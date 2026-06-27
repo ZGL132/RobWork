@@ -1,0 +1,122 @@
+# =========================================================
+# Top-level .gitignore for RobWork workspace
+# =========================================================
+#
+# vcpkg is a third-party dependency cloned from
+# https://github.com/microsoft/vcpkg and is not part of this
+# repository's own source. Re-clone it on a fresh machine.
+
+# -------------------------------------------------------------
+# vcpkg - exclude entirely (re-clone from upstream)
+# -------------------------------------------------------------
+vcpkg/
+
+# -------------------------------------------------------------
+# RobWork - exclude CMake / build artifacts
+# -------------------------------------------------------------
+RobWork/build/
+RobWork/CMakeCache.txt
+RobWork/CMakeCache.txt.prev
+RobWork/CMakeFiles/
+RobWork/cmake_install.cmake
+RobWork/Makefile
+RobWork/RobWork.cmake
+RobWork/CPackConfig.cmake
+RobWork/CPackSourceConfig.cmake
+RobWork/CMakeSettings.json
+RobWork/CMakeLists.txt.user
+RobWork/.cmake/
+RobWork/.qtc/
+RobWork/.qtc_clangd/
+RobWork/.qt/
+RobWork/.ninja_deps
+RobWork/.ninja_log
+RobWork/build.ninja
+RobWork/Testing/
+RobWork/bin/
+RobWork/lib/
+
+# Generated Doxygen output
+RobWork/doc/apidoc/html/
+RobWork/doc/apidoc/xml/
+RobWork/doc/apidoc/latex/
+RobWork/doc/apidoc/man/
+RobWork/doc/Doxyfile
+
+# Debian build artifacts
+RobWork/debian/.debhelper/
+RobWork/debian/files
+RobWork/debian/*.substvars
+RobWork/debian/*.debhelper.log
+RobWork/debian/autoreconf.*
+RobWork/debian/debhelper-build-stamp
+RobWork/debian/debian-binary
+RobWork/debian/*.deb
+
+# -------------------------------------------------------------
+# IDE / Editor user-specific files
+# -------------------------------------------------------------
+.vscode/
+.idea/
+*.code-workspace
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+CMakeUserPresets.json
+
+# Qt Creator
+*.autosave
+*.qmlproject.user
+.qt_for_python
+
+# Visual Studio
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.ilk
+*.obj
+*.pch
+*.exp
+*.lib
+*.log
+*.tlog
+
+# -------------------------------------------------------------
+# OS / misc
+# -------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+*.old
+*.orig
+*.rej
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+pythonenv*/
+
+# -------------------------------------------------------------
+# Test / runtime artifacts
+# -------------------------------------------------------------
+*testfile.bin
+*testfile.ini
+*rwsettings.xml
+.tpath.rwplay
+.spath.rwplay
+serialdev-out.txt
+*.rwplay
