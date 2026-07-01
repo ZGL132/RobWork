@@ -26,6 +26,8 @@
 #include <rw/math/EAA.hpp>
 #include <rw/math/Transform3D.hpp>
 #include <rw/math/Vector3D.hpp>
+
+#include <cassert>
 #endif
 namespace rw { namespace math {
 

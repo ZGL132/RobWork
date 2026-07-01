@@ -26,6 +26,7 @@
 #include <rw/core/macros.hpp>
 
 #include <Eigen/Core>
+#include <cassert>
 #endif
 
 namespace rw { namespace math {

@@ -20,6 +20,8 @@
 
 #if !defined(SWIG)
 #include <rw/math/Vector3D.hpp>
+
+#include <cassert>
 #endif 
 
 namespace rw { namespace math {

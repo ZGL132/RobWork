@@ -1,9 +1,9 @@
 <WorkCell name="SensorTestScene">
  
 <Frame name="fanucBase" refframe="WORLD" />
- <Include file="../../XMLDevices/Fanuc-LRM200i/fanuc_lrm200i.xml" />
+ <Include file="../../XMLDevices/UR-6-85-5-A/UR.wc.xml"/>
  
-<Frame name="handBase" refframe="LRM200.TCP" />
+<Frame name="handBase" refframe="UR-6-85-5-A.TCP" />
  <Include file="../../XMLDevices/SchunkHand/SchunkHand_udep.xml" />
 
  
@@ -31,5 +31,24 @@
  <Frame name="ScanScreen" refframe="WORLD" type="Movable">
 	<RPY /> <Pos>1.0 1.0 0.0</Pos>
  </Frame>
- 
+
+<Frame name="MyTool" refframe="" >
+	<Pos>0 0 2</Pos>
+	<RPY>0 0 0</RPY>
+<Property name="ShowFrameAxis">true</Property>
+</Frame>
+
+<Drawable name="MyToolBase" refframe="MyTool" colmodel="Enabled">
+    <Pos>0 0 0</Pos>
+    <RPY>0 0 0</RPY>
+    <RGB>0.2 0.2 0.8 </RGB>
+    <Cylinder radius="0.03" z="0.1" level="20"/>
+  </Drawable>
+
+ <Drawable name="MyBox" refframe="WORLD" colmodel="Enabled">
+    <Pos>0 0 1</Pos>
+    <RPY>0 0 0</RPY>
+    <RGB>0.6 0.6 0.6 </RGB>
+    <Box x="0.2" y="0.2" z="0.2"/>
+  </Drawable>
 </WorkCell>

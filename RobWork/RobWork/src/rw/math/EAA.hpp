@@ -29,6 +29,7 @@
 #include <rw/math/Vector3D.hpp>
 
 #include <Eigen/Core>
+#include <cassert>
 #endif
 namespace rw { namespace math {
     /** @addtogroup math */

@@ -1,0 +1,151 @@
+<SerialDevice name="GenericSixAxis">
+  <Frame name="Base">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+
+  <Joint name="Joint1" type="Revolute">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.350</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Joint name="Joint2" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0.120 0 0.000</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Joint name="Joint3" type="Revolute">
+    <RPY>0 0 0</RPY>
+    <Pos>0.520 0 0.000</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Joint name="Joint4" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0.420 0 0.000</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Joint name="Joint5" type="Revolute">
+    <RPY>0 -90 0</RPY>
+    <Pos>0.000 0 0.380</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Joint name="Joint6" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0.000 0 0.120</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+
+  <Frame name="TCP" refframe="Joint6">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.120</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+
+  <Drawable name="BasePedestal" refframe="Base">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.175</Pos>
+    <Cylinder radius="0.140" z="0.350" />
+  </Drawable>
+
+  <Drawable name="Joint1Axis" refframe="Joint1">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.105" z="0.180" />
+  </Drawable>
+
+  <Drawable name="Link1To2" refframe="Joint1">
+    <RPY>0 90 0</RPY>
+    <Pos>0.060 0 0</Pos>
+    <Cylinder radius="0.055" z="0.120" />
+  </Drawable>
+
+  <Drawable name="Joint2Axis" refframe="Joint2">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.095" z="0.170" />
+  </Drawable>
+
+  <Drawable name="Link2To3" refframe="Joint2">
+    <RPY>0 90 0</RPY>
+    <Pos>0.260 0 0</Pos>
+    <Cylinder radius="0.050" z="0.520" />
+  </Drawable>
+
+  <Drawable name="Joint3Axis" refframe="Joint3">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.085" z="0.160" />
+  </Drawable>
+
+  <Drawable name="Link3To4" refframe="Joint3">
+    <RPY>0 90 0</RPY>
+    <Pos>0.210 0 0</Pos>
+    <Cylinder radius="0.045" z="0.420" />
+  </Drawable>
+
+  <Drawable name="Joint4Axis" refframe="Joint4">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.075" z="0.150" />
+  </Drawable>
+
+  <Drawable name="Link4To5" refframe="Joint4">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.190</Pos>
+    <Cylinder radius="0.040" z="0.380" />
+  </Drawable>
+
+  <Drawable name="Joint5Axis" refframe="Joint5">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.065" z="0.140" />
+  </Drawable>
+
+  <Drawable name="Link5To6" refframe="Joint5">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.060</Pos>
+    <Cylinder radius="0.035" z="0.120" />
+  </Drawable>
+
+  <Drawable name="Joint6Axis" refframe="Joint6">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Cylinder radius="0.055" z="0.120" />
+  </Drawable>
+
+  <Drawable name="ToolStub" refframe="TCP">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.060</Pos>
+    <Cylinder radius="0.030" z="0.120" />
+  </Drawable>
+
+  <PosLimit refjoint="Joint1" min="-180" max="180" />
+  <PosLimit refjoint="Joint2" min="-120" max="120" />
+  <PosLimit refjoint="Joint3" min="-150" max="150" />
+  <PosLimit refjoint="Joint4" min="-180" max="180" />
+  <PosLimit refjoint="Joint5" min="-120" max="120" />
+  <PosLimit refjoint="Joint6" min="-360" max="360" />
+
+  <VelLimit refjoint="Joint1" max="120" />
+  <VelLimit refjoint="Joint2" max="120" />
+  <VelLimit refjoint="Joint3" max="120" />
+  <VelLimit refjoint="Joint4" max="180" />
+  <VelLimit refjoint="Joint5" max="180" />
+  <VelLimit refjoint="Joint6" max="240" />
+
+  <AccLimit refjoint="Joint1" max="360" />
+  <AccLimit refjoint="Joint2" max="360" />
+  <AccLimit refjoint="Joint3" max="360" />
+  <AccLimit refjoint="Joint4" max="540" />
+  <AccLimit refjoint="Joint5" max="540" />
+  <AccLimit refjoint="Joint6" max="720" />
+
+  <Q name="Home">0 -1.5707963267948966 1.5707963267948966 0 0 0</Q>
+  <Q name="Zero">0 0 0 0 0 0</Q>
+</SerialDevice>

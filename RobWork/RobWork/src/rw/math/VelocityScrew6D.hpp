@@ -30,6 +30,7 @@
 #include <rw/common/Serializable.hpp>
 
 #include <Eigen/Core>
+#include <cassert>
 #endif
 
 namespace rw { namespace math {

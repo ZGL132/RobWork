@@ -287,15 +287,22 @@ if(NOT DEFINED RWS_CXX_FLAGS)
     )
 endif()
 
-if(NOT DEFINED RWS_DEFINITIONS)
-    if(${IS_RELEASE})
-        set(RWS_DEFINITIONS_TMP "-DQT_NO_DEBUG")
-    else()
-        set(RWS_DEFINITIONS_TMP "-DQT_DEBUG")
-    endif()
+if(${IS_RELEASE})
+    set(RWS_DEFINITIONS_TMP "-DQT_NO_DEBUG")
+else()
+    set(RWS_DEFINITIONS_TMP "-DQT_DEBUG")
+endif()
 
+if(NOT DEFINED RWS_DEFINITIONS)
     set(RWS_DEFINITIONS "${RW_BUILD_WITH_DEFINITIONS};${RWS_DEFINITIONS_TMP}" CACHE STRING
         "Change this to force using your own definitions and not those of RobWorkSutdio"
+    )
+elseif(
+    (IS_RELEASE AND RWS_DEFINITIONS MATCHES "-DQT_DEBUG")
+    OR ((NOT IS_RELEASE) AND RWS_DEFINITIONS MATCHES "-DQT_NO_DEBUG")
+)
+    set(RWS_DEFINITIONS "${RW_BUILD_WITH_DEFINITIONS};${RWS_DEFINITIONS_TMP}" CACHE STRING
+        "Change this to force using your own definitions and not those of RobWorkSutdio" FORCE
     )
 endif()
 

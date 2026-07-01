@@ -439,9 +439,10 @@ macro(RW_SET_INSTALL_DIRS PROJECT_NAME PREFIX)
 endmacro()
 
 macro(RW_IS_RELEASE IS_RELEASE)
-    if(${RW_BUILD_TYPE} STREQUAL "release"
-       OR ${RW_BUILD_TYPE} STREQUAL "relwithdebinfo"
-       OR ${RW_BUILD_TYPE} STREQUAL "minsizerel"
+    string(TOLOWER "${RW_BUILD_TYPE}" RW_BUILD_TYPE_LOWER)
+    if("${RW_BUILD_TYPE_LOWER}" STREQUAL "release"
+       OR "${RW_BUILD_TYPE_LOWER}" STREQUAL "relwithdebinfo"
+       OR "${RW_BUILD_TYPE_LOWER}" STREQUAL "minsizerel"
     )
         set(${IS_RELEASE} TRUE)
     else()

@@ -29,6 +29,7 @@
 #include <rw/math/Transform3D.hpp>
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #endif
 
