@@ -56,6 +56,9 @@
 #ifdef RWS_HAVE_PLUGIN_WORKCELLEDITOR
 #include <rwslibs/workcelleditorplugin/WorkcellEditorPlugin.hpp>
 #endif
+#ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
+#include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
+#endif
 #ifdef RWS_HAVE_PLUGIN_LUAPL
 #include <rwslibs/lua/Lua.hpp>
 #endif
@@ -389,6 +392,11 @@ int RobWorkStudioApp::run ()
 
                 rwstudio.addPlugin (
                     new rws::WorkcellEditorPlugin (), false, Qt::LeftDockWidgetArea);
+#endif
+#ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
+
+                rwstudio.addPlugin (
+                    new rws::RobotModelBuilderPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
 #ifdef RW_HAVE_EIGEN
 
