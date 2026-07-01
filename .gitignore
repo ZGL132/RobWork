@@ -94,6 +94,7 @@ x86/
 Thumbs.db
 desktop.ini
 $RECYCLE.BIN/
+concurrent-popping-meadow.md
 *.swp
 *.swo
 *~
