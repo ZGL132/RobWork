@@ -15,10 +15,12 @@ if(build)
     set(ModelHeaderFiles RobotModelSpec.hpp RobotModelXmlWriter.hpp)
     set(SrcFiles
         RobotModelBuilderPlugin.cpp
+        RobotModelBuilderWidget.cpp
         ${ModelSrcFiles}
     )
     set(SRC_FILES_HPP
         RobotModelBuilderPlugin.hpp
+        RobotModelBuilderWidget.hpp
         ${ModelHeaderFiles}
     )
 
