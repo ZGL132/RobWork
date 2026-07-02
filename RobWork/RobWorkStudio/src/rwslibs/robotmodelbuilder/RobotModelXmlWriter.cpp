@@ -235,23 +235,23 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     spec.generateDrawables = true;
     spec.generateScene     = true;
 
-    const double rpy[JointCount][3] = {{0, 0, 0}, {0, 90, 0}, {0, 0, 0},
-                                       {0, 90, 0}, {0, -90, 0}, {0, 90, 0}};
+    const double alphaDeg[JointCount] = {0, 90, 0, 90, -90, 90};
+    const double offsetDeg[JointCount] = {0, 0, 0, 0, 0, 0};
     const double pos[JointCount][3] = {{0, 0, 0.35}, {0.12, 0, 0}, {0.52, 0, 0},
                                        {0.42, 0, 0}, {0, 0, 0.38}, {0, 0, 0.12}};
     for (int i = 0; i < JointCount; ++i) {
         DHJointSpec dh;
         dh.name      = "Joint" + std::to_string (i + 1);
-        dh.alphaDeg  = rpy[i][1];
+        dh.alphaDeg  = alphaDeg[i];
         dh.a         = pos[i][0];
         dh.d         = pos[i][2];
-        dh.offsetDeg = 0;
+        dh.offsetDeg = offsetDeg[i];
         spec.dhJoints.push_back (dh);
 
         JointTransformSpec joint;
         joint.name   = dh.name;
         joint.type   = "Revolute";
-        joint.rpyDeg = {{rpy[i][0], rpy[i][1], rpy[i][2]}};
+        joint.rpyDeg = {{dh.offsetDeg, 0, dh.alphaDeg}};
         joint.pos    = {{pos[i][0], pos[i][1], pos[i][2]}};
         spec.transformJoints.push_back (joint);
     }

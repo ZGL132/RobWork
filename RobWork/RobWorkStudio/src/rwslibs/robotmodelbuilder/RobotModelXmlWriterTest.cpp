@@ -40,6 +40,11 @@ int main (int argc, char** argv)
         return fail ("Serial XML missing TCP frame.");
     if (serialXml.count ("<Joint name=\"") != 6)
         return fail ("Serial XML must contain six explicit Joint elements.");
+    if (!contains (serialXml,
+                   "<Joint name=\"Joint2\" type=\"Revolute\">\n"
+                   "    <RPY>0 0 90</RPY>\n"
+                   "    <Pos>0.12 0 0</Pos>"))
+        return fail ("Joint RPY+Pos defaults should convert DH alpha to RobWork RPY Z-Y-X order.");
     if (contains (serialXml, "<Drawable name=\"Joint1Axis\""))
         return fail ("Default drawables should not include coordinate-axis geometry.");
     if (!contains (serialXml, "<Drawable name=\"Joint1Housing\""))
