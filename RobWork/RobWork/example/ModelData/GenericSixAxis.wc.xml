@@ -1,0 +1,118 @@
+<SerialDevice name="GenericSixAxis">
+  <Joint name="Joint1" type="Revolute">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.35</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Joint name="Joint2" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0.2 0 0.2</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Joint name="Joint3" type="Revolute">
+    <RPY>0 0 0</RPY>
+    <Pos>0.52 0 0</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Joint name="Joint4" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0.42 0 0</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Joint name="Joint5" type="Revolute">
+    <RPY>0 -90 0</RPY>
+    <Pos>0 0 0.38</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Joint name="Joint6" type="Revolute">
+    <RPY>0 90 0</RPY>
+    <Pos>0 0 0.12</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Joint>
+  <Drawable name="Joint1Axis" refframe="Joint1">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.01" z="0.18" />
+  </Drawable>
+  <Drawable name="Joint2Axis" refframe="Joint2">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.01" z="0.168" />
+  </Drawable>
+  <Drawable name="Joint3Axis" refframe="Joint3">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.085" z="0.156" />
+  </Drawable>
+  <Drawable name="Joint4Axis" refframe="Joint4">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.075" z="0.144" />
+  </Drawable>
+  <Drawable name="Joint5Axis" refframe="Joint5">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.065" z="0.132" />
+  </Drawable>
+  <Drawable name="Joint6Axis" refframe="Joint6">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Cylinder radius="0.055" z="0.12" />
+  </Drawable>
+  <Drawable name="Link1To2" refframe="Joint1">
+    <RPY>0 90 0</RPY>
+    <Pos>0.06 0 0</Pos>
+    <RGB>0.35 0.45 0.65</RGB>
+    <Cylinder radius="0.055" z="0.12" />
+  </Drawable>
+  <Drawable name="Link2To3" refframe="Joint2">
+    <RPY>0 90 0</RPY>
+    <Pos>0.26 0 0</Pos>
+    <RGB>0.35 0.45 0.65</RGB>
+    <Cylinder radius="0.05" z="0.52" />
+  </Drawable>
+  <Drawable name="Link3To4" refframe="Joint3">
+    <RPY>0 90 0</RPY>
+    <Pos>0.21 0 0</Pos>
+    <RGB>0.35 0.45 0.65</RGB>
+    <Cylinder radius="0.045" z="0.42" />
+  </Drawable>
+  <Drawable name="Link4To5" refframe="Joint4">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.19</Pos>
+    <RGB>0.35 0.45 0.65</RGB>
+    <Cylinder radius="0.04" z="0.38" />
+  </Drawable>
+  <Drawable name="Link5To6" refframe="Joint5">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.06</Pos>
+    <RGB>0.35 0.45 0.65</RGB>
+    <Cylinder radius="0.035" z="0.12" />
+  </Drawable>
+  <PosLimit refjoint="Joint1" min="-180" max="180" />
+  <PosLimit refjoint="Joint2" min="-120" max="120" />
+  <PosLimit refjoint="Joint3" min="-150" max="150" />
+  <PosLimit refjoint="Joint4" min="-180" max="180" />
+  <PosLimit refjoint="Joint5" min="-120" max="120" />
+  <PosLimit refjoint="Joint6" min="-360" max="360" />
+  <VelLimit refjoint="Joint1" max="120" />
+  <VelLimit refjoint="Joint2" max="120" />
+  <VelLimit refjoint="Joint3" max="120" />
+  <VelLimit refjoint="Joint4" max="180" />
+  <VelLimit refjoint="Joint5" max="180" />
+  <VelLimit refjoint="Joint6" max="240" />
+  <AccLimit refjoint="Joint1" max="360" />
+  <AccLimit refjoint="Joint2" max="360" />
+  <AccLimit refjoint="Joint3" max="360" />
+  <AccLimit refjoint="Joint4" max="540" />
+  <AccLimit refjoint="Joint5" max="540" />
+  <AccLimit refjoint="Joint6" max="720" />
+  <Q name="Zero">0 0 0 0 0 0</Q>
+  <Q name="Home">0 -1.5707963267949 1.5707963267949 0 0 0</Q>
+</SerialDevice>

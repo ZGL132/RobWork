@@ -53,6 +53,20 @@ int main (int argc, char** argv)
     if (!contains (sceneXml, "<Include file=\"GenericSixAxis.wc.xml\" />"))
         return fail ("Scene XML missing include.");
 
+    RobotModelSpec dhSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    dhSpec.mode           = RobotModelMode::DH;
+    const QString dhXml   = RobotModelXmlWriter::makeSerialDeviceXml (dhSpec);
+    if (dhXml.count ("<DHJoint name=\"") != 6)
+        return fail ("DH XML must contain six DHJoint elements.");
+    if (dhXml.count ("<Property name=\"ShowFrameAxis\">true</Property>") != 8)
+        return fail ("DH XML should show frame axes for Base, Joint1-6, and TCP.");
+    if (!contains (dhXml,
+                   "<DHJoint name=\"Joint1\" alpha=\"0\" a=\"0\" d=\"0.35\" offset=\"0\" "
+                   "type=\"schilling\">\n"
+                   "    <Property name=\"ShowFrameAxis\">true</Property>\n"
+                   "  </DHJoint>"))
+        return fail ("DH XML should emit ShowFrameAxis inside DHJoint elements.");
+
     spec.dynamics.generateDynamicWorkCell = true;
     if (!RobotModelXmlWriter::validate (spec, errors))
         return fail ("Default DWC model did not validate: " + errors.join ("; "));

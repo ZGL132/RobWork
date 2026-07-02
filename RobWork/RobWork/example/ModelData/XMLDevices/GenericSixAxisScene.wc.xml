@@ -1,0 +1,9 @@
+<WorkCell name="GenericSixAxisScene">
+  <Frame name="RobotBase" refframe="WORLD">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+
+  <Include file="GenericSixAxis.wc.xml" />
+</WorkCell>

@@ -451,7 +451,15 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
             out << "  <DHJoint name=\"" << QString::fromStdString (joint.name) << "\" alpha=\""
                 << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
                 << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
-                << "\" type=\"schilling\" />\n";
+                << "\" type=\"schilling\"";
+            if (spec.showFrameAxes) {
+                out << ">\n";
+                out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </DHJoint>\n";
+            }
+            else {
+                out << " />\n";
+            }
         }
     }
     else {
