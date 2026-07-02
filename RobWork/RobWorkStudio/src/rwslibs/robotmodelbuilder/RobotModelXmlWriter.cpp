@@ -88,14 +88,14 @@ void appendDefaultDynamics (RobotModelSpec& spec)
     spec.dynamics.baseMaterial = "Steel";
 }
 
-// Schilling/Craig DH 在 theta=0 时，joint_{i+1} 原点在 joint_i 坐标系下的位置：
-//   v = (a, -d*sin(alpha), d*cos(alpha))
-void dhLinkVector (double alphaDeg, double a, double d, std::array< double, 3 >& v)
+// Standard DH / RobWork schilling: p = (a*cos(theta), a*sin(theta), d)
+// Here theta is the zero-pose joint angle, i.e. the DH offset for revolute joints.
+void dhLinkVector (double a, double d, double offsetDeg, std::array< double, 3 >& v)
 {
-    const double alpha = alphaDeg * Pi / 180.0;
-    v[0] = a;
-    v[1] = -d * std::sin (alpha);
-    v[2] = d * std::cos (alpha);
+    const double theta = offsetDeg * Pi / 180.0;
+    v[0]               = a * std::cos (theta);
+    v[1]               = a * std::sin (theta);
+    v[2]               = d;
 }
 
 // 根据相邻关节的几何位置算出连杆圆柱的中心、RPY 和长度
@@ -117,12 +117,12 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
         v = spec.transformJoints[jointIdx].pos;
     }
     else {
-        // DH 模式：用 Schilling/Craig 公式计算
+        // DH 模式：用 RobWork schilling 对应的标准 DH 平移计算
         const int jointIdx = linkIndex + 1;
         if (jointIdx >= static_cast< int >(spec.dhJoints.size ()))
             return;
         const DHJointSpec& j = spec.dhJoints[jointIdx];
-        dhLinkVector (j.alphaDeg, j.a, j.d, v);
+        dhLinkVector (j.a, j.d, j.offsetDeg, v);
     }
 
     const double L = std::sqrt (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);

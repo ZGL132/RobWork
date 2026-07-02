@@ -122,6 +122,56 @@ int main (int argc, char** argv)
     if (!foundLink)
         return fail ("Could not find Link1To2 drawable.");
 
+    RobotModelSpec standardDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    standardDh.mode           = RobotModelMode::DH;
+    RobotModelXmlWriter::applyLinkGeometry (standardDh);
+    bool foundDhLink = false;
+    for (const DrawableSpec& d : standardDh.drawables) {
+        if (QString::fromStdString (d.name) == "Link4To5") {
+            foundDhLink = true;
+            if (std::abs (d.length - 0.38) > 1e-6)
+                return fail (QString ("Link4To5 length should be 0.38 in DH mode, got %1")
+                                 .arg (d.length));
+            if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1]) > 1e-6 ||
+                std::abs (d.pos[2] - 0.19) > 1e-6)
+                return fail (
+                    QString ("Link4To5 pos should be 0 0 0.19 in standard DH, got %1 %2 %3")
+                        .arg (d.pos[0])
+                        .arg (d.pos[1])
+                        .arg (d.pos[2]));
+            break;
+        }
+    }
+    if (!foundDhLink)
+        return fail ("Could not find Link4To5 drawable in DH mode.");
+
+    RobotModelSpec offsetDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    offsetDh.mode           = RobotModelMode::DH;
+    offsetDh.dhJoints[1].alphaDeg  = 0;
+    offsetDh.dhJoints[1].a         = 0.4;
+    offsetDh.dhJoints[1].d         = 0.2;
+    offsetDh.dhJoints[1].offsetDeg = 90;
+    RobotModelXmlWriter::applyLinkGeometry (offsetDh);
+    bool foundOffsetLink = false;
+    for (const DrawableSpec& d : offsetDh.drawables) {
+        if (QString::fromStdString (d.name) == "Link1To2") {
+            foundOffsetLink = true;
+            const double expectedLength = std::sqrt (0.4 * 0.4 + 0.2 * 0.2);
+            if (std::abs (d.length - expectedLength) > 1e-6)
+                return fail ("Link1To2 length should follow standard DH XY/Z projection.");
+            if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1] - 0.2) > 1e-6 ||
+                std::abs (d.pos[2] - 0.1) > 1e-6)
+                return fail (
+                    QString ("Link1To2 pos should be 0 0.2 0.1 for 90 deg offset, got %1 %2 %3")
+                        .arg (d.pos[0])
+                        .arg (d.pos[1])
+                        .arg (d.pos[2]));
+            break;
+        }
+    }
+    if (!foundOffsetLink)
+        return fail ("Could not find Link1To2 drawable for offset DH case.");
+
     RobotModelSpec autoDrawable = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     autoDrawable.drawables[6].length = 0.33;
     autoDrawable.drawables[6].rpyDeg = {{10, 20, 30}};
