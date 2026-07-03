@@ -18,6 +18,8 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QRegularExpression>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -712,6 +714,351 @@ int main (int argc, char** argv)
         if (syncSpec.dhJoints.size () != dhBefore ||
             syncSpec.transformJoints.size () != transformBefore)
             return fail ("refresh*/apply*: should not change vector sizes.");
+    }
+
+    // =====================================================================
+    //  Milestone 1:关节/帧语义补齐 —— Prismatic + FixedFrame + ToolFrame
+    // =====================================================================
+
+    // ---- 5 Revolute + 1 Prismatic:Q 长度为 6,Prismatic 值保持米不转弧度 ----
+    {
+        RobotModelSpec specRP = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 把 Joint3 改成 Prismatic,默认 6 个 pose 都是 0 单位,语义对 Prismatic = 0m
+        specRP.transformJoints[2].type = "Prismatic";
+        specRP.transformJoints[2].pos  = {{0.3, 0, 0.05}};
+        // 改 limit 用米而不是度
+        specRP.limits[2].posMin = -1.0;
+        specRP.limits[2].posMax = 1.0;
+        specRP.limits[2].velMax = 0.5;
+        specRP.limits[2].accMax = 1.0;
+        QStringList errRP;
+        if (!RobotModelXmlWriter::validate (specRP, errRP))
+            return fail ("5 Revolute + 1 Prismatic should validate: " + errRP.join ("; "));
+        const QString xmlRP = RobotModelXmlWriter::makeSerialDeviceXml (specRP);
+        if (!contains (xmlRP, "<Joint name=\"Joint3\" type=\"Prismatic\">"))
+            return fail ("Prismatic joint should emit type=\"Prismatic\".");
+        // Prismatic limit 应原文输出(m, 不转弧度)
+        if (!contains (xmlRP, "<PosLimit refjoint=\"Joint3\" min=\"-1\" max=\"1\" />"))
+            return fail ("Prismatic limit should be emitted in meters.");
+        if (!contains (xmlRP, "<VelLimit refjoint=\"Joint3\" max=\"0.5\" />"))
+            return fail ("Prismatic velocity limit should be emitted in m/s.");
+        // Revolute limit(Joint1 = +/- 180 度)在 XML 中应该已经被换算成弧度 (-3.14159)
+        if (!contains (xmlRP, "<PosLimit refjoint=\"Joint1\" min=\"-180\" max=\"180\" />"))
+            return fail ("Revolute position limit should be emitted in degrees.");
+        if (!contains (xmlRP, "<VelLimit refjoint=\"Joint1\" max=\"120\" />"))
+            return fail ("Revolute velocity limit should be emitted in deg/s.");
+        if (!contains (xmlRP, "<AccLimit refjoint=\"Joint1\" max=\"360\" />"))
+            return fail ("Revolute acceleration limit should be emitted in deg/s^2.");
+    }
+
+    // ---- FixedFrame 输出为 <Frame>,不进入 Q 维度,不引用 limit ----
+    {
+        RobotModelSpec fixedSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        fixedSpec.transformJoints[1].type = "FixedFrame";
+        // 自验:添加一条引用 FixedFrame 的 limit 必须被 validate 拦截
+        JointLimitSpec badLimit;
+        badLimit.jointName = "Joint2";        // Joint2 被改成 FixedFrame
+        badLimit.posMin    = -10;
+        badLimit.posMax    = 10;
+        badLimit.velMax    = 1;
+        badLimit.accMax    = 1;
+        // Bad limit 通过 spec.limits[1] 注入(原 Joint2 的 limit)
+        fixedSpec.limits[1] = badLimit;
+        // 同时让 zreo pose 仍能过;但 limit 会失败
+        QStringList errFixed;
+        if (RobotModelXmlWriter::validate (fixedSpec, errFixed))
+            return fail ("Limit referencing a FixedFrame row should be rejected.");
+        // 修正 limit 指向 Joint1(Revolute)
+        fixedSpec.limits[1].jointName = "Joint1";
+        // 同时把默认 poses 的 q 缩到可动关节数(5)
+        for (PoseSpec& p : fixedSpec.poses)
+            p.q = std::vector< double > (5, 0.0);
+        if (!RobotModelXmlWriter::validate (fixedSpec, errFixed))
+            return fail ("FixedFrame model with limits only on movable joints should validate: " +
+                         errFixed.join ("; "));
+        const QString xmlFixed = RobotModelXmlWriter::makeSerialDeviceXml (fixedSpec);
+        if (!contains (xmlFixed, "<Frame name=\"Joint2\" refframe=\"Joint1\">"))
+            return fail ("FixedFrame row should emit <Frame refframe=...> with previous frame.");
+        if (xmlFixed.contains ("<Joint name=\"Joint2\""))
+            return fail ("FixedFrame row should NOT emit <Joint name=\"Joint2\".");
+        // Q 维度 = 可动关节数 = 5;现有 pose.q 若长度错,会被 validate 拒
+        fixedSpec.poses.clear ();
+        PoseSpec p;
+        p.name = "Zero";
+        p.q    = std::vector< double > (5, 0.0);    // 5 个可动关节
+        fixedSpec.poses.push_back (p);
+        if (!RobotModelXmlWriter::validate (fixedSpec, errFixed))
+            return fail ("FixedFrame pose.q length should match movable joint count.");
+        const QString xmlFixedPose = RobotModelXmlWriter::makeSerialDeviceXml (fixedSpec);
+        if (xmlFixedPose.count ("<Q") == 0)
+            return fail ("At least one <Q> row should be emitted.");
+    }
+
+    // ---- ToolFrame 同上,并把 TCP ref 指向最后一个可动关节 ----
+    {
+        RobotModelSpec toolSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 把最后一行的 type 改成 ToolFrame
+        toolSpec.transformJoints.back ().type = "ToolFrame";
+        // 同步:清掉对应的 limit 与 dynamics link(Milestone 1 应该在 UI 里自动维护)
+        toolSpec.limits.pop_back ();
+        toolSpec.dynamics.forceLimits.pop_back ();
+        toolSpec.dynamics.links.pop_back ();
+        toolSpec.poses.clear ();
+        PoseSpec p;
+        p.name = "Zero";
+        p.q    = std::vector< double >(5, 0.0);    // 5 可动
+        toolSpec.poses.push_back (p);
+        QStringList errTool;
+        if (!RobotModelXmlWriter::validate (toolSpec, errTool))
+            return fail ("ToolFrame model should validate: " + errTool.join ("; "));
+        const QString xmlTool = RobotModelXmlWriter::makeSerialDeviceXml (toolSpec);
+        if (!contains (xmlTool, "<Frame name=\"Joint6\" refframe=\""))
+            return fail ("ToolFrame row should emit as <Frame> in the device XML.");
+        // TCP refframe = 最后一个可动关节 = Joint5
+        if (!contains (xmlTool, "<Frame name=\"TCP\" refframe=\"Joint5\">"))
+            return fail ("TCP should attach to the last movable joint (Joint5).");
+        // ForceLimit 引用 ToolFrame 必须被拒
+        auto lastIndex = toolSpec.dynamics.forceLimits.size () - 1;
+        toolSpec.dynamics.forceLimits[lastIndex].jointName = toolSpec.transformJoints.back ().name;
+        toolSpec.dynamics.generateDynamicWorkCell = true;
+        if (RobotModelXmlWriter::validate (toolSpec, errTool))
+            return fail ("ForceLimit referencing ToolFrame should be rejected.");
+    }
+
+    // ---- 没有可动关节(全是 FixedFrame / ToolFrame)时,生成合法 Frame-only XML,
+    //      且不应输出任何 PosLimit/VelLimit/AccLimit/<Q> ----
+    {
+        RobotModelSpec framesOnly = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        for (auto& j : framesOnly.transformJoints)
+            j.type = "FixedFrame";
+        // limit / forceLimits / poses 都清空,drawables 也清空
+        framesOnly.limits.clear ();
+        framesOnly.dynamics.forceLimits.clear ();
+        framesOnly.poses.clear ();
+        framesOnly.drawables.clear ();
+        QStringList errFo;
+        if (!RobotModelXmlWriter::validate (framesOnly, errFo))
+            return fail ("Frame-only spec should validate: " + errFo.join ("; "));
+        const QString xmlFo = RobotModelXmlWriter::makeSerialDeviceXml (framesOnly);
+        if (xmlFo.contains ("<Q "))
+            return fail ("Frame-only model should NOT output any <Q>.");
+        if (xmlFo.contains ("<PosLimit") || xmlFo.contains ("<VelLimit") ||
+            xmlFo.contains ("<AccLimit"))
+            return fail ("Frame-only model should NOT output PosLimit/VelLimit/AccLimit.");
+        if (xmlFo.contains ("<Joint "))
+            return fail ("Frame-only model should NOT output any <Joint>.");
+        // TCP 应该挂到 Base(没有可动关节时的回退策略)
+        if (!contains (xmlFo, "<Frame name=\"TCP\" refframe=\"Base\">"))
+            return fail ("Frame-only model: TCP should fall back to Base.");
+    }
+
+    // ---- validate 拒绝 q-vector 维度错误 ----
+    {
+        RobotModelSpec badPose = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badPose.poses.clear ();
+        PoseSpec wrong;
+        wrong.name = "Wrong";
+        wrong.q    = std::vector< double > {0, 0, 0};    // 只 3 个,模型有 6 个可动
+        badPose.poses.push_back (wrong);
+        QStringList errBp;
+        if (RobotModelXmlWriter::validate (badPose, errBp))
+            return fail ("pose.q length mismatch should fail validation.");
+        if (!errBp.join (" ").contains ("Wrong"))
+            return fail ("pose mismatch error should name the offending pose.");
+    }
+
+    // ---- validate 拒绝重复的 frame 名(Joint2 重命名为已存在的 Base 也算冲突)----
+    {
+        RobotModelSpec dup = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        dup.transformJoints[1].name = "Base";    // 冲突:与系统 Base
+        QStringList errDup;
+        if (RobotModelXmlWriter::validate (dup, errDup))
+            return fail ("Joint name colliding with Base should fail validation.");
+    }
+
+    // =====================================================================
+    //  Milestone 2:可变关节数
+    // =====================================================================
+
+    // ---- 3 轴模型:validate + 生成 XML ----
+    {
+        RobotModelSpec threeAxis = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 砍到只剩 3 关节 + 同步 limit/pose/dhJoints
+        while (threeAxis.transformJoints.size () > 3)
+            threeAxis.transformJoints.pop_back ();
+        while (threeAxis.dhJoints.size () > 3)
+            threeAxis.dhJoints.pop_back ();
+        while (threeAxis.limits.size () > 3)
+            threeAxis.limits.pop_back ();
+        threeAxis.dynamics.forceLimits.clear ();
+        threeAxis.dynamics.links.clear ();
+        threeAxis.poses.clear ();
+        // 每行 1 可动关节 → pose.q 长度应为 3
+        PoseSpec zero;
+        zero.name = "Zero";
+        zero.q    = {0.0, 0.0, 0.0};
+        threeAxis.poses.push_back (zero);
+        // 同步 drawables:删 housings / auto link drawables
+        threeAxis.drawables.erase (
+            std::remove_if (threeAxis.drawables.begin (), threeAxis.drawables.end (),
+                            [&] (const DrawableSpec& d) {
+                                const QString n = QString::fromStdString (d.name);
+                                return n.endsWith ("Housing") ||
+                                       QRegularExpression ("^Link\\d+To\\d+$").match (n).hasMatch ();
+                            }),
+            threeAxis.drawables.end ());
+        QStringList err3;
+        if (!RobotModelXmlWriter::validate (threeAxis, err3))
+            return fail ("3-axis model should validate: " + err3.join ("; "));
+        const QString xml3 = RobotModelXmlWriter::makeSerialDeviceXml (threeAxis);
+        if (xml3.count ("<Joint name=\"") != 3)
+            return fail ("3-axis model should emit exactly 3 <Joint name=...>.");
+        if (!contains (xml3, "<Frame name=\"TCP\" refframe=\"Joint3\">"))
+            return fail ("3-axis TCP should attach to Joint3.");
+    }
+
+    // ---- 7 轴模型:同上 ----
+    {
+        RobotModelSpec sevenAxis = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        JointTransformSpec extra;
+        extra.name   = "Joint7";
+        extra.type   = "Revolute";
+        extra.rpyDeg = {{0, 0, 90}};
+        extra.pos    = {{0, 0, 0.1}};
+        sevenAxis.transformJoints.push_back (extra);
+        DHJointSpec dh7;
+        dh7.name = extra.name;
+        sevenAxis.dhJoints.push_back (dh7);
+        JointLimitSpec lim7;
+        lim7.jointName = extra.name;
+        lim7.posMin    = -180;
+        lim7.posMax    = 180;
+        lim7.velMax    = 120;
+        lim7.accMax    = 360;
+        sevenAxis.limits.push_back (lim7);
+        // poses 长度扩展到 7
+        sevenAxis.poses.clear ();
+        PoseSpec zero;
+        zero.name = "Zero";
+        zero.q    = std::vector< double > (7, 0.0);
+        sevenAxis.poses.push_back (zero);
+        QStringList err7;
+        if (!RobotModelXmlWriter::validate (sevenAxis, err7))
+            return fail ("7-axis model should validate: " + err7.join ("; "));
+        const QString xml7 = RobotModelXmlWriter::makeSerialDeviceXml (sevenAxis);
+        if (xml7.count ("<Joint name=\"") != 7)
+            return fail ("7-axis model should emit exactly 7 <Joint name=...>.");
+        if (!contains (xml7, "<Frame name=\"TCP\" refframe=\"Joint7\">"))
+            return fail ("7-axis TCP should attach to Joint7.");
+    }
+
+    // ---- movableJointCount 与 fields 同步 ----
+    {
+        RobotModelSpec spec5 = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 5R + 1P:可动关节计数应为 6,但第 3 行是 Prismatic
+        spec5.transformJoints[2].type = "Prismatic";
+        if (RobotModelXmlWriter::movableJointCount (spec5) != 6)
+            return fail ("movableJointCount should return 6 for any Revolute/Prismatic mix.");
+    }
+
+    // ---- applyDefaultDrawables rebuilds default geometry from the current joint table ----
+    {
+        RobotModelSpec drawableSpec =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        const std::string removed = drawableSpec.transformJoints[2].name;
+        drawableSpec.transformJoints.erase (drawableSpec.transformJoints.begin () + 2);
+        DrawableSpec custom;
+        custom.name           = "CameraBody";
+        custom.refFrame       = "Joint1";
+        custom.shape          = "Cylinder";
+        custom.radius         = 0.01;
+        custom.length         = 0.02;
+        custom.rpyDeg         = {{0, 0, 0}};
+        custom.pos            = {{0, 0, 0}};
+        custom.rgb            = {{1, 0, 0}};
+        custom.collisionModel = false;
+        drawableSpec.drawables.push_back (custom);
+
+        RobotModelXmlWriter::applyDefaultDrawables (drawableSpec);
+
+        int housingCount = 0;
+        int linkCount    = 0;
+        bool keptCustom  = false;
+        for (const DrawableSpec& d : drawableSpec.drawables) {
+            const QString name = QString::fromStdString (d.name);
+            if (name.endsWith ("Housing"))
+                ++housingCount;
+            if (QRegularExpression ("^Link\\d+To\\d+$").match (name).hasMatch ())
+                ++linkCount;
+            if (d.name == "CameraBody" && d.refFrame == "Joint1")
+                keptCustom = true;
+            if (d.refFrame == removed)
+                return fail ("applyDefaultDrawables should not leave geometry on a removed joint.");
+        }
+        if (housingCount != 5)
+            return fail ("applyDefaultDrawables should create one housing per remaining row.");
+        if (linkCount != 4)
+            return fail ("applyDefaultDrawables should create one auto link per adjacent row pair.");
+        if (!keptCustom)
+            return fail ("applyDefaultDrawables should preserve custom drawables.");
+    }
+
+    // ---- computeLinkPose:7 关节 → 应有 6 条 link ----
+    {
+        RobotModelSpec sevenAxis = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        JointTransformSpec extra;
+        extra.name   = "Joint7";
+        extra.type   = "Revolute";
+        extra.rpyDeg = {{0, 0, 0}};
+        extra.pos    = {{0, 0, 0.05}};
+        sevenAxis.transformJoints.push_back (extra);
+        std::array< double, 3 > pos, rpy;
+        double len = 0;
+        RobotModelXmlWriter::computeLinkPose (sevenAxis, 5, pos, rpy, len);
+        if (std::abs (len - 0.05) > 1e-6)
+            return fail ("computeLinkPose on 7-axis: link 6 should be 0.05m.");
+    }
+
+    // ---- applyLinkGeometry 同步到 7 轴 ----
+    {
+        RobotModelSpec sevenAxis = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 加 Joint7
+        JointTransformSpec extra;
+        extra.name   = "Joint7";
+        extra.type   = "Revolute";
+        extra.rpyDeg = {{0, 0, 0}};
+        extra.pos    = {{0, 0, 0.1}};
+        sevenAxis.transformJoints.push_back (extra);
+        // 追加 Joint7Housing + Link6To7
+        DrawableSpec h;
+        h.name     = "Joint7Housing";
+        h.refFrame = "Joint7";
+        h.shape    = "Cylinder";
+        h.radius   = 0.04;
+        h.length   = 0.06;
+        h.rgb      = {{0.45, 0.45, 0.48}};
+        sevenAxis.drawables.push_back (h);
+        DrawableSpec l;
+        l.name             = "Link6To7";
+        l.refFrame         = "Joint6";
+        l.shape            = "Cylinder";
+        l.radius           = 0.04;
+        l.length           = 0;
+        l.rgb              = {{0.35, 0.45, 0.65}};
+        l.autoLinkGeometry = true;
+        sevenAxis.drawables.push_back (l);
+        RobotModelXmlWriter::applyLinkGeometry (sevenAxis);
+        bool found = false;
+        for (const DrawableSpec& d : sevenAxis.drawables) {
+            if (QString::fromStdString (d.name) == "Link6To7") {
+                found = true;
+                if (std::abs (d.length - 0.1) > 1e-6)
+                    return fail ("Link6To7 length should derive from Joint7.pos.z.");
+                break;
+            }
+        }
+        if (!found)
+            return fail ("applyLinkGeometry should update Link6To7 length.");
     }
 
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----

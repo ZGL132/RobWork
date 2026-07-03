@@ -65,14 +65,29 @@ class RobotModelXmlWriter
 
     /// 计算从 joint_i 到 joint_{i+1} 的连杆圆柱姿态(中心位置、RPY、长度)
     /// @param spec     : 完整模型数据,从中读取关节信息
-    /// @param linkIndex: 0..JointCount-2,对应连杆 i (Joint_{i+1} -> Joint_{i+2})
+    /// @param linkIndex: 0..(transformJoints.size() - 2)
+    ///                   对应连杆 i (Joint_{i+1} -> Joint_{i+2})
     /// @param posOut   : [out] 圆柱中心位置(米),在 Joint_{i+1} 坐标系下
     /// @param rpyDegOut: [out] 圆柱姿态 RPY(度,Z-Y-X 顺序)
     /// @param lengthOut: [out] 圆柱长度(米)
+    /// 现在支持可变关节数:link 数 = transformJoints.size() - 1。
     static void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
                                  std::array< double, 3 >& posOut,
                                  std::array< double, 3 >& rpyDegOut,
                                  double& lengthOut);
+
+    /// 设备"可动关节"数量 = transformJoints 中 Revolute / Prismatic 行数。
+    /// Q 维度、PosLimit/VelLimit/AccLimit 都按这个数量输出。
+    /// Milestone 1 起,F1xedFrame / ToolFrame 不计入可动关节。
+    static int movableJointCount (const RobotModelSpec& spec);
+
+    /// 默认画几何(外壳 + 连杆)按"当前可动关节数 + RigidFrame 数"重组:
+    ///   - 每个 transformJoints[i] 一个 Joint{i+1}Housing
+    ///   - 每对相邻 transformJoints[i] / [i+1] 一个 Link{i+1}To{i+2}
+    /// 即使 RigidFrame 出现在中间也会分配外壳,但它的 Link{i}To{i+1} 长度仍
+    /// 由 transformJoints[i+1].pos 决定;RigidFrame 不可动,不影响 Q。
+    static void applyDefaultDrawables (RobotModelSpec& spec,
+                                       double paddingBeforeFirst = 0.0);
 
     /// 重新计算所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 的 pos/rpy/length
     /// 一般在保存 XML 前调用一次,使连杆几何随用户改关节参数自动同步

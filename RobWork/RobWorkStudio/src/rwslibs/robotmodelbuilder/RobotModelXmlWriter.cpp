@@ -26,8 +26,9 @@ namespace {
 //  匿名命名空间:仅本文件可见的常量与工具
 // -----------------------------------------------------------------------------
 
-/// 6 轴机器人关节数
-const int JointCount = 6;
+/// 6 轴机器人出厂默认关节数(只能用于 makeDefaultSixAxisModel 填默认;
+///   实际 spec 接受任意 ≥0 的 transformJoints 数量)
+const int DefaultJointCount = 6;
 
 /// 圆周率;与公开常量 RobotModelXmlWriter::kPi 等价,仅本文件使用
 static constexpr double Pi = RobotModelXmlWriter::kPi;
@@ -43,19 +44,69 @@ bool isRevoluteType (const std::string& type)
     return QString::fromStdString (type).trimmed ().compare ("Revolute", Qt::CaseInsensitive) == 0;
 }
 
+bool isPrismaticType (const std::string& type)
+{
+    return QString::fromStdString (type).trimmed ().compare ("Prismatic", Qt::CaseInsensitive) == 0;
+}
+
+bool isFixedFrameType (const std::string& type)
+{
+    return QString::fromStdString (type).trimmed ().compare ("FixedFrame", Qt::CaseInsensitive) == 0;
+}
+
+bool isToolFrameType (const std::string& type)
+{
+    return QString::fromStdString (type).trimmed ().compare ("ToolFrame", Qt::CaseInsensitive) == 0;
+}
+
+// spec.transformJoints 内全部 frame 名(关节 + Base + TCP),用于校验引用
+std::set< std::string > allFrameNames (const RobotModelSpec& spec)
+{
+    std::set< std::string > names;
+    for (const JointTransformSpec& j : spec.transformJoints)
+        names.insert (j.name);
+    names.insert ("Base");
+    names.insert ("TCP");
+    return names;
+}
+
+// spec.transformJoints 中"可动关节"的下标(其余 FixedFrame/ToolFrame 被跳过)
+std::vector< size_t > movableJointIndices (const RobotModelSpec& spec)
+{
+    std::vector< size_t > result;
+    for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+        const std::string t = spec.transformJoints[i].type;
+        if (isRevoluteType (t) || isPrismaticType (t))
+            result.push_back (i);
+    }
+    return result;
+}
+
+// 在 spec 中查找 jointName 对应的 JointTransformSpec,失败返回 nullptr
+const JointTransformSpec* findJoint (const RobotModelSpec& spec, const std::string& jointName)
+{
+    for (const JointTransformSpec& j : spec.transformJoints) {
+        if (j.name == jointName)
+            return &j;
+    }
+    return nullptr;
+}
+
 /// 把 spec.robotName 经过文件名安全清洗后返回,作为 XML 节点/文件的"机器人名"
 QString exportedRobotName (const RobotModelSpec& spec)
 {
     return RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (spec.robotName));
 }
 
-/// 给 spec 增加默认的 6 个 Joint{i}Housing 圆柱(关节外壳),用于三维可视化
+/// 给 spec 增加默认的 Joint{i+1}Housing 圆柱(关节外壳),用于三维可视化
+/// 现在按 transformJoints.size() 生成,而非固定 6 个。
 void appendJointHousings (RobotModelSpec& spec)
 {
-    for (int i = 0; i < JointCount; ++i) {
+    const int n = static_cast< int >(spec.transformJoints.size ());
+    for (int i = 0; i < n; ++i) {
         DrawableSpec drawable;
         drawable.name           = "Joint" + std::to_string (i + 1) + "Housing";
-        drawable.refFrame       = "Joint" + std::to_string (i + 1);
+        drawable.refFrame       = spec.transformJoints[i].name;
         drawable.shape          = "Cylinder";
         // 半径/长度随关节号递减,让模型有一个简单的视觉层次
         drawable.radius         = 0.095 - 0.006 * i;
@@ -68,47 +119,58 @@ void appendJointHousings (RobotModelSpec& spec)
     }
 }
 
-/// 默认圆柱连杆(Link{i}To{i+1})的半径兜底值,长度随后由 computeLinkPose 重算
+/// 默认圆柱连杆(Link{i+1}To{i+2})的半径兜底值,长度随后由 computeLinkPose 重算
+/// 现在按 transformJoints.size()-1 生成,而非固定 5 个。
 void appendLinks (RobotModelSpec& spec)
 {
-    const double radii[5] = {0.055, 0.05, 0.045, 0.04, 0.035};
-    for (int i = 0; i < JointCount - 1; ++i) {
+    const int n = static_cast< int >(spec.transformJoints.size ());
+    if (n < 2)
+        return;
+    static const double defaultRadii[6] = {0.055, 0.05, 0.045, 0.04, 0.035, 0.03};
+    for (int i = 0; i < n - 1; ++i) {
         DrawableSpec drawable;
-        drawable.name           = "Link" + std::to_string (i + 1) + "To" + std::to_string (i + 2);
-        drawable.refFrame       = "Joint" + std::to_string (i + 1);
-        drawable.shape          = "Cylinder";
-        drawable.radius         = radii[i];
-        drawable.length         = 0;     // 稍后由 computeLinkPose 重新填充
-        drawable.rpyDeg         = {{0, 0, 0}};
-        drawable.pos            = {{0, 0, 0}};
-        drawable.rgb            = {{0.35, 0.45, 0.65}};
-        drawable.collisionModel = false;
+        drawable.name             = "Link" + std::to_string (i + 1) + "To" + std::to_string (i + 2);
+        drawable.refFrame         = spec.transformJoints[i].name;
+        drawable.shape            = "Cylinder";
+        const size_t r            = static_cast< size_t >(i) < 6 ? i : 5;
+        drawable.radius           = defaultRadii[r];
+        drawable.length           = 0;    // 稍后由 computeLinkPose 重新填充
+        drawable.rpyDeg           = {{0, 0, 0}};
+        drawable.pos              = {{0, 0, 0}};
+        drawable.rgb              = {{0.35, 0.45, 0.65}};
+        drawable.collisionModel   = false;
         drawable.autoLinkGeometry = true;
         spec.drawables.push_back (drawable);
     }
 }
 
-/// 给 spec 增加默认动力学参数(6 个 link + 6 个力限 + 基座信息)
+/// 给 spec 增加默认动力学参数:link 与 forceLimit 数 == 可动关节数
+/// (Milestone 1:FixedFrame / ToolFrame 不进入动力学 link 列表)
 void appendDefaultDynamics (RobotModelSpec& spec)
 {
-    // 默认 6 个 link,关联到 Joint1..Joint6
-    const std::string materials[JointCount] = {
+    const std::vector< size_t > movable = movableJointIndices (spec);
+    if (movable.empty ()) {
+        spec.dynamics.baseFrame    = "Base";
+        spec.dynamics.baseMaterial = "Steel";
+        return;
+    }
+    static const std::string defaultMaterials[6] = {
         "Steel", "Aluminum", "Aluminum", "Aluminum", "Aluminum", "Aluminum"};
-    const double masses[JointCount] = {5.0, 4.0, 3.0, 2.5, 2.0, 1.0};
-    for (int i = 0; i < JointCount; ++i) {
+    static const double defaultMasses[6] = {5.0, 4.0, 3.0, 2.5, 2.0, 1.0};
+    for (size_t k = 0; k < movable.size (); ++k) {
         LinkDynamicsSpec link;
-        link.linkName      = "Link" + std::to_string (i + 1);
-        link.objectName    = "Joint" + std::to_string (i + 1);
-        link.mass          = masses[i];
-        link.cog           = {{0, 0, 0}};
-        link.inertia       = {{0.01, 0.01, 0.01, 0, 0, 0}};
+        link.linkName        = "Link" + std::to_string (movable[k] + 1);
+        link.objectName      = spec.transformJoints[movable[k]].name;
+        link.mass            = defaultMasses[std::min< size_t >(k, 5)];
+        link.cog             = {{0, 0, 0}};
+        link.inertia         = {{0.01, 0.01, 0.01, 0, 0, 0}};
         link.estimateInertia = false;
-        link.material      = materials[i];
+        link.material        = defaultMaterials[std::min< size_t >(k, 5)];
         spec.dynamics.links.push_back (link);
     }
-    for (int i = 0; i < JointCount; ++i) {
+    for (size_t k = 0; k < movable.size (); ++k) {
         JointForceLimitSpec limit;
-        limit.jointName = "Joint" + std::to_string (i + 1);
+        limit.jointName = spec.transformJoints[movable[k]].name;
         limit.maxForce  = 1000.0;
         spec.dynamics.forceLimits.push_back (limit);
     }
@@ -149,6 +211,7 @@ double normalizedAngleDiffDeg (double lhs, double rhs)
 //        3) 默认圆柱轴向 +Z,绕轴 k = (0,0,1) x v_hat 旋转 a 角,使 +Z 对齐 v;
 //        4) 万一向量与 +Z 平行,则绕 X 轴 180° 翻转;
 //        5) 把旋转矩阵拆成 Z-Y-X 欧拉角,作为 Drawable 的 RPY。
+//        现在支持 0..(transformJoints.size()-2) 任意 linkIndex。
 // -----------------------------------------------------------------------------
 void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
                       std::array< double, 3 >& posOut,
@@ -159,8 +222,10 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
     rpyDegOut  = {{0, 0, 0}};
     lengthOut  = 0;
 
+    if (spec.transformJoints.size () < 2)
+        return;
     const int jointIdx = linkIndex + 1;
-    if (jointIdx >= static_cast< int >(spec.transformJoints.size ()))
+    if (jointIdx < 1 || jointIdx >= static_cast< int >(spec.transformJoints.size ()))
         return;
     const std::array< double, 3 > v = spec.transformJoints[jointIdx].pos;
 
@@ -239,8 +304,10 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
 }
 
 /// 把 spec 里所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 用上面的算法重算一次
+/// 现在允许 transformJoints.size() >= 2 的任意长度。
 void applyLinkGeometry (RobotModelSpec& spec)
 {
+    const int maxLinks = static_cast< int >(spec.transformJoints.size ()) - 1;
     for (DrawableSpec& drawable : spec.drawables) {
         const QString name = QString::fromStdString (drawable.name);
         if (!name.startsWith ("Link") || !name.contains ("To"))
@@ -252,7 +319,7 @@ void applyLinkGeometry (RobotModelSpec& spec)
         if (!match.hasMatch ())
             continue;
         const int linkCounter = match.captured (1).toInt () - 1;
-        if (linkCounter < 0 || linkCounter >= JointCount - 1)
+        if (linkCounter < 0 || linkCounter >= maxLinks)
             continue;
         std::array< double, 3 > pos, rpy;
         double length = 0;
@@ -284,11 +351,12 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     spec.generateScene     = true;
 
     // 一组能跑出像样姿态的默认关节尺寸
-    const double alphaDeg[JointCount] = {0, 90, 0, 90, -90, 90};
-    const double offsetDeg[JointCount] = {0, 0, 0, 0, 0, 0};
-    const double pos[JointCount][3] = {{0, 0, 0.35}, {0.12, 0, 0}, {0.52, 0, 0},
-                                       {0.42, 0, 0}, {0, 0, 0.38}, {0, 0, 0.12}};
-    for (int i = 0; i < JointCount; ++i) {
+    const double alphaDeg[DefaultJointCount]  = {0, 90, 0, 90, -90, 90};
+    const double offsetDeg[DefaultJointCount] = {0, 0, 0, 0, 0, 0};
+    const double pos[DefaultJointCount][3]    = {
+        {0, 0, 0.35}, {0.12, 0, 0}, {0.52, 0, 0},
+        {0.42, 0, 0}, {0, 0, 0.38}, {0, 0, 0.12}};
+    for (int i = 0; i < DefaultJointCount; ++i) {
         DHJointSpec dh;
         dh.name      = "Joint" + std::to_string (i + 1);
         dh.alphaDeg  = alphaDeg[i];
@@ -310,30 +378,30 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     appendLinks (spec);
     applyLinkGeometry (spec);    // 让连杆圆柱的位姿与上面关节参数保持一致
 
-    // 默认关节限位
-    const double posMin[JointCount] = {-180, -120, -150, -180, -120, -360};
-    const double posMax[JointCount] = {180, 120, 150, 180, 120, 360};
-    const double vel[JointCount]    = {120, 120, 120, 180, 180, 240};
-    const double acc[JointCount]    = {360, 360, 360, 540, 540, 720};
-    for (int i = 0; i < JointCount; ++i) {
+    // 默认关节限位(单位中立:Revolute 用度,Prismatic 用米)
+    const double posMin[DefaultJointCount] = {-180, -120, -150, -180, -120, -360};
+    const double posMax[DefaultJointCount] = {180, 120, 150, 180, 120, 360};
+    const double vel[DefaultJointCount]    = {120, 120, 120, 180, 180, 240};
+    const double acc[DefaultJointCount]    = {360, 360, 360, 540, 540, 720};
+    for (int i = 0; i < DefaultJointCount; ++i) {
         JointLimitSpec limit;
         limit.jointName = "Joint" + std::to_string (i + 1);
-        limit.posMinDeg = posMin[i];
-        limit.posMaxDeg = posMax[i];
-        limit.velMaxDeg = vel[i];
-        limit.accMaxDeg = acc[i];
+        limit.posMin    = posMin[i];
+        limit.posMax    = posMax[i];
+        limit.velMax    = vel[i];
+        limit.accMax    = acc[i];
         spec.limits.push_back (limit);
     }
 
-    // 默认位姿
+    // 默认位姿(每行 q 仅含可动关节,这里 6 个全为 Revolute,所以 q 长度为 6)
     PoseSpec zero;
     zero.name = "Zero";
-    zero.qDeg = {{0, 0, 0, 0, 0, 0}};
+    zero.q    = std::vector< double > (DefaultJointCount, 0.0);
     spec.poses.push_back (zero);
 
     PoseSpec ready;
     ready.name = "Ready";
-    ready.qDeg = {{0, -90, 90, 0, 0, 0}};
+    ready.q    = {0.0, -90.0, 90.0, 0.0, 0.0, 0.0};
     spec.poses.push_back (ready);
 
     appendDefaultDynamics (spec);
@@ -371,29 +439,36 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     if (!QDir (QString::fromStdString (spec.saveDirectory)).exists ())
         errors << "Save directory does not exist.";
 
-    // 按当前模式收集"生效关节"
-    std::vector< std::string > activeJoints;
-    for (const JointTransformSpec& joint : spec.transformJoints)
-        activeJoints.push_back (joint.name);
+    // ---- Milestone 1+2:关节列表(Milestone 1:类型必须是可识别的 4 种之一;
+    //                                  Milestone 2:可变数量,允许 0 / 3 / 6 / 7 等)----
+    const std::vector< size_t > movable = movableJointIndices (spec);
+    std::set< std::string > movableNames;
+    for (size_t idx : movable)
+        movableNames.insert (spec.transformJoints[idx].name);
 
-    if (activeJoints.size () != JointCount)
-        errors << "Exactly six joints are required.";
+    std::set< std::string > allNames;
+    for (const JointTransformSpec& j : spec.transformJoints) {
+        if (isEmpty (j.name))
+            errors << "Joint names must not be empty.";
+        if (!allNames.insert (j.name).second)
+            errors << QString ("Duplicate frame name: %1").arg (QString::fromStdString (j.name));
+
+        const QString t = QString::fromStdString (j.type).trimmed ();
+        if (t.isEmpty ())
+            errors << QString ("Joint %1 requires a type.").arg (QString::fromStdString (j.name));
+        else if (!isRevoluteType (j.type) && !isPrismaticType (j.type) &&
+                 !isFixedFrameType (j.type) && !isToolFrameType (j.type))
+            errors << QString ("Joint %1 has unsupported type '%2' "
+                               "(expected Revolute/Prismatic/FixedFrame/ToolFrame).")
+                          .arg (QString::fromStdString (j.name))
+                          .arg (t);
+    }
+
     if (spec.exportDhJointsAdvanced)
         canExportDhJoints (spec, &errors);
 
-    // 关节名不能为空且不能重复
-    std::set< std::string > jointNames;
-    for (const std::string& name : activeJoints) {
-        if (isEmpty (name))
-            errors << "Joint names must not be empty.";
-        if (!jointNames.insert (name).second)
-            errors << QString ("Duplicate joint name: %1").arg (QString::fromStdString (name));
-    }
-
     // 全部 Frame 名(关节 + Base + TCP),用于校验 Drawable/Dynamics 引用
-    std::set< std::string > frameNames = jointNames;
-    frameNames.insert ("Base");
-    frameNames.insert ("TCP");
+    const std::set< std::string > frameNames = allFrameNames (spec);
 
     if (spec.generateDrawables) {
         for (const DrawableSpec& drawable : spec.drawables) {
@@ -420,27 +495,40 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         }
     }
 
-    // 关节限位:min<max、速度/加速度>0、关节名必须存在
+    // ---- 关节限位:min<max、速度/加速度>0、jointName 必须是"可动关节"(Revolute/Prismatic)----
     for (const JointLimitSpec& limit : spec.limits) {
         if (isEmpty (limit.jointName))
             errors << "Limit rows require a joint name.";
-        else if (jointNames.find (limit.jointName) == jointNames.end ())
-            errors << QString ("Limit references unknown joint %1.")
+        else if (movableNames.find (limit.jointName) == movableNames.end ())
+            errors << QString ("Limit references non-movable joint %1 "
+                               "(only Revolute/Prismatic accept limits).")
                           .arg (QString::fromStdString (limit.jointName));
-        if (limit.posMinDeg >= limit.posMaxDeg)
+        if (!std::isfinite (limit.posMin) || !std::isfinite (limit.posMax))
+            errors << QString ("Limit %1 posMin/posMax must be finite.")
+                          .arg (QString::fromStdString (limit.jointName));
+        if (limit.posMin >= limit.posMax)
             errors << QString ("Position min must be less than max for %1.")
                           .arg (QString::fromStdString (limit.jointName));
-        if (limit.velMaxDeg <= 0)
+        if (limit.velMax <= 0)
             errors << QString ("Velocity limit must be greater than zero for %1.")
                           .arg (QString::fromStdString (limit.jointName));
-        if (limit.accMaxDeg <= 0)
+        if (limit.accMax <= 0)
             errors << QString ("Acceleration limit must be greater than zero for %1.")
                           .arg (QString::fromStdString (limit.jointName));
     }
 
+    // ---- 位姿:q 长度必须 == 可动关节数 ----
+    const size_t expectedQ = movable.size ();
     for (const PoseSpec& pose : spec.poses) {
         if (isEmpty (pose.name))
             errors << "Pose names must not be empty.";
+        if (pose.q.size () != expectedQ) {
+            errors << QString ("Pose '%1' has %2 q-values but the robot has %3 movable "
+                               "joints (Revolute/Prismatic).")
+                          .arg (QString::fromStdString (pose.name))
+                          .arg (static_cast< int >(pose.q.size ()))
+                          .arg (static_cast< int >(expectedQ));
+        }
     }
 
     // 动力学参数校验
@@ -458,8 +546,9 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
             if (isEmpty (link.objectName))
                 errors << QString ("Dynamics: link '%1' objectName is required.")
                               .arg (QString::fromStdString (link.linkName));
-            else if (frameNames.find (link.objectName) == frameNames.end ())
-                errors << QString ("Dynamics: link object '%1' does not exist.")
+            else if (movableNames.find (link.objectName) == movableNames.end ())
+                errors << QString ("Dynamics: link object '%1' is not a movable joint "
+                                   "(only Revolute/Prismatic accept Link).")
                               .arg (QString::fromStdString (link.objectName));
             if (link.mass <= 0)
                 errors << QString ("Dynamics: link '%1' mass must be greater than zero.")
@@ -484,8 +573,8 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         for (const JointForceLimitSpec& fl : spec.dynamics.forceLimits) {
             if (isEmpty (fl.jointName))
                 errors << "Dynamics: ForceLimit joint name is required.";
-            else if (jointNames.find (fl.jointName) == jointNames.end ())
-                errors << QString ("Dynamics: ForceLimit references unknown joint %1.")
+            else if (movableNames.find (fl.jointName) == movableNames.end ())
+                errors << QString ("Dynamics: ForceLimit references non-movable joint %1.")
                               .arg (QString::fromStdString (fl.jointName));
             if (fl.maxForce <= 0)
                 errors << QString ("Dynamics: ForceLimit for %1 must be greater than zero.")
@@ -551,6 +640,7 @@ bool RobotModelXmlWriter::canExportDhJoints (const RobotModelSpec& spec, QString
 //  说明: 把 spec 序列化为 RobWork <SerialDevice>...</SerialDevice> 文本。
 //        包含 Base/TCP 帧、关节(DH 或 RPY+Pos)、可选 Drawable、限位、位姿。
 // =============================================================================
+#if 0
 QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 {
     QString xml;
@@ -568,6 +658,142 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     // validate() 在 exportDhJointsAdvanced=true 时会主动调用
     // canExportDhJoints 并把错误塞到 errors,所以正常流程下这里不会再
     // 看到"勾选了但不通过"的情况;但保留 fallback 作为防御性编程。
+    // Milestone 1:FixedFrame / ToolFrame 永远是 <Frame> 不参与 DH 表;
+    // DHJoint 高级导出仅在转换无损且无 RigidFrame 时启用。
+    const bool writeDhJoints = spec.exportDhJointsAdvanced && canExportDhJoints (spec);
+    if (writeDhJoints) {
+        // writeDhJoints=true 时 canExportDhJoints 已确保 spec 全部 Revolute + 无损
+        for (const JointTransformSpec& transformJoint : spec.transformJoints) {
+            const DHJointSpec joint = transformJointToDh (transformJoint);
+            out << "  <DHJoint name=\"" << QString::fromStdString (joint.name) << "\" alpha=\""
+                << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
+                << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
+                << "\" type=\"schilling\"";
+            if (spec.showFrameAxes) {
+                out << ">\n";
+                out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </DHJoint>\n";
+            }
+            else {
+                out << " />\n";
+            }
+        }
+    }
+    else {
+        // 默认 SE(3) <Joint> + RigidFrame <Frame> 模式
+        for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+            const JointTransformSpec& joint = spec.transformJoints[i];
+            if (isFixedFrameType (joint.type) || isToolFrameType (joint.type)) {
+                // RigidFrame:输出 <Frame refframe="...">,而非 <Joint>;
+                // refframe 取前一个 transformJoint 名(若 i==0 则为 Base)。
+                const QString refframe = i > 0
+                const QString refframe = i > 0
+                    ? QString::fromStdString (spec.transformJoints[i - 1].name)
+                    : "Base";
+                out << "  <Frame name=\"" << QString::fromStdString (joint.name)
+                    << "\" refframe=\"" << refframe << "\">\n";
+                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
+                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
+                if (spec.showFrameAxes)
+                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </Frame>\n";
+            }
+            else {
+                out << "  <Joint name=\"" << QString::fromStdString (joint.name) << "\" type=\""
+                    << QString::fromStdString (joint.type) << "\">\n";
+                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
+                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
+                if (spec.showFrameAxes)
+                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </Joint>\n";
+            }
+        }
+    }
+
+    // TCP 帧:优先挂到最后一个"可动关节"上(Revolute / Prismatic);
+    // 如果没有任何可动关节,则挂在 Base 上。
+    {
+    {
+        QString tcpRef       = "Base";
+        const std::vector< size_t > movable = movableJointIndices (spec);
+        if (!movable.empty ())
+            tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
+        out << "  <Frame name=\"TCP\" refframe=\"" << tcpRef << "\">\n";
+        out << "    <RPY>0 0 0</RPY>\n";
+        out << "    <Pos>0 0 0</Pos>\n";
+        if (spec.showFrameAxes)
+            out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+        out << "  </Frame>\n";
+    }
+
+    if (spec.generateDrawables) {
+        for (const DrawableSpec& drawable : spec.drawables) {
+            out << "  <Drawable name=\"" << QString::fromStdString (drawable.name)
+                << "\" refframe=\"" << QString::fromStdString (drawable.refFrame) << "\"";
+            if (drawable.collisionModel)
+                out << " colmodel=\"Enabled\"";
+            out << ">\n";
+            out << "    <RPY>" << vector3 (drawable.rpyDeg) << "</RPY>\n";
+            out << "    <Pos>" << vector3 (drawable.pos) << "</Pos>\n";
+            out << "    <RGB>" << vector3 (drawable.rgb) << "</RGB>\n";
+            out << "    <Cylinder radius=\"" << number (drawable.radius) << "\" z=\""
+                << number (drawable.length) << "\" />\n";
+            out << "  </Drawable>\n";
+        }
+    }
+
+    // 关节限位(三种类型分开输出,RobWork 要求独立节点)
+    // 单位规则:Revolute 是度→rad;Prismatic 米保持。
+    for (const JointLimitSpec& limit : spec.limits) {
+    for (const JointLimitSpec& limit : spec.limits) {
+        out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+            << "\" min=\"" << number (limit.posMin) << "\" max=\""
+            << number (limit.posMax) << "\" />\n";
+    }
+    for (const JointLimitSpec& limit : spec.limits) {
+        out << "  <VelLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+            << "\" max=\"" << number (limit.velMax) << "\" />\n";
+    }
+    for (const JointLimitSpec& limit : spec.limits) {
+        out << "  <AccLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+            << "\" max=\"" << number (limit.accMax) << "\" />\n";
+    }
+
+    // 预设位姿:按可动关节顺序取 q;Revolute 度→rad,Prismatic 米保持。
+    const std::vector< size_t > movable = movableJointIndices (spec);
+    const std::vector< size_t > movable = movableJointIndices (spec);
+    for (const PoseSpec& pose : spec.poses) {
+        out << "  <Q name=\"" << QString::fromStdString (pose.name) << "\">";
+        for (size_t k = 0; k < movable.size (); ++k) {
+            if (k > 0)
+                out << " ";
+            const JointTransformSpec& j = spec.transformJoints[movable[k]];
+            const double raw            = pose.q[k];    // validate 已保证 size 一致
+            const double value          = isRevoluteType (j.type) ? degToRad (raw) : raw;
+            const double value          = isRevoluteType (j.type) ? degToRad (raw) : raw;
+            out << number (value);
+        }
+        out << "</Q>\n";
+    }
+
+    out << "</SerialDevice>\n";
+    return xml;
+}
+
+#endif
+
+QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
+{
+    QString xml;
+    QTextStream out (&xml);
+    out << "<SerialDevice name=\"" << exportedRobotName (spec) << "\">\n";
+    out << "  <Frame name=\"Base\">\n";
+    out << "    <RPY>0 0 0</RPY>\n";
+    out << "    <Pos>0 0 0</Pos>\n";
+    if (spec.showFrameAxes)
+        out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+    out << "  </Frame>\n";
+
     const bool writeDhJoints = spec.exportDhJointsAdvanced && canExportDhJoints (spec);
     if (writeDhJoints) {
         for (const JointTransformSpec& transformJoint : spec.transformJoints) {
@@ -587,21 +813,36 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
     else {
-        for (const JointTransformSpec& joint : spec.transformJoints) {
-            out << "  <Joint name=\"" << QString::fromStdString (joint.name) << "\" type=\""
-                << QString::fromStdString (joint.type) << "\">\n";
-            out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
-            out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
-            if (spec.showFrameAxes)
-                out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-            out << "  </Joint>\n";
+        for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+            const JointTransformSpec& joint = spec.transformJoints[i];
+            if (isFixedFrameType (joint.type) || isToolFrameType (joint.type)) {
+                const QString refframe = i > 0
+                    ? QString::fromStdString (spec.transformJoints[i - 1].name)
+                    : "Base";
+                out << "  <Frame name=\"" << QString::fromStdString (joint.name)
+                    << "\" refframe=\"" << refframe << "\">\n";
+                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
+                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
+                if (spec.showFrameAxes)
+                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </Frame>\n";
+            }
+            else {
+                out << "  <Joint name=\"" << QString::fromStdString (joint.name) << "\" type=\""
+                    << QString::fromStdString (joint.type) << "\">\n";
+                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
+                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
+                if (spec.showFrameAxes)
+                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+                out << "  </Joint>\n";
+            }
         }
     }
 
-    // TCP 帧:挂到最后一个关节上(若是 DH 则取最后一个 DHJoint,否则取最后一个 Joint)
     QString tcpRef = "Base";
-    if (!spec.transformJoints.empty ())
-        tcpRef = QString::fromStdString (spec.transformJoints.back ().name);
+    const std::vector< size_t > movable = movableJointIndices (spec);
+    if (!movable.empty ())
+        tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
     out << "  <Frame name=\"TCP\" refframe=\"" << tcpRef << "\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
     out << "    <Pos>0 0 0</Pos>\n";
@@ -625,28 +866,28 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
 
-    // 关节限位(三种类型分开输出,RobWork 要求独立节点)
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" min=\"" << number (limit.posMinDeg) << "\" max=\"" << number (limit.posMaxDeg)
-            << "\" />\n";
+            << "\" min=\"" << number (limit.posMin) << "\" max=\""
+            << number (limit.posMax) << "\" />\n";
     }
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <VelLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" max=\"" << number (limit.velMaxDeg) << "\" />\n";
+            << "\" max=\"" << number (limit.velMax) << "\" />\n";
     }
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <AccLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" max=\"" << number (limit.accMaxDeg) << "\" />\n";
+            << "\" max=\"" << number (limit.accMax) << "\" />\n";
     }
 
-    // 预设位姿(度 -> 弧度)
     for (const PoseSpec& pose : spec.poses) {
         out << "  <Q name=\"" << QString::fromStdString (pose.name) << "\">";
-        for (int i = 0; i < JointCount; ++i) {
-            if (i > 0)
+        for (size_t k = 0; k < movable.size (); ++k) {
+            if (k > 0)
                 out << " ";
-            out << number (degToRad (pose.qDeg[i]));
+            const JointTransformSpec& joint = spec.transformJoints[movable[k]];
+            const double raw = pose.q[k];
+            out << number (isRevoluteType (joint.type) ? degToRad (raw) : raw);
         }
         out << "</Q>\n";
     }
@@ -841,26 +1082,27 @@ void RobotModelXmlWriter::applyLinkGeometry (RobotModelSpec& spec)
     ::applyLinkGeometry (spec);
 }
 
-// =============================================================================
-//  DH projection / optional DH input conversion
-//  说明: 本插件约定的映射关系(与默认模型保持一致):
-//          roll  = offsetDeg
-//          pitch = 0          (DH 不存在独立的 pitch 分量)
-//          yaw   = alphaDeg
-//          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
-//  因此:
-//    * dhJointToTransform                   : 无损(DH -> Joint+RPY+Pos 必然有 pitch=0)
-//    * transformJointToDh                   : 投影到 DH 形式;若 pitch != 0,
-//                                              或 roll 与 Pos 的 xy 方向不一致,
-//                                              则标记为有损
-//  维护 SE(3) 与 DH 关系的两个工具函数:
-//    * refreshDhProjectionFromTransform     : 从真值刷新 DH 投影(真值 -> DH)
-//    * applyDhInputToTransform              : 把 DH 当作输入回填真值(DH -> 真值);
-//                                              **改写真值**,仅作为内部工具
-//  两侧长度不一致时取 min,不做插入/删除。
-// =============================================================================
+int RobotModelXmlWriter::movableJointCount (const RobotModelSpec& spec)
+{
+    return static_cast< int >(::movableJointIndices (spec).size ());
+}
 
-/// DH 关节 -> Joint+RPY+Pos;`existingType` 用来在 type 列保留用户先前的设置
+void RobotModelXmlWriter::applyDefaultDrawables (RobotModelSpec& spec,
+                                                 double /*paddingBeforeFirst*/)
+{
+    spec.drawables.erase (
+        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
+                        [] (const DrawableSpec& d) {
+                            const QString name = QString::fromStdString (d.name);
+                            return name.endsWith ("Housing") ||
+                                   QRegularExpression ("^Link\\d+To\\d+$").match (name).hasMatch ();
+                        }),
+        spec.drawables.end ());
+    appendJointHousings (spec);
+    appendLinks (spec);
+    applyLinkGeometry (spec);
+}
+
 JointTransformSpec RobotModelXmlWriter::dhJointToTransform (const DHJointSpec& dh,
                                                             const std::string& existingType)
 {
@@ -868,23 +1110,11 @@ JointTransformSpec RobotModelXmlWriter::dhJointToTransform (const DHJointSpec& d
     j.name   = dh.name;
     j.type   = existingType.empty () ? std::string ("Revolute") : existingType;
     j.rpyDeg = {{dh.offsetDeg, 0.0, dh.alphaDeg}};
-    // 位姿的平移部分必须与 DH 几何一致(参见 dhLinkVector):
-    //   v = (a·cos(offset), a·sin(offset), d)
-    // 旧实现写成 (a, 0, d) 在 offset != 0 时与 DH 实际位置不一致,
-    // 会让两种建模方式描述的机器人发生错位。
     const double theta = dh.offsetDeg * Pi / 180.0;
     j.pos = {{dh.a * std::cos (theta), dh.a * std::sin (theta), dh.d}};
     return j;
 }
 
-/// Joint+RPY+Pos -> DH 关节;正向 `(a·cos, a·sin, d)` 的反解:
-///   a         = sqrt(px^2 + py^2)
-///   offsetDeg = atan2(py, px)
-///   d         = pz
-///   alphaDeg  = yaw
-/// 投影可能有损:DH 形式要求 pitch=0,且 roll 与 Pos 的 xy 方向对应同一个
-/// offset。若用户写入更通用的 RPY/Pos,这些不能同时由简化 DH 表达的部分会
-/// 被标记为 lossy,但投影后的 DH 值仍按 Pos/Yaw 写出。
 DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& joint, bool* lossy)
 {
     DHJointSpec dh;
@@ -894,17 +1124,18 @@ DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& j
     dh.offsetDeg = dh.a > 1e-12 ? std::atan2 (joint.pos[1], joint.pos[0]) * 180.0 / Pi
                                 : joint.rpyDeg[0];
     dh.d         = joint.pos[2];
-    dh.alphaDeg  = joint.rpyDeg[2];    // yaw
+    dh.alphaDeg  = joint.rpyDeg[2];
     if (lossy != nullptr) {
+        const bool typeLoss =
+            isFixedFrameType (joint.type) || isToolFrameType (joint.type);
         const bool pitchLoss = std::abs (joint.rpyDeg[1]) > 1e-9;
         const bool rollPositionMismatch = dh.a > 1e-12 &&
             normalizedAngleDiffDeg (joint.rpyDeg[0], dh.offsetDeg) > 1e-6;
-        *lossy = pitchLoss || rollPositionMismatch;
+        *lossy = typeLoss || pitchLoss || rollPositionMismatch;
     }
     return dh;
 }
 
-/// 真值 -> 投影:从 spec.transformJoints 刷新 spec.dhJoints 投影视图缓存(逐行)
 void RobotModelXmlWriter::refreshDhProjectionFromTransform (RobotModelSpec& spec)
 {
     const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
@@ -913,9 +1144,6 @@ void RobotModelXmlWriter::refreshDhProjectionFromTransform (RobotModelSpec& spec
     }
 }
 
-/// "Apply DH" 工具:DH -> 真值,把 spec.dhJoints 全部按行重写到
-/// spec.transformJoints;保留 transformJoints[i].type。**会改写 SE(3) 真值**,
-/// UI 不调用此函数;仅在测试 / 批量回填场景使用。
 void RobotModelXmlWriter::applyDhInputToTransform (RobotModelSpec& spec)
 {
     const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());

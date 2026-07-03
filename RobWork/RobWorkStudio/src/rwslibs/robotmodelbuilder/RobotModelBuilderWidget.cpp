@@ -18,6 +18,7 @@
 
 // Qt 控件/工具头文件
 #include <QCheckBox>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
 #include <QFileDialog>
@@ -33,6 +34,10 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include <algorithm>
+#include <map>
+#include <set>
+
 using namespace rws;
 
 namespace {
@@ -40,8 +45,13 @@ namespace {
 //  匿名命名空间:本文件内部的常量与工具函数,不对外暴露
 // -----------------------------------------------------------------------------
 
-/// 6 轴机器人关节数,整份 UI 都按这个数量构建默认表
-const int JointCount = 6;
+/// 创建 Joint limit 表的默认单位中立列(由 fillLimitsTable 与 collectSpec 一致使用)
+const QStringList kLimitsHeaders = QStringList ()
+    << "Joint"
+    << "PosMin"
+    << "PosMax"
+    << "VelMax"
+    << "AccMax";
 
 /// 创建一个带表头、隔行着色、列宽自适应的 QTableWidget
 QTableWidget* makeTable (const QStringList& headers, int rows)
@@ -79,6 +89,160 @@ bool parseVector (const QString& text, int expected)
 bool isRevoluteType (const std::string& type)
 {
     return QString::fromStdString (type).trimmed ().compare ("Revolute", Qt::CaseInsensitive) == 0;
+}
+
+bool isMovableType (const std::string& type)
+{
+    const QString t = QString::fromStdString (type).trimmed ();
+    return t.compare ("Revolute", Qt::CaseInsensitive) == 0 ||
+           t.compare ("Prismatic", Qt::CaseInsensitive) == 0;
+}
+
+std::vector< std::string > movableNames (const std::vector< JointTransformSpec >& joints)
+{
+    std::vector< std::string > names;
+    for (const JointTransformSpec& joint : joints) {
+        if (isMovableType (joint.type))
+            names.push_back (joint.name);
+    }
+    return names;
+}
+
+int movableIndexBeforeRow (const std::vector< JointTransformSpec >& joints, int row)
+{
+    int index = 0;
+    for (int i = 0; i < row && i < static_cast< int > (joints.size ()); ++i) {
+        if (isMovableType (joints[static_cast< size_t > (i)].type))
+            ++index;
+    }
+    return index;
+}
+
+JointLimitSpec defaultLimit (const std::string& jointName, const std::string& type)
+{
+    JointLimitSpec limit;
+    limit.jointName = jointName;
+    if (QString::fromStdString (type).trimmed ().compare ("Prismatic", Qt::CaseInsensitive) == 0) {
+        limit.posMin = -1.0;
+        limit.posMax = 1.0;
+        limit.velMax = 0.5;
+        limit.accMax = 1.0;
+    }
+    else {
+        limit.posMin = -180.0;
+        limit.posMax = 180.0;
+        limit.velMax = 180.0;
+        limit.accMax = 360.0;
+    }
+    return limit;
+}
+
+JointForceLimitSpec defaultForceLimit (const std::string& jointName)
+{
+    JointForceLimitSpec force;
+    force.jointName = jointName;
+    force.maxForce  = 100.0;
+    return force;
+}
+
+LinkDynamicsSpec defaultLinkDynamics (const std::string& jointName, int index)
+{
+    LinkDynamicsSpec link;
+    link.linkName        = "Link" + std::to_string (index + 1);
+    link.objectName      = jointName;
+    link.mass            = 1.0;
+    link.cog             = {{0, 0, 0}};
+    link.inertia         = {{0.01, 0.01, 0.01, 0, 0, 0}};
+    link.estimateInertia = false;
+    link.material        = "Aluminum";
+    return link;
+}
+
+std::map< std::string, double > poseMapForMovables (
+    const PoseSpec& pose, const std::vector< std::string >& oldMovableNames)
+{
+    std::map< std::string, double > values;
+    const size_t n = std::min (pose.q.size (), oldMovableNames.size ());
+    for (size_t i = 0; i < n; ++i)
+        values[oldMovableNames[i]] = pose.q[i];
+    return values;
+}
+
+void synchronizeJointDerivedData (RobotModelSpec& spec,
+                                  const RobotModelSpec& oldSpec,
+                                  const std::vector< std::string >& oldMovableNames,
+                                  const std::set< std::string >& removedNames)
+{
+    std::map< std::string, JointLimitSpec > oldLimits;
+    for (const JointLimitSpec& limit : oldSpec.limits)
+        oldLimits[limit.jointName] = limit;
+
+    std::map< std::string, JointForceLimitSpec > oldForces;
+    for (const JointForceLimitSpec& force : oldSpec.dynamics.forceLimits)
+        oldForces[force.jointName] = force;
+
+    std::map< std::string, LinkDynamicsSpec > oldLinks;
+    for (const LinkDynamicsSpec& link : oldSpec.dynamics.links)
+        oldLinks[link.objectName] = link;
+
+    spec.limits.clear ();
+    spec.dynamics.forceLimits.clear ();
+    spec.dynamics.links.clear ();
+    int movableIndex = 0;
+    for (const JointTransformSpec& joint : spec.transformJoints) {
+        if (!isMovableType (joint.type))
+            continue;
+        std::map< std::string, JointLimitSpec >::const_iterator limitIt =
+            oldLimits.find (joint.name);
+        spec.limits.push_back (limitIt != oldLimits.end () ?
+                               limitIt->second : defaultLimit (joint.name, joint.type));
+
+        std::map< std::string, JointForceLimitSpec >::const_iterator forceIt =
+            oldForces.find (joint.name);
+        spec.dynamics.forceLimits.push_back (forceIt != oldForces.end () ?
+                                             forceIt->second : defaultForceLimit (joint.name));
+
+        std::map< std::string, LinkDynamicsSpec >::const_iterator linkIt =
+            oldLinks.find (joint.name);
+        spec.dynamics.links.push_back (linkIt != oldLinks.end () ?
+                                       linkIt->second : defaultLinkDynamics (joint.name, movableIndex));
+        ++movableIndex;
+    }
+
+    const std::vector< std::string > newMovableNames = movableNames (spec.transformJoints);
+    const size_t poseCount = std::min (spec.poses.size (), oldSpec.poses.size ());
+    for (size_t i = 0; i < poseCount; ++i) {
+        const std::map< std::string, double > oldQ =
+            poseMapForMovables (oldSpec.poses[i], oldMovableNames);
+        spec.poses[i].q.clear ();
+        for (const std::string& jointName : newMovableNames) {
+            std::map< std::string, double >::const_iterator it = oldQ.find (jointName);
+            spec.poses[i].q.push_back (it != oldQ.end () ? it->second : 0.0);
+        }
+    }
+
+    spec.drawables.erase (
+        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
+                        [&] (const DrawableSpec& d) {
+                            return removedNames.find (d.refFrame) != removedNames.end ();
+                        }),
+        spec.drawables.end ());
+    RobotModelXmlWriter::applyDefaultDrawables (spec);
+}
+
+/// 在 spec.transformJoints 中找一个还没用过的 "Joint{N}" 名(N 从 1 起递增),
+/// 用于 Add Joint 按钮保证名不冲突。
+QString pickNextJointName (const RobotModelSpec& spec)
+{
+    std::set< std::string > used;
+    for (const JointTransformSpec& j : spec.transformJoints)
+        used.insert (j.name);
+    for (int i = 1; i < 10000; ++i) {
+        const std::string candidate = "Joint" + std::to_string (i);
+        if (used.find (candidate) == used.end ())
+            return QString::fromStdString (candidate);
+    }
+    return QStringLiteral ("Joint_New");
 }
 }    // namespace
 
@@ -119,6 +283,7 @@ void RobotModelBuilderWidget::buildUi ()
 
     // 模式选择下拉框
     _mode = new QComboBox ();
+    _mode = new QComboBox ();
     _mode->addItem ("Joint + RPY + Pos");
     _mode->addItem ("DH Projection");
 
@@ -149,6 +314,7 @@ void RobotModelBuilderWidget::buildUi ()
 
     // -------------------------------------------------------------------------
     //  Kinematics 标签页:DH / Joint+RPY+Pos 两个表格(同时存在,通过 mode 切换可见性)
+    //  Milestone 2:行数 = 当前 spec.transformJoints.size(),不再固定 6。
     // -------------------------------------------------------------------------
     QWidget* kinematicsTab = new QWidget ();
     QVBoxLayout* kinLayout = new QVBoxLayout (kinematicsTab);
@@ -157,7 +323,7 @@ void RobotModelBuilderWidget::buildUi ()
                        << "Type"
                        << "RPY deg (Z Y X)"
                        << "Pos m",
-        JointCount);
+        0);
     _dhTable = makeTable (
         QStringList () << "Joint"
                        << "alpha deg"
@@ -165,13 +331,28 @@ void RobotModelBuilderWidget::buildUi ()
                        << "d m"
                        << "offset deg"
                        << "Status",
-        JointCount);
+        0);
     // DH 表是 SE(3) 真值的投影视图,整张表只读;
     // 任意单元格在 fillFromSpec / onTransformTableCellChanged 写入时
     // 也会显式 setFlags(~ItemIsEditable)以确保不可改。
     _dhTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     kinLayout->addWidget (_transformTable);
     kinLayout->addWidget (_dhTable);
+
+    // 添加/删除/上下移 Joint 的按钮条(Milestone 2)
+    QWidget* jointButtons     = new QWidget ();
+    QHBoxLayout* jointBtnLay  = new QHBoxLayout (jointButtons);
+    QPushButton* addJointBtn  = new QPushButton ("Add Joint");
+    QPushButton* delJointBtn  = new QPushButton ("Remove Joint");
+    QPushButton* upJointBtn   = new QPushButton ("Move Up");
+    QPushButton* downJointBtn = new QPushButton ("Move Down");
+    jointBtnLay->setContentsMargins (0, 0, 0, 0);
+    jointBtnLay->addWidget (addJointBtn);
+    jointBtnLay->addWidget (delJointBtn);
+    jointBtnLay->addWidget (upJointBtn);
+    jointBtnLay->addWidget (downJointBtn);
+    jointBtnLay->addStretch ();
+    kinLayout->addWidget (jointButtons);
     tabs->addTab (kinematicsTab, "Kinematics");
 
     // -------------------------------------------------------------------------
@@ -191,31 +372,20 @@ void RobotModelBuilderWidget::buildUi ()
     tabs->addTab (_drawablesTable, "Drawables");
 
     // -------------------------------------------------------------------------
-    //  Limits 标签页:关节限位(每关节 1 行,共 6 行)
+    //  Limits 标签页:关节限位(每关节 1 行,行数 = spec.limits.size())
+    //  列名改成"单位中立"(PosMin/PosMax/VelMax/AccMax),具体单位在 Joint
+    //  type 列指明 —— Revolute 是度,Prismatic 是米。
     // -------------------------------------------------------------------------
-    _limitsTable = makeTable (
-        QStringList () << "Joint"
-                       << "PosMin deg"
-                       << "PosMax deg"
-                       << "VelMax deg/s"
-                       << "AccMax deg/s2",
-        JointCount);
+    _limitsTable = makeTable (kLimitsHeaders, 0);
     tabs->addTab (_limitsTable, "Limits");
 
     // -------------------------------------------------------------------------
     //  Poses 标签页:预设位姿 + Add/Remove 按钮
+    //  列数随可动关节数变化;fillPosesTable 会按当前 spec 重建列。
     // -------------------------------------------------------------------------
     QWidget* posesTab      = new QWidget ();
     QVBoxLayout* posesLay  = new QVBoxLayout (posesTab);
-    _posesTable            = makeTable (
-        QStringList () << "Name"
-                       << "q1 deg"
-                       << "q2 deg"
-                       << "q3 deg"
-                       << "q4 deg"
-                       << "q5 deg"
-                       << "q6 deg",
-        0);
+    _posesTable            = makeTable (QStringList () << "Name", 0);
     QWidget* poseButtons      = new QWidget ();
     QHBoxLayout* poseBtnLay   = new QHBoxLayout (poseButtons);
     QPushButton* addPoseBtn   = new QPushButton ("Add Pose");
@@ -240,7 +410,7 @@ void RobotModelBuilderWidget::buildUi ()
     dynBaseForm->addRow ("Base material", _baseMaterial);
     dynLayout->addLayout (dynBaseForm);
 
-    QLabel* dynLinksLabel = new QLabel ("Links (object = Joint1..Joint6)");
+    QLabel* dynLinksLabel = new QLabel ("Links (object = name of movable joint)");
     dynLayout->addWidget (dynLinksLabel);
     _dynamicsLinksTable = makeTable (
         QStringList () << "Link"
@@ -250,15 +420,15 @@ void RobotModelBuilderWidget::buildUi ()
                        << "Ixx Iyy Izz Ixy Ixz Iyz"
                        << "Estimate?"
                        << "Material",
-        JointCount);
+        0);
     dynLayout->addWidget (_dynamicsLinksTable);
 
-    QLabel* forceLabel = new QLabel ("Force limits (Nm)");
+    QLabel* forceLabel = new QLabel ("Force limits (Nm for Revolute, N for Prismatic)");
     dynLayout->addWidget (forceLabel);
     _forceLimitsTable = makeTable (
         QStringList () << "Joint"
                        << "Max force",
-        JointCount);
+        0);
     dynLayout->addWidget (_forceLimitsTable);
     dynLayout->addStretch ();
     tabs->addTab (dynamicsTab, "Dynamics");
@@ -315,6 +485,10 @@ void RobotModelBuilderWidget::buildUi ()
     connect (resetBtn, SIGNAL (clicked ()), this, SLOT (resetDefaults ()));
     connect (addPoseBtn, SIGNAL (clicked ()), this, SLOT (addPose ()));
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
+    connect (addJointBtn, SIGNAL (clicked ()), this, SLOT (addJoint ()));
+    connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
+    connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
+    connect (downJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointDown ()));
 
     // Transform 表被编辑后刷新 DH 投影视图;DH 表不反向修改真值。
     // _syncingTables 防止 setItem 触发 _dhTable->itemChanged 引起无谓递归。
@@ -441,15 +615,18 @@ void RobotModelBuilderWidget::modeChanged (int index)
 
 // =============================================================================
 //  addPose() / removeSelectedPose()
-//  说明: Poses 表的"新增/删除选中行"。新增时初始化 6 个关节角为 0;
+//  说明: Poses 表的"新增/删除选中行"。新增时初始化当前可动关节数个关节角为 0;
 //        删除时至少保留 1 行,避免空表带来的边界问题。
+//        Milestone 2:_posesTable 列数随可动关节数变化;这里读 fillFromSpec
+//        留下的现有列数,作为新增行的列数参考。
 // =============================================================================
 void RobotModelBuilderWidget::addPose ()
 {
-    const int row = _posesTable->rowCount ();
+    const int row    = _posesTable->rowCount ();
+    const int qCount = std::max< int > (1, _posesTable->columnCount () - 1);
     _posesTable->insertRow (row);
     setItem (_posesTable, row, 0, "Pose" + QString::number (row + 1));
-    for (int i = 1; i <= JointCount; ++i)
+    for (int i = 1; i <= qCount; ++i)
         setItem (_posesTable, row, i, "0");
 }
 
@@ -458,6 +635,208 @@ void RobotModelBuilderWidget::removeSelectedPose ()
     const int row = _posesTable->currentRow ();
     if (row >= 0 && _posesTable->rowCount () > 1)
         _posesTable->removeRow (row);
+}
+
+// =============================================================================
+//  addJoint() / removeSelectedJoint() / moveSelectedJoint*()
+//  说明: Milestone 2 的"关节数量可变"UI。
+//        * addJoint():在 _transformTable 当前选中行下方追加一行 Revolute,
+//                     并同步追加 DH/limit/forceLimit/dynamics link/pose.q/
+//                     drawables(housing + auto link);
+//        * removeSelectedJoint():从所有 spec 中删除该行;至少保留 1 个关节;
+//        * moveSelectedJoint*():swap 两行;同样同步所有 spec 字段;
+//        同步完成后 fillFromSpec() 重新把所有表显示回 UI。
+// =============================================================================
+void RobotModelBuilderWidget::addJoint ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const RobotModelSpec oldSpec = spec;
+    const std::vector< std::string > oldMovables = movableNames (oldSpec.transformJoints);
+    const int insertRow = std::max< int > (0, _transformTable->currentRow () + 1);
+    const QString newName = pickNextJointName (spec);
+
+    JointTransformSpec j;
+    j.name   = newName.toStdString ();
+    j.type   = "Revolute";
+    j.rpyDeg = {{0, 0, 0}};
+    j.pos    = {{0, 0, 0.1}};
+    spec.transformJoints.insert (spec.transformJoints.begin () + insertRow, j);
+
+    DHJointSpec dh;
+    dh.name      = j.name;
+    dh.alphaDeg  = 0.0;
+    dh.a         = 0.0;
+    dh.d         = 0.1;
+    dh.offsetDeg = 0.0;
+    spec.dhJoints.insert (spec.dhJoints.begin () + insertRow, dh);
+
+    synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
+    fillFromSpec (spec);
+    setStatus (QString ("Added joint %1 (now %2 joints).").arg (newName).arg (
+                  static_cast< int >(spec.transformJoints.size ())));
+    return;
+
+    JointLimitSpec lim;
+    lim.jointName = j.name;
+    lim.posMin    = -180;
+    lim.posMax    = 180;
+    lim.velMax    = 180;
+    lim.accMax    = 360;
+    spec.limits.insert (spec.limits.begin () + insertRow, lim);
+
+    JointForceLimitSpec fl;
+    fl.jointName = j.name;
+    fl.maxForce  = 1000;
+    spec.dynamics.forceLimits.push_back (fl);
+
+    LinkDynamicsSpec link;
+    link.linkName        = "Link" + std::to_string (spec.dynamics.links.size () + 1);
+    link.objectName      = j.name;
+    link.mass            = 1.0;
+    link.cog             = {{0, 0, 0}};
+    link.inertia         = {{0.01, 0.01, 0.01, 0, 0, 0}};
+    link.estimateInertia = false;
+    link.material        = "Aluminum";
+    spec.dynamics.links.push_back (link);
+
+    for (PoseSpec& pose : spec.poses)
+        pose.q.push_back (0.0);
+
+    // 同步 drawables:新外壳 + 新 auto link(若 size >= 2)
+    DrawableSpec housing;
+    housing.name     = newName.toStdString () + "Housing";
+    housing.refFrame = j.name;
+    housing.shape    = "Cylinder";
+    housing.radius   = 0.06;
+    housing.length   = 0.08;
+    housing.rgb      = {{0.45, 0.45, 0.48}};
+    spec.drawables.push_back (housing);
+    if (spec.transformJoints.size () >= 2) {
+        DrawableSpec link_d;
+        link_d.name             = "Link" + std::to_string (insertRow + 1) + "To" +
+                                  std::to_string (insertRow + 2);
+        link_d.refFrame         = spec.transformJoints[insertRow].name;    // 新关节本身
+        link_d.shape            = "Cylinder";
+        link_d.shape            = "Cylinder";
+        link_d.radius           = 0.04;
+        link_d.length           = 0;
+        link_d.rgb              = {{0.35, 0.45, 0.65}};
+        link_d.autoLinkGeometry = true;
+        // 把它放在所有 housings + links 之后;不清掉用户自定义的 drawable。
+        spec.drawables.push_back (link_d);
+    }
+
+    RobotModelXmlWriter::applyLinkGeometry (spec);
+    fillFromSpec (spec);
+    setStatus (QString ("Added joint %1 (now %2 joints).").arg (newName).arg (
+                  static_cast< int >(spec.transformJoints.size ())));
+}
+
+void RobotModelBuilderWidget::removeSelectedJoint ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const RobotModelSpec oldSpec = spec;
+    const std::vector< std::string > oldMovables = movableNames (oldSpec.transformJoints);
+    const int row = _transformTable->currentRow ();
+    if (row < 0 || row >= static_cast< int >(spec.transformJoints.size ()))
+        return;
+    if (spec.transformJoints.size () <= 1) {
+        setStatus ("At least one joint must remain.");
+        return;
+    }
+    const QString removedName = QString::fromStdString (spec.transformJoints[row].name);
+
+    spec.transformJoints.erase (spec.transformJoints.begin () + row);
+    if (static_cast< size_t >(row) < spec.dhJoints.size ())
+        spec.dhJoints.erase (spec.dhJoints.begin () + row);
+    std::set< std::string > removedNames;
+    removedNames.insert (removedName.toStdString ());
+    synchronizeJointDerivedData (spec, oldSpec, oldMovables, removedNames);
+    fillFromSpec (spec);
+    setStatus (QString ("Removed joint %1 (now %2 joints).").arg (removedName).arg (
+                  static_cast< int >(spec.transformJoints.size ())));
+    return;
+    if (static_cast< size_t >(row) < spec.limits.size ())
+        spec.limits.erase (spec.limits.begin () + row);
+
+    // force limits / dynamics links / pose.q 都是按可动关节顺序索引;
+    // 移除时把它们同步缩短。简单做法:直接按 name 匹配删除。
+    const std::string removedKey = removedName.toStdString ();
+    spec.dynamics.forceLimits.erase (
+        std::remove_if (spec.dynamics.forceLimits.begin (),
+                        spec.dynamics.forceLimits.end (),
+                        [&] (const JointForceLimitSpec& f) { return f.jointName == removedKey; }),
+        spec.dynamics.forceLimits.end ());
+    spec.dynamics.links.erase (
+        std::remove_if (spec.dynamics.links.begin (), spec.dynamics.links.end (),
+                        [&] (const LinkDynamicsSpec& l) { return l.objectName == removedKey; }),
+        spec.dynamics.links.end ());
+
+    for (PoseSpec& pose : spec.poses) {
+        if (!pose.q.empty ())
+            pose.q.erase (pose.q.begin () + row);
+    }
+
+    // 同步 drawables:auto link drawables 与 joints 一一对应,删除对应的那条
+    // housing + 那条 link。一次性用一个谓词过滤,避免多个 remove_if 嵌套。
+    const QString houseName    = removedName + "Housing";
+    const QString linkABefore  = "Link" + QString::number (row + 1) + "To" +
+                                 QString::number (row + 2);
+    const QString linkAAfter   = "Link" + QString::number (row + 2) + "To" +
+                                 QString::number (row + 3);
+    spec.drawables.erase (
+        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
+                        [&] (const DrawableSpec& d) {
+                            const QString n = QString::fromStdString (d.name);
+                            return n == houseName || n == linkABefore || n == linkAAfter;
+                        }),
+        spec.drawables.end ());
+
+    RobotModelXmlWriter::applyLinkGeometry (spec);
+    fillFromSpec (spec);
+    setStatus (QString ("Removed joint %1 (now %2 joints).").arg (removedName).arg (
+                  static_cast< int >(spec.transformJoints.size ())));
+}
+
+void RobotModelBuilderWidget::moveSelectedJointUp ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const RobotModelSpec oldSpec = spec;
+    const std::vector< std::string > oldMovables = movableNames (oldSpec.transformJoints);
+    const int row = _transformTable->currentRow ();
+    if (row <= 0 || row >= static_cast< int >(spec.transformJoints.size ()))
+        return;
+    std::swap (spec.transformJoints[static_cast< size_t > (row - 1)],
+               spec.transformJoints[static_cast< size_t > (row)]);
+    if (static_cast< size_t > (row) < spec.dhJoints.size ())
+        std::swap (spec.dhJoints[static_cast< size_t > (row - 1)],
+                   spec.dhJoints[static_cast< size_t > (row)]);
+    synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
+    fillFromSpec (spec);
+    if (static_cast< size_t >(row - 1) < spec.transformJoints.size ())
+        _transformTable->setCurrentCell (row - 1, 0);
+}
+
+void RobotModelBuilderWidget::moveSelectedJointDown ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const RobotModelSpec oldSpec = spec;
+    const std::vector< std::string > oldMovables = movableNames (oldSpec.transformJoints);
+    const int row = _transformTable->currentRow ();
+    if (row < 0)
+        return;
+    const size_t n = spec.transformJoints.size ();
+    if (static_cast< size_t >(row + 1) >= n)
+        return;
+    std::swap (spec.transformJoints[static_cast< size_t > (row)],
+               spec.transformJoints[static_cast< size_t > (row + 1)]);
+    if (static_cast< size_t > (row + 1) < spec.dhJoints.size ())
+        std::swap (spec.dhJoints[static_cast< size_t > (row)],
+                   spec.dhJoints[static_cast< size_t > (row + 1)]);
+    synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
+    fillFromSpec (spec);
+    if (static_cast< size_t >(row + 1) < spec.transformJoints.size ())
+        _transformTable->setCurrentCell (row + 1, 0);
 }
 
 // =============================================================================
@@ -655,19 +1034,19 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     for (int row = 0; row < _limitsTable->rowCount (); ++row) {
         JointLimitSpec limit;
         limit.jointName = itemText (_limitsTable, row, 0).toStdString ();
-        limit.posMinDeg = itemDouble (_limitsTable, row, 1);
-        limit.posMaxDeg = itemDouble (_limitsTable, row, 2);
-        limit.velMaxDeg = itemDouble (_limitsTable, row, 3);
-        limit.accMaxDeg = itemDouble (_limitsTable, row, 4);
+        limit.posMin    = itemDouble (_limitsTable, row, 1);
+        limit.posMax    = itemDouble (_limitsTable, row, 2);
+        limit.velMax    = itemDouble (_limitsTable, row, 3);
+        limit.accMax    = itemDouble (_limitsTable, row, 4);
         spec.limits.push_back (limit);
     }
 
-    // ---- Poses 表 ----
+    // ---- Poses 表(Milestone 2:q 长度 = 当前表列数 - 1)----
     for (int row = 0; row < _posesTable->rowCount (); ++row) {
         PoseSpec pose;
         pose.name = itemText (_posesTable, row, 0).toStdString ();
-        for (int i = 0; i < JointCount; ++i)
-            pose.qDeg[i] = itemDouble (_posesTable, row, i + 1);
+        for (int col = 1; col < _posesTable->columnCount (); ++col)
+            pose.q.push_back (itemDouble (_posesTable, row, col));
         spec.poses.push_back (pose);
     }
 
@@ -774,22 +1153,28 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 // =============================================================================
 void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
 {
-    for (int row = 0; row < JointCount; ++row) {
+    const int n = static_cast< int >(spec.transformJoints.size ());
+    _dhTable->setRowCount (n);
+    _transformTable->setRowCount (n);
+    for (int row = 0; row < n; ++row) {
         const JointTransformSpec& joint = spec.transformJoints[row];
         // 把 SE(3) 真值投影成 DH;有损时仍写出投影值,但在 Status 列标记
         bool lossy = false;
         const DHJointSpec dh = RobotModelXmlWriter::transformJointToDh (joint, &lossy);
+        const QString jt = QString::fromStdString (joint.type).trimmed ();
         // Status 列语义:
         //   * Revolute + 无损 -> "Lossless"   (可被高级 <DHJoint> 导出)
         //   * Revolute + 有损 -> "Projected"  (高级 <DHJoint> 导出将被拒绝)
-        //   * 其它 type      -> "Unsupported"(高级 <DHJoint> 导出将被拒绝)
+        //   * Prismatic      -> "Projected"  (DH 仍能投影 d,但不能表达 theta)
+        //   * FixedFrame     -> "Unsupported"(DH 表对它无意义)
+        //   * ToolFrame      -> "Unsupported"
         QString status;
-        if (!isRevoluteType (joint.type))
-            status = "Unsupported";
-        else if (lossy)
+        if (jt.compare ("Revolute", Qt::CaseInsensitive) == 0)
+            status = lossy ? "Projected" : "Lossless";
+        else if (jt.compare ("Prismatic", Qt::CaseInsensitive) == 0)
             status = "Projected";
         else
-            status = "Lossless";
+            status = "Unsupported";
 
         // DH 表全部只读
         setItem (_dhTable, row, 0, QString::fromStdString (dh.name), false);
@@ -828,32 +1213,55 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
 
 void RobotModelBuilderWidget::fillLimitsTable (const RobotModelSpec& spec)
 {
-    for (int row = 0; row < JointCount; ++row) {
+    const int n = static_cast< int >(spec.limits.size ());
+    _limitsTable->setRowCount (n);
+    for (int row = 0; row < n; ++row) {
         const JointLimitSpec& limit = spec.limits[row];
         setItem (_limitsTable, row, 0, QString::fromStdString (limit.jointName));
-        setItem (_limitsTable, row, 1, QString::number (limit.posMinDeg));
-        setItem (_limitsTable, row, 2, QString::number (limit.posMaxDeg));
-        setItem (_limitsTable, row, 3, QString::number (limit.velMaxDeg));
-        setItem (_limitsTable, row, 4, QString::number (limit.accMaxDeg));
+        setItem (_limitsTable, row, 1, QString::number (limit.posMin));
+        setItem (_limitsTable, row, 2, QString::number (limit.posMax));
+        setItem (_limitsTable, row, 3, QString::number (limit.velMax));
+        setItem (_limitsTable, row, 4, QString::number (limit.accMax));
     }
 }
 
 void RobotModelBuilderWidget::fillPosesTable (const RobotModelSpec& spec)
 {
+    // Milestone 2:列数 = 1 (name) + 可动关节数 (q 长度)
+    int movable = 0;
+    for (const JointTransformSpec& j : spec.transformJoints) {
+        const QString t = QString::fromStdString (j.type).trimmed ();
+        if (t.compare ("Revolute", Qt::CaseInsensitive) == 0 ||
+            t.compare ("Prismatic", Qt::CaseInsensitive) == 0)
+            ++movable;
+    }
+    if (movable == 0)
+        movable = 1;    // 至少 1 个 q 列,避免空表
+    QStringList headers;
+    headers << "Name";
+    for (int i = 1; i <= movable; ++i)
+        headers << "q" + QString::number (i);
+    _posesTable->setColumnCount (headers.size ());
+    _posesTable->setHorizontalHeaderLabels (headers);
+
     _posesTable->setRowCount (static_cast< int > (spec.poses.size ()));
     for (int row = 0; row < _posesTable->rowCount (); ++row) {
         const PoseSpec& pose = spec.poses[row];
         setItem (_posesTable, row, 0, QString::fromStdString (pose.name));
-        for (int i = 0; i < JointCount; ++i)
-            setItem (_posesTable, row, i + 1, QString::number (pose.qDeg[i]));
+        for (int i = 0; i < movable; ++i) {
+            const double v = i < static_cast< int >(pose.q.size ()) ? pose.q[i] : 0.0;
+            setItem (_posesTable, row, i + 1, QString::number (v));
+        }
     }
 }
 
 void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
 {
-    // 链接表:只填到现有行数与 spec 行数两者中较小者,避免越界
-    for (int row = 0; row < _dynamicsLinksTable->rowCount () && row < (int) spec.dynamics.links.size ();
-         ++row) {
+    const int nLinks = static_cast< int >(spec.dynamics.links.size ());
+    const int nForce = static_cast< int >(spec.dynamics.forceLimits.size ());
+    _dynamicsLinksTable->setRowCount (nLinks);
+    _forceLimitsTable->setRowCount (nForce);
+    for (int row = 0; row < nLinks; ++row) {
         const LinkDynamicsSpec& link = spec.dynamics.links[row];
         setItem (_dynamicsLinksTable, row, 0, QString::fromStdString (link.linkName));
         setItem (_dynamicsLinksTable, row, 1, QString::fromStdString (link.objectName));
@@ -863,9 +1271,7 @@ void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
         setItem (_dynamicsLinksTable, row, 5, link.estimateInertia ? "Enabled" : "Disabled");
         setItem (_dynamicsLinksTable, row, 6, QString::fromStdString (link.material));
     }
-    for (int row = 0; row < _forceLimitsTable->rowCount () &&
-                       row < (int) spec.dynamics.forceLimits.size ();
-         ++row) {
+    for (int row = 0; row < nForce; ++row) {
         const JointForceLimitSpec& fl = spec.dynamics.forceLimits[row];
         setItem (_forceLimitsTable, row, 0, QString::fromStdString (fl.jointName));
         setItem (_forceLimitsTable, row, 1, QString::number (fl.maxForce));
