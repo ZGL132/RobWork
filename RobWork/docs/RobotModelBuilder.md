@@ -255,9 +255,131 @@ UI 提供两种建模方式 (`RobotModelMode::DH` / `RobotModelMode::JointRPYPos
 
 ---
 
-## 5. 几何原理与公式推导
+## 5. DH 与 Joint+RPY+Pos 双向联动
 
-### 5.1 标准 DH 平移向量(`dhLinkVector`)
+UI 中"DH Parameters" 与 "Joint + RPY + Pos" 两个表格是**同一组关节的两种表达**,任何一处修改都会即时同步到另一处,无需手动按 "Generate Preview"。
+
+### 5.1 约定
+
+为使"两种建模方式表达的几何等价",本插件采用下列映射关系。位姿的反解采用 `(r, θ) = (√(px²+py²), atan2(py,px))` 的极坐标形式,与 `dhLinkVector` / `computeLinkPose` 内部约定的"标准 DH 平移"完全一致。
+
+| 字段 | 方向 | 公式 |
+| --- | --- | --- |
+| `roll` (RPY[0]) | DH → Transform | `= offsetDeg` |
+| `pitch` (RPY[1]) | — | **固定为 0**(DH 旋转 R_x(α)·R_z(θ) 在 ZYX 欧拉分解下 pitch 恒为 0) |
+| `yaw` (RPY[2]) | DH → Transform | `= alphaDeg` |
+| `pos[0]` | DH → Transform | `= a · cos(offsetDeg · π/180)` |
+| `pos[1]` | DH → Transform | `= a · sin(offsetDeg · π/180)` |
+| `pos[2]` | DH → Transform | `= d` |
+| `offsetDeg` | Transform → DH | `pos.xy ≠ 0` 时 `= atan2(pos[1], pos[0]) · 180/π`;<br>`pos.xy = 0` 时 `= roll`(见下) |
+| `alphaDeg` | Transform → DH | `= rpyDeg[2]` (yaw) |
+| `a` | Transform → DH | `= √(pos[0]² + pos[1]²)`(`pos.xy = 0` 时为 0) |
+| `d` | Transform → DH | `= pos[2]` |
+| `name` | 双向 | 直接复制 |
+| `type` (Revolute / Prismatic) | DH → Transform | 保留原 Transform 行的设置,缺省 "Revolute" |
+| `type` | Transform → DH | **静默丢弃**(DH 节点不携带 type) |
+
+> **关于"有损"**(`Transform → DH` 方向):
+> 1. **pitch 非零**:DH 旋转 R_x(α)·R_z(θ) 在 ZYX 欧拉分解下 pitch 恒为 0;用户写入的非零 pitch 无法表达,被丢弃。
+> 2. **roll 与 pos 的 xy 方向不一致**:在极坐标约定下,`roll` 与 `atan2(pos[1], pos[0])` 必须描述同一个 `offset`。若用户在两个字段里写入不同的值(例如 `roll=30°` 但 `pos=(0.5, 0, 0.3)`,后者隐含 `offset=0°`),代码以 `pos` 为权威来源(`offset = atan2(py,px)`),原 `roll` 被覆盖。
+> 3. 两类有损都通过 `transformJointToDh(joint, &lossy)` 的出参告知调用方;UI 拿到后通过状态栏告诉用户"实际写入的 DH 值是什么、原始的 pitch/roll 是多少"。
+> 4. **xy 为零的特殊情况**:`pos[1]=pos[0]=0` 时,`atan2(0,0)` 数值不稳定(数学上为 0,但语义上没意义),代码保留 `roll` 作为 `offset`,`a = 0`。此时只要 `pitch=0`,转换**无损**;`roll` 描述的就是关节绕 Z 的纯旋转。
+> 5. **角度比较使用 `normalizedAngleDiffDeg`**:比较 `roll` 与 `atan2(py,px)` 时,差值要先按 360° 取模到 `[-180, 180]` 再取绝对值,避免 `roll=359°` 与 `roll=1°` 之类的绕回被误判为不一致。
+> 6. `offset=0` 时新约定退化为旧约定:`pos = (a, 0, d)`,默认值不变。
+
+### 5.2 转换入口(模型层)
+
+`RobotModelXmlWriter` 暴露 4 个纯静态函数,可在命令行测试中独立验证:
+
+```cpp
+// 单行转换
+static JointTransformSpec dhJointToTransform(
+    const DHJointSpec& dh,
+    const std::string& existingType = std::string());
+
+static DHJointSpec transformJointToDh(
+    const JointTransformSpec& joint,
+    bool* lossy = nullptr);   // [out] 当转换有损时被置为 true
+                              // 有损 = pitch != 0,或 roll 与 pos.xy 方向不一致
+
+// 整组同步(按行号,两侧 vector 长度不一致时不做增删)
+static void syncTransformJointsFromDh(RobotModelSpec& spec);
+static void syncDhJointsFromTransform(RobotModelSpec& spec);
+```
+
+内部还用到 1 个**仅本文件使用**的辅助:
+
+```cpp
+// 匿名命名空间内的 normalizedAngleDiffDeg(lhs, rhs):
+//   把 (lhs - rhs) 模 360° 归一化到 [-180, 180],再取绝对值。
+//   用途:比较两个角度是否"在 360° 环上相等",避免 359°/1° 被误判为 358° 差异。
+```
+
+所有逻辑都在 `RobotModelXmlWriter.cpp`,**与 Qt Widget 完全解耦**,命令行测试 `sdurws_robotmodelbuilder_xmltest` 可直接覆盖。
+
+### 5.3 UI 接线与重入保护
+
+`RobotModelBuilderWidget` 通过 `QTableWidget::itemChanged` 信号把两侧联动起来:
+
+```
+用户编辑 Transform 行
+        │
+        ▼
+onTransformTableCellChanged(item)
+        │
+        ├─► 检查 _syncingTables,若已在同步中则直接 return(防递归)
+        │
+        ├─► 读取整行 name/type/RPY/Pos
+        │
+        ├─► parseVector3 校验 RPY 和 Pos
+        │   └─► 任一向量解析失败 → setStatus 报错并 return(避免把 0 写进 DH)
+        │
+        ├─► RobotModelXmlWriter::transformJointToDh(..., &lossy)
+        │   └─► 总是把反推出的 alpha/a/d/offset 写回 DH,
+        │       即便 lossy=true 也不阻塞 UI
+        │
+        ├─► 若 lossy=true,setStatus 提示用户:
+        │   "Row N: RPY/Pos was projected to DH;
+        │    pitch=X deg, roll=Y deg, projected offset=Z deg, alpha=A deg, a=B m, d=C m"
+        │   即明确告诉用户"哪个 pitch/roll 被丢、实际写入的 DH 值是多少"
+        │   否则:仅显示成功同步的 offset/alpha/a/d
+        │
+        ├─► _syncingTables = true
+        ├─► setItem(... DH ... 4 个数值列 ...)
+        │   └─► 每个 setItem 都触发 itemChanged,但回调看到 _syncingTables=true 立即 return
+        └─► _syncingTables = false
+```
+
+`onDhTableCellChanged` 对称(但**不会**有损,DH → Transform 始终无损):
+- 读取整行 DH(name/alpha/a/d/offset)
+- 从 Transform 行的 type 列读出"用户先前选的 Revolute/Prismatic"作为 `existingType`
+- 调用 `dhJointToTransform(dh, existingType)`,写回 Transform 4 列
+
+`_syncingTables` 是 Widget 内部的 `bool` 标志,作为重入锁使用 — 它**只**在 Widget 内部写表时短暂打开,保证不会进入"A 改 B,B 改 A"的循环。
+
+`fillFromSpec`(程序化回填 UI,如 resetDefaults)也会在调用前后打开/关闭 `_syncingTables`,避免被 setItem 触发的 itemChanged 错误地当作"用户编辑"。
+
+### 5.4 测试矩阵
+
+`RobotModelXmlWriterTest.cpp` 的"DH <-> Joint+RPY+Pos 双向转换" 一节覆盖了:
+
+| 场景 | 断言 |
+| --- | --- |
+| `dhJointToTransform` 默认值 | roll=offset, pitch=0, yaw=alpha, pos=(a·cos, a·sin, d) |
+| `dhJointToTransform` offset=0 | 退化为 (a, 0, d) |
+| `dhJointToTransform` 保留 type | Prismatic 不被强制改回 Revolute |
+| `transformJointToDh` 一致输入 | roll/yaw/a/d 与 pos 一一对应,lossy=false |
+| `transformJointToDh` pitch != 0 | lossy=true,其余按 pos 反推 |
+| `transformJointToDh` roll 与 pos 不一致 | lossy=true,offset 走 pos 反推 |
+| `transformJointToDh` xy=0、pitch=0 | lossy=false,保留 roll 作 offset |
+| `transformJointToDh` 不传 lossy | 仍能正确返回(默认 nullptr) |
+| 往返无损 | DH → Transform → DH(用新约定数据)、Transform → DH → Transform(一致数据) |
+| `syncTransformJointsFromDh` | RPY=(offset, 0, alpha),pos=(a·cos, a·sin, d),custom type 保留 |
+| `syncDhJointsFromTransform` | 数值与 Transform 对齐(一致数据) |
+| `syncDhJointsFromTransform` 有损 | pitch 被丢,pos 反推的值正确 |
+| 长度不一致 | 不抛异常、不增删行 |
+
+### 6.1 标准 DH 平移向量(`dhLinkVector`)
 
 在标准 DH(RobWork `type="schilling"` 约定)下,父系到本系的位移只取决于 `a` 与 `d`,绕 X 轴旋转 `α` 后再沿新 Z 走 `d`:
 
@@ -270,7 +392,7 @@ v = (a·cos(θ₀), a·sin(θ₀), d)
 
 > **注意**:`JointRPYPos` 模式下不调用此函数,直接用 `transformJoints[i].pos` 作为 `v`——因为该模式下用户已经在 Joint_{i+1} 坐标系下给出了平移。
 
-### 5.2 自动连杆圆柱姿态(`computeLinkPose`)
+### 6.2 自动连杆圆柱姿态(`computeLinkPose`)
 
 **目标**:已知 `v`,求一个圆柱的中心位置 `p`、RPY 姿态 `(roll, pitch, yaw)`、长度 `L`。
 
@@ -337,7 +459,7 @@ roll = atan2(-R[0][1], R[1][1])
 
 最后把弧度转回度。
 
-### 5.3 为什么默认 RPY 是 `(offsetDeg, 0, alphaDeg)`?
+### 6.3 为什么默认 RPY 是 `(offsetDeg, 0, alphaDeg)`?
 
 在 JointRPYPos 模式下,默认模型把 DH 参数翻译为 RobWork 的 Z-Y-X 欧拉角:
 
@@ -349,7 +471,7 @@ RPY = (roll = offset, pitch = 0, yaw = alpha)
 
 > ⚠️ **这是约定的近似**,并不严格等价于 DH 变换的完整 4×4 矩阵,仅在简单几何下能给出与 `dhLinkVector` 一致的可视化效果。当 `pitch` 不为 0 时,DH 与 RPY 之间存在非线性差异——这就是为什么 Widget 同时暴露两种模式,让用户根据自己的建模习惯选择。
 
-### 5.4 6 元惯量 → 3×3 矩阵
+### 6.4 6 元惯量 → 3×3 矩阵
 
 `inertia[6] = (Ixx, Iyy, Izz, Ixy, Ixz, Iyz)`,对称矩阵:
 ```
@@ -368,9 +490,9 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 
 ---
 
-## 6. XML 输出格式速查
+## 7. XML 输出格式速查
 
-### 6.1 `<robotName>.wc.xml`(SerialDevice)
+### 7.1 `<robotName>.wc.xml`(SerialDevice)
 
 ```xml
 <SerialDevice name="GenericSixAxis">
@@ -426,7 +548,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 
 > ⚠️ 关节限位用**度**(RobWork 内部会再换算),但 `<Q>` 中的位姿用**弧度**(`-90° → -π/2 ≈ -1.5707963267949`)。
 
-### 6.2 `<robotName>Scene.wc.xml`(WorkCell 容器)
+### 7.2 `<robotName>Scene.wc.xml`(WorkCell 容器)
 
 ```xml
 <WorkCell name="GenericSixAxisScene">
@@ -442,7 +564,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 
 注意 `<Include>` 引用的是 **不**带 `Scene` 后缀的 SerialDevice 文件——这是 RobWork 加载链约定:Scene 文件是用户打开的入口,内部通过 `Include` 串到真正的机器人定义。
 
-### 6.3 `<robotName>.dwc.xml`(DynamicWorkCell)
+### 7.3 `<robotName>.dwc.xml`(DynamicWorkCell)
 
 ```xml
 <DynamicWorkCell workcell="GenericSixAxisScene.wc.xml">
@@ -470,9 +592,9 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 
 ---
 
-## 7. 扩展点
+## 8. 扩展点
 
-### 7.1 增加新的 Drawable 形状
+### 8.1 增加新的 Drawable 形状
 
 当前 `DrawableSpec::shape` 仅作语义标签保留,XML 始终输出 `<Cylinder>`。若需要支持 Box/Sphere:
 
@@ -482,7 +604,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 4. 在 UI 中增加 `Shape` 下拉框,并联动字段显隐。
 5. 在 `validate()` 中加入形状相关的字段校验(Box 需要 width/height/depth,Sphere 需要 radius)。
 
-### 7.2 增加新的建模模式
+### 8.2 增加新的建模模式
 
 例如要支持 "URDF-style" 或 "Modified DH (Craig 约定)":
 
@@ -494,7 +616,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 6. 在 `computeLinkPose` 中增加对应分支(Modified DH 的位移公式不同)。
 7. 在 `RobotModelXmlWriterTest.cpp` 中补回归测试。
 
-### 7.3 把模型导入(反向解析)
+### 8.3 把模型导入(反向解析)
 
 当前只支持"导出"。若需要把已有 SerialDevice XML 反向解析成 `RobotModelSpec` 以便二次编辑:
 
@@ -502,7 +624,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 2. 在 `Widget::buildUi` 增加 "Load XML" 按钮,在 Widget 上加私有槽函数 `loadXml()` 调用上述方法,然后 `fillFromSpec(parsed)` + `generatePreview()`。
 3. 在 `Plugin::loadSceneFile` 之外再加一个信号/槽,允许 Widget 主动通知 Plugin 把当前 WorkCell 缓存到 spec(用于 "Edit Current" 场景)。
 
-### 7.4 添加自定义默认模型
+### 8.4 添加自定义默认模型
 
 `makeDefaultSixAxisModel` 提供了出厂默认。要增加"UR5"、"Panda"等预设:
 
@@ -512,9 +634,9 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 
 ---
 
-## 8. 测试与调试
+## 9. 测试与调试
 
-### 8.1 命令行测试
+### 9.1 命令行测试
 
 ```bash
 cd RobWork/build
@@ -535,7 +657,7 @@ cmake --build . --target sdurws_robotmodelbuilder_xmltest
 | **自动重算** | 用户改 length/rpy/pos → 调用 applyLinkGeometry 后被覆写 |
 | **校验拒绝** | 零质量 / 零力限 / 含空格名 / 重复关节名 / 零半径 |
 
-### 8.2 落盘调试
+### 9.2 落盘调试
 
 测试退出前会把默认模型与"斜向模型"分别写到:
 
@@ -544,7 +666,7 @@ cmake --build . --target sdurws_robotmodelbuilder_xmltest
 
 可以直接用 RobWorkStudio 打开 `<robotName>Scene.wc.xml` 验证三维显示。
 
-### 8.3 常见坑
+### 9.3 常见坑
 
 | 现象 | 原因 | 排查 |
 | --- | --- | --- |
@@ -557,7 +679,7 @@ cmake --build . --target sdurws_robotmodelbuilder_xmltest
 
 ---
 
-## 9. 数据分离约定(交叉引用)
+## 10. 数据分离约定(交叉引用)
 
 本插件严格区分**运动学 / 显示 / 动力学**三类数据:
 
@@ -571,7 +693,7 @@ cmake --build . --target sdurws_robotmodelbuilder_xmltest
 
 ---
 
-## 10. 版本演进路线(建议)
+## 11. 版本演进路线(建议)
 
 > 仅作展望,不是当前已实现的功能。
 

@@ -29,8 +29,8 @@ namespace {
 /// 6 轴机器人关节数
 const int JointCount = 6;
 
-/// 圆周率
-const double Pi      = 3.14159265358979323846;
+/// 圆周率;与公开常量 RobotModelXmlWriter::kPi 等价,仅本文件使用
+static constexpr double Pi = RobotModelXmlWriter::kPi;
 
 /// 字符串是否为空白(把 std::string 转 QString 后判 trim().isEmpty())
 bool isEmpty (const std::string& value)
@@ -124,6 +124,16 @@ void dhLinkVector (double a, double d, double offsetDeg, std::array< double, 3 >
     v[0]               = a * std::cos (theta);
     v[1]               = a * std::sin (theta);
     v[2]               = d;
+}
+
+double normalizedAngleDiffDeg (double lhs, double rhs)
+{
+    double diff = std::fmod (lhs - rhs, 360.0);
+    if (diff > 180.0)
+        diff -= 360.0;
+    if (diff < -180.0)
+        diff += 360.0;
+    return std::abs (diff);
 }
 
 // -----------------------------------------------------------------------------
@@ -785,4 +795,82 @@ void RobotModelXmlWriter::computeLinkPose (const RobotModelSpec& spec, int linkI
 void RobotModelXmlWriter::applyLinkGeometry (RobotModelSpec& spec)
 {
     ::applyLinkGeometry (spec);
+}
+
+// =============================================================================
+//  DH <-> Joint+RPY+Pos 双向转换
+//  说明: 本插件约定的映射关系(与默认模型保持一致):
+//          roll  = offsetDeg
+//          pitch = 0          (DH 不存在独立的 pitch 分量)
+//          yaw   = alphaDeg
+//          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
+//        因此:
+//          * dhJointToTransform      : 无损(DH -> Joint+RPY+Pos 必然有 pitch=0)
+//          * transformJointToDh      : 投影到 DH 形式;若 pitch != 0,或 roll 与
+//                                      Pos 的 xy 方向不一致,则标记为有损
+//        两个 sync* 函数对两侧 vector 按行处理,行数取 min,不做插入/删除。
+//        UI 在 itemChanged 时调用 sync*,并通过 _syncingTables 锁避免递归回写。
+// =============================================================================
+
+/// DH 关节 -> Joint+RPY+Pos;`existingType` 用来在 type 列保留用户先前的设置
+JointTransformSpec RobotModelXmlWriter::dhJointToTransform (const DHJointSpec& dh,
+                                                            const std::string& existingType)
+{
+    JointTransformSpec j;
+    j.name   = dh.name;
+    j.type   = existingType.empty () ? std::string ("Revolute") : existingType;
+    j.rpyDeg = {{dh.offsetDeg, 0.0, dh.alphaDeg}};
+    // 位姿的平移部分必须与 DH 几何一致(参见 dhLinkVector):
+    //   v = (a·cos(offset), a·sin(offset), d)
+    // 旧实现写成 (a, 0, d) 在 offset != 0 时与 DH 实际位置不一致,
+    // 会让两种建模方式描述的机器人发生错位。
+    const double theta = dh.offsetDeg * Pi / 180.0;
+    j.pos = {{dh.a * std::cos (theta), dh.a * std::sin (theta), dh.d}};
+    return j;
+}
+
+/// Joint+RPY+Pos -> DH 关节;正向 `(a·cos, a·sin, d)` 的反解:
+///   a         = sqrt(px^2 + py^2)
+///   offsetDeg = atan2(py, px)
+///   d         = pz
+///   alphaDeg  = yaw
+/// 投影可能有损:DH 形式要求 pitch=0,且 roll 与 Pos 的 xy 方向对应同一个
+/// offset。若用户写入更通用的 RPY/Pos,这些不能同时由简化 DH 表达的部分会
+/// 被标记为 lossy,但投影后的 DH 值仍按 Pos/Yaw 写出。
+DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& joint, bool* lossy)
+{
+    DHJointSpec dh;
+    dh.name      = joint.name;
+    dh.a         = std::sqrt (joint.pos[0] * joint.pos[0] +
+                               joint.pos[1] * joint.pos[1]);
+    dh.offsetDeg = dh.a > 1e-12 ? std::atan2 (joint.pos[1], joint.pos[0]) * 180.0 / Pi
+                                : joint.rpyDeg[0];
+    dh.d         = joint.pos[2];
+    dh.alphaDeg  = joint.rpyDeg[2];    // yaw
+    if (lossy != nullptr) {
+        const bool pitchLoss = std::abs (joint.rpyDeg[1]) > 1e-9;
+        const bool rollPositionMismatch = dh.a > 1e-12 &&
+            normalizedAngleDiffDeg (joint.rpyDeg[0], dh.offsetDeg) > 1e-6;
+        *lossy = pitchLoss || rollPositionMismatch;
+    }
+    return dh;
+}
+
+/// 把 spec.transformJoints 全部按 spec.dhJoints 重写(逐行);保留 transformJoints[i].type
+void RobotModelXmlWriter::syncTransformJointsFromDh (RobotModelSpec& spec)
+{
+    const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
+    for (size_t i = 0; i < n; ++i) {
+        const std::string existingType = spec.transformJoints[i].type;
+        spec.transformJoints[i] = dhJointToTransform (spec.dhJoints[i], existingType);
+    }
+}
+
+/// 把 spec.dhJoints 全部按 spec.transformJoints 重写(逐行)
+void RobotModelXmlWriter::syncDhJointsFromTransform (RobotModelSpec& spec)
+{
+    const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
+    for (size_t i = 0; i < n; ++i) {
+        spec.dhJoints[i] = transformJointToDh (spec.transformJoints[i]);
+    }
 }

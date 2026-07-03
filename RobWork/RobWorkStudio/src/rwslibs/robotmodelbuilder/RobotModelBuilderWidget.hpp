@@ -19,6 +19,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 class QTableWidget;
+class QTableWidgetItem;
 class QTextEdit;
 
 namespace rws {
@@ -52,6 +53,11 @@ class RobotModelBuilderWidget : public QWidget
     void addPose ();
     /// Poses 标签页:删除当前选中行(至少保留 1 行)
     void removeSelectedPose ();
+
+    /// DH 表单元格被编辑:把当前行映射到 Joint+RPY+Pos 表的同一行
+    void onDhTableCellChanged (QTableWidgetItem* item);
+    /// Joint+RPY+Pos 表单元格被编辑:把当前行映射到 DH 表的同一行
+    void onTransformTableCellChanged (QTableWidgetItem* item);
 
   private:
     /// 构建整个 UI 控件树(在构造函数中调用)
@@ -131,6 +137,10 @@ class RobotModelBuilderWidget : public QWidget
 
     // ---- 状态 ----
     QLineEdit* _status;              // 底部状态栏
+
+    // ---- 内部标志 ----
+    /// 跨表同步时(A 表更新 B 表,B 表又会触发更新 A 表)的重入保护
+    bool _syncingTables = false;
 };
 
 }    // namespace rws

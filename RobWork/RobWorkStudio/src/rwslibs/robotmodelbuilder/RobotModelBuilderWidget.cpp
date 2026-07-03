@@ -300,6 +300,13 @@ void RobotModelBuilderWidget::buildUi ()
     connect (resetBtn, SIGNAL (clicked ()), this, SLOT (resetDefaults ()));
     connect (addPoseBtn, SIGNAL (clicked ()), this, SLOT (addPose ()));
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
+
+    // DH / Joint+RPY+Pos 跨表实时联动
+    // 由 _syncingTables 在回写时上锁,避免无限递归
+    connect (_dhTable, SIGNAL (itemChanged (QTableWidgetItem*)), this,
+             SLOT (onDhTableCellChanged (QTableWidgetItem*)));
+    connect (_transformTable, SIGNAL (itemChanged (QTableWidgetItem*)), this,
+             SLOT (onTransformTableCellChanged (QTableWidgetItem*)));
 }
 
 // =============================================================================
@@ -438,12 +445,134 @@ void RobotModelBuilderWidget::removeSelectedPose ()
 }
 
 // =============================================================================
+//  onDhTableCellChanged()
+//  说明: DH 表任意单元格被用户编辑后,把当前行按"约定"映射回
+//        Joint+RPY+Pos 表的同一行,实现两表实时联动:
+//          roll  = offsetDeg
+//          yaw   = alphaDeg
+//          pitch = 0          (DH 不支持)
+//          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
+//        type 列保留用户先前在 Transform 表里的设置(默认 "Revolute")。
+//        _syncingTables 防止反向再次触发本函数形成递归。
+// =============================================================================
+void RobotModelBuilderWidget::onDhTableCellChanged (QTableWidgetItem* item)
+{
+    if (_syncingTables || item == NULL)
+        return;
+    const int row = item->row ();
+    if (row < 0 || row >= _dhTable->rowCount ())
+        return;
+    if (row >= _transformTable->rowCount ())
+        return;
+
+    // 读取整个 DH 行
+    DHJointSpec dh;
+    dh.name      = itemText (_dhTable, row, 0).toStdString ();
+    dh.alphaDeg  = itemDouble (_dhTable, row, 1);
+    dh.a         = itemDouble (_dhTable, row, 2);
+    dh.d         = itemDouble (_dhTable, row, 3);
+    dh.offsetDeg = itemDouble (_dhTable, row, 4);
+
+    // 保留当前 Transform 行的 type,避免被强制改回 Revolute
+    const std::string existingType = itemText (_transformTable, row, 1).toStdString ();
+
+    // 委托给 XmlWriter 做转换(便于回归测试覆盖)
+    const JointTransformSpec j =
+        RobotModelXmlWriter::dhJointToTransform (dh, existingType);
+
+    _syncingTables = true;
+    setItem (_transformTable, row, 0, QString::fromStdString (j.name));
+    setItem (_transformTable, row, 1, QString::fromStdString (j.type));
+    setItem (_transformTable, row, 2, vectorText (j.rpyDeg));
+    setItem (_transformTable, row, 3, vectorText (j.pos));
+    _syncingTables = false;
+}
+
+// =============================================================================
+//  onTransformTableCellChanged()
+//  说明: Joint+RPY+Pos 表任意单元格被编辑后,把当前行反推回 DH 表的同一行:
+//          a         = sqrt(px^2 + py^2)
+//          offsetDeg = atan2(py, px)
+//          d         = pz
+//          alphaDeg  = rpyDeg[2] (yaw)
+//        (这是 dhJointToTransform 的反解,见 RobotModelXmlWriter.cpp)
+//
+//  边界处理:
+//   1) parseVector3 失败时立即 return,绝不把空 / 残留值写进 DH 表;
+//   2) 当 Transform 行无法由简化 DH 无损表达时,仍把投影后的
+//      alpha/a/d/offset 写回 DH,但通过状态栏提示用户这是投影结果。
+// =============================================================================
+void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* item)
+{
+    if (_syncingTables || item == NULL)
+        return;
+    const int row = item->row ();
+    if (row < 0 || row >= _transformTable->rowCount ())
+        return;
+    if (row >= _dhTable->rowCount ())
+        return;
+
+    JointTransformSpec j;
+    j.name = itemText (_transformTable, row, 0).toStdString ();
+    j.type = itemText (_transformTable, row, 1).toStdString ();
+
+    // 1) 输入校验:任一向量解析失败都中止,避免把 0 写进 DH 表导致数据损坏
+    if (!parseVector3 (itemText (_transformTable, row, 2), j.rpyDeg)) {
+        setStatus (QString ("Row %1: invalid RPY vector; DH row not updated.")
+                       .arg (row + 1));
+        return;
+    }
+    if (!parseVector3 (itemText (_transformTable, row, 3), j.pos)) {
+        setStatus (QString ("Row %1: invalid Pos vector; DH row not updated.")
+                       .arg (row + 1));
+        return;
+    }
+
+    // 2) 检测有损转换;有损时仍把反推出的 DH 值写回,但明确告诉用户
+    bool lossy = false;
+    const DHJointSpec dh = RobotModelXmlWriter::transformJointToDh (j, &lossy);
+
+    if (lossy) {
+        const double projectedOffset = dh.offsetDeg;
+        setStatus (QString ("Row %1: RPY/Pos was projected to DH; "
+                            "pitch=%2 deg, roll=%3 deg, projected offset=%4 deg, "
+                            "alpha=%5 deg, a=%6 m, d=%7 m.")
+                       .arg (row + 1)
+                       .arg (j.rpyDeg[1], 0, 'g', 4)
+                       .arg (j.rpyDeg[0], 0, 'g', 4)
+                       .arg (projectedOffset, 0, 'g', 4)
+                       .arg (dh.alphaDeg, 0, 'g', 4)
+                       .arg (dh.a, 0, 'g', 4)
+                       .arg (dh.d, 0, 'g', 4));
+    }
+    else {
+        setStatus (QString ("Row %1 synced to DH: offset=%2°, alpha=%3°, "
+                            "a=%4 m, d=%5 m.")
+                       .arg (row + 1)
+                       .arg (dh.offsetDeg, 0, 'g', 4)
+                       .arg (dh.alphaDeg, 0, 'g', 4)
+                       .arg (dh.a, 0, 'g', 4)
+                       .arg (dh.d, 0, 'g', 4));
+    }
+
+    _syncingTables = true;
+    setItem (_dhTable, row, 0, QString::fromStdString (dh.name));
+    setItem (_dhTable, row, 1, QString::number (dh.alphaDeg));
+    setItem (_dhTable, row, 2, QString::number (dh.a));
+    setItem (_dhTable, row, 3, QString::number (dh.d));
+    setItem (_dhTable, row, 4, QString::number (dh.offsetDeg));
+    _syncingTables = false;
+}
+
+// =============================================================================
 //  fillFromSpec()
 //  说明: 用 RobotModelSpec 数据完整回填整个 UI。注意 setCurrentIndex 会
 //        触发 modeChanged,所以在最后再调一次以确保可见性正确。
+//        持有 _syncingTables,避免 setItem 触发的 itemChanged 引发跨表回写。
 // =============================================================================
 void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
 {
+    _syncingTables = true;
     _robotName->setText (QString::fromStdString (spec.robotName));
     _saveDirectory->setText (QString::fromStdString (spec.saveDirectory));
     _mode->setCurrentIndex (spec.mode == RobotModelMode::DH ? 1 : 0);
@@ -459,6 +588,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     fillPosesTable (spec);
     fillDynamicsTab (spec);
     modeChanged (_mode->currentIndex ());
+    _syncingTables = false;
 }
 
 // =============================================================================

@@ -27,6 +27,10 @@ namespace rws {
 class RobotModelXmlWriter
 {
   public:
+    /// 公开的圆周率常量,供外部代码(测试、UI)做度/弧度换算;
+    /// 之前只放在匿名命名空间,测试无法访问。
+    static constexpr double kPi = 3.14159265358979323846;
+
     /// 构造一份"通用 6 轴机器人"的默认 RobotModelSpec,所有关节/限位/Drawable/动力学都填好
     static RobotModelSpec makeDefaultSixAxisModel (const QString& saveDirectory);
 
@@ -71,6 +75,38 @@ class RobotModelXmlWriter
     /// 重新计算所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 的 pos/rpy/length
     /// 一般在保存 XML 前调用一次,使连杆几何随用户改关节参数自动同步
     static void applyLinkGeometry (RobotModelSpec& spec);
+
+    // -------------------------------------------------------------------------
+    //  DH <-> Joint+RPY+Pos 双向转换
+    //  说明: 用于支持 UI 中"DH 表"和"Joint+RPY+Pos 表"实时联动。
+    //        本插件的约定(也是默认模型使用的):
+    //          roll  = offsetDeg
+    //          yaw   = alphaDeg
+    //          pitch = 0   (DH 没有独立的 pitch 项)
+    //          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
+    //        因此反向转换(transformJointToDh)会把通用 RPY/Pos 投影成简化 DH。
+    //        当 pitch 非零,或 roll 与 Pos 的 xy 方向不一致时,该投影有损。
+    // -------------------------------------------------------------------------
+
+    /// DH 关节 -> Joint+RPY+Pos。`existingType` 用来保留用户原来设置的
+    /// 关节类型(例如 Prismatic),为空时默认 "Revolute"。
+    static JointTransformSpec dhJointToTransform (const DHJointSpec& dh,
+                                                   const std::string& existingType = std::string ());
+
+    /// Joint+RPY+Pos -> DH 关节。
+    /// 反向求解:从 (px, py) 反推 (a, offset),d 直接取 pz,yaw 作为 alpha。
+    /// @param lossy [out, 可空] 若非空,当转换有损时被置为 true;
+    ///              当前实现下"有损"=Transform 行的 pitch(rpyDeg[1]) 非零,
+    ///              或 roll(rpyDeg[0]) 与 atan2(pos.y,pos.x) 不一致。
+    static DHJointSpec transformJointToDh (const JointTransformSpec& joint, bool* lossy = nullptr);
+
+    /// 把 spec.transformJoints 全部按 spec.dhJoints 重写(行数取两者较小值)。
+    /// 保留原 transformJoints[i].type。两侧长度不一致时不做插入/删除。
+    static void syncTransformJointsFromDh (RobotModelSpec& spec);
+
+    /// 把 spec.dhJoints 全部按 spec.transformJoints 的投影结果重写(行数取两者较小值)。
+    /// 两侧长度不一致时不做插入/删除。
+    static void syncDhJointsFromTransform (RobotModelSpec& spec);
 
   private:
     /// 浮点数的统一序列化格式:有效数字 15 位,既保证精度又避免太长
