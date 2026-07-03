@@ -39,6 +39,8 @@ class RobotModelBuilderWidget : public QWidget
     void removeSelectedJoint ();
     void moveSelectedJointUp ();
     void moveSelectedJointDown ();
+    void addSceneFrame ();
+    void removeSelectedSceneFrame ();
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
 
@@ -52,6 +54,7 @@ class RobotModelBuilderWidget : public QWidget
     void fillLimitsTable (const RobotModelSpec& spec);
     void fillPosesTable (const RobotModelSpec& spec);
     void fillDynamicsTab (const RobotModelSpec& spec);
+    void fillSceneTab (const RobotModelSpec& spec);
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
 
@@ -59,11 +62,13 @@ class RobotModelBuilderWidget : public QWidget
     static double itemDouble (const QTableWidget* table, int row, int column);
     static bool parseVector3 (const QString& text, std::array< double, 3 >& values);
     static bool parseVector6 (const QString& text, std::array< double, 6 >& values);
+    static bool parseVector16 (const QString& text, std::array< double, 16 >& values);
     static void setItem (QTableWidget* table, int row, int column, const QString& value,
                          bool editable = true);
     static bool isAutoLinkDrawable (const QString& name);
     static QString vectorText (const std::array< double, 3 >& values);
     static QString vectorText6 (const std::array< double, 6 >& values);
+    static QString vectorText16 (const std::array< double, 16 >& values);
 
   private:
     QLineEdit* _robotName;
@@ -78,6 +83,10 @@ class RobotModelBuilderWidget : public QWidget
 
     QLineEdit* _baseFrame;
     QLineEdit* _baseMaterial;
+
+    QLineEdit* _robotBaseRpy;        // Milestone 3:Scene Frames 标签页 RobotBase RPY
+    QLineEdit* _robotBasePos;        // Milestone 3:Scene Frames 标签页 RobotBase Pos
+    QTableWidget* _sceneFramesTable; // Milestone 3:Scene Frames 标签页的可编辑表格
 
     QTableWidget* _dhTable;
     QTableWidget* _transformTable;

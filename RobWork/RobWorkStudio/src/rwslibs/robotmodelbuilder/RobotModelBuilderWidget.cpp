@@ -372,6 +372,45 @@ void RobotModelBuilderWidget::buildUi ()
     tabs->addTab (_drawablesTable, "Drawables");
 
     // -------------------------------------------------------------------------
+    //  Scene Frames 标签页(Milestone 3):
+    //   - 顶部两个 QLineEdit 编辑 RobotBase 位姿(RPY deg / Pos m);
+    //   - 中间一张表编辑场景 frame 列表(每行 Name/RefFrame/Type/DAF/PoseMode/
+    //     RPY/Pos/Transform 4x4 共 8 列);
+    //   - 底部 Add / Remove 按钮。
+    // -------------------------------------------------------------------------
+    QWidget* sceneTab      = new QWidget ();
+    QVBoxLayout* sceneLay  = new QVBoxLayout (sceneTab);
+    QFormLayout* robotBaseForm = new QFormLayout ();
+    _robotBaseRpy = new QLineEdit ();
+    _robotBasePos = new QLineEdit ();
+    robotBaseForm->addRow ("RobotBase RPY deg (Z Y X)", _robotBaseRpy);
+    robotBaseForm->addRow ("RobotBase Pos m", _robotBasePos);
+    sceneLay->addLayout (robotBaseForm);
+
+    _sceneFramesTable = makeTable (
+        QStringList () << "Name"
+                       << "RefFrame"
+                       << "Type"
+                       << "DAF"
+                       << "PoseMode"
+                       << "RPY deg (Z Y X)"
+                       << "Pos m"
+                       << "Transform 4x4",
+        0);
+    sceneLay->addWidget (_sceneFramesTable);
+
+    QWidget* sceneButtons = new QWidget ();
+    QHBoxLayout* sceneBtnLay = new QHBoxLayout (sceneButtons);
+    QPushButton* addSceneBtn = new QPushButton ("Add Scene Frame");
+    QPushButton* delSceneBtn = new QPushButton ("Remove Scene Frame");
+    sceneBtnLay->setContentsMargins (0, 0, 0, 0);
+    sceneBtnLay->addWidget (addSceneBtn);
+    sceneBtnLay->addWidget (delSceneBtn);
+    sceneBtnLay->addStretch ();
+    sceneLay->addWidget (sceneButtons);
+    tabs->addTab (sceneTab, "Scene Frames");
+
+    // -------------------------------------------------------------------------
     //  Limits 标签页:关节限位(每关节 1 行,行数 = spec.limits.size())
     //  列名改成"单位中立"(PosMin/PosMax/VelMax/AccMax),具体单位在 Joint
     //  type 列指明 —— Revolute 是度,Prismatic 是米。
@@ -485,6 +524,8 @@ void RobotModelBuilderWidget::buildUi ()
     connect (resetBtn, SIGNAL (clicked ()), this, SLOT (resetDefaults ()));
     connect (addPoseBtn, SIGNAL (clicked ()), this, SLOT (addPose ()));
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
+    connect (addSceneBtn, SIGNAL (clicked ()), this, SLOT (addSceneFrame ()));
+    connect (delSceneBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedSceneFrame ()));
     connect (addJointBtn, SIGNAL (clicked ()), this, SLOT (addJoint ()));
     connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
     connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
@@ -533,6 +574,7 @@ void RobotModelBuilderWidget::generatePreview ()
     }
 
     fillDrawablesTable (spec);
+    fillSceneTab (spec);
     _serialPreview->setPlainText (RobotModelXmlWriter::makeSerialDeviceXml (spec));
     _scenePreview->setPlainText (RobotModelXmlWriter::makeSceneXml (spec));
     _dwcPreview->setPlainText (spec.dynamics.generateDynamicWorkCell
@@ -840,6 +882,55 @@ void RobotModelBuilderWidget::moveSelectedJointDown ()
 }
 
 // =============================================================================
+//  addSceneFrame() / removeSelectedSceneFrame()
+//  说明: Milestone 3 场景 frame 增删按钮。
+//        * addSceneFrame:在 spec.sceneFrames 末尾追加一个默认
+//          (Name="SceneFrame{N}", RefFrame=WORLD, Fixed, PoseMode=RPYPos,
+//           RPY/Pos 全 0,Transform 4x4 默认单位阵)。Daf=false。
+//        * removeSelectedSceneFrame:删除当前选中行;若被删 frame 被其他
+//          sceneFrame 引用,则把它们的 refFrame 重置为 "WORLD",
+//          避免留下 dangling reference。
+//        两种操作后都 fillFromSpec(spec) + generatePreview(),
+//        让用户立刻看到 XML 预览的变化。
+// =============================================================================
+void RobotModelBuilderWidget::addSceneFrame ()
+{
+    RobotModelSpec spec = collectSpec ();
+    FrameSpec frame;
+    frame.name      = "SceneFrame" + std::to_string (spec.sceneFrames.size () + 1);
+    frame.refFrame  = "WORLD";
+    frame.frameType = SceneFrameType::Fixed;
+    frame.daf       = false;
+    frame.poseMode  = PoseMode::RPYPos;
+    frame.rpyDeg    = {{0, 0, 0}};
+    frame.pos       = {{0, 0, 0}};
+    frame.transform = {{1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1}};
+    spec.sceneFrames.push_back (frame);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::removeSelectedSceneFrame ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const int row = _sceneFramesTable->currentRow ();
+    if (row < 0 || row >= static_cast< int >(spec.sceneFrames.size ()))
+        return;
+    const std::string removed = spec.sceneFrames[static_cast< size_t > (row)].name;
+    spec.sceneFrames.erase (spec.sceneFrames.begin () + row);
+    // 同步修正引用被删 frame 的其他 sceneFrame,避免 dangling refFrame
+    for (FrameSpec& frame : spec.sceneFrames) {
+        if (frame.refFrame == removed)
+            frame.refFrame = "WORLD";
+    }
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+// =============================================================================
 //  onDhTableCellChanged()
 //  说明: DH 表是 SE(3) 真值的投影视图,整表 NoEditTriggers + 单元格
 //        ~ItemIsEditable 双重保护,理论上不会被用户编辑。
@@ -963,6 +1054,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     _baseMaterial->setText (QString::fromStdString (spec.dynamics.baseMaterial));
     fillKinematicsTables (spec);
     fillDrawablesTable (spec);
+    fillSceneTab (spec);
     fillLimitsTable (spec);
     fillPosesTable (spec);
     fillDynamicsTab (spec);
@@ -1039,6 +1131,33 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         limit.velMax    = itemDouble (_limitsTable, row, 3);
         limit.accMax    = itemDouble (_limitsTable, row, 4);
         spec.limits.push_back (limit);
+    }
+
+    // ---- Milestone 3:Scene Frames(RobotBase + 场景 frame 列表)----
+    spec.robotBaseFrame.name      = "RobotBase";
+    spec.robotBaseFrame.refFrame  = "WORLD";
+    spec.robotBaseFrame.frameType = SceneFrameType::Fixed;
+    spec.robotBaseFrame.daf       = false;
+    spec.robotBaseFrame.poseMode  = PoseMode::RPYPos;
+    parseVector3 (_robotBaseRpy->text (), spec.robotBaseFrame.rpyDeg);
+    parseVector3 (_robotBasePos->text (), spec.robotBaseFrame.pos);
+
+    for (int row = 0; row < _sceneFramesTable->rowCount (); ++row) {
+        FrameSpec frame;
+        frame.name      = itemText (_sceneFramesTable, row, 0).toStdString ();
+        frame.refFrame  = itemText (_sceneFramesTable, row, 1).toStdString ();
+        frame.frameType = sceneFrameTypeFromString (
+            itemText (_sceneFramesTable, row, 2).toStdString ());
+        const QString daf = itemText (_sceneFramesTable, row, 3);
+        frame.daf       = daf.compare ("true", Qt::CaseInsensitive) == 0 ||
+                          daf.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
+                          daf.compare ("yes", Qt::CaseInsensitive) == 0;
+        frame.poseMode = poseModeFromString (
+            itemText (_sceneFramesTable, row, 4).toStdString ());
+        parseVector3 (itemText (_sceneFramesTable, row, 5), frame.rpyDeg);
+        parseVector3 (itemText (_sceneFramesTable, row, 6), frame.pos);
+        parseVector16 (itemText (_sceneFramesTable, row, 7), frame.transform);
+        spec.sceneFrames.push_back (frame);
     }
 
     // ---- Poses 表(Milestone 2:q 长度 = 当前表列数 - 1)----
@@ -1124,6 +1243,25 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
                 errors << QString ("Invalid drawable Pos vector at row %1.").arg (row + 1);
             if (!parseVector (itemText (_drawablesTable, row, 7), 3))
                 errors << QString ("Invalid drawable RGB vector at row %1.").arg (row + 1);
+        }
+    }
+
+    // ---- Milestone 3:Scene Frames 输入校验 ----
+    if (_robotBaseRpy != NULL &&
+        !parseVector (_robotBaseRpy->text (), 3))
+        errors << "Invalid RobotBase RPY vector.";
+    if (_robotBasePos != NULL &&
+        !parseVector (_robotBasePos->text (), 3))
+        errors << "Invalid RobotBase Pos vector.";
+    if (_sceneFramesTable != NULL) {
+        for (int row = 0; row < _sceneFramesTable->rowCount (); ++row) {
+            if (!parseVector (itemText (_sceneFramesTable, row, 5), 3))
+                errors << QString ("Invalid scene frame RPY vector at row %1.").arg (row + 1);
+            if (!parseVector (itemText (_sceneFramesTable, row, 6), 3))
+                errors << QString ("Invalid scene frame Pos vector at row %1.").arg (row + 1);
+            if (!parseVector (itemText (_sceneFramesTable, row, 7), 16))
+                errors << QString ("Invalid scene frame Transform vector at row %1.")
+                              .arg (row + 1);
         }
     }
 
@@ -1279,6 +1417,38 @@ void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
 }
 
 // =============================================================================
+//  fillSceneTab()
+//  说明: Milestone 3 — 用 spec 回填 Scene Frames 标签页:
+//         - 顶部两个 QLineEdit 上写 RobotBase RPY / Pos;
+//         - 表格逐行写 name / refFrame / type / daf / poseMode /
+//           rpyDeg / pos / transform 4x4。
+//        表格里 PoseMode=RPYPos 的行只填 RPY/Pos 列,UI 上同时显示
+//        Transform 4x4(默认 4x4 单位阵,不影响 spec 数据)。
+// =============================================================================
+void RobotModelBuilderWidget::fillSceneTab (const RobotModelSpec& spec)
+{
+    if (_robotBaseRpy != NULL)
+        _robotBaseRpy->setText (vectorText (spec.robotBaseFrame.rpyDeg));
+    if (_robotBasePos != NULL)
+        _robotBasePos->setText (vectorText (spec.robotBaseFrame.pos));
+
+    if (_sceneFramesTable == NULL)
+        return;
+    _sceneFramesTable->setRowCount (static_cast< int >(spec.sceneFrames.size ()));
+    for (int row = 0; row < _sceneFramesTable->rowCount (); ++row) {
+        const FrameSpec& frame = spec.sceneFrames[row];
+        setItem (_sceneFramesTable, row, 0, QString::fromStdString (frame.name));
+        setItem (_sceneFramesTable, row, 1, QString::fromStdString (frame.refFrame));
+        setItem (_sceneFramesTable, row, 2, sceneFrameTypeToString (frame.frameType));
+        setItem (_sceneFramesTable, row, 3, frame.daf ? "true" : "false");
+        setItem (_sceneFramesTable, row, 4, poseModeToString (frame.poseMode));
+        setItem (_sceneFramesTable, row, 5, vectorText (frame.rpyDeg));
+        setItem (_sceneFramesTable, row, 6, vectorText (frame.pos));
+        setItem (_sceneFramesTable, row, 7, vectorText16 (frame.transform));
+    }
+}
+
+// =============================================================================
 //  showErrors()
 //  说明: 把错误列表弹窗 + 在状态栏显示第一条
 // =============================================================================
@@ -1378,4 +1548,31 @@ QString RobotModelBuilderWidget::vectorText6 (const std::array< double, 6 >& val
         s += QString::number (values[i]);
     }
     return s;
+}
+
+/// std::array<double,16> -> "m00 m01 ... m33"(行优先 4x4),
+/// Milestone 3 用于 Scene Frames 表格 Transform 4x4 列。
+QString RobotModelBuilderWidget::vectorText16 (const std::array< double, 16 >& values)
+{
+    QStringList parts;
+    parts.reserve (16);
+    for (double value : values)
+        parts << QString::number (value);
+    return parts.join (" ");
+}
+
+/// 解析 "m00 m01 ... m33" -> std::array<double,16>(行优先 4x4)
+bool RobotModelBuilderWidget::parseVector16 (const QString& text,
+                                             std::array< double, 16 >& values)
+{
+    const QStringList parts = text.split (QRegularExpression ("\\s+"), Qt::SkipEmptyParts);
+    if (parts.size () != 16)
+        return false;
+    for (int i = 0; i < 16; ++i) {
+        bool ok = false;
+        values[i] = parts[i].toDouble (&ok);
+        if (!ok)
+            return false;
+    }
+    return true;
 }
