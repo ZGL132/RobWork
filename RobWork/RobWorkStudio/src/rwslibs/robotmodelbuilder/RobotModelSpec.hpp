@@ -27,6 +27,28 @@ enum class JointKind
     Unknown
 };
 
+// -----------------------------------------------------------------------------
+//  SceneFrameType / PoseMode
+//  说明: 场景 frame(Milestone 3 起)在 WorkCell 里使用:
+//          * SceneFrameType::Normal  : 普通 frame,无可动/Daf 标记;
+//          * SceneFrameType::Fixed   : 物理上固定(Loader 可能输出 type="Fixed");
+//          * SceneFrameType::Movable : 可动物理对象,Loader 输出 type="Movable";
+//          * PoseMode::RPYPos        : 用 <RPY>/<Pos> 输出位姿;
+//          * PoseMode::Transform4x4  : 用 <Transform> 输出 4x4(本 Milestone 暂不在 XML 启用);
+// -----------------------------------------------------------------------------
+enum class SceneFrameType
+{
+    Normal,
+    Fixed,
+    Movable
+};
+
+enum class PoseMode
+{
+    RPYPos,
+    Transform4x4
+};
+
 namespace detail {
 inline bool iequals (const std::string& lhs, const char* rhs)
 {
@@ -75,6 +97,42 @@ inline bool isRigidFrame (JointKind kind)
     return kind == JointKind::FixedFrame || kind == JointKind::ToolFrame;
 }
 
+// -----------------------------------------------------------------------------
+//  SceneFrameType / PoseMode 字符串 ↔ enum 转换(Qt-free)
+// -----------------------------------------------------------------------------
+inline SceneFrameType sceneFrameTypeFromString (const std::string& type)
+{
+    const std::string t = detail::trimmed (type);
+    if (detail::iequals (t, "Movable"))
+        return SceneFrameType::Movable;
+    if (detail::iequals (t, "Normal"))
+        return SceneFrameType::Normal;
+    return SceneFrameType::Fixed;
+}
+
+inline const char* sceneFrameTypeToString (SceneFrameType type)
+{
+    switch (type) {
+        case SceneFrameType::Movable: return "Movable";
+        case SceneFrameType::Normal:  return "Normal";
+        case SceneFrameType::Fixed:
+        default:                       return "Fixed";
+    }
+}
+
+inline PoseMode poseModeFromString (const std::string& mode)
+{
+    const std::string m = detail::trimmed (mode);
+    if (detail::iequals (m, "Transform4x4") || detail::iequals (m, "Transform"))
+        return PoseMode::Transform4x4;
+    return PoseMode::RPYPos;
+}
+
+inline const char* poseModeToString (PoseMode mode)
+{
+    return mode == PoseMode::Transform4x4 ? "Transform4x4" : "RPYPos";
+}
+
 struct KinematicRow
 {
     std::string name;
@@ -98,6 +156,28 @@ struct JointTransformSpec
     std::string type;
     std::array< double, 3 > rpyDeg;
     std::array< double, 3 > pos;
+};
+
+// -----------------------------------------------------------------------------
+//  FrameSpec
+//  说明: 一个场景 frame(在 Scene XML 中以 <Frame> 出现)。
+//        refframe 必须是 WORLD / RobotBase / 同 spec.sceneFrames 已存在的 name;
+//        设备内部 frame(Base / Joint* / TCP / ToolFrame)不能被场景 frame 引用,
+//        反之亦然(Milestone 3 边界)。
+// -----------------------------------------------------------------------------
+struct FrameSpec
+{
+    std::string name;                                                // frame 名称
+    std::string refFrame;                                            // 父系 frame 名
+    SceneFrameType frameType = SceneFrameType::Fixed;
+    bool daf = false;                                                // 物理 Daf 物体标记
+    PoseMode poseMode = PoseMode::RPYPos;                            // 位姿表达模式
+    std::array< double, 3 > rpyDeg = {{0, 0, 0}};                    // RPY(度,RobotBase/Z-Y-X 顺序)
+    std::array< double, 3 > pos = {{0, 0, 0}};                       // 平移(米)
+    std::array< double, 16 > transform = {{1, 0, 0, 0,
+                                           0, 1, 0, 0,
+                                           0, 0, 1, 0,
+                                           0, 0, 0, 1}};             // PoseMode::Transform4x4 用
 };
 
 struct DrawableSpec
@@ -164,6 +244,8 @@ struct RobotModelSpec
     bool showFrameAxes;
     bool generateDrawables;
     bool generateScene;
+    FrameSpec robotBaseFrame;                                        // Milestone 3:场景 RobotBase
+    std::vector< FrameSpec > sceneFrames;                            // Milestone 3:场景 frame 列表
     std::vector< JointTransformSpec > transformJoints;
     std::vector< DHJointSpec > dhJoints;
     std::vector< DrawableSpec > drawables;
