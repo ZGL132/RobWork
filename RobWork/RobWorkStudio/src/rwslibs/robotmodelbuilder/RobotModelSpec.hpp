@@ -2,11 +2,16 @@
 //  文件: RobotModelSpec.hpp
 //  说明: 整个 RobotModelBuilder 插件的"数据模型"层。这里只放纯数据结构,
 //        用来描述一个 6 轴机器人模型的所有可配置项:
-//           - 基本信息(名字、保存路径、显示模式)
-//           - 关节(DH 参数 / Joint+RPY+Pos 两种建模方式)
+//           - 基本信息(名字、保存路径、UI 视图模式)
+//           - 关节(SE(3) Joint+RPY+Pos 唯一真值 + DH 投影视图缓存)
 //           - Drawable(可视化几何体)
 //           - 关节限位与预设位姿
 //           - 动力学参数(用于生成 DynamicWorkCell)
+//        数据真值约定:
+//           * transformJoints(SE(3))是唯一可编辑真值;
+//           * dhJoints 仅作为 DH 投影视图缓存,由 transformJoints 派生;
+//           * 默认 XML 输出 <Joint>+<RPY>/<Pos>;
+//           * <DHJoint> 仅作为隐藏高级选项(全部 Revolute + 无损投影时)输出。
 //        UI 层(Wdiget)负责把数据展示为表单,XML 层(XmlWriter)负责把它
 //        序列化为 RobWork / RobWorkSim 能识别的 XML 文件。
 // =============================================================================
@@ -20,24 +25,62 @@
 namespace rws {
 
 // -----------------------------------------------------------------------------
-//  RobotModelMode
-//  说明: 描述机器人建模方式,二者只选其一:
-//        - DH         : 用标准 DH 参数(alpha/a/d/offset)建模,序列化为 <DHJoint>
-//        - JointRPYPos: 用 RobWork 的 <Joint> + <RPY>/<Pos> 直接建模
+//  KinematicsViewMode
+//  说明: 仅用于决定 UI 上哪个表可见:
+//        - JointRPYPos: 显示 SE(3) Joint+RPY+Pos 表(DH 表隐藏)
+//        - DHProjection: 显示 DH 投影视图表(SE(3) 表隐藏;但 SE(3) 仍是真值,
+//                       用户在 DH 表上的编辑会被忽略)
+//        注意:这不再是"建模方式"开关;建模方式已经由 transformJoints
+//        决定,DH 永远是派生视图。
 // -----------------------------------------------------------------------------
-enum class RobotModelMode
+enum class KinematicsViewMode
 {
-    DH,           // 标准 DH 参数建模(对应 XML 中的 <DHJoint type="schilling">)
-    JointRPYPos   // 关节+RPY+位置建模(对应 XML 中的 <Joint>+<RPY>/<Pos>)
+    JointRPYPos,   // UI 默认:显示 SE(3) Joint+RPY+Pos 表
+    DHProjection   // UI 备用:显示 DH 投影视图(只读)
+};
+
+// -----------------------------------------------------------------------------
+//  JointKind
+//  说明: 关节在运动学链上的语义角色(本期仅作为文档性枚举;
+//        transformJoints 内的 type 仍以 std::string 表达 "Revolute"/"Prismatic",
+//        后续可平滑迁移到 enum 表达)。
+// -----------------------------------------------------------------------------
+enum class JointKind
+{
+    Revolute,     // 旋转关节
+    Prismatic,    // 移动关节
+    FixedFrame,   // 固定参考帧(无自由度,只占位)
+    ToolFrame     // 末端工具参考帧
+};
+
+// -----------------------------------------------------------------------------
+//  KinematicRow
+//  说明: SE(3) 关节的"一行真值"表示,作为未来把 transformJoints/dhJoints
+//        合并到单一 vector 的目标结构。本期暂不替换 vector 字段,但已经
+//        在头文件里确立"单一真值"的语义:
+//           * name  : 关节名
+//           * type  : 关节类型(以字符串表达,与 RobWork XML 兼容)
+//           * rpyDeg: 父系 -> 本系 的 RPY(Z-Y-X 顺序,度)
+//           * pos   : 父系 -> 本系 的平移(米)
+//        后续会替换 transformJoints / dhJoints 这两个并列 vector。
+// -----------------------------------------------------------------------------
+struct KinematicRow
+{
+    std::string name;                // 关节名(同时作为 XML 节点名)
+    std::string type;                // 关节类型,如 "Revolute" / "Prismatic"
+    std::array< double, 3 > rpyDeg;  // 父系 -> 本系 的 RPY(度)
+    std::array< double, 3 > pos;     // 父系 -> 本系 的平移(米)
 };
 
 // -----------------------------------------------------------------------------
 //  DHJointSpec
-//  说明: 单个 DH 关节的参数集合,对应 RobWork <DHJoint> 节点:
+//  说明: 单个 DH 关节的"投影视图"参数集合;不再作为建模真值,也不再有
+//        对应的独立 XML 输出模式(默认 XML 永远输出 <Joint>):
 //        - alphaDeg : 绕 X_{i-1} 旋转到 Z_{i-1} 与 X_i 平行的扭转角(度)
 //        - a        : 沿 X_i 的连杆长度
 //        - d        : 沿 Z_{i-1} 的连杆偏距
 //        - offsetDeg: 关节零位偏移角(theta0)
+//        UI 上由 transformJoints 投影得到,用户在 DH 表上的编辑会被忽略。
 // -----------------------------------------------------------------------------
 struct DHJointSpec
 {
@@ -50,10 +93,11 @@ struct DHJointSpec
 
 // -----------------------------------------------------------------------------
 //  JointTransformSpec
-//  说明: 单个 Joint+RPY+Pos 关节的描述,对应 RobWork <Joint> 节点:
+//  说明: SE(3) 关节的"唯一真值"表示,对应默认输出的 RobWork <Joint> 节点:
 //        - type   : Revolute/Prismatic 等
 //        - rpyDeg : 从父关节坐标系到本关节坐标系的 Z-Y-X 欧拉角(度)
 //        - pos    : 同上,平移分量(米)
+//        UI 上是唯一可编辑表;DH 表由本结构派生。
 // -----------------------------------------------------------------------------
 struct JointTransformSpec
 {
@@ -161,17 +205,25 @@ struct DynamicModelSpec
 //  RobotModelSpec
 //  说明: 把上述所有片段组装成"一个完整的机器人模型"。
 //        Widget 会从这个对象读数据/写数据;XmlWriter 把它变成 XML。
+//        数据真值约定:
+//          * transformJoints  是 SE(3) 唯一真值;
+//          * dhJoints        是 transformJoints 派生出的 DH 投影缓存,只读;
+//          * mode            仅决定 UI 上哪个表可见,不影响真值与 XML 输出;
+//          * 默认 XML 永远输出 <Joint>+<RPY>/<Pos>;
+//          * 只有当 exportDhJointsAdvanced=true 且 canExportDhJoints() 通过时,
+//            才输出 <DHJoint>;否则回退到默认 <Joint>。
 // -----------------------------------------------------------------------------
 struct RobotModelSpec
 {
     std::string robotName;                          // 机器人名,会作为 .wc.xml 文件名前缀
     std::string saveDirectory;                      // XML 保存目录
-    RobotModelMode mode;                            // 建模方式(DH / JointRPYPos)
+    KinematicsViewMode mode;                        // UI view mode(JointRPYPos / DHProjection)
+    bool exportDhJointsAdvanced = false;            // Hidden advanced export: write <DHJoint> only if lossless.
     bool showFrameAxes;                             // 是否在每个 Frame/Joint 上画坐标轴
     bool generateDrawables;                         // 是否输出 <Drawable> 节点
     bool generateScene;                             // 是否额外生成 Scene.wc.xml
-    std::vector< DHJointSpec > dhJoints;            // DH 关节列表(mode = DH 时使用)
-    std::vector< JointTransformSpec > transformJoints;  // Joint+RPY+Pos 列表(mode = JointRPYPos 时使用)
+    std::vector< JointTransformSpec > transformJoints;  // SE(3) 真值(唯一可编辑)
+    std::vector< DHJointSpec > dhJoints;                // DH 投影视图缓存(由 transformJoints 派生,只读)
     std::vector< DrawableSpec > drawables;          // 全部 Drawable
     std::vector< JointLimitSpec > limits;           // 全部关节限位
     std::vector< PoseSpec > poses;                  // 全部预设位姿

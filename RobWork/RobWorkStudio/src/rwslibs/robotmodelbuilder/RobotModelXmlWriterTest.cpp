@@ -7,7 +7,8 @@
 //        覆盖内容:
 //          1) 默认数据能 validate;
 //          2) SerialDevice XML 包含必要节点(RPY 转换、限位、位姿、Drawable);
-//          3) DH 模式 XML 用 <DHJoint> 替代 <Joint>;
+//          3) 默认始终以 SE(3) Joint+RPY+Pos 为真值导出;
+//          4) 隐藏高级选项仅在全部 Revolute 且无损 DH 投影时导出 <DHJoint>;
 //          4) DWC XML 包含 ForceLimit/Link/Mass/COG/Inertia;
 //          5) computeLinkPose 在 RPY+Pos 与 DH 两种模式下都给出正确结果;
 //          6) 非法输入(零质量/零力限/含空格的名字/重复关节名)被 validate 拦截;
@@ -112,22 +113,137 @@ int main (int argc, char** argv)
     if (!contains (sceneXml, "<Include file=\"GenericSixAxis.wc.xml\" />"))
         return fail ("Scene XML missing include.");
 
-    // ---- DH 模式 XML 验证 ----
+    // ---- DH 表不再作为真值:切换旧 DH mode 也仍然输出 SE(3) Joint XML ----
+    RobotModelSpec dhViewSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    dhViewSpec.mode           = KinematicsViewMode::DHProjection;
+    const QString dhViewXml   = RobotModelXmlWriter::makeSerialDeviceXml (dhViewSpec);
+    if (dhViewXml.count ("<DHJoint name=\"") != 0)
+        return fail ("DH view mode should not export DHJoint XML by default.");
+    if (dhViewXml.count ("<Joint name=\"") != 6)
+        return fail ("DH view mode should still export six SE(3) Joint elements.");
+
+    // ---- 隐藏高级选项:只有全部 Revolute 且 SE(3) 可无损投影为 DH 时才允许 <DHJoint> ----
     RobotModelSpec dhSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-    dhSpec.mode           = RobotModelMode::DH;
-    const QString dhXml   = RobotModelXmlWriter::makeSerialDeviceXml (dhSpec);
+    dhSpec.exportDhJointsAdvanced = true;
+    if (!RobotModelXmlWriter::canExportDhJoints (dhSpec, &errors))
+        return fail ("Default SE(3) model should be lossless DH exportable: " + errors.join ("; "));
+    const QString dhXml = RobotModelXmlWriter::makeSerialDeviceXml (dhSpec);
     if (dhXml.count ("<DHJoint name=\"") != 6)
-        return fail ("DH XML must contain six DHJoint elements.");
-    // Base + Joint1..Joint6 + TCP = 8 个坐标系应开启 ShowFrameAxis
-    if (dhXml.count ("<Property name=\"ShowFrameAxis\">true</Property>") != 8)
-        return fail ("DH XML should show frame axes for Base, Joint1-6, and TCP.");
-    // DHJoint 的子节点应是 ShowFrameAxis
+        return fail ("Advanced DH export must contain six DHJoint elements.");
+    if (dhXml.count ("<Joint name=\"") != 0)
+        return fail ("Advanced DH export should not also contain explicit Joint elements.");
     if (!contains (dhXml,
                    "<DHJoint name=\"Joint1\" alpha=\"0\" a=\"0\" d=\"0.35\" offset=\"0\" "
                    "type=\"schilling\">\n"
                    "    <Property name=\"ShowFrameAxis\">true</Property>\n"
                    "  </DHJoint>"))
-        return fail ("DH XML should emit ShowFrameAxis inside DHJoint elements.");
+        return fail ("Advanced DH export should emit ShowFrameAxis inside DHJoint elements.");
+
+    RobotModelSpec lossyDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    lossyDh.exportDhJointsAdvanced = true;
+    lossyDh.transformJoints[0].rpyDeg[1] = 10;
+    if (RobotModelXmlWriter::canExportDhJoints (lossyDh, &errors))
+        return fail ("Advanced DH export should reject lossy SE(3) rows.");
+    if (RobotModelXmlWriter::validate (lossyDh, errors))
+        return fail ("validate should reject lossy advanced DH export.");
+
+    RobotModelSpec prismaticDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    prismaticDh.exportDhJointsAdvanced = true;
+    prismaticDh.transformJoints[1].type = "Prismatic";
+    if (RobotModelXmlWriter::canExportDhJoints (prismaticDh, &errors))
+        return fail ("Advanced DH export should reject non-Revolute rows.");
+    const QString prismaticFallbackXml = RobotModelXmlWriter::makeSerialDeviceXml (prismaticDh);
+    if (prismaticFallbackXml.count ("<DHJoint name=\"") != 0)
+        return fail ("Invalid advanced DH export should fall back instead of emitting DHJoint XML.");
+    if (!contains (prismaticFallbackXml, "<Joint name=\"Joint2\" type=\"Prismatic\">"))
+        return fail ("Invalid advanced DH export fallback should preserve SE(3) Joint XML.");
+
+    // ---- 高级 DH 导出:非 Revolute 包括 FixedFrame / ToolFrame 都应拒绝 ----
+    {
+        RobotModelSpec fixedDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        fixedDh.exportDhJointsAdvanced = true;
+        fixedDh.transformJoints[0].type = "FixedFrame";
+        if (RobotModelXmlWriter::canExportDhJoints (fixedDh, &errors))
+            return fail ("Advanced DH export should reject FixedFrame rows.");
+    }
+    {
+        RobotModelSpec toolDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        toolDh.exportDhJointsAdvanced = true;
+        toolDh.transformJoints[2].type = "ToolFrame";
+        if (RobotModelXmlWriter::canExportDhJoints (toolDh, &errors))
+            return fail ("Advanced DH export should reject ToolFrame rows.");
+    }
+
+    // ---- 高级 DH 导出:roll 与 pos.xy 方向不一致应拒绝 ----
+    {
+        RobotModelSpec rollMismatch = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        rollMismatch.exportDhJointsAdvanced = true;
+        // 默认 Joint2: pos=(0.12, 0, 0),roll=0 → atan2(0, 0.12)=0,一致
+        // 把 roll 改成 30 但 pos 仍指向 +X,触发 rollPositionMismatch
+        rollMismatch.transformJoints[1].rpyDeg[0] = 30;
+        if (RobotModelXmlWriter::canExportDhJoints (rollMismatch, &errors))
+            return fail ("Advanced DH export should reject roll vs pos.xy mismatch.");
+    }
+
+    // ---- 高级 DH 导出:transformJoints 与 dhJoints 行数不一致应拒绝 ----
+    {
+        RobotModelSpec lenMismatch = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        lenMismatch.exportDhJointsAdvanced = true;
+        // 多塞一个 dhJoints(模拟数据腐烂)
+        DHJointSpec extra;
+        extra.name      = "JointExtra";
+        extra.alphaDeg  = 0;
+        extra.a         = 0;
+        extra.d         = 0;
+        extra.offsetDeg = 0;
+        lenMismatch.dhJoints.push_back (extra);
+        if (RobotModelXmlWriter::canExportDhJoints (lenMismatch, &errors))
+            return fail ("Advanced DH export should reject SE(3)/DH row count mismatch.");
+    }
+
+    // ---- 高级 DH 导出:lossy 时 makeSerialDeviceXml 应 fallback 到 <Joint> ----
+    {
+        RobotModelSpec lossyFallback = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        lossyFallback.exportDhJointsAdvanced = true;
+        lossyFallback.transformJoints[0].rpyDeg[1] = 10;   // 触发 lossy
+        // validate 应该拒绝(测试 validate 路径)
+        if (RobotModelXmlWriter::validate (lossyFallback, errors))
+            return fail ("validate should reject lossy advanced DH export.");
+        // 直接调 makeSerialDeviceXml(防御性 fallback)应该输出 0 个 DHJoint
+        const QString fallbackXml = RobotModelXmlWriter::makeSerialDeviceXml (lossyFallback);
+        if (fallbackXml.count ("<DHJoint name=\"") != 0)
+            return fail ("Lossy advanced DH export should fall back to default <Joint> XML.");
+        if (fallbackXml.count ("<Joint name=\"") != 6)
+            return fail ("Lossy advanced DH export fallback should still emit 6 SE(3) Joint elements.");
+    }
+
+    // ---- 真值优先:spec.mode = DHProjection 仍以 transformJoints 计算连杆 ----
+    // (覆盖编辑 dhJoints 不会反向影响真值 + 连杆几何)
+    {
+        RobotModelSpec viewOnly = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        viewOnly.mode = KinematicsViewMode::DHProjection;
+        // 用户在 DH 投影视图上修改 Joint1 的几何,SE(3) 真值不动
+        viewOnly.dhJoints[1].alphaDeg  = 0;
+        viewOnly.dhJoints[1].a         = 0.4;
+        viewOnly.dhJoints[1].d         = 0.2;
+        viewOnly.dhJoints[1].offsetDeg = 90;
+        RobotModelXmlWriter::applyLinkGeometry (viewOnly);
+        bool foundViewOnly = false;
+        for (const DrawableSpec& d : viewOnly.drawables) {
+            if (QString::fromStdString (d.name) == "Link1To2") {
+                foundViewOnly = true;
+                // SE(3) Joint2 的 pos = (0.12, 0, 0),所以 Link1To2 应是 (0.06, 0, 0)
+                if (std::abs (d.length - 0.12) > 1e-6 ||
+                    std::abs (d.pos[0] - 0.06) > 1e-6 ||
+                    std::abs (d.pos[1]) > 1e-6 ||
+                    std::abs (d.pos[2]) > 1e-6)
+                    return fail ("DH view-only edit should not affect link geometry.");
+                break;
+            }
+        }
+        if (!foundViewOnly)
+            return fail ("Could not find Link1To2 in DH view-only test.");
+    }
 
     // ---- DWC 模式验证 ----
     spec.dynamics.generateDynamicWorkCell = true;
@@ -212,16 +328,16 @@ int main (int argc, char** argv)
     if (!foundYLink)
         return fail ("Could not find Link1To2 drawable for Y-skewed case.");
 
-    // ---- 标准 DH 模式:Link4To5 应是纯 +Z 方向(因为 Joint4->Joint5 在默认数据里只有 d=0.38) ----
+    // ---- DH view mode 仍以 SE(3) 真值计算连杆几何 ----
     RobotModelSpec standardDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-    standardDh.mode           = RobotModelMode::DH;
+    standardDh.mode           = KinematicsViewMode::DHProjection;
     RobotModelXmlWriter::applyLinkGeometry (standardDh);
     bool foundDhLink = false;
     for (const DrawableSpec& d : standardDh.drawables) {
         if (QString::fromStdString (d.name) == "Link4To5") {
             foundDhLink = true;
             if (std::abs (d.length - 0.38) > 1e-6)
-                return fail (QString ("Link4To5 length should be 0.38 in DH mode, got %1")
+                return fail (QString ("Link4To5 length should be 0.38 from SE(3) truth, got %1")
                                  .arg (d.length));
             if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1]) > 1e-6 ||
                 std::abs (d.pos[2] - 0.19) > 1e-6)
@@ -236,9 +352,9 @@ int main (int argc, char** argv)
     if (!foundDhLink)
         return fail ("Could not find Link4To5 drawable in DH mode.");
 
-    // ---- DH 偏移:把 Joint2 设为 a=0.4, d=0.2, offset=90°,验证 xy/z 投影 ----
+    // ---- DH 投影视图不会反向改写 SE(3) 真值;连杆几何跟随 transformJoints ----
     RobotModelSpec offsetDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-    offsetDh.mode           = RobotModelMode::DH;
+    offsetDh.mode           = KinematicsViewMode::DHProjection;
     offsetDh.dhJoints[1].alphaDeg  = 0;
     offsetDh.dhJoints[1].a         = 0.4;
     offsetDh.dhJoints[1].d         = 0.2;
@@ -248,21 +364,16 @@ int main (int argc, char** argv)
     for (const DrawableSpec& d : offsetDh.drawables) {
         if (QString::fromStdString (d.name) == "Link1To2") {
             foundOffsetLink = true;
-            const double expectedLength = std::sqrt (0.4 * 0.4 + 0.2 * 0.2);
-            if (std::abs (d.length - expectedLength) > 1e-6)
-                return fail ("Link1To2 length should follow standard DH XY/Z projection.");
-            if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1] - 0.2) > 1e-6 ||
-                std::abs (d.pos[2] - 0.1) > 1e-6)
-                return fail (
-                    QString ("Link1To2 pos should be 0 0.2 0.1 for 90 deg offset, got %1 %2 %3")
-                        .arg (d.pos[0])
-                        .arg (d.pos[1])
-                        .arg (d.pos[2]));
+            if (std::abs (d.length - 0.12) > 1e-6 ||
+                std::abs (d.pos[0] - 0.06) > 1e-6 ||
+                std::abs (d.pos[1]) > 1e-6 ||
+                std::abs (d.pos[2]) > 1e-6)
+                return fail ("Link1To2 geometry should follow SE(3) truth, not edited DH projection.");
             break;
         }
     }
     if (!foundOffsetLink)
-        return fail ("Could not find Link1To2 drawable for offset DH case.");
+        return fail ("Could not find Link1To2 drawable for DH projection edit case.");
 
     // ---- 自动 Drawable 应跟随关节几何重算,而不是用用户改的值 ----
     RobotModelSpec autoDrawable = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -515,7 +626,7 @@ int main (int argc, char** argv)
             return fail ("Transform -> DH -> Transform: Pos should round-trip.");
     }
 
-    // ---- syncTransformJointsFromDh:重写 Transform 行,但保留用户的 type ----
+    // ---- applyDhInputToTransform:重写 Transform 行,但保留用户的 type ----
     {
         RobotModelSpec syncSpec =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -526,25 +637,25 @@ int main (int argc, char** argv)
         syncSpec.dhJoints[2].offsetDeg = 56.78;
         syncSpec.dhJoints[2].a         = 0.111;
         syncSpec.dhJoints[2].d         = 0.222;
-        RobotModelXmlWriter::syncTransformJointsFromDh (syncSpec);
+        RobotModelXmlWriter::applyDhInputToTransform (syncSpec);
         if (syncSpec.transformJoints[2].type != "Prismatic")
-            return fail ("syncTransformJointsFromDh: custom type should be preserved.");
+            return fail ("applyDhInputToTransform: custom type should be preserved.");
         const DHJointSpec& d = syncSpec.dhJoints[2];
         const JointTransformSpec& j = syncSpec.transformJoints[2];
         // RPY = (offset, 0, alpha)
         if (std::abs (j.rpyDeg[0] - d.offsetDeg) > 1e-9 ||
             std::abs (j.rpyDeg[1]) > 1e-9 ||
             std::abs (j.rpyDeg[2] - d.alphaDeg) > 1e-9)
-            return fail ("syncTransformJointsFromDh: RPY should follow DH.");
+            return fail ("applyDhInputToTransform: RPY should follow DH.");
         // pos = (a*cos(offset), a*sin(offset), d)
         const double theta = d.offsetDeg * RobotModelXmlWriter::kPi / 180.0;
         if (std::abs (j.pos[0] - d.a * std::cos (theta)) > 1e-9 ||
             std::abs (j.pos[1] - d.a * std::sin (theta)) > 1e-9 ||
             std::abs (j.pos[2] - d.d) > 1e-9)
-            return fail ("syncTransformJointsFromDh: pos should follow DH (new convention).");
+            return fail ("applyDhInputToTransform: pos should follow DH (new convention).");
     }
 
-    // ---- syncDhJointsFromTransform:重写 DH 行(使用与 roll 一致的 pos)----
+    // ---- refreshDhProjectionFromTransform:重写 DH 行(使用与 roll 一致的 pos)----
     {
         RobotModelSpec syncSpec =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -552,22 +663,22 @@ int main (int argc, char** argv)
         syncSpec.transformJoints[1].rpyDeg = {{10, 0, 20}};
         const double theta = 10.0 * RobotModelXmlWriter::kPi / 180.0;
         syncSpec.transformJoints[1].pos    = {{0.3 * std::cos (theta), 0.3 * std::sin (theta), 0.4}};
-        RobotModelXmlWriter::syncDhJointsFromTransform (syncSpec);
+        RobotModelXmlWriter::refreshDhProjectionFromTransform (syncSpec);
         if (std::abs (syncSpec.dhJoints[1].offsetDeg - 10) > 1e-9 ||
             std::abs (syncSpec.dhJoints[1].alphaDeg - 20) > 1e-9 ||
             std::abs (syncSpec.dhJoints[1].a - 0.3) > 1e-9 ||
             std::abs (syncSpec.dhJoints[1].d - 0.4) > 1e-9)
-            return fail ("syncDhJointsFromTransform: values should follow Transform (consistent).");
+            return fail ("refreshDhProjectionFromTransform: values should follow Transform (consistent).");
     }
 
-    // ---- syncDhJointsFromTransform:有损分量(pitch)被丢弃 ----
+    // ---- refreshDhProjectionFromTransform:有损分量(pitch)被丢弃 ----
     {
         RobotModelSpec syncSpec =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         // 故意带 pitch=30 触发有损
         syncSpec.transformJoints[0].rpyDeg = {{20, 30, 40}};   // roll=20, pitch=30, yaw=40
         syncSpec.transformJoints[0].pos    = {{0.5, 0.2, 0.6}};
-        RobotModelXmlWriter::syncDhJointsFromTransform (syncSpec);
+        RobotModelXmlWriter::refreshDhProjectionFromTransform (syncSpec);
         // pos 仍然按新约定反推,所以 a / offset / d 走 pos 来的值
         const double aExp   = std::sqrt (0.5 * 0.5 + 0.2 * 0.2);
         const double offExp = std::atan2 (0.2, 0.5) * 180.0 / RobotModelXmlWriter::kPi;
@@ -575,15 +686,15 @@ int main (int argc, char** argv)
             std::abs (syncSpec.dhJoints[0].alphaDeg - 40) > 1e-9 ||
             std::abs (syncSpec.dhJoints[0].a - aExp) > 1e-9 ||
             std::abs (syncSpec.dhJoints[0].d - 0.6) > 1e-9)
-            return fail ("syncDhJointsFromTransform: pos-derived values should be correct.");
+            return fail ("refreshDhProjectionFromTransform: pos-derived values should be correct.");
         // 把"pitch 被丢"用 round-trip 验证:dhToTransform 回来的 rpy[1] 应为 0
         const JointTransformSpec backJ =
             RobotModelXmlWriter::dhJointToTransform (syncSpec.dhJoints[0]);
         if (std::abs (backJ.rpyDeg[1]) > 1e-9)
-            return fail ("syncDhJointsFromTransform: pitch should be discarded.");
+            return fail ("refreshDhProjectionFromTransform: pitch should be discarded.");
     }
 
-    // ---- sync* 两侧长度不一致时,不抛异常,也不增删行 ----
+    // ---- refresh*/apply* 两侧长度不一致时,不抛异常,也不增删行 ----
     {
         RobotModelSpec syncSpec =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -596,11 +707,11 @@ int main (int argc, char** argv)
         syncSpec.transformJoints.push_back (extra);
         const size_t dhBefore     = syncSpec.dhJoints.size ();
         const size_t transformBefore = syncSpec.transformJoints.size ();
-        RobotModelXmlWriter::syncTransformJointsFromDh (syncSpec);
-        RobotModelXmlWriter::syncDhJointsFromTransform (syncSpec);
+        RobotModelXmlWriter::applyDhInputToTransform (syncSpec);
+        RobotModelXmlWriter::refreshDhProjectionFromTransform (syncSpec);
         if (syncSpec.dhJoints.size () != dhBefore ||
             syncSpec.transformJoints.size () != transformBefore)
-            return fail ("sync*: should not change vector sizes.");
+            return fail ("refresh*/apply*: should not change vector sizes.");
     }
 
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----

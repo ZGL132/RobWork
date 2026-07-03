@@ -47,16 +47,17 @@ class RobotModelBuilderWidget : public QWidget
     void saveAndLoad ();
     /// 弹出目录选择对话框,选择保存目录
     void browseSaveDirectory ();
-    /// 切换建模方式(DH / Joint+RPY+Pos)时的 UI 同步
+    /// 切换 UI 视图模式(Joint+RPY+Pos 真值表 / DH 投影视图表)时的同步
     void modeChanged (int index);
     /// Poses 标签页:新增一行空位姿
     void addPose ();
     /// Poses 标签页:删除当前选中行(至少保留 1 行)
     void removeSelectedPose ();
 
-    /// DH 表单元格被编辑:把当前行映射到 Joint+RPY+Pos 表的同一行
+    /// DH 表单元格被编辑:DH 表是投影视图,不可编辑;只做提示,不改真值
     void onDhTableCellChanged (QTableWidgetItem* item);
-    /// Joint+RPY+Pos 表单元格被编辑:把当前行映射到 DH 表的同一行
+    /// Joint+RPY+Pos 表单元格被编辑:把当前行 SE(3) 真值的投影结果刷新到
+    /// DH 投影视图;不反向修改真值(由 setItem 的 editable=false 保证)
     void onTransformTableCellChanged (QTableWidgetItem* item);
 
   private:
@@ -105,21 +106,22 @@ class RobotModelBuilderWidget : public QWidget
     // ---- 基本信息 ----
     QLineEdit* _robotName;        // 机器人名(也是文件名前缀)
     QLineEdit* _saveDirectory;    // XML 输出目录
-    QComboBox* _mode;             // 建模方式下拉框(DH / Joint+RPY+Pos)
+    QComboBox* _mode;             // UI 视图模式下拉框(Joint+RPY+Pos / DH Projection)
 
     // ---- 选项开关 ----
     QCheckBox* _showFrameAxes;    // 是否在每个 Frame/Joint 上画坐标轴
     QCheckBox* _generateDrawables;// 是否输出 <Drawable> 节点
     QCheckBox* _generateScene;    // 是否额外生成 Scene.wc.xml
     QCheckBox* _generateDwc;      // 是否生成 DynamicWorkCell
+    QCheckBox* _exportDhAdvanced; // Hidden advanced option for lossless <DHJoint> export.
 
     // ---- 动力学 ----
     QLineEdit* _baseFrame;        // 动力学基座 frame 名
     QLineEdit* _baseMaterial;     // 动力学基座材料名
 
     // ---- 运动学 ----
-    QTableWidget* _dhTable;           // DH 参数表(alpha / a / d / offset)
-    QTableWidget* _transformTable;    // Joint+RPY+Pos 表
+    QTableWidget* _dhTable;           // DH 投影视图表(只读,带 Status 列)
+    QTableWidget* _transformTable;    // SE(3) Joint+RPY+Pos 真值表(可编辑)
 
     // ---- 可视化 / 限位 / 位姿 ----
     QTableWidget* _drawablesTable;    // Drawable 列表
@@ -139,7 +141,9 @@ class RobotModelBuilderWidget : public QWidget
     QLineEdit* _status;              // 底部状态栏
 
     // ---- 内部标志 ----
-    /// 跨表同步时(A 表更新 B 表,B 表又会触发更新 A 表)的重入保护
+    /// 刷新 DH 投影视图时(setItem 会触发 _dhTable->itemChanged)的重入保护。
+    /// 注意:虽然 _dhTable 整体只读,但 setItem 替换 QTableWidgetItem 时
+    /// 仍会发出 itemChanged,锁住后可避免无谓递归。
     bool _syncingTables = false;
 };
 

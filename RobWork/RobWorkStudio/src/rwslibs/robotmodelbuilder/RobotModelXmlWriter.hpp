@@ -40,6 +40,8 @@ class RobotModelXmlWriter
     /// 校验 RobotModelSpec 是否合法,把错误信息追加到 errors 中;返回 true 表示通过
     static bool validate (const RobotModelSpec& spec, QStringList& errors);
 
+    static bool canExportDhJoints (const RobotModelSpec& spec, QStringList* errors = nullptr);
+
     /// 生成 SerialDevice XML(<SerialDevice>...</SerialDevice>)
     static QString makeSerialDeviceXml (const RobotModelSpec& spec);
 
@@ -77,15 +79,23 @@ class RobotModelXmlWriter
     static void applyLinkGeometry (RobotModelSpec& spec);
 
     // -------------------------------------------------------------------------
-    //  DH <-> Joint+RPY+Pos 双向转换
-    //  说明: 用于支持 UI 中"DH 表"和"Joint+RPY+Pos 表"实时联动。
-    //        本插件的约定(也是默认模型使用的):
+    //  DH projection / optional DH input conversion
+    //  说明: SE(3) Joint+RPY+Pos 是唯一真值。DH 在数据模型中只是"投影视图
+    //        缓存",在 UI 中是只读表。本节里的两个 API 用于维护这种关系:
+    //          * refreshDhProjectionFromTransform : 从真值刷新 DH 投影缓存;
+    //                                                唯一允许从真值单向往 DH
+    //                                                写入的路径;
+    //          * applyDhInputToTransform         : 把 DH 行当作"输入源"反向
+    //                                                写入 SE(3) 真值;**会改写
+    //                                                真值**,仅作为内部"Apply DH"
+    //                                                工具,UI 默认不调用,仅
+    //                                                在极端回填场景使用。
+    //  本插件的 SE(3) <-> DH 约定:
     //          roll  = offsetDeg
     //          yaw   = alphaDeg
     //          pitch = 0   (DH 没有独立的 pitch 项)
     //          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
-    //        因此反向转换(transformJointToDh)会把通用 RPY/Pos 投影成简化 DH。
-    //        当 pitch 非零,或 roll 与 Pos 的 xy 方向不一致时,该投影有损。
+    //  当 pitch 非零,或 roll 与 Pos 的 xy 方向不一致时,投影有损。
     // -------------------------------------------------------------------------
 
     /// DH 关节 -> Joint+RPY+Pos。`existingType` 用来保留用户原来设置的
@@ -100,13 +110,16 @@ class RobotModelXmlWriter
     ///              或 roll(rpyDeg[0]) 与 atan2(pos.y,pos.x) 不一致。
     static DHJointSpec transformJointToDh (const JointTransformSpec& joint, bool* lossy = nullptr);
 
-    /// 把 spec.transformJoints 全部按 spec.dhJoints 重写(行数取两者较小值)。
-    /// 保留原 transformJoints[i].type。两侧长度不一致时不做插入/删除。
-    static void syncTransformJointsFromDh (RobotModelSpec& spec);
+    /// 从 SE(3) 真值刷新 DH 投影视图缓存(逐行)。两侧长度不一致时取较小值,
+    /// 不做插入/删除。这是真值 -> 投影 的唯一允许路径;UI 中"Transform 表
+    /// 编辑后立刻刷新 DH 表"就是用这个 API。
+    static void refreshDhProjectionFromTransform (RobotModelSpec& spec);
 
-    /// 把 spec.dhJoints 全部按 spec.transformJoints 的投影结果重写(行数取两者较小值)。
-    /// 两侧长度不一致时不做插入/删除。
-    static void syncDhJointsFromTransform (RobotModelSpec& spec);
+    /// "Apply DH" 工具:把 spec.dhJoints 全部按行重写到 spec.transformJoints。
+    /// 保留 transformJoints[i].type。两侧长度不一致时取较小值,不做插入/删除。
+    /// **警告**:此函数会改写 SE(3) 真值,只能作为内部"Apply DH input"工具
+    /// 使用;Widget 当前的 UI 不调用此函数(用户改 DH 表不会反向污染真值)。
+    static void applyDhInputToTransform (RobotModelSpec& spec);
 
   private:
     /// 浮点数的统一序列化格式:有效数字 15 位,既保证精度又避免太长

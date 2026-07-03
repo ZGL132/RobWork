@@ -38,6 +38,11 @@ bool isEmpty (const std::string& value)
     return QString::fromStdString (value).trimmed ().isEmpty ();
 }
 
+bool isRevoluteType (const std::string& type)
+{
+    return QString::fromStdString (type).trimmed ().compare ("Revolute", Qt::CaseInsensitive) == 0;
+}
+
 /// 把 spec.robotName 经过文件名安全清洗后返回,作为 XML 节点/文件的"机器人名"
 QString exportedRobotName (const RobotModelSpec& spec)
 {
@@ -154,22 +159,10 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
     rpyDegOut  = {{0, 0, 0}};
     lengthOut  = 0;
 
-    std::array< double, 3 > v = {{0, 0, 0}};
-    if (spec.mode == RobotModelMode::JointRPYPos) {
-        // link i 是 Joint_{i+1} 到 Joint_{i+2} 的连杆,向量在 Joint_{i+1} 的坐标系下
-        const int jointIdx = linkIndex + 1;
-        if (jointIdx >= static_cast< int >(spec.transformJoints.size ()))
-            return;
-        v = spec.transformJoints[jointIdx].pos;
-    }
-    else {
-        // DH 模式:用 RobWork schilling 对应的标准 DH 平移计算
-        const int jointIdx = linkIndex + 1;
-        if (jointIdx >= static_cast< int >(spec.dhJoints.size ()))
-            return;
-        const DHJointSpec& j = spec.dhJoints[jointIdx];
-        dhLinkVector (j.a, j.d, j.offsetDeg, v);
-    }
+    const int jointIdx = linkIndex + 1;
+    if (jointIdx >= static_cast< int >(spec.transformJoints.size ()))
+        return;
+    const std::array< double, 3 > v = spec.transformJoints[jointIdx].pos;
 
     const double L = std::sqrt (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     lengthOut = L;
@@ -285,7 +278,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     RobotModelSpec spec;
     spec.robotName         = "GenericSixAxis";
     spec.saveDirectory     = saveDirectory.toStdString ();
-    spec.mode              = RobotModelMode::JointRPYPos;
+    spec.mode              = KinematicsViewMode::JointRPYPos;
     spec.showFrameAxes     = true;
     spec.generateDrawables = true;
     spec.generateScene     = true;
@@ -380,17 +373,13 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
 
     // 按当前模式收集"生效关节"
     std::vector< std::string > activeJoints;
-    if (spec.mode == RobotModelMode::DH) {
-        for (const DHJointSpec& joint : spec.dhJoints)
-            activeJoints.push_back (joint.name);
-    }
-    else {
-        for (const JointTransformSpec& joint : spec.transformJoints)
-            activeJoints.push_back (joint.name);
-    }
+    for (const JointTransformSpec& joint : spec.transformJoints)
+        activeJoints.push_back (joint.name);
 
     if (activeJoints.size () != JointCount)
         errors << "Exactly six joints are required.";
+    if (spec.exportDhJointsAdvanced)
+        canExportDhJoints (spec, &errors);
 
     // 关节名不能为空且不能重复
     std::set< std::string > jointNames;
@@ -508,6 +497,56 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
 }
 
 // =============================================================================
+//  canExportDhJoints
+//  说明: 隐藏高级 <DHJoint> 导出的"闸门"检查。三条缺一不可:
+//          1) 至少有一行 SE(3) 关节(必须有真值才能投影);
+//          2) SE(3) 行数与 DH 投影视图行数一致(防御性,UI 始终保持同步);
+//          3) 每一行的 type 必须是 Revolute(简化 DH 不支持其它类型);
+//          4) 每一行的 SE(3) -> DH 投影必须无损(pitch=0 且 roll 与
+//             pos.xy 方向一致,见 transformJointToDh)。
+//        errors 非空时,每条失败原因都会写入。
+//        这是 spec.exportDhJointsAdvanced=true 的唯一放行条件。
+// =============================================================================
+bool RobotModelXmlWriter::canExportDhJoints (const RobotModelSpec& spec, QStringList* errors)
+{
+    QStringList localErrors;
+    QStringList& out = errors == nullptr ? localErrors : *errors;
+
+    if (spec.transformJoints.empty ()) {
+        out << "Advanced DH export requires at least one SE(3) joint row.";
+        return false;
+    }
+    if (spec.transformJoints.size () != spec.dhJoints.size ()) {
+        out << "Advanced DH export requires DH projection rows to match SE(3) rows.";
+        return false;
+    }
+
+    bool ok = true;
+    for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+        const JointTransformSpec& joint = spec.transformJoints[i];
+        if (!isRevoluteType (joint.type)) {
+            out << QString ("Advanced DH export only supports Revolute rows; row %1 (%2) is %3.")
+                       .arg (static_cast< int > (i + 1))
+                       .arg (QString::fromStdString (joint.name))
+                       .arg (QString::fromStdString (joint.type));
+            ok = false;
+            continue;
+        }
+
+        bool lossy = false;
+        transformJointToDh (joint, &lossy);
+        if (lossy) {
+            out << QString ("Advanced DH export requires lossless SE(3)->DH projection; row %1 (%2) is lossy.")
+                       .arg (static_cast< int > (i + 1))
+                       .arg (QString::fromStdString (joint.name));
+            ok = false;
+        }
+    }
+
+    return ok;
+}
+
+// =============================================================================
 //  makeSerialDeviceXml
 //  说明: 把 spec 序列化为 RobWork <SerialDevice>...</SerialDevice> 文本。
 //        包含 Base/TCP 帧、关节(DH 或 RPY+Pos)、可选 Drawable、限位、位姿。
@@ -524,8 +563,15 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
     out << "  </Frame>\n";
 
-    if (spec.mode == RobotModelMode::DH) {
-        for (const DHJointSpec& joint : spec.dhJoints) {
+    // 双闸门:既要用户主动勾选 exportDhJointsAdvanced,又要所有 SE(3) 行
+    // 都能无损投影为 DH。任何一个条件不满足都 fallback 到默认 <Joint> 输出。
+    // validate() 在 exportDhJointsAdvanced=true 时会主动调用
+    // canExportDhJoints 并把错误塞到 errors,所以正常流程下这里不会再
+    // 看到"勾选了但不通过"的情况;但保留 fallback 作为防御性编程。
+    const bool writeDhJoints = spec.exportDhJointsAdvanced && canExportDhJoints (spec);
+    if (writeDhJoints) {
+        for (const JointTransformSpec& transformJoint : spec.transformJoints) {
+            const DHJointSpec joint = transformJointToDh (transformJoint);
             out << "  <DHJoint name=\"" << QString::fromStdString (joint.name) << "\" alpha=\""
                 << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
                 << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
@@ -554,9 +600,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 
     // TCP 帧:挂到最后一个关节上(若是 DH 则取最后一个 DHJoint,否则取最后一个 Joint)
     QString tcpRef = "Base";
-    if (spec.mode == RobotModelMode::DH && !spec.dhJoints.empty ())
-        tcpRef = QString::fromStdString (spec.dhJoints.back ().name);
-    else if (!spec.transformJoints.empty ())
+    if (!spec.transformJoints.empty ())
         tcpRef = QString::fromStdString (spec.transformJoints.back ().name);
     out << "  <Frame name=\"TCP\" refframe=\"" << tcpRef << "\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
@@ -798,18 +842,22 @@ void RobotModelXmlWriter::applyLinkGeometry (RobotModelSpec& spec)
 }
 
 // =============================================================================
-//  DH <-> Joint+RPY+Pos 双向转换
+//  DH projection / optional DH input conversion
 //  说明: 本插件约定的映射关系(与默认模型保持一致):
 //          roll  = offsetDeg
 //          pitch = 0          (DH 不存在独立的 pitch 分量)
 //          yaw   = alphaDeg
 //          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
-//        因此:
-//          * dhJointToTransform      : 无损(DH -> Joint+RPY+Pos 必然有 pitch=0)
-//          * transformJointToDh      : 投影到 DH 形式;若 pitch != 0,或 roll 与
-//                                      Pos 的 xy 方向不一致,则标记为有损
-//        两个 sync* 函数对两侧 vector 按行处理,行数取 min,不做插入/删除。
-//        UI 在 itemChanged 时调用 sync*,并通过 _syncingTables 锁避免递归回写。
+//  因此:
+//    * dhJointToTransform                   : 无损(DH -> Joint+RPY+Pos 必然有 pitch=0)
+//    * transformJointToDh                   : 投影到 DH 形式;若 pitch != 0,
+//                                              或 roll 与 Pos 的 xy 方向不一致,
+//                                              则标记为有损
+//  维护 SE(3) 与 DH 关系的两个工具函数:
+//    * refreshDhProjectionFromTransform     : 从真值刷新 DH 投影(真值 -> DH)
+//    * applyDhInputToTransform              : 把 DH 当作输入回填真值(DH -> 真值);
+//                                              **改写真值**,仅作为内部工具
+//  两侧长度不一致时取 min,不做插入/删除。
 // =============================================================================
 
 /// DH 关节 -> Joint+RPY+Pos;`existingType` 用来在 type 列保留用户先前的设置
@@ -856,21 +904,23 @@ DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& j
     return dh;
 }
 
-/// 把 spec.transformJoints 全部按 spec.dhJoints 重写(逐行);保留 transformJoints[i].type
-void RobotModelXmlWriter::syncTransformJointsFromDh (RobotModelSpec& spec)
+/// 真值 -> 投影:从 spec.transformJoints 刷新 spec.dhJoints 投影视图缓存(逐行)
+void RobotModelXmlWriter::refreshDhProjectionFromTransform (RobotModelSpec& spec)
+{
+    const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
+    for (size_t i = 0; i < n; ++i) {
+        spec.dhJoints[i] = transformJointToDh (spec.transformJoints[i]);
+    }
+}
+
+/// "Apply DH" 工具:DH -> 真值,把 spec.dhJoints 全部按行重写到
+/// spec.transformJoints;保留 transformJoints[i].type。**会改写 SE(3) 真值**,
+/// UI 不调用此函数;仅在测试 / 批量回填场景使用。
+void RobotModelXmlWriter::applyDhInputToTransform (RobotModelSpec& spec)
 {
     const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
     for (size_t i = 0; i < n; ++i) {
         const std::string existingType = spec.transformJoints[i].type;
         spec.transformJoints[i] = dhJointToTransform (spec.dhJoints[i], existingType);
-    }
-}
-
-/// 把 spec.dhJoints 全部按 spec.transformJoints 重写(逐行)
-void RobotModelXmlWriter::syncDhJointsFromTransform (RobotModelSpec& spec)
-{
-    const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
-    for (size_t i = 0; i < n; ++i) {
-        spec.dhJoints[i] = transformJointToDh (spec.transformJoints[i]);
     }
 }

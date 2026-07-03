@@ -1,9 +1,10 @@
 // =============================================================================
 //  文件: RobotModelBuilderWidget.cpp
 //  说明: RobotModelBuilder 插件 UI 的实现。整体布局:
-//        顶部表单:机器人名、保存目录、模式(DH / Joint+RPY+Pos)、选项开关;
+//        顶部表单:机器人名、保存目录、模式(Joint+RPY+Pos / DH Projection)、选项开关;
 //        中部 QTabWidget 包含 5 个标签页:
-//           Kinematics  - DH 或 Joint+RPY+Pos 关节表
+//           Kinematics  - SE(3) Joint+RPY+Pos 真值表(可编辑) +
+//                        DH 投影视图表(只读,带 Status 列)
 //           Drawables   - 可视化几何表
 //           Limits      - 关节限位表
 //           Poses       - 预设位姿表(可增删)
@@ -73,6 +74,12 @@ bool parseVector (const QString& text, int expected)
     }
     return true;
 }
+
+/// 是否 Revolute 关节(大小写不敏感,trim 后比较)
+bool isRevoluteType (const std::string& type)
+{
+    return QString::fromStdString (type).trimmed ().compare ("Revolute", Qt::CaseInsensitive) == 0;
+}
 }    // namespace
 
 // =============================================================================
@@ -113,7 +120,7 @@ void RobotModelBuilderWidget::buildUi ()
     // 模式选择下拉框
     _mode = new QComboBox ();
     _mode->addItem ("Joint + RPY + Pos");
-    _mode->addItem ("DH Parameters");
+    _mode->addItem ("DH Projection");
 
     // 4 个选项开关(并排显示)
     QWidget* options        = new QWidget ();
@@ -122,11 +129,14 @@ void RobotModelBuilderWidget::buildUi ()
     _generateDrawables      = new QCheckBox ("Drawables");
     _generateScene          = new QCheckBox ("Scene file");
     _generateDwc            = new QCheckBox ("Dynamic WorkCell");
+    _exportDhAdvanced       = new QCheckBox ("Advanced: export DHJoint XML");
+    _exportDhAdvanced->setVisible (false);
     optionLay->setContentsMargins (0, 0, 0, 0);
     optionLay->addWidget (_showFrameAxes);
     optionLay->addWidget (_generateDrawables);
     optionLay->addWidget (_generateScene);
     optionLay->addWidget (_generateDwc);
+    optionLay->addWidget (_exportDhAdvanced);
     optionLay->addStretch ();
 
     form->addRow ("Robot name", _robotName);
@@ -153,8 +163,13 @@ void RobotModelBuilderWidget::buildUi ()
                        << "alpha deg"
                        << "a m"
                        << "d m"
-                       << "offset deg",
+                       << "offset deg"
+                       << "Status",
         JointCount);
+    // DH 表是 SE(3) 真值的投影视图,整张表只读;
+    // 任意单元格在 fillFromSpec / onTransformTableCellChanged 写入时
+    // 也会显式 setFlags(~ItemIsEditable)以确保不可改。
+    _dhTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     kinLayout->addWidget (_transformTable);
     kinLayout->addWidget (_dhTable);
     tabs->addTab (kinematicsTab, "Kinematics");
@@ -301,8 +316,8 @@ void RobotModelBuilderWidget::buildUi ()
     connect (addPoseBtn, SIGNAL (clicked ()), this, SLOT (addPose ()));
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
 
-    // DH / Joint+RPY+Pos 跨表实时联动
-    // 由 _syncingTables 在回写时上锁,避免无限递归
+    // Transform 表被编辑后刷新 DH 投影视图;DH 表不反向修改真值。
+    // _syncingTables 防止 setItem 触发 _dhTable->itemChanged 引起无谓递归。
     connect (_dhTable, SIGNAL (itemChanged (QTableWidgetItem*)), this,
              SLOT (onDhTableCellChanged (QTableWidgetItem*)));
     connect (_transformTable, SIGNAL (itemChanged (QTableWidgetItem*)), this,
@@ -414,7 +429,8 @@ void RobotModelBuilderWidget::browseSaveDirectory ()
 
 // =============================================================================
 //  modeChanged()
-//  说明: 模式切换(DH / Joint+RPY+Pos)时,只显示与当前模式匹配的表格。
+//  说明: UI 视图模式切换:Joint+RPY+Pos / DH Projection。
+//        只决定哪张表可见;真值永远是 SE(3),DH 永远是派生视图。
 // =============================================================================
 void RobotModelBuilderWidget::modeChanged (int index)
 {
@@ -446,61 +462,31 @@ void RobotModelBuilderWidget::removeSelectedPose ()
 
 // =============================================================================
 //  onDhTableCellChanged()
-//  说明: DH 表任意单元格被用户编辑后,把当前行按"约定"映射回
-//        Joint+RPY+Pos 表的同一行,实现两表实时联动:
-//          roll  = offsetDeg
-//          yaw   = alphaDeg
-//          pitch = 0          (DH 不支持)
-//          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
-//        type 列保留用户先前在 Transform 表里的设置(默认 "Revolute")。
-//        _syncingTables 防止反向再次触发本函数形成递归。
+//  说明: DH 表是 SE(3) 真值的投影视图,整表 NoEditTriggers + 单元格
+//        ~ItemIsEditable 双重保护,理论上不会被用户编辑。
+//        留这个槽只是为了在极端情况下(setItem 误用)给出明确提示,
+//        避免用户疑惑"为什么我改了 DH 表没反应"。
 // =============================================================================
 void RobotModelBuilderWidget::onDhTableCellChanged (QTableWidgetItem* item)
 {
     if (_syncingTables || item == NULL)
         return;
-    const int row = item->row ();
-    if (row < 0 || row >= _dhTable->rowCount ())
-        return;
-    if (row >= _transformTable->rowCount ())
-        return;
-
-    // 读取整个 DH 行
-    DHJointSpec dh;
-    dh.name      = itemText (_dhTable, row, 0).toStdString ();
-    dh.alphaDeg  = itemDouble (_dhTable, row, 1);
-    dh.a         = itemDouble (_dhTable, row, 2);
-    dh.d         = itemDouble (_dhTable, row, 3);
-    dh.offsetDeg = itemDouble (_dhTable, row, 4);
-
-    // 保留当前 Transform 行的 type,避免被强制改回 Revolute
-    const std::string existingType = itemText (_transformTable, row, 1).toStdString ();
-
-    // 委托给 XmlWriter 做转换(便于回归测试覆盖)
-    const JointTransformSpec j =
-        RobotModelXmlWriter::dhJointToTransform (dh, existingType);
-
-    _syncingTables = true;
-    setItem (_transformTable, row, 0, QString::fromStdString (j.name));
-    setItem (_transformTable, row, 1, QString::fromStdString (j.type));
-    setItem (_transformTable, row, 2, vectorText (j.rpyDeg));
-    setItem (_transformTable, row, 3, vectorText (j.pos));
-    _syncingTables = false;
+    setStatus ("DH parameters are a projection view. Edit Joint + RPY + Pos to change the model.");
 }
 
 // =============================================================================
 //  onTransformTableCellChanged()
-//  说明: Joint+RPY+Pos 表任意单元格被编辑后,把当前行反推回 DH 表的同一行:
+//  说明: SE(3) Joint+RPY+Pos 真值表被编辑后,刷新 DH 投影视图(只读):
 //          a         = sqrt(px^2 + py^2)
 //          offsetDeg = atan2(py, px)
 //          d         = pz
 //          alphaDeg  = rpyDeg[2] (yaw)
-//        (这是 dhJointToTransform 的反解,见 RobotModelXmlWriter.cpp)
+// 投影在 pitch!=0 或 roll 与 pos.xy 方向不一致时会有损,此时仍把投影值
+// 写回 DH 表(Status=Projected),并通过状态栏告知用户。
 //
-//  边界处理:
-//   1) parseVector3 失败时立即 return,绝不把空 / 残留值写进 DH 表;
-//   2) 当 Transform 行无法由简化 DH 无损表达时,仍把投影后的
-//      alpha/a/d/offset 写回 DH,但通过状态栏提示用户这是投影结果。
+// 注意:这是"真值 -> 投影"的单向刷新;DH 表被整体设为只读,所以不再
+// 存在反向回写 SE(3) 的路径。_syncingTables 防止 setItem 触发
+// _dhTable->itemChanged 引起无谓递归。
 // =============================================================================
 void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* item)
 {
@@ -532,35 +518,48 @@ void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* ite
     bool lossy = false;
     const DHJointSpec dh = RobotModelXmlWriter::transformJointToDh (j, &lossy);
 
+    QString status;
+    if (!isRevoluteType (j.type))
+        status = "Unsupported";
+    else if (lossy)
+        status = "Projected";
+    else
+        status = "Lossless";
+
     if (lossy) {
         const double projectedOffset = dh.offsetDeg;
         setStatus (QString ("Row %1: RPY/Pos was projected to DH; "
                             "pitch=%2 deg, roll=%3 deg, projected offset=%4 deg, "
-                            "alpha=%5 deg, a=%6 m, d=%7 m.")
+                            "alpha=%5 deg, a=%6 m, d=%7 m. (Status: %8)")
                        .arg (row + 1)
                        .arg (j.rpyDeg[1], 0, 'g', 4)
                        .arg (j.rpyDeg[0], 0, 'g', 4)
                        .arg (projectedOffset, 0, 'g', 4)
                        .arg (dh.alphaDeg, 0, 'g', 4)
                        .arg (dh.a, 0, 'g', 4)
-                       .arg (dh.d, 0, 'g', 4));
+                       .arg (dh.d, 0, 'g', 4)
+                       .arg (status));
     }
     else {
         setStatus (QString ("Row %1 synced to DH: offset=%2°, alpha=%3°, "
-                            "a=%4 m, d=%5 m.")
+                            "a=%4 m, d=%5 m. (Status: %6)")
                        .arg (row + 1)
                        .arg (dh.offsetDeg, 0, 'g', 4)
                        .arg (dh.alphaDeg, 0, 'g', 4)
                        .arg (dh.a, 0, 'g', 4)
-                       .arg (dh.d, 0, 'g', 4));
+                       .arg (dh.d, 0, 'g', 4)
+                       .arg (status));
     }
 
+    // DH 表是投影视图,所有写入都强制只读(false),避免某次 setItem
+    // 把 DH 单元格重新变成可编辑(进而触发 onDhTableCellChanged)
     _syncingTables = true;
-    setItem (_dhTable, row, 0, QString::fromStdString (dh.name));
-    setItem (_dhTable, row, 1, QString::number (dh.alphaDeg));
-    setItem (_dhTable, row, 2, QString::number (dh.a));
-    setItem (_dhTable, row, 3, QString::number (dh.d));
-    setItem (_dhTable, row, 4, QString::number (dh.offsetDeg));
+    setItem (_dhTable, row, 0, QString::fromStdString (dh.name), false);
+    setItem (_dhTable, row, 1, QString::number (dh.alphaDeg), false);
+    setItem (_dhTable, row, 2, QString::number (dh.a), false);
+    setItem (_dhTable, row, 3, QString::number (dh.d), false);
+    setItem (_dhTable, row, 4, QString::number (dh.offsetDeg), false);
+    setItem (_dhTable, row, 5, status, false);
     _syncingTables = false;
 }
 
@@ -575,11 +574,12 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     _syncingTables = true;
     _robotName->setText (QString::fromStdString (spec.robotName));
     _saveDirectory->setText (QString::fromStdString (spec.saveDirectory));
-    _mode->setCurrentIndex (spec.mode == RobotModelMode::DH ? 1 : 0);
+    _mode->setCurrentIndex (spec.mode == KinematicsViewMode::DHProjection ? 1 : 0);
     _showFrameAxes->setChecked (spec.showFrameAxes);
     _generateDrawables->setChecked (spec.generateDrawables);
     _generateScene->setChecked (spec.generateScene);
     _generateDwc->setChecked (spec.dynamics.generateDynamicWorkCell);
+    _exportDhAdvanced->setChecked (spec.exportDhJointsAdvanced);
     _baseFrame->setText (QString::fromStdString (spec.dynamics.baseFrame));
     _baseMaterial->setText (QString::fromStdString (spec.dynamics.baseMaterial));
     fillKinematicsTables (spec);
@@ -601,7 +601,9 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     RobotModelSpec spec;
     spec.robotName         = _robotName->text ().toStdString ();
     spec.saveDirectory     = _saveDirectory->text ().toStdString ();
-    spec.mode              = _mode->currentIndex () == 1 ? RobotModelMode::DH : RobotModelMode::JointRPYPos;
+    spec.mode              = _mode->currentIndex () == 1 ? KinematicsViewMode::DHProjection
+                                                          : KinematicsViewMode::JointRPYPos;
+    spec.exportDhJointsAdvanced = _exportDhAdvanced->isChecked ();
     spec.showFrameAxes     = _showFrameAxes->isChecked ();
     spec.generateDrawables = _generateDrawables->isChecked ();
     spec.generateScene     = _generateScene->isChecked ();
@@ -707,8 +709,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
 bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 {
     errors.clear ();
-    const bool dhMode = _mode->currentIndex () == 1;
-    QTableWidget* numericTables[] = {dhMode ? _dhTable : NULL, _limitsTable, _posesTable,
+    QTableWidget* numericTables[] = {NULL, _limitsTable, _posesTable,
                                      _generateDwc->isChecked () ? _forceLimitsTable : NULL};
     const int numericStartCols[]  = {1, 1, 1, 1};
     for (int t = 0; t < 4; ++t) {
@@ -725,13 +726,11 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
         }
     }
 
-    if (!dhMode) {
-        for (int row = 0; row < _transformTable->rowCount (); ++row) {
-            if (!parseVector (itemText (_transformTable, row, 2), 3))
-                errors << QString ("Invalid RPY vector at joint row %1.").arg (row + 1);
-            if (!parseVector (itemText (_transformTable, row, 3), 3))
-                errors << QString ("Invalid Pos vector at joint row %1.").arg (row + 1);
-        }
+    for (int row = 0; row < _transformTable->rowCount (); ++row) {
+        if (!parseVector (itemText (_transformTable, row, 2), 3))
+            errors << QString ("Invalid RPY vector at joint row %1.").arg (row + 1);
+        if (!parseVector (itemText (_transformTable, row, 3), 3))
+            errors << QString ("Invalid Pos vector at joint row %1.").arg (row + 1);
     }
 
     if (_generateDrawables->isChecked ()) {
@@ -776,14 +775,30 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
 {
     for (int row = 0; row < JointCount; ++row) {
-        const DHJointSpec& dh = spec.dhJoints[row];
-        setItem (_dhTable, row, 0, QString::fromStdString (dh.name));
-        setItem (_dhTable, row, 1, QString::number (dh.alphaDeg));
-        setItem (_dhTable, row, 2, QString::number (dh.a));
-        setItem (_dhTable, row, 3, QString::number (dh.d));
-        setItem (_dhTable, row, 4, QString::number (dh.offsetDeg));
-
         const JointTransformSpec& joint = spec.transformJoints[row];
+        // 把 SE(3) 真值投影成 DH;有损时仍写出投影值,但在 Status 列标记
+        bool lossy = false;
+        const DHJointSpec dh = RobotModelXmlWriter::transformJointToDh (joint, &lossy);
+        // Status 列语义:
+        //   * Revolute + 无损 -> "Lossless"   (可被高级 <DHJoint> 导出)
+        //   * Revolute + 有损 -> "Projected"  (高级 <DHJoint> 导出将被拒绝)
+        //   * 其它 type      -> "Unsupported"(高级 <DHJoint> 导出将被拒绝)
+        QString status;
+        if (!isRevoluteType (joint.type))
+            status = "Unsupported";
+        else if (lossy)
+            status = "Projected";
+        else
+            status = "Lossless";
+
+        // DH 表全部只读
+        setItem (_dhTable, row, 0, QString::fromStdString (dh.name), false);
+        setItem (_dhTable, row, 1, QString::number (dh.alphaDeg), false);
+        setItem (_dhTable, row, 2, QString::number (dh.a), false);
+        setItem (_dhTable, row, 3, QString::number (dh.d), false);
+        setItem (_dhTable, row, 4, QString::number (dh.offsetDeg), false);
+        setItem (_dhTable, row, 5, status, false);
+
         setItem (_transformTable, row, 0, QString::fromStdString (joint.name));
         setItem (_transformTable, row, 1, QString::fromStdString (joint.type));
         setItem (_transformTable, row, 2, vectorText (joint.rpyDeg));

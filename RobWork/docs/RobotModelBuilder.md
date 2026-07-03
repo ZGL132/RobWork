@@ -4,6 +4,17 @@
 > 适用代码路径:`RobWork/RobWorkStudio/src/rwslibs/robotmodelbuilder/`
 > 最后更新:2026-07-03
 
+## 0. 数据真值约定(先看)
+
+> 本插件严格遵守**单真值**架构:
+>
+> 1. **`transformJoints`(SE(3) Joint+RPY+Pos)是唯一真值。**
+> 2. **`dhJoints` 只是 `transformJoints` 派生出的 DH 投影视图缓存**,在 UI 中是只读表。
+> 3. **默认 XML 永远输出 `<Joint>` + `<RPY>`/`<Pos>`**;`<DHJoint>` 仅在隐藏高级选项(全部 Revolute 且 SE(3)→DH 无损)下输出。
+> 4. UI 视图模式(`KinematicsViewMode::JointRPYPos` / `DHProjection`)只决定哪张表可见,**不再决定建模方式**——建模方式由 `transformJoints` 唯一决定。
+>
+> 这意味着:用户改 DH 表的输入会被忽略;改 SE(3) 表才会真正改变模型。`<DHJoint>` 导出只用于兼容老格式,**不**是"另一种建模"。
+
 本插件为 RobWorkStudio 提供一个**所见即所得的 6 轴机器人模型构建工具**。用户通过表单填写关节/Drawable/限位/位姿/动力学参数,插件自动生成 RobWork / RobWorkSim 可识别的三类 XML:
 
 | XML 文件 | 用途 | 加载方 |
@@ -95,8 +106,9 @@ RobWorkStudio/src/rwslibs/robotmodelbuilder/
 **关键设计原则:**
 
 1. **数据模型零 Qt 依赖** — `RobotModelSpec.hpp` 只引用 STL,使得 XML 序列化层可以脱离 UI/GUI 编译,便于 CI 无头测试。
-2. **UI 只负责"显示 + 收集",不直接生成 XML** — 所有 XML 生成与几何计算都委托给 `RobotModelXmlWriter`,确保两份产物(预览 XML 与磁盘 XML)完全一致。
-3. **Plugin 仅做信号转发** — 业务逻辑全部下沉到 Widget 与 XmlWriter,Plugin 本体非常薄,避免被宿主生命周期细节污染。
+2. **SE(3) 唯一真值,DH 只读投影视图** — `transformJoints` 是唯一可编辑的真值;`dhJoints` 由其派生,UI 上整表只读;默认 XML 永远输出 `<Joint>`;`<DHJoint>` 仅作隐藏高级选项。
+3. **UI 只负责"显示 + 收集",不直接生成 XML** — 所有 XML 生成与几何计算都委托给 `RobotModelXmlWriter`,确保两份产物(预览 XML 与磁盘 XML)完全一致。
+4. **Plugin 仅做信号转发** — 业务逻辑全部下沉到 Widget 与 XmlWriter,Plugin 本体非常薄,避免被宿主生命周期细节污染。
 
 ---
 
@@ -178,14 +190,17 @@ Widget::saveAndLoad()
 | **Save XML** | ✅ | ❌ | 失败弹窗,状态栏报错 |
 | **Save and Load** | ✅ | ✅(自动加载场景) | 失败弹窗,不触发加载 |
 
-### 3.4 模式切换时序
+### 3.4 UI 视图模式切换
 
-UI 提供两种建模方式 (`RobotModelMode::DH` / `RobotModelMode::JointRPYPos`):
+UI 顶部的 "Mode" 下拉框对应 `KinematicsViewMode`,**只是 UI 视图切换器**,不再决定建模方式:
 
-- 用户切换下拉框 → `modeChanged(index)` 槽 → 隐藏/显示 `_dhTable` 或 `_transformTable`
-- `collectSpec()` 根据 `mode` 选择使用 `spec.dhJoints` 还是 `spec.transformJoints`
-- `XmlWriter::makeSerialDeviceXml()` 根据 `mode` 选择输出 `<DHJoint type="schilling">` 或 `<Joint>+<RPY>/<Pos>`
-- `computeLinkPose()` 根据 `mode` 选择不同的连杆位移来源(`dhJoints[i].pos` 或 `transformJoints[i].pos`)
+- `JointRPYPos`(默认):显示 SE(3) 真值表,隐藏 DH 投影视图表。
+- `DHProjection`:显示 DH 投影视图(只读),隐藏 SE(3) 真值表。
+
+切换时:
+- `modeChanged(index)` 槽 → 隐藏/显示 `_dhTable` / `_transformTable`。
+- **不影响** `spec.mode` 对 XML 输出路径的影响——`XmlWriter::makeSerialDeviceXml()` 默认永远输出 `<Joint>`,与 UI 模式无关。
+- **不影响** `computeLinkPose()` 的行为——它永远从 `transformJoints[i].pos` 取位移,与 UI 模式无关。
 
 ---
 
@@ -197,12 +212,13 @@ UI 提供两种建模方式 (`RobotModelMode::DH` / `RobotModelMode::JointRPYPos
 | --- | --- | --- | --- |
 | `robotName` | — | ✅ | 经 `sanitizeFileBaseName` 清洗后作 XML 节点/文件名前缀;允许 `[A-Za-z0-9_-]` |
 | `saveDirectory` | 路径 | ✅ | 必须存在(校验) |
-| `mode` | enum | ✅ | `DH` / `JointRPYPos` |
+| `mode` | enum | ✅ | `KinematicsViewMode::JointRPYPos` / `DHProjection` — **只决定 UI 上哪张表可见**,不影响 XML 输出 |
+| `exportDhJointsAdvanced` | bool | 默认 false | 隐藏高级选项;true 且 `canExportDhJoints()` 通过时输出 `<DHJoint>`,否则 fallback `<Joint>` |
 | `showFrameAxes` | bool | ✅ | 为 true 时所有 Frame/Joint 输出 `<Property name="ShowFrameAxis">true</Property>` |
 | `generateDrawables` | bool | ✅ | 关闭时跳过所有 Drawable 校验与序列化 |
 | `generateScene` | bool | ✅ | 关闭时不写 `<robotName>Scene.wc.xml` |
-| `dhJoints[]` | — | mode=DH 时 6 项 | 字段见下表 |
-| `transformJoints[]` | — | mode=JointRPYPos 时 6 项 | 字段见下表 |
+| `transformJoints[]` | — | 6 项 | **唯一真值**;`makeSerialDeviceXml` 始终从这里读 |
+| `dhJoints[]` | — | 6 项 | **DH 投影视图缓存**(由 `transformJoints` 派生);UI 上整表只读 |
 | `drawables[]` | — | 可选 | 字段见下表 |
 | `limits[]` | 度 / 度·s⁻¹ / 度·s⁻² | 通常 6 项 | 写入 XML 前做度→弧度 |
 | `poses[]` | 度 | 可选 | 写入 XML 前做度→弧度 |
@@ -255,37 +271,37 @@ UI 提供两种建模方式 (`RobotModelMode::DH` / `RobotModelMode::JointRPYPos
 
 ---
 
-## 5. DH 与 Joint+RPY+Pos 双向联动
+## 5. DH 投影视图与 SE(3) 真值
 
-UI 中"DH Parameters" 与 "Joint + RPY + Pos" 两个表格是**同一组关节的两种表达**,任何一处修改都会即时同步到另一处,无需手动按 "Generate Preview"。
+UI 中 "Joint + RPY + Pos" 表是**唯一可编辑的真值**; "DH Parameters" 表是**只读投影视图**——由 SE(3) 真值按本节约定派生。任何在 DH 表上的编辑都会被忽略(只显示提示),不会反向污染真值。
 
 ### 5.1 约定
 
-为使"两种建模方式表达的几何等价",本插件采用下列映射关系。位姿的反解采用 `(r, θ) = (√(px²+py²), atan2(py,px))` 的极坐标形式,与 `dhLinkVector` / `computeLinkPose` 内部约定的"标准 DH 平移"完全一致。
+为使"DH 投影视图"表达的几何与真值一致,本插件采用下列映射关系。位姿的反解采用 `(r, θ) = (√(px²+py²), atan2(py,px))` 的极坐标形式,与 `dhLinkVector` / `computeLinkPose` 内部约定的"标准 DH 平移"完全一致。
 
 | 字段 | 方向 | 公式 |
 | --- | --- | --- |
-| `roll` (RPY[0]) | DH → Transform | `= offsetDeg` |
+| `roll` (RPY[0]) | 真值 → DH | `= offsetDeg` |
 | `pitch` (RPY[1]) | — | **固定为 0**(DH 旋转 R_x(α)·R_z(θ) 在 ZYX 欧拉分解下 pitch 恒为 0) |
-| `yaw` (RPY[2]) | DH → Transform | `= alphaDeg` |
-| `pos[0]` | DH → Transform | `= a · cos(offsetDeg · π/180)` |
-| `pos[1]` | DH → Transform | `= a · sin(offsetDeg · π/180)` |
-| `pos[2]` | DH → Transform | `= d` |
-| `offsetDeg` | Transform → DH | `pos.xy ≠ 0` 时 `= atan2(pos[1], pos[0]) · 180/π`;<br>`pos.xy = 0` 时 `= roll`(见下) |
-| `alphaDeg` | Transform → DH | `= rpyDeg[2]` (yaw) |
-| `a` | Transform → DH | `= √(pos[0]² + pos[1]²)`(`pos.xy = 0` 时为 0) |
-| `d` | Transform → DH | `= pos[2]` |
-| `name` | 双向 | 直接复制 |
-| `type` (Revolute / Prismatic) | DH → Transform | 保留原 Transform 行的设置,缺省 "Revolute" |
-| `type` | Transform → DH | **静默丢弃**(DH 节点不携带 type) |
+| `yaw` (RPY[2]) | 真值 → DH | `= alphaDeg` |
+| `pos[0]` | 真值 → DH | `= a · cos(offsetDeg · π/180)` |
+| `pos[1]` | 真值 → DH | `= a · sin(offsetDeg · π/180)` |
+| `pos[2]` | 真值 → DH | `= d` |
+| `offsetDeg` | DH → 真值 | `pos.xy ≠ 0` 时 `= atan2(pos[1], pos[0]) · 180/π`;<br>`pos.xy = 0` 时 `= roll`(见下) |
+| `alphaDeg` | DH → 真值 | `= rpyDeg[2]` (yaw) |
+| `a` | DH → 真值 | `= √(pos[0]² + pos[1]²)`(`pos.xy = 0` 时为 0) |
+| `d` | DH → 真值 | `= pos[2]` |
+| `name` | 单向 | 直接从真值复制 |
+| `type` (Revolute / Prismatic) | 单向 | DH 投影视图不携带 type;UI 表格的 Status 列根据 type 显示 `Lossless` / `Projected` / `Unsupported` |
 
-> **关于"有损"**(`Transform → DH` 方向):
+> **关于"有损"**(`真值 → DH` 方向):
 > 1. **pitch 非零**:DH 旋转 R_x(α)·R_z(θ) 在 ZYX 欧拉分解下 pitch 恒为 0;用户写入的非零 pitch 无法表达,被丢弃。
 > 2. **roll 与 pos 的 xy 方向不一致**:在极坐标约定下,`roll` 与 `atan2(pos[1], pos[0])` 必须描述同一个 `offset`。若用户在两个字段里写入不同的值(例如 `roll=30°` 但 `pos=(0.5, 0, 0.3)`,后者隐含 `offset=0°`),代码以 `pos` 为权威来源(`offset = atan2(py,px)`),原 `roll` 被覆盖。
-> 3. 两类有损都通过 `transformJointToDh(joint, &lossy)` 的出参告知调用方;UI 拿到后通过状态栏告诉用户"实际写入的 DH 值是什么、原始的 pitch/roll 是多少"。
+> 3. 两类有损都通过 `transformJointToDh(joint, &lossy)` 的出参告知调用方;UI 拿到后通过状态栏告诉用户"实际写入的 DH 值是什么、原始的 pitch/roll 是多少",同时在 DH 表的 Status 列显示 `Projected`。
 > 4. **xy 为零的特殊情况**:`pos[1]=pos[0]=0` 时,`atan2(0,0)` 数值不稳定(数学上为 0,但语义上没意义),代码保留 `roll` 作为 `offset`,`a = 0`。此时只要 `pitch=0`,转换**无损**;`roll` 描述的就是关节绕 Z 的纯旋转。
 > 5. **角度比较使用 `normalizedAngleDiffDeg`**:比较 `roll` 与 `atan2(py,px)` 时,差值要先按 360° 取模到 `[-180, 180]` 再取绝对值,避免 `roll=359°` 与 `roll=1°` 之类的绕回被误判为不一致。
 > 6. `offset=0` 时新约定退化为旧约定:`pos = (a, 0, d)`,默认值不变。
+> 7. **高级 `<DHJoint>` 导出要求**:`exportDhJointsAdvanced=true` 时,任何一行出现上述有损情况(包括 `type != Revolute`)都会让 `canExportDhJoints()` 返回 false,`validate()` 报错,`makeSerialDeviceXml` 回退到默认 `<Joint>` 输出。
 
 ### 5.2 转换入口(模型层)
 
@@ -302,9 +318,14 @@ static DHJointSpec transformJointToDh(
     bool* lossy = nullptr);   // [out] 当转换有损时被置为 true
                               // 有损 = pitch != 0,或 roll 与 pos.xy 方向不一致
 
-// 整组同步(按行号,两侧 vector 长度不一致时不做增删)
-static void syncTransformJointsFromDh(RobotModelSpec& spec);
-static void syncDhJointsFromTransform(RobotModelSpec& spec);
+// 整组维护(按行号,两侧 vector 长度不一致时不做增删)
+static void refreshDhProjectionFromTransform(RobotModelSpec& spec);
+    // 真值 -> DH 投影缓存:唯一允许从真值单向往 DH 写入的路径
+    // UI 中"Transform 表编辑后立刻刷新 DH 表"用的就是这个
+
+static void applyDhInputToTransform(RobotModelSpec& spec);
+    // DH -> 真值:**会改写 SE(3) 真值**;仅作内部"Apply DH"工具,
+    // UI 当前不调用;测试 / 批量回填场景使用
 ```
 
 内部还用到 1 个**仅本文件使用**的辅助:
@@ -317,12 +338,12 @@ static void syncDhJointsFromTransform(RobotModelSpec& spec);
 
 所有逻辑都在 `RobotModelXmlWriter.cpp`,**与 Qt Widget 完全解耦**,命令行测试 `sdurws_robotmodelbuilder_xmltest` 可直接覆盖。
 
-### 5.3 UI 接线与重入保护
+### 5.3 UI 接线(单向:真值 → 投影)
 
-`RobotModelBuilderWidget` 通过 `QTableWidget::itemChanged` 信号把两侧联动起来:
+`RobotModelBuilderWidget` 通过 `QTableWidget::itemChanged` 信号维护"真值 -> DH 投影视图"单向刷新:
 
 ```
-用户编辑 Transform 行
+用户编辑 SE(3) Transform 表的某一行
         │
         ▼
 onTransformTableCellChanged(item)
@@ -335,27 +356,32 @@ onTransformTableCellChanged(item)
         │   └─► 任一向量解析失败 → setStatus 报错并 return(避免把 0 写进 DH)
         │
         ├─► RobotModelXmlWriter::transformJointToDh(..., &lossy)
-        │   └─► 总是把反推出的 alpha/a/d/offset 写回 DH,
-        │       即便 lossy=true 也不阻塞 UI
+        │   └─► 总是把反推出的 alpha/a/d/offset 写入 DH 投影视图
+        │       (即便 lossy=true 也不阻塞 UI)
+        │
+        ├─► 计算 Status:
+        │   * type != Revolute → "Unsupported"
+        │   * lossy == true   → "Projected"
+        │   * 其它            → "Lossless"
         │
         ├─► 若 lossy=true,setStatus 提示用户:
         │   "Row N: RPY/Pos was projected to DH;
-        │    pitch=X deg, roll=Y deg, projected offset=Z deg, alpha=A deg, a=B m, d=C m"
-        │   即明确告诉用户"哪个 pitch/roll 被丢、实际写入的 DH 值是多少"
-        │   否则:仅显示成功同步的 offset/alpha/a/d
+        │    pitch=X deg, roll=Y deg, projected offset=Z deg,
+        │    alpha=A deg, a=B m, d=C m. (Status: Projected)"
+        │   即明确告诉用户"哪个 pitch/roll 被丢、实际写入的 DH 值是什么"
+        │   否则:仅显示成功同步的 offset/alpha/a/d + Status
         │
         ├─► _syncingTables = true
-        ├─► setItem(... DH ... 4 个数值列 ...)
+        ├─► setItem(... DH ... 5 个数值列 + 1 个 Status 列, 全部 editable=false)
         │   └─► 每个 setItem 都触发 itemChanged,但回调看到 _syncingTables=true 立即 return
         └─► _syncingTables = false
 ```
 
-`onDhTableCellChanged` 对称(但**不会**有损,DH → Transform 始终无损):
-- 读取整行 DH(name/alpha/a/d/offset)
-- 从 Transform 行的 type 列读出"用户先前选的 Revolute/Prismatic"作为 `existingType`
-- 调用 `dhJointToTransform(dh, existingType)`,写回 Transform 4 列
+`onDhTableCellChanged` 不再写回 SE(3)(DH 表是只读视图):
+- 整体 `setEditTriggers(QAbstractItemView::NoEditTriggers)` + 每个单元格 `setFlags(~ItemIsEditable)` 双重保护。
+- 理论上不会被用户编辑;留这个槽只是为了在 setItem 误用时给出明确提示。
 
-`_syncingTables` 是 Widget 内部的 `bool` 标志,作为重入锁使用 — 它**只**在 Widget 内部写表时短暂打开,保证不会进入"A 改 B,B 改 A"的循环。
+`_syncingTables` 是 Widget 内部的 `bool` 标志,作为重入锁使用 — 它**只**在 Widget 内部写表时短暂打开,保证不会进入"setItem 触发 itemChanged 又触发 setItem"的循环。
 
 `fillFromSpec`(程序化回填 UI,如 resetDefaults)也会在调用前后打开/关闭 `_syncingTables`,避免被 setItem 触发的 itemChanged 错误地当作"用户编辑"。
 
@@ -374,9 +400,9 @@ onTransformTableCellChanged(item)
 | `transformJointToDh` xy=0、pitch=0 | lossy=false,保留 roll 作 offset |
 | `transformJointToDh` 不传 lossy | 仍能正确返回(默认 nullptr) |
 | 往返无损 | DH → Transform → DH(用新约定数据)、Transform → DH → Transform(一致数据) |
-| `syncTransformJointsFromDh` | RPY=(offset, 0, alpha),pos=(a·cos, a·sin, d),custom type 保留 |
-| `syncDhJointsFromTransform` | 数值与 Transform 对齐(一致数据) |
-| `syncDhJointsFromTransform` 有损 | pitch 被丢,pos 反推的值正确 |
+| `applyDhInputToTransform` | RPY=(offset, 0, alpha),pos=(a·cos, a·sin, d),custom type 保留 |
+| `refreshDhProjectionFromTransform` | 数值与 Transform 对齐(一致数据) |
+| `refreshDhProjectionFromTransform` 有损 | pitch 被丢,pos 反推的值正确 |
 | 长度不一致 | 不抛异常、不增删行 |
 
 ### 6.1 标准 DH 平移向量(`dhLinkVector`)
@@ -502,7 +528,7 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
     <Property name="ShowFrameAxis">true</Property>   <!-- 若 showFrameAxes=true -->
   </Frame>
 
-  <!-- mode=JointRPYPos 时 -->
+  <!-- 默认情况:6 个 SE(3) Joint -->
   <Joint name="Joint1" type="Revolute">
     <RPY>0 0 0</RPY>
     <Pos>0 0 0.35</Pos>
@@ -510,11 +536,14 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
   </Joint>
   ... (共 6 个 Joint)
 
-  <!-- mode=DH 时 -->
+  <!-- 隐藏高级选项(exportDhJointsAdvanced=true 且 canExportDhJoints 通过)时:
+       输出 6 个 <DHJoint type="schilling">,此时不再输出 <Joint> -->
+  <!--
   <DHJoint name="Joint1" alpha="0" a="0" d="0.35" offset="0" type="schilling">
     <Property name="ShowFrameAxis">true</Property>
   </DHJoint>
   ... (共 6 个 DHJoint)
+  -->
 
   <Frame name="TCP" refframe="Joint6">   <!-- 最后一个关节 -->
     <RPY>0 0 0</RPY>
@@ -545,6 +574,11 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
   <Q name="Ready">0 -1.5707963267949 1.5707963267949 0 0 0</Q>
 </SerialDevice>
 ```
+
+> ⚠️ **`<DHJoint>` 仅在隐藏高级选项通过时输出**:
+> 1. UI 上 `_exportDhAdvanced` 默认 `setVisible(false)`,用户看不到这个开关。
+> 2. 即使用户(或代码)显式打开 `exportDhJointsAdvanced=true`,`canExportDhJoints()` 也会要求所有 6 行都是 `Revolute` 且 `transformJointToDh` 全部无损,否则 `validate()` 报错,`saveFiles` 拒绝落盘。
+> 3. `makeSerialDeviceXml()` 内有 fallback 逻辑——若 `canExportDhJoints` 失败,自动回退到默认 `<Joint>` 输出(防御性编程)。
 
 > ⚠️ 关节限位用**度**(RobWork 内部会再换算),但 `<Q>` 中的位姿用**弧度**(`-90° → -π/2 ≈ -1.5707963267949`)。
 
@@ -604,17 +638,23 @@ inertia[0] inertia[3] inertia[4]   inertia[3] inertia[1] inertia[5]   inertia[4]
 4. 在 UI 中增加 `Shape` 下拉框,并联动字段显隐。
 5. 在 `validate()` 中加入形状相关的字段校验(Box 需要 width/height/depth,Sphere 需要 radius)。
 
-### 8.2 增加新的建模模式
+### 8.2 增加新的关节运动学表达(在 SE(3) 框架内)
 
-例如要支持 "URDF-style" 或 "Modified DH (Craig 约定)":
+由于 `transformJoints`(SE(3) Joint+RPY+Pos)已经是唯一真值,**新运动学表达(Modified DH / URDF / Product of Exponentials 等)只应作为"输入辅助 / 投影视图"加入**,不应再成为并行的真值。
 
-1. 在 `RobotModelSpec.hpp` 的 `enum class RobotModelMode` 增加新成员。
-2. 仿照 `JointTransformSpec` 增加新结构(如 `ModifiedDHJointSpec`)。
-3. 在 `RobotModelSpec` 中增加 `std::vector<...>` 字段。
-4. 在 `Widget::buildUi` 增加对应 Tab 与表格,在 `fillFromSpec` / `collectSpec` / `fillKinematicsTables` 中同步读写。
-5. 在 `XmlWriter::makeSerialDeviceXml` 输出对应的 XML 节点。
-6. 在 `computeLinkPose` 中增加对应分支(Modified DH 的位移公式不同)。
-7. 在 `RobotModelXmlWriterTest.cpp` 中补回归测试。
+推荐做法:
+
+1. 在 `XmlWriter` 增加新的"SE(3) → 新表达"投影函数,如 `transformJointToModifiedDh(...)`,把 `transformJoints` 派生为新表达(类似现有 `transformJointToDh`)。
+2. 若需要 UI 输入:在 `Widget` 中加一张新表,**只读**显示新表达;若用户希望"从新表达回填真值",提供显式 "Apply XXX" 按钮调用 `applyXxxInputToTransform(spec)`,并在按钮上明确标注"会覆盖 SE(3) 真值"。
+3. 在 `XmlWriter::makeSerialDeviceXml` 中:
+   * 默认仍输出 `<Joint>`(SE(3) 真值);
+   * 仅在隐藏高级选项 `exportModifiedDhJointsAdvanced = true` 且 `canExportModifiedDhJoints()` 通过时输出 `<ModifiedDHJoint>`。
+4. 在 `validate()` / `canExportModifiedDhJoints()` 中校验:是否所有行都满足该表达(例如 Modified DH 要求 pitch=0)。
+5. 在 `RobotModelXmlWriterTest.cpp` 中补回归测试,覆盖:
+   * 投影一致性;
+   * 回填按钮会改写真值(并验证改写后真值正确);
+   * 高级导出在非全 Revolute 或有损时拒绝;
+   * fallback 到 `<Joint>` 仍正确。
 
 ### 8.3 把模型导入(反向解析)
 
@@ -649,13 +689,19 @@ cmake --build . --target sdurws_robotmodelbuilder_xmltest
 | 类别 | 用例 |
 | --- | --- |
 | **基础结构** | 根节点 / Base / TCP / 6 Joint / 默认 Drawable / 限位 / Ready 位姿弧度 |
-| **DH 模式** | 6 个 DHJoint / 8 个 ShowFrameAxis 计数 |
+| **真值优先** | UI 模式 = DHProjection 时,默认仍输出 6 个 `<Joint>`(不是 `<DHJoint>`) |
+| **DH 投影视图不改真值** | 编辑 `dhJoints` 后 `applyLinkGeometry()` 仍按 `transformJoints` 计算 |
+| **高级 `<DHJoint>` 导出** | 全部 Revolute + 无损时输出 6 个 `<DHJoint>`;有 Prismatic / 有损时 `canExportDhJoints` 拒绝,`makeSerialDeviceXml` fallback `<Joint>` |
 | **DWC** | DynamicWorkCell / RigidDevice / KinematicBase / 6 Link / 6 ForceLimit |
 | **斜向几何** | Link1To2 长度 = √(0.3²+0.4²)、中心 = (0.15, 0, 0.20)、RPY 非硬编码 |
+| **Y 分量** | 长度 / 中心 / RPY 旋转都正确跟随 Pos 向量 |
 | **标准 DH** | Link4To5 长 0.38、中心 (0, 0, 0.19) |
 | **DH 偏移** | a=0.4 d=0.2 offset=90° → 长度 √0.20、中心 (0, 0.2, 0.1) |
 | **自动重算** | 用户改 length/rpy/pos → 调用 applyLinkGeometry 后被覆写 |
-| **校验拒绝** | 零质量 / 零力限 / 含空格名 / 重复关节名 / 零半径 |
+| **`applyDhInputToTransform`** | RPY/Pos 跟随 DH,custom type 保留 |
+| **`refreshDhProjectionFromTransform`** | 数值与真值一致;有损时 pos 反推正确 |
+| **往返** | DH → Transform → DH 无损(新约定数据);Transform → DH → Transform 无损(一致数据) |
+| **校验拒绝** | 零质量 / 零力限 / 含空格名 / 重复关节名 / 零半径 / lossy DH 高级导出 |
 
 ### 9.2 落盘调试
 
