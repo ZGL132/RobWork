@@ -37,6 +37,27 @@ bool contains (const QString& text, const QString& needle)
 {
     return text.contains (needle);
 }
+
+std::array< double, 3 > rpyRotatedZ (const std::array< double, 3 >& rpyDeg)
+{
+    const double a = rpyDeg[0] * RobotModelXmlWriter::kPi / 180.0;    // RobWork RPY: Z
+    const double b = rpyDeg[1] * RobotModelXmlWriter::kPi / 180.0;    // Y
+    const double c = rpyDeg[2] * RobotModelXmlWriter::kPi / 180.0;    // X
+    const double ca = std::cos (a);
+    const double sa = std::sin (a);
+    const double cb = std::cos (b);
+    const double sb = std::sin (b);
+    const double cc = std::cos (c);
+    const double sc = std::sin (c);
+    return {{ca * sb * cc + sa * sc,
+             sa * sb * cc - ca * sc,
+             cb * cc}};
+}
+
+bool nearlyEqual (double lhs, double rhs, double eps = 1e-6)
+{
+    return std::abs (lhs - rhs) <= eps;
+}
 }    // namespace
 
 // =============================================================================
@@ -165,6 +186,31 @@ int main (int argc, char** argv)
     }
     if (!foundLink)
         return fail ("Could not find Link1To2 drawable.");
+
+    // ---- Y 方向有分量的斜向关节:Drawable RPY 必须让圆柱局部 +Z 对齐 Pos 向量 ----
+    RobotModelSpec ySkewed = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    ySkewed.transformJoints[1].pos = {{0.12, 0.5, 0.12}};
+    RobotModelXmlWriter::applyLinkGeometry (ySkewed);
+    bool foundYLink = false;
+    for (const DrawableSpec& d : ySkewed.drawables) {
+        if (QString::fromStdString (d.name) == "Link1To2") {
+            foundYLink = true;
+            const double expectedLength = std::sqrt (0.12 * 0.12 + 0.5 * 0.5 + 0.12 * 0.12);
+            if (!nearlyEqual (d.length, expectedLength))
+                return fail ("Link1To2 length should include Y component.");
+            if (!nearlyEqual (d.pos[0], 0.06) || !nearlyEqual (d.pos[1], 0.25) ||
+                !nearlyEqual (d.pos[2], 0.06))
+                return fail ("Link1To2 center should be half of 0.12 0.5 0.12.");
+            const std::array< double, 3 > z = rpyRotatedZ (d.rpyDeg);
+            if (!nearlyEqual (z[0] * d.length, 0.12) ||
+                !nearlyEqual (z[1] * d.length, 0.5) ||
+                !nearlyEqual (z[2] * d.length, 0.12))
+                return fail ("Link1To2 RPY should align cylinder +Z with 0.12 0.5 0.12.");
+            break;
+        }
+    }
+    if (!foundYLink)
+        return fail ("Could not find Link1To2 drawable for Y-skewed case.");
 
     // ---- 标准 DH 模式:Link4To5 应是纯 +Z 方向(因为 Joint4->Joint5 在默认数据里只有 d=0.38) ----
     RobotModelSpec standardDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());

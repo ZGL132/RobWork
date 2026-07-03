@@ -228,21 +228,21 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
         r22 = c + nz * nz * C;
     }
 
-    // ZYX 欧拉角提取:R = RotZ(yaw) * RotY(pitch) * RotX(roll)
-    double roll = 0, pitch = 0, yaw = 0;
-    pitch = std::asin (std::max (-1.0, std::min (1.0, -r20)));
+    // RobWork RPY(a,b,c): a around Z, b around Y, c around X.
+    double zAngle = 0, yAngle = 0, xAngle = 0;
+    yAngle = std::asin (std::max (-1.0, std::min (1.0, -r20)));
     if (std::abs (r20) < 0.9999) {
-        yaw  = std::atan2 (r10, r00);
-        roll = std::atan2 (r21, r22);
+        zAngle = std::atan2 (r10, r00);
+        xAngle = std::atan2 (r21, r22);
     }
     else {
-        // pitch ≈ ±90° 时万向锁
-        yaw  = 0.0;
-        roll = std::atan2 (-r12, r11);
+        // yAngle ~= +/-90 deg: gimbal lock
+        zAngle = 0.0;
+        xAngle = std::atan2 (-r12, r11);
     }
-    rpyDegOut[0] = roll * 180.0 / Pi;
-    rpyDegOut[1] = pitch * 180.0 / Pi;
-    rpyDegOut[2] = yaw * 180.0 / Pi;
+    rpyDegOut[0] = zAngle * 180.0 / Pi;
+    rpyDegOut[1] = yAngle * 180.0 / Pi;
+    rpyDegOut[2] = xAngle * 180.0 / Pi;
 }
 
 /// 把 spec 里所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 用上面的算法重算一次
