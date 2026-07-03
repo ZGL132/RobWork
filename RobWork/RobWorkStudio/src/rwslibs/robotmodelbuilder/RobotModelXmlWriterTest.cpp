@@ -1061,6 +1061,79 @@ int main (int argc, char** argv)
             return fail ("applyLinkGeometry should update Link6To7 length.");
     }
 
+    // =====================================================================
+    //  Milestone 3: Frame / WorkCell scene objects
+    // =====================================================================
+    {
+        RobotModelSpec sceneSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        sceneSpec.robotBaseFrame.pos   = {{0.4, -0.2, 0.75}};
+        sceneSpec.robotBaseFrame.rpyDeg = {{0, 0, 90}};
+
+        FrameSpec table;
+        table.name     = "Table";
+        table.refFrame = "WORLD";
+        table.frameType = SceneFrameType::Fixed;
+        table.rpyDeg   = {{0, 0, 0}};
+        table.pos      = {{0.7, 0, 0.35}};
+        sceneSpec.sceneFrames.push_back (table);
+
+        FrameSpec workpiece;
+        workpiece.name     = "Workpiece";
+        workpiece.refFrame = "Table";
+        workpiece.frameType = SceneFrameType::Fixed;
+        workpiece.daf      = true;
+        workpiece.rpyDeg   = {{0, 0, 0}};
+        workpiece.pos      = {{0, 0, 0.08}};
+        sceneSpec.sceneFrames.push_back (workpiece);
+
+        FrameSpec camera;
+        camera.name     = "CameraFrame";
+        camera.refFrame = "RobotBase";
+        camera.frameType = SceneFrameType::Normal;
+        camera.rpyDeg   = {{180, 0, 0}};
+        camera.pos      = {{0.2, 0.1, 1.2}};
+        sceneSpec.sceneFrames.push_back (camera);
+
+        FrameSpec movableBox;
+        movableBox.name     = "MovableBox";
+        movableBox.refFrame = "WORLD";
+        movableBox.frameType = SceneFrameType::Movable;
+        movableBox.daf      = true;
+        movableBox.rpyDeg   = {{0, 0, 0}};
+        movableBox.pos      = {{0.1, 0.2, 0.3}};
+        sceneSpec.sceneFrames.push_back (movableBox);
+
+        QStringList sceneErrors;
+        if (!RobotModelXmlWriter::validate (sceneSpec, sceneErrors))
+            return fail ("Scene frame spec should validate: " + sceneErrors.join ("; "));
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (sceneSpec);
+        if (!contains (scene, "<Frame name=\"RobotBase\" refframe=\"WORLD\">"))
+            return fail ("Scene XML should contain RobotBase frame.");
+        if (!contains (scene, "<RPY>0 0 90</RPY>\n    <Pos>0.4 -0.2 0.75</Pos>"))
+            return fail ("RobotBase pose should be written to Scene XML.");
+        if (!contains (scene, "<Frame name=\"Table\" refframe=\"WORLD\" type=\"Fixed\">"))
+            return fail ("Scene XML should contain fixed Table frame.");
+        if (!contains (scene,
+                       "<Frame name=\"Workpiece\" refframe=\"Table\" type=\"Fixed\" daf=\"true\">"))
+            return fail ("Scene XML should write daf=true on Workpiece.");
+        if (!contains (scene, "<Frame name=\"CameraFrame\" refframe=\"RobotBase\">"))
+            return fail ("Normal scene frame should omit type attribute.");
+        if (!contains (scene,
+                       "<Frame name=\"MovableBox\" refframe=\"WORLD\" type=\"Movable\" daf=\"true\">"))
+            return fail ("Movable scene frame with DAF should be written.");
+        if (!contains (scene, "<Include file=\"GenericSixAxis.wc.xml\" />"))
+            return fail ("Scene XML should still include the robot file.");
+
+        RobotModelSpec badRef = sceneSpec;
+        badRef.sceneFrames[0].refFrame = "MissingFrame";
+        QStringList badRefErrors;
+        if (RobotModelXmlWriter::validate (badRef, badRefErrors))
+            return fail ("Scene frame with missing refframe should fail validation.");
+        if (!badRefErrors.join (" ").contains ("MissingFrame"))
+            return fail ("Missing refframe validation error should mention the bad reference.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
