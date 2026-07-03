@@ -22,6 +22,8 @@
 
 #include <array>
 
+class QTextStream;
+
 namespace rws {
 
 class RobotModelXmlWriter
@@ -141,6 +143,12 @@ class RobotModelXmlWriter
     static QString number (double value);
     /// 把 std::array<double,3> 序列化为 "x y z" 字符串
     static QString vector3 (const std::array< double, 3 >& values);
+    /// 把 std::array<double,16> 序列化为 16 个数字(空格分隔)用于 <Transform>
+    static QString vector16 (const std::array< double, 16 >& values);
+    /// 输出 <Frame type="..." /> 的属性片段(Normal 时返回空串)
+    static QString frameTypeAttribute (SceneFrameType type);
+    /// 把一个 FrameSpec 输出为单个 <Frame>...</Frame>
+    static void writeFrameXml (QTextStream& out, const FrameSpec& frame, bool showFrameAxes);
     /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
     static double degToRad (double value);
 };

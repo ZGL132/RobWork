@@ -1066,6 +1066,7 @@ int main (int argc, char** argv)
     // =====================================================================
     {
         RobotModelSpec sceneSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        sceneSpec.sceneFrames.clear ();    // makeDefaultSixAxisModel 已经预填 4 个,测试覆盖它们
         sceneSpec.robotBaseFrame.pos   = {{0.4, -0.2, 0.75}};
         sceneSpec.robotBaseFrame.rpyDeg = {{0, 0, 90}};
 
@@ -1108,8 +1109,8 @@ int main (int argc, char** argv)
             return fail ("Scene frame spec should validate: " + sceneErrors.join ("; "));
 
         const QString scene = RobotModelXmlWriter::makeSceneXml (sceneSpec);
-        if (!contains (scene, "<Frame name=\"RobotBase\" refframe=\"WORLD\">"))
-            return fail ("Scene XML should contain RobotBase frame.");
+        if (!contains (scene, "<Frame name=\"RobotBase\" refframe=\"WORLD\" type=\"Fixed\">"))
+            return fail ("Scene XML should contain RobotBase frame (as Fixed).");
         if (!contains (scene, "<RPY>0 0 90</RPY>\n    <Pos>0.4 -0.2 0.75</Pos>"))
             return fail ("RobotBase pose should be written to Scene XML.");
         if (!contains (scene, "<Frame name=\"Table\" refframe=\"WORLD\" type=\"Fixed\">"))

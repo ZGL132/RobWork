@@ -406,6 +406,51 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
 
     appendDefaultDynamics (spec);
 
+    // ---- Milestone 3:默认 RobotBase + 4 个常用场景 frame ----
+    spec.robotBaseFrame.name      = "RobotBase";
+    spec.robotBaseFrame.refFrame  = "WORLD";
+    spec.robotBaseFrame.frameType = SceneFrameType::Fixed;
+    spec.robotBaseFrame.daf       = false;
+    spec.robotBaseFrame.poseMode  = PoseMode::RPYPos;
+    spec.robotBaseFrame.rpyDeg    = {{0, 0, 0}};
+    spec.robotBaseFrame.pos       = {{0, 0, 0}};
+
+    {
+        FrameSpec f;
+        f.name      = "Table";
+        f.refFrame  = "WORLD";
+        f.frameType = SceneFrameType::Fixed;
+        f.pos       = {{0.7, 0, 0.35}};
+        spec.sceneFrames.push_back (f);
+    }
+    {
+        FrameSpec f;
+        f.name      = "Workpiece";
+        f.refFrame  = "Table";
+        f.frameType = SceneFrameType::Fixed;
+        f.daf       = true;
+        f.pos       = {{0, 0, 0.08}};
+        spec.sceneFrames.push_back (f);
+    }
+    {
+        FrameSpec f;
+        f.name      = "CameraFrame";
+        f.refFrame  = "RobotBase";
+        f.frameType = SceneFrameType::Normal;
+        f.rpyDeg    = {{180, 0, 0}};
+        f.pos       = {{0.2, 0.1, 1.2}};
+        spec.sceneFrames.push_back (f);
+    }
+    {
+        FrameSpec f;
+        f.name      = "MovableBox";
+        f.refFrame  = "WORLD";
+        f.frameType = SceneFrameType::Movable;
+        f.daf       = true;
+        f.pos       = {{0.1, 0.2, 0.3}};
+        spec.sceneFrames.push_back (f);
+    }
+
     return spec;
 }
 
@@ -469,6 +514,62 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
 
     // 全部 Frame 名(关节 + Base + TCP),用于校验 Drawable/Dynamics 引用
     const std::set< std::string > frameNames = allFrameNames (spec);
+
+    // ---- Milestone 3:RobotBase 与场景 frame 校验 ----
+    if (isEmpty (spec.robotBaseFrame.name))
+        errors << "RobotBase frame name must not be empty.";
+    if (spec.robotBaseFrame.name != "RobotBase")
+        errors << "RobotBase frame name must be RobotBase.";
+    if (spec.robotBaseFrame.refFrame != "WORLD")
+        errors << "RobotBase refframe must be WORLD.";
+
+    std::set< std::string > sceneNames;
+    sceneNames.insert ("WORLD");
+    sceneNames.insert ("RobotBase");
+    for (const FrameSpec& frame : spec.sceneFrames) {
+        if (isEmpty (frame.name))
+            errors << "Scene frame names must not be empty.";
+        else if (!sceneNames.insert (frame.name).second)
+            errors << QString ("Duplicate scene frame name: %1.")
+                          .arg (QString::fromStdString (frame.name));
+        if (!frame.name.empty () && (frame.name == "Base" || frame.name == "TCP" ||
+                                     allNames.find (frame.name) != allNames.end ()))
+            errors << QString ("Scene frame %1 collides with a device frame name.")
+                          .arg (QString::fromStdString (frame.name));
+    }
+
+    std::set< std::string > availableSceneRefs;
+    availableSceneRefs.insert ("WORLD");
+    availableSceneRefs.insert ("RobotBase");
+    for (const FrameSpec& frame : spec.sceneFrames)
+        availableSceneRefs.insert (frame.name);
+    for (const FrameSpec& frame : spec.sceneFrames) {
+        if (isEmpty (frame.refFrame))
+            errors << QString ("Scene frame %1 requires a refframe.")
+                          .arg (QString::fromStdString (frame.name));
+        else if (availableSceneRefs.find (frame.refFrame) == availableSceneRefs.end ())
+            errors << QString ("Scene frame %1 references unknown refframe %2.")
+                          .arg (QString::fromStdString (frame.name),
+                                QString::fromStdString (frame.refFrame));
+        if (frame.name == frame.refFrame)
+            errors << QString ("Scene frame %1 must not reference itself.")
+                          .arg (QString::fromStdString (frame.name));
+        for (double v : frame.rpyDeg) {
+            if (!std::isfinite (v))
+                errors << QString ("Scene frame %1 RPY values must be finite.")
+                              .arg (QString::fromStdString (frame.name));
+        }
+        for (double v : frame.pos) {
+            if (!std::isfinite (v))
+                errors << QString ("Scene frame %1 Pos values must be finite.")
+                              .arg (QString::fromStdString (frame.name));
+        }
+        for (double v : frame.transform) {
+            if (!std::isfinite (v))
+                errors << QString ("Scene frame %1 Transform values must be finite.")
+                              .arg (QString::fromStdString (frame.name));
+        }
+    }
 
     if (spec.generateDrawables) {
         for (const DrawableSpec& drawable : spec.drawables) {
@@ -899,7 +1000,9 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 // =============================================================================
 //  makeSceneXml
 //  说明: 生成场景容器 WorkCell:
-//        - RobotBase 帧(挂到 WORLD 下,坐标原点);
+//        - RobotBase 帧(Milestone 3 起,用 spec.robotBaseFrame 配置;
+//          兜底是 refframe="WORLD" + 0 0 0 位姿);
+//        - 依次输出所有 sceneFrames(Table / Workpiece / CameraFrame / MovableBox);
 //        - <Include> 引用真正的机器人 .wc.xml(SerialDevice)。
 // =============================================================================
 QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
@@ -908,12 +1011,21 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     QString xml;
     QTextStream out (&xml);
     out << "<WorkCell name=\"" << robotName << "Scene\">\n";
-    out << "  <Frame name=\"RobotBase\" refframe=\"WORLD\">\n";
-    out << "    <RPY>0 0 0</RPY>\n";
-    out << "    <Pos>0 0 0</Pos>\n";
-    if (spec.showFrameAxes)
-        out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-    out << "  </Frame>\n\n";
+
+    FrameSpec robotBase = spec.robotBaseFrame;
+    if (robotBase.name.empty ())
+        robotBase.name = "RobotBase";
+    if (robotBase.refFrame.empty ())
+        robotBase.refFrame = "WORLD";
+    robotBase.frameType = SceneFrameType::Fixed;
+    writeFrameXml (out, robotBase, spec.showFrameAxes);
+    out << "\n";
+
+    for (const FrameSpec& frame : spec.sceneFrames)
+        writeFrameXml (out, frame, spec.showFrameAxes);
+    if (!spec.sceneFrames.empty ())
+        out << "\n";
+
     out << "  <Include file=\"" << robotName << ".wc.xml\" />\n";
     out << "</WorkCell>\n";
     return xml;
@@ -1058,6 +1170,54 @@ QString RobotModelXmlWriter::number (double value)
 QString RobotModelXmlWriter::vector3 (const std::array< double, 3 >& values)
 {
     return number (values[0]) + " " + number (values[1]) + " " + number (values[2]);
+}
+
+/// std::array<double,16> -> "m00 m01 ... m33"(行优先 4x4),用于 <Transform>
+QString RobotModelXmlWriter::vector16 (const std::array< double, 16 >& values)
+{
+    QStringList parts;
+    parts.reserve (16);
+    for (double value : values)
+        parts << number (value);
+    return parts.join (" ");
+}
+
+/// 给出 <Frame> 的 type=... 属性串(Normal 时省略)
+QString RobotModelXmlWriter::frameTypeAttribute (SceneFrameType type)
+{
+    if (type == SceneFrameType::Movable)
+        return " type=\"Movable\"";
+    if (type == SceneFrameType::Fixed)
+        return " type=\"Fixed\"";
+    return QString ();
+}
+
+/// 输出单个 <Frame ...>...</Frame>:
+///   * Fixed / Movable 加 type 属性,Normal 时省略;
+///   * daf=true 输出 daf="true";
+///   * poseMode == Transform4x4 走 <Transform>,否则 <RPY>/<Pos>;
+///   * showFrameAxes 时附带 ShowFrameAxis 属性。
+void RobotModelXmlWriter::writeFrameXml (QTextStream& out, const FrameSpec& frame,
+                                         bool showFrameAxes)
+{
+    out << "  <Frame name=\"" << QString::fromStdString (frame.name)
+        << "\" refframe=\"" << QString::fromStdString (frame.refFrame) << "\""
+        << frameTypeAttribute (frame.frameType);
+    if (frame.daf)
+        out << " daf=\"true\"";
+    out << ">\n";
+
+    if (frame.poseMode == PoseMode::Transform4x4) {
+        out << "    <Transform>" << vector16 (frame.transform) << "</Transform>\n";
+    }
+    else {
+        out << "    <RPY>" << vector3 (frame.rpyDeg) << "</RPY>\n";
+        out << "    <Pos>" << vector3 (frame.pos) << "</Pos>\n";
+    }
+
+    if (showFrameAxes)
+        out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+    out << "  </Frame>\n";
 }
 
 /// 度 -> 弧度
