@@ -399,13 +399,33 @@ void RobotModelBuilderWidget::buildUi ()
         0);
     sceneLay->addWidget (_sceneFramesTable);
 
+    // ---- Milestone 3.5:场景几何体表 ----
+    _sceneGeometryTable = makeTable (
+        QStringList () << "Name"
+                       << "RefFrame"
+                       << "Kind"
+                       << "Size x y z"
+                       << "Radius"
+                       << "Length"
+                       << "File"
+                       << "RPY deg (Z Y X)"
+                       << "Pos m"
+                       << "RGB"
+                       << "Collision",
+        0);
+    sceneLay->addWidget (_sceneGeometryTable);
+
     QWidget* sceneButtons = new QWidget ();
     QHBoxLayout* sceneBtnLay = new QHBoxLayout (sceneButtons);
     QPushButton* addSceneBtn = new QPushButton ("Add Scene Frame");
     QPushButton* delSceneBtn = new QPushButton ("Remove Scene Frame");
+    QPushButton* addSceneGeometryBtn = new QPushButton ("Add Scene Geometry");
+    QPushButton* delSceneGeometryBtn = new QPushButton ("Remove Scene Geometry");
     sceneBtnLay->setContentsMargins (0, 0, 0, 0);
     sceneBtnLay->addWidget (addSceneBtn);
     sceneBtnLay->addWidget (delSceneBtn);
+    sceneBtnLay->addWidget (addSceneGeometryBtn);
+    sceneBtnLay->addWidget (delSceneGeometryBtn);
     sceneBtnLay->addStretch ();
     sceneLay->addWidget (sceneButtons);
     tabs->addTab (sceneTab, "Scene Frames");
@@ -526,6 +546,8 @@ void RobotModelBuilderWidget::buildUi ()
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
     connect (addSceneBtn, SIGNAL (clicked ()), this, SLOT (addSceneFrame ()));
     connect (delSceneBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedSceneFrame ()));
+    connect (addSceneGeometryBtn, SIGNAL (clicked ()), this, SLOT (addSceneGeometry ()));
+    connect (delSceneGeometryBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedSceneGeometry ()));
     connect (addJointBtn, SIGNAL (clicked ()), this, SLOT (addJoint ()));
     connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
     connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
@@ -575,6 +597,7 @@ void RobotModelBuilderWidget::generatePreview ()
 
     fillDrawablesTable (spec);
     fillSceneTab (spec);
+    fillSceneGeometryTable (spec);
     _serialPreview->setPlainText (RobotModelXmlWriter::makeSerialDeviceXml (spec));
     _scenePreview->setPlainText (RobotModelXmlWriter::makeSceneXml (spec));
     _dwcPreview->setPlainText (spec.dynamics.generateDynamicWorkCell
@@ -921,11 +944,53 @@ void RobotModelBuilderWidget::removeSelectedSceneFrame ()
         return;
     const std::string removed = spec.sceneFrames[static_cast< size_t > (row)].name;
     spec.sceneFrames.erase (spec.sceneFrames.begin () + row);
-    // 同步修正引用被删 frame 的其他 sceneFrame,避免 dangling refFrame
+    // 同步修正引用被删 frame 的其他 sceneFrame + 场景几何体,避免 dangling refFrame
     for (FrameSpec& frame : spec.sceneFrames) {
         if (frame.refFrame == removed)
             frame.refFrame = "WORLD";
     }
+    spec.sceneGeometries.erase (
+        std::remove_if (spec.sceneGeometries.begin (), spec.sceneGeometries.end (),
+                        [&] (const SceneGeometrySpec& geometry) {
+                            return geometry.refFrame == removed;
+                        }),
+        spec.sceneGeometries.end ());
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+// =============================================================================
+//  addSceneGeometry() / removeSelectedSceneGeometry()
+//  说明: Milestone 3.5 场景几何体增删按钮。
+//        * addSceneGeometry:追加默认 Box,RefFrame 取第一个场景 frame,
+//          没有则用 RobotBase。RGB 中性灰,collisionModel=true。
+//        * removeSelectedSceneGeometry:删除当前选中行,不级联。
+// =============================================================================
+void RobotModelBuilderWidget::addSceneGeometry ()
+{
+    RobotModelSpec spec = collectSpec ();
+    SceneGeometrySpec geometry;
+    geometry.name = "SceneGeometry" + std::to_string (spec.sceneGeometries.size () + 1);
+    geometry.refFrame =
+        spec.sceneFrames.empty () ? "RobotBase" : spec.sceneFrames.front ().name;
+    geometry.kind          = GeometryKind::Box;
+    geometry.size          = {{0.1, 0.1, 0.1}};
+    geometry.radius        = 0.05;
+    geometry.length        = 0.1;
+    geometry.rgb           = {{0.6, 0.6, 0.6}};
+    geometry.collisionModel = true;
+    spec.sceneGeometries.push_back (geometry);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::removeSelectedSceneGeometry ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const int row = _sceneGeometryTable->currentRow ();
+    if (row < 0 || row >= static_cast< int >(spec.sceneGeometries.size ()))
+        return;
+    spec.sceneGeometries.erase (spec.sceneGeometries.begin () + row);
     fillFromSpec (spec);
     generatePreview ();
 }
@@ -1055,6 +1120,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     fillKinematicsTables (spec);
     fillDrawablesTable (spec);
     fillSceneTab (spec);
+    fillSceneGeometryTable (spec);
     fillLimitsTable (spec);
     fillPosesTable (spec);
     fillDynamicsTab (spec);
@@ -1158,6 +1224,28 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         parseVector3 (itemText (_sceneFramesTable, row, 6), frame.pos);
         parseVector16 (itemText (_sceneFramesTable, row, 7), frame.transform);
         spec.sceneFrames.push_back (frame);
+    }
+
+    // ---- Milestone 3.5:场景几何体收集 ----
+    for (int row = 0; row < _sceneGeometryTable->rowCount (); ++row) {
+        SceneGeometrySpec geometry;
+        geometry.name     = itemText (_sceneGeometryTable, row, 0).toStdString ();
+        geometry.refFrame = itemText (_sceneGeometryTable, row, 1).toStdString ();
+        geometry.kind     = geometryKindFromString (
+            itemText (_sceneGeometryTable, row, 2).toStdString ());
+        parseVector3 (itemText (_sceneGeometryTable, row, 3), geometry.size);
+        geometry.radius   = itemDouble (_sceneGeometryTable, row, 4);
+        geometry.length   = itemDouble (_sceneGeometryTable, row, 5);
+        geometry.file     = itemText (_sceneGeometryTable, row, 6).toStdString ();
+        parseVector3 (itemText (_sceneGeometryTable, row, 7), geometry.rpyDeg);
+        parseVector3 (itemText (_sceneGeometryTable, row, 8), geometry.pos);
+        parseVector3 (itemText (_sceneGeometryTable, row, 9), geometry.rgb);
+        const QString collision =
+            itemText (_sceneGeometryTable, row, 10);
+        geometry.collisionModel =
+            collision.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
+            collision.compare ("true", Qt::CaseInsensitive) == 0;
+        spec.sceneGeometries.push_back (geometry);
     }
 
     // ---- Poses 表(Milestone 2:q 长度 = 当前表列数 - 1)----
@@ -1445,6 +1533,35 @@ void RobotModelBuilderWidget::fillSceneTab (const RobotModelSpec& spec)
         setItem (_sceneFramesTable, row, 5, vectorText (frame.rpyDeg));
         setItem (_sceneFramesTable, row, 6, vectorText (frame.pos));
         setItem (_sceneFramesTable, row, 7, vectorText16 (frame.transform));
+    }
+}
+
+// =============================================================================
+//  fillSceneGeometryTable()
+//  说明: Milestone 3.5 — 把 spec.sceneGeometries 回填到 Scene Geometry 表。
+//        每行 11 列对应 SceneGeometrySpec 的字段;数字列按几何形状
+//        可同时填(Box 表 size,Cylinder/Cone 表 radius/length,...),
+//        多余字段在 UI 保持也无所谓,Writer 只读需要的。
+// =============================================================================
+void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec)
+{
+    if (_sceneGeometryTable == NULL)
+        return;
+    _sceneGeometryTable->setRowCount (static_cast< int >(spec.sceneGeometries.size ()));
+    for (int row = 0; row < _sceneGeometryTable->rowCount (); ++row) {
+        const SceneGeometrySpec& geometry = spec.sceneGeometries[row];
+        setItem (_sceneGeometryTable, row, 0, QString::fromStdString (geometry.name));
+        setItem (_sceneGeometryTable, row, 1, QString::fromStdString (geometry.refFrame));
+        setItem (_sceneGeometryTable, row, 2, geometryKindToString (geometry.kind));
+        setItem (_sceneGeometryTable, row, 3, vectorText (geometry.size));
+        setItem (_sceneGeometryTable, row, 4, QString::number (geometry.radius));
+        setItem (_sceneGeometryTable, row, 5, QString::number (geometry.length));
+        setItem (_sceneGeometryTable, row, 6, QString::fromStdString (geometry.file));
+        setItem (_sceneGeometryTable, row, 7, vectorText (geometry.rpyDeg));
+        setItem (_sceneGeometryTable, row, 8, vectorText (geometry.pos));
+        setItem (_sceneGeometryTable, row, 9, vectorText (geometry.rgb));
+        setItem (_sceneGeometryTable, row, 10,
+                 geometry.collisionModel ? "Enabled" : "Disabled");
     }
 }
 

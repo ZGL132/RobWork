@@ -41,6 +41,8 @@ class RobotModelBuilderWidget : public QWidget
     void moveSelectedJointDown ();
     void addSceneFrame ();
     void removeSelectedSceneFrame ();
+    void addSceneGeometry ();
+    void removeSelectedSceneGeometry ();
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
 
@@ -55,6 +57,7 @@ class RobotModelBuilderWidget : public QWidget
     void fillPosesTable (const RobotModelSpec& spec);
     void fillDynamicsTab (const RobotModelSpec& spec);
     void fillSceneTab (const RobotModelSpec& spec);
+    void fillSceneGeometryTable (const RobotModelSpec& spec);
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
 
@@ -87,6 +90,7 @@ class RobotModelBuilderWidget : public QWidget
     QLineEdit* _robotBaseRpy;        // Milestone 3:Scene Frames 标签页 RobotBase RPY
     QLineEdit* _robotBasePos;        // Milestone 3:Scene Frames 标签页 RobotBase Pos
     QTableWidget* _sceneFramesTable; // Milestone 3:Scene Frames 标签页的可编辑表格
+    QTableWidget* _sceneGeometryTable; // Milestone 3.5:场景几何体表
 
     QTableWidget* _dhTable;
     QTableWidget* _transformTable;
