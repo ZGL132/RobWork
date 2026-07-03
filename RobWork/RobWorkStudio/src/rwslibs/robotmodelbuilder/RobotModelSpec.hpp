@@ -133,6 +133,38 @@ inline const char* poseModeToString (PoseMode mode)
     return mode == PoseMode::Transform4x4 ? "Transform4x4" : "RPYPos";
 }
 
+// -----------------------------------------------------------------------------
+//  GeometryKind 字符串 ↔ enum 转换(Qt-free);"STL" 等同 Mesh。
+// -----------------------------------------------------------------------------
+inline GeometryKind geometryKindFromString (const std::string& value)
+{
+    const std::string v = detail::trimmed (value);
+    if (detail::iequals (v, "Cylinder"))
+        return GeometryKind::Cylinder;
+    if (detail::iequals (v, "Sphere"))
+        return GeometryKind::Sphere;
+    if (detail::iequals (v, "Cone"))
+        return GeometryKind::Cone;
+    if (detail::iequals (v, "Plane"))
+        return GeometryKind::Plane;
+    if (detail::iequals (v, "Mesh") || detail::iequals (v, "STL"))
+        return GeometryKind::Mesh;
+    return GeometryKind::Box;
+}
+
+inline const char* geometryKindToString (GeometryKind kind)
+{
+    switch (kind) {
+        case GeometryKind::Cylinder: return "Cylinder";
+        case GeometryKind::Sphere:   return "Sphere";
+        case GeometryKind::Cone:     return "Cone";
+        case GeometryKind::Plane:    return "Plane";
+        case GeometryKind::Mesh:     return "Mesh";
+        case GeometryKind::Box:
+        default:                      return "Box";
+    }
+}
+
 struct KinematicRow
 {
     std::string name;
@@ -178,6 +210,45 @@ struct FrameSpec
                                            0, 1, 0, 0,
                                            0, 0, 1, 0,
                                            0, 0, 0, 1}};             // PoseMode::Transform4x4 用
+};
+
+// -----------------------------------------------------------------------------
+//  GeometryKind / SceneGeometrySpec
+//  说明: Milestone 3.5 起场景几何独立于 Frame;一个 SceneGeometrySpec 挂到
+//        一个已有的场景 frame(由 refFrame 指向),描述可视 / 碰撞几何。
+//        * kind     : Box / Cylinder / Sphere / Cone / Plane / Mesh;
+//        * size     : Box 的 (x,y,z) 或 Plane 的 (x,y);Box 用满 3 个,Plane 仅看前 2 个;
+//        * radius   : Cylinder / Sphere / Cone 半径;
+//        * length   : Cylinder / Cone 高度(z);
+//        * file     : Mesh 文件路径(可空,留待 User 填);Mesh 类型强制要求非空;
+//        * rpy/pos  : 在 refFrame 下的位姿;
+//        * rgb      : 颜色,每通道 0~1,validate 卡范围;
+//        * collisionModel : true → 写 colmodel="Enabled",参与碰撞;
+//        SceneGeometrySpec 字段按形状适配;统一几何序列化在 Writer 实现。
+// -----------------------------------------------------------------------------
+enum class GeometryKind
+{
+    Box,
+    Cylinder,
+    Sphere,
+    Cone,
+    Plane,
+    Mesh
+};
+
+struct SceneGeometrySpec
+{
+    std::string name;
+    std::string refFrame;
+    GeometryKind kind = GeometryKind::Box;
+    std::array< double, 3 > size = {{0.1, 0.1, 0.1}};                // Box xyz / Plane xy
+    double radius = 0.05;                                            // Cylinder/Sphere/Cone
+    double length = 0.1;                                            // Cylinder/Cone
+    std::string file;                                               // Mesh
+    std::array< double, 3 > rpyDeg = {{0, 0, 0}};
+    std::array< double, 3 > pos = {{0, 0, 0}};
+    std::array< double, 3 > rgb = {{0.6, 0.6, 0.6}};
+    bool collisionModel = true;
 };
 
 struct DrawableSpec
@@ -246,6 +317,7 @@ struct RobotModelSpec
     bool generateScene;
     FrameSpec robotBaseFrame;                                        // Milestone 3:场景 RobotBase
     std::vector< FrameSpec > sceneFrames;                            // Milestone 3:场景 frame 列表
+    std::vector< SceneGeometrySpec > sceneGeometries;               // Milestone 3.5:场景几何体
     std::vector< JointTransformSpec > transformJoints;
     std::vector< DHJointSpec > dhJoints;
     std::vector< DrawableSpec > drawables;

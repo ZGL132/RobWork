@@ -1135,6 +1135,21 @@ int main (int argc, char** argv)
             return fail ("Missing refframe validation error should mention the bad reference.");
     }
 
+    // ---- Milestone 3.5:默认场景几何体 ----
+    {
+        RobotModelSpec sceneGeo =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        const QString scene = RobotModelXmlWriter::makeSceneXml (sceneGeo);
+        if (!contains (scene, "<Drawable name=\"TableTop\" refframe=\"Table\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain a visible/collision TableTop drawable.");
+        if (!contains (scene, "<Box x=\"1.2\" y=\"0.8\" z=\"0.05\" />"))
+            return fail ("TableTop should be emitted as a Box.");
+        if (!contains (scene, "<Drawable name=\"WorkpieceBox\" refframe=\"Workpiece\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain WorkpieceBox geometry.");
+        if (!contains (scene, "<Drawable name=\"MovableBoxGeom\" refframe=\"MovableBox\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain MovableBox geometry.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
