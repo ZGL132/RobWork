@@ -1,5 +1,7 @@
 {
-            "name" : "RobotModelBuilder",
-         "version" : "1.0.0",
+    "name" : "RobotModelBuilder",
+    "version" : "1.0.0",
+    "description" : "RobWorkStudio 插件:可视化构建 6 轴机器人模型,导出 SerialDevice/WorkCell/DynamicWorkCell 三类 XML。",
+    "author" : "RobWork 二次开发",
     "dependencies" : []
 }

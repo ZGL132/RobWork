@@ -1,7 +1,21 @@
+// =============================================================================
+//  文件: RobotModelBuilderWidget.cpp
+//  说明: RobotModelBuilder 插件 UI 的实现。整体布局:
+//        顶部表单:机器人名、保存目录、模式(DH / Joint+RPY+Pos)、选项开关;
+//        中部 QTabWidget 包含 5 个标签页:
+//           Kinematics  - DH 或 Joint+RPY+Pos 关节表
+//           Drawables   - 可视化几何表
+//           Limits      - 关节限位表
+//           Poses       - 预设位姿表(可增删)
+//           Dynamics    - 动力学参数(链接质量/惯量/材料 + 力限)
+//           XML Preview - 三段 XML 实时预览
+//        底部按钮:Generate Preview / Save XML / Save and Load / Reset
+// =============================================================================
 #include "RobotModelBuilderWidget.hpp"
 
 #include "RobotModelXmlWriter.hpp"
 
+// Qt 控件/工具头文件
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
@@ -21,8 +35,14 @@
 using namespace rws;
 
 namespace {
+// -----------------------------------------------------------------------------
+//  匿名命名空间:本文件内部的常量与工具函数,不对外暴露
+// -----------------------------------------------------------------------------
+
+/// 6 轴机器人关节数,整份 UI 都按这个数量构建默认表
 const int JointCount = 6;
 
+/// 创建一个带表头、隔行着色、列宽自适应的 QTableWidget
 QTableWidget* makeTable (const QStringList& headers, int rows)
 {
     QTableWidget* table = new QTableWidget (rows, headers.size ());
@@ -33,6 +53,7 @@ QTableWidget* makeTable (const QStringList& headers, int rows)
     return table;
 }
 
+/// 判断一段文本能否解析为 double
 bool parseDouble (const QString& text)
 {
     bool ok = false;
@@ -40,6 +61,7 @@ bool parseDouble (const QString& text)
     return ok;
 }
 
+/// 判断一段以空白分隔的文本能否解析为 expected 个 double
 bool parseVector (const QString& text, int expected)
 {
     const QStringList parts = text.split (QRegularExpression ("\\s+"), Qt::SkipEmptyParts);
@@ -53,19 +75,33 @@ bool parseVector (const QString& text, int expected)
 }
 }    // namespace
 
+// =============================================================================
+//  构造函数
+//  说明: 创建 UI + 填入默认值
+// =============================================================================
 RobotModelBuilderWidget::RobotModelBuilderWidget (QWidget* parent) : QWidget (parent)
 {
     buildUi ();
     resetDefaults ();
 }
 
+// =============================================================================
+//  buildUi()
+//  说明: 用代码方式(无 .ui 文件)构建整个 UI 树,顺序为:
+//        1) 顶部 QFormLayout(机器人名/保存目录/模式/选项)
+//        2) 中部 QTabWidget(Kinematics/Drawables/Limits/Poses/Dynamics/Preview)
+//        3) 底部一排按钮 + 状态栏
+//        同时把所有需要交互的信号连接到对应的槽。
+// =============================================================================
 void RobotModelBuilderWidget::buildUi ()
 {
     QVBoxLayout* root = new QVBoxLayout (this);
 
+    // ---- 顶部表单 ----
     QFormLayout* form = new QFormLayout ();
     _robotName        = new QLineEdit ();
 
+    // 保存目录行:文本框 + Browse 按钮
     QWidget* saveWidget      = new QWidget ();
     QHBoxLayout* saveLayout  = new QHBoxLayout (saveWidget);
     _saveDirectory           = new QLineEdit ();
@@ -74,10 +110,12 @@ void RobotModelBuilderWidget::buildUi ()
     saveLayout->addWidget (_saveDirectory);
     saveLayout->addWidget (browse);
 
+    // 模式选择下拉框
     _mode = new QComboBox ();
     _mode->addItem ("Joint + RPY + Pos");
     _mode->addItem ("DH Parameters");
 
+    // 4 个选项开关(并排显示)
     QWidget* options        = new QWidget ();
     QHBoxLayout* optionLay  = new QHBoxLayout (options);
     _showFrameAxes          = new QCheckBox ("Show axes");
@@ -99,7 +137,9 @@ void RobotModelBuilderWidget::buildUi ()
 
     QTabWidget* tabs = new QTabWidget ();
 
-    // ---- Kinematics ----
+    // -------------------------------------------------------------------------
+    //  Kinematics 标签页:DH / Joint+RPY+Pos 两个表格(同时存在,通过 mode 切换可见性)
+    // -------------------------------------------------------------------------
     QWidget* kinematicsTab = new QWidget ();
     QVBoxLayout* kinLayout = new QVBoxLayout (kinematicsTab);
     _transformTable        = makeTable (
@@ -119,7 +159,9 @@ void RobotModelBuilderWidget::buildUi ()
     kinLayout->addWidget (_dhTable);
     tabs->addTab (kinematicsTab, "Kinematics");
 
-    // ---- Drawables ----
+    // -------------------------------------------------------------------------
+    //  Drawables 标签页:可视化几何(初始为空,resetDefaults 后会自动填入默认 Drawable)
+    // -------------------------------------------------------------------------
     _drawablesTable = makeTable (
         QStringList () << "Name"
                        << "RefFrame"
@@ -133,7 +175,9 @@ void RobotModelBuilderWidget::buildUi ()
         0);
     tabs->addTab (_drawablesTable, "Drawables");
 
-    // ---- Limits ----
+    // -------------------------------------------------------------------------
+    //  Limits 标签页:关节限位(每关节 1 行,共 6 行)
+    // -------------------------------------------------------------------------
     _limitsTable = makeTable (
         QStringList () << "Joint"
                        << "PosMin deg"
@@ -143,7 +187,9 @@ void RobotModelBuilderWidget::buildUi ()
         JointCount);
     tabs->addTab (_limitsTable, "Limits");
 
-    // ---- Poses ----
+    // -------------------------------------------------------------------------
+    //  Poses 标签页:预设位姿 + Add/Remove 按钮
+    // -------------------------------------------------------------------------
     QWidget* posesTab      = new QWidget ();
     QVBoxLayout* posesLay  = new QVBoxLayout (posesTab);
     _posesTable            = makeTable (
@@ -167,7 +213,9 @@ void RobotModelBuilderWidget::buildUi ()
     posesLay->addWidget (poseButtons);
     tabs->addTab (posesTab, "Poses");
 
-    // ---- Dynamics ----
+    // -------------------------------------------------------------------------
+    //  Dynamics 标签页:基座信息 + link 表 + 力限表
+    // -------------------------------------------------------------------------
     QWidget* dynamicsTab       = new QWidget ();
     QVBoxLayout* dynLayout     = new QVBoxLayout (dynamicsTab);
     QFormLayout* dynBaseForm   = new QFormLayout ();
@@ -200,7 +248,9 @@ void RobotModelBuilderWidget::buildUi ()
     dynLayout->addStretch ();
     tabs->addTab (dynamicsTab, "Dynamics");
 
-    // ---- Preview ----
+    // -------------------------------------------------------------------------
+    //  XML Preview 标签页:三段 XML 实时预览(只读)
+    // -------------------------------------------------------------------------
     QWidget* previewTab      = new QWidget ();
     QVBoxLayout* previewLay  = new QVBoxLayout (previewTab);
     QTabWidget* previewTabs  = new QTabWidget ();
@@ -218,6 +268,9 @@ void RobotModelBuilderWidget::buildUi ()
 
     root->addWidget (tabs, 1);
 
+    // -------------------------------------------------------------------------
+    //  底部按钮 + 状态栏
+    // -------------------------------------------------------------------------
     QWidget* buttons        = new QWidget ();
     QHBoxLayout* buttonLay  = new QHBoxLayout (buttons);
     QPushButton* previewBtn = new QPushButton ("Generate Preview");
@@ -236,6 +289,9 @@ void RobotModelBuilderWidget::buildUi ()
     _status->setReadOnly (true);
     root->addWidget (_status);
 
+    // -------------------------------------------------------------------------
+    //  信号 -> 槽连接
+    // -------------------------------------------------------------------------
     connect (browse, SIGNAL (clicked ()), this, SLOT (browseSaveDirectory ()));
     connect (_mode, SIGNAL (currentIndexChanged (int)), this, SLOT (modeChanged (int)));
     connect (previewBtn, SIGNAL (clicked ()), this, SLOT (generatePreview ()));
@@ -246,12 +302,25 @@ void RobotModelBuilderWidget::buildUi ()
     connect (delPoseBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedPose ()));
 }
 
+// =============================================================================
+//  resetDefaults()
+//  说明: 用 XmlWriter 的 makeDefaultSixAxisModel 生成默认数据并回填 UI,
+//        同时立即生成一次预览,让用户看到出厂默认的 XML 长什么样。
+// =============================================================================
 void RobotModelBuilderWidget::resetDefaults ()
 {
     fillFromSpec (RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::homePath ()));
     generatePreview ();
 }
 
+// =============================================================================
+//  generatePreview()
+//  说明: "Generate Preview" 按钮的回调:
+//        1) 先做轻量的文本规则校验(各表格数字格式、向量维度);
+//        2) 收集 spec,调用 applyLinkGeometry 自动重算 Link{i}To{i+1} 圆柱;
+//        3) 调用 XmlWriter 校验 + 生成三段 XML 文本,刷新到预览框;
+//        4) 在底部状态栏报告成功/失败。
+// =============================================================================
 void RobotModelBuilderWidget::generatePreview ()
 {
     QStringList errors;
@@ -276,6 +345,12 @@ void RobotModelBuilderWidget::generatePreview ()
     setStatus ("Preview generated.");
 }
 
+// =============================================================================
+//  saveXml()
+//  说明: "Save XML" 按钮的回调。流程与 generatePreview 类似,但最后调用
+//        saveFiles 真正落盘;完成后再次刷新一次预览(因为保存后再看预览
+//        是最自然的"确认"动作)。
+// =============================================================================
 void RobotModelBuilderWidget::saveXml ()
 {
     QStringList errors;
@@ -294,6 +369,11 @@ void RobotModelBuilderWidget::saveXml ()
     setStatus ("XML files saved.");
 }
 
+// =============================================================================
+//  saveAndLoad()
+//  说明: "Save and Load" 按钮的回调。在 saveXml 的基础上额外发出
+//        loadSceneRequested 信号,由 RobotModelBuilderPlugin 真正去切换场景。
+// =============================================================================
 void RobotModelBuilderWidget::saveAndLoad ()
 {
     QStringList errors;
@@ -313,6 +393,10 @@ void RobotModelBuilderWidget::saveAndLoad ()
     setStatus ("XML files saved. Loading scene...");
 }
 
+// =============================================================================
+//  browseSaveDirectory()
+//  说明: 弹出原生目录选择对话框,把结果回填到 _saveDirectory。
+// =============================================================================
 void RobotModelBuilderWidget::browseSaveDirectory ()
 {
     const QString dir =
@@ -321,6 +405,10 @@ void RobotModelBuilderWidget::browseSaveDirectory ()
         _saveDirectory->setText (dir);
 }
 
+// =============================================================================
+//  modeChanged()
+//  说明: 模式切换(DH / Joint+RPY+Pos)时,只显示与当前模式匹配的表格。
+// =============================================================================
 void RobotModelBuilderWidget::modeChanged (int index)
 {
     const bool dhMode = index == 1;
@@ -328,6 +416,11 @@ void RobotModelBuilderWidget::modeChanged (int index)
     _transformTable->setVisible (!dhMode);
 }
 
+// =============================================================================
+//  addPose() / removeSelectedPose()
+//  说明: Poses 表的"新增/删除选中行"。新增时初始化 6 个关节角为 0;
+//        删除时至少保留 1 行,避免空表带来的边界问题。
+// =============================================================================
 void RobotModelBuilderWidget::addPose ()
 {
     const int row = _posesTable->rowCount ();
@@ -344,6 +437,11 @@ void RobotModelBuilderWidget::removeSelectedPose ()
         _posesTable->removeRow (row);
 }
 
+// =============================================================================
+//  fillFromSpec()
+//  说明: 用 RobotModelSpec 数据完整回填整个 UI。注意 setCurrentIndex 会
+//        触发 modeChanged,所以在最后再调一次以确保可见性正确。
+// =============================================================================
 void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
 {
     _robotName->setText (QString::fromStdString (spec.robotName));
@@ -363,6 +461,11 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     modeChanged (_mode->currentIndex ());
 }
 
+// =============================================================================
+//  collectSpec()
+//  说明: 与 fillFromSpec 相反,把 UI 上的全部控件值收集为 RobotModelSpec。
+//        这里会按列含义把表格文本解析回 double / vector。
+// =============================================================================
 RobotModelSpec RobotModelBuilderWidget::collectSpec () const
 {
     RobotModelSpec spec;
@@ -376,6 +479,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     spec.dynamics.baseFrame    = _baseFrame->text ().toStdString ();
     spec.dynamics.baseMaterial = _baseMaterial->text ().toStdString ();
 
+    // ---- DH 关节表 ----
     for (int row = 0; row < _dhTable->rowCount (); ++row) {
         DHJointSpec joint;
         joint.name      = itemText (_dhTable, row, 0).toStdString ();
@@ -386,6 +490,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.dhJoints.push_back (joint);
     }
 
+    // ---- Joint+RPY+Pos 表 ----
     for (int row = 0; row < _transformTable->rowCount (); ++row) {
         JointTransformSpec joint;
         joint.name = itemText (_transformTable, row, 0).toStdString ();
@@ -395,6 +500,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.transformJoints.push_back (joint);
     }
 
+    // ---- Drawables 表 ----
     for (int row = 0; row < _drawablesTable->rowCount (); ++row) {
         DrawableSpec drawable;
         drawable.name           = itemText (_drawablesTable, row, 0).toStdString ();
@@ -407,11 +513,13 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         parseVector3 (itemText (_drawablesTable, row, 7), drawable.rgb);
         drawable.collisionModel =
             itemText (_drawablesTable, row, 8).compare ("Enabled", Qt::CaseInsensitive) == 0;
+        // 自动生成的 Link{i}To{i+1} Drawable 在保存前会被 applyLinkGeometry 覆写
         drawable.autoLinkGeometry =
             isAutoLinkDrawable (QString::fromStdString (drawable.name));
         spec.drawables.push_back (drawable);
     }
 
+    // ---- Limits 表 ----
     for (int row = 0; row < _limitsTable->rowCount (); ++row) {
         JointLimitSpec limit;
         limit.jointName = itemText (_limitsTable, row, 0).toStdString ();
@@ -422,6 +530,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.limits.push_back (limit);
     }
 
+    // ---- Poses 表 ----
     for (int row = 0; row < _posesTable->rowCount (); ++row) {
         PoseSpec pose;
         pose.name = itemText (_posesTable, row, 0).toStdString ();
@@ -430,6 +539,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.poses.push_back (pose);
     }
 
+    // ---- Dynamics 链接表 ----
     for (int row = 0; row < _dynamicsLinksTable->rowCount (); ++row) {
         LinkDynamicsSpec link;
         link.linkName      = itemText (_dynamicsLinksTable, row, 0).toStdString ();
@@ -443,6 +553,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.dynamics.links.push_back (link);
     }
 
+    // ---- 力限表 ----
     for (int row = 0; row < _forceLimitsTable->rowCount (); ++row) {
         JointForceLimitSpec fl;
         fl.jointName = itemText (_forceLimitsTable, row, 0).toStdString ();
@@ -453,6 +564,16 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     return spec;
 }
 
+// =============================================================================
+//  validateTableInput()
+//  说明: 在调用 XmlWriter.validate 之前,先做一轮纯 UI 输入格式校验,
+//        用来尽早把"输入框里写了非法字符"等问题拦截下来,避免
+//        错误信息到达底层后变得难以理解。规则:
+//          - DH/Limits/Poses/ForceLimits 从第 1 列起必须是 double
+//          - Transform/Drawables/Dynamics 中标了"x y z"或"x1..x6"的列
+//            必须能拆成对应数量的 double
+//        若对应功能未启用(如未勾选 DWC),相关表会被跳过。
+// =============================================================================
 bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 {
     errors.clear ();
@@ -512,6 +633,16 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
     return errors.isEmpty ();
 }
 
+// =============================================================================
+//  fillKinematicsTables() / fillDrawablesTable() / fillLimitsTable() /
+//  fillPosesTable() / fillDynamicsTab()
+//  说明: 这 5 个函数都是"用 spec 数据回填 UI 子表",逻辑基本一致:
+//          - 先按 spec 调整表格行数;
+//          - 再按列把数据写入对应单元格;
+//        Drawables 表对 "Link{i}To{i+1}" 这种自动生成的圆柱,把除
+//        Radius/RGB/Collision 之外的列锁为只读,避免用户误改后又被
+//        applyLinkGeometry 覆盖。
+// =============================================================================
 void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
 {
     for (int row = 0; row < JointCount; ++row) {
@@ -536,6 +667,8 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
     for (int row = 0; row < _drawablesTable->rowCount (); ++row) {
         const DrawableSpec& drawable = spec.drawables[row];
         const bool autoLink = isAutoLinkDrawable (QString::fromStdString (drawable.name));
+        // 自动生成的连杆圆柱:名称/参考系/形状/姿态/位置/长度 都由
+        // applyLinkGeometry 维护,所以在 UI 上锁为只读
         setItem (_drawablesTable, row, 0, QString::fromStdString (drawable.name), !autoLink);
         setItem (_drawablesTable, row, 1, QString::fromStdString (drawable.refFrame), !autoLink);
         setItem (_drawablesTable, row, 2, QString::fromStdString (drawable.shape), !autoLink);
@@ -573,6 +706,7 @@ void RobotModelBuilderWidget::fillPosesTable (const RobotModelSpec& spec)
 
 void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
 {
+    // 链接表:只填到现有行数与 spec 行数两者中较小者,避免越界
     for (int row = 0; row < _dynamicsLinksTable->rowCount () && row < (int) spec.dynamics.links.size ();
          ++row) {
         const LinkDynamicsSpec& link = spec.dynamics.links[row];
@@ -593,6 +727,10 @@ void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
     }
 }
 
+// =============================================================================
+//  showErrors()
+//  说明: 把错误列表弹窗 + 在状态栏显示第一条
+// =============================================================================
 void RobotModelBuilderWidget::showErrors (const QStringList& errors)
 {
     const QString message = errors.join ("\n");
@@ -600,22 +738,33 @@ void RobotModelBuilderWidget::showErrors (const QStringList& errors)
     QMessageBox::warning (this, "RobotModelBuilder", message);
 }
 
+// =============================================================================
+//  setStatus()
+//  说明: 设置底部状态栏文本
+// =============================================================================
 void RobotModelBuilderWidget::setStatus (const QString& message)
 {
     _status->setText (message);
 }
 
+// =============================================================================
+//  静态小工具
+// =============================================================================
+
+/// 安全读取单元格文本(自动 trim,空指针返回空串)
 QString RobotModelBuilderWidget::itemText (const QTableWidget* table, int row, int column)
 {
     const QTableWidgetItem* item = table->item (row, column);
     return item == NULL ? QString () : item->text ().trimmed ();
 }
 
+/// 读取单元格并转 double(失败返回 0.0)
 double RobotModelBuilderWidget::itemDouble (const QTableWidget* table, int row, int column)
 {
     return itemText (table, row, column).toDouble ();
 }
 
+/// 解析 "x y z" -> std::array<double, 3>;解析失败返回 false
 bool RobotModelBuilderWidget::parseVector3 (const QString& text, std::array< double, 3 >& values)
 {
     const QStringList parts = text.split (QRegularExpression ("\\s+"), Qt::SkipEmptyParts);
@@ -630,6 +779,7 @@ bool RobotModelBuilderWidget::parseVector3 (const QString& text, std::array< dou
     return true;
 }
 
+/// 解析 "x1 x2 ... x6" -> std::array<double, 6>;解析失败返回 false
 bool RobotModelBuilderWidget::parseVector6 (const QString& text, std::array< double, 6 >& values)
 {
     const QStringList parts = text.split (QRegularExpression ("\\s+"), Qt::SkipEmptyParts);
@@ -644,6 +794,7 @@ bool RobotModelBuilderWidget::parseVector6 (const QString& text, std::array< dou
     return true;
 }
 
+/// 设置单元格文本,可选是否可编辑
 void RobotModelBuilderWidget::setItem (QTableWidget* table, int row, int column,
                                        const QString& value, bool editable)
 {
@@ -653,17 +804,20 @@ void RobotModelBuilderWidget::setItem (QTableWidget* table, int row, int column,
     table->setItem (row, column, item);
 }
 
+/// 判断 Drawable 名是否形如 "Link1To2"(自动连杆几何),用于决定是否锁列
 bool RobotModelBuilderWidget::isAutoLinkDrawable (const QString& name)
 {
     return QRegularExpression ("^Link\\d+To\\d+$").match (name).hasMatch ();
 }
 
+/// std::array<double,3> -> "x y z"
 QString RobotModelBuilderWidget::vectorText (const std::array< double, 3 >& values)
 {
     return QString::number (values[0]) + " " + QString::number (values[1]) + " " +
            QString::number (values[2]);
 }
 
+/// std::array<double,6> -> "x1 x2 x3 x4 x5 x6"
 QString RobotModelBuilderWidget::vectorText6 (const std::array< double, 6 >& values)
 {
     QString s;

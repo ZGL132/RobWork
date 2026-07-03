@@ -1,3 +1,14 @@
+// =============================================================================
+//  文件: RobotModelXmlWriter.cpp
+//  说明: RobotModelSpec -> XML 的核心实现。文件大体分成 4 块:
+//        1) 匿名命名空间:文件内部使用的工具(默认数据填充、向量/姿态计算)
+//        2) makeDefaultSixAxisModel : 出厂默认 6 轴机器人数据
+//        3) validate                 : 输入校验
+//        4) 3 个 make*Xml            : 生成 SerialDevice/Scene/DWC 三段 XML
+//        5) saveFiles                : 把上面 3 段写盘
+//        6) computeLinkPose / applyLinkGeometry:
+//           根据关节几何自动重算 Link{i}To{i+1} 圆柱的中心、姿态、长度
+// =============================================================================
 #include "RobotModelXmlWriter.hpp"
 
 #include <QDir>
@@ -11,19 +22,29 @@
 using namespace rws;
 
 namespace {
+// -----------------------------------------------------------------------------
+//  匿名命名空间:仅本文件可见的常量与工具
+// -----------------------------------------------------------------------------
+
+/// 6 轴机器人关节数
 const int JointCount = 6;
+
+/// 圆周率
 const double Pi      = 3.14159265358979323846;
 
+/// 字符串是否为空白(把 std::string 转 QString 后判 trim().isEmpty())
 bool isEmpty (const std::string& value)
 {
     return QString::fromStdString (value).trimmed ().isEmpty ();
 }
 
+/// 把 spec.robotName 经过文件名安全清洗后返回,作为 XML 节点/文件的"机器人名"
 QString exportedRobotName (const RobotModelSpec& spec)
 {
     return RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (spec.robotName));
 }
 
+/// 给 spec 增加默认的 6 个 Joint{i}Housing 圆柱(关节外壳),用于三维可视化
 void appendJointHousings (RobotModelSpec& spec)
 {
     for (int i = 0; i < JointCount; ++i) {
@@ -31,6 +52,7 @@ void appendJointHousings (RobotModelSpec& spec)
         drawable.name           = "Joint" + std::to_string (i + 1) + "Housing";
         drawable.refFrame       = "Joint" + std::to_string (i + 1);
         drawable.shape          = "Cylinder";
+        // 半径/长度随关节号递减,让模型有一个简单的视觉层次
         drawable.radius         = 0.095 - 0.006 * i;
         drawable.length         = 0.10 - 0.006 * i;
         drawable.rpyDeg         = {{0, 0, 0}};
@@ -41,7 +63,7 @@ void appendJointHousings (RobotModelSpec& spec)
     }
 }
 
-// 默认圆柱连杆长度/半径，作为 computeLinkPose 计算结果的兜底
+/// 默认圆柱连杆(Link{i}To{i+1})的半径兜底值,长度随后由 computeLinkPose 重算
 void appendLinks (RobotModelSpec& spec)
 {
     const double radii[5] = {0.055, 0.05, 0.045, 0.04, 0.035};
@@ -61,9 +83,10 @@ void appendLinks (RobotModelSpec& spec)
     }
 }
 
+/// 给 spec 增加默认动力学参数(6 个 link + 6 个力限 + 基座信息)
 void appendDefaultDynamics (RobotModelSpec& spec)
 {
-    // 默认 6 个 link，关联到 Joint1..Joint6
+    // 默认 6 个 link,关联到 Joint1..Joint6
     const std::string materials[JointCount] = {
         "Steel", "Aluminum", "Aluminum", "Aluminum", "Aluminum", "Aluminum"};
     const double masses[JointCount] = {5.0, 4.0, 3.0, 2.5, 2.0, 1.0};
@@ -88,8 +111,13 @@ void appendDefaultDynamics (RobotModelSpec& spec)
     spec.dynamics.baseMaterial = "Steel";
 }
 
-// Standard DH / RobWork schilling: p = (a*cos(theta), a*sin(theta), d)
-// Here theta is the zero-pose joint angle, i.e. the DH offset for revolute joints.
+// -----------------------------------------------------------------------------
+//  dhLinkVector
+//  说明: 标准 DH (RobWork schilling 约定)下,父系到本系沿"X + Z"方向的位移:
+//          p = (a * cos(theta), a * sin(theta), d)
+//        其中 theta 是零位关节角,即 DH 约定里的 offset。
+//        这个向量就是 Link{i}To{i+1} 圆柱要跨越的方向与距离。
+// -----------------------------------------------------------------------------
 void dhLinkVector (double a, double d, double offsetDeg, std::array< double, 3 >& v)
 {
     const double theta = offsetDeg * Pi / 180.0;
@@ -98,7 +126,15 @@ void dhLinkVector (double a, double d, double offsetDeg, std::array< double, 3 >
     v[2]               = d;
 }
 
-// 根据相邻关节的几何位置算出连杆圆柱的中心、RPY 和长度
+// -----------------------------------------------------------------------------
+//  computeLinkPose
+//  说明: 根据相邻关节的几何,算出代表它们的连杆圆柱的中心、RPY、长度:
+//        1) 先求出 v = Joint_{i+1} -> Joint_{i+2} 的位移向量;
+//        2) 长度 L = |v|,圆柱放在 v 的中点;
+//        3) 默认圆柱轴向 +Z,绕轴 k = (0,0,1) x v_hat 旋转 a 角,使 +Z 对齐 v;
+//        4) 万一向量与 +Z 平行,则绕 X 轴 180° 翻转;
+//        5) 把旋转矩阵拆成 Z-Y-X 欧拉角,作为 Drawable 的 RPY。
+// -----------------------------------------------------------------------------
 void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
                       std::array< double, 3 >& posOut,
                       std::array< double, 3 >& rpyDegOut,
@@ -110,14 +146,14 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
 
     std::array< double, 3 > v = {{0, 0, 0}};
     if (spec.mode == RobotModelMode::JointRPYPos) {
-        // link i 是 Joint_{i+1} 到 Joint_{i+2} 的连杆，向量在 Joint_{i+1} 的坐标系下
+        // link i 是 Joint_{i+1} 到 Joint_{i+2} 的连杆,向量在 Joint_{i+1} 的坐标系下
         const int jointIdx = linkIndex + 1;
         if (jointIdx >= static_cast< int >(spec.transformJoints.size ()))
             return;
         v = spec.transformJoints[jointIdx].pos;
     }
     else {
-        // DH 模式：用 RobWork schilling 对应的标准 DH 平移计算
+        // DH 模式:用 RobWork schilling 对应的标准 DH 平移计算
         const int jointIdx = linkIndex + 1;
         if (jointIdx >= static_cast< int >(spec.dhJoints.size ()))
             return;
@@ -128,20 +164,20 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
     const double L = std::sqrt (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     lengthOut = L;
     if (L < 1e-9)
-        return;
+        return;    // 退化为零向量时,保持零长度零姿态即可
 
     posOut[0] = v[0] / 2.0;
     posOut[1] = v[1] / 2.0;
     posOut[2] = v[2] / 2.0;
 
-    // 默认圆柱轴向：局部 +Z
-    // 目标方向：d = v / L
+    // 默认圆柱轴向:局部 +Z
+    // 目标方向:d = v / L
     const double dx = v[0] / L;
     const double dy = v[1] / L;
     const double dz = v[2] / L;
 
-    // 轴角表示：绕轴 k 旋转 a，使得 R*(0,0,1) = d
-    // k = (0,0,1) × d = (-dy, dx, 0)；a = acos(dz)
+    // 轴角表示:绕轴 k 旋转 a,使得 R*(0,0,1) = d
+    // k = (0,0,1) x d = (-dy, dx, 0);a = acos(dz)
     const double kx = -dy;
     const double ky = dx;
     const double kz = 0.0;
@@ -182,7 +218,7 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
         r22 = c + nz * nz * C;
     }
 
-    // ZYX 欧拉角提取：R = RotZ(yaw) * RotY(pitch) * RotX(roll)
+    // ZYX 欧拉角提取:R = RotZ(yaw) * RotY(pitch) * RotX(roll)
     double roll = 0, pitch = 0, yaw = 0;
     pitch = std::asin (std::max (-1.0, std::min (1.0, -r20)));
     if (std::abs (r20) < 0.9999) {
@@ -199,6 +235,7 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
     rpyDegOut[2] = yaw * 180.0 / Pi;
 }
 
+/// 把 spec 里所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 用上面的算法重算一次
 void applyLinkGeometry (RobotModelSpec& spec)
 {
     for (DrawableSpec& drawable : spec.drawables) {
@@ -225,6 +262,14 @@ void applyLinkGeometry (RobotModelSpec& spec)
 }
 }    // namespace
 
+// =============================================================================
+//  makeDefaultSixAxisModel
+//  说明: 出厂默认的"通用 6 轴机器人"数据:
+//        - 6 个 JointRPYPos + DH 关节(给出常用尺寸)
+//        - 6 个关节外壳 + 5 个连杆圆柱
+//        - 默认限位 / Zero + Ready 两个预设位姿
+//        - 默认动力学参数(6 个 link + 6 个力限)
+// =============================================================================
 RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& saveDirectory)
 {
     RobotModelSpec spec;
@@ -235,6 +280,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     spec.generateDrawables = true;
     spec.generateScene     = true;
 
+    // 一组能跑出像样姿态的默认关节尺寸
     const double alphaDeg[JointCount] = {0, 90, 0, 90, -90, 90};
     const double offsetDeg[JointCount] = {0, 0, 0, 0, 0, 0};
     const double pos[JointCount][3] = {{0, 0, 0.35}, {0.12, 0, 0}, {0.52, 0, 0},
@@ -251,6 +297,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
         JointTransformSpec joint;
         joint.name   = dh.name;
         joint.type   = "Revolute";
+        // 把 DH 的 alpha/offset 翻译成 RobWork 的 RPY(Z-Y-X 顺序)
         joint.rpyDeg = {{dh.offsetDeg, 0, dh.alphaDeg}};
         joint.pos    = {{pos[i][0], pos[i][1], pos[i][2]}};
         spec.transformJoints.push_back (joint);
@@ -258,8 +305,9 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
 
     appendJointHousings (spec);
     appendLinks (spec);
-    applyLinkGeometry (spec);
+    applyLinkGeometry (spec);    // 让连杆圆柱的位姿与上面关节参数保持一致
 
+    // 默认关节限位
     const double posMin[JointCount] = {-180, -120, -150, -180, -120, -360};
     const double posMax[JointCount] = {180, 120, 150, 180, 120, 360};
     const double vel[JointCount]    = {120, 120, 120, 180, 180, 240};
@@ -274,6 +322,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
         spec.limits.push_back (limit);
     }
 
+    // 默认位姿
     PoseSpec zero;
     zero.name = "Zero";
     zero.qDeg = {{0, 0, 0, 0, 0, 0}};
@@ -289,6 +338,10 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     return spec;
 }
 
+// =============================================================================
+//  sanitizeFileBaseName
+//  说明: 把任意字符串清洗为合法文件名(字母/数字/_/-),其他字符替换为 _。
+// =============================================================================
 QString RobotModelXmlWriter::sanitizeFileBaseName (const QString& name)
 {
     QString result = name.trimmed ();
@@ -296,6 +349,12 @@ QString RobotModelXmlWriter::sanitizeFileBaseName (const QString& name)
     return result;
 }
 
+// =============================================================================
+//  validate
+//  说明: 校验 spec 的合法性,把每条错误追加到 errors。
+//        校验范围:机器人名/保存目录存在/关节数=6/无空名/无重复名/
+//        Drawable 几何合法/RGB ∈ [0,1]/关节限位合法/DWC 数据合法。
+// =============================================================================
 bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& errors)
 {
     errors.clear ();
@@ -309,6 +368,7 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     if (!QDir (QString::fromStdString (spec.saveDirectory)).exists ())
         errors << "Save directory does not exist.";
 
+    // 按当前模式收集"生效关节"
     std::vector< std::string > activeJoints;
     if (spec.mode == RobotModelMode::DH) {
         for (const DHJointSpec& joint : spec.dhJoints)
@@ -322,6 +382,7 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     if (activeJoints.size () != JointCount)
         errors << "Exactly six joints are required.";
 
+    // 关节名不能为空且不能重复
     std::set< std::string > jointNames;
     for (const std::string& name : activeJoints) {
         if (isEmpty (name))
@@ -330,6 +391,7 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
             errors << QString ("Duplicate joint name: %1").arg (QString::fromStdString (name));
     }
 
+    // 全部 Frame 名(关节 + Base + TCP),用于校验 Drawable/Dynamics 引用
     std::set< std::string > frameNames = jointNames;
     frameNames.insert ("Base");
     frameNames.insert ("TCP");
@@ -359,6 +421,7 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         }
     }
 
+    // 关节限位:min<max、速度/加速度>0、关节名必须存在
     for (const JointLimitSpec& limit : spec.limits) {
         if (isEmpty (limit.jointName))
             errors << "Limit rows require a joint name.";
@@ -434,6 +497,11 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     return errors.isEmpty ();
 }
 
+// =============================================================================
+//  makeSerialDeviceXml
+//  说明: 把 spec 序列化为 RobWork <SerialDevice>...</SerialDevice> 文本。
+//        包含 Base/TCP 帧、关节(DH 或 RPY+Pos)、可选 Drawable、限位、位姿。
+// =============================================================================
 QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 {
     QString xml;
@@ -474,6 +542,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
 
+    // TCP 帧:挂到最后一个关节上(若是 DH 则取最后一个 DHJoint,否则取最后一个 Joint)
     QString tcpRef = "Base";
     if (spec.mode == RobotModelMode::DH && !spec.dhJoints.empty ())
         tcpRef = QString::fromStdString (spec.dhJoints.back ().name);
@@ -502,6 +571,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
 
+    // 关节限位(三种类型分开输出,RobWork 要求独立节点)
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
             << "\" min=\"" << number (limit.posMinDeg) << "\" max=\"" << number (limit.posMaxDeg)
@@ -516,6 +586,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
             << "\" max=\"" << number (limit.accMaxDeg) << "\" />\n";
     }
 
+    // 预设位姿(度 -> 弧度)
     for (const PoseSpec& pose : spec.poses) {
         out << "  <Q name=\"" << QString::fromStdString (pose.name) << "\">";
         for (int i = 0; i < JointCount; ++i) {
@@ -530,6 +601,12 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     return xml;
 }
 
+// =============================================================================
+//  makeSceneXml
+//  说明: 生成场景容器 WorkCell:
+//        - RobotBase 帧(挂到 WORLD 下,坐标原点);
+//        - <Include> 引用真正的机器人 .wc.xml(SerialDevice)。
+// =============================================================================
 QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 {
     const QString robotName = exportedRobotName (spec);
@@ -547,6 +624,14 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     return xml;
 }
 
+// =============================================================================
+//  makeDynamicWorkCellXml
+//  说明: 生成 RobWorkSim 用的 DynamicWorkCell XML:
+//        - <DynamicWorkCell workcell="..."> 根节点
+//        - <RigidDevice> 内含所有 <ForceLimit> + <KinematicBase> + <Link>...
+//        - <Link> 中,estimateInertia=true 用 <EstimateInertia />,否则输出 9 个
+//          数字的 3x3 惯量矩阵(行优先展开)
+// =============================================================================
 QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
 {
     const QString robotName = exportedRobotName (spec);
@@ -574,8 +659,8 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
             out << "      <EstimateInertia />\n";
         }
         else {
-            // RobWorkSim 只接受 3 或 9 个数；这里把 6 元惯量数据
-            // (Ixx, Iyy, Izz, Ixy, Ixz, Iyz) 展开成行优先 3x3 矩阵：
+            // RobWorkSim 只接受 3 或 9 个数;这里把 6 元惯量数据
+            // (Ixx, Iyy, Izz, Ixy, Ixz, Iyz) 展开成行优先 3x3 矩阵:
             //   | Ixx Ixy Ixz |
             //   | Ixy Iyy Iyz |
             //   | Ixz Iyz Izz |
@@ -599,6 +684,9 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
     return xml;
 }
 
+// =============================================================================
+//  三个文件路径辅助函数:saveDirectory / robotName + 后缀
+// =============================================================================
 QString RobotModelXmlWriter::serialDeviceFilePath (const RobotModelSpec& spec)
 {
     QDir dir (QString::fromStdString (spec.saveDirectory));
@@ -617,6 +705,11 @@ QString RobotModelXmlWriter::dynamicWorkCellFilePath (const RobotModelSpec& spec
     return dir.filePath (exportedRobotName (spec) + ".dwc.xml");
 }
 
+// =============================================================================
+//  saveFiles
+//  说明: 先 validate,再按 spec.generateScene / spec.dynamics.generateDynamicWorkCell
+//        决定写哪些文件;任何一步失败都会把错误追加到 errors 并返回 false。
+// =============================================================================
 bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& errors)
 {
     if (!validate (spec, errors))
@@ -656,21 +749,31 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
     return true;
 }
 
+// =============================================================================
+//  静态辅助:number / vector3 / degToRad
+// =============================================================================
+
+/// 浮点数统一格式:有效数字 15 位,精度与简短兼顾
 QString RobotModelXmlWriter::number (double value)
 {
     return QString::number (value, 'g', 15);
 }
 
+/// std::array<double,3> -> "x y z"(使用统一的 number 格式)
 QString RobotModelXmlWriter::vector3 (const std::array< double, 3 >& values)
 {
     return number (values[0]) + " " + number (values[1]) + " " + number (values[2]);
 }
 
+/// 度 -> 弧度
 double RobotModelXmlWriter::degToRad (double value)
 {
     return value * Pi / 180.0;
 }
 
+// =============================================================================
+//  对外暴露的 thin wrapper(实现委托给匿名命名空间中的函数)
+// =============================================================================
 void RobotModelXmlWriter::computeLinkPose (const RobotModelSpec& spec, int linkIndex,
                                            std::array< double, 3 >& posOut,
                                            std::array< double, 3 >& rpyDegOut,
