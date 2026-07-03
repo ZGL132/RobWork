@@ -1347,9 +1347,16 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
                 errors << QString ("Invalid scene frame RPY vector at row %1.").arg (row + 1);
             if (!parseVector (itemText (_sceneFramesTable, row, 6), 3))
                 errors << QString ("Invalid scene frame Pos vector at row %1.").arg (row + 1);
-            if (!parseVector (itemText (_sceneFramesTable, row, 7), 16))
-                errors << QString ("Invalid scene frame Transform vector at row %1.")
-                              .arg (row + 1);
+            // Milestone 3.5 follow-up:Transform 4x4 仅在 PoseMode=Transform4x4
+            // (或别名 Transform)时才校验 16 个数;RPYPos 模式下允许占位值,
+            // 避免用户在用 RPY/Pos 时被强制输入 16 个数。
+            const QString poseMode = itemText (_sceneFramesTable, row, 4);
+            if (poseMode.compare ("Transform4x4", Qt::CaseInsensitive) == 0 ||
+                poseMode.compare ("Transform", Qt::CaseInsensitive) == 0) {
+                if (!parseVector (itemText (_sceneFramesTable, row, 7), 16))
+                    errors << QString ("Invalid scene frame Transform vector at row %1.")
+                                  .arg (row + 1);
+            }
         }
     }
 
