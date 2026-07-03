@@ -604,6 +604,54 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         }
     }
 
+    // ---- Milestone 3.5:场景几何体校验(refframe + 尺寸 + RGB)----
+    std::set< std::string > sceneFrameRefs;
+    sceneFrameRefs.insert ("WORLD");
+    sceneFrameRefs.insert ("RobotBase");
+    for (const FrameSpec& frame : spec.sceneFrames)
+        sceneFrameRefs.insert (frame.name);
+
+    std::set< std::string > sceneGeometryNames;
+    for (const SceneGeometrySpec& geometry : spec.sceneGeometries) {
+        if (isEmpty (geometry.name))
+            errors << "Scene geometry names must not be empty.";
+        else if (!sceneGeometryNames.insert (geometry.name).second)
+            errors << QString ("Duplicate scene geometry name: %1.")
+                          .arg (QString::fromStdString (geometry.name));
+        if (isEmpty (geometry.refFrame))
+            errors << QString ("Scene geometry %1 requires a refframe.")
+                          .arg (QString::fromStdString (geometry.name));
+        else if (sceneFrameRefs.find (geometry.refFrame) == sceneFrameRefs.end ())
+            errors << QString ("Scene geometry %1 references unknown frame %2.")
+                          .arg (QString::fromStdString (geometry.name),
+                                QString::fromStdString (geometry.refFrame));
+        for (double color : geometry.rgb) {
+            if (color < 0 || color > 1)
+                errors << QString ("Scene geometry %1 RGB values must be between 0 and 1.")
+                              .arg (QString::fromStdString (geometry.name));
+        }
+        if (geometry.kind == GeometryKind::Box &&
+            (!(geometry.size[0] > 0) || !(geometry.size[1] > 0) || !(geometry.size[2] > 0)))
+            errors << QString ("Scene geometry %1 Box size must be greater than zero.")
+                          .arg (QString::fromStdString (geometry.name));
+        if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Sphere ||
+             geometry.kind == GeometryKind::Cone) &&
+            !(geometry.radius > 0))
+            errors << QString ("Scene geometry %1 radius must be greater than zero.")
+                          .arg (QString::fromStdString (geometry.name));
+        if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Cone) &&
+            !(geometry.length > 0))
+            errors << QString ("Scene geometry %1 length must be greater than zero.")
+                          .arg (QString::fromStdString (geometry.name));
+        if (geometry.kind == GeometryKind::Plane &&
+            (!(geometry.size[0] > 0) || !(geometry.size[1] > 0)))
+            errors << QString ("Scene geometry %1 Plane size must be greater than zero.")
+                          .arg (QString::fromStdString (geometry.name));
+        if (geometry.kind == GeometryKind::Mesh && isEmpty (geometry.file))
+            errors << QString ("Scene geometry %1 Mesh requires a file path.")
+                          .arg (QString::fromStdString (geometry.name));
+    }
+
     if (spec.generateDrawables) {
         for (const DrawableSpec& drawable : spec.drawables) {
             if (isEmpty (drawable.name))

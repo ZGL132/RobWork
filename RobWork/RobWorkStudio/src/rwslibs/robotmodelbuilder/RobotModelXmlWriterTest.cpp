@@ -1150,6 +1150,25 @@ int main (int argc, char** argv)
             return fail ("Scene XML should contain MovableBox geometry.");
     }
 
+    // ---- Milestone 3.5:场景几何校验(refframe / size)----
+    {
+        RobotModelSpec badGeoRef =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badGeoRef.sceneGeometries[0].refFrame = "MissingSceneFrame";
+        QStringList geoErrors;
+        if (RobotModelXmlWriter::validate (badGeoRef, geoErrors))
+            return fail ("Scene geometry with missing refframe should fail validation.");
+        if (!geoErrors.join (" ").contains ("MissingSceneFrame"))
+            return fail ("Scene geometry refframe error should mention MissingSceneFrame.");
+
+        RobotModelSpec badGeoSize =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badGeoSize.sceneGeometries[0].size = {{0, 0.8, 0.05}};
+        QStringList sizeErrors;
+        if (RobotModelXmlWriter::validate (badGeoSize, sizeErrors))
+            return fail ("Scene geometry with zero Box size should fail validation.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
