@@ -134,37 +134,10 @@ inline const char* poseModeToString (PoseMode mode)
 }
 
 // -----------------------------------------------------------------------------
-//  GeometryKind 字符串 ↔ enum 转换(Qt-free);"STL" 等同 Mesh。
+//  GeometryKind 字符串 ↔ enum 转换(Qt-free);
+//  helpers 放在 enum 之后,避免前向引用。
 // -----------------------------------------------------------------------------
-inline GeometryKind geometryKindFromString (const std::string& value)
-{
-    const std::string v = detail::trimmed (value);
-    if (detail::iequals (v, "Cylinder"))
-        return GeometryKind::Cylinder;
-    if (detail::iequals (v, "Sphere"))
-        return GeometryKind::Sphere;
-    if (detail::iequals (v, "Cone"))
-        return GeometryKind::Cone;
-    if (detail::iequals (v, "Plane"))
-        return GeometryKind::Plane;
-    if (detail::iequals (v, "Mesh") || detail::iequals (v, "STL"))
-        return GeometryKind::Mesh;
-    return GeometryKind::Box;
-}
-
-inline const char* geometryKindToString (GeometryKind kind)
-{
-    switch (kind) {
-        case GeometryKind::Cylinder: return "Cylinder";
-        case GeometryKind::Sphere:   return "Sphere";
-        case GeometryKind::Cone:     return "Cone";
-        case GeometryKind::Plane:    return "Plane";
-        case GeometryKind::Mesh:     return "Mesh";
-        case GeometryKind::Box:
-        default:                      return "Box";
-    }
-}
-
+// (helpers moved below, after enum class GeometryKind declaration)
 struct KinematicRow
 {
     std::string name;
@@ -250,6 +223,39 @@ struct SceneGeometrySpec
     std::array< double, 3 > rgb = {{0.6, 0.6, 0.6}};
     bool collisionModel = true;
 };
+
+// -----------------------------------------------------------------------------
+//  GeometryKind 字符串 ↔ enum 转换(Qt-free);
+//  必须放在 enum 声明之后,避免前向引用。"STL" 也识别为 Mesh。
+// -----------------------------------------------------------------------------
+inline GeometryKind geometryKindFromString (const std::string& value)
+{
+    const std::string v = detail::trimmed (value);
+    if (detail::iequals (v, "Cylinder"))
+        return GeometryKind::Cylinder;
+    if (detail::iequals (v, "Sphere"))
+        return GeometryKind::Sphere;
+    if (detail::iequals (v, "Cone"))
+        return GeometryKind::Cone;
+    if (detail::iequals (v, "Plane"))
+        return GeometryKind::Plane;
+    if (detail::iequals (v, "Mesh") || detail::iequals (v, "STL"))
+        return GeometryKind::Mesh;
+    return GeometryKind::Box;
+}
+
+inline const char* geometryKindToString (GeometryKind kind)
+{
+    switch (kind) {
+        case GeometryKind::Cylinder: return "Cylinder";
+        case GeometryKind::Sphere:   return "Sphere";
+        case GeometryKind::Cone:     return "Cone";
+        case GeometryKind::Plane:    return "Plane";
+        case GeometryKind::Mesh:     return "Mesh";
+        case GeometryKind::Box:
+        default:                      return "Box";
+    }
+}
 
 struct DrawableSpec
 {

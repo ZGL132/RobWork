@@ -149,6 +149,10 @@ class RobotModelXmlWriter
     static QString frameTypeAttribute (SceneFrameType type);
     /// 把一个 FrameSpec 输出为单个 <Frame>...</Frame>
     static void writeFrameXml (QTextStream& out, const FrameSpec& frame, bool showFrameAxes);
+    /// Milestone 3.5:把 SceneGeometrySpec 输出为 <Drawable>(场景几何体);统一形状
+    /// 序列化(Box/Cylinder/Sphere/Cone/Plane/Mesh)由 geometryShapeXml 输出。
+    static QString geometryShapeXml (const SceneGeometrySpec& geometry);
+    static void writeSceneGeometryXml (QTextStream& out, const SceneGeometrySpec& geometry);
     /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
     static double degToRad (double value);
 };

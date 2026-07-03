@@ -451,6 +451,39 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
         spec.sceneFrames.push_back (f);
     }
 
+    // ---- Milestone 3.5:给默认 3 个场景 frame 各挂一个 Box 几何体 ----
+    {
+        SceneGeometrySpec g;
+        g.name          = "TableTop";
+        g.refFrame      = "Table";
+        g.kind          = GeometryKind::Box;
+        g.size          = {{1.2, 0.8, 0.05}};
+        g.pos           = {{0, 0, 0}};
+        g.rgb           = {{0.55, 0.55, 0.55}};
+        g.collisionModel = true;
+        spec.sceneGeometries.push_back (g);
+    }
+    {
+        SceneGeometrySpec g;
+        g.name          = "WorkpieceBox";
+        g.refFrame      = "Workpiece";
+        g.kind          = GeometryKind::Box;
+        g.size          = {{0.12, 0.08, 0.05}};
+        g.rgb           = {{0.2, 0.55, 0.8}};
+        g.collisionModel = true;
+        spec.sceneGeometries.push_back (g);
+    }
+    {
+        SceneGeometrySpec g;
+        g.name          = "MovableBoxGeom";
+        g.refFrame      = "MovableBox";
+        g.kind          = GeometryKind::Box;
+        g.size          = {{0.08, 0.08, 0.08}};
+        g.rgb           = {{0.8, 0.35, 0.2}};
+        g.collisionModel = true;
+        spec.sceneGeometries.push_back (g);
+    }
+
     return spec;
 }
 
@@ -1026,6 +1059,11 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     if (!spec.sceneFrames.empty ())
         out << "\n";
 
+    for (const SceneGeometrySpec& geometry : spec.sceneGeometries)
+        writeSceneGeometryXml (out, geometry);
+    if (!spec.sceneGeometries.empty ())
+        out << "\n";
+
     out << "  <Include file=\"" << robotName << ".wc.xml\" />\n";
     out << "</WorkCell>\n";
     return xml;
@@ -1218,6 +1256,57 @@ void RobotModelXmlWriter::writeFrameXml (QTextStream& out, const FrameSpec& fram
     if (showFrameAxes)
         out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
     out << "  </Frame>\n";
+}
+
+/// Milestone 3.5:把 SceneGeometrySpec 序列化为对应形状的 XML 子节点。
+/// 维度约定:
+///   * Box   : size[0..2] -> x/y/z(全部 > 0)
+///   * Plane : size[0..1] -> x/y(全部 > 0)
+///   * Cylinder / Cone : radius(> 0), length=z(> 0)
+///   * Sphere : radius(> 0)
+///   * Mesh   : file(非空)
+QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry)
+{
+    switch (geometry.kind) {
+        case GeometryKind::Cylinder:
+            return QString ("<Cylinder radius=\"%1\" z=\"%2\" />")
+                .arg (number (geometry.radius), number (geometry.length));
+        case GeometryKind::Sphere:
+            return QString ("<Sphere radius=\"%1\" />").arg (number (geometry.radius));
+        case GeometryKind::Cone:
+            return QString ("<Cone radius=\"%1\" z=\"%2\" />")
+                .arg (number (geometry.radius), number (geometry.length));
+        case GeometryKind::Plane:
+            return QString ("<Plane x=\"%1\" y=\"%2\" />")
+                .arg (number (geometry.size[0]), number (geometry.size[1]));
+        case GeometryKind::Mesh:
+            return QString ("<Mesh file=\"%1\" />")
+                .arg (QString::fromStdString (geometry.file));
+        case GeometryKind::Box:
+        default:
+            return QString ("<Box x=\"%1\" y=\"%2\" z=\"%3\" />")
+                .arg (number (geometry.size[0]), number (geometry.size[1]),
+                      number (geometry.size[2]));
+    }
+}
+
+/// Milestone 3.5:把 SceneGeometrySpec 输出为 <Drawable>:
+///   * 始终输出 <RPY> / <Pos> / <RGB>;
+///   * collisionModel=true → colmodel="Enabled";
+///   * showFrameAxes 暂不适用(Milestone 3.5 不在 Drawable 上加 axes 属性)。
+void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
+                                                 const SceneGeometrySpec& geometry)
+{
+    out << "  <Drawable name=\"" << QString::fromStdString (geometry.name)
+        << "\" refframe=\"" << QString::fromStdString (geometry.refFrame) << "\"";
+    if (geometry.collisionModel)
+        out << " colmodel=\"Enabled\"";
+    out << ">\n";
+    out << "    <RPY>" << vector3 (geometry.rpyDeg) << "</RPY>\n";
+    out << "    <Pos>" << vector3 (geometry.pos) << "</Pos>\n";
+    out << "    <RGB>" << vector3 (geometry.rgb) << "</RGB>\n";
+    out << "    " << geometryShapeXml (geometry) << "\n";
+    out << "  </Drawable>\n";
 }
 
 /// 度 -> 弧度
