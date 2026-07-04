@@ -1284,6 +1284,23 @@ int main (int argc, char** argv)
             return fail ("STL path should be relative to saveDirectory.");
     }
 
+    // ---- Milestone 4:自动连杆圆柱 + 用户可编辑几何保留 ----
+    {
+        RobotModelSpec links = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        bool sawLinkCylinder      = false;
+        bool sawHousingEditableShape = false;
+        for (const DrawableSpec& d : links.drawables) {
+            if (d.name == "Link1To2" && d.shape == "Cylinder" && d.autoLinkGeometry)
+                sawLinkCylinder = true;
+            if (d.name == "Joint1Housing" && d.shape == "Cylinder" && !d.autoLinkGeometry)
+                sawHousingEditableShape = true;
+        }
+        if (!sawLinkCylinder)
+            return fail ("Auto link drawables should remain Cylinder and autoLinkGeometry=true.");
+        if (!sawHousingEditableShape)
+            return fail ("Housing drawables should not be marked as auto-link locked.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
