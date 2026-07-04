@@ -375,6 +375,40 @@ void RobotModelBuilderWidget::buildUi ()
     tabs->addTab (_drawablesTable, "Drawables");
 
     // -------------------------------------------------------------------------
+    //  Collision Models 标签页(Milestone 5):
+    //    9 列(无 RGB、无 Collision):Name / RefFrame / Shape /
+    //    Dimensions x y z / Radius / Length / File / RPY / Pos;
+    //    下方 3 个按钮:Add / Remove / Generate From Drawables。
+    // -------------------------------------------------------------------------
+    QWidget* collisionTab      = new QWidget ();
+    QVBoxLayout* collisionLay  = new QVBoxLayout (collisionTab);
+    _collisionModelsTable = makeTable (
+        QStringList () << "Name"
+                       << "RefFrame"
+                       << "Shape"
+                       << "Dimensions x y z"
+                       << "Radius"
+                       << "Length"
+                       << "File"
+                       << "RPY deg (Z Y X)"
+                       << "Pos m",
+        0);
+    collisionLay->addWidget (_collisionModelsTable);
+
+    QWidget* collisionButtons      = new QWidget ();
+    QHBoxLayout* collisionBtnLay   = new QHBoxLayout (collisionButtons);
+    QPushButton* addCollisionBtn   = new QPushButton ("Add Collision Model");
+    QPushButton* delCollisionBtn   = new QPushButton ("Remove Collision Model");
+    QPushButton* genCollisionBtn   = new QPushButton ("Generate From Drawables");
+    collisionBtnLay->setContentsMargins (0, 0, 0, 0);
+    collisionBtnLay->addWidget (addCollisionBtn);
+    collisionBtnLay->addWidget (delCollisionBtn);
+    collisionBtnLay->addWidget (genCollisionBtn);
+    collisionBtnLay->addStretch ();
+    collisionLay->addWidget (collisionButtons);
+    tabs->addTab (collisionTab, "Collision Models");
+
+    // -------------------------------------------------------------------------
     //  Scene Frames 标签页(Milestone 3):
     //   - 顶部两个 QLineEdit 编辑 RobotBase 位姿(RPY deg / Pos m);
     //   - 中间一张表编辑场景 frame 列表(每行 Name/RefFrame/Type/DAF/PoseMode/
@@ -554,6 +588,9 @@ void RobotModelBuilderWidget::buildUi ()
     connect (delSceneBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedSceneFrame ()));
     connect (addSceneGeometryBtn, SIGNAL (clicked ()), this, SLOT (addSceneGeometry ()));
     connect (delSceneGeometryBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedSceneGeometry ()));
+    connect (addCollisionBtn, SIGNAL (clicked ()), this, SLOT (addCollisionModel ()));
+    connect (delCollisionBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedCollisionModel ()));
+    connect (genCollisionBtn, SIGNAL (clicked ()), this, SLOT (generateCollisionModelsFromDrawables ()));
     connect (addJointBtn, SIGNAL (clicked ()), this, SLOT (addJoint ()));
     connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
     connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
@@ -602,6 +639,7 @@ void RobotModelBuilderWidget::generatePreview ()
     }
 
     fillDrawablesTable (spec);
+    fillCollisionModelsTable (spec);
     fillSceneTab (spec);
     fillSceneGeometryTable (spec);
     _serialPreview->setPlainText (RobotModelXmlWriter::makeSerialDeviceXml (spec));
@@ -1018,6 +1056,107 @@ void RobotModelBuilderWidget::removeSelectedSceneGeometry ()
     generatePreview ();
 }
 
+// =============================================================================
+//  addCollisionModel() / removeSelectedCollisionModel()
+//  说明: Milestone 5 碰撞模型按钮。
+//        * addCollisionModel:追加默认 Box 碰撞模型,RefFrame 取第一个关节
+//          (没有则 Base);尺寸 0.1 各向,radius/length 给个合法的 0.05/0.1
+//          默认值,避免落进 validate 拒绝区;
+//        * removeSelectedCollisionModel:删除当前选中行;不级联。
+// =============================================================================
+void RobotModelBuilderWidget::addCollisionModel ()
+{
+    RobotModelSpec spec = collectSpec ();
+    CollisionModelSpec collision;
+    collision.name     = "CollisionModel" +
+                          std::to_string (spec.collisionModels.size () + 1);
+    collision.refFrame = spec.transformJoints.empty ()
+                              ? "Base"
+                              : spec.transformJoints.front ().name;
+    collision.shape        = "Box";
+    collision.dimensions   = {{0.1, 0.1, 0.1}};
+    collision.radius       = 0.05;
+    collision.length       = 0.1;
+    collision.rpyDeg       = {{0, 0, 0}};
+    collision.pos          = {{0, 0, 0}};
+    spec.collisionModels.push_back (collision);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::removeSelectedCollisionModel ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const int row = _collisionModelsTable->currentRow ();
+    if (row < 0 || row >= static_cast< int >(spec.collisionModels.size ()))
+        return;
+    spec.collisionModels.erase (spec.collisionModels.begin () + row);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+// =============================================================================
+//  collisionFromDrawable
+//  说明: 从 Drawable 生成简化 CollisionModel。
+//        * 视觉是 Cylinder/Sphere/Cone → 沿用形状(Cylinder/Cone 需要 length);
+//        * 视觉是 STL / Mesh / Polytope / Plane / Unknown → 退化为 Box。
+//        这样不强制用户在"试图把 STL 当碰撞"时再多填一行 Mesh 路径。
+// =============================================================================
+namespace {
+
+CollisionModelSpec collisionFromDrawable (const DrawableSpec& drawable, int index)
+{
+    CollisionModelSpec collision;
+    collision.name = drawable.name.empty ()
+                         ? "CollisionModel" + std::to_string (index + 1)
+                         : drawable.name + "Collision";
+    collision.refFrame = drawable.refFrame;
+    const GeometryKind kind = geometryKindFromString (drawable.shape);
+    if (kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
+        kind == GeometryKind::Cone) {
+        collision.shape      = drawable.shape;
+        collision.radius     = drawable.radius;
+        collision.length     = drawable.length > 0 ? drawable.length : 0.1;
+        collision.dimensions = drawable.dimensions;
+    }
+    else {
+        collision.shape      = "Box";
+        collision.dimensions = drawable.dimensions;
+        collision.radius     = drawable.radius > 0 ? drawable.radius : 0.05;
+        collision.length     = drawable.length > 0 ? drawable.length : 0.1;
+    }
+    collision.filePath.clear ();
+    collision.rpyDeg = drawable.rpyDeg;
+    collision.pos    = drawable.pos;
+    return collision;
+}
+
+}    // namespace
+
+// =============================================================================
+//  generateCollisionModelsFromDrawables()
+//  说明: Milestone 5 "Generate From Drawables" 按钮:
+//        清空当前 collisionModels,按 spec.drawables 顺序用 collisionFromDrawable
+//        生成;Link{i}To{i+1} 这些自动 link 也参与(它们的尺寸已经按关节几何
+//        填了,当 Box 碰撞用没问题)。
+// =============================================================================
+void RobotModelBuilderWidget::generateCollisionModelsFromDrawables ()
+{
+    RobotModelSpec spec = collectSpec ();
+    spec.collisionModels.clear ();
+    int index = 0;
+    for (const DrawableSpec& drawable : spec.drawables) {
+        if (!drawable.name.empty ()) {
+            spec.collisionModels.push_back (collisionFromDrawable (drawable, index));
+            ++index;
+        }
+    }
+    fillFromSpec (spec);
+    generatePreview ();
+    setStatus (QString ("Generated %1 collision models from drawables.")
+                   .arg (static_cast< int >(spec.collisionModels.size ())));
+}
+
 void RobotModelBuilderWidget::sceneGenerationToggled (bool)
 {
     updateSceneUiEnabled ();
@@ -1149,6 +1288,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     _baseMaterial->setText (QString::fromStdString (spec.dynamics.baseMaterial));
     fillKinematicsTables (spec);
     fillDrawablesTable (spec);
+    fillCollisionModelsTable (spec);
     fillSceneTab (spec);
     fillSceneGeometryTable (spec);
     fillLimitsTable (spec);
@@ -1220,6 +1360,21 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         drawable.autoLinkGeometry =
             isAutoLinkDrawable (QString::fromStdString (drawable.name));
         spec.drawables.push_back (drawable);
+    }
+
+    // ---- Collision Models 表(Milestone 5:独立碰撞几何)----
+    for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
+        CollisionModelSpec collision;
+        collision.name      = itemText (_collisionModelsTable, row, 0).toStdString ();
+        collision.refFrame  = itemText (_collisionModelsTable, row, 1).toStdString ();
+        collision.shape     = itemText (_collisionModelsTable, row, 2).toStdString ();
+        parseVector3 (itemText (_collisionModelsTable, row, 3), collision.dimensions);
+        collision.radius    = itemDouble (_collisionModelsTable, row, 4);
+        collision.length    = itemDouble (_collisionModelsTable, row, 5);
+        collision.filePath  = itemText (_collisionModelsTable, row, 6).toStdString ();
+        parseVector3 (itemText (_collisionModelsTable, row, 7), collision.rpyDeg);
+        parseVector3 (itemText (_collisionModelsTable, row, 8), collision.pos);
+        spec.collisionModels.push_back (collision);
     }
 
     // ---- Limits 表 ----
@@ -1370,6 +1525,22 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
         }
     }
 
+    // ---- Milestone 5:Collision Models 表输入校验(独立于 generateDrawables)----
+    for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
+        if (!parseVector (itemText (_collisionModelsTable, row, 3), 3))
+            errors << QString ("Invalid collision model dimensions vector at row %1.")
+                          .arg (row + 1);
+        if (!parseDouble (itemText (_collisionModelsTable, row, 4)))
+            errors << QString ("Invalid collision model radius at row %1.").arg (row + 1);
+        if (!parseDouble (itemText (_collisionModelsTable, row, 5)))
+            errors << QString ("Invalid collision model length at row %1.").arg (row + 1);
+        if (!parseVector (itemText (_collisionModelsTable, row, 7), 3))
+            errors << QString ("Invalid collision model RPY vector at row %1.")
+                          .arg (row + 1);
+        if (!parseVector (itemText (_collisionModelsTable, row, 8), 3))
+            errors << QString ("Invalid collision model Pos vector at row %1.").arg (row + 1);
+    }
+
     // ---- Milestone 3:Scene Frames 输入校验 ----
     if (_robotBaseRpy != NULL &&
         !parseVector (_robotBaseRpy->text (), 3))
@@ -1489,6 +1660,39 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
         setItem (_drawablesTable, row, 9, vectorText (drawable.rgb));
         setCombo (_drawablesTable, row, 10, QStringList () << "Enabled" << "Disabled",
                   drawable.collisionModel ? "Enabled" : "Disabled");
+    }
+}
+
+// =============================================================================
+//  fillCollisionModelsTable()
+//  说明: Milestone 5 — 把 spec.collisionModels 回填到 Collision Models 表。
+//        第 2 列(Shape)用 setCombo 给 6 种合法形状,不再用 setShapeCombo
+//        (后者多带 Plane/STL/8 项);其它列按 collisionColumnEditableForShape 解锁。
+// =============================================================================
+void RobotModelBuilderWidget::fillCollisionModelsTable (const RobotModelSpec& spec)
+{
+    if (_collisionModelsTable == NULL)
+        return;
+    _collisionModelsTable->setRowCount (static_cast< int > (spec.collisionModels.size ()));
+    for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
+        const CollisionModelSpec& collision = spec.collisionModels[row];
+        const QString shape = QString::fromStdString (collision.shape);
+        setItem (_collisionModelsTable, row, 0, QString::fromStdString (collision.name));
+        setItem (_collisionModelsTable, row, 1, QString::fromStdString (collision.refFrame));
+        setCombo (_collisionModelsTable, row, 2,
+                  QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
+                                 << "Mesh" << "Polytope",
+                  shape);
+        setItem (_collisionModelsTable, row, 3, vectorText (collision.dimensions),
+                 collisionColumnEditableForShape (shape, 3));
+        setItem (_collisionModelsTable, row, 4, QString::number (collision.radius),
+                 collisionColumnEditableForShape (shape, 4));
+        setItem (_collisionModelsTable, row, 5, QString::number (collision.length),
+                 collisionColumnEditableForShape (shape, 5));
+        setItem (_collisionModelsTable, row, 6, QString::fromStdString (collision.filePath),
+                 collisionColumnEditableForShape (shape, 6));
+        setItem (_collisionModelsTable, row, 7, vectorText (collision.rpyDeg));
+        setItem (_collisionModelsTable, row, 8, vectorText (collision.pos));
     }
 }
 
@@ -1847,5 +2051,22 @@ bool RobotModelBuilderWidget::drawableColumnEditableForShape (const QString& sha
     if (column == 6)
         return kind == GeometryKind::STL || kind == GeometryKind::Mesh ||
                kind == GeometryKind::Polytope;
+    return true;
+}
+
+// Milestone 5:Collision Models 表的列解锁规则;
+// 与 drawable 版相比没有 STL(Collision 不支持 STL,这一列位置给了 Mesh)。
+bool RobotModelBuilderWidget::collisionColumnEditableForShape (const QString& shape, int column)
+{
+    const GeometryKind kind = geometryKindFromString (shape.toStdString ());
+    if (column == 3)
+        return kind == GeometryKind::Box;
+    if (column == 4)
+        return kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
+               kind == GeometryKind::Cone;
+    if (column == 5)
+        return kind == GeometryKind::Cylinder || kind == GeometryKind::Cone;
+    if (column == 6)
+        return kind == GeometryKind::Mesh || kind == GeometryKind::Polytope;
     return true;
 }

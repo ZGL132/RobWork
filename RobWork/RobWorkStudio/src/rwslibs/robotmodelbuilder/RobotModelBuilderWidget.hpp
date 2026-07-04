@@ -44,6 +44,9 @@ class RobotModelBuilderWidget : public QWidget
     void removeSelectedSceneFrame ();
     void addSceneGeometry ();
     void removeSelectedSceneGeometry ();
+    void addCollisionModel ();
+    void removeSelectedCollisionModel ();
+    void generateCollisionModelsFromDrawables ();
     void sceneGenerationToggled (bool checked);
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
@@ -60,6 +63,7 @@ class RobotModelBuilderWidget : public QWidget
     void fillDynamicsTab (const RobotModelSpec& spec);
     void fillSceneTab (const RobotModelSpec& spec);
     void fillSceneGeometryTable (const RobotModelSpec& spec);
+    void fillCollisionModelsTable (const RobotModelSpec& spec);
     void updateSceneUiEnabled ();
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
@@ -84,6 +88,7 @@ class RobotModelBuilderWidget : public QWidget
                         const QString& value, bool editable = true);
     static bool drawableColumnEditableForShape (const QString& shape, int column,
                                                  bool autoLink);
+    static bool collisionColumnEditableForShape (const QString& shape, int column);
 
   private:
     QLineEdit* _robotName;
@@ -107,6 +112,7 @@ class RobotModelBuilderWidget : public QWidget
     QTableWidget* _dhTable;
     QTableWidget* _transformTable;
     QTableWidget* _drawablesTable;
+    QTableWidget* _collisionModelsTable;                       // Milestone 5
     QTableWidget* _limitsTable;
     QTableWidget* _posesTable;
     QTableWidget* _dynamicsLinksTable;
