@@ -1083,8 +1083,9 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 //  说明: 生成场景容器 WorkCell:
 //        - RobotBase 帧(Milestone 3 起,用 spec.robotBaseFrame 配置;
 //          兜底是 refframe="WORLD" + 0 0 0 位姿);
-//        - 依次输出所有 sceneFrames(Table / Workpiece / CameraFrame / MovableBox);
-//        - <Include> 引用真正的机器人 .wc.xml(SerialDevice)。
+//        - RobotBase 后立即 <Include>,因为 RobWork 会把未显式 refframe 的设备挂到
+//          WorkCell 当前最后一个 frame;
+//        - 再依次输出所有 sceneFrames(Table / Workpiece / CameraFrame / MovableBox)和场景几何。
 // =============================================================================
 QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 {
@@ -1102,6 +1103,8 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     writeFrameXml (out, robotBase, spec.showFrameAxes);
     out << "\n";
 
+    out << "  <Include file=\"" << robotName << ".wc.xml\" />\n\n";
+
     for (const FrameSpec& frame : spec.sceneFrames)
         writeFrameXml (out, frame, spec.showFrameAxes);
     if (!spec.sceneFrames.empty ())
@@ -1112,7 +1115,6 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     if (!spec.sceneGeometries.empty ())
         out << "\n";
 
-    out << "  <Include file=\"" << robotName << ".wc.xml\" />\n";
     out << "</WorkCell>\n";
     return xml;
 }

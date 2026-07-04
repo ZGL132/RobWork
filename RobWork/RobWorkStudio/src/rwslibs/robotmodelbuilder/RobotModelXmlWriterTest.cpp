@@ -1125,6 +1125,14 @@ int main (int argc, char** argv)
             return fail ("Movable scene frame with DAF should be written.");
         if (!contains (scene, "<Include file=\"GenericSixAxis.wc.xml\" />"))
             return fail ("Scene XML should still include the robot file.");
+        {
+            const int robotBaseAt = scene.indexOf ("<Frame name=\"RobotBase\"");
+            const int includeAt   = scene.indexOf ("<Include file=\"GenericSixAxis.wc.xml\" />");
+            const int movableAt   = scene.indexOf ("<Frame name=\"MovableBox\"");
+            if (!(robotBaseAt >= 0 && includeAt > robotBaseAt && movableAt > includeAt))
+                return fail ("Scene XML must include the robot immediately after RobotBase, before "
+                             "MovableBox, otherwise RobWork mounts the robot on the last scene frame.");
+        }
 
         RobotModelSpec badRef = sceneSpec;
         badRef.sceneFrames[0].refFrame = "MissingFrame";
