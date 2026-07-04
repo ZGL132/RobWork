@@ -228,6 +228,14 @@ void synchronizeJointDerivedData (RobotModelSpec& spec,
                         }),
         spec.drawables.end ());
     RobotModelXmlWriter::applyDefaultDrawables (spec);
+
+    // Milestone 5:同步删除引用被删 frame 的碰撞模型,避免 dangling refFrame。
+    spec.collisionModels.erase (
+        std::remove_if (spec.collisionModels.begin (), spec.collisionModels.end (),
+                        [&] (const CollisionModelSpec& c) {
+                            return removedNames.find (c.refFrame) != removedNames.end ();
+                        }),
+        spec.collisionModels.end ());
 }
 
 /// 在 spec.transformJoints 中找一个还没用过的 "Joint{N}" 名(N 从 1 起递增),
