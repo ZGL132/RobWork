@@ -1177,6 +1177,88 @@ int main (int argc, char** argv)
             return fail ("Scene geometry with zero Box size should fail validation.");
     }
 
+    // =====================================================================
+    //  Milestone 4: Drawable multi-geometry
+    // =====================================================================
+    {
+        RobotModelSpec multi = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        multi.drawables.clear ();
+
+        auto addBase = [&] (const std::string& name, const std::string& shape) {
+            DrawableSpec d;
+            d.name = name;
+            d.refFrame = "Joint1";
+            d.shape = shape;
+            d.radius = 0.05;
+            d.length = 0.2;
+            d.dimensions = {{0.1, 0.2, 0.3}};
+            d.filePath = "meshes/" + name + ".stl";
+            d.rpyDeg = {{0, 0, 0}};
+            d.pos = {{0, 0, 0}};
+            d.rgb = {{0.4, 0.5, 0.6}};
+            d.collisionModel = true;
+            multi.drawables.push_back (d);
+        };
+
+        addBase ("BoxDrawable", "Box");
+        addBase ("CylinderDrawable", "Cylinder");
+        addBase ("SphereDrawable", "Sphere");
+        addBase ("ConeDrawable", "Cone");
+        addBase ("PlaneDrawable", "Plane");
+        addBase ("STLDrawable", "STL");
+        addBase ("MeshDrawable", "Mesh");
+        addBase ("PolytopeDrawable", "Polytope");
+
+        QStringList multiErrors;
+        if (!RobotModelXmlWriter::validate (multi, multiErrors))
+            return fail ("Multi-geometry drawable spec should validate: " + multiErrors.join ("; "));
+
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (multi);
+        if (!contains (xml, "<Box x=\"0.1\" y=\"0.2\" z=\"0.3\" />"))
+            return fail ("Box drawable should emit Box x/y/z.");
+        if (!contains (xml, "<Cylinder radius=\"0.05\" z=\"0.2\" />"))
+            return fail ("Cylinder drawable should emit radius/z.");
+        if (!contains (xml, "<Sphere radius=\"0.05\" />"))
+            return fail ("Sphere drawable should emit radius.");
+        if (!contains (xml, "<Cone radius=\"0.05\" z=\"0.2\" />"))
+            return fail ("Cone drawable should emit radius/z.");
+        if (!contains (xml, "<Plane x=\"0.1\" y=\"0.2\" />"))
+            return fail ("Plane drawable should emit x/y.");
+        if (!contains (xml, "<STL file=\"meshes/STLDrawable.stl\" />"))
+            return fail ("STL drawable should emit file path.");
+        if (!contains (xml, "<Mesh file=\"meshes/MeshDrawable.stl\" />"))
+            return fail ("Mesh drawable should emit file path.");
+        if (!contains (xml, "<Polytope file=\"meshes/PolytopeDrawable.stl\" />"))
+            return fail ("Polytope drawable should emit file path.");
+        if (xml.count ("colmodel=\"Enabled\"") < 8)
+            return fail ("Drawable colmodel=Enabled should be preserved for all shapes.");
+    }
+
+    // ---- Milestone 4:Drawable 形状参数校验 ----
+    {
+        RobotModelSpec invalid = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+
+        invalid.drawables[0].shape = "Box";
+        invalid.drawables[0].dimensions = {{0, 0.1, 0.1}};
+        QStringList boxErrors;
+        if (RobotModelXmlWriter::validate (invalid, boxErrors))
+            return fail ("Box drawable with zero dimension should fail validation.");
+
+        RobotModelSpec missingFile =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        missingFile.drawables[0].shape = "Mesh";
+        missingFile.drawables[0].filePath.clear ();
+        QStringList fileErrors;
+        if (RobotModelXmlWriter::validate (missingFile, fileErrors))
+            return fail ("Mesh drawable with empty file path should fail validation.");
+
+        RobotModelSpec unknown = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        unknown.drawables[0].shape = "Capsule";
+        QStringList unknownErrors;
+        if (RobotModelXmlWriter::validate (unknown, unknownErrors))
+            return fail ("Unknown drawable shape should fail validation.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);

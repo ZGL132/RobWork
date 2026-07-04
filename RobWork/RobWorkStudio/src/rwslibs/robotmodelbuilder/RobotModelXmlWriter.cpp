@@ -108,6 +108,8 @@ void appendJointHousings (RobotModelSpec& spec)
         drawable.name           = "Joint" + std::to_string (i + 1) + "Housing";
         drawable.refFrame       = spec.transformJoints[i].name;
         drawable.shape          = "Cylinder";
+        drawable.filePath       = std::string ();
+        drawable.dimensions     = {{0.1, 0.1, 0.1}};
         // 半径/长度随关节号递减,让模型有一个简单的视觉层次
         drawable.radius         = 0.095 - 0.006 * i;
         drawable.length         = 0.10 - 0.006 * i;
@@ -132,6 +134,8 @@ void appendLinks (RobotModelSpec& spec)
         drawable.name             = "Link" + std::to_string (i + 1) + "To" + std::to_string (i + 2);
         drawable.refFrame         = spec.transformJoints[i].name;
         drawable.shape            = "Cylinder";
+        drawable.filePath         = std::string ();
+        drawable.dimensions       = {{0.1, 0.1, 0.1}};
         const size_t r            = static_cast< size_t >(i) < 6 ? i : 5;
         drawable.radius           = defaultRadii[r];
         drawable.length           = 0;    // 稍后由 computeLinkPose 重新填充
@@ -1329,8 +1333,14 @@ QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry
         case GeometryKind::Plane:
             return QString ("<Plane x=\"%1\" y=\"%2\" />")
                 .arg (number (geometry.size[0]), number (geometry.size[1]));
+        case GeometryKind::STL:
+            return QString ("<STL file=\"%1\" />")
+                .arg (QString::fromStdString (geometry.file));
         case GeometryKind::Mesh:
             return QString ("<Mesh file=\"%1\" />")
+                .arg (QString::fromStdString (geometry.file));
+        case GeometryKind::Polytope:
+            return QString ("<Polytope file=\"%1\" />")
                 .arg (QString::fromStdString (geometry.file));
         case GeometryKind::Box:
         default:

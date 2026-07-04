@@ -206,7 +206,10 @@ enum class GeometryKind
     Sphere,
     Cone,
     Plane,
-    Mesh
+    STL,
+    Mesh,
+    Polytope,
+    Unknown
 };
 
 struct SceneGeometrySpec
@@ -231,6 +234,8 @@ struct SceneGeometrySpec
 inline GeometryKind geometryKindFromString (const std::string& value)
 {
     const std::string v = detail::trimmed (value);
+    if (detail::iequals (v, "Box"))
+        return GeometryKind::Box;
     if (detail::iequals (v, "Cylinder"))
         return GeometryKind::Cylinder;
     if (detail::iequals (v, "Sphere"))
@@ -239,21 +244,28 @@ inline GeometryKind geometryKindFromString (const std::string& value)
         return GeometryKind::Cone;
     if (detail::iequals (v, "Plane"))
         return GeometryKind::Plane;
-    if (detail::iequals (v, "Mesh") || detail::iequals (v, "STL"))
+    if (detail::iequals (v, "STL"))
+        return GeometryKind::STL;
+    if (detail::iequals (v, "Mesh"))
         return GeometryKind::Mesh;
-    return GeometryKind::Box;
+    if (detail::iequals (v, "Polytope"))
+        return GeometryKind::Polytope;
+    return GeometryKind::Unknown;
 }
 
 inline const char* geometryKindToString (GeometryKind kind)
 {
     switch (kind) {
+        case GeometryKind::Box:      return "Box";
         case GeometryKind::Cylinder: return "Cylinder";
         case GeometryKind::Sphere:   return "Sphere";
         case GeometryKind::Cone:     return "Cone";
         case GeometryKind::Plane:    return "Plane";
+        case GeometryKind::STL:      return "STL";
         case GeometryKind::Mesh:     return "Mesh";
-        case GeometryKind::Box:
-        default:                      return "Box";
+        case GeometryKind::Polytope: return "Polytope";
+        case GeometryKind::Unknown:
+        default:                      return "Unknown";
     }
 }
 
@@ -262,6 +274,8 @@ struct DrawableSpec
     std::string name;
     std::string refFrame;
     std::string shape;
+    std::string filePath;
+    std::array< double, 3 > dimensions = {{0.1, 0.1, 0.1}};
     double radius;
     double length;
     std::array< double, 3 > rpyDeg;

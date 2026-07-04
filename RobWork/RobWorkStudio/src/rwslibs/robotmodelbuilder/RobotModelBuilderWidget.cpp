@@ -769,12 +769,14 @@ void RobotModelBuilderWidget::addJoint ()
 
     // 同步 drawables:新外壳 + 新 auto link(若 size >= 2)
     DrawableSpec housing;
-    housing.name     = newName.toStdString () + "Housing";
-    housing.refFrame = j.name;
-    housing.shape    = "Cylinder";
-    housing.radius   = 0.06;
-    housing.length   = 0.08;
-    housing.rgb      = {{0.45, 0.45, 0.48}};
+    housing.name       = newName.toStdString () + "Housing";
+    housing.refFrame  = j.name;
+    housing.shape     = "Cylinder";
+    housing.filePath  = std::string ();
+    housing.dimensions = {{0.1, 0.1, 0.1}};
+    housing.radius    = 0.06;
+    housing.length    = 0.08;
+    housing.rgb       = {{0.45, 0.45, 0.48}};
     spec.drawables.push_back (housing);
     if (spec.transformJoints.size () >= 2) {
         DrawableSpec link_d;
@@ -782,7 +784,8 @@ void RobotModelBuilderWidget::addJoint ()
                                   std::to_string (insertRow + 2);
         link_d.refFrame         = spec.transformJoints[insertRow].name;    // 新关节本身
         link_d.shape            = "Cylinder";
-        link_d.shape            = "Cylinder";
+        link_d.filePath         = std::string ();
+        link_d.dimensions       = {{0.1, 0.1, 0.1}};
         link_d.radius           = 0.04;
         link_d.length           = 0;
         link_d.rgb              = {{0.35, 0.45, 0.65}};
