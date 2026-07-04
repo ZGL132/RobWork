@@ -556,105 +556,109 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     // ---- Milestone 3:RobotBase 与场景 frame 校验 ----
     if (isEmpty (spec.robotBaseFrame.name))
         errors << "RobotBase frame name must not be empty.";
-    if (spec.robotBaseFrame.name != "RobotBase")
-        errors << "RobotBase frame name must be RobotBase.";
-    if (spec.robotBaseFrame.refFrame != "WORLD")
-        errors << "RobotBase refframe must be WORLD.";
+    if (spec.generateScene) {
+        if (spec.robotBaseFrame.name != "RobotBase")
+            errors << "RobotBase frame name must be RobotBase.";
+        if (spec.robotBaseFrame.refFrame != "WORLD")
+            errors << "RobotBase refframe must be WORLD.";
 
-    std::set< std::string > sceneNames;
-    sceneNames.insert ("WORLD");
-    sceneNames.insert ("RobotBase");
-    for (const FrameSpec& frame : spec.sceneFrames) {
-        if (isEmpty (frame.name))
-            errors << "Scene frame names must not be empty.";
-        else if (!sceneNames.insert (frame.name).second)
-            errors << QString ("Duplicate scene frame name: %1.")
-                          .arg (QString::fromStdString (frame.name));
-        if (!frame.name.empty () && (frame.name == "Base" || frame.name == "TCP" ||
-                                     allNames.find (frame.name) != allNames.end ()))
-            errors << QString ("Scene frame %1 collides with a device frame name.")
-                          .arg (QString::fromStdString (frame.name));
-    }
-
-    std::set< std::string > availableSceneRefs;
-    availableSceneRefs.insert ("WORLD");
-    availableSceneRefs.insert ("RobotBase");
-    for (const FrameSpec& frame : spec.sceneFrames)
-        availableSceneRefs.insert (frame.name);
-    for (const FrameSpec& frame : spec.sceneFrames) {
-        if (isEmpty (frame.refFrame))
-            errors << QString ("Scene frame %1 requires a refframe.")
-                          .arg (QString::fromStdString (frame.name));
-        else if (availableSceneRefs.find (frame.refFrame) == availableSceneRefs.end ())
-            errors << QString ("Scene frame %1 references unknown refframe %2.")
-                          .arg (QString::fromStdString (frame.name),
-                                QString::fromStdString (frame.refFrame));
-        if (frame.name == frame.refFrame)
-            errors << QString ("Scene frame %1 must not reference itself.")
-                          .arg (QString::fromStdString (frame.name));
-        for (double v : frame.rpyDeg) {
-            if (!std::isfinite (v))
-                errors << QString ("Scene frame %1 RPY values must be finite.")
+        std::set< std::string > sceneNames;
+        sceneNames.insert ("WORLD");
+        sceneNames.insert ("RobotBase");
+        for (const FrameSpec& frame : spec.sceneFrames) {
+            if (isEmpty (frame.name))
+                errors << "Scene frame names must not be empty.";
+            else if (!sceneNames.insert (frame.name).second)
+                errors << QString ("Duplicate scene frame name: %1.")
+                              .arg (QString::fromStdString (frame.name));
+            if (!frame.name.empty () && (frame.name == "Base" || frame.name == "TCP" ||
+                                         allNames.find (frame.name) != allNames.end ()))
+                errors << QString ("Scene frame %1 collides with a device frame name.")
                               .arg (QString::fromStdString (frame.name));
         }
-        for (double v : frame.pos) {
-            if (!std::isfinite (v))
-                errors << QString ("Scene frame %1 Pos values must be finite.")
-                              .arg (QString::fromStdString (frame.name));
-        }
-        for (double v : frame.transform) {
-            if (!std::isfinite (v))
-                errors << QString ("Scene frame %1 Transform values must be finite.")
-                              .arg (QString::fromStdString (frame.name));
-        }
-    }
 
-    // ---- Milestone 3.5:场景几何体校验(refframe + 尺寸 + RGB)----
-    std::set< std::string > sceneFrameRefs;
-    sceneFrameRefs.insert ("WORLD");
-    sceneFrameRefs.insert ("RobotBase");
-    for (const FrameSpec& frame : spec.sceneFrames)
-        sceneFrameRefs.insert (frame.name);
+        std::set< std::string > availableSceneRefs;
+        availableSceneRefs.insert ("WORLD");
+        availableSceneRefs.insert ("RobotBase");
+        for (const FrameSpec& frame : spec.sceneFrames)
+            availableSceneRefs.insert (frame.name);
+        for (const FrameSpec& frame : spec.sceneFrames) {
+            if (isEmpty (frame.refFrame))
+                errors << QString ("Scene frame %1 requires a refframe.")
+                              .arg (QString::fromStdString (frame.name));
+            else if (availableSceneRefs.find (frame.refFrame) == availableSceneRefs.end ())
+                errors << QString ("Scene frame %1 references unknown refframe %2.")
+                              .arg (QString::fromStdString (frame.name),
+                                    QString::fromStdString (frame.refFrame));
+            if (frame.name == frame.refFrame)
+                errors << QString ("Scene frame %1 must not reference itself.")
+                              .arg (QString::fromStdString (frame.name));
+            for (double v : frame.rpyDeg) {
+                if (!std::isfinite (v))
+                    errors << QString ("Scene frame %1 RPY values must be finite.")
+                                  .arg (QString::fromStdString (frame.name));
+            }
+            for (double v : frame.pos) {
+                if (!std::isfinite (v))
+                    errors << QString ("Scene frame %1 Pos values must be finite.")
+                                  .arg (QString::fromStdString (frame.name));
+            }
+            for (double v : frame.transform) {
+                if (!std::isfinite (v))
+                    errors << QString ("Scene frame %1 Transform values must be finite.")
+                                  .arg (QString::fromStdString (frame.name));
+            }
+        }
 
-    std::set< std::string > sceneGeometryNames;
-    for (const SceneGeometrySpec& geometry : spec.sceneGeometries) {
-        if (isEmpty (geometry.name))
-            errors << "Scene geometry names must not be empty.";
-        else if (!sceneGeometryNames.insert (geometry.name).second)
-            errors << QString ("Duplicate scene geometry name: %1.")
-                          .arg (QString::fromStdString (geometry.name));
-        if (isEmpty (geometry.refFrame))
-            errors << QString ("Scene geometry %1 requires a refframe.")
-                          .arg (QString::fromStdString (geometry.name));
-        else if (sceneFrameRefs.find (geometry.refFrame) == sceneFrameRefs.end ())
-            errors << QString ("Scene geometry %1 references unknown frame %2.")
-                          .arg (QString::fromStdString (geometry.name),
-                                QString::fromStdString (geometry.refFrame));
-        for (double color : geometry.rgb) {
-            if (color < 0 || color > 1)
-                errors << QString ("Scene geometry %1 RGB values must be between 0 and 1.")
+        // ---- Milestone 3.5:场景几何体校验(refframe + 尺寸 + RGB)----
+        std::set< std::string > sceneFrameRefs;
+        sceneFrameRefs.insert ("WORLD");
+        sceneFrameRefs.insert ("RobotBase");
+        for (const FrameSpec& frame : spec.sceneFrames)
+            sceneFrameRefs.insert (frame.name);
+
+        std::set< std::string > sceneGeometryNames;
+        for (const SceneGeometrySpec& geometry : spec.sceneGeometries) {
+            if (isEmpty (geometry.name))
+                errors << "Scene geometry names must not be empty.";
+            else if (!sceneGeometryNames.insert (geometry.name).second)
+                errors << QString ("Duplicate scene geometry name: %1.")
                               .arg (QString::fromStdString (geometry.name));
+            if (isEmpty (geometry.refFrame))
+                errors << QString ("Scene geometry %1 requires a refframe.")
+                              .arg (QString::fromStdString (geometry.name));
+            else if (sceneFrameRefs.find (geometry.refFrame) == sceneFrameRefs.end ())
+                errors << QString ("Scene geometry %1 references unknown frame %2.")
+                              .arg (QString::fromStdString (geometry.name),
+                                    QString::fromStdString (geometry.refFrame));
+            for (double color : geometry.rgb) {
+                if (color < 0 || color > 1)
+                    errors << QString ("Scene geometry %1 RGB values must be between 0 and 1.")
+                                  .arg (QString::fromStdString (geometry.name));
+            }
+            if (geometry.kind == GeometryKind::Box &&
+                (!(geometry.size[0] > 0) || !(geometry.size[1] > 0) || !(geometry.size[2] > 0)))
+                errors << QString ("Scene geometry %1 Box size must be greater than zero.")
+                              .arg (QString::fromStdString (geometry.name));
+            if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Sphere ||
+                 geometry.kind == GeometryKind::Cone) &&
+                !(geometry.radius > 0))
+                errors << QString ("Scene geometry %1 radius must be greater than zero.")
+                              .arg (QString::fromStdString (geometry.name));
+            if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Cone) &&
+                !(geometry.length > 0))
+                errors << QString ("Scene geometry %1 length must be greater than zero.")
+                              .arg (QString::fromStdString (geometry.name));
+            if (geometry.kind == GeometryKind::Plane &&
+                (!(geometry.size[0] > 0) || !(geometry.size[1] > 0)))
+                errors << QString ("Scene geometry %1 Plane size must be greater than zero.")
+                              .arg (QString::fromStdString (geometry.name));
+            if ((geometry.kind == GeometryKind::STL || geometry.kind == GeometryKind::Mesh ||
+                 geometry.kind == GeometryKind::Polytope) && isEmpty (geometry.file))
+                errors << QString ("Scene geometry %1 %2 requires a file path.")
+                              .arg (QString::fromStdString (geometry.name),
+                                    geometryKindToString (geometry.kind));
         }
-        if (geometry.kind == GeometryKind::Box &&
-            (!(geometry.size[0] > 0) || !(geometry.size[1] > 0) || !(geometry.size[2] > 0)))
-            errors << QString ("Scene geometry %1 Box size must be greater than zero.")
-                          .arg (QString::fromStdString (geometry.name));
-        if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Sphere ||
-             geometry.kind == GeometryKind::Cone) &&
-            !(geometry.radius > 0))
-            errors << QString ("Scene geometry %1 radius must be greater than zero.")
-                          .arg (QString::fromStdString (geometry.name));
-        if ((geometry.kind == GeometryKind::Cylinder || geometry.kind == GeometryKind::Cone) &&
-            !(geometry.length > 0))
-            errors << QString ("Scene geometry %1 length must be greater than zero.")
-                          .arg (QString::fromStdString (geometry.name));
-        if (geometry.kind == GeometryKind::Plane &&
-            (!(geometry.size[0] > 0) || !(geometry.size[1] > 0)))
-            errors << QString ("Scene geometry %1 Plane size must be greater than zero.")
-                          .arg (QString::fromStdString (geometry.name));
-        if (geometry.kind == GeometryKind::Mesh && isEmpty (geometry.file))
-            errors << QString ("Scene geometry %1 Mesh requires a file path.")
-                          .arg (QString::fromStdString (geometry.name));
     }
 
     if (spec.generateDrawables) {
@@ -1249,6 +1253,9 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
         QTextStream sceneStream (&sceneFile);
         sceneStream << makeSceneXml (spec);
         sceneFile.close ();
+    }
+    else {
+        QFile::remove (sceneFilePath (spec));
     }
 
     if (spec.dynamics.generateDynamicWorkCell) {

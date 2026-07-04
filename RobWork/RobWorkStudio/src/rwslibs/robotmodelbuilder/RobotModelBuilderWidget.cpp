@@ -311,6 +311,7 @@ void RobotModelBuilderWidget::buildUi ()
     root->addLayout (form);
 
     QTabWidget* tabs = new QTabWidget ();
+    _mainTabs = tabs;
 
     // -------------------------------------------------------------------------
     //  Kinematics 标签页:DH / Joint+RPY+Pos 两个表格(同时存在,通过 mode 切换可见性)
@@ -381,6 +382,7 @@ void RobotModelBuilderWidget::buildUi ()
     //   - 底部 Add / Remove 按钮。
     // -------------------------------------------------------------------------
     QWidget* sceneTab      = new QWidget ();
+    _sceneTab = sceneTab;
     QVBoxLayout* sceneLay  = new QVBoxLayout (sceneTab);
     QFormLayout* robotBaseForm = new QFormLayout ();
     _robotBaseRpy = new QLineEdit ();
@@ -500,6 +502,7 @@ void RobotModelBuilderWidget::buildUi ()
     QWidget* previewTab      = new QWidget ();
     QVBoxLayout* previewLay  = new QVBoxLayout (previewTab);
     QTabWidget* previewTabs  = new QTabWidget ();
+    _previewTabs = previewTabs;
     _serialPreview           = new QTextEdit ();
     _scenePreview            = new QTextEdit ();
     _dwcPreview              = new QTextEdit ();
@@ -540,6 +543,7 @@ void RobotModelBuilderWidget::buildUi ()
     // -------------------------------------------------------------------------
     connect (browse, SIGNAL (clicked ()), this, SLOT (browseSaveDirectory ()));
     connect (_mode, SIGNAL (currentIndexChanged (int)), this, SLOT (modeChanged (int)));
+    connect (_generateScene, SIGNAL (toggled (bool)), this, SLOT (sceneGenerationToggled (bool)));
     connect (previewBtn, SIGNAL (clicked ()), this, SLOT (generatePreview ()));
     connect (saveBtn, SIGNAL (clicked ()), this, SLOT (saveXml ()));
     connect (loadBtn, SIGNAL (clicked ()), this, SLOT (saveAndLoad ()));
@@ -601,7 +605,9 @@ void RobotModelBuilderWidget::generatePreview ()
     fillSceneTab (spec);
     fillSceneGeometryTable (spec);
     _serialPreview->setPlainText (RobotModelXmlWriter::makeSerialDeviceXml (spec));
-    _scenePreview->setPlainText (RobotModelXmlWriter::makeSceneXml (spec));
+    _scenePreview->setPlainText (spec.generateScene
+                                     ? RobotModelXmlWriter::makeSceneXml (spec)
+                                     : QString ("<!-- Enable \"Scene file\" to generate -->"));
     _dwcPreview->setPlainText (spec.dynamics.generateDynamicWorkCell
                                    ? RobotModelXmlWriter::makeDynamicWorkCellXml (spec)
                                    : QString ("<!-- Enable \"Dynamic WorkCell\" to generate -->"));
@@ -652,8 +658,14 @@ void RobotModelBuilderWidget::saveAndLoad ()
         return;
     }
     generatePreview ();
-    Q_EMIT loadSceneRequested (RobotModelXmlWriter::sceneFilePath (spec));
-    setStatus ("XML files saved. Loading scene...");
+    if (spec.generateScene) {
+        Q_EMIT loadSceneRequested (RobotModelXmlWriter::sceneFilePath (spec));
+        setStatus ("XML files saved. Loading scene...");
+    }
+    else {
+        Q_EMIT loadSceneRequested (RobotModelXmlWriter::serialDeviceFilePath (spec));
+        setStatus ("XML files saved. Loading robot model...");
+    }
 }
 
 // =============================================================================
@@ -770,7 +782,7 @@ void RobotModelBuilderWidget::addJoint ()
         pose.q.push_back (0.0);
 
     // 同步 drawables:新外壳 + 新 auto link(若 size >= 2)
-    DrawableSpec housing;
+    DrawableSpec housing {};
     housing.name       = newName.toStdString () + "Housing";
     housing.refFrame  = j.name;
     housing.shape     = "Cylinder";
@@ -778,10 +790,13 @@ void RobotModelBuilderWidget::addJoint ()
     housing.dimensions = {{0.1, 0.1, 0.1}};
     housing.radius    = 0.06;
     housing.length    = 0.08;
+    housing.rpyDeg    = {{0, 0, 0}};
+    housing.pos       = {{0, 0, 0}};
     housing.rgb       = {{0.45, 0.45, 0.48}};
+    housing.collisionModel = true;
     spec.drawables.push_back (housing);
     if (spec.transformJoints.size () >= 2) {
-        DrawableSpec link_d;
+        DrawableSpec link_d {};
         link_d.name             = "Link" + std::to_string (insertRow + 1) + "To" +
                                   std::to_string (insertRow + 2);
         link_d.refFrame         = spec.transformJoints[insertRow].name;    // 新关节本身
@@ -790,7 +805,10 @@ void RobotModelBuilderWidget::addJoint ()
         link_d.dimensions       = {{0.1, 0.1, 0.1}};
         link_d.radius           = 0.04;
         link_d.length           = 0;
+        link_d.rpyDeg           = {{0, 0, 0}};
+        link_d.pos              = {{0, 0, 0}};
         link_d.rgb              = {{0.35, 0.45, 0.65}};
+        link_d.collisionModel   = true;
         link_d.autoLinkGeometry = true;
         // 把它放在所有 housings + links 之后;不清掉用户自定义的 drawable。
         spec.drawables.push_back (link_d);
@@ -1000,6 +1018,13 @@ void RobotModelBuilderWidget::removeSelectedSceneGeometry ()
     generatePreview ();
 }
 
+void RobotModelBuilderWidget::sceneGenerationToggled (bool)
+{
+    updateSceneUiEnabled ();
+    if (!_syncingTables)
+        generatePreview ();
+}
+
 // =============================================================================
 //  onDhTableCellChanged()
 //  说明: DH 表是 SE(3) 真值的投影视图,整表 NoEditTriggers + 单元格
@@ -1130,6 +1155,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     fillPosesTable (spec);
     fillDynamicsTab (spec);
     modeChanged (_mode->currentIndex ());
+    updateSceneUiEnabled ();
     _syncingTables = false;
 }
 
@@ -1428,7 +1454,9 @@ void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
         setItem (_dhTable, row, 5, status, false);
 
         setItem (_transformTable, row, 0, QString::fromStdString (joint.name));
-        setItem (_transformTable, row, 1, QString::fromStdString (joint.type));
+        setCombo (_transformTable, row, 1,
+                  QStringList () << "Revolute" << "Prismatic" << "FixedFrame" << "ToolFrame",
+                  QString::fromStdString (joint.type));
         setItem (_transformTable, row, 2, vectorText (joint.rpyDeg));
         setItem (_transformTable, row, 3, vectorText (joint.pos));
     }
@@ -1447,15 +1475,20 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
         setItem (_drawablesTable, row, 1, QString::fromStdString (drawable.refFrame), !autoLink);
         setShapeCombo (_drawablesTable, row, 2,
                        QString::fromStdString (drawable.shape), !autoLink);
-        setItem (_drawablesTable, row, 3, vectorText (drawable.dimensions), !autoLink);
-        setItem (_drawablesTable, row, 4, QString::number (drawable.radius));
-        setItem (_drawablesTable, row, 5, QString::number (drawable.length), !autoLink);
-        setItem (_drawablesTable, row, 6, QString::fromStdString (drawable.filePath), !autoLink);
+        const QString shape = QString::fromStdString (drawable.shape);
+        setItem (_drawablesTable, row, 3, vectorText (drawable.dimensions),
+                 drawableColumnEditableForShape (shape, 3, autoLink));
+        setItem (_drawablesTable, row, 4, QString::number (drawable.radius),
+                 drawableColumnEditableForShape (shape, 4, autoLink));
+        setItem (_drawablesTable, row, 5, QString::number (drawable.length),
+                 drawableColumnEditableForShape (shape, 5, autoLink));
+        setItem (_drawablesTable, row, 6, QString::fromStdString (drawable.filePath),
+                 drawableColumnEditableForShape (shape, 6, autoLink));
         setItem (_drawablesTable, row, 7, vectorText (drawable.rpyDeg), !autoLink);
         setItem (_drawablesTable, row, 8, vectorText (drawable.pos), !autoLink);
         setItem (_drawablesTable, row, 9, vectorText (drawable.rgb));
-        setItem (_drawablesTable, row, 10,
-                 drawable.collisionModel ? "Enabled" : "Disabled");
+        setCombo (_drawablesTable, row, 10, QStringList () << "Enabled" << "Disabled",
+                  drawable.collisionModel ? "Enabled" : "Disabled");
     }
 }
 
@@ -1549,9 +1582,12 @@ void RobotModelBuilderWidget::fillSceneTab (const RobotModelSpec& spec)
         const FrameSpec& frame = spec.sceneFrames[row];
         setItem (_sceneFramesTable, row, 0, QString::fromStdString (frame.name));
         setItem (_sceneFramesTable, row, 1, QString::fromStdString (frame.refFrame));
-        setItem (_sceneFramesTable, row, 2, sceneFrameTypeToString (frame.frameType));
-        setItem (_sceneFramesTable, row, 3, frame.daf ? "true" : "false");
-        setItem (_sceneFramesTable, row, 4, poseModeToString (frame.poseMode));
+        setCombo (_sceneFramesTable, row, 2, QStringList () << "Fixed" << "Movable" << "Normal",
+                  sceneFrameTypeToString (frame.frameType));
+        setCombo (_sceneFramesTable, row, 3, QStringList () << "false" << "true",
+                  frame.daf ? "true" : "false");
+        setCombo (_sceneFramesTable, row, 4, QStringList () << "RPYPos" << "Transform4x4",
+                  poseModeToString (frame.poseMode));
         setItem (_sceneFramesTable, row, 5, vectorText (frame.rpyDeg));
         setItem (_sceneFramesTable, row, 6, vectorText (frame.pos));
         setItem (_sceneFramesTable, row, 7, vectorText16 (frame.transform));
@@ -1574,7 +1610,10 @@ void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec
         const SceneGeometrySpec& geometry = spec.sceneGeometries[row];
         setItem (_sceneGeometryTable, row, 0, QString::fromStdString (geometry.name));
         setItem (_sceneGeometryTable, row, 1, QString::fromStdString (geometry.refFrame));
-        setItem (_sceneGeometryTable, row, 2, geometryKindToString (geometry.kind));
+        setCombo (_sceneGeometryTable, row, 2,
+                  QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
+                                 << "Plane" << "STL" << "Mesh" << "Polytope",
+                  geometryKindToString (geometry.kind));
         setItem (_sceneGeometryTable, row, 3, vectorText (geometry.size));
         setItem (_sceneGeometryTable, row, 4, QString::number (geometry.radius));
         setItem (_sceneGeometryTable, row, 5, QString::number (geometry.length));
@@ -1582,8 +1621,31 @@ void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec
         setItem (_sceneGeometryTable, row, 7, vectorText (geometry.rpyDeg));
         setItem (_sceneGeometryTable, row, 8, vectorText (geometry.pos));
         setItem (_sceneGeometryTable, row, 9, vectorText (geometry.rgb));
-        setItem (_sceneGeometryTable, row, 10,
-                 geometry.collisionModel ? "Enabled" : "Disabled");
+        setCombo (_sceneGeometryTable, row, 10, QStringList () << "Enabled" << "Disabled",
+                  geometry.collisionModel ? "Enabled" : "Disabled");
+    }
+}
+
+void RobotModelBuilderWidget::updateSceneUiEnabled ()
+{
+    const bool enabled = _generateScene != NULL && _generateScene->isChecked ();
+    if (_sceneTab != NULL)
+        _sceneTab->setEnabled (enabled);
+    if (_mainTabs != NULL && _sceneTab != NULL) {
+        const int index = _mainTabs->indexOf (_sceneTab);
+        if (index >= 0) {
+            _mainTabs->setTabEnabled (index, enabled);
+            if (!enabled && _mainTabs->currentIndex () == index)
+                _mainTabs->setCurrentIndex (0);
+        }
+    }
+    if (_previewTabs != NULL) {
+        const int index = _previewTabs->indexOf (_scenePreview);
+        if (index >= 0) {
+            _previewTabs->setTabEnabled (index, enabled);
+            if (!enabled && _previewTabs->currentIndex () == index)
+                _previewTabs->setCurrentIndex (0);
+        }
     }
 }
 
@@ -1723,27 +1785,45 @@ bool RobotModelBuilderWidget::parseVector16 (const QString& text,
     return true;
 }
 
-/// Milestone 4:为 Drawables 表的 Shape 列做一个 ComboBox,
-/// 列出 8 种支持的几何类型。组合框不受 itemText 默认走 QTableWidgetItem
-/// 的限制,所以 itemText() 也做了一次 cellWidget 优先的特殊处理。
-QComboBox* RobotModelBuilderWidget::makeShapeCombo (const QString& currentShape, bool editable)
+QComboBox* RobotModelBuilderWidget::makeCombo (const QStringList& values,
+                                               const QString& currentValue,
+                                               bool editable)
 {
     QComboBox* combo = new QComboBox ();
-    combo->addItems (QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
-                                    << "Plane" << "STL" << "Mesh" << "Polytope");
-    const int index = combo->findText (currentShape, Qt::MatchFixedString);
-    combo->setCurrentIndex (index >= 0 ? index : combo->findText ("Cylinder"));
+    combo->addItems (values);
+    const int index = combo->findText (currentValue, Qt::MatchFixedString);
+    combo->setCurrentIndex (index >= 0 ? index : 0);
     combo->setEnabled (editable);
     return combo;
 }
 
-/// 在 table->cellWidget 注册一个 Shape 下拉,并在隐藏的 QTableWidgetItem 里
-/// 写当前文本(itemText 优先读 widget 文本)。
+void RobotModelBuilderWidget::setCombo (QTableWidget* table, int row, int column,
+                                        const QStringList& values,
+                                        const QString& value, bool editable)
+{
+    table->setCellWidget (row, column, makeCombo (values, value, editable));
+    QTableWidgetItem* item = new QTableWidgetItem ();
+    item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+    table->setItem (row, column, item);
+}
+
+/// Milestone 4:为 Drawables 表的 Shape 列做一个 ComboBox,
+/// 列出 8 种支持的几何类型。组合框不受 itemText 默认走 QTableWidgetItem
+/// 的限制,所以 itemText() 也做了一次 cellWidget 优先的特殊处理。
 void RobotModelBuilderWidget::setShapeCombo (QTableWidget* table, int row, int column,
                                              const QString& value, bool editable)
 {
-    table->setCellWidget (row, column, makeShapeCombo (value, editable));
-    setItem (table, row, column, value, false);
+    QComboBox* combo = makeCombo (QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
+                                                 << "Plane" << "STL" << "Mesh" << "Polytope",
+                                  value, editable);
+    table->setCellWidget (row, column, combo);
+    QTableWidgetItem* item = new QTableWidgetItem ();
+    item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+    table->setItem (row, column, item);
+    connect (combo, &QComboBox::currentTextChanged, this, [this] (const QString&) {
+        if (!_syncingTables)
+            generatePreview ();
+    });
 }
 
 /// Milestone 4:按 shape 决定哪几列可编辑,实现"切 Box 后只剩 Dimensions

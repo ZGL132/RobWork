@@ -11,6 +11,7 @@
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
+class QTabWidget;
 class QTableWidget;
 class QTableWidgetItem;
 class QTextEdit;
@@ -43,6 +44,7 @@ class RobotModelBuilderWidget : public QWidget
     void removeSelectedSceneFrame ();
     void addSceneGeometry ();
     void removeSelectedSceneGeometry ();
+    void sceneGenerationToggled (bool checked);
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
 
@@ -58,6 +60,7 @@ class RobotModelBuilderWidget : public QWidget
     void fillDynamicsTab (const RobotModelSpec& spec);
     void fillSceneTab (const RobotModelSpec& spec);
     void fillSceneGeometryTable (const RobotModelSpec& spec);
+    void updateSceneUiEnabled ();
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
 
@@ -72,9 +75,13 @@ class RobotModelBuilderWidget : public QWidget
     static QString vectorText (const std::array< double, 3 >& values);
     static QString vectorText6 (const std::array< double, 6 >& values);
     static QString vectorText16 (const std::array< double, 16 >& values);
-    static QComboBox* makeShapeCombo (const QString& currentShape, bool editable);
-    static void setShapeCombo (QTableWidget* table, int row, int column,
-                               const QString& value, bool editable = true);
+    static QComboBox* makeCombo (const QStringList& values, const QString& currentValue,
+                                 bool editable);
+    static void setCombo (QTableWidget* table, int row, int column,
+                          const QStringList& values, const QString& value,
+                          bool editable = true);
+    void setShapeCombo (QTableWidget* table, int row, int column,
+                        const QString& value, bool editable = true);
     static bool drawableColumnEditableForShape (const QString& shape, int column,
                                                  bool autoLink);
 
@@ -109,6 +116,10 @@ class RobotModelBuilderWidget : public QWidget
     QTextEdit* _scenePreview;
     QTextEdit* _dwcPreview;
     QLineEdit* _status;
+
+    QTabWidget* _mainTabs = NULL;
+    QTabWidget* _previewTabs = NULL;
+    QWidget* _sceneTab = NULL;
 
     bool _syncingTables = false;
 };

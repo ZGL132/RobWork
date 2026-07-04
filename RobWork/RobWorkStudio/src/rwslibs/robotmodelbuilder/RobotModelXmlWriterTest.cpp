@@ -18,6 +18,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QFile>
 #include <QRegularExpression>
 #include <algorithm>
 #include <cmath>
@@ -1175,6 +1176,22 @@ int main (int argc, char** argv)
         QStringList sizeErrors;
         if (RobotModelXmlWriter::validate (badGeoSize, sizeErrors))
             return fail ("Scene geometry with zero Box size should fail validation.");
+
+        RobotModelSpec badStlFile =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badStlFile.sceneGeometries[0].kind = GeometryKind::STL;
+        badStlFile.sceneGeometries[0].file.clear ();
+        QStringList stlFileErrors;
+        if (RobotModelXmlWriter::validate (badStlFile, stlFileErrors))
+            return fail ("Scene geometry STL with empty file path should fail validation.");
+
+        RobotModelSpec badPolytopeFile =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badPolytopeFile.sceneGeometries[0].kind = GeometryKind::Polytope;
+        badPolytopeFile.sceneGeometries[0].file.clear ();
+        QStringList polytopeFileErrors;
+        if (RobotModelXmlWriter::validate (badPolytopeFile, polytopeFileErrors))
+            return fail ("Scene geometry Polytope with empty file path should fail validation.");
     }
 
     // =====================================================================
@@ -1299,6 +1316,32 @@ int main (int argc, char** argv)
             return fail ("Auto link drawables should remain Cylinder and autoLinkGeometry=true.");
         if (!sawHousingEditableShape)
             return fail ("Housing drawables should not be marked as auto-link locked.");
+    }
+
+    // ---- Scene 关闭时不生成 Scene XML 文件 ----
+    {
+        const QString noSceneDir = QDir::tempPath () + "/robotmodelbuilder_no_scene";
+        QDir ().mkpath (noSceneDir);
+        RobotModelSpec noScene = RobotModelXmlWriter::makeDefaultSixAxisModel (noSceneDir);
+        noScene.robotName = "NoSceneRobot";
+        noScene.generateScene = false;
+        QFile staleScene (RobotModelXmlWriter::sceneFilePath (noScene));
+        if (!staleScene.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create stale Scene XML before disabled-scene save test.");
+        staleScene.write ("stale");
+        staleScene.close ();
+        QStringList noSceneErrors;
+        if (!RobotModelXmlWriter::saveFiles (noScene, noSceneErrors))
+            return fail ("saveFiles should succeed when Scene generation is disabled: " +
+                         noSceneErrors.join ("; "));
+        if (QFile::exists (RobotModelXmlWriter::sceneFilePath (noScene)))
+            return fail ("saveFiles should remove stale Scene XML when generateScene=false.");
+
+        noScene.sceneFrames[0].refFrame = "MissingSceneParent";
+        QStringList disabledSceneErrors;
+        if (!RobotModelXmlWriter::validate (noScene, disabledSceneErrors))
+            return fail ("Disabled Scene data should not block robot-only validation: " +
+                         disabledSceneErrors.join ("; "));
     }
 
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
