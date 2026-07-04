@@ -724,6 +724,71 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         }
     }
 
+    // ---- Milestone 5:独立 CollisionModel 校验(不挂 generateDrawables)----
+    std::set< std::string > collisionNames;
+    for (const CollisionModelSpec& collision : spec.collisionModels) {
+        if (isEmpty (collision.name))
+            errors << "CollisionModel names must not be empty.";
+        else if (!collisionNames.insert (collision.name).second)
+            errors << QString ("Duplicate CollisionModel name: %1.")
+                          .arg (QString::fromStdString (collision.name));
+
+        if (isEmpty (collision.refFrame))
+            errors << QString ("CollisionModel %1 requires a reference frame.")
+                          .arg (QString::fromStdString (collision.name));
+        else if (frameNames.find (collision.refFrame) == frameNames.end ())
+            errors << QString ("CollisionModel %1 references unknown frame %2.")
+                          .arg (QString::fromStdString (collision.name),
+                                QString::fromStdString (collision.refFrame));
+
+        const GeometryKind kind = geometryKindFromString (collision.shape);
+        if (!isCollisionModelShapeSupported (kind))
+            errors << QString ("CollisionModel %1 has unsupported shape %2.")
+                          .arg (QString::fromStdString (collision.name),
+                                QString::fromStdString (collision.shape));
+
+        if (kind == GeometryKind::Box &&
+            (!(collision.dimensions[0] > 0) || !(collision.dimensions[1] > 0) ||
+             !(collision.dimensions[2] > 0))) {
+            errors << QString ("CollisionModel %1 Box dimensions must be greater than zero.")
+                          .arg (QString::fromStdString (collision.name));
+        }
+        if ((kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
+             kind == GeometryKind::Cone) && !(collision.radius > 0)) {
+            errors << QString ("CollisionModel %1 radius must be greater than zero.")
+                          .arg (QString::fromStdString (collision.name));
+        }
+        if ((kind == GeometryKind::Cylinder || kind == GeometryKind::Cone) &&
+            !(collision.length > 0)) {
+            errors << QString ("CollisionModel %1 length must be greater than zero.")
+                          .arg (QString::fromStdString (collision.name));
+        }
+        if ((kind == GeometryKind::Mesh || kind == GeometryKind::Polytope) &&
+            isEmpty (collision.filePath)) {
+            errors << QString ("CollisionModel %1 file path is required for %2 geometry.")
+                          .arg (QString::fromStdString (collision.name),
+                                QString::fromStdString (collision.shape));
+        }
+        for (double value : collision.dimensions) {
+            if (!std::isfinite (value))
+                errors << QString ("CollisionModel %1 dimensions must be finite.")
+                              .arg (QString::fromStdString (collision.name));
+        }
+        if (!std::isfinite (collision.radius) || !std::isfinite (collision.length))
+            errors << QString ("CollisionModel %1 radius/length must be finite.")
+                          .arg (QString::fromStdString (collision.name));
+        for (double value : collision.rpyDeg) {
+            if (!std::isfinite (value))
+                errors << QString ("CollisionModel %1 RPY values must be finite.")
+                              .arg (QString::fromStdString (collision.name));
+        }
+        for (double value : collision.pos) {
+            if (!std::isfinite (value))
+                errors << QString ("CollisionModel %1 Pos values must be finite.")
+                              .arg (QString::fromStdString (collision.name));
+        }
+    }
+
     // ---- 关节限位:min<max、速度/加速度>0、jointName 必须是"可动关节"(Revolute/Prismatic)----
     for (const JointLimitSpec& limit : spec.limits) {
         if (isEmpty (limit.jointName))
