@@ -1344,6 +1344,172 @@ int main (int argc, char** argv)
                          disabledSceneErrors.join ("; "));
     }
 
+    // =====================================================================
+    //  Milestone 5: Independent CollisionModel
+    // =====================================================================
+    {
+        RobotModelSpec collisionOnly =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        collisionOnly.generateDrawables = false;
+        collisionOnly.drawables.clear ();
+        collisionOnly.collisionModels.clear ();
+
+        CollisionModelSpec box;
+        box.name = "Joint1SimpleCollision";
+        box.refFrame = "Joint1";
+        box.shape = "Box";
+        box.dimensions = {{0.2, 0.1, 0.08}};
+        box.radius = 0.05;
+        box.length = 0.1;
+        box.rpyDeg = {{0, 0, 0}};
+        box.pos = {{0, 0, 0.04}};
+        collisionOnly.collisionModels.push_back (box);
+
+        QStringList collisionErrors;
+        if (!RobotModelXmlWriter::validate (collisionOnly, collisionErrors))
+            return fail ("Independent CollisionModel should validate without Drawable: " +
+                         collisionErrors.join ("; "));
+
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (collisionOnly);
+        if (xml.contains ("<Drawable name=\""))
+            return fail ("Disabled drawables should not be required for CollisionModel output.");
+        if (!contains (xml,
+                       "<CollisionModel name=\"Joint1SimpleCollision\" refframe=\"Joint1\">"))
+            return fail ("CollisionModel XML should contain independent model root.");
+        if (!contains (xml, "<Box x=\"0.2\" y=\"0.1\" z=\"0.08\" />"))
+            return fail ("CollisionModel Box should emit x/y/z dimensions.");
+    }
+
+    // ---- Milestone 5:视觉 STL + 简化 Box 碰撞 ----
+    {
+        RobotModelSpec split =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        split.drawables.clear ();
+        split.collisionModels.clear ();
+
+        DrawableSpec visual;
+        visual.name = "Joint1VisualStl";
+        visual.refFrame = "Joint1";
+        visual.shape = "STL";
+        visual.filePath = "meshes/joint1_visual.stl";
+        visual.dimensions = {{0.1, 0.1, 0.1}};
+        visual.radius = 0.05;
+        visual.length = 0.1;
+        visual.rpyDeg = {{0, 0, 0}};
+        visual.pos = {{0, 0, 0}};
+        visual.rgb = {{0.7, 0.7, 0.75}};
+        visual.collisionModel = false;
+        split.drawables.push_back (visual);
+
+        CollisionModelSpec collision;
+        collision.name = "Joint1SimpleBox";
+        collision.refFrame = "Joint1";
+        collision.shape = "Box";
+        collision.dimensions = {{0.18, 0.12, 0.1}};
+        collision.radius = 0.05;
+        collision.length = 0.1;
+        collision.rpyDeg = {{0, 0, 0}};
+        collision.pos = {{0, 0, 0}};
+        split.collisionModels.push_back (collision);
+
+        QStringList splitErrors;
+        if (!RobotModelXmlWriter::validate (split, splitErrors))
+            return fail ("Visual STL plus simplified collision should validate: " +
+                         splitErrors.join ("; "));
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (split);
+        if (!contains (xml, "<STL file=\"meshes/joint1_visual.stl\" />"))
+            return fail ("Visual STL drawable should still be emitted.");
+        if (contains (xml, "<Drawable name=\"Joint1VisualStl\" refframe=\"Joint1\" colmodel=\"Enabled\">"))
+            return fail ("Visual-only STL drawable should not be marked colmodel=Enabled.");
+        if (!contains (xml,
+                       "<CollisionModel name=\"Joint1SimpleBox\" refframe=\"Joint1\">"))
+            return fail ("Simplified Box collision should be emitted independently.");
+        if (!contains (xml, "<Box x=\"0.18\" y=\"0.12\" z=\"0.1\" />"))
+            return fail ("Simplified Box collision dimensions should be emitted.");
+    }
+
+    // ---- Milestone 5:CollisionModel 校验(refFrame / Mesh 文件 / 不支持 Plane)----
+    {
+        RobotModelSpec badCollision =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badCollision.collisionModels.clear ();
+
+        CollisionModelSpec unknownFrame;
+        unknownFrame.name = "BadCollisionFrame";
+        unknownFrame.refFrame = "MissingJoint";
+        unknownFrame.shape = "Box";
+        unknownFrame.dimensions = {{0.1, 0.1, 0.1}};
+        unknownFrame.radius = 0.05;
+        unknownFrame.length = 0.1;
+        unknownFrame.rpyDeg = {{0, 0, 0}};
+        unknownFrame.pos = {{0, 0, 0}};
+        badCollision.collisionModels.push_back (unknownFrame);
+
+        QStringList frameErrors;
+        if (RobotModelXmlWriter::validate (badCollision, frameErrors))
+            return fail ("CollisionModel referencing unknown frame should fail validation.");
+        if (!frameErrors.join (" ").contains ("MissingJoint"))
+            return fail ("CollisionModel unknown frame error should mention MissingJoint.");
+
+        RobotModelSpec missingMesh =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        missingMesh.collisionModels.clear ();
+        CollisionModelSpec mesh;
+        mesh.name = "MissingMeshCollision";
+        mesh.refFrame = "Joint1";
+        mesh.shape = "Mesh";
+        mesh.filePath.clear ();
+        mesh.dimensions = {{0.1, 0.1, 0.1}};
+        mesh.radius = 0.05;
+        mesh.length = 0.1;
+        mesh.rpyDeg = {{0, 0, 0}};
+        mesh.pos = {{0, 0, 0}};
+        missingMesh.collisionModels.push_back (mesh);
+        QStringList meshErrors;
+        if (RobotModelXmlWriter::validate (missingMesh, meshErrors))
+            return fail ("CollisionModel Mesh with empty file path should fail validation.");
+
+        RobotModelSpec unsupported =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        unsupported.collisionModels.clear ();
+        CollisionModelSpec plane;
+        plane.name = "UnsupportedPlaneCollision";
+        plane.refFrame = "Joint1";
+        plane.shape = "Plane";
+        plane.filePath.clear ();
+        plane.dimensions = {{0.1, 0.1, 0.1}};
+        plane.radius = 0.05;
+        plane.length = 0.1;
+        plane.rpyDeg = {{0, 0, 0}};
+        plane.pos = {{0, 0, 0}};
+        unsupported.collisionModels.push_back (plane);
+        QStringList unsupportedErrors;
+        if (RobotModelXmlWriter::validate (unsupported, unsupportedErrors))
+            return fail ("CollisionModel Plane should be rejected because Milestone 5 supports "
+                         "Box/Cylinder/Sphere/Cone/Mesh/Polytope only.");
+    }
+
+    // ---- Milestone 5:删除 frame 后碰撞模型引用应判定为 dangling ----
+    {
+        RobotModelSpec dangling =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        dangling.transformJoints.erase (dangling.transformJoints.begin ());
+        dangling.collisionModels.clear ();
+        CollisionModelSpec collision;
+        collision.name = "DanglingCollision";
+        collision.refFrame = "Joint1";
+        collision.shape = "Box";
+        collision.dimensions = {{0.1, 0.1, 0.1}};
+        collision.radius = 0.05;
+        collision.length = 0.1;
+        collision.rpyDeg = {{0, 0, 0}};
+        collision.pos = {{0, 0, 0}};
+        dangling.collisionModels.push_back (collision);
+        QStringList danglingErrors;
+        if (RobotModelXmlWriter::validate (dangling, danglingErrors))
+            return fail ("Dangling CollisionModel reference should fail validation.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
