@@ -163,6 +163,18 @@ class RobotModelXmlWriter
                                      const DrawableSpec& drawable);
     static void writeDrawableXml (QTextStream& out, const RobotModelSpec& spec,
                                   const DrawableSpec& drawable);
+
+    /// Milestone 5:独立 <CollisionModel> 输出。
+    ///   * isCollisionModelShapeSupported:是否在合法形状范围内(拒 Plane / STL /
+    ///     Unknown);
+    ///   * collisionShapeXml :按 shape 序列化(Box/Cyl/Sphere/Cone/Mesh/Polytope),
+    ///     与 drawableShapeXml 共用 relativeGeometryPath;
+    ///   * writeCollisionModelXml :输出 <CollisionModel>...</CollisionModel>。
+    static bool isCollisionModelShapeSupported (GeometryKind kind);
+    static QString collisionShapeXml (const RobotModelSpec& spec,
+                                      const CollisionModelSpec& collision);
+    static void writeCollisionModelXml (QTextStream& out, const RobotModelSpec& spec,
+                                        const CollisionModelSpec& collision);
     /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
     static double degToRad (double value);
 };

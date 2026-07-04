@@ -960,6 +960,11 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
             writeDrawableXml (out, spec, drawable);
     }
 
+    // Milestone 5:独立碰撞模型 <CollisionModel>;不挂 generateDrawables,
+    // 关闭视觉时仍可单独输出。
+    for (const CollisionModelSpec& collision : spec.collisionModels)
+        writeCollisionModelXml (out, spec, collision);
+
     // 关节限位(三种类型分开输出,RobWork 要求独立节点)
     // 单位规则:Revolute 是度→rad;Prismatic 米保持。
     for (const JointLimitSpec& limit : spec.limits) {
@@ -1072,6 +1077,11 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         for (const DrawableSpec& drawable : spec.drawables)
             writeDrawableXml (out, spec, drawable);
     }
+
+    // Milestone 5:独立碰撞模型 <CollisionModel>;不挂 generateDrawables,
+    // 关闭视觉时仍可单独输出。
+    for (const CollisionModelSpec& collision : spec.collisionModels)
+        writeCollisionModelXml (out, spec, collision);
 
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
@@ -1472,6 +1482,68 @@ void RobotModelXmlWriter::writeDrawableXml (QTextStream& out,
     out << "    <RGB>" << vector3 (drawable.rgb) << "</RGB>\n";
     out << "    " << drawableShapeXml (spec, drawable) << "\n";
     out << "  </Drawable>\n";
+}
+
+// ============================================================================
+//  独立碰撞模型(Milestone 5)
+// ============================================================================
+// CollisionModel 支持 6 种形状:Box / Cylinder / Sphere / Cone / Mesh / Polytope;
+// Plane / STL / Unknown 在 Milestone 5 范围内被 validate 拒绝。
+bool RobotModelXmlWriter::isCollisionModelShapeSupported (GeometryKind kind)
+{
+    return kind == GeometryKind::Box || kind == GeometryKind::Cylinder ||
+           kind == GeometryKind::Sphere || kind == GeometryKind::Cone ||
+           kind == GeometryKind::Mesh || kind == GeometryKind::Polytope;
+}
+
+// 把 CollisionModelSpec 序列化为对应形状 XML 子节点,与 drawableShapeXml
+// 共享 relativeGeometryPath,但不输出 <RGB>(碰撞模型不是视觉对象)。
+QString RobotModelXmlWriter::collisionShapeXml (const RobotModelSpec& spec,
+                                                const CollisionModelSpec& collision)
+{
+    const GeometryKind kind = geometryKindFromString (collision.shape);
+    switch (kind) {
+        case GeometryKind::Box:
+            return QString ("<Box x=\"%1\" y=\"%2\" z=\"%3\" />")
+                .arg (number (collision.dimensions[0]),
+                      number (collision.dimensions[1]),
+                      number (collision.dimensions[2]));
+        case GeometryKind::Cylinder:
+            return QString ("<Cylinder radius=\"%1\" z=\"%2\" />")
+                .arg (number (collision.radius), number (collision.length));
+        case GeometryKind::Sphere:
+            return QString ("<Sphere radius=\"%1\" />").arg (number (collision.radius));
+        case GeometryKind::Cone:
+            return QString ("<Cone radius=\"%1\" z=\"%2\" />")
+                .arg (number (collision.radius), number (collision.length));
+        case GeometryKind::Mesh:
+            return QString ("<Mesh file=\"%1\" />")
+                .arg (relativeGeometryPath (spec, collision.filePath));
+        case GeometryKind::Polytope:
+            return QString ("<Polytope file=\"%1\" />")
+                .arg (relativeGeometryPath (spec, collision.filePath));
+        case GeometryKind::Plane:
+        case GeometryKind::STL:
+        case GeometryKind::Unknown:
+        default:
+            return QString ();
+    }
+}
+
+// 把 CollisionModelSpec 输出为 <CollisionModel>:
+//   * 不含 colmodel="Enabled" 属性(整段就是 collision);
+//   * 不输出 <RGB>(非视觉);
+//   * 不受 spec.generateDrawables 控制,独立循环。
+void RobotModelXmlWriter::writeCollisionModelXml (QTextStream& out,
+                                                  const RobotModelSpec& spec,
+                                                  const CollisionModelSpec& collision)
+{
+    out << "  <CollisionModel name=\"" << QString::fromStdString (collision.name)
+        << "\" refframe=\"" << QString::fromStdString (collision.refFrame) << "\">\n";
+    out << "    <RPY>" << vector3 (collision.rpyDeg) << "</RPY>\n";
+    out << "    <Pos>" << vector3 (collision.pos) << "</Pos>\n";
+    out << "    " << collisionShapeXml (spec, collision) << "\n";
+    out << "  </CollisionModel>\n";
 }
 
 /// 度 -> 弧度
