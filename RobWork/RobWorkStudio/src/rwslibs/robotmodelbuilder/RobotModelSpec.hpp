@@ -285,6 +285,30 @@ struct DrawableSpec
     bool autoLinkGeometry = false;
 };
 
+// -----------------------------------------------------------------------------
+//  CollisionModelSpec
+//  说明: Milestone 5 引入独立的"碰撞模型"——与视觉 Drawable 解耦。
+//        字段与 DrawableSpec 几何/位姿部分对齐,但:
+//          * 没有 rgb (碰撞模型不是视觉对象);
+//          * 没有 collisionModel (本身就是碰撞体);
+//          * 形状支持 Box/Cylinder/Sphere/Cone/Mesh/Polytope(无 Plane/STL,
+//            默认简化视觉 STL 为 Box 即可,详见 collisionFromDrawable 助手)。
+//        Writer 用 <CollisionModel> 输出,挂在场景 frame 上;
+//        UI 提供独立 Collision Models 标签页。
+// -----------------------------------------------------------------------------
+struct CollisionModelSpec
+{
+    std::string name;
+    std::string refFrame;
+    std::string shape = "Box";
+    std::string filePath;
+    std::array< double, 3 > dimensions = {{0.1, 0.1, 0.1}};
+    double radius = 0.05;
+    double length = 0.1;
+    std::array< double, 3 > rpyDeg = {{0, 0, 0}};
+    std::array< double, 3 > pos = {{0, 0, 0}};
+};
+
 struct JointLimitSpec
 {
     std::string jointName;
@@ -341,6 +365,7 @@ struct RobotModelSpec
     std::vector< JointTransformSpec > transformJoints;
     std::vector< DHJointSpec > dhJoints;
     std::vector< DrawableSpec > drawables;
+    std::vector< CollisionModelSpec > collisionModels;                  // Milestone 5:独立碰撞模型
     std::vector< JointLimitSpec > limits;
     std::vector< PoseSpec > poses;
     DynamicModelSpec dynamics;
