@@ -86,6 +86,8 @@ class RobotModelBuilderWidget : public QWidget
                           bool editable = true);
     void setShapeCombo (QTableWidget* table, int row, int column,
                         const QString& value, bool editable = true);
+    void setCollisionShapeCombo (QTableWidget* table, int row, int column,
+                                 const QString& value, bool editable = true);
     static bool drawableColumnEditableForShape (const QString& shape, int column,
                                                  bool autoLink);
     static bool collisionColumnEditableForShape (const QString& shape, int column);

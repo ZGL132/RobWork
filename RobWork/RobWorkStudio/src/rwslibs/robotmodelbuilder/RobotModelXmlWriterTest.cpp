@@ -1469,6 +1469,21 @@ int main (int argc, char** argv)
         if (RobotModelXmlWriter::validate (missingMesh, meshErrors))
             return fail ("CollisionModel Mesh with empty file path should fail validation.");
 
+        RobotModelSpec meshAlias =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        meshAlias.collisionModels.clear ();
+        mesh.filePath = "meshes/coarse_collision.stl";
+        meshAlias.collisionModels.push_back (mesh);
+        QStringList meshAliasErrors;
+        if (!RobotModelXmlWriter::validate (meshAlias, meshAliasErrors))
+            return fail ("CollisionModel Mesh alias with file path should validate: " +
+                         meshAliasErrors.join ("; "));
+        const QString meshAliasXml = RobotModelXmlWriter::makeSerialDeviceXml (meshAlias);
+        if (contains (meshAliasXml, "<Mesh file=\""))
+            return fail ("CollisionModel Mesh alias must not emit non-standard <Mesh> XML.");
+        if (!contains (meshAliasXml, "<Polytope file=\"meshes/coarse_collision.stl\" />"))
+            return fail ("CollisionModel Mesh alias should emit RobWork-compatible Polytope XML.");
+
         RobotModelSpec unsupported =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         unsupported.collisionModels.clear ();

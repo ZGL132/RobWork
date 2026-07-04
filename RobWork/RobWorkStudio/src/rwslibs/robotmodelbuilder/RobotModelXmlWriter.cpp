@@ -1582,8 +1582,6 @@ QString RobotModelXmlWriter::collisionShapeXml (const RobotModelSpec& spec,
             return QString ("<Cone radius=\"%1\" z=\"%2\" />")
                 .arg (number (collision.radius), number (collision.length));
         case GeometryKind::Mesh:
-            return QString ("<Mesh file=\"%1\" />")
-                .arg (relativeGeometryPath (spec, collision.filePath));
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
                 .arg (relativeGeometryPath (spec, collision.filePath));

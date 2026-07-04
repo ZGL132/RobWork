@@ -1687,10 +1687,7 @@ void RobotModelBuilderWidget::fillCollisionModelsTable (const RobotModelSpec& sp
         const QString shape = QString::fromStdString (collision.shape);
         setItem (_collisionModelsTable, row, 0, QString::fromStdString (collision.name));
         setItem (_collisionModelsTable, row, 1, QString::fromStdString (collision.refFrame));
-        setCombo (_collisionModelsTable, row, 2,
-                  QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
-                                 << "Mesh" << "Polytope",
-                  shape);
+        setCollisionShapeCombo (_collisionModelsTable, row, 2, shape);
         setItem (_collisionModelsTable, row, 3, vectorText (collision.dimensions),
                  collisionColumnEditableForShape (shape, 3));
         setItem (_collisionModelsTable, row, 4, QString::number (collision.radius),
@@ -2027,6 +2024,23 @@ void RobotModelBuilderWidget::setShapeCombo (QTableWidget* table, int row, int c
 {
     QComboBox* combo = makeCombo (QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
                                                  << "Plane" << "STL" << "Mesh" << "Polytope",
+                                  value, editable);
+    table->setCellWidget (row, column, combo);
+    QTableWidgetItem* item = new QTableWidgetItem ();
+    item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+    table->setItem (row, column, item);
+    connect (combo, &QComboBox::currentTextChanged, this, [this] (const QString&) {
+        if (!_syncingTables)
+            generatePreview ();
+    });
+}
+
+void RobotModelBuilderWidget::setCollisionShapeCombo (QTableWidget* table, int row,
+                                                      int column, const QString& value,
+                                                      bool editable)
+{
+    QComboBox* combo = makeCombo (QStringList () << "Box" << "Cylinder" << "Sphere"
+                                                 << "Cone" << "Mesh" << "Polytope",
                                   value, editable);
     table->setCellWidget (row, column, combo);
     QTableWidgetItem* item = new QTableWidgetItem ();
