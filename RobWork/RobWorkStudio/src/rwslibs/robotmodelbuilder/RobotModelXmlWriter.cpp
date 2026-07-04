@@ -13,6 +13,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QTextStream>
 
@@ -913,19 +914,8 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     }
 
     if (spec.generateDrawables) {
-        for (const DrawableSpec& drawable : spec.drawables) {
-            out << "  <Drawable name=\"" << QString::fromStdString (drawable.name)
-                << "\" refframe=\"" << QString::fromStdString (drawable.refFrame) << "\"";
-            if (drawable.collisionModel)
-                out << " colmodel=\"Enabled\"";
-            out << ">\n";
-            out << "    <RPY>" << vector3 (drawable.rpyDeg) << "</RPY>\n";
-            out << "    <Pos>" << vector3 (drawable.pos) << "</Pos>\n";
-            out << "    <RGB>" << vector3 (drawable.rgb) << "</RGB>\n";
-            out << "    <Cylinder radius=\"" << number (drawable.radius) << "\" z=\""
-                << number (drawable.length) << "\" />\n";
-            out << "  </Drawable>\n";
-        }
+        for (const DrawableSpec& drawable : spec.drawables)
+            writeDrawableXml (out, spec, drawable);
     }
 
     // 关节限位(三种类型分开输出,RobWork 要求独立节点)
@@ -1037,19 +1027,8 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     out << "  </Frame>\n";
 
     if (spec.generateDrawables) {
-        for (const DrawableSpec& drawable : spec.drawables) {
-            out << "  <Drawable name=\"" << QString::fromStdString (drawable.name)
-                << "\" refframe=\"" << QString::fromStdString (drawable.refFrame) << "\"";
-            if (drawable.collisionModel)
-                out << " colmodel=\"Enabled\"";
-            out << ">\n";
-            out << "    <RPY>" << vector3 (drawable.rpyDeg) << "</RPY>\n";
-            out << "    <Pos>" << vector3 (drawable.pos) << "</Pos>\n";
-            out << "    <RGB>" << vector3 (drawable.rgb) << "</RGB>\n";
-            out << "    <Cylinder radius=\"" << number (drawable.radius) << "\" z=\""
-                << number (drawable.length) << "\" />\n";
-            out << "  </Drawable>\n";
-        }
+        for (const DrawableSpec& drawable : spec.drawables)
+            writeDrawableXml (out, spec, drawable);
     }
 
     for (const JointLimitSpec& limit : spec.limits) {
@@ -1366,6 +1345,87 @@ void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
     out << "    <Pos>" << vector3 (geometry.pos) << "</Pos>\n";
     out << "    <RGB>" << vector3 (geometry.rgb) << "</RGB>\n";
     out << "    " << geometryShapeXml (geometry) << "\n";
+    out << "  </Drawable>\n";
+}
+
+/// Milestone 4:把文件几何路径转成相对 saveDirectory 的相对路径。
+/// 已经是相对路径的原文返回;空字符串原样返回。绝对路径走
+/// QDir::relativeFilePath,再用 "/" 统一分隔符。
+QString RobotModelXmlWriter::relativeGeometryPath (const RobotModelSpec& spec,
+                                                   const std::string& filePath)
+{
+    const QString raw = QString::fromStdString (filePath).trimmed ();
+    if (raw.isEmpty ())
+        return raw;
+    QFileInfo info (raw);
+    if (!info.isAbsolute ())
+        return QDir::fromNativeSeparators (raw);
+    QDir outDir (QString::fromStdString (spec.saveDirectory));
+    return QDir::fromNativeSeparators (outDir.relativeFilePath (info.absoluteFilePath ()));
+}
+
+/// Milestone 4:把 DrawableSpec 序列化为对应形状的 XML 子节点。
+/// 与 SceneGeometrySpec 共享 GeometryKind 枚举,但:
+///   * 尺寸字段统一来自 drawable.dimensions(Box/Plane)或 drawable.radius/length;
+///   * 文件几何(STL/Mesh/Polytope)走相对路径;
+///   * Unknown 形状返回空串,T3 校验负责拦截。
+QString RobotModelXmlWriter::drawableShapeXml (const RobotModelSpec& spec,
+                                               const DrawableSpec& drawable)
+{
+    const GeometryKind kind = geometryKindFromString (drawable.shape);
+    switch (kind) {
+        case GeometryKind::Box:
+            return QString ("<Box x=\"%1\" y=\"%2\" z=\"%3\" />")
+                .arg (number (drawable.dimensions[0]),
+                      number (drawable.dimensions[1]),
+                      number (drawable.dimensions[2]));
+        case GeometryKind::Cylinder:
+            return QString ("<Cylinder radius=\"%1\" z=\"%2\" />")
+                .arg (number (drawable.radius),
+                      number (drawable.length));
+        case GeometryKind::Sphere:
+            return QString ("<Sphere radius=\"%1\" />")
+                .arg (number (drawable.radius));
+        case GeometryKind::Cone:
+            return QString ("<Cone radius=\"%1\" z=\"%2\" />")
+                .arg (number (drawable.radius),
+                      number (drawable.length));
+        case GeometryKind::Plane:
+            return QString ("<Plane x=\"%1\" y=\"%2\" />")
+                .arg (number (drawable.dimensions[0]),
+                      number (drawable.dimensions[1]));
+        case GeometryKind::STL:
+            return QString ("<STL file=\"%1\" />")
+                .arg (relativeGeometryPath (spec, drawable.filePath));
+        case GeometryKind::Mesh:
+            return QString ("<Mesh file=\"%1\" />")
+                .arg (relativeGeometryPath (spec, drawable.filePath));
+        case GeometryKind::Polytope:
+            return QString ("<Polytope file=\"%1\" />")
+                .arg (relativeGeometryPath (spec, drawable.filePath));
+        case GeometryKind::Unknown:
+        default:
+            return QString ();
+    }
+}
+
+/// Milestone 4:把 DrawableSpec 输出为 <Drawable>(机器人本体几何体):
+///   * 始终输出 <RPY>/<Pos>/<RGB>;
+///   * collisionModel=true → colmodel="Enabled";
+///   * 形状由 drawableShapeXml 决定(不再写死 Cylinder)。
+void RobotModelXmlWriter::writeDrawableXml (QTextStream& out,
+                                            const RobotModelSpec& spec,
+                                            const DrawableSpec& drawable)
+{
+    out << "  <Drawable name=\"" << QString::fromStdString (drawable.name)
+        << "\" refframe=\"" << QString::fromStdString (drawable.refFrame) << "\"";
+    if (drawable.collisionModel)
+        out << " colmodel=\"Enabled\"";
+    out << ">\n";
+    out << "    <RPY>" << vector3 (drawable.rpyDeg) << "</RPY>\n";
+    out << "    <Pos>" << vector3 (drawable.pos) << "</Pos>\n";
+    out << "    <RGB>" << vector3 (drawable.rgb) << "</RGB>\n";
+    out << "    " << drawableShapeXml (spec, drawable) << "\n";
     out << "  </Drawable>\n";
 }
 

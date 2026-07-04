@@ -153,6 +153,16 @@ class RobotModelXmlWriter
     /// 序列化(Box/Cylinder/Sphere/Cone/Plane/Mesh)由 geometryShapeXml 输出。
     static QString geometryShapeXml (const SceneGeometrySpec& geometry);
     static void writeSceneGeometryXml (QTextStream& out, const SceneGeometrySpec& geometry);
+
+    /// Milestone 4:把 DrawableSpec 输出为 <Drawable>(机器人本体几何);
+    /// shape 决定具体的几何 XML(Box/Cylinder/Sphere/Cone/Plane/STL/Mesh/Polytope);
+    /// file 几何路径会经过 relativeGeometryPath 转成相对于 saveDirectory。
+    static QString relativeGeometryPath (const RobotModelSpec& spec,
+                                         const std::string& filePath);
+    static QString drawableShapeXml (const RobotModelSpec& spec,
+                                     const DrawableSpec& drawable);
+    static void writeDrawableXml (QTextStream& out, const RobotModelSpec& spec,
+                                  const DrawableSpec& drawable);
     /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
     static double degToRad (double value);
 };
