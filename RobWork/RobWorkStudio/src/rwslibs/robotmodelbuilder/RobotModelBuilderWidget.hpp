@@ -72,6 +72,11 @@ class RobotModelBuilderWidget : public QWidget
     static QString vectorText (const std::array< double, 3 >& values);
     static QString vectorText6 (const std::array< double, 6 >& values);
     static QString vectorText16 (const std::array< double, 16 >& values);
+    static QComboBox* makeShapeCombo (const QString& currentShape, bool editable);
+    static void setShapeCombo (QTableWidget* table, int row, int column,
+                               const QString& value, bool editable = true);
+    static bool drawableColumnEditableForShape (const QString& shape, int column,
+                                                 bool autoLink);
 
   private:
     QLineEdit* _robotName;

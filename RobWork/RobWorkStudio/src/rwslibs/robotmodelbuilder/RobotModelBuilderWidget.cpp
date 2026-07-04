@@ -362,8 +362,10 @@ void RobotModelBuilderWidget::buildUi ()
         QStringList () << "Name"
                        << "RefFrame"
                        << "Shape"
+                       << "Dimensions x y z"
                        << "Radius"
                        << "Length"
+                       << "File"
                        << "RPY deg (Z Y X)"
                        << "Pos m"
                        << "RGB"
@@ -1172,19 +1174,22 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.transformJoints.push_back (joint);
     }
 
-    // ---- Drawables 表 ----
+    // ---- Drawables 表(Milestone 4:新增 Dimensions/File 两列,共 11 列)----
     for (int row = 0; row < _drawablesTable->rowCount (); ++row) {
         DrawableSpec drawable;
-        drawable.name           = itemText (_drawablesTable, row, 0).toStdString ();
-        drawable.refFrame       = itemText (_drawablesTable, row, 1).toStdString ();
-        drawable.shape          = itemText (_drawablesTable, row, 2).toStdString ();
-        drawable.radius         = itemDouble (_drawablesTable, row, 3);
-        drawable.length         = itemDouble (_drawablesTable, row, 4);
-        parseVector3 (itemText (_drawablesTable, row, 5), drawable.rpyDeg);
-        parseVector3 (itemText (_drawablesTable, row, 6), drawable.pos);
-        parseVector3 (itemText (_drawablesTable, row, 7), drawable.rgb);
+        drawable.name       = itemText (_drawablesTable, row, 0).toStdString ();
+        drawable.refFrame  = itemText (_drawablesTable, row, 1).toStdString ();
+        drawable.shape     = itemText (_drawablesTable, row, 2).toStdString ();
+        parseVector3 (itemText (_drawablesTable, row, 3), drawable.dimensions);
+        drawable.radius    = itemDouble (_drawablesTable, row, 4);
+        drawable.length    = itemDouble (_drawablesTable, row, 5);
+        drawable.filePath  = itemText (_drawablesTable, row, 6).toStdString ();
+        parseVector3 (itemText (_drawablesTable, row, 7), drawable.rpyDeg);
+        parseVector3 (itemText (_drawablesTable, row, 8), drawable.pos);
+        parseVector3 (itemText (_drawablesTable, row, 9), drawable.rgb);
         drawable.collisionModel =
-            itemText (_drawablesTable, row, 8).compare ("Enabled", Qt::CaseInsensitive) == 0;
+            itemText (_drawablesTable, row, 10).compare ("Enabled", Qt::CaseInsensitive) == 0 ||
+            itemText (_drawablesTable, row, 10).compare ("true", Qt::CaseInsensitive) == 0;
         // 自动生成的 Link{i}To{i+1} Drawable 在保存前会被 applyLinkGeometry 覆写
         drawable.autoLinkGeometry =
             isAutoLinkDrawable (QString::fromStdString (drawable.name));
@@ -1324,15 +1329,17 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 
     if (_generateDrawables->isChecked ()) {
         for (int row = 0; row < _drawablesTable->rowCount (); ++row) {
-            if (!parseDouble (itemText (_drawablesTable, row, 3)))
-                errors << QString ("Invalid drawable radius at row %1.").arg (row + 1);
+            if (!parseVector (itemText (_drawablesTable, row, 3), 3))
+                errors << QString ("Invalid drawable dimensions vector at row %1.").arg (row + 1);
             if (!parseDouble (itemText (_drawablesTable, row, 4)))
+                errors << QString ("Invalid drawable radius at row %1.").arg (row + 1);
+            if (!parseDouble (itemText (_drawablesTable, row, 5)))
                 errors << QString ("Invalid drawable length at row %1.").arg (row + 1);
-            if (!parseVector (itemText (_drawablesTable, row, 5), 3))
-                errors << QString ("Invalid drawable RPY vector at row %1.").arg (row + 1);
-            if (!parseVector (itemText (_drawablesTable, row, 6), 3))
-                errors << QString ("Invalid drawable Pos vector at row %1.").arg (row + 1);
             if (!parseVector (itemText (_drawablesTable, row, 7), 3))
+                errors << QString ("Invalid drawable RPY vector at row %1.").arg (row + 1);
+            if (!parseVector (itemText (_drawablesTable, row, 8), 3))
+                errors << QString ("Invalid drawable Pos vector at row %1.").arg (row + 1);
+            if (!parseVector (itemText (_drawablesTable, row, 9), 3))
                 errors << QString ("Invalid drawable RGB vector at row %1.").arg (row + 1);
         }
     }
@@ -1434,16 +1441,21 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
         const DrawableSpec& drawable = spec.drawables[row];
         const bool autoLink = isAutoLinkDrawable (QString::fromStdString (drawable.name));
         // 自动生成的连杆圆柱:名称/参考系/形状/姿态/位置/长度 都由
-        // applyLinkGeometry 维护,所以在 UI 上锁为只读
+        // applyLinkGeometry 维护,所以在 UI 上锁为只读;radius/RGB/Collision
+        // 仍可手动覆盖。Milestone 4 起共 11 列,新增 Dimensions/File。
         setItem (_drawablesTable, row, 0, QString::fromStdString (drawable.name), !autoLink);
         setItem (_drawablesTable, row, 1, QString::fromStdString (drawable.refFrame), !autoLink);
-        setItem (_drawablesTable, row, 2, QString::fromStdString (drawable.shape), !autoLink);
-        setItem (_drawablesTable, row, 3, QString::number (drawable.radius));
-        setItem (_drawablesTable, row, 4, QString::number (drawable.length), !autoLink);
-        setItem (_drawablesTable, row, 5, vectorText (drawable.rpyDeg), !autoLink);
-        setItem (_drawablesTable, row, 6, vectorText (drawable.pos), !autoLink);
-        setItem (_drawablesTable, row, 7, vectorText (drawable.rgb));
-        setItem (_drawablesTable, row, 8, drawable.collisionModel ? "Enabled" : "Disabled");
+        setShapeCombo (_drawablesTable, row, 2,
+                       QString::fromStdString (drawable.shape), !autoLink);
+        setItem (_drawablesTable, row, 3, vectorText (drawable.dimensions), !autoLink);
+        setItem (_drawablesTable, row, 4, QString::number (drawable.radius));
+        setItem (_drawablesTable, row, 5, QString::number (drawable.length), !autoLink);
+        setItem (_drawablesTable, row, 6, QString::fromStdString (drawable.filePath), !autoLink);
+        setItem (_drawablesTable, row, 7, vectorText (drawable.rpyDeg), !autoLink);
+        setItem (_drawablesTable, row, 8, vectorText (drawable.pos), !autoLink);
+        setItem (_drawablesTable, row, 9, vectorText (drawable.rgb));
+        setItem (_drawablesTable, row, 10,
+                 drawable.collisionModel ? "Enabled" : "Disabled");
     }
 }
 
@@ -1600,8 +1612,15 @@ void RobotModelBuilderWidget::setStatus (const QString& message)
 // =============================================================================
 
 /// 安全读取单元格文本(自动 trim,空指针返回空串)
+/// Milestone 4 起:若单元格挂了 QComboBox(Milestone 4 Drawables Shape 列),
+/// 优先返回 combo 的当前文本(因为 setShapeCombo 把显示文本走 widget,
+/// QTableWidgetItem 的文本是空)。
 QString RobotModelBuilderWidget::itemText (const QTableWidget* table, int row, int column)
 {
+    if (table->cellWidget (row, column) != NULL) {
+        if (QComboBox* combo = qobject_cast< QComboBox* > (table->cellWidget (row, column)))
+            return combo->currentText ().trimmed ();
+    }
     const QTableWidgetItem* item = table->item (row, column);
     return item == NULL ? QString () : item->text ().trimmed ();
 }
@@ -1701,5 +1720,52 @@ bool RobotModelBuilderWidget::parseVector16 (const QString& text,
         if (!ok)
             return false;
     }
+    return true;
+}
+
+/// Milestone 4:为 Drawables 表的 Shape 列做一个 ComboBox,
+/// 列出 8 种支持的几何类型。组合框不受 itemText 默认走 QTableWidgetItem
+/// 的限制,所以 itemText() 也做了一次 cellWidget 优先的特殊处理。
+QComboBox* RobotModelBuilderWidget::makeShapeCombo (const QString& currentShape, bool editable)
+{
+    QComboBox* combo = new QComboBox ();
+    combo->addItems (QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
+                                    << "Plane" << "STL" << "Mesh" << "Polytope");
+    const int index = combo->findText (currentShape, Qt::MatchFixedString);
+    combo->setCurrentIndex (index >= 0 ? index : combo->findText ("Cylinder"));
+    combo->setEnabled (editable);
+    return combo;
+}
+
+/// 在 table->cellWidget 注册一个 Shape 下拉,并在隐藏的 QTableWidgetItem 里
+/// 写当前文本(itemText 优先读 widget 文本)。
+void RobotModelBuilderWidget::setShapeCombo (QTableWidget* table, int row, int column,
+                                             const QString& value, bool editable)
+{
+    table->setCellWidget (row, column, makeShapeCombo (value, editable));
+    setItem (table, row, column, value, false);
+}
+
+/// Milestone 4:按 shape 决定哪几列可编辑,实现"切 Box 后只剩 Dimensions
+/// 改得了,切 Cylinder 后只剩 Radius/Length"的语义。
+///   * autoLink row:仅 radius/RGB/Collision 可编辑(Link{i}To{i+1});
+///   * 非 autoLink:Dimensions 对 Box/Plane 可编辑;Radius 对 Cyl/Sphere/Cone;
+///                 Length 对 Cyl/Cone;File 对 STL/Mesh/Polytope。
+bool RobotModelBuilderWidget::drawableColumnEditableForShape (const QString& shape,
+                                                              int column, bool autoLink)
+{
+    if (autoLink)
+        return column == 4 || column == 9 || column == 10;
+    const GeometryKind kind = geometryKindFromString (shape.toStdString ());
+    if (column == 3)
+        return kind == GeometryKind::Box || kind == GeometryKind::Plane;
+    if (column == 4)
+        return kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
+               kind == GeometryKind::Cone;
+    if (column == 5)
+        return kind == GeometryKind::Cylinder || kind == GeometryKind::Cone;
+    if (column == 6)
+        return kind == GeometryKind::STL || kind == GeometryKind::Mesh ||
+               kind == GeometryKind::Polytope;
     return true;
 }
