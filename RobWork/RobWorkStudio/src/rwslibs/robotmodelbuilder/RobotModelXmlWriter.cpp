@@ -668,11 +668,49 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
                 errors << QString ("Drawable %1 references unknown frame %2.")
                               .arg (QString::fromStdString (drawable.name),
                                     QString::fromStdString (drawable.refFrame));
-            if (drawable.radius <= 0)
+            // Milestone 4:按 shape 维度校验,Unknown → 拦截,
+            // 避免把残缺几何也照样写出 XML
+            const GeometryKind kind = geometryKindFromString (drawable.shape);
+            if (kind == GeometryKind::Unknown) {
+                errors << QString ("Drawable %1 has unsupported shape %2.")
+                              .arg (QString::fromStdString (drawable.name),
+                                    QString::fromStdString (drawable.shape));
+            }
+            if (kind == GeometryKind::Box &&
+                (!(drawable.dimensions[0] > 0) || !(drawable.dimensions[1] > 0) ||
+                 !(drawable.dimensions[2] > 0))) {
+                errors << QString ("Drawable %1 Box dimensions must be greater than zero.")
+                              .arg (QString::fromStdString (drawable.name));
+            }
+            if (kind == GeometryKind::Plane &&
+                (!(drawable.dimensions[0] > 0) || !(drawable.dimensions[1] > 0))) {
+                errors << QString ("Drawable %1 Plane dimensions must be greater than zero.")
+                              .arg (QString::fromStdString (drawable.name));
+            }
+            if ((kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
+                 kind == GeometryKind::Cone) && !(drawable.radius > 0)) {
                 errors << QString ("Drawable %1 radius must be greater than zero.")
                               .arg (QString::fromStdString (drawable.name));
-            if (drawable.length <= 0)
+            }
+            if ((kind == GeometryKind::Cylinder || kind == GeometryKind::Cone) &&
+                !(drawable.length > 0)) {
                 errors << QString ("Drawable %1 length must be greater than zero.")
+                              .arg (QString::fromStdString (drawable.name));
+            }
+            if ((kind == GeometryKind::STL || kind == GeometryKind::Mesh ||
+                 kind == GeometryKind::Polytope) && isEmpty (drawable.filePath)) {
+                errors << QString ("Drawable %1 file path is required for %2 geometry.")
+                              .arg (QString::fromStdString (drawable.name),
+                                    QString::fromStdString (drawable.shape));
+            }
+            // 维度 / 半径 / 长度必须是有限数,避免 NaN/Inf 污染 XML
+            for (double value : drawable.dimensions) {
+                if (!std::isfinite (value))
+                    errors << QString ("Drawable %1 dimensions must be finite.")
+                                  .arg (QString::fromStdString (drawable.name));
+            }
+            if (!std::isfinite (drawable.radius) || !std::isfinite (drawable.length))
+                errors << QString ("Drawable %1 radius/length must be finite.")
                               .arg (QString::fromStdString (drawable.name));
             for (double color : drawable.rgb) {
                 if (color < 0 || color > 1)
