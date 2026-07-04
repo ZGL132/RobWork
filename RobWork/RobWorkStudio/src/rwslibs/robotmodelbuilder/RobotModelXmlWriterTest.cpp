@@ -1259,6 +1259,31 @@ int main (int argc, char** argv)
             return fail ("Unknown drawable shape should fail validation.");
     }
 
+    // ---- Milestone 4:文件几何路径相对化 ----
+    {
+        RobotModelSpec rel = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        rel.drawables.clear ();
+        DrawableSpec mesh;
+        mesh.name = "RelativeMesh";
+        mesh.refFrame = "Joint1";
+        mesh.shape = "STL";
+        mesh.filePath =
+            (QDir::tempPath () + "/robotmodelbuilder_meshes/part.stl").toStdString ();
+        mesh.dimensions = {{0.1, 0.1, 0.1}};
+        mesh.radius = 0.05;
+        mesh.length = 0.1;
+        mesh.rpyDeg = {{0, 0, 0}};
+        mesh.pos = {{0, 0, 0}};
+        mesh.rgb = {{0.3, 0.3, 0.3}};
+        mesh.collisionModel = false;
+        rel.drawables.push_back (mesh);
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (rel);
+        if (xml.contains (QDir::tempPath ()))
+            return fail ("Absolute mesh path should be saved relative to output directory.");
+        if (!contains (xml, "<STL file=\"robotmodelbuilder_meshes/part.stl\" />"))
+            return fail ("STL path should be relative to saveDirectory.");
+    }
+
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
