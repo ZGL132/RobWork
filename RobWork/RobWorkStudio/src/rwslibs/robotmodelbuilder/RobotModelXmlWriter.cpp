@@ -489,6 +489,19 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
         spec.sceneGeometries.push_back (g);
     }
 
+    // ---- Milestone 6:CollisionSetup / ProximitySetup 默认值 ----
+    // 把 includes 留空,Writer 会在 makeSceneXml 自动注入默认 Include 项,
+    // 避免 robotName 改了文件名还指向旧 include 的陷阱。
+    spec.collisionSetup.enabled                  = true;
+    spec.collisionSetup.file                     = "CollisionSetup.xml";
+    spec.collisionSetup.excludeAdjacentLinkPairs = true;
+    spec.collisionSetup.excludeStaticPairs       = false;
+
+    spec.proximitySetup.enabled                  = false;
+    spec.proximitySetup.file                     = "ProximitySetup.xml";
+    spec.proximitySetup.useIncludeAll            = true;
+    spec.proximitySetup.useExcludeStaticPairs    = false;
+
     return spec;
 }
 
@@ -876,6 +889,110 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         }
     }
 
+    // =====================================================================
+    //  Milestone 6:CollisionSetup / ProximitySetup / Scene <Include> 校验
+    //  已知 frame 名集合(用于校验 exclude pair、volatile frame 等):
+    //    * transformJoints 名;Base;TCP;
+    //    * robotBaseFrame 名(若 generateScene 通常是 RobotBase);
+    //    * sceneFrames 名。
+    //  注意:RobWork 的 Drawable/CollisionModel 会把 geometry 挂到 refframe,
+    //  CollisionSetup/ProximitySetup 过滤的是 frame pair,不是几何/模型 name。
+    //  校验要点:
+    //    1) collisionSetup.enabled → file 非空;
+    //    2) proximitySetup.enabled → file 非空;
+    //    3) excludePairs 的 first/second 非空且必须引用已知 frame;
+    //    4) volatileFrames 非空且必须引用已知 frame;
+    //    5) proximitySetup.rules 的 patternA/patternB 非空;
+    //    6) includes 项的文件名非空;
+    // =====================================================================
+    {
+        std::set< std::string > collisionKnown;
+        for (const std::string& n : allNames)
+            collisionKnown.insert (n);
+        collisionKnown.insert ("Base");
+        collisionKnown.insert ("TCP");
+        if (!spec.robotBaseFrame.name.empty ())
+            collisionKnown.insert (spec.robotBaseFrame.name);
+        if (spec.generateScene) {
+            collisionKnown.insert ("WORLD");
+            collisionKnown.insert ("RobotBase");
+            for (const FrameSpec& frame : spec.sceneFrames)
+                if (!frame.name.empty ())
+                    collisionKnown.insert (frame.name);
+        }
+
+        // CollisionSetup
+        if (spec.collisionSetup.enabled) {
+            if (isEmpty (spec.collisionSetup.file))
+                errors << "CollisionSetup file must not be empty when collision setup is enabled.";
+
+            for (const FramePairSpec& pair : spec.collisionSetup.excludePairs) {
+                if (isEmpty (pair.first) || isEmpty (pair.second)) {
+                    errors << QString ("CollisionSetup exclude pair requires both first "
+                                       "and second frame names.")
+                                  .arg (QString::fromStdString (pair.first))
+                                  .arg (QString::fromStdString (pair.second));
+                    continue;
+                }
+                if (collisionKnown.find (pair.first) == collisionKnown.end ())
+                    errors << QString ("CollisionSetup exclude pair references unknown "
+                                       "frame: %1")
+                                  .arg (QString::fromStdString (pair.first));
+                if (collisionKnown.find (pair.second) == collisionKnown.end ())
+                    errors << QString ("CollisionSetup exclude pair references unknown "
+                                       "frame: %1")
+                                  .arg (QString::fromStdString (pair.second));
+            }
+
+            for (const std::string& frame : spec.collisionSetup.volatileFrames) {
+                if (frame.empty ()) {
+                    errors << "CollisionSetup volatile frame name must not be empty.";
+                    continue;
+                }
+                if (collisionKnown.find (frame) == collisionKnown.end ())
+                    errors << QString ("CollisionSetup volatile frame references unknown "
+                                       "frame: %1")
+                                  .arg (QString::fromStdString (frame));
+            }
+        }
+
+        // ProximitySetup
+        if (spec.proximitySetup.enabled) {
+            if (isEmpty (spec.proximitySetup.file))
+                errors << "ProximitySetup file must not be empty when proximity setup is enabled.";
+
+            for (const ProximityRuleSpec& rule : spec.proximitySetup.rules) {
+                const bool aEmpty = isEmpty (rule.patternA);
+                const bool bEmpty = isEmpty (rule.patternB);
+                if (aEmpty || bEmpty)
+                    errors << QString ("ProximitySetup rule %1 PatternA/PatternB must not be empty.")
+                                  .arg (rule.kind == ProximityRuleKind::Include ? "Include" : "Exclude");
+            }
+        }
+
+        // 用户自定义 Scene 引用列表
+        for (const IncludeSpec& include : spec.includes) {
+            if (isEmpty (include.file)) {
+                errors << "Scene <Include> file path must not be empty.";
+                continue;
+            }
+            if (spec.generateScene) {
+                const QString rawPath = QString::fromStdString (include.file).trimmed ();
+                QFileInfo includeInfo (rawPath);
+                const QString resolvedPath = includeInfo.isAbsolute ()
+                    ? includeInfo.absoluteFilePath ()
+                    : QDir (QString::fromStdString (spec.saveDirectory)).filePath (rawPath);
+                if (!QFileInfo::exists (resolvedPath)) {
+                    errors << QString ("Scene reference file does not exist: %1")
+                                  .arg (QDir::fromNativeSeparators (rawPath));
+                }
+            }
+        }
+
+        // Scene 启用但 collision/proximity 关闭时也允许(用户可以单独不要碰撞),
+        // 不强加报错;留给上层 UI 决定是否提示。
+    }
+
     return errors.isEmpty ();
 }
 
@@ -1186,6 +1303,12 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 //        - RobotBase 后立即 <Include>,因为 RobWork 会把未显式 refframe 的设备挂到
 //          WorkCell 当前最后一个 frame;
 //        - 再依次输出所有 sceneFrames(Table / Workpiece / CameraFrame / MovableBox)和场景几何。
+//        - Milestone 6 起,CollisionSetup/ProximitySetup 引用与用户额外
+//          <Include> 列表会被列在 RobotBase 之后,顺序:
+//              <Include file="<robotName>.wc.xml" />
+//              <CollisionSetup file="..." />
+//              <ProximitySetup file="..." />
+//              用户自定义 <Include file="..." />
 // =============================================================================
 QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 {
@@ -1203,7 +1326,40 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     writeFrameXml (out, robotBase, spec.showFrameAxes);
     out << "\n";
 
-    out << "  <Include file=\"" << robotName << ".wc.xml\" />\n\n";
+    out << "  <Include file=\"" << robotName << ".wc.xml\" />\n";
+
+    // Milestone 6:CollisionSetup / ProximitySetup 引用。文件路径统一走
+    // relativeOutputPath,保证输出文件不依赖绝对路径。
+    if (spec.collisionSetup.enabled) {
+        const QString setupPath = collisionSetupFilePath (spec);
+        const QString rel       = relativeOutputPath (spec, setupPath);
+        out << "  <CollisionSetup file=\"" << rel << "\" />\n";
+    }
+    if (spec.proximitySetup.enabled) {
+        const QString setupPath = proximitySetupFilePath (spec);
+        const QString rel       = relativeOutputPath (spec, setupPath);
+        out << "  <ProximitySetup file=\"" << rel << "\" />\n";
+    }
+    // 用户在 spec.includes 里追加的额外引用项(可选)。
+    for (const IncludeSpec& include : spec.includes) {
+        if (!include.file.empty ()) {
+            const QString rel = relativeOutputPath (spec, QString::fromStdString (include.file));
+            switch (include.kind) {
+                case IncludeKind::Collision:
+                    out << "  <CollisionSetup file=\"" << rel << "\" />\n";
+                    break;
+                case IncludeKind::Proximity:
+                    out << "  <ProximitySetup file=\"" << rel << "\" />\n";
+                    break;
+                case IncludeKind::Device:
+                case IncludeKind::WorkCell:
+                default:
+                    out << "  <Include file=\"" << rel << "\" />\n";
+                    break;
+            }
+        }
+    }
+    out << "\n";
 
     for (const FrameSpec& frame : spec.sceneFrames)
         writeFrameXml (out, frame, spec.showFrameAxes);
@@ -1280,7 +1436,78 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
 }
 
 // =============================================================================
-//  三个文件路径辅助函数:saveDirectory / robotName + 后缀
+//  makeCollisionSetupXml
+//  说明: 输出 RobWork <CollisionSetup> 结构(Loader 支持的格式):
+//        * <Exclude> 内每行一个 <FramePair first="..." second="..."/>;
+//        * <Volatile> 每行一个 frame 名(空 list 整段省略);
+//        * excludeStaticPairs=true 输出 <ExcludeStaticPairs/>。
+//        excludePairs 来源:
+//          (a) spec.collisionSetup.excludePairs(用户配置)
+//          (b) 当 excludeAdjacentLinkPairs=true,自动追加相邻关节 pair
+//              (Joint{i} - Joint{i+1});空名会被跳过。
+//        重复 pair 会去重(顺序:用户 pair 在前,自动 pair 在后)。
+// =============================================================================
+QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
+{
+    const std::vector< FramePairSpec > pairs = effectiveCollisionExcludePairs (spec);
+    QString xml;
+    QTextStream out (&xml);
+    out << "<CollisionSetup>\n";
+
+    if (!pairs.empty ()) {
+        out << "  <Exclude>\n";
+        for (const FramePairSpec& pair : pairs) {
+            out << "    <FramePair first=\"" << QString::fromStdString (pair.first)
+                << "\" second=\"" << QString::fromStdString (pair.second) << "\"/>\n";
+        }
+        out << "  </Exclude>\n";
+    }
+
+    for (const std::string& frame : spec.collisionSetup.volatileFrames) {
+        if (frame.empty ())
+            continue;
+        out << "  <Volatile>" << QString::fromStdString (frame) << "</Volatile>\n";
+    }
+
+    if (spec.collisionSetup.excludeStaticPairs)
+        out << "  <ExcludeStaticPairs/>\n";
+
+    out << "</CollisionSetup>\n";
+    return xml;
+}
+
+// =============================================================================
+//  makeProximitySetupXml
+//  说明: 输出 RobWork <ProximitySetup> 结构:
+//        <ProximitySetup UseIncludeAll=".." UseExcludeStaticPairs="..">
+//          <Include PatternA=".." PatternB=".."/>
+//          <Exclude PatternA=".." PatternB=".."/>
+//        </ProximitySetup>
+//        空 rules 时仅输出根 + 两个开关属性(Use* 全 false 也照常输出)。
+// =============================================================================
+QString RobotModelXmlWriter::makeProximitySetupXml (const RobotModelSpec& spec)
+{
+    QString xml;
+    QTextStream out (&xml);
+    out << "<ProximitySetup UseIncludeAll=\""
+        << (spec.proximitySetup.useIncludeAll ? "true" : "false")
+        << "\" UseExcludeStaticPairs=\""
+        << (spec.proximitySetup.useExcludeStaticPairs ? "true" : "false")
+        << "\">\n";
+
+    for (const ProximityRuleSpec& rule : spec.proximitySetup.rules) {
+        out << "  <" << (rule.kind == ProximityRuleKind::Include ? "Include" : "Exclude")
+            << " PatternA=\"" << QString::fromStdString (rule.patternA)
+            << "\" PatternB=\"" << QString::fromStdString (rule.patternB)
+            << "\"/>\n";
+    }
+
+    out << "</ProximitySetup>\n";
+    return xml;
+}
+
+// =============================================================================
+//  三个文件路径辅助函数 + Milestone 6 setup 路径:saveDirectory / robotName + 后缀
 // =============================================================================
 QString RobotModelXmlWriter::serialDeviceFilePath (const RobotModelSpec& spec)
 {
@@ -1300,10 +1527,84 @@ QString RobotModelXmlWriter::dynamicWorkCellFilePath (const RobotModelSpec& spec
     return dir.filePath (exportedRobotName (spec) + ".dwc.xml");
 }
 
+// Milestone 6:CollisionSetup/ProximitySetup 落盘路径使用用户在 spec 里配置
+// 的文件名;空字符串兜底默认文件名,以保证 Scene XML 引用与真实文件一致。
+QString RobotModelXmlWriter::collisionSetupFilePath (const RobotModelSpec& spec)
+{
+    QDir dir (QString::fromStdString (spec.saveDirectory));
+    const QString file = QString::fromStdString (spec.collisionSetup.file).trimmed ();
+    return dir.filePath (file.isEmpty () ? QString ("CollisionSetup.xml") : file);
+}
+
+QString RobotModelXmlWriter::proximitySetupFilePath (const RobotModelSpec& spec)
+{
+    QDir dir (QString::fromStdString (spec.saveDirectory));
+    const QString file = QString::fromStdString (spec.proximitySetup.file).trimmed ();
+    return dir.filePath (file.isEmpty () ? QString ("ProximitySetup.xml") : file);
+}
+
+// Milestone 6:把所有 Scene 引用的文件路径转成相对 saveDirectory 的相对路径,
+// 避免 XML 输出依赖绝对路径。已经是相对路径的原文返回。
+QString RobotModelXmlWriter::relativeOutputPath (const RobotModelSpec& spec,
+                                                 const QString& filePath)
+{
+    const QString trimmed = filePath.trimmed ();
+    if (trimmed.isEmpty ())
+        return trimmed;
+    QFileInfo info (trimmed);
+    if (!info.isAbsolute ())
+        return QDir::fromNativeSeparators (trimmed);
+    QDir outDir (QString::fromStdString (spec.saveDirectory));
+    return QDir::fromNativeSeparators (outDir.relativeFilePath (info.absoluteFilePath ()));
+}
+
+// Milestone 6:把用户配置的 excludePairs 与"自动相邻关节 pair"合并。
+// 重复 pair 去重(以 "first|second" 为键),顺序是先用户 pair 后自动 pair。
+// 空名(first / second)会被跳过,相邻 pair 也只在两端 transformJoints 都
+// 存在且非空时追加。
+std::vector< FramePairSpec >
+RobotModelXmlWriter::effectiveCollisionExcludePairs (const RobotModelSpec& spec)
+{
+    std::vector< FramePairSpec > result;
+    std::set< std::string > seen;
+
+    auto push = [&] (const std::string& first, const std::string& second) {
+        if (first.empty () || second.empty ())
+            return;
+        if (first == second)
+            return;
+        const std::string key = first + "|" + second;
+        if (!seen.insert (key).second)
+            return;
+        FramePairSpec pair;
+        pair.first  = first;
+        pair.second = second;
+        result.push_back (pair);
+    };
+
+    for (const FramePairSpec& pair : spec.collisionSetup.excludePairs)
+        push (pair.first, pair.second);
+
+    if (spec.collisionSetup.excludeAdjacentLinkPairs &&
+        spec.transformJoints.size () >= 2) {
+        for (size_t i = 0; i + 1 < spec.transformJoints.size (); ++i) {
+            const std::string a = spec.transformJoints[i].name;
+            const std::string b = spec.transformJoints[i + 1].name;
+            // ensure 顺向
+            push (a, b);
+        }
+    }
+
+    return result;
+}
+
 // =============================================================================
 //  saveFiles
 //  说明: 先 validate,再按 spec.generateScene / spec.dynamics.generateDynamicWorkCell
 //        决定写哪些文件;任何一步失败都会把错误追加到 errors 并返回 false。
+//        Milestone 6:在 Scene XML 之前按 spec.collisionSetup.enabled /
+//        spec.proximitySetup.enabled 写 CollisionSetup.xml / ProximitySetup.xml;
+//        generateScene=false 时连带清理两个 setup 文件,避免遗留 stale 引用。
 // =============================================================================
 bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& errors)
 {
@@ -1320,6 +1621,46 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
     deviceFile.close ();
 
     if (spec.generateScene) {
+        // CollisionSetup 在 Scene 之前写:顺序 device -> collision -> proximity
+        // -> scene,这样如果中途失败,Scene 的引用尚未生成。
+        if (spec.collisionSetup.enabled) {
+            QFile collisionFile (collisionSetupFilePath (spec));
+            const QFileInfo collisionInfo (collisionFile.fileName ());
+            if (!QDir ().mkpath (collisionInfo.absolutePath ())) {
+                errors << QString ("Could not create directory %1").arg (collisionInfo.absolutePath ());
+                return false;
+            }
+            if (!collisionFile.open (QFile::WriteOnly | QFile::Text)) {
+                errors << QString ("Could not write %1").arg (collisionFile.fileName ());
+                return false;
+            }
+            QTextStream collisionStream (&collisionFile);
+            collisionStream << makeCollisionSetupXml (spec);
+            collisionFile.close ();
+        }
+        else {
+            QFile::remove (collisionSetupFilePath (spec));
+        }
+
+        if (spec.proximitySetup.enabled) {
+            QFile proximityFile (proximitySetupFilePath (spec));
+            const QFileInfo proximityInfo (proximityFile.fileName ());
+            if (!QDir ().mkpath (proximityInfo.absolutePath ())) {
+                errors << QString ("Could not create directory %1").arg (proximityInfo.absolutePath ());
+                return false;
+            }
+            if (!proximityFile.open (QFile::WriteOnly | QFile::Text)) {
+                errors << QString ("Could not write %1").arg (proximityFile.fileName ());
+                return false;
+            }
+            QTextStream proximityStream (&proximityFile);
+            proximityStream << makeProximitySetupXml (spec);
+            proximityFile.close ();
+        }
+        else {
+            QFile::remove (proximitySetupFilePath (spec));
+        }
+
         QFile sceneFile (sceneFilePath (spec));
         if (!sceneFile.open (QFile::WriteOnly | QFile::Text)) {
             errors << QString ("Could not write %1").arg (sceneFile.fileName ());
@@ -1330,7 +1671,11 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
         sceneFile.close ();
     }
     else {
+        // 生成 Scene 关闭时,连带删除 setup 文件,避免下一次开启 Scene 后
+        // 这些 stale setup 仍留在 saveDirectory。
         QFile::remove (sceneFilePath (spec));
+        QFile::remove (collisionSetupFilePath (spec));
+        QFile::remove (proximitySetupFilePath (spec));
     }
 
     if (spec.dynamics.generateDynamicWorkCell) {

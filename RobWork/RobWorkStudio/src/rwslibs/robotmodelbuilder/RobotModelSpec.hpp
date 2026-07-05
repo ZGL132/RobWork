@@ -350,6 +350,77 @@ struct DynamicModelSpec
     std::vector< JointForceLimitSpec > forceLimits;
 };
 
+// -----------------------------------------------------------------------------
+//  Milestone 6:CollisionSetup / ProximitySetup + Scene <Include> 列表
+//  说明:
+//    * IncludeSpec             : 生成器在 Scene XML 顶部 <Include file="..."> 列
+//                                表里使用的一项;Kind 决定它是否被分类输出。
+//                                Writer 自身也基于 spec 内部数据动态生成默认
+//                                <Include> 项(robot / collision / proximity),
+//                                所以用户填这一段是可选的。
+//    * FramePairSpec           : RobWork <CollisionSetup> <Exclude> 段里
+//                                <FramePair first="..." second="..."/> 一对
+//                                frame 名。CollisionSetup 主要表达"哪些 frame
+//                                pair 不参与碰撞",相邻关节 pair 会被自动追加。
+//    * CollisionSetupSpec      : 控制是否生成 CollisionSetup.xml,<Exclude> /
+//                                <Volatile> / <ExcludeStaticPairs> 的内容。
+//    * ProximityRuleSpec       : <ProximitySetup> 里的一条 Include / Exclude
+//                                规则,带两个 glob pattern(PatternA/PatternB)。
+//    * ProximitySetupSpec      : 可选的 ProximitySetup.xml;默认 disabled,
+//                                启用时 Scene XML 会自动 <ProximitySetup ...>。
+// -----------------------------------------------------------------------------
+enum class IncludeKind
+{
+    Device,
+    WorkCell,
+    Collision,
+    Proximity
+};
+
+struct IncludeSpec
+{
+    std::string file;
+    IncludeKind kind = IncludeKind::Device;
+};
+
+struct FramePairSpec
+{
+    std::string first;
+    std::string second;
+};
+
+struct CollisionSetupSpec
+{
+    bool enabled                       = true;
+    std::string file                   = "CollisionSetup.xml";
+    bool excludeAdjacentLinkPairs      = true;
+    bool excludeStaticPairs            = false;
+    std::vector< FramePairSpec > excludePairs;
+    std::vector< std::string > volatileFrames;
+};
+
+enum class ProximityRuleKind
+{
+    Include,
+    Exclude
+};
+
+struct ProximityRuleSpec
+{
+    ProximityRuleKind kind      = ProximityRuleKind::Include;
+    std::string patternA;
+    std::string patternB;
+};
+
+struct ProximitySetupSpec
+{
+    bool enabled                  = false;
+    std::string file              = "ProximitySetup.xml";
+    bool useIncludeAll            = true;
+    bool useExcludeStaticPairs    = false;
+    std::vector< ProximityRuleSpec > rules;
+};
+
 struct RobotModelSpec
 {
     std::string robotName;
@@ -369,6 +440,10 @@ struct RobotModelSpec
     std::vector< JointLimitSpec > limits;
     std::vector< PoseSpec > poses;
     DynamicModelSpec dynamics;
+    // Milestone 6:
+    std::vector< IncludeSpec > includes;                              // Scene XML 顶部 <Include file=...> 列表(可选;Writer 会自动注入默认)
+    CollisionSetupSpec collisionSetup;                                // 生成/引用 CollisionSetup.xml
+    ProximitySetupSpec proximitySetup;                                // 生成/引用 ProximitySetup.xml
 };
 
 }    // namespace rws

@@ -53,6 +53,26 @@ class RobotModelXmlWriter
     /// 生成 DynamicWorkCell XML(动力学配置文件)
     static QString makeDynamicWorkCellXml (const RobotModelSpec& spec);
 
+    /// 生成 Milestone 6 CollisionSetup XML。
+    /// 输出 RobWork CollisionSetupLoader 支持的格式:
+    ///   <CollisionSetup>
+    ///     <Exclude><FramePair first="A" second="B"/></Exclude>
+    ///     <Volatile>X</Volatile>
+    ///     <ExcludeStaticPairs/>
+    ///   </CollisionSetup>
+    /// 自动合并 spec.collisionSetup.excludePairs + 相邻关节 pair(当
+    /// excludeAdjacentLinkPairs=true)。空 list 时省略 <Exclude>,空
+    /// volatileFrames 时省略 <Volatile>。
+    static QString makeCollisionSetupXml (const RobotModelSpec& spec);
+
+    /// 生成 Milestone 6 ProximitySetup XML。
+    /// 输出 RobWork ProximitySetupLoader 支持的格式:
+    ///   <ProximitySetup UseIncludeAll="..." UseExcludeStaticPairs="...">
+    ///     <Include PatternA="..." PatternB="..."/>
+    ///     <Exclude PatternA="..." PatternB="..."/>
+    ///   </ProximitySetup>
+    static QString makeProximitySetupXml (const RobotModelSpec& spec);
+
     /// SerialDevice XML 的最终落盘路径(saveDirectory / robotName.wc.xml)
     static QString serialDeviceFilePath (const RobotModelSpec& spec);
 
@@ -61,6 +81,12 @@ class RobotModelXmlWriter
 
     /// DynamicWorkCell XML 的最终落盘路径(saveDirectory / robotName.dwc.xml)
     static QString dynamicWorkCellFilePath (const RobotModelSpec& spec);
+
+    /// CollisionSetup XML 的最终落盘路径(saveDirectory / collisionSetup.file)
+    static QString collisionSetupFilePath (const RobotModelSpec& spec);
+
+    /// ProximitySetup XML 的最终落盘路径(saveDirectory / proximitySetup.file)
+    static QString proximitySetupFilePath (const RobotModelSpec& spec);
 
     /// 校验 + 把 XML 写入磁盘;失败时把错误信息追加到 errors 中
     static bool saveFiles (const RobotModelSpec& spec, QStringList& errors);
@@ -177,6 +203,19 @@ class RobotModelXmlWriter
                                         const CollisionModelSpec& collision);
     /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
     static double degToRad (double value);
+
+    // -------------------------------------------------------------------------
+    //  Milestone 6:CollisionSetup / ProximitySetup 私有 helper
+    // -------------------------------------------------------------------------
+    /// 把一个绝对/相对文件路径转成相对于 spec.saveDirectory 的相对路径;
+    /// 用于 Scene XML 的 <CollisionSetup>/<ProximitySetup> 等 <Include> 引用,
+    /// 保证输出文件不依赖绝对路径。原文为相对路径时原样返回。
+    static QString relativeOutputPath (const RobotModelSpec& spec, const QString& filePath);
+
+    /// 合并 spec.collisionSetup.excludePairs 与相邻关节自动生成的 pair
+    /// (Joint{i} - Joint{i+1})。excludeAdjacentLinkPairs=false 时不追加
+    /// 相邻 pair;空结果返回空 vector。
+    static std::vector< FramePairSpec > effectiveCollisionExcludePairs (const RobotModelSpec& spec);
 };
 
 }    // namespace rws

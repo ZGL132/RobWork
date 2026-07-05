@@ -78,6 +78,12 @@ if(build)
         ${ModelSrcFiles}
         ${ModelHeaderFiles}
     )
-    target_link_libraries(sdurws_robotmodelbuilder_xmltest PRIVATE ${QT_LIBRARIES})
+    target_link_libraries(sdurws_robotmodelbuilder_xmltest
+        PRIVATE
+            ${QT_LIBRARIES}
+            RW::sdurw_loaders
+            RW::sdurw_models
+            RW::sdurw_proximity
+    )
     target_include_directories(sdurws_robotmodelbuilder_xmltest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 endif()

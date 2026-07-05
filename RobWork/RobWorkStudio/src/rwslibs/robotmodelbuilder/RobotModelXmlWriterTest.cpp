@@ -16,6 +16,12 @@
 // =============================================================================
 #include "RobotModelXmlWriter.hpp"
 
+#include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/models/WorkCell.hpp>
+#include <rw/proximity/BasicFilterStrategy.hpp>
+#include <rw/proximity/CollisionSetup.hpp>
+#include <rw/proximity/ProximityFilter.hpp>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -61,6 +67,20 @@ std::array< double, 3 > rpyRotatedZ (const std::array< double, 3 >& rpyDeg)
 bool nearlyEqual (double lhs, double rhs, double eps = 1e-6)
 {
     return std::abs (lhs - rhs) <= eps;
+}
+
+bool hasFramePair (rw::proximity::ProximityFilter::Ptr filter,
+                   const std::string& first,
+                   const std::string& second)
+{
+    while (!filter->isEmpty ()) {
+        const rw::kinematics::FramePair pair = filter->frontAndPop ();
+        const std::string a                  = pair.first->getName ();
+        const std::string b                  = pair.second->getName ();
+        if ((a == first && b == second) || (a == second && b == first))
+            return true;
+    }
+    return false;
 }
 }    // namespace
 
@@ -1523,6 +1543,389 @@ int main (int argc, char** argv)
         QStringList danglingErrors;
         if (RobotModelXmlWriter::validate (dangling, danglingErrors))
             return fail ("Dangling CollisionModel reference should fail validation.");
+    }
+
+    // =====================================================================
+    //  Milestone 6: CollisionSetup / ProximitySetup
+    // =====================================================================
+
+    // ---- Test 1: Scene XML 引用生成的 CollisionSetup.xml ----
+    {
+        RobotModelSpec setup =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        const QString scene = RobotModelXmlWriter::makeSceneXml (setup);
+        if (!contains (scene, "<CollisionSetup file=\"CollisionSetup.xml\" />"))
+            return fail ("Scene XML should reference generated CollisionSetup.xml.");
+    }
+
+    // ---- Test 2: CollisionSetup XML 包含默认的相邻关节 pair ----
+    {
+        RobotModelSpec setup =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (setup);
+
+        if (!contains (collisionXml, "<CollisionSetup>"))
+            return fail ("CollisionSetup XML missing root.");
+        if (!contains (collisionXml, "<FramePair first=\"Joint1\" second=\"Joint2\"/>"))
+            return fail ("Adjacent Joint1-Joint2 should be excluded from collision checks.");
+        if (!contains (collisionXml, "<FramePair first=\"Joint5\" second=\"Joint6\"/>"))
+            return fail ("Adjacent Joint5-Joint6 should be excluded from collision checks.");
+        // 默认有 5 个相邻关节 pair (Joint1-Joint2, ..., Joint5-Joint6)
+        if (collisionXml.count ("<FramePair ") != 5)
+            return fail ("Default 6-axis robot should auto-exclude 5 adjacent joint pairs.");
+    }
+
+    // ---- Test 3: 用户可显式配置 robot/environment frame pair ----
+    {
+        RobotModelSpec env = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        FramePairSpec pair;
+        pair.first  = "Joint3";
+        pair.second = "Table";
+        env.collisionSetup.excludePairs.push_back (pair);
+
+        QStringList envErrors;
+        if (!RobotModelXmlWriter::validate (env, envErrors))
+            return fail ("Robot/environment collision pair should validate: " +
+                         envErrors.join ("; "));
+
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (env);
+        if (!contains (collisionXml, "<FramePair first=\"Joint3\" second=\"Table\"/>"))
+            return fail ("Configured robot/environment frame pair should be emitted.");
+    }
+
+    // ---- Test 3b: CollisionSetup pair 必须引用 RobWork frame,不能误用 Drawable 名 ----
+    {
+        RobotModelSpec env = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        FramePairSpec pair;
+        pair.first  = "Joint3";
+        pair.second = "TableTop";
+        env.collisionSetup.excludePairs.push_back (pair);
+
+        QStringList envErrors;
+        if (RobotModelXmlWriter::validate (env, envErrors))
+            return fail ("CollisionSetup pair should reject Drawable names such as TableTop.");
+        if (!envErrors.join (" ").contains ("TableTop"))
+            return fail ("CollisionSetup Drawable-name validation error should mention TableTop.");
+    }
+
+    // ---- Test 4: ProximitySetup 可选生成与 Scene 引用 ----
+    {
+        RobotModelSpec prox =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        prox.proximitySetup.enabled = true;
+
+        ProximityRuleSpec rule;
+        rule.kind     = ProximityRuleKind::Include;
+        rule.patternA = "Joint.*";
+        rule.patternB = "Table.*";
+        prox.proximitySetup.rules.push_back (rule);
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (prox);
+        if (!contains (scene, "<ProximitySetup file=\"ProximitySetup.xml\" />"))
+            return fail ("Scene XML should reference enabled ProximitySetup.xml.");
+
+        const QString proxXml = RobotModelXmlWriter::makeProximitySetupXml (prox);
+        if (!contains (proxXml, "<ProximitySetup UseIncludeAll=\"true\""))
+            return fail ("ProximitySetup XML should emit root with UseIncludeAll=true.");
+        if (!contains (proxXml, "<Include PatternA=\"Joint.*\" PatternB=\"Table.*\"/>"))
+            return fail ("ProximitySetup include rule should be emitted.");
+    }
+
+    // ---- Test 5: saveFiles 写出 CollisionSetup + ProximitySetup 文件 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6";
+        QDir ().mkpath (dir);
+
+        RobotModelSpec files = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        files.proximitySetup.enabled = true;
+
+        QStringList fileErrors;
+        if (!RobotModelXmlWriter::saveFiles (files, fileErrors))
+            return fail ("saveFiles should write setup files: " + fileErrors.join ("; "));
+
+        if (!QFile::exists (RobotModelXmlWriter::collisionSetupFilePath (files)))
+            return fail ("saveFiles should create CollisionSetup.xml.");
+        if (!QFile::exists (RobotModelXmlWriter::proximitySetupFilePath (files)))
+            return fail ("saveFiles should create ProximitySetup.xml.");
+
+        // 文件路径应被 Scene XML 以相对 saveDirectory 的相对路径引用,
+        // 也就是说 Scene XML 里不应包含绝对路径。
+        const QString scene = RobotModelXmlWriter::makeSceneXml (files);
+        if (scene.contains (QDir::toNativeSeparators (dir)))
+            return fail ("Scene XML must reference setup files via paths relative to saveDirectory.");
+    }
+
+    // ---- Test 6: 缺失/非法引用有清晰错误 ----
+    {
+        RobotModelSpec bad = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        FramePairSpec pair;
+        pair.first  = "MissingFrame";
+        pair.second = "Joint2";
+        bad.collisionSetup.excludePairs.push_back (pair);
+
+        QStringList badErrors;
+        if (RobotModelXmlWriter::validate (bad, badErrors))
+            return fail ("CollisionSetup pair with missing frame should fail validation.");
+        if (!badErrors.join (" ").contains ("MissingFrame"))
+            return fail ("CollisionSetup missing frame error should mention MissingFrame.");
+    }
+
+    // ---- Test 7: collisionSetup.enabled=true 但 file 为空 → 报错 ----
+    {
+        RobotModelSpec empty =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        empty.collisionSetup.file.clear ();
+        QStringList emptyErrors;
+        if (RobotModelXmlWriter::validate (empty, emptyErrors))
+            return fail ("CollisionSetup with empty file path should fail validation.");
+    }
+
+    // ---- Test 8: ProximitySetup patternA/patternB 不能为空 ----
+    {
+        RobotModelSpec badRule =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badRule.proximitySetup.enabled = true;
+        ProximityRuleSpec rule;
+        rule.patternA = "";
+        rule.patternB = "X.*";
+        badRule.proximitySetup.rules.push_back (rule);
+        QStringList ruleErrors;
+        if (RobotModelXmlWriter::validate (badRule, ruleErrors))
+            return fail ("ProximitySetup rule with empty pattern should fail validation.");
+    }
+
+    // ---- Test 9: 关闭 collisionSetup 时,Scene XML 不应输出 <CollisionSetup> 引用,
+    //               saveFiles 也不再创建该文件;邻近关节对不会被自动追加为 exclude pair ----
+    {
+        RobotModelSpec disabled =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        disabled.collisionSetup.enabled = false;
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (disabled);
+        if (scene.contains ("<CollisionSetup "))
+            return fail ("Scene XML should not reference CollisionSetup when disabled.");
+
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (disabled);
+        // CollisionSetup 即使 disable,makeCollisionSetupXml 仍允许生成;
+        // 默认 excludeAdjacentLinkPairs=true → 仍然有 5 个相邻 pair。
+        // 但场景里没有引用该文件时,saveFiles 应主动清理避免遗留。
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6_disabled";
+        QDir ().mkpath (dir);
+        RobotModelSpec saveSpec = disabled;
+        saveSpec.saveDirectory = dir.toStdString ();
+        // 预先放一个 stale 文件
+        QFile stale (RobotModelXmlWriter::collisionSetupFilePath (saveSpec));
+        if (stale.open (QFile::WriteOnly | QFile::Text)) {
+            stale.write ("stale");
+            stale.close ();
+        }
+        QStringList disabledErrors;
+        if (!RobotModelXmlWriter::saveFiles (saveSpec, disabledErrors))
+            return fail ("saveFiles should succeed with disabled collision setup: " +
+                         disabledErrors.join ("; "));
+        // 既然 generateScene=true,这里 collisionSetup.enabled=false 时,
+        // saveFiles 会调用 QFile::remove 清理碰撞文件。
+        if (QFile::exists (RobotModelXmlWriter::collisionSetupFilePath (saveSpec)))
+            return fail ("saveFiles should remove stale CollisionSetup.xml when disabled.");
+    }
+
+    // ---- Test 10: relativeOutputPath 应保证 Scene 引用均为相对 saveDirectory ----
+    {
+        RobotModelSpec abs =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        // 把 collision file 改成绝对路径
+        abs.collisionSetup.file =
+            (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir/CollisionSetup.xml").toStdString ();
+        abs.proximitySetup.enabled = true;
+        abs.proximitySetup.file =
+            (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir/ProximitySetup.xml").toStdString ();
+        // 把 saveDirectory 设到 m6_abs_dir 的 sibling,这样相对引用会非平凡
+        abs.saveDirectory = (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir").toStdString ();
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (abs);
+        // 不应出现绝对路径(以盘符开头或包含绝对分隔符)
+        const QRegularExpression driveLetterRe ("[A-Z]:[/\\\\]");
+        if (scene.contains (driveLetterRe))
+            return fail ("Scene XML should not contain Windows-style absolute paths.");
+        // 应保留为相对文件名(同目录)
+        if (!contains (scene, "<CollisionSetup file=\"CollisionSetup.xml\""))
+            return fail ("Scene XML should normalize CollisionSetup path relative to saveDirectory.");
+        if (!contains (scene, "<ProximitySetup file=\"ProximitySetup.xml\""))
+            return fail ("Scene XML should normalize ProximitySetup path relative to saveDirectory.");
+    }
+
+    // ---- Test 11: 用户额外 <Include> 项会按顺序出现在 Scene 顶部 ----
+    {
+        RobotModelSpec incl =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        IncludeSpec extra;
+        extra.file = "extra/Fixture.wc.xml";
+        extra.kind = IncludeKind::Device;
+        incl.includes.push_back (extra);
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (incl);
+        if (!contains (scene, "<Include file=\"extra/Fixture.wc.xml\""))
+            return fail ("User-supplied <Include> file should be emitted in Scene XML.");
+    }
+
+    // ---- Test 11b: IncludeSpec.kind 应决定 Scene 引用标签类型 ----
+    {
+        RobotModelSpec incl =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        incl.collisionSetup.enabled = false;
+        incl.proximitySetup.enabled = false;
+
+        IncludeSpec collision;
+        collision.file = "custom/CollisionSetup.xml";
+        collision.kind = IncludeKind::Collision;
+        incl.includes.push_back (collision);
+
+        IncludeSpec proximity;
+        proximity.file = "custom/ProximitySetup.xml";
+        proximity.kind = IncludeKind::Proximity;
+        incl.includes.push_back (proximity);
+
+        const QString scene = RobotModelXmlWriter::makeSceneXml (incl);
+        if (!contains (scene, "<CollisionSetup file=\"custom/CollisionSetup.xml\""))
+            return fail ("IncludeKind::Collision should emit a CollisionSetup tag.");
+        if (!contains (scene, "<ProximitySetup file=\"custom/ProximitySetup.xml\""))
+            return fail ("IncludeKind::Proximity should emit a ProximitySetup tag.");
+        if (contains (scene, "<Include file=\"custom/CollisionSetup.xml\"") ||
+            contains (scene, "<Include file=\"custom/ProximitySetup.xml\""))
+            return fail ("Collision/Proximity IncludeSpec entries must not be emitted as generic Include tags.");
+    }
+
+    // ---- Test 11c: 用户额外 <Include> 引用缺失文件时 validate 应报清晰错误 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6_missing_include";
+        QDir ().mkpath (dir);
+        RobotModelSpec missing =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        IncludeSpec extra;
+        extra.file = "missing/Fixture.wc.xml";
+        extra.kind = IncludeKind::Device;
+        missing.includes.push_back (extra);
+
+        QStringList includeErrors;
+        if (RobotModelXmlWriter::validate (missing, includeErrors))
+            return fail ("Missing user-supplied Include file should fail validation.");
+        if (!includeErrors.join (" ").contains ("missing/Fixture.wc.xml"))
+            return fail ("Missing Include validation error should mention the missing file path.");
+    }
+
+    // ---- Test 11d: setup 文件位于子目录时 saveFiles 应创建父目录 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6_nested_setup";
+        QDir ().mkpath (dir);
+        RobotModelSpec nested =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        nested.collisionSetup.file = "setup/CollisionSetup.xml";
+        nested.proximitySetup.enabled = true;
+        nested.proximitySetup.file = "setup/ProximitySetup.xml";
+
+        QStringList nestedErrors;
+        if (!RobotModelXmlWriter::saveFiles (nested, nestedErrors))
+            return fail ("saveFiles should create setup parent directories: " +
+                         nestedErrors.join ("; "));
+        if (!QFile::exists (RobotModelXmlWriter::collisionSetupFilePath (nested)))
+            return fail ("Nested CollisionSetup.xml should be written.");
+        if (!QFile::exists (RobotModelXmlWriter::proximitySetupFilePath (nested)))
+            return fail ("Nested ProximitySetup.xml should be written.");
+    }
+
+    // ---- Test 12: CollisionSetup excludeAdjacentLinkPairs=false 时不自动追加相邻 pair ----
+    {
+        RobotModelSpec noAuto =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        noAuto.collisionSetup.excludeAdjacentLinkPairs = false;
+        const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (noAuto);
+        if (xml.contains ("<FramePair "))
+            return fail ("No adjacent pairs should be auto-added when excludeAdjacentLinkPairs=false.");
+    }
+
+    // ---- Test 13: Volatile frame 名应该参与 frame 名合法性校验 ----
+    {
+        RobotModelSpec vol =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        vol.collisionSetup.volatileFrames.push_back ("NonExistentFrame");
+        QStringList volErrors;
+        if (RobotModelXmlWriter::validate (vol, volErrors))
+            return fail ("CollisionSetup volatile frame referencing unknown frame should fail validation.");
+        if (!volErrors.join (" ").contains ("NonExistentFrame"))
+            return fail ("CollisionSetup volatile frame error should mention NonExistentFrame.");
+    }
+
+    // ---- Test 14: ExcludeStaticPairs 标志应输出 <ExcludeStaticPairs/> ----
+    {
+        RobotModelSpec stat =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        stat.collisionSetup.excludeStaticPairs = true;
+        const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (stat);
+        if (!contains (xml, "<ExcludeStaticPairs/>"))
+            return fail ("excludeStaticPairs=true should emit <ExcludeStaticPairs/> marker.");
+    }
+
+    // ---- Test 15: 把 Milestone 6 默认模型写到磁盘,供人工核对 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_dump_m6";
+        QDir ().mkpath (dir);
+        RobotModelSpec dumpSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        dumpSpec.proximitySetup.enabled = true;
+        ProximityRuleSpec rule;
+        rule.kind     = ProximityRuleKind::Include;
+        rule.patternA = "Joint.*";
+        rule.patternB = "Table.*";
+        dumpSpec.proximitySetup.rules.push_back (rule);
+        if (!RobotModelXmlWriter::saveFiles (dumpSpec, errors))
+            return fail ("saveFiles failed for Milestone 6 dump: " + errors.join ("; "));
+        std::cerr << "M6 dumped:\n  "
+                  << RobotModelXmlWriter::collisionSetupFilePath (dumpSpec).toStdString ()
+                  << "\n  "
+                  << RobotModelXmlWriter::proximitySetupFilePath (dumpSpec).toStdString ()
+                  << std::endl;
+    }
+
+    // ---- Test 16: 生成的 Scene 应能被 RobWork WorkCellLoader 加载 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6_load";
+        QDir ().mkpath (dir);
+        RobotModelSpec loadSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        loadSpec.proximitySetup.enabled = true;
+        ProximityRuleSpec rule;
+        rule.kind     = ProximityRuleKind::Include;
+        rule.patternA = "Joint.*";
+        rule.patternB = "Table.*";
+        loadSpec.proximitySetup.rules.push_back (rule);
+
+        QStringList loadErrors;
+        if (!RobotModelXmlWriter::saveFiles (loadSpec, loadErrors))
+            return fail ("saveFiles failed before WorkCell load test: " + loadErrors.join ("; "));
+
+        try {
+            rw::models::WorkCell::Ptr wc =
+                rw::loaders::WorkCellLoader::Factory::load (
+                    RobotModelXmlWriter::sceneFilePath (loadSpec).toStdString ());
+            if (wc.isNull ())
+                return fail ("WorkCellLoader returned null for generated Scene.");
+            if (wc->findDevice ("GenericSixAxis").isNull ())
+                return fail ("Loaded WorkCell should contain GenericSixAxis device.");
+            const rw::proximity::CollisionSetup setup =
+                rw::proximity::CollisionSetup::get (wc);
+            if (setup.getExcludeList ().empty ())
+                return fail ("Loaded WorkCell should contain CollisionSetup exclude pairs.");
+
+            rw::proximity::BasicFilterStrategy filter (wc);
+            rw::proximity::ProximityFilter::Ptr pairs =
+                filter.update (wc->getDefaultState ());
+            if (hasFramePair (pairs, "Joint1", "Joint2"))
+                return fail ("Adjacent Joint1-Joint2 must not be present in collision check pairs.");
+        }
+        catch (const std::exception& e) {
+            return fail (QString ("WorkCellLoader failed for generated Scene: %1").arg (e.what ()));
+        }
+        catch (...) {
+            return fail ("WorkCellLoader crashed for generated Scene with an unknown exception.");
+        }
     }
 
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
