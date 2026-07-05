@@ -148,6 +148,69 @@ int main (int argc, char** argv)
             return fail ("URDF effort limit was not imported.");
     }
 
+    // ---- Task 3:chain order test (joint_b declared before joint_a) ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_chain";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/chain.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create chain URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"ChainBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"middle\" />\n"
+            << "  <link name=\"tool\" />\n"
+            << "  <joint name=\"joint_b\" type=\"revolute\"><parent link=\"middle\" />"
+            << "<child link=\"tool\" /><origin xyz=\"0 0 0.2\" rpy=\"0 0 0\" /></joint>\n"
+            << "  <joint name=\"joint_a\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"middle\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Chain URDF import failed: " + importErrors.join ("; "));
+        if (result.spec.transformJoints.size () != 2)
+            return fail ("Chain URDF should import two transform joints.");
+        if (result.spec.transformJoints[0].name != "joint_a" ||
+            result.spec.transformJoints[1].name != "joint_b")
+            return fail ("URDF joints should be ordered from root to tip.");
+    }
+
+    // ---- Task 3:branch warning test ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_branch";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/branch.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create branch URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"BranchBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"arm\" />\n"
+            << "  <link name=\"camera\" />\n"
+            << "  <joint name=\"arm_joint\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"arm\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" /></joint>\n"
+            << "  <joint name=\"camera_joint\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"camera\" /><origin xyz=\"0.1 0 0\" rpy=\"0 0 0\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Branch URDF import failed: " + importErrors.join ("; "));
+        if (result.warnings.isEmpty ())
+            return fail ("Branch URDF import should report a branch warning.");
+    }
+
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 

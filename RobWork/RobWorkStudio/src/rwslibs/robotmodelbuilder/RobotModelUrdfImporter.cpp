@@ -287,6 +287,80 @@ bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
     return true;
 }
 
+// ===========================================================================
+//  Task 3:serial-chain 排序 + branch / 非默认 axis 警告
+// ===========================================================================
+
+/// 在 URDF links 中找唯一一个"不是任何 joint 的 child"的 link 当作 root。
+/// 找不到 / 多个 root 都报错(因为插件第一版只支持单条串联链)。
+QString findRootLink (const UrdfModel& model, QStringList& errors)
+{
+    std::set< QString > childLinks;
+    for (const UrdfJoint& joint : model.joints)
+        childLinks.insert (joint.childLink);
+
+    QStringList roots;
+    for (const auto& item : model.links) {
+        if (childLinks.find (item.first) == childLinks.end ())
+            roots << item.first;
+    }
+    if (roots.size () != 1) {
+        errors << QString ("URDF must have exactly one root link; found %1.")
+                      .arg (roots.size ());
+        return QString ();
+    }
+    return roots.front ();
+}
+
+/// 从 root 出发沿 parent -> child 关系走出一条串联链;
+/// 每个 link 选第一个 child joint(按 name 字典序),其它兄弟关节通过 warning 上报。
+/// 走完 / 出现环 / root 不存在都给出明确报错或空结果。
+std::vector< UrdfJoint > orderedRootChain (const UrdfModel& model,
+                                           QStringList& warnings,
+                                           QStringList& errors)
+{
+    const QString root = findRootLink (model, errors);
+    if (root.isEmpty ())
+        return std::vector< UrdfJoint > ();
+
+    std::map< QString, std::vector< UrdfJoint > > childrenByParent;
+    for (const UrdfJoint& joint : model.joints)
+        childrenByParent[joint.parentLink].push_back (joint);
+
+    std::vector< UrdfJoint > ordered;
+    QString current = root;
+    std::set< QString > visitedLinks;
+    while (childrenByParent.find (current) != childrenByParent.end ()) {
+        std::vector< UrdfJoint > children = childrenByParent[current];
+        if (children.size () > 1) {
+            std::sort (children.begin (), children.end (),
+                       [] (const UrdfJoint& a, const UrdfJoint& b) {
+                           return a.name < b.name;
+                       });
+            warnings << QString ("URDF branch at link %1: importing child joint %2 as the serial chain and skipping %3 sibling branch(es).")
+                            .arg (current, children.front ().name)
+                            .arg (children.size () - 1);
+        }
+        const UrdfJoint selected = children.front ();
+        if (visitedLinks.find (selected.childLink) != visitedLinks.end ()) {
+            errors << QString ("URDF cycle detected at link %1.").arg (selected.childLink);
+            return std::vector< UrdfJoint > ();
+        }
+        visitedLinks.insert (selected.childLink);
+        ordered.push_back (selected);
+        current = selected.childLink;
+    }
+    return ordered;
+}
+
+/// URDF 默认关节轴是 (0,0,1);非默认轴的关节在第一个实现里不动,
+/// 但需要把警告挂到 result.warnings。
+bool isDefaultJointAxis (const std::array< double, 3 >& axis)
+{
+    return std::abs (axis[0]) < 1e-9 && std::abs (axis[1]) < 1e-9 &&
+           std::abs (axis[2] - 1.0) < 1e-9;
+}
+
 }    // namespace
 
 // =============================================================================
@@ -332,8 +406,23 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     spec.robotBaseFrame.rpyDeg    = {{0, 0, 0}};
     spec.robotBaseFrame.pos       = {{0, 0, 0}};
 
-    // Task 2:按 model.joints 出现顺序转换(无 chain 排序)
-    for (const UrdfJoint& urdfJoint : model.joints) {
+    // Task 3:用 orderedRootChain 取代 model.joints 的出现顺序,
+    // 把分支 / 非默认轴 / root 错误 / 环 这些情况记到 result.warnings / errors。
+    const std::vector< UrdfJoint > orderedJoints =
+        orderedRootChain (model, result.warnings, errors);
+    if (!errors.isEmpty ())
+        return false;
+
+    for (const UrdfJoint& urdfJoint : orderedJoints) {
+        if (!isDefaultJointAxis (urdfJoint.axis)) {
+            result.warnings
+                << QString ("Joint %1 uses axis %2 %3 %4. Current importer preserves origin but does not re-orient non-Z axes.")
+                       .arg (urdfJoint.name)
+                       .arg (urdfJoint.axis[0])
+                       .arg (urdfJoint.axis[1])
+                       .arg (urdfJoint.axis[2]);
+        }
+
         JointTransformSpec joint;
         joint.name   = urdfJoint.name.toStdString ();
         joint.type   = jointTypeToPluginType (urdfJoint.type).toStdString ();
