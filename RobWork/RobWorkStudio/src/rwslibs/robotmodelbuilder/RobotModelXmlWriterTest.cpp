@@ -343,6 +343,46 @@ int main (int argc, char** argv)
             return fail ("package:// mesh path was not resolved.");
     }
 
+    // ---- Task 7:把导入的 spec 写盘 + 用 WorkCellLoader 加载 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_load";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/loadbot.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create load URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"LoadBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\" />\n"
+            << "  <joint name=\"joint1\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /><origin xyz=\"0 0 0.2\" rpy=\"0 0 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("LoadBot URDF import failed: " + importErrors.join ("; "));
+        QStringList saveErrors;
+        if (!RobotModelXmlWriter::saveFiles (result.spec, saveErrors))
+            return fail ("Imported URDF spec could not be saved: " + saveErrors.join ("; "));
+        try {
+            const rw::models::WorkCell::Ptr wc =
+                rw::loaders::WorkCellLoader::Factory::load (
+                    RobotModelXmlWriter::sceneFilePath (result.spec).toStdString ());
+            if (wc == NULL)
+                return fail ("WorkCellLoader returned null for URDF-generated scene.");
+        }
+        catch (const std::exception& e) {
+            return fail (QString ("WorkCellLoader failed for URDF-generated scene: %1")
+                              .arg (e.what ()));
+        }
+    }
+
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 

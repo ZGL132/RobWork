@@ -838,6 +838,16 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     RobotModelXmlWriter::refreshDhProjectionFromTransform (spec);
     RobotModelXmlWriter::applyDefaultDrawables (spec);
 
+    // Task 7:在写盘前调用 XmlWriter.validate 兜底,把任何
+    // "URDF 合法但 spec 不合法" 的状态阻挡下来,避免后续 saveFiles
+    // / WorkCellLoader 链式失败。
+    QStringList validationErrors;
+    if (!RobotModelXmlWriter::validate (spec, validationErrors)) {
+        errors << "URDF was parsed but produced an invalid RobotModelSpec:";
+        errors << validationErrors;
+        return false;
+    }
+
     result.spec = spec;
     return true;
 }
