@@ -261,6 +261,45 @@ int main (int argc, char** argv)
             return fail ("URDF collision cylinder was not imported as a CollisionModelSpec.");
     }
 
+    // ---- Task 5:urdf <inertial> -> LinkDynamicsSpec ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_inertial";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/inertial.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create inertial URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"MassBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\"><inertial><origin xyz=\"0.01 0.02 0.03\" rpy=\"0 0 0\" />"
+            << "<mass value=\"2.5\" />"
+            << "<inertia ixx=\"0.1\" ixy=\"0.01\" ixz=\"0.02\" iyy=\"0.2\" iyz=\"0.03\" izz=\"0.3\" />"
+            << "</inertial></link>\n"
+            << "  <joint name=\"joint1\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"2\" effort=\"3\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Inertial URDF import failed: " + importErrors.join ("; "));
+        bool foundMass = false;
+        for (const LinkDynamicsSpec& link : result.spec.dynamics.links) {
+            if (link.objectName == "joint1" && nearlyEqual (link.mass, 2.5) &&
+                nearlyEqual (link.cog[0], 0.01) && nearlyEqual (link.inertia[0], 0.1) &&
+                nearlyEqual (link.inertia[3], 0.01)) {
+                foundMass = true;
+            }
+        }
+        if (!foundMass)
+            return fail ("URDF inertial data was not imported into LinkDynamicsSpec.");
+    }
+
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 

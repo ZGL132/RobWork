@@ -38,29 +38,45 @@ namespace {
 // -----------------------------------------------------------------------------
 //  私有数据结构(Milestone Plan 2):对应 URDF 一个 robot
 // -----------------------------------------------------------------------------
-struct UrdfLink
-{
-    QString name;
-    std::vector< struct UrdfGeometry > visuals;     // forward decl 在下方
-    std::vector< struct UrdfGeometry > collisions;
-};
-
+/// URDF origin(t + rpy),其它结构都会复用
 struct UrdfOrigin
 {
-    std::array< double, 3 > xyz   = {{0, 0, 0}};
+    std::array< double, 3 > xyz    = {{0, 0, 0}};
     std::array< double, 3 > rpyRad = {{0, 0, 0}};
 };
 
+/// URDF <limit>:限位 + 速度 + 力上限
 struct UrdfLimit
 {
-    bool hasLower   = false;
-    bool hasUpper   = false;
+    bool hasLower    = false;
+    bool hasUpper    = false;
     bool hasVelocity = false;
-    bool hasEffort  = false;
-    double lower    = 0;
-    double upper    = 0;
-    double velocity = 0;
-    double effort   = 0;
+    bool hasEffort   = false;
+    double lower     = 0;
+    double upper     = 0;
+    double velocity  = 0;
+    double effort    = 0;
+};
+
+/// URDF <inertial>:origin + mass + 6 元素 inertia tensor (ixx..izz)。
+/// present=true 才被 writer 视为有效数据。
+struct UrdfInertial
+{
+    bool present                       = false;
+    UrdfOrigin origin;
+    double mass                        = 1.0;
+    std::array< double, 6 > inertia    = {{0.01, 0.01, 0.01, 0, 0, 0}};
+};
+
+/// forward-decl;完整定义在本文件下方"Task 4"区域。
+struct UrdfGeometry;
+
+struct UrdfLink
+{
+    QString name;
+    std::vector< UrdfGeometry > visuals;
+    std::vector< UrdfGeometry > collisions;
+    UrdfInertial inertial;                          // present=false 表示 link 不带 inertial
 };
 
 struct UrdfJoint
@@ -251,6 +267,9 @@ bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors);
 bool parseVisualOrCollision (QXmlStreamReader& xml, const QString& fallbackName,
                              UrdfGeometry& geometry, QStringList& errors);
 
+// Task 5:urdf inertial 解析
+bool parseInertial (QXmlStreamReader& xml, UrdfInertial& inertial, QStringList& errors);
+
 bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
 {
     QFile file (urdfPath);
@@ -298,6 +317,10 @@ bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
                     if (!parseVisualOrCollision (xml, fallback, geometry, errors))
                         return false;
                     link.collisions.push_back (geometry);
+                }
+                else if (xml.name () == "inertial") {
+                    if (!parseInertial (xml, link.inertial, errors))
+                        return false;
                 }
                 else {
                     xml.skipCurrentElement ();
@@ -528,6 +551,54 @@ QString linkFrameName (const QString& linkName,
     return "Base";
 }
 
+// ===========================================================================
+//  Task 5:urdf <inertial> 解析 -> LinkDynamicsSpec
+// ===========================================================================
+
+/// 解析 <inertial>:三个直接子节点 (origin / mass / inertia);
+/// inertia 6 个属性(ixx ixy ixz iyy iyz izz)缺一报错。
+bool parseInertial (QXmlStreamReader& xml, UrdfInertial& inertial, QStringList& errors)
+{
+    inertial.present = true;
+    while (xml.readNextStartElement ()) {
+        if (xml.name () == "origin") {
+            if (!parseOrigin (xml, inertial.origin, errors))
+                return false;
+            xml.skipCurrentElement ();
+        }
+        else if (xml.name () == "mass") {
+            bool ok = false;
+            inertial.mass = xml.attributes ().value ("value").toDouble (&ok);
+            if (!ok || inertial.mass <= 0) {
+                errors << "URDF inertial mass must be positive.";
+                return false;
+            }
+            xml.skipCurrentElement ();
+        }
+        else if (xml.name () == "inertia") {
+            const QXmlStreamAttributes attrs = xml.attributes ();
+            bool ok[6] = {false, false, false, false, false, false};
+            inertial.inertia[0] = attrs.value ("ixx").toDouble (&ok[0]);
+            inertial.inertia[3] = attrs.value ("ixy").toDouble (&ok[1]);
+            inertial.inertia[4] = attrs.value ("ixz").toDouble (&ok[2]);
+            inertial.inertia[1] = attrs.value ("iyy").toDouble (&ok[3]);
+            inertial.inertia[5] = attrs.value ("iyz").toDouble (&ok[4]);
+            inertial.inertia[2] = attrs.value ("izz").toDouble (&ok[5]);
+            for (bool valid : ok) {
+                if (!valid) {
+                    errors << "URDF inertia must define ixx ixy ixz iyy iyz izz.";
+                    return false;
+                }
+            }
+            xml.skipCurrentElement ();
+        }
+        else {
+            xml.skipCurrentElement ();
+        }
+    }
+    return true;
+}
+
 }    // namespace
 
 // =============================================================================
@@ -670,6 +741,49 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                 urdfRpyToPluginRpyDeg (collisionGeometry.origin.rpyRad);
             collision.pos         = collisionGeometry.origin.xyz;
             spec.collisionModels.push_back (collision);
+        }
+    }
+
+    // Task 5:<inertial> -> LinkDynamicsSpec。
+    // 重点:URDF 的 <inertial> 挂在子 link 上,但动力学 link 的 objectName
+    // 在插件里是可动 joint 名;用 childLinkToJointName 找这个 link 由哪个
+    // joint 创建。Root / 不在 chain 上的 link 给 warning 后跳过。
+    for (const auto& item : model.links) {
+        const UrdfLink& link = item.second;
+        if (!link.inertial.present)
+            continue;
+        const auto jointIt = childLinkToJointName.find (item.first);
+        if (jointIt == childLinkToJointName.end ()) {
+            result.warnings << QString ("Skipping inertial data for root or non-chain link %1.")
+                                   .arg (item.first);
+            continue;
+        }
+        LinkDynamicsSpec dyn;
+        dyn.linkName        = item.first.toStdString ();
+        dyn.objectName      = jointIt->second.toStdString ();
+        dyn.mass            = link.inertial.mass;
+        dyn.cog             = link.inertial.origin.xyz;
+        dyn.inertia         = link.inertial.inertia;
+        dyn.estimateInertia = false;
+        dyn.material        = "Imported";
+        spec.dynamics.links.push_back (dyn);
+    }
+    // 没有 URDF inertial 数据时,为每个 movable joint 兜底填一份默认
+    // LinkDynamicsSpec,避免 dynamics 表空缺导致后续 SaveAndLoad 失败。
+    if (spec.dynamics.links.empty ()) {
+        int index = 1;
+        for (const JointTransformSpec& joint : spec.transformJoints) {
+            if (!isMovable (typeToKind (joint.type)))
+                continue;
+            LinkDynamicsSpec dyn;
+            dyn.linkName        = "Link" + std::to_string (index++);
+            dyn.objectName      = joint.name;
+            dyn.mass            = 1.0;
+            dyn.cog             = {{0, 0, 0}};
+            dyn.inertia         = {{0.01, 0.01, 0.01, 0, 0, 0}};
+            dyn.estimateInertia = false;
+            dyn.material        = "Imported";
+            spec.dynamics.links.push_back (dyn);
         }
     }
 
