@@ -211,6 +211,56 @@ int main (int argc, char** argv)
             return fail ("Branch URDF import should report a branch warning.");
     }
 
+    // ---- Task 4:visual + collision geometry import test ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_geometry";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/geometry.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create geometry URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"GeoBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\">\n"
+            << "    <visual name=\"link1_visual\"><origin xyz=\"0 0 0.05\" rpy=\"0 0 0\" />"
+            << "<geometry><box size=\"0.1 0.2 0.3\" /></geometry>"
+            << "<material name=\"blue\"><color rgba=\"0.1 0.2 0.3 1\" /></material></visual>\n"
+            << "    <collision name=\"link1_collision\"><origin xyz=\"0 0 0.05\" rpy=\"0 0 0\" />"
+            << "<geometry><cylinder radius=\"0.04\" length=\"0.2\" /></geometry></collision>\n"
+            << "  </link>\n"
+            << "  <joint name=\"joint1\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Geometry URDF import failed: " + importErrors.join ("; "));
+        bool foundBox = false;
+        for (const DrawableSpec& drawable : result.spec.drawables) {
+            if (drawable.name == "link1_visual" && drawable.shape == "Box" &&
+                nearlyEqual (drawable.dimensions[0], 0.1) &&
+                nearlyEqual (drawable.rgb[0], 0.1)) {
+                foundBox = true;
+            }
+        }
+        if (!foundBox)
+            return fail ("URDF visual box was not imported as a DrawableSpec.");
+        bool foundCollision = false;
+        for (const CollisionModelSpec& collision : result.spec.collisionModels) {
+            if (collision.name == "link1_collision" && collision.shape == "Cylinder" &&
+                nearlyEqual (collision.radius, 0.04) && nearlyEqual (collision.length, 0.2)) {
+                foundCollision = true;
+            }
+        }
+        if (!foundCollision)
+            return fail ("URDF collision cylinder was not imported as a CollisionModelSpec.");
+    }
+
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 

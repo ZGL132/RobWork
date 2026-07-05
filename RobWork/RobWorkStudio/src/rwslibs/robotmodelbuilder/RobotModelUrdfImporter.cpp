@@ -41,6 +41,8 @@ namespace {
 struct UrdfLink
 {
     QString name;
+    std::vector< struct UrdfGeometry > visuals;     // forward decl 在下方
+    std::vector< struct UrdfGeometry > collisions;
 };
 
 struct UrdfOrigin
@@ -80,10 +82,19 @@ struct UrdfModel
 };
 
 // -----------------------------------------------------------------------------
-//  几何解析(本文件内 forward-decl,实现在 Task 4 步骤 3 引入;
-//            这里先 stub 不读 geometry)
+//  几何(Task 4):visual / collision 共享 UrdfGeometry
 // -----------------------------------------------------------------------------
-struct UrdfGeometry;        // 占位,后续任务实现
+struct UrdfGeometry
+{
+    QString name;
+    QString shape;
+    QString filePath;
+    std::array< double, 3 > dimensions = {{0.1, 0.1, 0.1}};
+    double radius   = 0.05;
+    double length   = 0.1;
+    UrdfOrigin origin;
+    std::array< double, 3 > rgb = {{0.6, 0.6, 0.6}};
+};
 
 // -----------------------------------------------------------------------------
 //  私有解析 helper
@@ -234,6 +245,12 @@ bool parseJointElement (QXmlStreamReader& xml, UrdfJoint& joint, QStringList& er
 /// Task 2:暂不解析 link body(geometry/inertial 在 Task 4/5 引入),只记 link 名;
 ///        joint 按 xml 出现顺序塞进 model.joints,具体排序在 Task 3 的
 ///        orderedRootChain 里再做。
+bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors);
+
+// Task 4:visual / collision 子树解析;为 parseUrdf 在 link body 里调用而 forward decl
+bool parseVisualOrCollision (QXmlStreamReader& xml, const QString& fallbackName,
+                             UrdfGeometry& geometry, QStringList& errors);
+
 bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
 {
     QFile file (urdfPath);
@@ -261,8 +278,31 @@ bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
                 errors << "URDF link without name is not supported.";
                 return false;
             }
-            // Task 2:link 内部的几何/inertial 暂不读,跳过整段。
-            xml.skipCurrentElement ();
+            // 解析 link body:<visual>/<collision> -> UrdfGeometry 队列;
+            // inertials 在 Task 5 引入。当前其它子元素(inertial等)暂跳过。
+            int visualIndex   = 0;
+            int collisionIndex = 0;
+            while (xml.readNextStartElement ()) {
+                if (xml.name () == "visual") {
+                    UrdfGeometry geometry;
+                    const QString fallback =
+                        link.name + "_visual_" + QString::number (++visualIndex);
+                    if (!parseVisualOrCollision (xml, fallback, geometry, errors))
+                        return false;
+                    link.visuals.push_back (geometry);
+                }
+                else if (xml.name () == "collision") {
+                    UrdfGeometry geometry;
+                    const QString fallback =
+                        link.name + "_collision_" + QString::number (++collisionIndex);
+                    if (!parseVisualOrCollision (xml, fallback, geometry, errors))
+                        return false;
+                    link.collisions.push_back (geometry);
+                }
+                else {
+                    xml.skipCurrentElement ();
+                }
+            }
             model.links[link.name] = link;
         }
         else if (tag == "joint") {
@@ -361,6 +401,133 @@ bool isDefaultJointAxis (const std::array< double, 3 >& axis)
            std::abs (axis[2] - 1.0) < 1e-9;
 }
 
+// ===========================================================================
+//  Task 4:visual / collision 几何解析
+// ===========================================================================
+
+/// 解析单个 <geometry> 子节点。当前支持 box / cylinder / sphere / mesh;
+/// URDF 别的(Plane 等)走"不支持"分支,返回 false,留给上层忽略整段。
+bool parseGeometryChild (QXmlStreamReader& xml, UrdfGeometry& geometry, QStringList& errors)
+{
+    const QString tag = xml.name ().toString ();
+    if (tag == "box") {
+        geometry.shape = "Box";
+        if (!parseVector3 (xml.attributes ().value ("size").toString (),
+                           geometry.dimensions)) {
+            errors << "Invalid URDF box size.";
+            return false;
+        }
+    }
+    else if (tag == "cylinder") {
+        geometry.shape = "Cylinder";
+        bool okRadius = false;
+        bool okLength = false;
+        geometry.radius = xml.attributes ().value ("radius").toDouble (&okRadius);
+        geometry.length = xml.attributes ().value ("length").toDouble (&okLength);
+        if (!okRadius || !okLength) {
+            errors << "Invalid URDF cylinder geometry.";
+            return false;
+        }
+    }
+    else if (tag == "sphere") {
+        geometry.shape = "Sphere";
+        bool ok = false;
+        geometry.radius = xml.attributes ().value ("radius").toDouble (&ok);
+        if (!ok) {
+            errors << "Invalid URDF sphere radius.";
+            return false;
+        }
+    }
+    else if (tag == "mesh") {
+        geometry.shape    = "Mesh";
+        geometry.filePath = xml.attributes ().value ("filename").toString ();
+        if (geometry.filePath.trimmed ().isEmpty ()) {
+            errors << "URDF mesh geometry must have filename.";
+            return false;
+        }
+        if (xml.attributes ().hasAttribute ("scale")) {
+            std::array< double, 3 > scale;
+            if (parseVector3 (xml.attributes ().value ("scale").toString (), scale))
+                geometry.dimensions = scale;
+        }
+    }
+    else {
+        errors << QString ("Unsupported URDF geometry tag %1.").arg (tag);
+        return false;
+    }
+    xml.skipCurrentElement ();
+    return true;
+}
+
+/// 解析单个 <visual> 或 <collision>。name 缺省时用 fallbackName。
+/// 内部子节点处理:<origin>/<geometry>/<material>。
+bool parseVisualOrCollision (QXmlStreamReader& xml, const QString& fallbackName,
+                             UrdfGeometry& geometry, QStringList& errors)
+{
+    geometry.name = xml.attributes ().value ("name").toString ().trimmed ();
+    if (geometry.name.isEmpty ())
+        geometry.name = fallbackName;
+
+    while (xml.readNextStartElement ()) {
+        const QString tag = xml.name ().toString ();
+        if (tag == "origin") {
+            if (!parseOrigin (xml, geometry.origin, errors))
+                return false;
+            xml.skipCurrentElement ();
+        }
+        else if (tag == "geometry") {
+            // <geometry> 内只关心一个本体(box / cylinder / sphere / mesh)
+            // + 配套 <material>/<color>(仅 visual 有);遇到不支持的几何返回 false。
+            while (xml.readNextStartElement ()) {
+                if (!parseGeometryChild (xml, geometry, errors)) {
+                    return false;
+                }
+            }
+        }
+        else if (tag == "material") {
+            while (xml.readNextStartElement ()) {
+                if (xml.name () == "color") {
+                    std::array< double, 3 > rgba = {{0.6, 0.6, 0.6}};
+                    const QStringList parts = xml.attributes ()
+                                                  .value ("rgba")
+                                                  .toString ()
+                                                  .split (QRegularExpression ("\\s+"),
+                                                          Qt::SkipEmptyParts);
+                    if (parts.size () >= 3) {
+                        bool ok0 = false, ok1 = false, ok2 = false;
+                        rgba[0] = parts[0].toDouble (&ok0);
+                        rgba[1] = parts[1].toDouble (&ok1);
+                        rgba[2] = parts[2].toDouble (&ok2);
+                        if (ok0 && ok1 && ok2)
+                            geometry.rgb = rgba;
+                    }
+                }
+                xml.skipCurrentElement ();
+            }
+        }
+        else {
+            xml.skipCurrentElement ();
+        }
+    }
+    if (geometry.shape.isEmpty ()) {
+        errors << QString ("URDF geometry %1 has no supported geometry child.")
+                      .arg (geometry.name);
+        return false;
+    }
+    return true;
+}
+
+/// 把子 link 名映射到"使该 link 出现的 joint 名"。Root 节点 & 在 tree
+/// 之外的 link 都映射回 "Base"。
+QString linkFrameName (const QString& linkName,
+                       const std::map< QString, QString >& childLinkToJointName)
+{
+    const auto it = childLinkToJointName.find (linkName);
+    if (it != childLinkToJointName.end ())
+        return it->second;
+    return "Base";
+}
+
 }    // namespace
 
 // =============================================================================
@@ -457,6 +624,52 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                                   ? std::max (urdfJoint.limit.effort, 1e-9)
                                   : 100.0;
             spec.dynamics.forceLimits.push_back (force);
+        }
+    }
+
+    // Task 4:建立 child link -> 父 joint 名映射,供 visual / collision 挂在
+    // 对应关节 frame 上。Root 子节点的 visual/collision 退化挂到 "Base"。
+    std::map< QString, QString > childLinkToJointName;
+    for (const UrdfJoint& joint : orderedJoints)
+        childLinkToJointName[joint.childLink] = joint.name;
+
+    for (const auto& item : model.links) {
+        const UrdfLink& link = item.second;
+        const QString refFrame = linkFrameName (item.first, childLinkToJointName);
+
+        for (const UrdfGeometry& visual : link.visuals) {
+            DrawableSpec drawable;
+            drawable.name            = visual.name.toStdString ();
+            drawable.refFrame        = refFrame.toStdString ();
+            drawable.shape           = visual.shape.toStdString ();
+            drawable.filePath        = visual.filePath.toStdString ();
+            drawable.dimensions      = visual.dimensions;
+            drawable.radius          = visual.radius;
+            drawable.length          = visual.length;
+            drawable.rpyDeg          = urdfRpyToPluginRpyDeg (visual.origin.rpyRad);
+            drawable.pos             = visual.origin.xyz;
+            drawable.rgb             = visual.rgb;
+            drawable.collisionModel  = false;
+            drawable.autoLinkGeometry = false;
+            spec.drawables.push_back (drawable);
+        }
+        for (const UrdfGeometry& collisionGeometry : link.collisions) {
+            CollisionModelSpec collision;
+            collision.name        = collisionGeometry.name.toStdString ();
+            collision.refFrame    = refFrame.toStdString ();
+            // Collision models 也接受 Mesh,本项目 Writer 把 Mesh 视为 Polytope
+            // 别名(Milestone 5);其余形状直接复用。
+            collision.shape       = collisionGeometry.shape == "Mesh"
+                                        ? std::string ("Mesh")
+                                        : collisionGeometry.shape.toStdString ();
+            collision.filePath    = collisionGeometry.filePath.toStdString ();
+            collision.dimensions  = collisionGeometry.dimensions;
+            collision.radius      = collisionGeometry.radius;
+            collision.length      = collisionGeometry.length;
+            collision.rpyDeg      =
+                urdfRpyToPluginRpyDeg (collisionGeometry.origin.rpyRad);
+            collision.pos         = collisionGeometry.origin.xyz;
+            spec.collisionModels.push_back (collision);
         }
     }
 
