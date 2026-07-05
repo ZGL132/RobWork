@@ -15,6 +15,7 @@
 //          7) 把生成的 XML 落到 temp 目录,供人工检查。
 // =============================================================================
 #include "RobotModelXmlWriter.hpp"
+#include "RobotModelUrdfImporter.hpp"
 
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/models/WorkCell.hpp>
@@ -26,6 +27,7 @@
 #include <QDir>
 #include <QFile>
 #include <QRegularExpression>
+#include <QTextStream>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -91,6 +93,22 @@ bool hasFramePair (rw::proximity::ProximityFilter::Ptr filter,
 int main (int argc, char** argv)
 {
     QCoreApplication app (argc, argv);
+
+    // =====================================================================
+    //  URDF 导入器骨架(Task 1):当前 importFile 应明确报错而不是假装成功
+    // =====================================================================
+    {
+        UrdfImportOptions importOptions;
+        importOptions.saveDirectory = QDir::tempPath ();
+        UrdfImportResult importResult;
+        QStringList importErrors;
+        if (RobotModelUrdfImporter::importFile ("missing.urdf", importOptions, importResult,
+                                                importErrors)) {
+            return fail ("Unimplemented URDF importer should not report success.");
+        }
+        if (importErrors.isEmpty ())
+            return fail ("Unimplemented URDF importer should report a clear error.");
+    }
 
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());

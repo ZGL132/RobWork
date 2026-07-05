@@ -25,8 +25,15 @@ rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} A
 if(build)
     # ---- 源代码分组 ----
     # Model 系列:不依赖 Qt Widget,只依赖 QtCore,可独立被命令行测试程序复用
-    set(ModelSrcFiles RobotModelXmlWriter.cpp)
-    set(ModelHeaderFiles RobotModelSpec.hpp RobotModelXmlWriter.hpp)
+    set(ModelSrcFiles
+        RobotModelXmlWriter.cpp
+        RobotModelUrdfImporter.cpp
+    )
+    set(ModelHeaderFiles
+        RobotModelSpec.hpp
+        RobotModelXmlWriter.hpp
+        RobotModelUrdfImporter.hpp
+    )
     # 插件编译入口:Plugin + Widget + Model 三者合并
     set(SrcFiles
         RobotModelBuilderPlugin.cpp
