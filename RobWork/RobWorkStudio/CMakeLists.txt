@@ -135,7 +135,9 @@ rw_get_revision(${RWS_ROOT} ROBWORKSTUDIO)
 #
 
 # first configure the header file
-configure_file(${RWS_ROOT}/src/RobWorkStudioConfig.hpp.in "${RWS_ROOT}/src/RobWorkStudioConfig.hpp")
+configure_file(${RWS_ROOT}/src/RobWorkStudioConfig.hpp.in
+               "${CMAKE_CURRENT_BINARY_DIR}/src/RobWorkStudioConfig.hpp"
+)
 
 # next build information script
 configure_file(${RWS_ROOT}/cmake/RobWorkStudioBuildConfig.cmake.in
@@ -180,7 +182,7 @@ install(
     COMPONENT cmake
 )
 install(
-    FILES ${RWS_ROOT}/src/RobWorkStudioConfig.hpp ${RWS_ROOT}/src/RobWorkStudio.hpp
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/src/RobWorkStudioConfig.hpp ${RWS_ROOT}/src/RobWorkStudio.hpp
           ${RWS_ROOT}/src/RobWorkStudioPlugin.hpp
     DESTINATION "${INCLUDE_INSTALL_DIR}"
     COMPONENT sdurws

@@ -49,7 +49,8 @@ if(build)
         PRIVATE ${GLUT_glut_LIBRARY}
     )
     target_include_directories(
-        ${SUBSYS_NAME} INTERFACE $<BUILD_INTERFACE:${RWS_ROOT}/src>
+        ${SUBSYS_NAME} INTERFACE $<BUILD_INTERFACE:${RobWorkStudio_BINARY_DIR}/src>
+                                 $<BUILD_INTERFACE:${RWS_ROOT}/src>
                                  $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
     )
 

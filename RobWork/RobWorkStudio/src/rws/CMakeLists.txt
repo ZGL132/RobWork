@@ -120,7 +120,9 @@ if(build)
     # Add the cmake binary dir because this is where the ui files are placed
     target_include_directories(
         ${SUBSYS_NAME}
-        PUBLIC $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
+        PUBLIC $<BUILD_INTERFACE:${RobWorkStudio_BINARY_DIR}/src>
+               $<BUILD_INTERFACE:${RWS_ROOT}/src>
+               $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
         PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${PYTHON_INCLUDE_DIRS}
     )
 

@@ -106,7 +106,9 @@ endif()
 rw_get_revision(${RW_ROOT} ROBWORK)
 
 # Store the test results in a RobWorkConfig.hpp file.
-configure_file(${RW_ROOT}/src/RobWorkConfig.hpp.in ${RW_ROOT}/src/RobWorkConfig.hpp)
+configure_file(${RW_ROOT}/src/RobWorkConfig.hpp.in
+               "${CMAKE_CURRENT_BINARY_DIR}/src/RobWorkConfig.hpp"
+)
 
 # Configure cmake/RobWorkBuildConfig.cmake.in such that other projects might use RobWork
 
@@ -185,7 +187,7 @@ install(
 )
 
 install(
-    FILES "${RW_ROOT}/src/RobWorkConfig.hpp"
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/src/RobWorkConfig.hpp"
     DESTINATION "${INCLUDE_INSTALL_DIR}"
     COMPONENT sdurw
 )

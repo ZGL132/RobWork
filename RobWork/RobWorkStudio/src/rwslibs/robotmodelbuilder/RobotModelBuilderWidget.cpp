@@ -750,7 +750,15 @@ void RobotModelBuilderWidget::importUrdf ()
     options.saveDirectory = _saveDirectory->text ().trimmed ();
     if (options.saveDirectory.isEmpty ())
         options.saveDirectory = QFileInfo (path).absolutePath ();
-    options.packageRoots << QFileInfo (path).absolutePath ();
+    const QDir urdfDir (QFileInfo (path).absolutePath ());
+    options.packageRoots << urdfDir.absolutePath ();
+    QDir parentDir = urdfDir;
+    if (parentDir.cdUp ())
+        options.packageRoots << parentDir.absolutePath ();
+    QDir packageParentDir = parentDir;
+    if (packageParentDir.cdUp ())
+        options.packageRoots << packageParentDir.absolutePath ();
+    options.packageRoots.removeDuplicates ();
     options.generateScene          = _generateScene->isChecked ();
     options.generateDrawables      = _generateDrawables->isChecked ();
     options.generateDynamicWorkCell = _generateDwc->isChecked ();
@@ -765,6 +773,16 @@ void RobotModelBuilderWidget::importUrdf ()
     fillFromSpec (result.spec);
     generatePreview ();
 
+    QStringList saveErrors;
+    if (!RobotModelXmlWriter::saveFiles (result.spec, saveErrors)) {
+        showErrors (saveErrors);
+        return;
+    }
+    if (result.spec.generateScene)
+        Q_EMIT loadSceneRequested (RobotModelXmlWriter::sceneFilePath (result.spec));
+    else
+        Q_EMIT loadSceneRequested (RobotModelXmlWriter::serialDeviceFilePath (result.spec));
+
     if (!result.warnings.isEmpty ()) {
         QMessageBox::information (
             this,
@@ -774,7 +792,7 @@ void RobotModelBuilderWidget::importUrdf ()
                        .arg (result.warnings.size ()));
     }
     else {
-        setStatus ("URDF imported.");
+        setStatus ("URDF imported and loaded.");
     }
 }
 

@@ -26,6 +26,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <algorithm>
@@ -84,6 +85,84 @@ bool hasFramePair (rw::proximity::ProximityFilter::Ptr filter,
     }
     return false;
 }
+
+int runExternalUrdfImport (const QString& urdfPath)
+{
+    const QFileInfo urdfInfo (urdfPath);
+    if (!urdfInfo.exists () || !urdfInfo.isFile ())
+        return fail ("External URDF file does not exist: " + urdfPath);
+
+    QString safeName = urdfInfo.completeBaseName ();
+    safeName.replace (QRegularExpression ("[^A-Za-z0-9_.-]"), "_");
+
+    const QDir urdfDir = urdfInfo.absoluteDir ();
+    const QString saveDir =
+        QDir::tempPath () + "/robotmodelbuilder_external_urdf_" + safeName;
+    QDir ().mkpath (saveDir);
+
+    UrdfImportOptions options;
+    options.saveDirectory = saveDir;
+    options.packageRoots << urdfDir.absolutePath ();
+    QDir parentDir = urdfDir;
+    if (parentDir.cdUp ()) {
+        options.packageRoots << parentDir.absolutePath ();
+        QDir packageParentDir = parentDir;
+        if (packageParentDir.cdUp ())
+            options.packageRoots << packageParentDir.absolutePath ();
+    }
+    options.packageRoots.removeDuplicates ();
+
+    UrdfImportResult result;
+    QStringList importErrors;
+    if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+        return fail ("External URDF import failed: " + importErrors.join ("; "));
+
+    for (const DrawableSpec& drawable : result.spec.drawables) {
+        if (QString::fromStdString (drawable.filePath).startsWith ("package://"))
+            return fail ("External URDF left unresolved drawable mesh path: " +
+                         QString::fromStdString (drawable.filePath));
+    }
+    for (const CollisionModelSpec& collision : result.spec.collisionModels) {
+        if (QString::fromStdString (collision.filePath).startsWith ("package://"))
+            return fail ("External URDF left unresolved collision mesh path: " +
+                         QString::fromStdString (collision.filePath));
+    }
+
+    QStringList saveErrors;
+    if (!RobotModelXmlWriter::saveFiles (result.spec, saveErrors))
+        return fail ("External URDF spec could not be saved: " + saveErrors.join ("; "));
+
+    try {
+        const rw::models::WorkCell::Ptr wc =
+            rw::loaders::WorkCellLoader::Factory::load (
+                RobotModelXmlWriter::sceneFilePath (result.spec).toStdString ());
+        if (wc == NULL)
+            return fail ("WorkCellLoader returned null for external URDF scene.");
+    }
+    catch (const std::exception& e) {
+        return fail (QString ("WorkCellLoader failed for external URDF scene: %1")
+                          .arg (e.what ()));
+    }
+
+    std::cout << "External URDF import OK:" << std::endl;
+    std::cout << "  urdf: " << QDir::toNativeSeparators (urdfPath).toStdString ()
+              << std::endl;
+    std::cout << "  robotName: " << result.spec.robotName << std::endl;
+    std::cout << "  joints: " << result.spec.transformJoints.size () << std::endl;
+    std::cout << "  drawables: " << result.spec.drawables.size () << std::endl;
+    std::cout << "  collisionModels: " << result.spec.collisionModels.size ()
+              << std::endl;
+    std::cout << "  dynamicsLinks: " << result.spec.dynamics.links.size ()
+              << std::endl;
+    std::cout << "  output: " << QDir::toNativeSeparators (saveDir).toStdString ()
+              << std::endl;
+    if (!result.warnings.isEmpty ()) {
+        std::cout << "  warnings:" << std::endl;
+        for (const QString& warning : result.warnings)
+            std::cout << "    - " << warning.toStdString () << std::endl;
+    }
+    return 0;
+}
 }    // namespace
 
 // =============================================================================
@@ -93,6 +172,8 @@ bool hasFramePair (rw::proximity::ProximityFilter::Ptr filter,
 int main (int argc, char** argv)
 {
     QCoreApplication app (argc, argv);
+    if (argc > 1)
+        return runExternalUrdfImport (QString::fromLocal8Bit (argv[1]));
 
     // =====================================================================
     //  URDF 导入 — Task 2:最小 URDF robot name / joint / origin xyz / rpy
@@ -146,6 +227,55 @@ int main (int argc, char** argv)
         if (result.spec.dynamics.forceLimits.size () != 1 ||
             !nearlyEqual (result.spec.dynamics.forceLimits[0].maxForce, 9.0))
             return fail ("URDF effort limit was not imported.");
+    }
+
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_axis_align";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/axis_align.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create axis alignment URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"AxisBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\"><visual name=\"link1_visual\">"
+            << "<geometry><box size=\"0.1 0.1 0.1\" /></geometry></visual></link>\n"
+            << "  <joint name=\"joint_y\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /><origin xyz=\"0 0 0.2\" rpy=\"0 0 0\" />"
+            << "<axis xyz=\"0 1 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Axis alignment URDF import failed: " + importErrors.join ("; "));
+        if (result.warnings.join ("; ").contains ("does not re-orient non-Z axes"))
+            return fail ("Non-Z axis joints should be re-oriented instead of warning.");
+        if (result.spec.transformJoints.size () != 2)
+            return fail ("Non-Z axis import should add one compensation frame.");
+        const JointTransformSpec& joint = result.spec.transformJoints[0];
+        const JointTransformSpec& compensation = result.spec.transformJoints[1];
+        if (joint.name != "joint_y" || joint.type != "Revolute")
+            return fail ("Axis-aligned movable joint should keep its URDF joint name/type.");
+        if (compensation.name != "joint_y_axis_compensation" ||
+            compensation.type != "FixedFrame")
+            return fail ("Axis-aligned joint should append a named FixedFrame compensation.");
+        if (result.spec.drawables.empty () ||
+            result.spec.drawables.front ().refFrame != "joint_y_axis_compensation")
+            return fail ("Child link visual geometry should attach to the compensation frame.");
+        const std::array< double, 3 > jointAxis = rpyRotatedZ (joint.rpyDeg);
+        if (!nearlyEqual (jointAxis[0], 0) || !nearlyEqual (jointAxis[1], 1) ||
+            !nearlyEqual (jointAxis[2], 0))
+            return fail ("Y-axis revolute joint should rotate local Z onto URDF Y.");
+        if (!nearlyEqual (compensation.rpyDeg[0], -joint.rpyDeg[0]) ||
+            !nearlyEqual (compensation.rpyDeg[1], -joint.rpyDeg[1]) ||
+            !nearlyEqual (compensation.rpyDeg[2], -joint.rpyDeg[2]))
+            return fail ("Axis compensation frame should restore the child link frame.");
     }
 
     // ---- Task 3:chain order test (joint_b declared before joint_a) ----
@@ -209,6 +339,44 @@ int main (int argc, char** argv)
             return fail ("Branch URDF import failed: " + importErrors.join ("; "));
         if (result.warnings.isEmpty ())
             return fail ("Branch URDF import should report a branch warning.");
+    }
+
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_branch_choice";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/branch_choice.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create branch choice URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"BranchChoiceBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"camera\" />\n"
+            << "  <link name=\"arm1\" />\n"
+            << "  <link name=\"arm2\" />\n"
+            << "  <joint name=\"aaa_camera_joint\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"camera\" /><origin xyz=\"0.1 0 0\" rpy=\"0 0 0\" /></joint>\n"
+            << "  <joint name=\"zz_arm_joint\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"arm1\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "  <joint name=\"zz_wrist_joint\" type=\"revolute\"><parent link=\"arm1\" />"
+            << "<child link=\"arm2\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Branch choice URDF import failed: " + importErrors.join ("; "));
+        if (result.spec.transformJoints.size () != 2 ||
+            result.spec.transformJoints[0].name != "zz_arm_joint" ||
+            result.spec.transformJoints[1].name != "zz_wrist_joint")
+            return fail ("URDF branch selection should prefer the movable serial chain.");
+        if (!result.warnings.join ("; ").contains ("URDF branch at link base"))
+            return fail ("Branch choice URDF import should report a branch warning.");
     }
 
     // ---- Task 4:visual + collision geometry import test ----
@@ -300,6 +468,46 @@ int main (int argc, char** argv)
             return fail ("URDF inertial data was not imported into LinkDynamicsSpec.");
     }
 
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_fixed_inertial";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/fixed_inertial.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create fixed inertial URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"FixedMassBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"arm\" />\n"
+            << "  <link name=\"camera\"><inertial><origin xyz=\"0 0 0\" rpy=\"0 0 0\" />"
+            << "<mass value=\"0.5\" />"
+            << "<inertia ixx=\"0.01\" ixy=\"0\" ixz=\"0\" iyy=\"0.01\" iyz=\"0\" izz=\"0.01\" />"
+            << "</inertial></link>\n"
+            << "  <joint name=\"arm_joint\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"arm\" /><origin xyz=\"0 0 0.1\" rpy=\"0 0 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "  <joint name=\"camera_mount\" type=\"fixed\"><parent link=\"arm\" />"
+            << "<child link=\"camera\" /><origin xyz=\"0.1 0 0\" rpy=\"0 0 0\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Fixed inertial URDF import failed: " + importErrors.join ("; "));
+        for (const LinkDynamicsSpec& link : result.spec.dynamics.links) {
+            if (link.objectName == "camera_mount")
+                return fail ("Fixed-link inertial should not create dynamics for a fixed joint.");
+        }
+        if (result.spec.dynamics.links.empty () ||
+            result.spec.dynamics.links.front ().objectName != "arm_joint")
+            return fail ("Movable joint should keep or receive dynamics when fixed inertial is skipped.");
+        if (result.warnings.join ("; ").contains ("Skipping inertial data for fixed link camera"))
+            return fail ("Fixed-link inertial skip should not be reported as a warning.");
+    }
+
     // ---- Task 6:package:// mesh path 解析测试 ----
     {
         const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_paths";
@@ -334,13 +542,98 @@ int main (int argc, char** argv)
             return fail ("Package path URDF import failed: " + importErrors.join ("; "));
         bool resolved = false;
         for (const DrawableSpec& drawable : result.spec.drawables) {
-            if (drawable.shape == "Mesh" &&
+            if (drawable.shape == "STL" &&
                 QString::fromStdString (drawable.filePath).endsWith ("my_robot/meshes/link.stl")) {
                 resolved = true;
             }
         }
         if (!resolved)
             return fail ("package:// mesh path was not resolved.");
+    }
+
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_package_root";
+        QDir ().mkpath (dir + "/actual_robot_dir/meshes");
+        QFile mesh (dir + "/actual_robot_dir/meshes/link.stl");
+        if (!mesh.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create package-root dummy mesh file.");
+        mesh.write ("solid dummy\nendsolid dummy\n");
+        mesh.close ();
+
+        const QString urdfPath = dir + "/actual_robot_dir/robot.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create package-root URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"PackageRootBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\"><visual><geometry>"
+            << "<mesh filename=\"package://declared_robot/meshes/link.stl\" />"
+            << "</geometry></visual></link>\n"
+            << "  <joint name=\"joint1\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        options.packageRoots << dir + "/actual_robot_dir";
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Package-root URDF import failed: " + importErrors.join ("; "));
+        bool resolved = false;
+        for (const DrawableSpec& drawable : result.spec.drawables) {
+            if (drawable.shape == "STL" &&
+                QString::fromStdString (drawable.filePath).endsWith ("actual_robot_dir/meshes/link.stl")) {
+                resolved = true;
+            }
+        }
+        if (!resolved)
+            return fail ("package:// mesh path should resolve when a package root points at the package directory.");
+    }
+
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_ros_layout";
+        QDir ().mkpath (dir + "/my_robot/urdf");
+        QDir ().mkpath (dir + "/my_robot/meshes");
+        QFile mesh (dir + "/my_robot/meshes/link.stl");
+        if (!mesh.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create ROS layout dummy mesh file.");
+        mesh.write ("solid dummy\nendsolid dummy\n");
+        mesh.close ();
+
+        const QString urdfPath = dir + "/my_robot/urdf/robot.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create ROS layout URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"RosLayoutBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\"><visual><geometry>"
+            << "<mesh filename=\"package://my_robot/meshes/link.stl\" />"
+            << "</geometry></visual></link>\n"
+            << "  <joint name=\"joint1\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        options.packageRoots << dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("ROS layout package path URDF import failed: " + importErrors.join ("; "));
+        bool resolved = false;
+        for (const DrawableSpec& drawable : result.spec.drawables) {
+            if (drawable.shape == "STL" &&
+                QString::fromStdString (drawable.filePath).endsWith ("my_robot/meshes/link.stl")) {
+                resolved = true;
+            }
+        }
+        if (!resolved)
+            return fail ("package:// mesh path should resolve from the package parent directory.");
     }
 
     // ---- Task 7:把导入的 spec 写盘 + 用 WorkCellLoader 加载 ----
@@ -1552,10 +1845,10 @@ int main (int argc, char** argv)
             return fail ("Cone drawable should emit radius/z.");
         if (!contains (xml, "<Plane x=\"0.1\" y=\"0.2\" />"))
             return fail ("Plane drawable should emit x/y.");
-        if (!contains (xml, "<STL file=\"meshes/STLDrawable.stl\" />"))
-            return fail ("STL drawable should emit file path.");
-        if (!contains (xml, "<Mesh file=\"meshes/MeshDrawable.stl\" />"))
-            return fail ("Mesh drawable should emit file path.");
+        if (!contains (xml, "<Polytope file=\"meshes/STLDrawable.stl\" />"))
+            return fail ("STL drawable should emit a WorkCellLoader-compatible file path.");
+        if (!contains (xml, "<Polytope file=\"meshes/MeshDrawable.stl\" />"))
+            return fail ("Mesh drawable should emit a WorkCellLoader-compatible file path.");
         if (!contains (xml, "<Polytope file=\"meshes/PolytopeDrawable.stl\" />"))
             return fail ("Polytope drawable should emit file path.");
         if (xml.count ("colmodel=\"Enabled\"") < 8)
@@ -1608,7 +1901,7 @@ int main (int argc, char** argv)
         const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (rel);
         if (xml.contains (QDir::tempPath ()))
             return fail ("Absolute mesh path should be saved relative to output directory.");
-        if (!contains (xml, "<STL file=\"robotmodelbuilder_meshes/part.stl\" />"))
+        if (!contains (xml, "<Polytope file=\"robotmodelbuilder_meshes/part.stl\" />"))
             return fail ("STL path should be relative to saveDirectory.");
     }
 
@@ -1728,8 +2021,8 @@ int main (int argc, char** argv)
             return fail ("Visual STL plus simplified collision should validate: " +
                          splitErrors.join ("; "));
         const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (split);
-        if (!contains (xml, "<STL file=\"meshes/joint1_visual.stl\" />"))
-            return fail ("Visual STL drawable should still be emitted.");
+        if (!contains (xml, "<Polytope file=\"meshes/joint1_visual.stl\" />"))
+            return fail ("Visual STL drawable should emit a WorkCellLoader-compatible Polytope.");
         if (contains (xml, "<Drawable name=\"Joint1VisualStl\" refframe=\"Joint1\" colmodel=\"Enabled\">"))
             return fail ("Visual-only STL drawable should not be marked colmodel=Enabled.");
         if (!contains (xml,

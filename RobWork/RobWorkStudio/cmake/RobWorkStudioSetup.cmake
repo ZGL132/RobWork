@@ -333,12 +333,12 @@ endif()
 #
 
 # Setup RobWorkStudio include and link directories
-set(ROBWORKSTUDIO_INCLUDE_DIR ${RWS_ROOT}/src/)
+set(ROBWORKSTUDIO_INCLUDE_DIR ${RobWorkStudio_BINARY_DIR}/src ${RWS_ROOT}/src)
 set(ROBWORKSTUDIO_LIBRARY_DIRS ${RWS_LIBS_DIR})
 #
 # The include dirs
 #
-set(ROBWORKSTUDIO_INCLUDE_DIR ${RWS_ROOT}/src ${Boost_INCLUDE_DIR}
+set(ROBWORKSTUDIO_INCLUDE_DIR ${RobWorkStudio_BINARY_DIR}/src ${RWS_ROOT}/src ${Boost_INCLUDE_DIR}
     ${RWS_ROOT}/ext/qtpropertybrowser/src/
 )
 

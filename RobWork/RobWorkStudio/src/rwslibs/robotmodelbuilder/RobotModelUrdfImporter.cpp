@@ -28,6 +28,7 @@
 #include <QXmlStreamReader>
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <set>
 
@@ -136,6 +137,11 @@ double radToDeg (double value)
     return value * 180.0 / RobotModelXmlWriter::kPi;
 }
 
+double degToRad (double value)
+{
+    return value * RobotModelXmlWriter::kPi / 180.0;
+}
+
 /// URDF rpy 是 X-Y-Z 内旋(r,p,y = around X,Y,Z),单位弧度;
 /// 插件内部 RPY 是 Z-Y-X(rpyDeg[0]=Z),单位度。
 /// 转换语义见 2026-07-05 计划 Task 2 注释。
@@ -144,6 +150,126 @@ std::array< double, 3 > urdfRpyToPluginRpyDeg (const std::array< double, 3 >& rp
     return {{radToDeg (rpyRad[2]),    // 插件 rpyDeg[0] (Z) <- URDF yaw
              radToDeg (rpyRad[1]),    // 插件 rpyDeg[1] (Y) <- URDF pitch
              radToDeg (rpyRad[0])}};  // 插件 rpyDeg[2] (X) <- URDF roll
+}
+
+using Rotation = std::array< double, 9 >;
+
+Rotation identityRotation ()
+{
+    return {{1, 0, 0, 0, 1, 0, 0, 0, 1}};
+}
+
+Rotation multiplyRotation (const Rotation& lhs, const Rotation& rhs)
+{
+    Rotation out = {{0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            for (int k = 0; k < 3; ++k)
+                out[row * 3 + col] += lhs[row * 3 + k] * rhs[k * 3 + col];
+        }
+    }
+    return out;
+}
+
+Rotation transposeRotation (const Rotation& rotation)
+{
+    return {{rotation[0], rotation[3], rotation[6],
+             rotation[1], rotation[4], rotation[7],
+             rotation[2], rotation[5], rotation[8]}};
+}
+
+std::array< double, 3 > crossVector (const std::array< double, 3 >& lhs,
+                                     const std::array< double, 3 >& rhs)
+{
+    return {{lhs[1] * rhs[2] - lhs[2] * rhs[1],
+             lhs[2] * rhs[0] - lhs[0] * rhs[2],
+             lhs[0] * rhs[1] - lhs[1] * rhs[0]}};
+}
+
+double vectorNorm (const std::array< double, 3 >& value)
+{
+    return std::sqrt (value[0] * value[0] + value[1] * value[1] + value[2] * value[2]);
+}
+
+std::array< double, 3 > normalizedVector (const std::array< double, 3 >& value)
+{
+    const double norm = vectorNorm (value);
+    if (norm < 1e-12)
+        return {{0, 0, 1}};
+    return {{value[0] / norm, value[1] / norm, value[2] / norm}};
+}
+
+Rotation pluginRpyDegToRotation (const std::array< double, 3 >& rpyDeg)
+{
+    const double a = degToRad (rpyDeg[0]);
+    const double b = degToRad (rpyDeg[1]);
+    const double c = degToRad (rpyDeg[2]);
+    const double ca = std::cos (a);
+    const double sa = std::sin (a);
+    const double cb = std::cos (b);
+    const double sb = std::sin (b);
+    const double cc = std::cos (c);
+    const double sc = std::sin (c);
+    return {{ca * cb, ca * sb * sc - sa * cc, ca * sb * cc + sa * sc,
+             sa * cb, sa * sb * sc + ca * cc, sa * sb * cc - ca * sc,
+             -sb, cb * sc, cb * cc}};
+}
+
+std::array< double, 3 > rotationToPluginRpyDeg (const Rotation& rotation)
+{
+    const double pitch =
+        std::atan2 (-rotation[6],
+                    std::sqrt (rotation[0] * rotation[0] + rotation[3] * rotation[3]));
+    const double cb = std::cos (pitch);
+    double roll = 0.0;
+    double yaw  = 0.0;
+    if (std::abs (cb) > 1e-9) {
+        roll = std::atan2 (rotation[3] / cb, rotation[0] / cb);
+        yaw  = std::atan2 (rotation[7] / cb, rotation[8] / cb);
+    }
+    else {
+        yaw = std::atan2 (-rotation[1], rotation[4]);
+    }
+    auto clean = [] (double value) {
+        const double deg = radToDeg (value);
+        return std::abs (deg) < 1e-9 ? 0.0 : deg;
+    };
+    return {{clean (roll), clean (pitch), clean (yaw)}};
+}
+
+Rotation axisAlignmentRotation (const std::array< double, 3 >& axis)
+{
+    const std::array< double, 3 > z = normalizedVector (axis);
+    std::array< double, 3 > xHint =
+        std::abs (z[0]) < 0.9 ? std::array< double, 3 >{{1, 0, 0}}
+                              : std::array< double, 3 >{{0, 1, 0}};
+    std::array< double, 3 > y = normalizedVector (crossVector (z, xHint));
+    std::array< double, 3 > x = normalizedVector (crossVector (y, z));
+    return {{x[0], y[0], z[0],
+             x[1], y[1], z[1],
+             x[2], y[2], z[2]}};
+}
+
+std::array< double, 3 > combineOriginAndAxisRpyDeg (
+    const std::array< double, 3 >& urdfRpyRad, const Rotation& axisAlignment)
+{
+    const Rotation origin =
+        pluginRpyDegToRotation (urdfRpyToPluginRpyDeg (urdfRpyRad));
+    return rotationToPluginRpyDeg (multiplyRotation (origin, axisAlignment));
+}
+
+QString axisCompensationFrameName (const QString& jointName,
+                                   const std::set< QString >& usedNames)
+{
+    const QString baseName = jointName + "_axis_compensation";
+    if (usedNames.find (baseName) == usedNames.end ())
+        return baseName;
+    int suffix = 2;
+    while (true) {
+        const QString candidate = baseName + "_" + QString::number (suffix++);
+        if (usedNames.find (candidate) == usedNames.end ())
+            return candidate;
+    }
 }
 
 /// URDF joint type -> 插件 joint type(目前没用到 ToolFrame:
@@ -161,6 +287,13 @@ QString jointTypeToPluginType (const QString& type)
     if (type.compare ("fixed", Qt::CaseInsensitive) == 0)
         return "FixedFrame";
     return "FixedFrame";
+}
+
+bool urdfJointIsMovable (const UrdfJoint& joint)
+{
+    return joint.type.compare ("revolute", Qt::CaseInsensitive) == 0 ||
+           joint.type.compare ("continuous", Qt::CaseInsensitive) == 0 ||
+           joint.type.compare ("prismatic", Qt::CaseInsensitive) == 0;
 }
 
 bool parseOrigin (QXmlStreamReader& xml, UrdfOrigin& origin, QStringList& errors)
@@ -375,6 +508,62 @@ QString findRootLink (const UrdfModel& model, QStringList& errors)
     return roots.front ();
 }
 
+struct ChainCandidate
+{
+    std::vector< UrdfJoint > joints;
+    int movableCount = 0;
+};
+
+bool betterChainCandidate (const ChainCandidate& lhs, const ChainCandidate& rhs)
+{
+    if (lhs.movableCount != rhs.movableCount)
+        return lhs.movableCount > rhs.movableCount;
+    if (lhs.joints.size () != rhs.joints.size ())
+        return lhs.joints.size () > rhs.joints.size ();
+
+    const QString lhsName = lhs.joints.empty () ? QString () : lhs.joints.front ().name;
+    const QString rhsName = rhs.joints.empty () ? QString () : rhs.joints.front ().name;
+    return lhsName < rhsName;
+}
+
+ChainCandidate bestChainFromLink (
+    const QString& link,
+    const std::map< QString, std::vector< UrdfJoint > >& childrenByParent,
+    const std::set< QString >& visitedLinks,
+    QStringList& errors)
+{
+    const auto childrenIt = childrenByParent.find (link);
+    if (childrenIt == childrenByParent.end ())
+        return ChainCandidate ();
+
+    ChainCandidate best;
+    bool hasBest = false;
+    for (const UrdfJoint& child : childrenIt->second) {
+        if (visitedLinks.find (child.childLink) != visitedLinks.end ()) {
+            errors << QString ("URDF cycle detected at link %1.").arg (child.childLink);
+            return ChainCandidate ();
+        }
+
+        std::set< QString > nextVisited = visitedLinks;
+        nextVisited.insert (child.childLink);
+        ChainCandidate candidate =
+            bestChainFromLink (child.childLink, childrenByParent, nextVisited, errors);
+        if (!errors.isEmpty ())
+            return ChainCandidate ();
+
+        candidate.joints.insert (candidate.joints.begin (), child);
+        if (urdfJointIsMovable (child))
+            ++candidate.movableCount;
+
+        if (!hasBest || betterChainCandidate (candidate, best)) {
+            best    = candidate;
+            hasBest = true;
+        }
+    }
+
+    return best;
+}
+
 /// 从 root 出发沿 parent -> child 关系走出一条串联链;
 /// 每个 link 选第一个 child joint(按 name 字典序),其它兄弟关节通过 warning 上报。
 /// 走完 / 出现环 / root 不存在都给出明确报错或空结果。
@@ -390,30 +579,25 @@ std::vector< UrdfJoint > orderedRootChain (const UrdfModel& model,
     for (const UrdfJoint& joint : model.joints)
         childrenByParent[joint.parentLink].push_back (joint);
 
-    std::vector< UrdfJoint > ordered;
-    QString current = root;
     std::set< QString > visitedLinks;
-    while (childrenByParent.find (current) != childrenByParent.end ()) {
-        std::vector< UrdfJoint > children = childrenByParent[current];
-        if (children.size () > 1) {
-            std::sort (children.begin (), children.end (),
-                       [] (const UrdfJoint& a, const UrdfJoint& b) {
-                           return a.name < b.name;
-                       });
+    visitedLinks.insert (root);
+    const ChainCandidate selected =
+        bestChainFromLink (root, childrenByParent, visitedLinks, errors);
+    if (!errors.isEmpty ())
+        return std::vector< UrdfJoint > ();
+
+    QString current = root;
+    for (const UrdfJoint& joint : selected.joints) {
+        const auto childrenIt = childrenByParent.find (current);
+        if (childrenIt != childrenByParent.end () && childrenIt->second.size () > 1) {
             warnings << QString ("URDF branch at link %1: importing child joint %2 as the serial chain and skipping %3 sibling branch(es).")
-                            .arg (current, children.front ().name)
-                            .arg (children.size () - 1);
+                            .arg (current, joint.name)
+                            .arg (childrenIt->second.size () - 1);
         }
-        const UrdfJoint selected = children.front ();
-        if (visitedLinks.find (selected.childLink) != visitedLinks.end ()) {
-            errors << QString ("URDF cycle detected at link %1.").arg (selected.childLink);
-            return std::vector< UrdfJoint > ();
-        }
-        visitedLinks.insert (selected.childLink);
-        ordered.push_back (selected);
-        current = selected.childLink;
+        current = joint.childLink;
     }
-    return ordered;
+
+    return selected.joints;
 }
 
 /// URDF 默认关节轴是 (0,0,1);非默认轴的关节在第一个实现里不动,
@@ -462,12 +646,14 @@ bool parseGeometryChild (QXmlStreamReader& xml, UrdfGeometry& geometry, QStringL
         }
     }
     else if (tag == "mesh") {
-        geometry.shape    = "Mesh";
         geometry.filePath = xml.attributes ().value ("filename").toString ();
         if (geometry.filePath.trimmed ().isEmpty ()) {
             errors << "URDF mesh geometry must have filename.";
             return false;
         }
+        geometry.shape = geometry.filePath.trimmed ().endsWith (".stl", Qt::CaseInsensitive)
+                             ? QString ("STL")
+                             : QString ("Mesh");
         if (xml.attributes ().hasAttribute ("scale")) {
             std::array< double, 3 > scale;
             if (parseVector3 (xml.attributes ().value ("scale").toString (), scale))
@@ -570,10 +756,19 @@ QString resolveMeshPath (const QString& rawPath, const QString& urdfPath,
         return trimmed;
     if (trimmed.startsWith ("package://")) {
         const QString suffix = trimmed.mid (QString ("package://").size ());
+        const int firstSlash = suffix.indexOf ('/');
+        const QString packageRelativeSuffix =
+            firstSlash >= 0 ? suffix.mid (firstSlash + 1) : QString ();
         for (const QString& root : options.packageRoots) {
             const QString candidate = QDir (root).absoluteFilePath (suffix);
             if (QFileInfo::exists (candidate))
                 return QDir::fromNativeSeparators (candidate);
+            if (!packageRelativeSuffix.isEmpty ()) {
+                const QString packageRootCandidate =
+                    QDir (root).absoluteFilePath (packageRelativeSuffix);
+                if (QFileInfo::exists (packageRootCandidate))
+                    return QDir::fromNativeSeparators (packageRootCandidate);
+            }
         }
         warnings << QString ("Could not resolve package mesh path %1; keeping original value.")
                           .arg (trimmed);
@@ -689,22 +884,49 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     if (!errors.isEmpty ())
         return false;
 
+    std::map< QString, QString > childLinkToFrameName;
+    std::map< QString, QString > childLinkToDynamicsJointName;
+    std::map< QString, QString > childLinkToJointType;
+    std::set< QString > usedTransformNames;
+
     for (const UrdfJoint& urdfJoint : orderedJoints) {
-        if (!isDefaultJointAxis (urdfJoint.axis)) {
-            result.warnings
-                << QString ("Joint %1 uses axis %2 %3 %4. Current importer preserves origin but does not re-orient non-Z axes.")
-                       .arg (urdfJoint.name)
-                       .arg (urdfJoint.axis[0])
-                       .arg (urdfJoint.axis[1])
-                       .arg (urdfJoint.axis[2]);
-        }
+        const QString pluginJointType = jointTypeToPluginType (urdfJoint.type);
+        const bool reorientAxis =
+            urdfJointIsMovable (urdfJoint) && !isDefaultJointAxis (urdfJoint.axis);
 
         JointTransformSpec joint;
         joint.name   = urdfJoint.name.toStdString ();
-        joint.type   = jointTypeToPluginType (urdfJoint.type).toStdString ();
+        joint.type   = pluginJointType.toStdString ();
         joint.pos    = urdfJoint.origin.xyz;
-        joint.rpyDeg = urdfRpyToPluginRpyDeg (urdfJoint.origin.rpyRad);
+        Rotation axisAlignment = identityRotation ();
+        if (reorientAxis) {
+            axisAlignment = axisAlignmentRotation (urdfJoint.axis);
+            joint.rpyDeg =
+                combineOriginAndAxisRpyDeg (urdfJoint.origin.rpyRad, axisAlignment);
+        }
+        else {
+            joint.rpyDeg = urdfRpyToPluginRpyDeg (urdfJoint.origin.rpyRad);
+        }
         spec.transformJoints.push_back (joint);
+        usedTransformNames.insert (urdfJoint.name);
+
+        QString linkFrameNameForJoint = urdfJoint.name;
+        if (reorientAxis) {
+            JointTransformSpec compensation;
+            const QString compensationName =
+                axisCompensationFrameName (urdfJoint.name, usedTransformNames);
+            compensation.name   = compensationName.toStdString ();
+            compensation.type   = "FixedFrame";
+            compensation.pos    = {{0, 0, 0}};
+            compensation.rpyDeg = rotationToPluginRpyDeg (transposeRotation (axisAlignment));
+            spec.transformJoints.push_back (compensation);
+            usedTransformNames.insert (compensationName);
+            linkFrameNameForJoint = compensationName;
+        }
+
+        childLinkToFrameName[urdfJoint.childLink]         = linkFrameNameForJoint;
+        childLinkToDynamicsJointName[urdfJoint.childLink] = urdfJoint.name;
+        childLinkToJointType[urdfJoint.childLink]         = pluginJointType;
 
         const JointKind kind = typeToKind (joint.type);
         if (kind == JointKind::Revolute || kind == JointKind::Prismatic) {
@@ -736,15 +958,11 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         }
     }
 
-    // Task 4:建立 child link -> 父 joint 名映射,供 visual / collision 挂在
-    // 对应关节 frame 上。Root 子节点的 visual/collision 退化挂到 "Base"。
-    std::map< QString, QString > childLinkToJointName;
-    for (const UrdfJoint& joint : orderedJoints)
-        childLinkToJointName[joint.childLink] = joint.name;
-
+    // Task 4:visual / collision 挂到 child link 对应的实际 frame 上。
+    // 非 Z 轴可动关节会使用补偿 FixedFrame;root / 链外 link 退化挂到 "Base"。
     for (const auto& item : model.links) {
         const UrdfLink& link = item.second;
-        const QString refFrame = linkFrameName (item.first, childLinkToJointName);
+        const QString refFrame = linkFrameName (item.first, childLinkToFrameName);
 
         for (const UrdfGeometry& visual : link.visuals) {
             DrawableSpec drawable;
@@ -770,7 +988,8 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             collision.refFrame    = refFrame.toStdString ();
             // Collision models 也接受 Mesh,本项目 Writer 把 Mesh 视为 Polytope
             // 别名(Milestone 5);其余形状直接复用。
-            collision.shape       = collisionGeometry.shape == "Mesh"
+            collision.shape       = (collisionGeometry.shape == "Mesh" ||
+                               collisionGeometry.shape == "STL")
                                         ? std::string ("Mesh")
                                         : collisionGeometry.shape.toStdString ();
             collision.filePath    =
@@ -794,10 +1013,15 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         const UrdfLink& link = item.second;
         if (!link.inertial.present)
             continue;
-        const auto jointIt = childLinkToJointName.find (item.first);
-        if (jointIt == childLinkToJointName.end ()) {
+        const auto jointIt = childLinkToDynamicsJointName.find (item.first);
+        if (jointIt == childLinkToDynamicsJointName.end ()) {
             result.warnings << QString ("Skipping inertial data for root or non-chain link %1.")
-                                   .arg (item.first);
+                                    .arg (item.first);
+            continue;
+        }
+        const auto typeIt = childLinkToJointType.find (item.first);
+        if (typeIt == childLinkToJointType.end () ||
+            !isMovable (typeToKind (typeIt->second.toStdString ()))) {
             continue;
         }
         LinkDynamicsSpec dyn;
@@ -812,10 +1036,17 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     }
     // 没有 URDF inertial 数据时,为每个 movable joint 兜底填一份默认
     // LinkDynamicsSpec,避免 dynamics 表空缺导致后续 SaveAndLoad 失败。
-    if (spec.dynamics.links.empty ()) {
+    {
         int index = 1;
         for (const JointTransformSpec& joint : spec.transformJoints) {
             if (!isMovable (typeToKind (joint.type)))
+                continue;
+            const bool hasDynamics =
+                std::find_if (spec.dynamics.links.begin (), spec.dynamics.links.end (),
+                              [&joint] (const LinkDynamicsSpec& link) {
+                                  return link.objectName == joint.name;
+                              }) != spec.dynamics.links.end ();
+            if (hasDynamics)
                 continue;
             LinkDynamicsSpec dyn;
             dyn.linkName        = "Link" + std::to_string (index++);
@@ -837,6 +1068,12 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
 
     RobotModelXmlWriter::refreshDhProjectionFromTransform (spec);
     RobotModelXmlWriter::applyDefaultDrawables (spec);
+    spec.drawables.erase (
+        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
+                        [] (const DrawableSpec& drawable) {
+                            return drawable.autoLinkGeometry && drawable.length <= 1e-9;
+                        }),
+        spec.drawables.end ());
 
     // Task 7:在写盘前调用 XmlWriter.validate 兜底,把任何
     // "URDF 合法但 spec 不合法" 的状态阻挡下来,避免后续 saveFiles

@@ -1859,12 +1859,8 @@ QString RobotModelXmlWriter::drawableShapeXml (const RobotModelSpec& spec,
             return QString ("<Plane x=\"%1\" y=\"%2\" />")
                 .arg (number (drawable.dimensions[0]),
                       number (drawable.dimensions[1]));
-        case GeometryKind::STL:
-            return QString ("<STL file=\"%1\" />")
-                .arg (relativeGeometryPath (spec, drawable.filePath));
         case GeometryKind::Mesh:
-            return QString ("<Mesh file=\"%1\" />")
-                .arg (relativeGeometryPath (spec, drawable.filePath));
+        case GeometryKind::STL:
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
                 .arg (relativeGeometryPath (spec, drawable.filePath));

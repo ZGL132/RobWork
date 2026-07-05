@@ -88,7 +88,8 @@ if(build)
 
 
     target_include_directories(
-        ${SUBSYS_NAME} PUBLIC $<BUILD_INTERFACE:${RW_ROOT}/src>
+        ${SUBSYS_NAME} PUBLIC $<BUILD_INTERFACE:${RobWork_BINARY_DIR}/src>
+                              $<BUILD_INTERFACE:${RW_ROOT}/src>
                               $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
     )
 

@@ -188,6 +188,9 @@ if(EXISTS ${RWCFG_ROOT}/RobWorkBuildConfig_${RW_BUILD_TYPE}.cmake)
     if(WIN32)
         list(APPEND ROBWORK_INCLUDE_DIRS "${RW_INCLUDE_EXT}")
     endif()
+    if(NOT IS_INSTALL)
+        list(INSERT ROBWORK_INCLUDE_DIRS 0 "${RW_BUILD_WITH_BUILD_DIR}/src")
+    endif()
 
     list(REMOVE_DUPLICATES ROBWORK_INCLUDE_DIRS)
 
