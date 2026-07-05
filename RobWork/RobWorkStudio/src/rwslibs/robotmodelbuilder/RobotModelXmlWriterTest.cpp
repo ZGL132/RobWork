@@ -300,6 +300,49 @@ int main (int argc, char** argv)
             return fail ("URDF inertial data was not imported into LinkDynamicsSpec.");
     }
 
+    // ---- Task 6:package:// mesh path 解析测试 ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_paths";
+        QDir ().mkpath (dir + "/my_robot/meshes");
+        QFile mesh (dir + "/my_robot/meshes/link.stl");
+        if (!mesh.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create dummy mesh file.");
+        mesh.write ("solid dummy\nendsolid dummy\n");
+        mesh.close ();
+
+        const QString urdfPath = dir + "/pathbot.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create package path URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"PathBot\">\n"
+            << "  <link name=\"base\" />\n"
+            << "  <link name=\"link1\"><visual><geometry>"
+            << "<mesh filename=\"package://my_robot/meshes/link.stl\" />"
+            << "</geometry></visual></link>\n"
+            << "  <joint name=\"joint1\" type=\"fixed\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        options.packageRoots << dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Package path URDF import failed: " + importErrors.join ("; "));
+        bool resolved = false;
+        for (const DrawableSpec& drawable : result.spec.drawables) {
+            if (drawable.shape == "Mesh" &&
+                QString::fromStdString (drawable.filePath).endsWith ("my_robot/meshes/link.stl")) {
+                resolved = true;
+            }
+        }
+        if (!resolved)
+            return fail ("package:// mesh path was not resolved.");
+    }
+
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 

@@ -552,6 +552,44 @@ QString linkFrameName (const QString& linkName,
 }
 
 // ===========================================================================
+//  Task 6:mesh 路径解析(package:// + 同目录相对路径)
+// ===========================================================================
+
+/// URDF <mesh filename="..."/> 可以是:
+///   * package://<pkg>/<sub>:在用户给定的 packageRoots 列表中逐一尝试,
+///     首个实际存在文件即返回绝对/规范化路径;没有命中则把原始字符串当
+///     兜底返回,并把"无法解析"挂到 warnings。
+///   * 绝对路径:原文返回。
+///   * 相对路径:尝试在 URDF 同目录下拼接,存在则返回绝对路径,否则保留
+///     原始文本。
+QString resolveMeshPath (const QString& rawPath, const QString& urdfPath,
+                         const UrdfImportOptions& options, QStringList& warnings)
+{
+    const QString trimmed = rawPath.trimmed ();
+    if (trimmed.isEmpty ())
+        return trimmed;
+    if (trimmed.startsWith ("package://")) {
+        const QString suffix = trimmed.mid (QString ("package://").size ());
+        for (const QString& root : options.packageRoots) {
+            const QString candidate = QDir (root).absoluteFilePath (suffix);
+            if (QFileInfo::exists (candidate))
+                return QDir::fromNativeSeparators (candidate);
+        }
+        warnings << QString ("Could not resolve package mesh path %1; keeping original value.")
+                          .arg (trimmed);
+        return trimmed;
+    }
+    QFileInfo info (trimmed);
+    if (info.isAbsolute ())
+        return QDir::fromNativeSeparators (info.absoluteFilePath ());
+    const QString relativeToUrdf =
+        QFileInfo (urdfPath).absoluteDir ().absoluteFilePath (trimmed);
+    if (QFileInfo::exists (relativeToUrdf))
+        return QDir::fromNativeSeparators (relativeToUrdf);
+    return QDir::fromNativeSeparators (trimmed);
+}
+
+// ===========================================================================
 //  Task 5:urdf <inertial> 解析 -> LinkDynamicsSpec
 // ===========================================================================
 
@@ -713,7 +751,9 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             drawable.name            = visual.name.toStdString ();
             drawable.refFrame        = refFrame.toStdString ();
             drawable.shape           = visual.shape.toStdString ();
-            drawable.filePath        = visual.filePath.toStdString ();
+            drawable.filePath        =
+                resolveMeshPath (visual.filePath, urdfPath, options, result.warnings)
+                    .toStdString ();
             drawable.dimensions      = visual.dimensions;
             drawable.radius          = visual.radius;
             drawable.length          = visual.length;
@@ -733,7 +773,9 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             collision.shape       = collisionGeometry.shape == "Mesh"
                                         ? std::string ("Mesh")
                                         : collisionGeometry.shape.toStdString ();
-            collision.filePath    = collisionGeometry.filePath.toStdString ();
+            collision.filePath    =
+                resolveMeshPath (collisionGeometry.filePath, urdfPath, options, result.warnings)
+                    .toStdString ();
             collision.dimensions  = collisionGeometry.dimensions;
             collision.radius      = collisionGeometry.radius;
             collision.length      = collisionGeometry.length;
