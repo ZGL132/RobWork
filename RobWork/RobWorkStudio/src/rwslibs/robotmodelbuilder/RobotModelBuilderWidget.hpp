@@ -32,6 +32,7 @@ class RobotModelBuilderWidget : public QWidget
     void generatePreview ();
     void saveXml ();
     void saveAndLoad ();
+    void importUrdf ();
     void browseSaveDirectory ();
     void modeChanged (int index);
     void addPose ();

@@ -15,6 +15,7 @@
 #include "RobotModelBuilderWidget.hpp"
 
 #include "RobotModelXmlWriter.hpp"
+#include "RobotModelUrdfImporter.hpp"
 
 // Qt 控件/工具头文件
 #include <QCheckBox>
@@ -564,11 +565,13 @@ void RobotModelBuilderWidget::buildUi ()
     // -------------------------------------------------------------------------
     QWidget* buttons        = new QWidget ();
     QHBoxLayout* buttonLay  = new QHBoxLayout (buttons);
+    QPushButton* importUrdfBtn = new QPushButton ("Import URDF");
     QPushButton* previewBtn = new QPushButton ("Generate Preview");
     QPushButton* saveBtn    = new QPushButton ("Save XML");
     QPushButton* loadBtn    = new QPushButton ("Save and Load");
     QPushButton* resetBtn   = new QPushButton ("Reset to Default Six Axis");
     buttonLay->setContentsMargins (0, 0, 0, 0);
+    buttonLay->addWidget (importUrdfBtn);
     buttonLay->addWidget (previewBtn);
     buttonLay->addWidget (saveBtn);
     buttonLay->addWidget (loadBtn);
@@ -586,6 +589,7 @@ void RobotModelBuilderWidget::buildUi ()
     connect (browse, SIGNAL (clicked ()), this, SLOT (browseSaveDirectory ()));
     connect (_mode, SIGNAL (currentIndexChanged (int)), this, SLOT (modeChanged (int)));
     connect (_generateScene, SIGNAL (toggled (bool)), this, SLOT (sceneGenerationToggled (bool)));
+    connect (importUrdfBtn, SIGNAL (clicked ()), this, SLOT (importUrdf ()));
     connect (previewBtn, SIGNAL (clicked ()), this, SLOT (generatePreview ()));
     connect (saveBtn, SIGNAL (clicked ()), this, SLOT (saveXml ()));
     connect (loadBtn, SIGNAL (clicked ()), this, SLOT (saveAndLoad ()));
@@ -724,6 +728,54 @@ void RobotModelBuilderWidget::browseSaveDirectory ()
         QFileDialog::getExistingDirectory (this, "Choose save directory", _saveDirectory->text ());
     if (!dir.isEmpty ())
         _saveDirectory->setText (dir);
+}
+
+// =============================================================================
+//  importUrdf()
+//  说明: Import URDF 按钮回调;弹出文件选择对话框,调用
+//        RobotModelUrdfImporter::importFile,然后把 spec 灌回 UI 并刷新预览;
+//        警告信息以信息框告诉用户。
+// =============================================================================
+void RobotModelBuilderWidget::importUrdf ()
+{
+    const QString path = QFileDialog::getOpenFileName (
+        this,
+        "Import URDF",
+        _saveDirectory->text (),
+        "URDF files (*.urdf *.xml);;All files (*)");
+    if (path.isEmpty ())
+        return;
+
+    UrdfImportOptions options;
+    options.saveDirectory = _saveDirectory->text ().trimmed ();
+    if (options.saveDirectory.isEmpty ())
+        options.saveDirectory = QFileInfo (path).absolutePath ();
+    options.packageRoots << QFileInfo (path).absolutePath ();
+    options.generateScene          = _generateScene->isChecked ();
+    options.generateDrawables      = _generateDrawables->isChecked ();
+    options.generateDynamicWorkCell = _generateDwc->isChecked ();
+
+    UrdfImportResult result;
+    QStringList errors;
+    if (!RobotModelUrdfImporter::importFile (path, options, result, errors)) {
+        showErrors (errors);
+        return;
+    }
+
+    fillFromSpec (result.spec);
+    generatePreview ();
+
+    if (!result.warnings.isEmpty ()) {
+        QMessageBox::information (
+            this,
+            "URDF Import Warnings",
+            result.warnings.join ("\n"));
+        setStatus (QString ("URDF imported with %1 warning(s).")
+                       .arg (result.warnings.size ()));
+    }
+    else {
+        setStatus ("URDF imported.");
+    }
 }
 
 // =============================================================================
