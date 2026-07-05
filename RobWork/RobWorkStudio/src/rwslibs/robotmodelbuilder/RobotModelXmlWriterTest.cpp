@@ -95,19 +95,57 @@ int main (int argc, char** argv)
     QCoreApplication app (argc, argv);
 
     // =====================================================================
-    //  URDF 导入器骨架(Task 1):当前 importFile 应明确报错而不是假装成功
+    //  URDF 导入 — Task 2:最小 URDF robot name / joint / origin xyz / rpy
+    //                    (rad -> deg) / revolute limit (rad -> deg) /
+    //                    effort -> forceLimit
     // =====================================================================
     {
-        UrdfImportOptions importOptions;
-        importOptions.saveDirectory = QDir::tempPath ();
-        UrdfImportResult importResult;
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_minimal";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/minimal.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create minimal URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"MiniBot\">\n"
+            << "  <link name=\"base_link\" />\n"
+            << "  <link name=\"link1\" />\n"
+            << "  <joint name=\"joint1\" type=\"revolute\">\n"
+            << "    <parent link=\"base_link\" />\n"
+            << "    <child link=\"link1\" />\n"
+            << "    <origin xyz=\"0.1 0.2 0.3\" rpy=\"0.4 0.5 0.6\" />\n"
+            << "    <axis xyz=\"0 0 1\" />\n"
+            << "    <limit lower=\"-1.57\" upper=\"1.57\" velocity=\"2.5\" effort=\"9.0\" />\n"
+            << "  </joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
         QStringList importErrors;
-        if (RobotModelUrdfImporter::importFile ("missing.urdf", importOptions, importResult,
-                                                importErrors)) {
-            return fail ("Unimplemented URDF importer should not report success.");
-        }
-        if (importErrors.isEmpty ())
-            return fail ("Unimplemented URDF importer should report a clear error.");
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Minimal URDF import failed: " + importErrors.join ("; "));
+        if (result.spec.robotName != "MiniBot")
+            return fail ("URDF robot name was not imported.");
+        if (result.spec.transformJoints.size () != 1)
+            return fail ("Minimal URDF should import one transform joint.");
+        const JointTransformSpec& joint = result.spec.transformJoints.front ();
+        if (joint.name != "joint1")
+            return fail ("URDF joint name was not imported.");
+        if (joint.type != "Revolute")
+            return fail ("URDF revolute joint type was not converted to Revolute.");
+        if (!nearlyEqual (joint.pos[0], 0.1) || !nearlyEqual (joint.pos[1], 0.2) ||
+            !nearlyEqual (joint.pos[2], 0.3))
+            return fail ("URDF origin xyz was not imported.");
+        if (result.spec.limits.size () != 1)
+            return fail ("URDF joint limit was not imported.");
+        if (!nearlyEqual (result.spec.limits[0].posMin, -1.57 * 180.0 / RobotModelXmlWriter::kPi) ||
+            !nearlyEqual (result.spec.limits[0].posMax, 1.57 * 180.0 / RobotModelXmlWriter::kPi))
+            return fail ("URDF revolute limits should be converted from radians to degrees.");
+        if (result.spec.dynamics.forceLimits.size () != 1 ||
+            !nearlyEqual (result.spec.dynamics.forceLimits[0].maxForce, 9.0))
+            return fail ("URDF effort limit was not imported.");
     }
 
     // ---- 默认模型基础校验 ----
