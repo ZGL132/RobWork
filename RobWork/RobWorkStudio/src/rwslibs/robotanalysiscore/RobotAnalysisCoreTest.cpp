@@ -1,3 +1,4 @@
+#include "RobotAnalysisCsv.hpp"
 #include "RobotAnalysisJson.hpp"
 #include "RobotAnalysisTypes.hpp"
 #include "RobotAnalysisValidation.hpp"
@@ -200,6 +201,38 @@ int main ()
     if (parseError.empty ())
         return fail ("Invalid JSON should report a parse error.");
 
-    std::cout << "RobotAnalysisCore type, validation, and JSON test passed." << std::endl;
+    rws::TaskPoint pointWithNote = point;
+    pointWithNote.id             = "P002";
+    pointWithNote.name           = "Inspect, quoted";
+    pointWithNote.type           = rws::TaskPointType::Inspect;
+    pointWithNote.position       = {{0.5, 0.2, 0.3}};
+    pointWithNote.note           = "requires \"fine\" alignment";
+    const std::vector< rws::TaskPoint > csvPoints = {point, pointWithNote};
+    const std::string csv = rws::RobotAnalysisCsv::taskPointsToCsv (csvPoints);
+    if (!contains (csv, "id,name,type,refFrame,tcpFrame,x,y,z,rollDeg,pitchDeg,yawDeg"))
+        return fail ("TaskPoint CSV should contain a stable header.");
+    if (!contains (csv, "\"Inspect, quoted\""))
+        return fail ("TaskPoint CSV should quote fields containing commas.");
+    if (!contains (csv, "\"requires \"\"fine\"\" alignment\""))
+        return fail ("TaskPoint CSV should escape quotes inside quoted fields.");
+
+    std::vector< rws::TaskPoint > parsedCsvPoints;
+    if (!rws::RobotAnalysisCsv::taskPointsFromCsv (csv, parsedCsvPoints))
+        return fail ("TaskPoint CSV should parse successfully.");
+    if (parsedCsvPoints.size () != csvPoints.size ())
+        return fail ("TaskPoint CSV round-trip should preserve row count.");
+    if (parsedCsvPoints[1].id != pointWithNote.id || parsedCsvPoints[1].name != pointWithNote.name ||
+        parsedCsvPoints[1].type != pointWithNote.type ||
+        !nearlyEqual (parsedCsvPoints[1].position[0], pointWithNote.position[0]) ||
+        parsedCsvPoints[1].note != pointWithNote.note)
+        return fail ("TaskPoint CSV round-trip should preserve task point fields.");
+
+    std::string csvError;
+    if (rws::RobotAnalysisCsv::taskPointsFromCsv ("id,name\nP001", parsedCsvPoints, &csvError))
+        return fail ("TaskPoint CSV with an invalid header should fail.");
+    if (csvError.empty ())
+        return fail ("TaskPoint CSV parse failure should report an error.");
+
+    std::cout << "RobotAnalysisCore type, validation, JSON, and CSV test passed." << std::endl;
     return 0;
 }
