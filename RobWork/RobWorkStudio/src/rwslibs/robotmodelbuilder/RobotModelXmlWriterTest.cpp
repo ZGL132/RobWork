@@ -720,6 +720,70 @@ int main (int argc, char** argv)
     if (!contains (sceneXml, "<Include file=\"GenericSixAxis.wc.xml\" />"))
         return fail ("Scene XML missing include.");
 
+    // ---- XML escaping:用户可控名字 / 路径 / 文本必须正确转义 ----
+    {
+        RobotModelSpec escaping = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        escaping.robotName = "EscapingRobot";
+        escaping.transformJoints[0].name = "Joint_A";
+        // Strip limit / forceLimit / dynamics references that would now dangle
+        // because Joint1 was renamed; the escaping test only cares about the
+        // serialization layer, not validate-time reference integrity.
+        escaping.limits.clear ();
+        escaping.dynamics.forceLimits.clear ();
+        escaping.dynamics.links.clear ();
+        escaping.drawables.clear ();
+        DrawableSpec drawable;
+        drawable.name = "Body & \"cover\"";
+        drawable.refFrame = "Joint_A";
+        drawable.shape = "Mesh";
+        drawable.filePath = "meshes/part & \"quoted\".stl";
+        drawable.dimensions = {{0.1, 0.1, 0.1}};
+        drawable.radius = 0.05;
+        drawable.length = 0.1;
+        drawable.rpyDeg = {{0, 0, 0}};
+        drawable.pos = {{0, 0, 0}};
+        drawable.rgb = {{0.4, 0.5, 0.6}};
+        drawable.collisionModel = false;
+        escaping.drawables.push_back (drawable);
+        escaping.dynamics.baseMaterial = "Steel & Aluminum";
+
+        QStringList escapingErrors;
+        if (!RobotModelXmlWriter::validate (escaping, escapingErrors))
+            return fail ("Escaping regression spec should validate: " + escapingErrors.join ("; "));
+
+        const QString escapingSerial = RobotModelXmlWriter::makeSerialDeviceXml (escaping);
+        const QString escapingDwc    = RobotModelXmlWriter::makeDynamicWorkCellXml (escaping);
+        if (!contains (escapingSerial, "Body &amp; &quot;cover&quot;"))
+            return fail ("Drawable name must be XML-escaped in SerialDevice output.");
+        if (!contains (escapingSerial, "meshes/part &amp; &quot;quoted&quot;.stl"))
+            return fail ("Drawable mesh path must be XML-escaped in SerialDevice output.");
+        if (!contains (escapingDwc, "<MaterialID>Steel &amp; Aluminum</MaterialID>"))
+            return fail ("DWC material text must be XML-escaped.");
+    }
+
+    // ---- DrawableSpec default initialization should produce deterministic data ----
+    {
+        DrawableSpec drawable;
+        if (!nearlyEqual (drawable.radius, 0.05))
+            return fail ("DrawableSpec default radius should be 0.05.");
+        if (!nearlyEqual (drawable.length, 0.1))
+            return fail ("DrawableSpec default length should be 0.1.");
+        if (!nearlyEqual (drawable.rpyDeg[0], 0.0) ||
+            !nearlyEqual (drawable.rpyDeg[1], 0.0) ||
+            !nearlyEqual (drawable.rpyDeg[2], 0.0))
+            return fail ("DrawableSpec default RPY should be zero.");
+        if (!nearlyEqual (drawable.pos[0], 0.0) ||
+            !nearlyEqual (drawable.pos[1], 0.0) ||
+            !nearlyEqual (drawable.pos[2], 0.0))
+            return fail ("DrawableSpec default Pos should be zero.");
+        if (!nearlyEqual (drawable.rgb[0], 0.6) ||
+            !nearlyEqual (drawable.rgb[1], 0.6) ||
+            !nearlyEqual (drawable.rgb[2], 0.6))
+            return fail ("DrawableSpec default RGB should be 0.6 0.6 0.6.");
+        if (drawable.collisionModel)
+            return fail ("DrawableSpec default collisionModel should be false.");
+    }
+
     // ---- DH 表不再作为真值:切换旧 DH mode 也仍然输出 SE(3) Joint XML ----
     RobotModelSpec dhViewSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     dhViewSpec.mode           = KinematicsViewMode::DHProjection;
@@ -1746,6 +1810,40 @@ int main (int argc, char** argv)
             return fail ("Scene frame with missing refframe should fail validation.");
         if (!badRefErrors.join (" ").contains ("MissingFrame"))
             return fail ("Missing refframe validation error should mention the bad reference.");
+
+        RobotModelSpec forward = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        forward.sceneFrames.clear ();
+        FrameSpec child;
+        child.name      = "ChildBeforeParent";
+        child.refFrame  = "LaterParent";
+        child.frameType = SceneFrameType::Fixed;
+        forward.sceneFrames.push_back (child);
+        FrameSpec parent;
+        parent.name      = "LaterParent";
+        parent.refFrame  = "WORLD";
+        parent.frameType = SceneFrameType::Fixed;
+        forward.sceneFrames.push_back (parent);
+
+        QStringList dependencyErrors;
+        if (RobotModelXmlWriter::validate (forward, dependencyErrors))
+            return fail ("Scene frame forward references should be rejected.");
+
+        RobotModelSpec cycle = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        cycle.sceneFrames.clear ();
+        FrameSpec a;
+        a.name      = "SceneA";
+        a.refFrame  = "SceneB";
+        a.frameType = SceneFrameType::Fixed;
+        cycle.sceneFrames.push_back (a);
+        FrameSpec b;
+        b.name      = "SceneB";
+        b.refFrame  = "SceneA";
+        b.frameType = SceneFrameType::Fixed;
+        cycle.sceneFrames.push_back (b);
+
+        dependencyErrors.clear ();
+        if (RobotModelXmlWriter::validate (cycle, dependencyErrors))
+            return fail ("Scene frame cycles should be rejected.");
     }
 
     // ---- Milestone 3.5:默认场景几何体 ----

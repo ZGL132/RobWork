@@ -93,4 +93,10 @@ if(build)
             RW::sdurw_proximity
     )
     target_include_directories(sdurws_robotmodelbuilder_xmltest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_robotmodelbuilder_xmltest
+            COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_xmltest>
+        )
+    endif()
 endif()

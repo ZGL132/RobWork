@@ -99,6 +99,24 @@ QString exportedRobotName (const RobotModelSpec& spec)
     return RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (spec.robotName));
 }
 
+/// XML 特殊字符转义:任何来自用户输入或 URDF 的字符串在写入 XML 之前都走这里,
+/// 避免 & / < / > / " / ' 五个字符破坏 XML 结构。
+QString xmlEscaped (const QString& value)
+{
+    QString escaped = value;
+    escaped.replace ('&', "&amp;");
+    escaped.replace ('<', "&lt;");
+    escaped.replace ('>', "&gt;");
+    escaped.replace ('"', "&quot;");
+    escaped.replace ('\'', "&apos;");
+    return escaped;
+}
+
+QString xmlEscaped (const std::string& value)
+{
+    return xmlEscaped (QString::fromStdString (value));
+}
+
 /// 给 spec 增加默认的 Joint{i+1}Housing 圆柱(关节外壳),用于三维可视化
 /// 现在按 transformJoints.size() 生成,而非固定 6 个。
 void appendJointHousings (RobotModelSpec& spec)
@@ -590,22 +608,22 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
                               .arg (QString::fromStdString (frame.name));
         }
 
-        std::set< std::string > availableSceneRefs;
-        availableSceneRefs.insert ("WORLD");
-        availableSceneRefs.insert ("RobotBase");
-        for (const FrameSpec& frame : spec.sceneFrames)
-            availableSceneRefs.insert (frame.name);
+        std::set< std::string > declaredSceneRefs;
+        declaredSceneRefs.insert ("WORLD");
+        declaredSceneRefs.insert ("RobotBase");
         for (const FrameSpec& frame : spec.sceneFrames) {
             if (isEmpty (frame.refFrame))
                 errors << QString ("Scene frame %1 requires a refframe.")
                               .arg (QString::fromStdString (frame.name));
-            else if (availableSceneRefs.find (frame.refFrame) == availableSceneRefs.end ())
-                errors << QString ("Scene frame %1 references unknown refframe %2.")
+            else if (declaredSceneRefs.find (frame.refFrame) == declaredSceneRefs.end ())
+                errors << QString ("Scene frame %1 references frame %2 before it is declared.")
                               .arg (QString::fromStdString (frame.name),
                                     QString::fromStdString (frame.refFrame));
             if (frame.name == frame.refFrame)
                 errors << QString ("Scene frame %1 must not reference itself.")
                               .arg (QString::fromStdString (frame.name));
+            if (!isEmpty (frame.name))
+                declaredSceneRefs.insert (frame.name);
             for (double v : frame.rpyDeg) {
                 if (!std::isfinite (v))
                     errors << QString ("Scene frame %1 RPY values must be finite.")
@@ -1051,147 +1069,11 @@ bool RobotModelXmlWriter::canExportDhJoints (const RobotModelSpec& spec, QString
 //  说明: 把 spec 序列化为 RobWork <SerialDevice>...</SerialDevice> 文本。
 //        包含 Base/TCP 帧、关节(DH 或 RPY+Pos)、可选 Drawable、限位、位姿。
 // =============================================================================
-#if 0
 QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 {
     QString xml;
     QTextStream out (&xml);
-    out << "<SerialDevice name=\"" << exportedRobotName (spec) << "\">\n";
-    out << "  <Frame name=\"Base\">\n";
-    out << "    <RPY>0 0 0</RPY>\n";
-    out << "    <Pos>0 0 0</Pos>\n";
-    if (spec.showFrameAxes)
-        out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-    out << "  </Frame>\n";
-
-    // 双闸门:既要用户主动勾选 exportDhJointsAdvanced,又要所有 SE(3) 行
-    // 都能无损投影为 DH。任何一个条件不满足都 fallback 到默认 <Joint> 输出。
-    // validate() 在 exportDhJointsAdvanced=true 时会主动调用
-    // canExportDhJoints 并把错误塞到 errors,所以正常流程下这里不会再
-    // 看到"勾选了但不通过"的情况;但保留 fallback 作为防御性编程。
-    // Milestone 1:FixedFrame / ToolFrame 永远是 <Frame> 不参与 DH 表;
-    // DHJoint 高级导出仅在转换无损且无 RigidFrame 时启用。
-    const bool writeDhJoints = spec.exportDhJointsAdvanced && canExportDhJoints (spec);
-    if (writeDhJoints) {
-        // writeDhJoints=true 时 canExportDhJoints 已确保 spec 全部 Revolute + 无损
-        for (const JointTransformSpec& transformJoint : spec.transformJoints) {
-            const DHJointSpec joint = transformJointToDh (transformJoint);
-            out << "  <DHJoint name=\"" << QString::fromStdString (joint.name) << "\" alpha=\""
-                << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
-                << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
-                << "\" type=\"schilling\"";
-            if (spec.showFrameAxes) {
-                out << ">\n";
-                out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-                out << "  </DHJoint>\n";
-            }
-            else {
-                out << " />\n";
-            }
-        }
-    }
-    else {
-        // 默认 SE(3) <Joint> + RigidFrame <Frame> 模式
-        for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
-            const JointTransformSpec& joint = spec.transformJoints[i];
-            if (isFixedFrameType (joint.type) || isToolFrameType (joint.type)) {
-                // RigidFrame:输出 <Frame refframe="...">,而非 <Joint>;
-                // refframe 取前一个 transformJoint 名(若 i==0 则为 Base)。
-                const QString refframe = i > 0
-                const QString refframe = i > 0
-                    ? QString::fromStdString (spec.transformJoints[i - 1].name)
-                    : "Base";
-                out << "  <Frame name=\"" << QString::fromStdString (joint.name)
-                    << "\" refframe=\"" << refframe << "\">\n";
-                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
-                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
-                if (spec.showFrameAxes)
-                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-                out << "  </Frame>\n";
-            }
-            else {
-                out << "  <Joint name=\"" << QString::fromStdString (joint.name) << "\" type=\""
-                    << QString::fromStdString (joint.type) << "\">\n";
-                out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
-                out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
-                if (spec.showFrameAxes)
-                    out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-                out << "  </Joint>\n";
-            }
-        }
-    }
-
-    // TCP 帧:优先挂到最后一个"可动关节"上(Revolute / Prismatic);
-    // 如果没有任何可动关节,则挂在 Base 上。
-    {
-    {
-        QString tcpRef       = "Base";
-        const std::vector< size_t > movable = movableJointIndices (spec);
-        if (!movable.empty ())
-            tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
-        out << "  <Frame name=\"TCP\" refframe=\"" << tcpRef << "\">\n";
-        out << "    <RPY>0 0 0</RPY>\n";
-        out << "    <Pos>0 0 0</Pos>\n";
-        if (spec.showFrameAxes)
-            out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-        out << "  </Frame>\n";
-    }
-
-    if (spec.generateDrawables) {
-        for (const DrawableSpec& drawable : spec.drawables)
-            writeDrawableXml (out, spec, drawable);
-    }
-
-    // Milestone 5:独立碰撞模型 <CollisionModel>;不挂 generateDrawables,
-    // 关闭视觉时仍可单独输出。
-    for (const CollisionModelSpec& collision : spec.collisionModels)
-        writeCollisionModelXml (out, spec, collision);
-
-    // 关节限位(三种类型分开输出,RobWork 要求独立节点)
-    // 单位规则:Revolute 是度→rad;Prismatic 米保持。
-    for (const JointLimitSpec& limit : spec.limits) {
-    for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" min=\"" << number (limit.posMin) << "\" max=\""
-            << number (limit.posMax) << "\" />\n";
-    }
-    for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <VelLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" max=\"" << number (limit.velMax) << "\" />\n";
-    }
-    for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <AccLimit refjoint=\"" << QString::fromStdString (limit.jointName)
-            << "\" max=\"" << number (limit.accMax) << "\" />\n";
-    }
-
-    // 预设位姿:按可动关节顺序取 q;Revolute 度→rad,Prismatic 米保持。
-    const std::vector< size_t > movable = movableJointIndices (spec);
-    const std::vector< size_t > movable = movableJointIndices (spec);
-    for (const PoseSpec& pose : spec.poses) {
-        out << "  <Q name=\"" << QString::fromStdString (pose.name) << "\">";
-        for (size_t k = 0; k < movable.size (); ++k) {
-            if (k > 0)
-                out << " ";
-            const JointTransformSpec& j = spec.transformJoints[movable[k]];
-            const double raw            = pose.q[k];    // validate 已保证 size 一致
-            const double value          = isRevoluteType (j.type) ? degToRad (raw) : raw;
-            const double value          = isRevoluteType (j.type) ? degToRad (raw) : raw;
-            out << number (value);
-        }
-        out << "</Q>\n";
-    }
-
-    out << "</SerialDevice>\n";
-    return xml;
-}
-
-#endif
-
-QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
-{
-    QString xml;
-    QTextStream out (&xml);
-    out << "<SerialDevice name=\"" << exportedRobotName (spec) << "\">\n";
+    out << "<SerialDevice name=\"" << xmlEscaped (exportedRobotName (spec)) << "\">\n";
     out << "  <Frame name=\"Base\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
     out << "    <Pos>0 0 0</Pos>\n";
@@ -1203,7 +1085,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     if (writeDhJoints) {
         for (const JointTransformSpec& transformJoint : spec.transformJoints) {
             const DHJointSpec joint = transformJointToDh (transformJoint);
-            out << "  <DHJoint name=\"" << QString::fromStdString (joint.name) << "\" alpha=\""
+            out << "  <DHJoint name=\"" << xmlEscaped (joint.name) << "\" alpha=\""
                 << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
                 << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
                 << "\" type=\"schilling\"";
@@ -1224,8 +1106,8 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
                 const QString refframe = i > 0
                     ? QString::fromStdString (spec.transformJoints[i - 1].name)
                     : "Base";
-                out << "  <Frame name=\"" << QString::fromStdString (joint.name)
-                    << "\" refframe=\"" << refframe << "\">\n";
+                out << "  <Frame name=\"" << xmlEscaped (joint.name)
+                    << "\" refframe=\"" << xmlEscaped (refframe) << "\">\n";
                 out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
                 out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
                 if (spec.showFrameAxes)
@@ -1233,8 +1115,8 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
                 out << "  </Frame>\n";
             }
             else {
-                out << "  <Joint name=\"" << QString::fromStdString (joint.name) << "\" type=\""
-                    << QString::fromStdString (joint.type) << "\">\n";
+                out << "  <Joint name=\"" << xmlEscaped (joint.name) << "\" type=\""
+                    << xmlEscaped (joint.type) << "\">\n";
                 out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
                 out << "    <Pos>" << vector3 (joint.pos) << "</Pos>\n";
                 if (spec.showFrameAxes)
@@ -1248,7 +1130,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
     const std::vector< size_t > movable = movableJointIndices (spec);
     if (!movable.empty ())
         tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
-    out << "  <Frame name=\"TCP\" refframe=\"" << tcpRef << "\">\n";
+    out << "  <Frame name=\"TCP\" refframe=\"" << xmlEscaped (tcpRef) << "\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
     out << "    <Pos>0 0 0</Pos>\n";
     if (spec.showFrameAxes)
@@ -1266,21 +1148,21 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         writeCollisionModelXml (out, spec, collision);
 
     for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <PosLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+        out << "  <PosLimit refjoint=\"" << xmlEscaped (limit.jointName)
             << "\" min=\"" << number (limit.posMin) << "\" max=\""
             << number (limit.posMax) << "\" />\n";
     }
     for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <VelLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+        out << "  <VelLimit refjoint=\"" << xmlEscaped (limit.jointName)
             << "\" max=\"" << number (limit.velMax) << "\" />\n";
     }
     for (const JointLimitSpec& limit : spec.limits) {
-        out << "  <AccLimit refjoint=\"" << QString::fromStdString (limit.jointName)
+        out << "  <AccLimit refjoint=\"" << xmlEscaped (limit.jointName)
             << "\" max=\"" << number (limit.accMax) << "\" />\n";
     }
 
     for (const PoseSpec& pose : spec.poses) {
-        out << "  <Q name=\"" << QString::fromStdString (pose.name) << "\">";
+        out << "  <Q name=\"" << xmlEscaped (pose.name) << "\">";
         for (size_t k = 0; k < movable.size (); ++k) {
             if (k > 0)
                 out << " ";
@@ -1315,7 +1197,7 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     const QString robotName = exportedRobotName (spec);
     QString xml;
     QTextStream out (&xml);
-    out << "<WorkCell name=\"" << robotName << "Scene\">\n";
+    out << "<WorkCell name=\"" << xmlEscaped (robotName) << "Scene\">\n";
 
     FrameSpec robotBase = spec.robotBaseFrame;
     if (robotBase.name.empty ())
@@ -1326,19 +1208,19 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     writeFrameXml (out, robotBase, spec.showFrameAxes);
     out << "\n";
 
-    out << "  <Include file=\"" << robotName << ".wc.xml\" />\n";
+    out << "  <Include file=\"" << xmlEscaped (robotName + ".wc.xml") << "\" />\n";
 
     // Milestone 6:CollisionSetup / ProximitySetup 引用。文件路径统一走
     // relativeOutputPath,保证输出文件不依赖绝对路径。
     if (spec.collisionSetup.enabled) {
         const QString setupPath = collisionSetupFilePath (spec);
         const QString rel       = relativeOutputPath (spec, setupPath);
-        out << "  <CollisionSetup file=\"" << rel << "\" />\n";
+        out << "  <CollisionSetup file=\"" << xmlEscaped (rel) << "\" />\n";
     }
     if (spec.proximitySetup.enabled) {
         const QString setupPath = proximitySetupFilePath (spec);
         const QString rel       = relativeOutputPath (spec, setupPath);
-        out << "  <ProximitySetup file=\"" << rel << "\" />\n";
+        out << "  <ProximitySetup file=\"" << xmlEscaped (rel) << "\" />\n";
     }
     // 用户在 spec.includes 里追加的额外引用项(可选)。
     for (const IncludeSpec& include : spec.includes) {
@@ -1346,15 +1228,15 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
             const QString rel = relativeOutputPath (spec, QString::fromStdString (include.file));
             switch (include.kind) {
                 case IncludeKind::Collision:
-                    out << "  <CollisionSetup file=\"" << rel << "\" />\n";
+                    out << "  <CollisionSetup file=\"" << xmlEscaped (rel) << "\" />\n";
                     break;
                 case IncludeKind::Proximity:
-                    out << "  <ProximitySetup file=\"" << rel << "\" />\n";
+                    out << "  <ProximitySetup file=\"" << xmlEscaped (rel) << "\" />\n";
                     break;
                 case IncludeKind::Device:
                 case IncludeKind::WorkCell:
                 default:
-                    out << "  <Include file=\"" << rel << "\" />\n";
+                    out << "  <Include file=\"" << xmlEscaped (rel) << "\" />\n";
                     break;
             }
         }
@@ -1388,22 +1270,22 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
     const QString robotName = exportedRobotName (spec);
     QString xml;
     QTextStream out (&xml);
-    out << "<DynamicWorkCell workcell=\"" << robotName << "Scene.wc.xml\">\n";
-    out << "  <RigidDevice device=\"" << robotName << "\">\n";
+    out << "<DynamicWorkCell workcell=\"" << xmlEscaped (robotName + "Scene.wc.xml") << "\">\n";
+    out << "  <RigidDevice device=\"" << xmlEscaped (robotName) << "\">\n";
 
     for (const JointForceLimitSpec& fl : spec.dynamics.forceLimits) {
-        out << "    <ForceLimit joint=\"" << QString::fromStdString (fl.jointName) << "\">"
+        out << "    <ForceLimit joint=\"" << xmlEscaped (fl.jointName) << "\">"
             << number (fl.maxForce) << "</ForceLimit>\n";
     }
 
-    out << "    <KinematicBase frame=\"" << QString::fromStdString (spec.dynamics.baseFrame)
+    out << "    <KinematicBase frame=\"" << xmlEscaped (spec.dynamics.baseFrame)
         << "\">\n";
-    out << "      <MaterialID>" << QString::fromStdString (spec.dynamics.baseMaterial)
+    out << "      <MaterialID>" << xmlEscaped (spec.dynamics.baseMaterial)
         << "</MaterialID>\n";
     out << "    </KinematicBase>\n";
 
     for (const LinkDynamicsSpec& link : spec.dynamics.links) {
-        out << "    <Link object=\"" << QString::fromStdString (link.objectName) << "\">\n";
+        out << "    <Link object=\"" << xmlEscaped (link.objectName) << "\">\n";
         out << "      <Mass>" << number (link.mass) << "</Mass>\n";
         out << "      <COG>" << vector3 (link.cog) << "</COG>\n";
         if (link.estimateInertia) {
@@ -1426,7 +1308,7 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
                               QString::number (link.inertia[2], 'g', 15);
             out << "      <Inertia>" << m << "</Inertia>\n";
         }
-        out << "      <MaterialID>" << QString::fromStdString (link.material) << "</MaterialID>\n";
+        out << "      <MaterialID>" << xmlEscaped (link.material) << "</MaterialID>\n";
         out << "    </Link>\n";
     }
 
@@ -1457,8 +1339,8 @@ QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
     if (!pairs.empty ()) {
         out << "  <Exclude>\n";
         for (const FramePairSpec& pair : pairs) {
-            out << "    <FramePair first=\"" << QString::fromStdString (pair.first)
-                << "\" second=\"" << QString::fromStdString (pair.second) << "\"/>\n";
+            out << "    <FramePair first=\"" << xmlEscaped (pair.first)
+                << "\" second=\"" << xmlEscaped (pair.second) << "\"/>\n";
         }
         out << "  </Exclude>\n";
     }
@@ -1466,7 +1348,7 @@ QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
     for (const std::string& frame : spec.collisionSetup.volatileFrames) {
         if (frame.empty ())
             continue;
-        out << "  <Volatile>" << QString::fromStdString (frame) << "</Volatile>\n";
+        out << "  <Volatile>" << xmlEscaped (frame) << "</Volatile>\n";
     }
 
     if (spec.collisionSetup.excludeStaticPairs)
@@ -1497,8 +1379,8 @@ QString RobotModelXmlWriter::makeProximitySetupXml (const RobotModelSpec& spec)
 
     for (const ProximityRuleSpec& rule : spec.proximitySetup.rules) {
         out << "  <" << (rule.kind == ProximityRuleKind::Include ? "Include" : "Exclude")
-            << " PatternA=\"" << QString::fromStdString (rule.patternA)
-            << "\" PatternB=\"" << QString::fromStdString (rule.patternB)
+            << " PatternA=\"" << xmlEscaped (rule.patternA)
+            << "\" PatternB=\"" << xmlEscaped (rule.patternB)
             << "\"/>\n";
     }
 
@@ -1736,8 +1618,8 @@ QString RobotModelXmlWriter::frameTypeAttribute (SceneFrameType type)
 void RobotModelXmlWriter::writeFrameXml (QTextStream& out, const FrameSpec& frame,
                                          bool showFrameAxes)
 {
-    out << "  <Frame name=\"" << QString::fromStdString (frame.name)
-        << "\" refframe=\"" << QString::fromStdString (frame.refFrame) << "\""
+    out << "  <Frame name=\"" << xmlEscaped (frame.name)
+        << "\" refframe=\"" << xmlEscaped (frame.refFrame) << "\""
         << frameTypeAttribute (frame.frameType);
     if (frame.daf)
         out << " daf=\"true\"";
@@ -1779,13 +1661,13 @@ QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry
                 .arg (number (geometry.size[0]), number (geometry.size[1]));
         case GeometryKind::STL:
             return QString ("<STL file=\"%1\" />")
-                .arg (QString::fromStdString (geometry.file));
+                .arg (xmlEscaped (geometry.file));
         case GeometryKind::Mesh:
             return QString ("<Mesh file=\"%1\" />")
-                .arg (QString::fromStdString (geometry.file));
+                .arg (xmlEscaped (geometry.file));
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (QString::fromStdString (geometry.file));
+                .arg (xmlEscaped (geometry.file));
         case GeometryKind::Box:
         default:
             return QString ("<Box x=\"%1\" y=\"%2\" z=\"%3\" />")
@@ -1801,8 +1683,8 @@ QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry
 void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
                                                  const SceneGeometrySpec& geometry)
 {
-    out << "  <Drawable name=\"" << QString::fromStdString (geometry.name)
-        << "\" refframe=\"" << QString::fromStdString (geometry.refFrame) << "\"";
+    out << "  <Drawable name=\"" << xmlEscaped (geometry.name)
+        << "\" refframe=\"" << xmlEscaped (geometry.refFrame) << "\"";
     if (geometry.collisionModel)
         out << " colmodel=\"Enabled\"";
     out << ">\n";
@@ -1863,7 +1745,7 @@ QString RobotModelXmlWriter::drawableShapeXml (const RobotModelSpec& spec,
         case GeometryKind::STL:
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (relativeGeometryPath (spec, drawable.filePath));
+                .arg (xmlEscaped (relativeGeometryPath (spec, drawable.filePath)));
         case GeometryKind::Unknown:
         default:
             return QString ();
@@ -1878,8 +1760,8 @@ void RobotModelXmlWriter::writeDrawableXml (QTextStream& out,
                                             const RobotModelSpec& spec,
                                             const DrawableSpec& drawable)
 {
-    out << "  <Drawable name=\"" << QString::fromStdString (drawable.name)
-        << "\" refframe=\"" << QString::fromStdString (drawable.refFrame) << "\"";
+    out << "  <Drawable name=\"" << xmlEscaped (drawable.name)
+        << "\" refframe=\"" << xmlEscaped (drawable.refFrame) << "\"";
     if (drawable.collisionModel)
         out << " colmodel=\"Enabled\"";
     out << ">\n";
@@ -1925,7 +1807,7 @@ QString RobotModelXmlWriter::collisionShapeXml (const RobotModelSpec& spec,
         case GeometryKind::Mesh:
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (relativeGeometryPath (spec, collision.filePath));
+                .arg (xmlEscaped (relativeGeometryPath (spec, collision.filePath)));
         case GeometryKind::Plane:
         case GeometryKind::STL:
         case GeometryKind::Unknown:
@@ -1942,8 +1824,8 @@ void RobotModelXmlWriter::writeCollisionModelXml (QTextStream& out,
                                                   const RobotModelSpec& spec,
                                                   const CollisionModelSpec& collision)
 {
-    out << "  <CollisionModel name=\"" << QString::fromStdString (collision.name)
-        << "\" refframe=\"" << QString::fromStdString (collision.refFrame) << "\">\n";
+    out << "  <CollisionModel name=\"" << xmlEscaped (collision.name)
+        << "\" refframe=\"" << xmlEscaped (collision.refFrame) << "\">\n";
     out << "    <RPY>" << vector3 (collision.rpyDeg) << "</RPY>\n";
     out << "    <Pos>" << vector3 (collision.pos) << "</Pos>\n";
     out << "    " << collisionShapeXml (spec, collision) << "\n";

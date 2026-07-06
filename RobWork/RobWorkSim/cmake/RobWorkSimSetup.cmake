@@ -276,9 +276,16 @@ if(NOT DEFINED RWSIM_CXX_FLAGS)
         "Change this to force using your own flags and not those of RobWorkSim"
     )
 endif()
+if(NOT DEFINED RWSIM_DEFINITIONS)
+    set(RWSIM_DEFINITIONS ${RW_BUILD_WITH_DEFINITIONS} CACHE STRING
+        "Change this to force using your own definitions and not those of RobWorkSim"
+    )
+endif()
 set(RWSIM_CXX_FLAGS "${RWSIM_CXX_FLAGS}${WERROR_FLAG}")
+add_definitions(${RWSIM_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RWSIM_CXX_FLAGS}")
 message(STATUS "RobWorkSim: Adding RWSIM CXX flags: ${RWSIM_CXX_FLAGS}")
+message(STATUS "RobWorkSim: Adding RWSIM definitions: ${RWSIM_DEFINITIONS}")
 
 #
 # Set extra linker flags. The user should be able to change this. The linker flags from RobWork are

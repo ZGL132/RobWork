@@ -273,15 +273,15 @@ struct DrawableSpec
 {
     std::string name;
     std::string refFrame;
-    std::string shape;
+    std::string shape = "Box";
     std::string filePath;
     std::array< double, 3 > dimensions = {{0.1, 0.1, 0.1}};
-    double radius;
-    double length;
-    std::array< double, 3 > rpyDeg;
-    std::array< double, 3 > pos;
-    std::array< double, 3 > rgb;
-    bool collisionModel;
+    double radius = 0.05;
+    double length = 0.1;
+    std::array< double, 3 > rpyDeg = {{0, 0, 0}};
+    std::array< double, 3 > pos = {{0, 0, 0}};
+    std::array< double, 3 > rgb = {{0.6, 0.6, 0.6}};
+    bool collisionModel = false;
     bool autoLinkGeometry = false;
 };
 

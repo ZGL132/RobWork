@@ -15,6 +15,7 @@ vcpkg/
 # RobWork - exclude CMake / build artifacts
 # -------------------------------------------------------------
 RobWork/build/
+RobWork/dist/
 RobWork/CMakeCache.txt
 RobWork/CMakeCache.txt.prev
 RobWork/CMakeFiles/

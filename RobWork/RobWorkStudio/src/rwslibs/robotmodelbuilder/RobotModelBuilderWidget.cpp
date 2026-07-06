@@ -19,7 +19,6 @@
 
 // Qt 控件/工具头文件
 #include <QCheckBox>
-#include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
 #include <QFileDialog>
@@ -291,7 +290,6 @@ void RobotModelBuilderWidget::buildUi ()
     saveLayout->addWidget (browse);
 
     // 模式选择下拉框
-    _mode = new QComboBox ();
     _mode = new QComboBox ();
     _mode->addItem ("Joint + RPY + Pos");
     _mode->addItem ("DH Projection");
@@ -773,27 +771,13 @@ void RobotModelBuilderWidget::importUrdf ()
     fillFromSpec (result.spec);
     generatePreview ();
 
-    QStringList saveErrors;
-    if (!RobotModelXmlWriter::saveFiles (result.spec, saveErrors)) {
-        showErrors (saveErrors);
-        return;
-    }
-    if (result.spec.generateScene)
-        Q_EMIT loadSceneRequested (RobotModelXmlWriter::sceneFilePath (result.spec));
-    else
-        Q_EMIT loadSceneRequested (RobotModelXmlWriter::serialDeviceFilePath (result.spec));
-
     if (!result.warnings.isEmpty ()) {
         QMessageBox::information (
             this,
             "URDF Import Warnings",
             result.warnings.join ("\n"));
-        setStatus (QString ("URDF imported with %1 warning(s).")
-                       .arg (result.warnings.size ()));
     }
-    else {
-        setStatus ("URDF imported and loaded.");
-    }
+    setStatus ("URDF imported. Review the preview, then use Save XML or Save and Load.");
 }
 
 // =============================================================================

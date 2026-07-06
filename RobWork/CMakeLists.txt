@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10  )
 
 # The name of the project.
 project(RobWorkProject)
+include(CTest)
 
 set(RWP_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
