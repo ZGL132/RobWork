@@ -52,5 +52,26 @@ if(build)
             NAME sdurws_robotanalysiscore_test
             COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test>
         )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_types
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> types
+        )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_validation
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> validation
+        )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_json
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> json
+        )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_csv
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> csv
+        )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_invalid_suite
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> invalid-suite
+        )
+        set_tests_properties(sdurws_robotanalysiscore_test_invalid_suite PROPERTIES WILL_FAIL TRUE)
     endif()
 endif()

@@ -34,9 +34,8 @@ bool contains (const std::string& text, const std::string& fragment)
 {
     return text.find (fragment) != std::string::npos;
 }
-}    // namespace
 
-int main ()
+rws::TaskPoint makePoint ()
 {
     rws::TaskPoint point;
     point.id       = "P001";
@@ -44,34 +43,30 @@ int main ()
     point.type     = rws::TaskPointType::Pick;
     point.position = {{0.4, 0.1, 0.2}};
     point.rpyDeg   = {{180.0, 0.0, 90.0}};
-    if (point.refFrame != "WORLD")
-        return fail ("TaskPoint default refFrame must be WORLD.");
-    if (point.tcpFrame != "TCP")
-        return fail ("TaskPoint default tcpFrame must be TCP.");
-    if (!point.enabled)
-        return fail ("TaskPoint should be enabled by default.");
-    if (!nearlyEqual (point.tolerance.positionMeters, 0.001))
-        return fail ("TaskPoint default position tolerance should be 0.001 m.");
+    return point;
+}
 
+rws::PayloadSpec makePayload ()
+{
     rws::PayloadSpec payload;
     payload.mass = 2.5;
     payload.cog  = {{0.0, 0.0, 0.1}};
-    if (payload.name != "Payload")
-        return fail ("PayloadSpec default name must be Payload.");
+    return payload;
+}
 
+rws::RobotDesignContext makeContext ()
+{
     rws::RobotDesignContext context;
-    context.projectName          = "analysis-core-test";
-    context.robotName            = "GenericSixAxis";
-    context.modelSpec.robotName  = "GenericSixAxis";
-    context.payload              = payload;
-    context.taskPoints.push_back (point);
-    if (context.baseFrame != "Base")
-        return fail ("RobotDesignContext default baseFrame must be Base.");
-    if (context.taskPoints.size () != 1)
-        return fail ("RobotDesignContext should store task points.");
-    if (context.modelSpec.robotName != "GenericSixAxis")
-        return fail ("RobotDesignContext should embed RobotModelSpec.");
+    context.projectName         = "analysis-core-test";
+    context.robotName           = "GenericSixAxis";
+    context.modelSpec.robotName = "GenericSixAxis";
+    context.payload             = makePayload ();
+    context.taskPoints.push_back (makePoint ());
+    return context;
+}
 
+rws::AnalysisResult makeResult ()
+{
     rws::AnalysisResult result;
     result.header.pluginName = "RobotAnalysisCoreTest";
     result.status            = rws::AnalysisStatus::Pass;
@@ -86,9 +81,42 @@ int main ()
     margin.unit  = "ratio";
     joint.metrics.push_back (margin);
     result.jointSummaries.push_back (joint);
+    return result;
+}
+
+int runTypes ()
+{
+    const rws::TaskPoint point = makePoint ();
+    if (point.refFrame != "WORLD")
+        return fail ("TaskPoint default refFrame must be WORLD.");
+    if (point.tcpFrame != "TCP")
+        return fail ("TaskPoint default tcpFrame must be TCP.");
+    if (!point.enabled)
+        return fail ("TaskPoint should be enabled by default.");
+    if (!nearlyEqual (point.tolerance.positionMeters, 0.001))
+        return fail ("TaskPoint default position tolerance should be 0.001 m.");
+
+    const rws::PayloadSpec payload = makePayload ();
+    if (payload.name != "Payload")
+        return fail ("PayloadSpec default name must be Payload.");
+
+    const rws::RobotDesignContext context = makeContext ();
+    if (context.baseFrame != "Base")
+        return fail ("RobotDesignContext default baseFrame must be Base.");
+    if (context.taskPoints.size () != 1)
+        return fail ("RobotDesignContext should store task points.");
+    if (context.modelSpec.robotName != "GenericSixAxis")
+        return fail ("RobotDesignContext should embed RobotModelSpec.");
+
+    const rws::AnalysisResult result = makeResult ();
     if (result.jointSummaries.front ().metrics.front ().name != "margin")
         return fail ("AnalysisResult should store joint metrics.");
+    return 0;
+}
 
+int runValidation ()
+{
+    const rws::TaskPoint point = makePoint ();
     const std::vector< rws::AnalysisWarning > validPointWarnings =
         rws::RobotAnalysisValidation::validateTaskPoint (point);
     if (!validPointWarnings.empty ())
@@ -118,20 +146,21 @@ int main ()
     if (!hasCode (invalidPointWarnings, "TaskPoint.Rpy.NonFinite"))
         return fail ("Invalid TaskPoint should report non-finite RPY.");
 
-    rws::PayloadSpec invalidPayload = payload;
+    rws::PayloadSpec invalidPayload = makePayload ();
     invalidPayload.mass            = -0.1;
     const std::vector< rws::AnalysisWarning > invalidPayloadWarnings =
         rws::RobotAnalysisValidation::validatePayload (invalidPayload);
     if (!hasCode (invalidPayloadWarnings, "Payload.Mass.Negative"))
         return fail ("Invalid PayloadSpec should report negative mass.");
 
-    rws::AnalysisResult invalidResult = result;
+    rws::AnalysisResult invalidResult = makeResult ();
     invalidResult.score              = 101.0;
     const std::vector< rws::AnalysisWarning > invalidResultWarnings =
         rws::RobotAnalysisValidation::validateAnalysisResult (invalidResult);
     if (!hasCode (invalidResultWarnings, "AnalysisResult.Score.OutOfRange"))
         return fail ("Invalid AnalysisResult should report score outside [0, 100].");
 
+    const rws::RobotDesignContext context = makeContext ();
     const std::vector< rws::AnalysisWarning > validContextWarnings =
         rws::RobotAnalysisValidation::validateRobotDesignContext (context);
     if (!validContextWarnings.empty ())
@@ -149,7 +178,12 @@ int main ()
         return fail ("Invalid RobotDesignContext should report empty tcpFrame.");
     if (!hasCode (invalidContextWarnings, "RobotDesignContext.RefFrame.Empty"))
         return fail ("Invalid RobotDesignContext should report empty refFrame.");
+    return 0;
+}
 
+int runJson ()
+{
+    const rws::TaskPoint point   = makePoint ();
     const std::string pointJson = rws::RobotAnalysisJson::toJson (point);
     if (!contains (pointJson, "\"id\":\"P001\""))
         return fail ("TaskPoint JSON should contain the task point id.");
@@ -161,7 +195,8 @@ int main ()
         !nearlyEqual (parsedPoint.rpyDeg[2], point.rpyDeg[2]))
         return fail ("TaskPoint JSON round-trip should preserve core fields.");
 
-    const std::string payloadJson = rws::RobotAnalysisJson::toJson (payload);
+    const rws::PayloadSpec payload = makePayload ();
+    const std::string payloadJson  = rws::RobotAnalysisJson::toJson (payload);
     rws::PayloadSpec parsedPayload;
     if (!rws::RobotAnalysisJson::fromJson (payloadJson, parsedPayload))
         return fail ("PayloadSpec JSON should parse successfully.");
@@ -169,7 +204,8 @@ int main ()
         !nearlyEqual (parsedPayload.cog[2], payload.cog[2]))
         return fail ("PayloadSpec JSON round-trip should preserve payload fields.");
 
-    const std::string contextJson = rws::RobotAnalysisJson::toJson (context);
+    const rws::RobotDesignContext context = makeContext ();
+    const std::string contextJson         = rws::RobotAnalysisJson::toJson (context);
     rws::RobotDesignContext parsedContext;
     if (!rws::RobotAnalysisJson::fromJson (contextJson, parsedContext))
         return fail ("RobotDesignContext JSON should parse successfully.");
@@ -179,6 +215,7 @@ int main ()
         !nearlyEqual (parsedContext.payload.mass, context.payload.mass))
         return fail ("RobotDesignContext JSON round-trip should preserve shared context fields.");
 
+    rws::AnalysisResult result = makeResult ();
     rws::AnalysisWarning warning;
     warning.code     = "W001";
     warning.message  = "joint margin low";
@@ -200,7 +237,12 @@ int main ()
         return fail ("Invalid JSON should fail to parse.");
     if (parseError.empty ())
         return fail ("Invalid JSON should report a parse error.");
+    return 0;
+}
 
+int runCsv ()
+{
+    const rws::TaskPoint point = makePoint ();
     rws::TaskPoint pointWithNote = point;
     pointWithNote.id             = "P002";
     pointWithNote.name           = "Inspect, quoted";
@@ -232,7 +274,40 @@ int main ()
         return fail ("TaskPoint CSV with an invalid header should fail.");
     if (csvError.empty ())
         return fail ("TaskPoint CSV parse failure should report an error.");
+    return 0;
+}
 
-    std::cout << "RobotAnalysisCore type, validation, JSON, and CSV test passed." << std::endl;
+int runAll ()
+{
+    if (const int rc = runTypes ())
+        return rc;
+    if (const int rc = runValidation ())
+        return rc;
+    if (const int rc = runJson ())
+        return rc;
+    return runCsv ();
+}
+}    // namespace
+
+int main (int argc, char** argv)
+{
+    const std::string suite = argc > 1 ? argv[1] : "all";
+    int rc                 = 0;
+    if (suite == "all")
+        rc = runAll ();
+    else if (suite == "types")
+        rc = runTypes ();
+    else if (suite == "validation")
+        rc = runValidation ();
+    else if (suite == "json")
+        rc = runJson ();
+    else if (suite == "csv")
+        rc = runCsv ();
+    else
+        return fail ("Unknown RobotAnalysisCore test suite: " + suite);
+
+    if (rc != 0)
+        return rc;
+    std::cout << "RobotAnalysisCore " << suite << " test passed." << std::endl;
     return 0;
 }
