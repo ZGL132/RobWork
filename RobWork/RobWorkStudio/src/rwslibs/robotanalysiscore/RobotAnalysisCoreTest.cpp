@@ -1,3 +1,4 @@
+#include "RobotAnalysisJson.hpp"
 #include "RobotAnalysisTypes.hpp"
 #include "RobotAnalysisValidation.hpp"
 
@@ -26,6 +27,11 @@ bool hasCode (const std::vector< rws::AnalysisWarning >& warnings, const std::st
             return true;
     }
     return false;
+}
+
+bool contains (const std::string& text, const std::string& fragment)
+{
+    return text.find (fragment) != std::string::npos;
 }
 }    // namespace
 
@@ -143,6 +149,57 @@ int main ()
     if (!hasCode (invalidContextWarnings, "RobotDesignContext.RefFrame.Empty"))
         return fail ("Invalid RobotDesignContext should report empty refFrame.");
 
-    std::cout << "RobotAnalysisCore type and validation test passed." << std::endl;
+    const std::string pointJson = rws::RobotAnalysisJson::toJson (point);
+    if (!contains (pointJson, "\"id\":\"P001\""))
+        return fail ("TaskPoint JSON should contain the task point id.");
+    rws::TaskPoint parsedPoint;
+    if (!rws::RobotAnalysisJson::fromJson (pointJson, parsedPoint))
+        return fail ("TaskPoint JSON should parse successfully.");
+    if (parsedPoint.id != point.id || parsedPoint.name != point.name ||
+        parsedPoint.type != point.type || !nearlyEqual (parsedPoint.position[0], point.position[0]) ||
+        !nearlyEqual (parsedPoint.rpyDeg[2], point.rpyDeg[2]))
+        return fail ("TaskPoint JSON round-trip should preserve core fields.");
+
+    const std::string payloadJson = rws::RobotAnalysisJson::toJson (payload);
+    rws::PayloadSpec parsedPayload;
+    if (!rws::RobotAnalysisJson::fromJson (payloadJson, parsedPayload))
+        return fail ("PayloadSpec JSON should parse successfully.");
+    if (parsedPayload.name != payload.name || !nearlyEqual (parsedPayload.mass, payload.mass) ||
+        !nearlyEqual (parsedPayload.cog[2], payload.cog[2]))
+        return fail ("PayloadSpec JSON round-trip should preserve payload fields.");
+
+    const std::string contextJson = rws::RobotAnalysisJson::toJson (context);
+    rws::RobotDesignContext parsedContext;
+    if (!rws::RobotAnalysisJson::fromJson (contextJson, parsedContext))
+        return fail ("RobotDesignContext JSON should parse successfully.");
+    if (parsedContext.projectName != context.projectName ||
+        parsedContext.modelSpec.robotName != context.modelSpec.robotName ||
+        parsedContext.taskPoints.size () != context.taskPoints.size () ||
+        !nearlyEqual (parsedContext.payload.mass, context.payload.mass))
+        return fail ("RobotDesignContext JSON round-trip should preserve shared context fields.");
+
+    rws::AnalysisWarning warning;
+    warning.code     = "W001";
+    warning.message  = "joint margin low";
+    warning.source   = "Joint1";
+    warning.severity = rws::AnalysisStatus::Warning;
+    result.warnings.push_back (warning);
+    const std::string resultJson = rws::RobotAnalysisJson::toJson (result);
+    rws::AnalysisResult parsedResult;
+    if (!rws::RobotAnalysisJson::fromJson (resultJson, parsedResult))
+        return fail ("AnalysisResult JSON should parse successfully.");
+    if (parsedResult.header.pluginName != result.header.pluginName ||
+        parsedResult.status != result.status || !nearlyEqual (parsedResult.score, result.score) ||
+        parsedResult.jointSummaries.size () != result.jointSummaries.size () ||
+        parsedResult.warnings.size () != result.warnings.size ())
+        return fail ("AnalysisResult JSON round-trip should preserve result fields.");
+
+    std::string parseError;
+    if (rws::RobotAnalysisJson::fromJson ("{not-json", parsedPoint, &parseError))
+        return fail ("Invalid JSON should fail to parse.");
+    if (parseError.empty ())
+        return fail ("Invalid JSON should report a parse error.");
+
+    std::cout << "RobotAnalysisCore type, validation, and JSON test passed." << std::endl;
     return 0;
 }
