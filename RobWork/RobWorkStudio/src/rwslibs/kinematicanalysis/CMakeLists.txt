@@ -20,12 +20,14 @@ if(build)
         KinematicAnalysisPlugin.cpp
         KinematicAnalysisWidget.cpp
         KinematicAnalysisTypes.cpp
+        KinematicMetrics.cpp
     )
 
     set(SRC_FILES_HPP
         KinematicAnalysisPlugin.hpp
         KinematicAnalysisWidget.hpp
         KinematicAnalysisTypes.hpp
+        KinematicMetrics.hpp
     )
 
     if(DEFINED Qt6Core_VERSION)
@@ -70,6 +72,10 @@ if(build)
         add_test(
             NAME sdurws_kinematicanalysis_test_types
             COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> types
+        )
+        add_test(
+            NAME sdurws_kinematicanalysis_test_metrics
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> metrics
         )
     endif()
 endif()
