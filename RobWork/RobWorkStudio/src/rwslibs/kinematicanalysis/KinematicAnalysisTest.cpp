@@ -1,5 +1,6 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicMetrics.hpp"
+#include "KinematicAnalyzer.hpp"
 
 #include <QCoreApplication>
 
@@ -73,6 +74,27 @@ static int testTypes ()
     if (const int rc = require (std::string (rws::toString (rws::KinematicFailureReason::Singular)) ==
                                 "Singular",
                                 "toString Singular"))
+        return rc;
+    return 0;
+}
+
+static int testCurrentPose ()
+{
+    rws::KinematicAnalyzer analyzer;
+    rw::kinematics::State emptyState;
+    const rws::KinematicCurrentPoseResult result =
+        analyzer.analyzeCurrentPose (NULL, NULL, emptyState);
+    if (const int rc =
+            require (result.status == rws::AnalysisStatus::Fail, "null device triggers Fail"))
+        return rc;
+    if (const int rc = require (!result.warnings.empty (), "null device emits a warning"))
+        return rc;
+    if (const int rc = require (result.deviceName.empty (), "no device name set"))
+        return rc;
+
+    analyzer.setThresholds (rws::KinematicThresholds ());
+    const rws::KinematicThresholds& t = analyzer.thresholds ();
+    if (const int rc = assertNear (t.nearJointLimitRatio, 0.05, 1e-12, "thresholds preserved"))
         return rc;
     return 0;
 }
@@ -178,7 +200,9 @@ static int runAll ()
 {
     if (const int rc = testTypes ())
         return rc;
-    return testMetrics ();
+    if (const int rc = testMetrics ())
+        return rc;
+    return testCurrentPose ();
 }
 
 int main (int argc, char** argv)
@@ -192,6 +216,8 @@ int main (int argc, char** argv)
         rc = testTypes ();
     else if (suite == "metrics")
         rc = testMetrics ();
+    else if (suite == "current_pose")
+        rc = testCurrentPose ();
     else
         return fail ("Unknown KinematicAnalysis test suite: " + suite);
     if (rc != 0)

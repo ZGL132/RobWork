@@ -21,6 +21,7 @@ if(build)
         KinematicAnalysisWidget.cpp
         KinematicAnalysisTypes.cpp
         KinematicMetrics.cpp
+        KinematicAnalyzer.cpp
     )
 
     set(SRC_FILES_HPP
@@ -28,6 +29,7 @@ if(build)
         KinematicAnalysisWidget.hpp
         KinematicAnalysisTypes.hpp
         KinematicMetrics.hpp
+        KinematicAnalyzer.hpp
     )
 
     if(DEFINED Qt6Core_VERSION)
@@ -76,6 +78,10 @@ if(build)
         add_test(
             NAME sdurws_kinematicanalysis_test_metrics
             COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> metrics
+        )
+        add_test(
+            NAME sdurws_kinematicanalysis_test_current_pose
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> current_pose
         )
     endif()
 endif()
