@@ -19,11 +19,13 @@ if(build)
     set(SrcFiles
         KinematicAnalysisPlugin.cpp
         KinematicAnalysisWidget.cpp
+        KinematicAnalysisTypes.cpp
     )
 
     set(SRC_FILES_HPP
         KinematicAnalysisPlugin.hpp
         KinematicAnalysisWidget.hpp
+        KinematicAnalysisTypes.hpp
     )
 
     if(DEFINED Qt6Core_VERSION)
@@ -49,5 +51,25 @@ if(build)
     rws_plugin_load_details(${SUBSYS_NAME} 1 KinematicAnalysis false)
     if("${RWS_DEFAULT_LIB_TYPE}" STREQUAL "STATIC")
         set(RWS_PLUGIN_LIBRARIES ${RWS_PLUGIN_LIBRARIES} ${SUBSYS_NAME} PARENT_SCOPE)
+    endif()
+
+    add_executable(sdurws_kinematicanalysis_test
+        KinematicAnalysisTest.cpp
+    )
+    target_link_libraries(sdurws_kinematicanalysis_test
+        PRIVATE
+            ${SUBSYS_NAME}
+            ${QT_LIBRARIES}
+    )
+    target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_kinematicanalysis_test
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test>
+        )
+        add_test(
+            NAME sdurws_kinematicanalysis_test_types
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> types
+        )
     endif()
 endif()
