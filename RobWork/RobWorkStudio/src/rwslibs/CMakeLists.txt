@@ -29,6 +29,7 @@ add_subdirectory(workcelleditor)
 add_subdirectory(workcelleditorplugin)
 add_subdirectory(robotmodelbuilder)
 add_subdirectory(robotanalysiscore)
+add_subdirectory(kinematicanalysis)
 # depends on all above
 add_subdirectory(rwstudioapp)
 # depends on rwstudio
