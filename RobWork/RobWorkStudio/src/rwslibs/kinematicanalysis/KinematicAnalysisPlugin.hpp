@@ -3,9 +3,9 @@
 
 #include <rws/RobWorkStudioPlugin.hpp>
 
-class KinematicAnalysisWidget;
-
 namespace rws {
+
+class KinematicAnalysisWidget;
 
 class KinematicAnalysisPlugin : public RobWorkStudioPlugin
 {

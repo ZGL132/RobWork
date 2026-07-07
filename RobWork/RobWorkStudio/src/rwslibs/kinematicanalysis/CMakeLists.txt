@@ -59,10 +59,13 @@ if(build)
 
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
+        KinematicAnalysisTypes.cpp
+        KinematicMetrics.cpp
+        KinematicAnalyzer.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE
-            ${SUBSYS_NAME}
+            ${SUBSYS_DEPS}
             ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -82,6 +85,10 @@ if(build)
         add_test(
             NAME sdurws_kinematicanalysis_test_current_pose
             COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> current_pose
+        )
+        add_test(
+            NAME sdurws_kinematicanalysis_test_ik
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> ik
         )
     endif()
 endif()

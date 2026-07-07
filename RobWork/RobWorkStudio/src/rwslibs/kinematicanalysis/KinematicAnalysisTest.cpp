@@ -196,13 +196,75 @@ static int testMetrics ()
     return 0;
 }
 
+static int testIkRanking ()
+{
+    std::vector< rws::KinematicIkSolution > solutions;
+
+    rws::KinematicIkSolution colliding;
+    colliding.inCollision = true;
+    colliding.positionErrorMeters = 0.0;
+    colliding.orientationErrorDeg = 0.0;
+    colliding.minJointLimitMargin = 0.8;
+    colliding.manipulability = 10.0;
+    colliding.distanceToCurrentQ = 0.1;
+    colliding.q = {9.0};
+
+    rws::KinematicIkSolution worseResidual;
+    worseResidual.inCollision = false;
+    worseResidual.positionErrorMeters = 0.1;
+    worseResidual.orientationErrorDeg = 0.0;
+    worseResidual.minJointLimitMargin = 0.9;
+    worseResidual.manipulability = 20.0;
+    worseResidual.distanceToCurrentQ = 0.1;
+    worseResidual.q = {2.0};
+
+    rws::KinematicIkSolution betterMargin;
+    betterMargin.inCollision = false;
+    betterMargin.positionErrorMeters = 0.0;
+    betterMargin.orientationErrorDeg = 0.0;
+    betterMargin.minJointLimitMargin = 0.7;
+    betterMargin.manipulability = 1.0;
+    betterMargin.distanceToCurrentQ = 0.5;
+    betterMargin.q = {1.0};
+
+    rws::KinematicIkSolution lowerDistance;
+    lowerDistance.inCollision = false;
+    lowerDistance.positionErrorMeters = 0.0;
+    lowerDistance.orientationErrorDeg = 0.0;
+    lowerDistance.minJointLimitMargin = 0.7;
+    lowerDistance.manipulability = 1.0;
+    lowerDistance.distanceToCurrentQ = 0.2;
+    lowerDistance.q = {0.0};
+
+    solutions.push_back (colliding);
+    solutions.push_back (worseResidual);
+    solutions.push_back (betterMargin);
+    solutions.push_back (lowerDistance);
+
+    rws::sortIkSolutionsForDisplay (solutions);
+
+    if (const int rc = require (solutions.size () == 4, "IK ranking preserves size"))
+        return rc;
+    if (const int rc = assertNear (solutions[0].q[0], 0.0, 1e-12, "lower distance first"))
+        return rc;
+    if (const int rc = assertNear (solutions[1].q[0], 1.0, 1e-12, "same quality next"))
+        return rc;
+    if (const int rc = assertNear (solutions[2].q[0], 2.0, 1e-12, "worse residual after"))
+        return rc;
+    if (const int rc = assertNear (solutions[3].q[0], 9.0, 1e-12, "colliding last"))
+        return rc;
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
         return rc;
     if (const int rc = testMetrics ())
         return rc;
-    return testCurrentPose ();
+    if (const int rc = testCurrentPose ())
+        return rc;
+    return testIkRanking ();
 }
 
 int main (int argc, char** argv)
@@ -218,6 +280,8 @@ int main (int argc, char** argv)
         rc = testMetrics ();
     else if (suite == "current_pose")
         rc = testCurrentPose ();
+    else if (suite == "ik")
+        rc = testIkRanking ();
     else
         return fail ("Unknown KinematicAnalysis test suite: " + suite);
     if (rc != 0)
