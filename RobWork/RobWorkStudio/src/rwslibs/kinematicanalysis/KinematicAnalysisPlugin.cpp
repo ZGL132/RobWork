@@ -4,7 +4,7 @@
 
 #include <rws/RobWorkStudio.hpp>
 
-using namespace rws;
+namespace rws {
 
 KinematicAnalysisPlugin::KinematicAnalysisPlugin() :
     RobWorkStudioPlugin("KinematicAnalysis", QIcon()),
@@ -34,3 +34,5 @@ void KinematicAnalysisPlugin::close()
     if (_widget != NULL)
         _widget->setWorkCell(NULL);
 }
+
+}    // namespace rws

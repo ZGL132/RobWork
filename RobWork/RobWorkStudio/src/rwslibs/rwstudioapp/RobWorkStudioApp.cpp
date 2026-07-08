@@ -59,6 +59,9 @@
 #ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
 #endif
+#ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
+#include <rwslibs/kinematicanalysis/KinematicAnalysisPlugin.hpp>
+#endif
 #ifdef RWS_HAVE_PLUGIN_LUAPL
 #include <rwslibs/lua/Lua.hpp>
 #endif
@@ -397,6 +400,11 @@ int RobWorkStudioApp::run ()
 
                 rwstudio.addPlugin (
                     new rws::RobotModelBuilderPlugin (), false, Qt::LeftDockWidgetArea);
+#endif
+#ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
+
+                rwstudio.addPlugin (
+                    new rws::KinematicAnalysisPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
 #ifdef RW_HAVE_EIGEN
 

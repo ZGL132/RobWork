@@ -14,12 +14,17 @@
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QFile>
+#include <QFileDialog>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
+#include <QScrollBar>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
@@ -74,6 +79,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 {
     Q_UNUSED (parent);
     QVBoxLayout* root = new QVBoxLayout(this);
+    root->setContentsMargins (4, 4, 4, 4);
 
     _tabs = new QTabWidget(this);
     root->addWidget(_tabs);
@@ -86,10 +92,14 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _deviceCombo = new QComboBox(_currentPoseTab);
     _tcpFrameCombo = new QComboBox(_currentPoseTab);
     _refreshCurrentPoseButton = new QPushButton(tr("Refresh"), _currentPoseTab);
+    _deviceCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    _tcpFrameCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    _deviceCombo->setMinimumContentsLength (10);
+    _tcpFrameCombo->setMinimumContentsLength (10);
     cpHeader->addWidget(new QLabel(tr("Device:"), _currentPoseTab));
-    cpHeader->addWidget(_deviceCombo);
+    cpHeader->addWidget(_deviceCombo, 1);
     cpHeader->addWidget(new QLabel(tr("TCP frame:"), _currentPoseTab));
-    cpHeader->addWidget(_tcpFrameCombo);
+    cpHeader->addWidget(_tcpFrameCombo, 1);
     cpHeader->addWidget(_refreshCurrentPoseButton);
     cpHeader->addStretch();
     cpLayout->addLayout(cpHeader);
@@ -103,9 +113,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     auto makeTable = [this] () -> QTableWidget* {
         QTableWidget* t = new QTableWidget(this);
-        t->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
+        t->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
         t->verticalHeader ()->setVisible (false);
         t->setEditTriggers (QAbstractItemView::NoEditTriggers);
+        t->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+        t->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
         return t;
     };
 
@@ -149,7 +161,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
     _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
     ikNameRow->addWidget(new QLabel(tr("Target:"), _ikTab));
-    ikNameRow->addWidget(_ikTargetNameEdit);
+    ikNameRow->addWidget(_ikTargetNameEdit, 1);
     ikNameRow->addWidget(_ikSolveButton);
     ikNameRow->addWidget(_ikApplyButton);
     ikLayout->addLayout(ikNameRow);
@@ -169,20 +181,20 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikPitchSpin = makePoseSpin(-360.0, 360.0, 1.0);
     _ikYawSpin = makePoseSpin(-360.0, 360.0, 1.0);
 
-    QHBoxLayout* ikPoseRow = new QHBoxLayout();
-    ikPoseRow->addWidget(new QLabel(tr("X:"), _ikTab));
-    ikPoseRow->addWidget(_ikXSpin);
-    ikPoseRow->addWidget(new QLabel(tr("Y:"), _ikTab));
-    ikPoseRow->addWidget(_ikYSpin);
-    ikPoseRow->addWidget(new QLabel(tr("Z:"), _ikTab));
-    ikPoseRow->addWidget(_ikZSpin);
-    ikPoseRow->addWidget(new QLabel(tr("Roll:"), _ikTab));
-    ikPoseRow->addWidget(_ikRollSpin);
-    ikPoseRow->addWidget(new QLabel(tr("Pitch:"), _ikTab));
-    ikPoseRow->addWidget(_ikPitchSpin);
-    ikPoseRow->addWidget(new QLabel(tr("Yaw:"), _ikTab));
-    ikPoseRow->addWidget(_ikYawSpin);
-    ikLayout->addLayout(ikPoseRow);
+    QGridLayout* ikPoseGrid = new QGridLayout();
+    ikPoseGrid->addWidget(new QLabel(tr("X:"), _ikTab), 0, 0);
+    ikPoseGrid->addWidget(_ikXSpin, 0, 1);
+    ikPoseGrid->addWidget(new QLabel(tr("Y:"), _ikTab), 0, 2);
+    ikPoseGrid->addWidget(_ikYSpin, 0, 3);
+    ikPoseGrid->addWidget(new QLabel(tr("Z:"), _ikTab), 0, 4);
+    ikPoseGrid->addWidget(_ikZSpin, 0, 5);
+    ikPoseGrid->addWidget(new QLabel(tr("Roll:"), _ikTab), 1, 0);
+    ikPoseGrid->addWidget(_ikRollSpin, 1, 1);
+    ikPoseGrid->addWidget(new QLabel(tr("Pitch:"), _ikTab), 1, 2);
+    ikPoseGrid->addWidget(_ikPitchSpin, 1, 3);
+    ikPoseGrid->addWidget(new QLabel(tr("Yaw:"), _ikTab), 1, 4);
+    ikPoseGrid->addWidget(_ikYawSpin, 1, 5);
+    ikLayout->addLayout(ikPoseGrid);
 
     _ikSummaryLabel = new QLabel(tr("Solutions: -"), _ikTab);
     ikLayout->addWidget(_ikSummaryLabel);
@@ -231,6 +243,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_importTaskPointsButton, SIGNAL (clicked ()), this, SLOT (importTaskPointsCsv ()));
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
+}
+
+QSize KinematicAnalysisWidget::sizeHint () const
+{
+    return QSize (360, 620);
+}
+
+QSize KinematicAnalysisWidget::minimumSizeHint () const
+{
+    return QSize (300, 420);
 }
 
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
@@ -327,6 +349,21 @@ QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& re
     for (rws::KinematicFailureReason reason : reasons)
         values << QString::fromLatin1(rws::toString(reason));
     return values.join(", ");
+}
+
+const char* taskPointTypeText (rws::TaskPointType type)
+{
+    switch (type) {
+        case rws::TaskPointType::Pick:    return "Pick";
+        case rws::TaskPointType::Place:   return "Place";
+        case rws::TaskPointType::Weld:    return "Weld";
+        case rws::TaskPointType::Glue:    return "Glue";
+        case rws::TaskPointType::Inspect: return "Inspect";
+        case rws::TaskPointType::Screw:   return "Screw";
+        case rws::TaskPointType::Custom:  return "Custom";
+        case rws::TaskPointType::Generic:
+        default:                          return "Generic";
+    }
 }
 
 QTableWidgetItem* makeQItem (const std::vector< double >& q,
@@ -550,18 +587,17 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
 {
     QVBoxLayout* tpLayout = new QVBoxLayout(_taskPointTab);
 
-    QHBoxLayout* buttonRow = new QHBoxLayout();
+    QGridLayout* buttonRow = new QGridLayout();
     _addTaskPointButton         = new QPushButton(tr("Add row"), _taskPointTab);
     _removeTaskPointButton      = new QPushButton(tr("Remove selected"), _taskPointTab);
     _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
     _exportTaskPointsButton     = new QPushButton(tr("Export CSV"), _taskPointTab);
     _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
-    buttonRow->addWidget (_addTaskPointButton);
-    buttonRow->addWidget (_removeTaskPointButton);
-    buttonRow->addStretch ();
-    buttonRow->addWidget (_importTaskPointsButton);
-    buttonRow->addWidget (_exportTaskPointsButton);
-    buttonRow->addWidget (_analyzeAllTaskPointsButton);
+    buttonRow->addWidget (_addTaskPointButton, 0, 0);
+    buttonRow->addWidget (_removeTaskPointButton, 0, 1);
+    buttonRow->addWidget (_importTaskPointsButton, 1, 0);
+    buttonRow->addWidget (_exportTaskPointsButton, 1, 1);
+    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 2);
     tpLayout->addLayout (buttonRow);
 
     _taskPointTable = new QTableWidget (_taskPointTab);
@@ -766,7 +802,7 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
         _taskPointTable->setItem (row, 0, enabled);
         setCell (_taskPointTable, row, 1,  QString::fromStdString (p.id), true);
         setCell (_taskPointTable, row, 2,  QString::fromStdString (p.name), true);
-        setCell (_taskPointTable, row, 3,  QString::fromUtf8 (rws::toString (p.type)), true);
+        setCell (_taskPointTable, row, 3,  QString::fromLatin1 (taskPointTypeText (p.type)), true);
         setCell (_taskPointTable, row, 4,  QString::number (p.position[0]), true);
         setCell (_taskPointTable, row, 5,  QString::number (p.position[1]), true);
         setCell (_taskPointTable, row, 6,  QString::number (p.position[2]), true);

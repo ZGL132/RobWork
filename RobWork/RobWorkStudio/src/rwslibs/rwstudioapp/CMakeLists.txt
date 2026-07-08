@@ -20,6 +20,7 @@ if(RWS_USE_STATIC_LINK_PLUGINS)
         RWS::sdurws_propertyview
         RWS::sdurws_workcelleditorplugin
         RWS::sdurws_robotmodelbuilder
+        RWS::sdurws_kinematicanalysis
     )
     if(SWIG_DEFAULT_COMPILE)
         set(SUBSYS_DEPS_TEST ${SUBSYS_DEPS_TEST} sdurws_luaeditor sdurws_luapl)
@@ -82,6 +83,9 @@ if(build)
         endif()
         if(TARGET sdurws_robotmodelbuilder)
             target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_ROBOTMODELBUILDER)
+        endif()
+        if(TARGET sdurws_kinematicanalysis)
+            target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_KINEMATICANALYSIS)
         endif()
         if(TARGET sdurws_luapl AND SWIG_DEFAULT_COMPILE)
             target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_LUAPL)

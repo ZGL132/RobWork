@@ -1,8 +1,11 @@
 #ifndef RWS_KINEMATICANALYSIS_KINEMATICANALYSISWIDGET_HPP
 #define RWS_KINEMATICANALYSIS_KINEMATICANALYSISWIDGET_HPP
 
+#include "KinematicAnalysisTypes.hpp"
+
 #include <rw/kinematics/State.hpp>
 
+#include <QSize>
 #include <QTabWidget>
 #include <QWidget>
 
@@ -24,6 +27,9 @@ class KinematicAnalysisWidget : public QWidget
 
 public:
     explicit KinematicAnalysisWidget(QWidget* parent = NULL);
+
+    QSize sizeHint () const override;
+    QSize minimumSizeHint () const override;
 
     void setRobWorkStudio(RobWorkStudio* studio);
     void setWorkCell(rw::models::WorkCell* workcell);
