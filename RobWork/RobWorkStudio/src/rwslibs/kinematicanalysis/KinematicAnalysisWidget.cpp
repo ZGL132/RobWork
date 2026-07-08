@@ -3,6 +3,8 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicAnalyzer.hpp"
 
+#include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
+
 #include <rw/models/Device.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/kinematics/Frame.hpp>
@@ -61,8 +63,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolveButton(NULL),
     _ikApplyButton(NULL),
     _ikSummaryLabel(NULL),
-    _ikSolutionTable(NULL)
+    _ikSolutionTable(NULL),
+    _taskPointTable(NULL),
+    _addTaskPointButton(NULL),
+    _removeTaskPointButton(NULL),
+    _importTaskPointsButton(NULL),
+    _exportTaskPointsButton(NULL),
+    _analyzeAllTaskPointsButton(NULL),
+    _taskPointSummaryLabel(NULL)
 {
+    Q_UNUSED (parent);
     QVBoxLayout* root = new QVBoxLayout(this);
 
     _tabs = new QTabWidget(this);
@@ -201,10 +211,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         l->addWidget (lab);
         l->addStretch ();
     };
-    fillPlaceholder (_taskPointTab, tr("Task point reachability - Task 9"));
     fillPlaceholder (_workspaceTab, tr("Workspace sampling - Task 11"));
     fillPlaceholder (_poseReachTab, tr("Pose reachability - Task 13"));
     fillPlaceholder (_reportTab,    tr("Report / export - Task 14"));
+
+    buildTaskPointTab ();
 
     _tabs->addTab (_ikTab,         tr("IK"));
     _tabs->addTab (_taskPointTab,  tr("Task points"));
@@ -215,6 +226,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_refreshCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (refreshCurrentPose ()));
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
+    connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
+    connect (_removeTaskPointButton, SIGNAL (clicked ()), this, SLOT (removeSelectedTaskPointRow ()));
+    connect (_importTaskPointsButton, SIGNAL (clicked ()), this, SLOT (importTaskPointsCsv ()));
+    connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
+    connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
 }
 
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
@@ -525,4 +541,286 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
     device->setQ(q, state);
     _studio->setState(state);
     refreshCurrentPose();
+}
+
+// -------------------------------------------------------------------------
+//  Task point tab
+// -------------------------------------------------------------------------
+void KinematicAnalysisWidget::buildTaskPointTab ()
+{
+    QVBoxLayout* tpLayout = new QVBoxLayout(_taskPointTab);
+
+    QHBoxLayout* buttonRow = new QHBoxLayout();
+    _addTaskPointButton         = new QPushButton(tr("Add row"), _taskPointTab);
+    _removeTaskPointButton      = new QPushButton(tr("Remove selected"), _taskPointTab);
+    _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
+    _exportTaskPointsButton     = new QPushButton(tr("Export CSV"), _taskPointTab);
+    _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
+    buttonRow->addWidget (_addTaskPointButton);
+    buttonRow->addWidget (_removeTaskPointButton);
+    buttonRow->addStretch ();
+    buttonRow->addWidget (_importTaskPointsButton);
+    buttonRow->addWidget (_exportTaskPointsButton);
+    buttonRow->addWidget (_analyzeAllTaskPointsButton);
+    tpLayout->addLayout (buttonRow);
+
+    _taskPointTable = new QTableWidget (_taskPointTab);
+    _taskPointTable->setColumnCount (15);
+    _taskPointTable->setHorizontalHeaderLabels ({
+        tr("Enabled"), tr("id"), tr("name"), tr("type"),
+        tr("x"), tr("y"), tr("z"),
+        tr("roll"), tr("pitch"), tr("yaw"),
+        tr("posTol"), tr("oriTol"),
+        tr("weight"),
+        tr("result"), tr("reason")
+    });
+    _taskPointTable->setSelectionBehavior (QAbstractItemView::SelectRows);
+    _taskPointTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
+    _taskPointTable->verticalHeader ()->setVisible (false);
+    tpLayout->addWidget (_taskPointTable);
+
+    _taskPointSummaryLabel = new QLabel (tr("Enabled: 0    Pass: 0    Warning: 0    Fail: 0    Reachable rate: -"),
+                                          _taskPointTab);
+    tpLayout->addWidget (_taskPointSummaryLabel);
+    tpLayout->addStretch ();
+}
+
+void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    _taskPointTable->resizeColumnsToContents ();
+}
+
+void KinematicAnalysisWidget::addTaskPointRow ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    const int row = _taskPointTable->rowCount ();
+    _taskPointTable->insertRow (row);
+    auto check = [this] (int r, int c) {
+        QTableWidgetItem* item = new QTableWidgetItem ();
+        item->setCheckState (Qt::Checked);
+        item->setFlags (item->flags () | Qt::ItemIsUserCheckable);
+        _taskPointTable->setItem (r, c, item);
+    };
+    check (row, 0);
+    auto text = [this] (int r, int c, const QString& s) {
+        QTableWidgetItem* item = new QTableWidgetItem (s);
+        item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+        _taskPointTable->setItem (r, c, item);
+    };
+    text (row, 1,  QString ("P%1").arg (row + 1));
+    text (row, 2,  QString ("Task %1").arg (row + 1));
+    text (row, 3,  QString ("Generic"));
+    text (row, 4,  QString ("0"));
+    text (row, 5,  QString ("0"));
+    text (row, 6,  QString ("0"));
+    text (row, 7,  QString ("0"));
+    text (row, 8,  QString ("0"));
+    text (row, 9,  QString ("0"));
+    text (row, 10, QString ("0.001"));
+    text (row, 11, QString ("1.0"));
+    text (row, 12, QString ("1.0"));
+    text (row, 13, QString ("-"));
+    text (row, 14, QString ("-"));
+    setTaskPointTableColumnWidths ();
+}
+
+void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    const int row = _taskPointTable->currentRow ();
+    if (row >= 0)
+        _taskPointTable->removeRow (row);
+}
+
+namespace {
+QTableWidgetItem* setCell (QTableWidget* t, int r, int c, const QString& s, bool editable)
+{
+    QTableWidgetItem* item = new QTableWidgetItem (s);
+    if (!editable)
+        item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+    t->setItem (r, c, item);
+    return item;
+}
+QString cellText (QTableWidget* t, int r, int c)
+{
+    QTableWidgetItem* item = t->item (r, c);
+    return item == nullptr ? QString () : item->text ();
+}
+}    // namespace
+
+std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable () const
+{
+    std::vector< TaskPoint > points;
+    if (_taskPointTable == nullptr)
+        return points;
+    for (int r = 0; r < _taskPointTable->rowCount (); ++r) {
+        TaskPoint p;
+        p.id      = cellText (_taskPointTable, r, 1).toStdString ();
+        p.name    = cellText (_taskPointTable, r, 2).toStdString ();
+        const QString typeText = cellText (_taskPointTable, r, 3);
+        p.type    = TaskPointType::Generic;
+        if (typeText.compare ("Pick", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Pick;
+        else if (typeText.compare ("Place", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Place;
+        else if (typeText.compare ("Weld", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Weld;
+        else if (typeText.compare ("Glue", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Glue;
+        else if (typeText.compare ("Inspect", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Inspect;
+        else if (typeText.compare ("Screw", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Screw;
+        else if (typeText.compare ("Custom", Qt::CaseInsensitive) == 0)
+            p.type = TaskPointType::Custom;
+        p.position[0] = cellText (_taskPointTable, r, 4).toDouble ();
+        p.position[1] = cellText (_taskPointTable, r, 5).toDouble ();
+        p.position[2] = cellText (_taskPointTable, r, 6).toDouble ();
+        p.rpyDeg[0]   = cellText (_taskPointTable, r, 7).toDouble ();
+        p.rpyDeg[1]   = cellText (_taskPointTable, r, 8).toDouble ();
+        p.rpyDeg[2]   = cellText (_taskPointTable, r, 9).toDouble ();
+        p.tolerance.positionMeters = cellText (_taskPointTable, r, 10).toDouble ();
+        p.tolerance.orientationDeg = cellText (_taskPointTable, r, 11).toDouble ();
+        p.weight                   = cellText (_taskPointTable, r, 12).toDouble ();
+        QTableWidgetItem* enabledItem = _taskPointTable->item (r, 0);
+        p.enabled = enabledItem != nullptr && enabledItem->checkState () == Qt::Checked;
+        points.push_back (p);
+    }
+    return points;
+}
+
+void KinematicAnalysisWidget::applyTaskPointResults (
+    const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
+{
+    if (_taskPointTable == nullptr)
+        return;
+    const std::size_t n = std::min (results.size (),
+                                    static_cast< std::size_t > (_taskPointTable->rowCount ()));
+    std::size_t passCount = 0, warnCount = 0, failCount = 0, enabledCount = 0;
+    for (std::size_t i = 0; i < n; ++i) {
+        const TaskPointReachabilityResult& r = results[i];
+        if (r.taskPoint.enabled)
+            ++enabledCount;
+        const char* status =
+            r.status == AnalysisStatus::Pass    ? "Pass" :
+            r.status == AnalysisStatus::Warning ? "Warning" :
+            r.status == AnalysisStatus::Fail    ? "Fail"    : "Unknown";
+        if (r.status == AnalysisStatus::Pass)
+            ++passCount;
+        else if (r.status == AnalysisStatus::Warning)
+            ++warnCount;
+        else if (r.status == AnalysisStatus::Fail)
+            ++failCount;
+        setCell (_taskPointTable, static_cast< int > (i), 13, QString::fromUtf8 (status), false);
+        QStringList reasons;
+        for (KinematicFailureReason fr : r.failureReasons)
+            reasons << QString::fromUtf8 (rws::toString (fr));
+        const QString reasonText = reasons.isEmpty () ? QString ("-")
+                                                       : reasons.join (QStringLiteral (", "));
+        setCell (_taskPointTable, static_cast< int > (i), 14, reasonText, false);
+    }
+    if (_taskPointSummaryLabel != nullptr) {
+        _taskPointSummaryLabel->setText (QString (
+            "Enabled: %1    Pass: %2    Warning: %3    Fail: %4    Reachable rate: %5")
+            .arg (enabledCount).arg (passCount).arg (warnCount).arg (failCount)
+            .arg (QString::number (reachableRate, 'f', 3)));
+    }
+    setTaskPointTableColumnWidths ();
+}
+
+void KinematicAnalysisWidget::importTaskPointsCsv ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    const QString path = QFileDialog::getOpenFileName (
+        this, tr("Import task points"), QString (),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ())
+        return;
+    QFile file (path);
+    if (!file.open (QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Import error"),
+                              tr("Could not open %1").arg (path));
+        return;
+    }
+    const QString csv = QString::fromUtf8 (file.readAll ());
+    file.close ();
+    std::vector< TaskPoint > points;
+    std::string err;
+    if (!RobotAnalysisCsv::taskPointsFromCsv (csv.toStdString (), points, &err)) {
+        QMessageBox::warning (this, tr("Import error"),
+                              tr("CSV parse failed: %1").arg (QString::fromStdString (err)));
+        return;
+    }
+    _taskPointTable->setRowCount (0);
+    for (const TaskPoint& p : points) {
+        const int row = _taskPointTable->rowCount ();
+        _taskPointTable->insertRow (row);
+        QTableWidgetItem* enabled = new QTableWidgetItem ();
+        enabled->setCheckState (p.enabled ? Qt::Checked : Qt::Unchecked);
+        enabled->setFlags (enabled->flags () | Qt::ItemIsUserCheckable);
+        _taskPointTable->setItem (row, 0, enabled);
+        setCell (_taskPointTable, row, 1,  QString::fromStdString (p.id), true);
+        setCell (_taskPointTable, row, 2,  QString::fromStdString (p.name), true);
+        setCell (_taskPointTable, row, 3,  QString::fromUtf8 (rws::toString (p.type)), true);
+        setCell (_taskPointTable, row, 4,  QString::number (p.position[0]), true);
+        setCell (_taskPointTable, row, 5,  QString::number (p.position[1]), true);
+        setCell (_taskPointTable, row, 6,  QString::number (p.position[2]), true);
+        setCell (_taskPointTable, row, 7,  QString::number (p.rpyDeg[0]), true);
+        setCell (_taskPointTable, row, 8,  QString::number (p.rpyDeg[1]), true);
+        setCell (_taskPointTable, row, 9,  QString::number (p.rpyDeg[2]), true);
+        setCell (_taskPointTable, row, 10, QString::number (p.tolerance.positionMeters), true);
+        setCell (_taskPointTable, row, 11, QString::number (p.tolerance.orientationDeg), true);
+        setCell (_taskPointTable, row, 12, QString::number (p.weight), true);
+        setCell (_taskPointTable, row, 13, QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, 14, QStringLiteral ("-"), false);
+    }
+    setTaskPointTableColumnWidths ();
+}
+
+void KinematicAnalysisWidget::exportTaskPointsCsv ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export task points"), QString ("task_points.csv"),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ())
+        return;
+    const std::vector< TaskPoint > points = collectTaskPointsFromTable ();
+    const std::string csv                 = RobotAnalysisCsv::taskPointsToCsv (points);
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        return;
+    }
+    file.write (csv.c_str (), static_cast< qint64 > (csv.size ()));
+    file.close ();
+}
+
+void KinematicAnalysisWidget::analyzeAllTaskPoints ()
+{
+    if (_workcell == nullptr)
+        return;
+    if (_deviceCombo == nullptr || _deviceCombo->count () == 0)
+        return;
+    const std::string deviceName = _deviceCombo->currentText ().toStdString ();
+    rw::core::Ptr< rw::models::Device > device = deviceByName (_workcell, deviceName);
+    if (device == nullptr)
+        return;
+    const std::string tcpName = _tcpFrameCombo->currentText ().toStdString ();
+    rw::core::Ptr< rw::kinematics::Frame > tcpFrame = frameByName (_workcell, tcpName);
+    const rw::kinematics::State state            = currentState ();
+
+    KinematicAnalyzer analyzer;
+    const std::vector< TaskPoint > points                = collectTaskPointsFromTable ();
+    const std::vector< TaskPointReachabilityResult > results =
+        analyzer.analyzeTaskPoints (device, tcpFrame, state, points, NULL);
+    const double rate = analyzer.calculateReachableRate (results);
+    applyTaskPointResults (results, rate);
 }

@@ -32,10 +32,20 @@ private Q_SLOTS:
     void refreshCurrentPose ();
     void solveIk ();
     void applySelectedIkSolution ();
+    void addTaskPointRow ();
+    void removeSelectedTaskPointRow ();
+    void importTaskPointsCsv ();
+    void exportTaskPointsCsv ();
+    void analyzeAllTaskPoints ();
 
 private:
     void populateDevices ();
     void populateTcpFrames ();
+    void buildTaskPointTab ();
+    std::vector< TaskPoint > collectTaskPointsFromTable () const;
+    void applyTaskPointResults (const std::vector< TaskPointReachabilityResult >& results,
+                                double reachableRate);
+    void setTaskPointTableColumnWidths ();
     rw::kinematics::State currentState () const;
 
     RobWorkStudio* _studio;
@@ -72,6 +82,14 @@ private:
     QPushButton* _ikApplyButton;
     QLabel* _ikSummaryLabel;
     QTableWidget* _ikSolutionTable;
+
+    QTableWidget* _taskPointTable;
+    QPushButton* _addTaskPointButton;
+    QPushButton* _removeTaskPointButton;
+    QPushButton* _importTaskPointsButton;
+    QPushButton* _exportTaskPointsButton;
+    QPushButton* _analyzeAllTaskPointsButton;
+    QLabel* _taskPointSummaryLabel;
 };
 
 }    // namespace rws
