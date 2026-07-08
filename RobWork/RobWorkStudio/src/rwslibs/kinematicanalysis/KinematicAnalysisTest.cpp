@@ -256,6 +256,49 @@ static int testIkRanking ()
     return 0;
 }
 
+static int testTaskPointReachableRate ()
+{
+    // 2 pass + 1 warning + 1 fail + 1 disabled:
+    // reachable count = 2 + 1 = 3; enabled = 4; rate = 3/4 = 0.75.
+    auto makeResult =
+        [] (const std::string& id, rws::AnalysisStatus status, bool enabled) {
+            rws::TaskPointReachabilityResult r;
+            r.taskPoint.id      = id;
+            r.taskPoint.enabled = enabled;
+            r.status            = status;
+            return r;
+        };
+    std::vector< rws::TaskPointReachabilityResult > results;
+    results.push_back (makeResult ("P1", rws::AnalysisStatus::Pass, true));
+    results.push_back (makeResult ("P2", rws::AnalysisStatus::Pass, true));
+    results.push_back (makeResult ("P3", rws::AnalysisStatus::Warning, true));
+    results.push_back (makeResult ("P4", rws::AnalysisStatus::Fail, true));
+    results.push_back (makeResult ("P5", rws::AnalysisStatus::Unknown, false));
+
+    rws::KinematicAnalyzer analyzer;
+    const double rate = analyzer.calculateReachableRate (results);
+    if (const int rc = assertNear (rate, 0.75, 1e-12, "reachable rate = 3/4"))
+        return rc;
+
+    // All disabled: rate should be 0.0 with no divide-by-zero.
+    std::vector< rws::TaskPointReachabilityResult > allDisabled;
+    allDisabled.push_back (makeResult ("D1", rws::AnalysisStatus::Pass, false));
+    allDisabled.push_back (makeResult ("D2", rws::AnalysisStatus::Warning, false));
+    const double rate2 = analyzer.calculateReachableRate (allDisabled);
+    if (const int rc = assertNear (rate2, 0.0, 1e-12, "all disabled rate = 0"))
+        return rc;
+
+    // All pass: rate should be 1.0.
+    std::vector< rws::TaskPointReachabilityResult > allPass;
+    allPass.push_back (makeResult ("A1", rws::AnalysisStatus::Pass, true));
+    allPass.push_back (makeResult ("A2", rws::AnalysisStatus::Pass, true));
+    const double rate3 = analyzer.calculateReachableRate (allPass);
+    if (const int rc = assertNear (rate3, 1.0, 1e-12, "all pass rate = 1"))
+        return rc;
+
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -264,7 +307,9 @@ static int runAll ()
         return rc;
     if (const int rc = testCurrentPose ())
         return rc;
-    return testIkRanking ();
+    if (const int rc = testIkRanking ())
+        return rc;
+    return testTaskPointReachableRate ();
 }
 
 int main (int argc, char** argv)
@@ -282,6 +327,8 @@ int main (int argc, char** argv)
         rc = testCurrentPose ();
     else if (suite == "ik")
         rc = testIkRanking ();
+    else if (suite == "task_points")
+        rc = testTaskPointReachableRate ();
     else
         return fail ("Unknown KinematicAnalysis test suite: " + suite);
     if (rc != 0)

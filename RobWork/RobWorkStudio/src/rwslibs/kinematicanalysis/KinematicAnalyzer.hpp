@@ -32,6 +32,16 @@ class KinematicAnalyzer
         const TaskPoint& target,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
 
+    std::vector< TaskPointReachabilityResult > analyzeTaskPoints (
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+        const rw::kinematics::State& state,
+        const std::vector< TaskPoint >& taskPoints,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    double calculateReachableRate (
+        const std::vector< TaskPointReachabilityResult >& results) const;
+
   private:
     KinematicThresholds _thresholds;
 };

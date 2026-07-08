@@ -366,3 +366,119 @@ void rws::sortIkSolutionsForDisplay (std::vector< KinematicIkSolution >& solutio
                    return lexicographicQLess (lhs.q, rhs.q);
                });
 }
+
+KinematicFailureReason primaryFailureFromIk (const KinematicIkAnalysisResult& ik)
+{
+    if (ik.solutions.empty ())
+        return KinematicFailureReason::IkNoSolution;
+    bool anyCollisionFree = false;
+    for (const KinematicIkSolution& s : ik.solutions) {
+        if (s.inCollision)
+            continue;
+        anyCollisionFree = true;
+        for (KinematicFailureReason r : s.failureReasons) {
+            if (r == KinematicFailureReason::JointLimit)
+                return KinematicFailureReason::JointLimit;
+            if (r == KinematicFailureReason::Singular)
+                return KinematicFailureReason::Singular;
+            if (r == KinematicFailureReason::NearJointLimit)
+                return KinematicFailureReason::NearJointLimit;
+            if (r == KinematicFailureReason::NearSingular)
+                return KinematicFailureReason::NearSingular;
+        }
+        return KinematicFailureReason::None;
+    }
+    if (!anyCollisionFree)
+        return KinematicFailureReason::Collision;
+    return KinematicFailureReason::None;
+}
+
+std::vector< TaskPointReachabilityResult > KinematicAnalyzer::analyzeTaskPoints (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& state,
+    const std::vector< TaskPoint >& taskPoints,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    std::vector< TaskPointReachabilityResult > results;
+    results.reserve (taskPoints.size ());
+    for (const TaskPoint& point : taskPoints) {
+        TaskPointReachabilityResult r;
+        r.taskPoint = point;
+        r.status    = AnalysisStatus::Unknown;
+
+        if (!point.enabled) {
+            r.primaryFailure = KinematicFailureReason::None;
+            AnalysisWarning w;
+            w.code     = "KIN_TASK_DISABLED";
+            w.message  = "Task point is disabled; skipped from reachability denominator.";
+            w.source   = "KinematicAnalyzer";
+            w.severity = AnalysisStatus::Warning;
+            r.ik.warnings.push_back (w);
+            r.ik.target = point;
+            results.push_back (r);
+            continue;
+        }
+
+        r.ik = analyzeIk (device, tcpFrame, state, point, collisionDetector);
+
+        if (r.ik.solutions.empty ()) {
+            r.status         = AnalysisStatus::Fail;
+            r.primaryFailure = KinematicFailureReason::IkNoSolution;
+            r.failureReasons.push_back (KinematicFailureReason::IkNoSolution);
+        }
+        else {
+            r.primaryFailure = primaryFailureFromIk (r.ik);
+            bool allCollide   = true;
+            bool anyWarn       = false;
+            for (const KinematicIkSolution& s : r.ik.solutions) {
+                if (!s.inCollision) {
+                    allCollide = false;
+                    if (s.status == AnalysisStatus::Warning)
+                        anyWarn = true;
+                }
+            }
+            if (allCollide) {
+                r.status         = AnalysisStatus::Fail;
+                if (r.primaryFailure == KinematicFailureReason::None)
+                    r.primaryFailure = KinematicFailureReason::Collision;
+                if (r.failureReasons.empty ())
+                    r.failureReasons.push_back (KinematicFailureReason::Collision);
+            }
+            else if (r.primaryFailure == KinematicFailureReason::JointLimit ||
+                     r.primaryFailure == KinematicFailureReason::Singular) {
+                r.status = AnalysisStatus::Fail;
+                r.failureReasons.push_back (r.primaryFailure);
+            }
+            else if (r.primaryFailure == KinematicFailureReason::NearJointLimit ||
+                     r.primaryFailure == KinematicFailureReason::NearSingular) {
+                r.status = AnalysisStatus::Warning;
+                r.failureReasons.push_back (r.primaryFailure);
+            }
+            else {
+                r.status = AnalysisStatus::Pass;
+            }
+            if (r.status == AnalysisStatus::Warning && !anyWarn)
+                r.status = AnalysisStatus::Pass;
+        }
+        results.push_back (r);
+    }
+    return results;
+}
+
+double KinematicAnalyzer::calculateReachableRate (
+    const std::vector< TaskPointReachabilityResult >& results) const
+{
+    std::size_t reachable = 0;
+    std::size_t enabled   = 0;
+    for (const TaskPointReachabilityResult& r : results) {
+        if (!r.taskPoint.enabled)
+            continue;
+        ++enabled;
+        if (r.status == AnalysisStatus::Pass || r.status == AnalysisStatus::Warning)
+            ++reachable;
+    }
+    if (enabled == 0)
+        return 0.0;
+    return static_cast< double > (reachable) / static_cast< double > (enabled);
+}
