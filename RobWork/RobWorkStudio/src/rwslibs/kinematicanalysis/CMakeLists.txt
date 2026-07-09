@@ -94,5 +94,9 @@ if(build)
             NAME sdurws_kinematicanalysis_test_task_points
             COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> task_points
         )
+        add_test(
+            NAME sdurws_kinematicanalysis_test_workspace
+            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> workspace
+        )
     endif()
 endif()

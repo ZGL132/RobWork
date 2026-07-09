@@ -299,6 +299,61 @@ static int testTaskPointReachableRate ()
     return 0;
 }
 
+static int testWorkspaceSampling ()
+{
+    rws::KinematicAnalyzer analyzer;
+    rw::kinematics::State state;
+
+    // Zero sample count: return empty regardless of mode.
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount = 0;
+        const std::vector< rws::WorkspaceSample > samples =
+            analyzer.sampleWorkspace (NULL, NULL, state, config, NULL);
+        if (const int rc =
+                require (samples.empty (), "workspace sampling returns empty for sampleCount=0"))
+            return rc;
+    }
+
+    // Negative sample count: return empty.
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount = -1;
+        const std::vector< rws::WorkspaceSample > samples =
+            analyzer.sampleWorkspace (NULL, NULL, state, config, NULL);
+        if (const int rc =
+                require (samples.empty (), "workspace sampling returns empty for negative count"))
+            return rc;
+    }
+
+    // Null device: return empty.
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount            = 10;
+        config.mode                    = rws::WorkspaceSamplingMode::RandomUniform;
+        config.randomSeed              = 42;
+        const std::vector< rws::WorkspaceSample > samples =
+            analyzer.sampleWorkspace (NULL, NULL, state, config, NULL);
+        if (const int rc = require (samples.empty (), "workspace sampling handles null device"))
+            return rc;
+    }
+
+    // Null device + Grid: also returns empty.
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount       = 10;
+        config.mode               = rws::WorkspaceSamplingMode::Grid;
+        config.gridStepsPerJoint = 0;
+        const std::vector< rws::WorkspaceSample > samples =
+            analyzer.sampleWorkspace (NULL, NULL, state, config, NULL);
+        if (const int rc =
+                require (samples.empty (), "workspace sampling handles null device under Grid"))
+            return rc;
+    }
+
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -309,7 +364,9 @@ static int runAll ()
         return rc;
     if (const int rc = testIkRanking ())
         return rc;
-    return testTaskPointReachableRate ();
+    if (const int rc = testTaskPointReachableRate ())
+        return rc;
+    return testWorkspaceSampling ();
 }
 
 int main (int argc, char** argv)
@@ -329,6 +386,8 @@ int main (int argc, char** argv)
         rc = testIkRanking ();
     else if (suite == "task_points")
         rc = testTaskPointReachableRate ();
+    else if (suite == "workspace")
+        rc = testWorkspaceSampling ();
     else
         return fail ("Unknown KinematicAnalysis test suite: " + suite);
     if (rc != 0)

@@ -5,6 +5,8 @@
 #include <rw/invkin/JacobianIKSolver.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/EAA.hpp>
+#include <rw/math/Jacobian.hpp>
+#include <rw/math/Q.hpp>
 #include <rw/math/RPY.hpp>
 #include <rw/math/Vector3D.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
@@ -12,6 +14,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <random>
 
 using namespace rws;
 
@@ -481,4 +484,162 @@ double KinematicAnalyzer::calculateReachableRate (
     if (enabled == 0)
         return 0.0;
     return static_cast< double > (reachable) / static_cast< double > (enabled);
+}
+
+namespace {
+
+// 构造单个 Q 对应的 WorkspaceSample:FK + 关节裕度 + Jacobian 指标 + 碰撞检测 +
+// 状态分类。匿名命名空间内,只依赖 KinematicMetrics.h 与 RobWork 几何。
+WorkspaceSample makeWorkspaceSample (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& baseState,
+    const rw::math::Q& q,
+    const KinematicThresholds& thresholds,
+    bool checkCollision,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector)
+{
+    WorkspaceSample sample;
+
+    sample.q.reserve (q.size ());
+    for (std::size_t i = 0; i < q.size (); ++i)
+        sample.q.push_back (q (i));
+
+    rw::kinematics::State sampleState = baseState;
+    device->setQ (q, sampleState);
+
+    try {
+        const rw::math::Transform3D<> transform =
+            rw::kinematics::Kinematics::frameTframe (device->getBase (), tcpFrame.get (), sampleState);
+        sample.tcpPosition[0] = transform.P () (0);
+        sample.tcpPosition[1] = transform.P () (1);
+        sample.tcpPosition[2] = transform.P () (2);
+    }
+    catch (...) {
+        // FK 失败:保留 q,位置 0,inCollision 留给后续 collider 决定,status 直接 Fail。
+        sample.status = AnalysisStatus::Fail;
+        return sample;
+    }
+
+    const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
+    const std::vector< double > margins = calculateJointLimitMargins (q, bounds);
+    sample.minJointLimitMargin =
+        margins.empty () ? 0.0 : minimumJointLimitMargin (margins);
+
+    SingularMetrics singular;
+    try {
+        singular = calculateSingularMetrics (device->baseJframe (tcpFrame.get (), sampleState), thresholds);
+    }
+    catch (...) {
+        singular.status = AnalysisStatus::Fail;
+    }
+    sample.manipulability  = singular.manipulability;
+    sample.conditionNumber = singular.conditionNumber;
+
+    sample.inCollision = false;
+    if (checkCollision && collisionDetector != NULL) {
+        try {
+            sample.inCollision = collisionDetector->inCollision (sampleState);
+        }
+        catch (...) {
+            sample.inCollision = false;
+        }
+    }
+
+    if (sample.inCollision)
+        sample.status = AnalysisStatus::Fail;
+    else if (singular.status == AnalysisStatus::Fail)
+        sample.status = AnalysisStatus::Fail;
+    else if (singular.status == AnalysisStatus::Warning ||
+             sample.minJointLimitMargin < thresholds.nearJointLimitRatio)
+        sample.status = AnalysisStatus::Warning;
+    else
+        sample.status = AnalysisStatus::Pass;
+
+    return sample;
+}
+
+}    // namespace
+
+std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& state,
+    const WorkspaceSamplingConfig& config,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    std::vector< WorkspaceSample > samples;
+
+    if (device == NULL)
+        return samples;
+    if (config.sampleCount <= 0)
+        return samples;
+    if (tcpFrame == NULL)
+        return samples;
+
+    const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
+    const rw::math::Q& lower = bounds.first;
+    const rw::math::Q& upper = bounds.second;
+    const std::size_t dof = device->getDOF ();
+    if (dof == 0)
+        return samples;
+    if (lower.size () != dof || upper.size () != dof)
+        return samples;
+    for (std::size_t i = 0; i < dof; ++i) {
+        if (!std::isfinite (lower (i)) || !std::isfinite (upper (i)) || upper (i) <= lower (i))
+            return samples;
+    }
+
+    if (config.mode == WorkspaceSamplingMode::RandomUniform) {
+        std::mt19937 rng (config.randomSeed == 0 ? 1u : config.randomSeed);
+        std::vector< std::uniform_real_distribution< double > > distributions;
+        distributions.reserve (dof);
+        for (std::size_t i = 0; i < dof; ++i)
+            distributions.emplace_back (lower (i), upper (i));
+
+        samples.reserve (static_cast< std::size_t > (config.sampleCount));
+        for (int sampleIndex = 0; sampleIndex < config.sampleCount; ++sampleIndex) {
+            rw::math::Q q (dof);
+            for (std::size_t j = 0; j < dof; ++j)
+                q (j) = distributions[j] (rng);
+            samples.push_back (makeWorkspaceSample (
+                device, tcpFrame, state, q, _thresholds,
+                config.checkCollision, collisionDetector));
+        }
+        return samples;
+    }
+
+    // WorkspaceSamplingMode::Grid:每关节等距 steps,steps<=1 时取中点;总组合
+    // 过大时按字典序截断到 config.sampleCount。
+    const int steps = std::max (1, config.gridStepsPerJoint);
+    std::size_t total = 1;
+    for (std::size_t i = 0; i < dof; ++i) {
+        if (total > static_cast< std::size_t > (config.sampleCount))
+            break;
+        total *= static_cast< std::size_t > (steps);
+    }
+    const std::size_t target =
+        std::min (static_cast< std::size_t > (config.sampleCount), total);
+
+    samples.reserve (target);
+    for (std::size_t index = 0; index < target; ++index) {
+        std::size_t cursor = index;
+        rw::math::Q q (dof);
+        for (std::size_t joint = 0; joint < dof; ++joint) {
+            const std::size_t stepIndex = steps <= 1 ? 0u : (cursor % static_cast< std::size_t > (steps));
+            cursor /= static_cast< std::size_t > (steps);
+            if (steps <= 1) {
+                q (joint) = 0.5 * (lower (joint) + upper (joint));
+            }
+            else {
+                const double ratio = static_cast< double > (stepIndex) /
+                                     static_cast< double > (steps - 1);
+                q (joint) = lower (joint) + ratio * (upper (joint) - lower (joint));
+            }
+        }
+        samples.push_back (makeWorkspaceSample (
+            device, tcpFrame, state, q, _thresholds,
+            config.checkCollision, collisionDetector));
+    }
+    return samples;
 }

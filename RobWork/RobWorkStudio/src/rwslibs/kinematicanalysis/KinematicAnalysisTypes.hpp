@@ -32,6 +32,21 @@ enum class WorkspaceColorMode
     Collision
 };
 
+enum class WorkspaceSamplingMode
+{
+    RandomUniform,
+    Grid
+};
+
+struct WorkspaceSamplingConfig
+{
+    WorkspaceSamplingMode mode         = WorkspaceSamplingMode::RandomUniform;
+    int sampleCount                    = 1000;
+    int gridStepsPerJoint              = 5;
+    bool checkCollision                = true;
+    unsigned int randomSeed            = 1;
+};
+
 struct KinematicThresholds
 {
     double nearJointLimitRatio      = 0.05;
