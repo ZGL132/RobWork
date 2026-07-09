@@ -52,6 +52,7 @@ private:
     void applyTaskPointResults (const std::vector< TaskPointReachabilityResult >& results,
                                 double reachableRate);
     void setTaskPointTableColumnWidths ();
+    void setStatus (const QString& message);
     rw::kinematics::State currentState () const;
 
     RobWorkStudio* _studio;
@@ -68,6 +69,7 @@ private:
     QComboBox* _deviceCombo;
     QComboBox* _tcpFrameCombo;
     QPushButton* _refreshCurrentPoseButton;
+    QLineEdit* _status;
     QTableWidget* _qTable;
     QTableWidget* _jointMarginTable;
     QTableWidget* _jacobianTable;
