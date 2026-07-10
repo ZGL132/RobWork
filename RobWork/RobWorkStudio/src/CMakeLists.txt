@@ -78,6 +78,24 @@ if(build)
                     $<TARGET_FILE_DIR:${SUBSYS_NAME}>/platforms
             )
         endforeach()
+
+        set(RWS_QT_STYLE_PLUGIN_TARGETS)
+        foreach(qt_style_plugin_target Qt6::QModernWindowsStylePlugin Qt5::QWindowsVistaStylePlugin)
+            if(TARGET ${qt_style_plugin_target})
+                list(APPEND RWS_QT_STYLE_PLUGIN_TARGETS ${qt_style_plugin_target})
+            endif()
+        endforeach()
+        foreach(qt_style_plugin_target ${RWS_QT_STYLE_PLUGIN_TARGETS})
+            add_custom_command(
+                TARGET ${SUBSYS_NAME}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                    $<TARGET_FILE_DIR:${SUBSYS_NAME}>/styles
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_style_plugin_target}>
+                    $<TARGET_FILE_DIR:${SUBSYS_NAME}>/styles
+            )
+        endforeach()
     endif()
 
     # Some install stuff

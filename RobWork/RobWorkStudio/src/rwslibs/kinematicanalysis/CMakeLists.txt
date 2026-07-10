@@ -103,6 +103,24 @@ if(build)
                     $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>/platforms
             )
         endforeach()
+
+        set(KINEMATICANALYSIS_QT_STYLE_PLUGIN_TARGETS)
+        foreach(qt_style_plugin_target Qt6::QModernWindowsStylePlugin Qt5::QWindowsVistaStylePlugin)
+            if(TARGET ${qt_style_plugin_target})
+                list(APPEND KINEMATICANALYSIS_QT_STYLE_PLUGIN_TARGETS ${qt_style_plugin_target})
+            endif()
+        endforeach()
+        foreach(qt_style_plugin_target ${KINEMATICANALYSIS_QT_STYLE_PLUGIN_TARGETS})
+            add_custom_command(
+                TARGET sdurws_kinematicanalysis_test
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                    $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>/styles
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_style_plugin_target}>
+                    $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>/styles
+            )
+        endforeach()
     endif()
     if(BUILD_TESTING)
         add_test(
