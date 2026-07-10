@@ -354,6 +354,110 @@ static int testWorkspaceSampling ()
     return 0;
 }
 
+static int testPoseReachability ()
+{
+    rws::PoseReachabilityConfig config;
+    if (const int rc = require (config.directionSamples == 24, "default direction samples"))
+        return rc;
+    if (const int rc = require (config.rollSamples == 1, "default roll samples"))
+        return rc;
+    if (const int rc = require (config.checkCollision, "default pose collision check"))
+        return rc;
+
+    rws::KinematicAnalyzer analyzer;
+    rw::kinematics::State state;
+
+    std::vector< std::array< double, 3 > > positions;
+    positions.push_back (std::array< double, 3 > {{1.0, 2.0, 3.0}});
+
+    const std::vector< rws::PoseReachabilitySample > noDevice =
+        analyzer.analyzePoseReachability (NULL, NULL, state, positions, config, NULL);
+    if (const int rc = require (noDevice.size () == 1, "no-device pose sample count"))
+        return rc;
+    if (const int rc = require (noDevice.front ().sampledDirections == 24,
+                                "no-device sampled directions"))
+        return rc;
+    if (const int rc = require (noDevice.front ().reachableDirections == 0,
+                                "no-device reachable directions"))
+        return rc;
+    if (const int rc = assertNear (noDevice.front ().coverage, 0.0, 1e-12,
+                                   "no-device coverage"))
+        return rc;
+    if (const int rc = require (noDevice.front ().status == rws::AnalysisStatus::Fail,
+                                "no-device status"))
+        return rc;
+
+    rws::PoseReachabilityConfig zero;
+    zero.directionSamples = 0;
+    zero.rollSamples      = 2;
+    const std::vector< rws::PoseReachabilitySample > zeroResult =
+        analyzer.analyzePoseReachability (NULL, NULL, state, positions, zero, NULL);
+    if (const int rc = require (zeroResult.size () == 1, "zero pose sample count"))
+        return rc;
+    if (const int rc = require (zeroResult.front ().sampledDirections == 0,
+                                "zero sampled directions"))
+        return rc;
+    if (const int rc = assertNear (zeroResult.front ().coverage, 0.0, 1e-12,
+                                   "zero coverage"))
+        return rc;
+    return 0;
+}
+
+static int testAggregateResult ()
+{
+    rws::KinematicCurrentPoseResult current;
+    current.status = rws::AnalysisStatus::Pass;
+    current.manipulability = 3.0;
+    current.conditionNumber = 4.0;
+
+    rws::TaskPointReachabilityResult pass;
+    pass.taskPoint.enabled = true;
+    pass.status = rws::AnalysisStatus::Pass;
+    rws::TaskPointReachabilityResult fail;
+    fail.taskPoint.enabled = true;
+    fail.status = rws::AnalysisStatus::Fail;
+
+    rws::WorkspaceSample ws1;
+    ws1.status = rws::AnalysisStatus::Pass;
+    ws1.manipulability = 2.0;
+    rws::WorkspaceSample ws2;
+    ws2.status = rws::AnalysisStatus::Warning;
+    ws2.manipulability = 4.0;
+
+    rws::PoseReachabilitySample pose;
+    pose.sampledDirections = 8;
+    pose.reachableDirections = 6;
+    pose.coverage = 0.75;
+    pose.status = rws::AnalysisStatus::Warning;
+
+    rws::KinematicAnalyzer analyzer;
+    const rws::KinematicAnalysisResult result = analyzer.buildAggregateResult (
+        current,
+        std::vector< rws::TaskPointReachabilityResult > {pass, fail},
+        std::vector< rws::WorkspaceSample > {ws1, ws2},
+        std::vector< rws::PoseReachabilitySample > {pose});
+
+    if (const int rc = require (result.header.pluginName == "KinematicAnalysis",
+                                "aggregate plugin name"))
+        return rc;
+    if (const int rc = require (result.status == rws::AnalysisStatus::Fail,
+                                "aggregate worst status"))
+        return rc;
+    if (const int rc = assertNear (result.reachableRate, 0.5, 1e-12,
+                                   "aggregate reachable rate"))
+        return rc;
+    if (const int rc = require (result.workspaceSamples.size () == 2,
+                                "aggregate workspace sample count"))
+        return rc;
+    if (const int rc = require (result.poseReachability.size () == 1,
+                                "aggregate pose sample count"))
+        return rc;
+    if (const int rc = require (result.manipulabilityMap.size () >= 3,
+                                "aggregate manipulability metrics"))
+        return rc;
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -366,7 +470,11 @@ static int runAll ()
         return rc;
     if (const int rc = testTaskPointReachableRate ())
         return rc;
-    return testWorkspaceSampling ();
+    if (const int rc = testWorkspaceSampling ())
+        return rc;
+    if (const int rc = testPoseReachability ())
+        return rc;
+    return testAggregateResult ();
 }
 
 int main (int argc, char** argv)
@@ -388,6 +496,10 @@ int main (int argc, char** argv)
         rc = testTaskPointReachableRate ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
+    else if (suite == "pose_reachability")
+        rc = testPoseReachability ();
+    else if (suite == "aggregate")
+        rc = testAggregateResult ();
     else
         return fail ("Unknown KinematicAnalysis test suite: " + suite);
     if (rc != 0)

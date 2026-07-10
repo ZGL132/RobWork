@@ -12,6 +12,7 @@
 #include <rw/math/Q.hpp>
 #include <rws/RobWorkStudio.hpp>
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFile>
@@ -20,6 +21,9 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -27,11 +31,14 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QScrollArea>
+#include <QSpinBox>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTextStream>
 #include <QVBoxLayout>
 #include <QVariant>
 
+#include <algorithm>
 #include <limits>
 #include <string>
 #include <vector>
@@ -78,7 +85,44 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _importTaskPointsButton(NULL),
     _exportTaskPointsButton(NULL),
     _analyzeAllTaskPointsButton(NULL),
-    _taskPointSummaryLabel(NULL)
+    _taskPointSummaryLabel(NULL),
+    _workspaceSampleCountSpin(NULL),
+    _workspaceGridStepsSpin(NULL),
+    _workspaceModeCombo(NULL),
+    _workspaceCollisionCheck(NULL),
+    _workspaceColorModeCombo(NULL),
+    _workspaceRunButton(NULL),
+    _workspaceExportButton(NULL),
+    _workspaceSummaryLabel(NULL),
+    _workspaceTable(NULL),
+    _poseSourceCombo(NULL),
+    _poseDirectionSamplesSpin(NULL),
+    _poseRollSamplesSpin(NULL),
+    _poseCollisionCheck(NULL),
+    _poseAddRowButton(NULL),
+    _poseAnalyzeButton(NULL),
+    _poseExportButton(NULL),
+    _poseSummaryLabel(NULL),
+    _posePositionTable(NULL),
+    _poseResultTable(NULL),
+    _reportSummaryLabel(NULL),
+    _reportWarningTable(NULL),
+    _reportRefreshButton(NULL),
+    _reportExportJsonButton(NULL),
+    _reportExportCsvButton(NULL),
+    _thresholdNearLimitSpin(NULL),
+    _thresholdConditionWarningSpin(NULL),
+    _thresholdConditionFailSpin(NULL),
+    _thresholdSingularValueSpin(NULL),
+    _thresholdManipulabilitySpin(NULL),
+    _thresholdPositionToleranceSpin(NULL),
+    _thresholdOrientationToleranceSpin(NULL),
+    _thresholdApplyButton(NULL),
+    _thresholds(),
+    _lastCurrentPose(),
+    _lastTaskPointResults(),
+    _workspaceSamples(),
+    _poseReachabilitySamples()
 {
     Q_UNUSED (parent);
     QVBoxLayout* root = new QVBoxLayout(this);
@@ -229,11 +273,20 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     // -------------------- Task Point Tab --------------------
     _taskPointTab  = new QWidget(_tabs);
+    _workspaceTab  = new QWidget(_tabs);
+    _poseReachTab  = new QWidget(_tabs);
+    _reportTab     = new QWidget(_tabs);
 
     buildTaskPointTab ();
+    buildWorkspaceTab ();
+    buildPoseReachabilityTab ();
+    buildReportTab ();
 
     _tabs->addTab (_ikTab,         tr("IK"));
     _tabs->addTab (_taskPointTab,  tr("Task points"));
+    _tabs->addTab (_workspaceTab,  tr("Workspace"));
+    _tabs->addTab (_poseReachTab,  tr("Pose reachability"));
+    _tabs->addTab (_reportTab,     tr("Report"));
 
     _status = new QLineEdit(base);
     _status->setReadOnly(true);
@@ -247,6 +300,15 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_importTaskPointsButton, SIGNAL (clicked ()), this, SLOT (importTaskPointsCsv ()));
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
+    connect (_workspaceRunButton, SIGNAL (clicked ()), this, SLOT (sampleWorkspace ()));
+    connect (_workspaceExportButton, SIGNAL (clicked ()), this, SLOT (exportWorkspaceCsv ()));
+    connect (_poseAddRowButton, SIGNAL (clicked ()), this, SLOT (addPoseReachabilityRow ()));
+    connect (_poseAnalyzeButton, SIGNAL (clicked ()), this, SLOT (analyzePoseReachability ()));
+    connect (_poseExportButton, SIGNAL (clicked ()), this, SLOT (exportPoseReachabilityCsv ()));
+    connect (_reportRefreshButton, SIGNAL (clicked ()), this, SLOT (refreshReport ()));
+    connect (_reportExportJsonButton, SIGNAL (clicked ()), this, SLOT (exportReportJson ()));
+    connect (_reportExportCsvButton, SIGNAL (clicked ()), this, SLOT (exportReportCsv ()));
+    connect (_thresholdApplyButton, SIGNAL (clicked ()), this, SLOT (applyThresholds ()));
 
     setStatus(tr("Load a WorkCell to start kinematic analysis."));
 }
@@ -330,6 +392,16 @@ void KinematicAnalysisWidget::setStatus (const QString& message)
 }
 
 namespace {
+void configureAnalysisTable (QTableWidget* table)
+{
+    table->setSelectionBehavior (QAbstractItemView::SelectRows);
+    table->setAlternatingRowColors (true);
+    table->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+    table->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
+    table->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
+    table->verticalHeader ()->setVisible (false);
+}
+
 QTableWidgetItem* makeItem (const QString& text)
 {
     QTableWidgetItem* item = new QTableWidgetItem (text);
@@ -430,6 +502,20 @@ rw::core::Ptr< rw::kinematics::Frame > frameByName (
 }
 }    // namespace
 
+rw::core::Ptr< rw::models::Device > KinematicAnalysisWidget::selectedDevice () const
+{
+    if (_workcell == NULL || _deviceCombo == NULL)
+        return NULL;
+    return deviceByName (_workcell, _deviceCombo->currentText ().toStdString ());
+}
+
+rw::core::Ptr< rw::kinematics::Frame > KinematicAnalysisWidget::selectedTcpFrame () const
+{
+    if (_workcell == NULL || _tcpFrameCombo == NULL)
+        return NULL;
+    return frameByName (_workcell, _tcpFrameCombo->currentText ().toStdString ());
+}
+
 void KinematicAnalysisWidget::refreshCurrentPose ()
 {
     _qTable->setRowCount (0);
@@ -458,7 +544,9 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
     rw::kinematics::State state = currentState ();
 
     KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
     const KinematicCurrentPoseResult result = analyzer.analyzeCurrentPose (device, tcpFrame, state);
+    _lastCurrentPose = result;
 
     // TCP pose label
     {
@@ -516,6 +604,7 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
             std::string ("[") + statusText(w.severity) + "] " + w.code + ": " + w.message));
     }
     setStatus(tr("Current pose analysis refreshed."));
+    updateReportSummary ();
 }
 
 void KinematicAnalysisWidget::solveIk ()
@@ -547,6 +636,7 @@ void KinematicAnalysisWidget::solveIk ()
     target.rpyDeg = {{_ikRollSpin->value(), _ikPitchSpin->value(), _ikYawSpin->value()}};
 
     KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
     const KinematicIkAnalysisResult result =
         analyzer.analyzeIk(device, tcpFrame, currentState(), target);
 
@@ -664,6 +754,180 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
                                           _taskPointTab);
     tpLayout->addWidget (_taskPointSummaryLabel);
     tpLayout->addStretch ();
+}
+
+void KinematicAnalysisWidget::buildWorkspaceTab ()
+{
+    QVBoxLayout* layout = new QVBoxLayout (_workspaceTab);
+
+    QGridLayout* controls = new QGridLayout ();
+    _workspaceSampleCountSpin = new QSpinBox (_workspaceTab);
+    _workspaceSampleCountSpin->setRange (1, 1000000);
+    _workspaceSampleCountSpin->setValue (1000);
+    _workspaceGridStepsSpin = new QSpinBox (_workspaceTab);
+    _workspaceGridStepsSpin->setRange (1, 100);
+    _workspaceGridStepsSpin->setValue (5);
+    _workspaceModeCombo = new QComboBox (_workspaceTab);
+    _workspaceModeCombo->addItem (tr("Random uniform"));
+    _workspaceModeCombo->addItem (tr("Grid"));
+    _workspaceCollisionCheck = new QCheckBox (tr("Collision"), _workspaceTab);
+    _workspaceCollisionCheck->setChecked (true);
+    _workspaceColorModeCombo = new QComboBox (_workspaceTab);
+    _workspaceColorModeCombo->addItems ({tr("Reachability"), tr("Manipulability"),
+                                         tr("Joint limit"), tr("Collision")});
+    _workspaceRunButton = new QPushButton (tr("Run"), _workspaceTab);
+    _workspaceExportButton = new QPushButton (tr("Export CSV"), _workspaceTab);
+
+    controls->addWidget (new QLabel (tr("Samples:"), _workspaceTab), 0, 0);
+    controls->addWidget (_workspaceSampleCountSpin, 0, 1);
+    controls->addWidget (new QLabel (tr("Mode:"), _workspaceTab), 0, 2);
+    controls->addWidget (_workspaceModeCombo, 0, 3);
+    controls->addWidget (new QLabel (tr("Grid steps:"), _workspaceTab), 1, 0);
+    controls->addWidget (_workspaceGridStepsSpin, 1, 1);
+    controls->addWidget (_workspaceCollisionCheck, 1, 2);
+    controls->addWidget (_workspaceColorModeCombo, 1, 3);
+    controls->addWidget (_workspaceRunButton, 2, 0);
+    controls->addWidget (_workspaceExportButton, 2, 1);
+    layout->addLayout (controls);
+
+    _workspaceSummaryLabel = new QLabel (tr("Samples: 0    Collision-free: 0    Avg manipulability: -"),
+                                         _workspaceTab);
+    layout->addWidget (_workspaceSummaryLabel);
+
+    _workspaceTable = new QTableWidget (_workspaceTab);
+    _workspaceTable->setColumnCount (8);
+    _workspaceTable->setHorizontalHeaderLabels ({
+        tr("Index"), tr("Status"), tr("Collision"), tr("TCP x"), tr("TCP y"), tr("TCP z"),
+        tr("Manipulability"), tr("Min limit margin")
+    });
+    _workspaceTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    configureAnalysisTable (_workspaceTable);
+    layout->addWidget (_workspaceTable);
+}
+
+void KinematicAnalysisWidget::buildPoseReachabilityTab ()
+{
+    QVBoxLayout* layout = new QVBoxLayout (_poseReachTab);
+
+    QGridLayout* controls = new QGridLayout ();
+    _poseSourceCombo = new QComboBox (_poseReachTab);
+    _poseSourceCombo->addItem (tr("Task points"));
+    _poseSourceCombo->addItem (tr("Manual rows"));
+    _poseDirectionSamplesSpin = new QSpinBox (_poseReachTab);
+    _poseDirectionSamplesSpin->setRange (0, 1000);
+    _poseDirectionSamplesSpin->setValue (24);
+    _poseRollSamplesSpin = new QSpinBox (_poseReachTab);
+    _poseRollSamplesSpin->setRange (1, 360);
+    _poseRollSamplesSpin->setValue (1);
+    _poseCollisionCheck = new QCheckBox (tr("Collision"), _poseReachTab);
+    _poseCollisionCheck->setChecked (true);
+    _poseAddRowButton = new QPushButton (tr("Add row"), _poseReachTab);
+    _poseAnalyzeButton = new QPushButton (tr("Run"), _poseReachTab);
+    _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
+
+    controls->addWidget (new QLabel (tr("Source:"), _poseReachTab), 0, 0);
+    controls->addWidget (_poseSourceCombo, 0, 1);
+    controls->addWidget (new QLabel (tr("Directions:"), _poseReachTab), 0, 2);
+    controls->addWidget (_poseDirectionSamplesSpin, 0, 3);
+    controls->addWidget (new QLabel (tr("Rolls:"), _poseReachTab), 1, 0);
+    controls->addWidget (_poseRollSamplesSpin, 1, 1);
+    controls->addWidget (_poseCollisionCheck, 1, 2);
+    controls->addWidget (_poseAddRowButton, 2, 0);
+    controls->addWidget (_poseAnalyzeButton, 2, 1);
+    controls->addWidget (_poseExportButton, 2, 2);
+    layout->addLayout (controls);
+
+    _posePositionTable = new QTableWidget (_poseReachTab);
+    _posePositionTable->setColumnCount (3);
+    _posePositionTable->setHorizontalHeaderLabels ({tr("x"), tr("y"), tr("z")});
+    configureAnalysisTable (_posePositionTable);
+    layout->addWidget (new QLabel (tr("Manual positions"), _poseReachTab));
+    layout->addWidget (_posePositionTable);
+
+    _poseSummaryLabel = new QLabel (tr("Positions: 0    Average coverage: -"), _poseReachTab);
+    layout->addWidget (_poseSummaryLabel);
+
+    _poseResultTable = new QTableWidget (_poseReachTab);
+    _poseResultTable->setColumnCount (8);
+    _poseResultTable->setHorizontalHeaderLabels ({
+        tr("Index"), tr("Status"), tr("x"), tr("y"), tr("z"),
+        tr("Sampled"), tr("Reachable"), tr("Coverage")
+    });
+    _poseResultTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    configureAnalysisTable (_poseResultTable);
+    layout->addWidget (_poseResultTable);
+}
+
+void KinematicAnalysisWidget::buildReportTab ()
+{
+    QVBoxLayout* layout = new QVBoxLayout (_reportTab);
+
+    _reportSummaryLabel = new QLabel (tr("No report data."), _reportTab);
+    layout->addWidget (_reportSummaryLabel);
+
+    QGridLayout* thresholdGrid = new QGridLayout ();
+    _thresholdNearLimitSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdNearLimitSpin->setRange (0.0, 1.0);
+    _thresholdNearLimitSpin->setDecimals (6);
+    _thresholdNearLimitSpin->setValue (_thresholds.nearJointLimitRatio);
+    _thresholdConditionWarningSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdConditionWarningSpin->setRange (1.0, 1000000.0);
+    _thresholdConditionWarningSpin->setValue (_thresholds.conditionWarning);
+    _thresholdConditionFailSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdConditionFailSpin->setRange (1.0, 1000000.0);
+    _thresholdConditionFailSpin->setValue (_thresholds.conditionFail);
+    _thresholdSingularValueSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdSingularValueSpin->setRange (0.0, 1.0);
+    _thresholdSingularValueSpin->setDecimals (8);
+    _thresholdSingularValueSpin->setValue (_thresholds.singularValueWarning);
+    _thresholdManipulabilitySpin = new QDoubleSpinBox (_reportTab);
+    _thresholdManipulabilitySpin->setRange (0.0, 1000000.0);
+    _thresholdManipulabilitySpin->setDecimals (8);
+    _thresholdManipulabilitySpin->setValue (_thresholds.manipulabilityWarning);
+    _thresholdPositionToleranceSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdPositionToleranceSpin->setRange (0.0, 1000.0);
+    _thresholdPositionToleranceSpin->setDecimals (6);
+    _thresholdPositionToleranceSpin->setValue (_thresholds.positionToleranceMeters);
+    _thresholdOrientationToleranceSpin = new QDoubleSpinBox (_reportTab);
+    _thresholdOrientationToleranceSpin->setRange (0.0, 360.0);
+    _thresholdOrientationToleranceSpin->setDecimals (4);
+    _thresholdOrientationToleranceSpin->setValue (_thresholds.orientationToleranceDeg);
+    _thresholdApplyButton = new QPushButton (tr("Apply thresholds"), _reportTab);
+
+    thresholdGrid->addWidget (new QLabel (tr("Near limit:"), _reportTab), 0, 0);
+    thresholdGrid->addWidget (_thresholdNearLimitSpin, 0, 1);
+    thresholdGrid->addWidget (new QLabel (tr("Cond warn:"), _reportTab), 0, 2);
+    thresholdGrid->addWidget (_thresholdConditionWarningSpin, 0, 3);
+    thresholdGrid->addWidget (new QLabel (tr("Cond fail:"), _reportTab), 1, 0);
+    thresholdGrid->addWidget (_thresholdConditionFailSpin, 1, 1);
+    thresholdGrid->addWidget (new QLabel (tr("Sigma warn:"), _reportTab), 1, 2);
+    thresholdGrid->addWidget (_thresholdSingularValueSpin, 1, 3);
+    thresholdGrid->addWidget (new QLabel (tr("Manip warn:"), _reportTab), 2, 0);
+    thresholdGrid->addWidget (_thresholdManipulabilitySpin, 2, 1);
+    thresholdGrid->addWidget (new QLabel (tr("Pos tol:"), _reportTab), 2, 2);
+    thresholdGrid->addWidget (_thresholdPositionToleranceSpin, 2, 3);
+    thresholdGrid->addWidget (new QLabel (tr("Ori tol:"), _reportTab), 3, 0);
+    thresholdGrid->addWidget (_thresholdOrientationToleranceSpin, 3, 1);
+    thresholdGrid->addWidget (_thresholdApplyButton, 3, 2);
+    layout->addLayout (thresholdGrid);
+
+    QGridLayout* buttons = new QGridLayout ();
+    _reportRefreshButton = new QPushButton (tr("Refresh"), _reportTab);
+    _reportExportJsonButton = new QPushButton (tr("Export JSON"), _reportTab);
+    _reportExportCsvButton = new QPushButton (tr("Export CSV"), _reportTab);
+    buttons->addWidget (_reportRefreshButton, 0, 0);
+    buttons->addWidget (_reportExportJsonButton, 0, 1);
+    buttons->addWidget (_reportExportCsvButton, 0, 2);
+    layout->addLayout (buttons);
+
+    _reportWarningTable = new QTableWidget (_reportTab);
+    _reportWarningTable->setColumnCount (4);
+    _reportWarningTable->setHorizontalHeaderLabels ({
+        tr("Severity"), tr("Code"), tr("Source"), tr("Message")
+    });
+    _reportWarningTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    configureAnalysisTable (_reportWarningTable);
+    layout->addWidget (_reportWarningTable);
 }
 
 void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
@@ -925,12 +1189,446 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
     const rw::kinematics::State state            = currentState ();
 
     KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
     const std::vector< TaskPoint > points                = collectTaskPointsFromTable ();
     const std::vector< TaskPointReachabilityResult > results =
         analyzer.analyzeTaskPoints (device, tcpFrame, state, points, NULL);
     const double rate = analyzer.calculateReachableRate (results);
+    _lastTaskPointResults = results;
     applyTaskPointResults (results, rate);
     setStatus(tr("Analyzed %1 task point(s). Reachable rate: %2.")
                   .arg(static_cast<int>(results.size()))
                   .arg(QString::number(rate, 'f', 3)));
+    updateReportSummary ();
+}
+
+std::vector< std::array< double, 3 > > KinematicAnalysisWidget::collectPoseReachabilityPositions () const
+{
+    std::vector< std::array< double, 3 > > positions;
+    if (_poseSourceCombo != NULL && _poseSourceCombo->currentIndex () == 0) {
+        const std::vector< TaskPoint > points = collectTaskPointsFromTable ();
+        for (const TaskPoint& point : points) {
+            if (point.enabled)
+                positions.push_back (point.position);
+        }
+        return positions;
+    }
+
+    if (_posePositionTable == NULL)
+        return positions;
+    for (int r = 0; r < _posePositionTable->rowCount (); ++r) {
+        positions.push_back ({{cellText (_posePositionTable, r, 0).toDouble (),
+                               cellText (_posePositionTable, r, 1).toDouble (),
+                               cellText (_posePositionTable, r, 2).toDouble ()}});
+    }
+    return positions;
+}
+
+void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< WorkspaceSample >& samples)
+{
+    if (_workspaceTable == NULL)
+        return;
+    const int rows = static_cast< int > (std::min< std::size_t > (samples.size (), 500));
+    _workspaceTable->setRowCount (rows);
+
+    int collisionFree = 0;
+    int warnCount = 0;
+    int failCount = 0;
+    double manipulabilitySum = 0.0;
+    for (std::size_t i = 0; i < samples.size (); ++i) {
+        const WorkspaceSample& sample = samples[i];
+        if (!sample.inCollision)
+            ++collisionFree;
+        if (sample.status == AnalysisStatus::Warning)
+            ++warnCount;
+        else if (sample.status == AnalysisStatus::Fail)
+            ++failCount;
+        manipulabilitySum += sample.manipulability;
+
+        if (i >= static_cast< std::size_t > (rows))
+            continue;
+        const int row = static_cast< int > (i);
+        _workspaceTable->setItem (row, 0, makeItem (QString::number (row)));
+        _workspaceTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
+        _workspaceTable->setItem (row, 2, makeItem (sample.inCollision ? tr("Yes") : tr("No")));
+        _workspaceTable->setItem (row, 3, makeItem (sample.tcpPosition[0]));
+        _workspaceTable->setItem (row, 4, makeItem (sample.tcpPosition[1]));
+        _workspaceTable->setItem (row, 5, makeItem (sample.tcpPosition[2]));
+        _workspaceTable->setItem (row, 6, makeItem (sample.manipulability));
+        _workspaceTable->setItem (row, 7, makeItem (sample.minJointLimitMargin));
+    }
+
+    const double avgManip = samples.empty () ? 0.0 :
+        manipulabilitySum / static_cast< double > (samples.size ());
+    if (_workspaceSummaryLabel != NULL) {
+        _workspaceSummaryLabel->setText (
+            tr("Samples: %1    Collision-free: %2    Warning: %3    Fail: %4    Avg manipulability: %5")
+                .arg (static_cast< int > (samples.size ()))
+                .arg (collisionFree)
+                .arg (warnCount)
+                .arg (failCount)
+                .arg (QString::number (avgManip, 'g', 6)));
+    }
+    _workspaceTable->resizeColumnsToContents ();
+}
+
+void KinematicAnalysisWidget::sampleWorkspace ()
+{
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == NULL) {
+        setStatus (tr("Cannot sample workspace: no valid device selected."));
+        return;
+    }
+    rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+
+    WorkspaceSamplingConfig config;
+    config.sampleCount = _workspaceSampleCountSpin->value ();
+    config.gridStepsPerJoint = _workspaceGridStepsSpin->value ();
+    config.mode = _workspaceModeCombo->currentIndex () == 1 ?
+        WorkspaceSamplingMode::Grid : WorkspaceSamplingMode::RandomUniform;
+    config.checkCollision = _workspaceCollisionCheck->isChecked ();
+    config.randomSeed = 1;
+
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    _workspaceSamples = analyzer.sampleWorkspace (device, tcpFrame, currentState (), config, NULL);
+    applyWorkspaceResults (_workspaceSamples);
+    setStatus (tr("Workspace sampling completed with %1 sample(s).")
+                   .arg (static_cast< int > (_workspaceSamples.size ())));
+    updateReportSummary ();
+}
+
+void KinematicAnalysisWidget::exportWorkspaceCsv ()
+{
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export workspace samples"), QString ("workspace_samples.csv"),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ()) {
+        setStatus (tr("Workspace export canceled."));
+        return;
+    }
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        return;
+    }
+    QTextStream out (&file);
+    out << "sample_index,q,tcp_x,tcp_y,tcp_z,manipulability,min_joint_limit_margin,condition_number,in_collision,status\n";
+    for (std::size_t i = 0; i < _workspaceSamples.size (); ++i) {
+        const WorkspaceSample& sample = _workspaceSamples[i];
+        out << static_cast< int > (i) << ",\"" << qVectorText (sample.q) << "\","
+            << sample.tcpPosition[0] << "," << sample.tcpPosition[1] << ","
+            << sample.tcpPosition[2] << "," << sample.manipulability << ","
+            << sample.minJointLimitMargin << "," << sample.conditionNumber << ","
+            << (sample.inCollision ? "true" : "false") << ","
+            << statusText (sample.status) << "\n";
+    }
+    setStatus (tr("Exported %1 workspace sample(s).")
+                   .arg (static_cast< int > (_workspaceSamples.size ())));
+}
+
+void KinematicAnalysisWidget::addPoseReachabilityRow ()
+{
+    if (_posePositionTable == NULL)
+        return;
+    const int row = _posePositionTable->rowCount ();
+    _posePositionTable->insertRow (row);
+    setCell (_posePositionTable, row, 0, QStringLiteral ("0"), true);
+    setCell (_posePositionTable, row, 1, QStringLiteral ("0"), true);
+    setCell (_posePositionTable, row, 2, QStringLiteral ("0"), true);
+    _posePositionTable->resizeColumnsToContents ();
+    setStatus (tr("Added pose reachability position row %1.").arg (row + 1));
+}
+
+void KinematicAnalysisWidget::applyPoseReachabilityResults (
+    const std::vector< PoseReachabilitySample >& samples)
+{
+    if (_poseResultTable == NULL)
+        return;
+    _poseResultTable->setRowCount (static_cast< int > (samples.size ()));
+    double coverageSum = 0.0;
+    for (std::size_t i = 0; i < samples.size (); ++i) {
+        const PoseReachabilitySample& sample = samples[i];
+        coverageSum += sample.coverage;
+        const int row = static_cast< int > (i);
+        _poseResultTable->setItem (row, 0, makeItem (QString::number (row)));
+        _poseResultTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
+        _poseResultTable->setItem (row, 2, makeItem (sample.position[0]));
+        _poseResultTable->setItem (row, 3, makeItem (sample.position[1]));
+        _poseResultTable->setItem (row, 4, makeItem (sample.position[2]));
+        _poseResultTable->setItem (row, 5, makeItem (QString::number (sample.sampledDirections)));
+        _poseResultTable->setItem (row, 6, makeItem (QString::number (sample.reachableDirections)));
+        _poseResultTable->setItem (row, 7, makeItem (sample.coverage));
+    }
+    const double avgCoverage = samples.empty () ? 0.0 :
+        coverageSum / static_cast< double > (samples.size ());
+    if (_poseSummaryLabel != NULL) {
+        _poseSummaryLabel->setText (tr("Positions: %1    Average coverage: %2")
+            .arg (static_cast< int > (samples.size ()))
+            .arg (QString::number (avgCoverage, 'f', 3)));
+    }
+    _poseResultTable->resizeColumnsToContents ();
+}
+
+void KinematicAnalysisWidget::analyzePoseReachability ()
+{
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == NULL) {
+        setStatus (tr("Cannot analyze pose reachability: no valid device selected."));
+        return;
+    }
+    const std::vector< std::array< double, 3 > > positions =
+        collectPoseReachabilityPositions ();
+    if (positions.empty ()) {
+        setStatus (tr("Cannot analyze pose reachability: no positions available."));
+        return;
+    }
+
+    PoseReachabilityConfig config;
+    config.directionSamples = _poseDirectionSamplesSpin->value ();
+    config.rollSamples      = _poseRollSamplesSpin->value ();
+    config.checkCollision   = _poseCollisionCheck->isChecked ();
+
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    _poseReachabilitySamples = analyzer.analyzePoseReachability (
+        device, selectedTcpFrame (), currentState (), positions, config, NULL);
+    applyPoseReachabilityResults (_poseReachabilitySamples);
+    setStatus (tr("Pose reachability completed for %1 position(s).")
+                   .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    updateReportSummary ();
+}
+
+void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
+{
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export pose reachability"), QString ("pose_reachability.csv"),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ()) {
+        setStatus (tr("Pose reachability export canceled."));
+        return;
+    }
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        return;
+    }
+    QTextStream out (&file);
+    out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status\n";
+    for (const PoseReachabilitySample& sample : _poseReachabilitySamples) {
+        out << sample.position[0] << "," << sample.position[1] << ","
+            << sample.position[2] << "," << sample.sampledDirections << ","
+            << sample.reachableDirections << "," << sample.coverage << ","
+            << statusText (sample.status) << "\n";
+    }
+    setStatus (tr("Exported %1 pose reachability row(s).")
+                   .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+}
+
+void KinematicAnalysisWidget::updateReportSummary ()
+{
+    if (_reportSummaryLabel == NULL)
+        return;
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    const KinematicAnalysisResult result = analyzer.buildAggregateResult (
+        _lastCurrentPose, _lastTaskPointResults, _workspaceSamples, _poseReachabilitySamples);
+
+    int taskPass = 0, taskWarn = 0, taskFail = 0;
+    for (const TaskPointReachabilityResult& task : _lastTaskPointResults) {
+        if (task.status == AnalysisStatus::Pass)
+            ++taskPass;
+        else if (task.status == AnalysisStatus::Warning)
+            ++taskWarn;
+        else if (task.status == AnalysisStatus::Fail)
+            ++taskFail;
+    }
+    double poseCoverage = 0.0;
+    for (const PoseReachabilitySample& sample : _poseReachabilitySamples)
+        poseCoverage += sample.coverage;
+    if (!_poseReachabilitySamples.empty ())
+        poseCoverage /= static_cast< double > (_poseReachabilitySamples.size ());
+
+    _reportSummaryLabel->setText (
+        tr("Status: %1\nReachable rate: %2\nCurrent condition: %3\nCurrent manipulability: %4\nTask points: Pass %5 / Warning %6 / Fail %7\nWorkspace samples: %8\nAverage pose coverage: %9")
+            .arg (QString::fromLatin1 (statusText (result.status)))
+            .arg (QString::number (result.reachableRate, 'f', 3))
+            .arg (QString::number (_lastCurrentPose.conditionNumber, 'g', 6))
+            .arg (QString::number (_lastCurrentPose.manipulability, 'g', 6))
+            .arg (taskPass).arg (taskWarn).arg (taskFail)
+            .arg (static_cast< int > (_workspaceSamples.size ()))
+            .arg (QString::number (poseCoverage, 'f', 3)));
+
+    if (_reportWarningTable != NULL) {
+        _reportWarningTable->setRowCount (static_cast< int > (result.warnings.size ()));
+        for (std::size_t i = 0; i < result.warnings.size (); ++i) {
+            const AnalysisWarning& warning = result.warnings[i];
+            const int row = static_cast< int > (i);
+            _reportWarningTable->setItem (row, 0, makeItem (QString::fromLatin1 (statusText (warning.severity))));
+            _reportWarningTable->setItem (row, 1, makeItem (QString::fromStdString (warning.code)));
+            _reportWarningTable->setItem (row, 2, makeItem (QString::fromStdString (warning.source)));
+            _reportWarningTable->setItem (row, 3, makeItem (QString::fromStdString (warning.message)));
+        }
+        _reportWarningTable->resizeColumnsToContents ();
+    }
+}
+
+void KinematicAnalysisWidget::refreshReport ()
+{
+    updateReportSummary ();
+    setStatus (tr("Kinematic report refreshed."));
+}
+
+namespace {
+QJsonArray vectorToJsonArray (const std::vector< double >& values)
+{
+    QJsonArray array;
+    for (double value : values)
+        array.append (value);
+    return array;
+}
+
+QJsonArray array3ToJsonArray (const std::array< double, 3 >& values)
+{
+    QJsonArray array;
+    array.append (values[0]);
+    array.append (values[1]);
+    array.append (values[2]);
+    return array;
+}
+}    // namespace
+
+void KinematicAnalysisWidget::exportReportJson ()
+{
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export kinematic report"), QString ("kinematic_report.json"),
+        tr("JSON files (*.json);;All files (*)"));
+    if (path.isEmpty ()) {
+        setStatus (tr("Report JSON export canceled."));
+        return;
+    }
+
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    const KinematicAnalysisResult result = analyzer.buildAggregateResult (
+        _lastCurrentPose, _lastTaskPointResults, _workspaceSamples, _poseReachabilitySamples);
+
+    QJsonObject root;
+    root["pluginName"] = QString::fromStdString (result.header.pluginName);
+    root["status"] = QString::fromLatin1 (statusText (result.status));
+    root["reachableRate"] = result.reachableRate;
+
+    QJsonObject current;
+    current["status"] = QString::fromLatin1 (statusText (result.currentPose.status));
+    current["q"] = vectorToJsonArray (result.currentPose.q);
+    current["tcpPosition"] = array3ToJsonArray (result.currentPose.tcpPosition);
+    current["tcpRpyDeg"] = array3ToJsonArray (result.currentPose.tcpRpyDeg);
+    current["conditionNumber"] = result.currentPose.conditionNumber;
+    current["manipulability"] = result.currentPose.manipulability;
+    root["currentPose"] = current;
+
+    QJsonArray taskArray;
+    for (const TaskPointReachabilityResult& task : result.taskPointResults) {
+        QJsonObject item;
+        item["id"] = QString::fromStdString (task.taskPoint.id);
+        item["name"] = QString::fromStdString (task.taskPoint.name);
+        item["status"] = QString::fromLatin1 (statusText (task.status));
+        item["primaryFailure"] = QString::fromLatin1 (toString (task.primaryFailure));
+        taskArray.append (item);
+    }
+    root["taskPointResults"] = taskArray;
+
+    QJsonArray workspaceArray;
+    for (const WorkspaceSample& sample : result.workspaceSamples) {
+        QJsonObject item;
+        item["q"] = vectorToJsonArray (sample.q);
+        item["tcpPosition"] = array3ToJsonArray (sample.tcpPosition);
+        item["manipulability"] = sample.manipulability;
+        item["minJointLimitMargin"] = sample.minJointLimitMargin;
+        item["conditionNumber"] = sample.conditionNumber;
+        item["inCollision"] = sample.inCollision;
+        item["status"] = QString::fromLatin1 (statusText (sample.status));
+        workspaceArray.append (item);
+    }
+    root["workspaceSamples"] = workspaceArray;
+
+    QJsonArray poseArray;
+    for (const PoseReachabilitySample& sample : result.poseReachability) {
+        QJsonObject item;
+        item["position"] = array3ToJsonArray (sample.position);
+        item["sampledDirections"] = sample.sampledDirections;
+        item["reachableDirections"] = sample.reachableDirections;
+        item["coverage"] = sample.coverage;
+        item["status"] = QString::fromLatin1 (statusText (sample.status));
+        poseArray.append (item);
+    }
+    root["poseReachability"] = poseArray;
+
+    QJsonArray warningArray;
+    for (const AnalysisWarning& warning : result.warnings) {
+        QJsonObject item;
+        item["code"] = QString::fromStdString (warning.code);
+        item["message"] = QString::fromStdString (warning.message);
+        item["source"] = QString::fromStdString (warning.source);
+        item["severity"] = QString::fromLatin1 (statusText (warning.severity));
+        warningArray.append (item);
+    }
+    root["warnings"] = warningArray;
+
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        return;
+    }
+    file.write (QJsonDocument (root).toJson (QJsonDocument::Indented));
+    setStatus (tr("Exported kinematic JSON report."));
+}
+
+void KinematicAnalysisWidget::exportReportCsv ()
+{
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export kinematic summary"), QString ("kinematic_summary.csv"),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ()) {
+        setStatus (tr("Report CSV export canceled."));
+        return;
+    }
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    const KinematicAnalysisResult result = analyzer.buildAggregateResult (
+        _lastCurrentPose, _lastTaskPointResults, _workspaceSamples, _poseReachabilitySamples);
+
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        return;
+    }
+    QTextStream out (&file);
+    out << "metric,value\n";
+    out << "status," << statusText (result.status) << "\n";
+    out << "reachable_rate," << result.reachableRate << "\n";
+    out << "current_condition," << result.currentPose.conditionNumber << "\n";
+    out << "current_manipulability," << result.currentPose.manipulability << "\n";
+    out << "task_point_results," << static_cast< int > (result.taskPointResults.size ()) << "\n";
+    out << "workspace_samples," << static_cast< int > (result.workspaceSamples.size ()) << "\n";
+    out << "pose_reachability_positions," << static_cast< int > (result.poseReachability.size ()) << "\n";
+    for (const MetricValue& metric : result.manipulabilityMap)
+        out << QString::fromStdString (metric.name) << "," << metric.value << "\n";
+    setStatus (tr("Exported kinematic CSV summary."));
+}
+
+void KinematicAnalysisWidget::applyThresholds ()
+{
+    _thresholds.nearJointLimitRatio = _thresholdNearLimitSpin->value ();
+    _thresholds.conditionWarning = _thresholdConditionWarningSpin->value ();
+    _thresholds.conditionFail = _thresholdConditionFailSpin->value ();
+    _thresholds.singularValueWarning = _thresholdSingularValueSpin->value ();
+    _thresholds.manipulabilityWarning = _thresholdManipulabilitySpin->value ();
+    _thresholds.positionToleranceMeters = _thresholdPositionToleranceSpin->value ();
+    _thresholds.orientationToleranceDeg = _thresholdOrientationToleranceSpin->value ();
+    setStatus (tr("Kinematic thresholds updated. Re-run analyses to refresh results."));
 }

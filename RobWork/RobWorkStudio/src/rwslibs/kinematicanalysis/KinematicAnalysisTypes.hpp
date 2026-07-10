@@ -47,6 +47,13 @@ struct WorkspaceSamplingConfig
     unsigned int randomSeed            = 1;
 };
 
+struct PoseReachabilityConfig
+{
+    int directionSamples = 24;
+    int rollSamples      = 1;
+    bool checkCollision  = true;
+};
+
 struct KinematicThresholds
 {
     double nearJointLimitRatio      = 0.05;

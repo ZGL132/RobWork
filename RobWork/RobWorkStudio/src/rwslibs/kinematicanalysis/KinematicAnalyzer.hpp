@@ -49,6 +49,20 @@ class KinematicAnalyzer
         const WorkspaceSamplingConfig& config,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
 
+    std::vector< PoseReachabilitySample > analyzePoseReachability (
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+        const rw::kinematics::State& state,
+        const std::vector< std::array< double, 3 > >& positions,
+        const PoseReachabilityConfig& config,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    KinematicAnalysisResult buildAggregateResult (
+        const KinematicCurrentPoseResult& currentPose,
+        const std::vector< TaskPointReachabilityResult >& taskPointResults,
+        const std::vector< WorkspaceSample >& workspaceSamples,
+        const std::vector< PoseReachabilitySample >& poseReachability) const;
+
   private:
     KinematicThresholds _thresholds;
 };

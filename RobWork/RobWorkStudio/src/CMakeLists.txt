@@ -44,6 +44,40 @@ if(build)
                     "$<TARGET_FILE_DIR:${SUBSYS_NAME}>"
             COMMENT "Copying RobWork runtime DLLs next to RobWorkStudio"
         )
+
+        set(RWS_QT_RUNTIME_TARGETS)
+        foreach(qt_runtime_target Qt6::Core Qt6::Gui Qt6::Widgets Qt5::Core Qt5::Gui Qt5::Widgets)
+            if(TARGET ${qt_runtime_target})
+                list(APPEND RWS_QT_RUNTIME_TARGETS ${qt_runtime_target})
+            endif()
+        endforeach()
+        foreach(qt_runtime_target ${RWS_QT_RUNTIME_TARGETS})
+            add_custom_command(
+                TARGET ${SUBSYS_NAME}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_runtime_target}>
+                    $<TARGET_FILE_DIR:${SUBSYS_NAME}>
+            )
+        endforeach()
+
+        set(RWS_QT_PLATFORM_PLUGIN_TARGETS)
+        foreach(qt_platform_plugin_target Qt6::QWindowsIntegrationPlugin Qt5::QWindowsIntegrationPlugin)
+            if(TARGET ${qt_platform_plugin_target})
+                list(APPEND RWS_QT_PLATFORM_PLUGIN_TARGETS ${qt_platform_plugin_target})
+            endif()
+        endforeach()
+        foreach(qt_platform_plugin_target ${RWS_QT_PLATFORM_PLUGIN_TARGETS})
+            add_custom_command(
+                TARGET ${SUBSYS_NAME}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                    $<TARGET_FILE_DIR:${SUBSYS_NAME}>/platforms
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_platform_plugin_target}>
+                    $<TARGET_FILE_DIR:${SUBSYS_NAME}>/platforms
+            )
+        endforeach()
     endif()
 
     # Some install stuff

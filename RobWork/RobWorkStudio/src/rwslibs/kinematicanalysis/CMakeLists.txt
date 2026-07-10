@@ -69,34 +69,50 @@ if(build)
             ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(WIN32)
+        set(KINEMATICANALYSIS_QT_RUNTIME_TARGETS)
+        foreach(qt_runtime_target Qt6::Core Qt6::Gui Qt6::Widgets Qt5::Core Qt5::Gui Qt5::Widgets)
+            if(TARGET ${qt_runtime_target})
+                list(APPEND KINEMATICANALYSIS_QT_RUNTIME_TARGETS ${qt_runtime_target})
+            endif()
+        endforeach()
+        foreach(qt_runtime_target ${KINEMATICANALYSIS_QT_RUNTIME_TARGETS})
+            add_custom_command(
+                TARGET sdurws_kinematicanalysis_test
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_runtime_target}>
+                    $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>
+            )
+        endforeach()
+
+        set(KINEMATICANALYSIS_QT_PLATFORM_PLUGIN_TARGETS)
+        foreach(qt_platform_plugin_target Qt6::QWindowsIntegrationPlugin Qt5::QWindowsIntegrationPlugin)
+            if(TARGET ${qt_platform_plugin_target})
+                list(APPEND KINEMATICANALYSIS_QT_PLATFORM_PLUGIN_TARGETS ${qt_platform_plugin_target})
+            endif()
+        endforeach()
+        foreach(qt_platform_plugin_target ${KINEMATICANALYSIS_QT_PLATFORM_PLUGIN_TARGETS})
+            add_custom_command(
+                TARGET sdurws_kinematicanalysis_test
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                    $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>/platforms
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:${qt_platform_plugin_target}>
+                    $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>/platforms
+            )
+        endforeach()
+    endif()
     if(BUILD_TESTING)
         add_test(
             NAME sdurws_kinematicanalysis_test
             COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test>
         )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_types
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> types
-        )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_metrics
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> metrics
-        )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_current_pose
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> current_pose
-        )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_ik
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> ik
-        )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_task_points
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> task_points
-        )
-        add_test(
-            NAME sdurws_kinematicanalysis_test_workspace
-            COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> workspace
+        set_tests_properties(
+            sdurws_kinematicanalysis_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>
         )
     endif()
 endif()

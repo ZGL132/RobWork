@@ -78,6 +78,87 @@ bool lexicographicQLess (const std::vector< double >& lhs, const std::vector< do
     return std::lexicographical_compare (lhs.begin (), lhs.end (), rhs.begin (), rhs.end ());
 }
 
+AnalysisWarning makeWarning (const std::string& code,
+                             const std::string& message,
+                             AnalysisStatus severity)
+{
+    AnalysisWarning w;
+    w.code     = code;
+    w.message  = message;
+    w.source   = "KinematicAnalyzer";
+    w.severity = severity;
+    return w;
+}
+
+std::vector< rw::math::Vector3D<> > sampleUnitDirections (int count)
+{
+    std::vector< rw::math::Vector3D<> > directions;
+    if (count <= 0)
+        return directions;
+    directions.reserve (static_cast< std::size_t > (count));
+    const double goldenAngle = rw::math::Pi * (3.0 - std::sqrt (5.0));
+    for (int i = 0; i < count; ++i) {
+        const double z = 1.0 - 2.0 * (static_cast< double > (i) + 0.5) /
+                                  static_cast< double > (count);
+        const double radius = std::sqrt (std::max (0.0, 1.0 - z * z));
+        const double theta  = goldenAngle * static_cast< double > (i);
+        directions.push_back (rw::math::Vector3D<> (
+            radius * std::cos (theta), radius * std::sin (theta), z));
+    }
+    return directions;
+}
+
+rw::math::Rotation3D<> toolZDirectionToRotation (
+    const rw::math::Vector3D<>& rawDirection, int rollIndex, int rollSamples)
+{
+    using rw::math::Vector3D;
+    rw::math::Vector3D<> z = rawDirection;
+    if (z.norm2 () < 1e-12)
+        z = Vector3D<>::z ();
+    z = normalize (z);
+
+    const rw::math::Vector3D<> reference =
+        std::fabs (z (2)) < 0.9 ? Vector3D<>::z () : Vector3D<>::y ();
+    rw::math::Vector3D<> x = cross (reference, z);
+    if (x.norm2 () < 1e-12)
+        x = Vector3D<>::x ();
+    x = normalize (x);
+    const rw::math::Vector3D<> y = normalize (cross (z, x));
+    const rw::math::Rotation3D<> base (x, y, z);
+
+    const int rolls = std::max (1, rollSamples);
+    const double roll = 2.0 * rw::math::Pi * static_cast< double > (rollIndex) /
+                        static_cast< double > (rolls);
+    return base * rw::math::EAA<> (Vector3D<>::z (), roll).toRotation3D ();
+}
+
+TaskPoint poseReachabilityTarget (const std::array< double, 3 >& position,
+                                  const rw::math::Rotation3D<>& rotation,
+                                  int directionIndex,
+                                  int rollIndex)
+{
+    TaskPoint target;
+    target.id       = "pose_reachability";
+    target.name     = "Pose reachability target";
+    target.position = position;
+    const rw::math::RPY<> rpy (rotation);
+    const double toDeg = 180.0 / rw::math::Pi;
+    target.rpyDeg = {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}};
+    target.note = std::string ("direction=") + std::to_string (directionIndex) +
+                  ", roll=" + std::to_string (rollIndex);
+    return target;
+}
+
+double meanValue (const std::vector< double >& values)
+{
+    if (values.empty ())
+        return 0.0;
+    double sum = 0.0;
+    for (double value : values)
+        sum += value;
+    return sum / static_cast< double > (values.size ());
+}
+
 }    // namespace
 
 void KinematicAnalyzer::setThresholds (const KinematicThresholds& thresholds)
@@ -642,4 +723,155 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
             config.checkCollision, collisionDetector));
     }
     return samples;
+}
+
+std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& state,
+    const std::vector< std::array< double, 3 > >& positions,
+    const PoseReachabilityConfig& config,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    std::vector< PoseReachabilitySample > results;
+    results.reserve (positions.size ());
+
+    const int directionCount = std::max (0, config.directionSamples);
+    const int rollCount      = directionCount == 0 ? 0 : std::max (1, config.rollSamples);
+    const int totalDirections = directionCount * rollCount;
+    const std::vector< rw::math::Vector3D<> > directions =
+        sampleUnitDirections (directionCount);
+
+    rw::core::Ptr< const rw::kinematics::Frame > resolvedTcpFrame = tcpFrame;
+    if (resolvedTcpFrame == NULL && device != NULL)
+        resolvedTcpFrame = device->getEnd ();
+
+    for (const std::array< double, 3 >& position : positions) {
+        PoseReachabilitySample sample;
+        sample.position          = position;
+        sample.sampledDirections = totalDirections;
+
+        if (device == NULL || resolvedTcpFrame == NULL || totalDirections == 0) {
+            sample.status = AnalysisStatus::Fail;
+            results.push_back (sample);
+            continue;
+        }
+
+        for (int directionIndex = 0; directionIndex < directionCount; ++directionIndex) {
+            for (int rollIndex = 0; rollIndex < rollCount; ++rollIndex) {
+                const rw::math::Rotation3D<> rotation =
+                    toolZDirectionToRotation (
+                        directions[static_cast< std::size_t > (directionIndex)],
+                        rollIndex, rollCount);
+                const TaskPoint target =
+                    poseReachabilityTarget (position, rotation, directionIndex, rollIndex);
+                const KinematicIkAnalysisResult ik = analyzeIk (
+                    device, resolvedTcpFrame, state, target,
+                    config.checkCollision ? collisionDetector : NULL);
+
+                bool reachable = false;
+                for (const KinematicIkSolution& solution : ik.solutions) {
+                    if (solution.inCollision)
+                        continue;
+                    if (solution.status == AnalysisStatus::Pass ||
+                        solution.status == AnalysisStatus::Warning) {
+                        reachable = true;
+                        break;
+                    }
+                }
+                if (reachable)
+                    ++sample.reachableDirections;
+            }
+        }
+
+        sample.coverage =
+            totalDirections == 0 ? 0.0 :
+            static_cast< double > (sample.reachableDirections) /
+                static_cast< double > (totalDirections);
+        if (sample.reachableDirections == 0)
+            sample.status = AnalysisStatus::Fail;
+        else if (sample.reachableDirections == totalDirections)
+            sample.status = AnalysisStatus::Pass;
+        else
+            sample.status = AnalysisStatus::Warning;
+        results.push_back (sample);
+    }
+    return results;
+}
+
+KinematicAnalysisResult KinematicAnalyzer::buildAggregateResult (
+    const KinematicCurrentPoseResult& currentPose,
+    const std::vector< TaskPointReachabilityResult >& taskPointResults,
+    const std::vector< WorkspaceSample >& workspaceSamples,
+    const std::vector< PoseReachabilitySample >& poseReachability) const
+{
+    KinematicAnalysisResult result;
+    result.header.pluginName    = "KinematicAnalysis";
+    result.header.pluginVersion = "1.0.0";
+    result.currentPose          = currentPose;
+    result.taskPointResults     = taskPointResults;
+    result.workspaceSamples     = workspaceSamples;
+    result.poseReachability     = poseReachability;
+    result.reachableRate        = calculateReachableRate (taskPointResults);
+
+    result.status = currentPose.status;
+    for (const TaskPointReachabilityResult& task : taskPointResults)
+        result.status = worstStatus (result.status, task.status);
+    for (const WorkspaceSample& sample : workspaceSamples)
+        result.status = worstStatus (result.status, sample.status);
+    for (const PoseReachabilitySample& sample : poseReachability)
+        result.status = worstStatus (result.status, sample.status);
+
+    std::vector< double > manipulabilityValues;
+    manipulabilityValues.reserve (workspaceSamples.size () + 1);
+    if (currentPose.manipulability > 0.0)
+        manipulabilityValues.push_back (currentPose.manipulability);
+    for (const WorkspaceSample& sample : workspaceSamples) {
+        if (sample.manipulability > 0.0)
+            manipulabilityValues.push_back (sample.manipulability);
+        if (sample.status == AnalysisStatus::Fail && sample.inCollision)
+            result.warnings.push_back (makeWarning (
+                "KIN_WORKSPACE_COLLISION",
+                "At least one workspace sample is in collision.",
+                AnalysisStatus::Warning));
+        if (sample.status == AnalysisStatus::Warning)
+            result.jointLimitWarnings.push_back (makeWarning (
+                "KIN_WORKSPACE_QUALITY_WARNING",
+                "A workspace sample is near a joint limit or singularity.",
+                AnalysisStatus::Warning));
+    }
+
+    if (!manipulabilityValues.empty ()) {
+        std::sort (manipulabilityValues.begin (), manipulabilityValues.end ());
+        MetricValue minMetric;
+        minMetric.name  = "manipulability_min";
+        minMetric.value = manipulabilityValues.front ();
+        MetricValue maxMetric;
+        maxMetric.name  = "manipulability_max";
+        maxMetric.value = manipulabilityValues.back ();
+        MetricValue meanMetric;
+        meanMetric.name  = "manipulability_mean";
+        meanMetric.value = meanValue (manipulabilityValues);
+        MetricValue p10Metric;
+        p10Metric.name = "manipulability_p10";
+        const std::size_t p10Index =
+            static_cast< std::size_t > (0.1 * static_cast< double > (manipulabilityValues.size () - 1));
+        p10Metric.value = manipulabilityValues[p10Index];
+        result.manipulabilityMap.push_back (minMetric);
+        result.manipulabilityMap.push_back (maxMetric);
+        result.manipulabilityMap.push_back (meanMetric);
+        result.manipulabilityMap.push_back (p10Metric);
+    }
+
+    for (const AnalysisWarning& warning : currentPose.warnings) {
+        result.warnings.push_back (warning);
+        if (warning.code.find ("SINGULAR") != std::string::npos ||
+            warning.code.find ("CONDITION") != std::string::npos)
+            result.singularityWarnings.push_back (warning);
+        if (warning.code.find ("JOINT") != std::string::npos ||
+            warning.code.find ("LIMIT") != std::string::npos)
+            result.jointLimitWarnings.push_back (warning);
+    }
+
+    return result;
 }
