@@ -13,6 +13,7 @@
 // 前置声明 RobWork 类型,避免在头文件引入过重的 include。
 namespace rw { namespace kinematics { class Frame; } }
 namespace rw { namespace models { class Device; class WorkCell; } }
+namespace rw { namespace proximity { class CollisionDetector; } }
 namespace rws { class RobWorkStudio; }
 // Qt 类型前置声明,避免在头文件中包含完整 Qt 头。
 class QComboBox;
@@ -24,6 +25,7 @@ class QListWidget;
 class QPushButton;
 class QSpinBox;
 class QTableWidget;
+class QString;
 
 namespace rws {
 
@@ -49,6 +51,8 @@ private Q_SLOTS:
     void refreshCurrentPose ();         // 重新计算并显示当前 state 的运动学指标
     void solveIk ();                     // 用 IK tab 输入求解
     void applySelectedIkSolution ();     // 把选中解写回 RobWorkStudio
+    void importCurrentPoseToIk ();
+    void updateIkUnitDisplay ();
     void addTaskPointRow ();             // 任务点 tab 新增一行
     void removeSelectedTaskPointRow ();  // 删除选中任务点行
     void importTaskPointsCsv ();         // 从 CSV 导入任务点
@@ -74,8 +78,9 @@ private:
     void buildReportTab ();
 
     // 表格 → POD 数据的转换。
-    std::vector< TaskPoint > collectTaskPointsFromTable () const;
-    std::vector< std::array< double, 3 > > collectPoseReachabilityPositions () const;
+    std::vector< TaskPoint > collectTaskPointsFromTable (QString* error = nullptr) const;
+    std::vector< std::array< double, 3 > > collectPoseReachabilityPositions (
+        QString* error = nullptr) const;
 
     // 把分析结果写回 UI 表格。
     void applyTaskPointResults (const std::vector< TaskPointReachabilityResult >& results,
@@ -90,6 +95,16 @@ private:
     rw::kinematics::State currentState () const;
     rw::core::Ptr< rw::models::Device > selectedDevice () const;
     rw::core::Ptr< rw::kinematics::Frame > selectedTcpFrame () const;
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetectorForAnalysis (
+        bool requested, bool* unavailable) const;
+    double ikXInputMeters () const;
+    double ikYInputMeters () const;
+    double ikZInputMeters () const;
+    double ikRollInputDeg () const;
+    double ikPitchInputDeg () const;
+    double ikYawInputDeg () const;
+    void setIkPoseMetersDeg (const std::array< double, 3 >& positionMeters,
+                             const std::array< double, 3 >& rpyDeg);
 
     RobWorkStudio* _studio;
     rw::models::WorkCell* _workcell;
@@ -124,6 +139,9 @@ private:
     QDoubleSpinBox* _ikRollSpin;
     QDoubleSpinBox* _ikPitchSpin;
     QDoubleSpinBox* _ikYawSpin;
+    QComboBox* _ikDistanceUnitCombo;
+    QComboBox* _ikAngleUnitCombo;
+    QPushButton* _ikImportCurrentPoseButton;
     QPushButton* _ikSolveButton;
     QPushButton* _ikApplyButton;
     QLabel* _ikSummaryLabel;
@@ -178,6 +196,8 @@ private:
 
     // 缓存最近一次分析结果,供 Report tab / 导出功能使用。
     KinematicThresholds _thresholds;
+    KinematicLengthUnit _ikLengthUnit;
+    KinematicAngleUnit _ikAngleUnit;
     KinematicCurrentPoseResult _lastCurrentPose;
     std::vector< TaskPointReachabilityResult > _lastTaskPointResults;
     std::vector< WorkspaceSample > _workspaceSamples;

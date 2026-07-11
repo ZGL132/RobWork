@@ -145,6 +145,53 @@ AnalysisWarning makeWarning (const std::string& code,
     return w;
 }
 
+bool validateTaskPointTarget (const TaskPoint& target, std::string* error)
+{
+    for (double value : target.position) {
+        if (!std::isfinite (value)) {
+            if (error != nullptr)
+                *error = "Target position contains a non-finite value.";
+            return false;
+        }
+    }
+    for (double value : target.rpyDeg) {
+        if (!std::isfinite (value)) {
+            if (error != nullptr)
+                *error = "Target orientation contains a non-finite value.";
+            return false;
+        }
+    }
+    if (!std::isfinite (target.tolerance.positionMeters) ||
+        target.tolerance.positionMeters < 0.0) {
+        if (error != nullptr)
+            *error = "Target position tolerance must be finite and non-negative.";
+        return false;
+    }
+    if (!std::isfinite (target.tolerance.orientationDeg) ||
+        target.tolerance.orientationDeg < 0.0) {
+        if (error != nullptr)
+            *error = "Target orientation tolerance must be finite and non-negative.";
+        return false;
+    }
+    if (!std::isfinite (target.weight)) {
+        if (error != nullptr)
+            *error = "Target weight must be finite.";
+        return false;
+    }
+    return true;
+}
+
+double effectiveTolerance (double taskTolerance, double defaultTolerance)
+{
+    return taskTolerance > 0.0 ? taskTolerance : defaultTolerance;
+}
+
+bool hasFailureReason (const KinematicIkSolution& solution, KinematicFailureReason reason)
+{
+    return std::find (solution.failureReasons.begin (), solution.failureReasons.end (), reason) !=
+           solution.failureReasons.end ();
+}
+
 // =============================================================================
 //  sampleUnitDirections — Fibonacci 球面采样
 // =============================================================================
@@ -480,8 +527,24 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
     result.target = target;          // 把目标点也写到结果里,UI 列表不用额外维护
     result.status = AnalysisStatus::Unknown;
 
+    std::string validationError;
+    if (!validateTaskPointTarget (target, &validationError) ||
+        !std::isfinite (_thresholds.positionToleranceMeters) ||
+        _thresholds.positionToleranceMeters < 0.0 ||
+        !std::isfinite (_thresholds.orientationToleranceDeg) ||
+        _thresholds.orientationToleranceDeg < 0.0) {
+        result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::InvalidTarget;
+        result.warnings.push_back (makeWarning (
+            "KIN_INVALID_TARGET",
+            validationError.empty () ? "Kinematic target thresholds are invalid." : validationError,
+            AnalysisStatus::Fail));
+        return result;
+    }
+
     if (device == NULL) {
         result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::NoDevice;
         AnalysisWarning w;
         w.code     = "KIN_NO_DEVICE";
         w.message  = "No device available for IK analysis.";
@@ -496,6 +559,7 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         resolvedTcpFrame = device->getEnd ();
     if (resolvedTcpFrame == NULL) {
         result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::NoTcpFrame;
         AnalysisWarning w;
         w.code     = "KIN_NO_TCP";
         w.message  = "No TCP frame available for IK analysis.";
@@ -517,13 +581,17 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         // ownedPtr 构造堆上 JacobianIKSolver;Ptr 是 RobWork 的引用计数智能指针。
         rw::invkin::JacobianIKSolver::Ptr solver =
             rw::core::ownedPtr (new rw::invkin::JacobianIKSolver (device, resolvedTcpFrame, state));
-        // IKMetaSolver 接受任意 IK solver + 可选 collisionDetector,自动多 seed 搜索。
-        rw::invkin::IKMetaSolver metaSolver (solver, device, collisionDetector);
+        // MetaSolver 只负责多 seed 枚举。碰撞和限位在下方统一分类,否则
+        // IKMetaSolver 会提前过滤候选解,导致 Collision/JointLimit 被误报成无解。
+        rw::invkin::IKMetaSolver metaSolver (
+            solver, device, rw::core::Ptr< rw::proximity::CollisionDetector > (NULL));
         metaSolver.setStopAtFirst (false);   // 拿所有解,不全断在第一个
+        metaSolver.setCheckJointLimits (false);
         rawSolutions = metaSolver.solve (targetBaseTtcp, state);
     }
     catch (const std::exception& ex) {
         result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::SolverError;
         AnalysisWarning w;
         w.code     = "KIN_IK_SOLVER_ERROR";
         w.message  = std::string ("IK solver failed: ") + ex.what ();
@@ -534,6 +602,7 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
     }
     catch (...) {
         result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::SolverError;
         AnalysisWarning w;
         w.code     = "KIN_IK_SOLVER_ERROR";
         w.message  = "IK solver failed with an unknown error.";
@@ -545,6 +614,7 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
 
     if (rawSolutions.empty ()) {
         result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::IkNoSolution;
         AnalysisWarning w;
         w.code     = "KIN_IK_NO_SOLUTION";
         w.message  = "No IK solution found for the target pose.";
@@ -556,15 +626,44 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
 
     // 缓存当前 q 与 bounds,循环里多次复用。
     const rw::math::Q currentQ = device->getQ (state);
+    if (currentQ.size () != device->getDOF ()) {
+        result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::SolverError;
+        result.warnings.push_back (makeWarning (
+            "KIN_CURRENT_Q_DIMENSION",
+            "Current joint vector dimension does not match the selected device DOF.",
+            AnalysisStatus::Fail));
+        return result;
+    }
     const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
+    const double positionTolerance = effectiveTolerance (
+        target.tolerance.positionMeters, _thresholds.positionToleranceMeters);
+    const double orientationTolerance = effectiveTolerance (
+        target.tolerance.orientationDeg, _thresholds.orientationToleranceDeg);
     for (const rw::math::Q& q : rawSolutions) {
+        if (q.size () != device->getDOF ()) {
+            result.warnings.push_back (makeWarning (
+                "KIN_IK_Q_DIMENSION",
+                "IK solver returned a joint vector with an unexpected dimension.",
+                AnalysisStatus::Fail));
+            continue;
+        }
         KinematicIkSolution solution;
         solution.q = qToVector (q);
         solution.distanceToCurrentQ = qDistance (currentQ, q);
 
         // 关键:在副本 state 上跑 setQ,绝不污染调用方传入的 state。
         rw::kinematics::State solutionState = state;
-        device->setQ (q, solutionState);
+        try {
+            device->setQ (q, solutionState);
+        }
+        catch (const std::exception& ex) {
+            result.warnings.push_back (makeWarning (
+                "KIN_IK_STATE_ERROR",
+                std::string ("Could not apply an IK solution: ") + ex.what (),
+                AnalysisStatus::Fail));
+            continue;
+        }
 
         // ---- (a) 关节裕度 + 失败原因 ----
         const std::vector< double > margins = calculateJointLimitMargins (q, bounds);
@@ -582,14 +681,41 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         // ---- (c) 用副本 state 验算 FK,与目标位姿比较 ----
         // 重要:即便 IK 求解器声称"已收敛",由于数值误差,FK 与目标仍可能
         // 有微小偏差。这两个字段就是给用户看"实际能到多准"的指标。
-        const rw::math::Transform3D<> actualBaseTtcp =
-            rw::kinematics::Kinematics::frameTframe (device->getBase (), resolvedTcpFrame, solutionState);
-        solution.positionErrorMeters = positionError (actualBaseTtcp, targetBaseTtcp);
-        solution.orientationErrorDeg = orientationErrorDeg (actualBaseTtcp, targetBaseTtcp);
+        rw::math::Transform3D<> actualBaseTtcp;
+        try {
+            actualBaseTtcp = rw::kinematics::Kinematics::frameTframe (
+                device->getBase (), resolvedTcpFrame, solutionState);
+            solution.positionErrorMeters = positionError (actualBaseTtcp, targetBaseTtcp);
+            solution.orientationErrorDeg = orientationErrorDeg (actualBaseTtcp, targetBaseTtcp);
+        }
+        catch (const std::exception& ex) {
+            result.warnings.push_back (makeWarning (
+                "KIN_IK_FK_ERROR",
+                std::string ("Could not validate an IK solution with FK: ") + ex.what (),
+                AnalysisStatus::Fail));
+            continue;
+        }
+        std::vector< AnalysisWarning > residualWarnings;
+        const AnalysisStatus residualStatus = classifyTargetResidual (
+            solution.positionErrorMeters, solution.orientationErrorDeg,
+            positionTolerance, orientationTolerance,
+            &solution.failureReasons, &residualWarnings);
+        result.warnings.insert (
+            result.warnings.end (), residualWarnings.begin (), residualWarnings.end ());
 
         // ---- (d) 在该 q 处重新算雅可比的奇异指标 ----
-        const SingularMetrics singular =
-            calculateSingularMetrics (device->baseJframe (resolvedTcpFrame, solutionState), _thresholds);
+        SingularMetrics singular;
+        try {
+            singular = calculateSingularMetrics (
+                device->baseJframe (resolvedTcpFrame, solutionState), _thresholds);
+        }
+        catch (const std::exception& ex) {
+            result.warnings.push_back (makeWarning (
+                "KIN_IK_JACOBIAN_ERROR",
+                std::string ("Could not evaluate an IK solution Jacobian: ") + ex.what (),
+                AnalysisStatus::Fail));
+            continue;
+        }
         solution.manipulability  = singular.manipulability;
         solution.conditionNumber = singular.conditionNumber;
         if (singular.status == AnalysisStatus::Fail)
@@ -599,11 +725,22 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
 
         // ---- (e) 碰撞检查(可选)----
         // 注意:inCollision 标志决定该解是否计入"reachable"。
+        AnalysisStatus collisionStatus = AnalysisStatus::Pass;
         if (collisionDetector != NULL) {
-            rw::proximity::CollisionDetector::QueryResult queryResult;
-            solution.inCollision = collisionDetector->inCollision (solutionState, &queryResult);
-            if (solution.inCollision)
-                solution.failureReasons.push_back (KinematicFailureReason::Collision);
+            try {
+                rw::proximity::CollisionDetector::QueryResult queryResult;
+                solution.inCollision = collisionDetector->inCollision (solutionState, &queryResult);
+                if (solution.inCollision)
+                    solution.failureReasons.push_back (KinematicFailureReason::Collision);
+            }
+            catch (const std::exception& ex) {
+                collisionStatus = AnalysisStatus::Fail;
+                solution.failureReasons.push_back (KinematicFailureReason::SolverError);
+                result.warnings.push_back (makeWarning (
+                    "KIN_COLLISION_CHECK_ERROR",
+                    std::string ("Collision checking failed: ") + ex.what (),
+                    AnalysisStatus::Fail));
+            }
         }
 
         // ---- (f) 评分(越小越优)----
@@ -627,12 +764,24 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         // 初始 Pass,然后叠加 limitStatus / singular.status / 碰撞(强制 Fail)。
         // worstStatus(A, B) 选 A、B 中"更糟"的那个。
         solution.status = AnalysisStatus::Pass;
+        solution.status = worstStatus (solution.status, residualStatus);
         solution.status = worstStatus (solution.status, limitStatus);
         solution.status = worstStatus (solution.status, singular.status);
+        solution.status = worstStatus (solution.status, collisionStatus);
         if (solution.inCollision)
             solution.status = AnalysisStatus::Fail;
 
         result.solutions.push_back (solution);
+    }
+
+    if (result.solutions.empty ()) {
+        result.status = AnalysisStatus::Fail;
+        result.failureReason = KinematicFailureReason::SolverError;
+        result.warnings.push_back (makeWarning (
+            "KIN_IK_NO_VALID_SOLUTIONS",
+            "IK returned candidates, but none could be validated safely.",
+            AnalysisStatus::Fail));
+        return result;
     }
 
     // 按 UI 偏好排序(详见 sortIkSolutionsForDisplay 的注释)。
@@ -705,26 +854,33 @@ void rws::sortIkSolutionsForDisplay (std::vector< KinematicIkSolution >& solutio
 KinematicFailureReason primaryFailureFromIk (const KinematicIkAnalysisResult& ik)
 {
     if (ik.solutions.empty ())
-        return KinematicFailureReason::IkNoSolution;
+        return ik.failureReason == KinematicFailureReason::None ?
+            KinematicFailureReason::IkNoSolution : ik.failureReason;
     bool anyCollisionFree = false;
     for (const KinematicIkSolution& s : ik.solutions) {
         if (s.inCollision)
             continue;
         anyCollisionFree = true;
-        for (KinematicFailureReason r : s.failureReasons) {
-            if (r == KinematicFailureReason::JointLimit)
-                return KinematicFailureReason::JointLimit;
-            if (r == KinematicFailureReason::Singular)
-                return KinematicFailureReason::Singular;
-            if (r == KinematicFailureReason::NearJointLimit)
-                return KinematicFailureReason::NearJointLimit;
-            if (r == KinematicFailureReason::NearSingular)
-                return KinematicFailureReason::NearSingular;
-        }
-        return KinematicFailureReason::None;
+        if (s.status == AnalysisStatus::Pass)
+            return KinematicFailureReason::None;
     }
     if (!anyCollisionFree)
         return KinematicFailureReason::Collision;
+
+    const KinematicFailureReason priority[] = {
+        KinematicFailureReason::SolverError,
+        KinematicFailureReason::TargetResidual,
+        KinematicFailureReason::JointLimit,
+        KinematicFailureReason::Singular,
+        KinematicFailureReason::NearJointLimit,
+        KinematicFailureReason::NearSingular
+    };
+    for (KinematicFailureReason reason : priority) {
+        for (const KinematicIkSolution& solution : ik.solutions) {
+            if (!solution.inCollision && hasFailureReason (solution, reason))
+                return reason;
+        }
+    }
     return KinematicFailureReason::None;
 }
 
@@ -780,53 +936,15 @@ std::vector< TaskPointReachabilityResult > KinematicAnalyzer::analyzeTaskPoints 
         r.ik = analyzeIk (device, tcpFrame, state, point, collisionDetector);
 
         if (r.ik.solutions.empty ()) {
-            // IK 求解器没找到任何解。
             r.status         = AnalysisStatus::Fail;
-            r.primaryFailure = KinematicFailureReason::IkNoSolution;
-            r.failureReasons.push_back (KinematicFailureReason::IkNoSolution);
+            r.primaryFailure = primaryFailureFromIk (r.ik);
+            r.failureReasons.push_back (r.primaryFailure);
         }
         else {
-            // 把多解的失败原因归类成"主要失败原因"。
             r.primaryFailure = primaryFailureFromIk (r.ik);
-            // 扫一遍统计 allCollide / anyWarn,供后续校正使用。
-            bool allCollide   = true;
-            bool anyWarn       = false;
-            for (const KinematicIkSolution& s : r.ik.solutions) {
-                if (!s.inCollision) {
-                    allCollide = false;
-                    if (s.status == AnalysisStatus::Warning)
-                        anyWarn = true;
-                }
-            }
-            if (allCollide) {
-                // 所有解都碰撞 → 任务点物理上不可用。
-                r.status         = AnalysisStatus::Fail;
-                if (r.primaryFailure == KinematicFailureReason::None)
-                    r.primaryFailure = KinematicFailureReason::Collision;
-                if (r.failureReasons.empty ())
-                    r.failureReasons.push_back (KinematicFailureReason::Collision);
-            }
-            else if (r.primaryFailure == KinematicFailureReason::JointLimit ||
-                     r.primaryFailure == KinematicFailureReason::Singular) {
-                // 硬错误(JointLimit/Singular):Fail。
-                r.status = AnalysisStatus::Fail;
+            r.status = r.ik.status;
+            if (r.primaryFailure != KinematicFailureReason::None)
                 r.failureReasons.push_back (r.primaryFailure);
-            }
-            else if (r.primaryFailure == KinematicFailureReason::NearJointLimit ||
-                     r.primaryFailure == KinematicFailureReason::NearSingular) {
-                // 软警告:Warning。
-                r.status = AnalysisStatus::Warning;
-                r.failureReasons.push_back (r.primaryFailure);
-            }
-            else {
-                // 全部无碰撞解都 Pass。
-                r.status = AnalysisStatus::Pass;
-            }
-            // 后校正:primaryFailure 是 Warning(Near*)但实际无"非碰撞 Warning 解"
-            // → 说明 primaryFailure 是从某个早期解取的,真正可达的解都是 Pass。
-            // 此时把 status 降为 Pass,避免 UI 报"能到达但有警告"的假阳性。
-            if (r.status == AnalysisStatus::Warning && !anyWarn)
-                r.status = AnalysisStatus::Pass;
         }
         results.push_back (r);
     }

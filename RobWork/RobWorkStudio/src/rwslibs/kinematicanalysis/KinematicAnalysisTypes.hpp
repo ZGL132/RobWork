@@ -11,6 +11,22 @@
 
 namespace rws {
 
+enum class KinematicLengthUnit
+{
+    Meters,
+    Centimeters,
+    Millimeters,
+    Inches
+};
+
+enum class KinematicAngleUnit
+{
+    Degrees,
+    Radians,
+    Grads,
+    Turns
+};
+
 // 表示一次运动学分析失败的原因标签。用于在报告/UI 中以可读方式呈现失败根因,
 // 而不仅仅是状态枚举。
 enum class KinematicFailureReason
@@ -20,6 +36,7 @@ enum class KinematicFailureReason
     NoTcpFrame,      // TCP 帧未配置且设备末端帧不存在
     IkNoSolution,    // IK 求解器返回空解集
     Collision,       // 解处于碰撞状态
+    TargetResidual,  // FK 验算残差超过任务点允许的位置或姿态容差
     JointLimit,      // 解超出关节限位
     NearJointLimit,  // 解接近关节限位
     Singular,        // 解处雅可比奇异(条件数过差)
@@ -116,6 +133,7 @@ struct KinematicIkSolution
 struct KinematicIkAnalysisResult
 {
     AnalysisStatus status = AnalysisStatus::Unknown;   // 所有解中"最严重程度"的状态聚合
+    KinematicFailureReason failureReason = KinematicFailureReason::None;
     TaskPoint target;                                 // 输入目标点
     std::vector< KinematicIkSolution > solutions;     // 已按 UI 排序规则排好
     std::vector< AnalysisWarning > warnings;
@@ -171,6 +189,15 @@ struct KinematicAnalysisResult
 
 // 将枚举转换为可读字符串(用于日志/UI)。
 const char* toString(KinematicFailureReason reason);
+const char* toString(KinematicLengthUnit unit);
+const char* toString(KinematicAngleUnit unit);
+const char* unitSuffix(KinematicLengthUnit unit);
+const char* unitSuffix(KinematicAngleUnit unit);
+
+double displayLengthFromMeters(double meters, KinematicLengthUnit unit);
+double metersFromDisplayLength(double displayValue, KinematicLengthUnit unit);
+double displayAngleFromDegrees(double degrees, KinematicAngleUnit unit);
+double degreesFromDisplayAngle(double displayValue, KinematicAngleUnit unit);
 
 }    // namespace rws
 

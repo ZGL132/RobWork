@@ -155,6 +155,43 @@ AnalysisStatus rws::classifyJointLimitMargins (
     return overall;
 }
 
+AnalysisStatus rws::classifyTargetResidual (
+    double positionErrorMeters,
+    double orientationErrorDeg,
+    double positionToleranceMeters,
+    double orientationToleranceDeg,
+    std::vector< KinematicFailureReason >* failureReasons,
+    std::vector< AnalysisWarning >* warnings)
+{
+    const bool invalidInput =
+        !std::isfinite (positionErrorMeters) || !std::isfinite (orientationErrorDeg) ||
+        !std::isfinite (positionToleranceMeters) || !std::isfinite (orientationToleranceDeg) ||
+        positionToleranceMeters < 0.0 || orientationToleranceDeg < 0.0;
+    const bool positionFailed =
+        invalidInput || positionErrorMeters > positionToleranceMeters;
+    const bool orientationFailed =
+        invalidInput || orientationErrorDeg > orientationToleranceDeg;
+    if (!positionFailed && !orientationFailed)
+        return AnalysisStatus::Pass;
+
+    if (failureReasons != nullptr)
+        failureReasons->push_back (KinematicFailureReason::TargetResidual);
+    if (warnings != nullptr) {
+        AnalysisWarning warning;
+        warning.code = "KIN_TARGET_RESIDUAL";
+        warning.message =
+            "IK solution residual exceeds tolerance: position=" +
+            std::to_string (positionErrorMeters) + " m (limit " +
+            std::to_string (positionToleranceMeters) + "), orientation=" +
+            std::to_string (orientationErrorDeg) + " deg (limit " +
+            std::to_string (orientationToleranceDeg) + ").";
+        warning.source = "KinematicAnalyzer";
+        warning.severity = AnalysisStatus::Fail;
+        warnings->push_back (warning);
+    }
+    return AnalysisStatus::Fail;
+}
+
 // =============================================================================
 //  calculateSingularMetrics
 // =============================================================================

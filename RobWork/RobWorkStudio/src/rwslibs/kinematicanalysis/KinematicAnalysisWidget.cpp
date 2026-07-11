@@ -11,6 +11,7 @@
 #include <rw/kinematics/Frame.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/Q.hpp>
+#include <rw/math/RPY.hpp>
 #include <rws/RobWorkStudio.hpp>
 
 #include <QCheckBox>
@@ -32,6 +33,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -40,6 +42,8 @@
 #include <QVariant>
 
 #include <algorithm>
+#include <cmath>
+#include <exception>
 #include <limits>
 #include <string>
 #include <vector>
@@ -84,6 +88,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikRollSpin(NULL),
     _ikPitchSpin(NULL),
     _ikYawSpin(NULL),
+    _ikDistanceUnitCombo(NULL),
+    _ikAngleUnitCombo(NULL),
+    _ikImportCurrentPoseButton(NULL),
     _ikSolveButton(NULL),
     _ikApplyButton(NULL),
     _ikSummaryLabel(NULL),
@@ -128,6 +135,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _thresholdOrientationToleranceSpin(NULL),
     _thresholdApplyButton(NULL),
     _thresholds(),
+    _ikLengthUnit(KinematicLengthUnit::Meters),
+    _ikAngleUnit(KinematicAngleUnit::Degrees),
     _lastCurrentPose(),
     _lastTaskPointResults(),
     _workspaceSamples(),
@@ -228,13 +237,33 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QHBoxLayout* ikNameRow = new QHBoxLayout();
     _ikTargetNameEdit = new QLineEdit(_ikTab);
     _ikTargetNameEdit->setText(tr("Target"));
+    _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
     _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
     _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
     ikNameRow->addWidget(new QLabel(tr("Target:"), _ikTab));
     ikNameRow->addWidget(_ikTargetNameEdit, 1);
+    ikNameRow->addWidget(_ikImportCurrentPoseButton);
     ikNameRow->addWidget(_ikSolveButton);
     ikNameRow->addWidget(_ikApplyButton);
     ikLayout->addLayout(ikNameRow);
+
+    QHBoxLayout* ikUnitRow = new QHBoxLayout();
+    _ikDistanceUnitCombo = new QComboBox(_ikTab);
+    _ikAngleUnitCombo = new QComboBox(_ikTab);
+    _ikDistanceUnitCombo->addItem(tr("Meters"), static_cast<int>(KinematicLengthUnit::Meters));
+    _ikDistanceUnitCombo->addItem(tr("Centimeters"), static_cast<int>(KinematicLengthUnit::Centimeters));
+    _ikDistanceUnitCombo->addItem(tr("Millimeters"), static_cast<int>(KinematicLengthUnit::Millimeters));
+    _ikDistanceUnitCombo->addItem(tr("Inches"), static_cast<int>(KinematicLengthUnit::Inches));
+    _ikAngleUnitCombo->addItem(tr("Degrees"), static_cast<int>(KinematicAngleUnit::Degrees));
+    _ikAngleUnitCombo->addItem(tr("Radians"), static_cast<int>(KinematicAngleUnit::Radians));
+    _ikAngleUnitCombo->addItem(tr("Grads"), static_cast<int>(KinematicAngleUnit::Grads));
+    _ikAngleUnitCombo->addItem(tr("Turns"), static_cast<int>(KinematicAngleUnit::Turns));
+    ikUnitRow->addWidget(new QLabel(tr("Distance unit:"), _ikTab));
+    ikUnitRow->addWidget(_ikDistanceUnitCombo);
+    ikUnitRow->addWidget(new QLabel(tr("Angle unit:"), _ikTab));
+    ikUnitRow->addWidget(_ikAngleUnitCombo);
+    ikUnitRow->addStretch(1);
+    ikLayout->addLayout(ikUnitRow);
 
     auto makePoseSpin = [this] (double minimum, double maximum, double step) -> QDoubleSpinBox* {
         QDoubleSpinBox* spin = new QDoubleSpinBox(_ikTab);
@@ -250,6 +279,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikRollSpin = makePoseSpin(-360.0, 360.0, 1.0);
     _ikPitchSpin = makePoseSpin(-360.0, 360.0, 1.0);
     _ikYawSpin = makePoseSpin(-360.0, 360.0, 1.0);
+    updateIkUnitDisplay();
 
     QGridLayout* ikPoseGrid = new QGridLayout();
     ikPoseGrid->addWidget(new QLabel(tr("X:"), _ikTab), 0, 0);
@@ -302,6 +332,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     content->addWidget(_status);
 
     connect (_refreshCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (refreshCurrentPose ()));
+    connect (_ikImportCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (importCurrentPoseToIk ()));
+    connect (_ikDistanceUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
+    connect (_ikAngleUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
     connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
@@ -544,6 +577,108 @@ rw::core::Ptr< rw::kinematics::Frame > KinematicAnalysisWidget::selectedTcpFrame
     return frameByName (_workcell, _tcpFrameCombo->currentText ().toStdString ());
 }
 
+rw::core::Ptr< rw::proximity::CollisionDetector >
+KinematicAnalysisWidget::collisionDetectorForAnalysis (
+    bool requested, bool* unavailable) const
+{
+    if (unavailable != nullptr)
+        *unavailable = false;
+    if (!requested)
+        return NULL;
+    if (_studio == nullptr) {
+        if (unavailable != nullptr)
+            *unavailable = true;
+        return NULL;
+    }
+    rw::core::Ptr< rw::proximity::CollisionDetector > detector =
+        _studio->getCollisionDetector ();
+    if (detector == NULL && unavailable != nullptr)
+        *unavailable = true;
+    return detector;
+}
+
+double KinematicAnalysisWidget::ikXInputMeters () const
+{
+    return metersFromDisplayLength (_ikXSpin->value (), _ikLengthUnit);
+}
+
+double KinematicAnalysisWidget::ikYInputMeters () const
+{
+    return metersFromDisplayLength (_ikYSpin->value (), _ikLengthUnit);
+}
+
+double KinematicAnalysisWidget::ikZInputMeters () const
+{
+    return metersFromDisplayLength (_ikZSpin->value (), _ikLengthUnit);
+}
+
+double KinematicAnalysisWidget::ikRollInputDeg () const
+{
+    return degreesFromDisplayAngle (_ikRollSpin->value (), _ikAngleUnit);
+}
+
+double KinematicAnalysisWidget::ikPitchInputDeg () const
+{
+    return degreesFromDisplayAngle (_ikPitchSpin->value (), _ikAngleUnit);
+}
+
+double KinematicAnalysisWidget::ikYawInputDeg () const
+{
+    return degreesFromDisplayAngle (_ikYawSpin->value (), _ikAngleUnit);
+}
+
+void KinematicAnalysisWidget::setIkPoseMetersDeg (
+    const std::array< double, 3 >& positionMeters,
+    const std::array< double, 3 >& rpyDeg)
+{
+    const QSignalBlocker bx (_ikXSpin);
+    const QSignalBlocker by (_ikYSpin);
+    const QSignalBlocker bz (_ikZSpin);
+    const QSignalBlocker br (_ikRollSpin);
+    const QSignalBlocker bp (_ikPitchSpin);
+    const QSignalBlocker bw (_ikYawSpin);
+    _ikXSpin->setValue (displayLengthFromMeters (positionMeters[0], _ikLengthUnit));
+    _ikYSpin->setValue (displayLengthFromMeters (positionMeters[1], _ikLengthUnit));
+    _ikZSpin->setValue (displayLengthFromMeters (positionMeters[2], _ikLengthUnit));
+    _ikRollSpin->setValue (displayAngleFromDegrees (rpyDeg[0], _ikAngleUnit));
+    _ikPitchSpin->setValue (displayAngleFromDegrees (rpyDeg[1], _ikAngleUnit));
+    _ikYawSpin->setValue (displayAngleFromDegrees (rpyDeg[2], _ikAngleUnit));
+}
+
+void KinematicAnalysisWidget::updateIkUnitDisplay ()
+{
+    if (_ikXSpin == NULL || _ikDistanceUnitCombo == NULL || _ikAngleUnitCombo == NULL)
+        return;
+
+    const std::array< double, 3 > positionMeters = {{
+        ikXInputMeters (), ikYInputMeters (), ikZInputMeters ()}};
+    const std::array< double, 3 > rpyDeg = {{
+        ikRollInputDeg (), ikPitchInputDeg (), ikYawInputDeg ()}};
+
+    _ikLengthUnit = static_cast< KinematicLengthUnit > (
+        _ikDistanceUnitCombo->currentData ().toInt ());
+    _ikAngleUnit = static_cast< KinematicAngleUnit > (
+        _ikAngleUnitCombo->currentData ().toInt ());
+
+    const QString lengthSuffix = QStringLiteral (" ") +
+        QString::fromLatin1 (unitSuffix (_ikLengthUnit));
+    const QString angleSuffix = QStringLiteral (" ") +
+        QString::fromLatin1 (unitSuffix (_ikAngleUnit));
+    for (QDoubleSpinBox* spin : {_ikXSpin, _ikYSpin, _ikZSpin}) {
+        spin->setRange (displayLengthFromMeters (-1000.0, _ikLengthUnit),
+                        displayLengthFromMeters (1000.0, _ikLengthUnit));
+        spin->setSingleStep (displayLengthFromMeters (0.01, _ikLengthUnit));
+        spin->setSuffix (lengthSuffix);
+    }
+    for (QDoubleSpinBox* spin : {_ikRollSpin, _ikPitchSpin, _ikYawSpin}) {
+        spin->setRange (displayAngleFromDegrees (-360.0, _ikAngleUnit),
+                        displayAngleFromDegrees (360.0, _ikAngleUnit));
+        spin->setSingleStep (displayAngleFromDegrees (1.0, _ikAngleUnit));
+        spin->setSuffix (angleSuffix);
+    }
+    setIkPoseMetersDeg (positionMeters, rpyDeg);
+}
+
 // refreshCurrentPose:重置四个 Current pose 表格与文本标签 → 调用
 // KinematicAnalyzer::analyzeCurrentPose → 把结果填回 UI,同时更新 _lastCurrentPose
 // 并刷新 Report tab 的汇总。
@@ -641,6 +776,42 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
 // solveIk:从 IK tab 读取目标点(x/y/z + RPY),转 TaskPoint 后调 analyzeIk;
 // 结果按 sortIkSolutionsForDisplay 已排好,逐条写入表格;同时把失败原因列在
 // "Q / failures" 一栏。
+void KinematicAnalysisWidget::importCurrentPoseToIk ()
+{
+    if (_workcell == NULL) {
+        setStatus (tr("Cannot import current TCP pose: no WorkCell loaded."));
+        return;
+    }
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == NULL) {
+        setStatus (tr("Cannot import current TCP pose: no valid device selected."));
+        return;
+    }
+    rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+    if (tcpFrame == NULL) {
+        setStatus (tr("Cannot import current TCP pose: no valid TCP frame selected."));
+        return;
+    }
+
+    try {
+        const rw::math::Transform3D<> baseTtcp =
+            rw::kinematics::Kinematics::frameTframe (
+                device->getBase (), tcpFrame.get (), currentState ());
+        const rw::math::RPY<> rpy (baseTtcp.R ());
+        const double toDeg = 180.0 / 3.141592653589793238462643383279502884;
+        setIkPoseMetersDeg (
+            {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}},
+            {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}});
+        setStatus (tr("Imported current TCP pose into IK target."));
+    }
+    catch (const std::exception& e) {
+        setStatus (tr("Cannot import current TCP pose: %1").arg (QString::fromStdString (e.what ())));
+    }
+    catch (...) {
+        setStatus (tr("Cannot import current TCP pose: unknown error."));
+    }
+}
+
 void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
@@ -666,13 +837,18 @@ void KinematicAnalysisWidget::solveIk ()
     target.id = "ik_target";
     target.name = _ikTargetNameEdit->text().toStdString();
     target.tcpFrame = tcpName;
-    target.position = {{_ikXSpin->value(), _ikYSpin->value(), _ikZSpin->value()}};
-    target.rpyDeg = {{_ikRollSpin->value(), _ikPitchSpin->value(), _ikYawSpin->value()}};
+    target.position = {{ikXInputMeters(), ikYInputMeters(), ikZInputMeters()}};
+    target.rpyDeg = {{ikRollInputDeg(), ikPitchInputDeg(), ikYawInputDeg()}};
+    target.tolerance.positionMeters = _thresholds.positionToleranceMeters;
+    target.tolerance.orientationDeg = _thresholds.orientationToleranceDeg;
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
+    bool collisionUnavailable = false;
+    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
+        collisionDetectorForAnalysis (true, &collisionUnavailable);
     const KinematicIkAnalysisResult result =
-        analyzer.analyzeIk(device, tcpFrame, currentState(), target);
+        analyzer.analyzeIk(device, tcpFrame, currentState(), target, collisionDetector);
 
     _ikSolutionTable->setRowCount(static_cast<int>(result.solutions.size()));
     for (std::size_t i = 0; i < result.solutions.size(); ++i) {
@@ -697,8 +873,14 @@ void KinematicAnalysisWidget::solveIk ()
         tr("Solutions: %1, status: %2")
             .arg(static_cast<int>(result.solutions.size()))
             .arg(QString::fromLatin1(statusText(result.status))));
-    setStatus(tr("IK analysis completed with %1 solution(s).")
-                  .arg(static_cast<int>(result.solutions.size())));
+    if (collisionUnavailable) {
+        setStatus (tr("IK analysis completed with %1 solution(s); collision checking was unavailable.")
+                       .arg (static_cast< int > (result.solutions.size ())));
+    }
+    else {
+        setStatus(tr("IK analysis completed with %1 solution(s).")
+                      .arg(static_cast<int>(result.solutions.size())));
+    }
 }
 
 // applySelectedIkSolution:把用户在 IK 表格里选中的那条解写回当前 state:
@@ -1072,11 +1254,24 @@ QString cellText (QTableWidget* t, int r, int c)
 //   - 第 0 列是 checkbox 决定 enabled;
 //   - 第 3 列的 Type 字符串映射回 TaskPointType 枚举;
 //   - 数值列通过 toDouble 解析。
-std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable () const
+std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable (QString* error) const
 {
     std::vector< TaskPoint > points;
+    if (error != nullptr)
+        error->clear ();
     if (_taskPointTable == nullptr)
         return points;
+    auto readNumber = [this, error] (int row, int column, const QString& field, double& value) {
+        bool ok = false;
+        value = cellText (_taskPointTable, row, column).toDouble (&ok);
+        if (ok && std::isfinite (value))
+            return true;
+        if (error != nullptr) {
+            *error = tr("Task point row %1 has an invalid %2 value.")
+                         .arg (row + 1).arg (field);
+        }
+        return false;
+    };
     for (int r = 0; r < _taskPointTable->rowCount (); ++r) {
         TaskPoint p;
         p.id      = cellText (_taskPointTable, r, 1).toStdString ();
@@ -1097,15 +1292,21 @@ std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable () 
             p.type = TaskPointType::Screw;
         else if (typeText.compare ("Custom", Qt::CaseInsensitive) == 0)
             p.type = TaskPointType::Custom;
-        p.position[0] = cellText (_taskPointTable, r, 4).toDouble ();
-        p.position[1] = cellText (_taskPointTable, r, 5).toDouble ();
-        p.position[2] = cellText (_taskPointTable, r, 6).toDouble ();
-        p.rpyDeg[0]   = cellText (_taskPointTable, r, 7).toDouble ();
-        p.rpyDeg[1]   = cellText (_taskPointTable, r, 8).toDouble ();
-        p.rpyDeg[2]   = cellText (_taskPointTable, r, 9).toDouble ();
-        p.tolerance.positionMeters = cellText (_taskPointTable, r, 10).toDouble ();
-        p.tolerance.orientationDeg = cellText (_taskPointTable, r, 11).toDouble ();
-        p.weight                   = cellText (_taskPointTable, r, 12).toDouble ();
+        if (!readNumber (r, 4, tr("x"), p.position[0]) ||
+            !readNumber (r, 5, tr("y"), p.position[1]) ||
+            !readNumber (r, 6, tr("z"), p.position[2]) ||
+            !readNumber (r, 7, tr("roll"), p.rpyDeg[0]) ||
+            !readNumber (r, 8, tr("pitch"), p.rpyDeg[1]) ||
+            !readNumber (r, 9, tr("yaw"), p.rpyDeg[2]) ||
+            !readNumber (r, 10, tr("position tolerance"), p.tolerance.positionMeters) ||
+            !readNumber (r, 11, tr("orientation tolerance"), p.tolerance.orientationDeg) ||
+            !readNumber (r, 12, tr("weight"), p.weight))
+            return std::vector< TaskPoint > ();
+        if (p.tolerance.positionMeters < 0.0 || p.tolerance.orientationDeg < 0.0) {
+            if (error != nullptr)
+                *error = tr("Task point row %1 has a negative tolerance.").arg (r + 1);
+            return std::vector< TaskPoint > ();
+        }
         QTableWidgetItem* enabledItem = _taskPointTable->item (r, 0);
         p.enabled = enabledItem != nullptr && enabledItem->checkState () == Qt::Checked;
         points.push_back (p);
@@ -1231,7 +1432,13 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
         setStatus(tr("Task point export canceled."));
         return;
     }
-    const std::vector< TaskPoint > points = collectTaskPointsFromTable ();
+    QString validationError;
+    const std::vector< TaskPoint > points = collectTaskPointsFromTable (&validationError);
+    if (!validationError.isEmpty ()) {
+        QMessageBox::warning (this, tr("Export error"), validationError);
+        setStatus (validationError);
+        return;
+    }
     const std::string csv                 = RobotAnalysisCsv::taskPointsToCsv (points);
     QFile file (path);
     if (!file.open (QFile::WriteOnly | QFile::Text)) {
@@ -1272,26 +1479,41 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
-    const std::vector< TaskPoint > points                = collectTaskPointsFromTable ();
+    QString validationError;
+    const std::vector< TaskPoint > points = collectTaskPointsFromTable (&validationError);
+    if (!validationError.isEmpty ()) {
+        setStatus (validationError);
+        return;
+    }
+    bool collisionUnavailable = false;
+    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
+        collisionDetectorForAnalysis (true, &collisionUnavailable);
     const std::vector< TaskPointReachabilityResult > results =
-        analyzer.analyzeTaskPoints (device, tcpFrame, state, points, NULL);
+        analyzer.analyzeTaskPoints (device, tcpFrame, state, points, collisionDetector);
     const double rate = analyzer.calculateReachableRate (results);
     _lastTaskPointResults = results;
     applyTaskPointResults (results, rate);
-    setStatus(tr("Analyzed %1 task point(s). Reachable rate: %2.")
+    const QString collisionNote = collisionUnavailable ?
+        tr(" Collision checking was unavailable.") : QString ();
+    setStatus(tr("Analyzed %1 task point(s). Reachable rate: %2.%3")
                   .arg(static_cast<int>(results.size()))
-                  .arg(QString::number(rate, 'f', 3)));
+                  .arg(QString::number(rate, 'f', 3)).arg (collisionNote));
     updateReportSummary ();
 }
 
 // collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:
 //   - 0 → Task points:复用 collectTaskPointsFromTable,只取 enabled 的位置;
 //   - 1 → Manual rows:从 _posePositionTable 逐行读出 xyz。
-std::vector< std::array< double, 3 > > KinematicAnalysisWidget::collectPoseReachabilityPositions () const
+std::vector< std::array< double, 3 > >
+KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
 {
     std::vector< std::array< double, 3 > > positions;
+    if (error != nullptr)
+        error->clear ();
     if (_poseSourceCombo != NULL && _poseSourceCombo->currentIndex () == 0) {
-        const std::vector< TaskPoint > points = collectTaskPointsFromTable ();
+        const std::vector< TaskPoint > points = collectTaskPointsFromTable (error);
+        if (error != nullptr && !error->isEmpty ())
+            return positions;
         for (const TaskPoint& point : points) {
             if (point.enabled)
                 positions.push_back (point.position);
@@ -1302,9 +1524,20 @@ std::vector< std::array< double, 3 > > KinematicAnalysisWidget::collectPoseReach
     if (_posePositionTable == NULL)
         return positions;
     for (int r = 0; r < _posePositionTable->rowCount (); ++r) {
-        positions.push_back ({{cellText (_posePositionTable, r, 0).toDouble (),
-                               cellText (_posePositionTable, r, 1).toDouble (),
-                               cellText (_posePositionTable, r, 2).toDouble ()}});
+        std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
+        for (int column = 0; column < 3; ++column) {
+            bool ok = false;
+            position[static_cast< std::size_t > (column)] =
+                cellText (_posePositionTable, r, column).toDouble (&ok);
+            if (!ok || !std::isfinite (position[static_cast< std::size_t > (column)])) {
+                if (error != nullptr) {
+                    *error = tr("Pose position row %1 contains an invalid numeric value.")
+                                 .arg (r + 1);
+                }
+                return std::vector< std::array< double, 3 > > ();
+            }
+        }
+        positions.push_back (position);
     }
     return positions;
 }
@@ -1381,10 +1614,16 @@ void KinematicAnalysisWidget::sampleWorkspace ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
-    _workspaceSamples = analyzer.sampleWorkspace (device, tcpFrame, currentState (), config, NULL);
+    bool collisionUnavailable = false;
+    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
+        collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
+    _workspaceSamples = analyzer.sampleWorkspace (
+        device, tcpFrame, currentState (), config, collisionDetector);
     applyWorkspaceResults (_workspaceSamples);
-    setStatus (tr("Workspace sampling completed with %1 sample(s).")
-                   .arg (static_cast< int > (_workspaceSamples.size ())));
+    const QString collisionNote = collisionUnavailable ?
+        tr(" Collision checking was unavailable.") : QString ();
+    setStatus (tr("Workspace sampling completed with %1 sample(s).%2")
+                   .arg (static_cast< int > (_workspaceSamples.size ())).arg (collisionNote));
     updateReportSummary ();
 }
 
@@ -1475,8 +1714,13 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
         setStatus (tr("Cannot analyze pose reachability: no valid device selected."));
         return;
     }
+    QString validationError;
     const std::vector< std::array< double, 3 > > positions =
-        collectPoseReachabilityPositions ();
+        collectPoseReachabilityPositions (&validationError);
+    if (!validationError.isEmpty ()) {
+        setStatus (validationError);
+        return;
+    }
     if (positions.empty ()) {
         setStatus (tr("Cannot analyze pose reachability: no positions available."));
         return;
@@ -1489,11 +1733,16 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
+    bool collisionUnavailable = false;
+    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
+        collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
     _poseReachabilitySamples = analyzer.analyzePoseReachability (
-        device, selectedTcpFrame (), currentState (), positions, config, NULL);
+        device, selectedTcpFrame (), currentState (), positions, config, collisionDetector);
     applyPoseReachabilityResults (_poseReachabilitySamples);
-    setStatus (tr("Pose reachability completed for %1 position(s).")
-                   .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    const QString collisionNote = collisionUnavailable ?
+        tr(" Collision checking was unavailable.") : QString ();
+    setStatus (tr("Pose reachability completed for %1 position(s).%2")
+                   .arg (static_cast< int > (_poseReachabilitySamples.size ())).arg (collisionNote));
     updateReportSummary ();
 }
 

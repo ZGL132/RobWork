@@ -45,6 +45,15 @@ AnalysisStatus classifyJointLimitMargins (
     const KinematicThresholds& thresholds,
     std::vector< AnalysisWarning >* warnings);
 
+// 用 FK 验算残差判定 IK 解是否满足目标容差。位置或姿态任一超差均为 Fail。
+AnalysisStatus classifyTargetResidual (
+    double positionErrorMeters,
+    double orientationErrorDeg,
+    double positionToleranceMeters,
+    double orientationToleranceDeg,
+    std::vector< KinematicFailureReason >* failureReasons,
+    std::vector< AnalysisWarning >* warnings);
+
 // 对一个 Jacobian 做 SVD,计算条件数 / 可操作度,并按 thresholds 给出状态。
 SingularMetrics calculateSingularMetrics (
     const rw::math::Jacobian& jacobian,

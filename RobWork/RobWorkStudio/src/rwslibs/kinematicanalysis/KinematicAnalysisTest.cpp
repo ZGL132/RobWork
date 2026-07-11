@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <string>
 
 // 测试程序:不依赖完整 RobWorkStudio 渲染环境,只验证分析器/指标/类型层
@@ -88,10 +89,115 @@ static int testTypes ()
                                 "Singular",
                                 "toString Singular"))
         return rc;
+    if (const int rc = require (
+            std::string (rws::toString (rws::KinematicFailureReason::TargetResidual)) ==
+                "TargetResidual",
+            "toString TargetResidual"))
+        return rc;
+    return 0;
+}
+
+static int testTargetValidationAndResidual ()
+{
+    rws::KinematicThresholds thresholds;
+    std::vector< rws::KinematicFailureReason > reasons;
+    std::vector< rws::AnalysisWarning > warnings;
+
+    rws::AnalysisStatus status = rws::classifyTargetResidual (
+        0.0005, 0.5,
+        thresholds.positionToleranceMeters,
+        thresholds.orientationToleranceDeg,
+        &reasons, &warnings);
+    if (const int rc = require (status == rws::AnalysisStatus::Pass,
+                                "residual inside tolerance passes"))
+        return rc;
+    if (const int rc = require (reasons.empty () && warnings.empty (),
+                                "passing residual has no diagnostics"))
+        return rc;
+
+    status = rws::classifyTargetResidual (
+        0.002, 0.5,
+        thresholds.positionToleranceMeters,
+        thresholds.orientationToleranceDeg,
+        &reasons, &warnings);
+    if (const int rc = require (status == rws::AnalysisStatus::Fail,
+                                "position residual outside tolerance fails"))
+        return rc;
+    if (const int rc = require (
+            reasons.size () == 1 &&
+                reasons.front () == rws::KinematicFailureReason::TargetResidual,
+            "target residual failure reason is recorded"))
+        return rc;
+    if (const int rc = require (!warnings.empty () && warnings.front ().code == "KIN_TARGET_RESIDUAL",
+                                "target residual warning is recorded"))
+        return rc;
+
+    reasons.clear ();
+    warnings.clear ();
+    status = rws::classifyTargetResidual (
+        std::numeric_limits< double >::quiet_NaN (), 0.0,
+        thresholds.positionToleranceMeters,
+        thresholds.orientationToleranceDeg,
+        &reasons, &warnings);
+    if (const int rc = require (status == rws::AnalysisStatus::Fail,
+                                "non-finite residual fails closed"))
+        return rc;
+
+    rws::KinematicAnalyzer analyzer;
+    rw::kinematics::State state;
+    rws::TaskPoint invalidTarget;
+    invalidTarget.position[0] = std::numeric_limits< double >::quiet_NaN ();
+    const rws::KinematicIkAnalysisResult invalid =
+        analyzer.analyzeIk (NULL, NULL, state, invalidTarget, NULL);
+    if (const int rc = require (invalid.status == rws::AnalysisStatus::Fail,
+                                "non-finite target fails"))
+        return rc;
+    if (const int rc = require (
+            invalid.failureReason == rws::KinematicFailureReason::InvalidTarget,
+            "non-finite target preserves InvalidTarget"))
+        return rc;
+
+    rws::TaskPoint validTarget;
+    const rws::KinematicIkAnalysisResult noDevice =
+        analyzer.analyzeIk (NULL, NULL, state, validTarget, NULL);
+    if (const int rc = require (
+            noDevice.failureReason == rws::KinematicFailureReason::NoDevice,
+            "valid target without a device preserves NoDevice"))
+        return rc;
     return 0;
 }
 
 // 子套件 2:analyzeCurrentPose 在 NULL device 下的降级路径,以及阈值存取。
+static int testPoseUnitConversions ()
+{
+    if (const int rc = assertNear (
+            rws::displayLengthFromMeters (0.125, rws::KinematicLengthUnit::Millimeters),
+            125.0, 1e-12, "meters to millimeters"))
+        return rc;
+    if (const int rc = assertNear (
+            rws::metersFromDisplayLength (12.5, rws::KinematicLengthUnit::Centimeters),
+            0.125, 1e-12, "centimeters to meters"))
+        return rc;
+    if (const int rc = assertNear (
+            rws::displayAngleFromDegrees (180.0, rws::KinematicAngleUnit::Radians),
+            rw::math::Pi, 1e-12, "degrees to radians"))
+        return rc;
+    if (const int rc = assertNear (
+            rws::degreesFromDisplayAngle (0.25, rws::KinematicAngleUnit::Turns),
+            90.0, 1e-12, "turns to degrees"))
+        return rc;
+    if (const int rc = require (
+            std::string (rws::toString (rws::KinematicLengthUnit::Millimeters)) ==
+                "Millimeters",
+            "length unit string"))
+        return rc;
+    if (const int rc = require (
+            std::string (rws::unitSuffix (rws::KinematicAngleUnit::Radians)) == "rad",
+            "angle unit suffix"))
+        return rc;
+    return 0;
+}
+
 static int testCurrentPose ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -500,6 +606,10 @@ static int runAll ()
         return rc;
     if (const int rc = testCurrentPose ())
         return rc;
+    if (const int rc = testTargetValidationAndResidual ())
+        return rc;
+    if (const int rc = testPoseUnitConversions ())
+        return rc;
     if (const int rc = testIkRanking ())
         return rc;
     if (const int rc = testTaskPointReachableRate ())
@@ -526,6 +636,10 @@ int main (int argc, char** argv)
         rc = testMetrics ();
     else if (suite == "current_pose")
         rc = testCurrentPose ();
+    else if (suite == "target_validation")
+        rc = testTargetValidationAndResidual ();
+    else if (suite == "pose_units")
+        rc = testPoseUnitConversions ();
     else if (suite == "ik")
         rc = testIkRanking ();
     else if (suite == "task_points")
