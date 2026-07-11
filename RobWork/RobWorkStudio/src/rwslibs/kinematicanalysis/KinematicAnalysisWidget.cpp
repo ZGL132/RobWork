@@ -3,6 +3,7 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicAnalyzer.hpp"
 
+// 共享的 CSV / JSON 序列化工具,TaskPoint 与本插件复用了它。
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
 
 #include <rw/models/Device.hpp>
@@ -45,6 +46,14 @@
 
 using namespace rws;
 
+// 构造函数:
+//   - 把所有成员指针先置 NULL(防御性初始化);
+//   - 用 QVBoxLayout + QScrollArea 包裹主内容区,
+//     这样插件可以在小窗口下保持可用(滚动条出现);
+//   - 顶部一行是设备 / TCP 帧选择 + Refresh 按钮;
+//   - QTabWidget 承载 6 个子页;
+//   - 底部一个只读状态条用于反馈用户操作结果;
+//   - 末尾把所有按钮的 clicked() 信号连到对应的槽函数。
 KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QWidget(parent),
     _studio(NULL),
@@ -323,11 +332,14 @@ QSize KinematicAnalysisWidget::minimumSizeHint () const
     return QSize (300, 420);
 }
 
+// setRobWorkStudio:由 KinematicAnalysisPlugin::initialize 调用,缓存主程序句柄;
+// 用它获取当前 state、写回 IK 解。
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
 {
     _studio = studio;
 }
 
+// setWorkCell:WorkCell 变化时调用,刷新设备/帧下拉,并提示用户当前状态。
 void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
 {
     _workcell = workcell;
@@ -341,6 +353,7 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         setStatus(tr("WorkCell loaded. Select a device and refresh analysis."));
 }
 
+// populateDevices:把 WorkCell 中的 Device 全部填进 _deviceCombo。
 void KinematicAnalysisWidget::populateDevices ()
 {
     _deviceCombo->clear ();
@@ -357,6 +370,8 @@ void KinematicAnalysisWidget::populateDevices ()
         _deviceCombo->setCurrentIndex (0);
 }
 
+// populateTcpFrames:用 Kinematics::findAllFrames 收集 WorkCell 中所有帧,
+// 提供给用户选作 TCP。这会把所有辅助 / 工具 / 末端帧都列出。
 void KinematicAnalysisWidget::populateTcpFrames ()
 {
     _tcpFrameCombo->clear ();
@@ -376,6 +391,8 @@ void KinematicAnalysisWidget::populateTcpFrames ()
         _tcpFrameCombo->setCurrentIndex (0);
 }
 
+// currentState:优先返回 RobWorkStudio 的当前 state;否则用 WorkCell 默认 state;
+// 都不可用时返回一个空 State(供分析器做空指针 / 空状态分支)。
 rw::kinematics::State KinematicAnalysisWidget::currentState () const
 {
     if (_studio != NULL)
@@ -385,6 +402,7 @@ rw::kinematics::State KinematicAnalysisWidget::currentState () const
     return rw::kinematics::State ();
 }
 
+// setStatus:状态栏的简单 setter,NULL 检查避免析构期崩溃。
 void KinematicAnalysisWidget::setStatus (const QString& message)
 {
     if (_status != NULL)
@@ -392,6 +410,7 @@ void KinematicAnalysisWidget::setStatus (const QString& message)
 }
 
 namespace {
+// configureAnalysisTable:把常用的表格属性集中在一起,避免在多处重复设置。
 void configureAnalysisTable (QTableWidget* table)
 {
     table->setSelectionBehavior (QAbstractItemView::SelectRows);
@@ -402,6 +421,7 @@ void configureAnalysisTable (QTableWidget* table)
     table->verticalHeader ()->setVisible (false);
 }
 
+// makeItem:构造只读单元格;重载 double 版本方便直接放数值。
 QTableWidgetItem* makeItem (const QString& text)
 {
     QTableWidgetItem* item = new QTableWidgetItem (text);
@@ -413,6 +433,7 @@ QTableWidgetItem* makeItem (double v)
     return makeItem (QString::number (v));
 }
 
+// statusText:AnalysisStatus → 可读字符串,与 toString(KinematicFailureReason) 配套。
 const char* statusText (rws::AnalysisStatus status)
 {
     switch (status) {
@@ -424,6 +445,7 @@ const char* statusText (rws::AnalysisStatus status)
     }
 }
 
+// qVectorText:把关节向量格式化为 "q0, q1, ..." 用于表格/CSV 显示。
 QString qVectorText (const std::vector< double >& q)
 {
     QStringList values;
@@ -432,6 +454,7 @@ QString qVectorText (const std::vector< double >& q)
     return values.join(", ");
 }
 
+// failureReasonsText:把失败原因枚举数组格式化为 ", " 分隔字符串。
 QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& reasons)
 {
     if (reasons.empty())
@@ -443,6 +466,7 @@ QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& re
     return values.join(", ");
 }
 
+// taskPointTypeText:TaskPointType → 字符串,UI 显示与回写都用。
 const char* taskPointTypeText (rws::TaskPointType type)
 {
     switch (type) {
@@ -458,6 +482,8 @@ const char* taskPointTypeText (rws::TaskPointType type)
     }
 }
 
+// makeQItem:把 IK 解的 q + failureReasons 拼成一个单元格,
+// 并把 q 序列化到 Qt::UserRole,Apply 时直接读取,避免再次解析字符串。
 QTableWidgetItem* makeQItem (const std::vector< double >& q,
                              const std::vector< rws::KinematicFailureReason >& reasons)
 {
@@ -474,6 +500,7 @@ QTableWidgetItem* makeQItem (const std::vector< double >& q,
     return item;
 }
 
+// deviceByName / frameByName:按名称在 WorkCell 中查找;找不到返回 NULL。
 rw::core::Ptr< rw::models::Device > deviceByName (
     rw::models::WorkCell* wc, const std::string& name)
 {
@@ -502,6 +529,7 @@ rw::core::Ptr< rw::kinematics::Frame > frameByName (
 }
 }    // namespace
 
+// selectedDevice / selectedTcpFrame:把"下拉框当前选项"翻译成 RobWork 指针。
 rw::core::Ptr< rw::models::Device > KinematicAnalysisWidget::selectedDevice () const
 {
     if (_workcell == NULL || _deviceCombo == NULL)
@@ -516,6 +544,9 @@ rw::core::Ptr< rw::kinematics::Frame > KinematicAnalysisWidget::selectedTcpFrame
     return frameByName (_workcell, _tcpFrameCombo->currentText ().toStdString ());
 }
 
+// refreshCurrentPose:重置四个 Current pose 表格与文本标签 → 调用
+// KinematicAnalyzer::analyzeCurrentPose → 把结果填回 UI,同时更新 _lastCurrentPose
+// 并刷新 Report tab 的汇总。
 void KinematicAnalysisWidget::refreshCurrentPose ()
 {
     _qTable->setRowCount (0);
@@ -607,6 +638,9 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
     updateReportSummary ();
 }
 
+// solveIk:从 IK tab 读取目标点(x/y/z + RPY),转 TaskPoint 后调 analyzeIk;
+// 结果按 sortIkSolutionsForDisplay 已排好,逐条写入表格;同时把失败原因列在
+// "Q / failures" 一栏。
 void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
@@ -667,6 +701,11 @@ void KinematicAnalysisWidget::solveIk ()
                   .arg(static_cast<int>(result.solutions.size())));
 }
 
+// applySelectedIkSolution:把用户在 IK 表格里选中的那条解写回当前 state:
+//   1) 通过 Qt::UserRole 取出 QVariantList(写入表格时由 makeQItem 缓存);
+//   2) 校验 DOF 维度;
+//   3) device->setQ + studio->setState 把整个 state 推回 RobWorkStudio;
+//   4) refreshCurrentPose 更新 Current pose tab 与 Report tab。
 void KinematicAnalysisWidget::applySelectedIkSolution ()
 {
     if (_workcell == NULL || _studio == NULL) {
@@ -713,6 +752,9 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
 
 // -------------------------------------------------------------------------
 //  Task point tab
+//  表格列:id | name | type | x/y/z | roll/pitch/yaw | posTol | oriTol |
+//         weight | result | reason。第 0 列是 checkbox 表示 enabled。
+//  按钮区:Add row / Remove / Import CSV / Export CSV / Analyze all。
 // -------------------------------------------------------------------------
 void KinematicAnalysisWidget::buildTaskPointTab ()
 {
@@ -756,6 +798,11 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     tpLayout->addStretch ();
 }
 
+// buildWorkspaceTab:Workspace 子页布局。控件包括:
+//   - 采样数 / 网格步数 / 模式(Random/Grid) / 碰撞检查 / 着色模式;
+//   - Run / Export CSV 两个动作;
+//   - 结果表 8 列:Index / Status / Collision / TCP x/y/z / Manipulability / Min margin;
+//   - 顶部 summary 显示无碰撞 / Warning / Fail 计数与平均可操作度。
 void KinematicAnalysisWidget::buildWorkspaceTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_workspaceTab);
@@ -805,6 +852,12 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     layout->addWidget (_workspaceTable);
 }
 
+// buildPoseReachabilityTab:位姿可达性子页布局。
+//   - Source ComboBox:Task points / Manual rows(两种取位置的方式);
+//   - Directions / Rolls:球面方向数 / 绕 Z 滚动采样数;
+//   - 手动位置表 + Add row;
+//   - 结果表 8 列:Index / Status / x/y/z / Sampled / Reachable / Coverage;
+//   - 顶部 summary 显示平均 coverage。
 void KinematicAnalysisWidget::buildPoseReachabilityTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_poseReachTab);
@@ -858,6 +911,12 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     layout->addWidget (_poseResultTable);
 }
 
+// buildReportTab:Report 子页布局。
+//   - 顶部 summary 标签:显示当前 / 任务 / 工作空间 / 位姿可达性的综合状态;
+//   - 7 个 DoubleSpinBox 调阈值(nearLimit / cond warn / cond fail / sigma /
+//     manipulability / pos tol / ori tol)+ Apply thresholds 按钮;
+//   - Refresh / Export JSON / Export CSV 三个动作按钮;
+//   - 底部告警表 4 列:Severity / Code / Source / Message。
 void KinematicAnalysisWidget::buildReportTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_reportTab);
@@ -937,6 +996,8 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
     _taskPointTable->resizeColumnsToContents ();
 }
 
+// addTaskPointRow:在 Task point 表格末尾追加一行默认值(0 位姿,Generic 类型,
+// enabled=on);后续用户可在表格里直接编辑 ID/Name/Type/X/Y/Z/...
 void KinematicAnalysisWidget::addTaskPointRow ()
 {
     if (_taskPointTable == nullptr)
@@ -974,6 +1035,7 @@ void KinematicAnalysisWidget::addTaskPointRow ()
     setStatus(tr("Added task point row %1.").arg(row + 1));
 }
 
+// removeSelectedTaskPointRow:删除当前选中行(没有选中时给出提示)。
 void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
 {
     if (_taskPointTable == nullptr)
@@ -989,6 +1051,8 @@ void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
 }
 
 namespace {
+// setCell / cellText:导入导出场景下常用的 cell 写入 / 读取帮助函数,
+// 比直接 new QTableWidgetItem 简短。
 QTableWidgetItem* setCell (QTableWidget* t, int r, int c, const QString& s, bool editable)
 {
     QTableWidgetItem* item = new QTableWidgetItem (s);
@@ -1004,6 +1068,10 @@ QString cellText (QTableWidget* t, int r, int c)
 }
 }    // namespace
 
+// collectTaskPointsFromTable:从 Task point 表格逐行读出 TaskPoint 结构。
+//   - 第 0 列是 checkbox 决定 enabled;
+//   - 第 3 列的 Type 字符串映射回 TaskPointType 枚举;
+//   - 数值列通过 toDouble 解析。
 std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable () const
 {
     std::vector< TaskPoint > points;
@@ -1045,6 +1113,9 @@ std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable () 
     return points;
 }
 
+// applyTaskPointResults:把分析结果回写到 Task point 表格的 result / reason 两列,
+// 并刷新底部 summary 标签(Enabled / Pass / Warning / Fail / Reachable rate)。
+// 行数与表格行数取小,避免越界(导入 CSV 后行数可能少或多)。
 void KinematicAnalysisWidget::applyTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
 {
@@ -1084,6 +1155,10 @@ void KinematicAnalysisWidget::applyTaskPointResults (
     setTaskPointTableColumnWidths ();
 }
 
+// importTaskPointsCsv:从用户选择的 CSV 文件读入任务点。
+//   - 用 RobotAnalysisCsv::taskPointsFromCsv 解析(共享 CSV 序列化);
+//   - 先清空表格,再逐点重建(覆盖式导入);
+//   - result/reason 列固定填 "-",留给后续 Analyze all 写回。
 void KinematicAnalysisWidget::importTaskPointsCsv ()
 {
     if (_taskPointTable == nullptr) {
@@ -1141,6 +1216,8 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
     setStatus(tr("Imported %1 task point(s).").arg(static_cast<int>(points.size())));
 }
 
+// exportTaskPointsCsv:把表格当前内容序列化为 CSV 并写入用户指定文件。
+// 写文件用 QFile::write(const char*, qint64) 写出 std::string 原始字节。
 void KinematicAnalysisWidget::exportTaskPointsCsv ()
 {
     if (_taskPointTable == nullptr) {
@@ -1168,6 +1245,11 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
     setStatus(tr("Exported %1 task point(s).").arg(static_cast<int>(points.size())));
 }
 
+// analyzeAllTaskPoints:批量跑任务点的 IK。
+//   - 从表格读出 TaskPoint 列表;
+//   - analyzeTaskPoints(此处传 NULL,跳过碰撞检测,避免依赖外部 collider);
+//   - 把结果写回 _lastTaskPointResults 并刷新表格;
+//   - 调用 updateReportSummary 让 Report tab 同步最新数据。
 void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 {
     if (_workcell == nullptr) {
@@ -1202,6 +1284,9 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
     updateReportSummary ();
 }
 
+// collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:
+//   - 0 → Task points:复用 collectTaskPointsFromTable,只取 enabled 的位置;
+//   - 1 → Manual rows:从 _posePositionTable 逐行读出 xyz。
 std::vector< std::array< double, 3 > > KinematicAnalysisWidget::collectPoseReachabilityPositions () const
 {
     std::vector< std::array< double, 3 > > positions;
@@ -1224,6 +1309,9 @@ std::vector< std::array< double, 3 > > KinematicAnalysisWidget::collectPoseReach
     return positions;
 }
 
+// applyWorkspaceResults:把 WorkspaceSample 数组写到结果表;
+//   - 表格最多显示前 500 条(防卡顿),但仍按全部样本统计 summary;
+//   - summary 包含总数、无碰撞 / Warning / Fail 计数与平均可操作度。
 void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< WorkspaceSample >& samples)
 {
     if (_workspaceTable == NULL)
@@ -1272,6 +1360,8 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
     _workspaceTable->resizeColumnsToContents ();
 }
 
+// sampleWorkspace:从控件读 WorkspaceSamplingConfig → 调 analyzer → 写回表格;
+// 固定 randomSeed=1 以保证结果可复现,便于回归对比。
 void KinematicAnalysisWidget::sampleWorkspace ()
 {
     rw::core::Ptr< rw::models::Device > device = selectedDevice ();
@@ -1298,6 +1388,8 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     updateReportSummary ();
 }
 
+// exportWorkspaceCsv:把 _workspaceSamples 全量写出(含 q 字符串、TCP 位置、
+// manipulability / 关节裕度 / 条件数 / 碰撞 / 状态)。
 void KinematicAnalysisWidget::exportWorkspaceCsv ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -1328,6 +1420,7 @@ void KinematicAnalysisWidget::exportWorkspaceCsv ()
                    .arg (static_cast< int > (_workspaceSamples.size ())));
 }
 
+// addPoseReachabilityRow:在手动位置表末尾追加一行全 0 的位置。
 void KinematicAnalysisWidget::addPoseReachabilityRow ()
 {
     if (_posePositionTable == NULL)
@@ -1341,6 +1434,8 @@ void KinematicAnalysisWidget::addPoseReachabilityRow ()
     setStatus (tr("Added pose reachability position row %1.").arg (row + 1));
 }
 
+// applyPoseReachabilityResults:把 PoseReachabilitySample 写到 _poseResultTable,
+// 同时刷新顶部 summary(Average coverage)。
 void KinematicAnalysisWidget::applyPoseReachabilityResults (
     const std::vector< PoseReachabilitySample >& samples)
 {
@@ -1371,6 +1466,8 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
     _poseResultTable->resizeColumnsToContents ();
 }
 
+// analyzePoseReachability:从控件收集位置与参数 → 调 analyzer → 写回 _poseReachabilitySamples
+// 与结果表;空位置直接给出状态提示。
 void KinematicAnalysisWidget::analyzePoseReachability ()
 {
     rw::core::Ptr< rw::models::Device > device = selectedDevice ();
@@ -1400,6 +1497,8 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     updateReportSummary ();
 }
 
+// exportPoseReachabilityCsv:把 _poseReachabilitySamples 写为 CSV,
+// 列与表格一致(位置 + sampled + reachable + coverage + status)。
 void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -1427,6 +1526,11 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
                    .arg (static_cast< int > (_poseReachabilitySamples.size ())));
 }
 
+// updateReportSummary:Report tab 的中央枢纽。
+//   - 用 analyzer.buildAggregateResult 把四类数据聚合成 KinematicAnalysisResult;
+//   - 在 summary 标签里显示总状态、可达率、当前条件数 / 可操作度、任务点计数、
+//     工作空间总数、位姿可达性平均 coverage;
+//   - 把 result.warnings 全部写入告警表。
 void KinematicAnalysisWidget::updateReportSummary ()
 {
     if (_reportSummaryLabel == NULL)
@@ -1475,6 +1579,8 @@ void KinematicAnalysisWidget::updateReportSummary ()
     }
 }
 
+// refreshReport:Report tab 上的 Refresh 按钮槽函数;
+// 重新跑一次 updateReportSummary,方便用户修改阈值后只刷一次面板而不重跑分析。
 void KinematicAnalysisWidget::refreshReport ()
 {
     updateReportSummary ();
@@ -1482,6 +1588,8 @@ void KinematicAnalysisWidget::refreshReport ()
 }
 
 namespace {
+// vectorToJsonArray / array3ToJsonArray:把 std::vector<double> 与 std::array<double,3>
+// 装进 QJsonArray;供 exportReportJson 使用。
 QJsonArray vectorToJsonArray (const std::vector< double >& values)
 {
     QJsonArray array;
@@ -1500,6 +1608,9 @@ QJsonArray array3ToJsonArray (const std::array< double, 3 >& values)
 }
 }    // namespace
 
+// exportReportJson:把 KinematicAnalysisResult 序列化为结构化 JSON,便于下游工具消费。
+// 顶层包含 pluginName / status / reachableRate;四个子节点分别为 currentPose、
+// taskPointResults、workspaceSamples、poseReachability;末尾是 warnings 数组。
 void KinematicAnalysisWidget::exportReportJson ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -1587,6 +1698,9 @@ void KinematicAnalysisWidget::exportReportJson ()
     setStatus (tr("Exported kinematic JSON report."));
 }
 
+// exportReportCsv:输出 "metric,value" 两列的精简摘要 CSV。
+//   - 顶层状态 / 可达率 / 当前位姿关键指标 / 各子结果条数;
+//   - 可操作度 min/max/mean/p10 一并追加(来自 result.manipulabilityMap)。
 void KinematicAnalysisWidget::exportReportCsv ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -1621,6 +1735,8 @@ void KinematicAnalysisWidget::exportReportCsv ()
     setStatus (tr("Exported kinematic CSV summary."));
 }
 
+// applyThresholds:把 Report tab 上的 7 个阈值 SpinBox 写回 _thresholds,
+// 仅修改内存中的阈值;不会主动重跑任何分析,提示用户按需重跑。
 void KinematicAnalysisWidget::applyThresholds ()
 {
     _thresholds.nearJointLimitRatio = _thresholdNearLimitSpin->value ();

@@ -11,17 +11,25 @@
 #include <iostream>
 #include <string>
 
+// 测试程序:不依赖完整 RobWorkStudio 渲染环境,只验证分析器/指标/类型层
+// 的纯算法正确性(QCoreApplication 仅为 Q_OBJECT 机制 / 元对象而存在)。
+// 用 main 的首个命令行参数选择子套件,默认 "all" 跑全套。
+// 每个子套件返回 0 表示通过,非 0 表示有失败用例。
+
+// 浮点近似比较:绝对差 ≤ eps。eps 默认 1e-12,适合整型解析/无浮点误差场景。
 static bool nearlyEqual (double lhs, double rhs, double eps = 1e-12)
 {
     return std::fabs (lhs - rhs) <= eps;
 }
 
+// 失败:打 stderr 并返回 1,便于 CTest 直接收到非 0 退出码。
 static int fail (const std::string& message)
 {
     std::cerr << message << std::endl;
     return 1;
 }
 
+// 通用断言:失败时附带 "what" 描述。
 static int require (bool condition, const std::string& what)
 {
     if (!condition)
@@ -29,6 +37,7 @@ static int require (bool condition, const std::string& what)
     return 0;
 }
 
+// 浮点断言:失败时同时打印 expected / actual。
 static int assertNear (double actual, double expected, double eps, const std::string& what)
 {
     if (!nearlyEqual (actual, expected, eps))
@@ -37,6 +46,10 @@ static int assertNear (double actual, double expected, double eps, const std::st
     return 0;
 }
 
+// 子套件 1:基础类型默认值 + toString。
+//   - 校验 KinematicThresholds 的默认值与 KinematicAnalysisTypes 注释一致;
+//   - 校验 KinematicFailureReason 的相等语义;
+//   - 校验 toString 的几个代表值。
 static int testTypes ()
 {
     rws::KinematicThresholds thresholds;
@@ -78,6 +91,7 @@ static int testTypes ()
     return 0;
 }
 
+// 子套件 2:analyzeCurrentPose 在 NULL device 下的降级路径,以及阈值存取。
 static int testCurrentPose ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -99,6 +113,12 @@ static int testCurrentPose ()
     return 0;
 }
 
+// 子套件 3:关节裕度 + SVD 指标的纯算法正确性。
+//   - q=5   → margin=0.5 → Pass,无警告;
+//   - q=0.2 → margin=0.02 → Warning,至少一条警告;
+//   - q=-1  → 超出 [0,10] → Fail,至少一条警告;
+//   - 对角 J=[4,2]  → σ={4,2}, κ=2, manipulability=8, Pass;
+//   - 对角 J=[4,0]  → κ=∞, Fail, 至少一条警告。
 static int testMetrics ()
 {
     using namespace rw::math;
@@ -196,6 +216,9 @@ static int testMetrics ()
     return 0;
 }
 
+// 子套件 4:sortIkSolutionsForDisplay 的优先级链。
+// 准备 4 条解:colliding / worseResidual / betterMargin / lowerDistance;
+// 排序后应当是 lowerDistance → betterMargin → worseResidual → colliding。
 static int testIkRanking ()
 {
     std::vector< rws::KinematicIkSolution > solutions;
@@ -256,6 +279,10 @@ static int testIkRanking ()
     return 0;
 }
 
+// 子套件 5:calculateReachableRate 的边界:
+//   - 2 Pass + 1 Warning + 1 Fail + 1 disabled = 3/4 = 0.75;
+//   - 全部 disabled → 0.0(避免除零);
+//   - 全部 Pass    → 1.0。
 static int testTaskPointReachableRate ()
 {
     // 2 pass + 1 warning + 1 fail + 1 disabled:
@@ -299,6 +326,7 @@ static int testTaskPointReachableRate ()
     return 0;
 }
 
+// 子套件 6:sampleWorkspace 在 NULL / 0 / 负 sampleCount / Grid 模式下的快速返回路径。
 static int testWorkspaceSampling ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -354,6 +382,7 @@ static int testWorkspaceSampling ()
     return 0;
 }
 
+// 子套件 7:analyzePoseReachability 在 NULL device / directionSamples=0 时的兜底。
 static int testPoseReachability ()
 {
     rws::PoseReachabilityConfig config;
@@ -403,6 +432,10 @@ static int testPoseReachability ()
     return 0;
 }
 
+// 子套件 8:buildAggregateResult 综合:
+//   - 包含 1 个 Fail 任务点时,总 status 是 Fail;
+//   - reachableRate = 0.5(1 Pass + 1 Fail);
+//   - manipulabilityMap 至少有 min/max/mean。
 static int testAggregateResult ()
 {
     rws::KinematicCurrentPoseResult current;
@@ -458,6 +491,7 @@ static int testAggregateResult ()
     return 0;
 }
 
+// runAll:把所有子套件串行跑一遍,首个失败立即返回。
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -477,6 +511,8 @@ static int runAll ()
     return testAggregateResult ();
 }
 
+// main:argv[1] 选子套件("all" / 各具体名),默认 "all"。
+// QCoreApplication 是为了让 Q_OBJECT 相关初始化(QFile/QString)能正常工作。
 int main (int argc, char** argv)
 {
     QCoreApplication app (argc, argv);
