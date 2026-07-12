@@ -404,6 +404,17 @@ static int testIkRanking ()
     if (const int rc = require (rws::countUsableIkSolutions (validity) == 2,
                                 "usable IK count excludes Fail candidates"))
         return rc;
+
+    // Task 1 Step 1:summarizeIkSolutions 的状态计数。
+    const rws::KinematicIkSummary summary = rws::summarizeIkSolutions (validity);
+    if (const int rc = require (summary.passCount == 1, "IK summary pass count"))
+        return rc;
+    if (const int rc = require (summary.warningCount == 1, "IK summary warning count"))
+        return rc;
+    if (const int rc = require (summary.failCount == 1, "IK summary fail count"))
+        return rc;
+    if (const int rc = require (summary.usableCount == 2, "IK summary usable count"))
+        return rc;
     return 0;
 }
 

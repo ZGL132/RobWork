@@ -953,6 +953,27 @@ std::size_t rws::countUsableIkSolutions (
     return count;
 }
 
+// summarizeIkSolutions:单次遍历统计 5 个计数,避免 UI 多次遍历。
+// 与 countUsableIkSolutions 行为一致:usable = !inCollision && status != Fail;
+// 同时按 status 单独计数。
+KinematicIkSummary rws::summarizeIkSolutions (
+    const std::vector< KinematicIkSolution >& solutions)
+{
+    KinematicIkSummary summary;
+    summary.totalCount = solutions.size ();
+    for (const KinematicIkSolution& solution : solutions) {
+        if (!solution.inCollision && solution.status != AnalysisStatus::Fail)
+            ++summary.usableCount;
+        if (solution.status == AnalysisStatus::Pass)
+            ++summary.passCount;
+        else if (solution.status == AnalysisStatus::Warning)
+            ++summary.warningCount;
+        else if (solution.status == AnalysisStatus::Fail)
+            ++summary.failCount;
+    }
+    return summary;
+}
+
 // =============================================================================
 //  primaryFailureFromIk — 主要失败原因归类
 // =============================================================================

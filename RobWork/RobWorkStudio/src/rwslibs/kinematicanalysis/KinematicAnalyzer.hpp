@@ -103,6 +103,10 @@ void addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
                            double proximityLimit);
 std::size_t countUsableIkSolutions (const std::vector< KinematicIkSolution >& solutions);
 
+// 遍历 solutions,统计 total / usable / pass / warning / fail 五类计数,
+// 供 IK tab 顶部 summary 标签使用。
+KinematicIkSummary summarizeIkSolutions (const std::vector< KinematicIkSolution >& solutions);
+
 }    // namespace rws
 
 #endif    // RWS_KINEMATICANALYSIS_KINEMATICANALYSIS_HPP

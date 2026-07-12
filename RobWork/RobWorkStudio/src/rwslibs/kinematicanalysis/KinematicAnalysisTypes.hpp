@@ -141,6 +141,22 @@ struct KinematicIkAnalysisResult
     std::vector< AnalysisWarning > warnings;
 };
 
+// IK 解集的统计摘要。供 UI 表格上方的状态条 / Report tab 一次性读取,
+// 避免每次重算都要遍历 solutions 列表。
+//   totalCount   = solutions.size()(去重后总数);
+//   usableCount  = 无碰撞 && status != Fail 的解数;
+//   passCount    = status == Pass 的解数;
+//   warningCount = status == Warning 的解数;
+//   failCount    = status == Fail 的解数(可能含诊断性 Fail,见汇总说明)。
+struct KinematicIkSummary
+{
+    std::size_t totalCount = 0;
+    std::size_t usableCount = 0;
+    std::size_t passCount = 0;
+    std::size_t warningCount = 0;
+    std::size_t failCount = 0;
+};
+
 // 任务点层面的可达性分析结果(在 IK 基础上叠加"是否启用"等任务级判断)。
 struct TaskPointReachabilityResult
 {

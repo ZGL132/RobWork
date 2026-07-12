@@ -37,6 +37,15 @@ These values can be changed in the Report tab. Re-run analyses after applying ne
 - RobotModelBuilder creates and edits robot models. KinematicAnalysis consumes the loaded WorkCell and selected device.
 - Dynamics, drive selection, and trajectory validation should be separate plugins. They can consume exported task points, selected IK solutions, and KinematicAnalysisResult summaries, but should not depend on KinematicAnalysis UI classes.
 
+## IK Page Layout
+
+The IK tab is split into a left input panel and a right results panel. The input panel holds the target name, units, pose spin boxes, filter checkboxes, and action buttons (Import current TCP pose, Solve, Apply selected Q). The results panel shows the status summary, a multi-column solution table, and a selected-candidate details table.
+
+- IK analysis distinguishes deterministic numerical candidates from usable unique solutions. The result table can show diagnostic failed candidates, while the summary reports how many candidates are usable.
+- Count summary rows: Raw candidates, Unique candidates, Usable unique, Pass, Warning, Fail (updated each Solve and on filter changes).
+- Filters: `Show usable only` and `Show failed candidates` toggle which solution rows are visible. Selecting a row updates the details table below it.
+- `Failure` and `Q` are separate table columns so long joint vectors no longer hide diagnostic reasons.
+
 ## Known Limitations
 
 - Workspace and pose reachability are currently table/export oriented. Dense 3D point-cloud and heat-map visualization can be added later.

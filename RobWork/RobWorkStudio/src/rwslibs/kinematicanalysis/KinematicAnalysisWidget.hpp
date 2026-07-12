@@ -50,6 +50,8 @@ private Q_SLOTS:
     // 槽函数,基本一一对应 UI 上的按钮:
     void refreshCurrentPose ();         // 重新计算并显示当前 state 的运动学指标
     void solveIk ();                     // 用 IK tab 输入求解
+    void refreshIkSolutionView ();       // 根据 _lastIkResult + 过滤器刷新 IK 结果表格
+    void updateIkSolutionDetails ();     // 把选中行的详情写到 _ikDetailTable
     void applySelectedIkSolution ();     // 把选中解写回 RobWorkStudio
     void importCurrentPoseToIk ();
     void updateIkUnitDisplay ();
@@ -93,6 +95,8 @@ private:
 
     // 当前 state / device / TCP 帧的统一获取入口。
     rw::kinematics::State currentState () const;
+    bool shouldShowIkSolution (const KinematicIkSolution& solution) const;
+    void setIkDetailsEmpty ();
     rw::core::Ptr< rw::models::Device > selectedDevice () const;
     rw::core::Ptr< rw::kinematics::Frame > selectedTcpFrame () const;
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetectorForAnalysis (
@@ -145,7 +149,12 @@ private:
     QPushButton* _ikSolveButton;
     QPushButton* _ikApplyButton;
     QLabel* _ikSummaryLabel;
+    QLabel* _ikSeedInfoLabel;
+    QLabel* _ikCountSummaryLabel;
+    QCheckBox* _ikShowUsableOnlyCheck;
+    QCheckBox* _ikShowFailedCandidatesCheck;
     QTableWidget* _ikSolutionTable;
+    QTableWidget* _ikDetailTable;
 
     // Task points tab
     QTableWidget* _taskPointTable;
@@ -199,6 +208,7 @@ private:
     KinematicLengthUnit _ikLengthUnit;
     KinematicAngleUnit _ikAngleUnit;
     KinematicCurrentPoseResult _lastCurrentPose;
+    KinematicIkAnalysisResult _lastIkResult;
     std::vector< TaskPointReachabilityResult > _lastTaskPointResults;
     std::vector< WorkspaceSample > _workspaceSamples;
     std::vector< PoseReachabilitySample > _poseReachabilitySamples;
