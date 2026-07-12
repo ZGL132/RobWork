@@ -7,6 +7,7 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rw/kinematics/State.hpp>
+#include <rw/math/Q.hpp>
 #include <rw/models/Device.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
 
@@ -97,6 +98,10 @@ class KinematicAnalyzer
 // 按 UI 展示偏好对 IK 解排序(无碰撞优先,然后按位姿残差、关节裕度、可操作度、
 // 与当前 q 的距离、字典序 q 排)。
 void sortIkSolutionsForDisplay (std::vector< KinematicIkSolution >& solutions);
+void addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
+                           const rw::math::Q& candidate,
+                           double proximityLimit);
+std::size_t countUsableIkSolutions (const std::vector< KinematicIkSolution >& solutions);
 
 }    // namespace rws
 

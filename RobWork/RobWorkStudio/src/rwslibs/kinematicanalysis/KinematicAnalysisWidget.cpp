@@ -296,7 +296,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikPoseGrid->addWidget(_ikYawSpin, 1, 5);
     ikLayout->addLayout(ikPoseGrid);
 
-    _ikSummaryLabel = new QLabel(tr("Solutions: -"), _ikTab);
+    _ikSummaryLabel = new QLabel(tr("Candidates: -    Usable unique: -"), _ikTab);
     ikLayout->addWidget(_ikSummaryLabel);
 
     _ikSolutionTable = makeTable();
@@ -815,7 +815,7 @@ void KinematicAnalysisWidget::importCurrentPoseToIk ()
 void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
-    _ikSummaryLabel->setText(tr("Solutions: -"));
+    _ikSummaryLabel->setText(tr("Candidates: -    Usable unique: -"));
 
     if (_workcell == NULL) {
         setStatus(tr("Cannot solve IK: no WorkCell loaded."));
@@ -825,7 +825,7 @@ void KinematicAnalysisWidget::solveIk ()
     const std::string deviceName = _deviceCombo->currentText().toStdString();
     rw::core::Ptr< rw::models::Device > device = deviceByName(_workcell, deviceName);
     if (device == NULL) {
-        _ikSummaryLabel->setText(tr("Solutions: no device"));
+        _ikSummaryLabel->setText(tr("Candidates: no device"));
         setStatus(tr("Cannot solve IK: no valid device selected."));
         return;
     }
@@ -870,15 +870,16 @@ void KinematicAnalysisWidget::solveIk ()
     }
 
     _ikSummaryLabel->setText(
-        tr("Solutions: %1, status: %2")
+        tr("Candidates: %1    Usable unique: %2    Status: %3")
             .arg(static_cast<int>(result.solutions.size()))
+            .arg(static_cast<int>(result.usableSolutionCount))
             .arg(QString::fromLatin1(statusText(result.status))));
     if (collisionUnavailable) {
-        setStatus (tr("IK analysis completed with %1 solution(s); collision checking was unavailable.")
+        setStatus (tr("IK analysis completed with %1 candidate(s); collision checking was unavailable.")
                        .arg (static_cast< int > (result.solutions.size ())));
     }
     else {
-        setStatus(tr("IK analysis completed with %1 solution(s).")
+        setStatus(tr("IK analysis completed with %1 candidate(s).")
                       .arg(static_cast<int>(result.solutions.size())));
     }
 }

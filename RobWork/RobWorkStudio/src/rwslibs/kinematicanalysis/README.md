@@ -40,6 +40,6 @@ These values can be changed in the Report tab. Re-run analyses after applying ne
 ## Known Limitations
 
 - Workspace and pose reachability are currently table/export oriented. Dense 3D point-cloud and heat-map visualization can be added later.
-- IK coverage depends on the RobWork solver and seed behavior; it may not enumerate every analytical branch.
+- IK coverage uses deterministic multi-seed numerical solving; it is repeatable for the same target/state but does not guarantee complete analytical branch enumeration.
 - Collision results depend on the collision models available in the loaded WorkCell.
 - Workspace grid sampling is capped by sample count to avoid combinatorial growth on high-DOF robots.

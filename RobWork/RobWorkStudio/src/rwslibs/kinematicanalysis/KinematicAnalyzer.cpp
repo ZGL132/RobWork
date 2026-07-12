@@ -2,7 +2,6 @@
 
 // 引入 IK 求解器和必要的运动学/数学工具。
 #include <rw/core/Ptr.hpp>
-#include <rw/invkin/IKMetaSolver.hpp>
 #include <rw/invkin/JacobianIKSolver.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/EAA.hpp>
@@ -190,6 +189,91 @@ bool hasFailureReason (const KinematicIkSolution& solution, KinematicFailureReas
 {
     return std::find (solution.failureReasons.begin (), solution.failureReasons.end (), reason) !=
            solution.failureReasons.end ();
+}
+
+double qInfDistance (const rw::math::Q& lhs, const rw::math::Q& rhs)
+{
+    if (lhs.size () != rhs.size ())
+        return std::numeric_limits< double >::infinity ();
+    double distance = 0.0;
+    for (std::size_t i = 0; i < lhs.size (); ++i)
+        distance = std::max (distance, std::fabs (lhs (i) - rhs (i)));
+    return distance;
+}
+
+double finiteBoundOrFallback (double bound, double fallback)
+{
+    return std::isfinite (bound) ? bound : fallback;
+}
+
+double interpolateBound (const rw::math::Q& lower,
+                         const rw::math::Q& upper,
+                         const rw::math::Q& current,
+                         std::size_t index,
+                         double fraction)
+{
+    double lo = finiteBoundOrFallback (lower (index), current (index) - rw::math::Pi);
+    double hi = finiteBoundOrFallback (upper (index), current (index) + rw::math::Pi);
+    if (!(hi > lo)) {
+        lo = current (index) - rw::math::Pi;
+        hi = current (index) + rw::math::Pi;
+    }
+    return lo + fraction * (hi - lo);
+}
+
+rw::math::Q clampedZeroSeed (const rw::math::Q& lower,
+                             const rw::math::Q& upper,
+                             const rw::math::Q& current)
+{
+    rw::math::Q q (current.size ());
+    for (std::size_t i = 0; i < current.size (); ++i) {
+        const double lo = finiteBoundOrFallback (lower (i), current (i) - rw::math::Pi);
+        const double hi = finiteBoundOrFallback (upper (i), current (i) + rw::math::Pi);
+        if (hi > lo)
+            q (i) = std::min (hi, std::max (lo, 0.0));
+        else
+            q (i) = current (i);
+    }
+    return q;
+}
+
+std::vector< rw::math::Q > deterministicIkSeeds (
+    const rw::math::Q& current,
+    const std::pair< rw::math::Q, rw::math::Q >& bounds)
+{
+    std::vector< rw::math::Q > seeds;
+    if (current.size () == 0)
+        return seeds;
+
+    const double seedProximity = 1e-6;
+    rws::addUniqueIkCandidate (seeds, current, seedProximity);
+
+    rw::math::Q center (current.size ());
+    for (std::size_t i = 0; i < current.size (); ++i)
+        center (i) = interpolateBound (bounds.first, bounds.second, current, i, 0.5);
+    rws::addUniqueIkCandidate (seeds, center, seedProximity);
+    rws::addUniqueIkCandidate (seeds, clampedZeroSeed (bounds.first, bounds.second, current),
+                               seedProximity);
+
+    const std::size_t dof = current.size ();
+    const std::size_t exactMaskCount =
+        dof < 16 ? (static_cast< std::size_t > (1) << dof) : 0;
+    const std::size_t maskCount =
+        exactMaskCount == 0 ? static_cast< std::size_t > (128) :
+        std::min< std::size_t > (exactMaskCount, 128);
+    for (std::size_t mask = 0; mask < maskCount; ++mask) {
+        rw::math::Q seed (dof);
+        for (std::size_t joint = 0; joint < dof; ++joint) {
+            const bool highSide =
+                joint < 8 * sizeof (std::size_t) ?
+                ((mask & (static_cast< std::size_t > (1) << joint)) != 0) :
+                (((mask + joint) % 2) != 0);
+            seed (joint) = interpolateBound (
+                bounds.first, bounds.second, current, joint, highSide ? 0.75 : 0.25);
+        }
+        rws::addUniqueIkCandidate (seeds, seed, seedProximity);
+    }
+    return seeds;
 }
 
 // =============================================================================
@@ -500,10 +584,10 @@ KinematicCurrentPoseResult KinematicAnalyzer::analyzeCurrentPose (
 //
 // 流程:
 //   1) 解析 device / TCP 帧(降级逻辑同 analyzeCurrentPose);
-//   2) 用 JacobianIKSolver + IKMetaSolver 求解:
+//   2) 用 JacobianIKSolver + 固定 seed 列表求解:
 //        - JacobianIKSolver 是基于雅可比伪逆的迭代 IK,seed 决定起点;
-//        - IKMetaSolver 会自动尝试多种 seed(JacobianIKSolver::solve 默认就是);
-//        - setStopAtFirst(false) 让出所有可达解,用于 IK 评分与多解排序;
+//        - seed 列表由当前 Q、关节中心、零位和关节限位内固定组合构成;
+//        - 不使用全局随机源,保证同一 target / state 下重复 Solve 结果稳定;
 //   3) 对每个候选 q:
 //        a) 在副本 state 上 setQ → 副本 state 用来验算 FK / 雅可比 / 碰撞;
 //        b) 关节裕度、关节状态(失败原因);
@@ -581,13 +665,19 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         // ownedPtr 构造堆上 JacobianIKSolver;Ptr 是 RobWork 的引用计数智能指针。
         rw::invkin::JacobianIKSolver::Ptr solver =
             rw::core::ownedPtr (new rw::invkin::JacobianIKSolver (device, resolvedTcpFrame, state));
-        // MetaSolver 只负责多 seed 枚举。碰撞和限位在下方统一分类,否则
-        // IKMetaSolver 会提前过滤候选解,导致 Collision/JointLimit 被误报成无解。
-        rw::invkin::IKMetaSolver metaSolver (
-            solver, device, rw::core::Ptr< rw::proximity::CollisionDetector > (NULL));
-        metaSolver.setStopAtFirst (false);   // 拿所有解,不全断在第一个
-        metaSolver.setCheckJointLimits (false);
-        rawSolutions = metaSolver.solve (targetBaseTtcp, state);
+        const rw::math::Q seedCurrentQ = device->getQ (state);
+        const std::pair< rw::math::Q, rw::math::Q > seedBounds = device->getBounds ();
+        const std::vector< rw::math::Q > seeds =
+            deterministicIkSeeds (seedCurrentQ, seedBounds);
+        for (const rw::math::Q& seed : seeds) {
+            rw::kinematics::State seedState = state;
+            device->setQ (seed, seedState);
+            const std::vector< rw::math::Q > seedSolutions =
+                solver->solve (targetBaseTtcp, seedState);
+            result.rawCandidateCount += seedSolutions.size ();
+            for (const rw::math::Q& q : seedSolutions)
+                addUniqueIkCandidate (rawSolutions, q, 1e-4);
+        }
     }
     catch (const std::exception& ex) {
         result.status = AnalysisStatus::Fail;
@@ -786,6 +876,7 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
 
     // 按 UI 偏好排序(详见 sortIkSolutionsForDisplay 的注释)。
     sortIkSolutionsForDisplay (result.solutions);
+    result.usableSolutionCount = countUsableIkSolutions (result.solutions);
 
     // 解集总状态:Pass 优先 → 否则 Warning → 否则 Fail。
     // 这里不用 worstStatus,因为 worstStatus 在 Pass + Pass 时也是 Pass,
@@ -834,6 +925,32 @@ void rws::sortIkSolutionsForDisplay (std::vector< KinematicIkSolution >& solutio
                        return lhs.distanceToCurrentQ < rhs.distanceToCurrentQ;
                    return lexicographicQLess (lhs.q, rhs.q);
                });
+}
+
+void rws::addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
+                                const rw::math::Q& candidate,
+                                double proximityLimit)
+{
+    if (proximityLimit <= 0.0) {
+        candidates.push_back (candidate);
+        return;
+    }
+    for (const rw::math::Q& existing : candidates) {
+        if (qInfDistance (existing, candidate) <= proximityLimit)
+            return;
+    }
+    candidates.push_back (candidate);
+}
+
+std::size_t rws::countUsableIkSolutions (
+    const std::vector< KinematicIkSolution >& solutions)
+{
+    std::size_t count = 0;
+    for (const KinematicIkSolution& solution : solutions) {
+        if (!solution.inCollision && solution.status != AnalysisStatus::Fail)
+            ++count;
+    }
+    return count;
 }
 
 // =============================================================================

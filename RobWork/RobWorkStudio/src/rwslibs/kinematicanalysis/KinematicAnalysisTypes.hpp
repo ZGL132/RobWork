@@ -135,6 +135,8 @@ struct KinematicIkAnalysisResult
     AnalysisStatus status = AnalysisStatus::Unknown;   // 所有解中"最严重程度"的状态聚合
     KinematicFailureReason failureReason = KinematicFailureReason::None;
     TaskPoint target;                                 // 输入目标点
+    std::size_t rawCandidateCount = 0;
+    std::size_t usableSolutionCount = 0;
     std::vector< KinematicIkSolution > solutions;     // 已按 UI 排序规则排好
     std::vector< AnalysisWarning > warnings;
 };

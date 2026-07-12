@@ -382,6 +382,28 @@ static int testIkRanking ()
         return rc;
     if (const int rc = assertNear (solutions[3].q[0], 9.0, 1e-12, "colliding last"))
         return rc;
+
+    std::vector< rw::math::Q > candidates;
+    rws::addUniqueIkCandidate (candidates, rw::math::Q (2, 0.0, 1.0), 1e-4);
+    rws::addUniqueIkCandidate (candidates, rw::math::Q (2, 0.0, 1.0 + 5e-5), 1e-4);
+    rws::addUniqueIkCandidate (candidates, rw::math::Q (2, 0.0, 1.1), 1e-4);
+    if (const int rc = require (candidates.size () == 2,
+                                "near-duplicate IK candidates are merged"))
+        return rc;
+
+    std::vector< rws::KinematicIkSolution > validity;
+    rws::KinematicIkSolution pass;
+    pass.status = rws::AnalysisStatus::Pass;
+    validity.push_back (pass);
+    rws::KinematicIkSolution warning;
+    warning.status = rws::AnalysisStatus::Warning;
+    validity.push_back (warning);
+    rws::KinematicIkSolution fail;
+    fail.status = rws::AnalysisStatus::Fail;
+    validity.push_back (fail);
+    if (const int rc = require (rws::countUsableIkSolutions (validity) == 2,
+                                "usable IK count excludes Fail candidates"))
+        return rc;
     return 0;
 }
 
