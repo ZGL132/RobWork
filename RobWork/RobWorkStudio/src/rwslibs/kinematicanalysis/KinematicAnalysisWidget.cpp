@@ -15,6 +15,7 @@
 #include <rws/RobWorkStudio.hpp>
 
 #include <QCheckBox>
+#include <QColor>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFile>
@@ -62,6 +63,7 @@ QTableWidgetItem* makeQItem (const std::vector< double >& q,
                              const std::vector< rws::KinematicFailureReason >& reasons);
 void storeIkSolutionIndex (QTableWidgetItem* item, int solutionIndex);
 void setDetailRow (QTableWidget* table, int row, const QString& field, const QString& value);
+void setCompactTableVisibleRows (QTableWidget* table, int rows);
 }    // namespace
 
 // 构造函数:
@@ -87,14 +89,12 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _tcpFrameCombo(NULL),
     _refreshCurrentPoseButton(NULL),
     _status(NULL),
-    _qTable(NULL),
-    _jointMarginTable(NULL),
+    _poseValueTable(NULL),
+    _poseIndicatorLabel(NULL),
+    _jointStatusTable(NULL),
     _jacobianTable(NULL),
     _singularTable(NULL),
-    _tcpPoseLabel(NULL),
-    _conditionLabel(NULL),
-    _manipulabilityLabel(NULL),
-    _warningList(NULL),
+    _warningLabel(NULL),
     _ikTargetNameEdit(NULL),
     _ikXSpin(NULL),
     _ikYSpin(NULL),
@@ -199,54 +199,96 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     content->addWidget(_tabs);
 
     // -------------------- Current Pose Tab --------------------
+    // 单列全宽密集布局(从上到下):
+    //   1. 紧凑摘要  — 2 行 6 列的位置/姿态 + 1 行关键指标;
+    //   2. 关节状态合并表 — Joint | q | Limit margin | Status;
+    //   3. Jacobian 全宽主表(行 vx/vy/vz/wx/wy/wz,列 q0..qn);
+    //   4. Singular values 横向小表(1 行);
+    //   5. Warnings 默认压成单行 \"Warnings: None\"。
     _currentPoseTab = new QWidget(_tabs);
     QVBoxLayout* cpLayout = new QVBoxLayout(_currentPoseTab);
 
-    _tcpPoseLabel = new QLabel(tr("TCP pose: -"), _currentPoseTab);
-    _conditionLabel = new QLabel(tr("Condition: -"), _currentPoseTab);
-    _manipulabilityLabel = new QLabel(tr("Manipulability: -"), _currentPoseTab);
-    cpLayout->addWidget(_tcpPoseLabel);
-    cpLayout->addWidget(_conditionLabel);
-    cpLayout->addWidget(_manipulabilityLabel);
+    // 共用的紧凑表格工厂:6 列内 stretch、隐藏垂直滚动条、
+    // 取消垂直 header(行名通过 setVerticalHeaderLabels 自定义)。
+    auto makeCompactTable = [this] (int columns, int rows) -> QTableWidget* {
+        QTableWidget* t = new QTableWidget(rows, columns, _currentPoseTab);
+        t->horizontalHeader()->setSectionResizeMode (QHeaderView::Stretch);
+        t->verticalHeader()->setVisible (false);
+        t->setAlternatingRowColors (true);
+        t->setEditTriggers (QAbstractItemView::NoEditTriggers);
+        t->setSelectionBehavior (QAbstractItemView::SelectRows);
+        t->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+        t->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+        t->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
+        return t;
+    };
 
     auto makeTable = [this] () -> QTableWidget* {
         QTableWidget* t = new QTableWidget(this);
         t->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
         t->verticalHeader ()->setVisible (false);
-        t->setAlternatingRowColors(true);
+        t->setAlternatingRowColors (true);
         t->setEditTriggers (QAbstractItemView::NoEditTriggers);
-        t->setSelectionBehavior(QAbstractItemView::SelectRows);
+        t->setSelectionBehavior (QAbstractItemView::SelectRows);
         t->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
         t->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
         return t;
     };
 
-    _qTable             = makeTable ();
-    _qTable->setColumnCount (2);
-    _qTable->setHorizontalHeaderLabels ({tr("Joint"), tr("q")});
-    cpLayout->addWidget (new QLabel(tr("Joint angles"), _currentPoseTab));
-    cpLayout->addWidget (_qTable);
+    // ---- 1. 紧凑摘要栏(只占表头 + 1 行值,固定高度) ----
+    cpLayout->addWidget (new QLabel(tr("TCP pose"), _currentPoseTab));
+    _poseValueTable = makeCompactTable (6, 1);
+    _poseValueTable->setHorizontalHeaderLabels (
+        {tr("pos x (m)"), tr("pos y (m)"), tr("pos z (m)"),
+         tr("roll (deg)"), tr("pitch (deg)"), tr("yaw (deg)")});
+    // 1 行内容,初始占位
+    for (int c = 0; c < 6; ++c)
+        _poseValueTable->setItem (0, c, makeItem (QStringLiteral ("-")));
+    cpLayout->addWidget (_poseValueTable);
+    setCompactTableVisibleRows (_poseValueTable, 1);
+    _poseValueTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    _jointMarginTable   = makeTable ();
-    _jointMarginTable->setColumnCount (2);
-    _jointMarginTable->setHorizontalHeaderLabels ({tr("Joint"), tr("Margin")});
-    cpLayout->addWidget (new QLabel(tr("Joint-limit margins"), _currentPoseTab));
-    cpLayout->addWidget (_jointMarginTable);
+    // 关键指标单行标签:Condition / Manipulability / Min limit margin
+    _poseIndicatorLabel = new QLabel (
+        tr("Condition: -    Manipulability: -    Min limit margin: -"),
+        _currentPoseTab);
+    cpLayout->addWidget (_poseIndicatorLabel);
 
-    _jacobianTable      = makeTable ();
-    _jacobianTable->setColumnCount (1);
-    cpLayout->addWidget (new QLabel(tr("Jacobian"), _currentPoseTab));
+    // ---- 2. 关节状态合并表(全列 stretch,固定高度) ----
+    cpLayout->addWidget (new QLabel(tr("Joint status"), _currentPoseTab));
+    _jointStatusTable = makeCompactTable (4, 0);
+    _jointStatusTable->setHorizontalHeaderLabels (
+        {tr("Joint"), tr("q"), tr("Limit margin"), tr("Status")});
+    // 4 列内容不多,横向 stretch 完全能铺满,关闭水平滚动;
+    // 垂直方向根据实际行数动态设高(详见 refreshCurrentPose)。
+    _jointStatusTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    cpLayout->addWidget (_jointStatusTable);
+
+    // ---- 3. Jacobian 全宽主表 ----
+    cpLayout->addWidget (new QLabel(tr("Jacobian (TCP velocity = J * joint velocity)"), _currentPoseTab));
+    _jacobianTable = makeCompactTable (1, 1);
+    _jacobianTable->verticalHeader()->setVisible (true);
+    _jacobianTable->setVerticalHeaderLabels ({tr("vx"), tr("vy"), tr("vz"),
+                                              tr("wx"), tr("wy"), tr("wz")});
+    // 数字统一 %.6g 精度,留出空间;
+    // refreshCurrentPose 阶段再用 makeItem(double) 写入。
     cpLayout->addWidget (_jacobianTable);
 
-    _singularTable      = makeTable ();
-    _singularTable->setColumnCount (2);
-    _singularTable->setHorizontalHeaderLabels ({tr("Index"), tr("Singular value")});
+    // ---- 4. Singular values:表头 + 1 行值(固定高度) ----
     cpLayout->addWidget (new QLabel(tr("Singular values"), _currentPoseTab));
+    // 列数会在 refreshCurrentPose 中按 σ 个数动态设定,所以先建 0 列 1 行;
+    // 行数固定为 1,index 已在 horizontal header(σ0 / σ1 / ... / σmin),
+    // 不再需要单独 index 行。
+    _singularTable = makeCompactTable (0, 1);
     cpLayout->addWidget (_singularTable);
+    setCompactTableVisibleRows (_singularTable, 1);
+    _singularTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    _warningList = new QListWidget(_currentPoseTab);
-    cpLayout->addWidget (new QLabel(tr("Warnings"), _currentPoseTab));
-    cpLayout->addWidget (_warningList);
+    // ---- 5. Warnings:默认压成一行 ----
+    _warningLabel = new QLabel (tr("Warnings: None"), _currentPoseTab);
+    _warningLabel->setWordWrap (true);
+    cpLayout->addWidget (_warningLabel);
+
     cpLayout->addStretch ();
 
     _tabs->addTab (_currentPoseTab, tr("Current pose"));
@@ -652,6 +694,23 @@ void configureAnalysisTable (QTableWidget* table)
     table->verticalHeader ()->setVisible (false);
 }
 
+// setCompactTableVisibleRows:把 QTableWidget 的高度固定成"表头 + rows 行
+// 内容 + 边框",并关闭垂直滚动条。
+// 用途:让 1 行的摘要表 / N 行的关节表在 QVBoxLayout 里只占自己需要的高度,
+// 不再被 layout 撑大留白;行数 > visible 区域时只能外部接管(本工具仍允许
+// 后续单独开启滚动条)。
+void setCompactTableVisibleRows (QTableWidget* table, int rows)
+{
+    if (table == NULL)
+        return;
+    const int height =
+        table->horizontalHeader ()->height () +
+        rows * table->verticalHeader ()->defaultSectionSize () +
+        2 * table->frameWidth () + 4;
+    table->setFixedHeight (height);
+    table->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+}
+
 // makeItem:构造只读单元格;重载 double 版本方便直接放数值。
 QTableWidgetItem* makeItem (const QString& text)
 {
@@ -927,14 +986,26 @@ void KinematicAnalysisWidget::updateIkUnitDisplay ()
 // 并刷新 Report tab 的汇总。
 void KinematicAnalysisWidget::refreshCurrentPose ()
 {
-    _qTable->setRowCount (0);
-    _jointMarginTable->setRowCount (0);
-    _jacobianTable->setRowCount (0);
-    _singularTable->setRowCount (0);
-    _warningList->clear ();
-    _tcpPoseLabel->setText (tr("TCP pose: -"));
-    _conditionLabel->setText (tr("Condition: -"));
-    _manipulabilityLabel->setText (tr("Manipulability: -"));
+    // 重置所有面板为占位状态。
+    if (_poseValueTable != NULL) {
+        for (int c = 0; c < 6; ++c)
+            _poseValueTable->setItem (0, c, makeItem (QStringLiteral ("-")));
+    }
+    if (_poseIndicatorLabel != NULL)
+        _poseIndicatorLabel->setText (
+            tr("Condition: -    Manipulability: -    Min limit margin: -"));
+    if (_jointStatusTable != NULL)
+        _jointStatusTable->setRowCount (0);
+    if (_jacobianTable != NULL) {
+        _jacobianTable->setRowCount (0);
+        _jacobianTable->setColumnCount (0);
+    }
+    if (_singularTable != NULL) {
+        _singularTable->setRowCount (0);
+        _singularTable->setColumnCount (0);
+    }
+    if (_warningLabel != NULL)
+        _warningLabel->setText (tr("Warnings: None"));
 
     if (_workcell == NULL) {
         setStatus(tr("Cannot refresh current pose: no WorkCell loaded."));
@@ -957,61 +1028,143 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
     const KinematicCurrentPoseResult result = analyzer.analyzeCurrentPose (device, tcpFrame, state);
     _lastCurrentPose = result;
 
-    // TCP pose label
-    {
-        const double x = result.tcpPosition[0];
-        const double y = result.tcpPosition[1];
-        const double z = result.tcpPosition[2];
-        const double r = result.tcpRpyDeg[0];
-        const double p = result.tcpRpyDeg[1];
-        const double yaw = result.tcpRpyDeg[2];
-        _tcpPoseLabel->setText (QString ("TCP pose: pos=(%1, %2, %3) m  rpy=(%4, %5, %6) deg")
-                                     .arg (x).arg (y).arg (z).arg (r).arg (p).arg (yaw));
+    // ---- 1. 紧凑摘要栏(2 行 6 列 + 关键指标) ----
+    if (_poseValueTable != NULL) {
+        _poseValueTable->setItem (0, 0, makeItem (result.tcpPosition[0]));
+        _poseValueTable->setItem (0, 1, makeItem (result.tcpPosition[1]));
+        _poseValueTable->setItem (0, 2, makeItem (result.tcpPosition[2]));
+        _poseValueTable->setItem (0, 3, makeItem (result.tcpRpyDeg[0]));
+        _poseValueTable->setItem (0, 4, makeItem (result.tcpRpyDeg[1]));
+        _poseValueTable->setItem (0, 5, makeItem (result.tcpRpyDeg[2]));
     }
-    if (std::isinf (result.conditionNumber))
-        _conditionLabel->setText ("Condition: inf");
-    else
-        _conditionLabel->setText (QString ("Condition: %1").arg (result.conditionNumber));
-    _manipulabilityLabel->setText (QString ("Manipulability: %1").arg (result.manipulability));
-
-    _qTable->setRowCount (static_cast< int > (result.q.size ()));
-    for (std::size_t i = 0; i < result.q.size (); ++i) {
-        _qTable->setItem (static_cast< int > (i), 0, makeItem (QString::fromStdString (deviceName + "_" + std::to_string (i))));
-        _qTable->setItem (static_cast< int > (i), 1, makeItem (result.q[i]));
-    }
-
-    _jointMarginTable->setRowCount (static_cast< int > (result.jointLimitMargins.size ()));
-    for (std::size_t i = 0; i < result.jointLimitMargins.size (); ++i) {
-        _jointMarginTable->setItem (static_cast< int > (i), 0, makeItem (QString::fromStdString ("Joint " + std::to_string (i))));
-        _jointMarginTable->setItem (static_cast< int > (i), 1, makeItem (result.jointLimitMargins[i]));
+    // 表头高度在初次布局后才会稳定,refresh 阶段再调一次确保紧凑。
+    if (_poseValueTable != NULL)
+        setCompactTableVisibleRows (_poseValueTable, 1);
+    if (_poseIndicatorLabel != NULL) {
+        const QString condText = std::isinf (result.conditionNumber) ?
+            QStringLiteral ("inf") : QString::number (result.conditionNumber, 'g', 6);
+        const QString minMargin = result.minJointLimitMargin > 0.0 ?
+            QString::number (result.minJointLimitMargin, 'g', 6) : QStringLiteral ("-");
+        _poseIndicatorLabel->setText (
+            tr("Condition: %1    Manipulability: %2    Min limit margin: %3")
+                .arg (condText)
+                .arg (QString::number (result.manipulability, 'g', 6))
+                .arg (minMargin));
     }
 
-    if (result.jacobianRows > 0 && result.jacobianCols > 0) {
-        _jacobianTable->setColumnCount (result.jacobianCols);
-        _jacobianTable->setRowCount (result.jacobianRows);
+    // ---- 2. 关节状态合并表 ----
+    if (_jointStatusTable != NULL) {
+        const int n = static_cast< int > (result.q.size ());
+        _jointStatusTable->setRowCount (n);
+        const int marginCount = static_cast< int > (result.jointLimitMargins.size ());
+        for (int i = 0; i < n; ++i) {
+            // 关节名:超过 14 字符用中间省略;完整名字进 tooltip。
+            QString jointName = QString::fromStdString (deviceName + "_" + std::to_string (i));
+            if (jointName.size () > 14)
+                jointName = jointName.left (6) + QStringLiteral ("...") +
+                            jointName.right (7);
+            QTableWidgetItem* nameItem = makeItem (jointName);
+            nameItem->setToolTip (QString::fromStdString (deviceName + "_" + std::to_string (i)));
+            _jointStatusTable->setItem (i, 0, nameItem);
+            _jointStatusTable->setItem (i, 1, makeItem (result.q[static_cast< std::size_t > (i)]));
+
+            // Limit margin 与 Status。
+            QString marginText = QStringLiteral ("-");
+            QString statusText = QStringLiteral ("OK");
+            if (i < marginCount) {
+                const double m = result.jointLimitMargins[static_cast< std::size_t > (i)];
+                marginText = QString::number (m, 'g', 6);
+                if (m < 0.0)
+                    statusText = QStringLiteral ("Fail");
+                else if (m < _thresholds.nearJointLimitRatio)
+                    statusText = QStringLiteral ("Near");
+            }
+            _jointStatusTable->setItem (i, 2, makeItem (marginText));
+            QTableWidgetItem* statusItem = makeItem (statusText);
+            // 颜色暗示:Pass=默认、Near/Fail 用粗体。
+            if (statusText == QStringLiteral ("Fail"))
+                statusItem->setForeground (QColor (200, 0, 0));
+            else if (statusText == QStringLiteral ("Near"))
+                statusItem->setForeground (QColor (200, 130, 0));
+            _jointStatusTable->setItem (i, 3, statusItem);
+        }
+        // 行数稳定后重新固定高度:6 轴完整可见,DOF 较多时也只占实际行数。
+        setCompactTableVisibleRows (_jointStatusTable, n);
+    }
+
+    // ---- 3. Jacobian 全宽主表 ----
+    if (_jacobianTable != NULL &&
+        result.jacobianRows > 0 && result.jacobianCols > 0) {
+        // 列数(q 数)会变,所以列头每次重设。
         QStringList headers;
         for (int c = 0; c < result.jacobianCols; ++c)
-            headers << tr("col %1").arg (c);
+            headers << tr("q%1").arg (c);
+        _jacobianTable->setColumnCount (result.jacobianCols);
+        _jacobianTable->setRowCount (result.jacobianRows);
         _jacobianTable->setHorizontalHeaderLabels (headers);
+        // 行头:基线 6 行(vx vy vz wx wy wz),多于 6 行的 Jacobian 也会自动出滚动条。
+        QStringList rowHeaders;
+        const QString labels[6] = {"vx", "vy", "vz", "wx", "wy", "wz"};
+        for (int r = 0; r < result.jacobianRows; ++r)
+            rowHeaders << labels[r % 6];
+        _jacobianTable->setVerticalHeaderLabels (rowHeaders);
         for (int r = 0; r < result.jacobianRows; ++r) {
             for (int c = 0; c < result.jacobianCols; ++c) {
-                const double v = result.jacobianRowMajor[static_cast< std::size_t > (r * result.jacobianCols + c)];
+                const double v = result.jacobianRowMajor[
+                    static_cast< std::size_t > (r * result.jacobianCols + c)];
                 _jacobianTable->setItem (r, c, makeItem (v));
             }
         }
+        // 6 行及以下时让 6 行可见;多于 6 行才允许垂直滚动。
+        if (result.jacobianRows <= 6)
+            _jacobianTable->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+        else
+            _jacobianTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     }
 
-    const int singCount = static_cast< int > (result.singularValues.size ());
-    _singularTable->setRowCount (singCount);
-    for (int i = 0; i < singCount; ++i) {
-        _singularTable->setItem (i, 0, makeItem (QString ("%1").arg (i)));
-        _singularTable->setItem (i, 1, makeItem (result.singularValues[static_cast< std::size_t > (i)]));
+    // ---- 4. Singular values:1 行多列,σ index 在表头 ----
+    if (_singularTable != NULL) {
+        const int singCount = static_cast< int > (result.singularValues.size ());
+        QStringList headers;
+        for (int i = 0; i < singCount; ++i)
+            headers << tr("σ%1").arg (i);
+        if (singCount > 0)
+            headers << tr("σmin");
+        _singularTable->setColumnCount (headers.size ());
+        _singularTable->setRowCount (1);
+        _singularTable->setHorizontalHeaderLabels (headers);
+
+        for (int i = 0; i < singCount; ++i) {
+            _singularTable->setItem (
+                0, i,
+                makeItem (result.singularValues[static_cast< std::size_t > (i)]));
+        }
+        // σmin 列:取最小值(奇异值已降序,最右一列就是 min)
+        if (singCount > 0) {
+            const double sigmaMin = result.singularValues.back ();
+            _singularTable->setItem (0, singCount, makeItem (sigmaMin));
+        }
+        // 表头高度初次布局后才稳定,refresh 阶段再固定一次。
+        setCompactTableVisibleRows (_singularTable, 1);
     }
 
-    for (const rws::AnalysisWarning& w : result.warnings) {
-        _warningList->addItem (QString::fromStdString (
-            std::string ("[") + statusText(w.severity) + "] " + w.code + ": " + w.message));
+    // ---- 5. Warnings:默认 None,有告警时展开 ----
+    if (_warningLabel != NULL) {
+        if (result.warnings.empty ()) {
+            _warningLabel->setText (tr("Warnings: None"));
+        }
+        else {
+            QStringList lines;
+            for (const rws::AnalysisWarning& w : result.warnings)
+                lines << QStringLiteral ("[%1] %2: %3")
+                    .arg (QString::fromLatin1 (statusText (w.severity)))
+                    .arg (QString::fromStdString (w.code))
+                    .arg (QString::fromStdString (w.message));
+            _warningLabel->setText (tr("Warnings:") + QStringLiteral ("\n") +
+                                    lines.join (QStringLiteral ("\n")));
+        }
     }
+
     setStatus(tr("Current pose analysis refreshed."));
     updateReportSummary ();
 }

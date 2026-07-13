@@ -121,19 +121,22 @@ private:
     QWidget* _poseReachTab;
     QWidget* _reportTab;
 
-    // Current pose tab
+    // Current pose tab — 单列全宽密集布局:
+    // 1. 紧凑摘要(2 行 6 列 + 关键指标 1 行)
+    // 2. 关节状态合并表(q / Limit margin / Status)
+    // 3. Jacobian 全宽主表(行 vx/vy/vz/wx/wy/wz)
+    // 4. Singular values 横向小表
+    // 5. Warnings 默认压成一行,无告警时只显示 \"Warnings: None\"
     QComboBox* _deviceCombo;
     QComboBox* _tcpFrameCombo;
     QPushButton* _refreshCurrentPoseButton;
     QLineEdit* _status;
-    QTableWidget* _qTable;
-    QTableWidget* _jointMarginTable;
-    QTableWidget* _jacobianTable;
-    QTableWidget* _singularTable;
-    QLabel* _tcpPoseLabel;
-    QLabel* _conditionLabel;
-    QLabel* _manipulabilityLabel;
-    QListWidget* _warningList;
+    QTableWidget* _poseValueTable;       // 1 行 × 6 列,TCP 位置/姿态值
+    QLabel* _poseIndicatorLabel;         // 一行关键指标(Condition / Manip / Min margin)
+    QTableWidget* _jointStatusTable;     // Joint | q | Limit margin | Status
+    QTableWidget* _jacobianTable;        // 全宽 Jacobian,行头显示 vx/vy/vz/wx/wy/wz
+    QTableWidget* _singularTable;        // 1 行多列 σ 值
+    QLabel* _warningLabel;               // \"Warnings: None\" 或展开的多行文本
 
     // IK tab
     QLineEdit* _ikTargetNameEdit;
