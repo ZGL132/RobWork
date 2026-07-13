@@ -90,6 +90,7 @@ struct KinematicThresholds
     double manipulabilityWarning    = 1e-5;   // 可操作度低于此值视为退化
     double positionToleranceMeters  = 0.001;  // 期望位姿位置容差
     double orientationToleranceDeg  = 1.0;    // 期望位姿姿态容差(度)
+    double ikDuplicateQThreshold    = 1e-4;   // IK 候选 Q 的无穷范数去重阈值(rad/m)
 };
 
 // "Current pose" 分析结果:在当前 state 下,对所选 device/TCP 帧做 FK +

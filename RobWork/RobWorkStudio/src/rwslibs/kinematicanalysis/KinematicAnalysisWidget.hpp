@@ -143,6 +143,7 @@ private:
     QDoubleSpinBox* _ikRollSpin;
     QDoubleSpinBox* _ikPitchSpin;
     QDoubleSpinBox* _ikYawSpin;
+    QDoubleSpinBox* _ikDuplicateQThresholdSpin;
     QComboBox* _ikDistanceUnitCombo;
     QComboBox* _ikAngleUnitCombo;
     QPushButton* _ikImportCurrentPoseButton;

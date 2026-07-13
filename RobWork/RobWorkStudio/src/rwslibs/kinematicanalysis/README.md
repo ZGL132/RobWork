@@ -45,6 +45,7 @@ The IK tab is split into a left input panel and a right results panel. The input
 - Count summary rows: Raw candidates, Unique candidates, Usable unique, Pass, Warning, Fail (updated each Solve and on filter changes).
 - Filters: `Show usable only` and `Show failed candidates` toggle which solution rows are visible. Selecting a row updates the details table below it.
 - `Failure` and `Q` are separate table columns so long joint vectors no longer hide diagnostic reasons.
+- `Duplicate Q threshold` controls joint-space IK candidate de-duplication. Increase it to merge tiny numerical variations around singular configurations.
 
 ## Known Limitations
 

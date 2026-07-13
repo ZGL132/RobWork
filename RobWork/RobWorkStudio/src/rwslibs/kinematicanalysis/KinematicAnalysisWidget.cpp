@@ -50,6 +50,20 @@
 
 using namespace rws;
 
+namespace {
+QTableWidgetItem* makeItem (const QString& text);
+QTableWidgetItem* makeItem (double v);
+const char* statusText (rws::AnalysisStatus status);
+QString qVectorText (const std::vector< double >& q);
+QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& reasons);
+QString ikFailureText (const rws::KinematicIkSolution& solution);
+bool isCurrentIkSolution (const rws::KinematicIkSolution& solution);
+QTableWidgetItem* makeQItem (const std::vector< double >& q,
+                             const std::vector< rws::KinematicFailureReason >& reasons);
+void storeIkSolutionIndex (QTableWidgetItem* item, int solutionIndex);
+void setDetailRow (QTableWidget* table, int row, const QString& field, const QString& value);
+}    // namespace
+
 // 构造函数:
 //   - 把所有成员指针先置 NULL(防御性初始化);
 //   - 用 QVBoxLayout + QScrollArea 包裹主内容区,
@@ -88,6 +102,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikRollSpin(NULL),
     _ikPitchSpin(NULL),
     _ikYawSpin(NULL),
+    _ikDuplicateQThresholdSpin(NULL),
     _ikDistanceUnitCombo(NULL),
     _ikAngleUnitCombo(NULL),
     _ikImportCurrentPoseButton(NULL),
@@ -143,6 +158,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikLengthUnit(KinematicLengthUnit::Meters),
     _ikAngleUnit(KinematicAngleUnit::Degrees),
     _lastCurrentPose(),
+    _lastIkResult(),
     _lastTaskPointResults(),
     _workspaceSamples(),
     _poseReachabilitySamples()
@@ -293,13 +309,18 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikRollSpin = makePoseSpin(-360.0, 360.0, 1.0);
     _ikPitchSpin = makePoseSpin(-360.0, 360.0, 1.0);
     _ikYawSpin = makePoseSpin(-360.0, 360.0, 1.0);
+    _ikDuplicateQThresholdSpin = new QDoubleSpinBox(_ikTab);
+    _ikDuplicateQThresholdSpin->setRange(0.0, 1.0);
+    _ikDuplicateQThresholdSpin->setDecimals(6);
+    _ikDuplicateQThresholdSpin->setSingleStep(0.001);
+    _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
     updateIkUnitDisplay();
 
     // Task 5 step 1:过滤器行 + solver 元信息 + counts summary。
     QHBoxLayout* ikFilterRow = new QHBoxLayout();
     _ikShowUsableOnlyCheck = new QCheckBox(tr("Show usable only"), _ikTab);
     _ikShowFailedCandidatesCheck = new QCheckBox(tr("Show failed candidates"), _ikTab);
-    _ikShowFailedCandidatesCheck->setChecked(true);
+    _ikShowFailedCandidatesCheck->setChecked(false);
     _ikSeedInfoLabel = new QLabel(tr("Solver: deterministic multi-seed"), _ikTab);
     _ikCountSummaryLabel = new QLabel(
         tr("Raw - | Unique - | Usable - | Pass - | Warning - | Fail -"), _ikTab);
@@ -310,13 +331,18 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikLayout->addLayout(ikFilterRow);
     ikLayout->addWidget(_ikCountSummaryLabel);
 
+    QHBoxLayout* ikDedupRow = new QHBoxLayout();
+    ikDedupRow->addWidget(new QLabel(tr("Duplicate Q threshold:"), _ikTab));
+    ikDedupRow->addWidget(_ikDuplicateQThresholdSpin);
+    ikDedupRow->addStretch(1);
+    ikLayout->addLayout(ikDedupRow);
+
     // Task 6 step 3:动作按钮垂直堆叠,留出整列高度让按钮文字清晰可点。
     QVBoxLayout* ikActionColumn = new QVBoxLayout();
     ikActionColumn->addWidget(_ikImportCurrentPoseButton);
     ikActionColumn->addWidget(_ikSolveButton);
     ikActionColumn->addWidget(_ikApplyButton);
     ikLayout->addLayout(ikActionColumn);
-    ikLayout->addWidget(_ikCountSummaryLabel);
 
     QGridLayout* ikPoseGrid = new QGridLayout();
     ikPoseGrid->addWidget(new QLabel(tr("X:"), _ikTab), 0, 0);
@@ -340,9 +366,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable = makeTable();
     // Task 3:把 "Q / failures" 拆成两列 — Failure(短文本) + Q(关节向量),
     // 长 Q 值不再吞掉失败原因。
-    _ikSolutionTable->setColumnCount(11);
+    _ikSolutionTable->setColumnCount(12);
     _ikSolutionTable->setHorizontalHeaderLabels({
-        tr("Index"), tr("Status"), tr("Failure"), tr("Collision"), tr("Distance"),
+        tr("Index"), tr("Status"), tr("Failure"), tr("Current Q"), tr("Collision"), tr("Distance"),
         tr("Min limit margin"), tr("Manipulability"), tr("Condition"),
         tr("Position error"), tr("Orientation error"), tr("Q")
     });
@@ -520,19 +546,20 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         storeIkSolutionIndex (indexItem, static_cast<int> (i));
         _ikSolutionTable->setItem (displayRow, 0, indexItem);
         _ikSolutionTable->setItem (displayRow, 1, makeItem (QString::fromLatin1 (statusText (solution.status))));
-        _ikSolutionTable->setItem (displayRow, 2, makeItem (failureReasonsText (solution.failureReasons)));
-        _ikSolutionTable->setItem (displayRow, 3, makeItem (solution.inCollision ? tr("Yes") : tr("No")));
-        _ikSolutionTable->setItem (displayRow, 4, makeItem (solution.distanceToCurrentQ));
-        _ikSolutionTable->setItem (displayRow, 5, makeItem (solution.minJointLimitMargin));
-        _ikSolutionTable->setItem (displayRow, 6, makeItem (solution.manipulability));
-        _ikSolutionTable->setItem (displayRow, 7,
+        _ikSolutionTable->setItem (displayRow, 2, makeItem (ikFailureText (solution)));
+        _ikSolutionTable->setItem (displayRow, 3, makeItem (isCurrentIkSolution (solution) ? tr("Yes") : tr("No")));
+        _ikSolutionTable->setItem (displayRow, 4, makeItem (solution.inCollision ? tr("Yes") : tr("No")));
+        _ikSolutionTable->setItem (displayRow, 5, makeItem (solution.distanceToCurrentQ));
+        _ikSolutionTable->setItem (displayRow, 6, makeItem (solution.minJointLimitMargin));
+        _ikSolutionTable->setItem (displayRow, 7, makeItem (solution.manipulability));
+        _ikSolutionTable->setItem (displayRow, 8,
             makeItem (std::isinf (solution.conditionNumber) ? tr("inf")
                                                             : QString::number (solution.conditionNumber)));
-        _ikSolutionTable->setItem (displayRow, 8, makeItem (solution.positionErrorMeters));
-        _ikSolutionTable->setItem (displayRow, 9, makeItem (solution.orientationErrorDeg));
+        _ikSolutionTable->setItem (displayRow, 9, makeItem (solution.positionErrorMeters));
+        _ikSolutionTable->setItem (displayRow, 10, makeItem (solution.orientationErrorDeg));
         // 第 10 列是纯 Q,失败原因已分到第 2 列;这里传空 reasons 防止 makeQItem
         // 把原因字符串重复显示一次。
-        _ikSolutionTable->setItem (displayRow, 10,
+        _ikSolutionTable->setItem (displayRow, 11,
             makeQItem (solution.q, std::vector< KinematicFailureReason > ()));
 
         // 整行的 solutionIndex 都存到 Qt::UserRole + 1,这样选中任一单元格
@@ -569,7 +596,7 @@ void KinematicAnalysisWidget::setIkDetailsEmpty ()
 }
 
 // updateIkSolutionDetails:把当前选中行反查 _lastIkResult.solutions,
-// 写 10 行详情(Status/Failures/Collision/Distance/Margin/Manipulability/
+    // 写 11 行详情(Status/Failures/Current Q/Collision/Distance/Margin/Manipulability/
 // Condition/Position error/Orientation error/Q)。任一缺失都退回 setIkDetailsEmpty。
 void KinematicAnalysisWidget::updateIkSolutionDetails ()
 {
@@ -591,24 +618,25 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
 
     const KinematicIkSolution& s =
         _lastIkResult.solutions[static_cast<std::size_t> (solutionIndex)];
-    _ikDetailTable->setRowCount (10);
+    _ikDetailTable->setRowCount (11);
     setDetailRow (_ikDetailTable, 0, tr("Status"), QString::fromLatin1 (statusText (s.status)));
-    setDetailRow (_ikDetailTable, 1, tr("Failures"), failureReasonsText (s.failureReasons));
-    setDetailRow (_ikDetailTable, 2, tr("Collision"), s.inCollision ? tr("Yes") : tr("No"));
-    setDetailRow (_ikDetailTable, 3, tr("Distance to current Q"),
+    setDetailRow (_ikDetailTable, 1, tr("Failures"), ikFailureText (s));
+    setDetailRow (_ikDetailTable, 2, tr("Current Q"), isCurrentIkSolution (s) ? tr("Yes") : tr("No"));
+    setDetailRow (_ikDetailTable, 3, tr("Collision"), s.inCollision ? tr("Yes") : tr("No"));
+    setDetailRow (_ikDetailTable, 4, tr("Distance to current Q"),
                   QString::number (s.distanceToCurrentQ, 'g', 8));
-    setDetailRow (_ikDetailTable, 4, tr("Min limit margin"),
+    setDetailRow (_ikDetailTable, 5, tr("Min limit margin"),
                   QString::number (s.minJointLimitMargin, 'g', 8));
-    setDetailRow (_ikDetailTable, 5, tr("Manipulability"),
+    setDetailRow (_ikDetailTable, 6, tr("Manipulability"),
                   QString::number (s.manipulability, 'g', 8));
-    setDetailRow (_ikDetailTable, 6, tr("Condition"),
+    setDetailRow (_ikDetailTable, 7, tr("Condition"),
                   std::isinf (s.conditionNumber) ? tr("inf")
                                                   : QString::number (s.conditionNumber, 'g', 8));
-    setDetailRow (_ikDetailTable, 7, tr("Position error"),
+    setDetailRow (_ikDetailTable, 8, tr("Position error"),
                   QString::number (s.positionErrorMeters, 'g', 8));
-    setDetailRow (_ikDetailTable, 8, tr("Orientation error"),
+    setDetailRow (_ikDetailTable, 9, tr("Orientation error"),
                   QString::number (s.orientationErrorDeg, 'g', 8));
-    setDetailRow (_ikDetailTable, 9, tr("Q"), qVectorText (s.q));
+    setDetailRow (_ikDetailTable, 10, tr("Q"), qVectorText (s.q));
     _ikDetailTable->resizeColumnsToContents ();
 }
 
@@ -667,6 +695,51 @@ QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& re
     for (rws::KinematicFailureReason reason : reasons)
         values << QString::fromLatin1(rws::toString(reason));
     return values.join(", ");
+}
+
+bool hasFailureReason (const std::vector< rws::KinematicFailureReason >& reasons,
+                       rws::KinematicFailureReason reason)
+{
+    return std::find (reasons.begin (), reasons.end (), reason) != reasons.end ();
+}
+
+bool isCurrentIkSolution (const rws::KinematicIkSolution& solution)
+{
+    return std::isfinite (solution.distanceToCurrentQ) &&
+           solution.distanceToCurrentQ <= 1e-9;
+}
+
+QString ikFailureText (const rws::KinematicIkSolution& solution)
+{
+    QString text = failureReasonsText (solution.failureReasons);
+    QStringList details;
+    if (hasFailureReason (solution.failureReasons, rws::KinematicFailureReason::Singular) ||
+        hasFailureReason (solution.failureReasons, rws::KinematicFailureReason::NearSingular)) {
+        details << (std::isinf (solution.conditionNumber) ?
+                    QStringLiteral ("condition=inf") :
+                    QStringLiteral ("condition=%1").arg (
+                        QString::number (solution.conditionNumber, 'g', 8)));
+        details << QStringLiteral ("manip=%1").arg (
+            QString::number (solution.manipulability, 'g', 8));
+    }
+    if (hasFailureReason (solution.failureReasons, rws::KinematicFailureReason::JointLimit) ||
+        hasFailureReason (solution.failureReasons, rws::KinematicFailureReason::NearJointLimit)) {
+        details << QStringLiteral ("margin=%1").arg (
+            QString::number (solution.minJointLimitMargin, 'g', 8));
+    }
+    if (hasFailureReason (solution.failureReasons, rws::KinematicFailureReason::TargetResidual)) {
+        details << QStringLiteral ("pos=%1 m").arg (
+            QString::number (solution.positionErrorMeters, 'g', 8));
+        details << QStringLiteral ("ori=%1 deg").arg (
+            QString::number (solution.orientationErrorDeg, 'g', 8));
+    }
+    if (!details.empty ()) {
+        if (!text.isEmpty ())
+            text += QStringLiteral (" (") + details.join (QStringLiteral (", ")) + QStringLiteral (")");
+        else
+            text = details.join (QStringLiteral (", "));
+    }
+    return text;
 }
 
 // taskPointTypeText:TaskPointType → 字符串,UI 显示与回写都用。
@@ -986,6 +1059,8 @@ void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
     _ikSummaryLabel->setText(tr("Candidates: -    Usable unique: -"));
+    if (_ikDuplicateQThresholdSpin != NULL)
+        _thresholds.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
 
     if (_workcell == NULL) {
         setStatus(tr("Cannot solve IK: no WorkCell loaded."));
@@ -1076,8 +1151,8 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
     }
 
     const int row = selected.front()->row();
-    // 表拆分后 Q 在第 10 列(0-indexed)。
-    QTableWidgetItem* qItem = _ikSolutionTable->item(row, 10);
+    // 表拆分后 Q 在第 11 列(0-indexed)。
+    QTableWidgetItem* qItem = _ikSolutionTable->item(row, 11);
     if (qItem == NULL) {
         setStatus(tr("Cannot apply IK solution: selected row has no Q value."));
         return;

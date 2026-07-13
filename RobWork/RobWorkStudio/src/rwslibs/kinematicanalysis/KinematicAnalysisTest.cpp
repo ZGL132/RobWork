@@ -4,8 +4,15 @@
 
 #include <QCoreApplication>
 
+#include <rw/core/Ptr.hpp>
+#include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/kinematics/StateStructure.hpp>
+#include <rw/math/RPY.hpp>
 #include <rw/math/Q.hpp>
 #include <rw/math/Jacobian.hpp>
+#include <rw/models/RevoluteJoint.hpp>
+#include <rw/models/SerialDevice.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -45,6 +52,109 @@ static int assertNear (double actual, double expected, double eps, const std::st
         return fail ("expected " + what + " = " + std::to_string (expected) +
                      " but got " + std::to_string (actual));
     return 0;
+}
+
+static rw::models::SerialDevice::Ptr makeTestKukaIIWA (
+    rw::kinematics::StateStructure& stateStructure)
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    const Frame::Ptr base =
+        rw::core::ownedPtr (new FixedFrame ("Base", Transform3D<>::identity ()));
+    const Joint::Ptr joint1 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint1", Transform3D<> (Vector3D<> (0, 0, 0.158))));
+    const Joint::Ptr joint2 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint2", Transform3D<> (Vector3D<> (0, 0, 0.182),
+                                                                        RPY<> (0, 0, -Pi / 2.0))));
+    const Joint::Ptr joint3 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint3", Transform3D<> (Vector3D<> (0, -0.182, 0),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Joint::Ptr joint4 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint4", Transform3D<> (Vector3D<> (0, 0, 0.218),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Joint::Ptr joint5 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint5", Transform3D<> (Vector3D<> (0, 0.182, 0),
+                                                                        RPY<> (0, 0, -Pi / 2.0))));
+    const Joint::Ptr joint6 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint6", Transform3D<> (Vector3D<> (0, 0, 0.218),
+                                                                        RPY<> (0, 0, -Pi / 2.0))));
+    const Joint::Ptr joint7 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint7", Transform3D<> (Vector3D<>::zero (),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Frame::Ptr end =
+        rw::core::ownedPtr (new FixedFrame ("TCP", Transform3D<> (Vector3D<> (0, 0, 0.126))));
+
+    stateStructure.addFrame (base);
+    stateStructure.addFrame (joint1, base);
+    stateStructure.addFrame (joint2, joint1);
+    stateStructure.addFrame (joint3, joint2);
+    stateStructure.addFrame (joint4, joint3);
+    stateStructure.addFrame (joint5, joint4);
+    stateStructure.addFrame (joint6, joint5);
+    stateStructure.addFrame (joint7, joint6);
+    stateStructure.addFrame (end, joint7);
+
+    rw::kinematics::State state = stateStructure.getDefaultState ();
+    const rw::models::SerialDevice::Ptr device =
+        rw::core::ownedPtr (new rw::models::SerialDevice (base.get (), end.get (), "KukaIIWA", state));
+    std::pair< Q, Q > bounds;
+    bounds.first = Q (7, -170 * Deg2Rad, -120 * Deg2Rad, -170 * Deg2Rad, -120 * Deg2Rad,
+                      -170 * Deg2Rad, -120 * Deg2Rad, -175 * Deg2Rad);
+    bounds.second = -bounds.first;
+    device->setBounds (bounds);
+    return device;
+}
+
+static rw::models::SerialDevice::Ptr makeGenericSixAxis (
+    rw::kinematics::StateStructure& stateStructure)
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    const Frame::Ptr base =
+        rw::core::ownedPtr (new FixedFrame ("Base", Transform3D<>::identity ()));
+    const Joint::Ptr joint1 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint1", Transform3D<> (Vector3D<> (0, 0, 0.35))));
+    const Joint::Ptr joint2 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint2", Transform3D<> (Vector3D<> (0.12, 0, 0),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Joint::Ptr joint3 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint3", Transform3D<> (Vector3D<> (0.52, 0, 0))));
+    const Joint::Ptr joint4 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint4", Transform3D<> (Vector3D<> (0.42, 0, 0),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Joint::Ptr joint5 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint5", Transform3D<> (Vector3D<> (0, 0, 0.38),
+                                                                        RPY<> (0, 0, -Pi / 2.0))));
+    const Joint::Ptr joint6 =
+        rw::core::ownedPtr (new RevoluteJoint ("Joint6", Transform3D<> (Vector3D<> (0, 0, 0.12),
+                                                                        RPY<> (0, 0, Pi / 2.0))));
+    const Frame::Ptr end =
+        rw::core::ownedPtr (new FixedFrame ("TCP", Transform3D<>::identity ()));
+
+    stateStructure.addFrame (base);
+    stateStructure.addFrame (joint1, base);
+    stateStructure.addFrame (joint2, joint1);
+    stateStructure.addFrame (joint3, joint2);
+    stateStructure.addFrame (joint4, joint3);
+    stateStructure.addFrame (joint5, joint4);
+    stateStructure.addFrame (joint6, joint5);
+    stateStructure.addFrame (end, joint6);
+
+    rw::kinematics::State state = stateStructure.getDefaultState ();
+    const rw::models::SerialDevice::Ptr device =
+        rw::core::ownedPtr (new rw::models::SerialDevice (base.get (), end.get (),
+                                                          "GenericSixAxis", state));
+    std::pair< Q, Q > bounds;
+    bounds.first = Q (6, -Pi, -120.0 * Deg2Rad, -150.0 * Deg2Rad,
+                      -Pi, -120.0 * Deg2Rad, -2.0 * Pi);
+    bounds.second = Q (6, Pi, 120.0 * Deg2Rad, 150.0 * Deg2Rad,
+                       Pi, 120.0 * Deg2Rad, 2.0 * Pi);
+    device->setBounds (bounds);
+    return device;
 }
 
 // 子套件 1:基础类型默认值 + toString。
@@ -418,10 +528,96 @@ static int testIkRanking ()
     return 0;
 }
 
+static int testIkIncludesCurrentQForCurrentTcpTarget ()
+{
+    rw::kinematics::StateStructure stateStructure;
+    const rw::models::SerialDevice::Ptr device = makeTestKukaIIWA (stateStructure);
+    rw::kinematics::State state = stateStructure.getDefaultState ();
+
+    const rw::math::Q currentQ (7, 0.4, -0.7, 0.6, 0.8, -0.5, 0.9, 0.3);
+    device->setQ (currentQ, state);
+    const rw::math::Transform3D<> currentTcp =
+        rw::kinematics::Kinematics::frameTframe (
+            device->getBase (), device->getEnd (), state);
+    const rw::math::RPY<> rpy (currentTcp.R ());
+
+    rws::TaskPoint target;
+    target.position = {{currentTcp.P ()[0], currentTcp.P ()[1], currentTcp.P ()[2]}};
+    target.rpyDeg = {{rpy (0) * 180.0 / rw::math::Pi,
+                      rpy (1) * 180.0 / rw::math::Pi,
+                      rpy (2) * 180.0 / rw::math::Pi}};
+
+    rws::KinematicThresholds thresholds;
+    thresholds.conditionWarning = 1e12;
+    thresholds.conditionFail = 1e13;
+    thresholds.singularValueWarning = 0.0;
+    thresholds.manipulabilityWarning = 0.0;
+    rws::KinematicAnalyzer analyzer;
+    analyzer.setThresholds (thresholds);
+
+    const rws::KinematicIkAnalysisResult result =
+        analyzer.analyzeIk (device, device->getEnd (), state, target, NULL);
+
+    bool foundCurrentQ = false;
+    for (const rws::KinematicIkSolution& solution : result.solutions) {
+        if (solution.distanceToCurrentQ <= 1e-10) {
+            foundCurrentQ = solution.status == rws::AnalysisStatus::Pass &&
+                            solution.positionErrorMeters <= thresholds.positionToleranceMeters &&
+                            solution.orientationErrorDeg <= thresholds.orientationToleranceDeg;
+            break;
+        }
+    }
+    if (const int rc = require (foundCurrentQ,
+                                "IK includes current Q as a passing solution for current TCP target"))
+        return rc;
+    return 0;
+}
+
 // 子套件 5:calculateReachableRate 的边界:
 //   - 2 Pass + 1 Warning + 1 Fail + 1 disabled = 3/4 = 0.75;
 //   - 全部 disabled → 0.0(避免除零);
 //   - 全部 Pass    → 1.0。
+static int testIkDuplicateThresholdControlsCandidateMerging ()
+{
+    rw::kinematics::StateStructure stateStructure;
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (stateStructure);
+    rw::kinematics::State state = stateStructure.getDefaultState ();
+    const rw::math::Q currentQ (6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    device->setQ (currentQ, state);
+
+    const rw::math::Transform3D<> currentTcp =
+        rw::kinematics::Kinematics::frameTframe (
+            device->getBase (), device->getEnd (), state);
+    const rw::math::RPY<> rpy (currentTcp.R ());
+    rws::TaskPoint target;
+    target.position = {{currentTcp.P ()[0], currentTcp.P ()[1], currentTcp.P ()[2]}};
+    target.rpyDeg = {{rpy (0) * 180.0 / rw::math::Pi,
+                      rpy (1) * 180.0 / rw::math::Pi,
+                      rpy (2) * 180.0 / rw::math::Pi}};
+
+    rws::KinematicAnalyzer defaultAnalyzer;
+    const rws::KinematicIkAnalysisResult defaultResult =
+        defaultAnalyzer.analyzeIk (device, device->getEnd (), state, target, NULL);
+
+    rws::KinematicThresholds thresholds;
+    if (const int rc = assertNear (
+            thresholds.ikDuplicateQThreshold, 1e-4, 1e-12, "default IK duplicate threshold"))
+        return rc;
+    thresholds.ikDuplicateQThreshold = 0.01;
+    rws::KinematicAnalyzer mergedAnalyzer;
+    mergedAnalyzer.setThresholds (thresholds);
+    const rws::KinematicIkAnalysisResult mergedResult =
+        mergedAnalyzer.analyzeIk (device, device->getEnd (), state, target, NULL);
+
+    if (const int rc = require (!defaultResult.solutions.empty (),
+                                "default duplicate threshold yields IK candidates"))
+        return rc;
+    if (const int rc = require (mergedResult.solutions.size () < defaultResult.solutions.size (),
+                                "larger duplicate threshold merges nearby IK candidates"))
+        return rc;
+    return 0;
+}
+
 static int testTaskPointReachableRate ()
 {
     // 2 pass + 1 warning + 1 fail + 1 disabled:
@@ -645,6 +841,10 @@ static int runAll ()
         return rc;
     if (const int rc = testIkRanking ())
         return rc;
+    if (const int rc = testIkIncludesCurrentQForCurrentTcpTarget ())
+        return rc;
+    if (const int rc = testIkDuplicateThresholdControlsCandidateMerging ())
+        return rc;
     if (const int rc = testTaskPointReachableRate ())
         return rc;
     if (const int rc = testWorkspaceSampling ())
@@ -675,6 +875,10 @@ int main (int argc, char** argv)
         rc = testPoseUnitConversions ();
     else if (suite == "ik")
         rc = testIkRanking ();
+    else if (suite == "ik_current_target")
+        rc = testIkIncludesCurrentQForCurrentTcpTarget ();
+    else if (suite == "ik_dedup")
+        rc = testIkDuplicateThresholdControlsCandidateMerging ();
     else if (suite == "task_points")
         rc = testTaskPointReachableRate ();
     else if (suite == "workspace")

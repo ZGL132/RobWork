@@ -656,6 +656,10 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
     // 把目标点(UI 度数)转到 RobWork 的 Transform3D。
     const rw::math::Transform3D<> targetBaseTtcp = taskPointToTransform (target);
     std::vector< rw::math::Q > rawSolutions;
+    const double duplicateQThreshold =
+        std::isfinite (_thresholds.ikDuplicateQThreshold) &&
+        _thresholds.ikDuplicateQThreshold >= 0.0 ?
+        _thresholds.ikDuplicateQThreshold : 1e-4;
 
     // ---- IK 求解 ----
     // 两层 try:
@@ -676,7 +680,7 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
                 solver->solve (targetBaseTtcp, seedState);
             result.rawCandidateCount += seedSolutions.size ();
             for (const rw::math::Q& q : seedSolutions)
-                addUniqueIkCandidate (rawSolutions, q, 1e-4);
+                addUniqueIkCandidate (rawSolutions, q, duplicateQThreshold);
         }
     }
     catch (const std::exception& ex) {
