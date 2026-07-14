@@ -59,6 +59,7 @@ QString qVectorText (const std::vector< double >& q);
 QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& reasons);
 QString ikFailureText (const rws::KinematicIkSolution& solution);
 bool isCurrentIkSolution (const rws::KinematicIkSolution& solution);
+bool isUsableIkSolution (const rws::KinematicIkSolution& solution);
 QTableWidgetItem* makeQItem (const std::vector< double >& q,
                              const std::vector< rws::KinematicFailureReason >& reasons);
 void storeIkSolutionIndex (QTableWidgetItem* item, int solutionIndex);
@@ -294,32 +295,19 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _tabs->addTab (_currentPoseTab, tr("Current pose"));
 
     // -------------------- IK Tab --------------------
-    // Task 6 step 1:拆分左右两栏 —— 左侧是输入面板(固定宽度),
-    // 右侧是结果面板(占主导宽度,内部还包含 summary / 表格 / 详情)。
+    // 单列全宽密集布局(与 Current pose 一致):
+    //   1. 顶部输入:Target + 单位 + 6 个 pose spin + threshold + 3 个动作按钮;
+    //   2. 过滤 + solver 元信息 + 计数 summary;
+    //   3. status summary 标签;
+    //   4. IK solution status table(允许滚动,横向铺满);
+    //   5. 详情面板(2 行固定高度,跟随选中行更新)。
     _ikTab         = new QWidget(_tabs);
-    QHBoxLayout* ikRootLayout = new QHBoxLayout(_ikTab);
-    QWidget* ikInputPanel = new QWidget(_ikTab);
-    QVBoxLayout* ikLayout = new QVBoxLayout(ikInputPanel);
-    ikInputPanel->setMinimumWidth(300);
-    ikInputPanel->setMaximumWidth(420);
-    QWidget* ikResultPanel = new QWidget(_ikTab);
-    QVBoxLayout* ikResultLayout = new QVBoxLayout(ikResultPanel);
-    ikRootLayout->addWidget(ikInputPanel);
-    ikRootLayout->addWidget(ikResultPanel, 1);
+    QVBoxLayout* ikLayout = new QVBoxLayout(_ikTab);
 
+    // ---- 第 1 行:Target + 单位选择 ----
     QHBoxLayout* ikNameRow = new QHBoxLayout();
     _ikTargetNameEdit = new QLineEdit(_ikTab);
     _ikTargetNameEdit->setText(tr("Target"));
-    _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
-    _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
-    _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
-    // Task 6 step 3:Target 行只保留标签与名称输入,3 个动作按钮
-    // 移到下方垂直按钮列里,避免挤压输入控件。
-    ikNameRow->addWidget(new QLabel(tr("Target:"), _ikTab));
-    ikNameRow->addWidget(_ikTargetNameEdit, 1);
-    ikLayout->addLayout(ikNameRow);
-
-    QHBoxLayout* ikUnitRow = new QHBoxLayout();
     _ikDistanceUnitCombo = new QComboBox(_ikTab);
     _ikAngleUnitCombo = new QComboBox(_ikTab);
     _ikDistanceUnitCombo->addItem(tr("Meters"), static_cast<int>(KinematicLengthUnit::Meters));
@@ -330,13 +318,17 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikAngleUnitCombo->addItem(tr("Radians"), static_cast<int>(KinematicAngleUnit::Radians));
     _ikAngleUnitCombo->addItem(tr("Grads"), static_cast<int>(KinematicAngleUnit::Grads));
     _ikAngleUnitCombo->addItem(tr("Turns"), static_cast<int>(KinematicAngleUnit::Turns));
-    ikUnitRow->addWidget(new QLabel(tr("Distance unit:"), _ikTab));
-    ikUnitRow->addWidget(_ikDistanceUnitCombo);
-    ikUnitRow->addWidget(new QLabel(tr("Angle unit:"), _ikTab));
-    ikUnitRow->addWidget(_ikAngleUnitCombo);
-    ikUnitRow->addStretch(1);
-    ikLayout->addLayout(ikUnitRow);
+    ikNameRow->addWidget(new QLabel(tr("Target:"), _ikTab));
+    ikNameRow->addWidget(_ikTargetNameEdit, 1);
+    ikNameRow->addSpacing (12);
+    ikNameRow->addWidget(new QLabel(tr("Distance unit:"), _ikTab));
+    ikNameRow->addWidget(_ikDistanceUnitCombo);
+    ikNameRow->addSpacing (12);
+    ikNameRow->addWidget(new QLabel(tr("Angle unit:"), _ikTab));
+    ikNameRow->addWidget(_ikAngleUnitCombo);
+    ikLayout->addLayout(ikNameRow);
 
+    // ---- 第 2 行:位姿 6 个 spin,2 行 × 3 列 ----
     auto makePoseSpin = [this] (double minimum, double maximum, double step) -> QDoubleSpinBox* {
         QDoubleSpinBox* spin = new QDoubleSpinBox(_ikTab);
         spin->setRange(minimum, maximum);
@@ -344,7 +336,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         spin->setSingleStep(step);
         return spin;
     };
-
     _ikXSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
     _ikYSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
     _ikZSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
@@ -357,34 +348,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikDuplicateQThresholdSpin->setSingleStep(0.001);
     _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
     updateIkUnitDisplay();
-
-    // Task 5 step 1:过滤器行 + solver 元信息 + counts summary。
-    QHBoxLayout* ikFilterRow = new QHBoxLayout();
-    _ikShowUsableOnlyCheck = new QCheckBox(tr("Show usable only"), _ikTab);
-    _ikShowFailedCandidatesCheck = new QCheckBox(tr("Show failed candidates"), _ikTab);
-    _ikShowFailedCandidatesCheck->setChecked(false);
-    _ikSeedInfoLabel = new QLabel(tr("Solver: deterministic multi-seed"), _ikTab);
-    _ikCountSummaryLabel = new QLabel(
-        tr("Raw - | Unique - | Usable - | Pass - | Warning - | Fail -"), _ikTab);
-    ikFilterRow->addWidget(_ikShowUsableOnlyCheck);
-    ikFilterRow->addWidget(_ikShowFailedCandidatesCheck);
-    ikFilterRow->addStretch(1);
-    ikFilterRow->addWidget(_ikSeedInfoLabel);
-    ikLayout->addLayout(ikFilterRow);
-    ikLayout->addWidget(_ikCountSummaryLabel);
-
-    QHBoxLayout* ikDedupRow = new QHBoxLayout();
-    ikDedupRow->addWidget(new QLabel(tr("Duplicate Q threshold:"), _ikTab));
-    ikDedupRow->addWidget(_ikDuplicateQThresholdSpin);
-    ikDedupRow->addStretch(1);
-    ikLayout->addLayout(ikDedupRow);
-
-    // Task 6 step 3:动作按钮垂直堆叠,留出整列高度让按钮文字清晰可点。
-    QVBoxLayout* ikActionColumn = new QVBoxLayout();
-    ikActionColumn->addWidget(_ikImportCurrentPoseButton);
-    ikActionColumn->addWidget(_ikSolveButton);
-    ikActionColumn->addWidget(_ikApplyButton);
-    ikLayout->addLayout(ikActionColumn);
 
     QGridLayout* ikPoseGrid = new QGridLayout();
     ikPoseGrid->addWidget(new QLabel(tr("X:"), _ikTab), 0, 0);
@@ -401,12 +364,46 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikPoseGrid->addWidget(_ikYawSpin, 1, 5);
     ikLayout->addLayout(ikPoseGrid);
 
-    _ikSummaryLabel = new QLabel(tr("Candidates: -    Usable unique: -"), _ikTab);
-    // Task 6 step 2:把 summary / table / 详情从输入面板切到结果面板。
-    ikResultLayout->addWidget(_ikSummaryLabel);
+    // ---- 第 3 行:threshold + 3 个动作按钮(横排)----
+    QHBoxLayout* ikDedupRow = new QHBoxLayout();
+    ikDedupRow->addWidget(new QLabel(tr("Duplicate Q threshold:"), _ikTab));
+    ikDedupRow->addWidget(_ikDuplicateQThresholdSpin);
+    _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
+    _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
+    _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
+    _ikApplyButton->setEnabled (false);   // 选中可用解前禁用
+    ikDedupRow->addSpacing (12);
+    ikDedupRow->addWidget(_ikImportCurrentPoseButton);
+    ikDedupRow->addWidget(_ikSolveButton);
+    ikDedupRow->addWidget(_ikApplyButton);
+    ikDedupRow->addStretch (1);
+    ikLayout->addLayout(ikDedupRow);
 
+    // ---- 第 4 行:过滤器 + solver 元信息 ----
+    QHBoxLayout* ikFilterRow = new QHBoxLayout();
+    _ikShowUsableOnlyCheck = new QCheckBox(tr("Show usable only"), _ikTab);
+    _ikShowFailedCandidatesCheck = new QCheckBox(tr("Show failed candidates"), _ikTab);
+    _ikShowFailedCandidatesCheck->setChecked(false);
+    _ikSeedInfoLabel = new QLabel(tr("Solver: deterministic multi-seed"), _ikTab);
+    ikFilterRow->addWidget(_ikShowUsableOnlyCheck);
+    ikFilterRow->addWidget(_ikShowFailedCandidatesCheck);
+    ikFilterRow->addStretch(1);
+    ikFilterRow->addWidget(_ikSeedInfoLabel);
+    ikLayout->addLayout(ikFilterRow);
+
+    // ---- 第 5 行:counts summary ----
+    _ikCountSummaryLabel = new QLabel(
+        tr("Raw - | Unique - | Usable - | Pass - | Warning - | Fail -"), _ikTab);
+    ikLayout->addWidget(_ikCountSummaryLabel);
+
+    // ---- 第 6 行:status summary 标签 ----
+    _ikSummaryLabel = new QLabel(tr("Candidates: -    Usable unique: -"), _ikTab);
+    ikLayout->addWidget(_ikSummaryLabel);
+
+    // ---- 第 7 行:IK solution status table(允许横纵滚动)----
+    ikLayout->addWidget(new QLabel(tr("IK solution status"), _ikTab));
     _ikSolutionTable = makeTable();
-    // Task 3:把 "Q / failures" 拆成两列 — Failure(短文本) + Q(关节向量),
+    // 把 "Q / failures" 拆成两列 — Failure(短文本) + Q(关节向量),
     // 长 Q 值不再吞掉失败原因。
     _ikSolutionTable->setColumnCount(12);
     _ikSolutionTable->setHorizontalHeaderLabels({
@@ -416,18 +413,25 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     });
     _ikSolutionTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     _ikSolutionTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    ikResultLayout->addWidget(_ikSolutionTable, 1);
-    // Task 3 step 5:选中行变化 → 详情表更新。
+    _ikSolutionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    _ikSolutionTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    _ikSolutionTable->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    // 选中行变化 → 详情表更新。
     connect (_ikSolutionTable, SIGNAL (itemSelectionChanged ()),
              this, SLOT (updateIkSolutionDetails ()));
+    // 该表是页面唯一允许滚动的主表,占主导高度。
+    ikLayout->addWidget(_ikSolutionTable, 1);
 
-    // Task 4 step 1:详情表 2 列(field/value),固定 10 行,高度受限避免抢占表格。
+    // ---- 第 8 行:选中详情(2 行固定高度)----
+    ikLayout->addWidget(new QLabel(tr("Selected candidate details"), _ikTab));
     _ikDetailTable = makeTable();
     _ikDetailTable->setColumnCount(2);
     _ikDetailTable->setHorizontalHeaderLabels({tr("Field"), tr("Value")});
-    _ikDetailTable->setMaximumHeight(180);
-    ikResultLayout->addWidget(new QLabel(tr("Selected candidate details"), _ikTab));
-    ikResultLayout->addWidget(_ikDetailTable);
+    _ikDetailTable->horizontalHeader()->setSectionResizeMode (QHeaderView::Stretch);
+    _ikDetailTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    ikLayout->addWidget(_ikDetailTable);
+    setCompactTableVisibleRows (_ikDetailTable, 2);
+    _ikDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
     // -------------------- Task Point Tab --------------------
     _taskPointTab  = new QWidget(_tabs);
@@ -625,21 +629,20 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
                 .arg (static_cast<int> (summary.failCount)));
     }
 
+    // 首次填表后默认选中第一行,详情表即时显示该候选;
+    // 过滤后无行时退回到空状态(Apply 也会被 setIkDetailsEmpty 禁用)。
+    if (_ikSolutionTable->rowCount () > 0)
+        _ikSolutionTable->selectRow (0);
+    else
+        setIkDetailsEmpty ();
+
+    // 按钮启用/禁用统一交给 updateIkSolutionDetails / setIkDetailsEmpty。
     updateIkSolutionDetails ();
 }
 
-// setIkDetailsEmpty:详情表清空成单行提示,用于未选中或选中行无效。
-void KinematicAnalysisWidget::setIkDetailsEmpty ()
-{
-    if (_ikDetailTable == NULL)
-        return;
-    _ikDetailTable->setRowCount (1);
-    setDetailRow (_ikDetailTable, 0, tr("Selection"), tr("No IK candidate selected."));
-}
-
 // updateIkSolutionDetails:把当前选中行反查 _lastIkResult.solutions,
-    // 写 11 行详情(Status/Failures/Current Q/Collision/Distance/Margin/Manipulability/
-// Condition/Position error/Orientation error/Q)。任一缺失都退回 setIkDetailsEmpty。
+// 写 2 行详情:Summary(状态类)+ Metrics / Q(数值类)。
+// 任一缺失都退回 setIkDetailsEmpty。
 void KinematicAnalysisWidget::updateIkSolutionDetails ()
 {
     if (_ikDetailTable == NULL || _ikSolutionTable == NULL)
@@ -660,26 +663,51 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
 
     const KinematicIkSolution& s =
         _lastIkResult.solutions[static_cast<std::size_t> (solutionIndex)];
-    _ikDetailTable->setRowCount (11);
-    setDetailRow (_ikDetailTable, 0, tr("Status"), QString::fromLatin1 (statusText (s.status)));
-    setDetailRow (_ikDetailTable, 1, tr("Failures"), ikFailureText (s));
-    setDetailRow (_ikDetailTable, 2, tr("Current Q"), isCurrentIkSolution (s) ? tr("Yes") : tr("No"));
-    setDetailRow (_ikDetailTable, 3, tr("Collision"), s.inCollision ? tr("Yes") : tr("No"));
-    setDetailRow (_ikDetailTable, 4, tr("Distance to current Q"),
-                  QString::number (s.distanceToCurrentQ, 'g', 8));
-    setDetailRow (_ikDetailTable, 5, tr("Min limit margin"),
-                  QString::number (s.minJointLimitMargin, 'g', 8));
-    setDetailRow (_ikDetailTable, 6, tr("Manipulability"),
-                  QString::number (s.manipulability, 'g', 8));
-    setDetailRow (_ikDetailTable, 7, tr("Condition"),
-                  std::isinf (s.conditionNumber) ? tr("inf")
-                                                  : QString::number (s.conditionNumber, 'g', 8));
-    setDetailRow (_ikDetailTable, 8, tr("Position error"),
-                  QString::number (s.positionErrorMeters, 'g', 8));
-    setDetailRow (_ikDetailTable, 9, tr("Orientation error"),
-                  QString::number (s.orientationErrorDeg, 'g', 8));
-    setDetailRow (_ikDetailTable, 10, tr("Q"), qVectorText (s.q));
-    _ikDetailTable->resizeColumnsToContents ();
+
+    // 同步 Apply 按钮启用态:只有无碰撞、非 Fail 的解可写回 RobWorkStudio。
+    if (_ikApplyButton != NULL)
+        _ikApplyButton->setEnabled (isUsableIkSolution (s));
+
+    // 第 1 行:状态类信息(标签 / 布尔)。
+    const QString summaryText = QStringLiteral (
+        "Status=%1; Failures=[%2]; Current Q=%3; Collision=%4")
+        .arg (QString::fromLatin1 (statusText (s.status)))
+        .arg (ikFailureText (s).isEmpty () ? QStringLiteral ("None")
+                                            : ikFailureText (s))
+        .arg (isCurrentIkSolution (s) ? QStringLiteral ("Yes") : QStringLiteral ("No"))
+        .arg (s.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"));
+
+    // 第 2 行:数值类 + Q 向量。
+    const QString condText = std::isinf (s.conditionNumber) ?
+        QStringLiteral ("inf") : QString::number (s.conditionNumber, 'g', 6);
+    const QString metricsText = QStringLiteral (
+        "Distance=%1; Margin=%2; Manip=%3; Cond=%4; Pos err=%5 m; Ori err=%6°; Q=[%7]")
+        .arg (QString::number (s.distanceToCurrentQ, 'g', 6))
+        .arg (QString::number (s.minJointLimitMargin, 'g', 6))
+        .arg (QString::number (s.manipulability, 'g', 6))
+        .arg (condText)
+        .arg (QString::number (s.positionErrorMeters, 'g', 6))
+        .arg (QString::number (s.orientationErrorDeg, 'g', 6))
+        .arg (qVectorText (s.q));
+
+    _ikDetailTable->setRowCount (2);
+    setDetailRow (_ikDetailTable, 0, tr("Summary"), summaryText);
+    setDetailRow (_ikDetailTable, 1, tr("Metrics / Q"), metricsText);
+    // 不调用 resizeColumnsToContents,避免在 Stretch 模式下被覆盖;
+    // 同时保持 2 行固定高度由 setCompactTableVisibleRows 锁定。
+}
+
+// setIkDetailsEmpty:详情表压成 1 行提示,用于未选中或选中行无效。
+void KinematicAnalysisWidget::setIkDetailsEmpty ()
+{
+    if (_ikDetailTable == NULL)
+        return;
+    _ikDetailTable->setRowCount (1);
+    setDetailRow (_ikDetailTable, 0, tr("Selection"), tr("No IK candidate selected."));
+    setCompactTableVisibleRows (_ikDetailTable, 2);
+    _ikDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    if (_ikApplyButton != NULL)
+        _ikApplyButton->setEnabled (false);
 }
 
 namespace {
@@ -766,6 +794,14 @@ bool isCurrentIkSolution (const rws::KinematicIkSolution& solution)
 {
     return std::isfinite (solution.distanceToCurrentQ) &&
            solution.distanceToCurrentQ <= 1e-9;
+}
+
+// isUsableIkSolution:判定该 IK 解是否可安全写回 RobWorkStudio,
+// 复用 refreshIkSolutionView / updateIkSolutionDetails 中的判定,避免重复。
+// 不可用情形:碰撞 / status == Fail。
+bool isUsableIkSolution (const rws::KinematicIkSolution& solution)
+{
+    return !solution.inCollision && solution.status != rws::AnalysisStatus::Fail;
 }
 
 QString ikFailureText (const rws::KinematicIkSolution& solution)
@@ -1212,6 +1248,8 @@ void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
     _ikSummaryLabel->setText(tr("Candidates: -    Usable unique: -"));
+    // 立即清空详情并禁用 Apply,保证所有提前返回路径都不会保留旧数据。
+    setIkDetailsEmpty ();
     if (_ikDuplicateQThresholdSpin != NULL)
         _thresholds.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
 
@@ -1665,8 +1703,14 @@ void storeIkSolutionIndex (QTableWidgetItem* item, int solutionIndex)
 // Task 4 辅助:把详情表的两列(field/value)写一行,直接复用 makeItem。
 void setDetailRow (QTableWidget* table, int row, const QString& field, const QString& value)
 {
-    table->setItem (row, 0, makeItem (field));
-    table->setItem (row, 1, makeItem (value));
+    QTableWidgetItem* fieldItem = makeItem (field);
+    QTableWidgetItem* valueItem = makeItem (value);
+    // 给两列都加 tooltip,允许 hover 查看完整长文本(尤其是
+    // 含长 Q 向量的 Metrics/Q 行),不必打开水平滚动。
+    fieldItem->setToolTip (field);
+    valueItem->setToolTip (value);
+    table->setItem (row, 0, fieldItem);
+    table->setItem (row, 1, valueItem);
 }
 }    // namespace
 
