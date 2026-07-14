@@ -247,7 +247,12 @@ int runCsv ()
     pointWithNote.id             = "P002";
     pointWithNote.name           = "Inspect, quoted";
     pointWithNote.type           = rws::TaskPointType::Inspect;
+    pointWithNote.refFrame       = "FixtureA";
+    pointWithNote.tcpFrame       = "ToolTip";
     pointWithNote.position       = {{0.5, 0.2, 0.3}};
+    pointWithNote.tolerance.allowToolRollFree = true;
+    pointWithNote.weight         = 2.5;
+    pointWithNote.enabled        = false;
     pointWithNote.note           = "requires \"fine\" alignment";
     const std::vector< rws::TaskPoint > csvPoints = {point, pointWithNote};
     const std::string csv = rws::RobotAnalysisCsv::taskPointsToCsv (csvPoints);
@@ -265,7 +270,13 @@ int runCsv ()
         return fail ("TaskPoint CSV round-trip should preserve row count.");
     if (parsedCsvPoints[1].id != pointWithNote.id || parsedCsvPoints[1].name != pointWithNote.name ||
         parsedCsvPoints[1].type != pointWithNote.type ||
+        parsedCsvPoints[1].refFrame != pointWithNote.refFrame ||
+        parsedCsvPoints[1].tcpFrame != pointWithNote.tcpFrame ||
         !nearlyEqual (parsedCsvPoints[1].position[0], pointWithNote.position[0]) ||
+        parsedCsvPoints[1].tolerance.allowToolRollFree !=
+            pointWithNote.tolerance.allowToolRollFree ||
+        !nearlyEqual (parsedCsvPoints[1].weight, pointWithNote.weight) ||
+        parsedCsvPoints[1].enabled != pointWithNote.enabled ||
         parsedCsvPoints[1].note != pointWithNote.note)
         return fail ("TaskPoint CSV round-trip should preserve task point fields.");
 
