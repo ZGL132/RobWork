@@ -416,6 +416,22 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     _ikSolutionTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     _ikSolutionTable->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    // Task 5:默认列宽。窄列(标签 / 布尔)+ 中列(数值)+ 宽列(Q),
+    // 避免长 Q 把所有数值列挤窄。setStretchLastSection(true) 让 Q 列
+    // 在窗口变宽时继续吸收多余宽度。
+    _ikSolutionTable->setColumnWidth (0, 60);    // Index
+    _ikSolutionTable->setColumnWidth (1, 80);    // Status
+    _ikSolutionTable->setColumnWidth (2, 180);   // Failure
+    _ikSolutionTable->setColumnWidth (3, 80);    // Current Q
+    _ikSolutionTable->setColumnWidth (4, 80);    // Collision
+    _ikSolutionTable->setColumnWidth (5, 100);   // Distance
+    _ikSolutionTable->setColumnWidth (6, 120);   // Min limit margin
+    _ikSolutionTable->setColumnWidth (7, 120);   // Manipulability
+    _ikSolutionTable->setColumnWidth (8, 100);   // Condition
+    _ikSolutionTable->setColumnWidth (9, 110);   // Position error
+    _ikSolutionTable->setColumnWidth (10, 120);  // Orientation error
+    _ikSolutionTable->setColumnWidth (11, 260);  // Q
+    _ikSolutionTable->horizontalHeader()->setStretchLastSection(true);
     // 选中行变化 → 详情表更新。
     connect (_ikSolutionTable, SIGNAL (itemSelectionChanged ()),
              this, SLOT (updateIkSolutionDetails ()));
@@ -580,6 +596,27 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
     if (_ikSolutionTable == NULL)
         return;
 
+    // Task 3:过滤器互斥。勾 Show usable only 时强制取消 Show failed candidates
+    // 并禁用,避免两个过滤器语义冲突。QSignalBlocker 防止 setChecked(false)
+    // 反向触发自身 stateChanged 槽,造成递归。
+    if (_ikShowUsableOnlyCheck != NULL && _ikShowFailedCandidatesCheck != NULL) {
+        const bool usableOnly = _ikShowUsableOnlyCheck->isChecked ();
+        _ikShowFailedCandidatesCheck->setEnabled (!usableOnly);
+        if (usableOnly && _ikShowFailedCandidatesCheck->isChecked ()) {
+            QSignalBlocker blocker (_ikShowFailedCandidatesCheck);
+            _ikShowFailedCandidatesCheck->setChecked (false);
+        }
+    }
+
+    // Task 4:刷新前记录当前选中的 solutionIndex,过滤后若该解仍可见,
+    // 在循环末尾重新选中,而不是默认跳到第 0 行。
+    int previousSolutionIndex = -1;
+    const QList<QTableWidgetItem*> previouslySelected = _ikSolutionTable->selectedItems ();
+    if (!previouslySelected.empty ())
+        previousSolutionIndex =
+            previouslySelected.front ()->data (Qt::UserRole + 1).toInt ();
+    int rowToSelect = -1;
+
     _ikSolutionTable->setRowCount (0);
     int displayRow = 0;
     for (std::size_t i = 0; i < _lastIkResult.solutions.size (); ++i) {
@@ -588,13 +625,37 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
             continue;
 
         _ikSolutionTable->insertRow (displayRow);
-        QTableWidgetItem* indexItem = makeItem (QString::number (static_cast<int> (i)));
-        storeIkSolutionIndex (indexItem, static_cast<int> (i));
+        const int solutionIndex = static_cast<int> (i);
+        if (solutionIndex == previousSolutionIndex)
+            rowToSelect = displayRow;
+
+        QTableWidgetItem* indexItem = makeItem (QString::number (solutionIndex));
+        storeIkSolutionIndex (indexItem, solutionIndex);
         _ikSolutionTable->setItem (displayRow, 0, indexItem);
-        _ikSolutionTable->setItem (displayRow, 1, makeItem (QString::fromLatin1 (statusText (solution.status))));
-        _ikSolutionTable->setItem (displayRow, 2, makeItem (ikFailureText (solution)));
-        _ikSolutionTable->setItem (displayRow, 3, makeItem (isCurrentIkSolution (solution) ? tr("Yes") : tr("No")));
-        _ikSolutionTable->setItem (displayRow, 4, makeItem (solution.inCollision ? tr("Yes") : tr("No")));
+
+        // Task 7:Status 列染色。Pass 绿 / Warning 橙 / Fail 红,
+        // 用户扫读时一眼区分候选质量。
+        QTableWidgetItem* statusItem =
+            makeItem (QString::fromLatin1 (statusText (solution.status)));
+        if (solution.status == AnalysisStatus::Pass)
+            statusItem->setForeground (QColor (0, 120, 0));
+        else if (solution.status == AnalysisStatus::Warning)
+            statusItem->setForeground (QColor (180, 120, 0));
+        else if (solution.status == AnalysisStatus::Fail)
+            statusItem->setForeground (QColor (180, 0, 0));
+        _ikSolutionTable->setItem (displayRow, 1, statusItem);
+
+        // Task 6:Failure 列加 tooltip,完整原因文本(可能含数值证据)
+        // 在 hover 时显示,不必打开横向滚动。
+        const QString failureText = ikFailureText (solution);
+        QTableWidgetItem* failureItem = makeItem (failureText);
+        failureItem->setToolTip (failureText);
+        _ikSolutionTable->setItem (displayRow, 2, failureItem);
+
+        _ikSolutionTable->setItem (displayRow, 3,
+            makeItem (isCurrentIkSolution (solution) ? tr("Yes") : tr("No")));
+        _ikSolutionTable->setItem (displayRow, 4,
+            makeItem (solution.inCollision ? tr("Yes") : tr("No")));
         _ikSolutionTable->setItem (displayRow, 5, makeItem (solution.distanceToCurrentQ));
         _ikSolutionTable->setItem (displayRow, 6, makeItem (solution.minJointLimitMargin));
         _ikSolutionTable->setItem (displayRow, 7, makeItem (solution.manipulability));
@@ -603,24 +664,26 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
                                                             : QString::number (solution.conditionNumber)));
         _ikSolutionTable->setItem (displayRow, 9, makeItem (solution.positionErrorMeters));
         _ikSolutionTable->setItem (displayRow, 10, makeItem (solution.orientationErrorDeg));
-        // 第 10 列是纯 Q,失败原因已分到第 2 列;这里传空 reasons 防止 makeQItem
-        // 把原因字符串重复显示一次。
+        // 第 11 列是纯 Q,失败原因已分到第 2 列;传空 reasons 防止 makeQItem
+        // 把原因字符串重复显示一次。Task 6:在 makeQItem 内部给 text 加 tooltip。
         _ikSolutionTable->setItem (displayRow, 11,
             makeQItem (solution.q, std::vector< KinematicFailureReason > ()));
 
-        // 整行的 solutionIndex 都存到 Qt::UserRole + 1,这样选中任一单元格
+        // 整行的 solutionIndex 都存到 Qt::UserRole + 1,选中任一单元格
         // 都能反查回原始 solution。
         for (int column = 1; column < _ikSolutionTable->columnCount (); ++column)
-            storeIkSolutionIndex (_ikSolutionTable->item (displayRow, column),
-                                  static_cast<int> (i));
+            storeIkSolutionIndex (_ikSolutionTable->item (displayRow, column), solutionIndex);
 
         ++displayRow;
     }
 
+    // Task 2:Displayed 是当前过滤后实际显示数;
+    // Raw / Unique / Pass / Warning / Fail 仍是全量统计,语义清晰不混淆。
     if (_ikCountSummaryLabel != NULL) {
         const KinematicIkSummary summary = summarizeIkSolutions (_lastIkResult.solutions);
         _ikCountSummaryLabel->setText (
-            tr("Raw %1 | Unique %2 | Usable %3 | Pass %4 | Warning %5 | Fail %6")
+            tr("Displayed %1 | Raw %2 | Unique %3 | Usable %4 | Pass %5 | Warning %6 | Fail %7")
+                .arg (displayRow)
                 .arg (static_cast<int> (_lastIkResult.rawCandidateCount))
                 .arg (static_cast<int> (_lastIkResult.solutions.size ()))
                 .arg (static_cast<int> (summary.usableCount))
@@ -629,12 +692,16 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
                 .arg (static_cast<int> (summary.failCount)));
     }
 
-    // 首次填表后默认选中第一行,详情表即时显示该候选;
-    // 过滤后无行时退回到空状态(Apply 也会被 setIkDetailsEmpty 禁用)。
-    if (_ikSolutionTable->rowCount () > 0)
-        _ikSolutionTable->selectRow (0);
-    else
+    // Task 4 续:若过滤后原选中解消失(被过滤掉),rowToSelect == -1,
+    // 回退到第 0 行;无行时退到空状态(Apply 也会被 setIkDetailsEmpty 禁用)。
+    if (_ikSolutionTable->rowCount () > 0) {
+        if (rowToSelect < 0)
+            rowToSelect = 0;
+        _ikSolutionTable->selectRow (rowToSelect);
+    }
+    else {
         setIkDetailsEmpty ();
+    }
 
     // 按钮启用/禁用统一交给 updateIkSolutionDetails / setIkDetailsEmpty。
     updateIkSolutionDetails ();
@@ -855,6 +922,8 @@ const char* taskPointTypeText (rws::TaskPointType type)
 
 // makeQItem:把 IK 解的 q + failureReasons 拼成一个单元格,
 // 并把 q 序列化到 Qt::UserRole,Apply 时直接读取,避免再次解析字符串。
+// Task 6:同步把完整文本写入 tooltip,IK 主表 Q 列(可能很长)在 hover 时
+// 可以看完整内容。
 QTableWidgetItem* makeQItem (const std::vector< double >& q,
                              const std::vector< rws::KinematicFailureReason >& reasons)
 {
@@ -864,6 +933,7 @@ QTableWidgetItem* makeQItem (const std::vector< double >& q,
         text += QString(" | ") + failures;
 
     QTableWidgetItem* item = makeItem(text);
+    item->setToolTip (text);
     QVariantList storedQ;
     for (double value : q)
         storedQ << value;
@@ -1253,8 +1323,16 @@ void KinematicAnalysisWidget::solveIk ()
     if (_ikDuplicateQThresholdSpin != NULL)
         _thresholds.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
 
+    // Task 8:进入分析前禁用 Solve + 状态栏提示"Solving IK...";
+    // 每个提前返回 / 正常结束都要把按钮恢复,避免遗留禁用状态。
+    if (_ikSolveButton != NULL)
+        _ikSolveButton->setEnabled (false);
+    setStatus (tr("Solving IK..."));
+
     if (_workcell == NULL) {
         setStatus(tr("Cannot solve IK: no WorkCell loaded."));
+        if (_ikSolveButton != NULL)
+            _ikSolveButton->setEnabled (true);
         return;
     }
 
@@ -1263,6 +1341,8 @@ void KinematicAnalysisWidget::solveIk ()
     if (device == NULL) {
         _ikSummaryLabel->setText(tr("Candidates: no device"));
         setStatus(tr("Cannot solve IK: no valid device selected."));
+        if (_ikSolveButton != NULL)
+            _ikSolveButton->setEnabled (true);
         return;
     }
 
@@ -1304,6 +1384,10 @@ void KinematicAnalysisWidget::solveIk ()
         setStatus(tr("IK analysis completed with %1 candidate(s).")
                       .arg(static_cast<int>(result.solutions.size())));
     }
+
+    // 正常路径收尾:恢复 Solve 按钮。
+    if (_ikSolveButton != NULL)
+        _ikSolveButton->setEnabled (true);
 }
 
 // shouldShowIkSolution:IK 解过滤器,组合两个 QCheckBox:
@@ -1342,6 +1426,26 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
     }
 
     const int row = selected.front()->row();
+    // 先从第 0 列取真实 solutionIndex,做一次完整性 / 可用性校验;
+    // 这样即便按钮状态被异常触发,也不会把 Fail / collision 解写回 RobWorkStudio。
+    QTableWidgetItem* indexItem = _ikSolutionTable->item(row, 0);
+    if (indexItem == NULL) {
+        setStatus(tr("Cannot apply IK solution: selected row has no solution index."));
+        return;
+    }
+    const int solutionIndex = indexItem->data(Qt::UserRole + 1).toInt();
+    if (solutionIndex < 0 ||
+        solutionIndex >= static_cast<int> (_lastIkResult.solutions.size ())) {
+        setStatus(tr("Cannot apply IK solution: selected row index is invalid."));
+        return;
+    }
+    const KinematicIkSolution& solution =
+        _lastIkResult.solutions[static_cast<std::size_t> (solutionIndex)];
+    if (!isUsableIkSolution (solution)) {
+        setStatus(tr("Cannot apply IK solution: selected solution is failed or in collision."));
+        return;
+    }
+
     // 表拆分后 Q 在第 11 列(0-indexed)。
     QTableWidgetItem* qItem = _ikSolutionTable->item(row, 11);
     if (qItem == NULL) {
