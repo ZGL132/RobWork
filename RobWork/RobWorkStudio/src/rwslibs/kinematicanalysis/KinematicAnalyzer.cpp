@@ -1,4 +1,5 @@
 #include "KinematicAnalyzer.hpp"
+#include "TaskPointResolver.hpp"
 
 // 引入 IK 求解器和必要的运动学/数学工具。
 #include <rw/core/Ptr.hpp>
@@ -1089,6 +1090,91 @@ std::vector< TaskPointReachabilityResult > KinematicAnalyzer::analyzeTaskPoints 
                 r.failureReasons.push_back (r.primaryFailure);
         }
         results.push_back (r);
+    }
+    return results;
+}
+
+// P1 单点分析:workcell-aware。
+//   - disabled 任务点:沿用旧逻辑,不跑 resolver,不计入分母;
+//   - enabled:先调 TaskPointResolver 解析 refFrame / tcpFrame;
+//     * 解析失败 → TaskPointReachabilityResult.status = Fail,
+//       primaryFailure 来自 resolver;
+//     * 解析成功 → 用 resolved.targetInDeviceBase + resolved.tcpFrame 调旧 analyzeIk。
+//   - r.taskPoint 始终保留原 taskPoint(用户输入语义),避免 Report / UI 丢字段。
+TaskPointReachabilityResult KinematicAnalyzer::analyzeTaskPoint (
+    rw::models::WorkCell* workcell,
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > defaultTcpFrame,
+    const rw::kinematics::State& state,
+    const TaskPoint& taskPoint,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    TaskPointReachabilityResult r;
+    r.taskPoint = taskPoint;
+    r.status    = AnalysisStatus::Unknown;
+
+    // disabled:直接 Skipped,不跑 resolver,不计 reachable。
+    if (!taskPoint.enabled) {
+        r.status = AnalysisStatus::Warning;
+        r.primaryFailure = KinematicFailureReason::None;
+        AnalysisWarning w;
+        w.code     = "KIN_TASK_DISABLED";
+        w.message  = "Task point is disabled; skipped from reachability denominator.";
+        w.source   = "KinematicAnalyzer";
+        w.severity = AnalysisStatus::Warning;
+        r.ik.warnings.push_back (w);
+        r.ik.target = taskPoint;
+        return r;
+    }
+
+    const ResolvedTaskPoint resolved = resolveTaskPoint (
+        workcell, device, defaultTcpFrame, state, taskPoint);
+    if (!resolved.valid) {
+        r.status         = AnalysisStatus::Fail;
+        r.primaryFailure = resolved.failure;
+        r.failureReasons.push_back (resolved.failure);
+        for (const AnalysisWarning& w : resolved.warnings)
+            r.ik.warnings.push_back (w);
+        // 把原 target 留在 r.ik.target,便于 Report / UI 展示用户输入;
+        // 失败 reason 已经在 warnings 里说明。
+        r.ik.target = taskPoint;
+        return r;
+    }
+
+    // 解析成功:用 resolved 后的 target + tcpFrame 调旧 analyzeIk;
+    // warnings 合并 resolver 警告 + IK 警告,保留完整诊断链。
+    r.ik = analyzeIk (device, resolved.tcpFrame, state,
+                      resolved.targetInDeviceBase, collisionDetector);
+    for (const AnalysisWarning& w : resolved.warnings)
+        r.ik.warnings.push_back (w);
+    if (r.ik.solutions.empty ()) {
+        r.status         = AnalysisStatus::Fail;
+        r.primaryFailure = primaryFailureFromIk (r.ik);
+        r.failureReasons.push_back (r.primaryFailure);
+    }
+    else {
+        r.primaryFailure = primaryFailureFromIk (r.ik);
+        r.status = r.ik.status;
+        if (r.primaryFailure != KinematicFailureReason::None)
+            r.failureReasons.push_back (r.primaryFailure);
+    }
+    return r;
+}
+
+// P1 批量分析:workcell-aware,逐点调 analyzeTaskPoint(workcell-aware)。
+std::vector< TaskPointReachabilityResult > KinematicAnalyzer::analyzeTaskPoints (
+    rw::models::WorkCell* workcell,
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > defaultTcpFrame,
+    const rw::kinematics::State& state,
+    const std::vector< TaskPoint >& taskPoints,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    std::vector< TaskPointReachabilityResult > results;
+    results.reserve (taskPoints.size ());
+    for (const TaskPoint& point : taskPoints) {
+        results.push_back (analyzeTaskPoint (
+            workcell, device, defaultTcpFrame, state, point, collisionDetector));
     }
     return results;
 }

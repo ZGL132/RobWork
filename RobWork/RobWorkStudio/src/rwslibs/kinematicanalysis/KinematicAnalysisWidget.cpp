@@ -54,7 +54,9 @@ using namespace rws;
 
 namespace {
 // Task point 表格列索引枚举,统一所有读写代码,避免列号硬编码漂移。
-// 列顺序与 RobotAnalysisCsv 标准字段一致,后两列 status / reason 是 UI 衍生。
+// 前 19 列对应 RobotAnalysisCsv 标准字段 + UI 衍生 status / reason;
+// 后 8 列是 P1 新增的批量 IK 结果列(raw / usable / bestQ / posErr /
+// oriErr / margin / condition / collision)。
 // 该枚举必须在 buildTaskPointTab 之前定义,否则 setColumnCount 与
 // setHorizontalHeaderLabels 引用 Col* 时会编译失败。
 enum TaskPointColumn
@@ -78,7 +80,16 @@ enum TaskPointColumn
     ColNote      = 16,
     ColStatus    = 17,
     ColReason    = 18,
-    TaskPointColumnCount = 19
+    // P1:批量 IK 结果列
+    ColRawCandidates       = 19,
+    ColUsableSolutions     = 20,
+    ColBestQ               = 21,
+    ColPositionError       = 22,
+    ColOrientationError    = 23,
+    ColMinMargin           = 24,
+    ColCondition           = 25,
+    ColCollision           = 26,
+    TaskPointColumnCount   = 27
 };
 
 QTableWidgetItem* makeItem (const QString& text);
@@ -514,6 +525,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_removeTaskPointButton, SIGNAL (clicked ()), this, SLOT (removeSelectedTaskPointRow ()));
     connect (_importTaskPointsButton, SIGNAL (clicked ()), this, SLOT (importTaskPointsCsv ()));
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
+    connect (_exportTaskPointResultsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointResultsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
     connect (_workspaceRunButton, SIGNAL (clicked ()), this, SLOT (sampleWorkspace ()));
     connect (_workspaceExportButton, SIGNAL (clicked ()), this, SLOT (exportWorkspaceCsv ()));
@@ -1520,13 +1532,15 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _addTaskPointButton         = new QPushButton(tr("Add row"), _taskPointTab);
     _removeTaskPointButton      = new QPushButton(tr("Remove selected"), _taskPointTab);
     _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
-    _exportTaskPointsButton     = new QPushButton(tr("Export CSV"), _taskPointTab);
+    _exportTaskPointsButton     = new QPushButton(tr("Export task CSV"), _taskPointTab);
+    _exportTaskPointResultsButton = new QPushButton(tr("Export result CSV"), _taskPointTab);
     _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
     buttonRow->addWidget (_addTaskPointButton, 0, 0);
     buttonRow->addWidget (_removeTaskPointButton, 0, 1);
     buttonRow->addWidget (_importTaskPointsButton, 1, 0);
     buttonRow->addWidget (_exportTaskPointsButton, 1, 1);
-    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 2);
+    buttonRow->addWidget (_exportTaskPointResultsButton, 1, 2);
+    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 3);
     tpLayout->addLayout (buttonRow);
 
     _taskPointTable = new QTableWidget (_taskPointTab);
@@ -1538,7 +1552,11 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
         tr("roll"), tr("pitch"), tr("yaw"),
         tr("posTol"), tr("oriTol"), tr("freeRoll"),
         tr("weight"), tr("note"),
-        tr("status"), tr("reason")
+        tr("status"), tr("reason"),
+        // P1:批量 IK 结果列
+        tr("raw"), tr("usable"), tr("bestQ"),
+        tr("posErr (m)"), tr("oriErr (deg)"),
+        tr("margin"), tr("condition"), tr("collision")
     });
     _taskPointTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     _taskPointTable->setSelectionMode (QAbstractItemView::SingleSelection);
@@ -1799,6 +1817,15 @@ void KinematicAnalysisWidget::addTaskPointRow ()
     text (row, ColNote,     QString (), true);
     text (row, ColStatus,   QString ("-"), false);
     text (row, ColReason,   QString ("-"), false);
+    // P1:8 个批量 IK 结果列只读,默认占位 "-",等 Analyze all 写回。
+    text (row, ColRawCandidates,    QString ("-"), false);
+    text (row, ColUsableSolutions,  QString ("-"), false);
+    text (row, ColBestQ,            QString ("-"), false);
+    text (row, ColPositionError,    QString ("-"), false);
+    text (row, ColOrientationError, QString ("-"), false);
+    text (row, ColMinMargin,        QString ("-"), false);
+    text (row, ColCondition,        QString ("-"), false);
+    text (row, ColCollision,        QString ("-"), false);
     setTaskPointTableColumnWidths ();
     setStatus(tr("Added task point row %1.").arg(row + 1));
 }
@@ -1829,10 +1856,34 @@ QTableWidgetItem* setCell (QTableWidget* t, int r, int c, const QString& s, bool
     t->setItem (r, c, item);
     return item;
 }
+QTableWidgetItem* setCell (QTableWidget* t, int r, int c, double value, bool editable)
+{
+    return setCell (t, r, c, QString::number (value, 'g', 8), editable);
+}
 QString cellText (QTableWidget* t, int r, int c)
 {
     QTableWidgetItem* item = t->item (r, c);
     return item == nullptr ? QString () : item->text ();
+}
+
+QString csvEscape (QString value)
+{
+    if (!value.contains (QLatin1Char (',')) &&
+        !value.contains (QLatin1Char ('"')) &&
+        !value.contains (QLatin1Char ('\r')) &&
+        !value.contains (QLatin1Char ('\n')))
+        return value;
+    value.replace (QStringLiteral ("\""), QStringLiteral ("\"\""));
+    return QStringLiteral ("\"%1\"").arg (value);
+}
+
+QString csvJoin (const QStringList& fields)
+{
+    QStringList escaped;
+    escaped.reserve (fields.size ());
+    for (const QString& field : fields)
+        escaped << csvEscape (field);
+    return escaped.join (QStringLiteral (","));
 }
 
 // Task 2 辅助:把"原始 solution 在 _lastIkResult 中的索引"存到 cell 的
@@ -1856,6 +1907,24 @@ void setDetailRow (QTableWidget* table, int row, const QString& field, const QSt
     valueItem->setToolTip (value);
     table->setItem (row, 0, fieldItem);
     table->setItem (row, 1, valueItem);
+}
+
+// P1 bestUsableSolution:为每个 task point 选"代表解"展示在 bestQ / 误差列。
+//   - 优先第一条无碰撞 + (Pass 或 Warning) 的解;
+//   - 全部 collision 时退回到第一条解(诊断用),让用户看到 IK 真的解到了;
+//   - 无解时返回 nullptr,UI 写 "-"。
+const rws::KinematicIkSolution* bestUsableSolution (const rws::KinematicIkAnalysisResult& ik)
+{
+    const rws::KinematicIkSolution* fallback = nullptr;
+    for (const auto& solution : ik.solutions) {
+        if (!solution.inCollision &&
+            (solution.status == rws::AnalysisStatus::Pass ||
+             solution.status == rws::AnalysisStatus::Warning))
+            return &solution;
+        if (fallback == nullptr)
+            fallback = &solution;
+    }
+    return fallback;
 }
 
 // readTaskPointFromRow:把表格一行(0-based row)完整读成 TaskPoint。
@@ -2097,8 +2166,27 @@ void KinematicAnalysisWidget::applyTaskPointResults (
     std::size_t passCount = 0, warnCount = 0, failCount = 0, enabledCount = 0;
     for (std::size_t i = 0; i < n; ++i) {
         const TaskPointReachabilityResult& r = results[i];
-        if (r.taskPoint.enabled)
-            ++enabledCount;
+        const int row = static_cast< int > (i);
+
+        // disabled 行:status=Skipped,reason=Disabled,8 个结果列全 "-"。
+        if (!r.taskPoint.enabled) {
+            setCell (_taskPointTable, row, ColStatus,
+                     QStringLiteral ("Skipped"), false);
+            setCell (_taskPointTable, row, ColReason,
+                     QStringLiteral ("Disabled"), false);
+            setCell (_taskPointTable, row, ColRawCandidates,    QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColUsableSolutions,  QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
+            continue;
+        }
+        ++enabledCount;
+
+        // enabled 行:取 status / reason + 批量 IK 结果。
         const char* status =
             r.status == AnalysisStatus::Pass    ? "Pass" :
             r.status == AnalysisStatus::Warning ? "Warning" :
@@ -2109,13 +2197,42 @@ void KinematicAnalysisWidget::applyTaskPointResults (
             ++warnCount;
         else if (r.status == AnalysisStatus::Fail)
             ++failCount;
-        setCell (_taskPointTable, static_cast< int > (i), ColStatus, QString::fromUtf8 (status), false);
+        setCell (_taskPointTable, row, ColStatus, QString::fromUtf8 (status), false);
         QStringList reasons;
         for (KinematicFailureReason fr : r.failureReasons)
             reasons << QString::fromUtf8 (rws::toString (fr));
         const QString reasonText = reasons.isEmpty () ? QString ("-")
                                                        : reasons.join (QStringLiteral (", "));
-        setCell (_taskPointTable, static_cast< int > (i), ColReason, reasonText, false);
+        setCell (_taskPointTable, row, ColReason, reasonText, false);
+
+        // 8 个结果列:rawCandidates / usableSolutions 直接来自 IK 结果;
+        // bestQ / 误差 / margin / condition / collision 从 bestUsableSolution 选。
+        setCell (_taskPointTable, row, ColRawCandidates,
+                 QString::number (static_cast< int > (r.ik.rawCandidateCount)), false);
+        setCell (_taskPointTable, row, ColUsableSolutions,
+                 QString::number (static_cast< int > (r.ik.usableSolutionCount)), false);
+
+        const KinematicIkSolution* best = bestUsableSolution (r.ik);
+        if (best != nullptr) {
+            setCell (_taskPointTable, row, ColBestQ, qVectorText (best->q), false);
+            setCell (_taskPointTable, row, ColPositionError, best->positionErrorMeters, false);
+            setCell (_taskPointTable, row, ColOrientationError, best->orientationErrorDeg, false);
+            setCell (_taskPointTable, row, ColMinMargin, best->minJointLimitMargin, false);
+            setCell (_taskPointTable, row, ColCondition,
+                     std::isinf (best->conditionNumber) ?
+                         tr ("inf") : makeItem (best->conditionNumber)->text (),
+                     false);
+            setCell (_taskPointTable, row, ColCollision,
+                     best->inCollision ? tr ("Yes") : tr ("No"), false);
+        }
+        else {
+            setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
+            setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
+        }
     }
     if (_taskPointSummaryLabel != nullptr) {
         _taskPointSummaryLabel->setText (QString (
@@ -2190,6 +2307,15 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
         setCell (_taskPointTable, row, ColNote,     QString::fromStdString (p.note), true);
         setCell (_taskPointTable, row, ColStatus,   QStringLiteral ("-"), false);
         setCell (_taskPointTable, row, ColReason,   QStringLiteral ("-"), false);
+        // P1:8 个结果列只读占位,等待 Analyze all 写回。
+        setCell (_taskPointTable, row, ColRawCandidates,    QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColUsableSolutions,  QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
+        setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
     }
     // P0-6:导入后立刻跑 RobotAnalysisValidation,
     // 失败的行整行标浅红 + tooltip + reason 显示第一条错误。
@@ -2241,6 +2367,76 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
     setStatus(tr("Exported %1 task point(s).").arg(static_cast<int>(points.size())));
 }
 
+// P1 exportTaskPointResultsCsv:导出批量 IK 结果 CSV。
+// 包含任务点定义(id/name/enabled/refFrame/tcpFrame) + 状态(status/reason) +
+// 8 个结果指标(rawCandidates/usableSolutions/bestQ/posErr/oriErr/margin/condition/collision)。
+// 不要求能再次导入 RobotAnalysisCore;它面向报告而不是回写。
+void KinematicAnalysisWidget::exportTaskPointResultsCsv ()
+{
+    if (_lastTaskPointResults.empty ()) {
+        setStatus (tr("Cannot export result CSV: run Analyze all first."));
+        return;
+    }
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export task point results"), QString ("task_point_results.csv"),
+        tr("CSV files (*.csv);;All files (*)"));
+    if (path.isEmpty ()) {
+        setStatus (tr("Task point result export canceled."));
+        return;
+    }
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning (this, tr("Export error"),
+                              tr("Could not open %1 for writing").arg (path));
+        setStatus (tr("Task point result export failed: could not open file for writing."));
+        return;
+    }
+    QTextStream out (&file);
+    out << "id,name,type,enabled,refFrame,tcpFrame,status,reason,"
+           "rawCandidates,usableSolutions,bestQ,"
+           "positionErrorMeters,orientationErrorDeg,"
+           "minJointLimitMargin,conditionNumber,inCollision\n";
+    for (const TaskPointReachabilityResult& r : _lastTaskPointResults) {
+        QStringList reasons;
+        for (KinematicFailureReason fr : r.failureReasons)
+            reasons << QString::fromUtf8 (rws::toString (fr));
+        const KinematicIkSolution* best = bestUsableSolution (r.ik);
+        QString bestQ = "-";
+        QString posErr = "-";
+        QString oriErr = "-";
+        QString margin = "-";
+        QString cond = "-";
+        QString collision = "-";
+        if (best != nullptr) {
+            bestQ    = qVectorText (best->q);
+            posErr   = QString::number (best->positionErrorMeters, 'g', 8);
+            oriErr   = QString::number (best->orientationErrorDeg, 'g', 8);
+            margin   = QString::number (best->minJointLimitMargin, 'g', 8);
+            cond     = std::isinf (best->conditionNumber) ?
+                           QStringLiteral ("inf") :
+                           QString::number (best->conditionNumber, 'g', 8);
+            collision = best->inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No");
+        }
+        const QStringList fields = {
+            QString::fromStdString (r.taskPoint.id),
+            QString::fromStdString (r.taskPoint.name),
+            QString::fromLatin1 (taskPointTypeText (r.taskPoint.type)),
+            r.taskPoint.enabled ? QStringLiteral ("true") : QStringLiteral ("false"),
+            QString::fromStdString (r.taskPoint.refFrame),
+            QString::fromStdString (r.taskPoint.tcpFrame),
+            QString::fromLatin1 (statusText (r.status)),
+            reasons.isEmpty () ? QStringLiteral ("-") : reasons.join (QStringLiteral (",")),
+            QString::number (static_cast< int > (r.ik.rawCandidateCount)),
+            QString::number (static_cast< int > (r.ik.usableSolutionCount)),
+            bestQ, posErr, oriErr, margin, cond, collision
+        };
+        out << csvJoin (fields) << "\n";
+    }
+    file.close ();
+    setStatus (tr("Exported %1 task point result row(s).")
+                   .arg (static_cast< int > (_lastTaskPointResults.size ())));
+}
+
 // analyzeAllTaskPoints:批量跑任务点的 IK。
 //   - 从表格读出 TaskPoint 列表;
 //   - analyzeTaskPoints(此处传 NULL,跳过碰撞检测,避免依赖外部 collider);
@@ -2281,8 +2477,11 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (true, &collisionUnavailable);
+    // P1:切到 workcell-aware overload。tcpFrame 是顶部默认 TCP,
+    // 每行 taskPoint.tcpFrame 由 TaskPointResolver 优先使用。
     const std::vector< TaskPointReachabilityResult > results =
-        analyzer.analyzeTaskPoints (device, tcpFrame, state, points, collisionDetector);
+        analyzer.analyzeTaskPoints (
+            _workcell, device, tcpFrame, state, points, collisionDetector);
     const double rate = analyzer.calculateReachableRate (results);
     _lastTaskPointResults = results;
     applyTaskPointResults (results, rate);
@@ -2687,8 +2886,45 @@ void KinematicAnalysisWidget::exportReportJson ()
         QJsonObject item;
         item["id"] = QString::fromStdString (task.taskPoint.id);
         item["name"] = QString::fromStdString (task.taskPoint.name);
+        item["type"] = QString::fromLatin1 (taskPointTypeText (task.taskPoint.type));
+        item["enabled"] = task.taskPoint.enabled;
+        item["refFrame"] = QString::fromStdString (task.taskPoint.refFrame);
+        item["tcpFrame"] = QString::fromStdString (task.taskPoint.tcpFrame);
         item["status"] = QString::fromLatin1 (statusText (task.status));
         item["primaryFailure"] = QString::fromLatin1 (toString (task.primaryFailure));
+        // failureReasons 完整数组,便于脚本二次过滤。
+        QJsonArray reasonArray;
+        for (KinematicFailureReason fr : task.failureReasons)
+            reasonArray.append (QString::fromLatin1 (toString (fr)));
+        item["failureReasons"] = reasonArray;
+        item["rawCandidateCount"] = static_cast< int > (task.ik.rawCandidateCount);
+        item["usableSolutionCount"] = static_cast< int > (task.ik.usableSolutionCount);
+        // best solution:从 bestUsableSolution 选;无解时写全 "-",
+        // 避免下游脚本访问 null 字段报错。
+        QJsonObject bestObj;
+        const KinematicIkSolution* best = bestUsableSolution (task.ik);
+        if (best != nullptr) {
+            bestObj["q"] = vectorToJsonArray (best->q);
+            bestObj["positionErrorMeters"] = best->positionErrorMeters;
+            bestObj["orientationErrorDeg"] = best->orientationErrorDeg;
+            bestObj["minJointLimitMargin"] = best->minJointLimitMargin;
+            bestObj["conditionNumber"] =
+                std::isinf (best->conditionNumber) ?
+                    QJsonValue (QStringLiteral ("inf")) :
+                    QJsonValue (best->conditionNumber);
+            bestObj["manipulability"] = best->manipulability;
+            bestObj["inCollision"] = best->inCollision;
+        }
+        else {
+            bestObj["q"] = QJsonArray ();
+            bestObj["positionErrorMeters"] = QJsonValue::Null;
+            bestObj["orientationErrorDeg"] = QJsonValue::Null;
+            bestObj["minJointLimitMargin"] = QJsonValue::Null;
+            bestObj["conditionNumber"] = QJsonValue::Null;
+            bestObj["manipulability"] = QJsonValue::Null;
+            bestObj["inCollision"] = QJsonValue::Null;
+        }
+        item["bestSolution"] = bestObj;
         taskArray.append (item);
     }
     root["taskPointResults"] = taskArray;

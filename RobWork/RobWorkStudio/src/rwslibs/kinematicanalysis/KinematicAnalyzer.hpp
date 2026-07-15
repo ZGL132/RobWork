@@ -9,6 +9,7 @@
 #include <rw/kinematics/State.hpp>
 #include <rw/math/Q.hpp>
 #include <rw/models/Device.hpp>
+#include <rw/models/WorkCell.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
 
 namespace rws {
@@ -49,6 +50,26 @@ class KinematicAnalyzer
     std::vector< TaskPointReachabilityResult > analyzeTaskPoints (
         rw::core::Ptr< rw::models::Device > device,
         rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+        const rw::kinematics::State& state,
+        const std::vector< TaskPoint >& taskPoints,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    // P1:WorkCell-aware 单点分析。内部先调 TaskPointResolver 把
+    // refFrame / tcpFrame 解析到 base 坐标系,失败则 status=Fail + reason;
+    // disabled 点直接保留旧逻辑(不跑 resolver,不计 reachable)。
+    TaskPointReachabilityResult analyzeTaskPoint (
+        rw::models::WorkCell* workcell,
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > defaultTcpFrame,
+        const rw::kinematics::State& state,
+        const TaskPoint& taskPoint,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    // P1:WorkCell-aware 批量分析。逐点调 analyzeTaskPoint(workcell-aware)。
+    std::vector< TaskPointReachabilityResult > analyzeTaskPoints (
+        rw::models::WorkCell* workcell,
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > defaultTcpFrame,
         const rw::kinematics::State& state,
         const std::vector< TaskPoint >& taskPoints,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;

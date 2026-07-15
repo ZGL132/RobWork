@@ -1,6 +1,7 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicMetrics.hpp"
 #include "KinematicAnalyzer.hpp"
+#include "TaskPointResolver.hpp"
 
 #include <QCoreApplication>
 
@@ -826,6 +827,343 @@ static int testAggregateResult ()
     return 0;
 }
 
+// ============================================================================
+//  TaskPointResolver 单元测试
+//  使用 makeGenericSixAxis 构造 device + StateStructure,
+//  再 addFrame 到 StateStructure 上,然后用 WorkCell 包装,验证
+//  refFrame / tcpFrame 在不同 frame 下的解析行为。
+// ============================================================================
+static int testTaskPointResolver ()
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    StateStructure::Ptr stateStructure = rw::core::ownedPtr (new StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+
+    // 多挂几个 named frame 供 resolver 查找:
+    const Frame::Ptr fixtureA =
+        rw::core::ownedPtr (new FixedFrame (
+            "FixtureA", Transform3D<> (Vector3D<> (0.5, 0.0, 0.0))));
+    const Frame::Ptr toolTip =
+        rw::core::ownedPtr (new FixedFrame (
+            "ToolTip", Transform3D<> (Vector3D<> (0.0, 0.0, 0.05))));
+    stateStructure->addFrame (fixtureA, device->getBase ());
+    stateStructure->addFrame (toolTip, device->getEnd ());
+
+    rw::models::WorkCell::Ptr workcell =
+        rw::core::ownedPtr (new rw::models::WorkCell (
+            stateStructure, "TestWorkCell", ""));
+    const rw::kinematics::State state = workcell->getDefaultState ();
+
+    // 1) WORLD refFrame:valid + 目标在 base 下
+    {
+        rws::TaskPoint p;
+        p.id = "P1";
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "TCP";
+        p.position = {{0.5, 0.0, 0.3}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (r.valid, "WORLD refFrame resolves to valid"))
+            return rc;
+        if (const int rc = require (r.tcpFrame == device->getEnd (),
+                                    "WORLD uses row-level TCP"))
+            return rc;
+        if (const int rc = require (r.targetInDeviceBase.refFrame == device->getBase ()->getName (),
+                                    "WORLD output refFrame = device base name"))
+            return rc;
+        if (const int rc = require (r.warnings.empty (), "WORLD success has no warnings"))
+            return rc;
+    }
+
+    // 2) device base refFrame:valid + refFrame 重写为 base
+    {
+        rws::TaskPoint p;
+        p.id = "P2";
+        p.refFrame = device->getBase ()->getName ();
+        p.tcpFrame = "TCP";
+        p.position = {{1.0, 2.0, 3.0}};
+        p.rpyDeg   = {{10.0, 20.0, 30.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (r.valid, "device base refFrame resolves to valid"))
+            return rc;
+        if (const int rc = require (r.targetInDeviceBase.refFrame == device->getBase ()->getName (),
+                                    "device base output refFrame stays base name"))
+            return rc;
+        // 已声明在 base 下,数值应当原样保留(无变换)。
+        if (const int rc = assertNear (r.targetInDeviceBase.position[0], 1.0, 1e-9,
+                                       "base refFrame preserves x"))
+            return rc;
+        if (const int rc = assertNear (r.targetInDeviceBase.position[1], 2.0, 1e-9,
+                                       "base refFrame preserves y"))
+            return rc;
+    }
+
+    // 3) named frame refFrame:valid + 数值被变换到 base
+    {
+        rws::TaskPoint p;
+        p.id = "P3";
+        p.refFrame = "FixtureA";   // 在 (0.5, 0, 0) 偏移
+        p.tcpFrame = "ToolTip";
+        p.position = {{0.0, 0.0, 0.2}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (r.valid, "named frame refFrame resolves to valid"))
+            return rc;
+        if (const int rc = require (r.tcpFrame != nullptr && r.tcpFrame->getName () == "ToolTip",
+                                    "named frame uses row-level TCP"))
+            return rc;
+        // FixtureA 在 base 的 (0.5, 0, 0) 偏移,ref 下 (0, 0, 0.2) 应转到 base 下 (0.5, 0, 0.2)。
+        if (const int rc = assertNear (r.targetInDeviceBase.position[0], 0.5, 1e-9,
+                                       "named frame transform x"))
+            return rc;
+        if (const int rc = assertNear (r.targetInDeviceBase.position[2], 0.2, 1e-9,
+                                       "named frame transform z"))
+            return rc;
+    }
+
+    // 4) unknown refFrame:invalid + KIN_TASK_REF_NOT_FOUND warning
+    {
+        rws::TaskPoint p;
+        p.id = "P4";
+        p.refFrame = "MissingFrame";
+        p.tcpFrame = "TCP";
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (!r.valid, "unknown refFrame is invalid"))
+            return rc;
+        if (const int rc = require (r.failure == rws::KinematicFailureReason::InvalidTarget,
+                                    "unknown refFrame -> InvalidTarget"))
+            return rc;
+        bool found = false;
+        for (const rws::AnalysisWarning& w : r.warnings) {
+            if (w.code == "KIN_TASK_REF_NOT_FOUND") {
+                found = true;
+                break;
+            }
+        }
+        if (const int rc = require (found, "KIN_TASK_REF_NOT_FOUND warning emitted"))
+            return rc;
+    }
+
+    // 5) unknown tcpFrame:invalid + KIN_TASK_TCP_NOT_FOUND warning
+    {
+        rws::TaskPoint p;
+        p.id = "P5";
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "MissingTCP";
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (!r.valid, "unknown tcpFrame is invalid"))
+            return rc;
+        if (const int rc = require (r.failure == rws::KinematicFailureReason::NoTcpFrame,
+                                    "unknown tcpFrame -> NoTcpFrame"))
+            return rc;
+        bool found = false;
+        for (const rws::AnalysisWarning& w : r.warnings) {
+            if (w.code == "KIN_TASK_TCP_NOT_FOUND") {
+                found = true;
+                break;
+            }
+        }
+        if (const int rc = require (found, "KIN_TASK_TCP_NOT_FOUND warning emitted"))
+            return rc;
+    }
+
+    // 6) 空 tcpFrame:fallback 到 default TCP
+    {
+        rws::TaskPoint p;
+        p.id = "P6";
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame.clear ();        // 空 → 用 default
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (r.valid, "empty tcpFrame falls back to default"))
+            return rc;
+        if (const int rc = require (r.tcpFrame == device->getEnd (),
+                                    "empty tcpFrame uses default TCP"))
+            return rc;
+    }
+
+    // 7) 空 tcpFrame + 空 default TCP:invalid + NoTcpFrame
+    {
+        rws::TaskPoint p;
+        p.id = "P7";
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame.clear ();
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, nullptr, state, p);
+        if (const int rc = require (!r.valid, "empty tcpFrame + null default is invalid"))
+            return rc;
+        if (const int rc = require (r.failure == rws::KinematicFailureReason::NoTcpFrame,
+                                    "no TCP at all -> NoTcpFrame"))
+            return rc;
+    }
+
+    return 0;
+}
+
+// ============================================================================
+//  P1:workcell-aware analyzeTaskPoint 行为
+//    - disabled 不跑 resolver,不计 reachable;
+//    - unknown refFrame / tcpFrame → resolver invalid → Fail;
+//    - WORLD / device base 成功路径 → 调用旧 analyzeIk。
+// ============================================================================
+static int testWorkcellAwareAnalyzeTaskPoint ()
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    StateStructure::Ptr stateStructure = rw::core::ownedPtr (new StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    rw::models::WorkCell::Ptr workcell =
+        rw::core::ownedPtr (new rw::models::WorkCell (stateStructure, "TestWC", ""));
+    const rw::kinematics::State state = workcell->getDefaultState ();
+
+    rws::KinematicAnalyzer analyzer;
+    analyzer.setThresholds (rws::KinematicThresholds ());
+
+    // 1) disabled → status Warning, status 文字通过 KIN_TASK_DISABLED 警告体现,
+    //    且 r.ik.solutions 为空(不影响 reachable rate)。
+    {
+        rws::TaskPoint p;
+        p.id = "P_disabled";
+        p.enabled = false;
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "TCP";
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        const auto r = analyzer.analyzeTaskPoint (workcell.get (), device,
+                                                  device->getEnd (), state, p, NULL);
+        if (const int rc = require (r.status == rws::AnalysisStatus::Warning,
+                                    "disabled -> Warning"))
+            return rc;
+        if (const int rc = require (r.ik.solutions.empty (), "disabled -> no solutions"))
+            return rc;
+        bool saw = false;
+        for (const rws::AnalysisWarning& w : r.ik.warnings) {
+            if (w.code == "KIN_TASK_DISABLED") { saw = true; break; }
+        }
+        if (const int rc = require (saw, "disabled -> KIN_TASK_DISABLED warning"))
+            return rc;
+    }
+
+    // 2) unknown refFrame → resolver InvalidTarget → Fail + warning。
+    {
+        rws::TaskPoint p;
+        p.id = "P_missing_ref";
+        p.enabled = true;
+        p.refFrame = "NoSuchFrame";
+        p.tcpFrame = "TCP";
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        const auto r = analyzer.analyzeTaskPoint (workcell.get (), device,
+                                                  device->getEnd (), state, p, NULL);
+        if (const int rc = require (r.status == rws::AnalysisStatus::Fail,
+                                    "unknown refFrame -> Fail"))
+            return rc;
+        if (const int rc = require (r.primaryFailure == rws::KinematicFailureReason::InvalidTarget,
+                                    "unknown refFrame -> InvalidTarget"))
+            return rc;
+        bool saw = false;
+        for (const rws::AnalysisWarning& w : r.ik.warnings) {
+            if (w.code == "KIN_TASK_REF_NOT_FOUND") { saw = true; break; }
+        }
+        if (const int rc = require (saw, "unknown refFrame -> KIN_TASK_REF_NOT_FOUND"))
+            return rc;
+    }
+
+    // 3) unknown tcpFrame → NoTcpFrame → Fail。
+    {
+        rws::TaskPoint p;
+        p.id = "P_missing_tcp";
+        p.enabled = true;
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "NoSuchTCP";
+        p.position = {{0.0, 0.0, 0.0}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.001;
+        p.tolerance.orientationDeg = 1.0;
+        const auto r = analyzer.analyzeTaskPoint (workcell.get (), device,
+                                                  device->getEnd (), state, p, NULL);
+        if (const int rc = require (r.status == rws::AnalysisStatus::Fail,
+                                    "unknown tcpFrame -> Fail"))
+            return rc;
+        if (const int rc = require (r.primaryFailure == rws::KinematicFailureReason::NoTcpFrame,
+                                    "unknown tcpFrame -> NoTcpFrame"))
+            return rc;
+    }
+
+    // 4) WORLD + 已知 TCP → 走 analyzeIk,rawCandidateCount > 0 或 NoSolution(可能)。
+    {
+        rws::TaskPoint p;
+        p.id = "P_world";
+        p.enabled = true;
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "TCP";
+        p.position = {{0.3, 0.0, 0.4}};
+        p.rpyDeg   = {{0.0, 0.0, 0.0}};
+        p.tolerance.positionMeters = 0.01;
+        p.tolerance.orientationDeg = 5.0;
+        const auto r = analyzer.analyzeTaskPoint (workcell.get (), device,
+                                                  device->getEnd (), state, p, NULL);
+        // r.status 至少应不是 Unknown,可能 Pass / Warning / Fail。
+        if (const int rc = require (r.status != rws::AnalysisStatus::Unknown,
+                                    "WORLD run produced a status"))
+            return rc;
+        // 批量可达率:disabled 不计,enabled 计分母。
+        std::vector< rws::TaskPoint > batch;
+        batch.push_back (p);
+        rws::TaskPoint p2 = p; p2.id = "P_disabled_2"; p2.enabled = false;
+        batch.push_back (p2);
+        const auto results = analyzer.analyzeTaskPoints (
+            workcell.get (), device, device->getEnd (), state, batch, NULL);
+        if (const int rc = require (results.size () == 2,
+                                    "workcell-aware batch returns 2 results"))
+            return rc;
+        if (const int rc = require (results[0].status != rws::AnalysisStatus::Unknown,
+                                    "enabled world task point receives a concrete status"))
+            return rc;
+        if (const int rc = require (results[1].status == rws::AnalysisStatus::Warning,
+                                    "disabled batch point remains skipped warning"))
+            return rc;
+    }
+
+    return 0;
+}
+
 // runAll:把所有子套件串行跑一遍,首个失败立即返回。
 static int runAll ()
 {
@@ -846,6 +1184,10 @@ static int runAll ()
     if (const int rc = testIkDuplicateThresholdControlsCandidateMerging ())
         return rc;
     if (const int rc = testTaskPointReachableRate ())
+        return rc;
+    if (const int rc = testTaskPointResolver ())
+        return rc;
+    if (const int rc = testWorkcellAwareAnalyzeTaskPoint ())
         return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
@@ -881,6 +1223,10 @@ int main (int argc, char** argv)
         rc = testIkDuplicateThresholdControlsCandidateMerging ();
     else if (suite == "task_points")
         rc = testTaskPointReachableRate ();
+    else if (suite == "task_point_resolver")
+        rc = testTaskPointResolver ();
+    else if (suite == "task_point_workcell")
+        rc = testWorkcellAwareAnalyzeTaskPoint ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")

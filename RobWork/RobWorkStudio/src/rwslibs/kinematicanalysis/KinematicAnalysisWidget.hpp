@@ -68,6 +68,7 @@ private Q_SLOTS:
     void refreshReport ();               // 重新汇总 Report tab
     void exportReportJson ();            // 导出 JSON 报告
     void exportReportCsv ();             // 导出 CSV 摘要
+    void exportTaskPointResultsCsv ();   // P1:导出批量 IK 结果 CSV(任务点 + 指标)
     void applyThresholds ();             // 把 Report tab 的阈值写回内部状态
 
 private:
@@ -166,6 +167,7 @@ private:
     QPushButton* _removeTaskPointButton;
     QPushButton* _importTaskPointsButton;
     QPushButton* _exportTaskPointsButton;
+    QPushButton* _exportTaskPointResultsButton;
     QPushButton* _analyzeAllTaskPointsButton;
     QLabel* _taskPointSummaryLabel;
 

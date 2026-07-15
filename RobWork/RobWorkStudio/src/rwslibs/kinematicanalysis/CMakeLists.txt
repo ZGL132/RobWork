@@ -22,13 +22,14 @@ set(build TRUE)
 rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} ADD_DOC)
 
 if(build)
-    # 主插件目标:5 个 .cpp + Qt 自动生成的 MOC + .qrc 资源文件。
+    # 主插件目标:6 个 .cpp(TaskPointResolver 是 P1 新增)+ Qt 自动生成的 MOC + .qrc 资源文件。
     set(SrcFiles
         KinematicAnalysisPlugin.cpp
         KinematicAnalysisWidget.cpp
         KinematicAnalysisTypes.cpp
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
+        TaskPointResolver.cpp
     )
 
     set(SRC_FILES_HPP
@@ -37,6 +38,7 @@ if(build)
         KinematicAnalysisTypes.hpp
         KinematicMetrics.hpp
         KinematicAnalyzer.hpp
+        TaskPointResolver.hpp
     )
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
@@ -68,12 +70,13 @@ if(build)
     endif()
 
     # 单独的测试可执行文件:不依赖 Qt Widget,只验证核心算法。
-    # 它和插件共享 Types/Metrics/Analyzer 三个 .cpp,避免重复实现。
+    # 它和插件共享 Types/Metrics/Analyzer/Resolver 四个 .cpp,避免重复实现。
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
         KinematicAnalysisTypes.cpp
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
+        TaskPointResolver.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE
