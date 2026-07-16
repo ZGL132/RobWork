@@ -162,6 +162,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _importTaskPointsButton(NULL),
     _exportTaskPointsButton(NULL),
     _analyzeAllTaskPointsButton(NULL),
+    // P2:Task points 专用按钮(NULL 守卫,见析构 / 析构期清理)
+    _analyzeSelectedTaskPointsButton(NULL),
+    _importCurrentTcpTaskPointButton(NULL),
+    _applySelectedTaskPointBestQButton(NULL),
+    _openSelectedTaskPointInIkButton(NULL),
     _taskPointSummaryLabel(NULL),
     _workspaceSampleCountSpin(NULL),
     _workspaceGridStepsSpin(NULL),
@@ -527,6 +532,18 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
     connect (_exportTaskPointResultsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointResultsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
+    // P2:Task points 专用按钮的信号连接
+    connect (_analyzeSelectedTaskPointsButton, SIGNAL (clicked ()),
+             this, SLOT (analyzeSelectedTaskPoints ()));
+    connect (_importCurrentTcpTaskPointButton, SIGNAL (clicked ()),
+             this, SLOT (importCurrentTcpAsTaskPoint ()));
+    connect (_applySelectedTaskPointBestQButton, SIGNAL (clicked ()),
+             this, SLOT (applySelectedTaskPointBestQ ()));
+    connect (_openSelectedTaskPointInIkButton, SIGNAL (clicked ()),
+             this, SLOT (openSelectedTaskPointInIk ()));
+    // P2:Task point 表格选中行变化 → 更新 selected-only 按钮的 enabled 状态。
+    connect (_taskPointTable, SIGNAL (itemSelectionChanged ()),
+             this, SLOT (updateTaskPointSelectionButtons ()));
     connect (_workspaceRunButton, SIGNAL (clicked ()), this, SLOT (sampleWorkspace ()));
     connect (_workspaceExportButton, SIGNAL (clicked ()), this, SLOT (exportWorkspaceCsv ()));
     connect (_poseAddRowButton, SIGNAL (clicked ()), this, SLOT (addPoseReachabilityRow ()));
@@ -1535,12 +1552,26 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _exportTaskPointsButton     = new QPushButton(tr("Export task CSV"), _taskPointTab);
     _exportTaskPointResultsButton = new QPushButton(tr("Export result CSV"), _taskPointTab);
     _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
+    // P2:Task points 专用按钮:局部分析、导入当前姿态、应用 best Q、跳到 IK。
+    _analyzeSelectedTaskPointsButton = new QPushButton (tr("Analyze selected"), _taskPointTab);
+    _importCurrentTcpTaskPointButton = new QPushButton (tr("Import current TCP"), _taskPointTab);
+    _applySelectedTaskPointBestQButton = new QPushButton (tr("Apply best Q"), _taskPointTab);
+    _openSelectedTaskPointInIkButton  = new QPushButton (tr("Open in IK tab"), _taskPointTab);
+    // 这 3 个按钮在没选中有效任务点时无可用结果,先禁用,
+    // 选中行变化 / 表格行数变化时由 paintResultStates 重新决定。
+    _analyzeSelectedTaskPointsButton->setEnabled (false);
+    _applySelectedTaskPointBestQButton->setEnabled (false);
+    _openSelectedTaskPointInIkButton->setEnabled (false);
     buttonRow->addWidget (_addTaskPointButton, 0, 0);
     buttonRow->addWidget (_removeTaskPointButton, 0, 1);
-    buttonRow->addWidget (_importTaskPointsButton, 1, 0);
-    buttonRow->addWidget (_exportTaskPointsButton, 1, 1);
-    buttonRow->addWidget (_exportTaskPointResultsButton, 1, 2);
-    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 3);
+    buttonRow->addWidget (_importTaskPointsButton, 0, 2);
+    buttonRow->addWidget (_exportTaskPointsButton, 0, 3);
+    buttonRow->addWidget (_exportTaskPointResultsButton, 0, 4);
+    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 0);
+    buttonRow->addWidget (_analyzeSelectedTaskPointsButton, 1, 1);
+    buttonRow->addWidget (_importCurrentTcpTaskPointButton, 1, 2);
+    buttonRow->addWidget (_applySelectedTaskPointBestQButton, 1, 3);
+    buttonRow->addWidget (_openSelectedTaskPointInIkButton, 1, 4);
     tpLayout->addLayout (buttonRow);
 
     _taskPointTable = new QTableWidget (_taskPointTab);
@@ -1927,6 +1958,50 @@ const rws::KinematicIkSolution* bestUsableSolution (const rws::KinematicIkAnalys
     return fallback;
 }
 
+// P2 paintResultStates:按 status / 校验结果给整行染色。
+//   优先级:验证错误(浅红) > Fail(浅红) > Warning / Skipped(浅黄) > Pass(浅绿) > 默认。
+// 同时把 status / reason / failureReasons 拼成 tooltip 方便 hover 诊断。
+void paintResultStates (QTableWidget* t, int row,
+                        rws::AnalysisStatus status,
+                        const QString& reasonText,
+                        const std::vector< rws::AnalysisWarning >& warnings,
+                        const QString& note = QString ())
+{
+    if (t == nullptr || row < 0 || row >= t->rowCount ())
+        return;
+    QColor bg;
+    switch (status) {
+        case rws::AnalysisStatus::Fail:    bg = QColor (255, 224, 224); break;
+        case rws::AnalysisStatus::Warning: bg = QColor (255, 247, 205); break;
+        case rws::AnalysisStatus::Pass:    bg = QColor (224, 247, 224); break;
+        default:                           bg = QColor ();            break;
+    }
+    QStringList tipLines;
+    tipLines << QStringLiteral ("status=%1").arg (QString::fromLatin1 (rws::statusText (status)));
+    if (!reasonText.isEmpty () && reasonText != QStringLiteral ("-"))
+        tipLines << QStringLiteral ("reason=%1").arg (reasonText);
+    if (!note.isEmpty ())
+        tipLines << QStringLiteral ("note=%1").arg (note);
+    for (const rws::AnalysisWarning& w : warnings) {
+        tipLines << QStringLiteral ("[%1] %2: %3")
+            .arg (QString::fromLatin1 (rws::statusText (w.severity)))
+            .arg (QString::fromStdString (w.code))
+            .arg (QString::fromStdString (w.message));
+    }
+    const QString tip = tipLines.join (QStringLiteral ("\n"));
+    for (int c = 0; c < t->columnCount (); ++c) {
+        QTableWidgetItem* item = t->item (row, c);
+        if (item == nullptr)
+            continue;
+        if (bg.isValid ())
+            item->setBackground (bg);
+        else
+            item->setData (Qt::BackgroundRole, QVariant ());
+        if (!tip.isEmpty ())
+            item->setToolTip (tip);
+    }
+}
+
 // readTaskPointFromRow:把表格一行(0-based row)完整读成 TaskPoint。
 // 任何字段非法(数值 / freeRoll / 缺少字段)都会把首条错误写入 *error,
 // 调用方负责 abort(返回空 TaskPoint,可以用 TaskPoint{} 标识)。
@@ -2241,6 +2316,37 @@ void KinematicAnalysisWidget::applyTaskPointResults (
             .arg (QString::number (reachableRate, 'f', 3)));
     }
     setTaskPointTableColumnWidths ();
+
+    // P2:给每行按 status 染色,Pass 浅绿 / Warning 或 Skipped 浅黄 / Fail 浅红;
+    // tooltip 聚合 status / reason / warnings / bestQ 数值,不用打开详情表也能扫读。
+    for (std::size_t i = 0; i < n; ++i) {
+        const TaskPointReachabilityResult& r = results[i];
+        const int row = static_cast<int> (i);
+        QString note;
+        QString bestQText;
+        const rws::KinematicIkSolution* best = bestUsableSolution (r.ik);
+        if (best != nullptr) {
+            bestQText = QStringLiteral ("bestQ=[%1]; posErr=%2 m; oriErr=%3 deg; "
+                                       "margin=%4; condition=%5; collision=%6")
+                .arg (qVectorText (best->q))
+                .arg (QString::number (best->positionErrorMeters, 'g', 6))
+                .arg (QString::number (best->orientationErrorDeg, 'g', 6))
+                .arg (QString::number (best->minJointLimitMargin, 'g', 6))
+                .arg (std::isinf (best->conditionNumber) ?
+                          QStringLiteral ("inf") :
+                          QString::number (best->conditionNumber, 'g', 6))
+                .arg (best->inCollision ? tr ("Yes") : tr ("No"));
+        }
+        if (!bestQText.isEmpty ())
+            note = bestQText;
+        // 取 table 里实际写的 reason 文本,这里读取当前 cell 以保证和
+        // applyTaskPointResults 写入时一致。
+        QTableWidgetItem* reasonItem = _taskPointTable->item (row, ColReason);
+        const QString reasonText = reasonItem == nullptr ?
+            QString () : reasonItem->text ();
+        paintResultStates (_taskPointTable, row, r.status, reasonText, r.ik.warnings, note);
+    }
+    updateTaskPointSelectionButtons ();
 }
 
 // importTaskPointsCsv:从用户选择的 CSV 文件读入任务点。
@@ -2491,6 +2597,312 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
                   .arg(static_cast<int>(results.size()))
                   .arg(QString::number(rate, 'f', 3)).arg (collisionNote));
     updateReportSummary ();
+}
+
+// ============================================================================
+//  P2:Task points 专用操作
+// ============================================================================
+
+// hasSelectedEnabledTaskPoint:返回选中的行号 + 该行是否 enabled + row 0-based。
+// 0 行 / 选 disabled 行 / 选 Skipped 都视为不可用。
+static bool hasSelectedEnabledTaskPoint (
+    QTableWidget* t, int& rowOut, TaskPoint& taskPointOut, QString& errorOut)
+{
+    if (t == nullptr)
+        return false;
+    const QList<QTableWidgetItem*> selected = t->selectedItems ();
+    if (selected.empty ())
+        return false;
+    const int row = selected.front ()->row ();
+    if (row < 0 || row >= t->rowCount ())
+        return false;
+    QString rowError;
+    const TaskPoint p = readTaskPointFromRow (t, row, &rowError);
+    if (!rowError.isEmpty ()) {
+        errorOut = rowError;
+        return false;
+    }
+    if (!p.enabled) {
+        errorOut = QObject::tr ("Selected task point is disabled; enable it first.");
+        return false;
+    }
+    rowOut        = row;
+    taskPointOut  = p;
+    return true;
+}
+
+// updateTaskPointSelectionButtons:选中行变化 / 表格行数变化时启用 / 禁用
+// 3 个 selected-only 按钮。按钮在 selected 有效时启用,否则禁用。
+void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+    int row = -1;
+    TaskPoint taskPoint;
+    QString error;
+    const bool enabled = hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error);
+    if (_analyzeSelectedTaskPointsButton != nullptr)
+        _analyzeSelectedTaskPointsButton->setEnabled (enabled);
+    if (_applySelectedTaskPointBestQButton != nullptr) {
+        // Apply best Q 还要求 _lastTaskPointResults[row] 里已有 usable solution。
+        bool canApply = enabled;
+        if (canApply && row >= 0 &&
+            static_cast<std::size_t> (row) < _lastTaskPointResults.size ()) {
+            const KinematicIkAnalysisResult& ik = _lastTaskPointResults[row].ik;
+            canApply = bestUsableSolution (ik) != nullptr;
+        }
+        else {
+            canApply = false;
+        }
+        _applySelectedTaskPointBestQButton->setEnabled (canApply);
+    }
+    if (_openSelectedTaskPointInIkButton != nullptr)
+        _openSelectedTaskPointInIkButton->setEnabled (enabled);
+}
+
+// analyzeSelectedTaskPoints:只分析选中且 enabled 的行。
+// disabled 行结果清空(Skipped),不影响其他行;_lastTaskPointResults
+// 按表格行号对齐,selected 之外保持上一轮结果或空。
+void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
+{
+    if (_workcell == nullptr) {
+        setStatus (tr ("Cannot analyze task points: no WorkCell loaded."));
+        return;
+    }
+    if (_deviceCombo == nullptr || _deviceCombo->count () == 0) {
+        setStatus (tr ("Cannot analyze task points: no device available."));
+        return;
+    }
+    if (_taskPointTable == nullptr)
+        return;
+    const QList<QTableWidgetItem*> selected = _taskPointTable->selectedItems ();
+    if (selected.empty ()) {
+        setStatus (tr ("Cannot analyze task points: no row selected."));
+        return;
+    }
+    // 拉所有行校验,保证后续列宽能更新到所有行。
+    QString validationSummary;
+    std::vector< TaskPoint > allPoints;
+    if (!validateTaskPointRows (_taskPointTable, &allPoints, &validationSummary)) {
+        QMessageBox::warning (this, tr ("Analyze validation"),
+                              tr ("Task points have validation errors:\n\n%1")
+                                  .arg (validationSummary));
+        setStatus (tr ("Task point analysis blocked: validation errors."));
+        setTaskPointTableColumnWidths ();
+        return;
+    }
+    // 第一次跑 / 切到 selected-only 模式,先按表格行数重新对齐 _lastTaskPointResults。
+    const int total = _taskPointTable->rowCount ();
+    _lastTaskPointResults = std::vector< TaskPointReachabilityResult > (total);
+
+    const std::string deviceName = _deviceCombo->currentText ().toStdString ();
+    rw::core::Ptr< rw::models::Device > device = deviceByName (_workcell, deviceName);
+    if (device == nullptr) {
+        setStatus (tr ("Cannot analyze task points: no valid device selected."));
+        return;
+    }
+    const std::string tcpName = _tcpFrameCombo->currentText ().toStdString ();
+    rw::core::Ptr< rw::kinematics::Frame > tcpFrame = frameByName (_workcell, tcpName);
+    const rw::kinematics::State state = currentState ();
+
+    bool collisionUnavailable = false;
+    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
+        collisionDetectorForAnalysis (true, &collisionUnavailable);
+
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+
+    int analyzed = 0;
+    QSet<int> selectedRows;
+    for (QTableWidgetItem* it : selected)
+        selectedRows.insert (it->row ());
+
+    for (int row : selectedRows) {
+        if (row < 0 || row >= total)
+            continue;
+        TaskPoint p = allPoints[static_cast<std::size_t> (row)];
+        TaskPointReachabilityResult r;
+        r.taskPoint = p;
+        r.ik         = analyzer.analyzeIk (device, tcpFrame, state, p, collisionDetector);
+        r.status     = r.ik.usableSolutionCount > 0 ? AnalysisStatus::Pass : AnalysisStatus::Fail;
+        if (r.ik.usableSolutionCount > 0)
+            r.primaryFailure = KinematicFailureReason::None;
+        else
+            r.primaryFailure = p.enabled ? KinematicFailureReason::IkNoSolution
+                                           : KinematicFailureReason::None;
+        // 复用 analyzeTaskPoints 内的状态归类逻辑。
+        r.failureReasons.clear ();
+        // 简化:把 failureReasons 沿用 ik 的状态文本。
+        _lastTaskPointResults[static_cast<std::size_t> (row)] = r;
+        if (p.enabled)
+            ++analyzed;
+    }
+
+    // 重新计算可达率 + 应用结果 + 更新 summary。
+    const double rate = analyzer.calculateReachableRate (_lastTaskPointResults);
+    applyTaskPointResults (_lastTaskPointResults, rate);
+
+    const QString collisionNote = collisionUnavailable ?
+        tr (" Collision checking was unavailable.") : QString ();
+    setStatus (tr ("Analyzed %1 selected task point(s).%2")
+                  .arg (analyzed).arg (collisionNote));
+    updateReportSummary ();
+    updateTaskPointSelectionButtons ();
+}
+
+// importCurrentTcpAsTaskPoint:把当前 RWS TCP 位姿插入新行 TaskPoint。
+// refFrame 默认用 WORLD,tcpFrame 跟随顶部 TCP,其他字段用阈值默认值。
+void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
+{
+    if (_workcell == nullptr) {
+        setStatus (tr ("Cannot import current TCP: no WorkCell loaded."));
+        return;
+    }
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == nullptr) {
+        setStatus (tr ("Cannot import current TCP: no valid device selected."));
+        return;
+    }
+    rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+    if (tcpFrame == nullptr) {
+        setStatus (tr ("Cannot import current TCP: no valid TCP frame selected."));
+        return;
+    }
+    // 复用 IK 页 importCurrentPoseToIk 的位姿读取逻辑。
+    try {
+        const rw::math::Transform3D<> baseTtcp =
+            rw::kinematics::Kinematics::frameTframe (
+                device->getBase (), tcpFrame.get (), currentState ());
+        const rw::math::RPY<> rpy (baseTtcp.R ());
+        const double toDeg = 180.0 / 3.141592653589793238462643383279502884;
+        TaskPoint p;
+        p.id          = QString ("TP_%1").arg (_taskPointTable->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
+        p.name        = p.id;
+        p.type        = TaskPointType::Generic;
+        p.refFrame    = "WORLD";
+        p.tcpFrame    = tcpFrame->getName ();
+        p.position    = {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}};
+        p.rpyDeg      = {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}};
+        p.tolerance.positionMeters = _thresholds.positionToleranceMeters;
+        p.tolerance.orientationDeg = _thresholds.orientationToleranceDeg;
+        p.tolerance.allowToolRollFree = false;
+        p.weight      = 1.0;
+        p.enabled     = true;
+        p.note        = "imported from current TCP pose";
+        // 用 addTaskPointRow 风格插入新行,然后用 setCell 改写 id/name/pos/rpy。
+        addTaskPointRow ();
+        const int row = _taskPointTable->rowCount () - 1;
+        setCell (_taskPointTable, row, ColId,   QString::fromStdString (p.id),   true);
+        setCell (_taskPointTable, row, ColName, QString::fromStdString (p.name), true);
+        setCell (_taskPointTable, row, ColX,    QString::number (p.position[0]), true);
+        setCell (_taskPointTable, row, ColY,    QString::number (p.position[1]), true);
+        setCell (_taskPointTable, row, ColZ,    QString::number (p.position[2]), true);
+        setCell (_taskPointTable, row, ColRoll, QString::number (p.rpyDeg[0]),   true);
+        setCell (_taskPointTable, row, ColPitch,QString::number (p.rpyDeg[1]),   true);
+        setCell (_taskPointTable, row, ColYaw,  QString::number (p.rpyDeg[2]),   true);
+        setStatus (tr ("Imported current TCP as task point row %1.").arg (row + 1));
+    }
+    catch (const std::exception& ex) {
+        setStatus (tr ("Cannot import current TCP: %1").arg (QString::fromUtf8 (ex.what ())));
+    }
+    updateTaskPointSelectionButtons ();
+}
+
+// applySelectedTaskPointBestQ:把选中行 _lastTaskPointResults 里 best usable
+// solution 的 q 写回 RWS state。
+// 必须先 Analyze 一次,否则 _lastTaskPointResults 为空。
+void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
+{
+    if (_workcell == nullptr || _studio == nullptr) {
+        setStatus (tr ("Cannot apply task point best Q: no WorkCell or RWS context."));
+        return;
+    }
+    int row = -1;
+    TaskPoint taskPoint;
+    QString error;
+    if (!hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error)) {
+        setStatus (tr ("Cannot apply task point best Q: %1").arg (error));
+        return;
+    }
+    if (static_cast<std::size_t> (row) >= _lastTaskPointResults.size ()) {
+        setStatus (tr ("Cannot apply task point best Q: no analysis result for selected row."));
+        return;
+    }
+    const KinematicIkAnalysisResult& ik = _lastTaskPointResults[row].ik;
+    const KinematicIkSolution* best = bestUsableSolution (ik);
+    if (best == nullptr) {
+        setStatus (tr ("Cannot apply task point best Q: no usable IK solution for selected row."));
+        return;
+    }
+    if (!isUsableIkSolution (*best)) {
+        setStatus (tr ("Cannot apply task point best Q: best solution is failed or in collision."));
+        return;
+    }
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == nullptr) {
+        setStatus (tr ("Cannot apply task point best Q: device not selected."));
+        return;
+    }
+    if (best->q.size () != device->getDOF ()) {
+        setStatus (tr ("Cannot apply task point best Q: Q dimension does not match device."));
+        return;
+    }
+    rw::kinematics::State state = currentState ();
+    device->setQ (best->q, state);
+    _studio->setState (state);
+    refreshCurrentPose ();
+    setStatus (tr ("Applied best Q (%1 joints) to RWS state for selected task point.")
+                  .arg (static_cast<int> (best->q.size ())));
+}
+
+// openSelectedTaskPointInIk:把选中行通过 TaskPointResolver 解析为 device-base
+// 目标,填到 IK 页 6 个 spin + name + TCP 切换,只填不 Solve。
+void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
+{
+    if (_workcell == nullptr) {
+        setStatus (tr ("Cannot open in IK: no WorkCell loaded."));
+        return;
+    }
+    int row = -1;
+    TaskPoint taskPoint;
+    QString error;
+    if (!hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error)) {
+        setStatus (tr ("Cannot open in IK: %1").arg (error));
+        return;
+    }
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == nullptr) {
+        setStatus (tr ("Cannot open in IK: no device selected."));
+        return;
+    }
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+    const ResolvedTaskPoint resolved = resolveTaskPoint (
+        _workcell, device, tcpFrame, currentState (), taskPoint);
+    if (!resolved.valid) {
+        // 解析失败,把首条警告写到状态栏;不做写入。
+        const QString msg = resolved.warnings.empty () ?
+            tr ("Task point cannot be resolved for IK tab.") :
+            QString::fromStdString (resolved.warnings.front ().message);
+        setStatus (tr ("Cannot open in IK: %1").arg (msg));
+        return;
+    }
+    // 写 IK 页:target name + position + rpy。
+    setIkPoseMetersDeg (
+        resolved.targetInDeviceBase.position,
+        resolved.targetInDeviceBase.rpyDeg);
+    if (_ikTargetNameEdit != nullptr)
+        _ikTargetNameEdit->setText (QString::fromStdString (taskPoint.id));
+    // TCP 优先用 resolver 解析出的 Frame 名称,IK 页的 _tcpFrameCombo 同步。
+    if (_tcpFrameCombo != nullptr &&
+        !resolved.targetInDeviceBase.tcpFrame.empty ()) {
+        const int idx = _tcpFrameCombo->findText (
+            QString::fromStdString (resolved.targetInDeviceBase.tcpFrame));
+        if (idx >= 0)
+            _tcpFrameCombo->setCurrentIndex (idx);
+    }
+    if (_tabs != nullptr && _ikTab != nullptr)
+        _tabs->setCurrentWidget (_ikTab);
+    setStatus (tr ("Opened selected task point in IK tab (resolved to device base)."));
 }
 
 // collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:

@@ -60,6 +60,12 @@ private Q_SLOTS:
     void importTaskPointsCsv ();         // 从 CSV 导入任务点
     void exportTaskPointsCsv ();         // 导出任务点 CSV
     void analyzeAllTaskPoints ();        // 批量跑 IK
+    // P2:Task points 专用操作
+    void analyzeSelectedTaskPoints ();     // 只分析选中行
+    void importCurrentTcpAsTaskPoint ();   // 把当前 TCP 位姿插入新行
+    void applySelectedTaskPointBestQ ();    // 把选中行 best Q 写回 RWS
+    void openSelectedTaskPointInIk ();      // 把选中行填到 IK 页做详细诊断
+    void updateTaskPointSelectionButtons (); // 选中行变化时启用 / 禁用 3 个 selected-only 按钮
     void sampleWorkspace ();             // 工作空间采样
     void exportWorkspaceCsv ();          // 导出工作空间 CSV
     void addPoseReachabilityRow ();      // 新增位姿可达性位置行
@@ -169,6 +175,11 @@ private:
     QPushButton* _exportTaskPointsButton;
     QPushButton* _exportTaskPointResultsButton;
     QPushButton* _analyzeAllTaskPointsButton;
+    // P2:Task points 专用按钮
+    QPushButton* _analyzeSelectedTaskPointsButton;
+    QPushButton* _importCurrentTcpTaskPointButton;
+    QPushButton* _applySelectedTaskPointBestQButton;
+    QPushButton* _openSelectedTaskPointInIkButton;
     QLabel* _taskPointSummaryLabel;
 
     // Workspace tab
