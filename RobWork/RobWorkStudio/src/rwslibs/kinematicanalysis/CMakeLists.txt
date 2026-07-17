@@ -30,6 +30,7 @@ if(build)
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
+        TaskPointUiLogic.cpp
     )
 
     set(SRC_FILES_HPP
@@ -39,6 +40,7 @@ if(build)
         KinematicMetrics.hpp
         KinematicAnalyzer.hpp
         TaskPointResolver.hpp
+        TaskPointUiLogic.hpp
     )
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
@@ -77,6 +79,7 @@ if(build)
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
+        TaskPointUiLogic.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE

@@ -2,6 +2,7 @@
 #include "KinematicMetrics.hpp"
 #include "KinematicAnalyzer.hpp"
 #include "TaskPointResolver.hpp"
+#include "TaskPointUiLogic.hpp"
 
 #include <QCoreApplication>
 
@@ -1165,6 +1166,76 @@ static int testWorkcellAwareAnalyzeTaskPoint ()
 }
 
 // runAll:把所有子套件串行跑一遍,首个失败立即返回。
+static int testTaskPointUiLogic ()
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    StateStructure::Ptr stateStructure = rw::core::ownedPtr (new StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    rw::models::WorkCell::Ptr workcell =
+        rw::core::ownedPtr (new rw::models::WorkCell (stateStructure, "TestWC", ""));
+    const rw::kinematics::State state = workcell->getDefaultState ();
+
+    rws::KinematicAnalyzer analyzer;
+
+    rws::TaskPoint keep;
+    keep.id = "keep";
+    keep.name = "keep";
+    keep.enabled = true;
+    keep.refFrame = device->getBase ()->getName ();
+    keep.tcpFrame = "TCP";
+    keep.position = {{0.0, 0.0, 0.0}};
+
+    rws::TaskPoint selected = keep;
+    selected.id = "selected";
+    selected.name = "selected";
+    selected.refFrame = "MissingFrame";
+
+    rws::TaskPointReachabilityResult previous;
+    previous.taskPoint = keep;
+    previous.status = rws::AnalysisStatus::Pass;
+    previous.primaryFailure = rws::KinematicFailureReason::None;
+
+    const std::vector< rws::TaskPointReachabilityResult > updated =
+        rws::analyzeSelectedTaskPointRows (
+            analyzer, workcell.get (), device, device->getEnd (), state,
+            std::vector< rws::TaskPoint > {keep, selected},
+            std::vector< int > {1},
+            std::vector< rws::TaskPointReachabilityResult > {previous},
+            NULL);
+
+    if (const int rc = require (updated.size () == 2,
+                                "selected analysis keeps result vector aligned to rows"))
+        return rc;
+    if (const int rc = require (updated[0].status == rws::AnalysisStatus::Pass,
+                                "selected analysis preserves unselected previous result"))
+        return rc;
+    if (const int rc = require (updated[1].status == rws::AnalysisStatus::Fail,
+                                "selected analysis uses workcell-aware resolver failure"))
+        return rc;
+    if (const int rc = require (updated[1].primaryFailure == rws::KinematicFailureReason::InvalidTarget,
+                                "selected analysis reports missing refFrame as InvalidTarget"))
+        return rc;
+
+    const Transform3D<> baseTtcp (Vector3D<> (1.0, 2.0, 3.0),
+                                  RPY<> (0.1, 0.2, 0.3));
+    const rws::TaskPoint imported = rws::taskPointFromCurrentTcpPose (
+        "TP_001", "TCP", device->getBase ()->getName (), baseTtcp,
+        rws::KinematicThresholds ());
+    if (const int rc = require (imported.refFrame == device->getBase ()->getName (),
+                                "current TCP import stores base refFrame for base coordinates"))
+        return rc;
+    if (const int rc = assertNear (imported.position[0], 1.0, 1e-12,
+                                   "current TCP import preserves base x"))
+        return rc;
+    if (const int rc = require (imported.tcpFrame == "TCP",
+                                "current TCP import stores selected TCP name"))
+        return rc;
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -1188,6 +1259,8 @@ static int runAll ()
     if (const int rc = testTaskPointResolver ())
         return rc;
     if (const int rc = testWorkcellAwareAnalyzeTaskPoint ())
+        return rc;
+    if (const int rc = testTaskPointUiLogic ())
         return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
@@ -1227,6 +1300,8 @@ int main (int argc, char** argv)
         rc = testTaskPointResolver ();
     else if (suite == "task_point_workcell")
         rc = testWorkcellAwareAnalyzeTaskPoint ();
+    else if (suite == "task_point_ui")
+        rc = testTaskPointUiLogic ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")

@@ -98,6 +98,7 @@ private:
     void applyPoseReachabilityResults (const std::vector< PoseReachabilitySample >& samples);
     void updateReportSummary ();
     void setTaskPointTableColumnWidths ();
+    void installTaskPointDelegates ();
     void setStatus (const QString& message);
 
     // 当前 state / device / TCP 帧的统一获取入口。

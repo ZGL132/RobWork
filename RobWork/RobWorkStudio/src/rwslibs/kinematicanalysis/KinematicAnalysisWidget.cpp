@@ -2,6 +2,8 @@
 
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicAnalyzer.hpp"
+#include "TaskPointResolver.hpp"
+#include "TaskPointUiLogic.hpp"
 
 // 共享的 CSV / JSON 序列化工具,TaskPoint 与本插件复用了它。
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -15,6 +17,7 @@
 #include <rw/math/RPY.hpp>
 #include <rws/RobWorkStudio.hpp>
 
+#include <QAbstractItemDelegate>
 #include <QCheckBox>
 #include <QColor>
 #include <QComboBox>
@@ -37,6 +40,8 @@
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpinBox>
+#include <QSet>
+#include <QStyledItemDelegate>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QTextStream>
@@ -91,6 +96,99 @@ enum TaskPointColumn
     ColCollision           = 26,
     TaskPointColumnCount   = 27
 };
+
+class ComboBoxDelegate : public QStyledItemDelegate
+{
+  public:
+    ComboBoxDelegate (const QStringList& values, QObject* parent = nullptr) :
+        QStyledItemDelegate (parent), _values (values)
+    {}
+
+    QWidget* createEditor (QWidget* parent, const QStyleOptionViewItem&,
+                           const QModelIndex&) const override
+    {
+        QComboBox* editor = new QComboBox (parent);
+        editor->addItems (_values);
+        editor->setEditable (false);
+        return editor;
+    }
+
+    void setEditorData (QWidget* editor, const QModelIndex& index) const override
+    {
+        QComboBox* combo = qobject_cast< QComboBox* > (editor);
+        if (combo == nullptr)
+            return;
+        const QString value = index.data (Qt::EditRole).toString ();
+        const int idx = combo->findText (value);
+        combo->setCurrentIndex (idx >= 0 ? idx : 0);
+    }
+
+    void setModelData (QWidget* editor, QAbstractItemModel* model,
+                       const QModelIndex& index) const override
+    {
+        QComboBox* combo = qobject_cast< QComboBox* > (editor);
+        if (combo != nullptr)
+            model->setData (index, combo->currentText (), Qt::EditRole);
+    }
+
+  private:
+    QStringList _values;
+};
+
+class DoubleSpinDelegate : public QStyledItemDelegate
+{
+  public:
+    DoubleSpinDelegate (double minimum, double maximum, int decimals,
+                        double step, QObject* parent = nullptr) :
+        QStyledItemDelegate (parent),
+        _minimum (minimum),
+        _maximum (maximum),
+        _decimals (decimals),
+        _step (step)
+    {}
+
+    QWidget* createEditor (QWidget* parent, const QStyleOptionViewItem&,
+                           const QModelIndex&) const override
+    {
+        QDoubleSpinBox* editor = new QDoubleSpinBox (parent);
+        editor->setRange (_minimum, _maximum);
+        editor->setDecimals (_decimals);
+        editor->setSingleStep (_step);
+        editor->setKeyboardTracking (false);
+        return editor;
+    }
+
+    void setEditorData (QWidget* editor, const QModelIndex& index) const override
+    {
+        QDoubleSpinBox* spin = qobject_cast< QDoubleSpinBox* > (editor);
+        if (spin != nullptr)
+            spin->setValue (index.data (Qt::EditRole).toDouble ());
+    }
+
+    void setModelData (QWidget* editor, QAbstractItemModel* model,
+                       const QModelIndex& index) const override
+    {
+        QDoubleSpinBox* spin = qobject_cast< QDoubleSpinBox* > (editor);
+        if (spin != nullptr)
+            model->setData (index, QString::number (spin->value (), 'g', 12), Qt::EditRole);
+    }
+
+  private:
+    double _minimum;
+    double _maximum;
+    int _decimals;
+    double _step;
+};
+
+void replaceColumnDelegate (QTableWidget* table, int column, QAbstractItemDelegate* delegate)
+{
+    if (table == nullptr)
+        return;
+    QAbstractItemDelegate* oldDelegate = table->itemDelegateForColumn (column);
+    table->setItemDelegateForColumn (column, delegate);
+    if (oldDelegate != nullptr && oldDelegate->parent () == table)
+        oldDelegate->deleteLater ();
+}
 
 QTableWidgetItem* makeItem (const QString& text);
 QTableWidgetItem* makeItem (double v);
@@ -524,6 +622,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_ikImportCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (importCurrentPoseToIk ()));
     connect (_ikDistanceUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
     connect (_ikAngleUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
+    connect (_deviceCombo,
+             static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
+             this,
+             [this] (int) { installTaskPointDelegates (); });
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
     connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
@@ -582,6 +684,7 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
     _workcell = workcell;
     populateDevices ();
     populateTcpFrames ();
+    installTaskPointDelegates ();
     if (_workcell == NULL)
         setStatus(tr("No WorkCell loaded."));
     else if (_deviceCombo->count() == 0)
@@ -1596,6 +1699,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
     _taskPointTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
     _taskPointTable->verticalHeader ()->setVisible (false);
+    installTaskPointDelegates ();
     tpLayout->addWidget (_taskPointTable);
 
     _taskPointSummaryLabel = new QLabel (tr("Enabled: 0    Pass: 0    Warning: 0    Fail: 0    Reachable rate: -"),
@@ -1802,6 +1906,86 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
     _taskPointTable->resizeColumnsToContents ();
 }
 
+void KinematicAnalysisWidget::installTaskPointDelegates ()
+{
+    if (_taskPointTable == nullptr)
+        return;
+
+    QStringList typeValues;
+    typeValues << QStringLiteral ("Generic") << QStringLiteral ("Pick")
+               << QStringLiteral ("Place") << QStringLiteral ("Weld")
+               << QStringLiteral ("Glue") << QStringLiteral ("Inspect")
+               << QStringLiteral ("Screw") << QStringLiteral ("Custom");
+
+    QStringList frameValues;
+    QStringList tcpValues;
+    QSet< QString > frameSeen;
+    QSet< QString > tcpSeen;
+    auto addUnique = [] (QStringList& values, QSet< QString >& seen, const QString& value) {
+        const QString trimmed = value.trimmed ();
+        if (trimmed.isEmpty () || seen.contains (trimmed))
+            return;
+        seen.insert (trimmed);
+        values << trimmed;
+    };
+
+    addUnique (frameValues, frameSeen, QStringLiteral ("WORLD"));
+    const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device != nullptr && device->getBase () != nullptr)
+        addUnique (frameValues, frameSeen,
+                   QString::fromStdString (device->getBase ()->getName ()));
+
+    if (_workcell != nullptr && _workcell->getWorldFrame () != nullptr) {
+        rw::kinematics::State workcellState = _workcell->getDefaultState ();
+        const std::vector< rw::kinematics::Frame* > frames =
+            rw::kinematics::Kinematics::findAllFrames (_workcell->getWorldFrame (), workcellState);
+        for (const rw::kinematics::Frame* frame : frames) {
+            if (frame == nullptr)
+                continue;
+            const QString name = QString::fromStdString (frame->getName ());
+            addUnique (frameValues, frameSeen, name);
+            addUnique (tcpValues, tcpSeen, name);
+        }
+    }
+
+    if (_tcpFrameCombo != nullptr)
+        addUnique (tcpValues, tcpSeen, _tcpFrameCombo->currentText ());
+    if (tcpValues.isEmpty ())
+        addUnique (tcpValues, tcpSeen, QStringLiteral ("TCP"));
+
+    replaceColumnDelegate (_taskPointTable, ColType,
+                           new ComboBoxDelegate (typeValues, _taskPointTable));
+    replaceColumnDelegate (_taskPointTable, ColRefFrame,
+                           new ComboBoxDelegate (frameValues, _taskPointTable));
+    replaceColumnDelegate (_taskPointTable, ColTcpFrame,
+                           new ComboBoxDelegate (tcpValues, _taskPointTable));
+    replaceColumnDelegate (_taskPointTable, ColFreeRoll,
+                           new ComboBoxDelegate (
+                               QStringList () << QStringLiteral ("false")
+                                              << QStringLiteral ("true"),
+                               _taskPointTable));
+
+    for (int column : {ColX, ColY, ColZ}) {
+        replaceColumnDelegate (_taskPointTable, column,
+                               new DoubleSpinDelegate (-1000.0, 1000.0, 6, 0.001,
+                                                       _taskPointTable));
+    }
+    for (int column : {ColRoll, ColPitch, ColYaw}) {
+        replaceColumnDelegate (_taskPointTable, column,
+                               new DoubleSpinDelegate (-360.0, 360.0, 6, 0.1,
+                                                       _taskPointTable));
+    }
+    replaceColumnDelegate (_taskPointTable, ColPosTol,
+                           new DoubleSpinDelegate (0.0, 1000.0, 9, 0.001,
+                                                   _taskPointTable));
+    replaceColumnDelegate (_taskPointTable, ColOriTol,
+                           new DoubleSpinDelegate (0.0, 360.0, 6, 0.1,
+                                                   _taskPointTable));
+    replaceColumnDelegate (_taskPointTable, ColWeight,
+                           new DoubleSpinDelegate (0.0, 1000000000.0, 6, 0.1,
+                                                   _taskPointTable));
+}
+
 // addTaskPointRow:在 Task point 表格末尾追加一行默认值(0 位姿,Generic 类型,
 // refFrame=WORLD、tcpFrame=当前 TCP 选择;后续用户可在表格里直接编辑。
 void KinematicAnalysisWidget::addTaskPointRow ()
@@ -1977,14 +2161,14 @@ void paintResultStates (QTableWidget* t, int row,
         default:                           bg = QColor ();            break;
     }
     QStringList tipLines;
-    tipLines << QStringLiteral ("status=%1").arg (QString::fromLatin1 (rws::statusText (status)));
+    tipLines << QStringLiteral ("status=%1").arg (QString::fromLatin1 (statusText (status)));
     if (!reasonText.isEmpty () && reasonText != QStringLiteral ("-"))
         tipLines << QStringLiteral ("reason=%1").arg (reasonText);
     if (!note.isEmpty ())
         tipLines << QStringLiteral ("note=%1").arg (note);
     for (const rws::AnalysisWarning& w : warnings) {
         tipLines << QStringLiteral ("[%1] %2: %3")
-            .arg (QString::fromLatin1 (rws::statusText (w.severity)))
+            .arg (QString::fromLatin1 (statusText (w.severity)))
             .arg (QString::fromStdString (w.code))
             .arg (QString::fromStdString (w.message));
     }
@@ -2693,7 +2877,6 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     }
     // 第一次跑 / 切到 selected-only 模式,先按表格行数重新对齐 _lastTaskPointResults。
     const int total = _taskPointTable->rowCount ();
-    _lastTaskPointResults = std::vector< TaskPointReachabilityResult > (total);
 
     const std::string deviceName = _deviceCombo->currentText ().toStdString ();
     rw::core::Ptr< rw::models::Device > device = deviceByName (_workcell, deviceName);
@@ -2717,28 +2900,20 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     for (QTableWidgetItem* it : selected)
         selectedRows.insert (it->row ());
 
+    std::vector< int > rows;
+    rows.reserve (static_cast< std::size_t > (selectedRows.size ()));
     for (int row : selectedRows) {
         if (row < 0 || row >= total)
             continue;
-        TaskPoint p = allPoints[static_cast<std::size_t> (row)];
-        TaskPointReachabilityResult r;
-        r.taskPoint = p;
-        r.ik         = analyzer.analyzeIk (device, tcpFrame, state, p, collisionDetector);
-        r.status     = r.ik.usableSolutionCount > 0 ? AnalysisStatus::Pass : AnalysisStatus::Fail;
-        if (r.ik.usableSolutionCount > 0)
-            r.primaryFailure = KinematicFailureReason::None;
-        else
-            r.primaryFailure = p.enabled ? KinematicFailureReason::IkNoSolution
-                                           : KinematicFailureReason::None;
-        // 复用 analyzeTaskPoints 内的状态归类逻辑。
-        r.failureReasons.clear ();
-        // 简化:把 failureReasons 沿用 ik 的状态文本。
-        _lastTaskPointResults[static_cast<std::size_t> (row)] = r;
-        if (p.enabled)
+        rows.push_back (row);
+        if (allPoints[static_cast<std::size_t> (row)].enabled)
             ++analyzed;
     }
 
     // 重新计算可达率 + 应用结果 + 更新 summary。
+    _lastTaskPointResults = analyzeSelectedTaskPointRows (
+        analyzer, _workcell, device, tcpFrame, state, allPoints, rows,
+        _lastTaskPointResults, collisionDetector);
     const double rate = analyzer.calculateReachableRate (_lastTaskPointResults);
     applyTaskPointResults (_lastTaskPointResults, rate);
 
@@ -2773,33 +2948,28 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
         const rw::math::Transform3D<> baseTtcp =
             rw::kinematics::Kinematics::frameTframe (
                 device->getBase (), tcpFrame.get (), currentState ());
-        const rw::math::RPY<> rpy (baseTtcp.R ());
-        const double toDeg = 180.0 / 3.141592653589793238462643383279502884;
-        TaskPoint p;
-        p.id          = QString ("TP_%1").arg (_taskPointTable->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
-        p.name        = p.id;
-        p.type        = TaskPointType::Generic;
-        p.refFrame    = "WORLD";
-        p.tcpFrame    = tcpFrame->getName ();
-        p.position    = {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}};
-        p.rpyDeg      = {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}};
-        p.tolerance.positionMeters = _thresholds.positionToleranceMeters;
-        p.tolerance.orientationDeg = _thresholds.orientationToleranceDeg;
-        p.tolerance.allowToolRollFree = false;
-        p.weight      = 1.0;
-        p.enabled     = true;
-        p.note        = "imported from current TCP pose";
+        const std::string id =
+            QString ("TP_%1").arg (_taskPointTable->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
+        const TaskPoint p = taskPointFromCurrentTcpPose (
+            id, tcpFrame->getName (), device->getBase ()->getName (), baseTtcp, _thresholds);
         // 用 addTaskPointRow 风格插入新行,然后用 setCell 改写 id/name/pos/rpy。
         addTaskPointRow ();
         const int row = _taskPointTable->rowCount () - 1;
         setCell (_taskPointTable, row, ColId,   QString::fromStdString (p.id),   true);
         setCell (_taskPointTable, row, ColName, QString::fromStdString (p.name), true);
+        setCell (_taskPointTable, row, ColRefFrame, QString::fromStdString (p.refFrame), true);
+        setCell (_taskPointTable, row, ColTcpFrame, QString::fromStdString (p.tcpFrame), true);
         setCell (_taskPointTable, row, ColX,    QString::number (p.position[0]), true);
         setCell (_taskPointTable, row, ColY,    QString::number (p.position[1]), true);
         setCell (_taskPointTable, row, ColZ,    QString::number (p.position[2]), true);
         setCell (_taskPointTable, row, ColRoll, QString::number (p.rpyDeg[0]),   true);
         setCell (_taskPointTable, row, ColPitch,QString::number (p.rpyDeg[1]),   true);
         setCell (_taskPointTable, row, ColYaw,  QString::number (p.rpyDeg[2]),   true);
+        setCell (_taskPointTable, row, ColPosTol, QString::number (p.tolerance.positionMeters), true);
+        setCell (_taskPointTable, row, ColOriTol, QString::number (p.tolerance.orientationDeg), true);
+        setCell (_taskPointTable, row, ColFreeRoll, p.tolerance.allowToolRollFree ? tr ("true") : tr ("false"), true);
+        setCell (_taskPointTable, row, ColWeight, QString::number (p.weight), true);
+        setCell (_taskPointTable, row, ColNote, QString::fromStdString (p.note), true);
         setStatus (tr ("Imported current TCP as task point row %1.").arg (row + 1));
     }
     catch (const std::exception& ex) {
