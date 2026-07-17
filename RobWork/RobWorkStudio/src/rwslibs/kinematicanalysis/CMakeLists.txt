@@ -22,7 +22,8 @@ set(build TRUE)
 rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} ADD_DOC)
 
 if(build)
-    # 主插件目标:6 个 .cpp(TaskPointResolver 是 P1 新增)+ Qt 自动生成的 MOC + .qrc 资源文件。
+    # 主插件目标:P3 重构后用 TaskPointTableModel + TaskPointDelegates 替代 QTableWidget 单元格手动管理;
+    # 同时保留 TaskPointResolver(P1)+ TaskPointUiLogic(P2)。
     set(SrcFiles
         KinematicAnalysisPlugin.cpp
         KinematicAnalysisWidget.cpp
@@ -31,6 +32,8 @@ if(build)
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
         TaskPointUiLogic.cpp
+        TaskPointTableModel.cpp
+        TaskPointDelegates.cpp
     )
 
     set(SRC_FILES_HPP
@@ -41,6 +44,8 @@ if(build)
         KinematicAnalyzer.hpp
         TaskPointResolver.hpp
         TaskPointUiLogic.hpp
+        TaskPointTableModel.hpp
+        TaskPointDelegates.hpp
     )
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
@@ -72,7 +77,8 @@ if(build)
     endif()
 
     # 单独的测试可执行文件:不依赖 Qt Widget,只验证核心算法。
-    # 它和插件共享 Types/Metrics/Analyzer/Resolver 四个 .cpp,避免重复实现。
+    # 它和插件共享 Types/Metrics/Analyzer/Resolver/UiLogic/TableModel/Delegates
+    # 七个 .cpp,避免重复实现。
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
         KinematicAnalysisTypes.cpp
@@ -80,6 +86,8 @@ if(build)
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
         TaskPointUiLogic.cpp
+        TaskPointTableModel.cpp
+        TaskPointDelegates.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE

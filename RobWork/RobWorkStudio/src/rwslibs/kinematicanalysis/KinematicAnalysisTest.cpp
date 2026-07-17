@@ -3,6 +3,7 @@
 #include "KinematicAnalyzer.hpp"
 #include "TaskPointResolver.hpp"
 #include "TaskPointUiLogic.hpp"
+#include "TaskPointTableModel.hpp"
 
 #include <QCoreApplication>
 
@@ -1236,6 +1237,121 @@ static int testTaskPointUiLogic ()
     return 0;
 }
 
+// 子套件:P3 TaskPointTableModel 数据层单测。
+// 覆盖:列数 27、header 文本、insertRows / removeRows、setData 字段、
+// validation 行为、result 列只读、Q_OBJECT 兼容(QModelIndex)。
+static int testTaskPointModel ()
+{
+    using namespace rws;
+
+    TaskPointTableModel model;
+
+    // 1) 初始状态:0 行 27 列。
+    if (const int rc = require (model.rowCount () == 0, "model starts empty"))
+        return rc;
+    if (const int rc = require (model.columnCount () == 27,
+                                "model column count is 27"))
+        return rc;
+
+    // 2) header 与当前 UI 一致(只检查代表性列)。
+    const QStringList headers = model.allHeaderTexts ();
+    if (const int rc = require (headers.size () == 27, "header list size matches"))
+        return rc;
+    if (const int rc = require (headers[ColEnabled]  == QStringLiteral ("Enabled"),
+                                "header[ColEnabled]"))
+        return rc;
+    if (const int rc = require (headers[ColType]    == QStringLiteral ("type"),
+                                "header[ColType]"))
+        return rc;
+    if (const int rc = require (headers[ColTcpFrame]== QStringLiteral ("tcpFrame"),
+                                "header[ColTcpFrame]"))
+        return rc;
+    if (const int rc = require (headers[ColCollision] == QStringLiteral ("collision"),
+                                "header[ColCollision]"))
+        return rc;
+
+    // 3) insertRows:默认行的 id / name / type / refFrame / tcpFrame。
+    if (const int rc = !model.insertRows (0, 1) ? 1 : 0)
+        return rc;
+    if (const int rc = require (model.rowCount () == 1, "insert one row"))
+        return rc;
+    const QModelIndex e0 = model.index (0, ColEnabled);
+    const QModelIndex x0 = model.index (0, ColX);
+    const QModelIndex id0 = model.index (0, ColId);
+    if (const int rc = require (e0.data (Qt::CheckStateRole).toInt () == int (Qt::Checked),
+                                "default row enabled is checked"))
+        return rc;
+    if (const int rc = require (model.data (id0, Qt::DisplayRole).toString () == QStringLiteral ("P1"),
+                                "default id P1"))
+        return rc;
+    if (const int rc = require (x0.data (Qt::DisplayRole).toString () == QStringLiteral ("0"),
+                                "default x = 0"))
+        return rc;
+
+    // 4) setData:改 x / type / freeRoll,确认 taskPointAt 返回正确。
+    if (const int rc = !model.setData (x0, QStringLiteral ("0.42")) ? 1 : 0)
+        return rc;
+    if (const int rc = !model.setData (model.index (0, ColType),
+                                       QStringLiteral ("Pick")) ? 1 : 0)
+        return rc;
+    if (const int rc = !model.setData (model.index (0, ColFreeRoll),
+                                       QStringLiteral ("true")) ? 1 : 0)
+        return rc;
+    {
+        const TaskPoint p = model.taskPointAt (0);
+        if (const int rc = require (nearlyEqual (p.position[0], 0.42, 1e-12),
+                                    "x = 0.42 round-trip"))
+            return rc;
+        if (const int rc = require (p.type == TaskPointType::Pick,
+                                    "type Pick round-trip"))
+            return rc;
+        if (const int rc = require (p.tolerance.allowToolRollFree == true,
+                                    "freeRoll true round-trip"))
+            return rc;
+    }
+
+    // 5) result 列(17..26)flags 不应包含 editable。
+    for (int c = ColStatus; c < TaskPointColumnCount; ++c) {
+        if (const int rc = require (
+                !((model.flags (model.index (0, c))) & Qt::ItemIsEditable),
+                QStringLiteral ("result column %1 is read-only").arg (c).toStdString ()))
+            return rc;
+    }
+
+    // 6) 非法数值输入返回 false,不污染已有值。
+    const double before = model.taskPointAt (0).position[1];
+    if (const int rc = model.setData (model.index (0, ColY), QStringLiteral ("not a number")) ? 1 : 0)
+        return rc;
+    if (const int rc = require (nearlyEqual (model.taskPointAt (0).position[1], before, 0),
+                                "invalid y input leaves value unchanged"))
+        return rc;
+
+    // 7) removeRows。
+    if (const int rc = !model.removeRows (0, 1) ? 1 : 0)
+        return rc;
+    if (const int rc = require (model.rowCount () == 0, "remove one row"))
+        return rc;
+
+    // 8) setRowsFromTaskPoints:覆盖式导入,validateAll 立刻跑。
+    TaskPoint a; a.id = "A"; a.name = "A";
+    a.enabled = true; a.refFrame = "WORLD"; a.tcpFrame = "TCP";
+    a.position = {{1.0, 2.0, 3.0}};
+    TaskPoint b = a; b.id = "B"; b.refFrame = "";  // invalid: empty refFrame
+    std::vector< TaskPoint > rows = {a, b};
+    model.setRowsFromTaskPoints (rows);
+    if (const int rc = require (model.rowCount () == 2, "import 2 rows"))
+        return rc;
+    QString summary;
+    if (const int rc = require (!model.validateAll (&summary),
+                                "imported invalid row reported"))
+        return rc;
+    if (const int rc = require (summary.contains (QStringLiteral ("Row 2")),
+                                "summary points to row 2"))
+        return rc;
+
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -1261,6 +1377,8 @@ static int runAll ()
     if (const int rc = testWorkcellAwareAnalyzeTaskPoint ())
         return rc;
     if (const int rc = testTaskPointUiLogic ())
+        return rc;
+    if (const int rc = testTaskPointModel ())
         return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
@@ -1302,6 +1420,8 @@ int main (int argc, char** argv)
         rc = testWorkcellAwareAnalyzeTaskPoint ();
     else if (suite == "task_point_ui")
         rc = testTaskPointUiLogic ();
+    else if (suite == "task_point_model")
+        rc = testTaskPointModel ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")
