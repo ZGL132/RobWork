@@ -1818,13 +1818,15 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     configureAnalysisTable (_workspaceTable);
     layout->addWidget (_workspaceTable);
 
-    // P4:mode / sampleCount / gridSteps 变化立即刷新 plan 标签;
+    // P4:mode / sampleCount / gridSteps / seed 变化立即刷新 plan 标签;
     // color 变化触发 Visualization 重绘。
     connect (_workspaceModeCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (updateWorkspaceControls ()));
     connect (_workspaceSampleCountSpin, SIGNAL (valueChanged (int)),
              this, SLOT (updateWorkspaceControls ()));
     connect (_workspaceGridStepsSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (updateWorkspaceControls ()));
+    connect (_workspaceSeedSpin, SIGNAL (valueChanged (int)),
              this, SLOT (updateWorkspaceControls ()));
     connect (_workspaceColorModeCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (refreshVisualization ()));
@@ -3191,15 +3193,22 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
 
-    // P4:在同步采样期间禁用 Run,避免用户重复点击导致重入。
-    if (_workspaceRunButton != NULL)
-        _workspaceRunButton->setEnabled (false);
-    QApplication::setOverrideCursor (Qt::WaitCursor);
+    // P4:RAII guard,在同步采样期间禁用 Run + 设忙光标,
+    // 无论采样/构造/异常都保证恢复,避免 UI 卡死。
+    struct SamplingGuard {
+        QPushButton* btn;
+        explicit SamplingGuard (QPushButton* b) : btn (b) {
+            if (btn != nullptr) btn->setEnabled (false);
+            QApplication::setOverrideCursor (Qt::WaitCursor);
+        }
+        ~SamplingGuard () {
+            QApplication::restoreOverrideCursor ();
+            if (btn != nullptr) btn->setEnabled (true);
+        }
+    };
+    const SamplingGuard guard (_workspaceRunButton);
     _workspaceSamples = analyzer.sampleWorkspace (
         device, tcpFrame, currentState (), config, collisionDetector);
-    QApplication::restoreOverrideCursor ();
-    if (_workspaceRunButton != NULL)
-        _workspaceRunButton->setEnabled (true);
 
     applyWorkspaceResults (_workspaceSamples);
     const QString collisionNote = collisionUnavailable ?

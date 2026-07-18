@@ -37,12 +37,20 @@ double lowerPercentile (std::vector< double > values, double ratio)
 }
 
 // 乘法 + 上限:中途一旦超出 cap 就直接返回 cap,避免溢出。
-std::size_t multiplyCapped (std::size_t lhs, std::size_t rhs, std::size_t cap)
+// *capped 在返回值为 cap 且实际乘积 > cap 时设 true,用于区分"刚好等于上限"
+// 和"被截断到上限",避免 theoreticalGridSamples 的 gridCountTruncated 误判。
+std::size_t multiplyCapped (std::size_t lhs, std::size_t rhs, std::size_t cap,
+                            bool* capped = nullptr)
 {
-    if (lhs == 0 || rhs == 0)
+    if (lhs == 0 || rhs == 0) {
+        if (capped != nullptr) *capped = false;
         return 0;
-    if (lhs > cap / rhs)
+    }
+    if (lhs > cap / rhs) {
+        if (capped != nullptr) *capped = true;
         return cap;
+    }
+    if (capped != nullptr) *capped = false;
     return lhs * rhs;
 }
 
@@ -104,12 +112,17 @@ std::size_t rws::plannedWorkspaceSampleCount (
     if (sanitized.mode == WorkspaceSamplingMode::Grid) {
         const std::size_t cap = static_cast< std::size_t > (MaxWorkspaceSampleCount);
         std::size_t total = 1;
-        for (std::size_t i = 0; i < dof; ++i)
+        bool anyCapped = false;
+        for (std::size_t i = 0; i < dof; ++i) {
+            bool stepCapped = false;
             total = multiplyCapped (
-                total, static_cast< std::size_t > (sanitized.gridStepsPerJoint), cap);
+                total, static_cast< std::size_t > (sanitized.gridStepsPerJoint),
+                cap, &stepCapped);
+            anyCapped = anyCapped || stepCapped;
+        }
         local.theoreticalGridSamples = total;
         planned = std::min (planned, total);
-        local.gridCountTruncated = total > planned;
+        local.gridCountTruncated = anyCapped || total > planned;
     }
 
     local.plannedSamples = planned;
