@@ -1,0 +1,333 @@
+#include "KinematicAnalysisVisualizationTypes.hpp"
+
+#include <QStringList>
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
+using namespace rws;
+
+namespace {
+
+QString statusTextLocal (AnalysisStatus status)
+{
+    switch (status) {
+        case AnalysisStatus::Pass:    return QStringLiteral ("Pass");
+        case AnalysisStatus::Warning: return QStringLiteral ("Warning");
+        case AnalysisStatus::Fail:    return QStringLiteral ("Fail");
+        case AnalysisStatus::Unknown:
+        default:                      return QStringLiteral ("Unknown");
+    }
+}
+
+double statusScalar (AnalysisStatus status)
+{
+    switch (status) {
+        case AnalysisStatus::Pass:    return 1.0;
+        case AnalysisStatus::Warning: return 0.5;
+        case AnalysisStatus::Fail:    return 0.0;
+        case AnalysisStatus::Unknown:
+        default:                      return std::numeric_limits< double >::quiet_NaN ();
+    }
+}
+
+bool finiteScalar (double value, double* out)
+{
+    if (!std::isfinite (value))
+        return false;
+    if (out != nullptr)
+        *out = value;
+    return true;
+}
+
+const KinematicIkSolution* bestUsableSolution (
+    const KinematicIkAnalysisResult& ik)
+{
+    const KinematicIkSolution* best = nullptr;
+    for (const KinematicIkSolution& solution : ik.solutions) {
+        if (solution.status == AnalysisStatus::Fail || solution.inCollision)
+            continue;
+        if (best == nullptr || solution.score < best->score)
+            best = &solution;
+    }
+    return best;
+}
+
+bool hasCollisionCandidate (const KinematicIkAnalysisResult& ik)
+{
+    for (const KinematicIkSolution& solution : ik.solutions) {
+        if (solution.inCollision)
+            return true;
+    }
+    return false;
+}
+
+QString failureReasonsText (const std::vector< KinematicFailureReason >& reasons)
+{
+    if (reasons.empty ())
+        return QStringLiteral ("-");
+    QStringList parts;
+    for (KinematicFailureReason reason : reasons)
+        parts << QString::fromLatin1 (toString (reason));
+    return parts.join (QStringLiteral (", "));
+}
+
+bool taskScalar (const TaskPointReachabilityResult& result,
+                 VisualScalarMode mode, double* value)
+{
+    const KinematicIkSolution* best = bestUsableSolution (result.ik);
+    switch (mode) {
+        case VisualScalarMode::Status:
+            return finiteScalar (statusScalar (result.status), value);
+        case VisualScalarMode::Manipulability:
+            return best != nullptr && finiteScalar (best->manipulability, value);
+        case VisualScalarMode::Condition:
+            return best != nullptr && finiteScalar (best->conditionNumber, value);
+        case VisualScalarMode::MinJointMargin:
+            return best != nullptr && finiteScalar (best->minJointLimitMargin, value);
+        case VisualScalarMode::PositionError:
+            return best != nullptr && finiteScalar (best->positionErrorMeters, value);
+        case VisualScalarMode::OrientationError:
+            return best != nullptr && finiteScalar (best->orientationErrorDeg, value);
+        case VisualScalarMode::Collision:
+            if (value != nullptr)
+                *value = (best != nullptr ? best->inCollision :
+                          hasCollisionCandidate (result.ik)) ? 1.0 : 0.0;
+            return true;
+        case VisualScalarMode::Coverage:
+        default:
+            return false;
+    }
+}
+
+bool workspaceScalar (const WorkspaceSample& sample,
+                      VisualScalarMode mode, double* value)
+{
+    switch (mode) {
+        case VisualScalarMode::Status:
+            return finiteScalar (statusScalar (sample.status), value);
+        case VisualScalarMode::Manipulability:
+            return finiteScalar (sample.manipulability, value);
+        case VisualScalarMode::Condition:
+            return finiteScalar (sample.conditionNumber, value);
+        case VisualScalarMode::MinJointMargin:
+            return finiteScalar (sample.minJointLimitMargin, value);
+        case VisualScalarMode::Collision:
+            if (value != nullptr)
+                *value = sample.inCollision ? 1.0 : 0.0;
+            return true;
+        case VisualScalarMode::PositionError:
+        case VisualScalarMode::OrientationError:
+        case VisualScalarMode::Coverage:
+        default:
+            return false;
+    }
+}
+
+bool poseScalar (const PoseReachabilitySample& sample,
+                 VisualScalarMode mode, double* value)
+{
+    switch (mode) {
+        case VisualScalarMode::Status:
+            return finiteScalar (statusScalar (sample.status), value);
+        case VisualScalarMode::Coverage:
+            return finiteScalar (sample.coverage, value);
+        case VisualScalarMode::Manipulability:
+        case VisualScalarMode::Condition:
+        case VisualScalarMode::MinJointMargin:
+        case VisualScalarMode::PositionError:
+        case VisualScalarMode::OrientationError:
+        case VisualScalarMode::Collision:
+        default:
+            return false;
+    }
+}
+
+void updateRange (AnalysisVisualData& data)
+{
+    bool first = true;
+    for (const AnalysisVisualPoint& point : data.points) {
+        if (!point.hasFiniteScalar)
+            continue;
+        if (first) {
+            data.scalarMin = point.scalar;
+            data.scalarMax = point.scalar;
+            first = false;
+        }
+        else {
+            data.scalarMin = std::min (data.scalarMin, point.scalar);
+            data.scalarMax = std::max (data.scalarMax, point.scalar);
+        }
+    }
+    data.hasFiniteScalar = !first;
+}
+
+double normalizedScalar (const AnalysisVisualPoint& point,
+                         const AnalysisVisualData& data)
+{
+    if (!point.hasFiniteScalar || !data.hasFiniteScalar)
+        return 0.5;
+    const double span = data.scalarMax - data.scalarMin;
+    if (!std::isfinite (span) || std::fabs (span) < 1e-12)
+        return 0.5;
+    const double t = (point.scalar - data.scalarMin) / span;
+    return std::max (0.0, std::min (1.0, t));
+}
+
+}    // namespace
+
+AnalysisVisualData rws::visualDataFromTaskPointResults (
+    const std::vector< TaskPointReachabilityResult >& results,
+    VisualScalarMode scalarMode)
+{
+    AnalysisVisualData data;
+    data.scalarMode = scalarMode;
+    data.points.reserve (results.size ());
+    for (std::size_t i = 0; i < results.size (); ++i) {
+        const TaskPointReachabilityResult& result = results[i];
+        AnalysisVisualPoint point;
+        point.position = result.taskPoint.position;
+        point.status = result.status;
+        point.inCollision = hasCollisionCandidate (result.ik);
+        point.source = VisualPointSource::TaskPoint;
+        point.sourceIndex = static_cast< int > (i);
+        point.label = !result.taskPoint.id.empty () ?
+            QString::fromStdString (result.taskPoint.id) :
+            (!result.taskPoint.name.empty () ?
+                 QString::fromStdString (result.taskPoint.name) :
+                 QStringLiteral ("TP%1").arg (static_cast< int > (i + 1)));
+        point.hasFiniteScalar = taskScalar (result, scalarMode, &point.scalar);
+        point.tooltip = QStringLiteral (
+            "Task point: %1\nStatus: %2\nReason: %3\nRaw candidates: %4\nUsable solutions: %5")
+            .arg (point.label)
+            .arg (statusTextLocal (result.status))
+            .arg (failureReasonsText (result.failureReasons))
+            .arg (static_cast< int > (result.ik.rawCandidateCount))
+            .arg (static_cast< int > (result.ik.usableSolutionCount));
+        data.points.push_back (point);
+    }
+    updateRange (data);
+    return data;
+}
+
+AnalysisVisualData rws::visualDataFromWorkspaceSamples (
+    const std::vector< WorkspaceSample >& samples,
+    VisualScalarMode scalarMode)
+{
+    AnalysisVisualData data;
+    data.scalarMode = scalarMode;
+    data.points.reserve (samples.size ());
+    for (std::size_t i = 0; i < samples.size (); ++i) {
+        const WorkspaceSample& sample = samples[i];
+        AnalysisVisualPoint point;
+        point.position = sample.tcpPosition;
+        point.status = sample.status;
+        point.inCollision = sample.inCollision;
+        point.source = VisualPointSource::Workspace;
+        point.sourceIndex = static_cast< int > (i);
+        point.label = QStringLiteral ("W%1").arg (static_cast< int > (i));
+        point.hasFiniteScalar = workspaceScalar (sample, scalarMode, &point.scalar);
+        point.tooltip = QStringLiteral (
+            "Workspace sample: %1\nStatus: %2\nManipulability: %3\nCondition: %4\nMin margin: %5\nCollision: %6")
+            .arg (point.sourceIndex)
+            .arg (statusTextLocal (sample.status))
+            .arg (QString::number (sample.manipulability, 'g', 6))
+            .arg (QString::number (sample.conditionNumber, 'g', 6))
+            .arg (QString::number (sample.minJointLimitMargin, 'g', 6))
+            .arg (sample.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"));
+        data.points.push_back (point);
+    }
+    updateRange (data);
+    return data;
+}
+
+AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
+    const std::vector< PoseReachabilitySample >& samples,
+    VisualScalarMode scalarMode)
+{
+    AnalysisVisualData data;
+    data.scalarMode = scalarMode;
+    data.points.reserve (samples.size ());
+    for (std::size_t i = 0; i < samples.size (); ++i) {
+        const PoseReachabilitySample& sample = samples[i];
+        AnalysisVisualPoint point;
+        point.position = sample.position;
+        point.status = sample.status;
+        point.source = VisualPointSource::PoseReachability;
+        point.sourceIndex = static_cast< int > (i);
+        point.label = QStringLiteral ("P%1").arg (static_cast< int > (i));
+        point.hasFiniteScalar = poseScalar (sample, scalarMode, &point.scalar);
+        point.tooltip = QStringLiteral (
+            "Pose reachability: %1\nStatus: %2\nCoverage: %3\nReachable: %4 / %5")
+            .arg (point.sourceIndex)
+            .arg (statusTextLocal (sample.status))
+            .arg (QString::number (sample.coverage, 'f', 3))
+            .arg (sample.reachableDirections)
+            .arg (sample.sampledDirections);
+        data.points.push_back (point);
+    }
+    updateRange (data);
+    return data;
+}
+
+QPointF rws::projectVisualPoint (const AnalysisVisualPoint& point,
+                                 VisualProjection projection)
+{
+    switch (projection) {
+        case VisualProjection::XY:
+            return QPointF (point.position[0], point.position[1]);
+        case VisualProjection::XZ:
+            return QPointF (point.position[0], point.position[2]);
+        case VisualProjection::YZ:
+            return QPointF (point.position[1], point.position[2]);
+    }
+    return QPointF (point.position[0], point.position[1]);
+}
+
+QString rws::visualScalarModeText (VisualScalarMode mode)
+{
+    switch (mode) {
+        case VisualScalarMode::Status:           return QStringLiteral ("Status");
+        case VisualScalarMode::Manipulability:  return QStringLiteral ("Manipulability");
+        case VisualScalarMode::Condition:       return QStringLiteral ("Condition");
+        case VisualScalarMode::MinJointMargin:  return QStringLiteral ("Min joint margin");
+        case VisualScalarMode::PositionError:   return QStringLiteral ("Position error");
+        case VisualScalarMode::OrientationError:return QStringLiteral ("Orientation error");
+        case VisualScalarMode::Collision:       return QStringLiteral ("Collision");
+        case VisualScalarMode::Coverage:        return QStringLiteral ("Coverage");
+    }
+    return QStringLiteral ("Status");
+}
+
+QString rws::visualProjectionText (VisualProjection projection)
+{
+    switch (projection) {
+        case VisualProjection::XY: return QStringLiteral ("XY");
+        case VisualProjection::XZ: return QStringLiteral ("XZ");
+        case VisualProjection::YZ: return QStringLiteral ("YZ");
+    }
+    return QStringLiteral ("XY");
+}
+
+QColor rws::visualColorForPoint (const AnalysisVisualPoint& point,
+                                 const AnalysisVisualData& data)
+{
+    if (data.scalarMode == VisualScalarMode::Status || !point.hasFiniteScalar) {
+        switch (point.status) {
+            case AnalysisStatus::Pass:    return QColor (42, 157, 143);
+            case AnalysisStatus::Warning: return QColor (233, 196, 106);
+            case AnalysisStatus::Fail:    return QColor (214, 64, 69);
+            case AnalysisStatus::Unknown:
+            default:                      return QColor (127, 127, 127);
+        }
+    }
+    if (data.scalarMode == VisualScalarMode::Collision) {
+        return point.scalar > 0.5 ? QColor (214, 64, 69) : QColor (42, 157, 143);
+    }
+    const double t = normalizedScalar (point, data);
+    const int r = static_cast< int > (45 + t * 190);
+    const int g = static_cast< int > (90 + (1.0 - std::fabs (t - 0.5) * 2.0) * 130);
+    const int b = static_cast< int > (180 - t * 135);
+    return QColor (r, g, b);
+}

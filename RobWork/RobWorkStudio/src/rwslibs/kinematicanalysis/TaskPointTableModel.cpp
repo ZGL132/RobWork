@@ -14,7 +14,7 @@ using namespace rws;
 
 namespace {
 
-// 16 个原始字段的列头,result 列(17..26)用 status / reason 等。
+// Headers for editable task point columns and derived result columns.
 const char* kHeaders[TaskPointColumnCount] = {
     "Enabled", "id", "name", "type",
     "refFrame", "tcpFrame",
@@ -84,7 +84,19 @@ QString reasonText (const std::vector< KinematicFailureReason >& reasons)
     return out.join (QStringLiteral (", "));
 }
 
-// 检查整数字符串转 double 合法且 finite,数字列写回时复用。
+const KinematicIkSolution* bestUsableSolutionLocal (const KinematicIkAnalysisResult& ik)
+{
+    const KinematicIkSolution* best = nullptr;
+    for (const KinematicIkSolution& solution : ik.solutions) {
+        if (solution.status == AnalysisStatus::Fail || solution.inCollision)
+            continue;
+        if (best == nullptr || solution.score < best->score)
+            best = &solution;
+    }
+    return best;
+}
+
+// Parse only finite floating point values.
 bool safeParseDouble (const QString& s, double& out)
 {
     bool ok = false;
@@ -99,7 +111,7 @@ bool safeParseDouble (const QString& s, double& out)
 }    // namespace
 
 // =====================================================================
-//  TaskPointTableModel 实现
+//  TaskPointTableModel 瀹炵幇
 // =====================================================================
 
 TaskPointTableModel::TaskPointTableModel (QObject* parent) :
@@ -201,7 +213,7 @@ bool TaskPointTableModel::stringToTaskPointField (
                 p.enabled = false;
                 return true;
             }
-            return false;  // 未知字符串,严格失败
+            return false;  // 鏈煡瀛楃涓?涓ユ牸澶辫触
         }
         case ColId:    p.id = trimmed.toStdString ();      return true;
         case ColName:  p.name = trimmed.toStdString ();    return true;
@@ -282,7 +294,7 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
     const TaskPointTableRow& r = _rows[static_cast<std::size_t> (row)];
     const int col = index.column ();
 
-    // Enabled 列:CheckStateRole 优先;其他 Role 用普通字符串。
+    // Enabled uses CheckStateRole; display/edit roles keep string compatibility.
     if (col == ColEnabled) {
         if (role == Qt::CheckStateRole)
             return r.point.enabled ? Qt::Checked : Qt::Unchecked;
@@ -290,7 +302,7 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
             return r.point.enabled ? QStringLiteral ("true") : QStringLiteral ("false");
     }
 
-    // result 列(17..26):只读展示;支持 BackgroundRole / ToolTipRole。
+    // Result columns are read-only and support status background/tooltips.
     if (col >= ColStatus) {
         switch (role) {
             case Qt::DisplayRole:
@@ -324,14 +336,14 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
         }
     }
 
-    // 任务点定义列(0..16):也支持 BackgroundRole / ToolTipRole 表达 validation。
+    // Editable task point columns also expose validation background/tooltips.
     if (role == Qt::BackgroundRole && !r.validationWarnings.empty ())
         return QColor (255, 224, 224);
     if (role == Qt::ToolTipRole && !r.validationWarnings.empty ()) {
         QStringList tip;
         for (const AnalysisWarning& w : r.validationWarnings)
             tip << QStringLiteral ("[%1] %2: %3")
-                .arg (QString::fromLatin1 (rws::statusText (w.severity)))
+                .arg (statusTextLocal (w.severity))
                 .arg (QString::fromStdString (w.code))
                 .arg (QString::fromStdString (w.message));
         return tip.join (QStringLiteral ("\n"));
@@ -340,7 +352,7 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         if (col <= ColNote)
             return taskPointToString (r.point, col);
-        // result 列展示
+        // Derived result columns display "-" until a result is available.
         if (!r.hasResult)
             return QStringLiteral ("-");
         switch (col) {
@@ -353,31 +365,31 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
                 return QString::number (
                     static_cast<int> (r.result.ik.usableSolutionCount));
             case ColBestQ: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") : QStringLiteral ("[...]");
             }
             case ColPositionError: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
                     QString::number (best->positionErrorMeters, 'g', 6);
             }
             case ColOrientationError: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
                     QString::number (best->orientationErrorDeg, 'g', 6);
             }
             case ColMinMargin: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
                     QString::number (best->minJointLimitMargin, 'g', 6);
             }
             case ColCondition: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
                     bestSolutionSummary (*best);
             }
             case ColCollision: {
-                const KinematicIkSolution* best = bestUsableSolution (r.result.ik);
+                const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 if (best == nullptr) return QStringLiteral ("-");
                 return best->inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No");
             }
@@ -401,7 +413,7 @@ bool TaskPointTableModel::setData (
     if (col == ColEnabled && role == Qt::CheckStateRole) {
         const Qt::CheckState state = value.value< Qt::CheckState > ();
         r.point.enabled = (state == Qt::Checked);
-        emit dataChanged (index, index, {Qt::CheckStateRole, Qt::DisplayRole, Qt::EditRole});
+        Q_EMIT dataChanged (index, index, {Qt::CheckStateRole, Qt::DisplayRole, Qt::EditRole});
         return true;
     }
 
@@ -410,9 +422,8 @@ bool TaskPointTableModel::setData (
         TaskPoint before = r.point;
         if (!stringToTaskPointField (value.toString (), col, r.point))
             return false;
-        // 写回成功:重新跑这一行的 validation,失败用浅红标出 + tooltip。
         recomputeValidation (r);
-        emit dataChanged (this->index (row, 0),
+        Q_EMIT dataChanged (this->index (row, 0),
                           this->index (row, TaskPointColumnCount - 1),
                           {Qt::DisplayRole, Qt::EditRole,
                            Qt::BackgroundRole, Qt::ToolTipRole});
@@ -493,7 +504,7 @@ void TaskPointTableModel::setResultForRow (
         return;
     _rows[static_cast<std::size_t> (row)].result   = result;
     _rows[static_cast<std::size_t> (row)].hasResult = true;
-    emit dataChanged (index (row, ColStatus),
+    Q_EMIT dataChanged (index (row, ColStatus),
                       index (row, TaskPointColumnCount - 1),
                       {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
 }
@@ -501,8 +512,7 @@ void TaskPointTableModel::setResultForRow (
 void TaskPointTableModel::setResults (
     const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
 {
-    // 表格行数 = results 数 + 不再存在的(导入后删除等) → 用 results.size() 对齐,
-    // 任何越界位置都清空结果。
+    // Keep the model row count aligned with the result vector.
     const std::size_t n = results.size ();
     _rows.resize (n);
     for (std::size_t i = 0; i < n; ++i) {
@@ -512,9 +522,11 @@ void TaskPointTableModel::setResults (
             _rows[i].point.id = results[i].taskPoint.id;
     }
     _reachableRate = reachableRate;
-    emit dataChanged (index (0, ColStatus),
-                      index (static_cast<int> (n) - 1, TaskPointColumnCount - 1),
-                      {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
+    if (n == 0)
+        return;
+    Q_EMIT dataChanged (index (0, ColStatus),
+                        index (static_cast<int> (n) - 1, TaskPointColumnCount - 1),
+                        {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
 }
 
 void TaskPointTableModel::clearAllResults ()
@@ -526,7 +538,7 @@ void TaskPointTableModel::clearAllResults ()
     _reachableRate = 0.0;
     if (_rows.empty ())
         return;
-    emit dataChanged (index (0, ColStatus),
+    Q_EMIT dataChanged (index (0, ColStatus),
                       index (static_cast<int> (_rows.size ()) - 1,
                              TaskPointColumnCount - 1),
                       {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
@@ -554,7 +566,7 @@ bool TaskPointTableModel::validateAll (QString* summary)
             .arg (QString::fromStdString (w.message));
     }
     if (!_rows.empty ()) {
-        emit dataChanged (index (0, 0),
+        Q_EMIT dataChanged (index (0, 0),
                           index (static_cast<int> (_rows.size ()) - 1,
                                  TaskPointColumnCount - 1),
                           {Qt::BackgroundRole, Qt::ToolTipRole});
@@ -567,7 +579,7 @@ void TaskPointTableModel::clearValidationMarks ()
     for (TaskPointTableRow& r : _rows)
         r.validationWarnings.clear ();
     if (!_rows.empty ()) {
-        emit dataChanged (index (0, 0),
+        Q_EMIT dataChanged (index (0, 0),
                           index (static_cast<int> (_rows.size ()) - 1,
                                  TaskPointColumnCount - 1),
                           {Qt::BackgroundRole, Qt::ToolTipRole});
@@ -590,9 +602,7 @@ std::vector< TaskPoint > TaskPointTableModel::taskPoints (QString* error) const
     if (error != nullptr)
         error->clear ();
     for (std::size_t i = 0; i < _rows.size (); ++i) {
-        // 简单复制;refFrame / tcpFrame 空值不补默认值,由
-        // RobotAnalysisValidation 在导出 / Analyze 时拦截,
-        // 与 P0 / P1 行为一致。
+        // Keep raw row values; validation is handled by analysis/export paths.
         out.push_back (_rows[i].point);
     }
     return out;
@@ -639,7 +649,7 @@ const KinematicIkSolution* TaskPointTableModel::bestUsableSolutionForRow (int ro
         return nullptr;
     if (!_rows[static_cast<std::size_t> (row)].hasResult)
         return nullptr;
-    return bestUsableSolution (_rows[static_cast<std::size_t> (row)].result.ik);
+    return bestUsableSolutionLocal (_rows[static_cast<std::size_t> (row)].result.ik);
 }
 
 bool TaskPointTableModel::hasUsableResult (int row) const

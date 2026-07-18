@@ -4,6 +4,7 @@
 #include "TaskPointResolver.hpp"
 #include "TaskPointUiLogic.hpp"
 #include "TaskPointTableModel.hpp"
+#include "KinematicAnalysisVisualizationTypes.hpp"
 
 #include <QCoreApplication>
 
@@ -1341,6 +1342,14 @@ static int testTaskPointModel ()
     model.setRowsFromTaskPoints (rows);
     if (const int rc = require (model.rowCount () == 2, "import 2 rows"))
         return rc;
+    QString taskPointError;
+    const std::vector< TaskPoint > roundTrip = model.taskPoints (&taskPointError);
+    if (const int rc = require (roundTrip.size () == 2,
+                                "taskPoints returns all imported rows"))
+        return rc;
+    if (const int rc = require (roundTrip[0].id == "A" && roundTrip[1].id == "B",
+                                "taskPoints preserves row ids"))
+        return rc;
     QString summary;
     if (const int rc = require (!model.validateAll (&summary),
                                 "imported invalid row reported"))
@@ -1349,6 +1358,94 @@ static int testTaskPointModel ()
                                 "summary points to row 2"))
         return rc;
 
+    return 0;
+}
+
+static int testVisualizationData ()
+{
+    using namespace rws;
+
+    TaskPointReachabilityResult task;
+    task.status = AnalysisStatus::Warning;
+    task.taskPoint.id = "TP_A";
+    task.taskPoint.name = "Task A";
+    task.taskPoint.position = {{1.0, 2.0, 3.0}};
+    task.failureReasons.push_back (KinematicFailureReason::NearJointLimit);
+    task.ik.rawCandidateCount = 3;
+    task.ik.usableSolutionCount = 1;
+    KinematicIkSolution taskSolution;
+    taskSolution.status = AnalysisStatus::Warning;
+    taskSolution.manipulability = 0.25;
+    taskSolution.conditionNumber = 42.0;
+    taskSolution.minJointLimitMargin = 0.08;
+    taskSolution.positionErrorMeters = 0.0005;
+    taskSolution.orientationErrorDeg = 0.2;
+    taskSolution.inCollision = false;
+    task.ik.solutions.push_back (taskSolution);
+
+    const AnalysisVisualData taskData = visualDataFromTaskPointResults (
+        std::vector< TaskPointReachabilityResult > {task},
+        VisualScalarMode::Condition);
+    if (const int rc = require (taskData.points.size () == 1,
+                                "task result creates one visual point"))
+        return rc;
+    if (const int rc = require (taskData.hasFiniteScalar,
+                                "task visual data has finite scalar"))
+        return rc;
+    if (const int rc = assertNear (taskData.points[0].position[0], 1.0, 1e-12,
+                                   "task visual x"))
+        return rc;
+    if (const int rc = assertNear (taskData.points[0].scalar, 42.0, 1e-12,
+                                   "task condition scalar"))
+        return rc;
+    if (const int rc = require (taskData.points[0].label == QStringLiteral ("TP_A"),
+                                "task label uses id"))
+        return rc;
+    if (const int rc = require (taskData.points[0].tooltip.contains (QStringLiteral ("NearJointLimit")),
+                                "task tooltip contains failure reason"))
+        return rc;
+
+    WorkspaceSample workspace;
+    workspace.tcpPosition = {{-1.0, 0.5, 2.5}};
+    workspace.status = AnalysisStatus::Pass;
+    workspace.manipulability = 0.75;
+    workspace.conditionNumber = 12.0;
+    workspace.minJointLimitMargin = 0.2;
+    workspace.inCollision = true;
+    const AnalysisVisualData workspaceData = visualDataFromWorkspaceSamples (
+        std::vector< WorkspaceSample > {workspace},
+        VisualScalarMode::Collision);
+    if (const int rc = require (workspaceData.points.size () == 1,
+                                "workspace creates one visual point"))
+        return rc;
+    if (const int rc = require (workspaceData.points[0].inCollision,
+                                "workspace collision flag is preserved"))
+        return rc;
+    if (const int rc = assertNear (workspaceData.points[0].scalar, 1.0, 1e-12,
+                                   "workspace collision scalar"))
+        return rc;
+
+    PoseReachabilitySample pose;
+    pose.position = {{4.0, 5.0, 6.0}};
+    pose.status = AnalysisStatus::Fail;
+    pose.sampledDirections = 10;
+    pose.reachableDirections = 3;
+    pose.coverage = 0.3;
+    const AnalysisVisualData poseData = visualDataFromPoseReachabilitySamples (
+        std::vector< PoseReachabilitySample > {pose},
+        VisualScalarMode::Coverage);
+    if (const int rc = require (poseData.points.size () == 1,
+                                "pose reachability creates one visual point"))
+        return rc;
+    if (const int rc = assertNear (poseData.points[0].scalar, 0.3, 1e-12,
+                                   "pose coverage scalar"))
+        return rc;
+
+    const QPointF projected = projectVisualPoint (poseData.points[0], VisualProjection::XZ);
+    if (const int rc = assertNear (projected.x (), 4.0, 1e-12, "XZ projection x"))
+        return rc;
+    if (const int rc = assertNear (projected.y (), 6.0, 1e-12, "XZ projection z"))
+        return rc;
     return 0;
 }
 
@@ -1379,6 +1476,8 @@ static int runAll ()
     if (const int rc = testTaskPointUiLogic ())
         return rc;
     if (const int rc = testTaskPointModel ())
+        return rc;
+    if (const int rc = testVisualizationData ())
         return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
@@ -1422,6 +1521,8 @@ int main (int argc, char** argv)
         rc = testTaskPointUiLogic ();
     else if (suite == "task_point_model")
         rc = testTaskPointModel ();
+    else if (suite == "visualization_data")
+        rc = testVisualizationData ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")

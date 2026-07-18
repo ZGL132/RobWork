@@ -1,5 +1,8 @@
 #include "TaskPointDelegates.hpp"
 
+#include <rw/kinematics/Frame.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QSet>
@@ -73,7 +76,7 @@ void DoubleSpinDelegate::setModelData (
 
 namespace {
 
-// 替换某列 delegate 并 delete 旧的(避免累积)。
+// Replace one column delegate and release an old delegate owned by the view.
 void replaceColumnDelegate (QAbstractItemView* view, int column,
                             QStyledItemDelegate* delegate)
 {
@@ -133,7 +136,6 @@ QStringList rws::collectWorkCellFrameNames (
     if (workcell == nullptr)
         return out;
     QSet< QString > seen (out.begin (), out.end ());
-    // 复用 KinematicAnalysisWidget 已有的 findAllFrames 思路。
     rw::kinematics::State state = workcell->getDefaultState ();
     const std::vector< rw::kinematics::Frame* > frames =
         rw::kinematics::Kinematics::findAllFrames (workcell->getWorldFrame (), state);

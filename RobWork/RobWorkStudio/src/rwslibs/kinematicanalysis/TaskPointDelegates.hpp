@@ -4,6 +4,8 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "TaskPointTableModel.hpp"
 
+#include <rw/models/WorkCell.hpp>
+
 #include <QStyledItemDelegate>
 #include <QStringList>
 #include <QAbstractItemView>
@@ -61,5 +63,3 @@ QStringList collectWorkCellFrameNames (rw::models::WorkCell* workcell,
 }    // namespace rws
 
 #endif    // RWS_KINEMATICANALYSIS_TASKPOINTDELEGATES_HPP
-
-#include <rw/models/WorkCell.hpp>
