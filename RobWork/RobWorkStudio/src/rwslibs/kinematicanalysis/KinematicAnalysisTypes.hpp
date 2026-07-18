@@ -72,6 +72,49 @@ struct WorkspaceSamplingConfig
     unsigned int randomSeed            = 1;      // RNG 种子;为 0 时回退到 1
 };
 
+// 描述 sanitize + planned sample count 的诊断信息,供 UI / Report 显示。
+//   - requestedSamples:用户输入的 sampleCount(夹到 ≥ 0);
+//   - plannedSamples:实际要执行的样本数(Grid 模式可能 = sampleCount 上限);
+//   - theoreticalGridSamples:Grid 模式按 dof × steps 算出的理论总数;
+//   - *Clamped / *Adjusted 标记 sanitize 内部是否修正了字段。
+struct WorkspaceSamplingDiagnostics
+{
+    std::size_t requestedSamples = 0;
+    std::size_t plannedSamples = 0;
+    std::size_t theoreticalGridSamples = 0;
+    bool gridCountTruncated = false;
+    bool sampleCountClamped = false;
+    bool gridStepsClamped = false;
+    bool randomSeedAdjusted = false;
+};
+
+// 描述整个 workspace 样本集的状态分布 + 关键指标(平均 / P10 / 最大等),
+// 由 summarizeWorkspaceSamples 一次性算出,供 UI summary 与 Report 复用。
+struct WorkspaceSummary
+{
+    std::size_t totalCount = 0;
+    std::size_t passCount = 0;
+    std::size_t warningCount = 0;
+    std::size_t failCount = 0;
+    std::size_t unknownCount = 0;
+    std::size_t collisionCount = 0;
+    std::size_t collisionFreeCount = 0;
+
+    bool hasManipulability = false;
+    double minManipulability = 0.0;
+    double maxManipulability = 0.0;
+    double avgManipulability = 0.0;
+    double p10Manipulability = 0.0;
+
+    bool hasCondition = false;
+    double minCondition = 0.0;
+    double maxCondition = 0.0;
+    double avgCondition = 0.0;
+
+    bool hasJointLimitMargin = false;
+    double minJointLimitMargin = 0.0;
+};
+
 // 位姿可达性(在某位置周围旋转工具方向)的采样配置。
 struct PoseReachabilityConfig
 {
