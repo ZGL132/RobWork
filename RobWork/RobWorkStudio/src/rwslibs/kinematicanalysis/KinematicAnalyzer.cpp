@@ -1,5 +1,6 @@
 #include "KinematicAnalyzer.hpp"
 #include "TaskPointResolver.hpp"
+#include "KinematicAnalysisWorkspace.hpp"
 
 // 引入 IK 求解器和必要的运动学/数学工具。
 #include <rw/core/Ptr.hpp>
@@ -1328,10 +1329,15 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
 {
     std::vector< WorkspaceSample > samples;
 
+    // P4:先 sanitize config,统一 clamp sampleCount / gridSteps / seed,
+    // 保证 UI / 脚本 / analyzer 都按同一份规则走。
+    const WorkspaceSamplingConfig sanitized =
+        sanitizeWorkspaceSamplingConfig (config, nullptr);
+
     // ---- 入口校验 ----
     if (device == NULL)
         return samples;
-    if (config.sampleCount <= 0)
+    if (sanitized.sampleCount <= 0)
         return samples;
     if (tcpFrame == NULL)
         return samples;
@@ -1351,38 +1357,35 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
     }
 
     // ---- RandomUniform ----
-    if (config.mode == WorkspaceSamplingMode::RandomUniform) {
-        // seed==0 视作 1,避免 mt19937(0) 在某些实现下行为退化。
-        std::mt19937 rng (config.randomSeed == 0 ? 1u : config.randomSeed);
+    if (sanitized.mode == WorkspaceSamplingMode::RandomUniform) {
+        // seed 由 sanitize 保证 ≥ 1。
+        std::mt19937 rng (sanitized.randomSeed);
         std::vector< std::uniform_real_distribution< double > > distributions;
         distributions.reserve (dof);
         for (std::size_t i = 0; i < dof; ++i)
             distributions.emplace_back (lower (i), upper (i));
 
-        samples.reserve (static_cast< std::size_t > (config.sampleCount));
-        for (int sampleIndex = 0; sampleIndex < config.sampleCount; ++sampleIndex) {
+        samples.reserve (static_cast< std::size_t > (sanitized.sampleCount));
+        for (int sampleIndex = 0; sampleIndex < sanitized.sampleCount; ++sampleIndex) {
             rw::math::Q q (dof);
             for (std::size_t j = 0; j < dof; ++j)
                 q (j) = distributions[j] (rng);  // 每个关节独立均匀抽样
             samples.push_back (makeWorkspaceSample (
                 device, tcpFrame, state, q, _thresholds,
-                config.checkCollision, collisionDetector));
+                sanitized.checkCollision, collisionDetector));
         }
         return samples;
     }
 
     // ---- Grid ----
-    // 总组合 steps^dof;一旦超过 sampleCount,后续连乘都没必要,
-    // 直接 early break 节省计算。
-    const int steps = std::max (1, config.gridStepsPerJoint);
-    std::size_t total = 1;
-    for (std::size_t i = 0; i < dof; ++i) {
-        if (total > static_cast< std::size_t > (config.sampleCount))
-            break;
-        total *= static_cast< std::size_t > (steps);
+    // P4:Grid 计划数也走 helper,统一 early break 与 cap 行为。
+    const int steps = sanitized.gridStepsPerJoint;
+    std::size_t target = 0;
+    {
+        rws::WorkspaceSamplingDiagnostics gd;
+        target = static_cast< std::size_t > (
+            rws::plannedWorkspaceSampleCount (sanitized, dof, &gd));
     }
-    const std::size_t target =
-        std::min (static_cast< std::size_t > (config.sampleCount), total);
 
     samples.reserve (target);
     for (std::size_t index = 0; index < target; ++index) {
@@ -1408,7 +1411,7 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
         }
         samples.push_back (makeWorkspaceSample (
             device, tcpFrame, state, q, _thresholds,
-            config.checkCollision, collisionDetector));
+            sanitized.checkCollision, collisionDetector));
     }
     return samples;
 }
