@@ -3523,6 +3523,15 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     QApplication::setOverrideCursor (Qt::WaitCursor);
     setStatus (tr("Pose reachability running..."));
 
+    // P5:构造可跨线程的安全取消回调。worker 通过原子标志检查取消请求。
+    PoseReachabilityRunCallbacks callbacks;
+    callbacks.isCancellationRequested = [] (void* userData) -> bool {
+        const std::atomic_bool* flag =
+            static_cast< const std::atomic_bool* > (userData);
+        return flag != NULL && flag->load ();
+    };
+    callbacks.userData = &_poseReachabilityCancelRequested;
+
     // 捕获值而非指针,worker 不触及 widget 成员。
     const rw::kinematics::State runState = currentState ();
     const rw::core::Ptr< rw::models::Device > runDevice = device;
@@ -3531,12 +3540,12 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     QFuture< std::vector< PoseReachabilitySample > > future = QtConcurrent::run (
         [runDevice, runTcpFrame, runState, positions, config,
-         collisionDetector, runThresholds] () {
+         collisionDetector, runThresholds, callbacks] () {
             KinematicAnalyzer worker;
             worker.setThresholds (runThresholds);
             return worker.analyzePoseReachability (
                 runDevice, runTcpFrame, runState, positions, config,
-                collisionDetector);
+                collisionDetector, callbacks);
         });
     _poseReachabilityWatcher->setFuture (future);
 }

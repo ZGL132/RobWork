@@ -9,6 +9,7 @@
 
 #include <QFutureWatcher>
 #include <QSize>
+#include <atomic>
 #include <QTabWidget>
 #include <QWidget>
 
@@ -202,7 +203,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseCancelButton;
     QFutureWatcher< std::vector< PoseReachabilitySample > >* _poseReachabilityWatcher;
     bool _poseReachabilityRunActive;
-    bool _poseReachabilityCancelRequested;
+    std::atomic_bool _poseReachabilityCancelRequested;
     QLabel* _poseSummaryLabel;
     QLabel* _poseDiagnosticsLabel;
     QTableWidget* _posePositionTable;

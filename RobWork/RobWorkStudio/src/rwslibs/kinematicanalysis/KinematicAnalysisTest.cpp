@@ -966,6 +966,18 @@ static int testPoseReachability ()
             return rc;
     }
 
+    // P5:取消测试:预取消的 alwaysCancel 回调应产生 1 个 position 的 Fail。
+    {
+        rws::PoseReachabilityRunCallbacks cancelCb;
+        cancelCb.isCancellationRequested = [] (void*) -> bool { return true; };
+        const std::vector< rws::PoseReachabilitySample > canceled =
+            analyzer.analyzePoseReachability (
+                NULL, NULL, state, positions, config, NULL, cancelCb);
+        if (const int rc = require (canceled.size () == 1,
+                                    "canceled pose result preserves current position"))
+            return rc;
+    }
+
     return 0;
 }
 

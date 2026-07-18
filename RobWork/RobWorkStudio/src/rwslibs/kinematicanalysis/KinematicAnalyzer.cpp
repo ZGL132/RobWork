@@ -1418,7 +1418,23 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
 }
 
 // =============================================================================
-//  analyzePoseReachability — 位姿可达性
+//  analyzePoseReachability (无回调) — 委托给有回调重载,默认空回调。
+// =============================================================================
+std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& state,
+    const std::vector< std::array< double, 3 > >& positions,
+    const PoseReachabilityConfig& config,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+{
+    return analyzePoseReachability (
+        device, tcpFrame, state, positions, config,
+        collisionDetector, PoseReachabilityRunCallbacks ());
+}
+
+// =============================================================================
+//  analyzePoseReachability (带回调) — 协作取消 + progress 通知
 // =============================================================================
 // 目标:在给定的若干空间位置周围,工具能在多大程度上旋转到任意朝向。
 //
@@ -1443,7 +1459,8 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
     const rw::kinematics::State& state,
     const std::vector< std::array< double, 3 > >& positions,
     const PoseReachabilityConfig& config,
-    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector,
+    const PoseReachabilityRunCallbacks& callbacks) const
 {
     std::vector< PoseReachabilitySample > results;
     results.reserve (positions.size ());
@@ -1458,6 +1475,10 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
     const int rollCount = directionCount == 0 ? 0 : sanitized.rollSamples;
     const int totalDirections =
         static_cast< int > (diagnostics.plannedDirectionsPerPosition);
+    const std::size_t ikPerPosition =
+        diagnostics.plannedDirectionsPerPosition;
+    const std::size_t plannedTotal =
+        diagnostics.plannedIkTargets;
     const std::vector< rw::math::Vector3D<> > directions =
         sampleUnitDirections (directionCount);
 
@@ -1465,6 +1486,7 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
     if (resolvedTcpFrame == NULL && device != NULL)
         resolvedTcpFrame = device->getEnd ();
 
+    std::size_t completedTargets = 0;
     for (const std::array< double, 3 >& position : positions) {
         PoseReachabilitySample sample;
         sample.position          = position;
@@ -1477,6 +1499,18 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             continue;
         }
 
+        // P5:每轮到下一个 position 时检查取消请求。
+        if (callbacks.isCancellationRequested != NULL &&
+            callbacks.isCancellationRequested (callbacks.userData)) {
+            sample.status = sample.reachableDirections == 0 ?
+                AnalysisStatus::Fail : AnalysisStatus::Warning;
+            sample.coverage = totalDirections == 0 ? 0.0 :
+                static_cast< double > (sample.reachableDirections) /
+                    static_cast< double > (totalDirections);
+            results.push_back (sample);
+            return results;
+        }
+
         // 双层循环:(方向, 滚动) → 一次 IK。
         for (int directionIndex = 0; directionIndex < directionCount; ++directionIndex) {
             for (int rollIndex = 0; rollIndex < rollCount; ++rollIndex) {
@@ -1485,12 +1519,9 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                     toolZDirectionToRotation (
                         directions[static_cast< std::size_t > (directionIndex)],
                         rollIndex, rollCount);
-                // 把 (position, rotation) 包成 TaskPoint。note 字段会记录
-                // direction / roll 索引,IK 失败时日志可以直接定位。
+                // 把 (position, rotation) 包成 TaskPoint。
                 const TaskPoint target =
                     poseReachabilityTarget (position, rotation, directionIndex, rollIndex);
-                // 注意:config.checkCollision 为 false 时这里传 NULL,
-                // analyzeIk 内部会跳过碰撞检查,使该方向的可达性仅由 IK 决定。
                 const KinematicIkAnalysisResult ik = analyzeIk (
                     device, resolvedTcpFrame, state, target,
                     config.checkCollision ? collisionDetector : NULL);
@@ -1499,11 +1530,11 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                 const bool reachable = isPoseDirectionReachable (ik.solutions);
                 if (reachable)
                     ++sample.reachableDirections;
+                ++completedTargets;
             }
         }
 
-        // coverage = reachable / sampled;totalDirections==0 时上面已经 continue,
-        // 但仍保留三元判断以防调用方改了逻辑。
+        // coverage = reachable / sampled;totalDirections==0 时上面已经 continue。
         sample.coverage =
             totalDirections == 0 ? 0.0 :
             static_cast< double > (sample.reachableDirections) /
@@ -1515,6 +1546,10 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
         else
             sample.status = AnalysisStatus::Warning;
         results.push_back (sample);
+
+        // P5:每组方向采样完成后回调 progress。
+        if (callbacks.onProgress != NULL)
+            callbacks.onProgress (completedTargets, plannedTotal, callbacks.userData);
     }
     return results;
 }

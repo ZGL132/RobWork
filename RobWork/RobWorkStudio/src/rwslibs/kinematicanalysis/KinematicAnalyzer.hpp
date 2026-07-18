@@ -14,6 +14,17 @@
 
 namespace rws {
 
+// 位姿可达性后台分析的可选回调,用于协作取消和进度通知。
+// isCancellationRequested 每轮 IK 循环检查一次;onProgress 在每组方向采样后调用。
+struct PoseReachabilityRunCallbacks
+{
+    bool (*isCancellationRequested) (void* userData) = NULL;
+    void (*onProgress) (std::size_t completedTargets,
+                        std::size_t plannedTargets,
+                        void* userData) = NULL;
+    void* userData = NULL;
+};
+
 // KinematicAnalyzer 是运动学分析的核心无 UI 组件。
 // 它不持有任何 Qt 类型,只接受 RobWork 的 Device / Frame / State / CollisionDetector
 // 输入,产出 POD 结果结构。这样:
@@ -93,6 +104,7 @@ class KinematicAnalyzer
 
     // 在给定的若干空间位置周围,用 Fibonacci 螺旋采样工具 Z 方向,
     // 再绕 Z 轴采样 roll,逐个跑 IK,统计可达方向占比(coverage)。
+    // 无回调版本直接调用有回调版本(默认空回调)。
     std::vector< PoseReachabilitySample > analyzePoseReachability (
         rw::core::Ptr< rw::models::Device > device,
         rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
@@ -100,6 +112,16 @@ class KinematicAnalyzer
         const std::vector< std::array< double, 3 > >& positions,
         const PoseReachabilityConfig& config,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    // P5:带回调的重载,支持协作取消和进度通知。
+    std::vector< PoseReachabilitySample > analyzePoseReachability (
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+        const rw::kinematics::State& state,
+        const std::vector< std::array< double, 3 > >& positions,
+        const PoseReachabilityConfig& config,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector,
+        const PoseReachabilityRunCallbacks& callbacks) const;
 
     // 把上述四种分析结果组装成单个 KinematicAnalysisResult:
     //   - 填好 header;
