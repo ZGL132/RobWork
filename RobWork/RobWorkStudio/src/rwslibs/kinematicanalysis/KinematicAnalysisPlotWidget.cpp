@@ -223,9 +223,24 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
 
 // paintPlot:核心绘图,供 paintEvent 和 renderToImage 共用。
 // plot 区域从 area 计算而非 widget rect(),保证 renderToImage 按目标尺寸布局。
+bool KinematicAnalysisPlotWidget::shouldPaintLegend (const QRect& area) const
+{
+    return _showLegend && area.width () >= 480;
+}
+
+int KinematicAnalysisPlotWidget::legendWidth (const QRect& area) const
+{
+    return shouldPaintLegend (area) ? 128 : 0;
+}
+
 void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
 {
-    const QRectF pr = area.adjusted (area.width () * 0.06, 18, -18, -area.height () * 0.08);
+    const int reservedLegendWidth = legendWidth (area);
+    const QRectF pr = area.adjusted (
+        area.width () * 0.06,
+        18,
+        -18 - reservedLegendWidth,
+        -area.height () * 0.08);
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 
@@ -262,7 +277,14 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
     }
 
     // P8:图例
-    paintLegend (painter, pr);
+    if (shouldPaintLegend (area)) {
+        const QRectF legendArea (
+            pr.right () + 8,
+            pr.top () + 4,
+            reservedLegendWidth - 12,
+            pr.height () - 8);
+        paintLegend (painter, legendArea);
+    }
 
     // 右下角 info
     painter.setPen (palette ().mid ().color ());
@@ -342,17 +364,14 @@ void KinematicAnalysisPlotWidget::paintGrid (
     painter.restore ();
 }
 
-// paintLegend:状态色块图例或标量色带。
+// paintLegend:状态色块图例或标量色带。绘制位置由 paintPlot 传入的 legendArea 决定。
 void KinematicAnalysisPlotWidget::paintLegend (
-    QPainter& painter, const QRectF& plotArea) const
+    QPainter& painter, const QRectF& legendArea) const
 {
-    if (!_showLegend || width () < 480)
-        return;
-
     painter.save ();
 
-    const double legendLeft = plotArea.right () + 6;
-    const double legendTop = plotArea.top () + 4;
+    const double legendLeft = legendArea.left ();
+    const double legendTop = legendArea.top ();
 
     if (_data.scalarMode == VisualScalarMode::Status) {
         // 状态图例:Pass / Warning / Fail / Unknown

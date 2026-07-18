@@ -43,7 +43,9 @@ class KinematicAnalysisPlotWidget : public QWidget
     void paintPlot (QPainter& painter, const QRect& area) const;
     void paintGrid (QPainter& painter, const QRectF& plotArea,
                     const QRectF& bounds) const;
-    void paintLegend (QPainter& painter, const QRectF& plotArea) const;
+    bool shouldPaintLegend (const QRect& area) const;
+    int legendWidth (const QRect& area) const;
+    void paintLegend (QPainter& painter, const QRectF& legendArea) const;
 
     AnalysisVisualData _data;
     VisualProjection _projection = VisualProjection::XY;

@@ -11,6 +11,7 @@
 #include "KinematicAnalysisWorkspace.hpp"
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
+#include "KinematicAnalysisJson.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -4161,16 +4162,16 @@ QJsonArray vectorToJsonArray (const std::vector< double >& values)
 {
     QJsonArray array;
     for (double value : values)
-        array.append (value);
+        array.append (rws::jsonValueFromDouble (value));
     return array;
 }
 
 QJsonArray array3ToJsonArray (const std::array< double, 3 >& values)
 {
     QJsonArray array;
-    array.append (values[0]);
-    array.append (values[1]);
-    array.append (values[2]);
+    array.append (rws::jsonValueFromDouble (values[0]));
+    array.append (rws::jsonValueFromDouble (values[1]));
+    array.append (rws::jsonValueFromDouble (values[2]));
     return array;
 }
 }    // namespace
@@ -4196,15 +4197,15 @@ void KinematicAnalysisWidget::exportReportJson ()
     QJsonObject root;
     root["pluginName"] = QString::fromStdString (result.header.pluginName);
     root["status"] = QString::fromLatin1 (statusText (result.status));
-    root["reachableRate"] = result.reachableRate;
+    root["reachableRate"] = jsonValueFromDouble (result.reachableRate);
 
     QJsonObject current;
     current["status"] = QString::fromLatin1 (statusText (result.currentPose.status));
     current["q"] = vectorToJsonArray (result.currentPose.q);
     current["tcpPosition"] = array3ToJsonArray (result.currentPose.tcpPosition);
     current["tcpRpyDeg"] = array3ToJsonArray (result.currentPose.tcpRpyDeg);
-    current["conditionNumber"] = result.currentPose.conditionNumber;
-    current["manipulability"] = result.currentPose.manipulability;
+    current["conditionNumber"] = jsonValueFromDouble (result.currentPose.conditionNumber);
+    current["manipulability"] = jsonValueFromDouble (result.currentPose.manipulability);
     root["currentPose"] = current;
 
     QJsonArray taskArray;
@@ -4231,14 +4232,11 @@ void KinematicAnalysisWidget::exportReportJson ()
         const KinematicIkSolution* best = bestUsableSolution (task.ik);
         if (best != nullptr) {
             bestObj["q"] = vectorToJsonArray (best->q);
-            bestObj["positionErrorMeters"] = best->positionErrorMeters;
-            bestObj["orientationErrorDeg"] = best->orientationErrorDeg;
-            bestObj["minJointLimitMargin"] = best->minJointLimitMargin;
-            bestObj["conditionNumber"] =
-                std::isinf (best->conditionNumber) ?
-                    QJsonValue (QStringLiteral ("inf")) :
-                    QJsonValue (best->conditionNumber);
-            bestObj["manipulability"] = best->manipulability;
+            bestObj["positionErrorMeters"] = jsonValueFromDouble (best->positionErrorMeters);
+            bestObj["orientationErrorDeg"] = jsonValueFromDouble (best->orientationErrorDeg);
+            bestObj["minJointLimitMargin"] = jsonValueFromDouble (best->minJointLimitMargin);
+            bestObj["conditionNumber"] = jsonValueFromDouble (best->conditionNumber);
+            bestObj["manipulability"] = jsonValueFromDouble (best->manipulability);
             bestObj["inCollision"] = best->inCollision;
         }
         else {
@@ -4260,9 +4258,9 @@ void KinematicAnalysisWidget::exportReportJson ()
         QJsonObject item;
         item["q"] = vectorToJsonArray (sample.q);
         item["tcpPosition"] = array3ToJsonArray (sample.tcpPosition);
-        item["manipulability"] = sample.manipulability;
-        item["minJointLimitMargin"] = sample.minJointLimitMargin;
-        item["conditionNumber"] = sample.conditionNumber;
+        item["manipulability"] = jsonValueFromDouble (sample.manipulability);
+        item["minJointLimitMargin"] = jsonValueFromDouble (sample.minJointLimitMargin);
+        item["conditionNumber"] = jsonValueFromDouble (sample.conditionNumber);
         item["inCollision"] = sample.inCollision;
         item["status"] = QString::fromLatin1 (statusText (sample.status));
         workspaceArray.append (item);
@@ -4275,7 +4273,7 @@ void KinematicAnalysisWidget::exportReportJson ()
         item["position"] = array3ToJsonArray (sample.position);
         item["sampledDirections"] = sample.sampledDirections;
         item["reachableDirections"] = sample.reachableDirections;
-        item["coverage"] = sample.coverage;
+        item["coverage"] = jsonValueFromDouble (sample.coverage);
         item["status"] = QString::fromLatin1 (statusText (sample.status));
         item["partial"] = sample.partial;
         item["completedIkTargets"] = static_cast< double > (sample.completedIkTargets);
