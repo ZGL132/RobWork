@@ -7,6 +7,8 @@
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
 #include "KinematicAnalysisPoseReachability.hpp"
+#include "KinematicAnalysisCollision.hpp"
+#include "KinematicAnalysisJson.hpp"
 
 #include <QCoreApplication>
 
@@ -1941,6 +1943,43 @@ static int testVisualizationData ()
     return 0;
 }
 
+static int testJsonAndCollisionHelpers ()
+{
+    {
+        const QJsonValue finite = rws::jsonValueFromDouble (3.25);
+        if (!finite.isDouble ())
+            return fail ("finite json value should remain numeric");
+        if (const int rc = assertNear (finite.toDouble (), 3.25, 1e-12,
+                                       "finite json value"))
+            return rc;
+    }
+    {
+        const QJsonValue posInf = rws::jsonValueFromDouble (
+            std::numeric_limits< double >::infinity ());
+        if (!posInf.isString () || posInf.toString () != QStringLiteral ("inf"))
+            return fail ("positive infinity should export as string inf");
+    }
+    {
+        const QJsonValue negInf = rws::jsonValueFromDouble (
+            -std::numeric_limits< double >::infinity ());
+        if (!negInf.isString () || negInf.toString () != QStringLiteral ("-inf"))
+            return fail ("negative infinity should export as string -inf");
+    }
+    {
+        const QJsonValue nanValue = rws::jsonValueFromDouble (
+            std::numeric_limits< double >::quiet_NaN ());
+        if (!nanValue.isString () || nanValue.toString () != QStringLiteral ("nan"))
+            return fail ("NaN should export as string nan");
+    }
+    {
+        const rw::core::Ptr< rw::proximity::CollisionDetector > detector =
+            rws::makeKinematicAnalysisCollisionDetector (NULL);
+        if (detector != NULL)
+            return fail ("null workcell should not create a collision detector");
+    }
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testTypes ())
@@ -1978,6 +2017,8 @@ static int runAll ()
     if (const int rc = testPoseReachabilityHelpers ())
         return rc;
     if (const int rc = testPoseReachability ())
+        return rc;
+    if (const int rc = testJsonAndCollisionHelpers ())
         return rc;
     return testAggregateResult ();
 }
@@ -2027,6 +2068,8 @@ int main (int argc, char** argv)
         rc = testPoseReachabilityHelpers ();
     else if (suite == "pose_reachability" || suite == "pose")
         rc = testPoseReachability ();
+    else if (suite == "helpers")
+        rc = testJsonAndCollisionHelpers ();
     else if (suite == "aggregate")
         rc = testAggregateResult ();
     else
