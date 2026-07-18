@@ -7,7 +7,7 @@ KinematicAnalysis is a RobWorkStudio plugin for early robot design validation. I
 - Current pose analysis: forward kinematics, TCP pose, joint values, joint-limit margins, Jacobian, singular values, condition number, manipulability, and warnings.
 - IK analysis: solve a target pose, list candidate solutions, rank by collision state, target residual, joint-limit margin, manipulability, and distance to the current configuration.
 - Task point reachability: import or edit task points, batch analyze IK reachability, and report pass/warning/fail status with failure reasons.
-- Workspace sampling: random or grid joint-space sampling with TCP point, manipulability, joint-limit margin, condition number, collision flag, and status.
+- Workspace sampling: deterministic random or capped grid joint-space sampling with seed control, TCP point, manipulability, condition number, joint-limit margin, collision flag, and status. Results link to Visualization tab.
 - Pose reachability: sample tool directions at positions and report orientation coverage.
 - Report export: JSON and CSV summaries for downstream review.
 
@@ -47,9 +47,27 @@ The IK tab is split into a left input panel and a right results panel. The input
 - `Failure` and `Q` are separate table columns so long joint vectors no longer hide diagnostic reasons.
 - `Duplicate Q threshold` controls joint-space IK candidate de-duplication. Increase it to merge tiny numerical variations around singular configurations.
 
+## Workspace Page Layout
+
+The Workspace tab samples the selected device joint space using deterministic random sampling or capped grid sampling. The page shows the first 500 rows in the table and keeps the complete sample set for CSV export, report aggregation, and the Visualization tab.
+
+Controls:
+- `Samples`: maximum generated sample count (clamped to [0, 1000000]).
+- `Mode`: `Random uniform` samples inside joint limits; `Grid` enumerates a joint-limit grid and caps the output by `Samples`.
+- `Grid steps`: per-joint grid resolution used only in `Grid` mode (clamped to [1, 100]).
+- `Seed`: deterministic random seed used by `Random uniform`. Same seed + same configuration produces identical results.
+- `Collision`: enables collision checks when a collision detector is available.
+- `Color`: preferred scalar field when opening the data in the Visualization tab.
+- `Open in Visualization`: switches to the Visualization tab, selects Workspace source, and applies the Color scalar mode.
+
+The summary label reports total/shown/pass/warning/fail/collision-free counts, average and P10 manipulability, and maximum finite condition number. The diagnostic label below shows the planned sample count versus the theoretical grid count (with a "capped" note when applicable).
+
+The 9-column table includes Index, Status, Collision, TCP x/y/z, Manipulability, Condition number, and Min joint-limit margin.
+
+CSV export includes a comment-line summary (`# workspace_summary,...`) followed by one row per sample. Downstream scripts that skip comment lines still work with the existing column headers.
+
 ## Known Limitations
 
-- Workspace and pose reachability are currently table/export oriented. Dense 3D point-cloud and heat-map visualization can be added later.
+- Workspace grid sampling is capped by sample count to avoid combinatorial growth on high-DOF robots.
 - IK coverage uses deterministic multi-seed numerical solving; it is repeatable for the same target/state but does not guarantee complete analytical branch enumeration.
 - Collision results depend on the collision models available in the loaded WorkCell.
-- Workspace grid sampling is capped by sample count to avoid combinatorial growth on high-DOF robots.
