@@ -82,7 +82,6 @@ if(build)
     foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
         if(TARGET ${qt_concurrent_target})
             target_link_libraries(${SUBSYS_NAME} PRIVATE ${qt_concurrent_target})
-            target_link_libraries(sdurws_kinematicanalysis_test PRIVATE ${qt_concurrent_target})
         endif()
     endforeach()
 
@@ -114,6 +113,14 @@ if(build)
             ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+    # QtConcurrent 链接必须在 add_executable 之后。
+    foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
+        if(TARGET ${qt_concurrent_target})
+            target_link_libraries(sdurws_kinematicanalysis_test PRIVATE ${qt_concurrent_target})
+        endif()
+    endforeach()
+
     # Windows 下把 Qt 运行库 / 平台插件 / 样式插件都拷到二进制同目录,
     # 这样 sdurws_kinematicanalysis_test 可以在不安装 Qt 的机器上独立运行。
     if(WIN32)

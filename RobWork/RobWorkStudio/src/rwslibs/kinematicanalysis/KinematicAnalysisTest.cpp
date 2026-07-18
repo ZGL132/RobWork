@@ -2023,9 +2023,9 @@ int main (int argc, char** argv)
         rc = testWorkspaceHelpers ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
-    else if (suite == "pose_reachability")
+    else if (suite == "pose_reachability_helpers" || suite == "pose_reachability_legacy")
         rc = testPoseReachabilityHelpers ();
-    else if (suite == "pose")
+    else if (suite == "pose_reachability" || suite == "pose")
         rc = testPoseReachability ();
     else if (suite == "aggregate")
         rc = testAggregateResult ();
