@@ -25,6 +25,15 @@ struct PoseReachabilityRunCallbacks
     void* userData = NULL;
 };
 
+struct WorkspaceSamplingRunCallbacks
+{
+    bool (*isCancellationRequested) (void* userData) = NULL;
+    void (*onProgress) (std::size_t completedSamples,
+                        std::size_t plannedSamples,
+                        void* userData) = NULL;
+    void* userData = NULL;
+};
+
 // KinematicAnalyzer 是运动学分析的核心无 UI 组件。
 // 它不持有任何 Qt 类型,只接受 RobWork 的 Device / Frame / State / CollisionDetector
 // 输入,产出 POD 结果结构。这样:
@@ -101,6 +110,14 @@ class KinematicAnalyzer
         const rw::kinematics::State& state,
         const WorkspaceSamplingConfig& config,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    std::vector< WorkspaceSample > sampleWorkspace (
+        rw::core::Ptr< rw::models::Device > device,
+        rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+        const rw::kinematics::State& state,
+        const WorkspaceSamplingConfig& config,
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector,
+        const WorkspaceSamplingRunCallbacks& callbacks) const;
 
     // 在给定的若干空间位置周围,用 Fibonacci 螺旋采样工具 Z 方向,
     // 再绕 Z 轴采样 roll,逐个跑 IK,统计可达方向占比(coverage)。

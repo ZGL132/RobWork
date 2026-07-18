@@ -1328,14 +1328,34 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
     const WorkspaceSamplingConfig& config,
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
 {
+    return sampleWorkspace (
+        device, tcpFrame, state, config, collisionDetector,
+        WorkspaceSamplingRunCallbacks ());
+}
+
+std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
+    rw::core::Ptr< rw::models::Device > device,
+    rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
+    const rw::kinematics::State& state,
+    const WorkspaceSamplingConfig& config,
+    rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector,
+    const WorkspaceSamplingRunCallbacks& callbacks) const
+{
     std::vector< WorkspaceSample > samples;
 
-    // P4:先 sanitize config,统一 clamp sampleCount / gridSteps / seed,
-    // 保证 UI / 脚本 / analyzer 都按同一份规则走。
+    const auto canceled = [&callbacks] () -> bool {
+        return callbacks.isCancellationRequested != NULL &&
+               callbacks.isCancellationRequested (callbacks.userData);
+    };
+    const auto progress = [&callbacks] (std::size_t completed,
+                                        std::size_t planned) {
+        if (callbacks.onProgress != NULL)
+            callbacks.onProgress (completed, planned, callbacks.userData);
+    };
+
     const WorkspaceSamplingConfig sanitized =
         sanitizeWorkspaceSamplingConfig (config, nullptr);
 
-    // ---- 入口校验 ----
     if (device == NULL)
         return samples;
     if (sanitized.sampleCount <= 0)
@@ -1351,35 +1371,38 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
         return samples;
     if (lower.size () != dof || upper.size () != dof)
         return samples;
-    // NaN / Inf / 反向限位都视为配置错误,直接放弃。
     for (std::size_t i = 0; i < dof; ++i) {
         if (!std::isfinite (lower (i)) || !std::isfinite (upper (i)) || upper (i) <= lower (i))
             return samples;
     }
 
-    // ---- RandomUniform ----
+    // ---- RandomUniform with cancel/progress ----
     if (sanitized.mode == WorkspaceSamplingMode::RandomUniform) {
-        // seed 由 sanitize 保证 ≥ 1。
         std::mt19937 rng (sanitized.randomSeed);
         std::vector< std::uniform_real_distribution< double > > distributions;
         distributions.reserve (dof);
         for (std::size_t i = 0; i < dof; ++i)
             distributions.emplace_back (lower (i), upper (i));
 
-        samples.reserve (static_cast< std::size_t > (sanitized.sampleCount));
+        const std::size_t planned =
+            static_cast< std::size_t > (sanitized.sampleCount);
+        progress (0, planned);
+        samples.reserve (planned);
         for (int sampleIndex = 0; sampleIndex < sanitized.sampleCount; ++sampleIndex) {
+            if (canceled ())
+                break;
             rw::math::Q q (dof);
             for (std::size_t j = 0; j < dof; ++j)
-                q (j) = distributions[j] (rng);  // 每个关节独立均匀抽样
+                q (j) = distributions[j] (rng);
             samples.push_back (makeWorkspaceSample (
                 device, tcpFrame, state, q, _thresholds,
                 sanitized.checkCollision, collisionDetector));
+            progress (samples.size (), planned);
         }
         return samples;
     }
 
-    // ---- Grid ----
-    // P4:Grid 计划数也走 helper,统一 early break 与 cap 行为。
+    // ---- Grid with cancel/progress ----
     const int steps = sanitized.gridStepsPerJoint;
     std::size_t target = 0;
     {
@@ -1388,23 +1411,20 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
             rws::plannedWorkspaceSampleCount (sanitized, dof, &gd));
     }
 
+    progress (0, target);
     samples.reserve (target);
     for (std::size_t index = 0; index < target; ++index) {
-        // 把 0..target 范围内的线性 index 展开为 base-steps 数字。
-        // 例如 6 自由度 + steps=3:index=10 → 001011(从 joint 0 开始读),
-        // 即每关节的步索引 [1, 0, 2] 等。
+        if (canceled ())
+            break;
         std::size_t cursor = index;
         rw::math::Q q (dof);
         for (std::size_t joint = 0; joint < dof; ++joint) {
             const std::size_t stepIndex = steps <= 1 ? 0u : (cursor % static_cast< std::size_t > (steps));
             cursor /= static_cast< std::size_t > (steps);
             if (steps <= 1) {
-                // steps<=1 退化:每个关节只取一次,固定到中点。
                 q (joint) = 0.5 * (lower (joint) + upper (joint));
             }
             else {
-                // 把 stepIndex ∈ [0, steps) 映射到关节值的 [lo, hi] 区间。
-                // ratio = stepIndex / (steps - 1) ∈ [0, 1]。
                 const double ratio = static_cast< double > (stepIndex) /
                                      static_cast< double > (steps - 1);
                 q (joint) = lower (joint) + ratio * (upper (joint) - lower (joint));
@@ -1413,6 +1433,7 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
         samples.push_back (makeWorkspaceSample (
             device, tcpFrame, state, q, _thresholds,
             sanitized.checkCollision, collisionDetector));
+        progress (samples.size (), target);
     }
     return samples;
 }

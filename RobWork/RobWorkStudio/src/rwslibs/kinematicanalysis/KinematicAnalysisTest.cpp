@@ -957,6 +957,57 @@ static int testWorkspaceSampling ()
             return rc;
     }
 
+    // P9:Workspace callback 测试 — cancel + progress。
+    {
+        rw::kinematics::StateStructure ss;
+        const rw::models::SerialDevice::Ptr dev = makeGenericSixAxis (ss);
+        rw::kinematics::State devState = ss.getDefaultState ();
+        rws::KinematicAnalyzer an;
+
+        struct CallbackState {
+            std::size_t progressCalls = 0;
+            std::size_t lastCompleted = 0;
+            std::size_t lastPlanned = 0;
+            std::size_t cancelAfter = 3;
+        };
+        CallbackState callbackState;
+
+        rws::WorkspaceSamplingConfig cancelConfig;
+        cancelConfig.mode = rws::WorkspaceSamplingMode::RandomUniform;
+        cancelConfig.sampleCount = 20;
+        cancelConfig.randomSeed = 11u;
+        cancelConfig.checkCollision = false;
+
+        rws::WorkspaceSamplingRunCallbacks callbacks;
+        callbacks.userData = &callbackState;
+        callbacks.isCancellationRequested = [] (void* userData) -> bool {
+            const CallbackState* s =
+                static_cast< const CallbackState* > (userData);
+            return s != NULL && s->lastCompleted >= s->cancelAfter;
+        };
+        callbacks.onProgress = [] (std::size_t completed,
+                                   std::size_t planned,
+                                   void* userData) {
+            CallbackState* s = static_cast< CallbackState* > (userData);
+            if (s == NULL) return;
+            ++s->progressCalls;
+            s->lastCompleted = completed;
+            s->lastPlanned = planned;
+        };
+
+        const std::vector< rws::WorkspaceSample > canceledSamples =
+            an.sampleWorkspace (
+                dev, dev->getEnd (), devState, cancelConfig, NULL, callbacks);
+        if (canceledSamples.size () != callbackState.cancelAfter)
+            return fail ("workspace sampling should stop after requested cancellation");
+        if (callbackState.progressCalls < 2)
+            return fail ("workspace sampling should emit initial and sample progress");
+        if (callbackState.lastPlanned != 20)
+            return fail ("workspace progress should report planned random sample count");
+        if (callbackState.lastCompleted != callbackState.cancelAfter)
+            return fail ("workspace progress should report the completed canceled count");
+    }
+
     return 0;
 }
 
