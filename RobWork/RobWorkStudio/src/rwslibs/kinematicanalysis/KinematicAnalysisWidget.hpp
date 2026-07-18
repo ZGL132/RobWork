@@ -68,6 +68,8 @@ class KinematicAnalysisWidget : public QWidget
     void updateTaskPointSelectionButtons ();
     void sampleWorkspace ();
     void exportWorkspaceCsv ();
+    void updateWorkspaceControls ();
+    void openWorkspaceInVisualization ();
     void addPoseReachabilityRow ();
     void analyzePoseReachability ();
     void exportPoseReachabilityCsv ();
@@ -176,12 +178,15 @@ class KinematicAnalysisWidget : public QWidget
 
     QSpinBox* _workspaceSampleCountSpin;
     QSpinBox* _workspaceGridStepsSpin;
+    QSpinBox* _workspaceSeedSpin;
     QComboBox* _workspaceModeCombo;
     QCheckBox* _workspaceCollisionCheck;
     QComboBox* _workspaceColorModeCombo;
     QPushButton* _workspaceRunButton;
     QPushButton* _workspaceExportButton;
+    QPushButton* _workspaceOpenVisualizationButton;
     QLabel* _workspaceSummaryLabel;
+    QLabel* _workspaceDiagnosticsLabel;
     QTableWidget* _workspaceTable;
 
     QComboBox* _poseSourceCombo;
