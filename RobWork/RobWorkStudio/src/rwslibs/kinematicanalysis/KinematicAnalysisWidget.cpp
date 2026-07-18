@@ -3723,14 +3723,20 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
             << ",avg_coverage," << summary.averageCoverage
             << ",min_coverage," << summary.minCoverage
             << ",max_coverage," << summary.maxCoverage
+            << ",partial," << summary.partialCount
+            << ",completed_ik_targets," << summary.completedIkTargets
+            << ",planned_ik_targets," << summary.plannedIkTargets
             << "\n";
     }
-    out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status\n";
+    out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status,partial,completed_ik_targets,planned_ik_targets\n";
     for (const PoseReachabilitySample& sample : _poseReachabilitySamples) {
         out << sample.position[0] << "," << sample.position[1] << ","
             << sample.position[2] << "," << sample.sampledDirections << ","
             << sample.reachableDirections << "," << sample.coverage << ","
-            << statusText (sample.status) << "\n";
+            << statusText (sample.status) << ","
+            << (sample.partial ? "true" : "false") << ","
+            << sample.completedIkTargets << ","
+            << sample.plannedIkTargets << "\n";
     }
     setStatus (tr("Exported %1 pose reachability row(s).")
                    .arg (static_cast< int > (_poseReachabilitySamples.size ())));
@@ -3936,6 +3942,9 @@ void KinematicAnalysisWidget::exportReportJson ()
         item["reachableDirections"] = sample.reachableDirections;
         item["coverage"] = sample.coverage;
         item["status"] = QString::fromLatin1 (statusText (sample.status));
+        item["partial"] = sample.partial;
+        item["completedIkTargets"] = static_cast< double > (sample.completedIkTargets);
+        item["plannedIkTargets"] = static_cast< double > (sample.plannedIkTargets);
         poseArray.append (item);
     }
     root["poseReachability"] = poseArray;
