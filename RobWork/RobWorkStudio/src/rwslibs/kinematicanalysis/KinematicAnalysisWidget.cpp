@@ -299,7 +299,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseCancelButton(NULL),
     _poseReachabilityWatcher(NULL),
     _poseReachabilityRunActive(false),
-    _poseReachabilityCancelRequested(false),
+    _poseReachabilityCancelRequested(std::make_shared< std::atomic_bool > (false)),
     _poseSummaryLabel(NULL),
     _poseDiagnosticsLabel(NULL),
     _posePositionTable(NULL),
@@ -702,7 +702,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_poseExportButton, SIGNAL (clicked ()), this, SLOT (exportPoseReachabilityCsv ()));
     // P4:Cancel 按钮设置取消标志并自禁用,避免重复点击。
     connect (_poseCancelButton, &QPushButton::clicked, this, [this] () {
-        _poseReachabilityCancelRequested = true;
+        if (_poseReachabilityCancelRequested)
+            _poseReachabilityCancelRequested->store (true);
         if (_poseCancelButton != NULL)
             _poseCancelButton->setEnabled (false);
         setStatus (tr("Pose reachability cancellation requested."));
@@ -729,6 +730,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     setStatus(tr("Load a WorkCell to start kinematic analysis."));
     // Task 4 step 5:鏃犻€変腑琛屾椂鏄剧ず"No IK candidate selected."銆?
     setIkDetailsEmpty ();
+}
+
+KinematicAnalysisWidget::~KinematicAnalysisWidget ()
+{
+    if (_poseReachabilityCancelRequested)
+        _poseReachabilityCancelRequested->store (true);
+    if (_poseReachabilityWatcher != NULL && _poseReachabilityWatcher->isRunning ())
+        _poseReachabilityWatcher->waitForFinished ();
+    if (_poseReachabilityRunActive)
+        QApplication::restoreOverrideCursor ();
 }
 
 QSize KinematicAnalysisWidget::sizeHint () const
@@ -3515,7 +3526,8 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     // P4:标记运行中,禁用 Run + 启用 Cancel,设忙光标。
     _poseReachabilityRunActive = true;
-    _poseReachabilityCancelRequested = false;
+    if (_poseReachabilityCancelRequested)
+        _poseReachabilityCancelRequested->store (false);
     if (_poseAnalyzeButton != NULL)
         _poseAnalyzeButton->setEnabled (false);
     if (_poseCancelButton != NULL)
@@ -3524,13 +3536,15 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     setStatus (tr("Pose reachability running..."));
 
     // P5:构造可跨线程的安全取消回调。worker 通过原子标志检查取消请求。
+    const std::shared_ptr< std::atomic_bool > cancelFlag =
+        _poseReachabilityCancelRequested;
     PoseReachabilityRunCallbacks callbacks;
     callbacks.isCancellationRequested = [] (void* userData) -> bool {
         const std::atomic_bool* flag =
             static_cast< const std::atomic_bool* > (userData);
         return flag != NULL && flag->load ();
     };
-    callbacks.userData = &_poseReachabilityCancelRequested;
+    callbacks.userData = cancelFlag.get ();
 
     // 捕获值而非指针,worker 不触及 widget 成员。
     const rw::kinematics::State runState = currentState ();
@@ -3540,7 +3554,7 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     QFuture< std::vector< PoseReachabilitySample > > future = QtConcurrent::run (
         [runDevice, runTcpFrame, runState, positions, config,
-         collisionDetector, runThresholds, callbacks] () {
+         collisionDetector, runThresholds, callbacks, cancelFlag] () {
             KinematicAnalyzer worker;
             worker.setThresholds (runThresholds);
             return worker.analyzePoseReachability (
@@ -3563,14 +3577,20 @@ void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
 
     const std::vector< PoseReachabilitySample > samples =
         _poseReachabilityWatcher->result ();
-    if (_poseReachabilityCancelRequested) {
-        setStatus (tr("Pose reachability run finished after cancellation request."));
-    }
+    const bool wasCanceled =
+        _poseReachabilityCancelRequested &&
+        _poseReachabilityCancelRequested->load ();
     _poseReachabilitySamples = samples;
     applyPoseReachabilityResults (_poseReachabilitySamples);
     updateReportSummary ();
-    setStatus (tr("Pose reachability completed for %1 position(s).")
-                   .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    if (wasCanceled) {
+        setStatus (tr("Pose reachability canceled after %1 position(s).")
+                       .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    }
+    else {
+        setStatus (tr("Pose reachability completed for %1 position(s).")
+                       .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    }
 }
 
 // exportPoseReachabilityCsv:鎶?_poseReachabilitySamples 鍐欎负 CSV,

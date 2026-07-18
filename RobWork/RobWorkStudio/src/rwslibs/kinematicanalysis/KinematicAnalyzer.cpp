@@ -1499,14 +1499,22 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             continue;
         }
 
-        // P5:每轮到下一个 position 时检查取消请求。
-        if (callbacks.isCancellationRequested != NULL &&
-            callbacks.isCancellationRequested (callbacks.userData)) {
+        const auto finishCanceledSample =
+            [&sample, totalDirections] () {
             sample.status = sample.reachableDirections == 0 ?
                 AnalysisStatus::Fail : AnalysisStatus::Warning;
             sample.coverage = totalDirections == 0 ? 0.0 :
                 static_cast< double > (sample.reachableDirections) /
                     static_cast< double > (totalDirections);
+        };
+        const auto cancellationRequested = [&callbacks] () {
+            return callbacks.isCancellationRequested != NULL &&
+                   callbacks.isCancellationRequested (callbacks.userData);
+        };
+
+        // P5:先在 position 边界检查一次,避免已经取消时继续进入 IK 循环。
+        if (cancellationRequested ()) {
+            finishCanceledSample ();
             results.push_back (sample);
             return results;
         }
@@ -1514,6 +1522,12 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
         // 双层循环:(方向, 滚动) → 一次 IK。
         for (int directionIndex = 0; directionIndex < directionCount; ++directionIndex) {
             for (int rollIndex = 0; rollIndex < rollCount; ++rollIndex) {
+                if (cancellationRequested ()) {
+                    finishCanceledSample ();
+                    results.push_back (sample);
+                    return results;
+                }
+
                 // 给定 Z 方向 + 滚动角,反推完整旋转矩阵。
                 const rw::math::Rotation3D<> rotation =
                     toolZDirectionToRotation (
@@ -1531,6 +1545,14 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                 if (reachable)
                     ++sample.reachableDirections;
                 ++completedTargets;
+
+                if (callbacks.onProgress != NULL)
+                    callbacks.onProgress (completedTargets, plannedTotal, callbacks.userData);
+                if (cancellationRequested ()) {
+                    finishCanceledSample ();
+                    results.push_back (sample);
+                    return results;
+                }
             }
         }
 
@@ -1547,9 +1569,6 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             sample.status = AnalysisStatus::Warning;
         results.push_back (sample);
 
-        // P5:每组方向采样完成后回调 progress。
-        if (callbacks.onProgress != NULL)
-            callbacks.onProgress (completedTargets, plannedTotal, callbacks.userData);
     }
     return results;
 }

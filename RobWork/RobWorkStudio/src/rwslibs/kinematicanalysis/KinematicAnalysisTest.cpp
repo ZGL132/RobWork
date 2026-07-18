@@ -978,6 +978,44 @@ static int testPoseReachability ()
             return rc;
     }
 
+    // P5:取消必须在单个 position 内的 IK target 之间生效,而不是只在 position 边界检查。
+    {
+        rw::kinematics::StateStructure stateStructure;
+        const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (stateStructure);
+        rw::kinematics::State deviceState = stateStructure.getDefaultState ();
+
+        rws::PoseReachabilityConfig cancelInsidePosition;
+        cancelInsidePosition.directionSamples = 2;
+        cancelInsidePosition.rollSamples = 2;
+        cancelInsidePosition.checkCollision = false;
+
+        struct CancelAfterFirstCheck {
+            int checks = 0;
+        } cancelState;
+        rws::PoseReachabilityRunCallbacks cancelCb;
+        cancelCb.userData = &cancelState;
+        cancelCb.isCancellationRequested = [] (void* userData) -> bool {
+            CancelAfterFirstCheck* state =
+                static_cast< CancelAfterFirstCheck* > (userData);
+            ++state->checks;
+            return state->checks >= 2;
+        };
+
+        const std::vector< rws::PoseReachabilitySample > canceled =
+            analyzer.analyzePoseReachability (
+                device, device->getEnd (), deviceState, positions,
+                cancelInsidePosition, NULL, cancelCb);
+        if (const int rc = require (cancelState.checks >= 2,
+                                    "pose cancellation checked inside IK target loop"))
+            return rc;
+        if (const int rc = require (canceled.size () == 1,
+                                    "inner-loop canceled pose result count"))
+            return rc;
+        if (const int rc = require (canceled.front ().sampledDirections == 4,
+                                    "inner-loop canceled sampled directions"))
+            return rc;
+    }
+
     return 0;
 }
 

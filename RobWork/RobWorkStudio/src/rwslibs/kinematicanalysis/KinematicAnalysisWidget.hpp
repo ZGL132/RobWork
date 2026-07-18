@@ -14,6 +14,7 @@
 #include <QWidget>
 
 #include <array>
+#include <memory>
 #include <vector>
 
 namespace rw { namespace kinematics { class Frame; } }
@@ -43,6 +44,7 @@ class KinematicAnalysisWidget : public QWidget
 
   public:
     explicit KinematicAnalysisWidget (QWidget* parent = NULL);
+    ~KinematicAnalysisWidget () override;
 
     QSize sizeHint () const override;
     QSize minimumSizeHint () const override;
@@ -203,7 +205,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseCancelButton;
     QFutureWatcher< std::vector< PoseReachabilitySample > >* _poseReachabilityWatcher;
     bool _poseReachabilityRunActive;
-    std::atomic_bool _poseReachabilityCancelRequested;
+    std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
     QLabel* _poseSummaryLabel;
     QLabel* _poseDiagnosticsLabel;
     QTableWidget* _posePositionTable;
