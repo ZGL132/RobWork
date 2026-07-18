@@ -123,6 +123,10 @@ PoseReachabilitySummary rws::summarizePoseReachabilitySamples (
             static_cast< std::size_t > (std::max (0, sample.reachableDirections));
         coverageSum += sample.coverage;
         includeCoverage (summary, sample.coverage);
+        if (sample.partial)
+            ++summary.partialCount;
+        summary.plannedIkTargets += sample.plannedIkTargets;
+        summary.completedIkTargets += sample.completedIkTargets;
     }
     if (summary.totalPositions != 0)
         summary.averageCoverage = coverageSum /

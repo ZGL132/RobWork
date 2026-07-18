@@ -149,6 +149,9 @@ struct PoseReachabilitySummary
     double averageCoverage = 0.0;
     double minCoverage = 0.0;
     double maxCoverage = 0.0;
+    std::size_t partialCount = 0;
+    std::size_t plannedIkTargets = 0;
+    std::size_t completedIkTargets = 0;
 };
 
 // 阈值集合,所有"近限位/奇异"的判断都参考这里;可由用户在 Report tab 修改。
@@ -259,6 +262,9 @@ struct PoseReachabilitySample
     int reachableDirections = 0;   // 至少有一个非碰撞 Pass/Warning 解的方向数
     double coverage = 0.0;          // reachableDirections / sampledDirections
     AnalysisStatus status = AnalysisStatus::Unknown;
+    std::size_t plannedIkTargets = 0;     // 该 position 的 IK 计划数
+    std::size_t completedIkTargets = 0;   // 该 position 已完成的 IK 数
+    bool partial = false;                 // 取消/中断导致未完成全部 IK
 };
 
 // 聚合结果:当前位姿 + 任务点 + 工作空间 + 位姿可达性 + 阈值导出的汇总。

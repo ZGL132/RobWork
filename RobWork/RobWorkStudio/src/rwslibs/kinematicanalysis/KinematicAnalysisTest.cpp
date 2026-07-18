@@ -831,11 +831,17 @@ static int testPoseReachabilityHelpers ()
         pass.sampledDirections = 10;
         pass.reachableDirections = 10;
         pass.coverage = 1.0;
+        pass.plannedIkTargets = 10;
+        pass.completedIkTargets = 10;
+        pass.partial = false;
         rws::PoseReachabilitySample warning;
         warning.status = rws::AnalysisStatus::Warning;
         warning.sampledDirections = 10;
         warning.reachableDirections = 4;
         warning.coverage = 0.4;
+        warning.plannedIkTargets = 10;
+        warning.completedIkTargets = 4;
+        warning.partial = true;
         const rws::PoseReachabilitySummary summary =
             rws::summarizePoseReachabilitySamples (
                 std::vector< rws::PoseReachabilitySample > {pass, warning});
@@ -844,6 +850,15 @@ static int testPoseReachabilityHelpers ()
             return rc;
         if (const int rc = assertNear (summary.averageCoverage, 0.7, 1e-12,
                                        "pose average coverage"))
+            return rc;
+        if (const int rc = require (summary.partialCount == 1,
+                                    "pose summary partial count"))
+            return rc;
+        if (const int rc = require (summary.plannedIkTargets == 20,
+                                    "pose summary planned IK targets"))
+            return rc;
+        if (const int rc = require (summary.completedIkTargets == 14,
+                                    "pose summary completed IK targets"))
             return rc;
     }
 
