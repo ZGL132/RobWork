@@ -198,13 +198,33 @@ AnalysisVisualData rws::visualDataFromTaskPointResults (
                  QString::fromStdString (result.taskPoint.name) :
                  QStringLiteral ("TP%1").arg (static_cast< int > (i + 1)));
         point.hasFiniteScalar = taskScalar (result, scalarMode, &point.scalar);
-        point.tooltip = QStringLiteral (
-            "Task point: %1\nStatus: %2\nReason: %3\nRaw candidates: %4\nUsable solutions: %5")
-            .arg (point.label)
-            .arg (statusTextLocal (result.status))
-            .arg (failureReasonsText (result.failureReasons))
-            .arg (static_cast< int > (result.ik.rawCandidateCount))
-            .arg (static_cast< int > (result.ik.usableSolutionCount));
+        {
+            const KinematicIkSolution* best = bestUsableSolution (result.ik);
+            QString extra;
+            if (best != nullptr) {
+                extra = QStringLiteral (
+                    "\nBest Q index: %1\nManipulability: %2\nCondition: %3\n"
+                    "Position error: %4 m\nOrientation error: %5 deg")
+                    .arg (point.sourceIndex)
+                    .arg (QString::number (best->manipulability, 'g', 6))
+                    .arg (QString::number (best->conditionNumber, 'g', 6))
+                    .arg (QString::number (best->positionErrorMeters, 'g', 6))
+                    .arg (QString::number (best->orientationErrorDeg, 'g', 6));
+            }
+            point.tooltip = QStringLiteral (
+                "Task point: %1\nStatus: %2\nReason: %3\n"
+                "Position: %4, %5, %6 m\nScalar: %7 = %8%9")
+                .arg (point.label)
+                .arg (statusTextLocal (result.status))
+                .arg (failureReasonsText (result.failureReasons))
+                .arg (QString::number (point.position[0], 'g', 6))
+                .arg (QString::number (point.position[1], 'g', 6))
+                .arg (QString::number (point.position[2], 'g', 6))
+                .arg (visualScalarModeText (scalarMode))
+                .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
+                                            : QStringLiteral ("-"))
+                .arg (extra);
+        }
         data.points.push_back (point);
     }
     updateRange (data);
@@ -229,9 +249,17 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
         point.label = QStringLiteral ("W%1").arg (static_cast< int > (i));
         point.hasFiniteScalar = workspaceScalar (sample, scalarMode, &point.scalar);
         point.tooltip = QStringLiteral (
-            "Workspace sample: %1\nStatus: %2\nManipulability: %3\nCondition: %4\nMin margin: %5\nCollision: %6")
+            "Workspace sample: %1\nStatus: %2\n"
+            "TCP: %3, %4, %5 m\nScalar: %6 = %7\n"
+            "Manipulability: %8\nCondition: %9\nMin margin: %10\nCollision: %11")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
+            .arg (QString::number (point.position[0], 'g', 6))
+            .arg (QString::number (point.position[1], 'g', 6))
+            .arg (QString::number (point.position[2], 'g', 6))
+            .arg (visualScalarModeText (scalarMode))
+            .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
+                                        : QStringLiteral ("-"))
             .arg (QString::number (sample.manipulability, 'g', 6))
             .arg (QString::number (sample.conditionNumber, 'g', 6))
             .arg (QString::number (sample.minJointLimitMargin, 'g', 6))
@@ -259,10 +287,17 @@ AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
         point.label = QStringLiteral ("P%1").arg (static_cast< int > (i));
         point.hasFiniteScalar = poseScalar (sample, scalarMode, &point.scalar);
         point.tooltip = QStringLiteral (
-            "Pose reachability: %1\nStatus: %2\nCoverage: %3\nReachable: %4 / %5")
+            "Pose reachability: %1\nStatus: %2\n"
+            "Position: %3, %4, %5 m\nScalar: %6 = %7\n"
+            "Reachable: %8 / %9")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
-            .arg (QString::number (sample.coverage, 'f', 3))
+            .arg (QString::number (point.position[0], 'g', 6))
+            .arg (QString::number (point.position[1], 'g', 6))
+            .arg (QString::number (point.position[2], 'g', 6))
+            .arg (visualScalarModeText (scalarMode))
+            .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
+                                        : QStringLiteral ("-"))
             .arg (sample.reachableDirections)
             .arg (sample.sampledDirections);
         data.points.push_back (point);
