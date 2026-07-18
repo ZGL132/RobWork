@@ -1491,16 +1491,24 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
         PoseReachabilitySample sample;
         sample.position          = position;
         sample.sampledDirections = totalDirections;
+        sample.plannedIkTargets  = ikPerPosition;
+        std::size_t completedTargetsForSample = 0;
 
         // 兜底:device / TCP / 总方向数任一为 0,直接报 Fail。
         if (device == NULL || resolvedTcpFrame == NULL || totalDirections == 0) {
+            sample.completedIkTargets = 0;
+            sample.partial = false;
             sample.status = AnalysisStatus::Fail;
             results.push_back (sample);
             continue;
         }
 
         const auto finishCanceledSample =
-            [&sample, totalDirections] () {
+            [&sample, totalDirections, ikPerPosition,
+             &completedTargetsForSample] () {
+            sample.completedIkTargets = completedTargetsForSample;
+            sample.plannedIkTargets = ikPerPosition;
+            sample.partial = completedTargetsForSample < ikPerPosition;
             sample.status = sample.reachableDirections == 0 ?
                 AnalysisStatus::Fail : AnalysisStatus::Warning;
             sample.coverage = totalDirections == 0 ? 0.0 :
@@ -1545,6 +1553,8 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                 if (reachable)
                     ++sample.reachableDirections;
                 ++completedTargets;
+                ++completedTargetsForSample;
+                sample.completedIkTargets = completedTargetsForSample;
 
                 if (callbacks.onProgress != NULL)
                     callbacks.onProgress (completedTargets, plannedTotal, callbacks.userData);
@@ -1561,6 +1571,8 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             totalDirections == 0 ? 0.0 :
             static_cast< double > (sample.reachableDirections) /
                 static_cast< double > (totalDirections);
+        sample.completedIkTargets = completedTargetsForSample;
+        sample.partial = false;
         if (sample.reachableDirections == 0)
             sample.status = AnalysisStatus::Fail;
         else if (sample.reachableDirections == totalDirections)

@@ -1029,6 +1029,68 @@ static int testPoseReachability ()
         if (const int rc = require (canceled.front ().sampledDirections == 4,
                                     "inner-loop canceled sampled directions"))
             return rc;
+        if (const int rc = require (canceled.front ().plannedIkTargets == 4,
+                                    "inner-loop canceled planned IK targets"))
+            return rc;
+        if (const int rc = require (canceled.front ().completedIkTargets < 4,
+                                    "inner-loop canceled completed IK targets"))
+            return rc;
+        if (const int rc = require (canceled.front ().partial,
+                                    "inner-loop canceled sample marked partial"))
+            return rc;
+    }
+
+    // P5:进度回调测试:每个 IK target 完成后回调一次,最后完成数 = 计划数。
+    {
+        rw::kinematics::StateStructure stateStructure;
+        const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (stateStructure);
+        rw::kinematics::State deviceState = stateStructure.getDefaultState ();
+
+        rws::PoseReachabilityConfig progressConfig;
+        progressConfig.directionSamples = 2;
+        progressConfig.rollSamples = 2;
+        progressConfig.checkCollision = false;
+
+        struct ProgressState {
+            std::size_t calls = 0;
+            std::size_t lastCompleted = 0;
+            std::size_t lastPlanned = 0;
+        } progressState;
+
+        rws::PoseReachabilityRunCallbacks progressCb;
+        progressCb.userData = &progressState;
+        progressCb.onProgress = [] (std::size_t completed,
+                                    std::size_t planned,
+                                    void* userData) {
+            ProgressState* state = static_cast< ProgressState* > (userData);
+            ++state->calls;
+            state->lastCompleted = completed;
+            state->lastPlanned = planned;
+        };
+
+        const std::vector< rws::PoseReachabilitySample > progressResult =
+            analyzer.analyzePoseReachability (
+                device, device->getEnd (), deviceState, positions,
+                progressConfig, NULL, progressCb);
+
+        if (const int rc = require (progressState.calls == 4,
+                                    "pose progress callback per IK target"))
+            return rc;
+        if (const int rc = require (progressState.lastCompleted == 4,
+                                    "pose progress last completed target"))
+            return rc;
+        if (const int rc = require (progressState.lastPlanned == 4,
+                                    "pose progress planned target count"))
+            return rc;
+        if (const int rc = require (progressResult.front ().plannedIkTargets == 4,
+                                    "pose sample planned IK targets"))
+            return rc;
+        if (const int rc = require (progressResult.front ().completedIkTargets == 4,
+                                    "pose sample completed IK targets"))
+            return rc;
+        if (const int rc = require (!progressResult.front ().partial,
+                                    "pose complete sample is not partial"))
+            return rc;
     }
 
     return 0;
