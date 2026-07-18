@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QFontMetrics>
 #include <QHelpEvent>
+#include <QImage>
 #include <QPainter>
 #include <QToolTip>
 
@@ -62,12 +63,42 @@ void KinematicAnalysisPlotWidget::setShowLabels (bool show)
 }
 
 void KinematicAnalysisPlotWidget::setStatusFilters (
-    bool showPass, bool showWarning, bool showFail)
+    bool showPass, bool showWarning, bool showFail, bool showUnknown)
 {
     _showPass = showPass;
     _showWarning = showWarning;
     _showFail = showFail;
+    _showUnknown = showUnknown;
     update ();
+}
+
+void KinematicAnalysisPlotWidget::setShowGrid (bool show)
+{
+    _showGrid = show;
+    update ();
+}
+
+void KinematicAnalysisPlotWidget::setShowLegend (bool show)
+{
+    _showLegend = show;
+    update ();
+}
+
+void KinematicAnalysisPlotWidget::setPointRadius (double radius)
+{
+    _pointRadius = radius;
+    update ();
+}
+
+QImage KinematicAnalysisPlotWidget::renderToImage (const QSize& size) const
+{
+    const QSize targetSize = size.isValid () ? size : QSize (1200, 800);
+    QImage image (targetSize, QImage::Format_ARGB32_Premultiplied);
+    image.fill (palette ().base ().color ());
+    QPainter painter (&image);
+    painter.setRenderHint (QPainter::Antialiasing, true);
+    paintPlot (painter, QRect (QPoint (0, 0), targetSize));
+    return image;
 }
 
 QSize KinematicAnalysisPlotWidget::minimumSizeHint () const
@@ -92,34 +123,32 @@ bool KinematicAnalysisPlotWidget::pointVisible (const AnalysisVisualPoint& point
         case AnalysisStatus::Warning: return _showWarning;
         case AnalysisStatus::Fail:    return _showFail;
         case AnalysisStatus::Unknown:
-        default:                      return true;
+        default:                      return _showUnknown;
     }
 }
 
+AnalysisVisualFilters KinematicAnalysisPlotWidget::filters () const
+{
+    AnalysisVisualFilters f;
+    f.showPass = _showPass;
+    f.showWarning = _showWarning;
+    f.showFail = _showFail;
+    f.showUnknown = _showUnknown;
+    return f;
+}
+
+// P8:委托到纯 helper,消除 duplicated bounds 逻辑。
 QRectF KinematicAnalysisPlotWidget::projectedBounds () const
 {
-    bool first = true;
-    double minX = 0.0, minY = 0.0, maxX = 1.0, maxY = 1.0;
-    for (const AnalysisVisualPoint& point : _data.points) {
-        if (!pointVisible (point))
-            continue;
-        const QPointF p = projectVisualPoint (point, _projection);
-        if (!std::isfinite (p.x ()) || !std::isfinite (p.y ()))
-            continue;
-        if (first) {
-            minX = maxX = p.x ();
-            minY = maxY = p.y ();
-            first = false;
-        }
-        else {
-            minX = std::min (minX, p.x ());
-            maxX = std::max (maxX, p.x ());
-            minY = std::min (minY, p.y ());
-            maxY = std::max (maxY, p.y ());
-        }
-    }
-    if (first)
+    const AnalysisVisualBounds bounds =
+        projectedVisualBounds (_data, _projection, filters ());
+    if (!bounds.valid)
         return QRectF (-1.0, -1.0, 2.0, 2.0);
+
+    double minX = bounds.minX;
+    double maxX = bounds.maxX;
+    double minY = bounds.minY;
+    double maxY = bounds.maxY;
     if (std::fabs (maxX - minX) < 1e-9) {
         minX -= 0.5;
         maxX += 0.5;
@@ -189,12 +218,61 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
     QPainter painter (this);
     painter.setRenderHint (QPainter::Antialiasing, true);
     painter.fillRect (rect (), palette ().base ());
+    paintPlot (painter, rect ());
+}
 
+// paintPlot:核心绘图,供 paintEvent 和 renderToImage 共用。
+void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
+{
     const QRectF pr = plotRect ();
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 
     const QRectF bounds = projectedBounds ();
+
+    // P8:grid
+    paintGrid (painter, pr, bounds);
+
+    // P8:按密度自动缩小点半径
+    double radius = _pointRadius;
+    if (_data.points.size () > 5000)
+        radius = std::min (radius, 2.5);
+    else if (_data.points.size () > 1000)
+        radius = std::min (radius, 3.5);
+
+    int visibleCount = 0;
+    for (const AnalysisVisualPoint& point : _data.points) {
+        if (!pointVisible (point))
+            continue;
+        ++visibleCount;
+        const QPointF mapped = mapToPlot (point, pr, bounds);
+        const QColor color = visualColorForPoint (point, _data);
+        // P8:碰撞点用深红轮廓,非碰撞点用较浅描边
+        painter.setPen (point.inCollision ?
+            QPen (QColor (120, 20, 20), 2) :
+            QPen (color.darker (130), 1));
+        painter.setBrush (color);
+        painter.drawEllipse (mapped, radius, radius);
+        if (_showLabels && !point.label.isEmpty ()) {
+            painter.setPen (palette ().text ().color ());
+            painter.drawText (QPointF (mapped.x () + 7, mapped.y () - 5),
+                              point.label);
+        }
+    }
+
+    // P8:图例
+    paintLegend (painter, pr);
+
+    // 右下角 info
+    painter.setPen (palette ().mid ().color ());
+    painter.drawText (QRectF (pr.left (), 2, pr.width (), 18),
+                      Qt::AlignRight | Qt::AlignVCenter,
+                      QStringLiteral ("%1 point(s), %2, %3")
+                          .arg (visibleCount)
+                          .arg (visualProjectionText (_projection))
+                          .arg (visualScalarModeText (_data.scalarMode)));
+
+    // 轴标签
     painter.setPen (palette ().text ().color ());
     painter.drawText (QRectF (pr.left (), pr.bottom () + 8, pr.width (), 20),
                       Qt::AlignCenter,
@@ -207,35 +285,160 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
                       QStringLiteral ("%1 (m)").arg (axisLabelY (_projection)));
     painter.restore ();
 
-    int visibleCount = 0;
-    for (const AnalysisVisualPoint& point : _data.points) {
-        if (!pointVisible (point))
-            continue;
-        ++visibleCount;
-        const QPointF mapped = mapToPlot (point, pr, bounds);
-        const QColor color = visualColorForPoint (point, _data);
-        painter.setPen (QPen (color.darker (130), 1));
-        painter.setBrush (color);
-        painter.drawEllipse (mapped, point.inCollision ? 5.5 : 4.5,
-                             point.inCollision ? 5.5 : 4.5);
-        if (_showLabels && !point.label.isEmpty ()) {
-            painter.setPen (palette ().text ().color ());
-            painter.drawText (QPointF (mapped.x () + 7, mapped.y () - 5),
-                              point.label);
-        }
-    }
-
-    painter.setPen (palette ().mid ().color ());
-    painter.drawText (QRectF (pr.left (), 2, pr.width (), 18),
-                      Qt::AlignRight | Qt::AlignVCenter,
-                      QStringLiteral ("%1 point(s), %2, %3")
-                          .arg (visibleCount)
-                          .arg (visualProjectionText (_projection))
-                          .arg (visualScalarModeText (_data.scalarMode)));
-
     if (visibleCount == 0) {
         painter.setPen (palette ().mid ().color ());
         painter.drawText (pr, Qt::AlignCenter,
                           QStringLiteral ("No visual data"));
     }
+}
+
+// paintGrid:5 等分刻度虚线网格 + 数字标签。
+void KinematicAnalysisPlotWidget::paintGrid (
+    QPainter& painter, const QRectF& plotArea, const QRectF& bounds) const
+{
+    if (!_showGrid)
+        return;
+
+    painter.save ();
+    QPen gridPen (palette ().mid ().color ().lighter (130), 1, Qt::DotLine);
+    painter.setPen (gridPen);
+
+    QFont tickFont = painter.font ();
+    tickFont.setPointSize (std::max (7, tickFont.pointSize () - 1));
+    painter.setFont (tickFont);
+    painter.setPen (palette ().text ().color ());
+
+    for (int i = 0; i <= 4; ++i) {
+        const double ratio = static_cast< double > (i) / 4.0;
+
+        // 垂直网格线 (x)
+        {
+            const double x = plotArea.left () + ratio * plotArea.width ();
+            painter.setPen (gridPen);
+            painter.drawLine (QPointF (x, plotArea.top ()),
+                              QPointF (x, plotArea.bottom ()));
+            const double dataX = bounds.left () + ratio * bounds.width ();
+            painter.setPen (palette ().text ().color ());
+            painter.drawText (QRectF (x - 20, plotArea.bottom () + 28, 40, 16),
+                              Qt::AlignCenter,
+                              QString::number (dataX, 'g', 4));
+        }
+
+        // 水平网格线 (y)
+        {
+            const double y = plotArea.bottom () - ratio * plotArea.height ();
+            painter.setPen (gridPen);
+            painter.drawLine (QPointF (plotArea.left (), y),
+                              QPointF (plotArea.right (), y));
+            const double dataY = bounds.top () + ratio * bounds.height ();
+            painter.setPen (palette ().text ().color ());
+            painter.drawText (QRectF (plotArea.left () - 42, y - 8, 38, 16),
+                              Qt::AlignRight | Qt::AlignVCenter,
+                              QString::number (dataY, 'g', 4));
+        }
+    }
+
+    painter.restore ();
+}
+
+// paintLegend:状态色块图例或标量色带。
+void KinematicAnalysisPlotWidget::paintLegend (
+    QPainter& painter, const QRectF& plotArea) const
+{
+    if (!_showLegend || width () < 480)
+        return;
+
+    painter.save ();
+
+    const double legendLeft = plotArea.right () + 6;
+    const double legendTop = plotArea.top () + 4;
+
+    if (_data.scalarMode == VisualScalarMode::Status) {
+        // 状态图例:Pass / Warning / Fail / Unknown
+        struct Swatch { QString label; AnalysisStatus status; };
+        const Swatch swatches[] = {
+            {QStringLiteral ("Pass"), AnalysisStatus::Pass},
+            {QStringLiteral ("Warning"), AnalysisStatus::Warning},
+            {QStringLiteral ("Fail"), AnalysisStatus::Fail},
+            {QStringLiteral ("Unknown"), AnalysisStatus::Unknown},
+        };
+        const double swatchSize = 10.0;
+        double y = legendTop;
+        QFont smallFont = painter.font ();
+        smallFont.setPointSize (std::max (7, smallFont.pointSize () - 1));
+        painter.setFont (smallFont);
+
+        for (const Swatch& sw : swatches) {
+            AnalysisVisualPoint pt;
+            pt.status = sw.status;
+            const QColor c = visualColorForPoint (pt, _data);
+            painter.setPen (Qt::NoPen);
+            painter.setBrush (c);
+            painter.drawRect (QRectF (legendLeft, y, swatchSize, swatchSize));
+
+            painter.setPen (palette ().text ().color ());
+            painter.drawText (QPointF (legendLeft + swatchSize + 4, y + swatchSize - 1),
+                              sw.label);
+            y += swatchSize + 3;
+        }
+    }
+    else if (_data.scalarMode == VisualScalarMode::Collision) {
+        // Collision 图例:Collision / Free
+        const double swatchSize = 10.0;
+        double y = legendTop;
+        QFont smallFont = painter.font ();
+        smallFont.setPointSize (std::max (7, smallFont.pointSize () - 1));
+        painter.setFont (smallFont);
+
+        for (const auto& pair : {std::make_pair (1.0, QStringLiteral ("Collision")),
+                                 std::make_pair (0.0, QStringLiteral ("Free"))}) {
+            AnalysisVisualPoint pt;
+            pt.scalar = pair.first;
+            pt.hasFiniteScalar = true;
+            AnalysisVisualData dummy;
+            dummy.scalarMode = VisualScalarMode::Collision;
+            dummy.hasFiniteScalar = true;
+            dummy.scalarMin = 0.0;
+            dummy.scalarMax = 1.0;
+            const QColor c = visualColorForPoint (pt, dummy);
+            painter.setPen (Qt::NoPen);
+            painter.setBrush (c);
+            painter.drawRect (QRectF (legendLeft, y, swatchSize, swatchSize));
+
+            painter.setPen (palette ().text ().color ());
+            painter.drawText (QPointF (legendLeft + swatchSize + 4, y + swatchSize - 1),
+                              pair.second);
+            y += swatchSize + 3;
+        }
+    }
+    else if (_data.hasFiniteScalar) {
+        // 标量色带:min → max 渐变条
+        const double rampWidth = 14.0;
+        const double rampHeight = 60.0;
+        const QRectF rampRect (legendLeft, legendTop, rampWidth, rampHeight);
+        for (int py = 0; py < static_cast< int > (rampHeight); ++py) {
+            const double t = 1.0 - static_cast< double > (py) / rampHeight;
+            AnalysisVisualPoint pt;
+            pt.scalar = _data.scalarMin + t * (_data.scalarMax - _data.scalarMin);
+            pt.hasFiniteScalar = true;
+            const QColor c = visualColorForPoint (pt, _data);
+            painter.setPen (c);
+            painter.drawLine (QPointF (legendLeft, legendTop + py),
+                              QPointF (legendLeft + rampWidth, legendTop + py));
+        }
+        painter.setPen (QPen (palette ().mid ().color (), 1));
+        painter.setBrush (Qt::NoBrush);
+        painter.drawRect (rampRect);
+
+        painter.setPen (palette ().text ().color ());
+        QFont smallFont = painter.font ();
+        smallFont.setPointSize (std::max (7, smallFont.pointSize () - 1));
+        painter.setFont (smallFont);
+        painter.drawText (QPointF (legendLeft + rampWidth + 4, legendTop + rampHeight),
+                          QString::number (_data.scalarMin, 'g', 4));
+        painter.drawText (QPointF (legendLeft + rampWidth + 4, legendTop + 6),
+                          QString::number (_data.scalarMax, 'g', 4));
+    }
+
+    painter.restore ();
 }

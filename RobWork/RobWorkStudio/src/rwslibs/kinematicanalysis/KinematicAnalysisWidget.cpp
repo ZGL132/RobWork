@@ -2064,7 +2064,8 @@ void KinematicAnalysisWidget::refreshVisualization ()
     _visualPlot->setStatusFilters (
         _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked (),
         _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked (),
-        _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked ());
+        _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked (),
+        true);  // showUnknown 暂时硬编码 true,Task 3 连接控件后恢复为控件值
     _visualPlot->setShowLabels (_visualShowLabelsCheck != NULL &&
                                 _visualShowLabelsCheck->isChecked ());
     _visualPlot->setVisualData (data);

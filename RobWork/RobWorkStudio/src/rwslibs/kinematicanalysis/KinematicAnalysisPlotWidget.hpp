@@ -9,13 +9,21 @@ namespace rws {
 
 class KinematicAnalysisPlotWidget : public QWidget
 {
+    Q_OBJECT
+
   public:
     explicit KinematicAnalysisPlotWidget (QWidget* parent = nullptr);
 
     void setVisualData (const AnalysisVisualData& data);
     void setProjection (VisualProjection projection);
     void setShowLabels (bool show);
-    void setStatusFilters (bool showPass, bool showWarning, bool showFail);
+    void setStatusFilters (bool showPass, bool showWarning, bool showFail,
+                           bool showUnknown);
+    void setShowGrid (bool show);
+    void setShowLegend (bool show);
+    void setPointRadius (double radius);
+
+    QImage renderToImage (const QSize& size = QSize ()) const;
 
     QSize minimumSizeHint () const override;
     QSize sizeHint () const override;
@@ -27,10 +35,15 @@ class KinematicAnalysisPlotWidget : public QWidget
   private:
     QRectF plotRect () const;
     bool pointVisible (const AnalysisVisualPoint& point) const;
+    AnalysisVisualFilters filters () const;
     QPointF mapToPlot (const AnalysisVisualPoint& point, const QRectF& rect,
                        const QRectF& bounds) const;
     QRectF projectedBounds () const;
     QString pointTooltipAt (const QPoint& pos) const;
+    void paintPlot (QPainter& painter, const QRect& area) const;
+    void paintGrid (QPainter& painter, const QRectF& plotArea,
+                    const QRectF& bounds) const;
+    void paintLegend (QPainter& painter, const QRectF& plotArea) const;
 
     AnalysisVisualData _data;
     VisualProjection _projection = VisualProjection::XY;
@@ -38,6 +51,10 @@ class KinematicAnalysisPlotWidget : public QWidget
     bool _showPass = true;
     bool _showWarning = true;
     bool _showFail = true;
+    bool _showUnknown = true;
+    bool _showGrid = true;
+    bool _showLegend = true;
+    double _pointRadius = 4.5;
 };
 
 }    // namespace rws
