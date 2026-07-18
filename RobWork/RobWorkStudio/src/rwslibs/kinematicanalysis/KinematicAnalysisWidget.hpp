@@ -8,6 +8,7 @@
 #include <rw/kinematics/State.hpp>
 
 #include <QFutureWatcher>
+#include <QProgressBar>
 #include <QSize>
 #include <atomic>
 #include <QTabWidget>
@@ -77,6 +78,8 @@ class KinematicAnalysisWidget : public QWidget
     void addPoseReachabilityRow ();
     void updatePoseReachabilityControls ();
     void analyzePoseReachability ();
+    void updatePoseReachabilityProgress (qulonglong completedTargets,
+                                         qulonglong plannedTargets);
     void handlePoseReachabilityFinished ();
     void exportPoseReachabilityCsv ();
     void refreshVisualization ();
@@ -208,6 +211,8 @@ class KinematicAnalysisWidget : public QWidget
     std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
     QLabel* _poseSummaryLabel;
     QLabel* _poseDiagnosticsLabel;
+    QProgressBar* _poseProgressBar;
+    QLabel* _poseProgressLabel;
     QTableWidget* _posePositionTable;
     QTableWidget* _poseResultTable;
 

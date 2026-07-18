@@ -25,6 +25,8 @@
 
 #include <QAbstractItemDelegate>
 #include <QApplication>
+#include <QMetaObject>
+#include <QPointer>
 #include <QtConcurrent/QtConcurrent>
 #include <QCheckBox>
 #include <QColor>
@@ -302,6 +304,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseReachabilityCancelRequested(std::make_shared< std::atomic_bool > (false)),
     _poseSummaryLabel(NULL),
     _poseDiagnosticsLabel(NULL),
+    _poseProgressBar(NULL),
+    _poseProgressLabel(NULL),
     _posePositionTable(NULL),
     _poseResultTable(NULL),
     _visualSourceCombo(NULL),
@@ -1925,6 +1929,15 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
         _poseReachTab);
     layout->addWidget (_poseDiagnosticsLabel);
 
+    // P5:进度条,运行期间显示已完成的 IK target 数。
+    _poseProgressBar = new QProgressBar (_poseReachTab);
+    _poseProgressBar->setRange (0, 1);
+    _poseProgressBar->setValue (0);
+    _poseProgressBar->setTextVisible (false);
+    _poseProgressLabel = new QLabel (tr("Progress: 0 / 0 IK target(s)"), _poseReachTab);
+    layout->addWidget (_poseProgressBar);
+    layout->addWidget (_poseProgressLabel);
+
     // P4:连接控件变化立即刷新 plan。
     connect (_poseSourceCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (updatePoseReachabilityControls ()));
@@ -3528,6 +3541,23 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     _poseReachabilityRunActive = true;
     if (_poseReachabilityCancelRequested)
         _poseReachabilityCancelRequested->store (false);
+
+    // P5:重置进度条,显示计划 IK 目标数。
+    {
+        PoseReachabilityDiagnostics runDiag;
+        const std::size_t plannedTargets =
+            plannedPoseReachabilityTargetCount (config, positions.size (), &runDiag);
+        if (_poseProgressBar != NULL) {
+            _poseProgressBar->setRange (0, static_cast< int > (plannedTargets));
+            _poseProgressBar->setValue (0);
+        }
+        if (_poseProgressLabel != NULL) {
+            _poseProgressLabel->setText (
+                tr("Progress: 0 / %1 IK target(s)")
+                    .arg (static_cast< int > (plannedTargets)));
+        }
+    }
+
     if (_poseAnalyzeButton != NULL)
         _poseAnalyzeButton->setEnabled (false);
     if (_poseCancelButton != NULL)
@@ -3535,16 +3565,38 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     QApplication::setOverrideCursor (Qt::WaitCursor);
     setStatus (tr("Pose reachability running..."));
 
-    // P5:构造可跨线程的安全取消回调。worker 通过原子标志检查取消请求。
-    const std::shared_ptr< std::atomic_bool > cancelFlag =
-        _poseReachabilityCancelRequested;
+    // P5:构造可跨线程的安全取消+进度回调。取消用 shared_ptr<atomic_bool> 跨线程共享;
+    // 进度用 QPointer 通过 QMetaObject::invokeMethod 回到 UI 线程。
+    struct PoseRunContext {
+        std::shared_ptr< std::atomic_bool > cancelFlag;
+        QPointer< KinematicAnalysisWidget > widget;
+    };
+    const std::shared_ptr< PoseRunContext > runContext =
+        std::make_shared< PoseRunContext > ();
+    runContext->cancelFlag = _poseReachabilityCancelRequested;
+    runContext->widget = this;
+
     PoseReachabilityRunCallbacks callbacks;
     callbacks.isCancellationRequested = [] (void* userData) -> bool {
-        const std::atomic_bool* flag =
-            static_cast< const std::atomic_bool* > (userData);
-        return flag != NULL && flag->load ();
+        const PoseRunContext* context =
+            static_cast< const PoseRunContext* > (userData);
+        return context != NULL && context->cancelFlag &&
+               context->cancelFlag->load ();
     };
-    callbacks.userData = cancelFlag.get ();
+    callbacks.onProgress = [] (std::size_t completedTargets,
+                               std::size_t plannedTargets,
+                               void* userData) {
+        PoseRunContext* context = static_cast< PoseRunContext* > (userData);
+        if (context == NULL || context->widget.isNull ())
+            return;
+        QMetaObject::invokeMethod (
+            context->widget.data (),
+            "updatePoseReachabilityProgress",
+            Qt::QueuedConnection,
+            Q_ARG (qulonglong, static_cast< qulonglong > (completedTargets)),
+            Q_ARG (qulonglong, static_cast< qulonglong > (plannedTargets)));
+    };
+    callbacks.userData = runContext.get ();
 
     // 捕获值而非指针,worker 不触及 widget 成员。
     const rw::kinematics::State runState = currentState ();
@@ -3554,7 +3606,7 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     QFuture< std::vector< PoseReachabilitySample > > future = QtConcurrent::run (
         [runDevice, runTcpFrame, runState, positions, config,
-         collisionDetector, runThresholds, callbacks, cancelFlag] () {
+         collisionDetector, runThresholds, callbacks, runContext] () {
             KinematicAnalyzer worker;
             worker.setThresholds (runThresholds);
             return worker.analyzePoseReachability (
@@ -3562,6 +3614,31 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
                 collisionDetector, callbacks);
         });
     _poseReachabilityWatcher->setFuture (future);
+}
+
+// updatePoseReachabilityProgress:P5 从后台线程通过 QMetaObject::invokeMethod
+// 回调到 UI 线程,更新进度条和标签。
+void KinematicAnalysisWidget::updatePoseReachabilityProgress (
+    qulonglong completedTargets, qulonglong plannedTargets)
+{
+    const int planned = static_cast< int > (plannedTargets);
+    const int completed = static_cast< int > (
+        std::min< qulonglong > (completedTargets, plannedTargets));
+
+    if (_poseProgressBar != NULL) {
+        _poseProgressBar->setRange (0, planned);
+        _poseProgressBar->setValue (completed);
+    }
+    if (_poseProgressLabel != NULL) {
+        const double pct = plannedTargets == 0 ? 0.0 :
+            100.0 * static_cast< double > (completedTargets) /
+                static_cast< double > (plannedTargets);
+        _poseProgressLabel->setText (
+            tr("Progress: %1 / %2 IK target(s) (%3%)")
+                .arg (static_cast< int > (completedTargets))
+                .arg (static_cast< int > (plannedTargets))
+                .arg (QString::number (pct, 'f', 1)));
+    }
 }
 
 // handlePoseReachabilityFinished:P4 后台 worker 完成回调。
@@ -3582,6 +3659,16 @@ void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
         _poseReachabilityCancelRequested->load ();
     _poseReachabilitySamples = samples;
     applyPoseReachabilityResults (_poseReachabilitySamples);
+
+    // P5:完成后把进度条刷到最终数字。
+    {
+        const PoseReachabilitySummary summary =
+            summarizePoseReachabilitySamples (_poseReachabilitySamples);
+        updatePoseReachabilityProgress (
+            static_cast< qulonglong > (summary.completedIkTargets),
+            static_cast< qulonglong > (summary.plannedIkTargets));
+    }
+
     updateReportSummary ();
     if (wasCanceled) {
         setStatus (tr("Pose reachability canceled after %1 position(s).")
