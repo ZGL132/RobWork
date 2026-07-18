@@ -123,6 +123,34 @@ struct PoseReachabilityConfig
     bool checkCollision  = true;
 };
 
+// 描述 sanitize / planned 过程的诊断信息,供 UI diagnostics label 与 Report 使用。
+struct PoseReachabilityDiagnostics
+{
+    std::size_t positionCount = 0;
+    std::size_t requestedDirectionSamples = 0;
+    std::size_t requestedRollSamples = 0;
+    std::size_t plannedDirectionsPerPosition = 0;
+    std::size_t plannedIkTargets = 0;
+    bool directionSamplesClamped = false;
+    bool rollSamplesClamped = false;
+    bool targetCountCapped = false;
+};
+
+// 描述整个位姿可达性样本集的状态分布 + 关键指标,由 summarizePoseReachabilitySamples 一次性算出。
+struct PoseReachabilitySummary
+{
+    std::size_t totalPositions = 0;
+    std::size_t passCount = 0;
+    std::size_t warningCount = 0;
+    std::size_t failCount = 0;
+    std::size_t unknownCount = 0;
+    std::size_t sampledDirections = 0;
+    std::size_t reachableDirections = 0;
+    double averageCoverage = 0.0;
+    double minCoverage = 0.0;
+    double maxCoverage = 0.0;
+};
+
 // 阈值集合,所有"近限位/奇异"的判断都参考这里;可由用户在 Report tab 修改。
 struct KinematicThresholds
 {

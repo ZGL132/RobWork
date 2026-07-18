@@ -6,6 +6,7 @@
 #include "TaskPointTableModel.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
+#include "KinematicAnalysisPoseReachability.hpp"
 
 #include <QCoreApplication>
 
@@ -785,7 +786,71 @@ static int testWorkspaceHelpers ()
     return 0;
 }
 
-// 子套件 6:sampleWorkspace 在 NULL / 0 / 负 sampleCount / Grid 模式下的快速返回路径。
+// 子套件 7a:PoseReachability 辅助— sanitize / planned count / summary。
+static int testPoseReachabilityHelpers ()
+{
+    {
+        rws::PoseReachabilityConfig config;
+        config.directionSamples = -5;
+        config.rollSamples = 0;
+        rws::PoseReachabilityDiagnostics diagnostics;
+        const rws::PoseReachabilityConfig sanitized =
+            rws::sanitizePoseReachabilityConfig (config, &diagnostics);
+        if (const int rc = require (sanitized.directionSamples == 0,
+                                    "pose direction samples clamped low"))
+            return rc;
+        if (const int rc = require (sanitized.rollSamples == 1,
+                                    "pose roll samples clamped low"))
+            return rc;
+        if (const int rc = require (diagnostics.directionSamplesClamped,
+                                    "pose direction clamp diagnostic"))
+            return rc;
+        if (const int rc = require (diagnostics.rollSamplesClamped,
+                                    "pose roll clamp diagnostic"))
+            return rc;
+    }
+
+    {
+        rws::PoseReachabilityConfig config;
+        config.directionSamples = 24;
+        config.rollSamples = 3;
+        rws::PoseReachabilityDiagnostics diagnostics;
+        const std::size_t planned =
+            rws::plannedPoseReachabilityTargetCount (config, 10, &diagnostics);
+        if (const int rc = require (planned == 720,
+                                    "pose planned target count"))
+            return rc;
+        if (const int rc = require (diagnostics.plannedDirectionsPerPosition == 72,
+                                    "pose planned directions per position"))
+            return rc;
+    }
+
+    {
+        rws::PoseReachabilitySample pass;
+        pass.status = rws::AnalysisStatus::Pass;
+        pass.sampledDirections = 10;
+        pass.reachableDirections = 10;
+        pass.coverage = 1.0;
+        rws::PoseReachabilitySample warning;
+        warning.status = rws::AnalysisStatus::Warning;
+        warning.sampledDirections = 10;
+        warning.reachableDirections = 4;
+        warning.coverage = 0.4;
+        const rws::PoseReachabilitySummary summary =
+            rws::summarizePoseReachabilitySamples (
+                std::vector< rws::PoseReachabilitySample > {pass, warning});
+        if (const int rc = require (summary.totalPositions == 2,
+                                    "pose summary total positions"))
+            return rc;
+        if (const int rc = assertNear (summary.averageCoverage, 0.7, 1e-12,
+                                       "pose average coverage"))
+            return rc;
+    }
+
+    return 0;
+}
+
+// 子套件 7:sampleWorkspace 在 NULL / 0 / 负 sampleCount / Grid 模式下的快速返回路径。
 static int testWorkspaceSampling ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -1603,6 +1668,8 @@ static int runAll ()
         return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
+    if (const int rc = testPoseReachabilityHelpers ())
+        return rc;
     if (const int rc = testPoseReachability ())
         return rc;
     return testAggregateResult ();
@@ -1650,6 +1717,8 @@ int main (int argc, char** argv)
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")
+        rc = testPoseReachabilityHelpers ();
+    else if (suite == "pose")
         rc = testPoseReachability ();
     else if (suite == "aggregate")
         rc = testAggregateResult ();

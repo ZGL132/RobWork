@@ -37,6 +37,7 @@ if(build)
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisWorkspace.cpp
+        KinematicAnalysisPoseReachability.cpp
     )
 
     set(SRC_FILES_HPP
@@ -52,6 +53,7 @@ if(build)
         KinematicAnalysisVisualizationTypes.hpp
         KinematicAnalysisPlotWidget.hpp
         KinematicAnalysisWorkspace.hpp
+        KinematicAnalysisPoseReachability.hpp
     )
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
@@ -96,6 +98,7 @@ if(build)
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisWorkspace.cpp
+        KinematicAnalysisPoseReachability.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE
