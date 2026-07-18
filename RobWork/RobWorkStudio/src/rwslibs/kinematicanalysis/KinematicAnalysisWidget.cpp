@@ -3457,6 +3457,9 @@ void KinematicAnalysisWidget::updatePoseReachabilityControls ()
             .arg (validationText));
 }
 
+// P4:位姿可达性表格最多显示 500 行,超出不影响 CSV/Report/Visualization。
+static const std::size_t MaxPoseReachabilityTableRows = 500;
+
 // applyPoseReachabilityResults:鎶?PoseReachabilitySample 鍐欏埌 _poseResultTable,
 // 鍚屾椂鍒锋柊椤堕儴 summary(Average coverage)銆?
 void KinematicAnalysisWidget::applyPoseReachabilityResults (
@@ -3464,13 +3467,15 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
 {
     if (_poseResultTable == NULL)
         return;
-    _poseResultTable->setRowCount (static_cast< int > (samples.size ()));
+    const int rows = static_cast< int > (
+        std::min< std::size_t > (samples.size (), MaxPoseReachabilityTableRows));
+    _poseResultTable->setRowCount (rows);
 
     // P4:用 helper 算 summary,替代手动累加。
     const rws::PoseReachabilitySummary summary =
         rws::summarizePoseReachabilitySamples (samples);
 
-    for (std::size_t i = 0; i < samples.size (); ++i) {
+    for (std::size_t i = 0; i < static_cast< std::size_t > (rows); ++i) {
         const rws::PoseReachabilitySample& sample = samples[i];
         const int row = static_cast< int > (i);
         _poseResultTable->setItem (row, 0, makeItem (QString::number (row)));
@@ -3484,12 +3489,14 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
     }
     if (_poseSummaryLabel != NULL) {
         _poseSummaryLabel->setText (
-            tr("Positions: %1    Pass: %2    Warning: %3    Fail: %4    "
-               "Average coverage: %5    Min/Max: %6 / %7")
+            tr("Positions: %1    Shown: %2    Pass: %3    Warning: %4    Fail: %5    "
+               "Partial: %6    Average coverage: %7    Min/Max: %8 / %9")
                 .arg (static_cast< int > (summary.totalPositions))
+                .arg (rows)
                 .arg (static_cast< int > (summary.passCount))
                 .arg (static_cast< int > (summary.warningCount))
                 .arg (static_cast< int > (summary.failCount))
+                .arg (static_cast< int > (summary.partialCount))
                 .arg (QString::number (summary.averageCoverage, 'f', 3))
                 .arg (QString::number (summary.minCoverage, 'f', 3))
                 .arg (QString::number (summary.maxCoverage, 'f', 3)));
