@@ -3596,6 +3596,21 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
         return;
     }
     QTextStream out (&file);
+    // P6:CSV 头部添加 # pose_reachability_summary 注释行。
+    {
+        const PoseReachabilitySummary summary =
+            summarizePoseReachabilitySamples (_poseReachabilitySamples);
+        out << "# pose_reachability_summary,total," << summary.totalPositions
+            << ",pass," << summary.passCount
+            << ",warning," << summary.warningCount
+            << ",fail," << summary.failCount
+            << ",sampled_directions," << summary.sampledDirections
+            << ",reachable_directions," << summary.reachableDirections
+            << ",avg_coverage," << summary.averageCoverage
+            << ",min_coverage," << summary.minCoverage
+            << ",max_coverage," << summary.maxCoverage
+            << "\n";
+    }
     out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status\n";
     for (const PoseReachabilitySample& sample : _poseReachabilitySamples) {
         out << sample.position[0] << "," << sample.position[1] << ","
@@ -3630,11 +3645,10 @@ void KinematicAnalysisWidget::updateReportSummary ()
         else if (task.status == AnalysisStatus::Fail)
             ++taskFail;
     }
-    double poseCoverage = 0.0;
-    for (const PoseReachabilitySample& sample : _poseReachabilitySamples)
-        poseCoverage += sample.coverage;
-    if (!_poseReachabilitySamples.empty ())
-        poseCoverage /= static_cast< double > (_poseReachabilitySamples.size ());
+    // P6:用 helper 替代手动累加覆盖率。
+    const PoseReachabilitySummary poseSummary =
+        summarizePoseReachabilitySamples (_poseReachabilitySamples);
+    const double poseCoverage = poseSummary.averageCoverage;
 
     // P4:Workspace 行从简单计数升级为 pass / warning / fail / collision / avg manip / max cond。
     const WorkspaceSummary wsSummary = summarizeWorkspaceSamples (_workspaceSamples);

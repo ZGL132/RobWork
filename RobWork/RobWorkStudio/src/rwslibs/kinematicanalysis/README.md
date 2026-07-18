@@ -8,7 +8,7 @@ KinematicAnalysis is a RobWorkStudio plugin for early robot design validation. I
 - IK analysis: solve a target pose, list candidate solutions, rank by collision state, target residual, joint-limit margin, manipulability, and distance to the current configuration.
 - Task point reachability: import or edit task points, batch analyze IK reachability, and report pass/warning/fail status with failure reasons.
 - Workspace sampling: deterministic random or capped grid joint-space sampling with seed control, TCP point, manipulability, condition number, joint-limit margin, collision flag, and status. Results link to Visualization tab.
-- Pose reachability: sample tool directions at positions and report orientation coverage.
+- Pose reachability: sample tool directions at positions, report orientation coverage, show planned IK target count before running, and run in background with cooperative cancellation.
 - Report export: JSON and CSV summaries for downstream review.
 
 ## Metrics
@@ -65,6 +65,24 @@ The summary label reports total/shown/pass/warning/fail/collision-free counts, a
 The 9-column table includes Index, Status, Collision, TCP x/y/z, Manipulability, Condition number, and Min joint-limit margin.
 
 CSV export includes a comment-line summary (`# workspace_summary,...`) followed by one row per sample. Downstream scripts that skip comment lines still work with the existing column headers.
+
+## Pose Reachability Page Layout
+
+The Pose reachability tab samples tool Z-axis directions (using Fibonacci spiral) and roll angles at each spatial position, then runs IK for each orientation to measure directional coverage.
+
+Controls:
+- `Source`: pick positions from Task points or manual rows.
+- `Directions`: number of directions sampled on the unit sphere (clamped to [0, 1000]).
+- `Rolls`: number of rotations around the tool Z-axis per direction (clamped to [1, 360]).
+- `Collision`: enables collision checks when a collision detector is available.
+- `Run`: starts the analysis. The Run button is disabled while running; a Cancel button appears to request early stop (cooperative cancellation, current position completes before stopping).
+- `Export CSV`: enabled only when results exist.
+
+The diagnostic label shows the planned IK target count (`positions × directions × rolls`) before running, including a "(capped)" note when the total exceeds 1,000,000.
+
+The summary label reports total/sampled/reachable counts, pass/warning/fail distribution, average coverage, and min/max coverage.
+
+The analysis runs on a background thread (`QtConcurrent`) so the RobWorkStudio window remains responsive during long runs. CSV export includes a comment-line summary (`# pose_reachability_summary,...`) followed by one row per sample.
 
 ## Known Limitations
 
