@@ -223,6 +223,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseOpenVisualizationButton;
     QFutureWatcher< std::vector< PoseReachabilitySample > >* _poseReachabilityWatcher;
     bool _poseReachabilityRunActive;
+    bool _poseReachabilityCollisionUnavailable;
     std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
     QLabel* _poseSummaryLabel;
     QLabel* _poseDiagnosticsLabel;

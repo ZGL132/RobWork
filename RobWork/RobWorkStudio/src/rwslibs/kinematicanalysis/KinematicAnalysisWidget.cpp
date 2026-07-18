@@ -309,6 +309,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseOpenVisualizationButton(NULL),
     _poseReachabilityWatcher(NULL),
     _poseReachabilityRunActive(false),
+    _poseReachabilityCollisionUnavailable(false),
     _poseReachabilityCancelRequested(std::make_shared< std::atomic_bool > (false)),
     _poseSummaryLabel(NULL),
     _poseDiagnosticsLabel(NULL),
@@ -3855,9 +3856,10 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     config.rollSamples      = _poseRollSamplesSpin->value ();
     config.checkCollision   = _poseCollisionCheck->isChecked ();
 
-    bool collisionUnavailable = false;
-    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
-        collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
+    const rw::core::Ptr< rw::models::WorkCell > runWorkCell =
+        _studio != NULL ? _studio->getWorkCell () : NULL;
+    _poseReachabilityCollisionUnavailable =
+        config.checkCollision && runWorkCell == NULL;
 
     // P4:标记运行中,禁用 Run + 启用 Cancel,设忙光标。
     _poseReachabilityRunActive = true;
@@ -3927,12 +3929,18 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
     QFuture< std::vector< PoseReachabilitySample > > future = QtConcurrent::run (
         [runDevice, runTcpFrame, runState, positions, config,
-         collisionDetector, runThresholds, callbacks, runContext] () {
+         runThresholds, callbacks, runContext, runWorkCell] () {
             KinematicAnalyzer worker;
             worker.setThresholds (runThresholds);
+            const rw::core::Ptr< rw::proximity::CollisionDetector > detector =
+                config.checkCollision ?
+                    makeKinematicAnalysisCollisionDetector (runWorkCell) : NULL;
+            PoseReachabilityConfig workerConfig = config;
+            if (config.checkCollision && detector == NULL)
+                workerConfig.checkCollision = false;
             return worker.analyzePoseReachability (
-                runDevice, runTcpFrame, runState, positions, config,
-                collisionDetector, callbacks);
+                runDevice, runTcpFrame, runState, positions, workerConfig,
+                detector, callbacks);
         });
     _poseReachabilityWatcher->setFuture (future);
 }
@@ -4000,13 +4008,17 @@ void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
     }
 
     updateReportSummary ();
+    const QString collisionNote = _poseReachabilityCollisionUnavailable ?
+        tr(" Collision checking was unavailable.") : QString ();
     if (wasCanceled) {
-        setStatus (tr("Pose reachability canceled after %1 position(s).")
-                       .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+        setStatus (tr("Pose reachability canceled after %1 position(s).%2")
+                       .arg (static_cast< int > (_poseReachabilitySamples.size ()))
+                       .arg (collisionNote));
     }
     else {
-        setStatus (tr("Pose reachability completed for %1 position(s).")
-                       .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+        setStatus (tr("Pose reachability completed for %1 position(s).%2")
+                       .arg (static_cast< int > (_poseReachabilitySamples.size ()))
+                       .arg (collisionNote));
     }
 }
 
