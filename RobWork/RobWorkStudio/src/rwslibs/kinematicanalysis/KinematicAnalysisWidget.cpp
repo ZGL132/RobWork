@@ -8,6 +8,7 @@
 #include "TaskPointDelegates.hpp"
 #include "KinematicAnalysisPlotWidget.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
+#include "KinematicAnalysisWorkspace.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -22,6 +23,7 @@
 #include <rws/RobWorkStudio.hpp>
 
 #include <QAbstractItemDelegate>
+#include <QApplication>
 #include <QCheckBox>
 #include <QColor>
 #include <QComboBox>
@@ -1765,6 +1767,9 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     _workspaceGridStepsSpin = new QSpinBox (_workspaceTab);
     _workspaceGridStepsSpin->setRange (1, 100);
     _workspaceGridStepsSpin->setValue (5);
+    _workspaceSeedSpin = new QSpinBox (_workspaceTab);
+    _workspaceSeedSpin->setRange (1, 2147483647);
+    _workspaceSeedSpin->setValue (1);
     _workspaceModeCombo = new QComboBox (_workspaceTab);
     _workspaceModeCombo->addItem (tr("Random uniform"));
     _workspaceModeCombo->addItem (tr("Grid"));
@@ -1775,6 +1780,9 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
                                          tr("Joint limit"), tr("Collision")});
     _workspaceRunButton = new QPushButton (tr("Run"), _workspaceTab);
     _workspaceExportButton = new QPushButton (tr("Export CSV"), _workspaceTab);
+    _workspaceOpenVisualizationButton =
+        new QPushButton (tr("Open in Visualization"), _workspaceTab);
+    _workspaceOpenVisualizationButton->setEnabled (false);
 
     controls->addWidget (new QLabel (tr("Samples:"), _workspaceTab), 0, 0);
     controls->addWidget (_workspaceSampleCountSpin, 0, 1);
@@ -1784,23 +1792,45 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     controls->addWidget (_workspaceGridStepsSpin, 1, 1);
     controls->addWidget (_workspaceCollisionCheck, 1, 2);
     controls->addWidget (_workspaceColorModeCombo, 1, 3);
-    controls->addWidget (_workspaceRunButton, 2, 0);
-    controls->addWidget (_workspaceExportButton, 2, 1);
+    controls->addWidget (new QLabel (tr("Seed:"), _workspaceTab), 2, 0);
+    controls->addWidget (_workspaceSeedSpin, 2, 1);
+    controls->addWidget (_workspaceRunButton, 3, 0);
+    controls->addWidget (_workspaceExportButton, 3, 1);
+    controls->addWidget (_workspaceOpenVisualizationButton, 3, 2);
     layout->addLayout (controls);
 
     _workspaceSummaryLabel = new QLabel (tr("Samples: 0    Collision-free: 0    Avg manipulability: -"),
                                          _workspaceTab);
     layout->addWidget (_workspaceSummaryLabel);
 
+    // P4:显示 plan / theoretical / 截断提示,用户改 mode / sample count
+    // 都能立即看到 Grid 模式会被截断。
+    _workspaceDiagnosticsLabel = new QLabel (tr("Plan: -"), _workspaceTab);
+    layout->addWidget (_workspaceDiagnosticsLabel);
+
     _workspaceTable = new QTableWidget (_workspaceTab);
-    _workspaceTable->setColumnCount (8);
+    _workspaceTable->setColumnCount (9);
     _workspaceTable->setHorizontalHeaderLabels ({
         tr("Index"), tr("Status"), tr("Collision"), tr("TCP x"), tr("TCP y"), tr("TCP z"),
-        tr("Manipulability"), tr("Min limit margin")
+        tr("Manipulability"), tr("Condition"), tr("Min limit margin")
     });
     _workspaceTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     configureAnalysisTable (_workspaceTable);
     layout->addWidget (_workspaceTable);
+
+    // P4:mode / sampleCount / gridSteps 变化立即刷新 plan 标签;
+    // color 变化触发 Visualization 重绘。
+    connect (_workspaceModeCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (updateWorkspaceControls ()));
+    connect (_workspaceSampleCountSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (updateWorkspaceControls ()));
+    connect (_workspaceGridStepsSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (updateWorkspaceControls ()));
+    connect (_workspaceColorModeCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (refreshVisualization ()));
+    connect (_workspaceOpenVisualizationButton, SIGNAL (clicked ()),
+             this, SLOT (openWorkspaceInVisualization ()));
+    updateWorkspaceControls ();
 }
 
 // buildPoseReachabilityTab:浣嶅Э鍙揪鎬у瓙椤靛竷灞€銆?
@@ -3095,21 +3125,42 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
         _workspaceTable->setItem (row, 4, makeItem (sample.tcpPosition[1]));
         _workspaceTable->setItem (row, 5, makeItem (sample.tcpPosition[2]));
         _workspaceTable->setItem (row, 6, makeItem (sample.manipulability));
-        _workspaceTable->setItem (row, 7, makeItem (sample.minJointLimitMargin));
+        _workspaceTable->setItem (row, 7, makeItem (sample.conditionNumber));
+        _workspaceTable->setItem (row, 8, makeItem (sample.minJointLimitMargin));
     }
 
     const double avgManip = samples.empty () ? 0.0 :
         manipulabilitySum / static_cast< double > (samples.size ());
     if (_workspaceSummaryLabel != NULL) {
+        // P4:走 helper 出标准 summary,而不是自己循环。
+        const rws::WorkspaceSummary summary =
+            rws::summarizeWorkspaceSamples (samples);
         _workspaceSummaryLabel->setText (
-            tr("Samples: %1    Collision-free: %2    Warning: %3    Fail: %4    Avg manipulability: %5")
-                .arg (static_cast< int > (samples.size ()))
-                .arg (collisionFree)
-                .arg (warnCount)
-                .arg (failCount)
-                .arg (QString::number (avgManip, 'g', 6)));
+            tr("Samples: %1    Shown: %2    Pass: %3    Warning: %4    Fail: %5    "
+               "Collision-free: %6    Avg manip: %7    P10 manip: %8    Max cond: %9")
+                .arg (static_cast< int > (summary.totalCount))
+                .arg (rows)
+                .arg (static_cast< int > (summary.passCount))
+                .arg (static_cast< int > (summary.warningCount))
+                .arg (static_cast< int > (summary.failCount))
+                .arg (static_cast< int > (summary.collisionFreeCount))
+                .arg (summary.hasManipulability
+                          ? QString::number (summary.avgManipulability, 'g', 6)
+                          : QStringLiteral ("-"))
+                .arg (summary.hasManipulability
+                          ? QString::number (summary.p10Manipulability, 'g', 6)
+                          : QStringLiteral ("-"))
+                .arg (summary.hasCondition
+                          ? QString::number (summary.maxCondition, 'g', 6)
+                          : QStringLiteral ("-")));
     }
     _workspaceTable->resizeColumnsToContents ();
+
+    // P4:导出 / 可视化按钮在有数据时启用。
+    if (_workspaceExportButton != NULL)
+        _workspaceExportButton->setEnabled (!samples.empty ());
+    if (_workspaceOpenVisualizationButton != NULL)
+        _workspaceOpenVisualizationButton->setEnabled (!samples.empty ());
     refreshVisualization ();
 }
 
@@ -3130,15 +3181,26 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     config.mode = _workspaceModeCombo->currentIndex () == 1 ?
         WorkspaceSamplingMode::Grid : WorkspaceSamplingMode::RandomUniform;
     config.checkCollision = _workspaceCollisionCheck->isChecked ();
-    config.randomSeed = 1;
+    // P4:用 UI 上的 Seed,让同一种子重复 Run 结果可复现。
+    config.randomSeed = _workspaceSeedSpin != NULL ?
+        static_cast< unsigned int > (_workspaceSeedSpin->value ()) : 1u;
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
+
+    // P4:在同步采样期间禁用 Run,避免用户重复点击导致重入。
+    if (_workspaceRunButton != NULL)
+        _workspaceRunButton->setEnabled (false);
+    QApplication::setOverrideCursor (Qt::WaitCursor);
     _workspaceSamples = analyzer.sampleWorkspace (
         device, tcpFrame, currentState (), config, collisionDetector);
+    QApplication::restoreOverrideCursor ();
+    if (_workspaceRunButton != NULL)
+        _workspaceRunButton->setEnabled (true);
+
     applyWorkspaceResults (_workspaceSamples);
     const QString collisionNote = collisionUnavailable ?
         tr(" Collision checking was unavailable.") : QString ();
@@ -3147,10 +3209,85 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     updateReportSummary ();
 }
 
+// updateWorkspaceControls:P4 把当前控件值合成 WorkspaceSamplingConfig,
+// 通过 plannedWorkspaceSampleCount 算 plan 数,把"实际要跑多少 / 理论多少
+// / 是否被截断"写进 diagnostics 标签。mode / sample count / grid steps 变化
+// 触发本槽,用户改参数时立即看到结果。
+void KinematicAnalysisWidget::updateWorkspaceControls ()
+{
+    if (_workspaceModeCombo == NULL || _workspaceGridStepsSpin == NULL ||
+        _workspaceSampleCountSpin == NULL)
+        return;
+
+    const bool gridMode = _workspaceModeCombo->currentIndex () == 1;
+    _workspaceGridStepsSpin->setEnabled (gridMode);
+
+    WorkspaceSamplingConfig config;
+    config.sampleCount = _workspaceSampleCountSpin->value ();
+    config.gridStepsPerJoint = _workspaceGridStepsSpin->value ();
+    config.mode = gridMode ? WorkspaceSamplingMode::Grid
+                            : WorkspaceSamplingMode::RandomUniform;
+    config.randomSeed = _workspaceSeedSpin != NULL ?
+        static_cast< unsigned int > (_workspaceSeedSpin->value ()) : 1u;
+
+    const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    const std::size_t dof = device == NULL ? 0 : device->getDOF ();
+    rws::WorkspaceSamplingDiagnostics diagnostics;
+    const std::size_t planned =
+        rws::plannedWorkspaceSampleCount (config, dof, &diagnostics);
+
+    if (_workspaceDiagnosticsLabel != NULL) {
+        if (!gridMode) {
+            _workspaceDiagnosticsLabel->setText (
+                tr("Plan: %1 random sample(s), seed %2")
+                    .arg (static_cast< int > (planned))
+                    .arg (_workspaceSeedSpin != NULL
+                              ? _workspaceSeedSpin->value () : 1));
+        }
+        else {
+            _workspaceDiagnosticsLabel->setText (
+                tr("Plan: %1 grid sample(s), theoretical %2%3")
+                    .arg (static_cast< int > (planned))
+                    .arg (static_cast< int > (diagnostics.theoreticalGridSamples))
+                    .arg (diagnostics.gridCountTruncated
+                              ? tr(" (capped)")
+                              : QString ()));
+        }
+    }
+}
+
+// openWorkspaceInVisualization:P4 把 Visualization 切到 Workspace source,
+// 复用 Workspace color 模式,跳到 Visualization tab 并 refresh。
+void KinematicAnalysisWidget::openWorkspaceInVisualization ()
+{
+    if (_visualSourceCombo != NULL)
+        _visualSourceCombo->setCurrentIndex (1);
+    if (_visualColorModeCombo != NULL && _workspaceColorModeCombo != NULL) {
+        const int workspaceMode = _workspaceColorModeCombo->currentIndex ();
+        const rws::VisualScalarMode scalar =
+            workspaceMode == 1 ? rws::VisualScalarMode::Manipulability :
+            workspaceMode == 2 ? rws::VisualScalarMode::MinJointMargin :
+            workspaceMode == 3 ? rws::VisualScalarMode::Collision :
+                                 rws::VisualScalarMode::Status;
+        const int index = _visualColorModeCombo->findData (
+            static_cast< int > (scalar));
+        if (index >= 0)
+            _visualColorModeCombo->setCurrentIndex (index);
+    }
+    if (_tabs != NULL && _visualizationTab != NULL)
+        _tabs->setCurrentWidget (_visualizationTab);
+    refreshVisualization ();
+}
+
 // exportWorkspaceCsv:鎶?_workspaceSamples 鍏ㄩ噺鍐欏嚭(鍚?q 瀛楃涓层€乀CP 浣嶇疆銆?
 // manipulability / 鍏宠妭瑁曞害 / 鏉′欢鏁?/ 纰版挒 / 鐘舵€?銆?
 void KinematicAnalysisWidget::exportWorkspaceCsv ()
 {
+    if (_workspaceSamples.empty ()) {
+        setStatus (tr("No workspace samples to export."));
+        return;
+    }
+
     const QString path = QFileDialog::getSaveFileName (
         this, tr("Export workspace samples"), QString ("workspace_samples.csv"),
         tr("CSV files (*.csv);;All files (*)"));
@@ -3165,6 +3302,19 @@ void KinematicAnalysisWidget::exportWorkspaceCsv ()
         return;
     }
     QTextStream out (&file);
+    // P4:摘要前言(comment 行),下游脚本可以 # 开头跳过。
+    {
+        const WorkspaceSummary summary = summarizeWorkspaceSamples (_workspaceSamples);
+        out << "# workspace_summary,total," << summary.totalCount
+            << ",pass," << summary.passCount
+            << ",warning," << summary.warningCount
+            << ",fail," << summary.failCount
+            << ",collision," << summary.collisionCount
+            << ",avg_manipulability," << summary.avgManipulability
+            << ",p10_manipulability," << summary.p10Manipulability
+            << ",max_condition," << summary.maxCondition
+            << "\n";
+    }
     out << "sample_index,q,tcp_x,tcp_y,tcp_z,manipulability,min_joint_limit_margin,condition_number,in_collision,status\n";
     for (std::size_t i = 0; i < _workspaceSamples.size (); ++i) {
         const WorkspaceSample& sample = _workspaceSamples[i];
@@ -3325,14 +3475,31 @@ void KinematicAnalysisWidget::updateReportSummary ()
     if (!_poseReachabilitySamples.empty ())
         poseCoverage /= static_cast< double > (_poseReachabilitySamples.size ());
 
+    // P4:Workspace 行从简单计数升级为 pass / warning / fail / collision / avg manip / max cond。
+    const WorkspaceSummary wsSummary = summarizeWorkspaceSamples (_workspaceSamples);
+    const QString wsAvgManip = wsSummary.hasManipulability
+        ? QString::number (wsSummary.avgManipulability, 'g', 6) : QStringLiteral ("-");
+    const QString wsMaxCond = wsSummary.hasCondition
+        ? QString::number (wsSummary.maxCondition, 'g', 6) : QStringLiteral ("-");
+
     _reportSummaryLabel->setText (
-        tr("Status: %1\nReachable rate: %2\nCurrent condition: %3\nCurrent manipulability: %4\nTask points: Pass %5 / Warning %6 / Fail %7\nWorkspace samples: %8\nAverage pose coverage: %9")
+        tr("Status: %1\nReachable rate: %2\nCurrent condition: %3\nCurrent manipulability: %4\n"
+           "Task points: Pass %5 / Warning %6 / Fail %7\n"
+           "Workspace: %8 samples, pass %9, warning %10, fail %11, collision %12, "
+           "avg manip %13, max cond %14\n"
+           "Average pose coverage: %15")
             .arg (QString::fromLatin1 (statusText (result.status)))
             .arg (QString::number (result.reachableRate, 'f', 3))
             .arg (QString::number (_lastCurrentPose.conditionNumber, 'g', 6))
             .arg (QString::number (_lastCurrentPose.manipulability, 'g', 6))
             .arg (taskPass).arg (taskWarn).arg (taskFail)
-            .arg (static_cast< int > (_workspaceSamples.size ()))
+            .arg (static_cast< int > (wsSummary.totalCount))
+            .arg (static_cast< int > (wsSummary.passCount))
+            .arg (static_cast< int > (wsSummary.warningCount))
+            .arg (static_cast< int > (wsSummary.failCount))
+            .arg (static_cast< int > (wsSummary.collisionCount))
+            .arg (wsAvgManip)
+            .arg (wsMaxCond)
             .arg (QString::number (poseCoverage, 'f', 3)));
 
     if (_reportWarningTable != NULL) {
