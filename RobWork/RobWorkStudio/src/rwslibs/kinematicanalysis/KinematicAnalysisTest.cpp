@@ -1130,6 +1130,53 @@ static int testPoseReachability ()
             return rc;
     }
 
+    // P7:多位置进度回调:2 positions × 2 dirs × 2 rolls = 8 IK targets。
+    {
+        rw::kinematics::StateStructure stateStructure;
+        const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (stateStructure);
+        rw::kinematics::State deviceState = stateStructure.getDefaultState ();
+
+        std::vector< std::array< double, 3 > > twoPositions;
+        twoPositions.push_back (std::array< double, 3 > {{1.0, 2.0, 3.0}});
+        twoPositions.push_back (std::array< double, 3 > {{1.1, 2.0, 3.0}});
+
+        rws::PoseReachabilityConfig progressConfig;
+        progressConfig.directionSamples = 2;
+        progressConfig.rollSamples = 2;
+        progressConfig.checkCollision = false;
+
+        struct MultiProgressState {
+            std::size_t lastCompleted = 0;
+            std::size_t lastPlanned = 0;
+        } progressState;
+
+        rws::PoseReachabilityRunCallbacks progressCb;
+        progressCb.userData = &progressState;
+        progressCb.onProgress = [] (std::size_t completed,
+                                    std::size_t planned,
+                                    void* userData) {
+            MultiProgressState* state =
+                static_cast< MultiProgressState* > (userData);
+            state->lastCompleted = completed;
+            state->lastPlanned = planned;
+        };
+
+        const std::vector< rws::PoseReachabilitySample > result =
+            analyzer.analyzePoseReachability (
+                device, device->getEnd (), deviceState, twoPositions,
+                progressConfig, NULL, progressCb);
+
+        if (const int rc = require (result.size () == 2,
+                                    "pose progress multi-position result count"))
+            return rc;
+        if (const int rc = require (progressState.lastCompleted == 8,
+                                    "pose progress multi-position completed count"))
+            return rc;
+        if (const int rc = require (progressState.lastPlanned == 8,
+                                    "pose progress multi-position planned count"))
+            return rc;
+    }
+
     return 0;
 }
 

@@ -1466,19 +1466,19 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
     results.reserve (positions.size ());
 
     // P4:用 sanitize + plan helper 统一边界检查和诊断。
-    PoseReachabilityDiagnostics diagnostics;
     const PoseReachabilityConfig sanitized =
-        sanitizePoseReachabilityConfig (config, &diagnostics);
-    plannedPoseReachabilityTargetCount (sanitized, positions.size (), &diagnostics);
+        sanitizePoseReachabilityConfig (config, nullptr);
 
     const int directionCount = sanitized.directionSamples;
     const int rollCount = directionCount == 0 ? 0 : sanitized.rollSamples;
-    const int totalDirections =
-        static_cast< int > (diagnostics.plannedDirectionsPerPosition);
     const std::size_t ikPerPosition =
-        diagnostics.plannedDirectionsPerPosition;
+        poseReachabilityTargetsPerPosition (sanitized);
+    const int totalDirections = static_cast< int > (ikPerPosition);
+    bool targetCountOverflowed = false;
     const std::size_t plannedTotal =
-        diagnostics.plannedIkTargets;
+        poseReachabilityExecutionTargetCount (
+            sanitized, positions.size (), &targetCountOverflowed);
+    (void) targetCountOverflowed;
     const std::vector< rw::math::Vector3D<> > directions =
         sampleUnitDirections (directionCount);
 
@@ -1546,7 +1546,7 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                     poseReachabilityTarget (position, rotation, directionIndex, rollIndex);
                 const KinematicIkAnalysisResult ik = analyzeIk (
                     device, resolvedTcpFrame, state, target,
-                    config.checkCollision ? collisionDetector : NULL);
+                    sanitized.checkCollision ? collisionDetector : NULL);
 
                 // "该方向可达"的判定:至少一个无碰撞的 Pass/Warning 解。
                 const bool reachable = isPoseDirectionReachable (ik.solutions);

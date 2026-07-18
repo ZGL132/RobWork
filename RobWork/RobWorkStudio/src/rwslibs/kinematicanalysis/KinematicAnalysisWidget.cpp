@@ -3459,6 +3459,7 @@ void KinematicAnalysisWidget::updatePoseReachabilityControls ()
 
 // P4:位姿可达性表格最多显示 500 行,超出不影响 CSV/Report/Visualization。
 static const std::size_t MaxPoseReachabilityTableRows = 500;
+static const int MaxPoseReachabilityProgressBarSteps = 1000000;
 
 // applyPoseReachabilityResults:鎶?PoseReachabilitySample 鍐欏埌 _poseResultTable,
 // 鍚屾椂鍒锋柊椤堕儴 summary(Average coverage)銆?
@@ -3549,19 +3550,18 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     if (_poseReachabilityCancelRequested)
         _poseReachabilityCancelRequested->store (false);
 
-    // P5:重置进度条,显示计划 IK 目标数。
+    // P7:重置进度条,用精确执行计数(uncapped)确保进度不会超过 100%。
     {
-        PoseReachabilityDiagnostics runDiag;
+        bool targetCountOverflowed = false;
         const std::size_t plannedTargets =
-            plannedPoseReachabilityTargetCount (config, positions.size (), &runDiag);
-        if (_poseProgressBar != NULL) {
-            _poseProgressBar->setRange (0, static_cast< int > (plannedTargets));
-            _poseProgressBar->setValue (0);
-        }
-        if (_poseProgressLabel != NULL) {
+            poseReachabilityExecutionTargetCount (
+                config, positions.size (), &targetCountOverflowed);
+        updatePoseReachabilityProgress (
+            0,
+            static_cast< qulonglong > (plannedTargets));
+        if (targetCountOverflowed && _poseProgressLabel != NULL) {
             _poseProgressLabel->setText (
-                tr("Progress: 0 / %1 IK target(s)")
-                    .arg (static_cast< int > (plannedTargets)));
+                tr("Progress: 0 / overflow IK target(s)"));
         }
     }
 
@@ -3625,25 +3625,34 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 
 // updatePoseReachabilityProgress:P5 从后台线程通过 QMetaObject::invokeMethod
 // 回调到 UI 线程,更新进度条和标签。
+// P7:进度条范围限制在 MaxPoseReachabilityProgressBarSteps 内,标签保持精确值。
 void KinematicAnalysisWidget::updatePoseReachabilityProgress (
     qulonglong completedTargets, qulonglong plannedTargets)
 {
-    const int planned = static_cast< int > (plannedTargets);
-    const int completed = static_cast< int > (
-        std::min< qulonglong > (completedTargets, plannedTargets));
+    const qulonglong boundedCompleted = plannedTargets == 0 ? 0 :
+        std::min< qulonglong > (completedTargets, plannedTargets);
+    const int barMax = plannedTargets >
+            static_cast< qulonglong > (MaxPoseReachabilityProgressBarSteps) ?
+        MaxPoseReachabilityProgressBarSteps :
+        static_cast< int > (plannedTargets);
+    const int barValue = plannedTargets == 0 ? 0 :
+        static_cast< int > (
+            (static_cast< double > (boundedCompleted) /
+             static_cast< double > (plannedTargets)) *
+            static_cast< double > (barMax));
 
     if (_poseProgressBar != NULL) {
-        _poseProgressBar->setRange (0, planned);
-        _poseProgressBar->setValue (completed);
+        _poseProgressBar->setRange (0, barMax);
+        _poseProgressBar->setValue (barValue);
     }
     if (_poseProgressLabel != NULL) {
         const double pct = plannedTargets == 0 ? 0.0 :
-            100.0 * static_cast< double > (completedTargets) /
+            100.0 * static_cast< double > (boundedCompleted) /
                 static_cast< double > (plannedTargets);
         _poseProgressLabel->setText (
             tr("Progress: %1 / %2 IK target(s) (%3%)")
-                .arg (static_cast< int > (completedTargets))
-                .arg (static_cast< int > (plannedTargets))
+                .arg (static_cast< qulonglong > (boundedCompleted))
+                .arg (static_cast< qulonglong > (plannedTargets))
                 .arg (QString::number (pct, 'f', 1)));
     }
 }
