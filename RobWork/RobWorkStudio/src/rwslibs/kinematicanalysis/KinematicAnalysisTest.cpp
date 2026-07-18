@@ -1855,6 +1855,71 @@ static int testVisualizationData ()
         return rc;
     if (const int rc = assertNear (projected.y (), 6.0, 1e-12, "XZ projection z"))
         return rc;
+
+    {
+        const std::vector< rws::VisualScalarMode > taskModes =
+            rws::supportedVisualScalarModes (rws::VisualPointSource::TaskPoint);
+        if (const int rc = require (
+                std::find (taskModes.begin (), taskModes.end (),
+                           rws::VisualScalarMode::PositionError) != taskModes.end (),
+                "task visualization supports position error"))
+            return rc;
+        if (const int rc = require (
+                rws::visualScalarModeSupported (
+                    rws::VisualPointSource::Workspace,
+                    rws::VisualScalarMode::Condition),
+                "workspace visualization supports condition"))
+            return rc;
+        if (const int rc = require (
+                !rws::visualScalarModeSupported (
+                    rws::VisualPointSource::PoseReachability,
+                    rws::VisualScalarMode::Condition),
+                "pose visualization rejects condition scalar"))
+            return rc;
+        if (const int rc = require (
+                rws::defaultVisualScalarModeForSource (
+                    rws::VisualPointSource::PoseReachability) ==
+                    rws::VisualScalarMode::Coverage,
+                "pose visualization defaults to coverage"))
+            return rc;
+    }
+
+    {
+        rws::AnalysisVisualData mixed;
+        mixed.points = taskData.points;
+        mixed.points.push_back (workspaceData.points[0]);
+        mixed.points.push_back (poseData.points[0]);
+
+        rws::AnalysisVisualFilters filters;
+        filters.showWarning = false;
+        const rws::AnalysisVisualStatusSummary summary =
+            rws::summarizeVisualData (mixed, filters);
+        if (const int rc = require (summary.totalCount == 3,
+                                    "visual summary total count"))
+            return rc;
+        if (const int rc = require (summary.visibleCount == 2,
+                                    "visual summary respects warning filter"))
+            return rc;
+        if (const int rc = require (summary.collisionCount == 1,
+                                    "visual summary collision count"))
+            return rc;
+    }
+
+    {
+        rws::AnalysisVisualFilters filters;
+        const rws::AnalysisVisualBounds bounds =
+            rws::projectedVisualBounds (poseData, rws::VisualProjection::YZ,
+                                        filters);
+        if (const int rc = require (bounds.valid, "visual bounds valid"))
+            return rc;
+        if (const int rc = assertNear (bounds.minX, 5.0, 1e-12,
+                                       "visual YZ bounds x"))
+            return rc;
+        if (const int rc = assertNear (bounds.minY, 6.0, 1e-12,
+                                       "visual YZ bounds y"))
+            return rc;
+    }
+
     return 0;
 }
 

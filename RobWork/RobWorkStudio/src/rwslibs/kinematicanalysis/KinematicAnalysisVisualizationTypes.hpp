@@ -80,6 +80,51 @@ QString visualProjectionText (VisualProjection projection);
 QColor visualColorForPoint (const AnalysisVisualPoint& point,
                             const AnalysisVisualData& data);
 
+// ---- New helper structs and helpers in this phase ----
+
+struct AnalysisVisualStatusSummary
+{
+    std::size_t totalCount = 0;
+    std::size_t visibleCount = 0;
+    std::size_t passCount = 0;
+    std::size_t warningCount = 0;
+    std::size_t failCount = 0;
+    std::size_t unknownCount = 0;
+    std::size_t collisionCount = 0;
+};
+
+struct AnalysisVisualBounds
+{
+    bool valid = false;
+    double minX = 0.0;
+    double maxX = 0.0;
+    double minY = 0.0;
+    double maxY = 0.0;
+};
+
+struct AnalysisVisualFilters
+{
+    bool showPass = true;
+    bool showWarning = true;
+    bool showFail = true;
+    bool showUnknown = true;
+};
+
+QString visualPointSourceText (VisualPointSource source);
+std::vector< VisualScalarMode > supportedVisualScalarModes (
+    VisualPointSource source);
+bool visualScalarModeSupported (VisualPointSource source,
+                                VisualScalarMode mode);
+VisualScalarMode defaultVisualScalarModeForSource (
+    VisualPointSource source);
+AnalysisVisualStatusSummary summarizeVisualData (
+    const AnalysisVisualData& data,
+    const AnalysisVisualFilters& filters);
+AnalysisVisualBounds projectedVisualBounds (
+    const AnalysisVisualData& data,
+    VisualProjection projection,
+    const AnalysisVisualFilters& filters);
+
 }    // namespace rws
 
 #endif    // RWS_KINEMATICANALYSIS_KINEMATICANALYSISVISUALIZATIONTYPES_HPP

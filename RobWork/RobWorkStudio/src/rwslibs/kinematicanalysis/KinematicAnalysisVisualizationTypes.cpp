@@ -331,3 +331,148 @@ QColor rws::visualColorForPoint (const AnalysisVisualPoint& point,
     const int b = static_cast< int > (180 - t * 135);
     return QColor (r, g, b);
 }
+
+// ---- New helpers ----
+
+QString rws::visualPointSourceText (VisualPointSource source)
+{
+    switch (source) {
+        case VisualPointSource::TaskPoint:
+            return QStringLiteral ("Task points");
+        case VisualPointSource::Workspace:
+            return QStringLiteral ("Workspace");
+        case VisualPointSource::PoseReachability:
+            return QStringLiteral ("Pose reachability");
+    }
+    return QStringLiteral ("Task points");
+}
+
+std::vector< VisualScalarMode > rws::supportedVisualScalarModes (
+    VisualPointSource source)
+{
+    switch (source) {
+        case VisualPointSource::TaskPoint:
+            return {
+                VisualScalarMode::Status,
+                VisualScalarMode::Manipulability,
+                VisualScalarMode::Condition,
+                VisualScalarMode::MinJointMargin,
+                VisualScalarMode::PositionError,
+                VisualScalarMode::OrientationError,
+                VisualScalarMode::Collision
+            };
+        case VisualPointSource::Workspace:
+            return {
+                VisualScalarMode::Status,
+                VisualScalarMode::Manipulability,
+                VisualScalarMode::Condition,
+                VisualScalarMode::MinJointMargin,
+                VisualScalarMode::Collision
+            };
+        case VisualPointSource::PoseReachability:
+            return {
+                VisualScalarMode::Status,
+                VisualScalarMode::Coverage
+            };
+    }
+    return {VisualScalarMode::Status};
+}
+
+bool rws::visualScalarModeSupported (VisualPointSource source,
+                                     VisualScalarMode mode)
+{
+    const std::vector< VisualScalarMode > modes =
+        supportedVisualScalarModes (source);
+    return std::find (modes.begin (), modes.end (), mode) != modes.end ();
+}
+
+VisualScalarMode rws::defaultVisualScalarModeForSource (
+    VisualPointSource source)
+{
+    switch (source) {
+        case VisualPointSource::TaskPoint:
+            return VisualScalarMode::Status;
+        case VisualPointSource::Workspace:
+            return VisualScalarMode::Status;
+        case VisualPointSource::PoseReachability:
+            return VisualScalarMode::Coverage;
+    }
+    return VisualScalarMode::Status;
+}
+
+namespace {
+
+bool visualPointPassesFilters (const AnalysisVisualPoint& point,
+                               const AnalysisVisualFilters& filters)
+{
+    switch (point.status) {
+        case AnalysisStatus::Pass:
+            return filters.showPass;
+        case AnalysisStatus::Warning:
+            return filters.showWarning;
+        case AnalysisStatus::Fail:
+            return filters.showFail;
+        case AnalysisStatus::Unknown:
+        default:
+            return filters.showUnknown;
+    }
+}
+
+}    // namespace
+
+AnalysisVisualStatusSummary rws::summarizeVisualData (
+    const AnalysisVisualData& data,
+    const AnalysisVisualFilters& filters)
+{
+    AnalysisVisualStatusSummary summary;
+    summary.totalCount = data.points.size ();
+    for (const AnalysisVisualPoint& point : data.points) {
+        switch (point.status) {
+            case AnalysisStatus::Pass:
+                ++summary.passCount;
+                break;
+            case AnalysisStatus::Warning:
+                ++summary.warningCount;
+                break;
+            case AnalysisStatus::Fail:
+                ++summary.failCount;
+                break;
+            case AnalysisStatus::Unknown:
+            default:
+                ++summary.unknownCount;
+                break;
+        }
+        if (point.inCollision)
+            ++summary.collisionCount;
+        if (visualPointPassesFilters (point, filters))
+            ++summary.visibleCount;
+    }
+    return summary;
+}
+
+AnalysisVisualBounds rws::projectedVisualBounds (
+    const AnalysisVisualData& data,
+    VisualProjection projection,
+    const AnalysisVisualFilters& filters)
+{
+    AnalysisVisualBounds bounds;
+    for (const AnalysisVisualPoint& point : data.points) {
+        if (!visualPointPassesFilters (point, filters))
+            continue;
+        const QPointF projected = projectVisualPoint (point, projection);
+        if (!std::isfinite (projected.x ()) || !std::isfinite (projected.y ()))
+            continue;
+        if (!bounds.valid) {
+            bounds.minX = bounds.maxX = projected.x ();
+            bounds.minY = bounds.maxY = projected.y ();
+            bounds.valid = true;
+        }
+        else {
+            bounds.minX = std::min (bounds.minX, projected.x ());
+            bounds.maxX = std::max (bounds.maxX, projected.x ());
+            bounds.minY = std::min (bounds.minY, projected.y ());
+            bounds.maxY = std::max (bounds.maxY, projected.y ());
+        }
+    }
+    return bounds;
+}
