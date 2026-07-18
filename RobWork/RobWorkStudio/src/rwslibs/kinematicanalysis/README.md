@@ -111,6 +111,22 @@ Supported color modes:
 
 The summary line reports total and visible point counts, status distribution, collision count, projection, color mode, and finite scalar range. Tooltips show source-specific diagnostics without including long joint vectors.
 
+### Workspace sampling
+
+Workspace sampling runs on a background thread. Random and grid sampling report completed samples against the planned sanitized sample count. Cancel stops cooperatively between samples and keeps the samples completed so far available for table display, visualization, CSV export, and report export.
+
+### Background collision checking
+
+Long-running background analyses create a fresh collision detector from the current WorkCell instead of reusing the RobWorkStudio UI collision detector. If collision checking is requested but no WorkCell is available for the worker, the run continues without collision checking and reports that collision checking was unavailable.
+
+### JSON non-finite values
+
+Report JSON keeps finite floating-point values as JSON numbers. Non-finite values are exported as strings: `"inf"`, `"-inf"`, and `"nan"`.
+
+### Visualization legend
+
+The visualization plot reserves right-side space for legends when the render area is wide enough. Narrow views hide the legend to keep the plot and axis labels readable.
+
 ## Known Limitations
 
 - Workspace grid sampling is capped by sample count to avoid combinatorial growth on high-DOF robots.
