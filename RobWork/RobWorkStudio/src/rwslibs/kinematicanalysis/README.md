@@ -88,6 +88,29 @@ CSV export includes a comment-line summary (`# pose_reachability_summary,...`) f
 
 The result table displays at most 500 rows; export, report, and visualization use the full result set.
 
+## Visualization Page Layout
+
+The Visualization tab renders full result sets from Task points, Workspace, or Pose reachability as 2D projections (`XY`, `XZ`, `YZ`). It is intentionally a projection view rather than a 3D scene.
+
+Controls:
+- `Source`: selects Task points, Workspace, or Pose reachability.
+- `Projection`: selects the spatial plane used by the scatter plot.
+- `Color`: lists only scalar modes supported by the selected source.
+- `Pass`, `Warning`, `Fail`, `Unknown`: filter points by analysis status.
+- `Labels`: toggles point labels.
+- `Grid`: toggles plot grid and tick marks.
+- `Legend`: toggles status legend or scalar color scale.
+- `Point size`: adjusts scatter point radius.
+- `Fit`: resets the plot to the visible data bounds.
+- `Export PNG`: writes the current visualization to an image file.
+
+Supported color modes:
+- Task points: Status, Manipulability, Condition, Min joint margin, Position error, Orientation error, Collision.
+- Workspace: Status, Manipulability, Condition, Min joint margin, Collision.
+- Pose reachability: Status, Coverage.
+
+The summary line reports total and visible point counts, status distribution, collision count, projection, color mode, and finite scalar range. Tooltips show source-specific diagnostics without including long joint vectors.
+
 ## Known Limitations
 
 - Workspace grid sampling is capped by sample count to avoid combinatorial growth on high-DOF robots.
