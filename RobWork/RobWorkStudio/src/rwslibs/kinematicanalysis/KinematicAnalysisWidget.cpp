@@ -299,6 +299,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseAnalyzeButton(NULL),
     _poseExportButton(NULL),
     _poseCancelButton(NULL),
+    _poseOpenVisualizationButton(NULL),
     _poseReachabilityWatcher(NULL),
     _poseReachabilityRunActive(false),
     _poseReachabilityCancelRequested(std::make_shared< std::atomic_bool > (false)),
@@ -314,7 +315,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _visualShowPassCheck(NULL),
     _visualShowWarningCheck(NULL),
     _visualShowFailCheck(NULL),
+    _visualShowUnknownCheck(NULL),
     _visualShowLabelsCheck(NULL),
+    _visualShowGridCheck(NULL),
+    _visualShowLegendCheck(NULL),
+    _visualPointSizeSpin(NULL),
+    _visualResetViewButton(NULL),
+    _visualExportPngButton(NULL),
     _visualSummaryLabel(NULL),
     _visualPlot(NULL),
     _reportSummaryLabel(NULL),
@@ -704,6 +711,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_poseAddRowButton, SIGNAL (clicked ()), this, SLOT (addPoseReachabilityRow ()));
     connect (_poseAnalyzeButton, SIGNAL (clicked ()), this, SLOT (analyzePoseReachability ()));
     connect (_poseExportButton, SIGNAL (clicked ()), this, SLOT (exportPoseReachabilityCsv ()));
+    connect (_poseOpenVisualizationButton, SIGNAL (clicked ()),
+             this, SLOT (openPoseReachabilityInVisualization ()));
     // P4:Cancel 按钮设置取消标志并自禁用,避免重复点击。
     connect (_poseCancelButton, &QPushButton::clicked, this, [this] () {
         if (_poseReachabilityCancelRequested)
@@ -1899,6 +1908,9 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
     _poseCancelButton = new QPushButton (tr("Cancel"), _poseReachTab);
     _poseCancelButton->setEnabled (false);
+    _poseOpenVisualizationButton =
+        new QPushButton (tr("Open in Visualization"), _poseReachTab);
+    _poseOpenVisualizationButton->setEnabled (false);
 
     controls->addWidget (new QLabel (tr("Source:"), _poseReachTab), 0, 0);
     controls->addWidget (_poseSourceCombo, 0, 1);
@@ -1911,6 +1923,7 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     controls->addWidget (_poseAnalyzeButton, 2, 1);
     controls->addWidget (_poseExportButton, 2, 2);
     controls->addWidget (_poseCancelButton, 2, 3);
+    controls->addWidget (_poseOpenVisualizationButton, 2, 4);
     layout->addLayout (controls);
 
     _posePositionTable = new QTableWidget (_poseReachTab);
@@ -1997,10 +2010,24 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualShowPassCheck = new QCheckBox (tr("Pass"), _visualizationTab);
     _visualShowWarningCheck = new QCheckBox (tr("Warning"), _visualizationTab);
     _visualShowFailCheck = new QCheckBox (tr("Fail"), _visualizationTab);
+    _visualShowUnknownCheck = new QCheckBox (tr("Unknown"), _visualizationTab);
     _visualShowLabelsCheck = new QCheckBox (tr("Labels"), _visualizationTab);
+    _visualShowGridCheck = new QCheckBox (tr("Grid"), _visualizationTab);
+    _visualShowLegendCheck = new QCheckBox (tr("Legend"), _visualizationTab);
     _visualShowPassCheck->setChecked (true);
     _visualShowWarningCheck->setChecked (true);
     _visualShowFailCheck->setChecked (true);
+    _visualShowUnknownCheck->setChecked (true);
+    _visualShowGridCheck->setChecked (true);
+    _visualShowLegendCheck->setChecked (true);
+
+    _visualPointSizeSpin = new QDoubleSpinBox (_visualizationTab);
+    _visualPointSizeSpin->setRange (1.0, 10.0);
+    _visualPointSizeSpin->setSingleStep (0.5);
+    _visualPointSizeSpin->setValue (4.5);
+
+    _visualResetViewButton = new QPushButton (tr("Fit"), _visualizationTab);
+    _visualExportPngButton = new QPushButton (tr("Export PNG"), _visualizationTab);
 
     controls->addWidget (new QLabel (tr("Source:"), _visualizationTab), 0, 0);
     controls->addWidget (_visualSourceCombo, 0, 1);
@@ -2012,7 +2039,14 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     controls->addWidget (_visualShowWarningCheck, 1, 2);
     controls->addWidget (_visualShowFailCheck, 1, 3);
     controls->addWidget (_visualShowLabelsCheck, 1, 4);
-    controls->setColumnStretch (6, 1);
+    controls->addWidget (_visualShowUnknownCheck, 1, 5);
+    controls->addWidget (_visualShowGridCheck, 2, 1);
+    controls->addWidget (_visualShowLegendCheck, 2, 2);
+    controls->addWidget (new QLabel (tr("Point size:"), _visualizationTab), 2, 3);
+    controls->addWidget (_visualPointSizeSpin, 2, 4);
+    controls->addWidget (_visualResetViewButton, 2, 5);
+    controls->addWidget (_visualExportPngButton, 2, 6);
+    controls->setColumnStretch (7, 1);
     layout->addLayout (controls);
 
     _visualSummaryLabel = new QLabel (tr("Points: 0"), _visualizationTab);
@@ -2020,6 +2054,100 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
 
     _visualPlot = new KinematicAnalysisPlotWidget (_visualizationTab);
     layout->addWidget (_visualPlot, 1);
+
+    // P8:连接控件
+    connect (_visualSourceCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (updateVisualizationControls ()));
+    connect (_visualShowUnknownCheck, SIGNAL (stateChanged (int)),
+             this, SLOT (refreshVisualization ()));
+    connect (_visualShowGridCheck, SIGNAL (stateChanged (int)),
+             this, SLOT (refreshVisualization ()));
+    connect (_visualShowLegendCheck, SIGNAL (stateChanged (int)),
+             this, SLOT (refreshVisualization ()));
+    connect (_visualPointSizeSpin, SIGNAL (valueChanged (double)),
+             this, SLOT (refreshVisualization ()));
+    connect (_visualResetViewButton, SIGNAL (clicked ()),
+             this, SLOT (resetVisualizationView ()));
+    connect (_visualExportPngButton, SIGNAL (clicked ()),
+             this, SLOT (exportVisualizationPng ()));
+    updateVisualizationControls ();
+}
+
+void KinematicAnalysisWidget::updateVisualizationControls ()
+{
+    if (_visualSourceCombo == NULL || _visualColorModeCombo == NULL)
+        return;
+
+    const VisualPointSource source =
+        _visualSourceCombo->currentData ().toInt () == 1 ?
+            VisualPointSource::Workspace :
+        _visualSourceCombo->currentData ().toInt () == 2 ?
+            VisualPointSource::PoseReachability :
+            VisualPointSource::TaskPoint;
+
+    const QVariant currentData = _visualColorModeCombo->currentData ();
+    VisualScalarMode currentMode = currentData.isValid () ?
+        static_cast< VisualScalarMode > (currentData.toInt ()) :
+        defaultVisualScalarModeForSource (source);
+    if (!visualScalarModeSupported (source, currentMode))
+        currentMode = defaultVisualScalarModeForSource (source);
+
+    const bool blocked = _visualColorModeCombo->blockSignals (true);
+    _visualColorModeCombo->clear ();
+    const std::vector< VisualScalarMode > modes =
+        supportedVisualScalarModes (source);
+    for (VisualScalarMode mode : modes) {
+        _visualColorModeCombo->addItem (
+            visualScalarModeText (mode), static_cast< int > (mode));
+    }
+    const int index = _visualColorModeCombo->findData (
+        static_cast< int > (currentMode));
+    _visualColorModeCombo->setCurrentIndex (index >= 0 ? index : 0);
+    _visualColorModeCombo->blockSignals (blocked);
+
+    refreshVisualization ();
+}
+
+void KinematicAnalysisWidget::resetVisualizationView ()
+{
+    refreshVisualization ();
+    setStatus (tr("Visualization fitted to visible data."));
+}
+
+void KinematicAnalysisWidget::exportVisualizationPng ()
+{
+    if (_visualPlot == NULL) {
+        setStatus (tr("No visualization plot to export."));
+        return;
+    }
+    const QString path = QFileDialog::getSaveFileName (
+        this, tr("Export visualization PNG"), QString (),
+        tr("PNG images (*.png)"));
+    if (path.isEmpty ())
+        return;
+    const QImage image = _visualPlot->renderToImage (QSize (1400, 900));
+    if (!image.save (path, "PNG")) {
+        setStatus (tr("Failed to export visualization PNG."));
+        return;
+    }
+    setStatus (tr("Exported visualization PNG to %1.").arg (path));
+}
+
+void KinematicAnalysisWidget::openPoseReachabilityInVisualization ()
+{
+    if (_visualSourceCombo != NULL)
+        _visualSourceCombo->setCurrentIndex (2);
+    updateVisualizationControls ();
+
+    if (_visualColorModeCombo != NULL) {
+        const int index = _visualColorModeCombo->findData (
+            static_cast< int > (VisualScalarMode::Coverage));
+        if (index >= 0)
+            _visualColorModeCombo->setCurrentIndex (index);
+    }
+    if (_tabs != NULL && _visualizationTab != NULL)
+        _tabs->setCurrentWidget (_visualizationTab);
+    refreshVisualization ();
 }
 
 void KinematicAnalysisWidget::refreshVisualization ()
@@ -2028,14 +2156,18 @@ void KinematicAnalysisWidget::refreshVisualization ()
         _visualProjectionCombo == NULL || _visualColorModeCombo == NULL)
         return;
 
-    const int source = _visualSourceCombo->currentData ().toInt ();
+    const int sourceKind = _visualSourceCombo->currentData ().toInt ();
+    const VisualPointSource source =
+        sourceKind == 1 ? VisualPointSource::Workspace :
+        sourceKind == 2 ? VisualPointSource::PoseReachability :
+                          VisualPointSource::TaskPoint;
     const VisualProjection projection =
         static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ());
     const VisualScalarMode scalarMode =
         static_cast< VisualScalarMode > (_visualColorModeCombo->currentData ().toInt ());
 
     AnalysisVisualData data;
-    if (source == 0) {
+    if (sourceKind == 0) {
         std::vector< TaskPointReachabilityResult > rows;
         if (_taskPointModel != nullptr) {
             const int rowCount = _taskPointModel->rowCount ();
@@ -2053,7 +2185,7 @@ void KinematicAnalysisWidget::refreshVisualization ()
         }
         data = visualDataFromTaskPointResults (rows, scalarMode);
     }
-    else if (source == 1) {
+    else if (sourceKind == 1) {
         data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode);
     }
     else {
@@ -2065,12 +2197,25 @@ void KinematicAnalysisWidget::refreshVisualization ()
         _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked (),
         _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked (),
         _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked (),
-        true);  // showUnknown 暂时硬编码 true,Task 3 连接控件后恢复为控件值
+        _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ());
     _visualPlot->setShowLabels (_visualShowLabelsCheck != NULL &&
                                 _visualShowLabelsCheck->isChecked ());
+    _visualPlot->setShowGrid (_visualShowGridCheck == NULL ||
+                              _visualShowGridCheck->isChecked ());
+    _visualPlot->setShowLegend (_visualShowLegendCheck == NULL ||
+                                _visualShowLegendCheck->isChecked ());
+    _visualPlot->setPointRadius (_visualPointSizeSpin != NULL ?
+        _visualPointSizeSpin->value () : 4.5);
     _visualPlot->setVisualData (data);
 
     if (_visualSummaryLabel != NULL) {
+        AnalysisVisualFilters filters;
+        filters.showPass = _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked ();
+        filters.showWarning = _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked ();
+        filters.showFail = _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked ();
+        filters.showUnknown = _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ();
+        const AnalysisVisualStatusSummary summary = summarizeVisualData (data, filters);
+
         QString scalarRange = tr("no finite scalar");
         if (data.hasFiniteScalar) {
             scalarRange = tr("%1 .. %2")
@@ -2078,8 +2223,17 @@ void KinematicAnalysisWidget::refreshVisualization ()
                 .arg (QString::number (data.scalarMax, 'g', 6));
         }
         _visualSummaryLabel->setText (
-            tr("Points: %1    Projection: %2    Color: %3    Scalar range: %4")
-                .arg (static_cast< int > (data.points.size ()))
+            tr("%1: %2 point(s), %3 visible    Pass: %4    Warning: %5    Fail: %6    "
+               "Unknown: %7    Collision: %8    Projection: %9    Color: %10    "
+               "Scalar range: %11")
+                .arg (visualPointSourceText (source))
+                .arg (static_cast< int > (summary.totalCount))
+                .arg (static_cast< int > (summary.visibleCount))
+                .arg (static_cast< int > (summary.passCount))
+                .arg (static_cast< int > (summary.warningCount))
+                .arg (static_cast< int > (summary.failCount))
+                .arg (static_cast< int > (summary.unknownCount))
+                .arg (static_cast< int > (summary.collisionCount))
                 .arg (visualProjectionText (projection))
                 .arg (visualScalarModeText (scalarMode))
                 .arg (scalarRange));
@@ -3341,6 +3495,7 @@ void KinematicAnalysisWidget::openWorkspaceInVisualization ()
 {
     if (_visualSourceCombo != NULL)
         _visualSourceCombo->setCurrentIndex (1);
+    updateVisualizationControls ();
     if (_visualColorModeCombo != NULL && _workspaceColorModeCombo != NULL) {
         const int workspaceMode = _workspaceColorModeCombo->currentIndex ();
         const rws::VisualScalarMode scalar =
@@ -3505,9 +3660,11 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
     }
     _poseResultTable->resizeColumnsToContents ();
 
-    // P4:有数据时启用导出按钮。
+    // P4:有数据时启用导出和可视化按钮。
     if (_poseExportButton != NULL)
         _poseExportButton->setEnabled (!samples.empty ());
+    if (_poseOpenVisualizationButton != NULL)
+        _poseOpenVisualizationButton->setEnabled (!samples.empty ());
     refreshVisualization ();
 }
 

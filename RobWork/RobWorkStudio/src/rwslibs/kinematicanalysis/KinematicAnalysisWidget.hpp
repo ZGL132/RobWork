@@ -82,7 +82,11 @@ class KinematicAnalysisWidget : public QWidget
                                          qulonglong plannedTargets);
     void handlePoseReachabilityFinished ();
     void exportPoseReachabilityCsv ();
+    void updateVisualizationControls ();
     void refreshVisualization ();
+    void resetVisualizationView ();
+    void exportVisualizationPng ();
+    void openPoseReachabilityInVisualization ();
     void refreshReport ();
     void exportReportJson ();
     void exportReportCsv ();
@@ -206,6 +210,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseAnalyzeButton;
     QPushButton* _poseExportButton;
     QPushButton* _poseCancelButton;
+    QPushButton* _poseOpenVisualizationButton;
     QFutureWatcher< std::vector< PoseReachabilitySample > >* _poseReachabilityWatcher;
     bool _poseReachabilityRunActive;
     std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
@@ -222,7 +227,13 @@ class KinematicAnalysisWidget : public QWidget
     QCheckBox* _visualShowPassCheck;
     QCheckBox* _visualShowWarningCheck;
     QCheckBox* _visualShowFailCheck;
+    QCheckBox* _visualShowUnknownCheck;
     QCheckBox* _visualShowLabelsCheck;
+    QCheckBox* _visualShowGridCheck;
+    QCheckBox* _visualShowLegendCheck;
+    QDoubleSpinBox* _visualPointSizeSpin;
+    QPushButton* _visualResetViewButton;
+    QPushButton* _visualExportPngButton;
     QLabel* _visualSummaryLabel;
     KinematicAnalysisPlotWidget* _visualPlot;
 
