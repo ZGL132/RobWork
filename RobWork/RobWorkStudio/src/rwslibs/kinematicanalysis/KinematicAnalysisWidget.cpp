@@ -10,6 +10,7 @@
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
 #include "KinematicAnalysisPoseReachability.hpp"
+#include "KinematicAnalysisCollision.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -289,6 +290,12 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _workspaceColorModeCombo(NULL),
     _workspaceRunButton(NULL),
     _workspaceExportButton(NULL),
+    _workspaceCancelButton(NULL),
+    _workspaceWatcher (new QFutureWatcher< std::vector< WorkspaceSample > > (this)),
+    _workspaceRunActive (false),
+    _workspaceCancelRequested (std::make_shared< std::atomic_bool > (false)),
+    _workspaceProgressBar (NULL),
+    _workspaceProgressLabel (NULL),
     _workspaceSummaryLabel(NULL),
     _workspaceTable(NULL),
     _poseSourceCombo(NULL),
@@ -651,6 +658,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              SIGNAL (finished ()),
              this,
              SLOT (handlePoseReachabilityFinished ()));
+    connect (_workspaceWatcher,
+             SIGNAL (finished ()),
+             this,
+             SLOT (handleWorkspaceFinished ()));
 
     _tabs->addTab (_ikTab,         tr("IK"));
     _tabs->addTab (_taskPointTab,  tr("Task points"));
@@ -707,6 +718,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_taskPointModel, &QAbstractItemModel::rowsRemoved,
              this, [this] () { refreshVisualization (); });
     connect (_workspaceRunButton, SIGNAL (clicked ()), this, SLOT (sampleWorkspace ()));
+    connect (_workspaceCancelButton, SIGNAL (clicked ()), this, SLOT (cancelWorkspaceSampling ()));
     connect (_workspaceExportButton, SIGNAL (clicked ()), this, SLOT (exportWorkspaceCsv ()));
     connect (_poseAddRowButton, SIGNAL (clicked ()), this, SLOT (addPoseReachabilityRow ()));
     connect (_poseAnalyzeButton, SIGNAL (clicked ()), this, SLOT (analyzePoseReachability ()));
@@ -1838,9 +1850,18 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     controls->addWidget (_workspaceColorModeCombo, 1, 3);
     controls->addWidget (new QLabel (tr("Seed:"), _workspaceTab), 2, 0);
     controls->addWidget (_workspaceSeedSpin, 2, 1);
+    _workspaceCancelButton = new QPushButton (tr("Cancel"), _workspaceTab);
+    _workspaceCancelButton->setEnabled (false);
+    _workspaceProgressBar = new QProgressBar (_workspaceTab);
+    _workspaceProgressBar->setRange (0, 1);
+    _workspaceProgressBar->setValue (0);
+    _workspaceProgressBar->setTextVisible (false);
+    _workspaceProgressLabel = new QLabel (tr("Progress: 0 / 0 sample(s)"), _workspaceTab);
+
     controls->addWidget (_workspaceRunButton, 3, 0);
     controls->addWidget (_workspaceExportButton, 3, 1);
     controls->addWidget (_workspaceOpenVisualizationButton, 3, 2);
+    controls->addWidget (_workspaceCancelButton, 3, 3);
     layout->addLayout (controls);
 
     _workspaceSummaryLabel = new QLabel (tr("Samples: 0    Collision-free: 0    Avg manipulability: -"),
@@ -1851,6 +1872,9 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     // 都能立即看到 Grid 模式会被截断。
     _workspaceDiagnosticsLabel = new QLabel (tr("Plan: -"), _workspaceTab);
     layout->addWidget (_workspaceDiagnosticsLabel);
+    // P9:Workspace 进度条
+    layout->addWidget (_workspaceProgressBar);
+    layout->addWidget (_workspaceProgressLabel);
 
     _workspaceTable = new QTableWidget (_workspaceTab);
     _workspaceTable->setColumnCount (9);
@@ -3428,16 +3452,144 @@ void KinematicAnalysisWidget::sampleWorkspace ()
             if (btn != nullptr) btn->setEnabled (true);
         }
     };
-    const SamplingGuard guard (_workspaceRunButton);
-    _workspaceSamples = analyzer.sampleWorkspace (
-        device, tcpFrame, currentState (), config, collisionDetector);
+    // P9:async — 后台执行,不阻塞 UI
+    const rw::kinematics::State runState = currentState ();
+    const rw::core::Ptr< rw::models::Device > runDevice = device;
+    const rw::core::Ptr< const rw::kinematics::Frame > runTcpFrame = tcpFrame;
+    const KinematicThresholds runThresholds = _thresholds;
+    const rw::core::Ptr< rw::models::WorkCell > runWorkCell =
+        _studio != NULL ? _studio->getWorkCell () : NULL;
 
+    const std::size_t plannedSamples =
+        rws::plannedWorkspaceSampleCount (
+            config, runDevice->getDOF (), NULL);
+    updateWorkspaceProgress (0, static_cast< qulonglong > (plannedSamples));
+
+    _workspaceRunActive = true;
+    if (_workspaceCancelRequested)
+        _workspaceCancelRequested->store (false);
+    if (_workspaceRunButton != NULL)
+        _workspaceRunButton->setEnabled (false);
+    if (_workspaceCancelButton != NULL)
+        _workspaceCancelButton->setEnabled (true);
+    QApplication::setOverrideCursor (Qt::WaitCursor);
+    setStatus (tr("Workspace sampling running..."));
+
+    struct WorkspaceRunContext {
+        std::shared_ptr< std::atomic_bool > cancelFlag;
+        QPointer< KinematicAnalysisWidget > widget;
+    };
+    const std::shared_ptr< WorkspaceRunContext > runContext =
+        std::make_shared< WorkspaceRunContext > ();
+    runContext->cancelFlag = _workspaceCancelRequested;
+    runContext->widget = this;
+
+    WorkspaceSamplingRunCallbacks callbacks;
+    callbacks.isCancellationRequested = [] (void* userData) -> bool {
+        const WorkspaceRunContext* ctx =
+            static_cast< const WorkspaceRunContext* > (userData);
+        return ctx != NULL && ctx->cancelFlag && ctx->cancelFlag->load ();
+    };
+    callbacks.onProgress = [] (std::size_t cSamples, std::size_t pSamples,
+                               void* userData) {
+        WorkspaceRunContext* ctx = static_cast< WorkspaceRunContext* > (userData);
+        if (ctx == NULL || ctx->widget.isNull ()) return;
+        QMetaObject::invokeMethod (
+            ctx->widget.data (), "updateWorkspaceProgress",
+            Qt::QueuedConnection,
+            Q_ARG (qulonglong, static_cast< qulonglong > (cSamples)),
+            Q_ARG (qulonglong, static_cast< qulonglong > (pSamples)));
+    };
+    callbacks.userData = runContext.get ();
+
+    QFuture< std::vector< WorkspaceSample > > future = QtConcurrent::run (
+        [runDevice, runTcpFrame, runState, config, runThresholds,
+         callbacks, runContext, runWorkCell] () {
+            KinematicAnalyzer worker;
+            worker.setThresholds (runThresholds);
+            const rw::core::Ptr< rw::proximity::CollisionDetector > detector =
+                config.checkCollision ?
+                    makeKinematicAnalysisCollisionDetector (runWorkCell) : NULL;
+            WorkspaceSamplingConfig workerConfig = config;
+            if (config.checkCollision && detector == NULL)
+                workerConfig.checkCollision = false;
+            return worker.sampleWorkspace (
+                runDevice, runTcpFrame, runState, workerConfig,
+                detector, callbacks);
+        });
+    _workspaceWatcher->setFuture (future);
+}
+
+void KinematicAnalysisWidget::cancelWorkspaceSampling ()
+{
+    if (!_workspaceRunActive || !_workspaceCancelRequested)
+        return;
+    _workspaceCancelRequested->store (true);
+    if (_workspaceCancelButton != NULL)
+        _workspaceCancelButton->setEnabled (false);
+    setStatus (tr("Workspace sampling cancel requested..."));
+}
+
+static const int MaxWorkspaceProgressBarSteps = 1000000;
+
+void KinematicAnalysisWidget::updateWorkspaceProgress (
+    qulonglong completedSamples, qulonglong plannedSamples)
+{
+    const qulonglong boundedCompleted = plannedSamples == 0 ? 0 :
+        std::min< qulonglong > (completedSamples, plannedSamples);
+    const int barMax = plannedSamples >
+            static_cast< qulonglong > (MaxWorkspaceProgressBarSteps) ?
+        MaxWorkspaceProgressBarSteps :
+        static_cast< int > (plannedSamples);
+    const int barValue = plannedSamples == 0 ? 0 :
+        static_cast< int > (
+            (static_cast< double > (boundedCompleted) /
+             static_cast< double > (plannedSamples)) *
+            static_cast< double > (barMax));
+
+    if (_workspaceProgressBar != NULL) {
+        _workspaceProgressBar->setRange (0, barMax);
+        _workspaceProgressBar->setValue (barValue);
+    }
+    if (_workspaceProgressLabel != NULL) {
+        const double pct = plannedSamples == 0 ? 0.0 :
+            100.0 * static_cast< double > (boundedCompleted) /
+                static_cast< double > (plannedSamples);
+        _workspaceProgressLabel->setText (
+            tr("Progress: %1 / %2 sample(s) (%3%)")
+                .arg (static_cast< qulonglong > (boundedCompleted))
+                .arg (static_cast< qulonglong > (plannedSamples))
+                .arg (QString::number (pct, 'f', 1)));
+    }
+}
+
+void KinematicAnalysisWidget::handleWorkspaceFinished ()
+{
+    QApplication::restoreOverrideCursor ();
+    _workspaceRunActive = false;
+    if (_workspaceRunButton != NULL)
+        _workspaceRunButton->setEnabled (true);
+    if (_workspaceCancelButton != NULL)
+        _workspaceCancelButton->setEnabled (false);
+
+    const std::vector< WorkspaceSample > samples = _workspaceWatcher->result ();
+    const bool wasCanceled =
+        _workspaceCancelRequested && _workspaceCancelRequested->load ();
+    _workspaceSamples = samples;
     applyWorkspaceResults (_workspaceSamples);
-    const QString collisionNote = collisionUnavailable ?
-        tr(" Collision checking was unavailable.") : QString ();
-    setStatus (tr("Workspace sampling completed with %1 sample(s).%2")
-                   .arg (static_cast< int > (_workspaceSamples.size ())).arg (collisionNote));
+    updateWorkspaceProgress (
+        static_cast< qulonglong > (_workspaceSamples.size ()),
+        static_cast< qulonglong > (_workspaceSamples.size ()));
     updateReportSummary ();
+
+    if (wasCanceled) {
+        setStatus (tr("Workspace sampling canceled after %1 sample(s).")
+                       .arg (static_cast< int > (_workspaceSamples.size ())));
+    }
+    else {
+        setStatus (tr("Workspace sampling completed with %1 sample(s).")
+                       .arg (static_cast< int > (_workspaceSamples.size ())));
+    }
 }
 
 // updateWorkspaceControls:P4 把当前控件值合成 WorkspaceSamplingConfig,
@@ -3485,6 +3637,12 @@ void KinematicAnalysisWidget::updateWorkspaceControls ()
                               : QString ()));
         }
     }
+
+    // P9:运行中禁用 Run 按钮,启用 Cancel。
+    if (_workspaceRunButton != NULL)
+        _workspaceRunButton->setEnabled (!_workspaceRunActive);
+    if (_workspaceCancelButton != NULL)
+        _workspaceCancelButton->setEnabled (_workspaceRunActive);
 }
 
 // openWorkspaceInVisualization:P4 把 Visualization 切到 Workspace source,

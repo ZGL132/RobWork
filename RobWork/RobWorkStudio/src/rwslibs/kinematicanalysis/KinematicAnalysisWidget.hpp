@@ -72,8 +72,12 @@ class KinematicAnalysisWidget : public QWidget
     void openSelectedTaskPointInIk ();
     void updateTaskPointSelectionButtons ();
     void sampleWorkspace ();
+    void cancelWorkspaceSampling ();
     void exportWorkspaceCsv ();
     void updateWorkspaceControls ();
+    void updateWorkspaceProgress (qulonglong completedSamples,
+                                  qulonglong plannedSamples);
+    void handleWorkspaceFinished ();
     void openWorkspaceInVisualization ();
     void addPoseReachabilityRow ();
     void updatePoseReachabilityControls ();
@@ -198,6 +202,12 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _workspaceRunButton;
     QPushButton* _workspaceExportButton;
     QPushButton* _workspaceOpenVisualizationButton;
+    QPushButton* _workspaceCancelButton;
+    QFutureWatcher< std::vector< WorkspaceSample > >* _workspaceWatcher;
+    bool _workspaceRunActive;
+    std::shared_ptr< std::atomic_bool > _workspaceCancelRequested;
+    QProgressBar* _workspaceProgressBar;
+    QLabel* _workspaceProgressLabel;
     QLabel* _workspaceSummaryLabel;
     QLabel* _workspaceDiagnosticsLabel;
     QTableWidget* _workspaceTable;
