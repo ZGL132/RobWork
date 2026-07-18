@@ -75,14 +75,18 @@ Controls:
 - `Directions`: number of directions sampled on the unit sphere (clamped to [0, 1000]).
 - `Rolls`: number of rotations around the tool Z-axis per direction (clamped to [1, 360]).
 - `Collision`: enables collision checks when a collision detector is available.
-- `Run`: starts the analysis. The Run button is disabled while running; a Cancel button appears to request early stop (cooperative cancellation, current position completes before stopping).
+- `Run`: starts the analysis. The Run button is disabled while running; the Cancel button requests cooperative early stop. Cancellation is checked before each position, before each IK target, and after each IK target returns.
 - `Export CSV`: enabled only when results exist.
 
 The diagnostic label shows the planned IK target count (`positions × directions × rolls`) before running, including a "(capped)" note when the total exceeds 1,000,000.
 
 The summary label reports total/sampled/reachable counts, pass/warning/fail distribution, average coverage, and min/max coverage.
 
-The analysis runs on a background thread (`QtConcurrent`) so the RobWorkStudio window remains responsive during long runs. CSV export includes a comment-line summary (`# pose_reachability_summary,...`) followed by one row per sample.
+The analysis runs on a background thread (`QtConcurrent`) so the RobWorkStudio window remains responsive during long runs. Progress is reported as completed IK targets over planned IK targets via a progress bar and label. If cancellation stops a run mid-position, the current sample is marked `partial`, its `completedIkTargets` / `plannedIkTargets` are exported, and coverage remains `reachableDirections / sampledDirections` for compatibility.
+
+CSV export includes a comment-line summary (`# pose_reachability_summary,...`) followed by one row per sample with `partial`, `completed_ik_targets`, and `planned_ik_targets` columns. Report JSON includes `partial`, `completedIkTargets`, and `plannedIkTargets` on each pose reachability object.
+
+The result table displays at most 500 rows; export, report, and visualization use the full result set.
 
 ## Known Limitations
 
