@@ -78,6 +78,14 @@ if(build)
         $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
     )
 
+    # P4:QtConcurrent 用于位姿可达性后台执行;条件链接兼容 Qt5/Qt6。
+    foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
+        if(TARGET ${qt_concurrent_target})
+            target_link_libraries(${SUBSYS_NAME} PRIVATE ${qt_concurrent_target})
+            target_link_libraries(sdurws_kinematicanalysis_test PRIVATE ${qt_concurrent_target})
+        endif()
+    endforeach()
+
     # 把插件元信息(plugin.json / 加载方式)记录到 RobWorkStudio 的插件清单中。
     rws_plugin_load_details(${SUBSYS_NAME} 1 KinematicAnalysis false)
     if("${RWS_DEFAULT_LIB_TYPE}" STREQUAL "STATIC")

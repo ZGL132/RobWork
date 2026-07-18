@@ -7,6 +7,7 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/State.hpp>
 
+#include <QFutureWatcher>
 #include <QSize>
 #include <QTabWidget>
 #include <QWidget>
@@ -73,6 +74,7 @@ class KinematicAnalysisWidget : public QWidget
     void addPoseReachabilityRow ();
     void updatePoseReachabilityControls ();
     void analyzePoseReachability ();
+    void handlePoseReachabilityFinished ();
     void exportPoseReachabilityCsv ();
     void refreshVisualization ();
     void refreshReport ();
@@ -197,6 +199,10 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseAddRowButton;
     QPushButton* _poseAnalyzeButton;
     QPushButton* _poseExportButton;
+    QPushButton* _poseCancelButton;
+    QFutureWatcher< std::vector< PoseReachabilitySample > >* _poseReachabilityWatcher;
+    bool _poseReachabilityRunActive;
+    bool _poseReachabilityCancelRequested;
     QLabel* _poseSummaryLabel;
     QLabel* _poseDiagnosticsLabel;
     QTableWidget* _posePositionTable;

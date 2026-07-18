@@ -25,6 +25,7 @@
 
 #include <QAbstractItemDelegate>
 #include <QApplication>
+#include <QtConcurrent/QtConcurrent>
 #include <QCheckBox>
 #include <QColor>
 #include <QComboBox>
@@ -295,6 +296,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseAddRowButton(NULL),
     _poseAnalyzeButton(NULL),
     _poseExportButton(NULL),
+    _poseCancelButton(NULL),
+    _poseReachabilityWatcher(NULL),
+    _poseReachabilityRunActive(false),
+    _poseReachabilityCancelRequested(false),
     _poseSummaryLabel(NULL),
     _poseDiagnosticsLabel(NULL),
     _posePositionTable(NULL),
@@ -628,6 +633,14 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     buildVisualizationTab ();
     buildReportTab ();
 
+    // P4:位姿可达性后台执行 watcher。
+    _poseReachabilityWatcher =
+        new QFutureWatcher< std::vector< PoseReachabilitySample > > (this);
+    connect (_poseReachabilityWatcher,
+             SIGNAL (finished ()),
+             this,
+             SLOT (handlePoseReachabilityFinished ()));
+
     _tabs->addTab (_ikTab,         tr("IK"));
     _tabs->addTab (_taskPointTab,  tr("Task points"));
     _tabs->addTab (_workspaceTab,  tr("Workspace"));
@@ -687,6 +700,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_poseAddRowButton, SIGNAL (clicked ()), this, SLOT (addPoseReachabilityRow ()));
     connect (_poseAnalyzeButton, SIGNAL (clicked ()), this, SLOT (analyzePoseReachability ()));
     connect (_poseExportButton, SIGNAL (clicked ()), this, SLOT (exportPoseReachabilityCsv ()));
+    // P4:Cancel 按钮设置取消标志并自禁用,避免重复点击。
+    connect (_poseCancelButton, &QPushButton::clicked, this, [this] () {
+        _poseReachabilityCancelRequested = true;
+        if (_poseCancelButton != NULL)
+            _poseCancelButton->setEnabled (false);
+        setStatus (tr("Pose reachability cancellation requested."));
+    });
     connect (_reportRefreshButton, SIGNAL (clicked ()), this, SLOT (refreshReport ()));
     connect (_reportExportJsonButton, SIGNAL (clicked ()), this, SLOT (exportReportJson ()));
     connect (_reportExportCsvButton, SIGNAL (clicked ()), this, SLOT (exportReportCsv ()));
@@ -1862,6 +1882,8 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseAddRowButton = new QPushButton (tr("Add row"), _poseReachTab);
     _poseAnalyzeButton = new QPushButton (tr("Run"), _poseReachTab);
     _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
+    _poseCancelButton = new QPushButton (tr("Cancel"), _poseReachTab);
+    _poseCancelButton->setEnabled (false);
 
     controls->addWidget (new QLabel (tr("Source:"), _poseReachTab), 0, 0);
     controls->addWidget (_poseSourceCombo, 0, 1);
@@ -1873,6 +1895,7 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     controls->addWidget (_poseAddRowButton, 2, 0);
     controls->addWidget (_poseAnalyzeButton, 2, 1);
     controls->addWidget (_poseExportButton, 2, 2);
+    controls->addWidget (_poseCancelButton, 2, 3);
     layout->addLayout (controls);
 
     _posePositionTable = new QTableWidget (_poseReachTab);
@@ -3455,10 +3478,15 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
     refreshVisualization ();
 }
 
-// analyzePoseReachability:浠庢帶浠舵敹闆嗕綅缃笌鍙傛暟 鈫?璋?analyzer 鈫?鍐欏洖 _poseReachabilitySamples
-// 涓庣粨鏋滆〃;绌轰綅缃洿鎺ョ粰鍑虹姸鎬佹彁绀恒€?
+// analyzePoseReachability:P4 改为 QtConcurrent::run 后台执行,
+// 验证输入后启动异步 worker,跑完由 handlePoseReachabilityFinished 收尾。
 void KinematicAnalysisWidget::analyzePoseReachability ()
 {
+    if (_poseReachabilityRunActive) {
+        setStatus (tr("Pose reachability is already running."));
+        return;
+    }
+
     rw::core::Ptr< rw::models::Device > device = selectedDevice ();
     if (device == NULL) {
         setStatus (tr("Cannot analyze pose reachability: no valid device selected."));
@@ -3481,19 +3509,59 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     config.rollSamples      = _poseRollSamplesSpin->value ();
     config.checkCollision   = _poseCollisionCheck->isChecked ();
 
-    KinematicAnalyzer analyzer;
-    analyzer.setThresholds (_thresholds);
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
-    _poseReachabilitySamples = analyzer.analyzePoseReachability (
-        device, selectedTcpFrame (), currentState (), positions, config, collisionDetector);
+
+    // P4:标记运行中,禁用 Run + 启用 Cancel,设忙光标。
+    _poseReachabilityRunActive = true;
+    _poseReachabilityCancelRequested = false;
+    if (_poseAnalyzeButton != NULL)
+        _poseAnalyzeButton->setEnabled (false);
+    if (_poseCancelButton != NULL)
+        _poseCancelButton->setEnabled (true);
+    QApplication::setOverrideCursor (Qt::WaitCursor);
+    setStatus (tr("Pose reachability running..."));
+
+    // 捕获值而非指针,worker 不触及 widget 成员。
+    const rw::kinematics::State runState = currentState ();
+    const rw::core::Ptr< rw::models::Device > runDevice = device;
+    const rw::core::Ptr< const rw::kinematics::Frame > runTcpFrame = selectedTcpFrame ();
+    const KinematicThresholds runThresholds = _thresholds;
+
+    QFuture< std::vector< PoseReachabilitySample > > future = QtConcurrent::run (
+        [runDevice, runTcpFrame, runState, positions, config,
+         collisionDetector, runThresholds] () {
+            KinematicAnalyzer worker;
+            worker.setThresholds (runThresholds);
+            return worker.analyzePoseReachability (
+                runDevice, runTcpFrame, runState, positions, config,
+                collisionDetector);
+        });
+    _poseReachabilityWatcher->setFuture (future);
+}
+
+// handlePoseReachabilityFinished:P4 后台 worker 完成回调。
+// 恢复 UI 状态,读结果,刷新表格 / report。
+void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
+{
+    QApplication::restoreOverrideCursor ();
+    _poseReachabilityRunActive = false;
+    if (_poseAnalyzeButton != NULL)
+        _poseAnalyzeButton->setEnabled (true);
+    if (_poseCancelButton != NULL)
+        _poseCancelButton->setEnabled (false);
+
+    const std::vector< PoseReachabilitySample > samples =
+        _poseReachabilityWatcher->result ();
+    if (_poseReachabilityCancelRequested) {
+        setStatus (tr("Pose reachability run finished after cancellation request."));
+    }
+    _poseReachabilitySamples = samples;
     applyPoseReachabilityResults (_poseReachabilitySamples);
-    const QString collisionNote = collisionUnavailable ?
-        tr(" Collision checking was unavailable.") : QString ();
-    setStatus (tr("Pose reachability completed for %1 position(s).%2")
-                   .arg (static_cast< int > (_poseReachabilitySamples.size ())).arg (collisionNote));
     updateReportSummary ();
+    setStatus (tr("Pose reachability completed for %1 position(s).")
+                   .arg (static_cast< int > (_poseReachabilitySamples.size ())));
 }
 
 // exportPoseReachabilityCsv:鎶?_poseReachabilitySamples 鍐欎负 CSV,
