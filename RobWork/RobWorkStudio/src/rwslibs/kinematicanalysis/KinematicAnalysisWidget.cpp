@@ -9,6 +9,7 @@
 #include "KinematicAnalysisPlotWidget.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
+#include "KinematicAnalysisPoseReachability.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -295,6 +296,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseAnalyzeButton(NULL),
     _poseExportButton(NULL),
     _poseSummaryLabel(NULL),
+    _poseDiagnosticsLabel(NULL),
     _posePositionTable(NULL),
     _poseResultTable(NULL),
     _visualSourceCombo(NULL),
@@ -1883,6 +1885,23 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseSummaryLabel = new QLabel (tr("Positions: 0    Average coverage: -"), _poseReachTab);
     layout->addWidget (_poseSummaryLabel);
 
+    // P4:诊断标签显示 plan / per-position 方向 / 是否截断。
+    _poseDiagnosticsLabel = new QLabel (
+        tr("Plan: 0 IK target(s), 0 orientation(s) per position"),
+        _poseReachTab);
+    layout->addWidget (_poseDiagnosticsLabel);
+
+    // P4:连接控件变化立即刷新 plan。
+    connect (_poseSourceCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (updatePoseReachabilityControls ()));
+    connect (_poseDirectionSamplesSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (updatePoseReachabilityControls ()));
+    connect (_poseRollSamplesSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (updatePoseReachabilityControls ()));
+    connect (_posePositionTable, SIGNAL (itemChanged (QTableWidgetItem*)),
+             this, SLOT (updatePoseReachabilityControls ()));
+    updatePoseReachabilityControls ();
+
     _poseResultTable = new QTableWidget (_poseReachTab);
     _poseResultTable->setColumnCount (8);
     _poseResultTable->setHorizontalHeaderLabels ({
@@ -1892,6 +1911,9 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseResultTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     configureAnalysisTable (_poseResultTable);
     layout->addWidget (_poseResultTable);
+
+    // P4:无数据时导出按钮禁用。
+    _poseExportButton->setEnabled (false);
 }
 
 // buildReportTab:Report 瀛愰〉甯冨眬銆?
@@ -3352,6 +3374,42 @@ void KinematicAnalysisWidget::addPoseReachabilityRow ()
     setStatus (tr("Added pose reachability position row %1.").arg (row + 1));
 }
 
+// updatePoseReachabilityControls:P4 把当前控件值通过
+// plannedPoseReachabilityTargetCount 算 plan 数,写入 _poseDiagnosticsLabel。
+// source / directions / rolls / positions 变化都触发刷新。
+void KinematicAnalysisWidget::updatePoseReachabilityControls ()
+{
+    if (_poseDiagnosticsLabel == NULL || _poseDirectionSamplesSpin == NULL ||
+        _poseRollSamplesSpin == NULL)
+        return;
+
+    QString validationError;
+    const std::vector< std::array< double, 3 > > positions =
+        collectPoseReachabilityPositions (&validationError);
+
+    PoseReachabilityConfig config;
+    config.directionSamples = _poseDirectionSamplesSpin->value ();
+    config.rollSamples = _poseRollSamplesSpin->value ();
+    config.checkCollision =
+        _poseCollisionCheck == NULL || _poseCollisionCheck->isChecked ();
+
+    PoseReachabilityDiagnostics diagnostics;
+    const std::size_t planned =
+        plannedPoseReachabilityTargetCount (
+            config, positions.size (), &diagnostics);
+
+    const QString cappedText = diagnostics.targetCountCapped ?
+        tr(" (capped)") : QString ();
+    const QString validationText = validationError.isEmpty () ?
+        QString () : tr(" Input warning: %1").arg (validationError);
+    _poseDiagnosticsLabel->setText (
+        tr("Plan: %1 IK target(s), %2 orientation(s) per position%3.%4")
+            .arg (static_cast< int > (planned))
+            .arg (static_cast< int > (diagnostics.plannedDirectionsPerPosition))
+            .arg (cappedText)
+            .arg (validationText));
+}
+
 // applyPoseReachabilityResults:鎶?PoseReachabilitySample 鍐欏埌 _poseResultTable,
 // 鍚屾椂鍒锋柊椤堕儴 summary(Average coverage)銆?
 void KinematicAnalysisWidget::applyPoseReachabilityResults (
@@ -3360,10 +3418,13 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
     if (_poseResultTable == NULL)
         return;
     _poseResultTable->setRowCount (static_cast< int > (samples.size ()));
-    double coverageSum = 0.0;
+
+    // P4:用 helper 算 summary,替代手动累加。
+    const rws::PoseReachabilitySummary summary =
+        rws::summarizePoseReachabilitySamples (samples);
+
     for (std::size_t i = 0; i < samples.size (); ++i) {
-        const PoseReachabilitySample& sample = samples[i];
-        coverageSum += sample.coverage;
+        const rws::PoseReachabilitySample& sample = samples[i];
         const int row = static_cast< int > (i);
         _poseResultTable->setItem (row, 0, makeItem (QString::number (row)));
         _poseResultTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
@@ -3374,14 +3435,23 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
         _poseResultTable->setItem (row, 6, makeItem (QString::number (sample.reachableDirections)));
         _poseResultTable->setItem (row, 7, makeItem (sample.coverage));
     }
-    const double avgCoverage = samples.empty () ? 0.0 :
-        coverageSum / static_cast< double > (samples.size ());
     if (_poseSummaryLabel != NULL) {
-        _poseSummaryLabel->setText (tr("Positions: %1    Average coverage: %2")
-            .arg (static_cast< int > (samples.size ()))
-            .arg (QString::number (avgCoverage, 'f', 3)));
+        _poseSummaryLabel->setText (
+            tr("Positions: %1    Pass: %2    Warning: %3    Fail: %4    "
+               "Average coverage: %5    Min/Max: %6 / %7")
+                .arg (static_cast< int > (summary.totalPositions))
+                .arg (static_cast< int > (summary.passCount))
+                .arg (static_cast< int > (summary.warningCount))
+                .arg (static_cast< int > (summary.failCount))
+                .arg (QString::number (summary.averageCoverage, 'f', 3))
+                .arg (QString::number (summary.minCoverage, 'f', 3))
+                .arg (QString::number (summary.maxCoverage, 'f', 3)));
     }
     _poseResultTable->resizeColumnsToContents ();
+
+    // P4:有数据时启用导出按钮。
+    if (_poseExportButton != NULL)
+        _poseExportButton->setEnabled (!samples.empty ());
     refreshVisualization ();
 }
 
@@ -3430,6 +3500,11 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
 // 鍒椾笌琛ㄦ牸涓€鑷?浣嶇疆 + sampled + reachable + coverage + status)銆?
 void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
 {
+    // P4:空数据提前返回。
+    if (_poseReachabilitySamples.empty ()) {
+        setStatus (tr("No pose reachability samples to export."));
+        return;
+    }
     const QString path = QFileDialog::getSaveFileName (
         this, tr("Export pose reachability"), QString ("pose_reachability.csv"),
         tr("CSV files (*.csv);;All files (*)"));

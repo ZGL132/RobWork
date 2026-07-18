@@ -71,6 +71,7 @@ class KinematicAnalysisWidget : public QWidget
     void updateWorkspaceControls ();
     void openWorkspaceInVisualization ();
     void addPoseReachabilityRow ();
+    void updatePoseReachabilityControls ();
     void analyzePoseReachability ();
     void exportPoseReachabilityCsv ();
     void refreshVisualization ();
@@ -197,6 +198,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _poseAnalyzeButton;
     QPushButton* _poseExportButton;
     QLabel* _poseSummaryLabel;
+    QLabel* _poseDiagnosticsLabel;
     QTableWidget* _posePositionTable;
     QTableWidget* _poseResultTable;
 
