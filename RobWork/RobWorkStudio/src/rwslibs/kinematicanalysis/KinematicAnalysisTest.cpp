@@ -5,6 +5,7 @@
 #include "TaskPointUiLogic.hpp"
 #include "TaskPointTableModel.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
+#include "KinematicAnalysisWorkspace.hpp"
 
 #include <QCoreApplication>
 
@@ -661,6 +662,125 @@ static int testTaskPointReachableRate ()
     const double rate3 = analyzer.calculateReachableRate (allPass);
     if (const int rc = assertNear (rate3, 1.0, 1e-12, "all pass rate = 1"))
         return rc;
+
+    return 0;
+}
+
+// 子套件 6a:KinematicAnalysisWorkspace helper — sanitize config / planned count / summary。
+static int testWorkspaceHelpers ()
+{
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount = -7;
+        config.gridStepsPerJoint = 0;
+        config.randomSeed = 0;
+
+        rws::WorkspaceSamplingDiagnostics diagnostics;
+        const rws::WorkspaceSamplingConfig sanitized =
+            rws::sanitizeWorkspaceSamplingConfig (config, &diagnostics);
+
+        if (const int rc = require (sanitized.sampleCount == 0,
+                                    "workspace sanitize clamps negative sample count"))
+            return rc;
+        if (const int rc = require (sanitized.gridStepsPerJoint == 1,
+                                    "workspace sanitize clamps grid steps"))
+            return rc;
+        if (const int rc = require (sanitized.randomSeed == 1,
+                                    "workspace sanitize adjusts zero seed"))
+            return rc;
+        if (const int rc = require (diagnostics.sampleCountClamped,
+                                    "workspace diagnostics sample count clamped"))
+            return rc;
+        if (const int rc = require (diagnostics.gridStepsClamped,
+                                    "workspace diagnostics grid steps clamped"))
+            return rc;
+        if (const int rc = require (diagnostics.randomSeedAdjusted,
+                                    "workspace diagnostics random seed adjusted"))
+            return rc;
+    }
+
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.mode = rws::WorkspaceSamplingMode::Grid;
+        config.sampleCount = 100;
+        config.gridStepsPerJoint = 4;
+
+        rws::WorkspaceSamplingDiagnostics diagnostics;
+        const std::size_t planned =
+            rws::plannedWorkspaceSampleCount (config, 6, &diagnostics);
+
+        if (const int rc = require (planned == 100,
+                                    "workspace grid planning respects sample cap"))
+            return rc;
+        if (const int rc = require (diagnostics.theoreticalGridSamples == 4096,
+                                    "workspace grid theoretical count"))
+            return rc;
+        if (const int rc = require (diagnostics.gridCountTruncated,
+                                    "workspace grid diagnostics truncated"))
+            return rc;
+    }
+
+    {
+        rws::WorkspaceSample pass;
+        pass.status = rws::AnalysisStatus::Pass;
+        pass.manipulability = 10.0;
+        pass.conditionNumber = 20.0;
+        pass.minJointLimitMargin = 0.3;
+
+        rws::WorkspaceSample warning;
+        warning.status = rws::AnalysisStatus::Warning;
+        warning.manipulability = 2.0;
+        warning.conditionNumber = 100.0;
+        warning.minJointLimitMargin = 0.1;
+
+        rws::WorkspaceSample fail;
+        fail.status = rws::AnalysisStatus::Fail;
+        fail.inCollision = true;
+        fail.manipulability = std::numeric_limits< double >::infinity ();
+        fail.conditionNumber = std::numeric_limits< double >::infinity ();
+        fail.minJointLimitMargin = 0.0;
+
+        const rws::WorkspaceSummary summary = rws::summarizeWorkspaceSamples (
+            std::vector< rws::WorkspaceSample > {pass, warning, fail});
+
+        if (const int rc = require (summary.totalCount == 3, "workspace summary total"))
+            return rc;
+        if (const int rc = require (summary.passCount == 1, "workspace summary pass"))
+            return rc;
+        if (const int rc = require (summary.warningCount == 1, "workspace summary warning"))
+            return rc;
+        if (const int rc = require (summary.failCount == 1, "workspace summary fail"))
+            return rc;
+        if (const int rc = require (summary.collisionCount == 1,
+                                    "workspace summary collision"))
+            return rc;
+        if (const int rc = assertNear (summary.avgManipulability, 6.0, 1e-12,
+                                       "workspace summary avg manipulability"))
+            return rc;
+        if (const int rc = assertNear (summary.p10Manipulability, 2.0, 1e-12,
+                                       "workspace summary p10 manipulability"))
+            return rc;
+        if (const int rc = assertNear (summary.maxCondition, 100.0, 1e-12,
+                                       "workspace summary finite max condition"))
+            return rc;
+        if (const int rc = assertNear (summary.minJointLimitMargin, 0.0, 1e-12,
+                                       "workspace summary min margin"))
+            return rc;
+    }
+
+    {
+        rws::WorkspaceSamplingConfig config;
+        config.sampleCount = -1;
+        rws::WorkspaceSamplingDiagnostics diagnostics;
+        const std::size_t planned =
+            rws::plannedWorkspaceSampleCount (config, 6, &diagnostics);
+        if (const int rc = require (planned == 0,
+                                    "workspace planned count handles negative count"))
+            return rc;
+        if (const int rc = require (diagnostics.sampleCountClamped,
+                                    "workspace planned count reports clamped negative count"))
+            return rc;
+    }
 
     return 0;
 }
@@ -1479,6 +1599,8 @@ static int runAll ()
         return rc;
     if (const int rc = testVisualizationData ())
         return rc;
+    if (const int rc = testWorkspaceHelpers ())
+        return rc;
     if (const int rc = testWorkspaceSampling ())
         return rc;
     if (const int rc = testPoseReachability ())
@@ -1523,6 +1645,8 @@ int main (int argc, char** argv)
         rc = testTaskPointModel ();
     else if (suite == "visualization_data")
         rc = testVisualizationData ();
+    else if (suite == "workspace_helpers")
+        rc = testWorkspaceHelpers ();
     else if (suite == "workspace")
         rc = testWorkspaceSampling ();
     else if (suite == "pose_reachability")
