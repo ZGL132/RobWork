@@ -2,6 +2,7 @@
 #define RWS_KINEMATICANALYSIS_KINEMATICANALYSISWIDGET_HPP
 
 #include "KinematicAnalysisTypes.hpp"
+#include "TaskPointTableModel.hpp"
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/State.hpp>
@@ -169,7 +170,10 @@ private:
     QTableWidget* _ikDetailTable;
 
     // Task points tab
-    QTableWidget* _taskPointTable;
+    // P3-A widget 迁移:QTableWidget → QTableView + TaskPointTableModel。
+    // model 持有数据 + 验证 + 结果;view 只负责渲染与 delegate。
+    QTableView* _taskPointTable;
+    rws::TaskPointTableModel* _taskPointModel;
     QPushButton* _addTaskPointButton;
     QPushButton* _removeTaskPointButton;
     QPushButton* _importTaskPointsButton;

@@ -4,6 +4,8 @@
 #include "KinematicAnalyzer.hpp"
 #include "TaskPointResolver.hpp"
 #include "TaskPointUiLogic.hpp"
+#include "TaskPointTableModel.hpp"
+#include "TaskPointDelegates.hpp"
 
 // 共享的 CSV / JSON 序列化工具,TaskPoint 与本插件复用了它。
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -44,6 +46,9 @@
 #include <QStyledItemDelegate>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTableView>
+#include <QItemSelectionModel>
+#include <QHeaderView>
 #include <QTextStream>
 #include <QVBoxLayout>
 #include <QVariant>
@@ -255,6 +260,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable(NULL),
     _ikDetailTable(NULL),
     _taskPointTable(NULL),
+    _taskPointModel(nullptr),
     _addTaskPointButton(NULL),
     _removeTaskPointButton(NULL),
     _importTaskPointsButton(NULL),
@@ -1677,21 +1683,15 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     buttonRow->addWidget (_openSelectedTaskPointInIkButton, 1, 4);
     tpLayout->addLayout (buttonRow);
 
-    _taskPointTable = new QTableWidget (_taskPointTab);
-    _taskPointTable->setColumnCount (TaskPointColumnCount);
-    _taskPointTable->setHorizontalHeaderLabels ({
-        tr("Enabled"), tr("id"), tr("name"), tr("type"),
-        tr("refFrame"), tr("tcpFrame"),
-        tr("x"), tr("y"), tr("z"),
-        tr("roll"), tr("pitch"), tr("yaw"),
-        tr("posTol"), tr("oriTol"), tr("freeRoll"),
-        tr("weight"), tr("note"),
-        tr("status"), tr("reason"),
-        // P1:批量 IK 结果列
-        tr("raw"), tr("usable"), tr("bestQ"),
-        tr("posErr (m)"), tr("oriErr (deg)"),
-        tr("margin"), tr("condition"), tr("collision")
-    });
+    // P3-A:数据源用 TaskPointTableModel,view 用 QTableView。
+    // model 持有 19 列任务点定义 + 8 列 IK 结果 + 验证状态;
+    // view 只负责渲染与 delegate 交互。
+    _taskPointModel = new rws::TaskPointTableModel (_taskPointTab);
+    _taskPointTable = new QTableView (_taskPointTab);
+    _taskPointTable->setModel (_taskPointModel);
+    QStringList headers = rws::TaskPointTableModel::allHeaderTexts ();
+    for (int i = 0; i < headers.size (); ++i)
+        _taskPointTable->model ()->setHeaderData (i, Qt::Horizontal, headers[i], Qt::DisplayRole);
     _taskPointTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     _taskPointTable->setSelectionMode (QAbstractItemView::SingleSelection);
     _taskPointTable->setAlternatingRowColors (true);
@@ -1699,6 +1699,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
     _taskPointTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
     _taskPointTable->verticalHeader ()->setVisible (false);
+    // model 的 flag 已经把 result 列设成只读,delegate 单独装。
     installTaskPointDelegates ();
     tpLayout->addWidget (_taskPointTable);
 
@@ -1911,12 +1912,8 @@ void KinematicAnalysisWidget::installTaskPointDelegates ()
     if (_taskPointTable == nullptr)
         return;
 
-    QStringList typeValues;
-    typeValues << QStringLiteral ("Generic") << QStringLiteral ("Pick")
-               << QStringLiteral ("Place") << QStringLiteral ("Weld")
-               << QStringLiteral ("Glue") << QStringLiteral ("Inspect")
-               << QStringLiteral ("Screw") << QStringLiteral ("Custom");
-
+    // 收集 refFrame / tcpFrame 候选:WORLD + device base + WorkCell 全部 frame +
+    // 顶部 TCP combo 当前值。addUnique 内部去重,空值跳过。
     QStringList frameValues;
     QStringList tcpValues;
     QSet< QString > frameSeen;
@@ -1928,136 +1925,80 @@ void KinematicAnalysisWidget::installTaskPointDelegates ()
         seen.insert (trimmed);
         values << trimmed;
     };
-
     addUnique (frameValues, frameSeen, QStringLiteral ("WORLD"));
     const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
     if (device != nullptr && device->getBase () != nullptr)
         addUnique (frameValues, frameSeen,
                    QString::fromStdString (device->getBase ()->getName ()));
-
-    if (_workcell != nullptr && _workcell->getWorldFrame () != nullptr) {
-        rw::kinematics::State workcellState = _workcell->getDefaultState ();
-        const std::vector< rw::kinematics::Frame* > frames =
-            rw::kinematics::Kinematics::findAllFrames (_workcell->getWorldFrame (), workcellState);
-        for (const rw::kinematics::Frame* frame : frames) {
-            if (frame == nullptr)
-                continue;
-            const QString name = QString::fromStdString (frame->getName ());
-            addUnique (frameValues, frameSeen, name);
-            addUnique (tcpValues, tcpSeen, name);
-        }
+    // WorkCell 全部 frame 名字 refFrame / tcpFrame 都能用。
+    const QStringList wcFrameNames = collectWorkCellFrameNames (_workcell);
+    for (const QString& name : wcFrameNames) {
+        addUnique (frameValues, frameSeen, name);
+        addUnique (tcpValues, tcpSeen, name);
     }
-
     if (_tcpFrameCombo != nullptr)
         addUnique (tcpValues, tcpSeen, _tcpFrameCombo->currentText ());
     if (tcpValues.isEmpty ())
         addUnique (tcpValues, tcpSeen, QStringLiteral ("TCP"));
 
-    replaceColumnDelegate (_taskPointTable, ColType,
-                           new ComboBoxDelegate (typeValues, _taskPointTable));
-    replaceColumnDelegate (_taskPointTable, ColRefFrame,
-                           new ComboBoxDelegate (frameValues, _taskPointTable));
-    replaceColumnDelegate (_taskPointTable, ColTcpFrame,
-                           new ComboBoxDelegate (tcpValues, _taskPointTable));
-    replaceColumnDelegate (_taskPointTable, ColFreeRoll,
-                           new ComboBoxDelegate (
-                               QStringList () << QStringLiteral ("false")
-                                              << QStringLiteral ("true"),
-                               _taskPointTable));
-
-    for (int column : {ColX, ColY, ColZ}) {
-        replaceColumnDelegate (_taskPointTable, column,
-                               new DoubleSpinDelegate (-1000.0, 1000.0, 6, 0.001,
-                                                       _taskPointTable));
-    }
-    for (int column : {ColRoll, ColPitch, ColYaw}) {
-        replaceColumnDelegate (_taskPointTable, column,
-                               new DoubleSpinDelegate (-360.0, 360.0, 6, 0.1,
-                                                       _taskPointTable));
-    }
-    replaceColumnDelegate (_taskPointTable, ColPosTol,
-                           new DoubleSpinDelegate (0.0, 1000.0, 9, 0.001,
-                                                   _taskPointTable));
-    replaceColumnDelegate (_taskPointTable, ColOriTol,
-                           new DoubleSpinDelegate (0.0, 360.0, 6, 0.1,
-                                                   _taskPointTable));
-    replaceColumnDelegate (_taskPointTable, ColWeight,
-                           new DoubleSpinDelegate (0.0, 1000000000.0, 6, 0.1,
-                                                   _taskPointTable));
+    // P3-A 工厂:内部已经用 setItemDelegateForColumn,直接传 view 即可。
+    rws::installTaskPointDelegates (_taskPointTable, frameValues, tcpValues);
 }
 
-// addTaskPointRow:在 Task point 表格末尾追加一行默认值(0 位姿,Generic 类型,
-// refFrame=WORLD、tcpFrame=当前 TCP 选择;后续用户可在表格里直接编辑。
+// addTaskPointRow:P3-A 迁移到 model API。
+// 在 model 末尾插入一行,默认值与 P2 一致(0 位姿 / Generic / WORLD /
+// 顶部 TCP / 0.001 m posTol / 1.0 deg oriTol / 1.0 weight / enabled)。
 void KinematicAnalysisWidget::addTaskPointRow ()
 {
-    if (_taskPointTable == nullptr)
+    if (_taskPointModel == nullptr)
         return;
-    const int row = _taskPointTable->rowCount ();
-    _taskPointTable->insertRow (row);
-    auto check = [this] (int r, int c) {
-        QTableWidgetItem* item = new QTableWidgetItem ();
-        item->setCheckState (Qt::Checked);
-        item->setFlags ((item->flags () | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
-        _taskPointTable->setItem (r, c, item);
+    const int row = _taskPointModel->rowCount ();
+    _taskPointModel->insertRows (row, 1);
+    auto setStr = [this, row] (int col, const QString& s) {
+        _taskPointModel->setData (_taskPointModel->index (row, col), s, Qt::EditRole);
     };
-    check (row, ColEnabled);
-    auto text = [this] (int r, int c, const QString& s, bool editable) {
-        QTableWidgetItem* item = new QTableWidgetItem (s);
-        if (!editable)
-            item->setFlags (item->flags () & ~Qt::ItemIsEditable);
-        _taskPointTable->setItem (r, c, item);
-    };
-    text (row, ColId,       QString ("P%1").arg (row + 1), true);
-    text (row, ColName,     QString ("Task %1").arg (row + 1), true);
-    text (row, ColType,     QString ("Generic"), true);
-    // refFrame 默认 WORLD,与 RobotAnalysisCore::TaskPoint 默认值一致;
-    // tcpFrame 默认沿用顶部 TCP 下拉框当前选择,空时退回到 "TCP"。
-    text (row, ColRefFrame, QString ("WORLD"), true);
-    {
-        QString defaultTcp = QStringLiteral ("TCP");
-        if (_tcpFrameCombo != nullptr && !_tcpFrameCombo->currentText ().isEmpty ())
-            defaultTcp = _tcpFrameCombo->currentText ();
-        text (row, ColTcpFrame, defaultTcp, true);
-    }
-    text (row, ColX,        QString ("0"), true);
-    text (row, ColY,        QString ("0"), true);
-    text (row, ColZ,        QString ("0"), true);
-    text (row, ColRoll,     QString ("0"), true);
-    text (row, ColPitch,    QString ("0"), true);
-    text (row, ColYaw,      QString ("0"), true);
-    text (row, ColPosTol,   QString ("0.001"), true);
-    text (row, ColOriTol,   QString ("1.0"), true);
-    text (row, ColFreeRoll, QString ("false"), true);
-    text (row, ColWeight,   QString ("1.0"), true);
-    text (row, ColNote,     QString (), true);
-    text (row, ColStatus,   QString ("-"), false);
-    text (row, ColReason,   QString ("-"), false);
-    // P1:8 个批量 IK 结果列只读,默认占位 "-",等 Analyze all 写回。
-    text (row, ColRawCandidates,    QString ("-"), false);
-    text (row, ColUsableSolutions,  QString ("-"), false);
-    text (row, ColBestQ,            QString ("-"), false);
-    text (row, ColPositionError,    QString ("-"), false);
-    text (row, ColOrientationError, QString ("-"), false);
-    text (row, ColMinMargin,        QString ("-"), false);
-    text (row, ColCondition,        QString ("-"), false);
-    text (row, ColCollision,        QString ("-"), false);
+    setStr (ColId,    QString ("P%1").arg (row + 1));
+    setStr (ColName,  QString ("Task %1").arg (row + 1));
+    setStr (ColType,  QStringLiteral ("Generic"));
+    // refFrame 默认 WORLD; tcpFrame 默认沿用顶部 TCP 下拉框。
+    setStr (ColRefFrame, QStringLiteral ("WORLD"));
+    QString defaultTcp = QStringLiteral ("TCP");
+    if (_tcpFrameCombo != nullptr && !_tcpFrameCombo->currentText ().isEmpty ())
+        defaultTcp = _tcpFrameCombo->currentText ();
+    setStr (ColTcpFrame, defaultTcp);
+    setStr (ColX,        QStringLiteral ("0"));
+    setStr (ColY,        QStringLiteral ("0"));
+    setStr (ColZ,        QStringLiteral ("0"));
+    setStr (ColRoll,     QStringLiteral ("0"));
+    setStr (ColPitch,    QStringLiteral ("0"));
+    setStr (ColYaw,      QStringLiteral ("0"));
+    setStr (ColPosTol,   QStringLiteral ("0.001"));
+    setStr (ColOriTol,   QStringLiteral ("1.0"));
+    setStr (ColFreeRoll, QStringLiteral ("false"));
+    setStr (ColWeight,   QStringLiteral ("1.0"));
+    setStr (ColNote,     QString ());
     setTaskPointTableColumnWidths ();
-    setStatus(tr("Added task point row %1.").arg(row + 1));
+    setStatus (tr ("Added task point row %1.").arg (row + 1));
 }
 
-// removeSelectedTaskPointRow:删除当前选中行(没有选中时给出提示)。
+// removeSelectedTaskPointRow:P3-A 迁移到 model API。
 void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
 {
-    if (_taskPointTable == nullptr)
+    if (_taskPointTable == nullptr || _taskPointModel == nullptr)
         return;
-    const int row = _taskPointTable->currentRow ();
-    if (row >= 0) {
-        _taskPointTable->removeRow (row);
-        setStatus(tr("Removed selected task point row."));
+    const QModelIndexList selected = _taskPointTable->selectionModel ()->selectedRows ();
+    if (selected.isEmpty ()) {
+        setStatus (tr ("No task point row selected."));
+        return;
     }
-    else {
-        setStatus(tr("No task point row selected."));
-    }
+    // 删除多个选中行时,从后往前删避免下标错位。
+    QList< int > rows;
+    for (const QModelIndex& idx : selected)
+        rows.append (idx.row ());
+    std::sort (rows.begin (), rows.end (), std::greater< int > ());
+    for (int row : rows)
+        _taskPointModel->removeRows (row, 1);
+    setStatus (tr ("Removed %1 task point row(s).").arg (rows.size ()));
 }
 
 namespace {
@@ -2412,86 +2353,31 @@ std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable (QS
     return points;
 }
 
-// applyTaskPointResults:把分析结果回写到 Task point 表格的 result / reason 两列,
-// 并刷新底部 summary 标签(Enabled / Pass / Warning / Fail / Reachable rate)。
-// 行数与表格行数取小,避免越界(导入 CSV 后行数可能少或多)。
+// applyTaskPointResults:P3-A 迁移到 model API。
+// 把 results 一次性写回 model,model 的 dataChanged 信号让 view 自动刷新;
+// 不再逐 cell setCell,也不必手动维护 status / reason / result 列的同步。
+// 染色与 tooltip 也由 model 的 BackgroundRole / ToolTipRole 负责。
 void KinematicAnalysisWidget::applyTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
 {
-    if (_taskPointTable == nullptr)
+    if (_taskPointModel == nullptr)
         return;
-    const std::size_t n = std::min (results.size (),
-                                    static_cast< std::size_t > (_taskPointTable->rowCount ()));
+
+    // 1) 写回 model;model 内部对每行 hasResult / result 字段赋值。
+    _taskPointModel->setResults (results, reachableRate);
+
+    // 2) 统计 pass / warning / fail / enabled,更新 summary 标签。
     std::size_t passCount = 0, warnCount = 0, failCount = 0, enabledCount = 0;
-    for (std::size_t i = 0; i < n; ++i) {
-        const TaskPointReachabilityResult& r = results[i];
-        const int row = static_cast< int > (i);
-
-        // disabled 行:status=Skipped,reason=Disabled,8 个结果列全 "-"。
-        if (!r.taskPoint.enabled) {
-            setCell (_taskPointTable, row, ColStatus,
-                     QStringLiteral ("Skipped"), false);
-            setCell (_taskPointTable, row, ColReason,
-                     QStringLiteral ("Disabled"), false);
-            setCell (_taskPointTable, row, ColRawCandidates,    QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColUsableSolutions,  QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
+    for (const TaskPointReachabilityResult& r : results) {
+        if (!r.taskPoint.enabled)
             continue;
-        }
         ++enabledCount;
-
-        // enabled 行:取 status / reason + 批量 IK 结果。
-        const char* status =
-            r.status == AnalysisStatus::Pass    ? "Pass" :
-            r.status == AnalysisStatus::Warning ? "Warning" :
-            r.status == AnalysisStatus::Fail    ? "Fail"    : "Unknown";
         if (r.status == AnalysisStatus::Pass)
             ++passCount;
         else if (r.status == AnalysisStatus::Warning)
             ++warnCount;
         else if (r.status == AnalysisStatus::Fail)
             ++failCount;
-        setCell (_taskPointTable, row, ColStatus, QString::fromUtf8 (status), false);
-        QStringList reasons;
-        for (KinematicFailureReason fr : r.failureReasons)
-            reasons << QString::fromUtf8 (rws::toString (fr));
-        const QString reasonText = reasons.isEmpty () ? QString ("-")
-                                                       : reasons.join (QStringLiteral (", "));
-        setCell (_taskPointTable, row, ColReason, reasonText, false);
-
-        // 8 个结果列:rawCandidates / usableSolutions 直接来自 IK 结果;
-        // bestQ / 误差 / margin / condition / collision 从 bestUsableSolution 选。
-        setCell (_taskPointTable, row, ColRawCandidates,
-                 QString::number (static_cast< int > (r.ik.rawCandidateCount)), false);
-        setCell (_taskPointTable, row, ColUsableSolutions,
-                 QString::number (static_cast< int > (r.ik.usableSolutionCount)), false);
-
-        const KinematicIkSolution* best = bestUsableSolution (r.ik);
-        if (best != nullptr) {
-            setCell (_taskPointTable, row, ColBestQ, qVectorText (best->q), false);
-            setCell (_taskPointTable, row, ColPositionError, best->positionErrorMeters, false);
-            setCell (_taskPointTable, row, ColOrientationError, best->orientationErrorDeg, false);
-            setCell (_taskPointTable, row, ColMinMargin, best->minJointLimitMargin, false);
-            setCell (_taskPointTable, row, ColCondition,
-                     std::isinf (best->conditionNumber) ?
-                         tr ("inf") : makeItem (best->conditionNumber)->text (),
-                     false);
-            setCell (_taskPointTable, row, ColCollision,
-                     best->inCollision ? tr ("Yes") : tr ("No"), false);
-        }
-        else {
-            setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
-            setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
-        }
     }
     if (_taskPointSummaryLabel != nullptr) {
         _taskPointSummaryLabel->setText (QString (
@@ -2500,36 +2386,6 @@ void KinematicAnalysisWidget::applyTaskPointResults (
             .arg (QString::number (reachableRate, 'f', 3)));
     }
     setTaskPointTableColumnWidths ();
-
-    // P2:给每行按 status 染色,Pass 浅绿 / Warning 或 Skipped 浅黄 / Fail 浅红;
-    // tooltip 聚合 status / reason / warnings / bestQ 数值,不用打开详情表也能扫读。
-    for (std::size_t i = 0; i < n; ++i) {
-        const TaskPointReachabilityResult& r = results[i];
-        const int row = static_cast<int> (i);
-        QString note;
-        QString bestQText;
-        const rws::KinematicIkSolution* best = bestUsableSolution (r.ik);
-        if (best != nullptr) {
-            bestQText = QStringLiteral ("bestQ=[%1]; posErr=%2 m; oriErr=%3 deg; "
-                                       "margin=%4; condition=%5; collision=%6")
-                .arg (qVectorText (best->q))
-                .arg (QString::number (best->positionErrorMeters, 'g', 6))
-                .arg (QString::number (best->orientationErrorDeg, 'g', 6))
-                .arg (QString::number (best->minJointLimitMargin, 'g', 6))
-                .arg (std::isinf (best->conditionNumber) ?
-                          QStringLiteral ("inf") :
-                          QString::number (best->conditionNumber, 'g', 6))
-                .arg (best->inCollision ? tr ("Yes") : tr ("No"));
-        }
-        if (!bestQText.isEmpty ())
-            note = bestQText;
-        // 取 table 里实际写的 reason 文本,这里读取当前 cell 以保证和
-        // applyTaskPointResults 写入时一致。
-        QTableWidgetItem* reasonItem = _taskPointTable->item (row, ColReason);
-        const QString reasonText = reasonItem == nullptr ?
-            QString () : reasonItem->text ();
-        paintResultStates (_taskPointTable, row, r.status, reasonText, r.ik.warnings, note);
-    }
     updateTaskPointSelectionButtons ();
 }
 
@@ -2537,10 +2393,13 @@ void KinematicAnalysisWidget::applyTaskPointResults (
 //   - 用 RobotAnalysisCsv::taskPointsFromCsv 解析(共享 CSV 序列化);
 //   - 先清空表格,再逐点重建(覆盖式导入);
 //   - result/reason 列固定填 "-",留给后续 Analyze all 写回。
+// importTaskPointsCsv:P3-A 迁移到 model API。
+// 直接 model->setRowsFromTaskPoints(points) 覆盖式导入,
+// 验证由 model 内部跑 RobotAnalysisValidation,失败行标浅红。
 void KinematicAnalysisWidget::importTaskPointsCsv ()
 {
-    if (_taskPointTable == nullptr) {
-        setStatus(tr("Cannot import task points: table is not available."));
+    if (_taskPointModel == nullptr) {
+        setStatus(tr("Cannot import task points: model is not available."));
         return;
     }
     const QString path = QFileDialog::getOpenFileName (
@@ -2567,64 +2426,19 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
         setStatus(tr("Task point import failed: CSV parse error."));
         return;
     }
-    _taskPointTable->setRowCount (0);
-    for (const TaskPoint& p : points) {
-        const int row = _taskPointTable->rowCount ();
-        _taskPointTable->insertRow (row);
-        QTableWidgetItem* enabled = new QTableWidgetItem ();
-        enabled->setCheckState (p.enabled ? Qt::Checked : Qt::Unchecked);
-        enabled->setFlags ((enabled->flags () | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
-        _taskPointTable->setItem (row, ColEnabled, enabled);
-        setCell (_taskPointTable, row, ColId,       QString::fromStdString (p.id), true);
-        setCell (_taskPointTable, row, ColName,     QString::fromStdString (p.name), true);
-        setCell (_taskPointTable, row, ColType,     QString::fromLatin1 (taskPointTypeText (p.type)), true);
-        // refFrame / tcpFrame / freeRoll / note 在老版本会被重置成默认值,
-        // 这里完整回写到表格,保证 CSV → UI → CSV 不丢字段。
-        setCell (_taskPointTable, row, ColRefFrame, QString::fromStdString (p.refFrame), true);
-        setCell (_taskPointTable, row, ColTcpFrame, QString::fromStdString (p.tcpFrame), true);
-        setCell (_taskPointTable, row, ColX,        QString::number (p.position[0]), true);
-        setCell (_taskPointTable, row, ColY,        QString::number (p.position[1]), true);
-        setCell (_taskPointTable, row, ColZ,        QString::number (p.position[2]), true);
-        setCell (_taskPointTable, row, ColRoll,     QString::number (p.rpyDeg[0]), true);
-        setCell (_taskPointTable, row, ColPitch,    QString::number (p.rpyDeg[1]), true);
-        setCell (_taskPointTable, row, ColYaw,      QString::number (p.rpyDeg[2]), true);
-        setCell (_taskPointTable, row, ColPosTol,   QString::number (p.tolerance.positionMeters), true);
-        setCell (_taskPointTable, row, ColOriTol,   QString::number (p.tolerance.orientationDeg), true);
-        setCell (_taskPointTable, row, ColFreeRoll, p.tolerance.allowToolRollFree ?
-                                                  QStringLiteral ("true") :
-                                                  QStringLiteral ("false"), true);
-        setCell (_taskPointTable, row, ColWeight,   QString::number (p.weight), true);
-        setCell (_taskPointTable, row, ColNote,     QString::fromStdString (p.note), true);
-        setCell (_taskPointTable, row, ColStatus,   QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColReason,   QStringLiteral ("-"), false);
-        // P1:8 个结果列只读占位,等待 Analyze all 写回。
-        setCell (_taskPointTable, row, ColRawCandidates,    QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColUsableSolutions,  QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColBestQ,            QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColPositionError,    QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColOrientationError, QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColMinMargin,        QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColCondition,        QStringLiteral ("-"), false);
-        setCell (_taskPointTable, row, ColCollision,        QStringLiteral ("-"), false);
-    }
-    // P0-6:导入后立刻跑 RobotAnalysisValidation,
-    // 失败的行整行标浅红 + tooltip + reason 显示第一条错误。
-    // 不阻止导入,但让用户立即看到哪些点需要修正。
-    // 用 readTaskPointFromRow 完整读出 19 列,逐字段都能被校验命中
-    // (空 id / 空 frame / 负 tolerance / 非法 freeRoll 等等)。
-    // 不要跳过空 id 行 — 空 id 也是错误,需要被显式标红提示用户。
+    _taskPointModel->setRowsFromTaskPoints (points);
     QString validationSummary;
-    validateTaskPointRows (_taskPointTable, nullptr, &validationSummary);
+    _taskPointModel->validateAll (&validationSummary);
     setTaskPointTableColumnWidths ();
-    setStatus(tr("Imported %1 task point(s).").arg(static_cast<int>(points.size())));
+    setStatus (tr ("Imported %1 task point(s).").arg (static_cast<int> (points.size ())));
 }
 
 // exportTaskPointsCsv:把表格当前内容序列化为 CSV 并写入用户指定文件。
 // 写文件用 QFile::write(const char*, qint64) 写出 std::string 原始字节。
 void KinematicAnalysisWidget::exportTaskPointsCsv ()
 {
-    if (_taskPointTable == nullptr) {
-        setStatus(tr("Cannot export task points: table is not available."));
+    if (_taskPointModel == nullptr) {
+        setStatus(tr("Cannot export task points: model is not available."));
         return;
     }
     const QString path = QFileDialog::getSaveFileName (
@@ -2634,9 +2448,9 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
         setStatus(tr("Task point export canceled."));
         return;
     }
-    std::vector< TaskPoint > points;
+    // 先跑 model 验证,空 frame / 负 tolerance 等都被拦截。
     QString validationSummary;
-    if (!validateTaskPointRows (_taskPointTable, &points, &validationSummary)) {
+    if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr("Export validation"),
                               tr("Task points have validation errors:\n\n%1")
                                   .arg (validationSummary));
@@ -2644,7 +2458,9 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
         setTaskPointTableColumnWidths ();
         return;
     }
-    const std::string csv                 = RobotAnalysisCsv::taskPointsToCsv (points);
+    // 验证通过后,从 model 取所有行(完整字段)写到 CSV。
+    const std::vector< TaskPoint > points = _taskPointModel->taskPoints (nullptr);
+    const std::string csv = RobotAnalysisCsv::taskPointsToCsv (points);
     QFile file (path);
     if (!file.open (QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning (this, tr("Export error"),
@@ -2754,9 +2570,9 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
-    std::vector< TaskPoint > points;
+    // P3-A 迁移:从 model 取所有行(完整字段)。
     QString validationSummary;
-    if (!validateTaskPointRows (_taskPointTable, &points, &validationSummary)) {
+    if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr("Analyze validation"),
                               tr("Task points have validation errors:\n\n%1")
                                   .arg (validationSummary));
@@ -2764,10 +2580,11 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
         setTaskPointTableColumnWidths ();
         return;
     }
+    const std::vector< TaskPoint > points = _taskPointModel->taskPoints (nullptr);
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (true, &collisionUnavailable);
-    // P1:切到 workcell-aware overload。tcpFrame 是顶部默认 TCP,
+    // P1:workcell-aware overload。tcpFrame 是顶部默认 TCP,
     // 每行 taskPoint.tcpFrame 由 TaskPointResolver 优先使用。
     const std::vector< TaskPointReachabilityResult > results =
         analyzer.analyzeTaskPoints (
@@ -2787,23 +2604,25 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 //  P2:Task points 专用操作
 // ============================================================================
 
-// hasSelectedEnabledTaskPoint:返回选中的行号 + 该行是否 enabled + row 0-based。
+// hasSelectedEnabledTaskPoint:P3-A 迁移:从 QTableView + model 拿选中行。
 // 0 行 / 选 disabled 行 / 选 Skipped 都视为不可用。
 static bool hasSelectedEnabledTaskPoint (
-    QTableWidget* t, int& rowOut, TaskPoint& taskPointOut, QString& errorOut)
+    QTableView* view, rws::TaskPointTableModel* model,
+    int& rowOut, TaskPoint& taskPointOut, QString& errorOut)
 {
-    if (t == nullptr)
+    if (view == nullptr || model == nullptr)
         return false;
-    const QList<QTableWidgetItem*> selected = t->selectedItems ();
-    if (selected.empty ())
+    const QModelIndexList selected = view->selectionModel ()->selectedRows ();
+    if (selected.isEmpty ())
         return false;
-    const int row = selected.front ()->row ();
-    if (row < 0 || row >= t->rowCount ())
+    const int row = selected.front ().row ();
+    if (row < 0 || row >= model->rowCount ())
         return false;
-    QString rowError;
-    const TaskPoint p = readTaskPointFromRow (t, row, &rowError);
-    if (!rowError.isEmpty ()) {
-        errorOut = rowError;
+    const TaskPoint p = model->taskPointAt (row);
+    if (p.id.empty () && p.name.empty () && p.position[0] == 0.0 &&
+        p.position[1] == 0.0 && p.position[2] == 0.0) {
+        // taskPointAt 越界或空行,等价于 disabled。
+        errorOut = QObject::tr ("Selected task point is invalid.");
         return false;
     }
     if (!p.enabled) {
@@ -2819,25 +2638,19 @@ static bool hasSelectedEnabledTaskPoint (
 // 3 个 selected-only 按钮。按钮在 selected 有效时启用,否则禁用。
 void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
 {
-    if (_taskPointTable == nullptr)
+    if (_taskPointTable == nullptr || _taskPointModel == nullptr)
         return;
     int row = -1;
     TaskPoint taskPoint;
     QString error;
-    const bool enabled = hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error);
+    const bool enabled = hasSelectedEnabledTaskPoint (
+        _taskPointTable, _taskPointModel, row, taskPoint, error);
     if (_analyzeSelectedTaskPointsButton != nullptr)
         _analyzeSelectedTaskPointsButton->setEnabled (enabled);
     if (_applySelectedTaskPointBestQButton != nullptr) {
-        // Apply best Q 还要求 _lastTaskPointResults[row] 里已有 usable solution。
-        bool canApply = enabled;
-        if (canApply && row >= 0 &&
-            static_cast<std::size_t> (row) < _lastTaskPointResults.size ()) {
-            const KinematicIkAnalysisResult& ik = _lastTaskPointResults[row].ik;
-            canApply = bestUsableSolution (ik) != nullptr;
-        }
-        else {
-            canApply = false;
-        }
+        // Apply best Q 还要求 _taskPointModel->bestUsableSolutionForRow 有解。
+        const bool canApply = enabled && row >= 0 &&
+            _taskPointModel->bestUsableSolutionForRow (row) != nullptr;
         _applySelectedTaskPointBestQButton->setEnabled (canApply);
     }
     if (_openSelectedTaskPointInIkButton != nullptr)
@@ -2857,17 +2670,17 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
         setStatus (tr ("Cannot analyze task points: no device available."));
         return;
     }
-    if (_taskPointTable == nullptr)
+    if (_taskPointModel == nullptr || _taskPointTable == nullptr)
         return;
-    const QList<QTableWidgetItem*> selected = _taskPointTable->selectedItems ();
-    if (selected.empty ()) {
+    // P3-A 迁移:从 view 的 selectionModel 拿选中行,不再依赖 QTableWidget 内部。
+    const QModelIndexList selected = _taskPointTable->selectionModel ()->selectedRows ();
+    if (selected.isEmpty ()) {
         setStatus (tr ("Cannot analyze task points: no row selected."));
         return;
     }
-    // 拉所有行校验,保证后续列宽能更新到所有行。
+    // 整表先跑一次 validation,空 frame / 负 tolerance 等都拦截。
     QString validationSummary;
-    std::vector< TaskPoint > allPoints;
-    if (!validateTaskPointRows (_taskPointTable, &allPoints, &validationSummary)) {
+    if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr ("Analyze validation"),
                               tr ("Task points have validation errors:\n\n%1")
                                   .arg (validationSummary));
@@ -2875,8 +2688,8 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
         setTaskPointTableColumnWidths ();
         return;
     }
-    // 第一次跑 / 切到 selected-only 模式,先按表格行数重新对齐 _lastTaskPointResults。
-    const int total = _taskPointTable->rowCount ();
+    const std::vector< TaskPoint > allPoints = _taskPointModel->taskPoints (nullptr);
+    const int total = _taskPointModel->rowCount ();
 
     const std::string deviceName = _deviceCombo->currentText ().toStdString ();
     rw::core::Ptr< rw::models::Device > device = deviceByName (_workcell, deviceName);
@@ -2896,9 +2709,9 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     analyzer.setThresholds (_thresholds);
 
     int analyzed = 0;
-    QSet<int> selectedRows;
-    for (QTableWidgetItem* it : selected)
-        selectedRows.insert (it->row ());
+    QSet< int > selectedRows;
+    for (const QModelIndex& idx : selected)
+        selectedRows.insert (idx.row ());
 
     std::vector< int > rows;
     rows.reserve (static_cast< std::size_t > (selectedRows.size ()));
@@ -2943,33 +2756,22 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
         setStatus (tr ("Cannot import current TCP: no valid TCP frame selected."));
         return;
     }
-    // 复用 IK 页 importCurrentPoseToIk 的位姿读取逻辑。
+    if (_taskPointModel == nullptr)
+        return;
+    // 复用 IK 页 importCurrentPoseToIk 的位姿读取逻辑 + P2 TaskPointUiLogic。
     try {
         const rw::math::Transform3D<> baseTtcp =
             rw::kinematics::Kinematics::frameTframe (
                 device->getBase (), tcpFrame.get (), currentState ());
         const std::string id =
-            QString ("TP_%1").arg (_taskPointTable->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
-        const TaskPoint p = taskPointFromCurrentTcpPose (
+            QString ("TP_%1").arg (_taskPointModel->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
+        TaskPoint p = taskPointFromCurrentTcpPose (
             id, tcpFrame->getName (), device->getBase ()->getName (), baseTtcp, _thresholds);
-        // 用 addTaskPointRow 风格插入新行,然后用 setCell 改写 id/name/pos/rpy。
-        addTaskPointRow ();
-        const int row = _taskPointTable->rowCount () - 1;
-        setCell (_taskPointTable, row, ColId,   QString::fromStdString (p.id),   true);
-        setCell (_taskPointTable, row, ColName, QString::fromStdString (p.name), true);
-        setCell (_taskPointTable, row, ColRefFrame, QString::fromStdString (p.refFrame), true);
-        setCell (_taskPointTable, row, ColTcpFrame, QString::fromStdString (p.tcpFrame), true);
-        setCell (_taskPointTable, row, ColX,    QString::number (p.position[0]), true);
-        setCell (_taskPointTable, row, ColY,    QString::number (p.position[1]), true);
-        setCell (_taskPointTable, row, ColZ,    QString::number (p.position[2]), true);
-        setCell (_taskPointTable, row, ColRoll, QString::number (p.rpyDeg[0]),   true);
-        setCell (_taskPointTable, row, ColPitch,QString::number (p.rpyDeg[1]),   true);
-        setCell (_taskPointTable, row, ColYaw,  QString::number (p.rpyDeg[2]),   true);
-        setCell (_taskPointTable, row, ColPosTol, QString::number (p.tolerance.positionMeters), true);
-        setCell (_taskPointTable, row, ColOriTol, QString::number (p.tolerance.orientationDeg), true);
-        setCell (_taskPointTable, row, ColFreeRoll, p.tolerance.allowToolRollFree ? tr ("true") : tr ("false"), true);
-        setCell (_taskPointTable, row, ColWeight, QString::number (p.weight), true);
-        setCell (_taskPointTable, row, ColNote, QString::fromStdString (p.note), true);
+        // P3-A 迁移:用 model->appendTaskPoint 一次性插入 + 触发验证。
+        const int row = _taskPointModel->appendTaskPoint (p);
+        QString validationSummary;
+        _taskPointModel->validateAll (&validationSummary);
+        setTaskPointTableColumnWidths ();
         setStatus (tr ("Imported current TCP as task point row %1.").arg (row + 1));
     }
     catch (const std::exception& ex) {
@@ -2978,9 +2780,9 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
     updateTaskPointSelectionButtons ();
 }
 
-// applySelectedTaskPointBestQ:把选中行 _lastTaskPointResults 里 best usable
-// solution 的 q 写回 RWS state。
-// 必须先 Analyze 一次,否则 _lastTaskPointResults 为空。
+// applySelectedTaskPointBestQ:P3-A 迁移到 model。
+// 从 _taskPointModel->bestUsableSolutionForRow 拿 best Q,直接用
+// isUsableIkSolution 二次校验,避免 _lastTaskPointResults 索引错位。
 void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
 {
     if (_workcell == nullptr || _studio == nullptr) {
@@ -2990,16 +2792,14 @@ void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
     int row = -1;
     TaskPoint taskPoint;
     QString error;
-    if (!hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error)) {
+    if (!hasSelectedEnabledTaskPoint (
+            _taskPointTable, _taskPointModel, row, taskPoint, error)) {
         setStatus (tr ("Cannot apply task point best Q: %1").arg (error));
         return;
     }
-    if (static_cast<std::size_t> (row) >= _lastTaskPointResults.size ()) {
-        setStatus (tr ("Cannot apply task point best Q: no analysis result for selected row."));
-        return;
-    }
-    const KinematicIkAnalysisResult& ik = _lastTaskPointResults[row].ik;
-    const KinematicIkSolution* best = bestUsableSolution (ik);
+    const KinematicIkSolution* best =
+        _taskPointModel != nullptr ?
+            _taskPointModel->bestUsableSolutionForRow (row) : nullptr;
     if (best == nullptr) {
         setStatus (tr ("Cannot apply task point best Q: no usable IK solution for selected row."));
         return;
@@ -3025,8 +2825,9 @@ void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
                   .arg (static_cast<int> (best->q.size ())));
 }
 
-// openSelectedTaskPointInIk:把选中行通过 TaskPointResolver 解析为 device-base
-// 目标,填到 IK 页 6 个 spin + name + TCP 切换,只填不 Solve。
+// openSelectedTaskPointInIk:P3-A 迁移到 model。
+// 选中行直接从 _taskPointModel->taskPointAt 拿 TaskPoint,
+// 通过 TaskPointResolver 解析为 device-base 目标,填到 IK 页。
 void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
 {
     if (_workcell == nullptr) {
@@ -3036,7 +2837,8 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
     int row = -1;
     TaskPoint taskPoint;
     QString error;
-    if (!hasSelectedEnabledTaskPoint (_taskPointTable, row, taskPoint, error)) {
+    if (!hasSelectedEnabledTaskPoint (
+            _taskPointTable, _taskPointModel, row, taskPoint, error)) {
         setStatus (tr ("Cannot open in IK: %1").arg (error));
         return;
     }
@@ -3049,20 +2851,17 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
     const ResolvedTaskPoint resolved = resolveTaskPoint (
         _workcell, device, tcpFrame, currentState (), taskPoint);
     if (!resolved.valid) {
-        // 解析失败,把首条警告写到状态栏;不做写入。
         const QString msg = resolved.warnings.empty () ?
             tr ("Task point cannot be resolved for IK tab.") :
             QString::fromStdString (resolved.warnings.front ().message);
         setStatus (tr ("Cannot open in IK: %1").arg (msg));
         return;
     }
-    // 写 IK 页:target name + position + rpy。
     setIkPoseMetersDeg (
         resolved.targetInDeviceBase.position,
         resolved.targetInDeviceBase.rpyDeg);
     if (_ikTargetNameEdit != nullptr)
         _ikTargetNameEdit->setText (QString::fromStdString (taskPoint.id));
-    // TCP 优先用 resolver 解析出的 Frame 名称,IK 页的 _tcpFrameCombo 同步。
     if (_tcpFrameCombo != nullptr &&
         !resolved.targetInDeviceBase.tcpFrame.empty ()) {
         const int idx = _tcpFrameCombo->findText (
@@ -3076,7 +2875,7 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
 }
 
 // collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:
-//   - 0 → Task points:复用 collectTaskPointsFromTable,只取 enabled 的位置;
+//   - 0 → Task points:从 _taskPointModel 取所有行,只取 enabled 的位置;
 //   - 1 → Manual rows:从 _posePositionTable 逐行读出 xyz。
 std::vector< std::array< double, 3 > >
 KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
@@ -3085,7 +2884,10 @@ KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
     if (error != nullptr)
         error->clear ();
     if (_poseSourceCombo != NULL && _poseSourceCombo->currentIndex () == 0) {
-        const std::vector< TaskPoint > points = collectTaskPointsFromTable (error);
+        // P3-A 迁移:从 model 取所有行,跳过对废弃的 QTableWidget helper 调用。
+        if (_taskPointModel == nullptr)
+            return positions;
+        const std::vector< TaskPoint > points = _taskPointModel->taskPoints (error);
         if (error != nullptr && !error->isEmpty ())
             return positions;
         for (const TaskPoint& point : points) {
