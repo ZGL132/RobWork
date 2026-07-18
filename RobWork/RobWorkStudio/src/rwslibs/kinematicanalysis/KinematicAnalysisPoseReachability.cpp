@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 using namespace rws;
 
@@ -100,6 +101,35 @@ std::size_t rws::plannedPoseReachabilityTargetCount (
     local.targetCountCapped = perPositionCapped || totalCapped;
     if (diagnostics != nullptr)
         *diagnostics = local;
+    return total;
+}
+
+std::size_t rws::poseReachabilityTargetsPerPosition (
+    const PoseReachabilityConfig& config)
+{
+    const PoseReachabilityConfig sanitized =
+        sanitizePoseReachabilityConfig (config, nullptr);
+    if (sanitized.directionSamples <= 0)
+        return 0;
+    return static_cast< std::size_t > (sanitized.directionSamples) *
+           static_cast< std::size_t > (sanitized.rollSamples);
+}
+
+std::size_t rws::poseReachabilityExecutionTargetCount (
+    const PoseReachabilityConfig& config,
+    std::size_t positionCount,
+    bool* overflowed)
+{
+    const std::size_t perPosition =
+        poseReachabilityTargetsPerPosition (config);
+    bool capped = false;
+    const std::size_t total = multiplyCapped (
+        positionCount,
+        perPosition,
+        std::numeric_limits< std::size_t >::max (),
+        &capped);
+    if (overflowed != nullptr)
+        *overflowed = capped;
     return total;
 }
 

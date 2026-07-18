@@ -825,6 +825,43 @@ static int testPoseReachabilityHelpers ()
             return rc;
     }
 
+    // P7:大配置下诊断 capped 但执行计数 uncapped。
+    {
+        rws::PoseReachabilityConfig hugeConfig;
+        hugeConfig.directionSamples = 1000;
+        hugeConfig.rollSamples = 360;
+
+        rws::PoseReachabilityDiagnostics diagnostics;
+        const std::size_t diagnosticPlanned =
+            rws::plannedPoseReachabilityTargetCount (
+                hugeConfig, 3, &diagnostics);
+        if (const int rc = require (
+                diagnosticPlanned == rws::MaxPoseReachabilityTargets,
+                "pose diagnostic target count remains capped"))
+            return rc;
+        if (const int rc = require (
+                diagnostics.targetCountCapped,
+                "pose diagnostic target count reports capped"))
+            return rc;
+
+        bool overflowed = true;
+        const std::size_t executionPlanned =
+            rws::poseReachabilityExecutionTargetCount (
+                hugeConfig, 3, &overflowed);
+        if (const int rc = require (
+                executionPlanned == 1080000,
+                "pose execution target count is uncapped"))
+            return rc;
+        if (const int rc = require (
+                !overflowed,
+                "pose execution target count does not overflow"))
+            return rc;
+        if (const int rc = require (
+                rws::poseReachabilityTargetsPerPosition (hugeConfig) == 360000,
+                "pose execution target count per position"))
+            return rc;
+    }
+
     {
         rws::PoseReachabilitySample pass;
         pass.status = rws::AnalysisStatus::Pass;

@@ -25,6 +25,18 @@ std::size_t plannedPoseReachabilityTargetCount (
     std::size_t positionCount,
     PoseReachabilityDiagnostics* diagnostics = nullptr);
 
+//! @brief 返回单个 position 的精确执行 IK 目标数(sanitized directions × rolls)。
+//!        不经过 MaxPoseReachabilityTargets 上限,用于 progress denominator。
+std::size_t poseReachabilityTargetsPerPosition (
+    const PoseReachabilityConfig& config);
+
+//! @brief 返回所有 positions 的精确执行 IK 目标总数。
+//!        不经过 MaxPoseReachabilityTargets 上限;overflowed 在 size_t 溢出时设 true。
+std::size_t poseReachabilityExecutionTargetCount (
+    const PoseReachabilityConfig& config,
+    std::size_t positionCount,
+    bool* overflowed = nullptr);
+
 //! @brief 一次性算 samples 的状态分布 + min/max/avg coverage。
 PoseReachabilitySummary summarizePoseReachabilitySamples (
     const std::vector< PoseReachabilitySample >& samples);
