@@ -222,9 +222,10 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
 }
 
 // paintPlot:核心绘图,供 paintEvent 和 renderToImage 共用。
+// plot 区域从 area 计算而非 widget rect(),保证 renderToImage 按目标尺寸布局。
 void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
 {
-    const QRectF pr = plotRect ();
+    const QRectF pr = area.adjusted (area.width () * 0.06, 18, -18, -area.height () * 0.08);
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 

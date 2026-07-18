@@ -725,8 +725,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_reportExportJsonButton, SIGNAL (clicked ()), this, SLOT (exportReportJson ()));
     connect (_reportExportCsvButton, SIGNAL (clicked ()), this, SLOT (exportReportCsv ()));
     connect (_thresholdApplyButton, SIGNAL (clicked ()), this, SLOT (applyThresholds ()));
-    connect (_visualSourceCombo, SIGNAL (currentIndexChanged (int)),
-             this, SLOT (refreshVisualization ()));
     connect (_visualProjectionCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (refreshVisualization ()));
     connect (_visualColorModeCombo, SIGNAL (currentIndexChanged (int)),
