@@ -1,6 +1,7 @@
 #include "KinematicAnalyzer.hpp"
 #include "TaskPointResolver.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
+#include "KinematicAnalysisPoseReachability.hpp"
 
 // 引入 IK 求解器和必要的运动学/数学工具。
 #include <rw/core/Ptr.hpp>
@@ -1447,10 +1448,16 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
     std::vector< PoseReachabilitySample > results;
     results.reserve (positions.size ());
 
-    // 防御性归零:directionSamples<=0 直接返回零样本。
-    const int directionCount = std::max (0, config.directionSamples);
-    const int rollCount      = directionCount == 0 ? 0 : std::max (1, config.rollSamples);
-    const int totalDirections = directionCount * rollCount;
+    // P4:用 sanitize + plan helper 统一边界检查和诊断。
+    PoseReachabilityDiagnostics diagnostics;
+    const PoseReachabilityConfig sanitized =
+        sanitizePoseReachabilityConfig (config, &diagnostics);
+    plannedPoseReachabilityTargetCount (sanitized, positions.size (), &diagnostics);
+
+    const int directionCount = sanitized.directionSamples;
+    const int rollCount = directionCount == 0 ? 0 : sanitized.rollSamples;
+    const int totalDirections =
+        static_cast< int > (diagnostics.plannedDirectionsPerPosition);
     const std::vector< rw::math::Vector3D<> > directions =
         sampleUnitDirections (directionCount);
 
@@ -1489,16 +1496,7 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                     config.checkCollision ? collisionDetector : NULL);
 
                 // "该方向可达"的判定:至少一个无碰撞的 Pass/Warning 解。
-                bool reachable = false;
-                for (const KinematicIkSolution& solution : ik.solutions) {
-                    if (solution.inCollision)
-                        continue;
-                    if (solution.status == AnalysisStatus::Pass ||
-                        solution.status == AnalysisStatus::Warning) {
-                        reachable = true;
-                        break;
-                    }
-                }
+                const bool reachable = isPoseDirectionReachable (ik.solutions);
                 if (reachable)
                     ++sample.reachableDirections;
             }

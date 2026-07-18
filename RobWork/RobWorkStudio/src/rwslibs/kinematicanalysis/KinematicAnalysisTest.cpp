@@ -953,6 +953,19 @@ static int testPoseReachability ()
     if (const int rc = assertNear (zeroResult.front ().coverage, 0.0, 1e-12,
                                    "zero coverage"))
         return rc;
+
+    // P4:负 rollSamples 应被 sanitize 为 1,使 sampledDirections = directionSamples × 1。
+    {
+        rws::PoseReachabilityConfig negativeRoll;
+        negativeRoll.directionSamples = 4;
+        negativeRoll.rollSamples = -9;
+        const std::vector< rws::PoseReachabilitySample > negativeRollResult =
+            analyzer.analyzePoseReachability (NULL, NULL, state, positions, negativeRoll, NULL);
+        if (const int rc = require (negativeRollResult.front ().sampledDirections == 4,
+                                    "negative roll is sanitized to one roll"))
+            return rc;
+    }
+
     return 0;
 }
 
