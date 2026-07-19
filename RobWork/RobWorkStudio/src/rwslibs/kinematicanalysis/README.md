@@ -111,6 +111,8 @@ Supported color modes:
 
 The summary line reports total and visible point counts, status distribution, collision count, projection, color mode, and finite scalar range. Tooltips show source-specific diagnostics without including long joint vectors.
 
+Clicking a visible point applies its saved representative joint configuration to the RobWorkStudio state when one is available. Task points use their best usable IK solution, workspace samples use the sampled joint configuration, and pose reachability points use the first reachable representative solution saved during analysis. Points without a saved Q leave the 3D view unchanged.
+
 ### Workspace sampling
 
 Workspace sampling runs on a background thread. Random and grid sampling report completed samples against the planned sanitized sample count. Cancel stops cooperatively between samples and keeps the samples completed so far available for table display, visualization, CSV export, and report export.

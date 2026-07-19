@@ -4102,7 +4102,7 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
             << ",planned_ik_targets," << summary.plannedIkTargets
             << "\n";
     }
-    out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status,partial,completed_ik_targets,planned_ik_targets\n";
+    out << "position_x,position_y,position_z,sampled_directions,reachable_directions,coverage,status,partial,completed_ik_targets,planned_ik_targets,has_representative_q,representative_q,representative_direction,representative_roll\n";
     for (const PoseReachabilitySample& sample : _poseReachabilitySamples) {
         out << sample.position[0] << "," << sample.position[1] << ","
             << sample.position[2] << "," << sample.sampledDirections << ","
@@ -4110,7 +4110,11 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
             << statusText (sample.status) << ","
             << (sample.partial ? "true" : "false") << ","
             << sample.completedIkTargets << ","
-            << sample.plannedIkTargets << "\n";
+            << sample.plannedIkTargets << ","
+            << (sample.hasRepresentativeQ ? "true" : "false") << ",\""
+            << qVectorText (sample.representativeQ) << "\","
+            << sample.representativeDirectionIndex << ","
+            << sample.representativeRollIndex << "\n";
     }
     setStatus (tr("Exported %1 pose reachability row(s).")
                    .arg (static_cast< int > (_poseReachabilitySamples.size ())));
@@ -4316,6 +4320,10 @@ void KinematicAnalysisWidget::exportReportJson ()
         item["partial"] = sample.partial;
         item["completedIkTargets"] = static_cast< double > (sample.completedIkTargets);
         item["plannedIkTargets"] = static_cast< double > (sample.plannedIkTargets);
+        item["hasRepresentativeQ"] = sample.hasRepresentativeQ;
+        item["representativeQ"] = vectorToJsonArray (sample.representativeQ);
+        item["representativeDirectionIndex"] = sample.representativeDirectionIndex;
+        item["representativeRollIndex"] = sample.representativeRollIndex;
         poseArray.append (item);
     }
     root["poseReachability"] = poseArray;
