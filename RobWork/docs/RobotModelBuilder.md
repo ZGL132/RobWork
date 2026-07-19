@@ -836,7 +836,7 @@ RobotModelBuilder 可以把 `.urdf` 文件作为输入格式,在已有的关节/
 - `robot/@name` → `spec.robotName`(同时作为 `sanitizeFileBaseName` 之后的文件名前缀)。
 - `joint type`:`revolute` / `continuous` → `Revolute`;`prismatic` → `Prismatic`;`fixed` → `FixedFrame`;`planar` / `floating` / 其它 → 退化到 `FixedFrame`。
 - `origin xyz/rpy`:URDF 是米 + 弧度;插件内部用米 + 度。RPY 语义从 URDF 的 X-Y-Z(rpyRad[i])重排到插件的 Z-Y-X(rpyDeg[i])。
-- `<axis xyz="...">`:URDF 默认 (0,0,1) 自动接受;非默认轴给出 `does not re-orient non-Z axes` 警告,数据照存。
+- `<axis xyz="...">`:URDF 默认轴 `(0,0,1)` 直接导入；非默认轴会通过旋转 RobWork joint frame 对齐到本地 Z 轴来表示，不再生成 `*_axis_compensation` 辅助帧。导入器会把 child link 的 visual / collision / inertial 局部位姿转换到新的 joint frame 下，因此可动关节数量和 URDF 保持一致，自动相邻碰撞排除也只基于真实关节。
 - `<limit lower/upper/velocity/effort>`:`revolute/continuous` 的 `lower/upper/velocity` 由弧度转度;`effort` 直接灌进 `JointForceLimitSpec.maxForce`;`prismatic` 保留米。
 - `<visual>` / `<collision>`:`<box>/<cylinder>/<sphere>/<mesh>` 转 `DrawableSpec` / `CollisionModelSpec`;`<material><color rgba>` 取前三通道 `RGB`。
 - `<inertial>`:`<mass value="..."/>` 与 `<inertia ixx ixy ixz iyy iyz izz/>` 转 `LinkDynamicsSpec.mass / cog / inertia`,`material="Imported"`;`objectName` 取产生该 link 的 joint 名(URDF 概念上的"动态对象"绑在子 link 上)。
@@ -845,7 +845,7 @@ RobotModelBuilder 可以把 `.urdf` 文件作为输入格式,在已有的关节/
 
 - 第一版只支持单条串联链 + fixed frame。如果 URDF 有分支,导入器选择一条 root-to-tip 链(每个 link 取字典序最小的子关节),对跳过的兄弟给 `"URDF branch at link ..."` 警告。
 - 不支持 `planar` / `floating` 等 URDF 关节类型:这些固定为 `FixedFrame`,自由度被忽略。
-- 链上的非默认 `<axis>` 会保留 `origin`,但轴向不做重排;警告中给出具体数值。
+- 链上的非默认 `<axis>` 会重定向 joint frame 使其 Z 轴对齐 URDF axis,同时折叠 child link 的 visual / collision / inertial 位姿到 joint frame 下。
 - `package://<pkg>/<path>` 在用户提供的 `UrdfImportOptions.packageRoots` 列表里逐一尝试,首个实际存在的文件返回规范化路径;无法解析的 mesh 路径保留原文并写一条 warning。
 - 没有 `<inertial>` 的 link 不会出现在 `LinkDynamicsSpec`;若 URDF 整体缺 dynamic 数据,导入器为每个 movable joint 兜底填一份默认(`mass=1.0`,`Ixx=Iyy=Izz=0.01`)。
 - 导入完成后立即调用 `RobotModelXmlWriter::validate` 兜底。如果 URDF 合法但产生的 spec 不合法,导入报错并把 validate 错误一同写进 `errors`。

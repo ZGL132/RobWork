@@ -636,8 +636,9 @@ std::vector< UrdfJoint > orderedRootChain (const UrdfModel& model,
     return selected.joints;
 }
 
-/// URDF 默认关节轴是 (0,0,1);非默认轴的关节在第一个实现里不动,
-/// 但需要把警告挂到 result.warnings。
+/// URDF 默认关节轴是 (0,0,1)。非默认可动轴通过旋转 RobWork joint frame
+/// 使其 Z 轴对齐 URDF <axis>,然后将 child link 的 visual/collision/inertial
+/// 位姿折叠到重定向后的 joint frame 中。
 bool isDefaultJointAxis (const std::array< double, 3 >& axis)
 {
     return std::abs (axis[0]) < 1e-9 && std::abs (axis[1]) < 1e-9 &&
@@ -985,7 +986,8 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     }
 
     // Task 4:visual / collision 挂到 child link 对应的实际 frame 上。
-    // 非 Z 轴可动关节会使用补偿 FixedFrame;root / 链外 link 退化挂到 "Base"。
+    // 非 Z 轴可动关节通过旋转 joint frame 对齐 URDF <axis>,geometry
+    // 位姿已折叠到 joint frame 下;root / 链外 link 退化挂到 "Base"。
     for (const auto& item : model.links) {
         const UrdfLink& link = item.second;
         const QString refFrame = linkFrameName (item.first, childLinkToFrameName);
