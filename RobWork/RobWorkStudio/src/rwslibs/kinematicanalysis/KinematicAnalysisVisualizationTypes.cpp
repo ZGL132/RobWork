@@ -202,6 +202,8 @@ AnalysisVisualData rws::visualDataFromTaskPointResults (
             const KinematicIkSolution* best = bestUsableSolution (result.ik);
             QString extra;
             if (best != nullptr) {
+                point.hasQ = !best->q.empty ();
+                point.q = best->q;
                 extra = QStringLiteral (
                     "\nBest Q index: %1\nManipulability: %2\nCondition: %3\n"
                     "Position error: %4 m\nOrientation error: %5 deg")
@@ -210,6 +212,8 @@ AnalysisVisualData rws::visualDataFromTaskPointResults (
                     .arg (QString::number (best->conditionNumber, 'g', 6))
                     .arg (QString::number (best->positionErrorMeters, 'g', 6))
                     .arg (QString::number (best->orientationErrorDeg, 'g', 6));
+                extra += QStringLiteral ("\nReplay Q: %1")
+                    .arg (point.hasQ ? QStringLiteral ("Yes") : QStringLiteral ("No"));
             }
             point.tooltip = QStringLiteral (
                 "Task point: %1\nStatus: %2\nReason: %3\n"
@@ -246,12 +250,15 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
         point.inCollision = sample.inCollision;
         point.source = VisualPointSource::Workspace;
         point.sourceIndex = static_cast< int > (i);
+        point.hasQ = !sample.q.empty ();
+        point.q = sample.q;
         point.label = QStringLiteral ("W%1").arg (static_cast< int > (i));
         point.hasFiniteScalar = workspaceScalar (sample, scalarMode, &point.scalar);
         point.tooltip = QStringLiteral (
             "Workspace sample: %1\nStatus: %2\n"
             "TCP: %3, %4, %5 m\nScalar: %6 = %7\n"
-            "Manipulability: %8\nCondition: %9\nMin margin: %10\nCollision: %11")
+            "Manipulability: %8\nCondition: %9\nMin margin: %10\nCollision: %11\n"
+            "Replay Q: %12")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
             .arg (QString::number (point.position[0], 'g', 6))
@@ -263,7 +270,8 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
             .arg (QString::number (sample.manipulability, 'g', 6))
             .arg (QString::number (sample.conditionNumber, 'g', 6))
             .arg (QString::number (sample.minJointLimitMargin, 'g', 6))
-            .arg (sample.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"));
+            .arg (sample.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"))
+            .arg (point.hasQ ? QStringLiteral ("Yes") : QStringLiteral ("No"));
         data.points.push_back (point);
     }
     updateRange (data);
@@ -284,12 +292,19 @@ AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
         point.status = sample.status;
         point.source = VisualPointSource::PoseReachability;
         point.sourceIndex = static_cast< int > (i);
+        point.hasQ = sample.hasRepresentativeQ && !sample.representativeQ.empty ();
+        point.q = point.hasQ ? sample.representativeQ : std::vector< double > ();
         point.label = QStringLiteral ("P%1").arg (static_cast< int > (i));
         point.hasFiniteScalar = poseScalar (sample, scalarMode, &point.scalar);
+        const QString reprText = sample.hasRepresentativeQ ?
+            QStringLiteral ("\nReplay Q: Yes\nRepresentative direction: %1\nRepresentative roll: %2")
+                .arg (sample.representativeDirectionIndex)
+                .arg (sample.representativeRollIndex) :
+            QStringLiteral ("\nReplay Q: No");
         point.tooltip = QStringLiteral (
             "Pose reachability: %1\nStatus: %2\n"
             "Position: %3, %4, %5 m\nScalar: %6 = %7\n"
-            "Reachable: %8 / %9")
+            "Reachable: %8 / %9%10")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
             .arg (QString::number (point.position[0], 'g', 6))
@@ -299,7 +314,8 @@ AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
             .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
                                         : QStringLiteral ("-"))
             .arg (sample.reachableDirections)
-            .arg (sample.sampledDirections);
+            .arg (sample.sampledDirections)
+            .arg (reprText);
         data.points.push_back (point);
     }
     updateRange (data);
