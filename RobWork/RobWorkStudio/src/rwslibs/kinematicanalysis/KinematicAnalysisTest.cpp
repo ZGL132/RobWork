@@ -1183,6 +1183,64 @@ static int testPoseReachability ()
             return rc;
     }
 
+    // P10:代表性 Q 保存测试:一个可达配置应保存代表性 Q。
+    {
+        rw::kinematics::StateStructure ss;
+        const rw::models::SerialDevice::Ptr dev =
+            makeGenericSixAxis (ss);
+        rw::kinematics::State reachableState = ss.getDefaultState ();
+        const rw::math::Q targetQ (6, 0.2, -0.3, 0.25, 0.1, -0.2, 0.15);
+        dev->setQ (targetQ, reachableState);
+        const rw::math::Transform3D<> tcp =
+            rw::kinematics::Kinematics::frameTframe (
+                dev->getBase (), dev->getEnd (), reachableState);
+
+        std::vector< std::array< double, 3 > > reachablePositions;
+        reachablePositions.push_back (
+            std::array< double, 3 > {{tcp.P ()[0], tcp.P ()[1], tcp.P ()[2]}});
+
+        rws::PoseReachabilityConfig repConfig;
+        repConfig.directionSamples = 12;
+        repConfig.rollSamples = 2;
+        repConfig.checkCollision = false;
+
+        rws::KinematicThresholds repThresholds;
+        repThresholds.conditionWarning = 1e12;
+        repThresholds.conditionFail = 1e13;
+        repThresholds.singularValueWarning = 0.0;
+        repThresholds.manipulabilityWarning = 0.0;
+        rws::KinematicAnalyzer repAnalyzer;
+        repAnalyzer.setThresholds (repThresholds);
+
+        const std::vector< rws::PoseReachabilitySample > repSamples =
+            repAnalyzer.analyzePoseReachability (
+                dev, dev->getEnd (), reachableState, reachablePositions,
+                repConfig, NULL);
+        if (const int rc = require (repSamples.size () == 1,
+                                    "representative pose sample count"))
+            return rc;
+        if (const int rc = require (
+                repSamples[0].reachableDirections > 0,
+                "representative pose has at least one reachable direction"))
+            return rc;
+        if (const int rc = require (
+                repSamples[0].hasRepresentativeQ,
+                "reachable pose stores representative Q"))
+            return rc;
+        if (const int rc = require (
+                repSamples[0].representativeQ.size () == dev->getDOF (),
+                "representative Q dimension matches device"))
+            return rc;
+        if (const int rc = require (
+                repSamples[0].representativeDirectionIndex >= 0,
+                "representative direction index stored"))
+            return rc;
+        if (const int rc = require (
+                repSamples[0].representativeRollIndex >= 0,
+                "representative roll index stored"))
+            return rc;
+    }
+
     // P7:多位置进度回调:2 positions × 2 dirs × 2 rolls = 8 IK targets。
     {
         rw::kinematics::StateStructure stateStructure;

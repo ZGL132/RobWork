@@ -1530,6 +1530,7 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             sample.completedIkTargets = completedTargetsForSample;
             sample.plannedIkTargets = ikPerPosition;
             sample.partial = completedTargetsForSample < ikPerPosition;
+            // Keep any representative Q already found before cancellation.
             sample.status = sample.reachableDirections == 0 ?
                 AnalysisStatus::Fail : AnalysisStatus::Warning;
             sample.coverage = totalDirections == 0 ? 0.0 :
@@ -1571,8 +1572,26 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
 
                 // "该方向可达"的判定:至少一个无碰撞的 Pass/Warning 解。
                 const bool reachable = isPoseDirectionReachable (ik.solutions);
-                if (reachable)
+                if (reachable) {
                     ++sample.reachableDirections;
+                    // P10:保存第一个可达解的代表性 Q。
+                    if (!sample.hasRepresentativeQ) {
+                        for (const KinematicIkSolution& sol : ik.solutions) {
+                            if (sol.inCollision) continue;
+                            if (sol.status == AnalysisStatus::Pass ||
+                                sol.status == AnalysisStatus::Warning) {
+                                if (!sol.q.empty ()) {
+                                    sample.hasRepresentativeQ = true;
+                                    sample.representativeQ = sol.q;
+                                    sample.representativeDirectionIndex =
+                                        directionIndex;
+                                    sample.representativeRollIndex = rollIndex;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
                 ++completedTargets;
                 ++completedTargetsForSample;
                 sample.completedIkTargets = completedTargetsForSample;
