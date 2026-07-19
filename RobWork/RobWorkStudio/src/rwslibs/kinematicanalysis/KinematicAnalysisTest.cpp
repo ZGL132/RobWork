@@ -1843,6 +1843,7 @@ static int testVisualizationData ()
     taskSolution.positionErrorMeters = 0.0005;
     taskSolution.orientationErrorDeg = 0.2;
     taskSolution.inCollision = false;
+    taskSolution.q = std::vector< double > {0.1, 0.2, 0.3};
     task.ik.solutions.push_back (taskSolution);
 
     const AnalysisVisualData taskData = visualDataFromTaskPointResults (
@@ -1863,6 +1864,12 @@ static int testVisualizationData ()
     if (const int rc = require (taskData.points[0].label == QStringLiteral ("TP_A"),
                                 "task label uses id"))
         return rc;
+    if (const int rc = require (taskData.points[0].hasQ,
+                                "task visual point carries best usable Q"))
+        return rc;
+    if (const int rc = require (taskData.points[0].q == taskSolution.q,
+                                "task visual point Q matches best usable solution"))
+        return rc;
     if (const int rc = require (taskData.points[0].tooltip.contains (QStringLiteral ("NearJointLimit")),
                                 "task tooltip contains failure reason"))
         return rc;
@@ -1871,6 +1878,7 @@ static int testVisualizationData ()
     workspace.tcpPosition = {{-1.0, 0.5, 2.5}};
     workspace.status = AnalysisStatus::Pass;
     workspace.manipulability = 0.75;
+    workspace.q = std::vector< double > {-0.1, -0.2, -0.3};
     workspace.conditionNumber = 12.0;
     workspace.minJointLimitMargin = 0.2;
     workspace.inCollision = true;
@@ -1886,6 +1894,12 @@ static int testVisualizationData ()
     if (const int rc = assertNear (workspaceData.points[0].scalar, 1.0, 1e-12,
                                    "workspace collision scalar"))
         return rc;
+    if (const int rc = require (workspaceData.points[0].hasQ,
+                                "workspace visual point carries sampled Q"))
+        return rc;
+    if (const int rc = require (workspaceData.points[0].q == workspace.q,
+                                "workspace visual point Q matches workspace sample"))
+        return rc;
 
     PoseReachabilitySample pose;
     pose.position = {{4.0, 5.0, 6.0}};
@@ -1893,6 +1907,10 @@ static int testVisualizationData ()
     pose.sampledDirections = 10;
     pose.reachableDirections = 3;
     pose.coverage = 0.3;
+    pose.hasRepresentativeQ = true;
+    pose.representativeQ = std::vector< double > {0.4, 0.5, 0.6};
+    pose.representativeDirectionIndex = 2;
+    pose.representativeRollIndex = 1;
     const AnalysisVisualData poseData = visualDataFromPoseReachabilitySamples (
         std::vector< PoseReachabilitySample > {pose},
         VisualScalarMode::Coverage);
@@ -1901,6 +1919,16 @@ static int testVisualizationData ()
         return rc;
     if (const int rc = assertNear (poseData.points[0].scalar, 0.3, 1e-12,
                                    "pose coverage scalar"))
+        return rc;
+    if (const int rc = require (poseData.points[0].hasQ,
+                                "pose visual point carries representative Q"))
+        return rc;
+    if (const int rc = require (poseData.points[0].q == pose.representativeQ,
+                                "pose visual point Q matches representative Q"))
+        return rc;
+    if (const int rc = require (
+            poseData.points[0].tooltip.contains (QStringLiteral ("Representative direction: 2")),
+            "pose tooltip includes representative direction"))
         return rc;
 
     const QPointF projected = projectVisualPoint (poseData.points[0], VisualProjection::XZ);

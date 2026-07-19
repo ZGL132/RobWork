@@ -265,6 +265,10 @@ struct PoseReachabilitySample
     std::size_t plannedIkTargets = 0;     // 该 position 的 IK 计划数
     std::size_t completedIkTargets = 0;   // 该 position 已完成的 IK 数
     bool partial = false;                 // 取消/中断导致未完成全部 IK
+    bool hasRepresentativeQ = false;
+    std::vector< double > representativeQ;
+    int representativeDirectionIndex = -1;
+    int representativeRollIndex = -1;
 };
 
 // 聚合结果:当前位姿 + 任务点 + 工作空间 + 位姿可达性 + 阈值导出的汇总。

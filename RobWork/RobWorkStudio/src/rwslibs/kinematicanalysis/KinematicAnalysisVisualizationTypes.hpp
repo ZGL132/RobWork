@@ -49,6 +49,8 @@ struct AnalysisVisualPoint
     QString tooltip;
     VisualPointSource source = VisualPointSource::TaskPoint;
     int sourceIndex = -1;
+    bool hasQ = false;
+    std::vector< double > q;
 };
 
 struct AnalysisVisualData
