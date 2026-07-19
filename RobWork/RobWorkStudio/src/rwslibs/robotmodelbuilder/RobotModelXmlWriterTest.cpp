@@ -237,11 +237,19 @@ int main (int argc, char** argv)
         if (!file.open (QFile::WriteOnly | QFile::Text))
             return fail ("Could not create axis alignment URDF test file.");
         QTextStream out (&file);
-        out << "<robot name=\"AxisBot\">\n"
-            << "  <link name=\"base\" />\n"
-            << "  <link name=\"link1\"><visual name=\"link1_visual\">"
-            << "<geometry><box size=\"0.1 0.1 0.1\" /></geometry></visual></link>\n"
-            << "  <joint name=\"joint_y\" type=\"revolute\"><parent link=\"base\" />"
+        out << "<robot name=\"axis_alignment_robot\">\n"
+            << "<link name=\"base\" />\n"
+            << "<link name=\"link1\">"
+            << "<visual><origin xyz=\"1 2 3\" rpy=\"0 0 0\" />"
+            << "<geometry><box size=\"0.1 0.2 0.3\" /></geometry></visual>"
+            << "<collision><origin xyz=\"4 5 6\" rpy=\"0 0 0\" />"
+            << "<geometry><box size=\"0.4 0.5 0.6\" /></geometry></collision>"
+            << "<inertial><origin xyz=\"7 8 9\" rpy=\"0 0 0\" />"
+            << "<mass value=\"2\" />"
+            << "<inertia ixx=\"1\" ixy=\"0\" ixz=\"0\" iyy=\"2\" iyz=\"0\" izz=\"3\" />"
+            << "</inertial>"
+            << "</link>\n"
+            << "<joint name=\"joint_y\" type=\"revolute\"><parent link=\"base\" />"
             << "<child link=\"link1\" /><origin xyz=\"0 0 0.2\" rpy=\"0 0 0\" />"
             << "<axis xyz=\"0 1 0\" />"
             << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
@@ -256,26 +264,87 @@ int main (int argc, char** argv)
             return fail ("Axis alignment URDF import failed: " + importErrors.join ("; "));
         if (result.warnings.join ("; ").contains ("does not re-orient non-Z axes"))
             return fail ("Non-Z axis joints should be re-oriented instead of warning.");
-        if (result.spec.transformJoints.size () != 2)
-            return fail ("Non-Z axis import should add one compensation frame.");
+        if (result.spec.transformJoints.size () != 1)
+            return fail ("Non-Z axis import should not add a compensation frame.");
         const JointTransformSpec& joint = result.spec.transformJoints[0];
-        const JointTransformSpec& compensation = result.spec.transformJoints[1];
         if (joint.name != "joint_y" || joint.type != "Revolute")
             return fail ("Axis-aligned movable joint should keep its URDF joint name/type.");
-        if (compensation.name != "joint_y_axis_compensation" ||
-            compensation.type != "FixedFrame")
-            return fail ("Axis-aligned joint should append a named FixedFrame compensation.");
+        if (QString::fromStdString (joint.name).contains ("axis_compensation"))
+            return fail ("Imported transform joints must not expose axis compensation frames.");
         if (result.spec.drawables.empty () ||
-            result.spec.drawables.front ().refFrame != "joint_y_axis_compensation")
-            return fail ("Child link visual geometry should attach to the compensation frame.");
+            result.spec.drawables.front ().refFrame != "joint_y")
+            return fail ("Child link visual geometry should attach to the real joint frame.");
         const std::array< double, 3 > jointAxis = rpyRotatedZ (joint.rpyDeg);
         if (!nearlyEqual (jointAxis[0], 0) || !nearlyEqual (jointAxis[1], 1) ||
             !nearlyEqual (jointAxis[2], 0))
             return fail ("Y-axis revolute joint should rotate local Z onto URDF Y.");
-        if (!nearlyEqual (compensation.rpyDeg[0], -joint.rpyDeg[0]) ||
-            !nearlyEqual (compensation.rpyDeg[1], -joint.rpyDeg[1]) ||
-            !nearlyEqual (compensation.rpyDeg[2], -joint.rpyDeg[2]))
-            return fail ("Axis compensation frame should restore the child link frame.");
+
+        const DrawableSpec& visual = result.spec.drawables.front ();
+        if (!nearlyEqual (visual.pos[0], 1) || !nearlyEqual (visual.pos[1], 3) ||
+            !nearlyEqual (visual.pos[2], -2))
+            return fail ("Visual pose should be converted from child-link frame to reoriented joint frame.");
+
+        if (result.spec.collisionModels.empty () ||
+            result.spec.collisionModels.front ().refFrame != "joint_y")
+            return fail ("Child link collision geometry should attach to the real joint frame.");
+        const CollisionModelSpec& collision = result.spec.collisionModels.front ();
+        if (!nearlyEqual (collision.pos[0], 4) || !nearlyEqual (collision.pos[1], 6) ||
+            !nearlyEqual (collision.pos[2], -5))
+            return fail ("Collision pose should be converted from child-link frame to reoriented joint frame.");
+
+        if (result.spec.dynamics.links.empty () ||
+            result.spec.dynamics.links.front ().objectName != "joint_y")
+            return fail ("URDF inertial data should remain attached to the real movable joint.");
+        const LinkDynamicsSpec& dyn = result.spec.dynamics.links.front ();
+        if (!nearlyEqual (dyn.cog[0], 7) || !nearlyEqual (dyn.cog[1], 9) ||
+            !nearlyEqual (dyn.cog[2], -8))
+            return fail ("Inertial COG should be converted from child-link frame to reoriented joint frame.");
+        if (!nearlyEqual (dyn.inertia[0], 1) || !nearlyEqual (dyn.inertia[1], 3) ||
+            !nearlyEqual (dyn.inertia[2], 2))
+            return fail ("Inertial tensor diagonal should be rotated into the reoriented joint frame.");
+    }
+
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_urdf_axis_adjacency";
+        QDir ().mkpath (dir);
+        const QString urdfPath = dir + "/axis_adjacency.urdf";
+        QFile file (urdfPath);
+        if (!file.open (QFile::WriteOnly | QFile::Text))
+            return fail ("Could not create axis adjacency URDF test file.");
+        QTextStream out (&file);
+        out << "<robot name=\"axis_adjacency_robot\">\n"
+            << "<link name=\"base\" />\n"
+            << "<link name=\"link1\"><collision><geometry><box size=\"0.1 0.1 0.1\" /></geometry></collision></link>\n"
+            << "<link name=\"link2\"><collision><geometry><box size=\"0.1 0.1 0.1\" /></geometry></collision></link>\n"
+            << "<joint name=\"joint_y\" type=\"revolute\"><parent link=\"base\" />"
+            << "<child link=\"link1\" /><origin xyz=\"0 0 0.2\" rpy=\"0 0 0\" />"
+            << "<axis xyz=\"0 1 0\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "<joint name=\"joint_z\" type=\"revolute\"><parent link=\"link1\" />"
+            << "<child link=\"link2\" /><origin xyz=\"0.1 0 0\" rpy=\"0 0 0\" />"
+            << "<axis xyz=\"0 0 1\" />"
+            << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
+            << "</robot>\n";
+        file.close ();
+
+        UrdfImportOptions options;
+        options.saveDirectory = dir;
+        UrdfImportResult result;
+        QStringList importErrors;
+        if (!RobotModelUrdfImporter::importFile (urdfPath, options, result, importErrors))
+            return fail ("Axis adjacency URDF import failed: " + importErrors.join ("; "));
+
+        if (result.spec.transformJoints.size () != 2)
+            return fail ("Axis adjacency import should contain exactly the two real URDF joints.");
+        if (result.spec.transformJoints[0].name != "joint_y" ||
+            result.spec.transformJoints[1].name != "joint_z")
+            return fail ("Axis adjacency import should preserve real serial joint order.");
+
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (result.spec);
+        if (!contains (collisionXml, "<FramePair first=\"joint_y\" second=\"joint_z\"/>"))
+            return fail ("Automatic adjacent collision exclusion should use real neighboring joints.");
+        if (collisionXml.contains ("axis_compensation"))
+            return fail ("Collision setup must not contain axis compensation frames.");
     }
 
     // ---- Task 3:chain order test (joint_b declared before joint_a) ----
