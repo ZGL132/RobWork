@@ -11,6 +11,9 @@ class KinematicAnalysisPlotWidget : public QWidget
 {
     Q_OBJECT
 
+  Q_SIGNALS:
+    void visualPointClicked (rws::AnalysisVisualPoint point);
+
   public:
     explicit KinematicAnalysisPlotWidget (QWidget* parent = nullptr);
 
@@ -30,6 +33,7 @@ class KinematicAnalysisPlotWidget : public QWidget
 
   protected:
     void paintEvent (QPaintEvent* event) override;
+    void mousePressEvent (QMouseEvent* event) override;
     bool event (QEvent* event) override;
 
   private:
@@ -39,6 +43,7 @@ class KinematicAnalysisPlotWidget : public QWidget
     QPointF mapToPlot (const AnalysisVisualPoint& point, const QRectF& rect,
                        const QRectF& bounds) const;
     QRectF projectedBounds () const;
+    bool visualPointAt (const QPoint& pos, AnalysisVisualPoint* hitPoint) const;
     QString pointTooltipAt (const QPoint& pos) const;
     void paintPlot (QPainter& painter, const QRect& area) const;
     void paintGrid (QPainter& painter, const QRectF& plotArea,

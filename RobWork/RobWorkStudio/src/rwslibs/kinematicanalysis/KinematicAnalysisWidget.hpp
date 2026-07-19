@@ -2,6 +2,7 @@
 #define RWS_KINEMATICANALYSIS_KINEMATICANALYSISWIDGET_HPP
 
 #include "KinematicAnalysisTypes.hpp"
+#include "KinematicAnalysisVisualizationTypes.hpp"
 #include "TaskPointTableModel.hpp"
 
 #include <rw/core/Ptr.hpp>
@@ -91,6 +92,7 @@ class KinematicAnalysisWidget : public QWidget
     void resetVisualizationView ();
     void exportVisualizationPng ();
     void openPoseReachabilityInVisualization ();
+    void applyVisualizationPointQ (rws::AnalysisVisualPoint point);
     void refreshReport ();
     void exportReportJson ();
     void exportReportCsv ();

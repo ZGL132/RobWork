@@ -4,6 +4,7 @@
 #include <QFontMetrics>
 #include <QHelpEvent>
 #include <QImage>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QToolTip>
 
@@ -176,12 +177,14 @@ QPointF KinematicAnalysisPlotWidget::mapToPlot (
     return QPointF (x, y);
 }
 
-QString KinematicAnalysisPlotWidget::pointTooltipAt (const QPoint& pos) const
+bool KinematicAnalysisPlotWidget::visualPointAt (
+    const QPoint& pos, AnalysisVisualPoint* hitPoint) const
 {
     const QRectF pr = plotRect ();
     const QRectF bounds = projectedBounds ();
     double bestDist = std::numeric_limits< double >::max ();
-    QString bestTip;
+    bool found = false;
+    AnalysisVisualPoint bestPoint;
     for (const AnalysisVisualPoint& point : _data.points) {
         if (!pointVisible (point))
             continue;
@@ -191,10 +194,34 @@ QString KinematicAnalysisPlotWidget::pointTooltipAt (const QPoint& pos) const
         const double dist = std::sqrt (dx * dx + dy * dy);
         if (dist <= 9.0 && dist < bestDist) {
             bestDist = dist;
-            bestTip = point.tooltip;
+            bestPoint = point;
+            found = true;
         }
     }
-    return bestTip;
+    if (found && hitPoint != nullptr)
+        *hitPoint = bestPoint;
+    return found;
+}
+
+QString KinematicAnalysisPlotWidget::pointTooltipAt (const QPoint& pos) const
+{
+    AnalysisVisualPoint point;
+    if (!visualPointAt (pos, &point))
+        return QString ();
+    return point.tooltip;
+}
+
+void KinematicAnalysisPlotWidget::mousePressEvent (QMouseEvent* event)
+{
+    if (event != nullptr && event->button () == Qt::LeftButton) {
+        AnalysisVisualPoint point;
+        if (visualPointAt (event->pos (), &point)) {
+            Q_EMIT visualPointClicked (point);
+            event->accept ();
+            return;
+        }
+    }
+    QWidget::mousePressEvent (event);
 }
 
 bool KinematicAnalysisPlotWidget::event (QEvent* event)

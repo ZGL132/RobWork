@@ -2086,6 +2086,9 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualPlot = new KinematicAnalysisPlotWidget (_visualizationTab);
     layout->addWidget (_visualPlot, 1);
 
+    connect (_visualPlot, &KinematicAnalysisPlotWidget::visualPointClicked,
+             this, &KinematicAnalysisWidget::applyVisualizationPointQ);
+
     // P8:连接控件
     connect (_visualSourceCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (updateVisualizationControls ()));
@@ -2143,6 +2146,38 @@ void KinematicAnalysisWidget::resetVisualizationView ()
 {
     refreshVisualization ();
     setStatus (tr("Visualization fitted to visible data."));
+}
+
+void KinematicAnalysisWidget::applyVisualizationPointQ (
+    rws::AnalysisVisualPoint point)
+{
+    if (!point.hasQ || point.q.empty ()) {
+        setStatus (tr("Visualization point has no saved reachable Q; 3D view unchanged."));
+        return;
+    }
+    if (_studio == NULL) {
+        setStatus (tr("Cannot apply visualization point: RobWorkStudio is unavailable."));
+        return;
+    }
+    rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == NULL) {
+        setStatus (tr("Cannot apply visualization point: no valid device selected."));
+        return;
+    }
+    if (point.q.size () != device->getDOF ()) {
+        setStatus (tr("Cannot apply visualization point: Q dimension %1 does not match device DOF %2.")
+                       .arg (static_cast< int > (point.q.size ()))
+                       .arg (static_cast< int > (device->getDOF ())));
+        return;
+    }
+
+    rw::kinematics::State state = currentState ();
+    device->setQ (point.q, state);
+    _studio->setState (state);
+    refreshCurrentPose ();
+    setStatus (tr("Applied visualization point %1 (%2 joints) to RobWorkStudio state.")
+                   .arg (point.label.isEmpty () ? QStringLiteral ("-") : point.label)
+                   .arg (static_cast< int > (point.q.size ())));
 }
 
 void KinematicAnalysisWidget::exportVisualizationPng ()
