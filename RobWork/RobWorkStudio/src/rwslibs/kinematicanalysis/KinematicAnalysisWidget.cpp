@@ -294,6 +294,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _workspaceCancelButton(NULL),
     _workspaceWatcher (new QFutureWatcher< std::vector< WorkspaceSample > > (this)),
     _workspaceRunActive (false),
+    _workspaceCollisionUnavailable (false),
     _workspaceCancelRequested (std::make_shared< std::atomic_bool > (false)),
     _workspaceProgressBar (NULL),
     _workspaceProgressLabel (NULL),
@@ -759,10 +760,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
 KinematicAnalysisWidget::~KinematicAnalysisWidget ()
 {
+    if (_workspaceCancelRequested)
+        _workspaceCancelRequested->store (true);
     if (_poseReachabilityCancelRequested)
         _poseReachabilityCancelRequested->store (true);
+    if (_workspaceWatcher != NULL && _workspaceWatcher->isRunning ())
+        _workspaceWatcher->waitForFinished ();
     if (_poseReachabilityWatcher != NULL && _poseReachabilityWatcher->isRunning ())
         _poseReachabilityWatcher->waitForFinished ();
+    if (_workspaceRunActive)
+        QApplication::restoreOverrideCursor ();
     if (_poseReachabilityRunActive)
         QApplication::restoreOverrideCursor ();
 }
@@ -3418,12 +3425,21 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
 // 鍥哄畾 randomSeed=1 浠ヤ繚璇佺粨鏋滃彲澶嶇幇,渚夸簬鍥炲綊瀵规瘮銆?
 void KinematicAnalysisWidget::sampleWorkspace ()
 {
+    if (_workspaceRunActive) {
+        setStatus (tr("Workspace sampling is already running."));
+        return;
+    }
+
     rw::core::Ptr< rw::models::Device > device = selectedDevice ();
     if (device == NULL) {
         setStatus (tr("Cannot sample workspace: no valid device selected."));
         return;
     }
     rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+    if (tcpFrame == NULL) {
+        setStatus (tr("Cannot sample workspace: no valid TCP frame selected."));
+        return;
+    }
 
     WorkspaceSamplingConfig config;
     config.sampleCount = _workspaceSampleCountSpin->value ();
@@ -3435,25 +3451,6 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     config.randomSeed = _workspaceSeedSpin != NULL ?
         static_cast< unsigned int > (_workspaceSeedSpin->value ()) : 1u;
 
-    KinematicAnalyzer analyzer;
-    analyzer.setThresholds (_thresholds);
-    bool collisionUnavailable = false;
-    const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
-        collisionDetectorForAnalysis (config.checkCollision, &collisionUnavailable);
-
-    // P4:RAII guard,在同步采样期间禁用 Run + 设忙光标,
-    // 无论采样/构造/异常都保证恢复,避免 UI 卡死。
-    struct SamplingGuard {
-        QPushButton* btn;
-        explicit SamplingGuard (QPushButton* b) : btn (b) {
-            if (btn != nullptr) btn->setEnabled (false);
-            QApplication::setOverrideCursor (Qt::WaitCursor);
-        }
-        ~SamplingGuard () {
-            QApplication::restoreOverrideCursor ();
-            if (btn != nullptr) btn->setEnabled (true);
-        }
-    };
     // P9:async — 后台执行,不阻塞 UI
     const rw::kinematics::State runState = currentState ();
     const rw::core::Ptr< rw::models::Device > runDevice = device;
@@ -3461,6 +3458,8 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     const KinematicThresholds runThresholds = _thresholds;
     const rw::core::Ptr< rw::models::WorkCell > runWorkCell =
         _studio != NULL ? _studio->getWorkCell () : NULL;
+    _workspaceCollisionUnavailable =
+        config.checkCollision && runWorkCell == NULL;
 
     const std::size_t plannedSamples =
         rws::plannedWorkspaceSampleCount (
@@ -3584,13 +3583,17 @@ void KinematicAnalysisWidget::handleWorkspaceFinished ()
         static_cast< qulonglong > (_workspaceSamples.size ()));
     updateReportSummary ();
 
+    const QString collisionNote = _workspaceCollisionUnavailable ?
+        tr(" Collision checking was unavailable.") : QString ();
     if (wasCanceled) {
-        setStatus (tr("Workspace sampling canceled after %1 sample(s).")
-                       .arg (static_cast< int > (_workspaceSamples.size ())));
+        setStatus (tr("Workspace sampling canceled after %1 sample(s).%2")
+                       .arg (static_cast< int > (_workspaceSamples.size ()))
+                       .arg (collisionNote));
     }
     else {
-        setStatus (tr("Workspace sampling completed with %1 sample(s).")
-                       .arg (static_cast< int > (_workspaceSamples.size ())));
+        setStatus (tr("Workspace sampling completed with %1 sample(s).%2")
+                       .arg (static_cast< int > (_workspaceSamples.size ()))
+                       .arg (collisionNote));
     }
 }
 

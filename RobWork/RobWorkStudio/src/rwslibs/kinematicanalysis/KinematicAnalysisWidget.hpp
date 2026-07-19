@@ -205,6 +205,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _workspaceCancelButton;
     QFutureWatcher< std::vector< WorkspaceSample > >* _workspaceWatcher;
     bool _workspaceRunActive;
+    bool _workspaceCollisionUnavailable;
     std::shared_ptr< std::atomic_bool > _workspaceCancelRequested;
     QProgressBar* _workspaceProgressBar;
     QLabel* _workspaceProgressLabel;
