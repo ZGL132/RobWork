@@ -258,18 +258,54 @@ std::array< double, 3 > combineOriginAndAxisRpyDeg (
     return rotationToPluginRpyDeg (multiplyRotation (origin, axisAlignment));
 }
 
-QString axisCompensationFrameName (const QString& jointName,
-                                   const std::set< QString >& usedNames)
+std::array< double, 3 > multiplyRotationVector (const Rotation& rotation,
+                                                const std::array< double, 3 >& value)
 {
-    const QString baseName = jointName + "_axis_compensation";
-    if (usedNames.find (baseName) == usedNames.end ())
-        return baseName;
-    int suffix = 2;
-    while (true) {
-        const QString candidate = baseName + "_" + QString::number (suffix++);
-        if (usedNames.find (candidate) == usedNames.end ())
-            return candidate;
+    return {{rotation[0] * value[0] + rotation[1] * value[1] + rotation[2] * value[2],
+             rotation[3] * value[0] + rotation[4] * value[1] + rotation[5] * value[2],
+             rotation[6] * value[0] + rotation[7] * value[1] + rotation[8] * value[2]}};
+}
+
+std::array< double, 6 > rotateInertiaTensor (const std::array< double, 6 >& inertia,
+                                             const Rotation& rotation)
+{
+    const double in[9] = {
+        inertia[0], inertia[3], inertia[4],
+        inertia[3], inertia[1], inertia[5],
+        inertia[4], inertia[5], inertia[2]};
+
+    double tmp[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            for (int k = 0; k < 3; ++k)
+                tmp[3 * r + c] += rotation[3 * r + k] * in[3 * k + c];
+        }
     }
+
+    double out[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            for (int k = 0; k < 3; ++k)
+                out[3 * r + c] += tmp[3 * r + k] * rotation[3 * c + k];
+        }
+    }
+
+    return {{out[0], out[4], out[8], out[1], out[2], out[5]}};
+}
+
+std::array< double, 3 > transformedOriginPos (const UrdfOrigin& origin,
+                                              const Rotation& inverseAxisAlignment)
+{
+    return multiplyRotationVector (inverseAxisAlignment, origin.xyz);
+}
+
+std::array< double, 3 > transformedOriginRpyDeg (const UrdfOrigin& origin,
+                                                 const Rotation& inverseAxisAlignment)
+{
+    const Rotation poseRotation =
+        pluginRpyDegToRotation (urdfRpyToPluginRpyDeg (origin.rpyRad));
+    return rotationToPluginRpyDeg (
+        multiplyRotation (inverseAxisAlignment, poseRotation));
 }
 
 /// URDF joint type -> 插件 joint type(目前没用到 ToolFrame:
@@ -887,6 +923,7 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
     std::map< QString, QString > childLinkToFrameName;
     std::map< QString, QString > childLinkToDynamicsJointName;
     std::map< QString, QString > childLinkToJointType;
+    std::map< QString, Rotation > childLinkToInverseAxisAlignment;
     std::set< QString > usedTransformNames;
 
     for (const UrdfJoint& urdfJoint : orderedJoints) {
@@ -910,21 +947,10 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         spec.transformJoints.push_back (joint);
         usedTransformNames.insert (urdfJoint.name);
 
-        QString linkFrameNameForJoint = urdfJoint.name;
-        if (reorientAxis) {
-            JointTransformSpec compensation;
-            const QString compensationName =
-                axisCompensationFrameName (urdfJoint.name, usedTransformNames);
-            compensation.name   = compensationName.toStdString ();
-            compensation.type   = "FixedFrame";
-            compensation.pos    = {{0, 0, 0}};
-            compensation.rpyDeg = rotationToPluginRpyDeg (transposeRotation (axisAlignment));
-            spec.transformJoints.push_back (compensation);
-            usedTransformNames.insert (compensationName);
-            linkFrameNameForJoint = compensationName;
-        }
+        childLinkToInverseAxisAlignment[urdfJoint.childLink] =
+            reorientAxis ? axisAlignment : identityRotation ();
 
-        childLinkToFrameName[urdfJoint.childLink]         = linkFrameNameForJoint;
+        childLinkToFrameName[urdfJoint.childLink]         = urdfJoint.name;
         childLinkToDynamicsJointName[urdfJoint.childLink] = urdfJoint.name;
         childLinkToJointType[urdfJoint.childLink]         = pluginJointType;
 
@@ -975,8 +1001,14 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             drawable.dimensions      = visual.dimensions;
             drawable.radius          = visual.radius;
             drawable.length          = visual.length;
-            drawable.rpyDeg          = urdfRpyToPluginRpyDeg (visual.origin.rpyRad);
-            drawable.pos             = visual.origin.xyz;
+            {
+                const Rotation invAxis =
+                    childLinkToInverseAxisAlignment.count (item.first) > 0
+                        ? childLinkToInverseAxisAlignment[item.first]
+                        : identityRotation ();
+                drawable.rpyDeg = transformedOriginRpyDeg (visual.origin, invAxis);
+                drawable.pos    = transformedOriginPos (visual.origin, invAxis);
+            }
             drawable.rgb             = visual.rgb;
             drawable.collisionModel  = false;
             drawable.autoLinkGeometry = false;
@@ -998,9 +1030,16 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             collision.dimensions  = collisionGeometry.dimensions;
             collision.radius      = collisionGeometry.radius;
             collision.length      = collisionGeometry.length;
-            collision.rpyDeg      =
-                urdfRpyToPluginRpyDeg (collisionGeometry.origin.rpyRad);
-            collision.pos         = collisionGeometry.origin.xyz;
+            {
+                const Rotation invAxis =
+                    childLinkToInverseAxisAlignment.count (item.first) > 0
+                        ? childLinkToInverseAxisAlignment[item.first]
+                        : identityRotation ();
+                collision.rpyDeg = transformedOriginRpyDeg (collisionGeometry.origin,
+                                                            invAxis);
+                collision.pos    = transformedOriginPos (collisionGeometry.origin,
+                                                         invAxis);
+            }
             spec.collisionModels.push_back (collision);
         }
     }
@@ -1028,8 +1067,14 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         dyn.linkName        = item.first.toStdString ();
         dyn.objectName      = jointIt->second.toStdString ();
         dyn.mass            = link.inertial.mass;
-        dyn.cog             = link.inertial.origin.xyz;
-        dyn.inertia         = link.inertial.inertia;
+        {
+            const Rotation invAxis =
+                childLinkToInverseAxisAlignment.count (item.first) > 0
+                    ? childLinkToInverseAxisAlignment[item.first]
+                    : identityRotation ();
+            dyn.cog     = transformedOriginPos (link.inertial.origin, invAxis);
+            dyn.inertia = rotateInertiaTensor (link.inertial.inertia, invAxis);
+        }
         dyn.estimateInertia = false;
         dyn.material        = "Imported";
         spec.dynamics.links.push_back (dyn);
