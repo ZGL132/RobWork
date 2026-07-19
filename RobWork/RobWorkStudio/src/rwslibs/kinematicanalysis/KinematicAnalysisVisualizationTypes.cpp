@@ -336,6 +336,27 @@ QPointF rws::projectVisualPoint (const AnalysisVisualPoint& point,
     return QPointF (point.position[0], point.position[1]);
 }
 
+bool rws::visualLegendVisible (bool showLegend, const QRect& area)
+{
+    return showLegend && area.width () >= 480;
+}
+
+int rws::visualLegendWidth (bool showLegend, const QRect& area)
+{
+    return visualLegendVisible (showLegend, area) ? 128 : 0;
+}
+
+QRectF rws::visualPlotArea (const QRect& area, bool showLegend)
+{
+    const int reservedLegendWidth = visualLegendWidth (showLegend, area);
+    const QRectF areaF (area);
+    return areaF.adjusted (
+        area.width () * 0.06,
+        18.0,
+        -18.0 - reservedLegendWidth,
+        -area.height () * 0.08);
+}
+
 QString rws::visualScalarModeText (VisualScalarMode mode)
 {
     switch (mode) {

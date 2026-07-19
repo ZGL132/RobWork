@@ -11,6 +11,8 @@
 #include "KinematicAnalysisJson.hpp"
 
 #include <QCoreApplication>
+#include <QRect>
+#include <QRectF>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -2049,25 +2051,49 @@ static int testVisualizationData ()
         const rws::AnalysisVisualBounds bounds =
             rws::projectedVisualBounds (poseData, rws::VisualProjection::YZ,
                                         filters);
-        // P8:tooltip content assertions
-    if (const int rc = require (
-            taskData.points[0].tooltip.contains (QStringLiteral ("Position:")),
-            "task tooltip contains position"))
-        return rc;
-    if (const int rc = require (
-            taskData.points[0].tooltip.contains (QStringLiteral ("Scalar:")),
-            "task tooltip contains scalar"))
-        return rc;
-    if (const int rc = require (
-            workspaceData.points[0].tooltip.contains (QStringLiteral ("TCP")),
-            "workspace tooltip identifies tcp"))
-        return rc;
-    if (const int rc = require (
-            poseData.points[0].tooltip.contains (QStringLiteral ("Reachable: 3 / 10")),
-            "pose tooltip preserves reachable ratio"))
-        return rc;
+        const QRect wideArea (0, 0, 720, 420);
+        const QRectF wideWithLegend =
+            rws::visualPlotArea (wideArea, true);
+        const QRectF wideWithoutLegend =
+            rws::visualPlotArea (wideArea, false);
+        if (const int rc = assertNear (
+                wideWithLegend.left (), wideWithoutLegend.left (), 1e-12,
+                "visual plot left is independent of legend"))
+            return rc;
+        if (const int rc = assertNear (
+                wideWithLegend.right (), wideWithoutLegend.right () - 128.0,
+                1e-12, "visual plot reserves legend width"))
+            return rc;
 
-    if (const int rc = require (bounds.valid, "visual bounds valid"))
+        const QRect narrowArea (0, 0, 400, 300);
+        const QRectF narrowWithLegend =
+            rws::visualPlotArea (narrowArea, true);
+        const QRectF narrowWithoutLegend =
+            rws::visualPlotArea (narrowArea, false);
+        if (const int rc = assertNear (
+                narrowWithLegend.right (), narrowWithoutLegend.right (), 1e-12,
+                "narrow visual plot does not reserve hidden legend width"))
+            return rc;
+
+        // P8:tooltip content assertions
+        if (const int rc = require (
+                taskData.points[0].tooltip.contains (QStringLiteral ("Position:")),
+                "task tooltip contains position"))
+            return rc;
+        if (const int rc = require (
+                taskData.points[0].tooltip.contains (QStringLiteral ("Scalar:")),
+                "task tooltip contains scalar"))
+            return rc;
+        if (const int rc = require (
+                workspaceData.points[0].tooltip.contains (QStringLiteral ("TCP")),
+                "workspace tooltip identifies tcp"))
+            return rc;
+        if (const int rc = require (
+                poseData.points[0].tooltip.contains (QStringLiteral ("Reachable: 3 / 10")),
+                "pose tooltip preserves reachable ratio"))
+            return rc;
+
+        if (const int rc = require (bounds.valid, "visual bounds valid"))
             return rc;
         if (const int rc = assertNear (bounds.minX, 5.0, 1e-12,
                                        "visual YZ bounds x"))

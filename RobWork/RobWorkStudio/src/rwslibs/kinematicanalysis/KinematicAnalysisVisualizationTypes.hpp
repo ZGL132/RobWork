@@ -5,6 +5,8 @@
 
 #include <QColor>
 #include <QPointF>
+#include <QRect>
+#include <QRectF>
 #include <QString>
 
 #include <array>
@@ -76,6 +78,9 @@ AnalysisVisualData visualDataFromPoseReachabilitySamples (
 
 QPointF projectVisualPoint (const AnalysisVisualPoint& point,
                             VisualProjection projection);
+bool visualLegendVisible (bool showLegend, const QRect& area);
+int visualLegendWidth (bool showLegend, const QRect& area);
+QRectF visualPlotArea (const QRect& area, bool showLegend);
 
 QString visualScalarModeText (VisualScalarMode mode);
 QString visualProjectionText (VisualProjection projection);

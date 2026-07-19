@@ -114,7 +114,7 @@ QSize KinematicAnalysisPlotWidget::sizeHint () const
 
 QRectF KinematicAnalysisPlotWidget::plotRect () const
 {
-    return rect ().adjusted (48, 18, -18, -36);
+    return visualPlotArea (rect (), _showLegend);
 }
 
 bool KinematicAnalysisPlotWidget::pointVisible (const AnalysisVisualPoint& point) const
@@ -248,26 +248,10 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
     paintPlot (painter, rect ());
 }
 
-// paintPlot:核心绘图,供 paintEvent 和 renderToImage 共用。
-// plot 区域从 area 计算而非 widget rect(),保证 renderToImage 按目标尺寸布局。
-bool KinematicAnalysisPlotWidget::shouldPaintLegend (const QRect& area) const
-{
-    return _showLegend && area.width () >= 480;
-}
-
-int KinematicAnalysisPlotWidget::legendWidth (const QRect& area) const
-{
-    return shouldPaintLegend (area) ? 128 : 0;
-}
-
 void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
 {
-    const int reservedLegendWidth = legendWidth (area);
-    const QRectF pr = area.adjusted (
-        area.width () * 0.06,
-        18,
-        -18 - reservedLegendWidth,
-        -area.height () * 0.08);
+    const int reservedLegendWidth = visualLegendWidth (_showLegend, area);
+    const QRectF pr = visualPlotArea (area, _showLegend);
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 
@@ -304,7 +288,7 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
     }
 
     // P8:图例
-    if (shouldPaintLegend (area)) {
+    if (visualLegendVisible (_showLegend, area)) {
         const QRectF legendArea (
             pr.right () + 8,
             pr.top () + 4,
