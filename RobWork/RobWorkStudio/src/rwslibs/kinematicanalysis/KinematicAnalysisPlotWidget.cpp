@@ -240,27 +240,38 @@ bool KinematicAnalysisPlotWidget::event (QEvent* event)
     return QWidget::event (event);
 }
 
+// paintEvent:标准 QWidget 重绘入口。创建 QPainter 调 paintPlot(rect())。
 void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
 {
     QPainter painter (this);
+    // 开启抗锯齿,让散点和文字边缘平滑(在大点距下尤为重要)
     painter.setRenderHint (QPainter::Antialiasing, true);
+    // 用调色板基础色填充整 widget 背景(避免与 plotArea 之间的留白透出)
     painter.fillRect (rect (), palette ().base ());
     paintPlot (painter, rect ());
 }
 
+// paintPlot:核心绘图入口,被 paintEvent 和 renderToImage 共享。
+// 渲染顺序(由下到上):
+//   1) plotArea 边框 → 2) 网格 + 刻度数字 → 3) 散点 → 4) 图例 →
+//   5) 右下 info 文本 → 6) 轴标签(底部/旋转 90° 左侧) →
+//   7) 可见点为 0 时画 "No visual data" 提示。
 void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
 {
+    // 1. plotArea:从 area 扣除边距 + 右侧图例空间
     const int reservedLegendWidth = visualLegendWidth (_showLegend, area);
     const QRectF pr = visualPlotArea (area, _showLegend);
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 
+    // 当前可见点投影后的 2D 边界(供 paintGrid 取刻度值)
     const QRectF bounds = projectedBounds ();
 
-    // P8:grid
+    // 2. 网格 + 刻度
     paintGrid (painter, pr, bounds);
 
-    // P8:按密度自动缩小点半径
+    // 3. 按密度自动缩小点半径,避免大量样本重叠
+    //    注意:用户 _pointRadius 是"上限",密度大时只缩不放大
     double radius = _pointRadius;
     if (_data.points.size () > 5000)
         radius = std::min (radius, 2.5);
@@ -268,18 +279,20 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
         radius = std::min (radius, 3.5);
 
     int visibleCount = 0;
+    // 4. 散点:按状态过滤后,逐点画椭圆;inCollision 用深红描边强调
     for (const AnalysisVisualPoint& point : _data.points) {
         if (!pointVisible (point))
             continue;
         ++visibleCount;
         const QPointF mapped = mapToPlot (point, pr, bounds);
         const QColor color = visualColorForPoint (point, _data);
-        // P8:碰撞点用深红轮廓,非碰撞点用较浅描边
+        // 碰撞点用深红粗描边 + 自身色填充,警示;非碰撞用色深 130
         painter.setPen (point.inCollision ?
             QPen (QColor (120, 20, 20), 2) :
             QPen (color.darker (130), 1));
         painter.setBrush (color);
         painter.drawEllipse (mapped, radius, radius);
+        // 标签:点右侧 + 7px 偏移,避免遮挡点中心
         if (_showLabels && !point.label.isEmpty ()) {
             painter.setPen (palette ().text ().color ());
             painter.drawText (QPointF (mapped.x () + 7, mapped.y () - 5),
@@ -287,7 +300,7 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
         }
     }
 
-    // P8:图例
+    // 5. 图例(右侧/底部)— 数据源和图例助手决定渲染什么
     if (visualLegendVisible (_showLegend, area)) {
         const QRectF legendArea (
             pr.right () + 8,
@@ -297,7 +310,7 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
         paintLegend (painter, legendArea);
     }
 
-    // 右下角 info
+    // 6. plotArea 顶部右侧显示 summary info
     painter.setPen (palette ().mid ().color ());
     painter.drawText (QRectF (pr.left (), 2, pr.width (), 18),
                       Qt::AlignRight | Qt::AlignVCenter,
@@ -306,7 +319,7 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
                           .arg (visualProjectionText (_projection))
                           .arg (visualScalarModeText (_data.scalarMode)));
 
-    // 轴标签
+    // 7. 轴标签:底部 X + 旋转 90° 的左侧 Y
     painter.setPen (palette ().text ().color ());
     painter.drawText (QRectF (pr.left (), pr.bottom () + 8, pr.width (), 20),
                       Qt::AlignCenter,
@@ -319,6 +332,7 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
                       QStringLiteral ("%1 (m)").arg (axisLabelY (_projection)));
     painter.restore ();
 
+    // 8. 空数据提示
     if (visibleCount == 0) {
         painter.setPen (palette ().mid ().color ());
         painter.drawText (pr, Qt::AlignCenter,
@@ -327,6 +341,8 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
 }
 
 // paintGrid:5 等分刻度虚线网格 + 数字标签。
+// 数字格式 'g' 4(自动选择 fixed/scientific),保留 4 位有效数字。
+// 字体自动缩小但不低于 7pt,保证可读性。
 void KinematicAnalysisPlotWidget::paintGrid (
     QPainter& painter, const QRectF& plotArea, const QRectF& bounds) const
 {
@@ -334,38 +350,45 @@ void KinematicAnalysisPlotWidget::paintGrid (
         return;
 
     painter.save ();
+    // 网格虚线:mid 色 lighten 130(更浅),1 像素 Qt::DotLine
     QPen gridPen (palette ().mid ().color ().lighter (130), 1, Qt::DotLine);
     painter.setPen (gridPen);
 
+    // 刻度字体:小一号但 ≥ 7pt
     QFont tickFont = painter.font ();
     tickFont.setPointSize (std::max (7, tickFont.pointSize () - 1));
     painter.setFont (tickFont);
     painter.setPen (palette ().text ().color ());
 
+    // 5 等分刻度(0, 0.25, 0.5, 0.75, 1)
     for (int i = 0; i <= 4; ++i) {
         const double ratio = static_cast< double > (i) / 4.0;
 
-        // 垂直网格线 (x)
+        // 垂直网格线 + 底部 X 刻度
         {
             const double x = plotArea.left () + ratio * plotArea.width ();
             painter.setPen (gridPen);
             painter.drawLine (QPointF (x, plotArea.top ()),
                               QPointF (x, plotArea.bottom ()));
+            // 把屏幕坐标反算回数据坐标(bounds),打印实际值
             const double dataX = bounds.left () + ratio * bounds.width ();
             painter.setPen (palette ().text ().color ());
+            // 数字位置:plotArea 下方 28px,居中,40 像素宽
             painter.drawText (QRectF (x - 20, plotArea.bottom () + 28, 40, 16),
                               Qt::AlignCenter,
                               QString::number (dataX, 'g', 4));
         }
 
-        // 水平网格线 (y)
+        // 水平网格线 + 左侧 Y 刻度
         {
+            // 注意 Y 方向反算:bounds.top() + ratio × height 表示从顶向下的距离
             const double y = plotArea.bottom () - ratio * plotArea.height ();
             painter.setPen (gridPen);
             painter.drawLine (QPointF (plotArea.left (), y),
                               QPointF (plotArea.right (), y));
             const double dataY = bounds.top () + ratio * bounds.height ();
             painter.setPen (palette ().text ().color ());
+            // 数字位置:plotArea 左侧 42px,垂直居中
             painter.drawText (QRectF (plotArea.left () - 42, y - 8, 38, 16),
                               Qt::AlignRight | Qt::AlignVCenter,
                               QString::number (dataY, 'g', 4));
