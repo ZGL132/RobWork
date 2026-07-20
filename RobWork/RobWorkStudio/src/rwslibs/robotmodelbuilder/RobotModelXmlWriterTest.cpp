@@ -280,24 +280,24 @@ int main (int argc, char** argv)
             return fail ("Y-axis revolute joint should rotate local Z onto URDF Y.");
 
         const DrawableSpec& visual = result.spec.drawables.front ();
-        if (!nearlyEqual (visual.pos[0], 1) || !nearlyEqual (visual.pos[1], 3) ||
-            !nearlyEqual (visual.pos[2], -2))
+        if (!nearlyEqual (visual.pos[0], 1) || !nearlyEqual (visual.pos[1], -3) ||
+            !nearlyEqual (visual.pos[2], 2))
             return fail ("Visual pose should be converted from child-link frame to reoriented joint frame.");
 
         if (result.spec.collisionModels.empty () ||
             result.spec.collisionModels.front ().refFrame != "joint_y")
             return fail ("Child link collision geometry should attach to the real joint frame.");
         const CollisionModelSpec& collision = result.spec.collisionModels.front ();
-        if (!nearlyEqual (collision.pos[0], 4) || !nearlyEqual (collision.pos[1], 6) ||
-            !nearlyEqual (collision.pos[2], -5))
+        if (!nearlyEqual (collision.pos[0], 4) || !nearlyEqual (collision.pos[1], -6) ||
+            !nearlyEqual (collision.pos[2], 5))
             return fail ("Collision pose should be converted from child-link frame to reoriented joint frame.");
 
         if (result.spec.dynamics.links.empty () ||
             result.spec.dynamics.links.front ().objectName != "joint_y")
             return fail ("URDF inertial data should remain attached to the real movable joint.");
         const LinkDynamicsSpec& dyn = result.spec.dynamics.links.front ();
-        if (!nearlyEqual (dyn.cog[0], 7) || !nearlyEqual (dyn.cog[1], 9) ||
-            !nearlyEqual (dyn.cog[2], -8))
+        if (!nearlyEqual (dyn.cog[0], 7) || !nearlyEqual (dyn.cog[1], -9) ||
+            !nearlyEqual (dyn.cog[2], 8))
             return fail ("Inertial COG should be converted from child-link frame to reoriented joint frame.");
         if (!nearlyEqual (dyn.inertia[0], 1) || !nearlyEqual (dyn.inertia[1], 3) ||
             !nearlyEqual (dyn.inertia[2], 2))
@@ -321,7 +321,7 @@ int main (int argc, char** argv)
             << "<axis xyz=\"0 1 0\" />"
             << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
             << "<joint name=\"joint_z\" type=\"revolute\"><parent link=\"link1\" />"
-            << "<child link=\"link2\" /><origin xyz=\"0.1 0 0\" rpy=\"0 0 0\" />"
+            << "<child link=\"link2\" /><origin xyz=\"0 0.2 0.3\" rpy=\"0 0 0\" />"
             << "<axis xyz=\"0 0 1\" />"
             << "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\" /></joint>\n"
             << "</robot>\n";
@@ -339,6 +339,14 @@ int main (int argc, char** argv)
         if (result.spec.transformJoints[0].name != "joint_y" ||
             result.spec.transformJoints[1].name != "joint_z")
             return fail ("Axis adjacency import should preserve real serial joint order.");
+        const JointTransformSpec& childJoint = result.spec.transformJoints[1];
+        if (!nearlyEqual (childJoint.pos[0], 0) || !nearlyEqual (childJoint.pos[1], -0.3) ||
+            !nearlyEqual (childJoint.pos[2], 0.2))
+            return fail ("Child joint origin should be converted into the reoriented parent link frame.");
+        if (!nearlyEqual (childJoint.rpyDeg[0], 0) ||
+            !nearlyEqual (childJoint.rpyDeg[1], 0) ||
+            !nearlyEqual (childJoint.rpyDeg[2], 90))
+            return fail ("Child joint orientation should cancel the parent link axis alignment.");
 
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (result.spec);
         if (!contains (collisionXml, "<FramePair first=\"joint_y\" second=\"joint_z\"/>"))

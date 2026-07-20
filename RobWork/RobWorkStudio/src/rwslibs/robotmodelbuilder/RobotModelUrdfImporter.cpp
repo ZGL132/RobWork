@@ -250,14 +250,6 @@ Rotation axisAlignmentRotation (const std::array< double, 3 >& axis)
              x[2], y[2], z[2]}};
 }
 
-std::array< double, 3 > combineOriginAndAxisRpyDeg (
-    const std::array< double, 3 >& urdfRpyRad, const Rotation& axisAlignment)
-{
-    const Rotation origin =
-        pluginRpyDegToRotation (urdfRpyToPluginRpyDeg (urdfRpyRad));
-    return rotationToPluginRpyDeg (multiplyRotation (origin, axisAlignment));
-}
-
 std::array< double, 3 > multiplyRotationVector (const Rotation& rotation,
                                                 const std::array< double, 3 >& value)
 {
@@ -932,24 +924,29 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         const bool reorientAxis =
             urdfJointIsMovable (urdfJoint) && !isDefaultJointAxis (urdfJoint.axis);
 
+        const auto parentInvIt =
+            childLinkToInverseAxisAlignment.find (urdfJoint.parentLink);
+        const Rotation parentInverseAxisAlignment =
+            parentInvIt != childLinkToInverseAxisAlignment.end () ? parentInvIt->second :
+                                                                    identityRotation ();
         JointTransformSpec joint;
         joint.name   = urdfJoint.name.toStdString ();
         joint.type   = pluginJointType.toStdString ();
-        joint.pos    = urdfJoint.origin.xyz;
+        joint.pos    = multiplyRotationVector (parentInverseAxisAlignment,
+                                               urdfJoint.origin.xyz);
         Rotation axisAlignment = identityRotation ();
-        if (reorientAxis) {
+        if (reorientAxis)
             axisAlignment = axisAlignmentRotation (urdfJoint.axis);
-            joint.rpyDeg =
-                combineOriginAndAxisRpyDeg (urdfJoint.origin.rpyRad, axisAlignment);
-        }
-        else {
-            joint.rpyDeg = urdfRpyToPluginRpyDeg (urdfJoint.origin.rpyRad);
-        }
+        const Rotation originRotation =
+            pluginRpyDegToRotation (urdfRpyToPluginRpyDeg (urdfJoint.origin.rpyRad));
+        joint.rpyDeg = rotationToPluginRpyDeg (
+            multiplyRotation (multiplyRotation (parentInverseAxisAlignment, originRotation),
+                              axisAlignment));
         spec.transformJoints.push_back (joint);
         usedTransformNames.insert (urdfJoint.name);
 
         childLinkToInverseAxisAlignment[urdfJoint.childLink] =
-            reorientAxis ? axisAlignment : identityRotation ();
+            transposeRotation (axisAlignment);
 
         childLinkToFrameName[urdfJoint.childLink]         = urdfJoint.name;
         childLinkToDynamicsJointName[urdfJoint.childLink] = urdfJoint.name;
