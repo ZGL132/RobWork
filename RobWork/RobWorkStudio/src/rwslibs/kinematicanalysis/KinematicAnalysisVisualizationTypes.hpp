@@ -64,6 +64,14 @@ struct AnalysisVisualData
     double scalarMax = 0.0;
 };
 
+// 从三种数据源转换为可视化点(包含标量计算和 tooltip)。
+//   - visualDataFromTaskPointResults       :任务点可达性 → 可视化点
+//   - visualDataFromWorkspaceSamples       :工作空间采样 → 可视化点
+//   - visualDataFromPoseReachabilitySamples:位姿可达性 → 可视化点
+// 每种转换都会:
+//   1) 从各 source 的对应字段填充 AnalysisVisualPoint(位置/状态/标量/碰撞等);
+//   2) 填充 label 和 tooltip(包含位置、标量值、Replay Q 信息等);
+//   3) 对于 TaskPoint 和 PoseReachability,填充 representative Q(replay)。
 AnalysisVisualData visualDataFromTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results,
     VisualScalarMode scalarMode);
@@ -76,12 +84,34 @@ AnalysisVisualData visualDataFromPoseReachabilitySamples (
     const std::vector< PoseReachabilitySample >& samples,
     VisualScalarMode scalarMode);
 
+// 3D 点按选定平面投影为 2D 屏幕坐标(纯坐标转换,无状态依赖)。
+//   XY 投影 → (x, y);
+//   XZ 投影 → (x, z);
+//   YZ 投影 → (y, z)。
 QPointF projectVisualPoint (const AnalysisVisualPoint& point,
                             VisualProjection projection);
+
+// 图例 / 着色区可见性辅助(供绘图控件布局):
+//   visualLegendVisible :在给定宽度下是否显示图例(< 480 像素隐藏);
+//   visualLegendWidth   :图例在 widget 中的固定宽度(像素);
+//   visualPlotArea      :从 widget 区域扣除图例/边距后,绘图可用矩形。
 bool visualLegendVisible (bool showLegend, const QRect& area);
 int visualLegendWidth (bool showLegend, const QRect& area);
 QRectF visualPlotArea (const QRect& area, bool showLegend);
 
+// 枚举 → 可读字符串(用于轴标签、图例标题、tooltip 等)。
+QString visualScalarModeText (VisualScalarMode mode);
+QString visualProjectionText (VisualProjection projection);
+
+// 根据 scalarMode 和 data 范围返回该点的颜色(Status/Collision 离散,其它连续)。
+//   Status/Coverage :按 status/collision 直接取固定调色板;
+//   连续标量         :用 (scalar - scalarMin) / (scalarMax - scalarMin) 归一化
+//                     后插入到 [冷-暖] 渐变(蓝→绿→红)。
+// 输入 scalar 非有限或 hasFiniteScalar == false 时,使用中位色(0.5)。
+QColor visualColorForPoint (const AnalysisVisualPoint& point,
+                            const AnalysisVisualData& data);
+
+// 枚举 → 可读字符串(用于轴标签、图例标题、tooltip 等)。
 QString visualScalarModeText (VisualScalarMode mode);
 QString visualProjectionText (VisualProjection projection);
 QColor visualColorForPoint (const AnalysisVisualPoint& point,
