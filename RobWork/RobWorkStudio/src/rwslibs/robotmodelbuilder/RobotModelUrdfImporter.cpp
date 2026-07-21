@@ -431,83 +431,128 @@ bool parseVisualOrCollision (QXmlStreamReader& xml, const QString& fallbackName,
 // Task 5:urdf inertial 解析
 bool parseInertial (QXmlStreamReader& xml, UrdfInertial& inertial, QStringList& errors);
 
+// =============================================================================
+//  parseUrdf
+//  说明: URDF XML 文件的底层解析器。
+//        使用 Qt 的 QXmlStreamReader 对 URDF/XML 进行流式读取，
+//        并将解析出的数据填充到内部的 UrdfModel 内存结构体中。
+//
+//  参数:
+//    - urdfPath : URDF 文件的绝对/相对磁盘路径
+//    - model    : 输出参数，用于接收解析出来的机器人模型 (包含 links 与 joints)
+//    - errors   : 输出参数，发生致命解析错误时，将错误信息追加到此列表
+//
+//  返回值:
+//    - bool : 解析成功返回 true，发生文件打不开、根节点错误或语法错误时返回 false
+// =============================================================================
 bool parseUrdf (const QString& urdfPath, UrdfModel& model, QStringList& errors)
 {
+    // ---- 1. 打开磁盘文件 ----
     QFile file (urdfPath);
     if (!file.open (QFile::ReadOnly | QFile::Text)) {
         errors << QString ("Could not open URDF file %1.").arg (urdfPath);
         return false;
     }
 
+    // ---- 2. 初始化 XML 流解析器并检查根节点 ----
     QXmlStreamReader xml (&file);
+    // 读取第一个 StartElement，校验根节点标签名必须是 <robot>
     if (!xml.readNextStartElement () || xml.name () != "robot") {
         errors << "URDF root element must be <robot>.";
         return false;
     }
 
+    // 提取 <robot name="..."> 属性中的机器人名称
     model.robotName = xml.attributes ().value ("name").toString ().trimmed ();
+    // 若 name 属性为空，兜底使用 URDF 文件的主文件名作为机器人名称
     if (model.robotName.isEmpty ())
         model.robotName = QFileInfo (urdfPath).completeBaseName ();
 
+    // ---- 3. 循环遍历 <robot> 下的一级子节点 (<link> 和 <joint>) ----
     while (xml.readNextStartElement ()) {
         const QString tag = xml.name ().toString ();
+        
+        // ---------------------------------------------------------------------
+        // 分支 A: 处理 <link> 节点
+        // ---------------------------------------------------------------------
         if (tag == "link") {
             UrdfLink link;
             link.name = xml.attributes ().value ("name").toString ().trimmed ();
+            // URDF 规范强制要求每一个 <link> 必须有 name 属性
             if (link.name.isEmpty ()) {
                 errors << "URDF link without name is not supported.";
                 return false;
             }
-            // 解析 link body:<visual>/<collision> -> UrdfGeometry 队列;
-            // inertials 在 Task 5 引入。当前其它子元素(inertial等)暂跳过。
-            int visualIndex   = 0;
+
+            // 用于生成缺省 name 属性时的自增序号 (例如: link1_visual_1)
+            int visualIndex    = 0;
             int collisionIndex = 0;
+
+            // 进入 <link> 内部，遍历其子节点 (<visual>, <collision>, <inertial>)
             while (xml.readNextStartElement ()) {
+                // 子分支 A1: 处理 <visual> 可视化渲染几何
                 if (xml.name () == "visual") {
                     UrdfGeometry geometry;
+                    // 若 URDF 中 <visual> 节点缺少 name 属性，生成兜底名称
                     const QString fallback =
                         link.name + "_visual_" + QString::number (++visualIndex);
                     if (!parseVisualOrCollision (xml, fallback, geometry, errors))
                         return false;
                     link.visuals.push_back (geometry);
                 }
+                // 子分支 A2: 处理 <collision> 碰撞检测几何
                 else if (xml.name () == "collision") {
                     UrdfGeometry geometry;
+                    // 若 URDF 中 <collision> 节点缺少 name 属性，生成兜底名称
                     const QString fallback =
                         link.name + "_collision_" + QString::number (++collisionIndex);
                     if (!parseVisualOrCollision (xml, fallback, geometry, errors))
                         return false;
                     link.collisions.push_back (geometry);
                 }
+                // 子分支 A3: 处理 <inertial> 质量与惯性张量数据
                 else if (xml.name () == "inertial") {
                     if (!parseInertial (xml, link.inertial, errors))
                         return false;
                 }
+                // 子分支 A4: 遇到未知或不关心的子标签，直接跳过整个元素
                 else {
                     xml.skipCurrentElement ();
                 }
             }
+            // 将解析好的 link 存入以 name 为 key 的哈希映射表 (model.links)
             model.links[link.name] = link;
         }
+        // ---------------------------------------------------------------------
+        // 分支 B: 处理 <joint> 节点
+        // ---------------------------------------------------------------------
         else if (tag == "joint") {
             UrdfJoint joint;
             if (!parseJointElement (xml, joint, errors))
                 return false;
+            // 将解析好的 joint 按照在 XML 中出现的先后顺序塞入列表
             model.joints.push_back (joint);
         }
+        // ---------------------------------------------------------------------
+        // 分支 C: 跳过 <gazebo>、<transmission>、<material> 等其他不关心的顶层节点
+        // ---------------------------------------------------------------------
         else {
             xml.skipCurrentElement ();
         }
     }
 
+    // ---- 4. 解析完成后的防御性语法与规则检查 ----
+    // 检查 XML 流在解析过程中是否发生语法截断或格式损坏错误
     if (xml.hasError ()) {
         errors << QString ("URDF XML parse error: %1").arg (xml.errorString ());
         return false;
     }
+    // 合法 URDF 文件必须至少包含一个 link
     if (model.links.empty ()) {
         errors << "URDF contains no links.";
         return false;
     }
+
     return true;
 }
 
@@ -592,39 +637,72 @@ ChainCandidate bestChainFromLink (
     return best;
 }
 
-/// 从 root 出发沿 parent -> child 关系走出一条串联链;
-/// 每个 link 选第一个 child joint(按 name 字典序),其它兄弟关节通过 warning 上报。
-/// 走完 / 出现环 / root 不存在都给出明确报错或空结果。
+// =============================================================================
+//  orderedRootChain
+//  说明: 从 URDF 树状拓扑中提取一条按父子关系从根节点 (Root) 到末端 (Tip) 排序的串联关节链。
+//
+//  工作流程与设计思想:
+//    1) 调用 findRootLink() 寻找唯一的根连杆 (Root Link)；
+//    2) 建立父连杆到子关节集合的映射表 (childrenByParent)，构建拓扑图；
+//    3) 调用 bestChainFromLink() 递归寻找最佳路径 (优先选择可动关节数最多、最长的串联链)；
+//    4) 检查在最佳链追踪过程中，是否存在多分支节点 (Branching Node)；
+//       若某个 Link 挂载了多个子关节 (如机器人装了额外相机或双臂分支)，
+//       选择最佳链上的子关节，并将其余被跳过的兄弟分支记录到 warnings 中，提醒用户；
+//    5) 最终返回拓扑有序的单条串联关节数组 (std::vector<UrdfJoint>)。
+//
+//  参数:
+//    - model    : 解析好的 URDF 内存数据模型 (包含所有 links 与 joints)
+//    - warnings : 输出参数，用于记录非致命警告 (如被忽略的分支关节数量)
+//    - errors   : 输出参数，记录致命错误 (如无根节点、多根节点或拓扑环路)
+//
+//  返回值:
+//    - std::vector<UrdfJoint> : 按 root -> tip 严格串联排序的关节数组
+// =============================================================================
 std::vector< UrdfJoint > orderedRootChain (const UrdfModel& model,
                                            QStringList& warnings,
                                            QStringList& errors)
 {
+    // ---- 1. 寻找 URDF 模型中唯一的根节点 (Root Link) ----
+    // 根节点的特征: 不是任何关节 (Joint) 的子连杆 (Child Link)
     const QString root = findRootLink (model, errors);
     if (root.isEmpty ())
-        return std::vector< UrdfJoint > ();
+        return std::vector< UrdfJoint > (); // 若根节点查找失败 (不存在或有多个)，直接返回空链
 
+    // ---- 2. 构建“父连杆 -> 子关节列表”的拓扑邻接表 ----
     std::map< QString, std::vector< UrdfJoint > > childrenByParent;
     for (const UrdfJoint& joint : model.joints)
         childrenByParent[joint.parentLink].push_back (joint);
 
+    // ---- 3. 从根节点开始搜索最佳串联链 ----
     std::set< QString > visitedLinks;
-    visitedLinks.insert (root);
+    visitedLinks.insert (root); // 标记根节点已访问，用于深度优先搜索 (DFS) 中检测闭环
+
+    // 递归寻找包含最长/最多可动关节的候选链 (ChainCandidate)
     const ChainCandidate selected =
         bestChainFromLink (root, childrenByParent, visitedLinks, errors);
+        
+    // 若搜索过程中检测到拓扑环路 (Cycle) 等致命错误，终止并返回空链
     if (!errors.isEmpty ())
         return std::vector< UrdfJoint > ();
 
+    // ---- 4. 遍历选中的串联链，检查并收集分支剪枝警告 (Branch Warnings) ----
     QString current = root;
     for (const UrdfJoint& joint : selected.joints) {
         const auto childrenIt = childrenByParent.find (current);
+        
+        // 如果当前连杆 (current) 拥有超过 1 个子关节，说明在此处发生了树状分支
         if (childrenIt != childrenByParent.end () && childrenIt->second.size () > 1) {
+            // 将跳过的分支记录为警告，明确告知用户：哪一个关节被作为主链导入，跳过了几个兄弟分支
             warnings << QString ("URDF branch at link %1: importing child joint %2 as the serial chain and skipping %3 sibling branch(es).")
                             .arg (current, joint.name)
                             .arg (childrenIt->second.size () - 1);
         }
+        
+        // 沿选中的链向下推进到下一个子连杆 (Child Link)
         current = joint.childLink;
     }
 
+    // ---- 5. 返回排序完成的串联关节链 ----
     return selected.joints;
 }
 
@@ -865,65 +943,82 @@ bool parseInertial (QXmlStreamReader& xml, UrdfInertial& inertial, QStringList& 
 
 // =============================================================================
 //  importFile
-//  说明: 任务 2 主入口
-//    * 解析 URDF;
-//    * 初始化一份 RobotModelSpec 默认字段;
-//    * 按 model.joints(暂按出现顺序;Task 3 才会切到 orderedRootChain)
-//      顺序填 transformJoints / limits / dynamics.forceLimits;
-//    * 末尾加一个名字叫 "Zero" 的零位姿;
-//    * refreshDhProjectionFromTransform 后立即 applyDefaultDrawables。
-//    Task 4/5 会在此基础上补视觉/碰撞/inertial 转换;
-//    Task 7 会在末尾加 validate 兜底。
+//  说明: URDF 导入的核心主入口函数。
+//        执行流程:
+//        1) 解析 URDF XML 文本到 C++ 内存临时模型 (UrdfModel);
+//        2) 初始化 RobotModelSpec 基础全局字段 (名称、保存路径、模式开关);
+//        3) 调用 orderedRootChain 提取最佳串联关节链 (处理分支与环);
+//        4) 遍历关节链: 转换关节类型、计算坐标系位姿，若遇到非 Z 轴旋转关节，
+//           计算轴对齐旋转矩阵 R_align 并保存反向补偿矩阵;
+//        5) 填充关节运动限位 (Limits) 与驱动力上限 (ForceLimits);
+//        6) 遍历 Link 的 Visual/Collision 几何体，挂载到对应 Joint 坐标系下，
+//           并利用反向补偿矩阵折叠其 RPY 和 Pos 位姿偏置;
+//        7) 遍历 Link 的 Inertial 动力学数据，进行位姿补偿与惯性张量基底旋转;
+//        8) 补全缺失动力学数据的默认兜底项，追加 "Zero" 零位姿;
+//        9) 刷新 DH 投影视图，应用默认外观 Geometry (外壳与连杆圆柱);
+//       10) 调用 XmlWriter::validate 进行最终的合法性兜底校验。
 // =============================================================================
 bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                                          const UrdfImportOptions& options,
                                          UrdfImportResult& result,
                                          QStringList& errors)
 {
+    // 重置并初始化导出结果对象 (清空之前的 spec 与 warnings)
     result = UrdfImportResult ();
 
+    // ---- 第一步: 解析 URDF XML 文本到内存结构中 ----
     UrdfModel model;
     if (!parseUrdf (urdfPath, model, errors))
         return false;
 
+    // ---- 第二步: 初始化 RobotModelSpec 顶层配置 ----
     RobotModelSpec spec;
     spec.robotName = model.robotName.toStdString ();
+    // 保存目录优先使用用户指定的 options，为空时默认落到 URDF 文件所在目录
     spec.saveDirectory = options.saveDirectory.isEmpty ()
                               ? QFileInfo (urdfPath).absolutePath ().toStdString ()
                               : options.saveDirectory.toStdString ();
-    spec.mode                   = KinematicsViewMode::JointRPYPos;
-    spec.exportDhJointsAdvanced = false;
-    spec.showFrameAxes          = true;
+    spec.mode                   = KinematicsViewMode::JointRPYPos; // 默认使用 SE(3) 真值模式
+    spec.exportDhJointsAdvanced = false;                          // 默认不启用高级 DH 导出
+    spec.showFrameAxes          = true;                           // 默认在 3D 界面中显示坐标轴
     spec.generateDrawables      = options.generateDrawables;
     spec.generateScene          = options.generateScene;
     spec.dynamics.generateDynamicWorkCell = options.generateDynamicWorkCell;
     spec.dynamics.baseFrame     = "Base";
     spec.dynamics.baseMaterial  = "Steel";
 
+    // 设置默认的场景基座 Frame (RobotBase)
     spec.robotBaseFrame.name      = "RobotBase";
     spec.robotBaseFrame.refFrame  = "WORLD";
     spec.robotBaseFrame.frameType = SceneFrameType::Fixed;
     spec.robotBaseFrame.rpyDeg    = {{0, 0, 0}};
     spec.robotBaseFrame.pos       = {{0, 0, 0}};
 
-    // Task 3:用 orderedRootChain 取代 model.joints 的出现顺序,
-    // 把分支 / 非默认轴 / root 错误 / 环 这些情况记到 result.warnings / errors。
+    // ---- 第三步: 提取串联关节链 (有序拓扑排序) ----
+    // 从树状 URDF 拓扑中选取包含最多可动关节的主串联链，被剪枝的兄弟分支会记录到 warnings
     const std::vector< UrdfJoint > orderedJoints =
         orderedRootChain (model, result.warnings, errors);
     if (!errors.isEmpty ())
         return false;
 
+    // 映射表: 记录子 Link 名与对应 Frame 名/动力学 Joint 名的关系
     std::map< QString, QString > childLinkToFrameName;
     std::map< QString, QString > childLinkToDynamicsJointName;
     std::map< QString, QString > childLinkToJointType;
+    // 关键映射表: 记录每个子 Link 对应的“关节轴对齐逆旋转矩阵” (用于下游几何与物理反向折叠)
     std::map< QString, Rotation > childLinkToInverseAxisAlignment;
     std::set< QString > usedTransformNames;
 
+    // ---- 第四步: 遍历串联链，转换并填充 Joint 变换与限位 ----
     for (const UrdfJoint& urdfJoint : orderedJoints) {
+        // 将 URDF 关节类型 (revolute/prismatic/fixed) 转换为插件内部枚举
         const QString pluginJointType = jointTypeToPluginType (urdfJoint.type);
+        
+        // 检查该关节是否为可动关节，且旋转/移动轴非默认局部 +Z 轴 [0,0,1]^T
         const bool reorientAxis =
             urdfJointIsMovable (urdfJoint) && !isDefaultJointAxis (urdfJoint.axis);
 
+        // 获取父 Link 处积累的逆轴对齐矩阵，若无则使用 3x3 单位矩阵
         const auto parentInvIt =
             childLinkToInverseAxisAlignment.find (urdfJoint.parentLink);
         const Rotation parentInverseAxisAlignment =
@@ -932,31 +1027,43 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         JointTransformSpec joint;
         joint.name   = urdfJoint.name.toStdString ();
         joint.type   = pluginJointType.toStdString ();
+
+        // 父坐标系可能经过了轴对齐旋转，因此关节平移向量 xyz 需要做父级的逆旋转变换补偿
         joint.pos    = multiplyRotationVector (parentInverseAxisAlignment,
                                                urdfJoint.origin.xyz);
+        
+        // 计算当前关节因轴重定向所需的旋转矩阵 R_align
         Rotation axisAlignment = identityRotation ();
         if (reorientAxis)
             axisAlignment = axisAlignmentRotation (urdfJoint.axis);
+            
+        // 将 URDF 的 rpy (X-Y-Z 弧度) 转换为插件标准的 RPY (Z-Y-X 角度) 并转为旋转矩阵
         const Rotation originRotation =
             pluginRpyDegToRotation (urdfRpyToPluginRpyDeg (urdfJoint.origin.rpyRad));
+            
+        // 最终 Joint 的姿态 = 父级逆变换 * 关节原始旋转 * 当前轴对齐旋转 R_align
         joint.rpyDeg = rotationToPluginRpyDeg (
             multiplyRotation (multiplyRotation (parentInverseAxisAlignment, originRotation),
                               axisAlignment));
         spec.transformJoints.push_back (joint);
         usedTransformNames.insert (urdfJoint.name);
 
+        // 为该关节创建的子 Link 保存其逆轴对齐矩阵 (即 R_align 的转置矩阵 R_align^T)
         childLinkToInverseAxisAlignment[urdfJoint.childLink] =
             transposeRotation (axisAlignment);
 
+        // 维护 Link 与 Joint 的名称映射关系
         childLinkToFrameName[urdfJoint.childLink]         = urdfJoint.name;
         childLinkToDynamicsJointName[urdfJoint.childLink] = urdfJoint.name;
         childLinkToJointType[urdfJoint.childLink]         = pluginJointType;
 
+        // 如果是可动关节 (Revolute 或 Prismatic)，填充运动限位 Limits 和动力学 ForceLimits
         const JointKind kind = typeToKind (joint.type);
         if (kind == JointKind::Revolute || kind == JointKind::Prismatic) {
             JointLimitSpec limit;
             limit.jointName = joint.name;
             if (kind == JointKind::Revolute) {
+                // 旋转关节: 弧度转换为度 (rad -> deg)
                 limit.posMin =
                     urdfJoint.limit.hasLower ? radToDeg (urdfJoint.limit.lower) : -180.0;
                 limit.posMax =
@@ -965,14 +1072,16 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                     urdfJoint.limit.hasVelocity ? radToDeg (urdfJoint.limit.velocity) : 180.0;
             }
             else {
+                // 移动关节: 保持米单位 (m)
                 limit.posMin = urdfJoint.limit.hasLower ? urdfJoint.limit.lower : -1.0;
                 limit.posMax = urdfJoint.limit.hasUpper ? urdfJoint.limit.upper : 1.0;
                 limit.velMax =
                     urdfJoint.limit.hasVelocity ? urdfJoint.limit.velocity : 1.0;
             }
-            limit.accMax = std::max (limit.velMax, 1.0);
+            limit.accMax = std::max (limit.velMax, 1.0); // 默认加速度设为速度上限或至少 1.0
             spec.limits.push_back (limit);
 
+            // 驱动力上限 (Revolute 为 N·m, Prismatic 为 N)
             JointForceLimitSpec force;
             force.jointName = joint.name;
             force.maxForce  = urdfJoint.limit.hasEffort
@@ -982,18 +1091,19 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         }
     }
 
-    // Task 4:visual / collision 挂到 child link 对应的实际 frame 上。
-    // 非 Z 轴可动关节通过旋转 joint frame 对齐 URDF <axis>,geometry
-    // 位姿已折叠到 joint frame 下;root / 链外 link 退化挂到 "Base"。
+    // ---- 第五步: 遍历所有 Link，处理 Visual (渲染) 与 Collision (碰撞) 几何 ----
     for (const auto& item : model.links) {
         const UrdfLink& link = item.second;
+        // 查找当前 Link 挂载在哪个 Joint Frame 上 (根节点/链外节点退化挂到 "Base")
         const QString refFrame = linkFrameName (item.first, childLinkToFrameName);
 
+        // 1. 处理视觉模型 (Visual -> DrawableSpec)
         for (const UrdfGeometry& visual : link.visuals) {
             DrawableSpec drawable;
             drawable.name            = visual.name.toStdString ();
             drawable.refFrame        = refFrame.toStdString ();
             drawable.shape           = visual.shape.toStdString ();
+            // 解析 package:// 或相对网格路径为系统绝对路径
             drawable.filePath        =
                 resolveMeshPath (visual.filePath, urdfPath, options, result.warnings)
                     .toStdString ();
@@ -1001,6 +1111,7 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             drawable.radius          = visual.radius;
             drawable.length          = visual.length;
             {
+                // 如果 Joint Frame 经过了轴对齐旋转，此处用其逆变换 R_align^T 补偿几何体的位姿
                 const Rotation invAxis =
                     childLinkToInverseAxisAlignment.count (item.first) > 0
                         ? childLinkToInverseAxisAlignment[item.first]
@@ -1013,12 +1124,13 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             drawable.autoLinkGeometry = false;
             spec.drawables.push_back (drawable);
         }
+
+        // 2. 处理碰撞模型 (Collision -> CollisionModelSpec)
         for (const UrdfGeometry& collisionGeometry : link.collisions) {
             CollisionModelSpec collision;
             collision.name        = collisionGeometry.name.toStdString ();
             collision.refFrame    = refFrame.toStdString ();
-            // Collision models 也接受 Mesh,本项目 Writer 把 Mesh 视为 Polytope
-            // 别名(Milestone 5);其余形状直接复用。
+            // 本项目 Writer 将 Mesh/STL 统一处理为 Polytope/Mesh
             collision.shape       = (collisionGeometry.shape == "Mesh" ||
                                collisionGeometry.shape == "STL")
                                         ? std::string ("Mesh")
@@ -1030,6 +1142,7 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
             collision.radius      = collisionGeometry.radius;
             collision.length      = collisionGeometry.length;
             {
+                // 同理，使用 R_align^T 反向折叠补偿碰撞几何的位姿
                 const Rotation invAxis =
                     childLinkToInverseAxisAlignment.count (item.first) > 0
                         ? childLinkToInverseAxisAlignment[item.first]
@@ -1043,30 +1156,32 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         }
     }
 
-    // Task 5:<inertial> -> LinkDynamicsSpec。
-    // 重点:URDF 的 <inertial> 挂在子 link 上,但动力学 link 的 objectName
-    // 在插件里是可动 joint 名;用 childLinkToJointName 找这个 link 由哪个
-    // joint 创建。Root / 不在 chain 上的 link 给 warning 后跳过。
+    // ---- 第六步: 处理 <inertial> 动力学数据 -> LinkDynamicsSpec ----
     for (const auto& item : model.links) {
         const UrdfLink& link = item.second;
         if (!link.inertial.present)
             continue;
+            
+        // URDF 惯性数据挂在 Link 上，而本插件中的物理对象挂在可动 Joint 上
         const auto jointIt = childLinkToDynamicsJointName.find (item.first);
         if (jointIt == childLinkToDynamicsJointName.end ()) {
             result.warnings << QString ("Skipping inertial data for root or non-chain link %1.")
                                     .arg (item.first);
-            continue;
+            continue; // 跳过基座 Root 或不在主串联链上的 Link
         }
+        
         const auto typeIt = childLinkToJointType.find (item.first);
         if (typeIt == childLinkToJointType.end () ||
             !isMovable (typeToKind (typeIt->second.toStdString ()))) {
-            continue;
+            continue; // 固定关节的 Link 不参与动力学 Link 列表
         }
+
         LinkDynamicsSpec dyn;
         dyn.linkName        = item.first.toStdString ();
-        dyn.objectName      = jointIt->second.toStdString ();
+        dyn.objectName      = jointIt->second.toStdString (); // 绑定对应可动关节
         dyn.mass            = link.inertial.mass;
         {
+            // 同样如果发生过关节轴重定向，质心 COG 需做平移补偿，惯性张量要做基底旋转变换: I' = R^T * I * R
             const Rotation invAxis =
                 childLinkToInverseAxisAlignment.count (item.first) > 0
                     ? childLinkToInverseAxisAlignment[item.first]
@@ -1078,8 +1193,8 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         dyn.material        = "Imported";
         spec.dynamics.links.push_back (dyn);
     }
-    // 没有 URDF inertial 数据时,为每个 movable joint 兜底填一份默认
-    // LinkDynamicsSpec,避免 dynamics 表空缺导致后续 SaveAndLoad 失败。
+
+    // ---- 第七步: 兜底逻辑 - 为缺失 URDF 动力学数据的可动关节补全默认 LinkDynamicsSpec ----
     {
         int index = 1;
         for (const JointTransformSpec& joint : spec.transformJoints) {
@@ -1092,6 +1207,8 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                               }) != spec.dynamics.links.end ();
             if (hasDynamics)
                 continue;
+                
+            // 如果某可动关节没有在 URDF 中找到 inertial 数据，填入默认 1.0kg 兜底
             LinkDynamicsSpec dyn;
             dyn.linkName        = "Link" + std::to_string (index++);
             dyn.objectName      = joint.name;
@@ -1104,14 +1221,19 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         }
     }
 
+    // ---- 第八步: 自动追加全 0 的 "Zero" 默认预设位姿 ----
     PoseSpec zero;
     zero.name = "Zero";
     zero.q    = std::vector< double > (
         static_cast< size_t >(RobotModelXmlWriter::movableJointCount (spec)), 0.0);
     spec.poses.push_back (zero);
 
+    // ---- 第九步: 视图与默认几何同步 ----
+    // 1. 根据刚算好的 SE(3) transformJoints 刷新 DH 投影视图表
     RobotModelXmlWriter::refreshDhProjectionFromTransform (spec);
+    // 2. 自动补充关节外壳 (Housings) 与连杆圆柱 (Link{i}To{i+1})
     RobotModelXmlWriter::applyDefaultDrawables (spec);
+    // 3. 擦除退化 (长度为 0) 的自动连杆圆柱，避免产生无效小 Geometry
     spec.drawables.erase (
         std::remove_if (spec.drawables.begin (), spec.drawables.end (),
                         [] (const DrawableSpec& drawable) {
@@ -1119,9 +1241,8 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                         }),
         spec.drawables.end ());
 
-    // Task 7:在写盘前调用 XmlWriter.validate 兜底,把任何
-    // "URDF 合法但 spec 不合法" 的状态阻挡下来,避免后续 saveFiles
-    // / WorkCellLoader 链式失败。
+    // ---- 第十步: 最终防御校验 ----
+    // 在返回前调用全局 validate，保证转换出的 spec 满足后续落盘写 XML 和 WorkCell 加载的铁律
     QStringList validationErrors;
     if (!RobotModelXmlWriter::validate (spec, validationErrors)) {
         errors << "URDF was parsed but produced an invalid RobotModelSpec:";
@@ -1129,6 +1250,7 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
         return false;
     }
 
+    // 导入成功，写回 result 并返回 true
     result.spec = spec;
     return true;
 }

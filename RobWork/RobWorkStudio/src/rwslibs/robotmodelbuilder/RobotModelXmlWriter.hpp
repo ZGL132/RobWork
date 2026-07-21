@@ -1,16 +1,15 @@
 // =============================================================================
 //  文件: RobotModelXmlWriter.hpp
-//  说明: 把 RobotModelSpec 序列化为 RobWork / RobWorkSim 能识别的 XML 文件的
-//        静态工具类。核心职责:
-//          1) makeDefaultSixAxisModel : 构造一个 6 轴机器人的"出厂默认"数据
-//          2) makeSerialDeviceXml     : 生成 <SerialDevice>...</SerialDevice>
-//          3) makeSceneXml            : 生成场景容器 <WorkCell>...</WorkCell>
-//          4) makeDynamicWorkCellXml  : 生成动力学 .dwc.xml
-//          5) saveFiles               : 把上面三类写到磁盘
-//          6) computeLinkPose / applyLinkGeometry
-//                                     : 根据关节几何自动计算连杆圆柱
-//                                       (中心位置、姿态、长度)
-//        该类无状态,所有方法均为 static。
+//  说明: 将 RobotModelSpec 序列化为 RobWork / RobWorkSim 可识别 XML 文件的无状态静态工具类。
+//
+//  核心职责:
+//    1) makeDefaultSixAxisModel : 构建 6 轴机器人的默认模型配置数据。
+//    2) makeSerialDeviceXml     : 生成串行设备 XML (<SerialDevice>...</SerialDevice>)。
+//    3) makeSceneXml            : 生成场景容器 XML (<WorkCell>...</WorkCell>)。
+//    4) makeDynamicWorkCellXml  : 生成动力学配置文件 (.dwc.xml)。
+//    5) makeCollision/Proximity : 生成碰撞与邻近度配置文件 (.xml)。
+//    6) saveFiles               : 将上述配置文件统一保存至磁盘。
+//    7) computeLinkPose / applyLinkGeometry : 依据关节位姿自动计算连杆几何参数（中心位置、姿态、长度）。
 // =============================================================================
 #ifndef RWS_ROBOTMODELBUILDER_ROBOTMODELXMLWRITER_HPP
 #define RWS_ROBOTMODELBUILDER_ROBOTMODELXMLWRITER_HPP
@@ -26,198 +25,233 @@ class QTextStream;
 
 namespace rws {
 
+/**
+ * @brief RobotModelSpec 的 XML 序列化与几何计算静态工具类。
+ * @note 本类为无状态类，所有成员方法均为静态方法（static）。
+ */
 class RobotModelXmlWriter
 {
   public:
-    /// 公开的圆周率常量,供外部代码(测试、UI)做度/弧度换算;
-    /// 之前只放在匿名命名空间,测试无法访问。
+    // =========================================================================
+    //  常量与基础接口
+    // =========================================================================
+
+    /// 圆周率常量，供外部模块（如测试、UI 交互）进行角度/弧度转换
     static constexpr double kPi = 3.14159265358979323846;
 
-    /// 构造一份"通用 6 轴机器人"的默认 RobotModelSpec,所有关节/限位/Drawable/动力学都填好
+    /**
+     * @brief 构建通用 6 轴机器人的出厂默认配置数据（包含预设关节、限位、几何体及动力学参数）。
+     * @param saveDirectory 保存的目标目录路径
+     * @return 填充完毕的 RobotModelSpec 结构体
+     */
     static RobotModelSpec makeDefaultSixAxisModel (const QString& saveDirectory);
 
-    /// 把用户输入的机器人名清洗成可作为文件名的安全字符串(只保留字母/数字/_/-)
+    /**
+     * @brief 将输入的机器人名称清洗为安全的文件名（仅保留字母、数字、下划线及连字符）。
+     * @param name 原始机器人名称
+     * @return 清洗后的安全文件名字符串
+     */
     static QString sanitizeFileBaseName (const QString& name);
 
-    /// 校验 RobotModelSpec 是否合法,把错误信息追加到 errors 中;返回 true 表示通过
+    /**
+     * @brief 校验 RobotModelSpec 数据的合法性。
+     * @param spec 待校验的模型配置
+     * @param[out] errors 若校验失败，追加收集到的错误信息
+     * @return 校验通过返回 true，否则返回 false
+     */
     static bool validate (const RobotModelSpec& spec, QStringList& errors);
 
+    /**
+     * @brief 检查当前模型规范是否支持导出 DH 参数。
+     * @param spec 模型配置
+     * @param[out] errors [可选] 若不支持，追加收集到的原因说明
+     * @return 支持导出返回 true，否则返回 false
+     */
     static bool canExportDhJoints (const RobotModelSpec& spec, QStringList* errors = nullptr);
 
-    /// 生成 SerialDevice XML(<SerialDevice>...</SerialDevice>)
+    // =========================================================================
+    //  XML 字符串生成接口
+    // =========================================================================
+
+    /// 生成串行设备 XML 文本（根节点为 <SerialDevice>）
     static QString makeSerialDeviceXml (const RobotModelSpec& spec);
 
-    /// 生成 Scene XML(WorkCell 容器,内含 <Include>)
+    /// 生成场景容器 XML 文本（根节点为 <WorkCell>，内部包含 <Include> 节点）
     static QString makeSceneXml (const RobotModelSpec& spec);
 
-    /// 生成 DynamicWorkCell XML(动力学配置文件)
+    /// 生成动力学 WorkCell XML 文本（用于 RobWorkSim 的配置文件）
     static QString makeDynamicWorkCellXml (const RobotModelSpec& spec);
 
-    /// 生成 Milestone 6 CollisionSetup XML。
-    /// 输出 RobWork CollisionSetupLoader 支持的格式:
-    ///   <CollisionSetup>
-    ///     <Exclude><FramePair first="A" second="B"/></Exclude>
-    ///     <Volatile>X</Volatile>
-    ///     <ExcludeStaticPairs/>
-    ///   </CollisionSetup>
-    /// 自动合并 spec.collisionSetup.excludePairs + 相邻关节 pair(当
-    /// excludeAdjacentLinkPairs=true)。空 list 时省略 <Exclude>,空
-    /// volatileFrames 时省略 <Volatile>。
+    /**
+     * @brief 生成碰撞检测配置 XML（CollisionSetup）。
+     * @details 输出格式适配 RobWork 的 CollisionSetupLoader。
+     *          会自动合并 spec 中指定的排除对与相邻关节对（若开启 excludeAdjacentLinkPairs）。
+     */
     static QString makeCollisionSetupXml (const RobotModelSpec& spec);
 
-    /// 生成 Milestone 6 ProximitySetup XML。
-    /// 输出 RobWork ProximitySetupLoader 支持的格式:
-    ///   <ProximitySetup UseIncludeAll="..." UseExcludeStaticPairs="...">
-    ///     <Include PatternA="..." PatternB="..."/>
-    ///     <Exclude PatternA="..." PatternB="..."/>
-    ///   </ProximitySetup>
+    /**
+     * @brief 生成邻近度检测配置 XML（ProximitySetup）。
+     * @details 输出格式适配 RobWork 的 ProximitySetupLoader。
+     */
     static QString makeProximitySetupXml (const RobotModelSpec& spec);
 
-    /// SerialDevice XML 的最终落盘路径(saveDirectory / robotName.wc.xml)
+    // =========================================================================
+    //  文件路径解析与落盘保存
+    // =========================================================================
+
+    /// 获取 SerialDevice XML 的完整目标路径 (saveDirectory / robotName.wc.xml)
     static QString serialDeviceFilePath (const RobotModelSpec& spec);
 
-    /// Scene XML 的最终落盘路径(saveDirectory / robotNameScene.wc.xml)
+    /// 获取 Scene XML 的完整目标路径 (saveDirectory / robotNameScene.wc.xml)
     static QString sceneFilePath (const RobotModelSpec& spec);
 
-    /// DynamicWorkCell XML 的最终落盘路径(saveDirectory / robotName.dwc.xml)
+    /// 获取 DynamicWorkCell XML 的完整目标路径 (saveDirectory / robotName.dwc.xml)
     static QString dynamicWorkCellFilePath (const RobotModelSpec& spec);
 
-    /// CollisionSetup XML 的最终落盘路径(saveDirectory / collisionSetup.file)
+    /// 获取 CollisionSetup XML 的完整目标路径 (saveDirectory / collisionSetup.file)
     static QString collisionSetupFilePath (const RobotModelSpec& spec);
 
-    /// ProximitySetup XML 的最终落盘路径(saveDirectory / proximitySetup.file)
+    /// 获取 ProximitySetup XML 的完整目标路径 (saveDirectory / proximitySetup.file)
     static QString proximitySetupFilePath (const RobotModelSpec& spec);
 
-    /// 校验 + 把 XML 写入磁盘;失败时把错误信息追加到 errors 中
+    /**
+     * @brief 执行合法性校验并将所有生成的 XML 配置文件写入磁盘。
+     * @param spec 模型配置
+     * @param[out] errors 保存失败时的错误日志
+     * @return 全部保存成功返回 true，否则返回 false
+     */
     static bool saveFiles (const RobotModelSpec& spec, QStringList& errors);
 
-    /// 计算从 joint_i 到 joint_{i+1} 的连杆圆柱姿态(中心位置、RPY、长度)
-    /// @param spec     : 完整模型数据,从中读取关节信息
-    /// @param linkIndex: 0..(transformJoints.size() - 2)
-    ///                   对应连杆 i (Joint_{i+1} -> Joint_{i+2})
-    /// @param posOut   : [out] 圆柱中心位置(米),在 Joint_{i+1} 坐标系下
-    /// @param rpyDegOut: [out] 圆柱姿态 RPY(度,Z-Y-X 顺序)
-    /// @param lengthOut: [out] 圆柱长度(米)
-    /// 现在支持可变关节数:link 数 = transformJoints.size() - 1。
+    // =========================================================================
+    //  运动学与几何图形计算
+    // =========================================================================
+
+    /**
+     * @brief 计算从 Joint_{i+1} 到 Joint_{i+2} 的连杆圆柱几何姿态及尺寸。
+     * @param spec 模型配置数据
+     * @param linkIndex 连杆索引（范围: 0 至 transformJoints.size() - 2）
+     * @param[out] posOut 在 Joint_{i+1} 坐标系下的圆柱中心位置 [x, y, z]（单位：米）
+     * @param[out] rpyDegOut 圆柱姿态的 RPY 旋转角（Z-Y-X 顺序，单位：度）
+     * @param[out] lengthOut 圆柱体的长度（单位：米）
+     */
     static void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
                                  std::array< double, 3 >& posOut,
                                  std::array< double, 3 >& rpyDegOut,
                                  double& lengthOut);
 
-    /// 设备"可动关节"数量 = transformJoints 中 Revolute / Prismatic 行数。
-    /// Q 维度、PosLimit/VelLimit/AccLimit 都按这个数量输出。
-    /// Milestone 1 起,F1xedFrame / ToolFrame 不计入可动关节。
+    /**
+     * @brief 获取设备中的“可动关节”总数。
+     * @details 仅计算 transformJoints 中类型为 Revolute 或 Prismatic 的关节，
+     *          FixedFrame 与 ToolFrame 不计入其中。
+     */
     static int movableJointCount (const RobotModelSpec& spec);
 
-    /// 默认画几何(外壳 + 连杆)按"当前可动关节数 + RigidFrame 数"重组:
-    ///   - 每个 transformJoints[i] 一个 Joint{i+1}Housing
-    ///   - 每对相邻 transformJoints[i] / [i+1] 一个 Link{i+1}To{i+2}
-    /// 即使 RigidFrame 出现在中间也会分配外壳,但它的 Link{i}To{i+1} 长度仍
-    /// 由 transformJoints[i+1].pos 决定;RigidFrame 不可动,不影响 Q。
+    /**
+     * @brief 重组并应用默认的几何绘制项（外壳与连杆圆柱）。
+     * @param[in,out] spec 待更新的模型配置
+     * @param paddingBeforeFirst 首个关节基座处的附加偏移量
+     */
     static void applyDefaultDrawables (RobotModelSpec& spec,
                                        double paddingBeforeFirst = 0.0);
 
-    /// 重新计算所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 的 pos/rpy/length
-    /// 一般在保存 XML 前调用一次,使连杆几何随用户改关节参数自动同步
+    /**
+     * @brief 重新计算所有标记为 `autoLinkGeometry=true` 的连杆几何属性（位置、姿态和长度）。
+     * @note 建议在导出或保存 XML 前调用，以确保连杆几何与最新的关节参数同步。
+     */
     static void applyLinkGeometry (RobotModelSpec& spec);
 
-    // -------------------------------------------------------------------------
-    //  DH projection / optional DH input conversion
-    //  说明: SE(3) Joint+RPY+Pos 是唯一真值。DH 在数据模型中只是"投影视图
-    //        缓存",在 UI 中是只读表。本节里的两个 API 用于维护这种关系:
-    //          * refreshDhProjectionFromTransform : 从真值刷新 DH 投影缓存;
-    //                                                唯一允许从真值单向往 DH
-    //                                                写入的路径;
-    //          * applyDhInputToTransform         : 把 DH 行当作"输入源"反向
-    //                                                写入 SE(3) 真值;**会改写
-    //                                                真值**,仅作为内部"Apply DH"
-    //                                                工具,UI 默认不调用,仅
-    //                                                在极端回填场景使用。
-    //  本插件的 SE(3) <-> DH 约定:
-    //          roll  = offsetDeg
-    //          yaw   = alphaDeg
-    //          pitch = 0   (DH 没有独立的 pitch 项)
-    //          pos   = (a*cos(offsetDeg), a*sin(offsetDeg), d)
-    //  当 pitch 非零,或 roll 与 Pos 的 xy 方向不一致时,投影有损。
-    // -------------------------------------------------------------------------
+    // =========================================================================
+    //  SE(3) 与 DH 参数转换工具
+    //  -----------------------------------------------------------------------
+    //  数据模型设计说明:
+    //  1. SE(3) 变换参数（Joint + RPY + Pos）是系统的【唯一数据真值】。
+    //  2. DH 参数在模型中仅作为“只读视图/缓存”存在。
+    //  3. 转换约定:
+    //       roll = offsetDeg, yaw = alphaDeg, pitch = 0 (DH 无 pitch)
+    //       pos  = (a * cos(offset), a * sin(offset), d)
+    //     若 Transform 中 pitch != 0 或 roll 与 pos 的 XY 方位不一致，转换即存在有损。
+    // =========================================================================
 
-    /// DH 关节 -> Joint+RPY+Pos。`existingType` 用来保留用户原来设置的
-    /// 关节类型(例如 Prismatic),为空时默认 "Revolute"。
+    /**
+     * @brief 将 DH 关节参数转换为 SE(3) 变换参数（Joint + RPY + Pos）。
+     * @param dh 输入的 DH 参数结构体
+     * @param existingType 保留的原始关节类型（如 "Prismatic"），若为空则默认设为 "Revolute"
+     */
     static JointTransformSpec dhJointToTransform (const DHJointSpec& dh,
-                                                   const std::string& existingType = std::string ());
+                                                  const std::string& existingType = std::string ());
 
-    /// Joint+RPY+Pos -> DH 关节。
-    /// 反向求解:从 (px, py) 反推 (a, offset),d 直接取 pz,yaw 作为 alpha。
-    /// @param lossy [out, 可空] 若非空,当转换有损时被置为 true;
-    ///              当前实现下"有损"=Transform 行的 pitch(rpyDeg[1]) 非零,
-    ///              或 roll(rpyDeg[0]) 与 atan2(pos.y,pos.x) 不一致。
+    /**
+     * @brief 将 SE(3) 变换参数反向求解为 DH 关节参数。
+     * @param joint 关节变换参数
+     * @param[out] lossy [可选] 若非空，当转换存在精度/信息损失时被置为 true
+     */
     static DHJointSpec transformJointToDh (const JointTransformSpec& joint, bool* lossy = nullptr);
 
-    /// 从 SE(3) 真值刷新 DH 投影视图缓存(逐行)。两侧长度不一致时取较小值,
-    /// 不做插入/删除。这是真值 -> 投影 的唯一允许路径;UI 中"Transform 表
-    /// 编辑后立刻刷新 DH 表"就是用这个 API。
+    /**
+     * @brief 从 SE(3) 真值逐行刷新 DH 参数视图缓存。
+     * @note 此函数为“真值 -> DH 视图”单向同步的唯一标准路径。
+     */
     static void refreshDhProjectionFromTransform (RobotModelSpec& spec);
 
-    /// "Apply DH" 工具:把 spec.dhJoints 全部按行重写到 spec.transformJoints。
-    /// 保留 transformJoints[i].type。两侧长度不一致时取较小值,不做插入/删除。
-    /// **警告**:此函数会改写 SE(3) 真值,只能作为内部"Apply DH input"工具
-    /// 使用;Widget 当前的 UI 不调用此函数(用户改 DH 表不会反向污染真值)。
+    /**
+     * @brief 将 spec.dhJoints 的参数反向覆写回 spec.transformJoints（仅作为内部工具使用）。
+     * @warning **此函数会直接修改 SE(3) 数据真值**。UI 默认不自动调用此接口，避免造成用户数据污染。
+     */
     static void applyDhInputToTransform (RobotModelSpec& spec);
 
   private:
-    /// 浮点数的统一序列化格式:有效数字 15 位,既保证精度又避免太长
+    // =========================================================================
+    //  私有辅助接口（格式化与节点输出）
+    // =========================================================================
+
+    /// 浮点数格式化输出（保留 15 位有效数字）
     static QString number (double value);
-    /// 把 std::array<double,3> 序列化为 "x y z" 字符串
+
+    /// 将 3D 向量格式化为 "x y z" 字符串
     static QString vector3 (const std::array< double, 3 >& values);
-    /// 把 std::array<double,16> 序列化为 16 个数字(空格分隔)用于 <Transform>
+
+    /// 将 4x4 矩阵（16 个元素）格式化为空格分隔的字符串（用于 <Transform> 节点）
     static QString vector16 (const std::array< double, 16 >& values);
-    /// 输出 <Frame type="..." /> 的属性片段(Normal 时返回空串)
+
+    /// 生成 <Frame type="..." /> 的属性文本（若为 Normal 类型则返回空串）
     static QString frameTypeAttribute (SceneFrameType type);
-    /// 把一个 FrameSpec 输出为单个 <Frame>...</Frame>
+
+    /// 将单个 FrameSpec 序列化写入 XML 流
     static void writeFrameXml (QTextStream& out, const FrameSpec& frame, bool showFrameAxes);
-    /// Milestone 3.5:把 SceneGeometrySpec 输出为 <Drawable>(场景几何体);统一形状
-    /// 序列化(Box/Cylinder/Sphere/Cone/Plane/Mesh)由 geometryShapeXml 输出。
+
+    /// 生成场景几何体 XML 节点文本
     static QString geometryShapeXml (const SceneGeometrySpec& geometry);
     static void writeSceneGeometryXml (QTextStream& out, const SceneGeometrySpec& geometry);
 
-    /// Milestone 4:把 DrawableSpec 输出为 <Drawable>(机器人本体几何);
-    /// shape 决定具体的几何 XML(Box/Cylinder/Sphere/Cone/Plane/STL/Mesh/Polytope);
-    /// file 几何路径会经过 relativeGeometryPath 转成相对于 saveDirectory。
+    /// 计算几何文件相对于保存目录的相对路径
     static QString relativeGeometryPath (const RobotModelSpec& spec,
                                          const std::string& filePath);
+
+    /// 生成机器人本体 Drawable 的几何 XML 文本
     static QString drawableShapeXml (const RobotModelSpec& spec,
                                      const DrawableSpec& drawable);
     static void writeDrawableXml (QTextStream& out, const RobotModelSpec& spec,
                                   const DrawableSpec& drawable);
 
-    /// Milestone 5:独立 <CollisionModel> 输出。
-    ///   * isCollisionModelShapeSupported:是否在合法形状范围内(拒 Plane / STL /
-    ///     Unknown);
-    ///   * collisionShapeXml :按 shape 序列化(Box/Cyl/Sphere/Cone/Mesh/Polytope),
-    ///     与 drawableShapeXml 共用 relativeGeometryPath;
-    ///   * writeCollisionModelXml :输出 <CollisionModel>...</CollisionModel>。
+    /// 检查几何类型是否支持作为碰撞模型（排除 Plane / STL / Unknown）
     static bool isCollisionModelShapeSupported (GeometryKind kind);
+
+    /// 生成碰撞模型 XML 节点文本
     static QString collisionShapeXml (const RobotModelSpec& spec,
                                       const CollisionModelSpec& collision);
     static void writeCollisionModelXml (QTextStream& out, const RobotModelSpec& spec,
                                         const CollisionModelSpec& collision);
-    /// 度 -> 弧度(关节限位/位姿写入 XML 前都要换算)
+
+    /// 角度转弧度
     static double degToRad (double value);
 
-    // -------------------------------------------------------------------------
-    //  Milestone 6:CollisionSetup / ProximitySetup 私有 helper
-    // -------------------------------------------------------------------------
-    /// 把一个绝对/相对文件路径转成相对于 spec.saveDirectory 的相对路径;
-    /// 用于 Scene XML 的 <CollisionSetup>/<ProximitySetup> 等 <Include> 引用,
-    /// 保证输出文件不依赖绝对路径。原文为相对路径时原样返回。
+    /// 将绝对或相对路径转为相对于 spec.saveDirectory 的相对路径（用于 XML <Include> 引用）
     static QString relativeOutputPath (const RobotModelSpec& spec, const QString& filePath);
 
-    /// 合并 spec.collisionSetup.excludePairs 与相邻关节自动生成的 pair
-    /// (Joint{i} - Joint{i+1})。excludeAdjacentLinkPairs=false 时不追加
-    /// 相邻 pair;空结果返回空 vector。
+    /// 获取有效的碰撞排除对列表（合并用户自定义排除对与相邻关节排除对）
     static std::vector< FramePairSpec > effectiveCollisionExcludePairs (const RobotModelSpec& spec);
 };
 
 }    // namespace rws
 
-#endif
+#endif // RWS_ROBOTMODELBUILDER_ROBOTMODELXMLWRITER_HPP

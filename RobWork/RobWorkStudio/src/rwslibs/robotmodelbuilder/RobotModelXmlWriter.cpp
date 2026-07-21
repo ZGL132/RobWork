@@ -1014,65 +1014,92 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     return errors.isEmpty ();
 }
 
-// =============================================================================
-//  canExportDhJoints
-//  说明: 隐藏高级 <DHJoint> 导出的"闸门"检查。三条缺一不可:
-//          1) 至少有一行 SE(3) 关节(必须有真值才能投影);
-//          2) SE(3) 行数与 DH 投影视图行数一致(防御性,UI 始终保持同步);
-//          3) 每一行的 type 必须是 Revolute(简化 DH 不支持其它类型);
-//          4) 每一行的 SE(3) -> DH 投影必须无损(pitch=0 且 roll 与
-//             pos.xy 方向一致,见 transformJointToDh)。
-//        errors 非空时,每条失败原因都会写入。
-//        这是 spec.exportDhJointsAdvanced=true 的唯一放行条件。
-// =============================================================================
+/**
+ * @brief 检查是否满足导出高级 <DHJoint> (Denavit-Hartenberg 关节) 的前置条件。
+ * 
+ * @details 该函数作为控制高级 DH 参数导出的“安全闸门”。必须同时满足以下所有条件才能放行：
+ *          1. 至少包含一行 SE(3) 关节数据（必须有变换矩阵真值才可以进行投影）；
+ *          2. SE(3) 关节行数与 DH 投影视图的行数保持绝对一致（用于 UI 和数据的防御性同步校验）；
+ *          3. 遍历每一行关节，其类型 (type) 必须严格为 Revolute（旋转关节，简化 DH 模型暂不支持移动关节等其他类型）；
+ *          4. 每一行从 SE(3) 到 DH 的投影转换必须是无损的（即 pitch = 0 且 roll 方向与 pos.xy 一致，详见 transformJointToDh 实现）。
+ * 
+ * @param spec   机器人模型配置规范数据对象 (RobotModelSpec)。
+ * @param errors [out] 错误信息收集列表指针 (QStringList*)。
+ *                     若传入非空指针，函数会将检查过程中发现的所有失败原因依次写入该列表中。
+ * 
+ * @return bool 如果完全满足导出条件返回 true（即 spec.exportDhJointsAdvanced = true 的唯一放行标准）；
+ *              只要有任何一项校验不通过，均返回 false。
+ */
 bool RobotModelXmlWriter::canExportDhJoints (const RobotModelSpec& spec, QStringList* errors)
 {
+    // 创建局部错误列表，防止外部传入的 errors 为 nullptr 时导致程序崩溃
     QStringList localErrors;
+    // 如果外部传入了有效的 errors 指针，则使用外部指针；否则引用局部的 localErrors（安全兜底）
     QStringList& out = errors == nullptr ? localErrors : *errors;
 
+    // 检查 1：确保至少存在一个 SE(3) 关节数据，否则无法进行 DH 参数投影
     if (spec.transformJoints.empty ()) {
         out << "Advanced DH export requires at least one SE(3) joint row.";
         return false;
     }
+
+    // 检查 2：防御性校验，确保 SE(3) 关节行数与 DH 关节行数严格对应一致
     if (spec.transformJoints.size () != spec.dhJoints.size ()) {
         out << "Advanced DH export requires DH projection rows to match SE(3) rows.";
         return false;
     }
 
     bool ok = true;
+
+    // 逐行遍历所有 SE(3) 关节，进行类型检查与投影无损校验
     for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
         const JointTransformSpec& joint = spec.transformJoints[i];
+
+        // 检查 3：校验关节类型是否为旋转关节 (Revolute)
         if (!isRevoluteType (joint.type)) {
             out << QString ("Advanced DH export only supports Revolute rows; row %1 (%2) is %3.")
-                       .arg (static_cast< int > (i + 1))
-                       .arg (QString::fromStdString (joint.name))
-                       .arg (QString::fromStdString (joint.type));
+                       .arg (static_cast< int > (i + 1))               // 行号（1-indexed，便于用户查看）
+                       .arg (QString::fromStdString (joint.name))      // 关节名称
+                       .arg (QString::fromStdString (joint.type));     // 当前实际类型
             ok = false;
-            continue;
+            continue; // 类型的非旋转关节无需再校验 DH 投影，直接跳转至下一行
         }
 
+        // 检查 4：计算 SE(3) -> DH 的投影，检查转换过程中是否存在数据/自由度损失
         bool lossy = false;
         transformJointToDh (joint, &lossy);
+
         if (lossy) {
             out << QString ("Advanced DH export requires lossless SE(3)->DH projection; row %1 (%2) is lossy.")
                        .arg (static_cast< int > (i + 1))
                        .arg (QString::fromStdString (joint.name));
-            ok = false;
+            ok = false; // 标记存在有损转换，但不中断循环，以便收集完所有有损行数的信息
         }
     }
 
+    // 只有所有行均校验通过，ok 才为 true
     return ok;
 }
-
 // =============================================================================
 //  makeSerialDeviceXml
-//  说明: 把 spec 序列化为 RobWork <SerialDevice>...</SerialDevice> 文本。
-//        包含 Base/TCP 帧、关节(DH 或 RPY+Pos)、可选 Drawable、限位、位姿。
+//  说明: 将 RobotModelSpec 序列化为 RobWork 格式的串行设备 XML 字符串
+//        (<SerialDevice name="...">...</SerialDevice>)。
+//
+//  生成的节点结构顺序:
+//    1. 基座节点 (<Frame name="Base">)
+//    2. 运动学关节节点 (高级 DH 导出分支 <DHJoint> 或 SE(3) 分支 <Joint>/<Frame>)
+//    3. 末端工具坐标系 (<Frame name="TCP">)
+//    4. 可视化几何体 (<Drawable>) [可选]
+//    5. 独立碰撞模型 (<CollisionModel>)
+//    6. 运动学限位 (<PosLimit> / <VelLimit> / <AccLimit>)
+//    7. 预设位姿 configuration 向量 (<Q>)
 // =============================================================================
 QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 {
     QString xml;
     QTextStream out (&xml);
+
+    // 1. 写入 SerialDevice 根节点与默认 Base 基座坐标系
     out << "<SerialDevice name=\"" << xmlEscaped (exportedRobotName (spec)) << "\">\n";
     out << "  <Frame name=\"Base\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
@@ -1081,14 +1108,21 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
     out << "  </Frame>\n";
 
+    // 2. 判断是否满足高级 DH 参数导出条件（闸门拦截 + 用户开关）
     const bool writeDhJoints = spec.exportDhJointsAdvanced && canExportDhJoints (spec);
+
     if (writeDhJoints) {
+        // ---------------------------------------------------------------------
+        // 分支 A: 导出 DH 关节参数节点 (<DHJoint>)
+        // 说明: 将 SE(3) 真值转换为标准 Schilling 约定的 DH 参数输出
+        // ---------------------------------------------------------------------
         for (const JointTransformSpec& transformJoint : spec.transformJoints) {
             const DHJointSpec joint = transformJointToDh (transformJoint);
             out << "  <DHJoint name=\"" << xmlEscaped (joint.name) << "\" alpha=\""
                 << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
                 << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
                 << "\" type=\"schilling\"";
+
             if (spec.showFrameAxes) {
                 out << ">\n";
                 out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
@@ -1100,12 +1134,20 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
     else {
+        // ---------------------------------------------------------------------
+        // 分支 B: 导出 SE(3) 矩阵参数节点 (默认路径: <Joint> 与 <Frame>)
+        // 说明: 根据关节类型区分输出 <Frame> (固定/工具系) 或 <Joint> (可动关节)
+        // ---------------------------------------------------------------------
         for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
             const JointTransformSpec& joint = spec.transformJoints[i];
+
             if (isFixedFrameType (joint.type) || isToolFrameType (joint.type)) {
+                // FixedFrame / ToolFrame 不计入可动关节，作为坐标系 <Frame> 输出
+                // 父坐标系 (refframe) 自动向上一级推导；若为首节点则默认挂载至 Base
                 const QString refframe = i > 0
                     ? QString::fromStdString (spec.transformJoints[i - 1].name)
                     : "Base";
+
                 out << "  <Frame name=\"" << xmlEscaped (joint.name)
                     << "\" refframe=\"" << xmlEscaped (refframe) << "\">\n";
                 out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
@@ -1115,6 +1157,7 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
                 out << "  </Frame>\n";
             }
             else {
+                // 运动学可动关节 (Revolute / Prismatic)，输出 <Joint> 节点
                 out << "  <Joint name=\"" << xmlEscaped (joint.name) << "\" type=\""
                     << xmlEscaped (joint.type) << "\">\n";
                 out << "    <RPY>" << vector3 (joint.rpyDeg) << "</RPY>\n";
@@ -1126,10 +1169,13 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
 
+    // 3. 动态配置末端工具坐标系 (TCP)
+    // 说明: TCP 默认挂载于运动链中最后一个“可动关节”上；若无可动关节则挂载至 Base
     QString tcpRef = "Base";
     const std::vector< size_t > movable = movableJointIndices (spec);
     if (!movable.empty ())
         tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
+
     out << "  <Frame name=\"TCP\" refframe=\"" << xmlEscaped (tcpRef) << "\">\n";
     out << "    <RPY>0 0 0</RPY>\n";
     out << "    <Pos>0 0 0</Pos>\n";
@@ -1137,16 +1183,18 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
     out << "  </Frame>\n";
 
+    // 4. 写入视觉几何绘制实体 (<Drawable>)
     if (spec.generateDrawables) {
         for (const DrawableSpec& drawable : spec.drawables)
             writeDrawableXml (out, spec, drawable);
     }
 
-    // Milestone 5:独立碰撞模型 <CollisionModel>;不挂 generateDrawables,
-    // 关闭视觉时仍可单独输出。
+    // 5. 写入独立碰撞模型 (<CollisionModel>)
+    // 说明: 不受 generateDrawables 开关控制，即使关闭视觉渲染也可独立输出碰撞体
     for (const CollisionModelSpec& collision : spec.collisionModels)
         writeCollisionModelXml (out, spec, collision);
 
+    // 6. 写入关节运动限位属性 (位置/角度限位、速度限位、加速度限位)
     for (const JointLimitSpec& limit : spec.limits) {
         out << "  <PosLimit refjoint=\"" << xmlEscaped (limit.jointName)
             << "\" min=\"" << number (limit.posMin) << "\" max=\""
@@ -1161,6 +1209,8 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
             << "\" max=\"" << number (limit.accMax) << "\" />\n";
     }
 
+    // 7. 写入预设关节构型向量 (<Q>)
+    // 说明: q 向量仅包含“可动关节”。若关节为 Revolute (旋转关节)，写入 XML 前需将度 (deg) 自动转换为弧度 (rad)
     for (const PoseSpec& pose : spec.poses) {
         out << "  <Q name=\"" << xmlEscaped (pose.name) << "\">";
         for (size_t k = 0; k < movable.size (); ++k) {
@@ -1173,45 +1223,58 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         out << "</Q>\n";
     }
 
+    // 8. 闭合根节点并返回生成的 XML 字符串
     out << "</SerialDevice>\n";
     return xml;
 }
-
-// =============================================================================
-//  makeSceneXml
-//  说明: 生成场景容器 WorkCell:
-//        - RobotBase 帧(Milestone 3 起,用 spec.robotBaseFrame 配置;
-//          兜底是 refframe="WORLD" + 0 0 0 位姿);
-//        - RobotBase 后立即 <Include>,因为 RobWork 会把未显式 refframe 的设备挂到
-//          WorkCell 当前最后一个 frame;
-//        - 再依次输出所有 sceneFrames(Table / Workpiece / CameraFrame / MovableBox)和场景几何。
-//        - Milestone 6 起,CollisionSetup/ProximitySetup 引用与用户额外
-//          <Include> 列表会被列在 RobotBase 之后,顺序:
-//              <Include file="<robotName>.wc.xml" />
-//              <CollisionSetup file="..." />
-//              <ProximitySetup file="..." />
-//              用户自定义 <Include file="..." />
-// =============================================================================
+/**
+ * @brief 生成 RobWork 场景容器 (WorkCell) 的 XML 配置字符串。
+ * 
+ * @details 该函数负责构建 RobWork 仿真框架中的场景主文件（通常为 scene.wc.xml）：
+ *          - 创建根节点 <WorkCell name="<robotName>Scene">。
+ *          - 输出机器人基座坐标系 Frame（RobotBase），提供系统的默认兜底位姿（WORLD, 0 0 0）。
+ *          - 紧跟 RobotBase 写入主机器人的 <Include> 节点。注意：RobWork 在解析时，若被包含的 Device 
+ *            未显式指定 refframe，默认会将其挂载到 WorkCell 中当前定义的最后一个 Frame 上，因此顺序极其关键。
+ *          - 顺序配置碰撞检测 (CollisionSetup) 与邻近度检测 (ProximitySetup) 文件引用（相对路径导出）。
+ *          - 处理用户自定义追加的额外 <Include> 节点。
+ *          - 依次写入场景中的其他静态/动态坐标系 (sceneFrames，如 Table / Workpiece / CameraFrame) 
+ *            及场景几何体 (sceneGeometries)。
+ * 
+ * @param spec 机器人模型配置规范数据对象 (RobotModelSpec)，包含场景坐标系、几何体及外部包含文件等信息。
+ * 
+ * @return QString 格式化后的完整 WorkCell XML 文本。
+ */
 QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 {
+    // 获取导出的机器人名称，用于构建 Scene 名称及包含的 `.wc.xml` 文件名
     const QString robotName = exportedRobotName (spec);
     QString xml;
     QTextStream out (&xml);
+
+    // 1. 写入根节点 <WorkCell>
     out << "<WorkCell name=\"" << xmlEscaped (robotName) << "Scene\">\n";
 
+    // 2. 准备并写入 RobotBase 坐标系 (Frame)
     FrameSpec robotBase = spec.robotBaseFrame;
+    // 名称兜底：若未指定，默认为 "RobotBase"
     if (robotBase.name.empty ())
         robotBase.name = "RobotBase";
+    // 参考坐标系兜底：若未指定，默认挂在全局原点 "WORLD"
     if (robotBase.refFrame.empty ())
         robotBase.refFrame = "WORLD";
+    // 强制指定基座坐标系类型为固定坐标系 (Fixed)
     robotBase.frameType = SceneFrameType::Fixed;
+    
+    // 写入 RobotBase 的 XML 节点
     writeFrameXml (out, robotBase, spec.showFrameAxes);
     out << "\n";
 
+    // 3. 立即包含机器人设备文件
+    // RobWork 特性：未显式指定 refframe 的设备会自动附着到上文最近定义的坐标系（即 RobotBase）
     out << "  <Include file=\"" << xmlEscaped (robotName + ".wc.xml") << "\" />\n";
 
-    // Milestone 6:CollisionSetup / ProximitySetup 引用。文件路径统一走
-    // relativeOutputPath,保证输出文件不依赖绝对路径。
+    // 4. Milestone 6 特性：配置碰撞检测 (CollisionSetup) 与邻近度检测 (ProximitySetup) 引用
+    // 所有路径均转换为相对路径，避免导出文件对特定机器绝对路径的依赖
     if (spec.collisionSetup.enabled) {
         const QString setupPath = collisionSetupFilePath (spec);
         const QString rel       = relativeOutputPath (spec, setupPath);
@@ -1222,10 +1285,12 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
         const QString rel       = relativeOutputPath (spec, setupPath);
         out << "  <ProximitySetup file=\"" << xmlEscaped (rel) << "\" />\n";
     }
-    // 用户在 spec.includes 里追加的额外引用项(可选)。
+
+    // 5. 遍历处理用户在 spec.includes 中显式追加的额外引用文件（如第三方设备、额外碰撞文件等）
     for (const IncludeSpec& include : spec.includes) {
         if (!include.file.empty ()) {
             const QString rel = relativeOutputPath (spec, QString::fromStdString (include.file));
+            // 根据不同的引用类型映射为对应的 XML 节点标签
             switch (include.kind) {
                 case IncludeKind::Collision:
                     out << "  <CollisionSetup file=\"" << xmlEscaped (rel) << "\" />\n";
@@ -1243,16 +1308,19 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
     }
     out << "\n";
 
+    // 6. 依次写入场景中的所有坐标系 (sceneFrames，如工作台 Table、工件 Workpiece 等)
     for (const FrameSpec& frame : spec.sceneFrames)
         writeFrameXml (out, frame, spec.showFrameAxes);
     if (!spec.sceneFrames.empty ())
         out << "\n";
 
+    // 7. 依次写入场景中的所有几何体模型 (sceneGeometries)
     for (const SceneGeometrySpec& geometry : spec.sceneGeometries)
         writeSceneGeometryXml (out, geometry);
     if (!spec.sceneGeometries.empty ())
         out << "\n";
 
+    // 8. 闭合 <WorkCell> 根节点并返回 XML 字符串
     out << "</WorkCell>\n";
     return xml;
 }
@@ -1317,25 +1385,33 @@ QString RobotModelXmlWriter::makeDynamicWorkCellXml (const RobotModelSpec& spec)
     return xml;
 }
 
-// =============================================================================
-//  makeCollisionSetupXml
-//  说明: 输出 RobWork <CollisionSetup> 结构(Loader 支持的格式):
-//        * <Exclude> 内每行一个 <FramePair first="..." second="..."/>;
-//        * <Volatile> 每行一个 frame 名(空 list 整段省略);
-//        * excludeStaticPairs=true 输出 <ExcludeStaticPairs/>。
-//        excludePairs 来源:
-//          (a) spec.collisionSetup.excludePairs(用户配置)
-//          (b) 当 excludeAdjacentLinkPairs=true,自动追加相邻关节 pair
-//              (Joint{i} - Joint{i+1});空名会被跳过。
-//        重复 pair 会去重(顺序:用户 pair 在前,自动 pair 在后)。
-// =============================================================================
+/**
+ * @brief 生成 RobWork 碰撞检测配置文件 (<CollisionSetup>) 的 XML 字符串。
+ * 
+ * @details 该函数依据规范生成 RobWork Loader 识别的碰撞组态 XML：
+ *          - **排除碰撞对 (<Exclude>)**：写入无需进行碰撞检测的 Frame 配对，格式为 `<FramePair first="..." second="..."/>`。
+ *            数据源包含两部分（由 effectiveCollisionExcludePairs 内部合并并按序去重）：
+ *              1) 用户显式配置的配对 (spec.collisionSetup.excludePairs)；
+ *              2) 开启 excludeAdjacentLinkPairs 时，自动生成的相邻连杆/关节配对 (Joint{i} - Joint{i+1})。
+ *          - **易变/动态坐标系 (<Volatile>)**：写入在运行过程中位姿频繁变动或不参与静态层次优化的 Frame 名称；若列表为空则自动忽略该段落。
+ *          - **静态碰撞排除标签 (<ExcludeStaticPairs/>)**：当标志位 excludeStaticPairs 为 true 时输出，指示仿真器忽略所有静态环境/连杆之间的碰撞计算。
+ * 
+ * @param spec 机器人模型配置规范数据对象 (RobotModelSpec)。
+ * 
+ * @return QString 格式化后的完整 <CollisionSetup> XML 文本。
+ */
 QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
 {
+    // 获取经过合并与去重后的“有效碰撞排除配对列表”
+    // (优先保留用户配置配对，后追加自动生成的相邻连杆配对，自动跳过空名称)
     const std::vector< FramePairSpec > pairs = effectiveCollisionExcludePairs (spec);
     QString xml;
     QTextStream out (&xml);
+
+    // 1. 写入根节点 <CollisionSetup>
     out << "<CollisionSetup>\n";
 
+    // 2. 如果存在需要排除碰撞的 Frame 配对，写入 <Exclude> 节点块
     if (!pairs.empty ()) {
         out << "  <Exclude>\n";
         for (const FramePairSpec& pair : pairs) {
@@ -1345,15 +1421,19 @@ QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
         out << "  </Exclude>\n";
     }
 
+    // 3. 遍历并写入所有指定的易变坐标系 (<Volatile>)
+    // 在 RobWork 中，标记为 Volatile 的 Frame 通常代表频繁变化或需要特别对待的碰撞对象
     for (const std::string& frame : spec.collisionSetup.volatileFrames) {
         if (frame.empty ())
-            continue;
+            continue; // 跳过无效的空名称
         out << "  <Volatile>" << xmlEscaped (frame) << "</Volatile>\n";
     }
 
+    // 4. 若开启了全局静态对碰撞排除，写入空标签 <ExcludeStaticPairs/>
     if (spec.collisionSetup.excludeStaticPairs)
         out << "  <ExcludeStaticPairs/>\n";
 
+    // 5. 闭合根节点并返回 XML 文本
     out << "</CollisionSetup>\n";
     return xml;
 }
@@ -1440,43 +1520,68 @@ QString RobotModelXmlWriter::relativeOutputPath (const RobotModelSpec& spec,
     return QDir::fromNativeSeparators (outDir.relativeFilePath (info.absoluteFilePath ()));
 }
 
-// Milestone 6:把用户配置的 excludePairs 与"自动相邻关节 pair"合并。
-// 重复 pair 去重(以 "first|second" 为键),顺序是先用户 pair 后自动 pair。
-// 空名(first / second)会被跳过,相邻 pair 也只在两端 transformJoints 都
-// 存在且非空时追加。
+/**
+ * @brief 计算并获取最终有效的碰撞排除配对列表 (Collision Exclude Frame Pairs)。
+ * 
+ * @details 该函数负责将用户手动配置的排除配对与系统自动生成的相邻关节/连杆配对进行合并：
+ *          1. **合法性过滤**：自动跳过包含空名称的 Frame、以及自我配对（first == second）；
+ *          2. **去重机制**：基于 `first|second` 格式的字符串作为 Key 建立 `std::set` 集合，实现高效率去重；
+ *          3. **合并顺序**：优先保留用户手动配置的配对 (`spec.collisionSetup.excludePairs`)，
+ *             而后在开启 `excludeAdjacentLinkPairs` 时追加相邻关节配对 (`Joint{i}` -> `Joint{i+1}`)；
+ *          4. **相邻匹配**：只有当 `transformJoints` 列表中至少存在两个关节，且相邻两端的名称均非空时才会加入。
+ * 
+ * @param spec 机器人模型配置规范数据对象 (RobotModelSpec)。
+ * 
+ * @return std::vector<FramePairSpec> 去重且合并后的有效碰撞排除配对列表。
+ */
 std::vector< FramePairSpec >
 RobotModelXmlWriter::effectiveCollisionExcludePairs (const RobotModelSpec& spec)
 {
-    std::vector< FramePairSpec > result;
-    std::set< std::string > seen;
+    std::vector< FramePairSpec > result; // 存储最终合并后的配对结果
+    std::set< std::string > seen;       // 用于记录已处理过的配对 Key，实现高效去重
 
+    // Lambda 表达式：封装通用的合法性检查、去重及压栈逻辑
     auto push = [&] (const std::string& first, const std::string& second) {
+        // 过滤条件 1：任意一端名称为空则属于无效配对，直接跳过
         if (first.empty () || second.empty ())
             return;
+        // 过滤条件 2：相同坐标系自身的碰撞排除没有意义，跳过
         if (first == second)
             return;
+
+        // 拼接唯一标识键 (Key)，例如 "Joint1|Joint2"
         const std::string key = first + "|" + second;
+        
+        // 过滤条件 3：尝试插入去重集合，若 key 已存在 (insert().second 为 false) 则直接跳过
         if (!seen.insert (key).second)
             return;
+
+        // 构建配对结构体并存入结果集
         FramePairSpec pair;
         pair.first  = first;
         pair.second = second;
         result.push_back (pair);
     };
 
+    // 步骤 1：优先将用户在配置中显式定义的排除配对压入列表
     for (const FramePairSpec& pair : spec.collisionSetup.excludePairs)
         push (pair.first, pair.second);
 
+    // 步骤 2：若开启了“自动排除相邻连杆/关节碰撞”标志位，且至少存在 2 个关节，则自动追加相邻配对
     if (spec.collisionSetup.excludeAdjacentLinkPairs &&
         spec.transformJoints.size () >= 2) {
+        
+        // 遍历所有相邻关节对：(Joint_0, Joint_1), (Joint_1, Joint_2), ...
         for (size_t i = 0; i + 1 < spec.transformJoints.size (); ++i) {
             const std::string a = spec.transformJoints[i].name;
             const std::string b = spec.transformJoints[i + 1].name;
-            // ensure 顺向
+            
+            // 按运动学链的顺向方向 (i -> i+1) 压入排除对
             push (a, b);
         }
     }
 
+    // 返回合并去重后的完整排除列表
     return result;
 }
 
@@ -1886,25 +1991,67 @@ JointTransformSpec RobotModelXmlWriter::dhJointToTransform (const DHJointSpec& d
     j.pos = {{dh.a * std::cos (theta), dh.a * std::sin (theta), dh.d}};
     return j;
 }
-
+/**
+ * @brief 将 SE(3) 空间关节变换 (JointTransformSpec) 投影/转换为 DH 参数 (DHJointSpec)。
+ * 
+ * @details 该函数负责将基于 Roll-Pitch-Yaw (RPY) 姿态和 3D 平移位置 (x, y, z) 表示的关节，
+ *          投影计算为 Denavit-Hartenberg (DH) 4 参数模型 (a, alpha, d, offset)。
+ *          由于简化 DH 参数的自由度受限（仅 4 个参数），无法完全拟合任意的 6-DOF SE(3) 变换，
+ *          因此函数还会检测变换过程是否存在自由度或信息的丢失（lossy）：
+ *          - **a (连杆长度)**: $x, y$ 平面上的欧氏距离 $\sqrt{x^2 + y^2}$。
+ *          - **offsetDeg (关节角度偏移量)**: 当 $a > 0$ 时，为位置向量在 XY 平面上的方位角 $\text{atan2}(y, x)$；
+ *            若 $a \approx 0$（无平面位移），则退化使用原始 RPY 的 Roll 角。
+ *          - **d (连杆偏置)**: Z 轴方向的平移量 $z$。
+ *          - **alphaDeg (连杆扭角)**: 姿态角中的 Yaw 角 ($rpy[2]$)。
+ * 
+ * @param joint 输入的 SE(3) 关节变换结构体，包含位置 (pos) 与 RPY 旋转角 (rpyDeg)。
+ * @param lossy [out] 可选输出参数指针。若非空，将写入该 SE(3) -> DH 投影过程是否“有损”。
+ *              满足以下任意条件即判定为有损 (lossy = true)：
+ *              1. 关节类型为 Fixed 或 Tool（类型不匹配/非运动关节）；
+ *              2. Pitch 角 ($rpy[1]$) 不为 0（简化 DH 假设无法表达 Pitch 倾角）；
+ *              3. 位置向量在 XY 平面的方向角与旋转 Roll 角方向不一致。
+ * 
+ * @return DHJointSpec 转换后的 DH 关节参数对象。
+ */
 DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& joint, bool* lossy)
 {
     DHJointSpec dh;
-    dh.name      = joint.name;
-    dh.a         = std::sqrt (joint.pos[0] * joint.pos[0] +
-                               joint.pos[1] * joint.pos[1]);
+    dh.name = joint.name;
+
+    // 1. 计算 DH 参数 a (连杆长度)：在机器人基坐标系 XY 平面上的投影距离
+    dh.a = std::sqrt (joint.pos[0] * joint.pos[0] +
+                       joint.pos[1] * joint.pos[1]);
+
+    // 2. 计算 DH 参数 offsetDeg (关节角偏移量)：
+    // 如果 XY 平面位移不为 0 (大于极小阈值 1e-12)，用 atan2 计算位置向量的倾角；
+    // 否则（X、Y 均在原点处），直接沿用原变换中的 Roll 旋转角。
     dh.offsetDeg = dh.a > 1e-12 ? std::atan2 (joint.pos[1], joint.pos[0]) * 180.0 / Pi
-                                : joint.rpyDeg[0];
-    dh.d         = joint.pos[2];
-    dh.alphaDeg  = joint.rpyDeg[2];
+                                 : joint.rpyDeg[0];
+
+    // 3. 计算 DH 参数 d (连杆偏置)：沿 Z 轴的平移量
+    dh.d = joint.pos[2];
+
+    // 4. 计算 DH 参数 alphaDeg (连杆扭角)：绕 X 轴扭转的角度，映射自 RPY 中的 Yaw 角
+    dh.alphaDeg = joint.rpyDeg[2];
+
+    // 5. 校验转换是否发生“信息/自由度损失” (Lossy)
     if (lossy != nullptr) {
+        // 校验 5.1: 类型有损——固定关节 (Fixed) 或末端工具关节 (Tool) 无法转换为标准的 DH 运动关节
         const bool typeLoss =
             isFixedFrameType (joint.type) || isToolFrameType (joint.type);
+
+        // 校验 5.2: 俯仰角有损——Pitch 旋转角 ($rpy[1]$) 必须接近 0 (小于 1e-9)，否则 DH 参数无法表达该倾角
         const bool pitchLoss = std::abs (joint.rpyDeg[1]) > 1e-9;
+
+        // 校验 5.3: 滚转与位置方向不匹配——当 $a > 0$ 时，Roll 角必须与 XY 平面位置向量的方向角保持一致；
+        // 若 normalizedAngleDiffDeg 计算出的角度差大于 1e-6，则说明几何姿态与位置存在约束冲突。
         const bool rollPositionMismatch = dh.a > 1e-12 &&
             normalizedAngleDiffDeg (joint.rpyDeg[0], dh.offsetDeg) > 1e-6;
+
+        // 任意一项不满足，即判定为“有损转换”
         *lossy = typeLoss || pitchLoss || rollPositionMismatch;
     }
+
     return dh;
 }
 

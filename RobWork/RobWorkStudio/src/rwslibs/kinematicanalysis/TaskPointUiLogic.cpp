@@ -75,7 +75,7 @@ TaskPoint rws::taskPointFromCurrentTcpPose (
     const KinematicThresholds& thresholds)
 {
     // RPY 提取:R 是 3×3 旋转矩阵,rpy(0/1/2) = roll/pitch/yaw(单位:弧度)
-    const rw::math::RPY<> rpy (baseTcp.R ());
+    const rw::math::RPY<> rpy (baseTtcp.R ());
     // 弧度 → 度:180/π
     const double toDeg = 180.0 / rw::math::Pi;
 
@@ -87,7 +87,7 @@ TaskPoint rws::taskPointFromCurrentTcpPose (
     p.refFrame    = deviceBaseFrameName;                        // base 坐标系名
     p.tcpFrame    = tcpFrameName;                                // TCP 坐标系名
     // 位置:从 baseTtcp.P() 读 3 元素位置
-    p.position    = {{baseTcp.P ()[0], baseTcp.P ()[1], baseTcp.P ()[2]}};
+    p.position    = {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}};
     // RPY:弧度 × 180/π = 度
     p.rpyDeg      = {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}};
     // 容差:直接用当前 UI 阈值(用户在 Report tab 改后下次导入跟随)
