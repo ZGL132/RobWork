@@ -12,12 +12,15 @@
 #include <rw/math/Q.hpp>
 #include <rw/math/RPY.hpp>
 #include <rw/math/Vector3D.hpp>
+#include <rw/models/JointDevice.hpp>
+#include <rw/models/RevoluteJoint.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <random>
+#include <utility>
 
 using namespace rws;
 
@@ -202,6 +205,65 @@ double qInfDistance (const rw::math::Q& lhs, const rw::math::Q& rhs)
     for (std::size_t i = 0; i < lhs.size (); ++i)
         distance = std::max (distance, std::fabs (lhs (i) - rhs (i)));
     return distance;
+}
+
+double wrappedAngularDistance (double lhs, double rhs)
+{
+    const double raw = std::fabs (lhs - rhs);
+    if (!std::isfinite (raw))
+        return std::numeric_limits< double >::infinity ();
+    const double twoPi = 2.0 * rw::math::Pi;
+    const double mod   = std::fmod (raw, twoPi);
+    return std::min (mod, twoPi - mod);
+}
+
+double qInfDistance (const rw::math::Q& lhs,
+                     const rw::math::Q& rhs,
+                     const std::vector< bool >& revoluteJoints)
+{
+    if (lhs.size () != rhs.size ())
+        return std::numeric_limits< double >::infinity ();
+    double distance = 0.0;
+    for (std::size_t i = 0; i < lhs.size (); ++i) {
+        const bool revolute =
+            i < revoluteJoints.size () && revoluteJoints[i];
+        const double jointDistance = revolute ?
+            wrappedAngularDistance (lhs (i), rhs (i)) :
+            std::fabs (lhs (i) - rhs (i));
+        distance = std::max (distance, jointDistance);
+    }
+    return distance;
+}
+
+std::vector< bool > revoluteJointMask (
+    rw::core::Ptr< rw::models::Device > device)
+{
+    std::vector< bool > mask;
+    if (device == NULL)
+        return mask;
+    mask.assign (device->getDOF (), false);
+
+    const rw::models::JointDevice* const jointDevice =
+        dynamic_cast< const rw::models::JointDevice* > (device.get ());
+    if (jointDevice == NULL)
+        return mask;
+
+    std::size_t qIndex = 0;
+    for (const rw::models::Joint* const joint : jointDevice->getJoints ()) {
+        if (qIndex >= mask.size ())
+            break;
+        const bool revolute =
+            dynamic_cast< const rw::models::RevoluteJoint* > (joint) != NULL;
+        const std::pair< rw::math::Q, rw::math::Q > bounds =
+            joint != NULL ? joint->getBounds () :
+                            std::make_pair (rw::math::Q (), rw::math::Q ());
+        const std::size_t jointDof =
+            bounds.first.size () > 0 ? bounds.first.size () : 1;
+        for (std::size_t local = 0;
+             local < jointDof && qIndex < mask.size (); ++local, ++qIndex)
+            mask[qIndex] = revolute;
+    }
+    return mask;
 }
 
 double finiteBoundOrFallback (double bound, double fallback)
@@ -663,6 +725,8 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
         std::isfinite (_thresholds.ikDuplicateQThreshold) &&
         _thresholds.ikDuplicateQThreshold >= 0.0 ?
         _thresholds.ikDuplicateQThreshold : 1e-4;
+    const std::vector< bool > duplicateRevoluteMask =
+        revoluteJointMask (device);
 
     // ---- IK 求解 ----
     // 两层 try:
@@ -683,7 +747,8 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
                 solver->solve (targetBaseTtcp, seedState);
             result.rawCandidateCount += seedSolutions.size ();
             for (const rw::math::Q& q : seedSolutions)
-                addUniqueIkCandidate (rawSolutions, q, duplicateQThreshold);
+                addUniqueIkCandidate (
+                    rawSolutions, q, duplicateQThreshold, duplicateRevoluteMask);
         }
     }
     catch (const std::exception& ex) {
@@ -944,6 +1009,22 @@ void rws::addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
     }
     for (const rw::math::Q& existing : candidates) {
         if (qInfDistance (existing, candidate) <= proximityLimit)
+            return;
+    }
+    candidates.push_back (candidate);
+}
+
+void rws::addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
+                                const rw::math::Q& candidate,
+                                double proximityLimit,
+                                const std::vector< bool >& revoluteJoints)
+{
+    if (proximityLimit <= 0.0) {
+        candidates.push_back (candidate);
+        return;
+    }
+    for (const rw::math::Q& existing : candidates) {
+        if (qInfDistance (existing, candidate, revoluteJoints) <= proximityLimit)
             return;
     }
     candidates.push_back (candidate);

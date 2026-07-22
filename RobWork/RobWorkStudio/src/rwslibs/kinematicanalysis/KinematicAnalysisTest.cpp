@@ -511,6 +511,19 @@ static int testIkRanking ()
                                 "near-duplicate IK candidates are merged"))
         return rc;
 
+    std::vector< rw::math::Q > wrappedCandidates;
+    const std::vector< bool > revoluteMask = {true, false};
+    rws::addUniqueIkCandidate (
+        wrappedCandidates, rw::math::Q (2, -rw::math::Pi, 0.0), 1e-4, revoluteMask);
+    rws::addUniqueIkCandidate (
+        wrappedCandidates, rw::math::Q (2, rw::math::Pi, 0.0), 1e-4, revoluteMask);
+    rws::addUniqueIkCandidate (
+        wrappedCandidates, rw::math::Q (2, -rw::math::Pi, 2.0 * rw::math::Pi), 1e-4,
+        revoluteMask);
+    if (const int rc = require (wrappedCandidates.size () == 2,
+                                "IK duplicate detection wraps revolute joints only"))
+        return rc;
+
     std::vector< rws::KinematicIkSolution > validity;
     rws::KinematicIkSolution pass;
     pass.status = rws::AnalysisStatus::Pass;

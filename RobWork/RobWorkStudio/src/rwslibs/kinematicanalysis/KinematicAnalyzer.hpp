@@ -267,6 +267,11 @@ void addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
                            const rw::math::Q& candidate,
                            double proximityLimit);
 
+void addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
+                           const rw::math::Q& candidate,
+                           double proximityLimit,
+                           const std::vector< bool >& revoluteJoints);
+
 // 统计 solutions 中"无碰撞 && status != Fail"的解数。
 std::size_t countUsableIkSolutions (const std::vector< KinematicIkSolution >& solutions);
 
