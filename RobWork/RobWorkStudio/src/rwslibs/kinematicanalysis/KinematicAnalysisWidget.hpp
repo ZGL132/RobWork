@@ -127,6 +127,7 @@ class KinematicAnalysisWidget : public QWidget
     void openSelectedTaskPointInIk ();
     // 选中行变化时更新 Apply/Open 按钮的可用状态。
     void updateTaskPointSelectionButtons ();
+    void updateTaskPointDetails ();
 
     // ===================================================================
     //  Workspace tab

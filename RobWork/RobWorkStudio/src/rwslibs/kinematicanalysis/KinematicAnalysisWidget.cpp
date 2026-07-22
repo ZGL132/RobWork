@@ -716,15 +716,28 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_taskPointTable->selectionModel (), &QItemSelectionModel::selectionChanged,
              this, [this] (const QItemSelection&, const QItemSelection&) {
                  updateTaskPointSelectionButtons ();
+                 updateTaskPointDetails ();
              });
     connect (_taskPointModel, &QAbstractItemModel::dataChanged,
-             this, [this] () { refreshVisualization (); });
+             this, [this] () {
+                 refreshVisualization ();
+                 updateTaskPointDetails ();
+             });
     connect (_taskPointModel, &QAbstractItemModel::modelReset,
-             this, [this] () { refreshVisualization (); });
+             this, [this] () {
+                 refreshVisualization ();
+                 updateTaskPointDetails ();
+             });
     connect (_taskPointModel, &QAbstractItemModel::rowsInserted,
-             this, [this] () { refreshVisualization (); });
+             this, [this] () {
+                 refreshVisualization ();
+                 updateTaskPointDetails ();
+             });
     connect (_taskPointModel, &QAbstractItemModel::rowsRemoved,
-             this, [this] () { refreshVisualization (); });
+             this, [this] () {
+                 refreshVisualization ();
+                 updateTaskPointDetails ();
+             });
     connect (_workspaceRunButton, SIGNAL (clicked ()), this, SLOT (sampleWorkspace ()));
     connect (_workspaceCancelButton, SIGNAL (clicked ()), this, SLOT (cancelWorkspaceSampling ()));
     connect (_workspaceExportButton, SIGNAL (clicked ()), this, SLOT (exportWorkspaceCsv ()));
@@ -1820,7 +1833,26 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->verticalHeader ()->setVisible (false);
     // model 鐨?flag 宸茬粡鎶?result 鍒楄鎴愬彧璇?delegate 鍗曠嫭瑁呫€?
     installTaskPointDelegates ();
-    tpLayout->addWidget (_taskPointTable);
+    tpLayout->addWidget (_taskPointTable, 3);
+
+    tpLayout->addWidget (new QLabel (tr ("Selected task point details"), _taskPointTab));
+    QTableWidget* taskPointDetailTable = new QTableWidget (_taskPointTab);
+    taskPointDetailTable->setObjectName (QStringLiteral ("taskPointDetailTable"));
+    taskPointDetailTable->setColumnCount (2);
+    taskPointDetailTable->setHorizontalHeaderLabels ({tr ("Field"), tr ("Value")});
+    taskPointDetailTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    taskPointDetailTable->setSelectionMode (QAbstractItemView::NoSelection);
+    taskPointDetailTable->setWordWrap (true);
+    configureAnalysisTable (taskPointDetailTable);
+    taskPointDetailTable->horizontalHeader ()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
+    taskPointDetailTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::Stretch);
+    taskPointDetailTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    taskPointDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+    taskPointDetailTable->setMinimumHeight (170);
+    taskPointDetailTable->setMaximumHeight (260);
+    tpLayout->addWidget (taskPointDetailTable, 1);
+    setTaskPointTableColumnWidths ();
+    updateTaskPointDetails ();
 
     _taskPointSummaryLabel = new QLabel (tr("Enabled: 0    Pass: 0    Warning: 0    Fail: 0    Reachable rate: -"),
                                           _taskPointTab);
@@ -2394,7 +2426,23 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
 {
     if (_taskPointTable == nullptr)
         return;
+    const std::vector< int > compactColumns = taskPointCompactTableColumns ();
+    for (int column = 0; column < _taskPointTable->model ()->columnCount (); ++column) {
+        const bool visible =
+            std::find (compactColumns.begin (), compactColumns.end (), column) != compactColumns.end ();
+        _taskPointTable->setColumnHidden (column, !visible);
+    }
     _taskPointTable->resizeColumnsToContents ();
+    _taskPointTable->setColumnWidth (ColEnabled, 70);
+    _taskPointTable->setColumnWidth (ColId, 90);
+    _taskPointTable->setColumnWidth (ColName, 150);
+    _taskPointTable->setColumnWidth (ColType, 90);
+    _taskPointTable->setColumnWidth (ColX, 85);
+    _taskPointTable->setColumnWidth (ColY, 85);
+    _taskPointTable->setColumnWidth (ColZ, 85);
+    _taskPointTable->setColumnWidth (ColStatus, 90);
+    _taskPointTable->setColumnWidth (ColUsableSolutions, 80);
+    _taskPointTable->setColumnWidth (ColCollision, 85);
 }
 
 void KinematicAnalysisWidget::installTaskPointDelegates ()
@@ -3137,6 +3185,60 @@ void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
 // analyzeSelectedTaskPoints:鍙垎鏋愰€変腑涓?enabled 鐨勮銆?
 // disabled 琛岀粨鏋滄竻绌?Skipped),涓嶅奖鍝嶅叾浠栬;_lastTaskPointResults
 // 鎸夎〃鏍艰鍙峰榻?selected 涔嬪淇濇寔涓婁竴杞粨鏋滄垨绌恒€?
+// updateTaskPointDetails: show secondary fields for the selected compact-table row.
+void KinematicAnalysisWidget::updateTaskPointDetails ()
+{
+    QTableWidget* detailTable = _taskPointTab != nullptr ?
+        _taskPointTab->findChild< QTableWidget* > (QStringLiteral ("taskPointDetailTable")) :
+        nullptr;
+    if (detailTable == nullptr)
+        return;
+
+    if (_taskPointTable == nullptr || _taskPointModel == nullptr ||
+        _taskPointTable->selectionModel () == nullptr) {
+        detailTable->setRowCount (1);
+        setDetailRow (detailTable, 0, tr ("Selection"), tr ("No task point selected."));
+        return;
+    }
+
+    const QModelIndexList selected = _taskPointTable->selectionModel ()->selectedRows ();
+    if (selected.isEmpty ()) {
+        detailTable->setRowCount (1);
+        setDetailRow (detailTable, 0, tr ("Selection"), tr ("No task point selected."));
+        return;
+    }
+
+    const int row = selected.front ().row ();
+    if (row < 0 || row >= _taskPointModel->rowCount ()) {
+        detailTable->setRowCount (1);
+        setDetailRow (detailTable, 0, tr ("Selection"), tr ("Selected task point is unavailable."));
+        return;
+    }
+
+    const std::vector< int > detailColumns = taskPointDetailColumns ();
+    detailTable->setRowCount (static_cast< int > (detailColumns.size ()));
+    for (std::size_t i = 0; i < detailColumns.size (); ++i) {
+        const int column = detailColumns[i];
+        QString value;
+        if (column == ColBestQ) {
+            const KinematicIkSolution* best = _taskPointModel->bestUsableSolutionForRow (row);
+            value = best != nullptr ? qVectorText (best->q) : QStringLiteral ("-");
+        }
+        else {
+            value = _taskPointModel->data (
+                _taskPointModel->index (row, column), Qt::DisplayRole).toString ();
+        }
+        if (value.trimmed ().isEmpty ())
+            value = QStringLiteral ("-");
+        setDetailRow (
+            detailTable,
+            static_cast< int > (i),
+            rws::TaskPointTableModel::headerText (column),
+            value);
+    }
+    detailTable->resizeRowsToContents ();
+}
+
 void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
 {
     if (_workcell == nullptr) {
