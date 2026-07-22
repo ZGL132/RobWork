@@ -1777,6 +1777,15 @@ static int testTaskPointUiLogic ()
 
     StateStructure::Ptr stateStructure = rw::core::ownedPtr (new StateStructure ());
     const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    if (const int rc = require (
+            rws::defaultTcpFrameName (device.get ()) ==
+                device->getEnd ()->getName (),
+            "device TCP defaults to the device end frame"))
+        return rc;
+    if (const int rc = require (
+            rws::defaultTcpFrameName (NULL).empty (),
+            "null device has no default TCP frame"))
+        return rc;
     rw::models::WorkCell::Ptr workcell =
         rw::core::ownedPtr (new rw::models::WorkCell (stateStructure, "TestWC", ""));
     const rw::kinematics::State state = workcell->getDefaultState ();
@@ -2149,6 +2158,14 @@ static int testVisualizationData ()
             rws::visualPlotArea (narrowArea, true);
         const QRectF narrowWithoutLegend =
             rws::visualPlotArea (narrowArea, false);
+        if (const int rc = require (
+                narrowWithoutLegend.left () >= 40.0,
+                "narrow visual plot reserves left margin for labels"))
+            return rc;
+        if (const int rc = require (
+                narrowWithoutLegend.bottom () <= 256.0,
+                "narrow visual plot reserves bottom margin for axis labels"))
+            return rc;
         if (const int rc = assertNear (
                 narrowWithLegend.right (), narrowWithoutLegend.right (), 1e-12,
                 "narrow visual plot does not reserve hidden legend width"))

@@ -350,11 +350,11 @@ QRectF rws::visualPlotArea (const QRect& area, bool showLegend)
 {
     const int reservedLegendWidth = visualLegendWidth (showLegend, area);
     const QRectF areaF (area);
-    return areaF.adjusted (
-        area.width () * 0.06,
-        18.0,
-        -18.0 - reservedLegendWidth,
-        -area.height () * 0.08);
+    const int leftMargin = std::max (48, static_cast< int > (std::round (area.width () * 0.10)));
+    const int topMargin = std::max (18, static_cast< int > (std::round (area.height () * 0.05)));
+    const int rightMargin = 18 + reservedLegendWidth;
+    const int bottomMargin = std::max (48, static_cast< int > (std::round (area.height () * 0.16)));
+    return areaF.adjusted (leftMargin, topMargin, -rightMargin, -bottomMargin);
 }
 
 QString rws::visualScalarModeText (VisualScalarMode mode)

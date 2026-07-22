@@ -324,13 +324,9 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
     painter.drawText (QRectF (pr.left (), pr.bottom () + 8, pr.width (), 20),
                       Qt::AlignCenter,
                       QStringLiteral ("%1 (m)").arg (axisLabelX (_projection)));
-    painter.save ();
-    painter.translate (12, pr.center ().y ());
-    painter.rotate (-90);
-    painter.drawText (QRectF (-pr.height () / 2.0, 0, pr.height (), 20),
+    painter.drawText (QRectF (0, pr.bottom () + 8, pr.left () - 4, 20),
                       Qt::AlignCenter,
                       QStringLiteral ("%1 (m)").arg (axisLabelY (_projection)));
-    painter.restore ();
 
     // 8. 空数据提示
     if (visibleCount == 0) {

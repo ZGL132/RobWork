@@ -2,6 +2,9 @@
 
 #include "TaskPointTableModel.hpp"
 
+#include <rw/models/Device.hpp>
+#include <rw/kinematics/Frame.hpp>
+
 bool rws::ikCollisionCheckRequested (bool checkboxAvailable, bool checkboxChecked)
 {
     return !checkboxAvailable || checkboxChecked;
@@ -44,4 +47,11 @@ std::vector< int > rws::taskPointDetailColumns ()
         ColMinMargin,
         ColCondition
     };
+}
+
+std::string rws::defaultTcpFrameName (const rw::models::Device* device)
+{
+    if (device == nullptr || device->getEnd () == nullptr)
+        return std::string ();
+    return device->getEnd ()->getName ();
 }

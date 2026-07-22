@@ -52,6 +52,7 @@
 #include <QScrollBar>
 #include <QScrollArea>
 #include <QSignalBlocker>
+#include <QSizePolicy>
 #include <QSpinBox>
 #include <QSet>
 #include <QStyledItemDelegate>
@@ -694,7 +695,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_deviceCombo,
              static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
              this,
-             [this] (int) { installTaskPointDelegates (); });
+             [this] (int) {
+                 populateTcpFrames ();
+                 refreshCurrentPose ();
+                 installTaskPointDelegates ();
+             });
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
     connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
@@ -858,8 +863,13 @@ void KinematicAnalysisWidget::populateTcpFrames ()
             continue;
         _tcpFrameCombo->addItem (QString::fromStdString (frame->getName ()));
     }
-    if (_tcpFrameCombo->count () > 0)
-        _tcpFrameCombo->setCurrentIndex (0);
+    const QString preferredTcp =
+        QString::fromStdString (defaultTcpFrameName (selectedDevice ().get ()));
+    int preferredIndex = _tcpFrameCombo->findText (preferredTcp);
+    if (preferredIndex < 0 && _tcpFrameCombo->count () > 0)
+        preferredIndex = 0;
+    if (preferredIndex >= 0)
+        _tcpFrameCombo->setCurrentIndex (preferredIndex);
 }
 
 // currentState:浼樺厛杩斿洖 RobWorkStudio 鐨勫綋鍓?state;鍚﹀垯鐢?WorkCell 榛樿 state;
@@ -1078,7 +1088,9 @@ void configureAnalysisTable (QTableWidget* table)
     table->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     table->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
     table->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
+    table->horizontalHeader ()->setStretchLastSection (true);
     table->verticalHeader ()->setVisible (false);
+    table->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
 // setCompactTableVisibleRows:鎶?QTableWidget 鐨勯珮搴﹀浐瀹氭垚"琛ㄥご + rows 琛?
@@ -1813,6 +1825,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     buttonRow->addWidget (_importCurrentTcpTaskPointButton, 1, 2);
     buttonRow->addWidget (_applySelectedTaskPointBestQButton, 1, 3);
     buttonRow->addWidget (_openSelectedTaskPointInIkButton, 1, 4);
+    buttonRow->setColumnStretch (5, 1);
     tpLayout->addLayout (buttonRow);
 
     // P3-A:鏁版嵁婧愮敤 TaskPointTableModel,view 鐢?QTableView銆?
@@ -1830,7 +1843,9 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     _taskPointTable->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
     _taskPointTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
+    _taskPointTable->horizontalHeader ()->setStretchLastSection (true);
     _taskPointTable->verticalHeader ()->setVisible (false);
+    _taskPointTable->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
     // model 鐨?flag 宸茬粡鎶?result 鍒楄鎴愬彧璇?delegate 鍗曠嫭瑁呫€?
     installTaskPointDelegates ();
     tpLayout->addWidget (_taskPointTable, 3);
@@ -1915,6 +1930,8 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     controls->addWidget (_workspaceExportButton, 3, 1);
     controls->addWidget (_workspaceOpenVisualizationButton, 3, 2);
     controls->addWidget (_workspaceCancelButton, 3, 3);
+    controls->setColumnStretch (1, 1);
+    controls->setColumnStretch (3, 1);
     layout->addLayout (controls);
 
     _workspaceSummaryLabel = new QLabel (tr("Samples: 0    Collision-free: 0    Avg manipulability: -"),
@@ -1999,6 +2016,9 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     controls->addWidget (_poseExportButton, 2, 2);
     controls->addWidget (_poseCancelButton, 2, 3);
     controls->addWidget (_poseOpenVisualizationButton, 2, 4);
+    controls->setColumnStretch (1, 1);
+    controls->setColumnStretch (3, 1);
+    controls->setColumnStretch (5, 1);
     layout->addLayout (controls);
 
     _posePositionTable = new QTableWidget (_poseReachTab);
@@ -2121,6 +2141,9 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     controls->addWidget (_visualPointSizeSpin, 2, 4);
     controls->addWidget (_visualResetViewButton, 2, 5);
     controls->addWidget (_visualExportPngButton, 2, 6);
+    controls->setColumnStretch (1, 1);
+    controls->setColumnStretch (3, 1);
+    controls->setColumnStretch (5, 1);
     controls->setColumnStretch (7, 1);
     layout->addLayout (controls);
 
@@ -2128,6 +2151,7 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     layout->addWidget (_visualSummaryLabel);
 
     _visualPlot = new KinematicAnalysisPlotWidget (_visualizationTab);
+    _visualPlot->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget (_visualPlot, 1);
 
     connect (_visualPlot, &KinematicAnalysisPlotWidget::visualPointClicked,
