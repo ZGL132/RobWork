@@ -32,6 +32,7 @@ if(build)
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
         TaskPointUiLogic.cpp
+        KinematicAnalysisUiLogic.cpp
         TaskPointTableModel.cpp
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp
@@ -50,6 +51,7 @@ if(build)
         KinematicAnalyzer.hpp
         TaskPointResolver.hpp
         TaskPointUiLogic.hpp
+        KinematicAnalysisUiLogic.hpp
         TaskPointTableModel.hpp
         TaskPointDelegates.hpp
         KinematicAnalysisVisualizationTypes.hpp
@@ -105,6 +107,7 @@ if(build)
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
         TaskPointUiLogic.cpp
+        KinematicAnalysisUiLogic.cpp
         TaskPointTableModel.cpp
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp

@@ -289,6 +289,7 @@ class KinematicAnalysisWidget : public QWidget
     QDoubleSpinBox* _ikPitchSpin;                      // 目标 pitch
     QDoubleSpinBox* _ikYawSpin;                        // 目标 yaw
     QDoubleSpinBox* _ikDuplicateQThresholdSpin;        // IK 解去重 Q 阈值
+    QCheckBox* _ikCollisionCheck;                      // IK 解是否启用碰撞检查
     QComboBox* _ikDistanceUnitCombo;                   // 长度显示单位
     QComboBox* _ikAngleUnitCombo;                     // 角度显示单位
     QPushButton* _ikImportCurrentPoseButton;           // 导入当前 TCP

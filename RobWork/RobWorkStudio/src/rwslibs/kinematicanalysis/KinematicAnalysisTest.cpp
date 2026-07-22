@@ -1,6 +1,7 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicMetrics.hpp"
 #include "KinematicAnalyzer.hpp"
+#include "KinematicAnalysisUiLogic.hpp"
 #include "TaskPointResolver.hpp"
 #include "TaskPointUiLogic.hpp"
 #include "TaskPointTableModel.hpp"
@@ -1705,6 +1706,16 @@ static int testWorkcellAwareAnalyzeTaskPoint ()
 // runAll:把所有子套件串行跑一遍,首个失败立即返回。
 static int testTaskPointUiLogic ()
 {
+    if (const int rc = require (rws::ikCollisionCheckRequested (true, true),
+                                "IK collision checkbox checked requests collision analysis"))
+        return rc;
+    if (const int rc = require (!rws::ikCollisionCheckRequested (true, false),
+                                "IK collision checkbox unchecked skips collision analysis"))
+        return rc;
+    if (const int rc = require (rws::ikCollisionCheckRequested (false, false),
+                                "missing IK collision checkbox preserves legacy collision analysis"))
+        return rc;
+
     using namespace rw::kinematics;
     using namespace rw::math;
     using namespace rw::models;

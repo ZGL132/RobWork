@@ -12,6 +12,7 @@
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
 #include "KinematicAnalysisJson.hpp"
+#include "KinematicAnalysisUiLogic.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -259,6 +260,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikPitchSpin(NULL),
     _ikYawSpin(NULL),
     _ikDuplicateQThresholdSpin(NULL),
+    _ikCollisionCheck(NULL),
     _ikDistanceUnitCombo(NULL),
     _ikAngleUnitCombo(NULL),
     _ikImportCurrentPoseButton(NULL),
@@ -539,6 +541,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikDuplicateQThresholdSpin->setDecimals(6);
     _ikDuplicateQThresholdSpin->setSingleStep(0.001);
     _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
+    _ikCollisionCheck = new QCheckBox (tr("Collision"), _ikTab);
+    _ikCollisionCheck->setChecked (true);
     updateIkUnitDisplay();
 
     QGridLayout* ikPoseGrid = new QGridLayout();
@@ -560,6 +564,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QHBoxLayout* ikDedupRow = new QHBoxLayout();
     ikDedupRow->addWidget(new QLabel(tr("Duplicate Q threshold:"), _ikTab));
     ikDedupRow->addWidget(_ikDuplicateQThresholdSpin);
+    ikDedupRow->addWidget(_ikCollisionCheck);
     _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
     _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
     _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
@@ -1634,9 +1639,12 @@ void KinematicAnalysisWidget::solveIk ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
+    const bool checkCollision = ikCollisionCheckRequested (
+        _ikCollisionCheck != NULL,
+        _ikCollisionCheck != NULL && _ikCollisionCheck->isChecked ());
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
-        collisionDetectorForAnalysis (true, &collisionUnavailable);
+        collisionDetectorForAnalysis (checkCollision, &collisionUnavailable);
     const KinematicIkAnalysisResult result =
         analyzer.analyzeIk(device, tcpFrame, currentState(), target, collisionDetector);
 
@@ -1650,7 +1658,11 @@ void KinematicAnalysisWidget::solveIk ()
         tr("Status: %1    Usable unique: %2")
             .arg(QString::fromLatin1(statusText(result.status)))
             .arg(static_cast<int>(result.usableSolutionCount)));
-    if (collisionUnavailable) {
+    if (!checkCollision) {
+        setStatus (tr("IK analysis completed with %1 candidate(s); collision checking disabled.")
+                       .arg (static_cast< int > (result.solutions.size ())));
+    }
+    else if (collisionUnavailable) {
         setStatus (tr("IK analysis completed with %1 candidate(s); collision checking was unavailable.")
                        .arg (static_cast< int > (result.solutions.size ())));
     }
