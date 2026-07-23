@@ -22,26 +22,51 @@ set(build TRUE)
 rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} ADD_DOC)
 
 if(build)
-    # 主插件目标:P3 重构后用 TaskPointTableModel + TaskPointDelegates 替代 QTableWidget 单元格手动管理;
-    # 同时保留 TaskPointResolver(P1)+ TaskPointUiLogic(P2)。
-    set(SrcFiles
-        KinematicAnalysisPlugin.cpp
-        KinematicAnalysisWidget.cpp
+    # 核心分析组件 — 无 UI/Widget 依赖,可单独链接。
+    set(CoreSrcFiles
         KinematicAnalysisTypes.cpp
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
         TaskPointResolver.cpp
-        TaskPointUiLogic.cpp
-        KinematicAnalysisUiLogic.cpp
-        TaskPointTableModel.cpp
-        TaskPointDelegates.cpp
-        KinematicAnalysisVisualizationTypes.cpp
-        KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisWorkspace.cpp
         KinematicAnalysisPoseReachability.cpp
         KinematicAnalysisCollision.cpp
         KinematicAnalysisEnvelope.cpp
+    )
+    set(CoreHeaderFiles
+        KinematicAnalysisTypes.hpp
+        KinematicMetrics.hpp
+        KinematicAnalyzer.hpp
+        TaskPointResolver.hpp
+        KinematicAnalysisWorkspace.hpp
+        KinematicAnalysisPoseReachability.hpp
+        KinematicAnalysisCollision.hpp
+        KinematicAnalysisEnvelope.hpp
+    )
+
+    # 核心静态库:供插件与测试链接,避免重复编译。
+    rws_add_component(sdurws_kinematicanalysis_core ${CoreSrcFiles} ${CoreHeaderFiles})
+    rw_add_includes(sdurws_kinematicanalysis_core "rwslibs/kinematicanalysis" ${CoreHeaderFiles})
+    target_link_libraries(sdurws_kinematicanalysis_core
+        PUBLIC sdurws_robotanalysiscore RW::sdurw_core RW::sdurw_math
+               RW::sdurw_kinematics RW::sdurw_models
+        PRIVATE RW::sdurw_invkin RW::sdurw_proximity RW::sdurw_proximitystrategies
+    )
+    set_target_properties(sdurws_kinematicanalysis_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
+    # 主插件目标:P3 重构后用 TaskPointTableModel + TaskPointDelegates 替代 QTableWidget 单元格手动管理;
+    # 同时保留 TaskPointResolver(P1)+ TaskPointUiLogic(P2)。
+    # 核心分析源文件已移至 sdurws_kinematicanalysis_core,此处仅保留 UI/Widget 源文件。
+    set(SrcFiles
+        KinematicAnalysisPlugin.cpp
+        KinematicAnalysisWidget.cpp
+        KinematicAnalysisVisualizationTypes.cpp
+        KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisJson.cpp
+        TaskPointUiLogic.cpp
+        KinematicAnalysisUiLogic.cpp
+        TaskPointTableModel.cpp
+        TaskPointDelegates.cpp
     )
 
     set(SRC_FILES_HPP
@@ -81,6 +106,7 @@ if(build)
     )
     rw_add_includes(${SUBSYS_NAME} "rwslibs/kinematicanalysis" ${SRC_FILES_HPP})
     target_link_libraries(${SUBSYS_NAME} ${SUBSYS_DEPS} PUBLIC ${QT_LIBRARIES})
+    target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_kinematicanalysis_core)
     target_include_directories(${SUBSYS_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
@@ -100,28 +126,20 @@ if(build)
     endif()
 
     # 单独的测试可执行文件:不依赖 Qt Widget,只验证核心算法。
-    # 它和插件共享 Types/Metrics/Analyzer/Resolver/UiLogic/TableModel/Delegates
-    # 七个 .cpp,避免重复实现。
+    # 核心分析源文件已移至 sdurws_kinematicanalysis_core,此处仅保留 UI/测试辅助源文件。
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
-        KinematicAnalysisTypes.cpp
-        KinematicMetrics.cpp
-        KinematicAnalyzer.cpp
-        TaskPointResolver.cpp
         TaskPointUiLogic.cpp
         KinematicAnalysisUiLogic.cpp
         TaskPointTableModel.cpp
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp
-        KinematicAnalysisWorkspace.cpp
-        KinematicAnalysisPoseReachability.cpp
-        KinematicAnalysisCollision.cpp
-        KinematicAnalysisEnvelope.cpp
         KinematicAnalysisJson.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE
             ${SUBSYS_DEPS}
+            sdurws_kinematicanalysis_core
             ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
