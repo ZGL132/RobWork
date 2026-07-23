@@ -61,3 +61,15 @@ bool rws::visualEnvelopeModeAvailable (int sourceKind, int renderMode)
     return sourceKind == 1 &&
         renderMode == static_cast< int > (VisualRenderMode::Envelope);
 }
+
+bool rws::visualEnvelopeDirectionChangeSupersedesRequest (
+    bool envelopeActive, bool requestActive)
+{
+    return envelopeActive && requestActive;
+}
+
+bool rws::visualEnvelopeStateChangeRequiresRefresh (
+    bool envelopeActive, bool studioStateChanged)
+{
+    return envelopeActive && studioStateChanged;
+}

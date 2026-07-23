@@ -1724,6 +1724,22 @@ static int testTaskPointUiLogic ()
             !rws::visualEnvelopeModeAvailable (0, static_cast<int> (rws::VisualRenderMode::Envelope)),
             "envelope mode is not available for task point source"))
         return rc;
+    if (const int rc = require (
+            rws::visualEnvelopeDirectionChangeSupersedesRequest (true, true),
+            "direction change supersedes active envelope request"))
+        return rc;
+    if (const int rc = require (
+            !rws::visualEnvelopeDirectionChangeSupersedesRequest (false, false),
+            "direction change without active request does not force generation bump"))
+        return rc;
+    if (const int rc = require (
+            rws::visualEnvelopeStateChangeRequiresRefresh (true, true),
+            "state change refreshes active envelope visualization"))
+        return rc;
+    if (const int rc = require (
+            !rws::visualEnvelopeStateChangeRequiresRefresh (false, true),
+            "state change does not refresh inactive envelope visualization"))
+        return rc;
 
     const std::vector< int > compactColumns = rws::taskPointCompactTableColumns ();
     const std::vector< int > detailColumns  = rws::taskPointDetailColumns ();

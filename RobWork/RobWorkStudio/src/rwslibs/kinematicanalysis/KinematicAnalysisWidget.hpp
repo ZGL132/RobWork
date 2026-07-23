@@ -260,6 +260,7 @@ class KinematicAnalysisWidget : public QWidget
     rw::core::Ptr< rw::kinematics::Frame > selectedTcpFrame () const;
     void cancelEnvelopeRequest (bool waitForFinished);
     void invalidateEnvelopeCache ();
+    void stateChangedListener (const rw::kinematics::State& state);
     WorkspaceEnvelopeCacheKey makeEnvelopeCacheKey (
         const rw::models::Device* device,
         const rw::kinematics::Frame* tcpFrame,

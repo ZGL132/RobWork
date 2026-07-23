@@ -12,6 +12,8 @@ namespace rws {
 
 bool ikCollisionCheckRequested (bool checkboxAvailable, bool checkboxChecked);
 bool visualEnvelopeModeAvailable (int sourceKind, int renderMode);
+bool visualEnvelopeDirectionChangeSupersedesRequest (bool envelopeActive, bool requestActive);
+bool visualEnvelopeStateChangeRequiresRefresh (bool envelopeActive, bool studioStateChanged);
 std::vector< int > taskPointCompactTableColumns ();
 std::vector< int > taskPointDetailColumns ();
 std::string defaultTcpFrameName (const rw::models::Device* device);

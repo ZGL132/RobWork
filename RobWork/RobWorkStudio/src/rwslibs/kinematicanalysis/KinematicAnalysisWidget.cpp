@@ -27,6 +27,8 @@
 #include <rw/math/RPY.hpp>
 #include <rws/RobWorkStudio.hpp>
 
+#include <boost/bind/bind.hpp>
+
 #include <QAbstractItemDelegate>
 #include <QApplication>
 #include <QMetaObject>
@@ -829,6 +831,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
 KinematicAnalysisWidget::~KinematicAnalysisWidget ()
 {
+    if (_studio != NULL)
+        _studio->stateChangedEvent ().remove (this);
     if (_workspaceCancelRequested)
         _workspaceCancelRequested->store (true);
     if (_poseReachabilityCancelRequested)
@@ -858,7 +862,17 @@ QSize KinematicAnalysisWidget::minimumSizeHint () const
 // 鐢ㄥ畠鑾峰彇褰撳墠 state銆佸啓鍥?IK 瑙ｃ€?
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
 {
+    if (_studio != NULL)
+        _studio->stateChangedEvent ().remove (this);
     _studio = studio;
+    if (_studio != NULL) {
+        _studio->stateChangedEvent ().add (
+            boost::bind (
+                &KinematicAnalysisWidget::stateChangedListener,
+                this,
+                boost::arg< 1 > ()),
+            this);
+    }
 }
 
 // setWorkCell:WorkCell 鍙樺寲鏃惰皟鐢?鍒锋柊璁惧/甯т笅鎷?骞舵彁绀虹敤鎴峰綋鍓嶇姸鎬併€?
@@ -1359,6 +1373,24 @@ void KinematicAnalysisWidget::cancelEnvelopeRequest (bool waitForFinished)
 void KinematicAnalysisWidget::invalidateEnvelopeCache ()
 {
     _envelopeCacheValid = false;
+}
+
+void KinematicAnalysisWidget::stateChangedListener (const rw::kinematics::State& state)
+{
+    (void) state;
+    const bool envelopeActive =
+        _visualSourceCombo != NULL &&
+        _visualRenderModeCombo != NULL &&
+        visualEnvelopeModeAvailable (
+            _visualSourceCombo->currentData ().toInt (),
+            _visualRenderModeCombo->currentData ().toInt ());
+    const bool requestActive = _envelopeRunActive ||
+        (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ());
+    if (requestActive)
+        cancelEnvelopeRequest (false);
+    invalidateEnvelopeCache ();
+    if (visualEnvelopeStateChangeRequiresRefresh (envelopeActive, true))
+        refreshVisualization ();
 }
 
 WorkspaceEnvelopeCacheKey KinematicAnalysisWidget::makeEnvelopeCacheKey (
@@ -2693,6 +2725,17 @@ void KinematicAnalysisWidget::onEnvelopeDebounceTimeout ()
     if (_envelopeDebounceTimer == NULL)
         return;
     // 防抖:方向数 spin 变化时重启定时器,200ms 无新变化才触发刷新
+    const bool envelopeActive =
+        _visualSourceCombo != NULL &&
+        _visualRenderModeCombo != NULL &&
+        visualEnvelopeModeAvailable (
+            _visualSourceCombo->currentData ().toInt (),
+            _visualRenderModeCombo->currentData ().toInt ());
+    const bool requestActive = _envelopeRunActive ||
+        (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ());
+    if (visualEnvelopeDirectionChangeSupersedesRequest (envelopeActive, requestActive))
+        cancelEnvelopeRequest (false);
+    invalidateEnvelopeCache ();
     _envelopeDebounceTimer->stop ();
     _envelopeDebounceTimer->start (200);
 }
