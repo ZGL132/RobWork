@@ -28,11 +28,13 @@ if(build)
     set(ModelSrcFiles
         RobotModelXmlWriter.cpp
         RobotModelUrdfImporter.cpp
+        RobotModelSpecJson.cpp
     )
     set(ModelHeaderFiles
         RobotModelSpec.hpp
         RobotModelXmlWriter.hpp
         RobotModelUrdfImporter.hpp
+        RobotModelSpecJson.hpp
     )
     # 插件编译入口:Plugin + Widget + Model 三者合并
     set(SrcFiles
@@ -97,6 +99,26 @@ if(build)
         add_test(
             NAME sdurws_robotmodelbuilder_xmltest
             COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_xmltest>
+        )
+    endif()
+
+    # ---- JSON 序列化往返测试 ----
+    add_executable(sdurws_robotmodelbuilder_jsontest
+        RobotModelSpecJsonTest.cpp
+        RobotModelSpecJson.cpp
+        RobotModelXmlWriter.cpp
+    )
+    target_link_libraries(sdurws_robotmodelbuilder_jsontest
+        PRIVATE
+            ${QT_LIBRARIES}
+            RW::sdurw_loaders
+            RW::sdurw_models
+    )
+    target_include_directories(sdurws_robotmodelbuilder_jsontest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_robotmodelbuilder_jsontest
+            COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_jsontest>
         )
     endif()
 endif()
