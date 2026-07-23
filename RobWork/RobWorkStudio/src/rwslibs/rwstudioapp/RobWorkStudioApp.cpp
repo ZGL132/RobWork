@@ -62,6 +62,9 @@
 #ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
 #include <rwslibs/kinematicanalysis/KinematicAnalysisPlugin.hpp>
 #endif
+#ifdef RWS_HAVE_PLUGIN_STRUCTUREOPTIMIZER
+#include <rwslibs/structureoptimizer/StructureOptimizerPlugin.hpp>
+#endif
 #ifdef RWS_HAVE_PLUGIN_LUAPL
 #include <rwslibs/lua/Lua.hpp>
 #endif
@@ -405,6 +408,11 @@ int RobWorkStudioApp::run ()
 
                 rwstudio.addPlugin (
                     new rws::KinematicAnalysisPlugin (), false, Qt::LeftDockWidgetArea);
+#endif
+#ifdef RWS_HAVE_PLUGIN_STRUCTUREOPTIMIZER
+
+                rwstudio.addPlugin (
+                    new rws::StructureOptimizerPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
 #ifdef RW_HAVE_EIGEN
 

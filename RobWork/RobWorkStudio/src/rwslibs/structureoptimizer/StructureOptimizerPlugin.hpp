@@ -25,6 +25,9 @@ public:
     void close() override;
     void initialize() override;
 
+    /// @brief 从文件路径加载场景
+    void loadSceneFile(const QString& filename);
+
 private:
     StructureOptimizerWidget* _widget;
 };

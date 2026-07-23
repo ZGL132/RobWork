@@ -70,35 +70,40 @@ if(build)
     target_include_directories(sdurws_structureoptimizer_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 
-    # ── 插件目标 (暂不注册为 RobWorkStudio 插件，后续 Task 15 启用) ────
-    # 源文件已创建，仅需取消下方注释即可启用。
-    # set(SrcFiles
-    #     StructureOptimizerPlugin.cpp
-    #     StructureOptimizerWidget.cpp
-    # )
-    # set(SRC_FILES_HPP
-    #     StructureOptimizerPlugin.hpp
-    #     StructureOptimizerWidget.hpp
-    # )
-    # if(DEFINED Qt6Core_VERSION)
-    #     qt_add_resources(RccSrcFiles resources.qrc)
-    # else()
-    #     qt5_add_resources(RccSrcFiles resources.qrc)
-    # endif()
-    #
-    # rws_add_plugin(
-    #     ${SUBSYS_NAME}
-    #     ${RWS_DEFAULT_LIB_TYPE}
-    #     ${SrcFiles}
-    #     ${RccSrcFiles}
-    # )
-    # rw_add_includes(${SUBSYS_NAME} "rwslibs/structureoptimizer" ${SRC_FILES_HPP})
-    # target_link_libraries(${SUBSYS_NAME} ${SUBSYS_DEPS} PUBLIC ${QT_LIBRARIES})
-    # target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_structureoptimizer_core)
-    # target_include_directories(${SUBSYS_NAME}
-    #     INTERFACE
-    #     $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
-    # )
+    # ── 插件目标 ─────────────────────────────────────────────────────────
+    set(SrcFiles
+        StructureOptimizerPlugin.cpp
+        StructureOptimizerWidget.cpp
+    )
+    set(SRC_FILES_HPP
+        StructureOptimizerPlugin.hpp
+        StructureOptimizerWidget.hpp
+    )
+    if(DEFINED Qt6Core_VERSION)
+        qt_add_resources(RccSrcFiles resources.qrc)
+    else()
+        qt5_add_resources(RccSrcFiles resources.qrc)
+    endif()
+
+    rws_add_plugin(
+        ${SUBSYS_NAME}
+        ${RWS_DEFAULT_LIB_TYPE}
+        ${SrcFiles}
+        ${RccSrcFiles}
+    )
+    rw_add_includes(${SUBSYS_NAME} "rwslibs/structureoptimizer" ${SRC_FILES_HPP})
+    target_link_libraries(${SUBSYS_NAME} ${SUBSYS_DEPS} PUBLIC ${QT_LIBRARIES})
+    target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_structureoptimizer_core)
+    target_include_directories(${SUBSYS_NAME}
+        INTERFACE
+        $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
+    )
+
+    # RobWorkStudio 插件元数据
+    rws_plugin_load_details(${SUBSYS_NAME} 1 StructureOptimizer false)
+    if("${RWS_DEFAULT_LIB_TYPE}" STREQUAL "STATIC")
+        set(RWS_PLUGIN_LIBRARIES ${RWS_PLUGIN_LIBRARIES} ${SUBSYS_NAME} PARENT_SCOPE)
+    endif()
 
 
     # ── CTest 注册 ───────────────────────────────────────────────────────

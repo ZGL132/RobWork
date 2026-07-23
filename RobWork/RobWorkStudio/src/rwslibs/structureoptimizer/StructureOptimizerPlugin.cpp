@@ -6,9 +6,10 @@
 namespace rws {
 
 StructureOptimizerPlugin::StructureOptimizerPlugin() :
-    RobWorkStudioPlugin("StructureOptimizer", QIcon()),
-    _widget(nullptr)
+    RobWorkStudioPlugin("StructureOptimizer", QIcon())
 {
+    _widget = new StructureOptimizerWidget();
+    setWidget(_widget);
 }
 
 StructureOptimizerPlugin::~StructureOptimizerPlugin()
@@ -17,19 +18,22 @@ StructureOptimizerPlugin::~StructureOptimizerPlugin()
 
 void StructureOptimizerPlugin::initialize()
 {
-    _widget = new StructureOptimizerWidget(this);
-    setWidget(_widget);
+    // Widget 已在构造函数中创建,此处无需额外初始化
 }
 
 void StructureOptimizerPlugin::open(rw::models::WorkCell* workcell)
 {
     (void)workcell;
-    // 后续 Task 实现 WorkCell 内容加载
 }
 
 void StructureOptimizerPlugin::close()
 {
-    // 后续 Task 实现清理
+}
+
+void StructureOptimizerPlugin::loadSceneFile(const QString& filename)
+{
+    if (getRobWorkStudio() != NULL)
+        getRobWorkStudio()->setWorkcell(filename.toStdString());
 }
 
 } // namespace rws
