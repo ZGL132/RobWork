@@ -12,6 +12,7 @@
 // RobWork 类型:Ptr 智能指针;State 工作单元不可变快照。
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/State.hpp>
+#include <rw/math/Q.hpp>
 
 // QFutureWatcher:监听 QtConcurrent::run 异步任务完成,触发 finished 信号到主线程。
 // QProgressBar :跨线程进度条(由 updatePoseReachabilityProgress 槽更新)。
@@ -49,6 +50,27 @@ namespace rws {
 
 class KinematicAnalysisPlotWidget;
 class RobWorkStudio;
+
+struct WorkspaceEnvelopeRunResult
+{
+    AnalysisEnvelopeData envelope;
+    int generation = 0;
+    bool cancelled = false;
+    QString errorMessage;
+};
+
+struct WorkspaceEnvelopeCacheKey
+{
+    const rw::models::Device* device = nullptr;
+    const rw::kinematics::Frame* tcpFrame = nullptr;
+    VisualProjection projection = VisualProjection::XY;
+    int angularDirections = 0;
+    int coordinateIterations = 0;
+    std::vector< double > lowerBounds;
+    std::vector< double > upperBounds;
+
+    bool operator== (const WorkspaceEnvelopeCacheKey& other) const;
+};
 
 // =============================================================================
 //  KinematicAnalysisWidget:KinematicAnalysis 插件主控件
@@ -236,6 +258,14 @@ class KinematicAnalysisWidget : public QWidget
     rw::core::Ptr< rw::models::Device > selectedDevice () const;
     // 当前 TCP frame combo 选中的 Frame 指针;空时回退到 device->getEnd()。
     rw::core::Ptr< rw::kinematics::Frame > selectedTcpFrame () const;
+    void cancelEnvelopeRequest (bool waitForFinished);
+    void invalidateEnvelopeCache ();
+    WorkspaceEnvelopeCacheKey makeEnvelopeCacheKey (
+        const rw::models::Device* device,
+        const rw::kinematics::Frame* tcpFrame,
+        VisualProjection projection,
+        int angularDirections,
+        int coordinateIterations) const;
     // 获取碰撞检测器;若 requested 但 WorkCell 无碰撞模型,unavailable 置 true。
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetectorForAnalysis (
         bool requested, bool* unavailable) const;
@@ -375,10 +405,14 @@ class KinematicAnalysisWidget : public QWidget
     QTableWidget* _poseResultTable;                    // 结果(最多 500 行)
 
     // ---- 包络异步计算 ----
-    QFutureWatcher< AnalysisEnvelopeData >* _envelopeWatcher;
+    QFutureWatcher< WorkspaceEnvelopeRunResult >* _envelopeWatcher;
     int _envelopeGeneration = 0;                       // 请求生成号(防过期)
     QTimer* _envelopeDebounceTimer;                    // 方向数防抖定时器
     bool _envelopeRunActive = false;
+    std::shared_ptr< std::atomic_bool > _envelopeCancelRequested;
+    bool _envelopeCacheValid = false;
+    WorkspaceEnvelopeCacheKey _envelopeCacheKey;
+    AnalysisEnvelopeData _envelopeCacheData;
 
     // ===================================================================
     //  Visualization tab 控件

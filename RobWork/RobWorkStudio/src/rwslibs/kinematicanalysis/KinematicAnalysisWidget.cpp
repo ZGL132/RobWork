@@ -76,6 +76,18 @@
 
 using namespace rws;
 
+bool rws::WorkspaceEnvelopeCacheKey::operator== (
+    const WorkspaceEnvelopeCacheKey& other) const
+{
+    return device == other.device &&
+        tcpFrame == other.tcpFrame &&
+        projection == other.projection &&
+        angularDirections == other.angularDirections &&
+        coordinateIterations == other.coordinateIterations &&
+        lowerBounds == other.lowerBounds &&
+        upperBounds == other.upperBounds;
+}
+
 namespace {
 // Task point 琛ㄦ牸鍒楃储寮曟灇涓?缁熶竴鎵€鏈夎鍐欎唬鐮?閬垮厤鍒楀彿纭紪鐮佹紓绉汇€?
 // 鍓?19 鍒楀搴?RobotAnalysisCsv 鏍囧噯瀛楁 + UI 琛嶇敓 status / reason;
@@ -344,6 +356,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _envelopeGeneration(0),
     _envelopeDebounceTimer(NULL),
     _envelopeRunActive(false),
+    _envelopeCancelRequested(std::make_shared< std::atomic_bool > (false)),
+    _envelopeCacheValid(false),
     _reportSummaryLabel(NULL),
     _reportWarningTable(NULL),
     _reportRefreshButton(NULL),
@@ -661,6 +675,18 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _visualizationTab = new QWidget(_tabs);
     _reportTab     = new QWidget(_tabs);
 
+    _envelopeWatcher = new QFutureWatcher< WorkspaceEnvelopeRunResult > (this);
+    connect (_envelopeWatcher,
+             SIGNAL (finished ()),
+             this,
+             SLOT (onEnvelopeFinished ()));
+    _envelopeDebounceTimer = new QTimer (this);
+    _envelopeDebounceTimer->setSingleShot (true);
+    connect (_envelopeDebounceTimer,
+             SIGNAL (timeout ()),
+             this,
+             SLOT (refreshVisualization ()));
+
     buildTaskPointTab ();
     buildWorkspaceTab ();
     buildPoseReachabilityTab ();
@@ -680,18 +706,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              SLOT (handleWorkspaceFinished ()));
 
     // 包络异步计算 watcher + 防抖定时器
-    _envelopeWatcher = new QFutureWatcher< AnalysisEnvelopeData > (this);
-    connect (_envelopeWatcher,
-             SIGNAL (finished ()),
-             this,
-             SLOT (onEnvelopeFinished ()));
-    _envelopeDebounceTimer = new QTimer (this);
-    _envelopeDebounceTimer->setSingleShot (true);
-    connect (_envelopeDebounceTimer,
-             SIGNAL (timeout ()),
-             this,
-             SLOT (refreshVisualization ()));
-
     _tabs->addTab (_ikTab,         tr("IK"));
     _tabs->addTab (_taskPointTab,  tr("Task points"));
     _tabs->addTab (_workspaceTab,  tr("Workspace"));
@@ -716,9 +730,21 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
              this,
              [this] (int) {
+                 cancelEnvelopeRequest (false);
+                 invalidateEnvelopeCache ();
                  populateTcpFrames ();
                  refreshCurrentPose ();
                  installTaskPointDelegates ();
+                 updateVisualizationControls ();
+             });
+    connect (_tcpFrameCombo,
+             static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
+             this,
+             [this] (int) {
+                 cancelEnvelopeRequest (false);
+                 invalidateEnvelopeCache ();
+                 refreshCurrentPose ();
+                 updateVisualizationControls ();
              });
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
@@ -807,8 +833,7 @@ KinematicAnalysisWidget::~KinematicAnalysisWidget ()
         _workspaceCancelRequested->store (true);
     if (_poseReachabilityCancelRequested)
         _poseReachabilityCancelRequested->store (true);
-    if (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ())
-        _envelopeWatcher->cancel ();
+    cancelEnvelopeRequest (true);
     if (_workspaceWatcher != NULL && _workspaceWatcher->isRunning ())
         _workspaceWatcher->waitForFinished ();
     if (_poseReachabilityWatcher != NULL && _poseReachabilityWatcher->isRunning ())
@@ -839,6 +864,8 @@ void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
 // setWorkCell:WorkCell 鍙樺寲鏃惰皟鐢?鍒锋柊璁惧/甯т笅鎷?骞舵彁绀虹敤鎴峰綋鍓嶇姸鎬併€?
 void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
 {
+    cancelEnvelopeRequest (true);
+    invalidateEnvelopeCache ();
     _workcell = workcell;
     populateDevices ();
     populateTcpFrames ();
@@ -1309,6 +1336,54 @@ rw::core::Ptr< rw::kinematics::Frame > KinematicAnalysisWidget::selectedTcpFrame
     if (_workcell == NULL || _tcpFrameCombo == NULL)
         return NULL;
     return frameByName (_workcell, _tcpFrameCombo->currentText ().toStdString ());
+}
+
+void KinematicAnalysisWidget::cancelEnvelopeRequest (bool waitForFinished)
+{
+    const bool hadActiveRequest = _envelopeRunActive ||
+        (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ());
+    if (_envelopeCancelRequested)
+        _envelopeCancelRequested->store (true);
+    if (_envelopeDebounceTimer != NULL)
+        _envelopeDebounceTimer->stop ();
+    if (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ()) {
+        _envelopeWatcher->cancel ();
+        if (waitForFinished)
+            _envelopeWatcher->waitForFinished ();
+    }
+    if (hadActiveRequest)
+        ++_envelopeGeneration;
+    _envelopeRunActive = false;
+}
+
+void KinematicAnalysisWidget::invalidateEnvelopeCache ()
+{
+    _envelopeCacheValid = false;
+}
+
+WorkspaceEnvelopeCacheKey KinematicAnalysisWidget::makeEnvelopeCacheKey (
+    const rw::models::Device* device,
+    const rw::kinematics::Frame* tcpFrame,
+    VisualProjection projection,
+    int angularDirections,
+    int coordinateIterations) const
+{
+    WorkspaceEnvelopeCacheKey key;
+    key.device = device;
+    key.tcpFrame = tcpFrame;
+    key.projection = projection;
+    key.angularDirections = angularDirections;
+    key.coordinateIterations = coordinateIterations;
+    if (device != nullptr) {
+        const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
+        key.lowerBounds.reserve (bounds.first.size ());
+        key.upperBounds.reserve (bounds.second.size ());
+        for (std::size_t i = 0; i < bounds.first.size (); ++i)
+            key.lowerBounds.push_back (bounds.first[i]);
+        for (std::size_t i = 0; i < bounds.second.size (); ++i)
+            key.upperBounds.push_back (bounds.second[i]);
+    }
+    return key;
 }
 
 rw::core::Ptr< rw::proximity::CollisionDetector >
@@ -2212,7 +2287,7 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     connect (_visualExportPngButton, SIGNAL (clicked ()),
              this, SLOT (exportVisualizationPng ()));
     connect (_visualRenderModeCombo, SIGNAL (currentIndexChanged (int)),
-             this, SLOT (refreshVisualization ()));
+             this, SLOT (updateVisualizationControls ()));
     connect (_visualEnvelopeDirectionsSpin, SIGNAL (valueChanged (int)),
              this, SLOT (onEnvelopeDebounceTimeout ()));
     _envelopeDebounceTimer->setInterval (200);
@@ -2267,8 +2342,10 @@ void KinematicAnalysisWidget::updateVisualizationControls ()
         renderModeValue == static_cast<int> (VisualRenderMode::Envelope)) {
         const int scatterIndex = _visualRenderModeCombo->findData (
             static_cast<int> (VisualRenderMode::Scatter));
-        if (scatterIndex >= 0)
+        if (scatterIndex >= 0) {
+            QSignalBlocker renderModeBlocker (_visualRenderModeCombo);
             _visualRenderModeCombo->setCurrentIndex (scatterIndex);
+        }
     }
 
     // Envelope 模式下禁用不相关的 Scatter 控件
@@ -2383,18 +2460,12 @@ void KinematicAnalysisWidget::refreshVisualization ()
         static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ());
     const VisualScalarMode scalarMode =
         static_cast< VisualScalarMode > (_visualColorModeCombo->currentData ().toInt ());
-    // 取消正在进行的包络异步计算（模式切换时）
-    if (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ()) {
-        if (_workspaceCancelRequested)
-            _workspaceCancelRequested->store (true);
-        _envelopeWatcher->cancel ();
-    }
-    _envelopeRunActive = false;
-
     const VisualRenderMode renderMode =
         _visualRenderModeCombo != NULL ?
             static_cast< VisualRenderMode > (_visualRenderModeCombo->currentData ().toInt ()) :
             VisualRenderMode::Scatter;
+    if (!(sourceKind == 1 && renderMode == VisualRenderMode::Envelope))
+        cancelEnvelopeRequest (false);
 
     AnalysisVisualData data;
     if (sourceKind == 0) {
@@ -2419,14 +2490,6 @@ void KinematicAnalysisWidget::refreshVisualization ()
     else if (sourceKind == 1) {
         if (renderMode == VisualRenderMode::Envelope) {
             // 异步计算:取消之前的请求,启动新任务
-            if (_envelopeWatcher != NULL && _envelopeWatcher->isRunning ()) {
-                if (_workspaceCancelRequested)
-                    _workspaceCancelRequested->store (true);
-                _envelopeWatcher->cancel ();
-            }
-            _envelopeRunActive = true;
-            ++_envelopeGeneration;
-
             WorkspaceEnvelopeConfig config;
             config.projection = projection;
             config.angularDirections = _visualEnvelopeDirectionsSpin != NULL ?
@@ -2438,25 +2501,52 @@ void KinematicAnalysisWidget::refreshVisualization ()
             const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
             const rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
             const rw::kinematics::State captureState = currentState ();
-            const WorkspaceEnvelopeConfig captureConfig = config;
-            const int captureGeneration = _envelopeGeneration;
+            const WorkspaceEnvelopeCacheKey cacheKey = makeEnvelopeCacheKey (
+                device.get (), tcpFrame.get (), projection,
+                config.angularDirections, config.coordinateIterations);
 
             data.renderMode = VisualRenderMode::Envelope;
             data.scalarMode = scalarMode;
-            // 显示占位状态
-            if (_visualSummaryLabel != NULL)
-                _visualSummaryLabel->setText (tr("Approximate outer envelope: computing…"));
-            // 保持前一次有效图像,不清除 plot
+            if (_envelopeCacheValid && cacheKey == _envelopeCacheKey) {
+                data.envelope = _envelopeCacheData;
+            }
+            else {
+                cancelEnvelopeRequest (false);
+                _envelopeRunActive = true;
+                ++_envelopeGeneration;
+                _envelopeCancelRequested = config.cancel;
+                _visualPlot->setProjection (projection);
+                _visualPlot->setRenderMode (data.renderMode);
+                // 显示占位状态
+                if (_visualSummaryLabel != NULL)
+                    _visualSummaryLabel->setText (tr("Approximate outer envelope: computing..."));
+                // 保持前一次有效图像,不清除 plot
 
-            QFuture< AnalysisEnvelopeData > future = QtConcurrent::run (
-                [device, tcpFrame, captureState, captureConfig] () {
-                return computeWorkspaceEnvelope (
-                    device.get (), tcpFrame.get (), captureState, captureConfig);
-            });
-            _envelopeWatcher->setFuture (future);
-            _workspaceCancelRequested = config.cancel;
-            _visualPlot->setRenderMode (data.renderMode);
-            return; // 异步完成后再更新 plot
+                const WorkspaceEnvelopeConfig captureConfig = config;
+                const int captureGeneration = _envelopeGeneration;
+                QFuture< WorkspaceEnvelopeRunResult > future = QtConcurrent::run (
+                    [device, tcpFrame, captureState, captureConfig, captureGeneration] () {
+                    WorkspaceEnvelopeRunResult result;
+                    result.generation = captureGeneration;
+                    try {
+                        result.envelope = computeWorkspaceEnvelope (
+                            device.get (), tcpFrame.get (), captureState, captureConfig);
+                        result.cancelled = captureConfig.cancel != nullptr &&
+                            captureConfig.cancel->load ();
+                    }
+                    catch (const std::exception& ex) {
+                        result.errorMessage = QString::fromLocal8Bit (ex.what ());
+                    }
+                    catch (...) {
+                        result.errorMessage =
+                            QStringLiteral ("Unexpected envelope computation error.");
+                    }
+                    return result;
+                });
+                _envelopeWatcher->setFuture (future);
+                _visualPlot->setRenderMode (data.renderMode);
+                return; // 异步完成后再更新 plot
+            }
         }
         else {
             data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode);
@@ -2489,7 +2579,7 @@ void KinematicAnalysisWidget::refreshVisualization ()
         if (data.renderMode == VisualRenderMode::Envelope) {
             if (data.envelope.valid) {
                 _visualSummaryLabel->setText (
-                    tr("Approximate outer envelope: %1 pts | %2 | %3×%4 m | Rmax %5 m | approximate — not exact reachability")
+                    tr("Approximate outer envelope: %1 pts | %2 | %3x%4 m | Rmax %5 m | approximate - not exact reachability")
                         .arg (static_cast<int> (data.envelope.boundary.size ()))
                         .arg (visualProjectionText (projection))
                         .arg (QString::number (data.envelope.width, 'f', 3))
@@ -2540,27 +2630,43 @@ void KinematicAnalysisWidget::refreshVisualization ()
 
 void KinematicAnalysisWidget::onEnvelopeFinished ()
 {
-    if (!_envelopeRunActive)
-        return;
-    _envelopeRunActive = false;
-
     if (_envelopeWatcher == NULL || !_envelopeWatcher->isFinished ())
         return;
 
-    const AnalysisEnvelopeData envelope = _envelopeWatcher->result ();
+    const WorkspaceEnvelopeRunResult result = _envelopeWatcher->result ();
+    if (result.generation != _envelopeGeneration)
+        return;
+    _envelopeRunActive = false;
 
     // 检查取消(取消时返回无效 envelope)
-    if (!envelope.valid && (_workspaceCancelRequested != nullptr &&
-                            _workspaceCancelRequested->load ())) {
+    if (result.cancelled) {
         if (_visualSummaryLabel != NULL)
             _visualSummaryLabel->setText (tr("Approximate outer envelope: cancelled."));
         return;
     }
+    if (!result.errorMessage.isEmpty ()) {
+        if (_visualSummaryLabel != NULL)
+            _visualSummaryLabel->setText (
+                tr("Approximate outer envelope: %1").arg (result.errorMessage));
+        return;
+    }
+
+    const AnalysisEnvelopeData envelope = result.envelope;
 
     // 构造可视化数据
     AnalysisVisualData data;
     data.renderMode = VisualRenderMode::Envelope;
     data.envelope = envelope;
+
+    if (envelope.valid) {
+        const WorkspaceEnvelopeCacheKey cacheKey = makeEnvelopeCacheKey (
+            selectedDevice ().get (), selectedTcpFrame ().get (), envelope.projection,
+            _visualEnvelopeDirectionsSpin != NULL ? _visualEnvelopeDirectionsSpin->value () : 180,
+            6);
+        _envelopeCacheKey = cacheKey;
+        _envelopeCacheData = envelope;
+        _envelopeCacheValid = true;
+    }
 
     _visualPlot->setRenderMode (data.renderMode);
     _visualPlot->setVisualData (data);
@@ -2568,7 +2674,7 @@ void KinematicAnalysisWidget::onEnvelopeFinished ()
     if (_visualSummaryLabel != NULL) {
         if (envelope.valid) {
             _visualSummaryLabel->setText (
-                tr("Approximate outer envelope: %1 pts | %2 | %3×%4 m | Rmax %5 m | approximate — not exact reachability")
+                tr("Approximate outer envelope: %1 pts | %2 | %3x%4 m | Rmax %5 m | approximate - not exact reachability")
                     .arg (static_cast<int> (envelope.boundary.size ()))
                     .arg (visualProjectionText (envelope.projection))
                     .arg (QString::number (envelope.width, 'f', 3))
@@ -2584,6 +2690,8 @@ void KinematicAnalysisWidget::onEnvelopeFinished ()
 
 void KinematicAnalysisWidget::onEnvelopeDebounceTimeout ()
 {
+    if (_envelopeDebounceTimer == NULL)
+        return;
     // 防抖:方向数 spin 变化时重启定时器,200ms 无新变化才触发刷新
     _envelopeDebounceTimer->stop ();
     _envelopeDebounceTimer->start (200);

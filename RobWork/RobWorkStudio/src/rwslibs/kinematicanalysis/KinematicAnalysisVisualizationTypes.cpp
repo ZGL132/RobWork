@@ -386,7 +386,7 @@ QString rws::visualRenderModeText (VisualRenderMode mode)
 {
     switch (mode) {
         case VisualRenderMode::Scatter:  return QStringLiteral ("Scatter");
-        case VisualRenderMode::Envelope: return QStringLiteral ("Outer envelope");
+        case VisualRenderMode::Envelope: return QStringLiteral ("Approximate outer envelope");
     }
     return QStringLiteral ("Scatter");
 }
@@ -472,6 +472,73 @@ void rws::updateEnvelopeDimensions (AnalysisEnvelopeData& envelope)
         return;
 
     envelope.valid = true;
+}
+
+EnvelopePlotLayout rws::computeEnvelopePlotLayout (
+    const QRect& area,
+    const QSizeF& titleSize,
+    const QSizeF& widthLabelSize,
+    const QSizeF& heightLabelSize,
+    const QSizeF& captionSize)
+{
+    EnvelopePlotLayout layout;
+    if (area.width () <= 0 || area.height () <= 0)
+        return layout;
+
+    const double minPlotW = 50.0;
+    const double minPlotH = 50.0;
+    const double pad = 8.0;
+    const double leftMargin = 12.0;
+    const double topMargin = std::max (24.0, titleSize.height () + 10.0);
+    const double rightMargin = std::max (56.0, heightLabelSize.width () + 24.0);
+    const double bottomMargin =
+        std::max (48.0, widthLabelSize.height () + captionSize.height () + 30.0);
+
+    const double plotX = area.x () + leftMargin;
+    const double plotY = area.y () + topMargin;
+    const double plotW = area.width () - leftMargin - rightMargin;
+    const double plotH = area.height () - topMargin - bottomMargin;
+    if (plotW < minPlotW || plotH < minPlotH)
+        return layout;
+
+    layout.valid = true;
+    layout.plotRect = QRectF (plotX, plotY, plotW, plotH);
+    layout.titleRect = QRectF (
+        plotX, area.y () + 2.0, plotW, std::max (titleSize.height (), topMargin - 4.0));
+
+    const double widthLineY = layout.plotRect.bottom () + pad;
+    layout.widthLineStart = QPointF (layout.plotRect.left (), widthLineY);
+    layout.widthLineEnd = QPointF (layout.plotRect.right (), widthLineY);
+    const double widthLabelW = std::min (std::max (widthLabelSize.width (), 40.0), plotW);
+    const double widthLabelH = std::max (widthLabelSize.height (), 16.0);
+    layout.widthLabelRect = QRectF (
+        layout.plotRect.center ().x () - widthLabelW * 0.5,
+        widthLineY + 2.0,
+        widthLabelW,
+        widthLabelH);
+
+    const double heightLineX = layout.plotRect.right () + pad;
+    layout.heightLineStart = QPointF (heightLineX, layout.plotRect.top ());
+    layout.heightLineEnd = QPointF (heightLineX, layout.plotRect.bottom ());
+    const double heightAvailableW =
+        std::max (24.0, area.right () - heightLineX - pad + 1.0);
+    const double heightLabelW =
+        std::min (std::max (heightLabelSize.width (), 40.0), heightAvailableW);
+    const double heightLabelH = std::max (heightLabelSize.height (), 16.0);
+    layout.heightLabelRect = QRectF (
+        heightLineX + pad,
+        layout.plotRect.center ().y () - heightLabelH * 0.5,
+        heightLabelW,
+        heightLabelH);
+
+    const double captionH = std::max (captionSize.height (), 16.0);
+    layout.captionRect = QRectF (
+        plotX,
+        area.y () + area.height () - captionH - 4.0,
+        plotW,
+        captionH);
+
+    return layout;
 }
 
 QColor rws::visualColorForPoint (const AnalysisVisualPoint& point,

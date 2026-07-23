@@ -14,8 +14,10 @@ class KinematicAnalysisWidget;
 class KinematicAnalysisPlugin : public RobWorkStudioPlugin
 {
     Q_OBJECT
+#ifndef RWS_USE_STATIC_LINK_PLUGINS
     Q_PLUGIN_METADATA(IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "plugin.json")
     Q_INTERFACES(rws::RobWorkStudioPlugin)
+#endif
 
 public:
     KinematicAnalysisPlugin();

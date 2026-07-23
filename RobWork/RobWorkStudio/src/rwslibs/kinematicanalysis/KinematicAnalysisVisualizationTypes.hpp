@@ -7,6 +7,7 @@
 #include <QPointF>
 #include <QRect>
 #include <QRectF>
+#include <QSizeF>
 #include <QString>
 
 #include <array>
@@ -59,6 +60,20 @@ struct AnalysisEnvelopeData
     double width = 0.0;
     double height = 0.0;
     double maxRadius = 0.0;
+};
+
+struct EnvelopePlotLayout
+{
+    bool valid = false;
+    QRectF plotRect;
+    QRectF titleRect;
+    QPointF widthLineStart;
+    QPointF widthLineEnd;
+    QRectF widthLabelRect;
+    QPointF heightLineStart;
+    QPointF heightLineEnd;
+    QRectF heightLabelRect;
+    QRectF captionRect;
 };
 
 struct AnalysisVisualPoint
@@ -127,6 +142,12 @@ QString visualScalarModeText (VisualScalarMode mode);
 QString visualProjectionText (VisualProjection projection);
 QString visualRenderModeText (VisualRenderMode mode);
 void updateEnvelopeDimensions (AnalysisEnvelopeData& envelope);
+EnvelopePlotLayout computeEnvelopePlotLayout (
+    const QRect& area,
+    const QSizeF& titleSize,
+    const QSizeF& widthLabelSize,
+    const QSizeF& heightLabelSize,
+    const QSizeF& captionSize);
 
 // 根据 scalarMode 和 data 范围返回该点的颜色(Status/Collision 离散,其它连续)。
 //   Status/Coverage :按 status/collision 直接取固定调色板;

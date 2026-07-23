@@ -2086,8 +2086,79 @@ static int testWorkspaceEnvelopeHelpers ()
     // 文字描述验证
     {
         if (const int rc = require (
-                rws::visualRenderModeText (VisualRenderMode::Envelope).contains (QStringLiteral ("Outer")),
-                "display text identifies outer envelope mode"))
+                rws::visualRenderModeText (VisualRenderMode::Envelope) ==
+                    QStringLiteral ("Approximate outer envelope"),
+                "display text identifies approximate outer envelope mode"))
+            return rc;
+    }
+
+    // ---- cancellation ----
+    {
+        WorkspaceEnvelopeConfig cancelled;
+        cancelled.cancel->store (true);
+        const AnalysisEnvelopeData cancelledEnvelope =
+            computeWorkspaceEnvelope (device.get (), device->getEnd (), state, cancelled);
+        if (const int rc = require (!cancelledEnvelope.valid,
+                                    "cancelled envelope computation returns invalid result"))
+            return rc;
+        if (const int rc = require (cancelledEnvelope.boundary.empty (),
+                                    "cancelled envelope computation does not publish partial geometry"))
+            return rc;
+    }
+
+    // ---- invalid joint bounds ----
+    {
+        StateStructure::Ptr invalidStateStructure =
+            rw::core::ownedPtr (new StateStructure ());
+        const rw::models::SerialDevice::Ptr invalidDevice =
+            makeGenericSixAxis (*invalidStateStructure);
+        std::pair< Q, Q > invalidBounds = invalidDevice->getBounds ();
+        invalidBounds.first[0] = std::numeric_limits< double >::quiet_NaN ();
+        invalidDevice->setBounds (invalidBounds);
+        const AnalysisEnvelopeData invalidEnvelope =
+            computeWorkspaceEnvelope (
+                invalidDevice.get (), invalidDevice->getEnd (),
+                invalidStateStructure->getDefaultState (), config);
+        if (const int rc = require (!invalidEnvelope.valid,
+                                    "non-finite joint bounds make envelope invalid"))
+            return rc;
+        if (const int rc = require (invalidEnvelope.boundary.empty (),
+                                    "non-finite joint bounds do not publish geometry"))
+            return rc;
+    }
+
+    return 0;
+}
+
+static int testWorkspaceEnvelopeRenderingLayout ()
+{
+    using namespace rws;
+
+    const QSizeF titleSize (260.0, 18.0);
+    const QSizeF widthLabelSize (90.0, 18.0);
+    const QSizeF heightLabelSize (70.0, 18.0);
+    const QSizeF captionSize (300.0, 18.0);
+
+    for (const QSize size : {QSize (320, 220), QSize (1400, 900)}) {
+        const QRect area (QPoint (0, 0), size);
+        const EnvelopePlotLayout layout = computeEnvelopePlotLayout (
+            area, titleSize, widthLabelSize, heightLabelSize, captionSize);
+        if (const int rc = require (layout.valid, "envelope layout is valid"))
+            return rc;
+        if (const int rc = require (area.contains (layout.plotRect.toAlignedRect ()),
+                                    "envelope plot rect stays inside image"))
+            return rc;
+        if (const int rc = require (area.contains (layout.titleRect.toAlignedRect ()),
+                                    "envelope title rect stays inside image"))
+            return rc;
+        if (const int rc = require (area.contains (layout.widthLabelRect.toAlignedRect ()),
+                                    "envelope width label rect stays inside image"))
+            return rc;
+        if (const int rc = require (area.contains (layout.heightLabelRect.toAlignedRect ()),
+                                    "envelope height label rect stays inside image"))
+            return rc;
+        if (const int rc = require (area.contains (layout.captionRect.toAlignedRect ()),
+                                    "envelope caption rect stays inside image"))
             return rc;
     }
 
@@ -2378,7 +2449,7 @@ static int testJsonAndCollisionHelpers ()
             return rc;
         if (const int rc = require (
                 rws::visualRenderModeText (rws::VisualRenderMode::Envelope) ==
-                    QStringLiteral ("Outer envelope"),
+                    QStringLiteral ("Approximate outer envelope"),
                 "visual render mode text"))
             return rc;
     }
@@ -2396,7 +2467,8 @@ static int testJsonAndCollisionHelpers ()
         };
         rws::updateEnvelopeDimensions (envelopeVisual.envelope);
         if (const int rc = require (
-                rws::visualRenderModeText (envelopeVisual.renderMode) == QStringLiteral ("Outer envelope"),
+                rws::visualRenderModeText (envelopeVisual.renderMode) ==
+                    QStringLiteral ("Approximate outer envelope"),
                 "envelope render mode is selected"))
             return rc;
         if (const int rc = assertNear (
@@ -2438,6 +2510,8 @@ static int runAll ()
     if (const int rc = testVisualizationData ())
         return rc;
     if (const int rc = testWorkspaceEnvelopeHelpers ())
+        return rc;
+    if (const int rc = testWorkspaceEnvelopeRenderingLayout ())
         return rc;
     if (const int rc = testWorkspaceHelpers ())
         return rc;
@@ -2491,6 +2565,8 @@ int main (int argc, char** argv)
         rc = testVisualizationData ();
     else if (suite == "workspace_envelope")
         rc = testWorkspaceEnvelopeHelpers ();
+    else if (suite == "workspace_envelope_layout")
+        rc = testWorkspaceEnvelopeRenderingLayout ();
     else if (suite == "workspace_helpers")
         rc = testWorkspaceHelpers ();
     else if (suite == "workspace")

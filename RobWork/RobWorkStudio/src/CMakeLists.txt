@@ -46,7 +46,9 @@ if(build)
         )
 
         set(RWS_QT_RUNTIME_TARGETS)
-        foreach(qt_runtime_target Qt6::Core Qt6::Gui Qt6::Widgets Qt5::Core Qt5::Gui Qt5::Widgets)
+        foreach(qt_runtime_target
+                Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets
+                Qt5::Core Qt5::Gui Qt5::Widgets)
             if(TARGET ${qt_runtime_target})
                 list(APPEND RWS_QT_RUNTIME_TARGETS ${qt_runtime_target})
             endif()

@@ -117,6 +117,19 @@ std::vector< rw::math::Q > envelopeSeeds (
     return seeds;
 }
 
+bool validEnvelopeBounds (const std::pair< rw::math::Q, rw::math::Q >& bounds)
+{
+    if (bounds.first.size () == 0 || bounds.first.size () != bounds.second.size ())
+        return false;
+    for (std::size_t i = 0; i < bounds.first.size (); ++i) {
+        if (!std::isfinite (bounds.first[i]) || !std::isfinite (bounds.second[i]))
+            return false;
+        if (bounds.first[i] > bounds.second[i])
+            return false;
+    }
+    return true;
+}
+
 }    // namespace
 
 QPointF rws::projectEnvelopePosition (
@@ -145,6 +158,8 @@ AnalysisEnvelopeData rws::computeWorkspaceEnvelope (
     const int directions = std::max (12, config.angularDirections);
     const int iterations = std::max (1, config.coordinateIterations);
     const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
+    if (!validEnvelopeBounds (bounds))
+        return envelope;
     const std::vector< rw::math::Q > seeds = envelopeSeeds (bounds);
 
     envelope.boundary.reserve (static_cast< std::size_t > (directions));
