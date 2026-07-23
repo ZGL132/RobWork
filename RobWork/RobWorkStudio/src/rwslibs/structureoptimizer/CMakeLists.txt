@@ -15,13 +15,23 @@ set(build TRUE)
 rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} ADD_DOC)
 
 if(build)
-    # 核心库 — 纯数据类型、验证逻辑，无 UI 依赖。
+    # 核心库 — 纯数据类型、验证逻辑、设计变量突变、目标评分、模型工厂，无 UI 依赖。
     set(CoreSrcFiles
         StructureOptimizationValidation.cpp
+        StructureDesignMutator.cpp
+        StructureObjectiveScorer.cpp
+        StructureCandidateGenerator.cpp
+        StructureCandidateCache.cpp
+        CandidateModelFactory.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
         StructureOptimizationValidation.hpp
+        StructureDesignMutator.hpp
+        StructureObjectiveScorer.hpp
+        StructureCandidateGenerator.hpp
+        StructureCandidateCache.hpp
+        CandidateModelFactory.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})
@@ -30,6 +40,8 @@ if(build)
         PUBLIC sdurws_robotanalysiscore RW::sdurw_core RW::sdurw_math
                RW::sdurw_kinematics RW::sdurw_models RW::sdurw_proximity
         PRIVATE sdurws_kinematicanalysis_core
+                sdurws_robotmodelbuilder
+                RW::sdurw_loaders
     )
     set_target_properties(sdurws_structureoptimizer_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
