@@ -3,6 +3,8 @@
 #include "RobotAnalysisTypes.hpp"
 #include "RobotAnalysisValidation.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -60,6 +62,14 @@ rws::RobotDesignContext makeContext ()
     context.projectName         = "analysis-core-test";
     context.robotName           = "GenericSixAxis";
     context.modelSpec.robotName = "GenericSixAxis";
+    rws::JointTransformSpec baseJoint;
+    baseJoint.name = "Base";
+    baseJoint.type = "FixedFrame";
+    context.modelSpec.transformJoints.push_back (baseJoint);
+    rws::JointTransformSpec joint1;
+    joint1.name = "Joint1";
+    joint1.type = "Revolute";
+    context.modelSpec.transformJoints.push_back (joint1);
     context.payload             = makePayload ();
     context.taskPoints.push_back (makePoint ());
     return context;
@@ -288,6 +298,64 @@ int runCsv ()
     return 0;
 }
 
+int runContextFullModel ()
+{
+    rws::RobotDesignContext context = makeContext ();
+
+    rws::JointTransformSpec joint;
+    joint.name   = "Joint1";
+    joint.type   = "Revolute";
+    joint.rpyDeg = {{0, 0, 0}};
+    joint.pos    = {{0, 0, 0.3}};
+    context.modelSpec.transformJoints.push_back (joint);
+
+    rws::JointTransformSpec joint2;
+    joint2.name   = "Joint2";
+    joint2.type   = "Revolute";
+    joint2.rpyDeg = {{90, 0, 0}};
+    joint2.pos    = {{0, 0, 0}};
+    context.modelSpec.transformJoints.push_back (joint2);
+
+    context.modelSpec.showFrameAxes = true;
+
+    const std::string contextJson = rws::RobotAnalysisJson::toJson (context);
+    if (!contains (contextJson, "\"modelSpec\""))
+        return fail ("RobotDesignContext JSON should contain modelSpec key.");
+
+    rws::RobotDesignContext parsedContext;
+    if (!rws::RobotAnalysisJson::fromJson (contextJson, parsedContext))
+        return fail ("RobotDesignContext with full modelSpec should parse successfully.");
+
+    if (parsedContext.modelSpec.transformJoints.size () != 4)
+        return fail ("RobotDesignContext JSON round-trip should preserve transformJoints count.");
+    if (parsedContext.modelSpec.transformJoints[2].name != "Joint1" ||
+        parsedContext.modelSpec.transformJoints[3].name != "Joint2")
+        return fail ("RobotDesignContext JSON round-trip should preserve joint names.");
+    if (!parsedContext.modelSpec.showFrameAxes)
+        return fail ("RobotDesignContext JSON round-trip should preserve showFrameAxes flag.");
+
+    return 0;
+}
+
+int runContextMissingModel ()
+{
+    rws::RobotDesignContext context;
+    context.projectName = "empty-ms-test";
+    context.robotName   = "NoModel";
+    context.baseFrame   = "Base";
+    context.tcpFrame    = "TCP";
+    context.refFrame    = "WORLD";
+    context.payload     = makePayload ();
+    context.taskPoints.push_back (makePoint ());
+
+    const std::vector< rws::AnalysisWarning > warnings =
+        rws::RobotAnalysisValidation::validateRobotDesignContext (context);
+    if (!hasCode (warnings, "RobotDesignContext.ModelSpec.Incomplete"))
+        return fail ("Context with empty modelSpec should report ModelSpec.Incomplete warning.");
+
+    return 0;
+}
+
 int runAll ()
 {
     if (const int rc = runTypes ())
@@ -296,7 +364,11 @@ int runAll ()
         return rc;
     if (const int rc = runJson ())
         return rc;
-    return runCsv ();
+    if (const int rc = runCsv ())
+        return rc;
+    if (const int rc = runContextFullModel ())
+        return rc;
+    return runContextMissingModel ();
 }
 }    // namespace
 
@@ -314,6 +386,10 @@ int main (int argc, char** argv)
         rc = runJson ();
     else if (suite == "csv")
         rc = runCsv ();
+    else if (suite == "contextFullModel")
+        rc = runContextFullModel ();
+    else if (suite == "contextMissingModel")
+        rc = runContextMissingModel ();
     else
         return fail ("Unknown RobotAnalysisCore test suite: " + suite);
 

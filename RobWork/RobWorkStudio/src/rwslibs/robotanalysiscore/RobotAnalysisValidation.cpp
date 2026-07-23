@@ -129,6 +129,12 @@ RobotAnalysisValidation::validateRobotDesignContext (const RobotDesignContext& c
             error ("RobotDesignContext.RefFrame.Empty", "Reference frame must not be empty.",
                    "RobotDesignContext"));
 
+    if (context.modelSpec.robotName.empty () || context.modelSpec.transformJoints.empty ()) {
+        warnings.push_back (error ("RobotDesignContext.ModelSpec.Incomplete",
+                                   "Robot design context must contain a complete RobotModelSpec for optimization.",
+                                   "RobotDesignContext"));
+    }
+
     append (warnings, validatePayload (context.payload));
     for (const TaskPoint& point : context.taskPoints) {
         append (warnings, validateTaskPoint (point));

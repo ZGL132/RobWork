@@ -1,5 +1,7 @@
 #include "RobotAnalysisJson.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -334,6 +336,8 @@ std::string RobotAnalysisJson::toJson (const RobotDesignContext& context)
     data["sourceModelPath"]           = qs (context.sourceModelPath);
     data["sourceScenePath"]           = qs (context.sourceScenePath);
     data["sourceDynamicWorkCellPath"] = qs (context.sourceDynamicWorkCellPath);
+    data["modelSpec"]                 = RobotModelSpecJson::toObject (context.modelSpec);
+    data["modelSpecSchemaVersion"]    = RobotModelSpecJson::SchemaVersion;
     data["modelSpecRobotName"]        = qs (context.modelSpec.robotName);
     data["deviceName"]                = qs (context.deviceName);
     data["baseFrame"]                 = qs (context.baseFrame);
@@ -401,7 +405,19 @@ bool RobotAnalysisJson::fromJson (const std::string& json, RobotDesignContext& c
     context.sourceModelPath           = ss (data.value ("sourceModelPath").toString ());
     context.sourceScenePath           = ss (data.value ("sourceScenePath").toString ());
     context.sourceDynamicWorkCellPath = ss (data.value ("sourceDynamicWorkCellPath").toString ());
-    context.modelSpec.robotName       = ss (data.value ("modelSpecRobotName").toString ());
+
+    if (data.contains ("modelSpec")) {
+        std::string msError;
+        if (!RobotModelSpecJson::fromObject (data.value ("modelSpec").toObject (),
+                                              context.modelSpec, &msError)) {
+            if (error)
+                *error = "RobotDesignContext.modelSpec:" + msError;
+            return false;
+        }
+    } else {
+        context.modelSpec.robotName = ss (data.value ("modelSpecRobotName").toString ());
+    }
+
     context.deviceName                = ss (data.value ("deviceName").toString ());
     context.baseFrame                 = ss (data.value ("baseFrame").toString (qs (context.baseFrame)));
     context.tcpFrame                  = ss (data.value ("tcpFrame").toString (qs (context.tcpFrame)));
