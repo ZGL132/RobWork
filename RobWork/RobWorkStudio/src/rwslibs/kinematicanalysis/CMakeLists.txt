@@ -40,6 +40,7 @@ if(build)
         KinematicAnalysisWorkspace.cpp
         KinematicAnalysisPoseReachability.cpp
         KinematicAnalysisCollision.cpp
+        KinematicAnalysisEnvelope.cpp
         KinematicAnalysisJson.cpp
     )
 
@@ -59,6 +60,7 @@ if(build)
         KinematicAnalysisWorkspace.hpp
         KinematicAnalysisPoseReachability.hpp
         KinematicAnalysisCollision.hpp
+        KinematicAnalysisEnvelope.hpp
         KinematicAnalysisJson.hpp
     )
 
@@ -114,6 +116,7 @@ if(build)
         KinematicAnalysisWorkspace.cpp
         KinematicAnalysisPoseReachability.cpp
         KinematicAnalysisCollision.cpp
+        KinematicAnalysisEnvelope.cpp
         KinematicAnalysisJson.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test

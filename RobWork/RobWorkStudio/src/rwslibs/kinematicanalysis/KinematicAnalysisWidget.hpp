@@ -375,6 +375,8 @@ class KinematicAnalysisWidget : public QWidget
     QComboBox* _visualSourceCombo;                     // 数据源(Task / Workspace / Pose)
     QComboBox* _visualProjectionCombo;                 // 投影平面(XY / XZ / YZ)
     QComboBox* _visualColorModeCombo;                  // 标量模式(由 updateVisualizationControls 动态填充)
+    QComboBox* _visualRenderModeCombo;                 // 渲染模式(Scatter / Envelope)
+    QSpinBox* _visualEnvelopeDirectionsSpin;           // 包络方向数(角度采样密度)
     QCheckBox* _visualShowPassCheck;                   // 显示 Pass 点
     QCheckBox* _visualShowWarningCheck;                // 显示 Warning 点
     QCheckBox* _visualShowFailCheck;                   // 显示 Fail 点

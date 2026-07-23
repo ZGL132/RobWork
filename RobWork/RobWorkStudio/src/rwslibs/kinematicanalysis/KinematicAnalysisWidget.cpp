@@ -12,6 +12,7 @@
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
 #include "KinematicAnalysisJson.hpp"
+#include "KinematicAnalysisEnvelope.hpp"
 #include "KinematicAnalysisUiLogic.hpp"
 
 // 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
@@ -325,6 +326,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _visualSourceCombo(NULL),
     _visualProjectionCombo(NULL),
     _visualColorModeCombo(NULL),
+    _visualRenderModeCombo(NULL),
+    _visualEnvelopeDirectionsSpin(NULL),
     _visualShowPassCheck(NULL),
     _visualShowWarningCheck(NULL),
     _visualShowFailCheck(NULL),
@@ -2102,6 +2105,19 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualColorModeCombo->addItem (tr("Collision"), static_cast<int> (VisualScalarMode::Collision));
     _visualColorModeCombo->addItem (tr("Coverage"), static_cast<int> (VisualScalarMode::Coverage));
 
+    _visualRenderModeCombo = new QComboBox (_visualizationTab);
+    _visualRenderModeCombo->addItem (
+        visualRenderModeText (VisualRenderMode::Scatter),
+        static_cast<int> (VisualRenderMode::Scatter));
+    _visualRenderModeCombo->addItem (
+        visualRenderModeText (VisualRenderMode::Envelope),
+        static_cast<int> (VisualRenderMode::Envelope));
+
+    _visualEnvelopeDirectionsSpin = new QSpinBox (_visualizationTab);
+    _visualEnvelopeDirectionsSpin->setRange (24, 720);
+    _visualEnvelopeDirectionsSpin->setSingleStep (12);
+    _visualEnvelopeDirectionsSpin->setValue (180);
+
     _visualShowPassCheck = new QCheckBox (tr("Pass"), _visualizationTab);
     _visualShowWarningCheck = new QCheckBox (tr("Warning"), _visualizationTab);
     _visualShowFailCheck = new QCheckBox (tr("Fail"), _visualizationTab);
@@ -2141,6 +2157,10 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     controls->addWidget (_visualPointSizeSpin, 2, 4);
     controls->addWidget (_visualResetViewButton, 2, 5);
     controls->addWidget (_visualExportPngButton, 2, 6);
+    controls->addWidget (new QLabel (tr("View:"), _visualizationTab), 3, 0);
+    controls->addWidget (_visualRenderModeCombo, 3, 1);
+    controls->addWidget (new QLabel (tr("Envelope dirs:"), _visualizationTab), 3, 2);
+    controls->addWidget (_visualEnvelopeDirectionsSpin, 3, 3);
     controls->setColumnStretch (1, 1);
     controls->setColumnStretch (3, 1);
     controls->setColumnStretch (5, 1);
@@ -2172,6 +2192,10 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
              this, SLOT (resetVisualizationView ()));
     connect (_visualExportPngButton, SIGNAL (clicked ()),
              this, SLOT (exportVisualizationPng ()));
+    connect (_visualRenderModeCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (refreshVisualization ()));
+    connect (_visualEnvelopeDirectionsSpin, SIGNAL (valueChanged (int)),
+             this, SLOT (refreshVisualization ()));
     updateVisualizationControls ();
 }
 
@@ -2206,6 +2230,21 @@ void KinematicAnalysisWidget::updateVisualizationControls ()
         static_cast< int > (currentMode));
     _visualColorModeCombo->setCurrentIndex (index >= 0 ? index : 0);
     _visualColorModeCombo->blockSignals (blocked);
+
+    const int renderModeValue = _visualRenderModeCombo != NULL ?
+        _visualRenderModeCombo->currentData ().toInt () :
+        static_cast<int> (VisualRenderMode::Scatter);
+    const bool envelopeAvailable =
+        visualEnvelopeModeAvailable (_visualSourceCombo->currentData ().toInt (), renderModeValue);
+    if (_visualEnvelopeDirectionsSpin != NULL)
+        _visualEnvelopeDirectionsSpin->setEnabled (envelopeAvailable);
+    if (!envelopeAvailable && _visualRenderModeCombo != NULL &&
+        renderModeValue == static_cast<int> (VisualRenderMode::Envelope)) {
+        const int scatterIndex = _visualRenderModeCombo->findData (
+            static_cast<int> (VisualRenderMode::Scatter));
+        if (scatterIndex >= 0)
+            _visualRenderModeCombo->setCurrentIndex (scatterIndex);
+    }
 
     refreshVisualization ();
 }
@@ -2299,6 +2338,10 @@ void KinematicAnalysisWidget::refreshVisualization ()
         static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ());
     const VisualScalarMode scalarMode =
         static_cast< VisualScalarMode > (_visualColorModeCombo->currentData ().toInt ());
+    const VisualRenderMode renderMode =
+        _visualRenderModeCombo != NULL ?
+            static_cast< VisualRenderMode > (_visualRenderModeCombo->currentData ().toInt ()) :
+            VisualRenderMode::Scatter;
 
     AnalysisVisualData data;
     if (sourceKind == 0) {
@@ -2318,12 +2361,28 @@ void KinematicAnalysisWidget::refreshVisualization ()
             }
         }
         data = visualDataFromTaskPointResults (rows, scalarMode);
+        data.renderMode = VisualRenderMode::Scatter;
     }
     else if (sourceKind == 1) {
-        data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode);
+        if (renderMode == VisualRenderMode::Envelope) {
+            WorkspaceEnvelopeConfig config;
+            config.projection = projection;
+            config.angularDirections = _visualEnvelopeDirectionsSpin != NULL ?
+                _visualEnvelopeDirectionsSpin->value () : 180;
+            config.coordinateIterations = 6;
+            data.renderMode = VisualRenderMode::Envelope;
+            data.scalarMode = scalarMode;
+            data.envelope = computeWorkspaceEnvelope (
+                selectedDevice ().get (), selectedTcpFrame ().get (), currentState (), config);
+        }
+        else {
+            data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode);
+            data.renderMode = VisualRenderMode::Scatter;
+        }
     }
     else {
         data = visualDataFromPoseReachabilitySamples (_poseReachabilitySamples, scalarMode);
+        data.renderMode = VisualRenderMode::Scatter;
     }
 
     _visualPlot->setProjection (projection);
@@ -2340,37 +2399,55 @@ void KinematicAnalysisWidget::refreshVisualization ()
                                 _visualShowLegendCheck->isChecked ());
     _visualPlot->setPointRadius (_visualPointSizeSpin != NULL ?
         _visualPointSizeSpin->value () : 4.5);
+    _visualPlot->setRenderMode (data.renderMode);
     _visualPlot->setVisualData (data);
 
     if (_visualSummaryLabel != NULL) {
-        AnalysisVisualFilters filters;
-        filters.showPass = _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked ();
-        filters.showWarning = _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked ();
-        filters.showFail = _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked ();
-        filters.showUnknown = _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ();
-        const AnalysisVisualStatusSummary summary = summarizeVisualData (data, filters);
-
-        QString scalarRange = tr("no finite scalar");
-        if (data.hasFiniteScalar) {
-            scalarRange = tr("%1 .. %2")
-                .arg (QString::number (data.scalarMin, 'g', 6))
-                .arg (QString::number (data.scalarMax, 'g', 6));
+        if (data.renderMode == VisualRenderMode::Envelope) {
+            if (data.envelope.valid) {
+                _visualSummaryLabel->setText (
+                    tr("Envelope: %1 boundary points | %2 | width %3 m | height %4 m | Rmax %5 m")
+                        .arg (static_cast<int> (data.envelope.boundary.size ()))
+                        .arg (visualProjectionText (projection))
+                        .arg (QString::number (data.envelope.width, 'f', 3))
+                        .arg (QString::number (data.envelope.height, 'f', 3))
+                        .arg (QString::number (data.envelope.maxRadius, 'f', 3)));
+            }
+            else {
+                _visualSummaryLabel->setText (
+                    tr("Envelope: no valid device or joint limits available."));
+            }
         }
-        _visualSummaryLabel->setText (
-            tr("%1: %2 point(s), %3 visible    Pass: %4    Warning: %5    Fail: %6    "
-               "Unknown: %7    Collision: %8    Projection: %9    Color: %10    "
-               "Scalar range: %11")
-                .arg (visualPointSourceText (source))
-                .arg (static_cast< int > (summary.totalCount))
-                .arg (static_cast< int > (summary.visibleCount))
-                .arg (static_cast< int > (summary.passCount))
-                .arg (static_cast< int > (summary.warningCount))
-                .arg (static_cast< int > (summary.failCount))
-                .arg (static_cast< int > (summary.unknownCount))
-                .arg (static_cast< int > (summary.collisionCount))
-                .arg (visualProjectionText (projection))
-                .arg (visualScalarModeText (scalarMode))
-                .arg (scalarRange));
+        else {
+            AnalysisVisualFilters filters;
+            filters.showPass = _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked ();
+            filters.showWarning = _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked ();
+            filters.showFail = _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked ();
+            filters.showUnknown = _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ();
+            const AnalysisVisualStatusSummary summary = summarizeVisualData (data, filters);
+
+            QString scalarRange = tr("no finite scalar");
+            if (data.hasFiniteScalar) {
+                scalarRange = tr("%1 .. %2")
+                    .arg (QString::number (data.scalarMin, 'g', 6))
+                    .arg (QString::number (data.scalarMax, 'g', 6));
+            }
+            _visualSummaryLabel->setText (
+                tr("%1: %2 point(s), %3 visible    Pass: %4    Warning: %5    Fail: %6    "
+                   "Unknown: %7    Collision: %8    Projection: %9    Color: %10    "
+                   "Scalar range: %11")
+                    .arg (visualPointSourceText (source))
+                    .arg (static_cast< int > (summary.totalCount))
+                    .arg (static_cast< int > (summary.visibleCount))
+                    .arg (static_cast< int > (summary.passCount))
+                    .arg (static_cast< int > (summary.warningCount))
+                    .arg (static_cast< int > (summary.failCount))
+                    .arg (static_cast< int > (summary.unknownCount))
+                    .arg (static_cast< int > (summary.collisionCount))
+                    .arg (visualProjectionText (projection))
+                    .arg (visualScalarModeText (scalarMode))
+                    .arg (scalarRange));
+        }
     }
 }
 

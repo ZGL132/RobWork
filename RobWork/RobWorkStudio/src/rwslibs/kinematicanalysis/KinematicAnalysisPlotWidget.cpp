@@ -91,6 +91,12 @@ void KinematicAnalysisPlotWidget::setPointRadius (double radius)
     update ();
 }
 
+void KinematicAnalysisPlotWidget::setRenderMode (VisualRenderMode mode)
+{
+    _renderMode = mode;
+    update ();
+}
+
 QImage KinematicAnalysisPlotWidget::renderToImage (const QSize& size) const
 {
     const QSize targetSize = size.isValid () ? size : QSize (1200, 800);
@@ -258,6 +264,12 @@ void KinematicAnalysisPlotWidget::paintEvent (QPaintEvent*)
 //   7) 可见点为 0 时画 "No visual data" 提示。
 void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& area) const
 {
+    // 0. 包络(Envelope)模式 — 直接绘制技术图纸,跳过散点渲染
+    if (_renderMode == VisualRenderMode::Envelope) {
+        paintEnvelope (painter, area);
+        return;
+    }
+
     // 1. plotArea:从 area 扣除边距 + 右侧图例空间
     const int reservedLegendWidth = visualLegendWidth (_showLegend, area);
     const QRectF pr = visualPlotArea (area, _showLegend);
@@ -491,4 +503,111 @@ void KinematicAnalysisPlotWidget::paintLegend (
     }
 
     painter.restore ();
+}
+#include "KinematicAnalysisEnvelope.hpp"
+
+// =============================================================================
+//  包络(Envelope)渲染
+// =============================================================================
+
+QRectF KinematicAnalysisPlotWidget::envelopeBounds () const
+{
+    const AnalysisEnvelopeData& envelope = _data.envelope;
+    if (!envelope.valid)
+        return QRectF (-1.0, -1.0, 2.0, 2.0);
+    const double padX = std::max (0.05, envelope.width * 0.12);
+    const double padY = std::max (0.05, envelope.height * 0.12);
+    return QRectF (envelope.minX - padX,
+                   envelope.minY - padY,
+                   envelope.width + 2.0 * padX,
+                   envelope.height + 2.0 * padY);
+}
+
+QPointF KinematicAnalysisPlotWidget::mapEnvelopePoint (
+    const QPointF& point, const QRectF& rect, const QRectF& bounds) const
+{
+    const double x = rect.left () +
+        (point.x () - bounds.left ()) / bounds.width () * rect.width ();
+    const double y = rect.bottom () -
+        (point.y () - bounds.top ()) / bounds.height () * rect.height ();
+    return QPointF (x, y);
+}
+
+void KinematicAnalysisPlotWidget::paintDimensionLine (
+    QPainter& painter,
+    const QPointF& a,
+    const QPointF& b,
+    const QString& text) const
+{
+    painter.drawLine (a, b);
+    const QPointF mid ((a.x () + b.x ()) * 0.5, (a.y () + b.y ()) * 0.5);
+    painter.drawText (QRectF (mid.x () - 45, mid.y () - 18, 90, 18),
+                      Qt::AlignCenter,
+                      text);
+}
+
+void KinematicAnalysisPlotWidget::paintEnvelope (
+    QPainter& painter, const QRect& area) const
+{
+    painter.setRenderHint (QPainter::Antialiasing, true);
+    const QRectF pr = visualPlotArea (area, false);
+    painter.setPen (QPen (palette ().mid ().color (), 1));
+    painter.drawRect (pr);
+
+    const AnalysisEnvelopeData& envelope = _data.envelope;
+    if (!envelope.valid) {
+        painter.setPen (palette ().mid ().color ());
+        painter.drawText (pr, Qt::AlignCenter,
+                          QStringLiteral ("No workspace envelope"));
+        return;
+    }
+
+    const QRectF bounds = envelopeBounds ();
+    QPolygonF polygon;
+    for (const QPointF& point : envelope.boundary)
+        polygon << mapEnvelopePoint (point, pr, bounds);
+
+    painter.setPen (QPen (QColor (30, 30, 30), 1.2));
+    painter.setBrush (QColor (230, 231, 233));
+    painter.drawPolygon (polygon);
+
+    const QPointF origin = mapEnvelopePoint (envelope.origin, pr, bounds);
+    painter.setPen (QPen (QColor (70, 70, 70), 1, Qt::DashLine));
+    painter.drawLine (QPointF (pr.left (), origin.y ()), QPointF (pr.right (), origin.y ()));
+    painter.drawLine (QPointF (origin.x (), pr.top ()), QPointF (origin.x (), pr.bottom ()));
+
+    painter.setPen (QPen (QColor (180, 180, 180), 1, Qt::DashLine));
+    painter.setBrush (Qt::NoBrush);
+    painter.drawEllipse (origin, pr.width () * 0.18, pr.height () * 0.18);
+
+    painter.setPen (QPen (QColor (20, 20, 20), 1));
+    painter.setBrush (QColor (20, 20, 20));
+    painter.drawEllipse (origin, 3.0, 3.0);
+
+    const double scale = 1000.0;
+    const QString unit = QStringLiteral ("mm");
+    paintDimensionLine (
+        painter,
+        QPointF (pr.left (), pr.bottom () + 24),
+        QPointF (pr.right (), pr.bottom () + 24),
+        QStringLiteral ("%1 %2").arg (envelope.width * scale, 0, 'f', 0).arg (unit));
+    paintDimensionLine (
+        painter,
+        QPointF (pr.right () + 18, pr.top ()),
+        QPointF (pr.right () + 18, pr.bottom ()),
+        QStringLiteral ("%1 %2").arg (envelope.height * scale, 0, 'f', 0).arg (unit));
+
+    painter.drawText (QRectF (pr.left (), 2, pr.width (), 18),
+                      Qt::AlignRight | Qt::AlignVCenter,
+                      QStringLiteral ("Working envelope, %1, Rmax %2 %3")
+                          .arg (visualProjectionText (envelope.projection))
+                          .arg (envelope.maxRadius * scale, 0, 'f', 0)
+                          .arg (unit));
+
+    painter.setPen (palette ().text ().color ());
+    painter.drawText (QRectF (pr.left (), pr.bottom () + 46, pr.width (), 20),
+                      Qt::AlignCenter,
+                      envelope.projection == VisualProjection::XY ?
+                          QStringLiteral ("Working envelope, top view") :
+                          QStringLiteral ("Working envelope, side view"));
 }

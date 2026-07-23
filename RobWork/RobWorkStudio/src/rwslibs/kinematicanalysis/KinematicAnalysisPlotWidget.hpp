@@ -65,6 +65,9 @@ class KinematicAnalysisPlotWidget : public QWidget
     // 散点半径(像素)。当前实现还会按数据规模自动缩放(> 1000 → ≤ 3.5;> 5000 → ≤ 2.5)。
     void setPointRadius (double radius);
 
+    // 设置渲染模式:Scatter(默认)或 Envelope(技术图纸风格包络图)。
+    void setRenderMode (VisualRenderMode mode);
+
     // ===================================================================
     //  渲染到 QImage(用于 Export PNG)
     // ===================================================================
@@ -135,6 +138,25 @@ class KinematicAnalysisPlotWidget : public QWidget
     // 绘制图例:状态色块 / Collision 图例 / 标量色带,根据 scalarMode 切换。
     void paintLegend (QPainter& painter, const QRectF& legendArea) const;
 
+    // ---- 包络(Envelope)渲染辅助 ----
+
+    // 计算包络的可见边界(含 padding),供 mapEnvelopePoint 投影。
+    QRectF envelopeBounds () const;
+
+    // 将包络坐标点从数据空间映射到绘图区屏幕坐标。
+    QPointF mapEnvelopePoint (const QPointF& point,
+                              const QRectF& rect,
+                              const QRectF& bounds) const;
+
+    // 绘制包络多边形(灰色填充 + 黑色描边 + 中心轴 + 尺寸标注 + 标题)。
+    void paintEnvelope (QPainter& painter, const QRect& area) const;
+
+    // 绘制一条尺寸标注线(带中间文本)。
+    void paintDimensionLine (QPainter& painter,
+                             const QPointF& a,
+                             const QPointF& b,
+                             const QString& text) const;
+
     // ===================================================================
     //  私有状态
     // ===================================================================
@@ -149,6 +171,7 @@ class KinematicAnalysisPlotWidget : public QWidget
     bool _showGrid    = true;                       // 显示网格 + 刻度
     bool _showLegend  = true;                       // 显示图例/标量色带
     double _pointRadius = 4.5;                      // 散点半径(像素)
+    VisualRenderMode _renderMode = VisualRenderMode::Scatter;  // 渲染模式
 };
 
 }    // namespace rws

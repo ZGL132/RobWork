@@ -109,6 +109,11 @@ Supported color modes:
 - Workspace: Status, Manipulability, Condition, Min joint margin, Collision.
 - Pose reachability: Status, Coverage.
 
+Workspace visualization supports two view modes:
+
+- Scatter (default): draws the analyzed workspace samples and supports color modes such as status, manipulability, condition, joint margin, and collision.
+- Envelope: computes a deterministic working envelope directly from the selected device joint limits and TCP frame. It does not require Workspace samples. XY is shown as a top view; XZ/YZ are side views. The drawing reports width, height, and maximum radius in meters/mm-style technical annotations.
+
 The summary line reports total and visible point counts, status distribution, collision count, projection, color mode, and finite scalar range. Tooltips show source-specific diagnostics without including long joint vectors.
 
 Clicking a visible point applies its saved representative joint configuration to the RobWorkStudio state when one is available. Task points use their best usable IK solution, workspace samples use the sampled joint configuration, and pose reachability points use the first reachable representative solution saved during analysis. Points without a saved Q leave the 3D view unchanged.

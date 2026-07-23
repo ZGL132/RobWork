@@ -40,6 +40,27 @@ enum class VisualProjection
     YZ
 };
 
+enum class VisualRenderMode
+{
+    Scatter,
+    Envelope
+};
+
+struct AnalysisEnvelopeData
+{
+    bool valid = false;
+    VisualProjection projection = VisualProjection::XY;
+    std::vector< QPointF > boundary;
+    QPointF origin = QPointF (0.0, 0.0);
+    double minX = 0.0;
+    double maxX = 0.0;
+    double minY = 0.0;
+    double maxY = 0.0;
+    double width = 0.0;
+    double height = 0.0;
+    double maxRadius = 0.0;
+};
+
 struct AnalysisVisualPoint
 {
     std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
@@ -59,6 +80,8 @@ struct AnalysisVisualData
 {
     std::vector< AnalysisVisualPoint > points;
     VisualScalarMode scalarMode = VisualScalarMode::Status;
+    VisualRenderMode renderMode = VisualRenderMode::Scatter;
+    AnalysisEnvelopeData envelope;
     bool hasFiniteScalar = false;
     double scalarMin = 0.0;
     double scalarMax = 0.0;
@@ -102,6 +125,8 @@ QRectF visualPlotArea (const QRect& area, bool showLegend);
 // 枚举 → 可读字符串(用于轴标签、图例标题、tooltip 等)。
 QString visualScalarModeText (VisualScalarMode mode);
 QString visualProjectionText (VisualProjection projection);
+QString visualRenderModeText (VisualRenderMode mode);
+void updateEnvelopeDimensions (AnalysisEnvelopeData& envelope);
 
 // 根据 scalarMode 和 data 范围返回该点的颜色(Status/Collision 离散,其它连续)。
 //   Status/Coverage :按 status/collision 直接取固定调色板;

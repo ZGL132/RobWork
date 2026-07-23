@@ -2,6 +2,7 @@
 #include "KinematicMetrics.hpp"
 #include "KinematicAnalyzer.hpp"
 #include "KinematicAnalysisUiLogic.hpp"
+#include "KinematicAnalysisEnvelope.hpp"
 #include "TaskPointResolver.hpp"
 #include "TaskPointUiLogic.hpp"
 #include "TaskPointTableModel.hpp"
@@ -1715,6 +1716,14 @@ static int testTaskPointUiLogic ()
     if (const int rc = require (rws::ikCollisionCheckRequested (false, false),
                                 "missing IK collision checkbox preserves legacy collision analysis"))
         return rc;
+    if (const int rc = require (
+            rws::visualEnvelopeModeAvailable (1, static_cast<int> (rws::VisualRenderMode::Envelope)),
+            "envelope mode is available for workspace source"))
+        return rc;
+    if (const int rc = require (
+            !rws::visualEnvelopeModeAvailable (0, static_cast<int> (rws::VisualRenderMode::Envelope)),
+            "envelope mode is not available for task point source"))
+        return rc;
 
     const std::vector< int > compactColumns = rws::taskPointCompactTableColumns ();
     const std::vector< int > detailColumns  = rws::taskPointDetailColumns ();
@@ -1968,6 +1977,48 @@ static int testTaskPointModel ()
                                 "summary points to row 2"))
         return rc;
 
+    return 0;
+}
+
+static int testWorkspaceEnvelopeHelpers ()
+{
+    using namespace rws;
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+
+    AnalysisEnvelopeData direct;
+    direct.projection = VisualProjection::XY;
+    direct.boundary = {
+        QPointF (1.0, 0.0),
+        QPointF (0.0, 1.0),
+        QPointF (-1.0, 0.0),
+        QPointF (0.0, -1.0)
+    };
+    updateEnvelopeDimensions (direct);
+    if (const int rc = require (direct.valid, "manual envelope is valid"))
+        return rc;
+    if (const int rc = assertNear (direct.maxRadius, 1.0, 1e-12, "manual max radius"))
+        return rc;
+
+    StateStructure::Ptr stateStructure = rw::core::ownedPtr (new StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    const rw::kinematics::State state = stateStructure->getDefaultState ();
+    WorkspaceEnvelopeConfig config;
+    config.projection = VisualProjection::XY;
+    config.angularDirections = 24;
+    config.coordinateIterations = 4;
+    const AnalysisEnvelopeData envelope =
+        computeWorkspaceEnvelope (device.get (), device->getEnd (), state, config);
+
+    if (const int rc = require (envelope.valid, "computed generic six axis envelope is valid"))
+        return rc;
+    if (const int rc = require (envelope.boundary.size () >= 12,
+                                "computed envelope has multiple boundary points"))
+        return rc;
+    if (const int rc = require (envelope.width > 0.1 && envelope.height > 0.1,
+                                "computed envelope has nonzero dimensions"))
+        return rc;
     return 0;
 }
 
@@ -2236,6 +2287,51 @@ static int testJsonAndCollisionHelpers ()
         if (detector != NULL)
             return fail ("null workcell should not create a collision detector");
     }
+
+    // ---- envelope data types (Task 1) ----
+    {
+        rws::AnalysisEnvelopeData envelope;
+        envelope.projection = rws::VisualProjection::XY;
+        envelope.boundary.push_back (QPointF (-1.0, -2.0));
+        envelope.boundary.push_back (QPointF (3.0, -2.0));
+        envelope.boundary.push_back (QPointF (3.0, 4.0));
+        envelope.boundary.push_back (QPointF (-1.0, 4.0));
+        rws::updateEnvelopeDimensions (envelope);
+
+        if (const int rc = require (envelope.valid, "envelope dimensions mark polygon valid"))
+            return rc;
+        if (const int rc = assertNear (envelope.width, 4.0, 1e-12, "envelope width"))
+            return rc;
+        if (const int rc = assertNear (envelope.height, 6.0, 1e-12, "envelope height"))
+            return rc;
+        if (const int rc = require (
+                rws::visualRenderModeText (rws::VisualRenderMode::Envelope) ==
+                    QStringLiteral ("Envelope"),
+                "visual render mode text"))
+            return rc;
+    }
+
+    // ---- envelope render data (Task 3) ----
+    {
+        rws::AnalysisVisualData envelopeVisual;
+        envelopeVisual.renderMode = rws::VisualRenderMode::Envelope;
+        envelopeVisual.envelope.projection = rws::VisualProjection::XZ;
+        envelopeVisual.envelope.boundary = {
+            QPointF (-2.0, 0.0),
+            QPointF (0.0, 2.0),
+            QPointF (2.0, 0.0),
+            QPointF (0.0, -1.0)
+        };
+        rws::updateEnvelopeDimensions (envelopeVisual.envelope);
+        if (const int rc = require (
+                rws::visualRenderModeText (envelopeVisual.renderMode) == QStringLiteral ("Envelope"),
+                "envelope render mode is selected"))
+            return rc;
+        if (const int rc = assertNear (
+                envelopeVisual.envelope.width, 4.0, 1e-12,
+                "envelope render width"))
+            return rc;
+    }
     return 0;
 }
 
@@ -2268,6 +2364,8 @@ static int runAll ()
     if (const int rc = testTaskPointModel ())
         return rc;
     if (const int rc = testVisualizationData ())
+        return rc;
+    if (const int rc = testWorkspaceEnvelopeHelpers ())
         return rc;
     if (const int rc = testWorkspaceHelpers ())
         return rc;
@@ -2319,6 +2417,8 @@ int main (int argc, char** argv)
         rc = testTaskPointModel ();
     else if (suite == "visualization_data")
         rc = testVisualizationData ();
+    else if (suite == "workspace_envelope")
+        rc = testWorkspaceEnvelopeHelpers ();
     else if (suite == "workspace_helpers")
         rc = testWorkspaceHelpers ();
     else if (suite == "workspace")

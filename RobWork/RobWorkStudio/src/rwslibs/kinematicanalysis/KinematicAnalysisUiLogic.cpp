@@ -55,3 +55,9 @@ std::string rws::defaultTcpFrameName (const rw::models::Device* device)
         return std::string ();
     return device->getEnd ()->getName ();
 }
+
+bool rws::visualEnvelopeModeAvailable (int sourceKind, int renderMode)
+{
+    return sourceKind == 1 &&
+        renderMode == static_cast< int > (VisualRenderMode::Envelope);
+}

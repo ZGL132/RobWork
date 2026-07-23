@@ -382,6 +382,46 @@ QString rws::visualProjectionText (VisualProjection projection)
     return QStringLiteral ("XY");
 }
 
+QString rws::visualRenderModeText (VisualRenderMode mode)
+{
+    switch (mode) {
+        case VisualRenderMode::Scatter:  return QStringLiteral ("Scatter");
+        case VisualRenderMode::Envelope: return QStringLiteral ("Envelope");
+    }
+    return QStringLiteral ("Scatter");
+}
+
+void rws::updateEnvelopeDimensions (AnalysisEnvelopeData& envelope)
+{
+    envelope.valid = false;
+    envelope.minX = envelope.maxX = envelope.minY = envelope.maxY = 0.0;
+    envelope.width = envelope.height = envelope.maxRadius = 0.0;
+    bool first = true;
+    for (const QPointF& point : envelope.boundary) {
+        if (!std::isfinite (point.x ()) || !std::isfinite (point.y ()))
+            continue;
+        if (first) {
+            envelope.minX = envelope.maxX = point.x ();
+            envelope.minY = envelope.maxY = point.y ();
+            first = false;
+        }
+        else {
+            envelope.minX = std::min (envelope.minX, point.x ());
+            envelope.maxX = std::max (envelope.maxX, point.x ());
+            envelope.minY = std::min (envelope.minY, point.y ());
+            envelope.maxY = std::max (envelope.maxY, point.y ());
+        }
+        const double dx = point.x () - envelope.origin.x ();
+        const double dy = point.y () - envelope.origin.y ();
+        envelope.maxRadius = std::max (envelope.maxRadius, std::sqrt (dx * dx + dy * dy));
+    }
+    envelope.valid = !first && envelope.boundary.size () >= 3;
+    if (envelope.valid) {
+        envelope.width = envelope.maxX - envelope.minX;
+        envelope.height = envelope.maxY - envelope.minY;
+    }
+}
+
 QColor rws::visualColorForPoint (const AnalysisVisualPoint& point,
                                  const AnalysisVisualData& data)
 {
