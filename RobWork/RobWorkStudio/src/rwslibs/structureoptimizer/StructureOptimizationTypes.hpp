@@ -6,6 +6,7 @@
 #include <rwslibs/kinematicanalysis/KinematicAnalysisTypes.hpp>
 
 #include <array>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -320,6 +321,30 @@ struct StructureOptimizationProblem
 };
 
 // =============================================================================
+//  灵敏度分析
+// =============================================================================
+//! @brief 单个设计变量的灵敏度分析入口。
+struct StructureSensitivityEntry
+{
+    std::string variableId;                              //!< 变量 ID
+    double delta = 0.0;                                   //!< 扰动步长绝对值
+    double perturbedValue = 0.0;                          //!< 扰动后的变量值
+    double scoreDrop = 0.0;                               //!< 综合得分下降量
+    bool feasible = false;                                //!< 扰动后是否仍可行
+    std::vector<std::string> violatedConstraints;          //!< 扰动后违反的约束
+};
+
+//! @brief 灵敏度分析结果。
+struct StructureSensitivityResult
+{
+    std::vector<StructureSensitivityEntry> entries;       //!< 各变量灵敏度入口
+    double maximumScoreDrop = 0.0;                        //!< 最大得分下降
+    double meanScoreDrop = 0.0;                           //!< 平均得分下降
+    std::vector<std::string> criticalVariableIds;          //!< 关键变量 ID
+    std::string robustnessGrade = "Unknown";              //!< 鲁棒性等级 A/B/C/D
+};
+
+// =============================================================================
 //  优化结果
 // =============================================================================
 //! @brief 结构优化运行结果。
@@ -335,6 +360,7 @@ struct StructureOptimizationResult
 
     std::vector< StructureCandidateResult > candidates;   //!< 所有候选解
     StructureRunDiagnostics                 diagnostics;   //!< 运行诊断
+    StructureSensitivityResult              sensitivity;   //!< 灵敏度分析结果
     std::vector< AnalysisWarning >          warnings;      //!< 全局警告
 };
 

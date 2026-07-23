@@ -23,6 +23,12 @@ if(build)
         StructureCandidateGenerator.cpp
         StructureCandidateCache.cpp
         CandidateModelFactory.cpp
+        StructureCandidateEvaluator.cpp
+        HybridStructureOptimizer.cpp
+        StructureSensitivityAnalyzer.cpp
+        StructureOptimizationJson.cpp
+        StructureOptimizationCsv.cpp
+        StructureCandidateExporter.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -32,6 +38,13 @@ if(build)
         StructureCandidateGenerator.hpp
         StructureCandidateCache.hpp
         CandidateModelFactory.hpp
+        StructureCandidateEvaluator.hpp
+        StructureOptimizationStrategy.hpp
+        HybridStructureOptimizer.hpp
+        StructureSensitivityAnalyzer.hpp
+        StructureOptimizationJson.hpp
+        StructureOptimizationCsv.hpp
+        StructureCandidateExporter.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})

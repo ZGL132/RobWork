@@ -5,6 +5,12 @@
 #include "StructureCandidateGenerator.hpp"
 #include "StructureCandidateCache.hpp"
 #include "CandidateModelFactory.hpp"
+#include "StructureCandidateEvaluator.hpp"
+#include "HybridStructureOptimizer.hpp"
+#include "StructureOptimizationStrategy.hpp"
+#include "StructureSensitivityAnalyzer.hpp"
+#include "StructureOptimizationJson.hpp"
+#include "StructureOptimizationCsv.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 
@@ -539,6 +545,352 @@ static void testModelFactory()
 }
 
 // =============================================================================
+//  Fake evaluator for optimizer testing
+// =============================================================================
+
+class QuadraticFakeEvaluator : public rws::IStructureCandidateEvaluator {
+  public:
+    void evaluate(
+        const rws::StructureOptimizationProblem& problem,
+        rws::StructureCandidateResult& candidate,
+        rws::StructureEvaluationStage stage,
+        const rws::StructureOptimizationCallbacks& callbacks,
+        rws::StructureCandidateCache* cache) override
+    {
+        candidate.stage = stage;
+
+        // Quadratic penalty: closer to preferred values is better
+        double error = 0.0;
+        for (std::size_t i = 0; i < candidate.values.size() && i < problem.variables.size(); ++i)
+        {
+            double diff = candidate.values[i] - problem.variables[i].preferredValue;
+            error += diff * diff;
+        }
+
+        candidate.totalScore = std::max(0.0, 100.0 - error * 10.0);
+        candidate.feasible   = true;
+        candidate.status     = rws::StructureCandidateStatus::Feasible;
+
+        // Populate minimal raw metrics
+        candidate.raw.modelValid             = true;
+        candidate.raw.requiredReachableCount = 5;
+        candidate.raw.requiredTaskCount      = 5;
+        candidate.raw.weightedReachability   = 1.0;
+        candidate.raw.manipulabilityP10      = 0.01;
+        candidate.raw.jointMarginP10         = 0.1;
+        candidate.raw.collisionFreeRate      = 1.0;
+        candidate.raw.totalKinematicLength   = 1.0;
+
+        rws::StructureObjectiveScorer scorer;
+        scorer.score(problem, candidate);
+    }
+};
+
+// =============================================================================
+//  测试用例: 候选解评估器 (接口验证)
+// =============================================================================
+
+static void testEvaluator()
+{
+    std::printf("testEvaluator ... ");
+
+    // Minimal problem — no valid context, so the real evaluator's mutator
+    // should fail quickly and return a Failed candidate.
+    rws::StructureOptimizationProblem problem;
+    rws::StructureCandidateEvaluator  evaluator;
+    rws::StructureCandidateResult     candidate;
+
+    candidate.index  = 0;
+    candidate.values = {};
+
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+
+    evaluator.evaluate(problem, candidate, rws::StructureEvaluationStage::Quick,
+                       callbacks, nullptr);
+
+    // Without a valid model spec, the mutator returns ok=false → Failed
+    REQUIRE(candidate.status == rws::StructureCandidateStatus::Failed);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
+//  测试用例: 混合优化器 (使用 Fake 评估器)
+// =============================================================================
+
+static void testOptimizer()
+{
+    std::printf("testOptimizer ... ");
+
+    // ── Problem: 2 design variables, Hybrid strategy ───────────────────
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"x", "X", "joint1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.1,
+         0.3, 0.5},   // preferred = 0.3, weight = 0.5
+        {"y", "Y", "joint2", "mm",
+         rws::StructureVariableKind::JointPositionY,
+         0.0, -1.0, 1.0, 0.1,
+         -0.2, 0.5}   // preferred = -0.2, weight = 0.5
+    };
+
+    problem.run.strategy         = rws::StructureStrategyKind::Hybrid;
+    problem.run.candidateCount   = 30;
+    problem.run.eliteCount       = 5;
+    problem.run.localEliteCount  = 3;
+    problem.run.maxLocalSweeps   = 6;
+    problem.run.randomSeed       = 42;
+
+    // Add a RequiredTaskReachable constraint for feasibility testing
+    rws::StructureConstraint reachCon;
+    reachCon.id      = "Reachable";
+    reachCon.kind    = rws::StructureConstraintKind::RequiredTaskReachable;
+    reachCon.hard    = true;
+    reachCon.enabled = true;
+    problem.constraints.push_back(reachCon);
+
+    // ── Run optimization ──────────────────────────────────────────────
+    QuadraticFakeEvaluator                    fakeEval;
+    rws::HybridStructureOptimizer             optimizer;
+    rws::StructureOptimizationCallbacks  callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+
+    rws::StructureOptimizationResult result = optimizer.optimize(
+        problem, fakeEval, callbacks);
+
+    // ── Assertions ────────────────────────────────────────────────────
+    REQUIRE(!result.canceled);
+    REQUIRE(result.baselineCandidateIndex == 0);
+    REQUIRE(!result.candidates.empty());
+    REQUIRE(result.diagnostics.generatedCandidates > 0);
+    REQUIRE(result.diagnostics.evaluatedCandidates > 0);
+    REQUIRE(result.diagnostics.totalSeconds >= 0.0);
+
+    // At least one feasible candidate should exist
+    bool foundFeasible = false;
+    for (const auto& c : result.candidates)
+        if (c.feasible) { foundFeasible = true; break; }
+    REQUIRE(foundFeasible);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
+//  测试用例: 灵敏度分析器
+// =============================================================================
+
+//! 简化的模拟评估器: 越偏离 0 则得分越低, >0.8 则不可行。
+struct SensitivityMockEvaluator : public rws::IStructureCandidateEvaluator {
+    void evaluate(
+        const rws::StructureOptimizationProblem& problem,
+        rws::StructureCandidateResult& candidate,
+        rws::StructureEvaluationStage stage,
+        const rws::StructureOptimizationCallbacks& callbacks,
+        rws::StructureCandidateCache* cache) override
+    {
+        (void)problem; (void)callbacks; (void)cache;
+        candidate.stage   = stage;
+        candidate.feasible = true;
+        candidate.totalScore = 100.0;
+        for (double v : candidate.values) {
+            if (v > 0.8 || v < -0.8) {
+                candidate.feasible = false;
+                candidate.violatedConstraints.push_back("OutOfRange");
+                candidate.totalScore = 0.0;
+                candidate.status = rws::StructureCandidateStatus::Infeasible;
+                return;
+            }
+            candidate.totalScore -= std::abs(v) * 10.0;
+        }
+        candidate.status = rws::StructureCandidateStatus::Feasible;
+    }
+};
+
+static void testSensitivity()
+{
+    std::printf("testSensitivity ... ");
+
+    // 问题: 两个设计变量
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"x", "X", "j1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.2, 0.0, 0.0, true, false},
+        {"y", "Y", "j2", "mm",
+         rws::StructureVariableKind::JointPositionY,
+         0.0, -1.0, 1.0, 0.2, 0.0, 0.0, true, false}
+    };
+
+    // 最佳候选: x=0.0, y=0.0 (全零, score=100)
+    rws::StructureCandidateResult best;
+    best.index  = 0;
+    best.values = {0.0, 0.0};
+    best.feasible  = true;
+    best.totalScore = 100.0;
+
+    // 执行分析
+    SensitivityMockEvaluator mockEval;
+    rws::StructureSensitivityAnalyzer analyzer;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+
+    rws::StructureSensitivityResult result =
+        analyzer.analyze(problem, best, mockEval, callbacks, nullptr);
+
+    // 断言:
+    // 每个变量有 2 个扰动方向, 共 4 个 entry
+    REQUIRE(result.entries.size() == 4);
+
+    // x = 0, perturb +0.2 -> score = 100 - 0.2*10 = 98, drop = 2
+    // y = 0, perturb +0.2 -> score = 100 - 0.2*10 = 98, drop = 2
+    // 所以 maxDrop = 2, grade = "A"
+    REQUIRE(result.maximumScoreDrop > 0.0);
+    REQUIRE(result.maximumScoreDrop <= 2.0 + 1e-12);
+    REQUIRE(result.robustnessGrade == "A");
+
+    // 无关键变量 (所有 drop <= 2)
+    REQUIRE(result.criticalVariableIds.empty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
+//  测试用例: JSON 序列化往返
+// =============================================================================
+
+static void testJsonRoundTrip()
+{
+    std::printf("testJsonRoundTrip ... ");
+
+    // 创建填充的问题
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "TestProj";
+    problem.context.robotName   = "TestRobot";
+
+    problem.variables = {
+        {"a", "Var A", "j1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         0.5, -1.0, 1.0, 0.1, 0.3, 0.5, true, false}
+    };
+
+    problem.constraints = {
+        {"c1", "Constraint 1", "", rws::StructureConstraintKind::ModelValid,
+         0.0, 0.0, true, true}
+    };
+
+    problem.run.candidateCount = 100;
+    problem.run.randomSeed     = 42;
+
+    // 序列化
+    const std::string json = rws::StructureOptimizationJson::problemToJson(problem);
+    REQUIRE(!json.empty());
+
+    // 反序列化
+    rws::StructureOptimizationProblem parsed;
+    std::string error;
+    bool ok = rws::StructureOptimizationJson::problemFromJson(json, parsed, &error);
+    if (!ok)
+        std::printf("\n  fromJson error: %s\n", error.c_str());
+    REQUIRE(ok);
+
+    // 验证字段
+    REQUIRE(parsed.context.projectName == "TestProj");
+    REQUIRE(parsed.context.robotName   == "TestRobot");
+    REQUIRE(parsed.variables.size() == 1);
+    REQUIRE(parsed.variables[0].id == "a");
+    REQUIRE(std::abs(parsed.variables[0].currentValue - 0.5) < 1e-12);
+    REQUIRE(parsed.constraints.size() == 1);
+    REQUIRE(parsed.constraints[0].id == "c1");
+    REQUIRE(parsed.run.candidateCount == 100);
+    REQUIRE(parsed.run.randomSeed == 42u);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
+//  测试用例: CSV 导出
+// =============================================================================
+
+static void testCsvExport()
+{
+    std::printf("testCsvExport ... ");
+
+    // 准备结果
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"v1", "Var 1", "j1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.1, 0.0, 0.0, true, false}
+    };
+
+    rws::StructureOptimizationResult result;
+
+    rws::StructureCandidateResult c0;
+    c0.index      = 0;
+    c0.feasible   = true;
+    c0.totalScore = 85.5;
+    c0.status     = rws::StructureCandidateStatus::Feasible;
+    c0.values     = {0.1};
+    c0.raw.requiredReachableCount = 5;
+    c0.raw.requiredTaskCount      = 5;
+    c0.raw.manipulabilityP10      = 0.05;
+    c0.raw.jointMarginP10         = 0.12;
+    c0.raw.collisionFreeRate      = 1.0;
+    c0.raw.totalKinematicLength   = 0.8;
+
+    rws::StructureTaskMetric tm;
+    tm.taskId = "t1";
+    tm.taskName = "Task 1";
+    tm.required   = true;
+    tm.reachable  = true;
+    tm.inCollision = false;
+    tm.manipulability = 0.3;
+    tm.jointMargin    = 0.15;
+    tm.usableSolutionCount = 5;
+    c0.raw.taskMetrics.push_back(tm);
+
+    result.candidates.push_back(c0);
+
+    // candidatesCsv
+    const std::string csv = rws::StructureOptimizationCsv::candidatesCsv(problem, result);
+    REQUIRE(!csv.empty());
+
+    // 检查表头包含关键列
+    REQUIRE(csv.find("Index,Status,Feasible,TotalScore") != std::string::npos);
+    REQUIRE(csv.find("v1") != std::string::npos);
+    // 检查数据行
+    REQUIRE(csv.find("\n0,Feasible,") != std::string::npos);
+    REQUIRE(csv.find(",true,") != std::string::npos);
+
+    // taskDetailCsv
+    const std::string detail = rws::StructureOptimizationCsv::taskDetailCsv(problem, result);
+    REQUIRE(!detail.empty());
+
+    REQUIRE(detail.find("CandidateIndex,TaskId,TaskName") != std::string::npos);
+    REQUIRE(detail.find("t1") != std::string::npos);
+    REQUIRE(detail.find("Task 1") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
 //  main
 // =============================================================================
 
@@ -563,6 +915,17 @@ int main()
     printf("\n");
 
     testModelFactory();
+
+    printf("\n");
+
+    testEvaluator();
+    testOptimizer();
+
+    printf("\n");
+
+    testSensitivity();
+    testJsonRoundTrip();
+    testCsvExport();
 
     std::printf("\n");
 
