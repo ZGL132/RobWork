@@ -63,7 +63,8 @@ rw::math::Q optimizeDirection (
     const rw::math::Q& seed,
     double angle,
     int coordinateIterations,
-    VisualProjection projection)
+    VisualProjection projection,
+    const std::shared_ptr< std::atomic< bool > >& cancel)
 {
     rw::math::Q best = clampQ (seed, bounds);
     double bestValue = supportValue (
@@ -73,7 +74,11 @@ rw::math::Q optimizeDirection (
         step[i] = std::max (1e-6, (bounds.second[i] - bounds.first[i]) * 0.25);
 
     for (int iter = 0; iter < coordinateIterations; ++iter) {
+        if (cancel != nullptr && cancel->load ())
+            return best;
         for (std::size_t joint = 0; joint < best.size (); ++joint) {
+            if (cancel != nullptr && cancel->load ())
+                return best;
             for (double sign : {-1.0, 1.0}) {
                 rw::math::Q candidate = best;
                 candidate[joint] += sign * step[joint];
@@ -144,6 +149,10 @@ AnalysisEnvelopeData rws::computeWorkspaceEnvelope (
 
     envelope.boundary.reserve (static_cast< std::size_t > (directions));
     for (int i = 0; i < directions; ++i) {
+        // 检查取消请求
+        if (config.cancel != nullptr && config.cancel->load ())
+            return envelope;
+
         const double angle = 2.0 * rw::math::Pi * static_cast< double > (i) /
             static_cast< double > (directions);
         bool haveBest = false;
@@ -151,7 +160,8 @@ AnalysisEnvelopeData rws::computeWorkspaceEnvelope (
         double bestValue = -std::numeric_limits< double >::infinity ();
         for (const rw::math::Q& seed : seeds) {
             const rw::math::Q candidate = optimizeDirection (
-                device, tcpFrame, state, bounds, seed, angle, iterations, config.projection);
+                device, tcpFrame, state, bounds, seed, angle, iterations,
+                config.projection, config.cancel);
             const QPointF point = projectedTcp (
                 device, tcpFrame, candidate, state, config.projection);
             const double value = supportValue (point, angle);

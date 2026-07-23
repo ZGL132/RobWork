@@ -2019,6 +2019,78 @@ static int testWorkspaceEnvelopeHelpers ()
     if (const int rc = require (envelope.width > 0.1 && envelope.height > 0.1,
                                 "computed envelope has nonzero dimensions"))
         return rc;
+
+    // ---- 非法几何验证 ----
+
+    // 少于 3 个点 → 无效
+    {
+        AnalysisEnvelopeData few;
+        few.boundary = { QPointF (0.0, 0.0), QPointF (1.0, 0.0) };
+        updateEnvelopeDimensions (few);
+        if (const int rc = require (!few.valid, "fewer than 3 points is invalid"))
+            return rc;
+    }
+
+    // NaN/Inf 点被移除 → 无效
+    {
+        AnalysisEnvelopeData nanData;
+        nanData.boundary = {
+            QPointF (0.0, 0.0),
+            QPointF (std::numeric_limits< double >::quiet_NaN (), 1.0),
+            QPointF (2.0, std::numeric_limits< double >::infinity ()),
+            QPointF (0.0, 2.0)
+        };
+        updateEnvelopeDimensions (nanData);
+        if (const int rc = require (!nanData.valid, "nan/inf filtered makes envelope invalid"))
+            return rc;
+        // 验证非有限点已被移除
+        if (const int rc = require (nanData.boundary.size () == 2,
+                                    "non-finite points removed from boundary, 2 remain"))
+            return rc;
+    }
+
+    // 零面积（共线）→ 无效
+    {
+        AnalysisEnvelopeData collinear;
+        collinear.boundary = {
+            QPointF (0.0, 0.0),
+            QPointF (1.0, 0.0),
+            QPointF (2.0, 0.0),
+            QPointF (3.0, 0.0)
+        };
+        updateEnvelopeDimensions (collinear);
+        if (const int rc = require (!collinear.valid, "collinear zero-area boundary is invalid"))
+            return rc;
+    }
+
+    // 重复点被归一化 → 有效（4个点去重后还有2个菱形端点，但要有至少3个点）
+    // 测试相邻重复点去重
+    {
+        AnalysisEnvelopeData dup;
+        dup.boundary = {
+            QPointF (0.0, 0.0),
+            QPointF (0.0, 0.0),
+            QPointF (2.0, 0.0),
+            QPointF (1.0, 1.0),
+            QPointF (0.0, 2.0)
+        };
+        updateEnvelopeDimensions (dup);
+        // 去重后应有 4 个点:(0,0),(2,0),(1,1),(0,2) — 面积=2 > 0
+        if (const int rc = require (dup.valid, "dup-removed boundary is valid"))
+            return rc;
+        if (const int rc = require (dup.boundary.size () == 4,
+                                    "adjacent duplicate points removed"))
+            return rc;
+    }
+
+    // 文字描述验证
+    {
+        if (const int rc = require (
+                rws::visualRenderModeText (VisualRenderMode::Envelope).contains (QStringLiteral ("Outer")),
+                "display text identifies outer envelope mode"))
+            return rc;
+    }
+
     return 0;
 }
 
@@ -2306,7 +2378,7 @@ static int testJsonAndCollisionHelpers ()
             return rc;
         if (const int rc = require (
                 rws::visualRenderModeText (rws::VisualRenderMode::Envelope) ==
-                    QStringLiteral ("Envelope"),
+                    QStringLiteral ("Outer envelope"),
                 "visual render mode text"))
             return rc;
     }
@@ -2324,7 +2396,7 @@ static int testJsonAndCollisionHelpers ()
         };
         rws::updateEnvelopeDimensions (envelopeVisual.envelope);
         if (const int rc = require (
-                rws::visualRenderModeText (envelopeVisual.renderMode) == QStringLiteral ("Envelope"),
+                rws::visualRenderModeText (envelopeVisual.renderMode) == QStringLiteral ("Outer envelope"),
                 "envelope render mode is selected"))
             return rc;
         if (const int rc = assertNear (

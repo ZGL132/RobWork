@@ -112,7 +112,7 @@ Supported color modes:
 Workspace visualization supports two view modes:
 
 - Scatter (default): draws the analyzed workspace samples and supports color modes such as status, manipulability, condition, joint margin, and collision.
-- Envelope: computes a deterministic working envelope directly from the selected device joint limits and TCP frame. It does not require Workspace samples. XY is shown as a top view; XZ/YZ are side views. The drawing reports width, height, and maximum radius in meters/mm-style technical annotations.
+- Outer envelope (approximate): computes an approximate outer envelope directly from the selected device joint limits and TCP frame. It does not require Workspace samples. XY is shown as a top view; XZ/YZ are side views. The drawing reports width, height, and maximum radius in meters/mm-style technical annotations. The displayed polygon is an approximate outer boundary, not a certified reachable region — use Workspace Scatter mode for detailed reachability, collision, and manipulability results.
 
 The summary line reports total and visible point counts, status distribution, collision count, projection, color mode, and finite scalar range. Tooltips show source-specific diagnostics without including long joint vectors.
 

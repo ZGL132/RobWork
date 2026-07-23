@@ -386,7 +386,7 @@ QString rws::visualRenderModeText (VisualRenderMode mode)
 {
     switch (mode) {
         case VisualRenderMode::Scatter:  return QStringLiteral ("Scatter");
-        case VisualRenderMode::Envelope: return QStringLiteral ("Envelope");
+        case VisualRenderMode::Envelope: return QStringLiteral ("Outer envelope");
     }
     return QStringLiteral ("Scatter");
 }
@@ -396,10 +396,45 @@ void rws::updateEnvelopeDimensions (AnalysisEnvelopeData& envelope)
     envelope.valid = false;
     envelope.minX = envelope.maxX = envelope.minY = envelope.maxY = 0.0;
     envelope.width = envelope.height = envelope.maxRadius = 0.0;
-    bool first = true;
+
+    // 1. 过滤非有限点
+    std::vector< QPointF > cleaned;
+    cleaned.reserve (envelope.boundary.size ());
     for (const QPointF& point : envelope.boundary) {
-        if (!std::isfinite (point.x ()) || !std::isfinite (point.y ()))
-            continue;
+        if (std::isfinite (point.x ()) && std::isfinite (point.y ()))
+            cleaned.push_back (point);
+    }
+
+    // 2. 移除相邻重复点（容差 1e-12）
+    if (!cleaned.empty ()) {
+        std::vector< QPointF > dedup;
+        dedup.push_back (cleaned.front ());
+        for (std::size_t i = 1; i < cleaned.size (); ++i) {
+            const double dx = cleaned[i].x () - dedup.back ().x ();
+            const double dy = cleaned[i].y () - dedup.back ().y ();
+            if (dx * dx + dy * dy > 1e-24)
+                dedup.push_back (cleaned[i]);
+        }
+        // 检查首尾重复
+        if (dedup.size () >= 2) {
+            const double dx = dedup.front ().x () - dedup.back ().x ();
+            const double dy = dedup.front ().y () - dedup.back ().y ();
+            if (dx * dx + dy * dy <= 1e-24)
+                dedup.pop_back ();
+        }
+        cleaned.swap (dedup);
+    }
+
+    envelope.boundary = cleaned;
+
+    // 3. 至少三个点才有意义
+    if (cleaned.size () < 3) {
+        return;
+    }
+
+    // 4. 计算边界
+    bool first = true;
+    for (const QPointF& point : cleaned) {
         if (first) {
             envelope.minX = envelope.maxX = point.x ();
             envelope.minY = envelope.maxY = point.y ();
@@ -415,11 +450,28 @@ void rws::updateEnvelopeDimensions (AnalysisEnvelopeData& envelope)
         const double dy = point.y () - envelope.origin.y ();
         envelope.maxRadius = std::max (envelope.maxRadius, std::sqrt (dx * dx + dy * dy));
     }
-    envelope.valid = !first && envelope.boundary.size () >= 3;
-    if (envelope.valid) {
-        envelope.width = envelope.maxX - envelope.minX;
-        envelope.height = envelope.maxY - envelope.minY;
+
+    envelope.width = envelope.maxX - envelope.minX;
+    envelope.height = envelope.maxY - envelope.minY;
+
+    // 5. 零宽/零高/极小面积 → 无效
+    const double eps = 1e-12;
+    if (envelope.width < eps || envelope.height < eps)
+        return;
+
+    // 6. 多边形面积（Shoelace 公式）— 共线/退化为零 → 无效
+    double area = 0.0;
+    const std::size_t n = cleaned.size ();
+    for (std::size_t i = 0; i < n; ++i) {
+        const std::size_t j = (i + 1) % n;
+        area += cleaned[i].x () * cleaned[j].y ();
+        area -= cleaned[j].x () * cleaned[i].y ();
     }
+    area = std::fabs (area) * 0.5;
+    if (area < eps)
+        return;
+
+    envelope.valid = true;
 }
 
 QColor rws::visualColorForPoint (const AnalysisVisualPoint& point,

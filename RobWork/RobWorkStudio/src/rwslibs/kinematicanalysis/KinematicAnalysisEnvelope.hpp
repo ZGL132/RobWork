@@ -6,6 +6,9 @@
 #include <rw/kinematics/State.hpp>
 #include <rw/math/Q.hpp>
 
+#include <atomic>
+#include <memory>
+
 namespace rw { namespace kinematics { class Frame; } }
 namespace rw { namespace models { class Device; } }
 
@@ -16,6 +19,7 @@ struct WorkspaceEnvelopeConfig
     VisualProjection projection = VisualProjection::XY;
     int angularDirections = 180;
     int coordinateIterations = 6;
+    std::shared_ptr< std::atomic< bool > > cancel = std::make_shared< std::atomic< bool > > (false);
 };
 
 QPointF projectEnvelopePosition (const std::array< double, 3 >& position,

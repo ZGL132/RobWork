@@ -179,6 +179,11 @@ class KinematicAnalysisWidget : public QWidget
     // 接到 plot 的 visualPointClicked 信号:把点的 Q 写到 RobWorkStudio state。
     void applyVisualizationPointQ (rws::AnalysisVisualPoint point);
 
+    // 包络异步计算结果到达。
+    void onEnvelopeFinished ();
+    // 方向数防抖超时后重新请求包络计算。
+    void onEnvelopeDebounceTimeout ();
+
     // ===================================================================
     //  Report tab
     // ===================================================================
@@ -368,6 +373,12 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _poseProgressLabel;                        // 进度文本 (X / Y IK target)
     QTableWidget* _posePositionTable;                  // 手动位置输入
     QTableWidget* _poseResultTable;                    // 结果(最多 500 行)
+
+    // ---- 包络异步计算 ----
+    QFutureWatcher< AnalysisEnvelopeData >* _envelopeWatcher;
+    int _envelopeGeneration = 0;                       // 请求生成号(防过期)
+    QTimer* _envelopeDebounceTimer;                    // 方向数防抖定时器
+    bool _envelopeRunActive = false;
 
     // ===================================================================
     //  Visualization tab 控件

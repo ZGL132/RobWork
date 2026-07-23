@@ -550,7 +550,28 @@ void KinematicAnalysisPlotWidget::paintEnvelope (
     QPainter& painter, const QRect& area) const
 {
     painter.setRenderHint (QPainter::Antialiasing, true);
-    const QRectF pr = visualPlotArea (area, false);
+    const QFontMetrics fm = painter.fontMetrics ();
+
+    // ---- 边距预算(基于当前字体) ----
+    const double topMargin    = static_cast< double > (fm.height () + 6);   // 标题行
+    const double bottomMargin = static_cast< double > (fm.height () * 3 + 20); // 水平尺寸线 + 说明
+    const double rightMargin  = static_cast< double > (fm.horizontalAdvance (QStringLiteral ("00000 mm")) + 20); // 垂直尺寸线
+    const double leftMargin   = 12.0;
+
+    const double plotX = area.x () + leftMargin;
+    const double plotY = area.y () + topMargin;
+    const double plotW = static_cast< double > (area.width ()) - leftMargin - rightMargin;
+    const double plotH = static_cast< double > (area.height ()) - topMargin - bottomMargin;
+
+    // 区域太小无法绘图
+    if (plotW < 50.0 || plotH < 50.0) {
+        painter.setPen (palette ().mid ().color ());
+        painter.drawText (QRectF (area), Qt::AlignCenter,
+                          QStringLiteral ("Area too small for envelope"));
+        return;
+    }
+
+    const QRectF pr (plotX, plotY, plotW, plotH);
     painter.setPen (QPen (palette ().mid ().color (), 1));
     painter.drawRect (pr);
 
@@ -558,7 +579,7 @@ void KinematicAnalysisPlotWidget::paintEnvelope (
     if (!envelope.valid) {
         painter.setPen (palette ().mid ().color ());
         painter.drawText (pr, Qt::AlignCenter,
-                          QStringLiteral ("No workspace envelope"));
+                          QStringLiteral ("No approximate outer envelope data"));
         return;
     }
 
@@ -586,28 +607,42 @@ void KinematicAnalysisPlotWidget::paintEnvelope (
 
     const double scale = 1000.0;
     const QString unit = QStringLiteral ("mm");
-    paintDimensionLine (
-        painter,
-        QPointF (pr.left (), pr.bottom () + 24),
-        QPointF (pr.right (), pr.bottom () + 24),
-        QStringLiteral ("%1 %2").arg (envelope.width * scale, 0, 'f', 0).arg (unit));
-    paintDimensionLine (
-        painter,
-        QPointF (pr.right () + 18, pr.top ()),
-        QPointF (pr.right () + 18, pr.bottom ()),
-        QStringLiteral ("%1 %2").arg (envelope.height * scale, 0, 'f', 0).arg (unit));
 
-    painter.drawText (QRectF (pr.left (), 2, pr.width (), 18),
+    // 底部:水平尺寸线(在 plotArea 下方,但仍在 area 内)
+    const double dimY = area.y () + static_cast< double > (area.height ()) - bottomMargin + 4.0;
+    paintDimensionLine (
+        painter,
+        QPointF (plotX, dimY),
+        QPointF (plotX + plotW, dimY),
+        QStringLiteral ("%1 %2").arg (envelope.width * scale, 0, 'f', 0).arg (unit));
+
+    // 右侧:垂直尺寸线(在 plotArea 右侧,但仍在 area 内)
+    const double dimX = plotX + plotW + 8.0;
+    const double dimCenterY = plotY + plotH * 0.5;
+    painter.save ();
+    painter.translate (dimX, dimCenterY);
+    painter.rotate (-90.0);
+    const QString heightText = QStringLiteral ("%1 %2")
+        .arg (envelope.height * scale, 0, 'f', 0).arg (unit);
+    painter.drawText (QRectF (-static_cast< double > (plotH) * 0.5, -12.0,
+                               plotH, 24.0),
+                      Qt::AlignCenter, heightText);
+    painter.restore ();
+
+    // 顶部:标题(在 plotArea 上方,但仍在 area 内)
+    painter.drawText (QRectF (plotX, area.y () + 2, plotW, topMargin - 4),
                       Qt::AlignRight | Qt::AlignVCenter,
-                      QStringLiteral ("Working envelope, %1, Rmax %2 %3")
+                      QStringLiteral ("Approximate outer envelope, %1, Rmax %2 %3")
                           .arg (visualProjectionText (envelope.projection))
                           .arg (envelope.maxRadius * scale, 0, 'f', 0)
                           .arg (unit));
 
+    // 底部:视图说明(在水平尺寸线下方)
     painter.setPen (palette ().text ().color ());
-    painter.drawText (QRectF (pr.left (), pr.bottom () + 46, pr.width (), 20),
-                      Qt::AlignCenter,
-                      envelope.projection == VisualProjection::XY ?
-                          QStringLiteral ("Working envelope, top view") :
-                          QStringLiteral ("Working envelope, side view"));
+    const QString caption = envelope.projection == VisualProjection::XY ?
+        QStringLiteral ("Approximate outer envelope, top view — not exact reachability") :
+        QStringLiteral ("Approximate outer envelope, side view — not exact reachability");
+    const double captionY = area.y () + static_cast< double > (area.height ()) - bottomMargin + fm.height () + 14.0;
+    painter.drawText (QRectF (plotX, captionY, plotW, 20.0),
+                      Qt::AlignCenter, caption);
 }
