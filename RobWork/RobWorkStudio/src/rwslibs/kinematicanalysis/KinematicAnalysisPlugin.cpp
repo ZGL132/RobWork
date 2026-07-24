@@ -8,7 +8,7 @@ namespace rws {
 
 // 插件构造:RobWorkStudioPlugin 接收插件名(用于显示)和图标(此处使用空图标)。
 KinematicAnalysisPlugin::KinematicAnalysisPlugin() :
-    RobWorkStudioPlugin("KinematicAnalysis", QIcon()),
+    RobWorkStudioPlugin("KinematicAnalysis", QIcon(":/kinematicanalysis/kinematicanalysis_icon.png")),
     _widget(NULL)
 {
 }

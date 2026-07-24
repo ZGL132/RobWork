@@ -6,7 +6,7 @@
 namespace rws {
 
 StructureOptimizerPlugin::StructureOptimizerPlugin() :
-    RobWorkStudioPlugin("StructureOptimizer", QIcon())
+    RobWorkStudioPlugin("StructureOptimizer", QIcon(":/structureoptimizer/structureoptimizer_icon.png"))
 {
     _widget = new StructureOptimizerWidget();
     setWidget(_widget);

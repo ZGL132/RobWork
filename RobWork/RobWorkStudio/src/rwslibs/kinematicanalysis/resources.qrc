@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/kinematicanalysis"/>
+    <qresource prefix="/kinematicanalysis">
+        <file>kinematicanalysis_icon.png</file>
+    </qresource>
 </RCC>

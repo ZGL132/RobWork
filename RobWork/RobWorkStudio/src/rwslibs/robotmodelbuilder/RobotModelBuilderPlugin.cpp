@@ -18,7 +18,7 @@ using namespace rws;
 //        _widget 暂时为空指针,待 initialize() 中再实例化。
 // -----------------------------------------------------------------------------
 RobotModelBuilderPlugin::RobotModelBuilderPlugin () :
-    RobWorkStudioPlugin ("RobotModelBuilder", QIcon ()), _widget (NULL)
+    RobWorkStudioPlugin ("RobotModelBuilder", QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png")), _widget (NULL)
 {}
 
 // -----------------------------------------------------------------------------

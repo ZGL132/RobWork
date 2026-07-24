@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/structureoptimizer"/>
+    <qresource prefix="/structureoptimizer">
+        <file>structureoptimizer_icon.png</file>
+    </qresource>
 </RCC>
