@@ -1,0 +1,50 @@
+<WorkCell name="GenericSixAxisScene">
+  <Frame name="RobotBase" refframe="WORLD" type="Fixed">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+
+  <Include file="GenericSixAxis.wc.xml" />
+
+  <Frame name="Table" refframe="WORLD" type="Fixed">
+    <RPY>0 0 0</RPY>
+    <Pos>0.7 0 0.35</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+  <Frame name="Workpiece" refframe="Table" type="Fixed" daf="true">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.08</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+  <Frame name="CameraFrame" refframe="RobotBase">
+    <RPY>180 0 0</RPY>
+    <Pos>0.2 0.1 1.2</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+  <Frame name="MovableBox" refframe="WORLD" type="Movable" daf="true">
+    <RPY>0 0 0</RPY>
+    <Pos>0.1 0.2 0.3</Pos>
+    <Property name="ShowFrameAxis">true</Property>
+  </Frame>
+
+  <Drawable name="TableTop" refframe="Table" colmodel="Enabled">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.55 0.55 0.55</RGB>
+    <Box x="1.2" y="0.8" z="0.05" />
+  </Drawable>
+  <Drawable name="WorkpieceBox" refframe="Workpiece" colmodel="Enabled">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.2 0.55 0.8</RGB>
+    <Box x="0.12" y="0.08" z="0.05" />
+  </Drawable>
+  <Drawable name="MovableBoxGeom" refframe="MovableBox" colmodel="Enabled">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0</Pos>
+    <RGB>0.8 0.35 0.2</RGB>
+    <Box x="0.08" y="0.08" z="0.08" />
+  </Drawable>
+
+</WorkCell>
