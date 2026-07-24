@@ -7,8 +7,11 @@
 #include "RobotModelBuilderPlugin.hpp"
 
 #include "RobotModelBuilderWidget.hpp"
+#include "WorkCellConverter.hpp"
 
 #include <rws/RobWorkStudio.hpp>
+
+#include <rw/models/WorkCell.hpp>
 
 using namespace rws;
 
@@ -18,7 +21,9 @@ using namespace rws;
 //        _widget 暂时为空指针,待 initialize() 中再实例化。
 // -----------------------------------------------------------------------------
 RobotModelBuilderPlugin::RobotModelBuilderPlugin () :
-    RobWorkStudioPlugin ("RobotModelBuilder", QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png")), _widget (NULL)
+    RobWorkStudioPlugin ("RobotModelBuilder", QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png")),
+    _widget (NULL),
+    _ignoreNextOpenFromSelfLoad (false)
 {}
 
 // -----------------------------------------------------------------------------
@@ -49,10 +54,32 @@ void RobotModelBuilderPlugin::initialize ()
 //  说明: WorkCell 切换钩子。本插件并不直接缓存 WorkCell 数据,因此两个回调保持空实现。
 // -----------------------------------------------------------------------------
 void RobotModelBuilderPlugin::open (rw::models::WorkCell* workcell)
-{}
+{
+    if (_ignoreNextOpenFromSelfLoad) {
+        _ignoreNextOpenFromSelfLoad = false;
+        return;
+    }
+    syncFromWorkCell (workcell);
+}
 
 void RobotModelBuilderPlugin::close ()
 {}
+
+void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
+{
+    if (_widget == NULL || workcell == NULL)
+        return;
+
+    QStringList warnings;
+    const std::string saveDirectory = WorkCellConverter::inferSaveDirectory (*workcell);
+    RobotModelSpec spec =
+        WorkCellConverter::convert (*workcell, workcell->getDefaultState (), saveDirectory, warnings);
+
+    if (!WorkCellConverter::hasConvertibleRobotModel (spec))
+        return;
+
+    _widget->syncFromWorkCellSpec (spec, warnings);
+}
 
 // -----------------------------------------------------------------------------
 //  loadSceneFile()
@@ -62,6 +89,8 @@ void RobotModelBuilderPlugin::close ()
 // -----------------------------------------------------------------------------
 void RobotModelBuilderPlugin::loadSceneFile (const QString& filename)
 {
-    if (getRobWorkStudio () != NULL)
+    if (getRobWorkStudio () != NULL) {
+        _ignoreNextOpenFromSelfLoad = true;
         getRobWorkStudio ()->setWorkcell (filename.toStdString ());
+    }
 }

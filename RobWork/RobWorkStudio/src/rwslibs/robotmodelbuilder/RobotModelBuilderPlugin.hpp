@@ -53,6 +53,9 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
   private:
     /// 实际的 UI 与业务逻辑对象,由本插件创建并管理生命周期
     RobotModelBuilderWidget* _widget;
+    bool _ignoreNextOpenFromSelfLoad;
+
+    void syncFromWorkCell (rw::models::WorkCell* workcell);
 };
 
 }    // namespace rws

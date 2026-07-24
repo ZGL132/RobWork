@@ -23,6 +23,7 @@ class RobotModelBuilderWidget : public QWidget
     Q_OBJECT
   public:
     explicit RobotModelBuilderWidget (QWidget* parent = NULL);
+    void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
 
   Q_SIGNALS:
     void loadSceneRequested (const QString& filename);
@@ -131,6 +132,7 @@ class RobotModelBuilderWidget : public QWidget
     QWidget* _sceneTab = NULL;
 
     bool _syncingTables = false;
+    bool _importingFromWorkCell = false;
 };
 
 }    // namespace rws

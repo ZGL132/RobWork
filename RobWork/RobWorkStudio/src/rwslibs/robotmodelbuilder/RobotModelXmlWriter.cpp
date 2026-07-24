@@ -11,6 +11,8 @@
 // =============================================================================
 #include "RobotModelXmlWriter.hpp"
 
+#include "RobotModelSpecJson.hpp"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -1503,6 +1505,31 @@ QString RobotModelXmlWriter::proximitySetupFilePath (const RobotModelSpec& spec)
     QDir dir (QString::fromStdString (spec.saveDirectory));
     const QString file = QString::fromStdString (spec.proximitySetup.file).trimmed ();
     return dir.filePath (file.isEmpty () ? QString ("ProximitySetup.xml") : file);
+}
+
+QString RobotModelXmlWriter::specSidecarFilePath (const RobotModelSpec& spec)
+{
+    QDir dir (QString::fromStdString (spec.saveDirectory));
+    return dir.filePath (sanitizeFileBaseName (QString::fromStdString (spec.robotName)) +
+                         ".rmb.json");
+}
+
+bool RobotModelXmlWriter::saveSpecSidecar (const RobotModelSpec& spec, QStringList& errors)
+{
+    QFile file (specSidecarFilePath (spec));
+    const QFileInfo info (file.fileName ());
+    if (!QDir ().mkpath (info.absolutePath ())) {
+        errors << QString ("Could not create directory %1").arg (info.absolutePath ());
+        return false;
+    }
+    if (!file.open (QFile::WriteOnly | QFile::Text)) {
+        errors << QString ("Could not write %1").arg (file.fileName ());
+        return false;
+    }
+    QTextStream out (&file);
+    out << QString::fromStdString (RobotModelSpecJson::toJson (spec));
+    file.close ();
+    return true;
 }
 
 // Milestone 6:把所有 Scene 引用的文件路径转成相对 saveDirectory 的相对路径,

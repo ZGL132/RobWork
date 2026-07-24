@@ -114,6 +114,9 @@ class RobotModelXmlWriter
     /// 获取 ProximitySetup XML 的完整目标路径 (saveDirectory / proximitySetup.file)
     static QString proximitySetupFilePath (const RobotModelSpec& spec);
 
+    static QString specSidecarFilePath (const RobotModelSpec& spec);
+    static bool saveSpecSidecar (const RobotModelSpec& spec, QStringList& errors);
+
     /**
      * @brief 执行合法性校验并将所有生成的 XML 配置文件写入磁盘。
      * @param spec 模型配置

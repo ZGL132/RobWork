@@ -15,6 +15,7 @@
 //          7) 把生成的 XML 落到 temp 目录,供人工检查。
 // =============================================================================
 #include "RobotModelXmlWriter.hpp"
+#include "RobotModelSpecJson.hpp"
 #include "RobotModelUrdfImporter.hpp"
 
 #include <rw/loaders/WorkCellLoader.hpp>
@@ -2688,6 +2689,36 @@ int main (int argc, char** argv)
     }
 
     // ---- 把生成的 XML 落到 temp 目录,方便人工核对 ----
+    // ---- Test 17: RobotModelBuilder sidecar should preserve editable spec metadata ----
+    {
+        const QString dir = QDir::tempPath () + "/robotmodelbuilder_sidecar";
+        QDir ().mkpath (dir);
+        RobotModelSpec sidecarSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        sidecarSpec.robotName = "SidecarBot";
+        sidecarSpec.proximitySetup.enabled = true;
+
+        QStringList sidecarErrors;
+        if (!RobotModelXmlWriter::saveSpecSidecar (sidecarSpec, sidecarErrors))
+            return fail ("saveSpecSidecar failed: " + sidecarErrors.join ("; "));
+
+        QFile sidecarFile (RobotModelXmlWriter::specSidecarFilePath (sidecarSpec));
+        if (!sidecarFile.exists ())
+            return fail ("saveSpecSidecar did not create the expected file.");
+        if (!sidecarFile.open (QFile::ReadOnly | QFile::Text))
+            return fail ("Could not reopen saved sidecar file.");
+
+        RobotModelSpec decoded;
+        std::string jsonError;
+        if (!RobotModelSpecJson::fromJson (
+                QString::fromUtf8 (sidecarFile.readAll ()).toStdString (), decoded, &jsonError))
+            return fail (QString ("Could not decode saved sidecar: %1")
+                             .arg (QString::fromStdString (jsonError)));
+        if (decoded.robotName != sidecarSpec.robotName)
+            return fail ("Sidecar robotName round trip failed.");
+        if (!decoded.proximitySetup.enabled)
+            return fail ("Sidecar proximitySetup flag round trip failed.");
+    }
+
     const QString dumpDir = QDir::tempPath () + "/robotmodelbuilder_dump";
     QDir ().mkpath (dumpDir);
     std::cerr << "Dumping to: " << dumpDir.toStdString () << std::endl;

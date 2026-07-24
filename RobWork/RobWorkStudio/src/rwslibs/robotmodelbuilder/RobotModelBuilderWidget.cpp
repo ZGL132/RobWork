@@ -682,6 +682,10 @@ void RobotModelBuilderWidget::saveXml ()
         showErrors (errors);
         return;
     }
+    if (!RobotModelXmlWriter::saveSpecSidecar (spec, errors)) {
+        showErrors (errors);
+        return;
+    }
     generatePreview ();
     setStatus ("XML files saved.");
 }
@@ -702,6 +706,10 @@ void RobotModelBuilderWidget::saveAndLoad ()
     RobotModelSpec spec = collectSpec ();
     RobotModelXmlWriter::applyLinkGeometry (spec);
     if (!RobotModelXmlWriter::saveFiles (spec, errors)) {
+        showErrors (errors);
+        return;
+    }
+    if (!RobotModelXmlWriter::saveSpecSidecar (spec, errors)) {
         showErrors (errors);
         return;
     }
@@ -1235,7 +1243,7 @@ void RobotModelBuilderWidget::sceneGenerationToggled (bool)
 // =============================================================================
 void RobotModelBuilderWidget::onDhTableCellChanged (QTableWidgetItem* item)
 {
-    if (_syncingTables || item == NULL)
+    if (_syncingTables || _importingFromWorkCell || item == NULL)
         return;
     setStatus ("DH parameters are a projection view. Edit Joint + RPY + Pos to change the model.");
 }
@@ -1256,7 +1264,7 @@ void RobotModelBuilderWidget::onDhTableCellChanged (QTableWidgetItem* item)
 // =============================================================================
 void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* item)
 {
-    if (_syncingTables || item == NULL)
+    if (_syncingTables || _importingFromWorkCell || item == NULL)
         return;
     const int row = item->row ();
     if (row < 0 || row >= _transformTable->rowCount ())
@@ -1359,6 +1367,24 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     modeChanged (_mode->currentIndex ());
     updateSceneUiEnabled ();
     _syncingTables = false;
+}
+
+void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
+                                                    const QStringList& warnings)
+{
+    _importingFromWorkCell = true;
+    fillFromSpec (spec);
+    generatePreview ();
+    _importingFromWorkCell = false;
+
+    if (warnings.isEmpty ()) {
+        setStatus ("Loaded WorkCell synchronized to RobotModelBuilder.");
+    }
+    else {
+        setStatus (QString ("Loaded WorkCell synchronized with %1 warning(s).")
+                       .arg (warnings.size ()));
+        QMessageBox::information (this, "WorkCell Import Warnings", warnings.join ("\n"));
+    }
 }
 
 // =============================================================================
