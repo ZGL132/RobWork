@@ -16,6 +16,7 @@ set(SUBSYS_DEPS
             RW::sdurw_core
             RW::sdurw_models
             RW::sdurw_loaders
+            RW::sdurw_proximity
 )
 
 set(build TRUE)
@@ -29,12 +30,14 @@ if(build)
         RobotModelXmlWriter.cpp
         RobotModelUrdfImporter.cpp
         RobotModelSpecJson.cpp
+        WorkCellConverter.cpp
     )
     set(ModelHeaderFiles
         RobotModelSpec.hpp
         RobotModelXmlWriter.hpp
         RobotModelUrdfImporter.hpp
         RobotModelSpecJson.hpp
+        WorkCellConverter.hpp
     )
     # 插件编译入口:Plugin + Widget + Model 三者合并
     set(SrcFiles
@@ -119,6 +122,26 @@ if(build)
         add_test(
             NAME sdurws_robotmodelbuilder_jsontest
             COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_jsontest>
+        )
+    endif()
+
+    add_executable(sdurws_robotmodelbuilder_workcellconvertertest
+        WorkCellConverterTest.cpp
+        ${ModelSrcFiles}
+        ${ModelHeaderFiles}
+    )
+    target_link_libraries(sdurws_robotmodelbuilder_workcellconvertertest
+        PRIVATE
+            ${QT_LIBRARIES}
+            RW::sdurw_loaders
+            RW::sdurw_models
+            RW::sdurw_proximity
+    )
+    target_include_directories(sdurws_robotmodelbuilder_workcellconvertertest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_robotmodelbuilder_workcellconvertertest
+            COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_workcellconvertertest>
         )
     endif()
 endif()
