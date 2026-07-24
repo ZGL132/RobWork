@@ -11,16 +11,31 @@
 #include "StructureSensitivityAnalyzer.hpp"
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationCsv.hpp"
+#include "StructureVariableTableModel.hpp"
+#include "OptimizationTaskTableModel.hpp"
+#include "StructureCandidateTableModel.hpp"
+#include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizerWidget.hpp"
+#include "StructureOptimizationController.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 
+#include <QApplication>
+#include <QCoreApplication>
 #include <QDir>
+#include <QEventLoop>
+#include <QMetaObject>
+#include <QPushButton>
+#include <QTimer>
+#include <QTabWidget>
 
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 // =============================================================================
@@ -891,12 +906,317 @@ static void testCsvExport()
 }
 
 // =============================================================================
+//  UI table models and default variable suggestions
+// =============================================================================
+
+static void testUiTableModelsAndSuggestions()
+{
+    std::printf("testUiTableModelsAndSuggestions ... ");
+
+    rws::StructureDesignVariable variable;
+    variable.id = "joint1_z";
+    variable.label = "Joint1 Z";
+    variable.targetName = "Joint1";
+    variable.kind = rws::StructureVariableKind::JointPositionZ;
+    variable.currentValue = 0.3;
+    variable.minimum = 0.21;
+    variable.maximum = 0.39;
+    variable.step = 0.001;
+    variable.enabled = true;
+
+    rws::StructureVariableTableModel variableModel;
+    variableModel.setVariables({variable});
+    REQUIRE(variableModel.rowCount() == 1);
+    REQUIRE(variableModel.columnCount() >= 8);
+    REQUIRE(variableModel.variables().size() == 1);
+    REQUIRE(variableModel.variables()[0].id == "joint1_z");
+    REQUIRE(variableModel.data(variableModel.index(0, 0)).toString().toStdString() == "joint1_z");
+
+    rws::OptimizationTaskPoint task;
+    task.point.id = "pick";
+    task.point.name = "Pick";
+    task.required = false;
+
+    rws::OptimizationTaskTableModel taskModel;
+    taskModel.setTasks({task});
+    REQUIRE(taskModel.rowCount() == 1);
+    REQUIRE(taskModel.columnCount() >= 7);
+    REQUIRE(taskModel.tasks().size() == 1);
+    REQUIRE(taskModel.tasks()[0].point.id == "pick");
+
+    rws::StructureCandidateResult candidate;
+    candidate.index = 7;
+    candidate.feasible = true;
+    candidate.totalScore = 88.5;
+    candidate.status = rws::StructureCandidateStatus::Feasible;
+
+    rws::StructureCandidateTableModel candidateModel;
+    candidateModel.setCandidates({candidate});
+    REQUIRE(candidateModel.rowCount() == 1);
+    REQUIRE(candidateModel.columnCount() >= 9);
+    REQUIRE(candidateModel.candidates().size() == 1);
+    REQUIRE(candidateModel.data(candidateModel.index(0, 0)).toInt() == 7);
+
+    rws::RobotDesignContext context;
+    context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    context.modelSpec.robotName = "SuggestionRobot";
+    context.modelSpec.transformJoints[0].pos[2] = 0.3;
+    context.modelSpec.robotBaseFrame.pos[2] = 0.2;
+    bool setTcpOffset = false;
+    for (auto& joint : context.modelSpec.transformJoints) {
+        if (rws::typeToKind(joint.type) == rws::JointKind::ToolFrame) {
+            joint.pos[0] = 0.05;
+            setTcpOffset = true;
+            break;
+        }
+    }
+    if (!setTcpOffset) {
+        rws::JointTransformSpec tcp;
+        tcp.name = "TCP";
+        tcp.type = "ToolFrame";
+        tcp.pos[0] = 0.05;
+        context.modelSpec.transformJoints.push_back(tcp);
+    }
+
+    const std::vector< rws::StructureDesignVariable > suggested =
+        rws::StructureOptimizationUiLogic::suggestVariables(context);
+
+    bool foundJointZ = false;
+    bool foundTcp = false;
+    bool foundBaseHeight = false;
+    bool foundLinkGeometry = false;
+    for (const auto& suggestedVariable : suggested) {
+        if (suggestedVariable.kind == rws::StructureVariableKind::JointPositionZ)
+            foundJointZ = true;
+        if (suggestedVariable.kind == rws::StructureVariableKind::TcpOffsetX ||
+            suggestedVariable.kind == rws::StructureVariableKind::TcpOffsetY ||
+            suggestedVariable.kind == rws::StructureVariableKind::TcpOffsetZ)
+            foundTcp = true;
+        if (suggestedVariable.kind == rws::StructureVariableKind::BaseHeight)
+            foundBaseHeight = true;
+        if (suggestedVariable.kind == rws::StructureVariableKind::LinkRadius ||
+            suggestedVariable.kind == rws::StructureVariableKind::LinkWidth ||
+            suggestedVariable.kind == rws::StructureVariableKind::LinkHeight)
+            foundLinkGeometry = true;
+    }
+    REQUIRE(foundJointZ);
+    REQUIRE(foundTcp);
+    REQUIRE(foundBaseHeight);
+    REQUIRE(foundLinkGeometry);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureOptimizerWidgetState()
+{
+    std::printf("testStructureOptimizerWidgetState ... ");
+
+    rws::StructureOptimizerWidget widget;
+
+    QTabWidget* tabs = widget.findChild<QTabWidget*>("structureOptimizerTabs");
+    REQUIRE(tabs != nullptr);
+    if (tabs != nullptr) {
+        REQUIRE(tabs->count() == 5);
+        REQUIRE(tabs->tabText(0).toStdString() == "设计变量");
+        REQUIRE(tabs->tabText(1).toStdString() == "任务与约束");
+        REQUIRE(tabs->tabText(2).toStdString() == "优化设置");
+        REQUIRE(tabs->tabText(3).toStdString() == "候选方案");
+        REQUIRE(tabs->tabText(4).toStdString() == "报告导出");
+    }
+
+    QPushButton* startButton =
+        widget.findChild<QPushButton*>("startOptimizationButton");
+    REQUIRE(startButton != nullptr);
+    if (startButton != nullptr)
+        REQUIRE(!startButton->isEnabled());
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+
+    rws::StructureDesignVariable variable;
+    variable.id = "joint1_z";
+    variable.label = "Joint1 Z";
+    variable.targetName = problem.context.modelSpec.transformJoints[0].name;
+    variable.kind = rws::StructureVariableKind::JointPositionZ;
+    variable.currentValue = problem.context.modelSpec.transformJoints[0].pos[2];
+    variable.minimum = 0.1;
+    variable.maximum = 0.5;
+    variable.step = 0.001;
+    variable.enabled = true;
+    problem.variables.push_back(variable);
+
+    rws::OptimizationTaskPoint task;
+    task.point.id = "target";
+    task.point.name = "Target";
+    task.point.enabled = true;
+    task.required = true;
+    problem.tasks.push_back(task);
+
+    widget.setProblem(problem);
+    if (startButton != nullptr)
+        REQUIRE(startButton->isEnabled());
+
+    const rws::StructureOptimizationProblem collected = widget.collectProblem();
+    REQUIRE(collected.variables.size() == 1);
+    REQUIRE(collected.tasks.size() == 1);
+    REQUIRE(collected.variables[0].id == "joint1_z");
+    REQUIRE(collected.tasks[0].point.id == "target");
+
+    rws::StructureOptimizationProblem invalidProblem = problem;
+    invalidProblem.context.modelSpec = rws::RobotModelSpec();
+    widget.setProblem(invalidProblem);
+    if (startButton != nullptr)
+        REQUIRE(!startButton->isEnabled());
+    REQUIRE(widget.statusText().toStdString().find(
+                "RobotDesignContext.ModelSpec.Incomplete") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureOptimizationControllerAsyncState()
+{
+    std::printf("testStructureOptimizationControllerAsyncState ... ");
+
+    struct SharedState {
+        int progressCount = 0;
+        bool canceled = false;
+    };
+    std::shared_ptr<SharedState> shared(new SharedState());
+
+    rws::StructureOptimizationController controller(
+        [shared](const rws::StructureOptimizationProblem&,
+                 const rws::StructureOptimizationCallbacks& callbacks) {
+            rws::StructureOptimizationResult result;
+            for (int i = 0; i < 200; ++i) {
+                if (callbacks.isCancellationRequested &&
+                    callbacks.isCancellationRequested()) {
+                    result.canceled = true;
+                    shared->canceled = true;
+                    return result;
+                }
+                if (callbacks.waitIfPaused)
+                    callbacks.waitIfPaused();
+                rws::StructureProgress progress;
+                progress.stage = "Fake";
+                progress.completed = i + 1;
+                progress.planned = 200;
+                progress.bestScore = static_cast<double>(i);
+                if (callbacks.onProgress)
+                    callbacks.onProgress(progress);
+                ++shared->progressCount;
+                std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            }
+            return result;
+        });
+
+    bool sawRunning = false;
+    bool sawPaused = false;
+    bool sawCompleted = false;
+    bool completedCanceled = false;
+
+    QObject::connect(&controller, &rws::StructureOptimizationController::runningChanged,
+                     [&](bool running) { if (running) sawRunning = true; });
+    QObject::connect(&controller, &rws::StructureOptimizationController::pausedChanged,
+                     [&](bool paused) { if (paused) sawPaused = true; });
+    QObject::connect(&controller, &rws::StructureOptimizationController::completed,
+                     [&](const rws::StructureOptimizationResult& result) {
+                         sawCompleted = true;
+                         completedCanceled = result.canceled;
+                     });
+
+    rws::StructureOptimizationProblem problem;
+    problem.run.candidateCount = 200;
+    REQUIRE(controller.start(problem));
+    REQUIRE(sawRunning);
+
+    QEventLoop waitForProgress;
+    QTimer::singleShot(80, &waitForProgress, SLOT(quit()));
+    waitForProgress.exec();
+    controller.pause();
+    REQUIRE(sawPaused);
+    const int pausedCount = shared->progressCount;
+
+    QEventLoop pausedLoop;
+    QTimer::singleShot(80, &pausedLoop, SLOT(quit()));
+    pausedLoop.exec();
+    REQUIRE(shared->progressCount <= pausedCount + 1);
+
+    controller.resume();
+    QEventLoop resumedLoop;
+    QTimer::singleShot(80, &resumedLoop, SLOT(quit()));
+    resumedLoop.exec();
+    REQUIRE(shared->progressCount > pausedCount);
+
+    controller.cancel();
+    QEventLoop finishedLoop;
+    QObject::connect(&controller, &rws::StructureOptimizationController::completed,
+                     &finishedLoop, [&finishedLoop](const rws::StructureOptimizationResult&) {
+                         finishedLoop.quit();
+                     });
+    QTimer::singleShot(5000, &finishedLoop, SLOT(quit()));
+    if (!sawCompleted)
+        finishedLoop.exec();
+
+    REQUIRE(sawCompleted);
+    REQUIRE(completedCanceled);
+    REQUIRE(!controller.isRunning());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
 //  main
 // =============================================================================
 
-int main()
+int main(int argc, char** argv)
 {
     std::printf("=== StructureOptimizer Test Suite ===\n\n");
+    std::fflush(stdout);
+
+    const std::string suite = argc > 1 ? argv[1] : std::string();
+
+    if (suite == "widget") {
+        QApplication app(argc, argv);
+        testStructureOptimizerWidgetState();
+        std::fflush(stdout);
+        if (g_testFailures == 0)
+        {
+            std::printf("All tests passed.\n");
+            return 0;
+        }
+        std::printf("%d test(s) FAILED.\n", g_testFailures);
+        return 1;
+    }
+
+    QCoreApplication app(argc, argv);
+
+    if (suite == "ui") {
+        testUiTableModelsAndSuggestions();
+        std::fflush(stdout);
+        testStructureOptimizationControllerAsyncState();
+        std::fflush(stdout);
+
+        if (g_testFailures == 0)
+        {
+            std::printf("All tests passed.\n");
+            return 0;
+        }
+        std::printf("%d test(s) FAILED.\n", g_testFailures);
+        return 1;
+    }
 
     testProblemDefaultsAndValidation();
 
@@ -926,6 +1246,8 @@ int main()
     testSensitivity();
     testJsonRoundTrip();
     testCsvExport();
+    testUiTableModelsAndSuggestions();
+    testStructureOptimizationControllerAsyncState();
 
     std::printf("\n");
 

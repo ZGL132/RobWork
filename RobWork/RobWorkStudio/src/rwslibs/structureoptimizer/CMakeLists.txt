@@ -15,6 +15,12 @@ set(build TRUE)
 rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} ADD_DOC)
 
 if(build)
+    if(DEFINED Qt6Core_VERSION)
+        find_package(Qt6 COMPONENTS Concurrent QUIET)
+    else()
+        find_package(Qt5 COMPONENTS Concurrent QUIET)
+    endif()
+
     # 核心库 — 纯数据类型、验证逻辑、设计变量突变、目标评分、模型工厂，无 UI 依赖。
     set(CoreSrcFiles
         StructureOptimizationValidation.cpp
@@ -61,12 +67,29 @@ if(build)
     # ── 测试可执行文件 ────────────────────────────────────────────────────
     add_executable(sdurws_structureoptimizer_test
         StructureOptimizationTest.cpp
+        StructureVariableTableModel.cpp
+        StructureVariableTableModel.hpp
+        OptimizationTaskTableModel.cpp
+        OptimizationTaskTableModel.hpp
+        StructureCandidateTableModel.cpp
+        StructureCandidateTableModel.hpp
+        StructureOptimizationUiLogic.cpp
+        StructureOptimizationUiLogic.hpp
+        StructureOptimizerWidget.cpp
+        StructureOptimizerWidget.hpp
+        StructureOptimizationController.cpp
+        StructureOptimizationController.hpp
     )
     target_link_libraries(sdurws_structureoptimizer_test
         PRIVATE
             sdurws_structureoptimizer_core
             ${QT_LIBRARIES}
     )
+    foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
+        if(TARGET ${qt_concurrent_target})
+            target_link_libraries(sdurws_structureoptimizer_test PRIVATE ${qt_concurrent_target})
+        endif()
+    endforeach()
     target_include_directories(sdurws_structureoptimizer_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 
@@ -74,10 +97,20 @@ if(build)
     set(SrcFiles
         StructureOptimizerPlugin.cpp
         StructureOptimizerWidget.cpp
+        StructureVariableTableModel.cpp
+        OptimizationTaskTableModel.cpp
+        StructureCandidateTableModel.cpp
+        StructureOptimizationUiLogic.cpp
+        StructureOptimizationController.cpp
     )
     set(SRC_FILES_HPP
         StructureOptimizerPlugin.hpp
         StructureOptimizerWidget.hpp
+        StructureVariableTableModel.hpp
+        OptimizationTaskTableModel.hpp
+        StructureCandidateTableModel.hpp
+        StructureOptimizationUiLogic.hpp
+        StructureOptimizationController.hpp
     )
     if(DEFINED Qt6Core_VERSION)
         qt_add_resources(RccSrcFiles resources.qrc)
@@ -94,6 +127,11 @@ if(build)
     rw_add_includes(${SUBSYS_NAME} "rwslibs/structureoptimizer" ${SRC_FILES_HPP})
     target_link_libraries(${SUBSYS_NAME} ${SUBSYS_DEPS} PUBLIC ${QT_LIBRARIES})
     target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_structureoptimizer_core)
+    foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
+        if(TARGET ${qt_concurrent_target})
+            target_link_libraries(${SUBSYS_NAME} PRIVATE ${qt_concurrent_target})
+        endif()
+    endforeach()
     target_include_directories(${SUBSYS_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
