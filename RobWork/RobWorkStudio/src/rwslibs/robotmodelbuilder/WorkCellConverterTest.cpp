@@ -5,6 +5,7 @@
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QTemporaryDir>
 
@@ -16,6 +17,26 @@ static int fail (const QString& message)
 {
     std::cerr << message.toStdString () << std::endl;
     return 1;
+}
+
+static bool writeTextFile (const QString& path, const QString& text)
+{
+    QFileInfo info (path);
+    if (!QDir ().mkpath (info.absolutePath ()))
+        return false;
+    QFile file (path);
+    if (!file.open (QFile::WriteOnly | QFile::Text))
+        return false;
+    file.write (text.toUtf8 ());
+    return true;
+}
+
+static QString readTextFile (const QString& path)
+{
+    QFile file (path);
+    if (!file.open (QFile::ReadOnly | QFile::Text))
+        return QString ();
+    return QString::fromUtf8 (file.readAll ());
 }
 
 // 获取项目源码根目录路径（向上跳转 4 级目录），用于寻找 RobWork 内置的示例测试模型
@@ -53,11 +74,35 @@ int main ()
     importedDrawable.collisionModel = true;
     original.drawables.push_back (importedDrawable);
 
+    const QString stlText =
+        "solid rmb\n"
+        "facet normal 0 0 1\n"
+        "outer loop\n"
+        "vertex 0 0 0\n"
+        "vertex 1 0 0\n"
+        "vertex 0 1 0\n"
+        "endloop\n"
+        "endfacet\n"
+        "endsolid rmb\n";
+    if (!writeTextFile (QDir (dir.path ()).filePath ("meshes/imported_tool.stl"), stlText) ||
+        !writeTextFile (QDir (dir.path ()).filePath ("meshes/imported_scene.stl"), stlText))
+        return fail ("Could not create mesh fixture files.");
+
+    rws::DrawableSpec importedMesh;
+    importedMesh.name = "ImportedToolMesh";
+    importedMesh.refFrame = "Joint1";
+    importedMesh.shape = "STL";
+    importedMesh.filePath = "meshes/imported_tool.stl";
+    importedMesh.radius = 0.01;
+    importedMesh.length = 0.01;
+    importedMesh.rgb = {{0.8, 0.2, 0.1}};
+    original.drawables.push_back (importedMesh);
+
     // 注入一条 Proximity 规则
     {
         rws::ProximityRuleSpec rule;
         rule.kind = rws::ProximityRuleKind::Exclude;
-        rule.patternA = "Joint.*";
+        rule.patternA = "RoundTripBot.Joint.*";
         rule.patternB = "Table";
         original.proximitySetup.rules.push_back (rule);
     }
@@ -98,6 +143,8 @@ int main ()
         return fail ("ProximitySetup UseExcludeStaticPairs flag was not recovered.");
     if (imported.proximitySetup.rules.empty ())
         return fail ("ProximitySetup companion rules were not recovered.");
+    if (imported.proximitySetup.rules[0].patternA != "Joint.*")
+        return fail ("Device-scoped ProximitySetup pattern was not normalized.");
     if (!imported.collisionSetup.enabled)
         return fail ("CollisionSetup enable flag was not recovered.");
     if (imported.collisionSetup.file != original.collisionSetup.file)
@@ -131,6 +178,10 @@ int main ()
     if (!QFileInfo::exists (rws::RobotModelXmlWriter::serialDeviceFilePath (imported)) ||
         !QFileInfo::exists (rws::RobotModelXmlWriter::sceneFilePath (imported)))
         return fail ("Imported document targets were not written.");
+    const QString resavedDeviceXml =
+        readTextFile (rws::RobotModelXmlWriter::serialDeviceFilePath (imported));
+    if (!resavedDeviceXml.contains ("file=\"../meshes/imported_tool.stl\""))
+        return fail ("Imported device mesh path was not rebased for the new output directory.");
         
     // 尝试重新加载二次写盘后的 Scene XML，验证生成的 XML 语法无误
     rw::models::WorkCell::Ptr reloaded = rw::loaders::WorkCellLoader::Factory::load (
@@ -138,9 +189,28 @@ int main ()
     if (reloaded == NULL)
         return fail ("Saved imported scene could not be loaded.");
 
+    rws::SceneGeometrySpec sceneMesh;
+    sceneMesh.name = "ImportedSceneMesh";
+    sceneMesh.refFrame = "RobotBase";
+    sceneMesh.kind = rws::GeometryKind::STL;
+    sceneMesh.file = "meshes/imported_scene.stl";
+    sceneMesh.radius = 0.01;
+    sceneMesh.length = 0.01;
+    imported.sceneGeometries.push_back (sceneMesh);
+    if (!rws::RobotModelXmlWriter::saveFiles (imported, saveErrors))
+        return fail ("Could not save imported scene mesh geometry: " + saveErrors.join ("; "));
+    const QString resavedSceneXmlWithMesh =
+        readTextFile (rws::RobotModelXmlWriter::sceneFilePath (imported));
+    if (!resavedSceneXmlWithMesh.contains ("file=\"../meshes/imported_scene.stl\""))
+        return fail ("Imported scene mesh path was not rebased for the new output directory.");
+
     // ---- 8. 核心测试点 3：测试侧车文件 (.rmb.json) 的最高优先权加载逻辑 ----
     rws::RobotModelSpec sidecarSpec = original;
     sidecarSpec.generateDrawables = false; // 故意修改一个开关属性
+    rws::IncludeSpec sidecarInclude;
+    sidecarInclude.file = "sidecar-only-extra.wc.xml";
+    sidecarInclude.kind = rws::IncludeKind::WorkCell;
+    sidecarSpec.includes.push_back (sidecarInclude);
     if (!rws::RobotModelXmlWriter::saveSpecSidecar (sidecarSpec, saveErrors))
         return fail ("Could not save generated sidecar: " + saveErrors.join ("; "));
 
@@ -151,6 +221,36 @@ int main ()
     // 断言验证：convert 是否优先读取了 Sidecar 中的 generateDrawables=false 覆盖了内存提取值
     if (importedWithSidecar.generateDrawables)
         return fail ("Sidecar metadata was not used as the authoritative editable spec.");
+    if (importedWithSidecar.includes.size () != 1 ||
+        importedWithSidecar.includes[0].file != sidecarInclude.file)
+        return fail ("Sidecar-only include metadata was overwritten by companion XML.");
+
+    {
+        QTemporaryDir brokenSourceDir;
+        if (!brokenSourceDir.isValid ())
+            return fail ("Could not create broken-source temporary directory.");
+        rws::RobotModelSpec brokenSourceSpec =
+            rws::RobotModelXmlWriter::makeDefaultSixAxisModel (brokenSourceDir.path ());
+        brokenSourceSpec.robotName = "BrokenSourceBot";
+        QStringList brokenSaveErrors;
+        if (!rws::RobotModelXmlWriter::saveFiles (brokenSourceSpec, brokenSaveErrors))
+            return fail ("Could not save broken-source fixture: " +
+                         brokenSaveErrors.join ("; "));
+        rw::models::WorkCell::Ptr brokenWc =
+            rw::loaders::WorkCellLoader::Factory::load (
+                rws::RobotModelXmlWriter::sceneFilePath (brokenSourceSpec).toStdString ());
+        if (brokenWc == NULL)
+            return fail ("Could not load broken-source fixture before removing XML.");
+        if (!QFile::remove (rws::RobotModelXmlWriter::serialDeviceFilePath (brokenSourceSpec)))
+            return fail ("Could not remove included device XML fixture.");
+        QStringList brokenWarnings;
+        rws::RobotModelSpec brokenImported =
+            rws::WorkCellConverter::convert (*brokenWc, brokenWc->getDefaultState (),
+                                              brokenSourceDir.path ().toStdString (),
+                                              brokenWarnings);
+        if (brokenImported.drawables.empty ())
+            return fail ("Runtime drawables were discarded when source XML include was missing.");
+    }
 
     // ---- 9. 核心测试点 4：测试真实的第三方复杂机器人模型 (RobWork 官方 UR 机械臂模型) ----
     const QString urFile =

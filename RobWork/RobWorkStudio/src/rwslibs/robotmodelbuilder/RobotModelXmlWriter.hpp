@@ -223,12 +223,16 @@ class RobotModelXmlWriter
     static void writeFrameXml (QTextStream& out, const FrameSpec& frame, bool showFrameAxes);
 
     /// 生成场景几何体 XML 节点文本
-    static QString geometryShapeXml (const SceneGeometrySpec& geometry);
-    static void writeSceneGeometryXml (QTextStream& out, const SceneGeometrySpec& geometry);
+    static QString geometryShapeXml (const RobotModelSpec& spec,
+                                     const SceneGeometrySpec& geometry);
+    static void writeSceneGeometryXml (QTextStream& out,
+                                       const RobotModelSpec& spec,
+                                       const SceneGeometrySpec& geometry);
 
     /// 计算几何文件相对于保存目录的相对路径
     static QString relativeGeometryPath (const RobotModelSpec& spec,
-                                         const std::string& filePath);
+                                         const std::string& filePath,
+                                         const QString& outputXmlFile);
 
     /// 生成机器人本体 Drawable 的几何 XML 文本
     static QString drawableShapeXml (const RobotModelSpec& spec,

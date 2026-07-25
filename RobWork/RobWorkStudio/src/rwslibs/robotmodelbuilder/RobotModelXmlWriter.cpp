@@ -1321,7 +1321,7 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 
     // 7. 依次写入场景中的所有几何体模型 (sceneGeometries)
     for (const SceneGeometrySpec& geometry : spec.sceneGeometries)
-        writeSceneGeometryXml (out, geometry);
+        writeSceneGeometryXml (out, spec, geometry);
     if (!spec.sceneGeometries.empty ())
         out << "\n";
 
@@ -1794,7 +1794,8 @@ void RobotModelXmlWriter::writeFrameXml (QTextStream& out, const FrameSpec& fram
 ///   * Cylinder / Cone : radius(> 0), length=z(> 0)
 ///   * Sphere : radius(> 0)
 ///   * Mesh   : file(非空)
-QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry)
+QString RobotModelXmlWriter::geometryShapeXml (const RobotModelSpec& spec,
+                                               const SceneGeometrySpec& geometry)
 {
     switch (geometry.kind) {
         case GeometryKind::Cylinder:
@@ -1810,13 +1811,16 @@ QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry
                 .arg (number (geometry.size[0]), number (geometry.size[1]));
         case GeometryKind::STL:
             return QString ("<STL file=\"%1\" />")
-                .arg (xmlEscaped (geometry.file));
+                .arg (xmlEscaped (relativeGeometryPath (
+                    spec, geometry.file, sceneFilePath (spec))));
         case GeometryKind::Mesh:
             return QString ("<Mesh file=\"%1\" />")
-                .arg (xmlEscaped (geometry.file));
+                .arg (xmlEscaped (relativeGeometryPath (
+                    spec, geometry.file, sceneFilePath (spec))));
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (xmlEscaped (geometry.file));
+                .arg (xmlEscaped (relativeGeometryPath (
+                    spec, geometry.file, sceneFilePath (spec))));
         case GeometryKind::Box:
         default:
             return QString ("<Box x=\"%1\" y=\"%2\" z=\"%3\" />")
@@ -1830,6 +1834,7 @@ QString RobotModelXmlWriter::geometryShapeXml (const SceneGeometrySpec& geometry
 ///   * collisionModel=true → colmodel="Enabled";
 ///   * showFrameAxes 暂不适用(Milestone 3.5 不在 Drawable 上加 axes 属性)。
 void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
+                                                 const RobotModelSpec& spec,
                                                  const SceneGeometrySpec& geometry)
 {
     out << "  <Drawable name=\"" << xmlEscaped (geometry.name)
@@ -1840,7 +1845,7 @@ void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
     out << "    <RPY>" << vector3 (geometry.rpyDeg) << "</RPY>\n";
     out << "    <Pos>" << vector3 (geometry.pos) << "</Pos>\n";
     out << "    <RGB>" << vector3 (geometry.rgb) << "</RGB>\n";
-    out << "    " << geometryShapeXml (geometry) << "\n";
+    out << "    " << geometryShapeXml (spec, geometry) << "\n";
     out << "  </Drawable>\n";
 }
 
@@ -1848,16 +1853,19 @@ void RobotModelXmlWriter::writeSceneGeometryXml (QTextStream& out,
 /// 已经是相对路径的原文返回;空字符串原样返回。绝对路径走
 /// QDir::relativeFilePath,再用 "/" 统一分隔符。
 QString RobotModelXmlWriter::relativeGeometryPath (const RobotModelSpec& spec,
-                                                   const std::string& filePath)
+                                                   const std::string& filePath,
+                                                   const QString& outputXmlFile)
 {
     const QString raw = QString::fromStdString (filePath).trimmed ();
     if (raw.isEmpty ())
         return raw;
     QFileInfo info (raw);
-    if (!info.isAbsolute ())
-        return QDir::fromNativeSeparators (raw);
-    QDir outDir (QString::fromStdString (spec.saveDirectory));
-    return QDir::fromNativeSeparators (outDir.relativeFilePath (info.absoluteFilePath ()));
+    const QString absolute = info.isAbsolute ()
+                                 ? info.absoluteFilePath ()
+                                 : QDir (QString::fromStdString (spec.saveDirectory))
+                                       .absoluteFilePath (raw);
+    QDir outDir (QFileInfo (outputXmlFile).absolutePath ());
+    return QDir::fromNativeSeparators (outDir.relativeFilePath (absolute));
 }
 
 /// Milestone 4:把 DrawableSpec 序列化为对应形状的 XML 子节点。
@@ -1894,7 +1902,8 @@ QString RobotModelXmlWriter::drawableShapeXml (const RobotModelSpec& spec,
         case GeometryKind::STL:
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (xmlEscaped (relativeGeometryPath (spec, drawable.filePath)));
+                .arg (xmlEscaped (relativeGeometryPath (
+                    spec, drawable.filePath, serialDeviceFilePath (spec))));
         case GeometryKind::Unknown:
         default:
             return QString ();
@@ -1956,7 +1965,8 @@ QString RobotModelXmlWriter::collisionShapeXml (const RobotModelSpec& spec,
         case GeometryKind::Mesh:
         case GeometryKind::Polytope:
             return QString ("<Polytope file=\"%1\" />")
-                .arg (xmlEscaped (relativeGeometryPath (spec, collision.filePath)));
+                .arg (xmlEscaped (relativeGeometryPath (
+                    spec, collision.filePath, serialDeviceFilePath (spec))));
         case GeometryKind::Plane:
         case GeometryKind::STL:
         case GeometryKind::Unknown:

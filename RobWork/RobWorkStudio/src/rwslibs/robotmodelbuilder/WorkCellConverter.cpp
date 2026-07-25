@@ -268,6 +268,10 @@ void normalizeDeviceScopedNames (const rw::models::WorkCell& workcell,
         pair.first = stripDeviceScope (pair.first, prefixes);
         pair.second = stripDeviceScope (pair.second, prefixes);
     }
+    for (ProximityRuleSpec& rule : spec.proximitySetup.rules) {
+        rule.patternA = stripDeviceScope (rule.patternA, prefixes);
+        rule.patternB = stripDeviceScope (rule.patternB, prefixes);
+    }
     for (std::string& frame : spec.collisionSetup.volatileFrames)
         frame = stripDeviceScope (frame, prefixes);
     for (JointForceLimitSpec& limit : spec.dynamics.forceLimits)
@@ -440,11 +444,14 @@ bool mergeSourceGeometryDocument (const QString& fileName,
         return false;
     }
 
+    bool ok = true;
     // 递归去解析收集到的所有子 <Include> 文件
-    for (const QString& include : includes)
-        mergeSourceGeometryDocument (include, spec, warnings, visited);
+    for (const QString& include : includes) {
+        if (!mergeSourceGeometryDocument (include, spec, warnings, visited))
+            ok = false;
+    }
 
-    return true;
+    return ok;
 }
 
 /// 核心接口：扫描源 XML，使用提取到的精确几何数据重置 spec 中的几何容器
@@ -457,17 +464,25 @@ bool mergeSourceGeometry (const rw::models::WorkCell& workcell,
     if (source.isEmpty () || !QFileInfo::exists (source))
         return false;
 
+    RobotModelSpec sourceSpec = spec;
     // 清空从内存粗略提取的默认 Box 占位几何
-    spec.drawables.clear ();
-    spec.sceneGeometries.clear ();
-    spec.collisionModels.clear ();
-    
+    sourceSpec.drawables.clear ();
+    sourceSpec.sceneGeometries.clear ();
+    sourceSpec.collisionModels.clear ();
+
     // 标记当前 spec 拥有导入来源，启用语义无损保存模式
-    spec.imported.active = true;
-    
+    sourceSpec.imported.active = true;
+
     std::set< QString > visited;
     // 从主 WorkCell XML 开始递归深度扫描
-    return mergeSourceGeometryDocument (source, spec, warnings, visited);
+    if (!mergeSourceGeometryDocument (source, sourceSpec, warnings, visited))
+        return false;
+
+    spec.drawables       = sourceSpec.drawables;
+    spec.sceneGeometries = sourceSpec.sceneGeometries;
+    spec.collisionModels = sourceSpec.collisionModels;
+    spec.imported        = sourceSpec.imported;
+    return true;
 }
 
 }    // namespace
@@ -551,8 +566,6 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
         spec = sidecarSpec;
         // 恢复 saveDirectory，防止 sidecar 里的旧路径覆盖当前传入的新目录
         spec.saveDirectory = saveDirectory.empty () ? inferSaveDirectory (workcell) : saveDirectory;
-        // 重新确保伴生 XML 元数据与文件最新状态同步
-        mergeCompanionXmlMetadata (workcell, spec, warnings);
     }
 
     // ---- 8. 设备作用域前缀规范化/剥离 ----
