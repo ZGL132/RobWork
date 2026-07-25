@@ -5,7 +5,7 @@
     <Property name="ShowFrameAxis">true</Property>
   </Frame>
 
-  <Include file="UR-6-85-5-A.wc.xml" />
+  <Include file="UR.wc.xml" />
   <CollisionSetup file="CollisionSetup.xml" />
 
 </WorkCell>
