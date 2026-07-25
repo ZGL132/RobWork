@@ -32,6 +32,11 @@ static bool sameRobotModelSpec (const rws::RobotModelSpec& a, const rws::RobotMo
     if (a.showFrameAxes != b.showFrameAxes) return false;
     if (a.generateDrawables != b.generateDrawables) return false;
     if (a.generateScene != b.generateScene) return false;
+    if (a.imported.active != b.imported.active) return false;
+    if (a.imported.sceneFile != b.imported.sceneFile) return false;
+    if (a.imported.deviceFile != b.imported.deviceFile) return false;
+    if (a.imported.workcellExtensions != b.imported.workcellExtensions) return false;
+    if (a.imported.deviceExtensions != b.imported.deviceExtensions) return false;
 
     // robotBaseFrame
     if (a.robotBaseFrame.name != b.robotBaseFrame.name) return false;
@@ -98,6 +103,13 @@ static int testFullRoundTrip ()
     original.proximitySetup.enabled = true;
     original.proximitySetup.rules.push_back (
         {rws::ProximityRuleKind::Exclude, "Joint.*", "Tool.*"});
+    original.imported.active = true;
+    original.imported.sceneFile = "CustomScene.wc.xml";
+    original.imported.deviceFile = "vendor/Robot.wc.xml";
+    original.imported.workcellExtensions.push_back (
+        "<ImportedExtension semantic=\"keep\" />");
+    original.imported.deviceExtensions.push_back (
+        "<VendorDeviceData value=\"preserve\" />");
 
     const std::string json = rws::RobotModelSpecJson::toJson (original);
     rws::RobotModelSpec decoded;

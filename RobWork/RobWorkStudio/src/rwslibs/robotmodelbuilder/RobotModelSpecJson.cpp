@@ -702,6 +702,22 @@ QJsonObject RobotModelSpecJson::toObject(const RobotModelSpec& spec)
     obj["generateDrawables"]     = spec.generateDrawables;
     obj["generateScene"]         = spec.generateScene;
 
+    {
+        QJsonObject imported;
+        imported["active"] = spec.imported.active;
+        imported["sceneFile"] = QString::fromStdString (spec.imported.sceneFile);
+        imported["deviceFile"] = QString::fromStdString (spec.imported.deviceFile);
+        QJsonArray workcellExtensions;
+        for (const std::string& extension : spec.imported.workcellExtensions)
+            workcellExtensions.append (QString::fromStdString (extension));
+        imported["workcellExtensions"] = workcellExtensions;
+        QJsonArray deviceExtensions;
+        for (const std::string& extension : spec.imported.deviceExtensions)
+            deviceExtensions.append (QString::fromStdString (extension));
+        imported["deviceExtensions"] = deviceExtensions;
+        obj["imported"] = imported;
+    }
+
     obj["robotBaseFrame"] = writeFrameSpec(spec.robotBaseFrame);
 
     // Arrays
@@ -798,6 +814,33 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
     spec.showFrameAxes          = dataObject.value("showFrameAxes").toBool(false);
     spec.generateDrawables      = dataObject.value("generateDrawables").toBool(false);
     spec.generateScene          = dataObject.value("generateScene").toBool(false);
+
+    spec.imported = ImportedDocumentSpec ();
+    const QJsonObject imported = dataObject.value ("imported").toObject ();
+    if (!imported.isEmpty ()) {
+        spec.imported.active = imported.value ("active").toBool (false);
+        spec.imported.sceneFile = imported.value ("sceneFile").toString ().toStdString ();
+        spec.imported.deviceFile = imported.value ("deviceFile").toString ().toStdString ();
+        const auto readExtensions = [&] (const char* key,
+                                         std::vector< std::string >& output) {
+            const QJsonValue value = imported.value (QLatin1String (key));
+            if (!value.isUndefined () && !value.isArray ()) {
+                if (error) *error = std::string (key) + " must be an array";
+                return false;
+            }
+            for (const QJsonValue& entry : value.toArray ()) {
+                if (!entry.isString ()) {
+                    if (error) *error = std::string (key) + " must contain strings";
+                    return false;
+                }
+                output.push_back (entry.toString ().toStdString ());
+            }
+            return true;
+        };
+        if (!readExtensions ("workcellExtensions", spec.imported.workcellExtensions) ||
+            !readExtensions ("deviceExtensions", spec.imported.deviceExtensions))
+            return false;
+    }
 
     // robotBaseFrame (object)
     {

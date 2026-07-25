@@ -10,7 +10,7 @@ namespace rws {
 class RobotModelSpecJson
 {
   public:
-    static const int SchemaVersion = 1;
+    static const int SchemaVersion = 2;
     static QJsonObject toObject (const RobotModelSpec& spec);
     static bool fromObject (const QJsonObject& dataObject, RobotModelSpec& spec,
                             std::string* error = nullptr);

@@ -422,8 +422,20 @@ struct ProximitySetupSpec
 };
 
 /// 机器人模型顶层数据结构 (Top-Level Root Spec)
+/// Import-only data that is not represented by RobotModelBuilder controls.
+/// It allows a normalized save to keep source document targets and extensions.
+struct ImportedDocumentSpec
+{
+    bool active = false;
+    std::string sceneFile;
+    std::string deviceFile;
+    std::vector< std::string > workcellExtensions;
+    std::vector< std::string > deviceExtensions;
+};
+
 struct RobotModelSpec
 {
+    ImportedDocumentSpec imported;
     std::string robotName;              ///< 机器人模型名称 (如 "GenericSixAxis")
     std::string saveDirectory;          ///< XML 文件保存的目标磁盘目录
     KinematicsViewMode mode;            ///< 运动学视图模式 (JointRPYPos / DHProjection)
