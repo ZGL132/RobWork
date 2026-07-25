@@ -39,114 +39,89 @@
     <Pos>0 0 0</Pos>
     <Property name="ShowFrameAxis">true</Property>
   </Frame>
-  <Drawable name="Base" refframe="Base" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="flangeGeo" refframe="Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/robotFlange" />
   </Drawable>
-  <Drawable name="Joint2" refframe="Joint2" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="BaseGeo" refframe="Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/base" />
   </Drawable>
-  <Drawable name="Joint3" refframe="Joint3" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="Joint0Geo" refframe="Joint0">
+    <RPY>180 90 0</RPY>
+    <Pos>0 0 0.003</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint0" />
   </Drawable>
-  <Drawable name="Joint5" refframe="Joint5" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="Joint1Geo" refframe="Joint1">
+    <RPY>0 0 90</RPY>
+    <Pos>0.0862 0 0</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint1" />
   </Drawable>
-  <Drawable name="Joint1" refframe="Joint1" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="Joint2Geo" refframe="Joint2">
+    <RPY>0 0 90</RPY>
+    <Pos>0.5112 0 0</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint2" />
   </Drawable>
-  <Drawable name="Joint4" refframe="Joint4" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="Joint3Geo" refframe="Joint3">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.90363 0</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint3" />
   </Drawable>
-  <Drawable name="Joint0" refframe="Joint0" colmodel="Enabled">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
+  <Drawable name="Joint4Geo" refframe="Joint4">
+    <RPY>0 90 0</RPY>
+    <Pos>0 -0.109 -0.90363</Pos>
     <RGB>0.6 0.6 0.6</RGB>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint4" />
   </Drawable>
-  <Drawable name="Joint1Housing" refframe="Joint0">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.095" z="0.1" />
+  <Drawable name="Joint5Geo" refframe="Joint5">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.99663 -0.109</Pos>
+    <RGB>0.6 0.6 0.6</RGB>
+    <Polytope file="geometry/joint5" />
   </Drawable>
-  <Drawable name="Joint2Housing" refframe="Joint1">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.089" z="0.094" />
-  </Drawable>
-  <Drawable name="Joint3Housing" refframe="Joint2">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.083" z="0.088" />
-  </Drawable>
-  <Drawable name="Joint4Housing" refframe="Joint3">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.077" z="0.082" />
-  </Drawable>
-  <Drawable name="Joint5Housing" refframe="Joint4">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.071" z="0.076" />
-  </Drawable>
-  <Drawable name="Joint6Housing" refframe="Joint5">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0</Pos>
-    <RGB>0.45 0.45 0.48</RGB>
-    <Cylinder radius="0.065" z="0.07" />
-  </Drawable>
-  <Drawable name="Link1To2" refframe="Joint0">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0.0446</Pos>
-    <RGB>0.35 0.45 0.65</RGB>
-    <Cylinder radius="0.055" z="0.0892" />
-  </Drawable>
-  <Drawable name="Link2To3" refframe="Joint1">
-    <RPY>0 -90 0</RPY>
-    <Pos>-0.2125 0 0</Pos>
-    <RGB>0.35 0.45 0.65</RGB>
-    <Cylinder radius="0.05" z="0.425" />
-  </Drawable>
-  <Drawable name="Link3To4" refframe="Joint2">
-    <RPY>0 -90 0</RPY>
-    <Pos>-0.196215 0 0</Pos>
-    <RGB>0.35 0.45 0.65</RGB>
-    <Cylinder radius="0.045" z="0.39243" />
-  </Drawable>
-  <Drawable name="Link4To5" refframe="Joint3">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0.0545</Pos>
-    <RGB>0.35 0.45 0.65</RGB>
-    <Cylinder radius="0.04" z="0.109" />
-  </Drawable>
-  <Drawable name="Link5To6" refframe="Joint4">
-    <RPY>0 0 0</RPY>
-    <Pos>0 0 0.0465</Pos>
-    <RGB>0.35 0.45 0.65</RGB>
-    <Cylinder radius="0.035" z="0.093" />
-  </Drawable>
+  <CollisionModel name="BaseGeoCollision" refframe="Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+    <Polytope file="geometry/robotFlange" />
+  </CollisionModel>
+  <CollisionModel name="Joint0GeoCollision" refframe="Joint0">
+    <RPY>180 90 0</RPY>
+    <Pos>0 0 0.003</Pos>
+    <Polytope file="geometry/joint0" />
+  </CollisionModel>
+  <CollisionModel name="Joint1GeoCollision" refframe="Joint1">
+    <RPY>0 0 90</RPY>
+    <Pos>0.0862 0 0</Pos>
+    <Polytope file="geometry/joint1" />
+  </CollisionModel>
+  <CollisionModel name="Joint2GeoCollision" refframe="Joint2">
+    <RPY>0 0 90</RPY>
+    <Pos>0.5112 0 0</Pos>
+    <Polytope file="geometry/joint2" />
+  </CollisionModel>
+  <CollisionModel name="Joint3GeoCollision" refframe="Joint3">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.90363 0</Pos>
+    <Polytope file="geometry/joint3" />
+  </CollisionModel>
+  <CollisionModel name="Joint4GeoCollision" refframe="Joint4">
+    <RPY>0 90 0</RPY>
+    <Pos>0 -0.109 -0.90363</Pos>
+    <Polytope file="geometry/joint4" />
+  </CollisionModel>
+  <CollisionModel name="Joint5GeoCollision" refframe="Joint5">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.99663 -0.109</Pos>
+    <Polytope file="geometry/joint5" />
+  </CollisionModel>
   <PosLimit refjoint="Joint0" min="-180" max="180" />
   <PosLimit refjoint="Joint1" min="-270" max="90" />
   <PosLimit refjoint="Joint2" min="-180" max="180" />
