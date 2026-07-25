@@ -34,10 +34,19 @@ static bool sameRobotModelSpec (const rws::RobotModelSpec& a, const rws::RobotMo
     if (a.generateDrawables != b.generateDrawables) return false;
     if (a.generateScene != b.generateScene) return false;
     if (a.imported.active != b.imported.active) return false;
-    if (a.imported.sceneFile != b.imported.sceneFile) return false;
-    if (a.imported.deviceFile != b.imported.deviceFile) return false;
+    if (a.imported.sourceSceneFile != b.imported.sourceSceneFile) return false;
+    if (a.imported.sourceDeviceFile != b.imported.sourceDeviceFile) return false;
+    if (a.imported.sourceCollisionSetupFile != b.imported.sourceCollisionSetupFile) return false;
+    if (a.imported.sourceProximitySetupFile != b.imported.sourceProximitySetupFile) return false;
     if (a.imported.workcellExtensions != b.imported.workcellExtensions) return false;
     if (a.imported.deviceExtensions != b.imported.deviceExtensions) return false;
+    if (a.exportLayout.deviceFile != b.exportLayout.deviceFile) return false;
+    if (a.exportLayout.sceneFile != b.exportLayout.sceneFile) return false;
+    if (a.exportLayout.dynamicWorkCellFile != b.exportLayout.dynamicWorkCellFile) return false;
+    if (a.exportLayout.collisionSetupFile != b.exportLayout.collisionSetupFile) return false;
+    if (a.exportLayout.proximitySetupFile != b.exportLayout.proximitySetupFile) return false;
+    if (a.exportLayout.preserveImportedFileLayout != b.exportLayout.preserveImportedFileLayout)
+        return false;
 
     // robotBaseFrame
     if (a.robotBaseFrame.name != b.robotBaseFrame.name) return false;
@@ -130,8 +139,16 @@ static int testFullRoundTrip ()
     original.proximitySetup.rules.push_back (
         {rws::ProximityRuleKind::Exclude, "Joint.*", "Tool.*"});
     original.imported.active = true;
-    original.imported.sceneFile = "CustomScene.wc.xml";
-    original.imported.deviceFile = "vendor/Robot.wc.xml";
+    original.imported.sourceSceneFile = "CustomScene.wc.xml";
+    original.imported.sourceDeviceFile = "vendor/Robot.wc.xml";
+    original.imported.sourceCollisionSetupFile = "vendor/CollisionSetup.xml";
+    original.imported.sourceProximitySetupFile = "vendor/ProximitySetup.xml";
+    original.exportLayout.preserveImportedFileLayout = true;
+    original.exportLayout.deviceFile = "export/JsonRoundTrip.wc.xml";
+    original.exportLayout.sceneFile = "export/JsonRoundTripScene.wc.xml";
+    original.exportLayout.dynamicWorkCellFile = "export/JsonRoundTrip.dwc.xml";
+    original.exportLayout.collisionSetupFile = "export/CollisionSetup.xml";
+    original.exportLayout.proximitySetupFile = "export/ProximitySetup.xml";
     original.imported.workcellExtensions.push_back (
         "<ImportedExtension semantic=\"keep\" />");
     original.imported.deviceExtensions.push_back (

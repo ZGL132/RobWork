@@ -136,7 +136,8 @@ int main ()
         return fail ("Scene generation flag should be true for loaded scene.");
     if (!imported.proximitySetup.enabled)
         return fail ("ProximitySetup enable flag was not recovered.");
-    if (imported.proximitySetup.file != original.proximitySetup.file)
+    if (QFileInfo (rws::RobotModelXmlWriter::proximitySetupFilePath (imported)).fileName () !=
+        "ProximitySetup.xml")
         return fail ("ProximitySetup filename was not recovered.");
     if (!imported.proximitySetup.useExcludeStaticPairs)
         return fail ("ProximitySetup UseExcludeStaticPairs flag was not recovered.");
@@ -146,7 +147,8 @@ int main ()
         return fail ("Device-scoped ProximitySetup pattern was not normalized.");
     if (!imported.collisionSetup.enabled)
         return fail ("CollisionSetup enable flag was not recovered.");
-    if (imported.collisionSetup.file != original.collisionSetup.file)
+    if (QFileInfo (rws::RobotModelXmlWriter::collisionSetupFilePath (imported)).fileName () !=
+        "CollisionSetup.xml")
         return fail ("CollisionSetup filename was not recovered.");
     if (!imported.collisionSetup.excludeStaticPairs)
         return fail ("CollisionSetup ExcludeStaticPairs flag was not recovered.");
@@ -167,8 +169,8 @@ int main ()
     if (!imported.imported.active)
         return fail ("Imported document metadata was not set.");
     // 修改导入目标文件名（测试多级相对目录）
-    imported.imported.deviceFile = "imported/RobotDevice.wc.xml";
-    imported.imported.sceneFile = "imported/RobotScene.wc.xml";
+    imported.exportLayout.deviceFile = "imported/RobotDevice.wc.xml";
+    imported.exportLayout.sceneFile = "imported/RobotScene.wc.xml";
     if (!rws::RobotModelXmlWriter::saveFiles (imported, saveErrors))
         return fail ("Could not save imported geometry: " + saveErrors.join ("; "));
     

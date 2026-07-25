@@ -350,7 +350,8 @@ int main (int argc, char** argv)
             return fail ("Child joint orientation should cancel the parent link axis alignment.");
 
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (result.spec);
-        if (!contains (collisionXml, "<FramePair first=\"joint_y\" second=\"joint_z\"/>"))
+        if (!contains (collisionXml,
+                       "<FramePair first=\"axis_adjacency_robot.joint_y\" second=\"axis_adjacency_robot.joint_z\"/>"))
             return fail ("Automatic adjacent collision exclusion should use real neighboring joints.");
         if (collisionXml.contains ("axis_compensation"))
             return fail ("Collision setup must not contain axis compensation frames.");
@@ -797,6 +798,28 @@ int main (int argc, char** argv)
     // Scene XML 应通过 <Include> 引用机器人文件
     if (!contains (sceneXml, "<Include file=\"GenericSixAxis.wc.xml\" />"))
         return fail ("Scene XML missing include.");
+
+    // Import provenance must never choose the files produced by a new save.
+    // This reproduces importing a scene that includes vendor UR.wc.xml, then
+    // saving it as a normalized model with a different Robot name.
+    {
+        RobotModelSpec imported = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        imported.robotName = "UR-6-85-5-A";
+        imported.imported.active = true;
+        imported.imported.sourceDeviceFile = "UR.wc.xml";
+        imported.imported.sourceSceneFile = "UR-6-85-5-AScene.wc.xml";
+        const QString importedScene = RobotModelXmlWriter::makeSceneXml (imported);
+        if (!contains (importedScene, "<Include file=\"UR-6-85-5-A.wc.xml\" />"))
+            return fail ("Imported source device filename must not override the export include.");
+        if (QFileInfo (RobotModelXmlWriter::serialDeviceFilePath (imported)).fileName () !=
+            "UR-6-85-5-A.wc.xml")
+            return fail ("Imported source device filename must not override the export device path.");
+
+        imported.exportLayout.preserveImportedFileLayout = true;
+        if (!contains (RobotModelXmlWriter::makeSceneXml (imported),
+                       "<Include file=\"UR.wc.xml\" />"))
+            return fail ("Preserve imported file layout should opt in to the source device filename.");
+    }
 
     // ---- XML escaping:用户可控名字 / 路径 / 文本必须正确转义 ----
     {
@@ -2319,9 +2342,11 @@ int main (int argc, char** argv)
 
         if (!contains (collisionXml, "<CollisionSetup>"))
             return fail ("CollisionSetup XML missing root.");
-        if (!contains (collisionXml, "<FramePair first=\"Joint1\" second=\"Joint2\"/>"))
+        if (!contains (collisionXml,
+                       "<FramePair first=\"GenericSixAxis.Joint1\" second=\"GenericSixAxis.Joint2\"/>"))
             return fail ("Adjacent Joint1-Joint2 should be excluded from collision checks.");
-        if (!contains (collisionXml, "<FramePair first=\"Joint5\" second=\"Joint6\"/>"))
+        if (!contains (collisionXml,
+                       "<FramePair first=\"GenericSixAxis.Joint5\" second=\"GenericSixAxis.Joint6\"/>"))
             return fail ("Adjacent Joint5-Joint6 should be excluded from collision checks.");
         // 默认有 5 个相邻关节 pair (Joint1-Joint2, ..., Joint5-Joint6)
         if (collisionXml.count ("<FramePair ") != 6)
@@ -2333,10 +2358,31 @@ int main (int argc, char** argv)
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (setup);
 
-        if (!contains (collisionXml, "<FramePair first=\"Base\" second=\"Joint1\"/>"))
+        if (!contains (collisionXml,
+                       "<FramePair first=\"GenericSixAxis.Base\" second=\"GenericSixAxis.Joint1\"/>"))
             return fail ("Default CollisionSetup should auto-exclude Base-Joint1.");
         if (collisionXml.count ("<FramePair ") != 6)
             return fail ("Default 6-axis robot should auto-exclude Base-Joint1 plus 5 adjacent joint pairs.");
+    }
+
+    // A CollisionSetup referenced from a scene must use the device-scoped names
+    // that RobWork assigns to frames originating in the included SerialDevice.
+    {
+        RobotModelSpec scoped =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        scoped.robotName = "Scoped Robot";
+        FramePairSpec pair;
+        pair.first  = "Joint3";
+        pair.second = "Table";
+        scoped.collisionSetup.excludePairs.push_back (pair);
+        scoped.collisionSetup.volatileFrames.push_back ("Joint3");
+
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (scoped);
+        if (!contains (collisionXml,
+                       "<FramePair first=\"Scoped_Robot.Joint3\" second=\"Table\"/>"))
+            return fail ("CollisionSetup should scope robot frames but leave scene frames unscoped.");
+        if (!contains (collisionXml, "<Volatile>Scoped_Robot.Joint3</Volatile>"))
+            return fail ("CollisionSetup should scope volatile robot frames.");
     }
 
     // ---- Test 3: 用户可显式配置 robot/environment frame pair ----
@@ -2353,7 +2399,8 @@ int main (int argc, char** argv)
                          envErrors.join ("; "));
 
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (env);
-        if (!contains (collisionXml, "<FramePair first=\"Joint3\" second=\"Table\"/>"))
+        if (!contains (collisionXml,
+                       "<FramePair first=\"GenericSixAxis.Joint3\" second=\"Table\"/>"))
             return fail ("Configured robot/environment frame pair should be emitted.");
     }
 
@@ -2438,10 +2485,13 @@ int main (int argc, char** argv)
     {
         RobotModelSpec empty =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-        empty.collisionSetup.file.clear ();
         QStringList emptyErrors;
-        if (RobotModelXmlWriter::validate (empty, emptyErrors))
-            return fail ("CollisionSetup with empty file path should fail validation.");
+        if (!RobotModelXmlWriter::validate (empty, emptyErrors))
+            return fail ("Default CollisionSetup output filename should validate: " +
+                         emptyErrors.join ("; "));
+        if (QFileInfo (RobotModelXmlWriter::collisionSetupFilePath (empty)).fileName () !=
+            "CollisionSetup.xml")
+            return fail ("Empty CollisionSetup output override should use the canonical filename.");
     }
 
     // ---- Test 8: ProximitySetup patternA/patternB 不能为空 ----
@@ -2498,10 +2548,10 @@ int main (int argc, char** argv)
         RobotModelSpec abs =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         // 把 collision file 改成绝对路径
-        abs.collisionSetup.file =
+        abs.exportLayout.collisionSetupFile =
             (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir/CollisionSetup.xml").toStdString ();
         abs.proximitySetup.enabled = true;
-        abs.proximitySetup.file =
+        abs.exportLayout.proximitySetupFile =
             (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir/ProximitySetup.xml").toStdString ();
         // 把 saveDirectory 设到 m6_abs_dir 的 sibling,这样相对引用会非平凡
         abs.saveDirectory = (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir").toStdString ();
@@ -2583,9 +2633,9 @@ int main (int argc, char** argv)
         QDir ().mkpath (dir);
         RobotModelSpec nested =
             RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
-        nested.collisionSetup.file = "setup/CollisionSetup.xml";
+        nested.exportLayout.collisionSetupFile = "setup/CollisionSetup.xml";
         nested.proximitySetup.enabled = true;
-        nested.proximitySetup.file = "setup/ProximitySetup.xml";
+        nested.exportLayout.proximitySetupFile = "setup/ProximitySetup.xml";
 
         QStringList nestedErrors;
         if (!RobotModelXmlWriter::saveFiles (nested, nestedErrors))

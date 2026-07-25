@@ -108,10 +108,10 @@ class RobotModelXmlWriter
     /// 获取 DynamicWorkCell XML 的完整目标路径 (saveDirectory / robotName.dwc.xml)
     static QString dynamicWorkCellFilePath (const RobotModelSpec& spec);
 
-    /// 获取 CollisionSetup XML 的完整目标路径 (saveDirectory / collisionSetup.file)
+    /// 获取 CollisionSetup XML 的完整目标路径 (saveDirectory / exportLayout override)
     static QString collisionSetupFilePath (const RobotModelSpec& spec);
 
-    /// 获取 ProximitySetup XML 的完整目标路径 (saveDirectory / proximitySetup.file)
+    /// 获取 ProximitySetup XML 的完整目标路径 (saveDirectory / exportLayout override)
     static QString proximitySetupFilePath (const RobotModelSpec& spec);
 
     static QString specSidecarFilePath (const RobotModelSpec& spec);

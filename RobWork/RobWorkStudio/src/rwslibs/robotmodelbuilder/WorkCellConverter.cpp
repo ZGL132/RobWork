@@ -399,13 +399,13 @@ bool mergeSourceGeometryDocument (const QString& fileName,
         if (name == "SerialDevice") {
             deviceDocument = true;
             // 记录导入的设备文件相对路径
-            spec.imported.deviceFile = QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile)
-                                          .toStdString ();
+            spec.imported.sourceDeviceFile =
+                QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile).toStdString ();
         }
         else if (name == "WorkCell") {
             // 记录导入的场景文件相对路径
-            spec.imported.sceneFile = QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile)
-                                         .toStdString ();
+            spec.imported.sourceSceneFile =
+                QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile).toStdString ();
         }
         else if (name == "Include" && !deviceDocument) {
             // 收集 Scene XML 中通过 <Include file="..."/> 包含的子 XML 路径
@@ -1245,7 +1245,7 @@ void WorkCellConverter::mergeCompanionXmlMetadata (const rw::models::WorkCell& w
             collisionFile = xml.attributes ().value ("file").toString ().trimmed ();
             if (!collisionFile.isEmpty ()) {
                 spec.collisionSetup.enabled = true; // 标记开启碰撞矩阵导出
-                spec.collisionSetup.file = collisionFile.toStdString (); // 记录碰撞文件名
+                spec.imported.sourceCollisionSetupFile = collisionFile.toStdString ();
             }
         }
         // 分支 C: 处理 <ProximitySetup file="..."> 节点
@@ -1253,7 +1253,7 @@ void WorkCellConverter::mergeCompanionXmlMetadata (const rw::models::WorkCell& w
             proximityFile = xml.attributes ().value ("file").toString ().trimmed ();
             if (!proximityFile.isEmpty ()) {
                 spec.proximitySetup.enabled = true; // 标记开启临近查询导出
-                spec.proximitySetup.file = proximityFile.toStdString (); // 记录临近查询文件名
+                spec.imported.sourceProximitySetupFile = proximityFile.toStdString ();
             }
         }
     }

@@ -392,7 +392,6 @@ struct FramePairSpec
 struct CollisionSetupSpec
 {
     bool enabled                       = true;  ///< 是否使能并输出 CollisionSetup.xml
-    std::string file                   = "CollisionSetup.xml"; ///< 输出的碰撞配置文件文件名
     bool excludeBaseToFirstJoint       = true;  ///< Whether to auto-exclude Base and first kinematic joint
     bool excludeAdjacentLinkPairs      = true;  ///< 是否自动排除相邻关节连杆对的碰撞检查
     bool excludeStaticPairs            = false; ///< 是否排除静态固定参考系之间的碰撞检查
@@ -419,27 +418,40 @@ struct ProximityRuleSpec
 struct ProximitySetupSpec
 {
     bool enabled                  = false; ///< 是否使能并输出 ProximitySetup.xml
-    std::string file              = "ProximitySetup.xml"; ///< 输出的临近检测配置文件文件名
     bool useIncludeAll            = true;  ///< 是否默认包含所有检测对 (UseIncludeAll)
     bool useExcludeStaticPairs    = false; ///< 是否排除静态参考系对 (UseExcludeStaticPairs)
     std::vector< ProximityRuleSpec > rules; ///< 自定义临近检测通配规则列表
 };
 
 /// 机器人模型顶层数据结构 (Top-Level Root Spec)
-/// Import-only data that is not represented by RobotModelBuilder controls.
-/// It allows a normalized save to keep source document targets and extensions.
+/// Import-only source provenance. It is never used as an export target.
 struct ImportedDocumentSpec
 {
     bool active = false;
-    std::string sceneFile;
-    std::string deviceFile;
+    std::string sourceSceneFile;
+    std::string sourceDeviceFile;
+    std::string sourceCollisionSetupFile;
+    std::string sourceProximitySetupFile;
     std::vector< std::string > workcellExtensions;
     std::vector< std::string > deviceExtensions;
+};
+
+/// Optional output file overrides. Empty values use the canonical robot-name
+/// based filenames, so renaming a model also renames its default outputs.
+struct ExportLayoutSpec
+{
+    bool preserveImportedFileLayout = false;
+    std::string deviceFile;
+    std::string sceneFile;
+    std::string dynamicWorkCellFile;
+    std::string collisionSetupFile;
+    std::string proximitySetupFile;
 };
 
 struct RobotModelSpec
 {
     ImportedDocumentSpec imported;
+    ExportLayoutSpec exportLayout;
     std::string robotName;              ///< 机器人模型名称 (如 "GenericSixAxis")
     std::string saveDirectory;          ///< XML 文件保存的目标磁盘目录
     KinematicsViewMode mode;            ///< 运动学视图模式 (JointRPYPos / DHProjection)

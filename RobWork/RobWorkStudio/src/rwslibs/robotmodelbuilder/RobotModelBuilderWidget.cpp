@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -318,6 +319,21 @@ void RobotModelBuilderWidget::buildUi ()
     form->addRow ("Options", options);
     root->addLayout (form);
 
+    QGroupBox* outputFiles = new QGroupBox ("Output Files");
+    QFormLayout* outputForm = new QFormLayout (outputFiles);
+    _deviceFile = new QLineEdit ();
+    _sceneFile = new QLineEdit ();
+    _dynamicWorkCellFile = new QLineEdit ();
+    _collisionSetupFile = new QLineEdit ();
+    _preserveImportedFileLayout = new QCheckBox ("Preserve imported file layout");
+    outputForm->addRow ("Device file", _deviceFile);
+    outputForm->addRow ("Scene file", _sceneFile);
+    outputForm->addRow ("Dynamic WorkCell", _dynamicWorkCellFile);
+    outputForm->addRow ("Collision setup", _collisionSetupFile);
+    outputForm->addRow (_preserveImportedFileLayout);
+    root->addWidget (outputFiles);
+    updateOutputFilePlaceholders ();
+
     QTabWidget* tabs = new QTabWidget ();
     _mainTabs = tabs;
 
@@ -417,14 +433,11 @@ void RobotModelBuilderWidget::buildUi ()
     QWidget* collisionSetupOptions = new QWidget ();
     QHBoxLayout* collisionSetupOptionLay = new QHBoxLayout (collisionSetupOptions);
     _collisionSetupEnabled = new QCheckBox ("Enable CollisionSetup");
-    _collisionSetupFile = new QLineEdit ("CollisionSetup.xml");
     _excludeBaseFirst = new QCheckBox ("Auto exclude base-first");
     _excludeAdjacent = new QCheckBox ("Auto exclude adjacent joints");
     _excludeStatic = new QCheckBox ("Exclude static pairs");
     collisionSetupOptionLay->setContentsMargins (0, 0, 0, 0);
     collisionSetupOptionLay->addWidget (_collisionSetupEnabled);
-    collisionSetupOptionLay->addWidget (new QLabel ("File"));
-    collisionSetupOptionLay->addWidget (_collisionSetupFile);
     collisionSetupOptionLay->addWidget (_excludeBaseFirst);
     collisionSetupOptionLay->addWidget (_excludeAdjacent);
     collisionSetupOptionLay->addWidget (_excludeStatic);
@@ -639,6 +652,8 @@ void RobotModelBuilderWidget::buildUi ()
     //  信号 -> 槽连接
     // -------------------------------------------------------------------------
     connect (browse, SIGNAL (clicked ()), this, SLOT (browseSaveDirectory ()));
+    connect (_robotName, &QLineEdit::textChanged, this,
+             [this] (const QString&) { updateOutputFilePlaceholders (); });
     connect (_mode, SIGNAL (currentIndexChanged (int)), this, SLOT (modeChanged (int)));
     connect (_generateScene, SIGNAL (toggled (bool)), this, SLOT (sceneGenerationToggled (bool)));
     connect (importUrdfBtn, SIGNAL (clicked ()), this, SLOT (importUrdf ()));
@@ -809,6 +824,15 @@ void RobotModelBuilderWidget::browseSaveDirectory ()
         QFileDialog::getExistingDirectory (this, "Choose save directory", _saveDirectory->text ());
     if (!dir.isEmpty ())
         _saveDirectory->setText (dir);
+}
+
+void RobotModelBuilderWidget::updateOutputFilePlaceholders ()
+{
+    const QString robotName = RobotModelXmlWriter::sanitizeFileBaseName (_robotName->text ());
+    _deviceFile->setPlaceholderText (robotName + ".wc.xml");
+    _sceneFile->setPlaceholderText (robotName + "Scene.wc.xml");
+    _dynamicWorkCellFile->setPlaceholderText (robotName + ".dwc.xml");
+    _collisionSetupFile->setPlaceholderText ("CollisionSetup.xml");
 }
 
 // =============================================================================
@@ -1168,8 +1192,6 @@ void RobotModelBuilderWidget::generateDefaultCollisionSetup ()
 {
     RobotModelSpec spec = collectSpec ();
     spec.collisionSetup.enabled = true;
-    if (spec.collisionSetup.file.empty ())
-        spec.collisionSetup.file = "CollisionSetup.xml";
     spec.collisionSetup.excludeBaseToFirstJoint = true;
     spec.collisionSetup.excludeAdjacentLinkPairs = true;
     spec.collisionSetup.excludeStaticPairs = false;
@@ -1362,6 +1384,14 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     _syncingTables = true;
     _robotName->setText (QString::fromStdString (spec.robotName));
     _saveDirectory->setText (QString::fromStdString (spec.saveDirectory));
+    _deviceFile->setText (QString::fromStdString (spec.exportLayout.deviceFile));
+    _sceneFile->setText (QString::fromStdString (spec.exportLayout.sceneFile));
+    _dynamicWorkCellFile->setText (
+        QString::fromStdString (spec.exportLayout.dynamicWorkCellFile));
+    _collisionSetupFile->setText (
+        QString::fromStdString (spec.exportLayout.collisionSetupFile));
+    _preserveImportedFileLayout->setChecked (spec.exportLayout.preserveImportedFileLayout);
+    updateOutputFilePlaceholders ();
     _mode->setCurrentIndex (spec.mode == KinematicsViewMode::DHProjection ? 1 : 0);
     _showFrameAxes->setChecked (spec.showFrameAxes);
     _generateDrawables->setChecked (spec.generateDrawables);
@@ -1413,6 +1443,13 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
 {
     RobotModelSpec spec;
     spec.imported = _importedDocument;
+    spec.exportLayout.deviceFile = _deviceFile->text ().trimmed ().toStdString ();
+    spec.exportLayout.sceneFile = _sceneFile->text ().trimmed ().toStdString ();
+    spec.exportLayout.dynamicWorkCellFile =
+        _dynamicWorkCellFile->text ().trimmed ().toStdString ();
+    spec.exportLayout.collisionSetupFile =
+        _collisionSetupFile->text ().trimmed ().toStdString ();
+    spec.exportLayout.preserveImportedFileLayout = _preserveImportedFileLayout->isChecked ();
     spec.robotName         = _robotName->text ().toStdString ();
     spec.saveDirectory     = _saveDirectory->text ().toStdString ();
     spec.mode              = _mode->currentIndex () == 1 ? KinematicsViewMode::DHProjection
@@ -1426,8 +1463,6 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     spec.dynamics.baseMaterial = _baseMaterial->text ().toStdString ();
     if (_collisionSetupEnabled != NULL)
         spec.collisionSetup.enabled = _collisionSetupEnabled->isChecked ();
-    if (_collisionSetupFile != NULL)
-        spec.collisionSetup.file = _collisionSetupFile->text ().toStdString ();
     if (_excludeBaseFirst != NULL)
         spec.collisionSetup.excludeBaseToFirstJoint = _excludeBaseFirst->isChecked ();
     if (_excludeAdjacent != NULL)
@@ -1815,8 +1850,6 @@ void RobotModelBuilderWidget::fillCollisionSetupTab (const RobotModelSpec& spec)
 {
     if (_collisionSetupEnabled != NULL)
         _collisionSetupEnabled->setChecked (spec.collisionSetup.enabled);
-    if (_collisionSetupFile != NULL)
-        _collisionSetupFile->setText (QString::fromStdString (spec.collisionSetup.file));
     if (_excludeBaseFirst != NULL)
         _excludeBaseFirst->setChecked (spec.collisionSetup.excludeBaseToFirstJoint);
     if (_excludeAdjacent != NULL)

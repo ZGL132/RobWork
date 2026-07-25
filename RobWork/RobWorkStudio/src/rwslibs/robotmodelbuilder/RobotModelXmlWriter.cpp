@@ -101,6 +101,34 @@ QString exportedRobotName (const RobotModelSpec& spec)
     return RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (spec.robotName));
 }
 
+QString collisionSetupFrameName (const RobotModelSpec& spec, const std::string& frame)
+{
+    const QString name = QString::fromStdString (frame);
+    if (!spec.generateScene || name.isEmpty () || name.contains ('.'))
+        return name;
+
+    const std::set< std::string > deviceFrames = allFrameNames (spec);
+    if (deviceFrames.find (frame) == deviceFrames.end ())
+        return name;
+
+    return exportedRobotName (spec) + "." + name;
+}
+
+QString outputFilePath (const RobotModelSpec& spec,
+                        const std::string& configuredFile,
+                        const std::string& importedFile,
+                        const QString& defaultFile)
+{
+    QDir dir (QString::fromStdString (spec.saveDirectory));
+    const QString file = QString::fromStdString (configuredFile).trimmed ();
+    const QString source = QString::fromStdString (importedFile).trimmed ();
+    if (!file.isEmpty ())
+        return dir.filePath (file);
+    if (spec.exportLayout.preserveImportedFileLayout && !source.isEmpty ())
+        return dir.filePath (source);
+    return dir.filePath (defaultFile);
+}
+
 /// XML 特殊字符转义:任何来自用户输入或 URDF 的字符串在写入 XML 之前都走这里,
 /// 避免 & / < / > / " / ' 五个字符破坏 XML 结构。
 QString xmlEscaped (const QString& value)
@@ -511,13 +539,11 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     // 把 includes 留空,Writer 会在 makeSceneXml 自动注入默认 Include 项,
     // 避免 robotName 改了文件名还指向旧 include 的陷阱。
     spec.collisionSetup.enabled                  = true;
-    spec.collisionSetup.file                     = "CollisionSetup.xml";
     spec.collisionSetup.excludeBaseToFirstJoint  = true;
     spec.collisionSetup.excludeAdjacentLinkPairs = true;
     spec.collisionSetup.excludeStaticPairs       = false;
 
     spec.proximitySetup.enabled                  = false;
-    spec.proximitySetup.file                     = "ProximitySetup.xml";
     spec.proximitySetup.useIncludeAll            = true;
     spec.proximitySetup.useExcludeStaticPairs    = false;
 
@@ -946,9 +972,6 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
 
         // CollisionSetup
         if (spec.collisionSetup.enabled) {
-            if (isEmpty (spec.collisionSetup.file))
-                errors << "CollisionSetup file must not be empty when collision setup is enabled.";
-
             for (const FramePairSpec& pair : spec.collisionSetup.excludePairs) {
                 if (!pair.enabled)
                     continue;
@@ -983,9 +1006,6 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
 
         // ProximitySetup
         if (spec.proximitySetup.enabled) {
-            if (isEmpty (spec.proximitySetup.file))
-                errors << "ProximitySetup file must not be empty when proximity setup is enabled.";
-
             for (const ProximityRuleSpec& rule : spec.proximitySetup.rules) {
                 const bool aEmpty = isEmpty (rule.patternA);
                 const bool bEmpty = isEmpty (rule.patternB);
@@ -1427,8 +1447,10 @@ QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
     if (!pairs.empty ()) {
         out << "  <Exclude>\n";
         for (const FramePairSpec& pair : pairs) {
-            out << "    <FramePair first=\"" << xmlEscaped (pair.first)
-                << "\" second=\"" << xmlEscaped (pair.second) << "\"/>\n";
+            out << "    <FramePair first=\""
+                << xmlEscaped (collisionSetupFrameName (spec, pair.first))
+                << "\" second=\""
+                << xmlEscaped (collisionSetupFrameName (spec, pair.second)) << "\"/>\n";
         }
         out << "  </Exclude>\n";
     }
@@ -1438,7 +1460,8 @@ QString RobotModelXmlWriter::makeCollisionSetupXml (const RobotModelSpec& spec)
     for (const std::string& frame : spec.collisionSetup.volatileFrames) {
         if (frame.empty ())
             continue; // 跳过无效的空名称
-        out << "  <Volatile>" << xmlEscaped (frame) << "</Volatile>\n";
+        out << "  <Volatile>" << xmlEscaped (collisionSetupFrameName (spec, frame))
+            << "</Volatile>\n";
     }
 
     // 4. 若开启了全局静态对碰撞排除，写入空标签 <ExcludeStaticPairs/>
@@ -1485,40 +1508,36 @@ QString RobotModelXmlWriter::makeProximitySetupXml (const RobotModelSpec& spec)
 // =============================================================================
 QString RobotModelXmlWriter::serialDeviceFilePath (const RobotModelSpec& spec)
 {
-    QDir dir (QString::fromStdString (spec.saveDirectory));
-    if (spec.imported.active && !spec.imported.deviceFile.empty ())
-        return dir.filePath (QString::fromStdString (spec.imported.deviceFile));
-    return dir.filePath (exportedRobotName (spec) + ".wc.xml");
+    return outputFilePath (spec, spec.exportLayout.deviceFile, spec.imported.sourceDeviceFile,
+                           exportedRobotName (spec) + ".wc.xml");
 }
 
 QString RobotModelXmlWriter::sceneFilePath (const RobotModelSpec& spec)
 {
-    QDir dir (QString::fromStdString (spec.saveDirectory));
-    if (spec.imported.active && !spec.imported.sceneFile.empty ())
-        return dir.filePath (QString::fromStdString (spec.imported.sceneFile));
-    return dir.filePath (exportedRobotName (spec) + "Scene.wc.xml");
+    return outputFilePath (spec, spec.exportLayout.sceneFile, spec.imported.sourceSceneFile,
+                           exportedRobotName (spec) + "Scene.wc.xml");
 }
 
 QString RobotModelXmlWriter::dynamicWorkCellFilePath (const RobotModelSpec& spec)
 {
-    QDir dir (QString::fromStdString (spec.saveDirectory));
-    return dir.filePath (exportedRobotName (spec) + ".dwc.xml");
+    return outputFilePath (spec, spec.exportLayout.dynamicWorkCellFile, std::string (),
+                           exportedRobotName (spec) + ".dwc.xml");
 }
 
 // Milestone 6:CollisionSetup/ProximitySetup 落盘路径使用用户在 spec 里配置
 // 的文件名;空字符串兜底默认文件名,以保证 Scene XML 引用与真实文件一致。
 QString RobotModelXmlWriter::collisionSetupFilePath (const RobotModelSpec& spec)
 {
-    QDir dir (QString::fromStdString (spec.saveDirectory));
-    const QString file = QString::fromStdString (spec.collisionSetup.file).trimmed ();
-    return dir.filePath (file.isEmpty () ? QString ("CollisionSetup.xml") : file);
+    return outputFilePath (spec, spec.exportLayout.collisionSetupFile,
+                           spec.imported.sourceCollisionSetupFile,
+                           QString ("CollisionSetup.xml"));
 }
 
 QString RobotModelXmlWriter::proximitySetupFilePath (const RobotModelSpec& spec)
 {
-    QDir dir (QString::fromStdString (spec.saveDirectory));
-    const QString file = QString::fromStdString (spec.proximitySetup.file).trimmed ();
-    return dir.filePath (file.isEmpty () ? QString ("ProximitySetup.xml") : file);
+    return outputFilePath (spec, spec.exportLayout.proximitySetupFile,
+                           spec.imported.sourceProximitySetupFile,
+                           QString ("ProximitySetup.xml"));
 }
 
 QString RobotModelXmlWriter::specSidecarFilePath (const RobotModelSpec& spec)

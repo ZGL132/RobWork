@@ -74,6 +74,7 @@ class RobotModelBuilderWidget : public QWidget
     void chooseGeometryFile (QTableWidget* table, int row, int column);
     void synchronizeCollisionFileFromDrawable (int row);
     void updateSceneUiEnabled ();
+    void updateOutputFilePlaceholders ();
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
 
@@ -108,6 +109,10 @@ class RobotModelBuilderWidget : public QWidget
   private:
     QLineEdit* _robotName;
     QLineEdit* _saveDirectory;
+    QLineEdit* _deviceFile;
+    QLineEdit* _sceneFile;
+    QLineEdit* _dynamicWorkCellFile;
+    QCheckBox* _preserveImportedFileLayout;
     QComboBox* _mode;
 
     QCheckBox* _showFrameAxes;

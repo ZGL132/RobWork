@@ -349,7 +349,6 @@ static QJsonObject writeCollisionSetupSpec(const CollisionSetupSpec& cs)
 {
     QJsonObject obj;
     obj["enabled"]                   = cs.enabled;
-    obj["file"]                      = QString::fromStdString(cs.file);
     obj["excludeBaseToFirstJoint"]   = cs.excludeBaseToFirstJoint;
     obj["excludeAdjacentLinkPairs"]  = cs.excludeAdjacentLinkPairs;
     obj["excludeStaticPairs"]        = cs.excludeStaticPairs;
@@ -380,7 +379,6 @@ static QJsonObject writeProximitySetupSpec(const ProximitySetupSpec& ps)
 {
     QJsonObject obj;
     obj["enabled"]               = ps.enabled;
-    obj["file"]                  = QString::fromStdString(ps.file);
     obj["useIncludeAll"]         = ps.useIncludeAll;
     obj["useExcludeStaticPairs"] = ps.useExcludeStaticPairs;
 
@@ -634,10 +632,14 @@ static bool readFramePairSpec(const QJsonObject& obj, FramePairSpec& fp, std::st
     return true;
 }
 
-static bool readCollisionSetupSpec(const QJsonObject& obj, CollisionSetupSpec& cs, std::string* error)
+static bool readCollisionSetupSpec(const QJsonObject& obj,
+                                   CollisionSetupSpec& cs,
+                                   std::string* legacyFile,
+                                   std::string* error)
 {
     cs.enabled                  = obj.value("enabled").toBool(true);
-    cs.file                     = obj.value("file").toString("CollisionSetup.xml").toStdString();
+    if (legacyFile != nullptr && obj.contains ("file"))
+        *legacyFile = obj.value ("file").toString ().toStdString ();
     cs.excludeBaseToFirstJoint  = obj.value("excludeBaseToFirstJoint").toBool(true);
     cs.excludeAdjacentLinkPairs = obj.value("excludeAdjacentLinkPairs").toBool(true);
     cs.excludeStaticPairs       = obj.value("excludeStaticPairs").toBool(false);
@@ -673,10 +675,14 @@ static bool readProximityRuleSpec(const QJsonObject& obj, ProximityRuleSpec& pr,
     return true;
 }
 
-static bool readProximitySetupSpec(const QJsonObject& obj, ProximitySetupSpec& ps, std::string* error)
+static bool readProximitySetupSpec(const QJsonObject& obj,
+                                   ProximitySetupSpec& ps,
+                                   std::string* legacyFile,
+                                   std::string* error)
 {
     ps.enabled               = obj.value("enabled").toBool(false);
-    ps.file                  = obj.value("file").toString("ProximitySetup.xml").toStdString();
+    if (legacyFile != nullptr && obj.contains ("file"))
+        *legacyFile = obj.value ("file").toString ().toStdString ();
     ps.useIncludeAll         = obj.value("useIncludeAll").toBool(true);
     ps.useExcludeStaticPairs = obj.value("useExcludeStaticPairs").toBool(false);
 
@@ -713,8 +719,12 @@ QJsonObject RobotModelSpecJson::toObject(const RobotModelSpec& spec)
     {
         QJsonObject imported;
         imported["active"] = spec.imported.active;
-        imported["sceneFile"] = QString::fromStdString (spec.imported.sceneFile);
-        imported["deviceFile"] = QString::fromStdString (spec.imported.deviceFile);
+        imported["sourceSceneFile"] = QString::fromStdString (spec.imported.sourceSceneFile);
+        imported["sourceDeviceFile"] = QString::fromStdString (spec.imported.sourceDeviceFile);
+        imported["sourceCollisionSetupFile"] =
+            QString::fromStdString (spec.imported.sourceCollisionSetupFile);
+        imported["sourceProximitySetupFile"] =
+            QString::fromStdString (spec.imported.sourceProximitySetupFile);
         QJsonArray workcellExtensions;
         for (const std::string& extension : spec.imported.workcellExtensions)
             workcellExtensions.append (QString::fromStdString (extension));
@@ -724,6 +734,20 @@ QJsonObject RobotModelSpecJson::toObject(const RobotModelSpec& spec)
             deviceExtensions.append (QString::fromStdString (extension));
         imported["deviceExtensions"] = deviceExtensions;
         obj["imported"] = imported;
+    }
+    {
+        QJsonObject exportLayout;
+        exportLayout["preserveImportedFileLayout"] =
+            spec.exportLayout.preserveImportedFileLayout;
+        exportLayout["deviceFile"] = QString::fromStdString (spec.exportLayout.deviceFile);
+        exportLayout["sceneFile"] = QString::fromStdString (spec.exportLayout.sceneFile);
+        exportLayout["dynamicWorkCellFile"] =
+            QString::fromStdString (spec.exportLayout.dynamicWorkCellFile);
+        exportLayout["collisionSetupFile"] =
+            QString::fromStdString (spec.exportLayout.collisionSetupFile);
+        exportLayout["proximitySetupFile"] =
+            QString::fromStdString (spec.exportLayout.proximitySetupFile);
+        obj["exportLayout"] = exportLayout;
     }
 
     obj["robotBaseFrame"] = writeFrameSpec(spec.robotBaseFrame);
@@ -827,8 +851,14 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
     const QJsonObject imported = dataObject.value ("imported").toObject ();
     if (!imported.isEmpty ()) {
         spec.imported.active = imported.value ("active").toBool (false);
-        spec.imported.sceneFile = imported.value ("sceneFile").toString ().toStdString ();
-        spec.imported.deviceFile = imported.value ("deviceFile").toString ().toStdString ();
+        spec.imported.sourceSceneFile = imported.value ("sourceSceneFile").toString (
+            imported.value ("sceneFile").toString ()).toStdString ();
+        spec.imported.sourceDeviceFile = imported.value ("sourceDeviceFile").toString (
+            imported.value ("deviceFile").toString ()).toStdString ();
+        spec.imported.sourceCollisionSetupFile =
+            imported.value ("sourceCollisionSetupFile").toString ().toStdString ();
+        spec.imported.sourceProximitySetupFile =
+            imported.value ("sourceProximitySetupFile").toString ().toStdString ();
         const auto readExtensions = [&] (const char* key,
                                          std::vector< std::string >& output) {
             const QJsonValue value = imported.value (QLatin1String (key));
@@ -848,6 +878,21 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
         if (!readExtensions ("workcellExtensions", spec.imported.workcellExtensions) ||
             !readExtensions ("deviceExtensions", spec.imported.deviceExtensions))
             return false;
+    }
+
+    spec.exportLayout = ExportLayoutSpec ();
+    const QJsonObject exportLayout = dataObject.value ("exportLayout").toObject ();
+    if (!exportLayout.isEmpty ()) {
+        spec.exportLayout.preserveImportedFileLayout =
+            exportLayout.value ("preserveImportedFileLayout").toBool (false);
+        spec.exportLayout.deviceFile = exportLayout.value ("deviceFile").toString ().toStdString ();
+        spec.exportLayout.sceneFile = exportLayout.value ("sceneFile").toString ().toStdString ();
+        spec.exportLayout.dynamicWorkCellFile =
+            exportLayout.value ("dynamicWorkCellFile").toString ().toStdString ();
+        spec.exportLayout.collisionSetupFile =
+            exportLayout.value ("collisionSetupFile").toString ().toStdString ();
+        spec.exportLayout.proximitySetupFile =
+            exportLayout.value ("proximitySetupFile").toString ().toStdString ();
     }
 
     // robotBaseFrame (object)
@@ -980,8 +1025,11 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
     {
         const QJsonObject csObj = dataObject.value("collisionSetup").toObject();
         if (!csObj.isEmpty()) {
-            if (!readCollisionSetupSpec(csObj, spec.collisionSetup, error))
+            std::string legacyFile;
+            if (!readCollisionSetupSpec(csObj, spec.collisionSetup, &legacyFile, error))
                 return false;
+            if (spec.exportLayout.collisionSetupFile.empty ())
+                spec.exportLayout.collisionSetupFile = legacyFile;
         }
     }
 
@@ -989,8 +1037,11 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
     {
         const QJsonObject psObj = dataObject.value("proximitySetup").toObject();
         if (!psObj.isEmpty()) {
-            if (!readProximitySetupSpec(psObj, spec.proximitySetup, error))
+            std::string legacyFile;
+            if (!readProximitySetupSpec(psObj, spec.proximitySetup, &legacyFile, error))
                 return false;
+            if (spec.exportLayout.proximitySetupFile.empty ())
+                spec.exportLayout.proximitySetupFile = legacyFile;
         }
     }
 
