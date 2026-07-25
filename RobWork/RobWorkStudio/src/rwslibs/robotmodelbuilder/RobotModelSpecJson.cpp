@@ -243,7 +243,6 @@ static QJsonObject writeDrawableSpec(const DrawableSpec& d)
     obj["rpyDeg"]           = writeFixedArray(d.rpyDeg);
     obj["pos"]              = writeFixedArray(d.pos);
     obj["rgb"]              = writeFixedArray(d.rgb);
-    obj["collisionModel"]   = d.collisionModel;
     obj["autoLinkGeometry"] = d.autoLinkGeometry;
     return obj;
 }
@@ -260,6 +259,7 @@ static QJsonObject writeCollisionModelSpec(const CollisionModelSpec& c)
     obj["length"]     = c.length;
     obj["rpyDeg"]     = writeFixedArray(c.rpyDeg);
     obj["pos"]        = writeFixedArray(c.pos);
+    obj["enabled"]    = c.enabled;
     return obj;
 }
 
@@ -339,6 +339,9 @@ static QJsonObject writeFramePairSpec(const FramePairSpec& fp)
     QJsonObject obj;
     obj["first"]  = QString::fromStdString(fp.first);
     obj["second"] = QString::fromStdString(fp.second);
+    obj["enabled"] = fp.enabled;
+    obj["source"] = QString::fromStdString(fp.source);
+    obj["reason"] = QString::fromStdString(fp.reason);
     return obj;
 }
 
@@ -347,6 +350,7 @@ static QJsonObject writeCollisionSetupSpec(const CollisionSetupSpec& cs)
     QJsonObject obj;
     obj["enabled"]                   = cs.enabled;
     obj["file"]                      = QString::fromStdString(cs.file);
+    obj["excludeBaseToFirstJoint"]   = cs.excludeBaseToFirstJoint;
     obj["excludeAdjacentLinkPairs"]  = cs.excludeAdjacentLinkPairs;
     obj["excludeStaticPairs"]        = cs.excludeStaticPairs;
 
@@ -493,7 +497,6 @@ static bool readDrawableSpec(const QJsonObject& obj, DrawableSpec& d, std::strin
     if (!readFixedArray(obj, "pos",    d.pos,    error)) return false;
     if (!readFixedArray(obj, "rgb",    d.rgb,    error)) return false;
 
-    d.collisionModel   = obj.value("collisionModel").toBool(false);
     d.autoLinkGeometry = obj.value("autoLinkGeometry").toBool(false);
 
     return true;
@@ -517,6 +520,7 @@ static bool readCollisionModelSpec(const QJsonObject& obj, CollisionModelSpec& c
     if (!readFixedArray(obj, "rpyDeg", c.rpyDeg, error)) return false;
     if (!readFixedArray(obj, "pos",    c.pos,    error)) return false;
 
+    c.enabled        = obj.value("enabled").toBool(true);
     return true;
 }
 
@@ -624,6 +628,9 @@ static bool readFramePairSpec(const QJsonObject& obj, FramePairSpec& fp, std::st
     Q_UNUSED(error);
     fp.first  = obj.value("first").toString().toStdString();
     fp.second = obj.value("second").toString().toStdString();
+    fp.enabled = obj.value("enabled").toBool(true);
+    fp.source = obj.value("source").toString("Manual").toStdString();
+    fp.reason = obj.value("reason").toString().toStdString();
     return true;
 }
 
@@ -631,6 +638,7 @@ static bool readCollisionSetupSpec(const QJsonObject& obj, CollisionSetupSpec& c
 {
     cs.enabled                  = obj.value("enabled").toBool(true);
     cs.file                     = obj.value("file").toString("CollisionSetup.xml").toStdString();
+    cs.excludeBaseToFirstJoint  = obj.value("excludeBaseToFirstJoint").toBool(true);
     cs.excludeAdjacentLinkPairs = obj.value("excludeAdjacentLinkPairs").toBool(true);
     cs.excludeStaticPairs       = obj.value("excludeStaticPairs").toBool(false);
 

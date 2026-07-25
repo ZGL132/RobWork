@@ -1120,7 +1120,6 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                 drawable.pos    = transformedOriginPos (visual.origin, invAxis);
             }
             drawable.rgb             = visual.rgb;
-            drawable.collisionModel  = false;
             drawable.autoLinkGeometry = false;
             spec.drawables.push_back (drawable);
         }

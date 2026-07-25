@@ -2,6 +2,7 @@
 #include "RobotModelXmlWriter.hpp"
 
 #include <QDir>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -65,6 +66,9 @@ static bool sameRobotModelSpec (const rws::RobotModelSpec& a, const rws::RobotMo
 
     // collisionModels
     if (a.collisionModels.size () != b.collisionModels.size ()) return false;
+    for (std::size_t i = 0; i < a.collisionModels.size (); ++i) {
+        if (a.collisionModels[i].enabled != b.collisionModels[i].enabled) return false;
+    }
 
     // limits
     if (a.limits.size () != b.limits.size ()) return false;
@@ -81,6 +85,18 @@ static bool sameRobotModelSpec (const rws::RobotModelSpec& a, const rws::RobotMo
 
     // collisionSetup
     if (a.collisionSetup.enabled != b.collisionSetup.enabled) return false;
+    if (a.collisionSetup.excludeBaseToFirstJoint != b.collisionSetup.excludeBaseToFirstJoint)
+        return false;
+    if (a.collisionSetup.excludePairs.size () != b.collisionSetup.excludePairs.size ())
+        return false;
+    for (std::size_t i = 0; i < a.collisionSetup.excludePairs.size (); ++i) {
+        if (a.collisionSetup.excludePairs[i].enabled !=
+            b.collisionSetup.excludePairs[i].enabled) return false;
+        if (a.collisionSetup.excludePairs[i].source !=
+            b.collisionSetup.excludePairs[i].source) return false;
+        if (a.collisionSetup.excludePairs[i].reason !=
+            b.collisionSetup.excludePairs[i].reason) return false;
+    }
 
     // proximitySetup
     if (a.proximitySetup.enabled != b.proximitySetup.enabled) return false;
@@ -99,7 +115,17 @@ static int testFullRoundTrip ()
     rws::RobotModelSpec original =
         rws::RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     original.robotName = "JsonRoundTrip";
-    original.collisionSetup.excludePairs.push_back ({"Joint1", "Joint3"});
+    if (!original.collisionModels.empty ()) {
+        original.collisionModels.front ().enabled = false;
+    }
+    rws::FramePairSpec pair;
+    pair.first = "Joint1";
+    pair.second = "Joint3";
+    pair.enabled = false;
+    pair.source = "Manual";
+    pair.reason = "Round-trip disabled pair";
+    original.collisionSetup.excludeBaseToFirstJoint = false;
+    original.collisionSetup.excludePairs.push_back (pair);
     original.proximitySetup.enabled = true;
     original.proximitySetup.rules.push_back (
         {rws::ProximityRuleKind::Exclude, "Joint.*", "Tool.*"});
@@ -121,9 +147,57 @@ static int testFullRoundTrip ()
     return 0;
 }
 
+static int testLegacyCollisionMetadataIsDiscardedOnSave ()
+{
+    rws::RobotModelSpec original =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    rws::CollisionModelSpec collision;
+    collision.name = "LegacyCollision";
+    collision.refFrame = "Joint1";
+    original.collisionModels.push_back (collision);
+
+    QJsonObject legacy = rws::RobotModelSpecJson::toObject (original);
+    QJsonArray drawables = legacy.value ("drawables").toArray ();
+    QJsonObject drawable = drawables.at (0).toObject ();
+    drawable["visualDetail"] = "Both";
+    drawable["collisionModel"] = true;
+    drawables[0] = drawable;
+    legacy["drawables"] = drawables;
+
+    QJsonArray collisionModels = legacy.value ("collisionModels").toArray ();
+    QJsonObject collisionModel = collisionModels.at (0).toObject ();
+    collisionModel["geometryDetail"] = "Fine";
+    collisionModel["source"] = "Imported";
+    collisionModels[0] = collisionModel;
+    legacy["collisionModels"] = collisionModels;
+
+    rws::RobotModelSpec decoded;
+    std::string error;
+    QJsonObject legacyRoot;
+    legacyRoot["schemaVersion"] = 1;
+    legacyRoot["type"] = "RobotModelSpec";
+    legacyRoot["data"] = legacy;
+    const std::string legacyJson = QJsonDocument (legacyRoot).toJson ().toStdString ();
+    if (!rws::RobotModelSpecJson::fromJson (legacyJson, decoded, &error))
+        return fail ("Legacy metadata JSON failed to load: " + error);
+
+    const QJsonObject saved = rws::RobotModelSpecJson::toObject (decoded);
+    const QJsonObject savedDrawable = saved.value ("drawables").toArray ().at (0).toObject ();
+    const QJsonObject savedCollision =
+        saved.value ("collisionModels").toArray ().at (0).toObject ();
+    if (savedDrawable.contains ("visualDetail") || savedDrawable.contains ("collisionModel") ||
+        savedCollision.contains ("geometryDetail") || savedCollision.contains ("source"))
+        return fail ("Legacy collision presentation metadata was written back to JSON.");
+    if (!savedCollision.value ("enabled").toBool ())
+        return fail ("Collision model enabled state was not preserved.");
+    return 0;
+}
+
 int main (int, char**)
 {
     if (const int rc = testFullRoundTrip ())
+        return rc;
+    if (const int rc = testLegacyCollisionMetadataIsDiscardedOnSave ())
         return rc;
     std::cout << "RobotModelSpecJson round trip test passed." << std::endl;
     return 0;

@@ -137,7 +137,6 @@ void appendJointHousings (RobotModelSpec& spec)
         drawable.rpyDeg         = {{0, 0, 0}};
         drawable.pos            = {{0, 0, 0}};
         drawable.rgb            = {{0.45, 0.45, 0.48}};
-        drawable.collisionModel = false;
         spec.drawables.push_back (drawable);
     }
 }
@@ -163,7 +162,6 @@ void appendLinks (RobotModelSpec& spec)
         drawable.rpyDeg           = {{0, 0, 0}};
         drawable.pos              = {{0, 0, 0}};
         drawable.rgb              = {{0.35, 0.45, 0.65}};
-        drawable.collisionModel   = false;
         drawable.autoLinkGeometry = true;
         spec.drawables.push_back (drawable);
     }
@@ -514,6 +512,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     // 避免 robotName 改了文件名还指向旧 include 的陷阱。
     spec.collisionSetup.enabled                  = true;
     spec.collisionSetup.file                     = "CollisionSetup.xml";
+    spec.collisionSetup.excludeBaseToFirstJoint  = true;
     spec.collisionSetup.excludeAdjacentLinkPairs = true;
     spec.collisionSetup.excludeStaticPairs       = false;
 
@@ -760,6 +759,8 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
     // ---- Milestone 5:独立 CollisionModel 校验(不挂 generateDrawables)----
     std::set< std::string > collisionNames;
     for (const CollisionModelSpec& collision : spec.collisionModels) {
+        if (!collision.enabled)
+            continue;
         if (isEmpty (collision.name))
             errors << "CollisionModel names must not be empty.";
         else if (!collisionNames.insert (collision.name).second)
@@ -931,6 +932,8 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
             collisionKnown.insert (n);
         collisionKnown.insert ("Base");
         collisionKnown.insert ("TCP");
+        if (!spec.dynamics.baseFrame.empty ())
+            collisionKnown.insert (spec.dynamics.baseFrame);
         if (!spec.robotBaseFrame.name.empty ())
             collisionKnown.insert (spec.robotBaseFrame.name);
         if (spec.generateScene) {
@@ -947,6 +950,8 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
                 errors << "CollisionSetup file must not be empty when collision setup is enabled.";
 
             for (const FramePairSpec& pair : spec.collisionSetup.excludePairs) {
+                if (!pair.enabled)
+                    continue;
                 if (isEmpty (pair.first) || isEmpty (pair.second)) {
                     errors << QString ("CollisionSetup exclude pair requires both first "
                                        "and second frame names.")
@@ -1193,8 +1198,10 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
 
     // 5. 写入独立碰撞模型 (<CollisionModel>)
     // 说明: 不受 generateDrawables 开关控制，即使关闭视觉渲染也可独立输出碰撞体
-    for (const CollisionModelSpec& collision : spec.collisionModels)
-        writeCollisionModelXml (out, spec, collision);
+    for (const CollisionModelSpec& collision : spec.collisionModels) {
+        if (collision.enabled)
+            writeCollisionModelXml (out, spec, collision);
+    }
 
     // 6. 写入关节运动限位属性 (位置/角度限位、速度限位、加速度限位)
     for (const JointLimitSpec& limit : spec.limits) {
@@ -1598,8 +1605,17 @@ RobotModelXmlWriter::effectiveCollisionExcludePairs (const RobotModelSpec& spec)
     };
 
     // 步骤 1：优先将用户在配置中显式定义的排除配对压入列表
-    for (const FramePairSpec& pair : spec.collisionSetup.excludePairs)
-        push (pair.first, pair.second);
+    for (const FramePairSpec& pair : spec.collisionSetup.excludePairs) {
+        if (pair.enabled)
+            push (pair.first, pair.second);
+    }
+
+    if (spec.collisionSetup.excludeBaseToFirstJoint &&
+        !spec.transformJoints.empty ()) {
+        const std::string base =
+            spec.dynamics.baseFrame.empty () ? std::string ("Base") : spec.dynamics.baseFrame;
+        push (base, spec.transformJoints.front ().name);
+    }
 
     // 步骤 2：若开启了“自动排除相邻连杆/关节碰撞”标志位，且至少存在 2 个关节，则自动追加相邻配对
     if (spec.collisionSetup.excludeAdjacentLinkPairs &&
@@ -1920,8 +1936,6 @@ void RobotModelXmlWriter::writeDrawableXml (QTextStream& out,
 {
     out << "  <Drawable name=\"" << xmlEscaped (drawable.name)
         << "\" refframe=\"" << xmlEscaped (drawable.refFrame) << "\"";
-    if (drawable.collisionModel)
-        out << " colmodel=\"Enabled\"";
     out << ">\n";
     out << "    <RPY>" << vector3 (drawable.rpyDeg) << "</RPY>\n";
     out << "    <Pos>" << vector3 (drawable.pos) << "</Pos>\n";

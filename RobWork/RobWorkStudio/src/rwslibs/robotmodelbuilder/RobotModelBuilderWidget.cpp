@@ -24,6 +24,7 @@
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QHeaderView>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -375,9 +376,8 @@ void RobotModelBuilderWidget::buildUi ()
                        << "Length"
                        << "File"
                        << "RPY deg (Z Y X)"
-                       << "Pos m"
-                       << "RGB"
-                       << "Collision",
+                        << "Pos m"
+                        << "RGB",
         0);
     tabs->addTab (_drawablesTable, "Drawables");
 
@@ -390,15 +390,13 @@ void RobotModelBuilderWidget::buildUi ()
     QWidget* collisionTab      = new QWidget ();
     QVBoxLayout* collisionLay  = new QVBoxLayout (collisionTab);
     _collisionModelsTable = makeTable (
-        QStringList () << "Name"
+        QStringList () << "Enabled"
+                       << "Name"
                        << "RefFrame"
                        << "Shape"
-                       << "Dimensions x y z"
-                       << "Radius"
-                       << "Length"
+                       << "Size"
                        << "File"
-                       << "RPY deg (Z Y X)"
-                       << "Pos m",
+                       << "Pose",
         0);
     collisionLay->addWidget (_collisionModelsTable);
 
@@ -413,7 +411,63 @@ void RobotModelBuilderWidget::buildUi ()
     collisionBtnLay->addWidget (genCollisionBtn);
     collisionBtnLay->addStretch ();
     collisionLay->addWidget (collisionButtons);
-    tabs->addTab (collisionTab, "Collision Models");
+
+    QWidget* collisionSetupTab = new QWidget ();
+    QVBoxLayout* collisionSetupLay = new QVBoxLayout (collisionSetupTab);
+    QWidget* collisionSetupOptions = new QWidget ();
+    QHBoxLayout* collisionSetupOptionLay = new QHBoxLayout (collisionSetupOptions);
+    _collisionSetupEnabled = new QCheckBox ("Enable CollisionSetup");
+    _collisionSetupFile = new QLineEdit ("CollisionSetup.xml");
+    _excludeBaseFirst = new QCheckBox ("Auto exclude base-first");
+    _excludeAdjacent = new QCheckBox ("Auto exclude adjacent joints");
+    _excludeStatic = new QCheckBox ("Exclude static pairs");
+    collisionSetupOptionLay->setContentsMargins (0, 0, 0, 0);
+    collisionSetupOptionLay->addWidget (_collisionSetupEnabled);
+    collisionSetupOptionLay->addWidget (new QLabel ("File"));
+    collisionSetupOptionLay->addWidget (_collisionSetupFile);
+    collisionSetupOptionLay->addWidget (_excludeBaseFirst);
+    collisionSetupOptionLay->addWidget (_excludeAdjacent);
+    collisionSetupOptionLay->addWidget (_excludeStatic);
+    collisionSetupLay->addWidget (collisionSetupOptions);
+
+    _collisionSetupPairsTable = makeTable (
+        QStringList () << "Enabled"
+                       << "First Frame"
+                       << "Second Frame"
+                       << "Source"
+                       << "Reason",
+        0);
+    collisionSetupLay->addWidget (_collisionSetupPairsTable);
+
+    QWidget* collisionSetupButtons = new QWidget ();
+    QHBoxLayout* collisionSetupBtnLay = new QHBoxLayout (collisionSetupButtons);
+    QPushButton* addExcludePairBtn = new QPushButton ("Add Pair");
+    QPushButton* removeExcludePairBtn = new QPushButton ("Remove Pair");
+    QPushButton* defaultsCollisionSetupBtn = new QPushButton ("Generate Defaults");
+    collisionSetupBtnLay->setContentsMargins (0, 0, 0, 0);
+    collisionSetupBtnLay->addWidget (addExcludePairBtn);
+    collisionSetupBtnLay->addWidget (removeExcludePairBtn);
+    collisionSetupBtnLay->addWidget (defaultsCollisionSetupBtn);
+    collisionSetupBtnLay->addStretch ();
+    collisionSetupLay->addWidget (collisionSetupButtons);
+    QPushButton* advancedCollisionBtn = new QPushButton ("Advanced...");
+    advancedCollisionBtn->setCheckable (true);
+    _collisionSetupPairsTable->setVisible (false);
+    collisionSetupButtons->setVisible (false);
+    collisionLay->addWidget (collisionSetupOptions);
+    collisionLay->addWidget (advancedCollisionBtn);
+    collisionLay->addWidget (_collisionSetupPairsTable);
+    collisionLay->addWidget (collisionSetupButtons);
+    collisionLay->addWidget (new QLabel ("Effective Exclusions"));
+    _effectiveExclusions = new QTextEdit ();
+    _effectiveExclusions->setReadOnly (true);
+    _effectiveExclusions->setMaximumHeight (120);
+    collisionLay->addWidget (_effectiveExclusions);
+    connect (advancedCollisionBtn, &QPushButton::toggled, _collisionSetupPairsTable,
+             &QWidget::setVisible);
+    connect (advancedCollisionBtn, &QPushButton::toggled, collisionSetupButtons,
+             &QWidget::setVisible);
+    tabs->addTab (collisionTab, "Collision");
 
     // -------------------------------------------------------------------------
     //  Scene Frames 标签页(Milestone 3):
@@ -601,6 +655,9 @@ void RobotModelBuilderWidget::buildUi ()
     connect (addCollisionBtn, SIGNAL (clicked ()), this, SLOT (addCollisionModel ()));
     connect (delCollisionBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedCollisionModel ()));
     connect (genCollisionBtn, SIGNAL (clicked ()), this, SLOT (generateCollisionModelsFromDrawables ()));
+    connect (addExcludePairBtn, SIGNAL (clicked ()), this, SLOT (addCollisionExcludePair ()));
+    connect (removeExcludePairBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedCollisionExcludePair ()));
+    connect (defaultsCollisionSetupBtn, SIGNAL (clicked ()), this, SLOT (generateDefaultCollisionSetup ()));
     connect (addJointBtn, SIGNAL (clicked ()), this, SLOT (addJoint ()));
     connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
     connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
@@ -612,6 +669,22 @@ void RobotModelBuilderWidget::buildUi ()
              SLOT (onDhTableCellChanged (QTableWidgetItem*)));
     connect (_transformTable, SIGNAL (itemChanged (QTableWidgetItem*)), this,
              SLOT (onTransformTableCellChanged (QTableWidgetItem*)));
+    connect (_drawablesTable, &QTableWidget::cellDoubleClicked, this,
+             [this] (int row, int column) {
+                 if (column == 6) chooseGeometryFile (_drawablesTable, row, column);
+             });
+    connect (_collisionModelsTable, &QTableWidget::cellDoubleClicked, this,
+             [this] (int row, int column) {
+                 if (column == 5) chooseGeometryFile (_collisionModelsTable, row, column);
+             });
+    connect (_excludeBaseFirst, &QCheckBox::toggled, this,
+             [this] (bool) { refreshEffectiveExclusions (); });
+    connect (_excludeAdjacent, &QCheckBox::toggled, this,
+             [this] (bool) { refreshEffectiveExclusions (); });
+    connect (_excludeStatic, &QCheckBox::toggled, this,
+             [this] (bool) { refreshEffectiveExclusions (); });
+    connect (_collisionSetupPairsTable, &QTableWidget::itemChanged, this,
+             [this] (QTableWidgetItem*) { refreshEffectiveExclusions (); });
 }
 
 // =============================================================================
@@ -651,6 +724,7 @@ void RobotModelBuilderWidget::generatePreview ()
 
     fillDrawablesTable (spec);
     fillCollisionModelsTable (spec);
+    fillCollisionSetupTab (spec);
     fillSceneTab (spec);
     fillSceneGeometryTable (spec);
     _serialPreview->setPlainText (RobotModelXmlWriter::makeSerialDeviceXml (spec));
@@ -1063,6 +1137,47 @@ void RobotModelBuilderWidget::removeSelectedCollisionModel ()
     generatePreview ();
 }
 
+void RobotModelBuilderWidget::addCollisionExcludePair ()
+{
+    RobotModelSpec spec = collectSpec ();
+    FramePairSpec pair;
+    pair.enabled = true;
+    pair.first = spec.dynamics.baseFrame.empty () ? "Base" : spec.dynamics.baseFrame;
+    pair.second = spec.transformJoints.empty () ? "Joint1" : spec.transformJoints.front ().name;
+    pair.source = "Manual";
+    pair.reason = "User-defined collision exclusion";
+    spec.collisionSetup.excludePairs.push_back (pair);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::removeSelectedCollisionExcludePair ()
+{
+    if (_collisionSetupPairsTable == NULL)
+        return;
+    RobotModelSpec spec = collectSpec ();
+    const int row = _collisionSetupPairsTable->currentRow ();
+    if (row < 0 || row >= static_cast< int >(spec.collisionSetup.excludePairs.size ()))
+        return;
+    spec.collisionSetup.excludePairs.erase (spec.collisionSetup.excludePairs.begin () + row);
+    fillFromSpec (spec);
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::generateDefaultCollisionSetup ()
+{
+    RobotModelSpec spec = collectSpec ();
+    spec.collisionSetup.enabled = true;
+    if (spec.collisionSetup.file.empty ())
+        spec.collisionSetup.file = "CollisionSetup.xml";
+    spec.collisionSetup.excludeBaseToFirstJoint = true;
+    spec.collisionSetup.excludeAdjacentLinkPairs = true;
+    spec.collisionSetup.excludeStaticPairs = false;
+    fillFromSpec (spec);
+    generatePreview ();
+    setStatus ("CollisionSetup defaults enabled.");
+}
+
 // =============================================================================
 //  collisionFromDrawable
 //  说明: 从 Drawable 生成简化 CollisionModel。
@@ -1096,6 +1211,7 @@ CollisionModelSpec collisionFromDrawable (const DrawableSpec& drawable, int inde
     collision.filePath.clear ();
     collision.rpyDeg = drawable.rpyDeg;
     collision.pos    = drawable.pos;
+    collision.enabled = true;
     return collision;
 }
 
@@ -1257,6 +1373,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     fillKinematicsTables (spec);
     fillDrawablesTable (spec);
     fillCollisionModelsTable (spec);
+    fillCollisionSetupTab (spec);
     fillSceneTab (spec);
     fillSceneGeometryTable (spec);
     fillLimitsTable (spec);
@@ -1265,6 +1382,7 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
     modeChanged (_mode->currentIndex ());
     updateSceneUiEnabled ();
     _syncingTables = false;
+    refreshEffectiveExclusions ();
 }
 
 void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
@@ -1306,6 +1424,16 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     spec.dynamics.generateDynamicWorkCell = _generateDwc->isChecked ();
     spec.dynamics.baseFrame    = _baseFrame->text ().toStdString ();
     spec.dynamics.baseMaterial = _baseMaterial->text ().toStdString ();
+    if (_collisionSetupEnabled != NULL)
+        spec.collisionSetup.enabled = _collisionSetupEnabled->isChecked ();
+    if (_collisionSetupFile != NULL)
+        spec.collisionSetup.file = _collisionSetupFile->text ().toStdString ();
+    if (_excludeBaseFirst != NULL)
+        spec.collisionSetup.excludeBaseToFirstJoint = _excludeBaseFirst->isChecked ();
+    if (_excludeAdjacent != NULL)
+        spec.collisionSetup.excludeAdjacentLinkPairs = _excludeAdjacent->isChecked ();
+    if (_excludeStatic != NULL)
+        spec.collisionSetup.excludeStaticPairs = _excludeStatic->isChecked ();
 
     // ---- DH 关节表 ----
     for (int row = 0; row < _dhTable->rowCount (); ++row) {
@@ -1341,9 +1469,6 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         parseVector3 (itemText (_drawablesTable, row, 7), drawable.rpyDeg);
         parseVector3 (itemText (_drawablesTable, row, 8), drawable.pos);
         parseVector3 (itemText (_drawablesTable, row, 9), drawable.rgb);
-        drawable.collisionModel =
-            itemText (_drawablesTable, row, 10).compare ("Enabled", Qt::CaseInsensitive) == 0 ||
-            itemText (_drawablesTable, row, 10).compare ("true", Qt::CaseInsensitive) == 0;
         // 自动生成的 Link{i}To{i+1} Drawable 在保存前会被 applyLinkGeometry 覆写
         drawable.autoLinkGeometry =
             isAutoLinkDrawable (QString::fromStdString (drawable.name));
@@ -1353,16 +1478,32 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     // ---- Collision Models 表(Milestone 5:独立碰撞几何)----
     for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
         CollisionModelSpec collision;
-        collision.name      = itemText (_collisionModelsTable, row, 0).toStdString ();
-        collision.refFrame  = itemText (_collisionModelsTable, row, 1).toStdString ();
-        collision.shape     = itemText (_collisionModelsTable, row, 2).toStdString ();
-        parseVector3 (itemText (_collisionModelsTable, row, 3), collision.dimensions);
-        collision.radius    = itemDouble (_collisionModelsTable, row, 4);
-        collision.length    = itemDouble (_collisionModelsTable, row, 5);
-        collision.filePath  = itemText (_collisionModelsTable, row, 6).toStdString ();
-        parseVector3 (itemText (_collisionModelsTable, row, 7), collision.rpyDeg);
-        parseVector3 (itemText (_collisionModelsTable, row, 8), collision.pos);
+        const QString enabled = itemText (_collisionModelsTable, row, 0);
+        collision.enabled = enabled.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
+                            enabled.compare ("true", Qt::CaseInsensitive) == 0;
+        collision.name = itemText (_collisionModelsTable, row, 1).toStdString ();
+        collision.refFrame = itemText (_collisionModelsTable, row, 2).toStdString ();
+        collision.shape = itemText (_collisionModelsTable, row, 3).toStdString ();
+        parseCollisionSize (itemText (_collisionModelsTable, row, 4), collision);
+        collision.filePath = itemText (_collisionModelsTable, row, 5).toStdString ();
+        parseCollisionPose (itemText (_collisionModelsTable, row, 6), collision);
         spec.collisionModels.push_back (collision);
+    }
+
+    if (_collisionSetupPairsTable != NULL) {
+        spec.collisionSetup.excludePairs.clear ();
+        for (int row = 0; row < _collisionSetupPairsTable->rowCount (); ++row) {
+            FramePairSpec pair;
+            const QString enabled = itemText (_collisionSetupPairsTable, row, 0);
+            pair.enabled =
+                enabled.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
+                enabled.compare ("true", Qt::CaseInsensitive) == 0;
+            pair.first = itemText (_collisionSetupPairsTable, row, 1).toStdString ();
+            pair.second = itemText (_collisionSetupPairsTable, row, 2).toStdString ();
+            pair.source = itemText (_collisionSetupPairsTable, row, 3).toStdString ();
+            pair.reason = itemText (_collisionSetupPairsTable, row, 4).toStdString ();
+            spec.collisionSetup.excludePairs.push_back (pair);
+        }
     }
 
     // ---- Limits 表 ----
@@ -1515,18 +1656,12 @@ bool RobotModelBuilderWidget::validateTableInput (QStringList& errors) const
 
     // ---- Milestone 5:Collision Models 表输入校验(独立于 generateDrawables)----
     for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
-        if (!parseVector (itemText (_collisionModelsTable, row, 3), 3))
-            errors << QString ("Invalid collision model dimensions vector at row %1.")
-                          .arg (row + 1);
-        if (!parseDouble (itemText (_collisionModelsTable, row, 4)))
-            errors << QString ("Invalid collision model radius at row %1.").arg (row + 1);
-        if (!parseDouble (itemText (_collisionModelsTable, row, 5)))
-            errors << QString ("Invalid collision model length at row %1.").arg (row + 1);
-        if (!parseVector (itemText (_collisionModelsTable, row, 7), 3))
-            errors << QString ("Invalid collision model RPY vector at row %1.")
-                          .arg (row + 1);
-        if (!parseVector (itemText (_collisionModelsTable, row, 8), 3))
-            errors << QString ("Invalid collision model Pos vector at row %1.").arg (row + 1);
+        CollisionModelSpec collision;
+        collision.shape = itemText (_collisionModelsTable, row, 3).toStdString ();
+        if (!parseCollisionSize (itemText (_collisionModelsTable, row, 4), collision))
+            errors << QString ("Invalid collision model size at row %1.").arg (row + 1);
+        if (!parseCollisionPose (itemText (_collisionModelsTable, row, 6), collision))
+            errors << QString ("Invalid collision model pose at row %1.").arg (row + 1);
     }
 
     // ---- Milestone 3:Scene Frames 输入校验 ----
@@ -1646,8 +1781,6 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
         setItem (_drawablesTable, row, 7, vectorText (drawable.rpyDeg), !autoLink);
         setItem (_drawablesTable, row, 8, vectorText (drawable.pos), !autoLink);
         setItem (_drawablesTable, row, 9, vectorText (drawable.rgb));
-        setCombo (_drawablesTable, row, 10, QStringList () << "Enabled" << "Disabled",
-                  drawable.collisionModel ? "Enabled" : "Disabled");
     }
 }
 
@@ -1665,20 +1798,121 @@ void RobotModelBuilderWidget::fillCollisionModelsTable (const RobotModelSpec& sp
     for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
         const CollisionModelSpec& collision = spec.collisionModels[row];
         const QString shape = QString::fromStdString (collision.shape);
-        setItem (_collisionModelsTable, row, 0, QString::fromStdString (collision.name));
-        setItem (_collisionModelsTable, row, 1, QString::fromStdString (collision.refFrame));
-        setCollisionShapeCombo (_collisionModelsTable, row, 2, shape);
-        setItem (_collisionModelsTable, row, 3, vectorText (collision.dimensions),
-                 collisionColumnEditableForShape (shape, 3));
-        setItem (_collisionModelsTable, row, 4, QString::number (collision.radius),
+        setCombo (_collisionModelsTable, row, 0, QStringList () << "Enabled" << "Disabled",
+                  collision.enabled ? "Enabled" : "Disabled");
+        setItem (_collisionModelsTable, row, 1, QString::fromStdString (collision.name));
+        setItem (_collisionModelsTable, row, 2, QString::fromStdString (collision.refFrame));
+        setCollisionShapeCombo (_collisionModelsTable, row, 3, shape);
+        setItem (_collisionModelsTable, row, 4, collisionSizeText (collision),
                  collisionColumnEditableForShape (shape, 4));
-        setItem (_collisionModelsTable, row, 5, QString::number (collision.length),
+        setItem (_collisionModelsTable, row, 5, QString::fromStdString (collision.filePath),
                  collisionColumnEditableForShape (shape, 5));
-        setItem (_collisionModelsTable, row, 6, QString::fromStdString (collision.filePath),
-                 collisionColumnEditableForShape (shape, 6));
-        setItem (_collisionModelsTable, row, 7, vectorText (collision.rpyDeg));
-        setItem (_collisionModelsTable, row, 8, vectorText (collision.pos));
+        setItem (_collisionModelsTable, row, 6, collisionPoseText (collision));
     }
+}
+
+void RobotModelBuilderWidget::fillCollisionSetupTab (const RobotModelSpec& spec)
+{
+    if (_collisionSetupEnabled != NULL)
+        _collisionSetupEnabled->setChecked (spec.collisionSetup.enabled);
+    if (_collisionSetupFile != NULL)
+        _collisionSetupFile->setText (QString::fromStdString (spec.collisionSetup.file));
+    if (_excludeBaseFirst != NULL)
+        _excludeBaseFirst->setChecked (spec.collisionSetup.excludeBaseToFirstJoint);
+    if (_excludeAdjacent != NULL)
+        _excludeAdjacent->setChecked (spec.collisionSetup.excludeAdjacentLinkPairs);
+    if (_excludeStatic != NULL)
+        _excludeStatic->setChecked (spec.collisionSetup.excludeStaticPairs);
+
+    if (_collisionSetupPairsTable == NULL)
+        return;
+    _collisionSetupPairsTable->setRowCount (
+        static_cast< int > (spec.collisionSetup.excludePairs.size ()));
+    for (int row = 0; row < _collisionSetupPairsTable->rowCount (); ++row) {
+        const FramePairSpec& pair = spec.collisionSetup.excludePairs[row];
+        setCombo (_collisionSetupPairsTable, row, 0, QStringList () << "Enabled" << "Disabled",
+                  pair.enabled ? "Enabled" : "Disabled");
+        setItem (_collisionSetupPairsTable, row, 1, QString::fromStdString (pair.first));
+        setItem (_collisionSetupPairsTable, row, 2, QString::fromStdString (pair.second));
+        setCombo (_collisionSetupPairsTable, row, 3,
+                  QStringList () << "Manual" << "Auto" << "Imported",
+                  QString::fromStdString (pair.source));
+        setItem (_collisionSetupPairsTable, row, 4, QString::fromStdString (pair.reason));
+    }
+    refreshEffectiveExclusions ();
+}
+
+void RobotModelBuilderWidget::chooseGeometryFile (QTableWidget* table, int row, int column)
+{
+    const QString path = QFileDialog::getOpenFileName (
+        this, "Choose geometry file", itemText (table, row, column),
+        "Geometry files (*.stl *.obj *.dae *.wrl *.iv);;All files (*)");
+    if (path.isEmpty ())
+        return;
+    setItem (table, row, column, QDir::fromNativeSeparators (path));
+    generatePreview ();
+}
+
+void RobotModelBuilderWidget::synchronizeCollisionFileFromDrawable (int row)
+{
+    if (row < 0 || row >= _collisionModelsTable->rowCount ())
+        return;
+    const GeometryKind kind = geometryKindFromString (
+        itemText (_collisionModelsTable, row, 3).toStdString ());
+    if (kind != GeometryKind::STL && kind != GeometryKind::Mesh &&
+        kind != GeometryKind::Polytope)
+        return;
+    const QString name = itemText (_collisionModelsTable, row, 1);
+    const QString refFrame = itemText (_collisionModelsTable, row, 2);
+    QString file;
+    for (int drawableRow = 0; drawableRow < _drawablesTable->rowCount (); ++drawableRow) {
+        if (itemText (_drawablesTable, drawableRow, 0) == name) {
+            file = itemText (_drawablesTable, drawableRow, 6);
+            break;
+        }
+    }
+    if (file.isEmpty ()) {
+        for (int drawableRow = 0; drawableRow < _drawablesTable->rowCount (); ++drawableRow) {
+            if (itemText (_drawablesTable, drawableRow, 1) == refFrame) {
+                file = itemText (_drawablesTable, drawableRow, 6);
+                break;
+            }
+        }
+    }
+    if (!file.isEmpty ())
+        setItem (_collisionModelsTable, row, 5, file);
+}
+
+void RobotModelBuilderWidget::refreshEffectiveExclusions ()
+{
+    if (_effectiveExclusions == NULL || _syncingTables)
+        return;
+    const RobotModelSpec spec = collectSpec ();
+    QStringList rows;
+    std::set< QString > seen;
+    const auto appendPair = [&rows, &seen] (const QString& first, const QString& second,
+                                            const QString& source) {
+        const QString key = first + "\n" + second;
+        if (seen.insert (key).second)
+            rows << first + " - " + second + "    " + source;
+    };
+    const QString base = spec.dynamics.baseFrame.empty () ? "Base" :
+                         QString::fromStdString (spec.dynamics.baseFrame);
+    if (spec.collisionSetup.excludeBaseToFirstJoint && !spec.transformJoints.empty ())
+        appendPair (base, QString::fromStdString (spec.transformJoints.front ().name), "Auto");
+    if (spec.collisionSetup.excludeAdjacentLinkPairs) {
+        for (size_t i = 1; i < spec.transformJoints.size (); ++i)
+            appendPair (QString::fromStdString (spec.transformJoints[i - 1].name),
+                        QString::fromStdString (spec.transformJoints[i].name), "Auto");
+    }
+    for (const FramePairSpec& pair : spec.collisionSetup.excludePairs) {
+        if (pair.enabled)
+            appendPair (QString::fromStdString (pair.first), QString::fromStdString (pair.second),
+                        QString::fromStdString (pair.source));
+    }
+    if (spec.collisionSetup.excludeStaticPairs)
+        rows << "Static pairs excluded";
+    _effectiveExclusions->setPlainText (rows.join ("\n"));
 }
 
 void RobotModelBuilderWidget::fillLimitsTable (const RobotModelSpec& spec)
@@ -1958,6 +2192,56 @@ QString RobotModelBuilderWidget::vectorText16 (const std::array< double, 16 >& v
     return parts.join (" ");
 }
 
+QString RobotModelBuilderWidget::collisionSizeText (const CollisionModelSpec& collision)
+{
+    const GeometryKind kind = geometryKindFromString (collision.shape);
+    if (kind == GeometryKind::Cylinder || kind == GeometryKind::Cone)
+        return QString::number (collision.radius) + " " + QString::number (collision.length);
+    if (kind == GeometryKind::Sphere)
+        return QString::number (collision.radius);
+    return vectorText (collision.dimensions);
+}
+
+bool RobotModelBuilderWidget::parseCollisionSize (const QString& text,
+                                                   CollisionModelSpec& collision)
+{
+    const QStringList values = text.split (QRegularExpression ("\\s+"), Qt::SkipEmptyParts);
+    const GeometryKind kind = geometryKindFromString (collision.shape);
+    const int expected = kind == GeometryKind::Sphere ? 1 :
+                         (kind == GeometryKind::Cylinder || kind == GeometryKind::Cone ? 2 : 3);
+    if (values.size () != expected)
+        return false;
+    bool ok = false;
+    if (expected == 1) {
+        collision.radius = values[0].toDouble (&ok);
+        return ok;
+    }
+    if (expected == 2) {
+        collision.radius = values[0].toDouble (&ok);
+        if (!ok) return false;
+        collision.length = values[1].toDouble (&ok);
+        return ok;
+    }
+    for (int i = 0; i < 3; ++i) {
+        collision.dimensions[i] = values[i].toDouble (&ok);
+        if (!ok) return false;
+    }
+    return true;
+}
+
+QString RobotModelBuilderWidget::collisionPoseText (const CollisionModelSpec& collision)
+{
+    return vectorText (collision.rpyDeg) + "; " + vectorText (collision.pos);
+}
+
+bool RobotModelBuilderWidget::parseCollisionPose (const QString& text,
+                                                   CollisionModelSpec& collision)
+{
+    const QStringList values = text.split (';', Qt::SkipEmptyParts);
+    return values.size () == 2 && parseVector3 (values[0].trimmed (), collision.rpyDeg) &&
+           parseVector3 (values[1].trimmed (), collision.pos);
+}
+
 /// 解析 "m00 m01 ... m33" -> std::array<double,16>(行优先 4x4)
 bool RobotModelBuilderWidget::parseVector16 (const QString& text,
                                              std::array< double, 16 >& values)
@@ -2020,15 +2304,19 @@ void RobotModelBuilderWidget::setCollisionShapeCombo (QTableWidget* table, int r
                                                       bool editable)
 {
     QComboBox* combo = makeCombo (QStringList () << "Box" << "Cylinder" << "Sphere"
-                                                 << "Cone" << "Mesh" << "Polytope",
+                                                 << "Cone" << "Plane" << "STL" << "Mesh"
+                                                 << "Polytope",
                                   value, editable);
     table->setCellWidget (row, column, combo);
     QTableWidgetItem* item = new QTableWidgetItem ();
     item->setFlags (item->flags () & ~Qt::ItemIsEditable);
     table->setItem (row, column, item);
-    connect (combo, &QComboBox::currentTextChanged, this, [this] (const QString&) {
-        if (!_syncingTables)
+    connect (combo, &QComboBox::currentTextChanged, this, [this, table, row] (const QString&) {
+        if (!_syncingTables) {
+            if (table == _collisionModelsTable)
+                synchronizeCollisionFileFromDrawable (row);
             generatePreview ();
+        }
     });
 }
 
@@ -2061,14 +2349,11 @@ bool RobotModelBuilderWidget::drawableColumnEditableForShape (const QString& sha
 bool RobotModelBuilderWidget::collisionColumnEditableForShape (const QString& shape, int column)
 {
     const GeometryKind kind = geometryKindFromString (shape.toStdString ());
-    if (column == 3)
-        return kind == GeometryKind::Box;
     if (column == 4)
-        return kind == GeometryKind::Cylinder || kind == GeometryKind::Sphere ||
-               kind == GeometryKind::Cone;
+        return kind != GeometryKind::STL && kind != GeometryKind::Mesh &&
+               kind != GeometryKind::Polytope;
     if (column == 5)
-        return kind == GeometryKind::Cylinder || kind == GeometryKind::Cone;
-    if (column == 6)
-        return kind == GeometryKind::Mesh || kind == GeometryKind::Polytope;
+        return kind == GeometryKind::STL || kind == GeometryKind::Mesh ||
+               kind == GeometryKind::Polytope;
     return true;
 }

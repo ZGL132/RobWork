@@ -49,6 +49,9 @@ class RobotModelBuilderWidget : public QWidget
     void addCollisionModel ();
     void removeSelectedCollisionModel ();
     void generateCollisionModelsFromDrawables ();
+    void addCollisionExcludePair ();
+    void removeSelectedCollisionExcludePair ();
+    void generateDefaultCollisionSetup ();
     void sceneGenerationToggled (bool checked);
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
@@ -66,6 +69,10 @@ class RobotModelBuilderWidget : public QWidget
     void fillSceneTab (const RobotModelSpec& spec);
     void fillSceneGeometryTable (const RobotModelSpec& spec);
     void fillCollisionModelsTable (const RobotModelSpec& spec);
+    void fillCollisionSetupTab (const RobotModelSpec& spec);
+    void refreshEffectiveExclusions ();
+    void chooseGeometryFile (QTableWidget* table, int row, int column);
+    void synchronizeCollisionFileFromDrawable (int row);
     void updateSceneUiEnabled ();
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
@@ -81,6 +88,10 @@ class RobotModelBuilderWidget : public QWidget
     static QString vectorText (const std::array< double, 3 >& values);
     static QString vectorText6 (const std::array< double, 6 >& values);
     static QString vectorText16 (const std::array< double, 16 >& values);
+    static QString collisionSizeText (const CollisionModelSpec& collision);
+    static bool parseCollisionSize (const QString& text, CollisionModelSpec& collision);
+    static QString collisionPoseText (const CollisionModelSpec& collision);
+    static bool parseCollisionPose (const QString& text, CollisionModelSpec& collision);
     static QComboBox* makeCombo (const QStringList& values, const QString& currentValue,
                                  bool editable);
     static void setCombo (QTableWidget* table, int row, int column,
@@ -117,6 +128,13 @@ class RobotModelBuilderWidget : public QWidget
     QTableWidget* _transformTable;
     QTableWidget* _drawablesTable;
     QTableWidget* _collisionModelsTable;                       // Milestone 5
+    QCheckBox* _collisionSetupEnabled = NULL;
+    QLineEdit* _collisionSetupFile = NULL;
+    QCheckBox* _excludeBaseFirst = NULL;
+    QCheckBox* _excludeAdjacent = NULL;
+    QCheckBox* _excludeStatic = NULL;
+    QTableWidget* _collisionSetupPairsTable = NULL;
+    QTextEdit* _effectiveExclusions = NULL;
     QTableWidget* _limitsTable;
     QTableWidget* _posesTable;
     QTableWidget* _dynamicsLinksTable;

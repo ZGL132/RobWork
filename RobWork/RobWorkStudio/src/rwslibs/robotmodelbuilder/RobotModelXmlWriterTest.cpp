@@ -821,7 +821,6 @@ int main (int argc, char** argv)
         drawable.rpyDeg = {{0, 0, 0}};
         drawable.pos = {{0, 0, 0}};
         drawable.rgb = {{0.4, 0.5, 0.6}};
-        drawable.collisionModel = false;
         escaping.drawables.push_back (drawable);
         escaping.dynamics.baseMaterial = "Steel & Aluminum";
 
@@ -858,8 +857,6 @@ int main (int argc, char** argv)
             !nearlyEqual (drawable.rgb[1], 0.6) ||
             !nearlyEqual (drawable.rgb[2], 0.6))
             return fail ("DrawableSpec default RGB should be 0.6 0.6 0.6.");
-        if (drawable.collisionModel)
-            return fail ("DrawableSpec default collisionModel should be false.");
     }
 
     // ---- DH 表不再作为真值:切换旧 DH mode 也仍然输出 SE(3) Joint XML ----
@@ -1723,7 +1720,6 @@ int main (int argc, char** argv)
         custom.rpyDeg         = {{0, 0, 0}};
         custom.pos            = {{0, 0, 0}};
         custom.rgb            = {{1, 0, 0}};
-        custom.collisionModel = false;
         drawableSpec.drawables.push_back (custom);
 
         RobotModelXmlWriter::applyDefaultDrawables (drawableSpec);
@@ -1993,7 +1989,6 @@ int main (int argc, char** argv)
             d.rpyDeg = {{0, 0, 0}};
             d.pos = {{0, 0, 0}};
             d.rgb = {{0.4, 0.5, 0.6}};
-            d.collisionModel = true;
             multi.drawables.push_back (d);
         };
 
@@ -2027,8 +2022,8 @@ int main (int argc, char** argv)
             return fail ("Mesh drawable should emit a WorkCellLoader-compatible file path.");
         if (!contains (xml, "<Polytope file=\"meshes/PolytopeDrawable.stl\" />"))
             return fail ("Polytope drawable should emit file path.");
-        if (xml.count ("colmodel=\"Enabled\"") < 8)
-            return fail ("Drawable colmodel=Enabled should be preserved for all shapes.");
+        if (xml.contains ("colmodel=\"Enabled\""))
+            return fail ("Robot Drawables must not emit collision attributes.");
     }
 
     // ---- Milestone 4:Drawable 形状参数校验 ----
@@ -2072,7 +2067,6 @@ int main (int argc, char** argv)
         mesh.rpyDeg = {{0, 0, 0}};
         mesh.pos = {{0, 0, 0}};
         mesh.rgb = {{0.3, 0.3, 0.3}};
-        mesh.collisionModel = false;
         rel.drawables.push_back (mesh);
         const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (rel);
         if (xml.contains (QDir::tempPath ()))
@@ -2178,7 +2172,6 @@ int main (int argc, char** argv)
         visual.rpyDeg = {{0, 0, 0}};
         visual.pos = {{0, 0, 0}};
         visual.rgb = {{0.7, 0.7, 0.75}};
-        visual.collisionModel = false;
         split.drawables.push_back (visual);
 
         CollisionModelSpec collision;
@@ -2331,8 +2324,19 @@ int main (int argc, char** argv)
         if (!contains (collisionXml, "<FramePair first=\"Joint5\" second=\"Joint6\"/>"))
             return fail ("Adjacent Joint5-Joint6 should be excluded from collision checks.");
         // 默认有 5 个相邻关节 pair (Joint1-Joint2, ..., Joint5-Joint6)
-        if (collisionXml.count ("<FramePair ") != 5)
-            return fail ("Default 6-axis robot should auto-exclude 5 adjacent joint pairs.");
+        if (collisionXml.count ("<FramePair ") != 6)
+            return fail ("Default 6-axis robot should auto-exclude Base-Joint1 plus 5 adjacent joint pairs.");
+    }
+
+    {
+        RobotModelSpec setup =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (setup);
+
+        if (!contains (collisionXml, "<FramePair first=\"Base\" second=\"Joint1\"/>"))
+            return fail ("Default CollisionSetup should auto-exclude Base-Joint1.");
+        if (collisionXml.count ("<FramePair ") != 6)
+            return fail ("Default 6-axis robot should auto-exclude Base-Joint1 plus 5 adjacent joint pairs.");
     }
 
     // ---- Test 3: 用户可显式配置 robot/environment frame pair ----
@@ -2598,6 +2602,7 @@ int main (int argc, char** argv)
         RobotModelSpec noAuto =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         noAuto.collisionSetup.excludeAdjacentLinkPairs = false;
+        noAuto.collisionSetup.excludeBaseToFirstJoint = false;
         const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (noAuto);
         if (xml.contains ("<FramePair "))
             return fail ("No adjacent pairs should be auto-added when excludeAdjacentLinkPairs=false.");
@@ -2623,6 +2628,21 @@ int main (int argc, char** argv)
         const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (stat);
         if (!contains (xml, "<ExcludeStaticPairs/>"))
             return fail ("excludeStaticPairs=true should emit <ExcludeStaticPairs/> marker.");
+    }
+
+    {
+        RobotModelSpec model =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        CollisionModelSpec collision;
+        collision.name = "DisabledCollision";
+        collision.refFrame = "Joint1";
+        collision.shape = "Box";
+        collision.enabled = false;
+        model.collisionModels.push_back (collision);
+
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (model);
+        if (contains (xml, "DisabledCollision"))
+            return fail ("Disabled CollisionModel should not be emitted.");
     }
 
     // ---- Test 15: 把 Milestone 6 默认模型写到磁盘,供人工核对 ----

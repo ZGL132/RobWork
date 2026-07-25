@@ -291,7 +291,6 @@ struct DrawableSpec
     std::array< double, 3 > rpyDeg = {{0, 0, 0}}; ///< 相对 refFrame 的 RPY 偏置 (度)
     std::array< double, 3 > pos = {{0, 0, 0}};    ///< 相对 refFrame 的 Pos 偏置 (米)
     std::array< double, 3 > rgb = {{0.6, 0.6, 0.6}}; ///< 颜色 RGB 通道 [0.0, 1.0]
-    bool collisionModel = false;        ///< 是否同时充当碰撞模型 (colmodel="Enabled")
     bool autoLinkGeometry = false;      ///< 是否为自动重算位姿的连杆圆柱 (如 Link1To2)
 };
 
@@ -310,6 +309,7 @@ struct CollisionModelSpec
     double length = 0.1;                ///< 长度 (米)
     std::array< double, 3 > rpyDeg = {{0, 0, 0}}; ///< 相对 refFrame 的 RPY 偏置 (度)
     std::array< double, 3 > pos = {{0, 0, 0}};    ///< 相对 refFrame 的 Pos 偏置 (米)
+    bool enabled = true;                ///< Whether this collision model is emitted and active
 };
 
 /// 关节运动限位参数结构体
@@ -383,6 +383,9 @@ struct FramePairSpec
 {
     std::string first;                  ///< 第一个 Frame 名称
     std::string second;                 ///< 第二个 Frame 名称
+    bool enabled = true;                ///< Whether this pair is emitted into CollisionSetup
+    std::string source = "Manual";      ///< Manual/Auto/Imported provenance shown in UI
+    std::string reason;                 ///< Optional user-facing reason for the exclusion
 };
 
 /// 碰撞矩阵配置参数结构体 (CollisionSetup.xml)
@@ -390,6 +393,7 @@ struct CollisionSetupSpec
 {
     bool enabled                       = true;  ///< 是否使能并输出 CollisionSetup.xml
     std::string file                   = "CollisionSetup.xml"; ///< 输出的碰撞配置文件文件名
+    bool excludeBaseToFirstJoint       = true;  ///< Whether to auto-exclude Base and first kinematic joint
     bool excludeAdjacentLinkPairs      = true;  ///< 是否自动排除相邻关节连杆对的碰撞检查
     bool excludeStaticPairs            = false; ///< 是否排除静态固定参考系之间的碰撞检查
     std::vector< FramePairSpec > excludePairs;  ///< 用户自定义排除碰撞的 Frame 对列表
