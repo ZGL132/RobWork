@@ -90,37 +90,37 @@
   <CollisionModel name="BaseGeoCollision" refframe="Base">
     <RPY>0 90 180</RPY>
     <Pos>0 0 0.003</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/robotFlange" />
   </CollisionModel>
   <CollisionModel name="Joint0GeoCollision" refframe="Joint0">
     <RPY>180 90 0</RPY>
     <Pos>0 0 0.003</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint0" />
   </CollisionModel>
   <CollisionModel name="Joint1GeoCollision" refframe="Joint1">
     <RPY>0 0 90</RPY>
     <Pos>0.0862 0 0</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint1" />
   </CollisionModel>
   <CollisionModel name="Joint2GeoCollision" refframe="Joint2">
     <RPY>0 0 90</RPY>
     <Pos>0.5112 0 0</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint2" />
   </CollisionModel>
   <CollisionModel name="Joint3GeoCollision" refframe="Joint3">
     <RPY>90 0 90</RPY>
     <Pos>0 0.90363 0</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint3" />
   </CollisionModel>
   <CollisionModel name="Joint4GeoCollision" refframe="Joint4">
     <RPY>0 90 0</RPY>
     <Pos>0 -0.109 -0.90363</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint4" />
   </CollisionModel>
   <CollisionModel name="Joint5GeoCollision" refframe="Joint5">
     <RPY>90 0 90</RPY>
     <Pos>0 0.99663 -0.109</Pos>
-    <Box x="0.1" y="0.1" z="0.1" />
+    <Polytope file="geometry/joint5" />
   </CollisionModel>
   <PosLimit refjoint="Joint0" min="-180" max="180" />
   <PosLimit refjoint="Joint1" min="-270" max="90" />
