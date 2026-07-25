@@ -71,7 +71,6 @@ int main ()
     importedDrawable.rpyDeg = {{11.0, 22.0, 33.0}};
     importedDrawable.pos = {{0.12, 0.23, 0.34}};
     importedDrawable.rgb = {{0.15, 0.45, 0.75}};
-    importedDrawable.collisionModel = true;
     original.drawables.push_back (importedDrawable);
 
     const QString stlText =
@@ -161,8 +160,7 @@ int main ()
     if (importedDrawableIt->dimensions != importedDrawable.dimensions ||
         importedDrawableIt->rpyDeg != importedDrawable.rpyDeg ||
         importedDrawableIt->pos != importedDrawable.pos ||
-        importedDrawableIt->rgb != importedDrawable.rgb ||
-        !importedDrawableIt->collisionModel)
+        importedDrawableIt->rgb != importedDrawable.rgb)
         return fail ("Imported drawable geometry was not preserved.");
 
     // ---- 7. 核心测试点 2：验证自定义导入目标的二次写盘与加载 ----

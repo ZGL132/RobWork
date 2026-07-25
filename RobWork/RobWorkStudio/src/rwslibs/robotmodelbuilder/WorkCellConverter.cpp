@@ -325,12 +325,14 @@ void readDrawableShape (QXmlStreamReader& xml, DrawableSpec& drawable)
 }
 
 /// 读取完整单个 <Drawable> 标签（提取名称、refframe、colmodel 属性及子节点）
-void readDrawableElement (QXmlStreamReader& xml, DrawableSpec& drawable)
+void readDrawableElement (QXmlStreamReader& xml, DrawableSpec& drawable,
+                          bool* legacyCollision = NULL)
 {
     const QXmlStreamAttributes attributes = xml.attributes ();
     drawable.name = attributes.value ("name").toString ().toStdString ();
     drawable.refFrame = attributes.value ("refframe").toString ().toStdString ();
-    drawable.collisionModel = attributes.value ("colmodel").toString () == "Enabled";
+    if (legacyCollision != NULL)
+        *legacyCollision = attributes.value ("colmodel").toString () == "Enabled";
 
     // 循环遍历 <Drawable> 的内部子标签 (<RPY>, <Pos>, <RGB>, 及几何体标签)
     while (xml.readNextStartElement ()) {
@@ -347,7 +349,7 @@ void readDrawableElement (QXmlStreamReader& xml, DrawableSpec& drawable)
 }
 
 /// 工具：从 DrawableSpec 转换构造 SceneGeometrySpec
-SceneGeometrySpec sceneGeometryFromDrawable (const DrawableSpec& drawable)
+SceneGeometrySpec sceneGeometryFromDrawable (const DrawableSpec& drawable, bool collisionModel)
 {
     SceneGeometrySpec result;
     result.name = drawable.name;
@@ -360,7 +362,7 @@ SceneGeometrySpec sceneGeometryFromDrawable (const DrawableSpec& drawable)
     result.rpyDeg = drawable.rpyDeg;
     result.pos = drawable.pos;
     result.rgb = drawable.rgb;
-    result.collisionModel = drawable.collisionModel;
+    result.collisionModel = collisionModel;
     return result;
 }
 
@@ -414,11 +416,39 @@ bool mergeSourceGeometryDocument (const QString& fileName,
         }
         else if (name == "Drawable") {
             DrawableSpec drawable;
-            readDrawableElement (xml, drawable);
-            if (deviceDocument)
+            bool legacyCollision = false;
+            readDrawableElement (xml, drawable, &legacyCollision);
+            if (deviceDocument) {
                 spec.drawables.push_back (drawable); // 属于机器人设备本身的 Drawable
+                if (legacyCollision) {
+                    CollisionModelSpec collision;
+                    collision.name = drawable.name + "Collision";
+                    collision.refFrame = drawable.refFrame;
+                    collision.shape = drawable.shape;
+                    collision.filePath = drawable.filePath;
+                    collision.dimensions = drawable.dimensions;
+                    collision.radius = drawable.radius;
+                    collision.length = drawable.length;
+                    collision.rpyDeg = drawable.rpyDeg;
+                    collision.pos = drawable.pos;
+                    const bool duplicate = std::any_of (
+                        spec.collisionModels.begin (), spec.collisionModels.end (),
+                        [&collision] (const CollisionModelSpec& existing) {
+                            return existing.refFrame == collision.refFrame &&
+                                   existing.shape == collision.shape &&
+                                   existing.filePath == collision.filePath &&
+                                   existing.dimensions == collision.dimensions &&
+                                   existing.radius == collision.radius &&
+                                   existing.length == collision.length &&
+                                   existing.rpyDeg == collision.rpyDeg &&
+                                   existing.pos == collision.pos;
+                        });
+                    if (!duplicate)
+                        spec.collisionModels.push_back (collision);
+                }
+            }
             else
-                spec.sceneGeometries.push_back (sceneGeometryFromDrawable (drawable)); // 属于外部场景的 Drawable
+                spec.sceneGeometries.push_back (sceneGeometryFromDrawable (drawable, legacyCollision)); // 属于外部场景的 Drawable
         }
         else if (name == "CollisionModel" && deviceDocument) {
             // 独立碰撞模型标签
@@ -434,7 +464,20 @@ bool mergeSourceGeometryDocument (const QString& fileName,
             collision.length = drawable.length;
             collision.rpyDeg = drawable.rpyDeg;
             collision.pos = drawable.pos;
-            spec.collisionModels.push_back (collision);
+            const bool duplicate = std::any_of (
+                spec.collisionModels.begin (), spec.collisionModels.end (),
+                [&collision] (const CollisionModelSpec& existing) {
+                    return existing.refFrame == collision.refFrame &&
+                           existing.shape == collision.shape &&
+                           existing.filePath == collision.filePath &&
+                           existing.dimensions == collision.dimensions &&
+                           existing.radius == collision.radius &&
+                           existing.length == collision.length &&
+                           existing.rpyDeg == collision.rpyDeg &&
+                           existing.pos == collision.pos;
+                });
+            if (!duplicate)
+                spec.collisionModels.push_back (collision);
         }
     }
 
@@ -927,16 +970,6 @@ void WorkCellConverter::extractDrawables (const rw::models::WorkCell& workcell,
             drawable.refFrame = refFrame;          // 绑定的参考坐标系
             drawable.shape = "Box";                // 默认/预设形状类型为长方体
 
-            // 检查该对象是否包含碰撞模型/几何形状
-            try {
-                // 如果几何体列表不为空，则认为具有碰撞模型
-                drawable.collisionModel = !obj->getGeometry ().empty ();
-            }
-            catch (...) {
-                // 异常处理：若读取几何体失败，记录警告日志
-                warnings << QString ("Could not inspect geometry for %1.")
-                                .arg (qstr (drawable.name));
-            }
             spec.drawables.push_back (drawable);   // 存入设备部件列表
         }
         else {
@@ -982,6 +1015,7 @@ void WorkCellConverter::extractCollisionSetup (const rw::models::WorkCell& workc
         FramePairSpec out;
         out.first = pair.first;   // 排除对中的第一个 Frame 名称
         out.second = pair.second; // 排除对中的第二个 Frame 名称
+        out.source = "Imported";
 
         // 调用辅助函数防重追加：仅当 pair 有效且不存在时才存入 spec.collisionSetup.excludePairs
         addFramePairOnce (spec.collisionSetup.excludePairs, out);
@@ -1274,6 +1308,7 @@ void WorkCellConverter::mergeCollisionSetupXml (const QString& file,
             FramePairSpec pair;
             pair.first = xml.attributes ().value ("first").toString ().toStdString ();
             pair.second = xml.attributes ().value ("second").toString ().toStdString ();
+            pair.source = "Imported";
             addFramePairOnce (spec.collisionSetup.excludePairs, pair);
         }
         else if (xml.name () == QLatin1String ("Volatile")) {
