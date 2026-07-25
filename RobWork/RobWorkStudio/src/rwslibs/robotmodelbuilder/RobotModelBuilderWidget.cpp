@@ -621,6 +621,7 @@ void RobotModelBuilderWidget::buildUi ()
 // =============================================================================
 void RobotModelBuilderWidget::resetDefaults ()
 {
+    _importedDocument = ImportedDocumentSpec ();
     fillFromSpec (RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::homePath ()));
     generatePreview ();
 }
@@ -776,6 +777,7 @@ void RobotModelBuilderWidget::importUrdf ()
         return;
     }
 
+    _importedDocument = ImportedDocumentSpec ();
     fillFromSpec (result.spec);
     generatePreview ();
 
@@ -1373,6 +1375,7 @@ void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
                                                     const QStringList& warnings)
 {
     _importingFromWorkCell = true;
+    _importedDocument = spec.imported;
     fillFromSpec (spec);
     generatePreview ();
     _importingFromWorkCell = false;
@@ -1395,6 +1398,7 @@ void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
 RobotModelSpec RobotModelBuilderWidget::collectSpec () const
 {
     RobotModelSpec spec;
+    spec.imported = _importedDocument;
     spec.robotName         = _robotName->text ().toStdString ();
     spec.saveDirectory     = _saveDirectory->text ().toStdString ();
     spec.mode              = _mode->currentIndex () == 1 ? KinematicsViewMode::DHProjection

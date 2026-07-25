@@ -133,6 +133,7 @@ class RobotModelBuilderWidget : public QWidget
 
     bool _syncingTables = false;
     bool _importingFromWorkCell = false;
+    ImportedDocumentSpec _importedDocument;
 };
 
 }    // namespace rws

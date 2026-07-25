@@ -1273,18 +1273,21 @@ QString RobotModelXmlWriter::makeSceneXml (const RobotModelSpec& spec)
 
     // 3. 立即包含机器人设备文件
     // RobWork 特性：未显式指定 refframe 的设备会自动附着到上文最近定义的坐标系（即 RobotBase）
-    out << "  <Include file=\"" << xmlEscaped (robotName + ".wc.xml") << "\" />\n";
+    const QString sceneDirectory = QFileInfo (sceneFilePath (spec)).absolutePath ();
+    const QString deviceInclude = QDir (sceneDirectory).relativeFilePath (serialDeviceFilePath (spec));
+    out << "  <Include file=\"" << xmlEscaped (QDir::fromNativeSeparators (deviceInclude))
+        << "\" />\n";
 
     // 4. Milestone 6 特性：配置碰撞检测 (CollisionSetup) 与邻近度检测 (ProximitySetup) 引用
     // 所有路径均转换为相对路径，避免导出文件对特定机器绝对路径的依赖
     if (spec.collisionSetup.enabled) {
         const QString setupPath = collisionSetupFilePath (spec);
-        const QString rel       = relativeOutputPath (spec, setupPath);
+        const QString rel = QDir (sceneDirectory).relativeFilePath (setupPath);
         out << "  <CollisionSetup file=\"" << xmlEscaped (rel) << "\" />\n";
     }
     if (spec.proximitySetup.enabled) {
         const QString setupPath = proximitySetupFilePath (spec);
-        const QString rel       = relativeOutputPath (spec, setupPath);
+        const QString rel = QDir (sceneDirectory).relativeFilePath (setupPath);
         out << "  <ProximitySetup file=\"" << xmlEscaped (rel) << "\" />\n";
     }
 
@@ -1476,12 +1479,16 @@ QString RobotModelXmlWriter::makeProximitySetupXml (const RobotModelSpec& spec)
 QString RobotModelXmlWriter::serialDeviceFilePath (const RobotModelSpec& spec)
 {
     QDir dir (QString::fromStdString (spec.saveDirectory));
+    if (spec.imported.active && !spec.imported.deviceFile.empty ())
+        return dir.filePath (QString::fromStdString (spec.imported.deviceFile));
     return dir.filePath (exportedRobotName (spec) + ".wc.xml");
 }
 
 QString RobotModelXmlWriter::sceneFilePath (const RobotModelSpec& spec)
 {
     QDir dir (QString::fromStdString (spec.saveDirectory));
+    if (spec.imported.active && !spec.imported.sceneFile.empty ())
+        return dir.filePath (QString::fromStdString (spec.imported.sceneFile));
     return dir.filePath (exportedRobotName (spec) + "Scene.wc.xml");
 }
 
@@ -1626,6 +1633,11 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
         return false;
 
     QFile deviceFile (serialDeviceFilePath (spec));
+    if (!QDir ().mkpath (QFileInfo (deviceFile.fileName ()).absolutePath ())) {
+        errors << QString ("Could not create directory %1")
+                      .arg (QFileInfo (deviceFile.fileName ()).absolutePath ());
+        return false;
+    }
     if (!deviceFile.open (QFile::WriteOnly | QFile::Text)) {
         errors << QString ("Could not write %1").arg (deviceFile.fileName ());
         return false;
@@ -1676,6 +1688,11 @@ bool RobotModelXmlWriter::saveFiles (const RobotModelSpec& spec, QStringList& er
         }
 
         QFile sceneFile (sceneFilePath (spec));
+        if (!QDir ().mkpath (QFileInfo (sceneFile.fileName ()).absolutePath ())) {
+            errors << QString ("Could not create directory %1")
+                          .arg (QFileInfo (sceneFile.fileName ()).absolutePath ());
+            return false;
+        }
         if (!sceneFile.open (QFile::WriteOnly | QFile::Text)) {
             errors << QString ("Could not write %1").arg (sceneFile.fileName ());
             return false;

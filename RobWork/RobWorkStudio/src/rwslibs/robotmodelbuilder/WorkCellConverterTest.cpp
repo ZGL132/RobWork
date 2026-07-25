@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QTemporaryDir>
 
+#include <algorithm>
 #include <iostream>
 
 static int fail (const QString& message)
@@ -35,6 +36,16 @@ int main ()
     original.robotName = "RoundTripBot";
     original.proximitySetup.enabled = true;
     original.proximitySetup.useExcludeStaticPairs = true;
+    rws::DrawableSpec importedDrawable;
+    importedDrawable.name = "ImportedBox";
+    importedDrawable.refFrame = "Joint1";
+    importedDrawable.shape = "Box";
+    importedDrawable.dimensions = {{1.25, 2.5, 3.75}};
+    importedDrawable.rpyDeg = {{11.0, 22.0, 33.0}};
+    importedDrawable.pos = {{0.12, 0.23, 0.34}};
+    importedDrawable.rgb = {{0.15, 0.45, 0.75}};
+    importedDrawable.collisionModel = true;
+    original.drawables.push_back (importedDrawable);
     {
         rws::ProximityRuleSpec rule;
         rule.kind = rws::ProximityRuleKind::Exclude;
@@ -81,6 +92,32 @@ int main ()
         return fail ("CollisionSetup filename was not recovered.");
     if (!imported.collisionSetup.excludeStaticPairs)
         return fail ("CollisionSetup ExcludeStaticPairs flag was not recovered.");
+
+    const auto importedDrawableIt = std::find_if (
+        imported.drawables.begin (), imported.drawables.end (),
+        [] (const rws::DrawableSpec& drawable) { return drawable.name == "ImportedBox"; });
+    if (importedDrawableIt == imported.drawables.end ())
+        return fail ("Imported drawable was not recovered.");
+    if (importedDrawableIt->dimensions != importedDrawable.dimensions ||
+        importedDrawableIt->rpyDeg != importedDrawable.rpyDeg ||
+        importedDrawableIt->pos != importedDrawable.pos ||
+        importedDrawableIt->rgb != importedDrawable.rgb ||
+        !importedDrawableIt->collisionModel)
+        return fail ("Imported drawable geometry was not preserved.");
+
+    if (!imported.imported.active)
+        return fail ("Imported document metadata was not set.");
+    imported.imported.deviceFile = "imported/RobotDevice.wc.xml";
+    imported.imported.sceneFile = "imported/RobotScene.wc.xml";
+    if (!rws::RobotModelXmlWriter::saveFiles (imported, saveErrors))
+        return fail ("Could not save imported geometry: " + saveErrors.join ("; "));
+    if (!QFileInfo::exists (rws::RobotModelXmlWriter::serialDeviceFilePath (imported)) ||
+        !QFileInfo::exists (rws::RobotModelXmlWriter::sceneFilePath (imported)))
+        return fail ("Imported document targets were not written.");
+    rw::models::WorkCell::Ptr reloaded = rw::loaders::WorkCellLoader::Factory::load (
+        rws::RobotModelXmlWriter::sceneFilePath (imported).toStdString ());
+    if (reloaded == NULL)
+        return fail ("Saved imported scene could not be loaded.");
 
     rws::RobotModelSpec sidecarSpec = original;
     sidecarSpec.generateDrawables = false;

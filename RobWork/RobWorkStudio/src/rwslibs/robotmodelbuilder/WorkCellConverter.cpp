@@ -238,6 +238,165 @@ void normalizeDeviceScopedNames (const rw::models::WorkCell& workcell,
     spec.dynamics.baseFrame = stripDeviceScope (spec.dynamics.baseFrame, prefixes);
 }
 
+void readVector3 (QXmlStreamReader& xml, std::array< double, 3 >& values)
+{
+    const std::vector< double > parsed = parseDoubles (xml.readElementText ());
+    if (parsed.size () == 3)
+        values = {{parsed[0], parsed[1], parsed[2]}};
+}
+
+void readDrawableShape (QXmlStreamReader& xml, DrawableSpec& drawable)
+{
+    const QString shape = xml.name ().toString ();
+    drawable.shape = shape.toStdString ();
+    const QXmlStreamAttributes attributes = xml.attributes ();
+    if (shape == "Box") {
+        drawable.dimensions = {{attributes.value ("x").toDouble (),
+                                attributes.value ("y").toDouble (),
+                                attributes.value ("z").toDouble ()}};
+    }
+    else if (shape == "Plane") {
+        drawable.dimensions[0] = attributes.value ("x").toDouble ();
+        drawable.dimensions[1] = attributes.value ("y").toDouble ();
+    }
+    else if (shape == "Cylinder" || shape == "Cone") {
+        drawable.radius = attributes.value ("radius").toDouble ();
+        drawable.length = attributes.value ("z").toDouble ();
+    }
+    else if (shape == "Sphere") {
+        drawable.radius = attributes.value ("radius").toDouble ();
+    }
+    else if (shape == "Polytope" || shape == "Mesh" || shape == "STL") {
+        drawable.filePath = attributes.value ("file").toString ().toStdString ();
+    }
+    xml.skipCurrentElement ();
+}
+
+void readDrawableElement (QXmlStreamReader& xml, DrawableSpec& drawable)
+{
+    const QXmlStreamAttributes attributes = xml.attributes ();
+    drawable.name = attributes.value ("name").toString ().toStdString ();
+    drawable.refFrame = attributes.value ("refframe").toString ().toStdString ();
+    drawable.collisionModel = attributes.value ("colmodel").toString () == "Enabled";
+    while (xml.readNextStartElement ()) {
+        const QString name = xml.name ().toString ();
+        if (name == "RPY")
+            readVector3 (xml, drawable.rpyDeg);
+        else if (name == "Pos")
+            readVector3 (xml, drawable.pos);
+        else if (name == "RGB")
+            readVector3 (xml, drawable.rgb);
+        else
+            readDrawableShape (xml, drawable);
+    }
+}
+
+SceneGeometrySpec sceneGeometryFromDrawable (const DrawableSpec& drawable)
+{
+    SceneGeometrySpec result;
+    result.name = drawable.name;
+    result.refFrame = drawable.refFrame;
+    result.kind = geometryKindFromString (drawable.shape);
+    result.size = drawable.dimensions;
+    result.radius = drawable.radius;
+    result.length = drawable.length;
+    result.file = drawable.filePath;
+    result.rpyDeg = drawable.rpyDeg;
+    result.pos = drawable.pos;
+    result.rgb = drawable.rgb;
+    result.collisionModel = drawable.collisionModel;
+    return result;
+}
+
+bool mergeSourceGeometryDocument (const QString& fileName,
+                                  RobotModelSpec& spec,
+                                  QStringList& warnings,
+                                  std::set< QString >& visited)
+{
+    const QString absoluteFile = QFileInfo (fileName).absoluteFilePath ();
+    if (visited.find (absoluteFile) != visited.end ())
+        return true;
+    visited.insert (absoluteFile);
+
+    QFile file (absoluteFile);
+    if (!file.open (QFile::ReadOnly | QFile::Text)) {
+        warnings << QString ("Could not read imported XML %1.").arg (absoluteFile);
+        return false;
+    }
+
+    QXmlStreamReader xml (&file);
+    bool deviceDocument = false;
+    QStringList includes;
+    while (!xml.atEnd ()) {
+        xml.readNext ();
+        if (!xml.isStartElement ())
+            continue;
+        const QString name = xml.name ().toString ();
+        if (name == "SerialDevice") {
+            deviceDocument = true;
+            spec.imported.deviceFile = QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile)
+                                          .toStdString ();
+        }
+        else if (name == "WorkCell") {
+            spec.imported.sceneFile = QDir (qstr (spec.saveDirectory)).relativeFilePath (absoluteFile)
+                                         .toStdString ();
+        }
+        else if (name == "Include" && !deviceDocument) {
+            const QString include = xml.attributes ().value ("file").toString ();
+            if (!include.isEmpty ())
+                includes << resolveRelativeTo (absoluteFile, include);
+            xml.skipCurrentElement ();
+        }
+        else if (name == "Drawable") {
+            DrawableSpec drawable;
+            readDrawableElement (xml, drawable);
+            if (deviceDocument)
+                spec.drawables.push_back (drawable);
+            else
+                spec.sceneGeometries.push_back (sceneGeometryFromDrawable (drawable));
+        }
+        else if (name == "CollisionModel" && deviceDocument) {
+            DrawableSpec drawable;
+            readDrawableElement (xml, drawable);
+            CollisionModelSpec collision;
+            collision.name = drawable.name;
+            collision.refFrame = drawable.refFrame;
+            collision.shape = drawable.shape;
+            collision.filePath = drawable.filePath;
+            collision.dimensions = drawable.dimensions;
+            collision.radius = drawable.radius;
+            collision.length = drawable.length;
+            collision.rpyDeg = drawable.rpyDeg;
+            collision.pos = drawable.pos;
+            spec.collisionModels.push_back (collision);
+        }
+    }
+    if (xml.hasError ()) {
+        warnings << QString ("Could not parse imported XML %1: %2")
+                        .arg (absoluteFile, xml.errorString ());
+        return false;
+    }
+    for (const QString& include : includes)
+        mergeSourceGeometryDocument (include, spec, warnings, visited);
+    return true;
+}
+
+bool mergeSourceGeometry (const rw::models::WorkCell& workcell,
+                          RobotModelSpec& spec,
+                          QStringList& warnings)
+{
+    const QString source = qstr (WorkCellConverter::inferWorkCellFilePath (workcell));
+    if (source.isEmpty () || !QFileInfo::exists (source))
+        return false;
+
+    spec.drawables.clear ();
+    spec.sceneGeometries.clear ();
+    spec.collisionModels.clear ();
+    spec.imported.active = true;
+    std::set< QString > visited;
+    return mergeSourceGeometryDocument (source, spec, warnings, visited);
+}
+
 }    // namespace
 
 RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
@@ -265,9 +424,9 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
     extractCollisionSetup (workcell, spec);
     extractProximitySetup (workcell, spec);
 
+    mergeSourceGeometry (workcell, spec, warnings);
+
     RobotModelXmlWriter::refreshDhProjectionFromTransform (spec);
-    if (spec.generateDrawables)
-        RobotModelXmlWriter::applyDefaultDrawables (spec);
 
     mergeCompanionXmlMetadata (workcell, spec, warnings);
 
