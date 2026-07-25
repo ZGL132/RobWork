@@ -65,20 +65,53 @@ void RobotModelBuilderPlugin::open (rw::models::WorkCell* workcell)
 void RobotModelBuilderPlugin::close ()
 {}
 
+// =============================================================================
+//  syncFromWorkCell
+//  说明: 当宿主程序 (RobWorkStudio) 加载或切换 WorkCell 场景时，触发此同步回调。
+//        负责将 C++ 内存中的 WorkCell 场景模型反向解析并灌入 UI 界面中。
+//
+//  工作流程:
+//    1) 指针有效性防御检查：确认 UI 界面控件 (_widget) 与场景指针 (workcell) 均非空；
+//    2) 保存路径推导：通过场景对象的磁盘文件信息推算 saveDirectory 目录；
+//    3) 核心反向转换：调用 WorkCellConverter::convert，结合内存 C++ 对象与磁盘源 XML
+//       无损提取/缝合出 RobotModelSpec 数据模型[cite: 5, 12]；
+//    4) 可建模模型判定：调用 WorkCellConverter::hasConvertibleRobotModel 检查转换出的 spec
+//       是否包含有效的机器人模型 (包含非空名称与运动学关节)[cite: 5, 12]；
+//    5) UI 数据回填：将解析好的 spec 与警告信息同步给 UI 控件 (_widget)，刷新界面表格。
+//
+//  参数:
+//    - workcell : 当前在 RobWorkStudio 中被加载/选中的工作单元场景指针
+// =============================================================================
 void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
 {
+    // ---- 1. 空指针防御检查 ----
+    // 若 UI 尚未实例化或当前没有激活的 WorkCell 场景，直接返回[cite: 5]
     if (_widget == NULL || workcell == NULL)
-        return;
+        return;[cite: 5]
 
-    QStringList warnings;
-    const std::string saveDirectory = WorkCellConverter::inferSaveDirectory (*workcell);
+    // 用于收集场景转换与文件解析过程中的非致命警告信息[cite: 5]
+    QStringList warnings;[cite: 5]
+
+    // ---- 2. 自动推导保存路径 ----
+    // 优先从 workcell 对象的元数据中提取绝对磁盘路径，并算出其所在目录[cite: 5, 12]
+    const std::string saveDirectory = WorkCellConverter::inferSaveDirectory (*workcell);[cite: 5, 12]
+
+    // ---- 3. 执行核心场景转换 ----
+    // 将内存中的 WorkCell 对象、默认状态 (State) 及目标保存目录传入转换器[cite: 5, 12]，
+    // 提取串联关节、SE(3) 矩阵、几何体、碰撞矩阵及伴生 XML 配置文件，构建出纯数据结构 spec[cite: 5, 12]
     RobotModelSpec spec =
-        WorkCellConverter::convert (*workcell, workcell->getDefaultState (), saveDirectory, warnings);
+        WorkCellConverter::convert (*workcell, workcell->getDefaultState (), saveDirectory, warnings);[cite: 5, 12]
 
+    // ---- 4. 检查模型有效性 ----
+    // 验证转换出来的 spec 是否包含可编辑/可转换的机器人模型[cite: 5, 12]
+    // （例如：场景中如果仅有一张桌子而没有串联机器人设备，则不触发插件界面同步）[cite: 5, 12]
     if (!WorkCellConverter::hasConvertibleRobotModel (spec))
-        return;
+        return;[cite: 5]
 
-    _widget->syncFromWorkCellSpec (spec, warnings);
+    // ---- 5. 驱动 UI 界面同步 ----
+    // 将解析提取出的模型规范 spec 以及警告列表灌入 Builder Widget 中[cite: 5, 6]，
+    // 触发 UI 各个标签页表格 (Kinematics, Drawables, Limits, Poses 等) 的全量回填[cite: 5, 6]
+    _widget->syncFromWorkCellSpec (spec, warnings);[cite: 5, 6]
 }
 
 // -----------------------------------------------------------------------------

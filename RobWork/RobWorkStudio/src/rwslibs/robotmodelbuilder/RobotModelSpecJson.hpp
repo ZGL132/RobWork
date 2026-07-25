@@ -1,3 +1,8 @@
+// =============================================================================
+//  核心功能是在 C++ 内存结构体（RobotModelSpec）与 
+//  JSON 文本/对象（QJsonObject / JSON string）之间进行双向转换与校验，
+//  用于机器人模型配置文件的持久化存储（保存）与读取加载。
+// =============================================================================
 #ifndef RWS_ROBOTMODELBUILDER_ROBOTMODELSPECJSON_HPP
 #define RWS_ROBOTMODELBUILDER_ROBOTMODELSPECJSON_HPP
 

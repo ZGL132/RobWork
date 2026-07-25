@@ -864,70 +864,6 @@ void RobotModelBuilderWidget::addJoint ()
     setStatus (QString ("Added joint %1 (now %2 joints).").arg (newName).arg (
                   static_cast< int >(spec.transformJoints.size ())));
     return;
-
-    JointLimitSpec lim;
-    lim.jointName = j.name;
-    lim.posMin    = -180;
-    lim.posMax    = 180;
-    lim.velMax    = 180;
-    lim.accMax    = 360;
-    spec.limits.insert (spec.limits.begin () + insertRow, lim);
-
-    JointForceLimitSpec fl;
-    fl.jointName = j.name;
-    fl.maxForce  = 1000;
-    spec.dynamics.forceLimits.push_back (fl);
-
-    LinkDynamicsSpec link;
-    link.linkName        = "Link" + std::to_string (spec.dynamics.links.size () + 1);
-    link.objectName      = j.name;
-    link.mass            = 1.0;
-    link.cog             = {{0, 0, 0}};
-    link.inertia         = {{0.01, 0.01, 0.01, 0, 0, 0}};
-    link.estimateInertia = false;
-    link.material        = "Aluminum";
-    spec.dynamics.links.push_back (link);
-
-    for (PoseSpec& pose : spec.poses)
-        pose.q.push_back (0.0);
-
-    // 同步 drawables:新外壳 + 新 auto link(若 size >= 2)
-    DrawableSpec housing {};
-    housing.name       = newName.toStdString () + "Housing";
-    housing.refFrame  = j.name;
-    housing.shape     = "Cylinder";
-    housing.filePath  = std::string ();
-    housing.dimensions = {{0.1, 0.1, 0.1}};
-    housing.radius    = 0.06;
-    housing.length    = 0.08;
-    housing.rpyDeg    = {{0, 0, 0}};
-    housing.pos       = {{0, 0, 0}};
-    housing.rgb       = {{0.45, 0.45, 0.48}};
-    housing.collisionModel = true;
-    spec.drawables.push_back (housing);
-    if (spec.transformJoints.size () >= 2) {
-        DrawableSpec link_d {};
-        link_d.name             = "Link" + std::to_string (insertRow + 1) + "To" +
-                                  std::to_string (insertRow + 2);
-        link_d.refFrame         = spec.transformJoints[insertRow].name;    // 新关节本身
-        link_d.shape            = "Cylinder";
-        link_d.filePath         = std::string ();
-        link_d.dimensions       = {{0.1, 0.1, 0.1}};
-        link_d.radius           = 0.04;
-        link_d.length           = 0;
-        link_d.rpyDeg           = {{0, 0, 0}};
-        link_d.pos              = {{0, 0, 0}};
-        link_d.rgb              = {{0.35, 0.45, 0.65}};
-        link_d.collisionModel   = true;
-        link_d.autoLinkGeometry = true;
-        // 把它放在所有 housings + links 之后;不清掉用户自定义的 drawable。
-        spec.drawables.push_back (link_d);
-    }
-
-    RobotModelXmlWriter::applyLinkGeometry (spec);
-    fillFromSpec (spec);
-    setStatus (QString ("Added joint %1 (now %2 joints).").arg (newName).arg (
-                  static_cast< int >(spec.transformJoints.size ())));
 }
 
 void RobotModelBuilderWidget::removeSelectedJoint ()
@@ -954,46 +890,6 @@ void RobotModelBuilderWidget::removeSelectedJoint ()
     setStatus (QString ("Removed joint %1 (now %2 joints).").arg (removedName).arg (
                   static_cast< int >(spec.transformJoints.size ())));
     return;
-    if (static_cast< size_t >(row) < spec.limits.size ())
-        spec.limits.erase (spec.limits.begin () + row);
-
-    // force limits / dynamics links / pose.q 都是按可动关节顺序索引;
-    // 移除时把它们同步缩短。简单做法:直接按 name 匹配删除。
-    const std::string removedKey = removedName.toStdString ();
-    spec.dynamics.forceLimits.erase (
-        std::remove_if (spec.dynamics.forceLimits.begin (),
-                        spec.dynamics.forceLimits.end (),
-                        [&] (const JointForceLimitSpec& f) { return f.jointName == removedKey; }),
-        spec.dynamics.forceLimits.end ());
-    spec.dynamics.links.erase (
-        std::remove_if (spec.dynamics.links.begin (), spec.dynamics.links.end (),
-                        [&] (const LinkDynamicsSpec& l) { return l.objectName == removedKey; }),
-        spec.dynamics.links.end ());
-
-    for (PoseSpec& pose : spec.poses) {
-        if (!pose.q.empty ())
-            pose.q.erase (pose.q.begin () + row);
-    }
-
-    // 同步 drawables:auto link drawables 与 joints 一一对应,删除对应的那条
-    // housing + 那条 link。一次性用一个谓词过滤,避免多个 remove_if 嵌套。
-    const QString houseName    = removedName + "Housing";
-    const QString linkABefore  = "Link" + QString::number (row + 1) + "To" +
-                                 QString::number (row + 2);
-    const QString linkAAfter   = "Link" + QString::number (row + 2) + "To" +
-                                 QString::number (row + 3);
-    spec.drawables.erase (
-        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
-                        [&] (const DrawableSpec& d) {
-                            const QString n = QString::fromStdString (d.name);
-                            return n == houseName || n == linkABefore || n == linkAAfter;
-                        }),
-        spec.drawables.end ());
-
-    RobotModelXmlWriter::applyLinkGeometry (spec);
-    fillFromSpec (spec);
-    setStatus (QString ("Removed joint %1 (now %2 joints).").arg (removedName).arg (
-                  static_cast< int >(spec.transformJoints.size ())));
 }
 
 void RobotModelBuilderWidget::moveSelectedJointUp ()
