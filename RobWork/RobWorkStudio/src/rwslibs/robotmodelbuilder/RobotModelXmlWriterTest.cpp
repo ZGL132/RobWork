@@ -497,6 +497,13 @@ int main (int argc, char** argv)
         }
         if (!foundBox)
             return fail ("URDF visual box was not imported as a DrawableSpec.");
+        int link1Drawables = 0;
+        for (const DrawableSpec& drawable : result.spec.drawables) {
+            if (drawable.refFrame == "joint1")
+                ++link1Drawables;
+        }
+        if (link1Drawables != 1)
+            return fail ("An imported visual should suppress default simplified drawables on the same frame.");
         bool foundCollision = false;
         for (const CollisionModelSpec& collision : result.spec.collisionModels) {
             if (collision.name == "link1_collision" && collision.shape == "Cylinder" &&
@@ -1768,10 +1775,10 @@ int main (int argc, char** argv)
             if (d.refFrame == removed)
                 return fail ("applyDefaultDrawables should not leave geometry on a removed joint.");
         }
-        if (housingCount != 5)
-            return fail ("applyDefaultDrawables should create one housing per remaining row.");
-        if (linkCount != 4)
-            return fail ("applyDefaultDrawables should create one auto link per adjacent row pair.");
+        if (housingCount != 4)
+            return fail ("applyDefaultDrawables should not add a housing to a frame with a custom drawable.");
+        if (linkCount != 3)
+            return fail ("applyDefaultDrawables should not add an auto link to a frame with a custom drawable.");
         if (!keptCustom)
             return fail ("applyDefaultDrawables should preserve custom drawables.");
     }

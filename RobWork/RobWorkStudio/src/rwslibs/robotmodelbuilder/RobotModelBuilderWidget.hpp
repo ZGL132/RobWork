@@ -70,7 +70,6 @@ class RobotModelBuilderWidget : public QWidget
     void fillSceneGeometryTable (const RobotModelSpec& spec);
     void fillCollisionModelsTable (const RobotModelSpec& spec);
     void fillCollisionSetupTab (const RobotModelSpec& spec);
-    void refreshEffectiveExclusions ();
     void chooseGeometryFile (QTableWidget* table, int row, int column);
     void synchronizeCollisionFileFromDrawable (int row);
     void updateSceneUiEnabled ();
@@ -143,7 +142,6 @@ class RobotModelBuilderWidget : public QWidget
     QCheckBox* _excludeAdjacent = NULL;
     QCheckBox* _excludeStatic = NULL;
     QTableWidget* _collisionSetupPairsTable = NULL;
-    QTextEdit* _effectiveExclusions = NULL;
     QTableWidget* _limitsTable;
     QTableWidget* _posesTable;
     QTableWidget* _dynamicsLinksTable;

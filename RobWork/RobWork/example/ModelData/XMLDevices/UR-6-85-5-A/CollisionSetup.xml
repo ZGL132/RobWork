@@ -1,12 +1,6 @@
 <CollisionSetup>
   <Exclude>
     <FramePair first="UR-6-85-5-A.TCP" second="UR-6-85-5-A.Joint5"/>
-    <FramePair first="UR-6-85-5-A.Joint5" second="UR-6-85-5-A.Joint4"/>
-    <FramePair first="UR-6-85-5-A.Joint4" second="UR-6-85-5-A.Joint3"/>
-    <FramePair first="UR-6-85-5-A.Joint3" second="UR-6-85-5-A.Joint2"/>
-    <FramePair first="UR-6-85-5-A.Joint2" second="UR-6-85-5-A.Joint1"/>
-    <FramePair first="UR-6-85-5-A.Joint1" second="UR-6-85-5-A.Joint0"/>
-    <FramePair first="UR-6-85-5-A.Joint0" second="UR-6-85-5-A.Base"/>
     <FramePair first="UR-6-85-5-A.Base" second="UR-6-85-5-A.Joint0"/>
     <FramePair first="UR-6-85-5-A.Joint0" second="UR-6-85-5-A.Joint1"/>
     <FramePair first="UR-6-85-5-A.Joint1" second="UR-6-85-5-A.Joint2"/>

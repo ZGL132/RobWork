@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QDir>
 #include <QFile>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMetaObject>
 #include <QMessageBox>
@@ -75,6 +76,13 @@ bool isSelectionCombo (QTableWidget* table, int row, int column)
     return combo != NULL && !combo->isEditable ();
 }
 
+bool isEnabledCombo (QTableWidget* table, int row, int column)
+{
+    QComboBox* combo = qobject_cast< QComboBox* > (table->cellWidget (row, column));
+    return combo != NULL && combo->count () == 2 && combo->itemText (0) == "Enabled" &&
+           combo->itemText (1) == "Disabled";
+}
+
 QLineEdit* findLineEdit (const rws::RobotModelBuilderWidget& widget, const QString& value)
 {
     const QList< QLineEdit* > lineEdits = widget.findChildren< QLineEdit* > ();
@@ -104,20 +112,11 @@ int main (int argc, char** argv)
     QApplication application (argc, argv);
     rws::RobotModelBuilderWidget widget;
 
-    QTextEdit* effectiveExclusions = NULL;
-    const QList< QTextEdit* > textEdits = widget.findChildren< QTextEdit* > ();
-    for (QTextEdit* textEdit : textEdits) {
-        const QString text = textEdit->toPlainText ();
-        if (text.contains ("Base - Joint1") && text.contains ("Joint1 - Joint2")) {
-            effectiveExclusions = textEdit;
-            break;
-        }
+    const QList< QLabel* > labels = widget.findChildren< QLabel* > ();
+    for (QLabel* label : labels) {
+        if (label->text () == "Effective Exclusions")
+            return fail ("Effective exclusions preview should not be shown.");
     }
-    if (effectiveExclusions == NULL)
-        return fail ("Effective exclusions preview was not found.");
-    const QString effectiveExclusionsText = effectiveExclusions->toPlainText ();
-    if (!effectiveExclusionsText.contains ("; ") || effectiveExclusionsText.contains ('\n'))
-        return fail ("Effective exclusions should be shown on one line, separated by semicolons.");
 
     QTableWidget* drawables = findTable (widget, "Name", "RefFrame", 10);
     QTableWidget* limits = findTable (widget, "Joint", "PosMin", 5);
@@ -166,8 +165,8 @@ int main (int argc, char** argv)
         return fail ("Could not add a collision model.");
     QTableWidget* collisionModels = findTable (widget, "Name");
     if (collisionModels == NULL ||
-        qobject_cast< QCheckBox* > (collisionModels->cellWidget (0, 0)) == NULL)
-        return fail ("Collision model enabled state should use a checkbox editor.");
+        !isEnabledCombo (collisionModels, 0, 0))
+        return fail ("Collision model enabled state should use an Enabled/Disabled combo.");
     if (!isSelectionCombo (collisionModels, 0, 2))
         return fail ("Collision model RefFrame should use a selection combo.");
 
@@ -175,8 +174,8 @@ int main (int argc, char** argv)
         return fail ("Could not add a collision exclusion pair.");
     QTableWidget* exclusionPairs = findTable (widget, "First Frame");
     if (exclusionPairs == NULL ||
-        qobject_cast< QCheckBox* > (exclusionPairs->cellWidget (0, 0)) == NULL)
-        return fail ("Collision exclusion enabled state should use a checkbox editor.");
+        !isEnabledCombo (exclusionPairs, 0, 0))
+        return fail ("Collision exclusion enabled state should use an Enabled/Disabled combo.");
     if (!isSelectionCombo (exclusionPairs, 0, 1) || !isSelectionCombo (exclusionPairs, 0, 2))
         return fail ("Collision exclusion frame pairs should use selection combos.");
 
