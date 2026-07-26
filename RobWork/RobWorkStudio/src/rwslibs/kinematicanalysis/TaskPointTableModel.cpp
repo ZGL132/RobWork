@@ -153,8 +153,39 @@ QVariant TaskPointTableModel::headerData (
     if (role != Qt::DisplayRole)
         return QVariant ();
     if (orientation == Qt::Horizontal)
-        return headerText (section);
+        return displayHeaderText (section);
     return section + 1;
+}
+
+void TaskPointTableModel::setDisplayUnits (
+    KinematicLengthUnit lengthUnit, KinematicAngleUnit angleUnit)
+{
+    if (_lengthUnit == lengthUnit && _angleUnit == angleUnit)
+        return;
+    _lengthUnit = lengthUnit;
+    _angleUnit = angleUnit;
+    Q_EMIT headerDataChanged (Qt::Horizontal, ColX, ColOrientationError);
+    if (!_rows.empty ())
+        Q_EMIT dataChanged (index (0, ColX), index (rowCount () - 1, ColOrientationError));
+}
+
+QString TaskPointTableModel::displayHeaderText (int column) const
+{
+    const QString length = QString::fromLatin1 (unitSuffix (_lengthUnit));
+    const QString angle = QString::fromLatin1 (unitSuffix (_angleUnit));
+    switch (column) {
+        case ColX: return QStringLiteral ("x (%1)").arg (length);
+        case ColY: return QStringLiteral ("y (%1)").arg (length);
+        case ColZ: return QStringLiteral ("z (%1)").arg (length);
+        case ColRoll: return QStringLiteral ("roll (%1)").arg (angle);
+        case ColPitch: return QStringLiteral ("pitch (%1)").arg (angle);
+        case ColYaw: return QStringLiteral ("yaw (%1)").arg (angle);
+        case ColPosTol: return QStringLiteral ("posTol (%1)").arg (length);
+        case ColOriTol: return QStringLiteral ("oriTol (%1)").arg (angle);
+        case ColPositionError: return QStringLiteral ("posErr (%1)").arg (length);
+        case ColOrientationError: return QStringLiteral ("oriErr (%1)").arg (angle);
+        default: return headerText (column);
+    }
 }
 
 Qt::ItemFlags TaskPointTableModel::flags (const QModelIndex& index) const
@@ -180,14 +211,14 @@ QString TaskPointTableModel::taskPointToString (const TaskPoint& p, int column) 
         case ColType:     return taskPointTypeText (p.type);
         case ColRefFrame: return QString::fromStdString (p.refFrame);
         case ColTcpFrame: return QString::fromStdString (p.tcpFrame);
-        case ColX:        return QString::number (p.position[0]);
-        case ColY:        return QString::number (p.position[1]);
-        case ColZ:        return QString::number (p.position[2]);
-        case ColRoll:     return QString::number (p.rpyDeg[0]);
-        case ColPitch:    return QString::number (p.rpyDeg[1]);
-        case ColYaw:      return QString::number (p.rpyDeg[2]);
-        case ColPosTol:   return QString::number (p.tolerance.positionMeters);
-        case ColOriTol:   return QString::number (p.tolerance.orientationDeg);
+        case ColX:        return QString::number (displayLengthFromMeters (p.position[0], _lengthUnit));
+        case ColY:        return QString::number (displayLengthFromMeters (p.position[1], _lengthUnit));
+        case ColZ:        return QString::number (displayLengthFromMeters (p.position[2], _lengthUnit));
+        case ColRoll:     return QString::number (displayAngleFromDegrees (p.rpyDeg[0], _angleUnit));
+        case ColPitch:    return QString::number (displayAngleFromDegrees (p.rpyDeg[1], _angleUnit));
+        case ColYaw:      return QString::number (displayAngleFromDegrees (p.rpyDeg[2], _angleUnit));
+        case ColPosTol:   return QString::number (displayLengthFromMeters (p.tolerance.positionMeters, _lengthUnit));
+        case ColOriTol:   return QString::number (displayAngleFromDegrees (p.tolerance.orientationDeg, _angleUnit));
         case ColFreeRoll: return p.tolerance.allowToolRollFree ?
                               QStringLiteral ("true") : QStringLiteral ("false");
         case ColWeight:   return QString::number (p.weight);
@@ -223,42 +254,42 @@ bool TaskPointTableModel::stringToTaskPointField (
         case ColX: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.position[0] = v; return true;
+            p.position[0] = metersFromDisplayLength (v, _lengthUnit); return true;
         }
         case ColY: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.position[1] = v; return true;
+            p.position[1] = metersFromDisplayLength (v, _lengthUnit); return true;
         }
         case ColZ: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.position[2] = v; return true;
+            p.position[2] = metersFromDisplayLength (v, _lengthUnit); return true;
         }
         case ColRoll: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.rpyDeg[0] = v; return true;
+            p.rpyDeg[0] = degreesFromDisplayAngle (v, _angleUnit); return true;
         }
         case ColPitch: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.rpyDeg[1] = v; return true;
+            p.rpyDeg[1] = degreesFromDisplayAngle (v, _angleUnit); return true;
         }
         case ColYaw: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.rpyDeg[2] = v; return true;
+            p.rpyDeg[2] = degreesFromDisplayAngle (v, _angleUnit); return true;
         }
         case ColPosTol: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.tolerance.positionMeters = v; return true;
+            p.tolerance.positionMeters = metersFromDisplayLength (v, _lengthUnit); return true;
         }
         case ColOriTol: {
             double v;
             if (!safeParseDouble (trimmed, v)) return false;
-            p.tolerance.orientationDeg = v; return true;
+            p.tolerance.orientationDeg = degreesFromDisplayAngle (v, _angleUnit); return true;
         }
         case ColFreeRoll: {
             const QString t = trimmed.toLower ();
@@ -371,12 +402,14 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
             case ColPositionError: {
                 const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
-                    QString::number (best->positionErrorMeters, 'g', 6);
+                    QString::number (
+                        displayLengthFromMeters (best->positionErrorMeters, _lengthUnit), 'g', 6);
             }
             case ColOrientationError: {
                 const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);
                 return best == nullptr ? QStringLiteral ("-") :
-                    QString::number (best->orientationErrorDeg, 'g', 6);
+                    QString::number (
+                        displayAngleFromDegrees (best->orientationErrorDeg, _angleUnit), 'g', 6);
             }
             case ColMinMargin: {
                 const KinematicIkSolution* best = bestUsableSolutionLocal (r.result.ik);

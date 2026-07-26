@@ -112,15 +112,19 @@ struct AnalysisVisualData
 //   3) 对于 TaskPoint 和 PoseReachability,填充 representative Q(replay)。
 AnalysisVisualData visualDataFromTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results,
-    VisualScalarMode scalarMode);
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit = KinematicLengthUnit::Meters,
+    KinematicAngleUnit angleUnit = KinematicAngleUnit::Degrees);
 
 AnalysisVisualData visualDataFromWorkspaceSamples (
     const std::vector< WorkspaceSample >& samples,
-    VisualScalarMode scalarMode);
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit = KinematicLengthUnit::Meters);
 
 AnalysisVisualData visualDataFromPoseReachabilitySamples (
     const std::vector< PoseReachabilitySample >& samples,
-    VisualScalarMode scalarMode);
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit = KinematicLengthUnit::Meters);
 
 // 3D 点按选定平面投影为 2D 屏幕坐标(纯坐标转换,无状态依赖)。
 //   XY 投影 → (x, y);

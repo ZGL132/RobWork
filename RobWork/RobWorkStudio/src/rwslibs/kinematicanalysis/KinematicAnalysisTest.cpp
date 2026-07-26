@@ -1906,6 +1906,21 @@ static int testTaskPointModel ()
                                 "header[ColCollision]"))
         return rc;
 
+    // Display units affect only the table representation.  The TaskPoint
+    // stored by the model remains in meters/degrees for analysis and export.
+    model.setDisplayUnits (KinematicLengthUnit::Millimeters,
+                           KinematicAngleUnit::Radians);
+    if (const int rc = require (
+            model.headerData (ColX, Qt::Horizontal, Qt::DisplayRole).toString () ==
+                QStringLiteral ("x (mm)"),
+            "position header follows selected length unit"))
+        return rc;
+    if (const int rc = require (
+            model.headerData (ColRoll, Qt::Horizontal, Qt::DisplayRole).toString () ==
+                QStringLiteral ("roll (rad)"),
+            "orientation header follows selected angle unit"))
+        return rc;
+
     // 3) insertRows:默认行的 id / name / type / refFrame / tcpFrame。
     if (const int rc = !model.insertRows (0, 1) ? 1 : 0)
         return rc;
@@ -1925,7 +1940,7 @@ static int testTaskPointModel ()
         return rc;
 
     // 4) setData:改 x / type / freeRoll,确认 taskPointAt 返回正确。
-    if (const int rc = !model.setData (x0, QStringLiteral ("0.42")) ? 1 : 0)
+    if (const int rc = !model.setData (x0, QStringLiteral ("420")) ? 1 : 0)
         return rc;
     if (const int rc = !model.setData (model.index (0, ColType),
                                        QStringLiteral ("Pick")) ? 1 : 0)
@@ -1936,7 +1951,7 @@ static int testTaskPointModel ()
     {
         const TaskPoint p = model.taskPointAt (0);
         if (const int rc = require (nearlyEqual (p.position[0], 0.42, 1e-12),
-                                    "x = 0.42 round-trip"))
+                                    "x = 420 mm round-trips to 0.42 m"))
             return rc;
         if (const int rc = require (p.type == TaskPointType::Pick,
                                     "type Pick round-trip"))
@@ -1945,6 +1960,10 @@ static int testTaskPointModel ()
                                     "freeRoll true round-trip"))
             return rc;
     }
+    if (const int rc = require (
+            model.data (x0, Qt::DisplayRole).toString () == QStringLiteral ("420"),
+            "meters are rendered in selected millimeters"))
+        return rc;
 
     // 5) result 列(17..26)flags 不应包含 editable。
     for (int c = ColStatus; c < TaskPointColumnCount; ++c) {

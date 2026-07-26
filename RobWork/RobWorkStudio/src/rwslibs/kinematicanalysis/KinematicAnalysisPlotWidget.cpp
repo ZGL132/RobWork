@@ -97,6 +97,14 @@ void KinematicAnalysisPlotWidget::setRenderMode (VisualRenderMode mode)
     update ();
 }
 
+void KinematicAnalysisPlotWidget::setLengthUnit (KinematicLengthUnit unit)
+{
+    if (_lengthUnit == unit)
+        return;
+    _lengthUnit = unit;
+    update ();
+}
+
 QImage KinematicAnalysisPlotWidget::renderToImage (const QSize& size) const
 {
     const QSize targetSize = size.isValid () ? size : QSize (1200, 800);
@@ -335,10 +343,12 @@ void KinematicAnalysisPlotWidget::paintPlot (QPainter& painter, const QRect& are
     painter.setPen (palette ().text ().color ());
     painter.drawText (QRectF (pr.left (), pr.bottom () + 8, pr.width (), 20),
                       Qt::AlignCenter,
-                      QStringLiteral ("%1 (m)").arg (axisLabelX (_projection)));
+                       QStringLiteral ("%1 (%2)").arg (axisLabelX (_projection))
+                           .arg (QString::fromLatin1 (unitSuffix (_lengthUnit))));
     painter.drawText (QRectF (0, pr.bottom () + 8, pr.left () - 4, 20),
                       Qt::AlignCenter,
-                      QStringLiteral ("%1 (m)").arg (axisLabelY (_projection)));
+                       QStringLiteral ("%1 (%2)").arg (axisLabelY (_projection))
+                           .arg (QString::fromLatin1 (unitSuffix (_lengthUnit))));
 
     // 8. 空数据提示
     if (visibleCount == 0) {
@@ -384,7 +394,8 @@ void KinematicAnalysisPlotWidget::paintGrid (
             // 数字位置:plotArea 下方 28px,居中,40 像素宽
             painter.drawText (QRectF (x - 20, plotArea.bottom () + 28, 40, 16),
                               Qt::AlignCenter,
-                              QString::number (dataX, 'g', 4));
+                               QString::number (
+                                   displayLengthFromMeters (dataX, _lengthUnit), 'g', 4));
         }
 
         // 水平网格线 + 左侧 Y 刻度
@@ -399,7 +410,8 @@ void KinematicAnalysisPlotWidget::paintGrid (
             // 数字位置:plotArea 左侧 42px,垂直居中
             painter.drawText (QRectF (plotArea.left () - 42, y - 8, 38, 16),
                               Qt::AlignRight | Qt::AlignVCenter,
-                              QString::number (dataY, 'g', 4));
+                               QString::number (
+                                   displayLengthFromMeters (dataY, _lengthUnit), 'g', 4));
         }
     }
 
@@ -560,16 +572,17 @@ void KinematicAnalysisPlotWidget::paintEnvelope (
         return;
     }
 
-    const double scale = 1000.0;
-    const QString unit = QStringLiteral ("mm");
+    const QString unit = QString::fromLatin1 (unitSuffix (_lengthUnit));
     const QString widthText =
-        QStringLiteral ("%1 %2").arg (envelope.width * scale, 0, 'f', 0).arg (unit);
+        QStringLiteral ("%1 %2").arg (
+            displayLengthFromMeters (envelope.width, _lengthUnit), 0, 'f', 3).arg (unit);
     const QString heightText =
-        QStringLiteral ("%1 %2").arg (envelope.height * scale, 0, 'f', 0).arg (unit);
+        QStringLiteral ("%1 %2").arg (
+            displayLengthFromMeters (envelope.height, _lengthUnit), 0, 'f', 3).arg (unit);
     const QString title =
         QStringLiteral ("Approximate outer envelope, %1, Rmax %2 %3")
             .arg (visualProjectionText (envelope.projection))
-            .arg (envelope.maxRadius * scale, 0, 'f', 0)
+            .arg (displayLengthFromMeters (envelope.maxRadius, _lengthUnit), 0, 'f', 3)
             .arg (unit);
     const QString caption = envelope.projection == VisualProjection::XY ?
         QStringLiteral ("Approximate outer envelope, top view - not exact reachability") :

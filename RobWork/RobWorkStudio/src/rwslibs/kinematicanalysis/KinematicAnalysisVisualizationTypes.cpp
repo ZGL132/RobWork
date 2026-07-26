@@ -179,7 +179,9 @@ double normalizedScalar (const AnalysisVisualPoint& point,
 
 AnalysisVisualData rws::visualDataFromTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results,
-    VisualScalarMode scalarMode)
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit,
+    KinematicAngleUnit angleUnit)
 {
     AnalysisVisualData data;
     data.scalarMode = scalarMode;
@@ -206,24 +208,29 @@ AnalysisVisualData rws::visualDataFromTaskPointResults (
                 point.q = best->q;
                 extra = QStringLiteral (
                     "\nBest Q index: %1\nManipulability: %2\nCondition: %3\n"
-                    "Position error: %4 m\nOrientation error: %5 deg")
+                    "Position error: %4 %5\nOrientation error: %6 %7")
                     .arg (point.sourceIndex)
                     .arg (QString::number (best->manipulability, 'g', 6))
                     .arg (QString::number (best->conditionNumber, 'g', 6))
-                    .arg (QString::number (best->positionErrorMeters, 'g', 6))
-                    .arg (QString::number (best->orientationErrorDeg, 'g', 6));
+                    .arg (QString::number (
+                        displayLengthFromMeters (best->positionErrorMeters, lengthUnit), 'g', 6))
+                    .arg (QString::fromLatin1 (unitSuffix (lengthUnit)))
+                    .arg (QString::number (
+                        displayAngleFromDegrees (best->orientationErrorDeg, angleUnit), 'g', 6))
+                    .arg (QString::fromLatin1 (unitSuffix (angleUnit)));
                 extra += QStringLiteral ("\nReplay Q: %1")
                     .arg (point.hasQ ? QStringLiteral ("Yes") : QStringLiteral ("No"));
             }
             point.tooltip = QStringLiteral (
                 "Task point: %1\nStatus: %2\nReason: %3\n"
-                "Position: %4, %5, %6 m\nScalar: %7 = %8%9")
+                "Position: %4, %5, %6 %7\nScalar: %8 = %9%10")
                 .arg (point.label)
                 .arg (statusTextLocal (result.status))
                 .arg (failureReasonsText (result.failureReasons))
-                .arg (QString::number (point.position[0], 'g', 6))
-                .arg (QString::number (point.position[1], 'g', 6))
-                .arg (QString::number (point.position[2], 'g', 6))
+                .arg (QString::number (displayLengthFromMeters (point.position[0], lengthUnit), 'g', 6))
+                .arg (QString::number (displayLengthFromMeters (point.position[1], lengthUnit), 'g', 6))
+                .arg (QString::number (displayLengthFromMeters (point.position[2], lengthUnit), 'g', 6))
+                .arg (QString::fromLatin1 (unitSuffix (lengthUnit)))
                 .arg (visualScalarModeText (scalarMode))
                 .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
                                             : QStringLiteral ("-"))
@@ -237,7 +244,8 @@ AnalysisVisualData rws::visualDataFromTaskPointResults (
 
 AnalysisVisualData rws::visualDataFromWorkspaceSamples (
     const std::vector< WorkspaceSample >& samples,
-    VisualScalarMode scalarMode)
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit)
 {
     AnalysisVisualData data;
     data.scalarMode = scalarMode;
@@ -256,14 +264,15 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
         point.hasFiniteScalar = workspaceScalar (sample, scalarMode, &point.scalar);
         point.tooltip = QStringLiteral (
             "Workspace sample: %1\nStatus: %2\n"
-            "TCP: %3, %4, %5 m\nScalar: %6 = %7\n"
-            "Manipulability: %8\nCondition: %9\nMin margin: %10\nCollision: %11\n"
-            "Replay Q: %12")
+            "TCP: %3, %4, %5 %6\nScalar: %7 = %8\n"
+            "Manipulability: %9\nCondition: %10\nMin margin: %11\nCollision: %12\n"
+            "Replay Q: %13")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
-            .arg (QString::number (point.position[0], 'g', 6))
-            .arg (QString::number (point.position[1], 'g', 6))
-            .arg (QString::number (point.position[2], 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[0], lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[1], lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[2], lengthUnit), 'g', 6))
+            .arg (QString::fromLatin1 (unitSuffix (lengthUnit)))
             .arg (visualScalarModeText (scalarMode))
             .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
                                         : QStringLiteral ("-"))
@@ -280,7 +289,8 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
 
 AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
     const std::vector< PoseReachabilitySample >& samples,
-    VisualScalarMode scalarMode)
+    VisualScalarMode scalarMode,
+    KinematicLengthUnit lengthUnit)
 {
     AnalysisVisualData data;
     data.scalarMode = scalarMode;
@@ -303,13 +313,14 @@ AnalysisVisualData rws::visualDataFromPoseReachabilitySamples (
             QStringLiteral ("\nReplay Q: No");
         point.tooltip = QStringLiteral (
             "Pose reachability: %1\nStatus: %2\n"
-            "Position: %3, %4, %5 m\nScalar: %6 = %7\n"
-            "Reachable: %8 / %9%10")
+            "Position: %3, %4, %5 %6\nScalar: %7 = %8\n"
+            "Reachable: %9 / %10%11")
             .arg (point.sourceIndex)
             .arg (statusTextLocal (sample.status))
-            .arg (QString::number (point.position[0], 'g', 6))
-            .arg (QString::number (point.position[1], 'g', 6))
-            .arg (QString::number (point.position[2], 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[0], lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[1], lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (point.position[2], lengthUnit), 'g', 6))
+            .arg (QString::fromLatin1 (unitSuffix (lengthUnit)))
             .arg (visualScalarModeText (scalarMode))
             .arg (point.hasFiniteScalar ? QString::number (point.scalar, 'g', 6)
                                         : QStringLiteral ("-"))

@@ -130,7 +130,7 @@ class KinematicAnalysisWidget : public QWidget
     // 把当前 currentPose 拷到 IK tab 的输入框。
     void importCurrentPoseToIk ();
     // 切换长度/角度单位时刷新所有 SpinBox 文本。
-    void updateIkUnitDisplay ();
+    void updateUnitDisplay ();
 
     // ===================================================================
     //  Task Points tab
@@ -327,8 +327,8 @@ class KinematicAnalysisWidget : public QWidget
     QDoubleSpinBox* _ikYawSpin;                        // 目标 yaw
     QDoubleSpinBox* _ikDuplicateQThresholdSpin;        // IK 解去重 Q 阈值
     QCheckBox* _ikCollisionCheck;                      // IK 解是否启用碰撞检查
-    QComboBox* _ikDistanceUnitCombo;                   // 长度显示单位
-    QComboBox* _ikAngleUnitCombo;                     // 角度显示单位
+    QComboBox* _lengthUnitCombo;                       // 全局长度显示单位
+    QComboBox* _angleUnitCombo;                        // 全局角度显示单位
     QPushButton* _ikImportCurrentPoseButton;           // 导入当前 TCP
     QPushButton* _ikSolveButton;                      // 触发 solveIk
     QPushButton* _ikApplyButton;                       // 把选中解写回 state
@@ -451,15 +451,15 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _thresholdApplyButton;
 
     // _thresholds:当前生效的阈值集合(可由用户改 Report tab)。
-    // _ikLengthUnit / _ikAngleUnit:IK tab 的显示单位(用户切换)。
+    // _lengthUnit / _angleUnit:插件全局的显示单位(用户切换)。
     // _lastCurrentPose:最近一次刷新的 current pose(供回写 state 时使用)。
     // _lastIkResult:最近一次 IK 求解结果(缓存,避免重复求解)。
     // _lastTaskPointResults:任务点分析结果(供 Report / 取消重算复用)。
     // _workspaceSamples:工作空间完整结果(供 Visualization 用)。
     // _poseReachabilitySamples:位姿可达性完整结果(供 Visualization 用)。
     KinematicThresholds _thresholds;
-    KinematicLengthUnit _ikLengthUnit;
-    KinematicAngleUnit _ikAngleUnit;
+    KinematicLengthUnit _lengthUnit;
+    KinematicAngleUnit _angleUnit;
     KinematicCurrentPoseResult _lastCurrentPose;
     KinematicIkAnalysisResult _lastIkResult;
     std::vector< TaskPointReachabilityResult > _lastTaskPointResults;

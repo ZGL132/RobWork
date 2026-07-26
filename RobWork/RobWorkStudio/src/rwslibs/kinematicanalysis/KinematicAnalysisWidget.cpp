@@ -277,8 +277,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikYawSpin(NULL),
     _ikDuplicateQThresholdSpin(NULL),
     _ikCollisionCheck(NULL),
-    _ikDistanceUnitCombo(NULL),
-    _ikAngleUnitCombo(NULL),
+    _lengthUnitCombo(NULL),
+    _angleUnitCombo(NULL),
     _ikImportCurrentPoseButton(NULL),
     _ikSolveButton(NULL),
     _ikApplyButton(NULL),
@@ -374,8 +374,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _thresholdOrientationToleranceSpin(NULL),
     _thresholdApplyButton(NULL),
     _thresholds(),
-    _ikLengthUnit(KinematicLengthUnit::Meters),
-    _ikAngleUnit(KinematicAngleUnit::Degrees),
+    _lengthUnit(KinematicLengthUnit::Meters),
+    _angleUnit(KinematicAngleUnit::Degrees),
     _lastCurrentPose(),
     _lastIkResult(),
     _lastTaskPointResults(),
@@ -402,6 +402,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     header->setColumnStretch(1, 1);
     _deviceCombo = new QComboBox(base);
     _tcpFrameCombo = new QComboBox(base);
+    _lengthUnitCombo = new QComboBox(base);
+    _angleUnitCombo = new QComboBox(base);
+    _lengthUnitCombo->addItem(tr("Meters"), static_cast<int>(KinematicLengthUnit::Meters));
+    _lengthUnitCombo->addItem(tr("Centimeters"), static_cast<int>(KinematicLengthUnit::Centimeters));
+    _lengthUnitCombo->addItem(tr("Millimeters"), static_cast<int>(KinematicLengthUnit::Millimeters));
+    _lengthUnitCombo->addItem(tr("Inches"), static_cast<int>(KinematicLengthUnit::Inches));
+    _angleUnitCombo->addItem(tr("Degrees"), static_cast<int>(KinematicAngleUnit::Degrees));
+    _angleUnitCombo->addItem(tr("Radians"), static_cast<int>(KinematicAngleUnit::Radians));
+    _angleUnitCombo->addItem(tr("Grads"), static_cast<int>(KinematicAngleUnit::Grads));
+    _angleUnitCombo->addItem(tr("Turns"), static_cast<int>(KinematicAngleUnit::Turns));
     _refreshCurrentPoseButton = new QPushButton(tr("Refresh"), base);
     _deviceCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
     _tcpFrameCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
@@ -412,6 +422,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     header->addWidget(new QLabel(tr("TCP frame:"), base), 1, 0);
     header->addWidget(_tcpFrameCombo, 1, 1);
     header->addWidget(_refreshCurrentPoseButton, 1, 2);
+    header->addWidget(new QLabel(tr("Distance unit:"), base), 2, 0);
+    header->addWidget(_lengthUnitCombo, 2, 1);
+    header->addWidget(new QLabel(tr("Angle unit:"), base), 2, 2);
+    header->addWidget(_angleUnitCombo, 2, 3);
     content->addLayout(header);
 
     _tabs = new QTabWidget(base);
@@ -526,24 +540,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QHBoxLayout* ikNameRow = new QHBoxLayout();
     _ikTargetNameEdit = new QLineEdit(_ikTab);
     _ikTargetNameEdit->setText(tr("Target"));
-    _ikDistanceUnitCombo = new QComboBox(_ikTab);
-    _ikAngleUnitCombo = new QComboBox(_ikTab);
-    _ikDistanceUnitCombo->addItem(tr("Meters"), static_cast<int>(KinematicLengthUnit::Meters));
-    _ikDistanceUnitCombo->addItem(tr("Centimeters"), static_cast<int>(KinematicLengthUnit::Centimeters));
-    _ikDistanceUnitCombo->addItem(tr("Millimeters"), static_cast<int>(KinematicLengthUnit::Millimeters));
-    _ikDistanceUnitCombo->addItem(tr("Inches"), static_cast<int>(KinematicLengthUnit::Inches));
-    _ikAngleUnitCombo->addItem(tr("Degrees"), static_cast<int>(KinematicAngleUnit::Degrees));
-    _ikAngleUnitCombo->addItem(tr("Radians"), static_cast<int>(KinematicAngleUnit::Radians));
-    _ikAngleUnitCombo->addItem(tr("Grads"), static_cast<int>(KinematicAngleUnit::Grads));
-    _ikAngleUnitCombo->addItem(tr("Turns"), static_cast<int>(KinematicAngleUnit::Turns));
     ikNameRow->addWidget(new QLabel(tr("Target:"), _ikTab));
     ikNameRow->addWidget(_ikTargetNameEdit, 1);
-    ikNameRow->addSpacing (12);
-    ikNameRow->addWidget(new QLabel(tr("Distance unit:"), _ikTab));
-    ikNameRow->addWidget(_ikDistanceUnitCombo);
-    ikNameRow->addSpacing (12);
-    ikNameRow->addWidget(new QLabel(tr("Angle unit:"), _ikTab));
-    ikNameRow->addWidget(_ikAngleUnitCombo);
     ikLayout->addLayout(ikNameRow);
 
     // ---- 第 2 行:位姿 6 个 spin,2 行 × 3 列 ----
@@ -567,7 +565,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
     _ikCollisionCheck = new QCheckBox (tr("Collision"), _ikTab);
     _ikCollisionCheck->setChecked (true);
-    updateIkUnitDisplay();
+    updateUnitDisplay();
 
     QGridLayout* ikPoseGrid = new QGridLayout();
     ikPoseGrid->addWidget(new QLabel(tr("X:"), _ikTab), 0, 0);
@@ -726,8 +724,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_ikShowFailedCandidatesCheck, SIGNAL (stateChanged (int)),
              this, SLOT (refreshIkSolutionView ()));
     connect (_ikImportCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (importCurrentPoseToIk ()));
-    connect (_ikDistanceUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
-    connect (_ikAngleUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateIkUnitDisplay ()));
+    connect (_lengthUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateUnitDisplay ()));
+    connect (_angleUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateUnitDisplay ()));
     connect (_deviceCombo,
              static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
              this,
@@ -1027,8 +1025,10 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         _ikSolutionTable->setItem (displayRow, 8,
             makeItem (std::isinf (solution.conditionNumber) ? tr("inf")
                                                             : QString::number (solution.conditionNumber)));
-        _ikSolutionTable->setItem (displayRow, 9, makeItem (solution.positionErrorMeters));
-        _ikSolutionTable->setItem (displayRow, 10, makeItem (solution.orientationErrorDeg));
+        _ikSolutionTable->setItem (displayRow, 9, makeItem (displayLengthFromMeters (
+            solution.positionErrorMeters, _lengthUnit)));
+        _ikSolutionTable->setItem (displayRow, 10, makeItem (displayAngleFromDegrees (
+            solution.orientationErrorDeg, _angleUnit)));
         // 第 11 列是纯 Q,失败原因已分到第 2 列;传空 reasons 防止 makeQItem
         // 把原因字符串重复显示一次。Task 6:在 makeQItem 内部给 text 加 tooltip。
         _ikSolutionTable->setItem (displayRow, 11,
@@ -1118,8 +1118,10 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
         .arg (QString::number (s.minJointLimitMargin, 'g', 6))
         .arg (QString::number (s.manipulability, 'g', 6))
         .arg (condText)
-        .arg (QString::number (s.positionErrorMeters, 'g', 6))
-        .arg (QString::number (s.orientationErrorDeg, 'g', 6))
+        .arg (QString::number (displayLengthFromMeters (
+            s.positionErrorMeters, _lengthUnit), 'g', 6))
+        .arg (QString::number (displayAngleFromDegrees (
+            s.orientationErrorDeg, _angleUnit), 'g', 6))
         .arg (qVectorText (s.q));
 
     _ikDetailTable->setRowCount (2);
@@ -1440,32 +1442,32 @@ KinematicAnalysisWidget::collisionDetectorForAnalysis (
 
 double KinematicAnalysisWidget::ikXInputMeters () const
 {
-    return metersFromDisplayLength (_ikXSpin->value (), _ikLengthUnit);
+    return metersFromDisplayLength (_ikXSpin->value (), _lengthUnit);
 }
 
 double KinematicAnalysisWidget::ikYInputMeters () const
 {
-    return metersFromDisplayLength (_ikYSpin->value (), _ikLengthUnit);
+    return metersFromDisplayLength (_ikYSpin->value (), _lengthUnit);
 }
 
 double KinematicAnalysisWidget::ikZInputMeters () const
 {
-    return metersFromDisplayLength (_ikZSpin->value (), _ikLengthUnit);
+    return metersFromDisplayLength (_ikZSpin->value (), _lengthUnit);
 }
 
 double KinematicAnalysisWidget::ikRollInputDeg () const
 {
-    return degreesFromDisplayAngle (_ikRollSpin->value (), _ikAngleUnit);
+    return degreesFromDisplayAngle (_ikRollSpin->value (), _angleUnit);
 }
 
 double KinematicAnalysisWidget::ikPitchInputDeg () const
 {
-    return degreesFromDisplayAngle (_ikPitchSpin->value (), _ikAngleUnit);
+    return degreesFromDisplayAngle (_ikPitchSpin->value (), _angleUnit);
 }
 
 double KinematicAnalysisWidget::ikYawInputDeg () const
 {
-    return degreesFromDisplayAngle (_ikYawSpin->value (), _ikAngleUnit);
+    return degreesFromDisplayAngle (_ikYawSpin->value (), _angleUnit);
 }
 
 void KinematicAnalysisWidget::setIkPoseMetersDeg (
@@ -1478,46 +1480,134 @@ void KinematicAnalysisWidget::setIkPoseMetersDeg (
     const QSignalBlocker br (_ikRollSpin);
     const QSignalBlocker bp (_ikPitchSpin);
     const QSignalBlocker bw (_ikYawSpin);
-    _ikXSpin->setValue (displayLengthFromMeters (positionMeters[0], _ikLengthUnit));
-    _ikYSpin->setValue (displayLengthFromMeters (positionMeters[1], _ikLengthUnit));
-    _ikZSpin->setValue (displayLengthFromMeters (positionMeters[2], _ikLengthUnit));
-    _ikRollSpin->setValue (displayAngleFromDegrees (rpyDeg[0], _ikAngleUnit));
-    _ikPitchSpin->setValue (displayAngleFromDegrees (rpyDeg[1], _ikAngleUnit));
-    _ikYawSpin->setValue (displayAngleFromDegrees (rpyDeg[2], _ikAngleUnit));
+    _ikXSpin->setValue (displayLengthFromMeters (positionMeters[0], _lengthUnit));
+    _ikYSpin->setValue (displayLengthFromMeters (positionMeters[1], _lengthUnit));
+    _ikZSpin->setValue (displayLengthFromMeters (positionMeters[2], _lengthUnit));
+    _ikRollSpin->setValue (displayAngleFromDegrees (rpyDeg[0], _angleUnit));
+    _ikPitchSpin->setValue (displayAngleFromDegrees (rpyDeg[1], _angleUnit));
+    _ikYawSpin->setValue (displayAngleFromDegrees (rpyDeg[2], _angleUnit));
 }
 
-void KinematicAnalysisWidget::updateIkUnitDisplay ()
+void KinematicAnalysisWidget::updateUnitDisplay ()
 {
-    if (_ikXSpin == NULL || _ikDistanceUnitCombo == NULL || _ikAngleUnitCombo == NULL)
+    if (_ikXSpin == NULL || _lengthUnitCombo == NULL || _angleUnitCombo == NULL)
         return;
 
     const std::array< double, 3 > positionMeters = {{
         ikXInputMeters (), ikYInputMeters (), ikZInputMeters ()}};
     const std::array< double, 3 > rpyDeg = {{
         ikRollInputDeg (), ikPitchInputDeg (), ikYawInputDeg ()}};
+    const double positionToleranceMeters = _thresholdPositionToleranceSpin == NULL ?
+        _thresholds.positionToleranceMeters :
+        metersFromDisplayLength (_thresholdPositionToleranceSpin->value (), _lengthUnit);
+    const double orientationToleranceDeg = _thresholdOrientationToleranceSpin == NULL ?
+        _thresholds.orientationToleranceDeg :
+        degreesFromDisplayAngle (_thresholdOrientationToleranceSpin->value (), _angleUnit);
 
-    _ikLengthUnit = static_cast< KinematicLengthUnit > (
-        _ikDistanceUnitCombo->currentData ().toInt ());
-    _ikAngleUnit = static_cast< KinematicAngleUnit > (
-        _ikAngleUnitCombo->currentData ().toInt ());
+    if (_posePositionTable != NULL) {
+        for (int row = 0; row < _posePositionTable->rowCount (); ++row) {
+            for (int column = 0; column < 3; ++column) {
+                QTableWidgetItem* item = _posePositionTable->item (row, column);
+                bool ok = false;
+                const double displayed = item == NULL ? 0.0 : item->text ().toDouble (&ok);
+                if (item != NULL && ok)
+                    item->setData (Qt::UserRole,
+                                   metersFromDisplayLength (displayed, _lengthUnit));
+            }
+        }
+    }
+
+    _lengthUnit = static_cast< KinematicLengthUnit > (
+        _lengthUnitCombo->currentData ().toInt ());
+    _angleUnit = static_cast< KinematicAngleUnit > (
+        _angleUnitCombo->currentData ().toInt ());
 
     const QString lengthSuffix = QStringLiteral (" ") +
-        QString::fromLatin1 (unitSuffix (_ikLengthUnit));
+        QString::fromLatin1 (unitSuffix (_lengthUnit));
     const QString angleSuffix = QStringLiteral (" ") +
-        QString::fromLatin1 (unitSuffix (_ikAngleUnit));
+        QString::fromLatin1 (unitSuffix (_angleUnit));
     for (QDoubleSpinBox* spin : {_ikXSpin, _ikYSpin, _ikZSpin}) {
-        spin->setRange (displayLengthFromMeters (-1000.0, _ikLengthUnit),
-                        displayLengthFromMeters (1000.0, _ikLengthUnit));
-        spin->setSingleStep (displayLengthFromMeters (0.01, _ikLengthUnit));
+        spin->setRange (displayLengthFromMeters (-1000.0, _lengthUnit),
+                        displayLengthFromMeters (1000.0, _lengthUnit));
+        spin->setSingleStep (displayLengthFromMeters (0.01, _lengthUnit));
         spin->setSuffix (lengthSuffix);
     }
     for (QDoubleSpinBox* spin : {_ikRollSpin, _ikPitchSpin, _ikYawSpin}) {
-        spin->setRange (displayAngleFromDegrees (-360.0, _ikAngleUnit),
-                        displayAngleFromDegrees (360.0, _ikAngleUnit));
-        spin->setSingleStep (displayAngleFromDegrees (1.0, _ikAngleUnit));
+        spin->setRange (displayAngleFromDegrees (-360.0, _angleUnit),
+                        displayAngleFromDegrees (360.0, _angleUnit));
+        spin->setSingleStep (displayAngleFromDegrees (1.0, _angleUnit));
         spin->setSuffix (angleSuffix);
     }
     setIkPoseMetersDeg (positionMeters, rpyDeg);
+
+    if (_thresholdPositionToleranceSpin != NULL) {
+        _thresholdPositionToleranceSpin->setRange (0.0,
+            displayLengthFromMeters (1000.0, _lengthUnit));
+        _thresholdPositionToleranceSpin->setSuffix (lengthSuffix);
+        _thresholdPositionToleranceSpin->setValue (
+            displayLengthFromMeters (positionToleranceMeters, _lengthUnit));
+    }
+    if (_thresholdOrientationToleranceSpin != NULL) {
+        _thresholdOrientationToleranceSpin->setRange (0.0,
+            displayAngleFromDegrees (360.0, _angleUnit));
+        _thresholdOrientationToleranceSpin->setSuffix (angleSuffix);
+        _thresholdOrientationToleranceSpin->setValue (
+            displayAngleFromDegrees (orientationToleranceDeg, _angleUnit));
+    }
+
+    if (_taskPointModel != nullptr)
+        _taskPointModel->setDisplayUnits (_lengthUnit, _angleUnit);
+    if (_poseValueTable != NULL) {
+        const QString length = QString::fromLatin1 (unitSuffix (_lengthUnit));
+        const QString angle = QString::fromLatin1 (unitSuffix (_angleUnit));
+        _poseValueTable->setHorizontalHeaderLabels ({
+            tr("pos x (%1)").arg (length), tr("pos y (%1)").arg (length),
+            tr("pos z (%1)").arg (length), tr("roll (%1)").arg (angle),
+            tr("pitch (%1)").arg (angle), tr("yaw (%1)").arg (angle)});
+    }
+    if (_ikSolutionTable != NULL)
+        _ikSolutionTable->setHorizontalHeaderLabels ({
+            tr("Index"), tr("Status"), tr("Failure"), tr("Current Q"), tr("Collision"),
+            tr("Distance"), tr("Min limit margin"), tr("Manipulability"), tr("Condition"),
+            tr("Position error (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
+            tr("Orientation error (%1)").arg (QString::fromLatin1 (unitSuffix (_angleUnit))),
+            tr("Q")});
+    if (_workspaceTable != NULL)
+        _workspaceTable->setHorizontalHeaderLabels ({
+            tr("Index"), tr("Status"), tr("Collision"),
+            tr("TCP x (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
+            tr("TCP y (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
+            tr("TCP z (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
+            tr("Manipulability"), tr("Condition"), tr("Min limit margin")});
+    if (_posePositionTable != NULL) {
+        const QString suffix = QString::fromLatin1 (unitSuffix (_lengthUnit));
+        _posePositionTable->setHorizontalHeaderLabels ({
+            tr("x (%1)").arg (suffix), tr("y (%1)").arg (suffix), tr("z (%1)").arg (suffix)});
+        for (int row = 0; row < _posePositionTable->rowCount (); ++row) {
+            for (int column = 0; column < 3; ++column) {
+                QTableWidgetItem* item = _posePositionTable->item (row, column);
+                if (item != NULL && item->data (Qt::UserRole).isValid ())
+                    item->setText (QString::number (displayLengthFromMeters (
+                        item->data (Qt::UserRole).toDouble (), _lengthUnit)));
+            }
+        }
+    }
+    if (_poseResultTable != NULL) {
+        const QString suffix = QString::fromLatin1 (unitSuffix (_lengthUnit));
+        _poseResultTable->setHorizontalHeaderLabels ({
+            tr("Index"), tr("Status"), tr("x (%1)").arg (suffix),
+            tr("y (%1)").arg (suffix), tr("z (%1)").arg (suffix),
+            tr("Sampled"), tr("Reachable"), tr("Coverage")});
+    }
+    if (_visualPlot != NULL)
+        _visualPlot->setLengthUnit (_lengthUnit);
+
+    if (_lastCurrentPose.status != AnalysisStatus::Unknown)
+        refreshCurrentPose ();
+    refreshIkSolutionView ();
+    applyWorkspaceResults (_workspaceSamples);
+    applyPoseReachabilityResults (_poseReachabilitySamples);
+    refreshVisualization ();
 }
 
 // refreshCurrentPose:重置四个 Current pose 表格与文本标签 → 调用
@@ -1569,12 +1659,18 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
 
     // ---- 1. 紧凑摘要栏(2 行 6 列 + 关键指标) ----
     if (_poseValueTable != NULL) {
-        _poseValueTable->setItem (0, 0, makeItem (result.tcpPosition[0]));
-        _poseValueTable->setItem (0, 1, makeItem (result.tcpPosition[1]));
-        _poseValueTable->setItem (0, 2, makeItem (result.tcpPosition[2]));
-        _poseValueTable->setItem (0, 3, makeItem (result.tcpRpyDeg[0]));
-        _poseValueTable->setItem (0, 4, makeItem (result.tcpRpyDeg[1]));
-        _poseValueTable->setItem (0, 5, makeItem (result.tcpRpyDeg[2]));
+        _poseValueTable->setItem (0, 0, makeItem (displayLengthFromMeters (
+            result.tcpPosition[0], _lengthUnit)));
+        _poseValueTable->setItem (0, 1, makeItem (displayLengthFromMeters (
+            result.tcpPosition[1], _lengthUnit)));
+        _poseValueTable->setItem (0, 2, makeItem (displayLengthFromMeters (
+            result.tcpPosition[2], _lengthUnit)));
+        _poseValueTable->setItem (0, 3, makeItem (displayAngleFromDegrees (
+            result.tcpRpyDeg[0], _angleUnit)));
+        _poseValueTable->setItem (0, 4, makeItem (displayAngleFromDegrees (
+            result.tcpRpyDeg[1], _angleUnit)));
+        _poseValueTable->setItem (0, 5, makeItem (displayAngleFromDegrees (
+            result.tcpRpyDeg[2], _angleUnit)));
     }
     // 表头高度在初次布局后才会稳定,refresh 阶段再调一次确保紧凑。
     if (_poseValueTable != NULL)
@@ -1666,9 +1762,9 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
         const int singCount = static_cast< int > (result.singularValues.size ());
         QStringList headers;
         for (int i = 0; i < singCount; ++i)
-            headers << tr("蟽%1").arg (i);
+            headers << tr("sigma%1").arg (i);
         if (singCount > 0)
-            headers << tr("蟽min");
+            headers << tr("sigma_min");
         _singularTable->setColumnCount (headers.size ());
         _singularTable->setRowCount (1);
         _singularTable->setHorizontalHeaderLabels (headers);
@@ -2516,7 +2612,7 @@ void KinematicAnalysisWidget::refreshVisualization ()
                 rows.push_back (result);
             }
         }
-        data = visualDataFromTaskPointResults (rows, scalarMode);
+        data = visualDataFromTaskPointResults (rows, scalarMode, _lengthUnit, _angleUnit);
         data.renderMode = VisualRenderMode::Scatter;
     }
     else if (sourceKind == 1) {
@@ -2581,12 +2677,13 @@ void KinematicAnalysisWidget::refreshVisualization ()
             }
         }
         else {
-            data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode);
+            data = visualDataFromWorkspaceSamples (_workspaceSamples, scalarMode, _lengthUnit);
             data.renderMode = VisualRenderMode::Scatter;
         }
     }
     else {
-        data = visualDataFromPoseReachabilitySamples (_poseReachabilitySamples, scalarMode);
+        data = visualDataFromPoseReachabilitySamples (
+            _poseReachabilitySamples, scalarMode, _lengthUnit);
         data.renderMode = VisualRenderMode::Scatter;
     }
 
@@ -2611,12 +2708,16 @@ void KinematicAnalysisWidget::refreshVisualization ()
         if (data.renderMode == VisualRenderMode::Envelope) {
             if (data.envelope.valid) {
                 _visualSummaryLabel->setText (
-                    tr("Approximate outer envelope: %1 pts | %2 | %3x%4 m | Rmax %5 m | approximate - not exact reachability")
+                    tr("Approximate outer envelope: %1 pts | %2 | %3x%4 %5 | Rmax %6 %5 | approximate - not exact reachability")
                         .arg (static_cast<int> (data.envelope.boundary.size ()))
                         .arg (visualProjectionText (projection))
-                        .arg (QString::number (data.envelope.width, 'f', 3))
-                        .arg (QString::number (data.envelope.height, 'f', 3))
-                        .arg (QString::number (data.envelope.maxRadius, 'f', 3)));
+                        .arg (QString::number (displayLengthFromMeters (
+                            data.envelope.width, _lengthUnit), 'f', 3))
+                        .arg (QString::number (displayLengthFromMeters (
+                            data.envelope.height, _lengthUnit), 'f', 3))
+                        .arg (QString::fromLatin1 (unitSuffix (_lengthUnit)))
+                        .arg (QString::number (displayLengthFromMeters (
+                            data.envelope.maxRadius, _lengthUnit), 'f', 3)));
             }
             else {
                 _visualSummaryLabel->setText (
@@ -2706,12 +2807,16 @@ void KinematicAnalysisWidget::onEnvelopeFinished ()
     if (_visualSummaryLabel != NULL) {
         if (envelope.valid) {
             _visualSummaryLabel->setText (
-                tr("Approximate outer envelope: %1 pts | %2 | %3x%4 m | Rmax %5 m | approximate - not exact reachability")
+                tr("Approximate outer envelope: %1 pts | %2 | %3x%4 %5 | Rmax %6 %5 | approximate - not exact reachability")
                     .arg (static_cast<int> (envelope.boundary.size ()))
                     .arg (visualProjectionText (envelope.projection))
-                    .arg (QString::number (envelope.width, 'f', 3))
-                    .arg (QString::number (envelope.height, 'f', 3))
-                    .arg (QString::number (envelope.maxRadius, 'f', 3)));
+                    .arg (QString::number (displayLengthFromMeters (
+                        envelope.width, _lengthUnit), 'f', 3))
+                    .arg (QString::number (displayLengthFromMeters (
+                        envelope.height, _lengthUnit), 'f', 3))
+                    .arg (QString::fromLatin1 (unitSuffix (_lengthUnit)))
+                    .arg (QString::number (displayLengthFromMeters (
+                        envelope.maxRadius, _lengthUnit), 'f', 3)));
         }
         else {
             _visualSummaryLabel->setText (
@@ -3872,8 +3977,8 @@ KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
         std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
         for (int column = 0; column < 3; ++column) {
             bool ok = false;
-            position[static_cast< std::size_t > (column)] =
-                cellText (_posePositionTable, r, column).toDouble (&ok);
+            position[static_cast< std::size_t > (column)] = metersFromDisplayLength (
+                cellText (_posePositionTable, r, column).toDouble (&ok), _lengthUnit);
             if (!ok || !std::isfinite (position[static_cast< std::size_t > (column)])) {
                 if (error != nullptr) {
                     *error = tr("Pose position row %1 contains an invalid numeric value.")
@@ -3917,9 +4022,12 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
         _workspaceTable->setItem (row, 0, makeItem (QString::number (row)));
         _workspaceTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
         _workspaceTable->setItem (row, 2, makeItem (sample.inCollision ? tr("Yes") : tr("No")));
-        _workspaceTable->setItem (row, 3, makeItem (sample.tcpPosition[0]));
-        _workspaceTable->setItem (row, 4, makeItem (sample.tcpPosition[1]));
-        _workspaceTable->setItem (row, 5, makeItem (sample.tcpPosition[2]));
+        _workspaceTable->setItem (row, 3, makeItem (displayLengthFromMeters (
+            sample.tcpPosition[0], _lengthUnit)));
+        _workspaceTable->setItem (row, 4, makeItem (displayLengthFromMeters (
+            sample.tcpPosition[1], _lengthUnit)));
+        _workspaceTable->setItem (row, 5, makeItem (displayLengthFromMeters (
+            sample.tcpPosition[2], _lengthUnit)));
         _workspaceTable->setItem (row, 6, makeItem (sample.manipulability));
         _workspaceTable->setItem (row, 7, makeItem (sample.conditionNumber));
         _workspaceTable->setItem (row, 8, makeItem (sample.minJointLimitMargin));
@@ -4337,9 +4445,12 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
         const int row = static_cast< int > (i);
         _poseResultTable->setItem (row, 0, makeItem (QString::number (row)));
         _poseResultTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
-        _poseResultTable->setItem (row, 2, makeItem (sample.position[0]));
-        _poseResultTable->setItem (row, 3, makeItem (sample.position[1]));
-        _poseResultTable->setItem (row, 4, makeItem (sample.position[2]));
+        _poseResultTable->setItem (row, 2, makeItem (displayLengthFromMeters (
+            sample.position[0], _lengthUnit)));
+        _poseResultTable->setItem (row, 3, makeItem (displayLengthFromMeters (
+            sample.position[1], _lengthUnit)));
+        _poseResultTable->setItem (row, 4, makeItem (displayLengthFromMeters (
+            sample.position[2], _lengthUnit)));
         _poseResultTable->setItem (row, 5, makeItem (QString::number (sample.sampledDirections)));
         _poseResultTable->setItem (row, 6, makeItem (QString::number (sample.reachableDirections)));
         _poseResultTable->setItem (row, 7, makeItem (sample.coverage));
@@ -4899,7 +5010,9 @@ void KinematicAnalysisWidget::applyThresholds ()
     _thresholds.conditionFail = _thresholdConditionFailSpin->value ();
     _thresholds.singularValueWarning = _thresholdSingularValueSpin->value ();
     _thresholds.manipulabilityWarning = _thresholdManipulabilitySpin->value ();
-    _thresholds.positionToleranceMeters = _thresholdPositionToleranceSpin->value ();
-    _thresholds.orientationToleranceDeg = _thresholdOrientationToleranceSpin->value ();
+    _thresholds.positionToleranceMeters = metersFromDisplayLength (
+        _thresholdPositionToleranceSpin->value (), _lengthUnit);
+    _thresholds.orientationToleranceDeg = degreesFromDisplayAngle (
+        _thresholdOrientationToleranceSpin->value (), _angleUnit);
     setStatus (tr("Kinematic thresholds updated. Re-run analyses to refresh results."));
 }

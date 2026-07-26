@@ -134,11 +134,17 @@ class TaskPointTableModel : public QAbstractTableModel
     static QString headerText (int column);
     static QStringList allHeaderTexts ();
 
+    //! Changes UI units only; TaskPoint values remain meters/degrees internally.
+    void setDisplayUnits (KinematicLengthUnit lengthUnit, KinematicAngleUnit angleUnit);
+
   private:
     // 内部维护的原始数据;UI 通过 QAbstractTableModel 接口读写。
     std::vector< TaskPointTableRow > _rows;
     double _reachableRate = 0.0;
+    KinematicLengthUnit _lengthUnit = KinematicLengthUnit::Meters;
+    KinematicAngleUnit _angleUnit = KinematicAngleUnit::Degrees;
 
+    QString displayHeaderText (int column) const;
     QString taskPointToString (const TaskPoint& p, int column) const;
     bool stringToTaskPointField (const QString& s, int column, TaskPoint& p) const;
     void recomputeValidation (TaskPointTableRow& row);

@@ -68,6 +68,9 @@ class KinematicAnalysisPlotWidget : public QWidget
     // 设置渲染模式:Scatter(默认)或 Envelope(技术图纸风格包络图)。
     void setRenderMode (VisualRenderMode mode);
 
+    //! Coordinates are stored in meters; this only changes visible labels and ticks.
+    void setLengthUnit (KinematicLengthUnit unit);
+
     // ===================================================================
     //  渲染到 QImage(用于 Export PNG)
     // ===================================================================
@@ -172,6 +175,7 @@ class KinematicAnalysisPlotWidget : public QWidget
     bool _showLegend  = true;                       // 显示图例/标量色带
     double _pointRadius = 4.5;                      // 散点半径(像素)
     VisualRenderMode _renderMode = VisualRenderMode::Scatter;  // 渲染模式
+    KinematicLengthUnit _lengthUnit = KinematicLengthUnit::Meters;
 };
 
 }    // namespace rws
