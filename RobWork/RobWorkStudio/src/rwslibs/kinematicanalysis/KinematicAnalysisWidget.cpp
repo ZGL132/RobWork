@@ -15,7 +15,7 @@
 #include "KinematicAnalysisEnvelope.hpp"
 #include "KinematicAnalysisUiLogic.hpp"
 
-// 鍏变韩鐨?CSV / JSON 搴忓垪鍖栧伐鍏?TaskPoint 涓庢湰鎻掍欢澶嶇敤浜嗗畠銆?
+// 共享的 CSV / JSON 序列化工具,TaskPoint 与本插件复用了它。
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
 #include <rwslibs/robotanalysiscore/RobotAnalysisValidation.hpp>
 
@@ -91,12 +91,12 @@ bool rws::WorkspaceEnvelopeCacheKey::operator== (
 }
 
 namespace {
-// Task point 琛ㄦ牸鍒楃储寮曟灇涓?缁熶竴鎵€鏈夎鍐欎唬鐮?閬垮厤鍒楀彿纭紪鐮佹紓绉汇€?
-// 鍓?19 鍒楀搴?RobotAnalysisCsv 鏍囧噯瀛楁 + UI 琛嶇敓 status / reason;
-// 鍚?8 鍒楁槸 P1 鏂板鐨勬壒閲?IK 缁撴灉鍒?raw / usable / bestQ / posErr /
-// oriErr / margin / condition / collision)銆?
-// 璇ユ灇涓惧繀椤诲湪 buildTaskPointTab 涔嬪墠瀹氫箟,鍚﹀垯 setColumnCount 涓?
-// setHorizontalHeaderLabels 寮曠敤 Col* 鏃朵細缂栬瘧澶辫触銆?
+// Task point 表格列索引枚举,统一所有读写代码,避免列号硬编码漂移。
+// 前 19 列对应 RobotAnalysisCsv 标准字段 + UI 衍生 status / reason;
+// 后 8 列是 P1 新增的批量 IK 结果列(raw / usable / bestQ / posErr /
+// oriErr / margin / condition / collision)。
+// 该枚举必须在 buildTaskPointTab 之前定义,否则 setColumnCount 与
+// setHorizontalHeaderLabels 引用 Col* 时会编译失败。
 enum TaskPointColumn
 {
     ColEnabled   = 0,
@@ -118,7 +118,7 @@ enum TaskPointColumn
     ColNote      = 16,
     ColStatus    = 17,
     ColReason    = 18,
-    // P1:鎵归噺 IK 缁撴灉鍒?
+    // P1:批量 IK 结果列
     ColRawCandidates       = 19,
     ColUsableSolutions     = 20,
     ColBestQ               = 21,
@@ -238,14 +238,14 @@ void setDetailRow (QTableWidget* table, int row, const QString& field, const QSt
 void setCompactTableVisibleRows (QTableWidget* table, int rows);
 }    // namespace
 
-// 鏋勯€犲嚱鏁?
-//   - 鎶婃墍鏈夋垚鍛樻寚閽堝厛缃?NULL(闃插尽鎬у垵濮嬪寲);
-//   - 鐢?QVBoxLayout + QScrollArea 鍖呰９涓诲唴瀹瑰尯,
-//     杩欐牱鎻掍欢鍙互鍦ㄥ皬绐楀彛涓嬩繚鎸佸彲鐢?婊氬姩鏉″嚭鐜?;
-//   - 椤堕儴涓€琛屾槸璁惧 / TCP 甯ч€夋嫨 + Refresh 鎸夐挳;
-//   - QTabWidget 鎵胯浇 6 涓瓙椤?
-//   - 搴曢儴涓€涓彧璇荤姸鎬佹潯鐢ㄤ簬鍙嶉鐢ㄦ埛鎿嶄綔缁撴灉;
-//   - 鏈熬鎶婃墍鏈夋寜閽殑 clicked() 淇″彿杩炲埌瀵瑰簲鐨勬Ы鍑芥暟銆?
+// 构造函数:
+//   - 把所有成员指针先置 NULL(防御性初始化);
+//   - 用 QVBoxLayout + QScrollArea 包裹主内容区,
+//     这样插件可以在小窗口下保持可用(滚动条出现);
+//   - 顶部一行是设备 / TCP 帧选择 + Refresh 按钮;
+//   - QTabWidget 承载 6 个子页;
+//   - 底部一个只读状态条用于反馈用户操作结果;
+//   - 末尾把所有按钮的 clicked() 信号连到对应的槽函数。
 KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QWidget(parent),
     _studio(NULL),
@@ -296,7 +296,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _importTaskPointsButton(NULL),
     _exportTaskPointsButton(NULL),
     _analyzeAllTaskPointsButton(NULL),
-    // P2:Task points 涓撶敤鎸夐挳(NULL 瀹堝崼,瑙佹瀽鏋?/ 鏋愭瀯鏈熸竻鐞?
+    // P2:Task points 专用按钮(NULL 守卫,见析构 / 析构期清理)
     _analyzeSelectedTaskPointsButton(NULL),
     _importCurrentTcpTaskPointButton(NULL),
     _applySelectedTaskPointBestQButton(NULL),
@@ -418,17 +418,17 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     content->addWidget(_tabs);
 
     // -------------------- Current Pose Tab --------------------
-    // 鍗曞垪鍏ㄥ瀵嗛泦甯冨眬(浠庝笂鍒颁笅):
-    //   1. 绱у噾鎽樿  鈥?2 琛?6 鍒楃殑浣嶇疆/濮挎€?+ 1 琛屽叧閿寚鏍?
-    //   2. 鍏宠妭鐘舵€佸悎骞惰〃 鈥?Joint | q | Limit margin | Status;
-    //   3. Jacobian 鍏ㄥ涓昏〃(琛?vx/vy/vz/wx/wy/wz,鍒?q0..qn);
-    //   4. Singular values 妯悜灏忚〃(1 琛?;
-    //   5. Warnings 榛樿鍘嬫垚鍗曡 \"Warnings: None\"銆?
+    // 单列全宽密集布局(从上到下):
+    //   1. 紧凑摘要  — 2 行 6 列的位置/姿态 + 1 行关键指标;
+    //   2. 关节状态合并表 — Joint | q | Limit margin | Status;
+    //   3. Jacobian 全宽主表(行 vx/vy/vz/wx/wy/wz,列 q0..qn);
+    //   4. Singular values 横向小表(1 行);
+    //   5. Warnings 默认压成单行 \"Warnings: None\"。
     _currentPoseTab = new QWidget(_tabs);
     QVBoxLayout* cpLayout = new QVBoxLayout(_currentPoseTab);
 
-    // 鍏辩敤鐨勭揣鍑戣〃鏍煎伐鍘?6 鍒楀唴 stretch銆侀殣钘忓瀭鐩存粴鍔ㄦ潯銆?
-    // 鍙栨秷鍨傜洿 header(琛屽悕閫氳繃 setVerticalHeaderLabels 鑷畾涔?銆?
+    // 共用的紧凑表格工厂:6 列内 stretch、隐藏垂直滚动条、
+    // 取消垂直 header(行名通过 setVerticalHeaderLabels 自定义)。
     auto makeCompactTable = [this] (int columns, int rows) -> QTableWidget* {
         QTableWidget* t = new QTableWidget(rows, columns, _currentPoseTab);
         t->horizontalHeader()->setSectionResizeMode (QHeaderView::Stretch);
@@ -454,56 +454,56 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         return t;
     };
 
-    // ---- 1. 绱у噾鎽樿鏍?鍙崰琛ㄥご + 1 琛屽€?鍥哄畾楂樺害) ----
+    // ---- 1. 紧凑摘要栏(只占表头 + 1 行值,固定高度) ----
     cpLayout->addWidget (new QLabel(tr("TCP pose"), _currentPoseTab));
     _poseValueTable = makeCompactTable (6, 1);
     _poseValueTable->setHorizontalHeaderLabels (
         {tr("pos x (m)"), tr("pos y (m)"), tr("pos z (m)"),
          tr("roll (deg)"), tr("pitch (deg)"), tr("yaw (deg)")});
-    // 1 琛屽唴瀹?鍒濆鍗犱綅
+    // 1 行内容,初始占位
     for (int c = 0; c < 6; ++c)
         _poseValueTable->setItem (0, c, makeItem (QStringLiteral ("-")));
     cpLayout->addWidget (_poseValueTable);
     setCompactTableVisibleRows (_poseValueTable, 1);
     _poseValueTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    // 鍏抽敭鎸囨爣鍗曡鏍囩:Condition / Manipulability / Min limit margin
+    // 关键指标单行标签:Condition / Manipulability / Min limit margin
     _poseIndicatorLabel = new QLabel (
         tr("Condition: -    Manipulability: -    Min limit margin: -"),
         _currentPoseTab);
     cpLayout->addWidget (_poseIndicatorLabel);
 
-    // ---- 2. 鍏宠妭鐘舵€佸悎骞惰〃(鍏ㄥ垪 stretch,鍥哄畾楂樺害) ----
+    // ---- 2. 关节状态合并表(全列 stretch,固定高度) ----
     cpLayout->addWidget (new QLabel(tr("Joint status"), _currentPoseTab));
     _jointStatusTable = makeCompactTable (4, 0);
     _jointStatusTable->setHorizontalHeaderLabels (
         {tr("Joint"), tr("q"), tr("Limit margin"), tr("Status")});
-    // 4 鍒楀唴瀹逛笉澶?妯悜 stretch 瀹屽叏鑳介摵婊?鍏抽棴姘村钩婊氬姩;
-    // 鍨傜洿鏂瑰悜鏍规嵁瀹為檯琛屾暟鍔ㄦ€佽楂?璇﹁ refreshCurrentPose)銆?
+    // 4 列内容不多,横向 stretch 完全能铺满,关闭水平滚动;
+    // 垂直方向根据实际行数动态设高(详见 refreshCurrentPose)。
     _jointStatusTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     cpLayout->addWidget (_jointStatusTable);
 
-    // ---- 3. Jacobian 鍏ㄥ涓昏〃 ----
+    // ---- 3. Jacobian 全宽主表 ----
     cpLayout->addWidget (new QLabel(tr("Jacobian (TCP velocity = J * joint velocity)"), _currentPoseTab));
     _jacobianTable = makeCompactTable (1, 1);
     _jacobianTable->verticalHeader()->setVisible (true);
     _jacobianTable->setVerticalHeaderLabels ({tr("vx"), tr("vy"), tr("vz"),
                                               tr("wx"), tr("wy"), tr("wz")});
-    // 鏁板瓧缁熶竴 %.6g 绮惧害,鐣欏嚭绌洪棿;
-    // refreshCurrentPose 闃舵鍐嶇敤 makeItem(double) 鍐欏叆銆?
+    // 数字统一 %.6g 精度,留出空间;
+    // refreshCurrentPose 阶段再用 makeItem(double) 写入。
     cpLayout->addWidget (_jacobianTable);
 
-    // ---- 4. Singular values:琛ㄥご + 1 琛屽€?鍥哄畾楂樺害) ----
+    // ---- 4. Singular values:表头 + 1 行值(固定高度) ----
     cpLayout->addWidget (new QLabel(tr("Singular values"), _currentPoseTab));
-    // 鍒楁暟浼氬湪 refreshCurrentPose 涓寜 蟽 涓暟鍔ㄦ€佽瀹?鎵€浠ュ厛寤?0 鍒?1 琛?
-    // 琛屾暟鍥哄畾涓?1,index 宸插湪 horizontal header(蟽0 / 蟽1 / ... / 蟽min),
-    // 涓嶅啀闇€瑕佸崟鐙?index 琛屻€?
+    // 列数会在 refreshCurrentPose 中按 σ 个数动态设定,所以先建 0 列 1 行;
+    // 行数固定为 1,index 已在 horizontal header(σ0 / σ1 / ... / σmin),
+    // 不再需要单独 index 行。
     _singularTable = makeCompactTable (0, 1);
     cpLayout->addWidget (_singularTable);
     setCompactTableVisibleRows (_singularTable, 1);
     _singularTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    // ---- 5. Warnings:榛樿鍘嬫垚涓€琛?----
+    // ---- 5. Warnings:默认压成一行 ----
     _warningLabel = new QLabel (tr("Warnings: None"), _currentPoseTab);
     _warningLabel->setWordWrap (true);
     cpLayout->addWidget (_warningLabel);
@@ -513,16 +513,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _tabs->addTab (_currentPoseTab, tr("Current pose"));
 
     // -------------------- IK Tab --------------------
-    // 鍗曞垪鍏ㄥ瀵嗛泦甯冨眬(涓?Current pose 涓€鑷?:
-    //   1. 椤堕儴杈撳叆:Target + 鍗曚綅 + 6 涓?pose spin + threshold + 3 涓姩浣滄寜閽?
-    //   2. 杩囨护 + solver 鍏冧俊鎭?+ 璁℃暟 summary;
-    //   3. status summary 鏍囩;
-    //   4. IK solution status table(鍏佽婊氬姩,妯悜閾烘弧);
-    //   5. 璇︽儏闈㈡澘(2 琛屽浐瀹氶珮搴?璺熼殢閫変腑琛屾洿鏂?銆?
+    // 单列全宽密集布局(与 Current pose 一致):
+    //   1. 顶部输入:Target + 单位 + 6 个 pose spin + threshold + 3 个动作按钮;
+    //   2. 过滤 + solver 元信息 + 计数 summary;
+    //   3. status summary 标签;
+    //   4. IK solution status table(允许滚动,横向铺满);
+    //   5. 详情面板(2 行固定高度,跟随选中行更新)。
     _ikTab         = new QWidget(_tabs);
     QVBoxLayout* ikLayout = new QVBoxLayout(_ikTab);
 
-    // ---- 绗?1 琛?Target + 鍗曚綅閫夋嫨 ----
+    // ---- 第 1 行:Target + 单位选择 ----
     QHBoxLayout* ikNameRow = new QHBoxLayout();
     _ikTargetNameEdit = new QLineEdit(_ikTab);
     _ikTargetNameEdit->setText(tr("Target"));
@@ -546,7 +546,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikNameRow->addWidget(_ikAngleUnitCombo);
     ikLayout->addLayout(ikNameRow);
 
-    // ---- 绗?2 琛?浣嶅Э 6 涓?spin,2 琛?脳 3 鍒?----
+    // ---- 第 2 行:位姿 6 个 spin,2 行 × 3 列 ----
     auto makePoseSpin = [this] (double minimum, double maximum, double step) -> QDoubleSpinBox* {
         QDoubleSpinBox* spin = new QDoubleSpinBox(_ikTab);
         spin->setRange(minimum, maximum);
@@ -584,7 +584,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikPoseGrid->addWidget(_ikYawSpin, 1, 5);
     ikLayout->addLayout(ikPoseGrid);
 
-    // ---- 绗?3 琛?threshold + 3 涓姩浣滄寜閽?妯帓)----
+    // ---- 第 3 行:threshold + 3 个动作按钮(横排)----
     QHBoxLayout* ikDedupRow = new QHBoxLayout();
     ikDedupRow->addWidget(new QLabel(tr("Duplicate Q threshold:"), _ikTab));
     ikDedupRow->addWidget(_ikDuplicateQThresholdSpin);
@@ -592,7 +592,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
     _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
     _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
-    _ikApplyButton->setEnabled (false);   // 閫変腑鍙敤瑙ｅ墠绂佺敤
+    _ikApplyButton->setEnabled (false);   // 选中可用解前禁用
     ikDedupRow->addSpacing (12);
     ikDedupRow->addWidget(_ikImportCurrentPoseButton);
     ikDedupRow->addWidget(_ikSolveButton);
@@ -600,7 +600,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikDedupRow->addStretch (1);
     ikLayout->addLayout(ikDedupRow);
 
-    // ---- 绗?4 琛?杩囨护鍣?+ solver 鍏冧俊鎭?----
+    // ---- 第 4 行:过滤器 + solver 元信息 ----
     QHBoxLayout* ikFilterRow = new QHBoxLayout();
     _ikShowUsableOnlyCheck = new QCheckBox(tr("Show usable only"), _ikTab);
     _ikShowFailedCandidatesCheck = new QCheckBox(tr("Show failed candidates"), _ikTab);
@@ -612,20 +612,20 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikFilterRow->addWidget(_ikSeedInfoLabel);
     ikLayout->addLayout(ikFilterRow);
 
-    // ---- 绗?5 琛?counts summary ----
+    // ---- 第 5 行:counts summary ----
     _ikCountSummaryLabel = new QLabel(
         tr("Raw - | Unique - | Usable - | Pass - | Warning - | Fail -"), _ikTab);
     ikLayout->addWidget(_ikCountSummaryLabel);
 
-    // ---- 绗?6 琛?status summary 鏍囩 ----
+    // ---- 第 6 行:status summary 标签 ----
     _ikSummaryLabel = new QLabel(tr("Candidates: -    Usable unique: -"), _ikTab);
     ikLayout->addWidget(_ikSummaryLabel);
 
-    // ---- 绗?7 琛?IK solution status table(鍏佽妯旱婊氬姩)----
+    // ---- 第 7 行:IK solution status table(允许横纵滚动)----
     ikLayout->addWidget(new QLabel(tr("IK solution status"), _ikTab));
     _ikSolutionTable = makeTable();
-    // 鎶?"Q / failures" 鎷嗘垚涓ゅ垪 鈥?Failure(鐭枃鏈? + Q(鍏宠妭鍚戦噺),
-    // 闀?Q 鍊间笉鍐嶅悶鎺夊け璐ュ師鍥犮€?
+    // 把 "Q / failures" 拆成两列 — Failure(短文本) + Q(关节向量),
+    // 长 Q 值不再吞掉失败原因。
     _ikSolutionTable->setColumnCount(12);
     _ikSolutionTable->setHorizontalHeaderLabels({
         tr("Index"), tr("Status"), tr("Failure"), tr("Current Q"), tr("Collision"), tr("Distance"),
@@ -637,9 +637,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     _ikSolutionTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     _ikSolutionTable->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    // Task 5:榛樿鍒楀銆傜獎鍒?鏍囩 / 甯冨皵)+ 涓垪(鏁板€?+ 瀹藉垪(Q),
-    // 閬垮厤闀?Q 鎶婃墍鏈夋暟鍊煎垪鎸ょ獎銆俿etStretchLastSection(true) 璁?Q 鍒?
-    // 鍦ㄧ獥鍙ｅ彉瀹芥椂缁х画鍚告敹澶氫綑瀹藉害銆?
+    // Task 5:默认列宽。窄列(标签 / 布尔)+ 中列(数值)+ 宽列(Q),
+    // 避免长 Q 把所有数值列挤窄。setStretchLastSection(true) 让 Q 列
+    // 在窗口变宽时继续吸收多余宽度。
     _ikSolutionTable->setColumnWidth (0, 60);    // Index
     _ikSolutionTable->setColumnWidth (1, 80);    // Status
     _ikSolutionTable->setColumnWidth (2, 180);   // Failure
@@ -653,13 +653,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable->setColumnWidth (10, 120);  // Orientation error
     _ikSolutionTable->setColumnWidth (11, 260);  // Q
     _ikSolutionTable->horizontalHeader()->setStretchLastSection(true);
-    // 閫変腑琛屽彉鍖?鈫?璇︽儏琛ㄦ洿鏂般€?
+    // 选中行变化 → 详情表更新。
     connect (_ikSolutionTable, SIGNAL (itemSelectionChanged ()),
              this, SLOT (updateIkSolutionDetails ()));
-    // 璇ヨ〃鏄〉闈㈠敮涓€鍏佽婊氬姩鐨勪富琛?鍗犱富瀵奸珮搴︺€?
+    // 该表是页面唯一允许滚动的主表,占主导高度。
     ikLayout->addWidget(_ikSolutionTable, 1);
 
-    // ---- 绗?8 琛?閫変腑璇︽儏(2 琛屽浐瀹氶珮搴?----
+    // ---- 第 8 行:选中详情(2 行固定高度)----
     ikLayout->addWidget(new QLabel(tr("Selected candidate details"), _ikTab));
     _ikDetailTable = makeTable();
     _ikDetailTable->setColumnCount(2);
@@ -720,7 +720,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     content->addWidget(_status);
 
     connect (_refreshCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (refreshCurrentPose ()));
-    // Task 5 step 2:鍕鹃€夎繃婊ゅ櫒鏃跺嵆鏃跺埛鏂?IK 缁撴灉琛ㄤ笌缁熻銆?
+    // Task 5 step 2:勾选过滤器时即时刷新 IK 结果表与统计。
     connect (_ikShowUsableOnlyCheck, SIGNAL (stateChanged (int)),
              this, SLOT (refreshIkSolutionView ()));
     connect (_ikShowFailedCandidatesCheck, SIGNAL (stateChanged (int)),
@@ -756,7 +756,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
     connect (_exportTaskPointResultsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointResultsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
-    // P2:Task points 涓撶敤鎸夐挳鐨勪俊鍙疯繛鎺?
+    // P2:Task points 专用按钮的信号连接
     connect (_analyzeSelectedTaskPointsButton, SIGNAL (clicked ()),
              this, SLOT (analyzeSelectedTaskPoints ()));
     connect (_importCurrentTcpTaskPointButton, SIGNAL (clicked ()),
@@ -765,7 +765,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              this, SLOT (applySelectedTaskPointBestQ ()));
     connect (_openSelectedTaskPointInIkButton, SIGNAL (clicked ()),
              this, SLOT (openSelectedTaskPointInIk ()));
-    // P2:Task point 琛ㄦ牸閫変腑琛屽彉鍖?鈫?鏇存柊 selected-only 鎸夐挳鐨?enabled 鐘舵€併€?
+    // P2:Task point 表格选中行变化 → 更新 selected-only 按钮的 enabled 状态。
     connect (_taskPointTable->selectionModel (), &QItemSelectionModel::selectionChanged,
              this, [this] (const QItemSelection&, const QItemSelection&) {
                  updateTaskPointSelectionButtons ();
@@ -825,7 +825,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              this, SLOT (refreshVisualization ()));
 
     setStatus(tr("Load a WorkCell to start kinematic analysis."));
-    // Task 4 step 5:鏃犻€変腑琛屾椂鏄剧ず"No IK candidate selected."銆?
+    // Task 4 step 5:无选中行时显示"No IK candidate selected."。
     setIkDetailsEmpty ();
 }
 
@@ -858,8 +858,8 @@ QSize KinematicAnalysisWidget::minimumSizeHint () const
     return QSize (300, 420);
 }
 
-// setRobWorkStudio:鐢?KinematicAnalysisPlugin::initialize 璋冪敤,缂撳瓨涓荤▼搴忓彞鏌?
-// 鐢ㄥ畠鑾峰彇褰撳墠 state銆佸啓鍥?IK 瑙ｃ€?
+// setRobWorkStudio:由 KinematicAnalysisPlugin::initialize 调用,缓存主程序句柄;
+// 用它获取当前 state、写回 IK 解。
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
 {
     if (_studio != NULL)
@@ -875,7 +875,7 @@ void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
     }
 }
 
-// setWorkCell:WorkCell 鍙樺寲鏃惰皟鐢?鍒锋柊璁惧/甯т笅鎷?骞舵彁绀虹敤鎴峰綋鍓嶇姸鎬併€?
+// setWorkCell:WorkCell 变化时调用,刷新设备/帧下拉,并提示用户当前状态。
 void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
 {
     cancelEnvelopeRequest (true);
@@ -892,7 +892,7 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         setStatus(tr("WorkCell loaded. Select a device and refresh analysis."));
 }
 
-// populateDevices:鎶?WorkCell 涓殑 Device 鍏ㄩ儴濉繘 _deviceCombo銆?
+// populateDevices:把 WorkCell 中的 Device 全部填进 _deviceCombo。
 void KinematicAnalysisWidget::populateDevices ()
 {
     _deviceCombo->clear ();
@@ -909,8 +909,8 @@ void KinematicAnalysisWidget::populateDevices ()
         _deviceCombo->setCurrentIndex (0);
 }
 
-// populateTcpFrames:鐢?Kinematics::findAllFrames 鏀堕泦 WorkCell 涓墍鏈夊抚,
-// 鎻愪緵缁欑敤鎴烽€変綔 TCP銆傝繖浼氭妸鎵€鏈夎緟鍔?/ 宸ュ叿 / 鏈甯ч兘鍒楀嚭銆?
+// populateTcpFrames:用 Kinematics::findAllFrames 收集 WorkCell 中所有帧,
+// 提供给用户选作 TCP。这会把所有辅助 / 工具 / 末端帧都列出。
 void KinematicAnalysisWidget::populateTcpFrames ()
 {
     _tcpFrameCombo->clear ();
@@ -935,8 +935,8 @@ void KinematicAnalysisWidget::populateTcpFrames ()
         _tcpFrameCombo->setCurrentIndex (preferredIndex);
 }
 
-// currentState:浼樺厛杩斿洖 RobWorkStudio 鐨勫綋鍓?state;鍚﹀垯鐢?WorkCell 榛樿 state;
-// 閮戒笉鍙敤鏃惰繑鍥炰竴涓┖ State(渚涘垎鏋愬櫒鍋氱┖鎸囬拡 / 绌虹姸鎬佸垎鏀?銆?
+// currentState:优先返回 RobWorkStudio 的当前 state;否则用 WorkCell 默认 state;
+// 都不可用时返回一个空 State(供分析器做空指针 / 空状态分支)。
 rw::kinematics::State KinematicAnalysisWidget::currentState () const
 {
     if (_studio != NULL)
@@ -946,24 +946,24 @@ rw::kinematics::State KinematicAnalysisWidget::currentState () const
     return rw::kinematics::State ();
 }
 
-// setStatus:鐘舵€佹爮鐨勭畝鍗?setter,NULL 妫€鏌ラ伩鍏嶆瀽鏋勬湡宕╂簝銆?
+// setStatus:状态栏的简单 setter,NULL 检查避免析构期崩溃。
 void KinematicAnalysisWidget::setStatus (const QString& message)
 {
     if (_status != NULL)
         _status->setText(message);
 }
 
-// refreshIkSolutionView:鎶?_lastIkResult 鍐欏叆 _ikSolutionTable,
-// 鎸夎繃婊ゅ櫒杩囨护,姣忚鐨勫師濮?solutionIndex 閫氳繃 storeIkSolutionIndex
-// 瀛樺埌 Qt::UserRole + 1銆傛湯灏惧埛鏂伴《閮ㄨ鏁?summary + 璇︽儏琛ㄣ€?
+// refreshIkSolutionView:把 _lastIkResult 写入 _ikSolutionTable,
+// 按过滤器过滤,每行的原始 solutionIndex 通过 storeIkSolutionIndex
+// 存到 Qt::UserRole + 1。末尾刷新顶部计数 summary + 详情表。
 void KinematicAnalysisWidget::refreshIkSolutionView ()
 {
     if (_ikSolutionTable == NULL)
         return;
 
-    // Task 3:杩囨护鍣ㄤ簰鏂ャ€傚嬀 Show usable only 鏃跺己鍒跺彇娑?Show failed candidates
-    // 骞剁鐢?閬垮厤涓や釜杩囨护鍣ㄨ涔夊啿绐併€俀SignalBlocker 闃叉 setChecked(false)
-    // 鍙嶅悜瑙﹀彂鑷韩 stateChanged 妲?閫犳垚閫掑綊銆?
+    // Task 3:过滤器互斥。勾 Show usable only 时强制取消 Show failed candidates
+    // 并禁用,避免两个过滤器语义冲突。QSignalBlocker 防止 setChecked(false)
+    // 反向触发自身 stateChanged 槽,造成递归。
     if (_ikShowUsableOnlyCheck != NULL && _ikShowFailedCandidatesCheck != NULL) {
         const bool usableOnly = _ikShowUsableOnlyCheck->isChecked ();
         _ikShowFailedCandidatesCheck->setEnabled (!usableOnly);
@@ -973,8 +973,8 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         }
     }
 
-    // Task 4:鍒锋柊鍓嶈褰曞綋鍓嶉€変腑鐨?solutionIndex,杩囨护鍚庤嫢璇ヨВ浠嶅彲瑙?
-    // 鍦ㄥ惊鐜湯灏鹃噸鏂伴€変腑,鑰屼笉鏄粯璁よ烦鍒扮 0 琛屻€?
+    // Task 4:刷新前记录当前选中的 solutionIndex,过滤后若该解仍可见,
+    // 在循环末尾重新选中,而不是默认跳到第 0 行。
     int previousSolutionIndex = -1;
     const QList<QTableWidgetItem*> previouslySelected = _ikSolutionTable->selectedItems ();
     if (!previouslySelected.empty ())
@@ -998,8 +998,8 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         storeIkSolutionIndex (indexItem, solutionIndex);
         _ikSolutionTable->setItem (displayRow, 0, indexItem);
 
-        // Task 7:Status 鍒楁煋鑹层€侾ass 缁?/ Warning 姗?/ Fail 绾?
-        // 鐢ㄦ埛鎵鏃朵竴鐪煎尯鍒嗗€欓€夎川閲忋€?
+        // Task 7:Status 列染色。Pass 绿 / Warning 橙 / Fail 红,
+        // 用户扫读时一眼区分候选质量。
         QTableWidgetItem* statusItem =
             makeItem (QString::fromLatin1 (statusText (solution.status)));
         if (solution.status == AnalysisStatus::Pass)
@@ -1010,8 +1010,8 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
             statusItem->setForeground (QColor (180, 0, 0));
         _ikSolutionTable->setItem (displayRow, 1, statusItem);
 
-        // Task 6:Failure 鍒楀姞 tooltip,瀹屾暣鍘熷洜鏂囨湰(鍙兘鍚暟鍊艰瘉鎹?
-        // 鍦?hover 鏃舵樉绀?涓嶅繀鎵撳紑妯悜婊氬姩銆?
+        // Task 6:Failure 列加 tooltip,完整原因文本(可能含数值证据)
+        // 在 hover 时显示,不必打开横向滚动。
         const QString failureText = ikFailureText (solution);
         QTableWidgetItem* failureItem = makeItem (failureText);
         failureItem->setToolTip (failureText);
@@ -1029,21 +1029,21 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
                                                             : QString::number (solution.conditionNumber)));
         _ikSolutionTable->setItem (displayRow, 9, makeItem (solution.positionErrorMeters));
         _ikSolutionTable->setItem (displayRow, 10, makeItem (solution.orientationErrorDeg));
-        // 绗?11 鍒楁槸绾?Q,澶辫触鍘熷洜宸插垎鍒扮 2 鍒?浼犵┖ reasons 闃叉 makeQItem
-        // 鎶婂師鍥犲瓧绗︿覆閲嶅鏄剧ず涓€娆°€俆ask 6:鍦?makeQItem 鍐呴儴缁?text 鍔?tooltip銆?
+        // 第 11 列是纯 Q,失败原因已分到第 2 列;传空 reasons 防止 makeQItem
+        // 把原因字符串重复显示一次。Task 6:在 makeQItem 内部给 text 加 tooltip。
         _ikSolutionTable->setItem (displayRow, 11,
             makeQItem (solution.q, std::vector< KinematicFailureReason > ()));
 
-        // 鏁磋鐨?solutionIndex 閮藉瓨鍒?Qt::UserRole + 1,閫変腑浠讳竴鍗曞厓鏍?
-        // 閮借兘鍙嶆煡鍥炲師濮?solution銆?
+        // 整行的 solutionIndex 都存到 Qt::UserRole + 1,选中任一单元格
+        // 都能反查回原始 solution。
         for (int column = 1; column < _ikSolutionTable->columnCount (); ++column)
             storeIkSolutionIndex (_ikSolutionTable->item (displayRow, column), solutionIndex);
 
         ++displayRow;
     }
 
-    // Task 2:Displayed 鏄綋鍓嶈繃婊ゅ悗瀹為檯鏄剧ず鏁?
-    // Raw / Unique / Pass / Warning / Fail 浠嶆槸鍏ㄩ噺缁熻,璇箟娓呮櫚涓嶆贩娣嗐€?
+    // Task 2:Displayed 是当前过滤后实际显示数;
+    // Raw / Unique / Pass / Warning / Fail 仍是全量统计,语义清晰不混淆。
     if (_ikCountSummaryLabel != NULL) {
         const KinematicIkSummary summary = summarizeIkSolutions (_lastIkResult.solutions);
         _ikCountSummaryLabel->setText (
@@ -1057,8 +1057,8 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
                 .arg (static_cast<int> (summary.failCount)));
     }
 
-    // Task 4 缁?鑻ヨ繃婊ゅ悗鍘熼€変腑瑙ｆ秷澶?琚繃婊ゆ帀),rowToSelect == -1,
-    // 鍥為€€鍒扮 0 琛?鏃犺鏃堕€€鍒扮┖鐘舵€?Apply 涔熶細琚?setIkDetailsEmpty 绂佺敤)銆?
+    // Task 4 续:若过滤后原选中解消失(被过滤掉),rowToSelect == -1,
+    // 回退到第 0 行;无行时退到空状态(Apply 也会被 setIkDetailsEmpty 禁用)。
     if (_ikSolutionTable->rowCount () > 0) {
         if (rowToSelect < 0)
             rowToSelect = 0;
@@ -1068,13 +1068,13 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         setIkDetailsEmpty ();
     }
 
-    // 鎸夐挳鍚敤/绂佺敤缁熶竴浜ょ粰 updateIkSolutionDetails / setIkDetailsEmpty銆?
+    // 按钮启用/禁用统一交给 updateIkSolutionDetails / setIkDetailsEmpty。
     updateIkSolutionDetails ();
 }
 
-// updateIkSolutionDetails:鎶婂綋鍓嶉€変腑琛屽弽鏌?_lastIkResult.solutions,
-// 鍐?2 琛岃鎯?Summary(鐘舵€佺被)+ Metrics / Q(鏁板€肩被)銆?
-// 浠讳竴缂哄け閮介€€鍥?setIkDetailsEmpty銆?
+// updateIkSolutionDetails:把当前选中行反查 _lastIkResult.solutions,
+// 写 2 行详情:Summary(状态类)+ Metrics / Q(数值类)。
+// 任一缺失都退回 setIkDetailsEmpty。
 void KinematicAnalysisWidget::updateIkSolutionDetails ()
 {
     if (_ikDetailTable == NULL || _ikSolutionTable == NULL)
@@ -1096,11 +1096,11 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
     const KinematicIkSolution& s =
         _lastIkResult.solutions[static_cast<std::size_t> (solutionIndex)];
 
-    // 鍚屾 Apply 鎸夐挳鍚敤鎬?鍙湁鏃犵鎾炪€侀潪 Fail 鐨勮В鍙啓鍥?RobWorkStudio銆?
+    // 同步 Apply 按钮启用态:只有无碰撞、非 Fail 的解可写回 RobWorkStudio。
     if (_ikApplyButton != NULL)
         _ikApplyButton->setEnabled (isUsableIkSolution (s));
 
-    // 绗?1 琛?鐘舵€佺被淇℃伅(鏍囩 / 甯冨皵)銆?
+    // 第 1 行:状态类信息(标签 / 布尔)。
     const QString summaryText = QStringLiteral (
         "Status=%1; Failures=[%2]; Current Q=%3; Collision=%4")
         .arg (QString::fromLatin1 (statusText (s.status)))
@@ -1109,7 +1109,7 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
         .arg (isCurrentIkSolution (s) ? QStringLiteral ("Yes") : QStringLiteral ("No"))
         .arg (s.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"));
 
-    // 绗?2 琛?鏁板€肩被 + Q 鍚戦噺銆?
+    // 第 2 行:数值类 + Q 向量。
     const QString condText = std::isinf (s.conditionNumber) ?
         QStringLiteral ("inf") : QString::number (s.conditionNumber, 'g', 6);
     const QString metricsText = QStringLiteral (
@@ -1125,11 +1125,11 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
     _ikDetailTable->setRowCount (2);
     setDetailRow (_ikDetailTable, 0, tr("Summary"), summaryText);
     setDetailRow (_ikDetailTable, 1, tr("Metrics / Q"), metricsText);
-    // 涓嶈皟鐢?resizeColumnsToContents,閬垮厤鍦?Stretch 妯″紡涓嬭瑕嗙洊;
-    // 鍚屾椂淇濇寔 2 琛屽浐瀹氶珮搴︾敱 setCompactTableVisibleRows 閿佸畾銆?
+    // 不调用 resizeColumnsToContents,避免在 Stretch 模式下被覆盖;
+    // 同时保持 2 行固定高度由 setCompactTableVisibleRows 锁定。
 }
 
-// setIkDetailsEmpty:璇︽儏琛ㄥ帇鎴?1 琛屾彁绀?鐢ㄤ簬鏈€変腑鎴栭€変腑琛屾棤鏁堛€?
+// setIkDetailsEmpty:详情表压成 1 行提示,用于未选中或选中行无效。
 void KinematicAnalysisWidget::setIkDetailsEmpty ()
 {
     if (_ikDetailTable == NULL)
@@ -1143,7 +1143,7 @@ void KinematicAnalysisWidget::setIkDetailsEmpty ()
 }
 
 namespace {
-// configureAnalysisTable:鎶婂父鐢ㄧ殑琛ㄦ牸灞炴€ч泦涓湪涓€璧?閬垮厤鍦ㄥ澶勯噸澶嶈缃€?
+// configureAnalysisTable:把常用的表格属性集中在一起,避免在多处重复设置。
 void configureAnalysisTable (QTableWidget* table)
 {
     table->setSelectionBehavior (QAbstractItemView::SelectRows);
@@ -1156,11 +1156,11 @@ void configureAnalysisTable (QTableWidget* table)
     table->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
-// setCompactTableVisibleRows:鎶?QTableWidget 鐨勯珮搴﹀浐瀹氭垚"琛ㄥご + rows 琛?
-// 鍐呭 + 杈规",骞跺叧闂瀭鐩存粴鍔ㄦ潯銆?
-// 鐢ㄩ€?璁?1 琛岀殑鎽樿琛?/ N 琛岀殑鍏宠妭琛ㄥ湪 QVBoxLayout 閲屽彧鍗犺嚜宸遍渶瑕佺殑楂樺害,
-// 涓嶅啀琚?layout 鎾戝ぇ鐣欑櫧;琛屾暟 > visible 鍖哄煙鏃跺彧鑳藉閮ㄦ帴绠?鏈伐鍏蜂粛鍏佽
-// 鍚庣画鍗曠嫭寮€鍚粴鍔ㄦ潯)銆?
+// setCompactTableVisibleRows:把 QTableWidget 的高度固定成"表头 + rows 行
+// 内容 + 边框",并关闭垂直滚动条。
+// 用途:让 1 行的摘要表 / N 行的关节表在 QVBoxLayout 里只占自己需要的高度,
+// 不再被 layout 撑大留白;行数 > visible 区域时只能外部接管(本工具仍允许
+// 后续单独开启滚动条)。
 void setCompactTableVisibleRows (QTableWidget* table, int rows)
 {
     if (table == NULL)
@@ -1173,7 +1173,7 @@ void setCompactTableVisibleRows (QTableWidget* table, int rows)
     table->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 }
 
-// makeItem:鏋勯€犲彧璇诲崟鍏冩牸;閲嶈浇 double 鐗堟湰鏂逛究鐩存帴鏀炬暟鍊笺€?
+// makeItem:构造只读单元格;重载 double 版本方便直接放数值。
 QTableWidgetItem* makeItem (const QString& text)
 {
     QTableWidgetItem* item = new QTableWidgetItem (text);
@@ -1185,7 +1185,7 @@ QTableWidgetItem* makeItem (double v)
     return makeItem (QString::number (v));
 }
 
-// statusText:AnalysisStatus 鈫?鍙瀛楃涓?涓?toString(KinematicFailureReason) 閰嶅銆?
+// statusText:AnalysisStatus → 可读字符串,与 toString(KinematicFailureReason) 配套。
 const char* statusText (rws::AnalysisStatus status)
 {
     switch (status) {
@@ -1197,7 +1197,7 @@ const char* statusText (rws::AnalysisStatus status)
     }
 }
 
-// qVectorText:鎶婂叧鑺傚悜閲忔牸寮忓寲涓?"q0, q1, ..." 鐢ㄤ簬琛ㄦ牸/CSV 鏄剧ず銆?
+// qVectorText:把关节向量格式化为 "q0, q1, ..." 用于表格/CSV 显示。
 QString qVectorText (const std::vector< double >& q)
 {
     QStringList values;
@@ -1206,7 +1206,7 @@ QString qVectorText (const std::vector< double >& q)
     return values.join(", ");
 }
 
-// failureReasonsText:鎶婂け璐ュ師鍥犳灇涓炬暟缁勬牸寮忓寲涓?", " 鍒嗛殧瀛楃涓层€?
+// failureReasonsText:把失败原因枚举数组格式化为 ", " 分隔字符串。
 QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& reasons)
 {
     if (reasons.empty())
@@ -1230,9 +1230,9 @@ bool isCurrentIkSolution (const rws::KinematicIkSolution& solution)
            solution.distanceToCurrentQ <= 1e-9;
 }
 
-// isUsableIkSolution:鍒ゅ畾璇?IK 瑙ｆ槸鍚﹀彲瀹夊叏鍐欏洖 RobWorkStudio,
-// 澶嶇敤 refreshIkSolutionView / updateIkSolutionDetails 涓殑鍒ゅ畾,閬垮厤閲嶅銆?
-// 涓嶅彲鐢ㄦ儏褰?纰版挒 / status == Fail銆?
+// isUsableIkSolution:判定该 IK 解是否可安全写回 RobWorkStudio,
+// 复用 refreshIkSolutionView / updateIkSolutionDetails 中的判定,避免重复。
+// 不可用情形:碰撞 / status == Fail。
 bool isUsableIkSolution (const rws::KinematicIkSolution& solution)
 {
     return !solution.inCollision && solution.status != rws::AnalysisStatus::Fail;
@@ -1271,7 +1271,7 @@ QString ikFailureText (const rws::KinematicIkSolution& solution)
     return text;
 }
 
-// taskPointTypeText:TaskPointType 鈫?瀛楃涓?UI 鏄剧ず涓庡洖鍐欓兘鐢ㄣ€?
+// taskPointTypeText:TaskPointType → 字符串,UI 显示与回写都用。
 const char* taskPointTypeText (rws::TaskPointType type)
 {
     switch (type) {
@@ -1287,10 +1287,10 @@ const char* taskPointTypeText (rws::TaskPointType type)
     }
 }
 
-// makeQItem:鎶?IK 瑙ｇ殑 q + failureReasons 鎷兼垚涓€涓崟鍏冩牸,
-// 骞舵妸 q 搴忓垪鍖栧埌 Qt::UserRole,Apply 鏃剁洿鎺ヨ鍙?閬垮厤鍐嶆瑙ｆ瀽瀛楃涓层€?
-// Task 6:鍚屾鎶婂畬鏁存枃鏈啓鍏?tooltip,IK 涓昏〃 Q 鍒?鍙兘寰堥暱)鍦?hover 鏃?
-// 鍙互鐪嬪畬鏁村唴瀹广€?
+// makeQItem:把 IK 解的 q + failureReasons 拼成一个单元格,
+// 并把 q 序列化到 Qt::UserRole,Apply 时直接读取,避免再次解析字符串。
+// Task 6:同步把完整文本写入 tooltip,IK 主表 Q 列(可能很长)在 hover 时
+// 可以看完整内容。
 QTableWidgetItem* makeQItem (const std::vector< double >& q,
                              const std::vector< rws::KinematicFailureReason >& reasons)
 {
@@ -1308,7 +1308,7 @@ QTableWidgetItem* makeQItem (const std::vector< double >& q,
     return item;
 }
 
-// deviceByName / frameByName:鎸夊悕绉板湪 WorkCell 涓煡鎵?鎵句笉鍒拌繑鍥?NULL銆?
+// deviceByName / frameByName:按名称在 WorkCell 中查找;找不到返回 NULL。
 rw::core::Ptr< rw::models::Device > deviceByName (
     rw::models::WorkCell* wc, const std::string& name)
 {
@@ -1337,7 +1337,7 @@ rw::core::Ptr< rw::kinematics::Frame > frameByName (
 }
 }    // namespace
 
-// selectedDevice / selectedTcpFrame:鎶?涓嬫媺妗嗗綋鍓嶉€夐」"缈昏瘧鎴?RobWork 鎸囬拡銆?
+// selectedDevice / selectedTcpFrame:把"下拉框当前选项"翻译成 RobWork 指针。
 rw::core::Ptr< rw::models::Device > KinematicAnalysisWidget::selectedDevice () const
 {
     if (_workcell == NULL || _deviceCombo == NULL)
@@ -1520,12 +1520,12 @@ void KinematicAnalysisWidget::updateIkUnitDisplay ()
     setIkPoseMetersDeg (positionMeters, rpyDeg);
 }
 
-// refreshCurrentPose:閲嶇疆鍥涗釜 Current pose 琛ㄦ牸涓庢枃鏈爣绛?鈫?璋冪敤
-// KinematicAnalyzer::analyzeCurrentPose 鈫?鎶婄粨鏋滃～鍥?UI,鍚屾椂鏇存柊 _lastCurrentPose
-// 骞跺埛鏂?Report tab 鐨勬眹鎬汇€?
+// refreshCurrentPose:重置四个 Current pose 表格与文本标签 → 调用
+// KinematicAnalyzer::analyzeCurrentPose → 把结果填回 UI,同时更新 _lastCurrentPose
+// 并刷新 Report tab 的汇总。
 void KinematicAnalysisWidget::refreshCurrentPose ()
 {
-    // 閲嶇疆鎵€鏈夐潰鏉夸负鍗犱綅鐘舵€併€?
+    // 重置所有面板为占位状态。
     if (_poseValueTable != NULL) {
         for (int c = 0; c < 6; ++c)
             _poseValueTable->setItem (0, c, makeItem (QStringLiteral ("-")));
@@ -1567,7 +1567,7 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
     const KinematicCurrentPoseResult result = analyzer.analyzeCurrentPose (device, tcpFrame, state);
     _lastCurrentPose = result;
 
-    // ---- 1. 绱у噾鎽樿鏍?2 琛?6 鍒?+ 鍏抽敭鎸囨爣) ----
+    // ---- 1. 紧凑摘要栏(2 行 6 列 + 关键指标) ----
     if (_poseValueTable != NULL) {
         _poseValueTable->setItem (0, 0, makeItem (result.tcpPosition[0]));
         _poseValueTable->setItem (0, 1, makeItem (result.tcpPosition[1]));
@@ -1576,7 +1576,7 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
         _poseValueTable->setItem (0, 4, makeItem (result.tcpRpyDeg[1]));
         _poseValueTable->setItem (0, 5, makeItem (result.tcpRpyDeg[2]));
     }
-    // 琛ㄥご楂樺害鍦ㄥ垵娆″竷灞€鍚庢墠浼氱ǔ瀹?refresh 闃舵鍐嶈皟涓€娆＄‘淇濈揣鍑戙€?
+    // 表头高度在初次布局后才会稳定,refresh 阶段再调一次确保紧凑。
     if (_poseValueTable != NULL)
         setCompactTableVisibleRows (_poseValueTable, 1);
     if (_poseIndicatorLabel != NULL) {
@@ -1591,13 +1591,13 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
                 .arg (minMargin));
     }
 
-    // ---- 2. 鍏宠妭鐘舵€佸悎骞惰〃 ----
+    // ---- 2. 关节状态合并表 ----
     if (_jointStatusTable != NULL) {
         const int n = static_cast< int > (result.q.size ());
         _jointStatusTable->setRowCount (n);
         const int marginCount = static_cast< int > (result.jointLimitMargins.size ());
         for (int i = 0; i < n; ++i) {
-            // 鍏宠妭鍚?瓒呰繃 14 瀛楃鐢ㄤ腑闂寸渷鐣?瀹屾暣鍚嶅瓧杩?tooltip銆?
+            // 关节名:超过 14 字符用中间省略;完整名字进 tooltip。
             QString jointName = QString::fromStdString (deviceName + "_" + std::to_string (i));
             if (jointName.size () > 14)
                 jointName = jointName.left (6) + QStringLiteral ("...") +
@@ -1607,7 +1607,7 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
             _jointStatusTable->setItem (i, 0, nameItem);
             _jointStatusTable->setItem (i, 1, makeItem (result.q[static_cast< std::size_t > (i)]));
 
-            // Limit margin 涓?Status銆?
+            // Limit margin 与 Status。
             QString marginText = QStringLiteral ("-");
             QString statusText = QStringLiteral ("OK");
             if (i < marginCount) {
@@ -1620,28 +1620,28 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
             }
             _jointStatusTable->setItem (i, 2, makeItem (marginText));
             QTableWidgetItem* statusItem = makeItem (statusText);
-            // 棰滆壊鏆楃ず:Pass=榛樿銆丯ear/Fail 鐢ㄧ矖浣撱€?
+            // 颜色暗示:Pass=默认、Near/Fail 用粗体。
             if (statusText == QStringLiteral ("Fail"))
                 statusItem->setForeground (QColor (200, 0, 0));
             else if (statusText == QStringLiteral ("Near"))
                 statusItem->setForeground (QColor (200, 130, 0));
             _jointStatusTable->setItem (i, 3, statusItem);
         }
-        // 琛屾暟绋冲畾鍚庨噸鏂板浐瀹氶珮搴?6 杞村畬鏁村彲瑙?DOF 杈冨鏃朵篃鍙崰瀹為檯琛屾暟銆?
+        // 行数稳定后重新固定高度:6 轴完整可见,DOF 较多时也只占实际行数。
         setCompactTableVisibleRows (_jointStatusTable, n);
     }
 
-    // ---- 3. Jacobian 鍏ㄥ涓昏〃 ----
+    // ---- 3. Jacobian 全宽主表 ----
     if (_jacobianTable != NULL &&
         result.jacobianRows > 0 && result.jacobianCols > 0) {
-        // 鍒楁暟(q 鏁?浼氬彉,鎵€浠ュ垪澶存瘡娆￠噸璁俱€?
+        // 列数(q 数)会变,所以列头每次重设。
         QStringList headers;
         for (int c = 0; c < result.jacobianCols; ++c)
             headers << tr("q%1").arg (c);
         _jacobianTable->setColumnCount (result.jacobianCols);
         _jacobianTable->setRowCount (result.jacobianRows);
         _jacobianTable->setHorizontalHeaderLabels (headers);
-        // 琛屽ご:鍩虹嚎 6 琛?vx vy vz wx wy wz),澶氫簬 6 琛岀殑 Jacobian 涔熶細鑷姩鍑烘粴鍔ㄦ潯銆?
+        // 行头:基线 6 行(vx vy vz wx wy wz),多于 6 行的 Jacobian 也会自动出滚动条。
         QStringList rowHeaders;
         const QString labels[6] = {"vx", "vy", "vz", "wx", "wy", "wz"};
         for (int r = 0; r < result.jacobianRows; ++r)
@@ -1654,14 +1654,14 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
                 _jacobianTable->setItem (r, c, makeItem (v));
             }
         }
-        // 6 琛屽強浠ヤ笅鏃惰 6 琛屽彲瑙?澶氫簬 6 琛屾墠鍏佽鍨傜洿婊氬姩銆?
+        // 6 行及以下时让 6 行可见;多于 6 行才允许垂直滚动。
         if (result.jacobianRows <= 6)
             _jacobianTable->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
         else
             _jacobianTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     }
 
-    // ---- 4. Singular values:1 琛屽鍒?蟽 index 鍦ㄨ〃澶?----
+    // ---- 4. Singular values:1 行多列,σ index 在表头 ----
     if (_singularTable != NULL) {
         const int singCount = static_cast< int > (result.singularValues.size ());
         QStringList headers;
@@ -1678,16 +1678,16 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
                 0, i,
                 makeItem (result.singularValues[static_cast< std::size_t > (i)]));
         }
-        // 蟽min 鍒?鍙栨渶灏忓€?濂囧紓鍊煎凡闄嶅簭,鏈€鍙充竴鍒楀氨鏄?min)
+        // σmin 列:取最小值(奇异值已降序,最右一列就是 min)
         if (singCount > 0) {
             const double sigmaMin = result.singularValues.back ();
             _singularTable->setItem (0, singCount, makeItem (sigmaMin));
         }
-        // 琛ㄥご楂樺害鍒濇甯冨眬鍚庢墠绋冲畾,refresh 闃舵鍐嶅浐瀹氫竴娆°€?
+        // 表头高度初次布局后才稳定,refresh 阶段再固定一次。
         setCompactTableVisibleRows (_singularTable, 1);
     }
 
-    // ---- 5. Warnings:榛樿 None,鏈夊憡璀︽椂灞曞紑 ----
+    // ---- 5. Warnings:默认 None,有告警时展开 ----
     if (_warningLabel != NULL) {
         if (result.warnings.empty ()) {
             _warningLabel->setText (tr("Warnings: None"));
@@ -1708,9 +1708,9 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
     updateReportSummary ();
 }
 
-// solveIk:浠?IK tab 璇诲彇鐩爣鐐?x/y/z + RPY),杞?TaskPoint 鍚庤皟 analyzeIk;
-// 缁撴灉鎸?sortIkSolutionsForDisplay 宸叉帓濂?閫愭潯鍐欏叆琛ㄦ牸;鍚屾椂鎶婂け璐ュ師鍥犲垪鍦?
-// "Q / failures" 涓€鏍忋€?
+// solveIk:从 IK tab 读取目标点(x/y/z + RPY),转 TaskPoint 后调 analyzeIk;
+// 结果按 sortIkSolutionsForDisplay 已排好,逐条写入表格;同时把失败原因列在
+// "Q / failures" 一栏。
 void KinematicAnalysisWidget::importCurrentPoseToIk ()
 {
     if (_workcell == NULL) {
@@ -1751,13 +1751,13 @@ void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
     _ikSummaryLabel->setText(tr("Candidates: -    Usable unique: -"));
-    // 绔嬪嵆娓呯┖璇︽儏骞剁鐢?Apply,淇濊瘉鎵€鏈夋彁鍓嶈繑鍥炶矾寰勯兘涓嶄細淇濈暀鏃ф暟鎹€?
+    // 立即清空详情并禁用 Apply,保证所有提前返回路径都不会保留旧数据。
     setIkDetailsEmpty ();
     if (_ikDuplicateQThresholdSpin != NULL)
         _thresholds.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
 
-    // Task 8:杩涘叆鍒嗘瀽鍓嶇鐢?Solve + 鐘舵€佹爮鎻愮ず"Solving IK...";
-    // 姣忎釜鎻愬墠杩斿洖 / 姝ｅ父缁撴潫閮借鎶婃寜閽仮澶?閬垮厤閬楃暀绂佺敤鐘舵€併€?
+    // Task 8:进入分析前禁用 Solve + 状态栏提示"Solving IK...";
+    // 每个提前返回 / 正常结束都要把按钮恢复,避免遗留禁用状态。
     if (_ikSolveButton != NULL)
         _ikSolveButton->setEnabled (false);
     setStatus (tr("Solving IK..."));
@@ -1802,9 +1802,9 @@ void KinematicAnalysisWidget::solveIk ()
     const KinematicIkAnalysisResult result =
         analyzer.analyzeIk(device, tcpFrame, currentState(), target, collisionDetector);
 
-    // 淇濆瓨鏈€杩戜竴娆″畬鏁寸粨鏋?_refreshIkSolutionView 涓?_updateIkSolutionDetails
-    // 閮戒粠杩欓噷璇汇€傝〃鏍肩湡姝ｅ～鍏呬氦缁?refreshIkSolutionView 缁熶竴璐熻矗,
-    // 杩欐牱杩囨护鍣ㄥ垏鎹㈡椂涓嶅繀鍐嶈皟 Solve,UI 鍗虫椂鍒锋柊銆?
+    // 保存最近一次完整结果,_refreshIkSolutionView 与 _updateIkSolutionDetails
+    // 都从这里读。表格真正填充交给 refreshIkSolutionView 统一负责,
+    // 这样过滤器切换时不必再调 Solve,UI 即时刷新。
     _lastIkResult = result;
     refreshIkSolutionView ();
 
@@ -1825,15 +1825,15 @@ void KinematicAnalysisWidget::solveIk ()
                       .arg(static_cast<int>(result.solutions.size())));
     }
 
-    // 姝ｅ父璺緞鏀跺熬:鎭㈠ Solve 鎸夐挳銆?
+    // 正常路径收尾:恢复 Solve 按钮。
     if (_ikSolveButton != NULL)
         _ikSolveButton->setEnabled (true);
 }
 
-// shouldShowIkSolution:IK 瑙ｈ繃婊ゅ櫒,缁勫悎涓や釜 QCheckBox:
-//   1) "Show usable only" 鍕句笂 鈫?鍙繚鐣欐棤纰版挒 + status != Fail 鐨勮В;
-//   2) 鍚﹀垯鑻?"Show failed candidates" 鏈嬀 鈫?闅愯棌 status == Fail 鐨勮瘖鏂В;
-//   3) 鍏朵綑鎯呭喌閮藉睍绀?淇濈暀鎵€鏈夊€欓€夌敤浜庤瘖鏂€?
+// shouldShowIkSolution:IK 解过滤器,组合两个 QCheckBox:
+//   1) "Show usable only" 勾上 → 只保留无碰撞 + status != Fail 的解;
+//   2) 否则若 "Show failed candidates" 未勾 → 隐藏 status == Fail 的诊断解;
+//   3) 其余情况都展示,保留所有候选用于诊断。
 bool KinematicAnalysisWidget::shouldShowIkSolution (
     const KinematicIkSolution& solution) const
 {
@@ -1847,11 +1847,11 @@ bool KinematicAnalysisWidget::shouldShowIkSolution (
     return true;
 }
 
-// applySelectedIkSolution:鎶婄敤鎴峰湪 IK 琛ㄦ牸閲岄€変腑鐨勯偅鏉¤В鍐欏洖褰撳墠 state:
-//   1) 閫氳繃 Qt::UserRole 鍙栧嚭 QVariantList(鍐欏叆琛ㄦ牸鏃剁敱 makeQItem 缂撳瓨);
-//   2) 鏍￠獙 DOF 缁村害;
-//   3) device->setQ + studio->setState 鎶婃暣涓?state 鎺ㄥ洖 RobWorkStudio;
-//   4) refreshCurrentPose 鏇存柊 Current pose tab 涓?Report tab銆?
+// applySelectedIkSolution:把用户在 IK 表格里选中的那条解写回当前 state:
+//   1) 通过 Qt::UserRole 取出 QVariantList(写入表格时由 makeQItem 缓存);
+//   2) 校验 DOF 维度;
+//   3) device->setQ + studio->setState 把整个 state 推回 RobWorkStudio;
+//   4) refreshCurrentPose 更新 Current pose tab 与 Report tab。
 void KinematicAnalysisWidget::applySelectedIkSolution ()
 {
     if (_workcell == NULL || _studio == NULL) {
@@ -1866,8 +1866,8 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
     }
 
     const int row = selected.front()->row();
-    // 鍏堜粠绗?0 鍒楀彇鐪熷疄 solutionIndex,鍋氫竴娆″畬鏁存€?/ 鍙敤鎬ф牎楠?
-    // 杩欐牱鍗充究鎸夐挳鐘舵€佽寮傚父瑙﹀彂,涔熶笉浼氭妸 Fail / collision 瑙ｅ啓鍥?RobWorkStudio銆?
+    // 先从第 0 列取真实 solutionIndex,做一次完整性 / 可用性校验;
+    // 这样即便按钮状态被异常触发,也不会把 Fail / collision 解写回 RobWorkStudio。
     QTableWidgetItem* indexItem = _ikSolutionTable->item(row, 0);
     if (indexItem == NULL) {
         setStatus(tr("Cannot apply IK solution: selected row has no solution index."));
@@ -1886,7 +1886,7 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
         return;
     }
 
-    // 琛ㄦ媶鍒嗗悗 Q 鍦ㄧ 11 鍒?0-indexed)銆?
+    // 表拆分后 Q 在第 11 列(0-indexed)。
     QTableWidgetItem* qItem = _ikSolutionTable->item(row, 11);
     if (qItem == NULL) {
         setStatus(tr("Cannot apply IK solution: selected row has no Q value."));
@@ -1919,9 +1919,9 @@ void KinematicAnalysisWidget::applySelectedIkSolution ()
 
 // -------------------------------------------------------------------------
 //  Task point tab
-//  琛ㄦ牸鍒?id | name | type | x/y/z | roll/pitch/yaw | posTol | oriTol |
-//         weight | result | reason銆傜 0 鍒楁槸 checkbox 琛ㄧず enabled銆?
-//  鎸夐挳鍖?Add row / Remove / Import CSV / Export CSV / Analyze all銆?
+//  表格列:id | name | type | x/y/z | roll/pitch/yaw | posTol | oriTol |
+//         weight | result | reason。第 0 列是 checkbox 表示 enabled。
+//  按钮区:Add row / Remove / Import CSV / Export CSV / Analyze all。
 // -------------------------------------------------------------------------
 void KinematicAnalysisWidget::buildTaskPointTab ()
 {
@@ -1934,13 +1934,13 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _exportTaskPointsButton     = new QPushButton(tr("Export task CSV"), _taskPointTab);
     _exportTaskPointResultsButton = new QPushButton(tr("Export result CSV"), _taskPointTab);
     _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
-    // P2:Task points 涓撶敤鎸夐挳:灞€閮ㄥ垎鏋愩€佸鍏ュ綋鍓嶅Э鎬併€佸簲鐢?best Q銆佽烦鍒?IK銆?
+    // P2:Task points 专用按钮:局部分析、导入当前姿态、应用 best Q、跳到 IK。
     _analyzeSelectedTaskPointsButton = new QPushButton (tr("Analyze selected"), _taskPointTab);
     _importCurrentTcpTaskPointButton = new QPushButton (tr("Import current TCP"), _taskPointTab);
     _applySelectedTaskPointBestQButton = new QPushButton (tr("Apply best Q"), _taskPointTab);
     _openSelectedTaskPointInIkButton  = new QPushButton (tr("Open in IK tab"), _taskPointTab);
-    // 杩?3 涓寜閽湪娌￠€変腑鏈夋晥浠诲姟鐐规椂鏃犲彲鐢ㄧ粨鏋?鍏堢鐢?
-    // 閫変腑琛屽彉鍖?/ 琛ㄦ牸琛屾暟鍙樺寲鏃剁敱 paintResultStates 閲嶆柊鍐冲畾銆?
+    // 这 3 个按钮在没选中有效任务点时无可用结果,先禁用,
+    // 选中行变化 / 表格行数变化时由 paintResultStates 重新决定。
     _analyzeSelectedTaskPointsButton->setEnabled (false);
     _applySelectedTaskPointBestQButton->setEnabled (false);
     _openSelectedTaskPointInIkButton->setEnabled (false);
@@ -1957,9 +1957,9 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     buttonRow->setColumnStretch (5, 1);
     tpLayout->addLayout (buttonRow);
 
-    // P3-A:鏁版嵁婧愮敤 TaskPointTableModel,view 鐢?QTableView銆?
-    // model 鎸佹湁 19 鍒椾换鍔＄偣瀹氫箟 + 8 鍒?IK 缁撴灉 + 楠岃瘉鐘舵€?
-    // view 鍙礋璐ｆ覆鏌撲笌 delegate 浜や簰銆?
+    // P3-A:数据源用 TaskPointTableModel,view 用 QTableView。
+    // model 持有 19 列任务点定义 + 8 列 IK 结果 + 验证状态;
+    // view 只负责渲染与 delegate 交互。
     _taskPointModel = new rws::TaskPointTableModel (_taskPointTab);
     _taskPointTable = new QTableView (_taskPointTab);
     _taskPointTable->setModel (_taskPointModel);
@@ -1975,7 +1975,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->horizontalHeader ()->setStretchLastSection (true);
     _taskPointTable->verticalHeader ()->setVisible (false);
     _taskPointTable->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-    // model 鐨?flag 宸茬粡鎶?result 鍒楄鎴愬彧璇?delegate 鍗曠嫭瑁呫€?
+    // model 的 flag 已经把 result 列设成只读,delegate 单独装。
     installTaskPointDelegates ();
     tpLayout->addWidget (_taskPointTable, 3);
 
@@ -2004,11 +2004,11 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     tpLayout->addStretch ();
 }
 
-// buildWorkspaceTab:Workspace 瀛愰〉甯冨眬銆傛帶浠跺寘鎷?
-//   - 閲囨牱鏁?/ 缃戞牸姝ユ暟 / 妯″紡(Random/Grid) / 纰版挒妫€鏌?/ 鐫€鑹叉ā寮?
-//   - Run / Export CSV 涓や釜鍔ㄤ綔;
-//   - 缁撴灉琛?8 鍒?Index / Status / Collision / TCP x/y/z / Manipulability / Min margin;
-//   - 椤堕儴 summary 鏄剧ず鏃犵鎾?/ Warning / Fail 璁℃暟涓庡钩鍧囧彲鎿嶄綔搴︺€?
+// buildWorkspaceTab:Workspace 子页布局。控件包括:
+//   - 采样数 / 网格步数 / 模式(Random/Grid) / 碰撞检查 / 着色模式;
+//   - Run / Export CSV 两个动作;
+//   - 结果表 8 列:Index / Status / Collision / TCP x/y/z / Manipulability / Min margin;
+//   - 顶部 summary 显示无碰撞 / Warning / Fail 计数与平均可操作度。
 void KinematicAnalysisWidget::buildWorkspaceTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_workspaceTab);
@@ -2102,12 +2102,12 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     updateWorkspaceControls ();
 }
 
-// buildPoseReachabilityTab:浣嶅Э鍙揪鎬у瓙椤靛竷灞€銆?
-//   - Source ComboBox:Task points / Manual rows(涓ょ鍙栦綅缃殑鏂瑰紡);
-//   - Directions / Rolls:鐞冮潰鏂瑰悜鏁?/ 缁?Z 婊氬姩閲囨牱鏁?
-//   - 鎵嬪姩浣嶇疆琛?+ Add row;
-//   - 缁撴灉琛?8 鍒?Index / Status / x/y/z / Sampled / Reachable / Coverage;
-//   - 椤堕儴 summary 鏄剧ず骞冲潎 coverage銆?
+// buildPoseReachabilityTab:位姿可达性子页布局。
+//   - Source ComboBox:Task points / Manual rows(两种取位置的方式);
+//   - Directions / Rolls:球面方向数 / 绕 Z 滚动采样数;
+//   - 手动位置表 + Add row;
+//   - 结果表 8 列:Index / Status / x/y/z / Sampled / Reachable / Coverage;
+//   - 顶部 summary 显示平均 coverage。
 void KinematicAnalysisWidget::buildPoseReachabilityTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_poseReachTab);
@@ -2200,12 +2200,12 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseExportButton->setEnabled (false);
 }
 
-// buildReportTab:Report 瀛愰〉甯冨眬銆?
-//   - 椤堕儴 summary 鏍囩:鏄剧ず褰撳墠 / 浠诲姟 / 宸ヤ綔绌洪棿 / 浣嶅Э鍙揪鎬х殑缁煎悎鐘舵€?
-//   - 7 涓?DoubleSpinBox 璋冮槇鍊?nearLimit / cond warn / cond fail / sigma /
-//     manipulability / pos tol / ori tol)+ Apply thresholds 鎸夐挳;
-//   - Refresh / Export JSON / Export CSV 涓変釜鍔ㄤ綔鎸夐挳;
-//   - 搴曢儴鍛婅琛?4 鍒?Severity / Code / Source / Message銆?
+// buildReportTab:Report 子页布局。
+//   - 顶部 summary 标签:显示当前 / 任务 / 工作空间 / 位姿可达性的综合状态;
+//   - 7 个 DoubleSpinBox 调阈值(nearLimit / cond warn / cond fail / sigma /
+//     manipulability / pos tol / ori tol)+ Apply thresholds 按钮;
+//   - Refresh / Export JSON / Export CSV 三个动作按钮;
+//   - 底部告警表 4 列:Severity / Code / Source / Message。
 void KinematicAnalysisWidget::buildVisualizationTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_visualizationTab);
@@ -2840,8 +2840,8 @@ void KinematicAnalysisWidget::installTaskPointDelegates ()
     if (_taskPointTable == nullptr)
         return;
 
-    // 鏀堕泦 refFrame / tcpFrame 鍊欓€?WORLD + device base + WorkCell 鍏ㄩ儴 frame +
-    // 椤堕儴 TCP combo 褰撳墠鍊笺€俛ddUnique 鍐呴儴鍘婚噸,绌哄€艰烦杩囥€?
+    // 收集 refFrame / tcpFrame 候选:WORLD + device base + WorkCell 全部 frame +
+    // 顶部 TCP combo 当前值。addUnique 内部去重,空值跳过。
     QStringList frameValues;
     QStringList tcpValues;
     QSet< QString > frameSeen;
@@ -2858,7 +2858,7 @@ void KinematicAnalysisWidget::installTaskPointDelegates ()
     if (device != nullptr && device->getBase () != nullptr)
         addUnique (frameValues, frameSeen,
                    QString::fromStdString (device->getBase ()->getName ()));
-    // WorkCell 鍏ㄩ儴 frame 鍚嶅瓧 refFrame / tcpFrame 閮借兘鐢ㄣ€?
+    // WorkCell 全部 frame 名字 refFrame / tcpFrame 都能用。
     const QStringList wcFrameNames = collectWorkCellFrameNames (_workcell);
     for (const QString& name : wcFrameNames) {
         addUnique (frameValues, frameSeen, name);
@@ -2869,13 +2869,13 @@ void KinematicAnalysisWidget::installTaskPointDelegates ()
     if (tcpValues.isEmpty ())
         addUnique (tcpValues, tcpSeen, QStringLiteral ("TCP"));
 
-    // P3-A 宸ュ巶:鍐呴儴宸茬粡鐢?setItemDelegateForColumn,鐩存帴浼?view 鍗冲彲銆?
+    // P3-A 工厂:内部已经用 setItemDelegateForColumn,直接传 view 即可。
     rws::installTaskPointDelegates (_taskPointTable, frameValues, tcpValues);
 }
 
-// addTaskPointRow:P3-A 杩佺Щ鍒?model API銆?
-// 鍦?model 鏈熬鎻掑叆涓€琛?榛樿鍊间笌 P2 涓€鑷?0 浣嶅Э / Generic / WORLD /
-// 椤堕儴 TCP / 0.001 m posTol / 1.0 deg oriTol / 1.0 weight / enabled)銆?
+// addTaskPointRow:P3-A 迁移到 model API。
+// 在 model 末尾插入一行,默认值与 P2 一致(0 位姿 / Generic / WORLD /
+// 顶部 TCP / 0.001 m posTol / 1.0 deg oriTol / 1.0 weight / enabled)。
 void KinematicAnalysisWidget::addTaskPointRow ()
 {
     if (_taskPointModel == nullptr)
@@ -2888,7 +2888,7 @@ void KinematicAnalysisWidget::addTaskPointRow ()
     setStr (ColId,    QString ("P%1").arg (row + 1));
     setStr (ColName,  QString ("Task %1").arg (row + 1));
     setStr (ColType,  QStringLiteral ("Generic"));
-    // refFrame 榛樿 WORLD; tcpFrame 榛樿娌跨敤椤堕儴 TCP 涓嬫媺妗嗐€?
+    // refFrame 默认 WORLD; tcpFrame 默认沿用顶部 TCP 下拉框。
     setStr (ColRefFrame, QStringLiteral ("WORLD"));
     QString defaultTcp = QStringLiteral ("TCP");
     if (_tcpFrameCombo != nullptr && !_tcpFrameCombo->currentText ().isEmpty ())
@@ -2909,7 +2909,7 @@ void KinematicAnalysisWidget::addTaskPointRow ()
     setStatus (tr ("Added task point row %1.").arg (row + 1));
 }
 
-// removeSelectedTaskPointRow:P3-A 杩佺Щ鍒?model API銆?
+// removeSelectedTaskPointRow:P3-A 迁移到 model API。
 void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
 {
     if (_taskPointTable == nullptr || _taskPointModel == nullptr)
@@ -2919,7 +2919,7 @@ void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
         setStatus (tr ("No task point row selected."));
         return;
     }
-    // 鍒犻櫎澶氫釜閫変腑琛屾椂,浠庡悗寰€鍓嶅垹閬垮厤涓嬫爣閿欎綅銆?
+    // 删除多个选中行时,从后往前删避免下标错位。
     QList< int > rows;
     for (const QModelIndex& idx : selected)
         rows.append (idx.row ());
@@ -2930,8 +2930,8 @@ void KinematicAnalysisWidget::removeSelectedTaskPointRow ()
 }
 
 namespace {
-// setCell / cellText:瀵煎叆瀵煎嚭鍦烘櫙涓嬪父鐢ㄧ殑 cell 鍐欏叆 / 璇诲彇甯姪鍑芥暟,
-// 姣旂洿鎺?new QTableWidgetItem 绠€鐭€?
+// setCell / cellText:导入导出场景下常用的 cell 写入 / 读取帮助函数,
+// 比直接 new QTableWidgetItem 简短。
 QTableWidgetItem* setCell (QTableWidget* t, int r, int c, const QString& s, bool editable)
 {
     QTableWidgetItem* item = new QTableWidgetItem (s);
@@ -2970,33 +2970,33 @@ QString csvJoin (const QStringList& fields)
     return escaped.join (QStringLiteral (","));
 }
 
-// Task 2 杈呭姪:鎶?鍘熷 solution 鍦?_lastIkResult 涓殑绱㈠紩"瀛樺埌 cell 鐨?
-// Qt::UserRole + 1 妲戒腑,杩欐牱杩囨护鍚庤〃鏍肩殑 displayRow 涓?solutionIndex
-// 涓嶅啀涓€鑷?鍚屼竴鏉?solution 鍙兘鍥犱负鍕鹃€変簡"鍙湅鍙敤瑙?琚烦杩?,
-// 浣嗙敤鎴烽€変腑浠讳綍涓€琛屾椂浠嶈兘鍙嶆煡鍒板師濮嬬储寮曘€?
+// Task 2 辅助:把"原始 solution 在 _lastIkResult 中的索引"存到 cell 的
+// Qt::UserRole + 1 槽中,这样过滤后表格的 displayRow 与 solutionIndex
+// 不再一致(同一条 solution 可能因为勾选了"只看可用解"被跳过),
+// 但用户选中任何一行时仍能反查到原始索引。
 void storeIkSolutionIndex (QTableWidgetItem* item, int solutionIndex)
 {
     if (item != NULL)
         item->setData (Qt::UserRole + 1, solutionIndex);
 }
 
-// Task 4 杈呭姪:鎶婅鎯呰〃鐨勪袱鍒?field/value)鍐欎竴琛?鐩存帴澶嶇敤 makeItem銆?
+// Task 4 辅助:把详情表的两列(field/value)写一行,直接复用 makeItem。
 void setDetailRow (QTableWidget* table, int row, const QString& field, const QString& value)
 {
     QTableWidgetItem* fieldItem = makeItem (field);
     QTableWidgetItem* valueItem = makeItem (value);
-    // 缁欎袱鍒楅兘鍔?tooltip,鍏佽 hover 鏌ョ湅瀹屾暣闀挎枃鏈?灏ゅ叾鏄?
-    // 鍚暱 Q 鍚戦噺鐨?Metrics/Q 琛?,涓嶅繀鎵撳紑姘村钩婊氬姩銆?
+    // 给两列都加 tooltip,允许 hover 查看完整长文本(尤其是
+    // 含长 Q 向量的 Metrics/Q 行),不必打开水平滚动。
     fieldItem->setToolTip (field);
     valueItem->setToolTip (value);
     table->setItem (row, 0, fieldItem);
     table->setItem (row, 1, valueItem);
 }
 
-// P1 bestUsableSolution:涓烘瘡涓?task point 閫?浠ｈ〃瑙?灞曠ず鍦?bestQ / 璇樊鍒椼€?
-//   - 浼樺厛绗竴鏉℃棤纰版挒 + (Pass 鎴?Warning) 鐨勮В;
-//   - 鍏ㄩ儴 collision 鏃堕€€鍥炲埌绗竴鏉¤В(璇婃柇鐢?,璁╃敤鎴风湅鍒?IK 鐪熺殑瑙ｅ埌浜?
-//   - 鏃犺В鏃惰繑鍥?nullptr,UI 鍐?"-"銆?
+// P1 bestUsableSolution:为每个 task point 选"代表解"展示在 bestQ / 误差列。
+//   - 优先第一条无碰撞 + (Pass 或 Warning) 的解;
+//   - 全部 collision 时退回到第一条解(诊断用),让用户看到 IK 真的解到了;
+//   - 无解时返回 nullptr,UI 写 "-"。
 const rws::KinematicIkSolution* bestUsableSolution (const rws::KinematicIkAnalysisResult& ik)
 {
     const rws::KinematicIkSolution* fallback = nullptr;
@@ -3011,9 +3011,9 @@ const rws::KinematicIkSolution* bestUsableSolution (const rws::KinematicIkAnalys
     return fallback;
 }
 
-// P2 paintResultStates:鎸?status / 鏍￠獙缁撴灉缁欐暣琛屾煋鑹层€?
-//   浼樺厛绾?楠岃瘉閿欒(娴呯孩) > Fail(娴呯孩) > Warning / Skipped(娴呴粍) > Pass(娴呯豢) > 榛樿銆?
-// 鍚屾椂鎶?status / reason / failureReasons 鎷兼垚 tooltip 鏂逛究 hover 璇婃柇銆?
+// P2 paintResultStates:按 status / 校验结果给整行染色。
+//   优先级:验证错误(浅红) > Fail(浅红) > Warning / Skipped(浅黄) > Pass(浅绿) > 默认。
+// 同时把 status / reason / failureReasons 拼成 tooltip 方便 hover 诊断。
 void paintResultStates (QTableWidget* t, int row,
                         rws::AnalysisStatus status,
                         const QString& reasonText,
@@ -3055,10 +3055,10 @@ void paintResultStates (QTableWidget* t, int row,
     }
 }
 
-// readTaskPointFromRow:鎶婅〃鏍间竴琛?0-based row)瀹屾暣璇绘垚 TaskPoint銆?
-// 浠讳綍瀛楁闈炴硶(鏁板€?/ freeRoll / 缂哄皯瀛楁)閮戒細鎶婇鏉￠敊璇啓鍏?*error,
-// 璋冪敤鏂硅礋璐?abort(杩斿洖绌?TaskPoint,鍙互鐢?TaskPoint{} 鏍囪瘑)銆?
-// 鐢ㄩ€?鍦?import 瀹屾垚鍚庡仛"瀹屾暣瀛楁绾?validation,鑰屼笉鏄彧鐪?id/name銆?
+// readTaskPointFromRow:把表格一行(0-based row)完整读成 TaskPoint。
+// 任何字段非法(数值 / freeRoll / 缺少字段)都会把首条错误写入 *error,
+// 调用方负责 abort(返回空 TaskPoint,可以用 TaskPoint{} 标识)。
+// 用途:在 import 完成后做"完整字段级"validation,而不是只看 id/name。
 TaskPoint readTaskPointFromRow (const QTableWidget* t, int row, QString* error)
 {
     TaskPoint p;
@@ -3120,7 +3120,7 @@ TaskPoint readTaskPointFromRow (const QTableWidget* t, int row, QString* error)
         p.type = TaskPointType::Screw;
     else if (typeText.compare ("Custom", Qt::CaseInsensitive) == 0)
         p.type = TaskPointType::Custom;
-    // 绌?refFrame / tcpFrame 涓嶅湪姝ゅ濉粯璁ゅ€?鐢?RobotAnalysisValidation 鎷︽埅銆?
+    // 空 refFrame / tcpFrame 不在此处填默认值,由 RobotAnalysisValidation 拦截。
     p.refFrame  = cellText (ColRefFrame).toStdString ();
     p.tcpFrame  = cellText (ColTcpFrame).toStdString ();
     if (!readNumber (ColX,      QObject::tr("x"),                       p.position[0]) ||
@@ -3140,8 +3140,8 @@ TaskPoint readTaskPointFromRow (const QTableWidget* t, int row, QString* error)
     return p;
 }
 
-// P0-6 杈呭姪:鎶婅〃鏍间竴琛岀殑 reason 鍒椾笌 status 鍒楁爣绾?骞舵妸鎵€鏈夐敊璇嫾鎴?
-// tooltip;reason 鏄剧ず绗竴鏉￠敊璇?code/message銆傚け璐ヨ鐢ㄦ祬绾㈣儗鏅€?
+// P0-6 辅助:把表格一行的 reason 列与 status 列标红,并把所有错误拼成
+// tooltip;reason 显示第一条错误 code/message。失败行用浅红背景。
 void markTaskPointRowError (QTableWidget* t, int row,
                             const std::vector< AnalysisWarning >& warnings)
 {
@@ -3166,7 +3166,7 @@ void markTaskPointRowError (QTableWidget* t, int row,
     const QString reasonText = firstCode.isEmpty () ?
         QStringLiteral ("-") :
         QStringLiteral ("%1: %2").arg (firstCode).arg (firstMessage);
-    // 缁欐暣琛屾墍鏈?cell 璁炬祬绾㈣儗鏅笌 tooltip,reason 鍒楅澶栨樉绀虹涓€鏉￠敊璇€?
+    // 给整行所有 cell 设浅红背景与 tooltip,reason 列额外显示第一条错误。
     for (int c = 0; c < t->columnCount (); ++c) {
         QTableWidgetItem* item = t->item (row, c);
         if (item == nullptr)
@@ -3180,7 +3180,7 @@ void markTaskPointRowError (QTableWidget* t, int row,
     setCell (t, row, ColReason, reasonText, false);
 }
 
-// 娓呴櫎鏁村紶琛ㄦ牸鐨勭孩鑹茶儗鏅笌 tooltip(涓嬩竴娆″垎鏋愬墠 / 瀵煎叆鍚庤皟鐢?銆?
+// 清除整张表格的红色背景与 tooltip(下一次分析前 / 导入后调用)。
 void clearTaskPointValidationMarks (QTableWidget* t)
 {
     if (t == nullptr)
@@ -3252,12 +3252,12 @@ bool validateTaskPointRows (QTableWidget* table, std::vector< TaskPoint >* point
 }
 }    // namespace
 
-// collectTaskPointsFromTable:浠?Task point 琛ㄦ牸閫愯璇诲嚭 TaskPoint 缁撴瀯銆?
-//   - 绗?0 鍒楁槸 checkbox 鍐冲畾 enabled;
-//   - 绗?3 鍒楃殑 Type 瀛楃涓叉槧灏勫洖 TaskPointType 鏋氫妇;
-//   - 鏁板€煎垪閫氳繃 toDouble 瑙ｆ瀽;
-//   - refFrame / tcpFrame / freeRoll / note 绛夊瓧绗︿覆瀛楁鍘熸牱鍥炰紶,
-//     淇濊瘉 CSV 鈫?UI 鈫?CSV 涓嶄涪瀛楁銆?
+// collectTaskPointsFromTable:从 Task point 表格逐行读出 TaskPoint 结构。
+//   - 第 0 列是 checkbox 决定 enabled;
+//   - 第 3 列的 Type 字符串映射回 TaskPointType 枚举;
+//   - 数值列通过 toDouble 解析;
+//   - refFrame / tcpFrame / freeRoll / note 等字符串字段原样回传,
+//     保证 CSV → UI → CSV 不丢字段。
 std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable (QString* error) const
 {
     if (error != nullptr)
@@ -3267,20 +3267,20 @@ std::vector< TaskPoint > KinematicAnalysisWidget::collectTaskPointsFromTable (QS
     return _taskPointModel->taskPoints (error);
 }
 
-// applyTaskPointResults:P3-A 杩佺Щ鍒?model API銆?
-// 鎶?results 涓€娆℃€у啓鍥?model,model 鐨?dataChanged 淇″彿璁?view 鑷姩鍒锋柊;
-// 涓嶅啀閫?cell setCell,涔熶笉蹇呮墜鍔ㄧ淮鎶?status / reason / result 鍒楃殑鍚屾銆?
-// 鏌撹壊涓?tooltip 涔熺敱 model 鐨?BackgroundRole / ToolTipRole 璐熻矗銆?
+// applyTaskPointResults:P3-A 迁移到 model API。
+// 把 results 一次性写回 model,model 的 dataChanged 信号让 view 自动刷新;
+// 不再逐 cell setCell,也不必手动维护 status / reason / result 列的同步。
+// 染色与 tooltip 也由 model 的 BackgroundRole / ToolTipRole 负责。
 void KinematicAnalysisWidget::applyTaskPointResults (
     const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
 {
     if (_taskPointModel == nullptr)
         return;
 
-    // 1) 鍐欏洖 model;model 鍐呴儴瀵规瘡琛?hasResult / result 瀛楁璧嬪€笺€?
+    // 1) 写回 model;model 内部对每行 hasResult / result 字段赋值。
     _taskPointModel->setResults (results, reachableRate);
 
-    // 2) 缁熻 pass / warning / fail / enabled,鏇存柊 summary 鏍囩銆?
+    // 2) 统计 pass / warning / fail / enabled,更新 summary 标签。
     std::size_t passCount = 0, warnCount = 0, failCount = 0, enabledCount = 0;
     for (const TaskPointReachabilityResult& r : results) {
         if (!r.taskPoint.enabled)
@@ -3304,13 +3304,13 @@ void KinematicAnalysisWidget::applyTaskPointResults (
     refreshVisualization ();
 }
 
-// importTaskPointsCsv:浠庣敤鎴烽€夋嫨鐨?CSV 鏂囦欢璇诲叆浠诲姟鐐广€?
-//   - 鐢?RobotAnalysisCsv::taskPointsFromCsv 瑙ｆ瀽(鍏变韩 CSV 搴忓垪鍖?;
-//   - 鍏堟竻绌鸿〃鏍?鍐嶉€愮偣閲嶅缓(瑕嗙洊寮忓鍏?;
-//   - result/reason 鍒楀浐瀹氬～ "-",鐣欑粰鍚庣画 Analyze all 鍐欏洖銆?
-// importTaskPointsCsv:P3-A 杩佺Щ鍒?model API銆?
-// 鐩存帴 model->setRowsFromTaskPoints(points) 瑕嗙洊寮忓鍏?
-// 楠岃瘉鐢?model 鍐呴儴璺?RobotAnalysisValidation,澶辫触琛屾爣娴呯孩銆?
+// importTaskPointsCsv:从用户选择的 CSV 文件读入任务点。
+//   - 用 RobotAnalysisCsv::taskPointsFromCsv 解析(共享 CSV 序列化);
+//   - 先清空表格,再逐点重建(覆盖式导入);
+//   - result/reason 列固定填 "-",留给后续 Analyze all 写回。
+// importTaskPointsCsv:P3-A 迁移到 model API。
+// 直接 model->setRowsFromTaskPoints(points) 覆盖式导入,
+// 验证由 model 内部跑 RobotAnalysisValidation,失败行标浅红。
 void KinematicAnalysisWidget::importTaskPointsCsv ()
 {
     if (_taskPointModel == nullptr) {
@@ -3348,8 +3348,8 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
     setStatus (tr ("Imported %1 task point(s).").arg (static_cast<int> (points.size ())));
 }
 
-// exportTaskPointsCsv:鎶婅〃鏍煎綋鍓嶅唴瀹瑰簭鍒楀寲涓?CSV 骞跺啓鍏ョ敤鎴锋寚瀹氭枃浠躲€?
-// 鍐欐枃浠剁敤 QFile::write(const char*, qint64) 鍐欏嚭 std::string 鍘熷瀛楄妭銆?
+// exportTaskPointsCsv:把表格当前内容序列化为 CSV 并写入用户指定文件。
+// 写文件用 QFile::write(const char*, qint64) 写出 std::string 原始字节。
 void KinematicAnalysisWidget::exportTaskPointsCsv ()
 {
     if (_taskPointModel == nullptr) {
@@ -3363,7 +3363,7 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
         setStatus(tr("Task point export canceled."));
         return;
     }
-    // 鍏堣窇 model 楠岃瘉,绌?frame / 璐?tolerance 绛夐兘琚嫤鎴€?
+    // 先跑 model 验证,空 frame / 负 tolerance 等都被拦截。
     QString validationSummary;
     if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr("Export validation"),
@@ -3373,7 +3373,7 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
         setTaskPointTableColumnWidths ();
         return;
     }
-    // 楠岃瘉閫氳繃鍚?浠?model 鍙栨墍鏈夎(瀹屾暣瀛楁)鍐欏埌 CSV銆?
+    // 验证通过后,从 model 取所有行(完整字段)写到 CSV。
     const std::vector< TaskPoint > points = _taskPointModel->taskPoints (nullptr);
     const std::string csv = RobotAnalysisCsv::taskPointsToCsv (points);
     QFile file (path);
@@ -3388,10 +3388,10 @@ void KinematicAnalysisWidget::exportTaskPointsCsv ()
     setStatus(tr("Exported %1 task point(s).").arg(static_cast<int>(points.size())));
 }
 
-// P1 exportTaskPointResultsCsv:瀵煎嚭鎵归噺 IK 缁撴灉 CSV銆?
-// 鍖呭惈浠诲姟鐐瑰畾涔?id/name/enabled/refFrame/tcpFrame) + 鐘舵€?status/reason) +
-// 8 涓粨鏋滄寚鏍?rawCandidates/usableSolutions/bestQ/posErr/oriErr/margin/condition/collision)銆?
-// 涓嶈姹傝兘鍐嶆瀵煎叆 RobotAnalysisCore;瀹冮潰鍚戞姤鍛婅€屼笉鏄洖鍐欍€?
+// P1 exportTaskPointResultsCsv:导出批量 IK 结果 CSV。
+// 包含任务点定义(id/name/enabled/refFrame/tcpFrame) + 状态(status/reason) +
+// 8 个结果指标(rawCandidates/usableSolutions/bestQ/posErr/oriErr/margin/condition/collision)。
+// 不要求能再次导入 RobotAnalysisCore;它面向报告而不是回写。
 void KinematicAnalysisWidget::exportTaskPointResultsCsv ()
 {
     if (_lastTaskPointResults.empty ()) {
@@ -3458,11 +3458,11 @@ void KinematicAnalysisWidget::exportTaskPointResultsCsv ()
                    .arg (static_cast< int > (_lastTaskPointResults.size ())));
 }
 
-// analyzeAllTaskPoints:鎵归噺璺戜换鍔＄偣鐨?IK銆?
-//   - 浠庤〃鏍艰鍑?TaskPoint 鍒楄〃;
-//   - analyzeTaskPoints(姝ゅ浼?NULL,璺宠繃纰版挒妫€娴?閬垮厤渚濊禆澶栭儴 collider);
-//   - 鎶婄粨鏋滃啓鍥?_lastTaskPointResults 骞跺埛鏂拌〃鏍?
-//   - 璋冪敤 updateReportSummary 璁?Report tab 鍚屾鏈€鏂版暟鎹€?
+// analyzeAllTaskPoints:批量跑任务点的 IK。
+//   - 从表格读出 TaskPoint 列表;
+//   - analyzeTaskPoints(此处传 NULL,跳过碰撞检测,避免依赖外部 collider);
+//   - 把结果写回 _lastTaskPointResults 并刷新表格;
+//   - 调用 updateReportSummary 让 Report tab 同步最新数据。
 void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 {
     if (_workcell == nullptr) {
@@ -3485,7 +3485,7 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 
     KinematicAnalyzer analyzer;
     analyzer.setThresholds (_thresholds);
-    // P3-A 杩佺Щ:浠?model 鍙栨墍鏈夎(瀹屾暣瀛楁)銆?
+    // P3-A 迁移:从 model 取所有行(完整字段)。
     QString validationSummary;
     if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr("Analyze validation"),
@@ -3499,8 +3499,8 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
     bool collisionUnavailable = false;
     const rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector =
         collisionDetectorForAnalysis (true, &collisionUnavailable);
-    // P1:workcell-aware overload銆倀cpFrame 鏄《閮ㄩ粯璁?TCP,
-    // 姣忚 taskPoint.tcpFrame 鐢?TaskPointResolver 浼樺厛浣跨敤銆?
+    // P1:workcell-aware overload。tcpFrame 是顶部默认 TCP,
+    // 每行 taskPoint.tcpFrame 由 TaskPointResolver 优先使用。
     const std::vector< TaskPointReachabilityResult > results =
         analyzer.analyzeTaskPoints (
             _workcell, device, tcpFrame, state, points, collisionDetector);
@@ -3516,11 +3516,11 @@ void KinematicAnalysisWidget::analyzeAllTaskPoints ()
 }
 
 // ============================================================================
-//  P2:Task points 涓撶敤鎿嶄綔
+//  P2:Task points 专用操作
 // ============================================================================
 
-// hasSelectedEnabledTaskPoint:P3-A 杩佺Щ:浠?QTableView + model 鎷块€変腑琛屻€?
-// 0 琛?/ 閫?disabled 琛?/ 閫?Skipped 閮借涓轰笉鍙敤銆?
+// hasSelectedEnabledTaskPoint:P3-A 迁移:从 QTableView + model 拿选中行。
+// 0 行 / 选 disabled 行 / 选 Skipped 都视为不可用。
 static bool hasSelectedEnabledTaskPoint (
     QTableView* view, rws::TaskPointTableModel* model,
     int& rowOut, TaskPoint& taskPointOut, QString& errorOut)
@@ -3536,7 +3536,7 @@ static bool hasSelectedEnabledTaskPoint (
     const TaskPoint p = model->taskPointAt (row);
     if (p.id.empty () && p.name.empty () && p.position[0] == 0.0 &&
         p.position[1] == 0.0 && p.position[2] == 0.0) {
-        // taskPointAt 瓒婄晫鎴栫┖琛?绛変环浜?disabled銆?
+        // taskPointAt 越界或空行,等价于 disabled。
         errorOut = QObject::tr ("Selected task point is invalid.");
         return false;
     }
@@ -3549,8 +3549,8 @@ static bool hasSelectedEnabledTaskPoint (
     return true;
 }
 
-// updateTaskPointSelectionButtons:閫変腑琛屽彉鍖?/ 琛ㄦ牸琛屾暟鍙樺寲鏃跺惎鐢?/ 绂佺敤
-// 3 涓?selected-only 鎸夐挳銆傛寜閽湪 selected 鏈夋晥鏃跺惎鐢?鍚﹀垯绂佺敤銆?
+// updateTaskPointSelectionButtons:选中行变化 / 表格行数变化时启用 / 禁用
+// 3 个 selected-only 按钮。按钮在 selected 有效时启用,否则禁用。
 void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
 {
     if (_taskPointTable == nullptr || _taskPointModel == nullptr)
@@ -3563,7 +3563,7 @@ void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
     if (_analyzeSelectedTaskPointsButton != nullptr)
         _analyzeSelectedTaskPointsButton->setEnabled (enabled);
     if (_applySelectedTaskPointBestQButton != nullptr) {
-        // Apply best Q 杩樿姹?_taskPointModel->bestUsableSolutionForRow 鏈夎В銆?
+        // Apply best Q 还要求 _taskPointModel->bestUsableSolutionForRow 有解。
         const bool canApply = enabled && row >= 0 &&
             _taskPointModel->bestUsableSolutionForRow (row) != nullptr;
         _applySelectedTaskPointBestQButton->setEnabled (canApply);
@@ -3572,9 +3572,9 @@ void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
         _openSelectedTaskPointInIkButton->setEnabled (enabled);
 }
 
-// analyzeSelectedTaskPoints:鍙垎鏋愰€変腑涓?enabled 鐨勮銆?
-// disabled 琛岀粨鏋滄竻绌?Skipped),涓嶅奖鍝嶅叾浠栬;_lastTaskPointResults
-// 鎸夎〃鏍艰鍙峰榻?selected 涔嬪淇濇寔涓婁竴杞粨鏋滄垨绌恒€?
+// analyzeSelectedTaskPoints:只分析选中且 enabled 的行。
+// disabled 行结果清空(Skipped),不影响其他行;_lastTaskPointResults
+// 按表格行号对齐,selected 之外保持上一轮结果或空。
 // updateTaskPointDetails: show secondary fields for the selected compact-table row.
 void KinematicAnalysisWidget::updateTaskPointDetails ()
 {
@@ -3641,13 +3641,13 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     }
     if (_taskPointModel == nullptr || _taskPointTable == nullptr)
         return;
-    // P3-A 杩佺Щ:浠?view 鐨?selectionModel 鎷块€変腑琛?涓嶅啀渚濊禆 QTableWidget 鍐呴儴銆?
+    // P3-A 迁移:从 view 的 selectionModel 拿选中行,不再依赖 QTableWidget 内部。
     const QModelIndexList selected = _taskPointTable->selectionModel ()->selectedRows ();
     if (selected.isEmpty ()) {
         setStatus (tr ("Cannot analyze task points: no row selected."));
         return;
     }
-    // 鏁磋〃鍏堣窇涓€娆?validation,绌?frame / 璐?tolerance 绛夐兘鎷︽埅銆?
+    // 整表先跑一次 validation,空 frame / 负 tolerance 等都拦截。
     QString validationSummary;
     if (!_taskPointModel->validateAll (&validationSummary)) {
         QMessageBox::warning (this, tr ("Analyze validation"),
@@ -3692,7 +3692,7 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
             ++analyzed;
     }
 
-    // 閲嶆柊璁＄畻鍙揪鐜?+ 搴旂敤缁撴灉 + 鏇存柊 summary銆?
+    // 重新计算可达率 + 应用结果 + 更新 summary。
     _lastTaskPointResults = analyzeSelectedTaskPointRows (
         analyzer, _workcell, device, tcpFrame, state, allPoints, rows,
         _lastTaskPointResults, collisionDetector);
@@ -3707,8 +3707,8 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     updateTaskPointSelectionButtons ();
 }
 
-// importCurrentTcpAsTaskPoint:鎶婂綋鍓?RWS TCP 浣嶅Э鎻掑叆鏂拌 TaskPoint銆?
-// refFrame 榛樿鐢?WORLD,tcpFrame 璺熼殢椤堕儴 TCP,鍏朵粬瀛楁鐢ㄩ槇鍊奸粯璁ゅ€笺€?
+// importCurrentTcpAsTaskPoint:把当前 RWS TCP 位姿插入新行 TaskPoint。
+// refFrame 默认用 WORLD,tcpFrame 跟随顶部 TCP,其他字段用阈值默认值。
 void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
 {
     if (_workcell == nullptr) {
@@ -3727,7 +3727,7 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
     }
     if (_taskPointModel == nullptr)
         return;
-    // 澶嶇敤 IK 椤?importCurrentPoseToIk 鐨勪綅濮胯鍙栭€昏緫 + P2 TaskPointUiLogic銆?
+    // 复用 IK 页 importCurrentPoseToIk 的位姿读取逻辑 + P2 TaskPointUiLogic。
     try {
         const rw::math::Transform3D<> baseTtcp =
             rw::kinematics::Kinematics::frameTframe (
@@ -3736,7 +3736,7 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
             QString ("TP_%1").arg (_taskPointModel->rowCount () + 1, 3, 10, QChar ('0')).toStdString ();
         TaskPoint p = taskPointFromCurrentTcpPose (
             id, tcpFrame->getName (), device->getBase ()->getName (), baseTtcp, _thresholds);
-        // P3-A 杩佺Щ:鐢?model->appendTaskPoint 涓€娆℃€ф彃鍏?+ 瑙﹀彂楠岃瘉銆?
+        // P3-A 迁移:用 model->appendTaskPoint 一次性插入 + 触发验证。
         const int row = _taskPointModel->appendTaskPoint (p);
         QString validationSummary;
         _taskPointModel->validateAll (&validationSummary);
@@ -3749,9 +3749,9 @@ void KinematicAnalysisWidget::importCurrentTcpAsTaskPoint ()
     updateTaskPointSelectionButtons ();
 }
 
-// applySelectedTaskPointBestQ:P3-A 杩佺Щ鍒?model銆?
-// 浠?_taskPointModel->bestUsableSolutionForRow 鎷?best Q,鐩存帴鐢?
-// isUsableIkSolution 浜屾鏍￠獙,閬垮厤 _lastTaskPointResults 绱㈠紩閿欎綅銆?
+// applySelectedTaskPointBestQ:P3-A 迁移到 model。
+// 从 _taskPointModel->bestUsableSolutionForRow 拿 best Q,直接用
+// isUsableIkSolution 二次校验,避免 _lastTaskPointResults 索引错位。
 void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
 {
     if (_workcell == nullptr || _studio == nullptr) {
@@ -3794,9 +3794,9 @@ void KinematicAnalysisWidget::applySelectedTaskPointBestQ ()
                   .arg (static_cast<int> (best->q.size ())));
 }
 
-// openSelectedTaskPointInIk:P3-A 杩佺Щ鍒?model銆?
-// 閫変腑琛岀洿鎺ヤ粠 _taskPointModel->taskPointAt 鎷?TaskPoint,
-// 閫氳繃 TaskPointResolver 瑙ｆ瀽涓?device-base 鐩爣,濉埌 IK 椤点€?
+// openSelectedTaskPointInIk:P3-A 迁移到 model。
+// 选中行直接从 _taskPointModel->taskPointAt 拿 TaskPoint,
+// 通过 TaskPointResolver 解析为 device-base 目标,填到 IK 页。
 void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
 {
     if (_workcell == nullptr) {
@@ -3843,9 +3843,9 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
     setStatus (tr ("Opened selected task point in IK tab (resolved to device base)."));
 }
 
-// collectPoseReachabilityPositions:鎸?Source 涓嬫媺閫夋嫨鏀堕泦浣嶇疆鍒楄〃:
-//   - 0 鈫?Task points:浠?_taskPointModel 鍙栨墍鏈夎,鍙彇 enabled 鐨勪綅缃?
-//   - 1 鈫?Manual rows:浠?_posePositionTable 閫愯璇诲嚭 xyz銆?
+// collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:
+//   - 0 → Task points:从 _taskPointModel 取所有行,只取 enabled 的位置;
+//   - 1 → Manual rows:从 _posePositionTable 逐行读出 xyz。
 std::vector< std::array< double, 3 > >
 KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
 {
@@ -3853,7 +3853,7 @@ KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
     if (error != nullptr)
         error->clear ();
     if (_poseSourceCombo != NULL && _poseSourceCombo->currentIndex () == 0) {
-        // P3-A 杩佺Щ:浠?model 鍙栨墍鏈夎,璺宠繃瀵瑰簾寮冪殑 QTableWidget helper 璋冪敤銆?
+        // P3-A 迁移:从 model 取所有行,跳过对废弃的 QTableWidget helper 调用。
         if (_taskPointModel == nullptr)
             return positions;
         const std::vector< TaskPoint > points = _taskPointModel->taskPoints (error);
@@ -3887,9 +3887,9 @@ KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
     return positions;
 }
 
-// applyWorkspaceResults:鎶?WorkspaceSample 鏁扮粍鍐欏埌缁撴灉琛?
-//   - 琛ㄦ牸鏈€澶氭樉绀哄墠 500 鏉?闃插崱椤?,浣嗕粛鎸夊叏閮ㄦ牱鏈粺璁?summary;
-//   - summary 鍖呭惈鎬绘暟銆佹棤纰版挒 / Warning / Fail 璁℃暟涓庡钩鍧囧彲鎿嶄綔搴︺€?
+// applyWorkspaceResults:把 WorkspaceSample 数组写到结果表;
+//   - 表格最多显示前 500 条(防卡顿),但仍按全部样本统计 summary;
+//   - summary 包含总数、无碰撞 / Warning / Fail 计数与平均可操作度。
 void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< WorkspaceSample >& samples)
 {
     if (_workspaceTable == NULL)
@@ -3960,8 +3960,8 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
     refreshVisualization ();
 }
 
-// sampleWorkspace:浠庢帶浠惰 WorkspaceSamplingConfig 鈫?璋?analyzer 鈫?鍐欏洖琛ㄦ牸;
-// 鍥哄畾 randomSeed=1 浠ヤ繚璇佺粨鏋滃彲澶嶇幇,渚夸簬鍥炲綊瀵规瘮銆?
+// sampleWorkspace:从控件读 WorkspaceSamplingConfig → 调 analyzer → 写回表格;
+// 固定 randomSeed=1 以保证结果可复现,便于回归对比。
 void KinematicAnalysisWidget::sampleWorkspace ()
 {
     if (_workspaceRunActive) {
@@ -4213,8 +4213,8 @@ void KinematicAnalysisWidget::openWorkspaceInVisualization ()
     refreshVisualization ();
 }
 
-// exportWorkspaceCsv:鎶?_workspaceSamples 鍏ㄩ噺鍐欏嚭(鍚?q 瀛楃涓层€乀CP 浣嶇疆銆?
-// manipulability / 鍏宠妭瑁曞害 / 鏉′欢鏁?/ 纰版挒 / 鐘舵€?銆?
+// exportWorkspaceCsv:把 _workspaceSamples 全量写出(含 q 字符串、TCP 位置、
+// manipulability / 关节裕度 / 条件数 / 碰撞 / 状态)。
 void KinematicAnalysisWidget::exportWorkspaceCsv ()
 {
     if (_workspaceSamples.empty ()) {
@@ -4263,7 +4263,7 @@ void KinematicAnalysisWidget::exportWorkspaceCsv ()
                    .arg (static_cast< int > (_workspaceSamples.size ())));
 }
 
-// addPoseReachabilityRow:鍦ㄦ墜鍔ㄤ綅缃〃鏈熬杩藉姞涓€琛屽叏 0 鐨勪綅缃€?
+// addPoseReachabilityRow:在手动位置表末尾追加一行全 0 的位置。
 void KinematicAnalysisWidget::addPoseReachabilityRow ()
 {
     if (_posePositionTable == NULL)
@@ -4317,8 +4317,8 @@ void KinematicAnalysisWidget::updatePoseReachabilityControls ()
 static const std::size_t MaxPoseReachabilityTableRows = 500;
 static const int MaxPoseReachabilityProgressBarSteps = 1000000;
 
-// applyPoseReachabilityResults:鎶?PoseReachabilitySample 鍐欏埌 _poseResultTable,
-// 鍚屾椂鍒锋柊椤堕儴 summary(Average coverage)銆?
+// applyPoseReachabilityResults:把 PoseReachabilitySample 写到 _poseResultTable,
+// 同时刷新顶部 summary(Average coverage)。
 void KinematicAnalysisWidget::applyPoseReachabilityResults (
     const std::vector< PoseReachabilitySample >& samples)
 {
@@ -4565,8 +4565,8 @@ void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
     }
 }
 
-// exportPoseReachabilityCsv:鎶?_poseReachabilitySamples 鍐欎负 CSV,
-// 鍒椾笌琛ㄦ牸涓€鑷?浣嶇疆 + sampled + reachable + coverage + status)銆?
+// exportPoseReachabilityCsv:把 _poseReachabilitySamples 写为 CSV,
+// 列与表格一致(位置 + sampled + reachable + coverage + status)。
 void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
 {
     // P4:空数据提前返回。
@@ -4624,11 +4624,11 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
                    .arg (static_cast< int > (_poseReachabilitySamples.size ())));
 }
 
-// updateReportSummary:Report tab 鐨勪腑澶灑绾姐€?
-//   - 鐢?analyzer.buildAggregateResult 鎶婂洓绫绘暟鎹仛鍚堟垚 KinematicAnalysisResult;
-//   - 鍦?summary 鏍囩閲屾樉绀烘€荤姸鎬併€佸彲杈剧巼銆佸綋鍓嶆潯浠舵暟 / 鍙搷浣滃害銆佷换鍔＄偣璁℃暟銆?
-//     宸ヤ綔绌洪棿鎬绘暟銆佷綅濮垮彲杈炬€у钩鍧?coverage;
-//   - 鎶?result.warnings 鍏ㄩ儴鍐欏叆鍛婅琛ㄣ€?
+// updateReportSummary:Report tab 的中央枢纽。
+//   - 用 analyzer.buildAggregateResult 把四类数据聚合成 KinematicAnalysisResult;
+//   - 在 summary 标签里显示总状态、可达率、当前条件数 / 可操作度、任务点计数、
+//     工作空间总数、位姿可达性平均 coverage;
+//   - 把 result.warnings 全部写入告警表。
 void KinematicAnalysisWidget::updateReportSummary ()
 {
     if (_reportSummaryLabel == NULL)
@@ -4693,8 +4693,8 @@ void KinematicAnalysisWidget::updateReportSummary ()
     }
 }
 
-// refreshReport:Report tab 涓婄殑 Refresh 鎸夐挳妲藉嚱鏁?
-// 閲嶆柊璺戜竴娆?updateReportSummary,鏂逛究鐢ㄦ埛淇敼闃堝€煎悗鍙埛涓€娆￠潰鏉胯€屼笉閲嶈窇鍒嗘瀽銆?
+// refreshReport:Report tab 上的 Refresh 按钮槽函数;
+// 重新跑一次 updateReportSummary,方便用户修改阈值后只刷一次面板而不重跑分析。
 void KinematicAnalysisWidget::refreshReport ()
 {
     updateReportSummary ();
@@ -4702,8 +4702,8 @@ void KinematicAnalysisWidget::refreshReport ()
 }
 
 namespace {
-// vectorToJsonArray / array3ToJsonArray:鎶?std::vector<double> 涓?std::array<double,3>
-// 瑁呰繘 QJsonArray;渚?exportReportJson 浣跨敤銆?
+// vectorToJsonArray / array3ToJsonArray:把 std::vector<double> 与 std::array<double,3>
+// 装进 QJsonArray;供 exportReportJson 使用。
 QJsonArray vectorToJsonArray (const std::vector< double >& values)
 {
     QJsonArray array;
@@ -4722,9 +4722,9 @@ QJsonArray array3ToJsonArray (const std::array< double, 3 >& values)
 }
 }    // namespace
 
-// exportReportJson:鎶?KinematicAnalysisResult 搴忓垪鍖栦负缁撴瀯鍖?JSON,渚夸簬涓嬫父宸ュ叿娑堣垂銆?
-// 椤跺眰鍖呭惈 pluginName / status / reachableRate;鍥涗釜瀛愯妭鐐瑰垎鍒负 currentPose銆?
-// taskPointResults銆亀orkspaceSamples銆乸oseReachability;鏈熬鏄?warnings 鏁扮粍銆?
+// exportReportJson:把 KinematicAnalysisResult 序列化为结构化 JSON,便于下游工具消费。
+// 顶层包含 pluginName / status / reachableRate;四个子节点分别为 currentPose、
+// taskPointResults、workspaceSamples、poseReachability;末尾是 warnings 数组。
 void KinematicAnalysisWidget::exportReportJson ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -4765,15 +4765,15 @@ void KinematicAnalysisWidget::exportReportJson ()
         item["tcpFrame"] = QString::fromStdString (task.taskPoint.tcpFrame);
         item["status"] = QString::fromLatin1 (statusText (task.status));
         item["primaryFailure"] = QString::fromLatin1 (toString (task.primaryFailure));
-        // failureReasons 瀹屾暣鏁扮粍,渚夸簬鑴氭湰浜屾杩囨护銆?
+        // failureReasons 完整数组,便于脚本二次过滤。
         QJsonArray reasonArray;
         for (KinematicFailureReason fr : task.failureReasons)
             reasonArray.append (QString::fromLatin1 (toString (fr)));
         item["failureReasons"] = reasonArray;
         item["rawCandidateCount"] = static_cast< int > (task.ik.rawCandidateCount);
         item["usableSolutionCount"] = static_cast< int > (task.ik.usableSolutionCount);
-        // best solution:浠?bestUsableSolution 閫?鏃犺В鏃跺啓鍏?"-",
-        // 閬垮厤涓嬫父鑴氭湰璁块棶 null 瀛楁鎶ラ敊銆?
+        // best solution:从 bestUsableSolution 选;无解时写全 "-",
+        // 避免下游脚本访问 null 字段报错。
         QJsonObject bestObj;
         const KinematicIkSolution* best = bestUsableSolution (task.ik);
         if (best != nullptr) {
@@ -4853,9 +4853,9 @@ void KinematicAnalysisWidget::exportReportJson ()
     setStatus (tr("Exported kinematic JSON report."));
 }
 
-// exportReportCsv:杈撳嚭 "metric,value" 涓ゅ垪鐨勭簿绠€鎽樿 CSV銆?
-//   - 椤跺眰鐘舵€?/ 鍙揪鐜?/ 褰撳墠浣嶅Э鍏抽敭鎸囨爣 / 鍚勫瓙缁撴灉鏉℃暟;
-//   - 鍙搷浣滃害 min/max/mean/p10 涓€骞惰拷鍔?鏉ヨ嚜 result.manipulabilityMap)銆?
+// exportReportCsv:输出 "metric,value" 两列的精简摘要 CSV。
+//   - 顶层状态 / 可达率 / 当前位姿关键指标 / 各子结果条数;
+//   - 可操作度 min/max/mean/p10 一并追加(来自 result.manipulabilityMap)。
 void KinematicAnalysisWidget::exportReportCsv ()
 {
     const QString path = QFileDialog::getSaveFileName (
@@ -4890,8 +4890,8 @@ void KinematicAnalysisWidget::exportReportCsv ()
     setStatus (tr("Exported kinematic CSV summary."));
 }
 
-// applyThresholds:鎶?Report tab 涓婄殑 7 涓槇鍊?SpinBox 鍐欏洖 _thresholds,
-// 浠呬慨鏀瑰唴瀛樹腑鐨勯槇鍊?涓嶄細涓诲姩閲嶈窇浠讳綍鍒嗘瀽,鎻愮ず鐢ㄦ埛鎸夐渶閲嶈窇銆?
+// applyThresholds:把 Report tab 上的 7 个阈值 SpinBox 写回 _thresholds,
+// 仅修改内存中的阈值;不会主动重跑任何分析,提示用户按需重跑。
 void KinematicAnalysisWidget::applyThresholds ()
 {
     _thresholds.nearJointLimitRatio = _thresholdNearLimitSpin->value ();
