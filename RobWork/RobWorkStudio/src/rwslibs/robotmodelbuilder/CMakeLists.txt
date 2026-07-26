@@ -106,6 +106,25 @@ if(build)
     endif()
 
     # ---- JSON 序列化往返测试 ----
+    add_executable(sdurws_robotmodelbuilder_widgettest
+        RobotModelBuilderWidgetTest.cpp
+        RobotModelBuilderWidget.cpp
+        ${ModelSrcFiles}
+        ${ModelHeaderFiles}
+    )
+    target_link_libraries(sdurws_robotmodelbuilder_widgettest
+        PRIVATE
+            ${SUBSYS_DEPS}
+            ${QT_LIBRARIES}
+    )
+    target_include_directories(sdurws_robotmodelbuilder_widgettest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_robotmodelbuilder_widgettest
+            COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_widgettest>
+        )
+    endif()
+
     add_executable(sdurws_robotmodelbuilder_jsontest
         RobotModelSpecJsonTest.cpp
         RobotModelSpecJson.cpp

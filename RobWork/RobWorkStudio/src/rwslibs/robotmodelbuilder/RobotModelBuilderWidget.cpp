@@ -22,6 +22,7 @@
 #include <QComboBox>
 #include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -31,6 +32,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QSet>
 #include <QTableWidget>
 #include <QTabWidget>
 #include <QTextEdit>
@@ -108,6 +110,66 @@ std::vector< std::string > movableNames (const std::vector< JointTransformSpec >
             names.push_back (joint.name);
     }
     return names;
+}
+
+void appendUniqueChoice (QStringList& choices, const QString& value)
+{
+    if (!value.isEmpty () && !choices.contains (value, Qt::CaseSensitive))
+        choices << value;
+}
+
+QStringList movableJointChoices (const RobotModelSpec& spec)
+{
+    QStringList choices;
+    for (const JointTransformSpec& joint : spec.transformJoints) {
+        if (isMovableType (joint.type))
+            appendUniqueChoice (choices, QString::fromStdString (joint.name));
+    }
+    return choices;
+}
+
+QStringList deviceFrameChoices (const RobotModelSpec& spec)
+{
+    QStringList choices;
+    appendUniqueChoice (choices, "Base");
+    appendUniqueChoice (choices, QString::fromStdString (spec.dynamics.baseFrame));
+    for (const JointTransformSpec& joint : spec.transformJoints)
+        appendUniqueChoice (choices, QString::fromStdString (joint.name));
+    appendUniqueChoice (choices, "TCP");
+    return choices;
+}
+
+QStringList collisionFrameChoices (const RobotModelSpec& spec)
+{
+    QStringList choices = deviceFrameChoices (spec);
+    appendUniqueChoice (choices, "RobotBase");
+    if (spec.generateScene) {
+        appendUniqueChoice (choices, "WORLD");
+        for (const FrameSpec& frame : spec.sceneFrames)
+            appendUniqueChoice (choices, QString::fromStdString (frame.name));
+    }
+    return choices;
+}
+
+QStringList sceneFrameChoices (const RobotModelSpec& spec, int row)
+{
+    QStringList choices;
+    appendUniqueChoice (choices, "WORLD");
+    appendUniqueChoice (choices, "RobotBase");
+    for (int index = 0; index < row && index < static_cast< int >(spec.sceneFrames.size ());
+         ++index)
+        appendUniqueChoice (choices, QString::fromStdString (spec.sceneFrames[index].name));
+    return choices;
+}
+
+QStringList sceneGeometryFrameChoices (const RobotModelSpec& spec)
+{
+    QStringList choices;
+    appendUniqueChoice (choices, "WORLD");
+    appendUniqueChoice (choices, "RobotBase");
+    for (const FrameSpec& frame : spec.sceneFrames)
+        appendUniqueChoice (choices, QString::fromStdString (frame.name));
+    return choices;
 }
 
 int movableIndexBeforeRow (const std::vector< JointTransformSpec >& joints, int row)
@@ -403,7 +465,7 @@ void RobotModelBuilderWidget::buildUi ()
     QWidget* collisionTab      = new QWidget ();
     QVBoxLayout* collisionLay  = new QVBoxLayout (collisionTab);
     _collisionModelsTable = makeTable (
-        QStringList () << "Enabled"
+        QStringList () << "Use"
                        << "Name"
                        << "RefFrame"
                        << "Shape"
@@ -441,7 +503,7 @@ void RobotModelBuilderWidget::buildUi ()
     collisionSetupLay->addWidget (collisionSetupOptions);
 
     _collisionSetupPairsTable = makeTable (
-        QStringList () << "Enabled"
+        QStringList () << "Use"
                        << "First Frame"
                        << "Second Frame"
                        << "Source"
@@ -620,7 +682,7 @@ void RobotModelBuilderWidget::buildUi ()
     tabs->addTab (dynamicsTab, "Dynamics");
 
     // -------------------------------------------------------------------------
-    //  XML Preview 标签页:三段 XML 实时预览(只读)
+    //  XML Preview 标签页:所有可输出 XML 的实时预览(只读)
     // -------------------------------------------------------------------------
     QWidget* previewTab      = new QWidget ();
     QVBoxLayout* previewLay  = new QVBoxLayout (previewTab);
@@ -629,12 +691,18 @@ void RobotModelBuilderWidget::buildUi ()
     _serialPreview           = new QTextEdit ();
     _scenePreview            = new QTextEdit ();
     _dwcPreview              = new QTextEdit ();
+    _collisionSetupPreview   = new QTextEdit ();
+    _proximitySetupPreview   = new QTextEdit ();
     _serialPreview->setReadOnly (true);
     _scenePreview->setReadOnly (true);
     _dwcPreview->setReadOnly (true);
+    _collisionSetupPreview->setReadOnly (true);
+    _proximitySetupPreview->setReadOnly (true);
     previewTabs->addTab (_serialPreview, "SerialDevice XML");
     previewTabs->addTab (_scenePreview, "Scene XML");
     previewTabs->addTab (_dwcPreview, "DWC XML");
+    previewTabs->addTab (_collisionSetupPreview, "CollisionSetup XML");
+    previewTabs->addTab (_proximitySetupPreview, "ProximitySetup XML");
     previewLay->addWidget (previewTabs);
     tabs->addTab (previewTab, "XML Preview");
 
@@ -735,7 +803,7 @@ void RobotModelBuilderWidget::resetDefaults ()
 //  说明: "Generate Preview" 按钮的回调:
 //        1) 先做轻量的文本规则校验(各表格数字格式、向量维度);
 //        2) 收集 spec,调用 applyLinkGeometry 自动重算 Link{i}To{i+1} 圆柱;
-//        3) 调用 XmlWriter 校验 + 生成三段 XML 文本,刷新到预览框;
+//        3) 调用 XmlWriter 校验 + 生成全部 XML 文本,刷新到预览框;
 //        4) 在底部状态栏报告成功/失败。
 // =============================================================================
 void RobotModelBuilderWidget::generatePreview ()
@@ -765,6 +833,12 @@ void RobotModelBuilderWidget::generatePreview ()
     _dwcPreview->setPlainText (spec.dynamics.generateDynamicWorkCell
                                    ? RobotModelXmlWriter::makeDynamicWorkCellXml (spec)
                                    : QString ("<!-- Enable \"Dynamic WorkCell\" to generate -->"));
+    _collisionSetupPreview->setPlainText (spec.generateScene && spec.collisionSetup.enabled
+                                              ? RobotModelXmlWriter::makeCollisionSetupXml (spec)
+                                              : QString ("<!-- Enable CollisionSetup to generate -->"));
+    _proximitySetupPreview->setPlainText (spec.generateScene && spec.proximitySetup.enabled
+                                               ? RobotModelXmlWriter::makeProximitySetupXml (spec)
+                                               : QString ("<!-- Enable ProximitySetup to generate -->"));
     setStatus ("Preview generated.");
 }
 
@@ -784,6 +858,10 @@ void RobotModelBuilderWidget::saveXml ()
 
     RobotModelSpec spec = collectSpec ();
     RobotModelXmlWriter::applyLinkGeometry (spec);
+    if (!confirmOutputOverwrite (spec)) {
+        setStatus ("Save cancelled.");
+        return;
+    }
     if (!RobotModelXmlWriter::saveFiles (spec, errors)) {
         showErrors (errors);
         return;
@@ -811,6 +889,10 @@ void RobotModelBuilderWidget::saveAndLoad ()
 
     RobotModelSpec spec = collectSpec ();
     RobotModelXmlWriter::applyLinkGeometry (spec);
+    if (!confirmOutputOverwrite (spec)) {
+        setStatus ("Save cancelled.");
+        return;
+    }
     if (!RobotModelXmlWriter::saveFiles (spec, errors)) {
         showErrors (errors);
         return;
@@ -849,6 +931,40 @@ void RobotModelBuilderWidget::updateOutputFilePlaceholders ()
     _sceneFile->setPlaceholderText (robotName + "Scene.wc.xml");
     _dynamicWorkCellFile->setPlaceholderText (robotName + ".dwc.xml");
     _collisionSetupFile->setPlaceholderText ("CollisionSetup.xml");
+}
+
+bool RobotModelBuilderWidget::confirmOutputOverwrite (const RobotModelSpec& spec)
+{
+    QStringList outputFiles;
+    outputFiles << RobotModelXmlWriter::serialDeviceFilePath (spec)
+                << RobotModelXmlWriter::specSidecarFilePath (spec);
+    if (spec.generateScene) {
+        if (spec.collisionSetup.enabled)
+            outputFiles << RobotModelXmlWriter::collisionSetupFilePath (spec);
+        if (spec.proximitySetup.enabled)
+            outputFiles << RobotModelXmlWriter::proximitySetupFilePath (spec);
+        outputFiles << RobotModelXmlWriter::sceneFilePath (spec);
+    }
+    if (spec.dynamics.generateDynamicWorkCell)
+        outputFiles << RobotModelXmlWriter::dynamicWorkCellFilePath (spec);
+
+    QSet< QString > seen;
+    QStringList existingFiles;
+    for (const QString& file : outputFiles) {
+        const QString normalized = QDir::cleanPath (file);
+        if (seen.contains (normalized) || !QFileInfo::exists (normalized))
+            continue;
+        seen.insert (normalized);
+        existingFiles << normalized;
+    }
+    if (existingFiles.isEmpty ())
+        return true;
+
+    return QMessageBox::question (
+               this, "Confirm overwrite",
+               "The following files already exist and will be replaced:\n" +
+                   existingFiles.join ("\n") + "\n\nContinue?",
+               QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes;
 }
 
 // =============================================================================
@@ -1529,9 +1645,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     // ---- Collision Models 表(Milestone 5:独立碰撞几何)----
     for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
         CollisionModelSpec collision;
-        const QString enabled = itemText (_collisionModelsTable, row, 0);
-        collision.enabled = enabled.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
-                            enabled.compare ("true", Qt::CaseInsensitive) == 0;
+        collision.enabled = itemChecked (_collisionModelsTable, row, 0);
         collision.name = itemText (_collisionModelsTable, row, 1).toStdString ();
         collision.refFrame = itemText (_collisionModelsTable, row, 2).toStdString ();
         collision.shape = itemText (_collisionModelsTable, row, 3).toStdString ();
@@ -1545,10 +1659,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         spec.collisionSetup.excludePairs.clear ();
         for (int row = 0; row < _collisionSetupPairsTable->rowCount (); ++row) {
             FramePairSpec pair;
-            const QString enabled = itemText (_collisionSetupPairsTable, row, 0);
-            pair.enabled =
-                enabled.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
-                enabled.compare ("true", Qt::CaseInsensitive) == 0;
+            pair.enabled = itemChecked (_collisionSetupPairsTable, row, 0);
             pair.first = itemText (_collisionSetupPairsTable, row, 1).toStdString ();
             pair.second = itemText (_collisionSetupPairsTable, row, 2).toStdString ();
             pair.source = itemText (_collisionSetupPairsTable, row, 3).toStdString ();
@@ -1583,10 +1694,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         frame.refFrame  = itemText (_sceneFramesTable, row, 1).toStdString ();
         frame.frameType = sceneFrameTypeFromString (
             itemText (_sceneFramesTable, row, 2).toStdString ());
-        const QString daf = itemText (_sceneFramesTable, row, 3);
-        frame.daf       = daf.compare ("true", Qt::CaseInsensitive) == 0 ||
-                          daf.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
-                          daf.compare ("yes", Qt::CaseInsensitive) == 0;
+        frame.daf = itemChecked (_sceneFramesTable, row, 3);
         frame.poseMode = poseModeFromString (
             itemText (_sceneFramesTable, row, 4).toStdString ());
         parseVector3 (itemText (_sceneFramesTable, row, 5), frame.rpyDeg);
@@ -1609,11 +1717,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         parseVector3 (itemText (_sceneGeometryTable, row, 7), geometry.rpyDeg);
         parseVector3 (itemText (_sceneGeometryTable, row, 8), geometry.pos);
         parseVector3 (itemText (_sceneGeometryTable, row, 9), geometry.rgb);
-        const QString collision =
-            itemText (_sceneGeometryTable, row, 10);
-        geometry.collisionModel =
-            collision.compare ("Enabled", Qt::CaseInsensitive) == 0 ||
-            collision.compare ("true", Qt::CaseInsensitive) == 0;
+        geometry.collisionModel = itemChecked (_sceneGeometryTable, row, 10);
         spec.sceneGeometries.push_back (geometry);
     }
 
@@ -1634,8 +1738,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
         link.mass          = itemDouble (_dynamicsLinksTable, row, 2);
         parseVector3 (itemText (_dynamicsLinksTable, row, 3), link.cog);
         parseVector6 (itemText (_dynamicsLinksTable, row, 4), link.inertia);
-        link.estimateInertia =
-            itemText (_dynamicsLinksTable, row, 5).compare ("Enabled", Qt::CaseInsensitive) == 0;
+        link.estimateInertia = itemChecked (_dynamicsLinksTable, row, 5);
         link.material = itemText (_dynamicsLinksTable, row, 6).toStdString ();
         spec.dynamics.links.push_back (link);
     }
@@ -1817,7 +1920,8 @@ void RobotModelBuilderWidget::fillDrawablesTable (const RobotModelSpec& spec)
         // applyLinkGeometry 维护,所以在 UI 上锁为只读;radius/RGB/Collision
         // 仍可手动覆盖。Milestone 4 起共 11 列,新增 Dimensions/File。
         setItem (_drawablesTable, row, 0, QString::fromStdString (drawable.name), !autoLink);
-        setItem (_drawablesTable, row, 1, QString::fromStdString (drawable.refFrame), !autoLink);
+        setCombo (_drawablesTable, row, 1, deviceFrameChoices (spec),
+                  QString::fromStdString (drawable.refFrame), !autoLink);
         setShapeCombo (_drawablesTable, row, 2,
                        QString::fromStdString (drawable.shape), !autoLink);
         const QString shape = QString::fromStdString (drawable.shape);
@@ -1849,10 +1953,10 @@ void RobotModelBuilderWidget::fillCollisionModelsTable (const RobotModelSpec& sp
     for (int row = 0; row < _collisionModelsTable->rowCount (); ++row) {
         const CollisionModelSpec& collision = spec.collisionModels[row];
         const QString shape = QString::fromStdString (collision.shape);
-        setCombo (_collisionModelsTable, row, 0, QStringList () << "Enabled" << "Disabled",
-                  collision.enabled ? "Enabled" : "Disabled");
+        setCheckBox (_collisionModelsTable, row, 0, collision.enabled);
         setItem (_collisionModelsTable, row, 1, QString::fromStdString (collision.name));
-        setItem (_collisionModelsTable, row, 2, QString::fromStdString (collision.refFrame));
+        setCombo (_collisionModelsTable, row, 2, deviceFrameChoices (spec),
+                  QString::fromStdString (collision.refFrame));
         setCollisionShapeCombo (_collisionModelsTable, row, 3, shape);
         setItem (_collisionModelsTable, row, 4, collisionSizeText (collision),
                  collisionColumnEditableForShape (shape, 4));
@@ -1879,10 +1983,13 @@ void RobotModelBuilderWidget::fillCollisionSetupTab (const RobotModelSpec& spec)
         static_cast< int > (spec.collisionSetup.excludePairs.size ()));
     for (int row = 0; row < _collisionSetupPairsTable->rowCount (); ++row) {
         const FramePairSpec& pair = spec.collisionSetup.excludePairs[row];
-        setCombo (_collisionSetupPairsTable, row, 0, QStringList () << "Enabled" << "Disabled",
-                  pair.enabled ? "Enabled" : "Disabled");
-        setItem (_collisionSetupPairsTable, row, 1, QString::fromStdString (pair.first));
-        setItem (_collisionSetupPairsTable, row, 2, QString::fromStdString (pair.second));
+        QCheckBox* enabled = setCheckBox (_collisionSetupPairsTable, row, 0, pair.enabled);
+        connect (enabled, &QCheckBox::toggled, this,
+                 [this] (bool) { refreshEffectiveExclusions (); });
+        setCombo (_collisionSetupPairsTable, row, 1, collisionFrameChoices (spec),
+                  QString::fromStdString (pair.first));
+        setCombo (_collisionSetupPairsTable, row, 2, collisionFrameChoices (spec),
+                  QString::fromStdString (pair.second));
         setCombo (_collisionSetupPairsTable, row, 3,
                   QStringList () << "Manual" << "Auto" << "Imported",
                   QString::fromStdString (pair.source));
@@ -1961,7 +2068,7 @@ void RobotModelBuilderWidget::refreshEffectiveExclusions ()
     }
     if (spec.collisionSetup.excludeStaticPairs)
         rows << "Static pairs excluded";
-    _effectiveExclusions->setPlainText (rows.join ("\n"));
+    _effectiveExclusions->setPlainText (rows.join ("; "));
 }
 
 void RobotModelBuilderWidget::fillLimitsTable (const RobotModelSpec& spec)
@@ -1970,7 +2077,8 @@ void RobotModelBuilderWidget::fillLimitsTable (const RobotModelSpec& spec)
     _limitsTable->setRowCount (n);
     for (int row = 0; row < n; ++row) {
         const JointLimitSpec& limit = spec.limits[row];
-        setItem (_limitsTable, row, 0, QString::fromStdString (limit.jointName));
+        setCombo (_limitsTable, row, 0, movableJointChoices (spec),
+                  QString::fromStdString (limit.jointName));
         setItem (_limitsTable, row, 1, QString::number (limit.posMin));
         setItem (_limitsTable, row, 2, QString::number (limit.posMax));
         setItem (_limitsTable, row, 3, QString::number (limit.velMax));
@@ -2017,16 +2125,18 @@ void RobotModelBuilderWidget::fillDynamicsTab (const RobotModelSpec& spec)
     for (int row = 0; row < nLinks; ++row) {
         const LinkDynamicsSpec& link = spec.dynamics.links[row];
         setItem (_dynamicsLinksTable, row, 0, QString::fromStdString (link.linkName));
-        setItem (_dynamicsLinksTable, row, 1, QString::fromStdString (link.objectName));
+        setCombo (_dynamicsLinksTable, row, 1, movableJointChoices (spec),
+                  QString::fromStdString (link.objectName));
         setItem (_dynamicsLinksTable, row, 2, QString::number (link.mass));
         setItem (_dynamicsLinksTable, row, 3, vectorText (link.cog));
         setItem (_dynamicsLinksTable, row, 4, vectorText6 (link.inertia));
-        setItem (_dynamicsLinksTable, row, 5, link.estimateInertia ? "Enabled" : "Disabled");
+        setCheckBox (_dynamicsLinksTable, row, 5, link.estimateInertia);
         setItem (_dynamicsLinksTable, row, 6, QString::fromStdString (link.material));
     }
     for (int row = 0; row < nForce; ++row) {
         const JointForceLimitSpec& fl = spec.dynamics.forceLimits[row];
-        setItem (_forceLimitsTable, row, 0, QString::fromStdString (fl.jointName));
+        setCombo (_forceLimitsTable, row, 0, movableJointChoices (spec),
+                  QString::fromStdString (fl.jointName));
         setItem (_forceLimitsTable, row, 1, QString::number (fl.maxForce));
     }
 }
@@ -2053,11 +2163,11 @@ void RobotModelBuilderWidget::fillSceneTab (const RobotModelSpec& spec)
     for (int row = 0; row < _sceneFramesTable->rowCount (); ++row) {
         const FrameSpec& frame = spec.sceneFrames[row];
         setItem (_sceneFramesTable, row, 0, QString::fromStdString (frame.name));
-        setItem (_sceneFramesTable, row, 1, QString::fromStdString (frame.refFrame));
+        setCombo (_sceneFramesTable, row, 1, sceneFrameChoices (spec, row),
+                  QString::fromStdString (frame.refFrame));
         setCombo (_sceneFramesTable, row, 2, QStringList () << "Fixed" << "Movable" << "Normal",
                   sceneFrameTypeToString (frame.frameType));
-        setCombo (_sceneFramesTable, row, 3, QStringList () << "false" << "true",
-                  frame.daf ? "true" : "false");
+        setCheckBox (_sceneFramesTable, row, 3, frame.daf);
         setCombo (_sceneFramesTable, row, 4, QStringList () << "RPYPos" << "Transform4x4",
                   poseModeToString (frame.poseMode));
         setItem (_sceneFramesTable, row, 5, vectorText (frame.rpyDeg));
@@ -2081,7 +2191,8 @@ void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec
     for (int row = 0; row < _sceneGeometryTable->rowCount (); ++row) {
         const SceneGeometrySpec& geometry = spec.sceneGeometries[row];
         setItem (_sceneGeometryTable, row, 0, QString::fromStdString (geometry.name));
-        setItem (_sceneGeometryTable, row, 1, QString::fromStdString (geometry.refFrame));
+        setCombo (_sceneGeometryTable, row, 1, sceneGeometryFrameChoices (spec),
+                  QString::fromStdString (geometry.refFrame));
         setCombo (_sceneGeometryTable, row, 2,
                   QStringList () << "Box" << "Cylinder" << "Sphere" << "Cone"
                                  << "Plane" << "STL" << "Mesh" << "Polytope",
@@ -2093,8 +2204,7 @@ void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec
         setItem (_sceneGeometryTable, row, 7, vectorText (geometry.rpyDeg));
         setItem (_sceneGeometryTable, row, 8, vectorText (geometry.pos));
         setItem (_sceneGeometryTable, row, 9, vectorText (geometry.rgb));
-        setCombo (_sceneGeometryTable, row, 10, QStringList () << "Enabled" << "Disabled",
-                  geometry.collisionModel ? "Enabled" : "Disabled");
+        setCheckBox (_sceneGeometryTable, row, 10, geometry.collisionModel);
     }
 }
 
@@ -2304,7 +2414,10 @@ QComboBox* RobotModelBuilderWidget::makeCombo (const QStringList& values,
                                                bool editable)
 {
     QComboBox* combo = new QComboBox ();
-    combo->addItems (values);
+    QStringList choices = values;
+    if (!currentValue.isEmpty () && !choices.contains (currentValue, Qt::CaseSensitive))
+        choices << currentValue;
+    combo->addItems (choices);
     const int index = combo->findText (currentValue, Qt::MatchFixedString);
     combo->setCurrentIndex (index >= 0 ? index : 0);
     combo->setEnabled (editable);
@@ -2319,6 +2432,30 @@ void RobotModelBuilderWidget::setCombo (QTableWidget* table, int row, int column
     QTableWidgetItem* item = new QTableWidgetItem ();
     item->setFlags (item->flags () & ~Qt::ItemIsEditable);
     table->setItem (row, column, item);
+}
+
+QCheckBox* RobotModelBuilderWidget::setCheckBox (QTableWidget* table, int row, int column,
+                                                  bool checked, bool editable)
+{
+    QCheckBox* checkBox = new QCheckBox ();
+    checkBox->setChecked (checked);
+    checkBox->setEnabled (editable);
+    table->setCellWidget (row, column, checkBox);
+    QTableWidgetItem* item = new QTableWidgetItem ();
+    item->setFlags (item->flags () & ~Qt::ItemIsEditable);
+    table->setItem (row, column, item);
+    return checkBox;
+}
+
+bool RobotModelBuilderWidget::itemChecked (const QTableWidget* table, int row, int column)
+{
+    if (QCheckBox* checkBox =
+            qobject_cast< QCheckBox* > (table->cellWidget (row, column)))
+        return checkBox->isChecked ();
+    const QString value = itemText (table, row, column);
+    return value.compare ("true", Qt::CaseInsensitive) == 0 ||
+           value.compare ("yes", Qt::CaseInsensitive) == 0 ||
+           value.compare ("enabled", Qt::CaseInsensitive) == 0 || value == "1";
 }
 
 /// Milestone 4:为 Drawables 表的 Shape 列做一个 ComboBox,

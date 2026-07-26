@@ -75,6 +75,7 @@ class RobotModelBuilderWidget : public QWidget
     void synchronizeCollisionFileFromDrawable (int row);
     void updateSceneUiEnabled ();
     void updateOutputFilePlaceholders ();
+    bool confirmOutputOverwrite (const RobotModelSpec& spec);
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
 
@@ -98,6 +99,9 @@ class RobotModelBuilderWidget : public QWidget
     static void setCombo (QTableWidget* table, int row, int column,
                           const QStringList& values, const QString& value,
                           bool editable = true);
+    static QCheckBox* setCheckBox (QTableWidget* table, int row, int column,
+                                   bool checked, bool editable = true);
+    static bool itemChecked (const QTableWidget* table, int row, int column);
     void setShapeCombo (QTableWidget* table, int row, int column,
                         const QString& value, bool editable = true);
     void setCollisionShapeCombo (QTableWidget* table, int row, int column,
@@ -148,6 +152,8 @@ class RobotModelBuilderWidget : public QWidget
     QTextEdit* _serialPreview;
     QTextEdit* _scenePreview;
     QTextEdit* _dwcPreview;
+    QTextEdit* _collisionSetupPreview;
+    QTextEdit* _proximitySetupPreview;
     QLineEdit* _status;
 
     QTabWidget* _mainTabs = NULL;

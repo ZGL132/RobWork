@@ -59,6 +59,7 @@ int main ()
     rws::RobotModelSpec original =
         rws::RobotModelXmlWriter::makeDefaultSixAxisModel (dir.path ());
     original.robotName = "RoundTripBot";
+    original.generateScene = true;
     original.proximitySetup.enabled = true; // 开启临近查询配置
     original.proximitySetup.useExcludeStaticPairs = true; // 开启排除静态对功能
 
@@ -251,6 +252,7 @@ int main ()
         rws::RobotModelSpec brokenSourceSpec =
             rws::RobotModelXmlWriter::makeDefaultSixAxisModel (brokenSourceDir.path ());
         brokenSourceSpec.robotName = "BrokenSourceBot";
+        brokenSourceSpec.generateScene = true;
         QStringList brokenSaveErrors;
         if (!rws::RobotModelXmlWriter::saveFiles (brokenSourceSpec, brokenSaveErrors))
             return fail ("Could not save broken-source fixture: " +
