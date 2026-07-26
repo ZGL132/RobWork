@@ -312,11 +312,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _taskPointSummaryLabel(NULL),
     _workspaceSampleCountSpin(NULL),
     _workspaceGridStepsSpin(NULL),
+    _workspaceSeedSpin(NULL),
     _workspaceModeCombo(NULL),
     _workspaceCollisionCheck(NULL),
     _workspaceColorModeCombo(NULL),
     _workspaceRunButton(NULL),
     _workspaceExportButton(NULL),
+    _workspaceOpenVisualizationButton(NULL),
     _workspaceCancelButton(NULL),
     _workspaceWatcher (new QFutureWatcher< std::vector< WorkspaceSample > > (this)),
     _workspaceRunActive (false),
@@ -324,8 +326,15 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _workspaceCancelRequested (std::make_shared< std::atomic_bool > (false)),
     _workspaceProgressBar (NULL),
     _workspaceProgressLabel (NULL),
-    _workspaceSummaryLabel(NULL),
+    _workspaceSampleCountLabel(NULL),
+    _workspaceCollisionFreeLabel(NULL),
+    _workspacePassLabel(NULL),
+    _workspaceWarningLabel(NULL),
+    _workspaceFailLabel(NULL),
+    _workspaceAvgManipulabilityLabel(NULL),
+    _workspaceDiagnosticsLabel(NULL),
     _workspaceTable(NULL),
+    _workspaceDetailTable(NULL),
     _poseSourceCombo(NULL),
     _poseDirectionSamplesSpin(NULL),
     _poseRollSamplesSpin(NULL),
@@ -1647,11 +1656,8 @@ void KinematicAnalysisWidget::updateUnitDisplay ()
             tr("Index"), tr("Status"), tr("Failure"), tr("Current Q"), tr("Collision")});
     if (_workspaceTable != NULL)
         _workspaceTable->setHorizontalHeaderLabels ({
-            tr("Index"), tr("Status"), tr("Collision"),
-            tr("TCP x (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
-            tr("TCP y (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
-            tr("TCP z (%1)").arg (QString::fromLatin1 (unitSuffix (_lengthUnit))),
-            tr("Manipulability"), tr("Condition"), tr("Min limit margin")});
+            tr("Index"), tr("Status"), tr("Collision"), tr("TCP position"),
+            tr("Manipulability"), tr("Min margin")});
     if (_posePositionTable != NULL) {
         const QString suffix = QString::fromLatin1 (unitSuffix (_lengthUnit));
         _posePositionTable->setHorizontalHeaderLabels ({
@@ -2283,16 +2289,11 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     updateTaskPointDetails ();
 }
 
-// buildWorkspaceTab:Workspace 子页布局。控件包括:
-//   - 采样数 / 网格步数 / 模式(Random/Grid) / 碰撞检查 / 着色模式;
-//   - Run / Export CSV 两个动作;
-//   - 结果表 8 列:Index / Status / Collision / TCP x/y/z / Manipulability / Min margin;
-//   - 顶部 summary 显示无碰撞 / Warning / Fail 计数与平均可操作度。
+// buildWorkspaceTab keeps sampling, summary, samples, and selected details separate.
 void KinematicAnalysisWidget::buildWorkspaceTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_workspaceTab);
 
-    QGridLayout* controls = new QGridLayout ();
     _workspaceSampleCountSpin = new QSpinBox (_workspaceTab);
     _workspaceSampleCountSpin->setRange (1, 1000000);
     _workspaceSampleCountSpin->setValue (1000);
@@ -2312,20 +2313,10 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
                                          tr("Joint limit"), tr("Collision")});
     _workspaceRunButton = new QPushButton (tr("Run"), _workspaceTab);
     _workspaceExportButton = new QPushButton (tr("Export CSV"), _workspaceTab);
+    _workspaceExportButton->setEnabled (false);
     _workspaceOpenVisualizationButton =
         new QPushButton (tr("Open in Visualization"), _workspaceTab);
     _workspaceOpenVisualizationButton->setEnabled (false);
-
-    controls->addWidget (new QLabel (tr("Samples:"), _workspaceTab), 0, 0);
-    controls->addWidget (_workspaceSampleCountSpin, 0, 1);
-    controls->addWidget (new QLabel (tr("Mode:"), _workspaceTab), 0, 2);
-    controls->addWidget (_workspaceModeCombo, 0, 3);
-    controls->addWidget (new QLabel (tr("Grid steps:"), _workspaceTab), 1, 0);
-    controls->addWidget (_workspaceGridStepsSpin, 1, 1);
-    controls->addWidget (_workspaceCollisionCheck, 1, 2);
-    controls->addWidget (_workspaceColorModeCombo, 1, 3);
-    controls->addWidget (new QLabel (tr("Seed:"), _workspaceTab), 2, 0);
-    controls->addWidget (_workspaceSeedSpin, 2, 1);
     _workspaceCancelButton = new QPushButton (tr("Cancel"), _workspaceTab);
     _workspaceCancelButton->setEnabled (false);
     _workspaceProgressBar = new QProgressBar (_workspaceTab);
@@ -2334,35 +2325,142 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     _workspaceProgressBar->setTextVisible (false);
     _workspaceProgressLabel = new QLabel (tr("Progress: 0 / 0 sample(s)"), _workspaceTab);
 
-    controls->addWidget (_workspaceRunButton, 3, 0);
-    controls->addWidget (_workspaceExportButton, 3, 1);
-    controls->addWidget (_workspaceOpenVisualizationButton, 3, 2);
-    controls->addWidget (_workspaceCancelButton, 3, 3);
-    controls->setColumnStretch (1, 1);
-    controls->setColumnStretch (3, 1);
-    layout->addLayout (controls);
+    QLabel* samplingTitle = new QLabel (tr("Sampling"), _workspaceTab);
+    samplingTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    QHBoxLayout* samplingTitleRow = new QHBoxLayout ();
+    samplingTitleRow->addWidget (samplingTitle);
+    samplingTitleRow->addStretch (1);
+    samplingTitleRow->addWidget (_workspaceRunButton);
+    samplingTitleRow->addWidget (_workspaceCancelButton);
+    samplingTitleRow->addWidget (_workspaceExportButton);
+    samplingTitleRow->addWidget (_workspaceOpenVisualizationButton);
+    layout->addLayout (samplingTitleRow);
 
-    _workspaceSummaryLabel = new QLabel (tr("Samples: 0    Collision-free: 0    Avg manipulability: -"),
-                                         _workspaceTab);
-    layout->addWidget (_workspaceSummaryLabel);
+    QHBoxLayout* samplingControls = new QHBoxLayout ();
+    samplingControls->addWidget (new QLabel (tr("Mode"), _workspaceTab));
+    samplingControls->addWidget (_workspaceModeCombo);
+    QLabel* samplesLabel = new QLabel (tr("Samples"), _workspaceTab);
+    samplesLabel->setObjectName (QStringLiteral ("workspaceSamplesLabel"));
+    samplingControls->addWidget (samplesLabel);
+    samplingControls->addWidget (_workspaceSampleCountSpin);
+    _workspaceSampleCountSpin->setObjectName (QStringLiteral ("workspaceSamplesSpin"));
+    QLabel* gridStepsLabel = new QLabel (tr("Grid steps"), _workspaceTab);
+    gridStepsLabel->setObjectName (QStringLiteral ("workspaceGridStepsLabel"));
+    samplingControls->addWidget (gridStepsLabel);
+    samplingControls->addWidget (_workspaceGridStepsSpin);
+    _workspaceGridStepsSpin->setObjectName (QStringLiteral ("workspaceGridStepsSpin"));
+    samplingControls->addWidget (_workspaceCollisionCheck);
+    samplingControls->addStretch (1);
+    layout->addLayout (samplingControls);
 
-    // P4:显示 plan / theoretical / 截断提示,用户改 mode / sample count
-    // 都能立即看到 Grid 模式会被截断。
-    _workspaceDiagnosticsLabel = new QLabel (tr("Plan: -"), _workspaceTab);
-    layout->addWidget (_workspaceDiagnosticsLabel);
-    // P9:Workspace 进度条
+    QToolButton* workspaceMoreToggle = new QToolButton (_workspaceTab);
+    workspaceMoreToggle->setText (tr("More..."));
+    workspaceMoreToggle->setCheckable (true);
+    workspaceMoreToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    workspaceMoreToggle->setArrowType (Qt::RightArrow);
+    QWidget* workspaceMoreContent = new QWidget (_workspaceTab);
+    workspaceMoreContent->setVisible (false);
+    QHBoxLayout* workspaceMoreLayout = new QHBoxLayout (workspaceMoreContent);
+    workspaceMoreLayout->setContentsMargins (18, 0, 0, 0);
+    workspaceMoreLayout->addWidget (new QLabel (tr("Seed"), workspaceMoreContent));
+    workspaceMoreLayout->addWidget (_workspaceSeedSpin);
+    workspaceMoreLayout->addSpacing (12);
+    workspaceMoreLayout->addWidget (new QLabel (tr("Visualization color"), workspaceMoreContent));
+    workspaceMoreLayout->addWidget (_workspaceColorModeCombo);
+    workspaceMoreLayout->addStretch (1);
+    _workspaceDiagnosticsLabel = new QLabel (tr("Plan: -"), workspaceMoreContent);
+    workspaceMoreLayout->addWidget (_workspaceDiagnosticsLabel);
+    layout->addWidget (workspaceMoreToggle);
+    layout->addWidget (workspaceMoreContent);
+    connect (workspaceMoreToggle, &QToolButton::toggled, this,
+             [workspaceMoreToggle, workspaceMoreContent] (bool expanded) {
+                 workspaceMoreToggle->setArrowType (
+                     expanded ? Qt::DownArrow : Qt::RightArrow);
+                 workspaceMoreContent->setVisible (expanded);
+             });
+
+    QLabel* summaryTitle = new QLabel (tr("Workspace summary"), _workspaceTab);
+    summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (summaryTitle);
+    auto makeSummaryLabel = [this] () -> QLabel* {
+        QLabel* label = new QLabel (_workspaceTab);
+        label->setTextFormat (Qt::RichText);
+        label->setMinimumWidth (92);
+        return label;
+    };
+    _workspaceSampleCountLabel = makeSummaryLabel ();
+    _workspaceCollisionFreeLabel = makeSummaryLabel ();
+    _workspacePassLabel = makeSummaryLabel ();
+    _workspaceWarningLabel = makeSummaryLabel ();
+    _workspaceFailLabel = makeSummaryLabel ();
+    _workspaceAvgManipulabilityLabel = makeSummaryLabel ();
+    const std::vector< std::pair< QLabel*, QString > > summaryLabels = {
+        {_workspaceSampleCountLabel, tr("Samples")},
+        {_workspaceCollisionFreeLabel, tr("Collision-free")},
+        {_workspacePassLabel, tr("Pass")},
+        {_workspaceWarningLabel, tr("Warning")},
+        {_workspaceFailLabel, tr("Fail")},
+        {_workspaceAvgManipulabilityLabel, tr("Avg manipulability")}};
+    QHBoxLayout* summaryRow = new QHBoxLayout ();
+    for (std::size_t i = 0; i < summaryLabels.size (); ++i) {
+        summaryLabels[i].first->setText (
+            QStringLiteral ("<b>%1</b><br>-").arg (summaryLabels[i].second));
+        if (i > 0) {
+            QFrame* separator = new QFrame (_workspaceTab);
+            separator->setFrameShape (QFrame::VLine);
+            separator->setFrameShadow (QFrame::Sunken);
+            summaryRow->addWidget (separator);
+        }
+        summaryRow->addWidget (summaryLabels[i].first);
+    }
+    summaryRow->addStretch (1);
+    layout->addLayout (summaryRow);
+
     layout->addWidget (_workspaceProgressBar);
     layout->addWidget (_workspaceProgressLabel);
 
+    QLabel* samplesTitle = new QLabel (tr("Samples"), _workspaceTab);
+    samplesTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (samplesTitle);
     _workspaceTable = new QTableWidget (_workspaceTab);
-    _workspaceTable->setColumnCount (9);
+    _workspaceTable->setColumnCount (6);
     _workspaceTable->setHorizontalHeaderLabels ({
-        tr("Index"), tr("Status"), tr("Collision"), tr("TCP x"), tr("TCP y"), tr("TCP z"),
-        tr("Manipulability"), tr("Condition"), tr("Min limit margin")
+        tr("Index"), tr("Status"), tr("Collision"), tr("TCP position"),
+        tr("Manipulability"), tr("Min margin")
     });
     _workspaceTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     configureAnalysisTable (_workspaceTable);
-    layout->addWidget (_workspaceTable);
+    _workspaceTable->setSelectionMode (QAbstractItemView::SingleSelection);
+    _workspaceTable->setSelectionBehavior (QAbstractItemView::SelectRows);
+    _workspaceTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::ResizeToContents);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (2, QHeaderView::ResizeToContents);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (3, QHeaderView::Stretch);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (4, QHeaderView::ResizeToContents);
+    _workspaceTable->horizontalHeader ()->setSectionResizeMode (5, QHeaderView::ResizeToContents);
+    layout->addWidget (_workspaceTable, 1);
+
+    QLabel* detailTitle = new QLabel (tr("Selected sample"), _workspaceTab);
+    detailTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (detailTitle);
+    _workspaceDetailTable = new QTableWidget (_workspaceTab);
+    _workspaceDetailTable->setColumnCount (2);
+    _workspaceDetailTable->setHorizontalHeaderLabels ({tr("Field"), tr("Value")});
+    _workspaceDetailTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    _workspaceDetailTable->setSelectionMode (QAbstractItemView::NoSelection);
+    _workspaceDetailTable->setWordWrap (true);
+    configureAnalysisTable (_workspaceDetailTable);
+    _workspaceDetailTable->horizontalHeader ()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
+    _workspaceDetailTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::Stretch);
+    _workspaceDetailTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    _workspaceDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+    _workspaceDetailTable->setMinimumHeight (150);
+    _workspaceDetailTable->setMaximumHeight (220);
+    layout->addWidget (_workspaceDetailTable);
+    connect (_workspaceTable, &QTableWidget::itemSelectionChanged,
+             this, [this] { updateWorkspaceSampleDetails (); });
+    updateWorkspaceSampleDetails ();
 
     // P4:mode / sampleCount / gridSteps / seed 变化立即刷新 plan 标签;
     // color 变化触发 Visualization 重绘。
@@ -4246,70 +4344,114 @@ void KinematicAnalysisWidget::applyWorkspaceResults (const std::vector< Workspac
     const int rows = static_cast< int > (std::min< std::size_t > (samples.size (), 500));
     _workspaceTable->setRowCount (rows);
 
-    int collisionFree = 0;
-    int warnCount = 0;
-    int failCount = 0;
-    double manipulabilitySum = 0.0;
     for (std::size_t i = 0; i < samples.size (); ++i) {
         const WorkspaceSample& sample = samples[i];
-        if (!sample.inCollision)
-            ++collisionFree;
-        if (sample.status == AnalysisStatus::Warning)
-            ++warnCount;
-        else if (sample.status == AnalysisStatus::Fail)
-            ++failCount;
-        manipulabilitySum += sample.manipulability;
-
         if (i >= static_cast< std::size_t > (rows))
             continue;
         const int row = static_cast< int > (i);
-        _workspaceTable->setItem (row, 0, makeItem (QString::number (row)));
-        _workspaceTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
+        QTableWidgetItem* indexItem = makeItem (QString::number (row));
+        indexItem->setData (Qt::UserRole, row);
+        _workspaceTable->setItem (row, 0, indexItem);
+        QTableWidgetItem* statusItem =
+            makeItem (QString::fromLatin1 (statusText (sample.status)));
+        if (sample.status == AnalysisStatus::Pass)
+            statusItem->setForeground (QColor (0, 120, 0));
+        else if (sample.status == AnalysisStatus::Warning)
+            statusItem->setForeground (QColor (180, 120, 0));
+        else if (sample.status == AnalysisStatus::Fail)
+            statusItem->setForeground (QColor (180, 0, 0));
+        _workspaceTable->setItem (row, 1, statusItem);
         _workspaceTable->setItem (row, 2, makeItem (sample.inCollision ? tr("Yes") : tr("No")));
-        _workspaceTable->setItem (row, 3, makeItem (displayLengthFromMeters (
-            sample.tcpPosition[0], _lengthUnit)));
-        _workspaceTable->setItem (row, 4, makeItem (displayLengthFromMeters (
-            sample.tcpPosition[1], _lengthUnit)));
-        _workspaceTable->setItem (row, 5, makeItem (displayLengthFromMeters (
-            sample.tcpPosition[2], _lengthUnit)));
-        _workspaceTable->setItem (row, 6, makeItem (sample.manipulability));
-        _workspaceTable->setItem (row, 7, makeItem (sample.conditionNumber));
-        _workspaceTable->setItem (row, 8, makeItem (sample.minJointLimitMargin));
+        const QString tcpPosition = QStringLiteral ("(%1, %2, %3)")
+            .arg (QString::number (displayLengthFromMeters (
+                sample.tcpPosition[0], _lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (
+                sample.tcpPosition[1], _lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (
+                sample.tcpPosition[2], _lengthUnit), 'g', 6));
+        _workspaceTable->setItem (row, 3, makeItem (tcpPosition));
+        _workspaceTable->setItem (row, 4, makeItem (sample.manipulability));
+        _workspaceTable->setItem (row, 5, makeItem (sample.minJointLimitMargin));
     }
 
-    const double avgManip = samples.empty () ? 0.0 :
-        manipulabilitySum / static_cast< double > (samples.size ());
-    if (_workspaceSummaryLabel != NULL) {
-        // P4:走 helper 出标准 summary,而不是自己循环。
-        const rws::WorkspaceSummary summary =
-            rws::summarizeWorkspaceSamples (samples);
-        _workspaceSummaryLabel->setText (
-            tr("Samples: %1    Shown: %2    Pass: %3    Warning: %4    Fail: %5    "
-               "Collision-free: %6    Avg manip: %7    P10 manip: %8    Max cond: %9")
-                .arg (static_cast< int > (summary.totalCount))
-                .arg (rows)
-                .arg (static_cast< int > (summary.passCount))
-                .arg (static_cast< int > (summary.warningCount))
-                .arg (static_cast< int > (summary.failCount))
-                .arg (static_cast< int > (summary.collisionFreeCount))
-                .arg (summary.hasManipulability
-                          ? QString::number (summary.avgManipulability, 'g', 6)
-                          : QStringLiteral ("-"))
-                .arg (summary.hasManipulability
-                          ? QString::number (summary.p10Manipulability, 'g', 6)
-                          : QStringLiteral ("-"))
-                .arg (summary.hasCondition
-                          ? QString::number (summary.maxCondition, 'g', 6)
-                          : QStringLiteral ("-")));
-    }
-    _workspaceTable->resizeColumnsToContents ();
+    const rws::WorkspaceSummary summary = rws::summarizeWorkspaceSamples (samples);
+    if (_workspaceSampleCountLabel != NULL)
+        _workspaceSampleCountLabel->setText (tr("<b>Samples</b><br>%1")
+            .arg (static_cast< int > (summary.totalCount)));
+    if (_workspaceCollisionFreeLabel != NULL)
+        _workspaceCollisionFreeLabel->setText (tr("<b>Collision-free</b><br>%1")
+            .arg (static_cast< int > (summary.collisionFreeCount)));
+    if (_workspacePassLabel != NULL)
+        _workspacePassLabel->setText (tr("<b>Pass</b><br><span style=\"color:#18794e\">%1</span>")
+            .arg (static_cast< int > (summary.passCount)));
+    if (_workspaceWarningLabel != NULL)
+        _workspaceWarningLabel->setText (tr("<b>Warning</b><br><span style=\"color:#a15c00\">%1</span>")
+            .arg (static_cast< int > (summary.warningCount)));
+    if (_workspaceFailLabel != NULL)
+        _workspaceFailLabel->setText (tr("<b>Fail</b><br><span style=\"color:#b00020\">%1</span>")
+            .arg (static_cast< int > (summary.failCount)));
+    if (_workspaceAvgManipulabilityLabel != NULL)
+        _workspaceAvgManipulabilityLabel->setText (
+            tr("<b>Avg manipulability</b><br>%1").arg (
+                summary.hasManipulability ?
+                    QString::number (summary.avgManipulability, 'g', 6) :
+                    QStringLiteral ("-")));
 
     // P4:导出 / 可视化按钮在有数据时启用。
     if (_workspaceExportButton != NULL)
         _workspaceExportButton->setEnabled (!samples.empty ());
     if (_workspaceOpenVisualizationButton != NULL)
         _workspaceOpenVisualizationButton->setEnabled (!samples.empty ());
+    if (rows > 0)
+        _workspaceTable->selectRow (0);
+    else
+        updateWorkspaceSampleDetails ();
     refreshVisualization ();
+}
+
+void KinematicAnalysisWidget::updateWorkspaceSampleDetails ()
+{
+    if (_workspaceDetailTable == NULL)
+        return;
+    if (_workspaceTable == NULL || _workspaceTable->selectionModel () == NULL ||
+        _workspaceTable->selectionModel ()->selectedRows ().isEmpty ()) {
+        _workspaceDetailTable->setRowCount (1);
+        setDetailRow (_workspaceDetailTable, 0, tr("Selection"), tr("No sample selected."));
+        return;
+    }
+
+    const int row = _workspaceTable->selectionModel ()->selectedRows ().front ().row ();
+    const QTableWidgetItem* indexItem = _workspaceTable->item (row, 0);
+    const int sampleIndex = indexItem == NULL ? -1 : indexItem->data (Qt::UserRole).toInt ();
+    if (sampleIndex < 0 ||
+        sampleIndex >= static_cast< int > (_workspaceSamples.size ())) {
+        _workspaceDetailTable->setRowCount (1);
+        setDetailRow (_workspaceDetailTable, 0, tr("Selection"), tr("No sample selected."));
+        return;
+    }
+
+    const WorkspaceSample& sample = _workspaceSamples[static_cast< std::size_t > (sampleIndex)];
+    const QString tcpPosition = QStringLiteral ("(%1, %2, %3)")
+        .arg (QString::number (displayLengthFromMeters (
+            sample.tcpPosition[0], _lengthUnit), 'g', 6))
+        .arg (QString::number (displayLengthFromMeters (
+            sample.tcpPosition[1], _lengthUnit), 'g', 6))
+        .arg (QString::number (displayLengthFromMeters (
+            sample.tcpPosition[2], _lengthUnit), 'g', 6));
+    _workspaceDetailTable->setRowCount (6);
+    setDetailRow (_workspaceDetailTable, 0, tr("TCP position"), tcpPosition);
+    setDetailRow (_workspaceDetailTable, 1, tr("Status"),
+                  QString::fromLatin1 (statusText (sample.status)));
+    setDetailRow (_workspaceDetailTable, 2, tr("Collision"),
+                  sample.inCollision ? tr("Yes") : tr("No"));
+    setDetailRow (_workspaceDetailTable, 3, tr("Manipulability"),
+                  QString::number (sample.manipulability, 'g', 6));
+    setDetailRow (_workspaceDetailTable, 4, tr("Condition"),
+                  std::isinf (sample.conditionNumber) ?
+                      QStringLiteral ("inf") :
+                      QString::number (sample.conditionNumber, 'g', 6));
+    setDetailRow (_workspaceDetailTable, 5, tr("Min joint margin"),
+                  QString::number (sample.minJointLimitMargin, 'g', 6));
 }
 
 // sampleWorkspace:从控件读 WorkspaceSamplingConfig → 调 analyzer → 写回表格;
@@ -4499,7 +4641,16 @@ void KinematicAnalysisWidget::updateWorkspaceControls ()
         return;
 
     const bool gridMode = _workspaceModeCombo->currentIndex () == 1;
-    _workspaceGridStepsSpin->setEnabled (gridMode);
+    _workspaceSampleCountSpin->setVisible (!gridMode);
+    _workspaceGridStepsSpin->setVisible (gridMode);
+    if (_workspaceTab != NULL) {
+        if (QLabel* samplesLabel = _workspaceTab->findChild< QLabel* > (
+                QStringLiteral ("workspaceSamplesLabel")))
+            samplesLabel->setVisible (!gridMode);
+        if (QLabel* gridStepsLabel = _workspaceTab->findChild< QLabel* > (
+                QStringLiteral ("workspaceGridStepsLabel")))
+            gridStepsLabel->setVisible (gridMode);
+    }
 
     WorkspaceSamplingConfig config;
     config.sampleCount = _workspaceSampleCountSpin->value ();

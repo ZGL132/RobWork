@@ -239,6 +239,7 @@ class KinematicAnalysisWidget : public QWidget
     void applyTaskPointResults (const std::vector< TaskPointReachabilityResult >& results,
                                 double reachableRate);
     void applyWorkspaceResults (const std::vector< WorkspaceSample >& samples);
+    void updateWorkspaceSampleDetails ();
     void applyPoseReachabilityResults (const std::vector< PoseReachabilitySample >& samples);
     void updateReportSummary ();          // 重新汇总 Report tab 数据
     void setTaskPointTableColumnWidths ();
@@ -386,9 +387,15 @@ class KinematicAnalysisWidget : public QWidget
     std::shared_ptr< std::atomic_bool > _workspaceCancelRequested;
     QProgressBar* _workspaceProgressBar;                // 进度条(已自动缩放)
     QLabel* _workspaceProgressLabel;                    // 进度文本 (X / Y sample(s))
-    QLabel* _workspaceSummaryLabel;                     // Workspace summary 文本
+    QLabel* _workspaceSampleCountLabel;
+    QLabel* _workspaceCollisionFreeLabel;
+    QLabel* _workspacePassLabel;
+    QLabel* _workspaceWarningLabel;
+    QLabel* _workspaceFailLabel;
+    QLabel* _workspaceAvgManipulabilityLabel;
     QLabel* _workspaceDiagnosticsLabel;                 // plan / theoretical / capped
     QTableWidget* _workspaceTable;                      // 样本表(最多 500 行)
+    QTableWidget* _workspaceDetailTable;                // 选中样本详情
 
     // ===================================================================
     //  Pose Reachability tab 控件
