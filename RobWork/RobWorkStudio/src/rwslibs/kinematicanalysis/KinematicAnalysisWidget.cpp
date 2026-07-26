@@ -335,7 +335,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _workspaceDiagnosticsLabel(NULL),
     _workspaceTable(NULL),
     _workspaceDetailTable(NULL),
-    _poseSourceCombo(NULL),
     _poseDirectionSamplesSpin(NULL),
     _poseRollSamplesSpin(NULL),
     _poseCollisionCheck(NULL),
@@ -348,8 +347,19 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseReachabilityRunActive(false),
     _poseReachabilityCollisionUnavailable(false),
     _poseReachabilityCancelRequested(std::make_shared< std::atomic_bool > (false)),
-    _poseSummaryLabel(NULL),
+    _poseTaskPointsSourceButton(NULL),
+    _poseManualSourceButton(NULL),
+    _poseRemoveRowButton(NULL),
+    _posePositionCountLabel(NULL),
+    _poseReachableLabel(NULL),
+    _poseCoverageLabel(NULL),
+    _posePassLabel(NULL),
+    _poseWarningLabel(NULL),
+    _poseFailLabel(NULL),
     _poseDiagnosticsLabel(NULL),
+    _poseRunDetailsLabel(NULL),
+    _poseManualPositionsPanel(NULL),
+    _poseMoreToggle(NULL),
     _poseProgressBar(NULL),
     _poseProgressLabel(NULL),
     _posePositionTable(NULL),
@@ -1659,9 +1669,8 @@ void KinematicAnalysisWidget::updateUnitDisplay ()
             tr("Index"), tr("Status"), tr("Collision"), tr("TCP position"),
             tr("Manipulability"), tr("Min margin")});
     if (_posePositionTable != NULL) {
-        const QString suffix = QString::fromLatin1 (unitSuffix (_lengthUnit));
         _posePositionTable->setHorizontalHeaderLabels ({
-            tr("x (%1)").arg (suffix), tr("y (%1)").arg (suffix), tr("z (%1)").arg (suffix)});
+            tr("X"), tr("Y"), tr("Z")});
         for (int row = 0; row < _posePositionTable->rowCount (); ++row) {
             for (int column = 0; column < 3; ++column) {
                 QTableWidgetItem* item = _posePositionTable->item (row, column);
@@ -1672,11 +1681,8 @@ void KinematicAnalysisWidget::updateUnitDisplay ()
         }
     }
     if (_poseResultTable != NULL) {
-        const QString suffix = QString::fromLatin1 (unitSuffix (_lengthUnit));
         _poseResultTable->setHorizontalHeaderLabels ({
-            tr("Index"), tr("Status"), tr("x (%1)").arg (suffix),
-            tr("y (%1)").arg (suffix), tr("z (%1)").arg (suffix),
-            tr("Sampled"), tr("Reachable"), tr("Coverage")});
+            tr("Index"), tr("Status"), tr("Position"), tr("Coverage")});
     }
     if (_visualPlot != NULL)
         _visualPlot->setLengthUnit (_lengthUnit);
@@ -2489,10 +2495,35 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
 {
     QVBoxLayout* layout = new QVBoxLayout (_poseReachTab);
 
+    QLabel* setupTitle = new QLabel (tr("Sampling setup"), _poseReachTab);
+    setupTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    QHBoxLayout* setupTitleRow = new QHBoxLayout ();
+    setupTitleRow->addWidget (setupTitle);
+    setupTitleRow->addStretch (1);
+
+    _poseAnalyzeButton = new QPushButton (tr("Run"), _poseReachTab);
+    _poseCancelButton = new QPushButton (tr("Cancel"), _poseReachTab);
+    _poseCancelButton->setEnabled (false);
+    _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
+    _poseOpenVisualizationButton =
+        new QPushButton (tr("Open in Visualization"), _poseReachTab);
+    _poseOpenVisualizationButton->setEnabled (false);
+    setupTitleRow->addWidget (_poseAnalyzeButton);
+    setupTitleRow->addWidget (_poseCancelButton);
+    setupTitleRow->addWidget (_poseExportButton);
+    setupTitleRow->addWidget (_poseOpenVisualizationButton);
+    layout->addLayout (setupTitleRow);
+
     QGridLayout* controls = new QGridLayout ();
-    _poseSourceCombo = new QComboBox (_poseReachTab);
-    _poseSourceCombo->addItem (tr("Task points"));
-    _poseSourceCombo->addItem (tr("Manual rows"));
+    _poseTaskPointsSourceButton = new QToolButton (_poseReachTab);
+    _poseTaskPointsSourceButton->setText (tr("Task points"));
+    _poseTaskPointsSourceButton->setCheckable (true);
+    _poseTaskPointsSourceButton->setAutoExclusive (true);
+    _poseTaskPointsSourceButton->setChecked (true);
+    _poseManualSourceButton = new QToolButton (_poseReachTab);
+    _poseManualSourceButton->setText (tr("Manual positions"));
+    _poseManualSourceButton->setCheckable (true);
+    _poseManualSourceButton->setAutoExclusive (true);
     _poseDirectionSamplesSpin = new QSpinBox (_poseReachTab);
     _poseDirectionSamplesSpin->setRange (0, 1000);
     _poseDirectionSamplesSpin->setValue (24);
@@ -2501,47 +2532,103 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseRollSamplesSpin->setValue (1);
     _poseCollisionCheck = new QCheckBox (tr("Collision"), _poseReachTab);
     _poseCollisionCheck->setChecked (true);
-    _poseAddRowButton = new QPushButton (tr("Add row"), _poseReachTab);
-    _poseAnalyzeButton = new QPushButton (tr("Run"), _poseReachTab);
-    _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
-    _poseCancelButton = new QPushButton (tr("Cancel"), _poseReachTab);
-    _poseCancelButton->setEnabled (false);
-    _poseOpenVisualizationButton =
-        new QPushButton (tr("Open in Visualization"), _poseReachTab);
-    _poseOpenVisualizationButton->setEnabled (false);
-
     controls->addWidget (new QLabel (tr("Source:"), _poseReachTab), 0, 0);
-    controls->addWidget (_poseSourceCombo, 0, 1);
-    controls->addWidget (new QLabel (tr("Directions:"), _poseReachTab), 0, 2);
-    controls->addWidget (_poseDirectionSamplesSpin, 0, 3);
-    controls->addWidget (new QLabel (tr("Rolls:"), _poseReachTab), 1, 0);
-    controls->addWidget (_poseRollSamplesSpin, 1, 1);
-    controls->addWidget (_poseCollisionCheck, 1, 2);
-    controls->addWidget (_poseAddRowButton, 2, 0);
-    controls->addWidget (_poseAnalyzeButton, 2, 1);
-    controls->addWidget (_poseExportButton, 2, 2);
-    controls->addWidget (_poseCancelButton, 2, 3);
-    controls->addWidget (_poseOpenVisualizationButton, 2, 4);
-    controls->setColumnStretch (1, 1);
-    controls->setColumnStretch (3, 1);
-    controls->setColumnStretch (5, 1);
+    controls->addWidget (_poseTaskPointsSourceButton, 0, 1);
+    controls->addWidget (_poseManualSourceButton, 0, 2);
+    controls->addWidget (new QLabel (tr("Directions:"), _poseReachTab), 0, 3);
+    controls->addWidget (_poseDirectionSamplesSpin, 0, 4);
+    controls->addWidget (new QLabel (tr("Rolls:"), _poseReachTab), 0, 5);
+    controls->addWidget (_poseRollSamplesSpin, 0, 6);
+    controls->addWidget (_poseCollisionCheck, 0, 7);
+    controls->setColumnStretch (2, 1);
+    controls->setColumnStretch (8, 1);
     layout->addLayout (controls);
 
-    _posePositionTable = new QTableWidget (_poseReachTab);
-    _posePositionTable->setColumnCount (3);
-    _posePositionTable->setHorizontalHeaderLabels ({tr("x"), tr("y"), tr("z")});
-    configureAnalysisTable (_posePositionTable);
-    layout->addWidget (new QLabel (tr("Manual positions"), _poseReachTab));
-    layout->addWidget (_posePositionTable);
+    _poseManualPositionsPanel = new QWidget (_poseReachTab);
+    QVBoxLayout* manualLayout = new QVBoxLayout (_poseManualPositionsPanel);
+    manualLayout->setContentsMargins (0, 0, 0, 0);
+    QHBoxLayout* manualTitleRow = new QHBoxLayout ();
+    QLabel* manualTitle = new QLabel (tr("Manual positions"), _poseManualPositionsPanel);
+    manualTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    _poseAddRowButton = new QPushButton (tr("Add"), _poseManualPositionsPanel);
+    _poseRemoveRowButton = new QPushButton (tr("Remove"), _poseManualPositionsPanel);
+    manualTitleRow->addWidget (manualTitle);
+    manualTitleRow->addStretch (1);
+    manualTitleRow->addWidget (_poseAddRowButton);
+    manualTitleRow->addWidget (_poseRemoveRowButton);
+    manualLayout->addLayout (manualTitleRow);
 
-    _poseSummaryLabel = new QLabel (tr("Positions: 0    Average coverage: -"), _poseReachTab);
-    layout->addWidget (_poseSummaryLabel);
+    _posePositionTable = new QTableWidget (_poseManualPositionsPanel);
+    _posePositionTable->setColumnCount (3);
+    _posePositionTable->setHorizontalHeaderLabels ({tr("X"), tr("Y"), tr("Z")});
+    configureAnalysisTable (_posePositionTable);
+    _posePositionTable->setMinimumHeight (110);
+    _posePositionTable->setMaximumHeight (180);
+    manualLayout->addWidget (_posePositionTable);
+    layout->addWidget (_poseManualPositionsPanel);
+
+    QLabel* summaryTitle = new QLabel (tr("Reachability summary"), _poseReachTab);
+    summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (summaryTitle);
+    auto makeSummaryLabel = [this] () -> QLabel* {
+        QLabel* label = new QLabel (_poseReachTab);
+        label->setTextFormat (Qt::RichText);
+        label->setMinimumWidth (86);
+        return label;
+    };
+    _posePositionCountLabel = makeSummaryLabel ();
+    _poseReachableLabel = makeSummaryLabel ();
+    _poseCoverageLabel = makeSummaryLabel ();
+    _posePassLabel = makeSummaryLabel ();
+    _poseWarningLabel = makeSummaryLabel ();
+    _poseFailLabel = makeSummaryLabel ();
+    const std::vector< std::pair< QLabel*, QString > > summaryLabels = {
+        {_posePositionCountLabel, tr("Positions")},
+        {_poseReachableLabel, tr("Reachable")},
+        {_poseCoverageLabel, tr("Coverage")},
+        {_posePassLabel, tr("Pass")},
+        {_poseWarningLabel, tr("Warning")},
+        {_poseFailLabel, tr("Fail")}};
+    QHBoxLayout* summaryRow = new QHBoxLayout ();
+    for (std::size_t i = 0; i < summaryLabels.size (); ++i) {
+        summaryLabels[i].first->setText (
+            QStringLiteral ("<b>%1</b><br>-").arg (summaryLabels[i].second));
+        if (i > 0) {
+            QFrame* separator = new QFrame (_poseReachTab);
+            separator->setFrameShape (QFrame::VLine);
+            separator->setFrameShadow (QFrame::Sunken);
+            summaryRow->addWidget (separator);
+        }
+        summaryRow->addWidget (summaryLabels[i].first);
+    }
+    summaryRow->addStretch (1);
+    layout->addLayout (summaryRow);
 
     // P4:诊断标签显示 plan / per-position 方向 / 是否截断。
     _poseDiagnosticsLabel = new QLabel (
         tr("Plan: 0 IK target(s), 0 orientation(s) per position"),
         _poseReachTab);
-    layout->addWidget (_poseDiagnosticsLabel);
+    _poseRunDetailsLabel = new QLabel (tr("Run: no results"), _poseReachTab);
+    _poseRunDetailsLabel->setWordWrap (true);
+    _poseMoreToggle = new QToolButton (_poseReachTab);
+    _poseMoreToggle->setText (tr("More..."));
+    _poseMoreToggle->setCheckable (true);
+    _poseMoreToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    _poseMoreToggle->setArrowType (Qt::RightArrow);
+    QWidget* moreContent = new QWidget (_poseReachTab);
+    moreContent->setVisible (false);
+    QVBoxLayout* moreLayout = new QVBoxLayout (moreContent);
+    moreLayout->setContentsMargins (18, 0, 0, 0);
+    moreLayout->addWidget (_poseDiagnosticsLabel);
+    moreLayout->addWidget (_poseRunDetailsLabel);
+    layout->addWidget (_poseMoreToggle);
+    layout->addWidget (moreContent);
+    connect (_poseMoreToggle, &QToolButton::toggled, this,
+             [this, moreContent] (bool expanded) {
+                 _poseMoreToggle->setArrowType (
+                     expanded ? Qt::DownArrow : Qt::RightArrow);
+                 moreContent->setVisible (expanded);
+             });
 
     // P5:进度条,运行期间显示已完成的 IK target 数。
     _poseProgressBar = new QProgressBar (_poseReachTab);
@@ -2553,25 +2640,52 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     layout->addWidget (_poseProgressLabel);
 
     // P4:连接控件变化立即刷新 plan。
-    connect (_poseSourceCombo, SIGNAL (currentIndexChanged (int)),
-             this, SLOT (updatePoseReachabilityControls ()));
+    connect (_poseTaskPointsSourceButton, &QToolButton::toggled, this,
+             [this] (bool checked) {
+                 if (checked)
+                     updatePoseReachabilityControls ();
+             });
+    connect (_poseManualSourceButton, &QToolButton::toggled, this,
+             [this] (bool checked) {
+                 if (checked)
+                     updatePoseReachabilityControls ();
+             });
     connect (_poseDirectionSamplesSpin, SIGNAL (valueChanged (int)),
              this, SLOT (updatePoseReachabilityControls ()));
     connect (_poseRollSamplesSpin, SIGNAL (valueChanged (int)),
              this, SLOT (updatePoseReachabilityControls ()));
     connect (_posePositionTable, SIGNAL (itemChanged (QTableWidgetItem*)),
              this, SLOT (updatePoseReachabilityControls ()));
+    connect (_poseAddRowButton, SIGNAL (clicked ()),
+             this, SLOT (addPoseReachabilityRow ()));
+    connect (_poseRemoveRowButton, &QPushButton::clicked, this, [this] {
+        if (_posePositionTable == NULL)
+            return;
+        const int row = _posePositionTable->currentRow ();
+        if (row < 0)
+            return;
+        _posePositionTable->removeRow (row);
+        updatePoseReachabilityControls ();
+    });
     updatePoseReachabilityControls ();
 
     _poseResultTable = new QTableWidget (_poseReachTab);
-    _poseResultTable->setColumnCount (8);
+    _poseResultTable->setColumnCount (4);
     _poseResultTable->setHorizontalHeaderLabels ({
-        tr("Index"), tr("Status"), tr("x"), tr("y"), tr("z"),
-        tr("Sampled"), tr("Reachable"), tr("Coverage")
+        tr("Index"), tr("Status"), tr("Position"), tr("Coverage")
     });
     _poseResultTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     configureAnalysisTable (_poseResultTable);
-    layout->addWidget (_poseResultTable);
+    _poseResultTable->setSelectionMode (QAbstractItemView::SingleSelection);
+    _poseResultTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    _poseResultTable->horizontalHeader ()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
+    _poseResultTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::ResizeToContents);
+    _poseResultTable->horizontalHeader ()->setSectionResizeMode (2, QHeaderView::Stretch);
+    _poseResultTable->horizontalHeader ()->setSectionResizeMode (3, QHeaderView::ResizeToContents);
+    QLabel* resultsTitle = new QLabel (tr("Reachability results"), _poseReachTab);
+    resultsTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (resultsTitle);
+    layout->addWidget (_poseResultTable, 1);
 
     // P4:无数据时导出按钮禁用。
     _poseExportButton->setEnabled (false);
@@ -4299,7 +4413,8 @@ KinematicAnalysisWidget::collectPoseReachabilityPositions (QString* error) const
     std::vector< std::array< double, 3 > > positions;
     if (error != nullptr)
         error->clear ();
-    if (_poseSourceCombo != NULL && _poseSourceCombo->currentIndex () == 0) {
+    if (_poseTaskPointsSourceButton != NULL &&
+        _poseTaskPointsSourceButton->isChecked ()) {
         // P3-A 迁移:从 model 取所有行,跳过对废弃的 QTableWidget helper 调用。
         if (_taskPointModel == nullptr)
             return positions;
@@ -4789,6 +4904,16 @@ void KinematicAnalysisWidget::updatePoseReachabilityControls ()
         _poseRollSamplesSpin == NULL)
         return;
 
+    const bool manualMode = _poseManualSourceButton != NULL &&
+        _poseManualSourceButton->isChecked ();
+    if (_poseManualPositionsPanel != NULL)
+        _poseManualPositionsPanel->setVisible (manualMode);
+    if (_poseAddRowButton != NULL)
+        _poseAddRowButton->setEnabled (manualMode);
+    if (_poseRemoveRowButton != NULL)
+        _poseRemoveRowButton->setEnabled (manualMode && _posePositionTable != NULL &&
+                                          _posePositionTable->rowCount () > 0);
+
     QString validationError;
     const std::vector< std::array< double, 3 > > positions =
         collectPoseReachabilityPositions (&validationError);
@@ -4839,31 +4964,67 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
         const rws::PoseReachabilitySample& sample = samples[i];
         const int row = static_cast< int > (i);
         _poseResultTable->setItem (row, 0, makeItem (QString::number (row)));
-        _poseResultTable->setItem (row, 1, makeItem (QString::fromLatin1 (statusText (sample.status))));
-        _poseResultTable->setItem (row, 2, makeItem (displayLengthFromMeters (
-            sample.position[0], _lengthUnit)));
-        _poseResultTable->setItem (row, 3, makeItem (displayLengthFromMeters (
-            sample.position[1], _lengthUnit)));
-        _poseResultTable->setItem (row, 4, makeItem (displayLengthFromMeters (
-            sample.position[2], _lengthUnit)));
-        _poseResultTable->setItem (row, 5, makeItem (QString::number (sample.sampledDirections)));
-        _poseResultTable->setItem (row, 6, makeItem (QString::number (sample.reachableDirections)));
-        _poseResultTable->setItem (row, 7, makeItem (sample.coverage));
+        QTableWidgetItem* statusItem =
+            makeItem (QString::fromLatin1 (statusText (sample.status)));
+        if (sample.status == AnalysisStatus::Pass)
+            statusItem->setForeground (QColor (0, 120, 0));
+        else if (sample.status == AnalysisStatus::Warning)
+            statusItem->setForeground (QColor (180, 120, 0));
+        else if (sample.status == AnalysisStatus::Fail)
+            statusItem->setForeground (QColor (180, 0, 0));
+        _poseResultTable->setItem (row, 1, statusItem);
+        const QString position = QStringLiteral ("(%1, %2, %3)")
+            .arg (QString::number (displayLengthFromMeters (
+                sample.position[0], _lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (
+                sample.position[1], _lengthUnit), 'g', 6))
+            .arg (QString::number (displayLengthFromMeters (
+                sample.position[2], _lengthUnit), 'g', 6));
+        _poseResultTable->setItem (row, 2, makeItem (position));
+        _poseResultTable->setItem (row, 3, makeItem (
+            QString::number (100.0 * sample.coverage, 'f', 1) + QStringLiteral ("%")));
     }
-    if (_poseSummaryLabel != NULL) {
-        _poseSummaryLabel->setText (
-            tr("Positions: %1    Shown: %2    Pass: %3    Warning: %4    Fail: %5    "
-               "Partial: %6    Average coverage: %7    Min/Max: %8 / %9")
+    if (_posePositionCountLabel != NULL)
+        _posePositionCountLabel->setText (tr("<b>Positions</b><br>%1")
+            .arg (static_cast< int > (summary.totalPositions)));
+    if (_poseReachableLabel != NULL)
+        _poseReachableLabel->setText (tr("<b>Reachable</b><br>%1 / %2")
+            .arg (static_cast< int > (summary.reachableDirections))
+            .arg (static_cast< int > (summary.sampledDirections)));
+    if (_poseCoverageLabel != NULL)
+        _poseCoverageLabel->setText (tr("<b>Coverage</b><br>%1%")
+            .arg (QString::number (100.0 * summary.averageCoverage, 'f', 1)));
+    if (_posePassLabel != NULL)
+        _posePassLabel->setText (tr("<b>Pass</b><br><span style=\"color:#18794e\">%1</span>")
+            .arg (static_cast< int > (summary.passCount)));
+    if (_poseWarningLabel != NULL)
+        _poseWarningLabel->setText (tr("<b>Warning</b><br><span style=\"color:#a15c00\">%1</span>")
+            .arg (static_cast< int > (summary.warningCount)));
+    if (_poseFailLabel != NULL)
+        _poseFailLabel->setText (tr("<b>Fail</b><br><span style=\"color:#b00020\">%1</span>")
+            .arg (static_cast< int > (summary.failCount)));
+    if (_poseRunDetailsLabel != NULL) {
+        const QString tableNote = samples.size () > static_cast< std::size_t > (rows) ?
+            tr("; showing first %1 rows").arg (rows) : QString ();
+        const QString partialNote = summary.partialCount > 0 ?
+            tr("; %1 partial position(s)").arg (
+                static_cast< int > (summary.partialCount)) : QString ();
+        const bool canceled = _poseReachabilityCancelRequested &&
+            _poseReachabilityCancelRequested->load ();
+        _poseRunDetailsLabel->setText (
+            tr("Run: %1; %2 position(s); %3 / %4 IK target(s); %5 / %6 reachable direction(s)%7%8")
+                .arg (canceled ? tr("canceled") : tr("complete"))
                 .arg (static_cast< int > (summary.totalPositions))
-                .arg (rows)
-                .arg (static_cast< int > (summary.passCount))
-                .arg (static_cast< int > (summary.warningCount))
-                .arg (static_cast< int > (summary.failCount))
-                .arg (static_cast< int > (summary.partialCount))
-                .arg (QString::number (summary.averageCoverage, 'f', 3))
-                .arg (QString::number (summary.minCoverage, 'f', 3))
-                .arg (QString::number (summary.maxCoverage, 'f', 3)));
+                .arg (static_cast< int > (summary.completedIkTargets))
+                .arg (static_cast< int > (summary.plannedIkTargets))
+                .arg (static_cast< int > (summary.reachableDirections))
+                .arg (static_cast< int > (summary.sampledDirections))
+                .arg (partialNote)
+                .arg (tableNote));
     }
+    if (_poseMoreToggle != NULL &&
+        (summary.warningCount > 0 || summary.failCount > 0 || summary.partialCount > 0))
+        _poseMoreToggle->setChecked (true);
     _poseResultTable->resizeColumnsToContents ();
 
     // P4:有数据时启用导出和可视化按钮。

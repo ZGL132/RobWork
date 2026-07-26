@@ -400,7 +400,6 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     //  Pose Reachability tab 控件
     // ===================================================================
-    QComboBox* _poseSourceCombo;                        // 位置来源(Task Points / Manual)
     QSpinBox* _poseDirectionSamplesSpin;                // 方向数(单位球)
     QSpinBox* _poseRollSamplesSpin;                     // 滚动数(绕 Z)
     QCheckBox* _poseCollisionCheck;                     // 碰撞检查
@@ -413,8 +412,19 @@ class KinematicAnalysisWidget : public QWidget
     bool _poseReachabilityRunActive;
     bool _poseReachabilityCollisionUnavailable;
     std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
-    QLabel* _poseSummaryLabel;
+    QToolButton* _poseTaskPointsSourceButton;
+    QToolButton* _poseManualSourceButton;
+    QPushButton* _poseRemoveRowButton;
+    QLabel* _posePositionCountLabel;
+    QLabel* _poseReachableLabel;
+    QLabel* _poseCoverageLabel;
+    QLabel* _posePassLabel;
+    QLabel* _poseWarningLabel;
+    QLabel* _poseFailLabel;
     QLabel* _poseDiagnosticsLabel;
+    QLabel* _poseRunDetailsLabel;
+    QWidget* _poseManualPositionsPanel;
+    QToolButton* _poseMoreToggle;
     QProgressBar* _poseProgressBar;                    // 进度条(已自动缩放)
     QLabel* _poseProgressLabel;                        // 进度文本 (X / Y IK target)
     QTableWidget* _posePositionTable;                  // 手动位置输入
