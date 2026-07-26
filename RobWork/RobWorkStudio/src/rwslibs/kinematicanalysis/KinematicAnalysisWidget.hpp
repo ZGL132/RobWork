@@ -324,7 +324,6 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     //  IK tab 控件
     // ===================================================================
-    QLineEdit* _ikTargetNameEdit;                     // 目标名
     QDoubleSpinBox* _ikXSpin;                          // 目标 x (m 或显示单位)
     QDoubleSpinBox* _ikYSpin;                          // 目标 y
     QDoubleSpinBox* _ikZSpin;                          // 目标 z
@@ -338,11 +337,14 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _ikImportCurrentPoseButton;           // 导入当前 TCP
     QPushButton* _ikSolveButton;                      // 触发 solveIk
     QPushButton* _ikApplyButton;                       // 把选中解写回 state
-    QLabel* _ikSummaryLabel;                           // IK 整体状态行
-    QLabel* _ikSeedInfoLabel;                          // 求解器配置摘要
-    QLabel* _ikCountSummaryLabel;                      // 解数量统计
-    QCheckBox* _ikShowUsableOnlyCheck;                 // 只看可用解
-    QCheckBox* _ikShowFailedCandidatesCheck;           // 显示诊断性 Fail 解
+    QLabel* _ikSourceLabel;                            // Task Point 跳转来源
+    QLabel* _ikStatusLabel;                            // IK 总体状态
+    QLabel* _ikDisplayedLabel;                         // 当前显示的候选数量
+    QLabel* _ikUsableLabel;                            // 可应用候选数量
+    QLabel* _ikPassLabel;
+    QLabel* _ikWarningLabel;
+    QLabel* _ikFailLabel;
+    QComboBox* _ikCandidateFilterCombo;                // 候选显示筛选
     QTableWidget* _ikSolutionTable;                    // 候选解列表
     QTableWidget* _ikDetailTable;                      // 选中解详情
 
