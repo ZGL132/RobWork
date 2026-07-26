@@ -14,38 +14,29 @@ std::vector< int > rws::taskPointCompactTableColumns ()
 {
     return {
         ColEnabled,
-        ColId,
         ColName,
-        ColType,
-        ColX,
-        ColY,
-        ColZ,
-        ColStatus,
-        ColUsableSolutions,
-        ColCollision
+        ColRefFrame,
+        ColTcpFrame,
+        ColStatus
     };
 }
 
 std::vector< int > rws::taskPointDetailColumns ()
 {
     return {
-        ColRefFrame,
-        ColTcpFrame,
-        ColRoll,
-        ColPitch,
-        ColYaw,
+        ColId,
+        ColType,
         ColPosTol,
         ColOriTol,
         ColFreeRoll,
         ColWeight,
         ColNote,
-        ColReason,
         ColRawCandidates,
-        ColBestQ,
         ColPositionError,
         ColOrientationError,
         ColMinMargin,
-        ColCondition
+        ColCondition,
+        ColCollision
     };
 }
 

@@ -1754,43 +1754,27 @@ static int testTaskPointUiLogic ()
     if (const int rc = require (containsColumn (compactColumns, rws::ColEnabled),
                                 "compact task point columns include enabled"))
         return rc;
-    if (const int rc = require (containsColumn (compactColumns, rws::ColId),
-                                "compact task point columns include id"))
-        return rc;
     if (const int rc = require (containsColumn (compactColumns, rws::ColName),
                                 "compact task point columns include name"))
         return rc;
-    if (const int rc = require (containsColumn (compactColumns, rws::ColX) &&
-                                containsColumn (compactColumns, rws::ColY) &&
-                                containsColumn (compactColumns, rws::ColZ),
-                                "compact task point columns include position"))
+    if (const int rc = require (containsColumn (compactColumns, rws::ColRefFrame) &&
+                                containsColumn (compactColumns, rws::ColTcpFrame),
+                                "compact task point columns include frames"))
         return rc;
     if (const int rc = require (containsColumn (compactColumns, rws::ColStatus),
                                 "compact task point columns include status"))
         return rc;
-    if (const int rc = require (containsColumn (compactColumns, rws::ColUsableSolutions),
-                                "compact task point columns include usable solution count"))
-        return rc;
-    if (const int rc = require (containsColumn (compactColumns, rws::ColCollision),
-                                "compact task point columns include collision"))
-        return rc;
-    if (const int rc = require (!containsColumn (compactColumns, rws::ColBestQ),
-                                "compact task point columns leave best Q for details"))
+    if (const int rc = require (!containsColumn (compactColumns, rws::ColX) &&
+                                !containsColumn (compactColumns, rws::ColBestQ),
+                                "compact task point columns leave pose and best Q for details"))
         return rc;
 
-    if (const int rc = require (containsColumn (detailColumns, rws::ColRefFrame),
-                                "detail task point columns include refFrame"))
-        return rc;
-    if (const int rc = require (containsColumn (detailColumns, rws::ColRoll) &&
-                                containsColumn (detailColumns, rws::ColPitch) &&
-                                containsColumn (detailColumns, rws::ColYaw),
-                                "detail task point columns include orientation"))
+    if (const int rc = require (containsColumn (detailColumns, rws::ColId) &&
+                                containsColumn (detailColumns, rws::ColType),
+                                "detail task point columns include definition fields"))
         return rc;
     if (const int rc = require (containsColumn (detailColumns, rws::ColPosTol),
                                 "detail task point columns include position tolerance"))
-        return rc;
-    if (const int rc = require (containsColumn (detailColumns, rws::ColBestQ),
-                                "detail task point columns include best Q"))
         return rc;
     if (const int rc = require (containsColumn (detailColumns, rws::ColCondition),
                                 "detail task point columns include condition"))

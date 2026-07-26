@@ -1600,6 +1600,31 @@ void KinematicAnalysisWidget::updateUnitDisplay ()
     }
     setIkPoseMetersDeg (positionMeters, rpyDeg);
 
+    if (_taskPointTab != NULL) {
+        for (const QString& name : {QStringLiteral ("taskPointXSpin"),
+                                    QStringLiteral ("taskPointYSpin"),
+                                    QStringLiteral ("taskPointZSpin")}) {
+            QDoubleSpinBox* spin = _taskPointTab->findChild< QDoubleSpinBox* > (name);
+            if (spin != NULL) {
+                spin->setRange (displayLengthFromMeters (-1000.0, _lengthUnit),
+                                displayLengthFromMeters (1000.0, _lengthUnit));
+                spin->setSingleStep (displayLengthFromMeters (0.01, _lengthUnit));
+                spin->setSuffix (QString ());
+            }
+        }
+        for (const QString& name : {QStringLiteral ("taskPointRollSpin"),
+                                    QStringLiteral ("taskPointPitchSpin"),
+                                    QStringLiteral ("taskPointYawSpin")}) {
+            QDoubleSpinBox* spin = _taskPointTab->findChild< QDoubleSpinBox* > (name);
+            if (spin != NULL) {
+                spin->setRange (displayAngleFromDegrees (-360.0, _angleUnit),
+                                displayAngleFromDegrees (360.0, _angleUnit));
+                spin->setSingleStep (displayAngleFromDegrees (1.0, _angleUnit));
+                spin->setSuffix (QString ());
+            }
+        }
+    }
+
     if (_thresholdPositionToleranceSpin != NULL) {
         _thresholdPositionToleranceSpin->setRange (0.0,
             displayLengthFromMeters (1000.0, _lengthUnit));
@@ -2080,35 +2105,42 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
 {
     QVBoxLayout* tpLayout = new QVBoxLayout(_taskPointTab);
 
-    QGridLayout* buttonRow = new QGridLayout();
-    _addTaskPointButton         = new QPushButton(tr("Add row"), _taskPointTab);
-    _removeTaskPointButton      = new QPushButton(tr("Remove selected"), _taskPointTab);
-    _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
-    _exportTaskPointsButton     = new QPushButton(tr("Export task CSV"), _taskPointTab);
-    _exportTaskPointResultsButton = new QPushButton(tr("Export result CSV"), _taskPointTab);
+    QHBoxLayout* summaryRow = new QHBoxLayout();
+    QLabel* summaryTitle = new QLabel (tr("Task points"), _taskPointTab);
+    summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    summaryRow->addWidget (summaryTitle);
+    _taskPointSummaryLabel = new QLabel (_taskPointTab);
+    _taskPointSummaryLabel->setTextFormat (Qt::RichText);
+    _taskPointSummaryLabel->setText (
+        tr("<b>Enabled</b> 0 | <b>Pass</b> - | <b>Warning</b> - | <b>Fail</b> -"));
+    summaryRow->addWidget (_taskPointSummaryLabel);
+    summaryRow->addStretch (1);
     _analyzeAllTaskPointsButton = new QPushButton(tr("Analyze all"), _taskPointTab);
-    // P2:Task points 专用按钮:局部分析、导入当前姿态、应用 best Q、跳到 IK。
+    summaryRow->addWidget (_analyzeAllTaskPointsButton);
+    tpLayout->addLayout (summaryRow);
+
+    QHBoxLayout* listActions = new QHBoxLayout();
+    _addTaskPointButton         = new QPushButton(tr("Add"), _taskPointTab);
+    _removeTaskPointButton      = new QPushButton(tr("Remove"), _taskPointTab);
+    _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
+    _exportTaskPointsButton     = new QPushButton(tr("Export tasks"), _taskPointTab);
+    _exportTaskPointResultsButton = new QPushButton(tr("Export results"), _taskPointTab);
+    _importCurrentTcpTaskPointButton = new QPushButton (tr("Add current TCP"), _taskPointTab);
+    listActions->addWidget (_addTaskPointButton);
+    listActions->addWidget (_removeTaskPointButton);
+    listActions->addWidget (_importTaskPointsButton);
+    listActions->addWidget (_exportTaskPointsButton);
+    listActions->addWidget (_exportTaskPointResultsButton);
+    listActions->addWidget (_importCurrentTcpTaskPointButton);
+    listActions->addStretch (1);
+    tpLayout->addLayout (listActions);
+
     _analyzeSelectedTaskPointsButton = new QPushButton (tr("Analyze selected"), _taskPointTab);
-    _importCurrentTcpTaskPointButton = new QPushButton (tr("Import current TCP"), _taskPointTab);
     _applySelectedTaskPointBestQButton = new QPushButton (tr("Apply best Q"), _taskPointTab);
     _openSelectedTaskPointInIkButton  = new QPushButton (tr("Open in IK tab"), _taskPointTab);
-    // 这 3 个按钮在没选中有效任务点时无可用结果,先禁用,
-    // 选中行变化 / 表格行数变化时由 paintResultStates 重新决定。
     _analyzeSelectedTaskPointsButton->setEnabled (false);
     _applySelectedTaskPointBestQButton->setEnabled (false);
     _openSelectedTaskPointInIkButton->setEnabled (false);
-    buttonRow->addWidget (_addTaskPointButton, 0, 0);
-    buttonRow->addWidget (_removeTaskPointButton, 0, 1);
-    buttonRow->addWidget (_importTaskPointsButton, 0, 2);
-    buttonRow->addWidget (_exportTaskPointsButton, 0, 3);
-    buttonRow->addWidget (_exportTaskPointResultsButton, 0, 4);
-    buttonRow->addWidget (_analyzeAllTaskPointsButton, 1, 0);
-    buttonRow->addWidget (_analyzeSelectedTaskPointsButton, 1, 1);
-    buttonRow->addWidget (_importCurrentTcpTaskPointButton, 1, 2);
-    buttonRow->addWidget (_applySelectedTaskPointBestQButton, 1, 3);
-    buttonRow->addWidget (_openSelectedTaskPointInIkButton, 1, 4);
-    buttonRow->setColumnStretch (5, 1);
-    tpLayout->addLayout (buttonRow);
 
     // P3-A:数据源用 TaskPointTableModel,view 用 QTableView。
     // model 持有 19 列任务点定义 + 8 列 IK 结果 + 验证状态;
@@ -2122,17 +2154,84 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _taskPointTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     _taskPointTable->setSelectionMode (QAbstractItemView::SingleSelection);
     _taskPointTable->setAlternatingRowColors (true);
-    _taskPointTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+    _taskPointTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     _taskPointTable->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
     _taskPointTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Interactive);
-    _taskPointTable->horizontalHeader ()->setStretchLastSection (true);
+    _taskPointTable->horizontalHeader ()->setStretchLastSection (false);
     _taskPointTable->verticalHeader ()->setVisible (false);
     _taskPointTable->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
     // model 的 flag 已经把 result 列设成只读,delegate 单独装。
     installTaskPointDelegates ();
-    tpLayout->addWidget (_taskPointTable, 3);
+    tpLayout->addWidget (_taskPointTable, 4);
 
-    tpLayout->addWidget (new QLabel (tr ("Selected task point details"), _taskPointTab));
+    QHBoxLayout* selectedTitleRow = new QHBoxLayout();
+    QLabel* selectedTitle = new QLabel (tr ("Selected point"), _taskPointTab);
+    selectedTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    selectedTitleRow->addWidget (selectedTitle);
+    selectedTitleRow->addStretch (1);
+    selectedTitleRow->addWidget (_analyzeSelectedTaskPointsButton);
+    selectedTitleRow->addWidget (_applySelectedTaskPointBestQButton);
+    selectedTitleRow->addWidget (_openSelectedTaskPointInIkButton);
+    tpLayout->addLayout (selectedTitleRow);
+
+    auto makeTaskPoseSpin = [this] (const QString& objectName, double minimum,
+                                    double maximum, double step) -> QDoubleSpinBox* {
+        QDoubleSpinBox* spin = new QDoubleSpinBox (_taskPointTab);
+        spin->setObjectName (objectName);
+        spin->setRange (minimum, maximum);
+        spin->setDecimals (6);
+        spin->setSingleStep (step);
+        return spin;
+    };
+    QDoubleSpinBox* taskX = makeTaskPoseSpin (QStringLiteral ("taskPointXSpin"), -1000.0, 1000.0, 0.01);
+    QDoubleSpinBox* taskY = makeTaskPoseSpin (QStringLiteral ("taskPointYSpin"), -1000.0, 1000.0, 0.01);
+    QDoubleSpinBox* taskZ = makeTaskPoseSpin (QStringLiteral ("taskPointZSpin"), -1000.0, 1000.0, 0.01);
+    QDoubleSpinBox* taskRoll = makeTaskPoseSpin (QStringLiteral ("taskPointRollSpin"), -360.0, 360.0, 1.0);
+    QDoubleSpinBox* taskPitch = makeTaskPoseSpin (QStringLiteral ("taskPointPitchSpin"), -360.0, 360.0, 1.0);
+    QDoubleSpinBox* taskYaw = makeTaskPoseSpin (QStringLiteral ("taskPointYawSpin"), -360.0, 360.0, 1.0);
+    QGridLayout* poseGrid = new QGridLayout();
+    poseGrid->addWidget (new QLabel (tr ("Position"), _taskPointTab), 0, 0);
+    poseGrid->addWidget (new QLabel (tr ("X"), _taskPointTab), 0, 1);
+    poseGrid->addWidget (taskX, 0, 2);
+    poseGrid->addWidget (new QLabel (tr ("Y"), _taskPointTab), 0, 3);
+    poseGrid->addWidget (taskY, 0, 4);
+    poseGrid->addWidget (new QLabel (tr ("Z"), _taskPointTab), 0, 5);
+    poseGrid->addWidget (taskZ, 0, 6);
+    poseGrid->addWidget (new QLabel (tr ("Orientation"), _taskPointTab), 1, 0);
+    poseGrid->addWidget (new QLabel (tr ("Roll"), _taskPointTab), 1, 1);
+    poseGrid->addWidget (taskRoll, 1, 2);
+    poseGrid->addWidget (new QLabel (tr ("Pitch"), _taskPointTab), 1, 3);
+    poseGrid->addWidget (taskPitch, 1, 4);
+    poseGrid->addWidget (new QLabel (tr ("Yaw"), _taskPointTab), 1, 5);
+    poseGrid->addWidget (taskYaw, 1, 6);
+    tpLayout->addLayout (poseGrid);
+
+    auto bindTaskPoseSpin = [this] (QDoubleSpinBox* spin, int column) {
+        connect (spin,
+                 static_cast< void (QDoubleSpinBox::*) (double) > (
+                     &QDoubleSpinBox::valueChanged),
+                 this,
+                 [this, column] (double value) {
+                     if (_taskPointTable == nullptr || _taskPointModel == nullptr ||
+                         _taskPointTable->selectionModel () == nullptr)
+                         return;
+                     const QModelIndexList selected =
+                         _taskPointTable->selectionModel ()->selectedRows ();
+                     if (selected.isEmpty ())
+                         return;
+                     _taskPointModel->setData (
+                         _taskPointModel->index (selected.front ().row (), column),
+                         value,
+                         Qt::EditRole);
+                 });
+    };
+    bindTaskPoseSpin (taskX, ColX);
+    bindTaskPoseSpin (taskY, ColY);
+    bindTaskPoseSpin (taskZ, ColZ);
+    bindTaskPoseSpin (taskRoll, ColRoll);
+    bindTaskPoseSpin (taskPitch, ColPitch);
+    bindTaskPoseSpin (taskYaw, ColYaw);
+
     QTableWidget* taskPointDetailTable = new QTableWidget (_taskPointTab);
     taskPointDetailTable->setObjectName (QStringLiteral ("taskPointDetailTable"));
     taskPointDetailTable->setColumnCount (2);
@@ -2145,16 +2244,43 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     taskPointDetailTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::Stretch);
     taskPointDetailTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     taskPointDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
-    taskPointDetailTable->setMinimumHeight (170);
-    taskPointDetailTable->setMaximumHeight (260);
+    taskPointDetailTable->setMinimumHeight (110);
+    taskPointDetailTable->setMaximumHeight (170);
     tpLayout->addWidget (taskPointDetailTable, 1);
+
+    QToolButton* moreToggle = new QToolButton (_taskPointTab);
+    moreToggle->setText (tr ("More..."));
+    moreToggle->setCheckable (true);
+    moreToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    moreToggle->setArrowType (Qt::RightArrow);
+    QWidget* moreContent = new QWidget (_taskPointTab);
+    moreContent->setVisible (false);
+    QVBoxLayout* moreLayout = new QVBoxLayout (moreContent);
+    moreLayout->setContentsMargins (18, 0, 0, 0);
+    QTableWidget* taskPointMoreTable = new QTableWidget (moreContent);
+    taskPointMoreTable->setObjectName (QStringLiteral ("taskPointMoreTable"));
+    taskPointMoreTable->setColumnCount (2);
+    taskPointMoreTable->setHorizontalHeaderLabels ({tr ("Field"), tr ("Value")});
+    taskPointMoreTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    taskPointMoreTable->setSelectionMode (QAbstractItemView::NoSelection);
+    configureAnalysisTable (taskPointMoreTable);
+    taskPointMoreTable->horizontalHeader ()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
+    taskPointMoreTable->horizontalHeader ()->setSectionResizeMode (1, QHeaderView::Stretch);
+    taskPointMoreTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    taskPointMoreTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
+    taskPointMoreTable->setMinimumHeight (160);
+    taskPointMoreTable->setMaximumHeight (240);
+    moreLayout->addWidget (taskPointMoreTable);
+    tpLayout->addWidget (moreToggle);
+    tpLayout->addWidget (moreContent);
+    connect (moreToggle, &QToolButton::toggled, this,
+             [moreToggle, moreContent] (bool expanded) {
+                 moreToggle->setArrowType (expanded ? Qt::DownArrow : Qt::RightArrow);
+                 moreContent->setVisible (expanded);
+             });
+
     setTaskPointTableColumnWidths ();
     updateTaskPointDetails ();
-
-    _taskPointSummaryLabel = new QLabel (tr("Enabled: 0    Pass: 0    Warning: 0    Fail: 0    Reachable rate: -"),
-                                          _taskPointTab);
-    tpLayout->addWidget (_taskPointSummaryLabel);
-    tpLayout->addStretch ();
 }
 
 // buildWorkspaceTab:Workspace 子页布局。控件包括:
@@ -2986,15 +3112,10 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
     }
     _taskPointTable->resizeColumnsToContents ();
     _taskPointTable->setColumnWidth (ColEnabled, 70);
-    _taskPointTable->setColumnWidth (ColId, 90);
-    _taskPointTable->setColumnWidth (ColName, 150);
-    _taskPointTable->setColumnWidth (ColType, 90);
-    _taskPointTable->setColumnWidth (ColX, 85);
-    _taskPointTable->setColumnWidth (ColY, 85);
-    _taskPointTable->setColumnWidth (ColZ, 85);
+    _taskPointTable->horizontalHeader ()->setSectionResizeMode (ColName, QHeaderView::Stretch);
+    _taskPointTable->setColumnWidth (ColRefFrame, 150);
+    _taskPointTable->setColumnWidth (ColTcpFrame, 150);
     _taskPointTable->setColumnWidth (ColStatus, 90);
-    _taskPointTable->setColumnWidth (ColUsableSolutions, 80);
-    _taskPointTable->setColumnWidth (ColCollision, 85);
 }
 
 void KinematicAnalysisWidget::installTaskPointDelegates ()
@@ -3442,25 +3563,6 @@ void KinematicAnalysisWidget::applyTaskPointResults (
     // 1) 写回 model;model 内部对每行 hasResult / result 字段赋值。
     _taskPointModel->setResults (results, reachableRate);
 
-    // 2) 统计 pass / warning / fail / enabled,更新 summary 标签。
-    std::size_t passCount = 0, warnCount = 0, failCount = 0, enabledCount = 0;
-    for (const TaskPointReachabilityResult& r : results) {
-        if (!r.taskPoint.enabled)
-            continue;
-        ++enabledCount;
-        if (r.status == AnalysisStatus::Pass)
-            ++passCount;
-        else if (r.status == AnalysisStatus::Warning)
-            ++warnCount;
-        else if (r.status == AnalysisStatus::Fail)
-            ++failCount;
-    }
-    if (_taskPointSummaryLabel != nullptr) {
-        _taskPointSummaryLabel->setText (QString (
-            "Enabled: %1    Pass: %2    Warning: %3    Fail: %4    Reachable rate: %5")
-            .arg (enabledCount).arg (passCount).arg (warnCount).arg (failCount)
-            .arg (QString::number (reachableRate, 'f', 3)));
-    }
     setTaskPointTableColumnWidths ();
     updateTaskPointSelectionButtons ();
     refreshVisualization ();
@@ -3743,34 +3845,102 @@ void KinematicAnalysisWidget::updateTaskPointDetails ()
     QTableWidget* detailTable = _taskPointTab != nullptr ?
         _taskPointTab->findChild< QTableWidget* > (QStringLiteral ("taskPointDetailTable")) :
         nullptr;
-    if (detailTable == nullptr)
+    QTableWidget* moreTable = _taskPointTab != nullptr ?
+        _taskPointTab->findChild< QTableWidget* > (QStringLiteral ("taskPointMoreTable")) :
+        nullptr;
+    const std::array< QDoubleSpinBox*, 6 > poseSpins = {{
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointXSpin")) : nullptr,
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointYSpin")) : nullptr,
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointZSpin")) : nullptr,
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointRollSpin")) : nullptr,
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointPitchSpin")) : nullptr,
+        _taskPointTab != nullptr ? _taskPointTab->findChild< QDoubleSpinBox* > (
+            QStringLiteral ("taskPointYawSpin")) : nullptr}};
+    if (detailTable == nullptr || moreTable == nullptr)
         return;
+
+    if (_taskPointSummaryLabel != nullptr && _taskPointModel != nullptr) {
+        int enabledCount = 0;
+        int passCount = 0;
+        int warningCount = 0;
+        int failCount = 0;
+        for (int row = 0; row < _taskPointModel->rowCount (); ++row) {
+            if (_taskPointModel->data (
+                    _taskPointModel->index (row, ColEnabled), Qt::CheckStateRole).toInt () !=
+                Qt::Checked)
+                continue;
+            ++enabledCount;
+            const QString status = _taskPointModel->data (
+                _taskPointModel->index (row, ColStatus), Qt::DisplayRole).toString ();
+            if (status == QStringLiteral ("Pass"))
+                ++passCount;
+            else if (status == QStringLiteral ("Warning"))
+                ++warningCount;
+            else if (status == QStringLiteral ("Fail"))
+                ++failCount;
+        }
+        _taskPointSummaryLabel->setText (
+            tr ("<b>Enabled</b> %1 | <span style=\"color:#18794e\"><b>Pass</b> %2</span> | "
+                "<span style=\"color:#a15c00\"><b>Warning</b> %3</span> | "
+                "<span style=\"color:#b00020\"><b>Fail</b> %4</span>")
+                .arg (enabledCount).arg (passCount).arg (warningCount).arg (failCount));
+    }
+
+    auto setPoseEnabled = [&poseSpins] (bool enabled) {
+        for (QDoubleSpinBox* spin : poseSpins) {
+            if (spin != nullptr)
+                spin->setEnabled (enabled);
+        }
+    };
+    auto showEmpty = [&] (const QString& message) {
+        detailTable->setRowCount (1);
+        setDetailRow (detailTable, 0, tr ("Selection"), message);
+        moreTable->setRowCount (0);
+        setPoseEnabled (false);
+    };
 
     if (_taskPointTable == nullptr || _taskPointModel == nullptr ||
         _taskPointTable->selectionModel () == nullptr) {
-        detailTable->setRowCount (1);
-        setDetailRow (detailTable, 0, tr ("Selection"), tr ("No task point selected."));
+        showEmpty (tr ("No task point selected."));
         return;
     }
 
     const QModelIndexList selected = _taskPointTable->selectionModel ()->selectedRows ();
     if (selected.isEmpty ()) {
-        detailTable->setRowCount (1);
-        setDetailRow (detailTable, 0, tr ("Selection"), tr ("No task point selected."));
+        showEmpty (tr ("No task point selected."));
         return;
     }
 
     const int row = selected.front ().row ();
     if (row < 0 || row >= _taskPointModel->rowCount ()) {
-        detailTable->setRowCount (1);
-        setDetailRow (detailTable, 0, tr ("Selection"), tr ("Selected task point is unavailable."));
+        showEmpty (tr ("Selected task point is unavailable."));
         return;
     }
 
-    const std::vector< int > detailColumns = taskPointDetailColumns ();
-    detailTable->setRowCount (static_cast< int > (detailColumns.size ()));
-    for (std::size_t i = 0; i < detailColumns.size (); ++i) {
-        const int column = detailColumns[i];
+    const std::array< int, 6 > poseColumns = {{
+        ColX, ColY, ColZ, ColRoll, ColPitch, ColYaw}};
+    for (std::size_t i = 0; i < poseSpins.size (); ++i) {
+        QDoubleSpinBox* spin = poseSpins[i];
+        if (spin == nullptr)
+            continue;
+        bool ok = false;
+        const double value = _taskPointModel->data (
+            _taskPointModel->index (row, poseColumns[i]), Qt::DisplayRole).toDouble (&ok);
+        const QSignalBlocker blocker (spin);
+        spin->setEnabled (true);
+        spin->setValue (ok ? value : 0.0);
+    }
+
+    const std::array< int, 4 > resultColumns = {{
+        ColStatus, ColReason, ColUsableSolutions, ColBestQ}};
+    detailTable->setRowCount (static_cast< int > (resultColumns.size ()));
+    for (std::size_t i = 0; i < resultColumns.size (); ++i) {
+        const int column = resultColumns[i];
         QString value;
         if (column == ColBestQ) {
             const KinematicIkSolution* best = _taskPointModel->bestUsableSolutionForRow (row);
@@ -3780,15 +3950,27 @@ void KinematicAnalysisWidget::updateTaskPointDetails ()
             value = _taskPointModel->data (
                 _taskPointModel->index (row, column), Qt::DisplayRole).toString ();
         }
+        setDetailRow (detailTable, static_cast< int > (i),
+                      rws::TaskPointTableModel::headerText (column),
+                      value.trimmed ().isEmpty () ? QStringLiteral ("-") : value);
+    }
+    detailTable->resizeRowsToContents ();
+
+    const std::vector< int > detailColumns = taskPointDetailColumns ();
+    moreTable->setRowCount (static_cast< int > (detailColumns.size ()));
+    for (std::size_t i = 0; i < detailColumns.size (); ++i) {
+        const int column = detailColumns[i];
+        QString value = _taskPointModel->data (
+            _taskPointModel->index (row, column), Qt::DisplayRole).toString ();
         if (value.trimmed ().isEmpty ())
             value = QStringLiteral ("-");
         setDetailRow (
-            detailTable,
+            moreTable,
             static_cast< int > (i),
             rws::TaskPointTableModel::headerText (column),
             value);
     }
-    detailTable->resizeRowsToContents ();
+    moreTable->resizeRowsToContents ();
 }
 
 void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
