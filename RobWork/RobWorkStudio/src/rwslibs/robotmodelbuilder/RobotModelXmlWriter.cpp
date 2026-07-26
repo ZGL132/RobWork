@@ -399,7 +399,7 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     spec.mode              = KinematicsViewMode::JointRPYPos;
     spec.showFrameAxes     = true;
     spec.generateDrawables = true;
-    spec.generateScene     = true;
+    spec.generateScene     = false;
 
     // 一组能跑出像样姿态的默认关节尺寸
     const double alphaDeg[DefaultJointCount]  = {0, 90, 0, 90, -90, 90};

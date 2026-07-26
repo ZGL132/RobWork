@@ -296,20 +296,19 @@ void RobotModelBuilderWidget::buildUi ()
     _mode->addItem ("Joint + RPY + Pos");
     _mode->addItem ("DH Projection");
 
-    // 4 个选项开关(并排显示)
+    // 全局选项只保留显示和导入布局行为；各输出开关随其功能页显示。
     QWidget* options        = new QWidget ();
     QHBoxLayout* optionLay  = new QHBoxLayout (options);
     _showFrameAxes          = new QCheckBox ("Show axes");
-    _generateDrawables      = new QCheckBox ("Drawables");
-    _generateScene          = new QCheckBox ("Scene file");
-    _generateDwc            = new QCheckBox ("Dynamic WorkCell");
+    _preserveImportedFileLayout = new QCheckBox ("Preserve imported file layout");
+    _generateDrawables      = new QCheckBox ("Generate Drawables");
+    _generateScene          = new QCheckBox ("Generate Scene file");
+    _generateDwc            = new QCheckBox ("Generate Dynamic WorkCell");
     _exportDhAdvanced       = new QCheckBox ("Advanced: export DHJoint XML");
     _exportDhAdvanced->setVisible (false);
     optionLay->setContentsMargins (0, 0, 0, 0);
     optionLay->addWidget (_showFrameAxes);
-    optionLay->addWidget (_generateDrawables);
-    optionLay->addWidget (_generateScene);
-    optionLay->addWidget (_generateDwc);
+    optionLay->addWidget (_preserveImportedFileLayout);
     optionLay->addWidget (_exportDhAdvanced);
     optionLay->addStretch ();
 
@@ -319,20 +318,10 @@ void RobotModelBuilderWidget::buildUi ()
     form->addRow ("Options", options);
     root->addLayout (form);
 
-    QGroupBox* outputFiles = new QGroupBox ("Output Files");
-    QFormLayout* outputForm = new QFormLayout (outputFiles);
     _deviceFile = new QLineEdit ();
     _sceneFile = new QLineEdit ();
     _dynamicWorkCellFile = new QLineEdit ();
     _collisionSetupFile = new QLineEdit ();
-    _preserveImportedFileLayout = new QCheckBox ("Preserve imported file layout");
-    outputForm->addRow ("Device file", _deviceFile);
-    outputForm->addRow ("Scene file", _sceneFile);
-    outputForm->addRow ("Dynamic WorkCell", _dynamicWorkCellFile);
-    outputForm->addRow ("Collision setup", _collisionSetupFile);
-    outputForm->addRow (_preserveImportedFileLayout);
-    root->addWidget (outputFiles);
-    updateOutputFilePlaceholders ();
 
     QTabWidget* tabs = new QTabWidget ();
     _mainTabs = tabs;
@@ -383,6 +372,9 @@ void RobotModelBuilderWidget::buildUi ()
     // -------------------------------------------------------------------------
     //  Drawables 标签页:可视化几何(初始为空,resetDefaults 后会自动填入默认 Drawable)
     // -------------------------------------------------------------------------
+    QWidget* drawablesTab = new QWidget ();
+    QVBoxLayout* drawablesLay = new QVBoxLayout (drawablesTab);
+    drawablesLay->addWidget (_generateDrawables);
     _drawablesTable = makeTable (
         QStringList () << "Name"
                        << "RefFrame"
@@ -395,7 +387,12 @@ void RobotModelBuilderWidget::buildUi ()
                         << "Pos m"
                         << "RGB",
         0);
-    tabs->addTab (_drawablesTable, "Drawables");
+    drawablesLay->addWidget (_drawablesTable);
+    QGroupBox* drawablesOutputFiles = new QGroupBox ("Output Files");
+    QFormLayout* drawablesOutputForm = new QFormLayout (drawablesOutputFiles);
+    drawablesOutputForm->addRow ("Device file", _deviceFile);
+    drawablesLay->addWidget (drawablesOutputFiles);
+    tabs->addTab (drawablesTab, "Drawables");
 
     // -------------------------------------------------------------------------
     //  Collision Models 标签页(Milestone 5):
@@ -468,6 +465,10 @@ void RobotModelBuilderWidget::buildUi ()
     _collisionSetupPairsTable->setVisible (false);
     collisionSetupButtons->setVisible (false);
     collisionLay->addWidget (collisionSetupOptions);
+    QGroupBox* collisionOutputFiles = new QGroupBox ("Output Files");
+    QFormLayout* collisionOutputForm = new QFormLayout (collisionOutputFiles);
+    collisionOutputForm->addRow ("Collision setup", _collisionSetupFile);
+    collisionLay->addWidget (collisionOutputFiles);
     collisionLay->addWidget (advancedCollisionBtn);
     collisionLay->addWidget (_collisionSetupPairsTable);
     collisionLay->addWidget (collisionSetupButtons);
@@ -492,12 +493,17 @@ void RobotModelBuilderWidget::buildUi ()
     QWidget* sceneTab      = new QWidget ();
     _sceneTab = sceneTab;
     QVBoxLayout* sceneLay  = new QVBoxLayout (sceneTab);
+    sceneLay->addWidget (_generateScene);
+    _sceneContent = new QWidget ();
+    QVBoxLayout* sceneContentLay = new QVBoxLayout (_sceneContent);
+    sceneContentLay->setContentsMargins (0, 0, 0, 0);
+    sceneLay->addWidget (_sceneContent);
     QFormLayout* robotBaseForm = new QFormLayout ();
     _robotBaseRpy = new QLineEdit ();
     _robotBasePos = new QLineEdit ();
     robotBaseForm->addRow ("RobotBase RPY deg (Z Y X)", _robotBaseRpy);
     robotBaseForm->addRow ("RobotBase Pos m", _robotBasePos);
-    sceneLay->addLayout (robotBaseForm);
+    sceneContentLay->addLayout (robotBaseForm);
 
     _sceneFramesTable = makeTable (
         QStringList () << "Name"
@@ -509,7 +515,7 @@ void RobotModelBuilderWidget::buildUi ()
                        << "Pos m"
                        << "Transform 4x4",
         0);
-    sceneLay->addWidget (_sceneFramesTable);
+    sceneContentLay->addWidget (_sceneFramesTable);
 
     // ---- Milestone 3.5:场景几何体表 ----
     _sceneGeometryTable = makeTable (
@@ -525,7 +531,7 @@ void RobotModelBuilderWidget::buildUi ()
                        << "RGB"
                        << "Collision",
         0);
-    sceneLay->addWidget (_sceneGeometryTable);
+    sceneContentLay->addWidget (_sceneGeometryTable);
 
     QWidget* sceneButtons = new QWidget ();
     QHBoxLayout* sceneBtnLay = new QHBoxLayout (sceneButtons);
@@ -539,7 +545,11 @@ void RobotModelBuilderWidget::buildUi ()
     sceneBtnLay->addWidget (addSceneGeometryBtn);
     sceneBtnLay->addWidget (delSceneGeometryBtn);
     sceneBtnLay->addStretch ();
-    sceneLay->addWidget (sceneButtons);
+    sceneContentLay->addWidget (sceneButtons);
+    QGroupBox* sceneOutputFiles = new QGroupBox ("Output Files");
+    QFormLayout* sceneOutputForm = new QFormLayout (sceneOutputFiles);
+    sceneOutputForm->addRow ("Scene file", _sceneFile);
+    sceneContentLay->addWidget (sceneOutputFiles);
     tabs->addTab (sceneTab, "Scene Frames");
 
     // -------------------------------------------------------------------------
@@ -574,6 +584,7 @@ void RobotModelBuilderWidget::buildUi ()
     // -------------------------------------------------------------------------
     QWidget* dynamicsTab       = new QWidget ();
     QVBoxLayout* dynLayout     = new QVBoxLayout (dynamicsTab);
+    dynLayout->addWidget (_generateDwc);
     QFormLayout* dynBaseForm   = new QFormLayout ();
     _baseFrame                 = new QLineEdit ();
     _baseMaterial              = new QLineEdit ();
@@ -601,6 +612,10 @@ void RobotModelBuilderWidget::buildUi ()
                        << "Max force",
         0);
     dynLayout->addWidget (_forceLimitsTable);
+    QGroupBox* dynamicsOutputFiles = new QGroupBox ("Output Files");
+    QFormLayout* dynamicsOutputForm = new QFormLayout (dynamicsOutputFiles);
+    dynamicsOutputForm->addRow ("Dynamic WorkCell", _dynamicWorkCellFile);
+    dynLayout->addWidget (dynamicsOutputFiles);
     dynLayout->addStretch ();
     tabs->addTab (dynamicsTab, "Dynamics");
 
@@ -624,6 +639,7 @@ void RobotModelBuilderWidget::buildUi ()
     tabs->addTab (previewTab, "XML Preview");
 
     root->addWidget (tabs, 1);
+    updateOutputFilePlaceholders ();
 
     // -------------------------------------------------------------------------
     //  底部按钮 + 状态栏
@@ -2085,16 +2101,8 @@ void RobotModelBuilderWidget::fillSceneGeometryTable (const RobotModelSpec& spec
 void RobotModelBuilderWidget::updateSceneUiEnabled ()
 {
     const bool enabled = _generateScene != NULL && _generateScene->isChecked ();
-    if (_sceneTab != NULL)
-        _sceneTab->setEnabled (enabled);
-    if (_mainTabs != NULL && _sceneTab != NULL) {
-        const int index = _mainTabs->indexOf (_sceneTab);
-        if (index >= 0) {
-            _mainTabs->setTabEnabled (index, enabled);
-            if (!enabled && _mainTabs->currentIndex () == index)
-                _mainTabs->setCurrentIndex (0);
-        }
-    }
+    if (_sceneContent != NULL)
+        _sceneContent->setEnabled (enabled);
     if (_previewTabs != NULL) {
         const int index = _previewTabs->indexOf (_scenePreview);
         if (index >= 0) {

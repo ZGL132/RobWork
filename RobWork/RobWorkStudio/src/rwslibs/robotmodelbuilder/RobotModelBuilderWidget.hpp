@@ -153,6 +153,7 @@ class RobotModelBuilderWidget : public QWidget
     QTabWidget* _mainTabs = NULL;
     QTabWidget* _previewTabs = NULL;
     QWidget* _sceneTab = NULL;
+    QWidget* _sceneContent = NULL;
 
     bool _syncingTables = false;
     bool _importingFromWorkCell = false;

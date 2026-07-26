@@ -758,6 +758,13 @@ int main (int argc, char** argv)
     // ---- 默认模型基础校验 ----
     RobotModelSpec spec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
 
+    if (!spec.generateDrawables)
+        return fail ("Default model should generate drawables.");
+    if (spec.generateScene)
+        return fail ("Default model should not generate a scene file.");
+    if (spec.dynamics.generateDynamicWorkCell)
+        return fail ("Default model should not generate a Dynamic WorkCell.");
+
     QStringList errors;
     if (!RobotModelXmlWriter::validate (spec, errors))
         return fail ("Default model did not validate: " + errors.join ("; "));
@@ -1832,6 +1839,7 @@ int main (int argc, char** argv)
     // =====================================================================
     {
         RobotModelSpec sceneSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        sceneSpec.generateScene = true;
         sceneSpec.sceneFrames.clear ();    // makeDefaultSixAxisModel 已经预填 4 个,测试覆盖它们
         sceneSpec.robotBaseFrame.pos   = {{0.4, -0.2, 0.75}};
         sceneSpec.robotBaseFrame.rpyDeg = {{0, 0, 90}};
@@ -1909,6 +1917,7 @@ int main (int argc, char** argv)
             return fail ("Missing refframe validation error should mention the bad reference.");
 
         RobotModelSpec forward = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        forward.generateScene = true;
         forward.sceneFrames.clear ();
         FrameSpec child;
         child.name      = "ChildBeforeParent";
@@ -1926,6 +1935,7 @@ int main (int argc, char** argv)
             return fail ("Scene frame forward references should be rejected.");
 
         RobotModelSpec cycle = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        cycle.generateScene = true;
         cycle.sceneFrames.clear ();
         FrameSpec a;
         a.name      = "SceneA";
@@ -1962,6 +1972,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec badGeoRef =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badGeoRef.generateScene = true;
         badGeoRef.sceneGeometries[0].refFrame = "MissingSceneFrame";
         QStringList geoErrors;
         if (RobotModelXmlWriter::validate (badGeoRef, geoErrors))
@@ -1971,6 +1982,7 @@ int main (int argc, char** argv)
 
         RobotModelSpec badGeoSize =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badGeoSize.generateScene = true;
         badGeoSize.sceneGeometries[0].size = {{0, 0.8, 0.05}};
         QStringList sizeErrors;
         if (RobotModelXmlWriter::validate (badGeoSize, sizeErrors))
@@ -1978,6 +1990,7 @@ int main (int argc, char** argv)
 
         RobotModelSpec badStlFile =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badStlFile.generateScene = true;
         badStlFile.sceneGeometries[0].kind = GeometryKind::STL;
         badStlFile.sceneGeometries[0].file.clear ();
         QStringList stlFileErrors;
@@ -1986,6 +1999,7 @@ int main (int argc, char** argv)
 
         RobotModelSpec badPolytopeFile =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badPolytopeFile.generateScene = true;
         badPolytopeFile.sceneGeometries[0].kind = GeometryKind::Polytope;
         badPolytopeFile.sceneGeometries[0].file.clear ();
         QStringList polytopeFileErrors;
@@ -2329,6 +2343,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec setup =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        setup.generateScene = true;
         const QString scene = RobotModelXmlWriter::makeSceneXml (setup);
         if (!contains (scene, "<CollisionSetup file=\"CollisionSetup.xml\" />"))
             return fail ("Scene XML should reference generated CollisionSetup.xml.");
@@ -2338,6 +2353,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec setup =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        setup.generateScene = true;
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (setup);
 
         if (!contains (collisionXml, "<CollisionSetup>"))
@@ -2356,6 +2372,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec setup =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        setup.generateScene = true;
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (setup);
 
         if (!contains (collisionXml,
@@ -2370,6 +2387,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec scoped =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        scoped.generateScene = true;
         scoped.robotName = "Scoped Robot";
         FramePairSpec pair;
         pair.first  = "Joint3";
@@ -2388,6 +2406,7 @@ int main (int argc, char** argv)
     // ---- Test 3: 用户可显式配置 robot/environment frame pair ----
     {
         RobotModelSpec env = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        env.generateScene = true;
         FramePairSpec pair;
         pair.first  = "Joint3";
         pair.second = "Table";
@@ -2407,6 +2426,7 @@ int main (int argc, char** argv)
     // ---- Test 3b: CollisionSetup pair 必须引用 RobWork frame,不能误用 Drawable 名 ----
     {
         RobotModelSpec env = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        env.generateScene = true;
         FramePairSpec pair;
         pair.first  = "Joint3";
         pair.second = "TableTop";
@@ -2423,6 +2443,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec prox =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        prox.generateScene = true;
         prox.proximitySetup.enabled = true;
 
         ProximityRuleSpec rule;
@@ -2448,6 +2469,7 @@ int main (int argc, char** argv)
         QDir ().mkpath (dir);
 
         RobotModelSpec files = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        files.generateScene = true;
         files.proximitySetup.enabled = true;
 
         QStringList fileErrors;
@@ -2469,6 +2491,7 @@ int main (int argc, char** argv)
     // ---- Test 6: 缺失/非法引用有清晰错误 ----
     {
         RobotModelSpec bad = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        bad.generateScene = true;
         FramePairSpec pair;
         pair.first  = "MissingFrame";
         pair.second = "Joint2";
@@ -2485,6 +2508,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec empty =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        empty.generateScene = true;
         QStringList emptyErrors;
         if (!RobotModelXmlWriter::validate (empty, emptyErrors))
             return fail ("Default CollisionSetup output filename should validate: " +
@@ -2498,6 +2522,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec badRule =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        badRule.generateScene = true;
         badRule.proximitySetup.enabled = true;
         ProximityRuleSpec rule;
         rule.patternA = "";
@@ -2513,6 +2538,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec disabled =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        disabled.generateScene = true;
         disabled.collisionSetup.enabled = false;
 
         const QString scene = RobotModelXmlWriter::makeSceneXml (disabled);
@@ -2547,6 +2573,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec abs =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        abs.generateScene = true;
         // 把 collision file 改成绝对路径
         abs.exportLayout.collisionSetupFile =
             (QDir::tempPath () + "/robotmodelbuilder_m6_abs_dir/CollisionSetup.xml").toStdString ();
@@ -2572,6 +2599,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec incl =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        incl.generateScene = true;
         IncludeSpec extra;
         extra.file = "extra/Fixture.wc.xml";
         extra.kind = IncludeKind::Device;
@@ -2586,6 +2614,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec incl =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        incl.generateScene = true;
         incl.collisionSetup.enabled = false;
         incl.proximitySetup.enabled = false;
 
@@ -2615,6 +2644,7 @@ int main (int argc, char** argv)
         QDir ().mkpath (dir);
         RobotModelSpec missing =
             RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        missing.generateScene = true;
         IncludeSpec extra;
         extra.file = "missing/Fixture.wc.xml";
         extra.kind = IncludeKind::Device;
@@ -2633,6 +2663,7 @@ int main (int argc, char** argv)
         QDir ().mkpath (dir);
         RobotModelSpec nested =
             RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        nested.generateScene = true;
         nested.exportLayout.collisionSetupFile = "setup/CollisionSetup.xml";
         nested.proximitySetup.enabled = true;
         nested.exportLayout.proximitySetupFile = "setup/ProximitySetup.xml";
@@ -2651,6 +2682,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec noAuto =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        noAuto.generateScene = true;
         noAuto.collisionSetup.excludeAdjacentLinkPairs = false;
         noAuto.collisionSetup.excludeBaseToFirstJoint = false;
         const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (noAuto);
@@ -2662,6 +2694,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec vol =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        vol.generateScene = true;
         vol.collisionSetup.volatileFrames.push_back ("NonExistentFrame");
         QStringList volErrors;
         if (RobotModelXmlWriter::validate (vol, volErrors))
@@ -2674,6 +2707,7 @@ int main (int argc, char** argv)
     {
         RobotModelSpec stat =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        stat.generateScene = true;
         stat.collisionSetup.excludeStaticPairs = true;
         const QString xml = RobotModelXmlWriter::makeCollisionSetupXml (stat);
         if (!contains (xml, "<ExcludeStaticPairs/>"))
@@ -2700,6 +2734,7 @@ int main (int argc, char** argv)
         const QString dir = QDir::tempPath () + "/robotmodelbuilder_dump_m6";
         QDir ().mkpath (dir);
         RobotModelSpec dumpSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        dumpSpec.generateScene = true;
         dumpSpec.proximitySetup.enabled = true;
         ProximityRuleSpec rule;
         rule.kind     = ProximityRuleKind::Include;
@@ -2720,6 +2755,7 @@ int main (int argc, char** argv)
         const QString dir = QDir::tempPath () + "/robotmodelbuilder_m6_load";
         QDir ().mkpath (dir);
         RobotModelSpec loadSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
+        loadSpec.generateScene = true;
         loadSpec.proximitySetup.enabled = true;
         ProximityRuleSpec rule;
         rule.kind     = ProximityRuleKind::Include;
@@ -2743,12 +2779,18 @@ int main (int argc, char** argv)
                 rw::proximity::CollisionSetup::get (wc);
             if (setup.getExcludeList ().empty ())
                 return fail ("Loaded WorkCell should contain CollisionSetup exclude pairs.");
-
-            rw::proximity::BasicFilterStrategy filter (wc);
-            rw::proximity::ProximityFilter::Ptr pairs =
-                filter.update (wc->getDefaultState ());
-            if (hasFramePair (pairs, "Joint1", "Joint2"))
-                return fail ("Adjacent Joint1-Joint2 must not be present in collision check pairs.");
+            bool excludesAdjacentJointPair = false;
+            for (const rw::core::StringPair& pair : setup.getExcludeList ()) {
+                if ((pair.first == "GenericSixAxis.Joint1" &&
+                     pair.second == "GenericSixAxis.Joint2") ||
+                    (pair.first == "GenericSixAxis.Joint2" &&
+                     pair.second == "GenericSixAxis.Joint1")) {
+                    excludesAdjacentJointPair = true;
+                    break;
+                }
+            }
+            if (!excludesAdjacentJointPair)
+                return fail ("CollisionSetup should exclude the adjacent Joint1-Joint2 pair.");
         }
         catch (const std::exception& e) {
             return fail (QString ("WorkCellLoader failed for generated Scene: %1").arg (e.what ()));
@@ -2793,6 +2835,7 @@ int main (int argc, char** argv)
     QDir ().mkpath (dumpDir);
     std::cerr << "Dumping to: " << dumpDir.toStdString () << std::endl;
     spec = RobotModelXmlWriter::makeDefaultSixAxisModel (dumpDir);
+    spec.generateScene = true;
     spec.dynamics.generateDynamicWorkCell = true;
     if (!RobotModelXmlWriter::saveFiles (spec, errors))
         return fail ("saveFiles failed in dump step: " + errors.join ("; "));
