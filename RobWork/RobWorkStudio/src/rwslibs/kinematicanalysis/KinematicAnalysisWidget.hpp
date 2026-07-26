@@ -44,6 +44,7 @@ class QPushButton;
 class QSpinBox;
 class QTableView;
 class QTableWidget;
+class QToolButton;
 class QString;
 
 namespace rws {
@@ -309,8 +310,13 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _refreshCurrentPoseButton;           // 重新读 State
     QLineEdit* _status;                               // 状态消息(只读)
     QTableWidget* _poseValueTable;                    // 6 元 TCP 位姿 + 关节值
-    QLabel* _poseIndicatorLabel;                      // 状态颜色指示(Pass/Warn/Fail)
+    QLabel* _poseIndicatorLabel;                      // 总体状态
+    QLabel* _poseConditionLabel;
+    QLabel* _poseManipulabilityLabel;
+    QLabel* _poseMarginLabel;
     QTableWidget* _jointStatusTable;                  // 各关节裕度详情
+    QToolButton* _advancedDiagnosticsToggle;
+    QWidget* _advancedDiagnosticsContent;
     QTableWidget* _jacobianTable;                     // 6×n 雅可比矩阵
     QTableWidget* _singularTable;                     // 奇异值序列
     QLabel* _warningLabel;                            // 综合告警文字
