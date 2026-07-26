@@ -283,6 +283,74 @@ void normalizeDeviceScopedNames (const rw::models::WorkCell& workcell,
     spec.dynamics.baseFrame = stripDeviceScope (spec.dynamics.baseFrame, prefixes);
 }
 
+bool hasSameFrames (const FramePairSpec& pair,
+                    const std::string& first,
+                    const std::string& second)
+{
+    return (pair.first == first && pair.second == second) ||
+           (pair.first == second && pair.second == first);
+}
+
+/// Move only complete, conventional imported exclusions into the compact
+/// automatic rules. A partial adjacent list remains explicit to preserve its
+/// original collision behavior.
+void normalizeImportedCollisionExclusions (RobotModelSpec& spec)
+{
+    CollisionSetupSpec& setup = spec.collisionSetup;
+    const std::string base =
+        spec.dynamics.baseFrame.empty () ? std::string ("Base") : spec.dynamics.baseFrame;
+
+    bool hasBaseFirst = false;
+    if (!spec.transformJoints.empty ()) {
+        const std::string& firstJoint = spec.transformJoints.front ().name;
+        for (const FramePairSpec& pair : setup.excludePairs) {
+            if (pair.source == "Imported" && hasSameFrames (pair, base, firstJoint)) {
+                hasBaseFirst = true;
+                break;
+            }
+        }
+    }
+
+    std::vector< bool > importedAdjacent (
+        spec.transformJoints.empty () ? 0 : spec.transformJoints.size () - 1, false);
+    for (std::size_t i = 0; i + 1 < spec.transformJoints.size (); ++i) {
+        const std::string& first = spec.transformJoints[i].name;
+        const std::string& second = spec.transformJoints[i + 1].name;
+        for (const FramePairSpec& pair : setup.excludePairs) {
+            if (pair.source == "Imported" && hasSameFrames (pair, first, second)) {
+                importedAdjacent[i] = true;
+                break;
+            }
+        }
+    }
+
+    const bool hasCompleteAdjacentChain =
+        !importedAdjacent.empty () &&
+        std::all_of (importedAdjacent.begin (), importedAdjacent.end (),
+                     [] (bool present) { return present; });
+    setup.excludeBaseToFirstJoint = hasBaseFirst;
+    setup.excludeAdjacentLinkPairs = hasCompleteAdjacentChain;
+
+    setup.excludePairs.erase (
+        std::remove_if (setup.excludePairs.begin (), setup.excludePairs.end (),
+                        [&] (const FramePairSpec& pair) {
+                            if (pair.source != "Imported")
+                                return false;
+                            if (hasBaseFirst && !spec.transformJoints.empty () &&
+                                hasSameFrames (pair, base, spec.transformJoints.front ().name))
+                                return true;
+                            if (!hasCompleteAdjacentChain)
+                                return false;
+                            for (std::size_t i = 0; i + 1 < spec.transformJoints.size (); ++i) {
+                                if (hasSameFrames (pair, spec.transformJoints[i].name,
+                                                   spec.transformJoints[i + 1].name))
+                                    return true;
+                            }
+                            return false;
+                        }),
+        setup.excludePairs.end ());
+}
+
 // -----------------------------------------------------------------------------
 //  4. 源 XML 几何流式解析器 (XML Source Reader)
 // -----------------------------------------------------------------------------
@@ -615,6 +683,10 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
     // 剥离 RobWork 加载设备时在 Frame 名字前自动追加的前缀 (如 "GenericSixAxis.Joint1" -> "Joint1")，
     // 确保回填到 UI 界面表格中的关节与坐标系名称干净简洁
     normalizeDeviceScopedNames (workcell, spec);
+
+    // Collapse conventional imported collision pairs into the automatic UI
+    // rules only after device scopes have been stripped from their frame names.
+    normalizeImportedCollisionExclusions (spec);
 
     // ---- 9. 返回解析与融合完成的最终 spec ----
     return spec;

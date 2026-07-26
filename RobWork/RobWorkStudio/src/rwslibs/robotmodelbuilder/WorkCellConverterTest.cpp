@@ -107,6 +107,14 @@ int main ()
     }
     original.collisionSetup.excludeStaticPairs = true; // 开启碰撞排除静态对
 
+    // This pair cannot be represented by the automatic base/adjacent rules.
+    // It must remain an explicit Imported pair after the scene is converted.
+    rws::FramePairSpec importedToolPair;
+    importedToolPair.first  = "TCP";
+    importedToolPair.second = original.transformJoints.back ().name;
+    importedToolPair.source = "Manual";
+    original.collisionSetup.excludePairs.push_back (importedToolPair);
+
     // ---- 3. 将基准模型写盘生成 XML 文件群 ----
     QStringList saveErrors;
     if (!rws::RobotModelXmlWriter::saveFiles (original, saveErrors))
@@ -152,6 +160,17 @@ int main ()
         return fail ("CollisionSetup filename was not recovered.");
     if (!imported.collisionSetup.excludeStaticPairs)
         return fail ("CollisionSetup ExcludeStaticPairs flag was not recovered.");
+    if (!imported.collisionSetup.excludeBaseToFirstJoint)
+        return fail ("Imported Base-first exclusion should be normalized into the automatic rule.");
+    if (!imported.collisionSetup.excludeAdjacentLinkPairs)
+        return fail ("Imported complete adjacent chain should be normalized into the automatic rule.");
+    if (imported.collisionSetup.excludePairs.size () != 1)
+        return fail ("Only CollisionSetup pairs outside automatic rules should remain Imported.");
+    const rws::FramePairSpec& retainedPair = imported.collisionSetup.excludePairs.front ();
+    if (retainedPair.first != "TCP" ||
+        retainedPair.second != original.transformJoints.back ().name ||
+        retainedPair.source != "Imported")
+        return fail ("TCP exclusion should remain as the sole Imported CollisionSetup pair.");
 
     // 检查第 2 步中注入的 "ImportedBox" 几何体各项参数 (尺寸、RPY、Pos、RGB、碰撞标记) 是否无损
     const auto importedDrawableIt = std::find_if (
