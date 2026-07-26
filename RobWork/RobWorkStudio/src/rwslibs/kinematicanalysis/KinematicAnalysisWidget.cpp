@@ -2757,36 +2757,72 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualResetViewButton = new QPushButton (tr("Fit"), _visualizationTab);
     _visualExportPngButton = new QPushButton (tr("Export PNG"), _visualizationTab);
 
-    controls->addWidget (new QLabel (tr("Source:"), _visualizationTab), 0, 0);
-    controls->addWidget (_visualSourceCombo, 0, 1);
-    controls->addWidget (new QLabel (tr("Projection:"), _visualizationTab), 0, 2);
-    controls->addWidget (_visualProjectionCombo, 0, 3);
-    controls->addWidget (new QLabel (tr("Color:"), _visualizationTab), 0, 4);
-    controls->addWidget (_visualColorModeCombo, 0, 5);
-    controls->addWidget (_visualShowPassCheck, 1, 1);
-    controls->addWidget (_visualShowWarningCheck, 1, 2);
-    controls->addWidget (_visualShowFailCheck, 1, 3);
-    controls->addWidget (_visualShowLabelsCheck, 1, 4);
-    controls->addWidget (_visualShowUnknownCheck, 1, 5);
-    controls->addWidget (_visualShowGridCheck, 2, 1);
-    controls->addWidget (_visualShowLegendCheck, 2, 2);
-    controls->addWidget (new QLabel (tr("Point size:"), _visualizationTab), 2, 3);
-    controls->addWidget (_visualPointSizeSpin, 2, 4);
-    controls->addWidget (_visualResetViewButton, 2, 5);
-    controls->addWidget (_visualExportPngButton, 2, 6);
-    controls->addWidget (new QLabel (tr("View:"), _visualizationTab), 3, 0);
-    controls->addWidget (_visualRenderModeCombo, 3, 1);
-    controls->addWidget (new QLabel (tr("Envelope dirs:"), _visualizationTab), 3, 2);
-    controls->addWidget (_visualEnvelopeDirectionsSpin, 3, 3);
-    controls->setColumnStretch (1, 1);
-    controls->setColumnStretch (3, 1);
-    controls->setColumnStretch (5, 1);
-    controls->setColumnStretch (7, 1);
+    QLabel* setupTitle = new QLabel (tr("View setup"), _visualizationTab);
+    setupTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    controls->addWidget (setupTitle, 0, 0);
+    controls->addWidget (new QLabel (tr("Source"), _visualizationTab), 0, 1);
+    controls->addWidget (_visualSourceCombo, 0, 2);
+    controls->addWidget (new QLabel (tr("Projection"), _visualizationTab), 0, 3);
+    controls->addWidget (_visualProjectionCombo, 0, 4);
+    controls->addWidget (new QLabel (tr("Color"), _visualizationTab), 0, 5);
+    controls->addWidget (_visualColorModeCombo, 0, 6);
+    controls->addWidget (_visualResetViewButton, 0, 7);
+    controls->addWidget (_visualExportPngButton, 0, 8);
+    controls->setColumnStretch (2, 1);
+    controls->setColumnStretch (4, 1);
+    controls->setColumnStretch (6, 1);
     layout->addLayout (controls);
 
-    _visualSummaryLabel = new QLabel (tr("Points: 0"), _visualizationTab);
+    QToolButton* moreToggle = new QToolButton (_visualizationTab);
+    moreToggle->setText (tr("More..."));
+    moreToggle->setCheckable (true);
+    moreToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    moreToggle->setArrowType (Qt::RightArrow);
+    layout->addWidget (moreToggle);
+
+    QWidget* moreContent = new QWidget (_visualizationTab);
+    moreContent->setVisible (false);
+    QGridLayout* moreControls = new QGridLayout (moreContent);
+    moreControls->setContentsMargins (18, 0, 0, 0);
+    QLabel* viewLabel = new QLabel (tr("View"), moreContent);
+    viewLabel->setObjectName (QStringLiteral ("visualizationMoreViewLabel"));
+    QLabel* envelopeLabel = new QLabel (tr("Envelope directions"), moreContent);
+    envelopeLabel->setObjectName (QStringLiteral ("visualizationMoreEnvelopeLabel"));
+    moreControls->addWidget (viewLabel, 0, 0);
+    moreControls->addWidget (_visualRenderModeCombo, 0, 1);
+    moreControls->addWidget (envelopeLabel, 0, 2);
+    moreControls->addWidget (_visualEnvelopeDirectionsSpin, 0, 3);
+    moreControls->addWidget (new QLabel (tr("Show"), moreContent), 1, 0);
+    moreControls->addWidget (_visualShowPassCheck, 1, 1);
+    moreControls->addWidget (_visualShowWarningCheck, 1, 2);
+    moreControls->addWidget (_visualShowFailCheck, 1, 3);
+    moreControls->addWidget (_visualShowUnknownCheck, 1, 4);
+    moreControls->addWidget (new QLabel (tr("Display"), moreContent), 2, 0);
+    moreControls->addWidget (_visualShowLabelsCheck, 2, 1);
+    moreControls->addWidget (_visualShowGridCheck, 2, 2);
+    moreControls->addWidget (_visualShowLegendCheck, 2, 3);
+    moreControls->addWidget (new QLabel (tr("Point size"), moreContent), 2, 4);
+    moreControls->addWidget (_visualPointSizeSpin, 2, 5);
+    moreControls->setColumnStretch (6, 1);
+    layout->addWidget (moreContent);
+    connect (moreToggle, &QToolButton::toggled, this,
+             [moreToggle, moreContent] (bool expanded) {
+                 moreToggle->setArrowType (expanded ? Qt::DownArrow : Qt::RightArrow);
+                 moreContent->setVisible (expanded);
+             });
+
+    QLabel* summaryTitle = new QLabel (tr("Summary"), _visualizationTab);
+    summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (summaryTitle);
+    _visualSummaryLabel = new QLabel (_visualizationTab);
+    _visualSummaryLabel->setTextFormat (Qt::RichText);
+    _visualSummaryLabel->setText (
+        tr("<b>Points</b> 0 | <b>Pass</b> - | <b>Warning</b> - | <b>Fail</b> -"));
     layout->addWidget (_visualSummaryLabel);
 
+    QLabel* plotTitle = new QLabel (tr("Plot"), _visualizationTab);
+    plotTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    layout->addWidget (plotTitle);
     _visualPlot = new KinematicAnalysisPlotWidget (_visualizationTab);
     _visualPlot->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget (_visualPlot, 1);
@@ -2849,27 +2885,38 @@ void KinematicAnalysisWidget::updateVisualizationControls ()
     _visualColorModeCombo->setCurrentIndex (index >= 0 ? index : 0);
     _visualColorModeCombo->blockSignals (blocked);
 
-    const int renderModeValue = _visualRenderModeCombo != NULL ?
+    const bool workspaceSource = source == VisualPointSource::Workspace;
+    int renderModeValue = _visualRenderModeCombo != NULL ?
         _visualRenderModeCombo->currentData ().toInt () :
         static_cast<int> (VisualRenderMode::Scatter);
-    const bool envelopeActive =
-        _visualSourceCombo->currentData ().toInt () == 1 &&
-        renderModeValue == static_cast<int> (VisualRenderMode::Envelope);
 
     // 包络方向数:仅在 Envelope + Workspace 时启用
-    if (_visualEnvelopeDirectionsSpin != NULL)
-        _visualEnvelopeDirectionsSpin->setEnabled (envelopeActive);
-
     // 非 Workspace 源强制切回 Scatter
-    if (!envelopeActive && _visualRenderModeCombo != NULL &&
+    if (!workspaceSource && _visualRenderModeCombo != NULL &&
         renderModeValue == static_cast<int> (VisualRenderMode::Envelope)) {
         const int scatterIndex = _visualRenderModeCombo->findData (
             static_cast<int> (VisualRenderMode::Scatter));
         if (scatterIndex >= 0) {
             QSignalBlocker renderModeBlocker (_visualRenderModeCombo);
             _visualRenderModeCombo->setCurrentIndex (scatterIndex);
+            renderModeValue = static_cast<int> (VisualRenderMode::Scatter);
         }
     }
+
+    const bool envelopeActive = workspaceSource &&
+        renderModeValue == static_cast<int> (VisualRenderMode::Envelope);
+    if (_visualizationTab != NULL) {
+        if (QLabel* label = _visualizationTab->findChild< QLabel* > (
+                QStringLiteral ("visualizationMoreViewLabel")))
+            label->setVisible (workspaceSource);
+        if (QLabel* label = _visualizationTab->findChild< QLabel* > (
+                QStringLiteral ("visualizationMoreEnvelopeLabel")))
+            label->setVisible (envelopeActive);
+    }
+    if (_visualRenderModeCombo != NULL)
+        _visualRenderModeCombo->setVisible (workspaceSource);
+    if (_visualEnvelopeDirectionsSpin != NULL)
+        _visualEnvelopeDirectionsSpin->setVisible (envelopeActive);
 
     // Envelope 模式下禁用不相关的 Scatter 控件
     if (_visualColorModeCombo != NULL)
@@ -3103,7 +3150,8 @@ void KinematicAnalysisWidget::refreshVisualization ()
         if (data.renderMode == VisualRenderMode::Envelope) {
             if (data.envelope.valid) {
                 _visualSummaryLabel->setText (
-                    tr("Approximate outer envelope: %1 pts | %2 | %3x%4 %5 | Rmax %6 %5 | approximate - not exact reachability")
+                    tr("<b>Boundary points</b> %1 | <b>Projection</b> %2 | "
+                       "<b>Size</b> %3 x %4 %5 | <b>Max radius</b> %6 %5")
                         .arg (static_cast<int> (data.envelope.boundary.size ()))
                         .arg (visualProjectionText (projection))
                         .arg (QString::number (displayLengthFromMeters (
@@ -3116,7 +3164,7 @@ void KinematicAnalysisWidget::refreshVisualization ()
             }
             else {
                 _visualSummaryLabel->setText (
-                    tr("Approximate outer envelope: no valid device or joint limits available."));
+                    tr("<b>Boundary</b> No valid device or joint limits available."));
             }
         }
         else {
@@ -3127,25 +3175,22 @@ void KinematicAnalysisWidget::refreshVisualization ()
             filters.showUnknown = _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ();
             const AnalysisVisualStatusSummary summary = summarizeVisualData (data, filters);
 
-            QString scalarRange = tr("no finite scalar");
+            QString scalarRange = tr("-");
             if (data.hasFiniteScalar) {
                 scalarRange = tr("%1 .. %2")
                     .arg (QString::number (data.scalarMin, 'g', 6))
                     .arg (QString::number (data.scalarMax, 'g', 6));
             }
             _visualSummaryLabel->setText (
-                tr("%1: %2 point(s), %3 visible    Pass: %4    Warning: %5    Fail: %6    "
-                   "Unknown: %7    Collision: %8    Projection: %9    Color: %10    "
-                   "Scalar range: %11")
-                    .arg (visualPointSourceText (source))
+                tr("<b>Points</b> %1 | <b>Visible</b> %2 | <b>Pass</b> %3 | "
+                   "<b>Warning</b> %4 | <b>Fail</b> %5 | <b>Collision</b> %6 | "
+                   "<b>%7</b> %8")
                     .arg (static_cast< int > (summary.totalCount))
                     .arg (static_cast< int > (summary.visibleCount))
                     .arg (static_cast< int > (summary.passCount))
                     .arg (static_cast< int > (summary.warningCount))
                     .arg (static_cast< int > (summary.failCount))
-                    .arg (static_cast< int > (summary.unknownCount))
                     .arg (static_cast< int > (summary.collisionCount))
-                    .arg (visualProjectionText (projection))
                     .arg (visualScalarModeText (scalarMode))
                     .arg (scalarRange));
         }
