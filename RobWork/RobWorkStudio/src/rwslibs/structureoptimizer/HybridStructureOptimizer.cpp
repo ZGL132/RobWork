@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <cstdlib>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -35,11 +35,13 @@ std::string currentTimestamp()
 std::vector<std::vector<double>> generateLocalPerturbations(
     const std::vector<StructureDesignVariable>& variables,
     const std::vector<double>& centre,
-    int count)
+    int count,
+    std::mt19937& rng)
 {
     std::vector<std::vector<double>> result;
     result.reserve(static_cast<std::size_t>(count));
 
+    std::uniform_real_distribution<double> unitOffset(-1.0, 1.0);
     for (int i = 0; i < count; ++i)
     {
         std::vector<double> vals;
@@ -49,7 +51,7 @@ std::vector<std::vector<double>> generateLocalPerturbations(
         {
             double range = variables[j].maximum - variables[j].minimum;
             double local = range * 0.15;   // 15 % neighbourhood
-            double offset = (static_cast<double>(std::rand()) / RAND_MAX * 2.0 - 1.0) * local;
+            double offset = unitOffset(rng) * local;
             double val = centre[j] + offset;
             val = std::max(variables[j].minimum, std::min(variables[j].maximum, val));
             vals.push_back(val);
@@ -237,7 +239,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
             int localPerElite = std::max(1,
                 problem.run.maxLocalSweeps / eliteCount);
 
-            std::srand(problem.run.randomSeed + 9999);
+            std::mt19937 localRng(problem.run.randomSeed + 9999u);
 
             std::vector<std::vector<double>> localPool;
             localPool.reserve(static_cast<std::size_t>(
@@ -258,7 +260,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                     continue;
 
                 auto perturbed = generateLocalPerturbations(
-                    problem.variables, elitePtr->values, localPerElite);
+                    problem.variables, elitePtr->values, localPerElite, localRng);
                 localPool.insert(localPool.end(),
                                  std::make_move_iterator(perturbed.begin()),
                                  std::make_move_iterator(perturbed.end()));

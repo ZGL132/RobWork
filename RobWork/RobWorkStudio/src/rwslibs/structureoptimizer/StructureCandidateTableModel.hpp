@@ -33,10 +33,13 @@ public:
                         int role = Qt::DisplayRole) const override;
 
     void setCandidates(const std::vector<StructureCandidateResult>& candidates);
+    void setResult(const StructureOptimizationResult& result);
     const std::vector<StructureCandidateResult>& candidates() const;
+    const StructureCandidateResult* candidateByIndex(int candidateIndex) const;
 
 private:
     std::vector<StructureCandidateResult> _candidates;
+    int _baselineCandidateIndex = -1;
 };
 
 } // namespace rws

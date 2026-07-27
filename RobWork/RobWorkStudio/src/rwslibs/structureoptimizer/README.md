@@ -82,3 +82,28 @@ The optimization respects cancellation and pause requests between candidate eval
 - No motor/gear selection or dynamics optimization
 - Single-worker only (no parallel candidate evaluation)
 - No evolutionary or multi-objective algorithms
+
+## P0 Workflow
+
+1. Open a `*.structure-optimization.json` project created from a complete
+   `RobotDesignContext`. A bare WorkCell is intentionally not reverse-engineered
+   into a model specification.
+2. Edit variables, task points, constraints, strategy, all run settings, and
+   objective weights. The start command is disabled whenever the snapshot fails
+   validation.
+3. Run the optimization, select a feasible candidate by its stable candidate
+   index, and preview it. Preview files are created in a temporary directory;
+   clearing the preview or closing the plugin restores the original WorkCell.
+4. Export produces `project.structure-optimization.json`,
+   `result.structure-optimization.json`, `candidates.csv`,
+   `task-details.csv`, and `report.md`. If a feasible candidate is selected,
+   its XML package is exported under `candidate-<index>/`.
+
+## Build Verification
+
+On Windows, initialize the Visual Studio x64 environment before CMake. The
+standard PowerShell environment alone does not provide all system library paths.
+
+```powershell
+& $env:ComSpec /d /s /c 'call "D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" >nul && cmake --build build\Desktop_Qt_6_11_1_MSVC2022_64bit-Debug --config Debug --target sdurws_structureoptimizer sdurws_structureoptimizer_test && ctest --test-dir build\Desktop_Qt_6_11_1_MSVC2022_64bit-Debug -C Debug -R "^sdurws_structureoptimizer_test$" --output-on-failure'
+```

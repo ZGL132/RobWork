@@ -2,18 +2,24 @@
 
 #include "OptimizationTaskTableModel.hpp"
 #include "StructureCandidateTableModel.hpp"
+#include "StructureConstraintTableModel.hpp"
 #include "StructureOptimizationController.hpp"
+#include "StructureOptimizationExportService.hpp"
+#include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureVariableTableModel.hpp"
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
@@ -51,6 +57,7 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     : QWidget(parent),
       _variableModel(new StructureVariableTableModel(this)),
       _taskModel(new OptimizationTaskTableModel(this)),
+      _constraintModel(new StructureConstraintTableModel(this)),
       _candidateModel(new StructureCandidateTableModel(this)),
       _controller(new StructureOptimizationController(this))
 {
@@ -96,6 +103,20 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::updateRunState);
     connect(_taskModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
+    connect(_constraintModel, &QAbstractItemModel::dataChanged,
+            this, &StructureOptimizerWidget::updateRunState);
+    for (QSpinBox* spin : {_candidateCountSpin, _eliteCountSpin, _localEliteCountSpin,
+                           _finalVerificationCountSpin, _maxLocalSweepsSpin,
+                           _gridStepsSpin, _seedSpin}) {
+        connect(spin, QOverload<int>::of(&QSpinBox::valueChanged),
+                this, &StructureOptimizerWidget::updateRunState);
+    }
+    connect(_strategyCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &StructureOptimizerWidget::updateRunState);
+    for (QDoubleSpinBox* weight : _weightSpins) {
+        connect(weight, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                this, &StructureOptimizerWidget::updateRunState);
+    }
 
     connect(_controller, &StructureOptimizationController::runningChanged,
             this, &StructureOptimizerWidget::handleRunningChanged);
@@ -114,6 +135,12 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
 StructureOptimizerWidget::~StructureOptimizerWidget()
 {
     _controller->cancel();
+    clearCandidatePreview();
+}
+
+void StructureOptimizerWidget::setPreviewHost(IWorkCellPreviewHost* host)
+{
+    _previewController.reset(host != nullptr ? new CandidatePreviewController(host) : nullptr);
 }
 
 void StructureOptimizerWidget::setProblem(
@@ -126,11 +153,28 @@ void StructureOptimizerWidget::setProblem(
 
     _variableModel->setVariables(_loadedProblem.variables);
     _taskModel->setTasks(_loadedProblem.tasks);
+    _constraintModel->setConstraints(_loadedProblem.constraints);
     _candidateModel->setCandidates({});
+    _lastResult = StructureOptimizationResult();
 
     _candidateCountSpin->setValue(_loadedProblem.run.candidateCount);
     _eliteCountSpin->setValue(_loadedProblem.run.eliteCount);
+    _localEliteCountSpin->setValue(_loadedProblem.run.localEliteCount);
+    _finalVerificationCountSpin->setValue(_loadedProblem.run.finalVerificationCount);
+    _maxLocalSweepsSpin->setValue(_loadedProblem.run.maxLocalSweeps);
+    _gridStepsSpin->setValue(_loadedProblem.run.gridSteps);
     _seedSpin->setValue(static_cast<int>(_loadedProblem.run.randomSeed));
+    const int strategyIndex = _strategyCombo->findData(static_cast<int>(_loadedProblem.run.strategy));
+    _strategyCombo->setCurrentIndex(strategyIndex >= 0 ? strategyIndex : 0);
+    const std::array<double, 6> weights = {{
+        _loadedProblem.weights.reachability,
+        _loadedProblem.weights.manipulability,
+        _loadedProblem.weights.jointMargin,
+        _loadedProblem.weights.collision,
+        _loadedProblem.weights.compactness,
+        _loadedProblem.weights.preference}};
+    for (std::size_t i = 0; i < _weightSpins.size(); ++i)
+        _weightSpins[i]->setValue(weights[i]);
 
     updateRunState();
 }
@@ -140,9 +184,22 @@ StructureOptimizationProblem StructureOptimizerWidget::collectProblem() const
     StructureOptimizationProblem problem = _loadedProblem;
     problem.variables = _variableModel->variables();
     problem.tasks = _taskModel->tasks();
+    problem.constraints = _constraintModel->constraints();
+    problem.run.strategy = static_cast<StructureStrategyKind>(
+        _strategyCombo->currentData().toInt());
     problem.run.candidateCount = _candidateCountSpin->value();
     problem.run.eliteCount = _eliteCountSpin->value();
+    problem.run.localEliteCount = _localEliteCountSpin->value();
+    problem.run.finalVerificationCount = _finalVerificationCountSpin->value();
+    problem.run.maxLocalSweeps = _maxLocalSweepsSpin->value();
+    problem.run.gridSteps = _gridStepsSpin->value();
     problem.run.randomSeed = static_cast<unsigned int>(_seedSpin->value());
+    problem.weights.reachability = _weightSpins[0]->value();
+    problem.weights.manipulability = _weightSpins[1]->value();
+    problem.weights.jointMargin = _weightSpins[2]->value();
+    problem.weights.collision = _weightSpins[3]->value();
+    problem.weights.compactness = _weightSpins[4]->value();
+    problem.weights.preference = _weightSpins[5]->value();
     return problem;
 }
 
@@ -166,9 +223,9 @@ QWidget* StructureOptimizerWidget::createTaskPage()
     QVBoxLayout* layout = new QVBoxLayout(page);
     layout->addWidget(makeTableView(_taskModel, "optimizationTaskTable"));
 
-    QGroupBox* constraints = new QGroupBox("硬约束摘要");
+    QGroupBox* constraints = new QGroupBox("约束条件");
     QVBoxLayout* constraintLayout = new QVBoxLayout(constraints);
-    constraintLayout->addWidget(new QLabel("模型合法、必达任务可达、碰撞安全、尺寸边界。"));
+    constraintLayout->addWidget(makeTableView(_constraintModel, "structureConstraintTable"));
     constraints->setLayout(constraintLayout);
     layout->addWidget(constraints);
     page->setLayout(layout);
@@ -180,10 +237,12 @@ QWidget* StructureOptimizerWidget::createSettingsPage()
     QWidget* page = new QWidget();
     QFormLayout* layout = new QFormLayout(page);
 
-    QComboBox* strategy = new QComboBox(page);
-    strategy->addItems({"Hybrid", "Random", "Grid"});
-    strategy->setObjectName("structureOptimizationStrategyCombo");
-    layout->addRow("策略", strategy);
+    _strategyCombo = new QComboBox(page);
+    _strategyCombo->addItem("Hybrid", static_cast<int>(StructureStrategyKind::Hybrid));
+    _strategyCombo->addItem("Random", static_cast<int>(StructureStrategyKind::Random));
+    _strategyCombo->addItem("Grid", static_cast<int>(StructureStrategyKind::Grid));
+    _strategyCombo->setObjectName("structureOptimizationStrategyCombo");
+    layout->addRow("策略", _strategyCombo);
 
     _candidateCountSpin = makeSpinBox(1, 100000, _loadedProblem.run.candidateCount);
     _candidateCountSpin->setObjectName("structureOptimizationCandidateCount");
@@ -193,6 +252,23 @@ QWidget* StructureOptimizerWidget::createSettingsPage()
     _eliteCountSpin->setObjectName("structureOptimizationEliteCount");
     layout->addRow("精英数量", _eliteCountSpin);
 
+    _localEliteCountSpin = makeSpinBox(1, 10000, _loadedProblem.run.localEliteCount);
+    _localEliteCountSpin->setObjectName("structureOptimizationLocalEliteCount");
+    layout->addRow("局部精修精英数", _localEliteCountSpin);
+
+    _finalVerificationCountSpin = makeSpinBox(1, 10000,
+                                              _loadedProblem.run.finalVerificationCount);
+    _finalVerificationCountSpin->setObjectName("structureOptimizationFinalVerificationCount");
+    layout->addRow("最终复核数", _finalVerificationCountSpin);
+
+    _maxLocalSweepsSpin = makeSpinBox(1, 1000, _loadedProblem.run.maxLocalSweeps);
+    _maxLocalSweepsSpin->setObjectName("structureOptimizationMaxLocalSweeps");
+    layout->addRow("局部搜索轮数", _maxLocalSweepsSpin);
+
+    _gridStepsSpin = makeSpinBox(2, 100, _loadedProblem.run.gridSteps);
+    _gridStepsSpin->setObjectName("structureOptimizationGridSteps");
+    layout->addRow("网格步数", _gridStepsSpin);
+
     _seedSpin = makeSpinBox(0, 2147483647,
                             static_cast<int>(_loadedProblem.run.randomSeed));
     _seedSpin->setObjectName("structureOptimizationSeed");
@@ -200,11 +276,19 @@ QWidget* StructureOptimizerWidget::createSettingsPage()
 
     QGridLayout* weights = new QGridLayout();
     const QStringList names = {"可达率", "操纵度", "关节裕度", "碰撞", "紧凑性", "偏好"};
+    const QStringList objectNames = {
+        "structureOptimizationWeightReachability",
+        "structureOptimizationWeightManipulability",
+        "structureOptimizationWeightJointMargin",
+        "structureOptimizationWeightCollision",
+        "structureOptimizationWeightCompactness",
+        "structureOptimizationWeightPreference"};
     for (int i = 0; i < names.size(); ++i) {
         QDoubleSpinBox* weight = new QDoubleSpinBox(page);
         weight->setRange(0.0, 1.0);
         weight->setSingleStep(0.01);
-        weight->setValue(0.1);
+        weight->setObjectName(objectNames[i]);
+        _weightSpins[static_cast<std::size_t>(i)] = weight;
         weights->addWidget(new QLabel(names[i], page), i / 2, (i % 2) * 2);
         weights->addWidget(weight, i / 2, (i % 2) * 2 + 1);
     }
@@ -218,7 +302,21 @@ QWidget* StructureOptimizerWidget::createCandidatePage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    layout->addWidget(makeTableView(_candidateModel, "structureCandidateTable"));
+    _candidateView = makeTableView(_candidateModel, "structureCandidateTable");
+    layout->addWidget(_candidateView);
+    QHBoxLayout* actions = new QHBoxLayout();
+    QPushButton* preview = new QPushButton("预览候选", page);
+    preview->setObjectName("previewStructureCandidateButton");
+    QPushButton* clear = new QPushButton("清除预览", page);
+    clear->setObjectName("clearStructureCandidatePreviewButton");
+    actions->addWidget(preview);
+    actions->addWidget(clear);
+    actions->addStretch();
+    layout->addLayout(actions);
+    connect(preview, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::previewSelectedCandidate);
+    connect(clear, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::clearCandidatePreview);
     page->setLayout(layout);
     return page;
 }
@@ -227,11 +325,19 @@ QWidget* StructureOptimizerWidget::createReportPage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    layout->addWidget(new QLabel("报告导出将在候选比较阶段接入 JSON、CSV 与模型包导出。"));
-    QPushButton* exportJson = new QPushButton("导出结果 JSON", page);
-    exportJson->setEnabled(false);
-    layout->addWidget(exportJson);
+    QPushButton* open = new QPushButton("打开项目", page);
+    open->setObjectName("openStructureOptimizationProjectButton");
+    QPushButton* save = new QPushButton("保存项目", page);
+    save->setObjectName("saveStructureOptimizationProjectButton");
+    QPushButton* exportAll = new QPushButton("导出报告和候选模型", page);
+    exportAll->setObjectName("exportStructureOptimizationResultButton");
+    layout->addWidget(open);
+    layout->addWidget(save);
+    layout->addWidget(exportAll);
     layout->addStretch();
+    connect(open, &QPushButton::clicked, this, &StructureOptimizerWidget::openProject);
+    connect(save, &QPushButton::clicked, this, &StructureOptimizerWidget::saveProject);
+    connect(exportAll, &QPushButton::clicked, this, &StructureOptimizerWidget::exportResult);
     page->setLayout(layout);
     return page;
 }
@@ -255,7 +361,14 @@ void StructureOptimizerWidget::setEditingEnabled(bool enabled)
     _tabs->setEnabled(enabled);
     _candidateCountSpin->setEnabled(enabled);
     _eliteCountSpin->setEnabled(enabled);
+    _localEliteCountSpin->setEnabled(enabled);
+    _finalVerificationCountSpin->setEnabled(enabled);
+    _maxLocalSweepsSpin->setEnabled(enabled);
+    _gridStepsSpin->setEnabled(enabled);
     _seedSpin->setEnabled(enabled);
+    _strategyCombo->setEnabled(enabled);
+    for (QDoubleSpinBox* weight : _weightSpins)
+        weight->setEnabled(enabled);
 }
 
 void StructureOptimizerWidget::startOptimization()
@@ -307,11 +420,114 @@ void StructureOptimizerWidget::handleProgress(const StructureProgress& progress)
 void StructureOptimizerWidget::handleCompleted(
     const StructureOptimizationResult& result)
 {
-    _candidateModel->setCandidates(result.candidates);
+    _lastResult = result;
+    _candidateModel->setResult(result);
     _statusLabel->setText(result.canceled ? "结构优化已取消。" : "结构优化已完成。");
 }
 
 void StructureOptimizerWidget::handleFailed(const QString& message)
 {
     _statusLabel->setText(message);
+}
+
+void StructureOptimizerWidget::previewSelectedCandidate()
+{
+    if (!_previewController || !_candidateView || !_candidateView->currentIndex().isValid()) {
+        _statusLabel->setText("没有可预览的候选方案。");
+        return;
+    }
+    const int row = _candidateView->currentIndex().row();
+    const QModelIndex index = _candidateModel->index(row, StructureCandidateTableModel::IndexColumn);
+    const StructureCandidateResult* candidate =
+        _candidateModel->candidateByIndex(index.data().toInt());
+    if (candidate == nullptr || !candidate->feasible) {
+        _statusLabel->setText("只能预览可行候选方案。");
+        return;
+    }
+    QString error;
+    if (!_previewController->preview(collectProblem(), *candidate, &error)) {
+        _statusLabel->setText(error);
+        return;
+    }
+    _statusLabel->setText(QString("正在预览候选方案 #%1。").arg(candidate->index));
+}
+
+void StructureOptimizerWidget::clearCandidatePreview()
+{
+    if (_previewController)
+        _previewController->clearPreview();
+}
+
+void StructureOptimizerWidget::openProject()
+{
+    const QString path = QFileDialog::getOpenFileName(
+        this, "打开结构优化项目", _projectPath,
+        "Structure optimization project (*.structure-optimization.json)");
+    if (path.isEmpty())
+        return;
+    StructureOptimizationProblem problem;
+    int selectedCandidateIndex = -1;
+    QString error;
+    if (!StructureOptimizationProjectAdapter::loadProject(
+            path, problem, &selectedCandidateIndex, &error)) {
+        QMessageBox::warning(this, "打开项目失败", error);
+        return;
+    }
+    _projectPath = path;
+    setProblem(problem);
+    _statusLabel->setText("结构优化项目已载入。");
+}
+
+void StructureOptimizerWidget::saveProject()
+{
+    QString path = _projectPath;
+    if (path.isEmpty()) {
+        path = QFileDialog::getSaveFileName(
+            this, "保存结构优化项目", "structure-optimization.structure-optimization.json",
+            "Structure optimization project (*.structure-optimization.json)");
+    }
+    if (path.isEmpty())
+        return;
+    int selectedCandidateIndex = -1;
+    if (_candidateView != nullptr && _candidateView->currentIndex().isValid())
+        selectedCandidateIndex = _candidateView->currentIndex().siblingAtColumn(
+            StructureCandidateTableModel::IndexColumn).data().toInt();
+    QString error;
+    if (!StructureOptimizationProjectAdapter::saveProject(
+            path, collectProblem(), selectedCandidateIndex, &error)) {
+        QMessageBox::warning(this, "保存项目失败", error);
+        return;
+    }
+    _projectPath = path;
+    _statusLabel->setText("结构优化项目已保存。");
+}
+
+void StructureOptimizerWidget::exportResult()
+{
+    if (_lastResult.candidates.empty()) {
+        QMessageBox::information(this, "导出报告", "尚无可导出的优化结果。");
+        return;
+    }
+    const QString directory = QFileDialog::getExistingDirectory(
+        this, "选择导出目录", _projectPath.isEmpty() ? QString() : QFileInfo(_projectPath).absolutePath());
+    if (directory.isEmpty())
+        return;
+    StructureOptimizationExportRequest request;
+    request.directory = directory;
+    if (_candidateView != nullptr && _candidateView->currentIndex().isValid()) {
+        request.selectedCandidateIndex = _candidateView->currentIndex().siblingAtColumn(
+            StructureCandidateTableModel::IndexColumn).data().toInt();
+        const StructureCandidateResult* candidate =
+            _candidateModel->candidateByIndex(request.selectedCandidateIndex);
+        request.exportCandidateModel = candidate != nullptr && candidate->feasible;
+    } else {
+        request.exportCandidateModel = false;
+    }
+    const StructureOptimizationExportResult exported =
+        StructureOptimizationExportService::exportAll(collectProblem(), _lastResult, request);
+    if (!exported.ok) {
+        QMessageBox::warning(this, "导出失败", exported.errors.join("\n"));
+        return;
+    }
+    _statusLabel->setText("结构优化报告已导出到 " + directory);
 }

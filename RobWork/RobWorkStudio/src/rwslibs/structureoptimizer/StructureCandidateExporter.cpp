@@ -64,6 +64,17 @@ bool StructureCandidateExporter::exportModel(
                                   ? problem.context.robotName
                                   : problem.context.deviceName;
     buildReq.tcpFrame       = problem.context.tcpFrame;
+    if (!buildReq.tcpFrame.empty()) {
+        bool tcpExists = false;
+        for (const JointTransformSpec& frame : exportSpec.transformJoints) {
+            if (frame.name == buildReq.tcpFrame) {
+                tcpExists = true;
+                break;
+            }
+        }
+        if (!tcpExists)
+            buildReq.tcpFrame.clear();
+    }
     buildReq.checkCollision = problem.evaluation.checkCollision;
 
     CandidateModelFactory factory;

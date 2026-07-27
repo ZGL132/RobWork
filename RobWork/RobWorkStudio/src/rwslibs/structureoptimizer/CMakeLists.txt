@@ -35,6 +35,9 @@ if(build)
         StructureOptimizationJson.cpp
         StructureOptimizationCsv.cpp
         StructureCandidateExporter.cpp
+        StructureOptimizationProjectAdapter.cpp
+        StructureOptimizationReportWriter.cpp
+        StructureOptimizationExportService.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -51,6 +54,9 @@ if(build)
         StructureOptimizationJson.hpp
         StructureOptimizationCsv.hpp
         StructureCandidateExporter.hpp
+        StructureOptimizationProjectAdapter.hpp
+        StructureOptimizationReportWriter.hpp
+        StructureOptimizationExportService.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})
@@ -79,6 +85,10 @@ if(build)
         StructureOptimizerWidget.hpp
         StructureOptimizationController.cpp
         StructureOptimizationController.hpp
+        StructureConstraintTableModel.cpp
+        StructureConstraintTableModel.hpp
+        CandidatePreviewController.cpp
+        CandidatePreviewController.hpp
     )
     target_link_libraries(sdurws_structureoptimizer_test
         PRIVATE
@@ -102,6 +112,8 @@ if(build)
         StructureCandidateTableModel.cpp
         StructureOptimizationUiLogic.cpp
         StructureOptimizationController.cpp
+        StructureConstraintTableModel.cpp
+        CandidatePreviewController.cpp
     )
     set(SRC_FILES_HPP
         StructureOptimizerPlugin.hpp
@@ -111,6 +123,8 @@ if(build)
         StructureCandidateTableModel.hpp
         StructureOptimizationUiLogic.hpp
         StructureOptimizationController.hpp
+        StructureConstraintTableModel.hpp
+        CandidatePreviewController.hpp
     )
     if(DEFINED Qt6Core_VERSION)
         qt_add_resources(RccSrcFiles resources.qrc)

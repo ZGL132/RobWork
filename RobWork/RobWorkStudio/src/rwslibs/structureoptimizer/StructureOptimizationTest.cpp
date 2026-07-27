@@ -17,15 +17,23 @@
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureOptimizerWidget.hpp"
 #include "StructureOptimizationController.hpp"
+#include "StructureConstraintTableModel.hpp"
+#include "StructureOptimizationProjectAdapter.hpp"
+#include "StructureOptimizationExportService.hpp"
+#include "CandidatePreviewController.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 
 #include <QApplication>
 #include <QCoreApplication>
+#include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QDir>
 #include <QEventLoop>
+#include <QFileInfo>
 #include <QMetaObject>
 #include <QPushButton>
+#include <QTemporaryDir>
 #include <QTimer>
 #include <QTabWidget>
 
@@ -677,6 +685,8 @@ static void testOptimizer()
 
     rws::StructureOptimizationResult result = optimizer.optimize(
         problem, fakeEval, callbacks);
+    rws::StructureOptimizationResult repeated = optimizer.optimize(
+        problem, fakeEval, callbacks);
 
     // ── Assertions ────────────────────────────────────────────────────
     REQUIRE(!result.canceled);
@@ -691,6 +701,14 @@ static void testOptimizer()
     for (const auto& c : result.candidates)
         if (c.feasible) { foundFeasible = true; break; }
     REQUIRE(foundFeasible);
+    REQUIRE(result.candidates.size() == repeated.candidates.size());
+    for (std::size_t i = 0; i < result.candidates.size() &&
+                            i < repeated.candidates.size(); ++i) {
+        REQUIRE(result.candidates[i].values == repeated.candidates[i].values);
+        REQUIRE(result.candidates[i].feasible == repeated.candidates[i].feasible);
+        REQUIRE(std::abs(result.candidates[i].totalScore -
+                         repeated.candidates[i].totalScore) < 1e-12);
+    }
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -957,6 +975,18 @@ static void testUiTableModelsAndSuggestions()
     REQUIRE(candidateModel.candidates().size() == 1);
     REQUIRE(candidateModel.data(candidateModel.index(0, 0)).toInt() == 7);
 
+    rws::StructureOptimizationResult candidateResult;
+    rws::StructureCandidateResult baseline = candidate;
+    baseline.index = 2;
+    baseline.totalScore = 80.0;
+    candidateResult.baselineCandidateIndex = 2;
+    candidateResult.candidates = {candidate, baseline};
+    candidateModel.setResult(candidateResult);
+    REQUIRE(candidateModel.candidateByIndex(2) != nullptr);
+    REQUIRE(candidateModel.candidateByIndex(2)->totalScore == 80.0);
+    REQUIRE(candidateModel.data(candidateModel.index(0,
+        rws::StructureCandidateTableModel::ImprovementColumn)).toDouble() == 8.5);
+
     rws::RobotDesignContext context;
     context.modelSpec =
         rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
@@ -1011,6 +1041,153 @@ static void testUiTableModelsAndSuggestions()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testConstraintModelAndProjectAdapter()
+{
+    std::printf("testConstraintModelAndProjectAdapter ... ");
+
+    rws::StructureConstraint constraint;
+    constraint.id = "workspace";
+    constraint.label = "Workspace coverage";
+    constraint.targetName = "workcell";
+    constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    constraint.threshold = 0.85;
+    constraint.secondaryThreshold = 0.05;
+    constraint.enabled = true;
+    constraint.hard = true;
+
+    rws::StructureConstraintTableModel constraintModel;
+    constraintModel.setConstraints({constraint});
+    REQUIRE(constraintModel.rowCount() == 1);
+    REQUIRE(constraintModel.constraints().at(0).id == "workspace");
+    REQUIRE(constraintModel.setData(
+        constraintModel.index(0, rws::StructureConstraintTableModel::ThresholdColumn),
+        0.9));
+    REQUIRE(std::abs(constraintModel.constraints().at(0).threshold - 0.9) < 1e-12);
+
+    rws::StructureOptimizationProblem original;
+    original.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    original.context.robotName = original.context.modelSpec.robotName;
+    original.context.deviceName = original.context.modelSpec.robotName;
+    original.constraints.push_back(constraint);
+    original.run.strategy = rws::StructureStrategyKind::Grid;
+    original.run.gridSteps = 7;
+    original.run.localEliteCount = 4;
+    original.weights.preference = 0.12;
+
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const QString path = dir.filePath("example.structure-optimization.json");
+    QString error;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        path, original, 12, &error));
+
+    rws::StructureOptimizationProblem loaded;
+    int selectedCandidateIndex = -1;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        path, loaded, &selectedCandidateIndex, &error));
+    REQUIRE(selectedCandidateIndex == 12);
+    REQUIRE(loaded.context.modelSpec.robotName == original.context.modelSpec.robotName);
+    REQUIRE(loaded.constraints.size() == 1);
+    REQUIRE(loaded.constraints[0].id == "workspace");
+    REQUIRE(loaded.run.strategy == rws::StructureStrategyKind::Grid);
+    REQUIRE(loaded.run.gridSteps == 7);
+    REQUIRE(loaded.run.localEliteCount == 4);
+    REQUIRE(std::abs(loaded.weights.preference - 0.12) < 1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testExportService()
+{
+    std::printf("testExportService ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+
+    rws::StructureOptimizationResult result;
+    rws::StructureCandidateResult candidate;
+    candidate.index = 5;
+    candidate.feasible = true;
+    candidate.status = rws::StructureCandidateStatus::Feasible;
+    candidate.totalScore = 91.5;
+    candidate.raw.weightedReachability = 1.0;
+    result.baselineCandidateIndex = 5;
+    result.bestCandidateIndex = 5;
+    result.candidates.push_back(candidate);
+
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    rws::StructureOptimizationExportRequest request;
+    request.directory = dir.filePath("export");
+    request.selectedCandidateIndex = 5;
+    request.exportCandidateModel = false;
+    const rws::StructureOptimizationExportResult exported =
+        rws::StructureOptimizationExportService::exportAll(problem, result, request);
+    REQUIRE(exported.ok);
+    REQUIRE(exported.writtenFiles.size() == 5);
+    REQUIRE(QFileInfo::exists(dir.filePath("export/report.md")));
+    REQUIRE(QFileInfo::exists(dir.filePath("export/project.structure-optimization.json")));
+
+    const rws::StructureOptimizationExportResult conflict =
+        rws::StructureOptimizationExportService::exportAll(problem, result, request);
+    REQUIRE(!conflict.ok);
+    REQUIRE(!conflict.errors.isEmpty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testCandidatePreviewController()
+{
+    std::printf("testCandidatePreviewController ... ");
+
+    struct FakeHost : rws::IWorkCellPreviewHost {
+        QString current = "original.wc.xml";
+        QString lastOpened;
+        bool openWorkCell(const QString& path, QString*) override {
+            lastOpened = path;
+            current = path;
+            return true;
+        }
+        QString currentWorkCellPath() override { return current; }
+    } host;
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+    rws::StructureCandidateResult candidate;
+    candidate.index = 3;
+    candidate.feasible = true;
+    candidate.status = rws::StructureCandidateStatus::Feasible;
+
+    rws::CandidatePreviewController preview(&host);
+    QString error;
+    const bool previewed = preview.preview(problem, candidate, &error);
+    if (!previewed)
+        std::fprintf(stderr, "  Preview error: %s\n", error.toStdString().c_str());
+    REQUIRE(previewed);
+    REQUIRE(preview.previewedCandidateIndex() == 3);
+    REQUIRE(host.current != "original.wc.xml");
+    preview.clearPreview();
+    REQUIRE(host.current == "original.wc.xml");
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testStructureOptimizerWidgetState()
 {
     std::printf("testStructureOptimizerWidgetState ... ");
@@ -1058,6 +1235,16 @@ static void testStructureOptimizerWidgetState()
     task.point.enabled = true;
     task.required = true;
     problem.tasks.push_back(task);
+    problem.constraints.push_back({"coverage", "Coverage", "workcell",
+                                   rws::StructureConstraintKind::MinimumWorkspaceCoverage,
+                                   0.8, 0.0, true, true});
+    problem.run.strategy = rws::StructureStrategyKind::Grid;
+    problem.run.localEliteCount = 4;
+    problem.run.finalVerificationCount = 2;
+    problem.run.maxLocalSweeps = 17;
+    problem.run.gridSteps = 6;
+    problem.weights.reachability = 0.30;
+    problem.weights.preference = 0.10;
 
     widget.setProblem(problem);
     if (startButton != nullptr)
@@ -1068,6 +1255,22 @@ static void testStructureOptimizerWidgetState()
     REQUIRE(collected.tasks.size() == 1);
     REQUIRE(collected.variables[0].id == "joint1_z");
     REQUIRE(collected.tasks[0].point.id == "target");
+    REQUIRE(collected.constraints.size() == 1);
+    REQUIRE(collected.run.strategy == rws::StructureStrategyKind::Grid);
+    REQUIRE(collected.run.localEliteCount == 4);
+    REQUIRE(collected.run.finalVerificationCount == 2);
+    REQUIRE(collected.run.maxLocalSweeps == 17);
+    REQUIRE(collected.run.gridSteps == 6);
+    REQUIRE(std::abs(collected.weights.reachability - 0.30) < 1e-12);
+    REQUIRE(std::abs(collected.weights.preference - 0.10) < 1e-12);
+
+    REQUIRE(widget.findChild<QComboBox*>("structureOptimizationStrategyCombo") != nullptr);
+    REQUIRE(widget.findChild<QSpinBox*>("structureOptimizationLocalEliteCount") != nullptr);
+    REQUIRE(widget.findChild<QSpinBox*>("structureOptimizationFinalVerificationCount") != nullptr);
+    REQUIRE(widget.findChild<QSpinBox*>("structureOptimizationMaxLocalSweeps") != nullptr);
+    REQUIRE(widget.findChild<QSpinBox*>("structureOptimizationGridSteps") != nullptr);
+    REQUIRE(widget.findChild<QDoubleSpinBox*>("structureOptimizationWeightReachability") != nullptr);
+    REQUIRE(widget.findChild<QDoubleSpinBox*>("structureOptimizationWeightPreference") != nullptr);
 
     rws::StructureOptimizationProblem invalidProblem = problem;
     invalidProblem.context.modelSpec = rws::RobotModelSpec();
@@ -1205,6 +1408,9 @@ int main(int argc, char** argv)
 
     if (suite == "ui") {
         testUiTableModelsAndSuggestions();
+        testConstraintModelAndProjectAdapter();
+        testExportService();
+        testCandidatePreviewController();
         std::fflush(stdout);
         testStructureOptimizationControllerAsyncState();
         std::fflush(stdout);
@@ -1247,6 +1453,9 @@ int main(int argc, char** argv)
     testJsonRoundTrip();
     testCsvExport();
     testUiTableModelsAndSuggestions();
+    testConstraintModelAndProjectAdapter();
+    testExportService();
+    testCandidatePreviewController();
     testStructureOptimizationControllerAsyncState();
 
     std::printf("\n");

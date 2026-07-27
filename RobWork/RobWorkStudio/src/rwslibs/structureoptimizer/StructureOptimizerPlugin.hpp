@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <rws/RobWorkStudioPlugin.hpp>
+#include "CandidatePreviewController.hpp"
 
 namespace rws {
 
@@ -11,7 +12,8 @@ class StructureOptimizerWidget;
 //! @brief StructureOptimizer 插件入口。
 //!
 //! 扩展 RobWorkStudioPlugin, 通过 Qt 插件系统加载。
-class StructureOptimizerPlugin : public rws::RobWorkStudioPlugin
+class StructureOptimizerPlugin : public rws::RobWorkStudioPlugin,
+                                public IWorkCellPreviewHost
 {
     Q_OBJECT
 #ifndef RWS_USE_STATIC_LINK_PLUGINS
@@ -29,6 +31,9 @@ public:
 
     /// @brief 从文件路径加载场景
     void loadSceneFile(const QString& filename);
+
+    QString currentWorkCellPath() override;
+    bool openWorkCell(const QString& path, QString* error) override;
 
 private:
     StructureOptimizerWidget* _widget;

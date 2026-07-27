@@ -36,7 +36,11 @@ QVariant StructureCandidateTableModel::data(const QModelIndex& index, int role) 
         case JointMarginColumn: return candidate.scores.jointMargin;
         case CollisionColumn: return candidate.scores.collision;
         case TotalLengthColumn: return candidate.raw.totalKinematicLength;
-        case ImprovementColumn: return candidate.scores.preference;
+        case ImprovementColumn: {
+            const StructureCandidateResult* baseline =
+                candidateByIndex(_baselineCandidateIndex);
+            return baseline != nullptr ? candidate.totalScore - baseline->totalScore : 0.0;
+        }
         default: return QVariant();
     }
 }
@@ -51,7 +55,7 @@ QVariant StructureCandidateTableModel::headerData(int section,
         return section + 1;
 
     switch (section) {
-        case IndexColumn: return "排名";
+        case IndexColumn: return "编号";
         case FeasibleColumn: return "可行性";
         case TotalScoreColumn: return "总分";
         case ReachabilityColumn: return "可达率";
@@ -69,6 +73,15 @@ void StructureCandidateTableModel::setCandidates(
 {
     beginResetModel();
     _candidates = candidates;
+    _baselineCandidateIndex = -1;
+    endResetModel();
+}
+
+void StructureCandidateTableModel::setResult(const StructureOptimizationResult& result)
+{
+    beginResetModel();
+    _candidates = result.candidates;
+    _baselineCandidateIndex = result.baselineCandidateIndex;
     endResetModel();
 }
 
@@ -76,4 +89,14 @@ const std::vector<StructureCandidateResult>&
 StructureCandidateTableModel::candidates() const
 {
     return _candidates;
+}
+
+const StructureCandidateResult*
+StructureCandidateTableModel::candidateByIndex(int candidateIndex) const
+{
+    for (const StructureCandidateResult& candidate : _candidates) {
+        if (candidate.index == candidateIndex)
+            return &candidate;
+    }
+    return nullptr;
 }

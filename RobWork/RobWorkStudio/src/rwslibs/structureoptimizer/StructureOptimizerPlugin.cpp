@@ -2,6 +2,7 @@
 #include "StructureOptimizerWidget.hpp"
 
 #include <rws/RobWorkStudio.hpp>
+#include <rw/loaders/rwxml/XMLRWLoader.hpp>
 
 namespace rws {
 
@@ -18,7 +19,7 @@ StructureOptimizerPlugin::~StructureOptimizerPlugin()
 
 void StructureOptimizerPlugin::initialize()
 {
-    // Widget 已在构造函数中创建,此处无需额外初始化
+    _widget->setPreviewHost(this);
 }
 
 void StructureOptimizerPlugin::open(rw::models::WorkCell* workcell)
@@ -28,12 +29,46 @@ void StructureOptimizerPlugin::open(rw::models::WorkCell* workcell)
 
 void StructureOptimizerPlugin::close()
 {
+    _widget->setPreviewHost(nullptr);
 }
 
 void StructureOptimizerPlugin::loadSceneFile(const QString& filename)
 {
     if (getRobWorkStudio() != NULL)
         getRobWorkStudio()->setWorkcell(filename.toStdString());
+}
+
+QString StructureOptimizerPlugin::currentWorkCellPath()
+{
+    RobWorkStudio* studio = getRobWorkStudio();
+    if (studio == nullptr || studio->getWorkCell().isNull())
+        return QString();
+    try {
+        const std::string path = static_cast<std::string>(
+            studio->getWorkCell()->getPropertyMap().get<std::string>(
+                rw::loaders::XMLRWLoader::getWorkCellFileNameId()));
+        return QString::fromStdString(path);
+    } catch (...) {
+        return QString();
+    }
+}
+
+bool StructureOptimizerPlugin::openWorkCell(const QString& path, QString* error)
+{
+    RobWorkStudio* studio = getRobWorkStudio();
+    if (studio == nullptr || path.isEmpty()) {
+        if (error != nullptr)
+            *error = "RobWorkStudio is unavailable.";
+        return false;
+    }
+    try {
+        studio->setWorkcell(path.toStdString());
+        return true;
+    } catch (const std::exception& exception) {
+        if (error != nullptr)
+            *error = QString::fromStdString(exception.what());
+        return false;
+    }
 }
 
 } // namespace rws
