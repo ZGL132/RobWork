@@ -1,5 +1,7 @@
 #include "StructureOptimizationValidation.hpp"
 
+#include <rwslibs/robotanalysiscore/EngineeringMetricRegistry.hpp>
+
 #include <cmath>
 #include <set>
 #include <string>
@@ -211,6 +213,52 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
                 }
             }
         }
+    }
+
+    const EngineeringMetricRegistry& registry = EngineeringMetricRegistry::standard();
+    std::set<std::string> objectiveMetricIds;
+    for (const ObjectiveTerm& objective : problem.objectives)
+    {
+        if (!objectiveMetricIds.insert(objective.metricId).second)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.Objective.DuplicateMetric",
+                "Duplicate objective metric ID: '" + objective.metricId + "'."));
+        if (registry.find(objective.metricId) == nullptr)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.Objective.UnknownMetric",
+                "Objective references an unknown metric: '" + objective.metricId + "'."));
+        if (!isFinite(objective.weight) || objective.weight < 0.0)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.Objective.InvalidWeight",
+                "Objective '" + objective.metricId + "' has an invalid weight."));
+        if (!isFinite(objective.normalization.good) ||
+            !isFinite(objective.normalization.bad) ||
+            objective.normalization.good == objective.normalization.bad)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.Objective.InvalidNormalization",
+                "Objective '" + objective.metricId + "' has an invalid normalization range."));
+    }
+
+    for (const ConstraintRule& constraint : problem.metricConstraints)
+    {
+        if (registry.find(constraint.metricId) == nullptr)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.MetricConstraint.UnknownMetric",
+                "Metric constraint references an unknown metric: '" + constraint.metricId + "'."));
+        if (!isFinite(constraint.threshold))
+            warnings.push_back(makeWarning(
+                "StructureOptimization.MetricConstraint.InvalidThreshold",
+                "Metric constraint '" + constraint.metricId + "' has a non-finite threshold."));
+    }
+
+    for (const StructureDesignVariable& variable : problem.variables)
+    {
+        if (variable.enabled &&
+            variable.domainDefinition.domain != DesignVariableDomain::Continuous)
+            warnings.push_back(makeWarning(
+                "StructureOptimization.Variable.Domain.Unsupported",
+                "Integer and discrete variables are not supported by the P1 search strategies: '" +
+                    variable.id + "'."));
     }
 
     return warnings;

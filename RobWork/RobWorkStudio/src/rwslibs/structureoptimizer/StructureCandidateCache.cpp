@@ -1,5 +1,10 @@
 #include "StructureCandidateCache.hpp"
 
+#include "StructureOptimizationJson.hpp"
+
+#include <rwslibs/robotanalysiscore/RobotAnalysisJson.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+
 #include <cmath>
 #include <cstddef>
 #include <functional>
@@ -25,8 +30,14 @@ bool StructureCandidateCache::Key::operator<(const Key& rhs) const
 {
     if (quantizedValues != rhs.quantizedValues)
         return quantizedValues < rhs.quantizedValues;
-    if (evaluationHash != rhs.evaluationHash)
-        return evaluationHash < rhs.evaluationHash;
+    if (modelHash != rhs.modelHash)
+        return modelHash < rhs.modelHash;
+    if (taskEnvironmentHash != rhs.taskEnvironmentHash)
+        return taskEnvironmentHash < rhs.taskEnvironmentHash;
+    if (evaluatorHash != rhs.evaluatorHash)
+        return evaluatorHash < rhs.evaluatorHash;
+    if (configurationHash != rhs.configurationHash)
+        return configurationHash < rhs.configurationHash;
     return stage < rhs.stage;
 }
 
@@ -54,6 +65,13 @@ StructureCandidateCache::Key StructureCandidateCache::makeKey(
             key.quantizedValues.push_back(qv);
         }
     }
+
+    key.modelHash = std::hash<std::string>{}(
+        RobotModelSpecJson::toJson(problem.context.modelSpec));
+    key.taskEnvironmentHash = std::hash<std::string>{}(
+        RobotAnalysisJson::toJson(problem.context));
+    key.evaluatorHash = std::hash<std::string>{}(
+        problem.evaluation.evaluatorId + "@" + problem.evaluation.evaluatorVersion);
 
     // Evaluation hash: combine all config fields that affect evaluation outcome
     std::size_t h = 0;
@@ -98,7 +116,9 @@ StructureCandidateCache::Key StructureCandidateCache::makeKey(
     // -- checkCollision --
     h = hashCombine(h, static_cast<std::size_t>(ev.checkCollision));
 
-    key.evaluationHash = h;
+    h = hashCombine(h, std::hash<std::string>{}(
+        StructureOptimizationJson::problemToJson(problem)));
+    key.configurationHash = h;
     return key;
 }
 

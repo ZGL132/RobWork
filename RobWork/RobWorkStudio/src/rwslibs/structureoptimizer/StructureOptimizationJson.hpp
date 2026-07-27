@@ -11,7 +11,7 @@ namespace rws {
 //! 使用 QJsonObject / QJsonDocument 实现。
 class StructureOptimizationJson {
   public:
-    static const int SchemaVersion = 1;
+    static const int SchemaVersion = 2;
 
     //! @brief 将优化问题序列化为 JSON 字符串。
     static std::string problemToJson(const StructureOptimizationProblem& problem);

@@ -1,5 +1,7 @@
 #include "StructureObjectiveScorer.hpp"
 
+#include "StructureOptimizationObjectiveProfile.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -38,6 +40,53 @@ double scoreLowValueIsBetter(double value, double good, double bad)
     return 1.0 - clampVal((value - good) / (bad - good), 0.0, 1.0);
 }
 
+bool metricValue(const StructureRawMetrics& raw, const std::string& metricId,
+                 double& value)
+{
+    if (metricId == "kinematics.reachability.weighted")
+        value = raw.weightedReachability;
+    else if (metricId == "kinematics.manipulability.p10")
+        value = raw.manipulabilityP10;
+    else if (metricId == "kinematics.joint_margin.p10")
+        value = raw.jointMarginP10;
+    else if (metricId == "kinematics.joint_margin.minimum")
+        value = raw.minimumJointMargin;
+    else if (metricId == "kinematics.workspace.coverage")
+        value = raw.workspaceCoverage;
+    else if (metricId == "collision.free_rate")
+        value = raw.collisionFreeRate;
+    else if (metricId == "geometry.compactness")
+        value = scoreLowValueIsBetter(raw.totalKinematicLength, 0.8, 2.5);
+    else if (metricId == "structure.preference")
+        value = raw.engineeringPreference;
+    else
+        return false;
+    return true;
+}
+
+double normalizeMetric(double value, const ObjectiveTerm& objective)
+{
+    const double good = objective.normalization.good;
+    const double bad = objective.normalization.bad;
+    double score = objective.direction == OptimizationDirection::Maximize
+        ? (good <= bad ? (value >= good ? 1.0 : 0.0) : (value - bad) / (good - bad))
+        : (bad <= good ? (value <= good ? 1.0 : 0.0) : 1.0 - (value - good) / (bad - good));
+    return objective.normalization.clamp ? clampVal(score, 0.0, 1.0) : score;
+}
+
+bool satisfies(double value, const ConstraintRule& constraint)
+{
+    switch (constraint.comparison) {
+    case ComparisonOperator::LessThanOrEqual:
+        return value <= constraint.threshold;
+    case ComparisonOperator::GreaterThanOrEqual:
+        return value >= constraint.threshold;
+    case ComparisonOperator::Equal:
+        return value == constraint.threshold;
+    }
+    return false;
+}
+
 } // anonymous namespace
 
 // ===========================================================================
@@ -48,7 +97,6 @@ void StructureObjectiveScorer::score(
     StructureCandidateResult& candidate) const
 {
     const auto& raw     = candidate.raw;
-    const auto& weights = problem.weights;
     auto& scores        = candidate.scores;
 
     // Reset
@@ -87,12 +135,15 @@ void StructureObjectiveScorer::score(
     //  Weighted total score  →  [0, 100]
     // =====================================================================
     double total = 0.0;
-    total += weights.reachability   * scores.reachability;
-    total += weights.manipulability * scores.manipulability;
-    total += weights.jointMargin    * scores.jointMargin;
-    total += weights.collision      * scores.collision;
-    total += weights.compactness    * scores.compactness;
-    total += weights.preference     * scores.preference;
+    for (const ObjectiveTerm& objective :
+         StructureOptimizationObjectiveProfile::effectiveObjectives(problem))
+    {
+        if (!objective.enabled || objective.weight <= 0.0)
+            continue;
+        double value = 0.0;
+        if (metricValue(raw, objective.metricId, value))
+            total += objective.weight * normalizeMetric(value, objective);
+    }
     candidate.totalScore = clampVal(total * 100.0, 0.0, 100.0);
 
     // =====================================================================
@@ -150,6 +201,20 @@ void StructureObjectiveScorer::score(
         {
             candidate.feasible = false;
             candidate.violatedConstraints.push_back(constraint.id);
+        }
+    }
+
+    for (const ConstraintRule& constraint : problem.metricConstraints)
+    {
+        if (!constraint.enabled || !constraint.hard)
+            continue;
+
+        double value = 0.0;
+        if (!metricValue(raw, constraint.metricId, value) ||
+            !satisfies(value, constraint))
+        {
+            candidate.feasible = false;
+            candidate.violatedConstraints.push_back(constraint.metricId);
         }
     }
 

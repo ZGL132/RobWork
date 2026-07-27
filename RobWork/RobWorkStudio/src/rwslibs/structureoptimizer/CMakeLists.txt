@@ -34,6 +34,7 @@ if(build)
         StructureSensitivityAnalyzer.cpp
         StructureOptimizationJson.cpp
         StructureOptimizationCsv.cpp
+        StructureOptimizationObjectiveProfile.cpp
         StructureCandidateExporter.cpp
         StructureOptimizationProjectAdapter.cpp
         StructureOptimizationReportWriter.cpp
@@ -53,6 +54,7 @@ if(build)
         StructureSensitivityAnalyzer.hpp
         StructureOptimizationJson.hpp
         StructureOptimizationCsv.hpp
+        StructureOptimizationObjectiveProfile.hpp
         StructureCandidateExporter.hpp
         StructureOptimizationProjectAdapter.hpp
         StructureOptimizationReportWriter.hpp

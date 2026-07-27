@@ -16,6 +16,8 @@ if(build)
         RobotAnalysisJson.cpp
         RobotAnalysisCsv.cpp
         RobotAnalysisValidation.cpp
+        EngineeringMetricRegistry.cpp
+        EngineeringEvaluationJson.cpp
     )
 
     set(SRC_FILES_HPP
@@ -23,6 +25,11 @@ if(build)
         RobotAnalysisJson.hpp
         RobotAnalysisCsv.hpp
         RobotAnalysisValidation.hpp
+        EngineeringEvaluationTypes.hpp
+        EngineeringMetricRegistry.hpp
+        EngineeringEvaluationJson.hpp
+        IEngineeringEvaluator.hpp
+        EngineeringOptimizationTypes.hpp
     )
 
     rws_add_component(

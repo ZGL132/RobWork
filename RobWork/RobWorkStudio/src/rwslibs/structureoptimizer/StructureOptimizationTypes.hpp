@@ -3,6 +3,7 @@
 
 // 基础类型: TaskPoint, RobotDesignContext, AnalysisWarning, KinematicThresholds, WorkspaceSamplingConfig
 #include <rwslibs/robotanalysiscore/RobotAnalysisTypes.hpp>
+#include <rwslibs/robotanalysiscore/EngineeringOptimizationTypes.hpp>
 #include <rwslibs/kinematicanalysis/KinematicAnalysisTypes.hpp>
 
 #include <array>
@@ -107,6 +108,7 @@ struct StructureDesignVariable
 
     bool enabled                  = true;  //!< 是否参与优化
     bool syncAssociatedGeometry   = false; //!< 是否自动同步关联连杆几何
+    EngineeringVariableDomainDefinition domainDefinition;
 };
 
 // =============================================================================
@@ -164,6 +166,8 @@ struct StructureEvaluationConfig
     WorkspaceSamplingConfig verifiedWorkspace; //!< 精确验证阶段的采样参数
     WorkspaceCoverageBox  coverageBox;       //!< 工作空间覆盖盒
     bool checkCollision = true;              //!< 是否启用碰撞检测
+    std::string evaluatorId = "structure.kinematics";
+    std::string evaluatorVersion = "1";
 };
 
 // =============================================================================
@@ -316,6 +320,8 @@ struct StructureOptimizationProblem
     std::vector< StructureConstraint >      constraints; //!< 约束条件列表
 
     StructureOptimizationWeights    weights;    //!< 多目标权重
+    std::vector< ObjectiveTerm >      objectives; //!< 通用指标目标 (P1 起可持久化)
+    std::vector< ConstraintRule >     metricConstraints; //!< 通用指标约束
     StructureEvaluationConfig       evaluation; //!< 评估配置
     StructureOptimizationRunConfig  run;        //!< 运行配置
 };

@@ -15,6 +15,8 @@ std::string StructureOptimizationReportWriter::write(
     out << "- Robot: " << problem.context.robotName << "\n";
     out << "- Strategy: " << static_cast<int>(problem.run.strategy) << "\n";
     out << "- Random seed: " << problem.run.randomSeed << "\n";
+    out << "- Evaluator: " << problem.evaluation.evaluatorId << "@"
+        << problem.evaluation.evaluatorVersion << "\n";
     out << "- Variables: " << problem.variables.size() << "\n";
     out << "- Tasks: " << problem.tasks.size() << "\n";
     out << "- Constraints: " << problem.constraints.size() << "\n\n";

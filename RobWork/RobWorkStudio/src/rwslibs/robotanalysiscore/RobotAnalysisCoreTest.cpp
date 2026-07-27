@@ -2,6 +2,9 @@
 #include "RobotAnalysisJson.hpp"
 #include "RobotAnalysisTypes.hpp"
 #include "RobotAnalysisValidation.hpp"
+#include "EngineeringEvaluationJson.hpp"
+#include "EngineeringEvaluationTypes.hpp"
+#include "EngineeringMetricRegistry.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
@@ -356,6 +359,72 @@ int runContextMissingModel ()
     return 0;
 }
 
+int runEngineeringEvaluation ()
+{
+    const rws::EngineeringMetricRegistry& registry =
+        rws::EngineeringMetricRegistry::standard ();
+    if (registry.find ("kinematics.reachability.weighted") == nullptr)
+        return fail ("Standard metric registry should include weighted reachability.");
+
+    rws::EngineeringEvaluationResult result;
+    result.providerId = "test.kinematics";
+    result.providerVersion = "1.0";
+    result.status = rws::EngineeringEvaluationStatus::Success;
+    result.elapsedSeconds = 0.125;
+    result.inputSnapshot.modelHash = "model-a";
+    result.inputSnapshot.configurationHash = "config-a";
+    result.metrics.push_back ({"kinematics.reachability.weighted", 1.0, "ratio",
+                               rws::EngineeringMetricStatus::Valid, "test.kinematics"});
+    result.constraints.push_back ({"kinematics.reachability.weighted", ">=", 1.0, 1.0,
+                                   true, true, ""});
+    result.artifacts.push_back ({"ik.solutions", "application/json", "{}"});
+    result.warnings.push_back ({"Kinematics.NearLimit", "Joint is near its limit.",
+                                "test.kinematics", rws::AnalysisStatus::Warning});
+
+    std::vector< rws::AnalysisWarning > warnings;
+    if (!registry.validate (result, &warnings) || !warnings.empty ())
+        return fail ("A valid engineering result should pass registry validation.");
+
+    const std::string json = rws::EngineeringEvaluationJson::toJson (result);
+    rws::EngineeringEvaluationResult decoded;
+    std::string error;
+    if (!rws::EngineeringEvaluationJson::fromJson (json, decoded, &error))
+        return fail ("Engineering evaluation JSON should round trip: " + error);
+    if (decoded.metrics.size () != 1 || decoded.metrics.front ().metricId !=
+                                            "kinematics.reachability.weighted" ||
+        decoded.artifacts.size () != 1 || decoded.warnings.size () != 1 ||
+        decoded.warnings.front ().code != "Kinematics.NearLimit" ||
+        std::abs (decoded.elapsedSeconds - 0.125) > 1e-12 ||
+        decoded.inputSnapshot.modelHash != "model-a")
+        return fail ("Engineering evaluation JSON changed the result payload.");
+
+    rws::EngineeringEvaluationResult invalid = result;
+    invalid.metrics.push_back (invalid.metrics.front ());
+    if (registry.validate (invalid, &warnings) ||
+        !hasCode (warnings, "EngineeringMetric.DuplicateId"))
+        return fail ("Duplicate metric IDs should be rejected.");
+
+    invalid = result;
+    invalid.metrics.front ().metricId = "unknown.metric";
+    if (registry.validate (invalid, &warnings) ||
+        !hasCode (warnings, "EngineeringMetric.UnknownId"))
+        return fail ("Unknown metric IDs should be rejected.");
+
+    invalid = result;
+    invalid.metrics.front ().unit = "N";
+    if (registry.validate (invalid, &warnings) ||
+        !hasCode (warnings, "EngineeringMetric.UnitMismatch"))
+        return fail ("Metric units must match the registered metric.");
+
+    invalid = result;
+    invalid.metrics.front ().value = std::numeric_limits< double >::infinity ();
+    if (registry.validate (invalid, &warnings) ||
+        !hasCode (warnings, "EngineeringMetric.Value.NonFinite"))
+        return fail ("Non-finite metric values should be rejected.");
+
+    return 0;
+}
+
 int runAll ()
 {
     if (const int rc = runTypes ())
@@ -368,7 +437,9 @@ int runAll ()
         return rc;
     if (const int rc = runContextFullModel ())
         return rc;
-    return runContextMissingModel ();
+    if (const int rc = runContextMissingModel ())
+        return rc;
+    return runEngineeringEvaluation ();
 }
 }    // namespace
 
@@ -390,6 +461,8 @@ int main (int argc, char** argv)
         rc = runContextFullModel ();
     else if (suite == "contextMissingModel")
         rc = runContextMissingModel ();
+    else if (suite == "engineering")
+        rc = runEngineeringEvaluation ();
     else
         return fail ("Unknown RobotAnalysisCore test suite: " + suite);
 

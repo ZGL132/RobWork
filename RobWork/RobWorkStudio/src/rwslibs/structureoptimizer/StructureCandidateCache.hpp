@@ -25,7 +25,10 @@ class StructureCandidateCache {
   private:
     struct Key {
         std::vector<long long> quantizedValues;
-        std::size_t evaluationHash = 0;
+        std::size_t modelHash = 0;
+        std::size_t taskEnvironmentHash = 0;
+        std::size_t evaluatorHash = 0;
+        std::size_t configurationHash = 0;
         StructureEvaluationStage stage = StructureEvaluationStage::Quick;
         bool operator<(const Key& rhs) const;
     };

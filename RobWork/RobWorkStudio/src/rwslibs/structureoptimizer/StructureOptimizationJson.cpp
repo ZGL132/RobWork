@@ -1,5 +1,6 @@
 #include "StructureOptimizationJson.hpp"
 
+#include "StructureOptimizationObjectiveProfile.hpp"
 #include "StructureOptimizationTypes.hpp"
 
 #include <rwslibs/robotanalysiscore/RobotAnalysisJson.hpp>
@@ -57,6 +58,51 @@ static StructureVariableKind variableKindFromJson(const QJsonObject& obj, bool* 
     if (k == "LinkHeight")         return StructureVariableKind::LinkHeight;
     if (ok) *ok = false;
     return StructureVariableKind::JointPositionX;
+}
+
+static QString variableDomainToString(DesignVariableDomain domain)
+{
+    switch (domain) {
+    case DesignVariableDomain::Continuous: return "Continuous";
+    case DesignVariableDomain::Integer: return "Integer";
+    case DesignVariableDomain::Discrete: return "Discrete";
+    }
+    return "Continuous";
+}
+
+static DesignVariableDomain variableDomainFromString(const QString& value)
+{
+    if (value == "Integer") return DesignVariableDomain::Integer;
+    if (value == "Discrete") return DesignVariableDomain::Discrete;
+    return DesignVariableDomain::Continuous;
+}
+
+static QString directionToString(OptimizationDirection direction)
+{
+    return direction == OptimizationDirection::Minimize ? "Minimize" : "Maximize";
+}
+
+static OptimizationDirection directionFromString(const QString& value)
+{
+    return value == "Minimize" ? OptimizationDirection::Minimize :
+                                  OptimizationDirection::Maximize;
+}
+
+static QString comparisonToString(ComparisonOperator comparison)
+{
+    switch (comparison) {
+    case ComparisonOperator::LessThanOrEqual: return "LessThanOrEqual";
+    case ComparisonOperator::GreaterThanOrEqual: return "GreaterThanOrEqual";
+    case ComparisonOperator::Equal: return "Equal";
+    }
+    return "GreaterThanOrEqual";
+}
+
+static ComparisonOperator comparisonFromString(const QString& value)
+{
+    if (value == "LessThanOrEqual") return ComparisonOperator::LessThanOrEqual;
+    if (value == "Equal") return ComparisonOperator::Equal;
+    return ComparisonOperator::GreaterThanOrEqual;
 }
 
 static QJsonObject constraintKindToJson(StructureConstraintKind kind)
@@ -184,6 +230,11 @@ static QJsonObject designVariableToJson(const StructureDesignVariable& var)
     obj["preferenceWeight"] = var.preferenceWeight;
     obj["enabled"]        = var.enabled;
     obj["syncAssociatedGeometry"] = var.syncAssociatedGeometry;
+    obj["domain"] = variableDomainToString(var.domainDefinition.domain);
+    QJsonArray discreteOptions;
+    for (const std::string& option : var.domainDefinition.discreteOptions)
+        discreteOptions.append(QString::fromStdString(option));
+    obj["discreteOptions"] = discreteOptions;
     return obj;
 }
 
@@ -203,6 +254,9 @@ static StructureDesignVariable designVariableFromJson(const QJsonObject& obj)
     var.preferenceWeight = obj["preferenceWeight"].toDouble();
     var.enabled        = obj["enabled"].toBool(true);
     var.syncAssociatedGeometry = obj["syncAssociatedGeometry"].toBool(false);
+    var.domainDefinition.domain = variableDomainFromString(obj["domain"].toString());
+    for (const QJsonValue& option : obj["discreteOptions"].toArray())
+        var.domainDefinition.discreteOptions.push_back(option.toString().toStdString());
     return var;
 }
 
@@ -256,10 +310,61 @@ static void weightsFromJson(const QJsonObject& obj, StructureOptimizationWeights
     w.preference     = obj["preference"    ].toDouble(0.05);
 }
 
+static QJsonObject objectiveToJson(const ObjectiveTerm& objective)
+{
+    QJsonObject obj;
+    obj["metricId"] = QString::fromStdString(objective.metricId);
+    obj["direction"] = directionToString(objective.direction);
+    obj["normalization"] = QJsonObject{{"good", objective.normalization.good},
+                                         {"bad", objective.normalization.bad},
+                                         {"clamp", objective.normalization.clamp}};
+    obj["weight"] = objective.weight;
+    obj["enabled"] = objective.enabled;
+    return obj;
+}
+
+static ObjectiveTerm objectiveFromJson(const QJsonObject& obj)
+{
+    ObjectiveTerm objective;
+    objective.metricId = obj["metricId"].toString().toStdString();
+    objective.direction = directionFromString(obj["direction"].toString());
+    const QJsonObject normalization = obj["normalization"].toObject();
+    objective.normalization.good = normalization["good"].toDouble(1.0);
+    objective.normalization.bad = normalization["bad"].toDouble(0.0);
+    objective.normalization.clamp = normalization["clamp"].toBool(true);
+    objective.weight = obj["weight"].toDouble();
+    objective.enabled = obj["enabled"].toBool(true);
+    return objective;
+}
+
+static QJsonObject metricConstraintToJson(const ConstraintRule& constraint)
+{
+    QJsonObject obj;
+    obj["metricId"] = QString::fromStdString(constraint.metricId);
+    obj["comparison"] = comparisonToString(constraint.comparison);
+    obj["threshold"] = constraint.threshold;
+    obj["hard"] = constraint.hard;
+    obj["enabled"] = constraint.enabled;
+    return obj;
+}
+
+static ConstraintRule metricConstraintFromJson(const QJsonObject& obj)
+{
+    ConstraintRule constraint;
+    constraint.metricId = obj["metricId"].toString().toStdString();
+    constraint.comparison = comparisonFromString(obj["comparison"].toString());
+    constraint.threshold = obj["threshold"].toDouble();
+    constraint.hard = obj["hard"].toBool(true);
+    constraint.enabled = obj["enabled"].toBool(true);
+    return constraint;
+}
+
 static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
 {
     QJsonObject obj;
     obj["checkCollision"] = cfg.checkCollision;
+    obj["evaluatorId"] = QString::fromStdString(cfg.evaluatorId);
+    obj["evaluatorVersion"] = QString::fromStdString(cfg.evaluatorVersion);
     // thresholds / workspace 暂简化
     return obj;
 }
@@ -267,6 +372,10 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
 static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig& cfg)
 {
     cfg.checkCollision = obj["checkCollision"].toBool(true);
+    cfg.evaluatorId = obj["evaluatorId"].toString(
+        QString::fromStdString(cfg.evaluatorId)).toStdString();
+    cfg.evaluatorVersion = obj["evaluatorVersion"].toString(
+        QString::fromStdString(cfg.evaluatorVersion)).toStdString();
 }
 
 static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
@@ -369,8 +478,21 @@ std::string StructureOptimizationJson::problemToJson(
         consArr.append(constraintToJson(c));
     root["constraints"] = consArr;
 
-    // weights
+    // The legacy weights remain for compatibility, while objectives are the
+    // canonical v2 representation.
     root["weights"] = weightsToJson(problem.weights);
+    const std::vector<ObjectiveTerm> objectives = problem.objectives.empty()
+        ? StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights)
+        : problem.objectives;
+    QJsonArray objectivesArr;
+    for (const ObjectiveTerm& objective : objectives)
+        objectivesArr.append(objectiveToJson(objective));
+    root["objectives"] = objectivesArr;
+
+    QJsonArray metricConstraintsArr;
+    for (const ConstraintRule& constraint : problem.metricConstraints)
+        metricConstraintsArr.append(metricConstraintToJson(constraint));
+    root["metricConstraints"] = metricConstraintsArr;
 
     // evaluationConfig
     root["evaluationConfig"] = evalConfigToJson(problem.evaluation);
@@ -404,7 +526,7 @@ bool StructureOptimizationJson::problemFromJson(
 
     // schemaVersion
     const int sv = root["schemaVersion"].toInt();
-    if (sv != SchemaVersion) {
+    if (sv != 1 && sv != SchemaVersion) {
         if (error) *error = "Unsupported schema version: " + std::to_string(sv);
         return false;
     }
@@ -447,6 +569,19 @@ bool StructureOptimizationJson::problemFromJson(
     // weights
     if (root.contains("weights"))
         weightsFromJson(root["weights"].toObject(), problem.weights);
+
+    problem.objectives.clear();
+    if (root.contains("objectives")) {
+        for (const QJsonValue& value : root["objectives"].toArray())
+            problem.objectives.push_back(objectiveFromJson(value.toObject()));
+    }
+    else {
+        problem.objectives = StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights);
+    }
+
+    problem.metricConstraints.clear();
+    for (const QJsonValue& value : root["metricConstraints"].toArray())
+        problem.metricConstraints.push_back(metricConstraintFromJson(value.toObject()));
 
     // evaluationConfig
     if (root.contains("evaluationConfig"))

@@ -1,5 +1,7 @@
 #include "StructureOptimizerWidget.hpp"
 
+#include "StructureOptimizationObjectiveProfile.hpp"
+
 #include "OptimizationTaskTableModel.hpp"
 #include "StructureCandidateTableModel.hpp"
 #include "StructureConstraintTableModel.hpp"
@@ -200,6 +202,10 @@ StructureOptimizationProblem StructureOptimizerWidget::collectProblem() const
     problem.weights.collision = _weightSpins[3]->value();
     problem.weights.compactness = _weightSpins[4]->value();
     problem.weights.preference = _weightSpins[5]->value();
+    if (problem.objectives.empty() ||
+        StructureOptimizationObjectiveProfile::isLegacyProfile(problem.objectives))
+        problem.objectives =
+            StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights);
     return problem;
 }
 

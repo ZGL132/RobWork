@@ -17,9 +17,11 @@
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureOptimizerWidget.hpp"
 #include "StructureOptimizationController.hpp"
+#include "StructureOptimizationObjectiveProfile.hpp"
 #include "StructureConstraintTableModel.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationExportService.hpp"
+#include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
@@ -85,6 +87,12 @@ static void testProblemDefaultsAndValidation()
     REQUIRE(problem.run.candidateCount == 300);
     REQUIRE(problem.run.eliteCount == 20);
     REQUIRE(problem.run.localEliteCount == 5);
+
+    const std::vector< rws::ObjectiveTerm > legacyObjectives =
+        rws::StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights);
+    REQUIRE(legacyObjectives.size() == 6);
+    REQUIRE(legacyObjectives[0].metricId == "kinematics.reachability.weighted");
+    REQUIRE(std::abs(legacyObjectives[0].weight - 0.35) < 1e-12);
     REQUIRE(problem.run.finalVerificationCount == 3);
     REQUIRE(problem.run.maxLocalSweeps == 20);
     REQUIRE(problem.run.gridSteps == 3);
@@ -304,6 +312,38 @@ static void testScorerWithConstraints()
 //  测试用例: 硬约束检查
 // =============================================================================
 
+static void testGenericObjectivesAndConstraints()
+{
+    std::printf("testGenericObjectivesAndConstraints ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.objectives = {
+        {"structure.preference", rws::OptimizationDirection::Maximize,
+         {1.0, 0.0, true}, 1.0, true}
+    };
+    problem.metricConstraints = {
+        {"collision.free_rate", rws::ComparisonOperator::GreaterThanOrEqual,
+         0.9, true, true}
+    };
+
+    rws::StructureCandidateResult candidate;
+    candidate.raw.engineeringPreference = 0.8;
+    candidate.raw.collisionFreeRate = 0.8;
+
+    rws::StructureObjectiveScorer scorer;
+    scorer.score(problem, candidate);
+
+    REQUIRE(std::abs(candidate.totalScore - 80.0) < 1e-12);
+    REQUIRE(!candidate.feasible);
+    REQUIRE(candidate.violatedConstraints.size() == 1);
+    REQUIRE(candidate.violatedConstraints[0] == "collision.free_rate");
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testHardConstraints()
 {
     std::printf("testHardConstraints ... ");
@@ -508,6 +548,13 @@ static void testCache()
 
     // ── 改变 checkCollision → 应未命中 ──────────────────────────────
     problem.evaluation.checkCollision = false;
+    foundResult = cache.find(problem, values,
+                             rws::StructureEvaluationStage::Quick, found);
+    REQUIRE(!foundResult);
+    REQUIRE(cache.hitCount() == 1);
+
+    problem.evaluation.checkCollision = true;
+    problem.context.modelSpec.robotName = "ChangedModel";
     foundResult = cache.find(problem, values,
                              rws::StructureEvaluationStage::Quick, found);
     REQUIRE(!foundResult);
@@ -816,6 +863,8 @@ static void testJsonRoundTrip()
          rws::StructureVariableKind::JointPositionX,
          0.5, -1.0, 1.0, 0.1, 0.3, 0.5, true, false}
     };
+    problem.variables[0].domainDefinition.domain = rws::DesignVariableDomain::Discrete;
+    problem.variables[0].domainDefinition.discreteOptions = {"0.4", "0.5", "0.6"};
 
     problem.constraints = {
         {"c1", "Constraint 1", "", rws::StructureConstraintKind::ModelValid,
@@ -824,10 +873,21 @@ static void testJsonRoundTrip()
 
     problem.run.candidateCount = 100;
     problem.run.randomSeed     = 42;
+    problem.evaluation.evaluatorId = "test.kinematics";
+    problem.evaluation.evaluatorVersion = "2.0";
+    problem.objectives = {
+        {"kinematics.reachability.weighted", rws::OptimizationDirection::Maximize,
+         {1.0, 0.0, true}, 0.7, true}
+    };
+    problem.metricConstraints = {
+        {"collision.free_rate", rws::ComparisonOperator::GreaterThanOrEqual,
+         0.95, true, true}
+    };
 
     // 序列化
     const std::string json = rws::StructureOptimizationJson::problemToJson(problem);
     REQUIRE(!json.empty());
+    REQUIRE(json.find("\"schemaVersion\": 2") != std::string::npos);
 
     // 反序列化
     rws::StructureOptimizationProblem parsed;
@@ -843,10 +903,43 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.variables.size() == 1);
     REQUIRE(parsed.variables[0].id == "a");
     REQUIRE(std::abs(parsed.variables[0].currentValue - 0.5) < 1e-12);
+    REQUIRE(parsed.variables[0].domainDefinition.domain == rws::DesignVariableDomain::Discrete);
+    REQUIRE(parsed.variables[0].domainDefinition.discreteOptions.size() == 3);
     REQUIRE(parsed.constraints.size() == 1);
     REQUIRE(parsed.constraints[0].id == "c1");
     REQUIRE(parsed.run.candidateCount == 100);
     REQUIRE(parsed.run.randomSeed == 42u);
+    REQUIRE(parsed.evaluation.evaluatorId == "test.kinematics");
+    REQUIRE(parsed.evaluation.evaluatorVersion == "2.0");
+    REQUIRE(parsed.objectives.size() == 1);
+    REQUIRE(parsed.objectives[0].metricId == "kinematics.reachability.weighted");
+    REQUIRE(std::abs(parsed.objectives[0].weight - 0.7) < 1e-12);
+    REQUIRE(parsed.metricConstraints.size() == 1);
+    REQUIRE(parsed.metricConstraints[0].metricId == "collision.free_rate");
+
+    const std::string report = rws::StructureOptimizationReportWriter::write(
+        parsed, rws::StructureOptimizationResult{});
+    REQUIRE(report.find("test.kinematics@2.0") != std::string::npos);
+
+    const std::string legacyJson = R"json({
+        "schemaVersion": 1,
+        "type": "StructureOptimizationProblem",
+        "weights": {
+            "reachability": 0.6,
+            "manipulability": 0.0,
+            "jointMargin": 0.0,
+            "collision": 0.0,
+            "compactness": 0.0,
+            "preference": 0.4
+        }
+    })json";
+    rws::StructureOptimizationProblem migrated;
+    ok = rws::StructureOptimizationJson::problemFromJson(legacyJson, migrated, &error);
+    REQUIRE(ok);
+    REQUIRE(migrated.objectives.size() == 6);
+    REQUIRE(std::abs(migrated.objectives[0].weight - 0.6) < 1e-12);
+    const std::string upgradedJson = rws::StructureOptimizationJson::problemToJson(migrated);
+    REQUIRE(upgradedJson.find("\"schemaVersion\": 2") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -1263,6 +1356,9 @@ static void testStructureOptimizerWidgetState()
     REQUIRE(collected.run.gridSteps == 6);
     REQUIRE(std::abs(collected.weights.reachability - 0.30) < 1e-12);
     REQUIRE(std::abs(collected.weights.preference - 0.10) < 1e-12);
+    REQUIRE(rws::StructureOptimizationObjectiveProfile::isLegacyProfile(
+        collected.objectives));
+    REQUIRE(std::abs(collected.objectives[0].weight - 0.30) < 1e-12);
 
     REQUIRE(widget.findChild<QComboBox*>("structureOptimizationStrategyCombo") != nullptr);
     REQUIRE(widget.findChild<QSpinBox*>("structureOptimizationLocalEliteCount") != nullptr);
@@ -1436,6 +1532,7 @@ int main(int argc, char** argv)
     testMutator();
     testScorer();
     testScorerWithConstraints();
+    testGenericObjectivesAndConstraints();
     testHardConstraints();
 
     printf("\n");
