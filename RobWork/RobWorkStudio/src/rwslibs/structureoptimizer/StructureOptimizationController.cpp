@@ -1,7 +1,8 @@
 #include "StructureOptimizationController.hpp"
 
-#include "HybridStructureOptimizer.hpp"
-#include "StructureCandidateEvaluator.hpp"
+#include "EngineeringEvaluatorPipeline.hpp"
+#include "KinematicEngineeringEvaluator.hpp"
+#include "SystemEngineeringOptimizer.hpp"
 
 #include <QMetaObject>
 #include <QtConcurrent>
@@ -153,9 +154,11 @@ StructureOptimizationController::runDefaultOptimization(
     const StructureOptimizationProblem& problem,
     const StructureOptimizationCallbacks& callbacks)
 {
-    StructureCandidateEvaluator evaluator;
-    HybridStructureOptimizer optimizer;
-    return optimizer.optimize(problem, evaluator, callbacks);
+    KinematicEngineeringEvaluator evaluator(problem);
+    EngineeringEvaluatorPipeline pipeline;
+    pipeline.addEvaluator(evaluator);
+    SystemEngineeringOptimizer optimizer;
+    return optimizer.optimize(problem, pipeline, callbacks);
 }
 
 void StructureOptimizationController::finishCurrentRun()

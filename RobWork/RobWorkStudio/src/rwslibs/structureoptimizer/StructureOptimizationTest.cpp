@@ -6,6 +6,9 @@
 #include "StructureCandidateCache.hpp"
 #include "CandidateModelFactory.hpp"
 #include "StructureCandidateEvaluator.hpp"
+#include "EngineeringEvaluatorPipeline.hpp"
+#include "KinematicEngineeringEvaluator.hpp"
+#include "SystemEngineeringOptimizer.hpp"
 #include "HybridStructureOptimizer.hpp"
 #include "StructureOptimizationStrategy.hpp"
 #include "StructureSensitivityAnalyzer.hpp"
@@ -656,6 +659,187 @@ class QuadraticFakeEvaluator : public rws::IStructureCandidateEvaluator {
     }
 };
 
+class PipelineArtifactProducer : public rws::IEngineeringEvaluator {
+  public:
+    explicit PipelineArtifactProducer(std::vector<std::string>* executionOrder)
+        : _executionOrder(executionOrder)
+    {}
+
+    std::string id() const override { return "test.producer"; }
+    std::string version() const override { return "1"; }
+    std::vector<std::string> providedArtifactIds() const override
+    {
+        return {"ik.solutions"};
+    }
+
+    rws::EngineeringEvaluationResult evaluate(
+        const rws::CandidateEvaluationContext& candidate,
+        const rws::EvaluationRequest&,
+        const rws::EvaluationCallbacks&) override
+    {
+        _executionOrder->push_back(id());
+        rws::EngineeringEvaluationResult result;
+        result.providerId = id();
+        result.providerVersion = version();
+        result.status = rws::EngineeringEvaluationStatus::Success;
+        result.inputSnapshot = candidate.inputSnapshot;
+        result.artifacts.push_back({"ik.solutions", "application/json", "[]"});
+        result.metrics.push_back({"kinematics.reachability.weighted", 1.0, "ratio",
+                                  rws::EngineeringMetricStatus::Valid, id()});
+        return result;
+    }
+
+  private:
+    std::vector<std::string>* _executionOrder;
+};
+
+class PipelineArtifactConsumer : public rws::IEngineeringEvaluator {
+  public:
+    explicit PipelineArtifactConsumer(std::vector<std::string>* executionOrder)
+        : _executionOrder(executionOrder)
+    {}
+
+    std::string id() const override { return "test.consumer"; }
+    std::string version() const override { return "1"; }
+    std::vector<std::string> requiredArtifactIds() const override
+    {
+        return {"ik.solutions"};
+    }
+
+    rws::EngineeringEvaluationResult evaluate(
+        const rws::CandidateEvaluationContext& candidate,
+        const rws::EvaluationRequest& request,
+        const rws::EvaluationCallbacks&) override
+    {
+        _executionOrder->push_back(id());
+        rws::EngineeringEvaluationResult result;
+        result.providerId = id();
+        result.providerVersion = version();
+        result.inputSnapshot = candidate.inputSnapshot;
+        result.status = rws::EngineeringEvaluationStatus::Success;
+        const bool hasIkArtifact = std::any_of(
+            request.inputArtifacts.begin(), request.inputArtifacts.end(),
+            [](const rws::EngineeringArtifact& artifact) {
+                return artifact.artifactId == "ik.solutions";
+            });
+        if (!hasIkArtifact) {
+            result.status = rws::EngineeringEvaluationStatus::DataInsufficient;
+            return result;
+        }
+        result.constraints.push_back({"trajectory.feasible", "==", 1.0, 1.0,
+                                      true, true, ""});
+        return result;
+    }
+
+  private:
+    std::vector<std::string>* _executionOrder;
+};
+
+static void testEngineeringEvaluatorPipeline()
+{
+    std::printf("testEngineeringEvaluatorPipeline ... ");
+
+    std::vector<std::string> order;
+    PipelineArtifactProducer producer(&order);
+    PipelineArtifactConsumer consumer(&order);
+    rws::EngineeringEvaluatorPipeline pipeline;
+    pipeline.addEvaluator(consumer);
+    pipeline.addEvaluator(producer);
+
+    rws::CandidateEvaluationContext candidate;
+    candidate.inputSnapshot.modelHash = "model";
+    rws::EngineeringEvaluationResult result = pipeline.evaluate(
+        candidate, rws::EvaluationRequest(), rws::EvaluationCallbacks());
+
+    REQUIRE(result.status == rws::EngineeringEvaluationStatus::Success);
+    REQUIRE(order.size() == 2);
+    REQUIRE(order[0] == "test.producer");
+    REQUIRE(order[1] == "test.consumer");
+    REQUIRE(result.artifacts.size() == 1);
+    REQUIRE(result.constraints.size() == 1);
+
+    rws::EngineeringEvaluatorPipeline incompletePipeline;
+    incompletePipeline.addEvaluator(consumer);
+    order.clear();
+    result = incompletePipeline.evaluate(
+        candidate, rws::EvaluationRequest(), rws::EvaluationCallbacks());
+    REQUIRE(result.status == rws::EngineeringEvaluationStatus::DataInsufficient);
+    REQUIRE(order.empty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
+  public:
+    std::string id() const override { return "test.system-metrics"; }
+    std::string version() const override { return "1"; }
+
+    rws::EngineeringEvaluationResult evaluate(
+        const rws::CandidateEvaluationContext& candidate,
+        const rws::EvaluationRequest&,
+        const rws::EvaluationCallbacks&) override
+    {
+        rws::EngineeringEvaluationResult result;
+        result.providerId = id();
+        result.providerVersion = version();
+        result.status = rws::EngineeringEvaluationStatus::Success;
+        result.inputSnapshot = candidate.inputSnapshot;
+        const std::vector<rws::EngineeringMetric> metrics = {
+            {"kinematics.reachability.weighted", 1.0, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"kinematics.manipulability.p10", 0.01, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"kinematics.joint_margin.p10", 0.2, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"kinematics.joint_margin.minimum", 0.2, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"kinematics.workspace.coverage", 1.0, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"collision.free_rate", 1.0, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"geometry.compactness", 1.0, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"geometry.kinematic_length", 0.8, "m", rws::EngineeringMetricStatus::Valid, id()},
+            {"geometry.base_height", 0.2, "m", rws::EngineeringMetricStatus::Valid, id()},
+            {"geometry.cross_section.maximum", 0.01, "m2", rws::EngineeringMetricStatus::Valid, id()},
+            {"geometry.link_slenderness.maximum", 5.0, "ratio", rws::EngineeringMetricStatus::Valid, id()},
+            {"structure.preference", 1.0, "ratio", rws::EngineeringMetricStatus::Valid, id()}};
+        result.metrics = metrics;
+        return result;
+    }
+};
+
+static void testSystemEngineeringOptimizer()
+{
+    std::printf("testSystemEngineeringOptimizer ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {{"x", "X", "joint1", "m",
+                          rws::StructureVariableKind::JointPositionX,
+                          0.0, -1.0, 1.0, 0.1, 0.0, 0.0}};
+    problem.run.strategy = rws::StructureStrategyKind::Random;
+    problem.run.candidateCount = 3;
+    problem.run.randomSeed = 8;
+
+    SystemMetricsEvaluator evaluator;
+    rws::EngineeringEvaluatorPipeline pipeline;
+    pipeline.addEvaluator(evaluator);
+    rws::SystemEngineeringOptimizer optimizer;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+    const rws::StructureOptimizationResult result =
+        optimizer.optimize(problem, pipeline, callbacks);
+
+    REQUIRE(!result.canceled);
+    REQUIRE(result.candidates.size() == 4);
+    REQUIRE(result.bestCandidateIndex >= 0);
+    for (const rws::StructureCandidateResult& candidate : result.candidates) {
+        REQUIRE(candidate.feasible);
+        REQUIRE(candidate.status == rws::StructureCandidateStatus::Feasible);
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // =============================================================================
 //  测试用例: 候选解评估器 (接口验证)
 // =============================================================================
@@ -681,6 +865,15 @@ static void testEvaluator()
 
     // Without a valid model spec, the mutator returns ok=false → Failed
     REQUIRE(candidate.status == rws::StructureCandidateStatus::Failed);
+
+    rws::KinematicEngineeringEvaluator engineeringEvaluator(problem);
+    rws::CandidateEvaluationContext context;
+    context.variableValues = candidate.values;
+    const rws::EngineeringEvaluationResult engineeringResult =
+        engineeringEvaluator.evaluate(context, rws::EvaluationRequest(),
+                                      rws::EvaluationCallbacks());
+    REQUIRE(engineeringResult.status == rws::EngineeringEvaluationStatus::Failed);
+    REQUIRE(engineeringResult.providerId == "structure.kinematics");
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -920,6 +1113,7 @@ static void testJsonRoundTrip()
     const std::string report = rws::StructureOptimizationReportWriter::write(
         parsed, rws::StructureOptimizationResult{});
     REQUIRE(report.find("test.kinematics@2.0") != std::string::npos);
+    REQUIRE(report.find("system evaluators not enabled") != std::string::npos);
 
     const std::string legacyJson = R"json({
         "schemaVersion": 1,
@@ -1542,6 +1736,8 @@ int main(int argc, char** argv)
     printf("\n");
 
     testEvaluator();
+    testEngineeringEvaluatorPipeline();
+    testSystemEngineeringOptimizer();
     testOptimizer();
 
     printf("\n");

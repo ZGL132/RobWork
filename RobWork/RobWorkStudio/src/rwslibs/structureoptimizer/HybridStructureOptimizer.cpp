@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <limits>
 #include <random>
 #include <string>
 #include <vector>
@@ -72,6 +73,66 @@ std::vector<double> gatherCurrentValues(
     for (const auto& v : variables)
         vals.push_back(v.currentValue);
     return vals;
+}
+
+double normalizedDistance(const std::vector<StructureDesignVariable>& variables,
+                          const std::vector<double>& first,
+                          const std::vector<double>& second)
+{
+    double squaredDistance = 0.0;
+    for (std::size_t i = 0; i < variables.size() && i < first.size() &&
+                            i < second.size(); ++i) {
+        const double range = variables[i].maximum - variables[i].minimum;
+        if (range <= 0.0)
+            continue;
+        const double delta = (first[i] - second[i]) / range;
+        squaredDistance += delta * delta;
+    }
+    return std::sqrt(squaredDistance);
+}
+
+std::vector<int> selectDiverseEliteIndices(
+    const std::vector<StructureCandidateResult>& candidates,
+    const std::vector<StructureDesignVariable>& variables, int count)
+{
+    std::vector<int> selected;
+    if (count <= 0)
+        return selected;
+
+    for (const StructureCandidateResult& candidate : candidates) {
+        if (static_cast<int>(selected.size()) >= count)
+            break;
+        if (selected.empty()) {
+            selected.push_back(candidate.index);
+            continue;
+        }
+
+        const StructureCandidateResult* best = nullptr;
+        double bestPriority = -1.0;
+        for (const StructureCandidateResult& option : candidates) {
+            if (std::find(selected.begin(), selected.end(), option.index) != selected.end())
+                continue;
+            double minDistance = std::numeric_limits<double>::max();
+            for (int selectedIndex : selected) {
+                const auto selectedIt = std::find_if(
+                    candidates.begin(), candidates.end(),
+                    [selectedIndex](const StructureCandidateResult& value) {
+                        return value.index == selectedIndex;
+                    });
+                minDistance = std::min(minDistance, normalizedDistance(
+                    variables, option.values, selectedIt->values));
+            }
+            const double feasibilityPriority = option.feasible ? 1000.0 : 0.0;
+            const double priority = feasibilityPriority + option.totalScore + minDistance * 5.0;
+            if (best == nullptr || priority > bestPriority) {
+                best = &option;
+                bestPriority = priority;
+            }
+        }
+        if (best != nullptr)
+            selected.push_back(best->index);
+    }
+    return selected;
 }
 
 } // anonymous namespace
@@ -179,19 +240,19 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
         // 5a.  Sort and select elites
         StructureObjectiveScorer::sortForDecision(result.candidates);
 
-        // Collect elite indices (deduplicated, within original candidate range)
-        std::vector<int> eliteIndices;
+        // Preserve feasibility and proxy score while spreading elites in design space.
         int eliteCount = std::min(problem.run.eliteCount,
                                   static_cast<int>(result.candidates.size()));
-        for (int i = 0; i < eliteCount; ++i)
-            eliteIndices.push_back(result.candidates[i].index);
+        std::vector<int> eliteIndices = selectDiverseEliteIndices(
+            result.candidates, problem.variables, eliteCount);
 
         // 5b.  Verified-evaluate elites
         {
             int completed = 0;
             for (int ei : eliteIndices)
             {
-                if (callbacks.isCancellationRequested())
+                if (callbacks.isCancellationRequested &&
+                    callbacks.isCancellationRequested())
                 {
                     result.canceled = true;
                     break;
@@ -271,7 +332,8 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
             int completed = 0;
             for (std::size_t i = 0; i < localPool.size(); ++i)
             {
-                if (callbacks.isCancellationRequested())
+                if (callbacks.isCancellationRequested &&
+                    callbacks.isCancellationRequested())
                 {
                     result.canceled = true;
                     break;

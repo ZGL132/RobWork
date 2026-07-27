@@ -1,4 +1,4 @@
-#include "StructureCandidateEvaluator.hpp"
+#include "KinematicEngineeringEvaluator.hpp"
 #include "StructureCandidateCache.hpp"
 #include "StructureDesignMutator.hpp"
 #include "CandidateModelFactory.hpp"
@@ -138,13 +138,13 @@ const char* failureReasonString(KinematicFailureReason r)
 // ===========================================================================
 //  evaluate()
 // ===========================================================================
-void StructureCandidateEvaluator::evaluate(
-    const StructureOptimizationProblem& problem,
+void KinematicEngineeringEvaluator::evaluateLegacy(
     StructureCandidateResult& candidate,
     StructureEvaluationStage stage,
     const StructureOptimizationCallbacks& callbacks,
     StructureCandidateCache* cache)
 {
+    const StructureOptimizationProblem& problem = _problem;
     // ── 0.  Cache lookup ────────────────────────────────────────────────
     if (cache)
     {

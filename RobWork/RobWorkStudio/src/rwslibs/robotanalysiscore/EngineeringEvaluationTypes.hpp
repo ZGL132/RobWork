@@ -77,6 +77,7 @@ struct EvaluationRequest
 {
     EngineeringEvaluationStage stage = EngineeringEvaluationStage::Quick;
     std::vector<std::string> requestedMetricIds;
+    std::vector<EngineeringArtifact> inputArtifacts;
     std::string configurationHash;
     bool allowCachedArtifacts = true;
 };

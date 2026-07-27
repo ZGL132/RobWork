@@ -3,6 +3,8 @@
 
 #include "EngineeringEvaluationTypes.hpp"
 
+#include <vector>
+
 namespace rws {
 
 class IEngineeringEvaluator
@@ -11,6 +13,8 @@ public:
     virtual ~IEngineeringEvaluator() = default;
     virtual std::string id() const = 0;
     virtual std::string version() const = 0;
+    virtual std::vector<std::string> requiredArtifactIds() const { return {}; }
+    virtual std::vector<std::string> providedArtifactIds() const { return {}; }
     virtual EngineeringEvaluationResult evaluate(
         const CandidateEvaluationContext& candidate,
         const EvaluationRequest& request,

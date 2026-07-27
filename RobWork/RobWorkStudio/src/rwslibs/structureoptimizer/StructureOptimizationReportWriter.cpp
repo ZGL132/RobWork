@@ -17,6 +17,8 @@ std::string StructureOptimizationReportWriter::write(
     out << "- Random seed: " << problem.run.randomSeed << "\n";
     out << "- Evaluator: " << problem.evaluation.evaluatorId << "@"
         << problem.evaluation.evaluatorVersion << "\n";
+    out << "- Optimization scope: kinematic structure optimization; "
+        << "system evaluators not enabled\n";
     out << "- Variables: " << problem.variables.size() << "\n";
     out << "- Tasks: " << problem.tasks.size() << "\n";
     out << "- Constraints: " << problem.constraints.size() << "\n\n";

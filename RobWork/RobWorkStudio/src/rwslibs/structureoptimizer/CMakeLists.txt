@@ -30,6 +30,9 @@ if(build)
         StructureCandidateCache.cpp
         CandidateModelFactory.cpp
         StructureCandidateEvaluator.cpp
+        KinematicEngineeringEvaluator.cpp
+        EngineeringEvaluatorPipeline.cpp
+        SystemEngineeringOptimizer.cpp
         HybridStructureOptimizer.cpp
         StructureSensitivityAnalyzer.cpp
         StructureOptimizationJson.cpp
@@ -49,6 +52,9 @@ if(build)
         StructureCandidateCache.hpp
         CandidateModelFactory.hpp
         StructureCandidateEvaluator.hpp
+        KinematicEngineeringEvaluator.hpp
+        EngineeringEvaluatorPipeline.hpp
+        SystemEngineeringOptimizer.hpp
         StructureOptimizationStrategy.hpp
         HybridStructureOptimizer.hpp
         StructureSensitivityAnalyzer.hpp
