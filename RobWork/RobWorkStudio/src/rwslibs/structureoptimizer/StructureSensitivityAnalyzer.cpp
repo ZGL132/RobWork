@@ -17,9 +17,15 @@ StructureSensitivityResult StructureSensitivityAnalyzer::analyze(
     StructureSensitivityResult result;
     double totalDrop = 0.0;
     int countDrops = 0;
+    bool canceled = false;
 
     for (std::size_t i = 0; i < problem.variables.size(); ++i)
     {
+        if (callbacks.isCancellationRequested &&
+            callbacks.isCancellationRequested()) {
+            canceled = true;
+            break;
+        }
         const auto& var = problem.variables[i];
         if (!var.enabled)
             continue;
@@ -39,9 +45,15 @@ StructureSensitivityResult StructureSensitivityAnalyzer::analyze(
 
         double variableWorstDrop = 0.0;
         bool variableEverInfeasible = false;
+        bool variableEvaluated = false;
 
         for (double testVal : testValues)
         {
+            if (callbacks.isCancellationRequested &&
+                callbacks.isCancellationRequested()) {
+                canceled = true;
+                break;
+            }
             StructureSensitivityEntry entry;
             entry.variableId    = var.id;
             entry.delta         = testVal - bestVal;
@@ -73,17 +85,22 @@ StructureSensitivityResult StructureSensitivityAnalyzer::analyze(
             }
 
             result.entries.push_back(entry);
+            variableEvaluated = true;
 
             if (entry.scoreDrop > variableWorstDrop)
                 variableWorstDrop = entry.scoreDrop;
         }
 
-        totalDrop += variableWorstDrop;
-        ++countDrops;
+        if (variableEvaluated) {
+            totalDrop += variableWorstDrop;
+            ++countDrops;
 
         // 判定是否为关键变量: scoreDrop > 10 或扰动后不可行
-        if (variableWorstDrop > 10.0 || variableEverInfeasible)
-            result.criticalVariableIds.push_back(var.id);
+            if (variableWorstDrop > 10.0 || variableEverInfeasible)
+                result.criticalVariableIds.push_back(var.id);
+        }
+        if (canceled)
+            break;
     }
 
     // ── 统计量 ──────────────────────────────────────────────────────────────
@@ -104,7 +121,9 @@ StructureSensitivityResult StructureSensitivityAnalyzer::analyze(
         result.meanScoreDrop = totalDrop / static_cast<double>(countDrops);
 
     // ── 鲁棒性等级 ──────────────────────────────────────────────────────────
-    if (result.maximumScoreDrop <= 2.0)
+    if (canceled)
+        result.robustnessGrade = "Unknown";
+    else if (result.maximumScoreDrop <= 2.0)
         result.robustnessGrade = "A";
     else if (result.maximumScoreDrop <= 5.0)
         result.robustnessGrade = "B";

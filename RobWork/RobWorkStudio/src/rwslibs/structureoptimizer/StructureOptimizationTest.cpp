@@ -677,6 +677,22 @@ class QuadraticFakeEvaluator : public rws::IStructureCandidateEvaluator {
     }
 };
 
+class AlwaysInfeasibleEvaluator : public rws::IStructureCandidateEvaluator {
+  public:
+    void evaluate(
+        const rws::StructureOptimizationProblem&,
+        rws::StructureCandidateResult& candidate,
+        rws::StructureEvaluationStage stage,
+        const rws::StructureOptimizationCallbacks&,
+        rws::StructureCandidateCache*) override
+    {
+        candidate.stage = stage;
+        candidate.feasible = false;
+        candidate.totalScore = 0.0;
+        candidate.status = rws::StructureCandidateStatus::Infeasible;
+    }
+};
+
 class PipelineArtifactProducer : public rws::IEngineeringEvaluator {
   public:
     explicit PipelineArtifactProducer(std::vector<std::string>* executionOrder)
@@ -979,6 +995,111 @@ static void testOptimizer()
 // =============================================================================
 
 //! 简化的模拟评估器: 越偏离 0 则得分越低, >0.8 则不可行。
+static void testHybridVerificationAndSensitivityWorkflow()
+{
+    std::printf("testHybridVerificationAndSensitivityWorkflow ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"x", "X", "joint1", "m", rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.1, 0.2, 0.5},
+        {"y", "Y", "joint2", "m", rws::StructureVariableKind::JointPositionY,
+         0.0, -1.0, 1.0, 0.1, -0.2, 0.5}
+    };
+    problem.run.strategy = rws::StructureStrategyKind::Hybrid;
+    problem.run.candidateCount = 4;
+    problem.run.eliteCount = 4;
+    problem.run.localEliteCount = 2;
+    problem.run.finalVerificationCount = 1;
+    problem.run.maxLocalSweeps = 2;
+    problem.run.randomSeed = 123u;
+
+    std::vector<rws::StructureProgress> progress;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+    callbacks.onProgress = [&progress](const rws::StructureProgress& value) {
+        progress.push_back(value);
+    };
+
+    QuadraticFakeEvaluator evaluator;
+    rws::HybridStructureOptimizer optimizer;
+    const rws::StructureOptimizationResult result =
+        optimizer.optimize(problem, evaluator, callbacks);
+    QuadraticFakeEvaluator repeatedEvaluator;
+    const rws::StructureOptimizationResult repeated =
+        optimizer.optimize(problem, repeatedEvaluator, callbacks);
+
+    int localPlanned = -1;
+    int finalVerifiedCompleted = 0;
+    int finalVerifiedPlanned = -1;
+    for (const rws::StructureProgress& value : progress) {
+        if (value.stage == "Local")
+            localPlanned = value.planned;
+        if (value.stage == "FinalVerified") {
+            finalVerifiedCompleted = value.completed;
+            finalVerifiedPlanned = value.planned;
+        }
+    }
+
+    REQUIRE(!result.canceled);
+    REQUIRE(localPlanned == 2);
+    REQUIRE(finalVerifiedPlanned == 1);
+    REQUIRE(finalVerifiedCompleted == 1);
+    REQUIRE(result.bestCandidateIndex >= 0);
+    REQUIRE(!result.sensitivity.entries.empty());
+    REQUIRE(result.bestCandidateIndex == repeated.bestCandidateIndex);
+    REQUIRE(result.sensitivity.entries.size() == repeated.sensitivity.entries.size());
+    for (std::size_t i = 0; i < result.sensitivity.entries.size() &&
+                            i < repeated.sensitivity.entries.size(); ++i) {
+        REQUIRE(result.sensitivity.entries[i].variableId ==
+                repeated.sensitivity.entries[i].variableId);
+        REQUIRE(std::abs(result.sensitivity.entries[i].scoreDrop -
+                         repeated.sensitivity.entries[i].scoreDrop) < 1e-12);
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testNoFeasibleCandidateLeavesSensitivityUnknown()
+{
+    std::printf("testNoFeasibleCandidateLeavesSensitivityUnknown ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"x", "X", "joint1", "m", rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.1}
+    };
+    problem.run.strategy = rws::StructureStrategyKind::Hybrid;
+    problem.run.candidateCount = 2;
+    problem.run.eliteCount = 1;
+    problem.run.localEliteCount = 1;
+    problem.run.finalVerificationCount = 1;
+
+    AlwaysInfeasibleEvaluator evaluator;
+    rws::HybridStructureOptimizer optimizer;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+    const rws::StructureOptimizationResult result =
+        optimizer.optimize(problem, evaluator, callbacks);
+
+    const bool hasNoFeasibleWarning = std::any_of(
+        result.warnings.begin(), result.warnings.end(),
+        [](const rws::AnalysisWarning& warning) {
+            return warning.code == "StructureOptimization.NoFeasibleCandidate";
+        });
+    REQUIRE(result.bestCandidateIndex == -1);
+    REQUIRE(result.sensitivity.robustnessGrade == "Unknown");
+    REQUIRE(hasNoFeasibleWarning);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 struct SensitivityMockEvaluator : public rws::IStructureCandidateEvaluator {
     void evaluate(
         const rws::StructureOptimizationProblem& problem,
@@ -1059,6 +1180,44 @@ static void testSensitivity()
 // =============================================================================
 //  测试用例: JSON 序列化往返
 // =============================================================================
+
+static void testSensitivityStopsAfterCancellation()
+{
+    std::printf("testSensitivityStopsAfterCancellation ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"x", "X", "j1", "m", rws::StructureVariableKind::JointPositionX,
+         0.0, -1.0, 1.0, 0.2},
+        {"y", "Y", "j2", "m", rws::StructureVariableKind::JointPositionY,
+         0.0, -1.0, 1.0, 0.2}
+    };
+    rws::StructureCandidateResult best;
+    best.values = {0.0, 0.0};
+    best.feasible = true;
+    best.totalScore = 100.0;
+
+    int cancellationChecks = 0;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [&cancellationChecks]() {
+        ++cancellationChecks;
+        return cancellationChecks >= 3;
+    };
+
+    SensitivityMockEvaluator evaluator;
+    rws::StructureSensitivityAnalyzer analyzer;
+    const rws::StructureSensitivityResult result = analyzer.analyze(
+        problem, best, evaluator, callbacks, nullptr);
+
+    REQUIRE(result.entries.size() == 1);
+    REQUIRE(cancellationChecks >= 2);
+    REQUIRE(result.robustnessGrade == "Unknown");
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
 
 static void testJsonRoundTrip()
 {
@@ -1989,10 +2148,13 @@ int main(int argc, char** argv)
     testEngineeringEvaluatorPipeline();
     testSystemEngineeringOptimizer();
     testOptimizer();
+    testHybridVerificationAndSensitivityWorkflow();
+    testNoFeasibleCandidateLeavesSensitivityUnknown();
 
     printf("\n");
 
     testSensitivity();
+    testSensitivityStopsAfterCancellation();
     testJsonRoundTrip();
     testCsvExport();
     testUiTableModelsAndSuggestions();

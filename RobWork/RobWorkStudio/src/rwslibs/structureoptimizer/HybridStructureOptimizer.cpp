@@ -2,6 +2,7 @@
 #include "StructureCandidateGenerator.hpp"
 #include "StructureObjectiveScorer.hpp"
 #include "StructureCandidateEvaluator.hpp"
+#include "StructureSensitivityAnalyzer.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -135,6 +136,26 @@ std::vector<int> selectDiverseEliteIndices(
     return selected;
 }
 
+StructureCandidateResult* findCandidateByIndex(
+    std::vector<StructureCandidateResult>& candidates, int index)
+{
+    for (StructureCandidateResult& candidate : candidates) {
+        if (candidate.index == index)
+            return &candidate;
+    }
+    return nullptr;
+}
+
+const StructureCandidateResult* findCandidateByIndex(
+    const std::vector<StructureCandidateResult>& candidates, int index)
+{
+    for (const StructureCandidateResult& candidate : candidates) {
+        if (candidate.index == index)
+            return &candidate;
+    }
+    return nullptr;
+}
+
 } // anonymous namespace
 
 // ===========================================================================
@@ -260,16 +281,8 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                 if (callbacks.waitIfPaused)
                     callbacks.waitIfPaused();
 
-                // Find the candidate by index
-                StructureCandidateResult* elitePtr = nullptr;
-                for (auto& c : result.candidates)
-                {
-                    if (c.index == ei)
-                    {
-                        elitePtr = &c;
-                        break;
-                    }
-                }
+                StructureCandidateResult* elitePtr =
+                    findCandidateByIndex(result.candidates, ei);
                 if (!elitePtr)
                     continue;
 
@@ -294,29 +307,37 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
             }
         }
 
-        // 5c.  Local search around elites
-        if (!result.canceled && !eliteIndices.empty())
+        std::vector<StructureCandidateResult> verifiedElites;
+        for (int eliteIndex : eliteIndices) {
+            const StructureCandidateResult* candidate =
+                findCandidateByIndex(result.candidates, eliteIndex);
+            if (candidate != nullptr && candidate->feasible &&
+                candidate->stage == StructureEvaluationStage::Verified) {
+                verifiedElites.push_back(*candidate);
+            }
+        }
+        const int localEliteCount = std::min(
+            problem.run.localEliteCount,
+            static_cast<int>(verifiedElites.size()));
+        const std::vector<int> localEliteIndices = selectDiverseEliteIndices(
+            verifiedElites, problem.variables, localEliteCount);
+
+        // 5c.  Local search around the configured number of verified elites.
+        if (!result.canceled && !localEliteIndices.empty())
         {
             int localPerElite = std::max(1,
-                problem.run.maxLocalSweeps / eliteCount);
+                problem.run.maxLocalSweeps / localEliteCount);
 
             std::mt19937 localRng(problem.run.randomSeed + 9999u);
 
             std::vector<std::vector<double>> localPool;
             localPool.reserve(static_cast<std::size_t>(
-                localPerElite * eliteCount));
+                localPerElite * localEliteCount));
 
-            for (int ei : eliteIndices)
+            for (int ei : localEliteIndices)
             {
-                const StructureCandidateResult* elitePtr = nullptr;
-                for (const auto& c : result.candidates)
-                {
-                    if (c.index == ei)
-                    {
-                        elitePtr = &c;
-                        break;
-                    }
-                }
+                const StructureCandidateResult* elitePtr =
+                    findCandidateByIndex(result.candidates, ei);
                 if (!elitePtr)
                     continue;
 
@@ -365,19 +386,69 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
         }
     }
 
-    // ── 6.  Sort and find best ──────────────────────────────────────────
+    // ── 6.  Final verified review of leading candidates ─────────────────
     StructureObjectiveScorer::sortForDecision(result.candidates);
+    if (!result.canceled) {
+        const int finalVerificationCount = std::min(
+            problem.run.finalVerificationCount,
+            static_cast<int>(result.candidates.size()));
+        int completed = 0;
+        for (int i = 0; i < finalVerificationCount; ++i) {
+            if (callbacks.isCancellationRequested &&
+                callbacks.isCancellationRequested()) {
+                result.canceled = true;
+                break;
+            }
+            if (callbacks.waitIfPaused)
+                callbacks.waitIfPaused();
 
+            evaluator.evaluate(problem, result.candidates[static_cast<std::size_t>(i)],
+                               StructureEvaluationStage::Verified,
+                               callbacks, &cache);
+            ++diag.evaluatedCandidates;
+            ++completed;
+            if (callbacks.onProgress) {
+                StructureProgress p;
+                p.stage = "FinalVerified";
+                p.completed = completed;
+                p.planned = finalVerificationCount;
+                callbacks.onProgress(p);
+            }
+        }
+    }
+
+    // ── 7.  Sort, find a verified best candidate, and analyze sensitivity ─
+    StructureObjectiveScorer::sortForDecision(result.candidates);
     for (const auto& c : result.candidates)
     {
-        if (c.feasible)
+        if (c.feasible && c.stage == StructureEvaluationStage::Verified)
         {
             result.bestCandidateIndex = c.index;
             break;
         }
     }
 
-    // ── 7.  Diagnostics ─────────────────────────────────────────────────
+    if (!result.canceled && result.bestCandidateIndex >= 0) {
+        const StructureCandidateResult* bestCandidate =
+            findCandidateByIndex(result.candidates, result.bestCandidateIndex);
+        if (bestCandidate != nullptr) {
+            result.sensitivity = StructureSensitivityAnalyzer().analyze(
+                problem, *bestCandidate, evaluator, callbacks, &cache);
+            if (callbacks.isCancellationRequested &&
+                callbacks.isCancellationRequested()) {
+                result.canceled = true;
+            }
+        }
+    } else if (result.bestCandidateIndex < 0) {
+        AnalysisWarning warning;
+        warning.code = "StructureOptimization.NoFeasibleCandidate";
+        warning.message = "No feasible verified candidate is available for sensitivity analysis.";
+        warning.source = "HybridStructureOptimizer";
+        warning.severity = AnalysisStatus::Warning;
+        result.warnings.push_back(warning);
+    }
+
+    // ── 8.  Diagnostics ─────────────────────────────────────────────────
     auto tEnd = std::chrono::steady_clock::now();
     diag.totalSeconds = std::chrono::duration<double>(tEnd - tStart).count();
 
