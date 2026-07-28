@@ -365,7 +365,32 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
     obj["checkCollision"] = cfg.checkCollision;
     obj["evaluatorId"] = QString::fromStdString(cfg.evaluatorId);
     obj["evaluatorVersion"] = QString::fromStdString(cfg.evaluatorVersion);
-    // thresholds / workspace 暂简化
+    const auto workspaceToJson = [](const WorkspaceSamplingConfig& sampling) {
+        QJsonObject value;
+        value["mode"] = static_cast<int>(sampling.mode);
+        value["sampleCount"] = sampling.sampleCount;
+        value["gridStepsPerJoint"] = sampling.gridStepsPerJoint;
+        value["checkCollision"] = sampling.checkCollision;
+        value["randomSeed"] = static_cast<int>(sampling.randomSeed);
+        return value;
+    };
+    obj["quickWorkspace"] = workspaceToJson(cfg.quickWorkspace);
+    obj["verifiedWorkspace"] = workspaceToJson(cfg.verifiedWorkspace);
+
+    QJsonObject coverage;
+    coverage["enabled"] = cfg.coverageBox.enabled;
+    QJsonArray minimum;
+    QJsonArray maximum;
+    QJsonArray cells;
+    for (std::size_t i = 0; i < cfg.coverageBox.minimum.size(); ++i) {
+        minimum.append(cfg.coverageBox.minimum[i]);
+        maximum.append(cfg.coverageBox.maximum[i]);
+        cells.append(cfg.coverageBox.cells[i]);
+    }
+    coverage["minimum"] = minimum;
+    coverage["maximum"] = maximum;
+    coverage["cells"] = cells;
+    obj["coverageBox"] = coverage;
     return obj;
 }
 
@@ -376,6 +401,41 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
         QString::fromStdString(cfg.evaluatorId)).toStdString();
     cfg.evaluatorVersion = obj["evaluatorVersion"].toString(
         QString::fromStdString(cfg.evaluatorVersion)).toStdString();
+    const auto workspaceFromJson = [](const QJsonObject& value,
+                                      WorkspaceSamplingConfig& sampling) {
+        if (value.isEmpty())
+            return;
+        sampling.mode = static_cast<WorkspaceSamplingMode>(
+            value["mode"].toInt(static_cast<int>(sampling.mode)));
+        sampling.sampleCount = value["sampleCount"].toInt(sampling.sampleCount);
+        sampling.gridStepsPerJoint = value["gridStepsPerJoint"].toInt(
+            sampling.gridStepsPerJoint);
+        sampling.checkCollision = value["checkCollision"].toBool(
+            sampling.checkCollision);
+        sampling.randomSeed = static_cast<unsigned int>(value["randomSeed"].toInt(
+            static_cast<int>(sampling.randomSeed)));
+    };
+    workspaceFromJson(obj["quickWorkspace"].toObject(), cfg.quickWorkspace);
+    workspaceFromJson(obj["verifiedWorkspace"].toObject(), cfg.verifiedWorkspace);
+
+    const QJsonObject coverage = obj["coverageBox"].toObject();
+    if (!coverage.isEmpty()) {
+        cfg.coverageBox.enabled = coverage["enabled"].toBool(cfg.coverageBox.enabled);
+        const QJsonArray minimum = coverage["minimum"].toArray();
+        const QJsonArray maximum = coverage["maximum"].toArray();
+        const QJsonArray cells = coverage["cells"].toArray();
+        for (int i = 0; i < 3; ++i) {
+            if (i < minimum.size())
+                cfg.coverageBox.minimum[static_cast<std::size_t>(i)] = minimum[i].toDouble(
+                    cfg.coverageBox.minimum[static_cast<std::size_t>(i)]);
+            if (i < maximum.size())
+                cfg.coverageBox.maximum[static_cast<std::size_t>(i)] = maximum[i].toDouble(
+                    cfg.coverageBox.maximum[static_cast<std::size_t>(i)]);
+            if (i < cells.size())
+                cfg.coverageBox.cells[static_cast<std::size_t>(i)] = cells[i].toInt(
+                    cfg.coverageBox.cells[static_cast<std::size_t>(i)]);
+        }
+    }
 }
 
 static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
@@ -637,6 +697,10 @@ std::string StructureOptimizationJson::resultToJson(
     diag["generatedCandidates"]   = result.diagnostics.generatedCandidates;
     diag["evaluatedCandidates"]   = result.diagnostics.evaluatedCandidates;
     diag["cacheHits"]            = result.diagnostics.cacheHits;
+    diag["quickEvaluatedCandidates"] = result.diagnostics.quickEvaluatedCandidates;
+    diag["verifiedEliteCandidates"] = result.diagnostics.verifiedEliteCandidates;
+    diag["finalVerifiedCandidates"] = result.diagnostics.finalVerifiedCandidates;
+    diag["sensitivityEvaluations"] = result.diagnostics.sensitivityEvaluations;
     diag["totalSeconds"]         = result.diagnostics.totalSeconds;
     diag["modelBuildSeconds"]    = result.diagnostics.modelBuildSeconds;
     diag["kinematicEvaluationSeconds"] = result.diagnostics.kinematicEvaluationSeconds;

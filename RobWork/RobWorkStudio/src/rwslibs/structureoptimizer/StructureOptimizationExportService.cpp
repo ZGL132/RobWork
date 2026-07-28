@@ -63,6 +63,7 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
         "result.structure-optimization.json",
         "candidates.csv",
         "task-details.csv",
+        "audit.csv",
         "report.md"};
     if (!request.overwrite) {
         for (const QString& name : names) {
@@ -86,7 +87,8 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
         {directory.filePath(names[1]), StructureOptimizationJson::resultToJson(problem, result)},
         {directory.filePath(names[2]), StructureOptimizationCsv::candidatesCsv(problem, result)},
         {directory.filePath(names[3]), StructureOptimizationCsv::taskDetailCsv(problem, result)},
-        {directory.filePath(names[4]), StructureOptimizationReportWriter::write(problem, result)}};
+        {directory.filePath(names[4]), StructureOptimizationCsv::auditCsv(problem, result)},
+        {directory.filePath(names[5]), StructureOptimizationReportWriter::write(problem, result)}};
     for (const auto& entry : textFiles) {
         if (!writeTextFile(entry.first, entry.second, &error)) {
             output.errors << "StructureOptimization.Export.WriteFailed: " + entry.first +

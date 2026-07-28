@@ -17,6 +17,10 @@ class StructureOptimizationCsv {
     //! @brief 生成任务点明细 CSV (每行一个候选项的任务点指标)。
     static std::string taskDetailCsv(const StructureOptimizationProblem& problem,
                                      const StructureOptimizationResult& result);
+
+    //! @brief 生成本次运行的可审计证据 CSV (每行一个证据字段)。
+    static std::string auditCsv(const StructureOptimizationProblem& problem,
+                                const StructureOptimizationResult& result);
 };
 
 } // namespace rws

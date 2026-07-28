@@ -59,6 +59,11 @@ static std::string statusToString(StructureCandidateStatus s)
     return "Unknown";
 }
 
+static std::string stageToString(StructureEvaluationStage stage)
+{
+    return stage == StructureEvaluationStage::Verified ? "Verified" : "Quick";
+}
+
 // =============================================================================
 //  candidatesCsv
 // =============================================================================
@@ -72,7 +77,8 @@ std::string StructureOptimizationCsv::candidatesCsv(
     // ── 表头 ───────────────────────────────────────────────────────────────
     os << "Index,Status,Feasible,TotalScore,RequiredReachable,RequiredTaskCount,"
           "ManipulabilityP10,JointMarginP10,CollisionFreeRate,WorkspaceCoverage,"
-          "TotalKinematicLength,BaseHeight,EngineeringPreference,ModelBuildSeconds";
+          "WorkspaceOccupiedCells,WorkspaceTotalCells,WorkspaceDataInsufficient,"
+          "EvaluationStage,TotalKinematicLength,BaseHeight,EngineeringPreference,ModelBuildSeconds";
 
     for (std::size_t vi = 0; vi < problem.variables.size(); ++vi) {
         os << "," << csvEscape(problem.variables[vi].id);
@@ -91,6 +97,10 @@ std::string StructureOptimizationCsv::candidatesCsv(
            << csvEscape(c.raw.jointMarginP10) << ","
            << csvEscape(c.raw.collisionFreeRate) << ","
            << csvEscape(c.raw.workspaceCoverage) << ","
+           << c.raw.workspaceOccupiedCellCount << ","
+           << c.raw.workspaceTotalCellCount << ","
+           << (c.raw.workspaceCoverageDataInsufficient ? "true" : "false") << ","
+           << stageToString(c.stage) << ","
            << csvEscape(c.raw.totalKinematicLength) << ","
            << csvEscape(c.raw.baseHeight) << ","
            << csvEscape(c.raw.engineeringPreference) << ","
@@ -102,6 +112,61 @@ std::string StructureOptimizationCsv::candidatesCsv(
         os << "\n";
     }
 
+    return os.str();
+}
+
+std::string StructureOptimizationCsv::auditCsv(
+    const StructureOptimizationProblem& problem,
+    const StructureOptimizationResult& result)
+{
+    std::ostringstream os;
+    os << "Field,Value\n";
+    const auto add = [&os](const std::string& field, const std::string& value) {
+        os << csvEscape(field) << "," << csvEscape(value) << "\n";
+    };
+    const auto addInt = [&add](const std::string& field, int value) {
+        add(field, std::to_string(value));
+    };
+    const auto addSize = [&add](const std::string& field, std::size_t value) {
+        add(field, std::to_string(value));
+    };
+
+    add("Evaluator", problem.evaluation.evaluatorId + "@" +
+        problem.evaluation.evaluatorVersion);
+    addInt("GeneratedCandidates", result.diagnostics.generatedCandidates);
+    addInt("EvaluatedCandidates", result.diagnostics.evaluatedCandidates);
+    addInt("QuickEvaluatedCandidates", result.diagnostics.quickEvaluatedCandidates);
+    addInt("VerifiedEliteCandidates", result.diagnostics.verifiedEliteCandidates);
+    addInt("FinalVerifiedCandidates", result.diagnostics.finalVerifiedCandidates);
+    addInt("SensitivityEvaluations", result.diagnostics.sensitivityEvaluations);
+    addInt("CacheHits", result.diagnostics.cacheHits);
+    addInt("BestCandidate", result.bestCandidateIndex);
+    add("SensitivitySource", "verified evaluator");
+    add("RobustnessGrade", result.sensitivity.robustnessGrade);
+
+    std::ostringstream criticalVariables;
+    for (std::size_t i = 0; i < result.sensitivity.criticalVariableIds.size(); ++i) {
+        if (i > 0)
+            criticalVariables << ";";
+        criticalVariables << result.sensitivity.criticalVariableIds[i];
+    }
+    add("CriticalVariables", criticalVariables.str());
+
+    add("WorkspaceCoverageEnabled", problem.evaluation.coverageBox.enabled ? "true" : "false");
+    addInt("WorkspaceCellsX", problem.evaluation.coverageBox.cells[0]);
+    addInt("WorkspaceCellsY", problem.evaluation.coverageBox.cells[1]);
+    addInt("WorkspaceCellsZ", problem.evaluation.coverageBox.cells[2]);
+    addInt("QuickWorkspaceSamples", problem.evaluation.quickWorkspace.sampleCount);
+    addInt("VerifiedWorkspaceSamples", problem.evaluation.verifiedWorkspace.sampleCount);
+
+    for (const StructureCandidateResult& candidate : result.candidates) {
+        if (candidate.index == result.bestCandidateIndex) {
+            add("WorkspaceCoverage", std::to_string(candidate.raw.workspaceCoverage));
+            addSize("WorkspaceOccupiedCells", candidate.raw.workspaceOccupiedCellCount);
+            addSize("WorkspaceTotalCells", candidate.raw.workspaceTotalCellCount);
+            break;
+        }
+    }
     return os.str();
 }
 

@@ -237,6 +237,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
             evaluator.evaluate(problem, cr, StructureEvaluationStage::Quick,
                                callbacks, &cache);
             ++diag.evaluatedCandidates;
+            ++diag.quickEvaluatedCandidates;
             result.candidates.push_back(std::move(cr));
             ++completed;
 
@@ -291,6 +292,8 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                                    StructureEvaluationStage::Verified,
                                    callbacks, &cache);
                 // (cache is updated inside the evaluator)
+                ++diag.evaluatedCandidates;
+                ++diag.verifiedEliteCandidates;
                 ++completed;
 
                 if (callbacks.onProgress)
@@ -368,6 +371,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                 evaluator.evaluate(problem, cr, StructureEvaluationStage::Quick,
                                    callbacks, &cache);
                 ++diag.evaluatedCandidates;
+                ++diag.quickEvaluatedCandidates;
                 result.candidates.push_back(std::move(cr));
                 ++completed;
 
@@ -406,6 +410,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                                StructureEvaluationStage::Verified,
                                callbacks, &cache);
             ++diag.evaluatedCandidates;
+            ++diag.finalVerifiedCandidates;
             ++completed;
             if (callbacks.onProgress) {
                 StructureProgress p;
@@ -434,6 +439,9 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
         if (bestCandidate != nullptr) {
             result.sensitivity = StructureSensitivityAnalyzer().analyze(
                 problem, *bestCandidate, evaluator, callbacks, &cache);
+            diag.sensitivityEvaluations =
+                static_cast<int>(result.sensitivity.entries.size());
+            diag.evaluatedCandidates += diag.sensitivityEvaluations;
             if (callbacks.isCancellationRequested &&
                 callbacks.isCancellationRequested()) {
                 result.canceled = true;

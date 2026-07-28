@@ -304,6 +304,10 @@ struct StructureRunDiagnostics
     int    generatedCandidates    = 0;    //!< 生成的候选解数
     int    evaluatedCandidates    = 0;    //!< 已评估的候选解数
     int    cacheHits             = 0;    //!< 缓存命中数
+    int    quickEvaluatedCandidates = 0; //!< Quick 阶段实际评估次数
+    int    verifiedEliteCandidates = 0; //!< 精英 Verified 阶段实际评估次数
+    int    finalVerifiedCandidates = 0; //!< 最终 Verified 阶段实际评估次数
+    int    sensitivityEvaluations = 0;  //!< 灵敏度分析实际评估次数
 
     double totalSeconds                = 0.0; //!< 总耗时
     double modelBuildSeconds           = 0.0; //!< 模型构建耗时

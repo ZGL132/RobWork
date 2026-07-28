@@ -437,7 +437,21 @@ void StructureOptimizerWidget::handleCompleted(
 {
     _lastResult = result;
     _candidateModel->setResult(result);
-    _statusLabel->setText(result.canceled ? "结构优化已取消。" : "结构优化已完成。");
+    QString status = QString("%1最终复核 %2，缓存命中 %3，灵敏度 %4。")
+        .arg(result.canceled ? "结构优化已取消。" : "结构优化已完成。")
+        .arg(result.diagnostics.finalVerifiedCandidates)
+        .arg(result.diagnostics.cacheHits)
+        .arg(QString::fromStdString(result.sensitivity.robustnessGrade));
+    if (_loadedProblem.evaluation.coverageBox.enabled) {
+        const std::array<int, 3>& cells = _loadedProblem.evaluation.coverageBox.cells;
+        status += QString("工作空间采样 Quick %1 / Verified %2，网格 %3x%4x%5。")
+            .arg(_loadedProblem.evaluation.quickWorkspace.sampleCount)
+            .arg(_loadedProblem.evaluation.verifiedWorkspace.sampleCount)
+            .arg(cells[0])
+            .arg(cells[1])
+            .arg(cells[2]);
+    }
+    _statusLabel->setText(status);
 }
 
 void StructureOptimizerWidget::handleFailed(const QString& message)

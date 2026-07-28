@@ -1045,6 +1045,11 @@ static void testHybridVerificationAndSensitivityWorkflow()
     REQUIRE(localPlanned == 2);
     REQUIRE(finalVerifiedPlanned == 1);
     REQUIRE(finalVerifiedCompleted == 1);
+    REQUIRE(result.diagnostics.quickEvaluatedCandidates == 6);
+    REQUIRE(result.diagnostics.verifiedEliteCandidates == 4);
+    REQUIRE(result.diagnostics.finalVerifiedCandidates == 1);
+    REQUIRE(result.diagnostics.sensitivityEvaluations ==
+            static_cast<int>(result.sensitivity.entries.size()));
     REQUIRE(result.bestCandidateIndex >= 0);
     REQUIRE(!result.sensitivity.entries.empty());
     REQUIRE(result.bestCandidateIndex == repeated.bestCandidateIndex);
@@ -1245,6 +1250,17 @@ static void testJsonRoundTrip()
     problem.run.randomSeed     = 42;
     problem.evaluation.evaluatorId = "test.kinematics";
     problem.evaluation.evaluatorVersion = "2.0";
+    problem.evaluation.quickWorkspace.mode = rws::WorkspaceSamplingMode::Grid;
+    problem.evaluation.quickWorkspace.sampleCount = 123;
+    problem.evaluation.quickWorkspace.gridStepsPerJoint = 4;
+    problem.evaluation.quickWorkspace.checkCollision = false;
+    problem.evaluation.quickWorkspace.randomSeed = 9u;
+    problem.evaluation.verifiedWorkspace.sampleCount = 456;
+    problem.evaluation.verifiedWorkspace.randomSeed = 11u;
+    problem.evaluation.coverageBox.enabled = true;
+    problem.evaluation.coverageBox.minimum = {{-0.5, -0.4, 0.1}};
+    problem.evaluation.coverageBox.maximum = {{0.5, 0.6, 1.1}};
+    problem.evaluation.coverageBox.cells = {{2, 3, 4}};
     problem.objectives = {
         {"kinematics.reachability.weighted", rws::OptimizationDirection::Maximize,
          {1.0, 0.0, true}, 0.7, true}
@@ -1281,6 +1297,16 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.run.randomSeed == 42u);
     REQUIRE(parsed.evaluation.evaluatorId == "test.kinematics");
     REQUIRE(parsed.evaluation.evaluatorVersion == "2.0");
+    REQUIRE(parsed.evaluation.quickWorkspace.mode == rws::WorkspaceSamplingMode::Grid);
+    REQUIRE(parsed.evaluation.quickWorkspace.sampleCount == 123);
+    REQUIRE(parsed.evaluation.quickWorkspace.gridStepsPerJoint == 4);
+    REQUIRE(!parsed.evaluation.quickWorkspace.checkCollision);
+    REQUIRE(parsed.evaluation.quickWorkspace.randomSeed == 9u);
+    REQUIRE(parsed.evaluation.verifiedWorkspace.sampleCount == 456);
+    REQUIRE(parsed.evaluation.coverageBox.enabled);
+    REQUIRE(parsed.evaluation.coverageBox.cells[0] == 2);
+    REQUIRE(parsed.evaluation.coverageBox.cells[1] == 3);
+    REQUIRE(parsed.evaluation.coverageBox.cells[2] == 4);
     REQUIRE(parsed.objectives.size() == 1);
     REQUIRE(parsed.objectives[0].metricId == "kinematics.reachability.weighted");
     REQUIRE(std::abs(parsed.objectives[0].weight - 0.7) < 1e-12);
@@ -1309,8 +1335,87 @@ static void testJsonRoundTrip()
     REQUIRE(ok);
     REQUIRE(migrated.objectives.size() == 6);
     REQUIRE(std::abs(migrated.objectives[0].weight - 0.6) < 1e-12);
+    REQUIRE(!migrated.evaluation.coverageBox.enabled);
+    REQUIRE(migrated.evaluation.quickWorkspace.sampleCount == 1000);
     const std::string upgradedJson = rws::StructureOptimizationJson::problemToJson(migrated);
     REQUIRE(upgradedJson.find("\"schemaVersion\": 2") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testAuditableEvidenceOutput()
+{
+    std::printf("testAuditableEvidenceOutput ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.robotName = "AuditRobot";
+    problem.evaluation.evaluatorId = "test.kinematics";
+    problem.evaluation.evaluatorVersion = "2.0";
+    problem.evaluation.coverageBox.enabled = true;
+    problem.evaluation.coverageBox.minimum = {{-0.5, -0.4, 0.1}};
+    problem.evaluation.coverageBox.maximum = {{0.5, 0.6, 1.1}};
+    problem.evaluation.coverageBox.cells = {{2, 3, 4}};
+    problem.evaluation.quickWorkspace.sampleCount = 120;
+    problem.evaluation.quickWorkspace.randomSeed = 17u;
+    problem.evaluation.verifiedWorkspace.sampleCount = 480;
+    problem.evaluation.verifiedWorkspace.randomSeed = 23u;
+    problem.variables = {
+        {"link2", "Link 2", "Joint2", "m",
+         rws::StructureVariableKind::JointPositionX,
+         0.4, 0.2, 0.8, 0.01, 0.4, 0.0, true, false}
+    };
+
+    rws::StructureOptimizationResult result;
+    result.baselineCandidateIndex = 0;
+    result.bestCandidateIndex = 7;
+    result.diagnostics.generatedCandidates = 31;
+    result.diagnostics.evaluatedCandidates = 29;
+    result.diagnostics.cacheHits = 6;
+    result.diagnostics.quickEvaluatedCandidates = 20;
+    result.diagnostics.verifiedEliteCandidates = 4;
+    result.diagnostics.finalVerifiedCandidates = 2;
+    result.diagnostics.sensitivityEvaluations = 2;
+    result.sensitivity.robustnessGrade = "B";
+    result.sensitivity.criticalVariableIds = {"link2"};
+
+    rws::StructureCandidateResult best;
+    best.index = 7;
+    best.feasible = true;
+    best.status = rws::StructureCandidateStatus::Feasible;
+    best.stage = rws::StructureEvaluationStage::Verified;
+    best.totalScore = 91.0;
+    best.values = {0.45};
+    best.raw.workspaceCoverage = 0.75;
+    best.raw.workspaceOccupiedCellCount = 18;
+    best.raw.workspaceTotalCellCount = 24;
+    result.candidates.push_back(best);
+
+    const std::string report = rws::StructureOptimizationReportWriter::write(problem, result);
+    REQUIRE(report.find("Final verified candidates: 2") != std::string::npos);
+    REQUIRE(report.find("Best candidate: 7") != std::string::npos);
+    REQUIRE(report.find("Workspace coverage: 0.750") != std::string::npos);
+    REQUIRE(report.find("Grid cells: 2 x 3 x 4") != std::string::npos);
+    REQUIRE(report.find("Quick sampling: mode=RandomUniform, samples=120") !=
+            std::string::npos);
+    REQUIRE(report.find("Sensitivity source: verified evaluator") != std::string::npos);
+    REQUIRE(report.find("Critical variables: link2") != std::string::npos);
+    REQUIRE(report.find("Trajectory evaluator: not enabled") != std::string::npos);
+    REQUIRE(report.find("Dynamics evaluator: not enabled") != std::string::npos);
+    REQUIRE(report.find("Drive selection evaluator: not enabled") != std::string::npos);
+
+    const std::string json = rws::StructureOptimizationJson::resultToJson(problem, result);
+    REQUIRE(json.find("\"quickEvaluatedCandidates\": 20") != std::string::npos);
+    REQUIRE(json.find("\"finalVerifiedCandidates\": 2") != std::string::npos);
+    REQUIRE(json.find("\"sensitivityEvaluations\": 2") != std::string::npos);
+
+    const std::string audit = rws::StructureOptimizationCsv::auditCsv(problem, result);
+    REQUIRE(audit.find("QuickEvaluatedCandidates") != std::string::npos);
+    REQUIRE(audit.find("FinalVerifiedCandidates") != std::string::npos);
+    REQUIRE(audit.find("SensitivityEvaluations") != std::string::npos);
+    REQUIRE(audit.find("test.kinematics@2.0") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -1809,8 +1914,9 @@ static void testExportService()
     const rws::StructureOptimizationExportResult exported =
         rws::StructureOptimizationExportService::exportAll(problem, result, request);
     REQUIRE(exported.ok);
-    REQUIRE(exported.writtenFiles.size() == 5);
+    REQUIRE(exported.writtenFiles.size() == 6);
     REQUIRE(QFileInfo::exists(dir.filePath("export/report.md")));
+    REQUIRE(QFileInfo::exists(dir.filePath("export/audit.csv")));
     REQUIRE(QFileInfo::exists(dir.filePath("export/project.structure-optimization.json")));
 
     const rws::StructureOptimizationExportResult conflict =
@@ -2156,6 +2262,7 @@ int main(int argc, char** argv)
     testSensitivity();
     testSensitivityStopsAfterCancellation();
     testJsonRoundTrip();
+    testAuditableEvidenceOutput();
     testCsvExport();
     testUiTableModelsAndSuggestions();
     testConstraintModelAndProjectAdapter();
