@@ -18,6 +18,24 @@
 
 using namespace rws;
 
+void CandidateModelFactory::resolveExternalAssetPaths (RobotModelSpec& spec)
+{
+    const QDir sourceDirectory (QString::fromStdString (spec.saveDirectory));
+    const auto resolve = [&sourceDirectory] (std::string& path) {
+        const QString raw = QString::fromStdString (path).trimmed ();
+        if (raw.isEmpty () || QFileInfo (raw).isAbsolute ())
+            return;
+        path = sourceDirectory.absoluteFilePath (raw).toStdString ();
+    };
+
+    for (DrawableSpec& drawable : spec.drawables)
+        resolve (drawable.filePath);
+    for (CollisionModelSpec& collision : spec.collisionModels)
+        resolve (collision.filePath);
+    for (SceneGeometrySpec& geometry : spec.sceneGeometries)
+        resolve (geometry.file);
+}
+
 // =============================================================================
 //  CandidateModelFactory::build
 //  说明: 将 RobotModelSpec 转化为可用的 WorkCell 运行时模型。
@@ -56,6 +74,7 @@ CandidateModelBuildResult CandidateModelFactory::build (
     //  2. 配置 spec,指向临时目录并启用场景生成
     // -------------------------------------------------------------------------
     RobotModelSpec spec = request.spec;
+    resolveExternalAssetPaths (spec);
     spec.saveDirectory  = tempDir->path ().toStdString ();
     spec.generateScene  = true;
 

@@ -21,9 +21,9 @@ The plugin is split into two layers:
 - `StructureCandidateEvaluator` - IK, manipulability, collision, and workspace evaluation
 - `StructureCandidateGenerator` - Random, Grid, and Latin Hypercube candidate generation
 - `StructureCandidateCache` - Quantized-value keyed evaluation cache
-- `HybridStructureOptimizer` - Global sampling + elite verification + local refinement
+- `HybridStructureOptimizer` - Global sampling + elite verification + local refinement + final verification
 - `StructureSensitivityAnalyzer` - Per-variable +/-step sensitivity analysis
-- `StructureOptimizationJson` / `StructureOptimizationCsv` - Export formats
+- `StructureOptimizationJson` / `StructureOptimizationCsv` - Export formats and audit CSV
 - `StructureCandidateExporter` - Candidate model XML packaging
 
 ## Scoring Formula
@@ -44,7 +44,7 @@ Hard constraints can make a candidate infeasible regardless of soft scores.
 
 - **Random**: Uniform random sampling with quantization
 - **Grid**: Cartesian product of per-variable step values
-- **Hybrid** (default): Latin Hypercube global sampling → Quick evaluation → Elite Verified re-evaluation → Coordinate local refinement
+- **Hybrid** (default): Latin Hypercube global sampling → Quick evaluation → diverse elite Verified re-evaluation → local refinement from `localEliteCount` centers → final Verified re-evaluation of `finalVerificationCount` leaders → sensitivity of the verified best candidate
 
 ## Determinism
 
@@ -60,7 +60,13 @@ The optimization respects cancellation and pause requests between candidate eval
 - Result JSON: Problem + candidate results + sensitivity analysis
 - Candidate CSV: Per-candidate summary with all metrics
 - Task detail CSV: Per-task IK results for top candidates
+- Audit CSV: Quick, Verified, final-verified, cache, and sensitivity counters
 - Candidate XML package: Complete RobWork model files for the selected candidate
+
+When a workspace coverage box is enabled, Quick and Verified evaluations sample
+the workspace using their respective configurations. Coverage and automatic
+sensitivity are included in the Markdown evidence report. The report also
+states that trajectory, dynamics, and drive-selection evaluators are not enabled.
 
 ## Error Codes
 
@@ -83,7 +89,7 @@ The optimization respects cancellation and pause requests between candidate eval
 - Single-worker only (no parallel candidate evaluation)
 - No evolutionary or multi-objective algorithms
 
-## P0 Workflow
+## Kinematic Optimization Workflow
 
 1. Open a `*.structure-optimization.json` project created from a complete
    `RobotDesignContext`. A bare WorkCell is intentionally not reverse-engineered
@@ -96,8 +102,17 @@ The optimization respects cancellation and pause requests between candidate eval
    clearing the preview or closing the plugin restores the original WorkCell.
 4. Export produces `project.structure-optimization.json`,
    `result.structure-optimization.json`, `candidates.csv`,
-   `task-details.csv`, and `report.md`. If a feasible candidate is selected,
+   `task-details.csv`, `audit.csv`, and `report.md`. If a feasible candidate is selected,
    its XML package is exported under `candidate-<index>/`.
+
+## Accepted Example
+
+`RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR-6-85-5-A.structure-optimization.json`
+is a fixed, portable acceptance example. It embeds a UR-6-85-5-A model snapshot,
+three required TCP poses, three structure variables, a `2 x 2 x 2` coverage grid,
+and seed `20260727`. Its intentionally small sample counts are for automated
+acceptance; engineering projects should use representative candidate and workspace
+sample counts.
 
 ## Build Verification
 

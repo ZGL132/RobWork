@@ -3,7 +3,9 @@
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationValidation.hpp"
 
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSaveFile>
@@ -69,6 +71,13 @@ bool StructureOptimizationProjectAdapter::loadProject(
     if (hasInvalidContext(loaded)) {
         setError(error, "StructureOptimization.Context.Invalid: complete RobotModelSpec is required.");
         return false;
+    }
+
+    const QString modelDirectory = QString::fromStdString(loaded.context.modelSpec.saveDirectory);
+    if (!modelDirectory.isEmpty() && QFileInfo(modelDirectory).isRelative()) {
+        loaded.context.modelSpec.saveDirectory = QDir(QFileInfo(path).absolutePath())
+                                                    .absoluteFilePath(modelDirectory)
+                                                    .toStdString();
     }
 
     if (selectedCandidateIndex != nullptr)

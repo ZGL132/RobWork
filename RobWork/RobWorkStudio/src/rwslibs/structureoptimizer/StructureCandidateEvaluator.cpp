@@ -220,6 +220,8 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     {
         candidate.status = StructureCandidateStatus::Failed;
         candidate.warnings.push_back("CandidateModelFactory.build() failed");
+        for (const AnalysisWarning& warning : buildResult.warnings)
+            candidate.warnings.push_back(warning.code + ": " + warning.message);
         if (cache)
             cache->put(problem, candidate.values, stage, candidate);
         return;

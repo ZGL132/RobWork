@@ -113,6 +113,8 @@ if(build)
         endif()
     endforeach()
     target_include_directories(sdurws_structureoptimizer_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(sdurws_structureoptimizer_test PRIVATE
+        STRUCTUREOPTIMIZER_TEST_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
 
     # ── 插件目标 ─────────────────────────────────────────────────────────

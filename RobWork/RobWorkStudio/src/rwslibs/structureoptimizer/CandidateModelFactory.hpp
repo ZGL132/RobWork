@@ -42,6 +42,9 @@ struct CandidateModelBuildResult {
 
 class CandidateModelFactory {
   public:
+    //! Resolves model-relative external geometry paths before changing saveDirectory.
+    static void resolveExternalAssetPaths(RobotModelSpec& spec);
+
     CandidateModelBuildResult build(const CandidateModelBuildRequest& request);
 };
 

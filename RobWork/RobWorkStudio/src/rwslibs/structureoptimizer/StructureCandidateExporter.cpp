@@ -43,6 +43,7 @@ bool StructureCandidateExporter::exportModel(
     // ── 3. 保存突变后的 RobotModelSpec 到目标目录 ──────────────────────────
     // 创建一个临时副本并设置保存目录为目标路径
     RobotModelSpec exportSpec = mutation.spec;
+    CandidateModelFactory::resolveExternalAssetPaths(exportSpec);
     exportSpec.saveDirectory = targetDir.absolutePath().toStdString();
 
     // 写入 XML 文件

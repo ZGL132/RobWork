@@ -30,6 +30,7 @@
 #include "CandidatePreviewController.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -37,6 +38,7 @@
 #include <QDoubleSpinBox>
 #include <QDir>
 #include <QEventLoop>
+#include <QFile>
 #include <QFileInfo>
 #include <QMetaObject>
 #include <QPushButton>
@@ -69,6 +71,11 @@ static void require(bool condition, const char* file, int line, const char* expr
 }
 
 #define REQUIRE(cond) require((cond), __FILE__, __LINE__, #cond)
+
+static QString sourcePath(const QString& relativePath)
+{
+    return QDir(QStringLiteral(STRUCTUREOPTIMIZER_TEST_SOURCE_DIR)).filePath(relativePath);
+}
 
 // =============================================================================
 //  测试用例: 验证默认值和验证逻辑
@@ -1930,6 +1937,101 @@ static void testExportService()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testAcceptedUr6585AProject()
+{
+    std::printf("testAcceptedUr6585AProject ... ");
+
+    const QString sampleDirectory = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A");
+    const QString modelPath = sampleDirectory + "/UR-6-85-5-A.rmb.json";
+    const QString projectPath = sampleDirectory +
+        "/UR-6-85-5-A.structure-optimization.json";
+
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::ReadOnly));
+    rws::RobotModelSpec modelSpec;
+    std::string error;
+    if (modelFile.isOpen()) {
+        REQUIRE(rws::RobotModelSpecJson::fromJson(
+            modelFile.readAll().toStdString(), modelSpec, &error));
+        modelFile.close();
+    }
+
+    rws::StructureOptimizationProblem project;
+    int selectedCandidateIndex = -1;
+    QString projectError;
+    const bool loaded = rws::StructureOptimizationProjectAdapter::loadProject(
+        projectPath, project, &selectedCandidateIndex, &projectError);
+    REQUIRE(loaded);
+    if (loaded) {
+        REQUIRE(project.context.robotName == "UR-6-85-5-A");
+        REQUIRE(project.context.modelSpec.robotName == modelSpec.robotName);
+        REQUIRE(QDir::cleanPath(QString::fromStdString(project.context.modelSpec.saveDirectory)) ==
+                QDir::cleanPath(sampleDirectory));
+        REQUIRE(project.context.modelSpec.transformJoints.size() ==
+                modelSpec.transformJoints.size());
+        REQUIRE(project.tasks.size() == 3);
+        REQUIRE(project.evaluation.coverageBox.enabled);
+        REQUIRE(project.run.randomSeed == 20260727u);
+        REQUIRE(project.variables.size() == 3);
+        if (project.variables.size() == 3) {
+            REQUIRE(project.variables[0].id == "Joint2_pos_x");
+            REQUIRE(project.variables[1].id == "Joint3_pos_x");
+            REQUIRE(project.variables[2].id == "Joint1_pos_z");
+        }
+
+        rws::KinematicEngineeringEvaluator evaluator(project);
+        rws::EngineeringEvaluatorPipeline pipeline;
+        pipeline.addEvaluator(evaluator);
+        rws::StructureOptimizationCallbacks callbacks;
+        callbacks.isCancellationRequested = []() { return false; };
+        rws::SystemEngineeringOptimizer optimizer;
+        const rws::StructureOptimizationResult first = optimizer.optimize(
+            project, pipeline, callbacks);
+        const rws::StructureOptimizationResult second = optimizer.optimize(
+            project, pipeline, callbacks);
+
+        REQUIRE(!first.canceled);
+        REQUIRE(first.bestCandidateIndex >= 0);
+        REQUIRE(first.bestCandidateIndex == second.bestCandidateIndex);
+        REQUIRE(first.sensitivity.robustnessGrade != "Unknown");
+
+        const rws::StructureCandidateResult* best = nullptr;
+        for (const rws::StructureCandidateResult& candidate : first.candidates) {
+            if (candidate.index == first.bestCandidateIndex) {
+                best = &candidate;
+                break;
+            }
+        }
+        REQUIRE(best != nullptr);
+        if (best != nullptr) {
+            REQUIRE(best->feasible);
+            REQUIRE(best->raw.requiredReachableCount == best->raw.requiredTaskCount);
+            REQUIRE(best->raw.collisionFreeRate == 1.0);
+            REQUIRE(best->raw.workspaceCoverage >= 0.01);
+        }
+
+        QTemporaryDir exportDirectory;
+        REQUIRE(exportDirectory.isValid());
+        rws::StructureOptimizationExportRequest request;
+        request.directory = exportDirectory.filePath("ur-example-export");
+        request.selectedCandidateIndex = first.bestCandidateIndex;
+        request.exportCandidateModel = true;
+        const rws::StructureOptimizationExportResult exported =
+            rws::StructureOptimizationExportService::exportAll(project, first, request);
+        REQUIRE(exported.ok);
+        const QDir candidateDirectory(request.directory + "/candidate-" +
+                                      QString::number(first.bestCandidateIndex));
+        REQUIRE(!candidateDirectory.entryList(QStringList() << "*.wc.xml",
+                                              QDir::Files).isEmpty());
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testCandidatePreviewController()
 {
     std::printf("testCandidatePreviewController ... ");
@@ -2211,6 +2313,7 @@ int main(int argc, char** argv)
         testConstraintModelAndProjectAdapter();
         testProjectFactory();
         testExportService();
+        testAcceptedUr6585AProject();
         testCandidatePreviewController();
         std::fflush(stdout);
         testStructureOptimizationControllerAsyncState();
@@ -2268,6 +2371,7 @@ int main(int argc, char** argv)
     testConstraintModelAndProjectAdapter();
     testProjectFactory();
     testExportService();
+    testAcceptedUr6585AProject();
     testCandidatePreviewController();
     testStructureOptimizationControllerAsyncState();
 
