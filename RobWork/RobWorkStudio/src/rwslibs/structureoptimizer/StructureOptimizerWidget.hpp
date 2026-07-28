@@ -56,6 +56,7 @@ private:
     void handleFailed(const QString& message);
     void previewSelectedCandidate();
     void clearCandidatePreview();
+    void newProjectFromModelSpec();
     void openProject();
     void saveProject();
     void exportResult();

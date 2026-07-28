@@ -8,13 +8,17 @@
 #include "StructureOptimizationController.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
+#include "StructureOptimizationProjectFactory.hpp"
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureVariableTableModel.hpp"
+
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QFileDialog>
+#include <QFile>
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -331,16 +335,21 @@ QWidget* StructureOptimizerWidget::createReportPage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
+    QPushButton* newFromModel = new QPushButton("从模型快照新建项目", page);
+    newFromModel->setObjectName("newStructureOptimizationProjectFromModelButton");
     QPushButton* open = new QPushButton("打开项目", page);
     open->setObjectName("openStructureOptimizationProjectButton");
     QPushButton* save = new QPushButton("保存项目", page);
     save->setObjectName("saveStructureOptimizationProjectButton");
     QPushButton* exportAll = new QPushButton("导出报告和候选模型", page);
     exportAll->setObjectName("exportStructureOptimizationResultButton");
+    layout->addWidget(newFromModel);
     layout->addWidget(open);
     layout->addWidget(save);
     layout->addWidget(exportAll);
     layout->addStretch();
+    connect(newFromModel, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::newProjectFromModelSpec);
     connect(open, &QPushButton::clicked, this, &StructureOptimizerWidget::openProject);
     connect(save, &QPushButton::clicked, this, &StructureOptimizerWidget::saveProject);
     connect(exportAll, &QPushButton::clicked, this, &StructureOptimizerWidget::exportResult);
@@ -462,6 +471,42 @@ void StructureOptimizerWidget::clearCandidatePreview()
 {
     if (_previewController)
         _previewController->clearPreview();
+}
+
+void StructureOptimizerWidget::newProjectFromModelSpec()
+{
+    const QString path = QFileDialog::getOpenFileName(
+        this, "从模型快照新建结构优化项目", _projectPath,
+        "Robot model snapshot (*.rmb.json)");
+    if (path.isEmpty())
+        return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, "读取模型快照失败", file.errorString());
+        return;
+    }
+
+    RobotModelSpec spec;
+    std::string parseError;
+    if (!RobotModelSpecJson::fromJson(file.readAll().toStdString(), spec, &parseError)) {
+        QMessageBox::warning(this, "读取模型快照失败",
+                             QString::fromStdString(parseError));
+        return;
+    }
+
+    StructureOptimizationProblem problem;
+    std::string factoryError;
+    if (!StructureOptimizationProjectFactory::create(spec, problem, &factoryError)) {
+        QMessageBox::warning(this, "创建结构优化项目失败",
+                             QString::fromStdString(factoryError));
+        return;
+    }
+
+    problem.context.sourceModelPath = path.toStdString();
+    _projectPath.clear();
+    setProblem(problem);
+    _statusLabel->setText("已从模型快照创建结构优化项目，请添加任务点后开始优化。");
 }
 
 void StructureOptimizerWidget::openProject()

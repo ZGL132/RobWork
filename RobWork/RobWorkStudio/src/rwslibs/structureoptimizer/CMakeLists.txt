@@ -42,6 +42,8 @@ if(build)
         StructureOptimizationProjectAdapter.cpp
         StructureOptimizationReportWriter.cpp
         StructureOptimizationExportService.cpp
+        StructureOptimizationProjectFactory.cpp
+        StructureOptimizationUiLogic.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -65,6 +67,8 @@ if(build)
         StructureOptimizationProjectAdapter.hpp
         StructureOptimizationReportWriter.hpp
         StructureOptimizationExportService.hpp
+        StructureOptimizationProjectFactory.hpp
+        StructureOptimizationUiLogic.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})
@@ -87,8 +91,6 @@ if(build)
         OptimizationTaskTableModel.hpp
         StructureCandidateTableModel.cpp
         StructureCandidateTableModel.hpp
-        StructureOptimizationUiLogic.cpp
-        StructureOptimizationUiLogic.hpp
         StructureOptimizerWidget.cpp
         StructureOptimizerWidget.hpp
         StructureOptimizationController.cpp
@@ -118,7 +120,6 @@ if(build)
         StructureVariableTableModel.cpp
         OptimizationTaskTableModel.cpp
         StructureCandidateTableModel.cpp
-        StructureOptimizationUiLogic.cpp
         StructureOptimizationController.cpp
         StructureConstraintTableModel.cpp
         CandidatePreviewController.cpp
@@ -129,7 +130,6 @@ if(build)
         StructureVariableTableModel.hpp
         OptimizationTaskTableModel.hpp
         StructureCandidateTableModel.hpp
-        StructureOptimizationUiLogic.hpp
         StructureOptimizationController.hpp
         StructureConstraintTableModel.hpp
         CandidatePreviewController.hpp

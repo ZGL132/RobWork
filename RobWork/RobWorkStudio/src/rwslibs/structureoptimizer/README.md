@@ -101,9 +101,25 @@ The optimization respects cancellation and pause requests between candidate eval
 
 ## Build Verification
 
-On Windows, initialize the Visual Studio x64 environment before CMake. The
-standard PowerShell environment alone does not provide all system library paths.
+On Windows, the normal PowerShell session does not include the MSVC and Windows
+SDK library paths. In particular, Boost.Thread transitively links the Windows
+SDK `synchronization.lib`; building without the Visual Studio developer
+environment therefore fails with `LNK1104`.
+
+Use `scripts\\build-msvc-debug.cmd` for every build target. It reuses an
+already configured `VSDEVCMD`, or locates a Visual Studio installation with
+`vswhere`, before initializing the x64 environment.
 
 ```powershell
-& $env:ComSpec /d /s /c 'call "D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" >nul && cmake --build build\Desktop_Qt_6_11_1_MSVC2022_64bit-Debug --config Debug --target sdurws_structureoptimizer sdurws_structureoptimizer_test && ctest --test-dir build\Desktop_Qt_6_11_1_MSVC2022_64bit-Debug -C Debug -R "^sdurws_structureoptimizer_test$" --output-on-failure'
+.\scripts\build-msvc-debug.cmd sdurws_robotmodelbuilder_jsontest
+.\scripts\build-msvc-debug.cmd sdurws_robotanalysiscore_test
+.\scripts\build-msvc-debug.cmd sdurws_kinematicanalysis_test
+.\scripts\build-msvc-debug.cmd sdurws_structureoptimizer_test
+
+ctest --test-dir build\Desktop_Qt_6_11_1_MSVC2022_64bit-Debug -C Debug -R "sdurws_(robotmodelbuilder_jsontest|robotanalysiscore_test|kinematicanalysis_test|structureoptimizer_test)" --output-on-failure
 ```
+
+Verified on 2026-07-27 with CMake 4.3.1, Ninja, MSVC 14.42.34433, Qt 6.11.1
+(`msvc2022_64`), and vcpkg `x64-windows`. The filtered CTest gate selected nine
+tests (the robot-analysis-core target registers six cases) and passed all nine
+in 10.01 seconds.

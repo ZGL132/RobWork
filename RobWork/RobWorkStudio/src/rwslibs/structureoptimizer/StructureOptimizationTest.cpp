@@ -23,6 +23,7 @@
 #include "StructureOptimizationObjectiveProfile.hpp"
 #include "StructureConstraintTableModel.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
+#include "StructureOptimizationProjectFactory.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
@@ -1388,6 +1389,52 @@ static void testConstraintModelAndProjectAdapter()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testProjectFactory()
+{
+    std::printf("testProjectFactory ... ");
+
+    rws::RobotModelSpec spec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    spec.robotName = "FactoryRobot";
+
+    rws::StructureOptimizationProblem problem;
+    std::string error;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(spec, problem, &error));
+    REQUIRE(problem.context.modelSpec.robotName == "FactoryRobot");
+    REQUIRE(problem.context.robotName == "FactoryRobot");
+    REQUIRE(problem.context.deviceName == "FactoryRobot");
+    REQUIRE(!problem.variables.empty());
+    REQUIRE(problem.tasks.empty());
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString projectPath = directory.filePath("factory.structure-optimization.json");
+    QString projectError;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        projectPath, problem, -1, &projectError));
+
+    rws::StructureOptimizationProblem loaded;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        projectPath, loaded, nullptr, &projectError));
+    REQUIRE(loaded.context.modelSpec.robotName == problem.context.modelSpec.robotName);
+    REQUIRE(loaded.context.modelSpec.transformJoints.size() ==
+            problem.context.modelSpec.transformJoints.size());
+    REQUIRE(loaded.variables.size() == problem.variables.size());
+    REQUIRE(rws::StructureOptimizationJson::problemToJson(loaded) ==
+            rws::StructureOptimizationJson::problemToJson(problem));
+
+    rws::StructureOptimizationProblem invalidProblem;
+    error.clear();
+    REQUIRE(!rws::StructureOptimizationProjectFactory::create(
+        rws::RobotModelSpec(), invalidProblem, &error));
+    REQUIRE(error.find("StructureOptimization.Context.Invalid") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testExportService()
 {
     std::printf("testExportService ... ");
@@ -1495,6 +1542,19 @@ static void testStructureOptimizerWidgetState()
     QPushButton* startButton =
         widget.findChild<QPushButton*>("startOptimizationButton");
     REQUIRE(startButton != nullptr);
+    if (startButton != nullptr)
+        REQUIRE(!startButton->isEnabled());
+    REQUIRE(widget.findChild<QPushButton*>(
+                "newStructureOptimizationProjectFromModelButton") != nullptr);
+
+    rws::StructureOptimizationProblem emptyTaskProject;
+    std::string factoryError;
+    const rws::RobotModelSpec factorySpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        factorySpec, emptyTaskProject, &factoryError));
+    REQUIRE(emptyTaskProject.tasks.empty());
+    widget.setProblem(emptyTaskProject);
     if (startButton != nullptr)
         REQUIRE(!startButton->isEnabled());
 
@@ -1699,6 +1759,7 @@ int main(int argc, char** argv)
     if (suite == "ui") {
         testUiTableModelsAndSuggestions();
         testConstraintModelAndProjectAdapter();
+        testProjectFactory();
         testExportService();
         testCandidatePreviewController();
         std::fflush(stdout);
@@ -1747,6 +1808,7 @@ int main(int argc, char** argv)
     testCsvExport();
     testUiTableModelsAndSuggestions();
     testConstraintModelAndProjectAdapter();
+    testProjectFactory();
     testExportService();
     testCandidatePreviewController();
     testStructureOptimizationControllerAsyncState();
