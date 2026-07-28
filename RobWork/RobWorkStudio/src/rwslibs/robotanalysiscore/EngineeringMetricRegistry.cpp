@@ -41,6 +41,7 @@ EngineeringMetricRegistry::EngineeringMetricRegistry()
         {"structure.preference", "Structure engineering preference", "ratio", "Structure"},
         {"evaluation.model_build_seconds", "Model build duration", "s", "Evaluation"},
         {"evaluation.kinematic_seconds", "Kinematic evaluation duration", "s", "Evaluation"},
+        {"evaluation.workspace_seconds", "Workspace sampling duration", "s", "Evaluation"},
         {"trajectory.feasible", "Trajectory feasible", "bool", "Trajectory"},
         {"trajectory.cycle_time", "Trajectory cycle time", "s", "Trajectory"},
         {"trajectory.path_clearance.minimum", "Trajectory minimum clearance", "m", "Trajectory"},

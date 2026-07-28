@@ -44,6 +44,7 @@ if(build)
         StructureOptimizationExportService.cpp
         StructureOptimizationProjectFactory.cpp
         StructureOptimizationUiLogic.cpp
+        StructureWorkspaceCoverage.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -69,6 +70,7 @@ if(build)
         StructureOptimizationExportService.hpp
         StructureOptimizationProjectFactory.hpp
         StructureOptimizationUiLogic.hpp
+        StructureWorkspaceCoverage.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})

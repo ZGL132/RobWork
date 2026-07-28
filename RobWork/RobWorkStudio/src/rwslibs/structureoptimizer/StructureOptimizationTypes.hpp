@@ -229,6 +229,9 @@ struct StructureRawMetrics
 
     double collisionFreeRate      = 0.0; //!< 无碰撞样本比例 [0, 1]
     double workspaceCoverage      = 0.0; //!< 工作空间覆盖率 [0, 1]
+    bool workspaceCoverageDataInsufficient = false; //!< 覆盖率采样未产生可用数据
+    std::size_t workspaceOccupiedCellCount = 0; //!< 覆盖率已占用栅格数
+    std::size_t workspaceTotalCellCount = 0; //!< 覆盖率栅格总数
 
     double totalKinematicLength   = 0.0; //!< 运动链总长度 (m)
     double baseHeight             = 0.0; //!< 基座高度 (m)

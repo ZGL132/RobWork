@@ -99,6 +99,8 @@ class PipelineCandidateEvaluator : public IStructureCandidateEvaluator
             result, "evaluation.model_build_seconds");
         candidate.raw.kinematicEvaluationSeconds = metricOr(
             result, "evaluation.kinematic_seconds");
+        candidate.raw.workspaceEvaluationSeconds = metricOr(
+            result, "evaluation.workspace_seconds");
         for (const AnalysisWarning& warning : result.warnings)
             candidate.warnings.push_back(warning.code + ": " + warning.message);
 

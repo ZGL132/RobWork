@@ -24,6 +24,7 @@
 #include "StructureConstraintTableModel.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationProjectFactory.hpp"
+#include "StructureWorkspaceCoverage.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
@@ -565,6 +566,22 @@ static void testCache()
     REQUIRE(cache.hitCount() == 1);
 
     // ── clear ────────────────────────────────────────────────────────
+    // Workspace sampling and the coverage box change evaluation results.
+    cache.clear();
+    problem.context.modelSpec.robotName.clear();
+    problem.evaluation.coverageBox.enabled = true;
+    problem.evaluation.coverageBox.cells = {{2, 2, 2}};
+    problem.evaluation.quickWorkspace.sampleCount = 8;
+    cache.put(problem, values, rws::StructureEvaluationStage::Quick, result);
+    REQUIRE(cache.find(problem, values, rws::StructureEvaluationStage::Quick, found));
+    problem.evaluation.coverageBox.cells[0] = 3;
+    REQUIRE(!cache.find(problem, values,
+                        rws::StructureEvaluationStage::Quick, found));
+    problem.evaluation.coverageBox.cells[0] = 2;
+    problem.evaluation.quickWorkspace.randomSeed = 2u;
+    REQUIRE(!cache.find(problem, values,
+                        rws::StructureEvaluationStage::Quick, found));
+
     cache.clear();
     REQUIRE(cache.size() == 0);
     REQUIRE(cache.hitCount() == 0);
@@ -1211,6 +1228,174 @@ static void testCsvExport()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testWorkspaceCoverage()
+{
+    std::printf("testWorkspaceCoverage ... ");
+
+    rws::WorkspaceCoverageBox box;
+    box.enabled = true;
+    box.minimum = {{0.0, 0.0, 0.0}};
+    box.maximum = {{2.0, 2.0, 2.0}};
+    box.cells = {{2, 2, 2}};
+
+    rws::WorkspaceSample first;
+    first.tcpPosition = {{0.1, 0.1, 0.1}};
+    first.status = rws::AnalysisStatus::Pass;
+
+    rws::WorkspaceSample second;
+    second.tcpPosition = {{1.1, 1.1, 1.1}};
+    second.status = rws::AnalysisStatus::Warning;
+
+    rws::WorkspaceSample collided;
+    collided.tcpPosition = {{1.1, 0.1, 0.1}};
+    collided.status = rws::AnalysisStatus::Pass;
+    collided.inCollision = true;
+
+    rws::WorkspaceSample outside;
+    outside.tcpPosition = {{2.1, 0.1, 0.1}};
+    outside.status = rws::AnalysisStatus::Pass;
+
+    const std::vector<rws::WorkspaceSample> samples = {
+        first, second, collided, outside};
+    const rws::StructureWorkspaceCoverageResult result =
+        rws::StructureWorkspaceCoverage::analyze(samples, box);
+    REQUIRE(result.totalCellCount == 8u);
+    REQUIRE(result.occupiedCellCount == 2u);
+    REQUIRE(std::abs(result.coverage - 0.25) < 1e-12);
+    REQUIRE(std::abs(rws::StructureWorkspaceCoverage::calculate(samples, box) - 0.25) <
+            1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// =============================================================================
+//  测试用例: 结构优化器接入真实工作空间覆盖率
+// =============================================================================
+
+static rws::StructureOptimizationProblem makeWorkspaceCoverageProblem()
+{
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.modelSpec.robotName = "WorkspaceCoverageRobot";
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+    problem.context.tcpFrame.clear();
+    problem.evaluation.checkCollision = false;
+    problem.evaluation.coverageBox.enabled = true;
+    problem.evaluation.coverageBox.minimum = {{-10.0, -10.0, -10.0}};
+    problem.evaluation.coverageBox.maximum = {{10.0, 10.0, 10.0}};
+    problem.evaluation.coverageBox.cells = {{1, 1, 1}};
+    problem.evaluation.quickWorkspace.sampleCount = 16;
+    problem.evaluation.quickWorkspace.checkCollision = false;
+    problem.evaluation.quickWorkspace.randomSeed = 7u;
+    return problem;
+}
+
+static const rws::EngineeringMetric* findMetric(
+    const rws::EngineeringEvaluationResult& result, const std::string& metricId)
+{
+    for (const rws::EngineeringMetric& metric : result.metrics) {
+        if (metric.metricId == metricId)
+            return &metric;
+    }
+    return nullptr;
+}
+
+static bool hasArtifact(const rws::EngineeringEvaluationResult& result,
+                        const std::string& artifactId)
+{
+    for (const rws::EngineeringArtifact& artifact : result.artifacts) {
+        if (artifact.artifactId == artifactId)
+            return true;
+    }
+    return false;
+}
+
+static void testWorkspaceCoverageEvaluator()
+{
+    std::printf("testWorkspaceCoverageEvaluator ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    rws::CandidateEvaluationContext context;
+    rws::EvaluationRequest request;
+    const rws::EngineeringEvaluationResult result = evaluator.evaluate(
+        context, request, rws::EvaluationCallbacks());
+    const rws::EngineeringMetric* coverage = findMetric(
+        result, "kinematics.workspace.coverage");
+
+    REQUIRE(result.status == rws::EngineeringEvaluationStatus::Success);
+    REQUIRE(coverage != nullptr);
+    REQUIRE(coverage != nullptr && coverage->value > 0.0);
+    REQUIRE(hasArtifact(result, "kinematics.workspace.coverage-summary"));
+
+    rws::StructureConstraint minimumCoverage;
+    minimumCoverage.id = "coverage-too-high";
+    minimumCoverage.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    minimumCoverage.threshold = 1.1;
+    minimumCoverage.hard = true;
+    minimumCoverage.enabled = true;
+    problem.constraints.push_back(minimumCoverage);
+    rws::KinematicEngineeringEvaluator constrainedEvaluator(problem);
+    const rws::EngineeringEvaluationResult constrained =
+        constrainedEvaluator.evaluate(context, request, rws::EvaluationCallbacks());
+    REQUIRE(constrained.status == rws::EngineeringEvaluationStatus::Infeasible);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testWorkspaceCoverageDataInsufficient()
+{
+    std::printf("testWorkspaceCoverageDataInsufficient ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    problem.evaluation.quickWorkspace.sampleCount = 0;
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    rws::CandidateEvaluationContext context;
+    const rws::EngineeringEvaluationResult result = evaluator.evaluate(
+        context, rws::EvaluationRequest(), rws::EvaluationCallbacks());
+
+    REQUIRE(result.status == rws::EngineeringEvaluationStatus::DataInsufficient);
+    REQUIRE(findMetric(result, "kinematics.workspace.coverage") == nullptr);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testWorkspaceCoverageCancellation()
+{
+    std::printf("testWorkspaceCoverageCancellation ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    rws::CandidateEvaluationContext context;
+    int cancellationChecks = 0;
+    rws::EvaluationCallbacks callbacks;
+    callbacks.isCancellationRequested = [&cancellationChecks]() {
+        ++cancellationChecks;
+        return cancellationChecks >= 2;
+    };
+    const rws::EngineeringEvaluationResult result = evaluator.evaluate(
+        context, rws::EvaluationRequest(), callbacks);
+
+    REQUIRE(result.status == rws::EngineeringEvaluationStatus::Cancelled);
+    REQUIRE(cancellationChecks >= 2);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // =============================================================================
 //  UI table models and default variable suggestions
 // =============================================================================
@@ -1797,6 +1982,10 @@ int main(int argc, char** argv)
     printf("\n");
 
     testEvaluator();
+    testWorkspaceCoverage();
+    testWorkspaceCoverageEvaluator();
+    testWorkspaceCoverageDataInsufficient();
+    testWorkspaceCoverageCancellation();
     testEngineeringEvaluatorPipeline();
     testSystemEngineeringOptimizer();
     testOptimizer();

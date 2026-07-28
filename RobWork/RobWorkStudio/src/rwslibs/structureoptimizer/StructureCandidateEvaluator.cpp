@@ -3,6 +3,7 @@
 #include "StructureDesignMutator.hpp"
 #include "CandidateModelFactory.hpp"
 #include "StructureObjectiveScorer.hpp"
+#include "StructureWorkspaceCoverage.hpp"
 #include <rwslibs/kinematicanalysis/KinematicAnalyzer.hpp>
 
 #include <algorithm>
@@ -133,6 +134,20 @@ const char* failureReasonString(KinematicFailureReason r)
     }
 }
 
+struct WorkspaceSamplingCallbackContext
+{
+    const StructureOptimizationCallbacks* callbacks = nullptr;
+};
+
+bool isWorkspaceSamplingCancellationRequested(void* userData)
+{
+    const WorkspaceSamplingCallbackContext* context =
+        static_cast<const WorkspaceSamplingCallbackContext*>(userData);
+    return context != nullptr && context->callbacks != nullptr &&
+           context->callbacks->isCancellationRequested &&
+           context->callbacks->isCancellationRequested();
+}
+
 } // anonymous namespace
 
 // ===========================================================================
@@ -145,6 +160,10 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     StructureCandidateCache* cache)
 {
     const StructureOptimizationProblem& problem = _problem;
+    const WorkspaceSamplingConfig& configuredWorkspaceSampling =
+        stage == StructureEvaluationStage::Verified
+            ? problem.evaluation.verifiedWorkspace
+            : problem.evaluation.quickWorkspace;
     // ── 0.  Cache lookup ────────────────────────────────────────────────
     if (cache)
     {
@@ -190,7 +209,9 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     buildReq.deviceName     = problem.context.deviceName;
     buildReq.tcpFrame       = problem.context.tcpFrame;
     buildReq.checkCollision = problem.evaluation.checkCollision &&
-                              (stage == StructureEvaluationStage::Verified);
+                              (stage == StructureEvaluationStage::Verified ||
+                               (problem.evaluation.coverageBox.enabled &&
+                                configuredWorkspaceSampling.checkCollision));
 
     CandidateModelFactory      factory;
     CandidateModelBuildResult  buildResult = factory.build(buildReq);
@@ -211,6 +232,8 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     rw::core::Ptr<rw::proximity::CollisionDetector> colDetector;
     if (buildReq.checkCollision)
         colDetector = buildResult.artifact.collisionDetector;
+    const rw::core::Ptr<rw::proximity::CollisionDetector> taskCollisionDetector =
+        stage == StructureEvaluationStage::Verified ? colDetector : nullptr;
 
     if (callbacks.isCancellationRequested &&
         callbacks.isCancellationRequested())
@@ -253,7 +276,7 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
             buildResult.artifact.tcpFrame,
             buildResult.artifact.state,
             optTask.point,
-            colDetector);
+            taskCollisionDetector);
 
         tm.usableSolutionCount = static_cast<int>(ikResult.usableSolutionCount);
         tm.reachable           = (ikResult.usableSolutionCount > 0);
@@ -286,6 +309,48 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
 
     double kinematicSeconds = std::chrono::duration<double>(
         std::chrono::steady_clock::now() - tKinStart).count();
+
+    std::vector<WorkspaceSample> workspaceSamples;
+    double workspaceSeconds = 0.0;
+    bool workspaceCoverageDataInsufficient = false;
+    StructureWorkspaceCoverageResult workspaceCoverage;
+    if (problem.evaluation.coverageBox.enabled)
+    {
+        WorkspaceSamplingConfig workspaceSampling = configuredWorkspaceSampling;
+        if (!problem.evaluation.checkCollision)
+            workspaceSampling.checkCollision = false;
+
+        WorkspaceSamplingCallbackContext samplingContext;
+        samplingContext.callbacks = &callbacks;
+        WorkspaceSamplingRunCallbacks samplingCallbacks;
+        samplingCallbacks.isCancellationRequested =
+            &isWorkspaceSamplingCancellationRequested;
+        samplingCallbacks.userData = &samplingContext;
+
+        const auto tWorkspaceStart = std::chrono::steady_clock::now();
+        workspaceSamples = analyzer.sampleWorkspace(
+            buildResult.artifact.device,
+            buildResult.artifact.tcpFrame,
+            buildResult.artifact.state,
+            workspaceSampling,
+            colDetector,
+            samplingCallbacks);
+        workspaceSeconds = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - tWorkspaceStart).count();
+
+        if (callbacks.isCancellationRequested &&
+            callbacks.isCancellationRequested())
+        {
+            candidate.status = StructureCandidateStatus::Canceled;
+            return;
+        }
+
+        if (workspaceSamples.empty())
+            workspaceCoverageDataInsufficient = true;
+        else
+            workspaceCoverage = StructureWorkspaceCoverage::analyze(
+                workspaceSamples, problem.evaluation.coverageBox);
+    }
 
     // ── 6.  Raw metrics ────────────────────────────────────────────────
     StructureRawMetrics raw;
@@ -357,6 +422,10 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
         ? static_cast<double>(collisionFree) /
           static_cast<double>(reachableCount)
         : 0.0;
+    raw.workspaceCoverageDataInsufficient = workspaceCoverageDataInsufficient;
+    raw.workspaceCoverage = workspaceCoverage.coverage;
+    raw.workspaceOccupiedCellCount = workspaceCoverage.occupiedCellCount;
+    raw.workspaceTotalCellCount = workspaceCoverage.totalCellCount;
 
     // Physical dimensions from spec
     raw.totalKinematicLength = estimateTotalLength(mutResult.spec);
@@ -371,6 +440,7 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     // Timing
     raw.modelBuildSeconds          = modelBuildSeconds;
     raw.kinematicEvaluationSeconds = kinematicSeconds;
+    raw.workspaceEvaluationSeconds = workspaceSeconds;
     raw.taskMetrics                = std::move(taskMetrics);
 
     candidate.raw = raw;

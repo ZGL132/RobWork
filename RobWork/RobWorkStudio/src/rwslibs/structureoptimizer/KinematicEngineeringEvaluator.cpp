@@ -52,6 +52,16 @@ std::string ikSummary(const StructureRawMetrics& raw)
     return stream.str();
 }
 
+std::string workspaceSummary(const StructureRawMetrics& raw)
+{
+    std::ostringstream stream;
+    stream << "{\"coverage\":" << raw.workspaceCoverage
+           << ",\"occupiedCellCount\":" << raw.workspaceOccupiedCellCount
+           << ",\"totalCellCount\":" << raw.workspaceTotalCellCount
+           << "}";
+    return stream.str();
+}
+
 } // namespace
 
 KinematicEngineeringEvaluator::KinematicEngineeringEvaluator(
@@ -72,7 +82,8 @@ std::string KinematicEngineeringEvaluator::version() const
 
 std::vector<std::string> KinematicEngineeringEvaluator::providedArtifactIds() const
 {
-    return {"kinematics.ik-solutions", "structure.raw-metrics"};
+    return {"kinematics.ik-solutions", "kinematics.workspace.coverage-summary",
+            "structure.raw-metrics"};
 }
 
 EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
@@ -114,6 +125,9 @@ EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
     }
     result.status = statusFor(candidate);
     const StructureRawMetrics& raw = candidate.raw;
+    if (raw.workspaceCoverageDataInsufficient) {
+        result.status = EngineeringEvaluationStatus::DataInsufficient;
+    }
     if (result.status == EngineeringEvaluationStatus::Success &&
         raw.requiredReachableCount < raw.requiredTaskCount) {
         result.status = EngineeringEvaluationStatus::Infeasible;
@@ -126,8 +140,11 @@ EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
               "ratio", id());
     addMetric(result, "kinematics.joint_margin.minimum", raw.minimumJointMargin,
               "ratio", id());
-    addMetric(result, "kinematics.workspace.coverage", raw.workspaceCoverage,
-              "ratio", id());
+    if (_problem.evaluation.coverageBox.enabled &&
+        !raw.workspaceCoverageDataInsufficient) {
+        addMetric(result, "kinematics.workspace.coverage", raw.workspaceCoverage,
+                  "ratio", id());
+    }
     addMetric(result, "kinematics.task.required.count", raw.requiredTaskCount,
               "count", id());
     addMetric(result, "kinematics.task.required.reachable_count",
@@ -152,7 +169,14 @@ EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
               "s", id());
     addMetric(result, "evaluation.kinematic_seconds",
               raw.kinematicEvaluationSeconds, "s", id());
+    addMetric(result, "evaluation.workspace_seconds",
+              raw.workspaceEvaluationSeconds, "s", id());
     result.artifacts.push_back({"kinematics.ik-solutions", "application/json", ikSummary(raw)});
+    if (_problem.evaluation.coverageBox.enabled &&
+        !raw.workspaceCoverageDataInsufficient) {
+        result.artifacts.push_back({"kinematics.workspace.coverage-summary",
+                                    "application/json", workspaceSummary(raw)});
+    }
     result.artifacts.push_back({"structure.raw-metrics", "application/json", "{}"});
 
     for (const std::string& violation : candidate.violatedConstraints) {
