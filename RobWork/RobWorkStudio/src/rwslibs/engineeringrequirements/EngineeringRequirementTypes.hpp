@@ -13,6 +13,7 @@ enum class ProcessType { Generic, Pick, Place, MachineLoad, MachineUnload, Inspe
                          WeldEnd, ToolChange, SafeStandby, Handover };
 enum class OrientationMode { Fixed, AlignFrame, AlignGeometryNormal, PointAtTarget };
 enum class OffsetAxis { ToolZ, ReferenceZ };
+enum class GeometryFeatureType { None, FrameOrigin, FramePlaneNormal };
 
 struct RobotModelBinding {
     std::string sourcePath;
@@ -50,6 +51,13 @@ struct ValidationPolicy {
     double minimumManipulability = 0.0;
 };
 
+struct GeometryFeatureReference {
+    GeometryFeatureType type = GeometryFeatureType::None;
+    std::string frameName;
+    std::string objectName;
+    std::string geometryName;
+};
+
 struct KeyStation {
     std::string id;
     std::string name;
@@ -61,6 +69,7 @@ struct KeyStation {
     std::array<double, 3> position = {{0.0, 0.0, 0.0}};
     std::array<double, 3> rpyDeg = {{0.0, 0.0, 0.0}};
     PoseTolerance tolerance;
+    GeometryFeatureReference geometryFeature;
     OrientationRule orientation;
     ApproachRetractRule approach;
     ApproachRetractRule retract;
@@ -103,6 +112,7 @@ struct CompiledPoseTask {
     std::array<double, 3> rpyDeg = {{0.0, 0.0, 0.0}};
     PoseTolerance tolerance;
     ProcessType processType = ProcessType::Generic;
+    GeometryFeatureReference geometryFeature;
     OrientationRule orientation;
     ValidationPolicy validation;
     bool pathValidationPending = false;
@@ -142,11 +152,13 @@ const char* toString(PoseTaskSource value);
 const char* toString(ProcessType value);
 const char* toString(OrientationMode value);
 const char* toString(OffsetAxis value);
+const char* toString(GeometryFeatureType value);
 bool requirementLevelFromString(const std::string& text, RequirementLevel& value);
 bool poseTaskSourceFromString(const std::string& text, PoseTaskSource& value);
 bool processTypeFromString(const std::string& text, ProcessType& value);
 bool orientationModeFromString(const std::string& text, OrientationMode& value);
 bool offsetAxisFromString(const std::string& text, OffsetAxis& value);
+bool geometryFeatureTypeFromString(const std::string& text, GeometryFeatureType& value);
 
 } // namespace rws
 

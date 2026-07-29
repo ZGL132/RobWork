@@ -54,6 +54,12 @@ QJsonObject writePoseTask(const PoseTask& task)
     object["positionToleranceMeters"] = task.tolerance.positionMeters;
     object["orientationToleranceDeg"] = task.tolerance.orientationDeg;
     object["allowToolRollFree"] = task.tolerance.allowToolRollFree;
+    QJsonObject geometryFeature;
+    geometryFeature["type"] = toString(task.geometryFeature.type);
+    geometryFeature["frameName"] = QString::fromStdString(task.geometryFeature.frameName);
+    geometryFeature["objectName"] = QString::fromStdString(task.geometryFeature.objectName);
+    geometryFeature["geometryName"] = QString::fromStdString(task.geometryFeature.geometryName);
+    object["geometryFeature"] = geometryFeature;
     QJsonObject orientation;
     orientation["mode"] = toString(task.orientation.mode);
     orientation["targetFrame"] = QString::fromStdString(task.orientation.targetFrame);
@@ -108,6 +114,14 @@ bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
     task.tolerance.positionMeters = object.value("positionToleranceMeters").toDouble(0.001);
     task.tolerance.orientationDeg = object.value("orientationToleranceDeg").toDouble(1.0);
     task.tolerance.allowToolRollFree = object.value("allowToolRollFree").toBool(false);
+    const QJsonObject geometryFeature = object.value("geometryFeature").toObject();
+    if (!geometryFeatureTypeFromString(geometryFeature.value("type").toString("None").toStdString(), task.geometryFeature.type)) {
+        if (error != nullptr) *error = "KeyStation.geometryFeature.type is invalid.";
+        return false;
+    }
+    task.geometryFeature.frameName = geometryFeature.value("frameName").toString().toStdString();
+    task.geometryFeature.objectName = geometryFeature.value("objectName").toString().toStdString();
+    task.geometryFeature.geometryName = geometryFeature.value("geometryName").toString().toStdString();
     const QJsonObject orientation = object.value("orientation").toObject();
     if (!orientationModeFromString(orientation.value("mode").toString("Fixed").toStdString(), task.orientation.mode)) {
         if (error != nullptr) *error = "KeyStation.orientation.mode is invalid.";
@@ -241,6 +255,15 @@ const char* toString(OrientationMode value)
     return "Fixed";
 }
 const char* toString(OffsetAxis value) { return value == OffsetAxis::ReferenceZ ? "ReferenceZ" : "ToolZ"; }
+const char* toString(GeometryFeatureType value)
+{
+    switch (value) {
+        case GeometryFeatureType::None: return "None";
+        case GeometryFeatureType::FrameOrigin: return "FrameOrigin";
+        case GeometryFeatureType::FramePlaneNormal: return "FramePlaneNormal";
+    }
+    return "None";
+}
 bool processTypeFromString(const std::string& text, ProcessType& value)
 {
     for (int item = static_cast<int>(ProcessType::Generic); item <= static_cast<int>(ProcessType::Handover); ++item) {
@@ -261,6 +284,13 @@ bool offsetAxisFromString(const std::string& text, OffsetAxis& value)
 {
     if (text == "ToolZ") { value = OffsetAxis::ToolZ; return true; }
     if (text == "ReferenceZ") { value = OffsetAxis::ReferenceZ; return true; }
+    return false;
+}
+bool geometryFeatureTypeFromString(const std::string& text, GeometryFeatureType& value)
+{
+    if (text == "None") { value = GeometryFeatureType::None; return true; }
+    if (text == "FrameOrigin") { value = GeometryFeatureType::FrameOrigin; return true; }
+    if (text == "FramePlaneNormal") { value = GeometryFeatureType::FramePlaneNormal; return true; }
     return false;
 }
 

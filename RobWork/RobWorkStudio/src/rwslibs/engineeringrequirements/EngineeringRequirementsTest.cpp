@@ -1,9 +1,17 @@
 #include "EngineeringRequirementTypes.hpp"
+#include "GeometryFeatureResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
 #include "EngineeringRequirementsWidget.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
+
+#include <rw/core/Ptr.hpp>
+#include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/StateStructure.hpp>
+#include <rw/math/Constants.hpp>
+#include <rw/math/RPY.hpp>
+#include <rw/models/WorkCell.hpp>
 
 #include <QCoreApplication>
 #include <QApplication>
@@ -195,6 +203,57 @@ int testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks()
     return 0;
 }
 
+int testGeometryFrameFeatureResolvesAndCompiles()
+{
+    using namespace rw::kinematics;
+    using namespace rw::math;
+
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const Frame::Ptr fixture = rw::core::ownedPtr(new FixedFrame(
+        "Fixture_A", Transform3D<>(Vector3D<>(0.4, 0.2, 0.3), RPY<>(0.0, 0.0, rw::math::Pi / 2.0))));
+    structure->addFrame(fixture, structure->getRoot());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "GeometryFeatureTest", ""));
+
+    rws::KeyStation station;
+    station.id = "inspect_face";
+    station.name = "Inspect fixture face";
+    station.tcpFrame = "TCP";
+    station.source = rws::PoseTaskSource::GeometryFeature;
+    station.geometryFeature.frameName = "Fixture_A";
+    station.geometryFeature.type = rws::GeometryFeatureType::FramePlaneNormal;
+
+    rws::GeometryFeatureResolution resolved;
+    std::string error;
+    REQUIRE(rws::GeometryFeatureResolver::resolve(station.geometryFeature, station.refFrame,
+                                                   *workcell, workcell->getDefaultState(), resolved, &error));
+    REQUIRE(std::abs(resolved.position[0] - 0.4) < 1e-12);
+    REQUIRE(std::abs(resolved.position[1] - 0.2) < 1e-12);
+    REQUIRE(std::abs(resolved.rpyDeg[2] - 90.0) < 1e-9);
+
+    REQUIRE(rws::GeometryFeatureResolver::applyToStation(
+        station.geometryFeature, *workcell, workcell->getDefaultState(), station, &error));
+    REQUIRE(station.orientation.mode == rws::OrientationMode::AlignGeometryNormal);
+    REQUIRE(station.orientation.targetFrame == "Fixture_A");
+
+    rws::RequirementSet persisted;
+    persisted.modelBinding.robotModelFingerprint = "model-fingerprint";
+    persisted.poseTasks.push_back(station);
+    rws::RequirementSet reloaded;
+    REQUIRE(rws::RequirementSetJson::fromJson(rws::RequirementSetJson::toJson(persisted), reloaded, &error));
+    REQUIRE(reloaded.poseTasks[0].geometryFeature.type == rws::GeometryFeatureType::FramePlaneNormal);
+    REQUIRE(reloaded.poseTasks[0].geometryFeature.frameName == "Fixture_A");
+
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+    requirements.poseTasks.push_back(station);
+    rws::CompiledRequirementSet compiled;
+    REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
+    REQUIRE(compiled.poseTasks.size() == 1);
+    REQUIRE(compiled.poseTasks[0].geometryFeature.frameName == "Fixture_A");
+    return 0;
+}
+
 int testWidgetBuildsEngineeringRequirementWorkflow()
 {
     rws::EngineeringRequirementsWidget widget;
@@ -220,6 +279,7 @@ int testWidgetExposesSemanticKeyStationInspector()
     REQUIRE(widget.findChild<QWidget*>("keyStationApproachEnabled") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationRetractEnabled") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationAdvancedPoseGroup") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("pickRequirementGeometryFeatureButton") != nullptr);
     return 0;
 }
 
@@ -242,6 +302,8 @@ int main(int argc, char** argv)
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;
     if (testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks() != 0)
+        return 1;
+    if (testGeometryFrameFeatureResolvesAndCompiles() != 0)
         return 1;
     std::puts("All engineering requirements tests passed.");
     return 0;

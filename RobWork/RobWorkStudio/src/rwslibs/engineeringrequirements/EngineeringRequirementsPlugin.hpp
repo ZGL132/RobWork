@@ -3,6 +3,11 @@
 
 #include <rws/RobWorkStudioPlugin.hpp>
 
+#include <map>
+
+namespace rw { namespace graphics { class DrawableNode; } }
+namespace rw { namespace kinematics { class Frame; class State; } }
+
 namespace rws {
 class EngineeringRequirementsWidget;
 
@@ -19,7 +24,19 @@ public:
     void open(rw::models::WorkCell* workcell) override;
     void close() override;
 private:
+    void beginGeometryFeaturePick();
+    void handleFrameSelected(rw::kinematics::Frame* frame);
+    void handleStateChanged(const rw::kinematics::State& state);
+    void scheduleStationMarkerRefresh();
+    void refreshStationMarkers();
+    void updateStationMarkers(const rw::kinematics::State& state);
+    void clearStationMarkers();
+
     EngineeringRequirementsWidget* _widget = nullptr;
+    bool _geometryFeaturePickActive = false;
+    bool _markerRefreshPending = false;
+    std::map<std::string, rw::core::Ptr<rw::graphics::DrawableNode> > _stationAxes;
+    std::map<std::string, rw::core::Ptr<rw::graphics::DrawableNode> > _stationLabels;
 };
 } // namespace rws
 

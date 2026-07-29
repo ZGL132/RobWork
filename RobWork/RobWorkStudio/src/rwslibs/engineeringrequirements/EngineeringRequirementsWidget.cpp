@@ -1,6 +1,7 @@
 #include "EngineeringRequirementsWidget.hpp"
 
 #include "RequirementCompiler.hpp"
+#include "GeometryFeatureResolver.hpp"
 #include "RequirementSetJson.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -109,7 +110,10 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QPushButton* duplicate = new QPushButton(QString::fromUtf8("复制工位"), page); duplicate->setObjectName("duplicateRequirementPoseTaskButton");
     QPushButton* remove = new QPushButton(QString::fromUtf8("删除工位"), page); remove->setObjectName("removeRequirementPoseTaskButton");
     QPushButton* capture = new QPushButton(QString::fromUtf8("从当前 TCP 捕获"), page); capture->setObjectName("captureRequirementTcpButton");
-    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addStretch();
+    QPushButton* pickGeometry = new QPushButton(QString::fromUtf8("从 3D 拾取几何 Frame"), page);
+    pickGeometry->setObjectName("pickRequirementGeometryFeatureButton");
+    pickGeometry->setToolTip(QString::fromUtf8("点击后，在 3D 视图中按住 Ctrl 双击目标工装或工件。"));
+    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry); actions->addStretch();
     layout->addLayout(actions);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
@@ -158,6 +162,7 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     connect(duplicate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::duplicatePoseTask);
     connect(remove, &QPushButton::clicked, this, &EngineeringRequirementsWidget::removePoseTask);
     connect(capture, &QPushButton::clicked, this, &EngineeringRequirementsWidget::captureCurrentTcp);
+    connect(pickGeometry, &QPushButton::clicked, this, &EngineeringRequirementsWidget::requestGeometryFeaturePick);
     connect(_stationList, &QListWidget::currentRowChanged, this, &EngineeringRequirementsWidget::refreshKeyStationInspector);
     connect(_stationOrientationModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EngineeringRequirementsWidget::updateOrientationEditor);
     connect(_stationNameEdit, &QLineEdit::editingFinished, this, &EngineeringRequirementsWidget::commitKeyStationInspector);
@@ -241,6 +246,7 @@ void EngineeringRequirementsWidget::refreshTables()
     if (_freezeButton != nullptr) _freezeButton->setEnabled(editable);
     for (const char* name : {"addRequirementPoseTaskButton", "duplicateRequirementPoseTaskButton",
                              "removeRequirementPoseTaskButton", "captureRequirementTcpButton",
+                             "pickRequirementGeometryFeatureButton",
                              "addRequirementBoxRegionButton", "duplicateRequirementBoxRegionButton",
                              "removeRequirementBoxRegionButton"}) {
         if (QPushButton* button = findChild<QPushButton*>(name)) button->setEnabled(editable);
@@ -255,6 +261,13 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
 {
     if (_requirements.frozen) return;
     commitKeyStationInspector();
+    if (_workcell != nullptr) {
+        for (PoseTask& task : _requirements.poseTasks) {
+            if (task.source != PoseTaskSource::GeometryFeature) continue;
+            GeometryFeatureResolver::applyToStation(task.geometryFeature, *_workcell,
+                                                    _workcell->getDefaultState(), task, nullptr);
+        }
+    }
     _requirements.boxRegions.clear();
     for (int row = 0; _regionTable != nullptr && row < _regionTable->rowCount(); ++row) {
         BoxRegion region; region.id = text(_regionTable, row, 0).toStdString(); region.name = text(_regionTable, row, 1).toStdString();
@@ -287,6 +300,14 @@ void EngineeringRequirementsWidget::refreshKeyStationList()
             if (diagnostic.requirementId != task.id) continue;
             hasDiagnostic = true;
             hasBlockingDiagnostic = hasBlockingDiagnostic || diagnostic.blocking;
+        }
+        if (task.source == PoseTaskSource::GeometryFeature && _workcell != nullptr) {
+            GeometryFeatureResolution resolution;
+            if (!GeometryFeatureResolver::resolve(task.geometryFeature, task.refFrame, *_workcell,
+                                                  _workcell->getDefaultState(), resolution, nullptr)) {
+                hasDiagnostic = true;
+                hasBlockingDiagnostic = hasBlockingDiagnostic || task.level == RequirementLevel::Must;
+            }
         }
         if (task.level == RequirementLevel::Info) {
             item->setForeground(QColor(Qt::gray));
@@ -368,6 +389,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
         if (editor != nullptr) editor->setEnabled(editable);
     if (!hasSelection) return;
 
+    _refreshingKeyStationInspector = true;
     refreshFrameChoices();
     const PoseTask& task = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     const QSignalBlocker nameBlocker(_stationNameEdit), processBlocker(_stationProcessTypeCombo), levelBlocker(_stationLevelCombo);
@@ -389,6 +411,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     _stationX->setValue(task.position[0]); _stationY->setValue(task.position[1]); _stationZ->setValue(task.position[2]);
     _stationRoll->setValue(task.rpyDeg[0]); _stationPitch->setValue(task.rpyDeg[1]); _stationYaw->setValue(task.rpyDeg[2]);
     updateOrientationEditor();
+    _refreshingKeyStationInspector = false;
 }
 
 void EngineeringRequirementsWidget::commitKeyStationInspector()
@@ -416,6 +439,7 @@ void EngineeringRequirementsWidget::commitKeyStationInspector()
     task.position = {{_stationX->value(), _stationY->value(), _stationZ->value()}};
     task.rpyDeg = {{_stationRoll->value(), _stationPitch->value(), _stationYaw->value()}};
     refreshKeyStationList();
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::updateOrientationEditor()
@@ -425,7 +449,7 @@ void EngineeringRequirementsWidget::updateOrientationEditor()
     _stationAdvancedPoseGroup->setVisible(fixed);
     if (_stationOrientationTargetFrameCombo != nullptr)
         _stationOrientationTargetFrameCombo->setVisible(!fixed);
-    commitKeyStationInspector();
+    if (!_refreshingKeyStationInspector) commitKeyStationInspector();
 }
 
 void EngineeringRequirementsWidget::bindModel()
@@ -459,12 +483,34 @@ void EngineeringRequirementsWidget::loadRequirements()
     if (!RequirementSetJson::fromJson(file.readAll().toStdString(), parsed, &error)) { setStatus(QString::fromStdString(error)); return; }
     _requirements = parsed; _compiled = CompiledRequirementSet(); if (_requirements.frozen) RequirementCompiler::compile(_requirements, _compiled, &error);
     setStatus(QString::fromUtf8("研发需求已加载。")); refreshTables();
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::freezeRequirements()
 {
     syncTablesToRequirements(); std::string error; CompiledRequirementSet compiled;
+    std::vector<std::string> unresolvedAdvisoryStations;
+    for (const PoseTask& task : _requirements.poseTasks) {
+        if (task.source != PoseTaskSource::GeometryFeature) continue;
+        GeometryFeatureResolution resolution;
+        const bool resolved = _workcell != nullptr && GeometryFeatureResolver::resolve(
+            task.geometryFeature, task.refFrame, *_workcell, _workcell->getDefaultState(), resolution, &error);
+        if (resolved) continue;
+        const QString message = QString::fromUtf8("几何特征 Frame 无法解析：%1").arg(QString::fromStdString(task.id));
+        if (task.level == RequirementLevel::Must) { setStatus(message); return; }
+        unresolvedAdvisoryStations.push_back(task.id);
+    }
     if (!RequirementCompiler::compile(_requirements, compiled, &error)) { setStatus(QString::fromStdString(error)); return; }
+    for (const std::string& id : unresolvedAdvisoryStations) {
+        compiled.poseTasks.erase(std::remove_if(compiled.poseTasks.begin(), compiled.poseTasks.end(),
+            [&id] (const CompiledPoseTask& task) { return task.id == id; }), compiled.poseTasks.end());
+        RequirementDiagnostic diagnostic;
+        diagnostic.requirementId = id;
+        diagnostic.level = RequirementLevel::Should;
+        diagnostic.message = "Geometry feature frame is unresolved and was excluded from compiled tasks: " + id;
+        diagnostic.blocking = false;
+        compiled.diagnostics.push_back(diagnostic);
+    }
     _requirements.frozen = true;
     _compiled = compiled;
     const int pathPending = static_cast<int>(std::count_if(compiled.poseTasks.begin(), compiled.poseTasks.end(), [] (const CompiledPoseTask& task) {
@@ -486,6 +532,7 @@ void EngineeringRequirementsWidget::addPoseTask()
     _requirements.poseTasks.push_back(task);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(static_cast<int>(_requirements.poseTasks.size()) - 1);
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::duplicatePoseTask()
@@ -500,6 +547,7 @@ void EngineeringRequirementsWidget::duplicatePoseTask()
     _requirements.poseTasks.insert(_requirements.poseTasks.begin() + row + 1, copy);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(row + 1);
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::removePoseTask()
@@ -510,6 +558,7 @@ void EngineeringRequirementsWidget::removePoseTask()
     if (row < 0 || row >= static_cast<int>(_requirements.poseTasks.size())) return;
     _requirements.poseTasks.erase(_requirements.poseTasks.begin() + row);
     refreshTables();
+    Q_EMIT requirementsChanged();
 }
 void EngineeringRequirementsWidget::captureCurrentTcp()
 {
@@ -542,9 +591,53 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
         _requirements.poseTasks.push_back(task);
         setStatus(QString::fromUtf8("已从当前设备 TCP 捕获位姿；可在冻结前调整其等级和公差。"));
         refreshTables();
+        Q_EMIT requirementsChanged();
     } catch (const std::exception& exception) {
         setStatus(QString::fromUtf8("无法捕获当前 TCP：%1").arg(QString::fromUtf8(exception.what())));
     }
+}
+void EngineeringRequirementsWidget::requestGeometryFeaturePick()
+{
+    if (_requirements.frozen || _workcell == nullptr || selectedKeyStationIndex() < 0) {
+        setStatus(QString::fromUtf8("请先打开 WorkCell、选择关键工位，并保持需求处于可编辑状态。"));
+        return;
+    }
+    setStatus(QString::fromUtf8("几何拾取已启用：请在 3D 视图中按住 Ctrl 双击目标工装或工件的 Frame。"));
+    Q_EMIT geometryFeaturePickRequested();
+}
+bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& frameName, QString* error)
+{
+    if (_requirements.frozen || _workcell == nullptr) {
+        const QString message = QString::fromUtf8("请在已打开 WorkCell 且需求未冻结时拾取几何特征。");
+        if (error != nullptr) *error = message;
+        setStatus(message);
+        return false;
+    }
+    const int selected = selectedKeyStationIndex();
+    if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
+        const QString message = QString::fromUtf8("请先在关键工位列表中选择一个工位。");
+        if (error != nullptr) *error = message;
+        setStatus(message);
+        return false;
+    }
+    PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    GeometryFeatureReference feature;
+    feature.type = GeometryFeatureType::FramePlaneNormal;
+    feature.frameName = frameName.toStdString();
+    feature.objectName = feature.frameName;
+    feature.geometryName = "FramePlaneNormal";
+    std::string resolveError;
+    if (!GeometryFeatureResolver::applyToStation(feature, *_workcell, _workcell->getDefaultState(), station, &resolveError)) {
+        const QString message = QString::fromStdString(resolveError);
+        if (error != nullptr) *error = message;
+        setStatus(message);
+        return false;
+    }
+    refreshTables();
+    setStatus(QString::fromUtf8("已关联几何 Frame“%1”：作业位会随当前 WorkCell 重新解析；面法向姿态已记录，连续路径验证将在 P3 执行。").arg(frameName));
+    Q_EMIT requirementsChanged();
+    if (error != nullptr) error->clear();
+    return true;
 }
 void EngineeringRequirementsWidget::addBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); BoxRegion region; region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1); region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString(); _requirements.boxRegions.push_back(region); refreshTables(); }
 void EngineeringRequirementsWidget::duplicateBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; BoxRegion copy = _requirements.boxRegions[static_cast<std::size_t>(row)]; copy.id += "_copy"; copy.name += " Copy"; _requirements.boxRegions.insert(_requirements.boxRegions.begin() + row + 1, copy); refreshTables(); }

@@ -49,6 +49,9 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
         if (task.name.empty()) addDiagnostic(diagnostics, task.id, task.level, "Key station name is required: " + task.id);
         if (task.refFrame.empty()) addDiagnostic(diagnostics, task.id, task.level, "Key station reference frame is required: " + task.id);
         if (task.tcpFrame.empty()) addDiagnostic(diagnostics, task.id, task.level, "Key station TCP frame is required: " + task.id);
+        if (task.source == PoseTaskSource::GeometryFeature &&
+            (task.geometryFeature.type == GeometryFeatureType::None || task.geometryFeature.frameName.empty()))
+            addDiagnostic(diagnostics, task.id, task.level, "Key station geometry feature frame is required: " + task.id);
         if (task.orientation.mode == OrientationMode::AlignFrame && task.orientation.targetFrame.empty())
             addDiagnostic(diagnostics, task.id, task.level, "Key station alignment target frame is required: " + task.id);
         if (task.orientation.mode == OrientationMode::PointAtTarget && task.orientation.targetFrame.empty() && task.orientation.targetPoint.empty())
@@ -120,6 +123,7 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
         item.refFrame = task.refFrame; item.tcpFrame = task.tcpFrame;
         item.position = task.position; item.rpyDeg = task.rpyDeg; item.tolerance = task.tolerance;
         item.processType = task.processType;
+        item.geometryFeature = task.geometryFeature;
         item.orientation = task.orientation;
         item.validation = task.validation;
         item.pathValidationPending = task.approach.enabled || task.retract.enabled;

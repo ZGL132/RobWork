@@ -10,11 +10,13 @@ rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} A
 
 if(build)
     set(CoreSrcFiles
+        GeometryFeatureResolver.cpp
         RequirementSetJson.cpp
         RequirementCompiler.cpp
     )
     set(CoreHeaderFiles
         EngineeringRequirementTypes.hpp
+        GeometryFeatureResolver.hpp
         RequirementSetJson.hpp
         RequirementCompiler.hpp
     )

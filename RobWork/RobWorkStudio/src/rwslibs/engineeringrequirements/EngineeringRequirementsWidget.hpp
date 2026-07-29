@@ -25,8 +25,13 @@ class EngineeringRequirementsWidget : public QWidget {
 public:
     explicit EngineeringRequirementsWidget(QWidget* parent = nullptr);
     void setWorkCell(rw::models::WorkCell* workcell);
+    bool applyGeometryFeatureFrame(const QString& frameName, QString* error = nullptr);
     RequirementSet requirementSet() const;
     QString statusText() const;
+
+Q_SIGNALS:
+    void geometryFeaturePickRequested();
+    void requirementsChanged();
 
 private:
     QWidget* createPoseTaskPage();
@@ -49,6 +54,7 @@ private:
     void duplicatePoseTask();
     void removePoseTask();
     void captureCurrentTcp();
+    void requestGeometryFeaturePick();
     void addBoxRegion();
     void duplicateBoxRegion();
     void removeBoxRegion();
@@ -85,6 +91,7 @@ private:
     QLabel* _freezeLabel = nullptr;
     QLabel* _statusLabel = nullptr;
     QPushButton* _freezeButton = nullptr;
+    bool _refreshingKeyStationInspector = false;
 };
 
 } // namespace rws
