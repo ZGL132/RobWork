@@ -35,6 +35,8 @@ public:
                  int role = Qt::EditRole) override;
 
     void setConstraints(const std::vector<StructureConstraint>& constraints);
+    int appendConstraint(const StructureConstraint& constraint);
+    bool removeConstraint(int row);
     const std::vector<StructureConstraint>& constraints() const;
 
 private:

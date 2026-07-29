@@ -19,6 +19,11 @@ public:
         XColumn,
         YColumn,
         ZColumn,
+        RollColumn,
+        PitchColumn,
+        YawColumn,
+        RefFrameColumn,
+        TcpFrameColumn,
         WeightColumn,
         ColumnCount
     };
@@ -35,6 +40,8 @@ public:
                  int role = Qt::EditRole) override;
 
     void setTasks(const std::vector<OptimizationTaskPoint>& tasks);
+    int appendTask(const OptimizationTaskPoint& task);
+    bool removeTask(int row);
     const std::vector<OptimizationTaskPoint>& tasks() const;
 
 private:

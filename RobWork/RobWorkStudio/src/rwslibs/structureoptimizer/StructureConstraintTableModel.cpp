@@ -130,6 +130,25 @@ void StructureConstraintTableModel::setConstraints(
     endResetModel();
 }
 
+int StructureConstraintTableModel::appendConstraint(const StructureConstraint& constraint)
+{
+    const int row = static_cast<int>(_constraints.size());
+    beginInsertRows(QModelIndex(), row, row);
+    _constraints.push_back(constraint);
+    endInsertRows();
+    return row;
+}
+
+bool StructureConstraintTableModel::removeConstraint(int row)
+{
+    if (row < 0 || row >= static_cast<int>(_constraints.size()))
+        return false;
+    beginRemoveRows(QModelIndex(), row, row);
+    _constraints.erase(_constraints.begin() + row);
+    endRemoveRows();
+    return true;
+}
+
 const std::vector<StructureConstraint>& StructureConstraintTableModel::constraints() const
 {
     return _constraints;

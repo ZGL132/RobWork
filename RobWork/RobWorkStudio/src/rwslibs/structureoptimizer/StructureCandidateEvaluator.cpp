@@ -272,13 +272,14 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
         tm.required = optTask.required;
         tm.weight   = optTask.point.weight;
 
-        // IK analysis via KinematicAnalyzer
-        KinematicIkAnalysisResult ikResult = analyzer.analyzeIk(
+        const TaskPointReachabilityResult taskResult = analyzer.analyzeTaskPoint(
+            buildResult.artifact.workcell.get(),
             buildResult.artifact.device,
             buildResult.artifact.tcpFrame,
             buildResult.artifact.state,
             optTask.point,
             taskCollisionDetector);
+        const KinematicIkAnalysisResult& ikResult = taskResult.ik;
 
         tm.usableSolutionCount = static_cast<int>(ikResult.usableSolutionCount);
         tm.reachable           = (ikResult.usableSolutionCount > 0);
@@ -302,9 +303,8 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
         tm.jointMargin    = bestMargin;
         tm.inCollision    = anyColl;
 
-        if (!tm.reachable &&
-            ikResult.failureReason != KinematicFailureReason::None)
-            tm.failure = failureReasonString(ikResult.failureReason);
+        if (!tm.reachable && taskResult.primaryFailure != KinematicFailureReason::None)
+            tm.failure = failureReasonString(taskResult.primaryFailure);
 
         taskMetrics.push_back(tm);
     }

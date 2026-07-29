@@ -44,6 +44,11 @@ QVariant OptimizationTaskTableModel::data(const QModelIndex& index, int role) co
         case XColumn: return task.point.position[0];
         case YColumn: return task.point.position[1];
         case ZColumn: return task.point.position[2];
+        case RollColumn: return task.point.rpyDeg[0];
+        case PitchColumn: return task.point.rpyDeg[1];
+        case YawColumn: return task.point.rpyDeg[2];
+        case RefFrameColumn: return QString::fromStdString(task.point.refFrame);
+        case TcpFrameColumn: return QString::fromStdString(task.point.tcpFrame);
         case WeightColumn: return task.point.weight;
         default: return QVariant();
     }
@@ -66,6 +71,11 @@ QVariant OptimizationTaskTableModel::headerData(int section,
         case XColumn: return "X";
         case YColumn: return "Y";
         case ZColumn: return "Z";
+        case RollColumn: return "Roll";
+        case PitchColumn: return "Pitch";
+        case YawColumn: return "Yaw";
+        case RefFrameColumn: return "参考系";
+        case TcpFrameColumn: return "TCP";
         case WeightColumn: return "权重";
         default: return QVariant();
     }
@@ -108,6 +118,11 @@ bool OptimizationTaskTableModel::setData(const QModelIndex& index,
             case XColumn: task.point.position[0] = value.toDouble(); break;
             case YColumn: task.point.position[1] = value.toDouble(); break;
             case ZColumn: task.point.position[2] = value.toDouble(); break;
+            case RollColumn: task.point.rpyDeg[0] = value.toDouble(); break;
+            case PitchColumn: task.point.rpyDeg[1] = value.toDouble(); break;
+            case YawColumn: task.point.rpyDeg[2] = value.toDouble(); break;
+            case RefFrameColumn: task.point.refFrame = value.toString().toStdString(); break;
+            case TcpFrameColumn: task.point.tcpFrame = value.toString().toStdString(); break;
             case WeightColumn: task.point.weight = value.toDouble(); break;
             default: return false;
         }
@@ -125,6 +140,25 @@ void OptimizationTaskTableModel::setTasks(
     beginResetModel();
     _tasks = tasks;
     endResetModel();
+}
+
+int OptimizationTaskTableModel::appendTask(const OptimizationTaskPoint& task)
+{
+    const int row = static_cast<int>(_tasks.size());
+    beginInsertRows(QModelIndex(), row, row);
+    _tasks.push_back(task);
+    endInsertRows();
+    return row;
+}
+
+bool OptimizationTaskTableModel::removeTask(int row)
+{
+    if (row < 0 || row >= static_cast<int>(_tasks.size()))
+        return false;
+    beginRemoveRows(QModelIndex(), row, row);
+    _tasks.erase(_tasks.begin() + row);
+    endRemoveRows();
+    return true;
 }
 
 const std::vector<OptimizationTaskPoint>& OptimizationTaskTableModel::tasks() const

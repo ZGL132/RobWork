@@ -57,6 +57,63 @@ QSpinBox* makeSpinBox(int minimum, int maximum, int value)
     return spinBox;
 }
 
+std::string uniqueId(const std::string& prefix, const std::vector<std::string>& existing)
+{
+    int suffix = 1;
+    while (true) {
+        const std::string candidate = prefix + "_" + std::to_string(suffix++);
+        if (std::find(existing.begin(), existing.end(), candidate) == existing.end())
+            return candidate;
+    }
+}
+
+QString constraintKindLabel(StructureConstraintKind kind)
+{
+    switch (kind) {
+    case StructureConstraintKind::ModelValid: return "模型有效";
+    case StructureConstraintKind::RequiredTaskReachable: return "必达任务可达";
+    case StructureConstraintKind::RequiredTaskCollisionFree: return "必达任务无碰撞";
+    case StructureConstraintKind::MinimumJointMargin: return "最小关节裕度";
+    case StructureConstraintKind::MaximumTotalLength: return "最大总长度";
+    case StructureConstraintKind::MaximumBaseHeight: return "最大基座高度";
+    case StructureConstraintKind::MaximumCrossSection: return "最大横截面积";
+    case StructureConstraintKind::MaximumLinkSlenderness: return "最大长细比";
+    case StructureConstraintKind::MinimumWorkspaceCoverage: return "最小工作空间覆盖";
+    }
+    return QString();
+}
+
+StructureConstraint makeDefaultConstraint(StructureConstraintKind kind,
+                                          const std::string& id)
+{
+    StructureConstraint constraint;
+    constraint.id = id;
+    constraint.label = constraintKindLabel(kind).toStdString();
+    constraint.kind = kind;
+    constraint.enabled = true;
+    constraint.hard = true;
+    switch (kind) {
+    case StructureConstraintKind::RequiredTaskCollisionFree:
+        constraint.threshold = 1.0;
+        break;
+    case StructureConstraintKind::MinimumJointMargin:
+        constraint.threshold = 0.01;
+        break;
+    case StructureConstraintKind::MaximumTotalLength:
+    case StructureConstraintKind::MaximumBaseHeight:
+    case StructureConstraintKind::MaximumCrossSection:
+    case StructureConstraintKind::MaximumLinkSlenderness:
+    case StructureConstraintKind::MinimumWorkspaceCoverage:
+        // These limits have no model-independent engineering default.
+        constraint.enabled = false;
+        break;
+    case StructureConstraintKind::ModelValid:
+    case StructureConstraintKind::RequiredTaskReachable:
+        break;
+    }
+    return constraint;
+}
+
 } // namespace
 
 StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
@@ -231,11 +288,56 @@ QWidget* StructureOptimizerWidget::createTaskPage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    layout->addWidget(makeTableView(_taskModel, "optimizationTaskTable"));
+    _taskView = makeTableView(_taskModel, "optimizationTaskTable");
+    layout->addWidget(_taskView);
+    QHBoxLayout* taskActions = new QHBoxLayout();
+    QPushButton* addTask = new QPushButton("新增任务", page);
+    addTask->setObjectName("addOptimizationTaskButton");
+    QPushButton* duplicateTask = new QPushButton("复制任务", page);
+    duplicateTask->setObjectName("duplicateOptimizationTaskButton");
+    QPushButton* removeTask = new QPushButton("删除任务", page);
+    removeTask->setObjectName("removeOptimizationTaskButton");
+    taskActions->addWidget(addTask);
+    taskActions->addWidget(duplicateTask);
+    taskActions->addWidget(removeTask);
+    taskActions->addStretch();
+    layout->addLayout(taskActions);
+    connect(addTask, &QPushButton::clicked, this, &StructureOptimizerWidget::addTask);
+    connect(duplicateTask, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::duplicateSelectedTask);
+    connect(removeTask, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::removeSelectedTask);
 
     QGroupBox* constraints = new QGroupBox("约束条件");
     QVBoxLayout* constraintLayout = new QVBoxLayout(constraints);
-    constraintLayout->addWidget(makeTableView(_constraintModel, "structureConstraintTable"));
+    _constraintView = makeTableView(_constraintModel, "structureConstraintTable");
+    constraintLayout->addWidget(_constraintView);
+    QHBoxLayout* constraintActions = new QHBoxLayout();
+    _newConstraintKindCombo = new QComboBox(constraints);
+    _newConstraintKindCombo->setObjectName("newStructureConstraintKindCombo");
+    for (int kind = static_cast<int>(StructureConstraintKind::ModelValid);
+         kind <= static_cast<int>(StructureConstraintKind::MinimumWorkspaceCoverage); ++kind) {
+        const StructureConstraintKind value = static_cast<StructureConstraintKind>(kind);
+        _newConstraintKindCombo->addItem(constraintKindLabel(value), kind);
+    }
+    QPushButton* addConstraint = new QPushButton("新增约束", constraints);
+    addConstraint->setObjectName("addStructureConstraintButton");
+    QPushButton* duplicateConstraint = new QPushButton("复制约束", constraints);
+    duplicateConstraint->setObjectName("duplicateStructureConstraintButton");
+    QPushButton* removeConstraint = new QPushButton("删除约束", constraints);
+    removeConstraint->setObjectName("removeStructureConstraintButton");
+    constraintActions->addWidget(_newConstraintKindCombo);
+    constraintActions->addWidget(addConstraint);
+    constraintActions->addWidget(duplicateConstraint);
+    constraintActions->addWidget(removeConstraint);
+    constraintActions->addStretch();
+    constraintLayout->addLayout(constraintActions);
+    connect(addConstraint, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::addConstraint);
+    connect(duplicateConstraint, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::duplicateSelectedConstraint);
+    connect(removeConstraint, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::removeSelectedConstraint);
     constraints->setLayout(constraintLayout);
     layout->addWidget(constraints);
     page->setLayout(layout);
@@ -622,4 +724,91 @@ void StructureOptimizerWidget::exportResult()
         return;
     }
     _statusLabel->setText("结构优化报告已导出到 " + directory);
+}
+
+void StructureOptimizerWidget::addTask()
+{
+    std::vector<std::string> ids;
+    for (const OptimizationTaskPoint& task : _taskModel->tasks())
+        ids.push_back(task.point.id);
+
+    OptimizationTaskPoint task;
+    task.point.id = uniqueId("task", ids);
+    task.point.name = "新任务";
+    task.point.refFrame = "WORLD";
+    // Empty means that the evaluator uses the project's default device end frame.
+    task.point.tcpFrame.clear();
+    task.point.enabled = true;
+    task.required = true;
+    const int row = _taskModel->appendTask(task);
+    _taskView->selectRow(row);
+    updateRunState();
+}
+
+void StructureOptimizerWidget::duplicateSelectedTask()
+{
+    if (_taskView == nullptr || !_taskView->currentIndex().isValid())
+        return;
+    const int sourceRow = _taskView->currentIndex().row();
+    const std::vector<OptimizationTaskPoint>& tasks = _taskModel->tasks();
+    if (sourceRow < 0 || sourceRow >= static_cast<int>(tasks.size()))
+        return;
+    std::vector<std::string> ids;
+    for (const OptimizationTaskPoint& task : tasks)
+        ids.push_back(task.point.id);
+    OptimizationTaskPoint copy = tasks[static_cast<std::size_t>(sourceRow)];
+    copy.point.id = uniqueId("task", ids);
+    copy.point.name += " (副本)";
+    const int row = _taskModel->appendTask(copy);
+    _taskView->selectRow(row);
+    updateRunState();
+}
+
+void StructureOptimizerWidget::removeSelectedTask()
+{
+    if (_taskView == nullptr || !_taskView->currentIndex().isValid())
+        return;
+    if (_taskModel->removeTask(_taskView->currentIndex().row()))
+        updateRunState();
+}
+
+void StructureOptimizerWidget::addConstraint()
+{
+    std::vector<std::string> ids;
+    for (const StructureConstraint& constraint : _constraintModel->constraints())
+        ids.push_back(constraint.id);
+    const StructureConstraintKind kind = static_cast<StructureConstraintKind>(
+        _newConstraintKindCombo->currentData().toInt());
+    StructureConstraint constraint = makeDefaultConstraint(
+        kind, uniqueId("constraint", ids));
+    const int row = _constraintModel->appendConstraint(constraint);
+    _constraintView->selectRow(row);
+    updateRunState();
+}
+
+void StructureOptimizerWidget::duplicateSelectedConstraint()
+{
+    if (_constraintView == nullptr || !_constraintView->currentIndex().isValid())
+        return;
+    const int sourceRow = _constraintView->currentIndex().row();
+    const std::vector<StructureConstraint>& constraints = _constraintModel->constraints();
+    if (sourceRow < 0 || sourceRow >= static_cast<int>(constraints.size()))
+        return;
+    std::vector<std::string> ids;
+    for (const StructureConstraint& constraint : constraints)
+        ids.push_back(constraint.id);
+    StructureConstraint copy = constraints[static_cast<std::size_t>(sourceRow)];
+    copy.id = uniqueId("constraint", ids);
+    copy.label += " (副本)";
+    const int row = _constraintModel->appendConstraint(copy);
+    _constraintView->selectRow(row);
+    updateRunState();
+}
+
+void StructureOptimizerWidget::removeSelectedConstraint()
+{
+    if (_constraintView == nullptr || !_constraintView->currentIndex().isValid())
+        return;
+    if (_constraintModel->removeConstraint(_constraintView->currentIndex().row()))
+        updateRunState();
 }

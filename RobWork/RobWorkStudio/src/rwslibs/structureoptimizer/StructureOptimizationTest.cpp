@@ -46,6 +46,7 @@
 #include <QPushButton>
 #include <QTemporaryDir>
 #include <QTimer>
+#include <QTableView>
 #include <QTabWidget>
 
 #include <algorithm>
@@ -2055,6 +2056,7 @@ static void testAcceptedUr6585AProject()
         REQUIRE(rws::RobotModelStalenessChecker::check(project.context, projectPath).status ==
                 rws::RobotModelSourceStatus::Current);
         REQUIRE(project.tasks.size() == 3);
+        REQUIRE(project.tasks[0].point.tcpFrame.empty());
         REQUIRE(project.evaluation.coverageBox.enabled);
         REQUIRE(project.run.randomSeed == 20260727u);
         REQUIRE(project.variables.size() == 3);
@@ -2193,6 +2195,98 @@ static void testStructureOptimizerWidgetState()
     widget.setProblem(emptyTaskProject);
     if (startButton != nullptr)
         REQUIRE(!startButton->isEnabled());
+
+    QTableView* taskView = widget.findChild<QTableView*>("optimizationTaskTable");
+    QPushButton* addTaskButton =
+        widget.findChild<QPushButton*>("addOptimizationTaskButton");
+    REQUIRE(taskView != nullptr);
+    REQUIRE(addTaskButton != nullptr);
+    if (taskView != nullptr && addTaskButton != nullptr) {
+        REQUIRE(taskView->model()->rowCount() == 0);
+        addTaskButton->click();
+        REQUIRE(taskView->model()->rowCount() == 1);
+        REQUIRE(taskView->model()->columnCount() == 13);
+        REQUIRE(taskView->model()->data(
+                    taskView->model()->index(0, rws::OptimizationTaskTableModel::IdColumn))
+                    .toString().startsWith("task_"));
+        REQUIRE(taskView->model()->data(
+                    taskView->model()->index(0, rws::OptimizationTaskTableModel::RefFrameColumn))
+                    .toString() == "WORLD");
+        REQUIRE(taskView->model()->data(
+                    taskView->model()->index(0, rws::OptimizationTaskTableModel::TcpFrameColumn))
+                    .toString().isEmpty());
+        REQUIRE(taskView->model()->setData(
+                    taskView->model()->index(0, rws::OptimizationTaskTableModel::RollColumn),
+                    15.0));
+        REQUIRE(taskView->model()->setData(
+                    taskView->model()->index(0, rws::OptimizationTaskTableModel::TcpFrameColumn),
+                    "Joint5"));
+        const rws::StructureOptimizationProblem edited = widget.collectProblem();
+        REQUIRE(edited.tasks[0].point.rpyDeg[0] == 15.0);
+        REQUIRE(edited.tasks[0].point.tcpFrame == "Joint5");
+
+        QPushButton* duplicateTaskButton =
+            widget.findChild<QPushButton*>("duplicateOptimizationTaskButton");
+        QPushButton* removeTaskButton =
+            widget.findChild<QPushButton*>("removeOptimizationTaskButton");
+        REQUIRE(duplicateTaskButton != nullptr);
+        REQUIRE(removeTaskButton != nullptr);
+        if (duplicateTaskButton != nullptr && removeTaskButton != nullptr) {
+            taskView->selectRow(0);
+            duplicateTaskButton->click();
+            REQUIRE(taskView->model()->rowCount() == 2);
+            REQUIRE(taskView->model()->data(
+                        taskView->model()->index(1, rws::OptimizationTaskTableModel::IdColumn))
+                        .toString() != taskView->model()->data(
+                        taskView->model()->index(0, rws::OptimizationTaskTableModel::IdColumn))
+                        .toString());
+            removeTaskButton->click();
+            REQUIRE(taskView->model()->rowCount() == 1);
+        }
+    }
+
+    QTableView* constraintView =
+        widget.findChild<QTableView*>("structureConstraintTable");
+    QPushButton* addConstraintButton =
+        widget.findChild<QPushButton*>("addStructureConstraintButton");
+    REQUIRE(constraintView != nullptr);
+    REQUIRE(addConstraintButton != nullptr);
+    if (constraintView != nullptr && addConstraintButton != nullptr) {
+        REQUIRE(constraintView->model()->rowCount() == 0);
+        addConstraintButton->click();
+        REQUIRE(constraintView->model()->rowCount() == 1);
+        QComboBox* constraintKindCombo =
+            widget.findChild<QComboBox*>("newStructureConstraintKindCombo");
+        REQUIRE(constraintKindCombo != nullptr);
+        if (constraintKindCombo != nullptr) {
+            constraintKindCombo->setCurrentIndex(constraintKindCombo->findData(
+                static_cast<int>(rws::StructureConstraintKind::MinimumJointMargin)));
+            addConstraintButton->click();
+            REQUIRE(constraintView->model()->rowCount() == 2);
+            REQUIRE(constraintView->model()->data(
+                        constraintView->model()->index(
+                            1, rws::StructureConstraintTableModel::KindColumn))
+                        .toString() == "最小关节裕度");
+            REQUIRE(constraintView->model()->data(
+                        constraintView->model()->index(
+                            1, rws::StructureConstraintTableModel::ThresholdColumn))
+                        .toDouble() == 0.01);
+        }
+
+        QPushButton* duplicateConstraintButton =
+            widget.findChild<QPushButton*>("duplicateStructureConstraintButton");
+        QPushButton* removeConstraintButton =
+            widget.findChild<QPushButton*>("removeStructureConstraintButton");
+        REQUIRE(duplicateConstraintButton != nullptr);
+        REQUIRE(removeConstraintButton != nullptr);
+        if (duplicateConstraintButton != nullptr && removeConstraintButton != nullptr) {
+            constraintView->selectRow(0);
+            duplicateConstraintButton->click();
+            REQUIRE(constraintView->model()->rowCount() == 3);
+            removeConstraintButton->click();
+            REQUIRE(constraintView->model()->rowCount() == 2);
+        }
+    }
 
     rws::StructureOptimizationProblem problem;
     problem.context.modelSpec =

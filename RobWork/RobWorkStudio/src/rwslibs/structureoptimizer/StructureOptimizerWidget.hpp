@@ -62,6 +62,12 @@ private:
     void openProject();
     void saveProject();
     void exportResult();
+    void addTask();
+    void duplicateSelectedTask();
+    void removeSelectedTask();
+    void addConstraint();
+    void duplicateSelectedConstraint();
+    void removeSelectedConstraint();
 
     StructureOptimizationProblem _loadedProblem;
     StructureVariableTableModel* _variableModel = nullptr;
@@ -75,6 +81,8 @@ private:
     RobotModelSourceStatus _modelSourceStatus = RobotModelSourceStatus::Untracked;
 
     QTabWidget* _tabs = nullptr;
+    QTableView* _taskView = nullptr;
+    QTableView* _constraintView = nullptr;
     QTableView* _candidateView = nullptr;
     QPushButton* _startButton = nullptr;
     QPushButton* _pauseButton = nullptr;
@@ -89,6 +97,7 @@ private:
     QSpinBox* _gridStepsSpin = nullptr;
     QSpinBox* _seedSpin = nullptr;
     QComboBox* _strategyCombo = nullptr;
+    QComboBox* _newConstraintKindCombo = nullptr;
     std::array<QDoubleSpinBox*, 6> _weightSpins = {{nullptr, nullptr, nullptr,
                                                       nullptr, nullptr, nullptr}};
 };
