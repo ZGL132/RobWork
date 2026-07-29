@@ -58,6 +58,19 @@ struct GeometryFeatureReference {
     std::string geometryName;
 };
 
+struct GenerationParameter {
+    std::string key;
+    std::string value;
+};
+
+// Keeps generated stations traceable without making the requirement set depend on a UI dialog.
+struct StationGenerationProvenance {
+    std::string generatorId;
+    std::string instanceId;
+    bool linked = false;
+    std::vector<GenerationParameter> parameters;
+};
+
 struct KeyStation {
     std::string id;
     std::string name;
@@ -70,6 +83,7 @@ struct KeyStation {
     std::array<double, 3> rpyDeg = {{0.0, 0.0, 0.0}};
     PoseTolerance tolerance;
     GeometryFeatureReference geometryFeature;
+    StationGenerationProvenance generation;
     OrientationRule orientation;
     ApproachRetractRule approach;
     ApproachRetractRule retract;

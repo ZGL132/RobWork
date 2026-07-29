@@ -3,6 +3,7 @@
 #include "RequirementCompiler.hpp"
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementSetJson.hpp"
+#include "StationTemplateService.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
@@ -12,11 +13,14 @@
 #include <rw/kinematics/Frame.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/RPY.hpp>
+#include <rw/math/Rotation3D.hpp>
 
 #include <QComboBox>
 #include <QCheckBox>
 #include <QColor>
 #include <QDoubleSpinBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QFile>
 #include <QFileDialog>
 #include <QFormLayout>
@@ -28,6 +32,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSplitter>
@@ -35,6 +40,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QSignalBlocker>
+#include <QSpinBox>
+#include <QStringList>
 
 #include <algorithm>
 
@@ -85,6 +92,302 @@ QDoubleSpinBox* angleSpinBox(const QString& objectName) {
     spin->setSuffix(" deg");
     return spin;
 }
+
+QDoubleSpinBox* nonNegativeLengthSpinBox(double value)
+{
+    QDoubleSpinBox* spin = lengthSpinBox(QString());
+    spin->setRange(0.0, 1000.0);
+    spin->setValue(value);
+    return spin;
+}
+
+QSpinBox* stationCountSpinBox(int value)
+{
+    QSpinBox* spin = new QSpinBox();
+    spin->setRange(1, 10000);
+    spin->setValue(std::max(1, value));
+    return spin;
+}
+
+void selectComboValue(QComboBox* combo, const QString& value)
+{
+    int index = combo->findData(value);
+    if (index < 0 && !value.isEmpty()) {
+        combo->addItem(value, value);
+        index = combo->count() - 1;
+    }
+    if (index >= 0)
+        combo->setCurrentIndex(index);
+}
+
+QComboBox* frameChoice(const rw::models::WorkCell* workcell, const QString& current, bool tcp)
+{
+    QComboBox* combo = new QComboBox();
+    combo->setEditable(true);
+    if (!tcp)
+        combo->addItem("WORLD", "WORLD");
+    if (workcell != nullptr) {
+        if (tcp) {
+            for (const rw::core::Ptr<rw::models::Device>& device : workcell->getDevices()) {
+                if (device != nullptr && device->getEnd() != nullptr) {
+                    const QString name = QString::fromStdString(device->getEnd()->getName());
+                    combo->addItem(name, name);
+                }
+            }
+        } else {
+            for (rw::kinematics::Frame* frame : workcell->getFrames()) {
+                if (frame == nullptr) continue;
+                const QString name = QString::fromStdString(frame->getName());
+                if (combo->findData(name) < 0)
+                    combo->addItem(name, name);
+            }
+        }
+    }
+    selectComboValue(combo, current);
+    return combo;
+}
+
+QString generationParameter(const PoseTask& station, const char* key, const QString& fallback = QString())
+{
+    const auto it = std::find_if(station.generation.parameters.begin(), station.generation.parameters.end(),
+                                 [key] (const GenerationParameter& parameter) {
+                                     return parameter.key == key;
+                                 });
+    return it == station.generation.parameters.end() ? fallback : QString::fromStdString(it->value);
+}
+
+int generationParameterInt(const PoseTask& station, const char* key, int fallback)
+{
+    bool ok = false;
+    const int value = generationParameter(station, key).toInt(&ok);
+    return ok ? value : fallback;
+}
+
+double generationParameterDouble(const PoseTask& station, const char* key, double fallback)
+{
+    bool ok = false;
+    const double value = generationParameter(station, key).toDouble(&ok);
+    return ok ? value : fallback;
+}
+
+bool templateKindFromGeneratorId(const std::string& generatorId, StationTemplateKind& kind)
+{
+    for (const StationTemplateKind candidate : {StationTemplateKind::BinPicking, StationTemplateKind::MachineTending,
+                                                 StationTemplateKind::Palletizing, StationTemplateKind::Inspection,
+                                                 StationTemplateKind::ToolChange, StationTemplateKind::Handover}) {
+        if (generatorId == std::string(StationTemplateService::toString(candidate)) + ".v1") {
+            kind = candidate;
+            return true;
+        }
+    }
+    return false;
+}
+
+void addTemplateKinds(QComboBox* combo)
+{
+    combo->addItem(QString::fromUtf8("料箱取料"), static_cast<int>(StationTemplateKind::BinPicking));
+    combo->addItem(QString::fromUtf8("机床上下料"), static_cast<int>(StationTemplateKind::MachineTending));
+    combo->addItem(QString::fromUtf8("码垛"), static_cast<int>(StationTemplateKind::Palletizing));
+    combo->addItem(QString::fromUtf8("检测"), static_cast<int>(StationTemplateKind::Inspection));
+    combo->addItem(QString::fromUtf8("换工具"), static_cast<int>(StationTemplateKind::ToolChange));
+    combo->addItem(QString::fromUtf8("人机交接"), static_cast<int>(StationTemplateKind::Handover));
+}
+
+bool editTemplateRequest(QWidget* parent, const rw::models::WorkCell* workcell,
+                         StationTemplateRequest& request, bool updateExisting, const QString& title)
+{
+    QDialog dialog(parent);
+    dialog.setWindowTitle(title);
+    QVBoxLayout* layout = new QVBoxLayout(&dialog);
+    QFormLayout* form = new QFormLayout();
+    QComboBox* kind = new QComboBox(&dialog);
+    addTemplateKinds(kind);
+    kind->setCurrentIndex(kind->findData(static_cast<int>(request.kind)));
+    QLineEdit* instanceId = new QLineEdit(QString::fromStdString(request.instanceId), &dialog);
+    instanceId->setReadOnly(updateExisting);
+    QLineEdit* idPrefix = new QLineEdit(QString::fromStdString(request.idPrefix), &dialog);
+    QLineEdit* namePrefix = new QLineEdit(QString::fromStdString(request.namePrefix), &dialog);
+    QComboBox* referenceFrame = frameChoice(workcell, QString::fromStdString(request.referenceFrame), false);
+    QComboBox* tcpFrame = frameChoice(workcell, QString::fromStdString(request.tcpFrame), true);
+    QComboBox* level = new QComboBox(&dialog);
+    level->addItem("Must", static_cast<int>(RequirementLevel::Must));
+    level->addItem("Should", static_cast<int>(RequirementLevel::Should));
+    level->addItem("Info", static_cast<int>(RequirementLevel::Info));
+    level->setCurrentIndex(level->findData(static_cast<int>(request.level)));
+    QDoubleSpinBox* offsetX = lengthSpinBox(QString()); offsetX->setValue(request.operationOffsetMeters[0]);
+    QDoubleSpinBox* offsetY = lengthSpinBox(QString()); offsetY->setValue(request.operationOffsetMeters[1]);
+    QDoubleSpinBox* offsetZ = lengthSpinBox(QString()); offsetZ->setValue(request.operationOffsetMeters[2]);
+    QSpinBox* rows = stationCountSpinBox(request.rows);
+    QSpinBox* columns = stationCountSpinBox(request.columns);
+    QSpinBox* layers = stationCountSpinBox(request.layers);
+    QDoubleSpinBox* rowSpacing = nonNegativeLengthSpinBox(request.rowSpacingMeters);
+    QDoubleSpinBox* columnSpacing = nonNegativeLengthSpinBox(request.columnSpacingMeters);
+    QDoubleSpinBox* layerSpacing = nonNegativeLengthSpinBox(request.layerSpacingMeters);
+    QDoubleSpinBox* approach = nonNegativeLengthSpinBox(request.approachDistanceMeters);
+    QDoubleSpinBox* retract = nonNegativeLengthSpinBox(request.retractDistanceMeters);
+    QDoubleSpinBox* clearance = nonNegativeLengthSpinBox(request.clearanceMeters);
+    form->addRow(QString::fromUtf8("模板类型"), kind);
+    form->addRow(QString::fromUtf8("实例 ID"), instanceId);
+    form->addRow(QString::fromUtf8("工位 ID 前缀"), idPrefix);
+    form->addRow(QString::fromUtf8("工位名称前缀"), namePrefix);
+    form->addRow(QString::fromUtf8("参考系"), referenceFrame);
+    form->addRow("TCP", tcpFrame);
+    form->addRow(QString::fromUtf8("需求等级"), level);
+    form->addRow(QString::fromUtf8("作业偏置 X"), offsetX);
+    form->addRow(QString::fromUtf8("作业偏置 Y"), offsetY);
+    form->addRow(QString::fromUtf8("作业偏置 Z"), offsetZ);
+    form->addRow(QString::fromUtf8("行数"), rows);
+    form->addRow(QString::fromUtf8("列数"), columns);
+    form->addRow(QString::fromUtf8("层数"), layers);
+    form->addRow(QString::fromUtf8("行间距"), rowSpacing);
+    form->addRow(QString::fromUtf8("列间距"), columnSpacing);
+    form->addRow(QString::fromUtf8("层间距"), layerSpacing);
+    form->addRow(QString::fromUtf8("接近距离"), approach);
+    form->addRow(QString::fromUtf8("撤离距离"), retract);
+    form->addRow(QString::fromUtf8("安全距离"), clearance);
+    layout->addLayout(form);
+    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted)
+        return false;
+    request.kind = static_cast<StationTemplateKind>(kind->currentData().toInt());
+    request.instanceId = instanceId->text().trimmed().toStdString();
+    request.idPrefix = idPrefix->text().trimmed().toStdString();
+    request.namePrefix = namePrefix->text().trimmed().toStdString();
+    request.referenceFrame = referenceFrame->currentText().trimmed().toStdString();
+    request.tcpFrame = tcpFrame->currentText().trimmed().toStdString();
+    request.level = static_cast<RequirementLevel>(level->currentData().toInt());
+    request.operationOffsetMeters = {{offsetX->value(), offsetY->value(), offsetZ->value()}};
+    request.rows = rows->value();
+    request.columns = columns->value();
+    request.layers = layers->value();
+    request.rowSpacingMeters = rowSpacing->value();
+    request.columnSpacingMeters = columnSpacing->value();
+    request.layerSpacingMeters = layerSpacing->value();
+    request.approachDistanceMeters = approach->value();
+    request.retractDistanceMeters = retract->value();
+    request.clearanceMeters = clearance->value();
+    return true;
+}
+
+bool templateRequestFromStation(const PoseTask& station, StationTemplateRequest& request)
+{
+    if (!templateKindFromGeneratorId(station.generation.generatorId, request.kind))
+        return false;
+    request.instanceId = station.generation.instanceId;
+    request.idPrefix = generationParameter(station, "idPrefix", QString::fromStdString(station.id)).toStdString();
+    request.namePrefix = generationParameter(station, "namePrefix", QString::fromStdString(station.name)).toStdString();
+    request.referenceFrame = generationParameter(station, "referenceFrame", QString::fromStdString(station.refFrame)).toStdString();
+    request.tcpFrame = generationParameter(station, "tcpFrame", QString::fromStdString(station.tcpFrame)).toStdString();
+    request.level = station.level;
+    request.operationOffsetMeters = {{
+        generationParameterDouble(station, "operationOffsetX", station.position[0]),
+        generationParameterDouble(station, "operationOffsetY", station.position[1]),
+        generationParameterDouble(station, "operationOffsetZ", station.position[2])
+    }};
+    request.rows = generationParameterInt(station, "rows", request.rows);
+    request.columns = generationParameterInt(station, "columns", request.columns);
+    request.layers = generationParameterInt(station, "layers", request.layers);
+    request.rowSpacingMeters = generationParameterDouble(station, "rowSpacingMeters", request.rowSpacingMeters);
+    request.columnSpacingMeters = generationParameterDouble(station, "columnSpacingMeters", request.columnSpacingMeters);
+    request.layerSpacingMeters = generationParameterDouble(station, "layerSpacingMeters", request.layerSpacingMeters);
+    request.approachDistanceMeters = generationParameterDouble(station, "approachDistanceMeters", request.approachDistanceMeters);
+    request.retractDistanceMeters = generationParameterDouble(station, "retractDistanceMeters", request.retractDistanceMeters);
+    request.clearanceMeters = generationParameterDouble(station, "clearanceMeters", request.clearanceMeters);
+    return true;
+}
+
+void addArrayKinds(QComboBox* combo)
+{
+    combo->addItem(QString::fromUtf8("线性阵列"), static_cast<int>(StationArrayKind::Linear));
+    combo->addItem(QString::fromUtf8("矩形阵列"), static_cast<int>(StationArrayKind::Rectangular));
+    combo->addItem(QString::fromUtf8("圆周阵列"), static_cast<int>(StationArrayKind::Circular));
+}
+
+bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
+{
+    QDialog dialog(parent);
+    dialog.setWindowTitle(QString::fromUtf8("批量生成工位"));
+    QVBoxLayout* layout = new QVBoxLayout(&dialog);
+    QFormLayout* form = new QFormLayout();
+    QComboBox* kind = new QComboBox(&dialog);
+    addArrayKinds(kind);
+    kind->setCurrentIndex(kind->findData(static_cast<int>(request.kind)));
+    QLineEdit* instanceId = new QLineEdit(QString::fromStdString(request.instanceId), &dialog);
+    QLineEdit* idPrefix = new QLineEdit(QString::fromStdString(request.idPrefix), &dialog);
+    QLineEdit* namePrefix = new QLineEdit(QString::fromStdString(request.namePrefix), &dialog);
+    QSpinBox* primaryCount = stationCountSpinBox(request.primaryCount);
+    QSpinBox* secondaryCount = stationCountSpinBox(request.secondaryCount);
+    QDoubleSpinBox* primaryX = lengthSpinBox(QString()); primaryX->setValue(request.primaryStepMeters[0]);
+    QDoubleSpinBox* primaryY = lengthSpinBox(QString()); primaryY->setValue(request.primaryStepMeters[1]);
+    QDoubleSpinBox* primaryZ = lengthSpinBox(QString()); primaryZ->setValue(request.primaryStepMeters[2]);
+    QDoubleSpinBox* secondaryX = lengthSpinBox(QString()); secondaryX->setValue(request.secondaryStepMeters[0]);
+    QDoubleSpinBox* secondaryY = lengthSpinBox(QString()); secondaryY->setValue(request.secondaryStepMeters[1]);
+    QDoubleSpinBox* secondaryZ = lengthSpinBox(QString()); secondaryZ->setValue(request.secondaryStepMeters[2]);
+    QDoubleSpinBox* radius = nonNegativeLengthSpinBox(request.radiusMeters);
+    QDoubleSpinBox* startAngle = angleSpinBox(QString()); startAngle->setValue(request.startAngleDeg);
+    QDoubleSpinBox* endAngle = angleSpinBox(QString()); endAngle->setValue(request.endAngleDeg);
+    form->addRow(QString::fromUtf8("阵列类型"), kind);
+    form->addRow(QString::fromUtf8("实例 ID"), instanceId);
+    form->addRow(QString::fromUtf8("工位 ID 前缀"), idPrefix);
+    form->addRow(QString::fromUtf8("工位名称前缀"), namePrefix);
+    form->addRow(QString::fromUtf8("主方向数量"), primaryCount);
+    form->addRow(QString::fromUtf8("次方向数量"), secondaryCount);
+    form->addRow(QString::fromUtf8("主步长 X"), primaryX);
+    form->addRow(QString::fromUtf8("主步长 Y"), primaryY);
+    form->addRow(QString::fromUtf8("主步长 Z"), primaryZ);
+    form->addRow(QString::fromUtf8("次步长 X"), secondaryX);
+    form->addRow(QString::fromUtf8("次步长 Y"), secondaryY);
+    form->addRow(QString::fromUtf8("次步长 Z"), secondaryZ);
+    form->addRow(QString::fromUtf8("半径"), radius);
+    form->addRow(QString::fromUtf8("起始角"), startAngle);
+    form->addRow(QString::fromUtf8("终止角"), endAngle);
+    layout->addLayout(form);
+    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    if (dialog.exec() != QDialog::Accepted)
+        return false;
+    request.kind = static_cast<StationArrayKind>(kind->currentData().toInt());
+    request.instanceId = instanceId->text().trimmed().toStdString();
+    request.idPrefix = idPrefix->text().trimmed().toStdString();
+    request.namePrefix = namePrefix->text().trimmed().toStdString();
+    request.primaryCount = primaryCount->value();
+    request.secondaryCount = secondaryCount->value();
+    request.primaryStepMeters = {{primaryX->value(), primaryY->value(), primaryZ->value()}};
+    request.secondaryStepMeters = {{secondaryX->value(), secondaryY->value(), secondaryZ->value()}};
+    request.radiusMeters = radius->value();
+    request.startAngleDeg = startAngle->value();
+    request.endAngleDeg = endAngle->value();
+    return true;
+}
+
+std::string uniqueInstanceId(const RequirementSet& requirements, const std::string& prefix)
+{
+    const std::string base = prefix.empty() ? "generated" : prefix;
+    for (int suffix = 1; ; ++suffix) {
+        const std::string candidate = base + "_" + std::to_string(suffix);
+        const bool exists = std::any_of(requirements.poseTasks.begin(), requirements.poseTasks.end(),
+            [&candidate] (const PoseTask& station) { return station.generation.instanceId == candidate; });
+        if (!exists)
+            return candidate;
+    }
+}
+
+std::string uniqueStationId(const RequirementSet& requirements, const std::string& prefix)
+{
+    const std::string base = prefix.empty() ? "station" : prefix;
+    for (int suffix = 1; ; ++suffix) {
+        const std::string candidate = suffix == 1 ? base : base + "_" + std::to_string(suffix);
+        const bool exists = std::any_of(requirements.poseTasks.begin(), requirements.poseTasks.end(),
+            [&candidate] (const PoseTask& station) { return station.id == candidate; });
+        if (!exists)
+            return candidate;
+    }
+}
 } // namespace
 
 EngineeringRequirementsWidget::EngineeringRequirementsWidget(QWidget* parent) : QWidget(parent)
@@ -113,7 +416,24 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QPushButton* pickGeometry = new QPushButton(QString::fromUtf8("从 3D 拾取几何 Frame"), page);
     pickGeometry->setObjectName("pickRequirementGeometryFeatureButton");
     pickGeometry->setToolTip(QString::fromUtf8("点击后，在 3D 视图中按住 Ctrl 双击目标工装或工件。"));
-    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry); actions->addStretch();
+    QPushButton* createTemplate = new QPushButton(QString::fromUtf8("工艺模板"), page);
+    createTemplate->setObjectName("createRequirementTemplateButton");
+    createTemplate->setToolTip(QString::fromUtf8("基于料箱取料、机床上下料等工艺模板批量创建工位"));
+    QPushButton* updateTemplate = new QPushButton(QString::fromUtf8("更新模板"), page);
+    updateTemplate->setObjectName("updateRequirementTemplateButton");
+    updateTemplate->setToolTip(QString::fromUtf8("更新当前模板实例中仍保持关联的工位"));
+    QPushButton* detachTemplate = new QPushButton(QString::fromUtf8("解除关联"), page);
+    detachTemplate->setObjectName("detachRequirementTemplateButton");
+    detachTemplate->setToolTip(QString::fromUtf8("将当前模板或阵列工位转为独立手工维护的工位"));
+    QPushButton* createArray = new QPushButton(QString::fromUtf8("批量阵列"), page);
+    createArray->setObjectName("createRequirementArrayButton");
+    createArray->setToolTip(QString::fromUtf8("从当前工位生成线性、矩形或圆周阵列"));
+    QPushButton* mirror = new QPushButton(QString::fromUtf8("镜像工位"), page);
+    mirror->setObjectName("mirrorRequirementStationButton");
+    mirror->setToolTip(QString::fromUtf8("以当前参考系原点为基准镜像固定姿态工位"));
+    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry);
+    actions->addWidget(createTemplate); actions->addWidget(updateTemplate); actions->addWidget(detachTemplate);
+    actions->addWidget(createArray); actions->addWidget(mirror); actions->addStretch();
     layout->addLayout(actions);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
@@ -163,6 +483,11 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     connect(remove, &QPushButton::clicked, this, &EngineeringRequirementsWidget::removePoseTask);
     connect(capture, &QPushButton::clicked, this, &EngineeringRequirementsWidget::captureCurrentTcp);
     connect(pickGeometry, &QPushButton::clicked, this, &EngineeringRequirementsWidget::requestGeometryFeaturePick);
+    connect(createTemplate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::createTemplateStations);
+    connect(updateTemplate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::updateSelectedTemplateStations);
+    connect(detachTemplate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::detachSelectedTemplateStation);
+    connect(createArray, &QPushButton::clicked, this, &EngineeringRequirementsWidget::createStationArray);
+    connect(mirror, &QPushButton::clicked, this, &EngineeringRequirementsWidget::mirrorSelectedStation);
     connect(_stationList, &QListWidget::currentRowChanged, this, &EngineeringRequirementsWidget::refreshKeyStationInspector);
     connect(_stationOrientationModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EngineeringRequirementsWidget::updateOrientationEditor);
     connect(_stationNameEdit, &QLineEdit::editingFinished, this, &EngineeringRequirementsWidget::commitKeyStationInspector);
@@ -247,6 +572,9 @@ void EngineeringRequirementsWidget::refreshTables()
     for (const char* name : {"addRequirementPoseTaskButton", "duplicateRequirementPoseTaskButton",
                              "removeRequirementPoseTaskButton", "captureRequirementTcpButton",
                              "pickRequirementGeometryFeatureButton",
+                             "createRequirementTemplateButton", "updateRequirementTemplateButton",
+                             "detachRequirementTemplateButton", "createRequirementArrayButton",
+                             "mirrorRequirementStationButton",
                              "addRequirementBoxRegionButton", "duplicateRequirementBoxRegionButton",
                              "removeRequirementBoxRegionButton"}) {
         if (QPushButton* button = findChild<QPushButton*>(name)) button->setEnabled(editable);
@@ -639,6 +967,176 @@ bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& fra
     if (error != nullptr) error->clear();
     return true;
 }
+void EngineeringRequirementsWidget::createTemplateStations()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    StationTemplateRequest request;
+    const int selected = selectedKeyStationIndex();
+    if (selected >= 0 && selected < static_cast<int>(_requirements.poseTasks.size())) {
+        const PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+        request.referenceFrame = station.refFrame;
+        request.tcpFrame = station.tcpFrame;
+        request.operationOffsetMeters = station.position;
+    }
+    request.instanceId = uniqueInstanceId(_requirements, "template");
+    request.idPrefix = "station";
+    request.namePrefix = "Template";
+    if (!editTemplateRequest(this, _workcell, request, false, QString::fromUtf8("创建工艺模板工位")))
+        return;
+    const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
+    std::string error;
+    if (!StationTemplateService::appendTemplate(_requirements, request, &error)) {
+        QMessageBox::warning(this, QString::fromUtf8("无法创建模板"), QString::fromStdString(error));
+        return;
+    }
+    refreshTables();
+    if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
+    setStatus(QString::fromUtf8("已创建工艺模板实例“%1”，其生成工位保持关联，可在后续统一更新或解除关联。").arg(QString::fromStdString(request.instanceId)));
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::updateSelectedTemplateStations()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const int selected = selectedKeyStationIndex();
+    if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
+        setStatus(QString::fromUtf8("请先选择一个仍与工艺模板保持关联的关键工位。"));
+        return;
+    }
+    const PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    StationTemplateRequest request;
+    if (!station.generation.linked || !templateRequestFromStation(station, request)) {
+        setStatus(QString::fromUtf8("当前工位不是可更新的模板关联工位；阵列和已解除关联的工位不会被模板更新覆盖。"));
+        return;
+    }
+    if (!editTemplateRequest(this, _workcell, request, true, QString::fromUtf8("更新工艺模板")))
+        return;
+    TemplateUpdatePreview preview;
+    std::string error;
+    if (!StationTemplateService::previewTemplateUpdate(_requirements, station.generation.instanceId, request, preview, &error)) {
+        QMessageBox::warning(this, QString::fromUtf8("无法预览模板更新"), QString::fromStdString(error));
+        return;
+    }
+    const QString message = QString::fromUtf8("本次更新将替换 %1 个仍保持关联的工位，并生成 %2 个新工位。已解除关联的工位不会修改。是否继续？")
+        .arg(preview.replacedStationIds.size()).arg(preview.generatedStations.size());
+    if (QMessageBox::question(this, QString::fromUtf8("确认模板更新"), message,
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
+        return;
+    if (!StationTemplateService::applyTemplateUpdate(_requirements, preview, &error)) {
+        QMessageBox::warning(this, QString::fromUtf8("无法应用模板更新"), QString::fromStdString(error));
+        return;
+    }
+    refreshTables();
+    setStatus(QString::fromUtf8("模板实例“%1”已更新；解除关联的工位保持原样。").arg(QString::fromStdString(request.instanceId)));
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::detachSelectedTemplateStation()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const int selected = selectedKeyStationIndex();
+    if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
+        setStatus(QString::fromUtf8("请先选择一个由模板或阵列生成的关键工位。"));
+        return;
+    }
+    PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    if (station.generation.instanceId.empty()) {
+        setStatus(QString::fromUtf8("当前工位不是由模板或阵列生成，已经是独立工位。"));
+        return;
+    }
+    if (!station.generation.linked) {
+        setStatus(QString::fromUtf8("当前工位已经解除关联，之后的模板更新不会覆盖它。"));
+        return;
+    }
+    std::string error;
+    if (!StationTemplateService::detachStation(_requirements, station.id, &error)) {
+        QMessageBox::warning(this, QString::fromUtf8("无法解除关联"), QString::fromStdString(error));
+        return;
+    }
+    refreshTables();
+    setStatus(QString::fromUtf8("工位“%1”已解除与模板的关联，可单独调整且不会被后续模板更新覆盖。").arg(QString::fromStdString(station.name)));
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::createStationArray()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const int selected = selectedKeyStationIndex();
+    if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
+        setStatus(QString::fromUtf8("请先选择一个关键工位，批量阵列会从该工位复制工艺语义、姿态规则和验证要求。"));
+        return;
+    }
+    const PoseTask source = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    StationArrayRequest request;
+    request.instanceId = uniqueInstanceId(_requirements, source.id + "_array");
+    request.idPrefix = source.id + "_array";
+    request.namePrefix = source.name + " array";
+    if (!editArrayRequest(this, request))
+        return;
+    const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
+    std::string error;
+    if (!StationTemplateService::appendArray(_requirements, source.id, request, &error)) {
+        QMessageBox::warning(this, QString::fromUtf8("无法生成阵列"), QString::fromStdString(error));
+        return;
+    }
+    refreshTables();
+    if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
+    setStatus(QString::fromUtf8("已从工位“%1”生成阵列实例“%2”；阵列工位独立维护，不受模板更新影响。")
+        .arg(QString::fromStdString(source.name), QString::fromStdString(request.instanceId)));
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::mirrorSelectedStation()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const int selected = selectedKeyStationIndex();
+    if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
+        setStatus(QString::fromUtf8("请先选择需要镜像的关键工位。"));
+        return;
+    }
+    const PoseTask& source = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    if (source.orientation.mode != OrientationMode::Fixed) {
+        setStatus(QString::fromUtf8("当前镜像只支持固定姿态工位；基于 Frame、几何法向或目标指向的姿态规则需要在 P3 结合场景镜像后再解析。"));
+        return;
+    }
+    bool accepted = false;
+    const QStringList planes = {"YZ (X=0)", "XZ (Y=0)", "XY (Z=0)"};
+    const QString selectedPlane = QInputDialog::getItem(this, QString::fromUtf8("镜像关键工位"),
+        QString::fromUtf8("以当前参考系原点为基准的镜像平面"), planes, 0, false, &accepted);
+    if (!accepted)
+        return;
+    const int axis = planes.indexOf(selectedPlane);
+    if (axis < 0)
+        return;
+    rw::math::Rotation3D<> reflection = axis == 0 ? rw::math::Rotation3D<>(-1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0) :
+        (axis == 1 ? rw::math::Rotation3D<>(1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0) :
+                     rw::math::Rotation3D<>(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0));
+    const rw::math::Rotation3D<> rotation = rw::math::RPY<>(source.rpyDeg[0] * rw::math::Pi / 180.0,
+        source.rpyDeg[1] * rw::math::Pi / 180.0, source.rpyDeg[2] * rw::math::Pi / 180.0).toRotation3D();
+    const rw::math::RPY<> mirroredRpy(reflection * rotation * reflection);
+    PoseTask mirrored = source;
+    mirrored.id = uniqueStationId(_requirements, source.id + "_mirror");
+    mirrored.name += " mirror";
+    mirrored.source = PoseTaskSource::FrameOffset;
+    mirrored.geometryFeature = GeometryFeatureReference();
+    mirrored.generation = StationGenerationProvenance();
+    mirrored.position[axis] = -mirrored.position[axis];
+    for (int angle = 0; angle < 3; ++angle)
+        mirrored.rpyDeg[angle] = mirroredRpy[angle] * 180.0 / rw::math::Pi;
+    mirrored.note = "Mirrored from station " + source.id + " about " + selectedPlane.toStdString() + ".";
+    _requirements.poseTasks.push_back(mirrored);
+    refreshTables();
+    if (_stationList != nullptr) _stationList->setCurrentRow(static_cast<int>(_requirements.poseTasks.size()) - 1);
+    setStatus(QString::fromUtf8("已创建镜像工位“%1”；位置和固定姿态均已在当前参考系内进行合法镜像。")
+        .arg(QString::fromStdString(mirrored.name)));
+    Q_EMIT requirementsChanged();
+}
+
 void EngineeringRequirementsWidget::addBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); BoxRegion region; region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1); region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString(); _requirements.boxRegions.push_back(region); refreshTables(); }
 void EngineeringRequirementsWidget::duplicateBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; BoxRegion copy = _requirements.boxRegions[static_cast<std::size_t>(row)]; copy.id += "_copy"; copy.name += " Copy"; _requirements.boxRegions.insert(_requirements.boxRegions.begin() + row + 1, copy); refreshTables(); }
 void EngineeringRequirementsWidget::removeBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; _requirements.boxRegions.erase(_requirements.boxRegions.begin() + row); refreshTables(); }

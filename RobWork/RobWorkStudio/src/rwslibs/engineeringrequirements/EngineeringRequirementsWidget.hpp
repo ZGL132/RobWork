@@ -55,6 +55,11 @@ private:
     void removePoseTask();
     void captureCurrentTcp();
     void requestGeometryFeaturePick();
+    void createTemplateStations();
+    void updateSelectedTemplateStations();
+    void detachSelectedTemplateStation();
+    void createStationArray();
+    void mirrorSelectedStation();
     void addBoxRegion();
     void duplicateBoxRegion();
     void removeBoxRegion();

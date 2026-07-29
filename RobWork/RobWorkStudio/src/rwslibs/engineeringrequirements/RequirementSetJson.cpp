@@ -60,6 +60,19 @@ QJsonObject writePoseTask(const PoseTask& task)
     geometryFeature["objectName"] = QString::fromStdString(task.geometryFeature.objectName);
     geometryFeature["geometryName"] = QString::fromStdString(task.geometryFeature.geometryName);
     object["geometryFeature"] = geometryFeature;
+    QJsonObject generation;
+    generation["generatorId"] = QString::fromStdString(task.generation.generatorId);
+    generation["instanceId"] = QString::fromStdString(task.generation.instanceId);
+    generation["linked"] = task.generation.linked;
+    QJsonArray generationParameters;
+    for (const GenerationParameter& parameter : task.generation.parameters) {
+        QJsonObject value;
+        value["key"] = QString::fromStdString(parameter.key);
+        value["value"] = QString::fromStdString(parameter.value);
+        generationParameters.append(value);
+    }
+    generation["parameters"] = generationParameters;
+    object["generation"] = generation;
     QJsonObject orientation;
     orientation["mode"] = toString(task.orientation.mode);
     orientation["targetFrame"] = QString::fromStdString(task.orientation.targetFrame);
@@ -122,6 +135,21 @@ bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
     task.geometryFeature.frameName = geometryFeature.value("frameName").toString().toStdString();
     task.geometryFeature.objectName = geometryFeature.value("objectName").toString().toStdString();
     task.geometryFeature.geometryName = geometryFeature.value("geometryName").toString().toStdString();
+    const QJsonObject generation = object.value("generation").toObject();
+    task.generation.generatorId = generation.value("generatorId").toString().toStdString();
+    task.generation.instanceId = generation.value("instanceId").toString().toStdString();
+    task.generation.linked = generation.value("linked").toBool(false);
+    task.generation.parameters.clear();
+    const QJsonArray generationParameters = generation.value("parameters").toArray();
+    for (const QJsonValue& value : generationParameters) {
+        const QJsonObject parameter = value.toObject();
+        const std::string key = parameter.value("key").toString().toStdString();
+        if (key.empty()) {
+            if (error != nullptr) *error = "KeyStation.generation parameter key cannot be empty.";
+            return false;
+        }
+        task.generation.parameters.push_back({key, parameter.value("value").toString().toStdString()});
+    }
     const QJsonObject orientation = object.value("orientation").toObject();
     if (!orientationModeFromString(orientation.value("mode").toString("Fixed").toStdString(), task.orientation.mode)) {
         if (error != nullptr) *error = "KeyStation.orientation.mode is invalid.";

@@ -13,12 +13,14 @@ if(build)
         GeometryFeatureResolver.cpp
         RequirementSetJson.cpp
         RequirementCompiler.cpp
+        StationTemplateService.cpp
     )
     set(CoreHeaderFiles
         EngineeringRequirementTypes.hpp
         GeometryFeatureResolver.hpp
         RequirementSetJson.hpp
         RequirementCompiler.hpp
+        StationTemplateService.hpp
     )
     rws_add_component(sdurws_engineeringrequirements_core ${CoreSrcFiles} ${CoreHeaderFiles})
     rw_add_includes(sdurws_engineeringrequirements_core "rwslibs/engineeringrequirements" ${CoreHeaderFiles})

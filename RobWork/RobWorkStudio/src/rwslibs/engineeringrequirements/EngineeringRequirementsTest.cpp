@@ -2,6 +2,7 @@
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
+#include "StationTemplateService.hpp"
 #include "EngineeringRequirementsWidget.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
@@ -21,6 +22,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <set>
 #include <string>
 
 namespace {
@@ -254,6 +256,172 @@ int testGeometryFrameFeatureResolvesAndCompiles()
     return 0;
 }
 
+int testTemplateGenerationKeepsTraceabilityAndUniqueIds()
+{
+    rws::RequirementSet requirements;
+    rws::PoseTask existing;
+    existing.id = "bin_pick_1";
+    requirements.poseTasks.push_back(existing);
+
+    rws::StationTemplateRequest request;
+    request.kind = rws::StationTemplateKind::BinPicking;
+    request.instanceId = "bin_A";
+    request.idPrefix = "bin_pick";
+    request.namePrefix = "Bin A";
+    request.referenceFrame = "Bin_A";
+    request.tcpFrame = "ToolTCP";
+    request.rows = 2;
+    request.columns = 3;
+    request.rowSpacingMeters = 0.06;
+    request.columnSpacingMeters = 0.08;
+    request.approachDistanceMeters = 0.12;
+
+    std::string error;
+    REQUIRE(rws::StationTemplateService::appendTemplate(requirements, request, &error));
+    REQUIRE(error.empty());
+    REQUIRE(requirements.poseTasks.size() == 7);
+
+    std::set<std::string> ids;
+    int generatedCount = 0;
+    for (const rws::PoseTask& station : requirements.poseTasks) {
+        REQUIRE(ids.insert(station.id).second);
+        if (station.generation.instanceId != "bin_A") continue;
+        ++generatedCount;
+        REQUIRE(station.source == rws::PoseTaskSource::Template);
+        REQUIRE(station.generation.generatorId == "BinPicking.v1");
+        REQUIRE(station.generation.linked);
+        REQUIRE(station.processType == rws::ProcessType::Pick);
+        REQUIRE(station.refFrame == "Bin_A");
+        REQUIRE(station.tcpFrame == "ToolTCP");
+        REQUIRE(station.approach.enabled);
+        REQUIRE(std::abs(station.approach.distanceMeters - 0.12) < 1e-12);
+        const auto findParameter = [&station] (const std::string& key) {
+            return std::find_if(station.generation.parameters.begin(), station.generation.parameters.end(),
+                                [&key] (const rws::GenerationParameter& parameter) {
+                                    return parameter.key == key;
+                                });
+        };
+        const auto idPrefix = findParameter("idPrefix");
+        const auto namePrefix = findParameter("namePrefix");
+        const auto offsetX = findParameter("operationOffsetX");
+        REQUIRE(idPrefix != station.generation.parameters.end());
+        REQUIRE(namePrefix != station.generation.parameters.end());
+        REQUIRE(offsetX != station.generation.parameters.end());
+        REQUIRE(idPrefix->value == "bin_pick");
+        REQUIRE(namePrefix->value == "Bin A");
+        REQUIRE(offsetX->value == "0");
+    }
+    REQUIRE(generatedCount == 6);
+    return 0;
+}
+
+int testTemplateUpdatePreservesDetachedStations()
+{
+    rws::RequirementSet requirements;
+    rws::StationTemplateRequest request;
+    request.kind = rws::StationTemplateKind::BinPicking;
+    request.instanceId = "bin_A";
+    request.idPrefix = "bin_pick";
+    request.referenceFrame = "Bin_A";
+    request.tcpFrame = "ToolTCP";
+    request.rows = 2;
+    request.columns = 2;
+
+    std::string error;
+    REQUIRE(rws::StationTemplateService::appendTemplate(requirements, request, &error));
+    REQUIRE(requirements.poseTasks.size() == 4);
+    const std::string detachedId = requirements.poseTasks.front().id;
+    requirements.poseTasks.front().name = "Hand tuned bin point";
+    REQUIRE(rws::StationTemplateService::detachStation(requirements, detachedId, &error));
+
+    request.rows = 1;
+    request.columns = 2;
+    rws::TemplateUpdatePreview preview;
+    REQUIRE(rws::StationTemplateService::previewTemplateUpdate(requirements, "bin_A", request,
+                                                                preview, &error));
+    REQUIRE(preview.replacedStationIds.size() == 3);
+    REQUIRE(preview.generatedStations.size() == 2);
+    REQUIRE(rws::StationTemplateService::applyTemplateUpdate(requirements, preview, &error));
+    REQUIRE(requirements.poseTasks.size() == 3);
+
+    bool foundDetached = false;
+    int linkedCount = 0;
+    for (const rws::PoseTask& station : requirements.poseTasks) {
+        if (station.id == detachedId) {
+            foundDetached = true;
+            REQUIRE(!station.generation.linked);
+            REQUIRE(station.name == "Hand tuned bin point");
+        }
+        if (station.generation.instanceId == "bin_A" && station.generation.linked)
+            ++linkedCount;
+    }
+    REQUIRE(foundDetached);
+    REQUIRE(linkedCount == 2);
+    return 0;
+}
+
+int testRectangularArrayRecordsGenerationAndDoesNotDuplicateIds()
+{
+    rws::RequirementSet requirements;
+    rws::PoseTask source;
+    source.id = "inspection";
+    source.name = "Inspection";
+    source.processType = rws::ProcessType::Inspect;
+    source.refFrame = "Fixture_A";
+    source.tcpFrame = "ToolTCP";
+    requirements.poseTasks.push_back(source);
+
+    rws::StationArrayRequest request;
+    request.kind = rws::StationArrayKind::Rectangular;
+    request.instanceId = "inspection_grid";
+    request.idPrefix = "inspection";
+    request.namePrefix = "Inspection grid";
+    request.primaryCount = 2;
+    request.secondaryCount = 3;
+    request.primaryStepMeters = {{0.10, 0.0, 0.0}};
+    request.secondaryStepMeters = {{0.0, 0.05, 0.0}};
+
+    std::string error;
+    REQUIRE(rws::StationTemplateService::appendArray(requirements, source.id, request, &error));
+    REQUIRE(requirements.poseTasks.size() == 7);
+    std::set<std::string> ids;
+    int generatedCount = 0;
+    for (const rws::PoseTask& station : requirements.poseTasks) {
+        REQUIRE(ids.insert(station.id).second);
+        if (station.generation.instanceId != "inspection_grid") continue;
+        ++generatedCount;
+        REQUIRE(station.generation.generatorId == "RectangularArray.v1");
+        REQUIRE(!station.generation.linked);
+        REQUIRE(station.processType == rws::ProcessType::Inspect);
+    }
+    REQUIRE(generatedCount == 6);
+    return 0;
+}
+
+int testGeneratedStationJsonRoundTripPreservesProvenance()
+{
+    rws::RequirementSet requirements;
+    rws::PoseTask station;
+    station.id = "handover_1";
+    station.source = rws::PoseTaskSource::Template;
+    station.generation.generatorId = "Handover.v1";
+    station.generation.instanceId = "handover_A";
+    station.generation.linked = true;
+    station.generation.parameters.push_back({"clearanceMeters", "0.15"});
+    requirements.poseTasks.push_back(station);
+
+    rws::RequirementSet restored;
+    std::string error;
+    REQUIRE(rws::RequirementSetJson::fromJson(rws::RequirementSetJson::toJson(requirements), restored, &error));
+    REQUIRE(restored.poseTasks.size() == 1);
+    REQUIRE(restored.poseTasks.front().generation.generatorId == "Handover.v1");
+    REQUIRE(restored.poseTasks.front().generation.instanceId == "handover_A");
+    REQUIRE(restored.poseTasks.front().generation.linked);
+    REQUIRE(restored.poseTasks.front().generation.parameters.size() == 1);
+    REQUIRE(restored.poseTasks.front().generation.parameters.front().key == "clearanceMeters");
+    return 0;
+}
+
 int testWidgetBuildsEngineeringRequirementWorkflow()
 {
     rws::EngineeringRequirementsWidget widget;
@@ -280,6 +448,11 @@ int testWidgetExposesSemanticKeyStationInspector()
     REQUIRE(widget.findChild<QWidget*>("keyStationRetractEnabled") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationAdvancedPoseGroup") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("pickRequirementGeometryFeatureButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("createRequirementTemplateButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("updateRequirementTemplateButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("detachRequirementTemplateButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("createRequirementArrayButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("mirrorRequirementStationButton") != nullptr);
     return 0;
 }
 
@@ -304,6 +477,14 @@ int main(int argc, char** argv)
     if (testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks() != 0)
         return 1;
     if (testGeometryFrameFeatureResolvesAndCompiles() != 0)
+        return 1;
+    if (testTemplateGenerationKeepsTraceabilityAndUniqueIds() != 0)
+        return 1;
+    if (testTemplateUpdatePreservesDetachedStations() != 0)
+        return 1;
+    if (testRectangularArrayRecordsGenerationAndDoesNotDuplicateIds() != 0)
+        return 1;
+    if (testGeneratedStationJsonRoundTripPreservesProvenance() != 0)
         return 1;
     std::puts("All engineering requirements tests passed.");
     return 0;
