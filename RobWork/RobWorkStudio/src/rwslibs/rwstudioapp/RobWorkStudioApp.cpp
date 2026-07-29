@@ -59,6 +59,9 @@
 #ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
 #endif
+#ifdef RWS_HAVE_PLUGIN_ENGINEERINGREQUIREMENTS
+#include <rwslibs/engineeringrequirements/EngineeringRequirementsPlugin.hpp>
+#endif
 #ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
 #include <rwslibs/kinematicanalysis/KinematicAnalysisPlugin.hpp>
 #endif
@@ -403,6 +406,11 @@ int RobWorkStudioApp::run ()
 
                 rwstudio.addPlugin (
                     new rws::RobotModelBuilderPlugin (), false, Qt::LeftDockWidgetArea);
+#endif
+#ifdef RWS_HAVE_PLUGIN_ENGINEERINGREQUIREMENTS
+
+                rwstudio.addPlugin (
+                    new rws::EngineeringRequirementsPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
 #ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
 

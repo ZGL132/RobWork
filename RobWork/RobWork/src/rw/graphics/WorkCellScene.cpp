@@ -649,7 +649,7 @@ void WorkCellScene::addDrawable (DrawableNode::Ptr drawable, rw::core::Ptr< Fram
         }
     }
 
-    _frameNodeMap[frame.get()]->addChild (drawable);
+    GroupNode::addChild (drawable, _frameNodeMap[frame.get()]);
 }
 
 DrawableNode::Ptr WorkCellScene::addDrawable (const std::string& filename, rw::core::Ptr< Frame> frame, int dmask)

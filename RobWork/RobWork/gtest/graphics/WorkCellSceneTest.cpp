@@ -185,6 +185,7 @@ TEST(WorkCellScene, Test) {
 	const DummyDrawable::Ptr draw1 = ownedPtr(new DummyDrawable("draw1"));
 	WSscene->addDrawable(draw1,frame3);
 	EXPECT_EQ(1u,WSscene->getDrawables().size());
+	EXPECT_EQ(frame3, WSscene->getFrame(draw1));
 	EXPECT_TRUE(WSscene->removeDrawables(frame3));
 	EXPECT_EQ(0u,WSscene->getDrawables().size());
 

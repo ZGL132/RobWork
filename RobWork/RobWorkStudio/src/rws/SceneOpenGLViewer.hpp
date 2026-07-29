@@ -215,6 +215,10 @@ class SceneOpenGLViewer : public QOpenGLWidget, public SceneViewerWidget
     //! @copydoc rw::graphics::SceneViewer::renderView
     void renderView (View::Ptr view);
 
+  Q_SIGNALS:
+    //! @brief Emitted when Ctrl+double-click selects a frame in the 3D view.
+    void frameSelected (rw::kinematics::Frame* frame);
+
   private Q_SLOTS:
     //! @copydoc rw::graphics::SceneViewer::renderView
     void renderViewThreadSafe (View::Ptr view);

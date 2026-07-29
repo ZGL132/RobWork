@@ -231,6 +231,9 @@ RWStudioView3D::RWStudioView3D (RobWorkStudio* rwStudio, QWidget* parent) :
     _wcscene    = ownedPtr (new WorkCellScene (_view->getScene ()));
     _view->setWorldNode (_wcscene->getWorldNode ());
     _view->setWorkCellScene (_wcscene);
+    connect (sceneview, &SceneOpenGLViewer::frameSelected, this, [this] (Frame* frame) {
+        _rws->frameSelectedEvent ().fire (frame);
+    });
 
     setupActions ();
 
@@ -420,19 +423,22 @@ rw::graphics::DrawableNode::Ptr RWStudioView3D::pick (int x, int y)
 
 void RWStudioView3D::mouseDoubleClickEvent (QMouseEvent* event)
 {
-    if (event->button () == Qt::LeftButton && event->modifiers () == Qt::ControlModifier) {
-        Log::debugLog () << "Mouse double click with control modifier..." << std::endl;
-        int winx = event->pos ().x ();
-        int winy = height () - event->pos ().y ();
-        // we pick the scene before
-        Frame* frame = pickFrame (winx, winy);
-        if (frame != NULL) {
-            _rws->frameSelectedEvent ().fire (frame);
-            Log::debugLog () << "Frame: " << frame->getName () << std::endl;
-        }
-        else {
-            Log::debugLog () << "Frame is NULL." << std::endl;
-        }
+    if (event->button () == Qt::LeftButton &&
+        (event->modifiers () & Qt::ControlModifier) != 0) {
+        selectFrameAt (event->pos (), height ());
+    }
+}
+
+void RWStudioView3D::selectFrameAt (const QPoint& position, int viewHeight)
+{
+    Log::debugLog () << "Mouse double click with control modifier..." << std::endl;
+    Frame* frame = pickFrame (position.x (), viewHeight - position.y ());
+    if (frame != NULL) {
+        _rws->frameSelectedEvent ().fire (frame);
+        Log::debugLog () << "Frame: " << frame->getName () << std::endl;
+    }
+    else {
+        Log::debugLog () << "Frame is NULL." << std::endl;
     }
 }
 

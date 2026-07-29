@@ -51,6 +51,7 @@ class QAction;
 class QMainWindow;
 class QMenu;
 class QMouseEvent;
+class QPoint;
 class QString;
 
 namespace rws {
@@ -236,6 +237,8 @@ class RWStudioView3D : public QWidget
     virtual void setupToolBarAndMenu (QMainWindow* mwindow);
 
     void resetCameraViewMenu ();
+
+    void selectFrameAt (const QPoint& position, int viewHeight);
 
     SensorCameraView makeCameraView (const std::string& name, double fovy, double w, double h,
                                      double n, double f, rw::kinematics::Frame* frame);

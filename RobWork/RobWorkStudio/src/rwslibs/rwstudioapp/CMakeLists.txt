@@ -20,6 +20,7 @@ if(RWS_USE_STATIC_LINK_PLUGINS)
         RWS::sdurws_propertyview
         RWS::sdurws_workcelleditorplugin
         RWS::sdurws_robotmodelbuilder
+        RWS::sdurws_engineeringrequirements
         RWS::sdurws_kinematicanalysis
         RWS::sdurws_structureoptimizer
     )
@@ -84,6 +85,9 @@ if(build)
         endif()
         if(TARGET sdurws_robotmodelbuilder)
             target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_ROBOTMODELBUILDER)
+        endif()
+        if(TARGET sdurws_engineeringrequirements)
+            target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_ENGINEERINGREQUIREMENTS)
         endif()
         if(TARGET sdurws_kinematicanalysis)
             target_compile_definitions(${SUBSYS_NAME} PRIVATE RWS_HAVE_PLUGIN_KINEMATICANALYSIS)

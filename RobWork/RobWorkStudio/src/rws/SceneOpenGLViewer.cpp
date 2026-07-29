@@ -649,6 +649,17 @@ void SceneOpenGLViewer::mouseDoubleClickEvent (QMouseEvent* event)
         int winx = event->pos ().x ();
         int winy = height () - event->pos ().y ();
 
+        // Frame selection belongs to the widget that receives the pointer event.
+        // It must not depend on unprojecting a regular surface hit: a frame axis
+        // or other helper drawable may not produce one.
+        if ((event->modifiers () & Qt::ControlModifier) != 0) {
+            Frame* frame = pickFrame (winx, winy);
+            if (frame != NULL)
+                Q_EMIT frameSelected (frame);
+            event->accept ();
+            return;
+        }
+
         makeCurrent ();
         Vector3D<> pos = _scene->unproject (_mainCam, winx, winy);
         doneCurrent ();
@@ -657,14 +668,6 @@ void SceneOpenGLViewer::mouseDoubleClickEvent (QMouseEvent* event)
             // double click + SHIFT => positionSelected event
             if (event->modifiers () == Qt::ShiftModifier) {
                 positionSelectedEvent ().fire (pos);
-
-                // doubleclick + CONTROL => frameSelected event
-            }
-            else if (event->modifiers () == Qt::ControlModifier) {
-                Frame* frame = pickFrame (winx, winy);
-                if (frame) {
-                    // frameSelectedEvent().fire(frame);
-                }
 
                 // plain doubleclick => move pivot point
             }
