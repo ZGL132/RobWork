@@ -1,4 +1,5 @@
 #include "RobotModelSpecJson.hpp"
+#include "RobotModelFingerprint.hpp"
 #include "RobotModelXmlWriter.hpp"
 
 #include <QDir>
@@ -211,11 +212,35 @@ static int testLegacyCollisionMetadataIsDiscardedOnSave ()
     return 0;
 }
 
+static int testFingerprint ()
+{
+    rws::RobotModelSpec original =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    const std::string originalDirectory = original.saveDirectory;
+    const std::string fingerprint = rws::RobotModelFingerprint::canonicalSha256 (original);
+    if (fingerprint.empty ())
+        return fail ("Model fingerprint must not be empty.");
+
+    rws::RobotModelSpec relocated = original;
+    relocated.saveDirectory = QDir::homePath ().toStdString ();
+    if (fingerprint != rws::RobotModelFingerprint::canonicalSha256 (relocated))
+        return fail ("Model fingerprint must ignore saveDirectory.");
+
+    relocated.transformJoints.at (1).pos[0] += 0.001;
+    if (fingerprint == rws::RobotModelFingerprint::canonicalSha256 (relocated))
+        return fail ("Model fingerprint must change for engineering content.");
+    if (original.saveDirectory != originalDirectory)
+        return fail ("Model fingerprint must not mutate the input model.");
+    return 0;
+}
+
 int main (int, char**)
 {
     if (const int rc = testFullRoundTrip ())
         return rc;
     if (const int rc = testLegacyCollisionMetadataIsDiscardedOnSave ())
+        return rc;
+    if (const int rc = testFingerprint ())
         return rc;
     std::cout << "RobotModelSpecJson round trip test passed." << std::endl;
     return 0;

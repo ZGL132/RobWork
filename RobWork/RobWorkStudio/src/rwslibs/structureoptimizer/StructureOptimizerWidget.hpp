@@ -3,6 +3,7 @@
 
 #include "StructureOptimizationTypes.hpp"
 #include "CandidatePreviewController.hpp"
+#include "RobotModelStalenessChecker.hpp"
 
 #include <QWidget>
 
@@ -45,6 +46,7 @@ private:
     QWidget* createReportPage();
 
     void updateRunState();
+    void updateModelSourceStatus();
     void setEditingEnabled(bool enabled);
     void startOptimization();
     void togglePause();
@@ -70,6 +72,7 @@ private:
     std::unique_ptr<CandidatePreviewController> _previewController;
     StructureOptimizationResult _lastResult;
     QString _projectPath;
+    RobotModelSourceStatus _modelSourceStatus = RobotModelSourceStatus::Untracked;
 
     QTabWidget* _tabs = nullptr;
     QTableView* _candidateView = nullptr;

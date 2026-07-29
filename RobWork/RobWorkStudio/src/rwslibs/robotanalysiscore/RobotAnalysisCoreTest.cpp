@@ -217,7 +217,9 @@ int runJson ()
         !nearlyEqual (parsedPayload.cog[2], payload.cog[2]))
         return fail ("PayloadSpec JSON round-trip should preserve payload fields.");
 
-    const rws::RobotDesignContext context = makeContext ();
+    rws::RobotDesignContext context = makeContext ();
+    context.sourceModelPath         = "legacy-model.rmb.json";
+    context.modelProvenance         = {"model.rmb.json", "source-sha", "snapshot-sha"};
     const std::string contextJson         = rws::RobotAnalysisJson::toJson (context);
     rws::RobotDesignContext parsedContext;
     if (!rws::RobotAnalysisJson::fromJson (contextJson, parsedContext))
@@ -227,6 +229,23 @@ int runJson ()
         parsedContext.taskPoints.size () != context.taskPoints.size () ||
         !nearlyEqual (parsedContext.payload.mass, context.payload.mass))
         return fail ("RobotDesignContext JSON round-trip should preserve shared context fields.");
+    if (parsedContext.modelProvenance.sourceModelPath != "model.rmb.json" ||
+        parsedContext.modelProvenance.sourceFingerprint != "source-sha" ||
+        parsedContext.modelProvenance.snapshotFingerprint != "snapshot-sha" ||
+        parsedContext.sourceModelPath != "model.rmb.json")
+        return fail ("RobotDesignContext JSON should preserve model provenance.");
+
+    const std::string legacyContextJson =
+        "{\"type\":\"RobotDesignContext\",\"data\":{\"projectName\":\"legacy\","
+        "\"sourceModelPath\":\"legacy-model.rmb.json\"}}";
+    rws::RobotDesignContext legacyContext;
+    if (!rws::RobotAnalysisJson::fromJson (legacyContextJson, legacyContext))
+        return fail ("Legacy RobotDesignContext JSON should parse successfully.");
+    if (legacyContext.sourceModelPath != "legacy-model.rmb.json" ||
+        !legacyContext.modelProvenance.sourceFingerprint.empty () ||
+        !legacyContext.modelProvenance.snapshotFingerprint.empty () ||
+        legacyContext.modelProvenance.sourceModelPath != "legacy-model.rmb.json")
+        return fail ("Legacy RobotDesignContext JSON should leave provenance fingerprints empty.");
 
     rws::AnalysisResult result = makeResult ();
     rws::AnalysisWarning warning;

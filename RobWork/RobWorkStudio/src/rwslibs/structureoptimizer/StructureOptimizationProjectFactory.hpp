@@ -3,6 +3,8 @@
 
 #include "StructureOptimizationTypes.hpp"
 
+#include <QString>
+
 #include <string>
 
 namespace rws {
@@ -14,6 +16,9 @@ class StructureOptimizationProjectFactory
     static bool create(const RobotModelSpec& spec,
                        StructureOptimizationProblem& problem,
                        std::string* error = nullptr);
+
+    static bool create(const RobotModelSpec& spec, const QString& sourceModelPath,
+                       StructureOptimizationProblem& problem, std::string* error = nullptr);
 };
 
 } // namespace rws

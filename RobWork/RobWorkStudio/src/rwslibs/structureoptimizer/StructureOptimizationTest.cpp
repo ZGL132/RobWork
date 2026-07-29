@@ -24,12 +24,14 @@
 #include "StructureConstraintTableModel.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationProjectFactory.hpp"
+#include "RobotModelStalenessChecker.hpp"
 #include "StructureWorkspaceCoverage.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QApplication>
@@ -815,6 +817,8 @@ static void testEngineeringEvaluatorPipeline()
 
 class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
   public:
+    std::string lastModelHash;
+
     std::string id() const override { return "test.system-metrics"; }
     std::string version() const override { return "1"; }
 
@@ -823,6 +827,7 @@ class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
         const rws::EvaluationRequest&,
         const rws::EvaluationCallbacks&) override
     {
+        lastModelHash = candidate.inputSnapshot.modelHash;
         rws::EngineeringEvaluationResult result;
         result.providerId = id();
         result.providerVersion = version();
@@ -851,6 +856,9 @@ static void testSystemEngineeringOptimizer()
     std::printf("testSystemEngineeringOptimizer ... ");
 
     rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.modelSpec.robotName = "SystemHashRobot";
     problem.variables = {{"x", "X", "joint1", "m",
                           rws::StructureVariableKind::JointPositionX,
                           0.0, -1.0, 1.0, 0.1, 0.0, 0.0}};
@@ -870,6 +878,8 @@ static void testSystemEngineeringOptimizer()
     REQUIRE(!result.canceled);
     REQUIRE(result.candidates.size() == 4);
     REQUIRE(result.bestCandidateIndex >= 0);
+    REQUIRE(evaluator.lastModelHash ==
+            rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec));
     for (const rws::StructureCandidateResult& candidate : result.candidates) {
         REQUIRE(candidate.feasible);
         REQUIRE(candidate.status == rws::StructureCandidateStatus::Feasible);
@@ -1359,6 +1369,9 @@ static void testAuditableEvidenceOutput()
 
     rws::StructureOptimizationProblem problem;
     problem.context.robotName = "AuditRobot";
+    problem.context.sourceModelPath = "models/audit.rmb.json";
+    problem.context.modelProvenance = {"models/audit.rmb.json", "source-sha",
+                                       "snapshot-sha"};
     problem.evaluation.evaluatorId = "test.kinematics";
     problem.evaluation.evaluatorVersion = "2.0";
     problem.evaluation.coverageBox.enabled = true;
@@ -1412,6 +1425,10 @@ static void testAuditableEvidenceOutput()
     REQUIRE(report.find("Trajectory evaluator: not enabled") != std::string::npos);
     REQUIRE(report.find("Dynamics evaluator: not enabled") != std::string::npos);
     REQUIRE(report.find("Drive selection evaluator: not enabled") != std::string::npos);
+    REQUIRE(report.find("Source status: Tracked") != std::string::npos);
+    REQUIRE(report.find("Source model path: models/audit.rmb.json") != std::string::npos);
+    REQUIRE(report.find("Source fingerprint: source-sha") != std::string::npos);
+    REQUIRE(report.find("Snapshot fingerprint: snapshot-sha") != std::string::npos);
 
     const std::string json = rws::StructureOptimizationJson::resultToJson(problem, result);
     REQUIRE(json.find("\"quickEvaluatedCandidates\": 20") != std::string::npos);
@@ -1423,6 +1440,10 @@ static void testAuditableEvidenceOutput()
     REQUIRE(audit.find("FinalVerifiedCandidates") != std::string::npos);
     REQUIRE(audit.find("SensitivityEvaluations") != std::string::npos);
     REQUIRE(audit.find("test.kinematics@2.0") != std::string::npos);
+    REQUIRE(audit.find("ModelProvenanceStatus,Tracked") != std::string::npos);
+    REQUIRE(audit.find("SourceModelPath,models/audit.rmb.json") != std::string::npos);
+    REQUIRE(audit.find("SourceFingerprint,source-sha") != std::string::npos);
+    REQUIRE(audit.find("SnapshotFingerprint,snapshot-sha") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -1891,6 +1912,62 @@ static void testProjectFactory()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testProjectFactoryProvenance()
+{
+    std::printf("testProjectFactoryProvenance ... ");
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+
+    rws::RobotModelSpec spec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path());
+    spec.robotName = "ProvenanceRobot";
+    QStringList saveErrors;
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(spec, saveErrors));
+    const QString sourceFilePath = rws::RobotModelXmlWriter::specSidecarFilePath(spec);
+    const QString relativeSourcePath = QFileInfo(sourceFilePath).fileName();
+    const QString projectPath = directory.filePath("provenance.structure-optimization.json");
+
+    rws::StructureOptimizationProblem problem;
+    std::string error;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        spec, relativeSourcePath, problem, &error));
+    REQUIRE(problem.context.modelProvenance.sourceModelPath ==
+            relativeSourcePath.toStdString());
+    REQUIRE(!problem.context.modelProvenance.sourceFingerprint.empty());
+    REQUIRE(problem.context.modelProvenance.sourceFingerprint ==
+            problem.context.modelProvenance.snapshotFingerprint);
+    REQUIRE(rws::RobotModelStalenessChecker::check(problem.context, projectPath).status ==
+            rws::RobotModelSourceStatus::Current);
+
+    rws::RobotModelSpec changedSpec = spec;
+    changedSpec.transformJoints.at(1).pos[0] += 0.001;
+    saveErrors.clear();
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(changedSpec, saveErrors));
+    REQUIRE(rws::RobotModelStalenessChecker::check(problem.context, projectPath).status ==
+            rws::RobotModelSourceStatus::Stale);
+
+    REQUIRE(QFile::remove(sourceFilePath));
+    REQUIRE(rws::RobotModelStalenessChecker::check(problem.context, projectPath).status ==
+            rws::RobotModelSourceStatus::SourceMissing);
+
+    QFile invalidSource(sourceFilePath);
+    REQUIRE(invalidSource.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(invalidSource.write("{not-json") > 0);
+    invalidSource.close();
+    REQUIRE(rws::RobotModelStalenessChecker::check(problem.context, projectPath).status ==
+            rws::RobotModelSourceStatus::SourceInvalid);
+
+    rws::RobotDesignContext legacyContext;
+    REQUIRE(rws::RobotModelStalenessChecker::check(legacyContext, projectPath).status ==
+            rws::RobotModelSourceStatus::Untracked);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testExportService()
 {
     std::printf("testExportService ... ");
@@ -1964,12 +2041,19 @@ static void testAcceptedUr6585AProject()
         projectPath, project, &selectedCandidateIndex, &projectError);
     REQUIRE(loaded);
     if (loaded) {
+        const std::string sourceFingerprint =
+            rws::RobotModelFingerprint::canonicalSha256(modelSpec);
         REQUIRE(project.context.robotName == "UR-6-85-5-A");
         REQUIRE(project.context.modelSpec.robotName == modelSpec.robotName);
         REQUIRE(QDir::cleanPath(QString::fromStdString(project.context.modelSpec.saveDirectory)) ==
                 QDir::cleanPath(sampleDirectory));
         REQUIRE(project.context.modelSpec.transformJoints.size() ==
                 modelSpec.transformJoints.size());
+        REQUIRE(!project.context.modelProvenance.sourceFingerprint.empty());
+        REQUIRE(project.context.modelProvenance.sourceFingerprint == sourceFingerprint);
+        REQUIRE(project.context.modelProvenance.snapshotFingerprint == sourceFingerprint);
+        REQUIRE(rws::RobotModelStalenessChecker::check(project.context, projectPath).status ==
+                rws::RobotModelSourceStatus::Current);
         REQUIRE(project.tasks.size() == 3);
         REQUIRE(project.evaluation.coverageBox.enabled);
         REQUIRE(project.run.randomSeed == 20260727u);
@@ -2149,6 +2233,35 @@ static void testStructureOptimizerWidgetState()
     if (startButton != nullptr)
         REQUIRE(startButton->isEnabled());
 
+    QTemporaryDir provenanceDirectory;
+    REQUIRE(provenanceDirectory.isValid());
+    rws::RobotModelSpec sourceSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(provenanceDirectory.path());
+    sourceSpec.robotName = "StaleWidgetRobot";
+    QStringList sourceSaveErrors;
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(sourceSpec, sourceSaveErrors));
+    const QString sourceModelPath =
+        rws::RobotModelXmlWriter::specSidecarFilePath(sourceSpec);
+    rws::StructureOptimizationProblem staleProblem;
+    std::string staleFactoryError;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        sourceSpec, sourceModelPath, staleProblem, &staleFactoryError));
+    staleProblem.variables = problem.variables;
+    staleProblem.tasks = problem.tasks;
+    staleProblem.constraints = problem.constraints;
+    staleProblem.run = problem.run;
+    staleProblem.weights = problem.weights;
+    staleProblem.objectives = problem.objectives;
+
+    rws::RobotModelSpec changedSourceSpec = sourceSpec;
+    changedSourceSpec.transformJoints.at(1).pos[0] += 0.001;
+    sourceSaveErrors.clear();
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(changedSourceSpec, sourceSaveErrors));
+    widget.setProblem(staleProblem);
+    if (startButton != nullptr)
+        REQUIRE(startButton->isEnabled());
+    REQUIRE(widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+
     const rws::StructureOptimizationProblem collected = widget.collectProblem();
     REQUIRE(collected.variables.size() == 1);
     REQUIRE(collected.tasks.size() == 1);
@@ -2312,6 +2425,7 @@ int main(int argc, char** argv)
         testUiTableModelsAndSuggestions();
         testConstraintModelAndProjectAdapter();
         testProjectFactory();
+        testProjectFactoryProvenance();
         testExportService();
         testAcceptedUr6585AProject();
         testCandidatePreviewController();
@@ -2370,6 +2484,7 @@ int main(int argc, char** argv)
     testUiTableModelsAndSuggestions();
     testConstraintModelAndProjectAdapter();
     testProjectFactory();
+    testProjectFactoryProvenance();
     testExportService();
     testAcceptedUr6585AProject();
     testCandidatePreviewController();

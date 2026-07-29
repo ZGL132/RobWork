@@ -27,12 +27,14 @@ if(build)
     # ---- 源代码分组 ----
     # Model 系列:不依赖 Qt Widget,只依赖 QtCore,可独立被命令行测试程序复用
     set(ModelSrcFiles
+        RobotModelFingerprint.cpp
         RobotModelXmlWriter.cpp
         RobotModelUrdfImporter.cpp
         RobotModelSpecJson.cpp
         WorkCellConverter.cpp
     )
     set(ModelHeaderFiles
+        RobotModelFingerprint.hpp
         RobotModelSpec.hpp
         RobotModelXmlWriter.hpp
         RobotModelUrdfImporter.hpp
@@ -127,6 +129,7 @@ if(build)
 
     add_executable(sdurws_robotmodelbuilder_jsontest
         RobotModelSpecJsonTest.cpp
+        RobotModelFingerprint.cpp
         RobotModelSpecJson.cpp
         RobotModelXmlWriter.cpp
     )

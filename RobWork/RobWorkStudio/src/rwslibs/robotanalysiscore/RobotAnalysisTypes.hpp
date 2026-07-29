@@ -67,6 +67,14 @@ struct PayloadSpec
     std::array< double, 6 > inertia = {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
 };
 
+//! @brief Content identity and source location for an embedded robot model snapshot.
+struct RobotModelProvenance
+{
+    std::string sourceModelPath;
+    std::string sourceFingerprint;
+    std::string snapshotFingerprint;
+};
+
 //! @brief Shared robot design context consumed by analysis plugins.
 struct RobotDesignContext
 {
@@ -76,6 +84,8 @@ struct RobotDesignContext
     std::string sourceModelPath;
     std::string sourceScenePath;
     std::string sourceDynamicWorkCellPath;
+
+    RobotModelProvenance modelProvenance;
 
     RobotModelSpec modelSpec;
 

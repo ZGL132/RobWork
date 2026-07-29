@@ -133,6 +133,16 @@ std::string StructureOptimizationCsv::auditCsv(
 
     add("Evaluator", problem.evaluation.evaluatorId + "@" +
         problem.evaluation.evaluatorVersion);
+    const RobotModelProvenance& provenance = problem.context.modelProvenance;
+    const std::string sourceModelPath = provenance.sourceModelPath.empty()
+                                            ? problem.context.sourceModelPath
+                                            : provenance.sourceModelPath;
+    const bool tracked = !provenance.sourceFingerprint.empty() &&
+                         !provenance.snapshotFingerprint.empty();
+    add("ModelProvenanceStatus", tracked ? "Tracked" : "Untracked");
+    add("SourceModelPath", sourceModelPath);
+    add("SourceFingerprint", provenance.sourceFingerprint);
+    add("SnapshotFingerprint", provenance.snapshotFingerprint);
     addInt("GeneratedCandidates", result.diagnostics.generatedCandidates);
     addInt("EvaluatedCandidates", result.diagnostics.evaluatedCandidates);
     addInt("QuickEvaluatedCandidates", result.diagnostics.quickEvaluatedCandidates);

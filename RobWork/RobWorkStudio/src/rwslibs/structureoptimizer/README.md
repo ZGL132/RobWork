@@ -68,6 +68,22 @@ the workspace using their respective configurations. Coverage and automatic
 sensitivity are included in the Markdown evidence report. The report also
 states that trajectory, dynamics, and drive-selection evaluators are not enabled.
 
+## Model Provenance
+
+`.rmb.json` is the parameterized design source. A project created from one embeds
+an immutable `RobotModelSpec` snapshot plus the source path, source fingerprint,
+and snapshot fingerprint. The optimizer always evaluates that embedded snapshot.
+
+- `Current`: source and snapshot fingerprints match.
+- `Stale`: source content changed; create a new project to optimize the new design.
+- `SourceMissing` / `SourceInvalid`: the source cannot be used for comparison.
+- `Untracked`: legacy or manually created project without complete provenance.
+
+All statuses are non-blocking because they preserve historical reproducibility.
+Reports and `audit.csv` contain the provenance fields and a `Tracked` or
+`Untracked` audit classification. JOG continues to load its WorkCell runtime
+model independently of this optimization-project check.
+
 ## Error Codes
 
 | Code | Description |

@@ -330,12 +330,22 @@ std::string RobotAnalysisJson::toJson (const PayloadSpec& payload)
 
 std::string RobotAnalysisJson::toJson (const RobotDesignContext& context)
 {
+    RobotModelProvenance provenance = context.modelProvenance;
+    if (provenance.sourceModelPath.empty ())
+        provenance.sourceModelPath = context.sourceModelPath;
+
+    QJsonObject modelProvenance;
+    modelProvenance["sourceModelPath"]    = qs (provenance.sourceModelPath);
+    modelProvenance["sourceFingerprint"]  = qs (provenance.sourceFingerprint);
+    modelProvenance["snapshotFingerprint"] = qs (provenance.snapshotFingerprint);
+
     QJsonObject data;
     data["projectName"]               = qs (context.projectName);
     data["robotName"]                 = qs (context.robotName);
     data["sourceModelPath"]           = qs (context.sourceModelPath);
     data["sourceScenePath"]           = qs (context.sourceScenePath);
     data["sourceDynamicWorkCellPath"] = qs (context.sourceDynamicWorkCellPath);
+    data["modelProvenance"]            = modelProvenance;
     data["modelSpec"]                 = RobotModelSpecJson::toObject (context.modelSpec);
     data["modelSpecSchemaVersion"]    = RobotModelSpecJson::SchemaVersion;
     data["modelSpecRobotName"]        = qs (context.modelSpec.robotName);
@@ -402,7 +412,20 @@ bool RobotAnalysisJson::fromJson (const std::string& json, RobotDesignContext& c
 
     context.projectName               = ss (data.value ("projectName").toString ());
     context.robotName                 = ss (data.value ("robotName").toString ());
-    context.sourceModelPath           = ss (data.value ("sourceModelPath").toString ());
+    const std::string legacySourceModelPath = ss (data.value ("sourceModelPath").toString ());
+    context.modelProvenance              = RobotModelProvenance ();
+    if (data.contains ("modelProvenance")) {
+        const QJsonObject modelProvenance = data.value ("modelProvenance").toObject ();
+        context.modelProvenance.sourceModelPath =
+            ss (modelProvenance.value ("sourceModelPath").toString ());
+        context.modelProvenance.sourceFingerprint =
+            ss (modelProvenance.value ("sourceFingerprint").toString ());
+        context.modelProvenance.snapshotFingerprint =
+            ss (modelProvenance.value ("snapshotFingerprint").toString ());
+    }
+    if (context.modelProvenance.sourceModelPath.empty ())
+        context.modelProvenance.sourceModelPath = legacySourceModelPath;
+    context.sourceModelPath           = context.modelProvenance.sourceModelPath;
     context.sourceScenePath           = ss (data.value ("sourceScenePath").toString ());
     context.sourceDynamicWorkCellPath = ss (data.value ("sourceDynamicWorkCellPath").toString ());
 

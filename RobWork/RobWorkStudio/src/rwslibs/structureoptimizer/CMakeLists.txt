@@ -45,6 +45,7 @@ if(build)
         StructureOptimizationProjectFactory.cpp
         StructureOptimizationUiLogic.cpp
         StructureWorkspaceCoverage.cpp
+        RobotModelStalenessChecker.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -71,6 +72,7 @@ if(build)
         StructureOptimizationProjectFactory.hpp
         StructureOptimizationUiLogic.hpp
         StructureWorkspaceCoverage.hpp
+        RobotModelStalenessChecker.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})

@@ -57,6 +57,18 @@ std::string StructureOptimizationReportWriter::write(
     out << "- Tasks: " << problem.tasks.size() << "\n";
     out << "- Constraints: " << problem.constraints.size() << "\n\n";
 
+    const RobotModelProvenance& provenance = problem.context.modelProvenance;
+    const std::string sourceModelPath = provenance.sourceModelPath.empty()
+                                            ? problem.context.sourceModelPath
+                                            : provenance.sourceModelPath;
+    const bool tracked = !provenance.sourceFingerprint.empty() &&
+                         !provenance.snapshotFingerprint.empty();
+    out << "## Model Provenance\n\n";
+    out << "- Source status: " << (tracked ? "Tracked" : "Untracked") << "\n";
+    out << "- Source model path: " << sourceModelPath << "\n";
+    out << "- Source fingerprint: " << provenance.sourceFingerprint << "\n";
+    out << "- Snapshot fingerprint: " << provenance.snapshotFingerprint << "\n\n";
+
     out << "## Workspace Coverage Configuration\n\n";
     out << "- Enabled: " << (problem.evaluation.coverageBox.enabled ? "true" : "false")
         << "\n";

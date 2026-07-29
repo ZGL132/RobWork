@@ -4,6 +4,8 @@
 #include "StructureCandidateCache.hpp"
 #include "StructureObjectiveScorer.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+
 namespace rws {
 
 namespace {
@@ -49,7 +51,8 @@ class PipelineCandidateEvaluator : public IStructureCandidateEvaluator
         CandidateEvaluationContext context;
         context.designContext = _problem.context;
         context.variableValues = candidate.values;
-        context.inputSnapshot.modelHash = _problem.context.modelSpec.robotName;
+        context.inputSnapshot.modelHash =
+            RobotModelFingerprint::canonicalSha256(_problem.context.modelSpec);
         context.inputSnapshot.configurationHash =
             stage == StructureEvaluationStage::Verified ? "verified" : "quick";
         for (const StructureDesignVariable& variable : _problem.variables)

@@ -2,6 +2,8 @@
 
 #include "StructureOptimizationUiLogic.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+
 namespace rws {
 
 bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
@@ -25,6 +27,24 @@ bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
     problem = std::move(created);
     if (error != nullptr)
         error->clear();
+    return true;
+}
+
+bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
+                                                 const QString& sourceModelPath,
+                                                 StructureOptimizationProblem& problem,
+                                                 std::string* error)
+{
+    if (!create(spec, problem, error))
+        return false;
+
+    const QString trimmedPath = sourceModelPath.trimmed();
+    if (!trimmedPath.isEmpty()) {
+        const std::string fingerprint = RobotModelFingerprint::canonicalSha256(spec);
+        problem.context.sourceModelPath = trimmedPath.toStdString();
+        problem.context.modelProvenance = {problem.context.sourceModelPath, fingerprint,
+                                           fingerprint};
+    }
     return true;
 }
 

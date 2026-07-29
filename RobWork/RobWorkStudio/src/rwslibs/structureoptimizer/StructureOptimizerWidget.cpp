@@ -365,10 +365,36 @@ void StructureOptimizerWidget::updateRunState()
     _startButton->setEnabled(runnable && !_controller->isRunning());
     _pauseButton->setEnabled(_controller->isRunning());
     _cancelButton->setEnabled(_controller->isRunning());
-    if (runnable)
-        _statusLabel->setText("结构优化项目已就绪。");
+    if (runnable) {
+        updateModelSourceStatus();
+        if (_modelSourceStatus == RobotModelSourceStatus::Current)
+            _statusLabel->setText("结构优化项目已就绪。");
+    }
     else
         _statusLabel->setText(QString::fromStdString(reason));
+}
+
+void StructureOptimizerWidget::updateModelSourceStatus()
+{
+    const RobotModelStalenessResult result =
+        RobotModelStalenessChecker::check(_loadedProblem.context, _projectPath);
+    _modelSourceStatus = result.status;
+    switch (result.status) {
+        case RobotModelSourceStatus::Current:
+            return;
+        case RobotModelSourceStatus::Untracked:
+            _statusLabel->setText("模型来源未追踪，当前优化使用项目内冻结快照。");
+            return;
+        case RobotModelSourceStatus::Stale:
+            _statusLabel->setText("模型快照已过期，当前优化仍使用项目内冻结快照。");
+            return;
+        case RobotModelSourceStatus::SourceMissing:
+            _statusLabel->setText("模型源文件缺失，当前优化仍使用项目内冻结快照。");
+            return;
+        case RobotModelSourceStatus::SourceInvalid:
+            _statusLabel->setText("模型源文件无效，当前优化仍使用项目内冻结快照。");
+            return;
+    }
 }
 
 void StructureOptimizerWidget::setEditingEnabled(bool enabled)
@@ -388,6 +414,7 @@ void StructureOptimizerWidget::setEditingEnabled(bool enabled)
 
 void StructureOptimizerWidget::startOptimization()
 {
+    updateModelSourceStatus();
     StructureOptimizationProblem problem = collectProblem();
     if (!_controller->start(problem))
         return;
@@ -511,13 +538,12 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
 
     StructureOptimizationProblem problem;
     std::string factoryError;
-    if (!StructureOptimizationProjectFactory::create(spec, problem, &factoryError)) {
+    if (!StructureOptimizationProjectFactory::create(spec, path, problem, &factoryError)) {
         QMessageBox::warning(this, "创建结构优化项目失败",
                              QString::fromStdString(factoryError));
         return;
     }
 
-    problem.context.sourceModelPath = path.toStdString();
     _projectPath.clear();
     setProblem(problem);
     _statusLabel->setText("已从模型快照创建结构优化项目，请添加任务点后开始优化。");
@@ -540,7 +566,8 @@ void StructureOptimizerWidget::openProject()
     }
     _projectPath = path;
     setProblem(problem);
-    _statusLabel->setText("结构优化项目已载入。");
+    if (_modelSourceStatus == RobotModelSourceStatus::Current)
+        _statusLabel->setText("结构优化项目已载入。");
 }
 
 void StructureOptimizerWidget::saveProject()
