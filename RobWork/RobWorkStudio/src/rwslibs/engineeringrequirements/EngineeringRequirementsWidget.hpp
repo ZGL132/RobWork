@@ -21,6 +21,17 @@ namespace rw { namespace models { class WorkCell; } }
 
 namespace rws {
 
+enum class StationTemplateKind;
+
+/**
+ * @brief 返回工艺模板对话框中需要显示的“模板专属参数”位掩码。
+ *
+ * 公共字段（模板类型、工位标识、Frame、TCP、需求等级和作业偏置）不在此掩码中，
+ * 始终显示。该策略只描述不同工艺真正消费的生成参数，避免界面要求工程师填写
+ * 当前模板不会使用的尺寸或安全距离。
+ */
+unsigned int templateParameterVisibilityMask(StationTemplateKind kind);
+
 class EngineeringRequirementsWidget : public QWidget {
     Q_OBJECT
 public:

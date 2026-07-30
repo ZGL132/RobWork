@@ -49,6 +49,53 @@
 #include <cmath>
 
 namespace rws {
+
+namespace {
+
+/**
+ * @brief 工艺模板专属参数在 FormLayout 中的可见性位定义。
+ *
+ * 位值而非多个分散布尔值使“模板类型 -> 参数集合”的映射可以被单元测试覆盖；
+ * 同时让 UI 层只负责显示/隐藏，不承担工艺模板生成算法的判断职责。
+ */
+enum TemplateParameterVisibility : unsigned int {
+    TemplateParameterRows = 1U << 0,
+    TemplateParameterColumns = 1U << 1,
+    TemplateParameterLayers = 1U << 2,
+    TemplateParameterRowSpacing = 1U << 3,
+    TemplateParameterColumnSpacing = 1U << 4,
+    TemplateParameterLayerSpacing = 1U << 5,
+    TemplateParameterApproach = 1U << 6,
+    TemplateParameterRetract = 1U << 7,
+    TemplateParameterClearance = 1U << 8
+};
+
+} // namespace
+
+unsigned int templateParameterVisibilityMask(StationTemplateKind kind)
+{
+    switch (kind) {
+        case StationTemplateKind::BinPicking:
+            // 料箱取料按层、行、列生成离散取料点，只消费阵列尺寸和三向间距。
+            return TemplateParameterRows | TemplateParameterColumns | TemplateParameterLayers |
+                   TemplateParameterRowSpacing | TemplateParameterColumnSpacing |
+                   TemplateParameterLayerSpacing;
+        case StationTemplateKind::MachineTending:
+            // 机床上下料围绕同一作业点展开待机、接近和撤离动作，不生成网格阵列。
+            return TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance;
+        case StationTemplateKind::Palletizing:
+            // 当前码垛实现固定每层 2x2 工位；层数和三向间距决定实际放置点的位置。
+            return TemplateParameterLayers | TemplateParameterRowSpacing |
+                   TemplateParameterColumnSpacing | TemplateParameterLayerSpacing;
+        case StationTemplateKind::Inspection:
+        case StationTemplateKind::ToolChange:
+        case StationTemplateKind::Handover:
+            // 这些模板仅生成一个作业点，专属阵列和路径距离参数均不会参与生成。
+            return 0U;
+    }
+    return 0U;
+}
+
 namespace {
 
 QString levelText(RequirementLevel level) { return QString::fromLatin1(toString(level)); }
@@ -239,15 +286,50 @@ bool editTemplateRequest(QWidget* parent, const rw::models::WorkCell* workcell,
     form->addRow(QString::fromUtf8("作业偏置 X"), offsetX);
     form->addRow(QString::fromUtf8("作业偏置 Y"), offsetY);
     form->addRow(QString::fromUtf8("作业偏置 Z"), offsetZ);
+
+    // 记录专属参数所在的 FormLayout 行。后续只切换行的可见性，不销毁控件或覆盖
+    // 其现有值，因此工程师在模板之间比较方案时，切回原模板仍可保留已输入的数据。
+    const int rowsRow = form->rowCount();
     form->addRow(QString::fromUtf8("行数"), rows);
+    const int columnsRow = form->rowCount();
     form->addRow(QString::fromUtf8("列数"), columns);
+    const int layersRow = form->rowCount();
     form->addRow(QString::fromUtf8("层数"), layers);
+    const int rowSpacingRow = form->rowCount();
     form->addRow(QString::fromUtf8("行间距"), rowSpacing);
+    const int columnSpacingRow = form->rowCount();
     form->addRow(QString::fromUtf8("列间距"), columnSpacing);
+    const int layerSpacingRow = form->rowCount();
     form->addRow(QString::fromUtf8("层间距"), layerSpacing);
+    const int approachRow = form->rowCount();
     form->addRow(QString::fromUtf8("接近距离"), approach);
+    const int retractRow = form->rowCount();
     form->addRow(QString::fromUtf8("撤离距离"), retract);
+    const int clearanceRow = form->rowCount();
     form->addRow(QString::fromUtf8("安全距离"), clearance);
+
+    const auto updateTemplateParameterRows = [form, kind, rowsRow, columnsRow, layersRow,
+                                              rowSpacingRow, columnSpacingRow, layerSpacingRow,
+                                              approachRow, retractRow, clearanceRow] () {
+        const StationTemplateKind selectedKind =
+            static_cast<StationTemplateKind>(kind->currentData().toInt());
+        const unsigned int visibleParameters = templateParameterVisibilityMask(selectedKind);
+
+        // setRowVisible 同时处理字段标签和编辑器，避免只隐藏编辑器后留下无意义标签。
+        form->setRowVisible(rowsRow, (visibleParameters & TemplateParameterRows) != 0U);
+        form->setRowVisible(columnsRow, (visibleParameters & TemplateParameterColumns) != 0U);
+        form->setRowVisible(layersRow, (visibleParameters & TemplateParameterLayers) != 0U);
+        form->setRowVisible(rowSpacingRow, (visibleParameters & TemplateParameterRowSpacing) != 0U);
+        form->setRowVisible(columnSpacingRow, (visibleParameters & TemplateParameterColumnSpacing) != 0U);
+        form->setRowVisible(layerSpacingRow, (visibleParameters & TemplateParameterLayerSpacing) != 0U);
+        form->setRowVisible(approachRow, (visibleParameters & TemplateParameterApproach) != 0U);
+        form->setRowVisible(retractRow, (visibleParameters & TemplateParameterRetract) != 0U);
+        form->setRowVisible(clearanceRow, (visibleParameters & TemplateParameterClearance) != 0U);
+    };
+    QObject::connect(kind, QOverload<int>::of(&QComboBox::currentIndexChanged), &dialog,
+                     [updateTemplateParameterRows] (int) { updateTemplateParameterRows(); });
+    updateTemplateParameterRows();
+
     layout->addLayout(form);
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     layout->addWidget(buttons);

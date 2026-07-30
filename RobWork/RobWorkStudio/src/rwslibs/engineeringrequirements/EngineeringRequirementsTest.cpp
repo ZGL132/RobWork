@@ -27,7 +27,25 @@
 #include <set>
 #include <string>
 
+namespace rws {
+// 模板参数的显示策略由界面层统一提供。此处先声明期望的最小接口，以便验证不同
+// 工艺类型确实拥有不同的参数集合，而不是让所有模板长期共用同一张表单。
+unsigned int templateParameterVisibilityMask(StationTemplateKind kind);
+}
+
 namespace {
+
+enum TemplateParameterVisibility : unsigned int {
+    TemplateParameterRows = 1U << 0,
+    TemplateParameterColumns = 1U << 1,
+    TemplateParameterLayers = 1U << 2,
+    TemplateParameterRowSpacing = 1U << 3,
+    TemplateParameterColumnSpacing = 1U << 4,
+    TemplateParameterLayerSpacing = 1U << 5,
+    TemplateParameterApproach = 1U << 6,
+    TemplateParameterRetract = 1U << 7,
+    TemplateParameterClearance = 1U << 8
+};
 
 int fail(const char* expression, int line)
 {
@@ -525,6 +543,37 @@ int testGeneratedStationJsonRoundTripPreservesProvenance()
     return 0;
 }
 
+int testTemplateParameterVisibilityMatchesProcessSemantics()
+{
+    const unsigned int binPicking = rws::templateParameterVisibilityMask(rws::StationTemplateKind::BinPicking);
+    REQUIRE((binPicking & TemplateParameterRows) != 0U);
+    REQUIRE((binPicking & TemplateParameterColumns) != 0U);
+    REQUIRE((binPicking & TemplateParameterLayers) != 0U);
+    REQUIRE((binPicking & TemplateParameterRowSpacing) != 0U);
+    REQUIRE((binPicking & TemplateParameterColumnSpacing) != 0U);
+    REQUIRE((binPicking & TemplateParameterLayerSpacing) != 0U);
+    REQUIRE((binPicking & (TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance)) == 0U);
+
+    const unsigned int machineTending = rws::templateParameterVisibilityMask(rws::StationTemplateKind::MachineTending);
+    REQUIRE((machineTending & (TemplateParameterRows | TemplateParameterColumns | TemplateParameterLayers)) == 0U);
+    REQUIRE((machineTending & (TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance)) ==
+            (TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance));
+
+    const unsigned int palletizing = rws::templateParameterVisibilityMask(rws::StationTemplateKind::Palletizing);
+    REQUIRE((palletizing & (TemplateParameterRows | TemplateParameterColumns)) == 0U);
+    REQUIRE((palletizing & (TemplateParameterLayers | TemplateParameterRowSpacing |
+                             TemplateParameterColumnSpacing | TemplateParameterLayerSpacing)) ==
+            (TemplateParameterLayers | TemplateParameterRowSpacing |
+             TemplateParameterColumnSpacing | TemplateParameterLayerSpacing));
+
+    for (const rws::StationTemplateKind kind : {rws::StationTemplateKind::Inspection,
+                                                 rws::StationTemplateKind::ToolChange,
+                                                 rws::StationTemplateKind::Handover}) {
+        REQUIRE(rws::templateParameterVisibilityMask(kind) == 0U);
+    }
+    return 0;
+}
+
 int testWidgetBuildsEngineeringRequirementWorkflow()
 {
     rws::EngineeringRequirementsWidget widget;
@@ -596,6 +645,8 @@ int main(int argc, char** argv)
     if (testRequirementSetUndoRestoresTheSnapshotBeforeBatchOperation() != 0)
         return 1;
     if (testGeneratedStationJsonRoundTripPreservesProvenance() != 0)
+        return 1;
+    if (testTemplateParameterVisibilityMatchesProcessSemantics() != 0)
         return 1;
     std::puts("All engineering requirements tests passed.");
     return 0;
