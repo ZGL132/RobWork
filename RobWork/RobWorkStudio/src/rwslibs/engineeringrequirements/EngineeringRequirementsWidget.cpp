@@ -111,6 +111,17 @@ double number(const QTableWidget* table, int row, int column, double fallback = 
     const double value = table->item(row, column) == nullptr ? fallback : table->item(row, column)->text().toDouble(&ok);
     return ok ? value : fallback;
 }
+int positiveSampleCount(const QTableWidget* table, int row, int column, int fallback)
+{
+    // 覆盖盒的每轴采样点数会改变离散网格规模，因而属于影响覆盖率结论的工程输入，不能在
+    // 表格同步时静默忽略。P2 覆盖率至少需要两个端点才能形成一个有尺寸的轴向区间；非整数、
+    // 空值和小于 2 的输入统一回退到安全下限，避免后续评价器收到退化网格。
+    bool ok = false;
+    const int value = table->item(row, column) == nullptr
+        ? fallback
+        : table->item(row, column)->text().toInt(&ok);
+    return ok ? std::max(2, value) : std::max(2, fallback);
+}
 QString text(const QTableWidget* table, int row, int column, const QString& fallback = QString()) {
     return table->item(row, column) == nullptr ? fallback : table->item(row, column)->text();
 }
@@ -643,8 +654,8 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addStretch();
     layout->addLayout(actions);
     _regionTable = new QTableWidget(page); _regionTable->setObjectName("engineeringRequirementBoxTable");
-    _regionTable->setColumnCount(11);
-    _regionTable->setHorizontalHeaderLabels({"ID", "名称", "等级", "参考系", "中心 X", "中心 Y", "中心 Z", "尺寸 X", "尺寸 Y", "尺寸 Z", "最小覆盖率"});
+    _regionTable->setColumnCount(12);
+    _regionTable->setHorizontalHeaderLabels({"ID", "名称", "等级", "参考系", "中心 X", "中心 Y", "中心 Z", "尺寸 X", "尺寸 Y", "尺寸 Z", "最小覆盖率", "每轴采样点"});
     _regionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     layout->addWidget(_regionTable);
     connect(add, &QPushButton::clicked, this, &EngineeringRequirementsWidget::addBoxRegion);
@@ -696,6 +707,9 @@ void EngineeringRequirementsWidget::refreshTables()
                 _regionTable->setItem(row, 7 + axis, textItem(QString::number(region.size[axis])));
             }
             _regionTable->setItem(row, 10, textItem(QString::number(region.minimumCoverage)));
+            // 将采样密度展示为显式的审计字段，确保导入、编辑、冻结和重新打开项目后采用完全
+            // 相同的覆盖率离散网格，而不是隐式回退到数据结构默认值。
+            _regionTable->setItem(row, 11, textItem(QString::number(region.samplesPerAxis)));
         }
     }
     const bool editable = !_requirements.frozen;
@@ -738,7 +752,9 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
         region.level = levelFromText(qobject_cast<QComboBox*>(_regionTable->cellWidget(row, 2))->currentText());
         region.refFrame = text(_regionTable, row, 3, "WORLD").toStdString();
         for (int axis = 0; axis < 3; ++axis) { region.center[axis] = number(_regionTable, row, 4 + axis); region.size[axis] = number(_regionTable, row, 7 + axis, 0.1); }
-        region.minimumCoverage = number(_regionTable, row, 10, 0.8); _requirements.boxRegions.push_back(region);
+        region.minimumCoverage = number(_regionTable, row, 10, 0.8);
+        region.samplesPerAxis = positiveSampleCount(_regionTable, row, 11, region.samplesPerAxis);
+        _requirements.boxRegions.push_back(region);
     }
 }
 

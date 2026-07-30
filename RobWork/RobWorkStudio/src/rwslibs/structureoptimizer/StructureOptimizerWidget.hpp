@@ -59,6 +59,7 @@ private:
     void previewSelectedCandidate();
     void clearCandidatePreview();
     void newProjectFromModelSpec();
+    void newProjectFromFrozenRequirements();
     void openProject();
     void saveProject();
     void exportResult();

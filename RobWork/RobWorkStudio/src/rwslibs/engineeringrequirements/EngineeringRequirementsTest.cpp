@@ -26,6 +26,7 @@
 #include <QJsonObject>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QDir>
 
 #include <cmath>
@@ -746,6 +747,28 @@ int testWidgetResolvesGeometryFeatureUsingLatestJogState()
     return 0;
 }
 
+int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
+{
+    // 覆盖率计算依赖每轴采样点数。工程师在表格中修改该值后，再执行新增、保存或冻结等会
+    // 触发表格同步的操作时，数值必须保留，不能静默退回 BoxRegion 的默认值 5。
+    rws::EngineeringRequirementsWidget widget;
+    QPushButton* addRegion = widget.findChild<QPushButton*>("addRequirementBoxRegionButton");
+    QTableWidget* regionTable = widget.findChild<QTableWidget*>("engineeringRequirementBoxTable");
+    REQUIRE(addRegion != nullptr);
+    REQUIRE(regionTable != nullptr);
+
+    addRegion->click();
+    REQUIRE(regionTable->rowCount() == 1);
+    regionTable->item(0, 11)->setText("9");
+
+    // 第二次新增会调用 syncTablesToRequirements()，可覆盖保存和冻结前的同一同步路径。
+    addRegion->click();
+    const rws::RequirementSet requirements = widget.requirementSet();
+    REQUIRE(requirements.boxRegions.size() == 2);
+    REQUIRE(requirements.boxRegions.front().samplesPerAxis == 9);
+    return 0;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -756,7 +779,9 @@ int main(int argc, char** argv)
             return 1;
         if (testWidgetExposesSemanticKeyStationInspector() != 0)
             return 1;
-        return testWidgetResolvesGeometryFeatureUsingLatestJogState();
+        if (testWidgetResolvesGeometryFeatureUsingLatestJogState() != 0)
+            return 1;
+        return testWidgetPreservesBoxSamplingDensityWhenSynchronizing();
     }
     QCoreApplication app(argc, argv);
     (void)app;

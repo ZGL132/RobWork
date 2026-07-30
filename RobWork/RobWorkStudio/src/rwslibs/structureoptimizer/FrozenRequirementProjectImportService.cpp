@@ -1,0 +1,105 @@
+#include "FrozenRequirementProjectImportService.hpp"
+
+#include "EngineeringRequirementArtifactAdapter.hpp"
+#include "StructureOptimizationProjectFactory.hpp"
+
+#include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QJsonDocument>
+
+namespace rws {
+namespace {
+
+bool setError(std::string* error, const std::string& message)
+{
+    if (error != nullptr)
+        *error = message;
+    return false;
+}
+
+QString resolveModelPath(const QString& requirementPath, const std::string& bindingPath)
+{
+    // 冻结工件中的 sourcePath 由需求插件记录。绝对路径保持原样；相对路径严格相对于
+    // 需求文件，而非当前进程工作目录，从而避免从不同插件或命令行启动程序时解析到不同模型。
+    const QString modelPath = QString::fromStdString(bindingPath).trimmed();
+    if (QFileInfo(modelPath).isAbsolute())
+        return QDir::cleanPath(modelPath);
+    return QDir(QFileInfo(requirementPath).absolutePath()).absoluteFilePath(modelPath);
+}
+
+} // namespace
+
+bool FrozenRequirementProjectImportService::createProblem(
+    const QString& requirementPath, StructureOptimizationProblem& problem, std::string* error)
+{
+    const QFileInfo requirementInfo(requirementPath);
+    if (requirementPath.trimmed().isEmpty() || !requirementInfo.isFile())
+        return setError(error, "Engineering requirement file does not exist.");
+
+    QFile requirementFile(requirementInfo.absoluteFilePath());
+    if (!requirementFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return setError(error, "Engineering requirement file cannot be opened: " +
+                              requirementFile.errorString().toStdString());
+
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(requirementFile.readAll(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !document.isObject())
+        return setError(error, "Engineering requirement JSON is invalid: " +
+                              parseError.errorString().toStdString());
+
+    // 同时解析编辑态 RequirementSet，防止手工拼接的顶层 JSON 绕开基本 schema 校验；真正
+    // 交给下游的仍然只会是 frozenArtifact，不会读取这份可编辑数据来生成任务。
+    RequirementSet editableRequirements;
+    std::string parseMessage;
+    if (!RequirementSetJson::fromObject(document.object(), editableRequirements, &parseMessage))
+        return setError(error, "Engineering requirement set is invalid: " + parseMessage);
+
+    const QJsonValue artifactValue = document.object().value("frozenArtifact");
+    if (!artifactValue.isObject())
+        return setError(error, "Engineering requirement file has no valid frozenArtifact.");
+
+    FrozenRequirementArtifact artifact;
+    if (!FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &parseMessage))
+        return setError(error, "Frozen engineering requirement artifact is invalid: " + parseMessage);
+    if (!artifact.compiled.frozen)
+        return setError(error, "Frozen engineering requirement artifact is not marked frozen.");
+
+    // 顶层绑定和冻结绑定必须描述同一模型。导入时先阻止两者不一致，才能避免用户编辑态
+    // 文件已改绑模型、但 artifact 仍指向旧模型而产生难以追溯的优化结论。
+    if (!editableRequirements.modelBinding.robotModelFingerprint.empty() &&
+        editableRequirements.modelBinding.robotModelFingerprint !=
+            artifact.modelBinding.robotModelFingerprint)
+        return setError(error, "Requirement set model binding differs from frozenArtifact.");
+
+    const QString modelPath = resolveModelPath(requirementInfo.absoluteFilePath(),
+                                               artifact.modelBinding.sourcePath);
+    if (artifact.modelBinding.sourcePath.empty() || !QFileInfo(modelPath).isFile())
+        return setError(error, "Frozen engineering requirement model snapshot does not exist.");
+
+    QFile modelFile(modelPath);
+    if (!modelFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return setError(error, "Robot model snapshot cannot be opened: " +
+                              modelFile.errorString().toStdString());
+
+    RobotModelSpec model;
+    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage))
+        return setError(error, "Robot model snapshot is invalid: " + parseMessage);
+
+    StructureOptimizationProblem created;
+    if (!StructureOptimizationProjectFactory::create(model, modelPath, created, &parseMessage))
+        return setError(error, "Structure optimization project creation failed: " + parseMessage);
+    if (!EngineeringRequirementArtifactAdapter::apply(artifact, created, &parseMessage))
+        return setError(error, "Frozen engineering requirements cannot be applied: " + parseMessage);
+
+    problem = created;
+    if (error != nullptr)
+        error->clear();
+    return true;
+}
+
+} // namespace rws

@@ -11,6 +11,7 @@ rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} A
 if(build)
     set(CoreSrcFiles
         GeometryFeatureResolver.cpp
+        OrientationRuleResolver.cpp
         RequirementSetJson.cpp
         RequirementCompiler.cpp
         RequirementFreezer.cpp
@@ -21,6 +22,7 @@ if(build)
     set(CoreHeaderFiles
         EngineeringRequirementTypes.hpp
         GeometryFeatureResolver.hpp
+        OrientationRuleResolver.hpp
         RequirementSetJson.hpp
         RequirementCompiler.hpp
         RequirementFreezer.hpp

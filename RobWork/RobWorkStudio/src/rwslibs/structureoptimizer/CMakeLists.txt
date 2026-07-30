@@ -47,6 +47,7 @@ if(build)
         StructureWorkspaceCoverage.cpp
         RobotModelStalenessChecker.cpp
         EngineeringRequirementArtifactAdapter.cpp
+        FrozenRequirementProjectImportService.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -75,6 +76,7 @@ if(build)
         StructureWorkspaceCoverage.hpp
         RobotModelStalenessChecker.hpp
         EngineeringRequirementArtifactAdapter.hpp
+        FrozenRequirementProjectImportService.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})

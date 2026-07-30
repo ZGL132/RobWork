@@ -30,8 +30,10 @@
 #include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
 #include "EngineeringRequirementArtifactAdapter.hpp"
+#include "FrozenRequirementProjectImportService.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -1947,6 +1949,80 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testFrozenRequirementProjectImportCreatesAuditableProblem()
+{
+    std::printf("testFrozenRequirementProjectImportCreatesAuditableProblem ... ");
+
+    // 导入服务必须从真实文件边界读取冻结工件：需求 JSON 中只有编辑态 RequirementSet 或者
+    // 工件缺失时都不能绕过冻结门禁。模型使用相对路径，覆盖工程项目随目录整体移动的场景。
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString modelPath = directory.filePath("robot.rmb.json");
+    const QString requirementPath = directory.filePath("cell.requirements.json");
+    const rws::RobotModelSpec model =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path());
+
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(modelFile.write(QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(model))) > 0);
+    modelFile.close();
+
+    rws::RequirementSet requirements;
+    requirements.name = "Frozen cell requirement";
+    requirements.modelBinding.sourcePath = "robot.rmb.json";
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    requirements.frozen = true;
+
+    rws::FrozenRequirementArtifact artifact;
+    artifact.requirementFingerprint = "frozen-requirement-fingerprint";
+    artifact.workcellFingerprint = "frozen-workcell-fingerprint";
+    artifact.modelBinding = requirements.modelBinding;
+    artifact.compiled.frozen = true;
+    artifact.compiled.modelBinding = artifact.modelBinding;
+    artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    rws::CompiledPoseTask station;
+    station.id = "load";
+    station.name = "Machine load";
+    station.level = rws::RequirementLevel::Must;
+    station.refFrame = "WORLD";
+    station.tcpFrame = "TCP";
+    station.position = {{0.35, 0.0, 0.45}};
+    artifact.compiled.poseTasks.push_back(station);
+
+    QJsonObject requirementProject = rws::RequirementSetJson::toObject(requirements);
+    requirementProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QFile requirementFile(requirementPath);
+    REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(requirementFile.write(QJsonDocument(requirementProject).toJson()) > 0);
+    requirementFile.close();
+
+    rws::StructureOptimizationProblem imported;
+    std::string error;
+    REQUIRE(rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, imported, &error));
+    REQUIRE(imported.tasks.size() == 1);
+    REQUIRE(imported.tasks.front().point.id == "load");
+    REQUIRE(imported.requirementProvenance.requirementFingerprint ==
+            "frozen-requirement-fingerprint");
+    REQUIRE(imported.context.sourceModelPath == modelPath.toStdString());
+
+    // 没有冻结工件的需求文件只能继续编辑，绝不能被误用为下游优化输入。
+    requirementProject.remove("frozenArtifact");
+    REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate));
+    REQUIRE(requirementFile.write(QJsonDocument(requirementProject).toJson()) > 0);
+    requirementFile.close();
+    REQUIRE(!rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, imported, &error));
+    REQUIRE(error.find("frozenArtifact") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testProjectFactory()
 {
     std::printf("testProjectFactory ... ");
@@ -2264,6 +2340,9 @@ static void testStructureOptimizerWidgetState()
         REQUIRE(!startButton->isEnabled());
     REQUIRE(widget.findChild<QPushButton*>(
                 "newStructureOptimizationProjectFromModelButton") != nullptr);
+    // 需求定义插件冻结后的工件必须有明确入口，避免工程师重新手工录入已经校验的任务点。
+    REQUIRE(widget.findChild<QPushButton*>(
+                "newStructureOptimizationProjectFromFrozenRequirementButton") != nullptr);
 
     rws::StructureOptimizationProblem emptyTaskProject;
     std::string factoryError;
@@ -2658,6 +2737,7 @@ int main(int argc, char** argv)
     testUiTableModelsAndSuggestions();
     testConstraintModelAndProjectAdapter();
     testFrozenEngineeringRequirementArtifactAdapter();
+    testFrozenRequirementProjectImportCreatesAuditableProblem();
     testProjectFactory();
     testProjectFactoryProvenance();
     testExportService();

@@ -9,6 +9,7 @@
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationProjectFactory.hpp"
+#include "FrozenRequirementProjectImportService.hpp"
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureVariableTableModel.hpp"
 
@@ -439,6 +440,8 @@ QWidget* StructureOptimizerWidget::createReportPage()
     QVBoxLayout* layout = new QVBoxLayout(page);
     QPushButton* newFromModel = new QPushButton("从模型快照新建项目", page);
     newFromModel->setObjectName("newStructureOptimizationProjectFromModelButton");
+    QPushButton* newFromRequirements = new QPushButton("从冻结需求创建项目", page);
+    newFromRequirements->setObjectName("newStructureOptimizationProjectFromFrozenRequirementButton");
     QPushButton* open = new QPushButton("打开项目", page);
     open->setObjectName("openStructureOptimizationProjectButton");
     QPushButton* save = new QPushButton("保存项目", page);
@@ -446,12 +449,15 @@ QWidget* StructureOptimizerWidget::createReportPage()
     QPushButton* exportAll = new QPushButton("导出报告和候选模型", page);
     exportAll->setObjectName("exportStructureOptimizationResultButton");
     layout->addWidget(newFromModel);
+    layout->addWidget(newFromRequirements);
     layout->addWidget(open);
     layout->addWidget(save);
     layout->addWidget(exportAll);
     layout->addStretch();
     connect(newFromModel, &QPushButton::clicked,
             this, &StructureOptimizerWidget::newProjectFromModelSpec);
+    connect(newFromRequirements, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::newProjectFromFrozenRequirements);
     connect(open, &QPushButton::clicked, this, &StructureOptimizerWidget::openProject);
     connect(save, &QPushButton::clicked, this, &StructureOptimizerWidget::saveProject);
     connect(exportAll, &QPushButton::clicked, this, &StructureOptimizerWidget::exportResult);
@@ -649,6 +655,32 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
     _projectPath.clear();
     setProblem(problem);
     _statusLabel->setText("已从模型快照创建结构优化项目，请添加任务点后开始优化。");
+}
+
+void StructureOptimizerWidget::newProjectFromFrozenRequirements()
+{
+    const QString path = QFileDialog::getOpenFileName(
+        this, "从冻结需求创建结构优化项目", _projectPath,
+        "Frozen engineering requirement (*.requirements.json *.json)");
+    if (path.isEmpty())
+        return;
+
+    StructureOptimizationProblem problem;
+    std::string importError;
+    // 冻结需求是跨插件的只读交付物。所有文件解析、模型一致性复核及 P2 能力边界检查均由
+    // 服务层完成；界面不能直接把可编辑 RequirementSet 转成任务点，以免绕过冻结审计门禁。
+    if (!FrozenRequirementProjectImportService::createProblem(path, problem, &importError)) {
+        QMessageBox::warning(this, "创建结构优化项目失败",
+                             QString::fromStdString(importError));
+        return;
+    }
+
+    // 需求文件是上游输入而不是结构优化项目本身。清除项目路径可保证后续“保存项目”写入一个
+    // 新文件，既不会修改冻结需求，也不会覆盖用户此前打开的优化项目。
+    _projectPath.clear();
+    setProblem(problem);
+    _statusLabel->setText(
+        "已从冻结研发需求创建项目：当前执行运动学结构优化；轨迹、动力学和驱动选型评价未启用。");
 }
 
 void StructureOptimizerWidget::openProject()

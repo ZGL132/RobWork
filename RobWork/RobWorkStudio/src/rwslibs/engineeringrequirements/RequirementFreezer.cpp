@@ -1,6 +1,7 @@
 #include "RequirementFreezer.hpp"
 
 #include "GeometryFeatureResolver.hpp"
+#include "OrientationRuleResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
 
@@ -172,6 +173,10 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
                 addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
                                          "Key station geometry feature cannot be resolved: " + resolutionError);
         }
+        std::string orientationError;
+        if (!OrientationRuleResolver::applyToStation(task, workcell, state, &orientationError))
+            addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
+                                     "Key station orientation rule cannot be resolved: " + orientationError);
     }
     for (const BoxRegion& region : resolved.boxRegions) {
         if (findFrame(workcell, region.refFrame) == nullptr)
