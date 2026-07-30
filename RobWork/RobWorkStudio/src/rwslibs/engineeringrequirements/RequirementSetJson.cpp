@@ -83,6 +83,9 @@ QJsonObject writePoseTask(const PoseTask& task)
     orientation["targetFrame"] = QString::fromStdString(task.orientation.targetFrame);
     orientation["targetGeometry"] = QString::fromStdString(task.orientation.targetGeometry);
     orientation["targetPoint"] = QString::fromStdString(task.orientation.targetPoint);
+    // 解析证据通常只在冻结快照中非空。统一通过需求 JSON 读写，保证冻结工件重载后
+    // 不会丢失“代表姿态来自哪条规则与哪个目标”的可审计依据。
+    orientation["resolutionEvidence"] = QString::fromStdString(task.orientation.resolutionEvidence);
     orientation["invertNormal"] = task.orientation.invertNormal;
     orientation["allowToolRollFree"] = task.orientation.allowToolRollFree;
     orientation["rollMinimumDeg"] = task.orientation.rollMinimumDeg;
@@ -170,6 +173,7 @@ bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
     task.orientation.targetFrame = orientation.value("targetFrame").toString().toStdString();
     task.orientation.targetGeometry = orientation.value("targetGeometry").toString().toStdString();
     task.orientation.targetPoint = orientation.value("targetPoint").toString().toStdString();
+    task.orientation.resolutionEvidence = orientation.value("resolutionEvidence").toString().toStdString();
     task.orientation.invertNormal = orientation.value("invertNormal").toBool(false);
     task.orientation.allowToolRollFree = orientation.value("allowToolRollFree").toBool(task.tolerance.allowToolRollFree);
     task.orientation.rollMinimumDeg = orientation.value("rollMinimumDeg").toDouble(-180.0);

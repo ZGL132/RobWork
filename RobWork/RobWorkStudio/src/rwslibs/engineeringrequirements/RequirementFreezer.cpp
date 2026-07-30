@@ -11,6 +11,7 @@
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <QCryptographicHash>
+#include <QDateTime>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -146,6 +147,9 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
                                  const rw::kinematics::State& state, const RobotModelSpec& model,
                                  FrozenRequirementArtifact& artifact, std::string* error)
 {
+    // 需求身份描述工程师冻结前提交的意图，而非随后由解析器补入的代表姿态和证据。
+    // 这样 isCurrent() 使用原始 RequirementSet 复核时，动态姿态工位不会被误判为已变更。
+    const std::string sourceRequirementFingerprint = RequirementCompiler::fingerprint(requirements);
     const std::string expectedModelFingerprint = RobotModelFingerprint::canonicalSha256(model);
     if (requirements.modelBinding.robotModelFingerprint.empty() ||
         requirements.modelBinding.robotModelFingerprint != expectedModelFingerprint ||
@@ -201,8 +205,10 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         compiled.workspaceRegions.end());
 
     artifact = FrozenRequirementArtifact();
-    artifact.requirementFingerprint = RequirementCompiler::fingerprint(resolved);
+    artifact.requirementFingerprint = sourceRequirementFingerprint;
     artifact.workcellFingerprint = workcellFingerprint(workcell, state);
+    // 使用 UTC ISO-8601 毫秒时间戳，使审计记录可跨时区比较且不依赖本机显示格式。
+    artifact.frozenAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
     artifact.modelBinding = resolved.modelBinding;
     artifact.compiled = compiled;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
@@ -265,6 +271,7 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     object["requirementFingerprint"] = QString::fromStdString(artifact.requirementFingerprint);
     object["workcellFingerprint"] = QString::fromStdString(artifact.workcellFingerprint);
     object["compilerVersion"] = QString::fromStdString(artifact.compilerVersion);
+    object["frozenAt"] = QString::fromStdString(artifact.frozenAt);
     QJsonObject binding;
     binding["sourcePath"] = QString::fromStdString(artifact.modelBinding.sourcePath);
     binding["robotModelFingerprint"] = QString::fromStdString(artifact.modelBinding.robotModelFingerprint);
@@ -295,6 +302,7 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     parsed.requirementFingerprint = object.value("requirementFingerprint").toString().toStdString();
     parsed.workcellFingerprint = object.value("workcellFingerprint").toString().toStdString();
     parsed.compilerVersion = object.value("compilerVersion").toString("EngineeringRequirements.Freezer.1").toStdString();
+    parsed.frozenAt = object.value("frozenAt").toString().toStdString();
     const QJsonObject binding = object.value("modelBinding").toObject();
     parsed.modelBinding.sourcePath = binding.value("sourcePath").toString().toStdString();
     parsed.modelBinding.robotModelFingerprint = binding.value("robotModelFingerprint").toString().toStdString();

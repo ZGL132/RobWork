@@ -14,12 +14,15 @@ class RequirementSetUndoStack {
   public:
     void pushSnapshot(const RequirementSet& requirements);
     bool canUndo() const;
+    bool canRedo() const;
     bool undo(RequirementSet& requirements);
+    bool redo(RequirementSet& requirements);
     void clear();
 
   private:
     static constexpr std::size_t maximumSnapshots = 32;
     std::vector<RequirementSet> _snapshots;
+    std::vector<RequirementSet> _redoSnapshots;
 };
 
 } // namespace rws

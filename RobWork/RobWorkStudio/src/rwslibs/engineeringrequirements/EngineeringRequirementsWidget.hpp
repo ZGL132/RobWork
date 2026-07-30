@@ -67,6 +67,7 @@ private:
     void refreshKeyStationInspector();
     void refreshFrameChoices();
     void commitKeyStationInspector();
+    void commitBoxRegionTableEdit();
     void updateOrientationEditor();
     int selectedKeyStationIndex() const;
     void bindModel();
@@ -74,6 +75,7 @@ private:
     void loadRequirements();
     void importStations();
     void undoLastOperation();
+    void redoLastOperation();
     void freezeRequirements();
     void unfreezeRequirements();
     void addPoseTask();
@@ -87,6 +89,7 @@ private:
     void createStationArray();
     void mirrorSelectedStation();
     void pushUndoSnapshot(const RequirementSet& snapshot);
+    void recordRequirementEdit(const RequirementSet& snapshot, bool refreshAllWidgets = true);
     void addBoxRegion();
     void duplicateBoxRegion();
     void removeBoxRegion();
@@ -120,6 +123,9 @@ private:
     QComboBox* _stationReferenceFrameCombo = nullptr;
     QComboBox* _stationTcpFrameCombo = nullptr;
     QComboBox* _stationOrientationTargetFrameCombo = nullptr;
+    QLabel* _stationOrientationTargetFrameLabel = nullptr;
+    QLineEdit* _stationOrientationTargetPointEdit = nullptr;
+    QLabel* _stationOrientationTargetPointLabel = nullptr;
     QCheckBox* _stationFreeRollCheck = nullptr;
     QCheckBox* _stationApproachEnabled = nullptr;
     QCheckBox* _stationRetractEnabled = nullptr;

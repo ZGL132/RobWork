@@ -538,6 +538,8 @@ std::string StructureOptimizationJson::problemToJson(
             QString::fromStdString(problem.requirementProvenance.workcellFingerprint);
         provenance["compilerVersion"] =
             QString::fromStdString(problem.requirementProvenance.compilerVersion);
+        // 冻结时间是需求工件的一部分而非项目创建时间，因此需与三类指纹一起保存。
+        provenance["frozenAt"] = QString::fromStdString(problem.requirementProvenance.frozenAt);
         root["engineeringRequirementProvenance"] = provenance;
     }
 
@@ -640,6 +642,8 @@ bool StructureOptimizationJson::problemFromJson(
             provenance["workcellFingerprint"].toString().toStdString();
         problem.requirementProvenance.compilerVersion =
             provenance["compilerVersion"].toString().toStdString();
+        // 旧项目没有该字段时保持为空，仍可按旧格式打开；新项目则完整保留审计时间线。
+        problem.requirementProvenance.frozenAt = provenance["frozenAt"].toString().toStdString();
     }
 
     // variables

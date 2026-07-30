@@ -1293,8 +1293,11 @@ static void testJsonRoundTrip()
          0.95, true, true}
     };
     // 冻结需求的审计身份必须随优化项目往返，确保导出的项目不会丢失其输入依据。
-    problem.requirementProvenance = {"requirement-sha256", "workcell-state-sha256",
-                                     "EngineeringRequirements.Freezer.1"};
+    // 显式填写每个字段，避免审计结构新增成员后，聚合初始化的成员顺序在测试中被悄然误用。
+    problem.requirementProvenance.requirementFingerprint = "requirement-sha256";
+    problem.requirementProvenance.workcellFingerprint = "workcell-state-sha256";
+    problem.requirementProvenance.compilerVersion = "EngineeringRequirements.Freezer.1";
+    problem.requirementProvenance.frozenAt = "2026-07-30T09:15:00.123Z";
 
     // 序列化
     const std::string json = rws::StructureOptimizationJson::problemToJson(problem);
@@ -1341,12 +1344,14 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.requirementProvenance.requirementFingerprint == "requirement-sha256");
     REQUIRE(parsed.requirementProvenance.workcellFingerprint == "workcell-state-sha256");
     REQUIRE(parsed.requirementProvenance.compilerVersion == "EngineeringRequirements.Freezer.1");
+    REQUIRE(parsed.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
 
     const std::string report = rws::StructureOptimizationReportWriter::write(
         parsed, rws::StructureOptimizationResult{});
     REQUIRE(report.find("test.kinematics@2.0") != std::string::npos);
     REQUIRE(report.find("system evaluators not enabled") != std::string::npos);
     REQUIRE(report.find("Engineering Requirement Provenance") != std::string::npos);
+    REQUIRE(report.find("2026-07-30T09:15:00.123Z") != std::string::npos);
 
     const std::string legacyJson = R"json({
         "schemaVersion": 1,
@@ -1892,6 +1897,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     rws::FrozenRequirementArtifact artifact;
     artifact.requirementFingerprint = "requirement-fingerprint";
     artifact.workcellFingerprint = "workcell-fingerprint";
+    artifact.frozenAt = "2026-07-30T09:15:00.123Z";
     artifact.modelBinding.robotName = problem.context.modelSpec.robotName;
     artifact.modelBinding.robotModelFingerprint =
         rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
@@ -1936,6 +1942,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.evaluation.coverageBox.cells[0] == 5);
     REQUIRE(problem.requirementProvenance.requirementFingerprint == "requirement-fingerprint");
     REQUIRE(problem.requirementProvenance.workcellFingerprint == "workcell-fingerprint");
+    REQUIRE(problem.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
 
     rws::WorkspaceDemandRegion secondRegion = region;
     secondRegion.id = "second_area";
@@ -1978,6 +1985,7 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     rws::FrozenRequirementArtifact artifact;
     artifact.requirementFingerprint = "frozen-requirement-fingerprint";
     artifact.workcellFingerprint = "frozen-workcell-fingerprint";
+    artifact.frozenAt = "2026-07-30T09:15:00.123Z";
     artifact.modelBinding = requirements.modelBinding;
     artifact.compiled.frozen = true;
     artifact.compiled.modelBinding = artifact.modelBinding;
@@ -2006,6 +2014,7 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     REQUIRE(imported.tasks.front().point.id == "load");
     REQUIRE(imported.requirementProvenance.requirementFingerprint ==
             "frozen-requirement-fingerprint");
+    REQUIRE(imported.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
     REQUIRE(imported.context.sourceModelPath == modelPath.toStdString());
 
     // 没有冻结工件的需求文件只能继续编辑，绝不能被误用为下游优化输入。

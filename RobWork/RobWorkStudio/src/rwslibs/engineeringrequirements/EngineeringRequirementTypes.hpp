@@ -109,11 +109,14 @@ struct OrientationRule {
     OrientationMode mode = OrientationMode::Fixed; ///< 姿态对齐模式
     std::string targetFrame;                       ///< 对齐的目标坐标系名称
     std::string targetGeometry;                    ///< 对齐的目标几何体标识
-    std::string targetPoint;                       ///< 指向模式下的目标点坐标或名称
+    std::string targetPoint;                       ///< 指向模式下相对参考系的目标点文本，格式为 "x, y, z"（m）
     bool invertNormal = false;                     ///< 是否反转法线方向（如从背面接近）
     bool allowToolRollFree = false;                ///< 是否允许绕工具轴自由滚转
     double rollMinimumDeg = -180.0;                ///< 滚转角下限（单位：度）
     double rollMaximumDeg = 180.0;                ///< 滚转角上限（单位：度）
+    // 此字段只由冻结阶段的姿态解析器写入，记录规则、目标来源及解析后的代表 RPY。
+    // 它随冻结工件持久化，供结构优化报告审计；编辑态需求不依赖该字段作任何物理计算。
+    std::string resolutionEvidence;
 };
 
 /**

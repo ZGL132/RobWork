@@ -74,14 +74,19 @@ std::string StructureOptimizationReportWriter::write(
     // 将人工编辑的旧式优化项目误标为具有工程需求冻结证据。
     if (!problem.requirementProvenance.requirementFingerprint.empty() ||
         !problem.requirementProvenance.workcellFingerprint.empty() ||
-        !problem.requirementProvenance.compilerVersion.empty()) {
+        !problem.requirementProvenance.compilerVersion.empty() ||
+        !problem.requirementProvenance.frozenAt.empty()) {
         out << "## Engineering Requirement Provenance\n\n";
         out << "- Requirement fingerprint: "
             << problem.requirementProvenance.requirementFingerprint << "\n";
         out << "- WorkCell and State fingerprint: "
             << problem.requirementProvenance.workcellFingerprint << "\n";
         out << "- Requirement compiler: "
-            << problem.requirementProvenance.compilerVersion << "\n\n";
+            << problem.requirementProvenance.compilerVersion << "\n";
+        // 时间统一由需求冻结器以 UTC 写入，报告直接输出原始 ISO-8601 字符串，避免导出机器的
+        // 本地时区或显示格式改变审计证据的含义。
+        out << "- Frozen at (UTC): "
+            << problem.requirementProvenance.frozenAt << "\n\n";
     }
 
     out << "## Workspace Coverage Configuration\n\n";

@@ -173,6 +173,9 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     updated.requirementProvenance.requirementFingerprint = artifact.requirementFingerprint;
     updated.requirementProvenance.workcellFingerprint = artifact.workcellFingerprint;
     updated.requirementProvenance.compilerVersion = artifact.compilerVersion;
+    // 适配器只复制冻结工件本身已经持久化的时间，而不在导入优化器时重新取当前时间；
+    // 否则同一份需求工件被重复导入会产生不同审计身份，破坏可复现性。
+    updated.requirementProvenance.frozenAt = artifact.frozenAt;
     problem = updated;
     if (error != nullptr) error->clear();
     return true;

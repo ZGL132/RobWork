@@ -125,14 +125,17 @@ std::vector<GenerationParameter> arrayParameters(const StationArrayRequest& requ
 
 bool validateTemplateRequest(const StationTemplateRequest& request, std::string* error)
 {
-    const long long count = static_cast<long long>(request.rows) * request.columns * request.layers;
     if (request.instanceId.empty()) {
         if (error != nullptr) *error = "Template instance ID is required.";
         return false;
     }
-    if (request.rows < 1 || request.columns < 1 || request.layers < 1 || count > maximumGeneratedStations) {
-        if (error != nullptr) *error = "Template dimensions must create between 1 and 10000 stations.";
-        return false;
+    // 只有离散阵列模板消费行、列、层数；其余模板不应因为 UI 隐藏的默认网格参数而被拒绝。
+    if (request.kind == StationTemplateKind::BinPicking || request.kind == StationTemplateKind::Palletizing) {
+        const long long count = static_cast<long long>(request.rows) * request.columns * request.layers;
+        if (request.rows < 1 || request.columns < 1 || request.layers < 1 || count > maximumGeneratedStations) {
+            if (error != nullptr) *error = "Template dimensions must create between 1 and 10000 stations.";
+            return false;
+        }
     }
     if (!isFinite(request.operationOffsetMeters) || !std::isfinite(request.rowSpacingMeters) ||
         !std::isfinite(request.columnSpacingMeters) || !std::isfinite(request.layerSpacingMeters) ||
@@ -254,11 +257,12 @@ std::vector<PoseTask> generateTemplate(const StationTemplateRequest& request, st
         case StationTemplateKind::Palletizing:
             for (int layer = 0; layer < request.layers; ++layer) {
                 const double z = request.operationOffsetMeters[2] + layer * request.layerSpacingMeters;
-                for (int row = 0; row < 2; ++row) {
-                    for (int column = 0; column < 2; ++column) {
+                for (int row = 0; row < request.rows; ++row) {
+                    for (int column = 0; column < request.columns; ++column) {
                         std::array<double, 3> offset = request.operationOffsetMeters;
-                        offset[0] += (column == 0 ? -0.5 : 0.5) * request.columnSpacingMeters;
-                        offset[1] += (row == 0 ? -0.5 : 0.5) * request.rowSpacingMeters;
+                        // 以阵列几何中心为零点，偶数和奇数行列都能保持对称，不再隐式固定 2x2。
+                        offset[0] += (static_cast<double>(column) - (request.columns - 1) / 2.0) * request.columnSpacingMeters;
+                        offset[1] += (static_cast<double>(row) - (request.rows - 1) / 2.0) * request.rowSpacingMeters;
                         offset[2] = z;
                         add("place " + std::to_string(layer + 1) + "-" + std::to_string(row + 1) + "-" + std::to_string(column + 1),
                             ProcessType::Place, offset, request.level);

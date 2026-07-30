@@ -26,6 +26,7 @@ struct FrozenRequirementArtifact {
     std::string requirementFingerprint;
     std::string workcellFingerprint;
     std::string compilerVersion = "EngineeringRequirements.Freezer.1";
+    std::string frozenAt;
     RobotModelBinding modelBinding;
     CompiledRequirementSet compiled;
 };

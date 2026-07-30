@@ -85,8 +85,9 @@ unsigned int templateParameterVisibilityMask(StationTemplateKind kind)
             // 机床上下料围绕同一作业点展开待机、接近和撤离动作，不生成网格阵列。
             return TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance;
         case StationTemplateKind::Palletizing:
-            // 当前码垛实现固定每层 2x2 工位；层数和三向间距决定实际放置点的位置。
-            return TemplateParameterLayers | TemplateParameterRowSpacing |
+            // 码垛按工程师定义的行、列、层数生成，三向间距决定各放置点的中心对称位置。
+            return TemplateParameterRows | TemplateParameterColumns | TemplateParameterLayers |
+                   TemplateParameterRowSpacing |
                    TemplateParameterColumnSpacing | TemplateParameterLayerSpacing;
         case StationTemplateKind::Inspection:
         case StationTemplateKind::ToolChange:
@@ -125,6 +126,32 @@ int positiveSampleCount(const QTableWidget* table, int row, int column, int fall
 QString text(const QTableWidget* table, int row, int column, const QString& fallback = QString()) {
     return table->item(row, column) == nullptr ? fallback : table->item(row, column)->text();
 }
+
+bool hasSameInspectorEditableValues(const PoseTask& left, const PoseTask& right)
+{
+    // 属性检查器只编辑工位的这一组字段。显式比较可避免控件刷新、重复信号或选择切换时
+    // 向撤销栈写入没有语义变化的冗余快照，使一次真实编辑严格对应一次可撤销操作。
+    return left.name == right.name &&
+           left.processType == right.processType &&
+           left.level == right.level &&
+           left.refFrame == right.refFrame &&
+           left.tcpFrame == right.tcpFrame &&
+           left.orientation.mode == right.orientation.mode &&
+           left.orientation.targetFrame == right.orientation.targetFrame &&
+           left.orientation.targetPoint == right.orientation.targetPoint &&
+           left.orientation.allowToolRollFree == right.orientation.allowToolRollFree &&
+           left.tolerance.allowToolRollFree == right.tolerance.allowToolRollFree &&
+           left.approach.enabled == right.approach.enabled &&
+           left.approach.axis == right.approach.axis &&
+           left.approach.distanceMeters == right.approach.distanceMeters &&
+           left.retract.enabled == right.retract.enabled &&
+           left.retract.axis == right.retract.axis &&
+           left.retract.distanceMeters == right.retract.distanceMeters &&
+           left.validation.minimumJointMargin == right.validation.minimumJointMargin &&
+           left.position == right.position &&
+           left.rpyDeg == right.rpyDeg;
+}
+
 QComboBox* levelCombo(RequirementLevel level) {
     QComboBox* combo = new QComboBox();
     combo->addItems({"Must", "Should", "Info"});
@@ -569,12 +596,14 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QPushButton* import = new QPushButton(QString::fromUtf8("导入工位"), page);
     import->setObjectName("importRequirementStationsButton");
     import->setToolTip(QString::fromUtf8("从 CSV 或 JSON 批量导入关键工位；任何错误记录均不会写入当前需求"));
-    QPushButton* undo = new QPushButton(QString::fromUtf8("撤销批量操作"), page);
+    QPushButton* undo = new QPushButton(QString::fromUtf8("撤销操作"), page);
     undo->setObjectName("undoRequirementOperationButton");
-    undo->setToolTip(QString::fromUtf8("恢复最近一次模板、阵列、镜像或导入操作前的完整需求快照"));
-    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry);
+    QPushButton* redo = new QPushButton(QString::fromUtf8("重做操作"), page);
+    redo->setObjectName("redoRequirementOperationButton");
+    undo->setToolTip(QString::fromUtf8("恢复最近一次工位、覆盖盒、模板、阵列、镜像或导入操作前的完整需求快照"));
+    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry); actions->addWidget(undo); actions->addWidget(redo);
     actions->addWidget(createTemplate); actions->addWidget(updateTemplate); actions->addWidget(detachTemplate);
-    actions->addWidget(createArray); actions->addWidget(mirror); actions->addWidget(import); actions->addWidget(undo); actions->addStretch();
+    actions->addWidget(createArray); actions->addWidget(mirror); actions->addWidget(import); actions->addStretch();
     layout->addLayout(actions);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
@@ -595,11 +624,19 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     _stationTcpFrameCombo = new QComboBox(inspector); _stationTcpFrameCombo->setObjectName("keyStationTcpFrameCombo");
     _stationOrientationModeCombo = enumCombo("keyStationOrientationModeCombo", {{QString::fromUtf8("固定姿态"), static_cast<int>(OrientationMode::Fixed)}, {QString::fromUtf8("对齐坐标系"), static_cast<int>(OrientationMode::AlignFrame)}, {QString::fromUtf8("对齐几何法向"), static_cast<int>(OrientationMode::AlignGeometryNormal)}, {QString::fromUtf8("指向目标"), static_cast<int>(OrientationMode::PointAtTarget)}});
     _stationOrientationTargetFrameCombo = new QComboBox(inspector); _stationOrientationTargetFrameCombo->setObjectName("keyStationOrientationTargetFrameCombo");
+    _stationOrientationTargetPointEdit = new QLineEdit(inspector);
+    _stationOrientationTargetPointEdit->setObjectName("keyStationOrientationTargetPointEdit");
+    _stationOrientationTargetPointEdit->setPlaceholderText(QString::fromUtf8("x, y, z（相对参考系，m）"));
+    _stationOrientationTargetPointEdit->setToolTip(QString::fromUtf8("指向目标模式下可输入目标点坐标，格式为 x, y, z，单位 m；未选择目标坐标系时使用该点。"));
     _stationFreeRollCheck = new QCheckBox(QString::fromUtf8("允许工具绕轴自由滚转"), inspector); _stationFreeRollCheck->setObjectName("keyStationFreeRollCheck");
     form->addRow(QString::fromUtf8("名称"), _stationNameEdit); form->addRow(QString::fromUtf8("工艺类型"), _stationProcessTypeCombo);
     form->addRow(QString::fromUtf8("要求等级"), _stationLevelCombo); form->addRow(QString::fromUtf8("参考系"), _stationReferenceFrameCombo);
     form->addRow(QString::fromUtf8("TCP"), _stationTcpFrameCombo); form->addRow(QString::fromUtf8("姿态规则"), _stationOrientationModeCombo);
-    form->addRow(QString::fromUtf8("姿态目标"), _stationOrientationTargetFrameCombo); form->addRow(QString(), _stationFreeRollCheck);
+    _stationOrientationTargetFrameLabel = new QLabel(QString::fromUtf8("姿态目标"), inspector);
+    _stationOrientationTargetPointLabel = new QLabel(QString::fromUtf8("目标点"), inspector);
+    form->addRow(_stationOrientationTargetFrameLabel, _stationOrientationTargetFrameCombo);
+    form->addRow(_stationOrientationTargetPointLabel, _stationOrientationTargetPointEdit);
+    form->addRow(QString(), _stationFreeRollCheck);
     inspectorLayout->addLayout(form);
     QGroupBox* pathGroup = new QGroupBox(QString::fromUtf8("接近与撤离"), inspector);
     QFormLayout* pathForm = new QFormLayout(pathGroup);
@@ -631,9 +668,12 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     connect(mirror, &QPushButton::clicked, this, &EngineeringRequirementsWidget::mirrorSelectedStation);
     connect(import, &QPushButton::clicked, this, &EngineeringRequirementsWidget::importStations);
     connect(undo, &QPushButton::clicked, this, &EngineeringRequirementsWidget::undoLastOperation);
+    connect(redo, &QPushButton::clicked, this, &EngineeringRequirementsWidget::redoLastOperation);
     connect(_stationList, &QListWidget::currentRowChanged, this, &EngineeringRequirementsWidget::refreshKeyStationInspector);
     connect(_stationOrientationModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EngineeringRequirementsWidget::updateOrientationEditor);
     connect(_stationNameEdit, &QLineEdit::editingFinished, this, &EngineeringRequirementsWidget::commitKeyStationInspector);
+    connect(_stationOrientationTargetPointEdit, &QLineEdit::editingFinished,
+            this, &EngineeringRequirementsWidget::commitKeyStationInspector);
     for (QComboBox* combo : {_stationProcessTypeCombo, _stationLevelCombo, _stationReferenceFrameCombo, _stationTcpFrameCombo, _stationOrientationTargetFrameCombo})
         connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EngineeringRequirementsWidget::commitKeyStationInspector);
     for (QCheckBox* check : {_stationFreeRollCheck, _stationApproachEnabled, _stationRetractEnabled})
@@ -661,6 +701,10 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     connect(add, &QPushButton::clicked, this, &EngineeringRequirementsWidget::addBoxRegion);
     connect(duplicate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::duplicateBoxRegion);
     connect(remove, &QPushButton::clicked, this, &EngineeringRequirementsWidget::removeBoxRegion);
+    // 表格单元格是覆盖盒的直接编辑入口。每次提交编辑后立即同步到数据模型并记录快照，
+    // 防止工程师修改采样密度、尺寸或约束级别后无法撤销，或直到保存时才发现修改未生效。
+    connect(_regionTable, &QTableWidget::cellChanged, this,
+            [this] (int, int) { commitBoxRegionTableEdit(); });
     return page;
 }
 
@@ -695,12 +739,19 @@ void EngineeringRequirementsWidget::refreshTables()
     refreshKeyStationList();
     refreshKeyStationInspector();
     if (_regionTable != nullptr) {
+        // 刷新表格属于视图回填，必须屏蔽 cellChanged；否则 setItem 会被误判为用户编辑，
+        // 从而污染撤销历史并在刷新过程中递归同步数据模型。
+        const QSignalBlocker blocker(_regionTable);
         _regionTable->setRowCount(static_cast<int>(_requirements.boxRegions.size()));
         for (int row = 0; row < _regionTable->rowCount(); ++row) {
             const BoxRegion& region = _requirements.boxRegions[static_cast<std::size_t>(row)];
             _regionTable->setItem(row, 0, textItem(QString::fromStdString(region.id)));
             _regionTable->setItem(row, 1, textItem(QString::fromStdString(region.name)));
-            _regionTable->setCellWidget(row, 2, levelCombo(region.level));
+            QComboBox* level = levelCombo(region.level);
+            _regionTable->setCellWidget(row, 2, level);
+            // QTableWidget 不会把嵌入 ComboBox 的切换转发为 cellChanged，需单独接入。
+            connect(level, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+                    [this] (int) { commitBoxRegionTableEdit(); });
             _regionTable->setItem(row, 3, textItem(QString::fromStdString(region.refFrame)));
             for (int axis = 0; axis < 3; ++axis) {
                 _regionTable->setItem(row, 4 + axis, textItem(QString::number(region.center[axis])));
@@ -727,10 +778,23 @@ void EngineeringRequirementsWidget::refreshTables()
     }
     if (QPushButton* button = findChild<QPushButton*>("undoRequirementOperationButton"))
         button->setEnabled(editable && _undoStack.canUndo());
+    if (QPushButton* button = findChild<QPushButton*>("redoRequirementOperationButton"))
+        button->setEnabled(editable && _undoStack.canRedo());
     if (_modelLabel != nullptr)
         _modelLabel->setText(QString::fromUtf8("模型：%1\n指纹：%2").arg(QString::fromStdString(_requirements.modelBinding.sourcePath), QString::fromStdString(_requirements.modelBinding.robotModelFingerprint)));
-    if (_freezeLabel != nullptr)
-        _freezeLabel->setText(_requirements.frozen ? QString::fromUtf8("状态：已冻结。需求指纹：%1").arg(QString::fromStdString(_compiled.requirementFingerprint)) : QString::fromUtf8("状态：可编辑。冻结后才可作为下游分析和优化输入。"));
+    if (_freezeLabel != nullptr) {
+        if (_requirements.frozen) {
+            // 冻结时间来自冻结工件，而不是当前界面刷新时间。工程师重新打开项目或导出报告时，
+            // 因而能准确识别本次优化将消费的是哪一次经过真实 WorkCell 校验的需求快照。
+            const QString frozenAt = _frozenArtifact.frozenAt.empty()
+                ? QString::fromUtf8("历史项目未记录")
+                : QString::fromStdString(_frozenArtifact.frozenAt);
+            _freezeLabel->setText(QString::fromUtf8("状态：已冻结。冻结时间（UTC）：%1\n需求指纹：%2")
+                                      .arg(frozenAt, QString::fromStdString(_compiled.requirementFingerprint)));
+        } else {
+            _freezeLabel->setText(QString::fromUtf8("状态：可编辑。冻结后才可作为下游分析和优化输入。"));
+        }
+    }
 }
 
 void EngineeringRequirementsWidget::syncTablesToRequirements()
@@ -862,7 +926,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     for (QWidget* editor : {static_cast<QWidget*>(_stationNameEdit), static_cast<QWidget*>(_stationProcessTypeCombo),
                             static_cast<QWidget*>(_stationLevelCombo), static_cast<QWidget*>(_stationReferenceFrameCombo),
                             static_cast<QWidget*>(_stationTcpFrameCombo), static_cast<QWidget*>(_stationOrientationModeCombo),
-                            static_cast<QWidget*>(_stationOrientationTargetFrameCombo), static_cast<QWidget*>(_stationFreeRollCheck),
+                            static_cast<QWidget*>(_stationOrientationTargetFrameCombo), static_cast<QWidget*>(_stationOrientationTargetPointEdit), static_cast<QWidget*>(_stationFreeRollCheck),
                             static_cast<QWidget*>(_stationApproachEnabled), static_cast<QWidget*>(_stationRetractEnabled),
                             static_cast<QWidget*>(_stationApproachDistance), static_cast<QWidget*>(_stationRetractDistance),
                             static_cast<QWidget*>(_stationMinimumJointMargin), static_cast<QWidget*>(_stationAdvancedPoseGroup)})
@@ -874,6 +938,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     const PoseTask& task = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     const QSignalBlocker nameBlocker(_stationNameEdit), processBlocker(_stationProcessTypeCombo), levelBlocker(_stationLevelCombo);
     const QSignalBlocker modeBlocker(_stationOrientationModeCombo), rollBlocker(_stationFreeRollCheck);
+    const QSignalBlocker targetPointBlocker(_stationOrientationTargetPointEdit);
     const QSignalBlocker approachBlocker(_stationApproachEnabled), retractBlocker(_stationRetractEnabled);
     const QSignalBlocker approachDistanceBlocker(_stationApproachDistance), retractDistanceBlocker(_stationRetractDistance);
     const QSignalBlocker jointMarginBlocker(_stationMinimumJointMargin), xBlocker(_stationX), yBlocker(_stationY), zBlocker(_stationZ);
@@ -882,6 +947,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     _stationProcessTypeCombo->setCurrentIndex(_stationProcessTypeCombo->findData(static_cast<int>(task.processType)));
     _stationLevelCombo->setCurrentIndex(_stationLevelCombo->findData(static_cast<int>(task.level)));
     _stationOrientationModeCombo->setCurrentIndex(_stationOrientationModeCombo->findData(static_cast<int>(task.orientation.mode)));
+    _stationOrientationTargetPointEdit->setText(QString::fromStdString(task.orientation.targetPoint));
     _stationFreeRollCheck->setChecked(task.orientation.allowToolRollFree);
     _stationApproachEnabled->setChecked(task.approach.enabled);
     _stationApproachDistance->setValue(task.approach.distanceMeters);
@@ -896,39 +962,69 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
 
 void EngineeringRequirementsWidget::commitKeyStationInspector()
 {
-    if (_requirements.frozen) return;
+    if (_requirements.frozen || _refreshingKeyStationInspector) return;
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) return;
-    PoseTask& task = _requirements.poseTasks[static_cast<std::size_t>(selected)];
-    task.name = _stationNameEdit->text().trimmed().toStdString();
-    task.processType = static_cast<ProcessType>(_stationProcessTypeCombo->currentData().toInt());
-    task.level = static_cast<RequirementLevel>(_stationLevelCombo->currentData().toInt());
-    task.refFrame = _stationReferenceFrameCombo->currentData().toString().toStdString();
-    task.tcpFrame = _stationTcpFrameCombo->currentData().toString().toStdString();
-    task.orientation.mode = static_cast<OrientationMode>(_stationOrientationModeCombo->currentData().toInt());
-    task.orientation.targetFrame = _stationOrientationTargetFrameCombo->currentData().toString().toStdString();
-    task.orientation.allowToolRollFree = _stationFreeRollCheck->isChecked();
-    task.tolerance.allowToolRollFree = task.orientation.allowToolRollFree;
-    task.approach.enabled = _stationApproachEnabled->isChecked();
-    task.approach.axis = OffsetAxis::ToolZ;
-    task.approach.distanceMeters = _stationApproachDistance->value();
-    task.retract.enabled = _stationRetractEnabled->isChecked();
-    task.retract.axis = OffsetAxis::ReferenceZ;
-    task.retract.distanceMeters = _stationRetractDistance->value();
-    task.validation.minimumJointMargin = _stationMinimumJointMargin->value();
-    task.position = {{_stationX->value(), _stationY->value(), _stationZ->value()}};
-    task.rpyDeg = {{_stationRoll->value(), _stationPitch->value(), _stationYaw->value()}};
-    refreshKeyStationList();
-    Q_EMIT requirementsChanged();
+    const RequirementSet before = _requirements;
+    const PoseTask& existing = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    PoseTask updated = existing;
+    updated.name = _stationNameEdit->text().trimmed().toStdString();
+    updated.processType = static_cast<ProcessType>(_stationProcessTypeCombo->currentData().toInt());
+    updated.level = static_cast<RequirementLevel>(_stationLevelCombo->currentData().toInt());
+    updated.refFrame = _stationReferenceFrameCombo->currentData().toString().toStdString();
+    updated.tcpFrame = _stationTcpFrameCombo->currentData().toString().toStdString();
+    updated.orientation.mode = static_cast<OrientationMode>(_stationOrientationModeCombo->currentData().toInt());
+    updated.orientation.targetFrame = _stationOrientationTargetFrameCombo->currentData().toString().toStdString();
+    updated.orientation.targetPoint = _stationOrientationTargetPointEdit->text().trimmed().toStdString();
+    updated.orientation.allowToolRollFree = _stationFreeRollCheck->isChecked();
+    updated.tolerance.allowToolRollFree = updated.orientation.allowToolRollFree;
+    updated.approach.enabled = _stationApproachEnabled->isChecked();
+    updated.approach.axis = OffsetAxis::ToolZ;
+    updated.approach.distanceMeters = _stationApproachDistance->value();
+    updated.retract.enabled = _stationRetractEnabled->isChecked();
+    updated.retract.axis = OffsetAxis::ReferenceZ;
+    updated.retract.distanceMeters = _stationRetractDistance->value();
+    updated.validation.minimumJointMargin = _stationMinimumJointMargin->value();
+    updated.position = {{_stationX->value(), _stationY->value(), _stationZ->value()}};
+    updated.rpyDeg = {{_stationRoll->value(), _stationPitch->value(), _stationYaw->value()}};
+    if (hasSameInspectorEditableValues(existing, updated)) return;
+
+    // 先构造候选工位、再比较、最后替换。这样快照一定保存的是修改前的完整需求集，
+    // 并且同一信号被多个槽接收时，后续槽不会产生重复撤销记录。
+    _requirements.poseTasks[static_cast<std::size_t>(selected)] = updated;
+    recordRequirementEdit(before);
+}
+
+void EngineeringRequirementsWidget::commitBoxRegionTableEdit()
+{
+    if (_requirements.frozen || _regionTable == nullptr) return;
+    const RequirementSet before = _requirements;
+    syncTablesToRequirements();
+    // 使用现有 JSON 序列化作为稳定的完整快照比较，覆盖盒既有文本又有嵌入式组合框，
+    // 通过整套需求数据比较可避免仅凭单元格坐标漏掉级别、采样密度等字段。
+    if (RequirementSetJson::toJson(before) == RequirementSetJson::toJson(_requirements)) return;
+    recordRequirementEdit(before, false);
 }
 
 void EngineeringRequirementsWidget::updateOrientationEditor()
 {
     if (_stationAdvancedPoseGroup == nullptr || _stationOrientationModeCombo == nullptr) return;
-    const bool fixed = static_cast<OrientationMode>(_stationOrientationModeCombo->currentData().toInt()) == OrientationMode::Fixed;
+    const OrientationMode mode = static_cast<OrientationMode>(_stationOrientationModeCombo->currentData().toInt());
+    const bool fixed = mode == OrientationMode::Fixed;
+    const bool pointAtTarget = mode == OrientationMode::PointAtTarget;
     _stationAdvancedPoseGroup->setVisible(fixed);
-    if (_stationOrientationTargetFrameCombo != nullptr)
+    // 固定姿态只显示高级 RPY；坐标系/法向模式只需选择目标 Frame；指向模式额外开放
+    // 参考系内目标点。两种目标同时填写时解析器优先使用 Frame，避免状态不确定。
+    if (_stationOrientationTargetFrameCombo != nullptr) {
         _stationOrientationTargetFrameCombo->setVisible(!fixed);
+        _stationOrientationTargetFrameLabel->setVisible(!fixed);
+        _stationOrientationTargetFrameLabel->setText(pointAtTarget
+            ? QString::fromUtf8("目标坐标系（可选）") : QString::fromUtf8("姿态目标"));
+    }
+    if (_stationOrientationTargetPointEdit != nullptr) {
+        _stationOrientationTargetPointEdit->setVisible(pointAtTarget);
+        _stationOrientationTargetPointLabel->setVisible(pointAtTarget);
+    }
     if (!_refreshingKeyStationInspector) commitKeyStationInspector();
 }
 
@@ -1073,6 +1169,17 @@ void EngineeringRequirementsWidget::undoLastOperation()
     Q_EMIT requirementsChanged();
 }
 
+void EngineeringRequirementsWidget::redoLastOperation()
+{
+    if (_requirements.frozen || !_undoStack.redo(_requirements)) return;
+    // 重做同样使编译缓存失效，后续冻结必须基于恢复后的完整编辑态重新校验。
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
+    refreshTables();
+    setStatus(QString::fromUtf8("已重做最近一次需求编辑操作。"));
+    Q_EMIT requirementsChanged();
+}
+
 void EngineeringRequirementsWidget::freezeRequirements()
 {
     syncTablesToRequirements();
@@ -1121,14 +1228,14 @@ void EngineeringRequirementsWidget::addPoseTask()
 {
     if (_requirements.frozen) return;
     syncTablesToRequirements();
+    const RequirementSet before = _requirements;
     PoseTask task;
     task.id = "station_" + std::to_string(_requirements.poseTasks.size() + 1);
     task.name = QString::fromUtf8("关键工位 %1").arg(_requirements.poseTasks.size() + 1).toStdString();
     task.refFrame = "WORLD";
     _requirements.poseTasks.push_back(task);
-    refreshTables();
+    recordRequirementEdit(before);
     if (_stationList != nullptr) _stationList->setCurrentRow(static_cast<int>(_requirements.poseTasks.size()) - 1);
-    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::duplicatePoseTask()
@@ -1137,13 +1244,13 @@ void EngineeringRequirementsWidget::duplicatePoseTask()
     syncTablesToRequirements();
     const int row = selectedKeyStationIndex();
     if (row < 0 || row >= static_cast<int>(_requirements.poseTasks.size())) return;
+    const RequirementSet before = _requirements;
     PoseTask copy = _requirements.poseTasks[static_cast<std::size_t>(row)];
     copy.id += "_copy";
     copy.name += " Copy";
     _requirements.poseTasks.insert(_requirements.poseTasks.begin() + row + 1, copy);
-    refreshTables();
+    recordRequirementEdit(before);
     if (_stationList != nullptr) _stationList->setCurrentRow(row + 1);
-    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::removePoseTask()
@@ -1152,9 +1259,9 @@ void EngineeringRequirementsWidget::removePoseTask()
     syncTablesToRequirements();
     const int row = selectedKeyStationIndex();
     if (row < 0 || row >= static_cast<int>(_requirements.poseTasks.size())) return;
+    const RequirementSet before = _requirements;
     _requirements.poseTasks.erase(_requirements.poseTasks.begin() + row);
-    refreshTables();
-    Q_EMIT requirementsChanged();
+    recordRequirementEdit(before);
 }
 void EngineeringRequirementsWidget::captureCurrentTcp()
 {
@@ -1173,6 +1280,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
             device->getBase(), device->getEnd(), activeWorkCellState());
         const rw::math::RPY<> rpy(baseTtcp.R());
         syncTablesToRequirements();
+        const RequirementSet before = _requirements;
         PoseTask task;
         task.id = "station_" + std::to_string(_requirements.poseTasks.size() + 1);
         task.name = QString::fromUtf8("TCP 捕获工位 %1").arg(_requirements.poseTasks.size() + 1).toStdString();
@@ -1186,8 +1294,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
         task.note = "Captured from current WorkCell TCP.";
         _requirements.poseTasks.push_back(task);
         setStatus(QString::fromUtf8("已从当前设备 TCP 捕获位姿；可在冻结前调整其等级和公差。"));
-        refreshTables();
-        Q_EMIT requirementsChanged();
+        recordRequirementEdit(before);
     } catch (const std::exception& exception) {
         setStatus(QString::fromUtf8("无法捕获当前 TCP：%1").arg(QString::fromUtf8(exception.what())));
     }
@@ -1216,6 +1323,7 @@ bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& fra
         setStatus(message);
         return false;
     }
+    const RequirementSet before = _requirements;
     PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     GeometryFeatureReference feature;
     feature.type = GeometryFeatureType::FramePlaneNormal;
@@ -1229,9 +1337,8 @@ bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& fra
         setStatus(message);
         return false;
     }
-    refreshTables();
+    recordRequirementEdit(before);
     setStatus(QString::fromUtf8("已关联几何 Frame“%1”：作业位会随当前 WorkCell 重新解析；面法向姿态已记录，连续路径验证将在 P3 执行。").arg(frameName));
-    Q_EMIT requirementsChanged();
     if (error != nullptr) error->clear();
     return true;
 }
@@ -1418,9 +1525,42 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
     Q_EMIT requirementsChanged();
 }
 
-void EngineeringRequirementsWidget::addBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); BoxRegion region; region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1); region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString(); _requirements.boxRegions.push_back(region); refreshTables(); }
-void EngineeringRequirementsWidget::duplicateBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; BoxRegion copy = _requirements.boxRegions[static_cast<std::size_t>(row)]; copy.id += "_copy"; copy.name += " Copy"; _requirements.boxRegions.insert(_requirements.boxRegions.begin() + row + 1, copy); refreshTables(); }
-void EngineeringRequirementsWidget::removeBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; _requirements.boxRegions.erase(_requirements.boxRegions.begin() + row); refreshTables(); }
+void EngineeringRequirementsWidget::addBoxRegion()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const RequirementSet before = _requirements;
+    BoxRegion region;
+    region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1);
+    region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString();
+    _requirements.boxRegions.push_back(region);
+    recordRequirementEdit(before);
+}
+
+void EngineeringRequirementsWidget::duplicateBoxRegion()
+{
+    if (_requirements.frozen || _regionTable == nullptr) return;
+    syncTablesToRequirements();
+    const int row = _regionTable->currentRow();
+    if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return;
+    const RequirementSet before = _requirements;
+    BoxRegion copy = _requirements.boxRegions[static_cast<std::size_t>(row)];
+    copy.id += "_copy";
+    copy.name += " Copy";
+    _requirements.boxRegions.insert(_requirements.boxRegions.begin() + row + 1, copy);
+    recordRequirementEdit(before);
+}
+
+void EngineeringRequirementsWidget::removeBoxRegion()
+{
+    if (_requirements.frozen || _regionTable == nullptr) return;
+    syncTablesToRequirements();
+    const int row = _regionTable->currentRow();
+    if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return;
+    const RequirementSet before = _requirements;
+    _requirements.boxRegions.erase(_requirements.boxRegions.begin() + row);
+    recordRequirementEdit(before);
+}
 void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell)
 {
     // State 的内部结构由 WorkCell 决定。切换场景时先丢弃旧 State，避免旧关节
@@ -1451,8 +1591,28 @@ RequirementSet EngineeringRequirementsWidget::requirementSet() const { return _r
 QString EngineeringRequirementsWidget::statusText() const { return _statusLabel == nullptr ? QString() : _statusLabel->text(); }
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)
 {
-    // 只由成功的批量操作调用，撤销粒度与工程师一次明确意图保持一致。
+    // 每条快照都是一次已经成功的工程语义修改之前的完整状态，不区分批量或普通编辑。
     _undoStack.pushSnapshot(snapshot);
+}
+
+void EngineeringRequirementsWidget::recordRequirementEdit(const RequirementSet& snapshot, bool refreshAllWidgets)
+{
+    // 编辑态一旦发生任何变化，之前的编译结果和冻结审计证据均不能继续代表当前数据。
+    // 统一在此处使其失效，避免不同按钮遗漏清理而让下游误用陈旧的任务工件。
+    pushUndoSnapshot(snapshot);
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
+    if (refreshAllWidgets) {
+        refreshTables();
+    } else {
+        // 覆盖盒表格仍处于用户正在编辑的单元格时不整体重绘，防止光标和未提交文本被打断；
+        // 但撤销/重做按钮必须立即反映新的历史状态。
+        if (QPushButton* undo = findChild<QPushButton*>("undoRequirementOperationButton"))
+            undo->setEnabled(!_requirements.frozen && _undoStack.canUndo());
+        if (QPushButton* redo = findChild<QPushButton*>("redoRequirementOperationButton"))
+            redo->setEnabled(!_requirements.frozen && _undoStack.canRedo());
+    }
+    Q_EMIT requirementsChanged();
 }
 void EngineeringRequirementsWidget::setStatus(const QString& text) { if (_statusLabel != nullptr) _statusLabel->setText(text); }
 

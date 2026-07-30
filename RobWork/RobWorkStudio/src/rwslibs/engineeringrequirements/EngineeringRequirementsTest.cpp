@@ -1,5 +1,6 @@
 #include "EngineeringRequirementTypes.hpp"
 #include "GeometryFeatureResolver.hpp"
+#include "OrientationRuleResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementFreezer.hpp"
 #include "RequirementSetJson.hpp"
@@ -23,7 +24,9 @@
 
 #include <QCoreApplication>
 #include <QApplication>
+#include <QComboBox>
 #include <QJsonObject>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -313,6 +316,80 @@ int testFreezerRejectsMissingWorkCellTcpForMustStation()
     return 0;
 }
 
+int testPointAtTargetResolvesCoordinateTextAndRejectsCoincidentTarget()
+{
+    // PointAtTarget 的坐标文本以工位参考系表示。该测试覆盖两条不可替代的工程语义：
+    // 工具 Z 轴必须准确指向目标点；目标与工位重合时无法确定姿态，冻结必须明确拒绝。
+    using namespace rw::kinematics;
+    using namespace rw::math;
+
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "PointAtTargetWorkCell", ""));
+    rws::KeyStation station;
+    station.refFrame = "WORLD";
+    station.position = {{0.0, 0.0, 0.0}};
+    station.orientation.mode = rws::OrientationMode::PointAtTarget;
+    station.orientation.targetPoint = "0.0, 1.0, 0.0";
+
+    std::string error;
+    REQUIRE(rws::OrientationRuleResolver::applyToStation(
+        station, *workcell, workcell->getDefaultState(), &error));
+    const RPY<> resolvedRpy(station.rpyDeg[0] * rw::math::Pi / 180.0,
+                             station.rpyDeg[1] * rw::math::Pi / 180.0,
+                             station.rpyDeg[2] * rw::math::Pi / 180.0);
+    const Vector3D<> toolZ = resolvedRpy.toRotation3D().getCol(2);
+    REQUIRE(std::abs(toolZ[0]) < 1e-9);
+    REQUIRE(std::abs(toolZ[1] - 1.0) < 1e-9);
+    REQUIRE(std::abs(toolZ[2]) < 1e-9);
+    // 冻结工件不能只留下 RPY 数字，还必须留下规则模式、目标来源和代表姿态，
+    // 以便下游优化报告能够解释该姿态是如何由工程需求确定的。
+    REQUIRE(station.orientation.resolutionEvidence.find("PointAtTarget") != std::string::npos);
+    REQUIRE(station.orientation.resolutionEvidence.find("targetPoint=0.0, 1.0, 0.0") != std::string::npos);
+
+    station.orientation.targetPoint = "0, 0, 0";
+    REQUIRE(!rws::OrientationRuleResolver::applyToStation(
+        station, *workcell, workcell->getDefaultState(), &error));
+    REQUIRE(error.find("coincides") != std::string::npos);
+    return 0;
+}
+
+int testOrientationRuleInvertsToolZForFrameAndGeometryNormal()
+{
+    // 对齐坐标系与对齐几何法向在 P2 都以目标 Frame 的 Z 轴表达法向。工程师勾选
+    // “反向法向”后，工具 Z 轴必须稳定地翻转到负方向，同时保持右手姿态矩阵；
+    // 这直接决定喷涂、检测和贴合等工艺是从工件正面还是反面接近。
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const Frame::Ptr target = rw::core::ownedPtr(new FixedFrame("SurfaceNormal", Transform3D<>()));
+    structure->addFrame(target, structure->getRoot());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "OrientationInvertWorkCell", ""));
+
+    for (const rws::OrientationMode mode : {rws::OrientationMode::AlignFrame,
+                                            rws::OrientationMode::AlignGeometryNormal}) {
+        rws::KeyStation station;
+        station.refFrame = "WORLD";
+        station.orientation.mode = mode;
+        station.orientation.targetFrame = "SurfaceNormal";
+        station.orientation.invertNormal = true;
+
+        std::string error;
+        REQUIRE(rws::OrientationRuleResolver::applyToStation(
+            station, *workcell, workcell->getDefaultState(), &error));
+        const Rotation3D<> rotation = RPY<>(station.rpyDeg[0] * Pi / 180.0,
+                                            station.rpyDeg[1] * Pi / 180.0,
+                                            station.rpyDeg[2] * Pi / 180.0)
+                                          .toRotation3D();
+        REQUIRE(std::abs(rotation.getCol(2)[0]) < 1e-9);
+        REQUIRE(std::abs(rotation.getCol(2)[1]) < 1e-9);
+        REQUIRE(std::abs(rotation.getCol(2)[2] + 1.0) < 1e-9);
+        REQUIRE(station.orientation.resolutionEvidence.find("invertNormal=true") != std::string::npos);
+    }
+    return 0;
+}
+
 int testFrozenArtifactRoundTripRetainsCompiledEvidence()
 {
     // 冻结工件必须保存编译后的任务、诊断和环境指纹；仅保存编辑态 RequirementSet
@@ -333,6 +410,10 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     // 规范化后的参考系；空参考系属于编辑态非法输入，不能代表可审计工件。
     station.refFrame = "WORLD";
     station.tcpFrame = "ToolTCP";
+    station.orientation.mode = rws::OrientationMode::PointAtTarget;
+    station.orientation.targetPoint = "0.2, 0.3, 0.4";
+    station.orientation.resolutionEvidence =
+        "resolver=OrientationRuleResolver.1;mode=PointAtTarget;targetPoint=0.2, 0.3, 0.4";
     artifact.compiled.poseTasks.push_back(station);
     artifact.compiled.diagnostics.push_back(
         {"optional_missing", rws::RequirementLevel::Should, "Excluded from frozen artifact.", false});
@@ -344,6 +425,8 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     std::string objectError;
     REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(object, objectRestored, &objectError));
     REQUIRE(objectRestored.compiled.poseTasks.size() == 1);
+    REQUIRE(objectRestored.compiled.poseTasks[0].orientation.resolutionEvidence ==
+            station.orientation.resolutionEvidence);
 
     const std::string json = rws::FrozenRequirementArtifactJson::toJson(artifact);
     rws::FrozenRequirementArtifact restored;
@@ -354,6 +437,8 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(restored.workcellFingerprint == "workcell-sha256");
     REQUIRE(restored.compiled.poseTasks.size() == 1);
     REQUIRE(restored.compiled.diagnostics.size() == 1);
+    REQUIRE(restored.compiled.poseTasks[0].orientation.resolutionEvidence ==
+            station.orientation.resolutionEvidence);
     return 0;
 }
 
@@ -627,6 +712,9 @@ int testRequirementSetUndoRestoresTheSnapshotBeforeBatchOperation()
     REQUIRE(requirements.poseTasks.size() == 1);
     REQUIRE(requirements.poseTasks.front().id == "source");
     REQUIRE(!undo.canUndo());
+    REQUIRE(undo.canRedo());
+    REQUIRE(undo.redo(requirements));
+    REQUIRE(requirements.poseTasks.size() == 2);
     return 0;
 }
 
@@ -671,10 +759,11 @@ int testTemplateParameterVisibilityMatchesProcessSemantics()
             (TemplateParameterApproach | TemplateParameterRetract | TemplateParameterClearance));
 
     const unsigned int palletizing = rws::templateParameterVisibilityMask(rws::StationTemplateKind::Palletizing);
-    REQUIRE((palletizing & (TemplateParameterRows | TemplateParameterColumns)) == 0U);
-    REQUIRE((palletizing & (TemplateParameterLayers | TemplateParameterRowSpacing |
+    REQUIRE((palletizing & (TemplateParameterRows | TemplateParameterColumns | TemplateParameterLayers |
+                             TemplateParameterRowSpacing |
                              TemplateParameterColumnSpacing | TemplateParameterLayerSpacing)) ==
-            (TemplateParameterLayers | TemplateParameterRowSpacing |
+            (TemplateParameterRows | TemplateParameterColumns | TemplateParameterLayers |
+             TemplateParameterRowSpacing |
              TemplateParameterColumnSpacing | TemplateParameterLayerSpacing));
 
     for (const rws::StationTemplateKind kind : {rws::StationTemplateKind::Inspection,
@@ -682,6 +771,22 @@ int testTemplateParameterVisibilityMatchesProcessSemantics()
                                                  rws::StationTemplateKind::Handover}) {
         REQUIRE(rws::templateParameterVisibilityMask(kind) == 0U);
     }
+    return 0;
+}
+
+int testPalletizingTemplateUsesConfiguredGridDimensions()
+{
+    // 码垛需求的行、列、层数是工艺输入，服务层不得用固定 2x2 网格替代用户配置。
+    rws::RequirementSet requirements;
+    rws::StationTemplateRequest request;
+    request.kind = rws::StationTemplateKind::Palletizing;
+    request.instanceId = "pallet_A";
+    request.rows = 3;
+    request.columns = 2;
+    request.layers = 2;
+    std::string error;
+    REQUIRE(rws::StationTemplateService::appendTemplate(requirements, request, &error));
+    REQUIRE(requirements.poseTasks.size() == 12);
     return 0;
 }
 
@@ -718,6 +823,7 @@ int testWidgetExposesSemanticKeyStationInspector()
     REQUIRE(widget.findChild<QPushButton*>("mirrorRequirementStationButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("importRequirementStationsButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("undoRequirementOperationButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("redoRequirementOperationButton") != nullptr);
     return 0;
 }
 
@@ -769,6 +875,69 @@ int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
     return 0;
 }
 
+int testWidgetUndoRedoCoversRegularStationAndCoverageEdits()
+{
+    // 工程师最频繁的操作不是批量模板，而是新增工位、修改工位语义和调整覆盖盒采样密度。
+    // 这些操作必须进入同一条撤销/重做历史，不能只对模板、阵列和导入提供可逆性。
+    rws::EngineeringRequirementsWidget widget;
+    QPushButton* addStation = widget.findChild<QPushButton*>("addRequirementPoseTaskButton");
+    QPushButton* addRegion = widget.findChild<QPushButton*>("addRequirementBoxRegionButton");
+    QPushButton* undo = widget.findChild<QPushButton*>("undoRequirementOperationButton");
+    QPushButton* redo = widget.findChild<QPushButton*>("redoRequirementOperationButton");
+    QLineEdit* stationName = widget.findChild<QLineEdit*>("keyStationNameEdit");
+    QTableWidget* regionTable = widget.findChild<QTableWidget*>("engineeringRequirementBoxTable");
+    REQUIRE(addStation != nullptr);
+    REQUIRE(addRegion != nullptr);
+    REQUIRE(undo != nullptr);
+    REQUIRE(redo != nullptr);
+    REQUIRE(stationName != nullptr);
+    REQUIRE(regionTable != nullptr);
+
+    addStation->click();
+    REQUIRE(widget.requirementSet().poseTasks.size() == 1);
+    undo->click();
+    REQUIRE(widget.requirementSet().poseTasks.empty());
+    redo->click();
+    REQUIRE(widget.requirementSet().poseTasks.size() == 1);
+
+    stationName->setText(QString::fromUtf8("装配作业位"));
+    REQUIRE(QMetaObject::invokeMethod(stationName, "editingFinished"));
+    REQUIRE(widget.requirementSet().poseTasks.front().name == QString::fromUtf8("装配作业位").toStdString());
+    undo->click();
+    REQUIRE(widget.requirementSet().poseTasks.front().name != QString::fromUtf8("装配作业位").toStdString());
+    redo->click();
+    REQUIRE(widget.requirementSet().poseTasks.front().name == QString::fromUtf8("装配作业位").toStdString());
+
+    addRegion->click();
+    REQUIRE(widget.requirementSet().boxRegions.size() == 1);
+    regionTable->item(0, 11)->setText("9");
+    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 9);
+    undo->click();
+    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 5);
+    redo->click();
+    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 9);
+    return 0;
+}
+
+int testWidgetEditsPointAtTargetCoordinates()
+{
+    // 目标点必须有界面入口，不能要求研发工程师为了定义视觉/激光指向工位而手工编辑 JSON。
+    // 同时验证属性编辑会写回需求模型，后续冻结才能调用已覆盖的 PointAtTarget 解析分支。
+    rws::EngineeringRequirementsWidget widget;
+    widget.findChild<QPushButton*>("addRequirementPoseTaskButton")->click();
+    QComboBox* mode = widget.findChild<QComboBox*>("keyStationOrientationModeCombo");
+    QLineEdit* targetPoint = widget.findChild<QLineEdit*>("keyStationOrientationTargetPointEdit");
+    REQUIRE(mode != nullptr);
+    REQUIRE(targetPoint != nullptr);
+    mode->setCurrentIndex(mode->findData(static_cast<int>(rws::OrientationMode::PointAtTarget)));
+    // 单元测试不显示顶层窗口，使用 isHidden() 验证模式切换是否主动隐藏该编辑器。
+    REQUIRE(!targetPoint->isHidden());
+    targetPoint->setText("0.25, -0.10, 0.40");
+    REQUIRE(QMetaObject::invokeMethod(targetPoint, "editingFinished"));
+    REQUIRE(widget.requirementSet().poseTasks.front().orientation.targetPoint == "0.25, -0.10, 0.40");
+    return 0;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -781,7 +950,11 @@ int main(int argc, char** argv)
             return 1;
         if (testWidgetResolvesGeometryFeatureUsingLatestJogState() != 0)
             return 1;
-        return testWidgetPreservesBoxSamplingDensityWhenSynchronizing();
+        if (testWidgetPreservesBoxSamplingDensityWhenSynchronizing() != 0)
+            return 1;
+        if (testWidgetUndoRedoCoversRegularStationAndCoverageEdits() != 0)
+            return 1;
+        return testWidgetEditsPointAtTargetCoordinates();
     }
     QCoreApplication app(argc, argv);
     (void)app;
@@ -801,6 +974,10 @@ int main(int argc, char** argv)
         return 1;
     if (testGeometryFrameFeatureResolvesAndCompiles() != 0)
         return 1;
+    if (testPointAtTargetResolvesCoordinateTextAndRejectsCoincidentTarget() != 0)
+        return 1;
+    if (testOrientationRuleInvertsToolZForFrameAndGeometryNormal() != 0)
+        return 1;
     if (testTemplateGenerationKeepsTraceabilityAndUniqueIds() != 0)
         return 1;
     if (testTemplateUpdatePreservesDetachedStations() != 0)
@@ -816,6 +993,8 @@ int main(int argc, char** argv)
     if (testGeneratedStationJsonRoundTripPreservesProvenance() != 0)
         return 1;
     if (testTemplateParameterVisibilityMatchesProcessSemantics() != 0)
+        return 1;
+    if (testPalletizingTemplateUsesConfiguredGridDimensions() != 0)
         return 1;
     std::puts("All engineering requirements tests passed.");
     return 0;
