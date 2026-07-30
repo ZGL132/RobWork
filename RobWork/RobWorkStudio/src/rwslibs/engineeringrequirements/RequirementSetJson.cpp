@@ -73,6 +73,11 @@ QJsonObject writePoseTask(const PoseTask& task)
     }
     generation["parameters"] = generationParameters;
     object["generation"] = generation;
+    // 导入溯源独立于模板/阵列溯源：一个工位既可能来自外部文件，也可能随后被阵列复制。
+    QJsonObject importProvenance;
+    importProvenance["sourcePath"] = QString::fromStdString(task.importProvenance.sourcePath);
+    importProvenance["recordNumber"] = task.importProvenance.recordNumber;
+    object["importProvenance"] = importProvenance;
     QJsonObject orientation;
     orientation["mode"] = toString(task.orientation.mode);
     orientation["targetFrame"] = QString::fromStdString(task.orientation.targetFrame);
@@ -149,6 +154,13 @@ bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
             return false;
         }
         task.generation.parameters.push_back({key, parameter.value("value").toString().toStdString()});
+    }
+    const QJsonObject importProvenance = object.value("importProvenance").toObject();
+    task.importProvenance.sourcePath = importProvenance.value("sourcePath").toString().toStdString();
+    task.importProvenance.recordNumber = importProvenance.value("recordNumber").toInt(0);
+    if (task.importProvenance.recordNumber < 0) {
+        if (error != nullptr) *error = "KeyStation.importProvenance.recordNumber cannot be negative.";
+        return false;
     }
     const QJsonObject orientation = object.value("orientation").toObject();
     if (!orientationModeFromString(orientation.value("mode").toString("Fixed").toStdString(), task.orientation.mode)) {

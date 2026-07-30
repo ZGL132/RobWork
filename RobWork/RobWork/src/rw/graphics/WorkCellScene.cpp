@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
  * Faculty of Engineering, University of Southern Denmark
  *
@@ -29,6 +29,7 @@
 #include <rw/graphics/Model3D.hpp>
 
 #include <boost/bind/bind.hpp>
+#include <set>
 #include <stack>
 #include <vector>
 
@@ -935,17 +936,39 @@ bool WorkCellScene::removeDrawable (const std::string& name, const rw::core::Ptr
 
 Frame* WorkCellScene::getFrame (DrawableNode::Ptr d) const
 {
-    GroupNode::Ptr gn = d->_parentNodes.front ().cast< GroupNode > ();
-    if (gn == NULL) {
-        RW_WARN ("Group Node is NULL");
+    if (d.isNull ()) {
+        RW_WARN ("Drawable Node is NULL");
         return NULL;
     }
-    // std::cout << "GroupeNode: " << gn->getName() << std::endl;
-    const NodeFrameMap::const_iterator it = _nodeFrameMap.find (gn);
-    if (it != _nodeFrameMap.end ())
-        return it->second;
-    else
-        return NULL;
+
+    // 可拾取的 Drawable 往往不是直接挂接在 WorkCell Frame 的 GroupNode 下：CAD 模型、
+    // 材质节点或渲染优化节点均可能插入一个或多个中间父节点。仅检查直接父节点会使
+    // 三维拾取得到有效 Drawable，却无法反查其所属 Frame，进而阻断 Frame 选择事件。
+    // 因此按层向上遍历全部父节点；广度优先保证首先命中距离 Drawable 最近的 Frame，
+    // 这与场景树中“最具体的附着 Frame 优先”的语义一致。
+    std::vector< SceneNode::Ptr > pendingNodes (d->_parentNodes.begin (), d->_parentNodes.end ());
+    std::set< const SceneNode* > visitedNodes;
+
+    for (std::size_t pendingIndex = 0; pendingIndex < pendingNodes.size (); pendingIndex++) {
+        const SceneNode::Ptr node = pendingNodes[pendingIndex];
+
+        if (node.isNull () || !visitedNodes.insert (node.get ()).second)
+            continue;
+
+        const GroupNode::Ptr groupNode = node->asGroupNode ();
+        if (!groupNode.isNull ()) {
+            const NodeFrameMap::const_iterator frameIt = _nodeFrameMap.find (groupNode);
+            if (frameIt != _nodeFrameMap.end ())
+                return frameIt->second;
+        }
+
+        // 场景图允许节点被多个分组共享。访问去重既避免重复搜索，也防止异常共享关系
+        // 形成环时出现无限遍历；未登记为 Frame 的节点继续向其所有父节点回溯。
+        pendingNodes.insert (
+            pendingNodes.end (), node->_parentNodes.begin (), node->_parentNodes.end ());
+    }
+
+    return NULL;
 }
 
 GroupNode::Ptr WorkCellScene::getNode (const rw::core::Ptr< Frame> frame) const

@@ -13,6 +13,8 @@ if(build)
         GeometryFeatureResolver.cpp
         RequirementSetJson.cpp
         RequirementCompiler.cpp
+        RequirementSetUndoStack.cpp
+        StationImportService.cpp
         StationTemplateService.cpp
     )
     set(CoreHeaderFiles
@@ -20,6 +22,8 @@ if(build)
         GeometryFeatureResolver.hpp
         RequirementSetJson.hpp
         RequirementCompiler.hpp
+        RequirementSetUndoStack.hpp
+        StationImportService.hpp
         StationTemplateService.hpp
     )
     rws_add_component(sdurws_engineeringrequirements_core ${CoreSrcFiles} ${CoreHeaderFiles})

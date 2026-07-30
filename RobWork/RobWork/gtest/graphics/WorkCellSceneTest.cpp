@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  * Copyright 2018 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
  * Faculty of Engineering, University of Southern Denmark
  *
@@ -186,6 +186,17 @@ TEST(WorkCellScene, Test) {
 	WSscene->addDrawable(draw1,frame3);
 	EXPECT_EQ(1u,WSscene->getDrawables().size());
 	EXPECT_EQ(frame3, WSscene->getFrame(draw1));
+
+	// 工件的实际渲染树常会在 Frame 节点与最终可拾取 Drawable 之间插入材质、模型或
+	// 变换分组。拾取结果是叶子 Drawable 时，仍必须回溯父节点链，解析出其所属的
+	// WorkCell Frame；否则三维视图只能选中“直接挂接”的简单图元。
+	const GroupNode::Ptr frame3_GN = WSscene->getNode(frame3);
+	const GroupNode::Ptr intermediateGroup = scene->makeGroupNode("IntermediateRenderGroup");
+	scene->addChild(intermediateGroup, frame3_GN);
+	const DummyDrawable::Ptr nestedDraw = ownedPtr(new DummyDrawable("nestedDraw"));
+	scene->addChild(nestedDraw, intermediateGroup);
+	EXPECT_EQ(frame3, WSscene->getFrame(nestedDraw));
+
 	EXPECT_TRUE(WSscene->removeDrawables(frame3));
 	EXPECT_EQ(0u,WSscene->getDrawables().size());
 

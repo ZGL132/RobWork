@@ -3,6 +3,7 @@
 #include "RequirementCompiler.hpp"
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementSetJson.hpp"
+#include "StationImportService.hpp"
 #include "StationTemplateService.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -23,6 +24,7 @@
 #include <QDialogButtonBox>
 #include <QFile>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHeaderView>
@@ -44,6 +46,7 @@
 #include <QStringList>
 
 #include <algorithm>
+#include <cmath>
 
 namespace rws {
 namespace {
@@ -304,6 +307,36 @@ void addArrayKinds(QComboBox* combo)
     combo->addItem(QString::fromUtf8("线性阵列"), static_cast<int>(StationArrayKind::Linear));
     combo->addItem(QString::fromUtf8("矩形阵列"), static_cast<int>(StationArrayKind::Rectangular));
     combo->addItem(QString::fromUtf8("圆周阵列"), static_cast<int>(StationArrayKind::Circular));
+    combo->addItem(QString::fromUtf8("沿折线等距"), static_cast<int>(StationArrayKind::Polyline));
+}
+
+QString polylineText(const std::vector<std::array<double, 3>>& points)
+{
+    QStringList segments;
+    for (const std::array<double, 3>& point : points)
+        segments.push_back(QString::number(point[0], 'g', 12) + "," + QString::number(point[1], 'g', 12) + "," + QString::number(point[2], 'g', 12));
+    return segments.join(';');
+}
+
+bool parsePolylineText(const QString& text, std::vector<std::array<double, 3>>& points)
+{
+    points.clear();
+    const QStringList segments = text.split(';', Qt::SkipEmptyParts);
+    for (const QString& segment : segments) {
+        const QStringList values = segment.split(',', Qt::KeepEmptyParts);
+        if (values.size() != 3)
+            return false;
+        std::array<double, 3> point;
+        for (int axis = 0; axis < 3; ++axis) {
+            bool ok = false;
+            point[axis] = values[axis].trimmed().toDouble(&ok);
+            if (!ok || !std::isfinite(point[axis]))
+                return false;
+        }
+        points.push_back(point);
+    }
+    // UI 只负责文本转换；真正的零长度和弧长校验仍由核心服务统一执行。
+    return points.size() >= 2;
 }
 
 bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
@@ -329,6 +362,8 @@ bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
     QDoubleSpinBox* radius = nonNegativeLengthSpinBox(request.radiusMeters);
     QDoubleSpinBox* startAngle = angleSpinBox(QString()); startAngle->setValue(request.startAngleDeg);
     QDoubleSpinBox* endAngle = angleSpinBox(QString()); endAngle->setValue(request.endAngleDeg);
+    QLineEdit* polyline = new QLineEdit(polylineText(request.polylinePointsMeters), &dialog);
+    polyline->setPlaceholderText("x,y,z; x,y,z; ...");
     form->addRow(QString::fromUtf8("阵列类型"), kind);
     form->addRow(QString::fromUtf8("实例 ID"), instanceId);
     form->addRow(QString::fromUtf8("工位 ID 前缀"), idPrefix);
@@ -344,6 +379,7 @@ bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
     form->addRow(QString::fromUtf8("半径"), radius);
     form->addRow(QString::fromUtf8("起始角"), startAngle);
     form->addRow(QString::fromUtf8("终止角"), endAngle);
+    form->addRow(QString::fromUtf8("折线点（m）"), polyline);
     layout->addLayout(form);
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     layout->addWidget(buttons);
@@ -362,6 +398,11 @@ bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
     request.radiusMeters = radius->value();
     request.startAngleDeg = startAngle->value();
     request.endAngleDeg = endAngle->value();
+    if (request.kind == StationArrayKind::Polyline && !parsePolylineText(polyline->text(), request.polylinePointsMeters)) {
+        QMessageBox::warning(parent, QString::fromUtf8("折线输入无效"),
+                             QString::fromUtf8("折线必须包含至少两个点，每个点使用 x,y,z，点之间用分号分隔。"));
+        return false;
+    }
     return true;
 }
 
@@ -431,9 +472,15 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QPushButton* mirror = new QPushButton(QString::fromUtf8("镜像工位"), page);
     mirror->setObjectName("mirrorRequirementStationButton");
     mirror->setToolTip(QString::fromUtf8("以当前参考系原点为基准镜像固定姿态工位"));
+    QPushButton* import = new QPushButton(QString::fromUtf8("导入工位"), page);
+    import->setObjectName("importRequirementStationsButton");
+    import->setToolTip(QString::fromUtf8("从 CSV 或 JSON 批量导入关键工位；任何错误记录均不会写入当前需求"));
+    QPushButton* undo = new QPushButton(QString::fromUtf8("撤销批量操作"), page);
+    undo->setObjectName("undoRequirementOperationButton");
+    undo->setToolTip(QString::fromUtf8("恢复最近一次模板、阵列、镜像或导入操作前的完整需求快照"));
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry);
     actions->addWidget(createTemplate); actions->addWidget(updateTemplate); actions->addWidget(detachTemplate);
-    actions->addWidget(createArray); actions->addWidget(mirror); actions->addStretch();
+    actions->addWidget(createArray); actions->addWidget(mirror); actions->addWidget(import); actions->addWidget(undo); actions->addStretch();
     layout->addLayout(actions);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
@@ -488,6 +535,8 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     connect(detachTemplate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::detachSelectedTemplateStation);
     connect(createArray, &QPushButton::clicked, this, &EngineeringRequirementsWidget::createStationArray);
     connect(mirror, &QPushButton::clicked, this, &EngineeringRequirementsWidget::mirrorSelectedStation);
+    connect(import, &QPushButton::clicked, this, &EngineeringRequirementsWidget::importStations);
+    connect(undo, &QPushButton::clicked, this, &EngineeringRequirementsWidget::undoLastOperation);
     connect(_stationList, &QListWidget::currentRowChanged, this, &EngineeringRequirementsWidget::refreshKeyStationInspector);
     connect(_stationOrientationModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EngineeringRequirementsWidget::updateOrientationEditor);
     connect(_stationNameEdit, &QLineEdit::editingFinished, this, &EngineeringRequirementsWidget::commitKeyStationInspector);
@@ -573,12 +622,14 @@ void EngineeringRequirementsWidget::refreshTables()
                              "removeRequirementPoseTaskButton", "captureRequirementTcpButton",
                              "pickRequirementGeometryFeatureButton",
                              "createRequirementTemplateButton", "updateRequirementTemplateButton",
-                             "detachRequirementTemplateButton", "createRequirementArrayButton",
-                             "mirrorRequirementStationButton",
+                              "detachRequirementTemplateButton", "createRequirementArrayButton",
+                             "mirrorRequirementStationButton", "importRequirementStationsButton",
                              "addRequirementBoxRegionButton", "duplicateRequirementBoxRegionButton",
                              "removeRequirementBoxRegionButton"}) {
         if (QPushButton* button = findChild<QPushButton*>(name)) button->setEnabled(editable);
     }
+    if (QPushButton* button = findChild<QPushButton*>("undoRequirementOperationButton"))
+        button->setEnabled(editable && _undoStack.canUndo());
     if (_modelLabel != nullptr)
         _modelLabel->setText(QString::fromUtf8("模型：%1\n指纹：%2").arg(QString::fromStdString(_requirements.modelBinding.sourcePath), QString::fromStdString(_requirements.modelBinding.robotModelFingerprint)));
     if (_freezeLabel != nullptr)
@@ -809,8 +860,59 @@ void EngineeringRequirementsWidget::loadRequirements()
     QFile file(path); if (!file.open(QFile::ReadOnly)) { setStatus(QString::fromUtf8("无法读取需求文件。")); return; }
     RequirementSet parsed; std::string error;
     if (!RequirementSetJson::fromJson(file.readAll().toStdString(), parsed, &error)) { setStatus(QString::fromStdString(error)); return; }
-    _requirements = parsed; _compiled = CompiledRequirementSet(); if (_requirements.frozen) RequirementCompiler::compile(_requirements, _compiled, &error);
+    _requirements = parsed; _compiled = CompiledRequirementSet(); _undoStack.clear(); if (_requirements.frozen) RequirementCompiler::compile(_requirements, _compiled, &error);
     setStatus(QString::fromUtf8("研发需求已加载。")); refreshTables();
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::importStations()
+{
+    if (_requirements.frozen) return;
+    syncTablesToRequirements();
+    const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("导入关键工位"), QString(),
+        "Station data (*.csv *.json);;CSV (*.csv);;JSON (*.json)");
+    if (path.isEmpty()) return;
+    QFile file(path);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        setStatus(QString::fromUtf8("无法读取工位导入文件。"));
+        return;
+    }
+    const RequirementSet before = _requirements;
+    StationImportResult result;
+    std::string error;
+    const bool isJson = QFileInfo(path).suffix().compare("json", Qt::CaseInsensitive) == 0;
+    const QByteArray content = file.readAll();
+    const bool imported = isJson ? StationImportService::appendJson(_requirements, content.toStdString(), path.toStdString(), result, &error) :
+                                   StationImportService::appendCsv(_requirements, content.toStdString(), path.toStdString(), result, &error);
+    if (!imported) {
+        QStringList details;
+        for (const StationImportDiagnostic& diagnostic : result.diagnostics) {
+            details.push_back(QString::fromUtf8("记录 %1：%2").arg(diagnostic.recordNumber).arg(QString::fromStdString(diagnostic.message)));
+            if (details.size() == 8) break;
+        }
+        const QString message = details.isEmpty() ? QString::fromStdString(error) : details.join('\n');
+        QMessageBox::warning(this, QString::fromUtf8("工位导入失败"), message);
+        setStatus(QString::fromUtf8("导入未写入任何工位：请根据逐行诊断修正源文件后重试。"));
+        return;
+    }
+    // 服务成功后才记录操作前快照，保证撤销栈中不出现失败导入或用户取消的伪操作。
+    pushUndoSnapshot(before);
+    refreshTables();
+    setStatus(QString::fromUtf8("已从“%1”原子导入 %2 个关键工位；每个工位都保留来源文件和原始记录号。").arg(path).arg(result.importedCount));
+    Q_EMIT requirementsChanged();
+}
+
+void EngineeringRequirementsWidget::undoLastOperation()
+{
+    if (_requirements.frozen) return;
+    if (!_undoStack.undo(_requirements)) {
+        setStatus(QString::fromUtf8("当前没有可撤销的批量操作。"));
+        return;
+    }
+    // 撤销后原冻结编译产物不再可信，必须等待工程师重新校验并冻结。
+    _compiled = CompiledRequirementSet();
+    refreshTables();
+    setStatus(QString::fromUtf8("已恢复最近一次批量操作前的完整需求快照。"));
     Q_EMIT requirementsChanged();
 }
 
@@ -984,12 +1086,14 @@ void EngineeringRequirementsWidget::createTemplateStations()
     request.namePrefix = "Template";
     if (!editTemplateRequest(this, _workcell, request, false, QString::fromUtf8("创建工艺模板工位")))
         return;
+    const RequirementSet before = _requirements;
     const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
     std::string error;
     if (!StationTemplateService::appendTemplate(_requirements, request, &error)) {
         QMessageBox::warning(this, QString::fromUtf8("无法创建模板"), QString::fromStdString(error));
         return;
     }
+    pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
     setStatus(QString::fromUtf8("已创建工艺模板实例“%1”，其生成工位保持关联，可在后续统一更新或解除关联。").arg(QString::fromStdString(request.instanceId)));
@@ -1024,10 +1128,12 @@ void EngineeringRequirementsWidget::updateSelectedTemplateStations()
     if (QMessageBox::question(this, QString::fromUtf8("确认模板更新"), message,
                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
         return;
+    const RequirementSet before = _requirements;
     if (!StationTemplateService::applyTemplateUpdate(_requirements, preview, &error)) {
         QMessageBox::warning(this, QString::fromUtf8("无法应用模板更新"), QString::fromStdString(error));
         return;
     }
+    pushUndoSnapshot(before);
     refreshTables();
     setStatus(QString::fromUtf8("模板实例“%1”已更新；解除关联的工位保持原样。").arg(QString::fromStdString(request.instanceId)));
     Q_EMIT requirementsChanged();
@@ -1051,11 +1157,13 @@ void EngineeringRequirementsWidget::detachSelectedTemplateStation()
         setStatus(QString::fromUtf8("当前工位已经解除关联，之后的模板更新不会覆盖它。"));
         return;
     }
+    const RequirementSet before = _requirements;
     std::string error;
     if (!StationTemplateService::detachStation(_requirements, station.id, &error)) {
         QMessageBox::warning(this, QString::fromUtf8("无法解除关联"), QString::fromStdString(error));
         return;
     }
+    pushUndoSnapshot(before);
     refreshTables();
     setStatus(QString::fromUtf8("工位“%1”已解除与模板的关联，可单独调整且不会被后续模板更新覆盖。").arg(QString::fromStdString(station.name)));
     Q_EMIT requirementsChanged();
@@ -1075,14 +1183,19 @@ void EngineeringRequirementsWidget::createStationArray()
     request.instanceId = uniqueInstanceId(_requirements, source.id + "_array");
     request.idPrefix = source.id + "_array";
     request.namePrefix = source.name + " array";
+    request.polylinePointsMeters = {source.position, {{source.position[0] + request.primaryStepMeters[0],
+                                                       source.position[1] + request.primaryStepMeters[1],
+                                                       source.position[2] + request.primaryStepMeters[2]}}};
     if (!editArrayRequest(this, request))
         return;
+    const RequirementSet before = _requirements;
     const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
     std::string error;
     if (!StationTemplateService::appendArray(_requirements, source.id, request, &error)) {
         QMessageBox::warning(this, QString::fromUtf8("无法生成阵列"), QString::fromStdString(error));
         return;
     }
+    pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
     setStatus(QString::fromUtf8("已从工位“%1”生成阵列实例“%2”；阵列工位独立维护，不受模板更新影响。")
@@ -1113,6 +1226,7 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
     const int axis = planes.indexOf(selectedPlane);
     if (axis < 0)
         return;
+    const RequirementSet before = _requirements;
     rw::math::Rotation3D<> reflection = axis == 0 ? rw::math::Rotation3D<>(-1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0) :
         (axis == 1 ? rw::math::Rotation3D<>(1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0) :
                      rw::math::Rotation3D<>(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0));
@@ -1130,6 +1244,7 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
         mirrored.rpyDeg[angle] = mirroredRpy[angle] * 180.0 / rw::math::Pi;
     mirrored.note = "Mirrored from station " + source.id + " about " + selectedPlane.toStdString() + ".";
     _requirements.poseTasks.push_back(mirrored);
+    pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(static_cast<int>(_requirements.poseTasks.size()) - 1);
     setStatus(QString::fromUtf8("已创建镜像工位“%1”；位置和固定姿态均已在当前参考系内进行合法镜像。")
@@ -1143,6 +1258,11 @@ void EngineeringRequirementsWidget::removeBoxRegion() { if (_requirements.frozen
 void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell) { _workcell = workcell; setStatus(workcell == nullptr ? QString::fromUtf8("当前未打开 WorkCell；引用 Frame 会显示为未解析。") : QString::fromUtf8("已连接当前 WorkCell。")); refreshTables(); }
 RequirementSet EngineeringRequirementsWidget::requirementSet() const { return _requirements; }
 QString EngineeringRequirementsWidget::statusText() const { return _statusLabel == nullptr ? QString() : _statusLabel->text(); }
+void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)
+{
+    // 只由成功的批量操作调用，撤销粒度与工程师一次明确意图保持一致。
+    _undoStack.pushSnapshot(snapshot);
+}
 void EngineeringRequirementsWidget::setStatus(const QString& text) { if (_statusLabel != nullptr) _statusLabel->setText(text); }
 
 } // namespace rws

@@ -2,6 +2,8 @@
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
+#include "RequirementSetUndoStack.hpp"
+#include "StationImportService.hpp"
 #include "StationTemplateService.hpp"
 #include "EngineeringRequirementsWidget.hpp"
 
@@ -398,6 +400,107 @@ int testRectangularArrayRecordsGenerationAndDoesNotDuplicateIds()
     return 0;
 }
 
+int testPolylineArrayDistributesStationsAtEqualArcLength()
+{
+    // 折线包含直角转弯，用于验证采样依据累计弧长而不是逐段平均分配。
+    rws::RequirementSet requirements;
+    rws::PoseTask source;
+    source.id = "scan";
+    source.name = "Scan";
+    source.processType = rws::ProcessType::Inspect;
+    source.refFrame = "Fixture_A";
+    source.tcpFrame = "ToolTCP";
+    requirements.poseTasks.push_back(source);
+
+    rws::StationArrayRequest request;
+    request.kind = rws::StationArrayKind::Polyline;
+    request.instanceId = "scan_curve";
+    request.idPrefix = "scan_curve";
+    request.namePrefix = "Scan curve";
+    request.primaryCount = 5;
+    request.polylinePointsMeters = {{{{0.0, 0.0, 0.0}}, {{1.0, 0.0, 0.0}}, {{1.0, 1.0, 0.0}}}};
+
+    std::string error;
+    REQUIRE(rws::StationTemplateService::appendArray(requirements, source.id, request, &error));
+    REQUIRE(requirements.poseTasks.size() == 6);
+    const std::array<std::array<double, 3>, 5> expected = {{{{0.0, 0.0, 0.0}}, {{0.5, 0.0, 0.0}},
+        {{1.0, 0.0, 0.0}}, {{1.0, 0.5, 0.0}}, {{1.0, 1.0, 0.0}}}};
+    for (std::size_t index = 0; index < expected.size(); ++index) {
+        const rws::PoseTask& station = requirements.poseTasks[index + 1];
+        REQUIRE(station.generation.generatorId == "PolylineArray.v1");
+        for (int axis = 0; axis < 3; ++axis)
+            REQUIRE(std::abs(station.position[axis] - expected[index][axis]) < 1e-12);
+    }
+    return 0;
+}
+
+int testStationImportsAreAtomicAndRetainRecordProvenance()
+{
+    // 第一段导入验证来源信息；第二段故意保留坏数值，确认失败不会改变已存在需求。
+    rws::RequirementSet requirements;
+    rws::PoseTask existing;
+    existing.id = "existing";
+    requirements.poseTasks.push_back(existing);
+    const std::string csv =
+        "id,name,refFrame,tcpFrame,x,y,z,roll,pitch,yaw,level,processType\r\n"
+        "inspect_1,Inspection A,Fixture_A,ToolTCP,0.1,0.2,0.3,0,0,90,Must,Inspect\r\n";
+    rws::StationImportResult result;
+    std::string error;
+    REQUIRE(rws::StationImportService::appendCsv(requirements, csv, "inspection.csv", result, &error));
+    REQUIRE(result.diagnostics.empty());
+    REQUIRE(requirements.poseTasks.size() == 2);
+    const rws::PoseTask& imported = requirements.poseTasks.back();
+    REQUIRE(imported.source == rws::PoseTaskSource::Imported);
+    REQUIRE(imported.importProvenance.sourcePath == "inspection.csv");
+    REQUIRE(imported.importProvenance.recordNumber == 2);
+    REQUIRE(imported.processType == rws::ProcessType::Inspect);
+    REQUIRE(std::abs(imported.rpyDeg[2] - 90.0) < 1e-12);
+
+    const std::size_t beforeInvalidImport = requirements.poseTasks.size();
+    const std::string invalidCsv =
+        "id,name,refFrame,tcpFrame,x,y,z,roll,pitch,yaw,level,processType\n"
+        "inspect_2,Inspection B,Fixture_A,ToolTCP,not-a-number,0.2,0.3,0,0,90,Must,Inspect\n";
+    REQUIRE(!rws::StationImportService::appendCsv(requirements, invalidCsv, "invalid.csv", result, &error));
+    REQUIRE(requirements.poseTasks.size() == beforeInvalidImport);
+    REQUIRE(result.diagnostics.size() == 1);
+    REQUIRE(result.diagnostics.front().recordNumber == 2);
+
+    const std::string json =
+        "{\"stations\":[{\"id\":\"handover_1\",\"name\":\"Handover\",\"refFrame\":\"WORLD\","
+        "\"tcpFrame\":\"ToolTCP\",\"position\":[0.4,0.0,0.2],\"rpyDeg\":[0,0,180],"
+        "\"level\":\"Should\",\"processType\":\"Handover\"}]}";
+    REQUIRE(rws::StationImportService::appendJson(requirements, json, "handover.json", result, &error));
+    REQUIRE(requirements.poseTasks.size() == 3);
+    REQUIRE(requirements.poseTasks.back().importProvenance.recordNumber == 1);
+    REQUIRE(requirements.poseTasks.back().level == rws::RequirementLevel::Should);
+    // 审计来源不能只存在于内存：保存并重新加载需求集后仍应能追溯到原始 CSV 记录。
+    rws::RequirementSet restored;
+    REQUIRE(rws::RequirementSetJson::fromJson(rws::RequirementSetJson::toJson(requirements), restored, &error));
+    REQUIRE(restored.poseTasks.size() == 3);
+    REQUIRE(restored.poseTasks[1].importProvenance.sourcePath == "inspection.csv");
+    REQUIRE(restored.poseTasks[1].importProvenance.recordNumber == 2);
+    return 0;
+}
+
+int testRequirementSetUndoRestoresTheSnapshotBeforeBatchOperation()
+{
+    // 批量操作的撤销必须回到完整的操作前快照，而不是仅删除最后一个工位。
+    rws::RequirementSet requirements;
+    rws::PoseTask source;
+    source.id = "source";
+    requirements.poseTasks.push_back(source);
+    rws::RequirementSetUndoStack undo;
+    undo.pushSnapshot(requirements);
+    requirements.poseTasks.push_back(rws::PoseTask());
+    requirements.poseTasks.back().id = "generated";
+    REQUIRE(undo.canUndo());
+    REQUIRE(undo.undo(requirements));
+    REQUIRE(requirements.poseTasks.size() == 1);
+    REQUIRE(requirements.poseTasks.front().id == "source");
+    REQUIRE(!undo.canUndo());
+    return 0;
+}
+
 int testGeneratedStationJsonRoundTripPreservesProvenance()
 {
     rws::RequirementSet requirements;
@@ -453,6 +556,8 @@ int testWidgetExposesSemanticKeyStationInspector()
     REQUIRE(widget.findChild<QPushButton*>("detachRequirementTemplateButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("createRequirementArrayButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("mirrorRequirementStationButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("importRequirementStationsButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>("undoRequirementOperationButton") != nullptr);
     return 0;
 }
 
@@ -483,6 +588,12 @@ int main(int argc, char** argv)
     if (testTemplateUpdatePreservesDetachedStations() != 0)
         return 1;
     if (testRectangularArrayRecordsGenerationAndDoesNotDuplicateIds() != 0)
+        return 1;
+    if (testPolylineArrayDistributesStationsAtEqualArcLength() != 0)
+        return 1;
+    if (testStationImportsAreAtomicAndRetainRecordProvenance() != 0)
+        return 1;
+    if (testRequirementSetUndoRestoresTheSnapshotBeforeBatchOperation() != 0)
         return 1;
     if (testGeneratedStationJsonRoundTripPreservesProvenance() != 0)
         return 1;

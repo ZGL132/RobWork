@@ -2,6 +2,7 @@
 #define RWS_ENGINEERINGREQUIREMENTS_ENGINEERINGREQUIRMENTSWIDGET_HPP
 
 #include "EngineeringRequirementTypes.hpp"
+#include "RequirementSetUndoStack.hpp"
 
 #include <QWidget>
 
@@ -48,6 +49,8 @@ private:
     void bindModel();
     void saveRequirements();
     void loadRequirements();
+    void importStations();
+    void undoLastOperation();
     void freezeRequirements();
     void unfreezeRequirements();
     void addPoseTask();
@@ -60,6 +63,7 @@ private:
     void detachSelectedTemplateStation();
     void createStationArray();
     void mirrorSelectedStation();
+    void pushUndoSnapshot(const RequirementSet& snapshot);
     void addBoxRegion();
     void duplicateBoxRegion();
     void removeBoxRegion();
@@ -67,6 +71,7 @@ private:
 
     RequirementSet _requirements;
     CompiledRequirementSet _compiled;
+    RequirementSetUndoStack _undoStack;
     rw::models::WorkCell* _workcell = nullptr;
     QTabWidget* _tabs = nullptr;
     QTableWidget* _poseTable = nullptr;

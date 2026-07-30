@@ -23,6 +23,50 @@ std::string number(double value)
     return stream.str();
 }
 
+std::string polylineParameter(const std::vector<std::array<double, 3>>& points)
+{
+    std::ostringstream stream;
+    for (std::size_t index = 0; index < points.size(); ++index) {
+        if (index != 0) stream << ';';
+        stream << number(points[index][0]) << ',' << number(points[index][1]) << ',' << number(points[index][2]);
+    }
+    return stream.str();
+}
+
+bool samplePolylineByArcLength(const std::vector<std::array<double, 3>>& points, int count,
+                               std::vector<std::array<double, 3>>& samples)
+{
+    std::vector<double> accumulated(points.size(), 0.0);
+    for (std::size_t index = 1; index < points.size(); ++index) {
+        double squaredLength = 0.0;
+        for (int axis = 0; axis < 3; ++axis) {
+            const double delta = points[index][axis] - points[index - 1][axis];
+            squaredLength += delta * delta;
+        }
+        accumulated[index] = accumulated[index - 1] + std::sqrt(squaredLength);
+    }
+    const double totalLength = accumulated.back();
+    if (!(totalLength > 0.0) || !std::isfinite(totalLength))
+        return false;
+    samples.clear();
+    samples.reserve(static_cast<std::size_t>(count));
+    // 每个采样目标以累计弧长定位，再在线段内做线性插值；这使折线转角不会改变点间距离。
+    for (int sampleIndex = 0; sampleIndex < count; ++sampleIndex) {
+        const double target = count == 1 ? 0.0 : totalLength * sampleIndex / (count - 1);
+        std::size_t segment = 1;
+        while (segment + 1 < accumulated.size() && accumulated[segment] < target)
+            ++segment;
+        const double startLength = accumulated[segment - 1];
+        const double endLength = accumulated[segment];
+        const double ratio = endLength > startLength ? (target - startLength) / (endLength - startLength) : 0.0;
+        std::array<double, 3> sample;
+        for (int axis = 0; axis < 3; ++axis)
+            sample[axis] = points[segment - 1][axis] + ratio * (points[segment][axis] - points[segment - 1][axis]);
+        samples.push_back(sample);
+    }
+    return true;
+}
+
 std::set<std::string> stationIds(const RequirementSet& requirements)
 {
     std::set<std::string> ids;
@@ -74,7 +118,8 @@ std::vector<GenerationParameter> arrayParameters(const StationArrayRequest& requ
         {"secondaryCount", std::to_string(request.secondaryCount)},
         {"radiusMeters", number(request.radiusMeters)},
         {"startAngleDeg", number(request.startAngleDeg)},
-        {"endAngleDeg", number(request.endAngleDeg)}
+        {"endAngleDeg", number(request.endAngleDeg)},
+        {"polylinePointsMeters", polylineParameter(request.polylinePointsMeters)}
     };
 }
 
@@ -118,6 +163,18 @@ bool validateArrayRequest(const StationArrayRequest& request, std::string* error
         !std::isfinite(request.endAngleDeg) || request.radiusMeters < 0.0) {
         if (error != nullptr) *error = "Array parameters must be finite and the radius cannot be negative.";
         return false;
+    }
+    if (request.kind == StationArrayKind::Polyline) {
+        if (request.secondaryCount != 1 || request.polylinePointsMeters.size() < 2 ||
+            !std::all_of(request.polylinePointsMeters.begin(), request.polylinePointsMeters.end(), isFinite)) {
+            if (error != nullptr) *error = "Polyline arrays require at least two finite points and a secondary count of one.";
+            return false;
+        }
+        std::vector<std::array<double, 3>> samples;
+        if (!samplePolylineByArcLength(request.polylinePointsMeters, request.primaryCount, samples)) {
+            if (error != nullptr) *error = "Polyline arrays require a non-zero total curve length.";
+            return false;
+        }
     }
     return true;
 }
@@ -243,6 +300,7 @@ const char* StationTemplateService::toString(StationArrayKind kind)
         case StationArrayKind::Linear: return "LinearArray";
         case StationArrayKind::Rectangular: return "RectangularArray";
         case StationArrayKind::Circular: return "CircularArray";
+        case StationArrayKind::Polyline: return "PolylineArray";
     }
     return "LinearArray";
 }
@@ -348,6 +406,12 @@ bool StationTemplateService::appendArray(RequirementSet& requirements, const std
     const std::string generatorId = std::string(toString(request.kind)) + ".v1";
     const std::vector<GenerationParameter> parameters = arrayParameters(request, sourceStationId);
     const double pi = std::acos(-1.0);
+    std::vector<std::array<double, 3>> polylineSamples;
+    if (request.kind == StationArrayKind::Polyline &&
+        !samplePolylineByArcLength(request.polylinePointsMeters, request.primaryCount, polylineSamples)) {
+        if (error != nullptr) *error = "Polyline array sampling failed.";
+        return false;
+    }
     std::vector<PoseTask> generated;
     for (int primary = 0; primary < request.primaryCount; ++primary) {
         for (int secondary = 0; secondary < request.secondaryCount; ++secondary) {
@@ -362,13 +426,16 @@ bool StationTemplateService::appendArray(RequirementSet& requirements, const std
                 for (int axis = 0; axis < 3; ++axis)
                     station.position[axis] += (primary + 1) * request.primaryStepMeters[axis] +
                                               (secondary + 1) * request.secondaryStepMeters[axis];
-            } else {
+            } else if (request.kind == StationArrayKind::Circular) {
                 const int count = request.primaryCount * request.secondaryCount;
                 const int index = primary * request.secondaryCount + secondary;
                 const double angle = (request.startAngleDeg +
                     (count == 1 ? 0.0 : (request.endAngleDeg - request.startAngleDeg) * index / (count - 1))) * pi / 180.0;
                 station.position[0] += request.radiusMeters * std::cos(angle);
                 station.position[1] += request.radiusMeters * std::sin(angle);
+            } else {
+                // 折线采样点已经是参考系内的绝对位置，保留源工位的 TCP、姿态、工艺类型和校验策略。
+                station.position = polylineSamples[static_cast<std::size_t>(primary)];
             }
             station.generation.generatorId = generatorId;
             station.generation.instanceId = request.instanceId;
