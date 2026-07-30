@@ -86,6 +86,21 @@ struct OptimizationTaskPoint
     bool      required = true;  //!< 是否为必需任务点
 };
 
+/**
+ * @brief 工程需求冻结工件在结构优化项目中的审计溯源信息。
+ *
+ * 结构优化器不保存也不重新解释需求编辑器中的表单字段，而是只记录已冻结工件的
+ * 内容指纹、冻结时的 WorkCell/State 指纹和编译器版本。这样优化项目、报告和导出
+ * 结果都能回答“本次结果基于哪一份经过验证的工程需求”，并在需求或场景变化后让
+ * 上层工作流明确要求重新冻结，而不是将旧结果伪装为仍然有效。
+ */
+struct EngineeringRequirementProvenance
+{
+    std::string requirementFingerprint; //!< 冻结 RequirementSet 的 SHA256 内容指纹
+    std::string workcellFingerprint;    //!< 冻结时 WorkCell 与 State 的联合 SHA256 指纹
+    std::string compilerVersion;        //!< 生成冻结工件的需求编译器/冻结器版本
+};
+
 // =============================================================================
 //  设计变量
 // =============================================================================
@@ -331,6 +346,7 @@ struct StructureOptimizationProblem
     std::vector< ConstraintRule >     metricConstraints; //!< 通用指标约束
     StructureEvaluationConfig       evaluation; //!< 评估配置
     StructureOptimizationRunConfig  run;        //!< 运行配置
+    EngineeringRequirementProvenance requirementProvenance; //!< 可选的需求冻结工件审计来源
 };
 
 // =============================================================================

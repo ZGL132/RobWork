@@ -88,7 +88,14 @@ struct RobotModelBinding {
 /**
  * @brief 位姿公差要求
  */
-struct PoseTolerance {
+/**
+ * @brief 工程需求域的位姿公差。
+ *
+ * 与 RobotAnalysisTypes.hpp 中供运动学/动力学计算使用的 PoseTolerance 分开
+ * 命名，避免需求工件适配到分析插件时两个独立领域模型在 rws 命名空间发生
+ * 重定义；二者的数值含义仍可由适配器显式转换。
+ */
+struct RequirementPoseTolerance {
     double positionMeters = 0.001;   ///< 位置容差（单位：米，默认 1mm）
     double orientationDeg = 1.0;     ///< 姿态容差（单位：度，默认 1°）
     bool allowToolRollFree = false;  ///< 是否允许末端工具绕轴自由滚转（轴对称工具如喷枪/吸盘通常设为 true，增加 IK 解空间）
@@ -180,7 +187,7 @@ struct KeyStation {
     std::string tcpFrame;                               ///< 机器人末端工具坐标系（TCP）名称
     std::array<double, 3> position = {{0.0, 0.0, 0.0}}; ///< 位置 [X, Y, Z]（单位：米）
     std::array<double, 3> rpyDeg = {{0.0, 0.0, 0.0}};   ///< 固定姿态 [Roll, Pitch, Yaw]（单位：度）
-    PoseTolerance tolerance;                            ///< 公差要求
+    RequirementPoseTolerance tolerance;                 ///< 公差要求
     GeometryFeatureReference geometryFeature;           ///< 绑定的几何特征
     StationGenerationProvenance generation;            ///< 模板/阵列生成溯源
     ImportProvenance importProvenance;                  ///< 外部导入溯源
@@ -236,7 +243,7 @@ struct CompiledPoseTask {
     std::string tcpFrame;                               ///< TCP 坐标系
     std::array<double, 3> position = {{0.0, 0.0, 0.0}}; ///< 解析后的位置 [X, Y, Z]
     std::array<double, 3> rpyDeg = {{0.0, 0.0, 0.0}};   ///< 解析后的姿态 [Roll, Pitch, Yaw]
-    PoseTolerance tolerance;                            ///< 容差
+    RequirementPoseTolerance tolerance;                 ///< 容差
     ProcessType processType = ProcessType::Generic;     ///< 工艺语义
     GeometryFeatureReference geometryFeature;           ///< 几何特征引用
     OrientationRule orientation;                       ///< 姿态规则

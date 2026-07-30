@@ -13,6 +13,7 @@ if(build)
         GeometryFeatureResolver.cpp
         RequirementSetJson.cpp
         RequirementCompiler.cpp
+        RequirementFreezer.cpp
         RequirementSetUndoStack.cpp
         StationImportService.cpp
         StationTemplateService.cpp
@@ -22,6 +23,7 @@ if(build)
         GeometryFeatureResolver.hpp
         RequirementSetJson.hpp
         RequirementCompiler.hpp
+        RequirementFreezer.hpp
         RequirementSetUndoStack.hpp
         StationImportService.hpp
         StationTemplateService.hpp
@@ -60,5 +62,9 @@ if(build)
     if(BUILD_TESTING)
         add_test(NAME sdurws_engineeringrequirements_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test>)
+        # UI 测试单独启动 QApplication，覆盖当前 JOG State 如何传入几何工位
+        # 解析的回归路径；不能只依赖默认的无界面核心测试。
+        add_test(NAME sdurws_engineeringrequirements_widget_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> widget)
     endif()
 endif()

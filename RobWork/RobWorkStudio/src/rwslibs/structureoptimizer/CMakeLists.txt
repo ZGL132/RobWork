@@ -46,6 +46,7 @@ if(build)
         StructureOptimizationUiLogic.cpp
         StructureWorkspaceCoverage.cpp
         RobotModelStalenessChecker.cpp
+        EngineeringRequirementArtifactAdapter.cpp
     )
     set(CoreHeaderFiles
         StructureOptimizationTypes.hpp
@@ -73,6 +74,7 @@ if(build)
         StructureOptimizationUiLogic.hpp
         StructureWorkspaceCoverage.hpp
         RobotModelStalenessChecker.hpp
+        EngineeringRequirementArtifactAdapter.hpp
     )
 
     rws_add_component(sdurws_structureoptimizer_core ${CoreSrcFiles} ${CoreHeaderFiles})
@@ -82,6 +84,7 @@ if(build)
                RW::sdurw_kinematics RW::sdurw_models RW::sdurw_proximity
         PRIVATE sdurws_kinematicanalysis_core
                 sdurws_robotmodelbuilder
+                sdurws_engineeringrequirements_core
                 RW::sdurw_loaders
     )
     set_target_properties(sdurws_structureoptimizer_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -107,6 +110,7 @@ if(build)
     target_link_libraries(sdurws_structureoptimizer_test
         PRIVATE
             sdurws_structureoptimizer_core
+            sdurws_engineeringrequirements_core
             ${QT_LIBRARIES}
     )
     foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)

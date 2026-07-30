@@ -526,6 +526,21 @@ std::string StructureOptimizationJson::problemToJson(
     }
     root["tasks"] = tasksArr;
 
+    // 冻结需求工件并不嵌入优化项目 JSON，以免将需求插件的编辑态模型复制到多个
+    // 下游文件；只持久化其审计身份，重新交接时仍由冻结工件负责内容真实性校验。
+    if (!problem.requirementProvenance.requirementFingerprint.empty() ||
+        !problem.requirementProvenance.workcellFingerprint.empty() ||
+        !problem.requirementProvenance.compilerVersion.empty()) {
+        QJsonObject provenance;
+        provenance["requirementFingerprint"] =
+            QString::fromStdString(problem.requirementProvenance.requirementFingerprint);
+        provenance["workcellFingerprint"] =
+            QString::fromStdString(problem.requirementProvenance.workcellFingerprint);
+        provenance["compilerVersion"] =
+            QString::fromStdString(problem.requirementProvenance.compilerVersion);
+        root["engineeringRequirementProvenance"] = provenance;
+    }
+
     // variables
     QJsonArray varsArr;
     for (const auto& v : problem.variables)
@@ -612,6 +627,19 @@ bool StructureOptimizationJson::problemFromJson(
         tp.point   = taskPointFromJson(tObj);
         tp.required = tObj["required"].toBool(true);
         problem.tasks.push_back(tp);
+    }
+
+    // 此字段在 P2 后才出现。使用可选读取保持旧版结构优化项目能够直接打开，
+    // 同时让新项目在报告、导出和复核时保留冻结工程需求的审计链。
+    problem.requirementProvenance = EngineeringRequirementProvenance();
+    if (root.contains("engineeringRequirementProvenance")) {
+        const QJsonObject provenance = root["engineeringRequirementProvenance"].toObject();
+        problem.requirementProvenance.requirementFingerprint =
+            provenance["requirementFingerprint"].toString().toStdString();
+        problem.requirementProvenance.workcellFingerprint =
+            provenance["workcellFingerprint"].toString().toStdString();
+        problem.requirementProvenance.compilerVersion =
+            provenance["compilerVersion"].toString().toStdString();
     }
 
     // variables

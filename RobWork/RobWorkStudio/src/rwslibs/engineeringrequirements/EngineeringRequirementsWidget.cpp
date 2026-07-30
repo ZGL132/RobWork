@@ -1,6 +1,7 @@
 #include "EngineeringRequirementsWidget.hpp"
 
 #include "RequirementCompiler.hpp"
+#include "RequirementFreezer.hpp"
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementSetJson.hpp"
 #include "StationImportService.hpp"
@@ -725,8 +726,10 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
     if (_workcell != nullptr) {
         for (PoseTask& task : _requirements.poseTasks) {
             if (task.source != PoseTaskSource::GeometryFeature) continue;
+            // 几何工位必须随当前 JOG/场景状态重新解释。例如工装 Frame 已被
+            // 移动时，继续使用 WorkCell 默认状态会把保存的工作点投到旧位置。
             GeometryFeatureResolver::applyToStation(task.geometryFeature, *_workcell,
-                                                    _workcell->getDefaultState(), task, nullptr);
+                                                     activeWorkCellState(), task, nullptr);
         }
     }
     _requirements.boxRegions.clear();
@@ -765,7 +768,7 @@ void EngineeringRequirementsWidget::refreshKeyStationList()
         if (task.source == PoseTaskSource::GeometryFeature && _workcell != nullptr) {
             GeometryFeatureResolution resolution;
             if (!GeometryFeatureResolver::resolve(task.geometryFeature, task.refFrame, *_workcell,
-                                                  _workcell->getDefaultState(), resolution, nullptr)) {
+                                                   activeWorkCellState(), resolution, nullptr)) {
                 hasDiagnostic = true;
                 hasBlockingDiagnostic = hasBlockingDiagnostic || task.level == RequirementLevel::Must;
             }
@@ -932,7 +935,14 @@ void EngineeringRequirementsWidget::saveRequirements()
     const QString path = QFileDialog::getSaveFileName(this, QString::fromUtf8("保存研发需求"), "requirements.requirements.json", "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QFile file(path); if (!file.open(QFile::WriteOnly | QFile::Text)) { setStatus(QString::fromUtf8("无法保存需求文件。")); return; }
-    file.write(QByteArray::fromStdString(RequirementSetJson::toJson(_requirements))); setStatus(QString::fromUtf8("研发需求已保存。"));
+    // 编辑态需求始终保存为兼容的 RequirementSet 字段；只有真正经过冻结器校验
+    // 的工件才额外挂入 frozenArtifact，不能根据一个可被手工修改的 bool 宣称
+    // 需求已验证。这样旧版本项目仍可读取，新版本则保留完整审计证据。
+    QJsonObject project = RequirementSetJson::toObject(_requirements);
+    if (_requirements.frozen && !_frozenArtifact.requirementFingerprint.empty())
+        project["frozenArtifact"] = FrozenRequirementArtifactJson::toObject(_frozenArtifact);
+    file.write(QJsonDocument(project).toJson(QJsonDocument::Indented));
+    setStatus(QString::fromUtf8("研发需求已保存。"));
 }
 
 void EngineeringRequirementsWidget::loadRequirements()
@@ -940,10 +950,59 @@ void EngineeringRequirementsWidget::loadRequirements()
     const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("加载研发需求"), QString(), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QFile file(path); if (!file.open(QFile::ReadOnly)) { setStatus(QString::fromUtf8("无法读取需求文件。")); return; }
-    RequirementSet parsed; std::string error;
-    if (!RequirementSetJson::fromJson(file.readAll().toStdString(), parsed, &error)) { setStatus(QString::fromStdString(error)); return; }
-    _requirements = parsed; _compiled = CompiledRequirementSet(); _undoStack.clear(); if (_requirements.frozen) RequirementCompiler::compile(_requirements, _compiled, &error);
-    setStatus(QString::fromUtf8("研发需求已加载。")); refreshTables();
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
+        setStatus(QString::fromUtf8("需求文件不是有效 JSON：%1").arg(parseError.errorString()));
+        return;
+    }
+    RequirementSet parsed;
+    std::string error;
+    if (!RequirementSetJson::fromObject(document.object(), parsed, &error)) { setStatus(QString::fromStdString(error)); return; }
+
+    CompiledRequirementSet compiled;
+    FrozenRequirementArtifact artifact;
+    QString loadStatus = QString::fromUtf8("研发需求已加载，处于可编辑状态。");
+    const QJsonValue artifactValue = document.object().value("frozenArtifact");
+    if (!artifactValue.isUndefined()) {
+        if (!artifactValue.isObject() || !FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &error)) {
+            setStatus(QString::fromUtf8("冻结审计工件无效：%1").arg(QString::fromStdString(error)));
+            return;
+        }
+
+        // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
+        // 会将需求降级为编辑态，明确要求工程师在当前工程环境中再次冻结。
+        RobotModelSpec model;
+        QFile modelFile(QString::fromStdString(parsed.modelBinding.sourcePath));
+        const bool modelReadable = !parsed.modelBinding.sourcePath.empty() && modelFile.open(QFile::ReadOnly) &&
+                                   RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &error);
+        const bool artifactCurrent = modelReadable && _workcell != nullptr &&
+            RequirementFreezer::isCurrent(artifact, parsed, *_workcell, activeWorkCellState(), model, &error);
+        if (artifactCurrent) {
+            parsed.frozen = true;
+            compiled = artifact.compiled;
+            loadStatus = QString::fromUtf8("研发需求及冻结审计工件已加载，且与当前模型和 WorkCell 一致。");
+        } else {
+            parsed.frozen = false;
+            artifact = FrozenRequirementArtifact();
+            const QString reason = modelReadable && _workcell == nullptr ?
+                QString::fromUtf8("当前未打开 WorkCell") : QString::fromStdString(error);
+            loadStatus = QString::fromUtf8("研发需求已加载，但冻结证据已过期或无法验证（%1）；请重新冻结。")
+                .arg(reason);
+        }
+    } else if (parsed.frozen) {
+        // 兼容旧项目：旧格式只有 frozen 标志而没有工件、环境和模型证据，必须
+        // 视为未验证，不能让它绕过当前版本的冻结门禁。
+        parsed.frozen = false;
+        loadStatus = QString::fromUtf8("研发需求已加载；旧文件缺少冻结审计工件，请重新冻结。" );
+    }
+
+    _requirements = parsed;
+    _compiled = compiled;
+    _frozenArtifact = artifact;
+    _undoStack.clear();
+    setStatus(loadStatus);
+    refreshTables();
     Q_EMIT requirementsChanged();
 }
 
@@ -1000,39 +1059,48 @@ void EngineeringRequirementsWidget::undoLastOperation()
 
 void EngineeringRequirementsWidget::freezeRequirements()
 {
-    syncTablesToRequirements(); std::string error; CompiledRequirementSet compiled;
-    std::vector<std::string> unresolvedAdvisoryStations;
-    for (const PoseTask& task : _requirements.poseTasks) {
-        if (task.source != PoseTaskSource::GeometryFeature) continue;
-        GeometryFeatureResolution resolution;
-        const bool resolved = _workcell != nullptr && GeometryFeatureResolver::resolve(
-            task.geometryFeature, task.refFrame, *_workcell, _workcell->getDefaultState(), resolution, &error);
-        if (resolved) continue;
-        const QString message = QString::fromUtf8("几何特征 Frame 无法解析：%1").arg(QString::fromStdString(task.id));
-        if (task.level == RequirementLevel::Must) { setStatus(message); return; }
-        unresolvedAdvisoryStations.push_back(task.id);
+    syncTablesToRequirements();
+    if (_workcell == nullptr) {
+        setStatus(QString::fromUtf8("无法冻结需求：请先打开实际 WorkCell，以验证 Frame、TCP 与工装状态。"));
+        return;
     }
-    if (!RequirementCompiler::compile(_requirements, compiled, &error)) { setStatus(QString::fromStdString(error)); return; }
-    for (const std::string& id : unresolvedAdvisoryStations) {
-        compiled.poseTasks.erase(std::remove_if(compiled.poseTasks.begin(), compiled.poseTasks.end(),
-            [&id] (const CompiledPoseTask& task) { return task.id == id; }), compiled.poseTasks.end());
-        RequirementDiagnostic diagnostic;
-        diagnostic.requirementId = id;
-        diagnostic.level = RequirementLevel::Should;
-        diagnostic.message = "Geometry feature frame is unresolved and was excluded from compiled tasks: " + id;
-        diagnostic.blocking = false;
-        compiled.diagnostics.push_back(diagnostic);
+    if (_requirements.modelBinding.sourcePath.empty()) {
+        setStatus(QString::fromUtf8("无法冻结需求：请先绑定与当前机器人一致的 .rmb.json 模型。"));
+        return;
+    }
+
+    // 绑定路径只是编辑态引用，冻结时必须重新读取模型并以其内容指纹核验，防止
+    // 文件已被替换而需求仍沿用过期模型指纹的情况进入结构优化链路。
+    QFile modelFile(QString::fromStdString(_requirements.modelBinding.sourcePath));
+    if (!modelFile.open(QFile::ReadOnly)) {
+        setStatus(QString::fromUtf8("无法冻结需求：绑定的机器人模型文件无法读取。"));
+        return;
+    }
+    RobotModelSpec model;
+    std::string error;
+    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &error)) {
+        setStatus(QString::fromStdString(error));
+        return;
+    }
+
+    FrozenRequirementArtifact artifact;
+    // RequirementFreezer 集中完成真实 Frame/TCP、几何特征与模型指纹门禁，并
+    // 将 Should 项的排除理由写入工件，避免旧界面逻辑仅在内存中临时删任务。
+    if (!RequirementFreezer::freeze(_requirements, *_workcell, activeWorkCellState(), model, artifact, &error)) {
+        setStatus(QString::fromStdString(error));
+        return;
     }
     _requirements.frozen = true;
-    _compiled = compiled;
-    const int pathPending = static_cast<int>(std::count_if(compiled.poseTasks.begin(), compiled.poseTasks.end(), [] (const CompiledPoseTask& task) {
+    _compiled = artifact.compiled;
+    _frozenArtifact = artifact;
+    const int pathPending = static_cast<int>(std::count_if(_compiled.poseTasks.begin(), _compiled.poseTasks.end(), [] (const CompiledPoseTask& task) {
         return task.pathValidationPending;
     }));
     setStatus(QString::fromUtf8("需求已校验并冻结：%1 个工位可用于 P2 运动学优化；%2 项建议需求未验证，未进入优化；%3 个接近/撤离规则已记录，连续 IK 与路径碰撞将在 P3 验证。")
-        .arg(compiled.poseTasks.size()).arg(compiled.diagnostics.size()).arg(pathPending));
+        .arg(_compiled.poseTasks.size()).arg(_compiled.diagnostics.size()).arg(pathPending));
     refreshTables();
 }
-void EngineeringRequirementsWidget::unfreezeRequirements() { _requirements.frozen = false; _compiled = CompiledRequirementSet(); setStatus(QString::fromUtf8("需求已解冻，可继续编辑。")); refreshTables(); }
+void EngineeringRequirementsWidget::unfreezeRequirements() { _requirements.frozen = false; _compiled = CompiledRequirementSet(); _frozenArtifact = FrozenRequirementArtifact(); setStatus(QString::fromUtf8("需求已解冻，可继续编辑。")); refreshTables(); }
 void EngineeringRequirementsWidget::addPoseTask()
 {
     if (_requirements.frozen) return;
@@ -1086,7 +1154,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
     }
     try {
         const rw::math::Transform3D<> baseTtcp = rw::kinematics::Kinematics::frameTframe(
-            device->getBase(), device->getEnd(), _workcell->getDefaultState());
+            device->getBase(), device->getEnd(), activeWorkCellState());
         const rw::math::RPY<> rpy(baseTtcp.R());
         syncTablesToRequirements();
         PoseTask task;
@@ -1139,7 +1207,7 @@ bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& fra
     feature.objectName = feature.frameName;
     feature.geometryName = "FramePlaneNormal";
     std::string resolveError;
-    if (!GeometryFeatureResolver::applyToStation(feature, *_workcell, _workcell->getDefaultState(), station, &resolveError)) {
+    if (!GeometryFeatureResolver::applyToStation(feature, *_workcell, activeWorkCellState(), station, &resolveError)) {
         const QString message = QString::fromStdString(resolveError);
         if (error != nullptr) *error = message;
         setStatus(message);
@@ -1337,7 +1405,32 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
 void EngineeringRequirementsWidget::addBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); BoxRegion region; region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1); region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString(); _requirements.boxRegions.push_back(region); refreshTables(); }
 void EngineeringRequirementsWidget::duplicateBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; BoxRegion copy = _requirements.boxRegions[static_cast<std::size_t>(row)]; copy.id += "_copy"; copy.name += " Copy"; _requirements.boxRegions.insert(_requirements.boxRegions.begin() + row + 1, copy); refreshTables(); }
 void EngineeringRequirementsWidget::removeBoxRegion() { if (_requirements.frozen) return; syncTablesToRequirements(); const int row = _regionTable->currentRow(); if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return; _requirements.boxRegions.erase(_requirements.boxRegions.begin() + row); refreshTables(); }
-void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell) { _workcell = workcell; setStatus(workcell == nullptr ? QString::fromUtf8("当前未打开 WorkCell；引用 Frame 会显示为未解析。") : QString::fromUtf8("已连接当前 WorkCell。")); refreshTables(); }
+void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell)
+{
+    // State 的内部结构由 WorkCell 决定。切换场景时先丢弃旧 State，避免旧关节
+    // 配置被用于新场景中的 TCP 捕获、几何解析或冻结环境指纹计算。
+    _workcell = workcell;
+    _currentState.reset();
+    _frozenArtifact = FrozenRequirementArtifact();
+    setStatus(workcell == nullptr ? QString::fromUtf8("当前未打开 WorkCell；引用 Frame 会显示为未解析。")
+                                : QString::fromUtf8("已连接当前 WorkCell，等待接收最新场景状态。"));
+    refreshTables();
+}
+
+void EngineeringRequirementsWidget::setCurrentState(const rw::kinematics::State& state)
+{
+    // 复制而不是保存外部引用：RobWorkStudio 会持续替换其 State，插件在按钮
+    // 回调和冻结流程中需要一份仍然有效、与最后一次界面渲染一致的快照。
+    _currentState = std::make_unique<rw::kinematics::State>(state);
+}
+
+rw::kinematics::State EngineeringRequirementsWidget::activeWorkCellState() const
+{
+    // 所有调用方已经检查 _workcell 非空。初始化阶段若尚未收到 stateChanged
+    // 事件，只在此处有限地回退默认 State；按值返回可避免引用 WorkCell 返回的
+    // 临时默认 State。交互后的实际状态始终优先使用插件保存的快照。
+    return _currentState != nullptr ? *_currentState : _workcell->getDefaultState();
+}
 RequirementSet EngineeringRequirementsWidget::requirementSet() const { return _requirements; }
 QString EngineeringRequirementsWidget::statusText() const { return _statusLabel == nullptr ? QString() : _statusLabel->text(); }
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)

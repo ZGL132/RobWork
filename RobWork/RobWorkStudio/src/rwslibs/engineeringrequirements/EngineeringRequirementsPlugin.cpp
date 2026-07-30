@@ -180,7 +180,13 @@ void EngineeringRequirementsPlugin::initialize() {
  * @brief 当用户在 RobWorkStudio 中打开一个新的 WorkCell 场景时触发
  */
 void EngineeringRequirementsPlugin::open(rw::models::WorkCell* workcell) {
-    if (_widget != nullptr) _widget->setWorkCell(workcell);
+    if (_widget != nullptr) {
+        _widget->setWorkCell(workcell);
+        // open() 早于用户第一次 JOG 操作时也要把主程序当前 State 交给需求
+        // 面板，保证首次 TCP 捕获、几何拾取和冻结不会落回无意的默认姿态。
+        if (getRobWorkStudio() != nullptr)
+            _widget->setCurrentState(getRobWorkStudio()->getState());
+    }
     refreshStationMarkers(); // 新场景加载后，全量构建 3D 工位 Marker
 }
 
@@ -225,6 +231,10 @@ void EngineeringRequirementsPlugin::handleFrameSelected(rw::kinematics::Frame* f
  */
 void EngineeringRequirementsPlugin::handleStateChanged(const rw::kinematics::State& state)
 {
+    // 标记刷新和工程需求解析必须观察同一份 JOG 状态；否则 3D 里显示的位置
+    // 与“捕获当前 TCP”或“冻结需求”所使用的位置可能彼此不一致。
+    if (_widget != nullptr)
+        _widget->setCurrentState(state);
     updateStationMarkers(state);
 }
 

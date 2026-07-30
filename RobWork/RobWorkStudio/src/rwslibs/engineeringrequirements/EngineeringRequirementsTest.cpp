@@ -1,6 +1,7 @@
 #include "EngineeringRequirementTypes.hpp"
 #include "GeometryFeatureResolver.hpp"
 #include "RequirementCompiler.hpp"
+#include "RequirementFreezer.hpp"
 #include "RequirementSetJson.hpp"
 #include "RequirementSetUndoStack.hpp"
 #include "StationImportService.hpp"
@@ -8,16 +9,21 @@
 #include "EngineeringRequirementsWidget.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/MovableFrame.hpp>
 #include <rw/kinematics/StateStructure.hpp>
 #include <rw/math/Constants.hpp>
 #include <rw/math/RPY.hpp>
+#include <rw/math/Transform3D.hpp>
+#include <rw/math/Vector3D.hpp>
 #include <rw/models/WorkCell.hpp>
 
 #include <QCoreApplication>
 #include <QApplication>
+#include <QJsonObject>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QDir>
@@ -273,6 +279,110 @@ int testGeometryFrameFeatureResolvesAndCompiles()
     REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
     REQUIRE(compiled.poseTasks.size() == 1);
     REQUIRE(compiled.poseTasks[0].geometryFeature.frameName == "Fixture_A");
+    return 0;
+}
+
+int testFreezerRejectsMissingWorkCellTcpForMustStation()
+{
+    // 冻结不是纯文本格式检查：即使 TCP 名称非空，只要它不属于当前 WorkCell，
+    // 该 Must 工位就绝不能被发布为后续运动学或结构优化的输入。
+    using namespace rw::kinematics;
+    rws::RequirementSet requirements;
+    rws::RobotModelSpec model;
+    model.robotName = "FreezeGateRobot";
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint = rws::RobotModelFingerprint::canonicalSha256(model);
+
+    rws::PoseTask station;
+    station.id = "missing_tcp";
+    station.name = "Missing TCP";
+    station.refFrame = "WORLD";
+    station.tcpFrame = "TCP_that_does_not_exist";
+    requirements.poseTasks.push_back(station);
+
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "FreezeGateWorkCell", ""));
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(!rws::RequirementFreezer::freeze(requirements, *workcell,
+                                               workcell->getDefaultState(), model, artifact, &error));
+    REQUIRE(error.find("TCP") != std::string::npos);
+    return 0;
+}
+
+int testFrozenArtifactRoundTripRetainsCompiledEvidence()
+{
+    // 冻结工件必须保存编译后的任务、诊断和环境指纹；仅保存编辑态 RequirementSet
+    // 会让 Should 工位的排除结果在重新打开项目后丢失，破坏审计可复现性。
+    rws::FrozenRequirementArtifact artifact;
+    artifact.requirementFingerprint = "requirement-sha256";
+    artifact.workcellFingerprint = "workcell-sha256";
+    // 冻结工件中的已编译快照仍须满足编译器的模型绑定契约。这里显式填入
+    // 指纹，验证 JSON 往返不会把这项下游可追溯信息遗漏或重置为空字符串。
+    artifact.modelBinding.robotModelFingerprint = "model-fingerprint";
+    artifact.compiled.frozen = true;
+    artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.compiled.modelBinding = artifact.modelBinding;
+    rws::CompiledPoseTask station;
+    station.id = "compiled_pick";
+    station.name = "Compiled pick";
+    // 编译快照中的任务来自已通过校验的冻结结果，因此测试样本同样应携带
+    // 规范化后的参考系；空参考系属于编辑态非法输入，不能代表可审计工件。
+    station.refFrame = "WORLD";
+    station.tcpFrame = "ToolTCP";
+    artifact.compiled.poseTasks.push_back(station);
+    artifact.compiled.diagnostics.push_back(
+        {"optional_missing", rws::RequirementLevel::Should, "Excluded from frozen artifact.", false});
+
+    // 项目文件需要把冻结工件嵌入编辑态需求 JSON，因此读写器必须提供对象级
+    // 接口，而不仅是独立字符串 API；两种入口应还原同一份可审计编译结果。
+    const QJsonObject object = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    rws::FrozenRequirementArtifact objectRestored;
+    std::string objectError;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(object, objectRestored, &objectError));
+    REQUIRE(objectRestored.compiled.poseTasks.size() == 1);
+
+    const std::string json = rws::FrozenRequirementArtifactJson::toJson(artifact);
+    rws::FrozenRequirementArtifact restored;
+    std::string error;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromJson(json, restored, &error));
+    REQUIRE(restored.compiled.frozen);
+    REQUIRE(restored.requirementFingerprint == "requirement-sha256");
+    REQUIRE(restored.workcellFingerprint == "workcell-sha256");
+    REQUIRE(restored.compiled.poseTasks.size() == 1);
+    REQUIRE(restored.compiled.diagnostics.size() == 1);
+    return 0;
+}
+
+int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
+{
+    // 冻结证据必须绑定到实际 WorkCell 的空间状态。此处只移动一个工装 Frame，
+    // 需求和模型都不改动，验证环境指纹仍可识别出工件已经不再适用于当前场景。
+    rws::RobotModelSpec model;
+    model.robotName = "ArtifactStateRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint = rws::RobotModelFingerprint::canonicalSha256(model);
+
+    rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ArtifactStateWorkCell", ""));
+    const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("ArtifactFixture"));
+    workcell->addFrame(fixture, workcell->getWorldFrame());
+    const rw::kinematics::State frozenState = workcell->getDefaultState();
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell, frozenState, model, artifact, &error));
+    REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, frozenState, model, &error));
+
+    rw::kinematics::State changedState = frozenState;
+    fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.05, 0.0, 0.0)), changedState);
+    REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, changedState, model, &error));
+    REQUIRE(error.find("WorkCell") != std::string::npos);
     return 0;
 }
 
@@ -610,6 +720,32 @@ int testWidgetExposesSemanticKeyStationInspector()
     return 0;
 }
 
+int testWidgetResolvesGeometryFeatureUsingLatestJogState()
+{
+    // 构造一个可在 State 中移动的工装 Frame。默认状态保持原点，而模拟的
+    // JOG 状态将其移到 X=0.42m；两者不同才能检验 UI 没有误用默认状态。
+    rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "JogStateWorkCell", ""));
+    const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("FixtureFrame"));
+    workcell->addFrame(fixture, workcell->getWorldFrame());
+    rw::kinematics::State jogState = workcell->getDefaultState();
+    fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.42, 0.0, 0.0)), jogState);
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setWorkCell(workcell.get());
+    widget.setCurrentState(jogState);
+    widget.findChild<QPushButton*>("addRequirementPoseTaskButton")->click();
+
+    QString error;
+    REQUIRE(widget.applyGeometryFeatureFrame("FixtureFrame", &error));
+    const rws::RequirementSet requirements = widget.requirementSet();
+    REQUIRE(requirements.poseTasks.size() == 1);
+    REQUIRE(std::fabs(requirements.poseTasks[0].position[0] - 0.42) < 1e-9);
+    return 0;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -618,13 +754,21 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         if (testWidgetBuildsEngineeringRequirementWorkflow() != 0)
             return 1;
-        return testWidgetExposesSemanticKeyStationInspector();
+        if (testWidgetExposesSemanticKeyStationInspector() != 0)
+            return 1;
+        return testWidgetResolvesGeometryFeatureUsingLatestJogState();
     }
     QCoreApplication app(argc, argv);
     (void)app;
     if (testFrozenRequirementCompilesOnlyEngineeringTasks() != 0)
         return 1;
     if (testJsonRoundTripPreservesBindingAndFrozenSnapshot() != 0)
+        return 1;
+    if (testFreezerRejectsMissingWorkCellTcpForMustStation() != 0)
+        return 1;
+    if (testFrozenArtifactRoundTripRetainsCompiledEvidence() != 0)
+        return 1;
+    if (testFrozenArtifactBecomesStaleWhenWorkCellStateChanges() != 0)
         return 1;
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;

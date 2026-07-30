@@ -2,9 +2,13 @@
 #define RWS_ENGINEERINGREQUIREMENTS_ENGINEERINGREQUIRMENTSWIDGET_HPP
 
 #include "EngineeringRequirementTypes.hpp"
+#include "RequirementFreezer.hpp"
 #include "RequirementSetUndoStack.hpp"
 
+#include <rw/kinematics/State.hpp>
 #include <QWidget>
+
+#include <memory>
 
 class QLabel;
 class QPushButton;
@@ -37,6 +41,14 @@ class EngineeringRequirementsWidget : public QWidget {
 public:
     explicit EngineeringRequirementsWidget(QWidget* parent = nullptr);
     void setWorkCell(rw::models::WorkCell* workcell);
+    /**
+     * @brief 接收 RobWorkStudio 最新发布的场景/JOG 状态快照。
+     *
+     * 需求插件不能自行读取 WorkCell 的默认状态来代替用户刚刚在 JOG、拖动
+     * 工装或回放轨迹后看到的实际状态。该副本只在 WorkCell 生命周期内保存，
+     * 并作为 TCP 捕获、几何特征解析、冻结与即时校验的唯一状态来源。
+     */
+    void setCurrentState(const rw::kinematics::State& state);
     bool applyGeometryFeatureFrame(const QString& frameName, QString* error = nullptr);
     RequirementSet requirementSet() const;
     QString statusText() const;
@@ -79,11 +91,25 @@ private:
     void duplicateBoxRegion();
     void removeBoxRegion();
     void setStatus(const QString& text);
+    /**
+     * @brief 返回本插件绑定 WorkCell 所对应的最新状态。
+     *
+     * 插件刚打开 WorkCell 但主程序尚未派发 stateChangedEvent 时，退回该
+     * WorkCell 的默认状态，以保证界面不会因短暂的初始化顺序而崩溃；正常
+     * 交互和冻结流程会优先使用 setCurrentState() 保存的快照。
+     */
+    rw::kinematics::State activeWorkCellState() const;
 
     RequirementSet _requirements;
     CompiledRequirementSet _compiled;
+    // 冻结工件保留完整的编译结果、环境指纹和诊断，后续保存/下游交接不能仅
+    // 依赖可编辑的 RequirementSet.frozen 标记来判断其是否已经经过真实校验。
+    FrozenRequirementArtifact _frozenArtifact;
     RequirementSetUndoStack _undoStack;
     rw::models::WorkCell* _workcell = nullptr;
+    // State 与所属 WorkCell 的 StateStructure 强关联；切换 WorkCell 时必须丢弃
+    // 旧快照，防止将旧场景的关节值误用于新场景的几何解析。
+    std::unique_ptr<rw::kinematics::State> _currentState;
     QTabWidget* _tabs = nullptr;
     QTableWidget* _poseTable = nullptr;
     QListWidget* _stationList = nullptr;

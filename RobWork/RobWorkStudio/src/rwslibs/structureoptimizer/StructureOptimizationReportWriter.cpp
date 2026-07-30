@@ -69,6 +69,21 @@ std::string StructureOptimizationReportWriter::write(
     out << "- Source fingerprint: " << provenance.sourceFingerprint << "\n";
     out << "- Snapshot fingerprint: " << provenance.snapshotFingerprint << "\n\n";
 
+    // 需求冻结工件与机器人模型快照是两条独立审计链：前者证明工艺任务和场景状态，
+    // 后者证明可变结构的初始模型。仅当适配器实际消费过冻结工件时才输出本节，避免
+    // 将人工编辑的旧式优化项目误标为具有工程需求冻结证据。
+    if (!problem.requirementProvenance.requirementFingerprint.empty() ||
+        !problem.requirementProvenance.workcellFingerprint.empty() ||
+        !problem.requirementProvenance.compilerVersion.empty()) {
+        out << "## Engineering Requirement Provenance\n\n";
+        out << "- Requirement fingerprint: "
+            << problem.requirementProvenance.requirementFingerprint << "\n";
+        out << "- WorkCell and State fingerprint: "
+            << problem.requirementProvenance.workcellFingerprint << "\n";
+        out << "- Requirement compiler: "
+            << problem.requirementProvenance.compilerVersion << "\n\n";
+    }
+
     out << "## Workspace Coverage Configuration\n\n";
     out << "- Enabled: " << (problem.evaluation.coverageBox.enabled ? "true" : "false")
         << "\n";

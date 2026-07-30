@@ -29,6 +29,9 @@
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
 #include "CandidatePreviewController.hpp"
+#include "EngineeringRequirementArtifactAdapter.hpp"
+
+#include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -1287,6 +1290,9 @@ static void testJsonRoundTrip()
         {"collision.free_rate", rws::ComparisonOperator::GreaterThanOrEqual,
          0.95, true, true}
     };
+    // 冻结需求的审计身份必须随优化项目往返，确保导出的项目不会丢失其输入依据。
+    problem.requirementProvenance = {"requirement-sha256", "workcell-state-sha256",
+                                     "EngineeringRequirements.Freezer.1"};
 
     // 序列化
     const std::string json = rws::StructureOptimizationJson::problemToJson(problem);
@@ -1330,11 +1336,15 @@ static void testJsonRoundTrip()
     REQUIRE(std::abs(parsed.objectives[0].weight - 0.7) < 1e-12);
     REQUIRE(parsed.metricConstraints.size() == 1);
     REQUIRE(parsed.metricConstraints[0].metricId == "collision.free_rate");
+    REQUIRE(parsed.requirementProvenance.requirementFingerprint == "requirement-sha256");
+    REQUIRE(parsed.requirementProvenance.workcellFingerprint == "workcell-state-sha256");
+    REQUIRE(parsed.requirementProvenance.compilerVersion == "EngineeringRequirements.Freezer.1");
 
     const std::string report = rws::StructureOptimizationReportWriter::write(
         parsed, rws::StructureOptimizationResult{});
     REQUIRE(report.find("test.kinematics@2.0") != std::string::npos);
     REQUIRE(report.find("system evaluators not enabled") != std::string::npos);
+    REQUIRE(report.find("Engineering Requirement Provenance") != std::string::npos);
 
     const std::string legacyJson = R"json({
         "schemaVersion": 1,
@@ -1860,6 +1870,76 @@ static void testConstraintModelAndProjectAdapter()
     REQUIRE(loaded.run.gridSteps == 7);
     REQUIRE(loaded.run.localEliteCount == 4);
     REQUIRE(std::abs(loaded.weights.preference - 0.12) < 1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testFrozenEngineeringRequirementArtifactAdapter()
+{
+    std::printf("testFrozenEngineeringRequirementArtifactAdapter ... ");
+
+    // 使用与结构优化项目相同的 RobotModelSpec 构造冻结工件，验证适配层只
+    // 接收已冻结且模型身份一致的工程需求，而不是直接读取编辑态表单数据。
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+
+    rws::FrozenRequirementArtifact artifact;
+    artifact.requirementFingerprint = "requirement-fingerprint";
+    artifact.workcellFingerprint = "workcell-fingerprint";
+    artifact.modelBinding.robotName = problem.context.modelSpec.robotName;
+    artifact.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
+    artifact.compiled.frozen = true;
+    artifact.compiled.modelBinding = artifact.modelBinding;
+    artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+
+    rws::CompiledPoseTask mustStation;
+    mustStation.id = "pick";
+    mustStation.name = "Pick station";
+    mustStation.level = rws::RequirementLevel::Must;
+    mustStation.refFrame = "WORLD";
+    mustStation.tcpFrame = "TCP";
+    mustStation.position = {{0.4, 0.1, 0.3}};
+    mustStation.tolerance.positionMeters = 0.002;
+    artifact.compiled.poseTasks.push_back(mustStation);
+
+    rws::CompiledPoseTask shouldStation = mustStation;
+    shouldStation.id = "inspect";
+    shouldStation.name = "Inspection station";
+    shouldStation.level = rws::RequirementLevel::Should;
+    artifact.compiled.poseTasks.push_back(shouldStation);
+
+    rws::WorkspaceDemandRegion region;
+    region.id = "work_area";
+    region.name = "Work area";
+    region.level = rws::RequirementLevel::Must;
+    region.refFrame = "WORLD";
+    region.center = {{0.5, 0.0, 0.4}};
+    region.size = {{0.4, 0.2, 0.3}};
+    region.minimumCoverage = 0.85;
+    region.samplesPerAxis = 6;
+    artifact.compiled.workspaceRegions.push_back(region);
+
+    std::string error;
+    REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
+    REQUIRE(problem.tasks.size() == 2);
+    REQUIRE(problem.tasks[0].required);
+    REQUIRE(!problem.tasks[1].required);
+    REQUIRE(problem.context.taskPoints.size() == 2);
+    REQUIRE(problem.evaluation.coverageBox.enabled);
+    REQUIRE(problem.evaluation.coverageBox.cells[0] == 5);
+    REQUIRE(problem.requirementProvenance.requirementFingerprint == "requirement-fingerprint");
+    REQUIRE(problem.requirementProvenance.workcellFingerprint == "workcell-fingerprint");
+
+    rws::WorkspaceDemandRegion secondRegion = region;
+    secondRegion.id = "second_area";
+    artifact.compiled.workspaceRegions.push_back(secondRegion);
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
+    REQUIRE(error.find("one") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -2577,6 +2657,7 @@ int main(int argc, char** argv)
     testCsvExport();
     testUiTableModelsAndSuggestions();
     testConstraintModelAndProjectAdapter();
+    testFrozenEngineeringRequirementArtifactAdapter();
     testProjectFactory();
     testProjectFactoryProvenance();
     testExportService();

@@ -1,0 +1,85 @@
+#ifndef RWS_ENGINEERINGREQUIREMENTS_REQUIREMENTFREEZER_HPP
+#define RWS_ENGINEERINGREQUIREMENTS_REQUIREMENTFREEZER_HPP
+
+#include "EngineeringRequirementTypes.hpp"
+
+#include <string>
+
+class QJsonObject;
+
+namespace rw { namespace kinematics { class State; } }
+namespace rw { namespace models { class WorkCell; } }
+
+namespace rws {
+
+struct RobotModelSpec;
+
+/**
+ * @brief 可交接、可审计的冻结需求工件。
+ *
+ * RequirementSet 是允许工程师持续修改的编辑态意图；本结构则是某一时刻在明确
+ * RobotModelSpec、WorkCell 与运动学 State 下完成环境解析后的只读输入。下游优化器
+ * 只能消费该工件，避免将“尚未解析的名称字符串”误当成已经满足的工程条件。
+ */
+struct FrozenRequirementArtifact {
+    int schemaVersion = 1;
+    std::string requirementFingerprint;
+    std::string workcellFingerprint;
+    std::string compilerVersion = "EngineeringRequirements.Freezer.1";
+    RobotModelBinding modelBinding;
+    CompiledRequirementSet compiled;
+};
+
+/**
+ * @brief 将编辑态需求冻结为与真实工程环境绑定的执行态工件。
+ *
+ * 冻结门禁同时检查模型指纹、Frame/TCP/姿态目标/覆盖盒引用和几何特征。在 Must
+ * 需求存在任何问题时失败；Should 需求会留下诊断并从 compiled 输入中排除，确保
+ * 下游不会将未验证建议项当作真实任务。
+ */
+class RequirementFreezer {
+  public:
+    static bool freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
+                       const rw::kinematics::State& state, const RobotModelSpec& model,
+                       FrozenRequirementArtifact& artifact, std::string* error = nullptr);
+
+    /**
+     * @brief 校验一个已冻结工件是否仍对应当前需求、模型与工程场景。
+     *
+     * 此接口用于项目重载和下游交接前的审计门禁：即使 JSON 中存在冻结标记，
+     * 只要需求内容、RobotModelSpec 或 WorkCell/State 任一项发生变化，工件就
+     * 必须被判定为过期，不能作为“已验证”的优化输入继续使用。
+     */
+    static bool isCurrent(const FrozenRequirementArtifact& artifact,
+                          const RequirementSet& requirements,
+                          const rw::models::WorkCell& workcell,
+                          const rw::kinematics::State& state,
+                          const RobotModelSpec& model,
+                          std::string* error = nullptr);
+};
+
+/**
+ * @brief 冻结需求工件的稳定 JSON 读写器。
+ *
+ * 该格式与编辑态 RequirementSet JSON 分离，专门持久化编译后的任务、环境指纹和
+ * 非阻断诊断，使项目重新打开后仍能准确知道当时哪些 Should 工位被排除。
+ */
+class FrozenRequirementArtifactJson {
+  public:
+    /**
+     * @brief 将冻结工件转换为可嵌入项目 JSON 的对象。
+     *
+     * RequirementSetJson 仍保持编辑态格式兼容；项目保存器可将本对象作为其
+     * 可选 frozenArtifact 字段，从而同时保留编辑意图和冻结时的审计证据。
+     */
+    static QJsonObject toObject(const FrozenRequirementArtifact& artifact);
+    static bool fromObject(const QJsonObject& object, FrozenRequirementArtifact& artifact,
+                           std::string* error = nullptr);
+    static std::string toJson(const FrozenRequirementArtifact& artifact);
+    static bool fromJson(const std::string& json, FrozenRequirementArtifact& artifact,
+                         std::string* error = nullptr);
+};
+
+} // namespace rws
+
+#endif
