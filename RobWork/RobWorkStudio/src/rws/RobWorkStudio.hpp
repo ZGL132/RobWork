@@ -687,8 +687,14 @@ class RobWorkStudio : public QMainWindow
     // 与旧有的 WorkCell 级入口（newWorkCell/saveWorkCell 等）并存，后者保留在
     // 菜单下半部分供调试单资源与迁移历史文件使用。
     void newProject ();
+    // 从既有 WorkCell 复制场景文件并建立带 mainWorkCell 入口的新项目。
+    void createProjectFromWorkCell ();
     void openProject ();
     void saveProject ();
+    // 将当前项目完整克隆到新的空目录，作为项目级“另存为”入口。
+    void saveProjectAs ();
+    // 将受支持的历史 XML/JSON 文件复制入当前项目并登记为项目资源。
+    void importProjectResource ();
     void closeProject ();
     void newWorkCell ();
     void reloadWorkCell ();

@@ -94,6 +94,88 @@ CollisionDetector::Ptr makeCollisionDetector (WorkCell::Ptr workcell)
     return rw::core::ownedPtr (new CollisionDetector (
         workcell, ProximityStrategyFactory::makeDefaultCollisionStrategy ()));
 }
+
+// 根据历史文件扩展名推导项目资源类型、默认目录和稳定 ID。只接受已有 Provider 的四类文件，
+// 这样导入后重新打开项目时不会因未知 kind 产生无法解释的加载行为。
+bool makeImportedProjectResource (const QString& sourcePath,
+                                  const rws::ProjectManifest& manifest,
+                                  rws::ProjectResource& resource,
+                                  QString* error)
+{
+    const QString filename = QFileInfo (sourcePath).fileName ();
+    const QString lowercaseFilename = filename.toLower ();
+    QString suffix;
+    QString idPrefix;
+    QString kind;
+    QString targetDirectory;
+    if (lowercaseFilename.endsWith (QStringLiteral (".wc.xml"))) {
+        suffix = QStringLiteral (".wc.xml");
+        idPrefix = QStringLiteral ("scene");
+        kind = QStringLiteral ("robwork.workcell");
+        targetDirectory = QStringLiteral ("scenes");
+    }
+    else if (lowercaseFilename.endsWith (QStringLiteral (".rmb.json"))) {
+        suffix = QStringLiteral (".rmb.json");
+        idPrefix = QStringLiteral ("model");
+        kind = QStringLiteral ("robwork.robot-model");
+        targetDirectory = QStringLiteral ("models");
+    }
+    else if (lowercaseFilename.endsWith (QStringLiteral (".requirements.json"))) {
+        suffix = QStringLiteral (".requirements.json");
+        idPrefix = QStringLiteral ("requirements");
+        kind = QStringLiteral ("rws.engineering-requirements");
+        targetDirectory = QStringLiteral ("requirements");
+    }
+    else if (lowercaseFilename.endsWith (QStringLiteral (".structure-optimization.json"))) {
+        suffix = QStringLiteral (".structure-optimization.json");
+        idPrefix = QStringLiteral ("optimization");
+        kind = QStringLiteral ("rws.structure-optimization");
+        targetDirectory = QStringLiteral ("optimizations");
+    }
+    else {
+        if (error != nullptr) {
+            *error = QString::fromUtf8 (
+                "仅支持导入 WorkCell (*.wc.xml)、机器人模型 (*.rmb.json)、工程需求 "
+                "(*.requirements.json) 或结构优化 (*.structure-optimization.json) 文件。");
+        }
+        return false;
+    }
+
+    // 资源 ID 不能直接采用用户文件名：空格、中文和符号虽可作为文件名，却不适合作为跨插件
+    // 依赖键。这里保留字母数字，其他连续字符归一化为单个连字符，形成可读且稳定的 ID。
+    const QString sourceBaseName = filename.left (filename.size () - suffix.size ());
+    QString normalizedName;
+    bool previousWasSeparator = false;
+    for (const QChar character : sourceBaseName) {
+        if (character.isLetterOrNumber ()) {
+            normalizedName.append (character.toLower ());
+            previousWasSeparator = false;
+        }
+        else if (!normalizedName.isEmpty () && !previousWasSeparator) {
+            normalizedName.append (QLatin1Char ('-'));
+            previousWasSeparator = true;
+        }
+    }
+    while (normalizedName.endsWith (QLatin1Char ('-')))
+        normalizedName.chop (1);
+    if (normalizedName.isEmpty ())
+        normalizedName = QStringLiteral ("imported");
+
+    const QString baseId = idPrefix + QLatin1Char ('.') + normalizedName;
+    QString candidateId = baseId;
+    int duplicateIndex = 2;
+    rws::ProjectResource existing;
+    // 同名资源通过递增序号保持可预测且不依赖随机 UUID，便于用户在清单中定位导入结果。
+    while (manifest.findResource (candidateId, existing))
+        candidateId = baseId + QLatin1Char ('-') + QString::number (duplicateIndex++);
+
+    resource.id = candidateId;
+    resource.kind = kind;
+    resource.path = targetDirectory + QLatin1Char ('/') + filename;
+    resource.ownership = QStringLiteral ("project");
+    resource.required = false;
+    return true;
+}
 }    // namespace
 
 RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
@@ -326,6 +408,11 @@ void RobWorkStudio::setupFileActions ()
         new QAction (QIcon (":/images/new.png"), tr ("&New Project..."), this);    // owned
     connect (newAction, SIGNAL (triggered ()), this, SLOT (newProject ()));
 
+    // 第四阶段新增：把历史 WorkCell 迁移为一个自包含的 rwproj 项目。
+    QAction* migrateWorkCellAction =
+        new QAction (tr ("Create Project from &WorkCell..."), this);    // owned
+    connect (migrateWorkCellAction, SIGNAL (triggered ()), this, SLOT (createProjectFromWorkCell ()));
+
     QAction* openAction =
         new QAction (QIcon (":/images/open.png"), tr ("&Open Project..."), this);    // owned
     connect (openAction, SIGNAL (triggered ()), this, SLOT (openProject ()));
@@ -337,6 +424,13 @@ void RobWorkStudio::setupFileActions ()
     QAction* saveAction =
         new QAction (QIcon (":/images/save.png"), tr ("&Save Project"), this);    // owned
     connect (saveAction, SIGNAL (triggered ()), this, SLOT (saveProject ()));
+
+    // 第四阶段新增：项目级“另存为”（克隆到新目录）与历史资源导入入口。
+    QAction* saveAsAction = new QAction (tr ("Save Project &As..."), this);    // owned
+    connect (saveAsAction, SIGNAL (triggered ()), this, SLOT (saveProjectAs ()));
+
+    QAction* importResourceAction = new QAction (tr ("&Import Project Resource..."), this);    // owned
+    connect (importResourceAction, SIGNAL (triggered ()), this, SLOT (importProjectResource ()));
 
     QAction* openResourceAction = new QAction (tr ("Open Single &Resource..."), this);    // owned
     connect (openResourceAction, SIGNAL (triggered ()), this, SLOT (open ()));
@@ -365,9 +459,12 @@ void RobWorkStudio::setupFileActions ()
     ////
     _fileMenu = menuBar ()->addMenu (tr ("&File"));
     _fileMenu->addAction (newAction);
+    _fileMenu->addAction (migrateWorkCellAction);
     _fileMenu->addAction (openAction);
     _fileMenu->addAction (closeAction);
     _fileMenu->addAction (saveAction);
+    _fileMenu->addAction (saveAsAction);
+    _fileMenu->addAction (importResourceAction);
     _fileMenu->addAction (reloadAction);
     _fileMenu->addSeparator ();
 
@@ -913,6 +1010,156 @@ void RobWorkStudio::newProject ()
     _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
     updateLastFiles ();
     updateProjectWindowTitle ();
+}
+
+// 从既有 WorkCell 创建项目：项目文件和资源复制完成后，先释放旧项目 Provider，再复用统一
+// 的 openProjectFile 加载新项目。这样 openProjectFile 内部的“校验后切换”仍是唯一加载入口。
+void RobWorkStudio::createProjectFromWorkCell ()
+{
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    const QString sourceWorkCell = QFileDialog::getOpenFileName (
+        this,
+        tr ("Create Project from WorkCell"),
+        previousDirectory,
+        tr ("WorkCell Files (*.wc.xml *.wc *.xml);;All Files (*.*)"));
+    if (sourceWorkCell.isEmpty ())
+        return;
+
+    QString projectFile = QFileDialog::getSaveFileName (
+        this,
+        tr ("New RobWorkStudio Project"),
+        QFileInfo (sourceWorkCell).absolutePath (),
+        tr ("RobWorkStudio Project (*.rwproj)"));
+    if (projectFile.isEmpty ())
+        return;
+    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
+        projectFile += QStringLiteral (".rwproj");
+
+    if (!confirmProjectClose ())
+        return;
+
+    QString error;
+    if (!_projectManager.createProjectFromWorkCell (projectFile, sourceWorkCell, &error)) {
+        QMessageBox::critical (this, tr ("Create Project Failed"), error);
+        return;
+    }
+
+    // createProjectFromWorkCell 已经切换了清单上下文，因此旧 Provider 必须在调用统一加载入口
+    // 前关闭；否则旧文档仍会占用旧文件路径，并可能把后续保存请求发送到新项目清单。
+    _projectDocuments.closeResources ();
+    closeWorkCell ();
+    if (!openProjectFile (projectFile, &error)) {
+        QMessageBox::critical (this, tr ("Open Created Project Failed"), error);
+        return;
+    }
+
+    _settingsMap->set< std::string > ("PreviousOpenDirectory",
+                                      QFileInfo (projectFile).absolutePath ().toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (projectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
+}
+
+// 项目另存为：先让所有 Provider 将内存内容提交到旧项目，再由 ProjectManager 事务式克隆；
+// 克隆成功后重新打开目标项目，确保 Registry 中缓存的 resolvedPath 全部指向新目录。
+void RobWorkStudio::saveProjectAs ()
+{
+    if (!_projectManager.hasProject ()) {
+        QMessageBox::information (this, tr ("Save Project As"), tr ("No project is open."));
+        return;
+    }
+
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    QString projectFile = QFileDialog::getSaveFileName (
+        this,
+        tr ("Save RobWorkStudio Project As"),
+        previousDirectory,
+        tr ("RobWorkStudio Project (*.rwproj)"));
+    if (projectFile.isEmpty ())
+        return;
+    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
+        projectFile += QStringLiteral (".rwproj");
+    if (QDir::cleanPath (QFileInfo (projectFile).absoluteFilePath ()) ==
+        QDir::cleanPath (_projectManager.projectFilePath ())) {
+        QMessageBox::warning (this, tr ("Save Project As"), tr ("The target is the current project."));
+        return;
+    }
+
+    QString error;
+    if (!saveProjectInternal (&error)) {
+        QMessageBox::warning (this, tr ("Save Project Failed"), error);
+        return;
+    }
+    if (!_projectManager.cloneProject (projectFile, &error)) {
+        QMessageBox::warning (this, tr ("Save Project As Failed"), error);
+        return;
+    }
+
+    _projectDocuments.closeResources ();
+    closeWorkCell ();
+    if (!openProjectFile (projectFile, &error)) {
+        QMessageBox::critical (this, tr ("Open Cloned Project Failed"), error);
+        return;
+    }
+
+    _settingsMap->set< std::string > ("PreviousOpenDirectory",
+                                      QFileInfo (projectFile).absolutePath ().toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (projectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
+}
+
+// 导入历史业务文件：先根据扩展名确定 Provider kind 和项目内目录，再由 ProjectManager 完成
+// 原子复制及清单更新。当前版本不强行替换正在编辑的文档，用户保存后重新打开即可加载新增资源。
+void RobWorkStudio::importProjectResource ()
+{
+    if (!_projectManager.hasProject ()) {
+        QMessageBox::information (this, tr ("Import Project Resource"), tr ("No project is open."));
+        return;
+    }
+
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    const QString sourcePath = QFileDialog::getOpenFileName (
+        this,
+        tr ("Import Project Resource"),
+        previousDirectory,
+        tr ("Supported Project Resources (*.wc.xml *.rmb.json *.requirements.json "
+            "*.structure-optimization.json);;All Files (*.*)"));
+    if (sourcePath.isEmpty ())
+        return;
+
+    ProjectResource resource;
+    QString error;
+    if (!makeImportedProjectResource (sourcePath, _projectManager.manifest (), resource, &error)) {
+        QMessageBox::warning (this, tr ("Import Project Resource Failed"), error);
+        return;
+    }
+    if (!_projectManager.importResource (sourcePath, resource, &error)) {
+        QMessageBox::warning (this, tr ("Import Project Resource Failed"), error);
+        return;
+    }
+
+    // 导入文件已经落盘，但清单仍处于脏状态；复用统一保存流程，让已打开 Provider 的修改和
+    // 新增资源登记使用同一个项目保存事务，避免只复制文件却丢失资源索引。
+    if (!saveProjectInternal (&error)) {
+        QMessageBox::warning (this, tr ("Save Imported Resource Failed"), error);
+        updateProjectWindowTitle ();
+        return;
+    }
+    updateProjectWindowTitle ();
+    QMessageBox::information (
+        this,
+        tr ("Project Resource Imported"),
+        tr ("The resource was imported. Reopen the project to load the new document."));
 }
 
 // 打开项目：弹文件选择对话框选中 .rwproj，统一走 openFile() 分派，

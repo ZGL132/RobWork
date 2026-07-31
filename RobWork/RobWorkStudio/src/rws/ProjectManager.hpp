@@ -23,12 +23,30 @@ class ProjectManager
                         const ProjectManifest& manifest,
                         QString* error = nullptr);
 
+    // 从已有 WorkCell 创建可自包含的项目：把源 XML 复制到目标项目的 scenes/main.wc.xml，
+    // 再写入带 mainWorkCell 入口的清单。源文件始终只读；任一步骤失败时不会替换当前项目。
+    bool createProjectFromWorkCell (const QString& projectFilePath,
+                                    const QString& sourceWorkCellPath,
+                                    QString* error = nullptr);
+
     // 打开既有项目：读取并校验 .rwproj 文件，预解析全部资源路径并检查 required
     // 资源是否真实存在；任一步失败都不会破坏当前已打开的项目上下文。
     bool openProject (const QString& projectFilePath, QString* error = nullptr);
 
     // 保存当前项目：把内存中的清单写回磁盘。没有打开任何项目时直接失败。
     bool saveProject (QString* error = nullptr);
+
+    // 把项目外的历史 XML/JSON 文件导入当前项目。resource.path 必须是项目内相对路径，
+    // ownership 为空时自动设为 project；复制成功后才更新内存清单并置脏，调用方随后通过
+    // saveProject 持久化清单。导入不加载 Provider，避免半加载状态影响当前编辑会话。
+    bool importResource (const QString& sourcePath,
+                         const ProjectResource& resource,
+                         QString* error = nullptr);
+
+    // 克隆当前项目到一个尚不存在的目标目录。只复制 ownership 为 project/generated 的文件，
+    // external 资源继续保留其原始引用；新清单生成独立 project.id，并在所有文件落盘后才切换
+    // 当前项目上下文，从而让“另存为”失败时仍能继续使用源项目。
+    bool cloneProject (const QString& targetProjectFilePath, QString* error = nullptr);
 
     // 关闭当前项目：清空项目文件路径与内存清单，并把脏标记复位。
     // 注意：本方法不会静默保存，丢弃未保存修改的决策权在上层 UI。
