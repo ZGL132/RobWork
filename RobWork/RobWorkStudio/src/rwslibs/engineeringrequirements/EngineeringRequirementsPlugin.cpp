@@ -1,6 +1,7 @@
 #include "EngineeringRequirementsPlugin.hpp"
 #include "GeometryFeatureResolver.hpp"
 #include "EngineeringRequirementsWidget.hpp"
+#include "OrientationRuleResolver.hpp"
 
 #include <rws/RobWorkStudio.hpp>
 #include <rws/RWStudioView3D.hpp>
@@ -14,6 +15,8 @@
 #include <rw/models/WorkCell.hpp>
 
 #include <QTimer>
+
+#include <string>
 
 namespace {
 
@@ -64,8 +67,8 @@ rw::math::Transform3D<> stationTransform(const rws::PoseTask& station,
                                          const rw::models::WorkCell& workcell,
                                          const rw::kinematics::State& state, bool* valid)
 {
-    std::array<double, 3> position = station.position;
-    std::array<double, 3> rpyDeg = station.rpyDeg;
+    // Resolve on a copy so marker refreshes never overwrite the authored task.
+    rws::PoseTask resolvedStation = station;
 
     // 1. 如果工位来源是“几何特征绑定”，先实时解算其在参考系下的相对位姿
     if (station.source == rws::PoseTaskSource::GeometryFeature) {
@@ -75,8 +78,20 @@ rw::math::Transform3D<> stationTransform(const rws::PoseTask& station,
             if (valid != nullptr) *valid = false; // 特征解算失败（可能场景中模型被删除）
             return rw::math::Transform3D<>::identity();
         }
-        position = resolution.position;
-        rpyDeg = resolution.rpyDeg;
+        resolvedStation.position = resolution.position;
+        resolvedStation.rpyDeg = resolution.rpyDeg;
+    }
+
+    // A geometry feature provides the current location; an orientation rule then
+    // supplies the final rotation for the same current State.  This ordering is
+    // essential for PointAtTarget because it uses the station position as source.
+    if (resolvedStation.orientation.mode != rws::OrientationMode::Fixed) {
+        std::string orientationError;
+        if (!rws::OrientationRuleResolver::applyToStation(
+                resolvedStation, workcell, state, &orientationError)) {
+            if (valid != nullptr) *valid = false;
+            return rw::math::Transform3D<>::identity();
+        }
     }
 
     // 2. 查找工位所引用的基准参考系 (Reference Frame)
@@ -95,8 +110,11 @@ rw::math::Transform3D<> stationTransform(const rws::PoseTask& station,
     // 4. 构建工位相对于基准系的齐次变换矩阵 T_reference_station（角度转弧度）
     const double degToRad = rw::math::Pi / 180.0;
     const rw::math::Transform3D<> referenceTstation(
-        rw::math::Vector3D<>(position[0], position[1], position[2]),
-        rw::math::RPY<>(rpyDeg[0] * degToRad, rpyDeg[1] * degToRad, rpyDeg[2] * degToRad));
+        rw::math::Vector3D<>(resolvedStation.position[0], resolvedStation.position[1],
+                             resolvedStation.position[2]),
+        rw::math::RPY<>(resolvedStation.rpyDeg[0] * degToRad,
+                        resolvedStation.rpyDeg[1] * degToRad,
+                        resolvedStation.rpyDeg[2] * degToRad));
 
     // 5. 矩阵乘法组合：T_world_station = T_world_reference * T_reference_station
     return worldTreference * referenceTstation;
