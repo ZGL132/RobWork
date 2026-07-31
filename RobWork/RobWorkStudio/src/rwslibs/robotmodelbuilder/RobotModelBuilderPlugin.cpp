@@ -49,6 +49,15 @@ RobotModelBuilderPlugin::~RobotModelBuilderPlugin ()
 void RobotModelBuilderPlugin::initialize ()
 {
     _widget = new RobotModelBuilderWidget (this);
+    // 项目上下文独立于 WorkCell 是否已保存或是否包含可转换机器人。插件初始化后立即订阅，
+    // 并主动读取一次当前目录，确保在“新建空项目后再打开插件”时也不会回退到用户主目录。
+    if (getRobWorkStudio () != NULL) {
+        connect (getRobWorkStudio (), &RobWorkStudio::projectContextChanged, this,
+                 [this] (const QString& projectDirectory) {
+                     _widget->setProjectOutputDirectory (projectDirectory);
+                 });
+        _widget->setProjectOutputDirectory (getRobWorkStudio ()->projectDirectory ());
+    }
     // 当 Widget 完成 "Save and Load" 操作时,会发出场景文件名,我们在这里负责真正去加载它
     connect (_widget, SIGNAL (loadSceneRequested (const QString&)), this,
              SLOT (loadSceneFile (const QString&)));
@@ -56,10 +65,15 @@ void RobotModelBuilderPlugin::initialize ()
     _projectProvider = new CallbackProjectDocumentProvider (
         QStringLiteral ("rws.robot-model-builder"),
         QStringLiteral ("robwork.robot-model"),
-        [this] (const QString& path, const ProjectDocumentContext&, QString* error) {
+        [this] (const QString& path, const ProjectDocumentContext& context, QString* error) {
+            // Provider 每次加载前重申项目目录，旧版本 JSON 中的 saveDirectory 不得覆盖它。
+            _widget->setProjectOutputDirectory (context.projectDirectory);
             return _widget->loadProjectDocument (path, error);
         },
-        [this] (const QString& targetPath, const ProjectDocumentContext&, QString* error) {
+        [this] (const QString& targetPath, const ProjectDocumentContext& context, QString* error) {
+            // 保存事务写入临时文件，targetPath 不在正式项目目录；只能使用 Context 提供的
+            // 项目根推导输出目录，不能误把暂存目录作为 XML 生成位置。
+            _widget->setProjectOutputDirectory (context.projectDirectory);
             return _widget->saveProjectDocument (targetPath, error);
         },
         CallbackProjectDocumentProvider::CanCloseHandler (),
@@ -108,7 +122,8 @@ void RobotModelBuilderPlugin::close ()
 //
 //  工作流程:
 //    1) 指针有效性防御检查：确认 UI 界面控件 (_widget) 与场景指针 (workcell) 均非空；
-//    2) 保存路径推导：通过场景对象的磁盘文件信息推算 saveDirectory 目录；
+//    2) 输出路径决策：有项目上下文时固定使用 <项目根>/generated/robot-models；仅在独立
+//       打开 WorkCell 且没有 rwproj 时，才通过场景对象的磁盘文件信息推算兼容性目录；
 //    3) 核心反向转换：调用 WorkCellConverter::convert，结合内存 C++ 对象与磁盘源 XML
 //       无损提取/缝合出 RobotModelSpec 数据模型；
 //    4) 可建模模型判定：调用 WorkCellConverter::hasConvertibleRobotModel 检查转换出的 spec
@@ -128,9 +143,14 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
     // 用于收集场景转换与文件解析过程中的非致命警告信息
     QStringList warnings;
 
-    // ---- 2. 自动推导保存路径 ----
-    // 优先从 workcell 对象的元数据中提取绝对磁盘路径，并算出其所在目录
-    const std::string saveDirectory = WorkCellConverter::inferSaveDirectory (*workcell);
+    // ---- 2. 解析项目受管输出路径 ----
+    // 有 rwproj 时，输出目录必须来自主窗口项目上下文；只有独立打开 WorkCell 时才沿用
+    // 原有文件目录推导，避免项目内编辑把 XML 写回历史样例或用户主目录。
+    if (getRobWorkStudio () != NULL)
+        _widget->setProjectOutputDirectory (getRobWorkStudio ()->projectDirectory ());
+    const std::string saveDirectory = _widget->projectOutputDirectory ().isEmpty ()
+                                          ? WorkCellConverter::inferSaveDirectory (*workcell)
+                                          : _widget->projectOutputDirectory ().toStdString ();
 
     // ---- 3. 执行核心场景转换 ----
     // 将内存中的 WorkCell 对象、默认状态 (State) 及目标保存目录传入转换器，

@@ -179,13 +179,10 @@ int main (int argc, char** argv)
     if (!isSelectionCombo (exclusionPairs, 0, 1) || !isSelectionCombo (exclusionPairs, 0, 2))
         return fail ("Collision exclusion frame pairs should use selection combos.");
 
-    QTemporaryDir outputDirectory;
-    if (!outputDirectory.isValid ())
-        return fail ("Could not create a temporary output directory.");
     QLineEdit* robotName = findLineEdit (widget, "GenericSixAxis");
-    QLineEdit* saveDirectory = findLineEdit (widget, QDir::homePath ());
-    if (robotName == NULL || saveDirectory == NULL)
-        return fail ("Default output fields were not found.");
+    QLineEdit* removedSaveDirectory = findLineEdit (widget, QDir::homePath ());
+    if (robotName == NULL || removedSaveDirectory != NULL)
+        return fail ("RobotModelBuilder should not expose a standalone save directory field.");
 
     // 项目 Provider 通过这组无对话框接口读写资源。先建立保存后的干净基线，再修改
     // 一个会写入 RobotModelSpec 的字段，验证 Widget 用规范 JSON 快照而非焦点状态
@@ -193,10 +190,19 @@ int main (int argc, char** argv)
     QTemporaryDir projectDirectory;
     if (!projectDirectory.isValid ())
         return fail ("Could not create a temporary project resource directory.");
+    widget.setProjectOutputDirectory (projectDirectory.path ());
+    const QString generatedDirectory =
+        QDir (projectDirectory.path ()).filePath ("generated/robot-models");
+    if (!QDir (generatedDirectory).exists ())
+        return fail ("Project output directory should be created inside the project directory.");
     const QString projectDocument = projectDirectory.filePath ("robot-model.json");
     QString projectError;
     if (!widget.saveProjectDocument (projectDocument, &projectError))
         return fail ("Could not save the RobotModelBuilder project document.");
+    QFile projectDocumentFile (projectDocument);
+    if (!projectDocumentFile.open (QFile::ReadOnly) ||
+        projectDocumentFile.readAll ().contains ("\"saveDirectory\""))
+        return fail ("Project RobotModelBuilder JSON must not persist saveDirectory.");
     widget.markProjectDocumentClean ();
     if (widget.isProjectDocumentDirty ())
         return fail ("Freshly saved RobotModelBuilder project document should be clean.");
@@ -209,8 +215,7 @@ int main (int argc, char** argv)
         return fail ("Reloaded RobotModelBuilder project document should be clean.");
 
     robotName->setText ("OverwriteCheck");
-    saveDirectory->setText (outputDirectory.path ());
-    const QString deviceFilePath = outputDirectory.filePath ("OverwriteCheck.wc.xml");
+    const QString deviceFilePath = QDir (generatedDirectory).filePath ("OverwriteCheck.wc.xml");
     QFile deviceFile (deviceFilePath);
     if (!deviceFile.open (QFile::WriteOnly | QFile::Text) ||
         deviceFile.write ("existing output") < 0)

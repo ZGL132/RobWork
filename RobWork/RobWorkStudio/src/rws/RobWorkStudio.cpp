@@ -1195,6 +1195,15 @@ void RobWorkStudio::notifyProjectDocumentChanged ()
     updateProjectWindowTitle ();
 }
 
+QString RobWorkStudio::projectDirectory () const
+{
+    // 项目资源解析器以 .rwproj 所在目录为边界，这里返回同一目录作为插件生成物的唯一
+    // 合法根；无项目时明确返回空，调用方可切换到独立 WorkCell 工作流。
+    if (!_projectManager.hasProject ())
+        return QString ();
+    return QFileInfo (_projectManager.projectFilePath ()).absolutePath ();
+}
+
 // 保存项目：把当前清单写回 .rwproj 文件；失败时弹出警告并保留原上下文。
 void RobWorkStudio::saveProject ()
 {
@@ -1611,6 +1620,10 @@ void RobWorkStudio::updateProjectWindowTitle ()
     }
     title += QStringLiteral ("RobWorkStudio v") + QString::fromLatin1 (RW_VERSION);
     setWindowTitle (title);
+
+    // 标题刷新恰好覆盖项目创建、打开、关闭和另存为后的所有稳定状态。信号由插件自行
+    // 去重处理，因此即使普通脏状态刷新重复发出，也不会重复创建目录或改变模型内容。
+    Q_EMIT projectContextChanged (projectDirectory ());
 }
 
 void RobWorkStudio::openWorkCellFile (const QString& filename)

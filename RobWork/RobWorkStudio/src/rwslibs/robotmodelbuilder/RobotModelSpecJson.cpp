@@ -711,7 +711,10 @@ QJsonObject RobotModelSpecJson::toObject(const RobotModelSpec& spec)
     QJsonObject obj;
 
     obj["robotName"]             = QString::fromStdString(spec.robotName);
-    obj["saveDirectory"]         = QString::fromStdString(spec.saveDirectory);
+    // saveDirectory 是 XML 写出时的运行时目录。项目模式会在保存前清空它，使 .rmb.json
+    // 不携带机器相关的绝对路径；旧版独立工作流仍可在字段非空时保持原有序列化兼容。
+    if (!spec.saveDirectory.empty())
+        obj["saveDirectory"] = QString::fromStdString(spec.saveDirectory);
     obj["mode"]                  = kinematicsViewModeToString(spec.mode);
     obj["exportDhJointsAdvanced"] = spec.exportDhJointsAdvanced;
     obj["showFrameAxes"]         = spec.showFrameAxes;

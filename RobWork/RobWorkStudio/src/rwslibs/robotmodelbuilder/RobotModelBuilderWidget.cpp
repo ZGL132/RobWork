@@ -359,6 +359,9 @@ bool RobotModelBuilderWidget::loadProjectDocument (const QString& path, QString*
 
     // 解析和 Schema 校验全部成功后才替换可视模型。项目打开失败时，用户当前正在编辑的
     // 临时模型不会被半截 JSON 覆盖。
+    // 兼容旧 .rmb.json 中的 saveDirectory 字段，但不信任其值。项目 Provider 已先注入当前
+    // 项目目录，因此载入后立即覆盖为受管目录，防止旧工程路径在新项目中复活。
+    parsed.saveDirectory = effectiveSaveDirectory ().toStdString ();
     fillFromSpec (parsed);
     _projectCleanSnapshot = projectDocumentSnapshot ();
     _projectSnapshotActive = true;
@@ -417,7 +420,51 @@ bool RobotModelBuilderWidget::eventFilter (QObject* watched, QEvent* event)
 // 保证“比较”与“写盘”使用同一份序列化规则。
 QByteArray RobotModelBuilderWidget::projectDocumentSnapshot () const
 {
-    return QByteArray::fromStdString (RobotModelSpecJson::toJson (collectSpec ()));
+    // 项目文档只保存可迁移的模型定义。XmlWriter 所需的 saveDirectory 在运行时由项目目录
+    // 推导，不能写进 .rmb.json，否则项目复制或移动后会重新指向创建机器上的旧绝对路径。
+    RobotModelSpec projectSpec = collectSpec ();
+    projectSpec.saveDirectory.clear ();
+    return QByteArray::fromStdString (RobotModelSpecJson::toJson (projectSpec));
+}
+
+// 设置项目受管输出目录（仅内存，不写入 .rmb.json）。目录为空表示独立 WorkCell 工作流。
+void RobotModelBuilderWidget::setProjectOutputDirectory (const QString& projectDirectory)
+{
+    QString outputDirectory;
+    if (!projectDirectory.trimmed ().isEmpty ()) {
+        // 产物统一落在项目目录下的固定子目录，而非项目资源 JSON 所在的 models 目录，避免
+        // XML、sidecar 与用户导入的模型快照混在一起，也让项目复制时保留明确的生成物边界。
+        outputDirectory = QDir::cleanPath (
+            QDir (QFileInfo (projectDirectory).absoluteFilePath ()).filePath (
+                QStringLiteral ("generated/robot-models")));
+        QDir ().mkpath (outputDirectory);
+    }
+    // 主窗口标题刷新会频繁发出 projectContextChanged；目录未变化时直接返回，
+    // 避免重复重排输出字段并触发不必要的预览重建。
+    if (_projectOutputDirectory == outputDirectory)
+        return;
+
+    _projectOutputDirectory = outputDirectory;
+    const bool projectManaged = !_projectOutputDirectory.isEmpty ();
+    // 历史导入文件布局可能包含相对上级目录或绝对路径。在项目模式下禁用该选项并清空
+    // 已显示的目录成分，确保每个输出字段仅表示文件名，最终只能写入受管输出目录。
+    _preserveImportedFileLayout->setEnabled (!projectManaged);
+    if (projectManaged) {
+        _preserveImportedFileLayout->setChecked (false);
+        for (QLineEdit* outputField :
+             {_deviceFile, _sceneFile, _dynamicWorkCellFile, _collisionSetupFile}) {
+            outputField->setText (QFileInfo (outputField->text ().trimmed ()).fileName ());
+        }
+    }
+    updateOutputFilePlaceholders ();
+    generatePreview ();
+}
+
+QString RobotModelBuilderWidget::effectiveSaveDirectory () const
+{
+    // 独立 WorkCell 工作流没有 .rwproj 上下文时保留旧默认值；一旦主窗口提供项目目录，
+    // 所有生成、预览和 URDF 导入都会改用项目内目录，绝不采纳历史 JSON 中的 saveDirectory。
+    return _projectOutputDirectory.isEmpty () ? QDir::homePath () : _projectOutputDirectory;
 }
 
 // =============================================================================
@@ -437,14 +484,6 @@ void RobotModelBuilderWidget::buildUi ()
     _robotName        = new QLineEdit ();
 
     // 保存目录行:文本框 + Browse 按钮
-    QWidget* saveWidget      = new QWidget ();
-    QHBoxLayout* saveLayout  = new QHBoxLayout (saveWidget);
-    _saveDirectory           = new QLineEdit ();
-    QPushButton* browse      = new QPushButton ("Browse");
-    saveLayout->setContentsMargins (0, 0, 0, 0);
-    saveLayout->addWidget (_saveDirectory);
-    saveLayout->addWidget (browse);
-
     // 模式选择下拉框
     _mode = new QComboBox ();
     _mode->addItem ("Joint + RPY + Pos");
@@ -467,7 +506,6 @@ void RobotModelBuilderWidget::buildUi ()
     optionLay->addStretch ();
 
     form->addRow ("Robot name", _robotName);
-    form->addRow ("Save directory", saveWidget);
     form->addRow ("Mode", _mode);
     form->addRow ("Options", options);
     root->addLayout (form);
@@ -822,7 +860,6 @@ void RobotModelBuilderWidget::buildUi ()
     // -------------------------------------------------------------------------
     //  信号 -> 槽连接
     // -------------------------------------------------------------------------
-    connect (browse, SIGNAL (clicked ()), this, SLOT (browseSaveDirectory ()));
     connect (_robotName, &QLineEdit::textChanged, this,
              [this] (const QString&) { updateOutputFilePlaceholders (); });
     connect (_mode, SIGNAL (currentIndexChanged (int)), this, SLOT (modeChanged (int)));
@@ -877,7 +914,9 @@ void RobotModelBuilderWidget::buildUi ()
 void RobotModelBuilderWidget::resetDefaults ()
 {
     _importedDocument = ImportedDocumentSpec ();
-    fillFromSpec (RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::homePath ()));
+    // 默认模型同样使用当前项目受管目录；没有项目时 effectiveSaveDirectory 才会回退到
+    // 独立工作流默认目录，避免“新建项目但仍输出到用户主目录”的窗口期。
+    fillFromSpec (RobotModelXmlWriter::makeDefaultSixAxisModel (effectiveSaveDirectory ()));
     generatePreview ();
 }
 
@@ -949,7 +988,11 @@ void RobotModelBuilderWidget::saveXml ()
         showErrors (errors);
         return;
     }
-    if (!RobotModelXmlWriter::saveSpecSidecar (spec, errors)) {
+    // 生成目录中的 sidecar 也会被后续作为项目资源导入，项目模式下同样不能保存绝对目录。
+    RobotModelSpec sidecarSpec = spec;
+    if (!_projectOutputDirectory.isEmpty ())
+        sidecarSpec.saveDirectory.clear ();
+    if (!RobotModelXmlWriter::saveSpecSidecar (sidecarSpec, errors)) {
         showErrors (errors);
         return;
     }
@@ -980,7 +1023,11 @@ void RobotModelBuilderWidget::saveAndLoad ()
         showErrors (errors);
         return;
     }
-    if (!RobotModelXmlWriter::saveSpecSidecar (spec, errors)) {
+    // Save and Load 生成的 sidecar 与普通保存具有相同的可搬迁性约束。
+    RobotModelSpec sidecarSpec = spec;
+    if (!_projectOutputDirectory.isEmpty ())
+        sidecarSpec.saveDirectory.clear ();
+    if (!RobotModelXmlWriter::saveSpecSidecar (sidecarSpec, errors)) {
         showErrors (errors);
         return;
     }
@@ -993,18 +1040,6 @@ void RobotModelBuilderWidget::saveAndLoad ()
         Q_EMIT loadSceneRequested (RobotModelXmlWriter::serialDeviceFilePath (spec));
         setStatus ("XML files saved. Loading robot model...");
     }
-}
-
-// =============================================================================
-//  browseSaveDirectory()
-//  说明: 弹出原生目录选择对话框,把结果回填到 _saveDirectory。
-// =============================================================================
-void RobotModelBuilderWidget::browseSaveDirectory ()
-{
-    const QString dir =
-        QFileDialog::getExistingDirectory (this, "Choose save directory", _saveDirectory->text ());
-    if (!dir.isEmpty ())
-        _saveDirectory->setText (dir);
 }
 
 void RobotModelBuilderWidget::updateOutputFilePlaceholders ()
@@ -1061,15 +1096,15 @@ void RobotModelBuilderWidget::importUrdf ()
     const QString path = QFileDialog::getOpenFileName (
         this,
         "Import URDF",
-        _saveDirectory->text (),
+        effectiveSaveDirectory (),
         "URDF files (*.urdf *.xml);;All files (*)");
     if (path.isEmpty ())
         return;
 
     UrdfImportOptions options;
-    options.saveDirectory = _saveDirectory->text ().trimmed ();
-    if (options.saveDirectory.isEmpty ())
-        options.saveDirectory = QFileInfo (path).absolutePath ();
+    // URDF 的读取位置可以在项目外，但生成后的模型/XML 必须返回当前项目的受管输出目录。
+    // 因此不再以 URDF 所在目录或用户输入目录作为 saveDirectory 的回退值。
+    options.saveDirectory = effectiveSaveDirectory ();
     const QDir urdfDir (QFileInfo (path).absolutePath ());
     options.packageRoots << urdfDir.absolutePath ();
     QDir parentDir = urdfDir;
@@ -1598,14 +1633,21 @@ void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
 {
     _syncingTables = true;
     _robotName->setText (QString::fromStdString (spec.robotName));
-    _saveDirectory->setText (QString::fromStdString (spec.saveDirectory));
-    _deviceFile->setText (QString::fromStdString (spec.exportLayout.deviceFile));
-    _sceneFile->setText (QString::fromStdString (spec.exportLayout.sceneFile));
+    // 项目模式的输出字段只允许文件名。旧 JSON/WorkCell 导入可能携带完整路径，显示和收集时
+    // 都将其压平为文件名，防止路径片段经由可编辑控件重新逃逸出项目输出目录。
+    const auto outputFileName = [this] (const std::string& value) {
+        const QString path = QString::fromStdString (value).trimmed ();
+        return _projectOutputDirectory.isEmpty () ? path : QFileInfo (path).fileName ();
+    };
+    _deviceFile->setText (outputFileName (spec.exportLayout.deviceFile));
+    _sceneFile->setText (outputFileName (spec.exportLayout.sceneFile));
     _dynamicWorkCellFile->setText (
-        QString::fromStdString (spec.exportLayout.dynamicWorkCellFile));
+        outputFileName (spec.exportLayout.dynamicWorkCellFile));
     _collisionSetupFile->setText (
-        QString::fromStdString (spec.exportLayout.collisionSetupFile));
-    _preserveImportedFileLayout->setChecked (spec.exportLayout.preserveImportedFileLayout);
+        outputFileName (spec.exportLayout.collisionSetupFile));
+    _preserveImportedFileLayout->setChecked (
+        _projectOutputDirectory.isEmpty () && spec.exportLayout.preserveImportedFileLayout);
+    _preserveImportedFileLayout->setEnabled (_projectOutputDirectory.isEmpty ());
     updateOutputFilePlaceholders ();
     _mode->setCurrentIndex (spec.mode == KinematicsViewMode::DHProjection ? 1 : 0);
     _showFrameAxes->setChecked (spec.showFrameAxes);
@@ -1656,16 +1698,22 @@ void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
 RobotModelSpec RobotModelBuilderWidget::collectSpec () const
 {
     RobotModelSpec spec;
+    // 项目模式把输出布局限制为纯文件名；XmlWriter 会统一以前缀受管目录拼接这些名称，
+    // 因此即使旧工程或粘贴操作提供了绝对路径、盘符或 ../，也无法让输出越出项目目录。
+    const auto outputFileName = [this] (const QLineEdit* field) {
+        const QString value = field->text ().trimmed ();
+        return (_projectOutputDirectory.isEmpty () ? value : QFileInfo (value).fileName ())
+            .toStdString ();
+    };
     spec.imported = _importedDocument;
-    spec.exportLayout.deviceFile = _deviceFile->text ().trimmed ().toStdString ();
-    spec.exportLayout.sceneFile = _sceneFile->text ().trimmed ().toStdString ();
-    spec.exportLayout.dynamicWorkCellFile =
-        _dynamicWorkCellFile->text ().trimmed ().toStdString ();
-    spec.exportLayout.collisionSetupFile =
-        _collisionSetupFile->text ().trimmed ().toStdString ();
-    spec.exportLayout.preserveImportedFileLayout = _preserveImportedFileLayout->isChecked ();
+    spec.exportLayout.deviceFile = outputFileName (_deviceFile);
+    spec.exportLayout.sceneFile = outputFileName (_sceneFile);
+    spec.exportLayout.dynamicWorkCellFile = outputFileName (_dynamicWorkCellFile);
+    spec.exportLayout.collisionSetupFile = outputFileName (_collisionSetupFile);
+    spec.exportLayout.preserveImportedFileLayout =
+        _projectOutputDirectory.isEmpty () && _preserveImportedFileLayout->isChecked ();
     spec.robotName         = _robotName->text ().toStdString ();
-    spec.saveDirectory     = _saveDirectory->text ().toStdString ();
+    spec.saveDirectory     = effectiveSaveDirectory ().toStdString ();
     spec.mode              = _mode->currentIndex () == 1 ? KinematicsViewMode::DHProjection
                                                           : KinematicsViewMode::JointRPYPos;
     spec.exportDhJointsAdvanced = _exportDhAdvanced->isChecked ();

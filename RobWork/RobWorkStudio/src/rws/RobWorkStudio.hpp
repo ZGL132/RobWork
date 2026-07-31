@@ -110,6 +110,10 @@ class RobWorkStudio : public QMainWindow
      */
     void notifyProjectDocumentChanged ();
 
+    // 返回当前项目根目录；无项目时返回空字符串。插件只能把它作为项目内运行时输出的根，
+    // 不能将其持久化到业务 JSON，以保证项目被复制或移动后仍然可用。
+    QString projectDirectory () const;
+
     /**
      * @brief returns the property map of this instance of robwork studio
      * @return propertymap
@@ -662,6 +666,11 @@ class RobWorkStudio : public QMainWindow
      * @return a reference to the settings.
      */
     rw::core::PropertyMap& getSettings () { return *_settingsMap; }
+
+  Q_SIGNALS:
+    // 项目创建、打开、另存为或关闭后广播新的根目录。业务插件据此刷新运行时输出位置，
+    // 不需要从 WorkCell 的历史文件路径推导目录，也不会在项目间残留旧绝对路径。
+    void projectContextChanged (const QString& projectDirectory);
 
   private:
     // all events are defined here

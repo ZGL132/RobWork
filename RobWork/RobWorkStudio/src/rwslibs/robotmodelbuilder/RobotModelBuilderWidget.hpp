@@ -27,6 +27,11 @@ class RobotModelBuilderWidget : public QWidget
     explicit RobotModelBuilderWidget (QWidget* parent = NULL);
     void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
 
+    // 项目模式下的 XML 产物统一写入 <项目目录>/generated/robot-models；空路径表示
+    // 独立 WorkCell 工作流，继续使用运行时默认目录但不在界面中暴露可编辑目录输入。
+    void setProjectOutputDirectory (const QString& projectDirectory);
+    QString projectOutputDirectory () const { return _projectOutputDirectory; }
+
     /**
      * @brief 从项目 Provider 传入的已解析路径加载模型 JSON，不显示文件对话框。
      *
@@ -52,7 +57,6 @@ class RobotModelBuilderWidget : public QWidget
     void saveXml ();
     void saveAndLoad ();
     void importUrdf ();
-    void browseSaveDirectory ();
     void modeChanged (int index);
     void addPose ();
     void removeSelectedPose ();
@@ -93,6 +97,9 @@ class RobotModelBuilderWidget : public QWidget
     void updateSceneUiEnabled ();
     void updateOutputFilePlaceholders ();
     bool confirmOutputOverwrite (const RobotModelSpec& spec);
+    // 生成模型时 saveDirectory 仍是 XmlWriter 的运行时必需字段；本函数优先返回项目受管
+    // 输出目录，避免任何项目内操作回退到用户主目录或历史模型记录的绝对路径。
+    QString effectiveSaveDirectory () const;
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
     bool eventFilter (QObject* watched, QEvent* event) override;
@@ -131,7 +138,6 @@ class RobotModelBuilderWidget : public QWidget
 
   private:
     QLineEdit* _robotName;
-    QLineEdit* _saveDirectory;
     QLineEdit* _deviceFile;
     QLineEdit* _sceneFile;
     QLineEdit* _dynamicWorkCellFile;
@@ -181,6 +187,9 @@ class RobotModelBuilderWidget : public QWidget
 
     bool _syncingTables = false;
     bool _importingFromWorkCell = false;
+    // 仅在内存中保存的项目输出根目录，不序列化到 .rmb.json；项目整体移动后会由主窗口
+    // 的 projectContextChanged 信号重新计算，因而不会留下机器相关的绝对路径。
+    QString _projectOutputDirectory;
     ImportedDocumentSpec _importedDocument;
     QByteArray _projectCleanSnapshot;
     bool _projectSnapshotActive = false;
