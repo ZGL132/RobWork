@@ -1,0 +1,135 @@
+#include "CallbackProjectDocumentProvider.hpp"
+
+#include "ProjectPathResolver.hpp"
+
+#include <utility>
+
+namespace rws {
+
+// 构造函数：按值接收标识与各回调并移动到成员。loadHandler/saveHandler 为必填，
+// canClose/close/clean 可选；未提供的扩展回调在对应生命周期操作中按默认行为处理。
+CallbackProjectDocumentProvider::CallbackProjectDocumentProvider (
+    QString providerId,
+    QString kind,
+    LoadHandler loadHandler,
+    SaveHandler saveHandler,
+    CanCloseHandler canCloseHandler,
+    CloseHandler closeHandler,
+    CleanHandler cleanHandler) :
+    _providerId (std::move (providerId)), _kind (std::move (kind)),
+    _loadHandler (std::move (loadHandler)), _saveHandler (std::move (saveHandler)),
+    _canCloseHandler (std::move (canCloseHandler)), _closeHandler (std::move (closeHandler)),
+    _cleanHandler (std::move (cleanHandler))
+{}
+
+// 返回构造时传入的插件身份标识，用于注册表查重。
+QString CallbackProjectDocumentProvider::providerId () const
+{
+    return _providerId;
+}
+
+// 本 Provider 只处理构造时声明的单一 kind。
+QStringList CallbackProjectDocumentProvider::supportedResourceKinds () const
+{
+    return {_kind};
+}
+
+bool CallbackProjectDocumentProvider::loadResource (const ProjectResource& resource,
+                                                    const ProjectDocumentContext& context,
+                                                    QString* error)
+{
+    QString resolvedPath;
+    // 路径安全必须在调用插件回调前完成。这样即使第三方插件的 JSON 加载器没有路径
+    // 校验能力，也无法借项目清单的 "../" 或绝对路径绕出项目根目录。
+    if (!ProjectPathResolver::resolveResource (
+            context.projectFilePath, resource, resolvedPath, error))
+        return false;
+    if (!_loadHandler || !_loadHandler (resolvedPath, context, error))
+        return false;
+
+    // 只有领域对象成功替换后才切换资源 ID 和清除脏状态；失败时仍保留此前已打开的
+    // 文档身份，避免保存操作错误地写入加载失败的新资源。
+    _resourceId = resource.id;
+    _dirty = false;
+    return true;
+}
+
+bool CallbackProjectDocumentProvider::saveResource (const ProjectResource& resource,
+                                                    const ProjectDocumentContext& context,
+                                                    const QString& targetPath,
+                                                    QString* error)
+{
+    if (resource.id != _resourceId) {
+        if (error != nullptr) {
+            *error = QString::fromUtf8 ("Provider“%1”未加载资源“%2”。")
+                         .arg (_providerId)
+                         .arg (resource.id);
+        }
+        return false;
+    }
+
+    // targetPath 是 ProjectSaveTransaction 创建的同目录暂存文件。回调不接收正式
+    // 资源路径，确保多文件保存中任一 Provider 暂存失败时不会污染上次成功版本。
+    if (!_saveHandler || !_saveHandler (targetPath, context, error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QString::fromUtf8 ("Provider“%1”保存资源“%2”失败。")
+                         .arg (_providerId)
+                         .arg (resource.id);
+        return false;
+    }
+    return true;
+}
+
+// 脏状态仅对当前持有的资源生效；资源 ID 不匹配时视为不脏。
+bool CallbackProjectDocumentProvider::isDirty (const QString& resourceId) const
+{
+    return resourceId == _resourceId && _dirty;
+}
+
+bool CallbackProjectDocumentProvider::canClose (const QString& resourceId, QString* reason) const
+{
+    if (resourceId != _resourceId)
+        return true;
+    // 后台计算等插件私有状态不能泄漏到 Registry；通过可选回调把“是否允许关闭”的
+    // 决策留在领域模块。未提供回调的普通 JSON 文档默认允许关闭。
+    return !_canCloseHandler || _canCloseHandler (reason);
+}
+
+void CallbackProjectDocumentProvider::markClean (const QString& resourceId)
+{
+    if (resourceId == _resourceId) {
+        _dirty = false;
+        // 此回调只在 ProjectSaveTransaction 全部资源提交成功后触发。Widget 因而不会
+        // 把“仅写入暂存文件”的中间状态误认为已经安全保存到正式项目资源。
+        if (_cleanHandler)
+            _cleanHandler ();
+    }
+}
+
+// 关闭当前资源：先通知插件的领域清理回调，再清空资源 ID 与脏标记；
+// 不是当前资源时是空操作。
+void CallbackProjectDocumentProvider::closeResource (const QString& resourceId)
+{
+    if (resourceId != _resourceId)
+        return;
+    if (_closeHandler)
+        _closeHandler ();
+    _resourceId.clear ();
+    _dirty = false;
+}
+
+// 直接置脏：插件应在领域数据确实变化后调用；未绑定资源时是空操作。
+void CallbackProjectDocumentProvider::markDirty ()
+{
+    if (!_resourceId.isEmpty ())
+        _dirty = true;
+}
+
+// 按插件领域快照的实测结果覆盖脏状态；dirty=false 用于用户把值改回原值时清脏。
+void CallbackProjectDocumentProvider::setDirty (bool dirty)
+{
+    if (!_resourceId.isEmpty ())
+        _dirty = dirty;
+}
+
+}    // namespace rws

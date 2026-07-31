@@ -935,6 +935,30 @@ int testWidgetExposesSemanticKeyStationInspector()
     return 0;
 }
 
+int testWidgetProjectDocumentSnapshotTracksRequirementEdits()
+{
+    rws::EngineeringRequirementsWidget widget;
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+    const QString projectDocument = projectDirectory.filePath("requirements.json");
+    QString error;
+
+    // 项目 Provider 调用 Widget 的无对话框入口。先保存并确认干净，再通过真实按钮
+    // 增加工位触发领域变更，最后重新加载资源，验证快照不会被普通导入导出路径污染。
+    REQUIRE(widget.saveProjectDocument(projectDocument, &error));
+    // rwproj 的正常打开流程会先通过 Provider 调用 loadProjectDocument；该步骤建立
+    // 资源路径和初始快照，单独导出文件本身不能替代“打开项目”。
+    REQUIRE(widget.loadProjectDocument(projectDocument, &error));
+    REQUIRE(!widget.isProjectDocumentDirty());
+    QPushButton* addPoseTask = widget.findChild<QPushButton*>("addRequirementPoseTaskButton");
+    REQUIRE(addPoseTask != nullptr);
+    addPoseTask->click();
+    REQUIRE(widget.isProjectDocumentDirty());
+    REQUIRE(widget.loadProjectDocument(projectDocument, &error));
+    REQUIRE(!widget.isProjectDocumentDirty());
+    return 0;
+}
+
 int testWidgetResolvesGeometryFeatureUsingLatestJogState()
 {
     // 构造一个可在 State 中移动的工装 Frame。默认状态保持原点，而模拟的
@@ -1081,6 +1105,8 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "widget") {
         QApplication app(argc, argv);
         if (testWidgetBuildsEngineeringRequirementWorkflow() != 0)
+            return 1;
+        if (testWidgetProjectDocumentSnapshotTracksRequirementEdits() != 0)
             return 1;
         if (testWidgetExposesSemanticKeyStationInspector() != 0)
             return 1;

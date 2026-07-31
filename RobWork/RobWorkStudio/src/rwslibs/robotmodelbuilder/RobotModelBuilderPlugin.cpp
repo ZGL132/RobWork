@@ -9,6 +9,7 @@
 #include "RobotModelBuilderWidget.hpp"
 #include "WorkCellConverter.hpp"
 
+#include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/RobWorkStudio.hpp>
 
 #include <rw/models/WorkCell.hpp>
@@ -23,6 +24,7 @@ using namespace rws;
 RobotModelBuilderPlugin::RobotModelBuilderPlugin () :
     RobWorkStudioPlugin ("RobotModelBuilder", QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png")),
     _widget (NULL),
+    _projectProvider (NULL),
     _ignoreNextOpenFromSelfLoad (false)
 {}
 
@@ -31,7 +33,11 @@ RobotModelBuilderPlugin::RobotModelBuilderPlugin () :
 //  说明: Qt 的对象父子机制会在本对象销毁时自动 delete _widget,无需手动释放。
 // -----------------------------------------------------------------------------
 RobotModelBuilderPlugin::~RobotModelBuilderPlugin ()
-{}
+{
+    // 主窗口在应用退出前先关闭项目文档；此时 Registry 不再访问 Provider，因此插件
+    // 可以安全释放自己的非 Qt Provider 对象，不把所有权错误转移给主窗口。
+    delete _projectProvider;
+}
 
 // -----------------------------------------------------------------------------
 //  initialize()
@@ -46,6 +52,36 @@ void RobotModelBuilderPlugin::initialize ()
     // 当 Widget 完成 "Save and Load" 操作时,会发出场景文件名,我们在这里负责真正去加载它
     connect (_widget, SIGNAL (loadSceneRequested (const QString&)), this,
              SLOT (loadSceneFile (const QString&)));
+
+    _projectProvider = new CallbackProjectDocumentProvider (
+        QStringLiteral ("rws.robot-model-builder"),
+        QStringLiteral ("robwork.robot-model"),
+        [this] (const QString& path, const ProjectDocumentContext&, QString* error) {
+            return _widget->loadProjectDocument (path, error);
+        },
+        [this] (const QString& targetPath, const ProjectDocumentContext&, QString* error) {
+            return _widget->saveProjectDocument (targetPath, error);
+        },
+        CallbackProjectDocumentProvider::CanCloseHandler (),
+        CallbackProjectDocumentProvider::CloseHandler (),
+        [this] () { _widget->markProjectDocumentClean (); });
+
+    QString projectProviderError;
+    if (getRobWorkStudio () == NULL || !getRobWorkStudio ()->registerProjectDocumentProvider (
+                                            _projectProvider, &projectProviderError)) {
+        // 注册失败时不让该插件静默参与项目保存；独立 XML 生成功能仍可继续使用，错误
+        // 通过全局日志保留给集成者诊断，而不会在插件初始化阶段阻塞整个主窗口。
+        RW_WARN ("RobotModelBuilder project Provider registration failed: "
+                 << projectProviderError.toStdString ());
+    }
+    // 用户与编辑控件交互后触发：先让 Widget 用规范快照判断真实脏状态并写入 Provider，
+    // 再通知主窗口刷新标题栏。事件本身不直接置脏，避免页签切换等非持久化操作误报。
+    connect (_widget, &RobotModelBuilderWidget::projectDocumentInteraction, this, [this] () {
+        if (_projectProvider == NULL || getRobWorkStudio () == NULL)
+            return;
+        _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
+        getRobWorkStudio ()->notifyProjectDocumentChanged ();
+    });
     setWidget (_widget);
 }
 

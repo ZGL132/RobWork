@@ -8,6 +8,7 @@
 namespace rws {
 
 class StructureOptimizerWidget;
+class CallbackProjectDocumentProvider;
 
 //! @brief StructureOptimizer 插件入口。
 //!
@@ -37,6 +38,8 @@ public:
 
 private:
     StructureOptimizerWidget* _widget;
+    // Registry 只借用 Provider 指针，因此插件负责其完整生命周期。
+    CallbackProjectDocumentProvider* _projectProvider = nullptr;
 };
 
 } // namespace rws

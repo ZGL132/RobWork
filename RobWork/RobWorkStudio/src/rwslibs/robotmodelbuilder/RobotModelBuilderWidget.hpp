@@ -6,6 +6,7 @@
 
 #include "RobotModelSpec.hpp"
 
+#include <QByteArray>
 #include <QWidget>
 
 class QCheckBox;
@@ -15,6 +16,7 @@ class QTabWidget;
 class QTableWidget;
 class QTableWidgetItem;
 class QTextEdit;
+class QEvent;
 
 namespace rws {
 
@@ -25,8 +27,24 @@ class RobotModelBuilderWidget : public QWidget
     explicit RobotModelBuilderWidget (QWidget* parent = NULL);
     void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
 
+    /**
+     * @brief 从项目 Provider 传入的已解析路径加载模型 JSON，不显示文件对话框。
+     *
+     * 只有完整反序列化成功后才替换当前 UI；失败时保留原模型，调用方据此中止项目
+     * 打开并报告错误。成功后保存规范化快照，刚加载的文档不会被误判为脏状态。
+     */
+    bool loadProjectDocument (const QString& path, QString* error = nullptr);
+    /** @brief 把当前模型写入保存事务分配的暂存路径，不直接覆盖正式项目资源。 */
+    bool saveProjectDocument (const QString& targetPath, QString* error = nullptr) const;
+    /** @brief 比较规范 JSON 快照，忽略控件焦点和页签选择等非持久化 UI 状态。 */
+    bool isProjectDocumentDirty () const;
+    /** @brief 仅在 ProjectSaveTransaction 完整提交成功后更新干净快照。 */
+    void markProjectDocumentClean ();
+
   Q_SIGNALS:
     void loadSceneRequested (const QString& filename);
+    // 用户交互后通知插件重新比较快照；信号本身不表示数据一定发生了变化。
+    void projectDocumentInteraction ();
 
   private Q_SLOTS:
     void resetDefaults ();
@@ -77,6 +95,8 @@ class RobotModelBuilderWidget : public QWidget
     bool confirmOutputOverwrite (const RobotModelSpec& spec);
     void showErrors (const QStringList& errors);
     void setStatus (const QString& message);
+    bool eventFilter (QObject* watched, QEvent* event) override;
+    QByteArray projectDocumentSnapshot () const;
 
     static QString itemText (const QTableWidget* table, int row, int column);
     static double itemDouble (const QTableWidget* table, int row, int column);
@@ -162,6 +182,8 @@ class RobotModelBuilderWidget : public QWidget
     bool _syncingTables = false;
     bool _importingFromWorkCell = false;
     ImportedDocumentSpec _importedDocument;
+    QByteArray _projectCleanSnapshot;
+    bool _projectSnapshotActive = false;
 };
 
 }    // namespace rws

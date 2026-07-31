@@ -13,6 +13,7 @@ namespace rws {
 
 // 前向声明:真正的 UI 与数据收集逻辑由 Widget 完成,这里只声明指针以减少头文件依赖
 class RobotModelBuilderWidget;
+class CallbackProjectDocumentProvider;
 
 /**
  * @brief RobotModelBuilder 插件类
@@ -53,6 +54,8 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
   private:
     /// 实际的 UI 与业务逻辑对象,由本插件创建并管理生命周期
     RobotModelBuilderWidget* _widget;
+    // 项目 Provider 由插件拥有，主窗口 Registry 只保存非拥有型引用。
+    CallbackProjectDocumentProvider* _projectProvider;
     bool _ignoreNextOpenFromSelfLoad;
 
     void syncFromWorkCell (rw::models::WorkCell* workcell);

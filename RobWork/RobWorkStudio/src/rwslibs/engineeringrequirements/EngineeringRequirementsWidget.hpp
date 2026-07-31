@@ -53,6 +53,24 @@ public:
     RequirementSet requirementSet() const;
     QString statusText() const;
 
+    /**
+     * @brief 由项目文档 Provider 调用的无界面读取入口。
+     *
+     * 项目系统已经完成了清单路径校验并把资源解析为绝对路径；Widget 只负责把 JSON
+     * 还原为领域对象。成功后记录持久化快照，使随后的编辑可以准确参与主窗口脏状态。
+     */
+    bool loadProjectDocument(const QString& path, QString* error = nullptr);
+
+    /**
+     * @brief 将当前需求写入 Provider 提供的暂存路径，不直接覆盖正式项目资源。
+     *
+     * Registry 会在所有资源暂存成功后统一提交事务，因此此函数不能自行更新“已保存”
+     * 快照；只有 Provider 收到事务成功后的 markClean() 才可以确认数据真的落盘。
+     */
+    bool saveProjectDocument(const QString& targetPath, QString* error = nullptr);
+    bool isProjectDocumentDirty();
+    void markProjectDocumentClean();
+
 Q_SIGNALS:
     void geometryFeaturePickRequested();
     void requirementsChanged();
@@ -66,6 +84,9 @@ private:
     void refreshKeyStationList();
     void refreshKeyStationInspector();
     void refreshFrameChoices();
+    bool loadRequirementDocument(const QString& path, bool captureProjectSnapshot, QString* error);
+    bool writeRequirementDocument(const QString& targetPath, QString* error);
+    QByteArray serializedProjectDocument(const QString& documentPath) const;
     void commitKeyStationInspector();
     void commitBoxRegionTableEdit();
     void updateOrientationEditor();
@@ -147,6 +168,11 @@ private:
     QPushButton* _freezeButton = nullptr;
     bool _refreshingKeyStationInspector = false;
     bool _stationOrientationCoordinatesResolved = true;
+    // 已保存快照只保存规范 JSON 字节；比较它而非 UI 焦点状态，可让用户把值改回原值时
+    // 自动恢复为干净状态，并避免选择页签等非持久化操作制造伪脏标记。
+    QString _projectDocumentPath;
+    QByteArray _savedProjectDocumentSnapshot;
+    QByteArray _pendingProjectDocumentSnapshot;
 };
 
 } // namespace rws

@@ -16,11 +16,14 @@
 
 #include "RobotModelXmlWriter.hpp"
 #include "RobotModelUrdfImporter.hpp"
+#include "RobotModelSpecJson.hpp"
 
 // Qt 控件/工具头文件
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
+#include <QEvent>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFormLayout>
@@ -326,6 +329,95 @@ RobotModelBuilderWidget::RobotModelBuilderWidget (QWidget* parent) : QWidget (pa
 {
     buildUi ();
     resetDefaults ();
+
+    // 所有编辑控件均在 buildUi 中一次性创建。统一安装事件过滤器可以覆盖表格、输入框、
+    // 下拉框和复选框，而是否真的变脏仍由序列化快照比较决定，避免复制大量槽函数。
+    const QList< QObject* > children = findChildren< QObject* > ();
+    for (QObject* child : children)
+        child->installEventFilter (this);
+}
+
+// 项目 Provider 加载回调：读取并解析模型 JSON，全部成功后替换可视模型并建立
+// 干净基线快照；失败时保留用户当前编辑的模型不变。
+bool RobotModelBuilderWidget::loadProjectDocument (const QString& path, QString* error)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("无法读取机器人模型：%1。").arg (file.errorString ());
+        return false;
+    }
+
+    RobotModelSpec parsed;
+    std::string parseError;
+    if (!RobotModelSpecJson::fromJson (file.readAll ().toStdString (), parsed, &parseError)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("机器人模型 JSON 无效：%1。")
+                         .arg (QString::fromStdString (parseError));
+        return false;
+    }
+
+    // 解析和 Schema 校验全部成功后才替换可视模型。项目打开失败时，用户当前正在编辑的
+    // 临时模型不会被半截 JSON 覆盖。
+    fillFromSpec (parsed);
+    _projectCleanSnapshot = projectDocumentSnapshot ();
+    _projectSnapshotActive = true;
+    return true;
+}
+
+// 项目 Provider 保存回调：把当前模型快照写入保存事务分配的暂存路径，
+// 不直接覆盖正式项目资源；正式替换由 ProjectSaveTransaction 完成。
+bool RobotModelBuilderWidget::saveProjectDocument (const QString& targetPath, QString* error) const
+{
+    QFile file (targetPath);
+    if (!file.open (QIODevice::WriteOnly | QIODevice::Truncate)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("无法写入机器人模型暂存文件：%1。").arg (
+                file.errorString ());
+        return false;
+    }
+
+    const QByteArray json = projectDocumentSnapshot ();
+    if (file.write (json) != json.size ()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("写入机器人模型暂存文件失败：%1。").arg (
+                file.errorString ());
+        return false;
+    }
+    return true;
+}
+
+// 脏判定：比较当前模型快照与干净基线；未加载过项目资源时一律视为干净。
+bool RobotModelBuilderWidget::isProjectDocumentDirty () const
+{
+    return _projectSnapshotActive && projectDocumentSnapshot () != _projectCleanSnapshot;
+}
+
+void RobotModelBuilderWidget::markProjectDocumentClean ()
+{
+    // 该方法只由 Provider 的 markClean 回调触发，而 markClean 仅发生在全部项目资源
+    // 提交成功之后。若其它资源保存失败，本 Widget 的快照仍保持旧版本并继续显示脏状态。
+    _projectCleanSnapshot = projectDocumentSnapshot ();
+    _projectSnapshotActive = true;
+}
+
+bool RobotModelBuilderWidget::eventFilter (QObject* watched, QEvent* event)
+{
+    if (watched != this && _projectSnapshotActive &&
+        (event->type () == QEvent::KeyRelease || event->type () == QEvent::MouseButtonRelease ||
+         event->type () == QEvent::Wheel || event->type () == QEvent::Drop)) {
+        // 事件并不直接置脏。页签切换或单纯选择单元格同样会到达这里，插件收到信号后必须
+        // 调用 isProjectDocumentDirty 进行内容比较，保证标题星号只反映持久化数据变更。
+        Q_EMIT projectDocumentInteraction ();
+    }
+    return QWidget::eventFilter (watched, event);
+}
+
+// 生成规范 JSON 快照：把当前 UI 收集的模型规格序列化，供脏比较与暂存写入共用，
+// 保证“比较”与“写盘”使用同一份序列化规则。
+QByteArray RobotModelBuilderWidget::projectDocumentSnapshot () const
+{
+    return QByteArray::fromStdString (RobotModelSpecJson::toJson (collectSpec ()));
 }
 
 // =============================================================================

@@ -28,6 +28,30 @@ void setError(QString* error, const QString& value)
         *error = value;
 }
 
+StructureOptimizationProblem portableProblem(const QString& projectPath,
+                                             const StructureOptimizationProblem& problem)
+{
+    StructureOptimizationProblem portable = problem;
+    const QString saveDirectory = QString::fromStdString(portable.context.modelSpec.saveDirectory);
+    if (saveDirectory.isEmpty())
+        return portable;
+
+    // 内存中的模型目录可为绝对路径，方便编辑器与导出服务直接访问。仅当输出目录
+    // 位于项目目录内部时才相对化：项目外模型的绝对路径属于模型快照指纹的一部分，
+    // 强行改写会破坏既有溯源校验并把“外部依赖”伪装为项目内资源。
+    const QDir projectDirectory(QFileInfo(projectPath).absolutePath());
+    const QFileInfo directoryInfo(saveDirectory);
+    const QString absoluteDirectory = directoryInfo.isRelative() ?
+        projectDirectory.absoluteFilePath(saveDirectory) : directoryInfo.absoluteFilePath();
+    const QString relativeDirectory = projectDirectory.relativeFilePath(absoluteDirectory);
+    if (relativeDirectory == "." ||
+        (!relativeDirectory.startsWith("../") && relativeDirectory != "..")) {
+        portable.context.modelSpec.saveDirectory =
+            QDir::fromNativeSeparators(relativeDirectory).toStdString();
+    }
+    return portable;
+}
+
 } // namespace
 
 bool StructureOptimizationProjectAdapter::loadProject(
@@ -88,17 +112,44 @@ bool StructureOptimizationProjectAdapter::loadProject(
     return true;
 }
 
+// 保存优化项目：先序列化为规范 JSON 字节，再以 QSaveFile 原子写入目标路径。
+// 项目 Provider 的 saveProjectDocument 也经由本函数写暂存文件，保证与手动导出
+// 使用完全一致的序列化规则。
 bool StructureOptimizationProjectAdapter::saveProject(
     const QString& path, const StructureOptimizationProblem& problem, int selectedCandidateIndex,
     QString* error)
+{
+    QByteArray serialized;
+    if (!serializeProject(path, problem, selectedCandidateIndex, serialized, error))
+        return false;
+
+    QSaveFile file(path);
+    if (!file.open(QIODevice::WriteOnly)) {
+        setError(error, "StructureOptimization.Project.OpenFailed: " + file.errorString());
+        return false;
+    }
+    if (file.write(serialized) < 0 || !file.commit()) {
+        setError(error, "StructureOptimization.Project.SaveFailed: " + file.errorString());
+        return false;
+    }
+    if (error != nullptr)
+        error->clear();
+    return true;
+}
+
+bool StructureOptimizationProjectAdapter::serializeProject(
+    const QString& path, const StructureOptimizationProblem& problem, int selectedCandidateIndex,
+    QByteArray& serialized, QString* error)
 {
     if (hasInvalidContext(problem)) {
         setError(error, "StructureOptimization.Context.Invalid: complete RobotModelSpec is required.");
         return false;
     }
 
+    // 使用便携副本进行 JSON 编码，绝不反向修改调用者正在编辑的绝对路径上下文。
+    const StructureOptimizationProblem portable = portableProblem(path, problem);
     const QJsonDocument problemDocument = QJsonDocument::fromJson(
-        QByteArray::fromStdString(StructureOptimizationJson::problemToJson(problem)));
+        QByteArray::fromStdString(StructureOptimizationJson::problemToJson(portable)));
     if (!problemDocument.isObject()) {
         setError(error, "StructureOptimization.Project.SerializeFailed");
         return false;
@@ -111,16 +162,7 @@ bool StructureOptimizationProjectAdapter::saveProject(
     QJsonObject ui;
     ui["selectedCandidateIndex"] = selectedCandidateIndex;
     root["ui"] = ui;
-
-    QSaveFile file(path);
-    if (!file.open(QIODevice::WriteOnly)) {
-        setError(error, "StructureOptimization.Project.OpenFailed: " + file.errorString());
-        return false;
-    }
-    if (file.write(QJsonDocument(root).toJson(QJsonDocument::Indented)) < 0 || !file.commit()) {
-        setError(error, "StructureOptimization.Project.SaveFailed: " + file.errorString());
-        return false;
-    }
+    serialized = QJsonDocument(root).toJson(QJsonDocument::Indented);
     if (error != nullptr)
         error->clear();
     return true;

@@ -1927,10 +1927,27 @@ static void testConstraintModelAndProjectAdapter()
 
     QTemporaryDir dir;
     REQUIRE(dir.isValid());
+    const QString modelOutputDirectory = dir.filePath("model-output");
+    REQUIRE(QDir().mkpath(modelOutputDirectory));
+    original.context.modelSpec.saveDirectory = modelOutputDirectory.toStdString();
     const QString path = dir.filePath("example.structure-optimization.json");
     QString error;
     REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
         path, original, 12, &error));
+
+    // 项目资源可随目录整体搬迁。验证写入的模型输出目录是相对路径，而加载后仍被
+    // Adapter 解析回可直接供编辑器和导出服务使用的绝对目录。
+    QFile serializedFile(path);
+    REQUIRE(serializedFile.open(QIODevice::ReadOnly));
+    QJsonParseError jsonError;
+    const QJsonDocument serializedDocument =
+        QJsonDocument::fromJson(serializedFile.readAll(), &jsonError);
+    serializedFile.close();
+    REQUIRE(jsonError.error == QJsonParseError::NoError && serializedDocument.isObject());
+    const QString savedDirectory = serializedDocument.object().value("problem").toObject()
+        .value("context").toObject().value("data").toObject().value("modelSpec").toObject()
+        .value("saveDirectory").toString();
+    REQUIRE(!savedDirectory.isEmpty() && QFileInfo(savedDirectory).isRelative());
 
     rws::StructureOptimizationProblem loaded;
     int selectedCandidateIndex = -1;
@@ -2617,6 +2634,26 @@ static void testStructureOptimizerWidgetState()
     widget.setProblem(problem);
     if (startButton != nullptr)
         REQUIRE(startButton->isEnabled());
+
+    // Provider 使用 Widget 的规范 JSON 快照判断脏状态。加载后必须干净，修改一个
+    // 已持久化任务字段后变脏；只有模拟保存事务完整提交后的 markClean 才恢复干净。
+    QTemporaryDir projectDocumentDirectory;
+    REQUIRE(projectDocumentDirectory.isValid());
+    const QString projectDocument = projectDocumentDirectory.filePath("optimization.json");
+    QString projectDocumentError;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        projectDocument, problem, -1, &projectDocumentError));
+    REQUIRE(widget.loadProjectDocument(projectDocument, &projectDocumentError));
+    REQUIRE(!widget.isProjectDocumentDirty());
+    if (taskView != nullptr) {
+        REQUIRE(taskView->model()->setData(
+            taskView->model()->index(0, rws::OptimizationTaskTableModel::RollColumn), 22.0));
+        REQUIRE(widget.isProjectDocumentDirty());
+        REQUIRE(widget.saveProjectDocument(projectDocument, &projectDocumentError));
+        widget.markProjectDocumentClean();
+        REQUIRE(!widget.isProjectDocumentDirty());
+    }
+    REQUIRE(widget.canCloseProjectDocument(&projectDocumentError));
 
     QTemporaryDir provenanceDirectory;
     REQUIRE(provenanceDirectory.isValid());

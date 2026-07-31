@@ -1,3 +1,4 @@
+#include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/ProjectDocumentProvider.hpp>
 #include <rws/ProjectDocumentRegistry.hpp>
 #include <rws/WorkCellProjectDocumentProvider.hpp>
@@ -249,4 +250,61 @@ TEST (ProjectDocumentRegistryTest, WorkCellProviderUsesResolvedPathAndDirtyLifec
     QFile saved (workCellPath);
     ASSERT_TRUE (saved.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("workcell-saved"), saved.readAll ());
+}
+
+TEST (ProjectDocumentRegistryTest, CallbackProviderStagesResolvedResourceAndTracksDirtyState)
+{
+    // 第三阶段的业务插件都通过同一类回调式 Provider 接入：Registry 仍负责路径
+    // 解析和保存事务，而插件只接收绝对读取路径或暂存写入路径。该测试先固定边界，
+    // 防止某个业务插件绕过事务直接覆盖项目正式资源。
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QString loadedPath;
+    bool markedClean = false;
+
+    rws::CallbackProjectDocumentProvider provider (
+        "plugin.callback",
+        "test.callback-document",
+        [&loadedPath] (const QString& path, const rws::ProjectDocumentContext&, QString*) {
+            loadedPath = path;
+            return true;
+        },
+        [] (const QString& path, const rws::ProjectDocumentContext&, QString* error) {
+            QFile file (path);
+            if (!file.open (QIODevice::WriteOnly | QIODevice::Truncate)) {
+                if (error != nullptr)
+                    *error = file.errorString ();
+                return false;
+            }
+            file.write ("callback-saved");
+            return true;
+        },
+        rws::CallbackProjectDocumentProvider::CanCloseHandler (),
+        rws::CallbackProjectDocumentProvider::CloseHandler (),
+        [&markedClean] () { markedClean = true; });
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+    rws::ProjectManifest manifest;
+    manifest.resources.push_back (resource ("callback.document",
+                                            "test.callback-document",
+                                            "documents/callback.json"));
+
+    ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QDir::cleanPath (QDir (directory.path ()).filePath ("documents/callback.json")),
+               loadedPath);
+
+    provider.markDirty ();
+    ASSERT_TRUE (registry.isDirty ());
+    ASSERT_TRUE (registry.saveDirtyResources (manifest, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_FALSE (provider.isDirty ("callback.document"));
+    EXPECT_TRUE (markedClean);
+
+    QFile saved (QDir (directory.path ()).filePath ("documents/callback.json"));
+    ASSERT_TRUE (saved.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("callback-saved"), saved.readAll ());
 }

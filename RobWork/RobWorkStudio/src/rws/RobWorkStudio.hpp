@@ -93,6 +93,24 @@ class RobWorkStudio : public QMainWindow
     void openFile (const std::string& filename);
 
     /**
+     * @brief 注册由业务插件拥有的项目文档 Provider。
+     *
+     * 主窗口只保存非拥有型引用并交给 Registry 管理加载、保存和关闭顺序；插件必须在
+     * initialize 完成后调用，且 Provider 的生命周期必须覆盖插件存活期。注册冲突时
+     * 返回 false 并回填 error，避免某个资源 kind 被两个插件静默竞争。
+     */
+    bool registerProjectDocumentProvider (ProjectDocumentProvider* provider,
+                                          QString* error = nullptr);
+
+    /**
+     * @brief 通知主窗口重新汇总 Provider 脏状态并刷新标题栏。
+     *
+     * 该通知不触发磁盘写入；它只让业务 Widget 的编辑及时显示项目星号，统一保存
+     * 仍由“保存项目”命令和 ProjectSaveTransaction 负责。
+     */
+    void notifyProjectDocumentChanged ();
+
+    /**
      * @brief returns the property map of this instance of robwork studio
      * @return propertymap
      */

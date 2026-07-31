@@ -5,6 +5,7 @@
 #include "CandidatePreviewController.hpp"
 #include "RobotModelStalenessChecker.hpp"
 
+#include <QByteArray>
 #include <QWidget>
 
 #include <array>
@@ -38,6 +39,23 @@ public:
     QString statusText() const;
     void setPreviewHost(IWorkCellPreviewHost* host);
 
+    /**
+     * @brief 项目 Provider 使用的无对话框资源读写接口。
+     *
+     * Registry 负责验证 rwproj 资源路径并提交多文件事务，Widget 只处理结构优化领域
+     * JSON 与规范快照，避免原有文件对话框绕过项目统一保存流程。
+     */
+    bool loadProjectDocument(const QString& path, QString* error = nullptr);
+    bool saveProjectDocument(const QString& targetPath, QString* error = nullptr) const;
+    bool isProjectDocumentDirty() const;
+    void markProjectDocumentClean();
+    bool canCloseProjectDocument(QString* reason = nullptr) const;
+
+Q_SIGNALS:
+    // 所有会影响可持久化优化问题的控件和模型都汇入此信号；插件再通过规范快照
+    // 判定 Provider 脏状态，避免仅改变运行进度或预览时错误标记项目。
+    void projectDocumentChanged();
+
 private:
     QWidget* createVariablePage();
     QWidget* createTaskPage();
@@ -69,6 +87,7 @@ private:
     void addConstraint();
     void duplicateSelectedConstraint();
     void removeSelectedConstraint();
+    int selectedCandidateIndex() const;
 
     StructureOptimizationProblem _loadedProblem;
     StructureVariableTableModel* _variableModel = nullptr;
@@ -79,6 +98,9 @@ private:
     std::unique_ptr<CandidatePreviewController> _previewController;
     StructureOptimizationResult _lastResult;
     QString _projectPath;
+    QString _projectDocumentPath;
+    QByteArray _savedProjectDocumentSnapshot;
+    mutable QByteArray _pendingProjectDocumentSnapshot;
     RobotModelSourceStatus _modelSourceStatus = RobotModelSourceStatus::Untracked;
 
     QTabWidget* _tabs = nullptr;

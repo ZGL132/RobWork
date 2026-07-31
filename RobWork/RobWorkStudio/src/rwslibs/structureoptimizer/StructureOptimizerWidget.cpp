@@ -169,17 +169,43 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::updateRunState);
     connect(_constraintModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
+
+    // 表格模型的行增删和单元格编辑都会改变项目问题。保留原有 updateRunState 连接，
+    // 并额外集中发出文档通知，交由插件进行快照比较而不是盲目置脏。
+    const auto notifyProjectDocumentChanged = [this]() { Q_EMIT projectDocumentChanged(); };
+    const std::array<QAbstractItemModel*, 3> projectModels = {{
+        static_cast<QAbstractItemModel*>(_variableModel),
+        static_cast<QAbstractItemModel*>(_taskModel),
+        static_cast<QAbstractItemModel*>(_constraintModel)}};
+    for (QAbstractItemModel* model : projectModels) {
+        connect(model, &QAbstractItemModel::dataChanged, this, notifyProjectDocumentChanged);
+        connect(model, &QAbstractItemModel::modelReset, this, notifyProjectDocumentChanged);
+        connect(model, &QAbstractItemModel::rowsInserted, this,
+                [notifyProjectDocumentChanged](const QModelIndex&, int, int) {
+                    notifyProjectDocumentChanged();
+                });
+        connect(model, &QAbstractItemModel::rowsRemoved, this,
+                [notifyProjectDocumentChanged](const QModelIndex&, int, int) {
+                    notifyProjectDocumentChanged();
+                });
+    }
     for (QSpinBox* spin : {_candidateCountSpin, _eliteCountSpin, _localEliteCountSpin,
                            _finalVerificationCountSpin, _maxLocalSweepsSpin,
                            _gridStepsSpin, _seedSpin}) {
         connect(spin, QOverload<int>::of(&QSpinBox::valueChanged),
                 this, &StructureOptimizerWidget::updateRunState);
+        connect(spin, QOverload<int>::of(&QSpinBox::valueChanged),
+                this, notifyProjectDocumentChanged);
     }
     connect(_strategyCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &StructureOptimizerWidget::updateRunState);
+    connect(_strategyCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, notifyProjectDocumentChanged);
     for (QDoubleSpinBox* weight : _weightSpins) {
         connect(weight, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                 this, &StructureOptimizerWidget::updateRunState);
+        connect(weight, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                this, notifyProjectDocumentChanged);
     }
 
     connect(_controller, &StructureOptimizationController::runningChanged,
@@ -269,6 +295,89 @@ StructureOptimizationProblem StructureOptimizerWidget::collectProblem() const
         problem.objectives =
             StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights);
     return problem;
+}
+
+bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString* error)
+{
+    StructureOptimizationProblem problem;
+    int selectedCandidate = -1;
+    if (!StructureOptimizationProjectAdapter::loadProject(path, problem, &selectedCandidate, error))
+        return false;
+
+    // setProblem 会复用现有模型和控件填充逻辑；随后才建立 rwproj 资源快照，确保
+    // 初始化信号不会把刚刚加载的数据误标记为未保存修改。
+    _projectPath = path;
+    _projectDocumentPath = path;
+    setProblem(problem);
+    _savedProjectDocumentSnapshot.clear();
+    _pendingProjectDocumentSnapshot.clear();
+    QByteArray snapshot;
+    if (!StructureOptimizationProjectAdapter::serializeProject(
+            path, collectProblem(), selectedCandidateIndex(), snapshot, error))
+        return false;
+    _savedProjectDocumentSnapshot = snapshot;
+    if (error != nullptr)
+        error->clear();
+    return true;
+}
+
+bool StructureOptimizerWidget::saveProjectDocument(const QString& targetPath, QString* error) const
+{
+    const int selectedCandidate = selectedCandidateIndex();
+    if (!StructureOptimizationProjectAdapter::saveProject(
+            targetPath, collectProblem(), selectedCandidate, error))
+        return false;
+
+    // 保存事务尚未完成，故只缓存候选基线；Provider 仅在所有资源提交成功后才会调用
+    // markProjectDocumentClean()，从而让失败回滚保持原有脏状态。
+    if (!StructureOptimizationProjectAdapter::serializeProject(
+            targetPath, collectProblem(), selectedCandidate, _pendingProjectDocumentSnapshot, error))
+        return false;
+    return true;
+}
+
+bool StructureOptimizerWidget::isProjectDocumentDirty() const
+{
+    if (_projectDocumentPath.isEmpty())
+        return false;
+    QByteArray current;
+    QString error;
+    // 序列化异常时宁可报告脏状态，禁止把无法完整表示的编辑内容当作已安全保存。
+    if (!StructureOptimizationProjectAdapter::serializeProject(
+            _projectDocumentPath, collectProblem(), selectedCandidateIndex(), current, &error))
+        return true;
+    return current != _savedProjectDocumentSnapshot;
+}
+
+// 仅由 Provider 的 markClean 回调调用（全部资源提交成功后）：把保存事务暂存阶段
+// 缓存的新基线提升为已保存基线；若没有暂存过（直接打开未改），基线保持不变。
+void StructureOptimizerWidget::markProjectDocumentClean()
+{
+    if (!_pendingProjectDocumentSnapshot.isEmpty()) {
+        _savedProjectDocumentSnapshot = _pendingProjectDocumentSnapshot;
+        _pendingProjectDocumentSnapshot.clear();
+    }
+}
+
+bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
+{
+    if (_controller != nullptr && _controller->isRunning()) {
+        if (reason != nullptr)
+            *reason = QString::fromUtf8("结构优化任务仍在运行，请先取消或等待任务完成。");
+        return false;
+    }
+    if (reason != nullptr)
+        reason->clear();
+    return true;
+}
+
+// 读取候选列表中当前选中项的索引；未选中或视图无效时返回 -1（表示不导出候选）。
+int StructureOptimizerWidget::selectedCandidateIndex() const
+{
+    if (_candidateView == nullptr || !_candidateView->currentIndex().isValid())
+        return -1;
+    return _candidateView->currentIndex().siblingAtColumn(
+        StructureCandidateTableModel::IndexColumn).data().toInt();
 }
 
 QString StructureOptimizerWidget::statusText() const
@@ -442,9 +551,9 @@ QWidget* StructureOptimizerWidget::createReportPage()
     newFromModel->setObjectName("newStructureOptimizationProjectFromModelButton");
     QPushButton* newFromRequirements = new QPushButton("从冻结需求创建项目", page);
     newFromRequirements->setObjectName("newStructureOptimizationProjectFromFrozenRequirementButton");
-    QPushButton* open = new QPushButton("打开项目", page);
+    QPushButton* open = new QPushButton("导入项目副本", page);
     open->setObjectName("openStructureOptimizationProjectButton");
-    QPushButton* save = new QPushButton("保存项目", page);
+    QPushButton* save = new QPushButton("导出项目副本", page);
     save->setObjectName("saveStructureOptimizationProjectButton");
     QPushButton* exportAll = new QPushButton("导出报告和候选模型", page);
     exportAll->setObjectName("exportStructureOptimizationResultButton");
@@ -686,7 +795,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
 void StructureOptimizerWidget::openProject()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, "打开结构优化项目", _projectPath,
+        this, "导入结构优化项目副本", _projectPath,
         "Structure optimization project (*.structure-optimization.json)");
     if (path.isEmpty())
         return;
@@ -706,12 +815,12 @@ void StructureOptimizerWidget::openProject()
 
 void StructureOptimizerWidget::saveProject()
 {
-    QString path = _projectPath;
-    if (path.isEmpty()) {
-        path = QFileDialog::getSaveFileName(
-            this, "保存结构优化项目", "structure-optimization.structure-optimization.json",
-            "Structure optimization project (*.structure-optimization.json)");
-    }
+    // 活动 rwproj 的正式资源由主窗口 Registry 通过 Provider 保存；此按钮只导出一份
+    // 项目外副本，始终要求用户选择目标路径，避免绕过多资源事务直接覆盖正式资源。
+    const QString path = QFileDialog::getSaveFileName(
+        this, "导出结构优化项目副本", _projectPath.isEmpty()
+            ? QStringLiteral("structure-optimization.structure-optimization.json") : _projectPath,
+        "Structure optimization project (*.structure-optimization.json)");
     if (path.isEmpty())
         return;
     int selectedCandidateIndex = -1;

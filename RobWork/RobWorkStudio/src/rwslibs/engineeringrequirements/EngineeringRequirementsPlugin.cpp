@@ -3,6 +3,7 @@
 #include "EngineeringRequirementsWidget.hpp"
 #include "OrientationRuleResolver.hpp"
 
+#include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/RobWorkStudio.hpp>
 #include <rws/RWStudioView3D.hpp>
 
@@ -142,6 +143,9 @@ EngineeringRequirementsPlugin::~EngineeringRequirementsPlugin()
         getRobWorkStudio()->frameSelectedEvent().remove(this);
         getRobWorkStudio()->stateChangedEvent().remove(this);
     }
+    // 应用退出时主窗口先关闭项目资源，Registry 不会再回调 Provider；此处再释放插件
+    // 持有的回调对象，避免把所有权错误交给仅保存非拥有指针的 Registry。
+    delete _projectProvider;
 }
 
 /**
@@ -160,11 +164,41 @@ void EngineeringRequirementsPlugin::initialize() {
     _widget = new EngineeringRequirementsWidget(this);
     setWidget(_widget);
 
+    _projectProvider = new CallbackProjectDocumentProvider(
+        QStringLiteral("rws.engineering-requirements"),
+        QStringLiteral("rws.engineering-requirements"),
+        [this](const QString& path, const ProjectDocumentContext&, QString* error) {
+            return _widget->loadProjectDocument(path, error);
+        },
+        [this](const QString& targetPath, const ProjectDocumentContext&, QString* error) {
+            return _widget->saveProjectDocument(targetPath, error);
+        },
+        CallbackProjectDocumentProvider::CanCloseHandler(),
+        CallbackProjectDocumentProvider::CloseHandler(),
+        [this]() { _widget->markProjectDocumentClean(); });
+
+    if (getRobWorkStudio() != nullptr) {
+        QString providerError;
+        // 注册失败时保留原有独立需求编辑能力，但不让该资源在 rwproj 中被静默跳过。
+        // 打开项目会由 Registry 对缺失的必需 Provider 给出明确诊断。
+        if (!getRobWorkStudio()->registerProjectDocumentProvider(_projectProvider, &providerError))
+            RW_WARN("EngineeringRequirements project Provider registration failed: "
+                    << providerError.toStdString());
+    }
+
     // 连接 UI 面板的交互信号
     connect(_widget, &EngineeringRequirementsWidget::geometryFeaturePickRequested,
             this, &EngineeringRequirementsPlugin::beginGeometryFeaturePick);
     connect(_widget, &EngineeringRequirementsWidget::requirementsChanged,
             this, &EngineeringRequirementsPlugin::scheduleStationMarkerRefresh);
+    connect(_widget, &EngineeringRequirementsWidget::requirementsChanged, this, [this]() {
+        if (_projectProvider == nullptr || getRobWorkStudio() == nullptr)
+            return;
+        // requirementsChanged 同时覆盖表格编辑、撤销重做和冻结状态变化；Widget 使用
+        // 规范 JSON 快照判断真实变化，Provider 因而不会把普通控件交互误报为脏数据。
+        _projectProvider->setDirty(_widget->isProjectDocumentDirty());
+        getRobWorkStudio()->notifyProjectDocumentChanged();
+    });
 
 // 检查当前插件是否已成功嵌入到 RobWorkStudio 主程序环境中（防止空指针调用导致程序崩溃）
     if (getRobWorkStudio() != nullptr) {

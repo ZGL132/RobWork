@@ -11,6 +11,7 @@ namespace rw { namespace kinematics { class Frame; class State; } }
 
 namespace rws {
 class EngineeringRequirementsWidget;
+class CallbackProjectDocumentProvider;
 
 /**
  * @brief 工程需求 RobWorkStudio 插件入口类 (Engineering Requirements Plugin)
@@ -137,6 +138,9 @@ private:
     // 成员变量
     // ------------------------------------------------------------------------
     EngineeringRequirementsWidget* _widget = nullptr; ///< 嵌入插件的 Qt UI 主面板指针
+    // Provider 不继承 QObject，生命周期由插件显式覆盖；主窗口 Registry 只保留非拥有
+    // 引用，因此 Provider 必须在插件存活期间保持有效。
+    CallbackProjectDocumentProvider* _projectProvider = nullptr;
     bool _geometryFeaturePickActive = false;           ///< 3D 视图几何拾取激活标志（true 表示下一次点击 3D 场景将捕获 Frame）
     bool _markerRefreshPending = false;                ///< 标记异步延迟刷新挂起标志（用于防抖）
 

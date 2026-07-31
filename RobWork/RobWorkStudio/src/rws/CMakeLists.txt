@@ -49,6 +49,7 @@ if(build)
         HelpAssistant.cpp
         RWSSpinBox.cpp
         ImageView.cpp
+        CallbackProjectDocumentProvider.cpp
         ProjectDocumentRegistry.cpp
         ProjectManifestJson.cpp
         ProjectManager.cpp
@@ -72,6 +73,7 @@ if(build)
         AboutBox.hpp
         HelpAssistant.hpp
         ImageView.hpp
+        CallbackProjectDocumentProvider.hpp
         ProjectDocumentProvider.hpp
         ProjectDocumentRegistry.hpp
         ProjectManifest.hpp

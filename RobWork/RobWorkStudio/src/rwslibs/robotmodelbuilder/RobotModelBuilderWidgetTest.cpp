@@ -186,6 +186,28 @@ int main (int argc, char** argv)
     QLineEdit* saveDirectory = findLineEdit (widget, QDir::homePath ());
     if (robotName == NULL || saveDirectory == NULL)
         return fail ("Default output fields were not found.");
+
+    // 项目 Provider 通过这组无对话框接口读写资源。先建立保存后的干净基线，再修改
+    // 一个会写入 RobotModelSpec 的字段，验证 Widget 用规范 JSON 快照而非焦点状态
+    // 判断脏数据；最后重新加载确认项目资源能回到干净状态。
+    QTemporaryDir projectDirectory;
+    if (!projectDirectory.isValid ())
+        return fail ("Could not create a temporary project resource directory.");
+    const QString projectDocument = projectDirectory.filePath ("robot-model.json");
+    QString projectError;
+    if (!widget.saveProjectDocument (projectDocument, &projectError))
+        return fail ("Could not save the RobotModelBuilder project document.");
+    widget.markProjectDocumentClean ();
+    if (widget.isProjectDocumentDirty ())
+        return fail ("Freshly saved RobotModelBuilder project document should be clean.");
+    robotName->setText ("ProjectSnapshotDirty");
+    if (!widget.isProjectDocumentDirty ())
+        return fail ("Changing a persisted model field should mark the project document dirty.");
+    if (!widget.loadProjectDocument (projectDocument, &projectError))
+        return fail ("Could not reload the RobotModelBuilder project document.");
+    if (widget.isProjectDocumentDirty ())
+        return fail ("Reloaded RobotModelBuilder project document should be clean.");
+
     robotName->setText ("OverwriteCheck");
     saveDirectory->setText (outputDirectory.path ());
     const QString deviceFilePath = outputDirectory.filePath ("OverwriteCheck.wc.xml");

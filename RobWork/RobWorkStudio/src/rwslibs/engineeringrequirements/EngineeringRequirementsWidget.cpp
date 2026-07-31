@@ -24,6 +24,7 @@
 #include <QDoubleSpinBox>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -39,6 +40,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSaveFile>
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -724,8 +726,8 @@ QWidget* EngineeringRequirementsWidget::createValidationPage()
     layout->addWidget(_modelLabel); layout->addWidget(_freezeLabel);
     QHBoxLayout* actions = new QHBoxLayout();
     QPushButton* bind = new QPushButton(QString::fromUtf8("绑定模型"), page); bind->setObjectName("bindRequirementModelButton");
-    QPushButton* load = new QPushButton(QString::fromUtf8("加载需求"), page); load->setObjectName("loadRequirementSetButton");
-    QPushButton* save = new QPushButton(QString::fromUtf8("保存需求"), page); save->setObjectName("saveRequirementSetButton");
+    QPushButton* load = new QPushButton(QString::fromUtf8("导入需求副本"), page); load->setObjectName("loadRequirementSetButton");
+    QPushButton* save = new QPushButton(QString::fromUtf8("导出需求副本"), page); save->setObjectName("saveRequirementSetButton");
     _freezeButton = new QPushButton(QString::fromUtf8("校验并冻结"), page); _freezeButton->setObjectName("freezeRequirementSetButton");
     QPushButton* unfreeze = new QPushButton(QString::fromUtf8("解冻编辑"), page); unfreeze->setObjectName("unfreezeRequirementSetButton");
     actions->addWidget(bind); actions->addWidget(load); actions->addWidget(save); actions->addWidget(_freezeButton); actions->addWidget(unfreeze); actions->addStretch();
@@ -1072,6 +1074,9 @@ void EngineeringRequirementsWidget::bindModel()
     _requirements.modelBinding.robotName = spec.robotName;
     _requirements.modelBinding.robotModelFingerprint = RobotModelFingerprint::canonicalSha256(spec);
     setStatus(QString::fromUtf8("已绑定模型，需求将使用模型内容指纹追溯。")); refreshTables();
+    // 绑定模型会改变需求资源中的 modelBinding。发出统一领域变更通知，使项目标题栏
+    // 和 Provider 脏状态与其他需求编辑操作保持一致。
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::saveRequirements()
@@ -1079,14 +1084,10 @@ void EngineeringRequirementsWidget::saveRequirements()
     syncTablesToRequirements();
     const QString path = QFileDialog::getSaveFileName(this, QString::fromUtf8("保存研发需求"), "requirements.requirements.json", "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
-    QFile file(path); if (!file.open(QFile::WriteOnly | QFile::Text)) { setStatus(QString::fromUtf8("无法保存需求文件。")); return; }
-    // 编辑态需求始终保存为兼容的 RequirementSet 字段；只有真正经过冻结器校验
-    // 的工件才额外挂入 frozenArtifact，不能根据一个可被手工修改的 bool 宣称
-    // 需求已验证。这样旧版本项目仍可读取，新版本则保留完整审计证据。
-    QJsonObject project = RequirementSetJson::toObject(_requirements);
-    if (_requirements.frozen && !_frozenArtifact.requirementFingerprint.empty())
-        project["frozenArtifact"] = FrozenRequirementArtifactJson::toObject(_frozenArtifact);
-    file.write(QJsonDocument(project).toJson(QJsonDocument::Indented));
+    QString error;
+    // 此按钮现在表示“导出一份项目外需求文件”。它复用相同的格式写入逻辑，但故意
+    // 不调用 markProjectDocumentClean()，以免导出文件被误认为已保存回 rwproj 资源。
+    if (!writeRequirementDocument(path, &error)) { setStatus(error); return; }
     setStatus(QString::fromUtf8("研发需求已保存。"));
 }
 
@@ -1094,25 +1095,146 @@ void EngineeringRequirementsWidget::loadRequirements()
 {
     const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("加载研发需求"), QString(), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
-    QFile file(path); if (!file.open(QFile::ReadOnly)) { setStatus(QString::fromUtf8("无法读取需求文件。")); return; }
+    QString error;
+    // 此按钮现在表示“导入项目外需求文件”。导入后应与当前 rwproj 的已保存快照比较，
+    // 而非以导入文件作为新的项目基线，否则用户会在未保存项目时丢失修改提示。
+    if (!loadRequirementDocument(path, false, &error)) { setStatus(error); return; }
+}
+
+bool EngineeringRequirementsWidget::loadProjectDocument(const QString& path, QString* error)
+{
+    // Provider 只在资源路径已由 Registry 校验后进入这里；以项目资源为新的基线，
+    // 保证刚打开 rwproj 时标题栏不会出现无意义的未保存星号。
+    return loadRequirementDocument(path, true, error);
+}
+
+bool EngineeringRequirementsWidget::saveProjectDocument(const QString& targetPath, QString* error)
+{
+    if (!writeRequirementDocument(targetPath, error))
+        return false;
+
+    // targetPath 是保存事务的同目录暂存文件。记录它的规范字节但不立刻设为干净；若
+    // 之后任一资源提交失败，Provider 不会调用 markClean()，旧基线仍然完好。
+    _pendingProjectDocumentSnapshot = serializedProjectDocument(targetPath);
+    return true;
+}
+
+bool EngineeringRequirementsWidget::isProjectDocumentDirty()
+{
+    if (_projectDocumentPath.isEmpty())
+        return false;
+    // 表格编辑器可能尚未触发失焦提交。比较前强制同步，令项目脏状态和最终保存内容
+    // 使用同一份领域数据，避免“显示干净但保存后发生变化”的不一致。
+    syncTablesToRequirements();
+    return serializedProjectDocument(_projectDocumentPath) != _savedProjectDocumentSnapshot;
+}
+
+void EngineeringRequirementsWidget::markProjectDocumentClean()
+{
+    if (!_pendingProjectDocumentSnapshot.isEmpty()) {
+        _savedProjectDocumentSnapshot = _pendingProjectDocumentSnapshot;
+        _pendingProjectDocumentSnapshot.clear();
+    } else if (!_projectDocumentPath.isEmpty()) {
+        // 打开项目时没有保存暂存文件，直接从当前模型生成基线快照。
+        _savedProjectDocumentSnapshot = serializedProjectDocument(_projectDocumentPath);
+    }
+}
+
+QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QString& documentPath) const
+{
+    // 工程目录可以整体搬迁，故模型引用必须相对于所属需求 JSON 保存。绝对路径只在
+    // 内存中参与模型读取与冻结校验，绝不被写进项目资源。
+    QJsonObject project = RequirementSetJson::toObject(_requirements);
+    const QDir documentDirectory(QFileInfo(documentPath).absolutePath());
+    const auto relativizeBinding = [&documentDirectory](QJsonObject& binding) {
+        const QString sourcePath = binding.value("sourcePath").toString();
+        if (sourcePath.isEmpty())
+            return;
+        const QFileInfo sourceInfo(sourcePath);
+        const QString absolutePath = sourceInfo.isRelative() ?
+            documentDirectory.absoluteFilePath(sourcePath) : sourceInfo.absoluteFilePath();
+        binding["sourcePath"] = documentDirectory.relativeFilePath(absolutePath);
+    };
+
+    QJsonObject modelBinding = project.value("modelBinding").toObject();
+    relativizeBinding(modelBinding);
+    project["modelBinding"] = modelBinding;
+    if (_requirements.frozen && !_frozenArtifact.requirementFingerprint.empty()) {
+        QJsonObject artifact = FrozenRequirementArtifactJson::toObject(_frozenArtifact);
+        QJsonObject artifactBinding = artifact.value("modelBinding").toObject();
+        relativizeBinding(artifactBinding);
+        artifact["modelBinding"] = artifactBinding;
+        project["frozenArtifact"] = artifact;
+    }
+    return QJsonDocument(project).toJson(QJsonDocument::Indented);
+}
+
+// 把需求写入目标文件（项目暂存路径或导出副本共用）：先同步表格编辑，再用
+// QSaveFile 原子写入规范化 JSON，避免中断留下半截需求文件。
+bool EngineeringRequirementsWidget::writeRequirementDocument(const QString& targetPath, QString* error)
+{
+    syncTablesToRequirements();
+    QSaveFile file(targetPath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8("无法保存需求文件：%1").arg(file.errorString());
+        return false;
+    }
+    if (file.write(serializedProjectDocument(targetPath)) < 0 || !file.commit()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8("无法提交需求文件：%1").arg(file.errorString());
+        return false;
+    }
+    if (error != nullptr)
+        error->clear();
+    return true;
+}
+
+// 加载需求文档：解析 JSON 并把相对模型路径还原为绝对路径，再重建冻结工件。
+// captureProjectSnapshot 为 true 时（项目 Provider 路径）把加载内容作为新的
+// 已保存基线；false 时（导入副本）不更新基线，避免未保存项目丢失脏提示。
+bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
+                                                            bool captureProjectSnapshot,
+                                                            QString* error)
+{
+    QFile file(path); if (!file.open(QFile::ReadOnly)) { if (error != nullptr) *error = QString::fromUtf8("无法读取需求文件：%1").arg(file.errorString()); return false; }
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
     if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
-        setStatus(QString::fromUtf8("需求文件不是有效 JSON：%1").arg(parseError.errorString()));
-        return;
+        if (error != nullptr) *error = QString::fromUtf8("需求文件不是有效 JSON：%1").arg(parseError.errorString());
+        return false;
+    }
+    QJsonObject project = document.object();
+    // 将项目内保存的相对模型路径恢复为绝对路径，后续冻结真实性校验与模型读取接口
+    // 仍可沿用既有约定；冻结工件中的模型绑定也必须同步恢复。
+    const QDir documentDirectory(QFileInfo(path).absolutePath());
+    const auto resolveBinding = [&documentDirectory](QJsonObject& binding) {
+        const QString sourcePath = binding.value("sourcePath").toString();
+        if (!sourcePath.isEmpty() && QFileInfo(sourcePath).isRelative())
+            binding["sourcePath"] = documentDirectory.absoluteFilePath(sourcePath);
+    };
+    QJsonObject modelBinding = project.value("modelBinding").toObject();
+    resolveBinding(modelBinding);
+    project["modelBinding"] = modelBinding;
+    QJsonObject artifactObject = project.value("frozenArtifact").toObject();
+    if (!artifactObject.isEmpty()) {
+        QJsonObject artifactBinding = artifactObject.value("modelBinding").toObject();
+        resolveBinding(artifactBinding);
+        artifactObject["modelBinding"] = artifactBinding;
+        project["frozenArtifact"] = artifactObject;
     }
     RequirementSet parsed;
-    std::string error;
-    if (!RequirementSetJson::fromObject(document.object(), parsed, &error)) { setStatus(QString::fromStdString(error)); return; }
+    std::string parseMessage;
+    if (!RequirementSetJson::fromObject(project, parsed, &parseMessage)) { if (error != nullptr) *error = QString::fromStdString(parseMessage); return false; }
 
     CompiledRequirementSet compiled;
     FrozenRequirementArtifact artifact;
     QString loadStatus = QString::fromUtf8("研发需求已加载，处于可编辑状态。");
-    const QJsonValue artifactValue = document.object().value("frozenArtifact");
+    const QJsonValue artifactValue = project.value("frozenArtifact");
     if (!artifactValue.isUndefined()) {
-        if (!artifactValue.isObject() || !FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &error)) {
-            setStatus(QString::fromUtf8("冻结审计工件无效：%1").arg(QString::fromStdString(error)));
-            return;
+        if (!artifactValue.isObject() || !FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &parseMessage)) {
+            if (error != nullptr) *error = QString::fromUtf8("冻结审计工件无效：%1").arg(QString::fromStdString(parseMessage));
+            return false;
         }
 
         // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
@@ -1120,9 +1242,9 @@ void EngineeringRequirementsWidget::loadRequirements()
         RobotModelSpec model;
         QFile modelFile(QString::fromStdString(parsed.modelBinding.sourcePath));
         const bool modelReadable = !parsed.modelBinding.sourcePath.empty() && modelFile.open(QFile::ReadOnly) &&
-                                   RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &error);
+                                   RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage);
         const bool artifactCurrent = modelReadable && _workcell != nullptr &&
-            RequirementFreezer::isCurrent(artifact, parsed, *_workcell, activeWorkCellState(), model, &error);
+            RequirementFreezer::isCurrent(artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage);
         if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;
@@ -1131,7 +1253,7 @@ void EngineeringRequirementsWidget::loadRequirements()
             parsed.frozen = false;
             artifact = FrozenRequirementArtifact();
             const QString reason = modelReadable && _workcell == nullptr ?
-                QString::fromUtf8("当前未打开 WorkCell") : QString::fromStdString(error);
+                QString::fromUtf8("当前未打开 WorkCell") : QString::fromStdString(parseMessage);
             loadStatus = QString::fromUtf8("研发需求已加载，但冻结证据已过期或无法验证（%1）；请重新冻结。")
                 .arg(reason);
         }
@@ -1148,7 +1270,14 @@ void EngineeringRequirementsWidget::loadRequirements()
     _undoStack.clear();
     setStatus(loadStatus);
     refreshTables();
+    if (captureProjectSnapshot) {
+        _projectDocumentPath = path;
+        _pendingProjectDocumentSnapshot.clear();
+        _savedProjectDocumentSnapshot = serializedProjectDocument(path);
+    }
     Q_EMIT requirementsChanged();
+    if (error != nullptr) error->clear();
+    return true;
 }
 
 void EngineeringRequirementsWidget::importStations()

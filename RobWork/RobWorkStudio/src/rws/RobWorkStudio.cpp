@@ -930,6 +930,24 @@ void RobWorkStudio::openProject ()
         openFile (projectFile.toStdString ());
 }
 
+bool RobWorkStudio::registerProjectDocumentProvider (ProjectDocumentProvider* provider,
+                                                      QString* error)
+{
+    // 插件初始化可能发生在没有打开项目之前；Registry 支持预注册，随后打开项目时
+    // 再按清单 kind 选择 Provider。失败不改变已有注册表，调用者可安全报告错误。
+    const bool registered = _projectDocuments.registerProvider (provider, error);
+    if (registered)
+        updateProjectWindowTitle ();
+    return registered;
+}
+
+void RobWorkStudio::notifyProjectDocumentChanged ()
+{
+    // 不在这里调用保存或修改清单。Provider 的 isDirty 由 Registry 聚合，标题栏只是
+    // 可视反馈；真正写入仍必须经过多文件暂存事务，避免一次控件编辑绕过失败回滚。
+    updateProjectWindowTitle ();
+}
+
 // 保存项目：把当前清单写回 .rwproj 文件；失败时弹出警告并保留原上下文。
 void RobWorkStudio::saveProject ()
 {
