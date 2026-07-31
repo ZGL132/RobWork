@@ -49,6 +49,9 @@ if(build)
         HelpAssistant.cpp
         RWSSpinBox.cpp
         ImageView.cpp
+        ProjectManifestJson.cpp
+        ProjectManager.cpp
+        ProjectPathResolver.cpp
         propertyview/PropertyViewEditor.cpp
         propertyview/PropertyViewDialog.cpp
     )
@@ -66,6 +69,10 @@ if(build)
         AboutBox.hpp
         HelpAssistant.hpp
         ImageView.hpp
+        ProjectManifest.hpp
+        ProjectManifestJson.hpp
+        ProjectManager.hpp
+        ProjectPathResolver.hpp
     )
     set(SRC_FILES_HPP_propertyview propertyview/PropertyViewEditor.hpp
                                    propertyview/PropertyViewDialog.hpp

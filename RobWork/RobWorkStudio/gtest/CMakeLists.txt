@@ -44,6 +44,10 @@ set(RWSMAIN_TEST_SRC
 )
 add_library( sdurws-gtest-main STATIC ${RWSMAIN_TEST_SRC})
 target_link_libraries( sdurws-gtest-main PUBLIC ${RW_BUILD_WITH_LIBRARIES_GTEST} RW::sdurw_core)
+# RobWork 的外部 GTest 配置只把库目标传入此处，没有保证旧版供应商工程会导出
+# 头文件使用要求。显式加入已探测到的 include 目录，可让测试主程序和具体测试
+# 使用完全一致的 GTest 头文件来源，避免在 Windows + MATLAB ROS2 供应商包下失败。
+target_include_directories(sdurws-gtest-main PUBLIC ${RW_BUILD_WITH_GTEST_INCLUDE_DIRS})
 
 ########################################################################
 # RWS
@@ -58,6 +62,7 @@ SET(RWS_TEST_LIBRARIES
 )
 
 SET(RWS_TEST_SRC
+  rws/ProjectSystemTest.cpp
   rws/RobWorkStudioTest.cpp
 )
 add_executable( sdurws_sdurws-gtest ${RWS_TEST_SRC})

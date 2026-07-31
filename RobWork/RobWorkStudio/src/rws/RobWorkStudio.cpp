@@ -42,7 +42,9 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QIcon>
 #include <QInputDialog>
 #include <QMenu>
@@ -291,19 +293,32 @@ void RobWorkStudio::updateLastFiles ()
 
 void RobWorkStudio::setupFileActions ()
 {
-    QAction* newAction = new QAction (QIcon (":/images/new.png"), tr ("&New"), this);    // owned
-    connect (newAction, SIGNAL (triggered ()), this, SLOT (newWorkCell ()));
+    // 项目操作成为主文件工作流。旧的 WorkCell 操作仍然保留在菜单下半部分，便于
+    // 调试单个资源和迁移历史文件，但工具栏只暴露项目级新建、打开和保存。
+    QAction* newAction =
+        new QAction (QIcon (":/images/new.png"), tr ("&New Project..."), this);    // owned
+    connect (newAction, SIGNAL (triggered ()), this, SLOT (newProject ()));
 
     QAction* openAction =
-        new QAction (QIcon (":/images/open.png"), tr ("&Open..."), this);    // owned
-    connect (openAction, SIGNAL (triggered ()), this, SLOT (open ()));
+        new QAction (QIcon (":/images/open.png"), tr ("&Open Project..."), this);    // owned
+    connect (openAction, SIGNAL (triggered ()), this, SLOT (openProject ()));
 
     QAction* closeAction =
-        new QAction (QIcon (":/images/close.png"), tr ("&Close"), this);    // owned
-    connect (closeAction, SIGNAL (triggered ()), this, SLOT (onCloseWorkCell ()));
+        new QAction (QIcon (":/images/close.png"), tr ("&Close Project"), this);    // owned
+    connect (closeAction, SIGNAL (triggered ()), this, SLOT (closeProject ()));
 
-    QAction* saveAction = new QAction (QIcon (":/images/save.png"), tr ("&Save"), this);    // owned
-    connect (saveAction, SIGNAL (triggered ()), this, SLOT (saveWorkCell ()));
+    QAction* saveAction =
+        new QAction (QIcon (":/images/save.png"), tr ("&Save Project"), this);    // owned
+    connect (saveAction, SIGNAL (triggered ()), this, SLOT (saveProject ()));
+
+    QAction* openResourceAction = new QAction (tr ("Open Single &Resource..."), this);    // owned
+    connect (openResourceAction, SIGNAL (triggered ()), this, SLOT (open ()));
+
+    QAction* newWorkCellAction = new QAction (tr ("New Empty &WorkCell"), this);    // owned
+    connect (newWorkCellAction, SIGNAL (triggered ()), this, SLOT (newWorkCell ()));
+
+    QAction* saveWorkCellAction = new QAction (tr ("Save WorkCell &As..."), this);    // owned
+    connect (saveWorkCellAction, SIGNAL (triggered ()), this, SLOT (saveWorkCell ()));
 
     QAction* reloadAction =
         new QAction (QIcon (":/images/reload.png"), tr ("&Reload"), this);    // owned
@@ -327,6 +342,11 @@ void RobWorkStudio::setupFileActions ()
     _fileMenu->addAction (closeAction);
     _fileMenu->addAction (saveAction);
     _fileMenu->addAction (reloadAction);
+    _fileMenu->addSeparator ();
+
+    _fileMenu->addAction (openResourceAction);
+    _fileMenu->addAction (newWorkCellAction);
+    _fileMenu->addAction (saveWorkCellAction);
     _fileMenu->addSeparator ();
 
     QAction* propertyAction = new QAction (tr ("&Preferences"), this);    // owned
@@ -821,6 +841,85 @@ std::string RobWorkStudio::loadSettingsWorkcell (const std::string& file)
     return workcellPath;
 }
 
+// 新建项目：弹保存对话框选择 .rwproj 位置，构造空清单交给项目管理器落盘，
+// 随后创建内存 WorkCell 并更新最近文件列表与窗口标题。
+void RobWorkStudio::newProject ()
+{
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    QString projectFile = QFileDialog::getSaveFileName (this,
+                                                        tr ("New RobWorkStudio Project"),
+                                                        previousDirectory,
+                                                        tr ("RobWorkStudio Project (*.rwproj)"));
+    if (projectFile.isEmpty ())
+        return;
+    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
+        projectFile += QStringLiteral (".rwproj");
+
+    ProjectManifest manifest;
+    manifest.project.name = QFileInfo (projectFile).completeBaseName ();
+    manifest.project.description = QString::fromUtf8 ("由 RobWorkStudio 创建的空项目");
+    manifest.settings.insert (QStringLiteral ("pathPolicy"),
+                              QStringLiteral ("project-relative"));
+
+    QString error;
+    if (!_projectManager.createProject (projectFile, manifest, &error)) {
+        QMessageBox::critical (this, tr ("Create Project Failed"), error);
+        return;
+    }
+
+    // 第一阶段的新建项目不强制生成 WorkCell 文件，而是提供一个内存中的空 WorkCell。
+    // 用户可以继续使用“打开单个资源”导入旧场景；阶段四会补充正式的项目创建向导。
+    newWorkCell ();
+    _settingsMap->set< std::string > ("PreviousOpenDirectory",
+                                      QFileInfo (projectFile).absolutePath ().toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (projectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
+}
+
+// 打开项目：弹文件选择对话框选中 .rwproj，统一走 openFile() 分派，
+// 以便与命令行、拖放入口共享完全相同的项目加载行为。
+void RobWorkStudio::openProject ()
+{
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    const QString projectFile = QFileDialog::getOpenFileName (
+        this,
+        tr ("Open RobWorkStudio Project"),
+        previousDirectory,
+        tr ("RobWorkStudio Project (*.rwproj);;All Files (*.*)"));
+    if (!projectFile.isEmpty ())
+        openFile (projectFile.toStdString ());
+}
+
+// 保存项目：把当前清单写回 .rwproj 文件；失败时弹出警告并保留原上下文。
+void RobWorkStudio::saveProject ()
+{
+    QString error;
+    if (!_projectManager.saveProject (&error)) {
+        QMessageBox::warning (this, tr ("Save Project Failed"), error);
+        return;
+    }
+
+    // 当前阶段只保存项目清单。WorkCell 和插件业务文档仍由现有入口保存；第二阶段
+    // 引入 ProjectDocumentProvider 后，“保存项目”会升级为真正的统一保存事务。
+    updateProjectWindowTitle ();
+}
+
+// 关闭项目：同时清空项目上下文与当前 WorkCell，并刷新窗口标题。
+void RobWorkStudio::closeProject ()
+{
+    // 第一阶段尚不存在插件级脏状态，因此这里只关闭项目上下文。后续阶段会在这里
+    // 统一列出未保存资源并提供“全部保存、不保存、取消”三种选择。
+    _projectManager.closeProject ();
+    closeWorkCell ();
+    updateProjectWindowTitle ();
+}
+
 void RobWorkStudio::newWorkCell ()
 {
     try {
@@ -933,7 +1032,20 @@ void RobWorkStudio::openFile (const std::string& file)
             std::vector< std::string > lastfiles = _settingsMap->get< std::vector< std::string > > (
                 "LastOpennedFiles", std::vector< std::string > ());
             lastfiles.push_back (file);
-            if (filename.endsWith (".STL", Qt::CaseInsensitive) ||
+            if (filename.endsWith (".rwproj", Qt::CaseInsensitive)) {
+                // 项目文件优先于通用资源分派。打开成功后沿用现有最近文件机制，
+                // 让菜单、命令行和拖放入口共享完全相同的项目加载行为。
+                QString projectError;
+                if (!openProjectFile (filename, &projectError)) {
+                    QMessageBox::critical (this, tr ("Open Project Failed"), projectError);
+                }
+                else {
+                    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles",
+                                                                      lastfiles);
+                    updateLastFiles ();
+                }
+            }
+            else if (filename.endsWith (".STL", Qt::CaseInsensitive) ||
                 filename.endsWith (".STLA", Qt::CaseInsensitive) ||
                 filename.endsWith (".STLB", Qt::CaseInsensitive) ||
 #if RW_HAVE_ASSIMP
@@ -991,9 +1103,9 @@ void RobWorkStudio::open ()
 
     QString filename = QFileDialog::getOpenFileName (
         this,
-        "Open WorkCell or Drawable",    // Title
+        "Open Project, WorkCell or Drawable",    // Title
         dir,                            // Directory
-        "All supported ( *.wu *.wc *.xml *.wc.xml *.dev *.stl *.stla *.stlb *.3ds *.ac *.ac3d "
+        "All supported ( *.rwproj *.wu *.wc *.xml *.wc.xml *.dev *.stl *.stla *.stlb *.3ds *.ac *.ac3d "
         "*.obj" +
             assimpExtensions +
             ")"
@@ -1017,6 +1129,46 @@ void RobWorkStudio::openDrawable (const QString& filename)
         const std::string msg = "Failed to load " + filename.toStdString () + " as a Drawable";
         QMessageBox::information (this, "Error", msg.c_str (), QMessageBox::Ok);
     }
+}
+
+// 实际打开项目文件：先让项目管理器读取并校验清单，再按 mainWorkCell 入口决定
+// 加载真实场景还是创建内存 WorkCell。任一环节失败即返回 false 并回填错误。
+bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
+{
+    if (!_projectManager.openProject (filename, error))
+        return false;
+
+    const QString workCellResourceId =
+        _projectManager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell"));
+    if (workCellResourceId.isEmpty ()) {
+        // 空项目是合法状态。创建一个内存 WorkCell 可保持现有插件和三维视图可用，
+        // 同时不在用户未确认前擅自生成场景文件。
+        newWorkCell ();
+    }
+    else {
+        QString workCellPath;
+        if (!_projectManager.resolveResource (workCellResourceId, workCellPath, error))
+            return false;
+        openWorkCellFile (workCellPath);
+    }
+
+    updateProjectWindowTitle ();
+    return true;
+}
+
+// 刷新主窗口标题：有项目时显示“项目名[*] - ”，再统一附加版本号。
+// 脏标记 * 反映清单保存后又有未保存改动。
+void RobWorkStudio::updateProjectWindowTitle ()
+{
+    QString title;
+    if (_projectManager.hasProject ()) {
+        title = _projectManager.manifest ().project.name;
+        if (_projectManager.isDirty ())
+            title += QStringLiteral ("*");
+        title += QStringLiteral (" - ");
+    }
+    title += QStringLiteral ("RobWorkStudio v") + QString::fromLatin1 (RW_VERSION);
+    setWindowTitle (title);
 }
 
 void RobWorkStudio::openWorkCellFile (const QString& filename)

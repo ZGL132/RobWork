@@ -25,6 +25,7 @@
 #endif
 
 #include "RWStudioView3D.hpp"
+#include "ProjectManager.hpp"
 
 #include <rw/core/Event.hpp>
 #include <rw/core/Log.hpp>
@@ -662,6 +663,13 @@ class RobWorkStudio : public QMainWindow
     void setTStatePath (rw::trajectory::TimedStatePath path);
 
   private Q_SLOTS:
+    // 项目级操作（第一阶段）：新建项目文件、打开项目、保存项目、关闭项目。
+    // 与旧有的 WorkCell 级入口（newWorkCell/saveWorkCell 等）并存，后者保留在
+    // 菜单下半部分供调试单资源与迁移历史文件使用。
+    void newProject ();
+    void openProject ();
+    void saveProject ();
+    void closeProject ();
     void newWorkCell ();
     void reloadWorkCell ();
     void open ();
@@ -714,6 +722,11 @@ class RobWorkStudio : public QMainWindow
 
     void openDrawable (const QString& filename);
     void openWorkCellFile (const QString& filename);
+    // 打开项目文件并按其入口加载 WorkCell：空项目创建内存 WorkCell，非空项目
+    // 解析 mainWorkCell 入口资源路径后加载真实场景文件。失败时经 error 回填原因。
+    bool openProjectFile (const QString& filename, QString* error = nullptr);
+    // 依据当前项目状态刷新主窗口标题：项目名（含脏标记 *）- RobWorkStudio 版本号。
+    void updateProjectWindowTitle ();
 
     rw::geometry::AABB< double > calculateWorkCellSize ();
 
@@ -741,6 +754,10 @@ class RobWorkStudio : public QMainWindow
     rw::core::PropertyMap* _settingsMap;
     std::vector< std::pair< QAction*, std::string > > _lastFilesActions;
     HelpAssistant* _assistant;
+
+    // 项目管理器作为主窗口的长期成员存在，确保拖放、最近文件和菜单入口都共享
+    // 同一份项目上下文。第一阶段只管理清单；插件文档注册将在后续阶段接入。
+    ProjectManager _projectManager;
 
     std::map< std::string, bool > _plugins_loaded;
     std::map< std::string, std::string > _plugin2fileName;

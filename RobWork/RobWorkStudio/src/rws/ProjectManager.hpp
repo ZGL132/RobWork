@@ -1,0 +1,66 @@
+#ifndef RWS_PROJECTMANAGER_HPP
+#define RWS_PROJECTMANAGER_HPP
+
+#include "ProjectManifest.hpp"
+
+namespace rws {
+
+/**
+ * @brief 第一阶段的项目生命周期管理器。
+ *
+ * 当前版本只管理项目清单本身，尚未把各插件文档 Provider 接入保存事务。先稳定
+ * 项目文件格式、路径规则和主程序入口，再逐步迁移业务插件，可以降低改造风险。
+ */
+class ProjectManager
+{
+  public:
+    ProjectManager () = default;
+
+    // 创建新项目：在磁盘上写入 .rwproj 清单文件，并让本管理器接管该项目的上下文。
+    // 参数 projectFilePath 是项目文件的目标路径；manifest 是待持久化的清单，其中
+    // 缺失的 id / createdAt 等字段会被自动补全；error 可选，失败时回填错误描述。
+    bool createProject (const QString& projectFilePath,
+                        const ProjectManifest& manifest,
+                        QString* error = nullptr);
+
+    // 打开既有项目：读取并校验 .rwproj 文件，预解析全部资源路径并检查 required
+    // 资源是否真实存在；任一步失败都不会破坏当前已打开的项目上下文。
+    bool openProject (const QString& projectFilePath, QString* error = nullptr);
+
+    // 保存当前项目：把内存中的清单写回磁盘。没有打开任何项目时直接失败。
+    bool saveProject (QString* error = nullptr);
+
+    // 关闭当前项目：清空项目文件路径与内存清单，并把脏标记复位。
+    // 注意：本方法不会静默保存，丢弃未保存修改的决策权在上层 UI。
+    void closeProject ();
+
+    // 状态查询：当前是否持有项目；清单是否被改动过（脏标记）。
+    bool hasProject () const { return !_projectFilePath.isEmpty (); }
+    bool isDirty () const { return _dirty; }
+    // 置脏/清脏：后续阶段会由插件文档注册表在业务文档变化时调用。
+    void markDirty (bool dirty = true) { _dirty = dirty; }
+
+    // 访问器：当前项目文件路径与内存中的清单（只读引用）。
+    QString projectFilePath () const { return _projectFilePath; }
+    const ProjectManifest& manifest () const { return _manifest; }
+
+    // 按稳定资源 ID 解析资源在磁盘上的实际路径。
+    // 内部委托 ProjectPathResolver 执行项目目录边界检查，越界路径会失败。
+    bool resolveResource (const QString& resourceId,
+                          QString& resolvedPath,
+                          QString* error = nullptr) const;
+
+  private:
+    // 把清单以原子方式（QSaveFile）写入指定项目文件，避免写入中断留下半截文件。
+    bool writeManifest (const QString& projectFilePath,
+                        const ProjectManifest& manifest,
+                        QString* error) const;
+
+    QString _projectFilePath;    // 当前项目文件绝对路径；为空表示未打开项目。
+    ProjectManifest _manifest;   // 当前项目的内存清单（内存模型）。
+    bool _dirty = false;         // 脏标记：清单在保存后又被改动则为 true。
+};
+
+}    // namespace rws
+
+#endif    // RWS_PROJECTMANAGER_HPP

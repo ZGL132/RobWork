@@ -1,0 +1,22 @@
+{
+    "entryPoints": {
+    },
+    "format": "RobWorkStudioProject",
+    "plugins": {
+    },
+    "project": {
+        "application": "RobWorkStudio",
+        "applicationVersion": "",
+        "createdAt": "2026-07-31T19:20:21Z",
+        "description": "由 RobWorkStudio 创建的空项目",
+        "id": "d6f64108-cae4-45c7-a03f-3578b9bb0a12",
+        "modifiedAt": "2026-07-31T19:20:21Z",
+        "name": "test"
+    },
+    "resources": [
+    ],
+    "schemaVersion": 1,
+    "settings": {
+        "pathPolicy": "project-relative"
+    }
+}
