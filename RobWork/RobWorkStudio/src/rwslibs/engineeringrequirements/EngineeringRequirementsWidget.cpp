@@ -3,6 +3,7 @@
 #include "RequirementCompiler.hpp"
 #include "RequirementFreezer.hpp"
 #include "GeometryFeatureResolver.hpp"
+#include "OrientationRuleResolver.hpp"
 #include "RequirementSetJson.hpp"
 #include "StationImportService.hpp"
 #include "StationTemplateService.hpp"
@@ -648,10 +649,14 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     pathForm->addRow(_stationApproachEnabled, _stationApproachDistance); pathForm->addRow(_stationRetractEnabled, _stationRetractDistance);
     pathForm->addRow(QString::fromUtf8("最小关节裕度"), _stationMinimumJointMargin);
     inspectorLayout->addWidget(pathGroup);
-    _stationAdvancedPoseGroup = new QGroupBox(QString::fromUtf8("高级坐标（固定姿态）"), inspector); _stationAdvancedPoseGroup->setObjectName("keyStationAdvancedPoseGroup");
+    _stationAdvancedPoseGroup = new QGroupBox(QString::fromUtf8("高级坐标（工位坐标）"), inspector); _stationAdvancedPoseGroup->setObjectName("keyStationAdvancedPoseGroup");
     QFormLayout* poseForm = new QFormLayout(_stationAdvancedPoseGroup);
+    _stationAdvancedPoseSourceLabel = new QLabel(_stationAdvancedPoseGroup);
+    _stationAdvancedPoseSourceLabel->setObjectName("keyStationAdvancedPoseSourceLabel");
+    _stationAdvancedPoseSourceLabel->setWordWrap(true);
     _stationX = lengthSpinBox("keyStationX"); _stationY = lengthSpinBox("keyStationY"); _stationZ = lengthSpinBox("keyStationZ");
     _stationRoll = angleSpinBox("keyStationRoll"); _stationPitch = angleSpinBox("keyStationPitch"); _stationYaw = angleSpinBox("keyStationYaw");
+    poseForm->addRow(QString::fromUtf8("坐标说明"), _stationAdvancedPoseSourceLabel);
     poseForm->addRow("X", _stationX); poseForm->addRow("Y", _stationY); poseForm->addRow("Z", _stationZ);
     poseForm->addRow("Roll", _stationRoll); poseForm->addRow("Pitch", _stationPitch); poseForm->addRow("Yaw", _stationYaw);
     inspectorLayout->addWidget(_stationAdvancedPoseGroup); inspectorLayout->addStretch();
@@ -936,6 +941,13 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     _refreshingKeyStationInspector = true;
     refreshFrameChoices();
     const PoseTask& task = _requirements.poseTasks[static_cast<std::size_t>(selected)];
+    PoseTask displayedTask = task;
+    _stationOrientationCoordinatesResolved = task.orientation.mode == OrientationMode::Fixed;
+    if (!_stationOrientationCoordinatesResolved && _workcell != nullptr) {
+        std::string resolutionError;
+        _stationOrientationCoordinatesResolved = OrientationRuleResolver::applyToStation(
+            displayedTask, *_workcell, activeWorkCellState(), &resolutionError);
+    }
     const QSignalBlocker nameBlocker(_stationNameEdit), processBlocker(_stationProcessTypeCombo), levelBlocker(_stationLevelCombo);
     const QSignalBlocker modeBlocker(_stationOrientationModeCombo), rollBlocker(_stationFreeRollCheck);
     const QSignalBlocker targetPointBlocker(_stationOrientationTargetPointEdit);
@@ -955,7 +967,7 @@ void EngineeringRequirementsWidget::refreshKeyStationInspector()
     _stationRetractDistance->setValue(task.retract.distanceMeters);
     _stationMinimumJointMargin->setValue(task.validation.minimumJointMargin);
     _stationX->setValue(task.position[0]); _stationY->setValue(task.position[1]); _stationZ->setValue(task.position[2]);
-    _stationRoll->setValue(task.rpyDeg[0]); _stationPitch->setValue(task.rpyDeg[1]); _stationYaw->setValue(task.rpyDeg[2]);
+    _stationRoll->setValue(displayedTask.rpyDeg[0]); _stationPitch->setValue(displayedTask.rpyDeg[1]); _stationYaw->setValue(displayedTask.rpyDeg[2]);
     updateOrientationEditor();
     _refreshingKeyStationInspector = false;
 }
@@ -986,7 +998,8 @@ void EngineeringRequirementsWidget::commitKeyStationInspector()
     updated.retract.distanceMeters = _stationRetractDistance->value();
     updated.validation.minimumJointMargin = _stationMinimumJointMargin->value();
     updated.position = {{_stationX->value(), _stationY->value(), _stationZ->value()}};
-    updated.rpyDeg = {{_stationRoll->value(), _stationPitch->value(), _stationYaw->value()}};
+    if (updated.orientation.mode == OrientationMode::Fixed)
+        updated.rpyDeg = {{_stationRoll->value(), _stationPitch->value(), _stationYaw->value()}};
     if (hasSameInspectorEditableValues(existing, updated)) return;
 
     // 先构造候选工位、再比较、最后替换。这样快照一定保存的是修改前的完整需求集，
@@ -1012,7 +1025,27 @@ void EngineeringRequirementsWidget::updateOrientationEditor()
     const OrientationMode mode = static_cast<OrientationMode>(_stationOrientationModeCombo->currentData().toInt());
     const bool fixed = mode == OrientationMode::Fixed;
     const bool pointAtTarget = mode == OrientationMode::PointAtTarget;
-    _stationAdvancedPoseGroup->setVisible(fixed);
+    _stationAdvancedPoseGroup->setVisible(true);
+    for (QDoubleSpinBox* spin : {_stationX, _stationY, _stationZ}) {
+        if (spin != nullptr) spin->setReadOnly(false);
+    }
+    for (QDoubleSpinBox* spin : {_stationRoll, _stationPitch, _stationYaw}) {
+        if (spin != nullptr) spin->setReadOnly(!fixed);
+    }
+    if (_stationAdvancedPoseSourceLabel != nullptr) {
+        const QString reference = _stationReferenceFrameCombo == nullptr
+            ? QStringLiteral("WORLD") : _stationReferenceFrameCombo->currentData().toString();
+        if (fixed) {
+            _stationAdvancedPoseSourceLabel->setText(
+                QString::fromUtf8("相对工位参考系 %1；位置和固定姿态均可编辑。").arg(reference));
+        } else if (_stationOrientationCoordinatesResolved) {
+            _stationAdvancedPoseSourceLabel->setText(
+                QString::fromUtf8("相对工位参考系 %1；姿态由规则解析，仅显示。").arg(reference));
+        } else {
+            _stationAdvancedPoseSourceLabel->setText(
+                QString::fromUtf8("相对工位参考系 %1；当前无法解析姿态规则，显示已保存的工位姿态。").arg(reference));
+        }
+    }
     // 固定姿态只显示高级 RPY；坐标系/法向模式只需选择目标 Frame；指向模式额外开放
     // 参考系内目标点。两种目标同时填写时解析器优先使用 Frame，避免状态不确定。
     if (_stationOrientationTargetFrameCombo != nullptr) {

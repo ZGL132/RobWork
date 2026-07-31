@@ -139,12 +139,14 @@ private:
     QDoubleSpinBox* _stationPitch = nullptr;
     QDoubleSpinBox* _stationYaw = nullptr;
     QGroupBox* _stationAdvancedPoseGroup = nullptr;
+    QLabel* _stationAdvancedPoseSourceLabel = nullptr;
     QTableWidget* _regionTable = nullptr;
     QLabel* _modelLabel = nullptr;
     QLabel* _freezeLabel = nullptr;
     QLabel* _statusLabel = nullptr;
     QPushButton* _freezeButton = nullptr;
     bool _refreshingKeyStationInspector = false;
+    bool _stationOrientationCoordinatesResolved = true;
 };
 
 } // namespace rws

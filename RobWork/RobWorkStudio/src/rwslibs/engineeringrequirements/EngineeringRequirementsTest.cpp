@@ -29,6 +29,8 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
 #include <QJsonObject>
 #include <QLineEdit>
 #include <QPushButton>
@@ -1044,6 +1046,34 @@ int testWidgetEditsPointAtTargetCoordinates()
     return 0;
 }
 
+int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
+{
+    rws::EngineeringRequirementsWidget widget;
+    widget.findChild<QPushButton*>("addRequirementPoseTaskButton")->click();
+
+    QGroupBox* coordinates = widget.findChild<QGroupBox*>("keyStationAdvancedPoseGroup");
+    QComboBox* mode = widget.findChild<QComboBox*>("keyStationOrientationModeCombo");
+    QDoubleSpinBox* x = widget.findChild<QDoubleSpinBox*>("keyStationX");
+    QDoubleSpinBox* roll = widget.findChild<QDoubleSpinBox*>("keyStationRoll");
+    REQUIRE(coordinates != nullptr);
+    REQUIRE(mode != nullptr);
+    REQUIRE(x != nullptr);
+    REQUIRE(roll != nullptr);
+    REQUIRE(coordinates->title() == QString::fromUtf8("高级坐标（工位坐标）"));
+    REQUIRE(!coordinates->isHidden());
+    REQUIRE(!x->isReadOnly());
+    REQUIRE(!roll->isReadOnly());
+
+    mode->setCurrentIndex(mode->findData(static_cast<int>(rws::OrientationMode::AlignFrame)));
+    REQUIRE(!coordinates->isHidden());
+    REQUIRE(!x->isReadOnly());
+    REQUIRE(roll->isReadOnly());
+
+    mode->setCurrentIndex(mode->findData(static_cast<int>(rws::OrientationMode::Fixed)));
+    REQUIRE(!roll->isReadOnly());
+    return 0;
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -1060,7 +1090,9 @@ int main(int argc, char** argv)
             return 1;
         if (testWidgetUndoRedoCoversRegularStationAndCoverageEdits() != 0)
             return 1;
-        return testWidgetEditsPointAtTargetCoordinates();
+        if (testWidgetEditsPointAtTargetCoordinates() != 0)
+            return 1;
+        return testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation();
     }
     QCoreApplication app(argc, argv);
     (void)app;
