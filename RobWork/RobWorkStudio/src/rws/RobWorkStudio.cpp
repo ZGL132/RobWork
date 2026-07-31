@@ -98,7 +98,7 @@ CollisionDetector::Ptr makeCollisionDetector (WorkCell::Ptr workcell)
 
 RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
     QMainWindow (NULL), _robwork (RobWork::getInstance ()), _aboutBox (NULL),
-    _inStateUpdate (false), _settingsMap (NULL)
+    _inStateUpdate (false), _settingsMap (NULL), _workCellProvider (NULL)
 {
     this->setObjectName ("RobWorkStudio_MainWindow");
     // Always create the about box.
@@ -168,6 +168,21 @@ RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
     _workcell = emptyWorkCell ();
     _state    = _workcell->getDefaultState ();
     _detector = makeCollisionDetector (_workcell);
+
+    // WorkCell Provider 通过回调复用主窗口现有的加载、视图刷新、插件通知和 DOM 保存
+    // 流程。Registry 只保存非拥有型指针，Provider 的生命周期由主窗口明确管理。
+    _workCellProvider = new WorkCellProjectDocumentProvider (
+        [this] (const QString& path, QString* error) {
+            return loadWorkCellProjectResource (path, error);
+        },
+        [this] (const QString& path, QString* error) {
+            return saveWorkCellProjectResource (path, error);
+        });
+    QString providerError;
+    if (!_projectDocuments.registerProvider (_workCellProvider, &providerError)) {
+        RW_WARN ("Unable to register WorkCell project provider: "
+                 << providerError.toStdString ());
+    }
     // Workcell given to view.
     _view->setWorkCell (_workcell);
     _view->setState (_state);
@@ -181,6 +196,10 @@ RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
 
 RobWorkStudio::~RobWorkStudio ()
 {
+    // 先关闭所有项目文档（按依赖逆序），再释放 Provider——Provider 是非拥有型指针，
+    // 由主窗口负责 delete；顺序保证在 Provider 析构前不会再有资源回调请求。
+    _projectDocuments.closeResources ();
+    delete _workCellProvider;
     delete _assistant;
     delete _propEditor;
 }
@@ -192,6 +211,14 @@ void RobWorkStudio::propertyChangedListener (PropertyBase* base)
 
 void RobWorkStudio::closeEvent (QCloseEvent* e)
 {
+    // 应用退出与“关闭项目”必须共享同一套保存决策。用户取消关闭时必须在释放插件、
+    // 清空视图或写入窗口设置之前立即返回，避免界面仍在但项目上下文已被破坏。
+    if (!confirmProjectClose ()) {
+        e->ignore ();
+        return;
+    }
+    closeProjectDocuments ();
+
     QByteArray mainAppState = saveState ();
     std::vector< int > state_vector (mainAppState.size ());
     for (int i = 0; i < mainAppState.size (); i++) {
@@ -855,6 +882,10 @@ void RobWorkStudio::newProject ()
         return;
     if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
         projectFile += QStringLiteral (".rwproj");
+    // 新建项目同样属于“离开当前项目”的操作：先完成旧项目的保存/放弃/取消决策，
+    // 用户取消时保持旧项目原样返回。
+    if (!confirmProjectClose ())
+        return;
 
     ProjectManifest manifest;
     manifest.project.name = QFileInfo (projectFile).completeBaseName ();
@@ -868,9 +899,12 @@ void RobWorkStudio::newProject ()
         return;
     }
 
+    // 新项目清单成功落盘后再关闭旧 Provider 文档，避免创建失败导致旧项目被卸载。
+    _projectDocuments.closeResources ();
     // 第一阶段的新建项目不强制生成 WorkCell 文件，而是提供一个内存中的空 WorkCell。
-    // 用户可以继续使用“打开单个资源”导入旧场景；阶段四会补充正式的项目创建向导。
-    newWorkCell ();
+    // 此处必须调用不带项目切换语义的内部函数；若调用用户菜单槽 newWorkCell，刚由
+    // createProject 建立的新项目会被误判为“待退出项目”并立即清空。
+    createEmptyWorkCell ();
     _settingsMap->set< std::string > ("PreviousOpenDirectory",
                                       QFileInfo (projectFile).absolutePath ().toStdString ());
     std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
@@ -900,27 +934,103 @@ void RobWorkStudio::openProject ()
 void RobWorkStudio::saveProject ()
 {
     QString error;
-    if (!_projectManager.saveProject (&error)) {
+    if (!saveProjectInternal (&error)) {
         QMessageBox::warning (this, tr ("Save Project Failed"), error);
         return;
     }
-
-    // 当前阶段只保存项目清单。WorkCell 和插件业务文档仍由现有入口保存；第二阶段
-    // 引入 ProjectDocumentProvider 后，“保存项目”会升级为真正的统一保存事务。
     updateProjectWindowTitle ();
+}
+
+// 统一的“保存项目”实现：先提交全部脏业务文档，最后写项目清单。
+// 菜单槽 saveProject、关闭确认和窗口关闭事件都走这里，保证三种路径行为一致。
+bool RobWorkStudio::saveProjectInternal (QString* error)
+{
+    if (!_projectManager.hasProject ()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("当前没有打开的项目。");
+        return false;
+    }
+
+    // 先提交所有业务文档，最后写项目清单。清单是本次保存的提交点，只有资源文件
+    // 全部成功后才更新时间戳并清除清单脏状态。
+    if (!_projectDocuments.saveDirtyResources (
+            _projectManager.manifest (), _projectManager.projectFilePath (), error))
+        return false;
+    return _projectManager.saveProject (error);
+}
+
+// 项目关闭门禁：无项目直接放行；有项目时先检查 Provider 是否允许关闭，再聚合
+// 清单与文档的脏状态。有未保存修改则弹出 保存/放弃/取消 三选对话框。
+// 返回 true 表示调用方可以继续关闭项目。
+bool RobWorkStudio::confirmProjectClose ()
+{
+    if (!_projectManager.hasProject ())
+        return true;
+
+    QString reason;
+    if (!_projectDocuments.canClose (&reason)) {
+        QMessageBox::warning (this,
+                              tr ("Project Cannot Be Closed"),
+                              reason.isEmpty () ? tr ("A project document is busy.") : reason);
+        return false;
+    }
+
+    if (!_projectManager.isDirty () && !_projectDocuments.isDirty ())
+        return true;
+
+    QMessageBox box (QMessageBox::Warning,
+                     tr ("Unsaved Project Changes"),
+                     tr ("The project contains unsaved changes."),
+                     QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                     this);
+    box.setInformativeText (tr ("Save all modified project documents before closing?"));
+    box.setDefaultButton (QMessageBox::Save);
+    const QMessageBox::StandardButton choice =
+        static_cast< QMessageBox::StandardButton > (box.exec ());
+    if (choice == QMessageBox::Cancel)
+        return false;
+    if (choice == QMessageBox::Discard)
+        return true;
+
+    QString error;
+    if (!saveProjectInternal (&error)) {
+        QMessageBox::warning (this, tr ("Save Project Failed"), error);
+        return false;
+    }
+    return true;
+}
+
+// 关闭项目文档上下文：先让 Registry 按依赖逆序关闭各业务文档，再清空清单。
+// 顺序固定——Provider 的 closeResource 依赖清单仍有效时才能按 ID 释放自身文档。
+void RobWorkStudio::closeProjectDocuments ()
+{
+    // Registry 必须先按依赖逆序关闭文档，再清空清单；Provider 的 closeResource
+    // 仍需要通过资源 ID 判断自己当前持有的文档。
+    _projectDocuments.closeResources ();
+    _projectManager.closeProject ();
 }
 
 // 关闭项目：同时清空项目上下文与当前 WorkCell，并刷新窗口标题。
 void RobWorkStudio::closeProject ()
 {
-    // 第一阶段尚不存在插件级脏状态，因此这里只关闭项目上下文。后续阶段会在这里
-    // 统一列出未保存资源并提供“全部保存、不保存、取消”三种选择。
-    _projectManager.closeProject ();
+    if (!confirmProjectClose ())
+        return;
+    closeProjectDocuments ();
     closeWorkCell ();
     updateProjectWindowTitle ();
 }
 
 void RobWorkStudio::newWorkCell ()
+{
+    // 菜单中的“新建空 WorkCell”表示用户明确离开项目文档模式。先完成项目保存决策，
+    // 用户取消时保持项目、Provider 和当前场景完全不变；确认后再创建独立内存文档。
+    if (!leaveProjectForStandaloneWorkCell ())
+        return;
+    createEmptyWorkCell ();
+    updateProjectWindowTitle ();
+}
+
+void RobWorkStudio::createEmptyWorkCell ()
 {
     try {
         closeWorkCell ();
@@ -1037,7 +1147,10 @@ void RobWorkStudio::openFile (const std::string& file)
                 // 让菜单、命令行和拖放入口共享完全相同的项目加载行为。
                 QString projectError;
                 if (!openProjectFile (filename, &projectError)) {
-                    QMessageBox::critical (this, tr ("Open Project Failed"), projectError);
+                    // 用户在未保存提示中选择“取消”时 error 为空，不应再显示一次失败
+                    // 对话框；真正的格式、路径或 Provider 错误仍需明确报告。
+                    if (!projectError.isEmpty ())
+                        QMessageBox::critical (this, tr ("Open Project Failed"), projectError);
                 }
                 else {
                     _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles",
@@ -1064,9 +1177,13 @@ void RobWorkStudio::openFile (const std::string& file)
             else if (filename.endsWith (".WC", Qt::CaseInsensitive) ||
                      filename.endsWith (".XML", Qt::CaseInsensitive)) {
                 Log::infoLog () << "Opening workcell file: " << filename.toStdString () << "\n";
-                openWorkCellFile (filename);
-                _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", lastfiles);
-                updateLastFiles ();
+                // 独立 WorkCell 会替换当前项目的入口文档，因此必须先通过统一项目关闭
+                // 门禁。用户取消或文件加载失败时不应写入最近文件列表。
+                if (openStandaloneWorkCellFile (filename)) {
+                    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles",
+                                                                      lastfiles);
+                    updateLastFiles ();
+                }
             }
             else if (filename.endsWith (".rwplay", Qt::CaseInsensitive) |
                      filename.endsWith (".csv", Qt::CaseInsensitive)) {
@@ -1076,7 +1193,7 @@ void RobWorkStudio::openFile (const std::string& file)
             }
             else {
                 // we try openning a workcell
-                openWorkCellFile (filename);
+                openStandaloneWorkCellFile (filename);
             }
         }
     }
@@ -1131,25 +1248,85 @@ void RobWorkStudio::openDrawable (const QString& filename)
     }
 }
 
+// 项目 Provider 的加载回调：确认 WorkCell 文件存在后调用 tryOpenWorkCellFile
+// 真正打开场景。成功返回 true；文件不存在或加载失败经 error 回填原因。
+bool RobWorkStudio::loadWorkCellProjectResource (const QString& filename, QString* error)
+{
+    if (!QFileInfo::exists (filename)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("WorkCell 文件不存在：%1。").arg (filename);
+        return false;
+    }
+    if (!tryOpenWorkCellFile (filename)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("WorkCell 加载失败：%1。").arg (filename);
+        return false;
+    }
+    return true;
+}
+
+// 项目 Provider 的保存回调：把当前 WorkCell 与 State 用 DOMWorkCellSaver 写入
+// 指定路径（保存事务分配的暂存文件）。捕获 RobWork 与标准库异常并回填中文错误。
+bool RobWorkStudio::saveWorkCellProjectResource (const QString& filename, QString* error)
+{
+    if (_workcell == nullptr) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("当前没有可保存的 WorkCell。");
+        return false;
+    }
+
+    try {
+        // Provider 只接收保存事务生成的暂存路径；DOMWorkCellSaver 不会直接覆盖正式
+        // 项目资源，正式替换由 ProjectSaveTransaction 负责。
+        rw::loaders::DOMWorkCellSaver::save (_workcell, _state, filename.toStdString ());
+        return true;
+    }
+    catch (const rw::core::Exception& exception) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("WorkCell 保存失败：%1。").arg (
+                QString::fromStdString (exception.getMessage ().getText ()));
+    }
+    catch (const std::exception& exception) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("WorkCell 保存失败：%1。").arg (
+                QString::fromUtf8 (exception.what ()));
+    }
+    return false;
+}
+
 // 实际打开项目文件：先让项目管理器读取并校验清单，再按 mainWorkCell 入口决定
 // 加载真实场景还是创建内存 WorkCell。任一环节失败即返回 false 并回填错误。
 bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
 {
+    if (!confirmProjectClose ())
+        return false;
     if (!_projectManager.openProject (filename, error))
         return false;
+
+    // 清单已通过结构、路径和 required 资源检查后，才关闭旧文档并加载新文档。
+    // 这样普通的文件选择错误不会破坏当前已打开的项目。
+    _projectDocuments.closeResources ();
+    closeWorkCell ();
+
+    if (!_projectDocuments.loadProjectResources (
+            _projectManager.manifest (), _projectManager.projectFilePath (), error)) {
+        _projectDocuments.closeResources ();
+        _projectManager.closeProject ();
+        // 项目资源加载失败后只恢复可用的空场景；此时项目上下文已经显式关闭，
+        // 不应再次进入用户交互式的项目退出流程。
+        createEmptyWorkCell ();
+        updateProjectWindowTitle ();
+        return false;
+    }
 
     const QString workCellResourceId =
         _projectManager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell"));
     if (workCellResourceId.isEmpty ()) {
         // 空项目是合法状态。创建一个内存 WorkCell 可保持现有插件和三维视图可用，
         // 同时不在用户未确认前擅自生成场景文件。
-        newWorkCell ();
-    }
-    else {
-        QString workCellPath;
-        if (!_projectManager.resolveResource (workCellResourceId, workCellPath, error))
-            return false;
-        openWorkCellFile (workCellPath);
+        // 空项目仍处于项目模式，只是暂时没有 mainWorkCell 入口。因此只能创建内部
+        // 内存场景，不能调用会退出项目的 newWorkCell 菜单槽。
+        createEmptyWorkCell ();
     }
 
     updateProjectWindowTitle ();
@@ -1163,7 +1340,7 @@ void RobWorkStudio::updateProjectWindowTitle ()
     QString title;
     if (_projectManager.hasProject ()) {
         title = _projectManager.manifest ().project.name;
-        if (_projectManager.isDirty ())
+        if (_projectManager.isDirty () || _projectDocuments.isDirty ())
             title += QStringLiteral ("*");
         title += QStringLiteral (" - ");
     }
@@ -1173,12 +1350,22 @@ void RobWorkStudio::updateProjectWindowTitle ()
 
 void RobWorkStudio::openWorkCellFile (const QString& filename)
 {
+    // 保留既有 void 符号，避免已经编译的静态/动态插件因方法签名变化产生链接失败。
+    // 项目 Provider 需要加载结果时，调用新增的 tryOpenWorkCellFile。
+    tryOpenWorkCellFile (filename);
+}
+
+// 打开 WorkCell 的内部实现，返回加载是否成功（失败时回退为空场景）。
+// 与旧 openWorkCellFile 的区别是带返回值，供项目 Provider 判断加载结果。
+bool RobWorkStudio::tryOpenWorkCellFile (const QString& filename)
+{
     // Always close the workcell.
     closeWorkCell ();
     // rw::graphics::WorkCellScene::Ptr wcsene = _view->makeWorkCellScene();
 
     WorkCell::Ptr wc;
 
+    bool loadedSuccessfully = true;
     try {
         wc = WorkCellLoader::Factory::load (filename.toStdString ());
         if (wc == NULL) {
@@ -1190,6 +1377,7 @@ void RobWorkStudio::openWorkCellFile (const QString& filename)
                                 std::string (e.what ());
         QMessageBox::information (this, "Error", msg.c_str (), QMessageBox::Ok);
         wc = emptyWorkCell ();
+        loadedSuccessfully = false;
     }
 
     // std::cout<<"Number of devices in workcell in RobWorkStudio::setWorkCell:
@@ -1204,6 +1392,35 @@ void RobWorkStudio::openWorkCellFile (const QString& filename)
     _view->setState (_state);
 
     openAllPlugins ();
+    return loadedSuccessfully;
+}
+
+bool RobWorkStudio::leaveProjectForStandaloneWorkCell ()
+{
+    if (!_projectManager.hasProject ())
+        return true;
+
+    // confirmProjectClose 同时检查 Provider 的 canClose、聚合脏状态并处理
+    // Save/Discard/Cancel。只有返回 true 才允许破坏当前项目上下文。
+    if (!confirmProjectClose ())
+        return false;
+
+    // Provider 必须在 ProjectManager 清单仍然有效时按依赖逆序收到 closeResource；
+    // closeProjectDocuments 已固定执行顺序，因此这里不直接分别清理两个对象。
+    closeProjectDocuments ();
+    return true;
+}
+
+bool RobWorkStudio::openStandaloneWorkCellFile (const QString& filename)
+{
+    if (!leaveProjectForStandaloneWorkCell ())
+        return false;
+
+    // 项目上下文解除后再调用旧加载入口，确保 WorkCell 状态变化不会继续被原项目
+    // Provider 记为脏。无论加载成功还是回退为空场景，标题都应反映独立文档模式。
+    const bool loadedSuccessfully = tryOpenWorkCellFile (filename);
+    updateProjectWindowTitle ();
+    return loadedSuccessfully;
 }
 
 void RobWorkStudio::setWorkcell (rw::models::WorkCell::Ptr workcell)
@@ -1381,6 +1598,14 @@ void RobWorkStudio::setState (const rw::kinematics::State& state)
 {
     _state = state;
     _view->setState (state);
+
+    // WorkCell XML 保存器会持久化当前 State，因此 JOG、拖动或插件调用 setState 后，
+    // 已加载的项目 WorkCell 应进入脏状态。Provider 未绑定资源时 markDirty 是空操作，
+    // 不会把项目外临时打开的 WorkCell 错误纳入项目保存。
+    if (_workCellProvider != nullptr) {
+        _workCellProvider->markDirty ();
+        updateProjectWindowTitle ();
+    }
     updateHandler ();
     stateChangedEvent ().fire (_state);
 }

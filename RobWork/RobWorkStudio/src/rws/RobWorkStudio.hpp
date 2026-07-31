@@ -25,7 +25,9 @@
 #endif
 
 #include "RWStudioView3D.hpp"
+#include "ProjectDocumentRegistry.hpp"
 #include "ProjectManager.hpp"
+#include "WorkCellProjectDocumentProvider.hpp"
 
 #include <rw/core/Event.hpp>
 #include <rw/core/Log.hpp>
@@ -722,9 +724,32 @@ class RobWorkStudio : public QMainWindow
 
     void openDrawable (const QString& filename);
     void openWorkCellFile (const QString& filename);
+    // 打开 WorkCell 的内部实现，返回加载是否成功；失败时回退为空场景。
+    // 保留旧 openWorkCellFile（void）以维持插件二进制兼容，它直接委托本函数。
+    bool tryOpenWorkCellFile (const QString& filename);
+    // 用户主动打开独立 WorkCell 时，必须先完成当前项目的保存/放弃/取消决策，
+    // 再解除 Provider 与 ProjectManager 绑定。该入口只供 openFile 的单资源分支使用，
+    // 项目 Provider 加载和“重新加载 WorkCell”仍直接走 tryOpenWorkCellFile，避免误退出项目。
+    bool openStandaloneWorkCellFile (const QString& filename);
+    // 从项目模式切换到独立 WorkCell 模式的统一门禁。无项目时直接成功；有项目时
+    // 复用关闭确认，并在用户允许后按依赖逆序关闭文档、清空项目清单上下文。
+    bool leaveProjectForStandaloneWorkCell ();
+    // 仅负责替换当前三维场景为空 WorkCell，不处理任何项目生命周期。项目创建、
+    // 空项目打开和加载失败恢复必须调用此内部函数，防止刚建立的项目被立即关闭。
+    void createEmptyWorkCell ();
+    // WorkCell 项目 Provider 的回调：加载时确认文件存在并打开场景；保存时把
+    // 当前 WorkCell/State 写入保存事务分配的暂存路径。失败均经 error 回填原因。
+    bool loadWorkCellProjectResource (const QString& filename, QString* error);
+    bool saveWorkCellProjectResource (const QString& filename, QString* error);
     // 打开项目文件并按其入口加载 WorkCell：空项目创建内存 WorkCell，非空项目
     // 解析 mainWorkCell 入口资源路径后加载真实场景文件。失败时经 error 回填原因。
     bool openProjectFile (const QString& filename, QString* error = nullptr);
+    // 统一的“保存项目”实现（先保存文档、后写清单）；菜单、关闭确认共用。
+    bool saveProjectInternal (QString* error);
+    // 项目关闭门禁：canClose 检查 + 未保存修改的 保存/放弃/取消 决策。
+    bool confirmProjectClose ();
+    // 关闭项目文档：按依赖逆序关闭 Provider 文档后清空清单上下文。
+    void closeProjectDocuments ();
     // 依据当前项目状态刷新主窗口标题：项目名（含脏标记 *）- RobWorkStudio 版本号。
     void updateProjectWindowTitle ();
 
@@ -758,6 +783,11 @@ class RobWorkStudio : public QMainWindow
     // 项目管理器作为主窗口的长期成员存在，确保拖放、最近文件和菜单入口都共享
     // 同一份项目上下文。第一阶段只管理清单；插件文档注册将在后续阶段接入。
     ProjectManager _projectManager;
+    // 第二阶段加入的文档注册表：按资源 kind 协调各 Provider 的加载、保存与关闭。
+    ProjectDocumentRegistry _projectDocuments;
+    // 把主窗口的 WorkCell 文档接入项目生命周期的 Provider（非拥有型指针，
+    // 由主窗口在析构时 delete）。
+    WorkCellProjectDocumentProvider* _workCellProvider;
 
     std::map< std::string, bool > _plugins_loaded;
     std::map< std::string, std::string > _plugin2fileName;

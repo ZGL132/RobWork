@@ -49,9 +49,12 @@ if(build)
         HelpAssistant.cpp
         RWSSpinBox.cpp
         ImageView.cpp
+        ProjectDocumentRegistry.cpp
         ProjectManifestJson.cpp
         ProjectManager.cpp
         ProjectPathResolver.cpp
+        ProjectSaveTransaction.cpp
+        WorkCellProjectDocumentProvider.cpp
         propertyview/PropertyViewEditor.cpp
         propertyview/PropertyViewDialog.cpp
     )
@@ -69,10 +72,14 @@ if(build)
         AboutBox.hpp
         HelpAssistant.hpp
         ImageView.hpp
+        ProjectDocumentProvider.hpp
+        ProjectDocumentRegistry.hpp
         ProjectManifest.hpp
         ProjectManifestJson.hpp
         ProjectManager.hpp
         ProjectPathResolver.hpp
+        ProjectSaveTransaction.hpp
+        WorkCellProjectDocumentProvider.hpp
     )
     set(SRC_FILES_HPP_propertyview propertyview/PropertyViewEditor.hpp
                                    propertyview/PropertyViewDialog.hpp

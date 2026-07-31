@@ -62,6 +62,7 @@ SET(RWS_TEST_LIBRARIES
 )
 
 SET(RWS_TEST_SRC
+  rws/ProjectDocumentRegistryTest.cpp
   rws/ProjectSystemTest.cpp
   rws/RobWorkStudioTest.cpp
 )
