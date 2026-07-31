@@ -15,14 +15,18 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
 #include <rw/kinematics/MovableFrame.hpp>
+#include <rw/models/RevoluteJoint.hpp>
 #include <rw/kinematics/StateStructure.hpp>
 #include <rw/math/Constants.hpp>
+#include <rw/math/Q.hpp>
 #include <rw/math/RPY.hpp>
 #include <rw/math/Transform3D.hpp>
 #include <rw/math/Vector3D.hpp>
+#include <rw/models/SerialDevice.hpp>
 #include <rw/models/WorkCell.hpp>
 
 #include <QCoreApplication>
+
 #include <QApplication>
 #include <QComboBox>
 #include <QJsonObject>
@@ -314,7 +318,7 @@ int testFreezerRejectsMissingWorkCellTcpForMustStation()
     std::string error;
     REQUIRE(!rws::RequirementFreezer::freeze(requirements, *workcell,
                                                workcell->getDefaultState(), model, artifact, &error));
-    REQUIRE(error.find("TCP") != std::string::npos);
+    REQUIRE(error.find("robot device") != std::string::npos);
     return 0;
 }
 
@@ -397,7 +401,9 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     // 冻结工件必须保存编译后的任务、诊断和环境指纹；仅保存编辑态 RequirementSet
     // 会让 Should 工位的排除结果在重新打开项目后丢失，破坏审计可复现性。
     rws::FrozenRequirementArtifact artifact;
+    artifact.schemaVersion = 3;
     artifact.requirementFingerprint = "requirement-sha256";
+    artifact.environmentFingerprint = "environment-sha256";
     artifact.workcellFingerprint = "workcell-sha256";
     // 冻结工件中的已编译快照仍须满足编译器的模型绑定契约。这里显式填入
     // 指纹，验证 JSON 往返不会把这项下游可追溯信息遗漏或重置为空字符串。
@@ -423,14 +429,20 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     // 场景快照是跨插件交接非 WORLD 工位的最小可复现依据：它既保留冻结时的场景
     // 定义，也将源文件版本、设备标识和状态指纹纳入审计。此处先以独立字段断言
     // JSON 往返契约，防止后续增加候选场景工厂时静默丢失这些关键证据。
-    artifact.schemaVersion = 2;
     artifact.scenario.sourceWorkCellPath = "D:/demo/cell.wc.xml";
     artifact.scenario.sourceFileFingerprint = "scene-file-sha256";
     artifact.scenario.snapshotFingerprint = "scene-snapshot-sha256";
     artifact.scenario.deviceName = "FreezeRobot";
+    artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
     artifact.scenario.stateFingerprint = artifact.workcellFingerprint;
     artifact.scenario.sceneSpec.robotName = "FrozenScene";
     artifact.scenario.sceneSpec.saveDirectory = "D:/demo";
+    artifact.frozenRobotState.deviceName = "FreezeRobot";
+    artifact.frozenRobotState.tcpFrameName = "FreezeTcp";
+    artifact.frozenRobotState.kinematicFingerprint = "robot-kinematic-sha256";
+    artifact.frozenRobotState.q.push_back(0.0);
+    artifact.frozenRobotState.tcpWorldPose[15] = 1.0;
+    artifact.frozenRobotState.capturedAt = "2026-07-31T00:00:00.000Z";
 
     // 项目文件需要把冻结工件嵌入编辑态需求 JSON，因此读写器必须提供对象级
     // 接口，而不仅是独立字符串 API；两种入口应还原同一份可审计编译结果。
@@ -441,7 +453,7 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(objectRestored.compiled.poseTasks.size() == 1);
     REQUIRE(objectRestored.compiled.poseTasks[0].orientation.resolutionEvidence ==
             station.orientation.resolutionEvidence);
-    REQUIRE(objectRestored.schemaVersion == 2);
+    REQUIRE(objectRestored.schemaVersion == 3);
     REQUIRE(objectRestored.scenario.sourceWorkCellPath == "D:/demo/cell.wc.xml");
     REQUIRE(objectRestored.scenario.sourceFileFingerprint == "scene-file-sha256");
     REQUIRE(objectRestored.scenario.snapshotFingerprint == "scene-snapshot-sha256");
@@ -458,7 +470,7 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(restored.compiled.diagnostics.size() == 1);
     REQUIRE(restored.compiled.poseTasks[0].orientation.resolutionEvidence ==
             station.orientation.resolutionEvidence);
-    REQUIRE(restored.schemaVersion == 2);
+    REQUIRE(restored.schemaVersion == 3);
     REQUIRE(restored.scenario.sceneSpec.robotName == "FrozenScene");
     return 0;
 }
@@ -474,8 +486,21 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     requirements.modelBinding.robotModelFingerprint = rws::RobotModelFingerprint::canonicalSha256(model);
 
     rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ArtifactBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("ArtifactJoint", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("ArtifactTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
     const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
         new rw::models::WorkCell(structure, "ArtifactStateWorkCell", ""));
+    const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base.get(), tcp.get(), model.robotName,
+                                     structure->getDefaultState()));
+    workcell->addDevice(device);
     const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
         new rw::kinematics::MovableFrame("ArtifactFixture"));
     workcell->addFrame(fixture, workcell->getWorldFrame());
@@ -487,9 +512,17 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, frozenState, model, &error));
 
     rw::kinematics::State changedState = frozenState;
+    device->setQ(rw::math::Q(1, 0.35), changedState);
+    REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, changedState, model, &error));
+
     fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.05, 0.0, 0.0)), changedState);
     REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, changedState, model, &error));
-    REQUIRE(error.find("WorkCell") != std::string::npos);
+    REQUIRE(error.find("Fixture or external environment") != std::string::npos);
+
+    rw::kinematics::State changedTcpState = frozenState;
+    tcp->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.01, 0.0, 0.0)), changedTcpState);
+    REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, changedTcpState, model, &error));
+    REQUIRE(error.find("Robot model or TCP configuration") != std::string::npos);
     return 0;
 }
 
@@ -511,14 +544,27 @@ int testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges()
     requirements.modelBinding.robotName = model.robotName;
     requirements.modelBinding.robotModelFingerprint = rws::RobotModelFingerprint::canonicalSha256(model);
     rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ArtifactSourceBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("ArtifactSourceJoint", rw::math::Transform3D<>()));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ArtifactSourceTcp", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
     const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
         new rw::models::WorkCell(structure, "ArtifactSourceWorkCell", workcellPath.toStdString()));
+    const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base.get(), tcp.get(), model.robotName,
+                                     structure->getDefaultState()));
+    workcell->addDevice(device);
 
     rws::FrozenRequirementArtifact artifact;
     std::string error;
     REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell,
                                                workcell->getDefaultState(), model, artifact, &error));
-    REQUIRE(artifact.schemaVersion == 2);
+    REQUIRE(artifact.schemaVersion == 3);
     REQUIRE(!artifact.scenario.sourceFileFingerprint.empty());
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
                                                  workcell->getDefaultState(), model, &error));

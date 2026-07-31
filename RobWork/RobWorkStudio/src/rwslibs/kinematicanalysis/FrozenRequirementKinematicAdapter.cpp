@@ -122,14 +122,33 @@ bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& a
                                                std::vector<TaskPoint>& output,
                                                std::string* error)
 {
+    return applyWithValidation(artifact, workcell, state, output, error, nullptr);
+}
+
+bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirementArtifact& artifact,
+                                               const rw::models::WorkCell& workcell,
+                                               const rw::kinematics::State& state,
+                                               std::vector<TaskPoint>& output,
+                                               std::string* error,
+                                               bool* robotStateChanged)
+{
     // 即使 JSON 有 frozen 标志，也必须复核冻结时的场景和 State。否则夹具移动后仍会把
     // 相对 Frame 的旧位姿送进 IK，产生看似正常、实际对应错误工艺位置的分析结论。
-    if (!artifact.compiled.frozen || artifact.requirementFingerprint.empty() ||
-        artifact.compiled.requirementFingerprint != artifact.requirementFingerprint) {
-        if (error != nullptr) *error = "Engineering requirement artifact is not a complete frozen artifact.";
+    if (!artifact.compiled.frozen) {
+        if (error != nullptr) *error = "Engineering requirement artifact has no compiled frozen requirements.";
         return false;
     }
-    if (!RequirementFreezer::isScenarioCurrent(artifact, workcell, state, error))
+    if (artifact.requirementFingerprint.empty()) {
+        if (error != nullptr) *error = "Engineering requirement artifact has no requirement fingerprint.";
+        return false;
+    }
+    if (artifact.compiled.requirementFingerprint != artifact.requirementFingerprint) {
+        if (error != nullptr)
+            *error = "Engineering requirement artifact compiled requirements do not match its fingerprint.";
+        return false;
+    }
+    FrozenRequirementValidationResult validation;
+    if (!RequirementFreezer::validateScenario(artifact, workcell, state, &validation, error))
         return false;
 
     std::vector<TaskPoint> converted;
@@ -137,6 +156,7 @@ bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& a
     for (const CompiledPoseTask& station : artifact.compiled.poseTasks)
         converted.push_back(toTaskPoint(station));
     output = std::move(converted);
+    if (robotStateChanged != nullptr) *robotStateChanged = validation.robotStateChanged;
     if (error != nullptr) error->clear();
     return true;
 }

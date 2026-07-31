@@ -16,6 +16,7 @@
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QCoreApplication>
 #include <QRect>
@@ -2011,17 +2012,27 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     // TCP、代表姿态和姿态解析证据均原样传入现有 TaskPoint 数据模型。
     rw::kinematics::StateStructure::Ptr structure =
         rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("FrozenImportBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("FrozenImportJoint", rw::math::Transform3D<>()));
     const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
         new rw::kinematics::MovableFrame("Fixture_A"));
     const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
         new rw::kinematics::FixedFrame("ToolTCP", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
     structure->addFrame(fixture, structure->getRoot());
-    structure->addFrame(tcp, structure->getRoot());
     const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
         new rw::models::WorkCell(structure, "FrozenImportCell", ""));
 
     rws::RobotModelSpec model;
     model.robotName = "FrozenImportRobot";
+    const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base.get(), tcp.get(), model.robotName,
+                                     structure->getDefaultState()));
+    workcell->addDevice(device);
     rws::RequirementSet requirements;
     requirements.modelBinding.robotName = model.robotName;
     requirements.modelBinding.robotModelFingerprint =
@@ -2042,17 +2053,48 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(rws::RequirementFreezer::freeze(
             requirements, *workcell, workcell->getDefaultState(), model, artifact, &error),
                                "freeze artifact for kinematic import")) return rc;
+    if (const int rc = require(artifact.compiled.frozen,
+                               "freeze artifact records compiled frozen state")) return rc;
+    if (const int rc = require(artifact.compiled.requirementFingerprint == artifact.requirementFingerprint,
+                               "freeze artifact keeps compiled requirement fingerprint")) return rc;
+    rws::RobotModelSpec restoredScene;
+    error.clear();
+    if (const int rc = require(rws::RobotModelSpecJson::fromObject(
+            rws::RobotModelSpecJson::toObject(artifact.scenario.sceneSpec), restoredScene, &error),
+                               "round-trip frozen scenario specification: " + error)) return rc;
+    if (const int rc = require(artifact.compiled.frozen,
+                               "scenario round-trip preserves compiled frozen state")) return rc;
+    if (const int rc = require(artifact.compiled.requirementFingerprint == artifact.requirementFingerprint,
+                               "scenario round-trip preserves compiled requirement fingerprint")) return rc;
     std::vector<rws::TaskPoint> tasks;
-    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::apply(
-            artifact, *workcell, workcell->getDefaultState(), tasks, &error),
-                               "import frozen artifact into kinematic tasks")) return rc;
+    const bool imported = rws::FrozenRequirementKinematicAdapter::apply(
+        artifact, *workcell, workcell->getDefaultState(), tasks, &error);
+    if (const int rc = require(imported,
+                               "import frozen artifact into kinematic tasks: " + error)) return rc;
     if (const int rc = require(tasks.size() == 1, "one frozen task is imported")) return rc;
     if (const int rc = require(tasks.front().refFrame == "Fixture_A", "fixture reference is retained")) return rc;
     if (const int rc = require(tasks.front().tcpFrame == "ToolTCP", "tcp is retained")) return rc;
     if (const int rc = require(tasks.front().note.find("OrientationRuleResolver.1") != std::string::npos,
                                "orientation evidence is retained")) return rc;
 
-    rw::kinematics::State changedState = workcell->getDefaultState();
+    rw::kinematics::State joggedState = workcell->getDefaultState();
+    device->setQ(rw::math::Q(1, 0.35), joggedState);
+    bool robotStateChanged = false;
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
+            artifact, *workcell, joggedState, tasks, &error, &robotStateChanged),
+                               "import frozen artifact after robot jog")) return rc;
+    if (const int rc = require(robotStateChanged,
+                               "robot jog is reported without rejecting frozen requirements")) return rc;
+
+    rws::FrozenRequirementArtifact tcpChangedArtifact = artifact;
+    tcpChangedArtifact.frozenRobotState.kinematicFingerprint = "changed-robot-kinematic-fingerprint";
+    if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::applyWithValidation(
+            tcpChangedArtifact, *workcell, joggedState, tasks, &error, &robotStateChanged),
+                               "reject frozen artifact after robot model or TCP change")) return rc;
+    if (const int rc = require(error.find("Robot model or TCP configuration") != std::string::npos,
+                               "robot model or TCP change reports refreeze guidance")) return rc;
+
+    rw::kinematics::State changedState = joggedState;
     fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.1, 0.0, 0.0)), changedState);
     if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
             artifact, *workcell, changedState, tasks, &error),
@@ -2065,9 +2107,10 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     QJsonObject frozenProject = project;
     frozenProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
     rws::FrozenRequirementArtifact parsedArtifact;
+    error.clear();
     if (const int rc = require(rws::FrozenRequirementKinematicAdapter::parseArtifactJson(
             frozenProject, parsedArtifact, &error),
-                               "parse frozen artifact nested in requirement project")) return rc;
+                               "parse frozen artifact nested in requirement project: " + error)) return rc;
     if (const int rc = require(parsedArtifact.requirementFingerprint == artifact.requirementFingerprint,
                                "nested artifact preserves requirement fingerprint")) return rc;
 

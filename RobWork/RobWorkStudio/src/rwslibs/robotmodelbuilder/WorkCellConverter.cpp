@@ -890,6 +890,14 @@ void WorkCellConverter::extractLimits (const rw::models::JointDevice& device,
             limit.accMax *= rw::math::Rad2Deg;
         }
 
+        // RobWork uses unbounded values for joints without explicit limits. The
+        // serialized RobotModelSpec must remain finite so frozen scene snapshots
+        // can be read back by downstream plugins.
+        if (!std::isfinite(limit.posMin)) limit.posMin = prismatic ? -1.0 : -180.0;
+        if (!std::isfinite(limit.posMax)) limit.posMax = prismatic ? 1.0 : 180.0;
+        if (!std::isfinite(limit.velMax)) limit.velMax = prismatic ? 1.0 : 180.0;
+        if (!std::isfinite(limit.accMax)) limit.accMax = prismatic ? 1.0 : 360.0;
+
         spec.limits.push_back (limit);
     }
 }

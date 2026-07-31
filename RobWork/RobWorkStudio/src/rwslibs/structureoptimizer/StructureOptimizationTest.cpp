@@ -1963,6 +1963,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
 
     rws::FrozenRequirementArtifact artifact;
     artifact.requirementFingerprint = "requirement-fingerprint";
+    artifact.environmentFingerprint = "environment-fingerprint";
     artifact.workcellFingerprint = "workcell-fingerprint";
     artifact.frozenAt = "2026-07-30T09:15:00.123Z";
     artifact.modelBinding.robotName = problem.context.modelSpec.robotName;
@@ -1971,6 +1972,12 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     artifact.compiled.frozen = true;
     artifact.compiled.modelBinding = artifact.modelBinding;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
+    artifact.frozenRobotState.deviceName = artifact.modelBinding.robotName;
+    artifact.frozenRobotState.tcpFrameName = "TCP";
+    artifact.frozenRobotState.kinematicFingerprint = "robot-kinematic-fingerprint";
+    artifact.frozenRobotState.tcpWorldPose[15] = 1.0;
+    artifact.frozenRobotState.capturedAt = artifact.frozenAt;
 
     rws::CompiledPoseTask mustStation;
     mustStation.id = "pick";
@@ -2009,7 +2016,13 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.evaluation.coverageBox.cells[0] == 5);
     REQUIRE(problem.requirementProvenance.requirementFingerprint == "requirement-fingerprint");
     REQUIRE(problem.requirementProvenance.workcellFingerprint == "workcell-fingerprint");
+    REQUIRE(problem.requirementProvenance.environmentFingerprint == "environment-fingerprint");
     REQUIRE(problem.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
+
+    rws::FrozenRequirementArtifact legacyArtifact = artifact;
+    legacyArtifact.schemaVersion = 2;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(legacyArtifact, problem, &error));
+    REQUIRE(error.find("Validate and freeze") != std::string::npos);
 
     rws::WorkspaceDemandRegion secondRegion = region;
     secondRegion.id = "second_area";
@@ -2056,12 +2069,19 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
 
     rws::FrozenRequirementArtifact artifact;
     artifact.requirementFingerprint = "frozen-requirement-fingerprint";
+    artifact.environmentFingerprint = "frozen-environment-fingerprint";
     artifact.workcellFingerprint = "frozen-workcell-fingerprint";
     artifact.frozenAt = "2026-07-30T09:15:00.123Z";
     artifact.modelBinding = requirements.modelBinding;
     artifact.compiled.frozen = true;
     artifact.compiled.modelBinding = artifact.modelBinding;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
+    artifact.frozenRobotState.deviceName = artifact.modelBinding.robotName;
+    artifact.frozenRobotState.tcpFrameName = "TCP";
+    artifact.frozenRobotState.kinematicFingerprint = "robot-kinematic-fingerprint";
+    artifact.frozenRobotState.tcpWorldPose[15] = 1.0;
+    artifact.frozenRobotState.capturedAt = artifact.frozenAt;
     rws::CompiledPoseTask station;
     station.id = "load";
     station.name = "Machine load";
@@ -2790,6 +2810,17 @@ int main(int argc, char** argv)
     }
 
     QCoreApplication app(argc, argv);
+
+    if (suite == "frozen_requirements") {
+        testFrozenEngineeringRequirementArtifactAdapter();
+        testFrozenRequirementProjectImportCreatesAuditableProblem();
+        if (g_testFailures == 0) {
+            std::printf("All frozen requirement tests passed.\n");
+            return 0;
+        }
+        std::printf("%d frozen requirement test(s) FAILED.\n", g_testFailures);
+        return 1;
+    }
 
     if (suite == "ui") {
         testUiTableModelsAndSuggestions();

@@ -98,6 +98,7 @@ struct EngineeringRequirementProvenance
 {
     std::string requirementFingerprint; //!< 冻结 RequirementSet 的 SHA256 内容指纹
     std::string workcellFingerprint;    //!< 冻结时 WorkCell 与 State 的联合 SHA256 指纹
+    std::string environmentFingerprint; //!< 冻结时外部工装与环境 SHA256 指纹
     std::string compilerVersion;        //!< 生成冻结工件的需求编译器/冻结器版本
     // 使用 UTC ISO-8601 时间戳记录需求工件真正完成冻结的时刻。它不参与优化评分，
     // 但使报告、导出项目和问题追溯可以按时间线核对“哪一次冻结”提供了输入。
@@ -117,6 +118,7 @@ struct StructureOptimizationScenarioSnapshot
     std::string sourceFileFingerprint;
     std::string snapshotFingerprint;
     std::string deviceName;
+    std::string environmentFingerprint;
     std::string stateFingerprint;
     RobotModelSpec sceneSpec;
 

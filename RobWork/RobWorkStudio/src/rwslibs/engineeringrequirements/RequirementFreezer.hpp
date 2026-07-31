@@ -5,7 +5,9 @@
 
 #include <rwslibs/robotmodelbuilder/RobotModelSpec.hpp>
 
+#include <array>
 #include <string>
+#include <vector>
 
 class QJsonObject;
 
@@ -24,13 +26,50 @@ struct RobotModelSpec;
  * 同时记录来源文件和内容指纹，用于发现冻结后发生的场景文件替换或手工修改。
  */
 struct FrozenWorkCellScenarioSnapshot {
-    int schemaVersion = 1;
+    int schemaVersion = 2;
     std::string sourceWorkCellPath;
     std::string sourceFileFingerprint;
     std::string snapshotFingerprint;
     std::string deviceName;
+    std::string environmentFingerprint;
     std::string stateFingerprint;
     RobotModelSpec sceneSpec;
+
+    FrozenWorkCellScenarioSnapshot() = default;
+
+    FrozenWorkCellScenarioSnapshot(const FrozenWorkCellScenarioSnapshot& other)
+    {
+        *this = other;
+    }
+
+    FrozenWorkCellScenarioSnapshot& operator=(const FrozenWorkCellScenarioSnapshot& other)
+    {
+        if (this == &other) return *this;
+        schemaVersion = other.schemaVersion;
+        sourceWorkCellPath = other.sourceWorkCellPath;
+        sourceFileFingerprint = other.sourceFileFingerprint;
+        snapshotFingerprint = other.snapshotFingerprint;
+        deviceName = other.deviceName;
+        environmentFingerprint = other.environmentFingerprint;
+        stateFingerprint = other.stateFingerprint;
+        sceneSpec = other.sceneSpec;
+        return *this;
+    }
+};
+
+struct FrozenRobotStateSnapshot {
+    std::string deviceName;
+    std::string tcpFrameName;
+    std::string kinematicFingerprint;
+    std::vector<double> q;
+    std::array<double, 16> tcpWorldPose = {{0.0}};
+    std::string capturedAt;
+};
+
+struct FrozenRequirementValidationResult {
+    bool robotStateChanged = false;
+    FrozenRobotStateSnapshot frozenRobotState;
+    FrozenRobotStateSnapshot currentRobotState;
 };
 
 /**
@@ -41,12 +80,14 @@ struct FrozenWorkCellScenarioSnapshot {
  * 只能消费该工件，避免将“尚未解析的名称字符串”误当成已经满足的工程条件。
  */
 struct FrozenRequirementArtifact {
-    int schemaVersion = 2;
+    int schemaVersion = 3;
     std::string requirementFingerprint;
+    std::string environmentFingerprint;
     std::string workcellFingerprint;
     std::string compilerVersion = "EngineeringRequirements.Freezer.1";
     std::string frozenAt;
     RobotModelBinding modelBinding;
+    FrozenRobotStateSnapshot frozenRobotState;
     FrozenWorkCellScenarioSnapshot scenario;
     CompiledRequirementSet compiled;
 };
@@ -89,6 +130,12 @@ class RequirementFreezer {
                                   const rw::models::WorkCell& workcell,
                                   const rw::kinematics::State& state,
                                   std::string* error = nullptr);
+
+    static bool validateScenario(const FrozenRequirementArtifact& artifact,
+                                 const rw::models::WorkCell& workcell,
+                                 const rw::kinematics::State& state,
+                                 FrozenRequirementValidationResult* result = nullptr,
+                                 std::string* error = nullptr);
 };
 
 /**

@@ -557,6 +557,8 @@ std::string StructureOptimizationJson::problemToJson(
             QString::fromStdString(problem.requirementProvenance.requirementFingerprint);
         provenance["workcellFingerprint"] =
             QString::fromStdString(problem.requirementProvenance.workcellFingerprint);
+        provenance["environmentFingerprint"] =
+            QString::fromStdString(problem.requirementProvenance.environmentFingerprint);
         provenance["compilerVersion"] =
             QString::fromStdString(problem.requirementProvenance.compilerVersion);
         // 冻结时间是需求工件的一部分而非项目创建时间，因此需与三类指纹一起保存。
@@ -570,6 +572,7 @@ std::string StructureOptimizationJson::problemToJson(
         scenario["sourceFileFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.sourceFileFingerprint);
         scenario["snapshotFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.snapshotFingerprint);
         scenario["deviceName"] = QString::fromStdString(problem.scenarioSnapshot.deviceName);
+        scenario["environmentFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.environmentFingerprint);
         scenario["stateFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.stateFingerprint);
         scenario["sceneSpec"] = RobotModelSpecJson::toObject(problem.scenarioSnapshot.sceneSpec);
         root["frozenScenarioSnapshot"] = scenario;
@@ -672,6 +675,8 @@ bool StructureOptimizationJson::problemFromJson(
             provenance["requirementFingerprint"].toString().toStdString();
         problem.requirementProvenance.workcellFingerprint =
             provenance["workcellFingerprint"].toString().toStdString();
+        problem.requirementProvenance.environmentFingerprint =
+            provenance["environmentFingerprint"].toString().toStdString();
         problem.requirementProvenance.compilerVersion =
             provenance["compilerVersion"].toString().toStdString();
         // 旧项目没有该字段时保持为空，仍可按旧格式打开；新项目则完整保留审计时间线。
@@ -685,6 +690,7 @@ bool StructureOptimizationJson::problemFromJson(
         problem.scenarioSnapshot.sourceFileFingerprint = scenario["sourceFileFingerprint"].toString().toStdString();
         problem.scenarioSnapshot.snapshotFingerprint = scenario["snapshotFingerprint"].toString().toStdString();
         problem.scenarioSnapshot.deviceName = scenario["deviceName"].toString().toStdString();
+        problem.scenarioSnapshot.environmentFingerprint = scenario["environmentFingerprint"].toString().toStdString();
         problem.scenarioSnapshot.stateFingerprint = scenario["stateFingerprint"].toString().toStdString();
         if (!scenario["sceneSpec"].isObject() ||
             !RobotModelSpecJson::fromObject(scenario["sceneSpec"].toObject(),

@@ -76,8 +76,18 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
 {
     // 冻结标识、完整审计指纹和内部模型绑定是跨插件交付的最低门槛。仅有 UI 的
     // frozen 标记不能证明任务已经在真实场景中解析，因此这里必须同时检查三者。
+    if (artifact.schemaVersion != 3) {
+        if (error != nullptr)
+            *error = "Frozen engineering requirements use legacy state-based evidence. Validate and freeze the requirements again.";
+        return false;
+    }
     if (!artifact.compiled.frozen || artifact.requirementFingerprint.empty() ||
-        artifact.workcellFingerprint.empty() || artifact.modelBinding.robotModelFingerprint.empty() ||
+        artifact.environmentFingerprint.empty() || artifact.frozenRobotState.deviceName.empty() ||
+        artifact.frozenRobotState.tcpFrameName.empty() ||
+        artifact.frozenRobotState.kinematicFingerprint.empty() ||
+        artifact.frozenRobotState.capturedAt.empty() ||
+        artifact.scenario.environmentFingerprint != artifact.environmentFingerprint ||
+        artifact.modelBinding.robotModelFingerprint.empty() ||
         artifact.compiled.modelBinding.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
         artifact.compiled.requirementFingerprint != artifact.requirementFingerprint) {
         if (error != nullptr) *error = "Engineering requirement artifact is not a complete frozen artifact.";
@@ -179,6 +189,7 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
 
     updated.requirementProvenance.requirementFingerprint = artifact.requirementFingerprint;
     updated.requirementProvenance.workcellFingerprint = artifact.workcellFingerprint;
+    updated.requirementProvenance.environmentFingerprint = artifact.environmentFingerprint;
     updated.requirementProvenance.compilerVersion = artifact.compilerVersion;
     // 适配器只复制冻结工件本身已经持久化的时间，而不在导入优化器时重新取当前时间；
     // 否则同一份需求工件被重复导入会产生不同审计身份，破坏可复现性。
@@ -186,12 +197,13 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     // 只从 schema v2 工件复制可重建场景；schema v1 仍可导入 WORLD 任务，但绝不会被
     // 误认为携带工装碰撞环境，从而保持历史项目的兼容性和新场景流程的正确性。
     updated.scenarioSnapshot = StructureOptimizationScenarioSnapshot();
-    if (artifact.schemaVersion >= 2 && !artifact.scenario.snapshotFingerprint.empty()) {
+    if (!artifact.scenario.snapshotFingerprint.empty()) {
         updated.scenarioSnapshot.schemaVersion = artifact.scenario.schemaVersion;
         updated.scenarioSnapshot.sourceWorkCellPath = artifact.scenario.sourceWorkCellPath;
         updated.scenarioSnapshot.sourceFileFingerprint = artifact.scenario.sourceFileFingerprint;
         updated.scenarioSnapshot.snapshotFingerprint = artifact.scenario.snapshotFingerprint;
         updated.scenarioSnapshot.deviceName = artifact.scenario.deviceName;
+        updated.scenarioSnapshot.environmentFingerprint = artifact.scenario.environmentFingerprint;
         updated.scenarioSnapshot.stateFingerprint = artifact.scenario.stateFingerprint;
         updated.scenarioSnapshot.sceneSpec = artifact.scenario.sceneSpec;
     }

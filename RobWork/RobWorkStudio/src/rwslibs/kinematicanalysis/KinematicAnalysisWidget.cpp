@@ -3923,7 +3923,9 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
         return;
     }
     std::vector<TaskPoint> points;
-    if (!FrozenRequirementKinematicAdapter::apply(artifact, *_workcell, currentState(), points, &error)) {
+    bool robotStateChanged = false;
+    if (!FrozenRequirementKinematicAdapter::applyWithValidation(artifact, *_workcell, currentState(), points,
+                                                                &error, &robotStateChanged)) {
         QMessageBox::warning(this, tr("Import validation"),
                              tr("Frozen artifact is not valid for the current WorkCell: %1")
                                  .arg(QString::fromStdString(error)));
@@ -3934,7 +3936,12 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
     QString validationSummary;
     _taskPointModel->validateAll(&validationSummary);
     setTaskPointTableColumnWidths();
-    setStatus(tr("Imported %1 frozen engineering task point(s).").arg(static_cast<int>(points.size())));
+    QString status = tr("Imported %1 frozen engineering task point(s).").arg(static_cast<int>(points.size()));
+    if (robotStateChanged) {
+        status += tr(" Robot joint state differs from the frozen state, but fixtures and the external environment are unchanged. "
+                     "Frozen requirements remain valid; the current joint state is used as the IK initial seed.");
+    }
+    setStatus(status);
 }
 
 // exportTaskPointsCsv:把表格当前内容序列化为 CSV 并写入用户指定文件。

@@ -7,6 +7,9 @@
 
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/RPY.hpp>
+#include <rw/models/Device.hpp>
+#include <rw/models/Joint.hpp>
+#include <rw/models/JointDevice.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
@@ -21,6 +24,7 @@
 #include <QJsonObject>
 
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
 #include <set>
 #include <sstream>
@@ -62,8 +66,128 @@ bool hasDiagnostic(const std::vector<RequirementDiagnostic>& diagnostics, const 
  * 同一个 Frame 名称在不同夹具位置或不同关节状态下不能被视为同一工程环境，因此
  * 对每个 Frame 记录其世界变换。数值使用高精度文本写入，避免显示层单位转换影响哈希。
  */
-std::string workcellFingerprint(const rw::models::WorkCell& workcell, const rw::kinematics::State& state)
+bool belongsToDevice(const rw::kinematics::Frame* frame,
+                     const rw::kinematics::Frame* deviceBase,
+                     const rw::kinematics::State& state)
 {
+    for (const rw::kinematics::Frame* current = frame; current != nullptr;
+         current = current->getParent(state)) {
+        if (current == deviceBase) return true;
+    }
+    return false;
+}
+
+std::string kinematicFingerprint(const rw::models::WorkCell& workcell,
+                                 const rw::kinematics::State& state,
+                                 const std::string& deviceName)
+{
+    const rw::models::Device::Ptr device = workcell.findDevice(deviceName);
+    if (device == nullptr || device->getBase() == nullptr || device->getEnd() == nullptr)
+        return std::string();
+
+    std::ostringstream stream;
+    stream << std::setprecision(17) << device->getName() << '\n'
+           << device->getBase()->getName() << '\n'
+           << device->getEnd()->getName() << '\n';
+    const rw::models::JointDevice* jointDevice = dynamic_cast<const rw::models::JointDevice*>(device.get());
+    if (jointDevice == nullptr) return std::string();
+    const std::vector<rw::models::Joint*>& joints = jointDevice->getJoints();
+    stream << joints.size() << '\n';
+    for (const rw::models::Joint* joint : joints) {
+        if (joint == nullptr) return std::string();
+        const rw::math::Transform3D<> transform = joint->getFixedTransform();
+        stream << joint->getName();
+        for (int row = 0; row < 3; ++row)
+            for (int column = 0; column < 3; ++column)
+                stream << ' ' << transform.R()(row, column);
+        for (int axis = 0; axis < 3; ++axis)
+            stream << ' ' << transform.P()[axis];
+        const std::pair<rw::math::Q, rw::math::Q> bounds = joint->getBounds();
+        for (std::size_t index = 0; index < bounds.first.size(); ++index)
+            stream << ' ' << bounds.first[index];
+        for (std::size_t index = 0; index < bounds.second.size(); ++index)
+            stream << ' ' << bounds.second[index];
+        const rw::math::Q velocity = joint->getMaxVelocity();
+        const rw::math::Q acceleration = joint->getMaxAcceleration();
+        for (std::size_t index = 0; index < velocity.size(); ++index)
+            stream << ' ' << velocity[index];
+        for (std::size_t index = 0; index < acceleration.size(); ++index)
+            stream << ' ' << acceleration[index];
+        stream << '\n';
+    }
+
+    // Joint transforms encode the live Q and are deliberately excluded here.
+    // Every other frame in the analysed device subtree is static installation
+    // evidence, including TCP and tool mounting frames.
+    std::vector<rw::kinematics::Frame*> frames =
+        rw::kinematics::Kinematics::findAllFrames(device->getBase(), state);
+    std::sort(frames.begin(), frames.end(), [] (const rw::kinematics::Frame* left,
+                                                const rw::kinematics::Frame* right) {
+        return left->getName() < right->getName();
+    });
+    stream << "frames " << frames.size() << '\n';
+    for (const rw::kinematics::Frame* frame : frames) {
+        if (frame == nullptr) return std::string();
+        const rw::kinematics::Frame* parent = frame->getParent(state);
+        stream << frame->getName() << ' '
+               << (parent == nullptr ? std::string("<none>") : parent->getName());
+        if (dynamic_cast<const rw::models::Joint*>(frame) != nullptr) {
+            stream << " joint\n";
+            continue;
+        }
+        const rw::math::Transform3D<> transform = frame->getTransform(state);
+        stream << " frame";
+        for (int row = 0; row < 3; ++row)
+            for (int column = 0; column < 3; ++column)
+                stream << ' ' << transform.R()(row, column);
+        for (int axis = 0; axis < 3; ++axis)
+            stream << ' ' << transform.P()[axis];
+        stream << '\n';
+    }
+    return QCryptographicHash::hash(QByteArray::fromStdString(stream.str()), QCryptographicHash::Sha256)
+        .toHex().toStdString();
+}
+
+FrozenRobotStateSnapshot captureRobotState(const rw::models::WorkCell& workcell,
+                                           const rw::kinematics::State& state,
+                                           const std::string& deviceName)
+{
+    FrozenRobotStateSnapshot snapshot;
+    snapshot.deviceName = deviceName;
+    const rw::models::Device::Ptr device = workcell.findDevice(deviceName);
+    if (device == nullptr || device->getEnd() == nullptr) return snapshot;
+    snapshot.tcpFrameName = device->getEnd()->getName();
+    snapshot.kinematicFingerprint = kinematicFingerprint(workcell, state, deviceName);
+
+    const rw::math::Q q = device->getQ(state);
+    snapshot.q.reserve(q.size());
+    for (std::size_t index = 0; index < q.size(); ++index)
+        snapshot.q.push_back(q[index]);
+    const rw::math::Transform3D<> tcp = rw::kinematics::Kinematics::worldTframe(device->getEnd(), state);
+    std::size_t index = 0;
+    for (int row = 0; row < 3; ++row)
+        for (int column = 0; column < 3; ++column)
+            snapshot.tcpWorldPose[index++] = tcp.R()(row, column);
+    for (int axis = 0; axis < 3; ++axis)
+        snapshot.tcpWorldPose[index++] = tcp.P()[axis];
+    snapshot.tcpWorldPose[index++] = 0.0;
+    snapshot.tcpWorldPose[index++] = 0.0;
+    snapshot.tcpWorldPose[index++] = 0.0;
+    snapshot.tcpWorldPose[index] = 1.0;
+    return snapshot;
+}
+
+bool sameQ(const FrozenRobotStateSnapshot& left, const FrozenRobotStateSnapshot& right)
+{
+    return left.deviceName == right.deviceName && left.q == right.q;
+}
+
+std::string environmentFingerprint(const rw::models::WorkCell& workcell,
+                                   const rw::kinematics::State& state,
+                                   const std::string& deviceName)
+{
+    const rw::models::Device::Ptr device = workcell.findDevice(deviceName);
+    const rw::kinematics::Frame* deviceBase = device == nullptr ? nullptr : device->getBase();
     std::vector<rw::kinematics::Frame*> frames = workcell.getFrames();
     std::sort(frames.begin(), frames.end(), [] (const rw::kinematics::Frame* left,
                                                 const rw::kinematics::Frame* right) {
@@ -73,8 +197,10 @@ std::string workcellFingerprint(const rw::models::WorkCell& workcell, const rw::
     stream << std::setprecision(17) << workcell.getName() << '\n';
     for (rw::kinematics::Frame* frame : frames) {
         if (frame == nullptr) continue;
+        if (deviceBase != nullptr && belongsToDevice(frame, deviceBase, state)) continue;
         const rw::math::Transform3D<> transform = rw::kinematics::Kinematics::worldTframe(frame, state);
-        stream << frame->getName();
+        const rw::kinematics::Frame* parent = frame->getParent(state);
+        stream << frame->getName() << ' ' << (parent == nullptr ? std::string("<none>") : parent->getName());
         for (int row = 0; row < 3; ++row)
             for (int column = 0; column < 3; ++column)
                 stream << ' ' << transform.R()(row, column);
@@ -82,6 +208,20 @@ std::string workcellFingerprint(const rw::models::WorkCell& workcell, const rw::
             stream << ' ' << transform.P()[axis];
         stream << '\n';
     }
+    // The frame graph alone cannot detect a fixture mesh, collision model, or
+    // attachment-resource change. Reuse the existing WorkCell conversion to
+    // canonicalize those scene inputs while excluding the live joint state.
+    QStringList conversionWarnings;
+    const RobotModelSpec scene = WorkCellConverter::convert(workcell, state, std::string(), conversionWarnings);
+    const QJsonObject sceneObject = RobotModelSpecJson::toObject(scene);
+    QJsonObject sceneEvidence;
+    sceneEvidence["sceneFrames"] = sceneObject.value("sceneFrames");
+    sceneEvidence["sceneGeometries"] = sceneObject.value("sceneGeometries");
+    sceneEvidence["drawables"] = sceneObject.value("drawables");
+    sceneEvidence["collisionModels"] = sceneObject.value("collisionModels");
+    sceneEvidence["collisionSetup"] = sceneObject.value("collisionSetup");
+    sceneEvidence["proximitySetup"] = sceneObject.value("proximitySetup");
+    stream << QJsonDocument(sceneEvidence).toJson(QJsonDocument::Compact).toStdString();
     return QCryptographicHash::hash(QByteArray::fromStdString(stream.str()), QCryptographicHash::Sha256)
         .toHex().toStdString();
 }
@@ -116,6 +256,7 @@ std::string scenarioFingerprint(const FrozenWorkCellScenarioSnapshot& scenario)
     object["sourceWorkCellPath"] = QString::fromStdString(scenario.sourceWorkCellPath);
     object["sourceFileFingerprint"] = QString::fromStdString(scenario.sourceFileFingerprint);
     object["deviceName"] = QString::fromStdString(scenario.deviceName);
+    object["environmentFingerprint"] = QString::fromStdString(scenario.environmentFingerprint);
     object["stateFingerprint"] = QString::fromStdString(scenario.stateFingerprint);
     object["sceneSpec"] = RobotModelSpecJson::toObject(scenario.sceneSpec);
     return QCryptographicHash::hash(QJsonDocument(object).toJson(QJsonDocument::Compact),
@@ -141,7 +282,8 @@ FrozenWorkCellScenarioSnapshot makeScenarioSnapshot(const rw::models::WorkCell& 
     }
     snapshot.sourceFileFingerprint = fileFingerprint(snapshot.sourceWorkCellPath);
     snapshot.deviceName = model.robotName;
-    snapshot.stateFingerprint = workcellFingerprint(workcell, state);
+    snapshot.environmentFingerprint = environmentFingerprint(workcell, state, snapshot.deviceName);
+    snapshot.stateFingerprint = snapshot.environmentFingerprint;
     QStringList conversionWarnings;
     const QString sceneDirectory = snapshot.sourceWorkCellPath.empty()
         ? QString::fromStdString(model.saveDirectory)
@@ -227,6 +369,12 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         if (error != nullptr) *error = "The bound RobotModelSpec does not match the model used for freezing.";
         return false;
     }
+    const rw::models::Device::Ptr device = workcell.findDevice(model.robotName);
+    if (device == nullptr || device->getBase() == nullptr || device->getEnd() == nullptr) {
+        if (error != nullptr)
+            *error = "The WorkCell does not contain the robot device required for freezing: " + model.robotName;
+        return false;
+    }
 
     RequirementSet resolved = requirements;
     std::vector<RequirementDiagnostic> environmentDiagnostics;
@@ -275,15 +423,21 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         compiled.workspaceRegions.end());
 
     artifact = FrozenRequirementArtifact();
-    artifact.schemaVersion = 2;
+    artifact.schemaVersion = 3;
     artifact.requirementFingerprint = sourceRequirementFingerprint;
-    artifact.workcellFingerprint = workcellFingerprint(workcell, state);
+    artifact.environmentFingerprint = environmentFingerprint(workcell, state, model.robotName);
+    artifact.workcellFingerprint = artifact.environmentFingerprint;
     // 使用 UTC ISO-8601 毫秒时间戳，使审计记录可跨时区比较且不依赖本机显示格式。
     artifact.frozenAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
     artifact.modelBinding = resolved.modelBinding;
+    artifact.frozenRobotState = captureRobotState(workcell, state, model.robotName);
+    artifact.frozenRobotState.capturedAt = artifact.frozenAt;
     // 场景快照必须在完成 Frame/几何/姿态解析之后生成，使其与本次编译输入使用的
     // WorkCell State 完全一致。后续候选工厂由该快照重建工装与工件，而不依赖当前 UI。
     artifact.scenario = makeScenarioSnapshot(workcell, state, model);
+    artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
+    artifact.scenario.stateFingerprint = artifact.environmentFingerprint;
+    artifact.scenario.snapshotFingerprint = scenarioFingerprint(artifact.scenario);
     artifact.compiled = compiled;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
     if (error != nullptr) error->clear();
@@ -299,9 +453,9 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
 {
     // 顶层绑定与已编译快照都要一致。双重检查能识别手工编辑 JSON 时只改了
     // 其中一层的情况，避免下游消费者读到互相矛盾的模型身份信息。
-    if ((artifact.schemaVersion != 1 && artifact.schemaVersion != 2) || artifact.requirementFingerprint.empty() ||
-        artifact.workcellFingerprint.empty()) {
-        if (error != nullptr) *error = "Frozen requirement artifact is incomplete or uses an unsupported schema.";
+    if (artifact.schemaVersion != 3 || artifact.requirementFingerprint.empty() ||
+        artifact.environmentFingerprint.empty()) {
+        if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
     }
     if (artifact.modelBinding.robotModelFingerprint.empty() ||
@@ -327,12 +481,6 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
         return false;
     }
 
-    const std::string expectedWorkcellFingerprint = workcellFingerprint(workcell, state);
-    if (artifact.workcellFingerprint != expectedWorkcellFingerprint) {
-        if (error != nullptr) *error = "Frozen requirement artifact does not match the current WorkCell or State.";
-        return false;
-    }
-
     if (!isScenarioCurrent(artifact, workcell, state, error)) return false;
 
     if (error != nullptr) error->clear();
@@ -344,35 +492,53 @@ bool RequirementFreezer::isScenarioCurrent(const FrozenRequirementArtifact& arti
                                            const rw::kinematics::State& state,
                                            std::string* error)
 {
-    // schema v1 产生于场景快照契约引入之前。为保证历史 WORLD 需求项目仍可读取，
-    // 此处允许其进行原有的 State 指纹校验；适配器会拒绝它承担非 WORLD 场景评价。
-    if (artifact.schemaVersion == 1) {
-        if (artifact.workcellFingerprint != workcellFingerprint(workcell, state)) {
-            if (error != nullptr) *error = "Frozen requirement artifact does not match the current WorkCell or State.";
-            return false;
-        }
-        if (error != nullptr) error->clear();
-        return true;
+    return validateScenario(artifact, workcell, state, nullptr, error);
+}
+
+bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artifact,
+                                          const rw::models::WorkCell& workcell,
+                                          const rw::kinematics::State& state,
+                                          FrozenRequirementValidationResult* result,
+                                          std::string* error)
+{
+    if (artifact.schemaVersion != 3) {
+        if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
+        return false;
     }
-    if (artifact.schemaVersion != 2 || artifact.scenario.schemaVersion != 1 ||
-        artifact.scenario.stateFingerprint.empty() || artifact.scenario.snapshotFingerprint.empty() ||
+    if (artifact.environmentFingerprint.empty() || artifact.frozenRobotState.deviceName.empty() ||
+        artifact.frozenRobotState.tcpFrameName.empty() ||
+        artifact.frozenRobotState.kinematicFingerprint.empty() ||
+        artifact.scenario.schemaVersion != 2 || artifact.scenario.environmentFingerprint.empty() ||
+        artifact.scenario.snapshotFingerprint.empty() ||
         artifact.scenario.snapshotFingerprint != scenarioFingerprint(artifact.scenario)) {
         if (error != nullptr) *error = "Frozen requirement artifact scene snapshot is incomplete or has been modified.";
         return false;
     }
-    const std::string currentStateFingerprint = workcellFingerprint(workcell, state);
-    if (artifact.workcellFingerprint != currentStateFingerprint ||
-        artifact.scenario.stateFingerprint != currentStateFingerprint) {
-        if (error != nullptr) *error = "Frozen requirement artifact does not match the current WorkCell or State.";
+    const FrozenRobotStateSnapshot currentRobotState = captureRobotState(
+        workcell, state, artifact.frozenRobotState.deviceName);
+    if (currentRobotState.tcpFrameName != artifact.frozenRobotState.tcpFrameName ||
+        currentRobotState.kinematicFingerprint != artifact.frozenRobotState.kinematicFingerprint) {
+        if (error != nullptr)
+            *error = "Robot model or TCP configuration has changed. Validate and freeze the requirements again.";
+        return false;
+    }
+    const std::string currentEnvironment = environmentFingerprint(workcell, state, artifact.frozenRobotState.deviceName);
+    if (artifact.environmentFingerprint != currentEnvironment ||
+        artifact.scenario.environmentFingerprint != artifact.environmentFingerprint) {
+        if (error != nullptr) *error = "Fixture or external environment position has changed. Validate and freeze the requirements again.";
         return false;
     }
     if (!artifact.scenario.sourceWorkCellPath.empty()) {
-        const std::string currentSourceFingerprint = fileFingerprint(artifact.scenario.sourceWorkCellPath);
-        if (currentSourceFingerprint.empty() ||
-            currentSourceFingerprint != artifact.scenario.sourceFileFingerprint) {
+        const std::string sourceFingerprint = fileFingerprint(artifact.scenario.sourceWorkCellPath);
+        if (sourceFingerprint.empty() || sourceFingerprint != artifact.scenario.sourceFileFingerprint) {
             if (error != nullptr) *error = "Frozen requirement artifact source WorkCell file is missing or has changed.";
             return false;
         }
+    }
+    if (result != nullptr) {
+        result->frozenRobotState = artifact.frozenRobotState;
+        result->currentRobotState = currentRobotState;
+        result->robotStateChanged = !sameQ(result->frozenRobotState, result->currentRobotState);
     }
     if (error != nullptr) error->clear();
     return true;
@@ -384,6 +550,7 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     object["type"] = "FrozenEngineeringRequirementArtifact";
     object["schemaVersion"] = artifact.schemaVersion;
     object["requirementFingerprint"] = QString::fromStdString(artifact.requirementFingerprint);
+    object["environmentFingerprint"] = QString::fromStdString(artifact.environmentFingerprint);
     object["workcellFingerprint"] = QString::fromStdString(artifact.workcellFingerprint);
     object["compilerVersion"] = QString::fromStdString(artifact.compilerVersion);
     object["frozenAt"] = QString::fromStdString(artifact.frozenAt);
@@ -399,9 +566,24 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
         scenario["sourceFileFingerprint"] = QString::fromStdString(artifact.scenario.sourceFileFingerprint);
         scenario["snapshotFingerprint"] = QString::fromStdString(artifact.scenario.snapshotFingerprint);
         scenario["deviceName"] = QString::fromStdString(artifact.scenario.deviceName);
+        scenario["environmentFingerprint"] = QString::fromStdString(artifact.scenario.environmentFingerprint);
         scenario["stateFingerprint"] = QString::fromStdString(artifact.scenario.stateFingerprint);
         scenario["sceneSpec"] = RobotModelSpecJson::toObject(artifact.scenario.sceneSpec);
         object["scenario"] = scenario;
+    }
+    if (artifact.schemaVersion >= 3) {
+        QJsonObject robotState;
+        robotState["deviceName"] = QString::fromStdString(artifact.frozenRobotState.deviceName);
+        robotState["tcpFrameName"] = QString::fromStdString(artifact.frozenRobotState.tcpFrameName);
+        robotState["kinematicFingerprint"] = QString::fromStdString(artifact.frozenRobotState.kinematicFingerprint);
+        QJsonArray q;
+        for (const double value : artifact.frozenRobotState.q) q.append(value);
+        robotState["q"] = q;
+        QJsonArray tcpWorldPose;
+        for (const double value : artifact.frozenRobotState.tcpWorldPose) tcpWorldPose.append(value);
+        robotState["tcpWorldPose"] = tcpWorldPose;
+        robotState["capturedAt"] = QString::fromStdString(artifact.frozenRobotState.capturedAt);
+        object["frozenRobotState"] = robotState;
     }
     object["compiledRequirements"] = RequirementSetJson::toObject(compiledSnapshot(artifact.compiled));
     QJsonArray diagnostics;
@@ -425,11 +607,12 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     if (!RequirementCompiler::compile(snapshot, compiled, error)) return false;
     FrozenRequirementArtifact parsed;
     parsed.schemaVersion = object.value("schemaVersion").toInt(1);
-    if (parsed.schemaVersion != 1 && parsed.schemaVersion != 2) {
-        if (error != nullptr) *error = "Frozen requirement artifact uses an unsupported schema version.";
+    if (parsed.schemaVersion != 3) {
+        if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
     }
     parsed.requirementFingerprint = object.value("requirementFingerprint").toString().toStdString();
+    parsed.environmentFingerprint = object.value("environmentFingerprint").toString().toStdString();
     parsed.workcellFingerprint = object.value("workcellFingerprint").toString().toStdString();
     parsed.compilerVersion = object.value("compilerVersion").toString("EngineeringRequirements.Freezer.1").toStdString();
     parsed.frozenAt = object.value("frozenAt").toString().toStdString();
@@ -444,10 +627,45 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         parsed.scenario.sourceFileFingerprint = scenario.value("sourceFileFingerprint").toString().toStdString();
         parsed.scenario.snapshotFingerprint = scenario.value("snapshotFingerprint").toString().toStdString();
         parsed.scenario.deviceName = scenario.value("deviceName").toString().toStdString();
+        parsed.scenario.environmentFingerprint = scenario.value("environmentFingerprint").toString().toStdString();
         parsed.scenario.stateFingerprint = scenario.value("stateFingerprint").toString().toStdString();
         if (!scenario.value("sceneSpec").isObject() ||
             !RobotModelSpecJson::fromObject(scenario.value("sceneSpec").toObject(), parsed.scenario.sceneSpec, error))
             return false;
+    }
+    const QJsonObject robotState = object.value("frozenRobotState").toObject();
+    parsed.frozenRobotState.deviceName = robotState.value("deviceName").toString().toStdString();
+    parsed.frozenRobotState.tcpFrameName = robotState.value("tcpFrameName").toString().toStdString();
+    parsed.frozenRobotState.kinematicFingerprint =
+        robotState.value("kinematicFingerprint").toString().toStdString();
+    for (const QJsonValue& value : robotState.value("q").toArray()) {
+        const double q = value.toDouble();
+        if (!std::isfinite(q)) {
+            if (error != nullptr) *error = "Frozen requirement artifact robot state contains a non-finite joint value.";
+            return false;
+        }
+        parsed.frozenRobotState.q.push_back(q);
+    }
+    const QJsonArray tcpWorldPose = robotState.value("tcpWorldPose").toArray();
+    if (parsed.environmentFingerprint.empty() || parsed.frozenRobotState.deviceName.empty() ||
+        parsed.frozenRobotState.tcpFrameName.empty() ||
+        parsed.frozenRobotState.kinematicFingerprint.empty() ||
+        tcpWorldPose.size() != static_cast<int>(parsed.frozenRobotState.tcpWorldPose.size())) {
+        if (error != nullptr) *error = "Frozen requirement artifact v3 evidence is incomplete.";
+        return false;
+    }
+    for (int index = 0; index < tcpWorldPose.size(); ++index) {
+        const double value = tcpWorldPose[index].toDouble();
+        if (!std::isfinite(value)) {
+            if (error != nullptr) *error = "Frozen requirement artifact robot state contains a non-finite TCP pose value.";
+            return false;
+        }
+        parsed.frozenRobotState.tcpWorldPose[static_cast<std::size_t>(index)] = value;
+    }
+    parsed.frozenRobotState.capturedAt = robotState.value("capturedAt").toString().toStdString();
+    if (parsed.frozenRobotState.capturedAt.empty()) {
+        if (error != nullptr) *error = "Frozen requirement artifact v3 robot state timestamp is missing.";
+        return false;
     }
     parsed.compiled = compiled;
     parsed.compiled.requirementFingerprint = parsed.requirementFingerprint;

@@ -45,6 +45,13 @@ class FrozenRequirementKinematicAdapter
                       const rw::kinematics::State& state,
                       std::vector<TaskPoint>& output,
                       std::string* error = nullptr);
+
+    static bool applyWithValidation(const FrozenRequirementArtifact& artifact,
+                      const rw::models::WorkCell& workcell,
+                      const rw::kinematics::State& state,
+                      std::vector<TaskPoint>& output,
+                      std::string* error,
+                      bool* robotStateChanged = nullptr);
 };
 
 } // namespace rws
