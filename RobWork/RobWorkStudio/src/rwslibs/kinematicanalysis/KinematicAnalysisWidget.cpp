@@ -3911,14 +3911,12 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
         setStatus(tr("Frozen requirement import failed: JSON parse error."));
         return;
     }
-    // 工程需求插件的项目文件把工件嵌在 frozenArtifact 字段；同时接受独立导出的工件
-    // 对象，便于审计系统或其他插件直接交接同一个只读文件。
+    // 解析逻辑集中在适配器中：它同时支持“需求项目内嵌工件”和“独立冻结工件”，并能
+    // 明确区分未冻结项目、损坏字段和选错 JSON，避免 UI 只显示难以定位的 schema 错误。
     const QJsonObject root = document.object();
-    const QJsonObject artifactObject = root.value("frozenArtifact").isObject()
-        ? root.value("frozenArtifact").toObject() : root;
     FrozenRequirementArtifact artifact;
     std::string error;
-    if (!FrozenRequirementArtifactJson::fromObject(artifactObject, artifact, &error)) {
+    if (!FrozenRequirementKinematicAdapter::parseArtifactJson(root, artifact, &error)) {
         QMessageBox::warning(this, tr("Import error"),
                              tr("Frozen artifact parse failed: %1").arg(QString::fromStdString(error)));
         setStatus(tr("Frozen requirement import failed: artifact parse error."));

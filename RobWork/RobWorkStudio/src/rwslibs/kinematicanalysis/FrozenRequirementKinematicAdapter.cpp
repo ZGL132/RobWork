@@ -2,6 +2,8 @@
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 
+#include <QString>
+
 namespace rws {
 namespace {
 
@@ -50,6 +52,69 @@ TaskPoint toTaskPoint(const CompiledPoseTask& station)
 }
 
 } // namespace
+
+bool FrozenRequirementKinematicAdapter::parseArtifactJson(
+    const QJsonObject& projectOrArtifact,
+    FrozenRequirementArtifact& artifact,
+    std::string* error)
+{
+    // 保存后的需求项目采用 RequirementSet 作为根对象，冻结审计证据嵌套在
+    // frozenArtifact 中；独立工件则直接以 FrozenEngineeringRequirementArtifact
+    // 为根对象。先在这里统一解包，避免每个下游插件各自实现一套容易漂移的判断。
+    const QJsonValue nestedArtifact = projectOrArtifact.value("frozenArtifact");
+    QJsonObject artifactObject;
+    if (nestedArtifact.isObject()) {
+        artifactObject = nestedArtifact.toObject();
+    } else if (projectOrArtifact.value("type").toString() ==
+               "FrozenEngineeringRequirementArtifact") {
+        artifactObject = projectOrArtifact;
+    } else {
+        const QString rootType = projectOrArtifact.value("type").toString();
+        if (nestedArtifact.isUndefined()) {
+            // RequirementSet 根对象而没有 frozenArtifact 时，最常见原因是用户保存
+            // 前尚未执行“冻结需求”。该情况不能退化为直接编译可编辑需求，否则会绕过
+            // WorkCell/State 指纹复核，破坏冻结工件的可审计边界。
+            // RequirementSetJson 的历史兼容格式没有顶层 type 字段，因此不能只按
+            // type 识别项目。modelBinding 加任务/覆盖区域字段是该格式稳定的结构特征。
+            const bool looksLikeRequirementProject =
+                rootType == "EngineeringRequirementSet" ||
+                (projectOrArtifact.value("modelBinding").isObject() &&
+                 (projectOrArtifact.value("poseTasks").isArray() ||
+                  projectOrArtifact.value("boxRegions").isArray()));
+            if (looksLikeRequirementProject) {
+                if (error != nullptr) {
+                    *error = "Selected engineering requirements project is not frozen. "
+                             "Freeze it in EngineeringRequirements and save the project again.";
+                }
+            } else {
+                if (error != nullptr) {
+                    *error = "Selected JSON is neither a frozen engineering requirement artifact "
+                             "nor an EngineeringRequirements project with a frozenArtifact field. "
+                             "Detected root type: " +
+                             (rootType.isEmpty() ? std::string("<missing>") : rootType.toStdString()) + ".";
+                }
+            }
+        } else {
+            // 字段存在却不是对象通常意味着用户手工改坏了 JSON，或使用了旧的外部
+            // 导出工具。明确指出字段而不交给底层 schema 校验，可直接缩短现场排查。
+            if (error != nullptr) {
+                *error = "Engineering requirements project has an invalid frozenArtifact field; "
+                         "the field must be a JSON object created by the freeze operation.";
+            }
+        }
+        return false;
+    }
+
+    if (!FrozenRequirementArtifactJson::fromObject(artifactObject, artifact, error)) {
+        // 嵌套字段存在但不是冻结工件时保留底层的完整校验结果，同时补充输入位置，
+        // 方便区分“选错文件”和“冻结记录损坏”。
+        if (error != nullptr) {
+            *error = "Invalid frozenArtifact object: " + *error;
+        }
+        return false;
+    }
+    return true;
+}
 
 bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& artifact,
                                                const rw::models::WorkCell& workcell,

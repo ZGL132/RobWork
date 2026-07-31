@@ -3,6 +3,8 @@
 
 #include "KinematicAnalysisTypes.hpp"
 
+#include <QJsonObject>
+
 #include <string>
 #include <vector>
 
@@ -23,6 +25,21 @@ struct FrozenRequirementArtifact;
 class FrozenRequirementKinematicAdapter
 {
   public:
+    /**
+     * @brief 从独立冻结工件或 EngineeringRequirements 项目根对象解析冻结工件。
+     *
+     * EngineeringRequirements 的保存格式以可编辑 RequirementSet 为根对象，并把经
+     * 冻结校验的审计工件放在 frozenArtifact 字段；审计系统也可以单独保存工件对象。
+     * 此函数是两种文件形态的唯一兼容边界。它特别区分“项目尚未冻结”和“选错文件”，
+     * 让界面能够给工程师可操作的提示，而不是笼统报告 schema 不支持。
+     */
+    static bool parseArtifactJson(const QJsonObject& projectOrArtifact,
+                                  FrozenRequirementArtifact& artifact,
+                                  std::string* error = nullptr);
+
+    /**
+     * @brief 在当前 WorkCell 和实时 State 与冻结场景一致时，转换为运动学任务点。
+     */
     static bool apply(const FrozenRequirementArtifact& artifact,
                       const rw::models::WorkCell& workcell,
                       const rw::kinematics::State& state,

@@ -14,6 +14,7 @@
 #include "FrozenRequirementKinematicAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <QCoreApplication>
@@ -2056,6 +2057,26 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
             artifact, *workcell, changedState, tasks, &error),
                                "reject artifact for changed WorkCell state")) return rc;
+
+    // 工程需求插件保存时将冻结工件嵌入可编辑 RequirementSet 根对象。这里必须走与
+    // Widget 文件导入完全相同的解析入口，防止未来 UI 修改后又把项目根对象误传给
+    // FrozenRequirementArtifactJson 而报“schema 不支持”。
+    const QJsonObject project = rws::RequirementSetJson::toObject(requirements);
+    QJsonObject frozenProject = project;
+    frozenProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    rws::FrozenRequirementArtifact parsedArtifact;
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::parseArtifactJson(
+            frozenProject, parsedArtifact, &error),
+                               "parse frozen artifact nested in requirement project")) return rc;
+    if (const int rc = require(parsedArtifact.requirementFingerprint == artifact.requirementFingerprint,
+                               "nested artifact preserves requirement fingerprint")) return rc;
+
+    // 未冻结的项目必须得到可操作的错误，不能以“schema 不支持”误导用户，也不能
+    // 退化为直接导入编辑态需求而绕过冻结状态和场景指纹复核。
+    if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::parseArtifactJson(
+            project, parsedArtifact, &error), "reject an unfrozen requirement project")) return rc;
+    if (const int rc = require(error.find("not frozen") != std::string::npos,
+                               "unfrozen project reports actionable error")) return rc;
     return 0;
 }
 
