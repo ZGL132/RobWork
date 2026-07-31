@@ -210,6 +210,66 @@ TEST (ProjectSystemTest, ManagerCreatesProjectFromExistingWorkCell)
 
 // 导入测试：业务 JSON 被复制到项目相对路径后才加入内存清单；资源归属未显式指定时默认
 // 设为 project，重复 ID 必须拒绝，且已成功导入的文件和清单状态不能被失败请求破坏。
+// 回归测试：迁移 WorkCell 时入口 XML 的相对 Include 也必须复制到项目内对应位置。只复制
+// scenes/main.wc.xml 会把解析基准从源目录改为 scenes，随后 WorkCellLoader 找不到被 Include
+// 的设备 XML 并在打开项目时失败。
+TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString sourceDirectory = QDir (directory.path ()).filePath ("legacy");
+    const QString projectDirectory = QDir (directory.path ()).filePath ("project");
+    ASSERT_TRUE (QDir ().mkpath (sourceDirectory));
+
+    const QString sourceWorkCell = QDir (sourceDirectory).filePath ("scene.wc.xml");
+    const QString sourceDevice = QDir (sourceDirectory).filePath ("robot.wc.xml");
+    const QString sourceGeometry = QDir (sourceDirectory).filePath ("geometry/shape.poly");
+    const QByteArray sceneXml (
+        "<WorkCell name=\"MigratedScene\">\n"
+        "  <Include file=\"robot.wc.xml\" />\n"
+        "</WorkCell>\n");
+    const QByteArray deviceXml (
+        "<SerialDevice name=\"MigratedRobot\">\n"
+        "  <Frame name=\"Base\" />\n"
+        "  <Drawable name=\"RobotGeometry\" refframe=\"Base\">\n"
+        // RobWork 的 WorkCell XML 允许几何引用省略扩展名；真实模型包常同时提供 .ac、.stl
+        // 等同基名文件，迁移器必须复制这些候选文件，不能把无扩展名文本误当作真实文件名。
+        "    <Polytope file=\"geometry/shape\" />\n"
+        "  </Drawable>\n"
+        "</SerialDevice>\n");
+    const QByteArray geometryData ("migrated geometry payload");
+    for (const auto& source : {std::make_pair (sourceWorkCell, sceneXml),
+                               std::make_pair (sourceDevice, deviceXml)}) {
+        QFile file (source.first);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        ASSERT_EQ (source.second.size (), file.write (source.second));
+    }
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (sourceGeometry).absolutePath ()));
+    QFile geometryFile (sourceGeometry);
+    ASSERT_TRUE (geometryFile.open (QIODevice::WriteOnly));
+    ASSERT_EQ (geometryData.size (), geometryFile.write (geometryData));
+    // 在调用迁移逻辑前关闭写入端，确保 QFile 缓冲区已刷新到磁盘，测试验证的才是复制器读取
+    // 的真实源文件内容，而不是尚停留在测试进程内存中的未提交数据。
+    geometryFile.close ();
+
+    rws::ProjectManager manager;
+    QString error;
+    const QString projectFile = QDir (projectDirectory).filePath ("Migrated.rwproj");
+    ASSERT_TRUE (manager.createProjectFromWorkCell (projectFile, sourceWorkCell, &error))
+        << error.toStdString ();
+
+    const QString copiedDevice = QDir (projectDirectory).filePath ("scenes/robot.wc.xml");
+    QFile copiedDeviceFile (copiedDevice);
+    ASSERT_TRUE (copiedDeviceFile.open (QIODevice::ReadOnly));
+    EXPECT_EQ (deviceXml, copiedDeviceFile.readAll ());
+
+    // XML 依赖树中的非 XML 网格/多面体文件同样要迁移；它们是叶子节点，无需再解析，但
+    // 路径必须保留为 scenes/geometry/...，这样入口 XML 内的 Polytope 相对路径仍然有效。
+    QFile copiedGeometry (QDir (projectDirectory).filePath ("scenes/geometry/shape.poly"));
+    ASSERT_TRUE (copiedGeometry.open (QIODevice::ReadOnly));
+    EXPECT_EQ (geometryData, copiedGeometry.readAll ());
+}
+
 TEST (ProjectSystemTest, ManagerImportsLegacyResourceIntoCurrentProject)
 {
     QTemporaryDir directory;

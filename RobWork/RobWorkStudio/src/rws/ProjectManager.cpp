@@ -11,6 +11,7 @@
 #include <QSet>
 #include <QTemporaryDir>
 #include <QUuid>
+#include <QXmlStreamReader>
 
 namespace rws {
 namespace {
@@ -86,6 +87,150 @@ bool copyFileAtomically (const QString& sourcePath, const QString& targetPath, Q
         return false;
     }
     return true;
+}
+
+// 判断一个已规范化的绝对路径是否仍位于给定目录内。迁移 WorkCell 时仅允许携带源 WorkCell
+// 同目录树中的相对依赖；若 Include 或几何文件通过 ".." 逃出该目录，项目就不再自包含，
+// 必须在创建阶段明确失败，而不是把项目外的绝对路径悄悄保留下来。
+bool isInsideDirectory (const QString& directoryPath, const QString& candidatePath)
+{
+    const QString root = QDir::cleanPath (QFileInfo (directoryPath).absoluteFilePath ());
+    const QString candidate = QDir::cleanPath (QFileInfo (candidatePath).absoluteFilePath ());
+    const QString relative = QDir::fromNativeSeparators (QDir (root).relativeFilePath (candidate));
+    return relative != QStringLiteral ("..") && !relative.startsWith (QStringLiteral ("../")) &&
+        !QFileInfo (relative).isAbsolute ();
+}
+
+// WorkCellLoader 支持把 "geometry/robotFlange" 这类无扩展名路径解析为同目录的
+// robotFlange.ac、robotFlange.stl 等真实网格文件。项目迁移必须复用这一语义：若精确
+// 文件存在优先复制它；仅当引用本身没有扩展名且精确文件缺失时，才收集所有同基名候选，
+// 让复制后的项目继续由加载器按原有优先级选择可用格式。
+QStringList resolveWorkCellDependencySources (const QString& sourceDirectory,
+                                              const QString& reference)
+{
+    const QString declaredPath = QDir::cleanPath (
+        QDir (sourceDirectory).absoluteFilePath (reference));
+    const QFileInfo declaredInfo (declaredPath);
+    if (declaredInfo.exists () && declaredInfo.isFile ())
+        return {declaredInfo.absoluteFilePath ()};
+
+    // 带扩展名的引用属于精确文件路径；保留原路径交给后续复制逻辑报出“文件不存在”，
+    // 不扩大匹配范围，避免把拼写错误悄悄替换为不相关资源。
+    if (!QFileInfo (reference).suffix ().isEmpty ())
+        return {declaredPath};
+
+    const QString requestedBaseName = QFileInfo (reference).fileName ();
+    QStringList resolvedPaths;
+    const QFileInfoList candidates = QDir (declaredInfo.absolutePath ()).entryInfoList (
+        QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+    for (const QFileInfo& candidate : candidates) {
+        // baseName 去除所有扩展名，因此 robotFlange.ac 与 robotFlange.stl 都能匹配
+        // robotFlange；同时保留完整原文件名，XML 无需重写。
+        if (candidate.baseName () == requestedBaseName)
+            resolvedPaths.push_back (candidate.absoluteFilePath ());
+    }
+    return resolvedPaths.isEmpty () ? QStringList ({declaredPath}) : resolvedPaths;
+}
+
+// 递归复制 WorkCell XML 中所有 file 属性引用的依赖。目标目录以入口 WorkCell 所在的
+// scenes 目录为根，源目录的相对层级原样保留，因而 XML 内无需改写 Include、CollisionSetup、
+// Polytope 等已有相对路径，加载器在新项目中仍会得到相同的解析结果。
+bool copyWorkCellDependencyTree (const QString& sourcePath,
+                                 const QString& targetPath,
+                                 const QString& sourceRootDirectory,
+                                 const QString& targetRootDirectory,
+                                 QSet< QString >& visitedSourcePaths,
+                                 QStringList& copiedTargetPaths,
+                                 QString* error)
+{
+    const QString sourceFile = QFileInfo (sourcePath).absoluteFilePath ();
+    const QString targetFile = QFileInfo (targetPath).absoluteFilePath ();
+    if (!visitedSourcePaths.contains (sourceFile)) {
+        visitedSourcePaths.insert (sourceFile);
+        // 源文件本来就在项目目标位置时不复制自身，避免 QSaveFile 覆盖正在读取的源文件；
+        // 仍继续扫描它的引用，以便把同目录下尚未进入项目的依赖一并收集。
+        if (QDir::cleanPath (sourceFile) != QDir::cleanPath (targetFile)) {
+            if (!copyFileAtomically (sourceFile, targetFile, error))
+                return false;
+            copiedTargetPaths.push_back (targetFile);
+        }
+    }
+
+    // 非 XML 文件（网格、纹理、二进制碰撞模型等）是叶子资源，复制完成后无需再解析。
+    if (QFileInfo (sourceFile).suffix ().compare (QStringLiteral ("xml"), Qt::CaseInsensitive) != 0)
+        return true;
+
+    QFile input (sourceFile);
+    if (!input.open (QIODevice::ReadOnly | QIODevice::Text)) {
+        setError (error,
+                  QString::fromUtf8 ("无法读取 WorkCell 依赖 XML：%1。").arg (input.errorString ()));
+        return false;
+    }
+
+    QXmlStreamReader xml (&input);
+    const QString sourceDirectory = QFileInfo (sourceFile).absolutePath ();
+    while (!xml.atEnd ()) {
+        xml.readNext ();
+        if (!xml.isStartElement ())
+            continue;
+
+        const QString reference = xml.attributes ().value (QStringLiteral ("file")).toString ().trimmed ();
+        if (reference.isEmpty ())
+            continue;
+        if (QFileInfo (reference).isAbsolute ()) {
+            setError (error,
+                      QString::fromUtf8 ("WorkCell 依赖不能使用绝对路径：%1。").arg (reference));
+            return false;
+        }
+
+        const QString declaredDependencySource = QDir::cleanPath (
+            QDir (sourceDirectory).absoluteFilePath (reference));
+        if (!isInsideDirectory (sourceRootDirectory, declaredDependencySource)) {
+            setError (error,
+                      QString::fromUtf8 ("WorkCell 依赖越出源目录：%1。").arg (reference));
+            return false;
+        }
+
+        const QStringList dependencySources =
+            resolveWorkCellDependencySources (sourceDirectory, reference);
+        for (const QString& dependencySource : dependencySources) {
+            // 同基名候选与声明路径都必须受源目录边界保护，防止目录扫描或符号链接意外把
+            // 项目外文件带入新项目。路径通过后按相对位置落到 scenes 根下。
+            if (!isInsideDirectory (sourceRootDirectory, dependencySource)) {
+                setError (error,
+                          QString::fromUtf8 ("WorkCell 依赖越出源目录：%1。").arg (reference));
+                return false;
+            }
+            const QString relativeDependency =
+                QDir (sourceRootDirectory).relativeFilePath (dependencySource);
+            const QString dependencyTarget = QDir (targetRootDirectory).filePath (relativeDependency);
+            if (!copyWorkCellDependencyTree (dependencySource,
+                                             dependencyTarget,
+                                             sourceRootDirectory,
+                                             targetRootDirectory,
+                                             visitedSourcePaths,
+                                             copiedTargetPaths,
+                                             error))
+                return false;
+        }
+    }
+
+    if (xml.hasError ()) {
+        setError (error,
+                  QString::fromUtf8 ("WorkCell 依赖 XML 格式错误（第 %1 行）：%2。")
+                      .arg (xml.lineNumber ())
+                      .arg (xml.errorString ()));
+        return false;
+    }
+    return true;
+}
+
+// 迁移过程任一步失败时，仅删除本次实际写入的文件。调用者可能选择在已有目录中创建项目，
+// 因此不能递归删除整个目录，更不能误删用户此前已经存在的其它项目资源。
+void removeCopiedWorkCellDependencies (const QStringList& copiedTargetPaths)
+{
+    for (auto path = copiedTargetPaths.crbegin (); path != copiedTargetPaths.crend (); ++path)
+        QFile::remove (*path);
 }
 
 }    // namespace
@@ -174,13 +319,25 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
     if (!ProjectPathResolver::resolveResource (
             absoluteProjectFile, workCell, targetWorkCell, error))
         return false;
-    if (!copyFileAtomically (sourceInfo.absoluteFilePath (), targetWorkCell, error))
+    QSet< QString > visitedSourcePaths;
+    QStringList copiedTargetPaths;
+    // 入口仍使用固定的 scenes/main.wc.xml，以保持项目清单稳定；递归复制器会把其同目录下
+    // 的相对依赖搬入 scenes 下的对应位置，使 XML 的原始相对引用在新项目中无需改写。
+    if (!copyWorkCellDependencyTree (sourceInfo.absoluteFilePath (),
+                                     targetWorkCell,
+                                     sourceInfo.absolutePath (),
+                                     QFileInfo (targetWorkCell).absolutePath (),
+                                     visitedSourcePaths,
+                                     copiedTargetPaths,
+                                     error)) {
+        removeCopiedWorkCellDependencies (copiedTargetPaths);
         return false;
+    }
 
     // createProject 仅在写入清单成功后才接管当前上下文。若清单写入失败，刚复制的资源不再
     // 有任何清单引用，因此主动删除它，避免在目标目录留下误导性的半成品项目。
     if (!createProject (absoluteProjectFile, manifest, error)) {
-        QFile::remove (targetWorkCell);
+        removeCopiedWorkCellDependencies (copiedTargetPaths);
         return false;
     }
     return true;
