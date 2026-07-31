@@ -11,6 +11,10 @@
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
 #include "KinematicAnalysisJson.hpp"
+#include "FrozenRequirementKinematicAdapter.hpp"
+
+#include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <QCoreApplication>
 #include <QRect>
@@ -18,6 +22,7 @@
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/MovableFrame.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/kinematics/StateStructure.hpp>
 #include <rw/math/RPY.hpp>
@@ -1999,6 +2004,61 @@ static int testTaskPointModel ()
     return 0;
 }
 
+static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
+{
+    // 运动学分析只能读取已经冻结的编译结果。测试同时验证非 WORLD 工装参考系、
+    // TCP、代表姿态和姿态解析证据均原样传入现有 TaskPoint 数据模型。
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("Fixture_A"));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ToolTCP", rw::math::Transform3D<>()));
+    structure->addFrame(fixture, structure->getRoot());
+    structure->addFrame(tcp, structure->getRoot());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "FrozenImportCell", ""));
+
+    rws::RobotModelSpec model;
+    model.robotName = "FrozenImportRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    rws::PoseTask station;
+    station.id = "fixture_pick";
+    station.name = "Fixture pick";
+    station.refFrame = "Fixture_A";
+    station.tcpFrame = "ToolTCP";
+    station.position = {{0.10, 0.20, 0.30}};
+    station.rpyDeg = {{0.0, 90.0, 0.0}};
+    station.orientation.resolutionEvidence =
+        "resolver=OrientationRuleResolver.1;mode=AlignFrame;target=Fixture_A";
+    requirements.poseTasks.push_back(station);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    if (const int rc = require(rws::RequirementFreezer::freeze(
+            requirements, *workcell, workcell->getDefaultState(), model, artifact, &error),
+                               "freeze artifact for kinematic import")) return rc;
+    std::vector<rws::TaskPoint> tasks;
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::apply(
+            artifact, *workcell, workcell->getDefaultState(), tasks, &error),
+                               "import frozen artifact into kinematic tasks")) return rc;
+    if (const int rc = require(tasks.size() == 1, "one frozen task is imported")) return rc;
+    if (const int rc = require(tasks.front().refFrame == "Fixture_A", "fixture reference is retained")) return rc;
+    if (const int rc = require(tasks.front().tcpFrame == "ToolTCP", "tcp is retained")) return rc;
+    if (const int rc = require(tasks.front().note.find("OrientationRuleResolver.1") != std::string::npos,
+                               "orientation evidence is retained")) return rc;
+
+    rw::kinematics::State changedState = workcell->getDefaultState();
+    fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.1, 0.0, 0.0)), changedState);
+    if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
+            artifact, *workcell, changedState, tasks, &error),
+                               "reject artifact for changed WorkCell state")) return rc;
+    return 0;
+}
+
 static int testWorkspaceEnvelopeHelpers ()
 {
     using namespace rws;
@@ -2526,6 +2586,8 @@ static int runAll ()
         return rc;
     if (const int rc = testTaskPointModel ())
         return rc;
+    if (const int rc = testFrozenRequirementArtifactImportsIntoKinematicTasks ())
+        return rc;
     if (const int rc = testVisualizationData ())
         return rc;
     if (const int rc = testWorkspaceEnvelopeHelpers ())
@@ -2580,6 +2642,8 @@ int main (int argc, char** argv)
         rc = testTaskPointUiLogic ();
     else if (suite == "task_point_model")
         rc = testTaskPointModel ();
+    else if (suite == "frozen_requirements")
+        rc = testFrozenRequirementArtifactImportsIntoKinematicTasks ();
     else if (suite == "visualization_data")
         rc = testVisualizationData ();
     else if (suite == "workspace_envelope")

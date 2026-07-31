@@ -63,6 +63,7 @@ if(build)
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisJson.cpp
+        FrozenRequirementKinematicAdapter.cpp
         TaskPointUiLogic.cpp
         KinematicAnalysisUiLogic.cpp
         TaskPointTableModel.cpp
@@ -87,6 +88,7 @@ if(build)
         KinematicAnalysisCollision.hpp
         KinematicAnalysisEnvelope.hpp
         KinematicAnalysisJson.hpp
+        FrozenRequirementKinematicAdapter.hpp
     )
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
@@ -106,7 +108,9 @@ if(build)
     )
     rw_add_includes(${SUBSYS_NAME} "rwslibs/kinematicanalysis" ${SRC_FILES_HPP})
     target_link_libraries(${SUBSYS_NAME} ${SUBSYS_DEPS} PUBLIC ${QT_LIBRARIES})
-    target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_kinematicanalysis_core)
+    # 冻结需求导入适配器位于插件/UI 层，链接需求核心库而不把该依赖倒灌进纯运动学核心。
+    target_link_libraries(${SUBSYS_NAME} PRIVATE sdurws_kinematicanalysis_core
+                          sdurws_engineeringrequirements_core)
     target_include_directories(${SUBSYS_NAME}
         INTERFACE
         $<BUILD_INTERFACE:${RWS_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
@@ -135,11 +139,13 @@ if(build)
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisJson.cpp
+        FrozenRequirementKinematicAdapter.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test
         PRIVATE
             ${SUBSYS_DEPS}
             sdurws_kinematicanalysis_core
+            sdurws_engineeringrequirements_core
             ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_kinematicanalysis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

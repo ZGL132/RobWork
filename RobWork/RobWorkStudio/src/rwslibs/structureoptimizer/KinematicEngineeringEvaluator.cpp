@@ -140,7 +140,7 @@ EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
               "ratio", id());
     addMetric(result, "kinematics.joint_margin.minimum", raw.minimumJointMargin,
               "ratio", id());
-    if (_problem.evaluation.coverageBox.enabled &&
+    if ((!_problem.evaluation.coverageBoxes.empty() || _problem.evaluation.coverageBox.enabled) &&
         !raw.workspaceCoverageDataInsufficient) {
         addMetric(result, "kinematics.workspace.coverage", raw.workspaceCoverage,
                   "ratio", id());
@@ -172,7 +172,7 @@ EngineeringEvaluationResult KinematicEngineeringEvaluator::evaluate(
     addMetric(result, "evaluation.workspace_seconds",
               raw.workspaceEvaluationSeconds, "s", id());
     result.artifacts.push_back({"kinematics.ik-solutions", "application/json", ikSummary(raw)});
-    if (_problem.evaluation.coverageBox.enabled &&
+    if ((!_problem.evaluation.coverageBoxes.empty() || _problem.evaluation.coverageBox.enabled) &&
         !raw.workspaceCoverageDataInsufficient) {
         result.artifacts.push_back({"kinematics.workspace.coverage-summary",
                                     "application/json", workspaceSummary(raw)});

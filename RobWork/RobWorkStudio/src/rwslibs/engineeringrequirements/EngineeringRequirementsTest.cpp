@@ -31,6 +31,8 @@
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QDir>
+#include <QFile>
+#include <QTemporaryDir>
 
 #include <cmath>
 #include <cstdio>
@@ -418,6 +420,18 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     artifact.compiled.diagnostics.push_back(
         {"optional_missing", rws::RequirementLevel::Should, "Excluded from frozen artifact.", false});
 
+    // 场景快照是跨插件交接非 WORLD 工位的最小可复现依据：它既保留冻结时的场景
+    // 定义，也将源文件版本、设备标识和状态指纹纳入审计。此处先以独立字段断言
+    // JSON 往返契约，防止后续增加候选场景工厂时静默丢失这些关键证据。
+    artifact.schemaVersion = 2;
+    artifact.scenario.sourceWorkCellPath = "D:/demo/cell.wc.xml";
+    artifact.scenario.sourceFileFingerprint = "scene-file-sha256";
+    artifact.scenario.snapshotFingerprint = "scene-snapshot-sha256";
+    artifact.scenario.deviceName = "FreezeRobot";
+    artifact.scenario.stateFingerprint = artifact.workcellFingerprint;
+    artifact.scenario.sceneSpec.robotName = "FrozenScene";
+    artifact.scenario.sceneSpec.saveDirectory = "D:/demo";
+
     // 项目文件需要把冻结工件嵌入编辑态需求 JSON，因此读写器必须提供对象级
     // 接口，而不仅是独立字符串 API；两种入口应还原同一份可审计编译结果。
     const QJsonObject object = rws::FrozenRequirementArtifactJson::toObject(artifact);
@@ -427,6 +441,11 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(objectRestored.compiled.poseTasks.size() == 1);
     REQUIRE(objectRestored.compiled.poseTasks[0].orientation.resolutionEvidence ==
             station.orientation.resolutionEvidence);
+    REQUIRE(objectRestored.schemaVersion == 2);
+    REQUIRE(objectRestored.scenario.sourceWorkCellPath == "D:/demo/cell.wc.xml");
+    REQUIRE(objectRestored.scenario.sourceFileFingerprint == "scene-file-sha256");
+    REQUIRE(objectRestored.scenario.snapshotFingerprint == "scene-snapshot-sha256");
+    REQUIRE(objectRestored.scenario.deviceName == "FreezeRobot");
 
     const std::string json = rws::FrozenRequirementArtifactJson::toJson(artifact);
     rws::FrozenRequirementArtifact restored;
@@ -439,6 +458,8 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(restored.compiled.diagnostics.size() == 1);
     REQUIRE(restored.compiled.poseTasks[0].orientation.resolutionEvidence ==
             station.orientation.resolutionEvidence);
+    REQUIRE(restored.schemaVersion == 2);
+    REQUIRE(restored.scenario.sceneSpec.robotName == "FrozenScene");
     return 0;
 }
 
@@ -469,6 +490,45 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.05, 0.0, 0.0)), changedState);
     REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, changedState, model, &error));
     REQUIRE(error.find("WorkCell") != std::string::npos);
+    return 0;
+}
+
+int testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges()
+{
+    // 真实工程中最危险的情况是文件路径未变、工装 XML 却被替换。场景快照的源文件
+    // SHA-256 必须在这种情况下使冻结工件失效，不能仅依赖内存中仍未重新加载的 Frame。
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString workcellPath = directory.filePath("frozen-cell.wc.xml");
+    QFile sourceFile(workcellPath);
+    REQUIRE(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(sourceFile.write("<WorkCell name=\"FrozenCell\" />\n") > 0);
+    sourceFile.close();
+
+    rws::RobotModelSpec model;
+    model.robotName = "ArtifactSourceRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint = rws::RobotModelFingerprint::canonicalSha256(model);
+    rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ArtifactSourceWorkCell", workcellPath.toStdString()));
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell,
+                                               workcell->getDefaultState(), model, artifact, &error));
+    REQUIRE(artifact.schemaVersion == 2);
+    REQUIRE(!artifact.scenario.sourceFileFingerprint.empty());
+    REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
+                                                 workcell->getDefaultState(), model, &error));
+
+    REQUIRE(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate));
+    REQUIRE(sourceFile.write("<WorkCell name=\"FrozenCellChanged\" />\n") > 0);
+    sourceFile.close();
+    REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
+                                                  workcell->getDefaultState(), model, &error));
+    REQUIRE(error.find("source WorkCell file") != std::string::npos);
     return 0;
 }
 
@@ -967,6 +1027,8 @@ int main(int argc, char** argv)
     if (testFrozenArtifactRoundTripRetainsCompiledEvidence() != 0)
         return 1;
     if (testFrozenArtifactBecomesStaleWhenWorkCellStateChanges() != 0)
+        return 1;
+    if (testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges() != 0)
         return 1;
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;

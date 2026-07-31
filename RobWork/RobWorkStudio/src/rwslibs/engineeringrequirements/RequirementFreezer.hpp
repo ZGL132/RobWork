@@ -3,6 +3,8 @@
 
 #include "EngineeringRequirementTypes.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelSpec.hpp>
+
 #include <string>
 
 class QJsonObject;
@@ -15,6 +17,23 @@ namespace rws {
 struct RobotModelSpec;
 
 /**
+ * @brief 冻结时提取的 WorkCell 场景快照。
+ *
+ * 优化器不能只把相对 Frame 的任务点提前换算为 WORLD 坐标，因为那会丢失工装、
+ * 工件和碰撞几何。该快照保存将候选机器人重新放回冻结场景所需的纯数据场景描述，
+ * 同时记录来源文件和内容指纹，用于发现冻结后发生的场景文件替换或手工修改。
+ */
+struct FrozenWorkCellScenarioSnapshot {
+    int schemaVersion = 1;
+    std::string sourceWorkCellPath;
+    std::string sourceFileFingerprint;
+    std::string snapshotFingerprint;
+    std::string deviceName;
+    std::string stateFingerprint;
+    RobotModelSpec sceneSpec;
+};
+
+/**
  * @brief 可交接、可审计的冻结需求工件。
  *
  * RequirementSet 是允许工程师持续修改的编辑态意图；本结构则是某一时刻在明确
@@ -22,12 +41,13 @@ struct RobotModelSpec;
  * 只能消费该工件，避免将“尚未解析的名称字符串”误当成已经满足的工程条件。
  */
 struct FrozenRequirementArtifact {
-    int schemaVersion = 1;
+    int schemaVersion = 2;
     std::string requirementFingerprint;
     std::string workcellFingerprint;
     std::string compilerVersion = "EngineeringRequirements.Freezer.1";
     std::string frozenAt;
     RobotModelBinding modelBinding;
+    FrozenWorkCellScenarioSnapshot scenario;
     CompiledRequirementSet compiled;
 };
 
@@ -57,6 +77,18 @@ class RequirementFreezer {
                           const rw::kinematics::State& state,
                           const RobotModelSpec& model,
                           std::string* error = nullptr);
+
+    /**
+     * @brief 仅复核冻结工件与当前 WorkCell 场景是否仍一致。
+     *
+     * 该接口服务于运动学分析等不持有编辑态 RequirementSet 的下游模块。它校验冻结
+     * State、来源场景文件内容和快照本身的完整性；调用方仍需按自己的输入契约决定
+     * 是否额外复核 RobotModelSpec。
+     */
+    static bool isScenarioCurrent(const FrozenRequirementArtifact& artifact,
+                                  const rw::models::WorkCell& workcell,
+                                  const rw::kinematics::State& state,
+                                  std::string* error = nullptr);
 };
 
 /**

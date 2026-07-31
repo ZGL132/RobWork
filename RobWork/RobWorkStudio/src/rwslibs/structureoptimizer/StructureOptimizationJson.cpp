@@ -377,20 +377,31 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
     obj["quickWorkspace"] = workspaceToJson(cfg.quickWorkspace);
     obj["verifiedWorkspace"] = workspaceToJson(cfg.verifiedWorkspace);
 
-    QJsonObject coverage;
-    coverage["enabled"] = cfg.coverageBox.enabled;
-    QJsonArray minimum;
-    QJsonArray maximum;
-    QJsonArray cells;
-    for (std::size_t i = 0; i < cfg.coverageBox.minimum.size(); ++i) {
-        minimum.append(cfg.coverageBox.minimum[i]);
-        maximum.append(cfg.coverageBox.maximum[i]);
-        cells.append(cfg.coverageBox.cells[i]);
-    }
-    coverage["minimum"] = minimum;
-    coverage["maximum"] = maximum;
-    coverage["cells"] = cells;
-    obj["coverageBox"] = coverage;
+    const auto coverageToJson = [](const WorkspaceCoverageBox& box) {
+        QJsonObject coverage;
+        coverage["id"] = QString::fromStdString(box.id);
+        coverage["referenceFrame"] = QString::fromStdString(box.referenceFrame);
+        coverage["enabled"] = box.enabled;
+        QJsonArray minimum;
+        QJsonArray maximum;
+        QJsonArray cells;
+        for (std::size_t i = 0; i < box.minimum.size(); ++i) {
+            minimum.append(box.minimum[i]);
+            maximum.append(box.maximum[i]);
+            cells.append(box.cells[i]);
+        }
+        coverage["minimum"] = minimum;
+        coverage["maximum"] = maximum;
+        coverage["cells"] = cells;
+        return coverage;
+    };
+    // 保留 coverageBox 以读取旧版本项目，同时额外写入 coverageBoxes，使冻结需求中的
+    // 多个独立工作空间区域在保存后不会退化为一个全局盒。
+    obj["coverageBox"] = coverageToJson(cfg.coverageBox);
+    QJsonArray coverageBoxes;
+    for (const WorkspaceCoverageBox& box : cfg.coverageBoxes)
+        coverageBoxes.append(coverageToJson(box));
+    obj["coverageBoxes"] = coverageBoxes;
     return obj;
 }
 
@@ -418,23 +429,33 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
     workspaceFromJson(obj["quickWorkspace"].toObject(), cfg.quickWorkspace);
     workspaceFromJson(obj["verifiedWorkspace"].toObject(), cfg.verifiedWorkspace);
 
-    const QJsonObject coverage = obj["coverageBox"].toObject();
-    if (!coverage.isEmpty()) {
-        cfg.coverageBox.enabled = coverage["enabled"].toBool(cfg.coverageBox.enabled);
+    const auto coverageFromJson = [](const QJsonObject& coverage, WorkspaceCoverageBox& box) {
+        if (coverage.isEmpty()) return;
+        box.id = coverage["id"].toString(QString::fromStdString(box.id)).toStdString();
+        box.referenceFrame = coverage["referenceFrame"].toString(
+            QString::fromStdString(box.referenceFrame)).toStdString();
+        box.enabled = coverage["enabled"].toBool(box.enabled);
         const QJsonArray minimum = coverage["minimum"].toArray();
         const QJsonArray maximum = coverage["maximum"].toArray();
         const QJsonArray cells = coverage["cells"].toArray();
         for (int i = 0; i < 3; ++i) {
             if (i < minimum.size())
-                cfg.coverageBox.minimum[static_cast<std::size_t>(i)] = minimum[i].toDouble(
-                    cfg.coverageBox.minimum[static_cast<std::size_t>(i)]);
+                box.minimum[static_cast<std::size_t>(i)] = minimum[i].toDouble(
+                    box.minimum[static_cast<std::size_t>(i)]);
             if (i < maximum.size())
-                cfg.coverageBox.maximum[static_cast<std::size_t>(i)] = maximum[i].toDouble(
-                    cfg.coverageBox.maximum[static_cast<std::size_t>(i)]);
+                box.maximum[static_cast<std::size_t>(i)] = maximum[i].toDouble(
+                    box.maximum[static_cast<std::size_t>(i)]);
             if (i < cells.size())
-                cfg.coverageBox.cells[static_cast<std::size_t>(i)] = cells[i].toInt(
-                    cfg.coverageBox.cells[static_cast<std::size_t>(i)]);
+                box.cells[static_cast<std::size_t>(i)] = cells[i].toInt(
+                    box.cells[static_cast<std::size_t>(i)]);
         }
+    };
+    coverageFromJson(obj["coverageBox"].toObject(), cfg.coverageBox);
+    cfg.coverageBoxes.clear();
+    for (const QJsonValue& value : obj["coverageBoxes"].toArray()) {
+        WorkspaceCoverageBox box;
+        coverageFromJson(value.toObject(), box);
+        cfg.coverageBoxes.push_back(box);
     }
 }
 
@@ -542,6 +563,17 @@ std::string StructureOptimizationJson::problemToJson(
         provenance["frozenAt"] = QString::fromStdString(problem.requirementProvenance.frozenAt);
         root["engineeringRequirementProvenance"] = provenance;
     }
+    if (problem.scenarioSnapshot.available()) {
+        QJsonObject scenario;
+        scenario["schemaVersion"] = problem.scenarioSnapshot.schemaVersion;
+        scenario["sourceWorkCellPath"] = QString::fromStdString(problem.scenarioSnapshot.sourceWorkCellPath);
+        scenario["sourceFileFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.sourceFileFingerprint);
+        scenario["snapshotFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.snapshotFingerprint);
+        scenario["deviceName"] = QString::fromStdString(problem.scenarioSnapshot.deviceName);
+        scenario["stateFingerprint"] = QString::fromStdString(problem.scenarioSnapshot.stateFingerprint);
+        scenario["sceneSpec"] = RobotModelSpecJson::toObject(problem.scenarioSnapshot.sceneSpec);
+        root["frozenScenarioSnapshot"] = scenario;
+    }
 
     // variables
     QJsonArray varsArr;
@@ -644,6 +676,22 @@ bool StructureOptimizationJson::problemFromJson(
             provenance["compilerVersion"].toString().toStdString();
         // 旧项目没有该字段时保持为空，仍可按旧格式打开；新项目则完整保留审计时间线。
         problem.requirementProvenance.frozenAt = provenance["frozenAt"].toString().toStdString();
+    }
+    problem.scenarioSnapshot = StructureOptimizationScenarioSnapshot();
+    if (root.contains("frozenScenarioSnapshot")) {
+        const QJsonObject scenario = root["frozenScenarioSnapshot"].toObject();
+        problem.scenarioSnapshot.schemaVersion = scenario["schemaVersion"].toInt();
+        problem.scenarioSnapshot.sourceWorkCellPath = scenario["sourceWorkCellPath"].toString().toStdString();
+        problem.scenarioSnapshot.sourceFileFingerprint = scenario["sourceFileFingerprint"].toString().toStdString();
+        problem.scenarioSnapshot.snapshotFingerprint = scenario["snapshotFingerprint"].toString().toStdString();
+        problem.scenarioSnapshot.deviceName = scenario["deviceName"].toString().toStdString();
+        problem.scenarioSnapshot.stateFingerprint = scenario["stateFingerprint"].toString().toStdString();
+        if (!scenario["sceneSpec"].isObject() ||
+            !RobotModelSpecJson::fromObject(scenario["sceneSpec"].toObject(),
+                                             problem.scenarioSnapshot.sceneSpec, error)) {
+            if (error != nullptr) *error = "Failed to parse frozen scenario snapshot.";
+            return false;
+        }
     }
 
     // variables

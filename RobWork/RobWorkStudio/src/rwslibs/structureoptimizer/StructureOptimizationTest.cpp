@@ -28,6 +28,7 @@
 #include "StructureWorkspaceCoverage.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
+#include "StructureCandidateExporter.hpp"
 #include "CandidatePreviewController.hpp"
 #include "EngineeringRequirementArtifactAdapter.hpp"
 #include "FrozenRequirementProjectImportService.hpp"
@@ -597,6 +598,30 @@ static void testCache()
     REQUIRE(!cache.find(problem, values,
                         rws::StructureEvaluationStage::Quick, found));
 
+    // 多区域覆盖率与冻结场景都会改变候选的实际评价环境，缓存绝不能把它们当作同一个
+    // 问题复用。该断言保护 problemToJson() 参与缓存键的契约，防止后续精简序列化时
+    // 意外遗漏新增区域或工装快照。
+    cache.clear();
+    problem.evaluation.quickWorkspace.randomSeed = 1u;
+    problem.evaluation.coverageBoxes.clear();
+    rws::WorkspaceCoverageBox regionalBox;
+    regionalBox.id = "fixture_area";
+    regionalBox.referenceFrame = "Fixture_A";
+    regionalBox.enabled = true;
+    regionalBox.cells = {{2, 2, 2}};
+    problem.evaluation.coverageBoxes.push_back(regionalBox);
+    problem.scenarioSnapshot.schemaVersion = 1;
+    problem.scenarioSnapshot.snapshotFingerprint = "scenario-fingerprint-a";
+    cache.put(problem, values, rws::StructureEvaluationStage::Quick, result);
+    REQUIRE(cache.find(problem, values, rws::StructureEvaluationStage::Quick, found));
+    problem.evaluation.coverageBoxes[0].cells[2] = 3;
+    REQUIRE(!cache.find(problem, values,
+                        rws::StructureEvaluationStage::Quick, found));
+    problem.evaluation.coverageBoxes[0].cells[2] = 2;
+    problem.scenarioSnapshot.snapshotFingerprint = "scenario-fingerprint-b";
+    REQUIRE(!cache.find(problem, values,
+                        rws::StructureEvaluationStage::Quick, found));
+
     cache.clear();
     REQUIRE(cache.size() == 0);
     REQUIRE(cache.hitCount() == 0);
@@ -643,6 +668,23 @@ static void testModelFactory()
     // 临时目录应有效
     REQUIRE(result.artifact.temporaryDirectory.get() != nullptr);
     REQUIRE(result.artifact.temporaryDirectory->isValid());
+
+    // 冻结场景必须与变异后的机器人共同出现在候选 WorkCell。这里不通过提前换算
+    // WORLD 位姿来规避工装，而是断言 Fixture_A 被真实写入候选场景，供后续 IK/
+    // 碰撞评价按同一个 Frame 名称解析。
+    rws::StructureOptimizationScenarioSnapshot scenario;
+    scenario.schemaVersion = 1;
+    scenario.snapshotFingerprint = "scenario-test-fingerprint";
+    scenario.sceneSpec.robotName = "FrozenCell";
+    rws::FrameSpec fixture;
+    fixture.name = "Fixture_A";
+    fixture.refFrame = "WORLD";
+    fixture.pos = {{0.4, 0.0, 0.2}};
+    scenario.sceneSpec.sceneFrames.push_back(fixture);
+    req.scenarioSnapshot = &scenario;
+    result = factory.build(req);
+    REQUIRE(result.ok);
+    REQUIRE(result.artifact.workcell->findFrame("Fixture_A") != nullptr);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -1346,12 +1388,27 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.requirementProvenance.compilerVersion == "EngineeringRequirements.Freezer.1");
     REQUIRE(parsed.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
 
+    // 报告必须保留冻结姿态的解析来源，而不是仅展示已经失去业务语义的 RPY 数值。
+    rws::OptimizationTaskPoint auditedStation;
+    auditedStation.required = true;
+    auditedStation.point.id = "fixture_pick";
+    auditedStation.point.name = "Fixture pick";
+    auditedStation.point.refFrame = "Fixture_A";
+    auditedStation.point.tcpFrame = "TCP";
+    auditedStation.point.position = {{0.12, 0.03, 0.08}};
+    auditedStation.point.rpyDeg = {{0.0, 90.0, 0.0}};
+    auditedStation.point.note = "Orientation resolution: resolver=OrientationRuleResolver.1;mode=AlignFrame;target=Fixture_A";
+    parsed.tasks.push_back(auditedStation);
+
     const std::string report = rws::StructureOptimizationReportWriter::write(
         parsed, rws::StructureOptimizationResult{});
     REQUIRE(report.find("test.kinematics@2.0") != std::string::npos);
     REQUIRE(report.find("system evaluators not enabled") != std::string::npos);
     REQUIRE(report.find("Engineering Requirement Provenance") != std::string::npos);
     REQUIRE(report.find("2026-07-30T09:15:00.123Z") != std::string::npos);
+    REQUIRE(report.find("Frozen Key Stations") != std::string::npos);
+    REQUIRE(report.find("fixture_pick") != std::string::npos);
+    REQUIRE(report.find("OrientationRuleResolver.1") != std::string::npos);
 
     const std::string legacyJson = R"json({
         "schemaVersion": 1,
@@ -1429,6 +1486,12 @@ static void testAuditableEvidenceOutput()
     best.raw.workspaceCoverage = 0.75;
     best.raw.workspaceOccupiedCellCount = 18;
     best.raw.workspaceTotalCellCount = 24;
+    // 多区域冻结需求不能只在评价器内部可见；报告必须保留每个区域的局部参考系、
+    // 覆盖率和网格统计，才能让工程师复核哪个工装区域限制了候选结构。
+    best.raw.workspaceRegionMetrics = {
+        {"area_a", "Fixture_A", 0.90, 9, 10},
+        {"area_b", "Fixture_B", 0.50, 5, 10}
+    };
     result.candidates.push_back(best);
 
     const std::string report = rws::StructureOptimizationReportWriter::write(problem, result);
@@ -1447,6 +1510,10 @@ static void testAuditableEvidenceOutput()
     REQUIRE(report.find("Source model path: models/audit.rmb.json") != std::string::npos);
     REQUIRE(report.find("Source fingerprint: source-sha") != std::string::npos);
     REQUIRE(report.find("Snapshot fingerprint: snapshot-sha") != std::string::npos);
+    REQUIRE(report.find("Workspace Coverage Results") != std::string::npos);
+    REQUIRE(report.find("area_a") != std::string::npos);
+    REQUIRE(report.find("Fixture_B") != std::string::npos);
+    REQUIRE(report.find("0.500") != std::string::npos);
 
     const std::string json = rws::StructureOptimizationJson::resultToJson(problem, result);
     REQUIRE(json.find("\"quickEvaluatedCandidates\": 20") != std::string::npos);
@@ -1947,8 +2014,13 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     rws::WorkspaceDemandRegion secondRegion = region;
     secondRegion.id = "second_area";
     artifact.compiled.workspaceRegions.push_back(secondRegion);
-    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
-    REQUIRE(error.find("one") != std::string::npos);
+    // 多个必须覆盖区域必须分别转换为独立的评价区域和硬约束，不能再以“只支持一个”
+    // 的方式拒绝工程需求，更不能把两者静默并成一个更大的 WORLD 覆盖盒。
+    REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
+    REQUIRE(problem.evaluation.coverageBoxes.size() == 2);
+    REQUIRE(problem.evaluation.coverageBoxes[0].id == "work_area");
+    REQUIRE(problem.evaluation.coverageBoxes[1].id == "second_area");
+    REQUIRE(problem.constraints.size() >= 2);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -2173,6 +2245,37 @@ static void testExportService()
         rws::StructureOptimizationExportService::exportAll(problem, result, request);
     REQUIRE(!conflict.ok);
     REQUIRE(!conflict.errors.isEmpty());
+
+    // 候选评价已将冻结工装合入临时 WorkCell，因此最终导出的模型也必须写入同一份
+    // 场景。否则预览/评价与交付给研发工程师的 XML 对工装 Frame 的解释会不一致。
+    rws::StructureOptimizationScenarioSnapshot scenario;
+    scenario.schemaVersion = 1;
+    scenario.snapshotFingerprint = "fixture-export-snapshot";
+    rws::FrameSpec fixture;
+    fixture.name = "Fixture_A";
+    fixture.refFrame = "WORLD";
+    fixture.pos = {{0.4, 0.0, 0.2}};
+    scenario.sceneSpec.sceneFrames.push_back(fixture);
+    problem.scenarioSnapshot = scenario;
+
+    const QString modelDirectory = dir.filePath("candidate-with-fixture");
+    QStringList modelErrors;
+    REQUIRE(rws::StructureCandidateExporter::exportModel(
+        problem, candidate, modelDirectory, modelErrors));
+    REQUIRE(modelErrors.isEmpty());
+
+    QDir exportedModel(modelDirectory);
+    const QStringList sceneFiles = exportedModel.entryList(
+        QStringList() << "*Scene.wc.xml", QDir::Files);
+    REQUIRE(sceneFiles.size() == 1);
+    if (sceneFiles.size() == 1) {
+        QFile sceneFile(exportedModel.filePath(sceneFiles.front()));
+        REQUIRE(sceneFile.open(QIODevice::ReadOnly));
+        if (sceneFile.isOpen()) {
+            const QByteArray sceneXml = sceneFile.readAll();
+            REQUIRE(sceneXml.contains("Fixture_A"));
+        }
+    }
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -2663,6 +2766,11 @@ static void testStructureOptimizationControllerAsyncState()
 
 int main(int argc, char** argv)
 {
+    // 测试程序可能在底层 XML/WorkCell 加载器触发运行库终止；关闭 stdout 缓冲，
+    // 使 CI 和本地调试日志始终保留最后一个已进入的测试用例名称，避免 abort() 将
+    // 缓冲区中的诊断信息一并丢失。
+    std::setvbuf(stdout, nullptr, _IONBF, 0);
+    std::setvbuf(stderr, nullptr, _IONBF, 0);
     std::printf("=== StructureOptimizer Test Suite ===\n\n");
     std::fflush(stdout);
 

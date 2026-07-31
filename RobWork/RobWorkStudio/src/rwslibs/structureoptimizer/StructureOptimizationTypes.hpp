@@ -104,6 +104,25 @@ struct EngineeringRequirementProvenance
     std::string frozenAt;
 };
 
+/**
+ * @brief 由冻结需求工件提供给候选模型工厂的场景重建快照。
+ *
+ * 它只表示冻结时的工装/工件环境和来源审计信息，不替代 context.modelSpec 中待优化的
+ * 机器人本体。候选评价时用该快照补入 Frame、场景几何和碰撞模型，再写出变异后的机器人。
+ */
+struct StructureOptimizationScenarioSnapshot
+{
+    int schemaVersion = 0;
+    std::string sourceWorkCellPath;
+    std::string sourceFileFingerprint;
+    std::string snapshotFingerprint;
+    std::string deviceName;
+    std::string stateFingerprint;
+    RobotModelSpec sceneSpec;
+
+    bool available() const { return schemaVersion > 0 && !snapshotFingerprint.empty(); }
+};
+
 // =============================================================================
 //  设计变量
 // =============================================================================
@@ -167,6 +186,8 @@ struct StructureOptimizationWeights
 //! @brief 工作空间覆盖评估的包围盒。
 struct WorkspaceCoverageBox
 {
+    std::string id;                                      //!< 区域唯一标识，用于硬约束和报告逐项关联
+    std::string referenceFrame = "WORLD";               //!< 最小/最大坐标所属的冻结场景参考系
     std::array< double, 3 > minimum = {{ -1.0, -1.0, -1.0 }};  //!< 包围盒最小值 (x, y, z) [m]
     std::array< double, 3 > maximum = {{ 1.0, 1.0, 1.0 }};     //!< 包围盒最大值 (x, y, z) [m]
     std::array< int, 3 >    cells   = {{ 10, 10, 10 }};         //!< 各轴单元格数
@@ -183,6 +204,9 @@ struct StructureEvaluationConfig
     WorkspaceSamplingConfig quickWorkspace;  //!< 快速评估阶段的采样参数
     WorkspaceSamplingConfig verifiedWorkspace; //!< 精确验证阶段的采样参数
     WorkspaceCoverageBox  coverageBox;       //!< 工作空间覆盖盒
+    // coverageBox 是旧项目和现有编辑器使用的单区域兼容入口；冻结需求导入时必须使用
+    // coverageBoxes 保留每个 Must 区域的 ID、参考系和独立覆盖率，不能将多个区域合并。
+    std::vector< WorkspaceCoverageBox > coverageBoxes;
     bool checkCollision = true;              //!< 是否启用碰撞检测
     std::string evaluatorId = "structure.kinematics";
     std::string evaluatorVersion = "1";
@@ -227,6 +251,21 @@ struct StructureTaskMetric
     int usableSolutionCount = 0;     //!< 可用 IK 解数
 };
 
+/**
+ * @brief 单个冻结工作空间区域的覆盖率结果。
+ *
+ * TCP 样本先被转换到区域 referenceFrame，再按区域局部盒网格统计，因此旋转或移动的
+ * 工装坐标系不会被错误地当作 WORLD 轴对齐区域。该结果通过 id 供约束和报告准确引用。
+ */
+struct StructureWorkspaceRegionMetric
+{
+    std::string id;
+    std::string referenceFrame;
+    double coverage = 0.0;
+    std::size_t occupiedCellCount = 0;
+    std::size_t totalCellCount = 0;
+};
+
 // =============================================================================
 //  原始指标
 // =============================================================================
@@ -250,6 +289,7 @@ struct StructureRawMetrics
     bool workspaceCoverageDataInsufficient = false; //!< 覆盖率采样未产生可用数据
     std::size_t workspaceOccupiedCellCount = 0; //!< 覆盖率已占用栅格数
     std::size_t workspaceTotalCellCount = 0; //!< 覆盖率栅格总数
+    std::vector< StructureWorkspaceRegionMetric > workspaceRegionMetrics; //!< 多区域覆盖率明细
 
     double totalKinematicLength   = 0.0; //!< 运动链总长度 (m)
     double baseHeight             = 0.0; //!< 基座高度 (m)
@@ -350,6 +390,7 @@ struct StructureOptimizationProblem
     StructureEvaluationConfig       evaluation; //!< 评估配置
     StructureOptimizationRunConfig  run;        //!< 运行配置
     EngineeringRequirementProvenance requirementProvenance; //!< 可选的需求冻结工件审计来源
+    StructureOptimizationScenarioSnapshot scenarioSnapshot; //!< 冻结场景重建信息
 };
 
 // =============================================================================

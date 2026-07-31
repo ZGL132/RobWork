@@ -5,6 +5,8 @@
 #include "StructureObjectiveScorer.hpp"
 #include "StructureWorkspaceCoverage.hpp"
 #include <rwslibs/kinematicanalysis/KinematicAnalyzer.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/kinematics/Frame.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -164,6 +166,12 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
         stage == StructureEvaluationStage::Verified
             ? problem.evaluation.verifiedWorkspace
             : problem.evaluation.quickWorkspace;
+    // 冻结需求可携带多个 Must 覆盖区域。旧项目仍可能只写 coverageBox，因此在此处
+    // 统一成评价列表：新格式优先，旧格式作为兼容回退，后续逻辑不再假设只有一个盒子。
+    std::vector<WorkspaceCoverageBox> coverageBoxes = problem.evaluation.coverageBoxes;
+    if (coverageBoxes.empty() && problem.evaluation.coverageBox.enabled)
+        coverageBoxes.push_back(problem.evaluation.coverageBox);
+    const bool evaluateWorkspaceCoverage = !coverageBoxes.empty();
     // ── 0.  Cache lookup ────────────────────────────────────────────────
     if (cache)
     {
@@ -208,9 +216,11 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     buildReq.spec           = mutResult.spec;
     buildReq.deviceName     = problem.context.deviceName;
     buildReq.tcpFrame       = problem.context.tcpFrame;
+    buildReq.scenarioSnapshot = problem.scenarioSnapshot.available()
+        ? &problem.scenarioSnapshot : nullptr;
     buildReq.checkCollision = problem.evaluation.checkCollision &&
                               (stage == StructureEvaluationStage::Verified ||
-                               (problem.evaluation.coverageBox.enabled &&
+                               (evaluateWorkspaceCoverage &&
                                 configuredWorkspaceSampling.checkCollision));
 
     CandidateModelFactory      factory;
@@ -316,7 +326,8 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     double workspaceSeconds = 0.0;
     bool workspaceCoverageDataInsufficient = false;
     StructureWorkspaceCoverageResult workspaceCoverage;
-    if (problem.evaluation.coverageBox.enabled)
+    std::vector<StructureWorkspaceRegionMetric> workspaceRegionMetrics;
+    if (evaluateWorkspaceCoverage)
     {
         WorkspaceSamplingConfig workspaceSampling = configuredWorkspaceSampling;
         if (!problem.evaluation.checkCollision)
@@ -347,11 +358,61 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
             return;
         }
 
-        if (workspaceSamples.empty())
+        if (workspaceSamples.empty()) {
             workspaceCoverageDataInsufficient = true;
-        else
-            workspaceCoverage = StructureWorkspaceCoverage::analyze(
-                workspaceSamples, problem.evaluation.coverageBox);
+        }
+        else {
+            // 同一批关节空间采样可以服务多个需求区域；每个区域仅将 TCP 样本坐标
+            // 转换到它自己的参考系后独立统计，不把工装局部盒错误地视作 WORLD 盒。
+            workspaceCoverage.coverage = 1.0;
+            bool hasCoverageResult = false;
+            for (const WorkspaceCoverageBox& box : coverageBoxes) {
+                std::vector<WorkspaceSample> samplesInRegionFrame = workspaceSamples;
+                const rw::kinematics::Frame* referenceFrame = nullptr;
+                if (box.referenceFrame.empty() || box.referenceFrame == "WORLD")
+                    referenceFrame = buildResult.artifact.workcell->getWorldFrame();
+                else
+                    referenceFrame = buildResult.artifact.workcell->findFrame(box.referenceFrame);
+                if (referenceFrame == nullptr) {
+                    workspaceCoverageDataInsufficient = true;
+                    candidate.warnings.push_back("Workspace coverage reference frame is unavailable: " +
+                                                 box.referenceFrame);
+                    continue;
+                }
+                const rw::math::Transform3D<> worldTframe =
+                    rw::kinematics::Kinematics::worldTframe(referenceFrame, buildResult.artifact.state);
+                // RobWork 的 Transform3D 不定义“变换 * 点”的统一运算符。显式写成
+                // p_frame = R_world_frame^T * (p_world - t_world_frame)，既避免 API
+                // 版本差异，也明确这里转换的是位置而非完整位姿。
+                const rw::math::Rotation3D<> frameRworld = rw::math::inverse(worldTframe.R());
+                for (WorkspaceSample& sample : samplesInRegionFrame) {
+                    const rw::math::Vector3D<> worldPoint(sample.tcpPosition[0],
+                                                          sample.tcpPosition[1],
+                                                          sample.tcpPosition[2]);
+                    const rw::math::Vector3D<> localPoint =
+                        frameRworld * (worldPoint - worldTframe.P());
+                    for (std::size_t axis = 0; axis < sample.tcpPosition.size(); ++axis)
+                        sample.tcpPosition[axis] = localPoint[axis];
+                }
+                const StructureWorkspaceCoverageResult regionCoverage =
+                    StructureWorkspaceCoverage::analyze(samplesInRegionFrame, box);
+                StructureWorkspaceRegionMetric metric;
+                metric.id = box.id;
+                metric.referenceFrame = box.referenceFrame;
+                metric.coverage = regionCoverage.coverage;
+                metric.occupiedCellCount = regionCoverage.occupiedCellCount;
+                metric.totalCellCount = regionCoverage.totalCellCount;
+                // 旧版汇总字段保留“最差区域”作为保守总览，保证任何一个 Must 区域
+                // 不足时均不会被其余区域的高覆盖率掩盖；逐区域明细仍完整保存在 raw 中。
+                if (!hasCoverageResult || regionCoverage.coverage < workspaceCoverage.coverage) {
+                    workspaceCoverage = regionCoverage;
+                    hasCoverageResult = true;
+                }
+                workspaceRegionMetrics.push_back(metric);
+            }
+            if (!hasCoverageResult)
+                workspaceCoverage.coverage = 0.0;
+        }
     }
 
     // ── 6.  Raw metrics ────────────────────────────────────────────────
@@ -428,6 +489,7 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     raw.workspaceCoverage = workspaceCoverage.coverage;
     raw.workspaceOccupiedCellCount = workspaceCoverage.occupiedCellCount;
     raw.workspaceTotalCellCount = workspaceCoverage.totalCellCount;
+    raw.workspaceRegionMetrics = std::move(workspaceRegionMetrics);
 
     // Physical dimensions from spec
     raw.totalKinematicLength = estimateTotalLength(mutResult.spec);

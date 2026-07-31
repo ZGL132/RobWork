@@ -9,9 +9,13 @@
 #include <rw/math/RPY.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+#include <rwslibs/robotmodelbuilder/WorkCellConverter.hpp>
 
 #include <QCryptographicHash>
 #include <QDateTime>
+#include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -80,6 +84,72 @@ std::string workcellFingerprint(const rw::models::WorkCell& workcell, const rw::
     }
     return QCryptographicHash::hash(QByteArray::fromStdString(stream.str()), QCryptographicHash::Sha256)
         .toHex().toStdString();
+}
+
+/**
+ * @brief 对磁盘上的场景源文件计算内容指纹。
+ *
+ * 仅记录路径不能识别“同一路径下的场景被替换”这一常见工程变更；因此在源文件存在时
+ * 读取原始字节计算 SHA-256。内存构造的测试 WorkCell 或无来源场景允许返回空指纹，
+ * 但它们仍受场景状态指纹与序列化快照的双重约束。
+ */
+std::string fileFingerprint(const std::string& path)
+{
+    if (path.empty()) return std::string();
+    QFile file(QString::fromStdString(path));
+    if (!file.open(QIODevice::ReadOnly)) return std::string();
+    return QCryptographicHash::hash(file.readAll(), QCryptographicHash::Sha256)
+        .toHex().toStdString();
+}
+
+/**
+ * @brief 为场景快照本身生成稳定指纹。
+ *
+ * 快照的设备名称、冻结状态和场景几何都参与哈希，避免 JSON 被手工篡改后仍沿用旧的
+ * WorkCell 指纹。使用 RobotModelSpec 的规范 JSON 而不是内存地址，确保跨进程、跨
+ * 机器可复现。
+ */
+std::string scenarioFingerprint(const FrozenWorkCellScenarioSnapshot& scenario)
+{
+    QJsonObject object;
+    object["schemaVersion"] = scenario.schemaVersion;
+    object["sourceWorkCellPath"] = QString::fromStdString(scenario.sourceWorkCellPath);
+    object["sourceFileFingerprint"] = QString::fromStdString(scenario.sourceFileFingerprint);
+    object["deviceName"] = QString::fromStdString(scenario.deviceName);
+    object["stateFingerprint"] = QString::fromStdString(scenario.stateFingerprint);
+    object["sceneSpec"] = RobotModelSpecJson::toObject(scenario.sceneSpec);
+    return QCryptographicHash::hash(QJsonDocument(object).toJson(QJsonDocument::Compact),
+                                    QCryptographicHash::Sha256)
+        .toHex().toStdString();
+}
+
+/**
+ * @brief 从冻结时的真实 WorkCell 提取候选评价可重建的场景快照。
+ *
+ * WorkCellConverter 会保留外部 Frame、场景几何、碰撞模型以及它们在冻结 State 下的
+ * 位姿。候选模型工厂之后只替换机器人结构部分，工装和工件仍使用此处冻结的真实场景。
+ */
+FrozenWorkCellScenarioSnapshot makeScenarioSnapshot(const rw::models::WorkCell& workcell,
+                                                     const rw::kinematics::State& state,
+                                                     const RobotModelSpec& model)
+{
+    FrozenWorkCellScenarioSnapshot snapshot;
+    snapshot.sourceWorkCellPath = WorkCellConverter::inferWorkCellFilePath(workcell);
+    if (!snapshot.sourceWorkCellPath.empty()) {
+        snapshot.sourceWorkCellPath = QFileInfo(QString::fromStdString(snapshot.sourceWorkCellPath))
+                                         .absoluteFilePath().toStdString();
+    }
+    snapshot.sourceFileFingerprint = fileFingerprint(snapshot.sourceWorkCellPath);
+    snapshot.deviceName = model.robotName;
+    snapshot.stateFingerprint = workcellFingerprint(workcell, state);
+    QStringList conversionWarnings;
+    const QString sceneDirectory = snapshot.sourceWorkCellPath.empty()
+        ? QString::fromStdString(model.saveDirectory)
+        : QFileInfo(QString::fromStdString(snapshot.sourceWorkCellPath)).absolutePath();
+    snapshot.sceneSpec = WorkCellConverter::convert(workcell, state,
+                                                     sceneDirectory.toStdString(), conversionWarnings);
+    snapshot.snapshotFingerprint = scenarioFingerprint(snapshot);
+    return snapshot;
 }
 
 RequirementSet compiledSnapshot(const CompiledRequirementSet& compiled)
@@ -205,11 +275,15 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         compiled.workspaceRegions.end());
 
     artifact = FrozenRequirementArtifact();
+    artifact.schemaVersion = 2;
     artifact.requirementFingerprint = sourceRequirementFingerprint;
     artifact.workcellFingerprint = workcellFingerprint(workcell, state);
     // 使用 UTC ISO-8601 毫秒时间戳，使审计记录可跨时区比较且不依赖本机显示格式。
     artifact.frozenAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
     artifact.modelBinding = resolved.modelBinding;
+    // 场景快照必须在完成 Frame/几何/姿态解析之后生成，使其与本次编译输入使用的
+    // WorkCell State 完全一致。后续候选工厂由该快照重建工装与工件，而不依赖当前 UI。
+    artifact.scenario = makeScenarioSnapshot(workcell, state, model);
     artifact.compiled = compiled;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
     if (error != nullptr) error->clear();
@@ -225,7 +299,7 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
 {
     // 顶层绑定与已编译快照都要一致。双重检查能识别手工编辑 JSON 时只改了
     // 其中一层的情况，避免下游消费者读到互相矛盾的模型身份信息。
-    if (artifact.schemaVersion != 1 || artifact.requirementFingerprint.empty() ||
+    if ((artifact.schemaVersion != 1 && artifact.schemaVersion != 2) || artifact.requirementFingerprint.empty() ||
         artifact.workcellFingerprint.empty()) {
         if (error != nullptr) *error = "Frozen requirement artifact is incomplete or uses an unsupported schema.";
         return false;
@@ -259,6 +333,47 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
         return false;
     }
 
+    if (!isScenarioCurrent(artifact, workcell, state, error)) return false;
+
+    if (error != nullptr) error->clear();
+    return true;
+}
+
+bool RequirementFreezer::isScenarioCurrent(const FrozenRequirementArtifact& artifact,
+                                           const rw::models::WorkCell& workcell,
+                                           const rw::kinematics::State& state,
+                                           std::string* error)
+{
+    // schema v1 产生于场景快照契约引入之前。为保证历史 WORLD 需求项目仍可读取，
+    // 此处允许其进行原有的 State 指纹校验；适配器会拒绝它承担非 WORLD 场景评价。
+    if (artifact.schemaVersion == 1) {
+        if (artifact.workcellFingerprint != workcellFingerprint(workcell, state)) {
+            if (error != nullptr) *error = "Frozen requirement artifact does not match the current WorkCell or State.";
+            return false;
+        }
+        if (error != nullptr) error->clear();
+        return true;
+    }
+    if (artifact.schemaVersion != 2 || artifact.scenario.schemaVersion != 1 ||
+        artifact.scenario.stateFingerprint.empty() || artifact.scenario.snapshotFingerprint.empty() ||
+        artifact.scenario.snapshotFingerprint != scenarioFingerprint(artifact.scenario)) {
+        if (error != nullptr) *error = "Frozen requirement artifact scene snapshot is incomplete or has been modified.";
+        return false;
+    }
+    const std::string currentStateFingerprint = workcellFingerprint(workcell, state);
+    if (artifact.workcellFingerprint != currentStateFingerprint ||
+        artifact.scenario.stateFingerprint != currentStateFingerprint) {
+        if (error != nullptr) *error = "Frozen requirement artifact does not match the current WorkCell or State.";
+        return false;
+    }
+    if (!artifact.scenario.sourceWorkCellPath.empty()) {
+        const std::string currentSourceFingerprint = fileFingerprint(artifact.scenario.sourceWorkCellPath);
+        if (currentSourceFingerprint.empty() ||
+            currentSourceFingerprint != artifact.scenario.sourceFileFingerprint) {
+            if (error != nullptr) *error = "Frozen requirement artifact source WorkCell file is missing or has changed.";
+            return false;
+        }
+    }
     if (error != nullptr) error->clear();
     return true;
 }
@@ -277,6 +392,17 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     binding["robotModelFingerprint"] = QString::fromStdString(artifact.modelBinding.robotModelFingerprint);
     binding["robotName"] = QString::fromStdString(artifact.modelBinding.robotName);
     object["modelBinding"] = binding;
+    if (artifact.schemaVersion >= 2) {
+        QJsonObject scenario;
+        scenario["schemaVersion"] = artifact.scenario.schemaVersion;
+        scenario["sourceWorkCellPath"] = QString::fromStdString(artifact.scenario.sourceWorkCellPath);
+        scenario["sourceFileFingerprint"] = QString::fromStdString(artifact.scenario.sourceFileFingerprint);
+        scenario["snapshotFingerprint"] = QString::fromStdString(artifact.scenario.snapshotFingerprint);
+        scenario["deviceName"] = QString::fromStdString(artifact.scenario.deviceName);
+        scenario["stateFingerprint"] = QString::fromStdString(artifact.scenario.stateFingerprint);
+        scenario["sceneSpec"] = RobotModelSpecJson::toObject(artifact.scenario.sceneSpec);
+        object["scenario"] = scenario;
+    }
     object["compiledRequirements"] = RequirementSetJson::toObject(compiledSnapshot(artifact.compiled));
     QJsonArray diagnostics;
     for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
@@ -299,6 +425,10 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     if (!RequirementCompiler::compile(snapshot, compiled, error)) return false;
     FrozenRequirementArtifact parsed;
     parsed.schemaVersion = object.value("schemaVersion").toInt(1);
+    if (parsed.schemaVersion != 1 && parsed.schemaVersion != 2) {
+        if (error != nullptr) *error = "Frozen requirement artifact uses an unsupported schema version.";
+        return false;
+    }
     parsed.requirementFingerprint = object.value("requirementFingerprint").toString().toStdString();
     parsed.workcellFingerprint = object.value("workcellFingerprint").toString().toStdString();
     parsed.compilerVersion = object.value("compilerVersion").toString("EngineeringRequirements.Freezer.1").toStdString();
@@ -307,6 +437,18 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     parsed.modelBinding.sourcePath = binding.value("sourcePath").toString().toStdString();
     parsed.modelBinding.robotModelFingerprint = binding.value("robotModelFingerprint").toString().toStdString();
     parsed.modelBinding.robotName = binding.value("robotName").toString().toStdString();
+    if (parsed.schemaVersion >= 2) {
+        const QJsonObject scenario = object.value("scenario").toObject();
+        parsed.scenario.schemaVersion = scenario.value("schemaVersion").toInt(1);
+        parsed.scenario.sourceWorkCellPath = scenario.value("sourceWorkCellPath").toString().toStdString();
+        parsed.scenario.sourceFileFingerprint = scenario.value("sourceFileFingerprint").toString().toStdString();
+        parsed.scenario.snapshotFingerprint = scenario.value("snapshotFingerprint").toString().toStdString();
+        parsed.scenario.deviceName = scenario.value("deviceName").toString().toStdString();
+        parsed.scenario.stateFingerprint = scenario.value("stateFingerprint").toString().toStdString();
+        if (!scenario.value("sceneSpec").isObject() ||
+            !RobotModelSpecJson::fromObject(scenario.value("sceneSpec").toObject(), parsed.scenario.sceneSpec, error))
+            return false;
+    }
     parsed.compiled = compiled;
     parsed.compiled.requirementFingerprint = parsed.requirementFingerprint;
     for (const QJsonValue& value : object.value("diagnostics").toArray()) {

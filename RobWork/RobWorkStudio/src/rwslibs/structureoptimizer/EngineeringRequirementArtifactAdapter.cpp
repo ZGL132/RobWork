@@ -52,8 +52,14 @@ OptimizationTaskPoint toOptimizationTask(const CompiledPoseTask& station)
     optimized.point.tolerance.allowToolRollFree = station.tolerance.allowToolRollFree;
     optimized.point.weight = optimized.required ? 1.0 : 0.5;
     optimized.point.enabled = true;
-    if (station.pathValidationPending)
-        optimized.point.note = "Approach/retract path validation is pending for the P3 trajectory evaluator.";
+    // 将冻结阶段实际使用的姿态解析证据随任务点下传。优化报告据此可以说明“该 RPY
+    // 来自何种工程规则”，而不是只展示一个失去语义来源的欧拉角数值。
+    if (!station.orientation.resolutionEvidence.empty())
+        optimized.point.note = "Orientation resolution: " + station.orientation.resolutionEvidence;
+    if (station.pathValidationPending) {
+        if (!optimized.point.note.empty()) optimized.point.note += " | ";
+        optimized.point.note += "Approach/retract path validation is pending for the P3 trajectory evaluator.";
+    }
     return optimized;
 }
 
@@ -89,16 +95,17 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         return false;
     }
 
-    // 候选模型工厂目前仅由 RobotModelSpec 构建临时 WorkCell，不能携带外部工装
-    // Frame。因此 P2 只允许 WORLD 工位；非 WORLD 工位保留在冻结工件中，待未来
-    // 将工装场景作为候选评价上下文加载后再适配，不能错误地按 WORLD 静默计算。
-    for (const CompiledPoseTask& station : artifact.compiled.poseTasks) {
-        if (!isWorld(station.refFrame)) {
-            if (error != nullptr)
-                *error = "P2 structure optimization supports only WORLD key stations; station '" +
-                    station.id + "' uses frame '" + station.refFrame + "'.";
-            return false;
-        }
+    bool needsFrozenScenario = false;
+    for (const CompiledPoseTask& station : artifact.compiled.poseTasks)
+        needsFrozenScenario = needsFrozenScenario || !isWorld(station.refFrame);
+    for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions)
+        needsFrozenScenario = needsFrozenScenario || !isWorld(region.refFrame);
+    if (needsFrozenScenario &&
+        (artifact.schemaVersion < 2 || artifact.scenario.snapshotFingerprint.empty() ||
+         artifact.scenario.sceneSpec.sceneFrames.empty())) {
+        if (error != nullptr)
+            *error = "Frozen engineering requirements use non-WORLD frames but do not contain a valid scenario snapshot.";
+        return false;
     }
 
     std::vector<WorkspaceDemandRegion> mustRegions;
@@ -110,16 +117,6 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
             return false;
         }
         if (region.level == RequirementLevel::Must) mustRegions.push_back(region);
-    }
-    if (mustRegions.size() > 1) {
-        if (error != nullptr) *error = "P2 structure optimization supports one required workspace coverage region at a time.";
-        return false;
-    }
-    if (!mustRegions.empty() && !isWorld(mustRegions.front().refFrame)) {
-        if (error != nullptr)
-            *error = "P2 structure optimization supports only a WORLD workspace coverage region; region '" +
-                mustRegions.front().id + "' uses frame '" + mustRegions.front().refFrame + "'.";
-        return false;
     }
 
     // 先在局部副本中完成全部变换和约束生成，所有校验成功后一次性写回，保证调用
@@ -141,15 +138,22 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
             return constraint.id.find("engineering_requirement.workspace.") == 0;
         }), updated.constraints.end());
 
+    updated.evaluation.coverageBoxes.clear();
     if (mustRegions.empty()) {
         // 冻结需求中没有覆盖区域时显式关闭旧项目遗留的覆盖盒，防止上一次项目的
         // 空间约束无意中影响本次优化。只移除本适配器创建的带前缀约束。
         updated.evaluation.coverageBox.enabled = false;
     }
     else {
-        const WorkspaceDemandRegion& region = mustRegions.front();
-        WorkspaceCoverageBox& box = updated.evaluation.coverageBox;
-        box.enabled = true;
+        // 每一个 Must 覆盖区域必须保留为独立盒。这里同时更新旧 coverageBox，保持原有
+        // 编辑器和旧项目格式可见；真正的候选评价仅消费 coverageBoxes 中的完整集合。
+        updated.evaluation.coverageBox.enabled = false;
+        for (std::size_t regionIndex = 0; regionIndex < mustRegions.size(); ++regionIndex) {
+            const WorkspaceDemandRegion& region = mustRegions[regionIndex];
+            WorkspaceCoverageBox box;
+            box.id = region.id;
+            box.referenceFrame = region.refFrame.empty() ? "WORLD" : region.refFrame;
+            box.enabled = true;
         for (std::size_t axis = 0; axis < 3; ++axis) {
             box.minimum[axis] = region.center[axis] - region.size[axis] * 0.5;
             box.maximum[axis] = region.center[axis] + region.size[axis] * 0.5;
@@ -157,6 +161,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
             // 之间的网格数，因此需要减一并保证退化配置至少有一个网格。
             box.cells[axis] = std::max(1, region.samplesPerAxis - 1);
         }
+            if (regionIndex == 0) updated.evaluation.coverageBox = box;
+            updated.evaluation.coverageBoxes.push_back(box);
 
         const std::string constraintId = "engineering_requirement.workspace." + region.id;
         StructureConstraint coverageConstraint;
@@ -168,6 +174,7 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         coverageConstraint.enabled = true;
         coverageConstraint.hard = true;
         updated.constraints.push_back(coverageConstraint);
+        }
     }
 
     updated.requirementProvenance.requirementFingerprint = artifact.requirementFingerprint;
@@ -176,6 +183,18 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     // 适配器只复制冻结工件本身已经持久化的时间，而不在导入优化器时重新取当前时间；
     // 否则同一份需求工件被重复导入会产生不同审计身份，破坏可复现性。
     updated.requirementProvenance.frozenAt = artifact.frozenAt;
+    // 只从 schema v2 工件复制可重建场景；schema v1 仍可导入 WORLD 任务，但绝不会被
+    // 误认为携带工装碰撞环境，从而保持历史项目的兼容性和新场景流程的正确性。
+    updated.scenarioSnapshot = StructureOptimizationScenarioSnapshot();
+    if (artifact.schemaVersion >= 2 && !artifact.scenario.snapshotFingerprint.empty()) {
+        updated.scenarioSnapshot.schemaVersion = artifact.scenario.schemaVersion;
+        updated.scenarioSnapshot.sourceWorkCellPath = artifact.scenario.sourceWorkCellPath;
+        updated.scenarioSnapshot.sourceFileFingerprint = artifact.scenario.sourceFileFingerprint;
+        updated.scenarioSnapshot.snapshotFingerprint = artifact.scenario.snapshotFingerprint;
+        updated.scenarioSnapshot.deviceName = artifact.scenario.deviceName;
+        updated.scenarioSnapshot.stateFingerprint = artifact.scenario.stateFingerprint;
+        updated.scenarioSnapshot.sceneSpec = artifact.scenario.sceneSpec;
+    }
     problem = updated;
     if (error != nullptr) error->clear();
     return true;

@@ -14,6 +14,9 @@
 #include "KinematicAnalysisJson.hpp"
 #include "KinematicAnalysisEnvelope.hpp"
 #include "KinematicAnalysisUiLogic.hpp"
+#include "FrozenRequirementKinematicAdapter.hpp"
+
+#include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 
 // 共享的 CSV / JSON 序列化工具,TaskPoint 与本插件复用了它。
 #include <rwslibs/robotanalysiscore/RobotAnalysisCsv.hpp>
@@ -302,6 +305,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _addTaskPointButton(NULL),
     _removeTaskPointButton(NULL),
     _importTaskPointsButton(NULL),
+    _importFrozenRequirementsButton(NULL),
     _exportTaskPointsButton(NULL),
     _analyzeAllTaskPointsButton(NULL),
     // P2:Task points 专用按钮(NULL 守卫,见析构 / 析构期清理)
@@ -857,6 +861,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
     connect (_removeTaskPointButton, SIGNAL (clicked ()), this, SLOT (removeSelectedTaskPointRow ()));
     connect (_importTaskPointsButton, SIGNAL (clicked ()), this, SLOT (importTaskPointsCsv ()));
+    connect (_importFrozenRequirementsButton, SIGNAL (clicked ()), this, SLOT (importFrozenRequirements ()));
     connect (_exportTaskPointsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointsCsv ()));
     connect (_exportTaskPointResultsButton, SIGNAL (clicked ()), this, SLOT (exportTaskPointResultsCsv ()));
     connect (_analyzeAllTaskPointsButton, SIGNAL (clicked ()), this, SLOT (analyzeAllTaskPoints ()));
@@ -2135,12 +2140,18 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _addTaskPointButton         = new QPushButton(tr("Add"), _taskPointTab);
     _removeTaskPointButton      = new QPushButton(tr("Remove"), _taskPointTab);
     _importTaskPointsButton     = new QPushButton(tr("Import CSV"), _taskPointTab);
+    _importFrozenRequirementsButton = new QPushButton(tr("Import frozen requirements"), _taskPointTab);
+    // 该对象名是 UI 自动化和发布验收的稳定定位点；不依赖可本地化的按钮文本，避免
+    // 中英文界面或翻译调整后无法确认“冻结需求导入”入口仍然存在。
+    _importFrozenRequirementsButton->setObjectName(
+        QStringLiteral("importFrozenRequirementsButton"));
     _exportTaskPointsButton     = new QPushButton(tr("Export tasks"), _taskPointTab);
     _exportTaskPointResultsButton = new QPushButton(tr("Export results"), _taskPointTab);
     _importCurrentTcpTaskPointButton = new QPushButton (tr("Add current TCP"), _taskPointTab);
     listActions->addWidget (_addTaskPointButton);
     listActions->addWidget (_removeTaskPointButton);
     listActions->addWidget (_importTaskPointsButton);
+    listActions->addWidget(_importFrozenRequirementsButton);
     listActions->addWidget (_exportTaskPointsButton);
     listActions->addWidget (_exportTaskPointResultsButton);
     listActions->addWidget (_importCurrentTcpTaskPointButton);
@@ -3867,6 +3878,65 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
     _taskPointModel->validateAll (&validationSummary);
     setTaskPointTableColumnWidths ();
     setStatus (tr ("Imported %1 task point(s).").arg (static_cast<int> (points.size ())));
+}
+
+// importFrozenRequirements: 从 EngineeringRequirements 保存的项目 JSON 中读取 frozenArtifact。
+// 该入口不支持把编辑态 RequirementSet 直接转换为任务点：只有通过冻结并与当前 WorkCell
+// 场景复核的工件，才能进入运动学分析，防止夹具或 TCP 已变化时继续使用过期工艺位姿。
+void KinematicAnalysisWidget::importFrozenRequirements ()
+{
+    if (_taskPointModel == nullptr || _workcell == nullptr) {
+        setStatus(tr("Cannot import frozen requirements: a task table and WorkCell are required."));
+        return;
+    }
+    const QString path = QFileDialog::getOpenFileName(
+        this, tr("Import frozen engineering requirements"), QString(),
+        tr("Engineering requirements (*.requirements.json *.json);;All files (*)"));
+    if (path.isEmpty()) {
+        setStatus(tr("Frozen requirement import canceled."));
+        return;
+    }
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("Import error"), tr("Could not open %1").arg(path));
+        setStatus(tr("Frozen requirement import failed: could not open file."));
+        return;
+    }
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
+    file.close();
+    if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
+        QMessageBox::warning(this, tr("Import error"),
+                             tr("Requirement JSON parse failed: %1").arg(parseError.errorString()));
+        setStatus(tr("Frozen requirement import failed: JSON parse error."));
+        return;
+    }
+    // 工程需求插件的项目文件把工件嵌在 frozenArtifact 字段；同时接受独立导出的工件
+    // 对象，便于审计系统或其他插件直接交接同一个只读文件。
+    const QJsonObject root = document.object();
+    const QJsonObject artifactObject = root.value("frozenArtifact").isObject()
+        ? root.value("frozenArtifact").toObject() : root;
+    FrozenRequirementArtifact artifact;
+    std::string error;
+    if (!FrozenRequirementArtifactJson::fromObject(artifactObject, artifact, &error)) {
+        QMessageBox::warning(this, tr("Import error"),
+                             tr("Frozen artifact parse failed: %1").arg(QString::fromStdString(error)));
+        setStatus(tr("Frozen requirement import failed: artifact parse error."));
+        return;
+    }
+    std::vector<TaskPoint> points;
+    if (!FrozenRequirementKinematicAdapter::apply(artifact, *_workcell, currentState(), points, &error)) {
+        QMessageBox::warning(this, tr("Import validation"),
+                             tr("Frozen artifact is not valid for the current WorkCell: %1")
+                                 .arg(QString::fromStdString(error)));
+        setStatus(tr("Frozen requirement import blocked: scenario validation failed."));
+        return;
+    }
+    _taskPointModel->setRowsFromTaskPoints(points);
+    QString validationSummary;
+    _taskPointModel->validateAll(&validationSummary);
+    setTaskPointTableColumnWidths();
+    setStatus(tr("Imported %1 frozen engineering task point(s).").arg(static_cast<int>(points.size())));
 }
 
 // exportTaskPointsCsv:把表格当前内容序列化为 CSV 并写入用户指定文件。

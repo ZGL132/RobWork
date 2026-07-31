@@ -140,6 +140,7 @@ class KinematicAnalysisWidget : public QWidget
     void addTaskPointRow ();
     void removeSelectedTaskPointRow ();
     void importTaskPointsCsv ();
+    void importFrozenRequirements ();
     void exportTaskPointsCsv ();
     void analyzeAllTaskPoints ();
     void analyzeSelectedTaskPoints ();
@@ -357,6 +358,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _addTaskPointButton;                  // 增加行
     QPushButton* _removeTaskPointButton;               // 删除选中行
     QPushButton* _importTaskPointsButton;              // 导入 CSV
+    QPushButton* _importFrozenRequirementsButton;      // 导入经工程需求插件冻结的工位工件
     QPushButton* _exportTaskPointsButton;              // 导出 CSV
     QPushButton* _exportTaskPointResultsButton;        // 导出分析结果 CSV
     QPushButton* _analyzeAllTaskPointsButton;          // 全量分析

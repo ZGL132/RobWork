@@ -198,9 +198,11 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
 
     // ── 9. 覆盖网格单元格数在 [1, 100] ──────────────────────────────────
     {
-        const auto& box = problem.evaluation.coverageBox;
-        if (box.enabled)
-        {
+        std::vector<WorkspaceCoverageBox> boxes = problem.evaluation.coverageBoxes;
+        if (boxes.empty() && problem.evaluation.coverageBox.enabled)
+            boxes.push_back(problem.evaluation.coverageBox);
+        for (const WorkspaceCoverageBox& box : boxes) {
+            if (!box.enabled) continue;
             for (int i = 0; i < 3; ++i)
             {
                 if (box.cells[i] < 1 || box.cells[i] > 100)

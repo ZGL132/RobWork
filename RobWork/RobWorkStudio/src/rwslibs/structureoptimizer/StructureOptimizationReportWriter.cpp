@@ -35,6 +35,20 @@ void writeWorkspaceSampling(std::ostringstream& out, const char* label,
         << "\n";
 }
 
+/**
+ * @brief 清理 Markdown 表格单元格中的控制字符和分隔符。
+ *
+ * 姿态解析证据来源于冻结工件，可能包含管线符或换行。报告必须保持一行一个工位，
+ * 因此在输出层转义这些字符，而不修改用于审计和 JSON 交接的原始任务注释。
+ */
+std::string markdownCell(std::string value)
+{
+    std::replace(value.begin(), value.end(), '|', '/');
+    std::replace(value.begin(), value.end(), '\n', ' ');
+    std::replace(value.begin(), value.end(), '\r', ' ');
+    return value;
+}
+
 } // namespace
 
 std::string StructureOptimizationReportWriter::write(
@@ -87,6 +101,30 @@ std::string StructureOptimizationReportWriter::write(
         // 本地时区或显示格式改变审计证据的含义。
         out << "- Frozen at (UTC): "
             << problem.requirementProvenance.frozenAt << "\n\n";
+
+        out << "## Frozen Key Stations\n\n";
+        out << "| ID | Name | Level | Reference frame | TCP | Position (m) | RPY (deg) | Orientation evidence |\n";
+        out << "| --- | --- | --- | --- | --- | --- | --- | --- |\n";
+        for (const OptimizationTaskPoint& task : problem.tasks) {
+            const TaskPoint& point = task.point;
+            const std::string evidencePrefix = "Orientation resolution: ";
+            std::string evidence;
+            const std::size_t evidenceOffset = point.note.find(evidencePrefix);
+            if (evidenceOffset != std::string::npos) {
+                evidence = point.note.substr(evidenceOffset + evidencePrefix.size());
+                const std::size_t pendingOffset = evidence.find(" | Approach/retract");
+                if (pendingOffset != std::string::npos) evidence.erase(pendingOffset);
+            }
+            out << "| " << markdownCell(point.id) << " | "
+                << markdownCell(point.name) << " | "
+                << (task.required ? "Must" : "Should") << " | "
+                << markdownCell(point.refFrame) << " | "
+                << markdownCell(point.tcpFrame) << " | "
+                << point.position[0] << ", " << point.position[1] << ", " << point.position[2] << " | "
+                << point.rpyDeg[0] << ", " << point.rpyDeg[1] << ", " << point.rpyDeg[2] << " | "
+                << markdownCell(evidence) << " |\n";
+        }
+        out << "\n";
     }
 
     out << "## Workspace Coverage Configuration\n\n";
@@ -126,6 +164,22 @@ std::string StructureOptimizationReportWriter::write(
         out << "- Workspace coverage: " << best->raw.workspaceCoverage << " ("
             << best->raw.workspaceOccupiedCellCount << "/"
             << best->raw.workspaceTotalCellCount << " cells)\n";
+
+        // 总覆盖率是兼容旧项目的保守概览（多区域时取最差值），不能替代各工装区域的
+        // 独立证据。按区域逐行输出，便于研发工程师追溯某个硬约束失败的真实位置。
+        if (!best->raw.workspaceRegionMetrics.empty()) {
+            out << "\n## Workspace Coverage Results\n\n";
+            out << "| Region | Reference frame | Coverage | Occupied cells | Total cells |\n";
+            out << "| --- | --- | ---: | ---: | ---: |\n";
+            for (const StructureWorkspaceRegionMetric& metric :
+                 best->raw.workspaceRegionMetrics) {
+                out << "| " << markdownCell(metric.id) << " | "
+                    << markdownCell(metric.referenceFrame) << " | "
+                    << metric.coverage << " | "
+                    << metric.occupiedCellCount << " | "
+                    << metric.totalCellCount << " |\n";
+            }
+        }
     }
     else {
         out << "- Workspace coverage: unavailable\n";

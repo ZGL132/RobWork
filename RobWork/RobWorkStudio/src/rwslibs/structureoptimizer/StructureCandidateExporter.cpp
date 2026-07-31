@@ -44,6 +44,10 @@ bool StructureCandidateExporter::exportModel(
     // 创建一个临时副本并设置保存目录为目标路径
     RobotModelSpec exportSpec = mutation.spec;
     CandidateModelFactory::resolveExternalAssetPaths(exportSpec);
+    // 最终交付的 XML 必须包含与候选评价完全相同的冻结工装/工件场景。先合入快照再
+    // 写文件，避免后续临时 WorkCell 虽然加载了 Fixture，但目标目录中的 Scene XML
+    // 仍是没有工装 Frame 的纯机器人模型。
+    CandidateModelFactory::applyScenarioSnapshot(exportSpec, problem.scenarioSnapshot);
     exportSpec.saveDirectory = targetDir.absolutePath().toStdString();
 
     // 写入 XML 文件

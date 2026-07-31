@@ -16,7 +16,52 @@
 #include <QDir>
 #include <QFileInfo>
 
+#include <set>
+
 using namespace rws;
+
+namespace {
+
+/**
+ * @brief 将冻结快照中的外部场景注入候选机器人规格。
+ *
+ * 快照中的完整 RobotModelSpec 只是序列化容器，不能直接替代候选规格；否则会把未变异的
+ * 机器人关节重新写回场景。此处仅复制非机器人场景 Frame、场景几何和外部碰撞模型，保留
+ * request.spec 中已经由优化变量变异后的关节、TCP 和连杆碰撞模型。
+ */
+void mergeFrozenScenario(RobotModelSpec& candidate,
+                         const StructureOptimizationScenarioSnapshot& snapshot)
+{
+    RobotModelSpec scene = snapshot.sceneSpec;
+    CandidateModelFactory::resolveExternalAssetPaths(scene);
+
+    candidate.sceneFrames.clear();
+    for (const FrameSpec& frame : scene.sceneFrames) {
+        // RobotBase 由候选机器人自身的场景定义创建，复制会造成重复 Frame 名称。
+        if (frame.name.empty() || frame.name == "RobotBase") continue;
+        candidate.sceneFrames.push_back(frame);
+    }
+    candidate.sceneGeometries = scene.sceneGeometries;
+
+    std::set<std::string> externalFrames = {"WORLD", "RobotBase"};
+    for (const FrameSpec& frame : candidate.sceneFrames)
+        externalFrames.insert(frame.name);
+    std::set<std::string> collisionNames;
+    for (const CollisionModelSpec& collision : candidate.collisionModels)
+        collisionNames.insert(collision.name);
+    for (const CollisionModelSpec& collision : scene.collisionModels) {
+        if (externalFrames.find(collision.refFrame) == externalFrames.end() ||
+            !collisionNames.insert(collision.name).second) {
+            continue;
+        }
+        candidate.collisionModels.push_back(collision);
+    }
+    // SceneGeometrySpec 自带 collisionModel 标记，能够覆盖多数工装/工件碰撞体；
+    // 额外 CollisionModelSpec 则保留网格和独立碰撞模型的原始语义。
+    candidate.generateScene = true;
+}
+
+} // namespace
 
 void CandidateModelFactory::resolveExternalAssetPaths (RobotModelSpec& spec)
 {
@@ -34,6 +79,19 @@ void CandidateModelFactory::resolveExternalAssetPaths (RobotModelSpec& spec)
         resolve (collision.filePath);
     for (SceneGeometrySpec& geometry : spec.sceneGeometries)
         resolve (geometry.file);
+}
+
+void CandidateModelFactory::applyScenarioSnapshot(
+    RobotModelSpec& spec,
+    const StructureOptimizationScenarioSnapshot& snapshot)
+{
+    // 不可用快照代表旧项目或纯机器人项目。保持原规格不变，继续兼容既有导出流程。
+    if (!snapshot.available())
+        return;
+
+    // 这里刻意复用候选模型工厂内部的唯一合并实现；导出器不复制这段逻辑，后续增加
+    // 场景元素时不会出现“评价能看到、导出看不到”的分叉。
+    mergeFrozenScenario(spec, snapshot);
 }
 
 // =============================================================================
@@ -75,6 +133,8 @@ CandidateModelBuildResult CandidateModelFactory::build (
     // -------------------------------------------------------------------------
     RobotModelSpec spec = request.spec;
     resolveExternalAssetPaths (spec);
+    if (request.scenarioSnapshot != nullptr)
+        applyScenarioSnapshot(spec, *request.scenarioSnapshot);
     spec.saveDirectory  = tempDir->path ().toStdString ();
     spec.generateScene  = true;
 

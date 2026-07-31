@@ -193,7 +193,20 @@ void StructureObjectiveScorer::score(
             break;
 
         case StructureConstraintKind::MinimumWorkspaceCoverage:
-            satisfied = (raw.workspaceCoverage >= constraint.threshold);
+            // 冻结需求会为每个覆盖区域创建带 targetName 的独立约束。只有旧项目未提供
+            // 区域 ID 时才回退到兼容汇总值，避免多个 Must 区域被错误共用同一覆盖率。
+            if (!constraint.targetName.empty()) {
+                const auto metric = std::find_if(raw.workspaceRegionMetrics.begin(),
+                                                 raw.workspaceRegionMetrics.end(),
+                    [&constraint] (const StructureWorkspaceRegionMetric& value) {
+                        return value.id == constraint.targetName;
+                    });
+                satisfied = metric != raw.workspaceRegionMetrics.end() &&
+                            metric->coverage >= constraint.threshold;
+            }
+            else {
+                satisfied = (raw.workspaceCoverage >= constraint.threshold);
+            }
             break;
         }
 
