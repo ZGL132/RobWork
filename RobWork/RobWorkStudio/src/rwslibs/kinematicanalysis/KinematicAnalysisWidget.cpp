@@ -12,6 +12,7 @@
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
 #include "KinematicAnalysisJson.hpp"
+#include "KinematicAnalysisProjectDocument.hpp"
 #include "KinematicAnalysisEnvelope.hpp"
 #include "KinematicAnalysisUiLogic.hpp"
 #include "FrozenRequirementKinematicAdapter.hpp"
@@ -57,6 +58,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QScrollArea>
+#include <QSaveFile>
 #include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QSpinBox>
@@ -999,6 +1001,240 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         setStatus(tr("No device found in WorkCell."));
     else
         setStatus(tr("WorkCell loaded. Select a device and refresh analysis."));
+}
+
+// 将当前 Widget 的可编辑内容收集为项目配置。这里故意不读取 _lastIkResult、workspace
+// samples 或 pose reachability samples：这些数据可以由配置和当前 WorkCell 重新计算，且体积
+// 可能远大于项目定义；把它们写入项目会造成陈旧结果和不可控的文件膨胀。
+QByteArray KinematicAnalysisWidget::projectDocumentSnapshot () const
+{
+    KinematicAnalysisProjectSettings settings;
+    settings.deviceName = _deviceCombo == nullptr ? QString () : _deviceCombo->currentText ();
+    settings.tcpFrameName = _tcpFrameCombo == nullptr ? QString () : _tcpFrameCombo->currentText ();
+    settings.ikPositionMeters = {{ikXInputMeters (), ikYInputMeters (), ikZInputMeters ()}};
+    settings.ikRpyDeg = {{ikRollInputDeg (), ikPitchInputDeg (), ikYawInputDeg ()}};
+    settings.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
+    settings.ikCollisionCheck = _ikCollisionCheck->isChecked ();
+    settings.lengthUnit = _lengthUnit;
+    settings.angleUnit = _angleUnit;
+    settings.workspace.mode = _workspaceModeCombo->currentIndex () == 1 ?
+        WorkspaceSamplingMode::Grid : WorkspaceSamplingMode::RandomUniform;
+    settings.workspace.sampleCount = _workspaceSampleCountSpin->value ();
+    settings.workspace.gridStepsPerJoint = _workspaceGridStepsSpin->value ();
+    settings.workspace.randomSeed = static_cast< unsigned int > (_workspaceSeedSpin->value ());
+    settings.workspace.checkCollision = _workspaceCollisionCheck->isChecked ();
+    settings.workspaceColorMode = static_cast< WorkspaceColorMode > (
+        _workspaceColorModeCombo->currentIndex ());
+    settings.poseReachability.directionSamples = _poseDirectionSamplesSpin->value ();
+    settings.poseReachability.rollSamples = _poseRollSamplesSpin->value ();
+    settings.poseReachability.checkCollision = _poseCollisionCheck->isChecked ();
+    settings.poseTaskPointsSource = _poseTaskPointsSourceButton->isChecked ();
+    for (int row = 0; row < _posePositionTable->rowCount (); ++row) {
+        std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
+        for (int column = 0; column < 3; ++column) {
+            const QTableWidgetItem* item = _posePositionTable->item (row, column);
+            bool ok = false;
+            const double stored = item == nullptr ? 0.0 :
+                item->data (Qt::UserRole).toDouble (&ok);
+            position[static_cast< std::size_t > (column)] = ok ? stored :
+                metersFromDisplayLength (
+                    item == nullptr ? 0.0 : item->text ().toDouble (), _lengthUnit);
+        }
+        settings.manualPosePositions.push_back (position);
+    }
+    settings.visualSource = static_cast< VisualPointSource > (_visualSourceCombo->currentData ().toInt ());
+    settings.visualProjection = static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ());
+    settings.visualScalarMode = static_cast< VisualScalarMode > (_visualColorModeCombo->currentData ().toInt ());
+    settings.visualRenderMode = static_cast< VisualRenderMode > (_visualRenderModeCombo->currentData ().toInt ());
+    settings.envelopeDirections = _visualEnvelopeDirectionsSpin->value ();
+    settings.showPass = _visualShowPassCheck->isChecked ();
+    settings.showWarning = _visualShowWarningCheck->isChecked ();
+    settings.showFail = _visualShowFailCheck->isChecked ();
+    settings.showUnknown = _visualShowUnknownCheck->isChecked ();
+    settings.showLabels = _visualShowLabelsCheck->isChecked ();
+    settings.showGrid = _visualShowGridCheck->isChecked ();
+    settings.showLegend = _visualShowLegendCheck->isChecked ();
+    settings.pointSize = _visualPointSizeSpin->value ();
+    settings.thresholds = _thresholds;
+    if (_taskPointModel != nullptr)
+        settings.taskPoints = _taskPointModel->taskPoints ();
+    return KinematicAnalysisProjectDocument::toJson (settings);
+}
+
+// 把项目 JSON 恢复到控件。所有控件变更信号在 _applyingProjectDocument 期间都会被抑制，
+// 防止一次加载被误判为用户编辑；结果缓存则统一清空，避免新项目继续显示旧 WorkCell 的结果。
+void KinematicAnalysisWidget::applyProjectDocumentSnapshot (const QByteArray& json, QString* error)
+{
+    KinematicAnalysisProjectSettings settings;
+    if (!KinematicAnalysisProjectDocument::fromJson (json, settings, error))
+        return;
+
+    _applyingProjectDocument = true;
+    const int deviceIndex = _deviceCombo->findText (settings.deviceName);
+    if (deviceIndex >= 0)
+        _deviceCombo->setCurrentIndex (deviceIndex);
+    populateTcpFrames ();
+    const int tcpIndex = _tcpFrameCombo->findText (settings.tcpFrameName);
+    if (tcpIndex >= 0)
+        _tcpFrameCombo->setCurrentIndex (tcpIndex);
+    const int lengthIndex = _lengthUnitCombo->findData (static_cast< int > (settings.lengthUnit));
+    const int angleIndex = _angleUnitCombo->findData (static_cast< int > (settings.angleUnit));
+    if (lengthIndex >= 0)
+        _lengthUnitCombo->setCurrentIndex (lengthIndex);
+    if (angleIndex >= 0)
+        _angleUnitCombo->setCurrentIndex (angleIndex);
+    updateUnitDisplay ();
+    setIkPoseMetersDeg (settings.ikPositionMeters, settings.ikRpyDeg);
+    _ikDuplicateQThresholdSpin->setValue (settings.ikDuplicateQThreshold);
+    _ikCollisionCheck->setChecked (settings.ikCollisionCheck);
+
+    _thresholds = settings.thresholds;
+    _thresholdNearLimitSpin->setValue (_thresholds.nearJointLimitRatio);
+    _thresholdConditionWarningSpin->setValue (_thresholds.conditionWarning);
+    _thresholdConditionFailSpin->setValue (_thresholds.conditionFail);
+    _thresholdSingularValueSpin->setValue (_thresholds.singularValueWarning);
+    _thresholdManipulabilitySpin->setValue (_thresholds.manipulabilityWarning);
+    updateUnitDisplay ();
+
+    _workspaceModeCombo->setCurrentIndex (
+        settings.workspace.mode == WorkspaceSamplingMode::Grid ? 1 : 0);
+    _workspaceSampleCountSpin->setValue (settings.workspace.sampleCount);
+    _workspaceGridStepsSpin->setValue (settings.workspace.gridStepsPerJoint);
+    _workspaceSeedSpin->setValue (static_cast< int > (settings.workspace.randomSeed));
+    _workspaceCollisionCheck->setChecked (settings.workspace.checkCollision);
+    _workspaceColorModeCombo->setCurrentIndex (static_cast< int > (settings.workspaceColorMode));
+    _poseDirectionSamplesSpin->setValue (settings.poseReachability.directionSamples);
+    _poseRollSamplesSpin->setValue (settings.poseReachability.rollSamples);
+    _poseCollisionCheck->setChecked (settings.poseReachability.checkCollision);
+    _poseTaskPointsSourceButton->setChecked (settings.poseTaskPointsSource);
+    _poseManualSourceButton->setChecked (!settings.poseTaskPointsSource);
+    _posePositionTable->setRowCount (0);
+    for (const auto& position : settings.manualPosePositions) {
+        const int row = _posePositionTable->rowCount ();
+        _posePositionTable->insertRow (row);
+        for (int column = 0; column < 3; ++column) {
+            QTableWidgetItem* item = new QTableWidgetItem ();
+            item->setData (Qt::UserRole, position[static_cast< std::size_t > (column)]);
+            item->setText (QString::number (displayLengthFromMeters (
+                position[static_cast< std::size_t > (column)], _lengthUnit), 'g', 12));
+            _posePositionTable->setItem (row, column, item);
+        }
+    }
+    _visualSourceCombo->setCurrentIndex (_visualSourceCombo->findData (
+        static_cast< int > (settings.visualSource)));
+    _visualProjectionCombo->setCurrentIndex (_visualProjectionCombo->findData (
+        static_cast< int > (settings.visualProjection)));
+    updateVisualizationControls ();
+    _visualColorModeCombo->setCurrentIndex (_visualColorModeCombo->findData (
+        static_cast< int > (settings.visualScalarMode)));
+    _visualRenderModeCombo->setCurrentIndex (_visualRenderModeCombo->findData (
+        static_cast< int > (settings.visualRenderMode)));
+    _visualEnvelopeDirectionsSpin->setValue (settings.envelopeDirections);
+    _visualShowPassCheck->setChecked (settings.showPass);
+    _visualShowWarningCheck->setChecked (settings.showWarning);
+    _visualShowFailCheck->setChecked (settings.showFail);
+    _visualShowUnknownCheck->setChecked (settings.showUnknown);
+    _visualShowLabelsCheck->setChecked (settings.showLabels);
+    _visualShowGridCheck->setChecked (settings.showGrid);
+    _visualShowLegendCheck->setChecked (settings.showLegend);
+    _visualPointSizeSpin->setValue (settings.pointSize);
+    if (_taskPointModel != nullptr)
+        _taskPointModel->setRowsFromTaskPoints (settings.taskPoints);
+    _lastIkResult = KinematicIkAnalysisResult ();
+    _lastTaskPointResults.clear ();
+    _workspaceSamples.clear ();
+    _poseReachabilitySamples.clear ();
+    _taskPointModel->clearAllResults ();
+    _workspaceTable->setRowCount (0);
+    _poseResultTable->setRowCount (0);
+    updateWorkspaceControls ();
+    updatePoseReachabilityControls ();
+    refreshVisualization ();
+    refreshReport ();
+    _applyingProjectDocument = false;
+}
+
+bool KinematicAnalysisWidget::loadProjectDocument (const QString& path, QString* error)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly | QIODevice::Text)) {
+        if (error != nullptr)
+            *error = QStringLiteral ("无法读取 KinematicAnalysis 项目文档：%1。")
+                         .arg (file.errorString ());
+        return false;
+    }
+    const QByteArray json = file.readAll ();
+    QString applyError;
+    applyProjectDocumentSnapshot (json, &applyError);
+    if (!applyError.isEmpty ()) {
+        if (error != nullptr)
+            *error = applyError;
+        return false;
+    }
+    _projectDocumentPath = QFileInfo (path).absoluteFilePath ();
+    _savedProjectDocumentSnapshot = projectDocumentSnapshot ();
+    _pendingProjectDocumentSnapshot.clear ();
+    return true;
+}
+
+bool KinematicAnalysisWidget::saveProjectDocument (const QString& targetPath, QString* error)
+{
+    const QByteArray json = projectDocumentSnapshot ();
+    QSaveFile file (targetPath);
+    if (!file.open (QIODevice::WriteOnly | QIODevice::Text) ||
+        file.write (json) != json.size () || !file.commit ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("无法暂存 KinematicAnalysis 项目文档：%1。")
+                         .arg (file.errorString ());
+        return false;
+    }
+    _pendingProjectDocumentSnapshot = json;
+    return true;
+}
+
+bool KinematicAnalysisWidget::isProjectDocumentDirty () const
+{
+    return !_projectDocumentPath.isEmpty () &&
+        projectDocumentSnapshot () != _savedProjectDocumentSnapshot;
+}
+
+void KinematicAnalysisWidget::markProjectDocumentClean ()
+{
+    if (!_pendingProjectDocumentSnapshot.isEmpty ()) {
+        _savedProjectDocumentSnapshot = _pendingProjectDocumentSnapshot;
+        _pendingProjectDocumentSnapshot.clear ();
+    }
+}
+
+bool KinematicAnalysisWidget::canCloseProjectDocument (QString* reason) const
+{
+    const bool running = _workspaceRunActive || _poseReachabilityRunActive || _envelopeRunActive ||
+        (_workspaceWatcher != nullptr && _workspaceWatcher->isRunning ()) ||
+        (_poseReachabilityWatcher != nullptr && _poseReachabilityWatcher->isRunning ()) ||
+        (_envelopeWatcher != nullptr && _envelopeWatcher->isRunning ());
+    if (running && reason != nullptr)
+        *reason = QStringLiteral ("KinematicAnalysis 后台分析尚未完成，无法关闭项目。");
+    return !running;
+}
+
+void KinematicAnalysisWidget::beginProjectDocument (const QString& path)
+{
+    // 该路径仅存于运行时，用于判定 Widget 已绑定项目资源；它绝不进入业务 JSON，保证项目
+    // 被复制或移动后不包含失效的绝对路径。
+    _projectDocumentPath = QFileInfo (path).absoluteFilePath ();
+    // 新资源还没有正式文件，空基线会使当前可编辑配置被识别为脏，并在“保存项目”时由
+    // ProjectSaveTransaction 原子创建目标文件。
+    _savedProjectDocumentSnapshot.clear ();
+    _pendingProjectDocumentSnapshot.clear ();
+}
+
+void KinematicAnalysisWidget::clearProjectDocumentContext ()
+{
+    // 仅清理项目生命周期数据而不主动改动控件：若下一项目存在资源，加载流程会恢复其配置；
+    // 若不存在，当前展示的临时 UI 状态也不会被错误纳入新项目的保存范围。
+    _projectDocumentPath.clear ();
+    _savedProjectDocumentSnapshot.clear ();
+    _pendingProjectDocumentSnapshot.clear ();
 }
 
 // populateDevices:把 WorkCell 中的 Device 全部填进 _deviceCombo。
@@ -2862,6 +3098,55 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
              this, SLOT (onEnvelopeDebounceTimeout ()));
     _envelopeDebounceTimer->setInterval (200);
     updateVisualizationControls ();
+
+    // 项目文档的脏状态只关心可重新执行分析的输入。统一在构造末尾补充信号连接，
+    // 可以覆盖既有 UI 行为而不侵入每个槽函数；项目加载时用标志抑制这些信号。
+    const auto notifyProjectEdit = [this] () {
+        if (!_applyingProjectDocument)
+            Q_EMIT projectDocumentChanged ();
+    };
+    for (QComboBox* combo : {_deviceCombo, _tcpFrameCombo, _lengthUnitCombo, _angleUnitCombo,
+                             _workspaceModeCombo, _workspaceColorModeCombo, _visualSourceCombo,
+                             _visualProjectionCombo, _visualColorModeCombo, _visualRenderModeCombo}) {
+        connect (combo, static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
+                 this, [notifyProjectEdit] (int) { notifyProjectEdit (); });
+    }
+    for (QDoubleSpinBox* spin : {_ikXSpin, _ikYSpin, _ikZSpin, _ikRollSpin, _ikPitchSpin,
+                                 _ikYawSpin, _ikDuplicateQThresholdSpin, _visualPointSizeSpin,
+                                 _thresholdNearLimitSpin, _thresholdConditionWarningSpin,
+                                 _thresholdConditionFailSpin, _thresholdSingularValueSpin,
+                                 _thresholdManipulabilitySpin, _thresholdPositionToleranceSpin,
+                                 _thresholdOrientationToleranceSpin}) {
+        connect (spin, static_cast< void (QDoubleSpinBox::*) (double) > (
+                           &QDoubleSpinBox::valueChanged),
+                 this, [notifyProjectEdit] (double) { notifyProjectEdit (); });
+    }
+    for (QSpinBox* spin : {_workspaceSampleCountSpin, _workspaceGridStepsSpin, _workspaceSeedSpin,
+                           _poseDirectionSamplesSpin, _poseRollSamplesSpin,
+                           _visualEnvelopeDirectionsSpin}) {
+        connect (spin, static_cast< void (QSpinBox::*) (int) > (&QSpinBox::valueChanged),
+                 this, [notifyProjectEdit] (int) { notifyProjectEdit (); });
+    }
+    for (QCheckBox* check : {_ikCollisionCheck, _workspaceCollisionCheck, _poseCollisionCheck,
+                             _visualShowPassCheck, _visualShowWarningCheck, _visualShowFailCheck,
+                             _visualShowUnknownCheck, _visualShowLabelsCheck, _visualShowGridCheck,
+                             _visualShowLegendCheck}) {
+        connect (check, &QCheckBox::toggled, this,
+                 [notifyProjectEdit] (bool) { notifyProjectEdit (); });
+    }
+    connect (_poseTaskPointsSourceButton, &QToolButton::toggled, this,
+             [notifyProjectEdit] (bool) { notifyProjectEdit (); });
+    connect (_poseManualSourceButton, &QToolButton::toggled, this,
+             [notifyProjectEdit] (bool) { notifyProjectEdit (); });
+    connect (_posePositionTable, &QTableWidget::itemChanged, this,
+             [notifyProjectEdit] (QTableWidgetItem*) { notifyProjectEdit (); });
+    connect (_taskPointModel, &QAbstractItemModel::dataChanged, this,
+             [notifyProjectEdit] () { notifyProjectEdit (); });
+    connect (_taskPointModel, &QAbstractItemModel::modelReset, this, notifyProjectEdit);
+    connect (_taskPointModel, &QAbstractItemModel::rowsInserted, this,
+             [notifyProjectEdit] () { notifyProjectEdit (); });
+    connect (_taskPointModel, &QAbstractItemModel::rowsRemoved, this,
+             [notifyProjectEdit] () { notifyProjectEdit (); });
 }
 
 void KinematicAnalysisWidget::updateVisualizationControls ()

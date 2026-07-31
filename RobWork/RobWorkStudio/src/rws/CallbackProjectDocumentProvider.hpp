@@ -73,6 +73,10 @@ class CallbackProjectDocumentProvider : public ProjectDocumentProvider
      */
     void setDirty (bool dirty);
 
+    // 首次编辑生成的新资源没有旧文件可加载。Registry 激活该资源后调用方通过此接口
+    // 绑定资源 ID，使随后的 setDirty/saveResource 能纳入与普通加载资源一致的生命周期。
+    void adoptGeneratedResource (const QString& resourceId);
+
   private:
     QString _providerId;    // 插件身份标识（注册表查重用）。
     QString _kind;          // 本 Provider 处理的唯一资源 kind。

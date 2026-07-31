@@ -258,6 +258,46 @@ TEST (ProjectSystemTest, ManagerImportsLegacyResourceIntoCurrentProject)
 
 // 可搬迁性测试：项目克隆仅复制项目内资源并创建新的项目 ID；随后整体移动项目目录后，
 // 相对资源必须改按新目录解析，而 external 资源仍保持原有的绝对路径语义。
+// 正向测试：插件首次编辑生成的业务资源必须只登记在当前项目根目录下的相对路径，并且在
+// 用户执行“保存项目”前不创建空文件。文件创建权属于 ProjectSaveTransaction，避免清单
+// 和业务 JSON 在不同操作中分别落盘后形成无法恢复的半完成项目。
+TEST (ProjectSystemTest, ManagerRegistersGeneratedResourceInsideProjectWithoutCreatingFile)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error))
+        << error.toStdString ();
+
+    rws::ProjectResource analysis;
+    analysis.id = "kinematic-analysis.main";
+    analysis.kind = "rws.kinematic-analysis";
+    analysis.path = "analysis/kinematic-analysis.json";
+    analysis.ownership = "project";
+    analysis.required = false;
+    // 设备和 TCP 名称从入口 WorkCell 解析，显式依赖确保项目重新打开时加载顺序稳定。
+    analysis.dependencies = {"scene.main"};
+
+    ASSERT_TRUE (manager.addGeneratedResource (analysis, &error)) << error.toStdString ();
+    EXPECT_TRUE (manager.isDirty ());
+
+    rws::ProjectResource stored;
+    ASSERT_TRUE (manager.manifest ().findResource (analysis.id, stored));
+    EXPECT_EQ (analysis.path, stored.path);
+    EXPECT_EQ (QStringList ({"scene.main"}), stored.dependencies);
+
+    QString resolvedPath;
+    ASSERT_TRUE (manager.resolveResource (analysis.id, resolvedPath, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QDir::cleanPath (
+                   QDir (directory.path ()).filePath ("analysis/kinematic-analysis.json")),
+               resolvedPath);
+    EXPECT_FALSE (QFileInfo::exists (resolvedPath));
+}
+
 TEST (ProjectSystemTest, ManagerClonesPortableProjectWithNewIdentity)
 {
     QTemporaryDir directory;

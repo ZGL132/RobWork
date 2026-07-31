@@ -141,6 +141,35 @@ bool ProjectDocumentRegistry::saveDirtyResources (const ProjectManifest& manifes
 }
 
 // 逐资源询问是否允许关闭；只要有一个资源拒绝（如仍有后台任务）就整体不关闭。
+// 生成资源没有历史文件可供 Provider 加载。Registry 仍将其登记为已加载资源，
+// 使第一次保存通过与其它文档相同的暂存事务创建正式 JSON，而不是由插件直接写盘。
+bool ProjectDocumentRegistry::activateGeneratedResource (const ProjectResource& resource,
+                                                         const QString& projectFilePath,
+                                                         QString* error)
+{
+    ProjectDocumentProvider* provider = providerForKind (resource.kind);
+    if (provider == nullptr) {
+        setError (error, QString::fromUtf8 ("生成资源“%1”没有可用 Provider。")
+                              .arg (resource.id));
+        return false;
+    }
+    for (const LoadedResource& loaded : _loaded) {
+        if (loaded.resource.id == resource.id)
+            return true;
+    }
+
+    QString resolvedPath;
+    if (!ProjectPathResolver::resolveResource (projectFilePath, resource, resolvedPath, error))
+        return false;
+
+    LoadedResource loaded;
+    loaded.resource = resource;
+    loaded.provider = provider;
+    loaded.resolvedPath = resolvedPath;
+    _loaded.push_back (loaded);
+    return true;
+}
+
 bool ProjectDocumentRegistry::canClose (QString* reason) const
 {
     for (const LoadedResource& loaded : _loaded) {

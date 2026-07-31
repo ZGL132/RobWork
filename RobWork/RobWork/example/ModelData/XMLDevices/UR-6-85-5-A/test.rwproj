@@ -7,10 +7,10 @@
     "project": {
         "application": "RobWorkStudio",
         "applicationVersion": "",
-        "createdAt": "2026-07-31T21:32:16Z",
+        "createdAt": "2026-07-31T21:54:57Z",
         "description": "由 RobWorkStudio 创建的空项目",
-        "id": "ce9be138-da24-4c1c-80f5-0a504e7e4048",
-        "modifiedAt": "2026-07-31T21:32:16Z",
+        "id": "f57d6ba0-1ead-4d01-9b0f-93c415f83c43",
+        "modifiedAt": "2026-07-31T21:55:07Z",
         "name": "test"
     },
     "resources": [

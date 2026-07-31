@@ -63,6 +63,8 @@ if(build)
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisJson.cpp
+        # 项目配置 JSON 与 Widget 解耦，既参与插件保存也参与无界面单测。
+        KinematicAnalysisProjectDocument.cpp
         FrozenRequirementKinematicAdapter.cpp
         TaskPointUiLogic.cpp
         KinematicAnalysisUiLogic.cpp
@@ -88,6 +90,7 @@ if(build)
         KinematicAnalysisCollision.hpp
         KinematicAnalysisEnvelope.hpp
         KinematicAnalysisJson.hpp
+        KinematicAnalysisProjectDocument.hpp
         FrozenRequirementKinematicAdapter.hpp
     )
 
@@ -139,6 +142,8 @@ if(build)
         TaskPointDelegates.cpp
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisJson.cpp
+        # 测试目标与插件共用同一序列化实现，避免出现两套不一致的项目格式。
+        KinematicAnalysisProjectDocument.cpp
         FrozenRequirementKinematicAdapter.cpp
     )
     target_link_libraries(sdurws_kinematicanalysis_test

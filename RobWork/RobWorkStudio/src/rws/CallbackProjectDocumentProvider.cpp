@@ -132,4 +132,13 @@ void CallbackProjectDocumentProvider::setDirty (bool dirty)
         _dirty = dirty;
 }
 
+void CallbackProjectDocumentProvider::adoptGeneratedResource (const QString& resourceId)
+{
+    // 仅在 Registry 已登记首次编辑生成的资源后调用。该资源没有历史文件，因此 Provider
+    // 需要无需 loadResource 即绑定资源身份，后续才能进入与普通资源相同的保存事务。
+    _resourceId = resourceId;
+    // 绑定本身不表示领域配置已改变；调用者会在设置 Widget 快照基线后传入真实脏状态。
+    _dirty = false;
+}
+
 }    // namespace rws

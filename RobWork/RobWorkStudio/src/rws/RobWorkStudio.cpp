@@ -132,6 +132,13 @@ bool makeImportedProjectResource (const QString& sourcePath,
         kind = QStringLiteral ("rws.structure-optimization");
         targetDirectory = QStringLiteral ("optimizations");
     }
+    else if (lowercaseFilename.endsWith (QStringLiteral (".kinematic-analysis.json"))) {
+        // 仅导入可编辑分析配置；可重算结果和各类导出文件均不属于项目源资源。
+        suffix = QStringLiteral (".kinematic-analysis.json");
+        idPrefix = QStringLiteral ("kinematic-analysis");
+        kind = QStringLiteral ("rws.kinematic-analysis");
+        targetDirectory = QStringLiteral ("analysis");
+    }
     else {
         if (error != nullptr) {
             *error = QString::fromUtf8 (
@@ -1133,7 +1140,7 @@ void RobWorkStudio::importProjectResource ()
         tr ("Import Project Resource"),
         previousDirectory,
         tr ("Supported Project Resources (*.wc.xml *.rmb.json *.requirements.json "
-            "*.structure-optimization.json);;All Files (*.*)"));
+            "*.structure-optimization.json *.kinematic-analysis.json);;All Files (*.*)"));
     if (sourcePath.isEmpty ())
         return;
 
@@ -1186,6 +1193,45 @@ bool RobWorkStudio::registerProjectDocumentProvider (ProjectDocumentProvider* pr
     if (registered)
         updateProjectWindowTitle ();
     return registered;
+}
+
+bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resource,
+                                                     bool* created,
+                                                     QString* error)
+{
+    if (created != nullptr)
+        *created = false;
+    if (!_projectManager.hasProject ()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("当前没有打开的项目，无法创建插件资源。");
+        return false;
+    }
+
+    // 稳定 ID 已存在时不重复登记。首次编辑之外的每次控件变化只能更新脏状态，不能追加
+    // 清单项，更不能覆盖用户已经保存的业务配置。
+    ProjectResource existing;
+    if (_projectManager.manifest ().findResource (resource.id, existing))
+        return true;
+    if (!_projectManager.addGeneratedResource (resource, error))
+        return false;
+    if (!_projectDocuments.activateGeneratedResource (
+            resource, _projectManager.projectFilePath (), error))
+        return false;
+
+    // 清单仅在内存中标脏，不在此处落盘。新资源 JSON 和 .rwproj 由一次“保存项目”操作
+    // 经同一个暂存事务统一提交，失败时不会产生只有其中一个文件的半成品项目。
+    if (created != nullptr)
+        *created = true;
+    updateProjectWindowTitle ();
+    return true;
+}
+
+QString RobWorkStudio::mainWorkCellResourceId () const
+{
+    // entryPoints 是项目主场景的唯一权威来源，不能依赖 resources 数组顺序推测。
+    if (!_projectManager.hasProject ())
+        return QString ();
+    return _projectManager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell"));
 }
 
 void RobWorkStudio::notifyProjectDocumentChanged ()

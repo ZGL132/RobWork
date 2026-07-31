@@ -308,3 +308,59 @@ TEST (ProjectDocumentRegistryTest, CallbackProviderStagesResolvedResourceAndTrac
     ASSERT_TRUE (saved.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("callback-saved"), saved.readAll ());
 }
+
+// 正向测试：首次编辑时生成的资源没有历史文件，因此不能走普通加载回调；Registry 应直接
+// 激活它并交给 Provider 的首次保存流程。提交成功后，新文件必须落在项目目录内且脏状态
+// 被清除，避免下一次保存重复写入同一份未变更的配置。
+TEST (ProjectDocumentRegistryTest, ActivatesGeneratedResourceForFirstTransactionalSave)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+
+    bool loadCalled = false;
+    bool markedClean = false;
+    rws::CallbackProjectDocumentProvider provider (
+        "provider.generated", "test.generated-document",
+        [&loadCalled] (const QString&, const rws::ProjectDocumentContext&, QString*) {
+            // 生成资源没有旧文件，若调用此回调就说明错误地进入了常规加载路径。
+            loadCalled = true;
+            return false;
+        },
+        [] (const QString& path, const rws::ProjectDocumentContext&, QString* error) {
+            QFile file (path);
+            if (!file.open (QIODevice::WriteOnly | QIODevice::Truncate)) {
+                if (error != nullptr)
+                    *error = file.errorString ();
+                return false;
+            }
+            file.write ("generated-document");
+            return true;
+        },
+        rws::CallbackProjectDocumentProvider::CanCloseHandler (),
+        rws::CallbackProjectDocumentProvider::CloseHandler (),
+        [&markedClean] () { markedClean = true; });
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+    const rws::ProjectResource generated = resource (
+        "analysis.main", "test.generated-document", "analysis/generated.json");
+
+    ASSERT_TRUE (registry.activateGeneratedResource (generated, projectFile, &error))
+        << error.toStdString ();
+    provider.adoptGeneratedResource (generated.id);
+    provider.setDirty (true);
+
+    rws::ProjectManifest manifest;
+    manifest.resources.push_back (generated);
+    ASSERT_TRUE (registry.saveDirtyResources (manifest, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_FALSE (loadCalled);
+    EXPECT_FALSE (registry.isDirty ());
+    EXPECT_TRUE (markedClean);
+
+    QFile saved (QDir (directory.path ()).filePath ("analysis/generated.json"));
+    ASSERT_TRUE (saved.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("generated-document"), saved.readAll ());
+}

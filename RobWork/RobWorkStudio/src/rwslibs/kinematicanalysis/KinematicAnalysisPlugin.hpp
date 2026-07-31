@@ -7,6 +7,7 @@ namespace rws {
 
 // 前置声明,避免在头文件里包含完整的 Widget 头文件。
 class KinematicAnalysisWidget;
+class CallbackProjectDocumentProvider;
 
 // KinematicAnalysis 插件入口。
 // 继承 RobWorkStudioPlugin,通过 Q_PLUGIN_METADATA / Q_INTERFACES 暴露给 Qt 的
@@ -33,6 +34,10 @@ public:
 
 private:
     KinematicAnalysisWidget* _widget;
+    // Registry 只借用该指针，Provider 的完整生命周期由插件负责，避免注册表持有悬空对象。
+    CallbackProjectDocumentProvider* _projectProvider;
+    // 仅在资源已加载或已按首次编辑规则激活后为真，防止控件连续变化时重复登记清单项。
+    bool _projectResourceActive;
 };
 
 }    // namespace rws

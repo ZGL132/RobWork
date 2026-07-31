@@ -43,6 +43,11 @@ class ProjectManager
                          const ProjectResource& resource,
                          QString* error = nullptr);
 
+    // 将软件首次编辑时生成的资源登记到当前清单。与 importResource 不同，此接口不复制
+    // 外部文件，也不要求目标文件已存在；调用者必须随后通过 ProjectDocumentRegistry 的
+    // 保存事务写入该路径，避免生成空文件或绕过项目内路径校验。
+    bool addGeneratedResource (const ProjectResource& resource, QString* error = nullptr);
+
     // 克隆当前项目到一个尚不存在的目标目录。只复制 ownership 为 project/generated 的文件，
     // external 资源继续保留其原始引用；新清单生成独立 project.id，并在所有文件落盘后才切换
     // 当前项目上下文，从而让“另存为”失败时仍能继续使用源项目。

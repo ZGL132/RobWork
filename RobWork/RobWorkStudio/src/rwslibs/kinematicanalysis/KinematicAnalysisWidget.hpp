@@ -18,6 +18,7 @@
 // QProgressBar :跨线程进度条(由 updatePoseReachabilityProgress 槽更新)。
 // std::atomic_bool / std::shared_ptr 跨线程安全,无需加锁。
 #include <QFutureWatcher>
+#include <QByteArray>
 #include <QProgressBar>
 #include <QSize>
 #include <atomic>
@@ -109,6 +110,19 @@ class KinematicAnalysisWidget : public QWidget
     void setRobWorkStudio (RobWorkStudio* studio);
     // 由 RobWorkStudio 在 WorkCell 加载/卸载时调用。
     void setWorkCell (rw::models::WorkCell* workcell);
+
+    // 项目 Provider 使用的无对话框文档接口。Widget 只读写 Provider 传入的暂存路径，
+    // 不直接改写项目正式文件；正式提交由 ProjectSaveTransaction 统一完成。
+    bool loadProjectDocument (const QString& path, QString* error = nullptr);
+    bool saveProjectDocument (const QString& targetPath, QString* error = nullptr);
+    bool isProjectDocumentDirty () const;
+    void markProjectDocumentClean ();
+    bool canCloseProjectDocument (QString* reason = nullptr) const;
+    // 首次编辑生成资源时建立项目内 JSON 的会话基线；该基线为空，使当前配置在用户保存项目
+    // 时进入统一事务创建文件，而不是在编辑瞬间直接写入磁盘。
+    void beginProjectDocument (const QString& path);
+    // 项目关闭或切换时释放仅用于脏比较的路径和快照，防止旧项目的基线影响新项目。
+    void clearProjectDocumentContext ();
 
   private Q_SLOTS:
     // ===================================================================
@@ -219,6 +233,11 @@ class KinematicAnalysisWidget : public QWidget
     // 阈值 SpinBox 改后应用。
     void applyThresholds ();
 
+  Q_SIGNALS:
+    // 领域配置发生实际变化后通知插件更新 Provider 脏状态；选择结果、焦点变化等
+    // 界面状态不会触发该信号，因为它们不属于项目文档内容。
+    void projectDocumentChanged ();
+
   private:
     // ===================================================================
     //  Tab 构建
@@ -247,6 +266,10 @@ class KinematicAnalysisWidget : public QWidget
     void installTaskPointDelegates ();
     // 把状态消息写入顶部 status QLineEdit(只读)。
     void setStatus (const QString& message);
+    // 将当前可编辑控件转换为项目 JSON 配置；分析结果、缓存和临时进度均不进入快照。
+    QByteArray projectDocumentSnapshot () const;
+    // 在加载项目文档时恢复所有可编辑输入，并清空旧 WorkCell 上下文产生的分析结果。
+    void applyProjectDocumentSnapshot (const QByteArray& json, QString* error);
 
     // ===================================================================
     //  状态/单位换算 helper
@@ -492,6 +515,12 @@ class KinematicAnalysisWidget : public QWidget
     std::vector< TaskPointReachabilityResult > _lastTaskPointResults;
     std::vector< WorkspaceSample > _workspaceSamples;
     std::vector< PoseReachabilitySample > _poseReachabilitySamples;
+
+    // 项目路径和两个快照仅用于当前会话的脏比较，绝不序列化到 KinematicAnalysis JSON。
+    QString _projectDocumentPath;
+    QByteArray _savedProjectDocumentSnapshot;
+    QByteArray _pendingProjectDocumentSnapshot;
+    bool _applyingProjectDocument = false;
 };
 
 }    // namespace rws

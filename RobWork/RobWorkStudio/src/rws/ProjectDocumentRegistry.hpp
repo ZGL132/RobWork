@@ -36,6 +36,12 @@ class ProjectDocumentRegistry
                              const QString& projectFilePath,
                              QString* error = nullptr);
 
+    // 把运行中首次创建的项目资源加入已加载列表。该资源尚无磁盘文件，因此不能走 load；
+    // 但其后续保存、脏检测和关闭会与打开项目时加载的资源完全使用同一套事务生命周期。
+    bool activateGeneratedResource (const ProjectResource& resource,
+                                    const QString& projectFilePath,
+                                    QString* error = nullptr);
+
     // 询问所有已加载资源是否都允许关闭；任一资源拒绝关闭则返回 false 并回填原因。
     bool canClose (QString* reason = nullptr) const;
     // 按依赖逆序关闭全部已加载资源，并清空加载列表。

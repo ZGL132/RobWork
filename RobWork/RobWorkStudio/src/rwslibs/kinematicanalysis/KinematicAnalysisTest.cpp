@@ -11,6 +11,7 @@
 #include "KinematicAnalysisPoseReachability.hpp"
 #include "KinematicAnalysisCollision.hpp"
 #include "KinematicAnalysisJson.hpp"
+#include "KinematicAnalysisProjectDocument.hpp"
 #include "FrozenRequirementKinematicAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
@@ -2006,6 +2007,57 @@ static int testTaskPointModel ()
     return 0;
 }
 
+// 项目文档只保存工程师可编辑的分析配置。该回归用例刻意不构造任何分析结果，
+// 以防后续实现为了方便而把大量、可重新计算的 workspace/IK 结果写入 rwproj 资源。
+// 同时验证设备和 TCP 仅以名称保存，项目文档不应携带机器相关的绝对文件路径。
+static int testProjectDocumentRoundTrip ()
+{
+    rws::KinematicAnalysisProjectSettings original;
+    original.deviceName = "GenericSixAxis";
+    original.tcpFrameName = "TCP";
+    original.ikPositionMeters = {{0.15, -0.20, 0.45}};
+    original.workspace.sampleCount = 2400;
+    original.workspace.randomSeed = 17;
+    original.poseReachability.directionSamples = 36;
+    // 可视化偏好是配置的一部分，但分析点与渲染结果不是；这里使用布尔开关验证该边界。
+    original.showLabels = true;
+
+    rws::TaskPoint point;
+    point.id = "pick-01";
+    point.name = "Pick target";
+    point.position = {{0.10, 0.20, 0.30}};
+    point.tolerance.positionMeters = 0.002;
+    original.taskPoints.push_back (point);
+    original.manualPosePositions.push_back ({{0.40, 0.50, 0.60}});
+
+    const QByteArray json = rws::KinematicAnalysisProjectDocument::toJson (original);
+    if (const int rc = require (!json.contains ("workspaceSamples") &&
+                                    !json.contains ("analysisResults"),
+                                "project document excludes recomputable analysis results"))
+        return rc;
+    if (const int rc = require (!json.contains (":\\\\") && !json.contains ("/home/"),
+                                "project document excludes absolute paths"))
+        return rc;
+
+    rws::KinematicAnalysisProjectSettings decoded;
+    QString error;
+    if (const int rc = require (rws::KinematicAnalysisProjectDocument::fromJson (
+                                    json, decoded, &error),
+                                "project document parses after serialization"))
+        return rc;
+    if (const int rc = require (decoded.deviceName == original.deviceName &&
+                                    decoded.tcpFrameName == original.tcpFrameName,
+                                "project document preserves device binding by name"))
+        return rc;
+    if (const int rc = require (decoded.taskPoints.size () == 1 &&
+                                    decoded.taskPoints.front ().id == point.id &&
+                                    decoded.manualPosePositions.size () == 1,
+                                "project document preserves authored task and pose inputs"))
+        return rc;
+    return assertNear (decoded.workspace.sampleCount, original.workspace.sampleCount, 0.0,
+                       "project document workspace sample count");
+}
+
 static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
 {
     // 运动学分析只能读取已经冻结的编译结果。测试同时验证非 WORLD 工装参考系、
@@ -2668,6 +2720,8 @@ static int runAll ()
         return rc;
     if (const int rc = testJsonAndCollisionHelpers ())
         return rc;
+    if (const int rc = testProjectDocumentRoundTrip ())
+        return rc;
     return testAggregateResult ();
 }
 
@@ -2724,6 +2778,8 @@ int main (int argc, char** argv)
         rc = testPoseReachability ();
     else if (suite == "helpers")
         rc = testJsonAndCollisionHelpers ();
+    else if (suite == "project_document")
+        rc = testProjectDocumentRoundTrip ();
     else if (suite == "aggregate")
         rc = testAggregateResult ();
     else

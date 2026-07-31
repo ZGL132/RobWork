@@ -102,6 +102,15 @@ class RobWorkStudio : public QMainWindow
     bool registerProjectDocumentProvider (ProjectDocumentProvider* provider,
                                           QString* error = nullptr);
 
+    // 为插件首次编辑创建项目内资源条目，并立即加入 Registry 的保存生命周期。资源必须
+    // 使用 project/generated 归属和项目相对路径；函数返回后调用方可安全标记 Provider 为脏。
+    bool ensureGeneratedProjectResource (const ProjectResource& resource,
+                                         bool* created = nullptr,
+                                         QString* error = nullptr);
+
+    // 返回主 WorkCell 的稳定资源 ID，使依赖设备和 TCP 名称的插件配置总在场景之后加载。
+    QString mainWorkCellResourceId () const;
+
     /**
      * @brief 通知主窗口重新汇总 Provider 脏状态并刷新标题栏。
      *

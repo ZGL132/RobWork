@@ -295,6 +295,28 @@ bool ProjectManager::importResource (const QString& sourcePath,
     return true;
 }
 
+bool ProjectManager::addGeneratedResource (const ProjectResource& resource, QString* error)
+{
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目。"));
+        return false;
+    }
+
+    // 生成资源必须先在候选清单上完成结构和路径校验，再替换内存清单。目标文件此时可以
+    // 尚不存在，因为它会由 Provider 的后续暂存保存创建；这里绝不能把空文件提前写入磁盘。
+    ProjectManifest candidate = _manifest;
+    candidate.resources.push_back (resource);
+    if (!ProjectManifestJson::validate (candidate, error))
+        return false;
+    QString resolvedPath;
+    if (!ProjectPathResolver::resolveResource (_projectFilePath, resource, resolvedPath, error))
+        return false;
+
+    _manifest = candidate;
+    _dirty = true;
+    return true;
+}
+
 bool ProjectManager::cloneProject (const QString& targetProjectFilePath, QString* error)
 {
     if (!hasProject ()) {
