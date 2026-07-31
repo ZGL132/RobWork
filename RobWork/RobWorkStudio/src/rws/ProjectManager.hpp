@@ -14,6 +14,16 @@ namespace rws {
 class ProjectManager
 {
   public:
+    // 项目完整性问题保持为结构化数据，界面可按类型分组显示、提供重新定位或清理入口，
+    // 不需要再解析本地化错误文本来判断问题类别。
+    struct IntegrityIssue
+    {
+        enum class Type { MissingResource, UnreferencedFile, ChangedSinceAutosave };
+        Type type = Type::MissingResource;
+        QString resourceId;
+        QString path;
+        QString message;
+    };
     ProjectManager () = default;
 
     // 创建新项目：在磁盘上写入 .rwproj 清单文件，并让本管理器接管该项目的上下文。
@@ -52,6 +62,16 @@ class ProjectManager
     // external 资源继续保留其原始引用；新清单生成独立 project.id，并在所有文件落盘后才切换
     // 当前项目上下文，从而让“另存为”失败时仍能继续使用源项目。
     bool cloneProject (const QString& targetProjectFilePath, QString* error = nullptr);
+
+    // 创建崩溃恢复快照：把当前清单及所有 project/generated 资源写入项目私有的
+    // .rwproject/autosave 目录。external 资源不属于项目，既不能复制也不能在恢复时覆盖。
+    bool createAutosaveSnapshot (QString* error = nullptr) const;
+    // 查询是否存在一个可被恢复流程读取的完整快照清单。
+    bool hasAutosaveSnapshot () const;
+    // 用最后一次成功创建的恢复快照替换当前项目的清单及项目自有资源。
+    bool restoreAutosaveSnapshot (QString* error = nullptr);
+    // 检查当前项目的资源可用性、目录孤儿文件，以及与最近恢复快照相比发生的字节变化。
+    QVector< IntegrityIssue > inspectIntegrity (QString* error = nullptr) const;
 
     // 关闭当前项目：清空项目文件路径与内存清单，并把脏标记复位。
     // 注意：本方法不会静默保存，丢弃未保存修改的决策权在上层 UI。

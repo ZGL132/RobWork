@@ -4,7 +4,9 @@
 #include "ProjectPathResolver.hpp"
 
 #include <QDateTime>
+#include <QCryptographicHash>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
 #include <QSaveFile>
@@ -29,10 +31,14 @@ QString nowUtc ()
     return QDateTime::currentDateTimeUtc ().toString (Qt::ISODate);
 }
 
-// 在不覆盖既有目标文件的前提下执行原子复制。QFile::copy 直接写入目标路径，一旦进程或
-// 磁盘操作中断可能遗留半截资源；这里先用 QSaveFile 写临时文件，commit 成功后才让目标
-// 对后续清单更新可见，保证导入和克隆的“先文件、后清单”顺序具有可恢复性。
-bool copyFileAtomically (const QString& sourcePath, const QString& targetPath, QString* error)
+// 原子复制（默认拒绝覆盖既有目标）。QFile::copy 直接写入目标路径，一旦进程或磁盘操作
+// 中断可能遗留半截资源；这里先用 QSaveFile 写临时文件，commit 成功后才让目标对后续清单
+// 更新可见，保证导入和克隆的“先文件、后清单”顺序具有可恢复性。
+// 参数 rejectExistingTarget=false 用于恢复快照场景：此时用快照内容覆盖正式文件是预期行为。
+bool copyFileAtomically (const QString& sourcePath,
+                         const QString& targetPath,
+                         QString* error,
+                         bool rejectExistingTarget = true)
 {
     const QFileInfo sourceInfo (sourcePath);
     if (!sourceInfo.exists () || !sourceInfo.isFile ()) {
@@ -40,7 +46,7 @@ bool copyFileAtomically (const QString& sourcePath, const QString& targetPath, Q
                   QString::fromUtf8 ("源资源文件不存在或不是普通文件：%1。").arg (sourcePath));
         return false;
     }
-    if (QFileInfo::exists (targetPath)) {
+    if (rejectExistingTarget && QFileInfo::exists (targetPath)) {
         setError (error,
                   QString::fromUtf8 ("目标资源文件已存在，拒绝覆盖：%1。").arg (targetPath));
         return false;
@@ -87,6 +93,91 @@ bool copyFileAtomically (const QString& sourcePath, const QString& targetPath, Q
         return false;
     }
     return true;
+}
+
+// 恢复快照只属于项目管理器，不应与用户可见资源混放。固定使用项目根目录下的隐藏目录，
+// 既能随项目整体移动，也能避免把临时副本误登记进 rwproj 清单或参与项目打包。
+QString autosaveDirectory (const QString& projectFilePath)
+{
+    return QDir (QFileInfo (projectFilePath).absolutePath ()).filePath (
+        QStringLiteral (".rwproject/autosave"));
+}
+
+QString autosaveProjectFile (const QString& projectFilePath)
+{
+    return QDir (autosaveDirectory (projectFilePath)).filePath (QStringLiteral ("snapshot.rwproj"));
+}
+
+// 只复制项目真正拥有的资源。external 资源的路径和生命周期由外部系统负责，恢复快照若
+// 复制它们会把外部文件意外带入项目，也可能在恢复时覆盖用户随后更新的外部数据。
+bool copyOwnedProjectResources (const QString& sourceProjectFile,
+                                const ProjectManifest& manifest,
+                                const QString& targetProjectFile,
+                                const bool rejectExistingTargets,
+                                QString* error)
+{
+    QSet< QString > copiedPaths;
+    for (const ProjectResource& resource : manifest.resources) {
+        if (resource.ownership == QStringLiteral ("external"))
+            continue;
+
+        QString sourcePath;
+        QString targetPath;
+        if (!ProjectPathResolver::resolveResource (sourceProjectFile, resource, sourcePath, error) ||
+            !ProjectPathResolver::resolveResource (targetProjectFile, resource, targetPath, error))
+            return false;
+        if (!QFileInfo (sourcePath).exists () || !QFileInfo (sourcePath).isFile ()) {
+            setError (error,
+                      QString::fromUtf8 ("无法创建恢复快照，项目资源不存在：%1（资源 ID：%2）。")
+                          .arg (sourcePath)
+                          .arg (resource.id));
+            return false;
+        }
+        // 多个资源可以有意共享同一相对文件；快照只复制一次，避免第二次复制因目标已存在
+        // 被误判为失败，同时仍保留清单中各自的稳定资源 ID。
+        if (copiedPaths.contains (targetPath))
+            continue;
+        if (!copyFileAtomically (sourcePath, targetPath, error, rejectExistingTargets))
+            return false;
+        copiedPaths.insert (targetPath);
+    }
+    return true;
+}
+
+// 恢复前必须一次性确认快照中的每个自有资源均可解析且真实存在。不能边发现边复制，否则
+// 后面的缺失资源会让前面的正式文件已经被覆盖，破坏“拒绝恢复时项目仍保持原状”的约定。
+bool validateOwnedProjectResources (const QString& projectFile,
+                                    const ProjectManifest& manifest,
+                                    QString* error)
+{
+    for (const ProjectResource& resource : manifest.resources) {
+        if (resource.ownership == QStringLiteral ("external"))
+            continue;
+        QString resourcePath;
+        if (!ProjectPathResolver::resolveResource (projectFile, resource, resourcePath, error))
+            return false;
+        if (!QFileInfo (resourcePath).exists () || !QFileInfo (resourcePath).isFile ()) {
+            setError (error,
+                      QString::fromUtf8 ("恢复快照中的项目资源不存在：%1（资源 ID：%2）。")
+                          .arg (resourcePath)
+                          .arg (resource.id));
+            return false;
+        }
+    }
+    return true;
+}
+
+// 指纹采用 SHA-256 的十六进制摘要，且以分块读取方式处理大网格文件。摘要只用于诊断，
+// 不写回 rwproj，因而不会改变既有项目格式或给正常保存流程增加兼容性负担。
+QByteArray fileFingerprint (const QString& filePath)
+{
+    QFile file (filePath);
+    if (!file.open (QIODevice::ReadOnly))
+        return QByteArray ();
+    QCryptographicHash hash (QCryptographicHash::Sha256);
+    while (!file.atEnd ())
+        hash.addData (file.read (64 * 1024));
+    return hash.result ().toHex ();
 }
 
 // 判断一个已规范化的绝对路径是否仍位于给定目录内。迁移 WorkCell 时仅允许携带源 WorkCell
@@ -568,6 +659,146 @@ bool ProjectManager::cloneProject (const QString& targetProjectFilePath, QString
     _manifest = candidate;
     _dirty = false;
     return true;
+}
+
+bool ProjectManager::createAutosaveSnapshot (QString* error) const
+{
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目，无法创建恢复快照。"));
+        return false;
+    }
+
+    const QString internalDirectory = QDir (QFileInfo (_projectFilePath).absolutePath ()).filePath (
+        QStringLiteral (".rwproject"));
+    if (!QDir ().mkpath (internalDirectory)) {
+        setError (error, QString::fromUtf8 ("无法创建项目恢复目录：%1。").arg (internalDirectory));
+        return false;
+    }
+
+    // 整个快照先写到同一父目录中的临时目录。资源和清单都完成后才切换 autosave 目录，
+    // 因而崩溃最多丢失本次快照，绝不会让恢复流程读取资源与清单版本不一致的半成品。
+    QTemporaryDir stagingDirectory (QDir (internalDirectory).filePath (
+        QStringLiteral (".autosave-stage-XXXXXX")));
+    if (!stagingDirectory.isValid ()) {
+        setError (error, QString::fromUtf8 ("无法创建恢复快照临时目录。"));
+        return false;
+    }
+    const QString stagedProjectFile = QDir (stagingDirectory.path ()).filePath (
+        QStringLiteral ("snapshot.rwproj"));
+    if (!copyOwnedProjectResources (
+            _projectFilePath, _manifest, stagedProjectFile, true, error) ||
+        !writeManifest (stagedProjectFile, _manifest, error))
+        return false;
+
+    const QString destinationDirectory = autosaveDirectory (_projectFilePath);
+    if (QFileInfo::exists (destinationDirectory) && !QDir (destinationDirectory).removeRecursively ()) {
+        setError (error, QString::fromUtf8 ("无法替换旧的恢复快照目录：%1。").arg (destinationDirectory));
+        return false;
+    }
+    if (!QDir ().rename (stagingDirectory.path (), destinationDirectory)) {
+        setError (error, QString::fromUtf8 ("无法提交恢复快照目录：%1。").arg (destinationDirectory));
+        return false;
+    }
+    stagingDirectory.setAutoRemove (false);
+    return true;
+}
+
+bool ProjectManager::hasAutosaveSnapshot () const
+{
+    return hasProject () && QFileInfo (autosaveProjectFile (_projectFilePath)).isFile ();
+}
+
+bool ProjectManager::restoreAutosaveSnapshot (QString* error)
+{
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目，无法恢复自动保存快照。"));
+        return false;
+    }
+    const QString snapshotFile = autosaveProjectFile (_projectFilePath);
+    QFile input (snapshotFile);
+    if (!input.open (QIODevice::ReadOnly)) {
+        setError (error, QString::fromUtf8 ("无法读取恢复快照：%1。").arg (input.errorString ()));
+        return false;
+    }
+    ProjectManifest snapshot;
+    if (!ProjectManifestJson::fromJson (input.readAll (), snapshot, error))
+        return false;
+    // 快照的项目 ID 必须与当前打开项目一致，防止用户复制 .rwproject 目录后误将另一个项目
+    // 的资源恢复进来。名称可以改，但稳定 UUID 不应在正常保存中发生变化。
+    if (snapshot.project.id != _manifest.project.id) {
+        setError (error, QString::fromUtf8 ("恢复快照不属于当前项目，已拒绝恢复。"));
+        return false;
+    }
+
+    // 先完整校验快照中的全部资源都可读，再开始覆盖正式项目。这样缺文件、越界路径或损坏
+    // 清单都会在任何正式资源改变前失败；实际写入沿用 QSaveFile 的单文件原子替换语义。
+    QString validationError;
+    if (!validateOwnedProjectResources (snapshotFile, snapshot, &validationError)) {
+        setError (error, validationError);
+        return false;
+    }
+    if (!copyOwnedProjectResources (snapshotFile, snapshot, _projectFilePath, false, error))
+        return false;
+    if (!writeManifest (_projectFilePath, snapshot, error))
+        return false;
+    _manifest = snapshot;
+    _dirty = false;
+    return true;
+}
+
+QVector< ProjectManager::IntegrityIssue > ProjectManager::inspectIntegrity (QString* error) const
+{
+    QVector< IntegrityIssue > issues;
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目，无法执行完整性检查。"));
+        return issues;
+    }
+
+    const QString projectDirectory = QFileInfo (_projectFilePath).absolutePath ();
+    const QString snapshotFile = autosaveProjectFile (_projectFilePath);
+    QSet< QString > declaredFiles;
+    for (const ProjectResource& resource : _manifest.resources) {
+        QString path;
+        if (!ProjectPathResolver::resolveResource (_projectFilePath, resource, path, error))
+            return {};
+        const QString normalizedPath = QDir::cleanPath (QFileInfo (path).absoluteFilePath ());
+        declaredFiles.insert (normalizedPath);
+        if (resource.ownership != QStringLiteral ("external") && !QFileInfo (normalizedPath).isFile ()) {
+            issues.push_back ({IntegrityIssue::Type::MissingResource,
+                               resource.id,
+                               normalizedPath,
+                               QString::fromUtf8 ("已登记的项目资源不存在或不是普通文件。")});
+            continue;
+        }
+        // 快照只包含项目自有资源。存在快照且两份文件均有效时，才可把摘要差异解释为“自
+        // 上次自动保存后变化”，避免把首次保存或外部资源的自然变化错误标为项目问题。
+        if (resource.ownership != QStringLiteral ("external") && QFileInfo (snapshotFile).isFile ()) {
+            QString snapshotPath;
+            if (ProjectPathResolver::resolveResource (snapshotFile, resource, snapshotPath, nullptr) &&
+                QFileInfo (snapshotPath).isFile () && fileFingerprint (normalizedPath) != fileFingerprint (snapshotPath)) {
+                issues.push_back ({IntegrityIssue::Type::ChangedSinceAutosave,
+                                   resource.id,
+                                   normalizedPath,
+                                   QString::fromUtf8 ("资源内容与最近自动保存快照不一致。")});
+            }
+        }
+    }
+
+    // 扫描时排除 .rwproject：它只存放软件管理的快照和后续本机状态，不是可由用户清理的
+    // 项目业务资源。rwproj 清单本身也不是孤儿资源，已登记文件则按绝对路径精确排除。
+    QDirIterator files (projectDirectory, QDir::Files, QDirIterator::Subdirectories);
+    while (files.hasNext ()) {
+        const QString path = QDir::cleanPath (QFileInfo (files.next ()).absoluteFilePath ());
+        const QString relative = QDir::fromNativeSeparators (QDir (projectDirectory).relativeFilePath (path));
+        if (path == QDir::cleanPath (_projectFilePath) || relative.startsWith (QStringLiteral (".rwproject/")) ||
+            declaredFiles.contains (path))
+            continue;
+        issues.push_back ({IntegrityIssue::Type::UnreferencedFile,
+                           QString (),
+                           path,
+                           QString::fromUtf8 ("项目目录内的文件未被 rwproj 清单引用。")});
+    }
+    return issues;
 }
 
 void ProjectManager::closeProject ()

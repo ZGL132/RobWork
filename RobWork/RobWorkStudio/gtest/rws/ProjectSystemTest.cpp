@@ -8,6 +8,8 @@
 #include <QTemporaryDir>
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 namespace {
 
 // 构造一个最小但完整的测试清单：一个名为“项目系统测试”的项目，含一个
@@ -422,4 +424,86 @@ TEST (ProjectSystemTest, ManagerClonesPortableProjectWithNewIdentity)
     ASSERT_TRUE (reopened.resolveResource ("external.reference", resolvedExternal, &error))
         << error.toStdString ();
     EXPECT_EQ (QDir::cleanPath (externalFile), resolvedExternal);
+}
+
+// 恢复测试：自动恢复快照必须同时保存项目清单和项目自有资源。模拟异常退出后，磁盘上的
+// 清单及 WorkCell 都可能已经被后续错误写入；恢复操作应以最后一个完整快照为准，而不是
+// 只恢复 .rwproj 清单后留下与清单版本不匹配的旧资源文件。
+TEST (ProjectSystemTest, ManagerRestoresAutosaveSnapshotWithOwnedResources)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Recovery.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QByteArray originalWorkCell ("<WorkCell name=\"Recovered\" />\n");
+    const QByteArray corruptedWorkCell ("<WorkCell name=\"Corrupted\" />\n");
+
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    QFile workCell (workCellFile);
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly));
+    ASSERT_EQ (originalWorkCell.size (), workCell.write (originalWorkCell));
+    workCell.close ();
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error)) << error.toStdString ();
+    ASSERT_TRUE (manager.createAutosaveSnapshot (&error)) << error.toStdString ();
+    EXPECT_TRUE (manager.hasAutosaveSnapshot ());
+
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (corruptedWorkCell.size (), workCell.write (corruptedWorkCell));
+    workCell.close ();
+    QFile corruptedManifest (projectFile);
+    ASSERT_TRUE (corruptedManifest.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (9), corruptedManifest.write ("{broken}\n"));
+    corruptedManifest.close ();
+
+    ASSERT_TRUE (manager.restoreAutosaveSnapshot (&error)) << error.toStdString ();
+    QFile restoredWorkCell (workCellFile);
+    ASSERT_TRUE (restoredWorkCell.open (QIODevice::ReadOnly));
+    EXPECT_EQ (originalWorkCell, restoredWorkCell.readAll ());
+
+    rws::ProjectManifest restoredManifest;
+    QFile restoredManifestFile (projectFile);
+    ASSERT_TRUE (restoredManifestFile.open (QIODevice::ReadOnly));
+    ASSERT_TRUE (rws::ProjectManifestJson::fromJson (
+        restoredManifestFile.readAll (), restoredManifest, &error)) << error.toStdString ();
+    EXPECT_EQ ("scene.main", restoredManifest.entryPoints.value ("mainWorkCell"));
+}
+
+// 诊断测试：完整性检查必须区分“清单指向的资源丢失”“目录内未登记的遗留文件”和
+// “相对自动保存快照已变更”的资源，供上层界面分别给出恢复、清理或保存提示。
+TEST (ProjectSystemTest, ManagerReportsMissingUnreferencedAndChangedResources)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Integrity.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    QFile workCell (workCellFile);
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (12), workCell.write ("<WorkCell />"));
+    workCell.close ();
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error)) << error.toStdString ();
+    ASSERT_TRUE (manager.createAutosaveSnapshot (&error)) << error.toStdString ();
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (26), workCell.write ("<WorkCell name=\"Changed\"/>"));
+    workCell.close ();
+    QFile orphan (QDir (directory.path ()).filePath ("legacy-note.txt"));
+    ASSERT_TRUE (orphan.open (QIODevice::WriteOnly));
+    orphan.close ();
+
+    const QVector< rws::ProjectManager::IntegrityIssue > issues = manager.inspectIntegrity (&error);
+    EXPECT_TRUE (error.isEmpty ());
+    EXPECT_TRUE (std::any_of (issues.cbegin (), issues.cend (), [] (const auto& issue) {
+        return issue.type == rws::ProjectManager::IntegrityIssue::Type::ChangedSinceAutosave &&
+            issue.resourceId == "scene.main";
+    }));
+    EXPECT_TRUE (std::any_of (issues.cbegin (), issues.cend (), [] (const auto& issue) {
+        return issue.type == rws::ProjectManager::IntegrityIssue::Type::UnreferencedFile &&
+            issue.path.endsWith ("legacy-note.txt");
+    }));
 }
