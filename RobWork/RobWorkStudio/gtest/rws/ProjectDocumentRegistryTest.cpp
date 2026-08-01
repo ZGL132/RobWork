@@ -26,10 +26,15 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
 
     bool loadResource (const rws::ProjectResource& resource,
                        const rws::ProjectDocumentContext&,
-                       QString*) override
+                       QString* error) override
     {
         if (_events != nullptr)
             _events->push_back (QStringLiteral ("load:") + resource.id);
+        if (resource.id == _failingLoadResource) {
+            if (error != nullptr)
+                *error = QString::fromUtf8 ("模拟可选资源加载失败");
+            return false;
+        }
         return true;
     }
 
@@ -75,8 +80,10 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     // 测试辅助：把指定资源标记为脏，或让指定资源的保存模拟失败。
     void markDirty (const QString& resourceId) { _dirtyResources.insert (resourceId); }
     void failSaving (const QString& resourceId) { _failingResource = resourceId; }
+    void failLoading (const QString& resourceId) { _failingLoadResource = resourceId; }
 
   private:
+    QString _failingLoadResource;
     QString _id;
     QString _kind;
     QStringList* _events;             // 可选事件记录（load:xxx / close:xxx）。
@@ -363,4 +370,87 @@ TEST (ProjectDocumentRegistryTest, ActivatesGeneratedResourceForFirstTransaction
     QFile saved (QDir (directory.path ()).filePath ("analysis/generated.json"));
     ASSERT_TRUE (saved.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("generated-document"), saved.readAll ());
+}
+
+// 可选资源的 Provider 即使已安装，也可能因旧版本数据或缺失的附属文件无法加载；这不能
+// 阻止仅依赖核心 WorkCell 的项目打开，Registry 应记录尝试后跳过该可选资源。
+TEST (ProjectDocumentRegistryTest, SkipsOptionalResourceWhenProviderLoadFails)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    provider.failLoading ("optional.analysis");
+
+    rws::ProjectManifest manifest;
+    manifest.project.id = "optional-test";
+    manifest.project.name = "optional-test";
+    rws::ProjectResource optional = resource ("optional.analysis", "test.document", "analysis.json");
+    optional.required = false;
+    manifest.resources.push_back (optional);
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error)) << error.toStdString ();
+    EXPECT_TRUE (registry.loadProjectResources (manifest, projectFile, &error)) << error.toStdString ();
+    EXPECT_TRUE (events.contains ("load:optional.analysis"));
+    EXPECT_FALSE (registry.isDirty ());
+}
+
+TEST (ProjectDocumentRegistryTest, ReportsWarningWhenOptionalResourceIsSkipped)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    provider.failLoading ("optional.analysis");
+
+    rws::ProjectManifest manifest;
+    manifest.project.id = "optional-test";
+    manifest.project.name = "optional-test";
+    rws::ProjectResource optional = resource ("optional.analysis", "test.document", "analysis.json");
+    optional.required = false;
+    manifest.resources.push_back (optional);
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    QStringList warnings;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error)) << error.toStdString ();
+    EXPECT_TRUE (registry.loadProjectResources (manifest, projectFile, &error, &warnings))
+        << error.toStdString ();
+    EXPECT_TRUE (error.isEmpty ());
+    ASSERT_EQ (1, warnings.size ());
+    EXPECT_TRUE (warnings.front ().contains ("optional.analysis"));
+}
+
+TEST (ProjectDocumentRegistryTest, AutosaveSerializesDirtyProviderWithoutMarkingItClean)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    const QString sourceFile = QDir (directory.path ()).filePath ("analysis.json");
+    const QString snapshotProject = QDir (directory.path ()).filePath ("snapshot/snapshot.rwproj");
+    QFile source (sourceFile);
+    ASSERT_TRUE (source.open (QIODevice::WriteOnly));
+    source.write ("disk-version");
+    source.close ();
+
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectManifest manifest;
+    manifest.resources.push_back (resource ("analysis", "test.document", "analysis.json"));
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+    ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error));
+    provider.markDirty ("analysis");
+
+    ASSERT_TRUE (registry.saveAutosaveResources (manifest, projectFile, snapshotProject, &error))
+        << error.toStdString ();
+    EXPECT_TRUE (registry.isDirty ());
+    QFile snapshot (QDir (QFileInfo (snapshotProject).absolutePath ()).filePath ("analysis.json"));
+    ASSERT_TRUE (snapshot.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("saved:analysis"), snapshot.readAll ());
 }

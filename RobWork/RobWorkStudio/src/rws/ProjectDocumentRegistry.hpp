@@ -29,12 +29,23 @@ class ProjectDocumentRegistry
     bool loadProjectResources (const ProjectManifest& manifest,
                                const QString& projectFilePath,
                                QString* error = nullptr);
+    bool loadProjectResources (const ProjectManifest& manifest,
+                               const QString& projectFilePath,
+                               QString* error,
+                               QStringList* warnings);
 
     // 把所有脏资源通过 ProjectSaveTransaction 统一保存；先暂存、后替换，任一失败
     // 即整体回滚，保证不会出现半提交状态。
     bool saveDirtyResources (const ProjectManifest& manifest,
-                             const QString& projectFilePath,
-                             QString* error = nullptr);
+                              const QString& projectFilePath,
+                              QString* error = nullptr);
+
+    // 向尚未可见的恢复快照目录写入当前 Provider 状态。已加载资源从内存序列化，
+    // 未加载资源按磁盘副本保留；此操作不会清除 Provider 的脏标记。
+    bool saveAutosaveResources (const ProjectManifest& manifest,
+                                const QString& sourceProjectFilePath,
+                                const QString& snapshotProjectFilePath,
+                                QString* error = nullptr);
 
     // 把运行中首次创建的项目资源加入已加载列表。该资源尚无磁盘文件，因此不能走 load；
     // 但其后续保存、脏检测和关闭会与打开项目时加载的资源完全使用同一套事务生命周期。

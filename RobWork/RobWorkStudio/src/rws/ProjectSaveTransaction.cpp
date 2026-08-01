@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QSaveFile>
 #include <QUuid>
 
 namespace rws {
@@ -77,6 +78,66 @@ bool ProjectSaveTransaction::stage (ProjectDocumentProvider& provider,
     return true;
 }
 
+// 暂存一个既有普通文件的副本：把源文件复制到目标同目录的暂存路径，供恢复快照、
+// rwpack 输出等非 Provider 场景与业务文档走同一套“先暂存、后统一提交”事务。
+bool ProjectSaveTransaction::stageCopy (const QString& sourcePath,
+                                        const QString& targetPath,
+                                        QString* error)
+{
+    const QFileInfo sourceInfo (sourcePath);
+    const QFileInfo targetInfo (targetPath);
+    if (!sourceInfo.isFile ()) {
+        setError (error, QString::fromUtf8 ("无法暂存不存在的源文件：%1。").arg (sourcePath));
+        return false;
+    }
+    if (targetInfo.exists () && !targetInfo.isFile ()) {
+        setError (error, QString::fromUtf8 ("事务目标不是普通文件：%1。").arg (targetPath));
+        return false;
+    }
+    if (!QDir ().mkpath (targetInfo.absolutePath ())) {
+        setError (error, QString::fromUtf8 ("无法创建资源目录：%1。").arg (targetInfo.absolutePath ()));
+        return false;
+    }
+    StagedResource staged;
+    staged.targetPath = targetInfo.absoluteFilePath ();
+    staged.stagedPath = uniqueSiblingPath (staged.targetPath, QStringLiteral (".rwstage-"));
+    staged.backupPath = uniqueSiblingPath (staged.targetPath, QStringLiteral (".rwbackup-"));
+    if (!QFile::copy (sourceInfo.absoluteFilePath (), staged.stagedPath)) {
+        setError (error, QString::fromUtf8 ("无法暂存源文件：%1。").arg (sourcePath));
+        return false;
+    }
+    _staged.push_back (staged);
+    return true;
+}
+
+// 暂存一段内存字节到目标同目录的暂存文件：用于把项目清单等内存内容与磁盘资源
+// 一起纳入同一提交单元，保证清单与资源要么全部更新、要么全部回滚。
+bool ProjectSaveTransaction::stageBytes (const QByteArray& bytes,
+                                         const QString& targetPath,
+                                         QString* error)
+{
+    const QFileInfo targetInfo (targetPath);
+    if (targetInfo.exists () && !targetInfo.isFile ()) {
+        setError (error, QString::fromUtf8 ("事务目标不是普通文件：%1。").arg (targetPath));
+        return false;
+    }
+    if (!QDir ().mkpath (targetInfo.absolutePath ())) {
+        setError (error, QString::fromUtf8 ("无法创建资源目录：%1。").arg (targetInfo.absolutePath ()));
+        return false;
+    }
+    StagedResource staged;
+    staged.targetPath = targetInfo.absoluteFilePath ();
+    staged.stagedPath = uniqueSiblingPath (staged.targetPath, QStringLiteral (".rwstage-"));
+    staged.backupPath = uniqueSiblingPath (staged.targetPath, QStringLiteral (".rwbackup-"));
+    QSaveFile file (staged.stagedPath);
+    if (!file.open (QIODevice::WriteOnly) || file.write (bytes) != bytes.size () || !file.commit ()) {
+        setError (error, QString::fromUtf8 ("无法暂存内存文件：%1。").arg (targetPath));
+        return false;
+    }
+    _staged.push_back (staged);
+    return true;
+}
+
 // 提交阶段：按暂存顺序逐个把正式文件备份、再把暂存文件安装为正式文件。
 // 任一步失败立即回滚全部已安装目标；只有所有资源都替换成功才进入清理阶段。
 bool ProjectSaveTransaction::commit (QString* error)
@@ -111,7 +172,8 @@ bool ProjectSaveTransaction::commit (QString* error)
     for (StagedResource& item : _staged) {
         if (item.targetBackedUp)
             QFile::remove (item.backupPath);
-        item.provider->markClean (item.resource.id);
+        if (item.provider != nullptr)
+            item.provider->markClean (item.resource.id);
     }
     _committed = true;
     return true;

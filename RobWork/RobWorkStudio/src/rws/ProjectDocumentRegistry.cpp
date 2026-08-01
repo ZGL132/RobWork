@@ -4,7 +4,9 @@
 #include "ProjectSaveTransaction.hpp"
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QSaveFile>
 
 namespace rws {
 namespace {
@@ -72,6 +74,14 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
                                                     const QString& projectFilePath,
                                                     QString* error)
 {
+    return loadProjectResources (manifest, projectFilePath, error, nullptr);
+}
+
+bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manifest,
+                                                    const QString& projectFilePath,
+                                                    QString* error,
+                                                    QStringList* warnings)
+{
     QVector< ProjectResource > ordered;
     if (!buildLoadOrder (manifest, ordered, error))
         return false;
@@ -94,13 +104,31 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
                 closeResources ();
                 return false;
             }
+            if (warnings != nullptr) {
+                warnings->push_back (QString::fromUtf8 (
+                    "可选资源“%1”没有可用 Provider，已跳过。").arg (resource.id));
+            }
             continue;
         }
 
         QString resolvedPath;
-        if (!ProjectPathResolver::resolveResource (
-                projectFilePath, resource, resolvedPath, error) ||
-            !provider->loadResource (resource, context, error)) {
+        const bool pathResolved = ProjectPathResolver::resolveResource (
+            projectFilePath, resource, resolvedPath, error);
+        const bool resourceLoaded = pathResolved && provider->loadResource (resource, context, error);
+        if (!resourceLoaded) {
+            // 必需资源失败必须终止打开；可选资源允许因旧数据、附属文件缺失或插件兼容性
+            // 问题降级跳过。清空本次局部错误，避免返回成功却把失败文本误传给调用方。
+            if (!resource.required) {
+                if (warnings != nullptr) {
+                    const QString reason = error != nullptr && !error->isEmpty () ?
+                        *error : QString::fromUtf8 ("资源加载失败。");
+                    warnings->push_back (QString::fromUtf8 (
+                        "可选资源“%1”已跳过：%2").arg (resource.id, reason));
+                }
+                if (error != nullptr)
+                    error->clear ();
+                continue;
+            }
             // 若 Provider 已回填具体错误则保留，否则补一个带资源 ID 的通用错误。
             if (error != nullptr && error->isEmpty ()) {
                 *error = QString::fromUtf8 ("加载项目资源失败：%1。").arg (resource.id);
@@ -138,6 +166,61 @@ bool ProjectDocumentRegistry::saveDirtyResources (const ProjectManifest& manifes
             return false;
     }
     return transaction.commit (error);
+}
+
+// 自动保存：把当前 Provider 中已加载的文档序列化到快照目录（写入暂存目标），未加载的
+// 自有资源按磁盘副本保留。这样恢复快照也能捕捉 Provider 内存里尚未落盘的编辑状态；
+// 本操作不清除 Provider 的脏标记，脏状态仍由“保存项目”事务统一处理。
+bool ProjectDocumentRegistry::saveAutosaveResources (const ProjectManifest& manifest,
+                                                     const QString& sourceProjectFilePath,
+                                                     const QString& snapshotProjectFilePath,
+                                                     QString* error)
+{
+    const ProjectDocumentContext snapshotContext = makeContext (manifest, snapshotProjectFilePath);
+    for (const ProjectResource& resource : manifest.resources) {
+        if (resource.ownership == QStringLiteral ("external"))
+            continue;
+
+        QString targetPath;
+        if (!ProjectPathResolver::resolveResource (
+                snapshotProjectFilePath, resource, targetPath, error) ||
+            !QDir ().mkpath (QFileInfo (targetPath).absolutePath ())) {
+            if (error != nullptr && error->isEmpty ())
+                *error = QString::fromUtf8 ("无法创建自动保存资源目录。");
+            return false;
+        }
+
+        const LoadedResource* loadedResource = nullptr;
+        for (const LoadedResource& loaded : _loaded) {
+            if (loaded.resource.id == resource.id) {
+                loadedResource = &loaded;
+                break;
+            }
+        }
+        if (loadedResource != nullptr) {
+            if (!loadedResource->provider->saveResource (resource, snapshotContext, targetPath, error))
+                return false;
+            continue;
+        }
+
+        QString sourcePath;
+        if (!ProjectPathResolver::resolveResource (sourceProjectFilePath, resource, sourcePath, error) ||
+            !QFileInfo (sourcePath).isFile ()) {
+            if (!resource.required)
+                continue;
+            if (error != nullptr && error->isEmpty ())
+                *error = QString::fromUtf8 ("无法读取自动保存资源：%1。").arg (resource.id);
+            return false;
+        }
+        QFile source (sourcePath);
+        QSaveFile target (targetPath);
+        if (!source.open (QIODevice::ReadOnly) || !target.open (QIODevice::WriteOnly) ||
+            target.write (source.readAll ()) < 0 || !target.commit ()) {
+            setError (error, QString::fromUtf8 ("无法写入自动保存资源：%1。").arg (resource.id));
+            return false;
+        }
+    }
+    return true;
 }
 
 // 逐资源询问是否允许关闭；只要有一个资源拒绝（如仍有后台任务）就整体不关闭。

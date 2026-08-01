@@ -53,9 +53,11 @@
 #include <QMimeData>
 #include <QObject>
 #include <QPluginLoader>
+#include <QPushButton>
 #include <QSettings>
 #include <QStringList>
 #include <QToolBar>
+#include <QTimer>
 #include <QUrl>
 
 #ifdef RWS_USE_PYTHON
@@ -439,6 +441,15 @@ void RobWorkStudio::setupFileActions ()
     QAction* importResourceAction = new QAction (tr ("&Import Project Resource..."), this);    // owned
     connect (importResourceAction, SIGNAL (triggered ()), this, SLOT (importProjectResource ()));
 
+    QAction* exportPackageAction = new QAction (tr ("Export Project &Package..."), this);    // owned
+    connect (exportPackageAction, SIGNAL (triggered ()), this, SLOT (exportProjectPackage ()));
+
+    QAction* importPackageAction = new QAction (tr ("Import Project Pac&kage..."), this);    // owned
+    connect (importPackageAction, SIGNAL (triggered ()), this, SLOT (importProjectPackage ()));
+
+    QAction* integrityAction = new QAction (tr ("Check Project &Integrity..."), this);    // owned
+    connect (integrityAction, SIGNAL (triggered ()), this, SLOT (inspectProjectIntegrity ()));
+
     QAction* openResourceAction = new QAction (tr ("Open Single &Resource..."), this);    // owned
     connect (openResourceAction, SIGNAL (triggered ()), this, SLOT (open ()));
 
@@ -472,6 +483,9 @@ void RobWorkStudio::setupFileActions ()
     _fileMenu->addAction (saveAction);
     _fileMenu->addAction (saveAsAction);
     _fileMenu->addAction (importResourceAction);
+    _fileMenu->addAction (exportPackageAction);
+    _fileMenu->addAction (importPackageAction);
+    _fileMenu->addAction (integrityAction);
     _fileMenu->addAction (reloadAction);
     _fileMenu->addSeparator ();
 
@@ -1169,6 +1183,98 @@ void RobWorkStudio::importProjectResource ()
         tr ("The resource was imported. Reopen the project to load the new document."));
 }
 
+// 导出项目包：先统一保存所有脏文档与清单，确保归档内容是磁盘上的最新状态，
+// 再弹出保存对话框调用 ProjectManager 生成 rwpack。
+void RobWorkStudio::exportProjectPackage ()
+{
+    if (!_projectManager.hasProject ()) {
+        QMessageBox::information (this, tr ("Export Project Package"), tr ("No project is open."));
+        return;
+    }
+    QString error;
+    if (!saveProjectInternal (&error)) {
+        QMessageBox::warning (this, tr ("Export Project Package Failed"), error);
+        return;
+    }
+    const QString packagePath = QFileDialog::getSaveFileName (
+        this, tr ("Export Project Package"), _projectManager.projectFilePath () + ".rwpack",
+        tr ("RobWorkStudio Package (*.rwpack)"));
+    if (packagePath.isEmpty ())
+        return;
+    if (!_projectManager.exportPackage (packagePath, &error)) {
+        QMessageBox::warning (this, tr ("Export Project Package Failed"), error);
+        return;
+    }
+    QMessageBox::information (this, tr ("Project Package Exported"), packagePath);
+}
+
+// 导入项目包：选择 rwpack 与目标父目录，解包后复用统一 openProjectFile 打开
+// 解出的 project.rwproj（含崩溃恢复提示与加载警告）。
+void RobWorkStudio::importProjectPackage ()
+{
+    const QString packagePath = QFileDialog::getOpenFileName (
+        this, tr ("Import Project Package"), QString (), tr ("RobWorkStudio Package (*.rwpack)"));
+    if (packagePath.isEmpty ())
+        return;
+    const QString parent = QFileDialog::getExistingDirectory (
+        this, tr ("Choose Project Package Destination"), QFileInfo (packagePath).absolutePath ());
+    if (parent.isEmpty ())
+        return;
+    const QString target = QDir (parent).filePath (QFileInfo (packagePath).completeBaseName ());
+    QString extractedProject;
+    QString error;
+    if (!ProjectManager::extractPackage (packagePath, target, extractedProject, &error) ||
+        !openProjectFile (extractedProject, &error)) {
+        QMessageBox::warning (this, tr ("Import Project Package Failed"), error);
+        return;
+    }
+    updateProjectWindowTitle ();
+}
+
+// 项目完整性检查：展示 MissingResource/UnreferencedFile/ChangedSinceAutosave 三类问题，
+// 并提供修复动作——确认后删除未引用文件、为缺失资源选择替换文件并原子更新清单。
+void RobWorkStudio::inspectProjectIntegrity ()
+{
+    if (!_projectManager.hasProject ()) {
+        QMessageBox::information (this, tr ("Project Integrity"), tr ("No project is open."));
+        return;
+    }
+    QString error;
+    const QVector< ProjectManager::IntegrityIssue > issues = _projectManager.inspectIntegrity (&error);
+    if (!error.isEmpty ()) {
+        QMessageBox::warning (this, tr ("Project Integrity Failed"), error);
+        return;
+    }
+    if (issues.isEmpty ()) {
+        QMessageBox::information (this, tr ("Project Integrity"), tr ("No integrity issues found."));
+        return;
+    }
+    QStringList messages;
+    QStringList unreferenced;
+    for (const ProjectManager::IntegrityIssue& issue : issues) {
+        messages.push_back (issue.message + QStringLiteral ("\n") + issue.path);
+        if (issue.type == ProjectManager::IntegrityIssue::Type::UnreferencedFile)
+            unreferenced.push_back (issue.path);
+    }
+    QMessageBox::information (this, tr ("Project Integrity"), messages.join (QStringLiteral ("\n\n")));
+    if (!unreferenced.isEmpty () && QMessageBox::question (
+            this, tr ("Remove Unreferenced Files"), tr ("Remove the unreferenced files shown above?")) ==
+            QMessageBox::Yes) {
+        if (!_projectManager.removeUnreferencedFiles (unreferenced, &error))
+            QMessageBox::warning (this, tr ("Remove Unreferenced Files Failed"), error);
+    }
+    for (const ProjectManager::IntegrityIssue& issue : issues) {
+        if (issue.type != ProjectManager::IntegrityIssue::Type::MissingResource)
+            continue;
+        if (QMessageBox::question (this, tr ("Relocate Missing Resource"),
+                                   tr ("Locate replacement for %1?").arg (issue.resourceId)) != QMessageBox::Yes)
+            continue;
+        const QString replacement = QFileDialog::getOpenFileName (this, tr ("Locate Resource"));
+        if (!replacement.isEmpty () && !_projectManager.relocateResource (issue.resourceId, replacement, &error))
+            QMessageBox::warning (this, tr ("Relocate Resource Failed"), error);
+    }
+}
+
 // 打开项目：弹文件选择对话框选中 .rwproj，统一走 openFile() 分派，
 // 以便与命令行、拖放入口共享完全相同的项目加载行为。
 void RobWorkStudio::openProject ()
@@ -1206,6 +1312,20 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
             *error = QString::fromUtf8 ("当前没有打开的项目，无法创建插件资源。");
         return false;
     }
+    // 自动保存定时器：项目有未保存修改时周期性创建恢复快照，快照同时包含清单、磁盘资源
+    // 与 Provider 内存编辑状态（createAutosaveSnapshot 接收 _projectDocuments 实现）。
+    // 注意：此处位于 ensureGeneratedProjectResource 内属懒启动，仅插件首次创建生成资源后生效。
+    _autosaveTimer = new QTimer (this);
+    _autosaveTimer->setInterval (60 * 1000);
+    connect (_autosaveTimer, &QTimer::timeout, this, [this] () {
+        if (!_projectManager.hasProject () ||
+            (!_projectManager.isDirty () && !_projectDocuments.isDirty ()))
+            return;
+        QString error;
+        if (!_projectManager.createAutosaveSnapshot (_projectDocuments, &error))
+            RW_WARN ("Unable to create project recovery snapshot: " << error.toStdString ());
+    });
+    _autosaveTimer->start ();
 
     // 稳定 ID 已存在时不重复登记。首次编辑之外的每次控件变化只能更新脏状态，不能追加
     // 清单项，更不能覆盖用户已经保存的业务配置。
@@ -1276,7 +1396,9 @@ bool RobWorkStudio::saveProjectInternal (QString* error)
     if (!_projectDocuments.saveDirtyResources (
             _projectManager.manifest (), _projectManager.projectFilePath (), error))
         return false;
-    return _projectManager.saveProject (error);
+    if (!_projectManager.saveProject (error))
+        return false;
+    return _projectManager.discardAutosaveSnapshot (error);
 }
 
 // 项目关闭门禁：无项目直接放行；有项目时先检查 Provider 是否允许关闭，再聚合
@@ -1295,8 +1417,13 @@ bool RobWorkStudio::confirmProjectClose ()
         return false;
     }
 
-    if (!_projectManager.isDirty () && !_projectDocuments.isDirty ())
-        return true;
+    if (!_projectManager.isDirty () && !_projectDocuments.isDirty ()) {
+        QString error;
+        if (_projectManager.discardAutosaveSnapshot (&error))
+            return true;
+        QMessageBox::warning (this, tr ("Discard Recovery Snapshot Failed"), error);
+        return false;
+    }
 
     QMessageBox box (QMessageBox::Warning,
                      tr ("Unsaved Project Changes"),
@@ -1309,8 +1436,13 @@ bool RobWorkStudio::confirmProjectClose ()
         static_cast< QMessageBox::StandardButton > (box.exec ());
     if (choice == QMessageBox::Cancel)
         return false;
-    if (choice == QMessageBox::Discard)
-        return true;
+    if (choice == QMessageBox::Discard) {
+        QString error;
+        if (_projectManager.discardAutosaveSnapshot (&error))
+            return true;
+        QMessageBox::warning (this, tr ("Discard Recovery Snapshot Failed"), error);
+        return false;
+    }
 
     QString error;
     if (!saveProjectInternal (&error)) {
@@ -1623,13 +1755,44 @@ bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
     if (!_projectManager.openProject (filename, error))
         return false;
 
+    // 崩溃恢复提示：打开项目时若发现自动保存快照，让用户选择恢复、放弃或取消打开。
+    // 恢复失败/取消都会关闭刚打开的项目上下文，保证不会带着不完整状态继续工作。
+    if (_projectManager.hasAutosaveSnapshot ()) {
+        QMessageBox recovery (QMessageBox::Question,
+                               tr ("Recovery Snapshot Available"),
+                               tr ("A recovery snapshot is available for this project."),
+                               QMessageBox::NoButton,
+                               this);
+        QPushButton* restoreButton = recovery.addButton (tr ("Restore"), QMessageBox::AcceptRole);
+        QPushButton* discardButton = recovery.addButton (tr ("Discard"), QMessageBox::DestructiveRole);
+        QPushButton* cancelButton = recovery.addButton (QMessageBox::Cancel);
+        recovery.setDefaultButton (restoreButton);
+        recovery.exec ();
+        if (recovery.clickedButton () == cancelButton) {
+            _projectManager.closeProject ();
+            return false;
+        }
+        if (recovery.clickedButton () == restoreButton) {
+            if (!_projectManager.restoreAutosaveSnapshot (error)) {
+                _projectManager.closeProject ();
+                return false;
+            }
+        }
+        else if (recovery.clickedButton () == discardButton &&
+                 !_projectManager.discardAutosaveSnapshot (error)) {
+            _projectManager.closeProject ();
+            return false;
+        }
+    }
+
     // 清单已通过结构、路径和 required 资源检查后，才关闭旧文档并加载新文档。
     // 这样普通的文件选择错误不会破坏当前已打开的项目。
     _projectDocuments.closeResources ();
     closeWorkCell ();
 
+    QStringList loadWarnings;
     if (!_projectDocuments.loadProjectResources (
-            _projectManager.manifest (), _projectManager.projectFilePath (), error)) {
+            _projectManager.manifest (), _projectManager.projectFilePath (), error, &loadWarnings)) {
         _projectDocuments.closeResources ();
         _projectManager.closeProject ();
         // 项目资源加载失败后只恢复可用的空场景；此时项目上下文已经显式关闭，
@@ -1650,6 +1813,8 @@ bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
     }
 
     updateProjectWindowTitle ();
+    if (!loadWarnings.isEmpty ())
+        QMessageBox::warning (this, tr ("Project Opened With Warnings"), loadWarnings.join (QStringLiteral ("\n")));
     return true;
 }
 

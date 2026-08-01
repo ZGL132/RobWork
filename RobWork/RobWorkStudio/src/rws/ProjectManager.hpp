@@ -5,6 +5,8 @@
 
 namespace rws {
 
+class ProjectDocumentRegistry;
+
 /**
  * @brief 第一阶段的项目生命周期管理器。
  *
@@ -66,12 +68,27 @@ class ProjectManager
     // 创建崩溃恢复快照：把当前清单及所有 project/generated 资源写入项目私有的
     // .rwproject/autosave 目录。external 资源不属于项目，既不能复制也不能在恢复时覆盖。
     bool createAutosaveSnapshot (QString* error = nullptr) const;
+    bool createAutosaveSnapshot (ProjectDocumentRegistry& documents, QString* error = nullptr) const;
     // 查询是否存在一个可被恢复流程读取的完整快照清单。
     bool hasAutosaveSnapshot () const;
     // 用最后一次成功创建的恢复快照替换当前项目的清单及项目自有资源。
     bool restoreAutosaveSnapshot (QString* error = nullptr);
+    // 用户成功保存或明确放弃恢复数据后删除项目私有恢复槽。
+    bool discardAutosaveSnapshot (QString* error = nullptr) const;
     // 检查当前项目的资源可用性、目录孤儿文件，以及与最近恢复快照相比发生的字节变化。
     QVector< IntegrityIssue > inspectIntegrity (QString* error = nullptr) const;
+    bool removeUnreferencedFiles (const QStringList& paths, QString* error = nullptr);
+    bool relocateResource (const QString& resourceId,
+                           const QString& replacementPath,
+                           QString* error = nullptr);
+
+    // 将当前项目的清单和自有资源导出为标准 ZIP 容器 rwpack；external 资源不会被带入。
+    bool exportPackage (const QString& packageFilePath, QString* error = nullptr) const;
+    // 解包到一个此前不存在的目录，并返回内部 project.rwproj 的绝对路径；不自动切换当前项目。
+    static bool extractPackage (const QString& packageFilePath,
+                                const QString& targetDirectory,
+                                QString& projectFilePath,
+                                QString* error = nullptr);
 
     // 关闭当前项目：清空项目文件路径与内存清单，并把脏标记复位。
     // 注意：本方法不会静默保存，丢弃未保存修改的决策权在上层 UI。
@@ -94,6 +111,7 @@ class ProjectManager
                           QString* error = nullptr) const;
 
   private:
+    bool createAutosaveSnapshot (ProjectDocumentRegistry* documents, QString* error) const;
     // 把清单以原子方式（QSaveFile）写入指定项目文件，避免写入中断留下半截文件。
     bool writeManifest (const QString& projectFilePath,
                         const ProjectManifest& manifest,

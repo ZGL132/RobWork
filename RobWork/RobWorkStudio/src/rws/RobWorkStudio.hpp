@@ -50,6 +50,7 @@ class QDragEnterEvent;
 class QDragDropEvent;
 class QDragMoveEvent;
 class QSettings;
+class QTimer;
 class QToolBar;
 
 class PropertyViewEditor;
@@ -713,6 +714,9 @@ class RobWorkStudio : public QMainWindow
     void saveProjectAs ();
     // 将受支持的历史 XML/JSON 文件复制入当前项目并登记为项目资源。
     void importProjectResource ();
+    void exportProjectPackage ();
+    void importProjectPackage ();
+    void inspectProjectIntegrity ();
     void closeProject ();
     void newWorkCell ();
     void reloadWorkCell ();
@@ -827,6 +831,7 @@ class RobWorkStudio : public QMainWindow
     ProjectManager _projectManager;
     // 第二阶段加入的文档注册表：按资源 kind 协调各 Provider 的加载、保存与关闭。
     ProjectDocumentRegistry _projectDocuments;
+    QTimer* _autosaveTimer = nullptr;
     // 把主窗口的 WorkCell 文档接入项目生命周期的 Provider（非拥有型指针，
     // 由主窗口在析构时 delete）。
     WorkCellProjectDocumentProvider* _workCellProvider;

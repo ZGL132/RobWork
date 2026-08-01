@@ -8,6 +8,8 @@
 #include <QTemporaryDir>
 #include <gtest/gtest.h>
 
+#include <zip.h>
+
 #include <algorithm>
 
 namespace {
@@ -471,6 +473,48 @@ TEST (ProjectSystemTest, ManagerRestoresAutosaveSnapshotWithOwnedResources)
     EXPECT_EQ ("scene.main", restoredManifest.entryPoints.value ("mainWorkCell"));
 }
 
+TEST (ProjectSystemTest, RestoreRejectsInvalidTargetWithoutChangingResources)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Recovery.rwproj");
+    const QString firstFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QString secondFile = QDir (directory.path ()).filePath ("analysis/result.json");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (firstFile).absolutePath ()));
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (secondFile).absolutePath ()));
+    for (const QString& path : {firstFile, secondFile}) {
+        QFile file (path);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        ASSERT_EQ (qint64 (8), file.write ("snapshot"));
+    }
+
+    rws::ProjectManifest manifest = makeManifest ();
+    rws::ProjectResource analysis;
+    analysis.id = "analysis.result";
+    analysis.kind = "test.analysis";
+    analysis.path = "analysis/result.json";
+    analysis.ownership = "project";
+    manifest.resources.push_back (analysis);
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error)) << error.toStdString ();
+    ASSERT_TRUE (manager.createAutosaveSnapshot (&error)) << error.toStdString ();
+
+    QFile first (firstFile);
+    ASSERT_TRUE (first.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (7), first.write ("current"));
+    first.close ();
+    ASSERT_TRUE (QFile::remove (secondFile));
+    ASSERT_TRUE (QDir ().mkpath (secondFile));
+
+    EXPECT_FALSE (manager.restoreAutosaveSnapshot (&error));
+    QFile restoredFirst (firstFile);
+    ASSERT_TRUE (restoredFirst.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("current"), restoredFirst.readAll ());
+    EXPECT_TRUE (QFileInfo (secondFile).isDir ());
+}
+
 // 诊断测试：完整性检查必须区分“清单指向的资源丢失”“目录内未登记的遗留文件”和
 // “相对自动保存快照已变更”的资源，供上层界面分别给出恢复、清理或保存提示。
 TEST (ProjectSystemTest, ManagerReportsMissingUnreferencedAndChangedResources)
@@ -506,4 +550,135 @@ TEST (ProjectSystemTest, ManagerReportsMissingUnreferencedAndChangedResources)
         return issue.type == rws::ProjectManager::IntegrityIssue::Type::UnreferencedFile &&
             issue.path.endsWith ("legacy-note.txt");
     }));
+}
+
+// 归档回归：rwpack 必须使用项目相对目录保存自有资源。解包到全新目录后，清单及其
+// WorkCell 仍可按原路径解析，证明归档没有携带机器相关的绝对路径。
+TEST (ProjectSystemTest, ManagerPackagesAndExtractsPortableProject)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Source.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    QFile workCell (workCellFile);
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (13), workCell.write ("<WorkCell />\n"));
+    workCell.close ();
+
+    rws::ProjectManager source;
+    QString error;
+    ASSERT_TRUE (source.createProject (projectFile, makeManifest (), &error)) << error.toStdString ();
+    const QString packageFile = QDir (directory.path ()).filePath ("portable.rwpack");
+    ASSERT_TRUE (source.exportPackage (packageFile, &error)) << error.toStdString ();
+
+    QString extractedProject;
+    const QString extractedDirectory = QDir (directory.path ()).filePath ("extracted");
+    ASSERT_TRUE (rws::ProjectManager::extractPackage (
+        packageFile, extractedDirectory, extractedProject, &error)) << error.toStdString ();
+    rws::ProjectManager reopened;
+    ASSERT_TRUE (reopened.openProject (extractedProject, &error)) << error.toStdString ();
+    EXPECT_TRUE (QFileInfo::exists (QDir (extractedDirectory).filePath ("scenes/main.wc.xml")));
+}
+
+TEST (ProjectSystemTest, PackageUsesCurrentInMemoryManifest)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Source.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QString analysisFile = QDir (directory.path ()).filePath ("analysis/result.json");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (analysisFile).absolutePath ()));
+    for (const QString& path : {workCellFile, analysisFile}) {
+        QFile file (path);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        file.write ("content");
+    }
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error)) << error.toStdString ();
+    rws::ProjectResource analysis;
+    analysis.id = "analysis.result";
+    analysis.kind = "test.analysis";
+    analysis.path = "analysis/result.json";
+    analysis.ownership = "project";
+    ASSERT_TRUE (manager.addGeneratedResource (analysis, &error)) << error.toStdString ();
+
+    const QString packageFile = QDir (directory.path ()).filePath ("portable.rwpack");
+    ASSERT_TRUE (manager.exportPackage (packageFile, &error)) << error.toStdString ();
+    QString extractedProject;
+    const QString extractedDirectory = QDir (directory.path ()).filePath ("extracted");
+    ASSERT_TRUE (rws::ProjectManager::extractPackage (
+        packageFile, extractedDirectory, extractedProject, &error)) << error.toStdString ();
+
+    rws::ProjectManager reopened;
+    ASSERT_TRUE (reopened.openProject (extractedProject, &error)) << error.toStdString ();
+    rws::ProjectResource extractedAnalysis;
+    EXPECT_TRUE (reopened.manifest ().findResource ("analysis.result", extractedAnalysis));
+}
+
+TEST (ProjectSystemTest, ExtractRejectsPackageMissingDeclaredOwnedResource)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Source.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    QFile workCell (workCellFile);
+    ASSERT_TRUE (workCell.open (QIODevice::WriteOnly));
+    workCell.write ("<WorkCell />");
+    workCell.close ();
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error));
+    const QString packageFile = QDir (directory.path ()).filePath ("broken.rwpack");
+    ASSERT_TRUE (manager.exportPackage (packageFile, &error));
+
+    int zipError = 0;
+    zip_t* archive = zip_open (packageFile.toUtf8 ().constData (), ZIP_CHECKCONS, &zipError);
+    ASSERT_NE (nullptr, archive);
+    const zip_int64_t resourceIndex = zip_name_locate (archive, "scenes/main.wc.xml", ZIP_FL_ENC_UTF_8);
+    ASSERT_GE (resourceIndex, 0);
+    ASSERT_EQ (0, zip_delete (archive, static_cast< zip_uint64_t > (resourceIndex)));
+    ASSERT_EQ (0, zip_close (archive));
+
+    QString extractedProject;
+    const QString target = QDir (directory.path ()).filePath ("extracted");
+    EXPECT_FALSE (rws::ProjectManager::extractPackage (packageFile, target, extractedProject, &error));
+    EXPECT_FALSE (QFileInfo::exists (target));
+}
+
+TEST (ProjectSystemTest, ManagerCleansUnreferencedFilesAndRelocatesMissingResources)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Integrity.rwproj");
+    const QString workCellFile = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QString replacementFile = QDir (directory.path ()).filePath ("replacement.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (workCellFile).absolutePath ()));
+    for (const QString& path : {workCellFile, replacementFile}) {
+        QFile file (path);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        file.write ("content");
+    }
+    const QString orphanFile = QDir (directory.path ()).filePath ("orphan.txt");
+    QFile orphan (orphanFile);
+    ASSERT_TRUE (orphan.open (QIODevice::WriteOnly));
+    orphan.close ();
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error));
+    ASSERT_TRUE (manager.removeUnreferencedFiles ({orphanFile}, &error)) << error.toStdString ();
+    EXPECT_FALSE (QFileInfo::exists (orphanFile));
+
+    ASSERT_TRUE (QFile::remove (workCellFile));
+    ASSERT_TRUE (manager.relocateResource ("scene.main", replacementFile, &error)) << error.toStdString ();
+    QString relocated;
+    ASSERT_TRUE (manager.resolveResource ("scene.main", relocated, &error));
+    EXPECT_TRUE (QFileInfo (relocated).isFile ());
+    EXPECT_NE (QDir::cleanPath (workCellFile), QDir::cleanPath (relocated));
 }

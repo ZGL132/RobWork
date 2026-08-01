@@ -26,6 +26,10 @@ rw_subsys_option(
 
 if(build)
 
+    # rwpack 采用标准 ZIP 容器；显式依赖 libzip，避免通过系统命令调用归档工具而丢失
+    # 跨平台错误处理、条目校验和可复现的构建依赖。
+    find_package(libzip CONFIG REQUIRED)
+
     # if we want to use ui files add them here
     set(UIS_FILES AboutBox.ui propertyview/PropertyViewEditor.ui propertyview/PropertyViewDialog.ui)
 
@@ -53,6 +57,7 @@ if(build)
         ProjectDocumentRegistry.cpp
         ProjectManifestJson.cpp
         ProjectManager.cpp
+        ProjectPackage.cpp
         ProjectPathResolver.cpp
         ProjectSaveTransaction.cpp
         WorkCellProjectDocumentProvider.cpp
@@ -79,6 +84,7 @@ if(build)
         ProjectManifest.hpp
         ProjectManifestJson.hpp
         ProjectManager.hpp
+        ProjectPackage.hpp
         ProjectPathResolver.hpp
         ProjectSaveTransaction.hpp
         WorkCellProjectDocumentProvider.hpp
@@ -149,6 +155,7 @@ if(build)
                ${QT_LIBRARIES}
                ${QTGL_LIBRARIES}
                ${SUBSYS_DEPS}
+               libzip::zip
         PUBLIC ${OPENGL_LIBRARIES}
         PRIVATE ${GLUT_glut_LIBRARY} ${PYTHON_LIBRARIES}
     )

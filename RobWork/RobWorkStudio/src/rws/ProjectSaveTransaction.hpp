@@ -29,6 +29,12 @@ class ProjectSaveTransaction
                 const QString& targetPath,
                 QString* error = nullptr);
 
+    // 将已有普通文件复制到事务暂存位置；用于恢复快照、打包输出和清单关联文件，
+    // 不会影响 Provider 的脏状态。
+    bool stageCopy (const QString& sourcePath, const QString& targetPath, QString* error = nullptr);
+    // 将内存字节写入事务暂存位置；用于把清单作为与资源相同的提交单元。
+    bool stageBytes (const QByteArray& bytes, const QString& targetPath, QString* error = nullptr);
+
     // 提交阶段：把全部已暂存文件依次替换为正式文件；任一替换失败则整体回滚，
     // 全部成功后删除备份并清除各 Provider 的脏状态。
     bool commit (QString* error = nullptr);
@@ -39,7 +45,7 @@ class ProjectSaveTransaction
     // 一个已暂存资源的完整状态，用于提交替换与失败回滚。
     struct StagedResource
     {
-        ProjectDocumentProvider* provider = nullptr;   // 负责保存该资源的 Provider。
+        ProjectDocumentProvider* provider = nullptr;   // 非空时负责保存资源及提交后清脏。
         ProjectResource resource;                     // 资源定义（含 ID、路径等）。
         QString targetPath;     // 正式目标文件绝对路径。
         QString stagedPath;     // 暂存文件路径（Provider 实际写入的位置）。
