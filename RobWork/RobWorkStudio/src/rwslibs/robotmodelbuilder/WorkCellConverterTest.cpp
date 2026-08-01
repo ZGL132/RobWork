@@ -209,6 +209,63 @@ int main ()
     if (reloaded == NULL)
         return fail ("Saved imported scene could not be loaded.");
 
+    // Project mode writes normalized robot XML below generated/robot-models while
+    // the imported WorkCell and its meshes remain below scenes. The converter
+    // must preserve the source XML directory as the anchor for relative mesh
+    // paths, otherwise the generated scene points to a non-existent geometry/
+    // directory and Save and Load fails.
+    QTemporaryDir projectDirectory;
+    if (!projectDirectory.isValid ())
+        return fail ("Could not create project geometry fixture directory.");
+    const QString sourceDirectory = QDir (projectDirectory.path ()).filePath ("scenes");
+    rws::RobotModelSpec projectSource =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (sourceDirectory);
+    projectSource.robotName = "ProjectAssetBot";
+    projectSource.generateScene = true;
+    rws::DrawableSpec projectMesh;
+    projectMesh.name = "ProjectToolMesh";
+    projectMesh.refFrame = "Joint1";
+    projectMesh.shape = "STL";
+    projectMesh.filePath = "meshes/project_tool.stl";
+    projectMesh.radius = 0.01;
+    projectMesh.length = 0.01;
+    projectSource.drawables.push_back (projectMesh);
+    if (!writeTextFile (QDir (sourceDirectory).filePath (projectMesh.filePath.c_str ()), stlText))
+        return fail ("Could not create project mesh fixture.");
+    QStringList projectSaveErrors;
+    if (!rws::RobotModelXmlWriter::saveFiles (projectSource, projectSaveErrors))
+        return fail ("Could not save project geometry fixture: " +
+                     projectSaveErrors.join ("; "));
+    rw::models::WorkCell::Ptr projectSourceWorkCell =
+        rw::loaders::WorkCellLoader::Factory::load (
+            rws::RobotModelXmlWriter::sceneFilePath (projectSource).toStdString ());
+    if (projectSourceWorkCell == NULL)
+        return fail ("Could not load project geometry source scene.");
+
+    QStringList projectWarnings;
+    rws::RobotModelSpec projectExport = rws::WorkCellConverter::convert (
+        *projectSourceWorkCell, projectSourceWorkCell->getDefaultState (),
+        projectDirectory.path ().toStdString (), projectWarnings);
+    projectExport.exportLayout.deviceFile = "generated/robot-models/ProjectAssetBot.wc.xml";
+    projectExport.exportLayout.sceneFile = "generated/robot-models/ProjectAssetBotScene.wc.xml";
+    if (!rws::RobotModelXmlWriter::saveFiles (projectExport, projectSaveErrors))
+        return fail ("Could not save project geometry export: " +
+                     projectSaveErrors.join ("; "));
+    const QString projectDeviceXml =
+        readTextFile (rws::RobotModelXmlWriter::serialDeviceFilePath (projectExport));
+    if (!projectDeviceXml.contains ("file=\"../../scenes/meshes/project_tool.stl\""))
+        return fail ("Project export did not rebase the source mesh path.");
+    try {
+        rw::models::WorkCell::Ptr projectReloaded = rw::loaders::WorkCellLoader::Factory::load (
+            rws::RobotModelXmlWriter::sceneFilePath (projectExport).toStdString ());
+        if (projectReloaded == NULL)
+            return fail ("Project-generated scene returned null on load.");
+    }
+    catch (const std::exception& error) {
+        return fail ("Project-generated scene could not be loaded: " +
+                     QString::fromUtf8 (error.what ()));
+    }
+
     rws::SceneGeometrySpec sceneMesh;
     sceneMesh.name = "ImportedSceneMesh";
     sceneMesh.refFrame = "RobotBase";

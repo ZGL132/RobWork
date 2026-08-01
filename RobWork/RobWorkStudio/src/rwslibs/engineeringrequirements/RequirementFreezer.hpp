@@ -68,6 +68,7 @@ struct FrozenRobotStateSnapshot {
 
 struct FrozenRequirementValidationResult {
     bool robotStateChanged = false;
+    std::vector<std::string> warnings;
     FrozenRobotStateSnapshot frozenRobotState;
     FrozenRobotStateSnapshot currentRobotState;
 };

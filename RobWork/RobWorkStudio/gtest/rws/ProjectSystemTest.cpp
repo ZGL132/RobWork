@@ -272,6 +272,58 @@ TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
     QFile copiedGeometry (QDir (projectDirectory).filePath ("scenes/geometry/shape.poly"));
     ASSERT_TRUE (copiedGeometry.open (QIODevice::ReadOnly));
     EXPECT_EQ (geometryData, copiedGeometry.readAll ());
+
+    // 被入口 XML 间接引用的文件也是项目资产。若它们没有进入 manifest，clone/rwpack
+    // 只复制 main.wc.xml 后会生成在原项目可用、迁移后损坏的工程。
+    bool deviceManaged = false;
+    bool geometryManaged = false;
+    for (const rws::ProjectResource& resource : manager.manifest ().resources) {
+        deviceManaged = deviceManaged || resource.path == QStringLiteral ("scenes/robot.wc.xml");
+        geometryManaged = geometryManaged ||
+                          resource.path == QStringLiteral ("scenes/geometry/shape.poly");
+    }
+    EXPECT_TRUE (deviceManaged);
+    EXPECT_TRUE (geometryManaged);
+}
+
+TEST (ProjectSystemTest, ManagerPromotesGeneratedWorkCellWithoutChangingStableEntryId)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error))
+        << error.toStdString ();
+
+    rws::ProjectResource deviceAsset;
+    deviceAsset.id = QStringLiteral ("scene.generated.device");
+    deviceAsset.kind = QStringLiteral ("robwork.passive-asset");
+    deviceAsset.path = QStringLiteral ("generated/robot-models/Robot.wc.xml");
+    deviceAsset.ownership = QStringLiteral ("generated");
+    deviceAsset.required = true;
+
+    rws::ProjectResource promoted;
+    ASSERT_TRUE (manager.manifest ().findResource (QStringLiteral ("scene.main"), promoted));
+    promoted.path = QStringLiteral ("generated/robot-models/RobotScene.wc.xml");
+    promoted.ownership = QStringLiteral ("generated");
+    promoted.dependencies = QStringList () << deviceAsset.id;
+
+    ASSERT_TRUE (manager.replaceResourceAndAddAssets (
+        promoted, QVector< rws::ProjectResource > () << deviceAsset, &error))
+        << error.toStdString ();
+
+    EXPECT_EQ (QStringLiteral ("scene.main"),
+               manager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell")));
+    rws::ProjectResource stored;
+    ASSERT_TRUE (manager.manifest ().findResource (QStringLiteral ("scene.main"), stored));
+    EXPECT_EQ (promoted.path, stored.path);
+    EXPECT_EQ (QStringLiteral ("generated"), stored.ownership);
+    EXPECT_EQ (QStringList () << deviceAsset.id, stored.dependencies);
+    ASSERT_TRUE (manager.manifest ().findResource (deviceAsset.id, stored));
+    EXPECT_EQ (deviceAsset.path, stored.path);
+    EXPECT_TRUE (manager.isDirty ());
 }
 
 TEST (ProjectSystemTest, ManagerImportsLegacyResourceIntoCurrentProject)

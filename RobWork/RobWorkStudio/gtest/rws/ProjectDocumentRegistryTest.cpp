@@ -147,6 +147,64 @@ TEST (ProjectDocumentRegistryTest, LoadsResourcesInDependencyOrder)
     EXPECT_EQ ((QStringList {"load:dependency", "load:consumer"}), events);
 }
 
+TEST (ProjectDocumentRegistryTest, LoadsConsumerWithManagedPassiveAssetDependency)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectManifest manifest;
+    rws::ProjectResource passive = resource (
+        "scene.generated.device", "robwork.passive-asset", "generated/Robot.wc.xml");
+    passive.required = true;
+    rws::ProjectResource consumer = resource (
+        "scene.main", "test.document", "generated/RobotScene.wc.xml");
+    consumer.required = true;
+    consumer.dependencies.push_back (passive.id);
+    manifest.resources.push_back (consumer);
+    manifest.resources.push_back (passive);
+
+    ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ ((QStringList {"load:scene.main"}), events);
+}
+
+TEST (ProjectDocumentRegistryTest, ReloadsStableResourceAtPromotedPath)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QString loadedPath;
+
+    rws::WorkCellProjectDocumentProvider provider (
+        [&loadedPath] (const QString& path, QString*) {
+            loadedPath = path;
+            return true;
+        },
+        [] (const QString&, QString*) { return true; });
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectManifest manifest;
+    const rws::ProjectResource original = resource (
+        "scene.main", "robwork.workcell", "scenes/main.wc.xml");
+    manifest.resources.push_back (original);
+    ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error));
+
+    rws::ProjectResource promoted = original;
+    promoted.path = QStringLiteral ("generated/robot-models/RobotScene.wc.xml");
+    ASSERT_TRUE (registry.reloadResource (promoted, manifest, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QDir::cleanPath (QDir (directory.path ()).filePath (promoted.path)), loadedPath);
+}
+
 // 正向测试：脏资源经保存事务写入正式文件，且保存成功后脏状态被清除。
 TEST (ProjectDocumentRegistryTest, SavesDirtyResourcesAndMarksThemClean)
 {

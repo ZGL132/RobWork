@@ -501,6 +501,7 @@ bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artif
                                           FrozenRequirementValidationResult* result,
                                           std::string* error)
 {
+    if (result != nullptr) *result = FrozenRequirementValidationResult();
     if (artifact.schemaVersion != 3) {
         if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
@@ -531,8 +532,11 @@ bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artif
     if (!artifact.scenario.sourceWorkCellPath.empty()) {
         const std::string sourceFingerprint = fileFingerprint(artifact.scenario.sourceWorkCellPath);
         if (sourceFingerprint.empty() || sourceFingerprint != artifact.scenario.sourceFileFingerprint) {
-            if (error != nullptr) *error = "Frozen requirement artifact source WorkCell file is missing or has changed.";
-            return false;
+            if (result != nullptr) {
+                result->warnings.push_back(
+                    "Frozen requirement artifact source WorkCell file is missing or has changed; "
+                    "the active model, TCP, and environment still match the frozen evidence.");
+            }
         }
     }
     if (result != nullptr) {

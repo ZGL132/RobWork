@@ -35,7 +35,12 @@ QString resolveModelPath(const QString& requirementPath, const std::string& bind
 } // namespace
 
 bool FrozenRequirementProjectImportService::createProblem(
-    const QString& requirementPath, StructureOptimizationProblem& problem, std::string* error)
+    const QString& requirementPath,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    StructureOptimizationProblem& problem,
+    FrozenRequirementValidationResult* validation,
+    std::string* error)
 {
     const QFileInfo requirementInfo(requirementPath);
     if (requirementPath.trimmed().isEmpty() || !requirementInfo.isFile())
@@ -69,6 +74,11 @@ bool FrozenRequirementProjectImportService::createProblem(
     if (!artifact.compiled.frozen)
         return setError(error, "Frozen engineering requirement artifact is not marked frozen.");
 
+    FrozenRequirementValidationResult scenarioValidation;
+    if (!RequirementFreezer::validateScenario(
+            artifact, workcell, state, &scenarioValidation, &parseMessage))
+        return setError(error, parseMessage);
+
     // 顶层绑定和冻结绑定必须描述同一模型。导入时先阻止两者不一致，才能避免用户编辑态
     // 文件已改绑模型、但 artifact 仍指向旧模型而产生难以追溯的优化结论。
     if (!editableRequirements.modelBinding.robotModelFingerprint.empty() &&
@@ -97,6 +107,8 @@ bool FrozenRequirementProjectImportService::createProblem(
         return setError(error, "Frozen engineering requirements cannot be applied: " + parseMessage);
 
     problem = created;
+    if (validation != nullptr)
+        *validation = scenarioValidation;
     if (error != nullptr)
         error->clear();
     return true;

@@ -40,6 +40,13 @@
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
+#include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/MovableFrame.hpp>
+#include <rw/kinematics/StateStructure.hpp>
+#include <rw/models/RevoluteJoint.hpp>
+#include <rw/models/SerialDevice.hpp>
+#include <rw/models/WorkCell.hpp>
+
 #include <QApplication>
 #include <QCoreApplication>
 #include <QComboBox>
@@ -2084,29 +2091,41 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
         rws::RobotModelFingerprint::canonicalSha256(model);
     requirements.frozen = true;
 
+    rws::PoseTask requestedStation;
+    requestedStation.id = "load";
+    requestedStation.name = "Machine load";
+    requestedStation.level = rws::RequirementLevel::Must;
+    requestedStation.refFrame = "WORLD";
+    requestedStation.tcpFrame = "ImportTcp";
+    requestedStation.position = {{0.35, 0.0, 0.45}};
+    requirements.poseTasks.push_back(requestedStation);
+
+    const rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ImportBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("ImportJoint", rw::math::Transform3D<>()));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ImportTcp", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ImportWorkCell", ""));
+    const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base.get(), tcp.get(), model.robotName,
+                                     structure->getDefaultState()));
+    workcell->addDevice(device);
+    const rw::kinematics::MovableFrame::Ptr fixture = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("ImportFixture"));
+    workcell->addFrame(fixture, workcell->getWorldFrame());
+    const rw::kinematics::State frozenState = workcell->getDefaultState();
+
     rws::FrozenRequirementArtifact artifact;
-    artifact.requirementFingerprint = "frozen-requirement-fingerprint";
-    artifact.environmentFingerprint = "frozen-environment-fingerprint";
-    artifact.workcellFingerprint = "frozen-workcell-fingerprint";
-    artifact.frozenAt = "2026-07-30T09:15:00.123Z";
-    artifact.modelBinding = requirements.modelBinding;
-    artifact.compiled.frozen = true;
-    artifact.compiled.modelBinding = artifact.modelBinding;
-    artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
-    artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
-    artifact.frozenRobotState.deviceName = artifact.modelBinding.robotName;
-    artifact.frozenRobotState.tcpFrameName = "TCP";
-    artifact.frozenRobotState.kinematicFingerprint = "robot-kinematic-fingerprint";
-    artifact.frozenRobotState.tcpWorldPose[15] = 1.0;
-    artifact.frozenRobotState.capturedAt = artifact.frozenAt;
-    rws::CompiledPoseTask station;
-    station.id = "load";
-    station.name = "Machine load";
-    station.level = rws::RequirementLevel::Must;
-    station.refFrame = "WORLD";
-    station.tcpFrame = "TCP";
-    station.position = {{0.35, 0.0, 0.45}};
-    artifact.compiled.poseTasks.push_back(station);
+    std::string error;
+    REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell, frozenState,
+                                             model, artifact, &error));
 
     QJsonObject requirementProject = rws::RequirementSetJson::toObject(requirements);
     requirementProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
@@ -2116,15 +2135,28 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     requirementFile.close();
 
     rws::StructureOptimizationProblem imported;
-    std::string error;
+    rws::FrozenRequirementValidationResult validation;
     REQUIRE(rws::FrozenRequirementProjectImportService::createProblem(
-        requirementPath, imported, &error));
+        requirementPath, *workcell, frozenState, imported, &validation, &error));
     REQUIRE(imported.tasks.size() == 1);
     REQUIRE(imported.tasks.front().point.id == "load");
     REQUIRE(imported.requirementProvenance.requirementFingerprint ==
-            "frozen-requirement-fingerprint");
-    REQUIRE(imported.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
+            artifact.requirementFingerprint);
+    REQUIRE(imported.requirementProvenance.frozenAt == artifact.frozenAt);
     REQUIRE(imported.context.sourceModelPath == modelPath.toStdString());
+
+    rw::kinematics::State joggedState = frozenState;
+    device->setQ(rw::math::Q(1, 0.25), joggedState);
+    REQUIRE(rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, joggedState, imported, &validation, &error));
+    REQUIRE(validation.robotStateChanged);
+
+    rw::kinematics::State fixtureMovedState = frozenState;
+    fixture->setTransform(
+        rw::math::Transform3D<>(rw::math::Vector3D<>(0.1, 0.0, 0.0)), fixtureMovedState);
+    REQUIRE(!rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, fixtureMovedState, imported, &validation, &error));
+    REQUIRE(error.find("Fixture or external environment") != std::string::npos);
 
     // 没有冻结工件的需求文件只能继续编辑，绝不能被误用为下游优化输入。
     requirementProject.remove("frozenArtifact");
@@ -2132,7 +2164,7 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     REQUIRE(requirementFile.write(QJsonDocument(requirementProject).toJson()) > 0);
     requirementFile.close();
     REQUIRE(!rws::FrozenRequirementProjectImportService::createProblem(
-        requirementPath, imported, &error));
+        requirementPath, *workcell, frozenState, imported, &validation, &error));
     REQUIRE(error.find("frozenArtifact") != std::string::npos);
 
     if (g_testFailures == 0)

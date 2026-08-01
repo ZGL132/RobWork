@@ -16,6 +16,7 @@
  ********************************************************************************/
 
 #include <rw/core/PropertyMap.hpp>
+#include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/ProjectManager.hpp>
 #include <rws/RobWorkStudio.hpp>
 #include <rws/RobWorkStudioPlugin.hpp>
@@ -24,10 +25,15 @@
 #include "../TestEnvironment.hpp"
 
 #include <QApplication>
+#include <QAbstractButton>
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QMessageBox>
 #include <QMetaObject>
 #include <QString>
 #include <QTemporaryDir>
+#include <QTimer>
 #include <gtest/gtest.h>
 
 using namespace rw::core;
@@ -96,6 +102,213 @@ TEST (RobWorkStudio, LaunchTest)
     TimerUtil::sleepMs (1000);
     rwstudio.close ();
     TimerUtil::sleepMs (2000);
+}
+
+TEST (RobWorkStudio, AutosaveDoesNotRunWhileProjectRecoveryDialogIsOpen)
+{
+    int argc      = 1;
+    char name[]   = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio rwstudio (map);
+
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString firstProject = QDir (directory.path ()).filePath ("first/First.rwproj");
+    const QString secondProject = QDir (directory.path ()).filePath ("second/Second.rwproj");
+    QString error;
+    const auto createProject = [&error] (const QString& projectFile) {
+        const QString resourceFile = QDir (QFileInfo (projectFile).absolutePath ()).filePath (
+            "data/state.json");
+        if (!QDir ().mkpath (QFileInfo (resourceFile).absolutePath ()))
+            return false;
+        QFile resource (resourceFile);
+        if (!resource.open (QIODevice::WriteOnly) || resource.write ("{}") != 2)
+            return false;
+        resource.close ();
+
+        ProjectManifest manifest;
+        manifest.project.id   = QFileInfo (projectFile).baseName ();
+        manifest.project.name = manifest.project.id;
+        ProjectResource resourceEntry;
+        resourceEntry.id        = QStringLiteral ("test.autosave.resource");
+        resourceEntry.kind      = QStringLiteral ("test.autosave");
+        resourceEntry.path      = QStringLiteral ("data/state.json");
+        resourceEntry.ownership = QStringLiteral ("project");
+        resourceEntry.required  = true;
+        manifest.resources.push_back (resourceEntry);
+
+        ProjectManager manager;
+        return manager.createProject (projectFile, manifest, &error);
+    };
+    ASSERT_TRUE (createProject (firstProject)) << error.toStdString ();
+    ASSERT_TRUE (createProject (secondProject)) << error.toStdString ();
+    ProjectManager secondManager;
+    ASSERT_TRUE (secondManager.openProject (secondProject, &error)) << error.toStdString ();
+    ASSERT_TRUE (secondManager.createAutosaveSnapshot (&error)) << error.toStdString ();
+    secondManager.closeProject ();
+
+    int autosaveWrites = 0;
+    CallbackProjectDocumentProvider provider (
+        QStringLiteral ("test.autosave"),
+        QStringLiteral ("test.autosave"),
+        [] (const QString&, const ProjectDocumentContext&, QString*) { return true; },
+        [&autosaveWrites] (const QString& targetPath, const ProjectDocumentContext&, QString*) {
+            ++autosaveWrites;
+            QFile output (targetPath);
+            return output.open (QIODevice::WriteOnly);
+        });
+    ASSERT_TRUE (rwstudio.registerProjectDocumentProvider (&provider, &error))
+        << error.toStdString ();
+
+    CallbackProjectDocumentProvider generatedProvider (
+        QStringLiteral ("test.generated"),
+        QStringLiteral ("test.generated"),
+        [] (const QString&, const ProjectDocumentContext&, QString*) { return true; },
+        [] (const QString& targetPath, const ProjectDocumentContext&, QString*) {
+            QFile output (targetPath);
+            return output.open (QIODevice::WriteOnly);
+        });
+    ASSERT_TRUE (rwstudio.registerProjectDocumentProvider (&generatedProvider, &error))
+        << error.toStdString ();
+
+    rwstudio.openFile (firstProject.toStdString ());
+    ProjectResource resource;
+    resource.id        = QStringLiteral ("test.generated.resource");
+    resource.kind      = QStringLiteral ("test.generated");
+    resource.path      = QStringLiteral ("analysis/autosave.json");
+    resource.ownership = QStringLiteral ("generated");
+    generatedProvider.adoptGeneratedResource (resource.id);
+    ASSERT_TRUE (rwstudio.ensureGeneratedProjectResource (resource, nullptr, &error))
+        << error.toStdString ();
+    ASSERT_TRUE (rwstudio.ensureGeneratedProjectResource (resource, nullptr, &error))
+        << error.toStdString ();
+
+    const QList< QTimer* > timers = rwstudio.findChildren< QTimer* > ();
+    ASSERT_EQ (1, timers.size ());
+    timers.front ()->stop ();
+    timers.front ()->setInterval (1);
+
+    QTimer recoveryDismissal;
+    recoveryDismissal.setInterval (5);
+    QObject::connect (&recoveryDismissal, &QTimer::timeout, &app, [&app] () {
+        for (QWidget* widget : QApplication::topLevelWidgets ()) {
+            QMessageBox* dialog = qobject_cast< QMessageBox* > (widget);
+            if (dialog == nullptr)
+                continue;
+            for (QAbstractButton* button : dialog->buttons ()) {
+                if (dialog->buttonRole (button) == QMessageBox::DestructiveRole) {
+                    button->click ();
+                    return;
+                }
+            }
+        }
+    });
+    recoveryDismissal.start ();
+    timers.front ()->start ();
+    rwstudio.openFile (secondProject.toStdString ());
+    recoveryDismissal.stop ();
+
+    EXPECT_EQ (0, autosaveWrites);
+    rwstudio.close ();
+}
+
+TEST (RobWorkStudio, PromotesGeneratedSceneWithoutChangingMainWorkCellIdentity)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio rwstudio (map);
+
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    const QString originalScene = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QString generatedScene =
+        QDir (directory.path ()).filePath ("generated/robot-models/RobotScene.wc.xml");
+    const QString generatedDevice =
+        QDir (directory.path ()).filePath ("generated/robot-models/Robot.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (originalScene).absolutePath ()))
+        << originalScene.toStdString ();
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (generatedScene).absolutePath ()))
+        << generatedScene.toStdString ();
+    for (const auto& fileData : {
+             std::make_pair (originalScene, QByteArray ("<WorkCell name=\"Original\" />\n")),
+             std::make_pair (generatedScene, QByteArray ("<WorkCell name=\"Generated\" />\n")),
+             std::make_pair (generatedDevice, QByteArray ("<SerialDevice name=\"Robot\" />\n"))}) {
+        QFile file (fileData.first);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        ASSERT_EQ (fileData.second.size (), file.write (fileData.second));
+    }
+
+    ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("promotion-test");
+    manifest.project.name = QStringLiteral ("PromotionTest");
+    ProjectResource workCell;
+    workCell.id = QStringLiteral ("scene.main");
+    workCell.kind = QStringLiteral ("robwork.workcell");
+    workCell.path = QStringLiteral ("scenes/main.wc.xml");
+    workCell.ownership = QStringLiteral ("project");
+    workCell.required = true;
+    manifest.resources.push_back (workCell);
+    manifest.entryPoints.insert (QStringLiteral ("mainWorkCell"), workCell.id);
+    ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error))
+        << error.toStdString ();
+    manager.closeProject ();
+
+    rwstudio.openFile (projectFile.toStdString ());
+    ASSERT_TRUE (rwstudio.promoteGeneratedWorkCell (
+        generatedScene, QStringList () << generatedDevice, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QStringLiteral ("scene.main"), rwstudio.mainWorkCellResourceId ());
+    QString activePath;
+    ASSERT_TRUE (rwstudio.resolveProjectResource (
+        QStringLiteral ("scene.main"), activePath, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QDir::cleanPath (generatedScene), activePath);
+
+}
+
+TEST (RobWorkStudio, ClassifiesRobotProjectXmlBeforeDispatch)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+
+    const auto writeXml = [&directory] (const QString& name, const QByteArray& contents) {
+        const QString path = QDir (directory.path ()).filePath (name);
+        QFile file (path);
+        EXPECT_TRUE (file.open (QIODevice::WriteOnly));
+        EXPECT_EQ (contents.size (), file.write (contents));
+        return path;
+    };
+
+    const QString urdf = writeXml (QStringLiteral ("robot.xml"),
+                                   QByteArray ("<robot name=\"Example\"/>\n"));
+    const QString device = writeXml (QStringLiteral ("device.xml"),
+                                     QByteArray ("<SerialDevice name=\"Example\"/>\n"));
+    const QString workCell = writeXml (QStringLiteral ("scene.xml"),
+                                       QByteArray ("<WorkCell name=\"Example\"/>\n"));
+    const QString unknown = writeXml (QStringLiteral ("unknown.xml"),
+                                      QByteArray ("<configuration/>\n"));
+
+    QString error;
+    EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Urdf,
+               RobWorkStudio::classifyRobotProjectSource (urdf, &error));
+    EXPECT_TRUE (error.isEmpty ());
+    EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::RobWorkXml,
+               RobWorkStudio::classifyRobotProjectSource (device, &error));
+    EXPECT_TRUE (error.isEmpty ());
+    EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::RobWorkXml,
+               RobWorkStudio::classifyRobotProjectSource (workCell, &error));
+    EXPECT_TRUE (error.isEmpty ());
+    EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Unsupported,
+               RobWorkStudio::classifyRobotProjectSource (unknown, &error));
+    EXPECT_FALSE (error.isEmpty ());
 }
 
 #ifndef WIN32

@@ -13,6 +13,7 @@
 #include "StructureOptimizationUiLogic.hpp"
 #include "StructureVariableTableModel.hpp"
 
+#include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QComboBox>
@@ -233,6 +234,19 @@ void StructureOptimizerWidget::setPreviewHost(IWorkCellPreviewHost* host)
     _previewController.reset(host != nullptr ? new CandidatePreviewController(host) : nullptr);
 }
 
+void StructureOptimizerWidget::setScenarioContext(
+    rw::models::WorkCell* workcell, const rw::kinematics::State& state)
+{
+    _scenarioWorkCell = workcell;
+    _scenarioState = state;
+}
+
+void StructureOptimizerWidget::clearScenarioContext()
+{
+    _scenarioWorkCell = nullptr;
+    _scenarioState = rw::kinematics::State();
+}
+
 void StructureOptimizerWidget::setProblem(
     const StructureOptimizationProblem& problem)
 {
@@ -351,6 +365,13 @@ bool StructureOptimizerWidget::isProjectDocumentDirty() const
 
 // 仅由 Provider 的 markClean 回调调用（全部资源提交成功后）：把保存事务暂存阶段
 // 缓存的新基线提升为已保存基线；若没有暂存过（直接打开未改），基线保持不变。
+void StructureOptimizerWidget::beginGeneratedProjectDocument(const QString& path)
+{
+    _projectDocumentPath = path;
+    _savedProjectDocumentSnapshot.clear();
+    _pendingProjectDocumentSnapshot.clear();
+}
+
 void StructureOptimizerWidget::markProjectDocumentClean()
 {
     if (!_pendingProjectDocumentSnapshot.isEmpty()) {
@@ -774,11 +795,19 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
     if (path.isEmpty())
         return;
 
+    if (_scenarioWorkCell == nullptr) {
+        QMessageBox::warning(this, "Create Structure Optimization Project Failed",
+                             "No active WorkCell is available for frozen scenario validation.");
+        return;
+    }
+
     StructureOptimizationProblem problem;
+    FrozenRequirementValidationResult validation;
     std::string importError;
     // 冻结需求是跨插件的只读交付物。所有文件解析、模型一致性复核及 P2 能力边界检查均由
     // 服务层完成；界面不能直接把可编辑 RequirementSet 转成任务点，以免绕过冻结审计门禁。
-    if (!FrozenRequirementProjectImportService::createProblem(path, problem, &importError)) {
+    if (!FrozenRequirementProjectImportService::createProblem(
+            path, *_scenarioWorkCell, _scenarioState, problem, &validation, &importError)) {
         QMessageBox::warning(this, "创建结构优化项目失败",
                              QString::fromStdString(importError));
         return;
@@ -790,6 +819,17 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
     setProblem(problem);
     _statusLabel->setText(
         "已从冻结研发需求创建项目：当前执行运动学结构优化；轨迹、动力学和驱动选型评价未启用。");
+    QString validationStatus =
+        tr("Created a structure optimization project from frozen requirements.");
+    if (validation.robotStateChanged) {
+        validationStatus +=
+            tr(" Robot joint state differs from the frozen state, but fixtures and the external "
+               "environment are unchanged. Frozen requirements remain valid.");
+    }
+    for (const std::string& warning : validation.warnings)
+        validationStatus += QLatin1Char(' ') + QString::fromStdString(warning);
+    _statusLabel->setText(validationStatus);
+    Q_EMIT projectDocumentChanged();
 }
 
 void StructureOptimizerWidget::openProject()

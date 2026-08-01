@@ -5,6 +5,8 @@
 #include <rws/RobWorkStudio.hpp>
 #include <rw/loaders/rwxml/XMLRWLoader.hpp>
 
+#include <QDir>
+
 namespace rws {
 
 StructureOptimizerPlugin::StructureOptimizerPlugin() :
@@ -16,6 +18,8 @@ StructureOptimizerPlugin::StructureOptimizerPlugin() :
 
 StructureOptimizerPlugin::~StructureOptimizerPlugin()
 {
+    if (getRobWorkStudio() != nullptr)
+        getRobWorkStudio()->stateChangedEvent().remove(this);
     // 主窗口关闭项目资源后才销毁插件；Registry 不拥有该对象，故在此统一释放。
     delete _projectProvider;
 }
@@ -44,24 +48,64 @@ void StructureOptimizerPlugin::initialize()
         if (!getRobWorkStudio()->registerProjectDocumentProvider(_projectProvider, &providerError))
             RW_WARN("StructureOptimizer project Provider registration failed: "
                     << providerError.toStdString());
+        getRobWorkStudio()->stateChangedEvent().add(
+            [this](const rw::kinematics::State& state) {
+                RobWorkStudio* studio = getRobWorkStudio();
+                _widget->setScenarioContext(
+                    studio != nullptr && !studio->getWorkCell().isNull()
+                        ? studio->getWorkCell().get()
+                        : nullptr,
+                    state);
+            },
+            this);
     }
     connect(_widget, &StructureOptimizerWidget::projectDocumentChanged, this, [this]() {
         if (_projectProvider == nullptr || getRobWorkStudio() == nullptr)
             return;
+        RobWorkStudio* studio = getRobWorkStudio();
+        if (!studio->projectDirectory().isEmpty()) {
+            ProjectResource resource;
+            resource.id = QStringLiteral("structure-optimization.main");
+            resource.kind = QStringLiteral("rws.structure-optimization");
+            resource.path =
+                QStringLiteral("optimizations/main.structure-optimization.json");
+            resource.ownership = QStringLiteral("generated");
+            resource.required = true;
+            const QString workCellResourceId = studio->mainWorkCellResourceId();
+            if (!workCellResourceId.isEmpty())
+                resource.dependencies << workCellResourceId;
+
+            bool created = false;
+            QString resourceError;
+            if (!studio->ensureGeneratedProjectResource(resource, &created, &resourceError)) {
+                RW_WARN("StructureOptimizer could not register its project resource: "
+                        << resourceError.toStdString());
+                return;
+            }
+            if (created) {
+                _projectProvider->adoptGeneratedResource(resource.id);
+                _widget->beginGeneratedProjectDocument(
+                    QDir(studio->projectDirectory()).filePath(resource.path));
+            }
+        }
+        _projectProvider->setDirty(_widget->isProjectDocumentDirty());
+        studio->notifyProjectDocumentChanged();
         // Widget 自身比较可移植 JSON 快照；因此用户撤销到原始配置时也可自动清除脏状态。
         _projectProvider->setDirty(_widget->isProjectDocumentDirty());
-        getRobWorkStudio()->notifyProjectDocumentChanged();
     });
 }
 
 void StructureOptimizerPlugin::open(rw::models::WorkCell* workcell)
 {
-    (void)workcell;
+    RobWorkStudio* studio = getRobWorkStudio();
+    if (studio != nullptr)
+        _widget->setScenarioContext(workcell, studio->getState());
 }
 
 void StructureOptimizerPlugin::close()
 {
     _widget->setPreviewHost(nullptr);
+    _widget->clearScenarioContext();
 }
 
 void StructureOptimizerPlugin::loadSceneFile(const QString& filename)

@@ -438,9 +438,6 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
     workCell.path = QStringLiteral ("scenes/main.wc.xml");
     workCell.ownership = QStringLiteral ("project");
     workCell.required = true;
-    manifest.resources.push_back (workCell);
-    manifest.entryPoints.insert (QStringLiteral ("mainWorkCell"), workCell.id);
-
     QString targetWorkCell;
     if (!ProjectPathResolver::resolveResource (
             absoluteProjectFile, workCell, targetWorkCell, error))
@@ -459,6 +456,29 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
         removeCopiedWorkCellDependencies (copiedTargetPaths);
         return false;
     }
+
+    // 入口之外的递归依赖同样属于项目。它们不需要编辑 Provider，但必须进入清单，
+    // 否则 clone/rwpack 只会携带 main.wc.xml，迁移后的相对 Include 和几何引用会失效。
+    QVector< ProjectResource > passiveAssets;
+    const QDir projectDirectory (QFileInfo (absoluteProjectFile).absolutePath ());
+    int assetIndex = 0;
+    for (const QString& copiedPath : copiedTargetPaths) {
+        if (QDir::cleanPath (copiedPath) == QDir::cleanPath (targetWorkCell))
+            continue;
+        ProjectResource asset;
+        asset.id = QStringLiteral ("scene.asset.%1").arg (++assetIndex);
+        asset.kind = QStringLiteral ("robwork.passive-asset");
+        asset.path = QDir::fromNativeSeparators (
+            projectDirectory.relativeFilePath (QFileInfo (copiedPath).absoluteFilePath ()));
+        asset.ownership = QStringLiteral ("project");
+        asset.required = true;
+        passiveAssets.push_back (asset);
+        workCell.dependencies.push_back (asset.id);
+    }
+    manifest.resources.push_back (workCell);
+    for (const ProjectResource& asset : passiveAssets)
+        manifest.resources.push_back (asset);
+    manifest.entryPoints.insert (QStringLiteral ("mainWorkCell"), workCell.id);
 
     // createProject 仅在写入清单成功后才接管当前上下文。若清单写入失败，刚复制的资源不再
     // 有任何清单引用，因此主动删除它，避免在目标目录留下误导性的半成品项目。
@@ -595,6 +615,53 @@ bool ProjectManager::addGeneratedResource (const ProjectResource& resource, QStr
     if (!ProjectPathResolver::resolveResource (_projectFilePath, resource, resolvedPath, error))
         return false;
 
+    _manifest = candidate;
+    _dirty = true;
+    return true;
+}
+
+// 原子替换既有资源的描述，并把新引用的被动资产加入清单。资源 ID 保持不变，
+// 因此入口与其它插件依赖无需重写；全部候选项通过清单校验后才修改当前项目。
+bool ProjectManager::replaceResourceAndAddAssets (
+    const ProjectResource& resource,
+    const QVector< ProjectResource >& assets,
+    QString* error)
+{
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目，无法替换项目资源。"));
+        return false;
+    }
+
+    ProjectManifest candidate = _manifest;
+    int resourceIndex = -1;
+    for (int index = 0; index < candidate.resources.size (); ++index) {
+        if (candidate.resources[index].id == resource.id) {
+            resourceIndex = index;
+            break;
+        }
+    }
+    if (resourceIndex < 0) {
+        setError (error, QString::fromUtf8 ("待替换的项目资源不存在：%1。").arg (resource.id));
+        return false;
+    }
+
+    candidate.resources[resourceIndex] = resource;
+    for (const ProjectResource& asset : assets) {
+        int existingIndex = -1;
+        for (int index = 0; index < candidate.resources.size (); ++index) {
+            if (candidate.resources[index].id == asset.id) {
+                existingIndex = index;
+                break;
+            }
+        }
+        if (existingIndex >= 0)
+            candidate.resources[existingIndex] = asset;
+        else
+            candidate.resources.push_back (asset);
+    }
+
+    if (!ProjectManifestJson::validate (candidate, error))
+        return false;
     _manifest = candidate;
     _dirty = true;
     return true;

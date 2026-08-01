@@ -15,6 +15,7 @@
 
 #include <rw/models/WorkCell.hpp>
 
+#include <QDir>
 #include <QMessageBox>
 
 using namespace rws;
@@ -266,8 +267,35 @@ void RobotModelBuilderPlugin::importRobotProjectSource (const QString& sourcePat
 // -----------------------------------------------------------------------------
 void RobotModelBuilderPlugin::loadSceneFile (const QString& filename)
 {
-    if (getRobWorkStudio () != NULL) {
+    RobWorkStudio* studio = getRobWorkStudio ();
+    if (studio == NULL)
+        return;
+
+    if (!studio->projectDirectory ().isEmpty ()) {
+        const RobotModelSpec spec = _widget->currentModelSpec ();
+        QStringList dependencies;
+        if (QDir::cleanPath (filename) == QDir::cleanPath (RobotModelXmlWriter::sceneFilePath (spec))) {
+            dependencies << RobotModelXmlWriter::serialDeviceFilePath (spec);
+            if (spec.collisionSetup.enabled)
+                dependencies << RobotModelXmlWriter::collisionSetupFilePath (spec);
+            if (spec.proximitySetup.enabled)
+                dependencies << RobotModelXmlWriter::proximitySetupFilePath (spec);
+        }
+
+        QString error;
         _ignoreNextOpenFromSelfLoad = true;
-        getRobWorkStudio ()->setWorkcell (filename.toStdString ());
+        const bool promoted = studio->promoteGeneratedWorkCell (filename, dependencies, &error);
+        _ignoreNextOpenFromSelfLoad = false;
+        if (!promoted) {
+            _widget->setProjectStatus ("Generated scene could not be promoted. The current project scene was kept.");
+            QMessageBox::critical (_widget, "RobotModelBuilder - Save and Load Failed", error);
+            return;
+        }
+        _widget->setProjectStatus (
+            "Generated scene loaded as the managed project WorkCell. Use File > Save Project to commit it.");
+        return;
     }
+
+    _ignoreNextOpenFromSelfLoad = true;
+    studio->setWorkcell (filename.toStdString ());
 }

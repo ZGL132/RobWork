@@ -75,6 +75,8 @@ class RobWorkStudio : public QMainWindow
 {
     Q_OBJECT
   public:
+    enum class RobotProjectSourceKind { Urdf, RobWorkXml, Unsupported };
+
     /**
        @brief RobWorkStudio object with a number of plugins loaded elsewhere.
     */
@@ -93,6 +95,9 @@ class RobWorkStudio : public QMainWindow
      */
     void openFile (const std::string& filename);
 
+    static RobotProjectSourceKind classifyRobotProjectSource (const QString& sourcePath,
+                                                               QString* error = nullptr);
+
     /**
      * @brief 注册由业务插件拥有的项目文档 Provider。
      *
@@ -108,6 +113,17 @@ class RobWorkStudio : public QMainWindow
     bool ensureGeneratedProjectResource (const ProjectResource& resource,
                                          bool* created = nullptr,
                                          QString* error = nullptr);
+
+    // 把 RobotModelBuilder 已生成并验证的场景晋升为当前项目主 WorkCell。保持入口资源 ID
+    // 不变，仅更新受管路径并登记场景引用的生成资产；失败时恢复原活动场景和清单。
+    bool promoteGeneratedWorkCell (const QString& sceneFilePath,
+                                   const QStringList& dependencyFilePaths,
+                                   QString* error = nullptr);
+
+    // 按稳定资源 ID 解析当前项目文件，供插件使用 manifest 权威路径而非扫描目录。
+    bool resolveProjectResource (const QString& resourceId,
+                                 QString& resolvedPath,
+                                 QString* error = nullptr) const;
 
     // 返回主 WorkCell 的稳定资源 ID，使依赖设备和 TCP 名称的插件配置总在场景之后加载。
     QString mainWorkCellResourceId () const;
@@ -834,6 +850,9 @@ class RobWorkStudio : public QMainWindow
     // 第二阶段加入的文档注册表：按资源 kind 协调各 Provider 的加载、保存与关闭。
     ProjectDocumentRegistry _projectDocuments;
     QTimer* _autosaveTimer = nullptr;
+    // 项目打开、恢复和资源替换可进入模态 Qt 事件循环。该计数器在整个切换事务期间
+    // 保持非零，使自动保存不会序列化正在释放或替换的 WorkCell。
+    int _projectTransitionDepth = 0;
     // 把主窗口的 WorkCell 文档接入项目生命周期的 Provider（非拥有型指针，
     // 由主窗口在析构时 delete）。
     WorkCellProjectDocumentProvider* _workCellProvider;

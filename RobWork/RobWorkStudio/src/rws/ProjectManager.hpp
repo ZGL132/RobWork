@@ -60,6 +60,12 @@ class ProjectManager
     // 保存事务写入该路径，避免生成空文件或绕过项目内路径校验。
     bool addGeneratedResource (const ProjectResource& resource, QString* error = nullptr);
 
+    // 原子替换一个既有资源的描述，并把它新引用的被动资产加入清单。资源 ID 保持不变，
+    // 因而 entryPoints 与其它插件依赖无需重写；全部候选项通过清单校验后才修改当前项目。
+    bool replaceResourceAndAddAssets (const ProjectResource& resource,
+                                      const QVector< ProjectResource >& assets,
+                                      QString* error = nullptr);
+
     // 克隆当前项目到一个尚不存在的目标目录。只复制 ownership 为 project/generated 的文件，
     // external 资源继续保留其原始引用；新清单生成独立 project.id，并在所有文件落盘后才切换
     // 当前项目上下文，从而让“另存为”失败时仍能继续使用源项目。

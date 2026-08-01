@@ -5,6 +5,8 @@
 #include "CandidatePreviewController.hpp"
 #include "RobotModelStalenessChecker.hpp"
 
+#include <rw/kinematics/State.hpp>
+
 #include <QByteArray>
 #include <QWidget>
 
@@ -17,6 +19,8 @@ class QDoubleSpinBox;
 class QSpinBox;
 class QTabWidget;
 class QTableView;
+
+namespace rw { namespace models { class WorkCell; } }
 
 namespace rws {
 
@@ -38,6 +42,9 @@ public:
     StructureOptimizationProblem collectProblem() const;
     QString statusText() const;
     void setPreviewHost(IWorkCellPreviewHost* host);
+    void setScenarioContext(rw::models::WorkCell* workcell,
+                            const rw::kinematics::State& state);
+    void clearScenarioContext();
 
     /**
      * @brief 项目 Provider 使用的无对话框资源读写接口。
@@ -49,6 +56,7 @@ public:
     bool saveProjectDocument(const QString& targetPath, QString* error = nullptr) const;
     bool isProjectDocumentDirty() const;
     void markProjectDocumentClean();
+    void beginGeneratedProjectDocument(const QString& path);
     bool canCloseProjectDocument(QString* reason = nullptr) const;
 
 Q_SIGNALS:
@@ -102,6 +110,8 @@ private:
     QByteArray _savedProjectDocumentSnapshot;
     mutable QByteArray _pendingProjectDocumentSnapshot;
     RobotModelSourceStatus _modelSourceStatus = RobotModelSourceStatus::Untracked;
+    rw::models::WorkCell* _scenarioWorkCell = nullptr;
+    rw::kinematics::State _scenarioState;
 
     QTabWidget* _tabs = nullptr;
     QTableView* _taskView = nullptr;

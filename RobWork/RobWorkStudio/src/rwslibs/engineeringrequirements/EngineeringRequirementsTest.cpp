@@ -529,7 +529,7 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     return 0;
 }
 
-int testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges()
+int testFrozenArtifactWarnsWhenSourceWorkCellFileChanges()
 {
     // 真实工程中最危险的情况是文件路径未变、工装 XML 却被替换。场景快照的源文件
     // SHA-256 必须在这种情况下使冻结工件失效，不能仅依赖内存中仍未重新加载的 Frame。
@@ -575,9 +575,15 @@ int testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges()
     REQUIRE(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate));
     REQUIRE(sourceFile.write("<WorkCell name=\"FrozenCellChanged\" />\n") > 0);
     sourceFile.close();
-    REQUIRE(!rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
-                                                  workcell->getDefaultState(), model, &error));
-    REQUIRE(error.find("source WorkCell file") != std::string::npos);
+    rws::FrozenRequirementValidationResult validation;
+    REQUIRE(rws::RequirementFreezer::validateScenario(artifact, *workcell,
+                                                        workcell->getDefaultState(),
+                                                        &validation, &error));
+    REQUIRE(error.empty());
+    REQUIRE(!validation.warnings.empty());
+    REQUIRE(validation.warnings.front().find("source WorkCell file") != std::string::npos);
+    REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
+                                                workcell->getDefaultState(), model, &error));
     return 0;
 }
 
@@ -986,8 +992,8 @@ int testWidgetResolvesGeometryFeatureUsingLatestJogState()
     return 0;
 }
 
-// 正向/负向测试：需求冻结前能从项目 generated/robot-models 自动绑定与设备名称匹配的
-// 唯一工程模型（含内容指纹）；出现多个模型时不得按文件名猜测，必须明确失败。
+// 需求冻结前只绑定项目清单解析出的 robot-model.main。同目录中的其他
+// .rmb.json 不是权威资源，不得影响绑定结果。
 int testWidgetBindsMatchingGeneratedProjectModel()
 {
     QTemporaryDir projectDirectory;
@@ -1017,6 +1023,7 @@ int testWidgetBindsMatchingGeneratedProjectModel()
 
     rws::EngineeringRequirementsWidget widget;
     widget.setProjectOutputDirectory(projectDirectory.path());
+    widget.setProjectModelPath(modelPath);
     widget.setWorkCell(workcell.get());
     QString error;
     REQUIRE(widget.bindGeneratedProjectModel(&error));
@@ -1026,18 +1033,19 @@ int testWidgetBindsMatchingGeneratedProjectModel()
     REQUIRE(requirements.modelBinding.robotModelFingerprint ==
             rws::RobotModelFingerprint::canonicalSha256(model));
 
-    // 方案 A 只支持一个当前工程模型。出现多个 sidecar 时不能根据文件名或目录顺序
-    // 猜测，否则冻结可能绑定错误机器人。
+    // Extra sidecars are not authoritative. The manifest-resolved robot-model.main
+    // path remains stable even when unrelated files exist in the same directory.
     QFile secondModelFile(modelDirectory + "/AnotherRobot.rmb.json");
     REQUIRE(secondModelFile.open(QIODevice::WriteOnly | QIODevice::Text));
     REQUIRE(secondModelFile.write("{}") > 0);
     secondModelFile.close();
     rws::EngineeringRequirementsWidget ambiguousWidget;
     ambiguousWidget.setProjectOutputDirectory(projectDirectory.path());
+    ambiguousWidget.setProjectModelPath(modelPath);
     ambiguousWidget.setWorkCell(workcell.get());
-    REQUIRE(!ambiguousWidget.bindGeneratedProjectModel(&error));
-    REQUIRE(error.contains(QString::fromUtf8("多个")));
-    REQUIRE(ambiguousWidget.requirementSet().modelBinding.sourcePath.empty());
+    REQUIRE(ambiguousWidget.bindGeneratedProjectModel(&error));
+    REQUIRE(error.isEmpty());
+    REQUIRE(ambiguousWidget.requirementSet().modelBinding.sourcePath == modelPath.toStdString());
     return 0;
 }
 
@@ -1190,7 +1198,7 @@ int main(int argc, char** argv)
         return 1;
     if (testFrozenArtifactBecomesStaleWhenWorkCellStateChanges() != 0)
         return 1;
-    if (testFrozenArtifactBecomesStaleWhenSourceWorkCellFileChanges() != 0)
+    if (testFrozenArtifactWarnsWhenSourceWorkCellFileChanges() != 0)
         return 1;
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;

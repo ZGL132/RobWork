@@ -41,9 +41,11 @@ class EngineeringRequirementsWidget : public QWidget {
 public:
     explicit EngineeringRequirementsWidget(QWidget* parent = nullptr);
     void setWorkCell(rw::models::WorkCell* workcell);
-    // 同步当前项目输出目录（空表示独立 WorkCell 工作流），用于定位 generated/robot-models。
+    // 同步当前项目输出目录（空表示独立 WorkCell 工作流）。
     void setProjectOutputDirectory(const QString& projectDirectory);
-    // 从项目输出目录自动绑定唯一且与设备名称匹配的 .rmb.json 工程模型到需求 modelBinding。
+    // 由项目清单解析 robot-model.main 后注入；不扫描目录猜测模型。
+    void setProjectModelPath(const QString& modelPath);
+    // 绑定项目清单中与当前设备匹配的 .rmb.json 工程模型。
     bool bindGeneratedProjectModel(QString* error = nullptr);
     /**
      * @brief 接收 RobWorkStudio 最新发布的场景/JOG 状态快照。
@@ -136,6 +138,7 @@ private:
     RequirementSetUndoStack _undoStack;
     rw::models::WorkCell* _workcell = nullptr;
     QString _projectOutputDirectory;
+    QString _projectModelPath;
     // State 与所属 WorkCell 的 StateStructure 强关联；切换 WorkCell 时必须丢弃
     // 旧快照，防止将旧场景的关节值误用于新场景的几何解析。
     std::unique_ptr<rw::kinematics::State> _currentState;

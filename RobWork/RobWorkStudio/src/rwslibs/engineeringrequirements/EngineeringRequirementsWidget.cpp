@@ -1080,16 +1080,23 @@ void EngineeringRequirementsWidget::bindModel()
 }
 
 // 记录当前项目输出目录（由主窗口 projectContextChanged 信号同步，空表示独立 WorkCell
-// 工作流）。仅用于定位 generated/robot-models 中的工程模型，不参与需求资源序列化。
+// 工作流）。该路径只用于判断项目上下文，不参与需求资源序列化。
 void EngineeringRequirementsWidget::setProjectOutputDirectory(const QString& projectDirectory)
 {
     _projectOutputDirectory = projectDirectory.trimmed().isEmpty() ? QString() :
         QFileInfo(projectDirectory).absoluteFilePath();
 }
 
-// 自动绑定工程生成模型：从项目输出目录的 generated/robot-models 中唯一 .rmb.json
-// 解析模型，并校验其 robotName 与当前 WorkCell 设备一致后写入 requirements 的 modelBinding。
-// 项目内模型必须唯一，否则不猜测以避免冻结绑定错误机器人。
+// 记录项目清单中 robot-model.main 资源解析出的绝对路径（由插件在项目打开/模型变化时
+// 同步，空表示当前项目尚未生成机器人模型）。仅用于绑定，不参与需求资源序列化。
+void EngineeringRequirementsWidget::setProjectModelPath(const QString& modelPath)
+{
+    _projectModelPath = modelPath.trimmed().isEmpty() ? QString() :
+        QFileInfo(modelPath).absoluteFilePath();
+}
+
+// 自动绑定工程生成模型：只解析项目清单 robot-model.main 指向的 .rmb.json，
+// 并校验其 robotName 与当前 WorkCell 设备一致后写入 requirements 的 modelBinding。
 bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
 {
     if (_workcell == nullptr) {
@@ -1101,20 +1108,13 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
         return false;
     }
 
-    const QDir modelDirectory(
-        QDir(_projectOutputDirectory).filePath("generated/robot-models"));
-    const QFileInfoList models = modelDirectory.entryInfoList(
-        QStringList() << "*.rmb.json", QDir::Files, QDir::Name);
-    if (models.size() != 1) {
-        if (error != nullptr) {
-            *error = models.isEmpty() ?
-                QString::fromUtf8("项目中没有已保存的 .rmb.json 模型。") :
-                QString::fromUtf8("项目中存在多个 .rmb.json 模型，当前单机器人项目无法自动选择。");
-        }
+    if (_projectModelPath.isEmpty()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8("项目清单中没有 robot-model.main 模型资源，请先在 RoboModelBuilder 中保存并加载模型。");
         return false;
     }
 
-    const QString path = models.front().absoluteFilePath();
+    const QString path = _projectModelPath;
     QFile modelFile(path);
     if (!modelFile.open(QFile::ReadOnly)) {
         if (error != nullptr) *error = QString::fromUtf8("无法读取项目机器人模型：%1").arg(path);
@@ -1422,7 +1422,7 @@ void EngineeringRequirementsWidget::freezeRequirements()
         setStatus(QString::fromUtf8("无法冻结需求：请先打开实际 WorkCell，以验证 Frame、TCP 与工装状态。"));
         return;
     }
-    // 编辑态未绑定模型时，尝试从项目 generated/robot-models 自动绑定唯一匹配的工程模型；
+    // 编辑态未绑定模型时，尝试绑定项目清单中的 robot-model.main 工程模型；
     // 无法自动绑定时给出明确提示，而不是以空的 modelBinding 继续冻结。
     if (_requirements.modelBinding.sourcePath.empty()) {
         QString bindingError;

@@ -43,6 +43,7 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QIcon>
@@ -55,10 +56,12 @@
 #include <QPluginLoader>
 #include <QPushButton>
 #include <QSettings>
+#include <QScopedValueRollback>
 #include <QStringList>
 #include <QToolBar>
 #include <QTimer>
 #include <QUrl>
+#include <QXmlStreamReader>
 
 #ifdef RWS_USE_PYTHON
 #include <rws/pythonpluginloader/PyPlugin.hpp>
@@ -1052,6 +1055,22 @@ void RobWorkStudio::createProjectFromRobotFile ()
     if (sourcePath.isEmpty ())
         return;
 
+    QString sourceError;
+    const RobotProjectSourceKind sourceKind = classifyRobotProjectSource (sourcePath, &sourceError);
+    if (sourceKind == RobotProjectSourceKind::RobWorkXml) {
+        QMessageBox::information (
+            this,
+            tr ("RobWork XML Detected"),
+            tr ("The selected file is a RobWork WorkCell or device XML, not URDF. "
+                "Use File > Create Project from WorkCell... so the scene and its dependencies "
+                "are copied into the managed project before RobotModelBuilder processes it."));
+        return;
+    }
+    if (sourceKind != RobotProjectSourceKind::Urdf) {
+        QMessageBox::warning (this, tr ("Unsupported Robot File"), sourceError);
+        return;
+    }
+
     QString projectFile = QFileDialog::getSaveFileName (
         this, tr ("New RobWorkStudio Project"), QFileInfo (sourcePath).absolutePath (),
         tr ("RobWorkStudio Project (*.rwproj)"));
@@ -1390,17 +1409,19 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
     // 自动保存定时器：项目有未保存修改时周期性创建恢复快照，快照同时包含清单、磁盘资源
     // 与 Provider 内存编辑状态（createAutosaveSnapshot 接收 _projectDocuments 实现）。
     // 注意：此处位于 ensureGeneratedProjectResource 内属懒启动，仅插件首次创建生成资源后生效。
-    _autosaveTimer = new QTimer (this);
-    _autosaveTimer->setInterval (60 * 1000);
-    connect (_autosaveTimer, &QTimer::timeout, this, [this] () {
-        if (!_projectManager.hasProject () ||
-            (!_projectManager.isDirty () && !_projectDocuments.isDirty ()))
-            return;
-        QString error;
-        if (!_projectManager.createAutosaveSnapshot (_projectDocuments, &error))
-            RW_WARN ("Unable to create project recovery snapshot: " << error.toStdString ());
-    });
-    _autosaveTimer->start ();
+    if (_autosaveTimer == nullptr) {
+        _autosaveTimer = new QTimer (this);
+        _autosaveTimer->setInterval (60 * 1000);
+        connect (_autosaveTimer, &QTimer::timeout, this, [this] () {
+            if (_projectTransitionDepth > 0 || !_projectManager.hasProject () ||
+                (!_projectManager.isDirty () && !_projectDocuments.isDirty ()))
+                return;
+            QString error;
+            if (!_projectManager.createAutosaveSnapshot (_projectDocuments, &error))
+                RW_WARN ("Unable to create project recovery snapshot: " << error.toStdString ());
+        });
+        _autosaveTimer->start ();
+    }
 
     // 稳定 ID 已存在时不重复登记。首次编辑之外的每次控件变化只能更新脏状态，不能追加
     // 清单项，更不能覆盖用户已经保存的业务配置。
@@ -1417,6 +1438,158 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
     // 经同一个暂存事务统一提交，失败时不会产生只有其中一个文件的半成品项目。
     if (created != nullptr)
         *created = true;
+    updateProjectWindowTitle ();
+    return true;
+}
+
+// 识别机器人源文件的根元素类型：URDF <robot> 走"从机器人文件创建项目"，RobWork
+// WorkCell/设备 XML 引导用户改走"从 WorkCell 创建项目"，其它根元素或损坏 XML 判为不支持。
+RobWorkStudio::RobotProjectSourceKind RobWorkStudio::classifyRobotProjectSource (
+    const QString& sourcePath, QString* error)
+{
+    if (error != nullptr)
+        error->clear ();
+
+    QFile file (sourcePath);
+    if (!file.open (QIODevice::ReadOnly)) {
+        if (error != nullptr)
+            *error = tr ("Could not open the selected robot file: %1").arg (file.errorString ());
+        return RobotProjectSourceKind::Unsupported;
+    }
+
+    QXmlStreamReader xml (&file);
+    while (!xml.atEnd ()) {
+        xml.readNext ();
+        if (!xml.isStartElement ())
+            continue;
+
+        const QString root = xml.name ().toString ();
+        if (root.compare (QStringLiteral ("robot"), Qt::CaseInsensitive) == 0)
+            return RobotProjectSourceKind::Urdf;
+        if (root == QStringLiteral ("WorkCell") || root == QStringLiteral ("SerialDevice") ||
+            root == QStringLiteral ("ParallelDevice") || root == QStringLiteral ("TreeDevice"))
+            return RobotProjectSourceKind::RobWorkXml;
+
+        if (error != nullptr) {
+            *error = tr ("Unsupported XML root <%1>. Select a URDF <robot> file, or use "
+                        "Create Project from WorkCell... for RobWork XML.")
+                         .arg (root);
+        }
+        return RobotProjectSourceKind::Unsupported;
+    }
+
+    if (error != nullptr) {
+        *error = xml.hasError () ? tr ("The selected XML file is invalid: %1").arg (xml.errorString ())
+                                : tr ("The selected file does not contain an XML root element.");
+    }
+    return RobotProjectSourceKind::Unsupported;
+}
+
+// 按稳定资源 ID 解析当前项目文件（委托 ProjectManager），供插件使用清单权威路径。
+bool RobWorkStudio::resolveProjectResource (const QString& resourceId,
+                                            QString& resolvedPath,
+                                            QString* error) const
+{
+    return _projectManager.resolveResource (resourceId, resolvedPath, error);
+}
+
+bool RobWorkStudio::promoteGeneratedWorkCell (const QString& sceneFilePath,
+                                              const QStringList& dependencyFilePaths,
+                                              QString* error)
+{
+    if (!_projectManager.hasProject ()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("当前没有打开的项目，无法晋升生成场景。");
+        return false;
+    }
+    const QFileInfo sceneInfo (sceneFilePath);
+    if (!sceneInfo.isFile ()) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("生成场景不存在：%1。").arg (sceneFilePath);
+        return false;
+    }
+
+    const QString projectRoot = QFileInfo (_projectManager.projectFilePath ()).absolutePath ();
+    const QDir projectDirectory (projectRoot);
+    const auto managedRelativePath = [&projectDirectory, &projectRoot] (
+                                         const QString& absolutePath,
+                                         QString& relativePath,
+                                         QString* pathError) {
+        const QFileInfo info (absolutePath);
+        if (!info.isFile ()) {
+            if (pathError != nullptr)
+                *pathError = QString::fromUtf8 ("生成场景依赖不存在：%1。").arg (absolutePath);
+            return false;
+        }
+        relativePath = QDir::fromNativeSeparators (
+            projectDirectory.relativeFilePath (info.absoluteFilePath ()));
+        if (relativePath == QStringLiteral ("..") ||
+            relativePath.startsWith (QStringLiteral ("../"))) {
+            if (pathError != nullptr)
+                *pathError = QString::fromUtf8 ("生成场景文件位于项目目录之外：%1（项目：%2）。")
+                                 .arg (absolutePath, projectRoot);
+            return false;
+        }
+        return true;
+    };
+
+    const QString mainResourceId = mainWorkCellResourceId ();
+    ProjectResource original;
+    if (mainResourceId.isEmpty () ||
+        !_projectManager.manifest ().findResource (mainResourceId, original)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8 ("当前项目没有可晋升的 mainWorkCell 资源。");
+        return false;
+    }
+
+    ProjectResource promoted = original;
+    if (!managedRelativePath (sceneInfo.absoluteFilePath (), promoted.path, error))
+        return false;
+    promoted.ownership = QStringLiteral ("generated");
+    promoted.required = true;
+
+    QVector< ProjectResource > assets;
+    int generatedAssetIndex = 0;
+    for (const QString& dependencyPath : dependencyFilePaths) {
+        QString relativePath;
+        if (!managedRelativePath (dependencyPath, relativePath, error))
+            return false;
+        ProjectResource asset;
+        asset.id = QStringLiteral ("scene.generated.asset.%1").arg (++generatedAssetIndex);
+        asset.kind = QStringLiteral ("robwork.passive-asset");
+        asset.path = relativePath;
+        asset.ownership = QStringLiteral ("generated");
+        asset.required = true;
+        assets.push_back (asset);
+        if (!promoted.dependencies.contains (asset.id))
+            promoted.dependencies.push_back (asset.id);
+    }
+
+    // 首次晋升时保留最初导入的 WorkCell，避免项目保存后失去原始工程来源。它不再是入口，
+    // 但仍作为受管被动资产参与 clone/rwpack。
+    if (original.ownership == QStringLiteral ("project") && original.path != promoted.path) {
+        ProjectResource sourceAsset;
+        sourceAsset.id = QStringLiteral ("scene.source.original");
+        sourceAsset.kind = QStringLiteral ("robwork.passive-asset");
+        sourceAsset.path = original.path;
+        sourceAsset.ownership = QStringLiteral ("project");
+        sourceAsset.required = true;
+        sourceAsset.dependencies = original.dependencies;
+        assets.push_back (sourceAsset);
+    }
+
+    // 先让原 WorkCell Provider 用同一资源 ID 加载新路径。此步骤失败时 Registry 会尝试
+    // 恢复旧资源；只有活动场景可用后才修改内存清单。
+    if (!_projectDocuments.reloadResource (
+            promoted, _projectManager.manifest (), _projectManager.projectFilePath (), error))
+        return false;
+    if (!_projectManager.replaceResourceAndAddAssets (promoted, assets, error)) {
+        QString ignored;
+        _projectDocuments.reloadResource (
+            original, _projectManager.manifest (), _projectManager.projectFilePath (), &ignored);
+        return false;
+    }
+
     updateProjectWindowTitle ();
     return true;
 }
@@ -1810,13 +1983,13 @@ bool RobWorkStudio::saveWorkCellProjectResource (const QString& filename, QStrin
     }
     catch (const rw::core::Exception& exception) {
         if (error != nullptr)
-            *error = QString::fromUtf8 ("WorkCell 保存失败：%1。").arg (
-                QString::fromStdString (exception.getMessage ().getText ()));
+            *error = QString::fromUtf8 ("WorkCell 保存失败（目标路径：%1）：%2。").arg (
+                filename, QString::fromStdString (exception.getMessage ().getText ()));
     }
     catch (const std::exception& exception) {
         if (error != nullptr)
-            *error = QString::fromUtf8 ("WorkCell 保存失败：%1。").arg (
-                QString::fromUtf8 (exception.what ()));
+            *error = QString::fromUtf8 ("WorkCell 保存失败（目标路径：%1）：%2。").arg (
+                filename, QString::fromUtf8 (exception.what ()));
     }
     return false;
 }
@@ -1825,6 +1998,8 @@ bool RobWorkStudio::saveWorkCellProjectResource (const QString& filename, QStrin
 // 加载真实场景还是创建内存 WorkCell。任一环节失败即返回 false 并回填错误。
 bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
 {
+    QScopedValueRollback< int > projectTransition (
+        _projectTransitionDepth, _projectTransitionDepth + 1);
     if (!confirmProjectClose ())
         return false;
     if (!_projectManager.openProject (filename, error))

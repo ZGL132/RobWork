@@ -7,7 +7,15 @@
 
 namespace rws {
 
+struct FrozenRequirementValidationResult;
 struct StructureOptimizationProblem;
+
+} // namespace rws
+
+namespace rw { namespace kinematics { class State; } }
+namespace rw { namespace models { class WorkCell; } }
+
+namespace rws {
 
 /**
  * @brief 从需求定义插件导出的冻结需求文件创建结构优化项目。
@@ -28,7 +36,10 @@ class FrozenRequirementProjectImportService
      * 成功前不会修改 `problem`，避免 UI 在导入失败后留下半成品项目。
      */
     static bool createProblem(const QString& requirementPath,
+                              const rw::models::WorkCell& workcell,
+                              const rw::kinematics::State& state,
                               StructureOptimizationProblem& problem,
+                              FrozenRequirementValidationResult* validation = nullptr,
                               std::string* error = nullptr);
 };
 

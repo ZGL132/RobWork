@@ -4209,8 +4209,10 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
     }
     std::vector<TaskPoint> points;
     bool robotStateChanged = false;
+    std::vector<std::string> validationWarnings;
     if (!FrozenRequirementKinematicAdapter::applyWithValidation(artifact, *_workcell, currentState(), points,
-                                                                &error, &robotStateChanged)) {
+                                                                &error, &robotStateChanged,
+                                                                &validationWarnings)) {
         QMessageBox::warning(this, tr("Import validation"),
                              tr("Frozen artifact is not valid for the current WorkCell: %1")
                                  .arg(QString::fromStdString(error)));
@@ -4226,6 +4228,8 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
         status += tr(" Robot joint state differs from the frozen state, but fixtures and the external environment are unchanged. "
                      "Frozen requirements remain valid; the current joint state is used as the IK initial seed.");
     }
+    for (const std::string& warning : validationWarnings)
+        status += tr(" Warning: %1").arg(QString::fromStdString(warning));
     setStatus(status);
 }
 

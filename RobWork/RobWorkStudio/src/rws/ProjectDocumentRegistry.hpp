@@ -53,6 +53,13 @@ class ProjectDocumentRegistry
                                     const QString& projectFilePath,
                                     QString* error = nullptr);
 
+    // 在不关闭其它项目文档的前提下，把同一稳定资源 ID 重新加载到新的受管路径。
+    // 加载失败时尝试恢复旧资源，成功后才替换 Registry 中的资源描述和解析路径。
+    bool reloadResource (const ProjectResource& resource,
+                         const ProjectManifest& manifest,
+                         const QString& projectFilePath,
+                         QString* error = nullptr);
+
     // 询问所有已加载资源是否都允许关闭；任一资源拒绝关闭则返回 false 并回填原因。
     bool canClose (QString* reason = nullptr) const;
     // 按依赖逆序关闭全部已加载资源，并清空加载列表。

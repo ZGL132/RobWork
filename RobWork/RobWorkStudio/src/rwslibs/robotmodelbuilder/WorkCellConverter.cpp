@@ -416,6 +416,17 @@ void readDrawableElement (QXmlStreamReader& xml, DrawableSpec& drawable,
     }
 }
 
+// Geometry file paths in WorkCell XML are relative to the XML document that
+// declares them, not to a later export directory. Resolve them at the parsing
+// boundary so RobotModelXmlWriter can correctly rebase them for its output.
+void resolveDrawableGeometryPath (const QString& sourceXmlFile, DrawableSpec& drawable)
+{
+    if (drawable.filePath.empty ())
+        return;
+    drawable.filePath =
+        resolveRelativeTo (sourceXmlFile, QString::fromStdString (drawable.filePath)).toStdString ();
+}
+
 /// 工具：从 DrawableSpec 转换构造 SceneGeometrySpec
 SceneGeometrySpec sceneGeometryFromDrawable (const DrawableSpec& drawable, bool collisionModel)
 {
@@ -486,6 +497,7 @@ bool mergeSourceGeometryDocument (const QString& fileName,
             DrawableSpec drawable;
             bool legacyCollision = false;
             readDrawableElement (xml, drawable, &legacyCollision);
+            resolveDrawableGeometryPath (absoluteFile, drawable);
             if (deviceDocument) {
                 spec.drawables.push_back (drawable); // 属于机器人设备本身的 Drawable
                 if (legacyCollision) {
@@ -522,6 +534,7 @@ bool mergeSourceGeometryDocument (const QString& fileName,
             // 独立碰撞模型标签
             DrawableSpec drawable;
             readDrawableElement (xml, drawable);
+            resolveDrawableGeometryPath (absoluteFile, drawable);
             CollisionModelSpec collision;
             collision.name = drawable.name;
             collision.refFrame = drawable.refFrame;

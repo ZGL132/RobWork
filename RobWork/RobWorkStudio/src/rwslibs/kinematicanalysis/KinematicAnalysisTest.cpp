@@ -20,8 +20,10 @@
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QCoreApplication>
+#include <QFile>
 #include <QRect>
 #include <QRectF>
+#include <QTemporaryDir>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -2062,6 +2064,16 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
 {
     // 运动学分析只能读取已经冻结的编译结果。测试同时验证非 WORLD 工装参考系、
     // TCP、代表姿态和姿态解析证据均原样传入现有 TaskPoint 数据模型。
+    QTemporaryDir sourceDirectory;
+    if (const int rc = require(sourceDirectory.isValid(),
+                               "create temporary source WorkCell directory")) return rc;
+    const QString sourcePath = sourceDirectory.filePath(QStringLiteral("source.wc.xml"));
+    QFile sourceFile(sourcePath);
+    if (const int rc = require(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text),
+                               "create source WorkCell file")) return rc;
+    sourceFile.write("<WorkCell name=\"FrozenImportCell\" />\n");
+    sourceFile.close();
+
     rw::kinematics::StateStructure::Ptr structure =
         rw::core::ownedPtr(new rw::kinematics::StateStructure());
     const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
@@ -2077,7 +2089,7 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     structure->addFrame(tcp, joint);
     structure->addFrame(fixture, structure->getRoot());
     const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
-        new rw::models::WorkCell(structure, "FrozenImportCell", ""));
+        new rw::models::WorkCell(structure, "FrozenImportCell", sourcePath.toStdString()));
 
     rws::RobotModelSpec model;
     model.robotName = "FrozenImportRobot";
@@ -2137,6 +2149,21 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                                "import frozen artifact after robot jog")) return rc;
     if (const int rc = require(robotStateChanged,
                                "robot jog is reported without rejecting frozen requirements")) return rc;
+
+    if (const int rc = require(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text |
+                                               QIODevice::Truncate),
+                               "replace source WorkCell file after freeze")) return rc;
+    sourceFile.write("<WorkCell name=\"FrozenImportCellChanged\" />\n");
+    sourceFile.close();
+    std::vector<std::string> validationWarnings;
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
+            artifact, *workcell, joggedState, tasks, &error, &robotStateChanged,
+            &validationWarnings),
+                               "source provenance warning does not block kinematic import")) return rc;
+    if (const int rc = require(!validationWarnings.empty() &&
+                                   validationWarnings.front().find("source WorkCell file") !=
+                                       std::string::npos,
+                               "source provenance warning is returned to the kinematic UI")) return rc;
 
     rws::FrozenRequirementArtifact tcpChangedArtifact = artifact;
     tcpChangedArtifact.frozenRobotState.kinematicFingerprint = "changed-robot-kinematic-fingerprint";

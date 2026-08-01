@@ -92,6 +92,10 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
 
     const ProjectDocumentContext context = makeContext (manifest, projectFilePath);
     for (const ProjectResource& resource : ordered) {
+        // 被动资产只用于完整性、克隆和打包，不代表可编辑文档。文件存在性由
+        // ProjectManager 在打开项目时统一校验，因此这里无需虚构一个空 Provider。
+        if (resource.kind == QStringLiteral ("robwork.passive-asset"))
+            continue;
         // 按 kind 找 Provider：可选资源缺 Provider 直接跳过；必需资源缺 Provider
         // 会让项目无法在缺少关键能力时正确工作，必须整体失败。
         ProjectDocumentProvider* provider = providerForKind (resource.kind);
@@ -250,6 +254,49 @@ bool ProjectDocumentRegistry::activateGeneratedResource (const ProjectResource& 
     loaded.provider = provider;
     loaded.resolvedPath = resolvedPath;
     _loaded.push_back (loaded);
+    return true;
+}
+
+// 在不关闭其它项目文档的前提下，把同一稳定资源 ID 重新加载到新的受管路径（用于
+// WorkCell 晋升等场景）。新路径加载失败时恢复旧资源描述；成功后才更新加载记录。
+bool ProjectDocumentRegistry::reloadResource (const ProjectResource& resource,
+                                               const ProjectManifest& manifest,
+                                               const QString& projectFilePath,
+                                               QString* error)
+{
+    int loadedIndex = -1;
+    for (int index = 0; index < _loaded.size (); ++index) {
+        if (_loaded[index].resource.id == resource.id) {
+            loadedIndex = index;
+            break;
+        }
+    }
+    if (loadedIndex < 0) {
+        setError (error, QString::fromUtf8 ("待重载的项目资源尚未加载：%1。").arg (resource.id));
+        return false;
+    }
+
+    LoadedResource& loaded = _loaded[loadedIndex];
+    ProjectDocumentProvider* provider = providerForKind (resource.kind);
+    if (provider == nullptr || provider != loaded.provider) {
+        setError (error, QString::fromUtf8 ("资源“%1”的 Provider 类型不能在重载时改变。")
+                              .arg (resource.id));
+        return false;
+    }
+
+    QString resolvedPath;
+    if (!ProjectPathResolver::resolveResource (projectFilePath, resource, resolvedPath, error))
+        return false;
+    const ProjectDocumentContext context = makeContext (manifest, projectFilePath);
+    const LoadedResource previous = loaded;
+    if (!provider->loadResource (resource, context, error)) {
+        QString ignored;
+        provider->loadResource (previous.resource, context, &ignored);
+        return false;
+    }
+
+    loaded.resource = resource;
+    loaded.resolvedPath = resolvedPath;
     return true;
 }
 
