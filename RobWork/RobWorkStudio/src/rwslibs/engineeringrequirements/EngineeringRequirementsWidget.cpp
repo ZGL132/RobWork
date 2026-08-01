@@ -1513,6 +1513,7 @@ void EngineeringRequirementsWidget::freezeRequirements()
         .arg(_compiled.poseTasks.size()).arg(_compiled.diagnostics.size()).arg(pathPending));
     refreshTables();
     Q_EMIT requirementsChanged();
+    Q_EMIT freezePublicationRequested();
 }
 void EngineeringRequirementsWidget::unfreezeRequirements()
 {
@@ -1889,6 +1890,21 @@ rw::kinematics::State EngineeringRequirementsWidget::activeWorkCellState() const
 }
 RequirementSet EngineeringRequirementsWidget::requirementSet() const { return _requirements; }
 QString EngineeringRequirementsWidget::statusText() const { return _statusLabel == nullptr ? QString() : _statusLabel->text(); }
+void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, const QString& error)
+{
+    if (saved) {
+        setStatus(QString::fromUtf8(
+            "需求已校验、冻结并随完整项目事务保存；下游插件可直接读取最新冻结工件。"));
+        return;
+    }
+
+    const QString detail = error.trimmed().isEmpty()
+        ? QString::fromUtf8("未知保存错误。")
+        : error.trimmed();
+    setStatus(QString::fromUtf8(
+        "需求已冻结在内存中，但项目保存失败，冻结工件尚未发布。请修复保存问题后执行“保存项目”。原因：%1")
+                  .arg(detail));
+}
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)
 {
     // 每条快照都是一次已经成功的工程语义修改之前的完整状态，不区分批量或普通编辑。

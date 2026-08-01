@@ -16,6 +16,7 @@
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
+#include <QMessageBox>
 #include <QTimer>
 
 #include <string>
@@ -256,6 +257,25 @@ void EngineeringRequirementsPlugin::initialize() {
         // 规范 JSON 快照判断真实变化，Provider 因而不会把普通控件交互误报为脏数据。
         _projectProvider->setDirty(_widget->isProjectDocumentDirty());
         studio->notifyProjectDocumentChanged();
+    });
+
+    // 冻结成功后请求“发布”：把冻结工件随完整项目事务保存，使下游插件只能读取
+    // 已落盘的冻结结果；保存失败时通过 UI 明确告知尚未发布。
+    connect(_widget, &EngineeringRequirementsWidget::freezePublicationRequested, this, [this]() {
+        RobWorkStudio* studio = getRobWorkStudio();
+        if (studio == nullptr || studio->projectDirectory().isEmpty())
+            return;
+
+        QString error;
+        const bool saved = studio->saveCurrentProject(&error);
+        _widget->reportFreezePublicationResult(saved, error);
+        if (!saved) {
+            QMessageBox::warning(
+                _widget, tr("Freeze Not Published"),
+                tr("The requirements are frozen in memory, but the complete project transaction "
+                   "could not be saved. Downstream plugins will not read this unpublished artifact.\n\n%1")
+                    .arg(error));
+        }
     });
 
 // 检查当前插件是否已成功嵌入到 RobWorkStudio 主程序环境中（防止空指针调用导致程序崩溃）

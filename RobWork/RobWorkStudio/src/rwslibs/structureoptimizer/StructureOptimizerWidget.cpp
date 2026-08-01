@@ -799,9 +799,14 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
 {
     QString path;
     QString resolveError;
-    if (_studio != nullptr) {
+    const bool managedRequirement =
+        _studio != nullptr &&
         _studio->resolveProjectResource(
             QStringLiteral("engineering-requirements.main"), path, &resolveError);
+    if (managedRequirement && !_studio->confirmSaveBeforeProjectResourceRead(this)) {
+        _statusLabel->setText(
+            "已取消导入：项目修改尚未保存，未读取可能过期的冻结需求。");
+        return;
     }
     if (path.isEmpty()) {
         const QString initialDirectory = _studio != nullptr && !_studio->projectDirectory().isEmpty()

@@ -4177,9 +4177,13 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
     }
     QString path;
     QString resolveError;
-    if (_studio != nullptr) {
+    const bool managedRequirement =
+        _studio != nullptr &&
         _studio->resolveProjectResource(
             QStringLiteral("engineering-requirements.main"), path, &resolveError);
+    if (managedRequirement && !_studio->confirmSaveBeforeProjectResourceRead(this)) {
+        setStatus(tr("Frozen requirement import canceled: project changes were not published."));
+        return;
     }
     if (path.isEmpty()) {
         const QString initialDirectory = _studio != nullptr && !_studio->projectDirectory().isEmpty()

@@ -1003,8 +1003,15 @@ int testWidgetFreezeAndUnfreezeEmitRequirementChanges()
     REQUIRE(widget.bindGeneratedProjectModel(&error));
 
     int changeCount = 0;
+    std::vector<std::string> notifications;
     QObject::connect(&widget, &rws::EngineeringRequirementsWidget::requirementsChanged,
-                     [&changeCount]() { ++changeCount; });
+                     [&changeCount, &notifications]() {
+                         ++changeCount;
+                         notifications.push_back("changed");
+                     });
+    QObject::connect(&widget,
+                     &rws::EngineeringRequirementsWidget::freezePublicationRequested,
+                     [&notifications]() { notifications.push_back("publish"); });
     QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
     QPushButton* unfreeze = widget.findChild<QPushButton*>("unfreezeRequirementSetButton");
     REQUIRE(freeze != nullptr);
@@ -1013,10 +1020,30 @@ int testWidgetFreezeAndUnfreezeEmitRequirementChanges()
     freeze->click();
     REQUIRE(widget.requirementSet().frozen);
     REQUIRE(changeCount == 1);
+    REQUIRE(notifications.size() == 2);
+    REQUIRE(notifications[0] == "changed");
+    REQUIRE(notifications[1] == "publish");
 
     unfreeze->click();
     REQUIRE(!widget.requirementSet().frozen);
     REQUIRE(changeCount == 2);
+    return 0;
+}
+
+// 负向测试：冻结校验失败时绝不发出发布请求，避免下游读到未经验证的冻结工件。
+int testWidgetDoesNotRequestPublicationWhenFreezeFails()
+{
+    rws::EngineeringRequirementsWidget widget;
+    int publicationRequests = 0;
+    QObject::connect(&widget,
+                     &rws::EngineeringRequirementsWidget::freezePublicationRequested,
+                     [&publicationRequests]() { ++publicationRequests; });
+
+    QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
+    REQUIRE(freeze != nullptr);
+    freeze->click();
+    REQUIRE(!widget.requirementSet().frozen);
+    REQUIRE(publicationRequests == 0);
     return 0;
 }
 
@@ -1271,6 +1298,8 @@ int main(int argc, char** argv)
         if (testWidgetProjectDocumentSnapshotTracksRequirementEdits() != 0)
             return 1;
         if (testWidgetFreezeAndUnfreezeEmitRequirementChanges() != 0)
+            return 1;
+        if (testWidgetDoesNotRequestPublicationWhenFreezeFails() != 0)
             return 1;
         if (testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline() != 0)
             return 1;

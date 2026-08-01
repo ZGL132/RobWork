@@ -274,6 +274,104 @@ TEST (RobWorkStudio, PromotesGeneratedSceneWithoutChangingMainWorkCellIdentity)
 
 }
 
+// 端到端测试：saveCurrentProject 把脏 Provider 内容随完整事务落盘；插件在下游读取
+// 项目资源前经 confirmSaveBeforeProjectResourceRead 强制保存(取消则阻止读取)。
+TEST (RobWorkStudio, PublishesDirtyProjectDocumentsAndGuardsProjectResourceReads)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio rwstudio (map);
+
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Publish.rwproj");
+    const QString documentFile = QDir (directory.path ()).filePath ("requirements/main.json");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (documentFile).absolutePath ()));
+    QFile initialDocument (documentFile);
+    ASSERT_TRUE (initialDocument.open (QIODevice::WriteOnly));
+    ASSERT_EQ (7, initialDocument.write ("initial"));
+    initialDocument.close ();
+
+    ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("publish-test");
+    manifest.project.name = QStringLiteral ("PublishTest");
+    ProjectResource resource;
+    resource.id = QStringLiteral ("engineering-requirements.main");
+    resource.kind = QStringLiteral ("test.publish-requirements");
+    resource.path = QStringLiteral ("requirements/main.json");
+    resource.ownership = QStringLiteral ("project");
+    resource.required = true;
+    manifest.resources.push_back (resource);
+    ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error))
+        << error.toStdString ();
+    manager.closeProject ();
+
+    int saveCount = 0;
+    CallbackProjectDocumentProvider provider (
+        QStringLiteral ("test.publish-provider"),
+        resource.kind,
+        [] (const QString&, const ProjectDocumentContext&, QString*) { return true; },
+        [&saveCount] (const QString& targetPath,
+                      const ProjectDocumentContext&,
+                      QString* error) {
+            ++saveCount;
+            QFile output (targetPath);
+            if (!output.open (QIODevice::WriteOnly | QIODevice::Truncate)) {
+                if (error != nullptr)
+                    *error = output.errorString ();
+                return false;
+            }
+            return output.write ("published") == 9;
+        });
+    ASSERT_TRUE (rwstudio.registerProjectDocumentProvider (&provider, &error))
+        << error.toStdString ();
+    rwstudio.openFile (projectFile.toStdString ());
+
+    EXPECT_FALSE (rwstudio.hasUnsavedProjectChanges ());
+    provider.markDirty ();
+    EXPECT_TRUE (rwstudio.hasUnsavedProjectChanges ());
+    ASSERT_TRUE (rwstudio.saveCurrentProject (&error)) << error.toStdString ();
+    EXPECT_FALSE (rwstudio.hasUnsavedProjectChanges ());
+    EXPECT_EQ (1, saveCount);
+    QFile savedDocument (documentFile);
+    ASSERT_TRUE (savedDocument.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("published"), savedDocument.readAll ());
+    savedDocument.close ();
+
+    provider.markDirty ();
+    QMessageBox::StandardButton buttonToClick = QMessageBox::Cancel;
+    QTimer dialogResponder;
+    dialogResponder.setInterval (5);
+    QObject::connect (&dialogResponder, &QTimer::timeout, &app, [&buttonToClick] () {
+        for (QWidget* widget : QApplication::topLevelWidgets ()) {
+            QMessageBox* dialog = qobject_cast< QMessageBox* > (widget);
+            if (dialog != nullptr && dialog->button (buttonToClick) != nullptr) {
+                dialog->button (buttonToClick)->click ();
+                return;
+            }
+        }
+    });
+    dialogResponder.start ();
+    EXPECT_FALSE (rwstudio.confirmSaveBeforeProjectResourceRead (&rwstudio));
+    dialogResponder.stop ();
+    EXPECT_TRUE (rwstudio.hasUnsavedProjectChanges ());
+    EXPECT_EQ (1, saveCount);
+
+    buttonToClick = QMessageBox::Save;
+    dialogResponder.start ();
+    EXPECT_TRUE (rwstudio.confirmSaveBeforeProjectResourceRead (&rwstudio));
+    dialogResponder.stop ();
+    EXPECT_FALSE (rwstudio.hasUnsavedProjectChanges ());
+    EXPECT_EQ (2, saveCount);
+
+    rwstudio.close ();
+}
+
 TEST (RobWorkStudio, ClassifiesRobotProjectXmlBeforeDispatch)
 {
     QTemporaryDir directory;

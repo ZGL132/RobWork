@@ -136,6 +136,15 @@ class RobWorkStudio : public QMainWindow
      */
     void notifyProjectDocumentChanged ();
 
+    /** @brief Returns true when the project manifest or any managed document is dirty. */
+    bool hasUnsavedProjectChanges () const;
+
+    /** @brief Saves all managed documents and commits the project manifest. */
+    bool saveCurrentProject (QString* error = nullptr);
+
+    /** @brief Saves dirty managed resources before a plugin reads one of them. */
+    bool confirmSaveBeforeProjectResourceRead (QWidget* parent = nullptr);
+
     // 返回当前项目根目录；无项目时返回空字符串。插件只能把它作为项目内运行时输出的根，
     // 不能将其持久化到业务 JSON，以保证项目被复制或移动后仍然可用。
     QString projectDirectory () const;

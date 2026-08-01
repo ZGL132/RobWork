@@ -62,6 +62,7 @@ public:
     bool applyGeometryFeatureFrame(const QString& frameName, QString* error = nullptr);
     RequirementSet requirementSet() const;
     QString statusText() const;
+    void reportFreezePublicationResult(bool saved, const QString& error = QString());
 
     /**
      * @brief 由项目文档 Provider 调用的无界面读取入口。
@@ -88,6 +89,7 @@ public:
 Q_SIGNALS:
     void geometryFeaturePickRequested();
     void requirementsChanged();
+    void freezePublicationRequested();
 
 private:
     QWidget* createPoseTaskPage();

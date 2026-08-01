@@ -50,6 +50,7 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMenuBar>
+#include <QAbstractButton>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QObject>
@@ -1609,6 +1610,50 @@ void RobWorkStudio::notifyProjectDocumentChanged ()
     updateProjectWindowTitle ();
 }
 
+bool RobWorkStudio::hasUnsavedProjectChanges () const
+{
+    return _projectManager.isDirty () || _projectDocuments.isDirty ();
+}
+
+bool RobWorkStudio::saveCurrentProject (QString* error)
+{
+    if (!saveProjectInternal (error))
+        return false;
+    updateProjectWindowTitle ();
+    if (error != nullptr)
+        error->clear ();
+    return true;
+}
+
+bool RobWorkStudio::confirmSaveBeforeProjectResourceRead (QWidget* parent)
+{
+    if (!hasUnsavedProjectChanges ())
+        return true;
+
+    QMessageBox box (QMessageBox::Warning,
+                     tr ("Unsaved Project Changes"),
+                     tr ("The managed project resources contain unsaved changes."),
+                     QMessageBox::Save | QMessageBox::Cancel,
+                     parent != nullptr ? parent : this);
+    box.setInformativeText (
+        tr ("Save the complete project transaction before continuing with this import?"));
+    box.setDefaultButton (QMessageBox::Save);
+    if (QAbstractButton* saveButton = box.button (QMessageBox::Save))
+        saveButton->setText (tr ("Save and Continue"));
+    if (box.exec () != QMessageBox::Save)
+        return false;
+
+    QString error;
+    if (saveCurrentProject (&error))
+        return true;
+
+    QMessageBox::warning (parent != nullptr ? parent : this,
+                          tr ("Save Project Failed"),
+                          error.isEmpty () ? tr ("The project transaction could not be saved.")
+                                           : error);
+    return false;
+}
+
 QString RobWorkStudio::projectDirectory () const
 {
     // 项目资源解析器以 .rwproj 所在目录为边界，这里返回同一目录作为插件生成物的唯一
@@ -1622,11 +1667,10 @@ QString RobWorkStudio::projectDirectory () const
 void RobWorkStudio::saveProject ()
 {
     QString error;
-    if (!saveProjectInternal (&error)) {
+    if (!saveCurrentProject (&error)) {
         QMessageBox::warning (this, tr ("Save Project Failed"), error);
         return;
     }
-    updateProjectWindowTitle ();
 }
 
 // 统一的“保存项目”实现：先提交全部脏业务文档，最后写项目清单。
