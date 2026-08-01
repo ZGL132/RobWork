@@ -281,13 +281,22 @@ TEST (ProjectDocumentRegistryTest, WorkCellProviderUsesResolvedPathAndDirtyLifec
     const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
     const QString workCellPath = QDir (directory.path ()).filePath ("scene.wc.xml");
     QString loadedPath;
+    QString stagedSavePath;
 
     rws::WorkCellProjectDocumentProvider provider (
         [&loadedPath] (const QString& path, QString*) {
             loadedPath = path;
             return true;
         },
-        [] (const QString& path, QString* error) {
+        [&stagedSavePath] (const QString& path, QString* error) {
+            stagedSavePath = path;
+            // DOMWorkCellSaver selects its writer from the final suffix. A transaction path
+            // must therefore retain the complete .wc.xml suffix while remaining a sibling.
+            if (!path.endsWith (QStringLiteral (".wc.xml"), Qt::CaseInsensitive)) {
+                if (error != nullptr)
+                    *error = QStringLiteral ("WorkCell staging path lost its .wc.xml suffix");
+                return false;
+            }
             QFile file (path);
             if (!file.open (QIODevice::WriteOnly)) {
                 if (error != nullptr)
@@ -311,6 +320,7 @@ TEST (ProjectDocumentRegistryTest, WorkCellProviderUsesResolvedPathAndDirtyLifec
     EXPECT_TRUE (registry.isDirty ());
 
     ASSERT_TRUE (registry.saveDirtyResources (manifest, projectFile, &error));
+    EXPECT_TRUE (QFileInfo (stagedSavePath).fileName ().contains (QStringLiteral (".rwstage-")));
     EXPECT_FALSE (registry.isDirty ());
     QFile saved (workCellPath);
     ASSERT_TRUE (saved.open (QIODevice::ReadOnly));

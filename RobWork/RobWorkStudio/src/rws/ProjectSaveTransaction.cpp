@@ -16,10 +16,18 @@ void setError (QString* error, const QString& message)
         *error = message;
 }
 
-// 在正式目标文件的同目录生成唯一临时路径（暂存或备份），避免多个事务并发冲突。
+// 在正式目标文件的同目录生成唯一临时路径（暂存或备份）。标记插入基本名与
+// 完整后缀之间，使 DOMWorkCellSaver 等依赖末尾扩展名选择格式的 Provider 仍能识别 .wc.xml。
 QString uniqueSiblingPath (const QString& targetPath, const QString& marker)
 {
-    return targetPath + marker + QUuid::createUuid ().toString (QUuid::WithoutBraces);
+    const QFileInfo targetInfo (targetPath);
+    const QString token = marker + QUuid::createUuid ().toString (QUuid::WithoutBraces);
+    const QString completeSuffix = targetInfo.completeSuffix ();
+    const QString fileName = completeSuffix.isEmpty ()
+                                 ? targetInfo.fileName () + token
+                                 : targetInfo.completeBaseName () + token + QStringLiteral (".") +
+                                       completeSuffix;
+    return QDir (targetInfo.absolutePath ()).filePath (fileName);
 }
 
 }    // namespace
