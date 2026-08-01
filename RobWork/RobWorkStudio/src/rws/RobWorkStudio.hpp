@@ -706,6 +706,8 @@ class RobWorkStudio : public QMainWindow
     // 与旧有的 WorkCell 级入口（newWorkCell/saveWorkCell 等）并存，后者保留在
     // 菜单下半部分供调试单资源与迁移历史文件使用。
     void newProject ();
+    // 从 URDF/XML 机器人文件创建草稿项目，并让已加载的 RobotModelBuilder 插件导入源文件。
+    void createProjectFromRobotFile ();
     // 从既有 WorkCell 复制场景文件并建立带 mainWorkCell 入口的新项目。
     void createProjectFromWorkCell ();
     void openProject ();

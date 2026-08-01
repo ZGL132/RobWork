@@ -1109,6 +1109,30 @@ void RobotModelBuilderWidget::importUrdf ()
     if (path.isEmpty ())
         return;
 
+    QString error;
+    if (!importUrdfFile (path, &error)) {
+        showErrors (error.split ('\n', Qt::SkipEmptyParts));
+        return;
+    }
+
+    if (!_lastUrdfImportWarnings.isEmpty ())
+        QMessageBox::information (this, "URDF Import Warnings",
+                                  _lastUrdfImportWarnings.join ("\n"));
+}
+
+// 无对话框的 URDF 导入实现：供"从机器人文件创建项目"流程复用，把源文件导入结果填入
+// UI 并生成预览；失败经 error 回填，警告存入 _lastUrdfImportWarnings 由调用方展示。
+bool RobotModelBuilderWidget::importUrdfFile (const QString& path, QString* error)
+{
+    if (error != NULL)
+        error->clear ();
+    _lastUrdfImportWarnings.clear ();
+    if (path.isEmpty ()) {
+        if (error != NULL)
+            *error = "No URDF file was selected.";
+        return false;
+    }
+
     UrdfImportOptions options;
     // URDF 的读取位置可以在项目外，但生成后的模型/XML 必须返回当前项目的受管输出目录。
     // 因此不再以 URDF 所在目录或用户输入目录作为 saveDirectory 的回退值。
@@ -1129,21 +1153,18 @@ void RobotModelBuilderWidget::importUrdf ()
     UrdfImportResult result;
     QStringList errors;
     if (!RobotModelUrdfImporter::importFile (path, options, result, errors)) {
-        showErrors (errors);
-        return;
+        if (error != NULL)
+            *error = errors.join ("\n");
+        return false;
     }
 
     _importedDocument = ImportedDocumentSpec ();
     fillFromSpec (result.spec);
     generatePreview ();
+    _lastUrdfImportWarnings = result.warnings;
 
-    if (!result.warnings.isEmpty ()) {
-        QMessageBox::information (
-            this,
-            "URDF Import Warnings",
-            result.warnings.join ("\n"));
-    }
     setStatus ("URDF imported. Review the preview, then use Save XML or Save and Load.");
+    return true;
 }
 
 // =============================================================================

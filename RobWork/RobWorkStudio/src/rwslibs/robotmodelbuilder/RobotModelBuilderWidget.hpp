@@ -26,6 +26,12 @@ class RobotModelBuilderWidget : public QWidget
   public:
     explicit RobotModelBuilderWidget (QWidget* parent = NULL);
     void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
+    // 无对话框 URDF 导入（供"从机器人文件创建项目"复用）；失败经 error 回填。
+    bool importUrdfFile (const QString& path, QString* error = nullptr);
+    // 当前 UI 收集到的模型规格（用于登记生成资源时的文件基名）。
+    RobotModelSpec currentModelSpec () const { return collectSpec (); }
+    // 向插件状态栏写入提示消息。
+    void setProjectStatus (const QString& message) { setStatus (message); }
 
     // 项目模式下的 XML 产物统一写入 <项目目录>/generated/robot-models；空路径表示
     // 独立 WorkCell 工作流，继续使用运行时默认目录但不在界面中暴露可编辑目录输入。
@@ -195,6 +201,7 @@ class RobotModelBuilderWidget : public QWidget
     ImportedDocumentSpec _importedDocument;
     QByteArray _projectCleanSnapshot;
     bool _projectSnapshotActive = false;
+    QStringList _lastUrdfImportWarnings;    // 最近一次 URDF 导入的非致命警告（供 UI 展示）。
 };
 
 }    // namespace rws

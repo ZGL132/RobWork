@@ -195,8 +195,26 @@ int main (int argc, char** argv)
         QDir (projectDirectory.path ()).filePath ("generated/robot-models");
     if (!QDir (generatedDirectory).exists ())
         return fail ("Project output directory should be created inside the project directory.");
-    const QString projectDocument = projectDirectory.filePath ("robot-model.json");
     QString projectError;
+
+    // 无对话框导入路径：写入一个最小 URDF 草稿文件，验证 importUrdfFile 不弹文件对话框
+    // 即可填充机器人名称，供"从机器人文件创建项目"工作流复用。
+    const QString draftUrdf = projectDirectory.filePath ("DraftBot.urdf");
+    QFile draftUrdfFile (draftUrdf);
+    if (!draftUrdfFile.open (QFile::WriteOnly | QFile::Text) ||
+        draftUrdfFile.write (
+            "<robot name=\"DraftBot\"><link name=\"base\"/><link name=\"tip\"/>"
+            "<joint name=\"joint1\" type=\"revolute\"><parent link=\"base\"/>"
+            "<child link=\"tip\"/><axis xyz=\"0 0 1\"/>"
+            "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\"/>"
+            "</joint></robot>") < 0)
+        return fail ("Could not create a URDF project draft source file.");
+    draftUrdfFile.close ();
+    if (!widget.importUrdfFile (draftUrdf, &projectError) ||
+        findLineEdit (widget, "DraftBot") == NULL)
+        return fail ("A selected URDF should populate RobotModelBuilder without a file dialog.");
+
+    const QString projectDocument = projectDirectory.filePath ("robot-model.json");
     if (!widget.saveProjectDocument (projectDocument, &projectError))
         return fail ("Could not save the RobotModelBuilder project document.");
     QFile projectDocumentFile (projectDocument);

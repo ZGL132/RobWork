@@ -44,6 +44,9 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
     /// RobWorkStudio 关闭 WorkCell 时调用,这里无需处理
     void close ();
 
+  public Q_SLOTS:
+    void importRobotProjectSource (const QString& sourcePath);
+
   private Q_SLOTS:
     /**
      * @brief 槽函数:Widget 完成 XML 写入后,通过信号通知此处加载生成的场景文件

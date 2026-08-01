@@ -422,6 +422,12 @@ void RobWorkStudio::setupFileActions ()
         new QAction (tr ("Create Project from &WorkCell..."), this);    // owned
     connect (migrateWorkCellAction, SIGNAL (triggered ()), this, SLOT (createProjectFromWorkCell ()));
 
+    // 第十一阶段新增：从 URDF/XML 机器人文件创建草稿项目，交由 RobotModelBuilder 导入。
+    QAction* createRobotProjectAction =
+        new QAction (tr ("Create Project from &Robot File..."), this);    // owned
+    connect (createRobotProjectAction, SIGNAL (triggered ()), this,
+             SLOT (createProjectFromRobotFile ()));
+
     QAction* openAction =
         new QAction (QIcon (":/images/open.png"), tr ("&Open Project..."), this);    // owned
     connect (openAction, SIGNAL (triggered ()), this, SLOT (openProject ()));
@@ -477,6 +483,7 @@ void RobWorkStudio::setupFileActions ()
     ////
     _fileMenu = menuBar ()->addMenu (tr ("&File"));
     _fileMenu->addAction (newAction);
+    _fileMenu->addAction (createRobotProjectAction);
     _fileMenu->addAction (migrateWorkCellAction);
     _fileMenu->addAction (openAction);
     _fileMenu->addAction (closeAction);
@@ -1031,6 +1038,74 @@ void RobWorkStudio::newProject ()
     _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
     updateLastFiles ();
     updateProjectWindowTitle ();
+}
+
+// 从 URDF/XML 机器人文件创建草稿项目：主窗口只创建空项目并通过 Qt 元对象把源文件
+// 交给可选的 RobotModelBuilder 插件，避免主程序对该插件产生静态链接依赖。
+void RobWorkStudio::createProjectFromRobotFile ()
+{
+    const QString previousDirectory = QString::fromStdString (
+        _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
+    const QString sourcePath = QFileDialog::getOpenFileName (
+        this, tr ("Create Project from Robot File"), previousDirectory,
+        tr ("URDF Robot Files (*.urdf *.xml);;All Files (*.*)"));
+    if (sourcePath.isEmpty ())
+        return;
+
+    QString projectFile = QFileDialog::getSaveFileName (
+        this, tr ("New RobWorkStudio Project"), QFileInfo (sourcePath).absolutePath (),
+        tr ("RobWorkStudio Project (*.rwproj)"));
+    if (projectFile.isEmpty ())
+        return;
+    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
+        projectFile += QStringLiteral (".rwproj");
+    if (!confirmProjectClose ())
+        return;
+
+    ProjectManifest manifest;
+    manifest.project.name = QFileInfo (projectFile).completeBaseName ();
+    manifest.project.description = QString::fromUtf8 ("由 RobWorkStudio 机器人文件草稿创建的项目");
+    manifest.settings.insert (QStringLiteral ("pathPolicy"), QStringLiteral ("project-relative"));
+
+    QString error;
+    if (!_projectManager.createProject (projectFile, manifest, &error)) {
+        QMessageBox::critical (this, tr ("Create Project Failed"), error);
+        return;
+    }
+
+    _projectDocuments.closeResources ();
+    createEmptyWorkCell ();
+    _settingsMap->set< std::string > ("PreviousOpenDirectory",
+                                      QFileInfo (projectFile).absolutePath ().toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (projectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
+
+    RobWorkStudioPlugin* builder = NULL;
+    for (RobWorkStudioPlugin* plugin : getPlugins ()) {
+        if (plugin != NULL && plugin->name () == QStringLiteral ("RobotModelBuilder")) {
+            builder = plugin;
+            break;
+        }
+    }
+    if (builder == NULL) {
+        QMessageBox::warning (this, tr ("RobotModelBuilder Unavailable"),
+                              tr ("The project draft was created, but RobotModelBuilder is not loaded. "
+                                  "Load the plugin and import the robot file before freezing requirements."));
+        return;
+    }
+
+    if (!builder->isVisible ())
+        builder->showPlugin ();
+    if (!QMetaObject::invokeMethod (builder, "importRobotProjectSource", Qt::DirectConnection,
+                                    Q_ARG (QString, sourcePath))) {
+        QMessageBox::warning (this, tr ("RobotModelBuilder Unavailable"),
+                              tr ("The project draft was created, but the loaded RobotModelBuilder "
+                                  "does not support robot-file project import."));
+    }
 }
 
 // 从既有 WorkCell 创建项目：项目文件和资源复制完成后，先释放旧项目 Provider，再复用统一

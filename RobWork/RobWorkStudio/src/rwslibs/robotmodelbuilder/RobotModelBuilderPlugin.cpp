@@ -15,6 +15,8 @@
 
 #include <rw/models/WorkCell.hpp>
 
+#include <QMessageBox>
+
 using namespace rws;
 
 // -----------------------------------------------------------------------------
@@ -201,6 +203,59 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
     _widget->beginGeneratedProjectDocument ();
     _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
     studio->notifyProjectDocumentChanged ();
+    // 生成模型后自动显示插件面板，方便用户立即审阅并保存该模型。
+    if (!isVisible ())
+        showPlugin ();
+}
+
+// 槽：主窗口"从机器人文件创建项目"通过元对象调用。无对话框直接导入 URDF/XML 源文件，
+// 成功后在当前草稿项目内登记生成的模型资源并建立空基线。
+void RobotModelBuilderPlugin::importRobotProjectSource (const QString& sourcePath)
+{
+    if (_widget == NULL)
+        return;
+
+    // 导入前重申项目输出目录，保证生成的模型落在当前项目 generated/robot-models。
+    RobWorkStudio* studio = getRobWorkStudio ();
+    if (studio != NULL)
+        _widget->setProjectOutputDirectory (studio->projectDirectory ());
+
+    QString error;
+    if (!_widget->importUrdfFile (sourcePath, &error)) {
+        QMessageBox::warning (_widget, "RobotModelBuilder",
+                              "Could not import the selected robot file:\n" + error);
+        return;
+    }
+    if (studio == NULL || _projectProvider == NULL || _widget->projectOutputDirectory ().isEmpty ()) {
+        QMessageBox::warning (_widget, "RobotModelBuilder",
+                              "The robot was imported for review, but there is no active project to save it.");
+        return;
+    }
+
+    ProjectResource resource;
+    resource.id = QStringLiteral ("robot-model.main");
+    resource.kind = QStringLiteral ("robwork.robot-model");
+    resource.path = QStringLiteral ("generated/robot-models/%1.rmb.json").arg (
+        RobotModelXmlWriter::sanitizeFileBaseName (
+            QString::fromStdString (_widget->currentModelSpec ().robotName)));
+    resource.ownership = QStringLiteral ("generated");
+    resource.required = true;
+
+    bool created = false;
+    if (!studio->ensureGeneratedProjectResource (resource, &created, &error)) {
+        QMessageBox::warning (_widget, "RobotModelBuilder",
+                              "The robot was imported for review, but no project model resource was registered:\n" +
+                                  error);
+        return;
+    }
+    if (created) {
+        _projectProvider->adoptGeneratedResource (resource.id);
+        _widget->beginGeneratedProjectDocument ();
+        _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
+        studio->notifyProjectDocumentChanged ();
+    }
+    _widget->setProjectStatus ("Robot project draft imported. Review the model, then use File > Save Project "
+                               "to generate the managed .rmb.json.");
 }
 
 // -----------------------------------------------------------------------------
