@@ -29,6 +29,7 @@ class StructureCandidateTableModel;
 class StructureConstraintTableModel;
 class StructureOptimizationController;
 class StructureVariableTableModel;
+class RobWorkStudio;
 
 class StructureOptimizerWidget : public QWidget
 {
@@ -42,6 +43,7 @@ public:
     StructureOptimizationProblem collectProblem() const;
     QString statusText() const;
     void setPreviewHost(IWorkCellPreviewHost* host);
+    void setRobWorkStudio(RobWorkStudio* studio);
     void setScenarioContext(rw::models::WorkCell* workcell,
                             const rw::kinematics::State& state);
     void clearScenarioContext();
@@ -112,6 +114,7 @@ private:
     RobotModelSourceStatus _modelSourceStatus = RobotModelSourceStatus::Untracked;
     rw::models::WorkCell* _scenarioWorkCell = nullptr;
     rw::kinematics::State _scenarioState;
+    RobWorkStudio* _studio = nullptr;
 
     QTabWidget* _tabs = nullptr;
     QTableView* _taskView = nullptr;

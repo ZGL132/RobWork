@@ -21,6 +21,7 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/loaders/dom/DOMProximitySetupSaver.hpp>
+#include <rw/loaders/dom/DOMWorkCellSaver.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/proximity/ProximitySetup.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
@@ -28,6 +29,7 @@
 #include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
 
 #include <string>
+#include <fstream>
 
 using namespace rw::core;
 using namespace rw::loaders;
@@ -81,5 +83,37 @@ TEST_F (DOMProximitySetupSaverTest, LoadWCSerializeProxAndReload)
 
     // Compare number of rules in the original proximity setup with the serialized one.
     EXPECT_EQ(proxSetup.getProximitySetupRules().size(), serializedProxSetup.getProximitySetupRules().size());
+}
+
+TEST (DOMWorkCellSaverTest, CollisionSetupOnlyWorkCellDoesNotWriteToEmptyProximityPath)
+{
+    const std::string source = TestEnvironment::testfilesDir () + "/simple/workcell.wc.xml";
+    const rw::models::WorkCell::Ptr workcell = WorkCellLoader::Factory::load (source);
+    ASSERT_TRUE (workcell != nullptr);
+
+    // XMLRWLoader represents a WorkCell without ProximitySetup using empty path properties.
+    // Set the contract explicitly so this regression remains independent of path normalization.
+    workcell->getPropertyMap ().set< std::string > ("ProximitySetupFilePath", std::string ());
+    workcell->getPropertyMap ().set< std::string > ("ProximitySetupRelFilePath", std::string ());
+    const std::string proximityPath = workcell->getPropertyMap ().get< std::string > (
+        "ProximitySetupFilePath", std::string ());
+    ASSERT_TRUE (proximityPath.empty ());
+
+    const std::string target = ::testing::TempDir () + "CollisionSetupOnlyWorkCell.wc.xml";
+    EXPECT_NO_THROW (rw::loaders::DOMWorkCellSaver::save (
+        workcell, workcell->getDefaultState (), target));
+
+    std::ifstream saved (target.c_str ());
+    ASSERT_TRUE (saved.good ());
+    const std::string xml ((std::istreambuf_iterator< char > (saved)),
+                           std::istreambuf_iterator< char > ());
+    EXPECT_EQ (std::string::npos, xml.find ("<ProximitySetup file=\"\""));
+
+    workcell->getPropertyMap ().erase ("ProximitySetupFilePath");
+    workcell->getPropertyMap ().erase ("ProximitySetupRelFilePath");
+    const std::string missingPropertiesTarget =
+        ::testing::TempDir () + "MissingProximityPropertiesWorkCell.wc.xml";
+    EXPECT_NO_THROW (rw::loaders::DOMWorkCellSaver::save (
+        workcell, workcell->getDefaultState (), missingPropertiesTarget));
 }
 

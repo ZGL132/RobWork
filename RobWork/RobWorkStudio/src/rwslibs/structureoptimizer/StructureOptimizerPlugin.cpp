@@ -27,6 +27,7 @@ StructureOptimizerPlugin::~StructureOptimizerPlugin()
 void StructureOptimizerPlugin::initialize()
 {
     _widget->setPreviewHost(this);
+    _widget->setRobWorkStudio(getRobWorkStudio());
 
     _projectProvider = new CallbackProjectDocumentProvider(
         QStringLiteral("rws.structure-optimizer"),

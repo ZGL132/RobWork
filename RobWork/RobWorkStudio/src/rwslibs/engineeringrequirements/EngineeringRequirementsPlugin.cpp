@@ -15,6 +15,7 @@
 #include <rw/math/RPY.hpp>
 #include <rw/models/WorkCell.hpp>
 
+#include <QDir>
 #include <QTimer>
 
 #include <string>
@@ -185,13 +186,18 @@ void EngineeringRequirementsPlugin::initialize() {
         QStringLiteral("rws.engineering-requirements"),
         QStringLiteral("rws.engineering-requirements"),
         [this](const QString& path, const ProjectDocumentContext&, QString* error) {
-            return _widget->loadProjectDocument(path, error);
+            const bool loaded = _widget->loadProjectDocument(path, error);
+            _projectResourceActive = loaded;
+            return loaded;
         },
         [this](const QString& targetPath, const ProjectDocumentContext&, QString* error) {
             return _widget->saveProjectDocument(targetPath, error);
         },
         CallbackProjectDocumentProvider::CanCloseHandler(),
-        CallbackProjectDocumentProvider::CloseHandler(),
+        [this]() {
+            _projectResourceActive = false;
+            _widget->clearProjectDocumentContext();
+        },
         [this]() { _widget->markProjectDocumentClean(); });
 
     if (getRobWorkStudio() != nullptr) {
@@ -211,10 +217,45 @@ void EngineeringRequirementsPlugin::initialize() {
     connect(_widget, &EngineeringRequirementsWidget::requirementsChanged, this, [this]() {
         if (_projectProvider == nullptr || getRobWorkStudio() == nullptr)
             return;
+        RobWorkStudio* studio = getRobWorkStudio();
+        if (!studio->projectDirectory().isEmpty() && !_projectResourceActive) {
+            const QString workCellResourceId = studio->mainWorkCellResourceId();
+            if (workCellResourceId.isEmpty()) {
+                RW_WARN("EngineeringRequirements configuration requires a main WorkCell project resource.");
+                return;
+            }
+
+            ProjectResource resource;
+            resource.id = QStringLiteral("engineering-requirements.main");
+            resource.kind = QStringLiteral("rws.engineering-requirements");
+            resource.path = QStringLiteral("requirements/main.requirements.json");
+            resource.ownership = QStringLiteral("generated");
+            resource.required = false;
+            resource.dependencies = {workCellResourceId};
+            QString modelPath;
+            QString modelError;
+            if (studio->resolveProjectResource(
+                    QStringLiteral("robot-model.main"), modelPath, &modelError))
+                resource.dependencies << QStringLiteral("robot-model.main");
+
+            bool created = false;
+            QString creationError;
+            if (!studio->ensureGeneratedProjectResource(resource, &created, &creationError)) {
+                RW_WARN("EngineeringRequirements project resource creation failed: "
+                        << creationError.toStdString());
+                return;
+            }
+            if (created) {
+                _projectProvider->adoptGeneratedResource(resource.id);
+                _widget->beginGeneratedProjectDocument(
+                    QDir(studio->projectDirectory()).filePath(resource.path));
+                _projectResourceActive = true;
+            }
+        }
         // requirementsChanged 同时覆盖表格编辑、撤销重做和冻结状态变化；Widget 使用
         // 规范 JSON 快照判断真实变化，Provider 因而不会把普通控件交互误报为脏数据。
         _projectProvider->setDirty(_widget->isProjectDocumentDirty());
-        getRobWorkStudio()->notifyProjectDocumentChanged();
+        studio->notifyProjectDocumentChanged();
     });
 
 // 检查当前插件是否已成功嵌入到 RobWorkStudio 主程序环境中（防止空指针调用导致程序崩溃）

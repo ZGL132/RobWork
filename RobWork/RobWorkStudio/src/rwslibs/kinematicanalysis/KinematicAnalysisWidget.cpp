@@ -42,6 +42,7 @@
 #include <QColor>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QFrame>
@@ -4174,9 +4175,20 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
         setStatus(tr("Cannot import frozen requirements: a task table and WorkCell are required."));
         return;
     }
-    const QString path = QFileDialog::getOpenFileName(
-        this, tr("Import frozen engineering requirements"), QString(),
-        tr("Engineering requirements (*.requirements.json *.json);;All files (*)"));
+    QString path;
+    QString resolveError;
+    if (_studio != nullptr) {
+        _studio->resolveProjectResource(
+            QStringLiteral("engineering-requirements.main"), path, &resolveError);
+    }
+    if (path.isEmpty()) {
+        const QString initialDirectory = _studio != nullptr && !_studio->projectDirectory().isEmpty()
+            ? QDir(_studio->projectDirectory()).filePath(QStringLiteral("requirements"))
+            : QString();
+        path = QFileDialog::getOpenFileName(
+            this, tr("Import frozen engineering requirements"), initialDirectory,
+            tr("Engineering requirements (*.requirements.json *.json);;All files (*)"));
+    }
     if (path.isEmpty()) {
         setStatus(tr("Frozen requirement import canceled."));
         return;

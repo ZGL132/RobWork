@@ -966,6 +966,100 @@ int testWidgetProjectDocumentSnapshotTracksRequirementEdits()
     return 0;
 }
 
+// 冻结/解冻也必须发出 requirementsChanged，使 Provider 脏状态与标题栏同步更新。
+int testWidgetFreezeAndUnfreezeEmitRequirementChanges()
+{
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+    const QString modelDirectory = projectDirectory.filePath("generated/robot-models");
+    REQUIRE(QDir().mkpath(modelDirectory));
+
+    rws::RobotModelSpec model;
+    model.robotName = "FreezeSignalRobot";
+    const QString modelPath = modelDirectory + "/FreezeSignalRobot.rmb.json";
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(modelFile.write(rws::RobotModelSpecJson::toJson(model).c_str()) > 0);
+    modelFile.close();
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("FreezeSignalBase", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("FreezeSignalTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "FreezeSignalWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setProjectOutputDirectory(projectDirectory.path());
+    widget.setProjectModelPath(modelPath);
+    widget.setWorkCell(workcell.get());
+    QString error;
+    REQUIRE(widget.bindGeneratedProjectModel(&error));
+
+    int changeCount = 0;
+    QObject::connect(&widget, &rws::EngineeringRequirementsWidget::requirementsChanged,
+                     [&changeCount]() { ++changeCount; });
+    QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
+    QPushButton* unfreeze = widget.findChild<QPushButton*>("unfreezeRequirementSetButton");
+    REQUIRE(freeze != nullptr);
+    REQUIRE(unfreeze != nullptr);
+
+    freeze->click();
+    REQUIRE(widget.requirementSet().frozen);
+    REQUIRE(changeCount == 1);
+
+    unfreeze->click();
+    REQUIRE(!widget.requirementSet().frozen);
+    REQUIRE(changeCount == 2);
+    return 0;
+}
+
+// 副本路径策略：有项目时导出到 requirements/exports、导入优先该目录，无项目回退默认。
+int testProjectRequirementCopyPathPolicy()
+{
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+
+    const QString requirementsDirectory = projectDirectory.filePath("requirements");
+    const QString exportDirectory = requirementsDirectory + "/exports";
+    REQUIRE(rws::EngineeringRequirementsWidget::requirementCopyExportPath(
+                projectDirectory.path()) ==
+            exportDirectory + "/requirements-copy.requirements.json");
+    REQUIRE(rws::EngineeringRequirementsWidget::requirementCopyImportDirectory(
+                projectDirectory.path()) == requirementsDirectory);
+    REQUIRE(rws::EngineeringRequirementsWidget::requirementCopyExportPath(QString()) ==
+            QStringLiteral("requirements.requirements.json"));
+
+    REQUIRE(QDir().mkpath(exportDirectory));
+    REQUIRE(rws::EngineeringRequirementsWidget::requirementCopyImportDirectory(
+                projectDirectory.path()) == exportDirectory);
+    return 0;
+}
+
+// 生成资源基线：beginGeneratedProjectDocument 建立以当前配置为已保存快照的基线，
+// 使首次编辑即可参与项目脏状态，副本导入导出使用项目内路径。
+int testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline()
+{
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+
+    const QString requirementsDirectory = projectDirectory.filePath("requirements");
+    const QString primaryDocument = requirementsDirectory + "/main.requirements.json";
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.beginGeneratedProjectDocument(primaryDocument);
+    REQUIRE(!widget.isProjectDocumentDirty());
+    widget.findChild<QPushButton*>("addRequirementPoseTaskButton")->click();
+    REQUIRE(widget.isProjectDocumentDirty());
+    return 0;
+}
+
 int testWidgetResolvesGeometryFeatureUsingLatestJogState()
 {
     // 构造一个可在 State 中移动的工装 Frame。默认状态保持原点，而模拟的
@@ -1166,11 +1260,19 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "widget_project_paths") {
+        QApplication app(argc, argv);
+        return testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline();
+    }
     if (argc > 1 && std::string(argv[1]) == "widget") {
         QApplication app(argc, argv);
         if (testWidgetBuildsEngineeringRequirementWorkflow() != 0)
             return 1;
         if (testWidgetProjectDocumentSnapshotTracksRequirementEdits() != 0)
+            return 1;
+        if (testWidgetFreezeAndUnfreezeEmitRequirementChanges() != 0)
+            return 1;
+        if (testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline() != 0)
             return 1;
         if (testWidgetExposesSemanticKeyStationInspector() != 0)
             return 1;
@@ -1227,6 +1329,8 @@ int main(int argc, char** argv)
     if (testTemplateParameterVisibilityMatchesProcessSemantics() != 0)
         return 1;
     if (testPalletizingTemplateUsesConfiguredGridDimensions() != 0)
+        return 1;
+    if (testProjectRequirementCopyPathPolicy() != 0)
         return 1;
     std::puts("All engineering requirements tests passed.");
     return 0;

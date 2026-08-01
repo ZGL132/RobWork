@@ -15,9 +15,11 @@
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+#include <rws/RobWorkStudio.hpp>
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QDir>
 #include <QFormLayout>
 #include <QFileDialog>
 #include <QFile>
@@ -232,6 +234,12 @@ StructureOptimizerWidget::~StructureOptimizerWidget()
 void StructureOptimizerWidget::setPreviewHost(IWorkCellPreviewHost* host)
 {
     _previewController.reset(host != nullptr ? new CandidatePreviewController(host) : nullptr);
+}
+
+// 由插件在 initialize 注入宿主主窗口，用于按资源 ID 解析项目内需求文件（而非扫描目录）。
+void StructureOptimizerWidget::setRobWorkStudio(RobWorkStudio* studio)
+{
+    _studio = studio;
 }
 
 void StructureOptimizerWidget::setScenarioContext(
@@ -789,9 +797,20 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
 
 void StructureOptimizerWidget::newProjectFromFrozenRequirements()
 {
-    const QString path = QFileDialog::getOpenFileName(
-        this, "从冻结需求创建结构优化项目", _projectPath,
-        "Frozen engineering requirement (*.requirements.json *.json)");
+    QString path;
+    QString resolveError;
+    if (_studio != nullptr) {
+        _studio->resolveProjectResource(
+            QStringLiteral("engineering-requirements.main"), path, &resolveError);
+    }
+    if (path.isEmpty()) {
+        const QString initialDirectory = _studio != nullptr && !_studio->projectDirectory().isEmpty()
+            ? QDir(_studio->projectDirectory()).filePath(QStringLiteral("requirements"))
+            : _projectPath;
+        path = QFileDialog::getOpenFileName(
+            this, "从冻结需求创建结构优化项目", initialDirectory,
+            "Frozen engineering requirement (*.requirements.json *.json)");
+    }
     if (path.isEmpty())
         return;
 

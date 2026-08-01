@@ -1087,6 +1087,27 @@ void EngineeringRequirementsWidget::setProjectOutputDirectory(const QString& pro
         QFileInfo(projectDirectory).absoluteFilePath();
 }
 
+// 导出副本的默认路径：有项目时落在项目内 requirements/exports/ 下（与正式资源分离），
+// 无项目时回退为当前工作目录下的默认文件名。
+QString EngineeringRequirementsWidget::requirementCopyExportPath(const QString& projectDirectory)
+{
+    if (projectDirectory.isEmpty())
+        return QStringLiteral("requirements.requirements.json");
+    return QDir(projectDirectory).filePath(
+        QStringLiteral("requirements/exports/requirements-copy.requirements.json"));
+}
+
+// 导入副本的初始目录：优先项目的 requirements/exports（已有导出副本），否则回退
+// requirements 目录；无项目时返回空让文件对话框使用默认位置。
+QString EngineeringRequirementsWidget::requirementCopyImportDirectory(const QString& projectDirectory)
+{
+    if (projectDirectory.isEmpty())
+        return QString();
+    const QDir project(projectDirectory);
+    const QString exports = project.filePath(QStringLiteral("requirements/exports"));
+    return QDir(exports).exists() ? exports : project.filePath(QStringLiteral("requirements"));
+}
+
 // 记录项目清单中 robot-model.main 资源解析出的绝对路径（由插件在项目打开/模型变化时
 // 同步，空表示当前项目尚未生成机器人模型）。仅用于绑定，不参与需求资源序列化。
 void EngineeringRequirementsWidget::setProjectModelPath(const QString& modelPath)
@@ -1155,7 +1176,9 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
 void EngineeringRequirementsWidget::saveRequirements()
 {
     syncTablesToRequirements();
-    const QString path = QFileDialog::getSaveFileName(this, QString::fromUtf8("保存研发需求"), "requirements.requirements.json", "Requirement set (*.requirements.json)");
+    const QString path = QFileDialog::getSaveFileName(
+        this, QString::fromUtf8("保存研发需求"),
+        requirementCopyExportPath(_projectOutputDirectory), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QString error;
     // 此按钮现在表示“导出一份项目外需求文件”。它复用相同的格式写入逻辑，但故意
@@ -1166,7 +1189,9 @@ void EngineeringRequirementsWidget::saveRequirements()
 
 void EngineeringRequirementsWidget::loadRequirements()
 {
-    const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("加载研发需求"), QString(), "Requirement set (*.requirements.json)");
+    const QString path = QFileDialog::getOpenFileName(
+        this, QString::fromUtf8("加载研发需求"),
+        requirementCopyImportDirectory(_projectOutputDirectory), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QString error;
     // 此按钮现在表示“导入项目外需求文件”。导入后应与当前 rwproj 的已保存快照比较，
@@ -1213,6 +1238,23 @@ void EngineeringRequirementsWidget::markProjectDocumentClean()
     }
 }
 
+// 首次编辑生成资源后建立会话基线：记录项目内路径并以当前配置为已保存快照，
+// 使随后的编辑能正确参与主窗口脏状态；路径仅存于运行时，不进入业务 JSON。
+void EngineeringRequirementsWidget::beginGeneratedProjectDocument(const QString& path)
+{
+    _projectDocumentPath = path;
+    _pendingProjectDocumentSnapshot.clear();
+    _savedProjectDocumentSnapshot = serializedProjectDocument(path);
+}
+
+// 项目关闭或切换时释放仅用于脏比较的路径与快照，防止旧项目基线污染新项目。
+void EngineeringRequirementsWidget::clearProjectDocumentContext()
+{
+    _projectDocumentPath.clear();
+    _savedProjectDocumentSnapshot.clear();
+    _pendingProjectDocumentSnapshot.clear();
+}
+
 QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QString& documentPath) const
 {
     // 工程目录可以整体搬迁，故模型引用必须相对于所属需求 JSON 保存。绝对路径只在
@@ -1247,6 +1289,12 @@ QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QStrin
 bool EngineeringRequirementsWidget::writeRequirementDocument(const QString& targetPath, QString* error)
 {
     syncTablesToRequirements();
+    const QString directory = QFileInfo(targetPath).absolutePath();
+    if (!QDir().mkpath(directory)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8("Unable to create requirement directory: %1").arg(directory);
+        return false;
+    }
     QSaveFile file(targetPath);
     if (!file.open(QIODevice::WriteOnly)) {
         if (error != nullptr)
@@ -1464,8 +1512,18 @@ void EngineeringRequirementsWidget::freezeRequirements()
     setStatus(QString::fromUtf8("需求已校验并冻结：%1 个工位可用于 P2 运动学优化；%2 项建议需求未验证，未进入优化；%3 个接近/撤离规则已记录，连续 IK 与路径碰撞将在 P3 验证。")
         .arg(_compiled.poseTasks.size()).arg(_compiled.diagnostics.size()).arg(pathPending));
     refreshTables();
+    Q_EMIT requirementsChanged();
 }
-void EngineeringRequirementsWidget::unfreezeRequirements() { _requirements.frozen = false; _compiled = CompiledRequirementSet(); _frozenArtifact = FrozenRequirementArtifact(); setStatus(QString::fromUtf8("需求已解冻，可继续编辑。")); refreshTables(); }
+void EngineeringRequirementsWidget::unfreezeRequirements()
+{
+    if (!_requirements.frozen) return;
+    _requirements.frozen = false;
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
+    setStatus(QString::fromUtf8("需求已解冻，可继续编辑。"));
+    refreshTables();
+    Q_EMIT requirementsChanged();
+}
 void EngineeringRequirementsWidget::addPoseTask()
 {
     if (_requirements.frozen) return;

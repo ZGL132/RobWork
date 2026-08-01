@@ -43,6 +43,10 @@ public:
     void setWorkCell(rw::models::WorkCell* workcell);
     // 同步当前项目输出目录（空表示独立 WorkCell 工作流）。
     void setProjectOutputDirectory(const QString& projectDirectory);
+    // 导出副本默认路径（有项目时落在 requirements/exports/ 下）。
+    static QString requirementCopyExportPath(const QString& projectDirectory);
+    // 导入副本初始目录（优先 requirements/exports，否则 requirements）。
+    static QString requirementCopyImportDirectory(const QString& projectDirectory);
     // 由项目清单解析 robot-model.main 后注入；不扫描目录猜测模型。
     void setProjectModelPath(const QString& modelPath);
     // 绑定项目清单中与当前设备匹配的 .rmb.json 工程模型。
@@ -76,6 +80,10 @@ public:
     bool saveProjectDocument(const QString& targetPath, QString* error = nullptr);
     bool isProjectDocumentDirty();
     void markProjectDocumentClean();
+    // 首次编辑生成资源后建立会话基线与项目内路径。
+    void beginGeneratedProjectDocument(const QString& path);
+    // 项目关闭/切换时释放仅用于脏比较的路径与快照。
+    void clearProjectDocumentContext();
 
 Q_SIGNALS:
     void geometryFeaturePickRequested();

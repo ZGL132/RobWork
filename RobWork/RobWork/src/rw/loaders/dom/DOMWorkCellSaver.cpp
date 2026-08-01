@@ -1221,17 +1221,18 @@ void createDOMDocument (DOMElem::Ptr rootDoc, rw::core::Ptr< const rw::models::W
     // get where to save the proximity setup, assumes that a main proximity setup file was provided.
     const std::string id_main = "ProximitySetupFilePath";
     const std::string id_rel  = "ProximitySetupRelFilePath";
-    std::string proxFilePath =
-        static_cast< std::string > (workcell->getPropertyMap ().get< std::string > (id_main));
-    std::string proxRelFilepath =
-        static_cast< std::string > (workcell->getPropertyMap ().get< std::string > (id_rel));
-    // std::cout << "Proximity filename: " << proxFilePath << std::endl;
-    // save using the DOMProximitySetupSaver
-    rw::loaders::DOMProximitySetupSaver::save (prox_setup, proxFilePath);
+    std::string proxFilePath = workcell->getPropertyMap ().get< std::string > (
+        id_main, std::string ());
+    std::string proxRelFilepath = workcell->getPropertyMap ().get< std::string > (
+        id_rel, std::string ());
+    // WorkCells loaded from legacy CollisionSetup-only XML have no ProximitySetup
+    // sidecar contract. Never attempt to save a sidecar or emit an empty reference.
+    if (!proxFilePath.empty () && !proxRelFilepath.empty ()) {
+        rw::loaders::DOMProximitySetupSaver::save (prox_setup, proxFilePath);
 
-    // add relative reference to the proximity setup file
-    DOMElem::Ptr element = rootElement->addChild ("ProximitySetup");
-    element->addAttribute ("file")->setValue (proxRelFilepath);
+        DOMElem::Ptr element = rootElement->addChild ("ProximitySetup");
+        element->addAttribute ("file")->setValue (proxRelFilepath);
+    }
 }
 }    // end of anonymous namespace
 
