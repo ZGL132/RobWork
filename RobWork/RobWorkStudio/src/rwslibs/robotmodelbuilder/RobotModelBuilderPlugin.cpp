@@ -7,6 +7,7 @@
 #include "RobotModelBuilderPlugin.hpp"
 
 #include "RobotModelBuilderWidget.hpp"
+#include "RobotModelXmlWriter.hpp"
 #include "WorkCellConverter.hpp"
 
 #include <rws/CallbackProjectDocumentProvider.hpp>
@@ -168,6 +169,38 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
     // 将解析提取出的模型规范 spec 以及警告列表灌入 Builder Widget 中，
     // 触发 UI 各个标签页表格 (Kinematics, Drawables, Limits, Poses 等) 的全量回填
     _widget->syncFromWorkCellSpec (spec, warnings);
+
+    RobWorkStudio* studio = getRobWorkStudio ();
+    if (studio == NULL || _projectProvider == NULL || _widget->projectOutputDirectory ().isEmpty ())
+        return;
+
+    // 方案 A：一个 WorkCell 项目只有一个当前工程机器人模型。固定资源 ID 避免 Provider
+    // 在同一会话中绑定多个 .rmb.json；多机器人项目需要显式的选择工作流。
+    ProjectResource resource;
+    resource.id = QStringLiteral ("robot-model.main");
+    resource.kind = QStringLiteral ("robwork.robot-model");
+    resource.path = QStringLiteral ("generated/robot-models/%1.rmb.json").arg (
+        RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (spec.robotName)));
+    resource.ownership = QStringLiteral ("generated");
+    resource.required = true;
+    const QString workcellResourceId = studio->mainWorkCellResourceId ();
+    if (!workcellResourceId.isEmpty ())
+        resource.dependencies << workcellResourceId;
+
+    bool created = false;
+    QString resourceError;
+    if (!studio->ensureGeneratedProjectResource (resource, &created, &resourceError)) {
+        RW_WARN ("RobotModelBuilder could not register the generated project model: "
+                 << resourceError.toStdString ());
+        return;
+    }
+    if (!created)
+        return;
+
+    _projectProvider->adoptGeneratedResource (resource.id);
+    _widget->beginGeneratedProjectDocument ();
+    _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
+    studio->notifyProjectDocumentChanged ();
 }
 
 // -----------------------------------------------------------------------------

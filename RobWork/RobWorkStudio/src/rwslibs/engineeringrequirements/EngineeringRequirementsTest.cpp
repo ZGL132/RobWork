@@ -11,6 +11,7 @@
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -985,6 +986,61 @@ int testWidgetResolvesGeometryFeatureUsingLatestJogState()
     return 0;
 }
 
+// 正向/负向测试：需求冻结前能从项目 generated/robot-models 自动绑定与设备名称匹配的
+// 唯一工程模型（含内容指纹）；出现多个模型时不得按文件名猜测，必须明确失败。
+int testWidgetBindsMatchingGeneratedProjectModel()
+{
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+    const QString modelDirectory = projectDirectory.filePath("generated/robot-models");
+    REQUIRE(QDir().mkpath(modelDirectory));
+
+    rws::RobotModelSpec model;
+    model.robotName = "ProjectRobot";
+    const QString modelPath = modelDirectory + "/ProjectRobot.rmb.json";
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(modelFile.write(rws::RobotModelSpecJson::toJson(model).c_str()) > 0);
+    modelFile.close();
+
+    rw::kinematics::StateStructure::Ptr structure = rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ProjectBase", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("ProjectTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ProjectWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setProjectOutputDirectory(projectDirectory.path());
+    widget.setWorkCell(workcell.get());
+    QString error;
+    REQUIRE(widget.bindGeneratedProjectModel(&error));
+    const rws::RequirementSet requirements = widget.requirementSet();
+    REQUIRE(requirements.modelBinding.sourcePath == modelPath.toStdString());
+    REQUIRE(requirements.modelBinding.robotName == model.robotName);
+    REQUIRE(requirements.modelBinding.robotModelFingerprint ==
+            rws::RobotModelFingerprint::canonicalSha256(model));
+
+    // 方案 A 只支持一个当前工程模型。出现多个 sidecar 时不能根据文件名或目录顺序
+    // 猜测，否则冻结可能绑定错误机器人。
+    QFile secondModelFile(modelDirectory + "/AnotherRobot.rmb.json");
+    REQUIRE(secondModelFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(secondModelFile.write("{}") > 0);
+    secondModelFile.close();
+    rws::EngineeringRequirementsWidget ambiguousWidget;
+    ambiguousWidget.setProjectOutputDirectory(projectDirectory.path());
+    ambiguousWidget.setWorkCell(workcell.get());
+    REQUIRE(!ambiguousWidget.bindGeneratedProjectModel(&error));
+    REQUIRE(error.contains(QString::fromUtf8("多个")));
+    REQUIRE(ambiguousWidget.requirementSet().modelBinding.sourcePath.empty());
+    return 0;
+}
+
 int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
 {
     // 覆盖率计算依赖每轴采样点数。工程师在表格中修改该值后，再执行新增、保存或冻结等会
@@ -1111,6 +1167,8 @@ int main(int argc, char** argv)
         if (testWidgetExposesSemanticKeyStationInspector() != 0)
             return 1;
         if (testWidgetResolvesGeometryFeatureUsingLatestJogState() != 0)
+            return 1;
+        if (testWidgetBindsMatchingGeneratedProjectModel() != 0)
             return 1;
         if (testWidgetPreservesBoxSamplingDensityWhenSynchronizing() != 0)
             return 1;

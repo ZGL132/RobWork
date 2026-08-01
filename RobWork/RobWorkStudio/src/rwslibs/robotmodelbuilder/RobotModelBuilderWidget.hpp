@@ -41,6 +41,8 @@ class RobotModelBuilderWidget : public QWidget
     bool loadProjectDocument (const QString& path, QString* error = nullptr);
     /** @brief 把当前模型写入保存事务分配的暂存路径，不直接覆盖正式项目资源。 */
     bool saveProjectDocument (const QString& targetPath, QString* error = nullptr) const;
+    /** @brief 首次登记生成资源后建立空基线，使当前 WorkCell 导入模型进入项目保存事务。 */
+    void beginGeneratedProjectDocument ();
     /** @brief 比较规范 JSON 快照，忽略控件焦点和页签选择等非持久化 UI 状态。 */
     bool isProjectDocumentDirty () const;
     /** @brief 仅在 ProjectSaveTransaction 完整提交成功后更新干净快照。 */

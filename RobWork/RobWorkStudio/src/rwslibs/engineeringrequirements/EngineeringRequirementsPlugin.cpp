@@ -164,6 +164,16 @@ void EngineeringRequirementsPlugin::initialize() {
     _widget = new EngineeringRequirementsWidget(this);
     setWidget(_widget);
 
+    // 订阅项目上下文变化并主动读取一次当前目录：冻结时能自动定位项目
+    // generated/robot-models 中的工程模型，项目切换/另存为后不会沿用旧绝对路径。
+    if (getRobWorkStudio() != nullptr) {
+        connect(getRobWorkStudio(), &RobWorkStudio::projectContextChanged, this,
+                [this](const QString& projectDirectory) {
+                    _widget->setProjectOutputDirectory(projectDirectory);
+                });
+        _widget->setProjectOutputDirectory(getRobWorkStudio()->projectDirectory());
+    }
+
     _projectProvider = new CallbackProjectDocumentProvider(
         QStringLiteral("rws.engineering-requirements"),
         QStringLiteral("rws.engineering-requirements"),

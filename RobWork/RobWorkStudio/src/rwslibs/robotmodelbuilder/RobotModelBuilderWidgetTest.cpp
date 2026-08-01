@@ -206,6 +206,20 @@ int main (int argc, char** argv)
     widget.markProjectDocumentClean ();
     if (widget.isProjectDocumentDirty ())
         return fail ("Freshly saved RobotModelBuilder project document should be clean.");
+
+    // 从当前 WorkCell 导入的模型还没有对应的 JSON 资源。插件登记生成资源后，Widget 必须
+    // 建立空基线，使下一次项目保存通过统一事务写入首个 .rmb.json，而不是在同步时直接落盘。
+    // （英文原注：A model imported from the current WorkCell does not have an existing JSON
+    //   resource yet. After the plugin registers that generated resource, the widget must
+    //   establish an empty baseline so the next project save writes the initial .rmb.json
+    //   through the transaction.）
+    widget.beginGeneratedProjectDocument ();
+    if (!widget.isProjectDocumentDirty ())
+        return fail ("A newly registered generated RobotModelBuilder resource should be dirty.");
+    widget.markProjectDocumentClean ();
+    if (widget.isProjectDocumentDirty ())
+        return fail ("A committed generated RobotModelBuilder resource should be clean.");
+
     robotName->setText ("ProjectSnapshotDirty");
     if (!widget.isProjectDocumentDirty ())
         return fail ("Changing a persisted model field should mark the project document dirty.");

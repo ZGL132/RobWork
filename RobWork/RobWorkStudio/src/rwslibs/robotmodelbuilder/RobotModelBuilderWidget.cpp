@@ -390,6 +390,14 @@ bool RobotModelBuilderWidget::saveProjectDocument (const QString& targetPath, QS
     return true;
 }
 
+void RobotModelBuilderWidget::beginGeneratedProjectDocument ()
+{
+    // 新资源没有可加载的历史 JSON。空基线让当前由 WorkCell 同步得到的模型成为未保存变更，
+    // 由项目保存事务首次写入 generated/robot-models，而不是在同步时直接落盘。
+    _projectCleanSnapshot.clear ();
+    _projectSnapshotActive = true;
+}
+
 // 脏判定：比较当前模型快照与干净基线；未加载过项目资源时一律视为干净。
 bool RobotModelBuilderWidget::isProjectDocumentDirty () const
 {
