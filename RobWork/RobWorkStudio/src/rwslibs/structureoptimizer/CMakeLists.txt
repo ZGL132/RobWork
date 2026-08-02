@@ -94,6 +94,8 @@ if(build)
     # ── 测试可执行文件 ────────────────────────────────────────────────────
     add_executable(sdurws_structureoptimizer_test
         StructureOptimizationTest.cpp
+        StructureOptimizerPlugin.cpp
+        StructureOptimizerPlugin.hpp
         StructureVariableTableModel.cpp
         StructureVariableTableModel.hpp
         OptimizationTaskTableModel.cpp

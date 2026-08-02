@@ -72,9 +72,17 @@ void StructureOptimizerPlugin::initialize()
                 QStringLiteral("optimizations/main.structure-optimization.json");
             resource.ownership = QStringLiteral("generated");
             resource.required = true;
-            const QString workCellResourceId = studio->mainWorkCellResourceId();
-            if (!workCellResourceId.isEmpty())
-                resource.dependencies << workCellResourceId;
+            const QStringList upstreamResourceIds = {
+                QStringLiteral("scene.main"),
+                QStringLiteral("robot-model.main"),
+                QStringLiteral("engineering-requirements.main")};
+            for (const QString& resourceId : upstreamResourceIds) {
+                QString resolvedPath;
+                if (studio->resolveProjectResource(resourceId, resolvedPath, nullptr) &&
+                    !resource.dependencies.contains(resourceId)) {
+                    resource.dependencies.push_back(resourceId);
+                }
+            }
 
             bool created = false;
             QString resourceError;

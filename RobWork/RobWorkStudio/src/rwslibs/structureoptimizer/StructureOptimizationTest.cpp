@@ -18,6 +18,7 @@
 #include "OptimizationTaskTableModel.hpp"
 #include "StructureCandidateTableModel.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizerPlugin.hpp"
 #include "StructureOptimizerWidget.hpp"
 #include "StructureOptimizationController.hpp"
 #include "StructureOptimizationObjectiveProfile.hpp"
@@ -39,6 +40,13 @@
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+#include <rwslibs/robotmodelbuilder/WorkCellConverter.hpp>
+
+#include <rws/CallbackProjectDocumentProvider.hpp>
+#include <rws/ProjectManager.hpp>
+#include <rws/RobWorkStudio.hpp>
+
+#include <rw/loaders/WorkCellLoader.hpp>
 
 #include <rw/kinematics/FixedFrame.hpp>
 #include <rw/kinematics/MovableFrame.hpp>
@@ -56,6 +64,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMetaObject>
+#include <QSet>
 #include <QPushButton>
 #include <QTemporaryDir>
 #include <QTimer>
@@ -2380,37 +2389,152 @@ static void testAcceptedUr6585AProject()
 {
     std::printf("testAcceptedUr6585AProject ... ");
 
-    const QString sampleDirectory = sourcePath(
-        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A");
-    const QString modelPath = sampleDirectory + "/UR-6-85-5-A.rmb.json";
-    const QString projectPath = sampleDirectory +
-        "/UR-6-85-5-A.structure-optimization.json";
+    QTemporaryDir inputDirectory;
+    REQUIRE(inputDirectory.isValid());
+    const QString sourceWorkCell = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml");
+    const QString manifestPath =
+        inputDirectory.filePath("UrProject/UrProject.rwproj");
+    const QString projectDirectory = QFileInfo(manifestPath).absolutePath();
 
-    QFile modelFile(modelPath);
-    REQUIRE(modelFile.open(QIODevice::ReadOnly));
+    QString projectError;
+    rws::ProjectManager manager;
+    REQUIRE(manager.createProjectFromWorkCell(
+        manifestPath, sourceWorkCell, &projectError));
+    QString managedWorkCellPath;
+    REQUIRE(manager.resolveResource(
+        "scene.main", managedWorkCellPath, &projectError));
+    const rw::models::WorkCell::Ptr workcell =
+        rw::loaders::WorkCellLoader::Factory::load(
+            managedWorkCellPath.toStdString());
+    REQUIRE(!workcell.isNull());
+
+    const QString modelDirectory =
+        QDir(projectDirectory).filePath("generated/robot-models");
+    REQUIRE(QDir().mkpath(modelDirectory));
+    QStringList conversionWarnings;
     rws::RobotModelSpec modelSpec;
-    std::string error;
+    if (!workcell.isNull()) {
+        modelSpec = rws::WorkCellConverter::convert(
+            *workcell, workcell->getDefaultState(),
+            modelDirectory.toStdString(), conversionWarnings);
+    }
+    REQUIRE(rws::WorkCellConverter::hasConvertibleRobotModel(modelSpec));
+
+    const QString modelPath =
+        QDir(modelDirectory).filePath("UR-6-85-5-A.rmb.json");
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray modelJson = QByteArray::fromStdString(
+        rws::RobotModelSpecJson::toJson(modelSpec));
     if (modelFile.isOpen()) {
-        REQUIRE(rws::RobotModelSpecJson::fromJson(
-            modelFile.readAll().toStdString(), modelSpec, &error));
+        REQUIRE(modelFile.write(modelJson) == modelJson.size());
         modelFile.close();
+    }
+
+    rws::StructureOptimizationProblem generatedProject;
+    std::string error;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        modelSpec, modelPath, generatedProject, &error));
+    generatedProject.context.sourceScenePath = managedWorkCellPath.toStdString();
+    generatedProject.context.tcpFrame.clear();
+
+    const auto addTask = [&generatedProject](
+                             const char* id, const char* name,
+                             const std::array<double, 3>& position) {
+        rws::OptimizationTaskPoint task;
+        task.point.id = id;
+        task.point.name = name;
+        task.point.refFrame = "WORLD";
+        task.point.tcpFrame.clear();
+        task.point.position = position;
+        task.point.rpyDeg = {{180.0, 0.0, 0.0}};
+        task.point.enabled = true;
+        task.required = true;
+        generatedProject.tasks.push_back(task);
+        generatedProject.context.taskPoints.push_back(task.point);
+    };
+    addTask("acceptance-task-1", "UR acceptance task 1", {{0.3, -0.2, 0.4}});
+    addTask("acceptance-task-2", "UR acceptance task 2", {{0.35, 0.0, 0.45}});
+    addTask("acceptance-task-3", "UR acceptance task 3", {{0.3, 0.2, 0.4}});
+
+    const auto makeVariable = [](
+                                  const char* id, const char* label,
+                                  const char* target,
+                                  rws::StructureVariableKind kind,
+                                  double currentValue, double minimum,
+                                  double maximum, double step) {
+        rws::StructureDesignVariable variable;
+        variable.id = id;
+        variable.label = label;
+        variable.targetName = target;
+        variable.unit = "m";
+        variable.kind = kind;
+        variable.currentValue = currentValue;
+        variable.minimum = minimum;
+        variable.maximum = maximum;
+        variable.step = step;
+        variable.enabled = true;
+        return variable;
+    };
+    generatedProject.variables = {
+        makeVariable("Joint2_pos_x", "Joint2 X", "Joint2",
+                     rws::StructureVariableKind::JointPositionX,
+                     -0.425, -0.48, -0.37, 0.005),
+        makeVariable("Joint3_pos_x", "Joint3 X", "Joint3",
+                     rws::StructureVariableKind::JointPositionX,
+                     -0.39243, -0.44, -0.34, 0.005),
+        makeVariable("Joint1_pos_z", "Joint1 Z", "Joint1",
+                     rws::StructureVariableKind::JointPositionZ,
+                     0.0892, 0.07, 0.11, 0.002)};
+    generatedProject.evaluation.coverageBox.enabled = true;
+    generatedProject.evaluation.coverageBox.minimum = {{-2.0, -2.0, -2.0}};
+    generatedProject.evaluation.coverageBox.maximum = {{2.0, 2.0, 2.0}};
+    generatedProject.evaluation.coverageBox.cells = {{2, 2, 2}};
+    generatedProject.evaluation.quickWorkspace.sampleCount = 8;
+    generatedProject.evaluation.verifiedWorkspace.sampleCount = 8;
+    generatedProject.run.strategy = rws::StructureStrategyKind::Hybrid;
+    generatedProject.run.candidateCount = 8;
+    generatedProject.run.eliteCount = 3;
+    generatedProject.run.localEliteCount = 2;
+    generatedProject.run.finalVerificationCount = 2;
+    generatedProject.run.maxLocalSweeps = 2;
+    generatedProject.run.gridSteps = 3;
+    generatedProject.run.randomSeed = 20260727u;
+    generatedProject.objectives =
+        rws::StructureOptimizationObjectiveProfile::legacyObjectives(
+            generatedProject.weights);
+
+    const QString projectPath = QDir(projectDirectory).filePath(
+        "optimizations/UR-6-85-5-A.structure-optimization.json");
+    REQUIRE(QDir().mkpath(QFileInfo(projectPath).absolutePath()));
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        projectPath, generatedProject, -1, &projectError));
+
+    rws::RobotModelSpec persistedModelSpec;
+    QFile persistedModelFile(modelPath);
+    REQUIRE(persistedModelFile.open(QIODevice::ReadOnly));
+    if (persistedModelFile.isOpen()) {
+        REQUIRE(rws::RobotModelSpecJson::fromJson(
+            persistedModelFile.readAll().toStdString(),
+            persistedModelSpec, &error));
+        persistedModelFile.close();
     }
 
     rws::StructureOptimizationProblem project;
     int selectedCandidateIndex = -1;
-    QString projectError;
     const bool loaded = rws::StructureOptimizationProjectAdapter::loadProject(
         projectPath, project, &selectedCandidateIndex, &projectError);
     REQUIRE(loaded);
     if (loaded) {
         const std::string sourceFingerprint =
-            rws::RobotModelFingerprint::canonicalSha256(modelSpec);
+            rws::RobotModelFingerprint::canonicalSha256(persistedModelSpec);
         REQUIRE(project.context.robotName == "UR-6-85-5-A");
-        REQUIRE(project.context.modelSpec.robotName == modelSpec.robotName);
+        REQUIRE(project.context.modelSpec.robotName == persistedModelSpec.robotName);
         REQUIRE(QDir::cleanPath(QString::fromStdString(project.context.modelSpec.saveDirectory)) ==
-                QDir::cleanPath(sampleDirectory));
+                QDir::cleanPath(modelDirectory));
         REQUIRE(project.context.modelSpec.transformJoints.size() ==
-                modelSpec.transformJoints.size());
+                persistedModelSpec.transformJoints.size());
         REQUIRE(!project.context.modelProvenance.sourceFingerprint.empty());
         REQUIRE(project.context.modelProvenance.sourceFingerprint == sourceFingerprint);
         REQUIRE(project.context.modelProvenance.snapshotFingerprint == sourceFingerprint);
@@ -2473,6 +2597,107 @@ static void testAcceptedUr6585AProject()
                                               QDir::Files).isEmpty());
     }
 
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureOptimizerResourceDependencies()
+{
+    std::printf("testStructureOptimizerResourceDependencies ... ");
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString projectPath =
+        directory.filePath("DependencyProject/DependencyProject.rwproj");
+    const QString sourceWorkCell = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml");
+    const QString projectDirectory = QFileInfo(projectPath).absolutePath();
+    const QString modelPath =
+        QDir(projectDirectory).filePath("generated/robot-models/main.rmb.json");
+    const QString requirementsPath =
+        QDir(projectDirectory).filePath("requirements/main.json");
+    REQUIRE(QDir().mkpath(QFileInfo(modelPath).absolutePath()));
+    REQUIRE(QDir().mkpath(QFileInfo(requirementsPath).absolutePath()));
+
+    const auto writeFile = [](const QString& path, const QByteArray& data) {
+        QFile file(path);
+        return file.open(QIODevice::WriteOnly | QIODevice::Truncate) &&
+               file.write(data) == data.size();
+    };
+    QString error;
+    rws::ProjectManager manager;
+    REQUIRE(manager.createProjectFromWorkCell(projectPath, sourceWorkCell, &error));
+    REQUIRE(writeFile(modelPath, "{}\n"));
+    REQUIRE(writeFile(requirementsPath, "{}\n"));
+
+    const auto addResource = [&manager, &error](const QString& id, const QString& kind,
+                                                const QString& path) {
+        rws::ProjectResource resource;
+        resource.id = id;
+        resource.kind = kind;
+        resource.path = path;
+        resource.ownership = "generated";
+        resource.required = false;
+        return manager.addGeneratedResource(resource, &error);
+    };
+    REQUIRE(addResource("robot-model.main", "rws.robot-model",
+                        "generated/robot-models/main.rmb.json"));
+    REQUIRE(addResource("engineering-requirements.main", "rws.engineering-requirements",
+                        "requirements/main.json"));
+    REQUIRE(manager.saveProject(&error));
+    manager.closeProject();
+
+    rws::StructureOptimizerPlugin plugin;
+    const auto loadDocument = [](const QString&, const rws::ProjectDocumentContext&,
+                                 QString*) { return true; };
+    const auto saveDocument = [](const QString&, const rws::ProjectDocumentContext&,
+                                 QString*) { return true; };
+    rws::CallbackProjectDocumentProvider robotModelProvider(
+        "test.robot-model-provider", "rws.robot-model", loadDocument, saveDocument);
+    rws::CallbackProjectDocumentProvider requirementProvider(
+        "test.requirement-provider", "rws.engineering-requirements",
+        loadDocument, saveDocument);
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio(properties);
+    REQUIRE(studio.registerProjectDocumentProvider(&robotModelProvider, &error));
+    REQUIRE(studio.registerProjectDocumentProvider(&requirementProvider, &error));
+    plugin.setRobWorkStudio(&studio);
+    plugin.initialize();
+    studio.openFile(projectPath.toStdString());
+    REQUIRE(!studio.projectDirectory().isEmpty());
+
+    rws::StructureOptimizationProblem problem;
+    std::string factoryError;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path()),
+        problem, &factoryError));
+    rws::StructureOptimizerWidget* widget =
+        qobject_cast<rws::StructureOptimizerWidget*>(plugin.widget());
+    REQUIRE(widget != nullptr);
+    if (widget != nullptr) {
+        widget->setProblem(problem);
+        REQUIRE(QMetaObject::invokeMethod(
+            widget, "projectDocumentChanged", Qt::DirectConnection));
+    }
+    REQUIRE(studio.saveCurrentProject(&error));
+
+    rws::ProjectManager verificationManager;
+    REQUIRE(verificationManager.openProject(projectPath, &error));
+    rws::ProjectResource optimizationResource;
+    REQUIRE(verificationManager.manifest().findResource(
+        "structure-optimization.main", optimizationResource));
+    const QSet<QString> uniqueDependencies(optimizationResource.dependencies.begin(),
+                                           optimizationResource.dependencies.end());
+    REQUIRE(optimizationResource.dependencies.size() == 3);
+    REQUIRE(uniqueDependencies.size() == optimizationResource.dependencies.size());
+    REQUIRE(uniqueDependencies.contains("scene.main"));
+    REQUIRE(uniqueDependencies.contains("robot-model.main"));
+    REQUIRE(uniqueDependencies.contains("engineering-requirements.main"));
+
+    studio.close();
+    plugin.setRobWorkStudio(nullptr);
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else
@@ -2888,6 +3113,28 @@ int main(int argc, char** argv)
     std::fflush(stdout);
 
     const std::string suite = argc > 1 ? argv[1] : std::string();
+
+    if (suite == "accepted_ur") {
+        QCoreApplication app(argc, argv);
+        testAcceptedUr6585AProject();
+        if (g_testFailures == 0) {
+            std::printf("Accepted UR project test passed.\n");
+            return 0;
+        }
+        std::printf("Accepted UR project test FAILED.\n");
+        return 1;
+    }
+
+    if (suite == "resource_dependencies") {
+        QApplication app(argc, argv);
+        testStructureOptimizerResourceDependencies();
+        if (g_testFailures == 0) {
+            std::printf("Resource dependency test passed.\n");
+            return 0;
+        }
+        std::printf("Resource dependency test FAILED.\n");
+        return 1;
+    }
 
     if (suite == "widget") {
         QApplication app(argc, argv);
