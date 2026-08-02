@@ -115,6 +115,9 @@ if(build)
         PRIVATE
             sdurws_structureoptimizer_core
             sdurws_engineeringrequirements_core
+            sdurws_kinematicanalysis
+            sdurws_kinematicanalysis_core
+            sdurws_robotmodelbuilder
             ${QT_LIBRARIES}
     )
     foreach(qt_concurrent_target Qt6::Concurrent Qt5::Concurrent)
@@ -215,5 +218,15 @@ if(build)
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
+        set(ROBOT_FILE_300KG_URDF
+            "${CMAKE_SOURCE_DIR}/RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/300kg_urdf/output/300kg.urdf")
+        if(EXISTS "${ROBOT_FILE_300KG_URDF}")
+            add_test(NAME sdurws_structureoptimizer_robot_file_acceptance_test
+                     COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> robot_file_acceptance)
+            set_tests_properties(sdurws_structureoptimizer_robot_file_acceptance_test
+                                 PROPERTIES
+                                     WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                                     ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}")
+        endif()
     endif()
 endif()

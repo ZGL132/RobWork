@@ -42,6 +42,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -1168,6 +1169,29 @@ bool RobWorkStudio::createProjectFromRobotFilePaths (
     return true;
 }
 
+QString generatedSceneAssetId (const QString& filePath, const QString& relativePath)
+{
+    QFile file (filePath);
+    if (file.open (QIODevice::ReadOnly)) {
+        QXmlStreamReader xml (&file);
+        while (xml.readNextStartElement ()) {
+            const QString root = xml.name ().toString ();
+            if (root.compare (QStringLiteral ("SerialDevice"), Qt::CaseInsensitive) == 0)
+                return QStringLiteral ("scene.generated.device");
+            if (root.compare (QStringLiteral ("CollisionSetup"), Qt::CaseInsensitive) == 0)
+                return QStringLiteral ("scene.generated.collision");
+            if (root.compare (QStringLiteral ("ProximitySetup"), Qt::CaseInsensitive) == 0)
+                return QStringLiteral ("scene.generated.proximity");
+            break;
+        }
+    }
+
+    const QByteArray digest = QCryptographicHash::hash (
+        QDir::fromNativeSeparators (relativePath).toUtf8 (), QCryptographicHash::Sha256);
+    return QStringLiteral ("scene.generated.asset.%1").arg (
+        QString::fromLatin1 (digest.toHex ().left (12)));
+}
+
 // 从 URDF/XML 机器人文件创建草稿项目：主窗口只创建空项目并通过 Qt 元对象把源文件
 // 交给可选的 RobotModelBuilder 插件，避免主程序对该插件产生静态链接依赖。
 void RobWorkStudio::createProjectFromRobotFile ()
@@ -1716,7 +1740,8 @@ bool RobWorkStudio::promoteGeneratedWorkCell (const QString& sceneFilePath,
 
     const QString mainResourceId = mainWorkCellResourceId ();
     ProjectResource original;
-    if (mainResourceId.isEmpty () ||
+    const bool firstPromotion = mainResourceId.isEmpty ();
+    if (!firstPromotion &&
         !_projectManager.manifest ().findResource (mainResourceId, original)) {
         if (error != nullptr)
             *error = QString::fromUtf8 ("当前项目没有可晋升的 mainWorkCell 资源。");
@@ -1724,19 +1749,23 @@ bool RobWorkStudio::promoteGeneratedWorkCell (const QString& sceneFilePath,
     }
 
     ProjectResource promoted = original;
+    if (firstPromotion) {
+        promoted.id = QStringLiteral ("scene.main");
+        promoted.kind = QStringLiteral ("robwork.workcell");
+    }
     if (!managedRelativePath (sceneInfo.absoluteFilePath (), promoted.path, error))
         return false;
     promoted.ownership = QStringLiteral ("generated");
     promoted.required = true;
+    promoted.dependencies.clear ();
 
     QVector< ProjectResource > assets;
-    int generatedAssetIndex = 0;
     for (const QString& dependencyPath : dependencyFilePaths) {
         QString relativePath;
         if (!managedRelativePath (dependencyPath, relativePath, error))
             return false;
         ProjectResource asset;
-        asset.id = QStringLiteral ("scene.generated.asset.%1").arg (++generatedAssetIndex);
+        asset.id = generatedSceneAssetId (dependencyPath, relativePath);
         asset.kind = QStringLiteral ("robwork.passive-asset");
         asset.path = relativePath;
         asset.ownership = QStringLiteral ("generated");
@@ -1748,7 +1777,8 @@ bool RobWorkStudio::promoteGeneratedWorkCell (const QString& sceneFilePath,
 
     // 首次晋升时保留最初导入的 WorkCell，避免项目保存后失去原始工程来源。它不再是入口，
     // 但仍作为受管被动资产参与 clone/rwpack。
-    if (original.ownership == QStringLiteral ("project") && original.path != promoted.path) {
+    if (!firstPromotion && original.ownership == QStringLiteral ("project") &&
+        original.path != promoted.path) {
         ProjectResource sourceAsset;
         sourceAsset.id = QStringLiteral ("scene.source.original");
         sourceAsset.kind = QStringLiteral ("robwork.passive-asset");
@@ -1761,10 +1791,22 @@ bool RobWorkStudio::promoteGeneratedWorkCell (const QString& sceneFilePath,
 
     // 先让原 WorkCell Provider 用同一资源 ID 加载新路径。此步骤失败时 Registry 会尝试
     // 恢复旧资源；只有活动场景可用后才修改内存清单。
-    if (!_projectDocuments.reloadResource (
-            promoted, _projectManager.manifest (), _projectManager.projectFilePath (), error))
+    if (firstPromotion) {
+        if (!_projectDocuments.loadNewResource (
+                promoted, _projectManager.manifest (), _projectManager.projectFilePath (), error))
+            return false;
+        if (!_projectManager.addMainWorkCellAndAssets (promoted, assets, error)) {
+            _projectDocuments.unloadResource (promoted.id);
+            setWorkCell (emptyWorkCell ());
+            return false;
+        }
+    }
+    else if (!_projectDocuments.reloadResource (
+                 promoted, _projectManager.manifest (), _projectManager.projectFilePath (), error)) {
         return false;
-    if (!_projectManager.replaceResourceAndAddAssets (promoted, assets, error)) {
+    }
+    else if (!_projectManager.replaceResourceAndReconcileGeneratedSceneAssets (
+                 promoted, assets, error)) {
         QString ignored;
         _projectDocuments.reloadResource (
             original, _projectManager.manifest (), _projectManager.projectFilePath (), &ignored);
@@ -1781,6 +1823,17 @@ QString RobWorkStudio::mainWorkCellResourceId () const
     if (!_projectManager.hasProject ())
         return QString ();
     return _projectManager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell"));
+}
+
+QString rws::robotProjectWorkCellReadinessError (const RobWorkStudio* studio)
+{
+    if (studio == nullptr || studio->projectDirectory ().isEmpty () ||
+        !studio->mainWorkCellResourceId ().isEmpty ())
+        return QString ();
+
+    return QStringLiteral (
+        "The robot project has not generated its managed WorkCell. Review the model in "
+        "RobotModelBuilder and run Save and Load first.");
 }
 
 void RobWorkStudio::notifyProjectDocumentChanged ()

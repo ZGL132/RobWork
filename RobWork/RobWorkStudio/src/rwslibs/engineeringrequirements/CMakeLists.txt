@@ -79,6 +79,8 @@ if(build)
         )
         add_test(NAME sdurws_engineeringrequirements_managed_project_root_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> managed_project_root)
+        add_test(NAME sdurws_engineeringrequirements_managed_project_gate_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> managed_project_gate)
         if(WIN32)
             set(ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM windows)
         else()
@@ -86,6 +88,7 @@ if(build)
         endif()
         set_tests_properties(
             sdurws_engineeringrequirements_widget_test
+            sdurws_engineeringrequirements_managed_project_gate_test
             PROPERTIES
                 ENVIRONMENT "QT_QPA_PLATFORM=${ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM}"
         )

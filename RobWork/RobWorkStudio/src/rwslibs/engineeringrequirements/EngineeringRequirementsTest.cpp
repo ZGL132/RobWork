@@ -11,8 +11,13 @@
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelProjectPaths.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 #include <rwslibs/robotmodelbuilder/WorkCellConverter.hpp>
+
+#include <rws/CallbackProjectDocumentProvider.hpp>
+#include <rws/ProjectManager.hpp>
+#include <rws/RobWorkStudio.hpp>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/loaders/WorkCellLoader.hpp>
@@ -33,6 +38,7 @@
 #include <QApplication>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QFileDialog>
 #include <QGroupBox>
 #include <QJsonObject>
 #include <QLineEdit>
@@ -43,6 +49,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryDir>
+#include <QTimer>
 
 #include <cmath>
 #include <cstdio>
@@ -1258,6 +1265,73 @@ int testWidgetFreezeAndUnfreezeEmitRequirementChanges()
     return 0;
 }
 
+int testWidgetBlocksFreezeUntilManagedWorkCellExists()
+{
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString projectPath = directory.filePath("RobotDraft/RobotDraft.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = "robot-draft";
+    manifest.project.name = "RobotDraft";
+    rws::ProjectResource source;
+    source.id = "robot-source.main";
+    source.kind = "robwork.passive-asset";
+    source.path = "sources/robot.urdf";
+    source.ownership = "project";
+    source.required = false;
+    rws::ProjectResource model;
+    model.id = "robot-model.main";
+    model.kind = "robwork.robot-model";
+    model.path = "generated/robot-models/robot.rmb.json";
+    model.ownership = "generated";
+    model.required = false;
+    model.dependencies = {source.id};
+    manifest.resources = {source, model};
+    manifest.entryPoints.insert("robotSource", source.id);
+    QString error;
+    rws::ProjectManager manager;
+    REQUIRE(manager.createProject(projectPath, manifest, &error));
+    manager.closeProject();
+
+    const QString projectRoot = QFileInfo(projectPath).absolutePath();
+    REQUIRE(QDir().mkpath(QFileInfo(QDir(projectRoot).filePath(source.path)).absolutePath()));
+    QFile sourceFile(QDir(projectRoot).filePath(source.path));
+    REQUIRE(sourceFile.open(QIODevice::WriteOnly));
+    REQUIRE(sourceFile.write("<robot name=\"RobotDraft\"/>") > 0);
+    sourceFile.close();
+    REQUIRE(QDir().mkpath(QFileInfo(QDir(projectRoot).filePath(model.path)).absolutePath()));
+    QFile modelFile(QDir(projectRoot).filePath(model.path));
+    REQUIRE(modelFile.open(QIODevice::WriteOnly));
+    REQUIRE(modelFile.write("{}") == 2);
+    modelFile.close();
+
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio(properties);
+    rws::CallbackProjectDocumentProvider modelProvider(
+        "test.robot-model", "robwork.robot-model",
+        [](const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        [](const QString&, const rws::ProjectDocumentContext&, QString*) { return true; });
+    REQUIRE(studio.registerProjectDocumentProvider(&modelProvider, &error));
+    studio.openFile(projectPath.toStdString());
+    REQUIRE(!studio.projectDirectory().isEmpty());
+    REQUIRE(studio.mainWorkCellResourceId().isEmpty());
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setFreezeReadinessCheck([&studio](QString* readinessError) {
+        *readinessError = rws::robotProjectWorkCellReadinessError(&studio);
+        return readinessError->isEmpty();
+    });
+    QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
+    REQUIRE(freeze != nullptr);
+    freeze->click();
+    REQUIRE(widget.statusText() == QStringLiteral(
+        "The robot project has not generated its managed WorkCell. Review the model in "
+        "RobotModelBuilder and run Save and Load first."));
+    REQUIRE(!widget.requirementSet().frozen);
+    studio.close();
+    return 0;
+}
+
 // 负向测试：冻结校验失败时绝不发出发布请求，避免下游读到未经验证的冻结工件。
 int testWidgetDoesNotRequestPublicationWhenFreezeFails()
 {
@@ -1398,6 +1472,134 @@ int testWidgetBindsMatchingGeneratedProjectModel()
     return 0;
 }
 
+int testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing()
+{
+    QTemporaryDir workspace;
+    REQUIRE(workspace.isValid());
+    const QString projectRoot = workspace.filePath("OriginalProject");
+    const QString movedProjectRoot = workspace.filePath("MovedProject");
+    const QString modelDirectory = QDir(projectRoot).filePath("generated/robot-models");
+    const QString geometryPath = QDir(projectRoot).filePath("assets/robot/base.stl");
+    const QString workcellPath = QDir(projectRoot).filePath("scenes/main.wc.xml");
+    const QString requirementsPath =
+        QDir(projectRoot).filePath("requirements/main.requirements.json");
+    REQUIRE(QDir().mkpath(modelDirectory));
+    REQUIRE(QDir().mkpath(QFileInfo(geometryPath).absolutePath()));
+    REQUIRE(QDir().mkpath(QFileInfo(workcellPath).absolutePath()));
+    QFile geometryFile(geometryPath);
+    REQUIRE(geometryFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(geometryFile.write("solid base\nendsolid base\n") > 0);
+    geometryFile.close();
+    QFile workcellFile(workcellPath);
+    REQUIRE(workcellFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(workcellFile.write("<WorkCell name=\"PortableProjectWorkCell\" />\n") > 0);
+    workcellFile.close();
+
+    rws::RobotModelSpec portableModel;
+    portableModel.robotName = "PortableProjectRobot";
+    rws::DrawableSpec drawable;
+    drawable.name = "base-visual";
+    drawable.refFrame = "PortableProjectBase";
+    drawable.shape = "Mesh";
+    drawable.filePath = "assets/robot/base.stl";
+    portableModel.drawables.push_back(drawable);
+    const QString modelPath = modelDirectory + "/PortableProjectRobot.rmb.json";
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray modelBytes =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(portableModel));
+    REQUIRE(modelFile.write(modelBytes) == modelBytes.size());
+    modelFile.close();
+
+    rws::RobotModelSpec runtimeModel;
+    QString pathError;
+    REQUIRE(rws::RobotModelProjectPaths::resolveManaged(
+        portableModel, projectRoot, runtimeModel, &pathError));
+    REQUIRE(runtimeModel.drawables.front().filePath == geometryPath.toStdString());
+    REQUIRE(rws::RobotModelFingerprint::canonicalSha256(portableModel) !=
+            rws::RobotModelFingerprint::canonicalSha256(runtimeModel));
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("PortableProjectBase", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("PortableProjectTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(
+            structure, "PortableProjectWorkCell", workcellPath.toStdString()));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), runtimeModel.robotName, structure->getDefaultState())));
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setProjectOutputDirectory(projectRoot);
+    widget.setProjectModelPath(modelPath);
+    widget.setWorkCell(workcell.get());
+    QString error;
+    REQUIRE(widget.bindGeneratedProjectModel(&error));
+    REQUIRE(widget.requirementSet().modelBinding.robotModelFingerprint ==
+            rws::RobotModelFingerprint::canonicalSha256(runtimeModel));
+
+    int manualBindingChanges = 0;
+    QObject::connect(&widget, &rws::EngineeringRequirementsWidget::requirementsChanged,
+                     [&]() { ++manualBindingChanges; });
+    bool modelSelected = false;
+    QTimer dialogResponder;
+    dialogResponder.setInterval(5);
+    QObject::connect(&dialogResponder, &QTimer::timeout, [&]() {
+        for (QWidget* topLevel : QApplication::topLevelWidgets()) {
+            QFileDialog* dialog = qobject_cast<QFileDialog*>(topLevel);
+            if (dialog == nullptr || !dialog->isVisible())
+                continue;
+            dialog->selectFile(modelPath);
+            static_cast<QDialog*>(dialog)->accept();
+            modelSelected = true;
+            return;
+        }
+    });
+    QPushButton* bind = widget.findChild<QPushButton*>("bindRequirementModelButton");
+    REQUIRE(bind != nullptr);
+    dialogResponder.start();
+    bind->click();
+    dialogResponder.stop();
+    REQUIRE(modelSelected);
+    REQUIRE(manualBindingChanges == 1);
+    REQUIRE(widget.statusText() ==
+            QString::fromUtf8("已绑定模型，需求将使用模型内容指纹追溯。"));
+    REQUIRE(widget.requirementSet().modelBinding.sourcePath == modelPath.toStdString());
+    REQUIRE(widget.requirementSet().modelBinding.robotModelFingerprint ==
+            rws::RobotModelFingerprint::canonicalSha256(runtimeModel));
+
+    QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
+    REQUIRE(freeze != nullptr);
+    freeze->click();
+    REQUIRE(widget.requirementSet().frozen);
+
+    REQUIRE(widget.saveProjectDocument(requirementsPath, &error));
+    REQUIRE(QDir(workspace.path()).rename(
+        QStringLiteral("OriginalProject"), QStringLiteral("MovedProject")));
+
+    const QString movedWorkcellPath =
+        QDir(movedProjectRoot).filePath("scenes/main.wc.xml");
+    const rw::models::WorkCell::Ptr movedWorkcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(
+            structure, "PortableProjectWorkCell", movedWorkcellPath.toStdString()));
+    movedWorkcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), runtimeModel.robotName, structure->getDefaultState())));
+    rws::EngineeringRequirementsWidget movedWidget;
+    movedWidget.setWorkCell(movedWorkcell.get());
+    REQUIRE(movedWidget.loadProjectDocument(
+        QDir(movedProjectRoot).filePath("requirements/main.requirements.json"),
+        &error, movedProjectRoot));
+    if (!movedWidget.requirementSet().frozen)
+        std::fprintf(stderr, "Moved portable Widget status: %s\n",
+                     movedWidget.statusText().toStdString().c_str());
+    REQUIRE(movedWidget.requirementSet().frozen);
+    return 0;
+}
+
 int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
 {
     // 覆盖率计算依赖每轴采样点数。工程师在表格中修改该值后，再执行新增、保存或冻结等会
@@ -1527,11 +1729,16 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         return testWidgetManagedLoadUsesExplicitProjectRoot();
     }
+    if (argc > 1 && std::string(argv[1]) == "managed_project_gate") {
+        QApplication app(argc, argv);
+        return testWidgetBlocksFreezeUntilManagedWorkCellExists();
+    }
     if (argc > 1 && std::string(argv[1]) == "widget_project_paths") {
         QApplication app(argc, argv);
         return testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline();
     }
     if (argc > 1 && std::string(argv[1]) == "widget") {
+        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
         QApplication app(argc, argv);
         if (testWidgetBuildsEngineeringRequirementWorkflow() != 0)
             return 1;
@@ -1548,6 +1755,8 @@ int main(int argc, char** argv)
         if (testWidgetResolvesGeometryFeatureUsingLatestJogState() != 0)
             return 1;
         if (testWidgetBindsMatchingGeneratedProjectModel() != 0)
+            return 1;
+        if (testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing() != 0)
             return 1;
         if (testWidgetPreservesBoxSamplingDensityWhenSynchronizing() != 0)
             return 1;

@@ -5,6 +5,7 @@
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelProjectPaths.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QDir>
@@ -53,6 +54,26 @@ QString commonDirectory(const QString& first, const QString& second)
     if (left.startsWith(QLatin1Char('/')))
         common.prepend(QLatin1Char('/'));
     return QDir::cleanPath(common);
+}
+
+bool hasRelativeGeometryPath(const RobotModelSpec& model)
+{
+    for (const DrawableSpec& drawable : model.drawables) {
+        const QString path = QString::fromStdString(drawable.filePath).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    for (const CollisionModelSpec& collision : model.collisionModels) {
+        const QString path = QString::fromStdString(collision.filePath).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    for (const SceneGeometrySpec& geometry : model.sceneGeometries) {
+        const QString path = QString::fromStdString(geometry.file).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    return false;
 }
 
 } // namespace
@@ -135,9 +156,19 @@ bool FrozenRequirementProjectImportService::createProblem(
         return setError(error, "Robot model snapshot cannot be opened: " +
                               modelFile.errorString().toStdString());
 
-    RobotModelSpec model;
-    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage))
+    RobotModelSpec storedModel;
+    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), storedModel, &parseMessage))
         return setError(error, "Robot model snapshot is invalid: " + parseMessage);
+
+    RobotModelSpec model = storedModel;
+    if (!artifactBaseDirectory.trimmed().isEmpty() && hasRelativeGeometryPath(storedModel)) {
+        QString pathError;
+        if (!RobotModelProjectPaths::resolveManaged(
+                storedModel, resolvedArtifactBaseDirectory, model, &pathError)) {
+            return setError(error, "Managed robot model paths are invalid: " +
+                                      pathError.toStdString());
+        }
+    }
 
     StructureOptimizationProblem created;
     if (!StructureOptimizationProjectFactory::create(model, modelPath, created, &parseMessage))

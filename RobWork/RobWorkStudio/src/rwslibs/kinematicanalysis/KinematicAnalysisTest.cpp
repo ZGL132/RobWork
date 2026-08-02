@@ -13,18 +13,26 @@
 #include "KinematicAnalysisJson.hpp"
 #include "KinematicAnalysisProjectDocument.hpp"
 #include "FrozenRequirementKinematicAdapter.hpp"
+#include "KinematicAnalysisWidget.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
+#include <rws/CallbackProjectDocumentProvider.hpp>
+#include <rws/ProjectManager.hpp>
+#include <rws/RobWorkStudio.hpp>
+
+#include <QApplication>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QRect>
 #include <QRectF>
 #include <QTemporaryDir>
+#include <QPushButton>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -2740,6 +2748,80 @@ static int testJsonAndCollisionHelpers ()
     return 0;
 }
 
+static int testManagedRobotProjectRequiresPublishedWorkCell ()
+{
+    QTemporaryDir directory;
+    if (!directory.isValid ())
+        return fail ("could not create managed project gate fixture");
+    const QString projectPath = directory.filePath ("RobotDraft/RobotDraft.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("robot-draft");
+    manifest.project.name = QStringLiteral ("RobotDraft");
+    rws::ProjectResource source;
+    source.id = QStringLiteral ("robot-source.main");
+    source.kind = QStringLiteral ("robwork.passive-asset");
+    source.path = QStringLiteral ("sources/robot.urdf");
+    source.ownership = QStringLiteral ("project");
+    source.required = false;
+    rws::ProjectResource model;
+    model.id = QStringLiteral ("robot-model.main");
+    model.kind = QStringLiteral ("robwork.robot-model");
+    model.path = QStringLiteral ("generated/robot-models/robot.rmb.json");
+    model.ownership = QStringLiteral ("generated");
+    model.required = false;
+    model.dependencies = {source.id};
+    manifest.resources = {source, model};
+    manifest.entryPoints.insert (QStringLiteral ("robotSource"), source.id);
+    QString error;
+    rws::ProjectManager manager;
+    if (!manager.createProject (projectPath, manifest, &error))
+        return fail ("could not create managed project gate fixture: " + error.toStdString ());
+    manager.closeProject ();
+
+    const QString projectRoot = QFileInfo (projectPath).absolutePath ();
+    QDir ().mkpath (QFileInfo (QDir (projectRoot).filePath (source.path)).absolutePath ());
+    QFile sourceFile (QDir (projectRoot).filePath (source.path));
+    if (!sourceFile.open (QIODevice::WriteOnly) ||
+        sourceFile.write ("<robot name=\"RobotDraft\"/>") <= 0)
+        return fail ("could not write managed project source fixture");
+    sourceFile.close ();
+    QDir ().mkpath (QFileInfo (QDir (projectRoot).filePath (model.path)).absolutePath ());
+    QFile modelFile (QDir (projectRoot).filePath (model.path));
+    if (!modelFile.open (QIODevice::WriteOnly) || modelFile.write ("{}") != 2)
+        return fail ("could not write managed project model fixture");
+    modelFile.close ();
+
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio (properties);
+    rws::CallbackProjectDocumentProvider modelProvider (
+        QStringLiteral ("test.robot-model"), QStringLiteral ("robwork.robot-model"),
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; });
+    if (!studio.registerProjectDocumentProvider (&modelProvider, &error))
+        return fail ("could not register managed project model fixture provider");
+    studio.openFile (projectPath.toStdString ());
+    if (studio.projectDirectory ().isEmpty () || !studio.mainWorkCellResourceId ().isEmpty ())
+        return fail ("managed project gate fixture did not open without mainWorkCell");
+
+    rw::models::WorkCell::Ptr placeholder =
+        rw::core::ownedPtr (new rw::models::WorkCell ("RobotDraft"));
+    rws::KinematicAnalysisWidget widget;
+    widget.setRobWorkStudio (&studio);
+    widget.setWorkCell (placeholder.get ());
+    QPushButton* import =
+        widget.findChild< QPushButton* > (QStringLiteral ("importFrozenRequirementsButton"));
+    if (import == nullptr)
+        return fail ("managed frozen requirement import button was not found");
+    import->click ();
+    const QString expected = QStringLiteral (
+        "The robot project has not generated its managed WorkCell. Review the model in "
+        "RobotModelBuilder and run Save and Load first.");
+    if (widget.statusMessage () != expected)
+        return fail ("kinematic import did not report the managed WorkCell readiness gate");
+    studio.close ();
+    return 0;
+}
+
 static int runAll ()
 {
     if (const int rc = testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ())
@@ -2797,8 +2879,16 @@ static int runAll ()
 // QCoreApplication 是为了让 Q_OBJECT 相关初始化(QFile/QString)能正常工作。
 int main (int argc, char** argv)
 {
+    const std::string requestedSuite = argc > 1 ? argv[1] : "all";
+    if (requestedSuite == "managed_project_gate") {
+        QApplication app (argc, argv);
+        const int rc = testManagedRobotProjectRequiresPublishedWorkCell ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis managed_project_gate test passed." << std::endl;
+        return rc;
+    }
     QCoreApplication app (argc, argv);
-    const std::string suite = argc > 1 ? argv[1] : "all";
+    const std::string suite = requestedSuite;
     int rc                 = 0;
     if (suite == "all")
         rc = runAll ();

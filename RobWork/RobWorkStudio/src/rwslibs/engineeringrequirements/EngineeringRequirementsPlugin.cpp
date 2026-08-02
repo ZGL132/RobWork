@@ -169,6 +169,13 @@ void EngineeringRequirementsPlugin::initialize() {
     // 订阅项目上下文变化并主动同步一次：冻结时只绑定项目清单中的
     // robot-model.main，项目切换、另存为或 RoboModelBuilder 新建资源后都会重新解析。
     if (getRobWorkStudio() != nullptr) {
+        _widget->setFreezeReadinessCheck([this](QString* error) {
+            const QString readinessError =
+                robotProjectWorkCellReadinessError(getRobWorkStudio());
+            if (error != nullptr)
+                *error = readinessError;
+            return readinessError.isEmpty();
+        });
         const auto syncProjectContext = [this](const QString& projectDirectory) {
             QString modelPath;
             QString error;

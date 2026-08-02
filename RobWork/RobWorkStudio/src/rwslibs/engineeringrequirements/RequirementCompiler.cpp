@@ -181,6 +181,9 @@ std::string RequirementCompiler::fingerprint(const RequirementSet& requirements)
 {
     RequirementSet canonical = requirements;
     canonical.frozen = false; // 排除内部状态干扰，仅针对数据内容计算哈希
+    // 模型内容由 robotModelFingerprint 单独校验。sourcePath 只是项目内定位信息，
+    // 保存时会相对化且随项目移动改变，不能使同一份工程需求证据失效。
+    canonical.modelBinding.sourcePath.clear();
     const QByteArray bytes = QByteArray::fromStdString(RequirementSetJson::toJson(canonical));
     return QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString();
 }

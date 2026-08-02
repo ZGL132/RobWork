@@ -3,6 +3,8 @@
 #include <QDir>
 #include <QFileInfo>
 
+#include <filesystem>
+
 namespace rws {
 namespace {
 
@@ -34,10 +36,39 @@ bool validateCanonicalContainment (const QString& absolutePath,
                                    const QString& field,
                                    QString* error)
 {
-    const QString canonicalRoot = QFileInfo (absoluteRoot).canonicalFilePath ();
-    const QString canonicalPath = QFileInfo (absolutePath).canonicalFilePath ();
-    if (canonicalRoot.isEmpty () || canonicalPath.isEmpty ())
+    const auto resolveThroughExistingAncestor = [] (const QString& path,
+                                                     QString& resolved) {
+        std::error_code errorCode;
+#ifdef Q_OS_WIN
+        const std::filesystem::path inputPath (
+            QFileInfo (path).absoluteFilePath ().toStdWString ());
+#else
+        const std::filesystem::path inputPath (
+            QFileInfo (path).absoluteFilePath ().toStdString ());
+#endif
+        const std::filesystem::path canonical = std::filesystem::weakly_canonical (
+            inputPath, errorCode);
+        if (errorCode || canonical.empty ())
+            return false;
+#ifdef Q_OS_WIN
+        resolved = QString::fromStdWString (canonical.native ());
+#else
+        resolved = QString::fromStdString (canonical.native ());
+#endif
+        resolved = QDir::cleanPath (QDir::fromNativeSeparators (resolved));
         return true;
+    };
+
+    QString canonicalRoot;
+    QString canonicalPath;
+    if (!resolveThroughExistingAncestor (absoluteRoot, canonicalRoot) ||
+        !resolveThroughExistingAncestor (absolutePath, canonicalPath)) {
+        if (error != nullptr) {
+            *error = QStringLiteral ("%1 cannot be resolved safely inside the managed robot project: %2")
+                         .arg (field, absolutePath);
+        }
+        return false;
+    }
 
     const QString relative = QDir (canonicalRoot).relativeFilePath (canonicalPath);
     if (isContainedRelativePath (relative))
@@ -158,6 +189,9 @@ bool RobotModelProjectPaths::resolveManaged (const RobotModelSpec& portable,
     };
     if (!convertGeometryPaths (candidate, makeAbsolute, error))
         return false;
+    candidate.saveDirectory = QDir::cleanPath (
+        QDir (absoluteRoot).filePath (QStringLiteral ("generated/robot-models")))
+                                  .toStdString ();
 
     runtime = candidate;
     return true;

@@ -40,6 +40,7 @@
 #include <QSet>
 #include <QTableWidget>
 #include <QTabWidget>
+#include <QTemporaryDir>
 #include <QTextEdit>
 #include <QVBoxLayout>
 
@@ -1191,6 +1192,8 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
     }
 
     UrdfImportOptions options;
+    QString intendedSaveDirectory;
+    QTemporaryDir validationDirectory;
     // URDF 的读取位置可以在项目外，但生成后的模型/XML 必须返回当前项目的受管输出目录。
     // 因此不再以 URDF 所在目录或用户输入目录作为 saveDirectory 的回退值。
     if (!projectRoot.trimmed ().isEmpty ()) {
@@ -1200,11 +1203,21 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
             return false;
         }
         const QString normalizedRoot = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
-        options.saveDirectory =
+        intendedSaveDirectory =
             QDir (normalizedRoot).filePath (QStringLiteral ("generated/robot-models"));
+        options.saveDirectory = intendedSaveDirectory;
     }
     else {
         options.saveDirectory = effectiveSaveDirectory ();
+        intendedSaveDirectory = options.saveDirectory;
+    }
+    if (!QDir (options.saveDirectory).exists ()) {
+        if (!validationDirectory.isValid ()) {
+            if (error != NULL)
+                *error = "Could not create a temporary directory for robot model preflight.";
+            return false;
+        }
+        options.saveDirectory = validationDirectory.path ();
     }
     const QDir urdfDir (QFileInfo (path).absolutePath ());
     options.packageRoots << urdfDir.absolutePath ();
@@ -1228,6 +1241,7 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
     }
 
     parsed = result.spec;
+    parsed.saveDirectory = intendedSaveDirectory.toStdString ();
     warnings = result.warnings;
     return true;
 }

@@ -1299,6 +1299,11 @@ void KinematicAnalysisWidget::setStatus (const QString& message)
         _status->setText(message);
 }
 
+QString KinematicAnalysisWidget::statusMessage () const
+{
+    return _status != nullptr ? _status->text () : QString ();
+}
+
 // refreshIkSolutionView:把 _lastIkResult 写入 _ikSolutionTable,
 // 按过滤器过滤,每行的原始 solutionIndex 通过 storeIkSolutionIndex
 // 存到 Qt::UserRole + 1。末尾刷新顶部计数 summary + 详情表。
@@ -4171,6 +4176,11 @@ void KinematicAnalysisWidget::importTaskPointsCsv ()
 // 场景复核的工件，才能进入运动学分析，防止夹具或 TCP 已变化时继续使用过期工艺位姿。
 void KinematicAnalysisWidget::importFrozenRequirements ()
 {
+    const QString readinessError = robotProjectWorkCellReadinessError (_studio);
+    if (!readinessError.isEmpty ()) {
+        setStatus (readinessError);
+        return;
+    }
     if (_taskPointModel == nullptr || _workcell == nullptr) {
         setStatus(tr("Cannot import frozen requirements: a task table and WorkCell are required."));
         return;

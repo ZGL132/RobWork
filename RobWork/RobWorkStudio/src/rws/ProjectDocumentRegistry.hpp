@@ -60,6 +60,12 @@ class ProjectDocumentRegistry
                          const QString& projectFilePath,
                          QString* error = nullptr);
 
+    bool loadNewResource (const ProjectResource& resource,
+                          const ProjectManifest& manifest,
+                          const QString& projectFilePath,
+                          QString* error = nullptr);
+    bool unloadResource (const QString& resourceId);
+
     // 原子刷新已加载资源的清单描述、解析路径和拓扑顺序，但不调用业务 Provider 重载。
     // 候选清单任一校验失败时保持当前 Registry 完全不变。
     bool synchronizeLoadedResources (const ProjectManifest& manifest,

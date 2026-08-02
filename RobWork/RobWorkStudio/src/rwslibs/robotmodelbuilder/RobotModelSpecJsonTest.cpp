@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QProcess>
 #include <QTemporaryDir>
 
 #include <cmath>
@@ -267,6 +268,25 @@ static int testFingerprint ()
         return fail ("Model fingerprint must change for engineering content.");
     if (original.saveDirectory != originalDirectory)
         return fail ("Model fingerprint must not mutate the input model.");
+
+    QTemporaryDir originalProject;
+    QTemporaryDir movedProject;
+    if (!originalProject.isValid () || !movedProject.isValid ())
+        return fail ("Could not create project roots for portable fingerprint testing.");
+    rws::RobotModelSpec managed = original;
+    managed.saveDirectory =
+        originalProject.filePath ("generated/robot-models").toStdString ();
+    rws::DrawableSpec drawable;
+    drawable.shape = "Mesh";
+    drawable.filePath = originalProject.filePath ("assets/base.stl").toStdString ();
+    managed.drawables = {drawable};
+    const std::string managedFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256 (managed);
+    rws::RobotModelSpec moved = managed;
+    moved.saveDirectory = movedProject.filePath ("generated/robot-models").toStdString ();
+    moved.drawables.front ().filePath = movedProject.filePath ("assets/base.stl").toStdString ();
+    if (managedFingerprint != rws::RobotModelFingerprint::canonicalSha256 (moved))
+        return fail ("Model fingerprint must survive a managed project directory move.");
     return 0;
 }
 
@@ -340,6 +360,11 @@ static int testManagedProjectGeometryPathsArePortable ()
     if (!rws::RobotModelProjectPaths::resolveManaged (
             portable, movedProject.path (), resolved, &error))
         return fail ("Could not resolve the moved managed model: " + error.toStdString ());
+    const QString expectedOutputDirectory =
+        movedProject.filePath ("generated/robot-models");
+    if (QDir::cleanPath (QString::fromStdString (resolved.saveDirectory)) !=
+        QDir::cleanPath (expectedOutputDirectory))
+        return fail ("Managed model resolution must restore its runtime output directory.");
     if (!isInsideProject (QString::fromStdString (resolved.drawables.front ().filePath),
                           movedProject.path ()) ||
         !isInsideProject (QString::fromStdString (resolved.collisionModels.front ().filePath),
@@ -398,6 +423,53 @@ static int testManagedProjectGeometryRejectsEscapes ()
     return 0;
 }
 
+static int testManagedProjectGeometryRejectsEscapeThroughLinkedAncestor ()
+{
+    QTemporaryDir workspace;
+    if (!workspace.isValid ())
+        return fail ("Could not create a temporary workspace for linked path testing.");
+    const QString projectRoot = workspace.filePath ("project");
+    const QString outsideRoot = workspace.filePath ("outside");
+    const QString linkedAssets = QDir (projectRoot).filePath ("linked-assets");
+    if (!QDir ().mkpath (projectRoot) || !QDir ().mkpath (outsideRoot))
+        return fail ("Could not create linked path test directories.");
+
+#ifdef Q_OS_WIN
+    QProcess linkProcess;
+    linkProcess.setStandardOutputFile (QProcess::nullDevice ());
+    linkProcess.setStandardErrorFile (QProcess::nullDevice ());
+    linkProcess.start (
+        QStringLiteral ("cmd.exe"),
+        QStringList () << QStringLiteral ("/d") << QStringLiteral ("/c")
+                       << QStringLiteral ("mklink") << QStringLiteral ("/J")
+                       << QDir::toNativeSeparators (linkedAssets)
+                       << QDir::toNativeSeparators (outsideRoot));
+    if (!linkProcess.waitForFinished () || linkProcess.exitCode () != 0)
+        return fail ("Could not create a directory junction for linked path testing.");
+#else
+    if (!QFile::link (outsideRoot, linkedAssets))
+        return fail ("Could not create a directory symlink for linked path testing.");
+#endif
+
+    rws::RobotModelSpec portable;
+    portable.robotName = "linked-escape";
+    rws::DrawableSpec drawable;
+    drawable.shape = "Mesh";
+    drawable.filePath = "linked-assets/not-created/mesh.stl";
+    portable.drawables = {drawable};
+    rws::RobotModelSpec unresolved;
+    unresolved.robotName = "untouched";
+    QString error;
+    const bool resolved = rws::RobotModelProjectPaths::resolveManaged (
+        portable, projectRoot, unresolved, &error);
+    QDir (projectRoot).rmdir (QStringLiteral ("linked-assets"));
+    if (resolved)
+        return fail ("A nonexistent geometry path below an outside-project link must be rejected.");
+    if (unresolved.robotName != "untouched" || error.trimmed ().isEmpty ())
+        return fail ("Rejected linked geometry resolution must preserve output and report an error.");
+    return 0;
+}
+
 int main (int, char**)
 {
     if (const int rc = testFullRoundTrip ())
@@ -409,6 +481,8 @@ int main (int, char**)
     if (const int rc = testManagedProjectGeometryPathsArePortable ())
         return rc;
     if (const int rc = testManagedProjectGeometryRejectsEscapes ())
+        return rc;
+    if (const int rc = testManagedProjectGeometryRejectsEscapeThroughLinkedAncestor ())
         return rc;
     std::cout << "RobotModelSpecJson round trip test passed." << std::endl;
     return 0;

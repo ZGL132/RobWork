@@ -8,6 +8,7 @@
 #include <rw/kinematics/State.hpp>
 #include <QWidget>
 
+#include <functional>
 #include <memory>
 
 class QLabel;
@@ -62,6 +63,7 @@ public:
     bool applyGeometryFeatureFrame(const QString& frameName, QString* error = nullptr);
     RequirementSet requirementSet() const;
     QString statusText() const;
+    void setFreezeReadinessCheck(std::function<bool(QString*)> check);
     void reportFreezePublicationResult(bool saved, const QString& error = QString());
 
     /**
@@ -103,6 +105,8 @@ private:
     void refreshFrameChoices();
     bool loadRequirementDocument(const QString& path, bool captureProjectSnapshot, QString* error,
                                  const QString& projectRoot = QString());
+    bool loadRobotModelDocument(const QString& path, const QString& projectRoot,
+                                RobotModelSpec& model, QString* error) const;
     bool writeRequirementDocument(const QString& targetPath, QString* error);
     QByteArray serializedProjectDocument(const QString& documentPath) const;
     void commitKeyStationInspector();
@@ -151,6 +155,7 @@ private:
     rw::models::WorkCell* _workcell = nullptr;
     QString _projectOutputDirectory;
     QString _projectModelPath;
+    std::function<bool(QString*)> _freezeReadinessCheck;
     // State 与所属 WorkCell 的 StateStructure 强关联；切换 WorkCell 时必须丢弃
     // 旧快照，防止将旧场景的关节值误用于新场景的几何解析。
     std::unique_ptr<rw::kinematics::State> _currentState;

@@ -258,6 +258,14 @@ void StructureOptimizerWidget::clearScenarioContext()
 void StructureOptimizerWidget::setProblem(
     const StructureOptimizationProblem& problem)
 {
+    setProblemWithManagedRoot(problem, QString());
+}
+
+void StructureOptimizerWidget::setProblemWithManagedRoot(
+    const StructureOptimizationProblem& problem, const QString& managedProjectRoot)
+{
+    _managedProjectRoot = managedProjectRoot.trimmed().isEmpty()
+        ? QString() : QFileInfo(managedProjectRoot).absoluteFilePath();
     _loadedProblem = problem;
     if (_loadedProblem.variables.empty())
         _loadedProblem.variables =
@@ -332,7 +340,7 @@ bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString*
     // 初始化信号不会把刚刚加载的数据误标记为未保存修改。
     _projectPath = path;
     _projectDocumentPath = path;
-    setProblem(problem);
+    setProblemWithManagedRoot(problem, projectRoot);
     _savedProjectDocumentSnapshot.clear();
     _pendingProjectDocumentSnapshot.clear();
     QByteArray snapshot;
@@ -625,7 +633,8 @@ void StructureOptimizerWidget::updateRunState()
 void StructureOptimizerWidget::updateModelSourceStatus()
 {
     const RobotModelStalenessResult result =
-        RobotModelStalenessChecker::check(_loadedProblem.context, _projectPath);
+        RobotModelStalenessChecker::checkManaged(
+            _loadedProblem.context, _projectPath, _managedProjectRoot);
     _modelSourceStatus = result.status;
     switch (result.status) {
         case RobotModelSourceStatus::Current:
@@ -793,12 +802,18 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
     }
 
     _projectPath.clear();
+    _managedProjectRoot.clear();
     setProblem(problem);
     _statusLabel->setText("已从模型快照创建结构优化项目，请添加任务点后开始优化。");
 }
 
 void StructureOptimizerWidget::newProjectFromFrozenRequirements()
 {
+    const QString readinessError = robotProjectWorkCellReadinessError(_studio);
+    if (!readinessError.isEmpty()) {
+        _statusLabel->setText(readinessError);
+        return;
+    }
     QString path;
     QString resolveError;
     const bool managedRequirement =
@@ -847,7 +862,8 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
     // 需求文件是上游输入而不是结构优化项目本身。清除项目路径可保证后续“保存项目”写入一个
     // 新文件，既不会修改冻结需求，也不会覆盖用户此前打开的优化项目。
     _projectPath.clear();
-    setProblem(problem);
+    setProblemWithManagedRoot(
+        problem, managedRequirement ? _studio->projectDirectory() : QString());
     _statusLabel->setText(
         "已从冻结研发需求创建项目：当前执行运动学结构优化；轨迹、动力学和驱动选型评价未启用。");
     QString validationStatus =
@@ -879,6 +895,7 @@ void StructureOptimizerWidget::openProject()
         return;
     }
     _projectPath = path;
+    _managedProjectRoot.clear();
     setProblem(problem);
     if (_modelSourceStatus == RobotModelSourceStatus::Current)
         _statusLabel->setText("结构优化项目已载入。");

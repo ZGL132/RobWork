@@ -110,6 +110,7 @@ class KinematicAnalysisWidget : public QWidget
     void setRobWorkStudio (RobWorkStudio* studio);
     // 由 RobWorkStudio 在 WorkCell 加载/卸载时调用。
     void setWorkCell (rw::models::WorkCell* workcell);
+    QString statusMessage () const;
 
     // 项目 Provider 使用的无对话框文档接口。Widget 只读写 Provider 传入的暂存路径，
     // 不直接改写项目正式文件；正式提交由 ProjectSaveTransaction 统一完成。

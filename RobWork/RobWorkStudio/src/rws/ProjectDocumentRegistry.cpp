@@ -327,6 +327,58 @@ bool ProjectDocumentRegistry::reloadResource (const ProjectResource& resource,
     return true;
 }
 
+bool ProjectDocumentRegistry::loadNewResource (const ProjectResource& resource,
+                                                const ProjectManifest& manifest,
+                                                const QString& projectFilePath,
+                                                QString* error)
+{
+    for (const LoadedResource& loaded : _loaded) {
+        if (loaded.resource.id == resource.id) {
+            setError (error,
+                      QString::fromUtf8 ("项目资源已经加载：%1。").arg (resource.id));
+            return false;
+        }
+    }
+
+    ProjectDocumentProvider* provider = providerForKind (resource.kind);
+    if (provider == nullptr) {
+        setError (error,
+                  QString::fromUtf8 ("新项目资源“%1”没有可用 Provider。").arg (
+                      resource.id));
+        return false;
+    }
+
+    QString resolvedPath;
+    if (!ProjectPathResolver::resolveResource (
+            projectFilePath, resource, resolvedPath, error))
+        return false;
+    const ProjectDocumentContext context = makeContext (manifest, projectFilePath);
+    if (!provider->loadResource (resource, context, error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QString::fromUtf8 ("加载新项目资源失败：%1。").arg (resource.id);
+        return false;
+    }
+
+    LoadedResource loaded;
+    loaded.resource = resource;
+    loaded.provider = provider;
+    loaded.resolvedPath = resolvedPath;
+    _loaded.push_back (loaded);
+    return true;
+}
+
+bool ProjectDocumentRegistry::unloadResource (const QString& resourceId)
+{
+    for (int index = 0; index < _loaded.size (); ++index) {
+        if (_loaded[index].resource.id != resourceId)
+            continue;
+        _loaded[index].provider->closeResource (resourceId);
+        _loaded.removeAt (index);
+        return true;
+    }
+    return false;
+}
+
 bool ProjectDocumentRegistry::synchronizeLoadedResources (const ProjectManifest& manifest,
                                                           const QString& projectFilePath,
                                                           QString* error)

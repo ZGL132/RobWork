@@ -1,6 +1,7 @@
 #include "RobotModelStalenessChecker.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelProjectPaths.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QDir>
@@ -8,9 +9,39 @@
 #include <QFileInfo>
 
 namespace rws {
+namespace {
+
+bool hasRelativeGeometryPath(const RobotModelSpec& model)
+{
+    for (const DrawableSpec& drawable : model.drawables) {
+        const QString path = QString::fromStdString(drawable.filePath).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    for (const CollisionModelSpec& collision : model.collisionModels) {
+        const QString path = QString::fromStdString(collision.filePath).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    for (const SceneGeometrySpec& geometry : model.sceneGeometries) {
+        const QString path = QString::fromStdString(geometry.file).trimmed();
+        if (!path.isEmpty() && QFileInfo(path).isRelative())
+            return true;
+    }
+    return false;
+}
+
+} // namespace
 
 RobotModelStalenessResult RobotModelStalenessChecker::check(
     const RobotDesignContext& context, const QString& projectPath)
+{
+    return checkManaged(context, projectPath, QString());
+}
+
+RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
+    const RobotDesignContext& context, const QString& projectPath,
+    const QString& managedProjectRoot)
 {
     const RobotModelProvenance& provenance = context.modelProvenance;
     if (provenance.sourceModelPath.empty() || provenance.sourceFingerprint.empty() ||
@@ -46,7 +77,19 @@ RobotModelStalenessResult RobotModelStalenessChecker::check(
                     QString::fromStdString(parseError)};
     }
 
-    const std::string sourceFingerprint = RobotModelFingerprint::canonicalSha256(sourceSpec);
+    RobotModelSpec fingerprintSpec = sourceSpec;
+    const QString managedRoot = managedProjectRoot.trimmed();
+    if (!managedRoot.isEmpty() && hasRelativeGeometryPath(sourceSpec)) {
+        QString pathError;
+        if (!RobotModelProjectPaths::resolveManaged(
+                sourceSpec, managedRoot, fingerprintSpec, &pathError)) {
+            return {RobotModelSourceStatus::SourceInvalid, resolvedPath,
+                    "The tracked managed model paths are invalid: " + pathError};
+        }
+    }
+
+    const std::string sourceFingerprint =
+        RobotModelFingerprint::canonicalSha256(fingerprintSpec);
     if (sourceFingerprint != provenance.sourceFingerprint ||
         sourceFingerprint != provenance.snapshotFingerprint) {
         return {RobotModelSourceStatus::Stale, resolvedPath,

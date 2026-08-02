@@ -9,6 +9,7 @@
 #include "StationTemplateService.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelProjectPaths.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <rw/models/Device.hpp>
@@ -1067,9 +1068,12 @@ void EngineeringRequirementsWidget::bindModel()
 {
     const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("绑定机器人模型"), QString(), "Robot model (*.rmb.json)");
     if (path.isEmpty()) return;
-    QFile file(path); if (!file.open(QFile::ReadOnly)) { setStatus(QString::fromUtf8("无法读取模型文件。")); return; }
-    RobotModelSpec spec; std::string error;
-    if (!RobotModelSpecJson::fromJson(file.readAll().toStdString(), spec, &error)) { setStatus(QString::fromStdString(error)); return; }
+    RobotModelSpec spec;
+    QString error;
+    if (!loadRobotModelDocument(path, _projectOutputDirectory, spec, &error)) {
+        setStatus(error);
+        return;
+    }
     _requirements.modelBinding.sourcePath = path.toStdString();
     _requirements.modelBinding.robotName = spec.robotName;
     _requirements.modelBinding.robotModelFingerprint = RobotModelFingerprint::canonicalSha256(spec);
@@ -1116,6 +1120,43 @@ void EngineeringRequirementsWidget::setProjectModelPath(const QString& modelPath
         QFileInfo(modelPath).absoluteFilePath();
 }
 
+bool EngineeringRequirementsWidget::loadRobotModelDocument(const QString& path,
+                                                            const QString& projectRoot,
+                                                            RobotModelSpec& model,
+                                                            QString* error) const
+{
+    QFile modelFile(path);
+    if (!modelFile.open(QFile::ReadOnly)) {
+        if (error != nullptr)
+            *error = QString::fromUtf8("无法读取机器人模型：%1").arg(path);
+        return false;
+    }
+
+    RobotModelSpec storedModel;
+    std::string parseError;
+    if (!RobotModelSpecJson::fromJson(
+            modelFile.readAll().toStdString(), storedModel, &parseError)) {
+        if (error != nullptr)
+            *error = QString::fromStdString(parseError);
+        return false;
+    }
+
+    if (projectRoot.trimmed().isEmpty()) {
+        model = storedModel;
+    } else {
+        QString pathError;
+        if (!RobotModelProjectPaths::resolveManaged(
+                storedModel, QFileInfo(projectRoot).absoluteFilePath(), model, &pathError)) {
+            if (error != nullptr)
+                *error = pathError;
+            return false;
+        }
+    }
+    if (error != nullptr)
+        error->clear();
+    return true;
+}
+
 // 自动绑定工程生成模型：只解析项目清单 robot-model.main 指向的 .rmb.json，
 // 并校验其 robotName 与当前 WorkCell 设备一致后写入 requirements 的 modelBinding。
 bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
@@ -1136,16 +1177,11 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
     }
 
     const QString path = _projectModelPath;
-    QFile modelFile(path);
-    if (!modelFile.open(QFile::ReadOnly)) {
-        if (error != nullptr) *error = QString::fromUtf8("无法读取项目机器人模型：%1").arg(path);
-        return false;
-    }
     RobotModelSpec model;
-    std::string parseError;
-    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseError)) {
+    QString modelError;
+    if (!loadRobotModelDocument(path, _projectOutputDirectory, model, &modelError)) {
         if (error != nullptr)
-            *error = QString::fromUtf8("项目机器人模型无效：%1").arg(QString::fromStdString(parseError));
+            *error = QString::fromUtf8("项目机器人模型无效：%1").arg(modelError);
         return false;
     }
 
@@ -1366,9 +1402,12 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
         // 会将需求降级为编辑态，明确要求工程师在当前工程环境中再次冻结。
         RobotModelSpec model;
-        QFile modelFile(QString::fromStdString(parsed.modelBinding.sourcePath));
-        const bool modelReadable = !parsed.modelBinding.sourcePath.empty() && modelFile.open(QFile::ReadOnly) &&
-                                   RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage);
+        QString modelError;
+        const bool modelReadable = !parsed.modelBinding.sourcePath.empty() &&
+            loadRobotModelDocument(QString::fromStdString(parsed.modelBinding.sourcePath),
+                                   validationRoot, model, &modelError);
+        if (!modelReadable)
+            parseMessage = modelError.toStdString();
         FrozenRequirementValidationResult validationResult;
         const bool artifactCurrent = modelReadable && _workcell != nullptr &&
             RequirementFreezer::isCurrent(
@@ -1477,6 +1516,13 @@ void EngineeringRequirementsWidget::redoLastOperation()
 
 void EngineeringRequirementsWidget::freezeRequirements()
 {
+    if (_freezeReadinessCheck) {
+        QString readinessError;
+        if (!_freezeReadinessCheck(&readinessError)) {
+            setStatus(readinessError);
+            return;
+        }
+    }
     syncTablesToRequirements();
     if (_workcell == nullptr) {
         setStatus(QString::fromUtf8("无法冻结需求：请先打开实际 WorkCell，以验证 Frame、TCP 与工装状态。"));
@@ -1496,15 +1542,13 @@ void EngineeringRequirementsWidget::freezeRequirements()
 
     // 绑定路径只是编辑态引用，冻结时必须重新读取模型并以其内容指纹核验，防止
     // 文件已被替换而需求仍沿用过期模型指纹的情况进入结构优化链路。
-    QFile modelFile(QString::fromStdString(_requirements.modelBinding.sourcePath));
-    if (!modelFile.open(QFile::ReadOnly)) {
-        setStatus(QString::fromUtf8("无法冻结需求：绑定的机器人模型文件无法读取。"));
-        return;
-    }
     RobotModelSpec model;
     std::string error;
-    if (!RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &error)) {
-        setStatus(QString::fromStdString(error));
+    QString modelError;
+    if (!loadRobotModelDocument(
+            QString::fromStdString(_requirements.modelBinding.sourcePath),
+            _projectOutputDirectory, model, &modelError)) {
+        setStatus(QString::fromUtf8("无法冻结需求：%1").arg(modelError));
         return;
     }
 
@@ -1903,6 +1947,12 @@ rw::kinematics::State EngineeringRequirementsWidget::activeWorkCellState() const
 }
 RequirementSet EngineeringRequirementsWidget::requirementSet() const { return _requirements; }
 QString EngineeringRequirementsWidget::statusText() const { return _statusLabel == nullptr ? QString() : _statusLabel->text(); }
+
+void EngineeringRequirementsWidget::setFreezeReadinessCheck(
+    std::function<bool(QString*)> check)
+{
+    _freezeReadinessCheck = std::move(check);
+}
 void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, const QString& error)
 {
     if (saved) {

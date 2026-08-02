@@ -297,6 +297,140 @@ TEST (RobWorkStudio, PromotesGeneratedSceneWithoutChangingMainWorkCellIdentity)
 
 // 端到端测试：saveCurrentProject 把脏 Provider 内容随完整事务落盘；插件在下游读取
 // 项目资源前经 confirmSaveBeforeProjectResourceRead 强制保存(取消则阻止读取)。
+TEST (RobWorkStudio, PromotesFirstGeneratedWorkCellForRobotProjectDraft)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio rwstudio (map);
+
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Robot.rwproj");
+    const QString generatedScene =
+        QDir (directory.path ()).filePath ("generated/robot-models/RobotScene.wc.xml");
+    const QString generatedDevice =
+        QDir (directory.path ()).filePath ("generated/robot-models/Robot.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (generatedScene).absolutePath ()));
+    for (const auto& fileData : {
+             std::make_pair (generatedScene, QByteArray ("<WorkCell name=\"Generated\" />\n")),
+             std::make_pair (generatedDevice, QByteArray ("<SerialDevice name=\"Robot\" />\n"))}) {
+        QFile file (fileData.first);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        ASSERT_EQ (fileData.second.size (), file.write (fileData.second));
+    }
+
+    ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("robot-draft-promotion");
+    manifest.project.name = QStringLiteral ("RobotDraftPromotion");
+    ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error)) << error.toStdString ();
+    manager.closeProject ();
+
+    rwstudio.openFile (projectFile.toStdString ());
+    ASSERT_TRUE (rwstudio.mainWorkCellResourceId ().isEmpty ());
+    ASSERT_TRUE (rwstudio.promoteGeneratedWorkCell (
+        generatedScene, QStringList () << generatedDevice, &error))
+        << error.toStdString ();
+    EXPECT_EQ (QStringLiteral ("scene.main"), rwstudio.mainWorkCellResourceId ());
+    QString activePath;
+    ASSERT_TRUE (rwstudio.resolveProjectResource (
+        QStringLiteral ("scene.main"), activePath, &error));
+    EXPECT_EQ (QDir::cleanPath (generatedScene), activePath);
+    ASSERT_TRUE (rwstudio.saveCurrentProject (&error)) << error.toStdString ();
+
+    ProjectManager verification;
+    ASSERT_TRUE (verification.openProject (projectFile, &error)) << error.toStdString ();
+    EXPECT_EQ (QStringLiteral ("scene.main"),
+               verification.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell")));
+}
+
+TEST (RobWorkStudio, RepeatPromotionRemovesDisabledGeneratedSceneDependencies)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio rwstudio (map);
+
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Robot.rwproj");
+    const QString originalScene = QDir (directory.path ()).filePath ("scenes/main.wc.xml");
+    const QDir generatedDirectory (
+        QDir (directory.path ()).filePath ("generated/robot-models"));
+    const QString generatedScene = generatedDirectory.filePath ("RobotScene.wc.xml");
+    const QString generatedDevice = generatedDirectory.filePath ("Robot.wc.xml");
+    const QString collisionSetup = generatedDirectory.filePath ("CollisionSetup.xml");
+    const QString proximitySetup = generatedDirectory.filePath ("ProximitySetup.xml");
+    ASSERT_TRUE (QDir ().mkpath (generatedDirectory.path ()));
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (originalScene).absolutePath ()));
+    for (const auto& fileData : {
+             std::make_pair (originalScene, QByteArray ("<WorkCell name=\"Original\" />\n")),
+             std::make_pair (generatedScene, QByteArray ("<WorkCell name=\"Generated\" />\n")),
+             std::make_pair (generatedDevice,
+                             QByteArray ("<SerialDevice name=\"Robot\" />\n")),
+             std::make_pair (collisionSetup, QByteArray ("<CollisionSetup />\n")),
+             std::make_pair (proximitySetup, QByteArray ("<ProximitySetup />\n"))}) {
+        QFile file (fileData.first);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly | QIODevice::Truncate));
+        ASSERT_EQ (fileData.second.size (), file.write (fileData.second));
+    }
+
+    ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("repeat-promotion");
+    manifest.project.name = QStringLiteral ("RepeatPromotion");
+    ProjectResource original;
+    original.id = QStringLiteral ("scene.main");
+    original.kind = QStringLiteral ("robwork.workcell");
+    original.path = QStringLiteral ("scenes/main.wc.xml");
+    original.ownership = QStringLiteral ("project");
+    original.required = true;
+    manifest.resources.push_back (original);
+    manifest.entryPoints.insert (QStringLiteral ("mainWorkCell"), original.id);
+    ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error)) << error.toStdString ();
+    manager.closeProject ();
+
+    rwstudio.openFile (projectFile.toStdString ());
+    ASSERT_TRUE (rwstudio.promoteGeneratedWorkCell (
+        generatedScene,
+        QStringList () << generatedDevice << collisionSetup << proximitySetup,
+        &error)) << error.toStdString ();
+    ASSERT_TRUE (rwstudio.promoteGeneratedWorkCell (
+        generatedScene, QStringList () << generatedDevice, &error)) << error.toStdString ();
+    ASSERT_TRUE (rwstudio.saveCurrentProject (&error)) << error.toStdString ();
+
+    ProjectManager verification;
+    ASSERT_TRUE (verification.openProject (projectFile, &error)) << error.toStdString ();
+    ProjectResource promoted;
+    ASSERT_TRUE (verification.manifest ().findResource (QStringLiteral ("scene.main"), promoted));
+    EXPECT_EQ (QStringList () << QStringLiteral ("scene.generated.device"),
+               promoted.dependencies);
+    ProjectResource asset;
+    EXPECT_TRUE (verification.manifest ().findResource (
+        QStringLiteral ("scene.generated.device"), asset));
+    EXPECT_FALSE (verification.manifest ().findResource (
+        QStringLiteral ("scene.generated.collision"), asset));
+    EXPECT_FALSE (verification.manifest ().findResource (
+        QStringLiteral ("scene.generated.proximity"), asset));
+    ASSERT_TRUE (verification.manifest ().findResource (
+        QStringLiteral ("scene.source.original"), asset));
+    EXPECT_EQ (QStringLiteral ("scenes/main.wc.xml"), asset.path);
+
+    verification.closeProject ();
+    ASSERT_TRUE (QFile::remove (collisionSetup));
+    ASSERT_TRUE (QFile::remove (proximitySetup));
+    ASSERT_TRUE (verification.openProject (projectFile, &error)) << error.toStdString ();
+    EXPECT_EQ (QStringLiteral ("scene.main"),
+               verification.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell")));
+}
+
 TEST (RobWorkStudio, PublishesDirtyProjectDocumentsAndGuardsProjectResourceReads)
 {
     int argc = 1;

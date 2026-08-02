@@ -29,6 +29,9 @@ class RobotModelStalenessChecker
   public:
     static RobotModelStalenessResult check(const RobotDesignContext& context,
                                            const QString& projectPath);
+    static RobotModelStalenessResult checkManaged(const RobotDesignContext& context,
+                                                  const QString& projectPath,
+                                                  const QString& managedProjectRoot);
 };
 
 } // namespace rws

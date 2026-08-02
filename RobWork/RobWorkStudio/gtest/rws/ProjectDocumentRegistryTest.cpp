@@ -437,6 +437,69 @@ TEST (ProjectDocumentRegistryTest, ReloadsStableResourceAtPromotedPath)
     EXPECT_EQ (QDir::cleanPath (QDir (directory.path ()).filePath (promoted.path)), loadedPath);
 }
 
+TEST (ProjectDocumentRegistryTest, LoadsAndCanRollbackANewGeneratedResource)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Robot.rwproj");
+    const QString generatedFile = QDir (directory.path ()).filePath ("generated/RobotScene.wc.xml");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (generatedFile).absolutePath ()));
+    QFile file (generatedFile);
+    ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+    file.write ("generated");
+    file.close ();
+
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectResource generated = resource (
+        "scene.main", "test.document", "generated/RobotScene.wc.xml");
+    generated.ownership = QStringLiteral ("generated");
+    generated.required = true;
+    rws::ProjectManifest candidate;
+    candidate.resources.push_back (generated);
+    candidate.entryPoints.insert (QStringLiteral ("mainWorkCell"), generated.id);
+
+    ASSERT_TRUE (registry.loadNewResource (generated, candidate, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ ((QStringList {"load:scene.main"}), events);
+    provider.markDirty (generated.id);
+    EXPECT_TRUE (registry.isDirty ());
+
+    ASSERT_TRUE (registry.unloadResource (generated.id));
+    EXPECT_EQ ((QStringList {"load:scene.main", "close:scene.main"}), events);
+    EXPECT_FALSE (registry.isDirty ());
+    EXPECT_FALSE (registry.unloadResource (generated.id));
+}
+
+TEST (ProjectDocumentRegistryTest, FailedNewResourceLoadIsNotTracked)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Robot.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    provider.failLoading ("scene.main");
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    const rws::ProjectResource generated = resource (
+        "scene.main", "test.document", "generated/RobotScene.wc.xml");
+    rws::ProjectManifest candidate;
+    candidate.resources.push_back (generated);
+    candidate.entryPoints.insert (QStringLiteral ("mainWorkCell"), generated.id);
+
+    EXPECT_FALSE (registry.loadNewResource (generated, candidate, projectFile, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_FALSE (registry.unloadResource (generated.id));
+    provider.markDirty (generated.id);
+    EXPECT_FALSE (registry.isDirty ());
+}
+
 // 正向测试：脏资源经保存事务写入正式文件，且保存成功后脏状态被清除。
 TEST (ProjectDocumentRegistryTest, SavesDirtyResourcesAndMarksThemClean)
 {

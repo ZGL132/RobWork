@@ -136,6 +136,8 @@ if(build)
     # 核心分析源文件已移至 sdurws_kinematicanalysis_core,此处仅保留 UI/测试辅助源文件。
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
+        KinematicAnalysisWidget.cpp
+        KinematicAnalysisPlotWidget.cpp
         TaskPointUiLogic.cpp
         KinematicAnalysisUiLogic.cpp
         TaskPointTableModel.cpp

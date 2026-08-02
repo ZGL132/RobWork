@@ -65,6 +65,9 @@ namespace rws {
 
 class AboutBox;
 class RobWorkStudioPlugin;
+class RobWorkStudio;
+
+QString robotProjectWorkCellReadinessError (const RobWorkStudio* studio);
 
 struct RobotProjectImportCallbacks
 {

@@ -37,8 +37,14 @@
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
 
+#include <rwslibs/kinematicanalysis/FrozenRequirementKinematicAdapter.hpp>
+
+#include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelBuilderWidget.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelPublishService.hpp>
+#include <rwslibs/robotmodelbuilder/RobotModelProjectPaths.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 #include <rwslibs/robotmodelbuilder/WorkCellConverter.hpp>
 
@@ -49,6 +55,7 @@
 #include <rw/loaders/WorkCellLoader.hpp>
 
 #include <rw/kinematics/FixedFrame.hpp>
+#include <rw/kinematics/Kinematics.hpp>
 #include <rw/kinematics/MovableFrame.hpp>
 #include <rw/kinematics/StateStructure.hpp>
 #include <rw/models/RevoluteJoint.hpp>
@@ -57,13 +64,17 @@
 
 #include <QApplication>
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QDir>
+#include <QDirIterator>
 #include <QEventLoop>
 #include <QFile>
 #include <QFileInfo>
 #include <QMetaObject>
+#include <QJsonDocument>
+#include <QMap>
 #include <QSet>
 #include <QPushButton>
 #include <QTemporaryDir>
@@ -106,6 +117,8 @@ static void testHistoricalStructureOptimizerAbiRemainsLinkable()
                                    const rw::kinematics::State&,
                                    rws::StructureOptimizationProblem&,
                                    rws::FrozenRequirementValidationResult*, std::string*);
+    using CheckStaleness = rws::RobotModelStalenessResult (*)(
+        const rws::RobotDesignContext&, const QString&);
 
     const ResolveExternalAssetPaths resolveExternalAssetPaths =
         static_cast<ResolveExternalAssetPaths>(
@@ -114,10 +127,12 @@ static void testHistoricalStructureOptimizerAbiRemainsLinkable()
         static_cast<LoadProject>(&rws::StructureOptimizationProjectAdapter::loadProject);
     const CreateProblem createProblem = static_cast<CreateProblem>(
         &rws::FrozenRequirementProjectImportService::createProblem);
+    const CheckStaleness checkStaleness = &rws::RobotModelStalenessChecker::check;
 
     REQUIRE(resolveExternalAssetPaths != nullptr);
     REQUIRE(loadProject != nullptr);
     REQUIRE(createProblem != nullptr);
+    REQUIRE(checkStaleness != nullptr);
 }
 
 static QString sourcePath(const QString& relativePath)
@@ -2441,6 +2456,87 @@ static void testManagedFrozenRequirementImportUsesExplicitProjectRoot()
     }
     REQUIRE(managedBuild.ok);
 
+    rws::RobotModelSpec portableModel;
+    QString portableError;
+    REQUIRE(rws::RobotModelProjectPaths::makePortable(
+        model, projectRoot, portableModel, &portableError));
+    portableModel.saveDirectory.clear();
+    rws::RobotModelSpec portableRuntime;
+    REQUIRE(rws::RobotModelProjectPaths::resolveManaged(
+        portableModel, projectRoot, portableRuntime, &portableError));
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray portableJson =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(portableModel));
+    REQUIRE(modelFile.write(portableJson) == portableJson.size());
+    modelFile.close();
+
+    rws::RequirementSet portableRequirements = requirements;
+    portableRequirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(portableRuntime);
+    rws::FrozenRequirementArtifact portableArtifact;
+    REQUIRE(rws::RequirementFreezer::freeze(
+        portableRequirements, *workcell, workcell->getDefaultState(), portableRuntime,
+        portableArtifact, &error, projectRoot.toStdString()));
+    QJsonObject portableRequirementProject =
+        rws::RequirementSetJson::toObject(portableRequirements);
+    portableRequirementProject["frozenArtifact"] =
+        rws::FrozenRequirementArtifactJson::toObject(portableArtifact);
+    REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(requirementFile.write(QJsonDocument(portableRequirementProject).toJson()) > 0);
+    requirementFile.close();
+
+    rws::StructureOptimizationProblem portableProblem;
+    const bool portableImported = rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, workcell->getDefaultState(), portableProblem,
+        &validation, &error, projectRoot);
+    if (!portableImported)
+        std::fprintf(stderr, "Portable managed import error: %s\n", error.c_str());
+    REQUIRE(portableImported);
+    REQUIRE(rws::RobotModelFingerprint::canonicalSha256(portableProblem.context.modelSpec) ==
+            portableRequirements.modelBinding.robotModelFingerprint);
+
+    const QString optimizationPath =
+        QDir(projectRoot).filePath("optimizations/main.structure-optimization.json");
+    const rws::RobotModelStalenessResult currentStatus =
+        rws::RobotModelStalenessChecker::checkManaged(
+            portableProblem.context, optimizationPath, projectRoot);
+    REQUIRE(currentStatus.status == rws::RobotModelSourceStatus::Current);
+    REQUIRE(QDir::cleanPath(currentStatus.resolvedSourcePath) == QDir::cleanPath(modelPath));
+
+    REQUIRE(QDir().mkpath(QFileInfo(optimizationPath).absolutePath()));
+    rws::StructureOptimizationProblem persistedProblem = portableProblem;
+    const QString relativeModelPath = QDir(QFileInfo(optimizationPath).absolutePath())
+                                          .relativeFilePath(modelPath);
+    persistedProblem.context.sourceModelPath = relativeModelPath.toStdString();
+    persistedProblem.context.modelProvenance.sourceModelPath =
+        relativeModelPath.toStdString();
+    persistedProblem.context.modelSpec.saveDirectory =
+        QStringLiteral("../generated/robot-models").toStdString();
+    QString projectError;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        optimizationPath, persistedProblem, -1, &projectError));
+
+    const QString movedRoot = directory.filePath("ManagedProjectMoved");
+    REQUIRE(QDir(directory.path()).rename("ManagedProject", "ManagedProjectMoved"));
+    QTemporaryDir hostileDirectory;
+    REQUIRE(hostileDirectory.isValid());
+    const QString previousCwd = QDir::currentPath();
+    REQUIRE(QDir::setCurrent(hostileDirectory.path()));
+
+    const QString movedModelPath = QDir(movedRoot).filePath("data/frozen/robot.rmb.json");
+    const QString movedOptimizationPath =
+        QDir(movedRoot).filePath("optimizations/main.structure-optimization.json");
+    rws::StructureOptimizationProblem movedProblem;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        movedOptimizationPath, movedProblem, nullptr, &projectError, movedRoot));
+    const rws::RobotModelStalenessResult movedStatus =
+        rws::RobotModelStalenessChecker::checkManaged(
+            movedProblem.context, movedOptimizationPath, movedRoot);
+    REQUIRE(movedStatus.status == rws::RobotModelSourceStatus::Current);
+    REQUIRE(QDir::cleanPath(movedStatus.resolvedSourcePath) ==
+            QDir::cleanPath(movedModelPath));
+    REQUIRE(QDir::setCurrent(previousCwd));
+
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else
@@ -2538,6 +2634,92 @@ static void testProjectFactoryProvenance()
     invalidSource.close();
     REQUIRE(rws::RobotModelStalenessChecker::check(problem.context, projectPath).status ==
             rws::RobotModelSourceStatus::SourceInvalid);
+
+    QTemporaryDir suffixCollisionDirectory;
+    REQUIRE(suffixCollisionDirectory.isValid());
+    rws::RobotModelSpec suffixCollisionSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(
+            suffixCollisionDirectory.path());
+    suffixCollisionSpec.robotName = "StandaloneSuffixCollision";
+    suffixCollisionSpec.saveDirectory =
+        suffixCollisionDirectory.filePath("generated/robot-models").toStdString();
+    suffixCollisionSpec.drawables.clear();
+    suffixCollisionSpec.collisionModels.clear();
+    suffixCollisionSpec.sceneGeometries.clear();
+    rws::DrawableSpec relativeDrawable;
+    relativeDrawable.name = "standalone-relative-geometry";
+    relativeDrawable.refFrame = "WORLD";
+    relativeDrawable.shape = "Mesh";
+    relativeDrawable.filePath = "assets/base.stl";
+    suffixCollisionSpec.drawables.push_back(relativeDrawable);
+    const QString suffixCollisionSource =
+        suffixCollisionDirectory.filePath("standalone.rmb.json");
+    QFile suffixCollisionFile(suffixCollisionSource);
+    REQUIRE(suffixCollisionFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray suffixCollisionJson = QByteArray::fromStdString(
+        rws::RobotModelSpecJson::toJson(suffixCollisionSpec));
+    REQUIRE(suffixCollisionFile.write(suffixCollisionJson) == suffixCollisionJson.size());
+    suffixCollisionFile.close();
+    rws::StructureOptimizationProblem suffixCollisionProblem;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        suffixCollisionSpec, suffixCollisionSource, suffixCollisionProblem, &error));
+    REQUIRE(rws::RobotModelStalenessChecker::check(
+                suffixCollisionProblem.context,
+                suffixCollisionDirectory.filePath(
+                    "standalone.structure-optimization.json")).status ==
+            rws::RobotModelSourceStatus::Current);
+
+    QTemporaryDir rootBoundaryDirectory;
+    REQUIRE(rootBoundaryDirectory.isValid());
+    const QString rootBoundaryAsset =
+        rootBoundaryDirectory.filePath("assets/root-boundary.stl");
+    REQUIRE(QDir().mkpath(QFileInfo(rootBoundaryAsset).absolutePath()));
+    QFile rootBoundaryAssetFile(rootBoundaryAsset);
+    REQUIRE(rootBoundaryAssetFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(rootBoundaryAssetFile.write("solid root-boundary\nendsolid root-boundary\n") > 0);
+    rootBoundaryAssetFile.close();
+    const QString normalizedBoundaryAsset = QDir::fromNativeSeparators(
+        QFileInfo(rootBoundaryAsset).absoluteFilePath());
+#ifdef Q_OS_WIN
+    const QString rootBoundary = normalizedBoundaryAsset.left(3);
+#else
+    const QString rootBoundary = QStringLiteral("/");
+#endif
+    REQUIRE(QFileInfo(rootBoundary).isAbsolute());
+    const QString rootRelativeAsset =
+        QDir(rootBoundary).relativeFilePath(normalizedBoundaryAsset);
+    REQUIRE(QFileInfo(rootRelativeAsset).isRelative());
+    rws::RobotModelSpec rootPortable =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(rootBoundaryDirectory.path());
+    rootPortable.robotName = "ManagedRootBoundary";
+    rootPortable.saveDirectory.clear();
+    rootPortable.drawables.clear();
+    rootPortable.collisionModels.clear();
+    rootPortable.sceneGeometries.clear();
+    rws::DrawableSpec rootDrawable;
+    rootDrawable.name = "managed-root-boundary";
+    rootDrawable.refFrame = "WORLD";
+    rootDrawable.shape = "Mesh";
+    rootDrawable.filePath = rootRelativeAsset.toStdString();
+    rootPortable.drawables.push_back(rootDrawable);
+    const QString rootSource = rootBoundaryDirectory.filePath("root-boundary.rmb.json");
+    QFile rootSourceFile(rootSource);
+    REQUIRE(rootSourceFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray rootSourceJson =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(rootPortable));
+    REQUIRE(rootSourceFile.write(rootSourceJson) == rootSourceJson.size());
+    rootSourceFile.close();
+    rws::RobotModelSpec rootRuntime;
+    QString rootPathError;
+    REQUIRE(rws::RobotModelProjectPaths::resolveManaged(
+        rootPortable, rootBoundary, rootRuntime, &rootPathError));
+    rws::StructureOptimizationProblem rootProblem;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        rootRuntime, rootSource, rootProblem, &error));
+    REQUIRE(rws::RobotModelStalenessChecker::checkManaged(
+                rootProblem.context,
+                rootBoundaryDirectory.filePath("root-boundary.structure-optimization.json"),
+                rootBoundary).status == rws::RobotModelSourceStatus::Current);
 
     rws::RobotDesignContext legacyContext;
     REQUIRE(rws::RobotModelStalenessChecker::check(legacyContext, projectPath).status ==
@@ -2837,6 +3019,304 @@ static void testAcceptedUr6585AProject()
         REQUIRE(!candidateDirectory.entryList(QStringList() << "*.wc.xml",
                                               QDir::Files).isEmpty());
     }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testPortable300kgRobotFileProjectAcceptance()
+{
+    std::printf("testPortable300kgRobotFileProjectAcceptance ... ");
+
+    const QString sourceRoot = QDir(QStringLiteral(STRUCTUREOPTIMIZER_TEST_SOURCE_DIR))
+                                   .filePath(QStringLiteral(
+                                       "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/"
+                                       "300kg_urdf"));
+    const QString sourceUrdf = QDir(sourceRoot).filePath(QStringLiteral("output/300kg.urdf"));
+    const auto treeSnapshot = [](const QString& root) {
+        QMap<QString, QByteArray> result;
+        QDirIterator iterator(root, QDir::Files, QDirIterator::Subdirectories);
+        while (iterator.hasNext()) {
+            const QString path = iterator.next();
+            QFile file(path);
+            if (!file.open(QIODevice::ReadOnly)) {
+                result.insert(QStringLiteral("!unreadable!") + path, QByteArray());
+                continue;
+            }
+            result.insert(QDir(root).relativeFilePath(path),
+                          QCryptographicHash::hash(file.readAll(), QCryptographicHash::Sha256));
+        }
+        return result;
+    };
+    const QMap<QString, QByteArray> sourceBefore = treeSnapshot(sourceRoot);
+    REQUIRE(QFileInfo(sourceUrdf).isFile());
+    REQUIRE(!sourceBefore.isEmpty());
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString originalRoot = directory.filePath(QStringLiteral("RobotProject"));
+    const QString originalProject = QDir(originalRoot).filePath(QStringLiteral("300kg.rwproj"));
+    REQUIRE(QDir().mkpath(originalRoot));
+    QString modelPath;
+    QString requirementPath;
+    QString publishedWorkCellPath;
+    QString error;
+
+    {
+        QString requirementDocument;
+        rws::CallbackProjectDocumentProvider requirementProvider(
+            QStringLiteral("acceptance.requirements"),
+            QStringLiteral("rws.engineering-requirements"),
+            [](const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+            [&requirementDocument](const QString& targetPath,
+                                   const rws::ProjectDocumentContext&, QString* saveError) {
+                QFile source(requirementDocument);
+                QFile target(targetPath);
+                if (!source.open(QIODevice::ReadOnly) ||
+                    !target.open(QIODevice::WriteOnly | QIODevice::Truncate) ||
+                    target.write(source.readAll()) < 0) {
+                    if (saveError != nullptr)
+                        *saveError = QStringLiteral("Could not stage the frozen requirement.");
+                    return false;
+                }
+                return true;
+            });
+        rws::RobotModelBuilderPlugin builderPlugin;
+        rw::core::PropertyMap properties;
+        rws::RobWorkStudio studio(properties);
+        REQUIRE(studio.registerProjectDocumentProvider(&requirementProvider, &error));
+        builderPlugin.setRobWorkStudio(&studio);
+        builderPlugin.initialize();
+        rws::RobotModelBuilderWidget* builder =
+            qobject_cast<rws::RobotModelBuilderWidget*>(builderPlugin.widget());
+        REQUIRE(builder != nullptr);
+        if (builder == nullptr)
+            return;
+
+        rws::RobotProjectImportCallbacks callbacks;
+        callbacks.preflight = [&builderPlugin](const QString& path, const QString& root,
+                                                QString* callbackError) {
+            const QString result = builderPlugin.preflightRobotProjectSource(path, root);
+            if (callbackError != nullptr)
+                *callbackError = result;
+            return result.isEmpty();
+        };
+        callbacks.commit = [&builderPlugin](const QString& path, const QString& root,
+                                             QString* callbackError) {
+            const QString result = builderPlugin.commitRobotProjectSource(path, root);
+            if (callbackError != nullptr)
+                *callbackError = result;
+            return result.isEmpty();
+        };
+        const bool created = studio.createProjectFromRobotFilePaths(
+            sourceUrdf, originalProject, callbacks, &error);
+        if (!created)
+            std::fprintf(stderr, "300kg project creation error: %s\n",
+                         error.toStdString().c_str());
+        REQUIRE(created);
+        if (!created)
+            return;
+
+        rws::RobotModelSpec runtimeSpec = builder->currentModelSpec();
+        REQUIRE(runtimeSpec.robotName == "300kg");
+        const std::size_t movableJointCount = static_cast<std::size_t>(std::count_if(
+            runtimeSpec.transformJoints.begin(), runtimeSpec.transformJoints.end(),
+            [](const rws::JointTransformSpec& joint) {
+                return rws::isMovable(rws::typeToKind(joint.type));
+            }));
+        REQUIRE(movableJointCount == 6);
+        REQUIRE(runtimeSpec.drawables.size() == 7);
+        REQUIRE(runtimeSpec.collisionModels.size() == 7);
+
+        const auto pathInsideProject = [&originalRoot](const std::string& value) {
+            const QString path = QFileInfo(QString::fromStdString(value)).absoluteFilePath();
+            const QString relative = QDir::fromNativeSeparators(
+                QDir(originalRoot).relativeFilePath(path));
+            return QFileInfo(path).isFile() && relative != QStringLiteral("..") &&
+                   !relative.startsWith(QStringLiteral("../")) &&
+                   !QDir::isAbsolutePath(relative);
+        };
+        bool geometryContained = true;
+        for (const rws::DrawableSpec& drawable : runtimeSpec.drawables)
+            geometryContained = geometryContained && pathInsideProject(drawable.filePath);
+        for (const rws::CollisionModelSpec& collision : runtimeSpec.collisionModels)
+            geometryContained = geometryContained && pathInsideProject(collision.filePath);
+        REQUIRE(geometryContained);
+
+        REQUIRE(studio.saveCurrentProject(&error));
+        REQUIRE(studio.resolveProjectResource(QStringLiteral("robot-model.main"), modelPath,
+                                              &error));
+        REQUIRE(QFileInfo(modelPath).isFile());
+
+        rws::RobotModelPublishRequest publishRequest;
+        publishRequest.spec = runtimeSpec;
+        publishRequest.projectRoot = originalRoot;
+        publishRequest.promote = [&studio](const QString& scene,
+                                           const QStringList& dependencies,
+                                           QString* promoteError) {
+            return studio.promoteGeneratedWorkCell(scene, dependencies, promoteError);
+        };
+        const bool published = rws::RobotModelPublishService::publishAndLoad(
+            publishRequest, &error);
+        if (!published)
+            std::fprintf(stderr, "300kg publication error: %s\n", error.toStdString().c_str());
+        REQUIRE(published);
+        if (!published) {
+            REQUIRE(treeSnapshot(sourceRoot) == sourceBefore);
+            std::printf("FAILED (%d)\n", g_testFailures);
+            return;
+        }
+
+        REQUIRE(!studio.mainWorkCellResourceId().isEmpty());
+        REQUIRE(studio.resolveProjectResource(studio.mainWorkCellResourceId(),
+                                              publishedWorkCellPath, &error));
+        REQUIRE(QFileInfo(publishedWorkCellPath).isFile());
+        REQUIRE(studio.getWorkcell() != nullptr);
+        REQUIRE(studio.getWorkcell()->getDevices().size() == 1);
+
+        rws::RobotModelBuilderWidget persistedBuilder;
+        persistedBuilder.setProjectOutputDirectory(originalRoot);
+        REQUIRE(persistedBuilder.loadProjectDocument(modelPath, &error));
+        runtimeSpec = persistedBuilder.currentModelSpec();
+
+        const rw::models::WorkCell::Ptr workcell = studio.getWorkcell();
+        const rw::kinematics::State state = workcell->getDefaultState();
+        const rw::models::Device::Ptr device = workcell->getDevices().front();
+        rws::RequirementSet requirements;
+        requirements.name = "300kg acceptance requirement";
+        requirements.frozen = true;
+        requirementPath = QDir(originalRoot).filePath(
+            QStringLiteral("requirements/main.requirements.json"));
+        REQUIRE(QDir().mkpath(QFileInfo(requirementPath).absolutePath()));
+        requirements.modelBinding.sourcePath =
+            QDir(QFileInfo(requirementPath).absolutePath())
+                .relativeFilePath(modelPath).toStdString();
+        requirements.modelBinding.robotName = runtimeSpec.robotName;
+        requirements.modelBinding.robotModelFingerprint =
+            rws::RobotModelFingerprint::canonicalSha256(runtimeSpec);
+        rws::PoseTask task;
+        task.id = "home";
+        task.name = "300kg home pose";
+        task.level = rws::RequirementLevel::Must;
+        task.refFrame = "WORLD";
+        task.tcpFrame = device->getEnd()->getName();
+        const rw::math::Transform3D<> worldTtcp =
+            rw::kinematics::Kinematics::worldTframe(device->getEnd(), state);
+        task.position = {{worldTtcp.P()[0], worldTtcp.P()[1], worldTtcp.P()[2]}};
+        requirements.poseTasks.push_back(task);
+
+        rws::FrozenRequirementArtifact artifact;
+        std::string domainError;
+        const bool frozen = rws::RequirementFreezer::freeze(
+            requirements, *workcell, state, runtimeSpec, artifact, &domainError,
+            originalRoot.toStdString());
+        if (!frozen)
+            std::fprintf(stderr, "300kg freeze error: %s\n", domainError.c_str());
+        REQUIRE(frozen);
+
+        QJsonObject requirementObject = rws::RequirementSetJson::toObject(requirements);
+        requirementObject.insert(QStringLiteral("frozenArtifact"),
+                                 rws::FrozenRequirementArtifactJson::toObject(artifact));
+        QFile requirementFile(requirementPath);
+        REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+        const QByteArray requirementJson = QJsonDocument(requirementObject).toJson();
+        REQUIRE(requirementFile.write(requirementJson) == requirementJson.size());
+        requirementFile.close();
+        requirementDocument = requirementPath;
+
+        std::vector<rws::TaskPoint> kinematicTasks;
+        REQUIRE(rws::FrozenRequirementKinematicAdapter::apply(
+            artifact, *workcell, state, kinematicTasks, &domainError,
+            originalRoot.toStdString()));
+        REQUIRE(kinematicTasks.size() == 1);
+
+        rws::StructureOptimizationProblem optimizationProblem;
+        rws::FrozenRequirementValidationResult validation;
+        const bool optimizationImported =
+            rws::FrozenRequirementProjectImportService::createProblem(
+            requirementPath, *workcell, state, optimizationProblem, &validation,
+            &domainError, originalRoot);
+        if (!optimizationImported)
+            std::fprintf(stderr, "300kg optimization import error: %s\n", domainError.c_str());
+        REQUIRE(optimizationImported);
+        REQUIRE(optimizationProblem.tasks.size() == 1);
+
+        rws::ProjectResource requirementResource;
+        requirementResource.id = QStringLiteral("engineering-requirements.main");
+        requirementResource.kind = QStringLiteral("rws.engineering-requirements");
+        requirementResource.path = QDir(originalRoot).relativeFilePath(requirementPath);
+        requirementResource.ownership = QStringLiteral("generated");
+        requirementResource.required = true;
+        requirementResource.dependencies = {QStringLiteral("robot-model.main"),
+                                            studio.mainWorkCellResourceId()};
+        REQUIRE(studio.ensureGeneratedProjectResource(requirementResource, nullptr, &error));
+        REQUIRE(studio.saveCurrentProject(&error));
+    }
+
+    const QString movedRoot = directory.filePath(QStringLiteral("RobotProjectMoved"));
+    REQUIRE(QDir().rename(originalRoot, movedRoot));
+    const QString movedProject = QDir(movedRoot).filePath(QStringLiteral("300kg.rwproj"));
+    QTemporaryDir hostileDirectory;
+    REQUIRE(hostileDirectory.isValid());
+    const QString previousCwd = QDir::currentPath();
+    REQUIRE(QDir::setCurrent(hostileDirectory.path()));
+
+    rws::ProjectManager reopened;
+    REQUIRE(reopened.openProject(movedProject, &error));
+    QString movedSource;
+    QString movedModel;
+    QString movedWorkCell;
+    QString movedRequirements;
+    REQUIRE(reopened.resolveResource(QStringLiteral("robot-source.main"), movedSource, &error));
+    REQUIRE(reopened.resolveResource(QStringLiteral("robot-model.main"), movedModel, &error));
+    REQUIRE(reopened.resolveResource(
+        reopened.manifest().entryPoints.value(QStringLiteral("mainWorkCell")),
+        movedWorkCell, &error));
+    REQUIRE(reopened.resolveResource(QStringLiteral("engineering-requirements.main"),
+                                     movedRequirements, &error));
+    REQUIRE(movedSource.startsWith(QDir::cleanPath(movedRoot)));
+    REQUIRE(movedModel.startsWith(QDir::cleanPath(movedRoot)));
+    REQUIRE(movedWorkCell.startsWith(QDir::cleanPath(movedRoot)));
+    REQUIRE(movedRequirements.startsWith(QDir::cleanPath(movedRoot)));
+
+    rws::RobotModelBuilderWidget movedBuilder;
+    movedBuilder.setProjectOutputDirectory(movedRoot);
+    REQUIRE(movedBuilder.loadProjectDocument(movedModel, &error));
+    const rws::RobotModelSpec movedSpec = movedBuilder.currentModelSpec();
+    REQUIRE(movedSpec.drawables.size() == 7);
+    const rw::models::WorkCell::Ptr movedCell =
+        rw::loaders::WorkCellLoader::Factory::load(movedWorkCell.toStdString());
+    REQUIRE(!movedCell.isNull());
+    if (!movedCell.isNull()) {
+        QFile requirementFile(movedRequirements);
+        REQUIRE(requirementFile.open(QIODevice::ReadOnly));
+        const QJsonDocument requirementJson = QJsonDocument::fromJson(requirementFile.readAll());
+        requirementFile.close();
+        rws::FrozenRequirementArtifact movedArtifact;
+        std::string domainError;
+        REQUIRE(rws::FrozenRequirementKinematicAdapter::parseArtifactJson(
+            requirementJson.object(), movedArtifact, &domainError));
+        std::vector<rws::TaskPoint> movedTasks;
+        REQUIRE(rws::FrozenRequirementKinematicAdapter::apply(
+            movedArtifact, *movedCell, movedCell->getDefaultState(), movedTasks, &domainError,
+            movedRoot.toStdString()));
+        REQUIRE(movedTasks.size() == 1);
+        rws::StructureOptimizationProblem movedProblem;
+        rws::FrozenRequirementValidationResult validation;
+        const bool movedOptimizationImported =
+            rws::FrozenRequirementProjectImportService::createProblem(
+            movedRequirements, *movedCell, movedCell->getDefaultState(), movedProblem,
+            &validation, &domainError, movedRoot);
+        if (!movedOptimizationImported)
+            std::fprintf(stderr, "Moved 300kg optimization import error: %s\n",
+                         domainError.c_str());
+        REQUIRE(movedOptimizationImported);
+        REQUIRE(movedProblem.tasks.size() == 1);
+    }
+    REQUIRE(QDir::setCurrent(previousCwd));
+    REQUIRE(treeSnapshot(sourceRoot) == sourceBefore);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -3323,6 +3803,76 @@ static void testStructureOptimizerWidgetState()
         REQUIRE(startButton->isEnabled());
     REQUIRE(widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
 
+    QTemporaryDir managedStatusDirectory;
+    REQUIRE(managedStatusDirectory.isValid());
+    const QString managedStatusRoot = managedStatusDirectory.filePath("ManagedProject");
+    const QString managedStatusAsset =
+        QDir(managedStatusRoot).filePath("assets/base.stl");
+    REQUIRE(QDir().mkpath(QFileInfo(managedStatusAsset).absolutePath()));
+    QFile managedStatusAssetFile(managedStatusAsset);
+    REQUIRE(managedStatusAssetFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(managedStatusAssetFile.write("solid managed\nendsolid managed\n") > 0);
+    managedStatusAssetFile.close();
+    rws::RobotModelSpec managedPortable =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(managedStatusRoot);
+    managedPortable.robotName = "ManagedWidgetStatus";
+    managedPortable.saveDirectory.clear();
+    managedPortable.drawables.clear();
+    managedPortable.collisionModels.clear();
+    managedPortable.sceneGeometries.clear();
+    rws::DrawableSpec managedDrawable;
+    managedDrawable.name = "managed-widget-geometry";
+    managedDrawable.refFrame = "WORLD";
+    managedDrawable.shape = "Mesh";
+    managedDrawable.filePath = "assets/base.stl";
+    managedPortable.drawables.push_back(managedDrawable);
+    rws::RobotModelSpec managedRuntime;
+    QString managedPathError;
+    REQUIRE(rws::RobotModelProjectPaths::resolveManaged(
+        managedPortable, managedStatusRoot, managedRuntime, &managedPathError));
+    const QString managedStatusSource =
+        QDir(managedStatusRoot).filePath("models/main.rmb.json");
+    REQUIRE(QDir().mkpath(QFileInfo(managedStatusSource).absolutePath()));
+    QFile managedStatusSourceFile(managedStatusSource);
+    REQUIRE(managedStatusSourceFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray managedStatusJson =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(managedPortable));
+    REQUIRE(managedStatusSourceFile.write(managedStatusJson) == managedStatusJson.size());
+    managedStatusSourceFile.close();
+    rws::StructureOptimizationProblem managedStatusProblem;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        managedRuntime, managedStatusSource, managedStatusProblem, &staleFactoryError));
+    managedStatusProblem.variables = problem.variables;
+    managedStatusProblem.tasks = problem.tasks;
+    managedStatusProblem.constraints = problem.constraints;
+    managedStatusProblem.run = problem.run;
+    managedStatusProblem.weights = problem.weights;
+    managedStatusProblem.objectives = problem.objectives;
+    const QString managedStatusDocument = QDir(managedStatusRoot).filePath(
+        "optimizations/main.structure-optimization.json");
+    REQUIRE(QDir().mkpath(QFileInfo(managedStatusDocument).absolutePath()));
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        managedStatusDocument, managedStatusProblem, -1, &projectDocumentError));
+    REQUIRE(widget.loadProjectDocument(
+        managedStatusDocument, &projectDocumentError, managedStatusRoot));
+    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    rws::StructureOptimizationProblem standaloneStatusProblem;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        managedPortable, managedStatusSource, standaloneStatusProblem, &staleFactoryError));
+    standaloneStatusProblem.variables = problem.variables;
+    standaloneStatusProblem.tasks = problem.tasks;
+    standaloneStatusProblem.constraints = problem.constraints;
+    standaloneStatusProblem.run = problem.run;
+    standaloneStatusProblem.weights = problem.weights;
+    standaloneStatusProblem.objectives = problem.objectives;
+    widget.setProblem(standaloneStatusProblem);
+    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(widget.loadProjectDocument(
+        managedStatusDocument, &projectDocumentError, managedStatusRoot));
+    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(widget.loadProjectDocument(managedStatusDocument, &projectDocumentError));
+    REQUIRE(widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+
     const rws::StructureOptimizationProblem collected = widget.collectProblem();
     REQUIRE(collected.variables.size() == 1);
     REQUIRE(collected.tasks.size() == 1);
@@ -3360,6 +3910,72 @@ static void testStructureOptimizerWidgetState()
         std::printf("PASSED\n");
     else
         std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testManagedRobotProjectRequiresPublishedWorkCell()
+{
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString projectPath = directory.filePath("RobotDraft/RobotDraft.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = "robot-draft";
+    manifest.project.name = "RobotDraft";
+    rws::ProjectResource source;
+    source.id = "robot-source.main";
+    source.kind = "robwork.passive-asset";
+    source.path = "sources/robot.urdf";
+    source.ownership = "project";
+    source.required = false;
+    rws::ProjectResource model;
+    model.id = "robot-model.main";
+    model.kind = "robwork.robot-model";
+    model.path = "generated/robot-models/robot.rmb.json";
+    model.ownership = "generated";
+    model.required = false;
+    model.dependencies = {source.id};
+    manifest.resources = {source, model};
+    manifest.entryPoints.insert("robotSource", source.id);
+    QString error;
+    rws::ProjectManager manager;
+    REQUIRE(manager.createProject(projectPath, manifest, &error));
+    manager.closeProject();
+
+    const QString projectRoot = QFileInfo(projectPath).absolutePath();
+    REQUIRE(QDir().mkpath(QFileInfo(QDir(projectRoot).filePath(source.path)).absolutePath()));
+    QFile sourceFile(QDir(projectRoot).filePath(source.path));
+    REQUIRE(sourceFile.open(QIODevice::WriteOnly));
+    REQUIRE(sourceFile.write("<robot name=\"RobotDraft\"/>") > 0);
+    sourceFile.close();
+    REQUIRE(QDir().mkpath(QFileInfo(QDir(projectRoot).filePath(model.path)).absolutePath()));
+    QFile modelFile(QDir(projectRoot).filePath(model.path));
+    REQUIRE(modelFile.open(QIODevice::WriteOnly));
+    REQUIRE(modelFile.write("{}") == 2);
+    modelFile.close();
+
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio(properties);
+    rws::CallbackProjectDocumentProvider modelProvider(
+        "test.robot-model", "robwork.robot-model",
+        [](const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        [](const QString&, const rws::ProjectDocumentContext&, QString*) { return true; });
+    REQUIRE(studio.registerProjectDocumentProvider(&modelProvider, &error));
+    studio.openFile(projectPath.toStdString());
+    REQUIRE(!studio.projectDirectory().isEmpty());
+    REQUIRE(studio.mainWorkCellResourceId().isEmpty());
+    rw::models::WorkCell::Ptr placeholder =
+        rw::core::ownedPtr(new rw::models::WorkCell("RobotDraft"));
+    rws::StructureOptimizerWidget widget;
+    widget.setRobWorkStudio(&studio);
+    widget.setScenarioContext(placeholder.get(), placeholder->getDefaultState());
+    QPushButton* create = widget.findChild<QPushButton*>(
+        "newStructureOptimizationProjectFromFrozenRequirementButton");
+    REQUIRE(create != nullptr);
+    if (create != nullptr)
+        create->click();
+    REQUIRE(widget.statusText() == QStringLiteral(
+        "The robot project has not generated its managed WorkCell. Review the model in "
+        "RobotModelBuilder and run Save and Load first."));
+    studio.close();
 }
 
 static void testStructureOptimizationControllerAsyncState()
@@ -3489,6 +4105,17 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if (suite == "robot_file_acceptance") {
+        QApplication app(argc, argv);
+        testPortable300kgRobotFileProjectAcceptance();
+        if (g_testFailures == 0) {
+            std::printf("Robot file acceptance test passed.\n");
+            return 0;
+        }
+        std::printf("Robot file acceptance test FAILED.\n");
+        return 1;
+    }
+
     if (suite == "resource_dependencies") {
         QApplication app(argc, argv);
         testStructureOptimizerResourceDependencies();
@@ -3524,9 +4151,30 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if (suite == "managed_project_gate") {
+        QApplication app(argc, argv);
+        testManagedRobotProjectRequiresPublishedWorkCell();
+        if (g_testFailures == 0) {
+            std::printf("Managed project gate test passed.\n");
+            return 0;
+        }
+        std::printf("Managed project gate test FAILED.\n");
+        return 1;
+    }
+
     QCoreApplication app(argc, argv);
 
     testHistoricalStructureOptimizerAbiRemainsLinkable();
+
+    if (suite == "model_staleness") {
+        testProjectFactoryProvenance();
+        if (g_testFailures == 0) {
+            std::printf("Model staleness tests passed.\n");
+            return 0;
+        }
+        std::printf("Model staleness tests FAILED.\n");
+        return 1;
+    }
 
     if (suite == "model_factory") {
         testModelFactory();

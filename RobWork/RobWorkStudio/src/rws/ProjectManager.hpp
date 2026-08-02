@@ -92,6 +92,14 @@ class ProjectManager
     bool replaceResourceAndAddAssets (const ProjectResource& resource,
                                       const QVector< ProjectResource >& assets,
                                       QString* error = nullptr);
+    bool replaceResourceAndReconcileGeneratedSceneAssets (
+        const ProjectResource& resource,
+        const QVector< ProjectResource >& assets,
+        QString* error = nullptr);
+
+    bool addMainWorkCellAndAssets (const ProjectResource& workCell,
+                                   const QVector< ProjectResource >& assets,
+                                   QString* error = nullptr);
 
     // 克隆当前项目到一个尚不存在的目标目录。只复制 ownership 为 project/generated 的文件，
     // external 资源继续保留其原始引用；新清单生成独立 project.id，并在所有文件落盘后才切换
@@ -144,6 +152,10 @@ class ProjectManager
                           QString* error = nullptr) const;
 
   private:
+    bool replaceResourceAndAssets (const ProjectResource& resource,
+                                   const QVector< ProjectResource >& assets,
+                                   bool reconcileGeneratedSceneAssets,
+                                   QString* error);
     bool createAutosaveSnapshot (ProjectDocumentRegistry* documents, QString* error) const;
     // 把清单以原子方式（QSaveFile）写入指定项目文件，避免写入中断留下半截文件。
     bool writeManifest (const QString& projectFilePath,

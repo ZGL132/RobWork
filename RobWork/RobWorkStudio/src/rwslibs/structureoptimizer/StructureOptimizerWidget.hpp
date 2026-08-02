@@ -68,6 +68,8 @@ Q_SIGNALS:
     void projectDocumentChanged();
 
 private:
+    void setProblemWithManagedRoot(const StructureOptimizationProblem& problem,
+                                   const QString& managedProjectRoot);
     QWidget* createVariablePage();
     QWidget* createTaskPage();
     QWidget* createSettingsPage();
@@ -109,6 +111,7 @@ private:
     std::unique_ptr<CandidatePreviewController> _previewController;
     StructureOptimizationResult _lastResult;
     QString _projectPath;
+    QString _managedProjectRoot;
     QString _projectDocumentPath;
     QByteArray _savedProjectDocumentSnapshot;
     mutable QByteArray _pendingProjectDocumentSnapshot;

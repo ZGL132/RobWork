@@ -859,6 +859,23 @@ bool ProjectManager::replaceResourceAndAddAssets (
     const QVector< ProjectResource >& assets,
     QString* error)
 {
+    return replaceResourceAndAssets (resource, assets, false, error);
+}
+
+bool ProjectManager::replaceResourceAndReconcileGeneratedSceneAssets (
+    const ProjectResource& resource,
+    const QVector< ProjectResource >& assets,
+    QString* error)
+{
+    return replaceResourceAndAssets (resource, assets, true, error);
+}
+
+bool ProjectManager::replaceResourceAndAssets (
+    const ProjectResource& resource,
+    const QVector< ProjectResource >& assets,
+    bool reconcileGeneratedSceneAssets,
+    QString* error)
+{
     if (!hasProject ()) {
         setError (error, QString::fromUtf8 ("当前没有打开的项目，无法替换项目资源。"));
         return false;
@@ -892,8 +909,78 @@ bool ProjectManager::replaceResourceAndAddAssets (
             candidate.resources.push_back (asset);
     }
 
+    if (reconcileGeneratedSceneAssets) {
+        QSet< QString > currentAssetIds;
+        for (const ProjectResource& asset : assets)
+            currentAssetIds.insert (asset.id);
+
+        QSet< QString > referencedResourceIds;
+        for (const ProjectResource& candidateResource : candidate.resources) {
+            for (const QString& dependency : candidateResource.dependencies)
+                referencedResourceIds.insert (dependency);
+        }
+        for (auto entryPoint = candidate.entryPoints.constBegin ();
+             entryPoint != candidate.entryPoints.constEnd (); ++entryPoint) {
+            referencedResourceIds.insert (entryPoint.value ());
+        }
+
+        for (int index = candidate.resources.size () - 1; index >= 0; --index) {
+            const ProjectResource& candidateResource = candidate.resources[index];
+            if (candidateResource.id.startsWith (QStringLiteral ("scene.generated.")) &&
+                candidateResource.ownership == QStringLiteral ("generated") &&
+                !currentAssetIds.contains (candidateResource.id) &&
+                !referencedResourceIds.contains (candidateResource.id)) {
+                candidate.resources.removeAt (index);
+            }
+        }
+    }
+
     if (!ProjectManifestJson::validate (candidate, error))
         return false;
+    _manifest = candidate;
+    _dirty = true;
+    return true;
+}
+
+bool ProjectManager::addMainWorkCellAndAssets (
+    const ProjectResource& workCell,
+    const QVector< ProjectResource >& assets,
+    QString* error)
+{
+    if (!hasProject ()) {
+        setError (error, QString::fromUtf8 ("当前没有打开的项目，无法注册主 WorkCell。"));
+        return false;
+    }
+    if (_manifest.entryPoints.contains (QStringLiteral ("mainWorkCell"))) {
+        setError (error, QString::fromUtf8 ("当前项目已经存在 mainWorkCell 入口。"));
+        return false;
+    }
+    if (workCell.id != QStringLiteral ("scene.main") ||
+        workCell.kind != QStringLiteral ("robwork.workcell")) {
+        setError (error,
+                  QString::fromUtf8 (
+                      "首次生成的主 WorkCell 必须使用 scene.main 和 robwork.workcell。"));
+        return false;
+    }
+
+    ProjectManifest candidate = _manifest;
+    for (const ProjectResource& asset : assets)
+        candidate.resources.push_back (asset);
+    candidate.resources.push_back (workCell);
+    candidate.entryPoints.insert (QStringLiteral ("mainWorkCell"), workCell.id);
+    if (!ProjectManifestJson::validate (candidate, error))
+        return false;
+
+    QString resolvedPath;
+    if (!ProjectPathResolver::resolveResource (
+            _projectFilePath, workCell, resolvedPath, error))
+        return false;
+    for (const ProjectResource& asset : assets) {
+        if (!ProjectPathResolver::resolveResource (
+                _projectFilePath, asset, resolvedPath, error))
+            return false;
+    }
+
     _manifest = candidate;
     _dirty = true;
     return true;

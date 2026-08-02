@@ -807,6 +807,57 @@ TEST (ProjectSystemTest, ManagerRejectsInvalidResourceReplacementWithoutChanging
                rws::ProjectManifestJson::toJson (manager.manifest ()));
 }
 
+TEST (ProjectSystemTest, ManagerAddsFirstMainWorkCellAndGeneratedAssetsAtomically)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Robot.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("robot-draft");
+    manifest.project.name = QStringLiteral ("RobotDraft");
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, manifest, &error)) << error.toStdString ();
+
+    rws::ProjectResource deviceAsset;
+    deviceAsset.id = QStringLiteral ("scene.generated.asset.1");
+    deviceAsset.kind = QStringLiteral ("robwork.passive-asset");
+    deviceAsset.path = QStringLiteral ("generated/robot-models/Robot.wc.xml");
+    deviceAsset.ownership = QStringLiteral ("generated");
+    deviceAsset.required = true;
+
+    rws::ProjectResource workCell;
+    workCell.id = QStringLiteral ("scene.main");
+    workCell.kind = QStringLiteral ("robwork.workcell");
+    workCell.path = QStringLiteral ("generated/robot-models/RobotScene.wc.xml");
+    workCell.ownership = QStringLiteral ("generated");
+    workCell.required = true;
+    workCell.dependencies.push_back (deviceAsset.id);
+
+    ASSERT_TRUE (manager.addMainWorkCellAndAssets (
+        workCell, QVector< rws::ProjectResource > () << deviceAsset, &error))
+        << error.toStdString ();
+    EXPECT_EQ (workCell.id,
+               manager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell")));
+    rws::ProjectResource stored;
+    ASSERT_TRUE (manager.manifest ().findResource (workCell.id, stored));
+    EXPECT_EQ (workCell.path, stored.path);
+    ASSERT_TRUE (manager.manifest ().findResource (deviceAsset.id, stored));
+    EXPECT_TRUE (manager.isDirty ());
+
+    const rws::ProjectManifest before = manager.manifest ();
+    const bool dirtyBefore = manager.isDirty ();
+    rws::ProjectResource invalidAsset = deviceAsset;
+    invalidAsset.id = QStringLiteral ("scene.main");
+    EXPECT_FALSE (manager.addMainWorkCellAndAssets (
+        workCell, QVector< rws::ProjectResource > () << invalidAsset, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (dirtyBefore, manager.isDirty ());
+    EXPECT_EQ (rws::ProjectManifestJson::toJson (before),
+               rws::ProjectManifestJson::toJson (manager.manifest ()));
+}
+
 TEST (ProjectSystemTest, ManagerImportsLegacyResourceIntoCurrentProject)
 {
     QTemporaryDir directory;
