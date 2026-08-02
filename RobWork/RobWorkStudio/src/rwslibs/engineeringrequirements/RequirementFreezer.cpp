@@ -489,8 +489,12 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
                                    const rw::kinematics::State& state,
                                    const RobotModelSpec& model,
                                    std::string* error,
-                                   const std::string& artifactBaseDirectory)
+                                   const std::string& artifactBaseDirectory,
+                                   FrozenRequirementValidationResult* validationResult)
 {
+    if (validationResult != nullptr)
+        *validationResult = FrozenRequirementValidationResult();
+
     // 顶层绑定与已编译快照都要一致。双重检查能识别手工编辑 JSON 时只改了
     // 其中一层的情况，避免下游消费者读到互相矛盾的模型身份信息。
     if (artifact.schemaVersion != 3 || artifact.requirementFingerprint.empty() ||
@@ -521,7 +525,9 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
         return false;
     }
 
-    if (!isScenarioCurrent(artifact, workcell, state, error, artifactBaseDirectory)) return false;
+    if (!validateScenario(artifact, workcell, state, validationResult, error,
+                          artifactBaseDirectory))
+        return false;
 
     if (error != nullptr) error->clear();
     return true;

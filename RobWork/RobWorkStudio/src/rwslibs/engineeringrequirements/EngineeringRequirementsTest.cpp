@@ -734,11 +734,16 @@ int testWidgetManagedLoadUsesExplicitProjectRoot()
     widget.setCurrentState(workcell->getDefaultState());
     widget.setProjectOutputDirectory(oldRoot);
     QString error;
+    REQUIRE(widget.loadProjectDocument(documentPath, &error, oldRoot));
+    REQUIRE(widget.requirementSet().frozen);
+    REQUIRE(widget.statusText().contains("source WorkCell file is missing or has changed"));
+
     REQUIRE(widget.loadProjectDocument(documentPath, &error, newRoot));
     if (!widget.requirementSet().frozen)
         std::fprintf(stderr, "Managed root load status: %s\n",
                      widget.statusText().toStdString().c_str());
     REQUIRE(widget.requirementSet().frozen);
+    REQUIRE(!widget.statusText().contains("source WorkCell file is missing or has changed"));
     return 0;
 }
 

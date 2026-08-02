@@ -120,7 +120,8 @@ class RequirementFreezer {
                           const rw::kinematics::State& state,
                           const RobotModelSpec& model,
                           std::string* error = nullptr,
-                          const std::string& artifactBaseDirectory = {});
+                          const std::string& artifactBaseDirectory = {},
+                          FrozenRequirementValidationResult* validationResult = nullptr);
 
     /**
      * @brief 仅复核冻结工件与当前 WorkCell 场景是否仍一致。

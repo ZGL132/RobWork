@@ -1369,14 +1369,17 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         QFile modelFile(QString::fromStdString(parsed.modelBinding.sourcePath));
         const bool modelReadable = !parsed.modelBinding.sourcePath.empty() && modelFile.open(QFile::ReadOnly) &&
                                    RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage);
+        FrozenRequirementValidationResult validationResult;
         const bool artifactCurrent = modelReadable && _workcell != nullptr &&
             RequirementFreezer::isCurrent(
                 artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
-                validationRoot.toStdString());
+                validationRoot.toStdString(), &validationResult);
         if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;
             loadStatus = QString::fromUtf8("研发需求及冻结审计工件已加载，且与当前模型和 WorkCell 一致。");
+            for (const std::string& warning : validationResult.warnings)
+                loadStatus += QString::fromUtf8("\n警告：%1").arg(QString::fromStdString(warning));
         } else {
             parsed.frozen = false;
             artifact = FrozenRequirementArtifact();
