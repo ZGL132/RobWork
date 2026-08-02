@@ -152,6 +152,14 @@ bool ProjectSaveTransaction::commit (QString* error)
 {
     for (int index = 0; index < _staged.size (); ++index) {
         StagedResource& item = _staged[index];
+        if (_existingTargetPolicy == ExistingTargetPolicy::Reject &&
+            QFileInfo::exists (item.targetPath)) {
+            setError (error,
+                      QString::fromUtf8 ("事务目标已经存在，拒绝覆盖：%1。").arg (
+                          item.targetPath));
+            rollback ();
+            return false;
+        }
         // 若正式目标已存在，先原子改名成备份文件，为回滚保留原内容。
         if (QFileInfo::exists (item.targetPath)) {
             if (!QFile::rename (item.targetPath, item.backupPath)) {

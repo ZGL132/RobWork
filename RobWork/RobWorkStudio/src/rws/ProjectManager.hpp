@@ -2,10 +2,27 @@
 #define RWS_PROJECTMANAGER_HPP
 
 #include "ProjectManifest.hpp"
+#include "RobotProjectSourcePackager.hpp"
+
+#include <QHash>
 
 namespace rws {
 
 class ProjectDocumentRegistry;
+
+struct PreparedRobotProject
+{
+    QString projectFilePath;
+    ProjectManifest manifest;
+    PackagedRobotSource packaged;
+    QStringList committedProjectPaths;
+    QHash< QString, QByteArray > committedContentHashes;
+    QStringList createdProjectDirectories;
+    QString previousProjectFilePath;
+    ProjectManifest previousManifest;
+    bool previousDirty = false;
+    bool activated = false;
+};
 
 /**
  * @brief 第一阶段的项目生命周期管理器。
@@ -40,6 +57,16 @@ class ProjectManager
     bool createProjectFromWorkCell (const QString& projectFilePath,
                                     const QString& sourceWorkCellPath,
                                     QString* error = nullptr);
+
+    bool prepareProjectFromRobotFile (const QString& projectFilePath,
+                                      const QString& sourceUrdfPath,
+                                      PreparedRobotProject& prepared,
+                                      QString* error = nullptr) const;
+    bool activatePreparedRobotProject (PreparedRobotProject& prepared,
+                                       QString* error = nullptr);
+    bool rollbackActivatedRobotProject (PreparedRobotProject& prepared,
+                                        QString* error = nullptr);
+    static void discardPreparedRobotProject (PreparedRobotProject& prepared);
 
     // 打开既有项目：读取并校验 .rwproj 文件，预解析全部资源路径并检查 required
     // 资源是否真实存在；任一步失败都不会破坏当前已打开的项目上下文。

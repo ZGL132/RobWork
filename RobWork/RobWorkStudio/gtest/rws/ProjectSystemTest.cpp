@@ -280,6 +280,157 @@ TEST (ProjectSystemTest, RobotSourcePackagerRejectsExistingTargetsWithoutOverwri
     EXPECT_EQ (before, directorySnapshot (target.path ()));
 }
 
+TEST (ProjectSystemTest, ManagerPreparesRobotProjectWithoutSwitchingContext)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString oldProject = QDir (directory.path ()).filePath ("old/Old.rwproj");
+    const QString newProject = QDir (directory.path ()).filePath ("new/New.rwproj");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (newProject).absolutePath ()));
+    ASSERT_TRUE (writeFile (QDir (directory.path ()).filePath ("source/meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        QDir (directory.path ()).filePath ("source"),
+        {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (oldProject, makeManifest (), &error)) << error.toStdString ();
+    manager.markDirty ();
+    const QString oldPath = manager.projectFilePath ();
+    const QString oldId = manager.manifest ().project.id;
+
+    rws::PreparedRobotProject prepared;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (newProject, urdf, prepared, &error))
+        << error.toStdString ();
+
+    EXPECT_EQ (oldPath, manager.projectFilePath ());
+    EXPECT_EQ (oldId, manager.manifest ().project.id);
+    EXPECT_TRUE (manager.isDirty ());
+    EXPECT_FALSE (QFileInfo::exists (newProject));
+    EXPECT_TRUE (QFileInfo::exists (prepared.packaged.stagedManagedUrdfPath));
+    rws::ProjectManager::discardPreparedRobotProject (prepared);
+    rws::ProjectManager::discardPreparedRobotProject (prepared);
+    EXPECT_TRUE (prepared.projectFilePath.isEmpty ());
+}
+
+TEST (ProjectSystemTest, ManagerActivatesPreparedRobotProjectAtomically)
+{
+    QTemporaryDir directory;
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    const QString projectFile = QDir (directory.path ()).filePath ("project/Robot.rwproj");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (projectFile).absolutePath ()));
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    rws::PreparedRobotProject prepared;
+    QString error;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (projectFile, urdf, prepared, &error))
+        << error.toStdString ();
+    ASSERT_TRUE (manager.activatePreparedRobotProject (prepared, &error)) << error.toStdString ();
+
+    EXPECT_EQ (QDir::cleanPath (projectFile), manager.projectFilePath ());
+    EXPECT_TRUE (prepared.activated);
+    EXPECT_TRUE (QFileInfo (projectFile).isFile ());
+    EXPECT_EQ (QStringLiteral ("robot-source.main"),
+               manager.manifest ().entryPoints.value (QStringLiteral ("robotSource")));
+    rws::ProjectResource robotSource;
+    ASSERT_TRUE (manager.manifest ().findResource (QStringLiteral ("robot-source.main"), robotSource));
+    EXPECT_TRUE (robotSource.required);
+    EXPECT_EQ (QStringLiteral ("robwork.passive-asset"), robotSource.kind);
+    EXPECT_TRUE (QFileInfo (QDir (QFileInfo (projectFile).absolutePath ())
+                                    .filePath (robotSource.path)).isFile ());
+    EXPECT_FALSE (QFileInfo::exists (prepared.packaged.stagingAttemptRoot));
+    EXPECT_EQ (prepared.committedProjectPaths.size (), prepared.committedContentHashes.size ());
+}
+
+TEST (ProjectSystemTest, ManagerRollsBackActivatedRobotProjectAndRestoresContext)
+{
+    QTemporaryDir directory;
+    const QString oldProject = QDir (directory.path ()).filePath ("old/Old.rwproj");
+    const QString newProject = QDir (directory.path ()).filePath ("new/New.rwproj");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (newProject).absolutePath ()));
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (oldProject, makeManifest (), &error));
+    manager.markDirty ();
+    const QString oldId = manager.manifest ().project.id;
+    rws::PreparedRobotProject prepared;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (newProject, urdf, prepared, &error));
+    ASSERT_TRUE (manager.activatePreparedRobotProject (prepared, &error));
+    const QStringList committed = prepared.committedProjectPaths;
+
+    ASSERT_TRUE (manager.rollbackActivatedRobotProject (prepared, &error)) << error.toStdString ();
+    EXPECT_EQ (QDir::cleanPath (oldProject), manager.projectFilePath ());
+    EXPECT_EQ (oldId, manager.manifest ().project.id);
+    EXPECT_TRUE (manager.isDirty ());
+    for (const QString& path : committed)
+        EXPECT_FALSE (QFileInfo::exists (path));
+    EXPECT_FALSE (prepared.activated);
+}
+
+TEST (ProjectSystemTest, ManagerActivationFailurePreservesOldProjectAndTargetFiles)
+{
+    QTemporaryDir directory;
+    const QString oldProject = QDir (directory.path ()).filePath ("old/Old.rwproj");
+    const QString newProject = QDir (directory.path ()).filePath ("new/New.rwproj");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (newProject).absolutePath ()));
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (oldProject, makeManifest (), &error));
+    const QString oldPath = manager.projectFilePath ();
+    rws::PreparedRobotProject prepared;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (newProject, urdf, prepared, &error));
+    const QString collision = QDir (QFileInfo (newProject).absolutePath ())
+                                  .filePath ("sources/robot/robot.urdf");
+    ASSERT_TRUE (writeFile (collision, "external"));
+
+    EXPECT_FALSE (manager.activatePreparedRobotProject (prepared, &error));
+    EXPECT_EQ (oldPath, manager.projectFilePath ());
+    EXPECT_EQ (QByteArray ("external"), readFile (collision));
+    EXPECT_FALSE (QFileInfo::exists (newProject));
+    rws::ProjectManager::discardPreparedRobotProject (prepared);
+    EXPECT_EQ (QByteArray ("external"), readFile (collision));
+}
+
+TEST (ProjectSystemTest, ManagerRollbackPreservesExternallyChangedCommittedFile)
+{
+    QTemporaryDir directory;
+    const QString oldProject = QDir (directory.path ()).filePath ("old/Old.rwproj");
+    const QString newProject = QDir (directory.path ()).filePath ("new/New.rwproj");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (newProject).absolutePath ()));
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (oldProject, makeManifest (), &error));
+    rws::PreparedRobotProject prepared;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (newProject, urdf, prepared, &error));
+    ASSERT_TRUE (manager.activatePreparedRobotProject (prepared, &error));
+    const QString managedSource = QDir (QFileInfo (newProject).absolutePath ())
+                                      .filePath ("sources/robot/robot.urdf");
+    ASSERT_TRUE (writeFile (managedSource, "externally changed"));
+
+    EXPECT_FALSE (manager.rollbackActivatedRobotProject (prepared, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (QByteArray ("externally changed"), readFile (managedSource));
+    EXPECT_EQ (QDir::cleanPath (oldProject), manager.projectFilePath ());
+}
+
 // 核心往返测试：确认清单序列化后再反序列化，项目标识、入口资源和资源路径保持完全一致。
 TEST (ProjectSystemTest, ManifestRoundTripPreservesCoreFields)
 {

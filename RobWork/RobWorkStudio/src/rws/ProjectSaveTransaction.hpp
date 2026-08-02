@@ -17,7 +17,11 @@ namespace rws {
 class ProjectSaveTransaction
 {
   public:
+    enum class ExistingTargetPolicy { Replace, Reject };
+
     ProjectSaveTransaction () = default;
+    explicit ProjectSaveTransaction (ExistingTargetPolicy policy) : _existingTargetPolicy (policy)
+    {}
     // 析构时若尚未提交，自动执行 rollback，防止异常路径留下暂存或半替换文件。
     ~ProjectSaveTransaction ();
 
@@ -42,6 +46,7 @@ class ProjectSaveTransaction
     void rollback ();
 
   private:
+    ExistingTargetPolicy _existingTargetPolicy = ExistingTargetPolicy::Replace;
     // 一个已暂存资源的完整状态，用于提交替换与失败回滚。
     struct StagedResource
     {

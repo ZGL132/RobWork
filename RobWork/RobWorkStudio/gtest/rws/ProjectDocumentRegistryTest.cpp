@@ -1,6 +1,7 @@
 #include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/ProjectDocumentProvider.hpp>
 #include <rws/ProjectDocumentRegistry.hpp>
+#include <rws/ProjectSaveTransaction.hpp>
 #include <rws/WorkCellProjectDocumentProvider.hpp>
 
 #include <QDir>
@@ -120,6 +121,30 @@ rws::ProjectResource resource (const QString& id,
 }
 
 }    // namespace
+
+TEST (ProjectDocumentRegistryTest, RejectModePreservesTargetCreatedAfterStaging)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    rws::ProjectSaveTransaction transaction (
+        rws::ProjectSaveTransaction::ExistingTargetPolicy::Reject);
+    QString error;
+    ASSERT_TRUE (transaction.stageBytes (QByteArray ("candidate"), target, &error));
+
+    QFile external (target);
+    ASSERT_TRUE (external.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (8), external.write ("external"));
+    external.close ();
+
+    EXPECT_FALSE (transaction.commit (&error));
+    EXPECT_FALSE (error.isEmpty ());
+    ASSERT_TRUE (external.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("external"), external.readAll ());
+    const QStringList residue = QDir (directory.path ()).entryList (
+        {QStringLiteral ("*.rwstage-*"), QStringLiteral ("*.rwbackup-*")}, QDir::Files);
+    EXPECT_TRUE (residue.isEmpty ());
+}
 
 // 负向测试：同一 kind 不能被两个 Provider 注册，杜绝加载结果依赖插件注册顺序。
 TEST (ProjectDocumentRegistryTest, RejectsDuplicateResourceKind)

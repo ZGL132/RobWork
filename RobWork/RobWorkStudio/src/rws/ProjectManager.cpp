@@ -21,6 +21,8 @@
 #include <QUuid>
 #include <QXmlStreamReader>
 
+#include <algorithm>
+
 namespace rws {
 namespace {
 
@@ -213,8 +215,12 @@ QByteArray fileFingerprint (const QString& filePath)
     if (!file.open (QIODevice::ReadOnly))
         return QByteArray ();
     QCryptographicHash hash (QCryptographicHash::Sha256);
-    while (!file.atEnd ())
-        hash.addData (file.read (64 * 1024));
+    while (!file.atEnd ()) {
+        const QByteArray chunk = file.read (64 * 1024);
+        if (chunk.isEmpty () && file.error () != QFile::NoError)
+            return QByteArray ();
+        hash.addData (chunk);
+    }
     return hash.result ().toHex ();
 }
 
@@ -360,6 +366,39 @@ void removeCopiedWorkCellDependencies (const QStringList& copiedTargetPaths)
 {
     for (auto path = copiedTargetPaths.crbegin (); path != copiedTargetPaths.crend (); ++path)
         QFile::remove (*path);
+}
+
+QStringList missingParentDirectories (const QStringList& targetPaths, const QString& projectRoot)
+{
+    QSet< QString > missing;
+    const QString normalizedRoot = QDir::cleanPath (QFileInfo (projectRoot).absoluteFilePath ());
+    for (const QString& targetPath : targetPaths) {
+        QString directory = QFileInfo (targetPath).absolutePath ();
+        while (directory != normalizedRoot && isInsideDirectory (normalizedRoot, directory) &&
+               !QFileInfo::exists (directory)) {
+            missing.insert (directory);
+            const QString parent = QFileInfo (directory).absolutePath ();
+            if (parent == directory)
+                break;
+            directory = parent;
+        }
+    }
+    QStringList result = missing.values ();
+    std::sort (result.begin (), result.end (), [] (const QString& left, const QString& right) {
+        return left.size () > right.size ();
+    });
+    return result;
+}
+
+void removeCreatedDirectoriesIfEmpty (const QStringList& directories)
+{
+    for (const QString& directory : directories) {
+        if (QFileInfo (directory).isDir () &&
+            QDir (directory).entryList (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden)
+                .isEmpty ()) {
+            QDir ().rmdir (directory);
+        }
+    }
 }
 
 }    // namespace
@@ -511,6 +550,175 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
         return false;
     }
     return true;
+}
+
+bool ProjectManager::prepareProjectFromRobotFile (const QString& projectFilePath,
+                                                  const QString& sourceUrdfPath,
+                                                  PreparedRobotProject& prepared,
+                                                  QString* error) const
+{
+    if (prepared.activated) {
+        setError (error, QString::fromUtf8 ("已激活的机器人候选项目必须先完成或回滚。"));
+        return false;
+    }
+    discardPreparedRobotProject (prepared);
+    if (error != nullptr)
+        error->clear ();
+
+    const QString absoluteProjectFile = QFileInfo (projectFilePath).absoluteFilePath ();
+    PackagedRobotSource packaged;
+    if (!RobotProjectSourcePackager::prepare (
+            sourceUrdfPath, absoluteProjectFile, packaged, error)) {
+        return false;
+    }
+
+    ProjectManifest manifest;
+    manifest.project.id = QUuid::createUuid ().toString (QUuid::WithoutBraces);
+    manifest.project.name = QFileInfo (absoluteProjectFile).completeBaseName ();
+    manifest.project.description = QString::fromUtf8 ("从 URDF 机器人文件创建的项目");
+    manifest.project.createdAt = nowUtc ();
+    manifest.project.modifiedAt = manifest.project.createdAt;
+    manifest.project.application = QStringLiteral ("RobWorkStudio");
+    manifest.settings.insert (QStringLiteral ("pathPolicy"), QStringLiteral ("project-relative"));
+    manifest.resources.push_back (packaged.sourceResource);
+    for (const ProjectResource& asset : packaged.assetResources)
+        manifest.resources.push_back (asset);
+    manifest.entryPoints.insert (QStringLiteral ("robotSource"), packaged.sourceResource.id);
+    if (!ProjectManifestJson::validate (manifest, error)) {
+        RobotProjectSourcePackager::discard (packaged);
+        return false;
+    }
+
+    prepared.projectFilePath = QDir::cleanPath (absoluteProjectFile);
+    prepared.manifest = manifest;
+    prepared.packaged = packaged;
+    return true;
+}
+
+bool ProjectManager::activatePreparedRobotProject (PreparedRobotProject& prepared, QString* error)
+{
+    if (prepared.activated || prepared.projectFilePath.isEmpty () ||
+        prepared.packaged.stagedFilesByProjectPath.isEmpty ()) {
+        setError (error, QString::fromUtf8 ("机器人候选项目尚未准备完成或已经激活。"));
+        return false;
+    }
+    if (!ProjectManifestJson::validate (prepared.manifest, error))
+        return false;
+
+    const QDir projectRoot (QFileInfo (prepared.projectFilePath).absolutePath ());
+    QMap< QString, QString > stagedByTarget;
+    for (auto item = prepared.packaged.stagedFilesByProjectPath.constBegin ();
+         item != prepared.packaged.stagedFilesByProjectPath.constEnd ();
+         ++item) {
+        stagedByTarget.insert (QFileInfo (projectRoot.filePath (item.key ())).absoluteFilePath (),
+                               item.value ());
+    }
+    QStringList targetPaths = stagedByTarget.keys ();
+    targetPaths.push_back (prepared.projectFilePath);
+    const QStringList createdDirectories =
+        missingParentDirectories (targetPaths, projectRoot.absolutePath ());
+
+    const QByteArray manifestBytes = ProjectManifestJson::toJson (prepared.manifest);
+    QHash< QString, QByteArray > expectedHashes;
+    for (auto item = stagedByTarget.constBegin (); item != stagedByTarget.constEnd (); ++item) {
+        const QByteArray hash = fileFingerprint (item.value ());
+        if (hash.isEmpty ()) {
+            setError (error,
+                      QString::fromUtf8 ("无法读取机器人候选暂存文件：%1。").arg (
+                          item.value ()));
+            return false;
+        }
+        expectedHashes.insert (item.key (), hash);
+    }
+    expectedHashes.insert (
+        prepared.projectFilePath,
+        QCryptographicHash::hash (manifestBytes, QCryptographicHash::Sha256).toHex ());
+
+    ProjectSaveTransaction transaction (
+        ProjectSaveTransaction::ExistingTargetPolicy::Reject);
+    for (auto item = stagedByTarget.constBegin (); item != stagedByTarget.constEnd (); ++item) {
+        if (!transaction.stageCopy (item.value (), item.key (), error)) {
+            removeCreatedDirectoriesIfEmpty (createdDirectories);
+            return false;
+        }
+    }
+    if (!transaction.stageBytes (manifestBytes, prepared.projectFilePath, error) ||
+        !transaction.commit (error)) {
+        removeCreatedDirectoriesIfEmpty (createdDirectories);
+        return false;
+    }
+
+    QStringList verificationErrors;
+    for (const QString& path : targetPaths) {
+        if (fileFingerprint (path) != expectedHashes.value (path))
+            verificationErrors.push_back (path);
+    }
+    if (!verificationErrors.isEmpty ()) {
+        for (const QString& path : targetPaths) {
+            if (fileFingerprint (path) == expectedHashes.value (path))
+                QFile::remove (path);
+        }
+        removeCreatedDirectoriesIfEmpty (createdDirectories);
+        setError (error,
+                  QString::fromUtf8 ("机器人项目提交校验失败；外部变更已保留：%1。")
+                      .arg (verificationErrors.join (QStringLiteral (", "))));
+        return false;
+    }
+
+    prepared.previousProjectFilePath = _projectFilePath;
+    prepared.previousManifest = _manifest;
+    prepared.previousDirty = _dirty;
+    prepared.committedProjectPaths = targetPaths;
+    prepared.committedContentHashes = expectedHashes;
+    prepared.createdProjectDirectories = createdDirectories;
+    prepared.activated = true;
+    _projectFilePath = prepared.projectFilePath;
+    _manifest = prepared.manifest;
+    _dirty = false;
+    RobotProjectSourcePackager::discard (prepared.packaged);
+    return true;
+}
+
+bool ProjectManager::rollbackActivatedRobotProject (PreparedRobotProject& prepared, QString* error)
+{
+    if (!prepared.activated) {
+        setError (error, QString::fromUtf8 ("机器人候选项目尚未激活，无法回滚。"));
+        return false;
+    }
+
+    QStringList cleanupErrors;
+    for (auto path = prepared.committedProjectPaths.crbegin ();
+         path != prepared.committedProjectPaths.crend ();
+         ++path) {
+        const QByteArray currentHash = fileFingerprint (*path);
+        if (currentHash.isEmpty ()) {
+            cleanupErrors.push_back (QString::fromUtf8 ("提交文件已缺失，未删除：%1").arg (*path));
+            continue;
+        }
+        if (currentHash != prepared.committedContentHashes.value (*path)) {
+            cleanupErrors.push_back (QString::fromUtf8 ("提交文件已被外部修改，已保留：%1").arg (*path));
+            continue;
+        }
+        if (!QFile::remove (*path))
+            cleanupErrors.push_back (QString::fromUtf8 ("无法删除本次提交文件：%1").arg (*path));
+    }
+    removeCreatedDirectoriesIfEmpty (prepared.createdProjectDirectories);
+
+    _projectFilePath = prepared.previousProjectFilePath;
+    _manifest = prepared.previousManifest;
+    _dirty = prepared.previousDirty;
+    const bool clean = cleanupErrors.isEmpty ();
+    if (!clean)
+        setError (error, cleanupErrors.join (QLatin1Char ('\n')));
+    prepared = PreparedRobotProject {};
+    return clean;
+}
+
+void ProjectManager::discardPreparedRobotProject (PreparedRobotProject& prepared)
+{
+    if (!prepared.activated)
+        RobotProjectSourcePackager::discard (prepared.packaged);
+    prepared = PreparedRobotProject {};
 }
 
 bool ProjectManager::openProject (const QString& projectFilePath, QString* error)
