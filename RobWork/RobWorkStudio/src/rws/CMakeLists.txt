@@ -59,6 +59,7 @@ if(build)
         ProjectManager.cpp
         ProjectPackage.cpp
         ProjectPathResolver.cpp
+        RobotProjectSourcePackager.cpp
         ProjectSaveTransaction.cpp
         WorkCellProjectDocumentProvider.cpp
         propertyview/PropertyViewEditor.cpp

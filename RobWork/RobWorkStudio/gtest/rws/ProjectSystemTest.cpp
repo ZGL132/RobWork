@@ -1,15 +1,19 @@
 #include <rws/ProjectManager.hpp>
 #include <rws/ProjectManifestJson.hpp>
 #include <rws/ProjectPathResolver.hpp>
+#include <rws/RobotProjectSourcePackager.hpp>
 
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/models/Device.hpp>
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QMap>
 #include <QTemporaryDir>
+#include <QXmlStreamReader>
 #include <gtest/gtest.h>
 
 #include <zip.h>
@@ -24,6 +28,84 @@ QByteArray readFile (const QString& path)
     if (!file.open (QIODevice::ReadOnly))
         return {};
     return file.readAll ();
+}
+
+bool writeFile (const QString& path, const QByteArray& bytes)
+{
+    if (!QDir ().mkpath (QFileInfo (path).absolutePath ()))
+        return false;
+    QFile file (path);
+    return file.open (QIODevice::WriteOnly | QIODevice::Truncate) &&
+        file.write (bytes) == bytes.size ();
+}
+
+QString writeUrdf (const QString& root, const QStringList& meshReferences)
+{
+    const QString path = QDir (root).filePath (QStringLiteral ("output/robot.urdf"));
+    QByteArray xml ("<?xml version=\"1.0\"?>\n<robot name=\"robot_pkg\">\n");
+    for (int index = 0; index < meshReferences.size (); ++index) {
+        xml += "  <link name=\"link" + QByteArray::number (index) + "\">\n";
+        xml += "    <visual><geometry><mesh filename=\"";
+        xml += meshReferences[index].toHtmlEscaped ().toUtf8 ();
+        xml += "\"/></geometry></visual>\n";
+        xml += "  </link>\n";
+    }
+    xml += "</robot>\n";
+    if (!writeFile (path, xml))
+        return {};
+    return path;
+}
+
+QMap< QString, QByteArray > directorySnapshot (const QString& root)
+{
+    QMap< QString, QByteArray > snapshot;
+    QDirIterator iterator (root,
+                           QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden,
+                           QDirIterator::Subdirectories);
+    const QDir rootDirectory (root);
+    while (iterator.hasNext ()) {
+        const QString path = iterator.next ();
+        const QString relative = rootDirectory.relativeFilePath (path);
+        snapshot.insert (QDir::fromNativeSeparators (relative),
+                         QFileInfo (path).isDir () ? QByteArray ("<directory>") : readFile (path));
+    }
+    return snapshot;
+}
+
+QStringList managedMeshReferences (const QString& urdfPath, QString* parseError = nullptr)
+{
+    QFile file (urdfPath);
+    if (!file.open (QIODevice::ReadOnly)) {
+        if (parseError != nullptr)
+            *parseError = file.errorString ();
+        return {};
+    }
+
+    QStringList references;
+    QXmlStreamReader xml (&file);
+    while (!xml.atEnd ()) {
+        xml.readNext ();
+        if (xml.isStartElement () && xml.name ().compare (QStringLiteral ("mesh"),
+                                                          Qt::CaseInsensitive) == 0) {
+            references.push_back (xml.attributes ().value (QStringLiteral ("filename")).toString ());
+        }
+    }
+    if (xml.hasError () && parseError != nullptr)
+        *parseError = xml.errorString ();
+    return references;
+}
+
+bool pathIsInside (const QString& root, const QString& candidate)
+{
+    const QString normalizedRoot =
+        QDir::fromNativeSeparators (QDir::cleanPath (QFileInfo (root).absoluteFilePath ())) + '/';
+    const QString normalizedCandidate =
+        QDir::fromNativeSeparators (QDir::cleanPath (QFileInfo (candidate).absoluteFilePath ())) + '/';
+#ifdef Q_OS_WIN
+    return normalizedCandidate.startsWith (normalizedRoot, Qt::CaseInsensitive);
+#else
+    return normalizedCandidate.startsWith (normalizedRoot, Qt::CaseSensitive);
+#endif
 }
 
 QString sourcePath (const QString& relativePath)
@@ -62,6 +144,141 @@ rws::ProjectManifest makeManifest ()
 }
 
 }    // namespace
+
+TEST (ProjectSystemTest, RobotSourcePackagerCreatesPortableManagedUrdf)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (source.isValid ());
+    ASSERT_TRUE (target.isValid ());
+    ASSERT_TRUE (writeFile (QDir (source.path ()).filePath ("meshes/base.STL"), "base"));
+    ASSERT_TRUE (writeFile (QDir (source.path ()).filePath ("meshes/link1.STL"), "link1"));
+    const QString urdf = writeUrdf (
+        source.path (),
+        {QStringLiteral ("package://robot_pkg/meshes/base.STL"),
+         QStringLiteral ("package://robot_pkg/meshes/link1.STL")});
+    ASSERT_FALSE (urdf.isEmpty ());
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error))
+        << error.toStdString ();
+
+    EXPECT_EQ (QStringLiteral ("sources/robot/robot.urdf"), packaged.sourceResource.path);
+    ASSERT_EQ (2, packaged.assetResources.size ());
+    QString parseError;
+    const QStringList references = managedMeshReferences (packaged.stagedManagedUrdfPath, &parseError);
+    ASSERT_TRUE (parseError.isEmpty ()) << parseError.toStdString ();
+    ASSERT_EQ (2, references.size ());
+    for (const QString& reference : references) {
+        EXPECT_FALSE (QFileInfo (reference).isAbsolute ());
+        const QString resolved = QFileInfo (packaged.stagedManagedUrdfPath)
+                                     .absoluteDir ()
+                                     .absoluteFilePath (reference);
+        EXPECT_TRUE (QFileInfo (resolved).isFile ());
+        EXPECT_TRUE (pathIsInside (packaged.stagingRoot, resolved));
+    }
+    rws::RobotProjectSourcePackager::discard (packaged);
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerRejectsMissingMeshWithoutResidue)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (source.isValid ());
+    ASSERT_TRUE (target.isValid ());
+    const QString urdf = writeUrdf (
+        source.path (), {QStringLiteral ("package://robot_pkg/meshes/missing.STL")});
+    ASSERT_TRUE (writeFile (QDir (target.path ()).filePath ("keep.txt"), "keep"));
+    const auto before = directorySnapshot (target.path ());
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    EXPECT_FALSE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (before, directorySnapshot (target.path ()));
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerDeduplicatesCanonicalMeshReferences)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (writeFile (QDir (source.path ()).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        source.path (),
+        {QStringLiteral ("package://robot_pkg/meshes/base.STL"),
+         QStringLiteral ("../meshes/./base.STL")});
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error))
+        << error.toStdString ();
+    EXPECT_EQ (1, packaged.assetResources.size ());
+    const QStringList references = managedMeshReferences (packaged.stagedManagedUrdfPath);
+    ASSERT_EQ (2, references.size ());
+    EXPECT_EQ (references[0], references[1]);
+    rws::RobotProjectSourcePackager::discard (packaged);
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerSeparatesSameBasenameMeshes)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    const QString first = QDir (source.path ()).filePath ("first/shared.STL");
+    const QString second = QDir (source.path ()).filePath ("second/shared.STL");
+    ASSERT_TRUE (writeFile (first, "first"));
+    ASSERT_TRUE (writeFile (second, "second"));
+    const QString urdf = writeUrdf (
+        source.path (),
+        {QDir::fromNativeSeparators (first), QDir::fromNativeSeparators (second)});
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error))
+        << error.toStdString ();
+    ASSERT_EQ (2, packaged.assetResources.size ());
+    EXPECT_NE (packaged.assetResources[0].path, packaged.assetResources[1].path);
+    rws::RobotProjectSourcePackager::discard (packaged);
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerRejectsNonUrdfXml)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    const QString xml = QDir (source.path ()).filePath ("device.xml");
+    ASSERT_TRUE (writeFile (xml, "<WorkCell name=\"NotUrdf\"/>\n"));
+    const auto before = directorySnapshot (target.path ());
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    EXPECT_FALSE (rws::RobotProjectSourcePackager::prepare (
+        xml, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (before, directorySnapshot (target.path ()));
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerRejectsExistingTargetsWithoutOverwrite)
+{
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (writeFile (QDir (source.path ()).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        source.path (), {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+    ASSERT_TRUE (writeFile (QDir (target.path ()).filePath ("sources/robot/robot.urdf"),
+                            "existing"));
+    const auto before = directorySnapshot (target.path ());
+
+    rws::PackagedRobotSource packaged;
+    QString error;
+    EXPECT_FALSE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (target.path ()).filePath ("Demo.rwproj"), packaged, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (before, directorySnapshot (target.path ()));
+}
 
 // 核心往返测试：确认清单序列化后再反序列化，项目标识、入口资源和资源路径保持完全一致。
 TEST (ProjectSystemTest, ManifestRoundTripPreservesCoreFields)
