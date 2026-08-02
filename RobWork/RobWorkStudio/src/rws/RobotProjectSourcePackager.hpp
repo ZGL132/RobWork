@@ -9,6 +9,7 @@ namespace rws {
 
 struct PackagedRobotSource
 {
+    QString projectRoot;
     QString stagingRoot;
     QString stagingAttemptRoot;
     QString stagedManagedUrdfPath;

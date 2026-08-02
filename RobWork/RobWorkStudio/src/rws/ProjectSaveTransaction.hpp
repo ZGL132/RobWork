@@ -20,8 +20,16 @@ class ProjectSaveTransaction
     enum class ExistingTargetPolicy { Replace, Reject };
 
     ProjectSaveTransaction () = default;
-    explicit ProjectSaveTransaction (ExistingTargetPolicy policy) : _existingTargetPolicy (policy)
-    {}
+    explicit ProjectSaveTransaction (ExistingTargetPolicy policy);
+    // 拷贝/移动构造函数与赋值：连同外部登记的事务状态（包含根、内容哈希）一起复制/搬移，
+    // 使事务可以按值传递而不丢失写入守卫约束。
+    ProjectSaveTransaction (const ProjectSaveTransaction& other);
+    ProjectSaveTransaction& operator= (const ProjectSaveTransaction& other);
+    ProjectSaveTransaction (ProjectSaveTransaction&& other);
+    ProjectSaveTransaction& operator= (ProjectSaveTransaction&& other);
+    // 为事务设置包含性根：此后本事务对正式文件的所有写/删都受该根目录边界约束。
+    static void setContainmentRoot (ProjectSaveTransaction& transaction,
+                                    const QString& containmentRoot);
     // 析构时若尚未提交，自动执行 rollback，防止异常路径留下暂存或半替换文件。
     ~ProjectSaveTransaction ();
 
@@ -43,10 +51,14 @@ class ProjectSaveTransaction
     bool install (QString* error = nullptr);
     // 最终确认：删除备份、清除 Provider 脏状态，并关闭析构回滚。
     void finalize ();
+    // 带错误回填的 finalize：清理失败时返回 false 并回填原因。
+    bool finalize (QString* error);
     // 兼容的一阶段入口，等价于 install 后立即 finalize。
     bool commit (QString* error = nullptr);
     // 手动回滚：逆序恢复已安装目标、还原备份、清理暂存文件。
     void rollback ();
+    // 带错误回填的 rollback：清理失败时经 error 说明。
+    void rollback (QString* error);
 
   private:
     ExistingTargetPolicy _existingTargetPolicy = ExistingTargetPolicy::Replace;
@@ -61,6 +73,8 @@ class ProjectSaveTransaction
         bool targetBackedUp = false;    // 原目标文件是否已备份（可能原本不存在）。
         bool targetInstalled = false;   // 暂存文件是否已安装为正式文件。
     };
+
+    bool validateTargetPath (const QString& targetPath, QString* error) const;
 
     QVector< StagedResource > _staged;    // 已暂存资源列表（按暂存顺序）。
     bool _installed = false;

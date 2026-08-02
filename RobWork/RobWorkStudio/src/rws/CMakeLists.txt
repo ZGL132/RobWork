@@ -170,7 +170,7 @@ if(build)
     if(RWS_USE_PYTHON)
         target_compile_definitions(sdurws PRIVATE PYTHON_VERSION_MINOR=${PYTHON_VERSION_MINOR})
     endif()
-    
+
     set(SUBSYS_NAME_PLUGIN ${SUBSYS_NAME}_plugin.rwplugin)
     set(SUBSYS_DESC_PLUGIN "Plugin providing extensions to RobWork from RobWorkStudio!")
     set(SUBSYS_DEPS_PLUGIN

@@ -119,6 +119,7 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
     }
 
     ProjectSaveTransaction transaction;
+    ProjectSaveTransaction::setContainmentRoot (transaction, projectRoot);
     const RobotModelSpec& spec = request.spec;
     const QString devicePath = RobotModelXmlWriter::serialDeviceFilePath (spec);
     QStringList publishTargets {devicePath};
@@ -170,6 +171,18 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
     if (!transaction.install (error))
         return false;
 
+    // 安装后的加载/验证失败也必须回滚（恢复被替换的正式文件与备份），并把回滚
+    // 自身的错误追加到原始错误之后，保证调用方看到完整失败链。
+    const auto rollbackAfterPostInstallFailure = [&] {
+        QString rollbackError;
+        transaction.rollback (&rollbackError);
+        if (error != nullptr && !rollbackError.isEmpty ()) {
+            if (!error->isEmpty ())
+                *error += QLatin1Char ('\n');
+            *error += rollbackError;
+        }
+    };
+
     try {
         const rw::models::WorkCell::Ptr loaded =
             rw::loaders::WorkCellLoader::Factory::load (loadPath.toStdString ());
@@ -177,6 +190,7 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
             setError (error,
                       QStringLiteral ("The generated WorkCell could not be loaded: %1")
                           .arg (loadPath));
+            rollbackAfterPostInstallFailure ();
             return false;
         }
     }
@@ -184,12 +198,14 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
         setError (error,
                   QStringLiteral ("The generated WorkCell could not be loaded: %1\n%2")
                       .arg (loadPath, QString::fromLocal8Bit (exception.what ())));
+        rollbackAfterPostInstallFailure ();
         return false;
     }
     catch (...) {
         setError (error,
                   QStringLiteral ("The generated WorkCell could not be loaded: %1")
                       .arg (loadPath));
+        rollbackAfterPostInstallFailure ();
         return false;
     }
 
@@ -197,6 +213,7 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
         if (!request.promote (loadPath, dependencies, error)) {
             if (error != nullptr && error->isEmpty ())
                 *error = QStringLiteral ("The generated WorkCell could not be promoted.");
+            rollbackAfterPostInstallFailure ();
             return false;
         }
     }
@@ -204,15 +221,16 @@ bool RobotModelPublishService::publishAndLoad (const RobotModelPublishRequest& r
         setError (error,
                   QStringLiteral ("The generated WorkCell promotion failed: %1")
                       .arg (QString::fromLocal8Bit (exception.what ())));
+        rollbackAfterPostInstallFailure ();
         return false;
     }
     catch (...) {
         setError (error, QStringLiteral ("The generated WorkCell promotion failed."));
+        rollbackAfterPostInstallFailure ();
         return false;
     }
 
-    transaction.finalize ();
-    return true;
+    return transaction.finalize (error);
 }
 
 }    // namespace rws

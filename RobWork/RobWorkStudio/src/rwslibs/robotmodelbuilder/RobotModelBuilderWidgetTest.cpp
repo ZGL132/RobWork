@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QMetaObject>
 #include <QMessageBox>
+#include <QProcess>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QTemporaryDir>
@@ -187,6 +188,39 @@ bool oldPublishTargetsRemain (const rws::RobotModelSpec& spec)
     return true;
 }
 
+#ifdef Q_OS_WIN
+bool runWindowsCommand (const QString& command)
+{
+    QProcess process;
+    process.setProgram (QStringLiteral ("cmd.exe"));
+    process.setNativeArguments (QStringLiteral ("/D /C ") + command);
+    process.start ();
+    return process.waitForFinished () && process.exitStatus () == QProcess::NormalExit &&
+           process.exitCode () == 0;
+}
+
+bool createDirectoryJunction (const QString& linkPath, const QString& targetPath)
+{
+    return runWindowsCommand (
+        QStringLiteral ("mklink /J \"%1\" \"%2\"")
+            .arg (QDir::toNativeSeparators (linkPath), QDir::toNativeSeparators (targetPath)));
+}
+
+class DirectoryJunctionCleanup
+{
+  public:
+    explicit DirectoryJunctionCleanup (const QString& path) : _path (path) {}
+    ~DirectoryJunctionCleanup ()
+    {
+        if (!_path.isEmpty ())
+            runWindowsCommand (QStringLiteral ("rmdir \"%1\"").arg (_path));
+    }
+
+  private:
+    QString _path;
+};
+#endif
+
 bool newPublishTargetsInstalled (const rws::RobotModelSpec& spec)
 {
     for (const QString& target : publishTargets (spec)) {
@@ -238,6 +272,114 @@ bool verifyTransactionalPublishService (QString* failure)
         }
         if (!newPublishTargetsInstalled (spec) || hasTransactionResidue (output)) {
             *failure = "Successful publish did not replace every output cleanly.";
+            return false;
+        }
+    }
+
+#ifdef Q_OS_WIN
+    {
+        QTemporaryDir project;
+        QTemporaryDir external;
+        if (!project.isValid () || !external.isValid ()) {
+            *failure = "Could not create the junction rollback fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        if (!seedPublishTargets (spec)) {
+            *failure = "Could not seed junction rollback targets.";
+            return false;
+        }
+        const QString scenePath = rws::RobotModelXmlWriter::sceneFilePath (spec);
+        const QString externalScene = QDir (external.path ()).filePath (QFileInfo (scenePath).fileName ());
+        if (!writeFixture (externalScene, "external-scene")) {
+            *failure = "Could not seed the external junction scene.";
+            return false;
+        }
+        const QString parkedOutput = QDir (project.path ()).filePath ("parked-robot-models");
+        DirectoryJunctionCleanup cleanup (output);
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [&] (const QString&, const QStringList&, QString* error) {
+            if (!QDir ().rename (output, parkedOutput) ||
+                !createDirectoryJunction (output, external.path ())) {
+                *error = QStringLiteral ("Could not replace the installed output with a junction.");
+                return false;
+            }
+            *error = QStringLiteral ("promotion rejected after directory replacement");
+            return false;
+        };
+        QString error;
+        QStringList parkedBackups;
+        QStringList sceneBackups;
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) ||
+            readFixture (externalScene) != QByteArray ("external-scene") ||
+            (!error.contains (QStringLiteral ("outside the project root")) &&
+             !error.contains (QStringLiteral ("reparse point"))) ||
+            QDir (external.path ()).entryList ({QStringLiteral ("*.rwbackup-*")}, QDir::Files).size () != 0 ||
+            (parkedBackups = QDir (parkedOutput).entryList (
+                 {QStringLiteral ("*.rwbackup-*")}, QDir::Files)).isEmpty () ||
+            (sceneBackups = QDir (parkedOutput).entryList (
+                 {QFileInfo (scenePath).completeBaseName () + QStringLiteral (".rwbackup-*")},
+                 QDir::Files)).size () != 1 ||
+            error.contains (QStringLiteral ("could not verify a safe backup recovery path")) ||
+            error.contains (QStringLiteral ("Original transaction backup is available for recovery: %1")
+                                .arg (QDir (output).filePath (sceneBackups.front ()))) ||
+            !error.contains (QDir (parkedOutput).filePath (sceneBackups.front ())) ||
+            readFixture (QDir (parkedOutput).filePath (sceneBackups.front ())) !=
+                QByteArray ("old:") + QFileInfo (scenePath).fileName ().toUtf8 ()) {
+            *failure = QStringLiteral ("Rollback did not reject a post-install junction safely: %1").arg (error);
+            return false;
+        }
+    }
+#endif
+
+    {
+        QTemporaryDir project;
+        if (!project.isValid ()) {
+            *failure = "Could not create the external promotion rollback fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        if (!seedPublishTargets (spec)) {
+            *failure = "Could not seed external promotion rollback targets.";
+            return false;
+        }
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [&] (const QString& scene, const QStringList&, QString* error) {
+            if (!writeFixture (scene, "external-scene")) {
+                *error = QStringLiteral ("Could not write external scene replacement.");
+                return false;
+            }
+            *error = QStringLiteral ("promotion rejected after external replacement");
+            return false;
+        };
+        QString error;
+        const QString scenePath = rws::RobotModelXmlWriter::sceneFilePath (spec);
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) ||
+            readFixture (scenePath) != QByteArray ("external-scene")) {
+            *failure = "Promotion rollback did not preserve the external scene replacement.";
+            return false;
+        }
+        const QStringList backups = QDir (output).entryList (
+            {QStringLiteral ("*.rwbackup-*")}, QDir::Files);
+        if (backups.size () != 1) {
+            *failure = "Promotion rollback did not retain exactly one recovery backup.";
+            return false;
+        }
+        const QString backupPath = QDir (output).filePath (backups.front ());
+        if (readFixture (backupPath) !=
+                QByteArray ("old:") + QFileInfo (scenePath).fileName ().toUtf8 () ||
+            !error.contains (backupPath)) {
+            *failure = "Promotion rollback did not report the recovery backup path.";
             return false;
         }
     }

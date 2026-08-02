@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMap>
+#include <QProcess>
 #include <QTemporaryDir>
 #include <QXmlStreamReader>
 #include <gtest/gtest.h>
@@ -105,6 +106,51 @@ bool pathIsInside (const QString& root, const QString& candidate)
     return normalizedCandidate.startsWith (normalizedRoot, Qt::CaseInsensitive);
 #else
     return normalizedCandidate.startsWith (normalizedRoot, Qt::CaseSensitive);
+#endif
+}
+
+#ifdef Q_OS_WIN
+bool runWindowsCommand (const QString& command);
+#endif
+
+class DirectoryJunctionCleanup
+{
+  public:
+    explicit DirectoryJunctionCleanup (const QString& path) : _path (path) {}
+    ~DirectoryJunctionCleanup ()
+    {
+#ifdef Q_OS_WIN
+        if (!_path.isEmpty ())
+            runWindowsCommand (QStringLiteral ("rmdir \"%1\"").arg (_path));
+#endif
+    }
+
+  private:
+    QString _path;
+};
+
+#ifdef Q_OS_WIN
+bool runWindowsCommand (const QString& command)
+{
+    QProcess process;
+    process.setProgram (QStringLiteral ("cmd.exe"));
+    process.setNativeArguments (QStringLiteral ("/D /C ") + command);
+    process.start ();
+    return process.waitForFinished () && process.exitStatus () == QProcess::NormalExit &&
+        process.exitCode () == 0;
+}
+#endif
+
+bool createDirectoryJunction (const QString& linkPath, const QString& targetPath)
+{
+#ifdef Q_OS_WIN
+    return runWindowsCommand (
+        QStringLiteral ("mklink /J \"%1\" \"%2\"")
+            .arg (QDir::toNativeSeparators (linkPath), QDir::toNativeSeparators (targetPath)));
+#else
+    Q_UNUSED (linkPath);
+    Q_UNUSED (targetPath);
+    return false;
 #endif
 }
 
@@ -402,6 +448,178 @@ TEST (ProjectSystemTest, ManagerActivationFailurePreservesOldProjectAndTargetFil
     EXPECT_FALSE (QFileInfo::exists (newProject));
     rws::ProjectManager::discardPreparedRobotProject (prepared);
     EXPECT_EQ (QByteArray ("external"), readFile (collision));
+}
+
+TEST (ProjectSystemTest, ManagerRejectsRobotProjectDirectoryJunctionEscapingProjectRoot)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString projectFile = QDir (projectRoot).filePath ("Robot.rwproj");
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+
+    rws::ProjectManager manager;
+    rws::PreparedRobotProject prepared;
+    QString error;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (projectFile, urdf, prepared, &error))
+        << error.toStdString ();
+    const QString sourcesLink = QDir (projectRoot).filePath ("sources");
+    if (!createDirectoryJunction (sourcesLink, external.path ()))
+        GTEST_SKIP () << "The test process cannot create a Windows directory junction.";
+    const DirectoryJunctionCleanup cleanup (sourcesLink);
+
+    const bool activated = manager.activatePreparedRobotProject (prepared, &error);
+    EXPECT_FALSE (activated);
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_FALSE (QFileInfo::exists (QDir (external.path ()).filePath ("robot/robot.urdf")));
+    EXPECT_FALSE (QFileInfo::exists (projectFile));
+    EXPECT_FALSE (QFileInfo::exists (QDir (projectRoot).filePath ("assets")));
+
+    if (activated)
+        manager.rollbackActivatedRobotProject (prepared, nullptr);
+    rws::ProjectManager::discardPreparedRobotProject (prepared);
+    EXPECT_FALSE (QFileInfo::exists (QDir (projectRoot).filePath (".rwproject")));
+#endif
+}
+
+TEST (ProjectSystemTest, WriteGuardBlocksDirectoryReplacementDuringManagedWrite)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory handle protection is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString sources = QDir (projectRoot).filePath ("sources");
+    const QString target = QDir (sources).filePath ("robot/robot.urdf");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (target).absolutePath ()));
+
+    rws::ProjectWriteGuard guard;
+    QString error;
+    ASSERT_TRUE (rws::ProjectWriteGuard::acquire (projectRoot, target, guard, &error))
+        << error.toStdString ();
+    EXPECT_FALSE (runWindowsCommand (QStringLiteral ("rmdir \"%1\"").arg (sources)));
+    EXPECT_TRUE (QFileInfo (sources).isDir ());
+#endif
+}
+
+TEST (ProjectSystemTest, ManagerRollbackRejectsCommittedSourceDirectoryJunction)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString projectFile = QDir (projectRoot).filePath ("Robot.rwproj");
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+    rws::ProjectManager manager;
+    rws::PreparedRobotProject prepared;
+    QString error;
+    ASSERT_TRUE (manager.prepareProjectFromRobotFile (projectFile, urdf, prepared, &error));
+    ASSERT_TRUE (manager.activatePreparedRobotProject (prepared, &error));
+
+    const QString sources = QDir (projectRoot).filePath ("sources");
+    const QString parkedSources = QDir (projectRoot).filePath ("parked-sources");
+    const QString externalUrdf = QDir (external.path ()).filePath ("robot/robot.urdf");
+    ASSERT_TRUE (writeFile (externalUrdf, "external-urdf"));
+    ASSERT_TRUE (QDir ().rename (sources, parkedSources));
+    ASSERT_TRUE (createDirectoryJunction (sources, external.path ()));
+    const DirectoryJunctionCleanup cleanup (sources);
+
+    EXPECT_FALSE (manager.rollbackActivatedRobotProject (prepared, &error));
+    EXPECT_TRUE (error.contains (QStringLiteral ("outside the project root")) ||
+                 error.contains (QStringLiteral ("reparse point"))) << error.toStdString ();
+    EXPECT_EQ (QByteArray ("external-urdf"), readFile (externalUrdf));
+#endif
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerDiscardRejectsReplacedStagingRoot)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString sourceRoot = QDir (directory.path ()).filePath ("source");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (QDir (sourceRoot).filePath ("meshes/base.STL"), "base"));
+    const QString urdf = writeUrdf (
+        sourceRoot, {QStringLiteral ("package://robot_pkg/meshes/base.STL")});
+    rws::PackagedRobotSource packaged;
+    QString error;
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdf, QDir (projectRoot).filePath ("Robot.rwproj"), packaged, &error));
+
+    const QString attemptRoot = packaged.stagingAttemptRoot;
+    const QString parkedAttempt = QDir (projectRoot).filePath ("parked-import" );
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (writeFile (externalSentinel, "external"));
+    ASSERT_TRUE (QDir ().rename (attemptRoot, parkedAttempt));
+    ASSERT_TRUE (createDirectoryJunction (attemptRoot, external.path ()));
+    const DirectoryJunctionCleanup cleanup (attemptRoot);
+
+    rws::RobotProjectSourcePackager::discard (packaged);
+    EXPECT_EQ (QByteArray ("external"), readFile (externalSentinel));
+    EXPECT_TRUE (QFileInfo (parkedAttempt).isDir ());
+#endif
+}
+
+TEST (ProjectSystemTest, ContainedDirectoryRemovalRejectsDirectoryJunction)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString target = QDir (projectRoot).filePath ("attempt");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (externalSentinel, "external"));
+    ASSERT_TRUE (createDirectoryJunction (target, external.path ()));
+    const DirectoryJunctionCleanup cleanup (target);
+
+    QString error;
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedDirectoryTree (
+        projectRoot, target, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (QByteArray ("external"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, ContainedDirectoryRemovalRemovesOrdinaryTree)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString target = QDir (projectRoot).filePath ("attempt");
+    ASSERT_TRUE (writeFile (QDir (target).filePath ("nested/payload.txt"), "payload"));
+
+    QString error;
+    ASSERT_TRUE (rws::ProjectPathResolver::removeContainedDirectoryTree (projectRoot, target, &error))
+        << error.toStdString ();
+    EXPECT_FALSE (QFileInfo::exists (target));
 }
 
 TEST (ProjectSystemTest, ManagerRollbackPreservesExternallyChangedCommittedFile)

@@ -390,14 +390,16 @@ QStringList missingParentDirectories (const QStringList& targetPaths, const QStr
     return result;
 }
 
-void removeCreatedDirectoriesIfEmpty (const QStringList& directories)
+// 清理迁移/激活过程中创建的空目录：先取项目写入守卫再做包含性安全删除，
+// 仅删除自己创建且仍为空的目录，避免误删用户已有资源。
+void removeCreatedDirectoriesIfEmpty (const QStringList& directories, const QString& projectRoot)
 {
     for (const QString& directory : directories) {
-        if (QFileInfo (directory).isDir () &&
-            QDir (directory).entryList (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden)
-                .isEmpty ()) {
-            QDir ().rmdir (directory);
-        }
+        ProjectWriteGuard writeGuard;
+        if (!ProjectWriteGuard::acquire (projectRoot, directory, writeGuard, nullptr))
+            continue;
+        if (QFileInfo (directory).isDir ())
+            ProjectPathResolver::removeContainedEmptyDirectory (projectRoot, directory, nullptr);
     }
 }
 
@@ -610,8 +612,17 @@ bool ProjectManager::activatePreparedRobotProject (PreparedRobotProject& prepare
     for (auto item = prepared.packaged.stagedFilesByProjectPath.constBegin ();
          item != prepared.packaged.stagedFilesByProjectPath.constEnd ();
          ++item) {
-        stagedByTarget.insert (QFileInfo (projectRoot.filePath (item.key ())).absoluteFilePath (),
-                               item.value ());
+        const QString targetPath =
+            QFileInfo (projectRoot.filePath (item.key ())).absoluteFilePath ();
+        if (!ProjectPathResolver::validateContainedWritePath (
+                projectRoot.absolutePath (), targetPath, error)) {
+            return false;
+        }
+        stagedByTarget.insert (targetPath, item.value ());
+    }
+    if (!ProjectPathResolver::validateContainedWritePath (
+            projectRoot.absolutePath (), prepared.projectFilePath, error)) {
+        return false;
     }
     QStringList targetPaths = stagedByTarget.keys ();
     targetPaths.push_back (prepared.projectFilePath);
@@ -634,17 +645,19 @@ bool ProjectManager::activatePreparedRobotProject (PreparedRobotProject& prepare
         prepared.projectFilePath,
         QCryptographicHash::hash (manifestBytes, QCryptographicHash::Sha256).toHex ());
 
-    ProjectSaveTransaction transaction (
-        ProjectSaveTransaction::ExistingTargetPolicy::Reject);
+    ProjectSaveTransaction transaction (ProjectSaveTransaction::ExistingTargetPolicy::Reject);
+    ProjectSaveTransaction::setContainmentRoot (transaction, projectRoot.absolutePath ());
     for (auto item = stagedByTarget.constBegin (); item != stagedByTarget.constEnd (); ++item) {
         if (!transaction.stageCopy (item.value (), item.key (), error)) {
-            removeCreatedDirectoriesIfEmpty (createdDirectories);
+            transaction.rollback ();
+            removeCreatedDirectoriesIfEmpty (createdDirectories, projectRoot.absolutePath ());
             return false;
         }
     }
     if (!transaction.stageBytes (manifestBytes, prepared.projectFilePath, error) ||
         !transaction.commit (error)) {
-        removeCreatedDirectoriesIfEmpty (createdDirectories);
+        transaction.rollback ();
+        removeCreatedDirectoriesIfEmpty (createdDirectories, projectRoot.absolutePath ());
         return false;
     }
 
@@ -655,10 +668,12 @@ bool ProjectManager::activatePreparedRobotProject (PreparedRobotProject& prepare
     }
     if (!verificationErrors.isEmpty ()) {
         for (const QString& path : targetPaths) {
-            if (fileFingerprint (path) == expectedHashes.value (path))
-                QFile::remove (path);
+            ProjectWriteGuard writeGuard;
+            if (ProjectWriteGuard::acquire (projectRoot.absolutePath (), path, writeGuard, nullptr) &&
+                fileFingerprint (path) == expectedHashes.value (path))
+                ProjectPathResolver::removeContainedFile (projectRoot.absolutePath (), path, nullptr);
         }
-        removeCreatedDirectoriesIfEmpty (createdDirectories);
+        removeCreatedDirectoriesIfEmpty (createdDirectories, projectRoot.absolutePath ());
         setError (error,
                   QString::fromUtf8 ("机器人项目提交校验失败；外部变更已保留：%1。")
                       .arg (verificationErrors.join (QStringLiteral (", "))));
@@ -687,9 +702,16 @@ bool ProjectManager::rollbackActivatedRobotProject (PreparedRobotProject& prepar
     }
 
     QStringList cleanupErrors;
+    const QString projectRoot = QFileInfo (prepared.projectFilePath).absolutePath ();
     for (auto path = prepared.committedProjectPaths.crbegin ();
          path != prepared.committedProjectPaths.crend ();
          ++path) {
+        ProjectWriteGuard writeGuard;
+        QString guardError;
+        if (!ProjectWriteGuard::acquire (projectRoot, *path, writeGuard, &guardError)) {
+            cleanupErrors.push_back (QString::fromUtf8 ("无法安全访问本次提交文件：%1").arg (guardError));
+            continue;
+        }
         const QByteArray currentHash = fileFingerprint (*path);
         if (currentHash.isEmpty ()) {
             cleanupErrors.push_back (QString::fromUtf8 ("提交文件已缺失，未删除：%1").arg (*path));
@@ -699,10 +721,10 @@ bool ProjectManager::rollbackActivatedRobotProject (PreparedRobotProject& prepar
             cleanupErrors.push_back (QString::fromUtf8 ("提交文件已被外部修改，已保留：%1").arg (*path));
             continue;
         }
-        if (!QFile::remove (*path))
+        if (!ProjectPathResolver::removeContainedFile (projectRoot, *path, nullptr))
             cleanupErrors.push_back (QString::fromUtf8 ("无法删除本次提交文件：%1").arg (*path));
     }
-    removeCreatedDirectoriesIfEmpty (prepared.createdProjectDirectories);
+    removeCreatedDirectoriesIfEmpty (prepared.createdProjectDirectories, projectRoot);
 
     _projectFilePath = prepared.previousProjectFilePath;
     _manifest = prepared.previousManifest;

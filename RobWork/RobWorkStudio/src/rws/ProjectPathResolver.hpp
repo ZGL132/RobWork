@@ -3,6 +3,8 @@
 
 #include "ProjectManifest.hpp"
 
+#include <QVector>
+
 namespace rws {
 
 /**
@@ -27,6 +29,47 @@ class ProjectPathResolver
                                             const QString& relativePath,
                                             QString& resolvedPath,
                                             QString* error = nullptr);
+
+    // 校验候选写入路径确实位于项目根之内（弱规范化后比较，防符号链接逃逸），
+    // 供事务、清理与机器人导入等所有写操作在触碰磁盘前统一做包含性检查。
+    static bool validateContainedWritePath (const QString& projectRoot,
+                                            const QString& candidatePath,
+                                            QString* error = nullptr);
+
+    // 在项目根内安全删除一个普通文件（Windows 用句柄删除，拒绝符号链接/重解析点）。
+    static bool removeContainedFile (const QString& projectRoot,
+                                     const QString& filePath,
+                                     QString* error = nullptr);
+    // 安全删除项目根内一个空目录。
+    static bool removeContainedEmptyDirectory (const QString& projectRoot,
+                                               const QString& directoryPath,
+                                               QString* error = nullptr);
+    // 安全递归删除项目根内的目录树（Windows 句柄级删除，避免路径竞争）。
+    static bool removeContainedDirectoryTree (const QString& projectRoot,
+                                              const QString& directoryPath,
+                                              QString* error = nullptr);
+};
+
+// 项目写入守卫：在写/删目标前沿路径逐级获取目录句柄（Windows），并把目标所在目录
+// 打开为防删除句柄，防止外部进程在操作窗口内替换/删除路径组件（TOCTOU 防护）。
+// 析构时统一释放全部句柄。不可拷贝。
+class ProjectWriteGuard
+{
+  public:
+    ProjectWriteGuard () = default;
+    ~ProjectWriteGuard ();
+    ProjectWriteGuard (const ProjectWriteGuard&) = delete;
+    ProjectWriteGuard& operator= (const ProjectWriteGuard&) = delete;
+
+    // 获取写入守卫：先做包含性校验，再（Windows）沿目标父链逐级打开目录句柄，
+    // 缺失目录先创建再打开；任一环节失败即释放已获取句柄并返回 false。
+    static bool acquire (const QString& projectRoot,
+                         const QString& targetPath,
+                         ProjectWriteGuard& guard,
+                         QString* error = nullptr);
+
+  private:
+    QVector< void* > _directoryHandles;    // Windows 目录句柄（析构时关闭）。
 };
 
 }    // namespace rws

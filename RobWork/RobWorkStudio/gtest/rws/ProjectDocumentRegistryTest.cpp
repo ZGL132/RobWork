@@ -6,13 +6,24 @@
 
 #include <QDir>
 #include <QFile>
+#include <QProcess>
 #include <QSet>
 #include <QTemporaryDir>
 #include <gtest/gtest.h>
 
 #include <functional>
+#include <type_traits>
+#include <utility>
 
 namespace {
+
+#if defined (Q_OS_WIN) && defined (_WIN64)
+static_assert (sizeof (rws::ProjectSaveTransaction) == 40,
+               "ProjectSaveTransaction must preserve its committed public layout.");
+#endif
+static_assert (std::is_constructible_v< rws::ProjectSaveTransaction,
+                                        rws::ProjectSaveTransaction::ExistingTargetPolicy >,
+               "ProjectSaveTransaction must retain its one-argument policy constructor.");
 
 // 测试用假 Provider：不接触真实文档格式，只记录加载/关闭事件、按需写暂存文件，
 // 并可通过 markDirty / failSaving 精确控制脏状态与保存失败，用于验证 Registry
@@ -120,6 +131,39 @@ rws::ProjectResource resource (const QString& id,
     return result;
 }
 
+#ifdef Q_OS_WIN
+bool runWindowsCommand (const QString& command)
+{
+    QProcess process;
+    process.setProgram (QStringLiteral ("cmd.exe"));
+    process.setNativeArguments (QStringLiteral ("/D /C ") + command);
+    process.start ();
+    return process.waitForFinished () && process.exitStatus () == QProcess::NormalExit &&
+           process.exitCode () == 0;
+}
+
+bool createDirectoryJunction (const QString& linkPath, const QString& targetPath)
+{
+    return runWindowsCommand (
+        QStringLiteral ("mklink /J \"%1\" \"%2\"")
+            .arg (QDir::toNativeSeparators (linkPath), QDir::toNativeSeparators (targetPath)));
+}
+
+class DirectoryJunctionCleanup
+{
+  public:
+    explicit DirectoryJunctionCleanup (const QString& path) : _path (path) {}
+    ~DirectoryJunctionCleanup ()
+    {
+        if (!_path.isEmpty ())
+            runWindowsCommand (QStringLiteral ("rmdir \"%1\"").arg (_path));
+    }
+
+  private:
+    QString _path;
+};
+#endif
+
 }    // namespace
 
 TEST (ProjectDocumentRegistryTest, RejectModePreservesTargetCreatedAfterStaging)
@@ -191,6 +235,160 @@ TEST (ProjectDocumentRegistryTest, InstalledFilesCanBeRolledBackBeforeFinalize)
                      .isEmpty ());
 }
 
+TEST (ProjectDocumentRegistryTest, RollbackPreservesTargetExternallyChangedAfterInstall)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    rws::ProjectSaveTransaction transaction;
+    QString error;
+    ASSERT_TRUE (transaction.stageBytes (QByteArray ("installed"), target, &error));
+    ASSERT_TRUE (transaction.install (&error)) << error.toStdString ();
+
+    QFile external (target);
+    ASSERT_TRUE (external.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (8), external.write ("external"));
+    external.close ();
+
+    QString rollbackError;
+    transaction.rollback (&rollbackError);
+
+    ASSERT_TRUE (external.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("external"), external.readAll ());
+    EXPECT_FALSE (rollbackError.isEmpty ());
+    const QStringList backups = QDir (directory.path ()).entryList (
+        {QStringLiteral ("*.rwbackup-*")}, QDir::Files);
+    ASSERT_EQ (1, backups.size ());
+    const QString backupPath = QDir (directory.path ()).filePath (backups.front ());
+    QFile backup (backupPath);
+    ASSERT_TRUE (backup.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("old"), backup.readAll ());
+    EXPECT_TRUE (rollbackError.contains (backupPath));
+    EXPECT_TRUE (QDir (directory.path ())
+                     .entryList ({QStringLiteral ("*.rwstage-*")}, QDir::Files)
+                     .isEmpty ());
+}
+
+TEST (ProjectDocumentRegistryTest, RollbackPreservesTargetWhenBackupChangesAfterInstall)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    rws::ProjectSaveTransaction transaction;
+    QString error;
+    ASSERT_TRUE (transaction.stageBytes (QByteArray ("installed"), target, &error));
+    ASSERT_TRUE (transaction.install (&error)) << error.toStdString ();
+
+    const QStringList backups = QDir (directory.path ()).entryList (
+        {QStringLiteral ("*.rwbackup-*")}, QDir::Files);
+    ASSERT_EQ (1, backups.size ());
+    const QString backupPath = QDir (directory.path ()).filePath (backups.front ());
+    QFile backup (backupPath);
+    ASSERT_TRUE (backup.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (7), backup.write ("altered"));
+    backup.close ();
+
+    QString rollbackError;
+    transaction.rollback (&rollbackError);
+
+    QFile installed (target);
+    ASSERT_TRUE (installed.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("installed"), installed.readAll ());
+    installed.close ();
+    ASSERT_TRUE (backup.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("altered"), backup.readAll ());
+    EXPECT_TRUE (rollbackError.contains (QStringLiteral ("backup changed")))
+        << rollbackError.toStdString ();
+    EXPECT_TRUE (rollbackError.contains (backupPath)) << rollbackError.toStdString ();
+}
+
+TEST (ProjectDocumentRegistryTest, InstallRejectsStagedContentChangedBeforeInstallation)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    rws::ProjectSaveTransaction transaction;
+    QString error;
+    ASSERT_TRUE (transaction.stageBytes (QByteArray ("candidate"), target, &error));
+    const QStringList staged = QDir (directory.path ()).entryList (
+        {QStringLiteral ("*.rwstage-*")}, QDir::Files);
+    ASSERT_EQ (1, staged.size ());
+    QFile mutation (QDir (directory.path ()).filePath (staged.front ()));
+    ASSERT_TRUE (mutation.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (7), mutation.write ("altered"));
+    mutation.close ();
+
+    EXPECT_FALSE (transaction.install (&error));
+    EXPECT_FALSE (error.isEmpty ());
+    QFile preserved (target);
+    ASSERT_TRUE (preserved.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("old"), preserved.readAll ());
+    EXPECT_TRUE (QDir (directory.path ())
+                     .entryList ({QStringLiteral ("*.rwstage-*"),
+                                  QStringLiteral ("*.rwbackup-*")},
+                                 QDir::Files)
+                     .isEmpty ());
+}
+
+TEST (ProjectDocumentRegistryTest, CopiedTransactionRetainsStagedContentIdentity)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    rws::ProjectSaveTransaction originalTransaction;
+    QString error;
+    ASSERT_TRUE (originalTransaction.stageBytes (QByteArray ("candidate"), target, &error));
+    rws::ProjectSaveTransaction copiedTransaction (originalTransaction);
+
+    ASSERT_TRUE (copiedTransaction.install (&error)) << error.toStdString ();
+    QFile installed (target);
+    ASSERT_TRUE (installed.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("candidate"), installed.readAll ());
+    copiedTransaction.rollback ();
+}
+
+TEST (ProjectDocumentRegistryTest, MovedTransactionTransfersStagedContentIdentity)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    rws::ProjectSaveTransaction originalTransaction;
+    QString error;
+    ASSERT_TRUE (originalTransaction.stageBytes (QByteArray ("candidate"), target, &error));
+    rws::ProjectSaveTransaction movedTransaction (std::move (originalTransaction));
+
+    ASSERT_TRUE (movedTransaction.install (&error)) << error.toStdString ();
+    QFile installed (target);
+    ASSERT_TRUE (installed.open (QIODevice::ReadOnly));
+    EXPECT_EQ (QByteArray ("candidate"), installed.readAll ());
+    movedTransaction.rollback ();
+}
+
 TEST (ProjectDocumentRegistryTest, FinalizeCleansProviderAndRemovesBackup)
 {
     QTemporaryDir directory;
@@ -226,6 +424,99 @@ TEST (ProjectDocumentRegistryTest, FinalizeCleansProviderAndRemovesBackup)
     QFile installed (target);
     ASSERT_TRUE (installed.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("saved:managed"), installed.readAll ());
+}
+
+TEST (ProjectDocumentRegistryTest, FinalizePreservesChangedBackupAndProviderState)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString target = QDir (directory.path ()).filePath ("managed.txt");
+    QFile original (target);
+    ASSERT_TRUE (original.open (QIODevice::WriteOnly));
+    ASSERT_EQ (qint64 (3), original.write ("old"));
+    original.close ();
+
+    FakeDocumentProvider provider ("provider.test", "test.document", nullptr);
+    const rws::ProjectResource managed = resource ("managed", "test.document", "managed.txt");
+    provider.markDirty (managed.id);
+    rws::ProjectDocumentContext context;
+    context.projectDirectory = directory.path ();
+    rws::ProjectSaveTransaction transaction;
+    QString error;
+    ASSERT_TRUE (transaction.stage (provider, managed, context, target, &error));
+    ASSERT_TRUE (transaction.install (&error)) << error.toStdString ();
+
+    const QStringList backups = QDir (directory.path ()).entryList (
+        {QStringLiteral ("*.rwbackup-*")}, QDir::Files);
+    ASSERT_EQ (1, backups.size ());
+    const QString backupPath = QDir (directory.path ()).filePath (backups.front ());
+    QFile backup (backupPath);
+    ASSERT_TRUE (backup.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    ASSERT_EQ (qint64 (7), backup.write ("altered"));
+    backup.close ();
+
+    EXPECT_FALSE (transaction.finalize (&error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (error.contains (QStringLiteral ("backup changed"))) << error.toStdString ();
+    EXPECT_TRUE (provider.isDirty (managed.id));
+    EXPECT_EQ (QByteArray ("saved:managed"), [&] {
+        QFile file (target);
+        EXPECT_TRUE (file.open (QIODevice::ReadOnly));
+        return file.readAll ();
+    } ());
+    EXPECT_EQ (QByteArray ("altered"), [&] {
+        QFile file (backupPath);
+        EXPECT_TRUE (file.open (QIODevice::ReadOnly));
+        return file.readAll ();
+    } ());
+}
+
+TEST (ProjectDocumentRegistryTest, FinalizePreflightFailurePreservesEarlierBackupsAndDirtyProviders)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString firstTarget = QDir (projectRoot).filePath ("first.txt");
+    const QString secondParent = QDir (projectRoot).filePath ("second");
+    const QString secondTarget = QDir (secondParent).filePath ("second.txt");
+    ASSERT_TRUE (QDir ().mkpath (secondParent));
+    for (const auto& entry : {qMakePair (firstTarget, QByteArray ("old-first")),
+                              qMakePair (secondTarget, QByteArray ("old-second"))}) {
+        QFile file (entry.first);
+        ASSERT_TRUE (file.open (QIODevice::WriteOnly));
+        ASSERT_EQ (entry.second.size (), file.write (entry.second));
+    }
+
+    FakeDocumentProvider provider ("provider.test", "test.document", nullptr);
+    const rws::ProjectResource first = resource ("first", "test.document", "first.txt");
+    const rws::ProjectResource second = resource ("second", "test.document", "second/second.txt");
+    provider.markDirty (first.id);
+    provider.markDirty (second.id);
+    rws::ProjectDocumentContext context;
+    context.projectDirectory = projectRoot;
+    const QString parkedParent = QDir (projectRoot).filePath ("parked-second");
+    DirectoryJunctionCleanup cleanup (secondParent);
+    rws::ProjectSaveTransaction transaction;
+    rws::ProjectSaveTransaction::setContainmentRoot (transaction, projectRoot);
+    QString error;
+    ASSERT_TRUE (transaction.stage (provider, first, context, firstTarget, &error));
+    ASSERT_TRUE (transaction.stage (provider, second, context, secondTarget, &error));
+    ASSERT_TRUE (transaction.install (&error)) << error.toStdString ();
+    ASSERT_TRUE (QDir ().rename (secondParent, parkedParent));
+    ASSERT_TRUE (createDirectoryJunction (secondParent, external.path ()));
+
+    EXPECT_FALSE (transaction.finalize (&error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (provider.isDirty (first.id));
+    EXPECT_TRUE (provider.isDirty (second.id));
+    EXPECT_EQ (1, QDir (projectRoot).entryList ({QStringLiteral ("*.rwbackup-*")}, QDir::Files).size ());
+    EXPECT_EQ (1, QDir (parkedParent).entryList ({QStringLiteral ("*.rwbackup-*")}, QDir::Files).size ());
+#endif
 }
 
 // 负向测试：同一 kind 不能被两个 Provider 注册，杜绝加载结果依赖插件注册顺序。

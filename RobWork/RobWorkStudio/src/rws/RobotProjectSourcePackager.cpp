@@ -1,5 +1,7 @@
 #include "RobotProjectSourcePackager.hpp"
 
+#include "ProjectPathResolver.hpp"
+
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
@@ -399,6 +401,10 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
     finalProjectPaths.push_back (managedProjectPath);
     for (const QString& relativePath : finalProjectPaths) {
         const QString finalPath = projectInfo.absoluteDir ().filePath (relativePath);
+        if (!ProjectPathResolver::validateContainedWritePath (
+                projectInfo.absolutePath (), finalPath, error)) {
+            return false;
+        }
         if (QFileInfo::exists (finalPath)) {
             setError (error,
                       QStringLiteral ("Robot project target already exists and will not be overwritten: %1")
@@ -408,12 +414,25 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
     }
 
     PackagedRobotSource candidate;
+    candidate.projectRoot = projectInfo.absolutePath ();
     const QString stagingParent = projectInfo.absoluteDir ().filePath (QStringLiteral (".rwproject"));
     candidate.removeEmptyStagingParent = !QFileInfo::exists (stagingParent);
     candidate.stagingAttemptRoot = QDir (stagingParent)
                                        .filePath (QStringLiteral ("import-") +
                                                   QUuid::createUuid ().toString (QUuid::WithoutBraces));
     candidate.stagingRoot = QDir (candidate.stagingAttemptRoot).filePath (QStringLiteral ("root"));
+    if (!ProjectPathResolver::validateContainedWritePath (
+            projectInfo.absolutePath (), candidate.stagingRoot, error)) {
+        discard (candidate);
+        return false;
+    }
+    ProjectWriteGuard stagingRootGuard;
+    if (!ProjectWriteGuard::acquire (projectInfo.absolutePath (),
+                                     QDir (candidate.stagingRoot).filePath (".guard"),
+                                     stagingRootGuard, error)) {
+        discard (candidate);
+        return false;
+    }
     if (!QDir ().mkpath (candidate.stagingRoot)) {
         setError (error, QStringLiteral ("Could not create robot import staging directory: %1")
                              .arg (candidate.stagingRoot));
@@ -426,6 +445,12 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
     QHash< QString, QString > resourceIdByPath;
     for (const QString& projectPath : sortedAssetPaths) {
         const QString stagedPath = QDir (candidate.stagingRoot).filePath (projectPath);
+        ProjectWriteGuard assetGuard;
+        if (!ProjectWriteGuard::acquire (projectInfo.absolutePath (), stagedPath, assetGuard,
+                                         error)) {
+            discard (candidate);
+            return false;
+        }
         if (!QDir ().mkpath (QFileInfo (stagedPath).absolutePath ()) ||
             !QFile::copy (sourceByProjectPath.value (projectPath), stagedPath)) {
             setError (error,
@@ -451,6 +476,12 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
         return false;
     }
     candidate.stagedManagedUrdfPath = QDir (candidate.stagingRoot).filePath (managedProjectPath);
+    ProjectWriteGuard managedUrdfGuard;
+    if (!ProjectWriteGuard::acquire (projectInfo.absolutePath (), candidate.stagedManagedUrdfPath,
+                                     managedUrdfGuard, error)) {
+        discard (candidate);
+        return false;
+    }
     if (!QDir ().mkpath (QFileInfo (candidate.stagedManagedUrdfPath).absolutePath ())) {
         setError (error, QStringLiteral ("Could not create managed URDF staging directory."));
         discard (candidate);
@@ -487,14 +518,23 @@ void RobotProjectSourcePackager::discard (PackagedRobotSource& packaged)
 {
     const QString attemptRoot = packaged.stagingAttemptRoot;
     const bool removeParent = packaged.removeEmptyStagingParent;
+    const QString projectRoot = packaged.projectRoot;
     QString stagingParent;
     if (!attemptRoot.isEmpty ())
         stagingParent = QFileInfo (attemptRoot).absoluteDir ().absolutePath ();
-    if (!attemptRoot.isEmpty () && QFileInfo::exists (attemptRoot))
-        QDir (attemptRoot).removeRecursively ();
+    {
+        ProjectWriteGuard attemptGuard;
+        const bool safeAttemptRoot = !attemptRoot.isEmpty () && !projectRoot.isEmpty () &&
+            ProjectWriteGuard::acquire (projectRoot, attemptRoot, attemptGuard, nullptr);
+        if (safeAttemptRoot && QFileInfo::exists (attemptRoot))
+            ProjectPathResolver::removeContainedDirectoryTree (projectRoot, attemptRoot, nullptr);
+    }
     if (removeParent && !stagingParent.isEmpty () && QFileInfo (stagingParent).isDir () &&
         directoryIsEmpty (stagingParent)) {
-        QDir ().rmdir (stagingParent);
+        ProjectWriteGuard parentGuard;
+        if (!projectRoot.isEmpty () &&
+            ProjectWriteGuard::acquire (projectRoot, stagingParent, parentGuard, nullptr))
+            ProjectPathResolver::removeContainedEmptyDirectory (projectRoot, stagingParent, nullptr);
     }
     packaged = PackagedRobotSource {};
 }
