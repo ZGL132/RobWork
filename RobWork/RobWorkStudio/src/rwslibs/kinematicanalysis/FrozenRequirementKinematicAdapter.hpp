@@ -52,7 +52,8 @@ class FrozenRequirementKinematicAdapter
                       std::vector<TaskPoint>& output,
                       std::string* error,
                       bool* robotStateChanged = nullptr,
-                      std::vector<std::string>* warnings = nullptr);
+                      std::vector<std::string>* warnings = nullptr,
+                      const std::string& artifactBaseDirectory = {});
 };
 
 } // namespace rws

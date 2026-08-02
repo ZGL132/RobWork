@@ -218,6 +218,7 @@ void KinematicEngineeringEvaluator::evaluateLegacy(
     buildReq.tcpFrame       = problem.context.tcpFrame;
     buildReq.scenarioSnapshot = problem.scenarioSnapshot.available()
         ? &problem.scenarioSnapshot : nullptr;
+    buildReq.scenarioBaseDirectory = problem.scenarioSnapshot.baseDirectory;
     buildReq.checkCollision = problem.evaluation.checkCollision &&
                               (stage == StructureEvaluationStage::Verified ||
                                (evaluateWorkspaceCoverage &&

@@ -30,10 +30,11 @@ namespace {
  * request.spec 中已经由优化变量变异后的关节、TCP 和连杆碰撞模型。
  */
 void mergeFrozenScenario(RobotModelSpec& candidate,
-                         const StructureOptimizationScenarioSnapshot& snapshot)
+                         const StructureOptimizationScenarioSnapshot& snapshot,
+                         const std::string& baseDirectory)
 {
     RobotModelSpec scene = snapshot.sceneSpec;
-    CandidateModelFactory::resolveExternalAssetPaths(scene);
+    CandidateModelFactory::resolveExternalAssetPaths(scene, baseDirectory);
 
     candidate.sceneFrames.clear();
     for (const FrameSpec& frame : scene.sceneFrames) {
@@ -63,9 +64,13 @@ void mergeFrozenScenario(RobotModelSpec& candidate,
 
 } // namespace
 
-void CandidateModelFactory::resolveExternalAssetPaths (RobotModelSpec& spec)
+void CandidateModelFactory::resolveExternalAssetPaths (
+    RobotModelSpec& spec, const std::string& baseDirectory)
 {
-    const QDir sourceDirectory (QString::fromStdString (spec.saveDirectory));
+    const QString sourceRoot = baseDirectory.empty()
+        ? QString::fromStdString(spec.saveDirectory)
+        : QString::fromStdString(baseDirectory);
+    const QDir sourceDirectory(QFileInfo(sourceRoot).absoluteFilePath());
     const auto resolve = [&sourceDirectory] (std::string& path) {
         const QString raw = QString::fromStdString (path).trimmed ();
         if (raw.isEmpty () || QFileInfo (raw).isAbsolute ())
@@ -83,7 +88,8 @@ void CandidateModelFactory::resolveExternalAssetPaths (RobotModelSpec& spec)
 
 void CandidateModelFactory::applyScenarioSnapshot(
     RobotModelSpec& spec,
-    const StructureOptimizationScenarioSnapshot& snapshot)
+    const StructureOptimizationScenarioSnapshot& snapshot,
+    const std::string& baseDirectory)
 {
     // 不可用快照代表旧项目或纯机器人项目。保持原规格不变，继续兼容既有导出流程。
     if (!snapshot.available())
@@ -91,7 +97,7 @@ void CandidateModelFactory::applyScenarioSnapshot(
 
     // 这里刻意复用候选模型工厂内部的唯一合并实现；导出器不复制这段逻辑，后续增加
     // 场景元素时不会出现“评价能看到、导出看不到”的分叉。
-    mergeFrozenScenario(spec, snapshot);
+    mergeFrozenScenario(spec, snapshot, baseDirectory);
 }
 
 // =============================================================================
@@ -134,7 +140,8 @@ CandidateModelBuildResult CandidateModelFactory::build (
     RobotModelSpec spec = request.spec;
     resolveExternalAssetPaths (spec);
     if (request.scenarioSnapshot != nullptr)
-        applyScenarioSnapshot(spec, *request.scenarioSnapshot);
+        applyScenarioSnapshot(
+            spec, *request.scenarioSnapshot, request.scenarioBaseDirectory);
     spec.saveDirectory  = tempDir->path ().toStdString ();
     spec.generateScene  = true;
 

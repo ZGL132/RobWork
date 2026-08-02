@@ -20,6 +20,7 @@
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFile>
 #include <QRect>
 #include <QRectF>
@@ -2115,7 +2116,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     rws::FrozenRequirementArtifact artifact;
     std::string error;
     if (const int rc = require(rws::RequirementFreezer::freeze(
-            requirements, *workcell, workcell->getDefaultState(), model, artifact, &error),
+            requirements, *workcell, workcell->getDefaultState(), model, artifact, &error,
+            sourceDirectory.path().toStdString()),
                                "freeze artifact for kinematic import")) return rc;
     if (const int rc = require(artifact.compiled.frozen,
                                "freeze artifact records compiled frozen state")) return rc;
@@ -2141,24 +2143,41 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(tasks.front().note.find("OrientationRuleResolver.1") != std::string::npos,
                                "orientation evidence is retained")) return rc;
 
+    QTemporaryDir clonedDirectory;
+    if (const int rc = require(clonedDirectory.isValid(),
+                               "create cloned project directory")) return rc;
+    const QString clonedSourcePath = clonedDirectory.filePath(QStringLiteral("source.wc.xml"));
+    if (const int rc = require(QFile::copy(sourcePath, clonedSourcePath),
+                               "copy frozen WorkCell provenance into cloned project")) return rc;
+    if (const int rc = require(QFile::remove(sourcePath),
+                               "make original project source unavailable")) return rc;
+    bool robotStateChanged = false;
+    std::vector<std::string> validationWarnings;
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
+            artifact, *workcell, workcell->getDefaultState(), tasks, &error,
+            &robotStateChanged, &validationWarnings, clonedDirectory.path().toStdString()),
+                               "import relocated frozen artifact from cloned project root")) return rc;
+    if (const int rc = require(validationWarnings.empty(),
+                               "relocated source provenance resolves without warnings")) return rc;
+
     rw::kinematics::State joggedState = workcell->getDefaultState();
     device->setQ(rw::math::Q(1, 0.35), joggedState);
-    bool robotStateChanged = false;
     if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
             artifact, *workcell, joggedState, tasks, &error, &robotStateChanged),
                                "import frozen artifact after robot jog")) return rc;
     if (const int rc = require(robotStateChanged,
                                "robot jog is reported without rejecting frozen requirements")) return rc;
 
-    if (const int rc = require(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text |
-                                               QIODevice::Truncate),
-                               "replace source WorkCell file after freeze")) return rc;
-    sourceFile.write("<WorkCell name=\"FrozenImportCellChanged\" />\n");
-    sourceFile.close();
-    std::vector<std::string> validationWarnings;
+    QFile clonedSourceFile(clonedSourcePath);
+    if (const int rc = require(clonedSourceFile.open(QIODevice::WriteOnly | QIODevice::Text |
+                                                     QIODevice::Truncate),
+                               "replace cloned source WorkCell file after freeze")) return rc;
+    clonedSourceFile.write("<WorkCell name=\"FrozenImportCellChanged\" />\n");
+    clonedSourceFile.close();
+    validationWarnings.clear();
     if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
             artifact, *workcell, joggedState, tasks, &error, &robotStateChanged,
-            &validationWarnings),
+            &validationWarnings, clonedDirectory.path().toStdString()),
                                "source provenance warning does not block kinematic import")) return rc;
     if (const int rc = require(!validationWarnings.empty() &&
                                    validationWarnings.front().find("source WorkCell file") !=

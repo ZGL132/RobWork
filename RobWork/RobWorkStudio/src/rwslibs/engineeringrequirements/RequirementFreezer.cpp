@@ -529,16 +529,19 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
 bool RequirementFreezer::isScenarioCurrent(const FrozenRequirementArtifact& artifact,
                                            const rw::models::WorkCell& workcell,
                                            const rw::kinematics::State& state,
-                                           std::string* error)
+                                           std::string* error,
+                                           const std::string& artifactBaseDirectory)
 {
-    return validateScenario(artifact, workcell, state, nullptr, error);
+    return validateScenario(
+        artifact, workcell, state, nullptr, error, artifactBaseDirectory);
 }
 
 bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artifact,
                                           const rw::models::WorkCell& workcell,
                                           const rw::kinematics::State& state,
                                           FrozenRequirementValidationResult* result,
-                                          std::string* error)
+                                          std::string* error,
+                                          const std::string& artifactBaseDirectory)
 {
     if (result != nullptr) *result = FrozenRequirementValidationResult();
     if (artifact.schemaVersion != 3) {
@@ -569,7 +572,12 @@ bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artif
         return false;
     }
     if (!artifact.scenario.sourceWorkCellPath.empty()) {
-        const std::string sourceFingerprint = fileFingerprint(artifact.scenario.sourceWorkCellPath);
+        QString sourcePath = QString::fromStdString(artifact.scenario.sourceWorkCellPath);
+        if (QFileInfo(sourcePath).isRelative() && !artifactBaseDirectory.empty()) {
+            sourcePath = QDir(QString::fromStdString(artifactBaseDirectory))
+                             .absoluteFilePath(sourcePath);
+        }
+        const std::string sourceFingerprint = fileFingerprint(sourcePath.toStdString());
         if (sourceFingerprint.empty() || sourceFingerprint != artifact.scenario.sourceFileFingerprint) {
             if (result != nullptr) {
                 result->warnings.push_back(

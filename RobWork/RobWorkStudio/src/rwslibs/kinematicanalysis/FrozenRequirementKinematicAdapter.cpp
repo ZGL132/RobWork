@@ -131,7 +131,8 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirem
                                                std::vector<TaskPoint>& output,
                                                std::string* error,
                                                bool* robotStateChanged,
-                                               std::vector<std::string>* warnings)
+                                               std::vector<std::string>* warnings,
+                                               const std::string& artifactBaseDirectory)
 {
     // 即使 JSON 有 frozen 标志，也必须复核冻结时的场景和 State。否则夹具移动后仍会把
     // 相对 Frame 的旧位姿送进 IK，产生看似正常、实际对应错误工艺位置的分析结论。
@@ -149,7 +150,8 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirem
         return false;
     }
     FrozenRequirementValidationResult validation;
-    if (!RequirementFreezer::validateScenario(artifact, workcell, state, &validation, error))
+    if (!RequirementFreezer::validateScenario(
+            artifact, workcell, state, &validation, error, artifactBaseDirectory))
         return false;
 
     std::vector<TaskPoint> converted;

@@ -4226,9 +4226,14 @@ void KinematicAnalysisWidget::importFrozenRequirements ()
     std::vector<TaskPoint> points;
     bool robotStateChanged = false;
     std::vector<std::string> validationWarnings;
+    const QString artifactBaseDirectory =
+        managedRequirement && _studio != nullptr && !_studio->projectDirectory().isEmpty()
+            ? _studio->projectDirectory()
+            : QFileInfo(path).absolutePath();
     if (!FrozenRequirementKinematicAdapter::applyWithValidation(artifact, *_workcell, currentState(), points,
                                                                 &error, &robotStateChanged,
-                                                                &validationWarnings)) {
+                                                                &validationWarnings,
+                                                                artifactBaseDirectory.toStdString())) {
         QMessageBox::warning(this, tr("Import validation"),
                              tr("Frozen artifact is not valid for the current WorkCell: %1")
                                  .arg(QString::fromStdString(error)));

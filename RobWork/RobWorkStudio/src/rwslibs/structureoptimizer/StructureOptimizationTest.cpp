@@ -688,7 +688,23 @@ static void testModelFactory()
     fixture.refFrame = "WORLD";
     fixture.pos = {{0.4, 0.0, 0.2}};
     scenario.sceneSpec.sceneFrames.push_back(fixture);
+    QTemporaryDir clonedScenarioRoot;
+    REQUIRE(clonedScenarioRoot.isValid());
+    REQUIRE(QDir().mkpath(clonedScenarioRoot.filePath("assets")));
+    const QString sourceMesh = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/geometry/base.stl");
+    const QString clonedMesh = clonedScenarioRoot.filePath("assets/base.stl");
+    REQUIRE(QFile::copy(sourceMesh, clonedMesh));
+    scenario.sceneSpec.saveDirectory = "scenes";
+    rws::SceneGeometrySpec fixtureMesh;
+    fixtureMesh.name = "FixtureMesh";
+    fixtureMesh.refFrame = "Fixture_A";
+    fixtureMesh.kind = rws::GeometryKind::Polytope;
+    fixtureMesh.file = "assets/base.stl";
+    fixtureMesh.collisionModel = false;
+    scenario.sceneSpec.sceneGeometries.push_back(fixtureMesh);
     req.scenarioSnapshot = &scenario;
+    req.scenarioBaseDirectory = clonedScenarioRoot.path().toStdString();
     result = factory.build(req);
     REQUIRE(result.ok);
     REQUIRE(result.artifact.workcell->findFrame("Fixture_A") != nullptr);
@@ -2075,6 +2091,11 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     REQUIRE(directory.isValid());
     const QString modelPath = directory.filePath("robot.rmb.json");
     const QString requirementPath = directory.filePath("cell.requirements.json");
+    const QString workcellPath = directory.filePath("source.wc.xml");
+    QFile workcellFile(workcellPath);
+    REQUIRE(workcellFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(workcellFile.write("<WorkCell name=\"ImportWorkCell\" />\n") > 0);
+    workcellFile.close();
     const rws::RobotModelSpec model =
         rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path());
 
@@ -2112,7 +2133,7 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     structure->addFrame(joint, base);
     structure->addFrame(tcp, joint);
     const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
-        new rw::models::WorkCell(structure, "ImportWorkCell", ""));
+        new rw::models::WorkCell(structure, "ImportWorkCell", workcellPath.toStdString()));
     const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
         new rw::models::SerialDevice(base.get(), tcp.get(), model.robotName,
                                      structure->getDefaultState()));
@@ -2125,7 +2146,8 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
     rws::FrozenRequirementArtifact artifact;
     std::string error;
     REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell, frozenState,
-                                             model, artifact, &error));
+                                             model, artifact, &error,
+                                             directory.path().toStdString()));
 
     QJsonObject requirementProject = rws::RequirementSetJson::toObject(requirements);
     requirementProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
@@ -2144,6 +2166,8 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
             artifact.requirementFingerprint);
     REQUIRE(imported.requirementProvenance.frozenAt == artifact.frozenAt);
     REQUIRE(imported.context.sourceModelPath == modelPath.toStdString());
+    REQUIRE(validation.warnings.empty());
+    REQUIRE(imported.scenarioSnapshot.baseDirectory == directory.path().toStdString());
 
     rw::kinematics::State joggedState = frozenState;
     device->setQ(rw::math::Q(1, 0.25), joggedState);
@@ -2879,6 +2903,16 @@ int main(int argc, char** argv)
     }
 
     QCoreApplication app(argc, argv);
+
+    if (suite == "model_factory") {
+        testModelFactory();
+        if (g_testFailures == 0) {
+            std::printf("Model factory test passed.\n");
+            return 0;
+        }
+        std::printf("Model factory test FAILED.\n");
+        return 1;
+    }
 
     if (suite == "frozen_requirements") {
         testFrozenEngineeringRequirementArtifactAdapter();

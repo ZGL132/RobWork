@@ -12,6 +12,8 @@
 #include <QFileInfo>
 #include <QJsonDocument>
 
+#include <algorithm>
+
 namespace rws {
 namespace {
 
@@ -30,6 +32,27 @@ QString resolveModelPath(const QString& requirementPath, const std::string& bind
     if (QFileInfo(modelPath).isAbsolute())
         return QDir::cleanPath(modelPath);
     return QDir(QFileInfo(requirementPath).absolutePath()).absoluteFilePath(modelPath);
+}
+
+QString commonDirectory(const QString& first, const QString& second)
+{
+    const QString left = QDir::fromNativeSeparators(QFileInfo(first).absoluteFilePath());
+    const QString right = QDir::fromNativeSeparators(QFileInfo(second).absoluteFilePath());
+    const QStringList leftParts = left.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+    const QStringList rightParts = right.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+    QStringList commonParts;
+    const int count = std::min(leftParts.size(), rightParts.size());
+    for (int index = 0; index < count; ++index) {
+        if (leftParts[index].compare(rightParts[index], Qt::CaseInsensitive) != 0)
+            break;
+        commonParts.push_back(leftParts[index]);
+    }
+    if (commonParts.size() <= 1)
+        return QFileInfo(first).absolutePath();
+    QString common = commonParts.join(QLatin1Char('/'));
+    if (left.startsWith(QLatin1Char('/')))
+        common.prepend(QLatin1Char('/'));
+    return QDir::cleanPath(common);
 }
 
 } // namespace
@@ -74,11 +97,6 @@ bool FrozenRequirementProjectImportService::createProblem(
     if (!artifact.compiled.frozen)
         return setError(error, "Frozen engineering requirement artifact is not marked frozen.");
 
-    FrozenRequirementValidationResult scenarioValidation;
-    if (!RequirementFreezer::validateScenario(
-            artifact, workcell, state, &scenarioValidation, &parseMessage))
-        return setError(error, parseMessage);
-
     // 顶层绑定和冻结绑定必须描述同一模型。导入时先阻止两者不一致，才能避免用户编辑态
     // 文件已改绑模型、但 artifact 仍指向旧模型而产生难以追溯的优化结论。
     if (!editableRequirements.modelBinding.robotModelFingerprint.empty() &&
@@ -90,6 +108,14 @@ bool FrozenRequirementProjectImportService::createProblem(
                                                artifact.modelBinding.sourcePath);
     if (artifact.modelBinding.sourcePath.empty() || !QFileInfo(modelPath).isFile())
         return setError(error, "Frozen engineering requirement model snapshot does not exist.");
+
+    const QString artifactBaseDirectory = commonDirectory(
+        requirementInfo.absolutePath(), QFileInfo(modelPath).absolutePath());
+    FrozenRequirementValidationResult scenarioValidation;
+    if (!RequirementFreezer::validateScenario(
+            artifact, workcell, state, &scenarioValidation, &parseMessage,
+            artifactBaseDirectory.toStdString()))
+        return setError(error, parseMessage);
 
     QFile modelFile(modelPath);
     if (!modelFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -105,6 +131,7 @@ bool FrozenRequirementProjectImportService::createProblem(
         return setError(error, "Structure optimization project creation failed: " + parseMessage);
     if (!EngineeringRequirementArtifactAdapter::apply(artifact, created, &parseMessage))
         return setError(error, "Frozen engineering requirements cannot be applied: " + parseMessage);
+    created.scenarioSnapshot.baseDirectory = artifactBaseDirectory.toStdString();
 
     problem = created;
     if (validation != nullptr)

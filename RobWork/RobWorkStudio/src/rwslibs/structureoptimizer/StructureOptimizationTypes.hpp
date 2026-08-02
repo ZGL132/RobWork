@@ -121,6 +121,8 @@ struct StructureOptimizationScenarioSnapshot
     std::string environmentFingerprint;
     std::string stateFingerprint;
     RobotModelSpec sceneSpec;
+    // Runtime-only root for project-relative scenario paths; it is not serialized.
+    std::string baseDirectory;
 
     bool available() const { return schemaVersion > 0 && !snapshotFingerprint.empty(); }
 };

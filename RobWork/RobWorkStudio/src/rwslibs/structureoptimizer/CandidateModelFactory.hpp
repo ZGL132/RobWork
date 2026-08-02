@@ -35,6 +35,7 @@ struct CandidateModelBuildRequest {
     // 指针仅在本次同步 build() 调用期间借用。场景快照属于优化问题，工厂不会保存它，
     // 从而避免候选并行评价时共享和修改同一份 WorkCell 状态。
     const StructureOptimizationScenarioSnapshot* scenarioSnapshot = nullptr;
+    std::string scenarioBaseDirectory;
 };
 
 struct CandidateModelBuildResult {
@@ -46,7 +47,8 @@ struct CandidateModelBuildResult {
 class CandidateModelFactory {
   public:
     //! Resolves model-relative external geometry paths before changing saveDirectory.
-    static void resolveExternalAssetPaths(RobotModelSpec& spec);
+    static void resolveExternalAssetPaths(
+        RobotModelSpec& spec, const std::string& baseDirectory = {});
 
     /**
      * @brief 将冻结需求中的工装/工件场景合入候选机器人规格。
@@ -57,7 +59,8 @@ class CandidateModelFactory {
      */
     static void applyScenarioSnapshot(
         RobotModelSpec& spec,
-        const StructureOptimizationScenarioSnapshot& snapshot);
+        const StructureOptimizationScenarioSnapshot& snapshot,
+        const std::string& baseDirectory = {});
 
     CandidateModelBuildResult build(const CandidateModelBuildRequest& request);
 };

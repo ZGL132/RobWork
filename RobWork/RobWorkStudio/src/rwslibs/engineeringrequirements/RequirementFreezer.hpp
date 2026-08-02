@@ -131,13 +131,15 @@ class RequirementFreezer {
     static bool isScenarioCurrent(const FrozenRequirementArtifact& artifact,
                                   const rw::models::WorkCell& workcell,
                                   const rw::kinematics::State& state,
-                                  std::string* error = nullptr);
+                                  std::string* error = nullptr,
+                                  const std::string& artifactBaseDirectory = {});
 
     static bool validateScenario(const FrozenRequirementArtifact& artifact,
                                  const rw::models::WorkCell& workcell,
                                  const rw::kinematics::State& state,
                                  FrozenRequirementValidationResult* result = nullptr,
-                                 std::string* error = nullptr);
+                                 std::string* error = nullptr,
+                                 const std::string& artifactBaseDirectory = {});
 };
 
 /**
