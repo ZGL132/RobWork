@@ -14,6 +14,7 @@
 // =============================================================================
 #include "RobotModelBuilderWidget.hpp"
 
+#include "RobotModelProjectPaths.hpp"
 #include "RobotModelXmlWriter.hpp"
 #include "RobotModelUrdfImporter.hpp"
 #include "RobotModelSpecJson.hpp"
@@ -361,8 +362,13 @@ bool RobotModelBuilderWidget::loadProjectDocument (const QString& path, QString*
     // 临时模型不会被半截 JSON 覆盖。
     // 兼容旧 .rmb.json 中的 saveDirectory 字段，但不信任其值。项目 Provider 已先注入当前
     // 项目目录，因此载入后立即覆盖为受管目录，防止旧工程路径在新项目中复活。
-    parsed.saveDirectory = effectiveSaveDirectory ().toStdString ();
-    fillFromSpec (parsed);
+    RobotModelSpec runtime = parsed;
+    if (!_projectDirectory.isEmpty () &&
+        !RobotModelProjectPaths::resolveManaged (parsed, _projectDirectory, runtime, error))
+        return false;
+
+    runtime.saveDirectory = effectiveSaveDirectory ().toStdString ();
+    fillFromSpec (runtime);
     _projectCleanSnapshot = projectDocumentSnapshot ();
     _projectSnapshotActive = true;
     return true;
@@ -372,6 +378,10 @@ bool RobotModelBuilderWidget::loadProjectDocument (const QString& path, QString*
 // 不直接覆盖正式项目资源；正式替换由 ProjectSaveTransaction 完成。
 bool RobotModelBuilderWidget::saveProjectDocument (const QString& targetPath, QString* error) const
 {
+    QByteArray json;
+    if (!serializeProjectDocument (json, error))
+        return false;
+
     QFile file (targetPath);
     if (!file.open (QIODevice::WriteOnly | QIODevice::Truncate)) {
         if (error != nullptr)
@@ -380,7 +390,6 @@ bool RobotModelBuilderWidget::saveProjectDocument (const QString& targetPath, QS
         return false;
     }
 
-    const QByteArray json = projectDocumentSnapshot ();
     if (file.write (json) != json.size ()) {
         if (error != nullptr)
             *error = QString::fromUtf8 ("写入机器人模型暂存文件失败：%1。").arg (
@@ -430,28 +439,53 @@ QByteArray RobotModelBuilderWidget::projectDocumentSnapshot () const
 {
     // 项目文档只保存可迁移的模型定义。XmlWriter 所需的 saveDirectory 在运行时由项目目录
     // 推导，不能写进 .rmb.json，否则项目复制或移动后会重新指向创建机器上的旧绝对路径。
+    QByteArray snapshot;
+    QString error;
+    if (!serializeProjectDocument (snapshot, &error))
+        return QByteArrayLiteral ("invalid-managed-model:") + error.toUtf8 ();
+    return snapshot;
+}
+
+bool RobotModelBuilderWidget::serializeProjectDocument (QByteArray& snapshot,
+                                                         QString* error) const
+{
+    if (error != nullptr)
+        error->clear ();
     RobotModelSpec projectSpec = collectSpec ();
+    if (!_projectDirectory.isEmpty ()) {
+        RobotModelSpec portable;
+        if (!RobotModelProjectPaths::makePortable (
+                projectSpec, _projectDirectory, portable, error))
+            return false;
+        projectSpec = portable;
+    }
     projectSpec.saveDirectory.clear ();
-    return QByteArray::fromStdString (RobotModelSpecJson::toJson (projectSpec));
+    snapshot = QByteArray::fromStdString (RobotModelSpecJson::toJson (projectSpec));
+    return true;
 }
 
 // 设置项目受管输出目录（仅内存，不写入 .rmb.json）。目录为空表示独立 WorkCell 工作流。
 void RobotModelBuilderWidget::setProjectOutputDirectory (const QString& projectDirectory)
 {
+    QString normalizedProjectDirectory;
     QString outputDirectory;
     if (!projectDirectory.trimmed ().isEmpty ()) {
         // 产物统一落在项目目录下的固定子目录，而非项目资源 JSON 所在的 models 目录，避免
         // XML、sidecar 与用户导入的模型快照混在一起，也让项目复制时保留明确的生成物边界。
+        normalizedProjectDirectory = QDir::cleanPath (
+            QDir::fromNativeSeparators (QFileInfo (projectDirectory).absoluteFilePath ()));
         outputDirectory = QDir::cleanPath (
-            QDir (QFileInfo (projectDirectory).absoluteFilePath ()).filePath (
+            QDir (normalizedProjectDirectory).filePath (
                 QStringLiteral ("generated/robot-models")));
         QDir ().mkpath (outputDirectory);
     }
     // 主窗口标题刷新会频繁发出 projectContextChanged；目录未变化时直接返回，
     // 避免重复重排输出字段并触发不必要的预览重建。
-    if (_projectOutputDirectory == outputDirectory)
+    if (_projectDirectory == normalizedProjectDirectory &&
+        _projectOutputDirectory == outputDirectory)
         return;
 
+    _projectDirectory = normalizedProjectDirectory;
     _projectOutputDirectory = outputDirectory;
     const bool projectManaged = !_projectOutputDirectory.isEmpty ();
     // 历史导入文件布局可能包含相对上级目录或绝对路径。在项目模式下禁用该选项并清空
@@ -1122,11 +1156,14 @@ void RobotModelBuilderWidget::importUrdf ()
 
 // 无对话框的 URDF 导入实现：供"从机器人文件创建项目"流程复用，把源文件导入结果填入
 // UI 并生成预览；失败经 error 回填，警告存入 _lastUrdfImportWarnings 由调用方展示。
-bool RobotModelBuilderWidget::importUrdfFile (const QString& path, QString* error)
+bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
+                                                 const QString& projectRoot,
+                                                 RobotModelSpec& parsed,
+                                                 QStringList& warnings,
+                                                 QString* error) const
 {
     if (error != NULL)
         error->clear ();
-    _lastUrdfImportWarnings.clear ();
     if (path.isEmpty ()) {
         if (error != NULL)
             *error = "No URDF file was selected.";
@@ -1136,7 +1173,19 @@ bool RobotModelBuilderWidget::importUrdfFile (const QString& path, QString* erro
     UrdfImportOptions options;
     // URDF 的读取位置可以在项目外，但生成后的模型/XML 必须返回当前项目的受管输出目录。
     // 因此不再以 URDF 所在目录或用户输入目录作为 saveDirectory 的回退值。
-    options.saveDirectory = effectiveSaveDirectory ();
+    if (!projectRoot.trimmed ().isEmpty ()) {
+        if (!QDir::isAbsolutePath (projectRoot)) {
+            if (error != NULL)
+                *error = "The robot project root must be an absolute path.";
+            return false;
+        }
+        const QString normalizedRoot = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
+        options.saveDirectory =
+            QDir (normalizedRoot).filePath (QStringLiteral ("generated/robot-models"));
+    }
+    else {
+        options.saveDirectory = effectiveSaveDirectory ();
+    }
     const QDir urdfDir (QFileInfo (path).absolutePath ());
     options.packageRoots << urdfDir.absolutePath ();
     QDir parentDir = urdfDir;
@@ -1158,12 +1207,29 @@ bool RobotModelBuilderWidget::importUrdfFile (const QString& path, QString* erro
         return false;
     }
 
+    parsed = result.spec;
+    warnings = result.warnings;
+    return true;
+}
+
+void RobotModelBuilderWidget::applyImportedProjectModel (const RobotModelSpec& parsed,
+                                                         const QStringList& warnings)
+{
     _importedDocument = ImportedDocumentSpec ();
-    fillFromSpec (result.spec);
+    fillFromSpec (parsed);
     generatePreview ();
-    _lastUrdfImportWarnings = result.warnings;
+    _lastUrdfImportWarnings = warnings;
 
     setStatus ("URDF imported. Review the preview, then use Save XML or Save and Load.");
+}
+
+bool RobotModelBuilderWidget::importUrdfFile (const QString& path, QString* error)
+{
+    RobotModelSpec parsed;
+    QStringList warnings;
+    if (!preflightUrdfFile (path, _projectDirectory, parsed, warnings, error))
+        return false;
+    applyImportedProjectModel (parsed, warnings);
     return true;
 }
 

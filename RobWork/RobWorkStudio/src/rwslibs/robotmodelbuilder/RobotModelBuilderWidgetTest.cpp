@@ -1,10 +1,12 @@
 #include "RobotModelBuilderWidget.hpp"
+#include "RobotModelSpecJson.hpp"
 
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMetaObject>
@@ -104,6 +106,30 @@ bool rejectOverwriteConfirmation ()
         }
     }
     return false;
+}
+
+class CurrentDirectoryGuard
+{
+  public:
+    CurrentDirectoryGuard () : _original (QDir::currentPath ()) {}
+    ~CurrentDirectoryGuard () { QDir::setCurrent (_original); }
+
+  private:
+    QString _original;
+};
+
+bool writeFixture (const QString& path, const QByteArray& bytes)
+{
+    if (!QDir ().mkpath (QFileInfo (path).absolutePath ()))
+        return false;
+    QFile file (path);
+    return file.open (QIODevice::WriteOnly | QIODevice::Truncate) &&
+           file.write (bytes) == bytes.size ();
+}
+
+bool copyFixture (const QString& source, const QString& target)
+{
+    return QDir ().mkpath (QFileInfo (target).absolutePath ()) && QFile::copy (source, target);
 }
 }    // namespace
 
@@ -225,6 +251,49 @@ int main (int argc, char** argv)
     if (widget.isProjectDocumentDirty ())
         return fail ("Freshly saved RobotModelBuilder project document should be clean.");
 
+    // Project creation preflights both the original source and the managed copy. Neither pass
+    // may replace the model currently being edited or reset its dirty baseline.
+    robotName = findLineEdit (widget, "DraftBot");
+    if (robotName == NULL)
+        return fail ("The imported robot name field was not found.");
+    robotName->setText ("UnsavedDraft");
+    const QByteArray beforePreflight = QByteArray::fromStdString (
+        rws::RobotModelSpecJson::toJson (widget.currentModelSpec ()));
+    const bool dirtyBeforePreflight = widget.isProjectDocumentDirty ();
+    if (!dirtyBeforePreflight)
+        return fail ("The preflight baseline should contain an unsaved model change.");
+
+    const QString preflightUrdf = projectDirectory.filePath ("PreflightBot.urdf");
+    QFile preflightUrdfFile (preflightUrdf);
+    if (!preflightUrdfFile.open (QFile::WriteOnly | QFile::Text) ||
+        preflightUrdfFile.write (
+            "<robot name=\"PreflightBot\"><link name=\"base\"/><link name=\"tip\"/>"
+            "<joint name=\"joint1\" type=\"revolute\"><parent link=\"base\"/>"
+            "<child link=\"tip\"/><axis xyz=\"0 0 1\"/>"
+            "<limit lower=\"-1\" upper=\"1\" velocity=\"1\" effort=\"1\"/>"
+            "</joint></robot>") < 0)
+        return fail ("Could not create the URDF preflight source file.");
+    preflightUrdfFile.close ();
+
+    rws::RobotModelSpec preflightSpec;
+    QStringList preflightWarnings;
+    if (!widget.preflightUrdfFile (preflightUrdf, projectDirectory.path (), preflightSpec,
+                                   preflightWarnings, &projectError))
+        return fail ("A valid URDF should pass non-mutating preflight.");
+    if (preflightSpec.robotName != "PreflightBot")
+        return fail ("URDF preflight should return the parsed model.");
+    if (QByteArray::fromStdString (
+            rws::RobotModelSpecJson::toJson (widget.currentModelSpec ())) != beforePreflight)
+        return fail ("URDF preflight must not replace the model currently being edited.");
+    if (widget.isProjectDocumentDirty () != dirtyBeforePreflight)
+        return fail ("URDF preflight must not change the project document dirty state.");
+
+    if (!widget.loadProjectDocument (projectDocument, &projectError))
+        return fail ("Could not restore the saved model after the preflight test.");
+    robotName = findLineEdit (widget, "DraftBot");
+    if (robotName == NULL)
+        return fail ("The saved robot name was not restored after preflight.");
+
     // 从当前 WorkCell 导入的模型还没有对应的 JSON 资源。插件登记生成资源后，Widget 必须
     // 建立空基线，使下一次项目保存通过统一事务写入首个 .rmb.json，而不是在同步时直接落盘。
     // （英文原注：A model imported from the current WorkCell does not have an existing JSON
@@ -268,6 +337,83 @@ int main (int argc, char** argv)
     deviceFile.close ();
     if (savedContent != "existing output")
         return fail ("Declining overwrite confirmation must leave existing XML unchanged.");
+
+    // Exercise the actual project Provider save/load seam, including relocation under a hostile
+    // process working directory. This catches accidental use of the CWD in Widget integration.
+    QTemporaryDir portableProject;
+    QTemporaryDir relocatedProject;
+    QTemporaryDir hostileWorkingDirectory;
+    if (!portableProject.isValid () || !relocatedProject.isValid () ||
+        !hostileWorkingDirectory.isValid ())
+        return fail ("Could not create portable Widget project fixtures.");
+
+    const QString visualPath = portableProject.filePath ("assets/visual.stl");
+    const QString collisionPath = portableProject.filePath ("assets/collision.stl");
+    const QString scenePath = portableProject.filePath ("assets/scene.stl");
+    if (!writeFixture (visualPath, "visual") || !writeFixture (collisionPath, "collision") ||
+        !writeFixture (scenePath, "scene"))
+        return fail ("Could not write portable Widget geometry fixtures.");
+
+    rws::RobotModelSpec portableRuntime = widget.currentModelSpec ();
+    portableRuntime.robotName = "PortableWidget";
+    portableRuntime.drawables.clear ();
+    portableRuntime.collisionModels.clear ();
+    portableRuntime.sceneGeometries.clear ();
+    rws::DrawableSpec visual;
+    visual.name = "Visual";
+    visual.shape = "Mesh";
+    visual.filePath = QFileInfo (visualPath).absoluteFilePath ().toStdString ();
+    portableRuntime.drawables.push_back (visual);
+    rws::CollisionModelSpec collision;
+    collision.name = "Collision";
+    collision.shape = "Mesh";
+    collision.filePath = QFileInfo (collisionPath).absoluteFilePath ().toStdString ();
+    portableRuntime.collisionModels.push_back (collision);
+    rws::SceneGeometrySpec scene;
+    scene.name = "Scene";
+    scene.kind = rws::GeometryKind::Mesh;
+    scene.file = QFileInfo (scenePath).absoluteFilePath ().toStdString ();
+    portableRuntime.sceneGeometries.push_back (scene);
+
+    rws::RobotModelBuilderWidget portableWidget;
+    portableWidget.setProjectOutputDirectory (portableProject.path ());
+    portableWidget.syncFromWorkCellSpec (portableRuntime, {});
+    const QString portableDocument = portableProject.filePath ("PortableWidget.rmb.json");
+    if (!portableWidget.saveProjectDocument (portableDocument, &projectError))
+        return fail ("Could not save a portable Widget project document.");
+    QFile portableDocumentFile (portableDocument);
+    if (!portableDocumentFile.open (QIODevice::ReadOnly))
+        return fail ("Could not read the portable Widget project document.");
+    const QByteArray portableJson = portableDocumentFile.readAll ();
+    portableDocumentFile.close ();
+    if (portableJson.contains (QFileInfo (portableProject.path ()).absoluteFilePath ().toUtf8 ()))
+        return fail ("Widget project JSON must not contain its original absolute project root.");
+
+    const QString relocatedDocument = relocatedProject.filePath ("PortableWidget.rmb.json");
+    const QString relocatedVisual = relocatedProject.filePath ("assets/visual.stl");
+    const QString relocatedCollision = relocatedProject.filePath ("assets/collision.stl");
+    const QString relocatedScene = relocatedProject.filePath ("assets/scene.stl");
+    if (!copyFixture (portableDocument, relocatedDocument) ||
+        !copyFixture (visualPath, relocatedVisual) ||
+        !copyFixture (collisionPath, relocatedCollision) ||
+        !copyFixture (scenePath, relocatedScene))
+        return fail ("Could not relocate the portable Widget project fixtures.");
+
+    CurrentDirectoryGuard cwdGuard;
+    if (!QDir::setCurrent (hostileWorkingDirectory.path ()))
+        return fail ("Could not establish the hostile Widget working directory.");
+    rws::RobotModelBuilderWidget relocatedWidget;
+    relocatedWidget.setProjectOutputDirectory (relocatedProject.path ());
+    if (!relocatedWidget.loadProjectDocument (relocatedDocument, &projectError))
+        return fail ("Could not load the relocated Widget project document.");
+    const rws::RobotModelSpec relocatedRuntime = relocatedWidget.currentModelSpec ();
+    if (QFileInfo (QString::fromStdString (relocatedRuntime.drawables.front ().filePath))
+                .absoluteFilePath () != QFileInfo (relocatedVisual).absoluteFilePath () ||
+        QFileInfo (QString::fromStdString (relocatedRuntime.collisionModels.front ().filePath))
+                .absoluteFilePath () != QFileInfo (relocatedCollision).absoluteFilePath () ||
+        QFileInfo (QString::fromStdString (relocatedRuntime.sceneGeometries.front ().file))
+                .absoluteFilePath () != QFileInfo (relocatedScene).absoluteFilePath ())
+        return fail ("Widget runtime geometry did not relocate with the managed project.");
 
     return 0;
 }

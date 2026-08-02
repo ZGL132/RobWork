@@ -26,6 +26,13 @@ class RobotModelBuilderWidget : public QWidget
   public:
     explicit RobotModelBuilderWidget (QWidget* parent = NULL);
     void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
+    bool preflightUrdfFile (const QString& path,
+                            const QString& projectRoot,
+                            RobotModelSpec& parsed,
+                            QStringList& warnings,
+                            QString* error = nullptr) const;
+    void applyImportedProjectModel (const RobotModelSpec& parsed,
+                                    const QStringList& warnings);
     // 无对话框 URDF 导入（供"从机器人文件创建项目"复用）；失败经 error 回填。
     bool importUrdfFile (const QString& path, QString* error = nullptr);
     // 当前 UI 收集到的模型规格（用于登记生成资源时的文件基名）。
@@ -112,6 +119,7 @@ class RobotModelBuilderWidget : public QWidget
     void setStatus (const QString& message);
     bool eventFilter (QObject* watched, QEvent* event) override;
     QByteArray projectDocumentSnapshot () const;
+    bool serializeProjectDocument (QByteArray& snapshot, QString* error = nullptr) const;
 
     static QString itemText (const QTableWidget* table, int row, int column);
     static double itemDouble (const QTableWidget* table, int row, int column);
@@ -197,6 +205,7 @@ class RobotModelBuilderWidget : public QWidget
     bool _importingFromWorkCell = false;
     // 仅在内存中保存的项目输出根目录，不序列化到 .rmb.json；项目整体移动后会由主窗口
     // 的 projectContextChanged 信号重新计算，因而不会留下机器相关的绝对路径。
+    QString _projectDirectory;
     QString _projectOutputDirectory;
     ImportedDocumentSpec _importedDocument;
     QByteArray _projectCleanSnapshot;

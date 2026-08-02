@@ -1,11 +1,15 @@
 #include "RobotModelSpecJson.hpp"
 #include "RobotModelFingerprint.hpp"
+#include "RobotModelProjectPaths.hpp"
 #include "RobotModelXmlWriter.hpp"
 
 #include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTemporaryDir>
 
 #include <cmath>
 #include <cstdlib>
@@ -22,6 +26,38 @@ static int fail (const std::string& msg)
 {
     std::cerr << "FAIL: " << msg << std::endl;
     return 1;
+}
+
+class CurrentDirectoryGuard
+{
+  public:
+    CurrentDirectoryGuard () : _original (QDir::currentPath ()) {}
+    ~CurrentDirectoryGuard () { QDir::setCurrent (_original); }
+
+  private:
+    QString _original;
+};
+
+static bool writeBytes (const QString& path, const QByteArray& bytes = QByteArray ("mesh"))
+{
+    if (!QDir ().mkpath (QFileInfo (path).absolutePath ()))
+        return false;
+    QFile file (path);
+    return file.open (QIODevice::WriteOnly | QIODevice::Truncate) &&
+           file.write (bytes) == bytes.size ();
+}
+
+static bool copyFile (const QString& source, const QString& target)
+{
+    return QDir ().mkpath (QFileInfo (target).absolutePath ()) && QFile::copy (source, target);
+}
+
+static bool isInsideProject (const QString& path, const QString& projectRoot)
+{
+    const QString relative = QDir (QFileInfo (projectRoot).absoluteFilePath ()).relativeFilePath (
+        QFileInfo (path).absoluteFilePath ());
+    return relative != QStringLiteral ("..") &&
+           !relative.startsWith (QStringLiteral ("../")) && !QDir::isAbsolutePath (relative);
 }
 
 // 深层比较两个 RobotModelSpec 的所有字段
@@ -234,6 +270,134 @@ static int testFingerprint ()
     return 0;
 }
 
+static int testManagedProjectGeometryPathsArePortable ()
+{
+    QTemporaryDir originalProject;
+    QTemporaryDir movedProject;
+    QTemporaryDir hostileWorkingDirectory;
+    if (!originalProject.isValid () || !movedProject.isValid () ||
+        !hostileWorkingDirectory.isValid ())
+        return fail ("Could not create temporary directories for project path tests.");
+
+    const QString drawablePath = originalProject.filePath ("assets/visual/base.stl");
+    const QString collisionPath = originalProject.filePath ("assets/collision/base.stl");
+    const QString scenePath = originalProject.filePath ("assets/scene/table.stl");
+    if (!writeBytes (drawablePath) || !writeBytes (collisionPath) || !writeBytes (scenePath))
+        return fail ("Could not create managed geometry fixtures.");
+
+    rws::RobotModelSpec runtime =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (originalProject.path ());
+    runtime.saveDirectory.clear ();
+    runtime.drawables.clear ();
+    runtime.collisionModels.clear ();
+    runtime.sceneGeometries.clear ();
+
+    rws::DrawableSpec drawable;
+    drawable.name = "BaseVisual";
+    drawable.shape = "Mesh";
+    drawable.filePath = QFileInfo (drawablePath).absoluteFilePath ().toStdString ();
+    runtime.drawables.push_back (drawable);
+
+    rws::CollisionModelSpec collision;
+    collision.name = "BaseCollision";
+    collision.shape = "Mesh";
+    collision.filePath = QFileInfo (collisionPath).absoluteFilePath ().toStdString ();
+    runtime.collisionModels.push_back (collision);
+
+    rws::SceneGeometrySpec scene;
+    scene.name = "Table";
+    scene.kind = rws::GeometryKind::Mesh;
+    scene.file = QFileInfo (scenePath).absoluteFilePath ().toStdString ();
+    runtime.sceneGeometries.push_back (scene);
+
+    rws::RobotModelSpec portable;
+    QString error;
+    if (!rws::RobotModelProjectPaths::makePortable (
+            runtime, originalProject.path (), portable, &error))
+        return fail ("Could not make managed geometry paths portable: " +
+                     error.toStdString ());
+    const QByteArray json = QByteArray::fromStdString (rws::RobotModelSpecJson::toJson (portable));
+    if (json.contains (QFileInfo (originalProject.path ()).absoluteFilePath ().toUtf8 ()))
+        return fail ("Managed RobotModelBuilder JSON must not contain the original project root.");
+    if (QDir::isAbsolutePath (QString::fromStdString (portable.drawables.front ().filePath)) ||
+        QDir::isAbsolutePath (
+            QString::fromStdString (portable.collisionModels.front ().filePath)) ||
+        QDir::isAbsolutePath (QString::fromStdString (portable.sceneGeometries.front ().file)))
+        return fail ("Every managed geometry field must be project-relative.");
+
+    const QString movedDrawable = movedProject.filePath ("assets/visual/base.stl");
+    const QString movedCollision = movedProject.filePath ("assets/collision/base.stl");
+    const QString movedScene = movedProject.filePath ("assets/scene/table.stl");
+    if (!copyFile (drawablePath, movedDrawable) || !copyFile (collisionPath, movedCollision) ||
+        !copyFile (scenePath, movedScene))
+        return fail ("Could not copy the managed project geometry fixtures.");
+
+    CurrentDirectoryGuard cwdGuard;
+    if (!QDir::setCurrent (hostileWorkingDirectory.path ()))
+        return fail ("Could not establish a hostile process working directory.");
+
+    rws::RobotModelSpec resolved;
+    if (!rws::RobotModelProjectPaths::resolveManaged (
+            portable, movedProject.path (), resolved, &error))
+        return fail ("Could not resolve the moved managed model: " + error.toStdString ());
+    if (!isInsideProject (QString::fromStdString (resolved.drawables.front ().filePath),
+                          movedProject.path ()) ||
+        !isInsideProject (QString::fromStdString (resolved.collisionModels.front ().filePath),
+                          movedProject.path ()) ||
+        !isInsideProject (QString::fromStdString (resolved.sceneGeometries.front ().file),
+                          movedProject.path ()))
+        return fail ("Resolved geometry must remain inside the moved project root.");
+    if (QFileInfo (QString::fromStdString (resolved.drawables.front ().filePath)).absoluteFilePath () !=
+            QFileInfo (movedDrawable).absoluteFilePath () ||
+        QFileInfo (QString::fromStdString (resolved.collisionModels.front ().filePath))
+                .absoluteFilePath () != QFileInfo (movedCollision).absoluteFilePath () ||
+        QFileInfo (QString::fromStdString (resolved.sceneGeometries.front ().file))
+                .absoluteFilePath () != QFileInfo (movedScene).absoluteFilePath ())
+        return fail ("Managed geometry paths did not relocate with the project.");
+
+    return 0;
+}
+
+static int testManagedProjectGeometryRejectsEscapes ()
+{
+    QTemporaryDir project;
+    QTemporaryDir outside;
+    if (!project.isValid () || !outside.isValid ())
+        return fail ("Could not create temporary directories for path rejection tests.");
+
+    const QString outsideMesh = outside.filePath ("outside.stl");
+    if (!writeBytes (outsideMesh))
+        return fail ("Could not create an outside-project geometry fixture.");
+
+    rws::RobotModelSpec runtime;
+    rws::DrawableSpec drawable;
+    drawable.shape = "Mesh";
+    drawable.filePath = QFileInfo (outsideMesh).absoluteFilePath ().toStdString ();
+    runtime.drawables.push_back (drawable);
+
+    rws::RobotModelSpec untouched;
+    untouched.robotName = "untouched";
+    QString error;
+    if (rws::RobotModelProjectPaths::makePortable (runtime, project.path (), untouched, &error))
+        return fail ("An absolute geometry path outside the project must be rejected.");
+    if (untouched.robotName != "untouched" || error.trimmed ().isEmpty ())
+        return fail ("Rejected portable conversion must preserve output and report an error.");
+
+    rws::RobotModelSpec portable;
+    portable.robotName = "escape";
+    drawable.filePath = "../outside.stl";
+    portable.drawables = {drawable};
+    rws::RobotModelSpec unresolved;
+    unresolved.robotName = "untouched";
+    error.clear ();
+    if (rws::RobotModelProjectPaths::resolveManaged (
+            portable, project.path (), unresolved, &error))
+        return fail ("A relative geometry path that escapes the project must be rejected.");
+    if (unresolved.robotName != "untouched" || error.trimmed ().isEmpty ())
+        return fail ("Rejected managed resolution must preserve output and report an error.");
+    return 0;
+}
+
 int main (int, char**)
 {
     if (const int rc = testFullRoundTrip ())
@@ -241,6 +405,10 @@ int main (int, char**)
     if (const int rc = testLegacyCollisionMetadataIsDiscardedOnSave ())
         return rc;
     if (const int rc = testFingerprint ())
+        return rc;
+    if (const int rc = testManagedProjectGeometryPathsArePortable ())
+        return rc;
+    if (const int rc = testManagedProjectGeometryRejectsEscapes ())
         return rc;
     std::cout << "RobotModelSpecJson round trip test passed." << std::endl;
     return 0;

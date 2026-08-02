@@ -211,52 +211,81 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
 
 // 槽：主窗口"从机器人文件创建项目"通过元对象调用。无对话框直接导入 URDF/XML 源文件，
 // 成功后在当前草稿项目内登记生成的模型资源并建立空基线。
-void RobotModelBuilderPlugin::importRobotProjectSource (const QString& sourcePath)
+QString RobotModelBuilderPlugin::preflightRobotProjectSource (const QString& sourcePath,
+                                                              const QString& projectRoot)
 {
     if (_widget == NULL)
-        return;
+        return QStringLiteral ("RobotModelBuilder is not initialized.");
 
-    // 导入前重申项目输出目录，保证生成的模型落在当前项目 generated/robot-models。
-    RobWorkStudio* studio = getRobWorkStudio ();
-    if (studio != NULL)
-        _widget->setProjectOutputDirectory (studio->projectDirectory ());
-
+    RobotModelSpec parsed;
+    QStringList warnings;
     QString error;
-    if (!_widget->importUrdfFile (sourcePath, &error)) {
-        QMessageBox::warning (_widget, "RobotModelBuilder",
-                              "Could not import the selected robot file:\n" + error);
-        return;
-    }
-    if (studio == NULL || _projectProvider == NULL || _widget->projectOutputDirectory ().isEmpty ()) {
-        QMessageBox::warning (_widget, "RobotModelBuilder",
-                              "The robot was imported for review, but there is no active project to save it.");
-        return;
-    }
+    if (!_widget->preflightUrdfFile (
+            sourcePath, projectRoot, parsed, warnings, &error))
+        return error.isEmpty () ? QStringLiteral ("The robot source could not be parsed.") : error;
+    return QString ();
+}
+
+QString RobotModelBuilderPlugin::commitRobotProjectSource (const QString& sourcePath,
+                                                           const QString& projectRoot)
+{
+    if (_widget == NULL)
+        return QStringLiteral ("RobotModelBuilder is not initialized.");
+
+    RobWorkStudio* studio = getRobWorkStudio ();
+    if (studio == NULL || _projectProvider == NULL)
+        return QStringLiteral ("RobotModelBuilder is not attached to RobWorkStudio project services.");
+    if (projectRoot.trimmed ().isEmpty () || !QDir::isAbsolutePath (projectRoot))
+        return QStringLiteral ("The robot project root must be an absolute path.");
+
+    const QString requestedRoot = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
+    const QString activeRoot =
+        QDir::cleanPath (QDir::fromNativeSeparators (studio->projectDirectory ()));
+    if (requestedRoot != activeRoot)
+        return QStringLiteral ("The robot project is no longer active: %1").arg (requestedRoot);
+
+    RobotModelSpec parsed;
+    QStringList warnings;
+    QString error;
+    if (!_widget->preflightUrdfFile (
+            sourcePath, requestedRoot, parsed, warnings, &error))
+        return error.isEmpty () ? QStringLiteral ("The managed robot source could not be parsed.")
+                                : error;
 
     ProjectResource resource;
     resource.id = QStringLiteral ("robot-model.main");
     resource.kind = QStringLiteral ("robwork.robot-model");
     resource.path = QStringLiteral ("generated/robot-models/%1.rmb.json").arg (
-        RobotModelXmlWriter::sanitizeFileBaseName (
-            QString::fromStdString (_widget->currentModelSpec ().robotName)));
+        RobotModelXmlWriter::sanitizeFileBaseName (QString::fromStdString (parsed.robotName)));
     resource.ownership = QStringLiteral ("generated");
     resource.required = true;
+    resource.dependencies << QStringLiteral ("robot-source.main");
 
     bool created = false;
     if (!studio->ensureGeneratedProjectResource (resource, &created, &error)) {
-        QMessageBox::warning (_widget, "RobotModelBuilder",
-                              "The robot was imported for review, but no project model resource was registered:\n" +
-                                  error);
-        return;
+        return QStringLiteral ("Could not register the managed robot model resource: %1").arg (
+            error);
     }
-    if (created) {
-        _projectProvider->adoptGeneratedResource (resource.id);
-        _widget->beginGeneratedProjectDocument ();
-        _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
-        studio->notifyProjectDocumentChanged ();
-    }
+    Q_UNUSED (created);
+
+    _widget->setProjectOutputDirectory (requestedRoot);
+    _widget->applyImportedProjectModel (parsed, warnings);
+    _projectProvider->adoptGeneratedResource (resource.id);
+    _widget->beginGeneratedProjectDocument ();
+    _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
+    studio->notifyProjectDocumentChanged ();
     _widget->setProjectStatus ("Robot project draft imported. Review the model, then use File > Save Project "
                                "to generate the managed .rmb.json.");
+    return QString ();
+}
+
+void RobotModelBuilderPlugin::importRobotProjectSource (const QString& sourcePath)
+{
+    RobWorkStudio* studio = getRobWorkStudio ();
+    const QString projectRoot = studio == NULL ? QString () : studio->projectDirectory ();
+    const QString error = commitRobotProjectSource (sourcePath, projectRoot);
+    if (!error.isEmpty () && _widget != NULL)
+        QMessageBox::warning (_widget, "RobotModelBuilder", error);
 }
 
 // -----------------------------------------------------------------------------

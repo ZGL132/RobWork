@@ -28,6 +28,7 @@ if(build)
     # Model 系列:不依赖 Qt Widget,只依赖 QtCore,可独立被命令行测试程序复用
     set(ModelSrcFiles
         RobotModelFingerprint.cpp
+        RobotModelProjectPaths.cpp
         RobotModelXmlWriter.cpp
         RobotModelUrdfImporter.cpp
         RobotModelSpecJson.cpp
@@ -35,6 +36,7 @@ if(build)
     )
     set(ModelHeaderFiles
         RobotModelFingerprint.hpp
+        RobotModelProjectPaths.hpp
         RobotModelSpec.hpp
         RobotModelXmlWriter.hpp
         RobotModelUrdfImporter.hpp
@@ -127,9 +129,26 @@ if(build)
         )
     endif()
 
+    add_executable(sdurws_robotmodelbuilder_metatest
+        RobotModelBuilderPluginMetaObjectTest.cpp
+    )
+    target_link_libraries(sdurws_robotmodelbuilder_metatest
+        PRIVATE
+            ${SUBSYS_NAME}
+            ${QT_LIBRARIES}
+    )
+    target_include_directories(sdurws_robotmodelbuilder_metatest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(BUILD_TESTING)
+        add_test(
+            NAME sdurws_robotmodelbuilder_metatest
+            COMMAND $<TARGET_FILE:sdurws_robotmodelbuilder_metatest>
+        )
+    endif()
+
     add_executable(sdurws_robotmodelbuilder_jsontest
         RobotModelSpecJsonTest.cpp
         RobotModelFingerprint.cpp
+        RobotModelProjectPaths.cpp
         RobotModelSpecJson.cpp
         RobotModelXmlWriter.cpp
     )

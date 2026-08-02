@@ -44,6 +44,11 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
     /// RobWorkStudio 关闭 WorkCell 时调用,这里无需处理
     void close ();
 
+    Q_INVOKABLE QString preflightRobotProjectSource (const QString& sourcePath,
+                                                      const QString& projectRoot);
+    Q_INVOKABLE QString commitRobotProjectSource (const QString& sourcePath,
+                                                   const QString& projectRoot);
+
   public Q_SLOTS:
     void importRobotProjectSource (const QString& sourcePath);
 
