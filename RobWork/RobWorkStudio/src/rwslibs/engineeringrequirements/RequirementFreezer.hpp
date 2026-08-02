@@ -104,7 +104,8 @@ class RequirementFreezer {
   public:
     static bool freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
                        const rw::kinematics::State& state, const RobotModelSpec& model,
-                       FrozenRequirementArtifact& artifact, std::string* error = nullptr);
+                       FrozenRequirementArtifact& artifact, std::string* error = nullptr,
+                       const std::string& projectRoot = std::string());
 
     /**
      * @brief 校验一个已冻结工件是否仍对应当前需求、模型与工程场景。

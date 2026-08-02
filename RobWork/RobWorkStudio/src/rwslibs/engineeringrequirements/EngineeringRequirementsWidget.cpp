@@ -1499,7 +1499,8 @@ void EngineeringRequirementsWidget::freezeRequirements()
     FrozenRequirementArtifact artifact;
     // RequirementFreezer 集中完成真实 Frame/TCP、几何特征与模型指纹门禁，并
     // 将 Should 项的排除理由写入工件，避免旧界面逻辑仅在内存中临时删任务。
-    if (!RequirementFreezer::freeze(_requirements, *_workcell, activeWorkCellState(), model, artifact, &error)) {
+    if (!RequirementFreezer::freeze(_requirements, *_workcell, activeWorkCellState(), model, artifact,
+                                    &error, _projectOutputDirectory.toStdString())) {
         setStatus(QString::fromStdString(error));
         return;
     }

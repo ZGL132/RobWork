@@ -61,6 +61,8 @@ if(build)
         PRIVATE sdurws_engineeringrequirements_core ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_engineeringrequirements_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(sdurws_engineeringrequirements_test PRIVATE
+        ENGINEERINGREQUIREMENTS_TEST_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
     if(BUILD_TESTING)
         add_test(NAME sdurws_engineeringrequirements_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test>)

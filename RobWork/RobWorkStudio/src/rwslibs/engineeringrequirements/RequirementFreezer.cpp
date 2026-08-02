@@ -17,6 +17,7 @@
 
 #include <QCryptographicHash>
 #include <QDateTime>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -264,6 +265,41 @@ std::string scenarioFingerprint(const FrozenWorkCellScenarioSnapshot& scenario)
         .toHex().toStdString();
 }
 
+bool makeProjectRelative(const QString& projectRoot, std::string& value)
+{
+    const QString raw = QString::fromStdString(value).trimmed();
+    if (projectRoot.isEmpty() || raw.isEmpty() || !QFileInfo(raw).isAbsolute())
+        return false;
+    const QDir root(QFileInfo(projectRoot).absoluteFilePath());
+    const QString relative = QDir::fromNativeSeparators(
+        root.relativeFilePath(QFileInfo(raw).absoluteFilePath()));
+    if (relative == QStringLiteral("..") || relative.startsWith(QStringLiteral("../")) ||
+        QFileInfo(relative).isAbsolute())
+        return false;
+    value = QDir::cleanPath(relative).toStdString();
+    return true;
+}
+
+void makeScenarioPortable(FrozenWorkCellScenarioSnapshot& snapshot, const QString& projectRoot)
+{
+    if (projectRoot.trimmed().isEmpty())
+        return;
+    makeProjectRelative(projectRoot, snapshot.sourceWorkCellPath);
+    makeProjectRelative(projectRoot, snapshot.sceneSpec.saveDirectory);
+    for (DrawableSpec& drawable : snapshot.sceneSpec.drawables)
+        makeProjectRelative(projectRoot, drawable.filePath);
+    for (CollisionModelSpec& collision : snapshot.sceneSpec.collisionModels)
+        makeProjectRelative(projectRoot, collision.filePath);
+    for (SceneGeometrySpec& geometry : snapshot.sceneSpec.sceneGeometries)
+        makeProjectRelative(projectRoot, geometry.file);
+    for (IncludeSpec& include : snapshot.sceneSpec.includes)
+        makeProjectRelative(projectRoot, include.file);
+    makeProjectRelative(projectRoot, snapshot.sceneSpec.imported.sourceSceneFile);
+    makeProjectRelative(projectRoot, snapshot.sceneSpec.imported.sourceDeviceFile);
+    makeProjectRelative(projectRoot, snapshot.sceneSpec.imported.sourceCollisionSetupFile);
+    makeProjectRelative(projectRoot, snapshot.sceneSpec.imported.sourceProximitySetupFile);
+}
+
 /**
  * @brief 从冻结时的真实 WorkCell 提取候选评价可重建的场景快照。
  *
@@ -271,8 +307,9 @@ std::string scenarioFingerprint(const FrozenWorkCellScenarioSnapshot& scenario)
  * 位姿。候选模型工厂之后只替换机器人结构部分，工装和工件仍使用此处冻结的真实场景。
  */
 FrozenWorkCellScenarioSnapshot makeScenarioSnapshot(const rw::models::WorkCell& workcell,
-                                                     const rw::kinematics::State& state,
-                                                     const RobotModelSpec& model)
+                                                      const rw::kinematics::State& state,
+                                                      const RobotModelSpec& model,
+                                                      const std::string& projectRoot)
 {
     FrozenWorkCellScenarioSnapshot snapshot;
     snapshot.sourceWorkCellPath = WorkCellConverter::inferWorkCellFilePath(workcell);
@@ -290,6 +327,7 @@ FrozenWorkCellScenarioSnapshot makeScenarioSnapshot(const rw::models::WorkCell& 
         : QFileInfo(QString::fromStdString(snapshot.sourceWorkCellPath)).absolutePath();
     snapshot.sceneSpec = WorkCellConverter::convert(workcell, state,
                                                      sceneDirectory.toStdString(), conversionWarnings);
+    makeScenarioPortable(snapshot, QString::fromStdString(projectRoot));
     snapshot.snapshotFingerprint = scenarioFingerprint(snapshot);
     return snapshot;
 }
@@ -357,7 +395,8 @@ bool diagnosticFromObject(const QJsonObject& object, RequirementDiagnostic& diag
 
 bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
                                  const rw::kinematics::State& state, const RobotModelSpec& model,
-                                 FrozenRequirementArtifact& artifact, std::string* error)
+                                 FrozenRequirementArtifact& artifact, std::string* error,
+                                 const std::string& projectRoot)
 {
     // 需求身份描述工程师冻结前提交的意图，而非随后由解析器补入的代表姿态和证据。
     // 这样 isCurrent() 使用原始 RequirementSet 复核时，动态姿态工位不会被误判为已变更。
@@ -434,7 +473,7 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     artifact.frozenRobotState.capturedAt = artifact.frozenAt;
     // 场景快照必须在完成 Frame/几何/姿态解析之后生成，使其与本次编译输入使用的
     // WorkCell State 完全一致。后续候选工厂由该快照重建工装与工件，而不依赖当前 UI。
-    artifact.scenario = makeScenarioSnapshot(workcell, state, model);
+    artifact.scenario = makeScenarioSnapshot(workcell, state, model, projectRoot);
     artifact.scenario.environmentFingerprint = artifact.environmentFingerprint;
     artifact.scenario.stateFingerprint = artifact.environmentFingerprint;
     artifact.scenario.snapshotFingerprint = scenarioFingerprint(artifact.scenario);

@@ -12,8 +12,10 @@
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+#include <rwslibs/robotmodelbuilder/WorkCellConverter.hpp>
 
 #include <rw/core/Ptr.hpp>
+#include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
 #include <rw/kinematics/MovableFrame.hpp>
 #include <rw/models/RevoluteJoint.hpp>
@@ -39,6 +41,7 @@
 #include <QTableWidget>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QTemporaryDir>
 
 #include <cmath>
@@ -584,6 +587,43 @@ int testFrozenArtifactWarnsWhenSourceWorkCellFileChanges()
     REQUIRE(validation.warnings.front().find("source WorkCell file") != std::string::npos);
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
                                                 workcell->getDefaultState(), model, &error));
+    return 0;
+}
+
+int testFreezeMakesManagedUrScenarioPathsProjectRelative()
+{
+    const QString projectRoot = QDir(QStringLiteral(ENGINEERINGREQUIREMENTS_TEST_SOURCE_DIR))
+                                    .filePath(QStringLiteral(
+                                        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A"));
+    const QString workcellPath = QDir(projectRoot).filePath(QStringLiteral("UR.wc.xml"));
+    const rw::models::WorkCell::Ptr workcell =
+        rw::loaders::WorkCellLoader::Factory::load(workcellPath.toStdString());
+    REQUIRE(!workcell.isNull());
+
+    QStringList warnings;
+    rws::RobotModelSpec model = rws::WorkCellConverter::convert(
+        *workcell, workcell->getDefaultState(), projectRoot.toStdString(), warnings);
+    REQUIRE(model.robotName == "UR-6-85-5-A");
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(rws::RequirementFreezer::freeze(
+        requirements, *workcell, workcell->getDefaultState(), model, artifact, &error,
+        projectRoot.toStdString()));
+    REQUIRE(!QFileInfo(QString::fromStdString(artifact.scenario.sourceWorkCellPath)).isAbsolute());
+    REQUIRE(!QFileInfo(QString::fromStdString(artifact.scenario.sceneSpec.saveDirectory)).isAbsolute());
+    for (const rws::DrawableSpec& drawable : artifact.scenario.sceneSpec.drawables) {
+        if (!drawable.filePath.empty())
+            REQUIRE(!QFileInfo(QString::fromStdString(drawable.filePath)).isAbsolute());
+    }
+    for (const rws::CollisionModelSpec& collision : artifact.scenario.sceneSpec.collisionModels) {
+        if (!collision.filePath.empty())
+            REQUIRE(!QFileInfo(QString::fromStdString(collision.filePath)).isAbsolute());
+    }
     return 0;
 }
 
@@ -1330,6 +1370,8 @@ int main(int argc, char** argv)
     if (testFrozenArtifactBecomesStaleWhenWorkCellStateChanges() != 0)
         return 1;
     if (testFrozenArtifactWarnsWhenSourceWorkCellFileChanges() != 0)
+        return 1;
+    if (testFreezeMakesManagedUrScenarioPathsProjectRelative() != 0)
         return 1;
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;
