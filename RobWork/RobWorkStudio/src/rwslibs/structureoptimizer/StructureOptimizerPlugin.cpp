@@ -32,8 +32,8 @@ void StructureOptimizerPlugin::initialize()
     _projectProvider = new CallbackProjectDocumentProvider(
         QStringLiteral("rws.structure-optimizer"),
         QStringLiteral("rws.structure-optimization"),
-        [this](const QString& path, const ProjectDocumentContext&, QString* error) {
-            return _widget->loadProjectDocument(path, error);
+        [this](const QString& path, const ProjectDocumentContext& context, QString* error) {
+            return _widget->loadProjectDocument(path, error, context.projectDirectory);
         },
         [this](const QString& targetPath, const ProjectDocumentContext&, QString* error) {
             return _widget->saveProjectDocument(targetPath, error);

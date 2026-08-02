@@ -44,7 +44,8 @@ class FrozenRequirementKinematicAdapter
                       const rw::models::WorkCell& workcell,
                       const rw::kinematics::State& state,
                       std::vector<TaskPoint>& output,
-                      std::string* error = nullptr);
+                      std::string* error = nullptr,
+                      const std::string& artifactBaseDirectory = {});
 
     static bool applyWithValidation(const FrozenRequirementArtifact& artifact,
                       const rw::models::WorkCell& workcell,

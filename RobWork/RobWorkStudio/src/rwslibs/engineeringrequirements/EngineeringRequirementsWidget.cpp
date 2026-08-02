@@ -1365,7 +1365,9 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         const bool modelReadable = !parsed.modelBinding.sourcePath.empty() && modelFile.open(QFile::ReadOnly) &&
                                    RobotModelSpecJson::fromJson(modelFile.readAll().toStdString(), model, &parseMessage);
         const bool artifactCurrent = modelReadable && _workcell != nullptr &&
-            RequirementFreezer::isCurrent(artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage);
+            RequirementFreezer::isCurrent(
+                artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
+                _projectOutputDirectory.toStdString());
         if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;

@@ -2090,6 +2090,82 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testProjectAdapterRestoresManagedScenarioRoot()
+{
+    std::printf("testProjectAdapterRestoresManagedScenarioRoot ... ");
+
+    QTemporaryDir workspace;
+    REQUIRE(workspace.isValid());
+    const QString sourceRoot = workspace.filePath("source-project");
+    const QString cloneRoot = workspace.filePath("clone-project");
+    REQUIRE(QDir().mkpath(QDir(sourceRoot).filePath("optimizations")));
+    REQUIRE(QDir().mkpath(QDir(sourceRoot).filePath("assets")));
+    REQUIRE(QDir().mkpath(QDir(cloneRoot).filePath("optimizations")));
+    REQUIRE(QDir().mkpath(QDir(cloneRoot).filePath("assets")));
+
+    const QString sourceMesh = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/geometry/base.stl");
+    const QString sourceProjectMesh = QDir(sourceRoot).filePath("assets/base.stl");
+    const QString cloneProjectMesh = QDir(cloneRoot).filePath("assets/base.stl");
+    REQUIRE(QFile::copy(sourceMesh, sourceProjectMesh));
+    REQUIRE(QFile::copy(sourceMesh, cloneProjectMesh));
+
+    rws::StructureOptimizationProblem original;
+    original.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(sourceRoot);
+    original.context.robotName = original.context.modelSpec.robotName;
+    original.context.deviceName = original.context.modelSpec.robotName;
+    original.scenarioSnapshot.schemaVersion = 1;
+    original.scenarioSnapshot.snapshotFingerprint = "managed-scenario";
+    rws::FrameSpec fixture;
+    fixture.name = "ManagedFixture";
+    fixture.refFrame = "WORLD";
+    original.scenarioSnapshot.sceneSpec.sceneFrames.push_back(fixture);
+    rws::SceneGeometrySpec geometry;
+    geometry.name = "ManagedFixtureMesh";
+    geometry.refFrame = fixture.name;
+    geometry.kind = rws::GeometryKind::Polytope;
+    geometry.file = "assets/base.stl";
+    original.scenarioSnapshot.sceneSpec.sceneGeometries.push_back(geometry);
+
+    const QString sourceDocument =
+        QDir(sourceRoot).filePath("optimizations/main.structure-optimization.json");
+    const QString cloneDocument =
+        QDir(cloneRoot).filePath("optimizations/main.structure-optimization.json");
+    QString error;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        sourceDocument, original, -1, &error));
+    REQUIRE(QFile::copy(sourceDocument, cloneDocument));
+    REQUIRE(QFile::remove(sourceProjectMesh));
+
+    const QString previousCwd = QDir::currentPath();
+    REQUIRE(QDir::setCurrent(workspace.filePath("unrelated-cwd")) ||
+            (QDir().mkpath(workspace.filePath("unrelated-cwd")) &&
+             QDir::setCurrent(workspace.filePath("unrelated-cwd"))));
+    rws::StructureOptimizationProblem loaded;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        cloneDocument, loaded, nullptr, &error, cloneRoot));
+    REQUIRE(loaded.scenarioSnapshot.baseDirectory == cloneRoot.toStdString());
+
+    rws::CandidateModelBuildRequest request;
+    request.spec = loaded.context.modelSpec;
+    request.deviceName = loaded.context.deviceName;
+    request.checkCollision = false;
+    request.scenarioSnapshot = &loaded.scenarioSnapshot;
+    request.scenarioBaseDirectory = loaded.scenarioSnapshot.baseDirectory;
+    const rws::CandidateModelBuildResult result = rws::CandidateModelFactory().build(request);
+    REQUIRE(result.ok);
+    REQUIRE(!result.artifact.workcell.isNull());
+    if (!result.artifact.workcell.isNull())
+        REQUIRE(result.artifact.workcell->findFrame("ManagedFixture") != nullptr);
+    REQUIRE(QDir::setCurrent(previousCwd));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testFrozenRequirementProjectImportCreatesAuditableProblem()
 {
     std::printf("testFrozenRequirementProjectImportCreatesAuditableProblem ... ");
@@ -2646,6 +2722,25 @@ static void testStructureOptimizerResourceDependencies()
                         "generated/robot-models/main.rmb.json"));
     REQUIRE(addResource("engineering-requirements.main", "rws.engineering-requirements",
                         "requirements/main.json"));
+
+    rws::StructureOptimizationProblem legacyProblem;
+    std::string legacyFactoryError;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(projectDirectory),
+        legacyProblem, &legacyFactoryError));
+    const QString optimizationPath = QDir(projectDirectory).filePath(
+        "legacy/legacy.structure-optimization.json");
+    REQUIRE(QDir().mkpath(QFileInfo(optimizationPath).absolutePath()));
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        optimizationPath, legacyProblem, -1, &error));
+    rws::ProjectResource legacyOptimization;
+    legacyOptimization.id = "structure-optimization.main";
+    legacyOptimization.kind = "rws.structure-optimization";
+    legacyOptimization.path = "legacy/legacy.structure-optimization.json";
+    legacyOptimization.ownership = "project";
+    legacyOptimization.required = false;
+    legacyOptimization.dependencies = {"scene.main", "scene.main"};
+    REQUIRE(manager.addGeneratedResource(legacyOptimization, &error));
     REQUIRE(manager.saveProject(&error));
     manager.closeProject();
 
@@ -2695,6 +2790,10 @@ static void testStructureOptimizerResourceDependencies()
     REQUIRE(uniqueDependencies.contains("scene.main"));
     REQUIRE(uniqueDependencies.contains("robot-model.main"));
     REQUIRE(uniqueDependencies.contains("engineering-requirements.main"));
+    REQUIRE(optimizationResource.kind == legacyOptimization.kind);
+    REQUIRE(optimizationResource.path == legacyOptimization.path);
+    REQUIRE(optimizationResource.ownership == legacyOptimization.ownership);
+    REQUIRE(optimizationResource.required == legacyOptimization.required);
 
     studio.close();
     plugin.setRobWorkStudio(nullptr);
@@ -3133,6 +3232,17 @@ int main(int argc, char** argv)
             return 0;
         }
         std::printf("Resource dependency test FAILED.\n");
+        return 1;
+    }
+
+    if (suite == "project_context") {
+        QCoreApplication app(argc, argv);
+        testProjectAdapterRestoresManagedScenarioRoot();
+        if (g_testFailures == 0) {
+            std::printf("Project context test passed.\n");
+            return 0;
+        }
+        std::printf("Project context test FAILED.\n");
         return 1;
     }
 

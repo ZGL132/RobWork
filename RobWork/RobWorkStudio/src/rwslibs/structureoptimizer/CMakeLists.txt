@@ -195,11 +195,16 @@ if(build)
             NAME sdurws_structureoptimizer_resource_dependencies_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> resource_dependencies
         )
+        if(WIN32)
+            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM windows)
+        else()
+            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM offscreen)
+        endif()
         set_tests_properties(
             sdurws_structureoptimizer_resource_dependencies_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-                ENVIRONMENT "QT_QPA_PLATFORM=windows"
+                ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
     endif()
 endif()

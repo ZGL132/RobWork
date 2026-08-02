@@ -120,9 +120,11 @@ bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& a
                                                const rw::models::WorkCell& workcell,
                                                const rw::kinematics::State& state,
                                                std::vector<TaskPoint>& output,
-                                               std::string* error)
+                                               std::string* error,
+                                               const std::string& artifactBaseDirectory)
 {
-    return applyWithValidation(artifact, workcell, state, output, error, nullptr, nullptr);
+    return applyWithValidation(
+        artifact, workcell, state, output, error, nullptr, nullptr, artifactBaseDirectory);
 }
 
 bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirementArtifact& artifact,

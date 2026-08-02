@@ -319,11 +319,13 @@ StructureOptimizationProblem StructureOptimizerWidget::collectProblem() const
     return problem;
 }
 
-bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString* error)
+bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString* error,
+                                                    const QString& projectRoot)
 {
     StructureOptimizationProblem problem;
     int selectedCandidate = -1;
-    if (!StructureOptimizationProjectAdapter::loadProject(path, problem, &selectedCandidate, error))
+    if (!StructureOptimizationProjectAdapter::loadProject(
+            path, problem, &selectedCandidate, error, projectRoot))
         return false;
 
     // setProblem 会复用现有模型和控件填充逻辑；随后才建立 rwproj 资源快照，确保

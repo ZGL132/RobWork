@@ -56,7 +56,7 @@ StructureOptimizationProblem portableProblem(const QString& projectPath,
 
 bool StructureOptimizationProjectAdapter::loadProject(
     const QString& path, StructureOptimizationProblem& out, int* selectedCandidateIndex,
-    QString* error)
+    QString* error, const QString& projectRoot)
 {
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -103,6 +103,10 @@ bool StructureOptimizationProjectAdapter::loadProject(
                                                     .absoluteFilePath(modelDirectory)
                                                     .toStdString();
     }
+    loaded.scenarioSnapshot.baseDirectory =
+        QFileInfo(projectRoot.isEmpty() ? QFileInfo(path).absolutePath() : projectRoot)
+            .absoluteFilePath()
+            .toStdString();
 
     if (selectedCandidateIndex != nullptr)
         *selectedCandidateIndex = root.value("ui").toObject().value("selectedCandidateIndex").toInt(-1);

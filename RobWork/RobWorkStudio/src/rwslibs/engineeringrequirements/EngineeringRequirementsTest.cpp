@@ -590,6 +590,65 @@ int testFrozenArtifactWarnsWhenSourceWorkCellFileChanges()
     return 0;
 }
 
+int testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory()
+{
+    QTemporaryDir projectDirectory;
+    QTemporaryDir unrelatedDirectory;
+    REQUIRE(projectDirectory.isValid());
+    REQUIRE(unrelatedDirectory.isValid());
+    const QString workcellPath = projectDirectory.filePath("frozen-cell.wc.xml");
+    QFile sourceFile(workcellPath);
+    REQUIRE(sourceFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    REQUIRE(sourceFile.write("<WorkCell name=\"FrozenCell\" />\n") > 0);
+    sourceFile.close();
+
+    rws::RobotModelSpec model;
+    model.robotName = "RelativeSourceRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("RelativeBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("RelativeJoint", rw::math::Transform3D<>()));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("RelativeTcp", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "RelativeSourceWorkCell", workcellPath.toStdString()));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(rws::RequirementFreezer::freeze(
+        requirements, *workcell, workcell->getDefaultState(), model, artifact, &error,
+        projectDirectory.path().toStdString()));
+    REQUIRE(QFileInfo(QString::fromStdString(
+                artifact.scenario.sourceWorkCellPath)).isRelative());
+
+    const QString previousCwd = QDir::currentPath();
+    REQUIRE(QDir::setCurrent(projectDirectory.path()));
+    rws::FrozenRequirementValidationResult withoutBase;
+    REQUIRE(rws::RequirementFreezer::validateScenario(
+        artifact, *workcell, workcell->getDefaultState(), &withoutBase, &error));
+    REQUIRE(withoutBase.warnings.size() == 1);
+    REQUIRE(withoutBase.warnings.front().find("base directory") != std::string::npos);
+
+    rws::FrozenRequirementValidationResult withBase;
+    REQUIRE(rws::RequirementFreezer::validateScenario(
+        artifact, *workcell, workcell->getDefaultState(), &withBase, &error,
+        projectDirectory.path().toStdString()));
+    REQUIRE(withBase.warnings.empty());
+    REQUIRE(QDir::setCurrent(previousCwd));
+    return 0;
+}
+
 int testFreezeMakesManagedUrScenarioPathsProjectRelative()
 {
     const QString projectRoot = QDir(QStringLiteral(ENGINEERINGREQUIREMENTS_TEST_SOURCE_DIR))
@@ -1327,6 +1386,10 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "relative_source_base") {
+        QCoreApplication app(argc, argv);
+        return testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory();
+    }
     if (argc > 1 && std::string(argv[1]) == "widget_project_paths") {
         QApplication app(argc, argv);
         return testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline();

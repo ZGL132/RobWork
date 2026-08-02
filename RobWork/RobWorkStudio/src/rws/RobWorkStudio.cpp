@@ -1427,8 +1427,24 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
     // 稳定 ID 已存在时不重复登记。首次编辑之外的每次控件变化只能更新脏状态，不能追加
     // 清单项，更不能覆盖用户已经保存的业务配置。
     ProjectResource existing;
-    if (_projectManager.manifest ().findResource (resource.id, existing))
+    if (_projectManager.manifest ().findResource (resource.id, existing)) {
+        QStringList mergedDependencies;
+        for (const QString& dependency : existing.dependencies) {
+            if (!mergedDependencies.contains (dependency))
+                mergedDependencies.push_back (dependency);
+        }
+        for (const QString& dependency : resource.dependencies) {
+            if (!mergedDependencies.contains (dependency))
+                mergedDependencies.push_back (dependency);
+        }
+        if (mergedDependencies != existing.dependencies) {
+            existing.dependencies = mergedDependencies;
+            if (!_projectManager.replaceResourceAndAddAssets (existing, {}, error))
+                return false;
+            updateProjectWindowTitle ();
+        }
         return true;
+    }
     if (!_projectManager.addGeneratedResource (resource, error))
         return false;
     if (!_projectDocuments.activateGeneratedResource (

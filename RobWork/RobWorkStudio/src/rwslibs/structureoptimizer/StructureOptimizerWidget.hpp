@@ -54,7 +54,8 @@ public:
      * Registry 负责验证 rwproj 资源路径并提交多文件事务，Widget 只处理结构优化领域
      * JSON 与规范快照，避免原有文件对话框绕过项目统一保存流程。
      */
-    bool loadProjectDocument(const QString& path, QString* error = nullptr);
+    bool loadProjectDocument(const QString& path, QString* error = nullptr,
+                             const QString& projectRoot = QString());
     bool saveProjectDocument(const QString& targetPath, QString* error = nullptr) const;
     bool isProjectDocumentDirty() const;
     void markProjectDocumentClean();

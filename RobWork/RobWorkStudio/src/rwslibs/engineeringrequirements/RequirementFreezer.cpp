@@ -488,7 +488,8 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
                                    const rw::models::WorkCell& workcell,
                                    const rw::kinematics::State& state,
                                    const RobotModelSpec& model,
-                                   std::string* error)
+                                   std::string* error,
+                                   const std::string& artifactBaseDirectory)
 {
     // 顶层绑定与已编译快照都要一致。双重检查能识别手工编辑 JSON 时只改了
     // 其中一层的情况，避免下游消费者读到互相矛盾的模型身份信息。
@@ -520,7 +521,7 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
         return false;
     }
 
-    if (!isScenarioCurrent(artifact, workcell, state, error)) return false;
+    if (!isScenarioCurrent(artifact, workcell, state, error, artifactBaseDirectory)) return false;
 
     if (error != nullptr) error->clear();
     return true;
@@ -573,12 +574,24 @@ bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artif
     }
     if (!artifact.scenario.sourceWorkCellPath.empty()) {
         QString sourcePath = QString::fromStdString(artifact.scenario.sourceWorkCellPath);
-        if (QFileInfo(sourcePath).isRelative() && !artifactBaseDirectory.empty()) {
-            sourcePath = QDir(QString::fromStdString(artifactBaseDirectory))
-                             .absoluteFilePath(sourcePath);
+        if (QFileInfo(sourcePath).isRelative()) {
+            if (artifactBaseDirectory.empty()) {
+                if (result != nullptr) {
+                    result->warnings.push_back(
+                        "Frozen requirement artifact source WorkCell path is relative, but no "
+                        "base directory was provided; source provenance could not be verified.");
+                }
+                sourcePath.clear();
+            } else {
+                sourcePath = QDir(QString::fromStdString(artifactBaseDirectory))
+                                 .absoluteFilePath(sourcePath);
+            }
         }
-        const std::string sourceFingerprint = fileFingerprint(sourcePath.toStdString());
-        if (sourceFingerprint.empty() || sourceFingerprint != artifact.scenario.sourceFileFingerprint) {
+        const std::string sourceFingerprint = sourcePath.isEmpty() ? std::string() :
+            fileFingerprint(sourcePath.toStdString());
+        if (!sourcePath.isEmpty() &&
+            (sourceFingerprint.empty() ||
+             sourceFingerprint != artifact.scenario.sourceFileFingerprint)) {
             if (result != nullptr) {
                 result->warnings.push_back(
                     "Frozen requirement artifact source WorkCell file is missing or has changed; "
