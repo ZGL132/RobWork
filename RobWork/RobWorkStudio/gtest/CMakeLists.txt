@@ -69,6 +69,9 @@ SET(RWS_TEST_SRC
 add_executable( sdurws_sdurws-gtest ${RWS_TEST_SRC})
 target_link_libraries( sdurws_sdurws-gtest PRIVATE ${RWS_TEST_LIBRARIES})
 target_include_directories(sdurws_sdurws-gtest PRIVATE  ${RW_BUILD_WITH_GTEST_INCLUDE_DIRS})
+target_compile_definitions(sdurws_sdurws-gtest PRIVATE
+  RWS_TEST_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
 ADD_RWS_GTEST(sdurws_sdurws-gtest)
 
 

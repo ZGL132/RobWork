@@ -6,6 +6,9 @@
 #include "ProjectPathResolver.hpp"
 #include "ProjectSaveTransaction.hpp"
 
+#include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/models/WorkCell.hpp>
+
 #include <QDateTime>
 #include <QCryptographicHash>
 #include <QDir>
@@ -453,6 +456,27 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
                                      visitedSourcePaths,
                                      copiedTargetPaths,
                                      error)) {
+        removeCopiedWorkCellDependencies (copiedTargetPaths);
+        return false;
+    }
+
+    // XML 语法正确不代表它是 RobWork 能加载的 WorkCell/Device。必须在清单接管项目
+    // 上下文前用真实加载器校验复制结果，避免创建出只能写入、无法再次打开的项目。
+    try {
+        const rw::models::WorkCell::Ptr copiedWorkCell =
+            rw::loaders::WorkCellLoader::Factory::load (targetWorkCell.toStdString ());
+        if (copiedWorkCell.isNull ()) {
+            setError (error,
+                      QString::fromUtf8 ("复制后的 WorkCell 无法加载：%1。").arg (
+                          targetWorkCell));
+            removeCopiedWorkCellDependencies (copiedTargetPaths);
+            return false;
+        }
+    }
+    catch (const std::exception& exception) {
+        setError (error,
+                  QString::fromUtf8 ("复制后的 WorkCell 校验失败：%1：%2。").arg (
+                      targetWorkCell, QString::fromUtf8 (exception.what ())));
         removeCopiedWorkCellDependencies (copiedTargetPaths);
         return false;
     }

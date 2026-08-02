@@ -2,6 +2,10 @@
 #include <rws/ProjectManifestJson.hpp>
 #include <rws/ProjectPathResolver.hpp>
 
+#include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/models/Device.hpp>
+#include <rw/models/WorkCell.hpp>
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -13,6 +17,29 @@
 #include <algorithm>
 
 namespace {
+
+QByteArray readFile (const QString& path)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly))
+        return {};
+    return file.readAll ();
+}
+
+QString sourcePath (const QString& relativePath)
+{
+    return QDir (QStringLiteral (RWS_TEST_SOURCE_DIR)).filePath (relativePath);
+}
+
+int managedGeometryResourceCount (const rws::ProjectManifest& manifest)
+{
+    int count = 0;
+    for (const rws::ProjectResource& resource : manifest.resources) {
+        if (resource.path.startsWith (QStringLiteral ("scenes/geometry/")))
+            ++count;
+    }
+    return count;
+}
 
 // 构造一个最小但完整的测试清单：一个名为“项目系统测试”的项目，含一个
 // 位于 scenes/main.wc.xml 的必需 WorkCell 资源，并把 "mainWorkCell" 作为入口。
@@ -185,7 +212,8 @@ TEST (ProjectSystemTest, ManagerCreatesProjectFromExistingWorkCell)
     QFile sourceFile (sourceWorkCell);
     // 使用二进制方式写入，确保断言验证的是导入复制没有修改任何字节，而不是平台的文本换行转换。
     ASSERT_TRUE (sourceFile.open (QIODevice::WriteOnly));
-    ASSERT_EQ (sourceFile.write ("<WorkCell />\n"), qint64 (13));
+    const QByteArray workCellXml ("<WorkCell name=\"Legacy\" />\n");
+    ASSERT_EQ (sourceFile.write (workCellXml), workCellXml.size ());
     sourceFile.close ();
 
     const QString projectFile = QDir (projectDirectory).filePath ("Migrated.rwproj");
@@ -227,7 +255,7 @@ TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
 
     const QString sourceWorkCell = QDir (sourceDirectory).filePath ("scene.wc.xml");
     const QString sourceDevice = QDir (sourceDirectory).filePath ("robot.wc.xml");
-    const QString sourceGeometry = QDir (sourceDirectory).filePath ("geometry/shape.poly");
+    const QString sourceGeometry = QDir (sourceDirectory).filePath ("geometry/shape.stl");
     const QByteArray sceneXml (
         "<WorkCell name=\"MigratedScene\">\n"
         "  <Include file=\"robot.wc.xml\" />\n"
@@ -241,7 +269,16 @@ TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
         "    <Polytope file=\"geometry/shape\" />\n"
         "  </Drawable>\n"
         "</SerialDevice>\n");
-    const QByteArray geometryData ("migrated geometry payload");
+    const QByteArray geometryData (
+        "solid shape\n"
+        "  facet normal 0 0 1\n"
+        "    outer loop\n"
+        "      vertex 0 0 0\n"
+        "      vertex 1 0 0\n"
+        "      vertex 0 1 0\n"
+        "    endloop\n"
+        "  endfacet\n"
+        "endsolid shape\n");
     for (const auto& source : {std::make_pair (sourceWorkCell, sceneXml),
                                std::make_pair (sourceDevice, deviceXml)}) {
         QFile file (source.first);
@@ -269,7 +306,7 @@ TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
 
     // XML 依赖树中的非 XML 网格/多面体文件同样要迁移；它们是叶子节点，无需再解析，但
     // 路径必须保留为 scenes/geometry/...，这样入口 XML 内的 Polytope 相对路径仍然有效。
-    QFile copiedGeometry (QDir (projectDirectory).filePath ("scenes/geometry/shape.poly"));
+    QFile copiedGeometry (QDir (projectDirectory).filePath ("scenes/geometry/shape.stl"));
     ASSERT_TRUE (copiedGeometry.open (QIODevice::ReadOnly));
     EXPECT_EQ (geometryData, copiedGeometry.readAll ());
 
@@ -280,10 +317,63 @@ TEST (ProjectSystemTest, ManagerCopiesRelativeWorkCellDependenciesIntoProject)
     for (const rws::ProjectResource& resource : manager.manifest ().resources) {
         deviceManaged = deviceManaged || resource.path == QStringLiteral ("scenes/robot.wc.xml");
         geometryManaged = geometryManaged ||
-                          resource.path == QStringLiteral ("scenes/geometry/shape.poly");
+                          resource.path == QStringLiteral ("scenes/geometry/shape.stl");
     }
     EXPECT_TRUE (deviceManaged);
     EXPECT_TRUE (geometryManaged);
+}
+
+TEST (ProjectSystemTest, ManagerCreatesLoadableProjectFromTopLevelUrDevice)
+{
+    QTemporaryDir target;
+    ASSERT_TRUE (target.isValid ());
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    const QByteArray sourceBefore = readFile (source);
+    ASSERT_FALSE (sourceBefore.isEmpty ());
+
+    rws::ProjectManager manager;
+    QString error;
+    const QString projectFile =
+        QDir (target.path ()).filePath (QStringLiteral ("UrProject/UrProject.rwproj"));
+    ASSERT_TRUE (manager.createProjectFromWorkCell (projectFile, source, &error))
+        << error.toStdString ();
+
+    QString scenePath;
+    ASSERT_TRUE (manager.resolveResource (QStringLiteral ("scene.main"), scenePath, &error))
+        << error.toStdString ();
+    const rw::models::WorkCell::Ptr workcell =
+        rw::loaders::WorkCellLoader::Factory::load (scenePath.toStdString ());
+    ASSERT_FALSE (workcell.isNull ());
+    EXPECT_FALSE (workcell->findDevice ("UR-6-85-5-A").isNull ());
+    EXPECT_EQ (sourceBefore, readFile (source));
+    EXPECT_EQ (16, managedGeometryResourceCount (manager.manifest ()))
+        << "Every .ac and .stl dependency must be a managed project resource.";
+}
+
+TEST (ProjectSystemTest, ManagerRejectsCopiedWorkCellThatRobWorkCannotLoad)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString sourceDirectory = QDir (directory.path ()).filePath (QStringLiteral ("source"));
+    ASSERT_TRUE (QDir ().mkpath (sourceDirectory));
+    const QString source = QDir (sourceDirectory).filePath (QStringLiteral ("invalid.wc.xml"));
+    QFile sourceFile (source);
+    ASSERT_TRUE (sourceFile.open (QIODevice::WriteOnly));
+    ASSERT_GT (sourceFile.write ("<UnsupportedRobWorkDocument />\n"), 0);
+    sourceFile.close ();
+
+    rws::ProjectManager manager;
+    const QString projectDirectory = QDir (directory.path ()).filePath (QStringLiteral ("project"));
+    const QString projectFile = QDir (projectDirectory).filePath (QStringLiteral ("Invalid.rwproj"));
+    QString error;
+    EXPECT_FALSE (manager.createProjectFromWorkCell (projectFile, source, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_FALSE (manager.hasProject ());
+    EXPECT_FALSE (QFileInfo::exists (projectFile));
+    EXPECT_FALSE (QFileInfo::exists (
+        QDir (projectDirectory).filePath (QStringLiteral ("scenes/main.wc.xml"))));
+    EXPECT_TRUE (QFileInfo::exists (source));
 }
 
 TEST (ProjectSystemTest, ManagerPromotesGeneratedWorkCellWithoutChangingStableEntryId)
