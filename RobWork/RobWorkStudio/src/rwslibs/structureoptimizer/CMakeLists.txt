@@ -191,5 +191,15 @@ if(build)
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
+        add_test(
+            NAME sdurws_structureoptimizer_resource_dependencies_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> resource_dependencies
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_resource_dependencies_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=windows"
+        )
     endif()
 endif()
