@@ -70,7 +70,8 @@ public:
      * 项目系统已经完成了清单路径校验并把资源解析为绝对路径；Widget 只负责把 JSON
      * 还原为领域对象。成功后记录持久化快照，使随后的编辑可以准确参与主窗口脏状态。
      */
-    bool loadProjectDocument(const QString& path, QString* error = nullptr);
+    bool loadProjectDocument(const QString& path, QString* error = nullptr,
+                             const QString& projectRoot = QString());
 
     /**
      * @brief 将当前需求写入 Provider 提供的暂存路径，不直接覆盖正式项目资源。
@@ -100,7 +101,8 @@ private:
     void refreshKeyStationList();
     void refreshKeyStationInspector();
     void refreshFrameChoices();
-    bool loadRequirementDocument(const QString& path, bool captureProjectSnapshot, QString* error);
+    bool loadRequirementDocument(const QString& path, bool captureProjectSnapshot, QString* error,
+                                 const QString& projectRoot = QString());
     bool writeRequirementDocument(const QString& targetPath, QString* error);
     QByteArray serializedProjectDocument(const QString& documentPath) const;
     void commitKeyStationInspector();

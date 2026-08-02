@@ -70,5 +70,25 @@ if(build)
         # 解析的回归路径；不能只依赖默认的无界面核心测试。
         add_test(NAME sdurws_engineeringrequirements_widget_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> widget)
+        add_test(NAME sdurws_engineeringrequirements_relative_source_base_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> relative_source_base)
+        set_tests_properties(
+            sdurws_engineeringrequirements_relative_source_base_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_engineeringrequirements_test>
+        )
+        add_test(NAME sdurws_engineeringrequirements_managed_project_root_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> managed_project_root)
+        if(WIN32)
+            set(ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM windows)
+        else()
+            set(ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM offscreen)
+        endif()
+        set_tests_properties(
+            sdurws_engineeringrequirements_managed_project_root_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_engineeringrequirements_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=${ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM}"
+        )
     endif()
 endif()

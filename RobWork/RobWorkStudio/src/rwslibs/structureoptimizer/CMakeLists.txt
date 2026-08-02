@@ -206,5 +206,14 @@ if(build)
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
                 ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
+        add_test(
+            NAME sdurws_structureoptimizer_project_context_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> project_context
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_project_context_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
     endif()
 endif()

@@ -649,6 +649,99 @@ int testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory()
     return 0;
 }
 
+int testWidgetManagedLoadUsesExplicitProjectRoot()
+{
+    QTemporaryDir workspace;
+    REQUIRE(workspace.isValid());
+    const QString oldRoot = workspace.filePath("old-project");
+    const QString newRoot = workspace.filePath("new-project");
+    const QString sourcePath = QDir(newRoot).filePath("scenes/main.wc.xml");
+    const QString staleSourcePath = QDir(oldRoot).filePath("scenes/main.wc.xml");
+    const QString modelPath = QDir(newRoot).filePath("generated/robot-models/main.rmb.json");
+    const QString documentPath = QDir(newRoot).filePath(
+        "requirements/main.requirements.json");
+    REQUIRE(QDir().mkpath(QFileInfo(sourcePath).absolutePath()));
+    REQUIRE(QDir().mkpath(QFileInfo(staleSourcePath).absolutePath()));
+    REQUIRE(QDir().mkpath(QFileInfo(modelPath).absolutePath()));
+    REQUIRE(QDir().mkpath(QFileInfo(documentPath).absolutePath()));
+    const auto writeFile = [](const QString& path, const QByteArray& data) {
+        QFile file(path);
+        return file.open(QIODevice::WriteOnly | QIODevice::Truncate) &&
+               file.write(data) == data.size();
+    };
+    REQUIRE(writeFile(sourcePath, "<WorkCell name=\"ManagedCell\" />\n"));
+    REQUIRE(writeFile(staleSourcePath, "<WorkCell name=\"StaleCell\" />\n"));
+
+    rws::RobotModelSpec model;
+    model.robotName = "ManagedRootRobot";
+    const QByteArray serializedModel =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(model));
+    REQUIRE(writeFile(modelPath, serializedModel));
+    std::string modelParseError;
+    REQUIRE(rws::RobotModelSpecJson::fromJson(
+        serializedModel.toStdString(), model, &modelParseError));
+    rws::RequirementSet requirements;
+    requirements.modelBinding.sourcePath = modelPath.toStdString();
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ManagedRootBase", rw::math::Transform3D<>()));
+    const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("ManagedRootJoint", rw::math::Transform3D<>()));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ManagedRootTcp", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(joint, base);
+    structure->addFrame(tcp, joint);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ManagedRootWorkCell", sourcePath.toStdString()));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string freezeError;
+    REQUIRE(rws::RequirementFreezer::freeze(
+        requirements, *workcell, workcell->getDefaultState(), model, artifact,
+        &freezeError, newRoot.toStdString()));
+    QJsonObject project = rws::RequirementSetJson::toObject(requirements);
+    QJsonObject binding = project.value("modelBinding").toObject();
+    binding["sourcePath"] = modelPath;
+    project["modelBinding"] = binding;
+    QJsonObject artifactObject = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QJsonObject artifactBinding = artifactObject.value("modelBinding").toObject();
+    artifactBinding["sourcePath"] = binding.value("sourcePath");
+    artifactObject["modelBinding"] = artifactBinding;
+    project["frozenArtifact"] = artifactObject;
+    REQUIRE(writeFile(documentPath, QJsonDocument(project).toJson()));
+
+    rws::FrozenRequirementValidationResult newRootValidation;
+    rws::FrozenRequirementValidationResult oldRootValidation;
+    REQUIRE(rws::RequirementFreezer::validateScenario(
+        artifact, *workcell, workcell->getDefaultState(), &newRootValidation,
+        &freezeError, newRoot.toStdString()));
+    REQUIRE(newRootValidation.warnings.empty());
+    REQUIRE(rws::RequirementFreezer::validateScenario(
+        artifact, *workcell, workcell->getDefaultState(), &oldRootValidation,
+        &freezeError, oldRoot.toStdString()));
+    REQUIRE(!oldRootValidation.warnings.empty());
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setWorkCell(workcell.get());
+    widget.setCurrentState(workcell->getDefaultState());
+    widget.setProjectOutputDirectory(oldRoot);
+    QString error;
+    REQUIRE(widget.loadProjectDocument(documentPath, &error, newRoot));
+    if (!widget.requirementSet().frozen)
+        std::fprintf(stderr, "Managed root load status: %s\n",
+                     widget.statusText().toStdString().c_str());
+    REQUIRE(widget.requirementSet().frozen);
+    return 0;
+}
+
 int testFreezeMakesManagedUrScenarioPathsProjectRelative()
 {
     const QString projectRoot = QDir(QStringLiteral(ENGINEERINGREQUIREMENTS_TEST_SOURCE_DIR))
@@ -1389,6 +1482,10 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "relative_source_base") {
         QCoreApplication app(argc, argv);
         return testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory();
+    }
+    if (argc > 1 && std::string(argv[1]) == "managed_project_root") {
+        QApplication app(argc, argv);
+        return testWidgetManagedLoadUsesExplicitProjectRoot();
     }
     if (argc > 1 && std::string(argv[1]) == "widget_project_paths") {
         QApplication app(argc, argv);

@@ -1428,17 +1428,13 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
     // 清单项，更不能覆盖用户已经保存的业务配置。
     ProjectResource existing;
     if (_projectManager.manifest ().findResource (resource.id, existing)) {
-        QStringList mergedDependencies;
-        for (const QString& dependency : existing.dependencies) {
-            if (!mergedDependencies.contains (dependency))
-                mergedDependencies.push_back (dependency);
-        }
+        QStringList desiredDependencies;
         for (const QString& dependency : resource.dependencies) {
-            if (!mergedDependencies.contains (dependency))
-                mergedDependencies.push_back (dependency);
+            if (!desiredDependencies.contains (dependency))
+                desiredDependencies.push_back (dependency);
         }
-        if (mergedDependencies != existing.dependencies) {
-            existing.dependencies = mergedDependencies;
+        if (desiredDependencies != existing.dependencies) {
+            existing.dependencies = desiredDependencies;
             if (!_projectManager.replaceResourceAndAddAssets (existing, {}, error))
                 return false;
             updateProjectWindowTitle ();

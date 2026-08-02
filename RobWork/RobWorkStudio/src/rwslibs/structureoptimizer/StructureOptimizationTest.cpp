@@ -2683,6 +2683,105 @@ static void testStructureOptimizerResourceDependencies()
 {
     std::printf("testStructureOptimizerResourceDependencies ... ");
 
+    // First creation remains an independent path: no legacy resource exists, so the plugin must
+    // create its default resource and attach exactly the currently resolvable upstream IDs.
+    {
+        QTemporaryDir creationDirectory;
+        REQUIRE(creationDirectory.isValid());
+        const QString creationProjectPath = creationDirectory.filePath(
+            "CreationProject/CreationProject.rwproj");
+        const QString creationProjectDirectory =
+            QFileInfo(creationProjectPath).absolutePath();
+        const QString creationModelPath = QDir(creationProjectDirectory).filePath(
+            "generated/robot-models/main.rmb.json");
+        const QString creationRequirementsPath = QDir(creationProjectDirectory).filePath(
+            "requirements/main.json");
+        REQUIRE(QDir().mkpath(QFileInfo(creationModelPath).absolutePath()));
+        REQUIRE(QDir().mkpath(QFileInfo(creationRequirementsPath).absolutePath()));
+        const auto writeCreationFile = [](const QString& path, const QByteArray& data) {
+            QFile file(path);
+            return file.open(QIODevice::WriteOnly | QIODevice::Truncate) &&
+                   file.write(data) == data.size();
+        };
+
+        QString creationError;
+        rws::ProjectManager creationManager;
+        REQUIRE(creationManager.createProjectFromWorkCell(
+            creationProjectPath,
+            sourcePath("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"),
+            &creationError));
+        REQUIRE(writeCreationFile(creationModelPath, "{}\n"));
+        REQUIRE(writeCreationFile(creationRequirementsPath, "{}\n"));
+        const auto addCreationResource = [&creationManager, &creationError](
+                                             const QString& id, const QString& kind,
+                                             const QString& path) {
+            rws::ProjectResource resource;
+            resource.id = id;
+            resource.kind = kind;
+            resource.path = path;
+            resource.ownership = "generated";
+            resource.required = false;
+            return creationManager.addGeneratedResource(resource, &creationError);
+        };
+        REQUIRE(addCreationResource("robot-model.main", "rws.robot-model",
+                                    "generated/robot-models/main.rmb.json"));
+        REQUIRE(addCreationResource("engineering-requirements.main",
+                                    "rws.engineering-requirements",
+                                    "requirements/main.json"));
+        REQUIRE(creationManager.saveProject(&creationError));
+        creationManager.closeProject();
+
+        const auto loadDocument = [](const QString&, const rws::ProjectDocumentContext&,
+                                     QString*) { return true; };
+        const auto saveDocument = [](const QString&, const rws::ProjectDocumentContext&,
+                                     QString*) { return true; };
+        rws::CallbackProjectDocumentProvider robotModelProvider(
+            "creation.robot-model-provider", "rws.robot-model", loadDocument, saveDocument);
+        rws::CallbackProjectDocumentProvider requirementProvider(
+            "creation.requirement-provider", "rws.engineering-requirements",
+            loadDocument, saveDocument);
+        rw::core::PropertyMap creationProperties;
+        rws::RobWorkStudio creationStudio(creationProperties);
+        REQUIRE(creationStudio.registerProjectDocumentProvider(
+            &robotModelProvider, &creationError));
+        REQUIRE(creationStudio.registerProjectDocumentProvider(
+            &requirementProvider, &creationError));
+        rws::StructureOptimizerPlugin creationPlugin;
+        creationPlugin.setRobWorkStudio(&creationStudio);
+        creationPlugin.initialize();
+        creationStudio.openFile(creationProjectPath.toStdString());
+
+        rws::StructureOptimizationProblem creationProblem;
+        std::string creationFactoryError;
+        REQUIRE(rws::StructureOptimizationProjectFactory::create(
+            rws::RobotModelXmlWriter::makeDefaultSixAxisModel(creationDirectory.path()),
+            creationProblem, &creationFactoryError));
+        rws::StructureOptimizerWidget* creationWidget =
+            qobject_cast<rws::StructureOptimizerWidget*>(creationPlugin.widget());
+        REQUIRE(creationWidget != nullptr);
+        if (creationWidget != nullptr) {
+            creationWidget->setProblem(creationProblem);
+            REQUIRE(QMetaObject::invokeMethod(
+                creationWidget, "projectDocumentChanged", Qt::DirectConnection));
+        }
+        REQUIRE(creationStudio.saveCurrentProject(&creationError));
+
+        rws::ProjectManager creationVerification;
+        REQUIRE(creationVerification.openProject(creationProjectPath, &creationError));
+        rws::ProjectResource createdOptimization;
+        REQUIRE(creationVerification.manifest().findResource(
+            "structure-optimization.main", createdOptimization));
+        REQUIRE(createdOptimization.kind == "rws.structure-optimization");
+        REQUIRE(createdOptimization.path ==
+                "optimizations/main.structure-optimization.json");
+        REQUIRE(createdOptimization.ownership == "generated");
+        REQUIRE(createdOptimization.required);
+        REQUIRE(createdOptimization.dependencies == QStringList({
+            "scene.main", "robot-model.main", "engineering-requirements.main"}));
+        creationStudio.close();
+        creationPlugin.setRobWorkStudio(nullptr);
+    }
+
     QTemporaryDir directory;
     REQUIRE(directory.isValid());
     const QString projectPath =
@@ -2722,6 +2821,10 @@ static void testStructureOptimizerResourceDependencies()
                         "generated/robot-models/main.rmb.json"));
     REQUIRE(addResource("engineering-requirements.main", "rws.engineering-requirements",
                         "requirements/main.json"));
+    REQUIRE(addResource("legacy.upstream", "legacy.upstream",
+                        "requirements/legacy-upstream.json"));
+    REQUIRE(writeFile(QDir(projectDirectory).filePath("requirements/legacy-upstream.json"),
+                      "{}\n"));
 
     rws::StructureOptimizationProblem legacyProblem;
     std::string legacyFactoryError;
@@ -2739,7 +2842,7 @@ static void testStructureOptimizerResourceDependencies()
     legacyOptimization.path = "legacy/legacy.structure-optimization.json";
     legacyOptimization.ownership = "project";
     legacyOptimization.required = false;
-    legacyOptimization.dependencies = {"scene.main", "scene.main"};
+    legacyOptimization.dependencies = {"scene.main", "legacy.upstream", "scene.main"};
     REQUIRE(manager.addGeneratedResource(legacyOptimization, &error));
     REQUIRE(manager.saveProject(&error));
     manager.closeProject();
@@ -2754,10 +2857,13 @@ static void testStructureOptimizerResourceDependencies()
     rws::CallbackProjectDocumentProvider requirementProvider(
         "test.requirement-provider", "rws.engineering-requirements",
         loadDocument, saveDocument);
+    rws::CallbackProjectDocumentProvider legacyProvider(
+        "test.legacy-provider", "legacy.upstream", loadDocument, saveDocument);
     rw::core::PropertyMap properties;
     rws::RobWorkStudio studio(properties);
     REQUIRE(studio.registerProjectDocumentProvider(&robotModelProvider, &error));
     REQUIRE(studio.registerProjectDocumentProvider(&requirementProvider, &error));
+    REQUIRE(studio.registerProjectDocumentProvider(&legacyProvider, &error));
     plugin.setRobWorkStudio(&studio);
     plugin.initialize();
     studio.openFile(projectPath.toStdString());

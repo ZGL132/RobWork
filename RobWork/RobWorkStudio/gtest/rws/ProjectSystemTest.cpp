@@ -416,6 +416,29 @@ TEST (ProjectSystemTest, ManagerPromotesGeneratedWorkCellWithoutChangingStableEn
     EXPECT_TRUE (manager.isDirty ());
 }
 
+TEST (ProjectSystemTest, ManagerRejectsInvalidResourceReplacementWithoutChangingManifest)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error))
+        << error.toStdString ();
+
+    const rws::ProjectManifest before = manager.manifest ();
+    const bool dirtyBefore = manager.isDirty ();
+    rws::ProjectResource invalid;
+    ASSERT_TRUE (before.findResource (QStringLiteral ("scene.main"), invalid));
+    invalid.dependencies = QStringList () << QStringLiteral ("missing.upstream");
+    EXPECT_FALSE (manager.replaceResourceAndAddAssets (
+        invalid, QVector< rws::ProjectResource > (), &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (dirtyBefore, manager.isDirty ());
+    EXPECT_EQ (rws::ProjectManifestJson::toJson (before),
+               rws::ProjectManifestJson::toJson (manager.manifest ()));
+}
+
 TEST (ProjectSystemTest, ManagerImportsLegacyResourceIntoCurrentProject)
 {
     QTemporaryDir directory;

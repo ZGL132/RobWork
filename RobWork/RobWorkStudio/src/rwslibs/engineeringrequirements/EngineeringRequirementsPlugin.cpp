@@ -186,8 +186,9 @@ void EngineeringRequirementsPlugin::initialize() {
     _projectProvider = new CallbackProjectDocumentProvider(
         QStringLiteral("rws.engineering-requirements"),
         QStringLiteral("rws.engineering-requirements"),
-        [this](const QString& path, const ProjectDocumentContext&, QString* error) {
-            const bool loaded = _widget->loadProjectDocument(path, error);
+        [this](const QString& path, const ProjectDocumentContext& context, QString* error) {
+            const bool loaded = _widget->loadProjectDocument(
+                path, error, context.projectDirectory);
             _projectResourceActive = loaded;
             return loaded;
         },

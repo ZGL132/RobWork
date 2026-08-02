@@ -1199,11 +1199,12 @@ void EngineeringRequirementsWidget::loadRequirements()
     if (!loadRequirementDocument(path, false, &error)) { setStatus(error); return; }
 }
 
-bool EngineeringRequirementsWidget::loadProjectDocument(const QString& path, QString* error)
+bool EngineeringRequirementsWidget::loadProjectDocument(const QString& path, QString* error,
+                                                         const QString& projectRoot)
 {
     // Provider 只在资源路径已由 Registry 校验后进入这里；以项目资源为新的基线，
     // 保证刚打开 rwproj 时标题栏不会出现无意义的未保存星号。
-    return loadRequirementDocument(path, true, error);
+    return loadRequirementDocument(path, true, error, projectRoot);
 }
 
 bool EngineeringRequirementsWidget::saveProjectDocument(const QString& targetPath, QString* error)
@@ -1316,7 +1317,8 @@ bool EngineeringRequirementsWidget::writeRequirementDocument(const QString& targ
 // 已保存基线；false 时（导入副本）不更新基线，避免未保存项目丢失脏提示。
 bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
                                                             bool captureProjectSnapshot,
-                                                            QString* error)
+                                                            QString* error,
+                                                            const QString& projectRoot)
 {
     QFile file(path); if (!file.open(QFile::ReadOnly)) { if (error != nullptr) *error = QString::fromUtf8("无法读取需求文件：%1").arg(file.errorString()); return false; }
     QJsonParseError parseError;
@@ -1350,6 +1352,9 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
 
     CompiledRequirementSet compiled;
     FrozenRequirementArtifact artifact;
+    const QString validationRoot = projectRoot.trimmed().isEmpty()
+        ? _projectOutputDirectory
+        : QFileInfo(projectRoot).absoluteFilePath();
     QString loadStatus = QString::fromUtf8("研发需求已加载，处于可编辑状态。");
     const QJsonValue artifactValue = project.value("frozenArtifact");
     if (!artifactValue.isUndefined()) {
@@ -1367,7 +1372,7 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         const bool artifactCurrent = modelReadable && _workcell != nullptr &&
             RequirementFreezer::isCurrent(
                 artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
-                _projectOutputDirectory.toStdString());
+                validationRoot.toStdString());
         if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;
@@ -1394,6 +1399,8 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
     setStatus(loadStatus);
     refreshTables();
     if (captureProjectSnapshot) {
+        if (!projectRoot.trimmed().isEmpty())
+            _projectOutputDirectory = validationRoot;
         _projectDocumentPath = path;
         _pendingProjectDocumentSnapshot.clear();
         _savedProjectDocumentSnapshot = serializedProjectDocument(path);
