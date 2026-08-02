@@ -36,6 +36,7 @@ if(build)
     )
     set(ModelHeaderFiles
         RobotModelFingerprint.hpp
+        RobotModelPublishService.hpp
         RobotModelProjectPaths.hpp
         RobotModelSpec.hpp
         RobotModelXmlWriter.hpp
@@ -47,6 +48,7 @@ if(build)
     set(SrcFiles
         RobotModelBuilderPlugin.cpp
         RobotModelBuilderWidget.cpp
+        RobotModelPublishService.cpp
         ${ModelSrcFiles}
     )
     # 公共头文件:供其他插件/外部项目引用
@@ -113,6 +115,7 @@ if(build)
     add_executable(sdurws_robotmodelbuilder_widgettest
         RobotModelBuilderWidgetTest.cpp
         RobotModelBuilderWidget.cpp
+        RobotModelPublishService.cpp
         ${ModelSrcFiles}
         ${ModelHeaderFiles}
     )

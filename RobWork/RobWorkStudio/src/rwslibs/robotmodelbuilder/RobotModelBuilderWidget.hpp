@@ -9,6 +9,9 @@
 #include <QByteArray>
 #include <QWidget>
 
+#include <functional>
+#include <utility>
+
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
@@ -44,6 +47,11 @@ class RobotModelBuilderWidget : public QWidget
     // 独立 WorkCell 工作流，继续使用运行时默认目录但不在界面中暴露可编辑目录输入。
     void setProjectOutputDirectory (const QString& projectDirectory);
     QString projectOutputDirectory () const { return _projectOutputDirectory; }
+    void setProjectPublishPromoter (
+        std::function< bool (const QString&, const QStringList&, QString*) > promoter)
+    {
+        _projectPublishPromoter = std::move (promoter);
+    }
 
     /**
      * @brief 从项目 Provider 传入的已解析路径加载模型 JSON，不显示文件对话框。
@@ -111,7 +119,7 @@ class RobotModelBuilderWidget : public QWidget
     void synchronizeCollisionFileFromDrawable (int row);
     void updateSceneUiEnabled ();
     void updateOutputFilePlaceholders ();
-    bool confirmOutputOverwrite (const RobotModelSpec& spec);
+    bool confirmOutputOverwrite (const RobotModelSpec& spec, bool includeSidecar = true);
     // 生成模型时 saveDirectory 仍是 XmlWriter 的运行时必需字段；本函数优先返回项目受管
     // 输出目录，避免任何项目内操作回退到用户主目录或历史模型记录的绝对路径。
     QString effectiveSaveDirectory () const;
@@ -207,6 +215,7 @@ class RobotModelBuilderWidget : public QWidget
     // 的 projectContextChanged 信号重新计算，因而不会留下机器相关的绝对路径。
     QString _projectDirectory;
     QString _projectOutputDirectory;
+    std::function< bool (const QString&, const QStringList&, QString*) > _projectPublishPromoter;
     ImportedDocumentSpec _importedDocument;
     QByteArray _projectCleanSnapshot;
     bool _projectSnapshotActive = false;

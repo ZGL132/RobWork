@@ -1,10 +1,13 @@
 #include "RobotModelBuilderWidget.hpp"
+#include "RobotModelPublishService.hpp"
 #include "RobotModelSpecJson.hpp"
+#include "RobotModelXmlWriter.hpp"
 
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
 #include <QLabel>
@@ -131,11 +134,306 @@ bool copyFixture (const QString& source, const QString& target)
 {
     return QDir ().mkpath (QFileInfo (target).absolutePath ()) && QFile::copy (source, target);
 }
+
+QByteArray readFixture (const QString& path)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly))
+        return QByteArray ();
+    return file.readAll ();
+}
+
+QStringList publishTargets (const rws::RobotModelSpec& spec)
+{
+    QStringList targets {rws::RobotModelXmlWriter::serialDeviceFilePath (spec)};
+    if (spec.generateScene) {
+        if (spec.collisionSetup.enabled)
+            targets << rws::RobotModelXmlWriter::collisionSetupFilePath (spec);
+        if (spec.proximitySetup.enabled)
+            targets << rws::RobotModelXmlWriter::proximitySetupFilePath (spec);
+        targets << rws::RobotModelXmlWriter::sceneFilePath (spec);
+    }
+    if (spec.dynamics.generateDynamicWorkCell)
+        targets << rws::RobotModelXmlWriter::dynamicWorkCellFilePath (spec);
+    targets.removeDuplicates ();
+    return targets;
+}
+
+bool hasTransactionResidue (const QString& directory)
+{
+    QDirIterator iterator (directory,
+                           {QStringLiteral ("*.rwstage-*"), QStringLiteral ("*.rwbackup-*")},
+                           QDir::Files,
+                           QDirIterator::Subdirectories);
+    return iterator.hasNext ();
+}
+
+bool seedPublishTargets (const rws::RobotModelSpec& spec)
+{
+    for (const QString& target : publishTargets (spec)) {
+        if (!writeFixture (target, QByteArray ("old:") + QFileInfo (target).fileName ().toUtf8 ()))
+            return false;
+    }
+    return true;
+}
+
+bool oldPublishTargetsRemain (const rws::RobotModelSpec& spec)
+{
+    for (const QString& target : publishTargets (spec)) {
+        if (readFixture (target) !=
+            QByteArray ("old:") + QFileInfo (target).fileName ().toUtf8 ())
+            return false;
+    }
+    return true;
+}
+
+bool newPublishTargetsInstalled (const rws::RobotModelSpec& spec)
+{
+    for (const QString& target : publishTargets (spec)) {
+        const QByteArray bytes = readFixture (target);
+        if (bytes.isEmpty () ||
+            bytes == QByteArray ("old:") + QFileInfo (target).fileName ().toUtf8 ())
+            return false;
+    }
+    return true;
+}
+
+bool verifyTransactionalPublishService (QString* failure)
+{
+    {
+        QTemporaryDir project;
+        if (!project.isValid ()) {
+            *failure = "Could not create the successful publish fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        if (!QDir ().mkpath (output)) {
+            *failure = "Could not create the successful publish output directory.";
+            return false;
+        }
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        if (!seedPublishTargets (spec)) {
+            *failure = "Could not seed successful publish targets.";
+            return false;
+        }
+
+        bool promoted = false;
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [&] (const QString& scene, const QStringList& dependencies,
+                               QString*) {
+            promoted = scene == rws::RobotModelXmlWriter::sceneFilePath (spec) &&
+                       dependencies.contains (
+                           rws::RobotModelXmlWriter::serialDeviceFilePath (spec)) &&
+                       dependencies.contains (
+                           rws::RobotModelXmlWriter::collisionSetupFilePath (spec));
+            return promoted;
+        };
+        QString error;
+        if (!rws::RobotModelPublishService::publishAndLoad (request, &error) || !promoted) {
+            *failure = QStringLiteral ("Successful transactional publish failed: %1").arg (error);
+            return false;
+        }
+        if (!newPublishTargetsInstalled (spec) || hasTransactionResidue (output)) {
+            *failure = "Successful publish did not replace every output cleanly.";
+            return false;
+        }
+    }
+
+    {
+        QTemporaryDir project;
+        if (!project.isValid ()) {
+            *failure = "Could not create the promotion rollback fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        if (!seedPublishTargets (spec)) {
+            *failure = "Could not seed promotion rollback targets.";
+            return false;
+        }
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [] (const QString&, const QStringList&, QString* error) {
+            *error = QStringLiteral ("promotion rejected");
+            return false;
+        };
+        QString error;
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) ||
+            !error.contains (QStringLiteral ("promotion rejected")) ||
+            !oldPublishTargetsRemain (spec) || hasTransactionResidue (output)) {
+            *failure = "Promotion failure did not restore all previous publish targets.";
+            return false;
+        }
+    }
+
+    {
+        QTemporaryDir project;
+        if (!project.isValid ()) {
+            *failure = "Could not create the load rollback fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        spec.exportLayout.sceneFile = spec.exportLayout.deviceFile = "shared.wc.xml";
+        if (!seedPublishTargets (spec)) {
+            *failure = "Could not seed load rollback targets.";
+            return false;
+        }
+        bool promotionCalled = false;
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [&] (const QString&, const QStringList&, QString*) {
+            promotionCalled = true;
+            return true;
+        };
+        QString error;
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) || promotionCalled ||
+            error.isEmpty () || !oldPublishTargetsRemain (spec) ||
+            hasTransactionResidue (output)) {
+            *failure = "WorkCell load failure did not restore all previous publish targets.";
+            return false;
+        }
+    }
+
+    {
+        QTemporaryDir project;
+        if (!project.isValid ()) {
+            *failure = "Could not create the staging rollback fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        spec.exportLayout.sceneFile = "blocked/scene.wc.xml";
+        const QString blockedParent = QDir (output).filePath ("blocked");
+        if (!writeFixture (blockedParent, "blocking-file")) {
+            *failure = "Could not create the staging failure sentinel.";
+            return false;
+        }
+        for (const QString& target : publishTargets (spec)) {
+            if (target != QDir (output).filePath ("blocked/scene.wc.xml") &&
+                !writeFixture (target,
+                               QByteArray ("old:") + QFileInfo (target).fileName ().toUtf8 ())) {
+                *failure = "Could not seed staging rollback targets.";
+                return false;
+            }
+        }
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [] (const QString&, const QStringList&, QString*) { return true; };
+        QString error;
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) || error.isEmpty () ||
+            readFixture (blockedParent) != QByteArray ("blocking-file") ||
+            readFixture (rws::RobotModelXmlWriter::serialDeviceFilePath (spec)) !=
+                QByteArray ("old:GenericSixAxis.wc.xml") ||
+            readFixture (rws::RobotModelXmlWriter::collisionSetupFilePath (spec)) !=
+                QByteArray ("old:CollisionSetup.xml") ||
+            hasTransactionResidue (output)) {
+            *failure = "Staging failure changed old outputs or left transaction residue.";
+            return false;
+        }
+    }
+
+    {
+        QTemporaryDir project;
+        QTemporaryDir outside;
+        if (!project.isValid () || !outside.isValid ()) {
+            *failure = "Could not create the escaped output fixture.";
+            return false;
+        }
+        const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+        QDir ().mkpath (output);
+        const QString outsideTarget = QDir (outside.path ()).filePath ("outside.wc.xml");
+        if (!writeFixture (outsideTarget, "outside-sentinel")) {
+            *failure = "Could not seed the escaped output sentinel.";
+            return false;
+        }
+        rws::RobotModelSpec spec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+        spec.generateScene = true;
+        spec.exportLayout.sceneFile =
+            QDir (output).relativeFilePath (outsideTarget).toStdString ();
+        bool promotionCalled = false;
+        rws::RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = project.path ();
+        request.promote = [&] (const QString&, const QStringList&, QString*) {
+            promotionCalled = true;
+            return true;
+        };
+        QString error;
+        if (rws::RobotModelPublishService::publishAndLoad (request, &error) || promotionCalled ||
+            !error.contains (QStringLiteral ("outside the project")) ||
+            readFixture (outsideTarget) != QByteArray ("outside-sentinel") ||
+            hasTransactionResidue (project.path ()) || hasTransactionResidue (outside.path ())) {
+            *failure = "Escaped publish output was not rejected before staging.";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool verifyProjectModeSaveAndLoad (QString* failure)
+{
+    QTemporaryDir project;
+    if (!project.isValid ()) {
+        *failure = "Could not create the project-mode Save and Load fixture.";
+        return false;
+    }
+
+    rws::RobotModelBuilderWidget widget;
+    widget.setProjectOutputDirectory (project.path ());
+    widget.beginGeneratedProjectDocument ();
+    bool promoted = false;
+    widget.setProjectPublishPromoter (
+        [&] (const QString& path, const QStringList&, QString*) {
+            promoted = QFileInfo (path).isFile ();
+            return promoted;
+        });
+    const rws::RobotModelSpec before = widget.currentModelSpec ();
+    if (!widget.isProjectDocumentDirty ()) {
+        *failure = "Generated project model should start dirty before Save and Load.";
+        return false;
+    }
+    if (!QMetaObject::invokeMethod (&widget, "saveAndLoad", Qt::DirectConnection)) {
+        *failure = "Could not invoke project-mode Save and Load.";
+        return false;
+    }
+    if (!promoted) {
+        *failure = "Project-mode Save and Load did not invoke transactional promotion.";
+        return false;
+    }
+    if (QFileInfo::exists (rws::RobotModelXmlWriter::specSidecarFilePath (before))) {
+        *failure = "Project-mode Save and Load wrote an unmanaged .rmb.json sidecar.";
+        return false;
+    }
+    if (!widget.isProjectDocumentDirty ()) {
+        *failure = "Project-mode Save and Load cleared the managed model before File > Save Project.";
+        return false;
+    }
+    return true;
+}
 }    // namespace
 
 int main (int argc, char** argv)
 {
     QApplication application (argc, argv);
+    QString publishFailure;
+    if (!verifyTransactionalPublishService (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
+    if (!verifyProjectModeSaveAndLoad (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
     rws::RobotModelBuilderWidget widget;
 
     const QList< QLabel* > labels = widget.findChildren< QLabel* > ();

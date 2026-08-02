@@ -17,6 +17,7 @@
 
 #include <QDir>
 #include <QMessageBox>
+#include <QScopedValueRollback>
 
 using namespace rws;
 
@@ -53,6 +54,17 @@ RobotModelBuilderPlugin::~RobotModelBuilderPlugin ()
 void RobotModelBuilderPlugin::initialize ()
 {
     _widget = new RobotModelBuilderWidget (this);
+    _widget->setProjectPublishPromoter (
+        [this] (const QString& filename, const QStringList& dependencies, QString* error) {
+            RobWorkStudio* studio = getRobWorkStudio ();
+            if (studio == NULL) {
+                if (error != nullptr)
+                    *error = QStringLiteral ("RobWorkStudio project services are unavailable.");
+                return false;
+            }
+            QScopedValueRollback< bool > ignoreSelfLoad (_ignoreNextOpenFromSelfLoad, true);
+            return studio->promoteGeneratedWorkCell (filename, dependencies, error);
+        });
     // 项目上下文独立于 WorkCell 是否已保存或是否包含可转换机器人。插件初始化后立即订阅，
     // 并主动读取一次当前目录，确保在“新建空项目后再打开插件”时也不会回退到用户主目录。
     if (getRobWorkStudio () != NULL) {

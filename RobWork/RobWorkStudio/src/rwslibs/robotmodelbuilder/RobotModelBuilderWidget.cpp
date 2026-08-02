@@ -14,6 +14,7 @@
 // =============================================================================
 #include "RobotModelBuilderWidget.hpp"
 
+#include "RobotModelPublishService.hpp"
 #include "RobotModelProjectPaths.hpp"
 #include "RobotModelXmlWriter.hpp"
 #include "RobotModelUrdfImporter.hpp"
@@ -1057,19 +1058,36 @@ void RobotModelBuilderWidget::saveAndLoad ()
 
     RobotModelSpec spec = collectSpec ();
     RobotModelXmlWriter::applyLinkGeometry (spec);
-    if (!confirmOutputOverwrite (spec)) {
+    const bool projectManaged = !_projectOutputDirectory.isEmpty ();
+    if (!confirmOutputOverwrite (spec, !projectManaged)) {
         setStatus ("Save cancelled.");
         return;
     }
+
+    if (projectManaged) {
+        RobotModelPublishRequest request;
+        request.spec = spec;
+        request.projectRoot = _projectDirectory;
+        request.promote = _projectPublishPromoter;
+        QString publishError;
+        if (!RobotModelPublishService::publishAndLoad (request, &publishError)) {
+            errors << publishError;
+            showErrors (errors);
+            setStatus ("Save and Load failed. Previous project outputs were restored.");
+            return;
+        }
+        generatePreview ();
+        setStatus (
+            "Generated scene loaded as the managed project WorkCell. Use File > Save Project to commit it.");
+        return;
+    }
+
     if (!RobotModelXmlWriter::saveFiles (spec, errors)) {
         showErrors (errors);
         return;
     }
     // Save and Load 生成的 sidecar 与普通保存具有相同的可搬迁性约束。
-    RobotModelSpec sidecarSpec = spec;
-    if (!_projectOutputDirectory.isEmpty ())
-        sidecarSpec.saveDirectory.clear ();
-    if (!RobotModelXmlWriter::saveSpecSidecar (sidecarSpec, errors)) {
+    if (!RobotModelXmlWriter::saveSpecSidecar (spec, errors)) {
         showErrors (errors);
         return;
     }
@@ -1093,11 +1111,13 @@ void RobotModelBuilderWidget::updateOutputFilePlaceholders ()
     _collisionSetupFile->setPlaceholderText ("CollisionSetup.xml");
 }
 
-bool RobotModelBuilderWidget::confirmOutputOverwrite (const RobotModelSpec& spec)
+bool RobotModelBuilderWidget::confirmOutputOverwrite (const RobotModelSpec& spec,
+                                                       bool includeSidecar)
 {
     QStringList outputFiles;
-    outputFiles << RobotModelXmlWriter::serialDeviceFilePath (spec)
-                << RobotModelXmlWriter::specSidecarFilePath (spec);
+    outputFiles << RobotModelXmlWriter::serialDeviceFilePath (spec);
+    if (includeSidecar)
+        outputFiles << RobotModelXmlWriter::specSidecarFilePath (spec);
     if (spec.generateScene) {
         if (spec.collisionSetup.enabled)
             outputFiles << RobotModelXmlWriter::collisionSetupFilePath (spec);

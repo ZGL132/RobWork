@@ -146,10 +146,12 @@ bool ProjectSaveTransaction::stageBytes (const QByteArray& bytes,
     return true;
 }
 
-// 提交阶段：按暂存顺序逐个把正式文件备份、再把暂存文件安装为正式文件。
-// 任一步失败立即回滚全部已安装目标；只有所有资源都替换成功才进入清理阶段。
-bool ProjectSaveTransaction::commit (QString* error)
+// 安装阶段保留全部备份，使调用方能在后续验证或外部状态切换失败时整体回滚。
+bool ProjectSaveTransaction::install (QString* error)
 {
+    if (_installed)
+        return true;
+
     for (int index = 0; index < _staged.size (); ++index) {
         StagedResource& item = _staged[index];
         if (_existingTargetPolicy == ExistingTargetPolicy::Reject &&
@@ -183,15 +185,31 @@ bool ProjectSaveTransaction::commit (QString* error)
         item.targetInstalled = true;
     }
 
-    // 只有所有替换都成功后才删除备份并清除 Provider 脏状态，保证调用方看到的
-    // “已保存”状态一定对应完整提交，而不是部分文件已经更新。
+    _installed = true;
+    return true;
+}
+
+void ProjectSaveTransaction::finalize ()
+{
+    if (!_installed || _committed)
+        return;
+
     for (StagedResource& item : _staged) {
         if (item.targetBackedUp)
             QFile::remove (item.backupPath);
         if (item.provider != nullptr)
             item.provider->markClean (item.resource.id);
+        item.targetBackedUp = false;
+        item.targetInstalled = false;
     }
     _committed = true;
+}
+
+bool ProjectSaveTransaction::commit (QString* error)
+{
+    if (!install (error))
+        return false;
+    finalize ();
     return true;
 }
 
@@ -199,6 +217,9 @@ bool ProjectSaveTransaction::commit (QString* error)
 // 清理残留暂存文件。逆序保证后安装的资源先恢复，与提交顺序对称。
 void ProjectSaveTransaction::rollback ()
 {
+    if (_committed)
+        return;
+
     for (int index = _staged.size () - 1; index >= 0; --index) {
         StagedResource& item = _staged[index];
         if (item.targetInstalled)
@@ -210,6 +231,7 @@ void ProjectSaveTransaction::rollback ()
         item.targetInstalled = false;
         item.targetBackedUp = false;
     }
+    _installed = false;
 }
 
 }    // namespace rws

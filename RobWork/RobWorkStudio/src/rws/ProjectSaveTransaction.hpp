@@ -39,8 +39,11 @@ class ProjectSaveTransaction
     // 将内存字节写入事务暂存位置；用于把清单作为与资源相同的提交单元。
     bool stageBytes (const QByteArray& bytes, const QString& targetPath, QString* error = nullptr);
 
-    // 提交阶段：把全部已暂存文件依次替换为正式文件；任一替换失败则整体回滚，
-    // 全部成功后删除备份并清除各 Provider 的脏状态。
+    // 安装阶段：替换正式文件但保留备份，不清除 Provider 脏状态；调用方仍可回滚。
+    bool install (QString* error = nullptr);
+    // 最终确认：删除备份、清除 Provider 脏状态，并关闭析构回滚。
+    void finalize ();
+    // 兼容的一阶段入口，等价于 install 后立即 finalize。
     bool commit (QString* error = nullptr);
     // 手动回滚：逆序恢复已安装目标、还原备份、清理暂存文件。
     void rollback ();
@@ -60,6 +63,7 @@ class ProjectSaveTransaction
     };
 
     QVector< StagedResource > _staged;    // 已暂存资源列表（按暂存顺序）。
+    bool _installed = false;
     bool _committed = false;              // 是否已完成提交；析构据此决定是否回滚。
 };
 
