@@ -17,6 +17,7 @@
 
 #include <rw/core/PropertyMap.hpp>
 #include <rws/CallbackProjectDocumentProvider.hpp>
+#include <rws/ProjectManifestJson.hpp>
 #include <rws/ProjectManager.hpp>
 #include <rws/RobWorkStudio.hpp>
 #include <rws/RobWorkStudioPlugin.hpp>
@@ -35,6 +36,8 @@
 #include <QTemporaryDir>
 #include <QTimer>
 #include <gtest/gtest.h>
+
+#include <algorithm>
 
 using namespace rw::core;
 using namespace rw::common;
@@ -58,6 +61,24 @@ QString createEmptyProject (const QString& directoryPath)
         << error.toStdString ();
     manager.closeProject ();
     return projectFile;
+}
+
+QString createMinimalUrdf (const QString& directoryPath)
+{
+    const QString urdf = QDir (directoryPath).filePath ("source/TestRobot.urdf");
+    EXPECT_TRUE (QDir ().mkpath (QFileInfo (urdf).absolutePath ()))
+        << urdf.toStdString ();
+    QFile file (urdf);
+    EXPECT_TRUE (file.open (QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray bytes ("<robot name=\"TestRobot\"><link name=\"base\"/></robot>\n");
+    EXPECT_EQ (bytes.size (), file.write (bytes));
+    return urdf;
+}
+
+std::vector< std::string > recentProjects (RobWorkStudio& studio)
+{
+    return studio.getSettings ().get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
 }
 
 }    // namespace
@@ -407,6 +428,261 @@ TEST (RobWorkStudio, ClassifiesRobotProjectXmlBeforeDispatch)
     EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Unsupported,
                RobWorkStudio::classifyRobotProjectSource (unknown, &error));
     EXPECT_FALSE (error.isEmpty ());
+}
+
+TEST (RobWorkStudio, RobotProjectPreflightFailurePreservesCurrentProject)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio studio (map);
+    QTemporaryDir current;
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (current.isValid () && source.isValid () && target.isValid ());
+    const QString currentProject = createEmptyProject (current.path ());
+    const QString urdf = createMinimalUrdf (source.path ());
+    const QString targetProject = target.filePath ("PreflightFailure.rwproj");
+    studio.openFile (currentProject.toStdString ());
+    const std::vector< std::string > recentBefore = recentProjects (studio);
+    EXPECT_EQ (recentBefore.end (),
+               std::find (recentBefore.begin (), recentBefore.end (),
+                          targetProject.toStdString ()));
+
+    int preflightCount = 0;
+    int commitCount = 0;
+    RobotProjectImportCallbacks callbacks;
+    callbacks.preflight = [&preflightCount] (const QString&, const QString&, QString*) {
+        ++preflightCount;
+        return false;
+    };
+    callbacks.confirmClose = [] (QString*) { return true; };
+    callbacks.commit = [&commitCount] (const QString&, const QString&, QString*) {
+        ++commitCount;
+        return true;
+    };
+
+    QString error;
+    EXPECT_FALSE (studio.createProjectFromRobotFilePaths (
+        urdf, targetProject, callbacks, &error));
+    EXPECT_EQ (1, preflightCount);
+    EXPECT_EQ (0, commitCount);
+    EXPECT_TRUE (error.contains (QStringLiteral ("source"), Qt::CaseInsensitive));
+    EXPECT_EQ (QDir::cleanPath (current.path ()), QDir::cleanPath (studio.projectDirectory ()));
+    EXPECT_FALSE (QFileInfo::exists (targetProject));
+    EXPECT_EQ (recentBefore, recentProjects (studio));
+}
+
+TEST (RobWorkStudio, RobotProjectManagedCopyPreflightFailureRemovesCandidate)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio studio (map);
+    QTemporaryDir current;
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (current.isValid () && source.isValid () && target.isValid ());
+    const QString currentProject = createEmptyProject (current.path ());
+    const QString urdf = createMinimalUrdf (source.path ());
+    const QString targetProject = target.filePath ("ManagedPreflightFailure.rwproj");
+    studio.openFile (currentProject.toStdString ());
+    const std::vector< std::string > recentBefore = recentProjects (studio);
+
+    QString managedPreflightPath;
+    int preflightCount = 0;
+    RobotProjectImportCallbacks callbacks;
+    callbacks.preflight = [&] (const QString& path, const QString&, QString* error) {
+        ++preflightCount;
+        if (preflightCount == 1)
+            return true;
+        managedPreflightPath = path;
+        if (error != nullptr)
+            *error = QStringLiteral ("injected managed preflight failure");
+        return false;
+    };
+    callbacks.confirmClose = [] (QString*) { return true; };
+    callbacks.commit = [] (const QString&, const QString&, QString*) { return true; };
+
+    QString error;
+    EXPECT_FALSE (studio.createProjectFromRobotFilePaths (
+        urdf, targetProject, callbacks, &error));
+    EXPECT_EQ (2, preflightCount);
+    EXPECT_FALSE (managedPreflightPath.isEmpty ());
+    EXPECT_FALSE (QFileInfo::exists (managedPreflightPath));
+    EXPECT_TRUE (error.contains (QStringLiteral ("injected managed preflight failure")));
+    EXPECT_EQ (QDir::cleanPath (current.path ()), QDir::cleanPath (studio.projectDirectory ()));
+    EXPECT_FALSE (QFileInfo::exists (targetProject));
+    EXPECT_EQ (recentBefore, recentProjects (studio));
+}
+
+TEST (RobWorkStudio, RobotProjectCommitFailureRestoresCurrentProject)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio studio (map);
+    QTemporaryDir current;
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (current.isValid () && source.isValid () && target.isValid ());
+
+    const QString currentDocument = current.filePath ("documents/old.json");
+    ASSERT_TRUE (QDir ().mkpath (QFileInfo (currentDocument).absolutePath ()));
+    QFile document (currentDocument);
+    ASSERT_TRUE (document.open (QIODevice::WriteOnly));
+    ASSERT_EQ (3, document.write ("old"));
+    document.close ();
+    ProjectManifest oldManifest;
+    oldManifest.project.id = QStringLiteral ("old-project");
+    oldManifest.project.name = QStringLiteral ("OldProject");
+    ProjectResource oldResource;
+    oldResource.id = QStringLiteral ("old.document");
+    oldResource.kind = QStringLiteral ("test.robot-project-old");
+    oldResource.path = QStringLiteral ("documents/old.json");
+    oldResource.ownership = QStringLiteral ("project");
+    oldResource.required = true;
+    oldManifest.resources.push_back (oldResource);
+    const QString currentProject = current.filePath ("Old.rwproj");
+    ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (currentProject, oldManifest, &error))
+        << error.toStdString ();
+    manager.closeProject ();
+
+    int loadCount = 0;
+    int closeCount = 0;
+    CallbackProjectDocumentProvider oldProvider (
+        QStringLiteral ("test.robot-project-old-provider"), oldResource.kind,
+        [&loadCount] (const QString&, const ProjectDocumentContext&, QString*) {
+            ++loadCount;
+            return true;
+        },
+        CallbackProjectDocumentProvider::SaveHandler (),
+        CallbackProjectDocumentProvider::CanCloseHandler (),
+        [&closeCount] () { ++closeCount; });
+    ASSERT_TRUE (studio.registerProjectDocumentProvider (&oldProvider, &error))
+        << error.toStdString ();
+    studio.openFile (currentProject.toStdString ());
+    ASSERT_EQ (1, loadCount);
+    const std::vector< std::string > recentBefore = recentProjects (studio);
+    const QString urdf = createMinimalUrdf (source.path ());
+    const QString targetProject = target.filePath ("CommitFailure.rwproj");
+
+    QString committedSource;
+    RobotProjectImportCallbacks callbacks;
+    callbacks.preflight = [] (const QString&, const QString&, QString*) { return true; };
+    callbacks.confirmClose = [] (QString*) { return true; };
+    callbacks.commit = [&committedSource] (const QString& path, const QString&, QString*) {
+        committedSource = path;
+        return false;
+    };
+
+    EXPECT_FALSE (studio.createProjectFromRobotFilePaths (
+        urdf, targetProject, callbacks, &error));
+    EXPECT_FALSE (QFileInfo::exists (targetProject));
+    EXPECT_FALSE (QFileInfo::exists (committedSource));
+    EXPECT_TRUE (error.contains (QStringLiteral ("commit"), Qt::CaseInsensitive));
+    EXPECT_EQ (QDir::cleanPath (current.path ()), QDir::cleanPath (studio.projectDirectory ()));
+    EXPECT_EQ (2, loadCount);
+    EXPECT_EQ (1, closeCount);
+    EXPECT_EQ (recentBefore, recentProjects (studio));
+}
+
+TEST (RobWorkStudio, RobotProjectSuccessUpdatesRecentFilesOnlyAfterCommit)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio studio (map);
+    QTemporaryDir current;
+    QTemporaryDir source;
+    QTemporaryDir target;
+    ASSERT_TRUE (current.isValid () && source.isValid () && target.isValid ());
+    const QString currentProject = createEmptyProject (current.path ());
+    const QString urdf = createMinimalUrdf (source.path ());
+    const QString targetProject = target.filePath ("Success.rwproj");
+    studio.openFile (currentProject.toStdString ());
+    const std::vector< std::string > recentBefore = recentProjects (studio);
+    EXPECT_EQ (recentBefore.end (),
+               std::find (recentBefore.begin (), recentBefore.end (),
+                          targetProject.toStdString ()));
+
+    CallbackProjectDocumentProvider modelProvider (
+        QStringLiteral ("test.robot-project-model-provider"),
+        QStringLiteral ("robwork.robot-model"),
+        [] (const QString&, const ProjectDocumentContext&, QString*) { return true; },
+        CallbackProjectDocumentProvider::SaveHandler ());
+    QString error;
+    ASSERT_TRUE (studio.registerProjectDocumentProvider (&modelProvider, &error))
+        << error.toStdString ();
+
+    int preflightCount = 0;
+    int commitCount = 0;
+    RobotProjectImportCallbacks callbacks;
+    callbacks.preflight = [&preflightCount] (const QString& path, const QString&, QString*) {
+        ++preflightCount;
+        return QFileInfo (path).isFile ();
+    };
+    callbacks.confirmClose = [] (QString*) { return true; };
+    callbacks.commit = [&] (const QString& managedSource,
+                            const QString& projectRoot,
+                            QString* callbackError) {
+        ++commitCount;
+        if (!QFileInfo (managedSource).isFile ()) {
+            if (callbackError != nullptr)
+                *callbackError = QStringLiteral ("managed source was not committed");
+            return false;
+        }
+        ProjectResource model;
+        model.id = QStringLiteral ("robot-model.main");
+        model.kind = QStringLiteral ("robwork.robot-model");
+        model.path = QStringLiteral ("generated/robot-models/TestRobot.rmb.json");
+        model.ownership = QStringLiteral ("generated");
+        model.required = true;
+        model.dependencies << QStringLiteral ("robot-source.main");
+        const QString modelPath = QDir (projectRoot).filePath (model.path);
+        if (!QDir ().mkpath (QFileInfo (modelPath).absolutePath ()))
+            return false;
+        QFile modelFile (modelPath);
+        if (!modelFile.open (QIODevice::WriteOnly) || modelFile.write ("{}") != 2)
+            return false;
+        bool created = false;
+        const bool registered = studio.ensureGeneratedProjectResource (
+            model, &created, callbackError);
+        if (registered)
+            modelProvider.adoptGeneratedResource (model.id);
+        return registered && created;
+    };
+
+    ASSERT_TRUE (studio.createProjectFromRobotFilePaths (
+        urdf, targetProject, callbacks, &error)) << error.toStdString ();
+    EXPECT_EQ (2, preflightCount);
+    EXPECT_EQ (1, commitCount);
+    EXPECT_EQ (QDir::cleanPath (target.path ()), QDir::cleanPath (studio.projectDirectory ()));
+    EXPECT_TRUE (QFileInfo::exists (targetProject));
+    const std::vector< std::string > recentAfter = recentProjects (studio);
+    EXPECT_NE (recentBefore, recentAfter);
+    ASSERT_FALSE (recentAfter.empty ());
+    EXPECT_EQ (targetProject.toStdString (), recentAfter.back ());
+
+    ASSERT_TRUE (studio.saveCurrentProject (&error)) << error.toStdString ();
+    QFile manifestFile (targetProject);
+    ASSERT_TRUE (manifestFile.open (QIODevice::ReadOnly));
+    ProjectManifest saved;
+    ASSERT_TRUE (ProjectManifestJson::fromJson (manifestFile.readAll (), saved, &error))
+        << error.toStdString ();
+    ProjectResource model;
+    ASSERT_TRUE (saved.findResource (QStringLiteral ("robot-model.main"), model));
+    EXPECT_EQ (QStringList () << QStringLiteral ("robot-source.main"), model.dependencies);
 }
 
 #ifndef WIN32

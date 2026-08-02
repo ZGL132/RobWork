@@ -41,6 +41,7 @@
 #include <QMainWindow>
 #include <boost/any.hpp>
 #include <boost/function.hpp>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -64,6 +65,13 @@ namespace rws {
 
 class AboutBox;
 class RobWorkStudioPlugin;
+
+struct RobotProjectImportCallbacks
+{
+    std::function< bool (const QString&, const QString&, QString*) > preflight;
+    std::function< bool (QString*) > confirmClose;
+    std::function< bool (const QString&, const QString&, QString*) > commit;
+};
 
 /** @addtogroup rws
     @{ */
@@ -97,6 +105,11 @@ class RobWorkStudio : public QMainWindow
 
     static RobotProjectSourceKind classifyRobotProjectSource (const QString& sourcePath,
                                                                QString* error = nullptr);
+    bool createProjectFromRobotFilePaths (
+        const QString& sourcePath,
+        const QString& projectFile,
+        const RobotProjectImportCallbacks& callbacks,
+        QString* error = nullptr);
 
     /**
      * @brief 注册由业务插件拥有的项目文档 Provider。

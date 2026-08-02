@@ -1044,6 +1044,130 @@ void RobWorkStudio::newProject ()
     updateProjectWindowTitle ();
 }
 
+bool RobWorkStudio::createProjectFromRobotFilePaths (
+    const QString& sourcePath,
+    const QString& projectFile,
+    const RobotProjectImportCallbacks& callbacks,
+    QString* error)
+{
+    if (error != nullptr)
+        error->clear ();
+    if (sourcePath.trimmed ().isEmpty () || projectFile.trimmed ().isEmpty ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Robot source and target project paths are required.");
+        return false;
+    }
+    if (!callbacks.preflight || !callbacks.commit) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Robot project import callbacks are incomplete.");
+        return false;
+    }
+
+    const QString absoluteProjectFile = QFileInfo (projectFile).absoluteFilePath ();
+    const QString projectRoot = QFileInfo (absoluteProjectFile).absolutePath ();
+    if (!callbacks.preflight (sourcePath, projectRoot, error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QStringLiteral ("The robot source failed RobotModelBuilder preflight.");
+        return false;
+    }
+
+    PreparedRobotProject prepared;
+    if (!_projectManager.prepareProjectFromRobotFile (
+            absoluteProjectFile, sourcePath, prepared, error))
+        return false;
+
+    const QString managedSourceProjectPath = prepared.packaged.sourceResource.path;
+    const QString stagedManagedSource =
+        prepared.packaged.stagedFilesByProjectPath.value (managedSourceProjectPath);
+    if (stagedManagedSource.isEmpty () ||
+        !callbacks.preflight (stagedManagedSource, projectRoot, error)) {
+        ProjectManager::discardPreparedRobotProject (prepared);
+        if (error != nullptr && error->isEmpty ())
+            *error = QStringLiteral ("The managed robot source could not be preflighted.");
+        return false;
+    }
+
+    if (callbacks.confirmClose && !callbacks.confirmClose (error)) {
+        ProjectManager::discardPreparedRobotProject (prepared);
+        return false;
+    }
+    if (!_projectManager.activatePreparedRobotProject (prepared, error)) {
+        ProjectManager::discardPreparedRobotProject (prepared);
+        return false;
+    }
+
+    const QString previousProjectFile = prepared.previousProjectFilePath;
+    const ProjectManifest previousManifest = prepared.previousManifest;
+    const auto restorePreviousProject = [&] (const QString& failure) {
+        _projectDocuments.closeResources ();
+
+        QString rollbackError;
+        const bool rolledBack =
+            _projectManager.rollbackActivatedRobotProject (prepared, &rollbackError);
+
+        QString reopenError;
+        bool reopened = true;
+        if (previousProjectFile.isEmpty ()) {
+            createEmptyWorkCell ();
+        }
+        else {
+            reopened = _projectDocuments.loadProjectResources (
+                previousManifest, previousProjectFile, &reopenError);
+            if (reopened && previousManifest.entryPoints.value (
+                                QStringLiteral ("mainWorkCell")).isEmpty ())
+                createEmptyWorkCell ();
+            else if (!reopened)
+                createEmptyWorkCell ();
+        }
+        updateProjectWindowTitle ();
+
+        QStringList details;
+        if (!failure.isEmpty ())
+            details.push_back (failure);
+        if (!rolledBack)
+            details.push_back (QStringLiteral ("Candidate cleanup failed: %1").arg (rollbackError));
+        if (!reopened)
+            details.push_back (QStringLiteral ("Previous project resources could not be reopened: %1")
+                                   .arg (reopenError));
+        if (error != nullptr)
+            *error = details.join (QLatin1Char ('\n'));
+        return false;
+    };
+
+    _projectDocuments.closeResources ();
+    closeWorkCell ();
+    QString registryError;
+    if (!_projectDocuments.loadProjectResources (
+            prepared.manifest, prepared.projectFilePath, &registryError)) {
+        return restorePreviousProject (
+            QStringLiteral ("The candidate robot project resources could not be loaded: %1")
+                .arg (registryError));
+    }
+    if (prepared.manifest.entryPoints.value (
+            QStringLiteral ("mainWorkCell")).isEmpty ())
+        createEmptyWorkCell ();
+
+    const QString managedSource =
+        QDir (projectRoot).filePath (managedSourceProjectPath);
+    QString commitError;
+    if (!callbacks.commit (QDir::cleanPath (managedSource), projectRoot, &commitError)) {
+        if (commitError.isEmpty ())
+            commitError = QStringLiteral ("RobotModelBuilder could not commit the managed robot source.");
+        return restorePreviousProject (commitError);
+    }
+
+    _settingsMap->set< std::string > ("PreviousOpenDirectory",
+                                      projectRoot.toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (absoluteProjectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
+    prepared = PreparedRobotProject {};
+    return true;
+}
+
 // 从 URDF/XML 机器人文件创建草稿项目：主窗口只创建空项目并通过 Qt 元对象把源文件
 // 交给可选的 RobotModelBuilder 插件，避免主程序对该插件产生静态链接依赖。
 void RobWorkStudio::createProjectFromRobotFile ()
@@ -1072,38 +1196,6 @@ void RobWorkStudio::createProjectFromRobotFile ()
         return;
     }
 
-    QString projectFile = QFileDialog::getSaveFileName (
-        this, tr ("New RobWorkStudio Project"), QFileInfo (sourcePath).absolutePath (),
-        tr ("RobWorkStudio Project (*.rwproj)"));
-    if (projectFile.isEmpty ())
-        return;
-    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
-        projectFile += QStringLiteral (".rwproj");
-    if (!confirmProjectClose ())
-        return;
-
-    ProjectManifest manifest;
-    manifest.project.name = QFileInfo (projectFile).completeBaseName ();
-    manifest.project.description = QString::fromUtf8 ("由 RobWorkStudio 机器人文件草稿创建的项目");
-    manifest.settings.insert (QStringLiteral ("pathPolicy"), QStringLiteral ("project-relative"));
-
-    QString error;
-    if (!_projectManager.createProject (projectFile, manifest, &error)) {
-        QMessageBox::critical (this, tr ("Create Project Failed"), error);
-        return;
-    }
-
-    _projectDocuments.closeResources ();
-    createEmptyWorkCell ();
-    _settingsMap->set< std::string > ("PreviousOpenDirectory",
-                                      QFileInfo (projectFile).absolutePath ().toStdString ());
-    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
-        "LastOpennedFiles", std::vector< std::string > ());
-    recent.push_back (projectFile.toStdString ());
-    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
-    updateLastFiles ();
-    updateProjectWindowTitle ();
-
     RobWorkStudioPlugin* builder = NULL;
     for (RobWorkStudioPlugin* plugin : getPlugins ()) {
         if (plugin != NULL && plugin->name () == QStringLiteral ("RobotModelBuilder")) {
@@ -1111,21 +1203,78 @@ void RobWorkStudio::createProjectFromRobotFile ()
             break;
         }
     }
-    if (builder == NULL) {
-        QMessageBox::warning (this, tr ("RobotModelBuilder Unavailable"),
-                              tr ("The project draft was created, but RobotModelBuilder is not loaded. "
-                                  "Load the plugin and import the robot file before freezing requirements."));
+    const QByteArray preflightSignature =
+        QMetaObject::normalizedSignature (
+            "preflightRobotProjectSource(QString,QString)");
+    const QByteArray commitSignature =
+        QMetaObject::normalizedSignature (
+            "commitRobotProjectSource(QString,QString)");
+    if (builder == NULL || builder->metaObject ()->indexOfMethod (preflightSignature) < 0 ||
+        builder->metaObject ()->indexOfMethod (commitSignature) < 0) {
+        QMessageBox::warning (
+            this, tr ("RobotModelBuilder Unavailable"),
+            tr ("RobotModelBuilder with managed robot-project preflight and commit support "
+                "must be loaded before creating a project from URDF."));
         return;
     }
 
+    QString projectFile = QFileDialog::getSaveFileName (
+        this, tr ("New RobWorkStudio Project"), QFileInfo (sourcePath).absolutePath (),
+        tr ("RobWorkStudio Project (*.rwproj)"));
+    if (projectFile.isEmpty ())
+        return;
+    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
+        projectFile += QStringLiteral (".rwproj");
+
+    RobotProjectImportCallbacks callbacks;
+    callbacks.preflight = [builder] (const QString& path,
+                                     const QString& projectRoot,
+                                     QString* error) {
+        QString result;
+        if (!QMetaObject::invokeMethod (
+                builder, "preflightRobotProjectSource", Qt::DirectConnection,
+                Q_RETURN_ARG (QString, result), Q_ARG (QString, path),
+                Q_ARG (QString, projectRoot))) {
+            if (error != nullptr)
+                *error = QStringLiteral ("RobotModelBuilder preflight invocation failed.");
+            return false;
+        }
+        if (error != nullptr)
+            *error = result;
+        return result.isEmpty ();
+    };
+    callbacks.confirmClose = [this] (QString* error) {
+        const bool confirmed = confirmProjectClose ();
+        if (!confirmed && error != nullptr)
+            error->clear ();
+        return confirmed;
+    };
+    callbacks.commit = [builder] (const QString& path,
+                                  const QString& projectRoot,
+                                  QString* error) {
+        QString result;
+        if (!QMetaObject::invokeMethod (
+                builder, "commitRobotProjectSource", Qt::DirectConnection,
+                Q_RETURN_ARG (QString, result), Q_ARG (QString, path),
+                Q_ARG (QString, projectRoot))) {
+            if (error != nullptr)
+                *error = QStringLiteral ("RobotModelBuilder commit invocation failed.");
+            return false;
+        }
+        if (error != nullptr)
+            *error = result;
+        return result.isEmpty ();
+    };
+
+    QString error;
+    if (!createProjectFromRobotFilePaths (
+            sourcePath, projectFile, callbacks, &error)) {
+        if (!error.isEmpty ())
+            QMessageBox::critical (this, tr ("Create Project Failed"), error);
+        return;
+    }
     if (!builder->isVisible ())
         builder->showPlugin ();
-    if (!QMetaObject::invokeMethod (builder, "importRobotProjectSource", Qt::DirectConnection,
-                                    Q_ARG (QString, sourcePath))) {
-        QMessageBox::warning (this, tr ("RobotModelBuilder Unavailable"),
-                              tr ("The project draft was created, but the loaded RobotModelBuilder "
-                                  "does not support robot-file project import."));
-    }
 }
 
 // 从既有 WorkCell 创建项目：项目文件和资源复制完成后，先释放旧项目 Provider，再复用统一
