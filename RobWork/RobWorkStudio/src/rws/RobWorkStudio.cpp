@@ -1435,8 +1435,27 @@ bool RobWorkStudio::ensureGeneratedProjectResource (const ProjectResource& resou
         }
         if (desiredDependencies != existing.dependencies) {
             existing.dependencies = desiredDependencies;
-            if (!_projectManager.replaceResourceAndAddAssets (existing, {}, error))
+            ProjectManifest candidateManifest = _projectManager.manifest ();
+            for (ProjectResource& candidateResource : candidateManifest.resources) {
+                if (candidateResource.id == existing.id) {
+                    candidateResource = existing;
+                    break;
+                }
+            }
+            if (!_projectDocuments.synchronizeLoadedResources (
+                    candidateManifest, _projectManager.projectFilePath (), error))
                 return false;
+            if (!_projectManager.replaceResourceAndAddAssets (existing, {}, error)) {
+                const QString replacementError = error == nullptr ? QString () : *error;
+                QString rollbackError;
+                if (!_projectDocuments.synchronizeLoadedResources (
+                        _projectManager.manifest (), _projectManager.projectFilePath (),
+                        &rollbackError) && error != nullptr) {
+                    *error = replacementError + QString::fromUtf8 (
+                        " Registry 回滚失败：%1").arg (rollbackError);
+                }
+                return false;
+            }
             updateProjectWindowTitle ();
         }
         return true;

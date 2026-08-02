@@ -832,8 +832,13 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
     std::string importError;
     // 冻结需求是跨插件的只读交付物。所有文件解析、模型一致性复核及 P2 能力边界检查均由
     // 服务层完成；界面不能直接把可编辑 RequirementSet 转成任务点，以免绕过冻结审计门禁。
-    if (!FrozenRequirementProjectImportService::createProblem(
-            path, *_scenarioWorkCell, _scenarioState, problem, &validation, &importError)) {
+    const bool imported = managedRequirement
+        ? FrozenRequirementProjectImportService::createProblem(
+              path, *_scenarioWorkCell, _scenarioState, problem, &validation, &importError,
+              _studio->projectDirectory())
+        : FrozenRequirementProjectImportService::createProblem(
+              path, *_scenarioWorkCell, _scenarioState, problem, &validation, &importError);
+    if (!imported) {
         QMessageBox::warning(this, "创建结构优化项目失败",
                              QString::fromStdString(importError));
         return;

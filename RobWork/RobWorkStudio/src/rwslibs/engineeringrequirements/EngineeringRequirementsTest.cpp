@@ -78,6 +78,37 @@ int fail(const char* expression, int line)
 #define REQUIRE(expression) \
     do { if (!(expression)) return fail(#expression, __LINE__); } while (false)
 
+int testHistoricalRequirementFreezerAbiRemainsLinkable()
+{
+    using Freeze = bool (*)(const rws::RequirementSet&, const rw::models::WorkCell&,
+                            const rw::kinematics::State&, const rws::RobotModelSpec&,
+                            rws::FrozenRequirementArtifact&, std::string*);
+    using IsCurrent = bool (*)(const rws::FrozenRequirementArtifact&,
+                               const rws::RequirementSet&, const rw::models::WorkCell&,
+                               const rw::kinematics::State&, const rws::RobotModelSpec&,
+                               std::string*);
+    using IsScenarioCurrent = bool (*)(const rws::FrozenRequirementArtifact&,
+                                       const rw::models::WorkCell&,
+                                       const rw::kinematics::State&, std::string*);
+    using ValidateScenario = bool (*)(const rws::FrozenRequirementArtifact&,
+                                      const rw::models::WorkCell&,
+                                      const rw::kinematics::State&,
+                                      rws::FrozenRequirementValidationResult*, std::string*);
+
+    const Freeze freeze = static_cast<Freeze>(&rws::RequirementFreezer::freeze);
+    const IsCurrent isCurrent = static_cast<IsCurrent>(&rws::RequirementFreezer::isCurrent);
+    const IsScenarioCurrent isScenarioCurrent =
+        static_cast<IsScenarioCurrent>(&rws::RequirementFreezer::isScenarioCurrent);
+    const ValidateScenario validateScenario =
+        static_cast<ValidateScenario>(&rws::RequirementFreezer::validateScenario);
+
+    REQUIRE(freeze != nullptr);
+    REQUIRE(isCurrent != nullptr);
+    REQUIRE(isScenarioCurrent != nullptr);
+    REQUIRE(validateScenario != nullptr);
+    return 0;
+}
+
 int testFrozenRequirementCompilesOnlyEngineeringTasks()
 {
     rws::RequirementSet requirements;
@@ -1484,6 +1515,10 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "abi") {
+        QCoreApplication app(argc, argv);
+        return testHistoricalRequirementFreezerAbiRemainsLinkable();
+    }
     if (argc > 1 && std::string(argv[1]) == "relative_source_base") {
         QCoreApplication app(argc, argv);
         return testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory();
@@ -1524,6 +1559,8 @@ int main(int argc, char** argv)
     }
     QCoreApplication app(argc, argv);
     (void)app;
+    if (testHistoricalRequirementFreezerAbiRemainsLinkable() != 0)
+        return 1;
     if (testFrozenRequirementCompilesOnlyEngineeringTasks() != 0)
         return 1;
     if (testJsonRoundTripPreservesBindingAndFrozenSnapshot() != 0)

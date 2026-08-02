@@ -104,8 +104,11 @@ class RequirementFreezer {
   public:
     static bool freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
                        const rw::kinematics::State& state, const RobotModelSpec& model,
-                       FrozenRequirementArtifact& artifact, std::string* error = nullptr,
-                       const std::string& projectRoot = std::string());
+                       FrozenRequirementArtifact& artifact, std::string* error = nullptr);
+    static bool freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
+                       const rw::kinematics::State& state, const RobotModelSpec& model,
+                       FrozenRequirementArtifact& artifact, std::string* error,
+                       const std::string& projectRoot);
 
     /**
      * @brief 校验一个已冻结工件是否仍对应当前需求、模型与工程场景。
@@ -119,8 +122,14 @@ class RequirementFreezer {
                           const rw::models::WorkCell& workcell,
                           const rw::kinematics::State& state,
                           const RobotModelSpec& model,
-                          std::string* error = nullptr,
-                          const std::string& artifactBaseDirectory = {},
+                          std::string* error = nullptr);
+    static bool isCurrent(const FrozenRequirementArtifact& artifact,
+                          const RequirementSet& requirements,
+                          const rw::models::WorkCell& workcell,
+                          const rw::kinematics::State& state,
+                          const RobotModelSpec& model,
+                          std::string* error,
+                          const std::string& artifactBaseDirectory,
                           FrozenRequirementValidationResult* validationResult = nullptr);
 
     /**
@@ -133,15 +142,24 @@ class RequirementFreezer {
     static bool isScenarioCurrent(const FrozenRequirementArtifact& artifact,
                                   const rw::models::WorkCell& workcell,
                                   const rw::kinematics::State& state,
-                                  std::string* error = nullptr,
-                                  const std::string& artifactBaseDirectory = {});
+                                  std::string* error = nullptr);
+    static bool isScenarioCurrent(const FrozenRequirementArtifact& artifact,
+                                  const rw::models::WorkCell& workcell,
+                                  const rw::kinematics::State& state,
+                                  std::string* error,
+                                  const std::string& artifactBaseDirectory);
 
     static bool validateScenario(const FrozenRequirementArtifact& artifact,
                                  const rw::models::WorkCell& workcell,
                                  const rw::kinematics::State& state,
                                  FrozenRequirementValidationResult* result = nullptr,
-                                 std::string* error = nullptr,
-                                 const std::string& artifactBaseDirectory = {});
+                                 std::string* error = nullptr);
+    static bool validateScenario(const FrozenRequirementArtifact& artifact,
+                                 const rw::models::WorkCell& workcell,
+                                 const rw::kinematics::State& state,
+                                 FrozenRequirementValidationResult* result,
+                                 std::string* error,
+                                 const std::string& artifactBaseDirectory);
 };
 
 /**

@@ -47,8 +47,9 @@ struct CandidateModelBuildResult {
 class CandidateModelFactory {
   public:
     //! Resolves model-relative external geometry paths before changing saveDirectory.
-    static void resolveExternalAssetPaths(
-        RobotModelSpec& spec, const std::string& baseDirectory = {});
+    static void resolveExternalAssetPaths(RobotModelSpec& spec);
+    static void resolveExternalAssetPaths(RobotModelSpec& spec,
+                                          const std::string& baseDirectory);
 
     /**
      * @brief 将冻结需求中的工装/工件场景合入候选机器人规格。

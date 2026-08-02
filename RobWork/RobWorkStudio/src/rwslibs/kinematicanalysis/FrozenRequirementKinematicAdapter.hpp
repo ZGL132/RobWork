@@ -44,8 +44,13 @@ class FrozenRequirementKinematicAdapter
                       const rw::models::WorkCell& workcell,
                       const rw::kinematics::State& state,
                       std::vector<TaskPoint>& output,
-                      std::string* error = nullptr,
-                      const std::string& artifactBaseDirectory = {});
+                      std::string* error = nullptr);
+    static bool apply(const FrozenRequirementArtifact& artifact,
+                      const rw::models::WorkCell& workcell,
+                      const rw::kinematics::State& state,
+                      std::vector<TaskPoint>& output,
+                      std::string* error,
+                      const std::string& artifactBaseDirectory);
 
     static bool applyWithValidation(const FrozenRequirementArtifact& artifact,
                       const rw::models::WorkCell& workcell,
@@ -53,8 +58,15 @@ class FrozenRequirementKinematicAdapter
                       std::vector<TaskPoint>& output,
                       std::string* error,
                       bool* robotStateChanged = nullptr,
-                      std::vector<std::string>* warnings = nullptr,
-                      const std::string& artifactBaseDirectory = {});
+                      std::vector<std::string>* warnings = nullptr);
+    static bool applyWithValidation(const FrozenRequirementArtifact& artifact,
+                      const rw::models::WorkCell& workcell,
+                      const rw::kinematics::State& state,
+                      std::vector<TaskPoint>& output,
+                      std::string* error,
+                      bool* robotStateChanged,
+                      std::vector<std::string>* warnings,
+                      const std::string& artifactBaseDirectory);
 };
 
 } // namespace rws

@@ -9,6 +9,8 @@
 #include <QTemporaryDir>
 #include <gtest/gtest.h>
 
+#include <functional>
+
 namespace {
 
 // 测试用假 Provider：不接触真实文档格式，只记录加载/关闭事件、按需写暂存文件，
@@ -30,6 +32,8 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     {
         if (_events != nullptr)
             _events->push_back (QStringLiteral ("load:") + resource.id);
+        if (_onLoad)
+            _onLoad (resource);
         if (resource.id == _failingLoadResource) {
             if (error != nullptr)
                 *error = QString::fromUtf8 ("模拟可选资源加载失败");
@@ -43,6 +47,8 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
                        const QString& targetPath,
                        QString* error) override
     {
+        _lastSavedResource = resource;
+        _lastSavePath = targetPath;
         if (resource.id == _failingResource) {
             if (error != nullptr)
                 *error = QString::fromUtf8 ("模拟保存失败");
@@ -81,6 +87,12 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     void markDirty (const QString& resourceId) { _dirtyResources.insert (resourceId); }
     void failSaving (const QString& resourceId) { _failingResource = resourceId; }
     void failLoading (const QString& resourceId) { _failingLoadResource = resourceId; }
+    void onLoad (std::function< void (const rws::ProjectResource&) > callback)
+    {
+        _onLoad = std::move (callback);
+    }
+    const rws::ProjectResource& lastSavedResource () const { return _lastSavedResource; }
+    QString lastSavePath () const { return _lastSavePath; }
 
   private:
     QString _failingLoadResource;
@@ -89,6 +101,9 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     QStringList* _events;             // 可选事件记录（load:xxx / close:xxx）。
     QSet< QString > _dirtyResources;  // 当前被标记为脏的资源集合。
     QString _failingResource;         // 保存时强制失败资源的 ID（为空则不模拟失败）。
+    rws::ProjectResource _lastSavedResource;
+    QString _lastSavePath;
+    std::function< void (const rws::ProjectResource&) > _onLoad;
 };
 
 // 构造一个 project 归属的测试资源：固定 id/kind/path，路径按项目相对路径解析。
@@ -145,6 +160,116 @@ TEST (ProjectDocumentRegistryTest, LoadsResourcesInDependencyOrder)
     ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error))
         << error.toStdString ();
     EXPECT_EQ ((QStringList {"load:dependency", "load:consumer"}), events);
+}
+
+TEST (ProjectDocumentRegistryTest, SynchronizesLoadedDescriptorsAndLifecycleWithoutReload)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectManifest original;
+    original.resources.push_back (resource ("consumer", "test.document", "old/consumer.txt"));
+    original.resources.push_back (resource ("dependency", "test.document", "dependency.txt"));
+    ASSERT_TRUE (registry.loadProjectResources (original, projectFile, &error));
+    EXPECT_EQ ((QStringList {"load:consumer", "load:dependency"}), events);
+
+    rws::ProjectManifest updated = original;
+    updated.resources[0].path = QStringLiteral ("new/consumer.txt");
+    updated.resources[0].dependencies = {QStringLiteral ("dependency")};
+    events.clear ();
+    ASSERT_TRUE (registry.synchronizeLoadedResources (updated, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_TRUE (events.isEmpty ());
+
+    provider.markDirty ("consumer");
+    ASSERT_TRUE (registry.saveDirtyResources (updated, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ ((QStringList {"dependency"}), provider.lastSavedResource ().dependencies);
+    EXPECT_EQ (QDir::cleanPath (QDir (directory.path ()).filePath ("new")),
+               QDir::cleanPath (QFileInfo (provider.lastSavePath ()).absolutePath ()));
+    EXPECT_TRUE (QFileInfo (provider.lastSavePath ()).fileName ().contains (
+        QStringLiteral (".rwstage-")));
+
+    events.clear ();
+    registry.closeResources ();
+    EXPECT_EQ ((QStringList {"close:consumer", "close:dependency"}), events);
+}
+
+TEST (ProjectDocumentRegistryTest, FailedSynchronizationLeavesLoadedStateUntouched)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectManifest original;
+    original.resources.push_back (resource ("first", "test.document", "first.txt"));
+    original.resources.push_back (resource ("second", "test.document", "second.txt"));
+    ASSERT_TRUE (registry.loadProjectResources (original, projectFile, &error));
+
+    rws::ProjectManifest incompatible = original;
+    incompatible.resources[0].kind = QStringLiteral ("test.incompatible-document");
+    incompatible.resources[1].dependencies = {QStringLiteral ("first")};
+    EXPECT_FALSE (registry.synchronizeLoadedResources (incompatible, projectFile, &error));
+
+    provider.markDirty ("first");
+    ASSERT_TRUE (registry.saveDirtyResources (original, projectFile, &error));
+    EXPECT_EQ (QStringLiteral ("test.document"), provider.lastSavedResource ().kind);
+    EXPECT_EQ (QStringLiteral ("first.txt"), provider.lastSavedResource ().path);
+
+    events.clear ();
+    registry.closeResources ();
+    EXPECT_EQ ((QStringList {"close:second", "close:first"}), events);
+}
+
+TEST (ProjectDocumentRegistryTest, DefersReentrantSynchronizationUntilLoadCompletes)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+    QStringList events;
+    FakeDocumentProvider provider ("provider.test", "test.document", &events);
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&provider, &error));
+
+    rws::ProjectManifest legacy;
+    legacy.resources.push_back (resource ("consumer", "test.document", "consumer.txt"));
+    legacy.resources.push_back (resource ("dependency", "test.document", "dependency.txt"));
+    rws::ProjectManifest reconciled = legacy;
+    reconciled.resources[0].dependencies = {QStringLiteral ("dependency")};
+
+    bool synchronizedDuringLoad = false;
+    provider.onLoad ([&] (const rws::ProjectResource& loaded) {
+        if (loaded.id != QStringLiteral ("consumer") || synchronizedDuringLoad)
+            return;
+        synchronizedDuringLoad = registry.synchronizeLoadedResources (
+            reconciled, projectFile, &error);
+    });
+
+    ASSERT_TRUE (registry.loadProjectResources (legacy, projectFile, &error))
+        << error.toStdString ();
+    ASSERT_TRUE (synchronizedDuringLoad) << error.toStdString ();
+    EXPECT_EQ ((QStringList {"load:consumer", "load:dependency"}), events);
+
+    provider.markDirty ("consumer");
+    ASSERT_TRUE (registry.saveDirtyResources (reconciled, projectFile, &error))
+        << error.toStdString ();
+    EXPECT_EQ ((QStringList {"dependency"}), provider.lastSavedResource ().dependencies);
+
+    events.clear ();
+    registry.closeResources ();
+    EXPECT_EQ ((QStringList {"close:consumer", "close:dependency"}), events);
 }
 
 TEST (ProjectDocumentRegistryTest, LoadsConsumerWithManagedPassiveAssetDependency)

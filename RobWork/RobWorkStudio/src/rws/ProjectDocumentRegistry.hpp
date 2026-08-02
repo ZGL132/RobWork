@@ -60,6 +60,12 @@ class ProjectDocumentRegistry
                          const QString& projectFilePath,
                          QString* error = nullptr);
 
+    // 原子刷新已加载资源的清单描述、解析路径和拓扑顺序，但不调用业务 Provider 重载。
+    // 候选清单任一校验失败时保持当前 Registry 完全不变。
+    bool synchronizeLoadedResources (const ProjectManifest& manifest,
+                                     const QString& projectFilePath,
+                                     QString* error = nullptr);
+
     // 询问所有已加载资源是否都允许关闭；任一资源拒绝关闭则返回 false 并回填原因。
     bool canClose (QString* reason = nullptr) const;
     // 按依赖逆序关闭全部已加载资源，并清空加载列表。
@@ -96,6 +102,10 @@ class ProjectDocumentRegistry
     QHash< QString, ProjectDocumentProvider* > _providersById;    // providerId → Provider。
     QHash< QString, ProjectDocumentProvider* > _providersByKind;  // kind → Provider。
     QVector< LoadedResource > _loaded;                            // 当前已加载的资源（按加载顺序）。
+    bool _loadingProjectResources = false;
+    bool _hasDeferredSynchronization = false;
+    ProjectManifest _deferredSynchronizationManifest;
+    QString _deferredSynchronizationProjectFilePath;
 };
 
 }    // namespace rws

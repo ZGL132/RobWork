@@ -68,6 +68,26 @@ static int require (bool condition, const std::string& what)
     return 0;
 }
 
+static int testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ()
+{
+    using Apply = bool (*) (const rws::FrozenRequirementArtifact&,
+                            const rw::models::WorkCell&, const rw::kinematics::State&,
+                            std::vector< rws::TaskPoint >&, std::string*);
+    using ApplyWithValidation = bool (*) (
+        const rws::FrozenRequirementArtifact&, const rw::models::WorkCell&,
+        const rw::kinematics::State&, std::vector< rws::TaskPoint >&, std::string*, bool*,
+        std::vector< std::string >*);
+
+    const Apply apply = static_cast< Apply > (&rws::FrozenRequirementKinematicAdapter::apply);
+    const ApplyWithValidation applyWithValidation = static_cast< ApplyWithValidation > (
+        &rws::FrozenRequirementKinematicAdapter::applyWithValidation);
+
+    if (const int rc = require (apply != nullptr, "historical apply ABI symbol"))
+        return rc;
+    return require (applyWithValidation != nullptr,
+                    "historical applyWithValidation ABI symbol");
+}
+
 // 浮点断言:失败时同时打印 expected / actual。
 static int assertNear (double actual, double expected, double eps, const std::string& what)
 {
@@ -2722,6 +2742,8 @@ static int testJsonAndCollisionHelpers ()
 
 static int runAll ()
 {
+    if (const int rc = testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ())
+        return rc;
     if (const int rc = testTypes ())
         return rc;
     if (const int rc = testMetrics ())
@@ -2780,6 +2802,8 @@ int main (int argc, char** argv)
     int rc                 = 0;
     if (suite == "all")
         rc = runAll ();
+    else if (suite == "abi")
+        rc = testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ();
     else if (suite == "types")
         rc = testTypes ();
     else if (suite == "metrics")

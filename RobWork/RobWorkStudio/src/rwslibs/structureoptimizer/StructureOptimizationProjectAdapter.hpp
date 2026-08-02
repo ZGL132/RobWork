@@ -13,8 +13,10 @@ class StructureOptimizationProjectAdapter
 public:
     static bool loadProject(const QString& path, StructureOptimizationProblem& out,
                             int* selectedCandidateIndex = nullptr,
-                            QString* error = nullptr,
-                            const QString& projectRoot = QString());
+                            QString* error = nullptr);
+    static bool loadProject(const QString& path, StructureOptimizationProblem& out,
+                            int* selectedCandidateIndex, QString* error,
+                            const QString& projectRoot);
     static bool saveProject(const QString& path, const StructureOptimizationProblem& problem,
                             int selectedCandidateIndex = -1, QString* error = nullptr);
 

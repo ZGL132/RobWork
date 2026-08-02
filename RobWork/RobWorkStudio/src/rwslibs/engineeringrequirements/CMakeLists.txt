@@ -85,6 +85,11 @@ if(build)
             set(ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM offscreen)
         endif()
         set_tests_properties(
+            sdurws_engineeringrequirements_widget_test
+            PROPERTIES
+                ENVIRONMENT "QT_QPA_PLATFORM=${ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM}"
+        )
+        set_tests_properties(
             sdurws_engineeringrequirements_managed_project_root_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_engineeringrequirements_test>

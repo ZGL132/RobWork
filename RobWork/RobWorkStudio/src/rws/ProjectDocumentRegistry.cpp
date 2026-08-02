@@ -90,6 +90,17 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
     // 文档仍保持原状，不会因为尚未开始的加载尝试而被提前释放。
     closeResources ();
 
+    _loadingProjectResources = true;
+    _hasDeferredSynchronization = false;
+    _deferredSynchronizationManifest = ProjectManifest ();
+    _deferredSynchronizationProjectFilePath.clear ();
+    const auto abandonDeferredSynchronization = [this] () {
+        _loadingProjectResources = false;
+        _hasDeferredSynchronization = false;
+        _deferredSynchronizationManifest = ProjectManifest ();
+        _deferredSynchronizationProjectFilePath.clear ();
+    };
+
     const ProjectDocumentContext context = makeContext (manifest, projectFilePath);
     for (const ProjectResource& resource : ordered) {
         // 被动资产只用于完整性、克隆和打包，不代表可编辑文档。文件存在性由
@@ -105,6 +116,7 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
                           QString::fromUtf8 ("必需资源“%1”没有可用 Provider，kind=%2。")
                               .arg (resource.id)
                               .arg (resource.kind));
+                abandonDeferredSynchronization ();
                 closeResources ();
                 return false;
             }
@@ -137,6 +149,7 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
             if (error != nullptr && error->isEmpty ()) {
                 *error = QString::fromUtf8 ("加载项目资源失败：%1。").arg (resource.id);
             }
+            abandonDeferredSynchronization ();
             closeResources ();
             return false;
         }
@@ -147,6 +160,20 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
         loaded.provider = provider;
         loaded.resolvedPath = resolvedPath;
         _loaded.push_back (loaded);
+    }
+
+    _loadingProjectResources = false;
+    if (_hasDeferredSynchronization) {
+        const ProjectManifest deferredManifest = _deferredSynchronizationManifest;
+        const QString deferredProjectFilePath = _deferredSynchronizationProjectFilePath;
+        _hasDeferredSynchronization = false;
+        _deferredSynchronizationManifest = ProjectManifest ();
+        _deferredSynchronizationProjectFilePath.clear ();
+        if (!synchronizeLoadedResources (
+                deferredManifest, deferredProjectFilePath, error)) {
+            closeResources ();
+            return false;
+        }
     }
     return true;
 }
@@ -297,6 +324,68 @@ bool ProjectDocumentRegistry::reloadResource (const ProjectResource& resource,
 
     loaded.resource = resource;
     loaded.resolvedPath = resolvedPath;
+    return true;
+}
+
+bool ProjectDocumentRegistry::synchronizeLoadedResources (const ProjectManifest& manifest,
+                                                          const QString& projectFilePath,
+                                                          QString* error)
+{
+    QVector< ProjectResource > ordered;
+    if (!buildLoadOrder (manifest, ordered, error))
+        return false;
+
+    QHash< QString, LoadedResource > loadedById;
+    for (const LoadedResource& loaded : _loaded)
+        loadedById.insert (loaded.resource.id, loaded);
+
+    QVector< LoadedResource > synchronized;
+    synchronized.reserve (_loaded.size ());
+    for (const ProjectResource& resource : ordered) {
+        if (!loadedById.contains (resource.id))
+            continue;
+
+        const LoadedResource previous = loadedById.take (resource.id);
+        ProjectDocumentProvider* provider = providerForKind (resource.kind);
+        if (provider == nullptr || provider != previous.provider) {
+            setError (error,
+                      QString::fromUtf8 ("资源“%1”的 Provider 类型不能在同步时改变。")
+                          .arg (resource.id));
+            return false;
+        }
+
+        QString resolvedPath;
+        if (!ProjectPathResolver::resolveResource (
+                projectFilePath, resource, resolvedPath, error))
+            return false;
+
+        LoadedResource candidate;
+        candidate.resource = resource;
+        candidate.provider = provider;
+        candidate.resolvedPath = resolvedPath;
+        synchronized.push_back (candidate);
+    }
+
+    if (!loadedById.isEmpty ()) {
+        setError (error,
+                  QString::fromUtf8 ("候选清单缺少已加载资源：%1。")
+                      .arg (loadedById.constBegin ().key ()));
+        return false;
+    }
+
+    if (_loadingProjectResources) {
+        // Provider 加载可同步触发清单依赖协调。此时当前资源尚未登记，立即替换只会
+        // 同步一个不完整子集；保留最后一个已校验候选，待加载循环登记完全部资源后
+        // 再一次性更新描述和拓扑顺序。
+        _deferredSynchronizationManifest = manifest;
+        _deferredSynchronizationProjectFilePath = projectFilePath;
+        _hasDeferredSynchronization = true;
+    }
+    else {
+        _loaded = synchronized;
+    }
+    if (error != nullptr)
+        error->clear ();
     return true;
 }
 

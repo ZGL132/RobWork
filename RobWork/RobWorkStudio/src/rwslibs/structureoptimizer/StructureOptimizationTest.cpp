@@ -97,6 +97,29 @@ static void require(bool condition, const char* file, int line, const char* expr
 
 #define REQUIRE(cond) require((cond), __FILE__, __LINE__, #cond)
 
+static void testHistoricalStructureOptimizerAbiRemainsLinkable()
+{
+    using ResolveExternalAssetPaths = void (*)(rws::RobotModelSpec&);
+    using LoadProject = bool (*)(const QString&, rws::StructureOptimizationProblem&, int*,
+                                 QString*);
+    using CreateProblem = bool (*)(const QString&, const rw::models::WorkCell&,
+                                   const rw::kinematics::State&,
+                                   rws::StructureOptimizationProblem&,
+                                   rws::FrozenRequirementValidationResult*, std::string*);
+
+    const ResolveExternalAssetPaths resolveExternalAssetPaths =
+        static_cast<ResolveExternalAssetPaths>(
+            &rws::CandidateModelFactory::resolveExternalAssetPaths);
+    const LoadProject loadProject =
+        static_cast<LoadProject>(&rws::StructureOptimizationProjectAdapter::loadProject);
+    const CreateProblem createProblem = static_cast<CreateProblem>(
+        &rws::FrozenRequirementProjectImportService::createProblem);
+
+    REQUIRE(resolveExternalAssetPaths != nullptr);
+    REQUIRE(loadProject != nullptr);
+    REQUIRE(createProblem != nullptr);
+}
+
 static QString sourcePath(const QString& relativePath)
 {
     return QDir(QStringLiteral(STRUCTUREOPTIMIZER_TEST_SOURCE_DIR)).filePath(relativePath);
@@ -2282,6 +2305,148 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testManagedFrozenRequirementImportUsesExplicitProjectRoot()
+{
+    std::printf("testManagedFrozenRequirementImportUsesExplicitProjectRoot ... ");
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    const QString projectRoot = directory.filePath("ManagedProject");
+    const QString nestedRoot = QDir(projectRoot).filePath("data/frozen");
+    const QString deviceRoot = QDir(projectRoot).filePath("devices");
+    const QString assetRoot = QDir(projectRoot).filePath("assets");
+    REQUIRE(QDir().mkpath(nestedRoot));
+    REQUIRE(QDir().mkpath(QDir(deviceRoot).filePath("geometry")));
+    REQUIRE(QDir().mkpath(assetRoot));
+
+    const QString urSourceRoot = sourcePath(
+        "RobWork/example/ModelData/XMLDevices/UR-6-85-5-A");
+    REQUIRE(QFile::copy(QDir(urSourceRoot).filePath("UR.wc.xml"),
+                        QDir(deviceRoot).filePath("UR.wc.xml")));
+    const QDir sourceGeometry(QDir(urSourceRoot).filePath("geometry"));
+    for (const QString& fileName : sourceGeometry.entryList(QDir::Files)) {
+        REQUIRE(QFile::copy(sourceGeometry.filePath(fileName),
+                            QDir(deviceRoot).filePath("geometry/" + fileName)));
+    }
+    REQUIRE(QFile::copy(sourceGeometry.filePath("base.stl"),
+                        QDir(assetRoot).filePath("fixture.stl")));
+
+    const QString workcellPath = QDir(projectRoot).filePath("scenes/main.wc.xml");
+    REQUIRE(QDir().mkpath(QFileInfo(workcellPath).absolutePath()));
+    QFile workcellFile(workcellPath);
+    REQUIRE(workcellFile.open(QIODevice::WriteOnly | QIODevice::Text));
+    const QByteArray workcellXml =
+        "<WorkCell name=\"ManagedImportScene\">\n"
+        "  <Frame name=\"Fixture\" refframe=\"WORLD\" />\n"
+        "  <Drawable name=\"FixtureMesh\" refframe=\"Fixture\">\n"
+        "    <Polytope file=\"../assets/fixture.stl\" />\n"
+        "  </Drawable>\n"
+        "  <Include file=\"../devices/UR.wc.xml\" />\n"
+        "</WorkCell>\n";
+    REQUIRE(workcellFile.write(workcellXml) == workcellXml.size());
+    workcellFile.close();
+
+    const rw::models::WorkCell::Ptr workcell =
+        rw::loaders::WorkCellLoader::Factory::load(workcellPath.toStdString());
+    REQUIRE(!workcell.isNull());
+    if (workcell.isNull()) {
+        std::printf("FAILED (%d)\n", g_testFailures);
+        return;
+    }
+    QStringList conversionWarnings;
+    rws::RobotModelSpec model = rws::WorkCellConverter::convert(
+        *workcell, workcell->getDefaultState(), nestedRoot.toStdString(), conversionWarnings);
+    REQUIRE(rws::WorkCellConverter::hasConvertibleRobotModel(model));
+    REQUIRE(!workcell->getDevices().empty());
+    if (!workcell->getDevices().empty()) {
+        model.robotName = workcell->getDevices().front()->getName();
+        model.includes.clear();
+        model.imported = rws::ImportedDocumentSpec();
+    }
+
+    const QString modelPath = QDir(nestedRoot).filePath("robot.rmb.json");
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray modelJson = QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(model));
+    REQUIRE(modelFile.write(modelJson) == modelJson.size());
+    modelFile.close();
+
+    rws::RequirementSet requirements;
+    requirements.name = "Managed nested requirement";
+    requirements.frozen = true;
+    requirements.modelBinding.sourcePath = "robot.rmb.json";
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    rws::PoseTask station;
+    station.id = "managed-load";
+    station.name = "Managed load";
+    station.level = rws::RequirementLevel::Must;
+    station.refFrame = "WORLD";
+    station.tcpFrame = workcell->getDevices().front()->getEnd()->getName();
+    requirements.poseTasks.push_back(station);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    const bool frozen = rws::RequirementFreezer::freeze(
+        requirements, *workcell, workcell->getDefaultState(), model, artifact, &error,
+        projectRoot.toStdString());
+    if (!frozen)
+        std::fprintf(stderr, "Managed import freeze error: %s\n", error.c_str());
+    REQUIRE(frozen);
+    const QString requirementPath = QDir(nestedRoot).filePath("cell.requirements.json");
+    QJsonObject requirementProject = rws::RequirementSetJson::toObject(requirements);
+    requirementProject["frozenArtifact"] = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QFile requirementFile(requirementPath);
+    REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(requirementFile.write(QJsonDocument(requirementProject).toJson()) > 0);
+    requirementFile.close();
+
+    rws::StructureOptimizationProblem heuristicProblem;
+    rws::FrozenRequirementValidationResult validation;
+    const bool heuristicImported = rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, workcell->getDefaultState(), heuristicProblem,
+        &validation, &error);
+    if (!heuristicImported)
+        std::fprintf(stderr, "Heuristic import error: %s\n", error.c_str());
+    REQUIRE(heuristicImported);
+    rws::CandidateModelBuildRequest heuristicRequest;
+    heuristicRequest.spec = heuristicProblem.context.modelSpec;
+    heuristicRequest.deviceName = heuristicProblem.context.deviceName;
+    heuristicRequest.checkCollision = false;
+    heuristicRequest.scenarioSnapshot = &heuristicProblem.scenarioSnapshot;
+    heuristicRequest.scenarioBaseDirectory = heuristicProblem.scenarioSnapshot.baseDirectory;
+    REQUIRE(!rws::CandidateModelFactory().build(heuristicRequest).ok);
+
+    rws::StructureOptimizationProblem managedProblem;
+    const bool managedImported = rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, workcell->getDefaultState(), managedProblem,
+        &validation, &error, projectRoot);
+    if (!managedImported)
+        std::fprintf(stderr, "Managed import error: %s\n", error.c_str());
+    REQUIRE(managedImported);
+    REQUIRE(QDir::cleanPath(QString::fromStdString(managedProblem.scenarioSnapshot.baseDirectory)) ==
+            QDir::cleanPath(projectRoot));
+    rws::CandidateModelBuildRequest managedRequest;
+    managedRequest.spec = managedProblem.context.modelSpec;
+    managedRequest.deviceName = managedProblem.context.deviceName;
+    managedRequest.checkCollision = false;
+    managedRequest.scenarioSnapshot = &managedProblem.scenarioSnapshot;
+    managedRequest.scenarioBaseDirectory = managedProblem.scenarioSnapshot.baseDirectory;
+    const rws::CandidateModelBuildResult managedBuild =
+        rws::CandidateModelFactory().build(managedRequest);
+    if (!managedBuild.ok) {
+        for (const rws::AnalysisWarning& warning : managedBuild.warnings)
+            std::fprintf(stderr, "Managed candidate build error: %s\n", warning.message.c_str());
+    }
+    REQUIRE(managedBuild.ok);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testProjectFactory()
 {
     std::printf("testProjectFactory ... ");
@@ -2869,19 +3034,7 @@ static void testStructureOptimizerResourceDependencies()
     studio.openFile(projectPath.toStdString());
     REQUIRE(!studio.projectDirectory().isEmpty());
 
-    rws::StructureOptimizationProblem problem;
-    std::string factoryError;
-    REQUIRE(rws::StructureOptimizationProjectFactory::create(
-        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path()),
-        problem, &factoryError));
-    rws::StructureOptimizerWidget* widget =
-        qobject_cast<rws::StructureOptimizerWidget*>(plugin.widget());
-    REQUIRE(widget != nullptr);
-    if (widget != nullptr) {
-        widget->setProblem(problem);
-        REQUIRE(QMetaObject::invokeMethod(
-            widget, "projectDocumentChanged", Qt::DirectConnection));
-    }
+    REQUIRE(qobject_cast<rws::StructureOptimizerWidget*>(plugin.widget()) != nullptr);
     REQUIRE(studio.saveCurrentProject(&error));
 
     rws::ProjectManager verificationManager;
@@ -3319,6 +3472,12 @@ int main(int argc, char** argv)
 
     const std::string suite = argc > 1 ? argv[1] : std::string();
 
+    if (suite == "abi") {
+        QCoreApplication app(argc, argv);
+        testHistoricalStructureOptimizerAbiRemainsLinkable();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     if (suite == "accepted_ur") {
         QCoreApplication app(argc, argv);
         testAcceptedUr6585AProject();
@@ -3367,6 +3526,8 @@ int main(int argc, char** argv)
 
     QCoreApplication app(argc, argv);
 
+    testHistoricalStructureOptimizerAbiRemainsLinkable();
+
     if (suite == "model_factory") {
         testModelFactory();
         if (g_testFailures == 0) {
@@ -3380,6 +3541,7 @@ int main(int argc, char** argv)
     if (suite == "frozen_requirements") {
         testFrozenEngineeringRequirementArtifactAdapter();
         testFrozenRequirementProjectImportCreatesAuditableProblem();
+        testManagedFrozenRequirementImportUsesExplicitProjectRoot();
         if (g_testFailures == 0) {
             std::printf("All frozen requirement tests passed.\n");
             return 0;
@@ -3452,6 +3614,7 @@ int main(int argc, char** argv)
     testConstraintModelAndProjectAdapter();
     testFrozenEngineeringRequirementArtifactAdapter();
     testFrozenRequirementProjectImportCreatesAuditableProblem();
+    testManagedFrozenRequirementImportUsesExplicitProjectRoot();
     testProjectFactory();
     testProjectFactoryProvenance();
     testExportService();

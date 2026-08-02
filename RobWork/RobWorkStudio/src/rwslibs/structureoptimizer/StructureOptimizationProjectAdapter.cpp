@@ -56,6 +56,13 @@ StructureOptimizationProblem portableProblem(const QString& projectPath,
 
 bool StructureOptimizationProjectAdapter::loadProject(
     const QString& path, StructureOptimizationProblem& out, int* selectedCandidateIndex,
+    QString* error)
+{
+    return loadProject(path, out, selectedCandidateIndex, error, QString());
+}
+
+bool StructureOptimizationProjectAdapter::loadProject(
+    const QString& path, StructureOptimizationProblem& out, int* selectedCandidateIndex,
     QString* error, const QString& projectRoot)
 {
     QFile file(path);

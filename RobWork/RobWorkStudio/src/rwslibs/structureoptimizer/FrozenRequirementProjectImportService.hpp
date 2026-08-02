@@ -41,6 +41,14 @@ class FrozenRequirementProjectImportService
                               StructureOptimizationProblem& problem,
                               FrozenRequirementValidationResult* validation = nullptr,
                               std::string* error = nullptr);
+
+    static bool createProblem(const QString& requirementPath,
+                              const rw::models::WorkCell& workcell,
+                              const rw::kinematics::State& state,
+                              StructureOptimizationProblem& problem,
+                              FrozenRequirementValidationResult* validation,
+                              std::string* error,
+                              const QString& artifactBaseDirectory);
 };
 
 } // namespace rws

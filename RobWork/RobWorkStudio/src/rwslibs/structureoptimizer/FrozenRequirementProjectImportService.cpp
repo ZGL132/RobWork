@@ -65,6 +65,18 @@ bool FrozenRequirementProjectImportService::createProblem(
     FrozenRequirementValidationResult* validation,
     std::string* error)
 {
+    return createProblem(requirementPath, workcell, state, problem, validation, error, QString());
+}
+
+bool FrozenRequirementProjectImportService::createProblem(
+    const QString& requirementPath,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    StructureOptimizationProblem& problem,
+    FrozenRequirementValidationResult* validation,
+    std::string* error,
+    const QString& artifactBaseDirectory)
+{
     const QFileInfo requirementInfo(requirementPath);
     if (requirementPath.trimmed().isEmpty() || !requirementInfo.isFile())
         return setError(error, "Engineering requirement file does not exist.");
@@ -109,12 +121,13 @@ bool FrozenRequirementProjectImportService::createProblem(
     if (artifact.modelBinding.sourcePath.empty() || !QFileInfo(modelPath).isFile())
         return setError(error, "Frozen engineering requirement model snapshot does not exist.");
 
-    const QString artifactBaseDirectory = commonDirectory(
-        requirementInfo.absolutePath(), QFileInfo(modelPath).absolutePath());
+    const QString resolvedArtifactBaseDirectory = artifactBaseDirectory.trimmed().isEmpty()
+        ? commonDirectory(requirementInfo.absolutePath(), QFileInfo(modelPath).absolutePath())
+        : QFileInfo(artifactBaseDirectory).absoluteFilePath();
     FrozenRequirementValidationResult scenarioValidation;
     if (!RequirementFreezer::validateScenario(
             artifact, workcell, state, &scenarioValidation, &parseMessage,
-            artifactBaseDirectory.toStdString()))
+            resolvedArtifactBaseDirectory.toStdString()))
         return setError(error, parseMessage);
 
     QFile modelFile(modelPath);
@@ -131,7 +144,7 @@ bool FrozenRequirementProjectImportService::createProblem(
         return setError(error, "Structure optimization project creation failed: " + parseMessage);
     if (!EngineeringRequirementArtifactAdapter::apply(artifact, created, &parseMessage))
         return setError(error, "Frozen engineering requirements cannot be applied: " + parseMessage);
-    created.scenarioSnapshot.baseDirectory = artifactBaseDirectory.toStdString();
+    created.scenarioSnapshot.baseDirectory = resolvedArtifactBaseDirectory.toStdString();
 
     problem = created;
     if (validation != nullptr)

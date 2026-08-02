@@ -64,6 +64,11 @@ void mergeFrozenScenario(RobotModelSpec& candidate,
 
 } // namespace
 
+void CandidateModelFactory::resolveExternalAssetPaths(RobotModelSpec& spec)
+{
+    resolveExternalAssetPaths(spec, std::string());
+}
+
 void CandidateModelFactory::resolveExternalAssetPaths (
     RobotModelSpec& spec, const std::string& baseDirectory)
 {
