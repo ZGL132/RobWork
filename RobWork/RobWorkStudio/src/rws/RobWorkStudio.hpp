@@ -43,6 +43,7 @@
 #include <boost/function.hpp>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -50,6 +51,7 @@ class QCloseEvent;
 class QDragEnterEvent;
 class QDragDropEvent;
 class QDragMoveEvent;
+class QEvent;
 class QSettings;
 class QTimer;
 class QToolBar;
@@ -66,6 +68,7 @@ namespace rws {
 class AboutBox;
 class RobWorkStudioPlugin;
 class RobWorkStudio;
+class WorkflowDockLayoutController;
 
 QString robotProjectWorkCellReadinessError (const RobWorkStudio* studio);
 
@@ -164,6 +167,9 @@ class RobWorkStudio : public QMainWindow
 
     // 返回主 WorkCell 的稳定资源 ID，使依赖设备和 TCP 名称的插件配置总在场景之后加载。
     QString mainWorkCellResourceId () const;
+
+    void configureWorkflowDockLayout ();
+    QString activeWorkflowDockName () const;
 
     /**
      * @brief 通知主窗口重新汇总 Provider 脏状态并刷新标题栏。
@@ -379,7 +385,7 @@ class RobWorkStudio : public QMainWindow
      * @param event [in] the Qt event.
      * @return true if handled, false otherwise.
      */
-    bool event (QEvent* event);
+    bool event (QEvent* event) override;
 
     ///////////////////////////////
     // Listener Interface
@@ -743,6 +749,7 @@ class RobWorkStudio : public QMainWindow
     // 项目创建、打开、另存为或关闭后广播新的根目录。业务插件据此刷新运行时输出位置，
     // 不需要从 WorkCell 的历史文件路径推导目录，也不会在项目间残留旧绝对路径。
     void projectContextChanged (const QString& projectDirectory);
+    void activeWorkCellChanged ();
 
   private:
     // all events are defined here
@@ -757,6 +764,8 @@ class RobWorkStudio : public QMainWindow
     PositionSelectedEvent _positionSelectedEvent;
 
   public Q_SLOTS:
+    void notifyWorkflowRobotModelLoaded (const QString& filename);
+
     /**
      * @brief Slot for changing the common timed state path.
      * @param path [in] the path.
@@ -902,6 +911,8 @@ class RobWorkStudio : public QMainWindow
     // 把主窗口的 WorkCell 文档接入项目生命周期的 Provider（非拥有型指针，
     // 由主窗口在析构时 delete）。
     WorkCellProjectDocumentProvider* _workCellProvider;
+    std::unique_ptr< WorkflowDockLayoutController > _workflowDockLayoutController;
+    bool _workflowDockLayoutStartupPending = false;
 
     std::map< std::string, bool > _plugins_loaded;
     std::map< std::string, std::string > _plugin2fileName;

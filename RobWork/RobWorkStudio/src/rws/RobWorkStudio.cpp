@@ -23,6 +23,7 @@
 #include "ProjectPathResolver.hpp"
 #include "ProjectSaveTransaction.hpp"
 #include "RobWorkStudioPlugin.hpp"
+#include "WorkflowDockLayoutController.hpp"
 
 #include <rw/common/TimerUtil.hpp>
 #include <rw/core/Exception.hpp>
@@ -3118,6 +3119,28 @@ QString RobWorkStudio::mainWorkCellResourceId () const
     return _projectManager.manifest ().entryPoints.value (QStringLiteral ("mainWorkCell"));
 }
 
+void RobWorkStudio::configureWorkflowDockLayout ()
+{
+    if (_workflowDockLayoutController == nullptr)
+        _workflowDockLayoutController = std::make_unique< WorkflowDockLayoutController > (this);
+    _workflowDockLayoutController->applyLayout ();
+    _workflowDockLayoutStartupPending = _workflowDockLayoutController->hasPendingInitialWidth ();
+}
+
+void RobWorkStudio::notifyWorkflowRobotModelLoaded (const QString& filename)
+{
+    if (_workflowDockLayoutController == nullptr)
+        _workflowDockLayoutController = std::make_unique< WorkflowDockLayoutController > (this);
+    _workflowDockLayoutController->notifyRobotModelLoaded (filename);
+}
+
+QString RobWorkStudio::activeWorkflowDockName () const
+{
+    if (_workflowDockLayoutController == nullptr)
+        return QString ();
+    return _workflowDockLayoutController->activeDockName ();
+}
+
 QString rws::robotProjectWorkCellReadinessError (const RobWorkStudio* studio)
 {
     if (studio == nullptr || studio->projectDirectory ().isEmpty () ||
@@ -3701,6 +3724,7 @@ bool RobWorkStudio::tryOpenWorkCellFile (const QString& filename)
     _view->setState (_state);
 
     openAllPlugins ();
+    Q_EMIT activeWorkCellChanged ();
     return loadedSuccessfully;
 }
 
@@ -3749,6 +3773,7 @@ void RobWorkStudio::setWorkcell (rw::models::WorkCell::Ptr workcell)
         _view->setWorkCell (_workcell);
         _view->setState (_state);
         openAllPlugins ();
+        Q_EMIT activeWorkCellChanged ();
 
         double scale = this->calculateWorkCellSize ().diagonal ().norm2 ();
         // set maximum zoom scale at 2m and minimum at 20cm
@@ -3779,6 +3804,7 @@ void RobWorkStudio::closeWorkCell ()
     closeAllPlugins ();
 
     updateHandler ();
+    Q_EMIT activeWorkCellChanged ();
 }
 
 void RobWorkStudio::showSolidTriggered ()
@@ -3999,6 +4025,16 @@ void RobWorkStudio::postGenericAnyEvent (const std::string& id, boost::any data)
 
 bool RobWorkStudio::event (QEvent* event)
 {
+    if (event->type () == QEvent::LayoutRequest) {
+        const bool handled = QMainWindow::event (event);
+        if (_workflowDockLayoutStartupPending && isVisible () &&
+            _workflowDockLayoutController != nullptr) {
+            _workflowDockLayoutController->finalizeInitialWidth ();
+            _workflowDockLayoutStartupPending = false;
+        }
+        return handled;
+    }
+
     // WARNING: only use this pointer if you know its the right type
     RobWorkStudioEvent* rwse = static_cast< RobWorkStudioEvent* > (event);
     if (event->type () == RobWorkStudioEvent::SetStateEvent) {

@@ -46,6 +46,7 @@ if(build)
         RWSImageLoaderPlugin.cpp
         ImageUtil.cpp
         RobWorkStudio.cpp
+        WorkflowDockLayoutController.cpp
         RWStudioView3D.cpp
         SceneOpenGLViewer.cpp
         RobWorkStudioPlugin.cpp
@@ -72,6 +73,7 @@ if(build)
         ImageUtil.hpp
         # FixedAxisController.hpp
         RobWorkStudio.hpp
+        WorkflowDockLayoutController.hpp
         RWSSpinBox.hpp
         SceneOpenGLViewer.hpp
         RobWorkStudioPlugin.hpp

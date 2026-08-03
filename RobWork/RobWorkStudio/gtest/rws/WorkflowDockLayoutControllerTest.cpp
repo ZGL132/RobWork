@@ -40,6 +40,26 @@ class NamedWorkflowDock : public rws::RobWorkStudioPlugin
     explicit NamedWorkflowDock (const QString& name) : RobWorkStudioPlugin (name, QIcon ()) {}
 };
 
+class LookalikeTabDock : public rws::RobWorkStudioPlugin
+{
+  public:
+    LookalikeTabDock () : RobWorkStudioPlugin (QStringLiteral ("Unrelated"), QIcon ())
+    {
+        _tabs = new QTabBar (this);
+        _tabs->addTab (QStringLiteral ("EngineeringRequirements"));
+        _tabs->addTab (QStringLiteral ("RobotModelBuilder"));
+        _tabs->addTab (QStringLiteral ("KinematicAnalysis"));
+        _tabs->addTab (QStringLiteral ("StructureOptimizer"));
+        _tabs->addTab (QStringLiteral ("UnrelatedTab"));
+        _tabs->setCurrentIndex (4);
+    }
+
+    QTabBar* tabs () const { return _tabs; }
+
+  private:
+    QTabBar* _tabs;
+};
+
 void addNamedWorkflowDocks (rws::RobWorkStudio& studio)
 {
     for (const QString& name : {QStringLiteral ("EngineeringRequirements"),
@@ -62,7 +82,11 @@ QStringList tabNames (const QTabBar& tabBar)
 QTabBar* workflowTabBar (rws::RobWorkStudio& studio)
 {
     for (QTabBar* tabBar : studio.findChildren< QTabBar* > ()) {
-        if (tabNames (*tabBar).contains (QStringLiteral ("RobotModelBuilder")))
+        if (tabNames (*tabBar) ==
+            QStringList {QStringLiteral ("EngineeringRequirements"),
+                         QStringLiteral ("RobotModelBuilder"),
+                         QStringLiteral ("KinematicAnalysis"),
+                         QStringLiteral ("StructureOptimizer")})
             return tabBar;
     }
     return nullptr;
@@ -201,4 +225,36 @@ TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)
     EXPECT_TRUE (tabs->isTabEnabled (1));
     EXPECT_TRUE (tabs->isTabEnabled (2));
     EXPECT_TRUE (tabs->isTabEnabled (3));
+}
+
+TEST (WorkflowDockLayout, IgnoresUnrelatedTabBarsWhenLockingAndSelectingActiveDock)
+{
+    int argc = 1;
+    char name[] = "WorkflowDockLayoutControllerTest";
+    char* argv[1] = {name};
+    QApplication application (argc, argv);
+    rw::core::PropertyMap settings;
+    rws::RobWorkStudio studio (settings);
+    auto* unrelated = new LookalikeTabDock ();
+    studio.addPlugin (unrelated, false, Qt::LeftDockWidgetArea);
+    addNamedWorkflowDocks (studio);
+
+    studio.configureWorkflowDockLayout ();
+    studio.show ();
+    processUiEvents ();
+
+    QTabBar* tabs = workflowTabBar (studio);
+    ASSERT_NE (nullptr, tabs);
+    EXPECT_FALSE (tabs->isTabEnabled (0));
+    EXPECT_TRUE (tabs->isTabEnabled (1));
+    EXPECT_FALSE (tabs->isTabEnabled (2));
+    EXPECT_FALSE (tabs->isTabEnabled (3));
+    EXPECT_EQ (QStringLiteral ("RobotModelBuilder"), studio.activeWorkflowDockName ());
+
+    ASSERT_NE (nullptr, unrelated->tabs ());
+    EXPECT_TRUE (unrelated->tabs ()->isTabEnabled (0));
+    EXPECT_TRUE (unrelated->tabs ()->isTabEnabled (1));
+    EXPECT_TRUE (unrelated->tabs ()->isTabEnabled (2));
+    EXPECT_TRUE (unrelated->tabs ()->isTabEnabled (3));
+    EXPECT_TRUE (unrelated->tabs ()->isTabEnabled (4));
 }

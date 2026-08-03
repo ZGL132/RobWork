@@ -146,6 +146,8 @@ class RobWorkStudioPlugin : public QDockWidget
     //! set current state of RobWorkStudio
     void setState (const rw::kinematics::State& state);
 
+    QAction* visibilityAction () { return &_showAction; }
+
   public Q_SLOTS:
     //! @brief toggles the visibility of the plugin
     void showPlugin ();
