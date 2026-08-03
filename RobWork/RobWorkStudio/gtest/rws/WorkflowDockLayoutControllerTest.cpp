@@ -227,6 +227,68 @@ TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)
     EXPECT_TRUE (tabs->isTabEnabled (3));
 }
 
+TEST (WorkflowDockLayout, ClosingActiveModelWorkCellRelocksDownstreamDocks)
+{
+    int argc = 1;
+    char name[] = "WorkflowDockLayoutControllerTest";
+    char* argv[1] = {name};
+    QApplication application (argc, argv);
+    rw::core::PropertyMap settings;
+    rws::RobWorkStudio studio (settings);
+    QTemporaryDir sceneDirectory;
+    ASSERT_TRUE (sceneDirectory.isValid ());
+    const QString sceneFile = sceneDirectory.filePath (QStringLiteral ("robot.wc.xml"));
+    QFile scene (sceneFile);
+    const QByteArray sceneXml ("<WorkCell name=\"Robot\" />\n");
+    ASSERT_TRUE (scene.open (QIODevice::WriteOnly));
+    ASSERT_EQ (sceneXml.size (), scene.write (sceneXml));
+    scene.close ();
+    studio.setWorkCell (sceneFile.toStdString ());
+    ASSERT_NE (nullptr, studio.getWorkCell ().get ());
+    addNamedWorkflowDocks (studio);
+
+    studio.configureWorkflowDockLayout ();
+    studio.show ();
+    processUiEvents ();
+
+    const std::vector< rws::RobWorkStudioPlugin* >& docks = studio.getPlugins ();
+    ASSERT_EQ (5U, docks.size ());
+    const std::array< QAction*, 5 > actions = visibilityActions (docks);
+    studio.notifyWorkflowRobotModelLoaded (QFileInfo (sceneFile).canonicalFilePath ());
+    processUiEvents ();
+
+    QTabBar* tabs = workflowTabBar (studio);
+    ASSERT_NE (nullptr, tabs);
+    EXPECT_TRUE (docks[0]->isEnabled ());
+    EXPECT_TRUE (docks[2]->isEnabled ());
+    EXPECT_TRUE (docks[3]->isEnabled ());
+    EXPECT_TRUE (actions[0]->isEnabled ());
+    EXPECT_TRUE (actions[2]->isEnabled ());
+    EXPECT_TRUE (actions[3]->isEnabled ());
+    EXPECT_TRUE (tabs->isTabEnabled (0));
+    EXPECT_TRUE (tabs->isTabEnabled (2));
+    EXPECT_TRUE (tabs->isTabEnabled (3));
+
+    studio.closeWorkCell ();
+    processUiEvents ();
+
+    EXPECT_FALSE (docks[0]->isEnabled ());
+    EXPECT_TRUE (docks[1]->isEnabled ());
+    EXPECT_FALSE (docks[2]->isEnabled ());
+    EXPECT_FALSE (docks[3]->isEnabled ());
+    EXPECT_TRUE (docks[4]->isEnabled ());
+    EXPECT_FALSE (actions[0]->isEnabled ());
+    EXPECT_TRUE (actions[1]->isEnabled ());
+    EXPECT_FALSE (actions[2]->isEnabled ());
+    EXPECT_FALSE (actions[3]->isEnabled ());
+    EXPECT_TRUE (actions[4]->isEnabled ());
+    EXPECT_FALSE (tabs->isTabEnabled (0));
+    EXPECT_TRUE (tabs->isTabEnabled (1));
+    EXPECT_FALSE (tabs->isTabEnabled (2));
+    EXPECT_FALSE (tabs->isTabEnabled (3));
+    EXPECT_EQ (QStringLiteral ("RobotModelBuilder"), studio.activeWorkflowDockName ());
+}
+
 TEST (WorkflowDockLayout, IgnoresUnrelatedTabBarsWhenLockingAndSelectingActiveDock)
 {
     int argc = 1;
