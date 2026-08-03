@@ -56,6 +56,8 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
     Q_INVOKABLE QVariantMap snapshotNewRobotProjectState ();
     Q_INVOKABLE QString restoreNewRobotProjectState (const QByteArray& snapshot);
 
+    Q_SIGNAL void robotModelLoaded (const QString& filename);
+
   public Q_SLOTS:
     void importRobotProjectSource (const QString& sourcePath);
 

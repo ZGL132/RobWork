@@ -375,7 +375,7 @@ int RobWorkStudioApp::run ()
 #endif
 #ifdef RWS_HAVE_PLUGIN_JOG
 
-                rwstudio.addPlugin (new rws::Jog (), false, Qt::LeftDockWidgetArea);
+                rwstudio.addPlugin (new rws::Jog (), false, Qt::RightDockWidgetArea);
 #endif
 #ifdef RWS_HAVE_PLUGIN_TREEVIEW
 
@@ -402,15 +402,15 @@ int RobWorkStudioApp::run ()
                 rwstudio.addPlugin (
                     new rws::WorkcellEditorPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
-#ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
-
-                rwstudio.addPlugin (
-                    new rws::RobotModelBuilderPlugin (), false, Qt::LeftDockWidgetArea);
-#endif
 #ifdef RWS_HAVE_PLUGIN_ENGINEERINGREQUIREMENTS
 
                 rwstudio.addPlugin (
                     new rws::EngineeringRequirementsPlugin (), false, Qt::LeftDockWidgetArea);
+#endif
+#ifdef RWS_HAVE_PLUGIN_ROBOTMODELBUILDER
+
+                rwstudio.addPlugin (
+                    new rws::RobotModelBuilderPlugin (), false, Qt::LeftDockWidgetArea);
 #endif
 #ifdef RWS_HAVE_PLUGIN_KINEMATICANALYSIS
 
@@ -485,6 +485,7 @@ int RobWorkStudioApp::run ()
                 if (!rwsplugin.empty ()) {
                     rwstudio.loadPlugin (rwsplugin);
                 }
+                rwstudio.configureWorkflowDockLayout ();
 
                 // load configuration into RobWorkStudio
                 if (showSplash) {

@@ -23,6 +23,7 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QLayout>
+#include <QObject>
 #include <QTabBar>
 #include <QTabWidget>
 #include <QTimer>
@@ -109,6 +110,8 @@ void WorkflowDockLayoutController::applyLayout ()
     RobWorkStudioPlugin* analysis = docks.value (AnalysisDock);
     RobWorkStudioPlugin* optimizer = docks.value (OptimizerDock);
     RobWorkStudioPlugin* jog = docks.value (JogDock);
+    QObject::connect (builder, SIGNAL (robotModelLoaded (QString)), _studio,
+                      SLOT (notifyWorkflowRobotModelLoaded (QString)), Qt::UniqueConnection);
 
     _studio->setTabPosition (Qt::LeftDockWidgetArea, QTabWidget::North);
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer}) {

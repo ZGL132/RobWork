@@ -49,8 +49,10 @@ bool hasInvokableOperation (const QMetaObject& metaObject,
 
 int main (int argc, char** argv)
 {
-    QApplication application (argc, argv);
     const QMetaObject& metaObject = rws::RobotModelBuilderPlugin::staticMetaObject;
+    if (metaObject.indexOfSignal ("robotModelLoaded(QString)") < 0)
+        return fail ("A completed RobotModelBuilder load must emit robotModelLoaded(QString).");
+    QApplication application (argc, argv);
     if (!hasQStringOperation (
             metaObject, "preflightRobotProjectSource(QString,QString)"))
         return fail ("Robot source preflight must be an invokable QString operation.");

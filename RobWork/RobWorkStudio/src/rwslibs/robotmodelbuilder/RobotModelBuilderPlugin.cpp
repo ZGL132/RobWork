@@ -17,6 +17,7 @@
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QScopedValueRollback>
 
@@ -460,9 +461,16 @@ void RobotModelBuilderPlugin::loadSceneFile (const QString& filename)
         }
         _widget->setProjectStatus (
             "Generated scene loaded as the managed project WorkCell. Use File > Save Project to commit it.");
+        Q_EMIT robotModelLoaded (filename);
         return;
     }
 
     _ignoreNextOpenFromSelfLoad = true;
     studio->setWorkcell (filename.toStdString ());
+    const QString canonicalFilename = QFileInfo (filename).canonicalFilePath ();
+    const rw::models::WorkCell::Ptr activeWorkCell = studio->getWorkcell ();
+    if (!canonicalFilename.isEmpty () && activeWorkCell != NULL &&
+        QFileInfo (QString::fromStdString (activeWorkCell->getFilename ())).canonicalFilePath () ==
+            canonicalFilename)
+        Q_EMIT robotModelLoaded (filename);
 }
