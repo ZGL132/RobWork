@@ -22,6 +22,15 @@
 #include <QXmlStreamReader>
 
 #include <algorithm>
+#include <atomic>
+#include <cstring>
+
+#ifndef Q_OS_WIN
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 namespace rws {
 namespace {
@@ -32,6 +41,105 @@ void setError (QString* error, const QString& message)
     if (error != nullptr)
         *error = message;
 }
+
+#ifndef Q_OS_WIN
+QString manifestIoError (const QString& operation, const QString& path)
+{
+    return QStringLiteral ("%1 failed for '%2': %3")
+        .arg (operation, path, QString::fromLocal8Bit (strerror (errno)));
+}
+
+bool splitManifestPath (const QString& path, QStringList& parentComponents,
+                        QByteArray& fileName, QString* error)
+{
+    if (!path.startsWith (QLatin1Char ('/'))) {
+        setError (error, QStringLiteral ("Project manifest path must be absolute: %1").arg (path));
+        return false;
+    }
+    const QStringList raw = path.split (QLatin1Char ('/'), Qt::KeepEmptyParts);
+    QStringList components;
+    for (int index = 1; index < raw.size (); ++index) {
+        if (raw[index].isEmpty () || raw[index] == QStringLiteral (".") ||
+            raw[index] == QStringLiteral ("..")) {
+            setError (error,
+                      QStringLiteral ("Project manifest path contains an unsafe component: %1")
+                          .arg (path));
+            return false;
+        }
+        components.push_back (raw[index]);
+    }
+    if (components.isEmpty ()) {
+        setError (error, QStringLiteral ("Project manifest path has no filename: %1").arg (path));
+        return false;
+    }
+    fileName = QFile::encodeName (components.takeLast ());
+    parentComponents = components;
+    return true;
+}
+
+int openManifestParent (const QStringList& components, const QString& path, QString* error)
+{
+    int current = open ("/", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    if (current < 0) {
+        setError (error, manifestIoError (QStringLiteral ("Opening filesystem root"), path));
+        return -1;
+    }
+    for (const QString& component : components) {
+        const QByteArray name = QFile::encodeName (component);
+        const int next = openat (
+            current, name.constData (), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+        if (next < 0) {
+            setError (error, manifestIoError (QStringLiteral ("Opening manifest parent"), path));
+            close (current);
+            return -1;
+        }
+        close (current);
+        current = next;
+    }
+    return current;
+}
+
+bool manifestParentIdentityMatches (int anchoredParent, const QStringList& components,
+                                    const QString& path, QString* error)
+{
+    struct stat anchored {};
+    if (fstat (anchoredParent, &anchored) != 0) {
+        setError (error, manifestIoError (QStringLiteral ("Inspecting manifest parent"), path));
+        return false;
+    }
+    const int currentParent = openManifestParent (components, path, error);
+    if (currentParent < 0)
+        return false;
+    struct stat current {};
+    const bool inspected = fstat (currentParent, &current) == 0;
+    close (currentParent);
+    if (!inspected || anchored.st_dev != current.st_dev || anchored.st_ino != current.st_ino) {
+        setError (error,
+                  QStringLiteral ("Project manifest parent identity changed during commit: %1")
+                      .arg (path));
+        return false;
+    }
+    return true;
+}
+
+bool writeAll (int descriptor, const QByteArray& bytes, const QString& path, QString* error)
+{
+    qsizetype offset = 0;
+    while (offset < bytes.size ()) {
+        const ssize_t written = write (
+            descriptor, bytes.constData () + offset,
+            static_cast< size_t > (bytes.size () - offset));
+        if (written < 0 && errno == EINTR)
+            continue;
+        if (written <= 0) {
+            setError (error, manifestIoError (QStringLiteral ("Writing project manifest"), path));
+            return false;
+        }
+        offset += static_cast< qsizetype > (written);
+    }
+    return true;
+}
+#endif
 
 // 生成当前 UTC 时间的 ISO-8601 字符串，用于清单的 createdAt / modifiedAt 元数据。
 QString nowUtc ()
@@ -1434,6 +1542,7 @@ bool ProjectManager::writeManifest (const QString& projectFilePath,
                                     const ProjectManifest& manifest,
                                     QString* error) const
 {
+#ifdef Q_OS_WIN
     // 使用 QSaveFile 实现“原子写入”：先写临时文件，全部成功后再 rename 覆盖原文件，
     // 避免断电或写入中断留下半截、损坏的项目清单。
     QSaveFile file (projectFilePath);
@@ -1455,6 +1564,100 @@ bool ProjectManager::writeManifest (const QString& projectFilePath,
         return false;
     }
     return true;
+#else
+    QStringList parentComponents;
+    QByteArray fileName;
+    if (!splitManifestPath (projectFilePath, parentComponents, fileName, error))
+        return false;
+    const int parent = openManifestParent (parentComponents, projectFilePath, error);
+    if (parent < 0)
+        return false;
+
+    struct stat existing {};
+    if (fstatat (parent, fileName.constData (), &existing, AT_SYMLINK_NOFOLLOW) == 0) {
+        if (!S_ISREG (existing.st_mode)) {
+            setError (error,
+                      QStringLiteral ("Project manifest target is not an ordinary file: %1")
+                          .arg (projectFilePath));
+            close (parent);
+            return false;
+        }
+    }
+    else if (errno != ENOENT) {
+        setError (error,
+                  manifestIoError (QStringLiteral ("Inspecting project manifest"), projectFilePath));
+        close (parent);
+        return false;
+    }
+
+    static std::atomic< unsigned long > sequence {0};
+    QByteArray temporaryName;
+    int temporary = -1;
+    for (int attempt = 0; attempt < 128 && temporary < 0; ++attempt) {
+        temporaryName = QByteArray (".rwproj-tmp-") + QByteArray::number (getpid ()) + '-' +
+            QByteArray::number (sequence.fetch_add (1, std::memory_order_relaxed));
+        temporary = openat (parent, temporaryName.constData (),
+                            O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
+        if (temporary < 0 && errno != EEXIST)
+            break;
+    }
+    if (temporary < 0) {
+        setError (error,
+                  manifestIoError (QStringLiteral ("Creating temporary project manifest"),
+                                   projectFilePath));
+        close (parent);
+        return false;
+    }
+
+    const QByteArray json = ProjectManifestJson::toJson (manifest);
+    bool success = writeAll (temporary, json, projectFilePath, error);
+    while (success && fsync (temporary) != 0) {
+        if (errno == EINTR)
+            continue;
+        setError (error,
+                  manifestIoError (QStringLiteral ("Syncing temporary project manifest"),
+                                   projectFilePath));
+        success = false;
+    }
+    if (close (temporary) != 0 && success) {
+        setError (error,
+                  manifestIoError (QStringLiteral ("Closing temporary project manifest"),
+                                   projectFilePath));
+        success = false;
+    }
+    temporary = -1;
+
+    if (success && !manifestParentIdentityMatches (
+                       parent, parentComponents, projectFilePath, error))
+        success = false;
+    if (success && renameat (parent, temporaryName.constData (),
+                             parent, fileName.constData ()) != 0) {
+        setError (error,
+                  manifestIoError (QStringLiteral ("Installing project manifest"), projectFilePath));
+        success = false;
+    }
+    bool installed = success;
+    while (success && fsync (parent) != 0) {
+        if (errno == EINTR)
+            continue;
+        setError (error,
+                  manifestIoError (QStringLiteral ("Syncing project manifest parent"),
+                                   projectFilePath));
+        success = false;
+    }
+    if (success && !manifestParentIdentityMatches (
+                       parent, parentComponents, projectFilePath, error))
+        success = false;
+
+    if (!success) {
+        if (installed)
+            unlinkat (parent, fileName.constData (), 0);
+        else
+            unlinkat (parent, temporaryName.constData (), 0);
+    }
+    close (parent);
+    return success;
+#endif
 }
 
 }    // namespace rws

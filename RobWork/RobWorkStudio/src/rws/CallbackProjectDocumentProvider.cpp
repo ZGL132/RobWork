@@ -2,6 +2,9 @@
 
 #include "ProjectPathResolver.hpp"
 
+#include <QDataStream>
+#include <QIODevice>
+
 #include <utility>
 
 namespace rws {
@@ -15,11 +18,14 @@ CallbackProjectDocumentProvider::CallbackProjectDocumentProvider (
     SaveHandler saveHandler,
     CanCloseHandler canCloseHandler,
     CloseHandler closeHandler,
-    CleanHandler cleanHandler) :
+    CleanHandler cleanHandler,
+    SnapshotHandler snapshotHandler,
+    RestoreHandler restoreHandler) :
     _providerId (std::move (providerId)), _kind (std::move (kind)),
     _loadHandler (std::move (loadHandler)), _saveHandler (std::move (saveHandler)),
     _canCloseHandler (std::move (canCloseHandler)), _closeHandler (std::move (closeHandler)),
-    _cleanHandler (std::move (cleanHandler))
+    _cleanHandler (std::move (cleanHandler)), _snapshotHandler (std::move (snapshotHandler)),
+    _restoreHandler (std::move (restoreHandler))
 {}
 
 // 返回构造时传入的插件身份标识，用于注册表查重。
@@ -116,6 +122,68 @@ void CallbackProjectDocumentProvider::closeResource (const QString& resourceId)
         _closeHandler ();
     _resourceId.clear ();
     _dirty = false;
+}
+
+// 快照当前领域内存状态（候选项目替换前）：把资源 ID、脏标记与领域快照一并编码为
+// 不透明字节。未绑定资源、缺少快照/恢复回调或编码失败时返回 false，明确拒绝过渡。
+bool CallbackProjectDocumentProvider::snapshotResource (const QString& resourceId,
+                                                        QByteArray* snapshot,
+                                                        QString* error) const
+{
+    if (snapshot == nullptr || resourceId != _resourceId || !_snapshotHandler ||
+        !_restoreHandler) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' cannot snapshot resource '%2'.")
+                         .arg (_providerId, resourceId);
+        return false;
+    }
+
+    QByteArray documentSnapshot;
+    if (!_snapshotHandler (&documentSnapshot, error))
+        return false;
+
+    // 把（资源 ID, 脏标记, 领域快照）打包进 QByteArray，恢复时校验 ID 防止错位恢复。
+    QDataStream stream (snapshot, QIODevice::WriteOnly);
+    stream << _resourceId << _dirty << documentSnapshot;
+    if (stream.status () != QDataStream::Ok) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' could not encode its snapshot.")
+                         .arg (_providerId);
+        return false;
+    }
+    return true;
+}
+
+// 从快照恢复领域内存状态（候选项目回滚时）：解码后先校验资源 ID 一致，再调用领域
+// 恢复回调；成功后恢复 Provider 自身的资源 ID 与脏标记。
+bool CallbackProjectDocumentProvider::restoreResource (const QString& resourceId,
+                                                       const QByteArray& snapshot,
+                                                       QString* error)
+{
+    if (!_restoreHandler) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' cannot restore resource '%2'.")
+                         .arg (_providerId, resourceId);
+        return false;
+    }
+
+    QString savedResourceId;
+    bool savedDirty = false;
+    QByteArray documentSnapshot;
+    QDataStream stream (snapshot);
+    stream >> savedResourceId >> savedDirty >> documentSnapshot;
+    if (stream.status () != QDataStream::Ok || savedResourceId != resourceId) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' received an invalid snapshot for '%2'.")
+                         .arg (_providerId, resourceId);
+        return false;
+    }
+    if (!_restoreHandler (documentSnapshot, error))
+        return false;
+
+    _resourceId = savedResourceId;
+    _dirty = savedDirty;
+    return true;
 }
 
 // 直接置脏：插件应在领域数据确实变化后调用；未绑定资源时是空操作。

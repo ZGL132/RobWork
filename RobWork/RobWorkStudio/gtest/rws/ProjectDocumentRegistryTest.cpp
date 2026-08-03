@@ -5,6 +5,7 @@
 #include <rws/WorkCellProjectDocumentProvider.hpp>
 
 #include <QDir>
+#include <QDataStream>
 #include <QFile>
 #include <QProcess>
 #include <QSet>
@@ -12,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <functional>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -116,6 +118,105 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     rws::ProjectResource _lastSavedResource;
     QString _lastSavePath;
     std::function< void (const rws::ProjectResource&) > _onLoad;
+};
+
+class TransitionStateProvider : public rws::ProjectDocumentProvider
+{
+  public:
+    TransitionStateProvider (QString id, QString kind, QByteArray loadedData,
+                             bool dirtyOnLoad, bool throwOnClose, QStringList* events) :
+        _id (std::move (id)),
+        _kind (std::move (kind)),
+        _loadedData (std::move (loadedData)),
+        _dirtyOnLoad (dirtyOnLoad),
+        _throwOnClose (throwOnClose),
+        _events (events)
+    {}
+
+    QString providerId () const override { return _id; }
+    QStringList supportedResourceKinds () const override { return {_kind}; }
+    bool loadResource (const rws::ProjectResource& resource,
+                       const rws::ProjectDocumentContext&,
+                       QString*) override
+    {
+        _loaded.insert (resource.id);
+        _data.insert (resource.id, _loadedData);
+        if (_dirtyOnLoad)
+            _dirty.insert (resource.id);
+        return true;
+    }
+    bool saveResource (const rws::ProjectResource&,
+                       const rws::ProjectDocumentContext&,
+                       const QString&,
+                       QString*) override
+    {
+        return true;
+    }
+    bool isDirty (const QString& resourceId) const override
+    {
+        return _dirty.contains (resourceId);
+    }
+    bool canClose (const QString&, QString*) const override { return true; }
+    void markClean (const QString& resourceId) override { _dirty.remove (resourceId); }
+    void closeResource (const QString& resourceId) override
+    {
+        if (_events != nullptr)
+            _events->push_back (QStringLiteral ("close:") + resourceId);
+        _loaded.remove (resourceId);
+        _data.remove (resourceId);
+        _dirty.remove (resourceId);
+        if (_throwOnClose)
+            throw std::runtime_error ("intentional close failure after clearing state");
+    }
+    bool snapshotResource (const QString& resourceId,
+                           QByteArray* snapshot,
+                           QString* error) const override
+    {
+        if (!_loaded.contains (resourceId) || snapshot == nullptr) {
+            if (error != nullptr)
+                *error = QStringLiteral ("resource is not loaded");
+            return false;
+        }
+        snapshot->clear ();
+        QDataStream stream (snapshot, QIODevice::WriteOnly);
+        stream << _data.value (resourceId) << _dirty.contains (resourceId);
+        return stream.status () == QDataStream::Ok;
+    }
+    bool restoreResource (const QString& resourceId,
+                          const QByteArray& snapshot,
+                          QString* error) override
+    {
+        QByteArray data;
+        bool dirty = false;
+        QDataStream stream (snapshot);
+        stream >> data >> dirty;
+        if (stream.status () != QDataStream::Ok) {
+            if (error != nullptr)
+                *error = QStringLiteral ("snapshot is invalid");
+            return false;
+        }
+        _loaded.insert (resourceId);
+        _data.insert (resourceId, data);
+        if (dirty)
+            _dirty.insert (resourceId);
+        else
+            _dirty.remove (resourceId);
+        return true;
+    }
+
+    bool isLoaded (const QString& resourceId) const { return _loaded.contains (resourceId); }
+    QByteArray data (const QString& resourceId) const { return _data.value (resourceId); }
+
+  private:
+    QString _id;
+    QString _kind;
+    QByteArray _loadedData;
+    bool _dirtyOnLoad;
+    bool _throwOnClose;
+    QStringList* _events;
+    QSet< QString > _loaded;
+    QSet< QString > _dirty;
+    QHash< QString, QByteArray > _data;
 };
 
 // 构造一个 project 归属的测试资源：固定 id/kind/path，路径按项目相对路径解析。
@@ -1107,4 +1208,70 @@ TEST (ProjectDocumentRegistryTest, AutosaveSerializesDirtyProviderWithoutMarking
     QFile snapshot (QDir (QFileInfo (snapshotProject).absolutePath ()).filePath ("analysis.json"));
     ASSERT_TRUE (snapshot.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("saved:analysis"), snapshot.readAll ());
+}
+
+TEST (ProjectDocumentRegistryTest,
+      CandidateSuccessCloseFailureRestoresAlreadyClosedProviderSnapshots)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString oldProject = QDir (directory.path ()).filePath ("Old.rwproj");
+    const QString candidateProject = QDir (directory.path ()).filePath ("Candidate.rwproj");
+    QStringList closeEvents;
+    TransitionStateProvider providerA (
+        "provider.old-a", "test.old-a", "complete-state-a", true, false, &closeEvents);
+    TransitionStateProvider providerB (
+        "provider.old-b", "test.old-b", "complete-state-b", true, true, &closeEvents);
+    TransitionStateProvider candidateProvider (
+        "provider.candidate", "test.candidate", "candidate-state", false, false, nullptr);
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    ASSERT_TRUE (registry.registerProvider (&providerA, &error));
+    ASSERT_TRUE (registry.registerProvider (&providerB, &error));
+    ASSERT_TRUE (registry.registerProvider (&candidateProvider, &error));
+
+    const rws::ProjectResource oldB = resource ("old.b", "test.old-b", "old-b.json");
+    const rws::ProjectResource oldA = resource ("old.a", "test.old-a", "old-a.json");
+    rws::ProjectManifest oldManifest;
+    oldManifest.resources = {oldB, oldA};
+    ASSERT_TRUE (registry.loadProjectResources (oldManifest, oldProject, &error))
+        << error.toStdString ();
+
+    const rws::ProjectResource candidate =
+        resource ("candidate.main", "test.candidate", "candidate.json");
+    rws::ProjectManifest candidateManifest;
+    candidateManifest.resources = {candidate};
+    rws::ProjectDocumentRegistry::CandidateTransitionReservation reservation;
+    ASSERT_TRUE (registry.preflightCandidateTransition (
+        candidateManifest.resources, reservation, &error)) << error.toStdString ();
+    registry.suspendResourcesForCandidateTransition (std::move (reservation));
+    ASSERT_TRUE (registry.loadProjectResources (
+        candidateManifest, candidateProject, &error)) << error.toStdString ();
+
+    EXPECT_FALSE (registry.closeSuspendedResourcesAfterCandidateSuccess (&error));
+    EXPECT_TRUE (error.contains (QStringLiteral ("intentional close failure")));
+    EXPECT_EQ (QStringList ({QStringLiteral ("close:old.a"),
+                            QStringLiteral ("close:old.b")}),
+               closeEvents);
+
+    QString closeError;
+    ASSERT_TRUE (registry.closeResources (&closeError)) << closeError.toStdString ();
+    ASSERT_TRUE (registry.restoreSuspendedResourcesAfterCandidateFailure (&error))
+        << error.toStdString ();
+
+    EXPECT_TRUE (providerA.isLoaded (oldA.id));
+    EXPECT_TRUE (providerB.isLoaded (oldB.id));
+    EXPECT_EQ (QByteArray ("complete-state-a"), providerA.data (oldA.id));
+    EXPECT_EQ (QByteArray ("complete-state-b"), providerB.data (oldB.id));
+    EXPECT_TRUE (providerA.isDirty (oldA.id));
+    EXPECT_TRUE (providerB.isDirty (oldB.id));
+    EXPECT_EQ (QSet< QString > ({oldA.id, oldB.id}), registry.activeResourceIds ());
+    EXPECT_TRUE (registry.isActiveResourceDirty (oldA.id));
+    EXPECT_TRUE (registry.isActiveResourceDirty (oldB.id));
+
+    rws::ProjectDocumentRegistry::CandidateTransitionReservation freshReservation;
+    error.clear ();
+    EXPECT_TRUE (registry.preflightCandidateTransition (
+        candidateManifest.resources, freshReservation, &error)) << error.toStdString ();
 }

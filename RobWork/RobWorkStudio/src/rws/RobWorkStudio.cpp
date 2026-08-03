@@ -20,6 +20,8 @@
 
 #include "AboutBox.hpp"
 #include "HelpAssistant.hpp"
+#include "ProjectPathResolver.hpp"
+#include "ProjectSaveTransaction.hpp"
 #include "RobWorkStudioPlugin.hpp"
 
 #include <rw/common/TimerUtil.hpp>
@@ -44,13 +46,16 @@
 #include <QCloseEvent>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QHash>
 #include <QIcon>
 #include <QInputDialog>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMetaMethod>
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QMimeData>
@@ -59,10 +64,14 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QScopedValueRollback>
+#include <QSet>
+#include <QStorageInfo>
 #include <QStringList>
+#include <QTemporaryDir>
 #include <QToolBar>
 #include <QTimer>
 #include <QUrl>
+#include <QVariantMap>
 #include <QXmlStreamReader>
 
 #ifdef RWS_USE_PYTHON
@@ -73,7 +82,11 @@
 
 #include <boost/bind/bind.hpp>
 #include <boost/filesystem.hpp>
+#include <algorithm>
+#include <exception>
+#include <limits>
 #include <sstream>
+#include <utility>
 
 using namespace rw;
 using namespace rw::core;
@@ -89,6 +102,14 @@ using namespace rwlibs::proximitystrategies;
 using namespace rws;
 
 namespace {
+constexpr int kMaxProjectBaselineRegularFiles = 1024;
+constexpr quint64 kMaxProjectBaselineTotalBytes = 64ULL * 1024ULL * 1024ULL;
+constexpr int kMaxProjectBaselineDepth = 32;
+constexpr int kMaxProjectBaselineRelativePathLength = 1024;
+constexpr int kMaxProjectBaselineEntries = 4096;
+constexpr quint64 kProjectBaselineBackupSafetyBytes = 16ULL * 1024ULL * 1024ULL;
+constexpr quint64 kProjectBaselineBackupSafetyPercent = 10;
+
 WorkCell::Ptr emptyWorkCell ()
 {
     WorkCell::Ptr workcell = rw::core::ownedPtr (new WorkCell (ownedPtr (new StateStructure ())));
@@ -998,10 +1019,224 @@ std::string RobWorkStudio::loadSettingsWorkcell (const std::string& file)
     return workcellPath;
 }
 
-// 新建项目：弹保存对话框选择 .rwproj 位置，构造空清单交给项目管理器落盘，
-// 随后创建内存 WorkCell 并更新最近文件列表与窗口标题。
+bool rws::resolveNewRobotProjectBuilderCallbacks (
+    const std::vector< RobWorkStudioPlugin* >& plugins,
+    std::function< bool (QString*) > confirmClose,
+    NewRobotProjectCallbacks& callbacks,
+    RobWorkStudioPlugin*& builder,
+    QString* error)
+{
+    callbacks = NewRobotProjectCallbacks {};
+    builder = NULL;
+    RobWorkStudioPlugin* candidate = NULL;
+    for (RobWorkStudioPlugin* plugin : plugins) {
+        if (plugin != NULL && plugin->name () == QStringLiteral ("RobotModelBuilder")) {
+            candidate = plugin;
+            break;
+        }
+    }
+    if (candidate == NULL) {
+        if (error != nullptr)
+            *error = QStringLiteral ("RobotModelBuilder is not loaded.");
+        return false;
+    }
+    const auto hasMetaOperation = [candidate] (const char* signature, int returnType) {
+        if (candidate == NULL)
+            return false;
+        const int index = candidate->metaObject ()->indexOfMethod (
+            QMetaObject::normalizedSignature (signature));
+        return index >= 0 &&
+            candidate->metaObject ()->method (index).returnMetaType ().id () == returnType;
+    };
+    if (!hasMetaOperation ("preflightNewRobotProject(QString)", QMetaType::QString) ||
+        !hasMetaOperation ("newRobotProjectResource(QString)", QMetaType::QVariantMap) ||
+        !hasMetaOperation ("snapshotNewRobotProjectState()", QMetaType::QVariantMap) ||
+        !hasMetaOperation ("restoreNewRobotProjectState(QByteArray)", QMetaType::QString) ||
+        !hasMetaOperation ("bootstrapNewRobotProject(QString)", QMetaType::QString)) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The loaded RobotModelBuilder is incompatible with New Project.");
+        return false;
+    }
+    if (!confirmClose) {
+        if (error != nullptr)
+            *error = QStringLiteral ("New Project close confirmation is unavailable.");
+        return false;
+    }
+    builder = candidate;
+
+    const auto setInvocationError = [] (QString* error, const QString& message) {
+        if (error != nullptr)
+            *error = message;
+    };
+    const auto hasVariantType = [] (const QVariantMap& map, const QString& key,
+                                    int typeId) {
+        const auto value = map.constFind (key);
+        return value != map.constEnd () && value->metaType ().id () == typeId;
+    };
+
+    callbacks.preflight = [builder, setInvocationError] (const QString& projectRoot,
+                                                         QString* error) {
+        QString result;
+        if (!QMetaObject::invokeMethod (
+                builder, "preflightNewRobotProject", Qt::DirectConnection,
+                Q_RETURN_ARG (QString, result), Q_ARG (QString, projectRoot))) {
+            setInvocationError (
+                error, QStringLiteral ("RobotModelBuilder New Project preflight invocation failed."));
+            return false;
+        }
+        if (error != nullptr)
+            *error = result;
+        return result.isEmpty ();
+    };
+    callbacks.requiredResources =
+        [builder, setInvocationError, hasVariantType] (
+            const QString& projectRoot, QVector< ProjectResource >& resources,
+            QString* error) {
+            QVariantMap declaration;
+            if (!QMetaObject::invokeMethod (
+                    builder, "newRobotProjectResource", Qt::DirectConnection,
+                    Q_RETURN_ARG (QVariantMap, declaration),
+                    Q_ARG (QString, projectRoot))) {
+                setInvocationError (
+                    error,
+                    QStringLiteral ("RobotModelBuilder resource declaration invocation failed."));
+                return false;
+            }
+            if (!hasVariantType (declaration, QStringLiteral ("success"), QMetaType::Bool) ||
+                !hasVariantType (declaration, QStringLiteral ("error"), QMetaType::QString)) {
+                setInvocationError (
+                    error, QStringLiteral ("RobotModelBuilder returned a malformed resource result."));
+                return false;
+            }
+            const bool success = declaration.value (QStringLiteral ("success")).toBool ();
+            const QString declaredError = declaration.value (QStringLiteral ("error")).toString ();
+            if (!success) {
+                setInvocationError (
+                    error, declaredError.isEmpty ()
+                               ? QStringLiteral ("RobotModelBuilder resource declaration failed.")
+                               : declaredError);
+                return false;
+            }
+            const QSet< QString > expectedKeys = {
+                QStringLiteral ("success"), QStringLiteral ("error"),
+                QStringLiteral ("id"), QStringLiteral ("kind"),
+                QStringLiteral ("path"), QStringLiteral ("ownership"),
+                QStringLiteral ("required"), QStringLiteral ("dependencies")};
+            const QSet< QString > actualKeys (declaration.keyBegin (), declaration.keyEnd ());
+            if (!declaredError.isEmpty () || actualKeys != expectedKeys ||
+                !hasVariantType (declaration, QStringLiteral ("id"), QMetaType::QString) ||
+                !hasVariantType (declaration, QStringLiteral ("kind"), QMetaType::QString) ||
+                !hasVariantType (declaration, QStringLiteral ("path"), QMetaType::QString) ||
+                !hasVariantType (declaration, QStringLiteral ("ownership"), QMetaType::QString) ||
+                !hasVariantType (declaration, QStringLiteral ("required"), QMetaType::Bool) ||
+                !hasVariantType (
+                    declaration, QStringLiteral ("dependencies"), QMetaType::QStringList)) {
+                setInvocationError (
+                    error, QStringLiteral ("RobotModelBuilder returned a malformed resource declaration."));
+                return false;
+            }
+
+            ProjectResource resource;
+            resource.id = declaration.value (QStringLiteral ("id")).toString ();
+            resource.kind = declaration.value (QStringLiteral ("kind")).toString ();
+            resource.path = declaration.value (QStringLiteral ("path")).toString ();
+            resource.ownership = declaration.value (QStringLiteral ("ownership")).toString ();
+            resource.required = declaration.value (QStringLiteral ("required")).toBool ();
+            resource.dependencies =
+                declaration.value (QStringLiteral ("dependencies")).toStringList ();
+            resources.push_back (resource);
+            if (error != nullptr)
+                error->clear ();
+            return true;
+        };
+    callbacks.snapshotState =
+        [builder, setInvocationError, hasVariantType] (QByteArray& snapshot, QString* error) {
+            QVariantMap result;
+            if (!QMetaObject::invokeMethod (
+                    builder, "snapshotNewRobotProjectState", Qt::DirectConnection,
+                    Q_RETURN_ARG (QVariantMap, result))) {
+                setInvocationError (
+                    error, QStringLiteral ("RobotModelBuilder state snapshot invocation failed."));
+                return false;
+            }
+            const QSet< QString > expectedKeys = {
+                QStringLiteral ("success"), QStringLiteral ("error"),
+                QStringLiteral ("snapshot")};
+            const QSet< QString > actualKeys (result.keyBegin (), result.keyEnd ());
+            if (actualKeys != expectedKeys ||
+                !hasVariantType (result, QStringLiteral ("success"), QMetaType::Bool) ||
+                !hasVariantType (result, QStringLiteral ("error"), QMetaType::QString) ||
+                !hasVariantType (result, QStringLiteral ("snapshot"), QMetaType::QByteArray)) {
+                setInvocationError (
+                    error, QStringLiteral ("RobotModelBuilder returned a malformed state snapshot."));
+                return false;
+            }
+            const bool success = result.value (QStringLiteral ("success")).toBool ();
+            const QString snapshotError = result.value (QStringLiteral ("error")).toString ();
+            snapshot = result.value (QStringLiteral ("snapshot")).toByteArray ();
+            if (!success || !snapshotError.isEmpty () || snapshot.isEmpty ()) {
+                setInvocationError (
+                    error, snapshotError.isEmpty ()
+                               ? QStringLiteral ("RobotModelBuilder state snapshot failed.")
+                               : snapshotError);
+                return false;
+            }
+            if (error != nullptr)
+                error->clear ();
+            return true;
+        };
+    callbacks.restoreState = [builder, setInvocationError] (const QByteArray& snapshot,
+                                                            QString* error) {
+        QString result;
+        if (!QMetaObject::invokeMethod (
+                builder, "restoreNewRobotProjectState", Qt::DirectConnection,
+                Q_RETURN_ARG (QString, result), Q_ARG (QByteArray, snapshot))) {
+            setInvocationError (
+                error, QStringLiteral ("RobotModelBuilder state restore invocation failed."));
+            return false;
+        }
+        if (error != nullptr)
+            *error = result;
+        return result.isEmpty ();
+    };
+    callbacks.bootstrap = [builder, setInvocationError] (const QString& projectRoot,
+                                                         QString* error) {
+        QString result;
+        if (!QMetaObject::invokeMethod (
+                builder, "bootstrapNewRobotProject", Qt::DirectConnection,
+                Q_RETURN_ARG (QString, result), Q_ARG (QString, projectRoot))) {
+            setInvocationError (
+                error, QStringLiteral ("RobotModelBuilder New Project bootstrap invocation failed."));
+            return false;
+        }
+        if (error != nullptr)
+            *error = result;
+        return result.isEmpty ();
+    };
+    callbacks.confirmClose = std::move (confirmClose);
+    if (error != nullptr)
+        error->clear ();
+    return true;
+}
+
 void RobWorkStudio::newProject ()
 {
+    NewRobotProjectCallbacks callbacks;
+    RobWorkStudioPlugin* builder = NULL;
+    QString error;
+    if (!resolveNewRobotProjectBuilderCallbacks (
+            getPlugins (),
+            [this] (QString* closeError) {
+                const bool confirmed = confirmProjectClose ();
+                if (!confirmed && closeError != nullptr)
+                    closeError->clear ();
+                return confirmed;
+            },
+            callbacks, builder, &error)) {
+        QMessageBox::warning (this, tr ("RobotModelBuilder Unavailable"), error);
+        return;
+    }
+
     const QString previousDirectory = QString::fromStdString (
         _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
     QString projectFile = QFileDialog::getSaveFileName (this,
@@ -1012,37 +1247,15 @@ void RobWorkStudio::newProject ()
         return;
     if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
         projectFile += QStringLiteral (".rwproj");
-    // 新建项目同样属于“离开当前项目”的操作：先完成旧项目的保存/放弃/取消决策，
-    // 用户取消时保持旧项目原样返回。
-    if (!confirmProjectClose ())
-        return;
 
-    ProjectManifest manifest;
-    manifest.project.name = QFileInfo (projectFile).completeBaseName ();
-    manifest.project.description = QString::fromUtf8 ("由 RobWorkStudio 创建的空项目");
-    manifest.settings.insert (QStringLiteral ("pathPolicy"),
-                              QStringLiteral ("project-relative"));
-
-    QString error;
-    if (!_projectManager.createProject (projectFile, manifest, &error)) {
-        QMessageBox::critical (this, tr ("Create Project Failed"), error);
+    error.clear ();
+    if (!createProjectWithRobotModelBuilderPaths (projectFile, callbacks, &error)) {
+        if (!error.isEmpty ())
+            QMessageBox::critical (this, tr ("Create Project Failed"), error);
         return;
     }
-
-    // 新项目清单成功落盘后再关闭旧 Provider 文档，避免创建失败导致旧项目被卸载。
-    _projectDocuments.closeResources ();
-    // 第一阶段的新建项目不强制生成 WorkCell 文件，而是提供一个内存中的空 WorkCell。
-    // 此处必须调用不带项目切换语义的内部函数；若调用用户菜单槽 newWorkCell，刚由
-    // createProject 建立的新项目会被误判为“待退出项目”并立即清空。
-    createEmptyWorkCell ();
-    _settingsMap->set< std::string > ("PreviousOpenDirectory",
-                                      QFileInfo (projectFile).absolutePath ().toStdString ());
-    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
-        "LastOpennedFiles", std::vector< std::string > ());
-    recent.push_back (projectFile.toStdString ());
-    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
-    updateLastFiles ();
-    updateProjectWindowTitle ();
+    if (!builder->isVisible ())
+        builder->showPlugin ();
 }
 
 bool RobWorkStudio::createProjectFromRobotFilePaths (
@@ -1166,6 +1379,1086 @@ bool RobWorkStudio::createProjectFromRobotFilePaths (
     updateLastFiles ();
     updateProjectWindowTitle ();
     prepared = PreparedRobotProject {};
+    return true;
+}
+
+bool RobWorkStudio::createProjectWithRobotModelBuilderPaths (
+    const QString& projectFile,
+    const NewRobotProjectCallbacks& callbacks,
+    QString* error)
+{
+    if (error != nullptr)
+        error->clear ();
+    const QString previousWindowTitle = windowTitle ();
+    const auto invokeCallback = [] (const QString& stage, auto&& callback,
+                                    QString* callbackError) {
+        try {
+            return callback ();
+        }
+        catch (const std::exception& exception) {
+            if (callbackError != nullptr) {
+                *callbackError =
+                    QStringLiteral ("%1 callback raised an exception: %2")
+                        .arg (stage, QString::fromLocal8Bit (exception.what ()));
+            }
+            return false;
+        }
+        catch (...) {
+            if (callbackError != nullptr) {
+                *callbackError =
+                    QStringLiteral ("%1 callback raised an unknown exception.").arg (stage);
+            }
+            return false;
+        }
+    };
+    if (!callbacks.preflight || !callbacks.requiredResources || !callbacks.snapshotState ||
+        !callbacks.restoreState || !callbacks.bootstrap || !callbacks.confirmClose) {
+        if (error != nullptr)
+            *error = QStringLiteral ("New robot project callbacks are incomplete.");
+        return false;
+    }
+    if (projectFile.trimmed ().isEmpty ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The target project path is required.");
+        return false;
+    }
+
+    const QString absoluteProjectFile = QFileInfo (projectFile).absoluteFilePath ();
+    const QString projectRoot = QFileInfo (absoluteProjectFile).absolutePath ();
+    const QFileInfo projectFileInfo (absoluteProjectFile);
+    const bool unsafeProjectFile =
+        ProjectPathResolver::isLinkOrReparsePoint (absoluteProjectFile);
+    if (projectFileInfo.fileName ().trimmed ().isEmpty () || unsafeProjectFile ||
+        projectFileInfo.exists ()) {
+        if (error != nullptr)
+            *error = unsafeProjectFile || projectFileInfo.exists ()
+                         ? QStringLiteral ("The target project file already exists.")
+                         : QStringLiteral ("The target project path is invalid.");
+        return false;
+    }
+
+    QStringList missingProjectDirectories;
+    QString existingAncestor = projectRoot;
+    bool unsafeAncestor = false;
+    while (true) {
+        if (ProjectPathResolver::isLinkOrReparsePoint (existingAncestor)) {
+            unsafeAncestor = true;
+            break;
+        }
+        if (QFileInfo::exists (existingAncestor))
+            break;
+        missingProjectDirectories.push_back (existingAncestor);
+        const QString parent = QFileInfo (existingAncestor).absolutePath ();
+        if (parent == existingAncestor)
+            break;
+        existingAncestor = parent;
+    }
+    const QFileInfo ancestorInfo (existingAncestor);
+    const QFileInfo rootInfo (projectRoot);
+    QString ancestorPath = existingAncestor;
+    while (!unsafeAncestor) {
+        if (ProjectPathResolver::isLinkOrReparsePoint (ancestorPath)) {
+            unsafeAncestor = true;
+            break;
+        }
+        if (!QFileInfo::exists (ancestorPath))
+            break;
+        const QString parent = QFileInfo (ancestorPath).absolutePath ();
+        if (parent == ancestorPath)
+            break;
+        ancestorPath = parent;
+    }
+    if (unsafeAncestor || ProjectPathResolver::isLinkOrReparsePoint (projectRoot) ||
+        !ancestorInfo.exists () || !ancestorInfo.isDir () || !ancestorInfo.isWritable () ||
+        (rootInfo.exists () && !rootInfo.isDir ())) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The target project parent is unavailable or unsafe: %1")
+                         .arg (existingAncestor);
+        return false;
+    }
+
+    if (!invokeCallback (QStringLiteral ("RobotModelBuilder preflight"),
+                         [&] { return callbacks.preflight (projectRoot, error); },
+                         error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QStringLiteral ("RobotModelBuilder project preflight failed.");
+        return false;
+    }
+
+    QVector< ProjectResource > candidateResources;
+    if (!invokeCallback (
+            QStringLiteral ("RobotModelBuilder requiredResources"),
+            [&] { return callbacks.requiredResources (projectRoot, candidateResources, error); },
+            error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QStringLiteral ("RobotModelBuilder resource preflight failed.");
+        return false;
+    }
+    if (candidateResources.isEmpty ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("RobotModelBuilder must declare its generated project resources.");
+        return false;
+    }
+
+    const ProjectResource* declaredRobotModel = nullptr;
+    int robotModelDeclarationCount = 0;
+    for (const ProjectResource& resource : candidateResources) {
+        if (resource.id == QStringLiteral ("robot-model.main")) {
+            declaredRobotModel = &resource;
+            ++robotModelDeclarationCount;
+        }
+    }
+    if (robotModelDeclarationCount != 1) {
+        if (error != nullptr)
+            *error = QStringLiteral (
+                "RobotModelBuilder must declare robot-model.main exactly once.");
+        return false;
+    }
+    const QString normalizedModelPath = QDir::cleanPath (
+        QDir::fromNativeSeparators (declaredRobotModel->path));
+    if (declaredRobotModel->kind != QStringLiteral ("robwork.robot-model") ||
+        declaredRobotModel->ownership != QStringLiteral ("generated") ||
+        !declaredRobotModel->required || !declaredRobotModel->dependencies.isEmpty () ||
+        declaredRobotModel->path != normalizedModelPath ||
+        !normalizedModelPath.startsWith (QStringLiteral ("generated/robot-models/")) ||
+        !normalizedModelPath.endsWith (QStringLiteral (".rmb.json")) ||
+        QDir::isAbsolutePath (normalizedModelPath)) {
+        if (error != nullptr) {
+            *error = QStringLiteral (
+                "robot-model.main must be a required generated robwork.robot-model with no "
+                "dependencies and a normalized generated/robot-models/*.rmb.json path.");
+        }
+        return false;
+    }
+
+    struct CandidateGeneratedOutput
+    {
+        QString path;
+        QStringList createdDirectories;
+    };
+    QVector< CandidateGeneratedOutput > generatedOutputs;
+    for (const ProjectResource& resource : candidateResources) {
+        const QString normalizedResourcePath =
+            QDir::cleanPath (QDir::fromNativeSeparators (resource.path));
+        if (resource.path.isEmpty () || resource.path != normalizedResourcePath ||
+            QDir::isAbsolutePath (normalizedResourcePath)) {
+            if (error != nullptr) {
+                *error = QStringLiteral (
+                             "New RobotModelBuilder generated resources must use nonempty "
+                             "normalized project-relative paths: %1")
+                             .arg (resource.id);
+            }
+            return false;
+        }
+        if (resource.ownership != QStringLiteral ("generated")) {
+            if (error != nullptr) {
+                *error = QStringLiteral (
+                             "New RobotModelBuilder project resources must use generated ownership: %1")
+                             .arg (resource.id);
+            }
+            return false;
+        }
+        QString resourcePath;
+        if (!ProjectPathResolver::resolveResource (
+                absoluteProjectFile, resource, resourcePath, error))
+            return false;
+
+        CandidateGeneratedOutput output;
+        output.path = resourcePath;
+        const QFileInfo currentRootInfo (projectRoot);
+        if (ProjectPathResolver::isLinkOrReparsePoint (projectRoot) ||
+            (currentRootInfo.exists () &&
+            !ProjectPathResolver::validateContainedWritePath (
+                projectRoot, resourcePath, error)))
+            return false;
+        const QFileInfo outputInfo (resourcePath);
+        const bool unsafeOutput =
+            ProjectPathResolver::isLinkOrReparsePoint (resourcePath);
+        if (unsafeOutput || outputInfo.exists ()) {
+            if (unsafeOutput || !outputInfo.isFile ()) {
+                if (error != nullptr)
+                    *error = QStringLiteral ("The declared generated output cannot be backed up safely: %1")
+                                 .arg (resourcePath);
+                return false;
+            }
+        }
+        QString directory = QFileInfo (resourcePath).absolutePath ();
+        const QString cleanRoot = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
+        while (QDir::cleanPath (QDir::fromNativeSeparators (directory)) != cleanRoot) {
+            const QString cleanDirectory =
+                QDir::cleanPath (QDir::fromNativeSeparators (directory));
+            if (directory.isEmpty () || !cleanDirectory.startsWith (cleanRoot + QLatin1Char ('/')))
+                break;
+            if (ProjectPathResolver::isLinkOrReparsePoint (directory)) {
+                if (error != nullptr)
+                    *error = QStringLiteral ("The declared generated output has an unsafe parent: %1")
+                                 .arg (directory);
+                return false;
+            }
+            if (!QFileInfo::exists (directory))
+                output.createdDirectories.push_back (directory);
+            const QString parent = QFileInfo (directory).absolutePath ();
+            if (parent == directory)
+                break;
+            directory = parent;
+        }
+        generatedOutputs.push_back (output);
+    }
+
+    if (!_projectDocuments.validateCandidateResources (candidateResources, error))
+        return false;
+
+    struct CandidatePathInventory
+    {
+        QSet< QString > files;
+        QSet< QString > directories;
+        QSet< QString > unsafeEntries;
+        QHash< QString, QByteArray > fileDigests;
+        QHash< QString, qint64 > fileSizes;
+        quint64 totalRegularBytes = 0;
+    };
+    const auto inventoryPath = [] (const QString& path) {
+        return QDir::cleanPath (QFileInfo (path).absoluteFilePath ());
+    };
+    const auto isUnsafeInventoryEntry = [] (const QFileInfo& info) {
+        return ProjectPathResolver::isLinkOrReparsePoint (info.absoluteFilePath ());
+    };
+    const auto fingerprintFile = [&] (const QString& path, QByteArray& digest,
+                                      QString* fingerprintError) {
+        const QFileInfo before (path);
+        if (!before.isFile () || isUnsafeInventoryEntry (before)) {
+            if (fingerprintError != nullptr)
+                *fingerprintError =
+                    QStringLiteral ("Project baseline entry is not an ordinary file: %1").arg (path);
+            return false;
+        }
+        QFile file (path);
+        if (!file.open (QIODevice::ReadOnly)) {
+            if (fingerprintError != nullptr)
+                *fingerprintError =
+                    QStringLiteral ("Project baseline file could not be read: %1").arg (path);
+            return false;
+        }
+        QCryptographicHash hash (QCryptographicHash::Sha256);
+        while (!file.atEnd ()) {
+            const QByteArray chunk = file.read (1024 * 1024);
+            if (chunk.isEmpty () && file.error () != QFileDevice::NoError) {
+                if (fingerprintError != nullptr)
+                    *fingerprintError =
+                        QStringLiteral ("Project baseline file could not be read: %1").arg (path);
+                return false;
+            }
+            hash.addData (chunk);
+        }
+        const QFileInfo after (path);
+        if (!after.isFile () || isUnsafeInventoryEntry (after) || before.size () != after.size () ||
+            before.lastModified () != after.lastModified ()) {
+            if (fingerprintError != nullptr)
+                *fingerprintError =
+                    QStringLiteral ("Project baseline changed while it was being read: %1").arg (path);
+            return false;
+        }
+        digest = hash.result ();
+        return true;
+    };
+    const auto captureProjectInventory = [&] (CandidatePathInventory& inventory,
+                                               bool includeDigests,
+                                               bool allowUnsafeEntries,
+                                               bool enforceBaselineLimits,
+                                               QString* inventoryError) {
+        inventory = CandidatePathInventory {};
+        const auto rejectLimit = [&] (const QString& detail) {
+            if (inventoryError != nullptr) {
+                *inventoryError =
+                    QStringLiteral (
+                        "Project baseline cannot be protected synchronously (%1). Choose a new or "
+                        "empty project directory.")
+                        .arg (detail);
+            }
+            return false;
+        };
+        const QFileInfo projectRootInfo (projectRoot);
+        if (isUnsafeInventoryEntry (projectRootInfo)) {
+            if (allowUnsafeEntries) {
+                inventory.unsafeEntries.insert (inventoryPath (projectRoot));
+                return true;
+            }
+            if (inventoryError != nullptr)
+                *inventoryError =
+                    QStringLiteral ("The project root changed into an unsafe entry: %1").arg (projectRoot);
+            return false;
+        }
+        if (!projectRootInfo.exists ())
+            return true;
+        if (!projectRootInfo.isDir ()) {
+            if (allowUnsafeEntries) {
+                inventory.unsafeEntries.insert (inventoryPath (projectRoot));
+                return true;
+            }
+            if (inventoryError != nullptr)
+                *inventoryError =
+                    QStringLiteral ("The project root changed into an unsafe entry: %1").arg (projectRoot);
+            return false;
+        }
+        inventory.directories.insert (inventoryPath (projectRoot));
+        int entryCount = 0;
+        std::function< bool (const QString&) > visitDirectory;
+        visitDirectory = [&] (const QString& directory) {
+            QDirIterator entries (directory,
+                                  QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden |
+                                      QDir::System);
+            while (entries.hasNext ()) {
+                const QFileInfo info (entries.next ());
+                const QString path = inventoryPath (info.absoluteFilePath ());
+                const QString relativePath = QDir::fromNativeSeparators (
+                    QDir (projectRoot).relativeFilePath (path));
+                const int depth = relativePath.split (QLatin1Char ('/'), Qt::SkipEmptyParts).size ();
+                ++entryCount;
+                if (entryCount > kMaxProjectBaselineEntries)
+                    return rejectLimit (QStringLiteral ("more than %1 filesystem entries")
+                                            .arg (kMaxProjectBaselineEntries));
+                if (depth > kMaxProjectBaselineDepth)
+                    return rejectLimit (QStringLiteral ("path depth exceeds %1")
+                                            .arg (kMaxProjectBaselineDepth));
+                if (relativePath.size () > kMaxProjectBaselineRelativePathLength)
+                    return rejectLimit (QStringLiteral ("relative path length exceeds %1 characters")
+                                            .arg (kMaxProjectBaselineRelativePathLength));
+                if (isUnsafeInventoryEntry (info)) {
+                    if (allowUnsafeEntries) {
+                        inventory.unsafeEntries.insert (path);
+                        continue;
+                    }
+                    if (inventoryError != nullptr)
+                        *inventoryError =
+                            QStringLiteral ("Project tree contains a link or reparse point: %1")
+                                .arg (path);
+                    return false;
+                }
+                QString containmentError;
+                if (!ProjectPathResolver::validateContainedWritePath (
+                        projectRoot, path, &containmentError)) {
+                    if (inventoryError != nullptr)
+                        *inventoryError = containmentError;
+                    return false;
+                }
+                if (info.isDir ()) {
+                    inventory.directories.insert (path);
+                    if (!visitDirectory (path))
+                        return false;
+                }
+                else if (info.isFile ()) {
+                    const qint64 signedSize = info.size ();
+                    if (signedSize < 0) {
+                        if (inventoryError != nullptr)
+                            *inventoryError = QStringLiteral (
+                                "Project baseline file size is unavailable: %1")
+                                                      .arg (path);
+                        return false;
+                    }
+                    const quint64 fileSize = static_cast< quint64 > (signedSize);
+                    if (fileSize > std::numeric_limits< quint64 >::max () -
+                                       inventory.totalRegularBytes) {
+                        return rejectLimit (QStringLiteral ("regular file byte total overflowed"));
+                    }
+                    inventory.files.insert (path);
+                    inventory.fileSizes.insert (path, signedSize);
+                    inventory.totalRegularBytes += fileSize;
+                    if (enforceBaselineLimits &&
+                        inventory.files.size () > kMaxProjectBaselineRegularFiles) {
+                        return rejectLimit (QStringLiteral ("more than %1 regular files")
+                                                .arg (kMaxProjectBaselineRegularFiles));
+                    }
+                    if (enforceBaselineLimits &&
+                        inventory.totalRegularBytes > kMaxProjectBaselineTotalBytes) {
+                        return rejectLimit (QStringLiteral ("regular files exceed %1 MiB total")
+                                                .arg (kMaxProjectBaselineTotalBytes /
+                                                      (1024ULL * 1024ULL)));
+                    }
+                    if (includeDigests) {
+                        QByteArray digest;
+                        if (!fingerprintFile (path, digest, inventoryError))
+                            return false;
+                        inventory.fileDigests.insert (path, digest);
+                    }
+                }
+                else {
+                    if (allowUnsafeEntries) {
+                        inventory.unsafeEntries.insert (path);
+                        continue;
+                    }
+                    if (inventoryError != nullptr)
+                        *inventoryError =
+                            QStringLiteral ("Project tree contains a non-regular entry: %1")
+                                .arg (path);
+                    return false;
+                }
+            }
+            return true;
+        };
+        return visitDirectory (projectRoot);
+    };
+
+    const QString cleanProjectRoot = inventoryPath (projectRoot);
+    CandidatePathInventory baselineInventory;
+    QString baselineError;
+    if (!captureProjectInventory (baselineInventory, true, false, true, &baselineError)) {
+        if (error != nullptr)
+            *error = baselineError;
+        return false;
+    }
+
+    ProjectWriteGuard transactionGuard;
+    QString transactionGuardError;
+    const QString transactionAnchor = missingProjectDirectories.isEmpty ()
+                                          ? projectRoot
+                                          : existingAncestor;
+    if (!ProjectWriteGuard::acquire (
+            transactionAnchor, transactionAnchor, transactionGuard, &transactionGuardError)) {
+        if (error != nullptr) {
+            *error = QStringLiteral ("The target project root could not be anchored safely: %1")
+                         .arg (transactionGuardError);
+        }
+        return false;
+    }
+
+    QByteArray previousBootstrapState;
+    if (!invokeCallback (
+            QStringLiteral ("RobotModelBuilder snapshotState"),
+            [&] { return callbacks.snapshotState (previousBootstrapState, error); },
+            error)) {
+        if (error != nullptr && error->isEmpty ())
+            *error = QStringLiteral ("RobotModelBuilder state snapshot failed.");
+        return false;
+    }
+
+    ProjectDocumentRegistry::CandidateTransitionReservation transitionReservation;
+    if (!invokeCallback (
+            QStringLiteral ("Project provider snapshot"),
+            [&] {
+                return _projectDocuments.preflightCandidateTransition (
+                    candidateResources, transitionReservation, error);
+            },
+            error))
+        return false;
+
+    if (!invokeCallback (QStringLiteral ("RobotModelBuilder confirmClose"),
+                         [&] { return callbacks.confirmClose (error); },
+                         error))
+        return false;
+
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError)) {
+        if (error != nullptr)
+            *error = transactionGuardError;
+        return false;
+    }
+
+    const quint64 proportionalSafety =
+        baselineInventory.totalRegularBytes / kProjectBaselineBackupSafetyPercent;
+    const quint64 backupSafety =
+        std::max (kProjectBaselineBackupSafetyBytes, proportionalSafety);
+    if (baselineInventory.totalRegularBytes >
+        std::numeric_limits< quint64 >::max () - backupSafety) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The required temporary baseline backup size overflowed.");
+        return false;
+    }
+    const quint64 requiredBackupBytes = baselineInventory.totalRegularBytes + backupSafety;
+    QStorageInfo temporaryStorage (QDir::tempPath ());
+    temporaryStorage.refresh ();
+    const qint64 availableBackupBytes = temporaryStorage.bytesAvailable ();
+    if (!temporaryStorage.isValid () || !temporaryStorage.isReady () ||
+        availableBackupBytes < 0 ||
+        static_cast< quint64 > (availableBackupBytes) < requiredBackupBytes) {
+        if (error != nullptr) {
+            *error = QStringLiteral (
+                         "Temporary storage cannot protect the existing project baseline (%1 bytes "
+                         "required). Free temporary disk space or choose a new or empty project "
+                         "directory.")
+                         .arg (requiredBackupBytes);
+        }
+        return false;
+    }
+
+    QTemporaryDir baselineBackup;
+    if (!baselineBackup.isValid ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Could not create a temporary project baseline backup.");
+        return false;
+    }
+    const QString cleanBackupRoot = inventoryPath (baselineBackup.path ());
+    const QString backupRelative =
+        QDir::fromNativeSeparators (QDir (cleanProjectRoot).relativeFilePath (cleanBackupRoot));
+    if (backupRelative == QStringLiteral (".") ||
+        (!QDir::isAbsolutePath (backupRelative) && backupRelative != QStringLiteral ("..") &&
+         !backupRelative.startsWith (QStringLiteral ("../")))) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The temporary baseline backup must be outside the project root.");
+        return false;
+    }
+
+    QHash< QString, QString > baselineBackupFiles;
+    for (const QString& sourcePath : baselineInventory.files) {
+        const QString relativePath =
+            QDir::fromNativeSeparators (QDir (cleanProjectRoot).relativeFilePath (sourcePath));
+        const QString backupPath =
+            QDir (baselineBackup.path ()).filePath (QStringLiteral ("files/") + relativePath);
+        if (!QDir ().mkpath (QFileInfo (backupPath).absolutePath ())) {
+            if (error != nullptr)
+                *error = QStringLiteral ("Could not create the project baseline backup directory: %1")
+                             .arg (QFileInfo (backupPath).absolutePath ());
+            return false;
+        }
+        ProjectWriteGuard sourceGuard;
+        QString copyError;
+        if (!ProjectWriteGuard::acquire (projectRoot, sourcePath, sourceGuard, &copyError) ||
+            !QFile::copy (sourcePath, backupPath)) {
+            if (error != nullptr)
+                *error = copyError.isEmpty ()
+                             ? QStringLiteral ("Could not back up project baseline file: %1").arg (sourcePath)
+                             : copyError;
+            return false;
+        }
+        QByteArray backupDigest;
+        if (QFileInfo (backupPath).size () != baselineInventory.fileSizes.value (sourcePath) ||
+            !fingerprintFile (backupPath, backupDigest, &copyError) ||
+            backupDigest != baselineInventory.fileDigests.value (sourcePath)) {
+            if (error != nullptr)
+                *error = copyError.isEmpty ()
+                             ? QStringLiteral ("Project baseline changed while it was backed up: %1")
+                                   .arg (sourcePath)
+                             : copyError;
+            return false;
+        }
+        baselineBackupFiles.insert (sourcePath, backupPath);
+    }
+    CandidatePathInventory verifiedBaseline;
+    if (!captureProjectInventory (verifiedBaseline, true, false, true, &baselineError) ||
+        verifiedBaseline.files != baselineInventory.files ||
+        verifiedBaseline.directories != baselineInventory.directories ||
+        verifiedBaseline.fileDigests != baselineInventory.fileDigests ||
+        verifiedBaseline.fileSizes != baselineInventory.fileSizes ||
+        verifiedBaseline.totalRegularBytes != baselineInventory.totalRegularBytes) {
+        if (error != nullptr)
+            *error = baselineError.isEmpty ()
+                         ? QStringLiteral ("The project baseline changed before candidate creation.")
+                         : baselineError;
+        return false;
+    }
+
+    const auto cleanupCreatedDirectories = [&] (QStringList& details) {
+        QSet< QString > directories;
+        for (const QString& directory : missingProjectDirectories)
+            directories.insert (QDir::cleanPath (directory));
+        for (const CandidateGeneratedOutput& output : generatedOutputs) {
+            for (const QString& directory : output.createdDirectories)
+                directories.insert (QDir::cleanPath (directory));
+        }
+        QStringList ordered = directories.values ();
+        std::sort (ordered.begin (), ordered.end (), [] (const QString& left, const QString& right) {
+            return QDir::fromNativeSeparators (left).count (QLatin1Char ('/')) >
+                QDir::fromNativeSeparators (right).count (QLatin1Char ('/'));
+        });
+        for (const QString& directory : ordered) {
+            if (baselineInventory.directories.contains (inventoryPath (directory)))
+                continue;
+            const QFileInfo info (directory);
+            if (isUnsafeInventoryEntry (info) || !info.exists () || !info.isDir () ||
+                !QDir (directory).entryList (
+                    QDir::NoDotAndDotDot | QDir::AllEntries | QDir::Hidden).isEmpty ())
+                continue;
+            QDir parent (info.absolutePath ());
+            if (!parent.rmdir (info.fileName ()))
+                details.push_back (
+                    QStringLiteral ("Candidate directory cleanup failed: %1").arg (directory));
+        }
+    };
+
+    const auto restoreBaselineTree = [&] (QStringList& details) {
+        QString restoreError;
+#ifndef Q_OS_WIN
+        const auto relativeInventoryPath = [&] (const QString& absolutePath) {
+            return QDir::fromNativeSeparators (
+                QDir (cleanProjectRoot).relativeFilePath (absolutePath));
+        };
+        QSet< QString > baselineRelativeFiles;
+        QSet< QString > baselineRelativeDirectories;
+        QHash< QString, QByteArray > baselineRelativeDigests;
+        QHash< QString, qint64 > baselineRelativeSizes;
+        for (const QString& path : baselineInventory.files) {
+            const QString relative = relativeInventoryPath (path);
+            baselineRelativeFiles.insert (relative);
+            baselineRelativeDigests.insert (relative, baselineInventory.fileDigests.value (path));
+            baselineRelativeSizes.insert (relative, baselineInventory.fileSizes.value (path));
+        }
+        for (const QString& path : baselineInventory.directories) {
+            const QString relative = relativeInventoryPath (path);
+            if (relative != QStringLiteral ("."))
+                baselineRelativeDirectories.insert (relative);
+        }
+
+        bool restored = true;
+        if (!transactionGuard.reconcileRelativeTree (
+                baselineRelativeFiles, baselineRelativeDirectories, &restoreError)) {
+            details.push_back (
+                QStringLiteral ("Anchored candidate tree cleanup failed: %1").arg (restoreError));
+            restored = false;
+        }
+        restoreError.clear ();
+        if (!transactionGuard.ensureRelativeDirectories (
+                baselineRelativeDirectories, &restoreError)) {
+            details.push_back (
+                QStringLiteral ("Anchored baseline directory restore failed: %1").arg (restoreError));
+            restored = false;
+        }
+        for (const QString& targetPath : baselineInventory.files) {
+            const QString backupPath = baselineBackupFiles.value (targetPath);
+            const QString relative = relativeInventoryPath (targetPath);
+            QByteArray backupDigest;
+            QString fileError;
+            if (backupPath.isEmpty () ||
+                QFileInfo (backupPath).size () != baselineInventory.fileSizes.value (targetPath) ||
+                !fingerprintFile (backupPath, backupDigest, &fileError) ||
+                backupDigest != baselineInventory.fileDigests.value (targetPath) ||
+                !transactionGuard.restoreRelativeFileAtomically (
+                    backupPath, relative, &fileError)) {
+                details.push_back (
+                    QStringLiteral ("Anchored baseline file restore failed: %1")
+                        .arg (fileError.isEmpty () ? relative : fileError));
+                restored = false;
+            }
+        }
+
+        ProjectAnchoredInventory restoredInventory;
+        restoreError.clear ();
+        if (!transactionGuard.captureRelativeInventory (
+                restoredInventory, true, &restoreError) ||
+            restoredInventory.files != baselineRelativeFiles ||
+            restoredInventory.directories != baselineRelativeDirectories ||
+            restoredInventory.fileDigests != baselineRelativeDigests ||
+            restoredInventory.fileSizes != baselineRelativeSizes ||
+            restoredInventory.totalRegularBytes != baselineInventory.totalRegularBytes) {
+            details.push_back (
+                restoreError.isEmpty ()
+                    ? QStringLiteral ("Anchored project baseline verification failed after rollback.")
+                    : QStringLiteral ("Anchored project baseline verification failed after rollback: %1")
+                          .arg (restoreError));
+            restored = false;
+        }
+        return restored;
+#else
+        const auto recordCleanupFailure = [&] (const QString& description,
+                                               const QString& path,
+                                               const QString& cleanupError) {
+            details.push_back (
+                cleanupError.isEmpty ()
+                    ? QStringLiteral ("%1: %2").arg (description, path)
+                    : QStringLiteral ("%1: %2").arg (description, cleanupError));
+        };
+        const auto removeCandidateEntry = [&] (const QFileInfo& info,
+                                                const QString& description) {
+            const QString path = inventoryPath (info.absoluteFilePath ());
+            QString cleanupError;
+            if (isUnsafeInventoryEntry (info)) {
+                if (!ProjectPathResolver::removeContainedUnsafeEntry (
+                        projectRoot, path, &cleanupError))
+                    recordCleanupFailure (description, path, cleanupError);
+                return;
+            }
+            const bool removed = info.isDir ()
+                                     ? ProjectPathResolver::removeContainedDirectoryTree (
+                                           projectRoot, path, &cleanupError)
+                                 : info.isFile ()
+                                     ? ProjectPathResolver::removeContainedFile (
+                                           projectRoot, path, &cleanupError)
+                                     : ProjectPathResolver::removeContainedUnsafeEntry (
+                                           projectRoot, path, &cleanupError);
+            if (!removed)
+                recordCleanupFailure (description, path, cleanupError);
+        };
+
+        const QFileInfo currentRootInfo (projectRoot);
+        if (isUnsafeInventoryEntry (currentRootInfo) ||
+            (currentRootInfo.exists () && !currentRootInfo.isDir ())) {
+            QString cleanupError;
+            if (!ProjectPathResolver::removeContainedUnsafeEntry (
+                    projectRoot, projectRoot, &cleanupError)) {
+                recordCleanupFailure (QStringLiteral ("Candidate project-root cleanup failed"),
+                                      projectRoot,
+                                      cleanupError);
+            }
+        }
+        else if (currentRootInfo.isDir ()) {
+            std::function< void (const QString&) > cleanupBaselineDirectory;
+            cleanupBaselineDirectory = [&] (const QString& directory) {
+                QDirIterator entries (
+                    directory,
+                    QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+                while (entries.hasNext ()) {
+                    const QFileInfo info (entries.next ());
+                    const QString path = inventoryPath (info.absoluteFilePath ());
+                    const bool unsafe = isUnsafeInventoryEntry (info);
+                    const bool baselineDirectory = baselineInventory.directories.contains (path);
+                    const bool baselineFile = baselineInventory.files.contains (path);
+
+                    if (baselineDirectory && !unsafe && info.isDir ()) {
+                        cleanupBaselineDirectory (path);
+                        continue;
+                    }
+                    if (baselineFile && !unsafe && info.isFile ())
+                        continue;
+
+                    removeCandidateEntry (
+                        info,
+                        baselineDirectory || baselineFile
+                            ? QStringLiteral ("Candidate baseline type-replacement cleanup failed")
+                            : QStringLiteral ("Candidate undeclared entry cleanup failed"));
+                }
+            };
+            cleanupBaselineDirectory (projectRoot);
+        }
+
+        QStringList baselineDirectories = baselineInventory.directories.values ();
+        std::sort (baselineDirectories.begin (), baselineDirectories.end (),
+                   [] (const QString& left, const QString& right) {
+                       return QDir::fromNativeSeparators (left).count (QLatin1Char ('/')) <
+                           QDir::fromNativeSeparators (right).count (QLatin1Char ('/'));
+                   });
+        for (const QString& directory : baselineDirectories) {
+            const QFileInfo info (directory);
+            if (isUnsafeInventoryEntry (info) ||
+                (!info.exists () && !QDir ().mkpath (directory)) ||
+                !QFileInfo (directory).isDir ()) {
+                details.push_back (
+                    QStringLiteral ("Project baseline directory restore failed: %1").arg (directory));
+            }
+        }
+
+        ProjectSaveTransaction baselineRestore;
+        ProjectSaveTransaction::setContainmentRoot (baselineRestore, projectRoot);
+        bool allRestoresStaged = true;
+        int stagedRestoreCount = 0;
+        for (const QString& targetPath : baselineInventory.files) {
+            const QString backupPath = baselineBackupFiles.value (targetPath);
+            QByteArray backupDigest;
+            QString stageError;
+            if (backupPath.isEmpty () ||
+                QFileInfo (backupPath).size () != baselineInventory.fileSizes.value (targetPath) ||
+                !fingerprintFile (backupPath, backupDigest, &stageError) ||
+                backupDigest != baselineInventory.fileDigests.value (targetPath) ||
+                !baselineRestore.stageCopy (backupPath, targetPath, &stageError)) {
+                details.push_back (
+                    QStringLiteral ("Project baseline file restore staging failed: %1")
+                        .arg (stageError.isEmpty () ? targetPath : stageError));
+                allRestoresStaged = false;
+                continue;
+            }
+            ++stagedRestoreCount;
+        }
+        bool restoreCommitted = allRestoresStaged;
+        if (stagedRestoreCount > 0 && !baselineRestore.commit (&restoreError)) {
+            details.push_back (
+                QStringLiteral ("Project baseline file restore failed: %1").arg (restoreError));
+            restoreCommitted = false;
+        }
+
+        CandidatePathInventory restoredInventory;
+        restoreError.clear ();
+        if (!captureProjectInventory (restoredInventory, true, false, true, &restoreError) ||
+            restoredInventory.files != baselineInventory.files ||
+            restoredInventory.directories != baselineInventory.directories ||
+            restoredInventory.fileDigests != baselineInventory.fileDigests ||
+            restoredInventory.fileSizes != baselineInventory.fileSizes ||
+            restoredInventory.totalRegularBytes != baselineInventory.totalRegularBytes) {
+            details.push_back (
+                restoreError.isEmpty ()
+                    ? QStringLiteral ("Project baseline tree verification failed after rollback.")
+                    : QStringLiteral ("Project baseline tree verification failed after rollback: %1")
+                          .arg (restoreError));
+            return false;
+        }
+        return restoreCommitted;
+#endif
+    };
+
+    if (!missingProjectDirectories.isEmpty ()) {
+        QString unexpectedDirectory;
+        for (const QString& directory : missingProjectDirectories) {
+            if (ProjectPathResolver::isLinkOrReparsePoint (directory) ||
+                QFileInfo::exists (directory)) {
+                unexpectedDirectory = directory;
+                break;
+            }
+        }
+        if (!unexpectedDirectory.isEmpty ()) {
+            if (error != nullptr) {
+                *error = QStringLiteral ("A missing project directory appeared unexpectedly: %1")
+                             .arg (unexpectedDirectory);
+            }
+            return false;
+        }
+
+        transactionGuardError.clear ();
+        if (!transactionGuard.createMissingProjectRoot (
+                projectRoot, missingProjectDirectories, &transactionGuardError)) {
+            if (error != nullptr) {
+                *error = QStringLiteral ("The target project root could not be created safely: %1")
+                             .arg (transactionGuardError);
+            }
+            return false;
+        }
+    }
+
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError)) {
+        QStringList details;
+        details.push_back (transactionGuardError);
+        transactionGuard.release ();
+        if (error != nullptr)
+            *error = details.join (QLatin1Char ('\n'));
+        return false;
+    }
+
+    const auto rollbackFilesystem = [&] (QStringList& details) {
+        QString identityError;
+        const bool identityStable =
+            transactionGuard.validateRootIdentity (&identityError);
+        if (!identityStable) {
+            details.push_back (
+                QStringLiteral (
+                    "Replacement-path rollback was skipped because the project root identity "
+                    "changed; rollback was restricted to the retained root anchor: %1")
+                    .arg (identityError));
+        }
+#ifdef Q_OS_WIN
+        const bool restored = identityStable && restoreBaselineTree (details);
+#else
+        const bool restored = restoreBaselineTree (details);
+#endif
+        transactionGuard.release ();
+        if (identityStable)
+            cleanupCreatedDirectories (details);
+        return restored;
+    };
+
+    const ProjectManager previousManager = _projectManager;
+    ProjectManifest candidateManifest;
+    candidateManifest.project.name = QFileInfo (absoluteProjectFile).completeBaseName ();
+    candidateManifest.project.description =
+        QStringLiteral ("Empty RobotModelBuilder project awaiting bootstrap.");
+    candidateManifest.settings.insert (QStringLiteral ("pathPolicy"),
+                                      QStringLiteral ("project-relative"));
+
+    if (!_projectManager.createProject (absoluteProjectFile, candidateManifest, error)) {
+        QStringList details;
+        if (error != nullptr && !error->isEmpty ())
+            details.push_back (*error);
+        rollbackFilesystem (details);
+        if (error != nullptr)
+            *error = details.join (QLatin1Char ('\n'));
+        return false;
+    }
+
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError)) {
+        QStringList details;
+        details.push_back (transactionGuardError);
+        rollbackFilesystem (details);
+        _projectManager = previousManager;
+        if (error != nullptr)
+            *error = details.join (QLatin1Char ('\n'));
+        return false;
+    }
+
+    const auto restorePreviousProject = [&] (const QString& failure) {
+        QStringList details;
+        if (!failure.isEmpty ())
+            details.push_back (failure);
+        QString closeError;
+        if (!_projectDocuments.closeResources (&closeError)) {
+            details.push_back (
+                QStringLiteral ("Candidate project document close failed: %1").arg (closeError));
+        }
+        rollbackFilesystem (details);
+
+        _projectManager = previousManager;
+        QString restoreError;
+        if (!_projectDocuments.restoreSuspendedResourcesAfterCandidateFailure (&restoreError)) {
+            details.push_back (QStringLiteral ("Prior project document restore failed: %1")
+                                   .arg (restoreError));
+        }
+        QString stateRestoreError;
+        if (!invokeCallback (
+                QStringLiteral ("RobotModelBuilder restoreState"),
+                [&] {
+                    return callbacks.restoreState (
+                        previousBootstrapState, &stateRestoreError);
+                },
+                &stateRestoreError)) {
+            details.push_back (QStringLiteral ("RobotModelBuilder state restore failed: %1")
+                                   .arg (stateRestoreError));
+        }
+        setWindowTitle (previousWindowTitle);
+        if (error != nullptr)
+            *error = details.join (QLatin1Char ('\n'));
+        return false;
+    };
+
+    _projectDocuments.suspendResourcesForCandidateTransition (std::move (transitionReservation));
+
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError))
+        return restorePreviousProject (transactionGuardError);
+
+    QString bootstrapError;
+    if (!invokeCallback (
+            QStringLiteral ("RobotModelBuilder bootstrap"),
+            [&] { return callbacks.bootstrap (projectRoot, &bootstrapError); },
+            &bootstrapError)) {
+        if (bootstrapError.isEmpty ())
+            bootstrapError = QStringLiteral ("RobotModelBuilder project bootstrap failed.");
+        return restorePreviousProject (bootstrapError);
+    }
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError))
+        return restorePreviousProject (transactionGuardError);
+
+    const auto sameResource = [] (const ProjectResource& left, const ProjectResource& right) {
+        return left.id == right.id && left.kind == right.kind && left.path == right.path &&
+            left.ownership == right.ownership && left.required == right.required &&
+            left.dependencies == right.dependencies;
+    };
+    QSet< QString > declaredResourceIds;
+    for (const ProjectResource& declared : candidateResources)
+        declaredResourceIds.insert (declared.id);
+    QSet< QString > manifestResourceIds;
+    for (const ProjectResource& resource : _projectManager.manifest ().resources)
+        manifestResourceIds.insert (resource.id);
+    if (manifestResourceIds != declaredResourceIds ||
+        _projectDocuments.activeResourceIds () != declaredResourceIds) {
+        return restorePreviousProject (
+            QStringLiteral (
+                "RobotModelBuilder bootstrap resource IDs do not exactly match preflight declarations."));
+    }
+    for (const ProjectResource& declared : candidateResources) {
+        ProjectResource activeManifestResource;
+        if (!_projectManager.manifest ().findResource (declared.id, activeManifestResource) ||
+            !sameResource (declared, activeManifestResource) ||
+            !_projectDocuments.hasActiveResource (declared)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap did not activate the declared resource: %1")
+                    .arg (declared.id));
+        }
+    }
+    bool mainResourceDirty = false;
+    QString dirtyCheckError;
+    if (!invokeCallback (
+            QStringLiteral ("Project provider dirty-state"),
+            [&] {
+                mainResourceDirty = _projectDocuments.isActiveResourceDirty (
+                    QStringLiteral ("robot-model.main"));
+                return true;
+            },
+            &dirtyCheckError)) {
+        return restorePreviousProject (dirtyCheckError);
+    }
+    if (!mainResourceDirty)
+        return restorePreviousProject (
+            QStringLiteral ("RobotModelBuilder bootstrap must leave robot-model.main dirty."));
+    if (!mainWorkCellResourceId ().isEmpty ())
+        return restorePreviousProject (
+            QStringLiteral ("A new RobotModelBuilder project must not publish mainWorkCell during bootstrap."));
+
+    CandidatePathInventory successInventory;
+    QString inventoryError;
+    if (!captureProjectInventory (successInventory, true, false, false, &inventoryError)) {
+        return restorePreviousProject (
+            QStringLiteral ("RobotModelBuilder bootstrap left an unsafe project tree: %1")
+                .arg (inventoryError));
+    }
+    QSet< QString > allowedChangedFiles;
+    allowedChangedFiles.insert (inventoryPath (absoluteProjectFile));
+    QSet< QString > allowedNewDirectories;
+    for (const QString& directory : missingProjectDirectories)
+        allowedNewDirectories.insert (inventoryPath (directory));
+    for (const QString& file : allowedChangedFiles) {
+        QString directory = inventoryPath (QFileInfo (file).absolutePath ());
+        while (directory == cleanProjectRoot ||
+               directory.startsWith (cleanProjectRoot + QLatin1Char ('/'),
+#ifdef Q_OS_WIN
+                                     Qt::CaseInsensitive
+#else
+                                     Qt::CaseSensitive
+#endif
+                                         )) {
+            allowedNewDirectories.insert (directory);
+            if (directory == cleanProjectRoot)
+                break;
+            const QString parent = inventoryPath (QFileInfo (directory).absolutePath ());
+            if (parent == directory)
+                break;
+            directory = parent;
+        }
+    }
+
+    for (const QString& file : baselineInventory.files) {
+        if (allowedChangedFiles.contains (file))
+            continue;
+        if (!successInventory.files.contains (file)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap deleted an undeclared baseline file: %1")
+                    .arg (file));
+        }
+        if (successInventory.fileDigests.value (file) !=
+            baselineInventory.fileDigests.value (file)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap modified an undeclared baseline file: %1")
+                    .arg (file));
+        }
+    }
+    for (const QString& file : successInventory.files) {
+        if (!baselineInventory.files.contains (file) && !allowedChangedFiles.contains (file)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap created an undeclared file: %1")
+                    .arg (file));
+        }
+    }
+    for (const QString& directory : baselineInventory.directories) {
+        if (!successInventory.directories.contains (directory)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap deleted a baseline directory: %1")
+                    .arg (directory));
+        }
+    }
+    for (const QString& directory : successInventory.directories) {
+        if (!baselineInventory.directories.contains (directory) &&
+            !allowedNewDirectories.contains (directory)) {
+            return restorePreviousProject (
+                QStringLiteral ("RobotModelBuilder bootstrap created an undeclared directory: %1")
+                    .arg (directory));
+        }
+    }
+
+    transactionGuardError.clear ();
+    if (!transactionGuard.validateRootIdentity (&transactionGuardError))
+        return restorePreviousProject (transactionGuardError);
+
+    QString suspendedCloseError;
+    if (!_projectDocuments.closeSuspendedResourcesAfterCandidateSuccess (
+            &suspendedCloseError)) {
+        return restorePreviousProject (
+            QStringLiteral ("Prior project document close failed: %1")
+                .arg (suspendedCloseError));
+    }
+    createEmptyWorkCell ();
+
+    _settingsMap->set< std::string > ("PreviousOpenDirectory", projectRoot.toStdString ());
+    std::vector< std::string > recent = _settingsMap->get< std::vector< std::string > > (
+        "LastOpennedFiles", std::vector< std::string > ());
+    recent.push_back (absoluteProjectFile.toStdString ());
+    _settingsMap->set< std::vector< std::string > > ("LastOpennedFiles", recent);
+    updateLastFiles ();
+    updateProjectWindowTitle ();
     return true;
 }
 

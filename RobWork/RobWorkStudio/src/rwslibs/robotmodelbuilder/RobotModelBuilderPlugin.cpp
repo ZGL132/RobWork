@@ -11,6 +11,7 @@
 #include "WorkCellConverter.hpp"
 
 #include <rws/CallbackProjectDocumentProvider.hpp>
+#include <rws/ProjectPathResolver.hpp>
 #include <rws/RobWorkStudio.hpp>
 
 #include <rw/models/WorkCell.hpp>
@@ -94,7 +95,13 @@ void RobotModelBuilderPlugin::initialize ()
         },
         CallbackProjectDocumentProvider::CanCloseHandler (),
         CallbackProjectDocumentProvider::CloseHandler (),
-        [this] () { _widget->markProjectDocumentClean (); });
+        [this] () { _widget->markProjectDocumentClean (); },
+        [this] (QByteArray* snapshot, QString* error) {
+            return _widget->snapshotProjectDocumentState (*snapshot, error);
+        },
+        [this] (const QByteArray& snapshot, QString* error) {
+            return _widget->restoreProjectDocumentState (snapshot, error);
+        });
 
     QString projectProviderError;
     if (getRobWorkStudio () == NULL || !getRobWorkStudio ()->registerProjectDocumentProvider (
@@ -288,6 +295,125 @@ QString RobotModelBuilderPlugin::commitRobotProjectSource (const QString& source
     studio->notifyProjectDocumentChanged ();
     _widget->setProjectStatus ("Robot project draft imported. Review the model, then use File > Save Project "
                                "to generate the managed .rmb.json.");
+    return QString ();
+}
+
+QString RobotModelBuilderPlugin::preflightNewRobotProject (const QString& projectRoot)
+{
+    if (_widget == NULL)
+        return QStringLiteral ("RobotModelBuilder is not initialized.");
+    if (getRobWorkStudio () == NULL || _projectProvider == NULL)
+        return QStringLiteral (
+            "RobotModelBuilder is not attached to RobWorkStudio project services.");
+    if (projectRoot.trimmed ().isEmpty ())
+        return QStringLiteral ("The New Project root is empty. Select an absolute project path.");
+    if (!QDir::isAbsolutePath (projectRoot))
+        return QStringLiteral ("The New Project root must be an absolute path: %1")
+            .arg (projectRoot);
+    return QString ();
+}
+
+QVariantMap RobotModelBuilderPlugin::newRobotProjectResource (const QString& projectRoot)
+{
+    QVariantMap result;
+    const QString error = preflightNewRobotProject (projectRoot);
+    result.insert (QStringLiteral ("success"), error.isEmpty ());
+    result.insert (QStringLiteral ("error"), error);
+    if (!error.isEmpty ())
+        return result;
+
+    const QString root = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
+    const RobotModelSpec defaults = RobotModelXmlWriter::makeDefaultSixAxisModel (
+        QDir (root).filePath (QStringLiteral ("generated/robot-models")));
+    result.insert (QStringLiteral ("id"), QStringLiteral ("robot-model.main"));
+    result.insert (QStringLiteral ("kind"), QStringLiteral ("robwork.robot-model"));
+    result.insert (
+        QStringLiteral ("path"),
+        QStringLiteral ("generated/robot-models/%1.rmb.json")
+            .arg (RobotModelXmlWriter::sanitizeFileBaseName (
+                QString::fromStdString (defaults.robotName))));
+    result.insert (QStringLiteral ("ownership"), QStringLiteral ("generated"));
+    result.insert (QStringLiteral ("required"), true);
+    result.insert (QStringLiteral ("dependencies"), QStringList ());
+    return result;
+}
+
+QVariantMap RobotModelBuilderPlugin::snapshotNewRobotProjectState ()
+{
+    QVariantMap result;
+    QByteArray snapshot;
+    QString error;
+    const bool success = _widget != NULL &&
+        _widget->snapshotProjectDocumentState (snapshot, &error);
+    if (!success && error.isEmpty ())
+        error = QStringLiteral ("RobotModelBuilder is not initialized.");
+    result.insert (QStringLiteral ("success"), success);
+    result.insert (QStringLiteral ("error"), error);
+    result.insert (QStringLiteral ("snapshot"), snapshot);
+    return result;
+}
+
+QString RobotModelBuilderPlugin::restoreNewRobotProjectState (const QByteArray& snapshot)
+{
+    if (_widget == NULL)
+        return QStringLiteral ("RobotModelBuilder is not initialized.");
+    QString error;
+    if (!_widget->restoreProjectDocumentState (snapshot, &error))
+        return error.isEmpty () ? QStringLiteral ("RobotModelBuilder state restore failed.") : error;
+    return QString ();
+}
+
+QString RobotModelBuilderPlugin::bootstrapNewRobotProject (const QString& projectRoot)
+{
+    const QString preflightError = preflightNewRobotProject (projectRoot);
+    if (!preflightError.isEmpty ())
+        return preflightError;
+
+    RobWorkStudio* studio = getRobWorkStudio ();
+    const QString requestedRoot = QDir::cleanPath (QDir::fromNativeSeparators (projectRoot));
+    const QString activeRoot =
+        QDir::cleanPath (QDir::fromNativeSeparators (studio->projectDirectory ()));
+    QString pathError;
+    const bool requestedInsideActive = ProjectPathResolver::validateContainedWritePath (
+        activeRoot, requestedRoot, &pathError);
+    const bool activeInsideRequested = requestedInsideActive &&
+        ProjectPathResolver::validateContainedWritePath (
+            requestedRoot, activeRoot, &pathError);
+    if (!activeInsideRequested) {
+        return QStringLiteral ("The requested New Project is no longer active: %1")
+            .arg (requestedRoot);
+    }
+
+    const QString outputDirectory =
+        QDir (activeRoot).filePath (QStringLiteral ("generated/robot-models"));
+    const RobotModelSpec defaults =
+        RobotModelXmlWriter::makeDefaultSixAxisModel (outputDirectory);
+    ProjectResource resource;
+    resource.id = QStringLiteral ("robot-model.main");
+    resource.kind = QStringLiteral ("robwork.robot-model");
+    resource.path = QStringLiteral ("generated/robot-models/%1.rmb.json")
+                        .arg (RobotModelXmlWriter::sanitizeFileBaseName (
+                            QString::fromStdString (defaults.robotName)));
+    resource.ownership = QStringLiteral ("generated");
+    resource.required = true;
+
+    bool created = false;
+    QString error;
+    if (!studio->ensureGeneratedProjectResource (resource, &created, &error)) {
+        return QStringLiteral ("Could not register the default robot model resource: %1")
+            .arg (error);
+    }
+    if (!created)
+        return QString ();
+
+    _widget->setProjectOutputDirectory (activeRoot);
+    _widget->applyDefaultProjectModel ();
+    _projectProvider->adoptGeneratedResource (resource.id);
+    _widget->beginGeneratedProjectDocument ();
+    _projectProvider->setDirty (_widget->isProjectDocumentDirty ());
+    studio->notifyProjectDocumentChanged ();
+    _widget->setProjectStatus (
+        "Default robot model created. Review it, then use Save and Load to publish the WorkCell.");
     return QString ();
 }
 

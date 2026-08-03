@@ -512,6 +512,32 @@ TEST (ProjectSystemTest, WriteGuardBlocksDirectoryReplacementDuringManagedWrite)
 #endif
 }
 
+TEST (ProjectSystemTest, WriteGuardRejectsJunctionProjectRoot)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Project-root reparse handling is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project-junction");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (writeFile (externalSentinel, "external-root"));
+    if (!createDirectoryJunction (projectRoot, external.path ()))
+        GTEST_SKIP () << "The test process cannot create a Windows directory junction.";
+    const DirectoryJunctionCleanup cleanup (projectRoot);
+
+    rws::ProjectWriteGuard guard;
+    QString error;
+    EXPECT_FALSE (rws::ProjectWriteGuard::acquire (
+        projectRoot, QDir (projectRoot).filePath ("sentinel.txt"), guard, &error));
+    EXPECT_TRUE (error.contains (QStringLiteral ("reparse point"), Qt::CaseInsensitive))
+        << error.toStdString ();
+    EXPECT_EQ (QByteArray ("external-root"), readFile (externalSentinel));
+#endif
+}
+
 TEST (ProjectSystemTest, ManagerRollbackRejectsCommittedSourceDirectoryJunction)
 {
 #ifndef Q_OS_WIN
@@ -604,6 +630,195 @@ TEST (ProjectSystemTest, ContainedDirectoryRemovalRejectsDirectoryJunction)
     EXPECT_FALSE (rws::ProjectPathResolver::removeContainedDirectoryTree (
         projectRoot, target, &error));
     EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (QByteArray ("external"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, UnsafeEntryRemovalDeletesJunctionAndPreservesTarget)
+{
+#ifndef Q_OS_WIN
+    GTEST_SKIP () << "Directory junction regression is specific to Windows.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid ());
+    ASSERT_TRUE (external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString junction = QDir (projectRoot).filePath ("candidate-junction");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (externalSentinel, "external-target"));
+    if (!createDirectoryJunction (junction, external.path ()))
+        GTEST_SKIP () << "The test process cannot create a Windows directory junction.";
+    const DirectoryJunctionCleanup cleanup (junction);
+
+    QString error;
+    ASSERT_TRUE (rws::ProjectPathResolver::removeContainedUnsafeEntry (
+        projectRoot, junction, &error)) << error.toStdString ();
+    EXPECT_FALSE (QFileInfo::exists (junction));
+    EXPECT_TRUE (QFileInfo (external.path ()).isDir ());
+    EXPECT_EQ (QByteArray ("external-target"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, PosixContainedRemovalRejectsRelativePathComponents)
+{
+#ifdef Q_OS_WIN
+    GTEST_SKIP () << "fd-relative project cleanup is specific to POSIX.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid () && external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString file = QDir (projectRoot).filePath ("file.txt");
+    const QString emptyDirectory = QDir (projectRoot).filePath ("empty");
+    const QString tree = QDir (projectRoot).filePath ("tree");
+    const QString unsafeEntry = QDir (projectRoot).filePath ("unsafe-link");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (writeFile (file, "file"));
+    ASSERT_TRUE (QDir ().mkpath (emptyDirectory));
+    ASSERT_TRUE (writeFile (QDir (tree).filePath ("nested/payload.txt"), "payload"));
+    ASSERT_TRUE (writeFile (externalSentinel, "external"));
+    ASSERT_TRUE (QFile::link (externalSentinel, unsafeEntry));
+
+    QString error;
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedFile (
+        projectRoot, projectRoot + QStringLiteral ("/component/../file.txt"), &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (QFileInfo::exists (file));
+
+    error.clear ();
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedEmptyDirectory (
+        projectRoot, projectRoot + QStringLiteral ("/./empty"), &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (QFileInfo (emptyDirectory).isDir ());
+
+    error.clear ();
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedDirectoryTree (
+        projectRoot, projectRoot + QStringLiteral ("/component/../tree"), &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (QFileInfo (tree).isDir ());
+
+    error.clear ();
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedUnsafeEntry (
+        projectRoot, projectRoot + QStringLiteral ("/./unsafe-link"), &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_TRUE (QFileInfo (unsafeEntry).isSymLink ());
+    EXPECT_EQ (QByteArray ("external"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, PosixContainedRemovalDoesNotFollowSymlinks)
+{
+#ifdef Q_OS_WIN
+    GTEST_SKIP () << "fd-relative project cleanup is specific to POSIX.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid () && external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (QDir ().mkpath (projectRoot));
+    ASSERT_TRUE (writeFile (externalSentinel, "external-target"));
+
+    const QString fileLink = QDir (projectRoot).filePath ("file-link");
+    const QString emptyDirectoryLink = QDir (projectRoot).filePath ("empty-directory-link");
+    const QString treeLink = QDir (projectRoot).filePath ("tree-link");
+    const QString unsafeLink = QDir (projectRoot).filePath ("unsafe-link");
+    ASSERT_TRUE (QFile::link (externalSentinel, fileLink));
+    ASSERT_TRUE (QFile::link (external.path (), emptyDirectoryLink));
+    ASSERT_TRUE (QFile::link (external.path (), treeLink));
+    ASSERT_TRUE (QFile::link (external.path (), unsafeLink));
+
+    QString error;
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedFile (
+        projectRoot, fileLink, &error));
+    EXPECT_TRUE (QFileInfo (fileLink).isSymLink ());
+    error.clear ();
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedEmptyDirectory (
+        projectRoot, emptyDirectoryLink, &error));
+    EXPECT_TRUE (QFileInfo (emptyDirectoryLink).isSymLink ());
+    error.clear ();
+    EXPECT_FALSE (rws::ProjectPathResolver::removeContainedDirectoryTree (
+        projectRoot, treeLink, &error));
+    EXPECT_TRUE (QFileInfo (treeLink).isSymLink ());
+    error.clear ();
+    ASSERT_TRUE (rws::ProjectPathResolver::removeContainedUnsafeEntry (
+        projectRoot, unsafeLink, &error)) << error.toStdString ();
+    EXPECT_FALSE (QFileInfo (unsafeLink).isSymLink ());
+    EXPECT_EQ (QByteArray ("external-target"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, PosixContainedDirectoryTreePreservesNestedSymlinkTarget)
+{
+#ifdef Q_OS_WIN
+    GTEST_SKIP () << "fd-relative project cleanup is specific to POSIX.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid () && external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString candidateTree = QDir (projectRoot).filePath ("candidate-only");
+    const QString externalSentinel = QDir (external.path ()).filePath ("sentinel.txt");
+    ASSERT_TRUE (writeFile (QDir (candidateTree).filePath ("nested/payload.txt"), "payload"));
+    ASSERT_TRUE (writeFile (externalSentinel, "external-target"));
+    ASSERT_TRUE (QFile::link (
+        external.path (), QDir (candidateTree).filePath ("nested/external-link")));
+
+    QString error;
+    ASSERT_TRUE (rws::ProjectPathResolver::removeContainedDirectoryTree (
+        projectRoot, candidateTree, &error)) << error.toStdString ();
+    EXPECT_FALSE (QFileInfo::exists (candidateTree));
+    EXPECT_EQ (QByteArray ("external-target"), readFile (externalSentinel));
+#endif
+}
+
+TEST (ProjectSystemTest, PosixRollbackUsesRetainedRootDescriptorAfterPathReplacement)
+{
+#ifdef Q_OS_WIN
+    GTEST_SKIP () << "Retained root descriptor rollback is specific to POSIX.";
+#else
+    QTemporaryDir directory;
+    QTemporaryDir external;
+    ASSERT_TRUE (directory.isValid () && external.isValid ());
+    const QString projectRoot = QDir (directory.path ()).filePath ("project");
+    const QString movedRoot = QDir (directory.path ()).filePath ("project-moved");
+    const QString baseline = QDir (projectRoot).filePath ("baseline/sentinel.bin");
+    const QString backup = QDir (external.path ()).filePath ("baseline-backup.bin");
+    const QString externalSentinel = QDir (external.path ()).filePath ("external-sentinel.bin");
+    ASSERT_TRUE (writeFile (baseline, "candidate-baseline"));
+    ASSERT_TRUE (writeFile (
+        QDir (projectRoot).filePath ("candidate-only/nested/payload.bin"), "candidate"));
+    ASSERT_TRUE (writeFile (backup, "restored-baseline"));
+    ASSERT_TRUE (writeFile (externalSentinel, "external"));
+
+    rws::ProjectWriteGuard guard;
+    QString error;
+    ASSERT_TRUE (rws::ProjectWriteGuard::acquire (
+        projectRoot, QDir (projectRoot).filePath ("Candidate.rwproj"), guard, &error))
+        << error.toStdString ();
+    ASSERT_TRUE (QDir (directory.path ()).rename ("project", "project-moved"));
+
+    const QString replacementSentinel =
+        QDir (projectRoot).filePath ("replacement-sentinel.bin");
+    ASSERT_TRUE (writeFile (replacementSentinel, "replacement"));
+
+    // Expected production interface: every target is relative to guard's retained root fd.
+    ASSERT_TRUE (guard.removeRelativeDirectoryTree (
+        QStringLiteral ("candidate-only"), &error)) << error.toStdString ();
+    ASSERT_TRUE (guard.restoreRelativeFileAtomically (
+        backup, QStringLiteral ("baseline/sentinel.bin"), &error)) << error.toStdString ();
+    rws::ProjectAnchoredInventory inventory;
+    ASSERT_TRUE (guard.captureRelativeInventory (inventory, true, &error))
+        << error.toStdString ();
+
+    EXPECT_FALSE (QFileInfo::exists (QDir (movedRoot).filePath ("candidate-only")));
+    EXPECT_EQ (QByteArray ("restored-baseline"),
+               readFile (QDir (movedRoot).filePath ("baseline/sentinel.bin")));
+    EXPECT_TRUE (inventory.files.contains (QStringLiteral ("baseline/sentinel.bin")));
+    EXPECT_FALSE (inventory.directories.contains (QStringLiteral ("candidate-only")));
+    EXPECT_EQ (QByteArray ("replacement"), readFile (replacementSentinel));
     EXPECT_EQ (QByteArray ("external"), readFile (externalSentinel));
 #endif
 }

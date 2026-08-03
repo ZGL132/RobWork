@@ -1,5 +1,6 @@
 #include "ProjectDocumentRegistry.hpp"
 
+#include "ProjectManifestJson.hpp"
 #include "ProjectPathResolver.hpp"
 #include "ProjectSaveTransaction.hpp"
 
@@ -7,6 +8,10 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QSaveFile>
+#include <QSet>
+
+#include <exception>
+#include <utility>
 
 namespace rws {
 namespace {
@@ -130,7 +135,9 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
         QString resolvedPath;
         const bool pathResolved = ProjectPathResolver::resolveResource (
             projectFilePath, resource, resolvedPath, error);
-        const bool resourceLoaded = pathResolved && provider->loadResource (resource, context, error);
+        const bool resourceLoaded = pathResolved &&
+                                    snapshotSuspendedProviderForCandidate (provider, error) &&
+                                    provider->loadResource (resource, context, error);
         if (!resourceLoaded) {
             // 必需资源失败必须终止打开；可选资源允许因旧数据、附属文件缺失或插件兼容性
             // 问题降级跳过。清空本次局部错误，避免返回成功却把失败文本误传给调用方。
@@ -275,6 +282,8 @@ bool ProjectDocumentRegistry::activateGeneratedResource (const ProjectResource& 
     QString resolvedPath;
     if (!ProjectPathResolver::resolveResource (projectFilePath, resource, resolvedPath, error))
         return false;
+    if (!snapshotSuspendedProviderForCandidate (provider, error))
+        return false;
 
     LoadedResource loaded;
     loaded.resource = resource;
@@ -351,6 +360,8 @@ bool ProjectDocumentRegistry::loadNewResource (const ProjectResource& resource,
     QString resolvedPath;
     if (!ProjectPathResolver::resolveResource (
             projectFilePath, resource, resolvedPath, error))
+        return false;
+    if (!snapshotSuspendedProviderForCandidate (provider, error))
         return false;
     const ProjectDocumentContext context = makeContext (manifest, projectFilePath);
     if (!provider->loadResource (resource, context, error)) {
@@ -452,10 +463,280 @@ bool ProjectDocumentRegistry::canClose (QString* reason) const
 
 void ProjectDocumentRegistry::closeResources ()
 {
+    closeResources (nullptr);
+}
+
+bool ProjectDocumentRegistry::closeResources (QString* error)
+{
     // 按加载顺序的逆序关闭，确保依赖者先释放，依赖资源最后释放。
-    for (int index = _loaded.size () - 1; index >= 0; --index)
-        _loaded[index].provider->closeResource (_loaded[index].resource.id);
+    QStringList failures;
+    for (int index = _loaded.size () - 1; index >= 0; --index) {
+        const QString resourceId = _loaded[index].resource.id;
+        try {
+            _loaded[index].provider->closeResource (resourceId);
+        }
+        catch (const std::exception& exception) {
+            failures.push_back (
+                QStringLiteral ("Provider close callback raised an exception for '%1': %2")
+                    .arg (resourceId, QString::fromLocal8Bit (exception.what ())));
+        }
+        catch (...) {
+            failures.push_back (
+                QStringLiteral ("Provider close callback raised an unknown exception for '%1'.")
+                    .arg (resourceId));
+        }
+    }
     _loaded.clear ();
+    if (!failures.isEmpty ()) {
+        setError (error, failures.join (QLatin1Char ('\n')));
+        return false;
+    }
+    return true;
+}
+
+bool ProjectDocumentRegistry::validateCandidateResources (
+    const QVector< ProjectResource >& resources, QString* error) const
+{
+    ProjectManifest candidate;
+    candidate.project.id = QStringLiteral ("candidate-preflight");
+    candidate.project.name = QStringLiteral ("Candidate Project");
+    candidate.resources = resources;
+    if (!ProjectManifestJson::validate (candidate, error))
+        return false;
+
+    for (const ProjectResource& resource : resources) {
+        QSet< QString > dependencies;
+        for (const QString& dependency : resource.dependencies) {
+            if (dependencies.contains (dependency)) {
+                setError (error,
+                          QStringLiteral ("Candidate resource '%1' declares dependency '%2' more than once.")
+                              .arg (resource.id, dependency));
+                return false;
+            }
+            dependencies.insert (dependency);
+        }
+        if (providerForKind (resource.kind) == nullptr) {
+            setError (error, QStringLiteral ("Candidate resource '%1' has no provider for kind '%2'.")
+                                  .arg (resource.id, resource.kind));
+            return false;
+        }
+    }
+
+    QVector< ProjectResource > ordered;
+    return buildLoadOrder (candidate, ordered, error);
+}
+
+bool ProjectDocumentRegistry::preflightCandidateTransition (
+    const QVector< ProjectResource >& resources,
+    CandidateTransitionReservation& reservation,
+    QString* error)
+{
+    if (!_suspended.isEmpty () || !_suspendedProviderSnapshots.isEmpty () ||
+        !_candidateProviders.isEmpty () || !reservation._providers.isEmpty () ||
+        !reservation._snapshots.isEmpty ()) {
+        setError (error, QStringLiteral ("A candidate project transition is already active."));
+        return false;
+    }
+
+    if (!validateCandidateResources (resources, error))
+        return false;
+    for (const ProjectResource& resource : resources)
+        reservation._providers.insert (providerForKind (resource.kind));
+
+    for (ProjectDocumentProvider* provider : reservation._providers) {
+        if (!snapshotProviderResources (provider, _loaded, reservation._snapshots, error)) {
+            reservation._providers.clear ();
+            reservation._snapshots.clear ();
+            return false;
+        }
+    }
+    return true;
+}
+
+void ProjectDocumentRegistry::suspendResourcesForCandidateTransition (
+    CandidateTransitionReservation&& reservation)
+{
+    Q_ASSERT (_suspended.isEmpty ());
+    Q_ASSERT (_suspendedProviderSnapshots.isEmpty ());
+    Q_ASSERT (_candidateProviders.isEmpty ());
+    _candidateProviders = std::move (reservation._providers);
+    _suspendedProviderSnapshots = std::move (reservation._snapshots);
+    _suspended = std::move (_loaded);
+    _loaded.clear ();
+}
+
+bool ProjectDocumentRegistry::restoreSuspendedResourcesAfterCandidateFailure (QString* error)
+{
+    Q_ASSERT (_loaded.isEmpty ());
+    QStringList failures;
+    for (int index = _suspendedProviderSnapshots.size () - 1; index >= 0; --index) {
+        const CandidateTransitionReservation::ProviderSnapshot& snapshot =
+            _suspendedProviderSnapshots[index];
+        QString restoreError;
+        try {
+            if (!snapshot.provider->restoreResource (
+                    snapshot.resourceId, snapshot.data, &restoreError)) {
+                failures.push_back (
+                    QStringLiteral ("Provider restore callback could not restore '%1': %2")
+                        .arg (snapshot.resourceId, restoreError));
+            }
+        }
+        catch (const std::exception& exception) {
+            failures.push_back (
+                QStringLiteral ("Provider restore callback raised an exception for '%1': %2")
+                    .arg (snapshot.resourceId,
+                          QString::fromLocal8Bit (exception.what ())));
+        }
+        catch (...) {
+            failures.push_back (
+                QStringLiteral ("Provider restore callback raised an unknown exception for '%1'.")
+                    .arg (snapshot.resourceId));
+        }
+    }
+    _suspendedProviderSnapshots.clear ();
+    _candidateProviders.clear ();
+    _loaded = std::move (_suspended);
+    _suspended.clear ();
+    if (!failures.isEmpty ()) {
+        setError (error, failures.join (QLatin1Char ('\n')));
+        return false;
+    }
+    return true;
+}
+
+bool ProjectDocumentRegistry::closeSuspendedResourcesAfterCandidateSuccess (QString* error)
+{
+    QSet< ProjectDocumentProvider* > activeProviders;
+    for (const LoadedResource& loaded : _loaded)
+        activeProviders.insert (loaded.provider);
+
+    QVector< CandidateTransitionReservation::ProviderSnapshot > closeSnapshots =
+        _suspendedProviderSnapshots;
+    QSet< ProjectDocumentProvider* > preflightedProviders;
+    for (int index = _suspended.size () - 1; index >= 0; --index) {
+        ProjectDocumentProvider* const provider = _suspended[index].provider;
+        if (activeProviders.contains (provider) || preflightedProviders.contains (provider))
+            continue;
+        if (!snapshotProviderResources (provider, _suspended, closeSnapshots, error))
+            return false;
+        preflightedProviders.insert (provider);
+    }
+
+    for (int index = _suspended.size () - 1; index >= 0; --index) {
+        if (activeProviders.contains (_suspended[index].provider))
+            continue;
+        ProjectDocumentProvider* const provider = _suspended[index].provider;
+        const QString resourceId = _suspended[index].resource.id;
+        const CandidateTransitionReservation::ProviderSnapshot* closeSnapshot = nullptr;
+        for (const CandidateTransitionReservation::ProviderSnapshot& snapshot : closeSnapshots) {
+            if (snapshot.provider == provider && snapshot.resourceId == resourceId) {
+                closeSnapshot = &snapshot;
+                break;
+            }
+        }
+        if (closeSnapshot == nullptr) {
+            setError (error,
+                      QStringLiteral ("Provider close snapshot is unavailable for '%1'.")
+                          .arg (resourceId));
+            return false;
+        }
+        bool registered = false;
+        for (const CandidateTransitionReservation::ProviderSnapshot& snapshot :
+             _suspendedProviderSnapshots) {
+            if (snapshot.provider == provider && snapshot.resourceId == resourceId) {
+                registered = true;
+                break;
+            }
+        }
+        if (!registered)
+            _suspendedProviderSnapshots.push_back (*closeSnapshot);
+
+        try {
+            provider->closeResource (resourceId);
+        }
+        catch (const std::exception& exception) {
+            setError (error,
+                      QStringLiteral ("Provider close callback raised an exception for '%1': %2")
+                          .arg (resourceId, QString::fromLocal8Bit (exception.what ())));
+            return false;
+        }
+        catch (...) {
+            setError (error,
+                      QStringLiteral ("Provider close callback raised an unknown exception for '%1'.")
+                          .arg (resourceId));
+            return false;
+        }
+    }
+    _suspended.clear ();
+    _suspendedProviderSnapshots.clear ();
+    _candidateProviders.clear ();
+    return true;
+}
+
+bool ProjectDocumentRegistry::snapshotSuspendedProviderForCandidate (
+    ProjectDocumentProvider* provider, QString* error)
+{
+    if (!_candidateProviders.isEmpty () && !_candidateProviders.contains (provider)) {
+        setError (error, QStringLiteral ("Candidate resource provider '%1' was not preflighted.")
+                              .arg (provider->providerId ()));
+        return false;
+    }
+    return snapshotProviderResources (provider, _suspended, _suspendedProviderSnapshots, error);
+}
+
+bool ProjectDocumentRegistry::snapshotProviderResources (
+    ProjectDocumentProvider* provider,
+    const QVector< LoadedResource >& resources,
+    QVector< CandidateTransitionReservation::ProviderSnapshot >& snapshots,
+    QString* error)
+{
+    if (resources.isEmpty ())
+        return true;
+
+    for (const LoadedResource& loaded : resources) {
+        if (loaded.provider != provider)
+            continue;
+
+        bool alreadySnapshotted = false;
+        for (const CandidateTransitionReservation::ProviderSnapshot& snapshot : snapshots) {
+            if (snapshot.provider == provider && snapshot.resourceId == loaded.resource.id) {
+                alreadySnapshotted = true;
+                break;
+            }
+        }
+        if (alreadySnapshotted)
+            continue;
+
+        CandidateTransitionReservation::ProviderSnapshot snapshot;
+        snapshot.provider = provider;
+        snapshot.resourceId = loaded.resource.id;
+        QString snapshotError;
+        try {
+            if (!provider->snapshotResource (
+                    snapshot.resourceId, &snapshot.data, &snapshotError)) {
+                setError (error,
+                          QStringLiteral ("Provider snapshot callback could not snapshot '%1': %2")
+                              .arg (snapshot.resourceId, snapshotError));
+                return false;
+            }
+        }
+        catch (const std::exception& exception) {
+            setError (error,
+                      QStringLiteral ("Provider snapshot callback raised an exception for '%1': %2")
+                          .arg (snapshot.resourceId,
+                                QString::fromLocal8Bit (exception.what ())));
+            return false;
+        }
+        catch (...) {
+            setError (error,
+                      QStringLiteral (
+                          "Provider snapshot callback raised an unknown exception for '%1'.")
+                          .arg (snapshot.resourceId));
+            return false;
+        }
+        snapshots.push_back (std::move (snapshot));
+    }
+    return true;
 }
 
 // 是否存在任一脏资源；用于标题栏星号与关闭确认。
@@ -479,7 +760,40 @@ QStringList ProjectDocumentRegistry::dirtyResourceIds () const
     return result;
 }
 
+bool ProjectDocumentRegistry::hasActiveResource (const ProjectResource& resource) const
+{
+    ProjectDocumentProvider* const expectedProvider = providerForKind (resource.kind);
+    if (expectedProvider == nullptr)
+        return false;
+    for (const LoadedResource& loaded : _loaded) {
+        const ProjectResource& active = loaded.resource;
+        if (loaded.provider == expectedProvider && active.id == resource.id &&
+            active.kind == resource.kind && active.path == resource.path &&
+            active.ownership == resource.ownership && active.required == resource.required &&
+            active.dependencies == resource.dependencies)
+            return true;
+    }
+    return false;
+}
+
 // 按 kind 索引直接查询 Provider；未注册的 kind 返回 nullptr。
+QSet< QString > ProjectDocumentRegistry::activeResourceIds () const
+{
+    QSet< QString > result;
+    for (const LoadedResource& loaded : _loaded)
+        result.insert (loaded.resource.id);
+    return result;
+}
+
+bool ProjectDocumentRegistry::isActiveResourceDirty (const QString& resourceId) const
+{
+    for (const LoadedResource& loaded : _loaded) {
+        if (loaded.resource.id == resourceId)
+            return loaded.provider->isDirty (resourceId);
+    }
+    return false;
+}
+
 ProjectDocumentProvider* ProjectDocumentRegistry::providerForKind (const QString& kind) const
 {
     return _providersByKind.value (kind, nullptr);

@@ -3,6 +3,7 @@
 
 #include "ProjectManifest.hpp"
 
+#include <QByteArray>
 #include <QString>
 #include <QStringList>
 
@@ -61,6 +62,34 @@ class ProjectDocumentProvider
     virtual void markClean (const QString& resourceId) = 0;
     // 关闭指定资源，释放其持有的文档状态。
     virtual void closeResource (const QString& resourceId) = 0;
+
+    // 候选项目切换会临时替换仍属于被挂起项目的 Provider 内存文档。能安全处理该过渡的
+    // Provider 用不透明的内存快照覆盖这一对接口：snapshotResource 序列化当前领域内存状态，
+    // restoreResource 在回滚时恢复。默认实现显式拒绝该过渡。
+    // （英文原注：A candidate project may temporarily replace the in-memory document of a
+    //   provider that is still owned by the suspended project. Providers that can do so
+    //   safely override this pair with an opaque, in-memory snapshot. The default
+    //   explicitly rejects that transition.）
+    virtual bool snapshotResource (const QString& resourceId,
+                                   QByteArray* snapshot,
+                                   QString* error) const
+    {
+        Q_UNUSED (snapshot);
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' cannot snapshot resource '%2'.")
+                         .arg (providerId (), resourceId);
+        return false;
+    }
+    virtual bool restoreResource (const QString& resourceId,
+                                  const QByteArray& snapshot,
+                                  QString* error)
+    {
+        Q_UNUSED (snapshot);
+        if (error != nullptr)
+            *error = QStringLiteral ("Provider '%1' cannot restore resource '%2'.")
+                         .arg (providerId (), resourceId);
+        return false;
+    }
 };
 
 }    // namespace rws

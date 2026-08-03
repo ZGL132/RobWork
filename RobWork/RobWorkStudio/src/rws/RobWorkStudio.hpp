@@ -76,6 +76,23 @@ struct RobotProjectImportCallbacks
     std::function< bool (const QString&, const QString&, QString*) > commit;
 };
 
+struct NewRobotProjectCallbacks
+{
+    std::function< bool (const QString&, QString*) > preflight;
+    std::function< bool (QByteArray&, QString*) > snapshotState;
+    std::function< bool (const QByteArray&, QString*) > restoreState;
+    std::function< bool (const QString&, QVector< ProjectResource >&, QString*) > requiredResources;
+    std::function< bool (const QString&, QString*) > bootstrap;
+    std::function< bool (QString*) > confirmClose;
+};
+
+bool resolveNewRobotProjectBuilderCallbacks (
+    const std::vector< RobWorkStudioPlugin* >& plugins,
+    std::function< bool (QString*) > confirmClose,
+    NewRobotProjectCallbacks& callbacks,
+    RobWorkStudioPlugin*& builder,
+    QString* error = nullptr);
+
 /** @addtogroup rws
     @{ */
 
@@ -112,6 +129,10 @@ class RobWorkStudio : public QMainWindow
         const QString& sourcePath,
         const QString& projectFile,
         const RobotProjectImportCallbacks& callbacks,
+        QString* error = nullptr);
+    bool createProjectWithRobotModelBuilderPaths (
+        const QString& projectFile,
+        const NewRobotProjectCallbacks& callbacks,
         QString* error = nullptr);
 
     /**

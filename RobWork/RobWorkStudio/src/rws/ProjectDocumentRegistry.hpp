@@ -4,6 +4,7 @@
 #include "ProjectDocumentProvider.hpp"
 
 #include <QHash>
+#include <QSet>
 #include <QVector>
 
 namespace rws {
@@ -20,6 +21,22 @@ class ProjectSaveTransaction;
 class ProjectDocumentRegistry
 {
   public:
+    class CandidateTransitionReservation
+    {
+      private:
+        struct ProviderSnapshot
+        {
+            ProjectDocumentProvider* provider = nullptr;
+            QString resourceId;
+            QByteArray data;
+        };
+
+        QSet< ProjectDocumentProvider* > _providers;
+        QVector< ProviderSnapshot > _snapshots;
+
+        friend class ProjectDocumentRegistry;
+    };
+
     // 注册一个 Provider：校验 providerId 非空且唯一、kind 列表非空且不与已注册的
     // kind 冲突。本类保存非拥有型指针，Provider 生命周期由注册方（主窗口）负责。
     bool registerProvider (ProjectDocumentProvider* provider, QString* error = nullptr);
@@ -76,10 +93,24 @@ class ProjectDocumentRegistry
     bool canClose (QString* reason = nullptr) const;
     // 按依赖逆序关闭全部已加载资源，并清空加载列表。
     void closeResources ();
+    bool closeResources (QString* error);
+
+    bool validateCandidateResources (const QVector< ProjectResource >& resources,
+                                     QString* error = nullptr) const;
+    // Keep existing providers live while a candidate project owns the active list.
+    bool preflightCandidateTransition (const QVector< ProjectResource >& resources,
+                                       CandidateTransitionReservation& reservation,
+                                       QString* error = nullptr);
+    void suspendResourcesForCandidateTransition (CandidateTransitionReservation&& reservation);
+    bool restoreSuspendedResourcesAfterCandidateFailure (QString* error = nullptr);
+    bool closeSuspendedResourcesAfterCandidateSuccess (QString* error = nullptr);
 
     // 是否有任何已加载资源处于脏状态；dirtyResourceIds 返回脏资源 ID 列表。
     bool isDirty () const;
     QStringList dirtyResourceIds () const;
+    bool hasActiveResource (const ProjectResource& resource) const;
+    QSet< QString > activeResourceIds () const;
+    bool isActiveResourceDirty (const QString& resourceId) const;
 
     // 按资源 kind 查找负责的 Provider；未注册时返回 nullptr。
     ProjectDocumentProvider* providerForKind (const QString& kind) const;
@@ -92,6 +123,13 @@ class ProjectDocumentRegistry
         ProjectDocumentProvider* provider = nullptr;
         QString resolvedPath;
     };
+
+    bool snapshotSuspendedProviderForCandidate (ProjectDocumentProvider* provider,
+                                                QString* error);
+    bool snapshotProviderResources (ProjectDocumentProvider* provider,
+                                    const QVector< LoadedResource >& resources,
+                                    QVector< CandidateTransitionReservation::ProviderSnapshot >& snapshots,
+                                    QString* error);
 
     // 对清单全部资源做依赖拓扑排序（DFS），结果保证依赖先于依赖者；发现环返回 false。
     bool buildLoadOrder (const ProjectManifest& manifest,
@@ -108,6 +146,9 @@ class ProjectDocumentRegistry
     QHash< QString, ProjectDocumentProvider* > _providersById;    // providerId → Provider。
     QHash< QString, ProjectDocumentProvider* > _providersByKind;  // kind → Provider。
     QVector< LoadedResource > _loaded;                            // 当前已加载的资源（按加载顺序）。
+    QVector< LoadedResource > _suspended;
+    QVector< CandidateTransitionReservation::ProviderSnapshot > _suspendedProviderSnapshots;
+    QSet< ProjectDocumentProvider* > _candidateProviders;
     bool _loadingProjectResources = false;
     bool _hasDeferredSynchronization = false;
     ProjectManifest _deferredSynchronizationManifest;

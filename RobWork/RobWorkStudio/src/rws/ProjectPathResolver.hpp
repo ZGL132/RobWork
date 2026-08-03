@@ -3,9 +3,21 @@
 
 #include "ProjectManifest.hpp"
 
+#include <QHash>
+#include <QSet>
+#include <QStringList>
 #include <QVector>
 
 namespace rws {
+
+struct ProjectAnchoredInventory
+{
+    QSet< QString > files;
+    QSet< QString > directories;
+    QHash< QString, QByteArray > fileDigests;
+    QHash< QString, qint64 > fileSizes;
+    quint64 totalRegularBytes = 0;
+};
 
 /**
  * @brief 统一解析项目资源路径并执行项目目录边界检查。
@@ -35,6 +47,11 @@ class ProjectPathResolver
     static bool validateContainedWritePath (const QString& projectRoot,
                                             const QString& candidatePath,
                                             QString* error = nullptr);
+
+    static bool isLinkOrReparsePoint (const QString& path);
+    static bool removeContainedUnsafeEntry (const QString& projectRoot,
+                                             const QString& entryPath,
+                                             QString* error = nullptr);
 
     // 在项目根内安全删除一个普通文件（Windows 用句柄删除，拒绝符号链接/重解析点）。
     static bool removeContainedFile (const QString& projectRoot,
@@ -67,9 +84,36 @@ class ProjectWriteGuard
                          const QString& targetPath,
                          ProjectWriteGuard& guard,
                          QString* error = nullptr);
+    bool createMissingProjectRoot (const QString& projectRoot,
+                                   const QStringList& missingDirectories,
+                                   QString* error = nullptr);
+    bool removeRelativeDirectoryTree (const QString& relativePath,
+                                      QString* error = nullptr);
+    bool reconcileRelativeTree (const QSet< QString >& baselineFiles,
+                                const QSet< QString >& baselineDirectories,
+                                QString* error = nullptr);
+    bool ensureRelativeDirectories (const QSet< QString >& relativeDirectories,
+                                    QString* error = nullptr);
+    bool restoreRelativeFileAtomically (const QString& backupPath,
+                                        const QString& relativeTarget,
+                                        QString* error = nullptr);
+    bool captureRelativeInventory (ProjectAnchoredInventory& inventory,
+                                   bool includeDigests,
+                                   QString* error = nullptr) const;
+    bool validateRootIdentity (QString* error = nullptr) const;
+    void release ();
 
   private:
     QVector< void* > _directoryHandles;    // Windows 目录句柄（析构时关闭）。
+#ifdef Q_OS_WIN
+    int _rootDirectoryHandleIndex = -1;
+#endif
+#ifndef Q_OS_WIN
+    int _rootDirectoryFd = -1;
+    quint64 _rootDevice = 0;
+    quint64 _rootInode = 0;
+#endif
+    QString _rootPath;
 };
 
 }    // namespace rws

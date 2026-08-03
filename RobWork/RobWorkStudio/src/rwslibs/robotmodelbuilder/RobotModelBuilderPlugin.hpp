@@ -9,6 +9,8 @@
 
 #include <rws/RobWorkStudioPlugin.hpp>
 
+#include <QVariantMap>
+
 namespace rws {
 
 // 前向声明:真正的 UI 与数据收集逻辑由 Widget 完成,这里只声明指针以减少头文件依赖
@@ -48,6 +50,11 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
                                                       const QString& projectRoot);
     Q_INVOKABLE QString commitRobotProjectSource (const QString& sourcePath,
                                                    const QString& projectRoot);
+    Q_INVOKABLE QString preflightNewRobotProject (const QString& projectRoot);
+    Q_INVOKABLE QString bootstrapNewRobotProject (const QString& projectRoot);
+    Q_INVOKABLE QVariantMap newRobotProjectResource (const QString& projectRoot);
+    Q_INVOKABLE QVariantMap snapshotNewRobotProjectState ();
+    Q_INVOKABLE QString restoreNewRobotProjectState (const QByteArray& snapshot);
 
   public Q_SLOTS:
     void importRobotProjectSource (const QString& sourcePath);

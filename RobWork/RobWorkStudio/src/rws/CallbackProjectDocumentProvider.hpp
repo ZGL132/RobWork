@@ -27,6 +27,9 @@ class CallbackProjectDocumentProvider : public ProjectDocumentProvider
     using CanCloseHandler = std::function< bool (QString*) >;
     using CloseHandler = std::function< void () >;
     using CleanHandler = std::function< void () >;
+    // 候选项目替换前对领域内存状态做不透明快照 / 回滚时恢复（可选，缺省即不支持该过渡）。
+    using SnapshotHandler = std::function< bool (QByteArray*, QString*) >;
+    using RestoreHandler = std::function< bool (const QByteArray&, QString*) >;
 
     /**
      * @brief 构造一个只处理一个清单 kind 的 Provider。
@@ -41,7 +44,9 @@ class CallbackProjectDocumentProvider : public ProjectDocumentProvider
                                      SaveHandler saveHandler,
                                      CanCloseHandler canCloseHandler = CanCloseHandler (),
                                      CloseHandler closeHandler = CloseHandler (),
-                                     CleanHandler cleanHandler = CleanHandler ());
+                                     CleanHandler cleanHandler = CleanHandler (),
+                                     SnapshotHandler snapshotHandler = SnapshotHandler (),
+                                     RestoreHandler restoreHandler = RestoreHandler ());
 
     QString providerId () const override;
     QStringList supportedResourceKinds () const override;
@@ -56,6 +61,12 @@ class CallbackProjectDocumentProvider : public ProjectDocumentProvider
     bool canClose (const QString& resourceId, QString* reason) const override;
     void markClean (const QString& resourceId) override;
     void closeResource (const QString& resourceId) override;
+    bool snapshotResource (const QString& resourceId,
+                           QByteArray* snapshot,
+                           QString* error) const override;
+    bool restoreResource (const QString& resourceId,
+                          const QByteArray& snapshot,
+                          QString* error) override;
 
     /**
      * @brief 标记当前已加载文档发生可持久化变更。
@@ -85,6 +96,8 @@ class CallbackProjectDocumentProvider : public ProjectDocumentProvider
     CanCloseHandler _canCloseHandler;   // 可选：是否允许关闭（如后台计算中拒绝）。
     CloseHandler _closeHandler;         // 可选：关闭文档时的领域清理。
     CleanHandler _cleanHandler;         // 可选：保存事务完整提交后的清理/重置。
+    SnapshotHandler _snapshotHandler;   // 可选：候选项目替换前的领域内存快照。
+    RestoreHandler _restoreHandler;     // 可选：候选项目回滚时恢复领域内存快照。
     QString _resourceId;    // 当前持有的资源 ID；空表示未加载任何项目资源。
     bool _dirty = false;    // 当前资源是否有未保存修改。
 };
