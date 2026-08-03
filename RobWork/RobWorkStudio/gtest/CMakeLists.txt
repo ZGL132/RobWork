@@ -65,6 +65,7 @@ SET(RWS_TEST_SRC
   rws/ProjectDocumentRegistryTest.cpp
   rws/ProjectSystemTest.cpp
   rws/RobWorkStudioTest.cpp
+  rws/WorkflowDockLayoutControllerTest.cpp
 )
 add_executable( sdurws_sdurws-gtest ${RWS_TEST_SRC})
 target_link_libraries( sdurws_sdurws-gtest PRIVATE ${RWS_TEST_LIBRARIES})
