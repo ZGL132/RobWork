@@ -606,8 +606,8 @@ bool RobotModelXmlWriter::validate (const RobotModelSpec& spec, QStringList& err
         errors << "Robot name must contain at least one safe file-name character.";
     if (!robotName.isEmpty () && robotName != sanitizeFileBaseName (robotName))
         errors << "Robot name may only contain letters, numbers, underscores, and hyphens.";
-    if (!QDir (QString::fromStdString (spec.saveDirectory)).exists ())
-        errors << "Save directory does not exist.";
+    if (QString::fromStdString (spec.saveDirectory).trimmed ().isEmpty ())
+        errors << "Save directory is required.";
 
     // ---- Milestone 1+2:关节列表(Milestone 1:类型必须是可识别的 4 种之一;
     //                                  Milestone 2:可变数量,允许 0 / 3 / 6 / 7 等)----

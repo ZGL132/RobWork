@@ -15,6 +15,7 @@
 #include <QMetaObject>
 #include <QMessageBox>
 #include <QProcess>
+#include <QSignalBlocker>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QTemporaryDir>
@@ -36,6 +37,28 @@ QTabWidget* findPreviewTabs (const rws::RobotModelBuilderWidget& widget)
     for (QTabWidget* tab : tabs) {
         if (tab->count () > 0 && tab->tabText (0) == "SerialDevice XML")
             return tab;
+    }
+    return NULL;
+}
+
+QTabWidget* findMainTabs (const rws::RobotModelBuilderWidget& widget)
+{
+    const QList< QTabWidget* > tabs = widget.findChildren< QTabWidget* > ();
+    for (QTabWidget* tab : tabs) {
+        for (int index = 0; index < tab->count (); ++index) {
+            if (tab->tabText (index) == "XML Preview")
+                return tab;
+        }
+    }
+    return NULL;
+}
+
+QLineEdit* findStatusLine (const rws::RobotModelBuilderWidget& widget)
+{
+    const QList< QLineEdit* > lines = widget.findChildren< QLineEdit* > ();
+    for (QLineEdit* line : lines) {
+        if (line->isReadOnly ())
+            return line;
     }
     return NULL;
 }
@@ -158,6 +181,201 @@ QStringList publishTargets (const rws::RobotModelSpec& spec)
         targets << rws::RobotModelXmlWriter::dynamicWorkCellFilePath (spec);
     targets.removeDuplicates ();
     return targets;
+}
+
+quint32 readU32 (const QByteArray& bytes, int offset, bool* ok = NULL)
+{
+    const bool valid = offset >= 0 && offset <= bytes.size () - 4;
+    if (ok != NULL)
+        *ok = valid;
+    if (!valid)
+        return 0;
+    const uchar* data = reinterpret_cast< const uchar* > (bytes.constData () + offset);
+    return (quint32 (data[0]) << 24) | (quint32 (data[1]) << 16) |
+           (quint32 (data[2]) << 8) | quint32 (data[3]);
+}
+
+void writeU32 (QByteArray& bytes, int offset, quint32 value)
+{
+    bytes[offset] = char ((value >> 24) & 0xff);
+    bytes[offset + 1] = char ((value >> 16) & 0xff);
+    bytes[offset + 2] = char ((value >> 8) & 0xff);
+    bytes[offset + 3] = char (value & 0xff);
+}
+
+void appendU32 (QByteArray& bytes, quint32 value)
+{
+    const int offset = bytes.size ();
+    bytes.resize (offset + 4);
+    writeU32 (bytes, offset, value);
+}
+
+bool skipField (const QByteArray& bytes, int& offset)
+{
+    bool ok = false;
+    const quint32 size = readU32 (bytes, offset, &ok);
+    if (!ok || size > quint32 (bytes.size () - offset - 4))
+        return false;
+    offset += 4 + int (size);
+    return true;
+}
+
+bool locateEditableState (const QByteArray& snapshot, int& lengthOffset, int& dataOffset,
+                          int& dataSize)
+{
+    if (readU32 (snapshot, 0) != quint32 (0x524d4253) || readU32 (snapshot, 4) != 3)
+        return false;
+    int offset = 8;
+    if (!skipField (snapshot, offset) || !skipField (snapshot, offset) ||
+        !skipField (snapshot, offset) || offset >= snapshot.size ())
+        return false;
+    ++offset;
+    if (!skipField (snapshot, offset))
+        return false;
+    lengthOffset = offset;
+    bool ok = false;
+    const quint32 size = readU32 (snapshot, offset, &ok);
+    if (!ok || size > quint32 (snapshot.size () - offset - 4))
+        return false;
+    dataOffset = offset + 4;
+    dataSize = int (size);
+    return true;
+}
+
+bool locateModeData (const QByteArray& editable, int& modeStart, int& variantTag,
+                     int& modeEnd)
+{
+    bool ok = false;
+    const quint32 lineEditCount = readU32 (editable, 0, &ok);
+    if (!ok)
+        return false;
+    int offset = 4;
+    for (quint32 index = 0; index < lineEditCount; ++index) {
+        if (!skipField (editable, offset) || offset > editable.size () - 3)
+            return false;
+        offset += 3;
+    }
+    modeStart = offset;
+    const quint32 itemCount = readU32 (editable, offset, &ok);
+    if (!ok)
+        return false;
+    offset += 4;
+    for (quint32 index = 0; index < itemCount; ++index) {
+        if (!skipField (editable, offset))
+            return false;
+    }
+    const quint32 dataCount = readU32 (editable, offset, &ok);
+    if (!ok || dataCount == 0)
+        return false;
+    offset += 4;
+    variantTag = offset;
+    for (quint32 index = 0; index < dataCount; ++index) {
+        if (offset >= editable.size ())
+            return false;
+        const quint8 tag = quint8 (editable[offset++]);
+        if (tag == 1) {
+            if (!skipField (editable, offset))
+                return false;
+        }
+        else if ((tag >= 2 && tag <= 5) || tag == 8) {
+            if (offset > editable.size () - 8)
+                return false;
+            offset += 8;
+        }
+        else if (tag == 6) {
+            if (offset >= editable.size ())
+                return false;
+            ++offset;
+        }
+        else if (tag != 0 && tag != 7) {
+            return false;
+        }
+    }
+    if (offset > editable.size () - 4)
+        return false;
+    offset += 4;
+    if (!skipField (editable, offset) || offset > editable.size () - 2)
+        return false;
+    modeEnd = offset + 2;
+    return true;
+}
+
+bool replaceEditableState (const QByteArray& snapshot, const QByteArray& editable,
+                           QByteArray& corrupted)
+{
+    int lengthOffset = 0;
+    int dataOffset = 0;
+    int dataSize = 0;
+    if (!locateEditableState (snapshot, lengthOffset, dataOffset, dataSize))
+        return false;
+    corrupted = snapshot.left (dataOffset) + editable + snapshot.mid (dataOffset + dataSize);
+    writeU32 (corrupted, lengthOffset, quint32 (editable.size ()));
+    return true;
+}
+
+bool makeHostileWidgetSnapshots (const QByteArray& snapshot, QList< QByteArray >& corrupted)
+{
+    int editableLengthOffset = 0;
+    int editableOffset = 0;
+    int editableSize = 0;
+    if (!locateEditableState (
+            snapshot, editableLengthOffset, editableOffset, editableSize))
+        return false;
+    const QByteArray editable = snapshot.mid (editableOffset, editableSize);
+    int modeStart = 0;
+    int variantTag = 0;
+    int modeEnd = 0;
+    if (!locateModeData (editable, modeStart, variantTag, modeEnd))
+        return false;
+
+    QByteArray hugeOuterString = snapshot;
+    writeU32 (hugeOuterString, 8, quint32 (0xffffffff));
+    corrupted.push_back (hugeOuterString);
+
+    int cleanSnapshotLength = 8;
+    if (!skipField (snapshot, cleanSnapshotLength) ||
+        !skipField (snapshot, cleanSnapshotLength))
+        return false;
+    QByteArray hugeOuterBytes = snapshot;
+    writeU32 (hugeOuterBytes, cleanSnapshotLength, quint32 (0xffffffff));
+    corrupted.push_back (hugeOuterBytes);
+
+    QByteArray hugeNestedString = editable;
+    writeU32 (hugeNestedString, 4, quint32 (0xffffffff));
+    QByteArray hostile;
+    if (!replaceEditableState (snapshot, hugeNestedString, hostile))
+        return false;
+    corrupted.push_back (hostile);
+
+    QByteArray unknownVariant = editable;
+    unknownVariant[variantTag] = char (0xff);
+    if (!replaceEditableState (snapshot, unknownVariant, hostile))
+        return false;
+    corrupted.push_back (hostile);
+
+    QByteArray hugeVariant = editable;
+    hugeVariant[variantTag] = char (1);
+    writeU32 (hugeVariant, variantTag + 1, quint32 (0xffffffff));
+    if (!replaceEditableState (snapshot, hugeVariant, hostile))
+        return false;
+    corrupted.push_back (hostile);
+
+    QByteArray saturatedMode;
+    appendU32 (saturatedMode, 10000);
+    for (int index = 0; index < 10000; ++index)
+        appendU32 (saturatedMode, 0);
+    appendU32 (saturatedMode, 10000);
+    saturatedMode.append (QByteArray (10000, char (0)));
+    appendU32 (saturatedMode, 0);
+    appendU32 (saturatedMode, 0);
+    saturatedMode.append (char (0));
+    saturatedMode.append (char (1));
+    const QByteArray aggregateComboItems = editable.left (modeStart) + saturatedMode +
+                                           editable.mid (modeEnd);
+    if (!replaceEditableState (snapshot, aggregateComboItems, hostile))
+        return false;
+    corrupted.push_back (hostile);
+    return true;
 }
 
 bool hasTransactionResidue (const QString& directory)
@@ -566,6 +784,291 @@ bool verifyProjectModeSaveAndLoad (QString* failure)
     }
     return true;
 }
+
+bool verifyWidgetStateSnapshotRoundTrip (QString* failure)
+{
+    QTemporaryDir originalProject;
+    QTemporaryDir candidateProject;
+    if (!originalProject.isValid () || !candidateProject.isValid ()) {
+        *failure = "Could not create Widget snapshot project fixtures.";
+        return false;
+    }
+
+    rws::RobotModelBuilderWidget widget;
+    widget.setProjectOutputDirectory (originalProject.path ());
+    rws::RobotModelSpec original =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (originalProject.path ());
+    original.robotName = "SnapshotOriginal";
+    original.imported.active = true;
+    original.imported.sourceDeviceFile = "vendor/ImportedDevice.wc.xml";
+    original.imported.sourceSceneFile = "vendor/ImportedScene.wc.xml";
+    original.imported.workcellExtensions.push_back ("<Property name=\"snapshot\"/>");
+    widget.syncFromWorkCellSpec (original, {});
+    widget.beginGeneratedProjectDocument ();
+    widget.markProjectDocumentClean ();
+
+    QLineEdit* robotName = findLineEdit (widget, "SnapshotOriginal");
+    if (robotName == NULL) {
+        *failure = "Could not find the Widget snapshot robot name field.";
+        return false;
+    }
+    robotName->setText ("SnapshotEdited");
+    if (!QMetaObject::invokeMethod (&widget, "generatePreview", Qt::DirectConnection)) {
+        *failure = "Could not establish the Widget snapshot preview state.";
+        return false;
+    }
+    robotName->setText ("  Snapshot partial  ");
+    QTableWidget* limits = findTable (widget, "Joint", "PosMin", 5);
+    QTableWidget* transforms = findTable (widget, "Joint", "Type", 4);
+    QCheckBox* sceneGeneration = NULL;
+    const QList< QCheckBox* > checkboxes = widget.findChildren< QCheckBox* > ();
+    for (QCheckBox* checkbox : checkboxes) {
+        if (checkbox->text () == "Generate Scene file") {
+            sceneGeneration = checkbox;
+            break;
+        }
+    }
+    if (limits == NULL || transforms == NULL || sceneGeneration == NULL ||
+        limits->item (0, 1) == NULL || transforms->item (0, 2) == NULL) {
+        *failure = "Could not find the raw Widget state used by the snapshot test.";
+        return false;
+    }
+    {
+        const QSignalBlocker limitsBlocker (limits);
+        const QSignalBlocker transformsBlocker (transforms);
+        limits->item (0, 1)->setText ("1e-");
+        transforms->item (0, 2)->setText ("90 0 +");
+    }
+    QComboBox* limitJoint = qobject_cast< QComboBox* > (limits->cellWidget (0, 0));
+    if (limitJoint == NULL) {
+        *failure = "Could not find the table combo used by the snapshot test.";
+        return false;
+    }
+    limitJoint->addItem ("TransientJoint");
+    limitJoint->setCurrentText ("TransientJoint");
+    {
+        const QSignalBlocker sceneBlocker (sceneGeneration);
+        sceneGeneration->setChecked (!sceneGeneration->isChecked ());
+    }
+    if (!widget.isProjectDocumentDirty ()) {
+        *failure = "Could not establish the dirty Widget snapshot state.";
+        return false;
+    }
+    QTabWidget* previewTabs = findPreviewTabs (widget);
+    QTabWidget* mainTabs = findMainTabs (widget);
+    QLineEdit* status = findStatusLine (widget);
+    if (previewTabs == NULL || mainTabs == NULL || status == NULL) {
+        *failure = "Could not find the visible Widget state used by the snapshot test.";
+        return false;
+    }
+    previewTabs->setCurrentIndex (1);
+    for (int index = 0; index < mainTabs->count (); ++index) {
+        if (mainTabs->tabText (index) == "XML Preview")
+            mainTabs->setCurrentIndex (index);
+    }
+    widget.setProjectStatus ("Snapshot status sentinel");
+
+    const QByteArray originalCanonical = QByteArray::fromStdString (
+        rws::RobotModelSpecJson::toJson (widget.currentModelSpec ()));
+    const QString originalOutputDirectory = widget.projectOutputDirectory ();
+    const bool originalDirty = widget.isProjectDocumentDirty ();
+    const QString originalRobotName = robotName->text ();
+    const QString originalLimitText = limits->item (0, 1)->text ();
+    const QString originalTransformText = transforms->item (0, 2)->text ();
+    const QStringList originalLimitChoices = [&] () {
+        QStringList choices;
+        for (int index = 0; index < limitJoint->count (); ++index)
+            choices.push_back (limitJoint->itemText (index));
+        return choices;
+    } ();
+    const QString originalLimitSelection = limitJoint->currentText ();
+    const bool originalSceneGeneration = sceneGeneration->isChecked ();
+    const QString originalStatus = status->text ();
+    const int originalMainTab = mainTabs->currentIndex ();
+    const int originalPreviewTab = previewTabs->currentIndex ();
+    QStringList originalPreviews;
+    for (int index = 0; index < previewTabs->count (); ++index) {
+        QTextEdit* preview = qobject_cast< QTextEdit* > (previewTabs->widget (index));
+        originalPreviews.push_back (preview == NULL ? QString () : preview->toPlainText ());
+    }
+
+    QByteArray snapshot;
+    QString error;
+    if (!widget.snapshotProjectDocumentState (snapshot, &error)) {
+        *failure = "Could not snapshot the real RobotModelBuilderWidget state.";
+        return false;
+    }
+
+    rws::RobotModelSpec candidate =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (candidateProject.path ());
+    candidate.robotName = "SnapshotCandidate";
+    candidate.imported.active = true;
+    candidate.imported.sourceDeviceFile = "candidate/Device.wc.xml";
+    widget.syncFromWorkCellSpec (candidate, {});
+    widget.setProjectOutputDirectory (candidateProject.path ());
+    widget.beginGeneratedProjectDocument ();
+    QMetaObject::invokeMethod (&widget, "generatePreview", Qt::DirectConnection);
+    previewTabs->setCurrentIndex (0);
+    mainTabs->setCurrentIndex (0);
+    widget.setProjectStatus ("Candidate status");
+
+    const QByteArray candidateCanonical = QByteArray::fromStdString (
+        rws::RobotModelSpecJson::toJson (widget.currentModelSpec ()));
+    const QString candidateOutputDirectory = widget.projectOutputDirectory ();
+    QList< QByteArray > corruptedSnapshots;
+    corruptedSnapshots.push_back (snapshot.left (snapshot.size () * 2 / 3));
+    if (!makeHostileWidgetSnapshots (snapshot, corruptedSnapshots)) {
+        *failure = "Could not build the bounded hostile Widget snapshot fixtures.";
+        return false;
+    }
+    for (int index = 0; index < corruptedSnapshots.size (); ++index) {
+        QString malformedError;
+        if (widget.restoreProjectDocumentState (corruptedSnapshots[index], &malformedError) ||
+            QByteArray::fromStdString (
+                rws::RobotModelSpecJson::toJson (widget.currentModelSpec ())) != candidateCanonical ||
+            widget.projectOutputDirectory () != candidateOutputDirectory ||
+            status->text () != "Candidate status" ||
+            findLineEdit (widget, "SnapshotCandidate") == NULL) {
+            *failure = QString ("Hostile Widget snapshot fixture %1 changed live state or was accepted.")
+                           .arg (index);
+            return false;
+        }
+    }
+
+    if (!widget.restoreProjectDocumentState (snapshot, &error)) {
+        *failure = "Could not restore the real RobotModelBuilderWidget state: " + error;
+        return false;
+    }
+    const QByteArray restoredCanonical = QByteArray::fromStdString (
+        rws::RobotModelSpecJson::toJson (widget.currentModelSpec ()));
+    if (restoredCanonical != originalCanonical ||
+        widget.projectOutputDirectory () != originalOutputDirectory ||
+        widget.isProjectDocumentDirty () != originalDirty) {
+        *failure = "Widget snapshot restore changed canonical data, project root, or dirty baseline.";
+        return false;
+    }
+    robotName = findLineEdit (widget, originalRobotName);
+    limits = findTable (widget, "Joint", "PosMin", 5);
+    transforms = findTable (widget, "Joint", "Type", 4);
+    limitJoint = limits == NULL ? NULL :
+        qobject_cast< QComboBox* > (limits->cellWidget (0, 0));
+    QStringList restoredLimitChoices;
+    if (limitJoint != NULL) {
+        for (int index = 0; index < limitJoint->count (); ++index)
+            restoredLimitChoices.push_back (limitJoint->itemText (index));
+    }
+    if (robotName == NULL || limits == NULL || transforms == NULL || limitJoint == NULL ||
+        limits->item (0, 1) == NULL || transforms->item (0, 2) == NULL ||
+        limits->item (0, 1)->text () != originalLimitText ||
+        transforms->item (0, 2)->text () != originalTransformText ||
+        restoredLimitChoices != originalLimitChoices ||
+        limitJoint->currentText () != originalLimitSelection ||
+        sceneGeneration->isChecked () != originalSceneGeneration) {
+        *failure = "Widget snapshot restore normalized or lost raw editable state.";
+        return false;
+    }
+    if (!widget.currentModelSpec ().imported.active ||
+        widget.currentModelSpec ().imported.sourceDeviceFile !=
+            original.imported.sourceDeviceFile) {
+        *failure = "Widget snapshot restore did not restore imported document metadata.";
+        return false;
+    }
+    if (status->text () != originalStatus || mainTabs->currentIndex () != originalMainTab ||
+        previewTabs->currentIndex () != originalPreviewTab) {
+        *failure = QString ("Widget snapshot restore visible state mismatch: status '%1'/'%2', "
+                            "main %3/%4, preview %5/%6.")
+                       .arg (status->text (), originalStatus)
+                       .arg (mainTabs->currentIndex ())
+                       .arg (originalMainTab)
+                       .arg (previewTabs->currentIndex ())
+                       .arg (originalPreviewTab);
+        return false;
+    }
+    for (int index = 0; index < previewTabs->count (); ++index) {
+        QTextEdit* preview = qobject_cast< QTextEdit* > (previewTabs->widget (index));
+        if (preview == NULL || preview->toPlainText () != originalPreviews[index]) {
+            *failure = "Widget snapshot restore did not restore XML previews.";
+            return false;
+        }
+    }
+
+    if (limitJoint->count () < 2) {
+        *failure = "Restored table combo has no alternate value for the interaction test.";
+        return false;
+    }
+    widget.markProjectDocumentClean ();
+    int interactions = 0;
+    QObject::connect (&widget, &rws::RobotModelBuilderWidget::projectDocumentInteraction,
+                      [&interactions] () { ++interactions; });
+    const int changedIndex = limitJoint->currentIndex () == 0 ? 1 : 0;
+    limitJoint->setCurrentIndex (changedIndex);
+    if (interactions != 1 || !widget.isProjectDocumentDirty ()) {
+        *failure = QString ("Restored table value change reported %1 interactions with dirty=%2.")
+                       .arg (interactions)
+                       .arg (widget.isProjectDocumentDirty ());
+        return false;
+    }
+    return true;
+}
+
+bool verifyProjectContextSetterDoesNotCreateDirectories (QString* failure)
+{
+    QTemporaryDir fixture;
+    if (!fixture.isValid ()) {
+        *failure = "Could not create the project context setter fixture.";
+        return false;
+    }
+
+    rws::RobotModelBuilderWidget widget;
+    const QString firstRoot = fixture.filePath ("first/project");
+    const QString rollbackRoot = fixture.filePath ("rollback/project");
+    widget.setProjectOutputDirectory (firstRoot);
+    widget.setProjectOutputDirectory (firstRoot);
+    widget.setProjectOutputDirectory (rollbackRoot);
+
+    for (const QString& root : {firstRoot, rollbackRoot}) {
+        if (QFileInfo::exists (root) ||
+            QFileInfo::exists (QDir (root).filePath ("generated/robot-models"))) {
+            *failure = "Project context notification created a generated output directory.";
+            return false;
+        }
+    }
+    return true;
+}
+
+bool verifyDefaultProjectModelBaseline (QString* failure)
+{
+    QTemporaryDir project;
+    if (!project.isValid ()) {
+        *failure = "Could not create the default project model fixture.";
+        return false;
+    }
+
+    rws::RobotModelBuilderWidget widget;
+    widget.setProjectOutputDirectory (project.path ());
+    widget.applyDefaultProjectModel ();
+    widget.beginGeneratedProjectDocument ();
+
+    const QString output = QDir (project.path ()).filePath ("generated/robot-models");
+    const rws::RobotModelSpec expected =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (output);
+    const rws::RobotModelSpec actual = widget.currentModelSpec ();
+    if (actual.robotName != expected.robotName ||
+        actual.transformJoints.size () != expected.transformJoints.size () ||
+        actual.transformJoints.size () != 6) {
+        *failure = "The default project model is not the factory six-axis baseline.";
+        return false;
+    }
+    if (!widget.isProjectDocumentDirty ()) {
+        *failure = "The default project model must start as an unsaved document.";
+        return false;
+    }
+    if (QFileInfo::exists (output)) {
+        *failure = "Applying the default project model created generated output.";
+        return false;
+    }
+    return true;
+}
 }    // namespace
 
 int main (int argc, char** argv)
@@ -575,6 +1078,12 @@ int main (int argc, char** argv)
     if (!verifyTransactionalPublishService (&publishFailure))
         return fail (publishFailure.toUtf8 ().constData ());
     if (!verifyProjectModeSaveAndLoad (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
+    if (!verifyProjectContextSetterDoesNotCreateDirectories (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
+    if (!verifyDefaultProjectModelBaseline (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
+    if (!verifyWidgetStateSnapshotRoundTrip (&publishFailure))
         return fail (publishFailure.toUtf8 ().constData ());
     rws::RobotModelBuilderWidget widget;
 
@@ -659,8 +1168,8 @@ int main (int argc, char** argv)
     widget.setProjectOutputDirectory (projectDirectory.path ());
     const QString generatedDirectory =
         QDir (projectDirectory.path ()).filePath ("generated/robot-models");
-    if (!QDir (generatedDirectory).exists ())
-        return fail ("Project output directory should be created inside the project directory.");
+    if (QDir (generatedDirectory).exists ())
+        return fail ("Project context notification must not create the output directory.");
     QString projectError;
 
     // 无对话框导入路径：写入一个最小 URDF 草稿文件，验证 importUrdfFile 不弹文件对话框
@@ -757,6 +1266,8 @@ int main (int argc, char** argv)
 
     robotName->setText ("OverwriteCheck");
     const QString deviceFilePath = QDir (generatedDirectory).filePath ("OverwriteCheck.wc.xml");
+    if (!QDir ().mkpath (generatedDirectory))
+        return fail ("Could not create the overwrite confirmation fixture directory.");
     QFile deviceFile (deviceFilePath);
     if (!deviceFile.open (QFile::WriteOnly | QFile::Text) ||
         deviceFile.write ("existing output") < 0)

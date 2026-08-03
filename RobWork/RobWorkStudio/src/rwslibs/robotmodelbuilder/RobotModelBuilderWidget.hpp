@@ -36,6 +36,7 @@ class RobotModelBuilderWidget : public QWidget
                             QString* error = nullptr) const;
     void applyImportedProjectModel (const RobotModelSpec& parsed,
                                     const QStringList& warnings);
+    void applyDefaultProjectModel ();
     // 无对话框 URDF 导入（供"从机器人文件创建项目"复用）；失败经 error 回填。
     bool importUrdfFile (const QString& path, QString* error = nullptr);
     // 当前 UI 收集到的模型规格（用于登记生成资源时的文件基名）。
@@ -68,6 +69,8 @@ class RobotModelBuilderWidget : public QWidget
     bool isProjectDocumentDirty () const;
     /** @brief 仅在 ProjectSaveTransaction 完整提交成功后更新干净快照。 */
     void markProjectDocumentClean ();
+    bool snapshotProjectDocumentState (QByteArray& snapshot, QString* error = nullptr) const;
+    bool restoreProjectDocumentState (const QByteArray& snapshot, QString* error = nullptr);
 
   Q_SIGNALS:
     void loadSceneRequested (const QString& filename);

@@ -23,9 +23,11 @@
 // Qt 控件/工具头文件
 #include <QCheckBox>
 #include <QComboBox>
+#include <QByteArrayView>
 #include <QDir>
 #include <QEvent>
 #include <QFile>
+#include <QIODevice>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFormLayout>
@@ -38,6 +40,8 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSet>
+#include <QSignalBlocker>
+#include <QStringDecoder>
 #include <QTableWidget>
 #include <QTabWidget>
 #include <QTemporaryDir>
@@ -45,7 +49,10 @@
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <cstring>
+#include <limits>
 #include <map>
+#include <memory>
 #include <set>
 
 using namespace rws;
@@ -62,6 +69,288 @@ const QStringList kLimitsHeaders = QStringList ()
     << "PosMax"
     << "VelMax"
     << "AccMax";
+
+// 快照编解码的安全上限：整个快照/解码变量区最大 64MB、单字段最大 16MB，
+// 防止异常或恶意输入耗尽内存。
+const qsizetype kMaxSnapshotBytes = 64 * 1024 * 1024;
+const qsizetype kMaxSnapshotFieldBytes = 16 * 1024 * 1024;
+const qint64 kMaxDecodedVariableBytes = 64 * 1024 * 1024;
+
+// 二进制快照写入器：把 Widget 的编辑控件状态（文本、启用/只读/隐藏、表格内容等）
+// 编码为紧凑二进制流。所有多字节整数均大端序；写越界/超限时置 ok=false 并使快照无效。
+class SnapshotWriter
+{
+  public:
+    explicit SnapshotWriter (QByteArray& data) : _data (data) { _data.clear (); }
+
+    bool ok () const { return _ok; }
+    void writeU8 (quint8 value) { _data.append (char (value)); }
+    void writeBool (bool value) { writeU8 (value ? 1 : 0); }
+    void writeU32 (quint32 value)
+    {
+        writeU8 (quint8 ((value >> 24) & 0xff));
+        writeU8 (quint8 ((value >> 16) & 0xff));
+        writeU8 (quint8 ((value >> 8) & 0xff));
+        writeU8 (quint8 (value & 0xff));
+    }
+    void writeI32 (qint32 value) { writeU32 (quint32 (value)); }
+    void writeU64 (quint64 value)
+    {
+        writeU32 (quint32 (value >> 32));
+        writeU32 (quint32 (value & 0xffffffff));
+    }
+    void writeI64 (qint64 value) { writeU64 (quint64 (value)); }
+    void writeDouble (double value)
+    {
+        quint64 bits = 0;
+        static_assert (sizeof (bits) == sizeof (value), "Unexpected double size");
+        std::memcpy (&bits, &value, sizeof (bits));
+        writeU64 (bits);
+    }
+    void writeBytes (QByteArrayView value)
+    {
+        if (!_ok || value.size () > kMaxSnapshotFieldBytes ||
+            _variableBytes + value.size () > kMaxDecodedVariableBytes ||
+            value.size () > qsizetype (std::numeric_limits< quint32 >::max ())) {
+            _ok = false;
+            return;
+        }
+        _variableBytes += value.size ();
+        writeU32 (quint32 (value.size ()));
+        _data.append (value.data (), value.size ());
+    }
+    void writeString (const QString& value) { writeBytes (value.toUtf8 ()); }
+    void writeVariant (const QVariant& value)
+    {
+        if (!value.isValid ()) {
+            writeU8 (0);
+            return;
+        }
+        switch (value.typeId ()) {
+            case QMetaType::QString:
+                writeU8 (1);
+                writeString (value.toString ());
+                break;
+            case QMetaType::Int:
+                writeU8 (2);
+                writeI64 (value.toInt ());
+                break;
+            case QMetaType::UInt:
+                writeU8 (3);
+                writeU64 (value.toUInt ());
+                break;
+            case QMetaType::LongLong:
+                writeU8 (4);
+                writeI64 (value.toLongLong ());
+                break;
+            case QMetaType::ULongLong:
+                writeU8 (5);
+                writeU64 (value.toULongLong ());
+                break;
+            case QMetaType::Bool:
+                writeU8 (6);
+                writeBool (value.toBool ());
+                break;
+            case QMetaType::Nullptr:
+                writeU8 (7);
+                break;
+            case QMetaType::Double:
+                writeU8 (8);
+                writeDouble (value.toDouble ());
+                break;
+            default:
+                _ok = false;
+                break;
+        }
+    }
+
+  private:
+    QByteArray& _data;
+    qint64 _variableBytes = 0;
+    bool _ok = true;
+};
+
+// 二进制快照读取器：带严格边界/长度校验的反序列化器。每次读取都检查剩余字节、
+// 字段长度与累计变量字节上限，任何越界或格式非法都置 ok=false 并中止后续读取，
+// 从而拒绝损坏或恶意构造的快照。
+class SnapshotReader
+{
+  public:
+    SnapshotReader (QByteArrayView data, qint64& variableBytes) :
+        _data (data), _variableBytes (variableBytes)
+    {}
+
+    bool atEnd () const { return _ok && _offset == _data.size (); }
+    bool ok () const { return _ok; }
+    bool readU8 (quint8& value)
+    {
+        if (!_ok || _offset >= _data.size ()) {
+            _ok = false;
+            return false;
+        }
+        value = quint8 (uchar (_data[_offset++]));
+        return true;
+    }
+    bool readBool (bool& value)
+    {
+        quint8 encoded = 0;
+        if (!readU8 (encoded) || encoded > 1) {
+            _ok = false;
+            return false;
+        }
+        value = encoded != 0;
+        return true;
+    }
+    bool readU32 (quint32& value)
+    {
+        quint8 bytes[4] = {};
+        for (quint8& byte : bytes) {
+            if (!readU8 (byte))
+                return false;
+        }
+        value = (quint32 (bytes[0]) << 24) | (quint32 (bytes[1]) << 16) |
+                (quint32 (bytes[2]) << 8) | quint32 (bytes[3]);
+        return true;
+    }
+    bool readI32 (qint32& value)
+    {
+        quint32 encoded = 0;
+        if (!readU32 (encoded))
+            return false;
+        value = qint32 (encoded);
+        return true;
+    }
+    bool readInt (int& value)
+    {
+        qint32 encoded = 0;
+        if (!readI32 (encoded))
+            return false;
+        value = int (encoded);
+        return true;
+    }
+    bool readU64 (quint64& value)
+    {
+        quint32 high = 0;
+        quint32 low = 0;
+        if (!readU32 (high) || !readU32 (low))
+            return false;
+        value = (quint64 (high) << 32) | low;
+        return true;
+    }
+    bool readI64 (qint64& value)
+    {
+        quint64 encoded = 0;
+        if (!readU64 (encoded))
+            return false;
+        value = qint64 (encoded);
+        return true;
+    }
+    bool readDouble (double& value)
+    {
+        quint64 bits = 0;
+        if (!readU64 (bits))
+            return false;
+        std::memcpy (&value, &bits, sizeof (value));
+        return true;
+    }
+    bool readBytes (QByteArrayView& value, qsizetype maxBytes = kMaxSnapshotFieldBytes,
+                    bool chargeBudget = true)
+    {
+        quint32 size = 0;
+        if (!readU32 (size) || size > quint32 (maxBytes) ||
+            qint64 (size) > qint64 (_data.size () - _offset) ||
+            (chargeBudget && _variableBytes + size > kMaxDecodedVariableBytes)) {
+            _ok = false;
+            return false;
+        }
+        if (chargeBudget)
+            _variableBytes += size;
+        value = QByteArrayView (_data.data () + _offset, qsizetype (size));
+        _offset += size;
+        return true;
+    }
+    bool readString (QString& value)
+    {
+        QByteArrayView bytes;
+        if (!readBytes (bytes))
+            return false;
+        QStringDecoder decoder (QStringDecoder::Utf8);
+        value = decoder.decode (bytes);
+        if (decoder.hasError ()) {
+            _ok = false;
+            return false;
+        }
+        return true;
+    }
+    bool readVariant (QVariant& value)
+    {
+        quint8 tag = 0;
+        if (!readU8 (tag))
+            return false;
+        qint64 signedValue = 0;
+        quint64 unsignedValue = 0;
+        switch (tag) {
+            case 0:
+                value = QVariant ();
+                return true;
+            case 1: {
+                QString stringValue;
+                if (!readString (stringValue))
+                    return false;
+                value = stringValue;
+                return true;
+            }
+            case 2:
+                if (!readI64 (signedValue) || signedValue < std::numeric_limits< int >::min () ||
+                    signedValue > std::numeric_limits< int >::max ())
+                    break;
+                value = int (signedValue);
+                return true;
+            case 3:
+                if (!readU64 (unsignedValue) || unsignedValue > std::numeric_limits< uint >::max ())
+                    break;
+                value = uint (unsignedValue);
+                return true;
+            case 4:
+                if (!readI64 (signedValue))
+                    return false;
+                value = qlonglong (signedValue);
+                return true;
+            case 5:
+                if (!readU64 (unsignedValue))
+                    return false;
+                value = qulonglong (unsignedValue);
+                return true;
+            case 6: {
+                bool boolValue = false;
+                if (!readBool (boolValue))
+                    return false;
+                value = boolValue;
+                return true;
+            }
+            case 7:
+                value = QVariant::fromValue (nullptr);
+                return true;
+            case 8: {
+                double doubleValue = 0.0;
+                if (!readDouble (doubleValue))
+                    return false;
+                value = doubleValue;
+                return true;
+            }
+            default:
+                break;
+        }
+        _ok = false;
+        return false;
+    }
+
+  private:
+    QByteArrayView _data;
+    qint64& _variableBytes;
+    qsizetype _offset = 0;
+    bool _ok = true;
+};
 
 /// 创建一个带表头、隔行着色、列宽自适应的 QTableWidget
 QTableWidget* makeTable (const QStringList& headers, int rows)
@@ -423,6 +712,645 @@ void RobotModelBuilderWidget::markProjectDocumentClean ()
     _projectSnapshotActive = true;
 }
 
+// 生成当前 Widget 完整状态的二进制快照：模型 JSON + 全部编辑控件（行编辑/复选框/
+// 表格）的文本、启用态与内容。快照用于"从零构建"流程的撤销/重做与项目文档基线；
+// 任何字段超限都会置失败并返回 false，避免保存损坏的快照。
+bool RobotModelBuilderWidget::snapshotProjectDocumentState (QByteArray& snapshot,
+                                                            QString* error) const
+{
+    if (error != nullptr)
+        error->clear ();
+
+    const QByteArray model = QByteArray::fromStdString (RobotModelSpecJson::toJson (collectSpec ()));
+    const QList< QLineEdit* > lineEdits = {_robotName,
+                                           _deviceFile,
+                                           _sceneFile,
+                                           _dynamicWorkCellFile,
+                                           _collisionSetupFile,
+                                           _baseFrame,
+                                           _baseMaterial,
+                                           _robotBaseRpy,
+                                           _robotBasePos,
+                                           _status};
+    const QList< QCheckBox* > checkBoxes = {_preserveImportedFileLayout,
+                                            _showFrameAxes,
+                                            _generateDrawables,
+                                            _generateScene,
+                                            _generateDwc,
+                                            _exportDhAdvanced,
+                                            _collisionSetupEnabled,
+                                            _excludeBaseFirst,
+                                            _excludeAdjacent,
+                                            _excludeStatic};
+    const QList< QTableWidget* > tables = {_transformTable,
+                                           _dhTable,
+                                           _drawablesTable,
+                                           _collisionModelsTable,
+                                           _collisionSetupPairsTable,
+                                           _sceneFramesTable,
+                                           _sceneGeometryTable,
+                                           _limitsTable,
+                                           _posesTable,
+                                           _dynamicsLinksTable,
+                                           _forceLimitsTable};
+
+    QByteArray editableState;
+    SnapshotWriter ui (editableState);
+    ui.writeU32 (quint32 (lineEdits.size ()));
+    for (const QLineEdit* lineEdit : lineEdits) {
+        ui.writeString (lineEdit->text ());
+        ui.writeBool (lineEdit->isEnabled ());
+        ui.writeBool (lineEdit->isReadOnly ());
+        ui.writeBool (lineEdit->isHidden ());
+    }
+    ui.writeU32 (quint32 (_mode->count ()));
+    for (int index = 0; index < _mode->count (); ++index)
+        ui.writeString (_mode->itemText (index));
+    ui.writeU32 (quint32 (_mode->count ()));
+    for (int index = 0; index < _mode->count (); ++index)
+        ui.writeVariant (_mode->itemData (index));
+    ui.writeI32 (_mode->currentIndex ());
+    ui.writeString (_mode->currentText ());
+    ui.writeBool (_mode->isEditable ());
+    ui.writeBool (_mode->isEnabled ());
+
+    ui.writeU32 (quint32 (checkBoxes.size ()));
+    for (const QCheckBox* checkBox : checkBoxes) {
+        ui.writeI32 (qint32 (checkBox->checkState ()));
+        ui.writeBool (checkBox->isTristate ());
+        ui.writeBool (checkBox->isEnabled ());
+        ui.writeBool (checkBox->isHidden ());
+    }
+
+    ui.writeU32 (quint32 (tables.size ()));
+    for (const QTableWidget* table : tables) {
+        ui.writeI32 (table->rowCount ());
+        ui.writeI32 (table->columnCount ());
+        ui.writeI32 (table->currentRow ());
+        ui.writeI32 (table->currentColumn ());
+        ui.writeBool (table->isEnabled ());
+        ui.writeBool (table->isHidden ());
+        for (int column = 0; column < table->columnCount (); ++column) {
+            const QTableWidgetItem* header = table->horizontalHeaderItem (column);
+            ui.writeString (header == NULL ? QString () : header->text ());
+        }
+        for (int row = 0; row < table->rowCount (); ++row) {
+            for (int column = 0; column < table->columnCount (); ++column) {
+                const QTableWidgetItem* item = table->item (row, column);
+                ui.writeBool (item != NULL);
+                if (item != NULL) {
+                    ui.writeString (item->text ());
+                    ui.writeU32 (quint32 (item->flags ()));
+                    ui.writeI32 (qint32 (item->checkState ()));
+                    ui.writeVariant (item->data (Qt::UserRole));
+                }
+                if (const QComboBox* combo =
+                        qobject_cast< const QComboBox* > (table->cellWidget (row, column))) {
+                    ui.writeU8 (1);
+                    ui.writeU32 (quint32 (combo->count ()));
+                    for (int index = 0; index < combo->count (); ++index)
+                        ui.writeString (combo->itemText (index));
+                    ui.writeU32 (quint32 (combo->count ()));
+                    for (int index = 0; index < combo->count (); ++index)
+                        ui.writeVariant (combo->itemData (index));
+                    ui.writeI32 (combo->currentIndex ());
+                    ui.writeString (combo->currentText ());
+                    ui.writeBool (combo->isEditable ());
+                    ui.writeBool (combo->isEnabled ());
+                }
+                else if (const QCheckBox* checkBox =
+                             qobject_cast< const QCheckBox* > (table->cellWidget (row, column))) {
+                    ui.writeU8 (2);
+                    ui.writeI32 (qint32 (checkBox->checkState ()));
+                    ui.writeBool (checkBox->isTristate ());
+                    ui.writeBool (checkBox->isEnabled ());
+                }
+                else {
+                    ui.writeU8 (0);
+                }
+            }
+        }
+    }
+    ui.writeBool (_sceneContent->isEnabled ());
+    if (!ui.ok ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Could not encode the RobotModelBuilder editable state.");
+        return false;
+    }
+
+    snapshot.clear ();
+    QByteArray mainTabsEnabled;
+    for (int index = 0; index < _mainTabs->count (); ++index)
+        mainTabsEnabled.append (_mainTabs->isTabEnabled (index) ? '\1' : '\0');
+    QByteArray previewTabsEnabled;
+    for (int index = 0; index < _previewTabs->count (); ++index)
+        previewTabsEnabled.append (_previewTabs->isTabEnabled (index) ? '\1' : '\0');
+    SnapshotWriter stream (snapshot);
+    stream.writeU32 (quint32 (0x524d4253));
+    stream.writeU32 (quint32 (3));
+    stream.writeString (_projectDirectory);
+    stream.writeString (_projectOutputDirectory);
+    stream.writeBytes (_projectCleanSnapshot);
+    stream.writeBool (_projectSnapshotActive);
+    stream.writeBytes (model);
+    stream.writeBytes (editableState);
+    stream.writeU32 (quint32 (_lastUrdfImportWarnings.size ()));
+    for (const QString& warning : _lastUrdfImportWarnings)
+        stream.writeString (warning);
+    stream.writeString (_status->text ());
+    stream.writeString (_serialPreview->toPlainText ());
+    stream.writeString (_scenePreview->toPlainText ());
+    stream.writeString (_dwcPreview->toPlainText ());
+    stream.writeString (_collisionSetupPreview->toPlainText ());
+    stream.writeString (_proximitySetupPreview->toPlainText ());
+    stream.writeBytes (mainTabsEnabled);
+    stream.writeBytes (previewTabsEnabled);
+    stream.writeI32 (_mainTabs->currentIndex ());
+    stream.writeI32 (_previewTabs->currentIndex ());
+    if (!stream.ok () || snapshot.size () > kMaxSnapshotBytes) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Could not encode the RobotModelBuilder document snapshot.");
+        return false;
+    }
+    return true;
+}
+
+// 从二进制快照恢复 Widget 状态（snapshotProjectDocumentState 的逆操作）。带严格边界
+// 校验，损坏/非法快照会整体拒绝并返回 false，不会把半解析的数据写入界面。
+bool RobotModelBuilderWidget::restoreProjectDocumentState (const QByteArray& snapshot,
+                                                           QString* error)
+{
+    if (error != nullptr)
+        error->clear ();
+
+    QString projectDirectory;
+    QString projectOutputDirectory;
+    QByteArray cleanSnapshot;
+    bool snapshotActive = false;
+    QByteArrayView model;
+    QByteArrayView editableState;
+    quint32 magic = 0;
+    quint32 version = 0;
+    QStringList importWarnings;
+    QString status;
+    QString serialPreview;
+    QString scenePreview;
+    QString dwcPreview;
+    QString collisionPreview;
+    QString proximityPreview;
+    QByteArray mainTabsEnabled;
+    QByteArray previewTabsEnabled;
+    qint32 mainTabIndex = 0;
+    qint32 previewTabIndex = 0;
+    const int maxStringListItems = 10000;
+    if (snapshot.size () > kMaxSnapshotBytes) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The RobotModelBuilder document snapshot is too large.");
+        return false;
+    }
+
+    qint64 decodedVariableBytes = 0;
+    SnapshotReader stream (QByteArrayView (snapshot), decodedVariableBytes);
+    QByteArrayView cleanSnapshotView;
+    if (!stream.readU32 (magic) || !stream.readU32 (version) ||
+        magic != quint32 (0x524d4253) || version != 3 ||
+        !stream.readString (projectDirectory) ||
+        !stream.readString (projectOutputDirectory) ||
+        !stream.readBytes (cleanSnapshotView) || !stream.readBool (snapshotActive) ||
+        !stream.readBytes (model) || !stream.readBytes (editableState, kMaxSnapshotFieldBytes, false)) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The RobotModelBuilder document snapshot is invalid.");
+        return false;
+    }
+    cleanSnapshot = QByteArray (cleanSnapshotView.data (), cleanSnapshotView.size ());
+    quint32 importWarningCount = 0;
+    if (!stream.readU32 (importWarningCount) || importWarningCount > quint32 (maxStringListItems)) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The RobotModelBuilder document snapshot is invalid.");
+        return false;
+    }
+    importWarnings.reserve (int (importWarningCount));
+    for (quint32 index = 0; index < importWarningCount; ++index) {
+        QString warning;
+        if (!stream.readString (warning)) {
+            if (error != nullptr)
+                *error = QStringLiteral ("The RobotModelBuilder document snapshot is invalid.");
+            return false;
+        }
+        importWarnings.push_back (warning);
+    }
+    QByteArrayView mainTabsEnabledView;
+    QByteArrayView previewTabsEnabledView;
+    if (!stream.readString (status) || !stream.readString (serialPreview) ||
+        !stream.readString (scenePreview) || !stream.readString (dwcPreview) ||
+        !stream.readString (collisionPreview) || !stream.readString (proximityPreview) ||
+        !stream.readBytes (mainTabsEnabledView) || !stream.readBytes (previewTabsEnabledView) ||
+        !stream.readI32 (mainTabIndex) || !stream.readI32 (previewTabIndex) || !stream.atEnd ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The RobotModelBuilder document snapshot is invalid.");
+        return false;
+    }
+    mainTabsEnabled = QByteArray (mainTabsEnabledView.data (), mainTabsEnabledView.size ());
+    previewTabsEnabled = QByteArray (previewTabsEnabledView.data (), previewTabsEnabledView.size ());
+
+    RobotModelSpec parsed;
+    std::string parseError;
+    if (!RobotModelSpecJson::fromJson (
+            std::string (model.data (), size_t (model.size ())), parsed, &parseError)) {
+        if (error != nullptr) {
+            *error = QStringLiteral ("The RobotModelBuilder document snapshot is invalid: %1")
+                         .arg (QString::fromStdString (parseError));
+        }
+        return false;
+    }
+
+    const QList< QLineEdit* > lineEdits = {_robotName,
+                                           _deviceFile,
+                                           _sceneFile,
+                                           _dynamicWorkCellFile,
+                                           _collisionSetupFile,
+                                           _baseFrame,
+                                           _baseMaterial,
+                                           _robotBaseRpy,
+                                           _robotBasePos,
+                                           _status};
+    const QList< QCheckBox* > checkBoxes = {_preserveImportedFileLayout,
+                                            _showFrameAxes,
+                                            _generateDrawables,
+                                            _generateScene,
+                                            _generateDwc,
+                                            _exportDhAdvanced,
+                                            _collisionSetupEnabled,
+                                            _excludeBaseFirst,
+                                            _excludeAdjacent,
+                                            _excludeStatic};
+    const QList< QTableWidget* > tables = {_transformTable,
+                                           _dhTable,
+                                           _drawablesTable,
+                                           _collisionModelsTable,
+                                           _collisionSetupPairsTable,
+                                           _sceneFramesTable,
+                                           _sceneGeometryTable,
+                                           _limitsTable,
+                                           _posesTable,
+                                           _dynamicsLinksTable,
+                                           _forceLimitsTable};
+
+    struct LineEditState
+    {
+        QString text;
+        bool enabled = false;
+        bool readOnly = false;
+        bool hidden = false;
+    };
+    struct CheckBoxState
+    {
+        qint32 checkState = 0;
+        bool tristate = false;
+        bool enabled = false;
+        bool hidden = false;
+    };
+    struct CellState
+    {
+        bool hasItem = false;
+        QString itemText;
+        quint32 itemFlags = 0;
+        qint32 itemCheckState = 0;
+        QVariant itemUserRole;
+        quint8 widgetKind = 0;
+        QStringList comboItems;
+        QVariantList comboData;
+        int comboIndex = -1;
+        QString comboText;
+        bool comboEditable = false;
+        bool widgetEnabled = false;
+        qint32 checkState = 0;
+        bool tristate = false;
+    };
+    struct TableState
+    {
+        int rows = 0;
+        int columns = 0;
+        int currentRow = -1;
+        int currentColumn = -1;
+        bool enabled = false;
+        bool hidden = false;
+        QStringList headers;
+        std::vector< CellState > cells;
+    };
+
+    const auto invalidEditableState = [error] (const QString& message) {
+        if (error != nullptr)
+            *error = message;
+        return false;
+    };
+    const QString invalidEditableMessage =
+        QStringLiteral ("The RobotModelBuilder editable state snapshot is invalid.");
+    const int maxTableRows = 10000;
+    const int maxTableColumns = 256;
+    const int maxTableCells = 1000000;
+    const int maxTotalTableCells = 1000000;
+    const int maxComboItems = 10000;
+
+    SnapshotReader ui (editableState, decodedVariableBytes);
+    quint32 lineEditCount = 0;
+    if (!ui.readU32 (lineEditCount) || lineEditCount != quint32 (lineEdits.size ()))
+        return invalidEditableState (invalidEditableMessage);
+    std::vector< LineEditState > lineEditStates (lineEditCount);
+    for (LineEditState& state : lineEditStates) {
+        if (!ui.readString (state.text) || !ui.readBool (state.enabled) ||
+            !ui.readBool (state.readOnly) || !ui.readBool (state.hidden))
+            return invalidEditableState (invalidEditableMessage);
+    }
+
+    QStringList modeItems;
+    QVariantList modeData;
+    int modeIndex = -1;
+    QString modeText;
+    bool modeEditable = false;
+    bool modeEnabled = false;
+    quint32 modeItemCount = 0;
+    if (!ui.readU32 (modeItemCount) || modeItemCount > quint32 (maxComboItems))
+        return invalidEditableState (invalidEditableMessage);
+    quint32 totalComboItems = modeItemCount;
+    modeItems.reserve (int (modeItemCount));
+    for (quint32 index = 0; index < modeItemCount; ++index) {
+        QString item;
+        if (!ui.readString (item))
+            return invalidEditableState (invalidEditableMessage);
+        modeItems.push_back (item);
+    }
+    quint32 modeDataCount = 0;
+    if (!ui.readU32 (modeDataCount) || modeDataCount != modeItemCount)
+        return invalidEditableState (invalidEditableMessage);
+    modeData.reserve (int (modeDataCount));
+    for (quint32 index = 0; index < modeDataCount; ++index) {
+        QVariant data;
+        if (!ui.readVariant (data))
+            return invalidEditableState (invalidEditableMessage);
+        modeData.push_back (data);
+    }
+    if (!ui.readInt (modeIndex) || !ui.readString (modeText) ||
+        !ui.readBool (modeEditable) || !ui.readBool (modeEnabled) || modeIndex < -1 ||
+        modeIndex >= modeItems.size ())
+        return invalidEditableState (invalidEditableMessage);
+
+    quint32 checkBoxCount = 0;
+    if (!ui.readU32 (checkBoxCount) || checkBoxCount != quint32 (checkBoxes.size ()))
+        return invalidEditableState (
+            QStringLiteral ("The RobotModelBuilder checkbox snapshot is invalid."));
+    std::vector< CheckBoxState > checkBoxStates (checkBoxCount);
+    for (CheckBoxState& state : checkBoxStates) {
+        if (!ui.readI32 (state.checkState) || !ui.readBool (state.tristate) ||
+            !ui.readBool (state.enabled) || !ui.readBool (state.hidden) ||
+            state.checkState < Qt::Unchecked ||
+            state.checkState > Qt::Checked)
+            return invalidEditableState (
+                QStringLiteral ("The RobotModelBuilder checkbox snapshot is invalid."));
+    }
+
+    quint32 tableCount = 0;
+    if (!ui.readU32 (tableCount) || tableCount != quint32 (tables.size ()))
+        return invalidEditableState (
+            QStringLiteral ("The RobotModelBuilder table snapshot is invalid."));
+    std::vector< TableState > tableStates (tableCount);
+    qint64 totalTableCells = 0;
+    for (TableState& tableState : tableStates) {
+        if (!ui.readInt (tableState.rows) || !ui.readInt (tableState.columns) ||
+            !ui.readInt (tableState.currentRow) || !ui.readInt (tableState.currentColumn) ||
+            !ui.readBool (tableState.enabled) || !ui.readBool (tableState.hidden))
+            return invalidEditableState (invalidEditableMessage);
+        const qint64 cellCount = qint64 (tableState.rows) * qint64 (tableState.columns);
+        if (tableState.rows < 0 ||
+            tableState.rows > maxTableRows || tableState.columns < 0 ||
+            tableState.columns > maxTableColumns || cellCount > maxTableCells ||
+            tableState.currentRow < -1 || tableState.currentRow >= tableState.rows ||
+            tableState.currentColumn < -1 || tableState.currentColumn >= tableState.columns ||
+            ((tableState.currentRow == -1) != (tableState.currentColumn == -1))) {
+            return invalidEditableState (
+                QStringLiteral ("The RobotModelBuilder table dimensions are invalid."));
+        }
+        totalTableCells += cellCount;
+        if (totalTableCells > maxTotalTableCells)
+            return invalidEditableState (
+                QStringLiteral ("The RobotModelBuilder table snapshot is too large."));
+        tableState.headers.reserve (tableState.columns);
+        for (int column = 0; column < tableState.columns; ++column) {
+            QString header;
+            if (!ui.readString (header))
+                return invalidEditableState (invalidEditableMessage);
+            tableState.headers.push_back (header);
+        }
+        tableState.cells.resize (size_t (cellCount));
+        for (CellState& cell : tableState.cells) {
+            if (!ui.readBool (cell.hasItem))
+                return invalidEditableState (invalidEditableMessage);
+            if (cell.hasItem) {
+                if (!ui.readString (cell.itemText) || !ui.readU32 (cell.itemFlags) ||
+                    !ui.readI32 (cell.itemCheckState) || !ui.readVariant (cell.itemUserRole) ||
+                    cell.itemCheckState < Qt::Unchecked || cell.itemCheckState > Qt::Checked)
+                    return invalidEditableState (invalidEditableMessage);
+            }
+            if (!ui.readU8 (cell.widgetKind))
+                return invalidEditableState (invalidEditableMessage);
+            if (cell.widgetKind == 1) {
+                quint32 comboItemCount = 0;
+                if (!ui.readU32 (comboItemCount) || comboItemCount > quint32 (maxComboItems) ||
+                    totalComboItems > quint32 (maxComboItems) - comboItemCount)
+                    return invalidEditableState (invalidEditableMessage);
+                totalComboItems += comboItemCount;
+                cell.comboItems.reserve (int (comboItemCount));
+                for (quint32 index = 0; index < comboItemCount; ++index) {
+                    QString item;
+                    if (!ui.readString (item))
+                        return invalidEditableState (invalidEditableMessage);
+                    cell.comboItems.push_back (item);
+                }
+                quint32 comboDataCount = 0;
+                if (!ui.readU32 (comboDataCount) || comboDataCount != comboItemCount)
+                    return invalidEditableState (invalidEditableMessage);
+                cell.comboData.reserve (int (comboDataCount));
+                for (quint32 index = 0; index < comboDataCount; ++index) {
+                    QVariant data;
+                    if (!ui.readVariant (data))
+                        return invalidEditableState (invalidEditableMessage);
+                    cell.comboData.push_back (data);
+                }
+                if (!ui.readInt (cell.comboIndex) || !ui.readString (cell.comboText) ||
+                    !ui.readBool (cell.comboEditable) || !ui.readBool (cell.widgetEnabled) ||
+                    cell.comboIndex < -1 || cell.comboIndex >= cell.comboItems.size ())
+                    return invalidEditableState (invalidEditableMessage);
+            }
+            else if (cell.widgetKind == 2) {
+                if (!ui.readI32 (cell.checkState) || !ui.readBool (cell.tristate) ||
+                    !ui.readBool (cell.widgetEnabled) || cell.checkState < Qt::Unchecked ||
+                    cell.checkState > Qt::Checked)
+                    return invalidEditableState (invalidEditableMessage);
+            }
+            else if (cell.widgetKind != 0) {
+                return invalidEditableState (invalidEditableMessage);
+            }
+            if (!ui.ok ())
+                return invalidEditableState (invalidEditableMessage);
+        }
+    }
+    bool sceneContentEnabled = false;
+    if (!ui.readBool (sceneContentEnabled) || !ui.atEnd ())
+        return invalidEditableState (invalidEditableMessage);
+
+    if (mainTabsEnabled.size () != _mainTabs->count () ||
+        previewTabsEnabled.size () != _previewTabs->count () || mainTabIndex < -1 ||
+        mainTabIndex >= _mainTabs->count () || previewTabIndex < -1 ||
+        previewTabIndex >= _previewTabs->count ())
+        return invalidEditableState (
+            QStringLiteral ("The RobotModelBuilder tab snapshot is invalid."));
+
+    std::vector< std::unique_ptr< QSignalBlocker > > blockers;
+    blockers.reserve (lineEdits.size () + checkBoxes.size () + tables.size () + 3);
+    const auto block = [&blockers] (QObject* object) {
+        blockers.push_back (std::unique_ptr< QSignalBlocker > (new QSignalBlocker (object)));
+    };
+    for (QLineEdit* lineEdit : lineEdits)
+        block (lineEdit);
+    for (QCheckBox* checkBox : checkBoxes)
+        block (checkBox);
+    for (QTableWidget* table : tables)
+        block (table);
+    block (_mode);
+    block (_mainTabs);
+    block (_previewTabs);
+
+    const bool wasSyncingTables = _syncingTables;
+    _syncingTables = true;
+    _projectDirectory = projectDirectory;
+    _projectOutputDirectory = projectOutputDirectory;
+    _importedDocument = parsed.imported;
+
+    for (int index = 0; index < lineEdits.size (); ++index) {
+        const LineEditState& state = lineEditStates[size_t (index)];
+        lineEdits[index]->setText (state.text);
+        lineEdits[index]->setEnabled (state.enabled);
+        lineEdits[index]->setReadOnly (state.readOnly);
+        lineEdits[index]->setHidden (state.hidden);
+    }
+
+    _mode->clear ();
+    for (int index = 0; index < modeItems.size (); ++index) {
+        _mode->addItem (modeItems[index], modeData[index]);
+    }
+    _mode->setEditable (modeEditable);
+    _mode->setCurrentIndex (modeIndex);
+    if (modeEditable)
+        _mode->setCurrentText (modeText);
+    _mode->setEnabled (modeEnabled);
+
+    for (int index = 0; index < checkBoxes.size (); ++index) {
+        const CheckBoxState& state = checkBoxStates[size_t (index)];
+        checkBoxes[index]->setTristate (state.tristate);
+        checkBoxes[index]->setCheckState (Qt::CheckState (state.checkState));
+        checkBoxes[index]->setEnabled (state.enabled);
+        checkBoxes[index]->setHidden (state.hidden);
+    }
+
+    for (int tableIndex = 0; tableIndex < tables.size (); ++tableIndex) {
+        QTableWidget* table = tables[tableIndex];
+        const TableState& tableState = tableStates[size_t (tableIndex)];
+        table->clearContents ();
+        table->setColumnCount (tableState.columns);
+        table->setRowCount (tableState.rows);
+        for (int column = 0; column < tableState.columns; ++column) {
+            table->setHorizontalHeaderItem (
+                column, new QTableWidgetItem (tableState.headers[column]));
+        }
+        for (int row = 0; row < tableState.rows; ++row) {
+            for (int column = 0; column < tableState.columns; ++column) {
+                const CellState& cell =
+                    tableState.cells[size_t (row * tableState.columns + column)];
+                if (cell.widgetKind == 1) {
+                    QComboBox* combo = new QComboBox ();
+                    for (int index = 0; index < cell.comboItems.size (); ++index) {
+                        combo->addItem (cell.comboItems[index], cell.comboData[index]);
+                    }
+                    combo->setEditable (cell.comboEditable);
+                    combo->setCurrentIndex (cell.comboIndex);
+                    if (cell.comboEditable)
+                        combo->setCurrentText (cell.comboText);
+                    combo->setEnabled (cell.widgetEnabled);
+                    table->setCellWidget (row, column, combo);
+                    combo->installEventFilter (this);
+                    connect (combo, &QComboBox::currentTextChanged, this,
+                             [this] (const QString&) {
+                                 if (!_syncingTables)
+                                     Q_EMIT projectDocumentInteraction ();
+                             });
+                    if (table == _drawablesTable && column == 2) {
+                        connect (combo, &QComboBox::currentTextChanged, this,
+                                 [this] (const QString&) {
+                                     if (!_syncingTables)
+                                         generatePreview ();
+                                 });
+                    }
+                    else if (table == _collisionModelsTable && column == 3) {
+                        connect (combo, &QComboBox::currentTextChanged, this,
+                                 [this, row] (const QString&) {
+                                     if (!_syncingTables) {
+                                         synchronizeCollisionFileFromDrawable (row);
+                                         generatePreview ();
+                                     }
+                                 });
+                    }
+                }
+                else if (cell.widgetKind == 2) {
+                    QCheckBox* checkBox = new QCheckBox ();
+                    checkBox->setTristate (cell.tristate);
+                    checkBox->setCheckState (Qt::CheckState (cell.checkState));
+                    checkBox->setEnabled (cell.widgetEnabled);
+                    table->setCellWidget (row, column, checkBox);
+                    checkBox->installEventFilter (this);
+                    connect (checkBox, &QCheckBox::checkStateChanged, this,
+                             [this] (Qt::CheckState) {
+                                 if (!_syncingTables)
+                                     Q_EMIT projectDocumentInteraction ();
+                             });
+                }
+                if (cell.hasItem) {
+                    QTableWidgetItem* item = new QTableWidgetItem (cell.itemText);
+                    item->setFlags (Qt::ItemFlags (cell.itemFlags));
+                    item->setCheckState (Qt::CheckState (cell.itemCheckState));
+                    item->setData (Qt::UserRole, cell.itemUserRole);
+                    table->setItem (row, column, item);
+                }
+            }
+        }
+        table->setEnabled (tableState.enabled);
+        table->setHidden (tableState.hidden);
+        if (tableState.currentRow >= 0)
+            table->setCurrentCell (tableState.currentRow, tableState.currentColumn);
+    }
+    _sceneContent->setEnabled (sceneContentEnabled);
+    _syncingTables = wasSyncingTables;
+
+    _projectCleanSnapshot = cleanSnapshot;
+    _projectSnapshotActive = snapshotActive;
+    _lastUrdfImportWarnings = importWarnings;
+    _serialPreview->setPlainText (serialPreview);
+    _scenePreview->setPlainText (scenePreview);
+    _dwcPreview->setPlainText (dwcPreview);
+    _collisionSetupPreview->setPlainText (collisionPreview);
+    _proximitySetupPreview->setPlainText (proximityPreview);
+    for (int index = 0; index < _mainTabs->count () && index < mainTabsEnabled.size (); ++index)
+        _mainTabs->setTabEnabled (index, mainTabsEnabled[index] != '\0');
+    for (int index = 0; index < _previewTabs->count () && index < previewTabsEnabled.size ();
+         ++index)
+        _previewTabs->setTabEnabled (index, previewTabsEnabled[index] != '\0');
+    if (mainTabIndex >= 0 && mainTabIndex < _mainTabs->count ())
+        _mainTabs->setCurrentIndex (mainTabIndex);
+    if (previewTabIndex >= 0 && previewTabIndex < _previewTabs->count ())
+        _previewTabs->setCurrentIndex (previewTabIndex);
+    setStatus (status);
+    return true;
+}
+
 bool RobotModelBuilderWidget::eventFilter (QObject* watched, QEvent* event)
 {
     if (watched != this && _projectSnapshotActive &&
@@ -479,7 +1407,6 @@ void RobotModelBuilderWidget::setProjectOutputDirectory (const QString& projectD
         outputDirectory = QDir::cleanPath (
             QDir (normalizedProjectDirectory).filePath (
                 QStringLiteral ("generated/robot-models")));
-        QDir ().mkpath (outputDirectory);
     }
     // 主窗口标题刷新会频繁发出 projectContextChanged；目录未变化时直接返回，
     // 避免重复重排输出字段并触发不必要的预览重建。
@@ -956,6 +1883,12 @@ void RobotModelBuilderWidget::buildUi ()
 //        同时立即生成一次预览,让用户看到出厂默认的 XML 长什么样。
 // =============================================================================
 void RobotModelBuilderWidget::resetDefaults ()
+{
+    applyDefaultProjectModel ();
+}
+
+// 应用默认六轴模型（"从零构建"的初始状态）：清空导入来源，用默认模型填充界面。
+void RobotModelBuilderWidget::applyDefaultProjectModel ()
 {
     _importedDocument = ImportedDocumentSpec ();
     // 默认模型同样使用当前项目受管目录；没有项目时 effectiveSaveDirectory 才会回退到
