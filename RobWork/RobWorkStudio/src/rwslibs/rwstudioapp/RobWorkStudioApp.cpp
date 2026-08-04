@@ -24,12 +24,18 @@
 #include <RobWorkConfig.hpp>
 #include <RobWorkStudioConfig.hpp>
 #include <rw/common/ProgramOptions.hpp>
+#include <rw/core/Exception.hpp>
 #include <rw/core/PropertyMap.hpp>
 #include <rw/core/RobWork.hpp>
 
+#include "ExceptionDiagnostics.hpp"
+
 #include <QApplication>
 #include <QCloseEvent>
+#include <QDateTime>
+#include <QDir>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include <QSplashScreen>
 #ifdef RWS_USE_STATIC_LINK_PLUGINS
 #ifdef RWS_HAVE_PLUGIN_JOG
@@ -89,6 +95,9 @@
 #include <boost/program_options/parsers.hpp>
 #include <cstdlib>
 #include <functional>
+#include <sstream>
+#include <thread>
+#include <typeinfo>
 
 USE_ROBWORK_NAMESPACE
 using namespace robwork;
@@ -96,6 +105,93 @@ using namespace robwork;
 using namespace rws;
 
 namespace {
+
+// 返回本次进程唯一的异常日志文件路径（AppLocalData 目录下 logs/exception-<时间戳>.log），
+// 首次调用时创建目录并固定路径，保证多次弹窗都追加到同一文件。
+QString exceptionLogPath ()
+{
+    static QString path;
+    if (path.isEmpty ()) {
+        QString base = QStandardPaths::writableLocation (QStandardPaths::AppLocalDataLocation);
+        if (base.isEmpty ())
+            base = QDir::homePath () + QStringLiteral ("/.RobWorkStudio");
+
+        QDir logDirectory (base);
+        logDirectory.mkpath (QStringLiteral ("logs"));
+        path = logDirectory.filePath (
+            QStringLiteral ("logs/exception-%1.log")
+                .arg (QDateTime::currentDateTime ().toString (QStringLiteral ("yyyyMMdd-hHmmss"))));
+    }
+    return path;
+}
+
+// 把当前线程 ID 哈希为字符串，用于区分异常来自哪个线程。
+std::string currentThreadId ()
+{
+    std::ostringstream stream;
+    stream << std::hash< std::thread::id > () (std::this_thread::get_id ());
+    return stream.str ();
+}
+
+// 事件接收者的类名（取自元对象），用于定位哪个 Qt 对象在处理事件时抛出。
+std::string receiverClass (QObject* receiver)
+{
+    return receiver == NULL || receiver->metaObject () == NULL
+               ? std::string ()
+               : receiver->metaObject ()->className ();
+}
+
+// 事件接收者的对象名（objectName），与类名一起缩小问题范围。
+std::string receiverObjectName (QObject* receiver)
+{
+    return receiver == NULL ? std::string () : receiver->objectName ().toStdString ();
+}
+
+// 组装异常诊断、写入异常日志，并返回格式化文本（供弹窗详情展示）。
+// receiver 为空时回退用 receiverContext 标识调用方（如主流程）。
+std::string reportException (QObject* receiver, const std::string& phase,
+                             const std::string& operation, const std::string& category,
+                             const std::string& message,
+                             const std::string& receiverContext = std::string ())
+{
+    const std::string logPath = exceptionLogPath ().toStdString ();
+    std::string receiverName = receiverClass (receiver);
+    if (receiverName.empty ())
+        receiverName = receiverContext;
+    const rws::ExceptionDiagnostic diagnostic = {
+        QDateTime::currentDateTime ().toString (Qt::ISODateWithMs).toStdString (),
+        phase,
+        operation,
+        category,
+        message,
+        receiverName,
+        receiverObjectName (receiver),
+        currentThreadId (),
+        logPath};
+    const std::string details = rws::formatExceptionDiagnostic (diagnostic);
+    rws::appendExceptionDiagnostic (logPath, diagnostic);
+    return details;
+}
+
+// 弹出一个带完整诊断信息的异常对话框：汇总 + 日志路径 + 可展开的 key=value 详情，
+// 取代原先只有一句 "This is likely a bug" 的无信息弹窗。
+void showExceptionDialog (QObject* receiver, const QString& title, const QString& summary,
+                          const std::string& phase, const std::string& operation,
+                          const std::string& category,
+                          const std::string& message,
+                          const std::string& receiverContext = std::string ())
+{
+    const std::string details =
+        reportException (receiver, phase, operation, category, message, receiverContext);
+    const QString logPath = exceptionLogPath ();
+
+    QMessageBox box (QMessageBox::Critical, title, summary, QMessageBox::Ok, NULL);
+    box.setInformativeText (QStringLiteral ("Detailed diagnostics were written to:\n%1")
+                                .arg (logPath));
+    box.setDetailedText (QString::fromStdString (details));
+    box.exec ();
+}
+
 bool isUsableEnvironmentPath (const char* path)
 {
     if (path == NULL)
@@ -132,12 +228,27 @@ class MyQApplication : public QApplication
             try {
                 return QApplication::notify (rec, ev);
             }
-            catch (std::exception& e) {
-                QMessageBox::warning (0, tr ("An error occurred"), e.what ());
+            catch (const rw::core::Exception& e) {
+                showExceptionDialog (rec, tr ("RobWork exception"),
+                                     tr ("A RobWork exception interrupted the current operation."),
+                                     "event-loop",
+                                     "QApplication::notify",
+                                     "rw::core::Exception", e.what ());
+            }
+            catch (const std::exception& e) {
+                showExceptionDialog (rec, tr ("C++ exception"),
+                                     tr ("A C++ exception interrupted the current operation."),
+                                     "event-loop",
+                                     "QApplication::notify",
+                                     typeid (e).name (), e.what ());
             }
             catch (...) {
-                QMessageBox::warning (
-                    0, tr ("An unexpected error occurred"), tr ("This is likely a bug."));
+                showExceptionDialog (
+                    rec, tr ("Unknown C++ exception"),
+                    tr ("An exception without a standard diagnostic interrupted the current operation."),
+                    "event-loop",
+                    "QApplication::notify",
+                    "unknown C++ exception", "The exception type and message are unavailable.");
             }
         }
         else {
@@ -297,6 +408,12 @@ int RobWorkStudioApp::run ()
 
     ProgramOptions poptions ("RobWorkStudio", RW_VERSION);
 
+#if defined(QT_DEBUG) || defined(_DEBUG)
+    const bool developerModeDefault = true;
+#else
+    const bool developerModeDefault = false;
+#endif
+
     const std::string homeDirectory = getHomeDirectory ();
     poptions.addStringOption ("ini-file",
                               homeDirectory + "/.RobWorkStudio.ini",
@@ -307,7 +424,8 @@ int RobWorkStudioApp::run ()
     poptions.addStringOption ("nosplash", "", "If defined the splash screen will not be shown");
     poptions.addStringOption ("exclude-plugins", "", "list of plugins not to load seperated by ,");
     poptions.addBoolOption (
-        "developer", false, "use developer mode. This lets exceptions be caught by a debugger");
+        "developer", developerModeDefault,
+        "use developer mode. Leave exceptions uncaught for a debugger such as Qt Creator");
     poptions.setPositionalOption ("input-file", -1);
 
     poptions.initOptions ();
@@ -345,6 +463,10 @@ int RobWorkStudioApp::run ()
         glutInit (&argc, argv);
 #endif
 
+        // 生命周期阶段/步骤跟踪：主流程各关键节点更新这些变量，任何异常发生时
+        // 弹窗与日志都能说明"故障发生在启动/事件循环/关闭的哪一步"。
+        std::string lifecyclePhase = "startup";
+        std::string lifecycleStep = "initialization";
         std::function<void(void)> AppRunner = [&]() {
             QSplashScreen* splash = NULL;
             if (showSplash) {
@@ -366,6 +488,7 @@ int RobWorkStudioApp::run ()
             {
                 Timer t;
 
+                lifecycleStep = "constructing RobWorkStudio";
                 rws::RobWorkStudio rwstudio (map);
 
 #ifdef RWS_USE_STATIC_LINK_PLUGINS
@@ -497,7 +620,11 @@ int RobWorkStudioApp::run ()
                 rwstudio.show ();
                 _isRunning = true;
 
+                lifecyclePhase = "event-loop";
+                lifecycleStep = "QApplication::exec";
                 app.exec ();
+                lifecyclePhase = "shutdown";
+                lifecycleStep = "RobWorkStudio destructor";
                 _isRunning = false;
                 _rwstudio  = NULL;
             }
@@ -509,19 +636,44 @@ int RobWorkStudioApp::run ()
             try {
                 AppRunner ();
             }
-            catch (const Exception& e) {
-                std::cout << e.what () << std::endl;
-                QMessageBox::critical (NULL, "RW Exception", e.what ());
+            catch (const rw::core::Exception& e) {
+                const QString phase = QString::fromStdString (lifecyclePhase);
+                showExceptionDialog (
+                    NULL, QStringLiteral ("RobWork exception"),
+                    QStringLiteral ("RobWorkStudio failed during %1.").arg (phase), lifecyclePhase,
+                    lifecycleStep,
+                    "rw::core::Exception", e.what (), "RobWorkStudioApp");
                 _isRunning = false;
                 return -1;
             }
-            catch (std::exception& e) {
-                std::cout << e.what () << std::endl;
-                QMessageBox::critical (NULL, "Exception", e.what ());
+            catch (const std::exception& e) {
+                const QString phase = QString::fromStdString (lifecyclePhase);
+                showExceptionDialog (NULL, QStringLiteral ("C++ exception"),
+                                     QStringLiteral ("RobWorkStudio failed during %1.").arg (phase),
+                                     lifecyclePhase, lifecycleStep, typeid (e).name (), e.what (),
+                                     "RobWorkStudioApp");
                 _isRunning = false;
                 return -1;
             }
-            catch (int) {
+            catch (int value) {
+                const QString phase = QString::fromStdString (lifecyclePhase);
+                showExceptionDialog (NULL, QStringLiteral ("Non-standard exception"),
+                                     QStringLiteral ("RobWorkStudio failed during %1.").arg (phase),
+                                     lifecyclePhase, lifecycleStep, "integer exception", std::to_string (value),
+                                     "RobWorkStudioApp");
+                _isRunning = false;
+                return -1;
+            }
+            catch (...) {
+                const QString phase = QString::fromStdString (lifecyclePhase);
+                showExceptionDialog (
+                    NULL, QStringLiteral ("Unknown C++ exception"),
+                    QStringLiteral ("RobWorkStudio failed during %1.").arg (phase), lifecyclePhase,
+                    lifecycleStep,
+                    "unknown C++ exception", "The exception type and message are unavailable.",
+                    "RobWorkStudioApp");
+                _isRunning = false;
+                return -1;
             }
         }
     }

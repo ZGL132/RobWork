@@ -314,6 +314,10 @@ RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
 
 RobWorkStudio::~RobWorkStudio ()
 {
+    // Plugin dock widgets are QObject children and are destroyed from the
+    // base destructor, after this class's event members. Detach callbacks now.
+    detachPluginsFromEvents ();
+
     // 先关闭所有项目文档（按依赖逆序），再释放 Provider——Provider 是非拥有型指针，
     // 由主窗口负责 delete；顺序保证在 Provider 析构前不会再有资源回调请求。
     _projectDocuments.closeResources ();
@@ -350,6 +354,7 @@ void RobWorkStudio::closeEvent (QCloseEvent* e)
     _settingsMap->set< int > ("WindowHeight", this->height ());
 
     closeAllPlugins ();
+    detachPluginsFromEvents ();
 
     // close all plugins
     typedef std::vector< RobWorkStudioPlugin* >::iterator I;
@@ -750,6 +755,32 @@ void RobWorkStudio::closeAllPlugins ()
     typedef std::vector< RobWorkStudioPlugin* >::iterator PI;
     for (PI p = _plugins.begin (); p != _plugins.end (); ++p)
         closePlugin (**p);
+}
+
+// 统一注销所有插件的事件监听，并解除插件与宿主的双向引用。
+// 必须在事件成员仍有效、而 Qt 尚未销毁 Dock Widget 子对象之前调用（析构与关窗时），
+// 这样插件析构函数就不再需要访问宿主事件，避免"事件对象已销毁仍被回调/注销"的崩溃。
+void RobWorkStudio::detachPluginsFromEvents ()
+{
+    typedef std::vector< RobWorkStudioPlugin* >::iterator PI;
+    for (PI p = _plugins.begin (); p != _plugins.end (); ++p) {
+        RobWorkStudioPlugin* plugin = *p;
+        if (plugin == NULL)
+            continue;
+
+        // 从全部宿主事件中移除该插件的回调。
+        _stateChangedEvent.remove (plugin);
+        _frameSelectedEvent.remove (plugin);
+        _genericEvent.remove (plugin);
+        _genericAnyEvent.remove (plugin);
+        _keyEvent.remove (plugin);
+        _mousePressedEvent.remove (plugin);
+        _stateTrajectoryChangedEvent.remove (plugin);
+        _stateTrajectoryPtrChangedEvent.remove (plugin);
+        _positionSelectedEvent.remove (plugin);
+        // 解除插件持有的宿主指针，插件此后不能再访问主窗口。
+        plugin->setRobWorkStudio (NULL);
+    }
 }
 
 void RobWorkStudio::openPlugin (RobWorkStudioPlugin& plugin)

@@ -129,9 +129,9 @@ void WorkflowDockLayoutController::applyLayout ()
         int legacyWidth = 0;
         for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
             legacyWidth = std::max (legacyWidth, dock->sizeHint ().width ());
-        _initialWidth = std::max (240, legacyWidth / 2);
+        _initialWidth = std::max (120, legacyWidth / 2);
         _initialWidthPending = true;
-        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion", 1);
+        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion", 2);
     }
 
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})

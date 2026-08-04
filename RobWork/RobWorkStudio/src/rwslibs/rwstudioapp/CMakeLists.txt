@@ -40,8 +40,8 @@ rw_subsys_option(
 
 if(build)
     # Standard cpp files to compile:
-    set(SrcFiles RobWorkStudioApp.cpp)
-    set(SRC_FILES_HPP RobWorkStudioApp.hpp)
+    set(SrcFiles RobWorkStudioApp.cpp ExceptionDiagnostics.cpp)
+    set(SRC_FILES_HPP RobWorkStudioApp.hpp ExceptionDiagnostics.hpp)
 
     rws_add_component(${SUBSYS_NAME} ${SrcFiles})
     rw_add_includes(${SUBSYS_NAME} "rwslibs/rwstudioapp" ${SRC_FILES_HPP})

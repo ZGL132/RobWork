@@ -18,8 +18,7 @@ StructureOptimizerPlugin::StructureOptimizerPlugin() :
 
 StructureOptimizerPlugin::~StructureOptimizerPlugin()
 {
-    if (getRobWorkStudio() != nullptr)
-        getRobWorkStudio()->stateChangedEvent().remove(this);
+    // Event callbacks are detached by RobWorkStudio before QObject children are destroyed.
     // 主窗口关闭项目资源后才销毁插件；Registry 不拥有该对象，故在此统一释放。
     delete _projectProvider;
 }

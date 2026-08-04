@@ -920,6 +920,9 @@ class RobWorkStudio : public QMainWindow
   private:
     void openAllPlugins ();
     void closeAllPlugins ();
+    // Detach callbacks while event members are still alive. Qt destroys dock
+    // widget children after this class's members.
+    void detachPluginsFromEvents ();
 
     // These all forward to the plugin and catch any exceptions.
     void openPlugin (RobWorkStudioPlugin& plugin);

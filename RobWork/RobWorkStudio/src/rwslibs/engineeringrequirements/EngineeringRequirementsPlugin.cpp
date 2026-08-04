@@ -140,11 +140,7 @@ EngineeringRequirementsPlugin::EngineeringRequirementsPlugin() :
 EngineeringRequirementsPlugin::~EngineeringRequirementsPlugin()
 {
     clearStationMarkers();
-    if (getRobWorkStudio() != nullptr) {
-        // 安全移除在 initialize() 中注册的 RobWorkStudio 全局事件回调
-        getRobWorkStudio()->frameSelectedEvent().remove(this);
-        getRobWorkStudio()->stateChangedEvent().remove(this);
-    }
+    // Event callbacks are detached by RobWorkStudio before QObject children are destroyed.
     // 应用退出时主窗口先关闭项目资源，Registry 不会再回调 Provider；此处再释放插件
     // 持有的回调对象，避免把所有权错误交给仅保存非拥有指针的 Registry。
     delete _projectProvider;
