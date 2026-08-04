@@ -108,15 +108,21 @@ void KinematicAnalysisPlugin::initialize()
 // open:WorkCell 切换后被调用,把新 WorkCell 推给 Widget,触发设备/帧下拉刷新。
 void KinematicAnalysisPlugin::open(rw::models::WorkCell* workcell)
 {
-    if (_widget != NULL)
+    if (_widget != NULL) {
+        // WorkCell 打开时向 Widget 注入当前宿主，供其按资源 ID 解析项目内需求文件。
+        _widget->setRobWorkStudio(getRobWorkStudio());
         _widget->setWorkCell(workcell);
+    }
 }
 
 // close:WorkCell 被卸载/关闭,清空 Widget 内部缓存,UI 自动回到"未加载"状态。
 void KinematicAnalysisPlugin::close()
 {
-    if (_widget != NULL)
+    if (_widget != NULL) {
+        // WorkCell 关闭时同步解除宿主指针，避免 Widget 在无宿主状态下误用事件/资源。
+        _widget->setRobWorkStudio(NULL);
         _widget->setWorkCell(NULL);
+    }
 }
 
 }    // namespace rws

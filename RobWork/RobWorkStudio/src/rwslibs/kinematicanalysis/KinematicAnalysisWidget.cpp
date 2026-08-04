@@ -943,8 +943,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
 KinematicAnalysisWidget::~KinematicAnalysisWidget ()
 {
-    if (_studio != NULL)
-        _studio->stateChangedEvent ().remove (this);
+    // RobWorkStudio 会在 QObject 子对象销毁前统一注销插件回调；此后再访问宿主事件
+    // 是未定义行为，因此析构只清空宿主指针，不再调用 _studio->stateChangedEvent()。
+    // （英文原注：RobWorkStudio detaches plugin-owned callbacks before QObject children
+    //   are destroyed. Do not access the host event after that point.）
+    _studio = NULL;
     if (_workspaceCancelRequested)
         _workspaceCancelRequested->store (true);
     if (_poseReachabilityCancelRequested)

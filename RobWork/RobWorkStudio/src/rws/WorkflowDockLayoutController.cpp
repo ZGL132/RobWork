@@ -125,13 +125,15 @@ void WorkflowDockLayoutController::applyLayout ()
     _studio->tabifyDockWidget (builder, analysis);
     _studio->tabifyDockWidget (analysis, optimizer);
 
-    if (_studio->getSettings ().get< int > ("WorkflowDockLayoutVersion", 0) < 1) {
+    // 布局版本 < 3 时按新策略重置初始宽度：固定 360 而非按插件宽度提示推算，
+    // 避免高分辨率/大提示宽度下首屏 Dock 过宽；升级版本号使老配置只重置一次。
+    if (_studio->getSettings ().get< int > ("WorkflowDockLayoutVersion", 0) < 3) {
         int legacyWidth = 0;
         for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
             legacyWidth = std::max (legacyWidth, dock->sizeHint ().width ());
-        _initialWidth = std::max (120, legacyWidth / 2);
+        _initialWidth = 360;
         _initialWidthPending = true;
-        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion", 2);
+        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion", 3);
     }
 
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
