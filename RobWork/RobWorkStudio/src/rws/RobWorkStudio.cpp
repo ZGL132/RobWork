@@ -875,6 +875,15 @@ void RobWorkStudio::addPlugin (RobWorkStudioPlugin* plugin, bool visible, Qt::Do
         }
         this->restoreState (mainAppState);
     }
+
+    // 项目上下文门控：若插件需要项目上下文但当前尚未打开任何项目，则把该插件的
+    // "初始可见性"存入属性 rws.restoreVisibleAfterProjectGate，供后续打开项目时
+    // 恢复用。这样插件在无项目状态下被强制隐藏后，一旦项目打开即可按用户原来的
+    // 界面偏好(此前是可见还是隐藏)自动还原，而不是一律显示。
+    if (plugin->requiresProjectContext () && !_projectManager.hasProject ())
+        plugin->setProperty ("rws.restoreVisibleAfterProjectGate", isVisible);
+    // 统一刷新所有需要项目上下文的插件的可用/可见状态(含刚加入的插件)。
+    updateProjectPluginAvailability ();
 }
 
 void RobWorkStudio::loadSettingsSetupPlugins (const std::string& file)
@@ -3718,8 +3727,40 @@ bool RobWorkStudio::openProjectFile (const QString& filename, QString* error)
     return true;
 }
 
-// 刷新主窗口标题：有项目时显示“项目名[*] - ”，再统一附加版本号。
-// 脏标记 * 反映清单保存后又有未保存改动。
+// 依据当前"是否有已打开项目"统一刷新所有需要项目上下文的插件的可用与可见状态。
+// 这是项目上下文门控的核心：保证任何时刻插件界面都只反映真实的项目就绪程度。
+// 在插件添加(addPlugin)、项目创建/打开/关闭/另存为(updateProjectWindowTitle)后调用。
+void RobWorkStudio::updateProjectPluginAvailability ()
+{
+    // projectActive 标记当前是否有一个处于打开状态的项目。
+    const bool projectActive = _projectManager.hasProject ();
+    // 用于暂存"门控前可见性"的属性名，见 addPlugin 中的设置逻辑。
+    const char* const restoreVisibleProperty = "rws.restoreVisibleAfterProjectGate";
+    for (RobWorkStudioPlugin* plugin : _plugins) {
+        // 空指针或不需要项目上下文的通用插件不参与门控，直接跳过。
+        if (plugin == NULL || !plugin->requiresProjectContext ())
+            continue;
+
+        // 可用性 = 是否处于项目状态。菜单/工具栏入口先随项目开合整体禁用/启用。
+        plugin->visibilityAction ()->setEnabled (projectActive);
+        if (!projectActive) {
+            // —— 项目关闭/未打开分支 ——
+            // 首次隐藏前先把当前可见性存档(属性未设置时才存，避免覆盖已存档值)，
+            // 这样打开项目后能还原用户此前对该插件的显示偏好。
+            if (!plugin->property (restoreVisibleProperty).isValid ())
+                plugin->setProperty (restoreVisibleProperty, plugin->isVisible ());
+            // 强制隐藏插件，阻止其在无项目环境下被显示。
+            plugin->setVisible (false);
+        }
+        else if (plugin->property (restoreVisibleProperty).toBool ()) {
+            // —— 项目打开分支 ——
+            // 若门控前该插件是可见的，则恢复显示，并清空存档属性避免残留。
+            plugin->setVisible (true);
+            plugin->setProperty (restoreVisibleProperty, QVariant ());
+        }
+    }
+}
+
 void RobWorkStudio::updateProjectWindowTitle ()
 {
     QString title;
@@ -3731,6 +3772,10 @@ void RobWorkStudio::updateProjectWindowTitle ()
     }
     title += QStringLiteral ("RobWorkStudio v") + QString::fromLatin1 (RW_VERSION);
     setWindowTitle (title);
+
+    // 标题刷新恰好覆盖项目创建、打开、关闭和另存为后的所有稳定状态，因此在这里
+    // 同步刷新项目上下文门控：项目就绪即解锁对应插件，项目关闭即禁用并隐藏它们。
+    updateProjectPluginAvailability ();
 
     // 标题刷新恰好覆盖项目创建、打开、关闭和另存为后的所有稳定状态。信号由插件自行
     // 去重处理，因此即使普通脏状态刷新重复发出，也不会重复创建目录或改变模型内容。

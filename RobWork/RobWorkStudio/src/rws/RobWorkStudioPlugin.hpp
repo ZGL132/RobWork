@@ -146,13 +146,28 @@ class RobWorkStudioPlugin : public QDockWidget
     //! set current state of RobWorkStudio
     void setState (const rw::kinematics::State& state);
 
+    //! @brief 返回该插件是否要求"已打开项目"作为前置上下文。
+    //!
+    //! 项目上下文门控(Project Context Gate)的查询接口：RobWorkStudio 主窗口与
+    //! WorkflowDockLayoutController 在未打开项目时据此禁用/隐藏返回 true 的插件，
+    //! 项目打开后再恢复其可用状态，从而避免插件在无项目环境下空上下文访问。
+    bool requiresProjectContext () const;
+
+    //! 显示/隐藏插件的 QAction，位于 RobWorkStudio 菜单与工具栏中。
     QAction* visibilityAction () { return &_showAction; }
 
   public Q_SLOTS:
-    //! @brief toggles the visibility of the plugin
+    //! @brief 切换插件可见性(经项目上下文门控过滤后执行)。
+    //! 需要项目上下文的插件在项目未就绪时调用本槽只会保持隐藏。
     void showPlugin ();
 
   protected:
+    //! @brief 声明该插件面向用户的动作需要一个已打开的项目。
+    //!
+    //! 由需要项目上下文的派生插件在构造函数中调用；声明后插件在未打开项目时
+    //! 被禁用并隐藏，打开项目后自动恢复。实现基于 Qt 动态属性，不改动类布局。
+    void setRequiresProjectContext (bool required);
+
     /**
      * @brief Find action in \b widget with name \b actionName .
      * @param widget [in] the widget.

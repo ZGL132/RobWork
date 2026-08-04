@@ -71,6 +71,24 @@ QString createEmptyProject (const QString& directoryPath)
     return projectFile;
 }
 
+// 项目上下文门控的测试插件：按 required 参数生成两种插件——
+//   需要项目上下文的"业务型"插件(ProjectContextBusinessPlugin)，
+//   与不依赖项目的"通用型"插件(ProjectContextGeneralPlugin)。
+class ProjectContextTestPlugin : public RobWorkStudioPlugin
+{
+  public:
+    // 构造：required 为 true 时在基类初始化后声明"需要项目上下文"，
+    // 供测试验证主窗口的门控禁用/隐藏与恢复逻辑。
+    explicit ProjectContextTestPlugin (bool required) :
+        RobWorkStudioPlugin (required ? QStringLiteral ("ProjectContextBusinessPlugin")
+                                      : QStringLiteral ("ProjectContextGeneralPlugin"),
+                             QIcon ())
+    {
+        if (required)
+            setRequiresProjectContext (true);
+    }
+};
+
 QString createMinimalUrdf (const QString& directoryPath)
 {
     const QString urdf = QDir (directoryPath).filePath ("source/TestRobot.urdf");
@@ -905,6 +923,65 @@ void expectNewRobotProjectFailureRestoresFullState (CandidateFailureCase failure
 }
 
 }    // namespace
+
+// 项目上下文门控生命周期测试：验证需要项目上下文的插件随"打开项目/关闭项目"
+// 完整生命周期被禁用、隐藏与自动恢复，而通用插件始终可用。
+TEST (RobWorkStudio, ProjectContextPluginGateTracksProjectLifecycle)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap map;
+    RobWorkStudio studio (map);
+    // 分别构造一个通用插件与一个需要项目上下文的"业务型"插件。
+    ProjectContextTestPlugin* generalPlugin = new ProjectContextTestPlugin (false);
+    ProjectContextTestPlugin* businessPlugin = new ProjectContextTestPlugin (true);
+    QTemporaryDir projectDirectory;
+    ASSERT_TRUE (projectDirectory.isValid ());
+
+    // 首先校验两个插件的项目上下文声明符合构造参数。
+    EXPECT_FALSE (generalPlugin->requiresProjectContext ());
+    EXPECT_TRUE (businessPlugin->requiresProjectContext ());
+
+    // 注册插件：通用插件默认隐藏，业务插件默认可见。此时尚未打开任何项目。
+    studio.addPlugin (generalPlugin, false);
+    studio.addPlugin (businessPlugin, true);
+    studio.show ();
+    QCoreApplication::processEvents ();
+
+    // 无项目状态：通用插件可用；业务插件应被门控禁用且隐藏(即使初始请求可见)。
+    EXPECT_TRUE (generalPlugin->visibilityAction ()->isEnabled ());
+    EXPECT_FALSE (businessPlugin->visibilityAction ()->isEnabled ());
+    EXPECT_FALSE (businessPlugin->isVisible ());
+
+    // 门控拦截：业务插件主动请求显示也被强制保持隐藏。
+    businessPlugin->showPlugin ();
+    EXPECT_FALSE (businessPlugin->isVisible ());
+
+    // 通用插件不受门控影响，可正常显示。
+    generalPlugin->showPlugin ();
+    EXPECT_TRUE (generalPlugin->isVisible ());
+
+    // 打开项目(空项目即可)：业务插件应解锁可用并恢复为可见。
+    const QString projectFile = createEmptyProject (projectDirectory.path ());
+    studio.openFile (projectFile.toStdString ());
+    QCoreApplication::processEvents ();
+    EXPECT_TRUE (businessPlugin->visibilityAction ()->isEnabled ());
+    EXPECT_TRUE (businessPlugin->isVisible ());
+
+    // 关闭项目：业务插件重新被禁用并隐藏，通用插件不受影响。
+    ASSERT_TRUE (QMetaObject::invokeMethod (&studio, "closeProject", Qt::DirectConnection));
+    EXPECT_FALSE (businessPlugin->visibilityAction ()->isEnabled ());
+    EXPECT_FALSE (businessPlugin->isVisible ());
+    EXPECT_TRUE (generalPlugin->visibilityAction ()->isEnabled ());
+
+    // 再次打开项目：业务插件再次解锁并恢复可见，验证门控可随生命周期往复。
+    studio.openFile (projectFile.toStdString ());
+    QCoreApplication::processEvents ();
+    EXPECT_TRUE (businessPlugin->visibilityAction ()->isEnabled ());
+    EXPECT_TRUE (businessPlugin->isVisible ());
+}
 
 TEST (RobWorkStudio, NewRobotProjectRejectsBaselineFileCountBeforeSnapshots)
 {

@@ -14,6 +14,9 @@ KinematicAnalysisPlugin::KinematicAnalysisPlugin() :
     RobWorkStudioPlugin("KinematicAnalysis", QIcon(":/kinematicanalysis/kinematicanalysis_icon.png")),
     _widget(NULL), _projectProvider(NULL), _projectResourceActive(false)
 {
+    // 声明本插件需要"已打开项目"作为前置上下文：未打开项目时由主窗口禁用并隐藏
+    // 本插件，打开项目后自动恢复，避免在无项目环境下对机器人模型做运动学分析。
+    setRequiresProjectContext (true);
 }
 
 // 析构:Widget 自身会被 QObject 父子机制在插件销毁前释放,无需手动 delete。

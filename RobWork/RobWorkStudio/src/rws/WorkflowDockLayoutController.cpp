@@ -227,16 +227,29 @@ void WorkflowDockLayoutController::setReady (bool ready)
     if (docks.isEmpty ())
         return;
 
+    // 项目上下文门控：projectActive 表示当前是否已打开项目(目录非空)。
+    const bool projectActive = !_studio->projectDirectory ().isEmpty ();
     for (const QString& name : LeftWorkflowDockNames) {
         RobWorkStudioPlugin* dock = docks.value (name);
-        const bool enabled = ready || name == BuilderDock;
+        // 项目上下文可用 = 插件不要求项目上下文，或当前已有打开的项目。
+        const bool projectContextAvailable = !dock->requiresProjectContext () || projectActive;
+        // 插件整体启用条件 = 项目上下文可用 且 (工作流就绪 或 该 Dock 是构建器)。
+        // 未打开项目时，所有要求项目上下文的 Dock 都被禁用；BuilderDock 特殊，
+        // 在就绪前也保持可用(用于新建机器人流程)，但前提同样是项目上下文可用。
+        const bool enabled = projectContextAvailable && (ready || name == BuilderDock);
         dock->setEnabled (enabled);
         dock->visibilityAction ()->setEnabled (enabled);
     }
+    // Jog 面板不依赖项目上下文，任何状态下都保持可用。
     docks.value (JogDock)->setEnabled (true);
     docks.value (JogDock)->visibilityAction ()->setEnabled (true);
 
-    if (!ready) {
+    // 若未打开项目且构建器要求项目上下文，则隐藏构建器，避免空上下文下展示；
+    if (!projectActive && docks.value (BuilderDock)->requiresProjectContext ()) {
+        docks.value (BuilderDock)->setVisible (false);
+    }
+    // 否则按原有逻辑：工作流未就绪时把构建器 Dock 置顶显示。
+    else if (!ready) {
         docks.value (BuilderDock)->setVisible (true);
         docks.value (BuilderDock)->raise ();
     }
@@ -254,8 +267,16 @@ void WorkflowDockLayoutController::refreshTabEnablement ()
             continue;
         for (int index = 0; index < tabBar->count (); ++index) {
             const QString name = tabBar->tabText (index);
-            if (LeftWorkflowDockNames.contains (name))
-                tabBar->setTabEnabled (index, _ready || name == BuilderDock);
+            if (LeftWorkflowDockNames.contains (name)) {
+                RobWorkStudioPlugin* dock = docks.value (name);
+                // 与 setReady 中的判定保持一致：Tab 页可用 = 项目上下文可用
+                // (插件不需要项目上下文，或当前已有打开的项目) 且 工作流就绪
+                // (或该 Tab 是构建器)。刷新 Tab 使能状态，使门控同时作用于 Tab 页。
+                const bool projectContextAvailable =
+                    !dock->requiresProjectContext () || !_studio->projectDirectory ().isEmpty ();
+                tabBar->setTabEnabled (index,
+                                       projectContextAvailable && (_ready || name == BuilderDock));
+            }
         }
         return;
     }

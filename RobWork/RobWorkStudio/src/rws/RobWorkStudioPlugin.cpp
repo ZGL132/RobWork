@@ -27,6 +27,15 @@ using namespace rw::core;
 using namespace rw::models;
 
 using namespace rws;
+
+namespace {
+// 项目上下文门控(Project Context Gate)使用的 Qt 动态属性键名。
+// 该属性以字符串 "rws.requiresProjectContext" 存储在插件(QObject)的动态属性表中，
+// 标记插件是否需要"已打开项目"作为前置条件。通过 QObject::property/setProperty 读写，
+// 避免改动 RobWorkStudioPlugin 类的二进制布局，从而保持对已编译插件的 ABI 兼容。
+const char* const RequiresProjectContextProperty = "rws.requiresProjectContext";
+}
+
 //----------------------------------------------------------------------
 // Virtual methods
 
@@ -65,12 +74,44 @@ RobWorkStudioPlugin::RobWorkStudioPlugin (const QString& name, const QIcon& icon
 
 void RobWorkStudioPlugin::showPlugin ()
 {
+    // 项目上下文门控：需要项目上下文的插件在"项目未就绪"时拒绝被显示。
+    // 门控条件取三者任一成立即拦截：
+    //   1) visibilityAction 被禁用 —— 说明 WorkflowDockLayoutController 或
+    //      RobWorkStudio 已判定当前不应激活该插件(未打开项目)；
+    //   2) 未绑定 RobWorkStudio 实例 —— 插件尚未被正确初始化；
+    //   3) 项目目录为空 —— 当前没有打开任何项目。
+    // 满足门控时强制隐藏并直接返回，避免插件在无项目环境下通过菜单/工具栏
+    // 快捷键强行弹出，产生空上下文访问。
+    if (requiresProjectContext () &&
+        (!visibilityAction ()->isEnabled () || getRobWorkStudio () == NULL ||
+         getRobWorkStudio ()->projectDirectory ().isEmpty ())) {
+        setVisible (false);
+        return;
+    }
+
     if (isVisible ()) {
         setVisible (false);
     }
     else {
         this->show ();
     }
+}
+
+// 查询插件是否声明"需要已打开项目"才能正常工作。
+// 读取动态属性 RequiresProjectContextProperty 的值；未显式设置过即返回 false，
+// 表示该插件无项目上下文要求，属于可随时使用的通用插件。
+bool RobWorkStudioPlugin::requiresProjectContext () const
+{
+    return property (RequiresProjectContextProperty).toBool ();
+}
+
+// 声明插件是否需要项目上下文。
+// 派生插件(如机器人模型构建器、运动学分析等)在构造函数中调用
+// setRequiresProjectContext (true)，RobWorkStudio 及工作流 Dock 布局控制器据此
+// 在未打开项目时禁用/隐藏插件，项目打开后自动恢复可用。
+void RobWorkStudioPlugin::setRequiresProjectContext (bool required)
+{
+    setProperty (RequiresProjectContextProperty, required);
 }
 
 void RobWorkStudioPlugin::setupMenu (QMenu* menu)

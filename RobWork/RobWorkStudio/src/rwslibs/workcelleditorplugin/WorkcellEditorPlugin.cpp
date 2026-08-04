@@ -34,7 +34,11 @@ using namespace rws;
 
 WorkcellEditorPlugin::WorkcellEditorPlugin () :
     RobWorkStudioPlugin ("Workcell Editor", QIcon (":/wceditoricon.png")), _editor (NULL)
-{}
+{
+    // 声明本插件需要"已打开项目"作为前置上下文：未打开项目时由主窗口禁用并隐藏
+    // 本插件，打开项目后自动恢复，避免在无项目环境下编辑工作单元。
+    setRequiresProjectContext (true);
+}
 
 WorkcellEditorPlugin::~WorkcellEditorPlugin ()
 {}

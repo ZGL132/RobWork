@@ -12,6 +12,9 @@ namespace rws {
 StructureOptimizerPlugin::StructureOptimizerPlugin() :
     RobWorkStudioPlugin("StructureOptimizer", QIcon(":/structureoptimizer/structureoptimizer_icon.png"))
 {
+    // 声明本插件需要"已打开项目"作为前置上下文：未打开项目时由主窗口禁用并隐藏
+    // 本插件，打开项目后自动恢复，避免在无项目环境下对结构方案做优化计算。
+    setRequiresProjectContext (true);
     _widget = new StructureOptimizerWidget();
     setWidget(_widget);
 }

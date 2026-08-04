@@ -132,7 +132,11 @@ namespace rws {
  */
 EngineeringRequirementsPlugin::EngineeringRequirementsPlugin() :
     RobWorkStudioPlugin("EngineeringRequirements", QIcon())
-{}
+{
+    // 声明本插件需要"已打开项目"作为前置上下文：未打开项目时由主窗口禁用并隐藏
+    // 本插件，打开项目后自动恢复，避免在无项目环境下操作工程需求清单。
+    setRequiresProjectContext (true);
+}
 
 /**
  * @brief 析构函数：清理 3D 渲染节点，注销事件监听

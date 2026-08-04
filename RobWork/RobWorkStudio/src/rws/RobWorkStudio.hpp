@@ -872,6 +872,9 @@ class RobWorkStudio : public QMainWindow
     bool confirmProjectClose ();
     // 关闭项目文档：按依赖逆序关闭 Provider 文档后清空清单上下文。
     void closeProjectDocuments ();
+    // 项目上下文门控：按"是否已打开项目"统一禁用/隐藏需要项目上下文的插件，
+    // 项目打开后按其门控前可见性恢复。在插件添加与主窗口标题刷新时调用。
+    void updateProjectPluginAvailability ();
     // 依据当前项目状态刷新主窗口标题：项目名（含脏标记 *）- RobWorkStudio 版本号。
     void updateProjectWindowTitle ();
 

@@ -38,9 +38,16 @@ namespace {
 class NamedWorkflowDock : public rws::RobWorkStudioPlugin
 {
   public:
-    NamedWorkflowDock (const QString& name, bool forceOversizedContent) :
+    // 构造工作流测试 Dock：
+    //   forceOversizedContent —— 为 true 时给内容控件设置大最小宽度，用于测试
+    //                            布局控制器对插件最小宽度的忽略处理；
+    //   requiresProject      —— 为 true 时声明该 Dock 需要项目上下文，用于测试
+    //                           未打开项目时的门控禁用/隐藏行为。
+    NamedWorkflowDock (const QString& name, bool forceOversizedContent, bool requiresProject) :
         RobWorkStudioPlugin (name, QIcon ())
     {
+        if (requiresProject)
+            setRequiresProjectContext (true);
         if (forceOversizedContent) {
             QWidget* content = new QWidget (this);
             content->setMinimumWidth (600);
@@ -82,14 +89,19 @@ class LayoutRequestIgnoringStudio : public rws::RobWorkStudio
     }
 };
 
-void addNamedWorkflowDocks (rws::RobWorkStudio& studio, bool forceOversizedContent = false)
+// 向工作室注册一组命名的工作流 Dock(工程需求/机器人模型构建器/运动学分析/
+// 结构优化/Jog)。requiresProject 为 true 时所有工作流 Dock 均声明需要项目上下文，
+// 用于测试项目上下文门控对整个 Dock 组生效。
+void addNamedWorkflowDocks (rws::RobWorkStudio& studio,
+                            bool forceOversizedContent = false,
+                            bool requiresProject = false)
 {
     for (const QString& name : {QStringLiteral ("EngineeringRequirements"),
                                 QStringLiteral ("RobotModelBuilder"),
                                 QStringLiteral ("KinematicAnalysis"),
                                 QStringLiteral ("StructureOptimizer"),
                                 QStringLiteral ("Jog")}) {
-        studio.addPlugin (new NamedWorkflowDock (name, forceOversizedContent), false,
+        studio.addPlugin (new NamedWorkflowDock (name, forceOversizedContent, requiresProject), false,
                           Qt::LeftDockWidgetArea);
     }
 }
@@ -231,6 +243,37 @@ TEST (WorkflowDockLayout, InitialWidthIgnoresPluginMinimumWidthAndLayoutRequest)
     processUiEvents ();
     EXPECT_EQ (240, docks[1]->width ());
     EXPECT_EQ (240, docks[4]->width ());
+}
+
+// 未打开项目时，要求项目上下文的构建器 Dock 应被禁用且隐藏：
+// 验证 WorkflowDockLayoutController 的项目上下文门控在无项目状态下生效，
+// 保证需要项目上下文的 Dock 不会在空上下文下被用户唤起。
+TEST (WorkflowDockLayout, ProjectRequiredBuilderStaysDisabledAndHiddenWithoutProject)
+{
+    int argc = 1;
+    char name[] = "WorkflowDockLayoutControllerTest";
+    char* argv[1] = {name};
+    QApplication application (argc, argv);
+    rw::core::PropertyMap settings;
+    rws::RobWorkStudio studio (settings);
+    // 注册的 5 个工作流 Dock 全部声明需要项目上下文(requiresProject = true)。
+    addNamedWorkflowDocks (studio, false, true);
+
+    // 配置工作流 Dock 布局并显示，此时尚未打开任何项目。
+    studio.configureWorkflowDockLayout ();
+    studio.show ();
+    processUiEvents ();
+
+    const std::vector< rws::RobWorkStudioPlugin* >& docks = studio.getPlugins ();
+    ASSERT_EQ (5U, docks.size ());
+    // 断言第二个 Dock(RobotModelBuilder)：
+    //   1) 确实声明了需要项目上下文；
+    //   2) 整体与可见性入口均被禁用；
+    //   3) 被强制隐藏，即使默认状态是可见的。
+    EXPECT_TRUE (docks[1]->requiresProjectContext ());
+    EXPECT_FALSE (docks[1]->isEnabled ());
+    EXPECT_FALSE (docks[1]->visibilityAction ()->isEnabled ());
+    EXPECT_FALSE (docks[1]->isVisible ());
 }
 
 TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)
