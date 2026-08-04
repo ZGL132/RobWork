@@ -24,9 +24,11 @@
 #include <QHash>
 #include <QLayout>
 #include <QObject>
+#include <QSizePolicy>
 #include <QTabBar>
 #include <QTabWidget>
 #include <QTimer>
+#include <QWidget>
 
 #include <algorithm>
 
@@ -42,6 +44,28 @@ const QStringList WorkflowDockNames = {RequirementsDock, BuilderDock, AnalysisDo
                                        JogDock};
 const QStringList LeftWorkflowDockNames = {RequirementsDock, BuilderDock, AnalysisDock,
                                            OptimizerDock};
+
+// 工作流 Dock 统一宽度策略：初始宽度 280px，手动可缩至最小 240px；布局版本号用于
+// 让老用户配置只重置一次。
+constexpr int WorkflowDockInitialWidth = 280;
+constexpr int WorkflowDockMinimumWidth = 240;
+constexpr int WorkflowDockLayoutVersion = 7;
+
+// 放宽 Dock 的水平宽度约束：Dock 外层只要求 >= 最小宽度 240，内容 widget 的最小宽度
+// 归零并把水平策略设为 Ignored，使 Dock 宽度完全由用户拖动控制，而不是被插件内容
+// 的 sizeHint/minimumSizeHint 撑宽。
+void relaxDockWidthConstraints (rws::RobWorkStudioPlugin* dock)
+{
+    dock->setMinimumWidth (WorkflowDockMinimumWidth);
+    QWidget* content = dock->widget ();
+    if (content == nullptr)
+        return;
+
+    content->setMinimumWidth (0);
+    QSizePolicy policy = content->sizePolicy ();
+    policy.setHorizontalPolicy (QSizePolicy::Ignored);
+    content->setSizePolicy (policy);
+}
 
 QHash< QString, rws::RobWorkStudioPlugin* > workflowDocks (const rws::RobWorkStudio* studio)
 {
@@ -121,19 +145,20 @@ void WorkflowDockLayoutController::applyLayout ()
     jog->setFloating (false);
     _studio->addDockWidget (Qt::RightDockWidgetArea, jog);
 
+    for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
+        relaxDockWidthConstraints (dock);
+
     _studio->tabifyDockWidget (requirements, builder);
     _studio->tabifyDockWidget (builder, analysis);
     _studio->tabifyDockWidget (analysis, optimizer);
 
-    // 布局版本 < 3 时按新策略重置初始宽度：固定 360 而非按插件宽度提示推算，
-    // 避免高分辨率/大提示宽度下首屏 Dock 过宽；升级版本号使老配置只重置一次。
-    if (_studio->getSettings ().get< int > ("WorkflowDockLayoutVersion", 0) < 3) {
-        int legacyWidth = 0;
-        for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
-            legacyWidth = std::max (legacyWidth, dock->sizeHint ().width ());
-        _initialWidth = 360;
+    // Apply each revised width policy once to both existing and fresh settings.
+    if (_studio->getSettings ().get< int > ("WorkflowDockLayoutVersion", 0) <
+        WorkflowDockLayoutVersion) {
+        _initialWidth = WorkflowDockInitialWidth;
         _initialWidthPending = true;
-        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion", 3);
+        _studio->getSettings ().set< int > ("WorkflowDockLayoutVersion",
+                                            WorkflowDockLayoutVersion);
     }
 
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
@@ -149,12 +174,9 @@ void WorkflowDockLayoutController::finalizeInitialWidth ()
     if (docks.isEmpty ())
         return;
 
-    _studio->resizeDocks ({docks.value (BuilderDock), docks.value (JogDock)},
-                          {_initialWidth, _initialWidth}, Qt::Horizontal);
+    _studio->resizeDocks ({docks.value (BuilderDock)}, {_initialWidth}, Qt::Horizontal);
+    _studio->resizeDocks ({docks.value (JogDock)}, {_initialWidth}, Qt::Horizontal);
     _studio->layout ()->activate ();
-    for (const QString& name : LeftWorkflowDockNames)
-        docks.value (name)->resize (_initialWidth, docks.value (name)->height ());
-    docks.value (JogDock)->resize (_initialWidth, docks.value (JogDock)->height ());
     _initialWidthPending = false;
 }
 

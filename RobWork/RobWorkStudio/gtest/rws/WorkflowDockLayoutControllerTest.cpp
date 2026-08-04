@@ -28,6 +28,7 @@
 #include <QTabBar>
 #include <QTabWidget>
 #include <QTemporaryDir>
+#include <QWidget>
 #include <gtest/gtest.h>
 
 #include <array>
@@ -37,7 +38,15 @@ namespace {
 class NamedWorkflowDock : public rws::RobWorkStudioPlugin
 {
   public:
-    explicit NamedWorkflowDock (const QString& name) : RobWorkStudioPlugin (name, QIcon ()) {}
+    NamedWorkflowDock (const QString& name, bool forceOversizedContent) :
+        RobWorkStudioPlugin (name, QIcon ())
+    {
+        if (forceOversizedContent) {
+            QWidget* content = new QWidget (this);
+            content->setMinimumWidth (600);
+            setWidget (content);
+        }
+    }
 };
 
 class LookalikeTabDock : public rws::RobWorkStudioPlugin
@@ -60,14 +69,28 @@ class LookalikeTabDock : public rws::RobWorkStudioPlugin
     QTabBar* _tabs;
 };
 
-void addNamedWorkflowDocks (rws::RobWorkStudio& studio)
+class LayoutRequestIgnoringStudio : public rws::RobWorkStudio
+{
+  public:
+    using RobWorkStudio::RobWorkStudio;
+
+    bool event (QEvent* event) override
+    {
+        if (event->type () == QEvent::LayoutRequest)
+            return true;
+        return RobWorkStudio::event (event);
+    }
+};
+
+void addNamedWorkflowDocks (rws::RobWorkStudio& studio, bool forceOversizedContent = false)
 {
     for (const QString& name : {QStringLiteral ("EngineeringRequirements"),
                                 QStringLiteral ("RobotModelBuilder"),
                                 QStringLiteral ("KinematicAnalysis"),
                                 QStringLiteral ("StructureOptimizer"),
                                 QStringLiteral ("Jog")}) {
-        studio.addPlugin (new NamedWorkflowDock (name), false, Qt::LeftDockWidgetArea);
+        studio.addPlugin (new NamedWorkflowDock (name, forceOversizedContent), false,
+                          Qt::LeftDockWidgetArea);
     }
 }
 
@@ -127,8 +150,12 @@ TEST (WorkflowDockLayout, InitialLayoutIsLocked)
     for (std::size_t index = 0; index < 4; ++index) {
         EXPECT_EQ (Qt::LeftDockWidgetArea, studio.dockWidgetArea (docks[index]));
         EXPECT_FALSE (docks[index]->isFloating ());
+        docks[index]->raise ();
+        processUiEvents ();
         EXPECT_EQ (docks[index]->width (), docks[4]->width ());
     }
+    docks[1]->raise ();
+    processUiEvents ();
     EXPECT_EQ (Qt::RightDockWidgetArea, studio.dockWidgetArea (docks[4]));
     EXPECT_FALSE (docks[4]->isFloating ());
     EXPECT_EQ (QTabWidget::North, studio.tabPosition (Qt::LeftDockWidgetArea));
@@ -161,6 +188,49 @@ TEST (WorkflowDockLayout, InitialLayoutIsLocked)
     EXPECT_FALSE (actions[2]->isEnabled ());
     EXPECT_FALSE (actions[3]->isEnabled ());
     EXPECT_TRUE (actions[4]->isEnabled ());
+}
+
+TEST (WorkflowDockLayout, InitialWidthIgnoresPluginMinimumWidthAndLayoutRequest)
+{
+    int argc = 1;
+    char name[] = "WorkflowDockLayoutControllerTest";
+    char* argv[1] = {name};
+    QApplication application (argc, argv);
+    rw::core::PropertyMap settings;
+    LayoutRequestIgnoringStudio studio (settings);
+    studio.getSettings ().set< int > ("WorkflowDockLayoutVersion", 0);
+    studio.resize (1440, 900);
+    addNamedWorkflowDocks (studio, true);
+
+    studio.configureWorkflowDockLayout ();
+    processUiEvents ();
+    studio.show ();
+    const std::vector< rws::RobWorkStudioPlugin* >& docks = studio.getPlugins ();
+    ASSERT_EQ (5U, docks.size ());
+    studio.resizeDocks ({docks[1]}, {500}, Qt::Horizontal);
+    studio.resizeDocks ({docks[4]}, {500}, Qt::Horizontal);
+    processUiEvents ();
+
+    for (std::size_t index = 0; index < 4; ++index) {
+        docks[index]->raise ();
+        processUiEvents ();
+        EXPECT_EQ (280, docks[index]->width ());
+    }
+    EXPECT_EQ (280, docks[4]->width ());
+    for (rws::RobWorkStudioPlugin* dock : docks) {
+        EXPECT_EQ (240, dock->minimumWidth ());
+        ASSERT_NE (nullptr, dock->widget ());
+        EXPECT_EQ (0, dock->widget ()->minimumWidth ());
+        EXPECT_EQ (QSizePolicy::Ignored, dock->widget ()->sizePolicy ().horizontalPolicy ());
+    }
+
+    docks[1]->raise ();
+    processUiEvents ();
+    studio.resizeDocks ({docks[1]}, {240}, Qt::Horizontal);
+    studio.resizeDocks ({docks[4]}, {240}, Qt::Horizontal);
+    processUiEvents ();
+    EXPECT_EQ (240, docks[1]->width ());
+    EXPECT_EQ (240, docks[4]->width ());
 }
 
 TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)

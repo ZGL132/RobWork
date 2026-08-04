@@ -42,7 +42,9 @@ KinematicAnalysisPlotWidget::KinematicAnalysisPlotWidget (QWidget* parent) :
     QWidget (parent)
 {
     setMouseTracking (true);
-    setMinimumSize (320, 220);
+    // 只保留最小高度 220，宽度不再作为硬约束，Dock 可缩至 240px。
+    setMinimumWidth (0);
+    setMinimumHeight (220);
 }
 
 void KinematicAnalysisPlotWidget::setVisualData (const AnalysisVisualData& data)
@@ -118,7 +120,7 @@ QImage KinematicAnalysisPlotWidget::renderToImage (const QSize& size) const
 
 QSize KinematicAnalysisPlotWidget::minimumSizeHint () const
 {
-    return QSize (320, 220);
+    return QSize (0, 220);
 }
 
 QSize KinematicAnalysisPlotWidget::sizeHint () const

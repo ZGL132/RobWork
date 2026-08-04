@@ -523,7 +523,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         QLabel* label = new QLabel (_currentPoseTab);
         label->setTextFormat (Qt::RichText);
         label->setTextInteractionFlags (Qt::TextSelectableByMouse);
-        label->setMinimumWidth (130);
+        label->setMinimumWidth (0);
+        label->setWordWrap (true);
+        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
         return label;
     };
     _poseIndicatorLabel = makeHealthLabel ();
@@ -678,7 +680,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     auto makeIkSummaryLabel = [this] () -> QLabel* {
         QLabel* label = new QLabel (_ikTab);
         label->setTextFormat (Qt::RichText);
-        label->setMinimumWidth (82);
+        label->setMinimumWidth (0);
+        label->setWordWrap (true);
+        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
         return label;
     };
     _ikStatusLabel = makeIkSummaryLabel ();
@@ -968,9 +972,10 @@ QSize KinematicAnalysisWidget::sizeHint () const
     return QSize (360, 620);
 }
 
+// 最小尺寸提示由 300 降到 150 宽：配合 Dock 宽度统一策略，允许工作流 Dock 缩至 240px。
 QSize KinematicAnalysisWidget::minimumSizeHint () const
 {
-    return QSize (300, 420);
+    return QSize (150, 420);
 }
 
 // setRobWorkStudio:由 KinematicAnalysisPlugin::initialize 调用,缓存主程序句柄;
@@ -2647,7 +2652,9 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     auto makeSummaryLabel = [this] () -> QLabel* {
         QLabel* label = new QLabel (_workspaceTab);
         label->setTextFormat (Qt::RichText);
-        label->setMinimumWidth (92);
+        label->setMinimumWidth (0);
+        label->setWordWrap (true);
+        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
         return label;
     };
     _workspaceSampleCountLabel = makeSummaryLabel ();
@@ -2829,7 +2836,9 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     auto makeSummaryLabel = [this] () -> QLabel* {
         QLabel* label = new QLabel (_poseReachTab);
         label->setTextFormat (Qt::RichText);
-        label->setMinimumWidth (86);
+        label->setMinimumWidth (0);
+        label->setWordWrap (true);
+        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
         return label;
     };
     _posePositionCountLabel = makeSummaryLabel ();

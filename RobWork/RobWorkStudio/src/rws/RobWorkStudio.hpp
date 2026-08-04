@@ -53,6 +53,7 @@ class QDragDropEvent;
 class QDragMoveEvent;
 class QEvent;
 class QSettings;
+class QShowEvent;
 class QTimer;
 class QToolBar;
 
@@ -819,8 +820,10 @@ class RobWorkStudio : public QMainWindow
   protected:
     //! Close Event inherited from QT
     void closeEvent (QCloseEvent* e);
+    void showEvent (QShowEvent* event) override;
 
   private:
+    void scheduleWorkflowDockInitialWidth ();
     void updateLastFiles ();
 
     void setupFileActions ();

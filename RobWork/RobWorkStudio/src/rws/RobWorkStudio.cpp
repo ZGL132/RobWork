@@ -66,6 +66,7 @@
 #include <QSettings>
 #include <QScopedValueRollback>
 #include <QSet>
+#include <QShowEvent>
 #include <QStorageInfo>
 #include <QStringList>
 #include <QTemporaryDir>
@@ -383,6 +384,14 @@ void RobWorkStudio::closeEvent (QCloseEvent* e)
 
     // now call accept
     e->accept ();
+}
+
+// 首次显示时触发工作流 Dock 初始宽度设置。用 showEvent 而非 LayoutRequest 事件，
+// 避免某些 Qt 版本/平台下初始化定时器因事件被吞而丢失，确保首屏 Dock 宽度可靠生效。
+void RobWorkStudio::showEvent (QShowEvent* event)
+{
+    QMainWindow::showEvent (event);
+    scheduleWorkflowDockInitialWidth ();
 }
 
 rw::core::Log& RobWorkStudio::log ()
@@ -3156,6 +3165,23 @@ void RobWorkStudio::configureWorkflowDockLayout ()
         _workflowDockLayoutController = std::make_unique< WorkflowDockLayoutController > (this);
     _workflowDockLayoutController->applyLayout ();
     _workflowDockLayoutStartupPending = _workflowDockLayoutController->hasPendingInitialWidth ();
+    scheduleWorkflowDockInitialWidth ();
+}
+
+// 用 0 延迟定时器在下一次事件循环轮到本窗口首次可见后，一次性应用工作流 Dock 初始
+// 宽度（finalizeInitialWidth）。单次触发后清除挂起标记，避免重复调整用户已改的宽度。
+void RobWorkStudio::scheduleWorkflowDockInitialWidth ()
+{
+    if (!_workflowDockLayoutStartupPending || _workflowDockLayoutController == nullptr)
+        return;
+
+    QTimer::singleShot (0, this, [this] () {
+        if (!_workflowDockLayoutStartupPending || !isVisible () ||
+            _workflowDockLayoutController == nullptr)
+            return;
+        _workflowDockLayoutController->finalizeInitialWidth ();
+        _workflowDockLayoutStartupPending = false;
+    });
 }
 
 void RobWorkStudio::notifyWorkflowRobotModelLoaded (const QString& filename)
@@ -4056,16 +4082,6 @@ void RobWorkStudio::postGenericAnyEvent (const std::string& id, boost::any data)
 
 bool RobWorkStudio::event (QEvent* event)
 {
-    if (event->type () == QEvent::LayoutRequest) {
-        const bool handled = QMainWindow::event (event);
-        if (_workflowDockLayoutStartupPending && isVisible () &&
-            _workflowDockLayoutController != nullptr) {
-            _workflowDockLayoutController->finalizeInitialWidth ();
-            _workflowDockLayoutStartupPending = false;
-        }
-        return handled;
-    }
-
     // WARNING: only use this pointer if you know its the right type
     RobWorkStudioEvent* rwse = static_cast< RobWorkStudioEvent* > (event);
     if (event->type () == RobWorkStudioEvent::SetStateEvent) {

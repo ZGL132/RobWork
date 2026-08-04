@@ -37,6 +37,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSizePolicy>
 #include <boost/bind/bind.hpp>
 #include <sstream>
 
@@ -257,7 +258,12 @@ Jog::Jog () :
 {
     QScrollArea* widg = new QScrollArea (this);
     widg->setWidgetResizable (true);
+    // 内容过窄时出现水平滚动条，而不是把 Dock 撑宽。
+    widg->setHorizontalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     QWidget* base        = new QWidget (this);
+    // 内容不设最小宽度、水平忽略，Dock 可缩至 240px。
+    base->setMinimumWidth (0);
+    base->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
     QGridLayout* pLayout = new QGridLayout (base);
     base->setLayout (pLayout);
 

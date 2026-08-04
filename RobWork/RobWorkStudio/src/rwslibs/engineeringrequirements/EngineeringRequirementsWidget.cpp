@@ -42,6 +42,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSaveFile>
+#include <QSizePolicy>
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -611,8 +612,13 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     layout->addLayout(actions);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
-    _stationList->setMinimumWidth(220);
+    // 允许 Dock 缩至 240px：工位列表最小宽度降到 100，水平策略 Ignored 不再撑开 Dock。
+    _stationList->setMinimumWidth(100);
+    _stationList->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     QWidget* inspector = new QWidget(splitter);
+    // 检查器面板不设最小宽度、水平忽略，跟随 Dock 宽度收缩。
+    inspector->setMinimumWidth(0);
+    inspector->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     QVBoxLayout* inspectorLayout = new QVBoxLayout(inspector);
     QFormLayout* form = new QFormLayout();
     _stationNameEdit = new QLineEdit(inspector); _stationNameEdit->setObjectName("keyStationNameEdit");
