@@ -57,11 +57,12 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     }
 
     bool saveResource (const rws::ProjectResource& resource,
-                       const rws::ProjectDocumentContext&,
+                       const rws::ProjectDocumentContext& context,
                        const QString& targetPath,
                        QString* error) override
     {
         _lastSavedResource = resource;
+        _lastSaveContext = context;
         _lastSavePath = targetPath;
         if (resource.id == _failingResource) {
             if (error != nullptr)
@@ -106,6 +107,7 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
         _onLoad = std::move (callback);
     }
     const rws::ProjectResource& lastSavedResource () const { return _lastSavedResource; }
+    const rws::ProjectDocumentContext& lastSaveContext () const { return _lastSaveContext; }
     QString lastSavePath () const { return _lastSavePath; }
 
   private:
@@ -116,6 +118,7 @@ class FakeDocumentProvider : public rws::ProjectDocumentProvider
     QSet< QString > _dirtyResources;  // 当前被标记为脏的资源集合。
     QString _failingResource;         // 保存时强制失败资源的 ID（为空则不模拟失败）。
     rws::ProjectResource _lastSavedResource;
+    rws::ProjectDocumentContext _lastSaveContext;
     QString _lastSavePath;
     std::function< void (const rws::ProjectResource&) > _onLoad;
 };
@@ -1208,6 +1211,8 @@ TEST (ProjectDocumentRegistryTest, AutosaveSerializesDirtyProviderWithoutMarking
     QFile snapshot (QDir (QFileInfo (snapshotProject).absolutePath ()).filePath ("analysis.json"));
     ASSERT_TRUE (snapshot.open (QIODevice::ReadOnly));
     EXPECT_EQ (QByteArray ("saved:analysis"), snapshot.readAll ());
+    EXPECT_EQ (QFileInfo (projectFile).absoluteFilePath (), provider.lastSaveContext ().projectFilePath);
+    EXPECT_EQ (QFileInfo (projectFile).absolutePath (), provider.lastSaveContext ().projectDirectory);
 }
 
 TEST (ProjectDocumentRegistryTest,

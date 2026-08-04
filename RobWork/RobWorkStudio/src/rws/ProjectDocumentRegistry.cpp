@@ -214,7 +214,7 @@ bool ProjectDocumentRegistry::saveAutosaveResources (const ProjectManifest& mani
                                                      const QString& snapshotProjectFilePath,
                                                      QString* error)
 {
-    const ProjectDocumentContext snapshotContext = makeContext (manifest, snapshotProjectFilePath);
+    const ProjectDocumentContext sourceContext = makeContext (manifest, sourceProjectFilePath);
     for (const ProjectResource& resource : manifest.resources) {
         if (resource.ownership == QStringLiteral ("external"))
             continue;
@@ -236,7 +236,7 @@ bool ProjectDocumentRegistry::saveAutosaveResources (const ProjectManifest& mani
             }
         }
         if (loadedResource != nullptr) {
-            if (!loadedResource->provider->saveResource (resource, snapshotContext, targetPath, error))
+            if (!loadedResource->provider->saveResource (resource, sourceContext, targetPath, error))
                 return false;
             continue;
         }
