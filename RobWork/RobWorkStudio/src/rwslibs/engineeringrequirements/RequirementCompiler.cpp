@@ -32,9 +32,11 @@ bool finiteArray(const std::array<double, 3>& values)
  * @param message 详细诊断描述信息
  */
 void addDiagnostic(std::vector<RequirementDiagnostic>& diagnostics, const std::string& requirementId,
-                   RequirementLevel level, const std::string& message)
+                   RequirementLevel level, const std::string& message,
+                   const std::string& code = "REQ_INVALID")
 {
     RequirementDiagnostic diagnostic;
+    diagnostic.code = code;
     diagnostic.requirementId = requirementId;
     diagnostic.level = level;
     diagnostic.message = message;
@@ -55,6 +57,16 @@ bool hasDiagnosticFor(const std::vector<RequirementDiagnostic>& diagnostics, con
             return true;
     }
     return false;
+}
+
+std::string diagnosticReasonFor(const std::vector<RequirementDiagnostic>& diagnostics,
+                                const std::string& requirementId)
+{
+    for (const RequirementDiagnostic& diagnostic : diagnostics) {
+        if (diagnostic.requirementId == requirementId)
+            return diagnostic.message;
+    }
+    return std::string();
 }
 
 } // namespace 匿名空间
@@ -86,74 +98,139 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
     // 2. 逐项校验关键工位 (KeyStation / PoseTask)
     for (const PoseTask& task : requirements.poseTasks) {
         // ID 及其唯一性检查
-        if (task.id.empty()) 
-            addDiagnostic(diagnostics, task.id, task.level, "Key station id is required.");
+        if (task.id.empty())
+            addDiagnostic(diagnostics, task.id, task.level, "Key station id is required.",
+                          "REQ_REQUIRED_FIELD_MISSING");
         else if (!ids.insert(task.id).second) 
-            addDiagnostic(diagnostics, task.id, task.level, "Duplicate requirement id: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Duplicate requirement id: " + task.id,
+                          "REQ_DUPLICATE_ID");
 
         // 必填基础文本项检查
-        if (task.name.empty()) 
-            addDiagnostic(diagnostics, task.id, task.level, "Key station name is required: " + task.id);
-        if (task.refFrame.empty()) 
-            addDiagnostic(diagnostics, task.id, task.level, "Key station reference frame is required: " + task.id);
-        if (task.tcpFrame.empty()) 
-            addDiagnostic(diagnostics, task.id, task.level, "Key station TCP frame is required: " + task.id);
+        if (task.name.empty())
+            addDiagnostic(diagnostics, task.id, task.level, "Key station name is required: " + task.id,
+                          "REQ_REQUIRED_FIELD_MISSING");
+        if (task.refFrame.empty())
+            addDiagnostic(diagnostics, task.id, task.level, "Key station reference frame is required: " + task.id,
+                          "REQ_REQUIRED_FIELD_MISSING");
+        if (task.tcpFrame.empty())
+            addDiagnostic(diagnostics, task.id, task.level, "Key station TCP frame is required: " + task.id,
+                          "REQ_REQUIRED_FIELD_MISSING");
 
         // 绑定几何特征时的特定依赖检查
         if (task.source == PoseTaskSource::GeometryFeature &&
             (task.geometryFeature.type == GeometryFeatureType::None || task.geometryFeature.frameName.empty()))
-            addDiagnostic(diagnostics, task.id, task.level, "Key station geometry feature frame is required: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station geometry feature frame is required: " + task.id,
+                          "REQ_GEOMETRY_FEATURE_INVALID");
 
         // 姿态模式特定依赖检查：坐标系对齐模式必须提供目标 Frame
         if (task.orientation.mode == OrientationMode::AlignFrame && task.orientation.targetFrame.empty())
-            addDiagnostic(diagnostics, task.id, task.level, "Key station alignment target frame is required: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station alignment target frame is required: " + task.id,
+                          "REQ_ORIENTATION_TARGET_MISSING");
 
         // 姿态模式特定依赖检查：指向模式必须提供目标 Frame 或目标 Point
         if (task.orientation.mode == OrientationMode::PointAtTarget && task.orientation.targetFrame.empty() && task.orientation.targetPoint.empty())
-            addDiagnostic(diagnostics, task.id, task.level, "Key station pointing target is required: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station pointing target is required: " + task.id,
+                          "REQ_ORIENTATION_TARGET_MISSING");
 
         // 位姿与容差数值有效性校验（必须为有限数且容差非负）
         if (!finiteArray(task.position) || !finiteArray(task.rpyDeg) ||
             !std::isfinite(task.tolerance.positionMeters) || !std::isfinite(task.tolerance.orientationDeg) ||
             task.tolerance.positionMeters < 0.0 || task.tolerance.orientationDeg < 0.0)
-            addDiagnostic(diagnostics, task.id, task.level, "Key station contains invalid pose or tolerance values: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station contains invalid pose or tolerance values: " + task.id,
+                          "REQ_POSE_INVALID");
 
         // 姿态滚转角极限范围校验 (rollMin <= rollMax)
         if (!std::isfinite(task.orientation.rollMinimumDeg) || !std::isfinite(task.orientation.rollMaximumDeg) ||
             task.orientation.rollMinimumDeg > task.orientation.rollMaximumDeg)
-            addDiagnostic(diagnostics, task.id, task.level, "Key station contains invalid roll limits: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station contains invalid roll limits: " + task.id,
+                          "REQ_ORIENTATION_RULE_INVALID");
 
         // 接近与撤离距离校验（启用时距离必须非负）
         if ((task.approach.enabled && (!std::isfinite(task.approach.distanceMeters) || task.approach.distanceMeters < 0.0)) ||
             (task.retract.enabled && (!std::isfinite(task.retract.distanceMeters) || task.retract.distanceMeters < 0.0)))
-            addDiagnostic(diagnostics, task.id, task.level, "Key station approach or retract distance must be non-negative: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station approach or retract distance must be non-negative: " + task.id,
+                          "REQ_PATH_POLICY_INVALID");
 
         // 可行性校验策略中的关节裕度与可操作度指标校验（必须非负）
         if (!std::isfinite(task.validation.minimumJointMargin) || !std::isfinite(task.validation.minimumManipulability) ||
             task.validation.minimumJointMargin < 0.0 || task.validation.minimumManipulability < 0.0)
-            addDiagnostic(diagnostics, task.id, task.level, "Key station validation policy contains invalid values: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station validation policy contains invalid values: " + task.id,
+                          "REQ_VALIDATION_POLICY_INVALID");
 
         // 工位可信度/权重校验 [0.0, 1.0]
         if (!std::isfinite(task.confidence) || task.confidence < 0.0 || task.confidence > 1.0)
-            addDiagnostic(diagnostics, task.id, task.level, "Key station confidence must be within [0, 1]: " + task.id);
+            addDiagnostic(diagnostics, task.id, task.level, "Key station confidence must be within [0, 1]: " + task.id,
+                          "REQ_CONFIDENCE_INVALID");
     }
 
     // 3. 逐项校验工作空间包络盒 (BoxRegion)
     for (const BoxRegion& region : requirements.boxRegions) {
         if (region.id.empty()) 
-            addDiagnostic(diagnostics, region.id, region.level, "Box region id is required.");
+            addDiagnostic(diagnostics, region.id, region.level, "Box region id is required.",
+                          "REQ_REQUIRED_FIELD_MISSING");
         else if (!ids.insert(region.id).second) 
-            addDiagnostic(diagnostics, region.id, region.level, "Duplicate requirement id: " + region.id);
+            addDiagnostic(diagnostics, region.id, region.level, "Duplicate requirement id: " + region.id,
+                          "REQ_DUPLICATE_ID");
 
         if (region.refFrame.empty()) 
-            addDiagnostic(diagnostics, region.id, region.level, "Box region reference frame is required: " + region.id);
+            addDiagnostic(diagnostics, region.id, region.level, "Box region reference frame is required: " + region.id,
+                          "REQ_REQUIRED_FIELD_MISSING");
+        if (region.tcpFrame.empty())
+            addDiagnostic(diagnostics, region.id, region.level, "Box region TCP frame is required: " + region.id,
+                          "REQ_REQUIRED_FIELD_MISSING");
 
         // 几何参数与采样密度校验：包络盒三维尺寸必须严格大于 0，覆盖率 $\in [0, 1]$，离散采样点数 $\ge 2$
         if (!finiteArray(region.center) || !finiteArray(region.size) ||
-            region.size[0] <= 0.0 || region.size[1] <= 0.0 || region.size[2] <= 0.0 ||
-            !std::isfinite(region.minimumCoverage) || region.minimumCoverage < 0.0 ||
-            region.minimumCoverage > 1.0 || region.samplesPerAxis < 2)
-            addDiagnostic(diagnostics, region.id, region.level, "Box region contains invalid values: " + region.id);
+            region.size[0] <= 0.0 || region.size[1] <= 0.0 || region.size[2] <= 0.0)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region contains invalid geometry values: " + region.id,
+                          "REQ_WORKSPACE_GEOMETRY_INVALID");
+        if (!std::isfinite(region.minimumCoverage) || region.minimumCoverage < 0.0 ||
+            region.minimumCoverage > 1.0)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region minimumCoverage must be within [0, 1]: " + region.id,
+                          "REQ_WORKSPACE_COVERAGE_INVALID");
+        const int minimumGridSamples =
+            region.minimumVerificationStage == RequirementVerificationStage::Verified ? 2 : 1;
+        if (region.samplesPerAxis < minimumGridSamples)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region samplesPerAxis is too coarse for the requested verification stage: " + region.id,
+                          "REQ_WORKSPACE_GRID_TOO_COARSE");
+        if (region.directionSamples < 1)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region directionSamples must be at least 1: " + region.id,
+                          "REQ_WORKSPACE_DIRECTION_SAMPLES_INVALID");
+        if (region.rollSamples < 1)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region rollSamples must be at least 1: " + region.id,
+                          "REQ_WORKSPACE_ROLL_SAMPLES_INVALID");
+        if (!finiteArray(region.fixedRpyDeg) ||
+            !std::isfinite(region.minimumOrientationCoverage) ||
+            region.minimumOrientationCoverage < 0.0 || region.minimumOrientationCoverage > 1.0)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region orientation coverage or fixed RPY is invalid: " + region.id,
+                          "REQ_WORKSPACE_ORIENTATION_POLICY_INVALID");
+        if (!std::isfinite(region.positionToleranceMeters) || region.positionToleranceMeters < 0.0 ||
+            !std::isfinite(region.orientationToleranceDeg) || region.orientationToleranceDeg < 0.0 ||
+            !std::isfinite(region.minimumJointMargin) || region.minimumJointMargin < 0.0 ||
+            !std::isfinite(region.minimumManipulability) || region.minimumManipulability < 0.0)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region validation tolerances and margins must be finite and non-negative: " + region.id,
+                          "REQ_WORKSPACE_VALIDATION_POLICY_INVALID");
+        if (region.orientationMode == OrientationMode::AlignFrame && region.orientationTargetFrame.empty())
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region alignment target frame is required: " + region.id,
+                          "REQ_WORKSPACE_ORIENTATION_TARGET_MISSING");
+        if (region.orientationMode == OrientationMode::AlignGeometryNormal &&
+            (region.orientationTargetGeometry.empty() || region.orientationTargetFrame.empty()))
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region geometry normal requires target frame and geometry: " + region.id,
+                          "REQ_WORKSPACE_GEOMETRY_TARGET_MISSING");
+        if (region.orientationMode == OrientationMode::PointAtTarget &&
+            region.orientationTargetFrame.empty() && region.orientationTargetPoint.empty())
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region pointing target is required: " + region.id,
+                          "REQ_WORKSPACE_POINTING_TARGET_MISSING");
     }
 
     return diagnostics;
@@ -222,9 +299,6 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
 
     // 步骤 3：过滤并转换关键工位 (PoseTask -> CompiledPoseTask)
     for (const PoseTask& task : requirements.poseTasks) {
-        // Info 级别项不参与算法求解；存在诊断警告的项被剔除，不进入下游求解器
-        if (task.level == RequirementLevel::Info || hasDiagnosticFor(diagnostics, task.id)) continue;
-
         CompiledPoseTask item;
         item.id = task.id; 
         item.name = task.name; 
@@ -238,17 +312,27 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
         item.geometryFeature = task.geometryFeature;
         item.orientation = task.orientation;
         item.validation = task.validation;
+        item.approach = task.approach;
+        item.retract = task.retract;
+        item.compileState = RequirementCompileState::Included;
         
         // 若使能了接近或撤离段，需在 P3 运动学阶段进一步做轨迹连续性与碰撞验证
         item.pathValidationPending = task.approach.enabled || task.retract.enabled;
+
+        if (task.level == RequirementLevel::Info) {
+            item.compileState = RequirementCompileState::Excluded;
+            item.excludedReason = "Info requirement is retained for audit only.";
+        }
+        else if (hasDiagnosticFor(diagnostics, task.id)) {
+            item.compileState = RequirementCompileState::Excluded;
+            item.excludedReason = diagnosticReasonFor(diagnostics, task.id);
+        }
         
         result.poseTasks.push_back(item);
     }
 
     // 步骤 4：过滤并转换工作空间包络盒 (BoxRegion -> WorkspaceDemandRegion)
     for (const BoxRegion& region : requirements.boxRegions) {
-        if (region.level == RequirementLevel::Info || hasDiagnosticFor(diagnostics, region.id)) continue;
-
         WorkspaceDemandRegion item;
         item.id = region.id; 
         item.name = region.name; 
@@ -258,6 +342,30 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
         item.size = region.size;
         item.minimumCoverage = region.minimumCoverage; 
         item.samplesPerAxis = region.samplesPerAxis;
+        item.tcpFrame = region.tcpFrame;
+        item.orientationMode = region.orientationMode;
+        item.orientationTargetFrame = region.orientationTargetFrame;
+        item.orientationTargetGeometry = region.orientationTargetGeometry;
+        item.orientationTargetPoint = region.orientationTargetPoint;
+        item.fixedRpyDeg = region.fixedRpyDeg;
+        item.directionSamples = region.directionSamples;
+        item.rollSamples = region.rollSamples;
+        item.minimumOrientationCoverage = region.minimumOrientationCoverage;
+        item.minimumVerificationStage = region.minimumVerificationStage;
+        item.collisionFreeRequired = region.collisionFreeRequired;
+        item.positionToleranceMeters = region.positionToleranceMeters;
+        item.orientationToleranceDeg = region.orientationToleranceDeg;
+        item.minimumJointMargin = region.minimumJointMargin;
+        item.minimumManipulability = region.minimumManipulability;
+        item.compileState = RequirementCompileState::Included;
+        if (region.level == RequirementLevel::Info) {
+            item.compileState = RequirementCompileState::Excluded;
+            item.excludedReason = "Info requirement is retained for audit only.";
+        }
+        else if (hasDiagnosticFor(diagnostics, region.id)) {
+            item.compileState = RequirementCompileState::Excluded;
+            item.excludedReason = diagnosticReasonFor(diagnostics, region.id);
+        }
         
         result.workspaceRegions.push_back(item);
     }

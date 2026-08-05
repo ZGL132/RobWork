@@ -5,8 +5,12 @@
 #include "EngineeringEvaluationJson.hpp"
 #include "EngineeringEvaluationTypes.hpp"
 #include "EngineeringMetricRegistry.hpp"
+#include "RequirementExecutionJson.hpp"
+#include "RequirementExecutionTypes.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
+
+#include <QJsonArray>
 
 #include <cmath>
 #include <iostream>
@@ -444,6 +448,123 @@ int runEngineeringEvaluation ()
     return 0;
 }
 
+int runRequirementExecution ()
+{
+    rws::RequirementExecutionSet value;
+    value.schemaVersion = 1;
+    value.provenance.requirementFingerprint = "req-sha";
+    value.provenance.robotModelFingerprint = "model-sha";
+    value.provenance.environmentFingerprint = "env-sha";
+    value.provenance.compilerVersion = "EngineeringRequirements.Compiler.4";
+
+    rws::RequirementExecutionTask task;
+    task.id = "task-1";
+    task.processType = rws::RequirementExecutionProcessType::Pick;
+    task.level = rws::RequirementExecutionLevel::Must;
+    task.refFrame = "WORLD";
+    task.tcpFrame = "TCP";
+    task.position = {{0.1, 0.2, 0.3}};
+    task.rpyDeg = {{0.0, 90.0, 0.0}};
+    task.approach.enabled = true;
+    task.approach.axis = rws::RequirementExecutionOffsetAxis::ReferenceZ;
+    task.approach.distanceMeters = 0.15;
+    task.approach.collisionFreeRequired = false;
+    task.retract.enabled = true;
+    task.retract.axis = rws::RequirementExecutionOffsetAxis::ToolZ;
+    task.retract.distanceMeters = 0.2;
+    task.pathValidationPending = true;
+    value.tasks.push_back (task);
+
+    rws::RequirementExecutionRegion region;
+    region.id = "region-1";
+    region.level = rws::RequirementExecutionLevel::Must;
+    region.refFrame = "WORLD";
+    region.tcpFrame = "TCP";
+    region.center = {{0.1, 0.2, 0.3}};
+    region.size = {{0.2, 0.2, 0.2}};
+    region.samplesPerAxis = 3;
+    region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
+    region.orientationTargetFrame = "FixtureFrame";
+    region.orientationTargetGeometry = "frame:FixtureFrame";
+    region.orientationTargetPoint = "0.1,0.2,0.3";
+    region.minimumVerificationStage = rws::RequirementExecutionStage::Verified;
+    value.workspaceRegions.push_back (region);
+
+    rws::RequirementExecutionDiagnostic diagnostic;
+    diagnostic.code = "REQ_OPTIONAL_ITEM_EXCLUDED";
+    diagnostic.requirementId = "optional-1";
+    diagnostic.severity = rws::RequirementExecutionDiagnosticSeverity::Warning;
+    diagnostic.message = "Optional item was excluded.";
+    value.diagnostics.push_back (diagnostic);
+
+    const QJsonObject object = rws::RequirementExecutionJson::toObject (value);
+    if (object.value ("schemaVersion").toInt () != 1)
+        return fail ("Requirement execution JSON should preserve schemaVersion.");
+
+    rws::RequirementExecutionSet restored;
+    std::string error;
+    if (!rws::RequirementExecutionJson::fromObject (object, restored, &error))
+        return fail ("Requirement execution JSON should round trip: " + error);
+    if (restored.tasks.size () != 1 || restored.workspaceRegions.size () != 1 ||
+        restored.diagnostics.size () != 1 || restored.tasks.front ().id != "task-1" ||
+        restored.tasks.front ().processType != rws::RequirementExecutionProcessType::Pick ||
+        restored.workspaceRegions.front ().samplesPerAxis != 3 ||
+        !restored.tasks.front ().approach.enabled ||
+        restored.tasks.front ().approach.axis != rws::RequirementExecutionOffsetAxis::ReferenceZ ||
+        restored.tasks.front ().approach.distanceMeters != 0.15 ||
+        !restored.tasks.front ().retract.enabled ||
+        !restored.tasks.front ().pathValidationPending ||
+        restored.workspaceRegions.front ().orientationTargetFrame != "FixtureFrame" ||
+        restored.workspaceRegions.front ().orientationTargetGeometry != "frame:FixtureFrame" ||
+        restored.workspaceRegions.front ().orientationTargetPoint != "0.1,0.2,0.3")
+        return fail ("Requirement execution JSON should preserve task, region and diagnostics.");
+
+    const std::string fingerprint = rws::RequirementExecutionJson::fingerprint (value);
+    if (fingerprint.empty () || fingerprint !=
+        rws::RequirementExecutionJson::fingerprint (restored))
+        return fail ("Requirement execution fingerprint should be stable across JSON round trips.");
+    rws::RequirementExecutionSet tampered = restored;
+    tampered.tasks.front ().position[0] += 0.01;
+    if (rws::RequirementExecutionJson::fingerprint (tampered) == fingerprint)
+        return fail ("Requirement execution fingerprint should change when execution data changes.");
+
+    // Quick screening may deliberately use a single sample on an axis.  The
+    // execution contract must not apply the Verified-only minimum of two.
+    value.workspaceRegions.front ().minimumVerificationStage =
+        rws::RequirementExecutionStage::Quick;
+    value.workspaceRegions.front ().samplesPerAxis = 1;
+    const QJsonObject quickObject = rws::RequirementExecutionJson::toObject (value);
+    if (!rws::RequirementExecutionJson::fromObject (quickObject, restored, &error) ||
+        restored.workspaceRegions.front ().samplesPerAxis != 1 ||
+        restored.workspaceRegions.front ().minimumVerificationStage !=
+            rws::RequirementExecutionStage::Quick)
+        return fail ("Quick requirement execution regions should allow one sample per axis.");
+
+    QJsonObject invalid = object;
+    invalid["workspaceRegions"] = QJsonArray {QJsonObject {{"id", "bad"},
+                                                            {"orientationMode", "Unknown"}}};
+    if (rws::RequirementExecutionJson::fromObject (invalid, restored, &error))
+        return fail ("Unknown requirement execution enum should be rejected.");
+    if (error.empty ())
+        return fail ("Unknown requirement execution enum should report an error.");
+
+    QJsonObject invalidStructure = object;
+    invalidStructure["tasks"] = QJsonArray {QJsonObject {
+        {"id", ""}, {"position", QJsonArray {0.0, 0.0, 0.0}},
+        {"rpyDeg", QJsonArray {0.0, 0.0, 0.0}},
+        {"positionToleranceMeters", -0.1}}};
+    if (rws::RequirementExecutionJson::fromObject (invalidStructure, restored, &error) ||
+        error.find ("id") == std::string::npos)
+        return fail ("Invalid execution task structure should be rejected with an id diagnostic.");
+
+    QJsonObject unsupportedSchema = object;
+    unsupportedSchema["schemaVersion"] = 2;
+    if (rws::RequirementExecutionJson::fromObject (unsupportedSchema, restored, &error) ||
+        error.find ("schemaVersion") == std::string::npos)
+        return fail ("Unsupported execution schema versions should be rejected explicitly.");
+    return 0;
+}
+
 int runAll ()
 {
     if (const int rc = runTypes ())
@@ -476,6 +597,8 @@ int main (int argc, char** argv)
         rc = runJson ();
     else if (suite == "csv")
         rc = runCsv ();
+    else if (suite == "requirementExecution")
+        rc = runRequirementExecution ();
     else if (suite == "contextFullModel")
         rc = runContextFullModel ();
     else if (suite == "contextMissingModel")

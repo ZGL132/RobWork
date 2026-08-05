@@ -1,6 +1,8 @@
 #include "EngineeringRequirementArtifactAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <algorithm>
@@ -60,12 +62,139 @@ OptimizationTaskPoint toOptimizationTask(const CompiledPoseTask& station)
         if (!optimized.point.note.empty()) optimized.point.note += " | ";
         optimized.point.note += "Approach/retract path validation is pending for the P3 trajectory evaluator.";
     }
+    const auto appendPath = [&optimized] (const char* name, const ApproachRetractRule& rule) {
+        if (!rule.enabled) return;
+        if (!optimized.point.note.empty()) optimized.point.note += " | ";
+        optimized.point.note += std::string(name) + " path: axis=" +
+            (rule.axis == OffsetAxis::ReferenceZ ? "ReferenceZ" : "ToolZ") +
+            ", distanceMeters=" + std::to_string(rule.distanceMeters) +
+            ", collisionFreeRequired=" + (rule.collisionFreeRequired ? "true" : "false");
+    };
+    appendPath("Approach", station.approach);
+    appendPath("Retract", station.retract);
     return optimized;
 }
 
 bool isWorld(const std::string& frame)
 {
     return frame.empty() || frame == "WORLD";
+}
+
+ProcessType toProcessType(RequirementExecutionProcessType value)
+{
+    switch (value) {
+    case RequirementExecutionProcessType::Generic: return ProcessType::Generic;
+    case RequirementExecutionProcessType::Pick: return ProcessType::Pick;
+    case RequirementExecutionProcessType::Place: return ProcessType::Place;
+    case RequirementExecutionProcessType::MachineLoad: return ProcessType::MachineLoad;
+    case RequirementExecutionProcessType::MachineUnload: return ProcessType::MachineUnload;
+    case RequirementExecutionProcessType::Inspect: return ProcessType::Inspect;
+    case RequirementExecutionProcessType::WeldStart: return ProcessType::WeldStart;
+    case RequirementExecutionProcessType::WeldEnd: return ProcessType::WeldEnd;
+    case RequirementExecutionProcessType::ToolChange: return ProcessType::ToolChange;
+    case RequirementExecutionProcessType::SafeStandby: return ProcessType::SafeStandby;
+    case RequirementExecutionProcessType::Handover: return ProcessType::Handover;
+    }
+    return ProcessType::Generic;
+}
+
+CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifact,
+                                         std::string* error)
+{
+    CompiledRequirementSet snapshot = artifact.compiled;
+    if (artifact.schemaVersion < 4 || artifact.executionFingerprint.empty())
+        return snapshot;
+    if (artifact.executionFingerprint.empty() ||
+        artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
+        !RequirementExecutionJson::validate(artifact.execution, error)) {
+        if (error != nullptr && error->empty())
+            *error = "Requirement execution contract is missing or has been modified.";
+        return CompiledRequirementSet();
+    }
+    const RequirementExecutionProvenance& provenance = artifact.execution.provenance;
+    if (artifact.execution.schemaVersion < 1 ||
+        provenance.requirementFingerprint != artifact.requirementFingerprint ||
+        provenance.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
+        provenance.workcellFingerprint != artifact.workcellFingerprint ||
+        provenance.environmentFingerprint != artifact.environmentFingerprint ||
+        provenance.compilerVersion != artifact.compilerVersion ||
+        provenance.frozenAt != artifact.frozenAt) {
+        if (error != nullptr)
+            *error = "Requirement execution contract provenance does not match the frozen artifact.";
+        return CompiledRequirementSet();
+    }
+    snapshot.poseTasks.clear();
+    for (const RequirementExecutionTask& source : artifact.execution.tasks) {
+        CompiledPoseTask target;
+        target.id = source.id;
+        target.name = source.name;
+        target.level = static_cast<RequirementLevel>(source.level);
+        target.processType = toProcessType(source.processType);
+        target.refFrame = source.refFrame;
+        target.tcpFrame = source.tcpFrame;
+        target.position = source.position;
+        target.rpyDeg = source.rpyDeg;
+        target.tolerance.positionMeters = source.positionToleranceMeters;
+        target.tolerance.orientationDeg = source.orientationToleranceDeg;
+        target.tolerance.allowToolRollFree = source.allowToolRollFree;
+        target.orientation.mode = static_cast<OrientationMode>(source.orientationMode);
+        target.orientation.targetFrame = source.orientationTargetFrame;
+        target.orientation.targetGeometry = source.orientationTargetGeometry;
+        target.orientation.targetPoint = source.orientationTargetPoint;
+        target.orientation.invertNormal = source.invertNormal;
+        target.orientation.rollMinimumDeg = source.rollMinimumDeg;
+        target.orientation.rollMaximumDeg = source.rollMaximumDeg;
+        target.orientation.resolutionEvidence = source.resolutionEvidence;
+        target.approach.enabled = source.approach.enabled;
+        target.approach.axis = source.approach.axis == RequirementExecutionOffsetAxis::ReferenceZ
+            ? OffsetAxis::ReferenceZ : OffsetAxis::ToolZ;
+        target.approach.distanceMeters = source.approach.distanceMeters;
+        target.approach.collisionFreeRequired = source.approach.collisionFreeRequired;
+        target.retract.enabled = source.retract.enabled;
+        target.retract.axis = source.retract.axis == RequirementExecutionOffsetAxis::ReferenceZ
+            ? OffsetAxis::ReferenceZ : OffsetAxis::ToolZ;
+        target.retract.distanceMeters = source.retract.distanceMeters;
+        target.retract.collisionFreeRequired = source.retract.collisionFreeRequired;
+        target.pathValidationPending = source.pathValidationPending ||
+            source.approach.enabled || source.retract.enabled;
+        target.validation.collisionFreeRequired = source.collisionFreeRequired;
+        target.validation.minimumJointMargin = source.minimumJointMargin;
+        target.validation.minimumManipulability = source.minimumManipulability;
+        target.compileState = static_cast<RequirementCompileState>(source.compileState);
+        target.excludedReason = source.excludedReason;
+        snapshot.poseTasks.push_back(target);
+    }
+    snapshot.workspaceRegions.clear();
+    for (const RequirementExecutionRegion& source : artifact.execution.workspaceRegions) {
+        WorkspaceDemandRegion target;
+        target.id = source.id;
+        target.name = source.name;
+        target.level = static_cast<RequirementLevel>(source.level);
+        target.refFrame = source.refFrame;
+        target.tcpFrame = source.tcpFrame;
+        target.center = source.center;
+        target.size = source.size;
+        target.minimumCoverage = source.minimumCoverage;
+        target.samplesPerAxis = source.samplesPerAxis;
+        target.orientationMode = static_cast<OrientationMode>(source.orientationMode);
+        target.orientationTargetFrame = source.orientationTargetFrame;
+        target.orientationTargetGeometry = source.orientationTargetGeometry;
+        target.orientationTargetPoint = source.orientationTargetPoint;
+        target.fixedRpyDeg = source.fixedRpyDeg;
+        target.directionSamples = source.directionSamples;
+        target.rollSamples = source.rollSamples;
+        target.minimumOrientationCoverage = source.minimumOrientationCoverage;
+        target.minimumVerificationStage = static_cast<RequirementVerificationStage>(source.minimumVerificationStage);
+        target.collisionFreeRequired = source.collisionFreeRequired;
+        target.positionToleranceMeters = source.positionToleranceMeters;
+        target.orientationToleranceDeg = source.orientationToleranceDeg;
+        target.minimumJointMargin = source.minimumJointMargin;
+        target.minimumManipulability = source.minimumManipulability;
+        target.compileState = static_cast<RequirementCompileState>(source.compileState);
+        target.excludedReason = source.excludedReason;
+        snapshot.workspaceRegions.push_back(target);
+    }
+    return snapshot;
 }
 
 } // namespace
@@ -76,7 +205,7 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
 {
     // 冻结标识、完整审计指纹和内部模型绑定是跨插件交付的最低门槛。仅有 UI 的
     // frozen 标记不能证明任务已经在真实场景中解析，因此这里必须同时检查三者。
-    if (artifact.schemaVersion != 3) {
+    if (artifact.schemaVersion != 3 && artifact.schemaVersion != 4) {
         if (error != nullptr)
             *error = "Frozen engineering requirements use legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
@@ -105,11 +234,17 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         return false;
     }
 
+    const CompiledRequirementSet compiled = executionSnapshot(artifact, error);
+    if (artifact.schemaVersion >= 4 && compiled.frozen == false)
+        return false;
+
     bool needsFrozenScenario = false;
-    for (const CompiledPoseTask& station : artifact.compiled.poseTasks)
+    for (const CompiledPoseTask& station : compiled.poseTasks)
         needsFrozenScenario = needsFrozenScenario || !isWorld(station.refFrame);
-    for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions)
+    for (const WorkspaceDemandRegion& region : compiled.workspaceRegions) {
+        if (region.compileState != RequirementCompileState::Included) continue;
         needsFrozenScenario = needsFrozenScenario || !isWorld(region.refFrame);
+    }
     if (needsFrozenScenario &&
         (artifact.schemaVersion < 2 || artifact.scenario.snapshotFingerprint.empty() ||
          artifact.scenario.sceneSpec.sceneFrames.empty())) {
@@ -119,7 +254,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     }
 
     std::vector<WorkspaceDemandRegion> mustRegions;
-    for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions) {
+    for (const WorkspaceDemandRegion& region : compiled.workspaceRegions) {
+        if (region.compileState != RequirementCompileState::Included) continue;
         if (region.level == RequirementLevel::Should) {
             if (error != nullptr)
                 *error = "P2 structure optimization does not support optional workspace coverage regions: '" +
@@ -134,7 +270,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     StructureOptimizationProblem updated = problem;
     updated.tasks.clear();
     updated.context.taskPoints.clear();
-    for (const CompiledPoseTask& station : artifact.compiled.poseTasks) {
+    for (const CompiledPoseTask& station : compiled.poseTasks) {
+        if (station.compileState != RequirementCompileState::Included) continue;
         OptimizationTaskPoint task = toOptimizationTask(station);
         updated.context.taskPoints.push_back(task.point);
         updated.tasks.push_back(task);
@@ -188,6 +325,7 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     }
 
     updated.requirementProvenance.requirementFingerprint = artifact.requirementFingerprint;
+    updated.requirementProvenance.executionFingerprint = artifact.executionFingerprint;
     updated.requirementProvenance.workcellFingerprint = artifact.workcellFingerprint;
     updated.requirementProvenance.environmentFingerprint = artifact.environmentFingerprint;
     updated.requirementProvenance.compilerVersion = artifact.compilerVersion;

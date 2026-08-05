@@ -2170,6 +2170,14 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(tasks.front().tcpFrame == "ToolTCP", "tcp is retained")) return rc;
     if (const int rc = require(tasks.front().note.find("OrientationRuleResolver.1") != std::string::npos,
                                "orientation evidence is retained")) return rc;
+    rws::FrozenRequirementArtifact tamperedExecution = artifact;
+    tamperedExecution.execution.tasks.front().position[0] += 0.01;
+    if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
+            tamperedExecution, *workcell, workcell->getDefaultState(), tasks, &error),
+                               "reject a frozen artifact after execution task tampering")) return rc;
+    if (const int rc = require(error.find("execution contract") != std::string::npos ||
+                                   error.find("execution is missing") != std::string::npos,
+                               "execution tampering reports a contract error")) return rc;
 
     QTemporaryDir clonedDirectory;
     if (const int rc = require(clonedDirectory.isValid(),

@@ -214,6 +214,22 @@ QJsonObject writeBoxRegion(const BoxRegion& region)
     object["size"] = writeArray(region.size);
     object["minimumCoverage"] = region.minimumCoverage;
     object["samplesPerAxis"] = region.samplesPerAxis;
+    object["tcpFrame"] = QString::fromStdString(region.tcpFrame);
+    object["orientationMode"] = toString(region.orientationMode);
+    object["orientationTargetFrame"] = QString::fromStdString(region.orientationTargetFrame);
+    object["orientationTargetGeometry"] = QString::fromStdString(region.orientationTargetGeometry);
+    object["orientationTargetPoint"] = QString::fromStdString(region.orientationTargetPoint);
+    object["fixedRpyDeg"] = writeArray(region.fixedRpyDeg);
+    object["directionSamples"] = region.directionSamples;
+    object["rollSamples"] = region.rollSamples;
+    object["minimumOrientationCoverage"] = region.minimumOrientationCoverage;
+    object["minimumVerificationStage"] =
+        region.minimumVerificationStage == RequirementVerificationStage::Verified ? "Verified" : "Quick";
+    object["collisionFreeRequired"] = region.collisionFreeRequired;
+    object["positionToleranceMeters"] = region.positionToleranceMeters;
+    object["orientationToleranceDeg"] = region.orientationToleranceDeg;
+    object["minimumJointMargin"] = region.minimumJointMargin;
+    object["minimumManipulability"] = region.minimumManipulability;
     return object;
 }
 
@@ -231,7 +247,38 @@ bool readBoxRegion(const QJsonObject& object, BoxRegion& region, std::string* er
         return false;
     region.minimumCoverage = object.value("minimumCoverage").toDouble(0.8);
     region.samplesPerAxis = object.value("samplesPerAxis").toInt(5);
-    return std::isfinite(region.minimumCoverage);
+    region.tcpFrame = object.value("tcpFrame").toString().toStdString();
+    if (!orientationModeFromString(object.value("orientationMode").toString("Fixed").toStdString(),
+                                   region.orientationMode)) {
+        if (error != nullptr) *error = "BoxRegion.orientationMode is invalid.";
+        return false;
+    }
+    region.orientationTargetFrame = object.value("orientationTargetFrame").toString().toStdString();
+    region.orientationTargetGeometry = object.value("orientationTargetGeometry").toString().toStdString();
+    region.orientationTargetPoint = object.value("orientationTargetPoint").toString().toStdString();
+    if (object.contains("fixedRpyDeg") &&
+        !readArray(object, "fixedRpyDeg", region.fixedRpyDeg, error)) return false;
+    region.directionSamples = object.value("directionSamples").toInt(1);
+    region.rollSamples = object.value("rollSamples").toInt(1);
+    region.minimumOrientationCoverage = object.value("minimumOrientationCoverage").toDouble(0.0);
+    const QString stage = object.value("minimumVerificationStage").toString("Verified");
+    if (stage == "Quick") region.minimumVerificationStage = RequirementVerificationStage::Quick;
+    else if (stage == "Verified") region.minimumVerificationStage = RequirementVerificationStage::Verified;
+    else {
+        if (error != nullptr) *error = "BoxRegion.minimumVerificationStage is invalid.";
+        return false;
+    }
+    region.collisionFreeRequired = object.value("collisionFreeRequired").toBool(true);
+    region.positionToleranceMeters = object.value("positionToleranceMeters").toDouble(0.001);
+    region.orientationToleranceDeg = object.value("orientationToleranceDeg").toDouble(1.0);
+    region.minimumJointMargin = object.value("minimumJointMargin").toDouble(0.0);
+    region.minimumManipulability = object.value("minimumManipulability").toDouble(0.0);
+    return std::isfinite(region.minimumCoverage) &&
+           std::isfinite(region.minimumOrientationCoverage) &&
+           std::isfinite(region.positionToleranceMeters) &&
+           std::isfinite(region.orientationToleranceDeg) &&
+           std::isfinite(region.minimumJointMargin) &&
+           std::isfinite(region.minimumManipulability);
 }
 
 } // namespace

@@ -88,11 +88,14 @@ std::string StructureOptimizationReportWriter::write(
     // 将人工编辑的旧式优化项目误标为具有工程需求冻结证据。
     if (!problem.requirementProvenance.requirementFingerprint.empty() ||
         !problem.requirementProvenance.workcellFingerprint.empty() ||
+        !problem.requirementProvenance.executionFingerprint.empty() ||
         !problem.requirementProvenance.compilerVersion.empty() ||
         !problem.requirementProvenance.frozenAt.empty()) {
         out << "## Engineering Requirement Provenance\n\n";
         out << "- Requirement fingerprint: "
             << problem.requirementProvenance.requirementFingerprint << "\n";
+        out << "- Execution fingerprint: "
+            << problem.requirementProvenance.executionFingerprint << "\n";
         out << "- WorkCell and State fingerprint: "
             << problem.requirementProvenance.workcellFingerprint << "\n";
         out << "- Requirement compiler: "

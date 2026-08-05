@@ -58,6 +58,9 @@ enum class OrientationMode {
     PointAtTarget        ///< 工具 Z 轴指向目标点/目标坐标系
 };
 
+enum class RequirementVerificationStage { Quick, Verified };
+enum class RequirementCompileState { Included, Excluded, Invalid };
+
 /**
  * @brief 接近与撤离的偏移参考轴
  */
@@ -218,6 +221,22 @@ struct BoxRegion {
     std::array<double, 3> size = {{0.1, 0.1, 0.1}};   ///< 区域尺寸 [DX, DY, DZ]（单位：米）
     double minimumCoverage = 0.8;                     ///< 要求的最小空间覆盖率 [0.0, 1.0]（如 80%）
     int samplesPerAxis = 5;                           ///< 空间采样离散密度（每个轴的采样点数）
+    std::string tcpFrame;
+    OrientationMode orientationMode = OrientationMode::Fixed;
+    std::string orientationTargetFrame;
+    std::string orientationTargetGeometry;
+    std::string orientationTargetPoint;
+    std::array<double, 3> fixedRpyDeg = {{0.0, 0.0, 0.0}};
+    int directionSamples = 1;
+    int rollSamples = 1;
+    double minimumOrientationCoverage = 0.0;
+    RequirementVerificationStage minimumVerificationStage =
+        RequirementVerificationStage::Verified;
+    bool collisionFreeRequired = true;
+    double positionToleranceMeters = 0.001;
+    double orientationToleranceDeg = 1.0;
+    double minimumJointMargin = 0.0;
+    double minimumManipulability = 0.0;
 };
 
 /**
@@ -252,6 +271,10 @@ struct CompiledPoseTask {
     OrientationRule orientation;                       ///< 姿态规则
     ValidationPolicy validation;                       ///< 校验策略
     bool pathValidationPending = false;                 ///< 是否存在待处理的接近/撤离路径校验
+    ApproachRetractRule approach;
+    ApproachRetractRule retract;
+    RequirementCompileState compileState = RequirementCompileState::Included;
+    std::string excludedReason;
 };
 
 /**
@@ -266,6 +289,24 @@ struct WorkspaceDemandRegion {
     std::array<double, 3> size = {{0.1, 0.1, 0.1}};   ///< 尺寸
     double minimumCoverage = 0.8;                     ///< 要求覆盖率
     int samplesPerAxis = 5;                           ///< 采样密度
+    std::string tcpFrame;
+    OrientationMode orientationMode = OrientationMode::Fixed;
+    std::string orientationTargetFrame;
+    std::string orientationTargetGeometry;
+    std::string orientationTargetPoint;
+    std::array<double, 3> fixedRpyDeg = {{0.0, 0.0, 0.0}};
+    int directionSamples = 1;
+    int rollSamples = 1;
+    double minimumOrientationCoverage = 0.0;
+    RequirementVerificationStage minimumVerificationStage =
+        RequirementVerificationStage::Verified;
+    bool collisionFreeRequired = true;
+    double positionToleranceMeters = 0.001;
+    double orientationToleranceDeg = 1.0;
+    double minimumJointMargin = 0.0;
+    double minimumManipulability = 0.0;
+    RequirementCompileState compileState = RequirementCompileState::Included;
+    std::string excludedReason;
 };
 
 /**
@@ -273,6 +314,7 @@ struct WorkspaceDemandRegion {
  * 在 RequirementCompiler 编译/校验需求时生成的错误或警告信息
  */
 struct RequirementDiagnostic {
+    std::string code;
     std::string requirementId;                      ///< 出错的需求/工位 ID
     RequirementLevel level = RequirementLevel::Must;///< 严重程度
     std::string message;                            ///< 诊断详细描述信息

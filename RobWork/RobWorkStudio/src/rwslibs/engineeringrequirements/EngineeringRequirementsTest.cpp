@@ -3,6 +3,7 @@
 #include "OrientationRuleResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementFreezer.hpp"
+#include "RequirementMigration.hpp"
 #include "RequirementSetJson.hpp"
 #include "RequirementSetUndoStack.hpp"
 #include "StationImportService.hpp"
@@ -41,8 +42,11 @@
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QTableWidget>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QDir>
@@ -147,6 +151,7 @@ int testFrozenRequirementCompilesOnlyEngineeringTasks()
     region.name = "Assembly box";
     region.level = rws::RequirementLevel::Must;
     region.refFrame = "WORLD";
+    region.tcpFrame = "TCP";
     region.center = {{0.45, 0.0, 0.35}};
     region.size = {{0.3, 0.2, 0.25}};
     region.minimumCoverage = 0.85;
@@ -157,9 +162,11 @@ int testFrozenRequirementCompilesOnlyEngineeringTasks()
     REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
     REQUIRE(error.empty());
     REQUIRE(compiled.frozen);
-    REQUIRE(compiled.poseTasks.size() == 2);
+    REQUIRE(compiled.poseTasks.size() == 3);
     REQUIRE(compiled.poseTasks[0].id == "station_pick");
     REQUIRE(compiled.poseTasks[1].level == rws::RequirementLevel::Should);
+    REQUIRE(compiled.poseTasks[2].compileState == rws::RequirementCompileState::Excluded);
+    REQUIRE(!compiled.poseTasks[2].excludedReason.empty());
     REQUIRE(compiled.workspaceRegions.size() == 1);
     REQUIRE(compiled.workspaceRegions[0].minimumCoverage == 0.85);
     REQUIRE(!compiled.requirementFingerprint.empty());
@@ -267,7 +274,9 @@ int testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks()
     requirements.poseTasks.push_back(advisory);
 
     REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
-    REQUIRE(compiled.poseTasks.size() == 1);
+    REQUIRE(compiled.poseTasks.size() == 2);
+    REQUIRE(compiled.poseTasks[1].compileState == rws::RequirementCompileState::Excluded);
+    REQUIRE(!compiled.poseTasks[1].excludedReason.empty());
     REQUIRE(!compiled.diagnostics.empty());
     bool sawNameDiagnostic = false;
     bool sawReferenceDiagnostic = false;
@@ -282,6 +291,173 @@ int testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks()
     REQUIRE(sawNameDiagnostic);
     REQUIRE(sawReferenceDiagnostic);
     REQUIRE(sawApproachDiagnostic);
+    return 0;
+}
+
+int testWorkspaceExecutionFieldsRoundTrip()
+{
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+    rws::BoxRegion region;
+    region.id = "verified_region";
+    region.tcpFrame = "ToolTCP";
+    region.orientationMode = rws::OrientationMode::AlignFrame;
+    region.orientationTargetFrame = "FixtureFrame";
+    region.fixedRpyDeg = {{10.0, 20.0, 30.0}};
+    region.directionSamples = 12;
+    region.rollSamples = 3;
+    region.minimumOrientationCoverage = 0.75;
+    region.collisionFreeRequired = false;
+    region.positionToleranceMeters = 0.002;
+    region.orientationToleranceDeg = 2.5;
+    region.minimumJointMargin = 0.08;
+    region.minimumManipulability = 0.01;
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    requirements.boxRegions.push_back(region);
+
+    const std::string json = rws::RequirementSetJson::toJson(requirements);
+    rws::RequirementSet restored;
+    std::string error;
+    REQUIRE(rws::RequirementSetJson::fromJson(json, restored, &error));
+    REQUIRE(restored.boxRegions.size() == 1);
+    const rws::BoxRegion& decoded = restored.boxRegions.front();
+    REQUIRE(decoded.tcpFrame == region.tcpFrame);
+    REQUIRE(decoded.orientationMode == region.orientationMode);
+    REQUIRE(decoded.orientationTargetFrame == region.orientationTargetFrame);
+    REQUIRE(decoded.directionSamples == 12);
+    REQUIRE(decoded.rollSamples == 3);
+    REQUIRE(decoded.minimumVerificationStage == rws::RequirementVerificationStage::Verified);
+    REQUIRE(std::abs(decoded.minimumOrientationCoverage - 0.75) < 1e-12);
+    REQUIRE(!decoded.collisionFreeRequired);
+    REQUIRE(std::abs(decoded.minimumJointMargin - 0.08) < 1e-12);
+    return 0;
+}
+
+int testWorkspaceVerificationPolicyValidation()
+{
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+    rws::BoxRegion verified;
+    verified.id = "verified_grid";
+    verified.tcpFrame = "TCP";
+    verified.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    verified.samplesPerAxis = 1;
+    requirements.boxRegions.push_back(verified);
+
+    rws::CompiledRequirementSet compiled;
+    std::string error;
+    REQUIRE(!rws::RequirementCompiler::compile(requirements, compiled, &error));
+    REQUIRE(error.find("samplesPerAxis") != std::string::npos);
+    const std::vector<rws::RequirementDiagnostic> diagnostics =
+        rws::RequirementCompiler::validateDetailed(requirements);
+    REQUIRE(!diagnostics.empty());
+    REQUIRE(diagnostics.front().code == "REQ_WORKSPACE_GRID_TOO_COARSE");
+
+    requirements.boxRegions.front().level = rws::RequirementLevel::Should;
+    REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
+    REQUIRE(compiled.workspaceRegions.size() == 1);
+    REQUIRE(compiled.workspaceRegions.front().compileState == rws::RequirementCompileState::Excluded);
+
+    rws::BoxRegion quick = verified;
+    quick.id = "quick_grid";
+    quick.level = rws::RequirementLevel::Must;
+    quick.minimumVerificationStage = rws::RequirementVerificationStage::Quick;
+    quick.samplesPerAxis = 1;
+    quick.directionSamples = 0;
+    requirements.boxRegions.clear();
+    requirements.boxRegions.push_back(quick);
+    REQUIRE(!rws::RequirementCompiler::compile(requirements, compiled, &error));
+    REQUIRE(error.find("directionSamples") != std::string::npos);
+    return 0;
+}
+
+int testStableRequirementDiagnosticCodes()
+{
+    rws::RequirementSet requirements;
+    rws::PoseTask task;
+    task.id = "pose-invalid";
+    task.name = "Invalid pose";
+    task.level = rws::RequirementLevel::Should;
+    task.refFrame = "WORLD";
+    task.tcpFrame = "TCP";
+    task.orientation.mode = rws::OrientationMode::AlignFrame;
+    task.orientation.targetFrame.clear();
+    requirements.poseTasks.push_back(task);
+
+    rws::BoxRegion region;
+    region.id = "workspace-invalid";
+    region.tcpFrame = "TCP";
+    region.level = rws::RequirementLevel::Should;
+    region.samplesPerAxis = 1;
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    requirements.boxRegions.push_back(region);
+
+    const std::vector<rws::RequirementDiagnostic> diagnostics =
+        rws::RequirementCompiler::validateDetailed(requirements);
+    bool orientationCode = false;
+    bool gridCode = false;
+    for (const rws::RequirementDiagnostic& diagnostic : diagnostics) {
+        orientationCode = orientationCode || diagnostic.code == "REQ_ORIENTATION_TARGET_MISSING";
+        gridCode = gridCode || diagnostic.code == "REQ_WORKSPACE_GRID_TOO_COARSE";
+    }
+    REQUIRE(orientationCode);
+    REQUIRE(gridCode);
+    return 0;
+}
+
+int testRequirementArtifactV3Migration()
+{
+    rws::FrozenRequirementArtifact legacy;
+    legacy.schemaVersion = 3;
+    legacy.requirementFingerprint = "requirements-v3";
+    legacy.environmentFingerprint = "environment-v3";
+    legacy.workcellFingerprint = "workcell-v3";
+    legacy.modelBinding.robotModelFingerprint = "model-v3";
+    legacy.compiled.frozen = true;
+    legacy.compiled.requirementFingerprint = legacy.requirementFingerprint;
+    legacy.compiled.modelBinding = legacy.modelBinding;
+    rws::WorkspaceDemandRegion region;
+    region.id = "legacy_region";
+    region.refFrame = "WORLD";
+    region.tcpFrame = "TCP";
+    region.samplesPerAxis = 3;
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    legacy.compiled.workspaceRegions.push_back(region);
+    legacy.frozenRobotState.deviceName = "robot";
+    legacy.frozenRobotState.tcpFrameName = "TCP";
+    legacy.frozenRobotState.kinematicFingerprint = "kinematic-v3";
+    legacy.frozenRobotState.capturedAt = "2026-08-05T00:00:00Z";
+    legacy.frozenRobotState.tcpWorldPose[15] = 1.0;
+    legacy.scenario.environmentFingerprint = legacy.environmentFingerprint;
+    legacy.scenario.schemaVersion = 2;
+    legacy.scenario.snapshotFingerprint = "snapshot-v3";
+
+    const QJsonObject input = rws::FrozenRequirementArtifactJson::toObject(legacy);
+    QJsonObject output;
+    std::vector<rws::RequirementDiagnostic> diagnostics;
+    std::string error;
+    REQUIRE(rws::migrateRequirementArtifact(input, output, diagnostics, &error));
+    REQUIRE(error.empty());
+    REQUIRE(input.value("schemaVersion").toInt() == 3);
+    REQUIRE(output.value("schemaVersion").toInt() == 4);
+    REQUIRE(output.value("execution").isObject());
+    REQUIRE(!diagnostics.empty());
+    REQUIRE(diagnostics.front().code == "REQ_V3_REQUIRES_REFREEZE");
+    const QJsonObject executionRegion = output.value("execution").toObject()
+        .value("workspaceRegions").toArray().at(0).toObject();
+    REQUIRE(executionRegion.value("minimumVerificationStage").toString() == "Quick");
+    bool outputHasMigrationDiagnostic = false;
+    for (const QJsonValue& diagnostic : output.value("diagnostics").toArray())
+        outputHasMigrationDiagnostic = outputHasMigrationDiagnostic ||
+            diagnostic.toObject().value("code").toString() == "REQ_V3_REQUIRES_REFREEZE";
+    REQUIRE(outputHasMigrationDiagnostic);
+    bool executionHasMigrationDiagnostic = false;
+    for (const QJsonValue& diagnostic : output.value("execution").toObject()
+             .value("diagnostics").toArray())
+        executionHasMigrationDiagnostic = executionHasMigrationDiagnostic ||
+            diagnostic.toObject().value("code").toString() == "REQ_V3_REQUIRES_REFREEZE";
+    REQUIRE(executionHasMigrationDiagnostic);
+    REQUIRE(!output.value("executionFingerprint").toString().isEmpty());
     return 0;
 }
 
@@ -468,7 +644,8 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
         "resolver=OrientationRuleResolver.1;mode=PointAtTarget;targetPoint=0.2, 0.3, 0.4";
     artifact.compiled.poseTasks.push_back(station);
     artifact.compiled.diagnostics.push_back(
-        {"optional_missing", rws::RequirementLevel::Should, "Excluded from frozen artifact.", false});
+        {"REQ_OPTIONAL_ITEM_EXCLUDED", "optional_missing", rws::RequirementLevel::Should,
+         "Excluded from frozen artifact.", false});
 
     // 场景快照是跨插件交接非 WORLD 工位的最小可复现依据：它既保留冻结时的场景
     // 定义，也将源文件版本、设备标识和状态指纹纳入审计。此处先以独立字段断言
@@ -550,10 +727,37 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     workcell->addFrame(fixture, workcell->getWorldFrame());
     const rw::kinematics::State frozenState = workcell->getDefaultState();
 
+    rws::PoseTask task;
+    task.id = "state_task";
+    task.name = "State task";
+    task.refFrame = "WORLD";
+    task.tcpFrame = "ArtifactTcp";
+    task.position = {{0.0, 0.0, 0.0}};
+    requirements.poseTasks.push_back(task);
+    rws::BoxRegion region;
+    region.id = "state_region";
+    region.name = "State region";
+    region.refFrame = "WORLD";
+    region.tcpFrame = "ArtifactTcp";
+    region.size = {{0.1, 0.1, 0.1}};
+    region.samplesPerAxis = 3;
+    requirements.boxRegions.push_back(region);
+
     rws::FrozenRequirementArtifact artifact;
     std::string error;
     REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell, frozenState, model, artifact, &error));
+    REQUIRE(artifact.schemaVersion == 4);
+    REQUIRE(artifact.execution.tasks.size() == 1);
+    REQUIRE(artifact.execution.workspaceRegions.size() == 1);
+    REQUIRE(artifact.execution.workspaceRegions[0].minimumVerificationStage ==
+            rws::RequirementExecutionStage::Verified);
+    REQUIRE(!artifact.executionFingerprint.empty());
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, frozenState, model, &error));
+    rws::FrozenRequirementArtifact tamperedExecution = artifact;
+    tamperedExecution.execution.workspaceRegions[0].size[0] += 0.01;
+    REQUIRE(!rws::RequirementFreezer::isCurrent(
+        tamperedExecution, requirements, *workcell, frozenState, model, &error));
+    REQUIRE(error.find("execution") != std::string::npos);
 
     rw::kinematics::State changedState = frozenState;
     device->setQ(rw::math::Q(1, 0.35), changedState);
@@ -608,7 +812,8 @@ int testFrozenArtifactWarnsWhenSourceWorkCellFileChanges()
     std::string error;
     REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell,
                                                workcell->getDefaultState(), model, artifact, &error));
-    REQUIRE(artifact.schemaVersion == 3);
+    REQUIRE(artifact.schemaVersion == 4);
+    REQUIRE(artifact.execution.provenance.requirementFingerprint == artifact.requirementFingerprint);
     REQUIRE(!artifact.scenario.sourceFileFingerprint.empty());
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell,
                                                  workcell->getDefaultState(), model, &error));
@@ -1151,6 +1356,8 @@ int testWidgetBuildsEngineeringRequirementWorkflow()
     REQUIRE(widget.findChild<QPushButton*>("addRequirementBoxRegionButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("freezeRequirementSetButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("saveRequirementSetButton") != nullptr);
+    REQUIRE(widget.findChild<QTableWidget*>("engineeringRequirementsDiagnosticTable") != nullptr);
+    REQUIRE(widget.findChild<QLabel*>("engineeringRequirementsValidationSummaryLabel") != nullptr);
     return 0;
 }
 
@@ -1717,6 +1924,22 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "workspace_execution_fields") {
+        QCoreApplication app(argc, argv);
+        return testWorkspaceExecutionFieldsRoundTrip();
+    }
+    if (argc > 1 && std::string(argv[1]) == "workspace_validation") {
+        QCoreApplication app(argc, argv);
+        return testWorkspaceVerificationPolicyValidation();
+    }
+    if (argc > 1 && std::string(argv[1]) == "diagnostic_codes") {
+        QCoreApplication app(argc, argv);
+        return testStableRequirementDiagnosticCodes();
+    }
+    if (argc > 1 && std::string(argv[1]) == "migration") {
+        QCoreApplication app(argc, argv);
+        return testRequirementArtifactV3Migration();
+    }
     if (argc > 1 && std::string(argv[1]) == "abi") {
         QCoreApplication app(argc, argv);
         return testHistoricalRequirementFreezerAbiRemainsLinkable();
@@ -1771,6 +1994,8 @@ int main(int argc, char** argv)
     if (testHistoricalRequirementFreezerAbiRemainsLinkable() != 0)
         return 1;
     if (testFrozenRequirementCompilesOnlyEngineeringTasks() != 0)
+        return 1;
+    if (testStableRequirementDiagnosticCodes() != 0)
         return 1;
     if (testJsonRoundTripPreservesBindingAndFrozenSnapshot() != 0)
         return 1;

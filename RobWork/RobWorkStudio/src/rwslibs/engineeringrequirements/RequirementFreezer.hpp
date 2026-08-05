@@ -2,6 +2,7 @@
 #define RWS_ENGINEERINGREQUIREMENTS_REQUIREMENTFREEZER_HPP
 
 #include "EngineeringRequirementTypes.hpp"
+#include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 
 #include <rwslibs/robotmodelbuilder/RobotModelSpec.hpp>
 
@@ -81,8 +82,9 @@ struct FrozenRequirementValidationResult {
  * 只能消费该工件，避免将“尚未解析的名称字符串”误当成已经满足的工程条件。
  */
 struct FrozenRequirementArtifact {
-    int schemaVersion = 3;
+    int schemaVersion = 4;
     std::string requirementFingerprint;
+    std::string executionFingerprint;
     std::string environmentFingerprint;
     std::string workcellFingerprint;
     std::string compilerVersion = "EngineeringRequirements.Freezer.1";
@@ -91,6 +93,7 @@ struct FrozenRequirementArtifact {
     FrozenRobotStateSnapshot frozenRobotState;
     FrozenWorkCellScenarioSnapshot scenario;
     CompiledRequirementSet compiled;
+    RequirementExecutionSet execution;
 };
 
 /**

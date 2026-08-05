@@ -1,6 +1,8 @@
 #include "FrozenRequirementKinematicAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 
 #include <QString>
 
@@ -48,6 +50,60 @@ TaskPoint toTaskPoint(const CompiledPoseTask& station)
         if (!point.note.empty()) point.note += " | ";
         point.note += "Approach/retract path validation is pending for the P3 trajectory evaluator.";
     }
+    const auto appendPath = [&point] (const char* name, const ApproachRetractRule& rule) {
+        if (!rule.enabled) return;
+        if (!point.note.empty()) point.note += " | ";
+        point.note += std::string(name) + " path: axis=" +
+            (rule.axis == OffsetAxis::ReferenceZ ? "ReferenceZ" : "ToolZ") +
+            ", distanceMeters=" + std::to_string(rule.distanceMeters) +
+            ", collisionFreeRequired=" + (rule.collisionFreeRequired ? "true" : "false");
+    };
+    appendPath("Approach", station.approach);
+    appendPath("Retract", station.retract);
+    return point;
+}
+
+TaskPointType toTaskPointType(RequirementExecutionProcessType processType)
+{
+    switch (processType) {
+    case RequirementExecutionProcessType::Pick: return TaskPointType::Pick;
+    case RequirementExecutionProcessType::Place:
+    case RequirementExecutionProcessType::MachineLoad:
+    case RequirementExecutionProcessType::MachineUnload: return TaskPointType::Place;
+    case RequirementExecutionProcessType::Inspect: return TaskPointType::Inspect;
+    case RequirementExecutionProcessType::WeldStart:
+    case RequirementExecutionProcessType::WeldEnd: return TaskPointType::Weld;
+    default: return TaskPointType::Generic;
+    }
+}
+
+TaskPoint toTaskPoint(const RequirementExecutionTask& task)
+{
+    TaskPoint point;
+    point.id = task.id;
+    point.name = task.name;
+    point.type = toTaskPointType(task.processType);
+    point.refFrame = task.refFrame;
+    point.tcpFrame = task.tcpFrame;
+    point.position = task.position;
+    point.rpyDeg = task.rpyDeg;
+    point.tolerance.positionMeters = task.positionToleranceMeters;
+    point.tolerance.orientationDeg = task.orientationToleranceDeg;
+    point.tolerance.allowToolRollFree = task.allowToolRollFree;
+    point.weight = task.level == RequirementExecutionLevel::Must ? 1.0 : 0.5;
+    point.enabled = true;
+    if (!task.resolutionEvidence.empty())
+        point.note = "Orientation resolution: " + task.resolutionEvidence;
+    const auto appendPath = [&point] (const char* name, const RequirementExecutionPathRule& rule) {
+        if (!rule.enabled) return;
+        if (!point.note.empty()) point.note += " | ";
+        point.note += std::string(name) + " path: axis=" +
+            (rule.axis == RequirementExecutionOffsetAxis::ReferenceZ ? "ReferenceZ" : "ToolZ") +
+            ", distanceMeters=" + std::to_string(rule.distanceMeters) +
+            ", collisionFreeRequired=" + (rule.collisionFreeRequired ? "true" : "false");
+    };
+    appendPath("Approach", task.approach);
+    appendPath("Retract", task.retract);
     return point;
 }
 
@@ -173,15 +229,47 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirem
             *error = "Engineering requirement artifact compiled requirements do not match its fingerprint.";
         return false;
     }
+    if (artifact.schemaVersion >= 4 && !artifact.executionFingerprint.empty()) {
+        if (artifact.executionFingerprint.empty() ||
+            artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
+            !RequirementExecutionJson::validate(artifact.execution, error)) {
+            if (error != nullptr && error->empty())
+                *error = "Requirement execution contract is missing or has been modified.";
+            return false;
+        }
+        const RequirementExecutionProvenance& provenance = artifact.execution.provenance;
+        if (artifact.execution.schemaVersion < 1 ||
+            provenance.requirementFingerprint != artifact.requirementFingerprint ||
+            provenance.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
+            provenance.workcellFingerprint != artifact.workcellFingerprint ||
+            provenance.environmentFingerprint != artifact.environmentFingerprint ||
+            provenance.compilerVersion != artifact.compilerVersion ||
+            provenance.frozenAt != artifact.frozenAt) {
+            if (error != nullptr)
+                *error = "Requirement execution contract provenance does not match the frozen artifact.";
+            return false;
+        }
+    }
     FrozenRequirementValidationResult validation;
     if (!RequirementFreezer::validateScenario(
             artifact, workcell, state, &validation, error, artifactBaseDirectory))
         return false;
 
     std::vector<TaskPoint> converted;
-    converted.reserve(artifact.compiled.poseTasks.size());
-    for (const CompiledPoseTask& station : artifact.compiled.poseTasks)
-        converted.push_back(toTaskPoint(station));
+    if (artifact.schemaVersion >= 4 && !artifact.executionFingerprint.empty()) {
+        converted.reserve(artifact.execution.tasks.size());
+        for (const RequirementExecutionTask& task : artifact.execution.tasks) {
+            if (task.compileState != RequirementExecutionCompileState::Included) continue;
+            converted.push_back(toTaskPoint(task));
+        }
+    }
+    else {
+        converted.reserve(artifact.compiled.poseTasks.size());
+        for (const CompiledPoseTask& station : artifact.compiled.poseTasks) {
+            if (station.compileState != RequirementCompileState::Included) continue;
+            converted.push_back(toTaskPoint(station));
+        }
+    }
     output = std::move(converted);
     if (robotStateChanged != nullptr) *robotStateChanged = validation.robotStateChanged;
     if (warnings != nullptr) *warnings = validation.warnings;

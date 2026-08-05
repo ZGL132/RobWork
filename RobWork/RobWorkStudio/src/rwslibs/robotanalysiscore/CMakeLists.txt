@@ -18,6 +18,7 @@ if(build)
         RobotAnalysisValidation.cpp
         EngineeringMetricRegistry.cpp
         EngineeringEvaluationJson.cpp
+        RequirementExecutionJson.cpp
     )
 
     set(SRC_FILES_HPP
@@ -30,6 +31,8 @@ if(build)
         EngineeringEvaluationJson.hpp
         IEngineeringEvaluator.hpp
         EngineeringOptimizationTypes.hpp
+        RequirementExecutionTypes.hpp
+        RequirementExecutionJson.hpp
     )
 
     rws_add_component(
@@ -54,6 +57,27 @@ if(build)
         ${QT_LIBRARIES}
     )
     target_include_directories(sdurws_robotanalysiscore_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    if(WIN32)
+        add_custom_command(
+            TARGET sdurws_robotanalysiscore_test
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    "${CMAKE_BINARY_DIR}/RobWork/bin/$<CONFIG>"
+                    "$<TARGET_FILE_DIR:sdurws_robotanalysiscore_test>"
+            COMMENT "Copying RobWork runtime DLLs next to robot analysis core tests"
+        )
+        foreach(qt_runtime_target Qt6::Core Qt6::Gui Qt6::Widgets Qt5::Core Qt5::Gui Qt5::Widgets)
+            if(TARGET ${qt_runtime_target})
+                add_custom_command(
+                    TARGET sdurws_robotanalysiscore_test
+                    POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                            $<TARGET_FILE:${qt_runtime_target}>
+                            $<TARGET_FILE_DIR:sdurws_robotanalysiscore_test>
+                )
+            endif()
+        endforeach()
+    endif()
     if(BUILD_TESTING)
         add_test(
             NAME sdurws_robotanalysiscore_test
@@ -74,6 +98,10 @@ if(build)
         add_test(
             NAME sdurws_robotanalysiscore_test_csv
             COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> csv
+        )
+        add_test(
+            NAME sdurws_robotanalysiscore_test_requirement_execution
+            COMMAND $<TARGET_FILE:sdurws_robotanalysiscore_test> requirementExecution
         )
         add_test(
             NAME sdurws_robotanalysiscore_test_invalid_suite

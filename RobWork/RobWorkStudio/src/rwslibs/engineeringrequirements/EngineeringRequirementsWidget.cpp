@@ -730,7 +730,19 @@ QWidget* EngineeringRequirementsWidget::createValidationPage()
     _modelLabel->setWordWrap(true);
     _freezeLabel = new QLabel(page); _freezeLabel->setObjectName("engineeringRequirementsFreezeLabel");
     _freezeLabel->setWordWrap(true);
+    _validationSummaryLabel = new QLabel(page);
+    _validationSummaryLabel->setObjectName("engineeringRequirementsValidationSummaryLabel");
+    _validationSummaryLabel->setWordWrap(true);
+    _diagnosticTable = new QTableWidget(page);
+    _diagnosticTable->setObjectName("engineeringRequirementsDiagnosticTable");
+    _diagnosticTable->setColumnCount(4);
+    _diagnosticTable->setHorizontalHeaderLabels({"Code", "Requirement", "Level", "Message"});
+    _diagnosticTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    _diagnosticTable->horizontalHeader()->setStretchLastSection(true);
+    _diagnosticTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _diagnosticTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     layout->addWidget(_modelLabel); layout->addWidget(_freezeLabel);
+    layout->addWidget(_validationSummaryLabel); layout->addWidget(_diagnosticTable);
     QHBoxLayout* actions = new QHBoxLayout();
     QPushButton* bind = new QPushButton(QString::fromUtf8("绑定模型"), page); bind->setObjectName("bindRequirementModelButton");
     QPushButton* load = new QPushButton(QString::fromUtf8("导入需求副本"), page); load->setObjectName("loadRequirementSetButton");
@@ -808,6 +820,42 @@ void EngineeringRequirementsWidget::refreshTables()
         } else {
             _freezeLabel->setText(QString::fromUtf8("状态：可编辑。冻结后才可作为下游分析和优化输入。"));
         }
+    }
+    refreshValidationPanel();
+}
+
+void EngineeringRequirementsWidget::refreshValidationPanel()
+{
+    if (_diagnosticTable == nullptr) return;
+    const std::vector<RequirementDiagnostic> diagnostics =
+        RequirementCompiler::validateDetailed(_requirements);
+    _diagnosticTable->setRowCount(static_cast<int>(diagnostics.size()));
+    int blocking = 0;
+    for (int row = 0; row < _diagnosticTable->rowCount(); ++row) {
+        const RequirementDiagnostic& diagnostic = diagnostics[static_cast<std::size_t>(row)];
+        if (diagnostic.blocking) ++blocking;
+        _diagnosticTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(
+            diagnostic.code.empty() ? "REQ_INVALID" : diagnostic.code)));
+        _diagnosticTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(diagnostic.requirementId)));
+        _diagnosticTable->setItem(row, 2, new QTableWidgetItem(QString::fromLatin1(toString(diagnostic.level))));
+        _diagnosticTable->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(diagnostic.message)));
+        const QColor color = diagnostic.blocking ? QColor(Qt::red) :
+            (diagnostic.level == RequirementLevel::Info ? QColor(Qt::gray) : QColor(180, 120, 0));
+        for (int column = 0; column < _diagnosticTable->columnCount(); ++column)
+            _diagnosticTable->item(row, column)->setForeground(color);
+    }
+    if (_validationSummaryLabel != nullptr) {
+        int included = 0;
+        int excluded = 0;
+        if (_compiled.frozen) {
+            for (const CompiledPoseTask& task : _compiled.poseTasks)
+                (task.compileState == RequirementCompileState::Included ? ++included : ++excluded);
+            for (const WorkspaceDemandRegion& region : _compiled.workspaceRegions)
+                (region.compileState == RequirementCompileState::Included ? ++included : ++excluded);
+        }
+        _validationSummaryLabel->setText(QString::fromUtf8(
+            "璇婃柇锛?%1锛屽繀椤绘敼姝ｏ細%2\n缂栬瘧椤圭粺璁★細Included %3锛屼笉鍖呭惈 %4")
+            .arg(diagnostics.size()).arg(blocking).arg(included).arg(excluded));
     }
 }
 

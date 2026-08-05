@@ -550,11 +550,14 @@ std::string StructureOptimizationJson::problemToJson(
     // 冻结需求工件并不嵌入优化项目 JSON，以免将需求插件的编辑态模型复制到多个
     // 下游文件；只持久化其审计身份，重新交接时仍由冻结工件负责内容真实性校验。
     if (!problem.requirementProvenance.requirementFingerprint.empty() ||
+        !problem.requirementProvenance.executionFingerprint.empty() ||
         !problem.requirementProvenance.workcellFingerprint.empty() ||
         !problem.requirementProvenance.compilerVersion.empty()) {
         QJsonObject provenance;
         provenance["requirementFingerprint"] =
             QString::fromStdString(problem.requirementProvenance.requirementFingerprint);
+        provenance["executionFingerprint"] =
+            QString::fromStdString(problem.requirementProvenance.executionFingerprint);
         provenance["workcellFingerprint"] =
             QString::fromStdString(problem.requirementProvenance.workcellFingerprint);
         provenance["environmentFingerprint"] =
@@ -673,6 +676,8 @@ bool StructureOptimizationJson::problemFromJson(
         const QJsonObject provenance = root["engineeringRequirementProvenance"].toObject();
         problem.requirementProvenance.requirementFingerprint =
             provenance["requirementFingerprint"].toString().toStdString();
+        problem.requirementProvenance.executionFingerprint =
+            provenance["executionFingerprint"].toString().toStdString();
         problem.requirementProvenance.workcellFingerprint =
             provenance["workcellFingerprint"].toString().toStdString();
         problem.requirementProvenance.environmentFingerprint =

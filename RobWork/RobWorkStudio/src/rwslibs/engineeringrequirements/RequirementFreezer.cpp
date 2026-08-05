@@ -4,6 +4,7 @@
 #include "OrientationRuleResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/math/RPY.hpp>
@@ -44,12 +45,14 @@ rw::kinematics::Frame* findFrame(const rw::models::WorkCell& workcell, const std
 }
 
 void addEnvironmentDiagnostic(std::vector<RequirementDiagnostic>& diagnostics, const std::string& id,
-                              RequirementLevel level, const std::string& message)
+                              RequirementLevel level, const std::string& message,
+                              const std::string& code = "REQ_FRAME_NOT_FOUND")
 {
     RequirementDiagnostic diagnostic;
     diagnostic.requirementId = id;
     diagnostic.level = level;
     diagnostic.message = message;
+    diagnostic.code = code;
     diagnostic.blocking = level == RequirementLevel::Must;
     diagnostics.push_back(diagnostic);
 }
@@ -351,7 +354,8 @@ RequirementSet compiledSnapshot(const CompiledRequirementSet& compiled)
         task.geometryFeature = item.geometryFeature;
         task.orientation = item.orientation;
         task.validation = item.validation;
-        task.approach.enabled = item.pathValidationPending;
+        task.approach = item.approach;
+        task.retract = item.retract;
         snapshot.poseTasks.push_back(task);
     }
     for (const WorkspaceDemandRegion& item : compiled.workspaceRegions) {
@@ -364,14 +368,134 @@ RequirementSet compiledSnapshot(const CompiledRequirementSet& compiled)
         region.size = item.size;
         region.minimumCoverage = item.minimumCoverage;
         region.samplesPerAxis = item.samplesPerAxis;
+        region.tcpFrame = item.tcpFrame;
+        region.orientationMode = item.orientationMode;
+        region.orientationTargetFrame = item.orientationTargetFrame;
+        region.orientationTargetGeometry = item.orientationTargetGeometry;
+        region.orientationTargetPoint = item.orientationTargetPoint;
+        region.fixedRpyDeg = item.fixedRpyDeg;
+        region.directionSamples = item.directionSamples;
+        region.rollSamples = item.rollSamples;
+        region.minimumOrientationCoverage = item.minimumOrientationCoverage;
+        region.minimumVerificationStage = item.minimumVerificationStage;
+        region.collisionFreeRequired = item.collisionFreeRequired;
+        region.positionToleranceMeters = item.positionToleranceMeters;
+        region.orientationToleranceDeg = item.orientationToleranceDeg;
+        region.minimumJointMargin = item.minimumJointMargin;
+        region.minimumManipulability = item.minimumManipulability;
         snapshot.boxRegions.push_back(region);
     }
     return snapshot;
 }
 
+RequirementExecutionDiagnostic executionDiagnostic(const RequirementDiagnostic& diagnostic)
+{
+    RequirementExecutionDiagnostic result;
+    result.code = diagnostic.code.empty() ? "REQ_INVALID" : diagnostic.code;
+    result.severity = diagnostic.blocking ? RequirementExecutionDiagnosticSeverity::Error :
+                   (diagnostic.level == RequirementLevel::Info ?
+                        RequirementExecutionDiagnosticSeverity::Info :
+                        RequirementExecutionDiagnosticSeverity::Warning);
+    result.requirementId = diagnostic.requirementId;
+    result.message = diagnostic.message;
+    result.source = "engineeringrequirements";
+    return result;
+}
+
+RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
+{
+    RequirementExecutionSet execution;
+    execution.schemaVersion = 1;
+    execution.provenance.requirementFingerprint = artifact.requirementFingerprint;
+    execution.provenance.robotModelFingerprint = artifact.modelBinding.robotModelFingerprint;
+    execution.provenance.workcellFingerprint = artifact.workcellFingerprint;
+    execution.provenance.environmentFingerprint = artifact.environmentFingerprint;
+    execution.provenance.compilerVersion = artifact.compilerVersion;
+    execution.provenance.frozenAt = artifact.frozenAt;
+    execution.provenance.sourcePath = artifact.modelBinding.sourcePath;
+    for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
+        execution.diagnostics.push_back(executionDiagnostic(diagnostic));
+    for (const CompiledPoseTask& item : artifact.compiled.poseTasks) {
+        RequirementExecutionTask task;
+        task.id = item.id;
+        task.name = item.name;
+        task.level = static_cast<RequirementExecutionLevel>(item.level);
+        task.compileState = static_cast<RequirementExecutionCompileState>(item.compileState);
+        task.processType = static_cast<RequirementExecutionProcessType>(item.processType);
+        task.excludedReason = item.excludedReason;
+        task.refFrame = item.refFrame;
+        task.tcpFrame = item.tcpFrame;
+        task.position = item.position;
+        task.rpyDeg = item.rpyDeg;
+        task.positionToleranceMeters = item.tolerance.positionMeters;
+        task.orientationToleranceDeg = item.tolerance.orientationDeg;
+        task.allowToolRollFree = item.tolerance.allowToolRollFree;
+        task.orientationMode = static_cast<RequirementExecutionOrientationMode>(item.orientation.mode);
+        task.orientationTargetFrame = item.orientation.targetFrame;
+        task.orientationTargetGeometry = item.orientation.targetGeometry;
+        task.orientationTargetPoint = item.orientation.targetPoint;
+        task.invertNormal = item.orientation.invertNormal;
+        task.rollMinimumDeg = item.orientation.rollMinimumDeg;
+        task.rollMaximumDeg = item.orientation.rollMaximumDeg;
+        task.collisionFreeRequired = item.validation.collisionFreeRequired;
+        task.minimumJointMargin = item.validation.minimumJointMargin;
+        task.minimumManipulability = item.validation.minimumManipulability;
+        task.resolutionEvidence = item.orientation.resolutionEvidence;
+        task.approach.enabled = item.approach.enabled;
+        task.approach.axis = item.approach.axis == OffsetAxis::ReferenceZ
+            ? RequirementExecutionOffsetAxis::ReferenceZ : RequirementExecutionOffsetAxis::ToolZ;
+        task.approach.distanceMeters = item.approach.distanceMeters;
+        task.approach.collisionFreeRequired = item.approach.collisionFreeRequired;
+        task.retract.enabled = item.retract.enabled;
+        task.retract.axis = item.retract.axis == OffsetAxis::ReferenceZ
+            ? RequirementExecutionOffsetAxis::ReferenceZ : RequirementExecutionOffsetAxis::ToolZ;
+        task.retract.distanceMeters = item.retract.distanceMeters;
+        task.retract.collisionFreeRequired = item.retract.collisionFreeRequired;
+        task.pathValidationPending = item.pathValidationPending;
+        for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
+            if (diagnostic.requirementId == item.id)
+                task.diagnostics.push_back(executionDiagnostic(diagnostic));
+        execution.tasks.push_back(task);
+    }
+    for (const WorkspaceDemandRegion& item : artifact.compiled.workspaceRegions) {
+        RequirementExecutionRegion region;
+        region.id = item.id;
+        region.name = item.name;
+        region.level = static_cast<RequirementExecutionLevel>(item.level);
+        region.compileState = static_cast<RequirementExecutionCompileState>(item.compileState);
+        region.excludedReason = item.excludedReason;
+        region.refFrame = item.refFrame;
+        region.tcpFrame = item.tcpFrame;
+        region.center = item.center;
+        region.size = item.size;
+        region.minimumCoverage = item.minimumCoverage;
+        region.samplesPerAxis = item.samplesPerAxis;
+        region.orientationMode = static_cast<RequirementExecutionOrientationMode>(item.orientationMode);
+        region.orientationTargetFrame = item.orientationTargetFrame;
+        region.orientationTargetGeometry = item.orientationTargetGeometry;
+        region.orientationTargetPoint = item.orientationTargetPoint;
+        region.fixedRpyDeg = item.fixedRpyDeg;
+        region.directionSamples = item.directionSamples;
+        region.rollSamples = item.rollSamples;
+        region.minimumOrientationCoverage = item.minimumOrientationCoverage;
+        region.minimumVerificationStage = static_cast<RequirementExecutionStage>(item.minimumVerificationStage);
+        region.collisionFreeRequired = item.collisionFreeRequired;
+        region.positionToleranceMeters = item.positionToleranceMeters;
+        region.orientationToleranceDeg = item.orientationToleranceDeg;
+        region.minimumJointMargin = item.minimumJointMargin;
+        region.minimumManipulability = item.minimumManipulability;
+        for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
+            if (diagnostic.requirementId == item.id)
+                region.diagnostics.push_back(executionDiagnostic(diagnostic));
+        execution.workspaceRegions.push_back(region);
+    }
+    return execution;
+}
+
 QJsonObject diagnosticToObject(const RequirementDiagnostic& diagnostic)
 {
     QJsonObject object;
+    object["code"] = QString::fromStdString(diagnostic.code);
     object["requirementId"] = QString::fromStdString(diagnostic.requirementId);
     object["level"] = QString::fromLatin1(toString(diagnostic.level));
     object["message"] = QString::fromStdString(diagnostic.message);
@@ -381,6 +505,7 @@ QJsonObject diagnosticToObject(const RequirementDiagnostic& diagnostic)
 
 bool diagnosticFromObject(const QJsonObject& object, RequirementDiagnostic& diagnostic, std::string* error)
 {
+    diagnostic.code = object.value("code").toString("REQ_INVALID").toStdString();
     diagnostic.requirementId = object.value("requirementId").toString().toStdString();
     if (!requirementLevelFromString(object.value("level").toString("Must").toStdString(), diagnostic.level)) {
         if (error != nullptr) *error = "Frozen artifact diagnostic level is invalid.";
@@ -430,29 +555,65 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     for (PoseTask& task : resolved.poseTasks) {
         if (findFrame(workcell, task.refFrame) == nullptr)
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
-                                     "Key station reference frame is unavailable in the current WorkCell: " + task.refFrame);
-        if (workcell.findFrame(task.tcpFrame) == nullptr)
+                                     "Key station reference frame is unavailable in the current WorkCell: " + task.refFrame,
+                                     "REQ_FRAME_NOT_FOUND");
+        if (task.tcpFrame.empty() || findFrame(workcell, task.tcpFrame) == nullptr)
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
-                                     "Key station TCP frame is unavailable in the current WorkCell: " + task.tcpFrame);
+                                     "Key station TCP frame is unavailable in the current WorkCell: " + task.tcpFrame,
+                                     "REQ_TCP_FRAME_NOT_FOUND");
         if ((task.orientation.mode == OrientationMode::AlignFrame || task.orientation.mode == OrientationMode::PointAtTarget) &&
-            !task.orientation.targetFrame.empty() && workcell.findFrame(task.orientation.targetFrame) == nullptr)
+            !task.orientation.targetFrame.empty() && findFrame(workcell, task.orientation.targetFrame) == nullptr)
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
-                                     "Key station orientation target frame is unavailable in the current WorkCell: " + task.orientation.targetFrame);
+                                     "Key station orientation target frame is unavailable in the current WorkCell: " + task.orientation.targetFrame,
+                                     "REQ_ORIENTATION_TARGET_NOT_FOUND");
+        if (task.orientation.mode == OrientationMode::AlignGeometryNormal &&
+            (!task.orientation.targetFrame.empty() && findFrame(workcell, task.orientation.targetFrame) == nullptr))
+            addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
+                                     "Key station geometry orientation target frame is unavailable in the current WorkCell: " + task.orientation.targetFrame,
+                                     "REQ_ORIENTATION_TARGET_NOT_FOUND");
+        if (task.orientation.mode == OrientationMode::AlignGeometryNormal &&
+            task.orientation.targetGeometry.rfind("frame:", 0) == 0 &&
+            findFrame(workcell, task.orientation.targetGeometry.substr(6)) == nullptr)
+            addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
+                                     "Key station geometry target is unavailable in the current WorkCell: " + task.orientation.targetGeometry,
+                                     "REQ_GEOMETRY_TARGET_NOT_FOUND");
         if (task.source == PoseTaskSource::GeometryFeature) {
             std::string resolutionError;
             if (!GeometryFeatureResolver::applyToStation(task.geometryFeature, workcell, state, task, &resolutionError))
                 addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
-                                         "Key station geometry feature cannot be resolved: " + resolutionError);
+                                         "Key station geometry feature cannot be resolved: " + resolutionError,
+                                         "REQ_GEOMETRY_TARGET_NOT_FOUND");
         }
         std::string orientationError;
         if (!OrientationRuleResolver::applyToStation(task, workcell, state, &orientationError))
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
-                                     "Key station orientation rule cannot be resolved: " + orientationError);
+                                     "Key station orientation rule cannot be resolved: " + orientationError,
+                                     "REQ_ORIENTATION_TARGET_NOT_FOUND");
     }
     for (const BoxRegion& region : resolved.boxRegions) {
         if (findFrame(workcell, region.refFrame) == nullptr)
             addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
-                                     "Workspace region reference frame is unavailable in the current WorkCell: " + region.refFrame);
+                                     "Workspace region reference frame is unavailable in the current WorkCell: " + region.refFrame,
+                                     "REQ_FRAME_NOT_FOUND");
+        if (region.tcpFrame.empty() || findFrame(workcell, region.tcpFrame) == nullptr)
+            addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
+                                     "Workspace region TCP frame is unavailable in the current WorkCell: " + region.tcpFrame,
+                                     "REQ_TCP_FRAME_NOT_FOUND");
+        if ((region.orientationMode == OrientationMode::AlignFrame ||
+             region.orientationMode == OrientationMode::AlignGeometryNormal ||
+             (region.orientationMode == OrientationMode::PointAtTarget &&
+              !region.orientationTargetFrame.empty())) &&
+            (region.orientationTargetFrame.empty() ||
+            findFrame(workcell, region.orientationTargetFrame) == nullptr))
+            addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
+                                     "Workspace region orientation target frame is unavailable in the current WorkCell: " + region.orientationTargetFrame,
+                                     "REQ_ORIENTATION_TARGET_NOT_FOUND");
+        if (region.orientationMode == OrientationMode::AlignGeometryNormal &&
+            region.orientationTargetGeometry.rfind("frame:", 0) == 0 &&
+            findFrame(workcell, region.orientationTargetGeometry.substr(6)) == nullptr)
+            addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
+                                     "Workspace region geometry target is unavailable in the current WorkCell: " + region.orientationTargetGeometry,
+                                     "REQ_GEOMETRY_TARGET_NOT_FOUND");
     }
     for (const RequirementDiagnostic& diagnostic : environmentDiagnostics) {
         if (diagnostic.blocking) {
@@ -472,7 +633,7 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         compiled.workspaceRegions.end());
 
     artifact = FrozenRequirementArtifact();
-    artifact.schemaVersion = 3;
+    artifact.schemaVersion = 4;
     artifact.requirementFingerprint = sourceRequirementFingerprint;
     artifact.environmentFingerprint = environmentFingerprint(workcell, state, model.robotName);
     artifact.workcellFingerprint = artifact.environmentFingerprint;
@@ -489,6 +650,8 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     artifact.scenario.snapshotFingerprint = scenarioFingerprint(artifact.scenario);
     artifact.compiled = compiled;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.execution = makeExecution(artifact);
+    artifact.executionFingerprint = RequirementExecutionJson::fingerprint(artifact.execution);
     if (error != nullptr) error->clear();
     return true;
 }
@@ -518,7 +681,7 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
 
     // 顶层绑定与已编译快照都要一致。双重检查能识别手工编辑 JSON 时只改了
     // 其中一层的情况，避免下游消费者读到互相矛盾的模型身份信息。
-    if (artifact.schemaVersion != 3 || artifact.requirementFingerprint.empty() ||
+    if ((artifact.schemaVersion != 3 && artifact.schemaVersion != 4) || artifact.requirementFingerprint.empty() ||
         artifact.environmentFingerprint.empty()) {
         if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
@@ -543,6 +706,20 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
     if (artifact.requirementFingerprint != expectedRequirementFingerprint ||
         artifact.compiled.requirementFingerprint != artifact.requirementFingerprint) {
         if (error != nullptr) *error = "Frozen requirement artifact does not match the current requirement set.";
+        return false;
+    }
+
+    const bool hasExecutionContract = !artifact.executionFingerprint.empty();
+    if (artifact.schemaVersion >= 4 && hasExecutionContract &&
+        (artifact.execution.schemaVersion != 1 || artifact.executionFingerprint.empty() ||
+         artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
+         artifact.execution.provenance.requirementFingerprint != artifact.requirementFingerprint ||
+         artifact.execution.provenance.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
+         artifact.execution.provenance.workcellFingerprint != artifact.workcellFingerprint ||
+         artifact.execution.provenance.environmentFingerprint != artifact.environmentFingerprint ||
+         artifact.execution.provenance.compilerVersion != artifact.compilerVersion ||
+         artifact.execution.provenance.frozenAt != artifact.frozenAt)) {
+        if (error != nullptr) *error = "Frozen requirement execution is missing or has been modified.";
         return false;
     }
 
@@ -589,7 +766,7 @@ bool RequirementFreezer::validateScenario(const FrozenRequirementArtifact& artif
                                           const std::string& artifactBaseDirectory)
 {
     if (result != nullptr) *result = FrozenRequirementValidationResult();
-    if (artifact.schemaVersion != 3) {
+    if (artifact.schemaVersion != 3 && artifact.schemaVersion != 4) {
         if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
     }
@@ -658,6 +835,15 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     object["type"] = "FrozenEngineeringRequirementArtifact";
     object["schemaVersion"] = artifact.schemaVersion;
     object["requirementFingerprint"] = QString::fromStdString(artifact.requirementFingerprint);
+    RequirementExecutionSet serializedExecution;
+    if (artifact.schemaVersion >= 4) {
+        serializedExecution = artifact.executionFingerprint.empty()
+            ? makeExecution(artifact) : artifact.execution;
+        object["executionFingerprint"] = QString::fromStdString(
+            artifact.executionFingerprint.empty()
+                ? RequirementExecutionJson::fingerprint(serializedExecution)
+                : artifact.executionFingerprint);
+    }
     object["environmentFingerprint"] = QString::fromStdString(artifact.environmentFingerprint);
     object["workcellFingerprint"] = QString::fromStdString(artifact.workcellFingerprint);
     object["compilerVersion"] = QString::fromStdString(artifact.compilerVersion);
@@ -698,6 +884,8 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
         diagnostics.append(diagnosticToObject(diagnostic));
     object["diagnostics"] = diagnostics;
+    if (artifact.schemaVersion >= 4)
+        object["execution"] = RequirementExecutionJson::toObject(serializedExecution);
     return object;
 }
 
@@ -711,15 +899,25 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     }
     RequirementSet snapshot;
     if (!RequirementSetJson::fromObject(object.value("compiledRequirements").toObject(), snapshot, error)) return false;
+    const int inputSchemaVersion = object.value("schemaVersion").toInt(1);
+    // v3 compiled snapshots did not carry a workspace TCP field. Preserve
+    // their historical meaning while keeping v4 strict about the field.
+    if (inputSchemaVersion == 3) {
+        for (PoseTask& task : snapshot.poseTasks)
+            if (task.tcpFrame.empty()) task.tcpFrame = "TCP";
+        for (BoxRegion& region : snapshot.boxRegions)
+            if (region.tcpFrame.empty()) region.tcpFrame = "TCP";
+    }
     CompiledRequirementSet compiled;
     if (!RequirementCompiler::compile(snapshot, compiled, error)) return false;
     FrozenRequirementArtifact parsed;
     parsed.schemaVersion = object.value("schemaVersion").toInt(1);
-    if (parsed.schemaVersion != 3) {
+    if (parsed.schemaVersion != 3 && parsed.schemaVersion != 4) {
         if (error != nullptr) *error = "Frozen requirement artifact uses legacy state-based evidence. Validate and freeze the requirements again.";
         return false;
     }
     parsed.requirementFingerprint = object.value("requirementFingerprint").toString().toStdString();
+    parsed.executionFingerprint = object.value("executionFingerprint").toString().toStdString();
     parsed.environmentFingerprint = object.value("environmentFingerprint").toString().toStdString();
     parsed.workcellFingerprint = object.value("workcellFingerprint").toString().toStdString();
     parsed.compilerVersion = object.value("compilerVersion").toString("EngineeringRequirements.Freezer.1").toStdString();
@@ -781,6 +979,21 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         RequirementDiagnostic diagnostic;
         if (!diagnosticFromObject(value.toObject(), diagnostic, error)) return false;
         parsed.compiled.diagnostics.push_back(diagnostic);
+    }
+    if (parsed.schemaVersion >= 4) {
+        if (!object.value("execution").isObject() ||
+            !RequirementExecutionJson::fromObject(object.value("execution").toObject(),
+                                                   parsed.execution, error))
+            return false;
+        if (parsed.executionFingerprint.empty() ||
+            parsed.executionFingerprint != RequirementExecutionJson::fingerprint(parsed.execution)) {
+            if (error != nullptr) *error = "Frozen requirement artifact execution fingerprint is missing or does not match execution.";
+            return false;
+        }
+    }
+    else {
+        parsed.execution = makeExecution(parsed);
+        parsed.executionFingerprint = RequirementExecutionJson::fingerprint(parsed.execution);
     }
     artifact = parsed;
     if (error != nullptr) error->clear();

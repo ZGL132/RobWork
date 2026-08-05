@@ -102,6 +102,7 @@ struct EngineeringRequirementProvenance
     std::string compilerVersion;        //!< 生成冻结工件的需求编译器/冻结器版本
     // 使用 UTC ISO-8601 时间戳记录需求工件真正完成冻结的时刻。它不参与优化评分，
     // 但使报告、导出项目和问题追溯可以按时间线核对“哪一次冻结”提供了输入。
+    std::string executionFingerprint;
     std::string frozenAt;
 };
 

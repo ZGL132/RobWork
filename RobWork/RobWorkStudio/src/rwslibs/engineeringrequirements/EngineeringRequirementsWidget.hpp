@@ -99,6 +99,7 @@ private:
     QWidget* createBoxRegionPage();
     QWidget* createValidationPage();
     void refreshTables();
+    void refreshValidationPanel();
     void syncTablesToRequirements();
     void refreshKeyStationList();
     void refreshKeyStationInspector();
@@ -190,6 +191,8 @@ private:
     QLabel* _modelLabel = nullptr;
     QLabel* _freezeLabel = nullptr;
     QLabel* _statusLabel = nullptr;
+    QLabel* _validationSummaryLabel = nullptr;
+    QTableWidget* _diagnosticTable = nullptr;
     QPushButton* _freezeButton = nullptr;
     bool _refreshingKeyStationInspector = false;
     bool _stationOrientationCoordinatesResolved = true;
