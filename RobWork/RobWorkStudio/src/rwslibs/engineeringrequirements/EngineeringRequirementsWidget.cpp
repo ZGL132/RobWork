@@ -53,6 +53,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <set>
 
 namespace rws {
 
@@ -126,15 +127,33 @@ int positiveSampleCount(const QTableWidget* table, int row, int column, int fall
     const int value = table->item(row, column) == nullptr
         ? fallback
         : table->item(row, column)->text().toInt(&ok);
-    return ok ? std::max(2, value) : std::max(2, fallback);
+    // 先取合法值或回退到 fallback，再钳制到 [2, MaxWorkspaceSamplesPerAxis]。
+    // 上限与 RequirementCompiler 的采样密度安全上限保持一致，防止用户在 UI 中
+    // 输入超大网格数，导致下游采样分析出现无界计算。
+    const int safeValue = ok ? value : fallback;
+    return std::min(MaxWorkspaceSamplesPerAxis,
+                     std::max(2, safeValue));
 }
 QString text(const QTableWidget* table, int row, int column, const QString& fallback = QString()) {
     return table->item(row, column) == nullptr ? fallback : table->item(row, column)->text();
 }
 
-std::string defaultTcpFrame(const rw::models::WorkCell* workcell)
+// 计算工位/覆盖盒的默认 TCP 帧名。
+// preferredRobotName 非空时优先取"绑定模型对应的设备"末端作为默认 TCP：这样
+// 默认值始终落在绑定机器人上，与冻结器的 WRONG_DEVICE 归属校验一致。若绑定设备
+// 不存在则返回空串(交由调用方按未解析处理)；未指定绑定设备时回退到第一个有末端
+// 的设备，保持旧行为。
+std::string defaultTcpFrame(const rw::models::WorkCell* workcell,
+                            const std::string& preferredRobotName = std::string())
 {
     if (workcell == nullptr) return std::string();
+    if (!preferredRobotName.empty()) {
+        const rw::core::Ptr<rw::models::Device> preferred =
+            workcell->findDevice(preferredRobotName);
+        if (preferred != nullptr && preferred->getEnd() != nullptr)
+            return preferred->getEnd()->getName();
+        return std::string();
+    }
     for (const rw::core::Ptr<rw::models::Device>& device : workcell->getDevices()) {
         if (device != nullptr && device->getEnd() != nullptr)
             return device->getEnd()->getName();
@@ -797,14 +816,18 @@ void EngineeringRequirementsWidget::refreshTables()
             // 将采样密度展示为显式的审计字段，确保导入、编辑、冻结和重新打开项目后采用完全
             // 相同的覆盖率离散网格，而不是隐式回退到数据结构默认值。
             _regionTable->setItem(row, 11, textItem(QString::number(region.samplesPerAxis)));
+            // TCP 帧未显式指定时，以绑定模型对应设备的末端作为默认值，确保展示的
+            // TCP 归属绑定机器人，避免覆盖盒 TCP 默认指向第一台设备(可能非绑定设备)。
             const std::string tcpFrame = region.tcpFrame.empty()
-                ? defaultTcpFrame(_workcell) : region.tcpFrame;
+                ? defaultTcpFrame(_workcell, _requirements.modelBinding.robotName) : region.tcpFrame;
             _regionTable->setItem(row, 12, textItem(QString::fromStdString(tcpFrame)));
         }
     }
     const bool editable = !_requirements.frozen;
     if (_regionTable != nullptr) _regionTable->setEnabled(editable);
     if (_freezeButton != nullptr) _freezeButton->setEnabled(editable);
+    // "绑定机器人模型"按钮同样只允许在编辑态使用：重新绑定会改变模型指纹与编译
+    // 结果，冻结后不应允许通过 UI 静默改绑，避免工件与模型来源不一致。
     for (const char* name : {"addRequirementPoseTaskButton", "duplicateRequirementPoseTaskButton",
                              "removeRequirementPoseTaskButton", "captureRequirementTcpButton",
                              "pickRequirementGeometryFeatureButton",
@@ -812,7 +835,7 @@ void EngineeringRequirementsWidget::refreshTables()
                               "detachRequirementTemplateButton", "createRequirementArrayButton",
                              "mirrorRequirementStationButton", "importRequirementStationsButton",
                              "addRequirementBoxRegionButton", "duplicateRequirementBoxRegionButton",
-                             "removeRequirementBoxRegionButton"}) {
+                             "removeRequirementBoxRegionButton", "bindRequirementModelButton"}) {
         if (QPushButton* button = findChild<QPushButton*>(name)) button->setEnabled(editable);
     }
     if (QPushButton* button = findChild<QPushButton*>("undoRequirementOperationButton"))
@@ -906,7 +929,10 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
         region.samplesPerAxis = positiveSampleCount(_regionTable, row, 11, region.samplesPerAxis);
         region.tcpFrame = text(_regionTable, row, 12,
                                QString::fromStdString(region.tcpFrame)).trimmed().toStdString();
-        if (region.tcpFrame.empty()) region.tcpFrame = defaultTcpFrame(_workcell);
+        // 表格 TCP 为空时回填默认值，且优先取绑定设备末端，保证同步后的覆盖盒
+        // TCP 归属绑定机器人。
+        if (region.tcpFrame.empty())
+            region.tcpFrame = defaultTcpFrame(_workcell, _requirements.modelBinding.robotName);
         _requirements.boxRegions.push_back(region);
     }
 }
@@ -988,9 +1014,23 @@ void EngineeringRequirementsWidget::refreshFrameChoices()
             addChoice(_stationReferenceFrameCombo, name);
             addChoice(_stationOrientationTargetFrameCombo, name);
         }
-        for (const rw::core::Ptr<rw::models::Device>& device : _workcell->getDevices()) {
-            if (device != nullptr && device->getEnd() != nullptr)
-                addChoice(_stationTcpFrameCombo, QString::fromStdString(device->getEnd()->getName()));
+        // TCP 下拉框优先只列出绑定模型对应设备的末端：绑定设备存在时仅提供该设备的
+        // TCP，引导工位 TCP 落在绑定机器人上(与冻结器归属校验一致)；未绑定时回退到
+        // 列出全部设备的末端，保持旧行为。
+        const rw::core::Ptr<rw::models::Device> boundDevice =
+            _requirements.modelBinding.robotName.empty()
+                ? rw::core::Ptr<rw::models::Device>()
+                : _workcell->findDevice(_requirements.modelBinding.robotName);
+        if (boundDevice != nullptr && boundDevice->getEnd() != nullptr) {
+            addChoice(_stationTcpFrameCombo,
+                      QString::fromStdString(boundDevice->getEnd()->getName()));
+        }
+        else if (_requirements.modelBinding.robotName.empty()) {
+            for (const rw::core::Ptr<rw::models::Device>& device : _workcell->getDevices()) {
+                if (device != nullptr && device->getEnd() != nullptr)
+                    addChoice(_stationTcpFrameCombo,
+                              QString::fromStdString(device->getEnd()->getName()));
+            }
         }
     }
     const auto selectOrUnresolved = [] (QComboBox* combo, const QString& value, const QString& unresolvedPrefix) {
@@ -1147,6 +1187,12 @@ void EngineeringRequirementsWidget::updateOrientationEditor()
 
 void EngineeringRequirementsWidget::bindModel()
 {
+    // 冻结门禁：重新绑定会改变 modelBinding 指纹并让既有编译/冻结结果作废，
+    // 因此冻结后禁止改绑，提示用户先解冻，避免工件与模型来源不一致。
+    if (_requirements.frozen) {
+        setStatus(QString::fromUtf8("需求已冻结，不能重新绑定机器人模型；请先解冻。"));
+        return;
+    }
     const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("绑定机器人模型"), QString(), "Robot model (*.rmb.json)");
     if (path.isEmpty()) return;
     RobotModelSpec spec;
@@ -1158,6 +1204,10 @@ void EngineeringRequirementsWidget::bindModel()
     _requirements.modelBinding.sourcePath = path.toStdString();
     _requirements.modelBinding.robotName = spec.robotName;
     _requirements.modelBinding.robotModelFingerprint = RobotModelFingerprint::canonicalSha256(spec);
+    // 换绑模型后旧的编译结果与冻结工件不再对应当前模型，必须清空，防止
+    // 残留的冻结审计记录被当作新模型的已验证证据使用。
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
     setStatus(QString::fromUtf8("已绑定模型，需求将使用模型内容指纹追溯。")); refreshTables();
     // 绑定模型会改变需求资源中的 modelBinding。发出统一领域变更通知，使项目标题栏
     // 和 Provider 脏状态与其他需求编辑操作保持一致。
@@ -1644,11 +1694,25 @@ void EngineeringRequirementsWidget::freezeRequirements()
     _requirements.frozen = true;
     _compiled = artifact.compiled;
     _frozenArtifact = artifact;
+    // 统计实际进入 P2 优化的工位数：只计 Included 且非 Info 级(Info 仅作审计记录)。
+    const int availableTasks = static_cast<int>(std::count_if(
+        _compiled.poseTasks.begin(), _compiled.poseTasks.end(), [] (const CompiledPoseTask& task) {
+            return task.compileState == RequirementCompileState::Included &&
+                   task.level != RequirementLevel::Info;
+        }));
+    // 有待验证接近/撤离(路径)规则的工位数：只有 Included 项才计入。
     const int pathPending = static_cast<int>(std::count_if(_compiled.poseTasks.begin(), _compiled.poseTasks.end(), [] (const CompiledPoseTask& task) {
-        return task.pathValidationPending;
+        return task.compileState == RequirementCompileState::Included && task.pathValidationPending;
     }));
+    // 建议性(非阻塞)需求按 requirementId 去重统计，提示"未验证、未进入优化"的条数，
+    // 与工位总数(含 Info)和诊断总数解耦，避免把审计诊断数量误报为需求数量。
+    std::set<std::string> advisoryRequirementIds;
+    for (const RequirementDiagnostic& diagnostic : _compiled.diagnostics) {
+        if (!diagnostic.blocking && !diagnostic.requirementId.empty())
+            advisoryRequirementIds.insert(diagnostic.requirementId);
+    }
     setStatus(QString::fromUtf8("需求已校验并冻结：%1 个工位可用于 P2 运动学优化；%2 项建议需求未验证，未进入优化；%3 个接近/撤离规则已记录，连续 IK 与路径碰撞将在 P3 验证。")
-        .arg(_compiled.poseTasks.size()).arg(_compiled.diagnostics.size()).arg(pathPending));
+        .arg(availableTasks).arg(advisoryRequirementIds.size()).arg(pathPending));
     refreshTables();
     Q_EMIT requirementsChanged();
     Q_EMIT freezePublicationRequested();
@@ -1709,7 +1773,13 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
         setStatus(QString::fromUtf8("无法捕获当前 TCP：未打开包含设备的 WorkCell。"));
         return;
     }
-    const rw::core::Ptr<rw::models::Device> device = _workcell->getDevices().front();
+    // 捕获 TCP 优先取绑定模型对应的设备，确保捕获到的末端就是实际用于分析的
+    // 机器人；找不到绑定设备时才回退到第一个设备(与旧行为一致)。
+    rw::core::Ptr<rw::models::Device> device;
+    if (!_requirements.modelBinding.robotName.empty())
+        device = _workcell->findDevice(_requirements.modelBinding.robotName);
+    if (device == nullptr)
+        device = _workcell->getDevices().front();
     if (device == nullptr || device->getBase() == nullptr || device->getEnd() == nullptr) {
         setStatus(QString::fromUtf8("无法捕获当前 TCP：默认设备没有有效的 Base 或 TCP。"));
         return;
@@ -1972,7 +2042,8 @@ void EngineeringRequirementsWidget::addBoxRegion()
     BoxRegion region;
     region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1);
     region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString();
-    region.tcpFrame = defaultTcpFrame(_workcell);
+    // 新建覆盖盒的默认 TCP 优先取绑定设备末端，避免默认值指向非绑定设备。
+    region.tcpFrame = defaultTcpFrame(_workcell, _requirements.modelBinding.robotName);
     _requirements.boxRegions.push_back(region);
     recordRequirementEdit(before);
 }
@@ -2007,6 +2078,10 @@ void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell)
     // 配置被用于新场景中的 TCP 捕获、几何解析或冻结环境指纹计算。
     _workcell = workcell;
     _currentState.reset();
+    // 切换 WorkCell 会改变场景/环境指纹，旧的冻结与编译结果全部失效：解冻需求并
+    // 清空编译快照与冻结工件，防止上一场景的"已验证"证据被带入新场景。
+    _requirements.frozen = false;
+    _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
     setStatus(workcell == nullptr ? QString::fromUtf8("当前未打开 WorkCell；引用 Frame 会显示为未解析。")
                                 : QString::fromUtf8("已连接当前 WorkCell，等待接收最新场景状态。"));

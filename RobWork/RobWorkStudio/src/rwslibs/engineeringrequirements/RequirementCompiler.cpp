@@ -204,6 +204,15 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
             addDiagnostic(diagnostics, region.id, region.level,
                           "Box region rollSamples must be at least 1: " + region.id,
                           "REQ_WORKSPACE_ROLL_SAMPLES_INVALID");
+        // 采样密度安全上限校验：逐轴网格数、方向样本数与翻滚样本数任一超过
+        // 定义的上限即生成 REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED 诊断，防止畸形的
+        // 覆盖盒请求在下游采样分析中产生无界计算量。
+        if (region.samplesPerAxis > MaxWorkspaceSamplesPerAxis ||
+            region.directionSamples > MaxWorkspaceDirectionSamples ||
+            region.rollSamples > MaxWorkspaceRollSamples)
+            addDiagnostic(diagnostics, region.id, region.level,
+                          "Box region sampling density exceeds the supported safety limit: " + region.id,
+                          "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED");
         if (!finiteArray(region.fixedRpyDeg) ||
             !std::isfinite(region.minimumOrientationCoverage) ||
             region.minimumOrientationCoverage < 0.0 || region.minimumOrientationCoverage > 1.0)

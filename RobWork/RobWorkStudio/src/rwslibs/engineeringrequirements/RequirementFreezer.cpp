@@ -518,6 +518,50 @@ bool diagnosticFromObject(const QJsonObject& object, RequirementDiagnostic& diag
 
 } // namespace
 
+bool RequirementFreezer::validateExecutionConsistency(const FrozenRequirementArtifact& artifact,
+                                                       std::string* error)
+{
+    if (error != nullptr) error->clear();
+    // v3 及更早版本尚无执行契约，直接视为一致；只有 v4 才要求完整的执行契约审计。
+    if (artifact.schemaVersion < 4) return true;
+    if (artifact.schemaVersion != 4) {
+        if (error != nullptr) *error = "Frozen requirement artifact schemaVersion is unsupported.";
+        return false;
+    }
+    // ① 执行契约本体必须完整、未被篡改，且通过结构校验。
+    // 若执行指纹缺失或与 execution 重算结果不符，或结构校验失败，即判定契约缺失/被改。
+    if (artifact.executionFingerprint.empty() ||
+        artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
+        !RequirementExecutionJson::validate(artifact.execution, error)) {
+        if (error != nullptr && error->empty())
+            *error = "Requirement execution contract is missing or has been modified.";
+        return false;
+    }
+    // ② 执行契约的来源(provenance)必须与工件顶层审计字段逐项一致，
+    // 防止"执行契约复制自另一份工件"或"工件指纹变更后未重新冻结"。
+    const RequirementExecutionProvenance& provenance = artifact.execution.provenance;
+    if (provenance.requirementFingerprint != artifact.requirementFingerprint ||
+        provenance.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
+        provenance.workcellFingerprint != artifact.workcellFingerprint ||
+        provenance.environmentFingerprint != artifact.environmentFingerprint ||
+        provenance.compilerVersion != artifact.compilerVersion ||
+        provenance.frozenAt != artifact.frozenAt ||
+        provenance.sourcePath != artifact.modelBinding.sourcePath) {
+        if (error != nullptr)
+            *error = "Requirement execution contract provenance does not match the frozen artifact.";
+        return false;
+    }
+    // ③ 由编译快照投影出的执行契约必须与存档执行契约指纹一致，
+    // 确保编译快照与执行契约没有各自独立漂移。
+    if (RequirementExecutionJson::fingerprint(makeExecution(artifact)) !=
+        artifact.executionFingerprint) {
+        if (error != nullptr)
+            *error = "Frozen requirement compiled snapshot does not match execution.";
+        return false;
+    }
+    return true;
+}
+
 bool RequirementFreezer::freeze(const RequirementSet& requirements,
                                  const rw::models::WorkCell& workcell,
                                  const rw::kinematics::State& state,
@@ -550,6 +594,14 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
         return false;
     }
 
+    // TCP 归属校验辅助：判断给定 Frame 是否属于"绑定机器人"设备(沿父链向上
+    // 能到达该设备的 Base 帧)。工位/覆盖盒的 TCP 必须落在绑定设备内，否则把另一
+    // 台设备的末端当作本设备 TCP 会把错误的运动链端点送进后续 IK/采样分析。
+    const auto tcpBelongsToBoundDevice = [&] (const std::string& frameName) {
+        const rw::kinematics::Frame* frame = findFrame(workcell, frameName);
+        return frame != nullptr && belongsToDevice(frame, device->getBase(), state);
+    };
+
     RequirementSet resolved = requirements;
     std::vector<RequirementDiagnostic> environmentDiagnostics;
     for (PoseTask& task : resolved.poseTasks) {
@@ -561,6 +613,12 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
                                      "Key station TCP frame is unavailable in the current WorkCell: " + task.tcpFrame,
                                      "REQ_TCP_FRAME_NOT_FOUND");
+        // TCP Frame 虽在场景中存在但不属于绑定设备：生成 WRONG_DEVICE 环境诊断，
+        // 防止把别的机器人末端误当作本设备的运动学端点。
+        else if (!tcpBelongsToBoundDevice(task.tcpFrame))
+            addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
+                                     "Key station TCP frame does not belong to the bound robot device: " + task.tcpFrame,
+                                     "REQ_TCP_FRAME_WRONG_DEVICE");
         if ((task.orientation.mode == OrientationMode::AlignFrame || task.orientation.mode == OrientationMode::PointAtTarget) &&
             !task.orientation.targetFrame.empty() && findFrame(workcell, task.orientation.targetFrame) == nullptr)
             addEnvironmentDiagnostic(environmentDiagnostics, task.id, task.level,
@@ -599,6 +657,11 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
             addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
                                      "Workspace region TCP frame is unavailable in the current WorkCell: " + region.tcpFrame,
                                      "REQ_TCP_FRAME_NOT_FOUND");
+        // 覆盖盒 TCP 同样要求归属于绑定设备，与工位的 WRONG_DEVICE 规则保持一致。
+        else if (!tcpBelongsToBoundDevice(region.tcpFrame))
+            addEnvironmentDiagnostic(environmentDiagnostics, region.id, region.level,
+                                     "Workspace region TCP frame does not belong to the bound robot device: " + region.tcpFrame,
+                                     "REQ_TCP_FRAME_WRONG_DEVICE");
         if ((region.orientationMode == OrientationMode::AlignFrame ||
              region.orientationMode == OrientationMode::AlignGeometryNormal ||
              (region.orientationMode == OrientationMode::PointAtTarget &&
@@ -625,12 +688,21 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     CompiledRequirementSet compiled;
     if (!RequirementCompiler::compile(resolved, compiled, error)) return false;
     compiled.diagnostics.insert(compiled.diagnostics.end(), environmentDiagnostics.begin(), environmentDiagnostics.end());
-    compiled.poseTasks.erase(std::remove_if(compiled.poseTasks.begin(), compiled.poseTasks.end(),
-        [&] (const CompiledPoseTask& task) { return hasDiagnostic(environmentDiagnostics, task.id); }),
-        compiled.poseTasks.end());
-    compiled.workspaceRegions.erase(std::remove_if(compiled.workspaceRegions.begin(), compiled.workspaceRegions.end(),
-        [&] (const WorkspaceDemandRegion& region) { return hasDiagnostic(environmentDiagnostics, region.id); }),
-        compiled.workspaceRegions.end());
+    // 环境诊断命中的工位/覆盖盒不再从 compiled 中删除，而是标记为 Excluded 并写入
+    // excludedReason。这样被排除项仍保留在审计记录中(可追溯"为什么没进优化")，
+    // 同时下游只消费 Included 项，语义与旧"直接擦除"行为等价但信息更完整。
+    for (CompiledPoseTask& task : compiled.poseTasks) {
+        if (hasDiagnostic(environmentDiagnostics, task.id)) {
+            task.compileState = RequirementCompileState::Excluded;
+            task.excludedReason = "Excluded because the current WorkCell cannot resolve the requirement environment.";
+        }
+    }
+    for (WorkspaceDemandRegion& region : compiled.workspaceRegions) {
+        if (hasDiagnostic(environmentDiagnostics, region.id)) {
+            region.compileState = RequirementCompileState::Excluded;
+            region.excludedReason = "Excluded because the current WorkCell cannot resolve the requirement environment.";
+        }
+    }
 
     artifact = FrozenRequirementArtifact();
     artifact.schemaVersion = 4;
@@ -709,8 +781,10 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
         return false;
     }
 
-    const bool hasExecutionContract = !artifact.executionFingerprint.empty();
-    if (artifact.schemaVersion >= 4 && hasExecutionContract &&
+    // v4 执行契约本体与来源审计：执行子契约 schema 必须为 1、执行指纹必须存在且
+    // 与 execution 重算一致，来源指纹须与工件顶层字段一致。v4 工件在执行契约缺失
+    // 或被动过手脚时一律判定为过期，而不再像旧逻辑那样允许"无执行契约"绕过。
+    if (artifact.schemaVersion >= 4 &&
         (artifact.execution.schemaVersion != 1 || artifact.executionFingerprint.empty() ||
          artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
          artifact.execution.provenance.requirementFingerprint != artifact.requirementFingerprint ||
@@ -720,6 +794,13 @@ bool RequirementFreezer::isCurrent(const FrozenRequirementArtifact& artifact,
          artifact.execution.provenance.compilerVersion != artifact.compilerVersion ||
          artifact.execution.provenance.frozenAt != artifact.frozenAt)) {
         if (error != nullptr) *error = "Frozen requirement execution is missing or has been modified.";
+        return false;
+    }
+    // 交叉一致性：由 compiled 编译快照投影出的执行契约指纹必须与存档执行契约一致，
+    // 防止编译快照与执行契约各自漂移导致下游拿到互相矛盾的两份数据。
+    if (artifact.schemaVersion >= 4 &&
+        RequirementExecutionJson::fingerprint(makeExecution(artifact)) != artifact.executionFingerprint) {
+        if (error != nullptr) *error = "Frozen requirement compiled snapshot does not match execution.";
         return false;
     }
 
@@ -900,13 +981,18 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     RequirementSet snapshot;
     if (!RequirementSetJson::fromObject(object.value("compiledRequirements").toObject(), snapshot, error)) return false;
     const int inputSchemaVersion = object.value("schemaVersion").toInt(1);
-    // v3 compiled snapshots did not carry a workspace TCP field. Preserve
-    // their historical meaning while keeping v4 strict about the field.
+    // v3 快照迁移：旧版编译快照不携带工作区 TCP 字段，也不记录验证阶段。
+    // 为保持历史语义并让 v4 对字段保持严格：
+    //   - 空 TCP 一律回填 "TCP"；
+    //   - 覆盖盒验证阶段统一回填为 Quick(旧快照缺乏 Verified 证据，不允许
+    //     以未经验证的状态当作 Verified 证据进入下游优化)。
     if (inputSchemaVersion == 3) {
         for (PoseTask& task : snapshot.poseTasks)
             if (task.tcpFrame.empty()) task.tcpFrame = "TCP";
-        for (BoxRegion& region : snapshot.boxRegions)
+        for (BoxRegion& region : snapshot.boxRegions) {
             if (region.tcpFrame.empty()) region.tcpFrame = "TCP";
+            region.minimumVerificationStage = RequirementVerificationStage::Quick;
+        }
     }
     CompiledRequirementSet compiled;
     if (!RequirementCompiler::compile(snapshot, compiled, error)) return false;
@@ -945,6 +1031,12 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     parsed.frozenRobotState.kinematicFingerprint =
         robotState.value("kinematicFingerprint").toString().toStdString();
     for (const QJsonValue& value : robotState.value("q").toArray()) {
+        // 严格类型校验：关节值必须是数字；非数字 JSON 值会在 toDouble 时被静默
+        // 转为 0，掩盖损坏的工件，因此先显式检查元素类型。
+        if (!value.isDouble()) {
+            if (error != nullptr) *error = "Frozen requirement artifact robot state joint value has the wrong type.";
+            return false;
+        }
         const double q = value.toDouble();
         if (!std::isfinite(q)) {
             if (error != nullptr) *error = "Frozen requirement artifact robot state contains a non-finite joint value.";
@@ -961,6 +1053,12 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         return false;
     }
     for (int index = 0; index < tcpWorldPose.size(); ++index) {
+        // 与关节值相同的严格类型校验：TCP 位姿元素必须是数字，拒绝被 toDouble
+        // 静默吞掉的非数字损坏数据。
+        if (!tcpWorldPose[index].isDouble()) {
+            if (error != nullptr) *error = "Frozen requirement artifact robot state TCP pose value has the wrong type.";
+            return false;
+        }
         const double value = tcpWorldPose[index].toDouble();
         if (!std::isfinite(value)) {
             if (error != nullptr) *error = "Frozen requirement artifact robot state contains a non-finite TCP pose value.";
@@ -975,21 +1073,66 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     }
     parsed.compiled = compiled;
     parsed.compiled.requirementFingerprint = parsed.requirementFingerprint;
+    // 序列化诊断是冻结时刻的审计记录。上面的编译只用于重建结构投影；若沿用本次
+    // 重新编译生成的诊断，会重复产生建议项诊断，并在重载时改变 v4 执行指纹。
+    // 因此这里强制要求工件自带 diagnostics 数组，并用它整体覆盖 compiled 诊断。
+    if (!object.contains("diagnostics") || !object.value("diagnostics").isArray()) {
+        if (error != nullptr) *error = "Frozen requirement artifact diagnostics must be an array.";
+        return false;
+    }
+    parsed.compiled.diagnostics.clear();
     for (const QJsonValue& value : object.value("diagnostics").toArray()) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Frozen requirement artifact diagnostic must be an object.";
+            return false;
+        }
         RequirementDiagnostic diagnostic;
         if (!diagnosticFromObject(value.toObject(), diagnostic, error)) return false;
         parsed.compiled.diagnostics.push_back(diagnostic);
+    }
+    // 依据保留的冻结诊断重建"环境无法解析"项：编译快照(compiledRequirements)是
+    // 传统 RequirementSet 投影，本身不携带 compileState/excludedReason。凡被环境类
+    // 诊断(引用帧/TCP/错误设备/朝向目标/几何目标缺失)命中的工位，重新标记为
+    // Excluded 并回填诊断消息作为排除原因，使重载后的审计语义与冻结时刻一致。
+    for (CompiledPoseTask& task : parsed.compiled.poseTasks) {
+        for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
+            if (diagnostic.requirementId == task.id &&
+                 (diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
+                 diagnostic.code == "REQ_TCP_FRAME_NOT_FOUND" ||
+                 diagnostic.code == "REQ_TCP_FRAME_WRONG_DEVICE" ||
+                 diagnostic.code == "REQ_ORIENTATION_TARGET_NOT_FOUND" ||
+                 diagnostic.code == "REQ_GEOMETRY_TARGET_NOT_FOUND")) {
+                task.compileState = RequirementCompileState::Excluded;
+                task.excludedReason = diagnostic.message;
+                break;
+            }
+        }
+    }
+    // 覆盖盒(WorkspaceDemandRegion)采用与工位完全相同的重建规则。
+    for (WorkspaceDemandRegion& region : parsed.compiled.workspaceRegions) {
+        for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
+            if (diagnostic.requirementId == region.id &&
+                 (diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
+                 diagnostic.code == "REQ_TCP_FRAME_NOT_FOUND" ||
+                 diagnostic.code == "REQ_TCP_FRAME_WRONG_DEVICE" ||
+                 diagnostic.code == "REQ_ORIENTATION_TARGET_NOT_FOUND" ||
+                 diagnostic.code == "REQ_GEOMETRY_TARGET_NOT_FOUND")) {
+                region.compileState = RequirementCompileState::Excluded;
+                region.excludedReason = diagnostic.message;
+                break;
+            }
+        }
     }
     if (parsed.schemaVersion >= 4) {
         if (!object.value("execution").isObject() ||
             !RequirementExecutionJson::fromObject(object.value("execution").toObject(),
                                                    parsed.execution, error))
             return false;
-        if (parsed.executionFingerprint.empty() ||
-            parsed.executionFingerprint != RequirementExecutionJson::fingerprint(parsed.execution)) {
-            if (error != nullptr) *error = "Frozen requirement artifact execution fingerprint is missing or does not match execution.";
-            return false;
-        }
+        // compiledRequirements 是传统 RequirementSet 投影，本身不带 compileState/
+        // excludedReason，这两个字段仅由上面保留的冻结诊断重建。执行契约在下面针对
+        // 这份权威投影做一致性校验。注意：散列前绝不能把执行状态复制回 compiled 状态，
+        // 否则会掩盖编译快照与执行契约之间本应暴露的漂移。
+        if (!RequirementFreezer::validateExecutionConsistency(parsed, error)) return false;
     }
     else {
         parsed.execution = makeExecution(parsed);

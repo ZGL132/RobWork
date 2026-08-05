@@ -36,6 +36,8 @@
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
+// 用于构造与校验 v4 工件的执行契约(execution)与执行指纹。
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 
 #include <rwslibs/kinematicanalysis/FrozenRequirementKinematicAdapter.hpp>
 
@@ -2049,6 +2051,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     problem.context.robotName = problem.context.modelSpec.robotName;
 
     rws::FrozenRequirementArtifact artifact;
+    artifact.schemaVersion = 4;
     artifact.requirementFingerprint = "requirement-fingerprint";
     artifact.environmentFingerprint = "environment-fingerprint";
     artifact.workcellFingerprint = "workcell-fingerprint";
@@ -2087,11 +2090,62 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     region.name = "Work area";
     region.level = rws::RequirementLevel::Must;
     region.refFrame = "WORLD";
+    region.tcpFrame = "TCP";
     region.center = {{0.5, 0.0, 0.4}};
     region.size = {{0.4, 0.2, 0.3}};
     region.minimumCoverage = 0.85;
     region.samplesPerAxis = 6;
     artifact.compiled.workspaceRegions.push_back(region);
+
+    // 结构优化适配器只接受 v4 工件，因此测试须手工构造与 compiled 快照一致的执行契约
+    // (execution)：provenance 逐项对齐工件顶层指纹，工位与覆盖盒从 compiled 投影而来，
+    // 最后计算执行指纹。这样适配器的一致性审计(validateExecutionConsistency)才会通过。
+    artifact.execution.schemaVersion = 1;
+    artifact.execution.provenance.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.execution.provenance.robotModelFingerprint = artifact.modelBinding.robotModelFingerprint;
+    artifact.execution.provenance.workcellFingerprint = artifact.workcellFingerprint;
+    artifact.execution.provenance.environmentFingerprint = artifact.environmentFingerprint;
+    artifact.execution.provenance.compilerVersion = artifact.compilerVersion;
+    artifact.execution.provenance.frozenAt = artifact.frozenAt;
+    artifact.execution.provenance.sourcePath = artifact.modelBinding.sourcePath;
+    // 工位任务点从 compiled 投影到执行契约类型(枚举用 static_cast 同序映射)。
+    for (const rws::CompiledPoseTask& source : artifact.compiled.poseTasks) {
+        rws::RequirementExecutionTask task;
+        task.id = source.id;
+        task.name = source.name;
+        task.level = static_cast<rws::RequirementExecutionLevel>(source.level);
+        task.compileState = static_cast<rws::RequirementExecutionCompileState>(source.compileState);
+        task.processType = static_cast<rws::RequirementExecutionProcessType>(source.processType);
+        task.excludedReason = source.excludedReason;
+        task.refFrame = source.refFrame;
+        task.tcpFrame = source.tcpFrame;
+        task.position = source.position;
+        task.rpyDeg = source.rpyDeg;
+        task.positionToleranceMeters = source.tolerance.positionMeters;
+        task.orientationToleranceDeg = source.tolerance.orientationDeg;
+        task.allowToolRollFree = source.tolerance.allowToolRollFree;
+        artifact.execution.tasks.push_back(task);
+    }
+    // 覆盖盒同样投影到执行契约类型。
+    for (const rws::WorkspaceDemandRegion& source : artifact.compiled.workspaceRegions) {
+        rws::RequirementExecutionRegion executionRegion;
+        executionRegion.id = source.id;
+        executionRegion.name = source.name;
+        executionRegion.level = static_cast<rws::RequirementExecutionLevel>(source.level);
+        executionRegion.compileState = static_cast<rws::RequirementExecutionCompileState>(source.compileState);
+        executionRegion.excludedReason = source.excludedReason;
+        executionRegion.refFrame = source.refFrame;
+        executionRegion.tcpFrame = source.tcpFrame;
+        executionRegion.center = source.center;
+        executionRegion.size = source.size;
+        executionRegion.minimumCoverage = source.minimumCoverage;
+        executionRegion.samplesPerAxis = source.samplesPerAxis;
+        executionRegion.minimumVerificationStage =
+            static_cast<rws::RequirementExecutionStage>(source.minimumVerificationStage);
+        artifact.execution.workspaceRegions.push_back(executionRegion);
+    }
+    // 依据执行契约计算执行指纹，供适配器的执行契约一致性校验使用。
+    artifact.executionFingerprint = rws::RequirementExecutionJson::fingerprint(artifact.execution);
 
     std::string error;
     REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
@@ -2106,14 +2160,21 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.requirementProvenance.environmentFingerprint == "environment-fingerprint");
     REQUIRE(problem.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
 
+    // 旧版 v3 工件必须被结构优化适配器拒绝，错误信息应明确要求 v4(带 Verified 证据)。
     rws::FrozenRequirementArtifact legacyArtifact = artifact;
-    legacyArtifact.schemaVersion = 2;
+    legacyArtifact.schemaVersion = 3;
     REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(legacyArtifact, problem, &error));
-    REQUIRE(error.find("Validate and freeze") != std::string::npos);
+    REQUIRE(error.find("v4") != std::string::npos);
 
+    // 追加第二个 Must 覆盖盒：compiled 与 execution 都必须同步加入，并重算执行指纹，
+    // 保持两契约一致，否则适配器的一致性校验会失败。
     rws::WorkspaceDemandRegion secondRegion = region;
     secondRegion.id = "second_area";
     artifact.compiled.workspaceRegions.push_back(secondRegion);
+    rws::RequirementExecutionRegion secondExecutionRegion = artifact.execution.workspaceRegions.front();
+    secondExecutionRegion.id = secondRegion.id;
+    artifact.execution.workspaceRegions.push_back(secondExecutionRegion);
+    artifact.executionFingerprint = rws::RequirementExecutionJson::fingerprint(artifact.execution);
     // 多个必须覆盖区域必须分别转换为独立的评价区域和硬约束，不能再以“只支持一个”
     // 的方式拒绝工程需求，更不能把两者静默并成一个更大的 WORLD 覆盖盒。
     REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));

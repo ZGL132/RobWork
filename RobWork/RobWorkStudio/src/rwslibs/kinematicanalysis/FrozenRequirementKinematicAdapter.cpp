@@ -107,6 +107,42 @@ TaskPoint toTaskPoint(const RequirementExecutionTask& task)
     return point;
 }
 
+// 将编译态覆盖盒(WorkspaceDemandRegion)完整投影为执行契约覆盖盒
+// (RequirementExecutionRegion)。枚举字段用 static_cast 保持同序映射；除映射外不做
+// 任何默认值回填，确保采样、朝向、接受阈值与验证阶段在适配器边界不发生漂移。
+RequirementExecutionRegion toExecutionRegion(const WorkspaceDemandRegion& source)
+{
+    RequirementExecutionRegion region;
+    region.id = source.id;
+    region.name = source.name;
+    region.level = static_cast<RequirementExecutionLevel>(source.level);
+    region.compileState = static_cast<RequirementExecutionCompileState>(source.compileState);
+    region.excludedReason = source.excludedReason;
+    region.refFrame = source.refFrame;
+    region.tcpFrame = source.tcpFrame;
+    region.center = source.center;
+    region.size = source.size;
+    region.minimumCoverage = source.minimumCoverage;
+    region.samplesPerAxis = source.samplesPerAxis;
+    region.orientationMode =
+        static_cast<RequirementExecutionOrientationMode>(source.orientationMode);
+    region.orientationTargetFrame = source.orientationTargetFrame;
+    region.orientationTargetGeometry = source.orientationTargetGeometry;
+    region.orientationTargetPoint = source.orientationTargetPoint;
+    region.fixedRpyDeg = source.fixedRpyDeg;
+    region.directionSamples = source.directionSamples;
+    region.rollSamples = source.rollSamples;
+    region.minimumOrientationCoverage = source.minimumOrientationCoverage;
+    region.minimumVerificationStage =
+        static_cast<RequirementExecutionStage>(source.minimumVerificationStage);
+    region.collisionFreeRequired = source.collisionFreeRequired;
+    region.positionToleranceMeters = source.positionToleranceMeters;
+    region.orientationToleranceDeg = source.orientationToleranceDeg;
+    region.minimumJointMargin = source.minimumJointMargin;
+    region.minimumManipulability = source.minimumManipulability;
+    return region;
+}
+
 } // namespace
 
 bool FrozenRequirementKinematicAdapter::parseArtifactJson(
@@ -192,6 +228,32 @@ bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& a
         artifact, workcell, state, output, error, nullptr, nullptr, artifactBaseDirectory);
 }
 
+// —— FrozenKinematicRequirementInput 重载族：在既有"仅工位任务点"的输出类型之外，
+// 新增同时输出工位任务点与工作区覆盖盒的输入契约类型。所有重载都汇聚到带
+// artifactBaseDirectory 的 applyWithValidation 完整实现，避免各调用方重复实现
+// 校验/投影逻辑。参数解释：
+//   artifactBaseDirectory —— 工件所在目录，用于解析相对路径的场景快照资源。
+bool FrozenRequirementKinematicAdapter::apply(const FrozenRequirementArtifact& artifact,
+                                               const rw::models::WorkCell& workcell,
+                                               const rw::kinematics::State& state,
+                                               FrozenKinematicRequirementInput& output,
+                                               std::string* error)
+{
+    return apply(artifact, workcell, state, output, error, std::string());
+}
+
+bool FrozenRequirementKinematicAdapter::apply(
+    const FrozenRequirementArtifact& artifact,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    FrozenKinematicRequirementInput& output,
+    std::string* error,
+    const std::string& artifactBaseDirectory)
+{
+    return applyWithValidation(
+        artifact, workcell, state, output, error, nullptr, nullptr, artifactBaseDirectory);
+}
+
 bool FrozenRequirementKinematicAdapter::applyWithValidation(
     const FrozenRequirementArtifact& artifact,
     const rw::models::WorkCell& workcell,
@@ -205,14 +267,49 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(
                                warnings, std::string());
 }
 
-bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirementArtifact& artifact,
-                                               const rw::models::WorkCell& workcell,
-                                               const rw::kinematics::State& state,
-                                               std::vector<TaskPoint>& output,
-                                               std::string* error,
-                                               bool* robotStateChanged,
-                                               std::vector<std::string>* warnings,
-                                               const std::string& artifactBaseDirectory)
+// 旧版输出类型(std::vector<TaskPoint>)的适配器实现：委托给 FrozenKinematicRequirementInput
+// 重载，再把结果中的工位任务点移交出去(覆盖盒对旧调用方不可见，保持向后兼容)。
+bool FrozenRequirementKinematicAdapter::applyWithValidation(
+    const FrozenRequirementArtifact& artifact,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    std::vector<TaskPoint>& output,
+    std::string* error,
+    bool* robotStateChanged,
+    std::vector<std::string>* warnings,
+    const std::string& artifactBaseDirectory)
+{
+    FrozenKinematicRequirementInput converted;
+    if (!applyWithValidation(artifact, workcell, state, converted, error, robotStateChanged,
+                             warnings, artifactBaseDirectory))
+        return false;
+    output = std::move(converted.tasks);
+    return true;
+}
+
+// 默认 artifactBaseDirectory 为空串的便捷重载，转发到完整实现。
+bool FrozenRequirementKinematicAdapter::applyWithValidation(
+    const FrozenRequirementArtifact& artifact,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    FrozenKinematicRequirementInput& output,
+    std::string* error,
+    bool* robotStateChanged,
+    std::vector<std::string>* warnings)
+{
+    return applyWithValidation(artifact, workcell, state, output, error, robotStateChanged,
+                               warnings, std::string());
+}
+
+bool FrozenRequirementKinematicAdapter::applyWithValidation(
+    const FrozenRequirementArtifact& artifact,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    FrozenKinematicRequirementInput& output,
+    std::string* error,
+    bool* robotStateChanged,
+    std::vector<std::string>* warnings,
+    const std::string& artifactBaseDirectory)
 {
     // 即使 JSON 有 frozen 标志，也必须复核冻结时的场景和 State。否则夹具移动后仍会把
     // 相对 Frame 的旧位姿送进 IK，产生看似正常、实际对应错误工艺位置的分析结论。
@@ -229,7 +326,7 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirem
             *error = "Engineering requirement artifact compiled requirements do not match its fingerprint.";
         return false;
     }
-    if (artifact.schemaVersion >= 4 && !artifact.executionFingerprint.empty()) {
+    if (artifact.schemaVersion >= 4) {
         if (artifact.executionFingerprint.empty() ||
             artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
             !RequirementExecutionJson::validate(artifact.execution, error)) {
@@ -249,27 +346,45 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(const FrozenRequirem
                 *error = "Requirement execution contract provenance does not match the frozen artifact.";
             return false;
         }
+        // 额外执行编译快照与执行契约的交叉一致性校验，双保险防止漂移。
+        if (!RequirementFreezer::validateExecutionConsistency(artifact, error))
+            return false;
     }
+    // 复核冻结时刻的场景与 State，避免夹具移动后把旧位姿送进 IK。
     FrozenRequirementValidationResult validation;
     if (!RequirementFreezer::validateScenario(
             artifact, workcell, state, &validation, error, artifactBaseDirectory))
         return false;
 
-    std::vector<TaskPoint> converted;
-    if (artifact.schemaVersion >= 4 && !artifact.executionFingerprint.empty()) {
-        converted.reserve(artifact.execution.tasks.size());
+    // 投影阶段：只把 Included 的项送入运动学输入(Excluded/Invalid 均跳过)。
+    // v4 从执行契约读取工位任务点与覆盖盒；v3 从编译快照读取，覆盖盒经
+    // toExecutionRegion 投影为执行契约类型，保证下游拿到统一类型。
+    FrozenKinematicRequirementInput converted;
+    if (artifact.schemaVersion >= 4) {
+        converted.tasks.reserve(artifact.execution.tasks.size());
         for (const RequirementExecutionTask& task : artifact.execution.tasks) {
             if (task.compileState != RequirementExecutionCompileState::Included) continue;
-            converted.push_back(toTaskPoint(task));
+            converted.tasks.push_back(toTaskPoint(task));
+        }
+        converted.workspaceRegions.reserve(artifact.execution.workspaceRegions.size());
+        for (const RequirementExecutionRegion& region : artifact.execution.workspaceRegions) {
+            if (region.compileState != RequirementExecutionCompileState::Included) continue;
+            converted.workspaceRegions.push_back(region);
         }
     }
     else {
-        converted.reserve(artifact.compiled.poseTasks.size());
+        converted.tasks.reserve(artifact.compiled.poseTasks.size());
         for (const CompiledPoseTask& station : artifact.compiled.poseTasks) {
             if (station.compileState != RequirementCompileState::Included) continue;
-            converted.push_back(toTaskPoint(station));
+            converted.tasks.push_back(toTaskPoint(station));
+        }
+        converted.workspaceRegions.reserve(artifact.compiled.workspaceRegions.size());
+        for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions) {
+            if (region.compileState != RequirementCompileState::Included) continue;
+            converted.workspaceRegions.push_back(toExecutionRegion(region));
         }
     }
+    // 统一移交输出与场景校验的副作用(机器人状态变化标记、告警)。
     output = std::move(converted);
     if (robotStateChanged != nullptr) *robotStateChanged = validation.robotStateChanged;
     if (warnings != nullptr) *warnings = validation.warnings;

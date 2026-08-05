@@ -7,6 +7,13 @@
 
 namespace rws {
 
+// 执行契约工作区采样的安全上限(独立于工程需求编译器的 MaxWorkspace* 常量)。
+// 即使工件在本进程内没有经过工程需求编译器，直接消费执行契约的下游也会被这些
+// 上限约束，避免畸形或篡改的执行契约引发无界采样计算。
+constexpr int MaxExecutionWorkspaceSamplesPerAxis = 64;
+constexpr int MaxExecutionWorkspaceDirectionSamples = 1000;
+constexpr int MaxExecutionWorkspaceRollSamples = 360;
+
 enum class RequirementExecutionLevel { Must, Should, Info };
 enum class RequirementExecutionStage { Quick, Verified };
 enum class RequirementExecutionCompileState { Included, Excluded, Invalid };

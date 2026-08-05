@@ -1428,8 +1428,14 @@ static int testTaskPointResolver ()
     const Frame::Ptr toolTip =
         rw::core::ownedPtr (new FixedFrame (
             "ToolTip", Transform3D<> (Vector3D<> (0.0, 0.0, 0.05))));
+    // 额外加入一个挂在场景根(而非所选设备)下的"外来 TCP"，用于验证全局可解析但
+    // 不属于所选设备的 Frame 不能被当作本设备 TCP 接受。
+    const Frame::Ptr foreignTcp =
+        rw::core::ownedPtr (new FixedFrame (
+            "ForeignTcp", Transform3D<> (Vector3D<> (0.0, 0.0, 0.1))));
     stateStructure->addFrame (fixtureA, device->getBase ());
     stateStructure->addFrame (toolTip, device->getEnd ());
+    stateStructure->addFrame (foreignTcp, stateStructure->getRoot ());
 
     rw::models::WorkCell::Ptr workcell =
         rw::core::ownedPtr (new rw::models::WorkCell (
@@ -1457,6 +1463,24 @@ static int testTaskPointResolver ()
                                     "WORLD output refFrame = device base name"))
             return rc;
         if (const int rc = require (r.warnings.empty (), "WORLD success has no warnings"))
+            return rc;
+    }
+
+    // 归属校验用例：全局可解析但不在所选设备运动链上的 Frame，不能被当作本设备
+    // TCP 接受。断言其解析失败，并给出稳定的 KIN_TASK_TCP_WRONG_DEVICE 告警码。
+    {
+        rws::TaskPoint p;
+        p.id = "ForeignTcp";
+        p.refFrame = rws::kTaskWorldFrameName;
+        p.tcpFrame = "ForeignTcp";
+        p.position = {{0.0, 0.0, 0.3}};
+        rws::ResolvedTaskPoint r = rws::resolveTaskPoint (
+            workcell.get (), device, device->getEnd (), state, p);
+        if (const int rc = require (!r.valid, "TCP outside selected device is rejected"))
+            return rc;
+        if (const int rc = require (!r.warnings.empty () &&
+                                    r.warnings.front ().code == "KIN_TASK_TCP_WRONG_DEVICE",
+                                    "wrong-device TCP reports a stable diagnostic"))
             return rc;
     }
 
@@ -2141,6 +2165,42 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
         "resolver=OrientationRuleResolver.1;mode=AlignFrame;target=Fixture_A";
     requirements.poseTasks.push_back(station);
 
+    // 构造一个"包含型"覆盖盒：各采样/朝向/阈值字段全部显式填充，用于验证冻结后
+    // 覆盖盒能完整无损地进入运动学输入，且验证阶段不被降级。
+    rws::BoxRegion includedRegion;
+    includedRegion.id = "fixture_workspace";
+    includedRegion.name = "Fixture workspace";
+    includedRegion.level = rws::RequirementLevel::Should;
+    includedRegion.refFrame = "Fixture_A";
+    includedRegion.tcpFrame = "ToolTCP";
+    includedRegion.center = {{0.11, 0.22, 0.33}};
+    includedRegion.size = {{0.44, 0.55, 0.66}};
+    includedRegion.minimumCoverage = 0.73;
+    includedRegion.samplesPerAxis = 4;
+    includedRegion.orientationMode = rws::OrientationMode::AlignFrame;
+    includedRegion.orientationTargetFrame = "Fixture_A";
+    includedRegion.orientationTargetGeometry = "frame:Fixture_A";
+    includedRegion.orientationTargetPoint = "0.7,0.8,0.9";
+    includedRegion.fixedRpyDeg = {{11.0, 22.0, 33.0}};
+    includedRegion.directionSamples = 12;
+    includedRegion.rollSamples = 7;
+    includedRegion.minimumOrientationCoverage = 0.61;
+    includedRegion.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    includedRegion.collisionFreeRequired = false;
+    includedRegion.positionToleranceMeters = 0.0025;
+    includedRegion.orientationToleranceDeg = 1.75;
+    includedRegion.minimumJointMargin = 0.08;
+    includedRegion.minimumManipulability = 0.015;
+    requirements.boxRegions.push_back(includedRegion);
+
+    // 再构造一个 Info 级覆盖盒：Info 仅作审计记录，冻结后必须被排除在运动学输入外，
+    // 验证"只让 Included 项进入执行输入"的过滤规则。
+    rws::BoxRegion excludedRegion = includedRegion;
+    excludedRegion.id = "audit_workspace";
+    excludedRegion.name = "Audit-only workspace";
+    excludedRegion.level = rws::RequirementLevel::Info;
+    requirements.boxRegions.push_back(excludedRegion);
+
     rws::FrozenRequirementArtifact artifact;
     std::string error;
     if (const int rc = require(rws::RequirementFreezer::freeze(
@@ -2169,15 +2229,95 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(tasks.front().refFrame == "Fixture_A", "fixture reference is retained")) return rc;
     if (const int rc = require(tasks.front().tcpFrame == "ToolTCP", "tcp is retained")) return rc;
     if (const int rc = require(tasks.front().note.find("OrientationRuleResolver.1") != std::string::npos,
-                               "orientation evidence is retained")) return rc;
+                                "orientation evidence is retained")) return rc;
+
+    // 新增的 FrozenKinematicRequirementInput 输入路径：同时导入工位任务点与覆盖盒。
+    // 验证只保留 Included 覆盖盒(Info 级 audit_workspace 不得进入执行输入)，
+    // 且覆盖盒的身份/几何/采样/朝向/阈值/验证阶段逐字段与冻结前的输入一致、不被降级。
+    rws::FrozenKinematicRequirementInput requirementInput;
+    error.clear();
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::apply(
+            artifact, *workcell, workcell->getDefaultState(), requirementInput, &error),
+                               "import frozen tasks and workspace regions: " + error)) return rc;
+    if (const int rc = require(requirementInput.tasks.size() == 1,
+                               "new kinematic input retains included tasks")) return rc;
+    if (const int rc = require(requirementInput.workspaceRegions.size() == 1,
+                               "excluded workspace regions do not enter kinematic execution input")) return rc;
+    const rws::RequirementExecutionRegion& region = requirementInput.workspaceRegions.front();
+    if (const int rc = require(region.id == includedRegion.id &&
+                                   region.name == includedRegion.name &&
+                                   region.level == rws::RequirementExecutionLevel::Should &&
+                                   region.compileState == rws::RequirementExecutionCompileState::Included &&
+                                   region.excludedReason.empty(),
+                               "workspace region identity and inclusion state are retained")) return rc;
+    if (const int rc = require(region.refFrame == includedRegion.refFrame &&
+                                   region.tcpFrame == includedRegion.tcpFrame &&
+                                   region.center == includedRegion.center &&
+                                   region.size == includedRegion.size,
+                               "workspace region frames and geometry are retained")) return rc;
+    if (const int rc = require(region.samplesPerAxis == includedRegion.samplesPerAxis &&
+                                   region.orientationMode == rws::RequirementExecutionOrientationMode::AlignFrame &&
+                                   region.orientationTargetFrame == includedRegion.orientationTargetFrame &&
+                                   region.orientationTargetGeometry == includedRegion.orientationTargetGeometry &&
+                                   region.orientationTargetPoint == includedRegion.orientationTargetPoint &&
+                                   region.fixedRpyDeg == includedRegion.fixedRpyDeg &&
+                                   region.directionSamples == includedRegion.directionSamples &&
+                                   region.rollSamples == includedRegion.rollSamples,
+                               "workspace region sampling and orientation policy are retained")) return rc;
+    if (const int rc = require(
+            nearlyEqual(region.minimumCoverage, includedRegion.minimumCoverage) &&
+                nearlyEqual(region.minimumOrientationCoverage,
+                            includedRegion.minimumOrientationCoverage) &&
+                region.minimumVerificationStage == rws::RequirementExecutionStage::Verified,
+            "workspace coverage thresholds and Verified stage are retained without downgrade")) return rc;
+    if (const int rc = require(
+            region.collisionFreeRequired == includedRegion.collisionFreeRequired &&
+                nearlyEqual(region.positionToleranceMeters,
+                            includedRegion.positionToleranceMeters) &&
+                nearlyEqual(region.orientationToleranceDeg,
+                            includedRegion.orientationToleranceDeg) &&
+                nearlyEqual(region.minimumJointMargin, includedRegion.minimumJointMargin) &&
+                nearlyEqual(region.minimumManipulability,
+                            includedRegion.minimumManipulability),
+            "workspace validation policy is retained")) return rc;
+
+    // 校验路径(applyWithValidation)同样输出工作区覆盖盒，且经过场景校验后
+    // Included 的工位与覆盖盒都应原样保留。
+    rws::FrozenKinematicRequirementInput validatedInput;
+    bool validatedRobotStateChanged = true;
+    std::vector<std::string> validatedWarnings;
+    error.clear();
+    if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
+            artifact, *workcell, workcell->getDefaultState(), validatedInput, &error,
+            &validatedRobotStateChanged, &validatedWarnings),
+                               "validated kinematic input import: " + error)) return rc;
+    if (const int rc = require(validatedInput.tasks.size() == 1 &&
+                                   validatedInput.workspaceRegions.size() == 1,
+                               "validated kinematic input preserves included task and region")) return rc;
+
     rws::FrozenRequirementArtifact tamperedExecution = artifact;
     tamperedExecution.execution.tasks.front().position[0] += 0.01;
     if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
             tamperedExecution, *workcell, workcell->getDefaultState(), tasks, &error),
                                "reject a frozen artifact after execution task tampering")) return rc;
     if (const int rc = require(error.find("execution contract") != std::string::npos ||
-                                   error.find("execution is missing") != std::string::npos,
+                                    error.find("execution is missing") != std::string::npos,
                                "execution tampering reports a contract error")) return rc;
+    // 失败原子性：用哨兵值预填充调用方输出，再对篡改过的执行契约调用 apply。
+    // 断言导入失败且调用方的整个输出(工位任务点与覆盖盒)保持原样不被部分改写，
+    // 保证下游不会在失败时拿到残缺输入。
+    rws::FrozenKinematicRequirementInput unchangedInput;
+    unchangedInput.tasks.push_back(rws::TaskPoint());
+    unchangedInput.tasks.front().id = "sentinel";
+    unchangedInput.workspaceRegions.push_back(region);
+    if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
+            tamperedExecution, *workcell, workcell->getDefaultState(), unchangedInput, &error),
+                               "new kinematic input rejects a tampered execution contract")) return rc;
+    if (const int rc = require(unchangedInput.tasks.size() == 1 &&
+                                   unchangedInput.tasks.front().id == "sentinel" &&
+                                   unchangedInput.workspaceRegions.size() == 1 &&
+                                   unchangedInput.workspaceRegions.front().id == region.id,
+                               "failed import leaves the complete caller output unchanged")) return rc;
 
     QTemporaryDir clonedDirectory;
     if (const int rc = require(clonedDirectory.isValid(),

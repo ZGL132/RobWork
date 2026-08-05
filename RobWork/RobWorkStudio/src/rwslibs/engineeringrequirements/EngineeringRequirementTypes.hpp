@@ -7,6 +7,15 @@
 
 namespace rws {
 
+// 工作空间(Workspace)离散采样的安全上限常量。
+// 这些上限用于阻止畸形或误填的需求请求在下游分析器中引发无界的采样计算：
+// 覆盖盒的逐轴网格数、方向样本数与翻滚(Roll)样本数都据此做硬性封顶。校验器
+// (RequirementCompiler::validateDetailed) 会为超限区域生成 REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED
+// 诊断；Widget 在用户输入时也按此钳制，保证 UI 与校验器口径一致。
+constexpr int MaxWorkspaceSamplesPerAxis = 64;
+constexpr int MaxWorkspaceDirectionSamples = 1000;
+constexpr int MaxWorkspaceRollSamples = 360;
+
 /**
  * @brief 需求等级枚举
  * 定义工程需求在算法优化和路径规划中的硬性/软性约束程度

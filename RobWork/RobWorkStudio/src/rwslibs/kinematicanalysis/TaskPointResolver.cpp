@@ -26,6 +26,20 @@ bool iequals (const std::string& a, const std::string& b)
     return true;
 }
 
+// 判断给定 Frame 是否属于某台设备：从该 Frame 沿 State 的父链向上遍历，
+// 若能到达设备 Base 帧则属于该设备。用于拒绝"把其他机器人末端当本设备 TCP"的
+// 工位配置——全局可解析的 Frame 未必属于所选设备。
+bool belongsToDevice (const rw::kinematics::Frame* frame,
+                      const rw::kinematics::Frame* deviceBase,
+                      const rw::kinematics::State& state)
+{
+    for (const rw::kinematics::Frame* current = frame; current != nullptr;
+         current = current->getParent (state)) {
+        if (current == deviceBase) return true;
+    }
+    return false;
+}
+
 // 构造一条 KIN_TASK_* 告警。
 AnalysisWarning makeTaskWarning (
     const std::string& code,
@@ -80,6 +94,17 @@ ResolvedTaskPoint rws::resolveTaskPoint (
             r.warnings.push_back (makeTaskWarning (
                 "KIN_TASK_TCP_NOT_FOUND",
                 "Task point TCP frame '" + taskPoint.tcpFrame + "' not found in WorkCell."));
+            return r;
+        }
+        // 归属校验：TCP Frame 虽可全局解析，但若不属于所选设备，同样按失败处理，
+        // 并给出稳定的 KIN_TASK_TCP_WRONG_DEVICE 告警码，避免把其他机器人末端
+        // 当作本设备 TCP 求解出错误运动学。
+        if (!belongsToDevice(resolvedTcp.get(), device->getBase (), state)) {
+            r.failure = KinematicFailureReason::NoTcpFrame;
+            r.warnings.push_back (makeTaskWarning (
+                "KIN_TASK_TCP_WRONG_DEVICE",
+                "Task point TCP frame '" + taskPoint.tcpFrame +
+                "' does not belong to the selected device."));
             return r;
         }
         r.targetInDeviceBase.tcpFrame = taskPoint.tcpFrame;

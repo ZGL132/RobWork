@@ -371,6 +371,32 @@ int testWorkspaceVerificationPolicyValidation()
     return 0;
 }
 
+// 采样上限测试：覆盖盒的逐轴网格数、方向样本数与翻滚样本数都超过安全上限时，
+// 详细校验必须生成 REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED 诊断，防止畸形需求在下游
+// 采样分析中产生无界计算量。
+int testWorkspaceSamplingLimitsRejectUnboundedWork()
+{
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+    rws::BoxRegion region;
+    region.id = "oversized_grid";
+    region.tcpFrame = "TCP";
+    // 三项采样参数均取"上限 + 1"，确保超出上限而非恰好在边界。
+    region.samplesPerAxis = rws::MaxWorkspaceSamplesPerAxis + 1;
+    region.directionSamples = rws::MaxWorkspaceDirectionSamples + 1;
+    region.rollSamples = rws::MaxWorkspaceRollSamples + 1;
+    requirements.boxRegions.push_back(region);
+
+    const std::vector<rws::RequirementDiagnostic> diagnostics =
+        rws::RequirementCompiler::validateDetailed(requirements);
+    // 断言诊断列表中至少出现一次采样上限超限码。
+    bool sawLimit = false;
+    for (const rws::RequirementDiagnostic& diagnostic : diagnostics)
+        sawLimit = sawLimit || diagnostic.code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED";
+    REQUIRE(sawLimit);
+    return 0;
+}
+
 int testStableRequirementDiagnosticCodes()
 {
     rws::RequirementSet requirements;
@@ -433,6 +459,15 @@ int testRequirementArtifactV3Migration()
     legacy.scenario.snapshotFingerprint = "snapshot-v3";
 
     const QJsonObject input = rws::FrozenRequirementArtifactJson::toObject(legacy);
+    // 先做一次往返解析，验证 v3 工件经 fromObject 加载后：覆盖盒仍被完整保留，
+    // 且由于 v3 缺乏 Verified 证据，验证阶段被迁移回填为 Quick。
+    rws::FrozenRequirementArtifact parsedLegacy;
+    std::string parseError;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(input, parsedLegacy, &parseError));
+    REQUIRE(parsedLegacy.compiled.workspaceRegions.size() == 1);
+    REQUIRE(parsedLegacy.compiled.workspaceRegions.front().minimumVerificationStage ==
+            rws::RequirementVerificationStage::Quick);
+
     QJsonObject output;
     std::vector<rws::RequirementDiagnostic> diagnostics;
     std::string error;
@@ -539,6 +574,110 @@ int testFreezerRejectsMissingWorkCellTcpForMustStation()
     REQUIRE(!rws::RequirementFreezer::freeze(requirements, *workcell,
                                                workcell->getDefaultState(), model, artifact, &error));
     REQUIRE(error.find("robot device") != std::string::npos);
+    return 0;
+}
+
+int testFreezerRetainsNonBlockingEnvironmentExclusions()
+{
+    using namespace rw::kinematics;
+    rws::RobotModelSpec model;
+    model.robotName = "OptionalEnvironmentRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const FixedFrame::Ptr base = rw::core::ownedPtr(
+        new FixedFrame("OptionalEnvironmentBase", rw::math::Transform3D<>()));
+    const FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new FixedFrame("OptionalEnvironmentTcp", rw::math::Transform3D<>()));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "OptionalEnvironmentWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::BoxRegion region;
+    region.id = "optional_missing_frame";
+    region.level = rws::RequirementLevel::Should;
+    region.refFrame = "MissingOptionalFixture";
+    region.tcpFrame = tcp->getName();
+    // 除环境诊断外再保留一条编译器级建议诊断(Verified 阶段的覆盖盒存在"过粗"建议)。
+    // 工件重载必须完整保留冻结时的诊断记录，不能因重新编译而重复生成或丢失。
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
+    region.samplesPerAxis = 1;
+    requirements.boxRegions.push_back(region);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    // Should 级覆盖盒的引用 Frame 在场景中缺失(非阻塞环境诊断)：冻结应成功，
+    // 但该覆盖盒在 compiled 与 execution 中都必须标记为 Excluded 并带排除原因，
+    // 而不是被静默删除。
+    REQUIRE(rws::RequirementFreezer::freeze(requirements, *workcell,
+                                             workcell->getDefaultState(), model,
+                                             artifact, &error));
+    REQUIRE(artifact.compiled.workspaceRegions.size() == 1);
+    REQUIRE(artifact.compiled.workspaceRegions.front().compileState ==
+            rws::RequirementCompileState::Excluded);
+    REQUIRE(!artifact.compiled.workspaceRegions.front().excludedReason.empty());
+    REQUIRE(artifact.execution.workspaceRegions.size() == 1);
+    REQUIRE(artifact.execution.workspaceRegions.front().compileState ==
+            rws::RequirementExecutionCompileState::Excluded);
+    // 往返重载后诊断数量必须与冻结时刻完全一致(不被重新编译重复生成)。
+    const QJsonObject artifactObject = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    rws::FrozenRequirementArtifact restored;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(artifactObject, restored, &error));
+    REQUIRE(restored.compiled.diagnostics.size() == artifact.compiled.diagnostics.size());
+    return 0;
+}
+
+// TCP 归属校验测试：工位声明的 TCP Frame 属于场景中"另一台设备"而非绑定机器人。
+// 冻结器必须拒绝此类需求(对阻塞诊断直接失败并给出包含 "does not belong" 的明确
+// 错误)，防止把别的机器人末端误当作绑定设备 TCP 进入后续 IK/采样。
+int testFreezerRejectsTcpFromAnotherDevice()
+{
+    using namespace rw::kinematics;
+    rws::RobotModelSpec model;
+    model.robotName = "BoundRobot";
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+
+    rws::PoseTask task;
+    task.id = "wrong_device_tcp";
+    task.refFrame = "WORLD";
+    task.tcpFrame = "OtherRobotTcp";
+    requirements.poseTasks.push_back(task);
+
+    StateStructure::Ptr structure = rw::core::ownedPtr(new StateStructure());
+    const FixedFrame::Ptr boundBase = rw::core::ownedPtr(
+        new FixedFrame("BoundBase", rw::math::Transform3D<>()));
+    const FixedFrame::Ptr boundTcp = rw::core::ownedPtr(
+        new FixedFrame("BoundRobotTcp", rw::math::Transform3D<>()));
+    const FixedFrame::Ptr otherBase = rw::core::ownedPtr(
+        new FixedFrame("OtherBase", rw::math::Transform3D<>()));
+    const FixedFrame::Ptr otherTcp = rw::core::ownedPtr(
+        new FixedFrame("OtherRobotTcp", rw::math::Transform3D<>()));
+    structure->addFrame(boundBase, structure->getRoot());
+    structure->addFrame(boundTcp, boundBase);
+    structure->addFrame(otherBase, structure->getRoot());
+    structure->addFrame(otherTcp, otherBase);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "MultiDeviceWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        boundBase.get(), boundTcp.get(), model.robotName, structure->getDefaultState())));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        otherBase.get(), otherTcp.get(), "OtherRobot", structure->getDefaultState())));
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    REQUIRE(!rws::RequirementFreezer::freeze(requirements, *workcell,
+                                              workcell->getDefaultState(), model,
+                                              artifact, &error));
+    REQUIRE(error.find("does not belong") != std::string::npos);
     return 0;
 }
 
@@ -753,11 +892,48 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
             rws::RequirementExecutionStage::Verified);
     REQUIRE(!artifact.executionFingerprint.empty());
     REQUIRE(rws::RequirementFreezer::isCurrent(artifact, requirements, *workcell, frozenState, model, &error));
+
+    // 篡改"编译快照"中的工位位置后直接反序列化：v4 工件要求执行契约与编译快照
+    // 精确一致，因此即使只改 compiledRequirements 的一处数值，也必须被
+    // fromObject 的一致性校验拒绝。
+    QJsonObject tamperedSnapshot = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QJsonObject compiledRequirements = tamperedSnapshot.value("compiledRequirements").toObject();
+    QJsonArray compiledTasks = compiledRequirements.value("poseTasks").toArray();
+    if (!compiledTasks.isEmpty()) {
+        QJsonObject task = compiledTasks.at(0).toObject();
+        QJsonArray position = task.value("position").toArray();
+        position.replace(0, position.at(0).toDouble() + 0.01);
+        task["position"] = position;
+        compiledTasks.replace(0, task);
+        compiledRequirements["poseTasks"] = compiledTasks;
+        tamperedSnapshot["compiledRequirements"] = compiledRequirements;
+        rws::FrozenRequirementArtifact parsedTamperedSnapshot;
+        REQUIRE(!rws::FrozenRequirementArtifactJson::fromObject(
+            tamperedSnapshot, parsedTamperedSnapshot, &error));
+    }
+
     rws::FrozenRequirementArtifact tamperedExecution = artifact;
     tamperedExecution.execution.workspaceRegions[0].size[0] += 0.01;
     REQUIRE(!rws::RequirementFreezer::isCurrent(
         tamperedExecution, requirements, *workcell, frozenState, model, &error));
     REQUIRE(error.find("execution") != std::string::npos);
+
+    // 保留的冻结诊断是"编译项无法解析"的权威证据。仅把 v4 执行契约中的对应项改为
+    // Included，不能把该排除状态"洗白"：工件必须拒绝这种自相矛盾的重载 —— 诊断声称
+    // 该工位 TCP 未解析，执行契约却声称已包含，二者不一致时以诊断为准并拒绝。
+    QJsonObject contradictoryExclusion = rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QJsonArray contradictoryDiagnostics = contradictoryExclusion.value("diagnostics").toArray();
+    QJsonObject unresolvedTcp;
+    unresolvedTcp["code"] = "REQ_TCP_FRAME_NOT_FOUND";
+    unresolvedTcp["requirementId"] = "state_task";
+    unresolvedTcp["level"] = "Should";
+    unresolvedTcp["message"] = "Injected unresolved TCP diagnostic for consistency testing.";
+    unresolvedTcp["blocking"] = false;
+    contradictoryDiagnostics.append(unresolvedTcp);
+    contradictoryExclusion["diagnostics"] = contradictoryDiagnostics;
+    rws::FrozenRequirementArtifact parsedContradictoryExclusion;
+    REQUIRE(!rws::FrozenRequirementArtifactJson::fromObject(
+        contradictoryExclusion, parsedContradictoryExclusion, &error));
 
     rw::kinematics::State changedState = frozenState;
     device->setQ(rw::math::Q(1, 0.35), changedState);
@@ -1970,6 +2146,11 @@ int main(int argc, char** argv)
         QCoreApplication app(argc, argv);
         return testWorkspaceVerificationPolicyValidation();
     }
+    // 独立运行的采样上限专项测试：./EngineeringRequirementsTest workspace_sampling_limits
+    if (argc > 1 && std::string(argv[1]) == "workspace_sampling_limits") {
+        QCoreApplication app(argc, argv);
+        return testWorkspaceSamplingLimitsRejectUnboundedWork();
+    }
     if (argc > 1 && std::string(argv[1]) == "diagnostic_codes") {
         QCoreApplication app(argc, argv);
         return testStableRequirementDiagnosticCodes();
@@ -2041,6 +2222,11 @@ int main(int argc, char** argv)
         return 1;
     if (testFreezerRejectsMissingWorkCellTcpForMustStation() != 0)
         return 1;
+    // 环境诊断保留与 TCP 归属校验：非阻塞排除项必须留存、跨设备 TCP 必须被拒绝。
+    if (testFreezerRetainsNonBlockingEnvironmentExclusions() != 0)
+        return 1;
+    if (testFreezerRejectsTcpFromAnotherDevice() != 0)
+        return 1;
     if (testFrozenArtifactRoundTripRetainsCompiledEvidence() != 0)
         return 1;
     if (testFrozenArtifactBecomesStaleWhenWorkCellStateChanges() != 0)
@@ -2052,6 +2238,9 @@ int main(int argc, char** argv)
     if (testKeyStationPersistsEngineeringIntentAndCompilesWorkPose() != 0)
         return 1;
     if (testCompilerKeepsNonBlockingStationDiagnosticsOutOfCompiledTasks() != 0)
+        return 1;
+    // 采样密度安全上限：超限的覆盖盒采样请求必须被详细校验拒绝。
+    if (testWorkspaceSamplingLimitsRejectUnboundedWork() != 0)
         return 1;
     if (testGeometryFrameFeatureResolvesAndCompiles() != 0)
         return 1;

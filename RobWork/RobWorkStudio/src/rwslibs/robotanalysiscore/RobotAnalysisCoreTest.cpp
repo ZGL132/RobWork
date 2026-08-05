@@ -273,6 +273,13 @@ int runJson ()
         return fail ("Invalid JSON should fail to parse.");
     if (parseError.empty ())
         return fail ("Invalid JSON should report a parse error.");
+    // 非对象根(此处为数组)的 JSON 必须在结构层就被拒绝，并给出含 "object" 的错误，
+    // 而不是被当作缺失字段的顶层对象继续解析。
+    parseError.clear ();
+    rws::RequirementExecutionSet restoredExecution;
+    if (rws::RequirementExecutionJson::fromJson ("[]", restoredExecution, &parseError) ||
+        parseError.find ("object") == std::string::npos)
+        return fail ("Non-object requirement execution JSON should report a structural error.");
     return 0;
 }
 
@@ -562,6 +569,99 @@ int runRequirementExecution ()
     if (rws::RequirementExecutionJson::fromObject (unsupportedSchema, restored, &error) ||
         error.find ("schemaVersion") == std::string::npos)
         return fail ("Unsupported execution schema versions should be rejected explicitly.");
+
+    // 结构严格性：缺失顶层 tasks/workspaceRegions 数组必须被拒绝。
+    QJsonObject missingTasks = object;
+    missingTasks.remove ("tasks");
+    if (rws::RequirementExecutionJson::fromObject (missingTasks, restored, &error) ||
+        error.find ("tasks") == std::string::npos)
+        return fail ("Requirement execution JSON should reject a missing tasks array.");
+
+    QJsonObject missingRegions = object;
+    missingRegions.remove ("workspaceRegions");
+    if (rws::RequirementExecutionJson::fromObject (missingRegions, restored, &error) ||
+        error.find ("workspaceRegions") == std::string::npos)
+        return fail ("Requirement execution JSON should reject a missing workspaceRegions array.");
+
+    // 采样上限：逐轴网格数超出 MaxExecutionWorkspaceSamplesPerAxis 必须被拒绝。
+    QJsonObject oversized = object;
+    QJsonArray oversizedRegions = oversized.value ("workspaceRegions").toArray ();
+    QJsonObject oversizedRegion = oversizedRegions.at (0).toObject ();
+    oversizedRegion["samplesPerAxis"] = rws::MaxExecutionWorkspaceSamplesPerAxis + 1;
+    oversizedRegions.replace (0, oversizedRegion);
+    oversized["workspaceRegions"] = oversizedRegions;
+    if (rws::RequirementExecutionJson::fromObject (oversized, restored, &error) ||
+        error.find ("invalid values") == std::string::npos)
+        return fail ("Requirement execution JSON should reject oversized workspace sampling.");
+
+    // 顶层 type/schemaVersion 必须显式存在(不允许缺省回填)。
+    QJsonObject missingType = object;
+    missingType.remove ("type");
+    if (rws::RequirementExecutionJson::fromObject (missingType, restored, &error) ||
+        error.find ("type") == std::string::npos)
+        return fail ("Requirement execution JSON should require an explicit type.");
+
+    QJsonObject missingSchema = object;
+    missingSchema.remove ("schemaVersion");
+    if (rws::RequirementExecutionJson::fromObject (missingSchema, restored, &error) ||
+        error.find ("schemaVersion") == std::string::npos)
+        return fail ("Requirement execution JSON should require an explicit schemaVersion.");
+
+    // provenance 的每个成员都必须显式存在，缺一个即拒绝。
+    QJsonObject missingProvenanceMember = object;
+    QJsonObject incompleteProvenance = missingProvenanceMember.value ("provenance").toObject();
+    incompleteProvenance.remove ("workcellFingerprint");
+    missingProvenanceMember["provenance"] = incompleteProvenance;
+    if (rws::RequirementExecutionJson::fromObject (missingProvenanceMember, restored, &error) ||
+        error.find ("provenance") == std::string::npos)
+        return fail ("Requirement execution JSON should require every provenance member.");
+
+    // 数组元素类型错误：position 数组混入非数字元素必须被拒绝，并指出 "position"。
+    QJsonObject wrongArrayType = object;
+    QJsonArray wrongPosition = wrongArrayType.value ("tasks").toArray ().at (0).toObject ()
+        .value ("position").toArray ();
+    wrongPosition.replace (1, "not-a-number");
+    QJsonObject wrongTask = wrongArrayType.value ("tasks").toArray ().at (0).toObject ();
+    wrongTask["position"] = wrongPosition;
+    QJsonArray wrongTasks = wrongArrayType.value ("tasks").toArray ();
+    wrongTasks.replace (0, wrongTask);
+    wrongArrayType["tasks"] = wrongTasks;
+    if (rws::RequirementExecutionJson::fromObject (wrongArrayType, restored, &error) ||
+        error.find ("position") == std::string::npos)
+        return fail ("Requirement execution JSON should reject wrong-typed array values.");
+
+    // 标量字段类型错误：整数字段混入字符串必须被拒绝，并指出 "samplesPerAxis"。
+    QJsonObject wrongScalarType = object;
+    QJsonArray wrongRegions = wrongScalarType.value ("workspaceRegions").toArray ();
+    QJsonObject wrongRegion = wrongRegions.at (0).toObject ();
+    wrongRegion["samplesPerAxis"] = "bad";
+    wrongRegions.replace (0, wrongRegion);
+    wrongScalarType["workspaceRegions"] = wrongRegions;
+    if (rws::RequirementExecutionJson::fromObject (wrongScalarType, restored, &error) ||
+        error.find ("samplesPerAxis") == std::string::npos)
+        return fail ("Requirement execution JSON should reject wrong-typed scalar values.");
+
+    // 方向样本数上限独立生效：即使逐轴网格数合法，directionSamples 超限也必须拒绝。
+    QJsonObject independentDirectionLimit = object;
+    QJsonArray directionRegions = independentDirectionLimit.value ("workspaceRegions").toArray ();
+    QJsonObject directionRegion = directionRegions.at (0).toObject ();
+    directionRegion["directionSamples"] = rws::MaxExecutionWorkspaceDirectionSamples + 1;
+    directionRegions.replace (0, directionRegion);
+    independentDirectionLimit["workspaceRegions"] = directionRegions;
+    if (rws::RequirementExecutionJson::fromObject (independentDirectionLimit, restored, &error) ||
+        error.find ("invalid values") == std::string::npos)
+        return fail ("Requirement execution JSON should enforce direction sample limits independently.");
+
+    // 翻滚样本数上限同样独立生效。
+    QJsonObject independentRollLimit = object;
+    QJsonArray rollRegions = independentRollLimit.value ("workspaceRegions").toArray ();
+    QJsonObject rollRegion = rollRegions.at (0).toObject ();
+    rollRegion["rollSamples"] = rws::MaxExecutionWorkspaceRollSamples + 1;
+    rollRegions.replace (0, rollRegion);
+    independentRollLimit["workspaceRegions"] = rollRegions;
+    if (rws::RequirementExecutionJson::fromObject (independentRollLimit, restored, &error) ||
+        error.find ("invalid values") == std::string::npos)
+        return fail ("Requirement execution JSON should enforce roll sample limits independently.");
     return 0;
 }
 

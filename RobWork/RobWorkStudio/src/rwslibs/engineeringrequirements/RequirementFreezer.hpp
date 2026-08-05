@@ -105,6 +105,22 @@ struct FrozenRequirementArtifact {
  */
 class RequirementFreezer {
   public:
+    /**
+     * @brief 校验 v4 执行契约是否为冻结编译快照及其来源的精确投影。
+     *
+     * 对 schemaVersion == 4 的工件执行完整一致性审计：
+     *   1) executionFingerprint 存在、非空且与 execution 重新计算的结果一致；
+     *   2) execution 本身通过 RequirementExecutionJson::validate 结构校验；
+     *   3) execution.provenance 的每一项(需求指纹/模型指纹/工作单元指纹/
+     *      环境指纹/编译器版本/冻结时间/源路径)与工件顶层字段逐项一致；
+     *   4) 由 compiled 快照投影生成的执行契约(makeExecution)与存档的执行契约
+     *      指纹一致，确保编译快照未被篡改而 execution 未同步更新。
+     * 任何一环不符即返回 false 并经 error 回填原因，防止"编译快照与执行契约
+     * 各自独立修改"造成的静默漂移。
+     */
+    static bool validateExecutionConsistency(const FrozenRequirementArtifact& artifact,
+                                             std::string* error = nullptr);
+
     static bool freeze(const RequirementSet& requirements, const rw::models::WorkCell& workcell,
                        const rw::kinematics::State& state, const RobotModelSpec& model,
                        FrozenRequirementArtifact& artifact, std::string* error = nullptr);

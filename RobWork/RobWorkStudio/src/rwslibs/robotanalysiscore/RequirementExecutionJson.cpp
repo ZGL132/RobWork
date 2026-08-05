@@ -26,10 +26,71 @@ bool finiteArray(const std::array<double, N>& values)
     return true;
 }
 
+// —— 严格 JSON 字段类型校验辅助函数族 ——
+// 执行契约是下游分析直接消费的审计数据：字段缺失或被换成其他 JSON 类型时，
+// toDouble/toBool/toString 会静默返回默认值，掩盖损坏或篡改的工件。因此解析前先
+// 用这些函数显式核对字段类型，类型不符即失败并回填包含字段名的可操作错误。
+// 通用类型检查：字段存在且类型匹配才通过；未定义(缺失)也视为失败。
+bool requireType(const QJsonObject& object, const char* key, QJsonValue::Type type,
+                 std::string* error)
+{
+    const QJsonValue value = object.value(key);
+    if (!value.isUndefined() && value.type() == type) return true;
+    if (error != nullptr)
+        *error = std::string("Requirement execution field '") + key + "' is missing or has the wrong type.";
+    return false;
+}
+
+// 要求字段为字符串。
+bool requireString(const QJsonObject& object, const char* key, std::string* error)
+{
+    return requireType(object, key, QJsonValue::String, error);
+}
+
+// 要求字段为数字(QJson 中整数也以 Double 类型存储)。
+bool requireNumber(const QJsonObject& object, const char* key, std::string* error)
+{
+    return requireType(object, key, QJsonValue::Double, error);
+}
+
+// 要求字段为整数值：先确保是数字，再校验其有限且无小数部分。
+bool requireInteger(const QJsonObject& object, const char* key, std::string* error)
+{
+    if (!requireNumber(object, key, error)) return false;
+    const double value = object.value(key).toDouble();
+    if (!std::isfinite(value) || std::floor(value) != value) {
+        if (error != nullptr)
+            *error = std::string("Requirement execution field '") + key + "' must be an integer.";
+        return false;
+    }
+    return true;
+}
+
+// 要求字段为布尔值。
+bool requireBool(const QJsonObject& object, const char* key, std::string* error)
+{
+    return requireType(object, key, QJsonValue::Bool, error);
+}
+
+// 要求字段为 JSON 数组。
+bool requireArray(const QJsonObject& object, const char* key, std::string* error)
+{
+    return requireType(object, key, QJsonValue::Array, error);
+}
+
+// 要求字段为 JSON 对象。
+bool requireObject(const QJsonObject& object, const char* key, std::string* error)
+{
+    return requireType(object, key, QJsonValue::Object, error);
+}
+
+// 读取固定长度 double 数组：先确认字段是数组且长度恰为 N，再逐元素校验类型
+// 与有限性。非数字元素会在此被拒绝，而不是被 toDouble 静默转为 0。
 template <std::size_t N>
 bool readArray(const QJsonObject& object, const char* key,
                std::array<double, N>& values, std::string* error)
 {
+    if (!requireArray(object, key, error)) return false;
     const QJsonArray array = object.value(key).toArray();
     if (array.size() != static_cast<int>(N)) {
         if (error != nullptr) *error = std::string(key) + " must contain " +
@@ -37,7 +98,14 @@ bool readArray(const QJsonObject& object, const char* key,
         return false;
     }
     for (std::size_t index = 0; index < N; ++index) {
-        const double value = array.at(static_cast<int>(index)).toDouble();
+        const QJsonValue element = array.at(static_cast<int>(index));
+        // 显式类型校验：只接受 Double，拒绝字符串/布尔等被 toDouble 吞掉的错误类型。
+        if (!element.isDouble()) {
+            if (error != nullptr)
+                *error = std::string(key) + " contains a value with the wrong type.";
+            return false;
+        }
+        const double value = element.toDouble();
         if (!std::isfinite(value)) {
             if (error != nullptr) *error = std::string(key) + " contains a non-finite value.";
             return false;
@@ -202,12 +270,15 @@ bool diagnosticFromObject(const QJsonObject& object,
                           RequirementExecutionDiagnostic& value,
                           std::string* error)
 {
+    // 诊断的所有文本字段必须显式存在且为字符串；severity 枚举值必须在合法集合内。
+    for (const char* key : {"code", "severity", "requirementId", "field", "message", "source"})
+        if (!requireString(object, key, error)) return false;
     value.code = object.value("code").toString().toStdString();
     value.requirementId = object.value("requirementId").toString().toStdString();
     value.field = object.value("field").toString().toStdString();
     value.message = object.value("message").toString().toStdString();
     value.source = object.value("source").toString().toStdString();
-    if (!severityFromString(object.value("severity").toString("Info"), value.severity)) {
+    if (!severityFromString(object.value("severity").toString(), value.severity)) {
         if (error != nullptr) *error = "Requirement execution diagnostic severity is invalid.";
         return false;
     }
@@ -253,22 +324,45 @@ void writeCommon(const RequirementExecutionTask& value, QJsonObject& object)
     object["pathValidationPending"] = value.pathValidationPending;
 }
 
+bool validateExecutionTask(const RequirementExecutionTask& task, std::string* error);
+bool validateExecutionRegion(const RequirementExecutionRegion& region, std::string* error);
+
 bool readCommon(const QJsonObject& object, RequirementExecutionTask& value, std::string* error)
 {
+    // 字符串字段：id/name/excludedReason/refFrame/tcpFrame 及枚举、朝向目标、证据等。
+    for (const char* key : {"id", "name", "excludedReason", "refFrame", "tcpFrame",
+                            "level", "compileState", "processType", "orientationMode",
+                            "orientationTargetFrame", "orientationTargetGeometry",
+                            "orientationTargetPoint", "resolutionEvidence"})
+        if (!requireString(object, key, error)) return false;
+    // 数值字段：容差、翻滚范围、关节裕量、可操作度等。
+    for (const char* key : {"positionToleranceMeters", "orientationToleranceDeg",
+                            "rollMinimumDeg", "rollMaximumDeg", "minimumJointMargin",
+                            "minimumManipulability"})
+        if (!requireNumber(object, key, error)) return false;
+    // 布尔字段：工具翻滚自由、法向翻转、碰撞自由要求、路径待验证。
+    for (const char* key : {"allowToolRollFree", "invertNormal", "collisionFreeRequired",
+                            "pathValidationPending"})
+        if (!requireBool(object, key, error)) return false;
+    // 嵌套的接近/撤离路径规则必须是对象。
+    if (!requireObject(object, "approach", error) || !requireObject(object, "retract", error))
+        return false;
     value.id = object.value("id").toString().toStdString();
     value.name = object.value("name").toString().toStdString();
     value.excludedReason = object.value("excludedReason").toString().toStdString();
     value.refFrame = object.value("refFrame").toString("WORLD").toStdString();
     value.tcpFrame = object.value("tcpFrame").toString().toStdString();
-    if (!levelFromString(object.value("level").toString("Must"), value.level) ||
-        !compileStateFromString(object.value("compileState").toString("Included"), value.compileState) ||
-        !processTypeFromString(object.value("processType").toString("Generic"), value.processType) ||
-        !orientationFromString(object.value("orientationMode").toString("Fixed"), value.orientationMode)) {
+    // 枚举字段必须落在合法取值集合内(不再允许缺省回填后悄悄通过)。
+    if (!levelFromString(object.value("level").toString(), value.level) ||
+        !compileStateFromString(object.value("compileState").toString(), value.compileState) ||
+        !processTypeFromString(object.value("processType").toString(), value.processType) ||
+        !orientationFromString(object.value("orientationMode").toString(), value.orientationMode)) {
         if (error != nullptr) *error = "Requirement execution task enum is invalid.";
         return false;
     }
     if (!readArray(object, "position", value.position, error) ||
         !readArray(object, "rpyDeg", value.rpyDeg, error)) return false;
+    // 数值字段严格读取：字段已由上面 require* 保证类型，这里不再回填默认值。
     value.positionToleranceMeters = object.value("positionToleranceMeters").toDouble(0.001);
     value.orientationToleranceDeg = object.value("orientationToleranceDeg").toDouble(1.0);
     value.allowToolRollFree = object.value("allowToolRollFree").toBool(false);
@@ -282,23 +376,23 @@ bool readCommon(const QJsonObject& object, RequirementExecutionTask& value, std:
     value.minimumJointMargin = object.value("minimumJointMargin").toDouble(0.0);
     value.minimumManipulability = object.value("minimumManipulability").toDouble(0.0);
     value.resolutionEvidence = object.value("resolutionEvidence").toString().toStdString();
+    // 路径规则严格读取：四个字段全部必须显式存在且类型正确；axis 枚举必须合法。
     const auto readPath = [&] (const QJsonObject& path, RequirementExecutionPathRule& rule) {
-        if (path.isEmpty()) return true;
+        if (!requireBool(path, "enabled", error) || !requireString(path, "axis", error) ||
+            !requireNumber(path, "distanceMeters", error) ||
+            !requireBool(path, "collisionFreeRequired", error)) return false;
         rule.enabled = path.value("enabled").toBool(false);
-        if (!offsetAxisFromString(path.value("axis").toString("ToolZ"), rule.axis)) {
+        if (!offsetAxisFromString(path.value("axis").toString(), rule.axis)) {
             if (error != nullptr) *error = "Requirement execution path axis is invalid.";
             return false;
         }
-        rule.distanceMeters = path.value("distanceMeters").toDouble(0.0);
-        rule.collisionFreeRequired = path.value("collisionFreeRequired").toBool(true);
+        rule.distanceMeters = path.value("distanceMeters").toDouble();
+        rule.collisionFreeRequired = path.value("collisionFreeRequired").toBool();
         return true;
     };
     if (!readPath(object.value("approach").toObject(), value.approach) ||
         !readPath(object.value("retract").toObject(), value.retract)) return false;
-    value.pathValidationPending = object.contains("pathValidationPending")
-        ? object.value("pathValidationPending").toBool(false)
-        : (value.approach.enabled || value.retract.enabled);
-    value.pathValidationPending = value.pathValidationPending || value.approach.enabled || value.retract.enabled;
+    value.pathValidationPending = object.value("pathValidationPending").toBool();
     if (!std::isfinite(value.positionToleranceMeters) || !std::isfinite(value.orientationToleranceDeg) ||
         !std::isfinite(value.rollMinimumDeg) || !std::isfinite(value.rollMaximumDeg) ||
         !std::isfinite(value.minimumJointMargin) || !std::isfinite(value.minimumManipulability) ||
@@ -321,8 +415,27 @@ QJsonObject taskToObject(const RequirementExecutionTask& value)
 
 bool taskFromObject(const QJsonObject& object, RequirementExecutionTask& value, std::string* error)
 {
+    // 身份是最具可操作性的结构诊断：先于契约其余字段检查 id，避免畸形记录因后续
+    // 字段缺失而无法定位到具体是哪个需求条目非法。
+    if (!requireString(object, "id", error)) return false;
+    if (object.value("id").toString().trimmed().isEmpty()) {
+        if (error != nullptr) *error = "Requirement execution task id is required.";
+        return false;
+    }
     if (!readCommon(object, value, error)) return false;
+    // 先校验身份与标量契约，再检查嵌套诊断：当多个字段同时畸形时，调用方收到最
+    // 可操作的错误(例如空的工位 id)，而不是被嵌套结构的错误淹没。
+    if (!validateExecutionTask(value, error)) return false;
+    // 诊断数组必须存在且元素为对象。
+    if (!object.contains("diagnostics") || !object.value("diagnostics").isArray()) {
+        if (error != nullptr) *error = "Requirement execution task diagnostics must be an array.";
+        return false;
+    }
     for (const auto& item : object.value("diagnostics").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement execution task diagnostic must be an object.";
+            return false;
+        }
         RequirementExecutionDiagnostic diagnostic;
         if (!diagnosticFromObject(item.toObject(), diagnostic, error)) return false;
         value.diagnostics.push_back(diagnostic);
@@ -366,34 +479,56 @@ QJsonObject regionToObject(const RequirementExecutionRegion& value)
 
 bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& value, std::string* error)
 {
+    // 字符串字段：id/name/excludedReason/refFrame/tcpFrame 及枚举、朝向目标、验证阶段。
+    for (const char* key : {"id", "name", "excludedReason", "refFrame", "tcpFrame",
+                            "level", "compileState", "orientationMode",
+                            "orientationTargetFrame", "orientationTargetGeometry",
+                            "orientationTargetPoint", "minimumVerificationStage"})
+        if (!requireString(object, key, error)) return false;
+    // 覆盖率/朝向覆盖率/容差等数值字段。
+    for (const char* key : {"minimumCoverage", "minimumOrientationCoverage",
+                            "positionToleranceMeters", "orientationToleranceDeg",
+                            "minimumJointMargin", "minimumManipulability"})
+        if (!requireNumber(object, key, error)) return false;
+    // 采样计数必须是整数(网格/方向/翻滚样本数)。
+    for (const char* key : {"samplesPerAxis", "directionSamples", "rollSamples"})
+        if (!requireInteger(object, key, error)) return false;
+    // 固定数组与布尔字段。
+    if (!requireArray(object, "center", error) || !requireArray(object, "size", error) ||
+        !requireArray(object, "fixedRpyDeg", error) ||
+        !requireBool(object, "collisionFreeRequired", error)) return false;
     value.id = object.value("id").toString().toStdString();
     value.name = object.value("name").toString().toStdString();
     value.excludedReason = object.value("excludedReason").toString().toStdString();
     value.refFrame = object.value("refFrame").toString("WORLD").toStdString();
     value.tcpFrame = object.value("tcpFrame").toString().toStdString();
-    if (!levelFromString(object.value("level").toString("Must"), value.level) ||
-        !compileStateFromString(object.value("compileState").toString("Included"), value.compileState) ||
-        !orientationFromString(object.value("orientationMode").toString("Fixed"), value.orientationMode) ||
-        !stageFromString(object.value("minimumVerificationStage").toString("Verified"), value.minimumVerificationStage)) {
+    // 枚举字段必须在合法取值集合内。
+    if (!levelFromString(object.value("level").toString(), value.level) ||
+        !compileStateFromString(object.value("compileState").toString(), value.compileState) ||
+        !orientationFromString(object.value("orientationMode").toString(), value.orientationMode) ||
+        !stageFromString(object.value("minimumVerificationStage").toString(), value.minimumVerificationStage)) {
         if (error != nullptr) *error = "Requirement execution region enum is invalid.";
         return false;
     }
     if (!readArray(object, "center", value.center, error) ||
         !readArray(object, "size", value.size, error) ||
         !readArray(object, "fixedRpyDeg", value.fixedRpyDeg, error)) return false;
-    value.minimumCoverage = object.value("minimumCoverage").toDouble(0.8);
-    value.samplesPerAxis = object.value("samplesPerAxis").toInt(5);
+    // 数值严格读取：类型已由 require* 保证，不再回填默认值。
+    value.minimumCoverage = object.value("minimumCoverage").toDouble();
+    value.samplesPerAxis = object.value("samplesPerAxis").toInt();
     value.orientationTargetFrame = object.value("orientationTargetFrame").toString().toStdString();
     value.orientationTargetGeometry = object.value("orientationTargetGeometry").toString().toStdString();
     value.orientationTargetPoint = object.value("orientationTargetPoint").toString().toStdString();
-    value.directionSamples = object.value("directionSamples").toInt(1);
-    value.rollSamples = object.value("rollSamples").toInt(1);
-    value.minimumOrientationCoverage = object.value("minimumOrientationCoverage").toDouble(0.0);
-    value.collisionFreeRequired = object.value("collisionFreeRequired").toBool(true);
-    value.positionToleranceMeters = object.value("positionToleranceMeters").toDouble(0.001);
-    value.orientationToleranceDeg = object.value("orientationToleranceDeg").toDouble(1.0);
-    value.minimumJointMargin = object.value("minimumJointMargin").toDouble(0.0);
-    value.minimumManipulability = object.value("minimumManipulability").toDouble(0.0);
+    value.directionSamples = object.value("directionSamples").toInt();
+    value.rollSamples = object.value("rollSamples").toInt();
+    value.minimumOrientationCoverage = object.value("minimumOrientationCoverage").toDouble();
+    value.collisionFreeRequired = object.value("collisionFreeRequired").toBool();
+    value.positionToleranceMeters = object.value("positionToleranceMeters").toDouble();
+    value.orientationToleranceDeg = object.value("orientationToleranceDeg").toDouble();
+    value.minimumJointMargin = object.value("minimumJointMargin").toDouble();
+    value.minimumManipulability = object.value("minimumManipulability").toDouble();
+    // 先做语义校验(枚举合法性)，再校验取值范围(覆盖率、采样下限与上限、有限性)。
+    if (!validateExecutionRegion(value, error)) return false;
     if (!std::isfinite(value.minimumCoverage) || value.minimumCoverage < 0.0 || value.minimumCoverage > 1.0 ||
         value.samplesPerAxis < (value.minimumVerificationStage == RequirementExecutionStage::Verified ? 2 : 1) ||
         value.directionSamples < 1 || value.rollSamples < 1 ||
@@ -404,7 +539,15 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
         if (error != nullptr) *error = "Requirement execution region contains invalid values.";
         return false;
     }
+    if (!object.contains("diagnostics") || !object.value("diagnostics").isArray()) {
+        if (error != nullptr) *error = "Requirement execution region diagnostics must be an array.";
+        return false;
+    }
     for (const auto& item : object.value("diagnostics").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement execution region diagnostic must be an object.";
+            return false;
+        }
         RequirementExecutionDiagnostic diagnostic;
         if (!diagnosticFromObject(item.toObject(), diagnostic, error)) return false;
         value.diagnostics.push_back(diagnostic);
@@ -412,8 +555,14 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
     return true;
 }
 
+// 校验单条路径规则：axis 必须是合法枚举(ToolZ/ReferenceZ)，距离有限且非负。
 bool validatePathRule(const RequirementExecutionPathRule& rule, std::string* error)
 {
+    if (rule.axis != RequirementExecutionOffsetAxis::ToolZ &&
+        rule.axis != RequirementExecutionOffsetAxis::ReferenceZ) {
+        if (error != nullptr) *error = "Requirement execution path axis is invalid.";
+        return false;
+    }
     if (!std::isfinite(rule.distanceMeters) || rule.distanceMeters < 0.0) {
         if (error != nullptr) *error = "Requirement execution path distance must be finite and non-negative.";
         return false;
@@ -421,6 +570,9 @@ bool validatePathRule(const RequirementExecutionPathRule& rule, std::string* err
     return true;
 }
 
+// 语义校验执行契约工位：除必填字段外，逐项核对枚举取值(level/compileState/
+// orientationMode/processType)、容差与限值(有限且非负、翻滚区间单调)以及朝向
+// 目标完整性。非法值一律拒绝，防止枚举静态转换产生的越界值流入下游。
 bool validateExecutionTask(const RequirementExecutionTask& task, std::string* error)
 {
     if (task.id.empty()) {
@@ -429,6 +581,25 @@ bool validateExecutionTask(const RequirementExecutionTask& task, std::string* er
     }
     if (task.refFrame.empty() || task.tcpFrame.empty()) {
         if (error != nullptr) *error = "Requirement execution task refFrame and tcpFrame are required.";
+        return false;
+    }
+    // 枚举合法性：只接受已知枚举值。
+    const bool validLevel = task.level == RequirementExecutionLevel::Must ||
+        task.level == RequirementExecutionLevel::Should || task.level == RequirementExecutionLevel::Info;
+    const bool validCompileState = task.compileState == RequirementExecutionCompileState::Included ||
+        task.compileState == RequirementExecutionCompileState::Excluded ||
+        task.compileState == RequirementExecutionCompileState::Invalid;
+    const bool validOrientation = task.orientationMode == RequirementExecutionOrientationMode::Fixed ||
+        task.orientationMode == RequirementExecutionOrientationMode::AlignFrame ||
+        task.orientationMode == RequirementExecutionOrientationMode::AlignGeometryNormal ||
+        task.orientationMode == RequirementExecutionOrientationMode::PointAtTarget;
+    // processType 用整数区间判定，覆盖连续枚举的合法范围。
+    const bool validProcessType = static_cast<int>(task.processType) >=
+        static_cast<int>(RequirementExecutionProcessType::Generic) &&
+        static_cast<int>(task.processType) <=
+        static_cast<int>(RequirementExecutionProcessType::Handover);
+    if (!validLevel || !validCompileState || !validOrientation || !validProcessType) {
+        if (error != nullptr) *error = "Requirement execution task enum is invalid.";
         return false;
     }
     if (!finiteArray(task.position) || !finiteArray(task.rpyDeg) ||
@@ -453,6 +624,9 @@ bool validateExecutionTask(const RequirementExecutionTask& task, std::string* er
     return validatePathRule(task.approach, error) && validatePathRule(task.retract, error);
 }
 
+// 语义校验执行契约工作区覆盖盒：必填字段、枚举合法性、几何/覆盖率/采样上下限
+// (含 MaxExecutionWorkspace* 安全上限)与朝向目标完整性。拒绝任何非法值，防止
+// 畸形或篡改的覆盖盒在采样分析中造成无界计算。
 bool validateExecutionRegion(const RequirementExecutionRegion& region, std::string* error)
 {
     if (region.id.empty()) {
@@ -463,13 +637,34 @@ bool validateExecutionRegion(const RequirementExecutionRegion& region, std::stri
         if (error != nullptr) *error = "Requirement execution workspace region refFrame and tcpFrame are required.";
         return false;
     }
+    // 枚举合法性：level/compileState/orientationMode/minimumVerificationStage 均须合法。
+    const bool validLevel = region.level == RequirementExecutionLevel::Must ||
+        region.level == RequirementExecutionLevel::Should || region.level == RequirementExecutionLevel::Info;
+    const bool validCompileState = region.compileState == RequirementExecutionCompileState::Included ||
+        region.compileState == RequirementExecutionCompileState::Excluded ||
+        region.compileState == RequirementExecutionCompileState::Invalid;
+    const bool validOrientation = region.orientationMode == RequirementExecutionOrientationMode::Fixed ||
+        region.orientationMode == RequirementExecutionOrientationMode::AlignFrame ||
+        region.orientationMode == RequirementExecutionOrientationMode::AlignGeometryNormal ||
+        region.orientationMode == RequirementExecutionOrientationMode::PointAtTarget;
+    const bool validStage = region.minimumVerificationStage == RequirementExecutionStage::Quick ||
+        region.minimumVerificationStage == RequirementExecutionStage::Verified;
+    if (!validLevel || !validCompileState || !validOrientation || !validStage) {
+        if (error != nullptr) *error = "Requirement execution region enum is invalid.";
+        return false;
+    }
+    // 几何/数值范围：尺寸各分量必须为正，覆盖率在 [0,1]，采样计数有下限(Verified
+    // 阶段至少 2)与安全上限(MaxExecutionWorkspace*)，其余阈值有限且非负。
     if (!finiteArray(region.center) || !finiteArray(region.size) || !finiteArray(region.fixedRpyDeg) ||
         !std::isfinite(region.size[0]) || !std::isfinite(region.size[1]) ||
         !std::isfinite(region.size[2]) || region.size[0] <= 0.0 || region.size[1] <= 0.0 ||
         region.size[2] <= 0.0 || !std::isfinite(region.minimumCoverage) ||
         region.minimumCoverage < 0.0 || region.minimumCoverage > 1.0 ||
         region.samplesPerAxis < (region.minimumVerificationStage == RequirementExecutionStage::Verified ? 2 : 1) ||
-        region.directionSamples < 1 || region.rollSamples < 1 ||
+        region.samplesPerAxis > MaxExecutionWorkspaceSamplesPerAxis ||
+        region.directionSamples < 1 ||
+        region.directionSamples > MaxExecutionWorkspaceDirectionSamples ||
+        region.rollSamples < 1 || region.rollSamples > MaxExecutionWorkspaceRollSamples ||
         !std::isfinite(region.minimumOrientationCoverage) ||
         region.minimumOrientationCoverage < 0.0 || region.minimumOrientationCoverage > 1.0 ||
         !std::isfinite(region.positionToleranceMeters) || region.positionToleranceMeters < 0.0 ||
@@ -524,17 +719,42 @@ bool RequirementExecutionJson::fromObject(const QJsonObject& object,
                                           std::string* error)
 {
     if (error != nullptr) error->clear();
-    if (object.value("type").toString("RequirementExecutionSet") != "RequirementExecutionSet") {
+    // 顶层类型必须显式存在且等于 RequirementExecutionSet(拒绝缺省回填)。
+    if (!requireString(object, "type", error) ||
+        object.value("type").toString() != "RequirementExecutionSet") {
         if (error != nullptr) *error = "Requirement execution JSON type is invalid.";
         return false;
     }
     RequirementExecutionSet parsed;
-    parsed.schemaVersion = object.value("schemaVersion").toInt(1);
+    // schemaVersion 必须显式为整数且等于 1。
+    if (!requireInteger(object, "schemaVersion", error)) return false;
+    parsed.schemaVersion = object.value("schemaVersion").toInt();
     if (parsed.schemaVersion != 1) {
         if (error != nullptr) *error = "Requirement execution schemaVersion is unsupported; expected 1.";
         return false;
     }
+    // provenance 必须为对象，且七个来源成员全部显式存在并是字符串。
+    if (!object.value("provenance").isObject()) {
+        if (error != nullptr) *error = "Requirement execution JSON provenance must be an object.";
+        return false;
+    }
     const QJsonObject provenance = object.value("provenance").toObject();
+    for (const char* key : {"requirementFingerprint", "robotModelFingerprint",
+                            "workcellFingerprint", "environmentFingerprint",
+                            "compilerVersion", "frozenAt", "sourcePath"}) {
+        if (!requireString(provenance, key, error)) {
+            if (error != nullptr && error->find("provenance") == std::string::npos)
+                *error = "Requirement execution provenance member '" + std::string(key) + "' is missing or has the wrong type.";
+            return false;
+        }
+    }
+    // 三个顶层数组(tasks/workspaceRegions/diagnostics)必须显式存在，缺一即拒绝。
+    for (const char* key : {"tasks", "workspaceRegions", "diagnostics"}) {
+        if (!object.contains(key) || !object.value(key).isArray()) {
+            if (error != nullptr) *error = std::string("Requirement execution JSON field is missing or not an array: ") + key;
+            return false;
+        }
+    }
     parsed.provenance.requirementFingerprint = provenance.value("requirementFingerprint").toString().toStdString();
     parsed.provenance.robotModelFingerprint = provenance.value("robotModelFingerprint").toString().toStdString();
     parsed.provenance.workcellFingerprint = provenance.value("workcellFingerprint").toString().toStdString();
@@ -542,21 +762,35 @@ bool RequirementExecutionJson::fromObject(const QJsonObject& object,
     parsed.provenance.compilerVersion = provenance.value("compilerVersion").toString().toStdString();
     parsed.provenance.frozenAt = provenance.value("frozenAt").toString().toStdString();
     parsed.provenance.sourcePath = provenance.value("sourcePath").toString().toStdString();
+    // 数组元素逐个解析：每个元素必须为对象，且经各自严格的 fromObject 校验。
     for (const auto& item : object.value("tasks").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement execution task must be an object.";
+            return false;
+        }
         RequirementExecutionTask task;
         if (!taskFromObject(item.toObject(), task, error)) return false;
         parsed.tasks.push_back(task);
     }
     for (const auto& item : object.value("workspaceRegions").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement execution workspace region must be an object.";
+            return false;
+        }
         RequirementExecutionRegion region;
         if (!regionFromObject(item.toObject(), region, error)) return false;
         parsed.workspaceRegions.push_back(region);
     }
     for (const auto& item : object.value("diagnostics").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement execution diagnostic must be an object.";
+            return false;
+        }
         RequirementExecutionDiagnostic diagnostic;
         if (!diagnosticFromObject(item.toObject(), diagnostic, error)) return false;
         parsed.diagnostics.push_back(diagnostic);
     }
+    // 整集合校验：覆盖工位/覆盖盒的语义校验与 id 唯一性检查。
     if (!RequirementExecutionJson::validate(parsed, error)) return false;
     value = parsed;
     if (error != nullptr) error->clear();
