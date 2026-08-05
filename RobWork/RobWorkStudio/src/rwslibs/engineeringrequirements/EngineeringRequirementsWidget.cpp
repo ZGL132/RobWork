@@ -132,6 +132,16 @@ QString text(const QTableWidget* table, int row, int column, const QString& fall
     return table->item(row, column) == nullptr ? fallback : table->item(row, column)->text();
 }
 
+std::string defaultTcpFrame(const rw::models::WorkCell* workcell)
+{
+    if (workcell == nullptr) return std::string();
+    for (const rw::core::Ptr<rw::models::Device>& device : workcell->getDevices()) {
+        if (device != nullptr && device->getEnd() != nullptr)
+            return device->getEnd()->getName();
+    }
+    return std::string();
+}
+
 bool hasSameInspectorEditableValues(const PoseTask& left, const PoseTask& right)
 {
     // 属性检查器只编辑工位的这一组字段。显式比较可避免控件刷新、重复信号或选择切换时
@@ -708,8 +718,8 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addStretch();
     layout->addLayout(actions);
     _regionTable = new QTableWidget(page); _regionTable->setObjectName("engineeringRequirementBoxTable");
-    _regionTable->setColumnCount(12);
-    _regionTable->setHorizontalHeaderLabels({"ID", "名称", "等级", "参考系", "中心 X", "中心 Y", "中心 Z", "尺寸 X", "尺寸 Y", "尺寸 Z", "最小覆盖率", "每轴采样点"});
+    _regionTable->setColumnCount(13);
+    _regionTable->setHorizontalHeaderLabels({"ID", "名称", "等级", "参考系", "中心 X", "中心 Y", "中心 Z", "尺寸 X", "尺寸 Y", "尺寸 Z", "最小覆盖率", "每轴采样点", "TCP Frame"});
     _regionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     layout->addWidget(_regionTable);
     connect(add, &QPushButton::clicked, this, &EngineeringRequirementsWidget::addBoxRegion);
@@ -787,6 +797,9 @@ void EngineeringRequirementsWidget::refreshTables()
             // 将采样密度展示为显式的审计字段，确保导入、编辑、冻结和重新打开项目后采用完全
             // 相同的覆盖率离散网格，而不是隐式回退到数据结构默认值。
             _regionTable->setItem(row, 11, textItem(QString::number(region.samplesPerAxis)));
+            const std::string tcpFrame = region.tcpFrame.empty()
+                ? defaultTcpFrame(_workcell) : region.tcpFrame;
+            _regionTable->setItem(row, 12, textItem(QString::fromStdString(tcpFrame)));
         }
     }
     const bool editable = !_requirements.frozen;
@@ -872,14 +885,28 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
                                                      activeWorkCellState(), task, nullptr);
         }
     }
+    const std::vector<BoxRegion> previousRegions = _requirements.boxRegions;
     _requirements.boxRegions.clear();
     for (int row = 0; _regionTable != nullptr && row < _regionTable->rowCount(); ++row) {
-        BoxRegion region; region.id = text(_regionTable, row, 0).toStdString(); region.name = text(_regionTable, row, 1).toStdString();
+        const std::string id = text(_regionTable, row, 0).toStdString();
+        BoxRegion region;
+        for (const BoxRegion& previous : previousRegions) {
+            if (previous.id == id) {
+                region = previous;
+                break;
+            }
+        }
+        if (region.id.empty() && row < static_cast<int>(previousRegions.size()))
+            region = previousRegions[static_cast<std::size_t>(row)];
+        region.id = id; region.name = text(_regionTable, row, 1).toStdString();
         region.level = levelFromText(qobject_cast<QComboBox*>(_regionTable->cellWidget(row, 2))->currentText());
         region.refFrame = text(_regionTable, row, 3, "WORLD").toStdString();
         for (int axis = 0; axis < 3; ++axis) { region.center[axis] = number(_regionTable, row, 4 + axis); region.size[axis] = number(_regionTable, row, 7 + axis, 0.1); }
         region.minimumCoverage = number(_regionTable, row, 10, 0.8);
         region.samplesPerAxis = positiveSampleCount(_regionTable, row, 11, region.samplesPerAxis);
+        region.tcpFrame = text(_regionTable, row, 12,
+                               QString::fromStdString(region.tcpFrame)).trimmed().toStdString();
+        if (region.tcpFrame.empty()) region.tcpFrame = defaultTcpFrame(_workcell);
         _requirements.boxRegions.push_back(region);
     }
 }
@@ -1945,6 +1972,7 @@ void EngineeringRequirementsWidget::addBoxRegion()
     BoxRegion region;
     region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1);
     region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString();
+    region.tcpFrame = defaultTcpFrame(_workcell);
     _requirements.boxRegions.push_back(region);
     recordRequirementEdit(before);
 }

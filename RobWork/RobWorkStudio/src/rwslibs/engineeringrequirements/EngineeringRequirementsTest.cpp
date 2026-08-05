@@ -1829,6 +1829,44 @@ int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
     return 0;
 }
 
+int testWidgetAssignsAndPreservesWorkspaceTcpFrame()
+{
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("WidgetBase", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("WidgetTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "WidgetWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), "WidgetRobot", structure->getDefaultState())));
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setWorkCell(workcell.get());
+    QPushButton* addRegion = widget.findChild<QPushButton*>("addRequirementBoxRegionButton");
+    QTableWidget* regionTable = widget.findChild<QTableWidget*>("engineeringRequirementBoxTable");
+    REQUIRE(addRegion != nullptr);
+    REQUIRE(regionTable != nullptr);
+
+    addRegion->click();
+    REQUIRE(widget.requirementSet().boxRegions.size() == 1);
+    REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "WidgetTcp");
+
+    regionTable->item(0, 11)->setText("9");
+    REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "WidgetTcp");
+    regionTable->item(0, 12)->setText("CustomTcp");
+    REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "CustomTcp");
+
+    addRegion->click();
+    REQUIRE(widget.requirementSet().boxRegions.size() == 2);
+    REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "CustomTcp");
+    REQUIRE(widget.requirementSet().boxRegions.back().tcpFrame == "WidgetTcp");
+    return 0;
+}
+
 int testWidgetUndoRedoCoversRegularStationAndCoverageEdits()
 {
     // 工程师最频繁的操作不是批量模板，而是新增工位、修改工位语义和调整覆盖盒采样密度。
@@ -1982,6 +2020,8 @@ int main(int argc, char** argv)
         if (testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing() != 0)
             return 1;
         if (testWidgetPreservesBoxSamplingDensityWhenSynchronizing() != 0)
+            return 1;
+        if (testWidgetAssignsAndPreservesWorkspaceTcpFrame() != 0)
             return 1;
         if (testWidgetUndoRedoCoversRegularStationAndCoverageEdits() != 0)
             return 1;
