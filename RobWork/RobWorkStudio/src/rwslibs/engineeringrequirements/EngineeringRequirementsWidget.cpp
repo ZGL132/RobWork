@@ -764,8 +764,11 @@ QWidget* EngineeringRequirementsWidget::createValidationPage()
     _validationSummaryLabel->setWordWrap(true);
     _diagnosticTable = new QTableWidget(page);
     _diagnosticTable->setObjectName("engineeringRequirementsDiagnosticTable");
-    _diagnosticTable->setColumnCount(4);
-    _diagnosticTable->setHorizontalHeaderLabels({"Code", "Requirement", "Level", "Message"});
+    // 5 列诊断表：Code/Requirement/Field/Level/Message。Field 列承载诊断涉及的
+    // 具体字段/码(如 REQ_TCP_FRAME_NOT_FOUND 问题指向的 TCP 字段)，便于工程师
+    // 一眼定位问题出处。
+    _diagnosticTable->setColumnCount(5);
+    _diagnosticTable->setHorizontalHeaderLabels({"Code", "Requirement", "Field", "Level", "Message"});
     _diagnosticTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _diagnosticTable->horizontalHeader()->setStretchLastSection(true);
     _diagnosticTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -857,6 +860,27 @@ void EngineeringRequirementsWidget::refreshTables()
             _freezeLabel->setText(QString::fromUtf8("状态：可编辑。冻结后才可作为下游分析和优化输入。"));
         }
     }
+    // 冻结后把审计摘要展示在冻结状态标签的悬停提示里：三个审计指纹(需求/模型/场景)
+    // 加 Included/Excluded 条目计数与 Quick/Verified 验证阶段计数，方便工程师在不
+    // 打开工件文件的情况下核对冻结内容的构成与验证覆盖程度。
+    if (_requirements.frozen && _freezeLabel != nullptr) {
+        int included = 0;
+        int excluded = 0;
+        int quick = 0;
+        int verified = 0;
+        for (const CompiledPoseTask& task : _compiled.poseTasks)
+            (task.compileState == RequirementCompileState::Included ? ++included : ++excluded);
+        for (const WorkspaceDemandRegion& region : _compiled.workspaceRegions) {
+            (region.compileState == RequirementCompileState::Included ? ++included : ++excluded);
+            (region.minimumVerificationStage == RequirementVerificationStage::Quick ? ++quick : ++verified);
+        }
+        _freezeLabel->setToolTip(QStringLiteral("Requirement fingerprint: %1; Robot model fingerprint: %2; WorkCell fingerprint: %3; Included %4; Excluded %5; Quick %6; Verified %7; schema v%8")
+                                 .arg(QString::fromStdString(_frozenArtifact.requirementFingerprint),
+                                      QString::fromStdString(_frozenArtifact.modelBinding.robotModelFingerprint),
+                                      QString::fromStdString(_frozenArtifact.workcellFingerprint))
+                                 .arg(included).arg(excluded).arg(quick).arg(verified)
+                                 .arg(_frozenArtifact.schemaVersion));
+    }
     refreshValidationPanel();
 }
 
@@ -873,8 +897,11 @@ void EngineeringRequirementsWidget::refreshValidationPanel()
         _diagnosticTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(
             diagnostic.code.empty() ? "REQ_INVALID" : diagnostic.code)));
         _diagnosticTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(diagnostic.requirementId)));
-        _diagnosticTable->setItem(row, 2, new QTableWidgetItem(QString::fromLatin1(toString(diagnostic.level))));
-        _diagnosticTable->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(diagnostic.message)));
+        // Field 列展示诊断码(即问题指向的字段/类型码)，与 Code 列区分开，便于
+        // 工程师同时看到"问题类型"与"涉及字段"两个维度。
+        _diagnosticTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(diagnostic.code)));
+        _diagnosticTable->setItem(row, 3, new QTableWidgetItem(QString::fromLatin1(toString(diagnostic.level))));
+        _diagnosticTable->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(diagnostic.message)));
         const QColor color = diagnostic.blocking ? QColor(Qt::red) :
             (diagnostic.level == RequirementLevel::Info ? QColor(Qt::gray) : QColor(180, 120, 0));
         for (int column = 0; column < _diagnosticTable->columnCount(); ++column)
@@ -893,6 +920,10 @@ void EngineeringRequirementsWidget::refreshValidationPanel()
             "璇婃柇锛?%1锛屽繀椤绘敼姝ｏ細%2\n缂栬瘧椤圭粺璁★細Included %3锛屼笉鍖呭惈 %4")
             .arg(diagnostics.size()).arg(blocking).arg(included).arg(excluded));
     }
+    // 冻结按钮门禁：仅当需求未冻结且当前没有任何阻断性诊断时才允许冻结，
+    // 防止带着 Must 级违规强行生成不可用的冻结工件。
+    if (_freezeButton != nullptr)
+        _freezeButton->setEnabled(!_requirements.frozen && blocking == 0);
 }
 
 void EngineeringRequirementsWidget::syncTablesToRequirements()
@@ -1715,7 +1746,12 @@ void EngineeringRequirementsWidget::freezeRequirements()
         .arg(availableTasks).arg(advisoryRequirementIds.size()).arg(pathPending));
     refreshTables();
     Q_EMIT requirementsChanged();
-    Q_EMIT freezePublicationRequested();
+    // 发布请求携带资源元数据：资源 id、项目内文档路径、需求指纹与 schema 版本，
+    // 供插件把冻结工件发布到正确的项目资源位置并用于后续一致性核对。
+    Q_EMIT freezePublicationRequested(QStringLiteral("engineering-requirements"),
+                                      _projectDocumentPath,
+                                      QString::fromStdString(_frozenArtifact.requirementFingerprint),
+                                      _frozenArtifact.schemaVersion);
 }
 void EngineeringRequirementsWidget::unfreezeRequirements()
 {

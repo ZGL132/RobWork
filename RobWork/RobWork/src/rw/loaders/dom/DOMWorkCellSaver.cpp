@@ -123,6 +123,10 @@ class ElementCreator
 {
   public:
     ElementCreator (DOMElem::Ptr root) : _root (root) {}
+    // 注入当前 State：装配中的 WorkCell 部分 Frame 尚未挂到运动链上，读取其父
+    // Frame 时必须使用与本次保存一致的 State，避免无参 getParent() 在未初始化
+    // State 下返回空指针。
+    void setState (const State& state) { _state = &state; }
 
     template< class T >
     DOMElem::Ptr createElement (T object, rw::core::Ptr< const rw::models::WorkCell > workcell,
@@ -142,6 +146,9 @@ class ElementCreator
 
   private:
     DOMElem::Ptr _root;
+    // 保存时使用的 State 指针；未通过 setState 注入时为 nullptr，各序列化路径
+    // 据此决定使用无参 getParent() 还是带 State 的版本。
+    const State* _state = nullptr;
 };
 
 std::map< rw::kinematics::Frame*, rw::models::Device* > frameToDevice;
@@ -876,7 +883,12 @@ DOMElem::Ptr ElementCreator::createElement< RevoluteJoint* > (
         // std::cout << "The Joint is a regular Joint" << std::endl;
         DOMElem::Ptr element = parent->addChild ("Joint");
         element->addAttribute ("name")->setValue (scopedName (frameToDevice[frame], frame));
-        element->addAttribute ("refframe")->setValue (scopedName (frame, frame->getParent (state)));
+        // 装配中的关节父链可能尚未建立：父 Frame 为空时按 WORLD 子节点序列化，
+        // 避免对空父解引用。
+        Frame* parentFrame = frame->getParent (state);
+        element->addAttribute ("refframe")->setValue (
+            parentFrame == nullptr ? std::string ("WORLD")
+                                   : scopedName (frame, parentFrame));
         const std::string type = "Revolute";
         element->addAttribute ("type")->setValue (type);
 
@@ -920,7 +932,10 @@ DOMElem::Ptr ElementCreator::createElement< MovableFrame* > (
 
     // Set attributes
     element->addAttribute ("name")->setValue (frame->getName ());
-    element->addAttribute ("refframe")->setValue (frame->getParent ()->getName ());
+    // 可动 Frame 的父 Frame 缺失(装配中)时同样回退为 WORLD 子节点。
+    const Frame* parentFrame = frame->getParent (state);
+    element->addAttribute ("refframe")->setValue (
+        parentFrame == nullptr ? std::string ("WORLD") : parentFrame->getName ());
 
     const std::string type = "Movable";
     element->addAttribute ("type")->setValue (type);
@@ -960,7 +975,12 @@ DOMElem::Ptr ElementCreator::createElement< FixedFrame* > (
 
     // Set attributes
     element->addAttribute ("name")->setValue (frame->getName ());
-    element->addAttribute ("refframe")->setValue (frame->getParent ()->getName ());
+    // 装配中的 WorkCell 允许存在未挂接父链的 FixedFrame：此时按 WORLD 子节点序列化，
+    // 而不是对空父解引用。父链查询优先使用保存时的 State(已通过 setState 注入)，
+    // 未注入时回退到无参 getParent()。
+    const Frame* parentFrame = _state == nullptr ? frame->getParent () : frame->getParent (*_state);
+    element->addAttribute ("refframe")->setValue (
+        parentFrame == nullptr ? std::string ("WORLD") : parentFrame->getName ());
 
     const std::string type = "Fixed";
     element->addAttribute ("type")->setValue (type);
@@ -1016,7 +1036,9 @@ ElementCreator::createElement< FixedFrame* > (FixedFrame* frame,
         element->addAttribute ("name")->setValue (fname);
     }
 
-    fname = frame->getParent ()->getName ();
+    // 设备内 FixedFrame 同样处理空父：未挂接时按 WORLD 记录 refframe。
+    const Frame* parentFrame = _state == nullptr ? frame->getParent () : frame->getParent (*_state);
+    fname = parentFrame == nullptr ? std::string ("WORLD") : parentFrame->getName ();
 
     if (fname.length () > dname.length ()) {
         if (dname == fname.substr (0, dname.length ())) {
@@ -1066,6 +1088,8 @@ void writeDeviceFrame (rw::core::Ptr< Frame > frame, ElementCreator& creator,
                        rw::core::Ptr< const rw::models::WorkCell > workcell, const State state,
                        Device::Ptr dev, DOMElem::Ptr parent)
 {
+    // 空 Frame 防护：装配中的设备可能引用了尚未创建/已失效的 Frame，直接跳过。
+    if (frame == nullptr) return;
     if (FixedFrame* ff = frame.cast< FixedFrame > ().get ()) {
         // std::cout << "The frame type was Fixed!" << std::endl;
         if (isFrameInDevice (frame))
@@ -1100,6 +1124,8 @@ void writeFrame (rw::core::Ptr< Frame > frame, ElementCreator& creator,
                  rw::core::Ptr< const rw::models::WorkCell > workcell, const State state,
                  DOMElem::Ptr parent)
 {
+    // 与 writeDeviceFrame 一致的空 Frame 防护，避免对空指针做强转。
+    if (frame == nullptr) return;
     if (FixedFrame* ff = frame.cast< FixedFrame > ().get ()) {
         // std::cout << "The frame type was Fixed!" << std::endl;
         creator.createElement< FixedFrame* > (ff, workcell, parent);
@@ -1133,6 +1159,8 @@ void createDOMDocument (DOMElem::Ptr rootDoc, rw::core::Ptr< const rw::models::W
     DOMElem::Ptr rootElement = rootDoc->addChild ("WorkCell");
     rootElement->addAttribute ("name")->setValue (workcell->getName ());
     ElementCreator creator (rootElement);
+    // 把本次保存使用的 State 注入 ElementCreator，供各 Frame 序列化路径读取父链。
+    creator.setState (state);
 
     // Get all frames in the workcell
     const std::vector< Frame* > wc_frames = workcell->getFrames ();

@@ -356,6 +356,12 @@ RequirementSet compiledSnapshot(const CompiledRequirementSet& compiled)
         task.validation = item.validation;
         task.approach = item.approach;
         task.retract = item.retract;
+        // 从条目级溯源还原工位的来源种类：编译快照只存文本形式的 sourceKind，
+        // 重新投影回编辑态快照时用它还原 PoseTaskSource，保证往返不丢失来源语义。
+        PoseTaskSource source = PoseTaskSource::Manual;
+        if (!item.provenance.sourceKind.empty() &&
+            poseTaskSourceFromString(item.provenance.sourceKind, source))
+            task.source = source;
         snapshot.poseTasks.push_back(task);
     }
     for (const WorkspaceDemandRegion& item : compiled.workspaceRegions) {
@@ -397,8 +403,26 @@ RequirementExecutionDiagnostic executionDiagnostic(const RequirementDiagnostic& 
                         RequirementExecutionDiagnosticSeverity::Info :
                         RequirementExecutionDiagnosticSeverity::Warning);
     result.requirementId = diagnostic.requirementId;
+    // 执行诊断的 field 字段承载原诊断码，便于下游一眼看到问题类型(如
+    // REQ_TCP_FRAME_NOT_FOUND)，而不只是自然语言消息。
+    result.field = diagnostic.code;
     result.message = diagnostic.message;
     result.source = "engineeringrequirements";
+    return result;
+}
+
+// 把编译态条目溯源投影为执行态条目溯源：携带源 id/种类，并把与该条目相关的
+// 全部编译诊断转换(executionDiagnostic)后写入 provenance.diagnostics。
+RequirementItemProvenance executionProvenance(const CompiledRequirementItemProvenance& source,
+                                              const std::vector<RequirementDiagnostic>& diagnostics)
+{
+    RequirementItemProvenance result;
+    result.sourceId = source.sourceId;
+    result.sourceKind = source.sourceKind;
+    for (const RequirementDiagnostic& diagnostic : diagnostics) {
+        if (diagnostic.requirementId == source.sourceId)
+            result.diagnostics.push_back(executionDiagnostic(diagnostic));
+    }
     return result;
 }
 
@@ -415,7 +439,11 @@ RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
     execution.provenance.sourcePath = artifact.modelBinding.sourcePath;
     for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
         execution.diagnostics.push_back(executionDiagnostic(diagnostic));
+    // 执行契约只承载 Included 的工位：被排除(Excluded/Invalid)的条目保留在编译
+    // 审计快照与溯源中，但不进入下游执行的工位清单，避免把审计项当成执行任务。
     for (const CompiledPoseTask& item : artifact.compiled.poseTasks) {
+        if (item.compileState != RequirementCompileState::Included)
+            continue;
         RequirementExecutionTask task;
         task.id = item.id;
         task.name = item.name;
@@ -423,6 +451,8 @@ RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
         task.compileState = static_cast<RequirementExecutionCompileState>(item.compileState);
         task.processType = static_cast<RequirementExecutionProcessType>(item.processType);
         task.excludedReason = item.excludedReason;
+        // 逐工位携带执行态溯源(来源 + 相关诊断)。
+        task.provenance = executionProvenance(item.provenance, artifact.compiled.diagnostics);
         task.refFrame = item.refFrame;
         task.tcpFrame = item.tcpFrame;
         task.position = item.position;
@@ -457,13 +487,18 @@ RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
                 task.diagnostics.push_back(executionDiagnostic(diagnostic));
         execution.tasks.push_back(task);
     }
+    // 覆盖盒与工位采用相同的过滤规则：只有 Included 的覆盖盒进入执行契约。
     for (const WorkspaceDemandRegion& item : artifact.compiled.workspaceRegions) {
+        if (item.compileState != RequirementCompileState::Included)
+            continue;
         RequirementExecutionRegion region;
         region.id = item.id;
         region.name = item.name;
         region.level = static_cast<RequirementExecutionLevel>(item.level);
         region.compileState = static_cast<RequirementExecutionCompileState>(item.compileState);
         region.excludedReason = item.excludedReason;
+        // 逐覆盖盒携带执行态溯源。
+        region.provenance = executionProvenance(item.provenance, artifact.compiled.diagnostics);
         region.refFrame = item.refFrame;
         region.tcpFrame = item.tcpFrame;
         region.center = item.center;
@@ -503,16 +538,38 @@ QJsonObject diagnosticToObject(const RequirementDiagnostic& diagnostic)
     return object;
 }
 
+// 严格反序列化冻结工件诊断：所有文本字段必须显式存在且为字符串，code/message
+// 不得为空，level 必须合法，blocking 必须是布尔且与 level 语义一致(Must ⇔ blocking)。
+// 拒绝缺省回填与自相矛盾的诊断，防止损坏/篡改的审计记录被静默接受。
 bool diagnosticFromObject(const QJsonObject& object, RequirementDiagnostic& diagnostic, std::string* error)
 {
-    diagnostic.code = object.value("code").toString("REQ_INVALID").toStdString();
+    for (const char* key : {"code", "requirementId", "level", "message"}) {
+        if (!object.contains(key) || !object.value(key).isString()) {
+            if (error != nullptr) *error = std::string("Frozen artifact diagnostic field is missing or has the wrong type: ") + key;
+            return false;
+        }
+    }
+    if (!object.contains("blocking") || !object.value("blocking").isBool()) {
+        if (error != nullptr) *error = "Frozen artifact diagnostic blocking field is missing or has the wrong type.";
+        return false;
+    }
+    diagnostic.code = object.value("code").toString().toStdString();
     diagnostic.requirementId = object.value("requirementId").toString().toStdString();
-    if (!requirementLevelFromString(object.value("level").toString("Must").toStdString(), diagnostic.level)) {
+    if (diagnostic.code.empty() || !requirementLevelFromString(object.value("level").toString().toStdString(), diagnostic.level)) {
         if (error != nullptr) *error = "Frozen artifact diagnostic level is invalid.";
         return false;
     }
     diagnostic.message = object.value("message").toString().toStdString();
-    diagnostic.blocking = object.value("blocking").toBool(diagnostic.level == RequirementLevel::Must);
+    if (diagnostic.message.empty()) {
+        if (error != nullptr) *error = "Frozen artifact diagnostic message is required.";
+        return false;
+    }
+    diagnostic.blocking = object.value("blocking").toBool();
+    // blocking 必须与 level 一致：Must 级诊断必须阻塞，其余必须非阻塞。
+    if ((diagnostic.level == RequirementLevel::Must) != diagnostic.blocking) {
+        if (error != nullptr) *error = "Frozen artifact diagnostic blocking does not match its level.";
+        return false;
+    }
     return true;
 }
 
@@ -978,9 +1035,75 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         if (error != nullptr) *error = "Frozen requirement artifact JSON has an unsupported schema.";
         return false;
     }
+    // schemaVersion 必须显式存在；v4 起对工件做严格的字段完整性校验。
+    if (!object.contains("schemaVersion") || !object.value("schemaVersion").isDouble()) {
+        if (error != nullptr) *error = "Frozen requirement artifact schemaVersion is required.";
+        return false;
+    }
+    const int inputSchemaVersion = object.value("schemaVersion").toInt();
+    // —— v4 字段完整性门禁 ——
+    // v4 工件是下游分析的唯一可信输入，顶层审计指纹、模型绑定、场景快照、冻结
+    // 机器人状态与执行契约都必须显式存在且类型正确，缺失/空值/类型错误一律拒绝，
+    // 防止不完整的旧工件或损坏数据被当作已验证输入继续使用。
+    if (inputSchemaVersion >= 4) {
+        // 顶层指纹与审计字段必须存在且非空字符串。
+        for (const char* key : {"requirementFingerprint", "environmentFingerprint",
+                                "workcellFingerprint", "compilerVersion", "frozenAt"}) {
+            if (!object.contains(key) || !object.value(key).isString() ||
+                object.value(key).toString().trimmed().isEmpty()) {
+                if (error != nullptr) *error = std::string("Frozen requirement artifact field is missing or empty: ") + key;
+                return false;
+            }
+        }
+        // 四个核心子对象必须存在。
+        if (!object.value("modelBinding").isObject() ||
+            !object.value("scenario").isObject() ||
+            !object.value("frozenRobotState").isObject() ||
+            !object.value("execution").isObject()) {
+            if (error != nullptr) *error = "Frozen requirement artifact v4 requires modelBinding, scenario, frozenRobotState and execution objects.";
+            return false;
+        }
+        // modelBinding 三字段必须为字符串，且 robotModelFingerprint 非空。
+        const QJsonObject binding = object.value("modelBinding").toObject();
+        for (const char* key : {"sourcePath", "robotModelFingerprint", "robotName"}) {
+            if (!binding.contains(key) || !binding.value(key).isString()) {
+                if (error != nullptr) *error = std::string("Frozen requirement artifact modelBinding field has the wrong type: ") + key;
+                return false;
+            }
+        }
+        if (!binding.value("robotModelFingerprint").isString() ||
+            binding.value("robotModelFingerprint").toString().trimmed().isEmpty()) {
+            if (error != nullptr) *error = "Frozen requirement artifact modelBinding.robotModelFingerprint is required.";
+            return false;
+        }
+        // scenario 各字段必须为字符串，sceneSpec 与 schemaVersion 必须存在。
+        const QJsonObject scenario = object.value("scenario").toObject();
+        for (const char* key : {"sourceWorkCellPath", "sourceFileFingerprint", "snapshotFingerprint",
+                                "deviceName", "environmentFingerprint", "stateFingerprint"}) {
+            if (!scenario.contains(key) || !scenario.value(key).isString()) {
+                if (error != nullptr) *error = std::string("Frozen requirement artifact scenario field has the wrong type: ") + key;
+                return false;
+            }
+        }
+        if (!scenario.value("sceneSpec").isObject() || !scenario.value("schemaVersion").isDouble()) {
+            if (error != nullptr) *error = "Frozen requirement artifact scenario is incomplete.";
+            return false;
+        }
+        // frozenRobotState 字段必须为字符串，q 与 tcpWorldPose 必须为数组。
+        const QJsonObject robotState = object.value("frozenRobotState").toObject();
+        for (const char* key : {"deviceName", "tcpFrameName", "kinematicFingerprint", "capturedAt"}) {
+            if (!robotState.contains(key) || !robotState.value(key).isString()) {
+                if (error != nullptr) *error = std::string("Frozen requirement artifact robot state field has the wrong type: ") + key;
+                return false;
+            }
+        }
+        if (!robotState.value("q").isArray() || !robotState.value("tcpWorldPose").isArray()) {
+            if (error != nullptr) *error = "Frozen requirement artifact robot state arrays are required.";
+            return false;
+        }
+    }
     RequirementSet snapshot;
     if (!RequirementSetJson::fromObject(object.value("compiledRequirements").toObject(), snapshot, error)) return false;
-    const int inputSchemaVersion = object.value("schemaVersion").toInt(1);
     // v3 快照迁移：旧版编译快照不携带工作区 TCP 字段，也不记录验证阶段。
     // 为保持历史语义并让 v4 对字段保持严格：
     //   - 空 TCP 一律回填 "TCP"；
@@ -1090,14 +1213,16 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         if (!diagnosticFromObject(value.toObject(), diagnostic, error)) return false;
         parsed.compiled.diagnostics.push_back(diagnostic);
     }
-    // 依据保留的冻结诊断重建"环境无法解析"项：编译快照(compiledRequirements)是
+    // 依据保留的冻结诊断重建"被排除"项：编译快照(compiledRequirements)是
     // 传统 RequirementSet 投影，本身不携带 compileState/excludedReason。凡被环境类
-    // 诊断(引用帧/TCP/错误设备/朝向目标/几何目标缺失)命中的工位，重新标记为
-    // Excluded 并回填诊断消息作为排除原因，使重载后的审计语义与冻结时刻一致。
+    // 诊断(可选条目被排除/引用帧/TCP/错误设备/朝向目标/几何目标缺失)命中的工位，
+    // 重新标记为 Excluded 并回填诊断消息作为排除原因，使重载后的审计语义与冻结
+    // 时刻一致。REQ_OPTIONAL_ITEM_EXCLUDED 同样作为被排除依据(Info/有问题的 Should)。
     for (CompiledPoseTask& task : parsed.compiled.poseTasks) {
         for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
             if (diagnostic.requirementId == task.id &&
-                 (diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
+                 (diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED" ||
+                 diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
                  diagnostic.code == "REQ_TCP_FRAME_NOT_FOUND" ||
                  diagnostic.code == "REQ_TCP_FRAME_WRONG_DEVICE" ||
                  diagnostic.code == "REQ_ORIENTATION_TARGET_NOT_FOUND" ||
@@ -1112,7 +1237,8 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     for (WorkspaceDemandRegion& region : parsed.compiled.workspaceRegions) {
         for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
             if (diagnostic.requirementId == region.id &&
-                 (diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
+                 (diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED" ||
+                 diagnostic.code == "REQ_FRAME_NOT_FOUND" ||
                  diagnostic.code == "REQ_TCP_FRAME_NOT_FOUND" ||
                  diagnostic.code == "REQ_TCP_FRAME_WRONG_DEVICE" ||
                  diagnostic.code == "REQ_ORIENTATION_TARGET_NOT_FOUND" ||

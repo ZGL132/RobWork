@@ -59,6 +59,18 @@ struct RequirementExecutionDiagnostic {
     std::string source;
 };
 
+/**
+ * @brief 执行契约中逐条保留的"条目级溯源"信息(执行态)。
+ *
+ * 由编译态 CompiledRequirementItemProvenance 在冻结时投影而来：除来源 id/种类外，
+ * 还携带与该条目相关的执行诊断(供下游审计条目为何被排除/降级)。
+ */
+struct RequirementItemProvenance {
+    std::string sourceId;                                     ///< 源编辑态条目 id
+    std::string sourceKind;                                   ///< 来源种类(如 PoseTaskSource 文本 / "BoxRegion")
+    std::vector<RequirementExecutionDiagnostic> diagnostics;  ///< 关联的执行诊断
+};
+
 struct RequirementExecutionPathRule {
     bool enabled = false;
     RequirementExecutionOffsetAxis axis = RequirementExecutionOffsetAxis::ToolZ;
@@ -74,6 +86,7 @@ struct RequirementExecutionTask {
         RequirementExecutionCompileState::Included;
     RequirementExecutionProcessType processType = RequirementExecutionProcessType::Generic;
     std::string excludedReason;
+    RequirementItemProvenance provenance; ///< 执行态条目溯源
     std::string refFrame = "WORLD";
     std::string tcpFrame;
     std::array<double, 3> position = {{0.0, 0.0, 0.0}};
@@ -108,6 +121,7 @@ struct RequirementExecutionRegion {
     RequirementExecutionCompileState compileState =
         RequirementExecutionCompileState::Included;
     std::string excludedReason;
+    RequirementItemProvenance provenance; ///< 执行态条目溯源
     std::string refFrame = "WORLD";
     std::string tcpFrame;
     std::array<double, 3> center = {{0.0, 0.0, 0.0}};

@@ -269,10 +269,19 @@ void EngineeringRequirementsPlugin::initialize() {
 
     // 冻结成功后请求“发布”：把冻结工件随完整项目事务保存，使下游插件只能读取
     // 已落盘的冻结结果；保存失败时通过 UI 明确告知尚未发布。
-    connect(_widget, &EngineeringRequirementsWidget::freezePublicationRequested, this, [this]() {
+    connect(_widget, &EngineeringRequirementsWidget::freezePublicationRequested, this,
+            [this](const QString& resourceId, const QString& path,
+                   const QString& requirementFingerprint, int schemaVersion) {
         RobWorkStudio* studio = getRobWorkStudio();
         if (studio == nullptr || studio->projectDirectory().isEmpty())
             return;
+        // 发布目标信息(资源 id/路径/需求指纹/schema 版本)当前由项目保存事务统一承载；
+        // 此处显式声明为"不使用"，避免未使用的参数告警，并为后续按资源精确定位发布
+        // 目标预留扩展点。
+        Q_UNUSED(resourceId);
+        Q_UNUSED(path);
+        Q_UNUSED(requirementFingerprint);
+        Q_UNUSED(schemaVersion);
 
         QString error;
         const bool saved = studio->saveCurrentProject(&error);

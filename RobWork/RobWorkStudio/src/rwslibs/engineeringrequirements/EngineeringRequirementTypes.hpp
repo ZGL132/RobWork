@@ -71,6 +71,19 @@ enum class RequirementVerificationStage { Quick, Verified };
 enum class RequirementCompileState { Included, Excluded, Invalid };
 
 /**
+ * @brief 编译/审计快照中逐条保留的"条目级溯源"信息(编译态)。
+ *
+ * 记录一个工位/覆盖盒在编译时的来源(源条目 id 与来源种类)以及命中的诊断码列表，
+ * 使被排除或降级的需求项在审计时仍可追溯到"为什么没进执行"以及来自哪个编辑态条目。
+ * 冻结时通过 executionProvenance 投影为执行契约侧的 RequirementItemProvenance。
+ */
+struct CompiledRequirementItemProvenance {
+    std::string sourceId;                     ///< 源编辑态条目 id
+    std::string sourceKind;                   ///< 来源种类(如 PoseTaskSource 文本 / "BoxRegion")
+    std::vector<std::string> diagnosticCodes; ///< 编译时命中的诊断码(去重前的完整列表)
+};
+
+/**
  * @brief 接近与撤离的偏移参考轴
  */
 enum class OffsetAxis { 
@@ -284,6 +297,7 @@ struct CompiledPoseTask {
     ApproachRetractRule retract;
     RequirementCompileState compileState = RequirementCompileState::Included;
     std::string excludedReason;
+    CompiledRequirementItemProvenance provenance;       ///< 编译态条目溯源
 };
 
 /**
@@ -316,6 +330,7 @@ struct WorkspaceDemandRegion {
     double minimumManipulability = 0.0;
     RequirementCompileState compileState = RequirementCompileState::Included;
     std::string excludedReason;
+    CompiledRequirementItemProvenance provenance;       ///< 编译态条目溯源
 };
 
 /**

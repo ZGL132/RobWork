@@ -69,6 +69,40 @@ std::string diagnosticReasonFor(const std::vector<RequirementDiagnostic>& diagno
     return std::string();
 }
 
+// 为"可选需求被排除"追加一条审计诊断(码 REQ_OPTIONAL_ITEM_EXCLUDED)。
+// 规则：Must 级不会被排除，直接返回；同一 id 已存在该诊断则去重；追加的诊断
+// 显式标记为非阻塞(blocking=false)，避免把"建议项未进入执行"误报为阻断性错误。
+// 这样 Info 级以及带问题的 Should 级条目虽不进入执行，但审计记录明确其被排除原因。
+void appendOptionalExclusionDiagnostic(std::vector<RequirementDiagnostic>& diagnostics,
+                                       const std::string& id, RequirementLevel level,
+                                       const std::string& reason)
+{
+    if (level == RequirementLevel::Must) return;
+    for (const RequirementDiagnostic& diagnostic : diagnostics) {
+        if (diagnostic.requirementId == id &&
+            diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED")
+            return;
+    }
+    addDiagnostic(diagnostics, id, level,
+                  reason.empty() ? "Optional requirement is excluded from execution." : reason,
+                  "REQ_OPTIONAL_ITEM_EXCLUDED");
+    diagnostics.back().blocking = false;
+}
+
+// 收集某个编译条目(id)的条目级溯源：记录源 id、来源种类，并把编译诊断中与该
+// 条目相关且非空的诊断码全部收集进 provenance.diagnosticCodes，供冻结投影与审计。
+void populateProvenance(CompiledRequirementItemProvenance& provenance,
+                        const std::string& id, const std::string& sourceKind,
+                        const std::vector<RequirementDiagnostic>& diagnostics)
+{
+    provenance.sourceId = id;
+    provenance.sourceKind = sourceKind;
+    for (const RequirementDiagnostic& diagnostic : diagnostics) {
+        if (diagnostic.requirementId == id && !diagnostic.code.empty())
+            provenance.diagnosticCodes.push_back(diagnostic.code);
+    }
+}
+
 } // namespace 匿名空间
 
 /**
@@ -291,7 +325,21 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
                                   std::string* error)
 {
     // 步骤 1：执行详细校验并检查阻断性错误
-    const std::vector<RequirementDiagnostic> diagnostics = validateDetailed(requirements);
+    std::vector<RequirementDiagnostic> diagnostics = validateDetailed(requirements);
+    // 可选条目(Info 级全部、Should 级且有问题的)补一条"被排除"审计诊断：
+    // 使这些不进入执行的需求项在诊断/审计快照中留下明确被排除的记录。
+    for (const PoseTask& task : requirements.poseTasks) {
+        const bool hasDiagnostic = hasDiagnosticFor(diagnostics, task.id);
+        if (task.level == RequirementLevel::Info || (task.level == RequirementLevel::Should && hasDiagnostic))
+            appendOptionalExclusionDiagnostic(diagnostics, task.id, task.level,
+                                              "Optional requirement is excluded from execution.");
+    }
+    for (const BoxRegion& region : requirements.boxRegions) {
+        const bool hasDiagnostic = hasDiagnosticFor(diagnostics, region.id);
+        if (region.level == RequirementLevel::Info || (region.level == RequirementLevel::Should && hasDiagnostic))
+            appendOptionalExclusionDiagnostic(diagnostics, region.id, region.level,
+                                              "Optional workspace region is excluded from execution.");
+    }
     for (const RequirementDiagnostic& diagnostic : diagnostics) {
         if (diagnostic.blocking) { // 遇到阻断性错误（Must 级别违规）
             if (error != nullptr) *error = diagnostic.message;
@@ -336,6 +384,8 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
             item.compileState = RequirementCompileState::Excluded;
             item.excludedReason = diagnosticReasonFor(diagnostics, task.id);
         }
+        // 收集工位的条目级溯源：来源种类取编辑态 task.source 的文本形式。
+        populateProvenance(item.provenance, item.id, toString(task.source), diagnostics);
         
         result.poseTasks.push_back(item);
     }
@@ -375,6 +425,8 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
             item.compileState = RequirementCompileState::Excluded;
             item.excludedReason = diagnosticReasonFor(diagnostics, region.id);
         }
+        // 覆盖盒的条目级溯源：来源种类固定为 "BoxRegion"。
+        populateProvenance(item.provenance, item.id, "BoxRegion", diagnostics);
         
         result.workspaceRegions.push_back(item);
     }

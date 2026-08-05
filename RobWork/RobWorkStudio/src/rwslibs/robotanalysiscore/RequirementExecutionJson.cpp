@@ -268,6 +268,49 @@ QJsonObject diagnosticToObject(const RequirementExecutionDiagnostic& value)
 
 bool diagnosticFromObject(const QJsonObject& object,
                           RequirementExecutionDiagnostic& value,
+                          std::string* error);
+
+// 序列化执行态条目溯源：sourceId/sourceKind 为字符串，关联诊断写入 diagnostics 数组。
+QJsonObject provenanceToObject(const RequirementItemProvenance& value)
+{
+    QJsonObject object;
+    object["sourceId"] = QString::fromStdString(value.sourceId);
+    object["sourceKind"] = QString::fromStdString(value.sourceKind);
+    QJsonArray diagnostics;
+    for (const auto& diagnostic : value.diagnostics)
+        diagnostics.append(diagnosticToObject(diagnostic));
+    object["diagnostics"] = diagnostics;
+    return object;
+}
+
+// 反序列化执行态条目溯源：sourceId/sourceKind 必须为字符串，diagnostics 必须为数组
+// 且每个元素都是对象；任一结构不符即拒绝。
+bool provenanceFromObject(const QJsonObject& object, RequirementItemProvenance& value,
+                          std::string* error)
+{
+    if (!requireString(object, "sourceId", error) ||
+        !requireString(object, "sourceKind", error) ||
+        !object.contains("diagnostics") || !object.value("diagnostics").isArray()) {
+        if (error != nullptr && error->empty())
+            *error = "Requirement item provenance is incomplete.";
+        return false;
+    }
+    value.sourceId = object.value("sourceId").toString().toStdString();
+    value.sourceKind = object.value("sourceKind").toString().toStdString();
+    for (const QJsonValue& item : object.value("diagnostics").toArray()) {
+        if (!item.isObject()) {
+            if (error != nullptr) *error = "Requirement item provenance diagnostic must be an object.";
+            return false;
+        }
+        RequirementExecutionDiagnostic diagnostic;
+        if (!diagnosticFromObject(item.toObject(), diagnostic, error)) return false;
+        value.diagnostics.push_back(diagnostic);
+    }
+    return true;
+}
+
+bool diagnosticFromObject(const QJsonObject& object,
+                          RequirementExecutionDiagnostic& value,
                           std::string* error)
 {
     // 诊断的所有文本字段必须显式存在且为字符串；severity 枚举值必须在合法集合内。
@@ -322,6 +365,8 @@ void writeCommon(const RequirementExecutionTask& value, QJsonObject& object)
     object["approach"] = writePath(value.approach);
     object["retract"] = writePath(value.retract);
     object["pathValidationPending"] = value.pathValidationPending;
+    // 逐工位序列化条目级溯源(来源 + 关联诊断)。
+    object["provenance"] = provenanceToObject(value.provenance);
 }
 
 bool validateExecutionTask(const RequirementExecutionTask& task, std::string* error);
@@ -346,6 +391,10 @@ bool readCommon(const QJsonObject& object, RequirementExecutionTask& value, std:
         if (!requireBool(object, key, error)) return false;
     // 嵌套的接近/撤离路径规则必须是对象。
     if (!requireObject(object, "approach", error) || !requireObject(object, "retract", error))
+        return false;
+    // 条目级溯源必须存在且通过严格反序列化。
+    if (!requireObject(object, "provenance", error) ||
+        !provenanceFromObject(object.value("provenance").toObject(), value.provenance, error))
         return false;
     value.id = object.value("id").toString().toStdString();
     value.name = object.value("name").toString().toStdString();
@@ -471,6 +520,8 @@ QJsonObject regionToObject(const RequirementExecutionRegion& value)
     object["orientationToleranceDeg"] = value.orientationToleranceDeg;
     object["minimumJointMargin"] = value.minimumJointMargin;
     object["minimumManipulability"] = value.minimumManipulability;
+    // 逐覆盖盒序列化条目级溯源。
+    object["provenance"] = provenanceToObject(value.provenance);
     QJsonArray diagnostics;
     for (const auto& item : value.diagnostics) diagnostics.append(diagnosticToObject(item));
     object["diagnostics"] = diagnostics;
@@ -497,6 +548,10 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
     if (!requireArray(object, "center", error) || !requireArray(object, "size", error) ||
         !requireArray(object, "fixedRpyDeg", error) ||
         !requireBool(object, "collisionFreeRequired", error)) return false;
+    // 条目级溯源必须存在且通过严格反序列化。
+    if (!requireObject(object, "provenance", error) ||
+        !provenanceFromObject(object.value("provenance").toObject(), value.provenance, error))
+        return false;
     value.id = object.value("id").toString().toStdString();
     value.name = object.value("name").toString().toStdString();
     value.excludedReason = object.value("excludedReason").toString().toStdString();
@@ -840,8 +895,14 @@ bool RequirementExecutionJson::fromJson(const std::string& json,
 {
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(QByteArray::fromStdString(json), &parseError);
+    // 区分两种失败：JSON 语法错误(报告解析器错误)与根节点不是对象(明确说明结构要求)，
+    // 让调用方无需猜测失败原因。
     if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
-        if (error != nullptr) *error = parseError.errorString().toStdString();
+        if (error != nullptr) {
+            *error = parseError.error != QJsonParseError::NoError
+                ? parseError.errorString().toStdString()
+                : "Requirement execution JSON root must be an object.";
+        }
         return false;
     }
     return fromObject(document.object(), value, error);

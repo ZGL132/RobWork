@@ -622,14 +622,22 @@ int testFreezerRetainsNonBlockingEnvironmentExclusions()
     REQUIRE(artifact.compiled.workspaceRegions.front().compileState ==
             rws::RequirementCompileState::Excluded);
     REQUIRE(!artifact.compiled.workspaceRegions.front().excludedReason.empty());
-    REQUIRE(artifact.execution.workspaceRegions.size() == 1);
-    REQUIRE(artifact.execution.workspaceRegions.front().compileState ==
-            rws::RequirementExecutionCompileState::Excluded);
+    // 断言出现 REQ_OPTIONAL_ITEM_EXCLUDED 审计诊断(可选条目被排除的明确记录)。
+    bool sawOptionalExclusion = false;
+    for (const rws::RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
+        sawOptionalExclusion = sawOptionalExclusion ||
+            diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED";
+    REQUIRE(sawOptionalExclusion);
+    // 被排除项保留在编译审计快照中，但绝不能作为可执行工作区约束进入执行契约：
+    // 因此 execution.workspaceRegions 必须为空。
+    REQUIRE(artifact.execution.workspaceRegions.empty());
     // 往返重载后诊断数量必须与冻结时刻完全一致(不被重新编译重复生成)。
     const QJsonObject artifactObject = rws::FrozenRequirementArtifactJson::toObject(artifact);
     rws::FrozenRequirementArtifact restored;
     REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(artifactObject, restored, &error));
     REQUIRE(restored.compiled.diagnostics.size() == artifact.compiled.diagnostics.size());
+    // 重载后的执行契约同样不得包含被排除的覆盖盒。
+    REQUIRE(restored.execution.workspaceRegions.empty());
     return 0;
 }
 

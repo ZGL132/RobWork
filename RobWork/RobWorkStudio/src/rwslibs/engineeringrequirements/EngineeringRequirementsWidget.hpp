@@ -92,7 +92,10 @@ public:
 Q_SIGNALS:
     void geometryFeaturePickRequested();
     void requirementsChanged();
-    void freezePublicationRequested();
+    // 冻结发布请求：携带资源 id、项目内文档路径、需求指纹与 schema 版本，
+    // 供插件把冻结工件发布到正确的项目资源位置并核对一致性。
+    void freezePublicationRequested(const QString& resourceId, const QString& path,
+                                    const QString& requirementFingerprint, int schemaVersion);
 
 private:
     QWidget* createPoseTaskPage();
