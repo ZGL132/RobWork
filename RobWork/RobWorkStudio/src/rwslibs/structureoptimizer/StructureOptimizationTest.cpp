@@ -2183,6 +2183,23 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.evaluation.coverageBoxes[1].id == "second_area");
     REQUIRE(problem.constraints.size() >= 2);
 
+    // A supported artifact may contain an advisory pose-policy workspace.
+    // Structure optimization currently evaluates position coverage only, so a
+    // Should region must not become a hard blocker solely for this limitation.
+    rws::WorkspaceDemandRegion advisoryPoseRegion = region;
+    advisoryPoseRegion.id = "advisory_pose_area";
+    advisoryPoseRegion.level = rws::RequirementLevel::Should;
+    advisoryPoseRegion.directionSamples = 2;
+    artifact.compiled.workspaceRegions.push_back(advisoryPoseRegion);
+    rws::RequirementExecutionRegion advisoryExecutionRegion =
+        artifact.execution.workspaceRegions.front();
+    advisoryExecutionRegion.id = advisoryPoseRegion.id;
+    advisoryExecutionRegion.level = rws::RequirementExecutionLevel::Should;
+    advisoryExecutionRegion.directionSamples = advisoryPoseRegion.directionSamples;
+    artifact.execution.workspaceRegions.push_back(advisoryExecutionRegion);
+    artifact.executionFingerprint = rws::RequirementExecutionJson::fingerprint(artifact.execution);
+    REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(artifact, problem, &error));
+
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else

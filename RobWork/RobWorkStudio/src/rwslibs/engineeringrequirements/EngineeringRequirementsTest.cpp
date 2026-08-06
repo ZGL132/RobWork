@@ -204,6 +204,68 @@ int testJsonRoundTripPreservesBindingAndFrozenSnapshot()
     return 0;
 }
 
+int testRequirementSetJsonRejectsWrongScalarTypes()
+{
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+
+    rws::PoseTask task;
+    task.id = "strict-json";
+    task.name = "Strict JSON";
+    task.tcpFrame = "TCP";
+    requirements.poseTasks.push_back(task);
+
+    QJsonObject document = rws::RequirementSetJson::toObject(requirements);
+    QJsonArray tasks = document.value("poseTasks").toArray();
+    QJsonObject taskObject = tasks.at(0).toObject();
+    taskObject["positionToleranceMeters"] = "not-a-number";
+    tasks[0] = taskObject;
+    document["poseTasks"] = tasks;
+
+    rws::RequirementSet parsed;
+    std::string error;
+    REQUIRE(!rws::RequirementSetJson::fromObject(document, parsed, &error));
+    REQUIRE(error.find("positionToleranceMeters") != std::string::npos);
+
+    taskObject["positionToleranceMeters"] = 0.001;
+    QJsonObject orientation = taskObject.value("orientation").toObject();
+    orientation["mode"] = 7;
+    taskObject["orientation"] = orientation;
+    tasks[0] = taskObject;
+    document["poseTasks"] = tasks;
+    error.clear();
+    REQUIRE(!rws::RequirementSetJson::fromObject(document, parsed, &error));
+    REQUIRE(error.find("mode") != std::string::npos);
+    return 0;
+}
+
+int testCompilerReportsInvalidMustItemsAndClearsPreviousOutput()
+{
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+
+    rws::PoseTask task;
+    task.id = "must-invalid";
+    task.name = "Must invalid";
+    task.tcpFrame.clear();
+    requirements.poseTasks.push_back(task);
+
+    rws::CompiledRequirementSet compiled;
+    compiled.frozen = true;
+    rws::CompiledPoseTask stale;
+    stale.id = "stale";
+    compiled.poseTasks.push_back(stale);
+
+    std::string error;
+    REQUIRE(!rws::RequirementCompiler::compile(requirements, compiled, &error));
+    REQUIRE(!compiled.frozen);
+    REQUIRE(compiled.poseTasks.size() == 1);
+    REQUIRE(compiled.poseTasks.front().id == "must-invalid");
+    REQUIRE(compiled.poseTasks.front().compileState == rws::RequirementCompileState::Invalid);
+    REQUIRE(!compiled.poseTasks.front().provenance.diagnosticCodes.empty());
+    return 0;
+}
+
 int testKeyStationPersistsEngineeringIntentAndCompilesWorkPose()
 {
     rws::RequirementSet requirements;
@@ -1969,6 +2031,21 @@ int testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing()
     REQUIRE(widget.requirementSet().frozen);
 
     REQUIRE(widget.saveProjectDocument(requirementsPath, &error));
+    QFile savedRequirements(requirementsPath);
+    REQUIRE(savedRequirements.open(QIODevice::ReadOnly));
+    const QJsonDocument savedDocument = QJsonDocument::fromJson(savedRequirements.readAll());
+    REQUIRE(savedDocument.isObject());
+    const QJsonObject savedArtifact = savedDocument.object().value("frozenArtifact").toObject();
+    REQUIRE(!QFileInfo(savedArtifact.value("modelBinding").toObject().value("sourcePath").toString()).isAbsolute());
+    REQUIRE(!QFileInfo(savedArtifact.value("compiledRequirements").toObject()
+                       .value("modelBinding").toObject().value("sourcePath").toString()).isAbsolute());
+    REQUIRE(!QFileInfo(savedArtifact.value("execution").toObject()
+                       .value("provenance").toObject().value("sourcePath").toString()).isAbsolute());
+    rws::FrozenRequirementArtifact persistedArtifact;
+    std::string persistedArtifactError;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(
+        savedArtifact, persistedArtifact, &persistedArtifactError));
+    savedRequirements.close();
     REQUIRE(QDir(workspace.path()).rename(
         QStringLiteral("OriginalProject"), QStringLiteral("MovedProject")));
 
@@ -2150,6 +2227,14 @@ int main(int argc, char** argv)
         QCoreApplication app(argc, argv);
         return testWorkspaceExecutionFieldsRoundTrip();
     }
+    if (argc > 1 && std::string(argv[1]) == "strict_json") {
+        QCoreApplication app(argc, argv);
+        return testRequirementSetJsonRejectsWrongScalarTypes();
+    }
+    if (argc > 1 && std::string(argv[1]) == "must_invalid") {
+        QCoreApplication app(argc, argv);
+        return testCompilerReportsInvalidMustItemsAndClearsPreviousOutput();
+    }
     if (argc > 1 && std::string(argv[1]) == "workspace_validation") {
         QCoreApplication app(argc, argv);
         return testWorkspaceVerificationPolicyValidation();
@@ -2227,6 +2312,10 @@ int main(int argc, char** argv)
     if (testStableRequirementDiagnosticCodes() != 0)
         return 1;
     if (testJsonRoundTripPreservesBindingAndFrozenSnapshot() != 0)
+        return 1;
+    if (testRequirementSetJsonRejectsWrongScalarTypes() != 0)
+        return 1;
+    if (testCompilerReportsInvalidMustItemsAndClearsPreviousOutput() != 0)
         return 1;
     if (testFreezerRejectsMissingWorkCellTcpForMustStation() != 0)
         return 1;

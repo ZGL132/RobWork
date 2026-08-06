@@ -324,6 +324,8 @@ std::string RequirementCompiler::fingerprint(const RequirementSet& requirements)
 bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRequirementSet& compiled,
                                   std::string* error)
 {
+    compiled = CompiledRequirementSet();
+    if (error != nullptr) error->clear();
     // 步骤 1：执行详细校验并检查阻断性错误
     std::vector<RequirementDiagnostic> diagnostics = validateDetailed(requirements);
     // 可选条目(Info 级全部、Should 级且有问题的)补一条"被排除"审计诊断：
@@ -340,19 +342,20 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
             appendOptionalExclusionDiagnostic(diagnostics, region.id, region.level,
                                               "Optional workspace region is excluded from execution.");
     }
-    for (const RequirementDiagnostic& diagnostic : diagnostics) {
-        if (diagnostic.blocking) { // 遇到阻断性错误（Must 级别违规）
-            if (error != nullptr) *error = diagnostic.message;
-            return false;
-        }
-    }
-
     // 步骤 2：初始化冻结态产物及元数据
     CompiledRequirementSet result;
-    result.frozen = true;
+    result.frozen = false;
     result.modelBinding = requirements.modelBinding;
     result.requirementFingerprint = fingerprint(requirements);
     result.diagnostics = diagnostics; // 保留 Should 等级的非阻断性警告日志
+
+    const auto hasBlockingFor = [&diagnostics] (const std::string& id) {
+        for (const RequirementDiagnostic& diagnostic : diagnostics) {
+            if (diagnostic.requirementId == id && diagnostic.blocking)
+                return true;
+        }
+        return false;
+    };
 
     // 步骤 3：过滤并转换关键工位 (PoseTask -> CompiledPoseTask)
     for (const PoseTask& task : requirements.poseTasks) {
@@ -379,6 +382,10 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
         if (task.level == RequirementLevel::Info) {
             item.compileState = RequirementCompileState::Excluded;
             item.excludedReason = "Info requirement is retained for audit only.";
+        }
+        else if (hasBlockingFor(task.id)) {
+            item.compileState = RequirementCompileState::Invalid;
+            item.excludedReason = diagnosticReasonFor(diagnostics, task.id);
         }
         else if (hasDiagnosticFor(diagnostics, task.id)) {
             item.compileState = RequirementCompileState::Excluded;
@@ -421,6 +428,10 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
             item.compileState = RequirementCompileState::Excluded;
             item.excludedReason = "Info requirement is retained for audit only.";
         }
+        else if (hasBlockingFor(region.id)) {
+            item.compileState = RequirementCompileState::Invalid;
+            item.excludedReason = diagnosticReasonFor(diagnostics, region.id);
+        }
         else if (hasDiagnosticFor(diagnostics, region.id)) {
             item.compileState = RequirementCompileState::Excluded;
             item.excludedReason = diagnosticReasonFor(diagnostics, region.id);
@@ -432,9 +443,17 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
     }
 
     // 步骤 5：完成编译输出
+    bool hasBlocking = false;
+    for (const RequirementDiagnostic& diagnostic : diagnostics) {
+        if (diagnostic.blocking) {
+            hasBlocking = true;
+            if (error != nullptr && error->empty()) *error = diagnostic.message;
+        }
+    }
+    result.frozen = !hasBlocking;
     compiled = result;
-    if (error != nullptr) error->clear();
-    return true;
+    if (!hasBlocking && error != nullptr) error->clear();
+    return !hasBlocking;
 }
 
 } // namespace rws

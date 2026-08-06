@@ -252,18 +252,6 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     // 结构优化目前只评价"位置可达覆盖"，不含姿态可达性验证。因此带姿态约束的覆盖盒
     // (非 Fixed 朝向、多方向样本、多翻滚样本或要求朝向覆盖率)不能静默降级为仅位置，
     // 尤其当需求要求 Verified 朝向证据时：直接拒绝并提示先做姿态可达性验证。
-    for (const WorkspaceDemandRegion& region : compiled.workspaceRegions) {
-        const bool posePolicy = region.orientationMode != OrientationMode::Fixed ||
-            region.directionSamples > 1 || region.rollSamples > 1 ||
-            region.minimumOrientationCoverage > 0.0;
-        if (posePolicy) {
-            if (error != nullptr)
-                *error = "Workspace region '" + region.id +
-                         "' requires pose reachability orientation validation before structure optimization.";
-            return false;
-        }
-    }
-
     bool needsFrozenScenario = false;
     for (const CompiledPoseTask& station : compiled.poseTasks)
         needsFrozenScenario = needsFrozenScenario || !isWorld(station.refFrame);

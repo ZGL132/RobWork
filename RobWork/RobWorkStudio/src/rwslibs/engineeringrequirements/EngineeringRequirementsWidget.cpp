@@ -2,6 +2,7 @@
 
 #include "RequirementCompiler.hpp"
 #include "RequirementFreezer.hpp"
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include "GeometryFeatureResolver.hpp"
 #include "OrientationRuleResolver.hpp"
 #include "RequirementSetJson.hpp"
@@ -1474,11 +1475,24 @@ QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QStrin
     relativizeBinding(modelBinding);
     project["modelBinding"] = modelBinding;
     if (_requirements.frozen && !_frozenArtifact.requirementFingerprint.empty()) {
-        QJsonObject artifact = FrozenRequirementArtifactJson::toObject(_frozenArtifact);
-        QJsonObject artifactBinding = artifact.value("modelBinding").toObject();
-        relativizeBinding(artifactBinding);
-        artifact["modelBinding"] = artifactBinding;
-        project["frozenArtifact"] = artifact;
+        // Keep all three copies of the model path in the frozen artifact portable.
+        // The execution fingerprint includes provenance.sourcePath, so recompute it
+        // after the representation-only path change.
+        FrozenRequirementArtifact portableArtifact = _frozenArtifact;
+        const auto relativizePath = [&documentDirectory] (std::string& sourcePath) {
+            if (sourcePath.empty()) return;
+            const QFileInfo sourceInfo(QString::fromStdString(sourcePath));
+            const QString absolutePath = sourceInfo.isRelative()
+                ? documentDirectory.absoluteFilePath(sourceInfo.filePath())
+                : sourceInfo.absoluteFilePath();
+            sourcePath = documentDirectory.relativeFilePath(absolutePath).toStdString();
+        };
+        relativizePath(portableArtifact.modelBinding.sourcePath);
+        relativizePath(portableArtifact.compiled.modelBinding.sourcePath);
+        relativizePath(portableArtifact.execution.provenance.sourcePath);
+        portableArtifact.executionFingerprint =
+            RequirementExecutionJson::fingerprint(portableArtifact.execution);
+        project["frozenArtifact"] = FrozenRequirementArtifactJson::toObject(portableArtifact);
     }
     return QJsonDocument(project).toJson(QJsonDocument::Indented);
 }
@@ -1537,13 +1551,6 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
     QJsonObject modelBinding = project.value("modelBinding").toObject();
     resolveBinding(modelBinding);
     project["modelBinding"] = modelBinding;
-    QJsonObject artifactObject = project.value("frozenArtifact").toObject();
-    if (!artifactObject.isEmpty()) {
-        QJsonObject artifactBinding = artifactObject.value("modelBinding").toObject();
-        resolveBinding(artifactBinding);
-        artifactObject["modelBinding"] = artifactBinding;
-        project["frozenArtifact"] = artifactObject;
-    }
     RequirementSet parsed;
     std::string parseMessage;
     if (!RequirementSetJson::fromObject(project, parsed, &parseMessage)) { if (error != nullptr) *error = QString::fromStdString(parseMessage); return false; }
@@ -1560,6 +1567,20 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
             if (error != nullptr) *error = QString::fromUtf8("冻结审计工件无效：%1").arg(QString::fromStdString(parseMessage));
             return false;
         }
+
+        // Validate the portable artifact before resolving paths. Afterwards restore
+        // every duplicated path in memory and rehash its execution contract so its
+        // internal provenance remains coherent at the moved project location.
+        const auto resolveArtifactPath = [&documentDirectory] (std::string& sourcePath) {
+            if (sourcePath.empty()) return;
+            const QFileInfo sourceInfo(QString::fromStdString(sourcePath));
+            if (sourceInfo.isRelative())
+                sourcePath = documentDirectory.absoluteFilePath(sourceInfo.filePath()).toStdString();
+        };
+        resolveArtifactPath(artifact.modelBinding.sourcePath);
+        resolveArtifactPath(artifact.compiled.modelBinding.sourcePath);
+        resolveArtifactPath(artifact.execution.provenance.sourcePath);
+        artifact.executionFingerprint = RequirementExecutionJson::fingerprint(artifact.execution);
 
         // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
         // 会将需求降级为编辑态，明确要求工程师在当前工程环境中再次冻结。

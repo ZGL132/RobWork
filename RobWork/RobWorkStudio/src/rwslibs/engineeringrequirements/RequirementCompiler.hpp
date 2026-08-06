@@ -54,7 +54,8 @@ public:
      * 5. 标记 compiled.frozen = true，锁死数据。
      * 
      * @param requirements 输入：待编译的编辑态需求集
-     * @param compiled 输出：编译生成的只读执行态需求集（仅在返回 true 时有效）
+     * @param compiled 输出：始终先清空再写入编译快照。失败时 frozen 为 false，Must
+     *                 条目会标记为 Invalid，并保留诊断以便调用方显示和审计。
      * @param error 可选输出：编译失败时的阻断性错误原因描述
      * @return true 编译成功（无阻断性错误）
      * @return false 编译失败

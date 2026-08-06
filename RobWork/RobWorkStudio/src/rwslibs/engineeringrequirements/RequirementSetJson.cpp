@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 
 #include <cmath>
+#include <limits>
 
 namespace rws {
 namespace {
@@ -21,14 +22,26 @@ template <std::size_t N>
 bool readArray(const QJsonObject& object, const char* key, std::array<double, N>& values,
                std::string* error)
 {
-    const QJsonArray array = object.value(key).toArray();
+    const QJsonValue raw = object.value(key);
+    if (!raw.isArray()) {
+        if (error != nullptr)
+            *error = std::string(key) + " must be an array.";
+        return false;
+    }
+    const QJsonArray array = raw.toArray();
     if (array.size() != static_cast<int>(N)) {
         if (error != nullptr)
             *error = std::string(key) + " must contain " + std::to_string(N) + " values.";
         return false;
     }
     for (std::size_t index = 0; index < N; ++index) {
-        const double value = array.at(static_cast<int>(index)).toDouble();
+        const QJsonValue rawValue = array.at(static_cast<int>(index));
+        if (!rawValue.isDouble()) {
+            if (error != nullptr)
+                *error = std::string(key) + " values must be numbers.";
+            return false;
+        }
+        const double value = rawValue.toDouble();
         if (!std::isfinite(value)) {
             if (error != nullptr)
                 *error = std::string(key) + " contains a non-finite value.";
@@ -36,6 +49,105 @@ bool readArray(const QJsonObject& object, const char* key, std::array<double, N>
         }
         values[index] = value;
     }
+    return true;
+}
+
+bool requireString(const QJsonObject& object, const char* key, std::string& value,
+                   const std::string& defaultValue, std::string* error)
+{
+    const QJsonValue raw = object.value(key);
+    if (raw.isUndefined()) {
+        value = defaultValue;
+        return true;
+    }
+    if (!raw.isString()) {
+        if (error != nullptr) *error = std::string(key) + " must be a string.";
+        return false;
+    }
+    value = raw.toString().toStdString();
+    return true;
+}
+
+bool requireNumber(const QJsonObject& object, const char* key, double& value,
+                   double defaultValue, std::string* error)
+{
+    const QJsonValue raw = object.value(key);
+    if (raw.isUndefined()) {
+        value = defaultValue;
+        return true;
+    }
+    if (!raw.isDouble() || !std::isfinite(raw.toDouble())) {
+        if (error != nullptr) *error = std::string(key) + " must be a finite number.";
+        return false;
+    }
+    value = raw.toDouble();
+    return true;
+}
+
+bool requireInteger(const QJsonObject& object, const char* key, int& value,
+                    int defaultValue, std::string* error)
+{
+    double number = 0.0;
+    if (!requireNumber(object, key, number, static_cast<double>(defaultValue), error))
+        return false;
+    if (object.contains(key) && std::floor(number) != number) {
+        if (error != nullptr) *error = std::string(key) + " must be an integer.";
+        return false;
+    }
+    if (number < static_cast<double>(std::numeric_limits<int>::min()) ||
+        number > static_cast<double>(std::numeric_limits<int>::max())) {
+        if (error != nullptr) *error = std::string(key) + " is outside the integer range.";
+        return false;
+    }
+    value = static_cast<int>(number);
+    return true;
+}
+
+bool requireBool(const QJsonObject& object, const char* key, bool& value,
+                 bool defaultValue, std::string* error)
+{
+    const QJsonValue raw = object.value(key);
+    if (raw.isUndefined()) {
+        value = defaultValue;
+        return true;
+    }
+    if (!raw.isBool()) {
+        if (error != nullptr) *error = std::string(key) + " must be a boolean.";
+        return false;
+    }
+    value = raw.toBool();
+    return true;
+}
+
+bool requireObject(const QJsonObject& object, const char* key, QJsonObject& value,
+                   std::string* error)
+{
+    const QJsonValue raw = object.value(key);
+    if (raw.isUndefined()) {
+        value = QJsonObject();
+        return true;
+    }
+    if (!raw.isObject()) {
+        if (error != nullptr) *error = std::string(key) + " must be an object.";
+        return false;
+    }
+    value = raw.toObject();
+    return true;
+}
+
+bool requireArray(const QJsonObject& object, const char* key, QJsonArray& value,
+                  std::string* error)
+{
+    const QJsonValue raw = object.value(key);
+    if (raw.isUndefined()) {
+        value = QJsonArray();
+        return true;
+    }
+    if (!raw.isArray()) {
+        if (error != nullptr) *error = std::string(key) + " must be an array.";
+        return false;
+    }
+    value = raw.toArray();
     return true;
 }
 
@@ -113,90 +225,115 @@ QJsonObject writePoseTask(const PoseTask& task)
 
 bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
 {
-    task.id = object.value("id").toString().toStdString();
-    task.name = object.value("name").toString().toStdString();
-    if (!processTypeFromString(object.value("processType").toString("Generic").toStdString(), task.processType)) {
+    std::string text;
+    if (!requireString(object, "id", task.id, "", error) ||
+        !requireString(object, "name", task.name, "", error) ||
+        !requireString(object, "processType", text, "Generic", error)) return false;
+    if (!processTypeFromString(text, task.processType)) {
         if (error != nullptr) *error = "KeyStation.processType is invalid.";
         return false;
     }
-    if (!requirementLevelFromString(object.value("level").toString("Must").toStdString(), task.level)) {
+    if (!requireString(object, "level", text, "Must", error)) return false;
+    if (!requirementLevelFromString(text, task.level)) {
         if (error != nullptr) *error = "PoseTask.level is invalid.";
         return false;
     }
-    if (!poseTaskSourceFromString(object.value("source").toString("Manual").toStdString(), task.source)) {
+    if (!requireString(object, "source", text, "Manual", error)) return false;
+    if (!poseTaskSourceFromString(text, task.source)) {
         if (error != nullptr) *error = "PoseTask.source is invalid.";
         return false;
     }
-    task.refFrame = object.value("refFrame").toString("WORLD").toStdString();
-    task.tcpFrame = object.value("tcpFrame").toString().toStdString();
+    if (!requireString(object, "refFrame", task.refFrame, "WORLD", error) ||
+        !requireString(object, "tcpFrame", task.tcpFrame, "", error)) return false;
     if (!readArray(object, "position", task.position, error) ||
         !readArray(object, "rpyDeg", task.rpyDeg, error))
         return false;
-    task.tolerance.positionMeters = object.value("positionToleranceMeters").toDouble(0.001);
-    task.tolerance.orientationDeg = object.value("orientationToleranceDeg").toDouble(1.0);
-    task.tolerance.allowToolRollFree = object.value("allowToolRollFree").toBool(false);
-    const QJsonObject geometryFeature = object.value("geometryFeature").toObject();
-    if (!geometryFeatureTypeFromString(geometryFeature.value("type").toString("None").toStdString(), task.geometryFeature.type)) {
+    if (!requireNumber(object, "positionToleranceMeters", task.tolerance.positionMeters, 0.001, error) ||
+        !requireNumber(object, "orientationToleranceDeg", task.tolerance.orientationDeg, 1.0, error) ||
+        !requireBool(object, "allowToolRollFree", task.tolerance.allowToolRollFree, false, error)) return false;
+    QJsonObject geometryFeature;
+    if (!requireObject(object, "geometryFeature", geometryFeature, error)) return false;
+    if (!requireString(geometryFeature, "type", text, "None", error)) return false;
+    if (!geometryFeatureTypeFromString(text, task.geometryFeature.type)) {
         if (error != nullptr) *error = "KeyStation.geometryFeature.type is invalid.";
         return false;
     }
-    task.geometryFeature.frameName = geometryFeature.value("frameName").toString().toStdString();
-    task.geometryFeature.objectName = geometryFeature.value("objectName").toString().toStdString();
-    task.geometryFeature.geometryName = geometryFeature.value("geometryName").toString().toStdString();
-    const QJsonObject generation = object.value("generation").toObject();
-    task.generation.generatorId = generation.value("generatorId").toString().toStdString();
-    task.generation.instanceId = generation.value("instanceId").toString().toStdString();
-    task.generation.linked = generation.value("linked").toBool(false);
+    if (!requireString(geometryFeature, "frameName", task.geometryFeature.frameName, "", error) ||
+        !requireString(geometryFeature, "objectName", task.geometryFeature.objectName, "", error) ||
+        !requireString(geometryFeature, "geometryName", task.geometryFeature.geometryName, "", error)) return false;
+    QJsonObject generation;
+    if (!requireObject(object, "generation", generation, error) ||
+        !requireString(generation, "generatorId", task.generation.generatorId, "", error) ||
+        !requireString(generation, "instanceId", task.generation.instanceId, "", error) ||
+        !requireBool(generation, "linked", task.generation.linked, false, error)) return false;
     task.generation.parameters.clear();
-    const QJsonArray generationParameters = generation.value("parameters").toArray();
+    QJsonArray generationParameters;
+    if (!requireArray(generation, "parameters", generationParameters, error)) return false;
     for (const QJsonValue& value : generationParameters) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "generation.parameters entries must be objects.";
+            return false;
+        }
         const QJsonObject parameter = value.toObject();
-        const std::string key = parameter.value("key").toString().toStdString();
+        std::string key;
+        std::string parameterValue;
+        if (!requireString(parameter, "key", key, "", error) ||
+            !requireString(parameter, "value", parameterValue, "", error)) return false;
         if (key.empty()) {
             if (error != nullptr) *error = "KeyStation.generation parameter key cannot be empty.";
             return false;
         }
-        task.generation.parameters.push_back({key, parameter.value("value").toString().toStdString()});
+        task.generation.parameters.push_back({key, parameterValue});
     }
-    const QJsonObject importProvenance = object.value("importProvenance").toObject();
-    task.importProvenance.sourcePath = importProvenance.value("sourcePath").toString().toStdString();
-    task.importProvenance.recordNumber = importProvenance.value("recordNumber").toInt(0);
+    QJsonObject importProvenance;
+    if (!requireObject(object, "importProvenance", importProvenance, error) ||
+        !requireString(importProvenance, "sourcePath", task.importProvenance.sourcePath, "", error) ||
+        !requireInteger(importProvenance, "recordNumber", task.importProvenance.recordNumber, 0, error)) return false;
     if (task.importProvenance.recordNumber < 0) {
         if (error != nullptr) *error = "KeyStation.importProvenance.recordNumber cannot be negative.";
         return false;
     }
-    const QJsonObject orientation = object.value("orientation").toObject();
-    if (!orientationModeFromString(orientation.value("mode").toString("Fixed").toStdString(), task.orientation.mode)) {
+    QJsonObject orientation;
+    if (!requireObject(object, "orientation", orientation, error) ||
+        !requireString(orientation, "mode", text, "Fixed", error)) return false;
+    if (!orientationModeFromString(text, task.orientation.mode)) {
         if (error != nullptr) *error = "KeyStation.orientation.mode is invalid.";
         return false;
     }
-    task.orientation.targetFrame = orientation.value("targetFrame").toString().toStdString();
-    task.orientation.targetGeometry = orientation.value("targetGeometry").toString().toStdString();
-    task.orientation.targetPoint = orientation.value("targetPoint").toString().toStdString();
-    task.orientation.resolutionEvidence = orientation.value("resolutionEvidence").toString().toStdString();
-    task.orientation.invertNormal = orientation.value("invertNormal").toBool(false);
-    task.orientation.allowToolRollFree = orientation.value("allowToolRollFree").toBool(task.tolerance.allowToolRollFree);
-    task.orientation.rollMinimumDeg = orientation.value("rollMinimumDeg").toDouble(-180.0);
-    task.orientation.rollMaximumDeg = orientation.value("rollMaximumDeg").toDouble(180.0);
+    if (!requireString(orientation, "targetFrame", task.orientation.targetFrame, "", error) ||
+        !requireString(orientation, "targetGeometry", task.orientation.targetGeometry, "", error) ||
+        !requireString(orientation, "targetPoint", task.orientation.targetPoint, "", error) ||
+        !requireString(orientation, "resolutionEvidence", task.orientation.resolutionEvidence, "", error) ||
+        !requireBool(orientation, "invertNormal", task.orientation.invertNormal, false, error) ||
+        !requireBool(orientation, "allowToolRollFree", task.orientation.allowToolRollFree,
+                     task.tolerance.allowToolRollFree, error) ||
+        !requireNumber(orientation, "rollMinimumDeg", task.orientation.rollMinimumDeg, -180.0, error) ||
+        !requireNumber(orientation, "rollMaximumDeg", task.orientation.rollMaximumDeg, 180.0, error)) return false;
     const auto readPathRule = [error] (const QJsonObject& value, ApproachRetractRule& rule) {
-        rule.enabled = value.value("enabled").toBool(false);
-        if (!offsetAxisFromString(value.value("axis").toString("ToolZ").toStdString(), rule.axis)) {
+        std::string axis;
+        if (!requireBool(value, "enabled", rule.enabled, false, error) ||
+            !requireString(value, "axis", axis, "ToolZ", error)) return false;
+        if (!offsetAxisFromString(axis, rule.axis)) {
             if (error != nullptr) *error = "KeyStation approach/retract axis is invalid.";
             return false;
         }
-        rule.distanceMeters = value.value("distanceMeters").toDouble(0.0);
-        rule.collisionFreeRequired = value.value("collisionFreeRequired").toBool(true);
+        if (!requireNumber(value, "distanceMeters", rule.distanceMeters, 0.0, error) ||
+            !requireBool(value, "collisionFreeRequired", rule.collisionFreeRequired, true, error)) return false;
         return std::isfinite(rule.distanceMeters);
     };
-    if (!readPathRule(object.value("approach").toObject(), task.approach) ||
-        !readPathRule(object.value("retract").toObject(), task.retract))
+    QJsonObject approach;
+    QJsonObject retract;
+    if (!requireObject(object, "approach", approach, error) ||
+        !requireObject(object, "retract", retract, error) ||
+        !readPathRule(approach, task.approach) || !readPathRule(retract, task.retract))
         return false;
-    const QJsonObject validation = object.value("validation").toObject();
-    task.validation.collisionFreeRequired = validation.value("collisionFreeRequired").toBool(true);
-    task.validation.minimumJointMargin = validation.value("minimumJointMargin").toDouble(0.0);
-    task.validation.minimumManipulability = validation.value("minimumManipulability").toDouble(0.0);
-    task.confidence = object.value("confidence").toDouble(1.0);
-    task.note = object.value("note").toString().toStdString();
+    QJsonObject validation;
+    if (!requireObject(object, "validation", validation, error) ||
+        !requireBool(validation, "collisionFreeRequired", task.validation.collisionFreeRequired, true, error) ||
+        !requireNumber(validation, "minimumJointMargin", task.validation.minimumJointMargin, 0.0, error) ||
+        !requireNumber(validation, "minimumManipulability", task.validation.minimumManipulability, 0.0, error) ||
+        !requireNumber(object, "confidence", task.confidence, 1.0, error) ||
+        !requireString(object, "note", task.note, "", error)) return false;
     return std::isfinite(task.tolerance.positionMeters) && std::isfinite(task.tolerance.orientationDeg) &&
            std::isfinite(task.orientation.rollMinimumDeg) && std::isfinite(task.orientation.rollMaximumDeg) &&
            std::isfinite(task.validation.minimumJointMargin) && std::isfinite(task.validation.minimumManipulability) &&
@@ -235,44 +372,46 @@ QJsonObject writeBoxRegion(const BoxRegion& region)
 
 bool readBoxRegion(const QJsonObject& object, BoxRegion& region, std::string* error)
 {
-    region.id = object.value("id").toString().toStdString();
-    region.name = object.value("name").toString().toStdString();
-    if (!requirementLevelFromString(object.value("level").toString("Must").toStdString(), region.level)) {
+    std::string text;
+    if (!requireString(object, "id", region.id, "", error) ||
+        !requireString(object, "name", region.name, "", error) ||
+        !requireString(object, "level", text, "Must", error)) return false;
+    if (!requirementLevelFromString(text, region.level)) {
         if (error != nullptr) *error = "BoxRegion.level is invalid.";
         return false;
     }
-    region.refFrame = object.value("refFrame").toString("WORLD").toStdString();
+    if (!requireString(object, "refFrame", region.refFrame, "WORLD", error)) return false;
     if (!readArray(object, "center", region.center, error) ||
         !readArray(object, "size", region.size, error))
         return false;
-    region.minimumCoverage = object.value("minimumCoverage").toDouble(0.8);
-    region.samplesPerAxis = object.value("samplesPerAxis").toInt(5);
-    region.tcpFrame = object.value("tcpFrame").toString().toStdString();
-    if (!orientationModeFromString(object.value("orientationMode").toString("Fixed").toStdString(),
-                                   region.orientationMode)) {
+    if (!requireNumber(object, "minimumCoverage", region.minimumCoverage, 0.8, error) ||
+        !requireInteger(object, "samplesPerAxis", region.samplesPerAxis, 5, error) ||
+        !requireString(object, "tcpFrame", region.tcpFrame, "", error) ||
+        !requireString(object, "orientationMode", text, "Fixed", error)) return false;
+    if (!orientationModeFromString(text, region.orientationMode)) {
         if (error != nullptr) *error = "BoxRegion.orientationMode is invalid.";
         return false;
     }
-    region.orientationTargetFrame = object.value("orientationTargetFrame").toString().toStdString();
-    region.orientationTargetGeometry = object.value("orientationTargetGeometry").toString().toStdString();
-    region.orientationTargetPoint = object.value("orientationTargetPoint").toString().toStdString();
-    if (object.contains("fixedRpyDeg") &&
-        !readArray(object, "fixedRpyDeg", region.fixedRpyDeg, error)) return false;
-    region.directionSamples = object.value("directionSamples").toInt(1);
-    region.rollSamples = object.value("rollSamples").toInt(1);
-    region.minimumOrientationCoverage = object.value("minimumOrientationCoverage").toDouble(0.0);
-    const QString stage = object.value("minimumVerificationStage").toString("Verified");
+    if (!requireString(object, "orientationTargetFrame", region.orientationTargetFrame, "", error) ||
+        !requireString(object, "orientationTargetGeometry", region.orientationTargetGeometry, "", error) ||
+        !requireString(object, "orientationTargetPoint", region.orientationTargetPoint, "", error)) return false;
+    if (object.contains("fixedRpyDeg") && !readArray(object, "fixedRpyDeg", region.fixedRpyDeg, error)) return false;
+    if (!requireInteger(object, "directionSamples", region.directionSamples, 1, error) ||
+        !requireInteger(object, "rollSamples", region.rollSamples, 1, error) ||
+        !requireNumber(object, "minimumOrientationCoverage", region.minimumOrientationCoverage, 0.0, error) ||
+        !requireString(object, "minimumVerificationStage", text, "Verified", error)) return false;
+    const QString stage = QString::fromStdString(text);
     if (stage == "Quick") region.minimumVerificationStage = RequirementVerificationStage::Quick;
     else if (stage == "Verified") region.minimumVerificationStage = RequirementVerificationStage::Verified;
     else {
         if (error != nullptr) *error = "BoxRegion.minimumVerificationStage is invalid.";
         return false;
     }
-    region.collisionFreeRequired = object.value("collisionFreeRequired").toBool(true);
-    region.positionToleranceMeters = object.value("positionToleranceMeters").toDouble(0.001);
-    region.orientationToleranceDeg = object.value("orientationToleranceDeg").toDouble(1.0);
-    region.minimumJointMargin = object.value("minimumJointMargin").toDouble(0.0);
-    region.minimumManipulability = object.value("minimumManipulability").toDouble(0.0);
+    if (!requireBool(object, "collisionFreeRequired", region.collisionFreeRequired, true, error) ||
+        !requireNumber(object, "positionToleranceMeters", region.positionToleranceMeters, 0.001, error) ||
+        !requireNumber(object, "orientationToleranceDeg", region.orientationToleranceDeg, 1.0, error) ||
+        !requireNumber(object, "minimumJointMargin", region.minimumJointMargin, 0.0, error) ||
+        !requireNumber(object, "minimumManipulability", region.minimumManipulability, 0.0, error)) return false;
     return std::isfinite(region.minimumCoverage) &&
            std::isfinite(region.minimumOrientationCoverage) &&
            std::isfinite(region.positionToleranceMeters) &&
@@ -412,20 +551,33 @@ bool RequirementSetJson::fromObject(const QJsonObject& object, RequirementSet& r
                                     std::string* error)
 {
     RequirementSet parsed;
-    parsed.schemaVersion = object.value("schemaVersion").toInt(1);
-    parsed.name = object.value("name").toString().toStdString();
-    parsed.version = object.value("version").toInt(1);
-    parsed.frozen = object.value("frozen").toBool(false);
-    const QJsonObject binding = object.value("modelBinding").toObject();
-    parsed.modelBinding.sourcePath = binding.value("sourcePath").toString().toStdString();
-    parsed.modelBinding.robotModelFingerprint = binding.value("robotModelFingerprint").toString().toStdString();
-    parsed.modelBinding.robotName = binding.value("robotName").toString().toStdString();
-    for (const QJsonValue& value : object.value("poseTasks").toArray()) {
+    if (!requireInteger(object, "schemaVersion", parsed.schemaVersion, 1, error) ||
+        !requireString(object, "name", parsed.name, "", error) ||
+        !requireInteger(object, "version", parsed.version, 1, error) ||
+        !requireBool(object, "frozen", parsed.frozen, false, error)) return false;
+    QJsonObject binding;
+    if (!requireObject(object, "modelBinding", binding, error) ||
+        !requireString(binding, "sourcePath", parsed.modelBinding.sourcePath, "", error) ||
+        !requireString(binding, "robotModelFingerprint", parsed.modelBinding.robotModelFingerprint, "", error) ||
+        !requireString(binding, "robotName", parsed.modelBinding.robotName, "", error)) return false;
+    QJsonArray poseValues;
+    QJsonArray regionValues;
+    if (!requireArray(object, "poseTasks", poseValues, error) ||
+        !requireArray(object, "boxRegions", regionValues, error)) return false;
+    for (const QJsonValue& value : poseValues) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "poseTasks entries must be objects.";
+            return false;
+        }
         PoseTask task;
         if (!readPoseTask(value.toObject(), task, error)) return false;
         parsed.poseTasks.push_back(task);
     }
-    for (const QJsonValue& value : object.value("boxRegions").toArray()) {
+    for (const QJsonValue& value : regionValues) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "boxRegions entries must be objects.";
+            return false;
+        }
         BoxRegion region;
         if (!readBoxRegion(value.toObject(), region, error)) return false;
         parsed.boxRegions.push_back(region);
