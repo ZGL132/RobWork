@@ -10,6 +10,57 @@
 namespace rws {
 namespace {
 
+bool isKnownKey(const QString& key, std::initializer_list<const char*> knownKeys)
+{
+    for (const char* known : knownKeys)
+        if (key == QLatin1String(known)) return true;
+    return false;
+}
+
+bool readExtensions(const QJsonObject& object,
+                    std::initializer_list<const char*> knownKeys,
+                    QJsonObject& extensions, std::string* error)
+{
+    extensions = QJsonObject();
+    if (object.contains("extensions")) {
+        if (!object.value("extensions").isObject()) {
+            if (error != nullptr) *error = "extensions must be an object.";
+            return false;
+        }
+        const QJsonObject explicitExtensions = object.value("extensions").toObject();
+        for (const QString& key : explicitExtensions.keys()) {
+            if (isKnownKey(key, knownKeys) || key == QLatin1String("extensions")) {
+                if (error != nullptr)
+                    *error = "extensions cannot override known field '" + key.toStdString() + "'.";
+                return false;
+            }
+            extensions.insert(key, explicitExtensions.value(key));
+        }
+    }
+    for (const QString& key : object.keys()) {
+        if (key == QLatin1String("extensions") || isKnownKey(key, knownKeys)) continue;
+        if (extensions.contains(key)) {
+            if (error != nullptr)
+                *error = "top-level extension field '" + key.toStdString() +
+                    "' conflicts with explicit extensions.";
+            return false;
+        }
+        extensions.insert(key, object.value(key));
+    }
+    return true;
+}
+
+void writeExtensions(QJsonObject& object, const QJsonObject& extensions,
+                     std::initializer_list<const char*> knownKeys)
+{
+    QJsonObject filtered;
+    for (const QString& key : extensions.keys()) {
+        if (!isKnownKey(key, knownKeys) && key != QLatin1String("extensions"))
+            filtered.insert(key, extensions.value(key));
+    }
+    if (!filtered.isEmpty()) object["extensions"] = filtered;
+}
+
 template <std::size_t N>
 QJsonArray writeArray(const std::array<double, N>& values)
 {
@@ -367,6 +418,14 @@ void writeCommon(const RequirementExecutionTask& value, QJsonObject& object)
     object["pathValidationPending"] = value.pathValidationPending;
     // 逐工位序列化条目级溯源(来源 + 关联诊断)。
     object["provenance"] = provenanceToObject(value.provenance);
+    writeExtensions(object, value.extensions,
+                    {"id", "name", "level", "compileState", "processType", "excludedReason",
+                     "refFrame", "tcpFrame", "position", "rpyDeg", "positionToleranceMeters",
+                     "orientationToleranceDeg", "allowToolRollFree", "orientationMode",
+                     "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
+                     "invertNormal", "rollMinimumDeg", "rollMaximumDeg", "collisionFreeRequired",
+                     "minimumJointMargin", "minimumManipulability", "resolutionEvidence", "approach",
+                     "retract", "pathValidationPending", "provenance", "diagnostics"});
 }
 
 bool validateExecutionTask(const RequirementExecutionTask& task, std::string* error);
@@ -374,6 +433,15 @@ bool validateExecutionRegion(const RequirementExecutionRegion& region, std::stri
 
 bool readCommon(const QJsonObject& object, RequirementExecutionTask& value, std::string* error)
 {
+    if (!readExtensions(object,
+                        {"id", "name", "level", "compileState", "processType", "excludedReason",
+                         "refFrame", "tcpFrame", "position", "rpyDeg", "positionToleranceMeters",
+                         "orientationToleranceDeg", "allowToolRollFree", "orientationMode",
+                         "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
+                         "invertNormal", "rollMinimumDeg", "rollMaximumDeg", "collisionFreeRequired",
+                         "minimumJointMargin", "minimumManipulability", "resolutionEvidence", "approach",
+                         "retract", "pathValidationPending", "provenance", "diagnostics"},
+                        value.extensions, error)) return false;
     // 字符串字段：id/name/excludedReason/refFrame/tcpFrame 及枚举、朝向目标、证据等。
     for (const char* key : {"id", "name", "excludedReason", "refFrame", "tcpFrame",
                             "level", "compileState", "processType", "orientationMode",
@@ -525,11 +593,28 @@ QJsonObject regionToObject(const RequirementExecutionRegion& value)
     QJsonArray diagnostics;
     for (const auto& item : value.diagnostics) diagnostics.append(diagnosticToObject(item));
     object["diagnostics"] = diagnostics;
+    writeExtensions(object, value.extensions,
+                    {"id", "name", "level", "compileState", "excludedReason", "refFrame", "tcpFrame",
+                     "center", "size", "minimumCoverage", "samplesPerAxis", "orientationMode",
+                     "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
+                     "fixedRpyDeg", "directionSamples", "rollSamples", "minimumOrientationCoverage",
+                     "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
+                     "orientationToleranceDeg", "minimumJointMargin", "minimumManipulability",
+                     "provenance", "diagnostics"});
     return object;
 }
 
 bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& value, std::string* error)
 {
+    if (!readExtensions(object,
+                        {"id", "name", "level", "compileState", "excludedReason", "refFrame", "tcpFrame",
+                         "center", "size", "minimumCoverage", "samplesPerAxis", "orientationMode",
+                         "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
+                         "fixedRpyDeg", "directionSamples", "rollSamples", "minimumOrientationCoverage",
+                         "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
+                         "orientationToleranceDeg", "minimumJointMargin", "minimumManipulability",
+                         "provenance", "diagnostics"},
+                        value.extensions, error)) return false;
     // 字符串字段：id/name/excludedReason/refFrame/tcpFrame 及枚举、朝向目标、验证阶段。
     for (const char* key : {"id", "name", "excludedReason", "refFrame", "tcpFrame",
                             "level", "compileState", "orientationMode",
@@ -766,6 +851,8 @@ QJsonObject RequirementExecutionJson::toObject(const RequirementExecutionSet& va
     QJsonArray diagnostics;
     for (const auto& item : value.diagnostics) diagnostics.append(diagnosticToObject(item));
     object["diagnostics"] = diagnostics;
+    writeExtensions(object, value.extensions,
+                    {"type", "schemaVersion", "provenance", "tasks", "workspaceRegions", "diagnostics"});
     return object;
 }
 
@@ -781,6 +868,9 @@ bool RequirementExecutionJson::fromObject(const QJsonObject& object,
         return false;
     }
     RequirementExecutionSet parsed;
+    if (!readExtensions(object,
+                        {"type", "schemaVersion", "provenance", "tasks", "workspaceRegions", "diagnostics"},
+                        parsed.extensions, error)) return false;
     // schemaVersion 必须显式为整数且等于 1。
     if (!requireInteger(object, "schemaVersion", error)) return false;
     parsed.schemaVersion = object.value("schemaVersion").toInt();

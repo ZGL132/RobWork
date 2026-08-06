@@ -20,6 +20,25 @@ bool finiteArray(const std::array<double, 3>& values)
     return std::isfinite(values[0]) && std::isfinite(values[1]) && std::isfinite(values[2]);
 }
 
+std::string inferDiagnosticField(const std::string& code, const std::string& message)
+{
+    if (code == "REQ_REQUIRED_FIELD_MISSING") {
+        if (message.find("TCP") != std::string::npos) return "tcpFrame";
+        if (message.find("reference frame") != std::string::npos) return "refFrame";
+        if (message.find("name") != std::string::npos) return "name";
+        return "id";
+    }
+    if (code == "REQ_DUPLICATE_ID") return "id";
+    if (code == "REQ_GEOMETRY_FEATURE_INVALID") return "geometryFeature";
+    if (code == "REQ_ORIENTATION_TARGET_MISSING" || code == "REQ_ORIENTATION_RULE_INVALID")
+        return "orientation";
+    if (code == "REQ_POSE_INVALID") return "position";
+    if (code == "REQ_WORKSPACE_GRID_TOO_COARSE" ||
+        code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED") return "samplesPerAxis";
+    if (code == "REQ_WORKSPACE_INVALID") return "size";
+    return std::string();
+}
+
 /**
  * @brief 辅助函数：向诊断日志集合中构造并追加一条新的诊断条目
  * 
@@ -37,9 +56,14 @@ void addDiagnostic(std::vector<RequirementDiagnostic>& diagnostics, const std::s
 {
     RequirementDiagnostic diagnostic;
     diagnostic.code = code;
+    diagnostic.severity = level == RequirementLevel::Must ? RequirementDiagnosticSeverity::Error :
+        (level == RequirementLevel::Info ? RequirementDiagnosticSeverity::Info :
+                                           RequirementDiagnosticSeverity::Warning);
     diagnostic.requirementId = requirementId;
     diagnostic.level = level;
+    diagnostic.field = inferDiagnosticField(code, message);
     diagnostic.message = message;
+    diagnostic.source = "engineeringrequirements.compiler";
     diagnostic.blocking = (level == RequirementLevel::Must); // 仅 Must 级别的错误才会阻断编译
     diagnostics.push_back(diagnostic);
 }
@@ -97,9 +121,13 @@ void populateProvenance(CompiledRequirementItemProvenance& provenance,
 {
     provenance.sourceId = id;
     provenance.sourceKind = sourceKind;
+    provenance.diagnosticCodes.clear();
+    provenance.diagnostics.clear();
     for (const RequirementDiagnostic& diagnostic : diagnostics) {
-        if (diagnostic.requirementId == id && !diagnostic.code.empty())
-            provenance.diagnosticCodes.push_back(diagnostic.code);
+        if (diagnostic.requirementId == id) {
+            provenance.diagnostics.push_back(diagnostic);
+            if (!diagnostic.code.empty()) provenance.diagnosticCodes.push_back(diagnostic.code);
+        }
     }
 }
 

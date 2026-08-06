@@ -51,8 +51,15 @@ void addEnvironmentDiagnostic(std::vector<RequirementDiagnostic>& diagnostics, c
     RequirementDiagnostic diagnostic;
     diagnostic.requirementId = id;
     diagnostic.level = level;
+    diagnostic.severity = level == RequirementLevel::Must ? RequirementDiagnosticSeverity::Error :
+        (level == RequirementLevel::Info ? RequirementDiagnosticSeverity::Info :
+                                           RequirementDiagnosticSeverity::Warning);
+    diagnostic.field = code == "REQ_FRAME_NOT_FOUND" ? "refFrame" :
+        ((code == "REQ_TCP_FRAME_NOT_FOUND" || code == "REQ_TCP_FRAME_WRONG_DEVICE") ? "tcpFrame" :
+         (code == "REQ_GEOMETRY_TARGET_NOT_FOUND" ? "geometryFeature" : "orientation"));
     diagnostic.message = message;
     diagnostic.code = code;
+    diagnostic.source = "engineeringrequirements.freezer";
     diagnostic.blocking = level == RequirementLevel::Must;
     diagnostics.push_back(diagnostic);
 }
@@ -398,16 +405,21 @@ RequirementExecutionDiagnostic executionDiagnostic(const RequirementDiagnostic& 
 {
     RequirementExecutionDiagnostic result;
     result.code = diagnostic.code.empty() ? "REQ_INVALID" : diagnostic.code;
-    result.severity = diagnostic.blocking ? RequirementExecutionDiagnosticSeverity::Error :
-                   (diagnostic.level == RequirementLevel::Info ?
-                        RequirementExecutionDiagnosticSeverity::Info :
-                        RequirementExecutionDiagnosticSeverity::Warning);
+    switch (diagnostic.severity) {
+    case RequirementDiagnosticSeverity::Info:
+        result.severity = RequirementExecutionDiagnosticSeverity::Info;
+        break;
+    case RequirementDiagnosticSeverity::Warning:
+        result.severity = RequirementExecutionDiagnosticSeverity::Warning;
+        break;
+    case RequirementDiagnosticSeverity::Error:
+        result.severity = RequirementExecutionDiagnosticSeverity::Error;
+        break;
+    }
     result.requirementId = diagnostic.requirementId;
-    // 执行诊断的 field 字段承载原诊断码，便于下游一眼看到问题类型(如
-    // REQ_TCP_FRAME_NOT_FOUND)，而不只是自然语言消息。
-    result.field = diagnostic.code;
+    result.field = diagnostic.field;
     result.message = diagnostic.message;
-    result.source = "engineeringrequirements";
+    result.source = diagnostic.source.empty() ? "engineeringrequirements" : diagnostic.source;
     return result;
 }
 
@@ -419,9 +431,13 @@ RequirementItemProvenance executionProvenance(const CompiledRequirementItemProve
     RequirementItemProvenance result;
     result.sourceId = source.sourceId;
     result.sourceKind = source.sourceKind;
-    for (const RequirementDiagnostic& diagnostic : diagnostics) {
-        if (diagnostic.requirementId == source.sourceId)
+    if (!source.diagnostics.empty()) {
+        for (const RequirementDiagnostic& diagnostic : source.diagnostics)
             result.diagnostics.push_back(executionDiagnostic(diagnostic));
+    } else {
+        for (const RequirementDiagnostic& diagnostic : diagnostics)
+            if (diagnostic.requirementId == source.sourceId)
+                result.diagnostics.push_back(executionDiagnostic(diagnostic));
     }
     return result;
 }
@@ -527,13 +543,28 @@ RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
     return execution;
 }
 
+std::vector<FrozenCompiledItemState> snapshotCompiledItems(const CompiledRequirementSet& compiled)
+{
+    std::vector<FrozenCompiledItemState> result;
+    for (const CompiledPoseTask& task : compiled.poseTasks)
+        result.push_back({"PoseTask", task.id, task.compileState, task.excludedReason, task.provenance});
+    for (const WorkspaceDemandRegion& region : compiled.workspaceRegions)
+        result.push_back({"WorkspaceRegion", region.id, region.compileState,
+                          region.excludedReason, region.provenance});
+    return result;
+}
+
 QJsonObject diagnosticToObject(const RequirementDiagnostic& diagnostic)
 {
     QJsonObject object;
     object["code"] = QString::fromStdString(diagnostic.code);
     object["requirementId"] = QString::fromStdString(diagnostic.requirementId);
     object["level"] = QString::fromLatin1(toString(diagnostic.level));
+    object["severity"] = diagnostic.severity == RequirementDiagnosticSeverity::Error ? "Error" :
+        (diagnostic.severity == RequirementDiagnosticSeverity::Warning ? "Warning" : "Info");
+    object["field"] = QString::fromStdString(diagnostic.field);
     object["message"] = QString::fromStdString(diagnostic.message);
+    object["source"] = QString::fromStdString(diagnostic.source);
     object["blocking"] = diagnostic.blocking;
     return object;
 }
@@ -565,10 +596,124 @@ bool diagnosticFromObject(const QJsonObject& object, RequirementDiagnostic& diag
         return false;
     }
     diagnostic.blocking = object.value("blocking").toBool();
+    if (object.contains("field") && !object.value("field").isString()) {
+        if (error != nullptr) *error = "Frozen artifact diagnostic field has the wrong type.";
+        return false;
+    }
+    if (object.contains("source") && !object.value("source").isString()) {
+        if (error != nullptr) *error = "Frozen artifact diagnostic source has the wrong type.";
+        return false;
+    }
+    diagnostic.field = object.value("field").toString().toStdString();
+    diagnostic.source = object.value("source").toString("engineeringrequirements.legacy").toStdString();
+    if (object.contains("severity")) {
+        if (!object.value("severity").isString()) {
+            if (error != nullptr) *error = "Frozen artifact diagnostic severity has the wrong type.";
+            return false;
+        }
+        const QString severity = object.value("severity").toString();
+        if (severity == "Info") diagnostic.severity = RequirementDiagnosticSeverity::Info;
+        else if (severity == "Warning") diagnostic.severity = RequirementDiagnosticSeverity::Warning;
+        else if (severity == "Error") diagnostic.severity = RequirementDiagnosticSeverity::Error;
+        else {
+            if (error != nullptr) *error = "Frozen artifact diagnostic severity is invalid.";
+            return false;
+        }
+    } else {
+        diagnostic.severity = diagnostic.blocking ? RequirementDiagnosticSeverity::Error :
+            (diagnostic.level == RequirementLevel::Info ? RequirementDiagnosticSeverity::Info :
+                                                          RequirementDiagnosticSeverity::Warning);
+    }
     // blocking 必须与 level 一致：Must 级诊断必须阻塞，其余必须非阻塞。
     if ((diagnostic.level == RequirementLevel::Must) != diagnostic.blocking) {
         if (error != nullptr) *error = "Frozen artifact diagnostic blocking does not match its level.";
         return false;
+    }
+    return true;
+}
+
+const char* compileStateToString(RequirementCompileState state)
+{
+    switch (state) {
+    case RequirementCompileState::Included: return "Included";
+    case RequirementCompileState::Excluded: return "Excluded";
+    case RequirementCompileState::Invalid: return "Invalid";
+    }
+    return "Invalid";
+}
+
+bool compileStateFromString(const QString& value, RequirementCompileState& state)
+{
+    if (value == "Included") state = RequirementCompileState::Included;
+    else if (value == "Excluded") state = RequirementCompileState::Excluded;
+    else if (value == "Invalid") state = RequirementCompileState::Invalid;
+    else return false;
+    return true;
+}
+
+QJsonObject compiledItemStateToObject(const FrozenCompiledItemState& item)
+{
+    QJsonObject object;
+    object["kind"] = QString::fromStdString(item.kind);
+    object["id"] = QString::fromStdString(item.id);
+    object["compileState"] = compileStateToString(item.compileState);
+    object["excludedReason"] = QString::fromStdString(item.excludedReason);
+    QJsonObject provenance;
+    provenance["sourceId"] = QString::fromStdString(item.provenance.sourceId);
+    provenance["sourceKind"] = QString::fromStdString(item.provenance.sourceKind);
+    QJsonArray diagnostics;
+    for (const RequirementDiagnostic& diagnostic : item.provenance.diagnostics)
+        diagnostics.append(diagnosticToObject(diagnostic));
+    provenance["diagnostics"] = diagnostics;
+    object["provenance"] = provenance;
+    return object;
+}
+
+bool compiledItemStateFromObject(const QJsonObject& object, FrozenCompiledItemState& item,
+                                 std::string* error)
+{
+    for (const char* key : {"kind", "id", "compileState", "excludedReason"}) {
+        if (!object.value(key).isString()) {
+            if (error != nullptr) *error = std::string("Frozen compiled item field has the wrong type: ") + key;
+            return false;
+        }
+    }
+    if (!object.value("provenance").isObject()) {
+        if (error != nullptr) *error = "Frozen compiled item provenance must be an object.";
+        return false;
+    }
+    const QJsonObject provenance = object.value("provenance").toObject();
+    for (const char* key : {"sourceId", "sourceKind"}) {
+        if (!provenance.value(key).isString()) {
+            if (error != nullptr) *error = std::string("Frozen compiled item provenance field has the wrong type: ") + key;
+            return false;
+        }
+    }
+    if (!provenance.value("diagnostics").isArray()) {
+        if (error != nullptr) *error = "Frozen compiled item provenance diagnostics must be an array.";
+        return false;
+    }
+    item.kind = object.value("kind").toString().toStdString();
+    item.id = object.value("id").toString().toStdString();
+    item.excludedReason = object.value("excludedReason").toString().toStdString();
+    if ((item.kind != "PoseTask" && item.kind != "WorkspaceRegion") || item.id.empty() ||
+        !compileStateFromString(object.value("compileState").toString(), item.compileState)) {
+        if (error != nullptr) *error = "Frozen compiled item identity or state is invalid.";
+        return false;
+    }
+    item.provenance.sourceId = provenance.value("sourceId").toString().toStdString();
+    item.provenance.sourceKind = provenance.value("sourceKind").toString().toStdString();
+    item.provenance.diagnostics.clear();
+    item.provenance.diagnosticCodes.clear();
+    for (const QJsonValue& value : provenance.value("diagnostics").toArray()) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Frozen compiled item provenance diagnostic must be an object.";
+            return false;
+        }
+        RequirementDiagnostic diagnostic;
+        if (!diagnosticFromObject(value.toObject(), diagnostic, error)) return false;
+        item.provenance.diagnostics.push_back(diagnostic);
+        if (!diagnostic.code.empty()) item.provenance.diagnosticCodes.push_back(diagnostic.code);
     }
     return true;
 }
@@ -610,8 +755,25 @@ bool RequirementFreezer::validateExecutionConsistency(const FrozenRequirementArt
     }
     // ③ 由编译快照投影出的执行契约必须与存档执行契约指纹一致，
     // 确保编译快照与执行契约没有各自独立漂移。
-    if (RequirementExecutionJson::fingerprint(makeExecution(artifact)) !=
-        artifact.executionFingerprint) {
+    RequirementExecutionSet expectedExecution = makeExecution(artifact);
+    expectedExecution.extensions = artifact.execution.extensions;
+    for (RequirementExecutionTask& expectedTask : expectedExecution.tasks) {
+        for (const RequirementExecutionTask& storedTask : artifact.execution.tasks) {
+            if (storedTask.id == expectedTask.id) {
+                expectedTask.extensions = storedTask.extensions;
+                break;
+            }
+        }
+    }
+    for (RequirementExecutionRegion& expectedRegion : expectedExecution.workspaceRegions) {
+        for (const RequirementExecutionRegion& storedRegion : artifact.execution.workspaceRegions) {
+            if (storedRegion.id == expectedRegion.id) {
+                expectedRegion.extensions = storedRegion.extensions;
+                break;
+            }
+        }
+    }
+    if (RequirementExecutionJson::fingerprint(expectedExecution) != artifact.executionFingerprint) {
         if (error != nullptr)
             *error = "Frozen requirement compiled snapshot does not match execution.";
         return false;
@@ -745,6 +907,20 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     CompiledRequirementSet compiled;
     if (!RequirementCompiler::compile(resolved, compiled, error)) return false;
     compiled.diagnostics.insert(compiled.diagnostics.end(), environmentDiagnostics.begin(), environmentDiagnostics.end());
+    // 编译器已记录编辑态诊断；冻结阶段新增的 WorkCell 诊断也必须进入逐项
+    // provenance，才能让执行契约准确定位 refFrame/tcpFrame/姿态目标错误。
+    const auto appendEnvironmentProvenance = [&environmentDiagnostics] (auto& items) {
+        for (auto& item : items) {
+            for (const RequirementDiagnostic& diagnostic : environmentDiagnostics) {
+                if (diagnostic.requirementId != item.id) continue;
+                item.provenance.diagnostics.push_back(diagnostic);
+                if (!diagnostic.code.empty())
+                    item.provenance.diagnosticCodes.push_back(diagnostic.code);
+            }
+        }
+    };
+    appendEnvironmentProvenance(compiled.poseTasks);
+    appendEnvironmentProvenance(compiled.workspaceRegions);
     // 环境诊断命中的工位/覆盖盒不再从 compiled 中删除，而是标记为 Excluded 并写入
     // excludedReason。这样被排除项仍保留在审计记录中(可追溯"为什么没进优化")，
     // 同时下游只消费 Included 项，语义与旧"直接擦除"行为等价但信息更完整。
@@ -779,6 +955,7 @@ bool RequirementFreezer::freeze(const RequirementSet& requirements, const rw::mo
     artifact.scenario.snapshotFingerprint = scenarioFingerprint(artifact.scenario);
     artifact.compiled = compiled;
     artifact.compiled.requirementFingerprint = artifact.requirementFingerprint;
+    artifact.compiledItems = snapshotCompiledItems(artifact.compiled);
     artifact.execution = makeExecution(artifact);
     artifact.executionFingerprint = RequirementExecutionJson::fingerprint(artifact.execution);
     if (error != nullptr) error->clear();
@@ -1018,6 +1195,12 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
         object["frozenRobotState"] = robotState;
     }
     object["compiledRequirements"] = RequirementSetJson::toObject(compiledSnapshot(artifact.compiled));
+    QJsonArray compiledItems;
+    const std::vector<FrozenCompiledItemState> itemStates = artifact.compiledItems.empty()
+        ? snapshotCompiledItems(artifact.compiled) : artifact.compiledItems;
+    for (const FrozenCompiledItemState& item : itemStates)
+        compiledItems.append(compiledItemStateToObject(item));
+    object["compiledItems"] = compiledItems;
     QJsonArray diagnostics;
     for (const RequirementDiagnostic& diagnostic : artifact.compiled.diagnostics)
         diagnostics.append(diagnosticToObject(diagnostic));
@@ -1213,12 +1396,70 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
         if (!diagnosticFromObject(value.toObject(), diagnostic, error)) return false;
         parsed.compiled.diagnostics.push_back(diagnostic);
     }
+    // v4 新工件以 compiledItems 为编译状态的权威来源。诊断码仅用于人类审计，
+    // 不得决定 Included/Excluded/Invalid；只有旧工件缺少该快照时才走兼容回退。
+    const bool hasExplicitCompiledItems = object.contains("compiledItems");
+    if (parsed.schemaVersion >= 4 && !hasExplicitCompiledItems) {
+        if (error != nullptr) *error = "Frozen v4 requirement artifact is missing compiledItems.";
+        return false;
+    }
+    if (hasExplicitCompiledItems) {
+        if (!object.value("compiledItems").isArray()) {
+            if (error != nullptr) *error = "Frozen requirement artifact compiledItems must be an array.";
+            return false;
+        }
+        std::set<std::pair<std::string, std::string>> compiledItemKeys;
+        for (const QJsonValue& value : object.value("compiledItems").toArray()) {
+            if (!value.isObject()) {
+                if (error != nullptr) *error = "Frozen requirement artifact compiled item must be an object.";
+                return false;
+            }
+            FrozenCompiledItemState item;
+            if (!compiledItemStateFromObject(value.toObject(), item, error)) return false;
+            if (!compiledItemKeys.insert(std::make_pair(item.kind, item.id)).second) {
+                if (error != nullptr) *error = "Frozen requirement artifact contains duplicate compiledItems.";
+                return false;
+            }
+            bool found = false;
+            if (item.kind == "PoseTask") {
+                for (CompiledPoseTask& task : parsed.compiled.poseTasks) {
+                    if (task.id != item.id) continue;
+                    task.compileState = item.compileState;
+                    task.excludedReason = item.excludedReason;
+                    task.provenance = item.provenance;
+                    found = true;
+                    break;
+                }
+            } else {
+                for (WorkspaceDemandRegion& region : parsed.compiled.workspaceRegions) {
+                    if (region.id != item.id) continue;
+                    region.compileState = item.compileState;
+                    region.excludedReason = item.excludedReason;
+                    region.provenance = item.provenance;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                if (error != nullptr) *error = "Frozen compiled item does not exist in compiledRequirements.";
+                return false;
+            }
+            parsed.compiledItems.push_back(item);
+        }
+        const std::size_t expectedItems = parsed.compiled.poseTasks.size() +
+            parsed.compiled.workspaceRegions.size();
+        if (parsed.compiledItems.size() != expectedItems) {
+            if (error != nullptr) *error = "Frozen requirement artifact compiledItems is incomplete.";
+            return false;
+        }
+    }
     // 依据保留的冻结诊断重建"被排除"项：编译快照(compiledRequirements)是
     // 传统 RequirementSet 投影，本身不携带 compileState/excludedReason。凡被环境类
     // 诊断(可选条目被排除/引用帧/TCP/错误设备/朝向目标/几何目标缺失)命中的工位，
     // 重新标记为 Excluded 并回填诊断消息作为排除原因，使重载后的审计语义与冻结
     // 时刻一致。REQ_OPTIONAL_ITEM_EXCLUDED 同样作为被排除依据(Info/有问题的 Should)。
     for (CompiledPoseTask& task : parsed.compiled.poseTasks) {
+        if (hasExplicitCompiledItems) continue;
         for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
             if (diagnostic.requirementId == task.id &&
                  (diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED" ||
@@ -1235,6 +1476,7 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     }
     // 覆盖盒(WorkspaceDemandRegion)采用与工位完全相同的重建规则。
     for (WorkspaceDemandRegion& region : parsed.compiled.workspaceRegions) {
+        if (hasExplicitCompiledItems) continue;
         for (const RequirementDiagnostic& diagnostic : parsed.compiled.diagnostics) {
             if (diagnostic.requirementId == region.id &&
                  (diagnostic.code == "REQ_OPTIONAL_ITEM_EXCLUDED" ||
@@ -1249,6 +1491,8 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
             }
         }
     }
+    if (!hasExplicitCompiledItems)
+        parsed.compiledItems = snapshotCompiledItems(parsed.compiled);
     if (parsed.schemaVersion >= 4) {
         if (!object.value("execution").isObject() ||
             !RequirementExecutionJson::fromObject(object.value("execution").toObject(),

@@ -888,8 +888,40 @@ void EngineeringRequirementsWidget::refreshTables()
 void EngineeringRequirementsWidget::refreshValidationPanel()
 {
     if (_diagnosticTable == nullptr) return;
-    const std::vector<RequirementDiagnostic> diagnostics =
+    std::vector<RequirementDiagnostic> diagnostics =
         RequirementCompiler::validateDetailed(_requirements);
+    // 编辑态字段校验不足以确认真实 WorkCell 的 Frame/TCP/几何引用。只要当前
+    // WorkCell 与绑定模型均可读取，就复用冻结器做无副作用预检；这样 UI 门禁和
+    // 实际冻结使用同一套环境规则，不会出现“按钮可点、点击后才报 Must 错误”。
+    const auto appendPreflightFailure = [&diagnostics] (const std::string& message) {
+        RequirementDiagnostic diagnostic;
+        diagnostic.code = "REQ_ENVIRONMENT_PRECHECK_FAILED";
+        diagnostic.severity = RequirementDiagnosticSeverity::Error;
+        diagnostic.level = RequirementLevel::Must;
+        diagnostic.field = "workcell";
+        diagnostic.message = message;
+        diagnostic.source = "engineeringrequirements.freezer";
+        diagnostic.blocking = true;
+        diagnostics.push_back(diagnostic);
+    };
+    if (!_requirements.modelBinding.sourcePath.empty() && _workcell == nullptr) {
+        appendPreflightFailure("The current WorkCell is unavailable for requirement validation.");
+    } else if (_workcell != nullptr && !_requirements.modelBinding.sourcePath.empty()) {
+        RobotModelSpec model;
+        QString modelError;
+        if (loadRobotModelDocument(QString::fromStdString(_requirements.modelBinding.sourcePath),
+                                   _projectOutputDirectory, model, &modelError)) {
+            FrozenRequirementArtifact preview;
+            std::string freezeError;
+            if (!RequirementFreezer::freeze(_requirements, *_workcell, activeWorkCellState(), model,
+                                             preview, &freezeError,
+                                             _projectOutputDirectory.toStdString())) {
+                appendPreflightFailure(freezeError);
+            }
+        } else {
+            appendPreflightFailure(modelError.toStdString());
+        }
+    }
     _diagnosticTable->setRowCount(static_cast<int>(diagnostics.size()));
     int blocking = 0;
     for (int row = 0; row < _diagnosticTable->rowCount(); ++row) {
@@ -898,9 +930,7 @@ void EngineeringRequirementsWidget::refreshValidationPanel()
         _diagnosticTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(
             diagnostic.code.empty() ? "REQ_INVALID" : diagnostic.code)));
         _diagnosticTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(diagnostic.requirementId)));
-        // Field 列展示诊断码(即问题指向的字段/类型码)，与 Code 列区分开，便于
-        // 工程师同时看到"问题类型"与"涉及字段"两个维度。
-        _diagnosticTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(diagnostic.code)));
+        _diagnosticTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(diagnostic.field)));
         _diagnosticTable->setItem(row, 3, new QTableWidgetItem(QString::fromLatin1(toString(diagnostic.level))));
         _diagnosticTable->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(diagnostic.message)));
         const QColor color = diagnostic.blocking ? QColor(Qt::red) :

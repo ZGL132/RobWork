@@ -67,6 +67,15 @@ struct FrozenRobotStateSnapshot {
     std::string capturedAt;
 };
 
+/** 冻结工件中逐项持久化的编译审计状态，独立于诊断码的未来演进。 */
+struct FrozenCompiledItemState {
+    std::string kind; // "PoseTask" or "WorkspaceRegion"
+    std::string id;
+    RequirementCompileState compileState = RequirementCompileState::Included;
+    std::string excludedReason;
+    CompiledRequirementItemProvenance provenance;
+};
+
 struct FrozenRequirementValidationResult {
     bool robotStateChanged = false;
     std::vector<std::string> warnings;
@@ -93,6 +102,7 @@ struct FrozenRequirementArtifact {
     FrozenRobotStateSnapshot frozenRobotState;
     FrozenWorkCellScenarioSnapshot scenario;
     CompiledRequirementSet compiled;
+    std::vector<FrozenCompiledItemState> compiledItems;
     RequirementExecutionSet execution;
 };
 

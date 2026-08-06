@@ -2,6 +2,7 @@
 #define RWS_ENGINEERINGREQUIREMENTS_ENGINEERINGREQUIREMENTTYPES_HPP
 
 #include <array>
+#include <QJsonObject>
 #include <string>
 #include <vector>
 
@@ -69,6 +70,24 @@ enum class OrientationMode {
 
 enum class RequirementVerificationStage { Quick, Verified };
 enum class RequirementCompileState { Included, Excluded, Invalid };
+enum class RequirementDiagnosticSeverity { Info, Warning, Error };
+
+/**
+ * @brief 编译/冻结阶段的结构化诊断。
+ *
+ * `field` 指向用户可操作的需求字段，`source` 标识产生诊断的组件；二者不能再由
+ * 诊断码推断，以免下游将错误码误当作字段名而失去精确定位能力。
+ */
+struct RequirementDiagnostic {
+    std::string code;
+    RequirementDiagnosticSeverity severity = RequirementDiagnosticSeverity::Info;
+    std::string requirementId;
+    RequirementLevel level = RequirementLevel::Must;
+    std::string field;
+    std::string message;
+    std::string source;
+    bool blocking = true;
+};
 
 /**
  * @brief 编译/审计快照中逐条保留的"条目级溯源"信息(编译态)。
@@ -81,6 +100,7 @@ struct CompiledRequirementItemProvenance {
     std::string sourceId;                     ///< 源编辑态条目 id
     std::string sourceKind;                   ///< 来源种类(如 PoseTaskSource 文本 / "BoxRegion")
     std::vector<std::string> diagnosticCodes; ///< 编译时命中的诊断码(去重前的完整列表)
+    std::vector<RequirementDiagnostic> diagnostics; ///< 完整逐项诊断快照
 };
 
 /**
@@ -225,6 +245,7 @@ struct KeyStation {
     ValidationPolicy validation;                       ///< 校验策略
     double confidence = 1.0;                            ///< 工位可信度/权重 [0.0, 1.0]
     std::string note;                                   ///< 备注说明
+    QJsonObject extensions;                             ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 /// 保持向下兼容的别名（MVP 早期及 JSON 字段中使用的名称）
@@ -259,6 +280,7 @@ struct BoxRegion {
     double orientationToleranceDeg = 1.0;
     double minimumJointMargin = 0.0;
     double minimumManipulability = 0.0;
+    QJsonObject extensions;                             ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 /**
@@ -273,6 +295,7 @@ struct RequirementSet {
     RobotModelBinding modelBinding;         ///< 绑定的机器人模型信息
     std::vector<PoseTask> poseTasks;        ///< 关键工位列表
     std::vector<BoxRegion> boxRegions;      ///< 工作区域需求列表
+    QJsonObject extensions;                  ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 /**
@@ -331,18 +354,6 @@ struct WorkspaceDemandRegion {
     RequirementCompileState compileState = RequirementCompileState::Included;
     std::string excludedReason;
     CompiledRequirementItemProvenance provenance;       ///< 编译态条目溯源
-};
-
-/**
- * @brief 需求校验诊断日志
- * 在 RequirementCompiler 编译/校验需求时生成的错误或警告信息
- */
-struct RequirementDiagnostic {
-    std::string code;
-    std::string requirementId;                      ///< 出错的需求/工位 ID
-    RequirementLevel level = RequirementLevel::Must;///< 严重程度
-    std::string message;                            ///< 诊断详细描述信息
-    bool blocking = true;                           ///< 是否为阻断性错误（true 会阻断编译冻结）
 };
 
 /**

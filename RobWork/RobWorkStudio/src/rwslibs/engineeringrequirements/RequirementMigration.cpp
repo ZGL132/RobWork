@@ -4,6 +4,9 @@
 
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 
+#include <cmath>
+#include <limits>
+
 namespace rws {
 namespace {
 
@@ -14,11 +17,46 @@ void addMigrationDiagnostic(std::vector<RequirementDiagnostic>& diagnostics,
 {
     RequirementDiagnostic diagnostic;
     diagnostic.code = code;
+    diagnostic.severity = RequirementDiagnosticSeverity::Warning;
     diagnostic.requirementId = requirementId;
     diagnostic.level = RequirementLevel::Should;
+    diagnostic.field = "schemaVersion";
     diagnostic.message = message;
+    diagnostic.source = "engineeringrequirements.migration";
     diagnostic.blocking = false;
     diagnostics.push_back(diagnostic);
+}
+
+bool readArtifactHeader(const QJsonObject& input, int& schemaVersion, std::string* error)
+{
+    const QJsonValue type = input.value("type");
+    if (!type.isString()) {
+        if (error != nullptr)
+            *error = "Frozen artifact header field 'type' must be a string.";
+        return false;
+    }
+    if (type.toString() != "FrozenEngineeringRequirementArtifact") {
+        if (error != nullptr)
+            *error = "Frozen artifact header field 'type' is unsupported.";
+        return false;
+    }
+
+    const QJsonValue version = input.value("schemaVersion");
+    if (!version.isDouble()) {
+        if (error != nullptr)
+            *error = "Frozen artifact header field 'schemaVersion' must be a JSON number.";
+        return false;
+    }
+    const double numericVersion = version.toDouble();
+    if (!std::isfinite(numericVersion) || std::floor(numericVersion) != numericVersion ||
+        numericVersion < static_cast<double>(std::numeric_limits<int>::min()) ||
+        numericVersion > static_cast<double>(std::numeric_limits<int>::max())) {
+        if (error != nullptr)
+            *error = "Frozen artifact header field 'schemaVersion' must be a finite integer.";
+        return false;
+    }
+    schemaVersion = static_cast<int>(numericVersion);
+    return true;
 }
 
 } // namespace
@@ -29,14 +67,15 @@ bool migrateRequirementArtifact(const QJsonObject& input,
                                 std::string* error)
 {
     diagnostics.clear();
-    if (input.value("type").toString() != "FrozenEngineeringRequirementArtifact") {
+    int schemaVersion = 0;
+    std::string headerError;
+    if (!readArtifactHeader(input, schemaVersion, &headerError)) {
         addMigrationDiagnostic(diagnostics, "REQ_SCHEMA_UNSUPPORTED",
-                               "Input is not a frozen engineering requirement artifact.");
-        if (error != nullptr) *error = "Unsupported frozen requirement artifact type.";
+                               headerError);
+        if (error != nullptr) *error = headerError;
         return false;
     }
 
-    const int schemaVersion = input.value("schemaVersion").toInt(1);
     if (schemaVersion == 4) {
         output = input;
         if (error != nullptr) error->clear();
@@ -63,10 +102,13 @@ bool migrateRequirementArtifact(const QJsonObject& input,
         region.minimumVerificationStage = RequirementVerificationStage::Quick;
         RequirementDiagnostic migrationDiagnostic;
         migrationDiagnostic.code = "REQ_V3_REQUIRES_REFREEZE";
+        migrationDiagnostic.severity = RequirementDiagnosticSeverity::Warning;
         migrationDiagnostic.requirementId = region.id;
         migrationDiagnostic.level = RequirementLevel::Should;
+        migrationDiagnostic.field = "minimumVerificationStage";
         migrationDiagnostic.message =
             "The v3 workspace region is available for Quick analysis only; refreeze before Verified acceptance.";
+        migrationDiagnostic.source = "engineeringrequirements.migration";
         migrationDiagnostic.blocking = false;
         artifact.compiled.diagnostics.push_back(migrationDiagnostic);
         diagnostics.push_back(migrationDiagnostic);

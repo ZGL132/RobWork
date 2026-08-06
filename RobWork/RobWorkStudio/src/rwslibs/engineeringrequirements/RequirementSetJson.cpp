@@ -9,6 +9,57 @@
 namespace rws {
 namespace {
 
+bool isKnownKey(const QString& key, std::initializer_list<const char*> knownKeys)
+{
+    for (const char* known : knownKeys)
+        if (key == QLatin1String(known)) return true;
+    return false;
+}
+
+bool readExtensions(const QJsonObject& object,
+                    std::initializer_list<const char*> knownKeys,
+                    QJsonObject& extensions, std::string* error)
+{
+    extensions = QJsonObject();
+    if (object.contains("extensions")) {
+        if (!object.value("extensions").isObject()) {
+            if (error != nullptr) *error = "extensions must be an object.";
+            return false;
+        }
+        const QJsonObject explicitExtensions = object.value("extensions").toObject();
+        for (const QString& key : explicitExtensions.keys()) {
+            if (isKnownKey(key, knownKeys) || key == QLatin1String("extensions")) {
+                if (error != nullptr)
+                    *error = "extensions cannot override known field '" + key.toStdString() + "'.";
+                return false;
+            }
+            extensions.insert(key, explicitExtensions.value(key));
+        }
+    }
+    for (const QString& key : object.keys()) {
+        if (key == QLatin1String("extensions") || isKnownKey(key, knownKeys)) continue;
+        if (extensions.contains(key)) {
+            if (error != nullptr)
+                *error = "top-level extension field '" + key.toStdString() +
+                    "' conflicts with explicit extensions.";
+            return false;
+        }
+        extensions.insert(key, object.value(key));
+    }
+    return true;
+}
+
+void writeExtensions(QJsonObject& object, const QJsonObject& extensions,
+                     std::initializer_list<const char*> knownKeys)
+{
+    QJsonObject filtered;
+    for (const QString& key : extensions.keys()) {
+        if (!isKnownKey(key, knownKeys) && key != QLatin1String("extensions"))
+            filtered.insert(key, extensions.value(key));
+    }
+    if (!filtered.isEmpty()) object["extensions"] = filtered;
+}
+
 template <std::size_t N>
 QJsonArray writeArray(const std::array<double, N>& values)
 {
@@ -220,11 +271,22 @@ QJsonObject writePoseTask(const PoseTask& task)
     object["validation"] = validation;
     object["confidence"] = task.confidence;
     object["note"] = QString::fromStdString(task.note);
+    writeExtensions(object, task.extensions,
+                    {"id", "name", "processType", "level", "source", "refFrame", "tcpFrame",
+                     "position", "rpyDeg", "positionToleranceMeters", "orientationToleranceDeg",
+                     "allowToolRollFree", "geometryFeature", "generation", "importProvenance",
+                     "orientation", "approach", "retract", "validation", "confidence", "note"});
     return object;
 }
 
 bool readPoseTask(const QJsonObject& object, PoseTask& task, std::string* error)
 {
+    if (!readExtensions(object,
+                        {"id", "name", "processType", "level", "source", "refFrame", "tcpFrame",
+                         "position", "rpyDeg", "positionToleranceMeters", "orientationToleranceDeg",
+                         "allowToolRollFree", "geometryFeature", "generation", "importProvenance",
+                         "orientation", "approach", "retract", "validation", "confidence", "note"},
+                        task.extensions, error)) return false;
     std::string text;
     if (!requireString(object, "id", task.id, "", error) ||
         !requireString(object, "name", task.name, "", error) ||
@@ -367,11 +429,26 @@ QJsonObject writeBoxRegion(const BoxRegion& region)
     object["orientationToleranceDeg"] = region.orientationToleranceDeg;
     object["minimumJointMargin"] = region.minimumJointMargin;
     object["minimumManipulability"] = region.minimumManipulability;
+    writeExtensions(object, region.extensions,
+                    {"id", "name", "level", "refFrame", "center", "size", "minimumCoverage",
+                     "samplesPerAxis", "tcpFrame", "orientationMode", "orientationTargetFrame",
+                     "orientationTargetGeometry", "orientationTargetPoint", "fixedRpyDeg",
+                     "directionSamples", "rollSamples", "minimumOrientationCoverage",
+                     "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
+                     "orientationToleranceDeg", "minimumJointMargin", "minimumManipulability"});
     return object;
 }
 
 bool readBoxRegion(const QJsonObject& object, BoxRegion& region, std::string* error)
 {
+    if (!readExtensions(object,
+                        {"id", "name", "level", "refFrame", "center", "size", "minimumCoverage",
+                         "samplesPerAxis", "tcpFrame", "orientationMode", "orientationTargetFrame",
+                         "orientationTargetGeometry", "orientationTargetPoint", "fixedRpyDeg",
+                         "directionSamples", "rollSamples", "minimumOrientationCoverage",
+                         "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
+                         "orientationToleranceDeg", "minimumJointMargin", "minimumManipulability"},
+                        region.extensions, error)) return false;
     std::string text;
     if (!requireString(object, "id", region.id, "", error) ||
         !requireString(object, "name", region.name, "", error) ||
@@ -544,6 +621,8 @@ QJsonObject RequirementSetJson::toObject(const RequirementSet& requirements)
     for (const BoxRegion& region : requirements.boxRegions)
         regions.append(writeBoxRegion(region));
     object["boxRegions"] = regions;
+    writeExtensions(object, requirements.extensions,
+                    {"schemaVersion", "name", "version", "frozen", "modelBinding", "poseTasks", "boxRegions"});
     return object;
 }
 
@@ -551,6 +630,9 @@ bool RequirementSetJson::fromObject(const QJsonObject& object, RequirementSet& r
                                     std::string* error)
 {
     RequirementSet parsed;
+    if (!readExtensions(object,
+                        {"schemaVersion", "name", "version", "frozen", "modelBinding", "poseTasks", "boxRegions"},
+                        parsed.extensions, error)) return false;
     if (!requireInteger(object, "schemaVersion", parsed.schemaVersion, 1, error) ||
         !requireString(object, "name", parsed.name, "", error) ||
         !requireInteger(object, "version", parsed.version, 1, error) ||

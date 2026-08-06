@@ -508,6 +508,39 @@ int runRequirementExecution ()
     if (object.value ("schemaVersion").toInt () != 1)
         return fail ("Requirement execution JSON should preserve schemaVersion.");
 
+    QJsonObject extensible = object;
+    extensible["futureTopLevel"] = QJsonObject{{"revision", 7}};
+    QJsonArray extensibleTasks = extensible.value("tasks").toArray();
+    QJsonObject extensibleTask = extensibleTasks.at(0).toObject();
+    extensibleTask["futureTaskField"] = QJsonArray{1, 2, 3};
+    extensibleTasks[0] = extensibleTask;
+    extensible["tasks"] = extensibleTasks;
+    QJsonArray extensibleRegions = extensible.value("workspaceRegions").toArray();
+    QJsonObject extensibleRegion = extensibleRegions.at(0).toObject();
+    extensibleRegion["futureRegionField"] = true;
+    extensibleRegions[0] = extensibleRegion;
+    extensible["workspaceRegions"] = extensibleRegions;
+    rws::RequirementExecutionSet extensibleRestored;
+    std::string extensionsError;
+    if (!rws::RequirementExecutionJson::fromObject(extensible, extensibleRestored, &extensionsError))
+        return fail("Requirement execution extensions should parse: " + extensionsError);
+    const QJsonObject extensionsRoundTrip = rws::RequirementExecutionJson::toObject(extensibleRestored);
+    if (extensionsRoundTrip.value("extensions").toObject().value("futureTopLevel").toObject()
+            .value("revision").toInt() != 7 ||
+        extensionsRoundTrip.value("tasks").toArray().at(0).toObject()
+            .value("extensions").toObject().value("futureTaskField").toArray().size() != 3 ||
+        !extensionsRoundTrip.value("workspaceRegions").toArray().at(0).toObject()
+            .value("extensions").toObject().value("futureRegionField").toBool())
+        return fail("Requirement execution JSON should preserve unknown fields in extensions.");
+
+    QJsonObject conflictingExtensions = extensible;
+    conflictingExtensions["extensions"] = QJsonObject{
+        {"futureTopLevel", QJsonObject{{"revision", 8}}}};
+    if (rws::RequirementExecutionJson::fromObject(
+            conflictingExtensions, extensibleRestored, &extensionsError) ||
+        extensionsError.find("conflicts") == std::string::npos)
+        return fail("Requirement execution JSON should reject conflicting extension fields.");
+
     rws::RequirementExecutionSet restored;
     std::string error;
     if (!rws::RequirementExecutionJson::fromObject (object, restored, &error))

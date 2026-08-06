@@ -2,6 +2,7 @@
 #define RWS_ROBOTANALYSISCORE_REQUIREMENTEXECUTIONTYPES_HPP
 
 #include <array>
+#include <QJsonObject>
 #include <string>
 #include <vector>
 
@@ -112,6 +113,7 @@ struct RequirementExecutionTask {
     // original execution contract. The detailed rules above are authoritative.
     bool pathValidationPending = false;
     std::vector<RequirementExecutionDiagnostic> diagnostics;
+    QJsonObject extensions; ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 struct RequirementExecutionRegion {
@@ -145,6 +147,7 @@ struct RequirementExecutionRegion {
     double minimumJointMargin = 0.0;
     double minimumManipulability = 0.0;
     std::vector<RequirementExecutionDiagnostic> diagnostics;
+    QJsonObject extensions; ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 struct RequirementExecutionSet {
@@ -153,6 +156,7 @@ struct RequirementExecutionSet {
     std::vector<RequirementExecutionTask> tasks;
     std::vector<RequirementExecutionRegion> workspaceRegions;
     std::vector<RequirementExecutionDiagnostic> diagnostics;
+    QJsonObject extensions; ///< 未知 JSON 字段，供未来版本往返保留
 };
 
 } // namespace rws

@@ -239,6 +239,57 @@ int testRequirementSetJsonRejectsWrongScalarTypes()
     return 0;
 }
 
+int testRequirementSetJsonPreservesUnknownFieldsInExtensions()
+{
+    rws::RequirementSet requirements;
+    requirements.name = "Forward compatible requirements";
+    requirements.modelBinding.robotModelFingerprint = "model-fingerprint";
+
+    rws::PoseTask task;
+    task.id = "future-task";
+    task.name = "Future task";
+    task.tcpFrame = "TCP";
+    requirements.poseTasks.push_back(task);
+
+    rws::BoxRegion region;
+    region.id = "future-region";
+    region.name = "Future region";
+    region.tcpFrame = "TCP";
+    requirements.boxRegions.push_back(region);
+
+    QJsonObject document = rws::RequirementSetJson::toObject(requirements);
+    document["futureTopLevel"] = QJsonObject{{"revision", 7}};
+    QJsonArray tasks = document.value("poseTasks").toArray();
+    QJsonObject taskObject = tasks.at(0).toObject();
+    taskObject["futureTaskField"] = QJsonArray{1, 2, 3};
+    tasks[0] = taskObject;
+    document["poseTasks"] = tasks;
+    QJsonArray regions = document.value("boxRegions").toArray();
+    QJsonObject regionObject = regions.at(0).toObject();
+    regionObject["futureRegionField"] = true;
+    regions[0] = regionObject;
+    document["boxRegions"] = regions;
+
+    rws::RequirementSet parsed;
+    std::string error;
+    REQUIRE(rws::RequirementSetJson::fromObject(document, parsed, &error));
+    const QJsonObject roundTripped = rws::RequirementSetJson::toObject(parsed);
+    REQUIRE(roundTripped.value("extensions").toObject().value("futureTopLevel").toObject()
+                .value("revision").toInt() == 7);
+    REQUIRE(roundTripped.value("poseTasks").toArray().at(0).toObject()
+                .value("extensions").toObject().value("futureTaskField").toArray().size() == 3);
+    REQUIRE(roundTripped.value("boxRegions").toArray().at(0).toObject()
+                .value("extensions").toObject().value("futureRegionField").toBool());
+
+    QJsonObject conflictingExtensions = document;
+    conflictingExtensions["extensions"] = QJsonObject{
+        {"futureTopLevel", QJsonObject{{"revision", 8}}}};
+    error.clear();
+    REQUIRE(!rws::RequirementSetJson::fromObject(conflictingExtensions, parsed, &error));
+    REQUIRE(error.find("conflicts") != std::string::npos);
+    return 0;
+}
+
 int testCompilerReportsInvalidMustItemsAndClearsPreviousOutput()
 {
     rws::RequirementSet requirements;
@@ -263,6 +314,14 @@ int testCompilerReportsInvalidMustItemsAndClearsPreviousOutput()
     REQUIRE(compiled.poseTasks.front().id == "must-invalid");
     REQUIRE(compiled.poseTasks.front().compileState == rws::RequirementCompileState::Invalid);
     REQUIRE(!compiled.poseTasks.front().provenance.diagnosticCodes.empty());
+    REQUIRE(compiled.poseTasks.front().provenance.diagnostics.size() == 1);
+    const rws::RequirementDiagnostic& diagnostic =
+        compiled.poseTasks.front().provenance.diagnostics.front();
+    REQUIRE(diagnostic.code == "REQ_REQUIRED_FIELD_MISSING");
+    REQUIRE(diagnostic.field == "tcpFrame");
+    REQUIRE(diagnostic.message.find("TCP") != std::string::npos);
+    REQUIRE(diagnostic.source == "engineeringrequirements.compiler");
+    REQUIRE(diagnostic.severity == rws::RequirementDiagnosticSeverity::Error);
     return 0;
 }
 
@@ -558,6 +617,50 @@ int testRequirementArtifactV3Migration()
     return 0;
 }
 
+int testRequirementArtifactMigrationRejectsWrongHeaderTypes()
+{
+    rws::FrozenRequirementArtifact legacy;
+    legacy.schemaVersion = 3;
+    legacy.requirementFingerprint = "requirements-v3";
+    legacy.environmentFingerprint = "environment-v3";
+    legacy.workcellFingerprint = "workcell-v3";
+    legacy.modelBinding.robotModelFingerprint = "model-v3";
+    legacy.compiled.frozen = true;
+    legacy.compiled.requirementFingerprint = legacy.requirementFingerprint;
+    legacy.compiled.modelBinding = legacy.modelBinding;
+    legacy.frozenRobotState.deviceName = "robot";
+    legacy.frozenRobotState.tcpFrameName = "TCP";
+    legacy.frozenRobotState.kinematicFingerprint = "kinematic-v3";
+    legacy.frozenRobotState.capturedAt = "2026-08-05T00:00:00Z";
+    legacy.frozenRobotState.tcpWorldPose[15] = 1.0;
+    legacy.scenario.environmentFingerprint = legacy.environmentFingerprint;
+    legacy.scenario.schemaVersion = 2;
+    legacy.scenario.snapshotFingerprint = "snapshot-v3";
+
+    const QJsonObject valid = rws::FrozenRequirementArtifactJson::toObject(legacy);
+    for (const QJsonValue& invalidValue :
+         {QJsonValue(3.5), QJsonValue(QStringLiteral("3")), QJsonValue(true)}) {
+        QJsonObject invalid = valid;
+        invalid["schemaVersion"] = invalidValue;
+        QJsonObject output;
+        std::vector<rws::RequirementDiagnostic> diagnostics;
+        std::string error;
+        REQUIRE(!rws::migrateRequirementArtifact(invalid, output, diagnostics, &error));
+        REQUIRE(error.find("schemaVersion") != std::string::npos);
+        REQUIRE(!diagnostics.empty());
+        REQUIRE(diagnostics.front().code == "REQ_SCHEMA_UNSUPPORTED");
+    }
+
+    QJsonObject invalidType = valid;
+    invalidType["type"] = 4;
+    QJsonObject output;
+    std::vector<rws::RequirementDiagnostic> diagnostics;
+    std::string error;
+    REQUIRE(!rws::migrateRequirementArtifact(invalidType, output, diagnostics, &error));
+    REQUIRE(error.find("type") != std::string::npos);
+    return 0;
+}
+
 int testGeometryFrameFeatureResolvesAndCompiles()
 {
     using namespace rw::kinematics;
@@ -700,6 +803,40 @@ int testFreezerRetainsNonBlockingEnvironmentExclusions()
     REQUIRE(restored.compiled.diagnostics.size() == artifact.compiled.diagnostics.size());
     // 重载后的执行契约同样不得包含被排除的覆盖盒。
     REQUIRE(restored.execution.workspaceRegions.empty());
+
+    QJsonObject v4WithoutCompiledItems = artifactObject;
+    v4WithoutCompiledItems.remove("compiledItems");
+    error.clear();
+    REQUIRE(!rws::FrozenRequirementArtifactJson::fromObject(
+        v4WithoutCompiledItems, restored, &error));
+    REQUIRE(error.find("compiledItems") != std::string::npos);
+
+    // 诊断码可随插件版本扩展；条目状态必须由冻结快照恢复，而不能依赖固定码白名单。
+    QJsonObject futureDiagnosticArtifact = artifactObject;
+    QJsonArray futureItems = futureDiagnosticArtifact.value("compiledItems").toArray();
+    for (int index = 0; index < futureItems.size(); ++index) {
+        QJsonObject item = futureItems.at(index).toObject();
+        if (item.value("id").toString() == "optional_missing_frame") {
+            QJsonObject provenance = item.value("provenance").toObject();
+            QJsonArray itemDiagnostics = provenance.value("diagnostics").toArray();
+            for (int diagnosticIndex = 0; diagnosticIndex < itemDiagnostics.size(); ++diagnosticIndex) {
+                QJsonObject diagnostic = itemDiagnostics.at(diagnosticIndex).toObject();
+                diagnostic["code"] = "REQ_PLUGIN_FUTURE_ENVIRONMENT_UNAVAILABLE";
+                itemDiagnostics[diagnosticIndex] = diagnostic;
+            }
+            provenance["diagnostics"] = itemDiagnostics;
+            item["provenance"] = provenance;
+            futureItems[index] = item;
+        }
+    }
+    futureDiagnosticArtifact["compiledItems"] = futureItems;
+    rws::FrozenRequirementArtifact futureRestored;
+    REQUIRE(rws::FrozenRequirementArtifactJson::fromObject(
+        futureDiagnosticArtifact, futureRestored, &error));
+    REQUIRE(futureRestored.compiled.workspaceRegions.front().compileState ==
+            rws::RequirementCompileState::Excluded);
+    REQUIRE(!futureRestored.compiled.workspaceRegions.front().excludedReason.empty());
+    REQUIRE(rws::RequirementFreezer::validateExecutionConsistency(futureRestored, &error));
     return 0;
 }
 
@@ -853,8 +990,9 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
         "resolver=OrientationRuleResolver.1;mode=PointAtTarget;targetPoint=0.2, 0.3, 0.4";
     artifact.compiled.poseTasks.push_back(station);
     artifact.compiled.diagnostics.push_back(
-        {"REQ_OPTIONAL_ITEM_EXCLUDED", "optional_missing", rws::RequirementLevel::Should,
-         "Excluded from frozen artifact.", false});
+        {"REQ_OPTIONAL_ITEM_EXCLUDED", rws::RequirementDiagnosticSeverity::Warning,
+         "optional_missing", rws::RequirementLevel::Should, "", "Excluded from frozen artifact.",
+         "engineeringrequirements.test", false});
 
     // 场景快照是跨插件交接非 WORLD 工位的最小可复现依据：它既保留冻结时的场景
     // 定义，也将源文件版本、设备标识和状态指纹纳入审计。此处先以独立字段断言
@@ -2231,6 +2369,10 @@ int main(int argc, char** argv)
         QCoreApplication app(argc, argv);
         return testRequirementSetJsonRejectsWrongScalarTypes();
     }
+    if (argc > 1 && std::string(argv[1]) == "extensions") {
+        QCoreApplication app(argc, argv);
+        return testRequirementSetJsonPreservesUnknownFieldsInExtensions();
+    }
     if (argc > 1 && std::string(argv[1]) == "must_invalid") {
         QCoreApplication app(argc, argv);
         return testCompilerReportsInvalidMustItemsAndClearsPreviousOutput();
@@ -2251,6 +2393,10 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "migration") {
         QCoreApplication app(argc, argv);
         return testRequirementArtifactV3Migration();
+    }
+    if (argc > 1 && std::string(argv[1]) == "migration_strict") {
+        QCoreApplication app(argc, argv);
+        return testRequirementArtifactMigrationRejectsWrongHeaderTypes();
     }
     if (argc > 1 && std::string(argv[1]) == "abi") {
         QCoreApplication app(argc, argv);
@@ -2315,7 +2461,11 @@ int main(int argc, char** argv)
         return 1;
     if (testRequirementSetJsonRejectsWrongScalarTypes() != 0)
         return 1;
+    if (testRequirementSetJsonPreservesUnknownFieldsInExtensions() != 0)
+        return 1;
     if (testCompilerReportsInvalidMustItemsAndClearsPreviousOutput() != 0)
+        return 1;
+    if (testRequirementArtifactMigrationRejectsWrongHeaderTypes() != 0)
         return 1;
     if (testFreezerRejectsMissingWorkCellTcpForMustStation() != 0)
         return 1;
