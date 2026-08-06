@@ -1,7 +1,10 @@
 #include "KinematicAnalyzer.hpp"
+#include "ConfigurationEvaluator.hpp"
+#include "TargetEvaluator.hpp"
 #include "TaskPointResolver.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
 #include "KinematicAnalysisPoseReachability.hpp"
+#include "OrientationCoverageEvaluator.hpp"
 
 // 引入 IK 求解器和必要的运动学/数学工具。
 #include <rw/core/Ptr.hpp>
@@ -26,6 +29,179 @@ using namespace rws;
 
 // 默认阈值由 KinematicThresholds 自身的成员初始值给出。
 KinematicAnalyzer::KinematicAnalyzer () : _thresholds () {}
+
+namespace {
+
+// 把 Quality 等级映射为可比较的整数(升序:Unknown < Good < Degraded < Critical)。
+// 用于 buildRequirementValidationSummary 中"取所有 Must 项中最差质量"的判定。
+int requirementQualityRank (Quality quality)
+{
+    switch (quality) {
+    case Quality::Critical: return 3;
+    case Quality::Degraded: return 2;
+    case Quality::Good: return 1;
+    case Quality::Unknown: return 0;
+    }
+    return 0;
+}
+
+// 给汇总追加一条告警:自动补全 source 为 "KinematicAnalyzer",并在 message 尾部
+// 附上需求 id(非空时),方便用户在告警列表中定位到具体需求条目。
+void appendRequirementSummaryWarning (RequirementValidationSummary& summary,
+                                      const char* code,
+                                      const std::string& message,
+                                      const std::string& requirementId)
+{
+    AnalysisWarning warning;
+    warning.code = code;
+    warning.message = message;
+    warning.source = "KinematicAnalyzer";
+    warning.severity = AnalysisStatus::Warning;
+    if (!requirementId.empty ())
+        warning.message += " [" + requirementId + "]";
+    summary.warnings.push_back (warning);
+}
+
+// 把候选证据阶段合并进累计值:只保留更"高"的阶段(Estimated < Quick < Verified)。
+// 用于让汇总的阶段反映"已达到的最强证据",而不是被后处理的低阶段覆盖。
+void includeRequirementStage (AnalysisEvidenceStage& stage,
+                              AnalysisEvidenceStage candidate)
+{
+    if (static_cast< int > (candidate) > static_cast< int > (stage))
+        stage = candidate;
+}
+
+} // namespace
+
+RequirementValidationSummary rws::buildRequirementValidationSummary (
+    const RequirementExecutionSet& requirements,
+    const std::vector< TargetEvaluation >& taskResults,
+    const std::vector< RegionCoverageResult >& regionResults)
+{
+    RequirementValidationSummary summary;
+    summary.provenance = requirements.provenance;
+    summary.taskResults = taskResults;
+    summary.regionResults = regionResults;
+    summary.stage = AnalysisEvidenceStage::Estimated;
+
+    bool hasInfeasibleMust = false;
+    bool hasDataInsufficientMust = false;
+    Quality mustQuality = Quality::Unknown;
+    const auto includeQuality = [&mustQuality] (Quality quality) {
+        if (requirementQualityRank (quality) > requirementQualityRank (mustQuality))
+            mustQuality = quality;
+    };
+
+    for (std::size_t index = 0; index < requirements.tasks.size (); ++index) {
+        const RequirementExecutionTask& requirement = requirements.tasks[index];
+        if (index >= taskResults.size ()) {
+            if (requirement.compileState == RequirementExecutionCompileState::Included &&
+                requirement.level == RequirementExecutionLevel::Must) {
+                ++summary.mustTaskCount;
+                hasDataInsufficientMust = true;
+                appendRequirementSummaryWarning (
+                    summary, "KIN_MUST_TASK_DATA_INSUFFICIENT",
+                    "Included Must task has no evaluation result.", requirement.id);
+            }
+            continue;
+        }
+        const TargetEvaluation& result = taskResults[index];
+        includeRequirementStage (summary.stage, result.stage);
+        if (requirement.compileState != RequirementExecutionCompileState::Included ||
+            requirement.level != RequirementExecutionLevel::Must)
+            continue;
+        ++summary.mustTaskCount;
+        includeQuality (result.quality);
+        if (result.feasibility == Feasibility::Feasible) {
+            ++summary.mustTaskFeasibleCount;
+        }
+        else if (result.feasibility == Feasibility::DataInsufficient ||
+                 result.feasibility == Feasibility::NotEvaluated) {
+            hasDataInsufficientMust = true;
+            appendRequirementSummaryWarning (
+                summary, "KIN_MUST_TASK_DATA_INSUFFICIENT",
+                "Included Must task lacks sufficient evaluation evidence.", requirement.id);
+        }
+        else {
+            hasInfeasibleMust = true;
+            appendRequirementSummaryWarning (
+                summary, "KIN_MUST_TASK_INFEASIBLE",
+                "Included Must task is infeasible.", requirement.id);
+        }
+    }
+
+    for (std::size_t index = 0; index < requirements.workspaceRegions.size (); ++index) {
+        const RequirementExecutionRegion& requirement = requirements.workspaceRegions[index];
+        if (index >= regionResults.size ()) {
+            if (requirement.compileState == RequirementExecutionCompileState::Included &&
+                requirement.level == RequirementExecutionLevel::Must) {
+                ++summary.mustRegionCount;
+                hasDataInsufficientMust = true;
+                appendRequirementSummaryWarning (
+                    summary, "KIN_MUST_REGION_DATA_INSUFFICIENT",
+                    "Included Must region has no evaluation result.", requirement.id);
+            }
+            continue;
+        }
+        const RegionCoverageResult& result = regionResults[index];
+        includeRequirementStage (summary.stage, result.stage);
+        if (requirement.compileState != RequirementExecutionCompileState::Included ||
+            requirement.level != RequirementExecutionLevel::Must)
+            continue;
+        ++summary.mustRegionCount;
+        includeQuality (result.quality);
+        if (result.feasibility == Feasibility::Feasible) {
+            ++summary.mustRegionFeasibleCount;
+        }
+        else if (result.feasibility == Feasibility::DataInsufficient ||
+                 result.feasibility == Feasibility::NotEvaluated) {
+            hasDataInsufficientMust = true;
+            appendRequirementSummaryWarning (
+                summary, "KIN_MUST_REGION_DATA_INSUFFICIENT",
+                "Included Must region lacks sufficient evaluation evidence.", requirement.id);
+        }
+        else {
+            hasInfeasibleMust = true;
+            appendRequirementSummaryWarning (
+                summary, "KIN_MUST_REGION_INFEASIBLE",
+                "Included Must region is infeasible.", requirement.id);
+        }
+    }
+
+    const int mustCount = summary.mustTaskCount + summary.mustRegionCount;
+    if (mustCount == 0) {
+        summary.feasibility = Feasibility::NotEvaluated;
+        summary.quality = Quality::Unknown;
+        if (summary.stage == AnalysisEvidenceStage::Estimated)
+            summary.stage = AnalysisEvidenceStage::Verified;
+    }
+    else if (hasDataInsufficientMust) {
+        summary.feasibility = Feasibility::DataInsufficient;
+        summary.quality = Quality::Critical;
+    }
+    else if (hasInfeasibleMust) {
+        summary.feasibility = Feasibility::Infeasible;
+        summary.quality = Quality::Critical;
+    }
+    else {
+        summary.feasibility = Feasibility::Feasible;
+        summary.quality = mustQuality;
+    }
+    return summary;
+}
+
+// 新执行契约的 Must-only 批量验证入口:把参数打包后委托给 KinematicBatchRunner
+// 执行。批量逻辑(去重、批次拆分、取消检查)集中在 BatchRunner,本类只做参数
+// 转发;旧 API 的批量结果仍由下方 analyzeTaskPoints 提供。
+RequirementValidationSummary KinematicAnalyzer::validateRequirements (
+    const AnalysisContext& context,
+    const RequirementExecutionSet& requirements,
+    const BatchRunOptions& options,
+    const CancellationToken& cancellation) const
+{
+    return KinematicBatchRunner ().validateRequirements (
+        context, requirements, options, cancellation);
+}
 
 namespace {
 
@@ -150,6 +326,11 @@ AnalysisWarning makeWarning (const std::string& code,
     return w;
 }
 
+// 校验任务点目标数据是否可用于 IK:
+//   - position / rpyDeg 必须全部有限(NaN/Inf 会让 IK/FK 数值崩溃);
+//   - 位置/姿态容差必须有限且非负;
+//   - weight 必须有限。
+// 失败时写入 error 并返回 false;调用方(analyzeIk)据此标记 InvalidTarget。
 bool validateTaskPointTarget (const TaskPoint& target, std::string* error)
 {
     for (double value : target.position) {
@@ -186,17 +367,161 @@ bool validateTaskPointTarget (const TaskPoint& target, std::string* error)
     return true;
 }
 
+double effectiveTolerance (double taskTolerance, double defaultTolerance);
+
+// 从目标评估的失败原因列表中挑选"最具代表性"的一个,用于在 UI 高亮主因。
+// 优先级数组(从最严重到最轻)手工排序:求解器错误 > 无解 > 碰撞 > ...
+// 返回 None 表示没有匹配到任何已知原因(可视为成功)。
+KinematicFailureReason primaryFailureFromTarget(const TargetEvaluation& evaluation)
+{
+    const KinematicFailureReason priority[] = {
+        KinematicFailureReason::SolverError,
+        KinematicFailureReason::IkNoSolution,
+        KinematicFailureReason::Collision,
+        KinematicFailureReason::CollisionDetectorUnavailable,
+        KinematicFailureReason::FrameNotFound,
+        KinematicFailureReason::TargetResidual,
+        KinematicFailureReason::JointLimit,
+        KinematicFailureReason::Singular,
+        KinematicFailureReason::NearJointLimit,
+        KinematicFailureReason::NearSingular,
+        KinematicFailureReason::InvalidTarget,
+        KinematicFailureReason::NoTcpFrame,
+        KinematicFailureReason::NoDevice};
+    for (const KinematicFailureReason candidate : priority) {
+        if (std::find (evaluation.failureReasons.begin (), evaluation.failureReasons.end (), candidate) !=
+            evaluation.failureReasons.end ())
+            return candidate;
+    }
+    return KinematicFailureReason::None;
+}
+
+// 把新执行契约的 TargetEvaluation 转回旧版 KinematicIkAnalysisResult,供既有
+// IK tab / 旧批量 API 使用。关键映射:
+//   - status:Feasible+Good -> Pass,Feasible+Degraded -> Warning,NotEvaluated ->
+//     Unknown,其余 -> Fail;
+//   - 每个候选解:残差超容差 / 不可行 / 碰撞 -> Fail,Degraded -> Warning,否则 Pass;
+//   - usableSolutionCount 只统计"无碰撞且非 Fail"的解。
+KinematicIkAnalysisResult legacyIkResultFromTarget(const TargetEvaluation& evaluation,
+                                                   const TaskPoint& target)
+{
+    KinematicIkAnalysisResult result;
+    result.target = target;
+    result.rawCandidateCount = evaluation.candidates.size ();
+    result.warnings = evaluation.warnings;
+    result.failureReason = primaryFailureFromTarget (evaluation);
+    result.status = evaluation.feasibility == Feasibility::Feasible ?
+        (evaluation.quality == Quality::Degraded ? AnalysisStatus::Warning : AnalysisStatus::Pass) :
+        (evaluation.feasibility == Feasibility::NotEvaluated ? AnalysisStatus::Unknown :
+                                                                AnalysisStatus::Fail);
+
+    for (const TargetCandidate& candidate : evaluation.candidates) {
+        KinematicIkSolution solution;
+        solution.q = qToVector (candidate.configuration.q);
+        solution.distanceToCurrentQ = candidate.distanceToReferenceQ;
+        solution.minJointLimitMargin = candidate.configuration.minimumJointMargin;
+        solution.manipulability = candidate.configuration.manipulability;
+        solution.conditionNumber = candidate.configuration.conditionNumber;
+        solution.positionErrorMeters = candidate.positionErrorMeters;
+        solution.orientationErrorDeg = candidate.orientationErrorDeg;
+        solution.inCollision = candidate.configuration.inCollision;
+        solution.score = candidate.score;
+        solution.failureReasons = candidate.configuration.failureReasons;
+        const double positionTolerance = effectiveTolerance (
+            target.tolerance.positionMeters, 0.001);
+        const double orientationTolerance = effectiveTolerance (
+            target.tolerance.orientationDeg, 1.0);
+        const bool residualOk = solution.positionErrorMeters <= positionTolerance &&
+                                solution.orientationErrorDeg <= orientationTolerance;
+        if (candidate.configuration.feasibility == Feasibility::DataInsufficient ||
+            candidate.configuration.feasibility == Feasibility::Infeasible || !residualOk ||
+            solution.inCollision)
+            solution.status = AnalysisStatus::Fail;
+        else if (candidate.configuration.quality == Quality::Degraded)
+            solution.status = AnalysisStatus::Warning;
+        else
+            solution.status = AnalysisStatus::Pass;
+        if (!solution.inCollision && solution.status != AnalysisStatus::Fail)
+            ++result.usableSolutionCount;
+        result.solutions.push_back (solution);
+    }
+    sortIkSolutionsForDisplay (result.solutions);
+    return result;
+}
+
+// 把旧版 TaskPoint 投影为执行契约任务(RequirementExecutionTask),供新的
+// validateRequirements 批量流程消费:
+//   - enabled -> Included,否则 Excluded;
+//   - 历史 API 把碰撞检测器当作"可选证据"而非硬性要求,故 collisionFreeRequired
+//     恒为 false(与 legacy 行为保持一致)。
+RequirementExecutionTask requirementTaskFromLegacyTaskPoint(const TaskPoint& point)
+{
+    RequirementExecutionTask task;
+    task.id = point.id;
+    task.name = point.name;
+    task.refFrame = point.refFrame;
+    task.tcpFrame = point.tcpFrame;
+    task.position = point.position;
+    task.rpyDeg = point.rpyDeg;
+    task.positionToleranceMeters = point.tolerance.positionMeters;
+    task.orientationToleranceDeg = point.tolerance.orientationDeg;
+    task.allowToolRollFree = point.tolerance.allowToolRollFree;
+    task.compileState = point.enabled ? RequirementExecutionCompileState::Included :
+                                        RequirementExecutionCompileState::Excluded;
+    // The historical API treats a detector as optional evidence, rather than as
+    // a hard requirement for every task point.
+    task.collisionFreeRequired = false;
+    return task;
+}
+
+// 把目标评估转回旧版任务级结果。disabled 任务点直接返回 Unknown + KIN_TASK_DISABLED
+// 告警,且不计入可达率分母;其余情况沿用 legacyIkResultFromTarget 的状态映射。
+TaskPointReachabilityResult legacyTaskResultFromTarget(const TargetEvaluation& evaluation,
+                                                       const TaskPoint& point)
+{
+    TaskPointReachabilityResult result;
+    result.taskPoint = point;
+    if (!point.enabled) {
+        result.status = AnalysisStatus::Unknown;
+        result.ik.target = point;
+        AnalysisWarning warning;
+        warning.code = "KIN_TASK_DISABLED";
+        warning.message = "Task point is disabled; skipped from reachability denominator.";
+        warning.source = "KinematicAnalyzer";
+        warning.severity = AnalysisStatus::Warning;
+        result.ik.warnings.push_back (warning);
+        return result;
+    }
+    result.ik = legacyIkResultFromTarget (evaluation, point);
+    result.primaryFailure = primaryFailureFromTarget (evaluation);
+    if (result.primaryFailure != KinematicFailureReason::None)
+        result.failureReasons.push_back (result.primaryFailure);
+    if (evaluation.feasibility == Feasibility::Feasible)
+        result.status = evaluation.quality == Quality::Degraded ? AnalysisStatus::Warning :
+                                                                   AnalysisStatus::Pass;
+    else if (evaluation.feasibility == Feasibility::NotEvaluated)
+        result.status = AnalysisStatus::Unknown;
+    else
+        result.status = AnalysisStatus::Fail;
+    return result;
+}
+
+// 有效容差:任务点显式给定了正的容差就用它,否则回退到全局默认值。
+// 约定 0 或负值视为"未指定",避免用户把容差填 0 导致所有解都被判为残差超限。
 double effectiveTolerance (double taskTolerance, double defaultTolerance)
 {
     return taskTolerance > 0.0 ? taskTolerance : defaultTolerance;
 }
 
+// 判断某个解是否带指定失败原因,供 primaryFailureFromIk 按优先级扫描。
 bool hasFailureReason (const KinematicIkSolution& solution, KinematicFailureReason reason)
 {
     return std::find (solution.failureReasons.begin (), solution.failureReasons.end (), reason) !=
            solution.failureReasons.end ();
 }
 
+// 两个关节向量的无穷范数距离:max_i |lhs(i) - rhs(i)|。
+// 维度不一致返回 +inf(而非异常),让调用方(去重)总是安全比较。
 double qInfDistance (const rw::math::Q& lhs, const rw::math::Q& rhs)
 {
     if (lhs.size () != rhs.size ())
@@ -207,6 +532,9 @@ double qInfDistance (const rw::math::Q& lhs, const rw::math::Q& rhs)
     return distance;
 }
 
+// 周期性关节(旋转关节)在圆环上的最短角度距离,取值 [0, PI]:
+//   |delta| 对 2PI 取模后,再取 min(mod, 2PI - mod)。
+// 这样 q 值相差 359 度与相差 1 度的旋转关节被视为"几乎同一个姿态"。
 double wrappedAngularDistance (double lhs, double rhs)
 {
     const double raw = std::fabs (lhs - rhs);
@@ -217,6 +545,9 @@ double wrappedAngularDistance (double lhs, double rhs)
     return std::min (mod, twoPi - mod);
 }
 
+// qInfDistance 的旋转关节感知版本:对掩码中标记为 revolute 的关节用
+// wrappedAngularDistance(环形最短距离),其余关节仍用绝对值距离。
+// revoluteJoints 掩码由 revoluteJointMask 从设备关节类型生成。
 double qInfDistance (const rw::math::Q& lhs,
                      const rw::math::Q& rhs,
                      const std::vector< bool >& revoluteJoints)
@@ -235,6 +566,11 @@ double qInfDistance (const rw::math::Q& lhs,
     return distance;
 }
 
+// 生成"每个 q 分量是否为旋转关节"的掩码。关键点:
+//   - 只有 JointDevice 能枚举其关节;非 JointDevice 的 Device 无法判断,返回全 false
+//     (即全部按绝对距离处理,去重会更保守);
+//   - 一个关节可能占多个 q 分量(如自由度 > 1 的关节),这里把整块都标记成
+//     revolute;仅 RevoluteJoint 视为旋转关节。
 std::vector< bool > revoluteJointMask (
     rw::core::Ptr< rw::models::Device > device)
 {
@@ -266,11 +602,16 @@ std::vector< bool > revoluteJointMask (
     return mask;
 }
 
+// 有界性兜底:关节限位可能是正负无穷(未限制),此时用 fallback 代替,避免
+// 后续插值/裁剪计算产生 NaN 或溢出。
 double finiteBoundOrFallback (double bound, double fallback)
 {
     return std::isfinite (bound) ? bound : fallback;
 }
 
+// 在关节区间 [lo, hi] 上按 fraction(0..1)线性插值得到种子关节值。
+// 对无限限位回退到 current +/- PI;若 hi <= lo(异常区间)则强制用 current +/- PI,
+// 保证总能产出有效种子。
 double interpolateBound (const rw::math::Q& lower,
                          const rw::math::Q& upper,
                          const rw::math::Q& current,
@@ -286,6 +627,8 @@ double interpolateBound (const rw::math::Q& lower,
     return lo + fraction * (hi - lo);
 }
 
+// 构造"零位"种子:每个关节取 0 并裁剪到 [lo, hi] 内(0 在区间内则保持 0)。
+// 对无限限位同样用 current +/- PI 兜底;区间无效时直接用当前值,避免 NaN。
 rw::math::Q clampedZeroSeed (const rw::math::Q& lower,
                              const rw::math::Q& upper,
                              const rw::math::Q& current)
@@ -302,6 +645,13 @@ rw::math::Q clampedZeroSeed (const rw::math::Q& lower,
     return q;
 }
 
+// 生成一组确定性 IK 起始种子,使同一 target / state 下重复求解结果稳定:
+//   1) 当前 q 本身(最贴近现状的解最容易被迭代收敛到);
+//   2) 关节区间中点(避免被当前姿态"吸引"到同一个分支);
+//   3) 裁剪到限位内的零位;
+//   4) 限位区间内 2^dof 种高低组合的端点插值(0.25 / 0.75),dof <= 16 时枚举全部,
+//      否则按位抽取至多 128 个组合,覆盖不同关节分支。
+// 用 addUniqueIkCandidate 去重,避免重复起点重复计算。
 std::vector< rw::math::Q > deterministicIkSeeds (
     const rw::math::Q& current,
     const std::pair< rw::math::Q, rw::math::Q >& bounds)
@@ -339,90 +689,6 @@ std::vector< rw::math::Q > deterministicIkSeeds (
         rws::addUniqueIkCandidate (seeds, seed, seedProximity);
     }
     return seeds;
-}
-
-// =============================================================================
-//  sampleUnitDirections — Fibonacci 球面采样
-// =============================================================================
-// 数学:对 i ∈ [0, count) 计算
-//   z_i       = 1 − 2·(i + 0.5) / count    ∈ (-1, 1)   均匀分布
-//   θ_i       = golden_angle · i            黄金角递增(≈ 137.508°)
-//   r_i       = √(max(0, 1 − z_i²))         球面等 z 圆周半径
-//   x_i, y_i  = r_i · cos/sin(θ_i)
-//   d_i       = (x_i, y_i, z_i)             单位向量
-//
-// golden_angle = π·(3 − √5),由"向日葵种子排列"的极限角度决定。
-// 相对经纬度网格,Fibonacci 螺旋避免了"两极聚集"现象:
-//   - 经纬度法:赤道方向数 ≈ cos(θ)·count,极方向数趋近于 0;
-//   - Fibonacci:任意环形带内方向数几乎一致。
-//
-// 这对"位姿可达性"至关重要:必须让所有方向都被同等采样,否则 coverage 指标
-// 会被人为低估。
-std::vector< rw::math::Vector3D<> > sampleUnitDirections (int count)
-{
-    std::vector< rw::math::Vector3D<> > directions;
-    if (count <= 0)
-        return directions;
-    directions.reserve (static_cast< std::size_t > (count));
-    const double goldenAngle = rw::math::Pi * (3.0 - std::sqrt (5.0));
-    for (int i = 0; i < count; ++i) {
-        // +0.5 让 z 落在两极中点而非极点上,防止 r=0 时 cos/sin 退化。
-        const double z = 1.0 - 2.0 * (static_cast< double > (i) + 0.5) /
-                                  static_cast< double > (count);
-        // max(0, ·) 防止浮点误差下 z² 略大于 1 产生 NaN sqrt。
-        const double radius = std::sqrt (std::max (0.0, 1.0 - z * z));
-        const double theta  = goldenAngle * static_cast< double > (i);
-        directions.push_back (rw::math::Vector3D<> (
-            radius * std::cos (theta), radius * std::sin (theta), z));
-    }
-    return directions;
-}
-
-// =============================================================================
-//  toolZDirectionToRotation — 给定 Z 方向 + roll,构造完整旋转矩阵
-// =============================================================================
-// 问题:IK 需要 baseTtcp = baseTposition · positionTtcp,而 positionTtcp 由
-// 工具 Z 方向 + 绕 Z 的 roll 决定。
-//
-// 步骤:
-//   1) 规范化 rawDirection → z;
-//   2) 选一个不与 z 共线的参考向量 reference:
-//        - 通常用世界 Z,这样 x 与世界 XY 平面平行;
-//        - 但如果 z 接近 ±Z(|z(2)| ≥ 0.9),就换成世界 Y,避免 cross ≈ 0;
-//   3) x = reference × z,归一化;这样 (x, y, z) 构成右手正交基;
-//   4) base = Rotation3D(x, y, z) = [x | y | z] 作为列向量构成的矩阵;
-//   5) 绕 z 旋转 roll 弧度:R = base · Rot_z(roll);
-//   6) rollIndex/rollSamples 决定绕 z 的等分角,rollSamples 至少 1,均匀分布。
-//
-// 这是经典的"从一个方向反推完整姿态"的 Gram-Schmidt 风格构造。
-rw::math::Rotation3D<> toolZDirectionToRotation (
-    const rw::math::Vector3D<>& rawDirection, int rollIndex, int rollSamples)
-{
-    using rw::math::Vector3D;
-    rw::math::Vector3D<> z = rawDirection;
-    // 零向量兜底:理论上 sampleUnitDirections 不会产生 0,但 API 是公开的。
-    if (z.norm2 () < 1e-12)
-        z = Vector3D<>::z ();
-    z = normalize (z);
-
-    // reference 选择:0.9 的阈值给 ±Z 附近留出"安全区",避免 |reference·z| ≈ 1。
-    const rw::math::Vector3D<> reference =
-        std::fabs (z (2)) < 0.9 ? Vector3D<>::z () : Vector3D<>::y ();
-    // x = reference × z,若 reference 与 z 共线(cross=0)则 fallback 到世界 X。
-    rw::math::Vector3D<> x = cross (reference, z);
-    if (x.norm2 () < 1e-12)
-        x = Vector3D<>::x ();
-    x = normalize (x);
-    // y = z × x,自动右手系且正交(无需重新归一化,但代码里做了数值保险)。
-    const rw::math::Vector3D<> y = normalize (cross (z, x));
-    const rw::math::Rotation3D<> base (x, y, z);
-
-    // roll 角:把 [0, 2π) 等分成 rollSamples 份;rollIndex 从 0 开始。
-    const int rolls = std::max (1, rollSamples);
-    const double roll = 2.0 * rw::math::Pi * static_cast< double > (rollIndex) /
-                        static_cast< double > (rolls);
-    // 注意复合顺序:base * Rz(roll) 表示"先做 Rz,再做 base"。
-    return base * rw::math::EAA<> (Vector3D<>::z (), roll).toRotation3D ();
 }
 
 // =============================================================================
@@ -537,107 +803,51 @@ KinematicCurrentPoseResult KinematicAnalyzer::analyzeCurrentPose (
         return result;
     }
 
-    // 把 device/TCP 名写到结果里,UI 表格显示时直接用。
-    result.deviceName  = device->getName ();
-    result.tcpFrameName = resolvedTcpFrame->getName ();
+    AnalysisContext context;
+    context.device = device;
+    context.tcpFrame = resolvedTcpFrame;
+    context.baseState = state;
+    context.deviceName = device->getName ();
+    context.tcpFrameName = resolvedTcpFrame->getName ();
+    context.thresholds = _thresholds;
 
-    // --------------------------------------------------------------------
-    // 拷贝关节值到 std::vector 便于跨接口(QTableWidget / JSON)。
-    // q.e() 返回底层 Eigen 向量;用 assign+resize 而不是 assign(e.begin, e.end),
-    // 是为了在 q 是空 Q 时也保证 result.q 至少是 size=0 的 vector。
-    // --------------------------------------------------------------------
+    ConfigurationEvaluationOptions options;
+    options.checkCollision = false;
     const rw::math::Q q = device->getQ (state);
+    const ConfigurationEvaluation evaluation =
+        ConfigurationEvaluator ().evaluate (context, q, options);
+
+    result.deviceName = context.deviceName;
+    result.tcpFrameName = context.tcpFrameName;
     result.q.assign (q.e ().begin (), q.e ().end ());
     result.q.resize (static_cast< std::size_t > (q.size ()));
+    result.tcpPosition = {{evaluation.tcpPose.P ()[0], evaluation.tcpPose.P ()[1],
+                           evaluation.tcpPose.P ()[2]}};
+    const rw::math::RPY<> rpy (evaluation.tcpPose.R ());
+    const double toDeg = 180.0 / rw::math::Pi;
+    result.tcpRpyDeg = {{rpy[0] * toDeg, rpy[1] * toDeg, rpy[2] * toDeg}};
+    result.jointLimitMargins = evaluation.jointLimitMargins;
+    result.minJointLimitMargin = evaluation.minimumJointMargin;
+    result.jacobianRowMajor = evaluation.jacobianRowMajor;
+    result.jacobianRows = evaluation.jacobianRows;
+    result.jacobianCols = evaluation.jacobianCols;
+    result.singularValues = evaluation.singularValues;
+    result.conditionNumber = evaluation.conditionNumber;
+    result.manipulability = evaluation.manipulability;
+    result.warnings.insert (result.warnings.end (), evaluation.warnings.begin (),
+                            evaluation.warnings.end ());
 
-    // --------------------------------------------------------------------
-    // 3) 正运动学:baseTtcp = Kinematics::frameTframe(base, tcp, state)。
-    //    这是 IK 的逆运算:给定关节值,求末端位姿。
-    //    失败通常是 WorkCell 配置错乱(帧未挂到树上 / 设备基坐标系异常)。
-    //    catch 住 std::exception 但不吞所有异常 —— 真正的非 std 异常
-    //    (bad_alloc 等)继续向上抛。
-    // --------------------------------------------------------------------
-    try {
-        const rw::math::Transform3D<> tcpTf =
-            rw::kinematics::Kinematics::frameTframe (device->getBase (), resolvedTcpFrame, state);
-        // 平移分量写入位置(米)。
-        result.tcpPosition = {{tcpTf.P () (0), tcpTf.P () (1), tcpTf.P () (2)}};
-        // 旋转分量转 RPY 度数,UI 显示直观。
-        const rw::math::RPY<> rpy (tcpTf.R ());
-        const double toDeg = 180.0 / rw::math::Pi;
-        result.tcpRpyDeg = {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}};
-    }
-    catch (const std::exception&) {
-        AnalysisWarning w;
-        w.code     = "KIN_FK_FAILED";
-        w.message  = "Forward kinematics failed for the selected device / TCP frame.";
-        w.source   = "KinematicAnalyzer";
-        w.severity = AnalysisStatus::Fail;
-        result.warnings.push_back (w);
+    if (evaluation.feasibility == Feasibility::Infeasible ||
+        evaluation.feasibility == Feasibility::DataInsufficient ||
+        evaluation.quality == Quality::Critical) {
         result.status = AnalysisStatus::Fail;
-        return result;
     }
-
-    // --------------------------------------------------------------------
-    // 4) 雅可比 J ∈ R^{6×n}:把"关节速度"映射到"末端线速度/角速度"。
-    //    异常位形下某些 device 会抛错,记录告警但继续(没有 J 也能算裕度)。
-    // --------------------------------------------------------------------
-    rw::math::Jacobian jac;
-    try {
-        jac = device->baseJframe (resolvedTcpFrame, state);
-    }
-    catch (const std::exception&) {
-        AnalysisWarning w;
-        w.code     = "KIN_JACOBIAN_FAILED";
-        w.message  = "Failed to compute base-to-TCP Jacobian.";
-        w.source   = "KinematicAnalyzer";
-        w.severity = AnalysisStatus::Fail;
-        result.warnings.push_back (w);
-    }
-    if (jac.size1 () > 0 && jac.size2 () > 0) {
-        // 把 J 拷贝到 std::vector<double>(行优先),便于 JSON / UI 序列化。
-        // 6×n 矩阵 → 6 行 × n 列展开,jacobianRowMajor.size() == rows*cols。
-        result.jacobianRows = static_cast< int > (jac.size1 ());
-        result.jacobianCols = static_cast< int > (jac.size2 ());
-        result.jacobianRowMajor.assign (jac.e ().data (),
-                                       jac.e ().data () + jac.e ().size ());
-    }
-
-    // --------------------------------------------------------------------
-    // 5) 关节裕度:每个关节的归一化"距限位距离"。
-    //    classifyJointLimitMargins 会向 result.warnings 追加 KIN_JOINT_LIMIT /
-    //    KIN_NEAR_JOINT_LIMIT。
-    // --------------------------------------------------------------------
-    std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
-    result.jointLimitMargins = calculateJointLimitMargins (q, bounds);
-    result.minJointLimitMargin =
-        result.jointLimitMargins.empty () ? 0.0
-                                         : minimumJointLimitMargin (result.jointLimitMargins);
-    const AnalysisStatus limitStatus =
-        classifyJointLimitMargins (q, bounds, _thresholds, &result.warnings);
-
-    // --------------------------------------------------------------------
-    // 奇异指标:J 的 SVD → σ_max / σ_min / 可操作度。
-    //    注意此处 singular.warnings 是"额外的奇异告警",与上面 limitWarnings
-    //    分别 push 到 result.warnings,避免互相覆盖。
-    // --------------------------------------------------------------------
-    const SingularMetrics singular = calculateSingularMetrics (jac, _thresholds);
-    result.singularValues  = singular.singularValues;
-    result.conditionNumber = singular.conditionNumber;
-    result.manipulability  = singular.manipulability;
-    for (const AnalysisWarning& w : singular.warnings)
-        result.warnings.push_back (w);
-
-    // --------------------------------------------------------------------
-    // 状态合并:关节裕度和奇异度任一为 Fail → 整体 Fail;任一为 Warning →
-    // Warning;否则 Pass。这正是 worstStatus 的两两合并语义。
-    // --------------------------------------------------------------------
-    if (limitStatus == AnalysisStatus::Fail || singular.status == AnalysisStatus::Fail)
-        result.status = AnalysisStatus::Fail;
-    else if (limitStatus == AnalysisStatus::Warning || singular.status == AnalysisStatus::Warning)
+    else if (evaluation.quality == Quality::Degraded) {
         result.status = AnalysisStatus::Warning;
-    else
+    }
+    else if (evaluation.feasibility == Feasibility::Feasible) {
         result.status = AnalysisStatus::Pass;
+    }
 
     return result;
 }
@@ -672,6 +882,20 @@ KinematicIkAnalysisResult KinematicAnalyzer::analyzeIk (
     const TaskPoint& target,
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
 {
+    AnalysisContext context;
+    context.device = device;
+    context.tcpFrame = tcpFrame;
+    context.baseState = state;
+    context.collisionDetector = collisionDetector;
+    context.thresholds = _thresholds;
+
+    TargetEvaluationOptions options;
+    options.checkCollision = collisionDetector != NULL;
+    options.positionToleranceMeters = _thresholds.positionToleranceMeters;
+    options.orientationToleranceDeg = _thresholds.orientationToleranceDeg;
+    const TargetEvaluation evaluation = TargetEvaluator ().evaluate (context, target, options);
+    return legacyIkResultFromTarget (evaluation, target);
+
     KinematicIkAnalysisResult result;
     result.target = target;          // 把目标点也写到结果里,UI 列表不用额外维护
     result.status = AnalysisStatus::Unknown;
@@ -1137,42 +1361,38 @@ std::vector< TaskPointReachabilityResult > KinematicAnalyzer::analyzeTaskPoints 
     const std::vector< TaskPoint >& taskPoints,
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector) const
 {
+    AnalysisContext context;
+    context.device = device;
+    context.tcpFrame = tcpFrame;
+    context.baseState = state;
+    context.collisionDetector = collisionDetector;
+    context.thresholds = _thresholds;
+
+    RequirementExecutionSet requirements;
+    requirements.tasks.reserve (taskPoints.size ());
+    for (const TaskPoint& point : taskPoints)
+        requirements.tasks.push_back (requirementTaskFromLegacyTaskPoint (point));
+
+    BatchRunOptions options;
+    options.evidenceStage = AnalysisEvidenceStage::Quick;
+    options.targetOptions.evidenceStage = AnalysisEvidenceStage::Quick;
+    options.targetOptions.checkCollision = collisionDetector != NULL;
+    options.targetOptions.requireCollisionFree = false;
+    const RequirementValidationSummary summary =
+        validateRequirements (context, requirements, options, CancellationToken ());
+
     std::vector< TaskPointReachabilityResult > results;
     results.reserve (taskPoints.size ());
-    for (const TaskPoint& point : taskPoints) {
-        TaskPointReachabilityResult r;
-        r.taskPoint = point;
-        r.status    = AnalysisStatus::Unknown;
-
-        // ---- disabled 任务点:不计入可达率分母 ----
-        if (!point.enabled) {
-            r.primaryFailure = KinematicFailureReason::None;
-            AnalysisWarning w;
-            w.code     = "KIN_TASK_DISABLED";
-            w.message  = "Task point is disabled; skipped from reachability denominator.";
-            w.source   = "KinematicAnalyzer";
-            w.severity = AnalysisStatus::Warning;
-            // 警告放进 IK 容器,这样 UI 在查看结果时仍能看到上下文。
-            r.ik.warnings.push_back (w);
-            r.ik.target = point;
-            results.push_back (r);
-            continue;
-        }
-
-        r.ik = analyzeIk (device, tcpFrame, state, point, collisionDetector);
-
-        if (r.ik.solutions.empty ()) {
-            r.status         = AnalysisStatus::Fail;
-            r.primaryFailure = primaryFailureFromIk (r.ik);
-            r.failureReasons.push_back (r.primaryFailure);
-        }
+    for (std::size_t index = 0; index < taskPoints.size (); ++index) {
+        if (index < summary.taskResults.size ())
+            results.push_back (legacyTaskResultFromTarget (
+                summary.taskResults[index], taskPoints[index]));
         else {
-            r.primaryFailure = primaryFailureFromIk (r.ik);
-            r.status = r.ik.status;
-            if (r.primaryFailure != KinematicFailureReason::None)
-                r.failureReasons.push_back (r.primaryFailure);
+            TaskPointReachabilityResult incomplete;
+            incomplete.taskPoint = taskPoints[index];
+            incomplete.status = AnalysisStatus::Unknown;
+            results.push_back (incomplete);
         }
-        results.push_back (r);
     }
     return results;
 }
@@ -1316,69 +1536,44 @@ WorkspaceSample makeWorkspaceSample (
     rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector)
 {
     WorkspaceSample sample;
+    AnalysisContext context;
+    context.device = device;
+    context.tcpFrame = tcpFrame;
+    context.baseState = baseState;
+    context.collisionDetector = collisionDetector;
+    context.thresholds = thresholds;
+    context.collisionRequired = checkCollision;
 
-    // 先把 q 拷贝到 std::vector<double>(序列化用)。
+    ConfigurationEvaluationOptions options;
+    options.evidenceStage = AnalysisEvidenceStage::Estimated;
+    options.checkCollision = checkCollision;
+    const ConfigurationEvaluation evaluation =
+        ConfigurationEvaluator ().evaluate (context, q, options);
+
+    sample.stage = evaluation.stage;
+    sample.feasibility = evaluation.feasibility;
+    sample.quality = evaluation.quality;
     sample.q.reserve (q.size ());
     for (std::size_t i = 0; i < q.size (); ++i)
         sample.q.push_back (q (i));
-
-    // 关键:副本 state,绝不污染 baseState。
-    rw::kinematics::State sampleState = baseState;
-    device->setQ (q, sampleState);
-
-    // ---- FK:失败直接返回 Fail,保留 q 用于排查 ----
-    try {
-        const rw::math::Transform3D<> transform =
-            rw::kinematics::Kinematics::frameTframe (device->getBase (), tcpFrame.get (), sampleState);
-        sample.tcpPosition[0] = transform.P () (0);
-        sample.tcpPosition[1] = transform.P () (1);
-        sample.tcpPosition[2] = transform.P () (2);
-    }
-    catch (...) {
+    sample.tcpPosition[0] = evaluation.tcpPose.P () (0);
+    sample.tcpPosition[1] = evaluation.tcpPose.P () (1);
+    sample.tcpPosition[2] = evaluation.tcpPose.P () (2);
+    sample.manipulability = evaluation.manipulability;
+    sample.minJointLimitMargin = evaluation.minimumJointMargin;
+    sample.conditionNumber = evaluation.conditionNumber;
+    sample.collisionChecked = evaluation.collisionChecked;
+    sample.inCollision = evaluation.inCollision;
+    if (sample.feasibility == Feasibility::DataInsufficient)
         sample.status = AnalysisStatus::Fail;
-        return sample;
-    }
-
-    // ---- 关节裕度 ----
-    const std::pair< rw::math::Q, rw::math::Q > bounds = device->getBounds ();
-    const std::vector< double > margins = calculateJointLimitMargins (q, bounds);
-    sample.minJointLimitMargin =
-        margins.empty () ? 0.0 : minimumJointLimitMargin (margins);
-
-    // ---- Jacobian 奇异指标 ----
-    // 退化位形可能抛错,记 Fail 但不让整个循环挂掉。
-    SingularMetrics singular;
-    try {
-        singular = calculateSingularMetrics (device->baseJframe (tcpFrame.get (), sampleState), thresholds);
-    }
-    catch (...) {
-        singular.status = AnalysisStatus::Fail;
-    }
-    sample.manipulability  = singular.manipulability;
-    sample.conditionNumber = singular.conditionNumber;
-
-    // ---- 碰撞检查(可选)----
-    sample.inCollision = false;
-    if (checkCollision && collisionDetector != NULL) {
-        try {
-            sample.inCollision = collisionDetector->inCollision (sampleState);
-        }
-        catch (...) {
-            sample.inCollision = false;
-        }
-    }
-
-    // 状态合并:优先级 碰撞 > 奇异 Fail > (奇异 Warning 或 近限位) > Pass。
-    if (sample.inCollision)
+    else if (sample.feasibility == Feasibility::Infeasible)
         sample.status = AnalysisStatus::Fail;
-    else if (singular.status == AnalysisStatus::Fail)
-        sample.status = AnalysisStatus::Fail;
-    else if (singular.status == AnalysisStatus::Warning ||
-             sample.minJointLimitMargin < thresholds.nearJointLimitRatio)
+    else if (sample.quality == Quality::Degraded)
         sample.status = AnalysisStatus::Warning;
-    else
+    else if (sample.feasibility == Feasibility::Feasible)
         sample.status = AnalysisStatus::Pass;
-
+    else
+        sample.status = AnalysisStatus::Unknown;
     return sample;
 }
 
@@ -1424,6 +1619,8 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
 {
     std::vector< WorkspaceSample > samples;
 
+    // 把回调封装为本地 lambda:canceled() 返回是否请求取消(回调为空则恒 false),
+    // progress(completed, planned) 在回调非空时触发进度通知。
     const auto canceled = [&callbacks] () -> bool {
         return callbacks.isCancellationRequested != NULL &&
                callbacks.isCancellationRequested (callbacks.userData);
@@ -1475,9 +1672,12 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
             rw::math::Q q (dof);
             for (std::size_t j = 0; j < dof; ++j)
                 q (j) = distributions[j] (rng);
-            samples.push_back (makeWorkspaceSample (
+            WorkspaceSample sample = makeWorkspaceSample (
                 device, tcpFrame, state, q, _thresholds,
-                sanitized.checkCollision, collisionDetector));
+                sanitized.checkCollision, collisionDetector);
+            sample.sampleSeed = sanitized.randomSeed;
+            sample.sampleCount = sanitized.sampleCount;
+            samples.push_back (sample);
             progress (samples.size (), planned);
         }
         return samples;
@@ -1511,9 +1711,12 @@ std::vector< WorkspaceSample > KinematicAnalyzer::sampleWorkspace (
                 q (joint) = lower (joint) + ratio * (upper (joint) - lower (joint));
             }
         }
-        samples.push_back (makeWorkspaceSample (
+        WorkspaceSample sample = makeWorkspaceSample (
             device, tcpFrame, state, q, _thresholds,
-            sanitized.checkCollision, collisionDetector));
+            sanitized.checkCollision, collisionDetector);
+        sample.sampleSeed = sanitized.randomSeed;
+        sample.sampleCount = sanitized.sampleCount;
+        samples.push_back (sample);
         progress (samples.size (), target);
     }
     return samples;
@@ -1572,32 +1775,46 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
         sanitizePoseReachabilityConfig (config, nullptr);
 
     const int directionCount = sanitized.directionSamples;
-    const int rollCount = directionCount == 0 ? 0 : sanitized.rollSamples;
     const std::size_t ikPerPosition =
         poseReachabilityTargetsPerPosition (sanitized);
-    const int totalDirections = static_cast< int > (ikPerPosition);
+    const int totalOrientations = static_cast< int > (ikPerPosition);
     bool targetCountOverflowed = false;
     const std::size_t plannedTotal =
         poseReachabilityExecutionTargetCount (
             sanitized, positions.size (), &targetCountOverflowed);
     (void) targetCountOverflowed;
-    const std::vector< rw::math::Vector3D<> > directions =
-        sampleUnitDirections (directionCount);
+    const std::vector< OrientationTargetSample > orientationTargets =
+        generateOrientationTargetSamples (sanitized);
 
     rw::core::Ptr< const rw::kinematics::Frame > resolvedTcpFrame = tcpFrame;
     if (resolvedTcpFrame == NULL && device != NULL)
         resolvedTcpFrame = device->getEnd ();
 
+    AnalysisContext targetContext;
+    targetContext.device = device;
+    targetContext.tcpFrame = resolvedTcpFrame;
+    targetContext.baseState = state;
+    targetContext.collisionDetector = collisionDetector;
+    targetContext.thresholds = _thresholds;
+    TargetEvaluationOptions targetOptions;
+    targetOptions.checkCollision = sanitized.checkCollision && collisionDetector != NULL;
+    targetOptions.positionToleranceMeters = _thresholds.positionToleranceMeters;
+    targetOptions.orientationToleranceDeg = _thresholds.orientationToleranceDeg;
+    TargetEvaluator targetEvaluator;
+
     std::size_t completedTargets = 0;
     for (const std::array< double, 3 >& position : positions) {
         PoseReachabilitySample sample;
         sample.position          = position;
-        sample.sampledDirections = totalDirections;
+        sample.sampledDirections = directionCount;
+        sample.sampledOrientationSamples = totalOrientations;
         sample.plannedIkTargets  = ikPerPosition;
         std::size_t completedTargetsForSample = 0;
+        std::vector< bool > reachableDirectionFlags (
+            static_cast< std::size_t > (std::max (0, directionCount)), false);
 
         // 兜底:device / TCP / 总方向数任一为 0,直接报 Fail。
-        if (device == NULL || resolvedTcpFrame == NULL || totalDirections == 0) {
+        if (device == NULL || resolvedTcpFrame == NULL || totalOrientations == 0) {
             sample.completedIkTargets = 0;
             sample.partial = false;
             sample.status = AnalysisStatus::Fail;
@@ -1606,17 +1823,21 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
         }
 
         const auto finishCanceledSample =
-            [&sample, totalDirections, ikPerPosition,
+            [&sample, directionCount, totalOrientations, ikPerPosition,
              &completedTargetsForSample] () {
             sample.completedIkTargets = completedTargetsForSample;
             sample.plannedIkTargets = ikPerPosition;
             sample.partial = completedTargetsForSample < ikPerPosition;
             // Keep any representative Q already found before cancellation.
-            sample.status = sample.reachableDirections == 0 ?
+            sample.status = sample.reachableOrientationSamples == 0 ?
                 AnalysisStatus::Fail : AnalysisStatus::Warning;
-            sample.coverage = totalDirections == 0 ? 0.0 :
+            sample.directionCoverage = directionCount == 0 ? 0.0 :
                 static_cast< double > (sample.reachableDirections) /
-                    static_cast< double > (totalDirections);
+                    static_cast< double > (directionCount);
+            sample.orientationCoverage = totalOrientations == 0 ? 0.0 :
+                static_cast< double > (sample.reachableOrientationSamples) /
+                    static_cast< double > (totalOrientations);
+            sample.coverage = sample.orientationCoverage;
         };
         const auto cancellationRequested = [&callbacks] () {
             return callbacks.isCancellationRequested != NULL &&
@@ -1630,44 +1851,55 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
             return results;
         }
 
-        // 双层循环:(方向, 滚动) → 一次 IK。
-        for (int directionIndex = 0; directionIndex < directionCount; ++directionIndex) {
-            for (int rollIndex = 0; rollIndex < rollCount; ++rollIndex) {
+        // 每个确定性方向/滚转样本对应一次 IK。
+        for (const OrientationTargetSample& orientation : orientationTargets) {
+                const int directionIndex = orientation.directionIndex;
+                const int rollIndex = orientation.rollIndex;
                 if (cancellationRequested ()) {
                     finishCanceledSample ();
                     results.push_back (sample);
                     return results;
                 }
 
-                // 给定 Z 方向 + 滚动角,反推完整旋转矩阵。
-                const rw::math::Rotation3D<> rotation =
-                    toolZDirectionToRotation (
-                        directions[static_cast< std::size_t > (directionIndex)],
-                        rollIndex, rollCount);
                 // 把 (position, rotation) 包成 TaskPoint。
                 const TaskPoint target =
-                    poseReachabilityTarget (position, rotation, directionIndex, rollIndex);
-                const KinematicIkAnalysisResult ik = analyzeIk (
-                    device, resolvedTcpFrame, state, target,
-                    sanitized.checkCollision ? collisionDetector : NULL);
-
-                // "该方向可达"的判定:至少一个无碰撞的 Pass/Warning 解。
-                const bool reachable = isPoseDirectionReachable (ik.solutions);
-                if (reachable) {
-                    ++sample.reachableDirections;
+                    poseReachabilityTarget (position, orientation.rotation,
+                                            directionIndex, rollIndex);
+                const TargetEvaluation evaluation = targetEvaluator.evaluate (
+                    targetContext, target, targetOptions);
+                const bool directionReachable = isDirectionTargetReachable (
+                    evaluation, orientation.rotation,
+                    targetOptions.positionToleranceMeters,
+                    targetOptions.orientationToleranceDeg);
+                const bool orientationReachable = isOrientationTargetReachable (
+                    evaluation, targetOptions.positionToleranceMeters,
+                    targetOptions.orientationToleranceDeg);
+                if (directionReachable) {
+                    const std::size_t directionOffset =
+                        static_cast< std::size_t > (directionIndex);
+                    if (!reachableDirectionFlags[directionOffset]) {
+                        reachableDirectionFlags[directionOffset] = true;
+                        ++sample.reachableDirections;
+                    }
+                }
+                if (orientationReachable) {
+                    ++sample.reachableOrientationSamples;
                     // P10:保存第一个可达解的代表性 Q。
                     if (!sample.hasRepresentativeQ) {
-                        for (const KinematicIkSolution& sol : ik.solutions) {
-                            if (sol.inCollision) continue;
-                            if (sol.status == AnalysisStatus::Pass ||
-                                sol.status == AnalysisStatus::Warning) {
-                                if (!sol.q.empty ()) {
+                        for (const TargetCandidate& candidate : evaluation.candidates) {
+                            if (candidate.configuration.feasibility != Feasibility::Feasible ||
+                                candidate.configuration.inCollision ||
+                                candidate.positionErrorMeters >
+                                    targetOptions.positionToleranceMeters ||
+                                candidate.orientationErrorDeg >
+                                    targetOptions.orientationToleranceDeg)
+                                continue;
+                            if (!candidate.configuration.q.empty ()) {
                                     sample.hasRepresentativeQ = true;
-                                    sample.representativeQ = sol.q;
+                                    sample.representativeQ = qToVector (candidate.configuration.q);
                                     sample.representativeDirectionIndex =
                                         directionIndex;
                                     sample.representativeRollIndex = rollIndex;
-                                }
                                 break;
                             }
                         }
@@ -1684,19 +1916,22 @@ std::vector< PoseReachabilitySample > KinematicAnalyzer::analyzePoseReachability
                     results.push_back (sample);
                     return results;
                 }
-            }
         }
 
-        // coverage = reachable / sampled;totalDirections==0 时上面已经 continue。
-        sample.coverage =
-            totalDirections == 0 ? 0.0 :
+        sample.directionCoverage =
+            directionCount == 0 ? 0.0 :
             static_cast< double > (sample.reachableDirections) /
-                static_cast< double > (totalDirections);
+                static_cast< double > (directionCount);
+        sample.orientationCoverage =
+            totalOrientations == 0 ? 0.0 :
+            static_cast< double > (sample.reachableOrientationSamples) /
+                static_cast< double > (totalOrientations);
+        sample.coverage = sample.orientationCoverage;
         sample.completedIkTargets = completedTargetsForSample;
         sample.partial = false;
-        if (sample.reachableDirections == 0)
+        if (sample.reachableOrientationSamples == 0)
             sample.status = AnalysisStatus::Fail;
-        else if (sample.reachableDirections == totalDirections)
+        else if (sample.reachableOrientationSamples == totalOrientations)
             sample.status = AnalysisStatus::Pass;
         else
             sample.status = AnalysisStatus::Warning;
@@ -1748,6 +1983,26 @@ KinematicAnalysisResult KinematicAnalyzer::buildAggregateResult (
         result.status = worstStatus (result.status, sample.status);
     for (const PoseReachabilitySample& sample : poseReachability)
         result.status = worstStatus (result.status, sample.status);
+
+    switch (result.status) {
+    case AnalysisStatus::Fail:
+        result.feasibility = Feasibility::Infeasible;
+        result.quality = Quality::Critical;
+        break;
+    case AnalysisStatus::Warning:
+        result.feasibility = Feasibility::Feasible;
+        result.quality = Quality::Degraded;
+        break;
+    case AnalysisStatus::Pass:
+        result.feasibility = Feasibility::Feasible;
+        result.quality = Quality::Good;
+        break;
+    case AnalysisStatus::Unknown:
+    default:
+        result.feasibility = Feasibility::NotEvaluated;
+        result.quality = Quality::Unknown;
+        break;
+    }
 
     // 收集可操作度样本:currentPose + 所有 workspace(过滤掉 0 值)。
     std::vector< double > manipulabilityValues;

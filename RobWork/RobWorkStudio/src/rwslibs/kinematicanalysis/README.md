@@ -11,6 +11,35 @@ KinematicAnalysis is a RobWorkStudio plugin for early robot design validation. I
 - Pose reachability: sample tool directions at positions, report orientation coverage, show planned IK target count before running, and run in background with cooperative cancellation.
 - Report export: JSON and CSV summaries for downstream review.
 
+## Evidence stages and requirement levels
+
+- **Current pose** is a read-only measurement of the live WorkCell state. It uses FK and
+  Jacobian metrics and does not validate a requirement.
+- **IK** solves one pose with deterministic seeds. **Task points** batch those same target
+  evaluations; the batch layer does not implement a second IK algorithm.
+- **Workspace estimated** is a Quick/Estimated joint-space sample (FK metrics and optional
+  collision checks). It is useful for exploration, but it is not Verified reachability evidence.
+- **Verified region** transforms every frozen region cell into the region reference frame and
+  evaluates every requested orientation with IK. Position and orientation coverage are reported
+  separately; a region passes only when both configured thresholds pass.
+- Requirement `Must`, `Should`, and `Info` levels are preserved in the v4 execution contract.
+  Only included `Must` items determine the validation summary.
+
+All report results carry `provenance`, `evidenceStage`, `feasibility`, and `quality`. A missing
+required collision detector is `DataInsufficient`, never an implicit collision-free pass. A
+cancelled or sampling-limited run keeps partial results and reports a warning rather than claiming
+complete Verified evidence.
+
+Frozen v4 artifacts are the only input accepted for Verified requirement validation. v3 artifacts
+may be read for history or Quick analysis, but must be refrozen before Verified execution. The
+artifact's requirement, robot model, WorkCell environment, analysis stage, configuration hash,
+and seed form the batch cache identity; changing any component invalidates reuse.
+
+The Report tab exports the same in-memory report used by the UI. JSON uses stable enum strings and
+serializes non-finite numbers as `null` with a `KIN_REPORT_NONFINITE` warning. Task CSV and Region
+CSV use fixed headers and RFC-style quoting for commas, quotes, and newlines. Report views support
+read-only filters for evidence stage, feasibility, quality, failure reason, and region id.
+
 ## Metrics
 
 - Joint-limit margin is normalized as the smaller distance to lower or upper limit divided by joint range.
@@ -18,6 +47,10 @@ KinematicAnalysis is a RobWorkStudio plugin for early robot design validation. I
 - Manipulability is the product of the Jacobian singular values.
 - Pose reachability coverage is `reachableDirections / sampledDirections`.
 - Task point reachable rate counts `Pass` and `Warning` as reachable and excludes disabled task points.
+- Verified position coverage is `reachableCells / totalCells` and orientation coverage is
+  `reachableOrientations / sampledOrientations`; an empty denominator is `NotEvaluated`.
+- A finite condition number is `sigma_max / sigma_min`; a zero or non-finite `sigma_min` is
+  represented as non-finite and never silently converted into a pass.
 
 ## Default Thresholds
 

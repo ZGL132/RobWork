@@ -195,6 +195,24 @@ if(build)
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
         add_test(
+            NAME sdurws_structureoptimizer_test_evaluator_consistency
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> evaluator_consistency
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_test_evaluator_consistency
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_test_cache
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> cache
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_test_cache
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
             NAME sdurws_structureoptimizer_resource_dependencies_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> resource_dependencies
         )

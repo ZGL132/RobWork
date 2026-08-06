@@ -1,6 +1,7 @@
 #include "FrozenRequirementKinematicAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/engineeringrequirements/RequirementMigration.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 
@@ -8,6 +9,19 @@
 
 namespace rws {
 namespace {
+
+// 统一的"带错误码拒绝"助手:把 "code: detail" 写入 error(非空时)并返回 false。
+// 所有校验失败路径都汇聚到这里,保证错误消息前缀一致,便于 UI 分类展示。
+bool rejectWithCode(std::string* error,
+                    const char* code,
+                    const std::string& detail = std::string())
+{
+    if (error != nullptr) {
+        *error = code;
+        if (!detail.empty()) *error += ": " + detail;
+    }
+    return false;
+}
 
 /**
  * @brief 将需求侧工艺类型映射为运动学任务类型。
@@ -29,6 +43,14 @@ TaskPointType toTaskPointType(ProcessType processType)
     }
 }
 
+// 把编译态工位任务点(CompiledPoseTask)投影为运动学任务点(TaskPoint)。
+// 字段逐项搬运,并附加两类信息到 note:
+//   - 朝向解析证据(resolutionEvidence);
+//   - 若路径验证待 P3 轨迹评价器处理,则追加 "Approach/retract path validation
+//     is pending..." 提示;
+//   - 接近 / 撤离路径规则(启用时)以 "Approach/Retract path: axis=..., distanceMeters=...,
+//     collisionFreeRequired=..." 追加,保证下游不丢信息。
+// Must 级任务点 weight = 1.0,其余 0.5,供评分排序使用。
 TaskPoint toTaskPoint(const CompiledPoseTask& station)
 {
     TaskPoint point;
@@ -63,6 +85,8 @@ TaskPoint toTaskPoint(const CompiledPoseTask& station)
     return point;
 }
 
+// 与 ProcessType 版本同构的映射,但输入是执行契约类型;两套类型各自独立
+// 演进,因此分开实现(见 toTaskPointType(ProcessType))。
 TaskPointType toTaskPointType(RequirementExecutionProcessType processType)
 {
     switch (processType) {
@@ -77,6 +101,9 @@ TaskPointType toTaskPointType(RequirementExecutionProcessType processType)
     }
 }
 
+// 把执行契约任务(RequirementExecutionTask,v4 输出)投影为 TaskPoint。
+// 处理与 CompiledPoseTask 版本一致:Must -> weight 1.0,朝向解析证据与接近/
+// 撤离路径规则并入 note;纯数据投影,不访问 UI。
 TaskPoint toTaskPoint(const RequirementExecutionTask& task)
 {
     TaskPoint point;
@@ -197,6 +224,11 @@ bool FrozenRequirementKinematicAdapter::parseArtifactJson(
         return false;
     }
 
+    if (!artifactObject.value("schemaVersion").isDouble()) {
+        return rejectWithCode(error, "REQ_SCHEMA_UNSUPPORTED",
+                              "Frozen artifact schemaVersion is missing or invalid.");
+    }
+
     if (!FrozenRequirementArtifactJson::fromObject(artifactObject, artifact, error)) {
         // 嵌套字段存在但不是冻结工件时保留底层的完整校验结果，同时补充输入位置，
         // 方便区分“选错文件”和“冻结记录损坏”。
@@ -252,6 +284,69 @@ bool FrozenRequirementKinematicAdapter::apply(
 {
     return applyWithValidation(
         artifact, workcell, state, output, error, nullptr, nullptr, artifactBaseDirectory);
+}
+
+bool FrozenRequirementKinematicAdapter::applyExecutionSet(
+    const FrozenRequirementArtifact& artifact,
+    const rw::models::WorkCell& workcell,
+    const rw::kinematics::State& state,
+    AnalysisEvidenceStage requestedStage,
+    RequirementExecutionSet& output,
+    std::string* error,
+    bool* robotStateChanged,
+    std::vector<std::string>* warnings,
+    const std::string& artifactBaseDirectory)
+{
+    if (requestedStage == AnalysisEvidenceStage::Estimated) {
+        return rejectWithCode(error, "REQ_EVIDENCE_STAGE_UNSUPPORTED",
+                              "Frozen requirements support Quick or Verified analysis only.");
+    }
+    if (artifact.schemaVersion == 3 && requestedStage == AnalysisEvidenceStage::Verified) {
+        return rejectWithCode(error, "REQ_V3_REQUIRES_REFREEZE",
+                              "A v3 frozen artifact is available for Quick analysis only.");
+    }
+
+    FrozenKinematicRequirementInput validationProbe;
+    if (!applyWithValidation(artifact, workcell, state, validationProbe, error,
+                             robotStateChanged, warnings, artifactBaseDirectory)) {
+        return false;
+    }
+
+    RequirementExecutionSet converted;
+    if (artifact.schemaVersion == 3) {
+        QJsonObject migratedObject;
+        std::vector<RequirementDiagnostic> migrationDiagnostics;
+        std::string migrationError;
+        if (!migrateRequirementArtifact(
+                FrozenRequirementArtifactJson::toObject(artifact), migratedObject,
+                migrationDiagnostics, &migrationError)) {
+            return rejectWithCode(error, "REQ_SCHEMA_UNSUPPORTED", migrationError);
+        }
+        const QJsonValue executionValue = migratedObject.value("execution");
+        if (!executionValue.isObject() ||
+            !RequirementExecutionJson::fromObject(
+                executionValue.toObject(), converted, &migrationError)) {
+            return rejectWithCode(error, "REQ_SCHEMA_UNSUPPORTED", migrationError);
+        }
+    }
+    else {
+        converted = artifact.execution;
+    }
+
+    if (requestedStage == AnalysisEvidenceStage::Verified) {
+        for (const RequirementExecutionRegion& region : converted.workspaceRegions) {
+            if (region.compileState == RequirementExecutionCompileState::Included &&
+                region.minimumVerificationStage != RequirementExecutionStage::Verified) {
+                return rejectWithCode(
+                    error, "REQ_VERIFIED_REGION_POLICY_MISSING",
+                    "Workspace region '" + region.id + "' is not frozen for Verified analysis.");
+            }
+        }
+    }
+
+    output = std::move(converted);
+    if (error != nullptr) error->clear();
+    return true;
 }
 
 bool FrozenRequirementKinematicAdapter::applyWithValidation(
@@ -311,11 +406,21 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(
     std::vector<std::string>* warnings,
     const std::string& artifactBaseDirectory)
 {
+    if (error != nullptr) error->clear();
+
     // 即使 JSON 有 frozen 标志，也必须复核冻结时的场景和 State。否则夹具移动后仍会把
     // 相对 Frame 的旧位姿送进 IK，产生看似正常、实际对应错误工艺位置的分析结论。
     if (!artifact.compiled.frozen) {
         if (error != nullptr) *error = "Engineering requirement artifact has no compiled frozen requirements.";
         return false;
+    }
+    if (artifact.schemaVersion != 3 && artifact.schemaVersion != 4) {
+        return rejectWithCode(error, "REQ_SCHEMA_UNSUPPORTED",
+                              "Only frozen requirement artifact schema v3 and v4 are supported.");
+    }
+    if (artifact.modelBinding.robotModelFingerprint.empty()) {
+        return rejectWithCode(error, "REQ_MODEL_FINGERPRINT_MISSING",
+                              "Frozen artifact has no robot model fingerprint.");
     }
     if (artifact.requirementFingerprint.empty()) {
         if (error != nullptr) *error = "Engineering requirement artifact has no requirement fingerprint.";
@@ -350,11 +455,31 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(
         if (!RequirementFreezer::validateExecutionConsistency(artifact, error))
             return false;
     }
+
+    for (const CompiledPoseTask& task : artifact.compiled.poseTasks) {
+        if (task.level == RequirementLevel::Must &&
+            task.compileState != RequirementCompileState::Included) {
+            return rejectWithCode(error, "REQ_MUST_ITEM_EXCLUDED",
+                                  "Must task '" + task.id + "' is not included.");
+        }
+    }
+    for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions) {
+        if (region.level == RequirementLevel::Must &&
+            region.compileState != RequirementCompileState::Included) {
+            return rejectWithCode(error, "REQ_MUST_ITEM_EXCLUDED",
+                                  "Must workspace region '" + region.id +
+                                      "' is not included.");
+        }
+    }
+
     // 复核冻结时刻的场景与 State，避免夹具移动后把旧位姿送进 IK。
     FrozenRequirementValidationResult validation;
+    std::string validationError;
     if (!RequirementFreezer::validateScenario(
-            artifact, workcell, state, &validation, error, artifactBaseDirectory))
-        return false;
+            artifact, workcell, state, &validation, &validationError,
+            artifactBaseDirectory)) {
+        return rejectWithCode(error, "REQ_SCENARIO_FINGERPRINT_MISMATCH", validationError);
+    }
 
     // 投影阶段：只把 Included 的项送入运动学输入(Excluded/Invalid 均跳过)。
     // v4 从执行契约读取工位任务点与覆盖盒；v3 从编译快照读取，覆盖盒经
@@ -381,7 +506,19 @@ bool FrozenRequirementKinematicAdapter::applyWithValidation(
         converted.workspaceRegions.reserve(artifact.compiled.workspaceRegions.size());
         for (const WorkspaceDemandRegion& region : artifact.compiled.workspaceRegions) {
             if (region.compileState != RequirementCompileState::Included) continue;
-            converted.workspaceRegions.push_back(toExecutionRegion(region));
+            RequirementExecutionRegion quickRegion = toExecutionRegion(region);
+            quickRegion.minimumVerificationStage = RequirementExecutionStage::Quick;
+            RequirementExecutionDiagnostic diagnostic;
+            diagnostic.code = "REQ_V3_REQUIRES_REFREEZE";
+            diagnostic.severity = RequirementExecutionDiagnosticSeverity::Warning;
+            diagnostic.requirementId = region.id;
+            diagnostic.field = "minimumVerificationStage";
+            diagnostic.message =
+                "The v3 workspace region is available for Quick analysis only; refreeze "
+                "before Verified acceptance.";
+            diagnostic.source = "kinematicanalysis.frozen_adapter";
+            quickRegion.diagnostics.push_back(diagnostic);
+            converted.workspaceRegions.push_back(std::move(quickRegion));
         }
     }
     // 统一移交输出与场景校验的副作用(机器人状态变化标记、告警)。

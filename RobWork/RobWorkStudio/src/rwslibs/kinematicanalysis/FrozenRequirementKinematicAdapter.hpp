@@ -15,6 +15,9 @@ namespace rw { namespace models { class WorkCell; } }
 
 namespace rws {
 
+// 冻结需求工件的前置声明:完整定义在 EngineeringRequirements 模块
+// (RequirementFreezer / RequirementExecutionJson),本适配器只依赖其字段做
+// 只读投影,前向声明避免在此引入跨模块循环依赖。
 struct FrozenRequirementArtifact;
 
 /**
@@ -51,6 +54,22 @@ class FrozenRequirementKinematicAdapter
     static bool parseArtifactJson(const QJsonObject& projectOrArtifact,
                                   FrozenRequirementArtifact& artifact,
                                   std::string* error = nullptr);
+
+    /**
+     * @brief 校验冻结工件并输出完整执行契约，不执行 IK 或访问 UI。
+     *
+     * v4 输出保留集合及条目 provenance、诊断和扩展字段。requestedStage 用于区分
+     * Quick 探索与 Verified 验收；旧版工件的阶段约束由适配器统一处理。
+     */
+    static bool applyExecutionSet(const FrozenRequirementArtifact& artifact,
+                                  const rw::models::WorkCell& workcell,
+                                  const rw::kinematics::State& state,
+                                  AnalysisEvidenceStage requestedStage,
+                                  RequirementExecutionSet& output,
+                                  std::string* error = nullptr,
+                                  bool* robotStateChanged = nullptr,
+                                  std::vector<std::string>* warnings = nullptr,
+                                  const std::string& artifactBaseDirectory = std::string());
 
     /**
      * @brief 在当前 WorkCell 和实时 State 与冻结场景一致时，转换为运动学任务点。

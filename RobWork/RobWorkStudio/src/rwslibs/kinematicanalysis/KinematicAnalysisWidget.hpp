@@ -24,9 +24,11 @@
 #include <atomic>
 #include <QTabWidget>
 #include <QWidget>
+#include <QJsonObject>
 
 #include <array>
 #include <memory>
+#include <string>
 #include <vector>
 
 // 提前声明 RobWork 复杂类型,避免引入完整头。
@@ -52,23 +54,41 @@ namespace rws {
 
 class KinematicAnalysisPlotWidget;
 class RobWorkStudio;
+struct KinematicAnalysisReport;
 
+// 包络异步计算的单次运行结果:envelope 为计算产物;generation 用于丢弃过期请求
+// (方向数 / 参数在途变化时,旧任务的返回结果会被判定为过期);cancelled 表示被
+// 用户取消(此时 envelope 无效);errorMessage 携带异常文本便于 UI 展示。
 struct WorkspaceEnvelopeRunResult
 {
+    // 计算得到的包络数据(有效时 valid == true)
     AnalysisEnvelopeData envelope;
+    // 发起该请求时的生成号,用于防过期丢弃
     int generation = 0;
+    // 是否被取消(取消时不应使用 envelope)
     bool cancelled = false;
+    // 计算过程中的异常信息(空表示正常)
     QString errorMessage;
 };
 
+// 包络缓存键:完全刻画"当前请求的包络输入"。除显式配置(投影 / 方向数 / 坐标迭代)
+// 外还包含设备与 TCP 指针及关节上下限——关节界限变化会显著改变包络形状,
+// 因此必须作为缓存键的一部分参与相等比较,否则会误命中陈旧包络。
 struct WorkspaceEnvelopeCacheKey
 {
+    // 采样所用的设备
     const rw::models::Device* device = nullptr;
+    // 采样所用的 TCP 帧
     const rw::kinematics::Frame* tcpFrame = nullptr;
+    // 投影平面(XY / XZ / YZ)
     VisualProjection projection = VisualProjection::XY;
+    // 方向采样数(角度采样密度)
     int angularDirections = 0;
+    // 坐标迭代数
     int coordinateIterations = 0;
+    // 设备各关节下限
     std::vector< double > lowerBounds;
+    // 设备各关节上限
     std::vector< double > upperBounds;
 
     bool operator== (const WorkspaceEnvelopeCacheKey& other) const;
@@ -112,6 +132,9 @@ class KinematicAnalysisWidget : public QWidget
     void setWorkCell (rw::models::WorkCell* workcell);
     QString statusMessage () const;
 
+    Q_INVOKABLE bool loadFrozenRequirementDocument (const QByteArray& json);
+    Q_INVOKABLE bool setRequirementExecutionDocument (const QJsonObject& json);
+
     // 项目 Provider 使用的无对话框文档接口。Widget 只读写 Provider 传入的暂存路径，
     // 不直接改写项目正式文件；正式提交由 ProjectSaveTransaction 统一完成。
     bool loadProjectDocument (const QString& path, QString* error = nullptr);
@@ -131,6 +154,14 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     // 重新读 State 并填充 "current pose" tab 的表格。
     void refreshCurrentPose ();
+    void refreshWorkflowControls ();
+    void openFrozenRequirementsForValidation ();
+    void validateRequirements ();
+    void startCapabilityExploration ();
+    void cancelCapabilityExploration ();
+    void updateCapabilityExplorationProgress (qulonglong completedSamples,
+                                              qulonglong plannedSamples);
+    void handleCapabilityExplorationFinished ();
 
     // ===================================================================
     //  IK tab
@@ -240,6 +271,8 @@ class KinematicAnalysisWidget : public QWidget
     void projectDocumentChanged ();
 
   private:
+    KinematicAnalysisReport buildReportForExport () const;
+
     // ===================================================================
     //  Tab 构建
     // ===================================================================
@@ -306,7 +339,9 @@ class KinematicAnalysisWidget : public QWidget
     double ikYawInputDeg () const;
     // 把 IK tab 输入框值写回 SpinBox(m / 度)。
     void setIkPoseMetersDeg (const std::array< double, 3 >& positionMeters,
-                             const std::array< double, 3 >& rpyDeg);
+                              const std::array< double, 3 >& rpyDeg);
+    bool loadFrozenRequirementDocument (const QByteArray& json,
+                                        const std::string& artifactBaseDirectory);
 
     // ===================================================================
     //  注入的外部句柄
@@ -319,7 +354,46 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     //  Tab 容器(每个 tab 一个 QWidget)
     // ===================================================================
-    QTabWidget* _tabs;                  // 外层 QTabWidget
+    QTabWidget* _workflowTabs;          // Diagnose / Validate / Explore 工作流
+    QTabWidget* _tabs;                  // Explore 内部的兼容功能页
+    // 三个工作流页面:Diagnose(当前位姿诊断)/ Validate Requirements(冻结需求校验)
+    // / Explore Capability(能力探索)。Explore 页内部再嵌 _tabs 兼容功能页。
+    QWidget* _diagnoseWorkflowPage;
+    QWidget* _validateWorkflowPage;
+    QWidget* _exploreWorkflowPage;
+    // ---- Validate Requirements 页:加载冻结工件 → 跑 Verified 校验 → 导出报告 ----
+    // _validateLoadRequirementsButton:选择并加载冻结需求工件。
+    QPushButton* _validateLoadRequirementsButton;
+    // _validateRunButton:触发 validateRequirements 校验。
+    QPushButton* _validateRunButton;
+    // _validateExportButton:导出校验报告(JSON)。
+    QPushButton* _validateExportButton;
+    // _validateRequirementStateLabel:工件加载 / 校验状态文本。
+    QLabel* _validateRequirementStateLabel;
+    // _validateTaskResultTable:任务级结果(ID/Name/Feasibility/Quality/Stage/Level)。
+    QTableWidget* _validateTaskResultTable;
+    // _validateRegionCellTable:工作区域单元级结果(逐单元覆盖评估)。
+    QTableWidget* _validateRegionCellTable;
+    // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
+    // Run / Cancel + 采样参数(samples / mode / seed / grid / directions / rolls)。
+    QPushButton* _exploreRunButton;
+    QPushButton* _exploreCancelButton;
+    QSpinBox* _exploreSamplesSpin;
+    QComboBox* _exploreModeCombo;
+    QSpinBox* _exploreSeedSpin;
+    QSpinBox* _exploreGridStepsSpin;
+    QSpinBox* _exploreDirectionSamplesSpin;
+    QSpinBox* _exploreRollSamplesSpin;
+    QLabel* _exploreStateLabel;
+    // 探索运行状态与后台执行句柄:RunActive 表示在跑,CancellationRequested 表示已请求
+    // 取消;watcher 监听 QtConcurrent worker 完成,cancelToken 为跨线程取消标志,
+    // completed/planned 用于进度文本。
+    bool _exploreRunActive;
+    bool _exploreCancellationRequested;
+    QFutureWatcher< std::vector< WorkspaceSample > >* _exploreWatcher;
+    std::shared_ptr< std::atomic_bool > _exploreCancelToken;
+    std::size_t _exploreCompletedSamples;
+    std::size_t _explorePlannedSamples;
     QWidget* _currentPoseTab;           // Tab 0:当前位姿
     QWidget* _ikTab;                    // Tab 1:IK 求解
     QWidget* _taskPointTab;             // Tab 2:任务点表格
@@ -340,6 +414,7 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _poseConditionLabel;
     QLabel* _poseManipulabilityLabel;
     QLabel* _poseMarginLabel;
+    QLabel* _poseCollisionCapabilityLabel;
     QTableWidget* _jointStatusTable;                  // 各关节裕度详情
     QToolButton* _advancedDiagnosticsToggle;
     QWidget* _advancedDiagnosticsContent;
@@ -487,18 +562,44 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _visualSummaryLabel;
     KinematicAnalysisPlotWidget* _visualPlot;
 
+    // ---- Report tab:汇总标签、过滤下拉、阈值 SpinBox 与导出/刷新按钮 ----
+    // 过滤组合(Stage / Feasibility / Quality / Failure / Region)只影响视图与导出,
+    // 不改变底层分析结果;阈值改动通过 applyThresholds 写回 _thresholds 供后续分析使用。
+    // _reportSummaryLabel:报告汇总文本
     QLabel* _reportSummaryLabel;
+    // _reportWarningTable:告警表(Severity/Code/Source/Message)
     QTableWidget* _reportWarningTable;
+    // _reportRefreshButton:手动刷新汇总
     QPushButton* _reportRefreshButton;
+    // _reportExportJsonButton:导出 JSON 报告
     QPushButton* _reportExportJsonButton;
+    // _reportExportCsvButton:导出 CSV 报告
     QPushButton* _reportExportCsvButton;
+    // _reportStageFilterCombo:证据阶段过滤(Estimated/Quick/Verified)
+    QComboBox* _reportStageFilterCombo;
+    // _reportFeasibilityFilterCombo:可行性过滤
+    QComboBox* _reportFeasibilityFilterCombo;
+    // _reportQualityFilterCombo:质量过滤
+    QComboBox* _reportQualityFilterCombo;
+    // _reportFailureFilterCombo:失败原因过滤
+    QComboBox* _reportFailureFilterCombo;
+    // _reportRegionFilterEdit:区域 ID 文本过滤(可选)
+    QLineEdit* _reportRegionFilterEdit;
+    // _thresholdNearLimitSpin:接近关节极限比例阈值
     QDoubleSpinBox* _thresholdNearLimitSpin;
+    // _thresholdConditionWarningSpin:条件数告警阈值
     QDoubleSpinBox* _thresholdConditionWarningSpin;
+    // _thresholdConditionFailSpin:条件数失败阈值
     QDoubleSpinBox* _thresholdConditionFailSpin;
+    // _thresholdSingularValueSpin:奇异值告警阈值
     QDoubleSpinBox* _thresholdSingularValueSpin;
+    // _thresholdManipulabilitySpin:可操作度告警阈值
     QDoubleSpinBox* _thresholdManipulabilitySpin;
+    // _thresholdPositionToleranceSpin:位置容差(显示单位)
     QDoubleSpinBox* _thresholdPositionToleranceSpin;
+    // _thresholdOrientationToleranceSpin:姿态容差(显示单位)
     QDoubleSpinBox* _thresholdOrientationToleranceSpin;
+    // _thresholdApplyButton:应用阈值的按钮
     QPushButton* _thresholdApplyButton;
 
     // _thresholds:当前生效的阈值集合(可由用户改 Report tab)。
@@ -517,10 +618,21 @@ class KinematicAnalysisWidget : public QWidget
     std::vector< WorkspaceSample > _workspaceSamples;
     std::vector< PoseReachabilitySample > _poseReachabilitySamples;
 
+    // 冻结需求校验相关:执行契约(任务与区域)、最近一次校验汇总,以及两个布尔
+    // 标志分别表示"契约是否已加载"与"是否已产出结果"(后者决定 Export 按钮可用性)。
+    RequirementExecutionSet _validateExecution;
+    RequirementValidationSummary _validateSummary;
+    bool _validateExecutionSet;
+    bool _validateHasResults;
+
     // 项目路径和两个快照仅用于当前会话的脏比较，绝不序列化到 KinematicAnalysis JSON。
     QString _projectDocumentPath;
+    // _savedProjectDocumentSnapshot:保存 / 确认时的基线快照
     QByteArray _savedProjectDocumentSnapshot;
+    // _pendingProjectDocumentSnapshot:暂存到目标路径但尚未确认的快照
     QByteArray _pendingProjectDocumentSnapshot;
+    // 加载项目文档期间为 true,抑制所有控件的 projectDocumentChanged 信号,
+    // 避免"恢复配置"被误判为用户编辑而标记脏。
     bool _applyingProjectDocument = false;
 };
 

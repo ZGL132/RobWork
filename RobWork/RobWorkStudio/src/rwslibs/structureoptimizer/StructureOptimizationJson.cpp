@@ -4,6 +4,7 @@
 #include "StructureOptimizationTypes.hpp"
 
 #include <rwslibs/robotanalysiscore/RobotAnalysisJson.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelSpecJson.hpp>
 
 #include <QJsonArray>
@@ -16,6 +17,8 @@ namespace rws {
 //  内部辅助函数
 // =============================================================================
 
+// 把设计变量种类枚举映射为稳定的 JSON 字符串。以文本而非数值序列化，
+// 保证枚举值顺序调整或新增种类后仍能与旧项目文件兼容。
 static QJsonObject variableKindToJson(StructureVariableKind kind)
 {
     switch (kind) {
@@ -38,6 +41,8 @@ static QJsonObject variableKindToJson(StructureVariableKind kind)
     return {{"kind", "Unknown"}};
 }
 
+// 逆过程：按字符串恢复变量种类；ok 为可选的解析成功标志，遇到未知字符串时
+// 置 false，让上层显式报错而不是静默回退到默认种类。
 static StructureVariableKind variableKindFromJson(const QJsonObject& obj, bool* ok = nullptr)
 {
     const QString k = obj["kind"].toString();
@@ -60,6 +65,7 @@ static StructureVariableKind variableKindFromJson(const QJsonObject& obj, bool* 
     return StructureVariableKind::JointPositionX;
 }
 
+// 设计变量定义域（连续/整数/离散）到字符串，用于持久化。
 static QString variableDomainToString(DesignVariableDomain domain)
 {
     switch (domain) {
@@ -70,6 +76,7 @@ static QString variableDomainToString(DesignVariableDomain domain)
     return "Continuous";
 }
 
+// 逆映射：未知字符串按 Continuous 处理，保持对旧数据的宽容读取。
 static DesignVariableDomain variableDomainFromString(const QString& value)
 {
     if (value == "Integer") return DesignVariableDomain::Integer;
@@ -77,17 +84,20 @@ static DesignVariableDomain variableDomainFromString(const QString& value)
     return DesignVariableDomain::Continuous;
 }
 
+// 优化方向（最小化/最大化）到字符串。
 static QString directionToString(OptimizationDirection direction)
 {
     return direction == OptimizationDirection::Minimize ? "Minimize" : "Maximize";
 }
 
+// 逆映射，默认按 Maximize 处理。
 static OptimizationDirection directionFromString(const QString& value)
 {
     return value == "Minimize" ? OptimizationDirection::Minimize :
                                   OptimizationDirection::Maximize;
 }
 
+// 指标比较运算符到字符串。
 static QString comparisonToString(ComparisonOperator comparison)
 {
     switch (comparison) {
@@ -98,6 +108,7 @@ static QString comparisonToString(ComparisonOperator comparison)
     return "GreaterThanOrEqual";
 }
 
+// 逆映射，默认 GreaterThanOrEqual。
 static ComparisonOperator comparisonFromString(const QString& value)
 {
     if (value == "LessThanOrEqual") return ComparisonOperator::LessThanOrEqual;
@@ -105,6 +116,7 @@ static ComparisonOperator comparisonFromString(const QString& value)
     return ComparisonOperator::GreaterThanOrEqual;
 }
 
+// 结构约束种类到字符串。
 static QJsonObject constraintKindToJson(StructureConstraintKind kind)
 {
     switch (kind) {
@@ -121,6 +133,7 @@ static QJsonObject constraintKindToJson(StructureConstraintKind kind)
     return {{"kind", "Unknown"}};
 }
 
+// 逆映射：未知字符串返回 ModelValid 并置 ok=false，避免静默接受错误类型。
 static StructureConstraintKind constraintKindFromJson(const QJsonObject& obj, bool* ok = nullptr)
 {
     const QString k = obj["kind"].toString();
@@ -137,6 +150,7 @@ static StructureConstraintKind constraintKindFromJson(const QJsonObject& obj, bo
     return StructureConstraintKind::ModelValid;
 }
 
+// 候选解状态到字符串。
 static QJsonObject candidateStatusToJson(StructureCandidateStatus s)
 {
     switch (s) {
@@ -149,6 +163,7 @@ static QJsonObject candidateStatusToJson(StructureCandidateStatus s)
     return {{"status", "Unknown"}};
 }
 
+// 逆映射：未知状态回退 Pending，保证缺字段的旧结果文件仍可读取。
 static StructureCandidateStatus candidateStatusFromJson(const QJsonObject& obj)
 {
     const QString s = obj["status"].toString();
@@ -164,6 +179,8 @@ static StructureCandidateStatus candidateStatusFromJson(const QJsonObject& obj)
 //  TaskPoint -> QJsonObject
 // =============================================================================
 
+// 任务点序列化：位置与姿态（RPY 角度）以数值数组保存，便于与旧版 RobWork
+// 项目中的位姿语义对应，也避免浮点精度在文本往返中丢失。
 static QJsonObject taskPointToJson(const TaskPoint& pt)
 {
     QJsonObject obj;
@@ -186,6 +203,8 @@ static QJsonObject taskPointToJson(const TaskPoint& pt)
     return obj;
 }
 
+// 逆过程：数组长度不足 3 时保持默认位姿；enabled/weight 缺省取 1，
+// 保证旧文件缺少字段时也能安全加载而不会崩溃。
 static TaskPoint taskPointFromJson(const QJsonObject& obj)
 {
     TaskPoint pt;
@@ -214,6 +233,8 @@ static TaskPoint taskPointFromJson(const QJsonObject& obj)
 //  variable / constraint / weight / evalConfig / runConfig -> QJsonObject
 // =============================================================================
 
+// 设计变量序列化：除范围/步长外还保存离散选项与偏好信息，
+// 保证优化参数在项目重载后完全可恢复。
 static QJsonObject designVariableToJson(const StructureDesignVariable& var)
 {
     QJsonObject obj;
@@ -238,6 +259,7 @@ static QJsonObject designVariableToJson(const StructureDesignVariable& var)
     return obj;
 }
 
+// 逆过程：discreteOptions 缺省为空数组，不改变既有默认值。
 static StructureDesignVariable designVariableFromJson(const QJsonObject& obj)
 {
     StructureDesignVariable var;
@@ -260,6 +282,7 @@ static StructureDesignVariable designVariableFromJson(const QJsonObject& obj)
     return var;
 }
 
+// 结构约束序列化：含主/次阈值、启用状态与硬/软属性。
 static QJsonObject constraintToJson(const StructureConstraint& con)
 {
     QJsonObject obj;
@@ -274,6 +297,7 @@ static QJsonObject constraintToJson(const StructureConstraint& con)
     return obj;
 }
 
+// 逆过程：enabled/hard 缺省取 true，与历史版本默认保持一致。
 static StructureConstraint constraintFromJson(const QJsonObject& obj)
 {
     StructureConstraint con;
@@ -288,6 +312,7 @@ static StructureConstraint constraintFromJson(const QJsonObject& obj)
     return con;
 }
 
+// 多目标权重序列化。weights 仅用于旧版兼容，新版本以 objectives 为准。
 static QJsonObject weightsToJson(const StructureOptimizationWeights& w)
 {
     QJsonObject obj;
@@ -300,6 +325,7 @@ static QJsonObject weightsToJson(const StructureOptimizationWeights& w)
     return obj;
 }
 
+// 逆过程：逐项读取并给出历史默认值；缺字段时不会重置其他权重。
 static void weightsFromJson(const QJsonObject& obj, StructureOptimizationWeights& w)
 {
     w.reachability   = obj["reachability"  ].toDouble(0.35);
@@ -310,6 +336,7 @@ static void weightsFromJson(const QJsonObject& obj, StructureOptimizationWeights
     w.preference     = obj["preference"    ].toDouble(0.05);
 }
 
+// 通用指标目标序列化：方向、归一化区间与权重一并保存。
 static QJsonObject objectiveToJson(const ObjectiveTerm& objective)
 {
     QJsonObject obj;
@@ -323,6 +350,7 @@ static QJsonObject objectiveToJson(const ObjectiveTerm& objective)
     return obj;
 }
 
+// 逆过程：归一化缺省 good=1.0/bad=0.0 并启用 clamp，保证可复现评分语义。
 static ObjectiveTerm objectiveFromJson(const QJsonObject& obj)
 {
     ObjectiveTerm objective;
@@ -337,6 +365,7 @@ static ObjectiveTerm objectiveFromJson(const QJsonObject& obj)
     return objective;
 }
 
+// 通用指标硬/软约束序列化。
 static QJsonObject metricConstraintToJson(const ConstraintRule& constraint)
 {
     QJsonObject obj;
@@ -348,6 +377,7 @@ static QJsonObject metricConstraintToJson(const ConstraintRule& constraint)
     return obj;
 }
 
+// 逆过程：hard/enabled 缺省为 true。
 static ConstraintRule metricConstraintFromJson(const QJsonObject& obj)
 {
     ConstraintRule constraint;
@@ -359,6 +389,8 @@ static ConstraintRule metricConstraintFromJson(const QJsonObject& obj)
     return constraint;
 }
 
+// 评估配置序列化：粗评/精评采样参数、碰撞开关与覆盖盒集合。
+// 内部用局部 lambda 复用工作空间采样与覆盖盒的编码逻辑。
 static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
 {
     QJsonObject obj;
@@ -405,6 +437,7 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
     return obj;
 }
 
+// 逆过程：各子对象均为"缺失即保留默认"，因此旧项目文件可以直接打开。
 static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig& cfg)
 {
     cfg.checkCollision = obj["checkCollision"].toBool(true);
@@ -459,6 +492,7 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
     }
 }
 
+// 优化运行配置序列化。
 static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
 {
     QJsonObject obj;
@@ -473,6 +507,7 @@ static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
     return obj;
 }
 
+// 逆过程：默认值与历史版本一致，保证旧项目重载后搜索行为不变。
 static void runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunConfig& run)
 {
     run.strategy               = static_cast<StructureStrategyKind>(obj["strategy"].toInt(2));
@@ -489,6 +524,7 @@ static void runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunCo
 //  Sensitivity JSON
 // =============================================================================
 
+// 单变量灵敏度入口序列化。
 static QJsonObject sensitivityEntryToJson(const StructureSensitivityEntry& e)
 {
     QJsonObject obj;
@@ -504,6 +540,7 @@ static QJsonObject sensitivityEntryToJson(const StructureSensitivityEntry& e)
     return obj;
 }
 
+// 灵敏度分析整体结果序列化：条目列表、汇总得分、关键变量与鲁棒性等级。
 static QJsonObject sensitivityResultToJson(const StructureSensitivityResult& sr)
 {
     QJsonObject obj;
@@ -525,6 +562,8 @@ static QJsonObject sensitivityResultToJson(const StructureSensitivityResult& sr)
 //  公有的 problemToJson / problemFromJson
 // =============================================================================
 
+// 问题全量序列化：上下文、任务、变量、约束、目标/权重、评估与运行配置，
+// 外加冻结需求工件提供的执行契约、审计溯源与场景快照，保证优化可完整重建。
 std::string StructureOptimizationJson::problemToJson(
     const StructureOptimizationProblem& problem)
 {
@@ -547,8 +586,8 @@ std::string StructureOptimizationJson::problemToJson(
     }
     root["tasks"] = tasksArr;
 
-    // 冻结需求工件并不嵌入优化项目 JSON，以免将需求插件的编辑态模型复制到多个
-    // 下游文件；只持久化其审计身份，重新交接时仍由冻结工件负责内容真实性校验。
+    // 不复制需求插件的编辑态模型；只持久化已冻结的执行契约和审计身份，使结构优化
+    // 重载后仍能运行同一组公共 evaluator，并让完整契约参与候选缓存键计算。
     if (!problem.requirementProvenance.requirementFingerprint.empty() ||
         !problem.requirementProvenance.executionFingerprint.empty() ||
         !problem.requirementProvenance.workcellFingerprint.empty() ||
@@ -567,6 +606,12 @@ std::string StructureOptimizationJson::problemToJson(
         // 冻结时间是需求工件的一部分而非项目创建时间，因此需与三类指纹一起保存。
         provenance["frozenAt"] = QString::fromStdString(problem.requirementProvenance.frozenAt);
         root["engineeringRequirementProvenance"] = provenance;
+    }
+    if (!problem.requirementExecution.provenance.requirementFingerprint.empty() ||
+        !problem.requirementExecution.tasks.empty() ||
+        !problem.requirementExecution.workspaceRegions.empty()) {
+        root["requirementExecution"] =
+            RequirementExecutionJson::toObject(problem.requirementExecution);
     }
     if (problem.scenarioSnapshot.available()) {
         QJsonObject scenario;
@@ -596,6 +641,8 @@ std::string StructureOptimizationJson::problemToJson(
     // The legacy weights remain for compatibility, while objectives are the
     // canonical v2 representation.
     root["weights"] = weightsToJson(problem.weights);
+    // 双写兼容：weights 保留给旧版读取；若新项目没有显式 objectives，
+    // 则从 weights 推导旧式目标，使新旧格式都能被下游一致消费。
     const std::vector<ObjectiveTerm> objectives = problem.objectives.empty()
         ? StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights)
         : problem.objectives;
@@ -619,6 +666,8 @@ std::string StructureOptimizationJson::problemToJson(
     return doc.toJson(QJsonDocument::Indented).toStdString();
 }
 
+// 问题反序列化：对 schemaVersion 做兼容校验，解析失败时通过 error 输出原因并
+// 返回 false，避免上层拿着半填充的问题对象继续优化产生错误结果。
 bool StructureOptimizationJson::problemFromJson(
     const std::string& json, StructureOptimizationProblem& problem,
     std::string* error)
@@ -687,6 +736,20 @@ bool StructureOptimizationJson::problemFromJson(
         // 旧项目没有该字段时保持为空，仍可按旧格式打开；新项目则完整保留审计时间线。
         problem.requirementProvenance.frozenAt = provenance["frozenAt"].toString().toStdString();
     }
+    // 解析冻结执行契约：它是 Verified 阶段评价的直接输入。契约对象无效时视为
+    // 致命错误返回，保证优化不会在缺少已验证需求时静默运行。
+    problem.requirementExecution = RequirementExecutionSet();
+    if (root.contains("requirementExecution")) {
+        if (!root["requirementExecution"].isObject() ||
+            !RequirementExecutionJson::fromObject(
+                root["requirementExecution"].toObject(), problem.requirementExecution, error)) {
+            if (error != nullptr && error->empty())
+                *error = "Failed to parse frozen requirement execution contract.";
+            return false;
+        }
+    }
+    // 解析冻结场景快照：用于候选模型工厂重建工装与碰撞环境。
+    // 旧项目没有该字段时保持空快照，仍可按 WORLD 任务正常运行。
     problem.scenarioSnapshot = StructureOptimizationScenarioSnapshot();
     if (root.contains("frozenScenarioSnapshot")) {
         const QJsonObject scenario = root["frozenScenarioSnapshot"].toObject();
@@ -721,6 +784,7 @@ bool StructureOptimizationJson::problemFromJson(
     if (root.contains("weights"))
         weightsFromJson(root["weights"].toObject(), problem.weights);
 
+    // objectives 反序列化：优先读取新字段；缺失时回退为按旧 weights 推导的目标。
     problem.objectives.clear();
     if (root.contains("objectives")) {
         for (const QJsonValue& value : root["objectives"].toArray())
@@ -745,6 +809,8 @@ bool StructureOptimizationJson::problemFromJson(
     return true;
 }
 
+// 优化结果序列化：内嵌完整问题快照、候选摘要、诊断与灵敏度数据，
+// 使结果文件可独立用于复核与导出，无需同时持有原始项目文件。
 std::string StructureOptimizationJson::resultToJson(
     const StructureOptimizationProblem& problem,
     const StructureOptimizationResult& result)

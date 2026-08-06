@@ -4,6 +4,7 @@
 // 基础类型: TaskPoint, RobotDesignContext, AnalysisWarning, KinematicThresholds, WorkspaceSamplingConfig
 #include <rwslibs/robotanalysiscore/RobotAnalysisTypes.hpp>
 #include <rwslibs/robotanalysiscore/EngineeringOptimizationTypes.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 #include <rwslibs/kinematicanalysis/KinematicAnalysisTypes.hpp>
 
 #include <array>
@@ -122,9 +123,13 @@ struct StructureOptimizationScenarioSnapshot
     std::string environmentFingerprint;
     std::string stateFingerprint;
     RobotModelSpec sceneSpec;
+    // 场景文件的运行时根目录：用于把项目相对路径解析为磁盘绝对路径。仅存在于内存，
+    // 不属于序列化字段，旧项目缺失时按空字符串处理。
     // Runtime-only root for project-relative scenario paths; it is not serialized.
     std::string baseDirectory;
 
+    // 快照是否可用于重建场景：只有同时具备版本号与指纹才算有效，
+    // 避免"仅有版本号而无指纹"的半填充对象被误用作重建输入。
     bool available() const { return schemaVersion > 0 && !snapshotFingerprint.empty(); }
 };
 
@@ -150,6 +155,7 @@ struct StructureDesignVariable
 
     bool enabled                  = true;  //!< 是否参与优化
     bool syncAssociatedGeometry   = false; //!< 是否自动同步关联连杆几何
+    // 变量定义域（连续/整数/离散）及其离散取值列表，决定搜索空间的取值方式。
     EngineeringVariableDomainDefinition domainDefinition;
 };
 
@@ -285,6 +291,7 @@ struct StructureRawMetrics
     int optionalReachableCount = 0;  //!< 可达的可选任务点数
 
     double weightedReachability   = 0.0; //!< 加权可达性
+    bool taskEvaluationDataInsufficient = false; //!< 必需的任务验证未产生完整证据
     double manipulabilityP10      = 0.0; //!< 可操作度 10 分位数
     double jointMarginP10         = 0.0; //!< 关节裕度 10 分位数
     double minimumJointMargin     = 0.0; //!< 全局最小关节裕度
@@ -381,6 +388,15 @@ struct StructureRunDiagnostics
 // =============================================================================
 //  优化问题
 // =============================================================================
+/**
+ * @brief 结构优化问题的根对象，聚合优化所需的全部输入。
+ *
+ * 除传统设计变量/任务点外，自 P1 起携带冻结需求工件提供的三块信息：
+ *  - requirementProvenance：需求与场景的内容指纹及冻结时间，用于审计与失效检测；
+ *  - requirementExecution：冻结后的执行契约，Verified 阶段由公共 evaluator 直接消费；
+ *  - scenarioSnapshot：冻结时的工装/环境重建快照，供候选模型工厂补全场景。
+ * 三者共同保证"优化结果可追溯到一份经过验证的工程需求"。
+ */
 //! @brief 完整的结构优化问题定义。
 struct StructureOptimizationProblem
 {
@@ -395,6 +411,7 @@ struct StructureOptimizationProblem
     StructureEvaluationConfig       evaluation; //!< 评估配置
     StructureOptimizationRunConfig  run;        //!< 运行配置
     EngineeringRequirementProvenance requirementProvenance; //!< 可选的需求冻结工件审计来源
+    RequirementExecutionSet requirementExecution; //!< 冻结执行契约，供公共 evaluator 直接消费
     StructureOptimizationScenarioSnapshot scenarioSnapshot; //!< 冻结场景重建信息
 };
 

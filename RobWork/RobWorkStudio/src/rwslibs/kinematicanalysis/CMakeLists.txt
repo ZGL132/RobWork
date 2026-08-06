@@ -24,6 +24,12 @@ rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS} A
 if(build)
     # 核心分析组件 — 无 UI/Widget 依赖,可单独链接。
     set(CoreSrcFiles
+        ConfigurationEvaluator.cpp
+        TargetEvaluator.cpp
+        KinematicBatchRunner.cpp
+        RegionCoverageEvaluator.cpp
+        OrientationCoverageEvaluator.cpp
+        KinematicAnalysisReportJson.cpp
         KinematicAnalysisTypes.cpp
         KinematicMetrics.cpp
         KinematicAnalyzer.cpp
@@ -34,6 +40,13 @@ if(build)
         KinematicAnalysisEnvelope.cpp
     )
     set(CoreHeaderFiles
+        ConfigurationEvaluator.hpp
+        TargetEvaluator.hpp
+        KinematicBatchRunner.hpp
+        RegionCoverageEvaluator.hpp
+        OrientationCoverageEvaluator.hpp
+        KinematicAnalysisReportJson.hpp
+        KinematicAnalysisContext.hpp
         KinematicAnalysisTypes.hpp
         KinematicMetrics.hpp
         KinematicAnalyzer.hpp
@@ -230,5 +243,46 @@ if(build)
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>
         )
+
+        # KinematicAnalysisTest accepts a suite name as argv[1]. Register each
+        # stable suite separately so targeted ctest -R commands execute tests
+        # instead of succeeding with an empty selection.
+        function(add_kinematic_analysis_suite suite)
+            add_test(
+                NAME sdurws_kinematicanalysis_test_${suite}
+                COMMAND $<TARGET_FILE:sdurws_kinematicanalysis_test> ${suite}
+            )
+            set_tests_properties(
+                sdurws_kinematicanalysis_test_${suite}
+                PROPERTIES
+                    WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_kinematicanalysis_test>
+            )
+        endfunction()
+
+        foreach(kinematic_suite
+                types
+                context
+                configuration
+                target
+                target_sort
+                batch
+                cancellation
+                batch_forwarding
+                verified_region_grid
+                verified_region_ik
+                adapter
+                metrics
+                current_pose
+                ik
+                task_points
+                task_point_workcell
+                workspace
+                pose_reachability
+                report
+                cache
+                workflow_ui
+                aggregate)
+            add_kinematic_analysis_suite(${kinematic_suite})
+        endforeach()
     endif()
 endif()

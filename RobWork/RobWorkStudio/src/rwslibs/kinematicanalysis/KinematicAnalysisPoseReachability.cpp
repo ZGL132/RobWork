@@ -42,13 +42,29 @@ std::size_t multiplyCapped (std::size_t lhs, std::size_t rhs, std::size_t cap,
 // 实现用"if first then init else update"避免大量 if (initialized) 分支。
 void includeCoverage (PoseReachabilitySummary& summary, double coverage)
 {
-    if (summary.totalPositions == 0) {
+    if (summary.totalPositions <= 1) {
         summary.minCoverage = coverage;
         summary.maxCoverage = coverage;
     }
     else {
         summary.minCoverage = std::min (summary.minCoverage, coverage);
         summary.maxCoverage = std::max (summary.maxCoverage, coverage);
+    }
+}
+
+// 方向覆盖率版本的 min/max 累加器,与 includeCoverage 语义一致,只是更新
+// 方向覆盖率的极值;同样用"首个样本直接赋初值"避免大量初始化分支。
+void includeDirectionCoverage (PoseReachabilitySummary& summary, double coverage)
+{
+    if (summary.totalPositions <= 1) {
+        summary.minDirectionCoverage = coverage;
+        summary.maxDirectionCoverage = coverage;
+    }
+    else {
+        summary.minDirectionCoverage =
+            std::min (summary.minDirectionCoverage, coverage);
+        summary.maxDirectionCoverage =
+            std::max (summary.maxDirectionCoverage, coverage);
     }
 }
 
@@ -210,7 +226,8 @@ PoseReachabilitySummary rws::summarizePoseReachabilitySamples (
     const std::vector< PoseReachabilitySample >& samples)
 {
     PoseReachabilitySummary summary;
-    double coverageSum = 0.0;
+    double directionCoverageSum = 0.0;
+    double orientationCoverageSum = 0.0;
     for (const PoseReachabilitySample& sample : samples) {
         ++summary.totalPositions;
         // 状态分布
@@ -226,8 +243,21 @@ PoseReachabilitySummary rws::summarizePoseReachabilitySamples (
             static_cast< std::size_t > (std::max (0, sample.sampledDirections));
         summary.reachableDirections +=
             static_cast< std::size_t > (std::max (0, sample.reachableDirections));
-        coverageSum += sample.coverage;
-        includeCoverage (summary, sample.coverage);   // 用 helper 更新 min/max
+        summary.sampledOrientationSamples +=
+            static_cast< std::size_t > (
+                std::max (0, sample.sampledOrientationSamples));
+        summary.reachableOrientationSamples +=
+            static_cast< std::size_t > (
+                std::max (0, sample.reachableOrientationSamples));
+        const double directionCoverage =
+            sample.sampledDirections > 0 ? sample.directionCoverage : sample.coverage;
+        const double orientationCoverage =
+            sample.sampledOrientationSamples > 0 ?
+                sample.orientationCoverage : sample.coverage;
+        directionCoverageSum += directionCoverage;
+        orientationCoverageSum += orientationCoverage;
+        includeDirectionCoverage (summary, directionCoverage);
+        includeCoverage (summary, orientationCoverage);
         // 取消 / 部分统计
         if (sample.partial)
             ++summary.partialCount;
@@ -236,9 +266,13 @@ PoseReachabilitySummary rws::summarizePoseReachabilitySamples (
         summary.completedIkTargets += sample.completedIkTargets;
     }
     // 平均 coverage;totalPositions == 0 时避免除零
-    if (summary.totalPositions != 0)
-        summary.averageCoverage = coverageSum /
+    if (summary.totalPositions != 0) {
+        summary.averageDirectionCoverage = directionCoverageSum /
             static_cast< double > (summary.totalPositions);
+        summary.averageOrientationCoverage = orientationCoverageSum /
+            static_cast< double > (summary.totalPositions);
+        summary.averageCoverage = summary.averageOrientationCoverage;
+    }
     return summary;
 }
 

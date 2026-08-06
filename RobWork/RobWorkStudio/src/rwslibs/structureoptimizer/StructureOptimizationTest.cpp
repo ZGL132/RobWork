@@ -40,6 +40,10 @@
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 
 #include <rwslibs/kinematicanalysis/FrozenRequirementKinematicAdapter.hpp>
+#include <rwslibs/kinematicanalysis/ConfigurationEvaluator.hpp>
+#include <rwslibs/kinematicanalysis/KinematicAnalysisContext.hpp>
+#include <rwslibs/kinematicanalysis/RegionCoverageEvaluator.hpp>
+#include <rwslibs/kinematicanalysis/TargetEvaluator.hpp>
 
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderWidget.hpp>
@@ -63,6 +67,7 @@
 #include <rw/models/RevoluteJoint.hpp>
 #include <rw/models/SerialDevice.hpp>
 #include <rw/models/WorkCell.hpp>
+#include <rw/math/RPY.hpp>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -110,6 +115,9 @@ static void require(bool condition, const char* file, int line, const char* expr
 
 #define REQUIRE(cond) require((cond), __FILE__, __LINE__, #cond)
 
+// 子套件 ABI:验证结构优化域的几个历史公开入口仍按既有函数指针类型可链接——
+// resolveExternalAssetPaths / loadProject / createProblem / check。
+// 防止重构(改签名或改名)后旧插件或既有调用方二进制链接失败。
 static void testHistoricalStructureOptimizerAbiRemainsLinkable()
 {
     using ResolveExternalAssetPaths = void (*)(rws::RobotModelSpec&);
@@ -329,6 +337,9 @@ static void testScorer()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 带约束的评分:在问题里加一条硬约束 RequiredTaskReachable 后,
+// 可达数不足的候选被判 infeasible,可达数足够的候选保持 feasible,
+// 且 totalScore 保持在 [0,100] 区间;排序 sortForDecision 保证可行候选排前。
 static void testScorerWithConstraints()
 {
     std::printf("testScorerWithConstraints ... ");
@@ -421,6 +432,11 @@ static void testGenericObjectivesAndConstraints()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 硬约束:注册八类硬约束(ModelValid / RequiredTaskReachable /
+// MinimumJointMargin / MaximumTotalLength / MaximumBaseHeight /
+// MinimumWorkspaceCoverage / MaximumCrossSection / MaximumLinkSlenderness),
+// 用一个逐项违反的候选验证:被判 infeasible,且 violatedConstraints 完整记录
+// 全部八个约束 id,不吞掉任何一项(覆盖的完备性检查)。
 static void testHardConstraints()
 {
     std::printf("testHardConstraints ... ");
@@ -679,6 +695,21 @@ static void testCache()
                         rws::StructureEvaluationStage::Quick, found));
 
     cache.clear();
+    problem.scenarioSnapshot.snapshotFingerprint = "scenario-fingerprint-a";
+    rws::RequirementExecutionRegion cachedRegion;
+    cachedRegion.id = "cached-verified-region";
+    cachedRegion.refFrame = "WORLD";
+    cachedRegion.minimumVerificationStage = rws::RequirementExecutionStage::Verified;
+    problem.requirementExecution.provenance.requirementFingerprint =
+        "cache-requirement-fingerprint";
+    problem.requirementExecution.workspaceRegions.push_back(cachedRegion);
+    cache.put(problem, values, rws::StructureEvaluationStage::Verified, result);
+    REQUIRE(cache.find(problem, values, rws::StructureEvaluationStage::Verified, found));
+    problem.requirementExecution.workspaceRegions.front().directionSamples = 2;
+    REQUIRE(!cache.find(problem, values,
+                        rws::StructureEvaluationStage::Verified, found));
+
+    cache.clear();
     REQUIRE(cache.size() == 0);
     REQUIRE(cache.hitCount() == 0);
 
@@ -768,6 +799,8 @@ static void testModelFactory()
 //  Fake evaluator for optimizer testing
 // =============================================================================
 
+// 二次型假评价器:得分 = 100 - 10 * Σ(变量值-偏好值)²,全部可行。
+// 用于优化器/灵敏度测试——"越接近偏好值越好"的解析行为让断言可精确计算。
 class QuadraticFakeEvaluator : public rws::IStructureCandidateEvaluator {
   public:
     void evaluate(
@@ -806,6 +839,8 @@ class QuadraticFakeEvaluator : public rws::IStructureCandidateEvaluator {
     }
 };
 
+// 全不可行假评价器:任何候选都判 Infeasible、得分 0。
+// 专用于验证"无可行解"场景下优化器与灵敏度的兜底行为。
 class AlwaysInfeasibleEvaluator : public rws::IStructureCandidateEvaluator {
   public:
     void evaluate(
@@ -822,6 +857,8 @@ class AlwaysInfeasibleEvaluator : public rws::IStructureCandidateEvaluator {
     }
 };
 
+// 流水线工件生产者:记录执行顺序,产出 ik.solutions 工件与可达性指标。
+// 用于验证 EngineeringEvaluatorPipeline 能按工件依赖自动拓扑排序。
 class PipelineArtifactProducer : public rws::IEngineeringEvaluator {
   public:
     explicit PipelineArtifactProducer(std::vector<std::string>* executionOrder)
@@ -856,6 +893,8 @@ class PipelineArtifactProducer : public rws::IEngineeringEvaluator {
     std::vector<std::string>* _executionOrder;
 };
 
+// 流水线工件消费者:记录执行顺序,要求 ik.solutions 工件——请求中缺失该工件时
+// 返回 DataInsufficient;具备时产出轨迹可行性约束。
 class PipelineArtifactConsumer : public rws::IEngineeringEvaluator {
   public:
     explicit PipelineArtifactConsumer(std::vector<std::string>* executionOrder)
@@ -898,6 +937,10 @@ class PipelineArtifactConsumer : public rws::IEngineeringEvaluator {
     std::vector<std::string>* _executionOrder;
 };
 
+// 子套件 工程评价流水线:验证 EngineeringEvaluatorPipeline 按工件依赖自动
+// 拓扑排序——即使先 addEvaluator(consumer) 再 addEvaluator(producer),执行时
+// producer 必须先运行产出 ik.solutions,consumer 才能消费(顺序为 producer→consumer);
+// 只挂 consumer 而缺少提供者时返回 DataInsufficient 且不执行任何环节。
 static void testEngineeringEvaluatorPipeline()
 {
     std::printf("testEngineeringEvaluatorPipeline ... ");
@@ -935,6 +978,8 @@ static void testEngineeringEvaluatorPipeline()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 系统指标假评价器:完整输出运动学/碰撞/几何/偏好十二项工程指标,
+// 并记录收到的 modelHash 以便断言优化器喂入的模型快照正确。
 class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
   public:
     std::string lastModelHash;
@@ -971,6 +1016,10 @@ class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
     }
 };
 
+// 子套件 系统级优化器:用真实指标评价器(SystemMetricsEvaluator)驱动
+// SystemEngineeringOptimizer,验证候选数(基线 + 3)、未被取消、存在最佳候选,
+// 且评价器拿到的 modelHash 与 RobotModelFingerprint 计算的模型指纹一致——
+// 证明优化器把正确的模型快照喂给了工程评价环节。
 static void testSystemEngineeringOptimizer()
 {
     std::printf("testSystemEngineeringOptimizer ... ");
@@ -1132,6 +1181,10 @@ static void testOptimizer()
 // =============================================================================
 
 //! 简化的模拟评估器: 越偏离 0 则得分越低, >0.8 则不可行。
+// 子套件 混合优化工作流:驱动 HybridStructureOptimizer 完成 Quick→Local→
+// FinalVerified 的完整过程,验证进度回调的 Local/FinalVerified 计划数、诊断计数
+// (quickEvaluated=6, verifiedElite=4, finalVerified=1)以及灵敏度条目数,并保证
+// 两次相同输入的优化结果(最佳候选、灵敏度条目与降分)完全确定、可复现。
 static void testHybridVerificationAndSensitivityWorkflow()
 {
     std::printf("testHybridVerificationAndSensitivityWorkflow ... ");
@@ -1205,6 +1258,9 @@ static void testHybridVerificationAndSensitivityWorkflow()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 无可行解的灵敏度兜底:当评价器使所有候选都不可行时,优化结果不得
+// 谎报最佳候选(bestCandidateIndex == -1),灵敏度等级必须为 Unknown,
+// 并给出 StructureOptimization.NoFeasibleCandidate 告警,供 UI 展示原因。
 static void testNoFeasibleCandidateLeavesSensitivityUnknown()
 {
     std::printf("testNoFeasibleCandidateLeavesSensitivityUnknown ... ");
@@ -1242,6 +1298,8 @@ static void testNoFeasibleCandidateLeavesSensitivityUnknown()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 灵敏度假评价器:值越偏离 0 得分越低,任一变量 |v|>0.8 即不可行。
+// 与 QuadraticFakeEvaluator 类似但解析更简单,便于手工推算扰动后的降分。
 struct SensitivityMockEvaluator : public rws::IStructureCandidateEvaluator {
     void evaluate(
         const rws::StructureOptimizationProblem& problem,
@@ -1268,6 +1326,9 @@ struct SensitivityMockEvaluator : public rws::IStructureCandidateEvaluator {
     }
 };
 
+// 子套件 灵敏度分析:用 SensitivityMockEvaluator 在最佳候选 x=0,y=0 上做扰动,
+// 验证每个变量生成 +step/-step 两个扰动条目(共 4 个),最大降分 = 2 → 等级 "A",
+// 且没有关键变量——关键变量列表只在降分超过阈值时才填充。
 static void testSensitivity()
 {
     std::printf("testSensitivity ... ");
@@ -1323,6 +1384,9 @@ static void testSensitivity()
 //  测试用例: JSON 序列化往返
 // =============================================================================
 
+// 子套件 灵敏度取消:验证取消回调在第三次检查时触发后,灵敏度分析立即停止
+// (只剩 1 个扰动条目),整体等级保持 "Unknown"——取消必须贯穿扰动循环,
+// 而不是等到分析完成后再检查一次。
 static void testSensitivityStopsAfterCancellation()
 {
     std::printf("testSensitivityStopsAfterCancellation ... ");
@@ -1361,6 +1425,11 @@ static void testSensitivityStopsAfterCancellation()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 问题 JSON 往返:构造带变量(离散域)、约束、运行参数、快速/验证工作区
+// 采样、覆盖盒、目标、指标约束与需求溯源(requirementProvenance)的完整问题,
+// 序列化后反序列化并逐字段比对,保证 v2 schema 不丢字段;报告保留冻结姿态的
+// 解析来源;旧 v1 权重 JSON 能迁移到 v2 objectives 且不启用覆盖盒、快速采样回退
+// 默认 1000。
 static void testJsonRoundTrip()
 {
     std::printf("testJsonRoundTrip ... ");
@@ -1510,6 +1579,10 @@ static void testJsonRoundTrip()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 审计证据输出:构造带模型溯源(源路径/源指纹/快照指纹)与区域级覆盖率
+// 指标的候选结果,验证报告、结果 JSON、审计 CSV 三种导出形式都保留证据阶段统计、
+// 灵敏度来源与关键变量、各区域覆盖率及本地参考系,供工程师复核是哪个工装区域
+// 限制了候选结构。
 static void testAuditableEvidenceOutput()
 {
     std::printf("testAuditableEvidenceOutput ... ");
@@ -1677,6 +1750,9 @@ static void testCsvExport()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 工作区覆盖率统计:2x2x2 覆盖盒内放入 Pass/Warning/碰撞三个样本与一个
+// 盒外样本,验证只有"落在盒内且未碰撞"的样本才占据单元(2/8=0.25)——
+// 碰撞样本与盒外样本都不计入,Warning 仍算可达,覆盖率不可超过 1。
 static void testWorkspaceCoverage()
 {
     std::printf("testWorkspaceCoverage ... ");
@@ -1724,6 +1800,8 @@ static void testWorkspaceCoverage()
 //  测试用例: 结构优化器接入真实工作空间覆盖率
 // =============================================================================
 
+// 构造一个专用于工作区覆盖率测试的问题:关闭碰撞、启用 1x1x1 大覆盖盒、
+// 快速采样 16 个点固定种子。供多个覆盖率用例复用,保证求值环境一致。
 static rws::StructureOptimizationProblem makeWorkspaceCoverageProblem()
 {
     rws::StructureOptimizationProblem problem;
@@ -1744,6 +1822,7 @@ static rws::StructureOptimizationProblem makeWorkspaceCoverageProblem()
     return problem;
 }
 
+// 在工程评价结果里按 metricId 查找指标,找不到返回 nullptr。测试辅助函数。
 static const rws::EngineeringMetric* findMetric(
     const rws::EngineeringEvaluationResult& result, const std::string& metricId)
 {
@@ -1754,6 +1833,7 @@ static const rws::EngineeringMetric* findMetric(
     return nullptr;
 }
 
+// 判断工程评价结果是否产出了指定工件。测试辅助函数。
 static bool hasArtifact(const rws::EngineeringEvaluationResult& result,
                         const std::string& artifactId)
 {
@@ -1764,6 +1844,9 @@ static bool hasArtifact(const rws::EngineeringEvaluationResult& result,
     return false;
 }
 
+// 子套件 工作区覆盖率评价器:验证 KinematicEngineeringEvaluator 在真实六轴模型上
+// 产出正值 coverage 指标与 coverage-summary 工件;再挂一条超过可达上限的
+// MinimumWorkspaceCoverage 硬约束(阈值 1.1),评价结果必须为 Infeasible。
 static void testWorkspaceCoverageEvaluator()
 {
     std::printf("testWorkspaceCoverageEvaluator ... ");
@@ -1800,6 +1883,319 @@ static void testWorkspaceCoverageEvaluator()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 评价器一致性:在候选场景里放置一个覆盖整个可达空间的大碰撞盒子,验证
+// KinematicEngineeringEvaluator 对"当前位姿"任务(Must 碰撞必需 / Should 无碰撞)
+// 的结果与直接调用 TargetEvaluator + ConfigurationEvaluator 完全一致——Must 任务
+// 因碰撞不可达、Should 任务可达;任务指标的 jointMargin/manipulability 与配置
+// 求值逐位吻合,防止两条评价路径漂移。
+static void testSharedTargetEvaluatorConsistency()
+{
+    std::printf("testSharedTargetEvaluatorConsistency ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    problem.evaluation.checkCollision = true;
+    problem.evaluation.coverageBox.enabled = false;
+    problem.evaluation.coverageBoxes.clear();
+
+    rws::SceneGeometrySpec collisionFixture;
+    collisionFixture.name = "EvaluatorConsistencyCollisionFixture";
+    collisionFixture.refFrame = "WORLD";
+    collisionFixture.kind = rws::GeometryKind::Box;
+    collisionFixture.size = {{10.0, 10.0, 10.0}};
+    collisionFixture.collisionModel = true;
+    problem.context.modelSpec.sceneGeometries.push_back(collisionFixture);
+
+    rws::CandidateModelBuildRequest request;
+    request.spec = problem.context.modelSpec;
+    request.deviceName = problem.context.deviceName;
+    request.tcpFrame = problem.context.tcpFrame;
+    request.checkCollision = true;
+    const rws::CandidateModelBuildResult built = rws::CandidateModelFactory().build(request);
+    REQUIRE(built.ok);
+    REQUIRE(!built.artifact.collisionDetector.isNull());
+    if (!built.ok) return;
+
+    const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
+        built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
+        built.artifact.state);
+    const rw::math::RPY<> targetRpy(worldTtcp.R());
+
+    rws::RequirementExecutionTask requirementTask;
+    requirementTask.id = "shared-evaluator-current-pose";
+    requirementTask.name = "Shared evaluator current pose";
+    requirementTask.level = rws::RequirementExecutionLevel::Must;
+    requirementTask.compileState = rws::RequirementExecutionCompileState::Included;
+    requirementTask.refFrame = "WORLD";
+    requirementTask.tcpFrame = built.artifact.tcpFrame->getName();
+    requirementTask.collisionFreeRequired = true;
+    for (std::size_t axis = 0; axis < 3; ++axis) {
+        requirementTask.position[axis] = worldTtcp.P()[axis];
+        requirementTask.rpyDeg[axis] = targetRpy(axis) * rw::math::Rad2Deg;
+    }
+    requirementTask.positionToleranceMeters = 1e-6;
+    requirementTask.orientationToleranceDeg = 1e-4;
+    problem.requirementExecution.tasks.push_back(requirementTask);
+
+    rws::RequirementExecutionTask shouldTask = requirementTask;
+    shouldTask.id = "shared-evaluator-should-task";
+    shouldTask.name = "Shared evaluator Should task";
+    shouldTask.level = rws::RequirementExecutionLevel::Should;
+    shouldTask.collisionFreeRequired = false;
+    problem.requirementExecution.tasks.push_back(shouldTask);
+
+    rws::StructureCandidateResult structureResult;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [] () { return false; };
+    rws::KinematicEngineeringEvaluator(problem).evaluateLegacy(
+        structureResult, rws::StructureEvaluationStage::Verified, callbacks, nullptr);
+    REQUIRE(structureResult.raw.taskMetrics.size() == 2);
+    if (structureResult.raw.taskMetrics.size() != 2) return;
+    REQUIRE(structureResult.raw.taskMetrics[0].required);
+    REQUIRE(!structureResult.raw.taskMetrics[1].required);
+    REQUIRE(!structureResult.raw.taskMetrics[0].reachable);
+    REQUIRE(structureResult.raw.taskMetrics[0].inCollision);
+    REQUIRE(structureResult.raw.taskMetrics[1].reachable);
+    REQUIRE(!structureResult.raw.taskMetrics[1].inCollision);
+
+    rws::AnalysisContextInput contextInput;
+    contextInput.workcell = built.artifact.workcell;
+    contextInput.device = built.artifact.device;
+    contextInput.tcpFrame = built.artifact.tcpFrame;
+    contextInput.baseState = built.artifact.state;
+    contextInput.modelFingerprint = "structure-evaluator-consistency-model";
+    contextInput.environmentFingerprint = "structure-evaluator-consistency-environment";
+    contextInput.thresholds = problem.evaluation.thresholds;
+    contextInput.collisionDetector = built.artifact.collisionDetector;
+    contextInput.collisionRequired = true;
+    rws::AnalysisContext context;
+    std::string contextError;
+    REQUIRE(rws::makeAnalysisContext(contextInput, context, &contextError));
+
+    rws::TargetEvaluationOptions options;
+    rws::TaskPoint target;
+    target.id = requirementTask.id;
+    target.name = requirementTask.name;
+    target.refFrame = requirementTask.refFrame;
+    target.tcpFrame = requirementTask.tcpFrame;
+    target.position = requirementTask.position;
+    target.rpyDeg = requirementTask.rpyDeg;
+    target.tolerance.positionMeters = requirementTask.positionToleranceMeters;
+    target.tolerance.orientationDeg = requirementTask.orientationToleranceDeg;
+
+    options.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    options.checkCollision = true;
+    options.requireCollisionFree = true;
+    options.positionToleranceMeters = target.tolerance.positionMeters;
+    options.orientationToleranceDeg = target.tolerance.orientationDeg;
+    const rws::TargetEvaluation direct =
+        rws::TargetEvaluator().evaluate(context, target, options);
+    REQUIRE(!direct.candidates.empty());
+    if (direct.candidates.empty()) return;
+
+    const rws::TargetCandidate& selected = direct.candidates.front();
+    rws::ConfigurationEvaluationOptions configurationOptions;
+    configurationOptions.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    configurationOptions.checkCollision = true;
+    configurationOptions.requireCollisionFree = true;
+    const rws::ConfigurationEvaluation sameQ =
+        rws::ConfigurationEvaluator().evaluate(
+            context, selected.configuration.q, configurationOptions);
+    REQUIRE(sameQ.collisionChecked);
+    REQUIRE(sameQ.inCollision);
+    REQUIRE(selected.configuration.feasibility == sameQ.feasibility);
+    REQUIRE(selected.configuration.inCollision == sameQ.inCollision);
+    REQUIRE(std::abs(selected.configuration.minimumJointMargin -
+                     sameQ.minimumJointMargin) < 1e-12);
+    REQUIRE(std::abs(selected.configuration.manipulability -
+                     sameQ.manipulability) < 1e-12);
+
+    const rws::StructureTaskMetric& metric = structureResult.raw.taskMetrics.front();
+    REQUIRE(metric.reachable == (direct.feasibility == rws::Feasibility::Feasible));
+    REQUIRE(metric.inCollision == sameQ.inCollision);
+    REQUIRE(std::abs(metric.jointMargin - sameQ.minimumJointMargin) < 1e-12);
+    REQUIRE(std::abs(metric.manipulability - sameQ.manipulability) < 1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 Verified 区域走共享评价器:在当前位姿处放置一个极小(1e-6)的 Verified
+// 区域,验证 kinematic 求值器在 Quick 与 Verified 两个阶段都成功,且 Verified 阶段
+// 产出 coverage == 1.0 的指标——证明区域覆盖率确实经由同一套 RegionCoverage
+// 机制计算,而非只对任务点生效。
+static void testVerifiedRegionUsesSharedEvaluator()
+{
+    std::printf("testVerifiedRegionUsesSharedEvaluator ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    problem.evaluation.checkCollision = true;
+    problem.evaluation.verifiedWorkspace.sampleCount = 8;
+    problem.evaluation.verifiedWorkspace.checkCollision = false;
+
+    rws::CandidateModelBuildRequest buildRequest;
+    buildRequest.spec = problem.context.modelSpec;
+    buildRequest.deviceName = problem.context.deviceName;
+    buildRequest.tcpFrame = problem.context.tcpFrame;
+    buildRequest.checkCollision = true;
+    const rws::CandidateModelBuildResult built =
+        rws::CandidateModelFactory().build(buildRequest);
+    REQUIRE(built.ok);
+    if (!built.ok) return;
+    const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
+        built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
+        built.artifact.state);
+    const rw::math::RPY<> currentRpy(worldTtcp.R());
+
+    rws::RequirementExecutionRegion region;
+    region.id = "verified-far-region";
+    region.name = "Verified far region";
+    region.level = rws::RequirementExecutionLevel::Must;
+    region.compileState = rws::RequirementExecutionCompileState::Included;
+    region.refFrame = "WORLD";
+    region.center = {{worldTtcp.P()[0], worldTtcp.P()[1], worldTtcp.P()[2]}};
+    region.size = {{1e-6, 1e-6, 1e-6}};
+    region.fixedRpyDeg = {{currentRpy(0) * rw::math::Rad2Deg,
+                           currentRpy(1) * rw::math::Rad2Deg,
+                           currentRpy(2) * rw::math::Rad2Deg}};
+    region.minimumCoverage = 1.0;
+    region.samplesPerAxis = 2;
+    region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
+    region.directionSamples = 1;
+    region.rollSamples = 1;
+    region.minimumOrientationCoverage = 0.5;
+    region.minimumVerificationStage = rws::RequirementExecutionStage::Quick;
+    region.collisionFreeRequired = false;
+    problem.requirementExecution.provenance.requirementFingerprint =
+        "verified-region-requirements";
+    problem.requirementExecution.workspaceRegions.push_back(region);
+
+    rws::CandidateEvaluationContext context;
+    rws::EvaluationRequest quickRequest;
+    quickRequest.stage = rws::EngineeringEvaluationStage::Quick;
+    const rws::EngineeringEvaluationResult quick =
+        rws::KinematicEngineeringEvaluator(problem).evaluate(
+            context, quickRequest, rws::EvaluationCallbacks());
+    REQUIRE(quick.status == rws::EngineeringEvaluationStatus::Success);
+
+    rws::EvaluationRequest verifiedRequest;
+    verifiedRequest.stage = rws::EngineeringEvaluationStage::Verified;
+    const rws::EngineeringEvaluationResult verified =
+        rws::KinematicEngineeringEvaluator(problem).evaluate(
+            context, verifiedRequest, rws::EvaluationCallbacks());
+    REQUIRE(verified.status == rws::EngineeringEvaluationStatus::Success);
+    const rws::EngineeringMetric* coverage =
+        findMetric(verified, "kinematics.workspace.coverage");
+    REQUIRE(coverage != nullptr);
+    REQUIRE(coverage != nullptr && coverage->value == 1.0);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 区域位置覆盖率保真:验证 PointAtTarget 区域下 orientationCoverage 小于
+// positionCoverage(位置可达但方向受限),并把最小方向覆盖率收紧到恰好通过;
+// 结构评价器中的区域指标取的是 positionCoverage 并与直接求值一致——防止方向
+// 覆盖率把位置可达的区域误判为不可达(只把位置覆盖作为硬约束)。
+static void testVerifiedRegionPreservesPositionCoverage()
+{
+    std::printf("testVerifiedRegionPreservesPositionCoverage ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    problem.evaluation.coverageBox.enabled = false;
+    problem.evaluation.coverageBoxes.clear();
+    REQUIRE(!problem.context.modelSpec.limits.empty());
+    if (problem.context.modelSpec.limits.empty()) return;
+    problem.context.modelSpec.limits.back().posMin = -20.0;
+    problem.context.modelSpec.limits.back().posMax = 20.0;
+
+    rws::CandidateModelBuildRequest buildRequest;
+    buildRequest.spec = problem.context.modelSpec;
+    buildRequest.deviceName = problem.context.deviceName;
+    buildRequest.tcpFrame = problem.context.tcpFrame;
+    buildRequest.checkCollision = false;
+    const rws::CandidateModelBuildResult built =
+        rws::CandidateModelFactory().build(buildRequest);
+    REQUIRE(built.ok);
+    if (!built.ok) return;
+
+    const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
+        built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
+        built.artifact.state);
+    const rw::math::Vector3D<> orientationTarget =
+        worldTtcp.P() + worldTtcp.R().getCol(2);
+
+    rws::RequirementExecutionRegion region;
+    region.id = "position-versus-orientation-region";
+    region.name = "Position versus orientation region";
+    region.level = rws::RequirementExecutionLevel::Must;
+    region.compileState = rws::RequirementExecutionCompileState::Included;
+    region.refFrame = "WORLD";
+    region.tcpFrame = built.artifact.tcpFrame->getName();
+    region.center = {{worldTtcp.P()[0], worldTtcp.P()[1], worldTtcp.P()[2]}};
+    region.size = {{1e-6, 1e-6, 1e-6}};
+    region.samplesPerAxis = 2;
+    region.orientationMode = rws::RequirementExecutionOrientationMode::PointAtTarget;
+    region.orientationTargetPoint = QString("%1,%2,%3")
+        .arg(orientationTarget[0], 0, 'g', 17)
+        .arg(orientationTarget[1], 0, 'g', 17)
+        .arg(orientationTarget[2], 0, 'g', 17).toStdString();
+    region.rollSamples = 24;
+    region.minimumCoverage = 1.0;
+    region.minimumOrientationCoverage = 0.0;
+    region.collisionFreeRequired = false;
+
+    rws::AnalysisContextInput contextInput;
+    contextInput.workcell = built.artifact.workcell;
+    contextInput.device = built.artifact.device;
+    contextInput.tcpFrame = built.artifact.tcpFrame;
+    contextInput.baseState = built.artifact.state;
+    contextInput.modelFingerprint = "position-versus-orientation-model";
+    contextInput.environmentFingerprint = "position-versus-orientation-environment";
+    contextInput.thresholds = problem.evaluation.thresholds;
+    rws::AnalysisContext analysisContext;
+    std::string contextError;
+    REQUIRE(rws::makeAnalysisContext(contextInput, analysisContext, &contextError));
+    const rws::RegionCoverageResult direct =
+        rws::RegionCoverageEvaluator().evaluate(analysisContext, region);
+    REQUIRE(direct.feasibility == rws::Feasibility::Feasible);
+    REQUIRE(direct.positionCoverage == 1.0);
+    REQUIRE(direct.orientationCoverage > 0.0);
+    REQUIRE(direct.orientationCoverage < direct.positionCoverage);
+
+    region.minimumOrientationCoverage = direct.orientationCoverage;
+    problem.requirementExecution.workspaceRegions.push_back(region);
+    rws::StructureConstraint positionConstraint;
+    positionConstraint.id = "position-coverage-only";
+    positionConstraint.targetName = region.id;
+    positionConstraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    positionConstraint.threshold = region.minimumCoverage;
+    positionConstraint.enabled = true;
+    positionConstraint.hard = true;
+    problem.constraints.push_back(positionConstraint);
+
+    rws::StructureCandidateResult structureResult;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [] () { return false; };
+    rws::KinematicEngineeringEvaluator(problem).evaluateLegacy(
+        structureResult, rws::StructureEvaluationStage::Verified, callbacks, nullptr);
+    REQUIRE(structureResult.status == rws::StructureCandidateStatus::Feasible);
+    REQUIRE(structureResult.raw.workspaceRegionMetrics.size() == 1);
+    REQUIRE(structureResult.raw.workspaceRegionMetrics.size() == 1 &&
+            std::abs(structureResult.raw.workspaceRegionMetrics.front().coverage -
+                     direct.positionCoverage) < 1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 覆盖率数据不足:当快速工作区采样数被设为 0 时,工程评价结果必须是
+// DataInsufficient 且不产出 coverage 指标——采样缺失不能被伪装成低覆盖率。
 static void testWorkspaceCoverageDataInsufficient()
 {
     std::printf("testWorkspaceCoverageDataInsufficient ... ");
@@ -1820,6 +2216,8 @@ static void testWorkspaceCoverageDataInsufficient()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 覆盖率取消:取消回调在第二次检查时触发后,评价结果必须是 Cancelled,
+// 而不是被误判为 Success 或 Infeasible。
 static void testWorkspaceCoverageCancellation()
 {
     std::printf("testWorkspaceCoverageCancellation ... ");
@@ -1963,6 +2361,9 @@ static void testUiTableModelsAndSuggestions()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 约束表模型 + 项目适配器:验证约束表模型能编辑阈值;项目 saveProject/
+// loadProject 往返保留约束、策略、局部精英数、权重等设置,且保存的模型输出目录是
+// 相对路径(项目可整体搬迁),加载后仍被解析回可直接使用的绝对目录。
 static void testConstraintModelAndProjectAdapter()
 {
     std::printf("testConstraintModelAndProjectAdapter ... ");
@@ -2040,6 +2441,10 @@ static void testConstraintModelAndProjectAdapter()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 冻结工程需求工件适配器:手工构造与 compiled 快照一致的 v4 工件
+// (含执行契约与执行指纹),验证适配层只接受已冻结且模型指纹一致的需求——
+// Must 工位/覆盖盒转为硬约束与独立评价区域,Should 区域不阻断;v3 工件被拒绝
+// 并要求重冻结;多个 Must 区域各自成为独立覆盖盒,不能合并成单个 WORLD 盒。
 static void testFrozenEngineeringRequirementArtifactAdapter()
 {
     std::printf("testFrozenEngineeringRequirementArtifactAdapter ... ");
@@ -2077,12 +2482,14 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     mustStation.tcpFrame = "TCP";
     mustStation.position = {{0.4, 0.1, 0.3}};
     mustStation.tolerance.positionMeters = 0.002;
+    mustStation.validation.collisionFreeRequired = true;
     artifact.compiled.poseTasks.push_back(mustStation);
 
     rws::CompiledPoseTask shouldStation = mustStation;
     shouldStation.id = "inspect";
     shouldStation.name = "Inspection station";
     shouldStation.level = rws::RequirementLevel::Should;
+    shouldStation.validation.collisionFreeRequired = false;
     artifact.compiled.poseTasks.push_back(shouldStation);
 
     rws::WorkspaceDemandRegion region;
@@ -2095,6 +2502,13 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     region.size = {{0.4, 0.2, 0.3}};
     region.minimumCoverage = 0.85;
     region.samplesPerAxis = 6;
+    region.orientationMode = rws::OrientationMode::PointAtTarget;
+    region.orientationTargetPoint = "0.8,0.0,0.4";
+    region.directionSamples = 2;
+    region.rollSamples = 3;
+    region.minimumOrientationCoverage = 0.5;
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Quick;
+    region.collisionFreeRequired = false;
     artifact.compiled.workspaceRegions.push_back(region);
 
     // 结构优化适配器只接受 v4 工件，因此测试须手工构造与 compiled 快照一致的执行契约
@@ -2124,6 +2538,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         task.positionToleranceMeters = source.tolerance.positionMeters;
         task.orientationToleranceDeg = source.tolerance.orientationDeg;
         task.allowToolRollFree = source.tolerance.allowToolRollFree;
+        task.collisionFreeRequired = source.validation.collisionFreeRequired;
         artifact.execution.tasks.push_back(task);
     }
     // 覆盖盒同样投影到执行契约类型。
@@ -2142,6 +2557,13 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         executionRegion.samplesPerAxis = source.samplesPerAxis;
         executionRegion.minimumVerificationStage =
             static_cast<rws::RequirementExecutionStage>(source.minimumVerificationStage);
+        executionRegion.orientationMode =
+            static_cast<rws::RequirementExecutionOrientationMode>(source.orientationMode);
+        executionRegion.orientationTargetPoint = source.orientationTargetPoint;
+        executionRegion.directionSamples = source.directionSamples;
+        executionRegion.rollSamples = source.rollSamples;
+        executionRegion.minimumOrientationCoverage = source.minimumOrientationCoverage;
+        executionRegion.collisionFreeRequired = source.collisionFreeRequired;
         artifact.execution.workspaceRegions.push_back(executionRegion);
     }
     // 依据执行契约计算执行指纹，供适配器的执行契约一致性校验使用。
@@ -2159,6 +2581,41 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.requirementProvenance.workcellFingerprint == "workcell-fingerprint");
     REQUIRE(problem.requirementProvenance.environmentFingerprint == "environment-fingerprint");
     REQUIRE(problem.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
+    REQUIRE(problem.requirementExecution.provenance.requirementFingerprint ==
+            artifact.execution.provenance.requirementFingerprint);
+    REQUIRE(problem.requirementExecution.tasks.size() == artifact.execution.tasks.size());
+    REQUIRE(problem.requirementExecution.tasks[0].collisionFreeRequired);
+    REQUIRE(!problem.requirementExecution.tasks[1].collisionFreeRequired);
+    REQUIRE(problem.requirementExecution.workspaceRegions.size() ==
+            artifact.execution.workspaceRegions.size());
+    REQUIRE(problem.requirementExecution.workspaceRegions.front().minimumVerificationStage ==
+            rws::RequirementExecutionStage::Quick);
+    REQUIRE(problem.requirementExecution.workspaceRegions.front().orientationMode ==
+            artifact.execution.workspaceRegions.front().orientationMode);
+    REQUIRE(problem.requirementExecution.workspaceRegions.front().orientationTargetPoint ==
+            artifact.execution.workspaceRegions.front().orientationTargetPoint);
+    REQUIRE(problem.requirementExecution.workspaceRegions.front().directionSamples == 2);
+    REQUIRE(problem.requirementExecution.workspaceRegions.front().rollSamples == 3);
+    REQUIRE(std::abs(problem.requirementExecution.workspaceRegions.front().minimumOrientationCoverage - 0.5) < 1e-12);
+    REQUIRE(!problem.requirementExecution.workspaceRegions.front().collisionFreeRequired);
+    rws::StructureOptimizationProblem restoredProblem;
+    const std::string problemJson = rws::StructureOptimizationJson::problemToJson(problem);
+    REQUIRE(rws::StructureOptimizationJson::problemFromJson(
+        problemJson, restoredProblem, &error));
+    REQUIRE(restoredProblem.requirementExecution.provenance.requirementFingerprint ==
+            artifact.execution.provenance.requirementFingerprint);
+    REQUIRE(restoredProblem.requirementExecution.tasks[0].collisionFreeRequired);
+    REQUIRE(!restoredProblem.requirementExecution.tasks[1].collisionFreeRequired);
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.size() == 1);
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.front().id == "work_area");
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.front().orientationMode ==
+            rws::RequirementExecutionOrientationMode::PointAtTarget);
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.front().orientationTargetPoint ==
+            "0.8,0.0,0.4");
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.front().directionSamples == 2);
+    REQUIRE(restoredProblem.requirementExecution.workspaceRegions.front().rollSamples == 3);
+    REQUIRE(std::abs(restoredProblem.requirementExecution.workspaceRegions.front().minimumOrientationCoverage - 0.5) < 1e-12);
+    REQUIRE(!restoredProblem.requirementExecution.workspaceRegions.front().collisionFreeRequired);
 
     // 旧版 v3 工件必须被结构优化适配器拒绝，错误信息应明确要求 v4(带 Verified 证据)。
     rws::FrozenRequirementArtifact legacyArtifact = artifact;
@@ -2206,6 +2663,9 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 项目适配器恢复托管场景根:把含托管冻结场景(带 Fixture 与几何)的项目
+// 整体复制到新目录、删除原资产后,loadProject 必须解析出显式传入的 cloneRoot
+// 作为场景根,使 CandidateModelFactory 仍能构建出带 ManagedFixture 的 WorkCell。
 static void testProjectAdapterRestoresManagedScenarioRoot()
 {
     std::printf("testProjectAdapterRestoresManagedScenarioRoot ... ");
@@ -2282,6 +2742,10 @@ static void testProjectAdapterRestoresManagedScenarioRoot()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 冻结需求项目导入:验证导入服务从真实文件边界读取冻结工件——需求文件中
+// 必须有 frozenArtifact;模型用相对路径(随目录搬迁);机器人 jog 只报告
+// robotStateChanged 而不拒绝,工装移动则明确拒绝(场景指纹变化);缺少
+// frozenArtifact 的文件绝不能成为优化输入。
 static void testFrozenRequirementProjectImportCreatesAuditableProblem()
 {
     std::printf("testFrozenRequirementProjectImportCreatesAuditableProblem ... ");
@@ -2398,6 +2862,10 @@ static void testFrozenRequirementProjectImportCreatesAuditableProblem()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 托管冻结需求导入使用显式项目根:构造嵌套目录(项目根/data/frozen)下的
+// 冻结需求与从 UR 设备转换的托管模型,验证不传 projectRoot 的启发式导入构造出的
+// 场景无法构建候选;传入显式 projectRoot 后场景根正确、模型可移植,项目整体移动
+// 后模型溯源仍为 Current。
 static void testManagedFrozenRequirementImportUsesExplicitProjectRoot()
 {
     std::printf("testManagedFrozenRequirementImportUsesExplicitProjectRoot ... ");
@@ -2621,6 +3089,9 @@ static void testManagedFrozenRequirementImportUsesExplicitProjectRoot()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 项目工厂:验证从 RobotModelSpec 创建结构优化问题(设备名/变量/空任务),
+// 保存/加载往返后 JSON 完全一致;空模型规格必须被拒绝并给出稳定的
+// StructureOptimization.Context.Invalid 错误。
 static void testProjectFactory()
 {
     std::printf("testProjectFactory ... ");
@@ -2667,6 +3138,9 @@ static void testProjectFactory()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 项目工厂溯源:验证 factory 记录的模型溯源与 RobotModelStalenessChecker
+// 状态机联动——源文件未变→Current,修改→Stale,删除→SourceMissing,写坏→
+// SourceInvalid;并覆盖相对几何后缀碰撞与平台根目录边界下的托管解析。
 static void testProjectFactoryProvenance()
 {
     std::printf("testProjectFactoryProvenance ... ");
@@ -2809,6 +3283,9 @@ static void testProjectFactoryProvenance()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 导出服务:验证 exportAll 一次写出报告/审计 CSV/项目 JSON 等 6 个文件,
+// 目标已存在时重复导出失败;候选模型导出必须把冻结工装 Fixture_A 写入同一份场景
+// XML,保证预览/评价与交付给工程师的模型对工装 Frame 的解释一致。
 static void testExportService()
 {
     std::printf("testExportService ... ");
@@ -2886,6 +3363,9 @@ static void testExportService()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 端到端验收(UR 六轴):从 UR.wc.xml 创建托管项目、转换模型、构造含 3 个
+// 任务与 3 个设计变量的问题并保存;重新加载后校验模型溯源为 Current,并实际跑
+// 两次系统级优化(验证确定性)与最佳候选模型导出,检查候选 WC 落盘。
 static void testAcceptedUr6585AProject()
 {
     std::printf("testAcceptedUr6585AProject ... ");
@@ -3104,6 +3584,9 @@ static void testAcceptedUr6585AProject()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 端到端验收(300kg 机器人文件):用 RobotModelBuilderPlugin 从 URDF 创建
+// 项目、发布托管 WorkCell、冻结需求,验证项目整体移动后资源仍可解析、冻结工件
+// 可重新导入为运动学任务与优化问题;全程校验源目录未被写回(只读源)。
 static void testPortable300kgRobotFileProjectAcceptance()
 {
     std::printf("testPortable300kgRobotFileProjectAcceptance ... ");
@@ -3402,6 +3885,9 @@ static void testPortable300kgRobotFileProjectAcceptance()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 优化器项目资源依赖:首次创建时插件生成 structure-optimization.main 资源
+// 并挂接当前可解析的上游(scene.main/robot-model.main/engineering-requirements.main);
+// 对已存在的旧资源,保存时去重并保留非空依赖,不能重复添加自身或残留脏依赖。
 static void testStructureOptimizerResourceDependencies()
 {
     std::printf("testStructureOptimizerResourceDependencies ... ");
@@ -3620,6 +4106,8 @@ static void testStructureOptimizerResourceDependencies()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 候选预览控制器:验证 preview 把候选模型导出并交给宿主打开
+// (host.current 变为新 WC),clearPreview 恢复原 WC,且记录被预览的候选索引。
 static void testCandidatePreviewController()
 {
     std::printf("testCandidatePreviewController ... ");
@@ -3662,6 +4150,9 @@ static void testCandidatePreviewController()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 优化器 Widget 状态:验证五个页签与关键按钮存在、任务/约束表的增删复制、
+// collectProblem 的字段保真;项目文档脏状态与 markClean 事务;模型快照过期/托管
+// 场景的状态文案;非法模型规格禁用启动按钮。
 static void testStructureOptimizerWidgetState()
 {
     std::printf("testStructureOptimizerWidgetState ... ");
@@ -3990,6 +4481,9 @@ static void testStructureOptimizerWidgetState()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 托管项目门禁:构造只有源文件与模型文件、尚未发布托管 WorkCell 的机器人
+// 项目,点击"从冻结需求新建"时必须显示明确的 WorkCell 就绪门禁文案,禁止在模型
+// 发布前创建优化项目。需独立运行(依赖完整 RobWorkStudio 栈)。
 static void testManagedRobotProjectRequiresPublishedWorkCell()
 {
     QTemporaryDir directory;
@@ -4056,6 +4550,9 @@ static void testManagedRobotProjectRequiresPublishedWorkCell()
     studio.close();
 }
 
+// 子套件 异步控制器状态:用假任务循环驱动 StructureOptimizationController,验证
+// running/paused/completed 信号时序、暂停期间进度不再推进、恢复后继续推进、
+// 取消后 completed 携带 canceled 且控制器退出运行态。
 static void testStructureOptimizationControllerAsyncState()
 {
     std::printf("testStructureOptimizationControllerAsyncState ... ");
@@ -4276,6 +4773,28 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if (suite == "evaluator_consistency") {
+        testSharedTargetEvaluatorConsistency();
+        testVerifiedRegionUsesSharedEvaluator();
+        testVerifiedRegionPreservesPositionCoverage();
+        if (g_testFailures == 0) {
+            std::printf("Evaluator consistency test passed.\n");
+            return 0;
+        }
+        std::printf("Evaluator consistency test FAILED.\n");
+        return 1;
+    }
+
+    if (suite == "cache") {
+        testCache();
+        if (g_testFailures == 0) {
+            std::printf("Cache test passed.\n");
+            return 0;
+        }
+        std::printf("Cache test FAILED.\n");
+        return 1;
+    }
+
     if (suite == "ui") {
         testUiTableModelsAndSuggestions();
         testConstraintModelAndProjectAdapter();
@@ -4321,6 +4840,9 @@ int main(int argc, char** argv)
     testEvaluator();
     testWorkspaceCoverage();
     testWorkspaceCoverageEvaluator();
+    testSharedTargetEvaluatorConsistency();
+    testVerifiedRegionUsesSharedEvaluator();
+    testVerifiedRegionPreservesPositionCoverage();
     testWorkspaceCoverageDataInsufficient();
     testWorkspaceCoverageCancellation();
     testEngineeringEvaluatorPipeline();

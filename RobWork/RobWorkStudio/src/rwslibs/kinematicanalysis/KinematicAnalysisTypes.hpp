@@ -10,12 +10,72 @@
 //   - MetricValue        :度量名+数值结构(供 manipulabilityMap 等使用)
 // 这些类型在 RobotAnalysisCore 插件中定义并被本插件的所有子模块共享。
 #include <rwslibs/robotanalysiscore/RobotAnalysisTypes.hpp>
+#include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
+
+#include <rw/math/Q.hpp>
+#include <rw/math/Transform3D.hpp>
 
 #include <array>
 #include <string>
 #include <vector>
 
 namespace rws {
+
+// =============================================================================
+//  证据阶段(evidence stage)枚举
+// =============================================================================
+//
+// AnalysisEvidenceStage 描述一条分析结论的"证据强度/可信度",区分估算、
+// 快速验证与验收级验证三类证据。
+//   - Estimated:估算值(例如随机采样的工作空间样本,未经逐点精确验证);
+//   - Quick    :快速探索阶段的结论(牺牲部分精度换取速度);
+//   - Verified :已通过 Verified 验收级验证的结论(最可信)。
+// 阶段沿 Estimated -> Quick -> Verified 单调递增;下游 UI / Report 据此提示用户
+// 当前结论处于哪个证据等级,避免把"估算"误当作"验收"。
+enum class AnalysisEvidenceStage
+{
+    Estimated,
+    Quick,
+    Verified
+};
+
+// =============================================================================
+//  可行性(feasibility)枚举
+// =============================================================================
+//
+// Feasibility 回答"在当前证据下,该需求/结论是否可行":
+//   - Feasible        :有足够证据表明可行;
+//   - Infeasible      :有证据表明不可行(IK 无解、碰撞、超限位等);
+//   - DataInsufficient:证据不足,既不能证明可行也不能证明不可行;
+//   - NotEvaluated    :尚未评估(结构默认值)。
+// 与 Quality 正交:Quality 回答"即使可行,质量多好",Feasibility 回答"能不能做"。
+// 聚合规则见 buildRequirementValidationSummary / buildAggregateResult。
+enum class Feasibility
+{
+    Feasible,
+    Infeasible,
+    DataInsufficient,
+    NotEvaluated
+};
+
+// =============================================================================
+//  质量(quality)枚举
+// =============================================================================
+//
+// Quality 是 Feasibility 的补充维度,描述"可行解的质量等级":
+//   - Good    :质量良好(裕度充足、无奇异、无碰撞);
+//   - Degraded:可行但质量退化(接近奇异 / 接近限位 / 可操作度偏低);
+//   - Critical:严重退化或不可用(奇异、碰撞、数据不足等);
+//   - Unknown :未知(未评估或证据不足)。
+// 约定:仅在 Feasibility == Feasible 时 Quality 才有积极意义,其余情况多为
+// Unknown 或 Critical;具体映射由各聚合函数负责,便于 UI 用颜色区分等级。
+enum class Quality
+{
+    Good,
+    Degraded,
+    Critical,
+    Unknown
+};
 
 // =============================================================================
 //  长度/角度单位枚举
@@ -60,7 +120,9 @@ enum class KinematicFailureReason
     Singular,        // 解处雅可比奇异(条件数过差,目标姿态无法精确达到)
     NearSingular,    // 解处雅可比条件数恶化但未奇异
     InvalidTarget,   // 目标位姿本身无效(超出 FK 可达范围等)
-    SolverError      // 求解器抛出异常(底层 IK 库错误)
+    SolverError,     // 求解器抛出异常(底层 IK 库错误)
+    CollisionDetectorUnavailable,
+    FrameNotFound
 };
 
 // =============================================================================
@@ -230,6 +292,14 @@ struct PoseReachabilitySummary
     std::size_t unknownCount = 0;
     std::size_t sampledDirections = 0;  // 所有位置的方向×滚动求和
     std::size_t reachableDirections = 0; // 所有位置可达方向求和
+    std::size_t sampledOrientationSamples = 0;
+    std::size_t reachableOrientationSamples = 0;
+    double averageDirectionCoverage = 0.0;
+    double minDirectionCoverage = 0.0;
+    double maxDirectionCoverage = 0.0;
+    double averageOrientationCoverage = 0.0;
+    double minOrientationCoverage = 0.0;
+    double maxOrientationCoverage = 0.0;
     double averageCoverage = 0.0;       // 所有位置 coverage 的平均值
     double minCoverage = 0.0;
     double maxCoverage = 0.0;
@@ -257,6 +327,188 @@ struct KinematicThresholds
     double positionToleranceMeters  = 0.001;  // 期望位姿位置容差(米)
     double orientationToleranceDeg  = 1.0;    // 期望位姿姿态容差(度)
     double ikDuplicateQThreshold    = 1e-4;   // IK 候选 Q 的无穷范数去重阈值(rad/m)
+};
+
+// =============================================================================
+//  单个配置(关节值 q)的完整运动学评估
+// =============================================================================
+//
+// ConfigurationEvaluation 是一次"在给定 q 下的评估快照":
+//   - stage/feasibility/quality :评估等级与结论(见上方三个枚举);
+//   - provenance                :需求执行溯源(记录由哪条冻结需求派生而来);
+//   - q / tcpPose               :被评估的关节值与对应的 FK 位姿;
+//   - jointLimitMargins         :各关节归一化裕度,minimumJointMargin 取其中最小;
+//   - jacobianRowMajor          :baseJframe 的 6 x n 雅可比(行优先扁平化,便于序列化);
+//   - singularValues            :雅可比 SVD 的奇异值(降序);
+//   - conditionNumber           :sigma_max / sigma_min,奇异时为 +inf;
+//   - manipulability            :奇异值之积(可操作度),= 0 表示奇异;
+//   - collisionChecked/inCollision:是否做了碰撞检查及结果;
+//   - failureReasons/warnings   :失败原因与告警列表。
+// 该结构由 ConfigurationEvaluator 产出,并被 analyzeCurrentPose / 工作空间采样
+// 等场景复用;它不绑定任何 UI 类型,可直接序列化到 Report JSON。
+struct ConfigurationEvaluation
+{
+    AnalysisEvidenceStage stage = AnalysisEvidenceStage::Quick;
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    RequirementExecutionProvenance provenance;
+    rw::math::Q q;
+    rw::math::Transform3D<> tcpPose;
+    std::vector< double > jointLimitMargins;
+    double minimumJointMargin = 0.0;
+    std::vector< double > jacobianRowMajor;
+    int jacobianRows = 0;
+    int jacobianCols = 0;
+    std::vector< double > singularValues;
+    double conditionNumber = 0.0;
+    double manipulability = 0.0;
+    bool collisionChecked = false;
+    bool inCollision = false;
+    std::vector< KinematicFailureReason > failureReasons;
+    std::vector< AnalysisWarning > warnings;
+};
+
+// =============================================================================
+//  单个 IK 候选解的评分记录
+// =============================================================================
+//
+// TargetCandidate 把"一个候选解"与其评价指标打包,供 UI 排序与评分展示:
+//   - configuration        :该解在 q 处的完整运动学评估;
+//   - positionErrorMeters  :FK 结果与目标的位置误差(米);
+//   - orientationErrorDeg  :FK 结果与目标的姿态误差(度);
+//   - distanceToReferenceQ :与参考关节值(通常为当前 q)的 L2 距离,
+//                            用于表达"尽量少动"的路径偏好;
+//   - score                :综合评分(越小越优),由 TargetEvaluator 计算,
+//                            排序规则见 sortIkSolutionsForDisplay。
+struct TargetCandidate
+{
+    ConfigurationEvaluation configuration;
+    double positionErrorMeters = 0.0;
+    double orientationErrorDeg = 0.0;
+    double distanceToReferenceQ = 0.0;
+    double score = 0.0;
+};
+
+// =============================================================================
+//  单个目标位姿的完整执行评估
+// =============================================================================
+//
+// TargetEvaluation 是一次"任务点(target)级别的评估结果",是目标评估的核心输出:
+//   - stage/feasibility/quality :整体等级与结论;
+//   - level                    :需求等级(Must/Should/Info 等);
+//   - provenance/itemProvenance:需求执行溯源 + 条目溯源(记录来自哪条需求条目);
+//   - target                   :被评估的任务点(输入);
+//   - candidates               :所有候选解(评分后,由高到低);
+//   - failureReasons/warnings  :聚合失败原因与告警。
+// 该结构由 TargetEvaluator 产出;旧 UI 通过 legacyIkResultFromTarget 把它转回
+// KinematicIkAnalysisResult,新执行契约流程则直接消费它,保持两代接口并存。
+struct TargetEvaluation
+{
+    AnalysisEvidenceStage stage = AnalysisEvidenceStage::Quick;
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    RequirementExecutionLevel level = RequirementExecutionLevel::Must;
+    RequirementExecutionProvenance provenance;
+    RequirementItemProvenance itemProvenance;
+    TaskPoint target;
+    std::vector< TargetCandidate > candidates;
+    std::vector< KinematicFailureReason > failureReasons;
+    std::vector< AnalysisWarning > warnings;
+};
+
+// =============================================================================
+//  工作区覆盖盒中单个格点的评估结果
+// =============================================================================
+//
+// RegionCellResult 描述覆盖盒按笛卡尔网格剖分后,单个格点的采样结论:
+//   - index      :格点在 (nx, ny, nz) 网格中的索引;
+//   - position   :格点的世界坐标(米);
+//   - feasibility / quality:该格点的结论(位置是否可达、质量如何);
+//   - reachableOrientationCount / sampledOrientationCount:该格点可达 / 采样朝向数,
+//                    用于计算该格点的朝向覆盖率;
+//   - bestManipulability / bestJointMargin:该格点所有可达样本中的最佳指标,
+//                    供颜色映射 / 排序使用;
+//   - failureReasons:该格点全部失败原因(去重后的集合)。
+// 每个覆盖盒的 cells 集合由 RegionCoverageResult 持有,供可视化与诊断逐格点展示。
+struct RegionCellResult
+{
+    std::array< int, 3 > index = {{0, 0, 0}};
+    std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    int reachableOrientationCount = 0;
+    int sampledOrientationCount = 0;
+    double bestManipulability = 0.0;
+    double bestJointMargin = 0.0;
+    std::vector< KinematicFailureReason > failureReasons;
+};
+
+// =============================================================================
+//  工作区覆盖盒的整体覆盖评估结果
+// =============================================================================
+//
+// RegionCoverageResult 聚合一个覆盖盒(RequirementExecutionRegion)的评估结论:
+//   - stage / feasibility / quality:整体等级;
+//   - provenance / itemProvenance :执行溯源 + 条目溯源;
+//   - regionId                   :对应覆盖盒的 id;
+//   - totalCells / reachableCells:总格点数 / 可达格点数;
+//   - sampledOrientations / reachableOrientations:总采样朝向 / 可达朝向;
+//   - positionCoverage           :reachableCells / totalCells(位置覆盖率);
+//   - orientationCoverage        :reachableOrientations / sampledOrientations(朝向覆盖率);
+//   - cells                      :每个格点的明细(供可视化 / 诊断);
+//   - warnings                   :聚合告警。
+// 位置覆盖率与朝向覆盖率分开统计:一个格点位置可达但朝向不全,仍会拉低朝向
+// 覆盖率——这正是覆盖盒 Must 级验收(Must 区域硬约束)的核心判定依据。
+struct RegionCoverageResult
+{
+    AnalysisEvidenceStage stage = AnalysisEvidenceStage::Verified;
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    RequirementExecutionProvenance provenance;
+    RequirementItemProvenance itemProvenance;
+    std::string regionId;
+    int totalCells = 0;
+    int reachableCells = 0;
+    int sampledOrientations = 0;
+    int reachableOrientations = 0;
+    double positionCoverage = 0.0;
+    double orientationCoverage = 0.0;
+    std::vector< RegionCellResult > cells;
+    std::vector< AnalysisWarning > warnings;
+};
+
+// =============================================================================
+//  Must 级需求执行验证的汇总
+// =============================================================================
+//
+// RequirementValidationSummary 是 validateRequirements 的顶层输出,汇总所有
+// Must 级任务点与覆盖盒的验证结果:
+//   - stage / feasibility / quality:整体证据阶段 / 可行性 / 质量;
+//   - provenance                   :需求执行溯源;
+//   - mustTaskCount / mustTaskFeasibleCount :参与验证的 Must 任务点总数,及其中
+//                      Feasible 的数量;
+//   - mustRegionCount / mustRegionFeasibleCount:参与验证的 Must 覆盖盒总数,及其中
+//                      Feasible 的数量;
+//   - taskResults / regionResults :每个任务点 / 覆盖盒的明细结果;
+//   - warnings                    :汇总告警(如 KIN_MUST_TASK_INFEASIBLE)。
+// 聚合规则(buildRequirementValidationSummary):
+//   - 无 Must 项         -> NotEvaluated;
+//   - 任一 Must 项数据不足 -> DataInsufficient + Critical;
+//   - 任一 Must 项不可行   -> Infeasible + Critical;
+//   - 全部可行           -> Feasible,quality 取所有 Must 项中最差等级。
+struct RequirementValidationSummary
+{
+    AnalysisEvidenceStage stage = AnalysisEvidenceStage::Verified;
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    RequirementExecutionProvenance provenance;
+    int mustTaskCount = 0;
+    int mustTaskFeasibleCount = 0;
+    int mustRegionCount = 0;
+    int mustRegionFeasibleCount = 0;
+    std::vector< TargetEvaluation > taskResults;
+    std::vector< RegionCoverageResult > regionResults;
+    std::vector< AnalysisWarning > warnings;
 };
 
 // =============================================================================
@@ -380,12 +632,18 @@ struct TaskPointReachabilityResult
 //   - status    :聚合状态(碰撞 → Fail, manip 太低 → Warning, 等等)
 struct WorkspaceSample
 {
+    AnalysisEvidenceStage stage = AnalysisEvidenceStage::Estimated;
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    unsigned int sampleSeed = 0;
+    int sampleCount = 0;
     std::vector< double > q;                          // 采样得到的关节值
     std::array< double, 3 > tcpPosition = {{0.0, 0.0, 0.0}};  // 由此关节值 FK 得到的 TCP 位置
     double manipulability     = 0.0;
     double minJointLimitMargin = 0.0;
     double conditionNumber    = 0.0;
     bool inCollision          = false;
+    bool collisionChecked     = false;
     AnalysisStatus status     = AnalysisStatus::Unknown;
 };
 
@@ -401,9 +659,13 @@ struct WorkspaceSample
 struct PoseReachabilitySample
 {
     std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
-    int sampledDirections = 0;     // 总尝试的方向数 = directionSamples × rollSamples
-    int reachableDirections = 0;   // 至少有一个非碰撞 Pass/Warning 解的方向数
-    double coverage = 0.0;          // reachableDirections / sampledDirections
+    int sampledDirections = 0;          // 工具 Z 方向样本数
+    int reachableDirections = 0;        // 至少一个 roll 姿态可达的工具 Z 方向数
+    int sampledOrientationSamples = 0;  // directionSamples × rollSamples
+    int reachableOrientationSamples = 0;// 完整姿态可达样本数
+    double directionCoverage = 0.0;     // reachableDirections / sampledDirections
+    double orientationCoverage = 0.0;   // reachableOrientationSamples / sampledOrientationSamples
+    double coverage = 0.0;              // 兼容字段，始终映射为 orientationCoverage
     AnalysisStatus status = AnalysisStatus::Unknown;
     std::size_t plannedIkTargets = 0;     // 该 position 的 IK 计划数
     std::size_t completedIkTargets = 0;   // 该 position 已完成的 IK 数
@@ -425,6 +687,9 @@ struct KinematicAnalysisResult
 {
     AnalysisResultHeader header;
     AnalysisStatus status = AnalysisStatus::Unknown;     // 整体聚合状态
+    Feasibility feasibility = Feasibility::NotEvaluated;
+    Quality quality = Quality::Unknown;
+    AnalysisEvidenceStage evidenceStage = AnalysisEvidenceStage::Estimated;
     KinematicCurrentPoseResult currentPose;              // 当前位姿
     std::vector< TaskPointReachabilityResult > taskPointResults;  // 任务点结果
     double reachableRate = 0.0;                          // 任务点的可达率
@@ -442,8 +707,23 @@ struct KinematicAnalysisResult
 
 // 将枚举转换为可读字符串(用于日志/UI/CSV)。
 const char* toString(KinematicFailureReason reason);
+const char* toString(AnalysisEvidenceStage stage);
+const char* toString(Feasibility feasibility);
+const char* toString(Quality quality);
 const char* toString(KinematicLengthUnit unit);
 const char* toString(KinematicAngleUnit unit);
+bool analysisEvidenceStageFromString(const std::string& text,
+                                     AnalysisEvidenceStage& value,
+                                     std::string* error = nullptr);
+bool feasibilityFromString(const std::string& text,
+                           Feasibility& value,
+                           std::string* error = nullptr);
+bool qualityFromString(const std::string& text,
+                       Quality& value,
+                       std::string* error = nullptr);
+bool kinematicFailureReasonFromString(const std::string& text,
+                                      KinematicFailureReason& value,
+                                      std::string* error = nullptr);
 // 返回显示单位后缀(如 "m" / "cm" / "mm" / "in" / "deg" / "rad")。
 const char* unitSuffix(KinematicLengthUnit unit);
 const char* unitSuffix(KinematicAngleUnit unit);

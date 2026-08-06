@@ -3,6 +3,7 @@
 
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicMetrics.hpp"
+#include "KinematicBatchRunner.hpp"
 
 // RobWork 核心类型:Ptr 是 RobWork 的侵入式智能指针;Device 表示一个运动学链;
 // State 是不可变的工作单元配置;Q 是关节值向量;Frame 是坐标系;CollisionDetector
@@ -16,6 +17,14 @@
 #include <rw/proximity/CollisionDetector.hpp>
 
 namespace rws {
+
+// 汇总 Must 级需求执行验证结果(任务点 + 覆盖盒),产出顶层可行性/质量结论。
+// 被 validateRequirements 调用;也暴露为自由函数,便于测试直接复用。
+// 聚合规则详见 .cpp 中 buildRequirementValidationSummary 的实现注释。
+RequirementValidationSummary buildRequirementValidationSummary (
+    const RequirementExecutionSet& requirements,
+    const std::vector< TargetEvaluation >& taskResults,
+    const std::vector< RegionCoverageResult >& regionResults);
 
 // =============================================================================
 //  位姿可达性后台分析的可选回调
@@ -67,6 +76,7 @@ struct WorkspaceSamplingRunCallbacks
 class KinematicAnalyzer
 {
   public:
+    // 构造:使用 KinematicThresholds 的成员初始值作为默认判定阈值。
     KinematicAnalyzer ();
 
     // 设置/获取判定阈值(关节裕度、奇异、可操作度、位姿容差)。
@@ -125,6 +135,14 @@ class KinematicAnalyzer
         const rw::kinematics::State& state,
         const std::vector< TaskPoint >& taskPoints,
         rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+
+    // 新执行契约的 Must-only 批量验证入口；兼容旧 API 的批量结果由下方
+    // analyzeTaskPoints 继续提供。
+    RequirementValidationSummary validateRequirements (
+        const AnalysisContext& context,
+        const RequirementExecutionSet& requirements,
+        const BatchRunOptions& options = BatchRunOptions (),
+        const CancellationToken& cancellation = CancellationToken ()) const;
 
     // =======================================================================
     //  analyzeTaskPoint(workcell-aware 单点版本,P1)

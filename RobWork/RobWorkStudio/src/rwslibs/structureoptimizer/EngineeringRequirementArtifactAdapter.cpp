@@ -75,11 +75,14 @@ OptimizationTaskPoint toOptimizationTask(const CompiledPoseTask& station)
     return optimized;
 }
 
+// 判断参考系名是否为 WORLD：空字符串按 WORLD 处理，用于识别
+// 不需要场景快照即可解析的 WORLD 坐标系任务。
 bool isWorld(const std::string& frame)
 {
     return frame.empty() || frame == "WORLD";
 }
 
+// 把执行契约中的工艺类型枚举还原为需求域的 ProcessType，供上层通用流程使用。
 ProcessType toProcessType(RequirementExecutionProcessType value)
 {
     switch (value) {
@@ -98,6 +101,10 @@ ProcessType toProcessType(RequirementExecutionProcessType value)
     return ProcessType::Generic;
 }
 
+// 把冻结工件转换/审计为优化器可消费的编译快照（CompiledRequirementSet）。
+//  - v3 及更早：无 Verified 证据契约，覆盖盒降级为 Quick 阶段检查，仍可读取；
+//  - v4：先做执行契约一致性审计（指纹与 provenance），任一不符返回空快照，
+//    随后把执行契约中的任务/区域完整翻译为编译快照供下游生成约束与任务。
 CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifact,
                                          std::string* error)
 {
@@ -208,6 +215,9 @@ CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifa
 
 } // namespace
 
+// 将冻结需求工件应用到结构优化问题上，是"冻结 -> 优化"流水线的核心入口。
+// 先在局部副本上完成全部转换与校验，任一环节失败都不会让问题处于半更新状态；
+// 仅接受 schema v4 工件，并强制校验模型指纹与优化 RobotModelSpec 一致。
 bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifact& artifact,
                                                    StructureOptimizationProblem& problem,
                                                    std::string* error)
@@ -267,6 +277,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         return false;
     }
 
+    // 收集 Must 级覆盖区域以生成硬约束；Should/Info 级仅留在执行契约中作为审计记录，
+    // 不会转化为必须满足的优化约束。
     std::vector<WorkspaceDemandRegion> mustRegions;
     for (const WorkspaceDemandRegion& region : compiled.workspaceRegions) {
         if (region.compileState != RequirementCompileState::Included) continue;
@@ -295,6 +307,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
             return constraint.id.find("engineering_requirement.workspace.") == 0;
         }), updated.constraints.end());
 
+    // 清空旧项目的覆盖盒，再按本次冻结需求的 Must 区域逐一重建，
+    // 每个区域保留独立 ID、参考系与覆盖率阈值，互不合并。
     updated.evaluation.coverageBoxes.clear();
     if (mustRegions.empty()) {
         // 冻结需求中没有覆盖区域时显式关闭旧项目遗留的覆盖盒，防止上一次项目的
@@ -334,6 +348,8 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         }
     }
 
+    // 写入需求审计溯源：全部取自冻结工件本身，导入过程不生成新时间戳，
+    // 保证同一工件重复导入得到一致的审计身份与可复现性。
     updated.requirementProvenance.requirementFingerprint = artifact.requirementFingerprint;
     updated.requirementProvenance.executionFingerprint = artifact.executionFingerprint;
     updated.requirementProvenance.workcellFingerprint = artifact.workcellFingerprint;
@@ -342,6 +358,9 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     // 适配器只复制冻结工件本身已经持久化的时间，而不在导入优化器时重新取当前时间；
     // 否则同一份需求工件被重复导入会产生不同审计身份，破坏可复现性。
     updated.requirementProvenance.frozenAt = artifact.frozenAt;
+    // 直接携带完整执行契约：它是 Verified 阶段候选评价的权威输入，
+    // 保证优化器消费的正是冻结器验证过的那份需求。
+    updated.requirementExecution = artifact.execution;
     // 只从 schema v2 工件复制可重建场景；schema v1 仍可导入 WORLD 任务，但绝不会被
     // 误认为携带工装碰撞环境，从而保持历史项目的兼容性和新场景流程的正确性。
     updated.scenarioSnapshot = StructureOptimizationScenarioSnapshot();
