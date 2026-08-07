@@ -38,7 +38,6 @@ namespace rw { namespace proximity { class CollisionDetector; } }
 
 // 提前声明 Qt UI 控件类(使用前向声明减少编译依赖)。
 class QCheckBox;
-class QButtonGroup;
 class QComboBox;
 class QDoubleSpinBox;
 class QFrame;
@@ -51,6 +50,7 @@ class QScrollArea;
 class QTableView;
 class QTableWidget;
 class QToolButton;
+class QTabBar;
 class QStackedWidget;
 class QString;
 
@@ -388,8 +388,7 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     //  Three-mode workflow shell
     // ===================================================================
-    QWidget* _modeSelector;
-    QButtonGroup* _modeButtonGroup;
+    QTabBar* _modeTabs;
     QStackedWidget* _modeStack;
     QScrollArea* _diagnoseScroll;
     QScrollArea* _exploreScroll;

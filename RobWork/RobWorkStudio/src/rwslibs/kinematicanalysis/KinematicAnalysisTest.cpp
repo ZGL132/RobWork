@@ -51,12 +51,14 @@
 #include <QDoubleSpinBox>
 #include <QDialog>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QJsonArray>
 #include <QPushButton>
 #include <QPointer>
 #include <QSpinBox>
 #include <QScrollArea>
 #include <QStackedWidget>
+#include <QTabBar>
 #include <QTableWidget>
 #include <QTableView>
 #include <QTabWidget>
@@ -4983,6 +4985,35 @@ static int testWorkflowUiStates ()
 {
     rws::KinematicAnalysisWidget widget;
 
+    QFrame* healthFrame = widget.findChild< QFrame* > (
+        QStringLiteral ("currentPoseHealthFrame"));
+    const QList< QLabel* > healthLabels = healthFrame == nullptr ? QList< QLabel* > () :
+        healthFrame->findChildren< QLabel* > (QString (), Qt::FindDirectChildrenOnly);
+    if (const int rc = require (healthLabels.size () == 5,
+                                "Health summary exposes five direct metric labels before a WorkCell is set"))
+        return rc;
+    for (QLabel* label : healthLabels) {
+        if (const int rc = require (!label->text ().isEmpty () && label->text ().contains (QStringLiteral ("-")),
+                                    "Health summary metrics start with visible placeholder content"))
+            return rc;
+    }
+
+    const QStringList workspaceSummaryNames = {
+        QStringLiteral ("workspaceSampleCountLabel"),
+        QStringLiteral ("workspaceCollisionFreeLabel"),
+        QStringLiteral ("workspacePassLabel"),
+        QStringLiteral ("workspaceWarningLabel"),
+        QStringLiteral ("workspaceFailLabel"),
+        QStringLiteral ("workspaceAvgManipulabilityLabel")};
+    QList< QLabel* > workspaceSummaryLabels;
+    for (const QString& objectName : workspaceSummaryNames) {
+        QLabel* label = widget.findChild< QLabel* > (objectName);
+        if (const int rc = require (label != nullptr && !label->text ().isEmpty (),
+                                    "Workspace summary exposes initialized metric labels"))
+            return rc;
+        workspaceSummaryLabels.push_back (label);
+    }
+
     QPushButton* reportButton = widget.findChild< QPushButton* > (
         QStringLiteral ("reportButton"));
     if (const int rc = require (reportButton != nullptr && reportButton->menu () != nullptr &&
@@ -5008,49 +5039,36 @@ static int testWorkflowUiStates ()
                                 "refreshing through Header Report retains filtering state"))
         return rc;
 
-    QWidget* modeSelector =
-        widget.findChild< QWidget* > (QStringLiteral ("kinematicModeSelector"));
+    QTabBar* modeTabs =
+        widget.findChild< QTabBar* > (QStringLiteral ("kinematicModeTabs"));
     QStackedWidget* modeStack =
         widget.findChild< QStackedWidget* > (QStringLiteral ("kinematicModeStack"));
-    if (const int rc = require (modeSelector != nullptr && modeStack != nullptr,
+    if (const int rc = require (modeTabs != nullptr && modeStack != nullptr,
                                 "three-mode shell exposes stable object names"))
         return rc;
-    const QList< QToolButton* > modeButtons = modeSelector->findChildren< QToolButton* > ();
-    if (const int rc = require (modeButtons.size () == 3 && modeStack->count () == 3,
-                                "three exclusive modes control exactly three stack pages"))
+    if (const int rc = require (modeTabs->count () == 3 && modeStack->count () == 3 &&
+                                    modeTabs->currentIndex () == 0 && modeTabs->expanding (),
+                                "three expanding mode tabs control exactly three stack pages"))
         return rc;
-    for (int index = 0; index < modeButtons.size (); ++index) {
-        QToolButton* button = modeButtons.at (index);
-        if (const int rc = require (button->isCheckable () && !button->text ().isEmpty (),
-                                    "mode selectors are checkable text buttons"))
-            return rc;
-        button->click ();
-        QCoreApplication::processEvents ();
-        int checkedCount = 0;
-        for (QToolButton* candidate : modeButtons)
-            checkedCount += candidate->isChecked () ? 1 : 0;
-        if (const int rc = require (checkedCount == 1 && modeStack->currentIndex () == index,
-                                    "mode selector is exclusive and changes the visible page"))
-            return rc;
-    }
     const QStringList modeLabels = {QStringLiteral ("Diagnose"),
                                     QStringLiteral ("Validate"),
                                     QStringLiteral ("Explore")};
     const QStringList modeDescriptions = {QStringLiteral ("Diagnose"),
                                           QStringLiteral ("Validate Requirements"),
                                           QStringLiteral ("Explore Capability")};
-    for (int index = 0; index < modeButtons.size (); ++index) {
+    for (int index = 0; index < modeTabs->count (); ++index) {
         if (const int rc = require (
-                modeButtons.at (index)->text () == modeLabels.at (index) &&
-                    modeButtons.at (index)->toolTip () == modeDescriptions.at (index) &&
-                    modeButtons.at (index)->accessibleName () == modeDescriptions.at (index),
-                "narrow mode selectors keep short labels with full accessible descriptions"))
+                    modeTabs->tabText (index) == modeLabels.at (index) &&
+                    modeTabs->tabToolTip (index) == modeDescriptions.at (index) &&
+                    modeTabs->accessibleTabName (index) == modeDescriptions.at (index),
+                "mode tabs keep short labels with full accessible descriptions"))
             return rc;
     }
     if (const int rc = require (
-            widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs")) == nullptr &&
+            widget.findChild< QWidget* > (QStringLiteral ("kinematicModeSelector")) == nullptr &&
+                widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs")) == nullptr &&
                 widget.findChildren< QTabWidget* > ().isEmpty (),
-            "workflow and compatibility tabs are absent from the visible hierarchy"))
+            "legacy selector and QTabWidget workflow containers are absent"))
         return rc;
 
     QPushButton* diagnoseRefresh = widget.findChild< QPushButton* > (
@@ -5079,8 +5097,6 @@ static int testWorkflowUiStates ()
     QWidget* currentPosePage = widget.findChild< QWidget* > (
         QStringLiteral ("currentPoseTab"));
     QWidget* ikPage = widget.findChild< QWidget* > (QStringLiteral ("ikTab"));
-    QFrame* healthFrame = widget.findChild< QFrame* > (
-        QStringLiteral ("currentPoseHealthFrame"));
     QDoubleSpinBox* ikX = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikXSpin"));
     QDoubleSpinBox* ikY = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYSpin"));
     QDoubleSpinBox* ikZ = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikZSpin"));
@@ -5120,7 +5136,7 @@ static int testWorkflowUiStates ()
 
     widget.resize (300, 620);
     widget.show ();
-    modeButtons.at (0)->click ();
+    modeTabs->setCurrentIndex (0);
     QCoreApplication::processEvents ();
     if (const int rc = require (widget.width () == 300,
                                 "narrow-width checks run on a 300px dock"))
@@ -5146,27 +5162,65 @@ static int testWorkflowUiStates ()
                                     healthFrame->geometry ().right () < currentPosePage->width (),
                                 "current-state health frame does not overflow a 300px Diagnose page"))
         return rc;
+    for (QLabel* label : healthLabels) {
+        if (const int rc = require (!label->geometry ().isEmpty () && label->width () >= 24 &&
+                                        healthFrame->contentsRect ().contains (label->geometry ()),
+                                    "Health summary metric labels remain visible inside a 300px dock"))
+            return rc;
+    }
+    modeTabs->setCurrentIndex (2);
+    QCoreApplication::processEvents ();
+    for (QLabel* label : workspaceSummaryLabels) {
+        if (const int rc = require (label->isVisible () && !label->geometry ().isEmpty () &&
+                                        label->width () >= 24,
+                                    "Workspace summary metric labels remain visible in Explore at 300px"))
+            return rc;
+    }
+    modeTabs->setCurrentIndex (0);
+    QCoreApplication::processEvents ();
     if (const int rc = require (deviceCombo->width () >= 24 && tcpCombo->width () >= 24,
                                 "Device and TCP remain usable in a 300px header"))
         return rc;
     const QList< QWidget* > fixedControls = {
         deviceCombo, tcpCombo, lengthUnitCombo, angleUnitCombo, diagnoseRefresh,
-        thresholdSettings, report, status, modeSelector};
-    for (QToolButton* button : modeButtons) {
-        button->click ();
+        thresholdSettings, report, status, modeTabs};
+    bool allModeTabsFitAt300 = !modeTabs->usesScrollButtons ();
+    bool hasVisibleModeTabScrollButtonAt300 = false;
+    for (int index = 0; index < modeTabs->count (); ++index) {
+        const QRect tabRect = modeTabs->tabRect (index);
+        const QPoint tabTopLeft = widget.mapFromGlobal (
+            modeTabs->mapToGlobal (tabRect.topLeft ()));
+        allModeTabsFitAt300 = allModeTabsFitAt300 && !tabRect.isEmpty () &&
+            modeTabs->rect ().contains (tabRect) &&
+            widget.rect ().contains (QRect (tabTopLeft, tabRect.size ()));
+    }
+    for (QToolButton* button : modeTabs->findChildren< QToolButton* > ())
+        hasVisibleModeTabScrollButtonAt300 = hasVisibleModeTabScrollButtonAt300 || button->isVisible ();
+    if (const int rc = require (allModeTabsFitAt300 && !hasVisibleModeTabScrollButtonAt300,
+                                "all mode tabs fit without scroll buttons in a 300px dock"))
+        return rc;
+    for (QWidget* control : fixedControls) {
+        const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
+        const QRect geometry (topLeft, control->size ());
+        if (const int rc = require (!geometry.isEmpty () && widget.rect ().contains (geometry),
+                                    "fixed shell controls fit inside a 300x620 dock"))
+            return rc;
+    }
+    for (int index = 0; index < modeTabs->count (); ++index) {
+        modeTabs->setCurrentIndex ((index + 1) % modeTabs->count ());
         QCoreApplication::processEvents ();
-        for (QWidget* control : fixedControls) {
-            const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
-            const QRect geometry (topLeft, control->size ());
-            if (const int rc = require (!geometry.isEmpty () && widget.rect ().contains (geometry),
-                                        "fixed shell controls fit inside a 300x620 dock"))
-                return rc;
-        }
-        const QPoint modeTopLeft = widget.mapFromGlobal (
-            button->mapToGlobal (QPoint (0, 0)));
-        if (const int rc = require (!button->geometry ().isEmpty () &&
-                                        widget.rect ().contains (QRect (modeTopLeft, button->size ())),
-                                    "every mode selector fits inside a 300px dock"))
+        const QPointF tabCenter = modeTabs->tabRect (index).center ();
+        const QPointF globalTabCenter = modeTabs->mapToGlobal (tabCenter.toPoint ());
+        QMouseEvent press (QEvent::MouseButtonPress, tabCenter, globalTabCenter,
+                           Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (modeTabs, &press);
+        QMouseEvent release (QEvent::MouseButtonRelease, tabCenter, globalTabCenter,
+                             Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        QCoreApplication::sendEvent (modeTabs, &release);
+        QCoreApplication::processEvents ();
+        if (const int rc = require (modeTabs->currentIndex () == index &&
+                                    modeStack->currentIndex () == index,
+                                    "mouse-clicked mode tab changes the visible page"))
             return rc;
     }
     if (const int rc = require (
@@ -5177,22 +5231,28 @@ static int testWorkflowUiStates ()
         return rc;
     widget.resize (320, 620);
     widget.show ();
+    modeTabs->setCurrentIndex (0);
     QCoreApplication::processEvents ();
-    for (QToolButton* button : modeButtons) {
-        button->click ();
-        QCoreApplication::processEvents ();
-        for (QWidget* control : fixedControls) {
-            const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
-            if (const int rc = require (!control->geometry ().isEmpty () &&
-                                            widget.rect ().contains (QRect (topLeft, control->size ())),
-                                        "fixed shell controls fit inside a 320x620 dock"))
-                return rc;
-        }
-        const QPoint modeTopLeft = widget.mapFromGlobal (
-            button->mapToGlobal (QPoint (0, 0)));
-        if (const int rc = require (!button->geometry ().isEmpty () &&
-                                        widget.rect ().contains (QRect (modeTopLeft, button->size ())),
-                                    "every mode selector fits inside a 320px dock"))
+    bool allModeTabsFitAt320 = !modeTabs->usesScrollButtons ();
+    bool hasVisibleModeTabScrollButtonAt320 = false;
+    for (int index = 0; index < modeTabs->count (); ++index) {
+        const QRect tabRect = modeTabs->tabRect (index);
+        const QPoint tabTopLeft = widget.mapFromGlobal (
+            modeTabs->mapToGlobal (tabRect.topLeft ()));
+        allModeTabsFitAt320 = allModeTabsFitAt320 && !tabRect.isEmpty () &&
+            modeTabs->rect ().contains (tabRect) &&
+            widget.rect ().contains (QRect (tabTopLeft, tabRect.size ()));
+    }
+    for (QToolButton* button : modeTabs->findChildren< QToolButton* > ())
+        hasVisibleModeTabScrollButtonAt320 = hasVisibleModeTabScrollButtonAt320 || button->isVisible ();
+    if (const int rc = require (allModeTabsFitAt320 && !hasVisibleModeTabScrollButtonAt320,
+                                "all mode tabs fit without scroll buttons in a 320px dock"))
+        return rc;
+    for (QWidget* control : fixedControls) {
+        const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
+        if (const int rc = require (!control->geometry ().isEmpty () &&
+                                        widget.rect ().contains (QRect (topLeft, control->size ())),
+                                    "fixed shell controls fit inside a 320x620 dock"))
             return rc;
     }
 
@@ -5277,7 +5337,7 @@ static int testWorkflowUiStates ()
                 embeddedPlot->maximumHeight () == 160,
             "Explore exposes Random, Grid and Pose Reachability with compact visualization"))
         return rc;
-    modeButtons.at (2)->click ();
+    modeTabs->setCurrentIndex (2);
     exploreSamplingMode->setCurrentIndex (0);
     if (const int rc = require (
             exploreSamples->isVisible () && exploreSamplesLabel->isVisible () &&
@@ -5347,7 +5407,7 @@ static int testWorkflowUiStates ()
                 frozenRegions->editTriggers () == QAbstractItemView::NoEditTriggers,
             "Mode 2 exposes local and frozen data sources with read-only frozen results"))
         return rc;
-    modeButtons.at (1)->click ();
+    modeTabs->setCurrentIndex (1);
     QCoreApplication::processEvents ();
     mode2Source->setCurrentIndex (0);
     if (const int rc = require (localTasksPage->isVisible () && !frozenTasks->isVisible () &&
@@ -5536,7 +5596,7 @@ static int testWorkflowUiStates ()
     taskTable->setCurrentIndex (taskModel->index (reorderedLocalTaskRow, 0));
     taskTable->selectRow (reorderedLocalTaskRow);
     QCoreApplication::processEvents ();
-    modeButtons.at (1)->click ();
+    modeTabs->setCurrentIndex (1);
     mode2Source->setCurrentIndex (0);
     mode2ValidateSelected->click ();
     QCoreApplication::processEvents ();
@@ -5566,14 +5626,33 @@ static int testWorkflowUiStates ()
     ikDetails->setRowCount (1);
     ikDetails->setItem (0, 0, new QTableWidgetItem (QStringLiteral ("Previous detail")));
     ikApply->setEnabled (true);
-    modeButtons.at (2)->click ();
+    modeTabs->setCurrentIndex (0);
+    QCoreApplication::processEvents ();
+    const bool openedPoseReachability = QMetaObject::invokeMethod (
+        &widget, "openPoseReachabilityInVisualization", Qt::DirectConnection);
+    QCoreApplication::processEvents ();
+    if (const int rc = require (openedPoseReachability && modeTabs->currentIndex () == 2 &&
+                                    modeStack->currentIndex () == 2,
+                                "pose reachability navigation selects the Explore tab and page"))
+        return rc;
+    modeTabs->setCurrentIndex (0);
+    QCoreApplication::processEvents ();
+    const bool openedWorkspace = QMetaObject::invokeMethod (
+        &widget, "openWorkspaceInVisualization", Qt::DirectConnection);
+    QCoreApplication::processEvents ();
+    if (const int rc = require (openedWorkspace && modeTabs->currentIndex () == 2 &&
+                                    modeStack->currentIndex () == 2,
+                                "workspace navigation selects the Explore tab and page"))
+        return rc;
+    modeTabs->setCurrentIndex (2);
     const bool openedInIk = QMetaObject::invokeMethod (
         &widget, "openSelectedTaskPointInIk", Qt::DirectConnection);
     QCoreApplication::processEvents ();
     const QRect ikInViewport (
         diagnoseScroll->viewport ()->mapFromGlobal (ikPage->mapToGlobal (QPoint (0, 0))),
         ikPage->size ());
-    if (const int rc = require (openedInIk && modeStack->currentIndex () == 0 &&
+    if (const int rc = require (openedInIk && modeTabs->currentIndex () == 0 &&
+                                    modeStack->currentIndex () == 0 &&
                                     ikInViewport.intersects (diagnoseScroll->viewport ()->rect ()) &&
                                     ikCandidates->rowCount () == 0 && ikDetails->rowCount () == 1 &&
                                     !ikApply->isEnabled () &&
@@ -5790,7 +5869,7 @@ static int testWorkflowUiStates ()
         QStringLiteral ("validateProvenanceLabel"));
     QToolButton* frozenDiagnostics = widget.findChild< QToolButton* > (
         QStringLiteral ("validateDiagnosticsToggle"));
-    modeButtons.at (1)->click ();
+    modeTabs->setCurrentIndex (1);
     mode2Source->setCurrentIndex (1);
     QApplication::processEvents ();
     if (const int rc = require (

@@ -43,7 +43,6 @@
 #include <QAbstractItemView>
 #include <QAction>
 #include <QApplication>
-#include <QButtonGroup>
 #include <QMetaObject>
 #include <QPointer>
 #include <QtConcurrent/QtConcurrent>
@@ -75,6 +74,7 @@
 #include <QSizePolicy>
 #include <QSpinBox>
 #include <QStackedWidget>
+#include <QTabBar>
 #include <QSet>
 #include <QStyledItemDelegate>
 #include <QTableWidget>
@@ -273,15 +273,14 @@ void setCompactTableVisibleRows (QTableWidget* table, int rows);
 //   - 用 QVBoxLayout + QScrollArea 包裹主内容区,
 //     这样插件可以在小窗口下保持可用(滚动条出现);
 //   - 顶部一行是设备 / TCP 帧选择 + Refresh 按钮;
-//   - Three text mode buttons switch scrollable workflow pages;
+//   - Three mode tabs switch scrollable workflow pages;
 //   - 底部一个只读状态条用于反馈用户操作结果;
 //   - 末尾把所有按钮的 clicked() 信号连到对应的槽函数。
 KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QWidget(parent),
     _studio(NULL),
     _workcell(NULL),
-    _modeSelector(NULL),
-    _modeButtonGroup(NULL),
+    _modeTabs(NULL),
     _modeStack(NULL),
     _diagnoseScroll(NULL),
     _exploreScroll(NULL),
@@ -585,34 +584,25 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     // 三模式工作流外壳:Diagnose(当前位姿诊断)/ Validate(冻结需求校验)/
     // Explore(能力探索)互斥切换,替代原 QTabWidget。每个模式页由独立
     // QScrollArea 承载(addModePage),避免页面内容过高时超出 Dock 可视区。
-    _modeSelector = new QWidget (this);
-    _modeSelector->setObjectName (QStringLiteral ("kinematicModeSelector"));
-    QHBoxLayout* modeLayout = new QHBoxLayout (_modeSelector);
-    modeLayout->setContentsMargins (0, 0, 0, 0);
-    modeLayout->setSpacing (4);
-    _modeButtonGroup = new QButtonGroup (this);
-    _modeButtonGroup->setExclusive (true);
+    _modeTabs = new QTabBar (this);
+    _modeTabs->setObjectName (QStringLiteral ("kinematicModeTabs"));
+    _modeTabs->setExpanding (true);
+    _modeTabs->setUsesScrollButtons (false);
     const QStringList modeNames = {tr("Diagnose"), tr("Validate"), tr("Explore")};
     const QStringList modeDescriptions = {tr("Diagnose"), tr("Validate Requirements"),
                                           tr("Explore Capability")};
     for (int index = 0; index < modeNames.size (); ++index) {
-        QToolButton* button = new QToolButton (_modeSelector);
-        button->setText (modeNames.at (index));
-        button->setToolTip (modeDescriptions.at (index));
-        button->setAccessibleName (modeDescriptions.at (index));
-        button->setCheckable (true);
-        button->setToolButtonStyle (Qt::ToolButtonTextOnly);
-        button->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-        _modeButtonGroup->addButton (button, index);
-        modeLayout->addWidget (button);
-        connect (button, &QToolButton::clicked, this,
-                 [this, index] { _modeStack->setCurrentIndex (index); });
+        _modeTabs->addTab (modeNames.at (index));
+        _modeTabs->setTabToolTip (index, modeDescriptions.at (index));
+        _modeTabs->setAccessibleTabName (index, modeDescriptions.at (index));
     }
-    root->addWidget (_modeSelector);
+    root->addWidget (_modeTabs);
 
     _modeStack = new QStackedWidget (this);
     _modeStack->setObjectName (QStringLiteral ("kinematicModeStack"));
     root->addWidget (_modeStack, 1);
+    connect (_modeTabs, &QTabBar::currentChanged, _modeStack,
+             &QStackedWidget::setCurrentIndex);
 
     _diagnoseWorkflowPage = new QWidget ();
     _diagnoseWorkflowPage->setObjectName (QStringLiteral ("diagnoseWorkflowPage"));
@@ -671,7 +661,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     setCompactTableVisibleRows (_poseValueTable, 2);
     _poseValueTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    // ---- Health summary: four scan-friendly metrics without another data table. ----
+    // ---- Health summary: five scan-friendly metrics without another data table. ----
     cpLayout->addWidget (new QLabel (tr("Health summary"), _currentPoseTab));
     QFrame* healthFrame = new QFrame (_currentPoseTab);
     healthFrame->setObjectName (QStringLiteral ("currentPoseHealthFrame"));
@@ -683,25 +673,29 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         label->setTextInteractionFlags (Qt::TextSelectableByMouse);
         label->setMinimumWidth (0);
         label->setWordWrap (true);
-        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+        label->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
         return label;
     };
     _poseIndicatorLabel = makeHealthLabel ();
     _poseIndicatorLabel->setObjectName (QStringLiteral ("currentPoseStatusLabel"));
+    _poseIndicatorLabel->setText (tr ("<b>Status</b><br>-"));
     _poseConditionLabel = makeHealthLabel ();
+    _poseConditionLabel->setText (tr ("<b>Condition</b><br>-"));
     _poseManipulabilityLabel = makeHealthLabel ();
+    _poseManipulabilityLabel->setText (tr ("<b>Manipulability</b><br>-"));
     _poseMarginLabel = makeHealthLabel ();
+    _poseMarginLabel->setText (tr ("<b>Min joint margin</b><br>-"));
     _poseCollisionCapabilityLabel = makeHealthLabel ();
-    healthLayout->addWidget (_poseIndicatorLabel);
+    _poseCollisionCapabilityLabel->setText (tr ("<b>Collision capability</b><br>-"));
+    healthLayout->addWidget (_poseIndicatorLabel, 1);
     for (QLabel* label : {_poseConditionLabel, _poseManipulabilityLabel,
                           _poseMarginLabel, _poseCollisionCapabilityLabel}) {
         QFrame* separator = new QFrame (_currentPoseTab);
         separator->setFrameShape (QFrame::VLine);
         separator->setFrameShadow (QFrame::Sunken);
         healthLayout->addWidget (separator);
-        healthLayout->addWidget (label);
+        healthLayout->addWidget (label, 1);
     }
-    healthLayout->addStretch (1);
     cpLayout->addWidget (healthFrame);
 
     // ---- Joint status is the only primary table. ----
@@ -1197,7 +1191,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     addModePage (_diagnoseWorkflowPage);
     addModePage (_validateWorkflowPage);
     addModePage (_exploreWorkflowPage);
-    _modeButtonGroup->button (0)->setChecked (true);
+    _modeTabs->setCurrentIndex (0);
     _modeStack->setCurrentIndex (0);
     updateMode2DataSource (_mode2DataSourceCombo->currentIndex ());
 
@@ -4127,15 +4121,23 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
         label->setTextFormat (Qt::RichText);
         label->setMinimumWidth (0);
         label->setWordWrap (true);
-        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+        label->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
         return label;
     };
     _workspaceSampleCountLabel = makeSummaryLabel ();
+    _workspaceSampleCountLabel->setObjectName (QStringLiteral ("workspaceSampleCountLabel"));
     _workspaceCollisionFreeLabel = makeSummaryLabel ();
+    _workspaceCollisionFreeLabel->setObjectName (
+        QStringLiteral ("workspaceCollisionFreeLabel"));
     _workspacePassLabel = makeSummaryLabel ();
+    _workspacePassLabel->setObjectName (QStringLiteral ("workspacePassLabel"));
     _workspaceWarningLabel = makeSummaryLabel ();
+    _workspaceWarningLabel->setObjectName (QStringLiteral ("workspaceWarningLabel"));
     _workspaceFailLabel = makeSummaryLabel ();
+    _workspaceFailLabel->setObjectName (QStringLiteral ("workspaceFailLabel"));
     _workspaceAvgManipulabilityLabel = makeSummaryLabel ();
+    _workspaceAvgManipulabilityLabel->setObjectName (
+        QStringLiteral ("workspaceAvgManipulabilityLabel"));
     const std::vector< std::pair< QLabel*, QString > > summaryLabels = {
         {_workspaceSampleCountLabel, tr("Samples")},
         {_workspaceCollisionFreeLabel, tr("Collision-free")},
@@ -4153,9 +4155,8 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
             separator->setFrameShadow (QFrame::Sunken);
             summaryRow->addWidget (separator);
         }
-        summaryRow->addWidget (summaryLabels[i].first);
+        summaryRow->addWidget (summaryLabels[i].first, 1);
     }
-    summaryRow->addStretch (1);
     layout->addLayout (summaryRow);
 
     layout->addWidget (_workspaceProgressBar);
@@ -4952,8 +4953,8 @@ void KinematicAnalysisWidget::openPoseReachabilityInVisualization ()
         if (index >= 0)
             _visualColorModeCombo->setCurrentIndex (index);
     }
-    if (_modeButtonGroup != NULL && _modeButtonGroup->button (2) != NULL)
-        _modeButtonGroup->button (2)->click ();
+    if (_modeTabs != NULL)
+        _modeTabs->setCurrentIndex (2);
     if (_exploreScroll != NULL && _visualizationTab != NULL)
         _exploreScroll->ensureWidgetVisible (_visualizationTab);
     refreshVisualization ();
@@ -6556,8 +6557,8 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
         if (idx >= 0)
             _tcpFrameCombo->setCurrentIndex (idx);
     }
-    if (_modeButtonGroup != nullptr && _modeButtonGroup->button (0) != nullptr)
-        _modeButtonGroup->button (0)->click ();
+    if (_modeTabs != nullptr)
+        _modeTabs->setCurrentIndex (0);
     if (_diagnoseScroll != nullptr && _ikTab != nullptr)
         _diagnoseScroll->ensureWidgetVisible (_ikTab);
     setStatus (tr ("Opened selected task point in Diagnose IK; previous results are stale."));
@@ -6997,8 +6998,8 @@ void KinematicAnalysisWidget::openWorkspaceInVisualization ()
         if (index >= 0)
             _visualColorModeCombo->setCurrentIndex (index);
     }
-    if (_modeButtonGroup != NULL && _modeButtonGroup->button (2) != NULL)
-        _modeButtonGroup->button (2)->click ();
+    if (_modeTabs != NULL)
+        _modeTabs->setCurrentIndex (2);
     if (_exploreScroll != NULL && _visualizationTab != NULL)
         _exploreScroll->ensureWidgetVisible (_visualizationTab);
     refreshVisualization ();
