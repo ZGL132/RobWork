@@ -21,6 +21,9 @@
 #include "KinematicAnalysisProjectDocument.hpp"
 #include "FrozenRequirementKinematicAdapter.hpp"
 #include "KinematicAnalysisWidget.hpp"
+#include "KinematicAnalysisPlotWidget.hpp"
+#include "KinematicPlotDialog.hpp"
+#include "KinematicThresholdsDialog.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementSetJson.hpp>
@@ -33,6 +36,9 @@
 #include <rws/RobWorkStudio.hpp>
 
 #include <QApplication>
+#include <QAction>
+#include <QCheckBox>
+#include <QLineEdit>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -42,12 +48,20 @@
 #include <QTemporaryDir>
 #include <QElapsedTimer>
 #include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QDialog>
 #include <QLabel>
 #include <QJsonArray>
 #include <QPushButton>
+#include <QPointer>
 #include <QSpinBox>
+#include <QScrollArea>
+#include <QStackedWidget>
 #include <QTableWidget>
+#include <QTableView>
 #include <QTabWidget>
+#include <QToolButton>
+#include <QMenu>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -96,6 +110,8 @@ static int require (bool condition, const std::string& what)
 // 子套件 ABI:验证 FrozenRequirementKinematicAdapter 的两个历史公开入口
 // (apply / applyWithValidation)仍能以既有的函数指针类型链接成功。
 // 目的是在重构、模板化或换签名时守住二进制接口,防止旧插件/调用方链接失败。
+// 补充说明:用 static_cast 到既有函数指针类型来强制符号地址可解析,若未来有人改动
+// 函数签名、模板化或删掉某入口,此处会编译失败,从源头守住二进制接口。
 static int testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ()
 {
     using Apply = bool (*) (const rws::FrozenRequirementArtifact&,
@@ -125,6 +141,10 @@ static int assertNear (double actual, double expected, double eps, const std::st
     return 0;
 }
 
+// 测试设备工厂 1:构造一个 7 自由度 Kuka IIWA 串联机器人(设备名 KukaIIWA)。
+// 关节 1..7 全部为旋转关节,限位对称(hi = -lo),角度约 ±(170/120/170/120/170/120/175) 度,
+// 每个关节用位置偏移 + RPY 描述,末端 TCP 固定于关节 7 上。
+// 该设备用于"当前位姿可达自身"这类需要完整 7-DOF IK 的测试。
 static rw::models::SerialDevice::Ptr makeTestKukaIIWA (
     rw::kinematics::StateStructure& stateStructure)
 {
@@ -178,6 +198,9 @@ static rw::models::SerialDevice::Ptr makeTestKukaIIWA (
     return device;
 }
 
+// 测试设备工厂 2:构造一个通用 6 轴串联机器人(设备名 GenericSixAxis)。
+// 关节限位非对称(J2/J3/J5 为 ±120°/±150°/±120°,J6 为 ±2π),用于区分
+// "可解析/不可达目标"以及大部分分析路径的测试;与 KukaIIWA 形成对照。
 static rw::models::SerialDevice::Ptr makeGenericSixAxis (
     rw::kinematics::StateStructure& stateStructure)
 {
@@ -232,6 +255,15 @@ static rw::models::SerialDevice::Ptr makeGenericSixAxis (
 //   - 校验 KinematicThresholds 的默认值与 KinematicAnalysisTypes 注释一致;
 //   - 校验 KinematicFailureReason 的相等语义;
 //   - 校验 toString 的几个代表值。
+// 补充说明:
+//   - 默认阈值逐项断言,与 KinematicAnalysisTypes 头文件注释值一致,防止改默认值
+//     而不同步文档;
+//   - KinematicFailureReason 的相等语义与 toString 的稳定字符串是诊断码/告警跨进程
+//     (JSON / UI / 日志)传递的基础,改动会造成下游解析断裂;
+//   - ConfigurationEvaluation 默认证据阶段(Quick)/可行性(NotEvaluated)/质量(Unknown)
+//     是"尚未求值"的协议约定;
+//   - 四个枚举的字符串往返(含拒绝未知字符串并给出 error)是严格类型解析的回归保障:
+//     编辑态 JSON 中的错误类型不得被静默降级为默认值。
 static int testTypes ()
 {
     rws::KinematicThresholds thresholds;
@@ -330,6 +362,14 @@ static int testTypes ()
 // 追加 KIN_REPORT_NONFINITE 诊断;要求等级(Should/Info)保真,未知等级被拒绝;
 // CSV 导出表头稳定;filterReportView 支持按证据阶段/可行性/失败原因/区域 id
 // 过滤且不修改源报告。
+// 关键非显而易见点:
+//   - 刻意把 currentPose / 候选 / 配置 / 区域单元格的各字段塞满 inf/NaN,以验证
+//     toObject 统一把非有限数写成 JSON null 并追加 KIN_REPORT_NONFINITE 诊断,
+//     而从 fromObject 读回后仍是非有限值(而非被截断成 0),保证往返不丢信息;
+//   - filteredTask 作为第二个任务结果,用于验证 level(Should/Info)保真与
+//     未知 level 被整体拒绝(不静默降级);
+//   - filterReportView 的四种过滤(证据阶段/可行性/失败原因/区域 id)均只影响视图,
+//     不得修改源报告;CSV 表头是稳定导出契约,改动会破坏下游解析。
 static int testReportJsonRoundTrip ()
 {
     rws::KinematicAnalysisReport report;
@@ -493,6 +533,8 @@ static int testReportJsonRoundTrip ()
                 !std::isfinite (decoded.regionResults.front ().cells.front ().position[0]),
             "report JSON round trips identity and provenance"))
         return rc;
+    // 篡改一个任务的 level 为未知值,验证反序列化整体拒绝(而非静默降级),
+    // 保证未知等级永远不会出现在下游分析结果中。
     QJsonObject unknownLevelObject = object;
     QJsonArray unknownLevelTasks = unknownLevelObject.value (QStringLiteral ("taskResults")).toArray ();
     QJsonObject unknownLevelTask = unknownLevelTasks.at (0).toObject ();
@@ -507,6 +549,7 @@ static int testReportJsonRoundTrip ()
                 !rejectionError.empty (),
             "report JSON rejects unknown task requirement levels"))
         return rc;
+    // CSV 导出:表头是稳定契约(供下游脚本/表格解析),并须保留任务的 level 字段。
     const std::string taskCsv = rws::KinematicAnalysisReportJson::taskCsv (report);
     const std::string regionCsv = rws::KinematicAnalysisReportJson::regionCsv (report);
     if (const int rc = require (
@@ -523,6 +566,8 @@ static int testReportJsonRoundTrip ()
             "region CSV uses the stable report header"))
         return rc;
 
+    // filterReportView 是只读视图:先记录源报告规模,再分别按证据阶段/可行性/
+    // 失败原因/区域 id 过滤,最后断言源报告完全未被修改。
     const std::size_t originalTaskCount = report.taskResults.size ();
     const std::size_t originalRegionCount = report.regionResults.size ();
     rws::KinematicAnalysisReportFilters filters;
@@ -575,6 +620,9 @@ static int testReportJsonRoundTrip ()
 // 子套件 批缓存键:验证 makeKinematicBatchCacheKey 把所有来源维度
 // (模型/环境/需求指纹、证据阶段、配置名、随机种子)都编码进缓存键字符串,
 // 并且仅改变随机种子就能得到不同的键,保证批量结果缓存不会串用。
+// 补充说明:批量结果缓存是"分析选项 -> 结果"的映射,任何来源维度(模型/环境/需求
+// 指纹、证据阶段、配置名、随机种子)变化都必须产生不同缓存键,否则会串用旧结果。
+// 这里验证全部维度都编码进字符串,且仅改随机种子 42->43 即得到不同键。
 static int testBatchCacheKey ()
 {
     const rws::KinematicBatchCacheKey base = rws::makeKinematicBatchCacheKey (
@@ -603,6 +651,13 @@ static int testBatchCacheKey ()
 // Device / TCP / 模型指纹 / 环境指纹时依次返回稳定的错误码(KIN_CONTEXT_*)。
 // 在能力缺失(如必需碰撞但无检测器)时仍能构造可求值上下文并记录显式告警,
 // 同时确认传入的 State 被深度拷贝到 context.baseState,不受外部改写影响。
+// 补充说明:
+//   - 错误码链顺序固定:NO_WORKCELL -> NO_DEVICE -> NO_TCP -> NO_MODEL_FINGERPRINT
+//     -> NO_ENVIRONMENT_FINGERPRINT,任何顺序变化都会破坏上层 UI 的提示逻辑;
+//   - 碰撞检测器缺失(collisionRequired=true)时仍构造成功但记录显式告警
+//     KIN_COLLISION_DETECTOR_UNAVAILABLE,而不是让调用方猜测能力缺失;
+//   - 最后验证 context.baseState 是输入 State 的深拷贝:外部改写 device 的 Q 后
+//     context.baseState 内位姿保持不变,保证分析不依赖调用方后续改动。
 static int testAnalysisContext ()
 {
     rws::AnalysisContextInput input;
@@ -679,6 +734,10 @@ static int testAnalysisContext ()
 // 必需碰撞检查但缺少碰撞检测器时结果为 DataInsufficient 且带
 // CollisionDetectorUnavailable 失败原因;可选碰撞检查则明确标记
 // collisionChecked=false,不做任何碰撞判定,避免误报"未检测即为无碰撞"。
+// 补充说明:这是"能力降级语义"的回归保障——必需碰撞但缺检测器时,结果必须是
+// DataInsufficient 并带 CollisionDetectorUnavailable 失败原因,而不是假装"未检测
+// 即无碰撞"而误判 Feasible;可选碰撞(collisionRequired=false)则显式标记
+// collisionChecked=false / inCollision=false,让上层 UI 明确显示"未做碰撞检查"。
 static int testConfigurationEvaluator ()
 {
     rw::kinematics::StateStructure::Ptr stateStructure =
@@ -732,6 +791,12 @@ static int testConfigurationEvaluator ()
 // TargetResidual 失败原因并记录 KIN_TARGET_RESIDUAL 告警;非有限残差一律
 // Fail 关闭(拒绝任何 NaN 解析)。同时验证 analyzeIk 对非有限目标返回
 // InvalidTarget,对有效目标但缺失设备返回 NoDevice,失败原因不被吞掉。
+// 补充说明:classifyTargetResidual 的容差来源是 KinematicThresholds 的
+// positionToleranceMeters / orientationToleranceDeg;位置残差 0.5mm < 1mm 通过,
+// 2mm > 1mm 失败并同时记录失败原因与 KIN_TARGET_RESIDUAL 告警;
+// 非有限残差"失败关闭"(fail-closed),拒绝任何 NaN 被当作可解;
+// analyzeIk 对非有限目标返回 InvalidTarget、对有效目标但 NULL 设备返回 NoDevice,
+// 确保失败原因不被通用逻辑吞掉。
 static int testTargetValidationAndResidual ()
 {
     rws::KinematicThresholds thresholds;
@@ -806,6 +871,9 @@ static int testTargetValidationAndResidual ()
 // 子套件 单位换算:验证长度单位(米→毫米、厘米→米)与角度单位
 // (度→弧度、圈→度)的显示换算精度,以及长度/角度单位的
 // toString 与 unitSuffix("rad")稳定输出,保证 UI 显示与导出一致。
+// 补充说明:显示单位换算用于 UI 输入/显示与导出的一致性,改动会导致用户看到的数值
+// 与实际分析单位不符;这里对四组换算(米->毫米、厘米->米、度->弧度、圈->度)做高精度
+// 断言,并锁定长度/角度单位的 toString 与 unitSuffix(如 "rad")稳定输出。
 static int testPoseUnitConversions ()
 {
     if (const int rc = assertNear (
@@ -841,6 +909,11 @@ static int testPoseUnitConversions ()
 // 验证非 NULL 路径:报告的位姿与 FK 结果一致,且雅可比维度、最小关节裕度、
 // 条件数、可操作性等指标与 ConfigurationEvaluator 直接求值的结果完全一致,
 // 证明"当前位姿"只是配置求值的一个视图。
+// 补充说明:
+//   - 第一部分验证 NULL 设备降级(Fail + 告警 + 空设备名),并确认阈值可读写;
+//   - 第二部分用真实六轴设备验证"当前位姿"只是配置求值的一个视图:FK 位姿、
+//     雅可比维度、最小关节裕度、条件数、可操作性全部与 ConfigurationEvaluator
+//     直接求值一致,任何一处偏差都说明 analyzeCurrentPose 没有正确委托。
 static int testCurrentPose ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -913,6 +986,10 @@ static int testCurrentPose ()
 // 对 100 米外的目标报告 IkNoSolution,对缺失参考系报告 FrameNotFound,
 // 并保留目标 id 与失败原因;同时确认旧 analyzeIk 入口能穿透到同一套逻辑,
 // 保持向后兼容。
+// 补充说明:三个场景分别覆盖"可行"(当前 FK 位姿)、"不可达"(100 米外,期望
+// IkNoSolution)、"参考系缺失"(FrameNotFound),并逐一断言目标 id 保真;
+// 最后的 legacy analyzeIk 调用验证新旧入口穿透到同一套 TargetEvaluator 逻辑,
+// 保持向后兼容——旧插件/调用方不会因重构而链接失败。
 static int testTargetEvaluator ()
 {
     rw::kinematics::StateStructure::Ptr stateStructure =
@@ -1009,6 +1086,9 @@ static int testTargetEvaluator ()
 // 子套件 候选排序:验证 sortTargetCandidatesForDisplay 的显示优先级链——
 // 无碰撞候选排在碰撞候选之前(碰撞候选排最后);在残差相同时用最小关节裕度
 // 与可操作性打破平局;完全相同时按 Q 字典序保证排序确定性,便于 UI 稳定展示。
+// 补充说明:排序优先级链为"无碰撞 > 残差小 > 关节裕度/可操作性 > Q 字典序",
+// 碰撞候选总是最后。构造 5 个候选分别命中链上的不同环节,验证
+// sortTargetCandidatesForDisplay 稳定、可预期,保证 UI 展示不抖动。
 static int testTargetCandidateOrdering ()
 {
     rws::TargetCandidate collisionCandidate;
@@ -1066,6 +1146,12 @@ static int testTargetCandidateOrdering ()
 // mustTaskFeasibleCount;任一 Must 任务不可达则整批 Infeasible,而 Should/Info
 // 失败不会改变 Must 可行性;被 Excluded 的任务保持 NotEvaluated。
 // 这正是"Must 是硬约束、Should/Info 仅供参考"语义的回归保障。
+// 补充说明:makeTask lambda 按 id/level/reachable 构造任务,其中可达目标取"当前 FK
+// 位姿"、不可达目标取 (100,100,100);6 个任务中 2 个 Included Must 可达、1 个
+// Included Must 不可达、Should/Info 各 1 个不可达、1 个 Excluded Must;
+// 断言 mustTaskCount=3 / mustTaskFeasibleCount=2、整批 Infeasible、Excluded 保持
+// NotEvaluated;删除不可达 Must 后 Should/Info 失败不再影响整批(Feasible),
+// 这是"Must 是硬约束、Should/Info 仅供参考"的语义回归。
 static int testKinematicBatchRunnerMustOnlyAggregation ()
 {
     rw::kinematics::StateStructure::Ptr stateStructure =
@@ -1171,6 +1257,8 @@ static int testKinematicBatchRunnerMustOnlyAggregation ()
         "Should and Info failures do not change Must feasibility");
 }
 
+// 取消回调:第二次检查时返回 true(第一次返回 false),让"第一个任务求值后、第二个
+// 任务求值前"触发取消,从而验证取消语义发生在批处理任务之间。
 static bool cancelAfterFirstBatchCheck (void* userData)
 {
     int* checks = static_cast< int* > (userData);
@@ -1180,6 +1268,9 @@ static bool cancelAfterFirstBatchCheck (void* userData)
 // 子套件 批处理取消:验证取消回调在第二个任务求值前触发时,只保留已完成的
 // 任务结果,整批状态为 DataInsufficient,并携带 KIN_BATCH_CANCELLED 告警——
 // 取消不是"当作失败",而是明确表示"数据不足,结果不完整"。
+// 补充说明:取消语义——不是"当作失败",而是 DataInsufficient + KIN_BATCH_CANCELLED;
+// 只保留已完成的任务结果,未求值的任务不合成占位结果,防止 UI 把"取消"误显示为
+// 失败或成功。这里用空 AnalysisContext 即可,因为取消发生在任何任务求值之前。
 static int testKinematicBatchRunnerCancellation ()
 {
     rws::RequirementExecutionSet requirements;
@@ -1213,6 +1304,8 @@ static int testKinematicBatchRunnerCancellation ()
 
 // 子套件 批处理器入口:把"Must 聚合"与"取消"两条路径串行跑一遍,
 // 首条失败即返回,作为 validateRequirements 的外部观察点。
+// 补充说明:批处理器入口的对外观察点,串行跑"Must 聚合"与"取消"两个子用例,
+// 首个失败即返回,作为 CTest 单独跑 "batch" 子套件时的执行入口。
 static int testKinematicBatchRunner ()
 {
     if (const int rc = testKinematicBatchRunnerMustOnlyAggregation ())
@@ -1224,6 +1317,10 @@ static int testKinematicBatchRunner ()
 // Must 区域数据不足时整批状态为 DataInsufficient/Critical(不被 Should 任务
 // 结果稀释);正确统计 Included 的 Must 任务/区域数量与可行数;保留 provenance;
 // 去掉区域后仅 Must 任务可行即整批 Feasible,证明 Should 失败不影响 Must。
+// 补充说明:buildRequirementValidationSummary 是"把各任务/区域结果聚合成整批结论"
+// 的纯函数;Must 区域 DataInsufficient 时整批必须 DataInsufficient/Critical,不被
+// Should 任务结果稀释;统计只算 Included 的 Must 项;去掉区域后仅 Must 任务可行即
+// 整批 Feasible,证明 Should 失败不影响 Must。
 static int testRequirementValidationSummary ()
 {
     rws::RequirementExecutionSet requirements;
@@ -1290,6 +1387,9 @@ static int testRequirementValidationSummary ()
 // 子套件 转发:验证 KinematicAnalyzer::validateRequirements 只是把批处理器
 // 的汇总结果原样转发——Excluded 任务仍出现在 taskResults 中但不计入 Must 计数,
 // 空 Must 时状态为 NotEvaluated,保证高层入口不改变低层语义。
+// 补充说明:KinematicAnalyzer::validateRequirements 只是转发批处理器的汇总,高层
+// 入口不得改变低层语义:Excluded 任务仍出现在 taskResults(供 UI 展示)但不计入
+// mustTaskCount;空 Must 时状态为 NotEvaluated(而非 Feasible/Infeasible)。
 static int testKinematicAnalyzerRequirementValidationForwarding ()
 {
     rws::RequirementExecutionSet requirements;
@@ -1318,6 +1418,12 @@ static int testKinematicAnalyzerRequirementValidationForwarding ()
 // Fixed(用固定 RPY)、AlignFrame(对齐目标 frame 姿态)、AlignGeometryNormal
 // (对齐 frame 的 Z 轴)、PointAtTarget(指向目标点并按 rollSamples 扩展绕 Z 旋转),
 // 并验证各模式产出的目标姿态数值;非法几何引用/缺失 frame/坏指向点均拒绝。
+// 补充说明:此用例覆盖 Verified 区域的"网格生成 + 目标生成"两层;
+// generateGrid 对非法输入(尺寸<=0 / 采样<2 / 未知参考系)返回 DataInsufficient,
+// 2x2x2 区域生成 8 个单元且索引/角点坐标确定可预测(供测试与 UI 复用);
+// generateTargets 的四种朝向模式逐一验证数值:Fixed 用固定 RPY、AlignFrame 用目标
+// frame 姿态、AlignGeometryNormal 用目标 frame 的 Z 轴、PointAtTarget 指向目标点并
+// 按 rollSamples 绕工具 Z 扩展;非法几何引用/缺失 frame/坏指向点均拒绝。
 static int testVerifiedRegionGridGeneration ()
 {
     rw::kinematics::StateStructure::Ptr stateStructure =
@@ -1541,6 +1647,11 @@ static int testVerifiedRegionGridGeneration ()
 // 必需碰撞检查缺检测器在求值前即 DataInsufficient;超大方向/滚转采样被
 // KIN_REGION_SAMPLING_LIMIT 拒绝;取消时保留已采样部分(标记部分进度)但整体
 // 不通过,并带 KIN_REGION_CANCELLED 告警。
+// 补充说明:对 100 米外的不可达区域,整区域 Infeasible 且每个单元恰好采样/求值一次
+// (sampledOrientations == totalCells == 8);把覆盖率阈值降为 0 后 Feasible;
+// 必需碰撞缺检测器在求值前即 DataInsufficient;超大方向/滚转采样被
+// KIN_REGION_SAMPLING_LIMIT 拒绝(防无限运行);取消时保留已采样部分(partial 进度)
+// 但整体不通过,并带 KIN_REGION_CANCELLED 告警。
 static int testVerifiedRegionTargetEvaluation ()
 {
     rw::kinematics::StateStructure::Ptr stateStructure =
@@ -1653,6 +1764,9 @@ static int testVerifiedRegionTargetEvaluation ()
 //   - q=-1  → 超出 [0,10] → Fail,至少一条警告;
 //   - 对角 J=[4,2]  → σ={4,2}, κ=2, manipulability=8, Pass;
 //   - 对角 J=[4,0]  → κ=∞, Fail, 至少一条警告。
+// 补充说明:关节裕度取"离上下限距离的最小值 / 关节范围",阈值 nearJointLimitRatio
+// 默认 0.05;SVD 指标用对角雅可比直接构造,避免数值求解器带来的不确定性;
+// 奇异配置([4,0])条件数为 inf 且 Fail,验证"奇异 = 不可用"而非静默通过。
 static int testMetrics ()
 {
     using namespace rw::math;
@@ -1753,6 +1867,10 @@ static int testMetrics ()
 // 子套件 4:sortIkSolutionsForDisplay 的优先级链。
 // 准备 4 条解:colliding / worseResidual / betterMargin / lowerDistance;
 // 排序后应当是 lowerDistance → betterMargin → worseResidual → colliding。
+// 补充说明:排序链 lowerDistance -> betterMargin -> worseResidual -> colliding;
+// addUniqueIkCandidate 用阈值合并邻近候选,并只对回转关节做周期归并(revolutionMask),
+// 避免把 ±π 的同一姿态当两个解;countUsableIkSolutions 排除 Fail;
+// summarizeIkSolutions 统计 pass/warning/fail/usable 计数,供 UI 汇总展示。
 static int testIkRanking ()
 {
     std::vector< rws::KinematicIkSolution > solutions;
@@ -1862,6 +1980,10 @@ static int testIkRanking ()
 // 子套件 IK 当前解:当目标恰好是设备当前 TCP 位姿时,IK 结果中必须包含一条
 // 距当前 Q 距离为 0 的 Pass 解(放宽条件数/可操作性阈值以免奇异配置误判)。
 // 这保证"当前位置可达自身"这一平凡事实总被识别,UI 不会误报原地不可达。
+// 补充说明:平凡事实回归——"当前位姿可达自身"。目标=当前 TCP 位姿时,IK 结果中必须
+// 含距离当前 Q 为 0 的 Pass 解;放宽条件数/可操作性阈值是为了避免奇异配置误判,
+// 但位置/姿态残差仍用标准容差,确保不是"随便一条解就算通过"。
+// 使用 7-DOF KukaIIWA 而非 6 轴,以保证 IK 有解且解集包含当前位姿。
 static int testIkIncludesCurrentQForCurrentTcpTarget ()
 {
     rw::kinematics::StateStructure stateStructure;
@@ -1914,6 +2036,9 @@ static int testIkIncludesCurrentQForCurrentTcpTarget ()
 // 子套件 IK 去重阈值:同一当前 TCP 目标下,把 ikDuplicateQThreshold 从默认
 // 1e-4 放大到 0.01 后,analyzeIk 返回的解应显著变少——证明该阈值控制着
 // 邻近候选的合并强度,是展示层去重的关键旋钮。
+// 补充说明:把 ikDuplicateQThreshold 从默认 1e-4 放大到 0.01 后,analyzeIk 返回的解
+// 显著变少,证明该阈值控制邻近候选的合并强度,是展示层去重的关键旋钮;
+// 若未来实现把去重与求解解耦,此用例会立即失败提醒维护者。
 static int testIkDuplicateThresholdControlsCandidateMerging ()
 {
     rw::kinematics::StateStructure stateStructure;
@@ -1959,6 +2084,9 @@ static int testIkDuplicateThresholdControlsCandidateMerging ()
 // 只除以启用(enabled)任务数——2 Pass + 1 Warning + 1 Fail + 1 disabled 得 3/4;
 // 全部 disabled 时得 0(避免除零),全部 Pass 得 1。另验证空的批量请求是成功的
 // no-op,不合成任何占位结果。
+// 补充说明:可达率 = Pass+Warning 数 / enabled 数(disabled 不计入分母);
+// 2 Pass + 1 Warning + 1 Fail + 1 disabled 得 3/4;全部 disabled 得 0 避免除零;
+// 全部 Pass 得 1;最后验证空批量请求是成功 no-op,不合成占位结果。
 static int testTaskPointReachableRate ()
 {
     // 2 pass + 1 warning + 1 fail + 1 disabled:
@@ -2015,6 +2143,11 @@ static int testTaskPointReachableRate ()
 }
 
 // 子套件 6a:KinematicAnalysisWorkspace helper — sanitize config / planned count / summary。
+// 补充说明:三个独立小用例——(1) sanitize 把负 sampleCount 收敛为 0、gridSteps 收敛为
+// 1、随机种子 0 调整为 1,并逐项记录诊断;(2) Grid 模式下计划采样数受 sampleCount
+// 上限约束,理论网格数 4096(=4^6)被截断并记录;(3) summarizeWorkspaceSamples 的
+// 计数、平均可操作性(pass/warning 平均)、p10 分位、有限 max 条件数(忽略 inf)
+// 与最小裕度。
 static int testWorkspaceHelpers ()
 {
     {
@@ -2134,6 +2267,11 @@ static int testWorkspaceHelpers ()
 }
 
 // 子套件 7a:PoseReachability 辅助— sanitize / planned count / summary。
+// 补充说明:四组用例——(1) sanitize 把负 directionSamples 收敛为 0、rollSamples 收敛
+// 为 1;(2) 24 方向 x 3 滚转的计划数 720(10 个位置 => 每位置 72 方向);
+// (3) P7 关键边界:诊断用目标数被 MaxPoseReachabilityTargets 封顶(防 UI 卡死),
+// 而执行计数 uncapped(真实求解用),1000 方向 x 360 滚转 x 3 位置 = 1080000 不溢出;
+// (4) summarizePoseReachabilitySamples 汇总覆盖率/部分进度/计划与完成 IK 数。
 static int testPoseReachabilityHelpers ()
 {
     {
@@ -2258,6 +2396,11 @@ static int testPoseReachabilityHelpers ()
 }
 
 // 子套件 7:sampleWorkspace 在 NULL / 0 / 负 sampleCount / Grid 模式下的快速返回路径。
+// 补充说明:四个快速返回路径(sampleCount=0 / 负 / NULL 设备 / NULL 设备+Grid)都返回空;
+// P9 取消回调验证:取消后返回已完成数量的样本,进度回调至少 2 次且最后报告
+// completed=取消数、planned=20;Estimated 采样是"确定性、带元数据、FK 证据"
+// ——同种子重复采样结果一致、stage=Estimated、保留 seed/count、collisionChecked=false;
+// 必需碰撞缺检测器时首样本 DataInsufficient。
 static int testWorkspaceSampling ()
 {
     rws::KinematicAnalyzer analyzer;
@@ -2408,6 +2551,11 @@ static int testWorkspaceSampling ()
 }
 
 // Task 9 / S13:方向采样与滚转采样必须分别表达工具 Z 方向和绕工具 Z 的姿态自由度。
+// 补充说明:方向采样与滚转采样分别表达"工具 Z 方向"与"绕工具 Z 的姿态自由度";
+// 4 方向 x 2 滚转 = 8 个目标,滚转样本必须保持工具 Z 方向不变而让 X/Y 轴反向旋转
+// (dot < -0.999);isDirectionTargetReachable 只看工具 Z(滚转残差不破坏方向可达),
+// isOrientationTargetReachable 则要求完整姿态(滚转残差 90 度不可达);
+// 位置残差超容差或工具轴残差(5 度)都会拒绝方向可达。
 static int testOrientationCoverageSampling ()
 {
     rws::PoseReachabilityConfig config;
@@ -2490,6 +2638,14 @@ static int testOrientationCoverageSampling ()
 }
 
 // 子套件 7:analyzePoseReachability 在 NULL device / directionSamples=0 时的兜底。
+// 补充说明:先验证默认配置(24 方向 / 1 滚转 / 碰撞检查开);NULL 设备下按方向数采样、
+// 可达数全 0、coverage 0、status Fail;directionSamples=0 时样本数为 0;
+// splitCoverage 验证 direction 与 orientation 计数分离(4 方向 x 2 滚转 = 8 姿态),
+// 并保留 legacy coverage == orientationCoverage 的映射;
+// P4 负 roll 被 sanitize 为 1;P5 预取消在 position 边界生效、单 position 内取消在
+// IK target 循环内生效并标记 partial;进度回调每个 IK target 一次;
+// P10 可达配置保存代表 Q、方向/滚转索引;P7 多位置 2 位置 x 2 方向 x 2 滚转 = 8 个
+// IK target 的总进度。
 static int testPoseReachability ()
 {
     rws::PoseReachabilityConfig config;
@@ -2808,6 +2964,9 @@ static int testPoseReachability ()
 //   - 包含 1 个 Fail 任务点时,总 status 是 Fail;
 //   - reachableRate = 0.5(1 Pass + 1 Fail);
 //   - manipulabilityMap 至少有 min/max/mean。
+// 补充说明:buildAggregateResult 把当前位姿/任务点/工作区/位姿可达四类结果合成总览;
+// 任一 Fail 任务点 => 总 status Fail、feasibility Infeasible、quality Critical;
+// reachableRate 0.5(1 Pass + 1 Fail);manipulabilityMap 至少含 min/max/mean。
 static int testAggregateResult ()
 {
     rws::KinematicCurrentPoseResult current;
@@ -2873,6 +3032,14 @@ static int testAggregateResult ()
 //  再 addFrame 到 StateStructure 上,然后用 WorkCell 包装,验证
 //  refFrame / tcpFrame 在不同 frame 下的解析行为。
 // ============================================================================
+// 补充场景说明:
+//   - FixtureA 挂在设备 base 下(偏移 0.5,0,0),ToolTip 挂在设备 end 下,
+//     ForeignTcp 挂在场景根下(不在所选设备运动链上);
+//   - 归属校验是核心:全局可解析但不在所选设备运动链上的 Frame 不能被当作本设备
+//     TCP(稳定告警 KIN_TASK_TCP_WRONG_DEVICE),防止跨设备误用 TCP;
+//   - 数值验证:base 参考系下数值原样保留;named frame 参考系下数值变换到 base;
+//     空 tcpFrame 回退默认 TCP;空 tcpFrame + 空默认 TCP 报 NoTcpFrame;
+//   - 未知参考系/TCP 分别返回 InvalidTarget/NoTcpFrame 并带对应告警码。
 static int testTaskPointResolver ()
 {
     using namespace rw::kinematics;
@@ -3100,6 +3267,10 @@ static int testTaskPointResolver ()
 //    - unknown refFrame / tcpFrame → resolver invalid → Fail;
 //    - WORLD / device base 成功路径 → 调用旧 analyzeIk。
 // ============================================================================
+// 补充说明:workcell-aware analyzeTaskPoint 把 resolver(参考系/TCP 解析)接到
+// analyzeIk 之前;disabled 任务返回 Warning + KIN_TASK_DISABLED 且不产生解;
+// 未知参考系/TCP 直接 Fail 且 primaryFailure 是 InvalidTarget/NoTcpFrame;
+// WORLD 成功路径穿透到 analyzeIk;批量可达率统计中 disabled 不计入分母。
 static int testWorkcellAwareAnalyzeTaskPoint ()
 {
     using namespace rw::kinematics;
@@ -3229,6 +3400,15 @@ static int testWorkcellAwareAnalyzeTaskPoint ()
 }
 
 // runAll:把所有子套件串行跑一遍,首个失败立即返回。
+// 子套件 UI 逻辑辅助函数:全部为纯函数/列定义/导入辅助,不需要 QApplication。
+//   - ikCollisionCheckRequested:碰撞复选框(存在/勾选)与 legacy 碰撞分析的关系;
+//   - visualEnvelopeModeAvailable / visualEnvelopeDirectionChangeSupersedesRequest /
+//     visualEnvelopeStateChangeRequiresRefresh:包络可视化模式/状态/方向的刷新规则;
+//   - taskPointCompactTableColumns / taskPointDetailColumns:紧凑/详情列集合的契约,
+//     紧凑列不含位姿与 BestQ(留给详情列);
+//   - defaultTcpFrameName:设备 TCP 默认取设备末端 frame(NULL 设备为空);
+//   - analyzeSelectedTaskPointRows:只重新分析选中行,未选中行保留上次结果;
+//   - taskPointFromCurrentTcpPose:从当前 TCP 位姿导入任务点(参考系=设备 base)。
 static int testTaskPointUiLogic ()
 {
     if (const int rc = require (rws::ikCollisionCheckRequested (true, true),
@@ -3384,6 +3564,12 @@ static int testTaskPointUiLogic ()
 // 子套件:P3 TaskPointTableModel 数据层单测。
 // 覆盖:列数 27、header 文本、insertRows / removeRows、setData 字段、
 // validation 行为、result 列只读、Q_OBJECT 兼容(QModelIndex)。
+// 补充说明:数据层契约的核心断言——27 列与列头固定;显示单位(毫米/弧度)只影响表
+// 展示,存储与分析仍是米/度;result 列(ColStatus 起)只读;非法数值输入返回 false
+// 且不污染已有值;setRowsFromTaskPoints 覆盖式导入后立即 validateAll;
+// 稳定任务 ID 是模型身份边界:重复 ID 导入保留首行、append 重复 ID 拒绝、编辑 ID
+// 不得引入重复;applyResultsByTaskId 只作用于唯一 ID;
+// 多行插入自动生成未占用的稳定默认 ID(P1/P2/P4/P3)。
 static int testTaskPointModel ()
 {
     using namespace rws;
@@ -3520,12 +3706,62 @@ static int testTaskPointModel ()
                                 "summary points to row 2"))
         return rc;
 
+    // Stable task IDs are the model identity boundary. Imports retain the
+    // first occurrence and later duplicate sources cannot target one visual
+    // row while silently leaving another row with the same identity stale.
+    TaskPoint duplicateA = a;
+    duplicateA.name = "duplicate A";
+    TaskPoint distinct = a;
+    distinct.id = "C";
+    model.setRowsFromTaskPoints ({a, duplicateA, distinct});
+    if (const int rc = require (model.rowCount () == 2 &&
+                                model.taskPointAt (0).id == "A" &&
+                                model.taskPointAt (0).name == "A" &&
+                                model.taskPointAt (1).id == "C",
+                                "duplicate task IDs are normalized at import preserving the first row"))
+        return rc;
+    if (const int rc = require (model.appendTaskPoint (duplicateA) == -1 &&
+                                model.rowCount () == 2,
+                                "duplicate task IDs are rejected when appended"))
+        return rc;
+    if (const int rc = require (!model.setData (model.index (1, ColId),
+                                                QStringLiteral ("A")) &&
+                                model.taskPointAt (1).id == "C",
+                                "editing a task ID cannot introduce a duplicate"))
+        return rc;
+    TaskPointReachabilityResult canonicalResult;
+    canonicalResult.taskPoint = a;
+    canonicalResult.status = AnalysisStatus::Pass;
+    model.applyResultsByTaskId ({canonicalResult});
+    const std::vector< TaskPointReachabilityResult > canonicalResults = model.results ();
+    if (const int rc = require (canonicalResults.size () == 1 &&
+                                canonicalResults.front ().taskPoint.id == "A",
+                                "result application targets exactly one canonical task ID"))
+        return rc;
+
+    TaskPoint p1 = a;
+    p1.id = "P1";
+    TaskPoint p3 = a;
+    p3.id = "P3";
+    model.setRowsFromTaskPoints ({p1, p3});
+    if (const int rc = require (model.insertRows (1, 2) && model.rowCount () == 4 &&
+                                model.taskPointAt (0).id == "P1" &&
+                                model.taskPointAt (1).id == "P2" &&
+                                model.taskPointAt (2).id == "P4" &&
+                                model.taskPointAt (3).id == "P3",
+                                "multi-row insertion generates unused stable default IDs"))
+        return rc;
+
     return 0;
 }
 
 // 项目文档只保存工程师可编辑的分析配置。该回归用例刻意不构造任何分析结果，
 // 以防后续实现为了方便而把大量、可重新计算的 workspace/IK 结果写入 rwproj 资源。
 // 同时验证设备和 TCP 仅以名称保存，项目文档不应携带机器相关的绝对文件路径。
+// 补充说明:工程文档只持久化"可编辑配置",刻意不写入 workspaceSamples/analysisResults
+// 这类可重算结果;设备与 TCP 仅以名称保存、不含机器相关绝对路径;
+// ikDuplicateQThreshold 在顶层与阈值结构内双写且保持同步,并兼容 schema v1 的单一
+// 字段(thresholdIkDuplicateQ / ikDuplicateQThreshold)读入,保证旧工程可迁移。
 static int testProjectDocumentRoundTrip ()
 {
     rws::KinematicAnalysisProjectSettings original;
@@ -3535,6 +3771,8 @@ static int testProjectDocumentRoundTrip ()
     original.workspace.sampleCount = 2400;
     original.workspace.randomSeed = 17;
     original.poseReachability.directionSamples = 36;
+    original.ikDuplicateQThreshold = 0.0042;
+    original.thresholds.ikDuplicateQThreshold = 0.0042;
     // 可视化偏好是配置的一部分，但分析点与渲染结果不是；这里使用布尔开关验证该边界。
     original.showLabels = true;
 
@@ -3555,6 +3793,16 @@ static int testProjectDocumentRoundTrip ()
                                 "project document excludes absolute paths"))
         return rc;
 
+    const QJsonObject serializedSettings = QJsonDocument::fromJson (json).object ()
+        .value (QStringLiteral ("settings")).toObject ();
+    if (const int rc = require (
+            serializedSettings.contains (QStringLiteral ("ikDuplicateQThreshold")) &&
+                serializedSettings.contains (QStringLiteral ("thresholdIkDuplicateQ")) &&
+                serializedSettings.value (QStringLiteral ("ikDuplicateQThreshold")).toDouble () ==
+                    serializedSettings.value (QStringLiteral ("thresholdIkDuplicateQ")).toDouble (),
+            "project document writes synchronized duplicate-Q fields"))
+        return rc;
+
     rws::KinematicAnalysisProjectSettings decoded;
     QString error;
     if (const int rc = require (rws::KinematicAnalysisProjectDocument::fromJson (
@@ -3570,6 +3818,32 @@ static int testProjectDocumentRoundTrip ()
                                     decoded.manualPosePositions.size () == 1,
                                 "project document preserves authored task and pose inputs"))
         return rc;
+    QJsonObject legacyRoot = QJsonDocument::fromJson (json).object ();
+    QJsonObject legacySettings = legacyRoot.value (QStringLiteral ("settings")).toObject ();
+    legacySettings.remove (QStringLiteral ("ikDuplicateQThreshold"));
+    legacySettings[QStringLiteral ("thresholdIkDuplicateQ")] = 0.0075;
+    legacyRoot[QStringLiteral ("settings")] = legacySettings;
+    rws::KinematicAnalysisProjectSettings legacyDecoded;
+    if (const int rc = require (
+            rws::KinematicAnalysisProjectDocument::fromJson (
+                QJsonDocument (legacyRoot).toJson (), legacyDecoded, &error) &&
+                nearlyEqual (legacyDecoded.ikDuplicateQThreshold, 0.0075) &&
+                nearlyEqual (legacyDecoded.thresholds.ikDuplicateQThreshold, 0.0075),
+            "schema v1 legacy duplicate-Q field synchronizes both settings"))
+        return rc;
+    QJsonObject currentRoot = QJsonDocument::fromJson (json).object ();
+    QJsonObject currentSettings = currentRoot.value (QStringLiteral ("settings")).toObject ();
+    currentSettings.remove (QStringLiteral ("thresholdIkDuplicateQ"));
+    currentSettings[QStringLiteral ("ikDuplicateQThreshold")] = 0.0065;
+    currentRoot[QStringLiteral ("settings")] = currentSettings;
+    rws::KinematicAnalysisProjectSettings currentDecoded;
+    if (const int rc = require (
+            rws::KinematicAnalysisProjectDocument::fromJson (
+                QJsonDocument (currentRoot).toJson (), currentDecoded, &error) &&
+                nearlyEqual (currentDecoded.ikDuplicateQThreshold, 0.0065) &&
+                nearlyEqual (currentDecoded.thresholds.ikDuplicateQThreshold, 0.0065),
+            "schema v1 current duplicate-Q field synchronizes both settings"))
+        return rc;
     return assertNear (decoded.workspace.sampleCount, original.workspace.sampleCount, 0.0,
                        "project document workspace sample count");
 }
@@ -3584,6 +3858,19 @@ static int testProjectDocumentRoundTrip ()
 //     均返回稳定错误码,且失败时绝不改写调用方输出(原子性);
 //   - 项目整体迁移后 provenance 重定位;机器人 jog/模型 TCP 变更/场景状态变更时
 //     的接受或拒绝行为;解析嵌套在 RequirementSet 根对象里的 frozenArtifact。
+// 补充关键点:
+//   - 工位任务点非 WORLD 工装参考系(Fixture_A)、TCP(ToolTCP)与姿态解析证据
+//     (resolutionEvidence)须无损进入 TaskPoint;
+//   - Included 覆盖盒逐字段无损进入执行输入,Info 级 audit_workspace 被排除;
+//   - v4 执行契约(applyExecutionSet)完整保留条目集合与 provenance(含 sourcePath);
+//   - v3 工件可导入 Quick(要求重冻结 REQ_V3_REQUIRES_REFREEZE)、拒绝 Verified;
+//     只有 Quick 区域的 v4 工件被 Verified 分析拒绝(REQ_VERIFIED_REGION_POLICY_MISSING);
+//   - 失败原子性:校验失败时调用方输出完全不变(sentinel 哨兵);
+//   - 项目迁移后 provenance 按新根重定位;机器人 jog 允许但报告 robotStateChanged;
+//     源文件内容变更给出告警但不阻断;机器人模型/TCP 变更拒绝并要求重冻结;
+//     场景状态(工装移动)变更拒绝;
+//   - 冻结工件可嵌套在 RequirementSet 根对象的 frozenArtifact 字段,未冻结项目
+//     必须报"not frozen"而非误导性"schema 不支持"。
 static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
 {
     // 运动学分析只能读取已经冻结的编译结果。测试同时验证非 WORLD 工装参考系、
@@ -3766,6 +4053,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                                    validatedInput.workspaceRegions.size() == 1,
                                "validated kinematic input preserves included task and region")) return rc;
 
+    // v4 执行契约导入路径:把完整条目集合与 provenance(需求/模型/场景/环境指纹、
+    // 编译器版本、冻结时间、源路径)整体搬入执行输入,防止任何字段跨界传输时丢失。
     rws::RequirementExecutionSet importedExecution;
     error.clear();
     if (const int rc = require(
@@ -3806,10 +4095,13 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                     artifact.execution.workspaceRegions.front().provenance.sourceKind,
             "execution contract import preserves item provenance")) return rc;
 
+    // 稳定错误码判定:允许"精确匹配"或"码:前缀匹配"(错误码可能带冒号后附详情)。
     const auto hasStableErrorCode = [] (const std::string& value, const std::string& code) {
         return value == code || value.rfind(code + ":", 0) == 0;
     };
 
+    // 把 v4 工件的一个区域降为 Quick-only 验证阶段,用于断言 Verified 分析会拒绝它
+    // (REQ_VERIFIED_REGION_POLICY_MISSING),且失败时调用方输出不被改写(原子性)。
     rws::FrozenRequirementArtifact quickOnlyV4 = artifact;
     quickOnlyV4.compiled.workspaceRegions.front().minimumVerificationStage =
         rws::RequirementVerificationStage::Quick;
@@ -3835,6 +4127,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                 unchangedExecution.tasks.front().id == "sentinel",
             "failed Verified import leaves caller execution output unchanged")) return rc;
 
+    // 构造 v3 老工件(schemaVersion=3、无执行契约):Quick 分析可导入并自动降级区域、
+    // 记录 REQ_V3_REQUIRES_REFREEZE 诊断;Verified 分析必须拒绝并要求重新冻结。
     rws::FrozenRequirementArtifact legacyV3 = artifact;
     legacyV3.schemaVersion = 3;
     legacyV3.executionFingerprint.clear();
@@ -3884,6 +4178,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(hasStableErrorCode(error, "REQ_V3_REQUIRES_REFREEZE"),
                                "v3 Verified import requires refreeze")) return rc;
 
+    // 缺少 schemaVersion 的工件必须被拒绝(REQ_SCHEMA_UNSUPPORTED),而不是被当作
+    // 某种默认版本导入。
     QJsonObject missingSchemaObject =
         rws::FrozenRequirementArtifactJson::toObject(artifact);
     missingSchemaObject.remove("schemaVersion");
@@ -3896,6 +4192,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(hasStableErrorCode(error, "REQ_SCHEMA_UNSUPPORTED"),
                                "missing schema reports REQ_SCHEMA_UNSUPPORTED")) return rc;
 
+    // 缺少模型指纹的工件被拒绝(REQ_MODEL_FINGERPRINT_MISSING)——冻结结果不能在没有
+    // 模型身份校验的情况下进入分析。
     rws::FrozenRequirementArtifact missingModelFingerprint = artifact;
     missingModelFingerprint.modelBinding.robotModelFingerprint.clear();
     error.clear();
@@ -3907,6 +4205,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
             hasStableErrorCode(error, "REQ_MODEL_FINGERPRINT_MISSING"),
             "missing model fingerprint reports REQ_MODEL_FINGERPRINT_MISSING")) return rc;
 
+    // 场景快照指纹不匹配被拒绝(REQ_SCENARIO_FINGERPRINT_MISMATCH),防止把冻结时场景
+    // 与当前场景不同的工件误当作有效输入。
     rws::FrozenRequirementArtifact mismatchedScenario = artifact;
     mismatchedScenario.scenario.snapshotFingerprint = "mismatched-scenario-fingerprint";
     error.clear();
@@ -3919,6 +4219,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
             hasStableErrorCode(error, "REQ_SCENARIO_FINGERPRINT_MISMATCH"),
             "scenario mismatch reports REQ_SCENARIO_FINGERPRINT_MISMATCH")) return rc;
 
+    // 被 Excluded 的 Must 任务不得进入执行输入(REQ_MUST_ITEM_EXCLUDED),因为 Must 是
+    // 硬约束,不能因为"排除"而静默丢失或降级。
     rws::FrozenRequirementArtifact excludedMust = artifact;
     excludedMust.compiled.poseTasks.front().compileState =
         rws::RequirementCompileState::Excluded;
@@ -3957,6 +4259,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                                    unchangedInput.workspaceRegions.front().id == region.id,
                                "failed import leaves the complete caller output unchanged")) return rc;
 
+    // 项目整体迁移场景:把冻结工件从原目录复制到"克隆项目"新根目录并删除原源文件,
+    // 验证 provenance 能按新根重定位解析,且不产生告警。
     QTemporaryDir clonedDirectory;
     if (const int rc = require(clonedDirectory.isValid(),
                                "create cloned project directory")) return rc;
@@ -3974,6 +4278,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(validationWarnings.empty(),
                                "relocated source provenance resolves without warnings")) return rc;
 
+    // 机器人 jog(关节移动)不改变运动学结构,应被接受但报告 robotStateChanged=true,
+    // 供 UI 提示用户当前状态已偏离冻结快照。
     rw::kinematics::State joggedState = workcell->getDefaultState();
     device->setQ(rw::math::Q(1, 0.35), joggedState);
     if (const int rc = require(rws::FrozenRequirementKinematicAdapter::applyWithValidation(
@@ -3982,6 +4288,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(robotStateChanged,
                                "robot jog is reported without rejecting frozen requirements")) return rc;
 
+    // 迁移后源 WorkCell 文件内容被改写:导入仍成功(不阻断),但必须返回告警给
+    // 运动学 UI,提示场景来源已变化。
     QFile clonedSourceFile(clonedSourcePath);
     if (const int rc = require(clonedSourceFile.open(QIODevice::WriteOnly | QIODevice::Text |
                                                      QIODevice::Truncate),
@@ -3998,6 +4306,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                                        std::string::npos,
                                "source provenance warning is returned to the kinematic UI")) return rc;
 
+    // 机器人模型或 TCP 配置变更(运动学指纹变化)必须拒绝并给出重新冻结指引,
+    // 因为 IK 结果依赖 TCP 定义。
     rws::FrozenRequirementArtifact tcpChangedArtifact = artifact;
     tcpChangedArtifact.frozenRobotState.kinematicFingerprint = "changed-robot-kinematic-fingerprint";
     if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::applyWithValidation(
@@ -4006,6 +4316,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     if (const int rc = require(error.find("Robot model or TCP configuration") != std::string::npos,
                                "robot model or TCP change reports refreeze guidance")) return rc;
 
+    // 场景状态变更(工装 Fixture_A 平移)使冻结工件失效:工位参考系不再是冻结时的
+    // 相对位姿,必须拒绝导入。
     rw::kinematics::State changedState = joggedState;
     fixture->setTransform(rw::math::Transform3D<>(rw::math::Vector3D<>(0.1, 0.0, 0.0)), changedState);
     if (const int rc = require(!rws::FrozenRequirementKinematicAdapter::apply(
@@ -4039,6 +4351,10 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
 // 判定——少于 3 点、含非有限点、共线零面积都判为无效;相邻重复点被去重后
 // 仍有效。computeWorkspaceEnvelope 能在六轴设备上算出非零尺寸包络;取消时
 // 返回无效且不发布部分几何;非有限关节限位同样不产出几何。
+// 补充说明:updateEnvelopeDimensions 的边界判定——<3 点、含非有限点(移除后 <3)、
+// 共线零面积均无效;相邻重复点去重后仍有效(4 点菱形面积=2);
+// computeWorkspaceEnvelope 在六轴设备上算出非零尺寸包络;
+// 取消返回无效且不发布部分几何;非有限关节限位同样不产出几何。
 static int testWorkspaceEnvelopeHelpers ()
 {
     using namespace rws;
@@ -4192,6 +4508,8 @@ static int testWorkspaceEnvelopeHelpers ()
 // 子套件 包络渲染布局:验证 computeEnvelopePlotLayout 在小(320x220)与大
 // (1400x900)两种画布尺寸下,绘图区、标题、宽/高标签与说明文字矩形都保持
 // 在图片范围内,防止缩放时控件溢出。
+// 补充说明:布局契约——绘图区/标题/宽高标签/说明文字矩形都必须落在画布内,
+// 320x220 与 1400x900 两种尺寸都验证,防止缩放时控件溢出。
 static int testWorkspaceEnvelopeRenderingLayout ()
 {
     using namespace rws;
@@ -4231,6 +4549,12 @@ static int testWorkspaceEnvelopeRenderingLayout ()
 // 可视化点的标量值、位置、标签、tooltip 与代表 Q 保真;投影函数与标量模式
 // 支持集(如 PoseReachability 默认 Coverage、拒绝 Condition);视觉汇总的过滤
 // 计数;以及图例预留宽度与边距在不同画布宽度下的边界行为。
+// 补充说明:三类结果 -> 可视化点的映射逐字段验证——task 用 Condition 标量(42)、
+// workspace 用 Collision 标量(1)并保留采样 Q、pose 用 Coverage 标量(0.3)并带
+// 代表 Q/方向索引 tooltip;projectVisualPoint 的 XZ 投影;
+// 标量模式支持集(PoseReachability 拒绝 Condition、默认 Coverage);
+// 视觉汇总的过滤计数;图例预留宽度:宽画布右缘少 128px、窄画布不预留隐藏图例但
+// 保留左右/底部边距;P8 tooltip 关键内容断言。
 static int testVisualizationData ()
 {
     using namespace rws;
@@ -4466,6 +4790,10 @@ static int testVisualizationData ()
 // 与 NaN 分别导出为 "inf"/"-inf"/"nan" 字符串(JSON 无法表示非有限数的约定);
 // NULL workcell 不创建碰撞检测器;包络数据类型/渲染数据类型的尺寸计算与
 // VisualRenderMode 文案。
+// 补充说明:jsonValueFromDouble 对有限值保留数值、对 inf/-inf/NaN 分别导出为
+// "inf"/"-inf"/"nan" 字符串(JSON 无法表示非有限数的约定);
+// NULL workcell 不得创建碰撞检测器;
+// 包络多边形宽/高计算与渲染模式文案的稳定输出。
 static int testJsonAndCollisionHelpers ()
 {
     {
@@ -4554,6 +4882,10 @@ static int testJsonAndCollisionHelpers ()
 // 点击"导入冻结需求"按钮时,必须显示明确的 WorkCell 就绪门禁文案
 // ("Review the model ... Save and Load first"),禁止在模型未发布前进入分析。
 // 该用例需独立运行(需 QApplication 与完整 Studio 栈)。
+// 补充说明:通过 ProjectManager 创建一个只有源(URDF)与模型资源、没有托管 WorkCell
+// 的项目(RobotDraft),注册模型文档提供器并打开;此时主 WorkCell 资源为空,
+// 点击"导入冻结需求"必须给出明确的就绪门禁文案(要求先在 RobotModelBuilder
+// 中 Save and Load),禁止在模型未发布前进入分析。该用例需真实 RobWorkStudio 栈。
 static int testManagedRobotProjectRequiresPublishedWorkCell ()
 {
     QTemporaryDir directory;
@@ -4636,31 +4968,233 @@ static int testManagedRobotProjectRequiresPublishedWorkCell ()
 //   - 旧 v3 工件被拒绝并报告 REQ_V3_REQUIRES_REFREEZE;
 //   - Explore 运行/取消期间的状态迁移,取消完成后报告部分采样 DataInsufficient,
 //     修改采样设置重新武装 Run;卸载 WorkCell 时所有命令安全禁用。
+// 补充说明:这是最长的 UI 集成用例,分几个阶段:
+//   (1) Header Report 菜单动作与过滤状态保持;
+//   (2) 三模式外壳(Diagnose / Validate / Explore)互斥切换与窄窗口(300px/320px)布局;
+//   (3) Diagnose 页:IK 输入一列排布、健康框不溢出、设备/TCP 选择可用;
+//   (4) IK Solve 后候选/详情表、同步当前 TCP、编辑目标使结果 stale 并禁用 Apply;
+//   (5) Local Task Points 模型路由、Validate Selected 只更新选中稳定 ID;
+//   (6) Validate 页:无冻结工件时仅 Load 可用;v3 拒绝并报 REQ_V3_REQUIRES_REFREEZE;
+//       v4 执行契约加载后 Run 可用,Must/Should 任务结果与区域单元格显示
+//       Feasibility/Quality/Verified;选中冻结任务/区域替换全量结果;
+//   (7) Explore 页:Run/Cancel 状态机、取消后 DataInsufficient、改设置重新武装 Run;
+//   (8) 卸载 WorkCell 时所有命令安全禁用。
 static int testWorkflowUiStates ()
 {
     rws::KinematicAnalysisWidget widget;
 
-    QTabWidget* workflows =
-        widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs"));
-    if (const int rc = require (workflows != nullptr, "workflow tabs are exposed"))
+    QPushButton* reportButton = widget.findChild< QPushButton* > (
+        QStringLiteral ("reportButton"));
+    if (const int rc = require (reportButton != nullptr && reportButton->menu () != nullptr &&
+                                    reportButton->isEnabled (),
+                                "Header Report is an enabled text menu"))
         return rc;
-    if (const int rc = require (workflows->count () == 3,
-                                "exactly three workflow tabs are shown"))
+    const QList< QAction* > reportActions = reportButton->menu ()->actions ();
+    if (const int rc = require (reportActions.size () == 4 &&
+                                    reportActions.at (0)->text () == QStringLiteral ("Refresh report") &&
+                                    reportActions.at (1)->text () == QStringLiteral ("Export JSON") &&
+                                    reportActions.at (2)->text () == QStringLiteral ("Export summary CSV") &&
+                                    reportActions.at (3)->text () == QStringLiteral ("Export task-results CSV"),
+                                "Header Report menu exposes every report action"))
         return rc;
+    QComboBox* reportStageFilter = widget.findChild< QComboBox* > (
+        QStringLiteral ("reportStageFilter"));
+    if (const int rc = require (reportStageFilter != nullptr,
+                                "report filter state remains available to Header actions"))
+        return rc;
+    reportStageFilter->setCurrentIndex (2);
+    reportActions.at (0)->trigger ();
+    if (const int rc = require (reportStageFilter->currentIndex () == 2,
+                                "refreshing through Header Report retains filtering state"))
+        return rc;
+
+    QWidget* modeSelector =
+        widget.findChild< QWidget* > (QStringLiteral ("kinematicModeSelector"));
+    QStackedWidget* modeStack =
+        widget.findChild< QStackedWidget* > (QStringLiteral ("kinematicModeStack"));
+    if (const int rc = require (modeSelector != nullptr && modeStack != nullptr,
+                                "three-mode shell exposes stable object names"))
+        return rc;
+    const QList< QToolButton* > modeButtons = modeSelector->findChildren< QToolButton* > ();
+    if (const int rc = require (modeButtons.size () == 3 && modeStack->count () == 3,
+                                "three exclusive modes control exactly three stack pages"))
+        return rc;
+    for (int index = 0; index < modeButtons.size (); ++index) {
+        QToolButton* button = modeButtons.at (index);
+        if (const int rc = require (button->isCheckable () && !button->text ().isEmpty (),
+                                    "mode selectors are checkable text buttons"))
+            return rc;
+        button->click ();
+        QCoreApplication::processEvents ();
+        int checkedCount = 0;
+        for (QToolButton* candidate : modeButtons)
+            checkedCount += candidate->isChecked () ? 1 : 0;
+        if (const int rc = require (checkedCount == 1 && modeStack->currentIndex () == index,
+                                    "mode selector is exclusive and changes the visible page"))
+            return rc;
+    }
+    const QStringList modeLabels = {QStringLiteral ("Diagnose"),
+                                    QStringLiteral ("Validate"),
+                                    QStringLiteral ("Explore")};
+    const QStringList modeDescriptions = {QStringLiteral ("Diagnose"),
+                                          QStringLiteral ("Validate Requirements"),
+                                          QStringLiteral ("Explore Capability")};
+    for (int index = 0; index < modeButtons.size (); ++index) {
+        if (const int rc = require (
+                modeButtons.at (index)->text () == modeLabels.at (index) &&
+                    modeButtons.at (index)->toolTip () == modeDescriptions.at (index) &&
+                    modeButtons.at (index)->accessibleName () == modeDescriptions.at (index),
+                "narrow mode selectors keep short labels with full accessible descriptions"))
+            return rc;
+    }
     if (const int rc = require (
-            workflows->tabText (0) == QStringLiteral ("Diagnose") &&
-                workflows->tabText (1) == QStringLiteral ("Validate Requirements") &&
-                workflows->tabText (2) == QStringLiteral ("Explore Capability"),
-            "workflow tab names match the approved information architecture"))
+            widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs")) == nullptr &&
+                widget.findChildren< QTabWidget* > ().isEmpty (),
+            "workflow and compatibility tabs are absent from the visible hierarchy"))
         return rc;
 
     QPushButton* diagnoseRefresh = widget.findChild< QPushButton* > (
         QStringLiteral ("diagnoseRefreshButton"));
+    QComboBox* deviceCombo = widget.findChild< QComboBox* > (
+        QStringLiteral ("deviceCombo"));
     QComboBox* tcpCombo = widget.findChild< QComboBox* > (
         QStringLiteral ("tcpFrameCombo"));
-    if (const int rc = require (diagnoseRefresh != nullptr && tcpCombo != nullptr,
-                                "Diagnose controls expose stable object names"))
+    QComboBox* lengthUnitCombo = widget.findChild< QComboBox* > (
+        QStringLiteral ("lengthUnitCombo"));
+    QComboBox* angleUnitCombo = widget.findChild< QComboBox* > (
+        QStringLiteral ("angleUnitCombo"));
+    QPushButton* thresholdSettings = widget.findChild< QPushButton* > (
+        QStringLiteral ("thresholdSettingsButton"));
+    QPushButton* report = widget.findChild< QPushButton* > (QStringLiteral ("reportButton"));
+    QLineEdit* status = widget.findChild< QLineEdit* > (QStringLiteral ("kinematicStatus"));
+    if (const int rc = require (
+            diagnoseRefresh != nullptr && deviceCombo != nullptr && tcpCombo != nullptr &&
+                lengthUnitCombo != nullptr && angleUnitCombo != nullptr &&
+                thresholdSettings != nullptr && report != nullptr && status != nullptr,
+            "fixed shell controls expose stable object names"))
         return rc;
+
+    QWidget* diagnosePage = modeStack->widget (0)->findChild< QWidget* > (
+        QStringLiteral ("diagnoseWorkflowPage"));
+    QWidget* currentPosePage = widget.findChild< QWidget* > (
+        QStringLiteral ("currentPoseTab"));
+    QWidget* ikPage = widget.findChild< QWidget* > (QStringLiteral ("ikTab"));
+    QFrame* healthFrame = widget.findChild< QFrame* > (
+        QStringLiteral ("currentPoseHealthFrame"));
+    QDoubleSpinBox* ikX = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikXSpin"));
+    QDoubleSpinBox* ikY = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYSpin"));
+    QDoubleSpinBox* ikZ = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikZSpin"));
+    QDoubleSpinBox* ikRoll = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikRollSpin"));
+    QDoubleSpinBox* ikPitch = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikPitchSpin"));
+    QDoubleSpinBox* ikYaw = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYawSpin"));
+    QPushButton* ikSync = widget.findChild< QPushButton* > (
+        QStringLiteral ("ikSyncCurrentTcpButton"));
+    QPushButton* ikSolve = widget.findChild< QPushButton* > (QStringLiteral ("ikSolveButton"));
+    QPushButton* ikApply = widget.findChild< QPushButton* > (QStringLiteral ("ikApplyButton"));
+    QCheckBox* ikCollision = widget.findChild< QCheckBox* > (
+        QStringLiteral ("ikCollisionCheck"));
+    QTableWidget* ikCandidates = widget.findChild< QTableWidget* > (
+        QStringLiteral ("ikSolutionTable"));
+    QTableWidget* ikDetails = widget.findChild< QTableWidget* > (
+        QStringLiteral ("ikDetailTable"));
+    QToolButton* diagnostics = widget.findChild< QToolButton* > (
+        QStringLiteral ("advancedDiagnosticsToggle"));
+    if (const int rc = require (
+            diagnosePage != nullptr && currentPosePage != nullptr && ikPage != nullptr &&
+                healthFrame != nullptr && ikX != nullptr && ikY != nullptr && ikZ != nullptr &&
+                ikRoll != nullptr && ikPitch != nullptr && ikYaw != nullptr && ikSync != nullptr &&
+                ikSolve != nullptr && ikApply != nullptr && ikCollision != nullptr &&
+                ikCandidates != nullptr &&
+                ikDetails != nullptr && diagnostics != nullptr,
+            "Diagnose owns current pose health and IK controls"))
+        return rc;
+    if (const int rc = require (
+            currentPosePage->parentWidget () == diagnosePage && ikPage->parentWidget () == diagnosePage,
+            "current pose and IK pages share the Diagnose page"))
+        return rc;
+    if (const int rc = require (
+            ikCandidates->maximumHeight () > 0 && ikDetails->maximumHeight () > 0 &&
+                !diagnostics->isChecked (),
+            "IK tables are bounded and advanced diagnostics starts collapsed"))
+        return rc;
+
+    widget.resize (300, 620);
+    widget.show ();
+    modeButtons.at (0)->click ();
+    QCoreApplication::processEvents ();
+    if (const int rc = require (widget.width () == 300,
+                                "narrow-width checks run on a 300px dock"))
+        return rc;
+    const QList< QDoubleSpinBox* > targetSpins = {ikX, ikY, ikZ, ikRoll, ikPitch, ikYaw};
+    for (int index = 1; index < targetSpins.size (); ++index) {
+        const QRect previous = targetSpins.at (index - 1)->geometry ();
+        const QRect current = targetSpins.at (index)->geometry ();
+        if (const int rc = require (
+                current.top () > previous.top () &&
+                    std::abs (current.left () - previous.left ()) <= 1,
+                "IK target controls use one vertical column"))
+            return rc;
+    }
+    for (QDoubleSpinBox* targetSpin : targetSpins) {
+        if (const int rc = require (
+                targetSpin->geometry ().left () >= 0 &&
+                    targetSpin->geometry ().right () < ikPage->width (),
+                "IK target controls do not overflow a 300px Diagnose page"))
+            return rc;
+    }
+    if (const int rc = require (healthFrame->geometry ().left () >= 0 &&
+                                    healthFrame->geometry ().right () < currentPosePage->width (),
+                                "current-state health frame does not overflow a 300px Diagnose page"))
+        return rc;
+    if (const int rc = require (deviceCombo->width () >= 24 && tcpCombo->width () >= 24,
+                                "Device and TCP remain usable in a 300px header"))
+        return rc;
+    const QList< QWidget* > fixedControls = {
+        deviceCombo, tcpCombo, lengthUnitCombo, angleUnitCombo, diagnoseRefresh,
+        thresholdSettings, report, status, modeSelector};
+    for (QToolButton* button : modeButtons) {
+        button->click ();
+        QCoreApplication::processEvents ();
+        for (QWidget* control : fixedControls) {
+            const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
+            const QRect geometry (topLeft, control->size ());
+            if (const int rc = require (!geometry.isEmpty () && widget.rect ().contains (geometry),
+                                        "fixed shell controls fit inside a 300x620 dock"))
+                return rc;
+        }
+        const QPoint modeTopLeft = widget.mapFromGlobal (
+            button->mapToGlobal (QPoint (0, 0)));
+        if (const int rc = require (!button->geometry ().isEmpty () &&
+                                        widget.rect ().contains (QRect (modeTopLeft, button->size ())),
+                                    "every mode selector fits inside a 300px dock"))
+            return rc;
+    }
+    if (const int rc = require (
+            lengthUnitCombo->minimumWidth () == 0 && angleUnitCombo->minimumWidth () == 0 &&
+                lengthUnitCombo->sizePolicy ().horizontalPolicy () == QSizePolicy::Ignored &&
+                angleUnitCombo->sizePolicy ().horizontalPolicy () == QSizePolicy::Ignored,
+            "unit controls can shrink inside the fixed two-row header"))
+        return rc;
+    widget.resize (320, 620);
+    widget.show ();
+    QCoreApplication::processEvents ();
+    for (QToolButton* button : modeButtons) {
+        button->click ();
+        QCoreApplication::processEvents ();
+        for (QWidget* control : fixedControls) {
+            const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
+            if (const int rc = require (!control->geometry ().isEmpty () &&
+                                            widget.rect ().contains (QRect (topLeft, control->size ())),
+                                        "fixed shell controls fit inside a 320x620 dock"))
+                return rc;
+        }
+        const QPoint modeTopLeft = widget.mapFromGlobal (
+            button->mapToGlobal (QPoint (0, 0)));
+        if (const int rc = require (!button->geometry ().isEmpty () &&
+                                        widget.rect ().contains (QRect (modeTopLeft, button->size ())),
+                                    "every mode selector fits inside a 320px dock"))
+            return rc;
+    }
 
     QPushButton* validateLoad = widget.findChild< QPushButton* > (
         QStringLiteral ("validateLoadRequirementsButton"));
@@ -4688,16 +5222,172 @@ static int testWorkflowUiStates ()
         QStringLiteral ("exploreDirectionSamplesSpin"));
     QSpinBox* exploreRolls = widget.findChild< QSpinBox* > (
         QStringLiteral ("exploreRollSamplesSpin"));
+    QLabel* exploreSamplesLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("exploreSamplesLabel"));
+    QLabel* exploreSeedLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("exploreSeedLabel"));
+    QLabel* exploreGridLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("exploreGridStepsLabel"));
+    QLabel* exploreDirectionsLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("exploreDirectionsLabel"));
+    QLabel* exploreRollsLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("exploreRollsLabel"));
     if (const int rc = require (
-            exploreMode != nullptr && exploreSeed != nullptr && exploreGrid != nullptr &&
-                exploreDirections != nullptr && exploreRolls != nullptr,
+            exploreMode != nullptr && exploreSamplesLabel != nullptr &&
+                exploreSeed != nullptr && exploreSeedLabel != nullptr &&
+                exploreGrid != nullptr && exploreGridLabel != nullptr &&
+                exploreDirections != nullptr && exploreDirectionsLabel != nullptr &&
+                exploreRolls != nullptr && exploreRollsLabel != nullptr,
             "Explore Capability exposes sampling and orientation controls"))
         return rc;
+    QComboBox* exploreSamplingMode = exploreMode;
+    QWidget* workspacePage = widget.findChild< QWidget* > (QStringLiteral ("workspaceTab"));
+    QWidget* poseReachPage = widget.findChild< QWidget* > (QStringLiteral ("poseReachTab"));
+    QPushButton* legacyWorkspaceRun = widget.findChild< QPushButton* > (
+        QStringLiteral ("workspaceRunButton"));
+    QPushButton* legacyWorkspaceCancel = widget.findChild< QPushButton* > (
+        QStringLiteral ("workspaceCancelButton"));
+    QComboBox* legacyWorkspaceMode = widget.findChild< QComboBox* > (
+        QStringLiteral ("workspaceModeCombo"));
+    QPushButton* legacyPoseRun = widget.findChild< QPushButton* > (
+        QStringLiteral ("poseRunButton"));
+    QPushButton* legacyPoseCancel = widget.findChild< QPushButton* > (
+        QStringLiteral ("poseCancelButton"));
+    QSpinBox* legacyPoseDirections = widget.findChild< QSpinBox* > (
+        QStringLiteral ("poseDirectionSamplesSpin"));
+    QSpinBox* legacyPoseRolls = widget.findChild< QSpinBox* > (
+        QStringLiteral ("poseRollSamplesSpin"));
+    rws::KinematicAnalysisPlotWidget* embeddedPlot =
+        widget.findChild< rws::KinematicAnalysisPlotWidget* > ();
+    QPushButton* openPlot = widget.findChild< QPushButton* > (
+        QStringLiteral ("visualizationOpenPlotButton"));
+    if (const int rc = require (
+            exploreSamplingMode->count () == 3 &&
+                exploreSamplingMode->itemText (0) == QStringLiteral ("Random") &&
+                exploreSamplingMode->itemData (0).toInt () == 0 &&
+                exploreSamplingMode->itemText (1) == QStringLiteral ("Joint Grid") &&
+                exploreSamplingMode->itemData (1).toInt () == 1 &&
+                exploreSamplingMode->itemText (2) == QStringLiteral ("Pose Reachability") &&
+                exploreSamplingMode->itemData (2).toInt () == 2 &&
+                workspacePage != nullptr && poseReachPage != nullptr && embeddedPlot != nullptr &&
+                openPlot != nullptr && legacyWorkspaceRun != nullptr &&
+                legacyWorkspaceCancel != nullptr && legacyWorkspaceMode != nullptr &&
+                legacyPoseRun != nullptr && legacyPoseCancel != nullptr &&
+                legacyPoseDirections != nullptr && legacyPoseRolls != nullptr &&
+                embeddedPlot->maximumHeight () == 160,
+            "Explore exposes Random, Grid and Pose Reachability with compact visualization"))
+        return rc;
+    modeButtons.at (2)->click ();
+    exploreSamplingMode->setCurrentIndex (0);
+    if (const int rc = require (
+            exploreSamples->isVisible () && exploreSamplesLabel->isVisible () &&
+                exploreSeed->isVisible () && exploreSeedLabel->isVisible () &&
+                !exploreGrid->isVisible () && !exploreGridLabel->isVisible () &&
+                !exploreDirections->isVisible () && !exploreDirectionsLabel->isVisible () &&
+                !exploreRolls->isVisible () && !exploreRollsLabel->isVisible () &&
+                workspacePage->isVisible () && !poseReachPage->isVisible (),
+            "Random mode shows only Samples and Seed workspace parameters"))
+        return rc;
+    if (const int rc = require (
+            !legacyWorkspaceRun->isVisible () && !legacyWorkspaceCancel->isVisible () &&
+                !legacyWorkspaceMode->isVisible () && !legacyPoseRun->isVisible () &&
+                !legacyPoseCancel->isVisible (),
+            "Explore keeps the legacy workspace and pose Run, Cancel, and mode entry points hidden"))
+        return rc;
+    exploreSamplingMode->setCurrentIndex (1);
+    if (const int rc = require (
+            !exploreSamples->isVisible () && !exploreSamplesLabel->isVisible () &&
+                !exploreSeed->isVisible () && !exploreSeedLabel->isVisible () &&
+                exploreGrid->isVisible () && exploreGridLabel->isVisible () &&
+                !exploreDirections->isVisible () && !exploreDirectionsLabel->isVisible () &&
+                !exploreRolls->isVisible () && !exploreRollsLabel->isVisible (),
+            "Joint Grid mode shows only Grid Steps workspace parameters"))
+        return rc;
+    exploreSamplingMode->setCurrentIndex (2);
+    if (const int rc = require (
+            !exploreSamples->isVisible () && !exploreSamplesLabel->isVisible () &&
+                !exploreSeed->isVisible () && !exploreSeedLabel->isVisible () &&
+                !exploreGrid->isVisible () && !exploreGridLabel->isVisible () &&
+                exploreDirections->isVisible () && exploreDirectionsLabel->isVisible () &&
+                exploreRolls->isVisible () && exploreRollsLabel->isVisible () &&
+                !workspacePage->isVisible () && poseReachPage->isVisible (),
+            "Pose Reachability mode shows only pose orientation parameters"))
+        return rc;
+    exploreDirections->setValue (37);
+    exploreRolls->setValue (5);
+    if (const int rc = require (
+            legacyPoseDirections->value () == 37 && legacyPoseRolls->value () == 5 &&
+                !legacyPoseDirections->isVisible () && !legacyPoseRolls->isVisible (),
+            "Pose orientation parameters are synchronized to the existing pipeline without duplicate controls"))
+        return rc;
+    exploreSamplingMode->setCurrentIndex (0);
     if (const int rc = require (
             exploreState != nullptr &&
                 exploreState->text ().contains (QStringLiteral ("Estimated")),
             "Explore Capability labels its evidence as Estimated"))
         return rc;
+
+    QComboBox* mode2Source = widget.findChild< QComboBox* > (
+        QStringLiteral ("mode2DataSourceCombo"));
+    QWidget* localTasksPage = widget.findChild< QWidget* > (
+        QStringLiteral ("localTasksPage"));
+    QTableWidget* frozenTasks = widget.findChild< QTableWidget* > (
+        QStringLiteral ("validateTaskResultTable"));
+    QTableWidget* frozenRegions = widget.findChild< QTableWidget* > (
+        QStringLiteral ("validateRegionCellTable"));
+    QLabel* taskSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("taskPointSummaryLabel"));
+    QTableWidget* taskMore = widget.findChild< QTableWidget* > (
+        QStringLiteral ("taskPointMoreTable"));
+    if (const int rc = require (
+            mode2Source != nullptr && mode2Source->count () == 2 &&
+                localTasksPage != nullptr && frozenTasks != nullptr && frozenRegions != nullptr &&
+                taskSummary != nullptr && taskMore != nullptr &&
+                frozenTasks->editTriggers () == QAbstractItemView::NoEditTriggers &&
+                frozenRegions->editTriggers () == QAbstractItemView::NoEditTriggers,
+            "Mode 2 exposes local and frozen data sources with read-only frozen results"))
+        return rc;
+    modeButtons.at (1)->click ();
+    QCoreApplication::processEvents ();
+    mode2Source->setCurrentIndex (0);
+    if (const int rc = require (localTasksPage->isVisible () && !frozenTasks->isVisible () &&
+                                    !frozenRegions->isVisible (),
+                                "Local Tasks source shows editable task data only"))
+        return rc;
+
+    QPushButton* mode2Load = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2LoadJsonButton"));
+    QPushButton* mode2ValidateAll = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2ValidateAllButton"));
+    QPushButton* mode2ValidateSelected = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2ValidateSelectedButton"));
+    QPushButton* mode2Add = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2AddButton"));
+    QPushButton* mode2Remove = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2RemoveButton"));
+    QTableView* localTaskTable = localTasksPage->findChild< QTableView* > ();
+    if (const int rc = require (
+            mode2Load != nullptr && mode2ValidateAll != nullptr &&
+                mode2ValidateSelected != nullptr && mode2Add != nullptr &&
+                mode2Remove != nullptr && localTaskTable != nullptr &&
+                localTaskTable->model ()->columnCount () == 27 && mode2Add->isEnabled () &&
+                !mode2Remove->isEnabled () && localTaskTable->isEnabled (),
+            "Local Tasks exposes the compact text toolbar and remains the editable 27-column source"))
+        return rc;
+    mode2Source->setCurrentIndex (1);
+    if (const int rc = require (!localTasksPage->isVisible () && frozenTasks->isVisible () &&
+                                    !frozenRegions->isVisible (),
+                                "Frozen Requirements keeps cell-level diagnostics collapsed by default"))
+        return rc;
+    if (const int rc = require (
+            !mode2Add->isEnabled () && !mode2Remove->isEnabled () &&
+                !localTaskTable->isEnabled () &&
+                frozenTasks->editTriggers () == QAbstractItemView::NoEditTriggers &&
+                frozenRegions->editTriggers () == QAbstractItemView::NoEditTriggers &&
+                frozenTasks->columnCount () <= 6 && frozenRegions->columnCount () <= 9,
+            "Frozen Requirements disables local editing and keeps compact read-only task and region summaries"))
+        return rc;
+    mode2Source->setCurrentIndex (0);
 
     widget.setWorkCell (nullptr);
     if (const int rc = require (
@@ -4752,11 +5442,180 @@ static int testWorkflowUiStates ()
             diagnoseRefresh->isEnabled (),
             "valid WorkCell, Device and TCP enable Diagnose refresh"))
         return rc;
+    diagnoseRefresh->click ();
+    QLabel* currentPoseStatus = widget.findChild< QLabel* > (
+        QStringLiteral ("currentPoseStatusLabel"));
+    if (const int rc = require (currentPoseStatus != nullptr,
+                                "current-state health status has a stable object name"))
+        return rc;
+    const QString healthBeforeSync = currentPoseStatus->text ();
+    ikSync->click ();
+    if (const int rc = require (currentPoseStatus->text () == healthBeforeSync,
+                                "Sync current TCP copies IK inputs without changing current-state health"))
+        return rc;
+    ikCollision->setChecked (false);
+    for (QComboBox* combo : widget.findChildren< QComboBox* > ()) {
+        if (combo->currentText () == QStringLiteral ("Exclude failed"))
+            combo->setCurrentIndex (2);
+    }
+    // 在有效 WorkCell/设备/TCP 下执行 IK Solve:候选表 5 列、详情表 2 列;
+    // 每行候选在 tooltip 里保留完整 Q;选中候选后详情表第 6 行展示 Q;
+    // 之后编辑目标位姿会使先前结果变 stale 并禁用 Apply,防止应用过时解。
+    ikSolve->click ();
+    QCoreApplication::processEvents ();
+    if (const int rc = require (ikCandidates->columnCount () == 5 &&
+                                    ikDetails->columnCount () == 2,
+                                "Solve exposes candidate and selected-detail tables"))
+        return rc;
+    if (ikCandidates->rowCount () > 0) {
+        for (int row = 0; row < ikCandidates->rowCount (); ++row) {
+            QTableWidgetItem* currentQ = ikCandidates->item (row, 3);
+            if (const int rc = require (currentQ != nullptr && !currentQ->toolTip ().isEmpty (),
+                                        "candidate rows retain complete Q values in tooltips"))
+                return rc;
+        }
+        ikCandidates->selectRow (0);
+        QCoreApplication::processEvents ();
+        if (const int rc = require (ikDetails->item (6, 1) != nullptr &&
+                                        !ikDetails->item (6, 1)->text ().isEmpty (),
+                                    "selected candidate details retain Q values"))
+            return rc;
+    }
+    const double ikXBeforeEdit = ikX->value ();
+    ikX->setValue (ikXBeforeEdit < ikX->maximum () ? ikXBeforeEdit + 0.01
+                                                    : ikXBeforeEdit - 0.01);
+    if (const int rc = require (!ikApply->isEnabled () &&
+                                    widget.statusMessage ().contains (QStringLiteral ("stale"),
+                                                                       Qt::CaseInsensitive),
+                                "editing a target invalidates the previous IK presentation"))
+        return rc;
+
+    rws::TaskPointTableModel* taskModel = widget.findChild< rws::TaskPointTableModel* > ();
+    QTableView* taskTable = nullptr;
+    for (QTableView* candidate : widget.findChildren< QTableView* > ()) {
+        if (candidate != nullptr && candidate->model () == taskModel) {
+            taskTable = candidate;
+            break;
+        }
+    }
+    QScrollArea* diagnoseScroll = widget.findChild< QScrollArea* > (
+        QStringLiteral ("diagnoseScroll"));
+    if (const int rc = require (taskModel != nullptr && taskTable != nullptr &&
+                                    taskTable->selectionModel () != nullptr && diagnoseScroll != nullptr,
+                                "Local Task Points can route into the Diagnose scroll area"))
+        return rc;
+    const rw::kinematics::State taskState = workcell->getDefaultState ();
+    const rw::math::Transform3D<> baseTtcp = rw::kinematics::Kinematics::frameTframe (
+        device->getBase (), device->getEnd (), taskState);
+    const rw::math::RPY<> taskRpy (baseTtcp.R ());
+    rws::TaskPoint localTask;
+    localTask.id = "workflow-local-task";
+    localTask.name = "Workflow local task";
+    localTask.enabled = true;
+    localTask.refFrame = device->getBase ()->getName ();
+    localTask.tcpFrame = device->getEnd ()->getName ();
+    localTask.position = {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}};
+    localTask.rpyDeg = {{taskRpy (0) * rw::math::Rad2Deg,
+                         taskRpy (1) * rw::math::Rad2Deg,
+                         taskRpy (2) * rw::math::Rad2Deg}};
+    const int localTaskRow = taskModel->appendTaskPoint (localTask);
+    if (const int rc = require (
+            taskModel->data (taskModel->index (localTaskRow, rws::ColId), Qt::UserRole)
+                    .toString () == QStringLiteral ("workflow-local-task"),
+            "Local task rows expose their stable ID independently of the visual row"))
+        return rc;
+    rws::TaskPoint untouchedTask = localTask;
+    untouchedTask.id = "workflow-untouched-task";
+    untouchedTask.name = "Workflow Untouched";
+    taskModel->setRowsFromTaskPoints ({untouchedTask, localTask});
+    rws::TaskPointReachabilityResult untouchedResult;
+    untouchedResult.taskPoint = untouchedTask;
+    untouchedResult.status = rws::AnalysisStatus::Pass;
+    taskModel->setResultForRow (0, untouchedResult);
+    const int reorderedLocalTaskRow = 1;
+    taskTable->setCurrentIndex (taskModel->index (reorderedLocalTaskRow, 0));
+    taskTable->selectRow (reorderedLocalTaskRow);
+    QCoreApplication::processEvents ();
+    modeButtons.at (1)->click ();
+    mode2Source->setCurrentIndex (0);
+    mode2ValidateSelected->click ();
+    QCoreApplication::processEvents ();
+    if (const int rc = require (
+            taskModel->resultAt (0).taskPoint.id == untouchedTask.id &&
+                taskModel->resultAt (0).status == rws::AnalysisStatus::Pass &&
+                taskModel->resultAt (reorderedLocalTaskRow).taskPoint.id == localTask.id,
+            "Local Validate Selected updates only the selected stable task ID after visual reordering"))
+        return rc;
+    QToolButton* taskMoreActions = widget.findChild< QToolButton* > (
+        QStringLiteral ("taskPointMoreActions"));
+    QPushButton* oldFrozenImport = widget.findChild< QPushButton* > (
+        QStringLiteral ("importFrozenRequirementsButton"));
+    bool frozenImportInMore = false;
+    if (taskMoreActions != nullptr && taskMoreActions->menu () != nullptr) {
+        for (QAction* action : taskMoreActions->menu ()->actions ())
+            frozenImportInMore = frozenImportInMore ||
+                action->text ().contains (QStringLiteral ("frozen"), Qt::CaseInsensitive);
+    }
+    if (const int rc = require (
+            taskMoreActions != nullptr && oldFrozenImport != nullptr && !oldFrozenImport->isVisible () &&
+                !frozenImportInMore,
+            "Local More does not expose frozen-requirement import into editable tasks"))
+        return rc;
+    ikCandidates->insertRow (0);
+    ikCandidates->setItem (0, 0, new QTableWidgetItem (QStringLiteral ("previous candidate")));
+    ikDetails->setRowCount (1);
+    ikDetails->setItem (0, 0, new QTableWidgetItem (QStringLiteral ("Previous detail")));
+    ikApply->setEnabled (true);
+    modeButtons.at (2)->click ();
+    const bool openedInIk = QMetaObject::invokeMethod (
+        &widget, "openSelectedTaskPointInIk", Qt::DirectConnection);
+    QCoreApplication::processEvents ();
+    const QRect ikInViewport (
+        diagnoseScroll->viewport ()->mapFromGlobal (ikPage->mapToGlobal (QPoint (0, 0))),
+        ikPage->size ());
+    if (const int rc = require (openedInIk && modeStack->currentIndex () == 0 &&
+                                    ikInViewport.intersects (diagnoseScroll->viewport ()->rect ()) &&
+                                    ikCandidates->rowCount () == 0 && ikDetails->rowCount () == 1 &&
+                                    !ikApply->isEnabled () &&
+                                    widget.statusMessage ().contains (QStringLiteral ("stale"),
+                                                                       Qt::CaseInsensitive),
+                                "opening a Local Task Point routes to visible stale Diagnose IK"))
+        return rc;
+
+    const rws::KinematicAnalysisReport localReport = widget.buildReportForExport ();
+    bool hasUntouchedPass = false;
+    bool hasLocalTask = false;
+    for (const rws::TargetEvaluation& result : localReport.taskResults) {
+        hasUntouchedPass = hasUntouchedPass ||
+            (result.target.id == untouchedTask.id &&
+             result.feasibility == rws::Feasibility::Feasible);
+        hasLocalTask = hasLocalTask || result.target.id == localTask.id;
+    }
+    if (const int rc = require (localReport.taskResults.size () == 2 && hasUntouchedPass &&
+                                hasLocalTask,
+                                "local selected analysis rebuilds the report cache by current stable task IDs"))
+        return rc;
+    if (const int rc = require (taskModel->removeRows (reorderedLocalTaskRow, 1),
+                                "local task removal succeeds"))
+        return rc;
+    const rws::KinematicAnalysisReport afterRemovalReport = widget.buildReportForExport ();
+    if (const int rc = require (afterRemovalReport.taskResults.size () == 1 &&
+                                afterRemovalReport.taskResults.front ().target.id == untouchedTask.id &&
+                                afterRemovalReport.taskResults.front ().feasibility ==
+                                    rws::Feasibility::Feasible,
+                                "removing a task prunes stale report IDs while preserving current task results"))
+        return rc;
+    taskModel->setRowsFromTaskPoints ({untouchedTask});
+    if (const int rc = require (widget.buildReportForExport ().taskResults.empty (),
+                                "replacing rows clears report cache entries with no current model result"))
+        return rc;
 
     if (const int rc = require (
             validateLoad != nullptr && validateRun != nullptr &&
-                validateExport != nullptr && validateState != nullptr,
-            "Validate Requirements controls expose stable object names"))
+                validateExport != nullptr && validateState != nullptr &&
+                !validateLoad->isVisible () && !validateRun->isVisible () &&
+                !validateExport->isVisible (),
+            "legacy frozen commands are hidden outside the single Mode 2 toolbar"))
         return rc;
     widget.setWorkCell (nullptr);
     if (const int rc = require (
@@ -4849,7 +5708,15 @@ static int testWorkflowUiStates ()
     region.minimumVerificationStage = rws::RequirementExecutionStage::Verified;
     region.collisionFreeRequired = false;
     execution.workspaceRegions.push_back (region);
+    rws::RequirementExecutionRegion secondRegion = region;
+    secondRegion.id = "workflow-region-second";
+    secondRegion.name = "Workflow Region Second";
+    secondRegion.directionSamples = 3;
+    secondRegion.rollSamples = 2;
+    execution.workspaceRegions.push_back (secondRegion);
 
+    // 构造并加载一个 v4 执行契约(Must 任务 + Should 任务 + 两个 Must 区域),任务取
+    // 当前世界坐标系下的 TCP 位姿以保证可达、容差取极小值;加载成功后 Run 才可用。
     bool executionAccepted = false;
     const bool executionInvoked = QMetaObject::invokeMethod (
         &widget, "setRequirementExecutionDocument", Qt::DirectConnection,
@@ -4859,12 +5726,37 @@ static int testWorkflowUiStates ()
                                     validateRun->isEnabled (),
                                 "v4 execution contract enables validation"))
         return rc;
-    validateRun->click ();
-    QApplication::processEvents ();
     QTableWidget* taskResults = widget.findChild< QTableWidget* > (
         QStringLiteral ("validateTaskResultTable"));
     QTableWidget* regionCells = widget.findChild< QTableWidget* > (
         QStringLiteral ("validateRegionCellTable"));
+    QTableWidget* regionSummary = widget.findChild< QTableWidget* > (
+        QStringLiteral ("validateRegionSummaryTable"));
+    if (const int rc = require (
+            taskResults != nullptr && regionCells != nullptr && regionSummary != nullptr &&
+                taskResults->rowCount () == 2 && regionSummary->rowCount () == 2 &&
+                taskResults->item (1, 0) != nullptr &&
+                taskResults->item (1, 0)->data (Qt::UserRole).toString () ==
+                    QStringLiteral ("workflow-should") &&
+                validateState->text ().contains (QStringLiteral ("not yet validated"),
+                                                  Qt::CaseInsensitive),
+            "loaded frozen requirements expose selectable unvalidated task and region sources"))
+        return rc;
+    mode2Source->setCurrentIndex (1);
+    taskResults->selectRow (1);
+    mode2ValidateSelected->click ();
+    QApplication::processEvents ();
+    const rws::KinematicAnalysisReport preFullSelectedTaskReport =
+        widget.buildReportForExport ();
+    if (const int rc = require (
+            taskResults->rowCount () == 1 &&
+                preFullSelectedTaskReport.taskResults.size () == 1 &&
+                preFullSelectedTaskReport.taskResults.front ().target.id == "workflow-should" &&
+                preFullSelectedTaskReport.regionResults.empty (),
+            "selected frozen task validates before a full frozen validation"))
+        return rc;
+    mode2ValidateAll->click ();
+    QApplication::processEvents ();
     if (const int rc = require (
             taskResults != nullptr && taskResults->rowCount () == 2,
             "Must and Should task results are displayed separately"))
@@ -4892,9 +5784,84 @@ static int testWorkflowUiStates ()
                 regionCells->item (0, 7)->text () == QStringLiteral ("Verified"),
             "region cells display Feasibility, Quality and EvidenceStage"))
         return rc;
+    QLabel* orientationProbe = widget.findChild< QLabel* > (
+        QStringLiteral ("validateOrientationProbeLabel"));
+    QLabel* provenance = widget.findChild< QLabel* > (
+        QStringLiteral ("validateProvenanceLabel"));
+    QToolButton* frozenDiagnostics = widget.findChild< QToolButton* > (
+        QStringLiteral ("validateDiagnosticsToggle"));
+    modeButtons.at (1)->click ();
+    mode2Source->setCurrentIndex (1);
+    QApplication::processEvents ();
+    if (const int rc = require (
+            regionSummary != nullptr && regionSummary->rowCount () == 2 &&
+                regionSummary->columnCount () <= 6 && orientationProbe != nullptr &&
+                orientationProbe->isVisible () && provenance != nullptr &&
+                frozenDiagnostics != nullptr &&
+                !frozenDiagnostics->isChecked (),
+            "frozen requirements expose compact region summaries and collapsed provenance diagnostics"))
+        return rc;
+    regionSummary->selectRow (1);
+    QApplication::processEvents ();
+    if (const int rc = require (
+            orientationProbe->text ().contains (QStringLiteral ("3")) &&
+                orientationProbe->text ().contains (QStringLiteral ("2")),
+            "selected frozen region exposes its own multi-orientation probe"))
+        return rc;
+    taskResults->selectRow (1);
+    mode2ValidateSelected->click ();
+    QApplication::processEvents ();
+    if (const int rc = require (
+            taskResults->rowCount () == 1 && taskResults->item (0, 0) != nullptr &&
+                taskResults->item (0, 0)->text () == QStringLiteral ("workflow-should") &&
+                regionCells->rowCount () == 0 && regionSummary->rowCount () == 0 &&
+                widget.statusMessage ().contains (QStringLiteral ("selected frozen task")),
+            "selected frozen task replaces visible results from the previous full validation"))
+        return rc;
+    const rws::KinematicAnalysisReport selectedTaskReport = widget.buildReportForExport ();
+    if (const int rc = require (
+            selectedTaskReport.taskResults.size () == 1 &&
+                selectedTaskReport.taskResults.front ().target.id == "workflow-should" &&
+                selectedTaskReport.regionResults.empty (),
+            "selected frozen task replaces the report summary with its readonly subset"))
+        return rc;
+    mode2ValidateAll->click ();
+    QApplication::processEvents ();
+    regionSummary->selectRow (1);
+    mode2ValidateSelected->click ();
+    QApplication::processEvents ();
+    if (const int rc = require (
+            regionCells->rowCount () >= 1 && regionCells->item (0, 0) != nullptr &&
+                regionCells->item (0, 0)->text () == QStringLiteral ("workflow-region-second") &&
+                regionSummary->rowCount () == 1 && regionSummary->item (0, 0) != nullptr &&
+                regionSummary->item (0, 0)->data (Qt::UserRole).toString () ==
+                    QStringLiteral ("workflow-region-second") && taskResults->rowCount () == 0 &&
+                widget.statusMessage ().contains (QStringLiteral ("selected frozen region")),
+            "selected frozen region replaces visible results from the previous full validation"))
+        return rc;
+    const rws::KinematicAnalysisReport selectedRegionReport = widget.buildReportForExport ();
+    if (const int rc = require (
+            selectedRegionReport.taskResults.empty () &&
+                selectedRegionReport.regionResults.size () == 1 &&
+                selectedRegionReport.regionResults.front ().regionId == "workflow-region-second",
+            "selected frozen region replaces the report summary with its readonly subset"))
+        return rc;
     if (const int rc = require (
             validateExport->isEnabled (),
             "validated requirement results enable report export"))
+        return rc;
+    mode2Source->setCurrentIndex (0);
+    taskTable->setCurrentIndex (taskModel->index (0, 0));
+    taskTable->selectRow (0);
+    mode2ValidateSelected->click ();
+    QApplication::processEvents ();
+    const rws::KinematicAnalysisReport localAfterFrozenReport = widget.buildReportForExport ();
+    if (const int rc = require (
+            localAfterFrozenReport.analysisId == "interactive-analysis" &&
+                localAfterFrozenReport.taskResults.size () == 1 &&
+                localAfterFrozenReport.taskResults.front ().target.id == untouchedTask.id &&
+                localAfterFrozenReport.regionResults.empty (),
+            "local validation supersedes frozen selected-report authority"))
         return rc;
 
     if (const int rc = require (
@@ -4923,7 +5890,10 @@ static int testWorkflowUiStates ()
     tcpCombo->setCurrentIndex (0);
     QMetaObject::invokeMethod (&widget, "refreshWorkflowControls", Qt::DirectConnection);
 
-    exploreSamples->setValue (exploreSamples->maximum ());
+    // Explore 运行状态机:运行中禁用 Run、启用 Cancel,状态含 Running/Estimated;
+    // 取消后进入 Cancelling/Cancellation requested,并最终报告部分采样
+    // DataInsufficient(含 "sample" 字样);改采样设置重新武装 Run。
+    exploreSamples->setValue (1000);
     exploreRun->click ();
     QApplication::processEvents ();
     if (const int rc = require (
@@ -4960,6 +5930,8 @@ static int testWorkflowUiStates ()
             "changing exploration settings re-arms the Run command"))
         return rc;
 
+    // 在取消进行中卸载 WorkCell:所有命令(Diagnose/Validate/Explore)必须安全禁用,
+    // 且后台取消完成不得覆盖"已卸载 WorkCell"的状态文案。
     widget.setWorkCell (nullptr);
     workcell = nullptr;
     device = nullptr;
@@ -4975,6 +5947,277 @@ static int testWorkflowUiStates ()
         "background cancellation does not overwrite the unloaded WorkCell status");
 }
 
+// The modeless plot window is a view over the Widget-owned visualization
+// snapshot.  Reopening it must reuse the same window, while unloading the
+// WorkCell must clear the view and tolerate deletion safely.
+// 补充说明(中文):无模式绘图窗口是 Widget 可视化快照的视图;重复打开必须复用同一
+// 窗口(保留用户改过的尺寸 930x710),卸载 WorkCell 必须清空视图;任务点/投影/
+// 标量模式/网格开关双向同步(Widget->Dialog 与 Dialog->Widget),Dialog 请求的
+// 不支持的标量模式回退到 Widget 状态;关闭后 QPointer 变 null 以允许安全析构。
+static int testKinematicPlotDialogLifecycle ()
+{
+    rws::KinematicAnalysisWidget widget;
+    widget.resize (640, 480);
+    widget.show ();
+    QApplication::processEvents ();
+
+    QPushButton* openButton = widget.findChild< QPushButton* > (
+        QStringLiteral ("visualizationOpenPlotButton"));
+    if (const int rc = require (openButton != nullptr,
+                                "visualization exposes the plot-window action"))
+        return rc;
+
+    const bool opened = QMetaObject::invokeMethod (
+        &widget, "openKinematicPlotDialog", Qt::DirectConnection);
+    if (const int rc = require (opened, "plot window open action is invokable"))
+        return rc;
+    QApplication::processEvents ();
+
+    rws::KinematicPlotDialog* dialog = widget.findChild< rws::KinematicPlotDialog* > (
+        QStringLiteral ("kinematicPlotDialog"));
+    if (const int rc = require (dialog != nullptr && dialog->isVisible (),
+                                "first plot open creates a visible modeless dialog"))
+        return rc;
+    if (const int rc = require (dialog->size () == QSize (800, 600) &&
+                                    dialog->windowFlags ().testFlag (Qt::WindowStaysOnTopHint),
+                                "plot dialog has its required initial size and stay-on-top flag"))
+        return rc;
+    if (const int rc = require (
+            dialog->findChild< QComboBox* > (QStringLiteral ("plotProjectionCombo")) != nullptr &&
+                dialog->findChild< QComboBox* > (QStringLiteral ("plotScalarModeCombo")) != nullptr &&
+                dialog->findChild< QComboBox* > (QStringLiteral ("plotRenderModeCombo")) != nullptr &&
+                dialog->findChild< QPushButton* > (QStringLiteral ("plotFitButton")) != nullptr &&
+                dialog->findChild< QPushButton* > (QStringLiteral ("plotExportPngButton")) != nullptr &&
+                dialog->plotWidget () != nullptr,
+            "plot dialog exposes text controls and the shared plot widget"))
+        return rc;
+
+    QPointer< rws::KinematicPlotDialog > guardedDialog = dialog;
+    dialog->resize (930, 710);
+    QMetaObject::invokeMethod (&widget, "openKinematicPlotDialog", Qt::DirectConnection);
+    QApplication::processEvents ();
+    if (const int rc = require (guardedDialog != nullptr && guardedDialog->size () == QSize (930, 710),
+                                "reopening reuses the existing resizable dialog"))
+        return rc;
+
+    rw::kinematics::StateStructure::Ptr stateStructure =
+        rw::core::ownedPtr (new rw::kinematics::StateStructure ());
+    rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr (
+        new rw::models::WorkCell (stateStructure, "PlotDialog", ""));
+    workcell->addDevice (device);
+    widget.setWorkCell (workcell.get ());
+
+    rws::TaskPointTableModel* taskModel = widget.findChild< rws::TaskPointTableModel* > ();
+    if (const int rc = require (taskModel != nullptr, "visualization owns a task point model"))
+        return rc;
+    rws::TaskPoint point;
+    point.name = "Plot propagation point";
+    point.enabled = true;
+    taskModel->appendTaskPoint (point);
+    QApplication::processEvents ();
+    if (const int rc = require (dialog->visualData ().points.size () == 1,
+                                "task sample changes propagate to the open plot dialog"))
+        return rc;
+
+    QComboBox* projection = widget.findChild< QComboBox* > (
+        QStringLiteral ("visualizationProjectionCombo"));
+    QComboBox* scalarMode = widget.findChild< QComboBox* > (
+        QStringLiteral ("visualizationScalarModeCombo"));
+    QCheckBox* showGrid = widget.findChild< QCheckBox* > (
+        QStringLiteral ("visualizationShowGridCheck"));
+    if (const int rc = require (projection != nullptr && scalarMode != nullptr && showGrid != nullptr,
+                                "visualization controls have stable object names"))
+        return rc;
+    projection->setCurrentIndex (projection->findData (static_cast<int> (rws::VisualProjection::YZ)));
+    scalarMode->setCurrentIndex (scalarMode->findData (static_cast<int> (rws::VisualScalarMode::Status)));
+    showGrid->setChecked (false);
+    QApplication::processEvents ();
+    if (const int rc = require (dialog->projection () == rws::VisualProjection::YZ &&
+                                    !dialog->showGrid () &&
+                                    dialog->visualData ().scalarMode == rws::VisualScalarMode::Status,
+                                "projection scalar mode and display state propagate to the dialog"))
+        return rc;
+
+    dialog->findChild< QComboBox* > (QStringLiteral ("plotProjectionCombo"))
+        ->setCurrentIndex (dialog->findChild< QComboBox* > (
+            QStringLiteral ("plotProjectionCombo"))->findData (
+            static_cast<int> (rws::VisualProjection::XZ)));
+    QApplication::processEvents ();
+    if (const int rc = require (
+            projection->currentData ().toInt () == static_cast<int> (rws::VisualProjection::XZ),
+            "dialog projection requests update the Widget-owned display state"))
+        return rc;
+
+    QComboBox* dialogScalarMode = dialog->findChild< QComboBox* > (
+        QStringLiteral ("plotScalarModeCombo"));
+    dialogScalarMode->setCurrentIndex (dialogScalarMode->findData (
+        static_cast<int> (rws::VisualScalarMode::Coverage)));
+    QApplication::processEvents ();
+    if (const int rc = require (
+            dialogScalarMode->currentData ().toInt () == scalarMode->currentData ().toInt (),
+            "unsupported dialog scalar modes revert to the Widget-owned display state"))
+        return rc;
+
+    dialog->plotWidget ()->visualPointClicked (rws::AnalysisVisualPoint ());
+    if (const int rc = require (
+            widget.statusMessage ().contains (QStringLiteral ("no saved reachable Q")),
+            "dialog plot point clicks are forwarded to the Widget"))
+        return rc;
+
+    widget.setWorkCell (nullptr);
+    QApplication::processEvents ();
+    if (const int rc = require (dialog->visualData ().points.empty (),
+                                "unloading the WorkCell clears open plot data"))
+        return rc;
+
+    dialog->close ();
+    QApplication::processEvents ();
+    if (const int rc = require (guardedDialog.isNull (),
+                                "closing the modeless plot dialog clears the guarded pointer"))
+        return rc;
+    return 0;
+}
+
+// Threshold dialog transaction: values are copied in, displayed in selected
+// units, and only a valid accepted dialog exposes the edited eight-value set.
+// 补充说明(中文):阈值对话框是事务式编辑——初值按所选显示单位(厘米/弧度)换算显示,
+// 但内部仍以米/度保存;reject 不改变源阈值;accept 后只有通过校验的八值集合可读;
+// 条件数警告 >= 失败时拒绝(Rejected)并显示校验文案。
+static int testKinematicThresholdsDialog ()
+{
+    rws::KinematicThresholds source;
+    source.nearJointLimitRatio = 0.12;
+    source.conditionWarning = 120.0;
+    source.conditionFail = 1200.0;
+    source.singularValueWarning = 2e-4;
+    source.manipulabilityWarning = 3e-5;
+    source.positionToleranceMeters = 0.002;
+    source.orientationToleranceDeg = 2.0;
+    source.ikDuplicateQThreshold = 0.003;
+
+    rws::KinematicThresholdsDialog dialog (
+        source, rws::KinematicLengthUnit::Centimeters,
+        rws::KinematicAngleUnit::Radians);
+    if (const int rc = require (dialog.isModal (), "threshold dialog is modal"))
+        return rc;
+    const QList< QDoubleSpinBox* > spins = dialog.findChildren< QDoubleSpinBox* > ();
+    if (const int rc = require (spins.size () == 8, "threshold dialog has eight spin boxes"))
+        return rc;
+    QDoubleSpinBox* nearLimit = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("nearJointLimitRatioSpin"));
+    QDoubleSpinBox* conditionWarning = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("conditionWarningSpin"));
+    QDoubleSpinBox* conditionFail = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("conditionFailSpin"));
+    QDoubleSpinBox* singularWarning = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("singularValueWarningSpin"));
+    QDoubleSpinBox* manipulabilityWarning = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("manipulabilityWarningSpin"));
+    QDoubleSpinBox* positionTolerance = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("positionToleranceSpin"));
+    QDoubleSpinBox* orientationTolerance = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("orientationToleranceSpin"));
+    QDoubleSpinBox* duplicateQ = dialog.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("ikDuplicateQThresholdSpin"));
+    if (const int rc = require (
+            nearLimit != nullptr && conditionWarning != nullptr && conditionFail != nullptr &&
+                singularWarning != nullptr && manipulabilityWarning != nullptr &&
+                positionTolerance != nullptr && orientationTolerance != nullptr &&
+                duplicateQ != nullptr,
+            "threshold dialog exposes stable spin names"))
+        return rc;
+    if (const int rc = assertNear (nearLimit->value (), source.nearJointLimitRatio, 1e-12,
+                                   "near-limit initial value"))
+        return rc;
+    if (const int rc = assertNear (conditionWarning->value (), source.conditionWarning, 1e-12,
+                                   "condition-warning initial value"))
+        return rc;
+    if (const int rc = assertNear (conditionFail->value (), source.conditionFail, 1e-12,
+                                   "condition-fail initial value"))
+        return rc;
+    if (const int rc = assertNear (singularWarning->value (), source.singularValueWarning, 1e-12,
+                                   "singular-warning initial value"))
+        return rc;
+    if (const int rc = assertNear (manipulabilityWarning->value (),
+                                   source.manipulabilityWarning, 1e-12,
+                                   "manipulability-warning initial value"))
+        return rc;
+    if (const int rc = assertNear (positionTolerance->value (), 0.2, 1e-9,
+                                   "position tolerance displayed in centimeters"))
+        return rc;
+    if (const int rc = assertNear (orientationTolerance->value (),
+                                   source.orientationToleranceDeg * 3.14159265358979323846 / 180.0,
+                                   1e-9, "orientation tolerance displayed in radians"))
+        return rc;
+    if (const int rc = assertNear (duplicateQ->value (), source.ikDuplicateQThreshold, 1e-12,
+                                   "duplicate-Q initial value"))
+        return rc;
+
+    nearLimit->setValue (0.25);
+    dialog.reject ();
+    if (const int rc = assertNear (source.nearJointLimitRatio, 0.12, 1e-12,
+                                   "cancel leaves source threshold unchanged"))
+        return rc;
+
+    rws::KinematicThresholdsDialog accepted (
+        source, rws::KinematicLengthUnit::Meters, rws::KinematicAngleUnit::Degrees);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("nearJointLimitRatioSpin"))
+        ->setValue (0.25);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("conditionWarningSpin"))
+        ->setValue (150.0);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("conditionFailSpin"))
+        ->setValue (1500.0);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("singularValueWarningSpin"))
+        ->setValue (4e-4);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("manipulabilityWarningSpin"))
+        ->setValue (5e-5);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("positionToleranceSpin"))
+        ->setValue (0.004);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("orientationToleranceSpin"))
+        ->setValue (4.0);
+    accepted.findChild< QDoubleSpinBox* > (QStringLiteral ("ikDuplicateQThresholdSpin"))
+        ->setValue (0.006);
+    accepted.accept ();
+    if (const int rc = require (accepted.result () == QDialog::Accepted,
+                                "valid threshold dialog accepts"))
+        return rc;
+    const rws::KinematicThresholds edited = accepted.thresholds ();
+    if (const int rc = assertNear (edited.nearJointLimitRatio, 0.25, 1e-12,
+                                   "accepted near-limit ratio")) return rc;
+    if (const int rc = assertNear (edited.conditionWarning, 150.0, 1e-12,
+                                   "accepted condition warning")) return rc;
+    if (const int rc = assertNear (edited.conditionFail, 1500.0, 1e-12,
+                                   "accepted condition fail")) return rc;
+    if (const int rc = assertNear (edited.singularValueWarning, 4e-4, 1e-12,
+                                   "accepted singular warning")) return rc;
+    if (const int rc = assertNear (edited.manipulabilityWarning, 5e-5, 1e-12,
+                                   "accepted manipulability warning")) return rc;
+    if (const int rc = assertNear (edited.positionToleranceMeters, 0.004, 1e-12,
+                                   "accepted position tolerance")) return rc;
+    if (const int rc = assertNear (edited.orientationToleranceDeg, 4.0, 1e-12,
+                                   "accepted orientation tolerance")) return rc;
+    if (const int rc = assertNear (edited.ikDuplicateQThreshold, 0.006, 1e-12,
+                                   "accepted duplicate-Q threshold")) return rc;
+
+    rws::KinematicThresholdsDialog invalid (
+        source, rws::KinematicLengthUnit::Meters, rws::KinematicAngleUnit::Degrees);
+    invalid.findChild< QDoubleSpinBox* > (QStringLiteral ("conditionWarningSpin"))
+        ->setValue (2000.0);
+    invalid.findChild< QDoubleSpinBox* > (QStringLiteral ("conditionFailSpin"))
+        ->setValue (1000.0);
+    invalid.accept ();
+    if (const int rc = require (invalid.result () == QDialog::Rejected,
+                                "condition warning at or above fail is rejected"))
+        return rc;
+    QLabel* validation = invalid.findChild< QLabel* > (QStringLiteral ("validationLabel"));
+    return require (validation != nullptr && !validation->text ().isEmpty (),
+                    "invalid threshold feedback is visible");
+}
+
+// runAll:把所有子套件串行跑一遍,首个失败立即返回,便于 CTest 精确定位首个失败点;
+// 其中需要 QApplication 的四个用例(managed_project_gate / workflow_ui / thresholds /
+// plot_dialog)由 main 独立分发,不在此列表内。
 static int runAll ()
 {
     if (const int rc = testHistoricalFrozenRequirementAdapterAbiRemainsLinkable ())
@@ -5050,6 +6293,10 @@ static int runAll ()
 
 // main:argv[1] 选子套件("all" / 各具体名),默认 "all"。
 // QCoreApplication 是为了让 Q_OBJECT 相关初始化(QFile/QString)能正常工作。
+// 补充说明:四个需要 QApplication(完整 Qt Widget 栈)的子套件(managed_project_gate /
+// workflow_ui / thresholds / plot_dialog)与基于 QCoreApplication 的纯算法子套件在
+// main 中分别分支;每个子套件由 argv[1] 名字选择,默认 "all";"frozen_requirements"
+// 与 "adapter" 别名指向同一个集成用例。
 int main (int argc, char** argv)
 {
     const std::string requestedSuite = argc > 1 ? argv[1] : "all";
@@ -5065,6 +6312,20 @@ int main (int argc, char** argv)
         const int rc = testWorkflowUiStates ();
         if (rc == 0)
             std::cout << "KinematicAnalysis workflow_ui test passed." << std::endl;
+        return rc;
+    }
+    if (requestedSuite == "thresholds") {
+        QApplication app (argc, argv);
+        const int rc = testKinematicThresholdsDialog ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis thresholds test passed." << std::endl;
+        return rc;
+    }
+    if (requestedSuite == "plot_dialog") {
+        QApplication app (argc, argv);
+        const int rc = testKinematicPlotDialogLifecycle ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis plot_dialog test passed." << std::endl;
         return rc;
     }
     QCoreApplication app (argc, argv);

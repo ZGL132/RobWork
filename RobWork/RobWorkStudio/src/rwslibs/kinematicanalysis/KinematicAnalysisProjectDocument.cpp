@@ -1,3 +1,14 @@
+// =====================================================================
+// KinematicAnalysisProjectDocument：运动学分析工程文档的 JSON 序列化/反序列化。
+//
+// 本文件负责把“可编辑的分析配置”与磁盘上的规范 JSON 文档相互转换：
+//   - toJson：将当前分析设置(设备/TCP 名称、采样参数、评价阈值、任务点等)
+//     编码为 format + schemaVersion + settings 三层结构的规范 JSON，用于保存；
+//   - fromJson：解析并严格校验 JSON 后恢复可编辑配置，格式/版本/必需字段
+//     不合法时整体拒绝，其余可选字段带默认值读取以兼容早期项目。
+// 序列化只保存“如何重新执行分析”的输入，不保存任何一次运行的派生结果，
+// 也避免机器相关的绝对路径，保证文档可移植、可原样重放。
+// =====================================================================
 #include "KinematicAnalysisProjectDocument.hpp"
 
 #include <QJsonArray>
@@ -107,20 +118,27 @@ QByteArray KinematicAnalysisProjectDocument::toJson (
     root["schemaVersion"] = ProjectDocumentSchemaVersion;
 
     QJsonObject object;
+    // 保存 IK 求解的核心输入：设备、TCP 框架、目标位姿与重复解去重阈值。
+    // 这些字段是 fromJson 侧的硬性校验项，缺失将导致整个文档无法加载。
     object["deviceName"] = settings.deviceName;
     object["tcpFrameName"] = settings.tcpFrameName;
     object["ikPositionMeters"] = pointToArray (settings.ikPositionMeters);
     object["ikRpyDeg"] = pointToArray (settings.ikRpyDeg);
-    object["ikDuplicateQThreshold"] = settings.ikDuplicateQThreshold;
+    const double duplicateQThreshold = settings.ikDuplicateQThreshold;
+    object["ikDuplicateQThreshold"] = duplicateQThreshold;
     object["ikCollisionCheck"] = settings.ikCollisionCheck;
     object["lengthUnit"] = static_cast< int > (settings.lengthUnit);
     object["angleUnit"] = static_cast< int > (settings.angleUnit);
+    // 工作空间采样参数：采样模式、样本数/栅格步数与碰撞开关。
+    // randomSeed 固定后可保证随机采样的结果可复现。
     object["workspaceMode"] = static_cast< int > (settings.workspace.mode);
     object["workspaceSampleCount"] = settings.workspace.sampleCount;
     object["workspaceGridStepsPerJoint"] = settings.workspace.gridStepsPerJoint;
     object["workspaceCheckCollision"] = settings.workspace.checkCollision;
     object["workspaceRandomSeed"] = static_cast< qint64 > (settings.workspace.randomSeed);
     object["workspaceColorMode"] = static_cast< int > (settings.workspaceColorMode);
+    // 姿态可达性分析参数：方向/翻滚采样数与碰撞开关；
+    // poseTaskPointsSource 决定采样来源是手动位置还是表格任务点。
     object["poseDirectionSamples"] = settings.poseReachability.directionSamples;
     object["poseRollSamples"] = settings.poseReachability.rollSamples;
     object["poseCheckCollision"] = settings.poseReachability.checkCollision;
@@ -129,6 +147,8 @@ QByteArray KinematicAnalysisProjectDocument::toJson (
     for (const auto& position : settings.manualPosePositions)
         manualPositions.append (pointToArray (position));
     object["manualPosePositions"] = manualPositions;
+    // 可视化渲染选项：点来源、投影方式、标量场模式、渲染模式与包络方向。
+    // 显示开关与点大小属于纯 UI 偏好，不影响分析结果，但仍随文档保存。
     object["visualSource"] = static_cast< int > (settings.visualSource);
     object["visualProjection"] = static_cast< int > (settings.visualProjection);
     object["visualScalarMode"] = static_cast< int > (settings.visualScalarMode);
@@ -142,6 +162,8 @@ QByteArray KinematicAnalysisProjectDocument::toJson (
     object["showGrid"] = settings.showGrid;
     object["showLegend"] = settings.showLegend;
     object["pointSize"] = settings.pointSize;
+    // 评价阈值集合：关节限位比例、奇异值、条件数、可操作度的告警/失败阈值，
+    // 以及位置/姿态容差与 IK 重复解去重阈值。它们决定状态 Pass/Warning/Fail 的划分。
     object["thresholdNearJointLimitRatio"] = settings.thresholds.nearJointLimitRatio;
     object["thresholdSingularValueWarning"] = settings.thresholds.singularValueWarning;
     object["thresholdConditionWarning"] = settings.thresholds.conditionWarning;
@@ -149,8 +171,9 @@ QByteArray KinematicAnalysisProjectDocument::toJson (
     object["thresholdManipulabilityWarning"] = settings.thresholds.manipulabilityWarning;
     object["thresholdPositionToleranceMeters"] = settings.thresholds.positionToleranceMeters;
     object["thresholdOrientationToleranceDeg"] = settings.thresholds.orientationToleranceDeg;
-    object["thresholdIkDuplicateQ"] = settings.thresholds.ikDuplicateQThreshold;
+    object["thresholdIkDuplicateQ"] = duplicateQThreshold;
 
+    // 任务点集合：按表内顺序保存，每个任务点用 writeTaskPoint 完整编码。
     QJsonArray taskPoints;
     for (const TaskPoint& point : settings.taskPoints) {
         QJsonObject taskPoint;
@@ -192,9 +215,15 @@ bool KinematicAnalysisProjectDocument::fromJson (
         return false;
     }
 
+    // 逐项恢复可选字段：字段缺失时采用默认值，保持与早期项目文档的兼容性。
     settings.deviceName = object.value ("deviceName").toString ();
     settings.tcpFrameName = object.value ("tcpFrameName").toString ();
-    settings.ikDuplicateQThreshold = object.value ("ikDuplicateQThreshold").toDouble (1e-4);
+    // ikDuplicateQThreshold 的键名在早期版本中曾写作 thresholdIkDuplicateQ，
+    // 这里优先读新键，缺失时回退旧键，保证旧文档仍可加载。
+    const QJsonValue currentDuplicateQ = object.value ("ikDuplicateQThreshold");
+    const QJsonValue legacyDuplicateQ = object.value ("thresholdIkDuplicateQ");
+    settings.ikDuplicateQThreshold = currentDuplicateQ.isDouble ()
+        ? currentDuplicateQ.toDouble () : legacyDuplicateQ.toDouble (1e-4);
     settings.ikCollisionCheck = object.value ("ikCollisionCheck").toBool (true);
     settings.lengthUnit = static_cast< KinematicLengthUnit > (object.value ("lengthUnit").toInt (0));
     settings.angleUnit = static_cast< KinematicAngleUnit > (object.value ("angleUnit").toInt (0));
@@ -210,6 +239,7 @@ bool KinematicAnalysisProjectDocument::fromJson (
     settings.poseReachability.rollSamples = object.value ("poseRollSamples").toInt (1);
     settings.poseReachability.checkCollision = object.value ("poseCheckCollision").toBool (true);
     settings.poseTaskPointsSource = object.value ("poseTaskPointsSource").toBool (true);
+    // 手动位置为可变长字段：逐个解析，任一元素非法则整体拒绝加载。
     settings.manualPosePositions.clear ();
     for (const QJsonValue& value : object.value ("manualPosePositions").toArray ()) {
         std::array< double, 3 > position;
@@ -219,6 +249,7 @@ bool KinematicAnalysisProjectDocument::fromJson (
         }
         settings.manualPosePositions.push_back (position);
     }
+    // 可视化显示选项恢复。
     settings.visualSource = static_cast< VisualPointSource > (object.value ("visualSource").toInt (0));
     settings.visualProjection = static_cast< VisualProjection > (object.value ("visualProjection").toInt (0));
     settings.visualScalarMode = static_cast< VisualScalarMode > (object.value ("visualScalarMode").toInt (0));
@@ -232,6 +263,7 @@ bool KinematicAnalysisProjectDocument::fromJson (
     settings.showGrid = object.value ("showGrid").toBool (true);
     settings.showLegend = object.value ("showLegend").toBool (true);
     settings.pointSize = object.value ("pointSize").toDouble (4.5);
+    // 评价阈值恢复：缺失时回退到与分析库一致的内置默认值。
     settings.thresholds.nearJointLimitRatio = object.value ("thresholdNearJointLimitRatio").toDouble (0.05);
     settings.thresholds.singularValueWarning = object.value ("thresholdSingularValueWarning").toDouble (1e-4);
     settings.thresholds.conditionWarning = object.value ("thresholdConditionWarning").toDouble (100.0);
@@ -239,7 +271,8 @@ bool KinematicAnalysisProjectDocument::fromJson (
     settings.thresholds.manipulabilityWarning = object.value ("thresholdManipulabilityWarning").toDouble (1e-5);
     settings.thresholds.positionToleranceMeters = object.value ("thresholdPositionToleranceMeters").toDouble (0.001);
     settings.thresholds.orientationToleranceDeg = object.value ("thresholdOrientationToleranceDeg").toDouble (1.0);
-    settings.thresholds.ikDuplicateQThreshold = object.value ("thresholdIkDuplicateQ").toDouble (1e-4);
+    settings.thresholds.ikDuplicateQThreshold = settings.ikDuplicateQThreshold;
+    // 任务点集合恢复：逐个解析，任一任务点非法则整体拒绝加载。
     settings.taskPoints.clear ();
     for (const QJsonValue& value : object.value ("taskPoints").toArray ()) {
         TaskPoint point;

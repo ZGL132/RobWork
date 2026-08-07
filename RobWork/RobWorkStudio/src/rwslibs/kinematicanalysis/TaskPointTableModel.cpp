@@ -1,3 +1,13 @@
+// =====================================================================
+// TaskPointTableModel：任务点表格的 QAbstractTableModel 实现。
+//
+// 本文件实现任务点表格的数据模型：列定义、单位换算、单元格读写、
+// 行增删、分析结果回填与校验状态维护。列分为两类：
+//   - 可编辑列(ColEnabled..ColNote)：任务点定义本身，UI 可编辑并即时校验；
+//   - 结果列(ColStatus..ColCollision)：由批量 IK 分析产生的只读衍生值。
+// 所有位置/姿态值内部统一以米/度存储，仅在显示与编辑时按当前单位换算，
+// 切换单位只会刷新表头与显示值，不会改动底层数据。
+// =====================================================================
 #include "TaskPointTableModel.hpp"
 
 #include <rwslibs/robotanalysiscore/RobotAnalysisValidation.hpp>
@@ -8,6 +18,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <set>
 #include <sstream>
 
 using namespace rws;
@@ -15,6 +26,8 @@ using namespace rws;
 namespace {
 
 // Headers for editable task point columns and derived result columns.
+// 表头顺序定义：前半部分为可编辑任务点字段，后半部分为分析结果衍生列。
+// 列索引必须与 hpp 中的 TaskPointColumn 枚举一一对应，改动需两边同步。
 const char* kHeaders[TaskPointColumnCount] = {
     "Enabled", "id", "name", "type",
     "refFrame", "tcpFrame",
@@ -28,6 +41,7 @@ const char* kHeaders[TaskPointColumnCount] = {
     "margin", "condition", "collision"
 };
 
+// 任务点类型的显示文本：枚举转字符串，用于表格展示与 CSV 导出。
 QString taskPointTypeText (TaskPointType t)
 {
     switch (t) {
@@ -43,6 +57,8 @@ QString taskPointTypeText (TaskPointType t)
     return QStringLiteral ("Generic");
 }
 
+// 字符串解析回任务点类型：大小写不敏感，未知类型回退为 Generic。
+// 与 taskPointTypeText 互为逆操作，保证编辑往返后类型不会漂移。
 TaskPointType parseTaskPointType (const QString& s)
 {
     const QString t = s.trimmed ();
@@ -56,6 +72,7 @@ TaskPointType parseTaskPointType (const QString& s)
     return TaskPointType::Generic;
 }
 
+// 分析状态的本地显示文本，与 CSV 导出使用的状态字面量保持一致。
 QString statusTextLocal (AnalysisStatus s)
 {
     switch (s) {
@@ -67,6 +84,7 @@ QString statusTextLocal (AnalysisStatus s)
     }
 }
 
+// 最优解的摘要文本：直接显示条件数；条件数为 inf 时显式输出 "inf"。
 QString bestSolutionSummary (const KinematicIkSolution& s)
 {
     if (std::isinf (s.conditionNumber))
@@ -74,6 +92,7 @@ QString bestSolutionSummary (const KinematicIkSolution& s)
     return QString::number (s.conditionNumber, 'g', 6);
 }
 
+// 失败原因列表转逗号分隔文本；为空时显示 "-" 占位。
 QString reasonText (const std::vector< KinematicFailureReason >& reasons)
 {
     if (reasons.empty ())
@@ -84,6 +103,9 @@ QString reasonText (const std::vector< KinematicFailureReason >& reasons)
     return out.join (QStringLiteral (", "));
 }
 
+// 在给定 IK 结果中挑选“可用”的最优解：跳过失败或碰撞的解，
+// 其余按评分升序取最小者；没有可用解时返回 nullptr。
+// 各结果列共用该选择逻辑，保证状态、误差、条件数等取自同一个解。
 const KinematicIkSolution* bestUsableSolutionLocal (const KinematicIkAnalysisResult& ik)
 {
     const KinematicIkSolution* best = nullptr;
@@ -97,6 +119,7 @@ const KinematicIkSolution* bestUsableSolutionLocal (const KinematicIkAnalysisRes
 }
 
 // Parse only finite floating point values.
+// 只接受有限浮点数：拒绝 NaN/Inf 与非法文本，避免脏数据混入任务点。
 bool safeParseDouble (const QString& s, double& out)
 {
     bool ok = false;
@@ -114,10 +137,12 @@ bool safeParseDouble (const QString& s, double& out)
 //  TaskPointTableModel 瀹炵幇
 // =====================================================================
 
+// 构造空模型；数据行通过 insertRows / setRowsFromTaskPoints 填充。
 TaskPointTableModel::TaskPointTableModel (QObject* parent) :
     QAbstractTableModel (parent)
 {}
 
+// 无父索引时返回行数；本模型为扁平表格，带父索引(嵌套场景)一律返回 0。
 int TaskPointTableModel::rowCount (const QModelIndex& parent) const
 {
     if (parent.isValid ())
@@ -132,6 +157,7 @@ int TaskPointTableModel::columnCount (const QModelIndex& parent) const
     return TaskPointColumnCount;
 }
 
+// 静态表头文本：供 QTableView 与单元测试共用，避免表头字符串重复定义。
 QString TaskPointTableModel::headerText (int column)
 {
     if (column < 0 || column >= TaskPointColumnCount)
@@ -147,6 +173,7 @@ QStringList TaskPointTableModel::allHeaderTexts ()
     return out;
 }
 
+// 表头显示：横向返回带单位后缀的显示表头，纵向返回 1-based 行号。
 QVariant TaskPointTableModel::headerData (
     int section, Qt::Orientation orientation, int role) const
 {
@@ -157,6 +184,8 @@ QVariant TaskPointTableModel::headerData (
     return section + 1;
 }
 
+// 切换显示单位：仅改变表头与单元格的显示换算，不触碰 TaskPoint 内部
+// 以米/度存储的原始值；单位未变化时直接短路返回，避免无谓的模型刷新。
 void TaskPointTableModel::setDisplayUnits (
     KinematicLengthUnit lengthUnit, KinematicAngleUnit angleUnit)
 {
@@ -169,6 +198,8 @@ void TaskPointTableModel::setDisplayUnits (
         Q_EMIT dataChanged (index (0, ColX), index (rowCount () - 1, ColOrientationError));
 }
 
+// 生成带当前单位后缀的表头文本：单位相关列(位置/容差/姿态/误差)使用
+// 动态后缀，其余列直接返回静态表头。
 QString TaskPointTableModel::displayHeaderText (int column) const
 {
     const QString length = QString::fromLatin1 (unitSuffix (_lengthUnit));
@@ -188,6 +219,8 @@ QString TaskPointTableModel::displayHeaderText (int column) const
     }
 }
 
+// 列权限：ColNote 及之前的列为可编辑列(可选择/可用/可编辑)；
+// 结果列只读；ColEnabled 额外支持勾选框(CheckStateRole)。
 Qt::ItemFlags TaskPointTableModel::flags (const QModelIndex& index) const
 {
     if (!index.isValid ())
@@ -202,6 +235,8 @@ Qt::ItemFlags TaskPointTableModel::flags (const QModelIndex& index) const
     return f;
 }
 
+// 任务点转显示字符串：数值列先按当前单位换算，布尔列输出 true/false，
+// 供 DisplayRole 与 EditRole 共用，保证表格展示与编辑起点一致。
 QString TaskPointTableModel::taskPointToString (const TaskPoint& p, int column) const
 {
     switch (column) {
@@ -227,6 +262,8 @@ QString TaskPointTableModel::taskPointToString (const TaskPoint& p, int column) 
     }
 }
 
+// 把编辑框字符串写回 TaskPoint 对应字段：数值列做有限性校验并换算回
+// 米/度，布尔列接受多种真/假写法；非法输入返回 false 拒绝本次提交。
 bool TaskPointTableModel::stringToTaskPointField (
     const QString& s, int column, TaskPoint& p) const
 {
@@ -315,6 +352,9 @@ bool TaskPointTableModel::stringToTaskPointField (
     }
 }
 
+// 单元格数据查询：Qt::UserRole 返回稳定的任务点 ID(供排序/查找复用)，
+// ColEnabled 走 CheckStateRole；结果列提供状态背景色与悬浮提示，
+// 可编辑列提供校验警告的背景色与提示；最后统一输出显示文本。
 QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
 {
     if (!index.isValid ())
@@ -324,6 +364,9 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
         return QVariant ();
     const TaskPointTableRow& r = _rows[static_cast<std::size_t> (row)];
     const int col = index.column ();
+
+    if (role == Qt::UserRole)
+        return QString::fromStdString (r.point.id);
 
     // Enabled uses CheckStateRole; display/edit roles keep string compatibility.
     if (col == ColEnabled) {
@@ -432,6 +475,8 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
     return QVariant ();
 }
 
+// 编辑提交：勾选框直接更新 enabled；文本列先校验再写回，并同步到已存在
+// 的结果(保持 taskPoint 快照一致)，随后重算校验并通知视图整行刷新。
 bool TaskPointTableModel::setData (
     const QModelIndex& index, const QVariant& value, int role)
 {
@@ -452,9 +497,14 @@ bool TaskPointTableModel::setData (
 
     if (col <= ColNote &&
         (role == Qt::EditRole || role == Qt::DisplayRole)) {
-        TaskPoint before = r.point;
-        if (!stringToTaskPointField (value.toString (), col, r.point))
+        TaskPoint updated = r.point;
+        if (!stringToTaskPointField (value.toString (), col, updated))
             return false;
+        if (col == ColId && containsTaskPointId (updated.id, row))
+            return false;
+        r.point = updated;
+        if (r.hasResult)
+            r.result.taskPoint = r.point;
         recomputeValidation (r);
         Q_EMIT dataChanged (this->index (row, 0),
                           this->index (row, TaskPointColumnCount - 1),
@@ -465,6 +515,8 @@ bool TaskPointTableModel::setData (
     return false;
 }
 
+// 插入行：在指定位置批量插入，自动生成不重复的默认 ID(P1/P2/...)与
+// 默认字段，并通过 beginInsertRows/endInsertRows 通知视图。
 bool TaskPointTableModel::insertRows (
     int row, int count, const QModelIndex& parent)
 {
@@ -472,11 +524,23 @@ bool TaskPointTableModel::insertRows (
         return false;
     if (row > static_cast<int> (_rows.size ()))
         row = static_cast<int> (_rows.size ());
+    std::set< std::string > usedIds;
+    for (const TaskPointTableRow& existing : _rows)
+        usedIds.insert (existing.point.id);
+    int nextIdNumber = 1;
+    const auto nextDefaultId = [&usedIds, &nextIdNumber] () {
+        std::string id;
+        do {
+            id = QString ("P%1").arg (nextIdNumber++).toStdString ();
+        } while (usedIds.find (id) != usedIds.end ());
+        usedIds.insert (id);
+        return id;
+    };
     beginInsertRows (QModelIndex (), row, row + count - 1);
     for (int i = 0; i < count; ++i) {
         TaskPointTableRow r;
-        r.point.id   = QString ("P%1").arg (row + i + 1).toStdString ();
-        r.point.name = QString ("Task %1").arg (row + i + 1).toStdString ();
+        r.point.id   = nextDefaultId ();
+        r.point.name = QString ("Task %1").arg (QString::fromStdString (r.point.id)).toStdString ();
         r.point.type = TaskPointType::Generic;
         r.point.refFrame = "WORLD";
         r.point.tcpFrame = "TCP";
@@ -490,6 +554,7 @@ bool TaskPointTableModel::insertRows (
     return true;
 }
 
+// 删除行：越界或非法请求返回 false，成功后通知视图更新。
 bool TaskPointTableModel::removeRows (
     int row, int count, const QModelIndex& parent)
 {
@@ -503,12 +568,17 @@ bool TaskPointTableModel::removeRows (
     return true;
 }
 
+// 全量替换行(导入用)：重复的非空 ID 保留首次出现，每行重算校验，
+// 通过 beginResetModel 整体重置视图；旧的分析结果一并清空。
 void TaskPointTableModel::setRowsFromTaskPoints (const std::vector< TaskPoint >& points)
 {
     beginResetModel ();
     _rows.clear ();
     _rows.reserve (points.size ());
+    std::set< std::string > importedIds;
     for (const TaskPoint& p : points) {
+        if (!p.id.empty () && !importedIds.insert (p.id).second)
+            continue;
         TaskPointTableRow r;
         r.point = p;
         recomputeValidation (r);
@@ -518,8 +588,12 @@ void TaskPointTableModel::setRowsFromTaskPoints (const std::vector< TaskPoint >&
     endResetModel ();
 }
 
+// 追加单行(Import current TCP 等场景)：ID 已存在时返回 -1 拒绝重复，
+// 成功返回新行号并通知视图。
 int TaskPointTableModel::appendTaskPoint (const TaskPoint& point)
 {
+    if (containsTaskPointId (point.id))
+        return -1;
     const int row = static_cast<int> (_rows.size ());
     beginInsertRows (QModelIndex (), row, row);
     TaskPointTableRow r;
@@ -530,6 +604,7 @@ int TaskPointTableModel::appendTaskPoint (const TaskPoint& point)
     return row;
 }
 
+// 把单个分析结果写回指定行，仅刷新结果列区域的数据变化。
 void TaskPointTableModel::setResultForRow (
     int row, const TaskPointReachabilityResult& result)
 {
@@ -542,6 +617,8 @@ void TaskPointTableModel::setResultForRow (
                       {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
 }
 
+// 批量写入分析结果(整表分析)：先按结果数对齐行数，再逐行回填，
+// 空 ID 行用结果中的任务点 ID 补齐，并同步更新总可达率。
 void TaskPointTableModel::setResults (
     const std::vector< TaskPointReachabilityResult >& results, double reachableRate)
 {
@@ -562,6 +639,30 @@ void TaskPointTableModel::setResults (
                         {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
 }
 
+// 按稳定任务点 ID 增量更新结果：仅更新 ID 唯一匹配的行，
+// 重复 ID 导致歧义时跳过，避免结果错位覆盖。
+void TaskPointTableModel::applyResultsByTaskId (
+    const std::vector< TaskPointReachabilityResult >& results)
+{
+    for (const TaskPointReachabilityResult& result : results) {
+        if (result.taskPoint.id.empty ())
+            continue;
+        int matchingRow = -1;
+        for (int row = 0; row < rowCount (); ++row) {
+            if (_rows[static_cast< std::size_t > (row)].point.id != result.taskPoint.id)
+                continue;
+            if (matchingRow >= 0) {
+                matchingRow = -1;
+                break;
+            }
+            matchingRow = row;
+        }
+        if (matchingRow >= 0)
+            setResultForRow (matchingRow, result);
+    }
+}
+
+// 清空所有行结果与可达率(导入/删除前调用)，防止旧结果污染新数据。
 void TaskPointTableModel::clearAllResults ()
 {
     for (TaskPointTableRow& r : _rows) {
@@ -577,6 +678,8 @@ void TaskPointTableModel::clearAllResults ()
                       {Qt::DisplayRole, Qt::BackgroundRole, Qt::ToolTipRole});
 }
 
+// 全表触发校验，收集每行首条警告到 summary 摘要；返回是否任意行校验失败，
+// 供上层决定是否允许继续分析/导出。
 bool TaskPointTableModel::validateAll (QString* summary)
 {
     if (summary != nullptr)
@@ -607,6 +710,7 @@ bool TaskPointTableModel::validateAll (QString* summary)
     return allValid;
 }
 
+// 清空所有行的校验警告标记，供下一次 validateAll 之前清掉过期背景/提示。
 void TaskPointTableModel::clearValidationMarks ()
 {
     for (TaskPointTableRow& r : _rows)
@@ -620,6 +724,7 @@ void TaskPointTableModel::clearValidationMarks ()
 }
 
 std::vector< std::vector< AnalysisWarning > >
+// 导出所有行的校验警告，供 UI 逐行查看完整警告列表。
 TaskPointTableModel::allValidationWarnings () const
 {
     std::vector< std::vector< AnalysisWarning > > out;
@@ -629,6 +734,8 @@ TaskPointTableModel::allValidationWarnings () const
     return out;
 }
 
+// 导出全部任务点(CSV 导出 / 整表分析用)：保留原始行值，
+// 校验由分析与导出路径负责，这里不做过滤。
 std::vector< TaskPoint > TaskPointTableModel::taskPoints (QString* error) const
 {
     std::vector< TaskPoint > out;
@@ -642,19 +749,36 @@ std::vector< TaskPoint > TaskPointTableModel::taskPoints (QString* error) const
 }
 
 std::vector< TaskPointReachabilityResult >
+// 导出有结果的行(报告导出 / Apply best Q 用)：跳过尚未分析的行，
+// 并用当前表格值刷新结果中的任务点快照，保证导出一致。
 TaskPointTableModel::results () const
 {
     std::vector< TaskPointReachabilityResult > out;
     out.reserve (_rows.size ());
     for (const TaskPointTableRow& r : _rows) {
-        if (r.hasResult)
-            out.push_back (r.result);
-        else
-            out.push_back (TaskPointReachabilityResult {});
+        if (!r.hasResult)
+            continue;
+        TaskPointReachabilityResult result = r.result;
+        result.taskPoint = r.point;
+        out.push_back (std::move (result));
     }
     return out;
 }
 
+// 检查 ID 是否已存在(可排除指定行)：空 ID 不算重复，
+// 用于新增/编辑时保证 ID 唯一性。
+bool TaskPointTableModel::containsTaskPointId (const std::string& id, int exceptRow) const
+{
+    if (id.empty ())
+        return false;
+    for (int row = 0; row < rowCount (); ++row) {
+        if (row != exceptRow && _rows[static_cast< std::size_t > (row)].point.id == id)
+            return true;
+    }
+    return false;
+}
+
+// 单行只读访问器：越界返回空对象/空结果，供 UI 与测试使用。
 TaskPoint TaskPointTableModel::taskPointAt (int row) const
 {
     if (row < 0 || static_cast<std::size_t> (row) >= _rows.size ())
@@ -676,6 +800,7 @@ bool TaskPointTableModel::hasResultAt (int row) const
     return _rows[static_cast<std::size_t> (row)].hasResult;
 }
 
+// 返回指定行结果中的“可用”最优解指针；无结果或不可用时返回 nullptr。
 const KinematicIkSolution* TaskPointTableModel::bestUsableSolutionForRow (int row) const
 {
     if (row < 0 || static_cast<std::size_t> (row) >= _rows.size ())
@@ -685,6 +810,7 @@ const KinematicIkSolution* TaskPointTableModel::bestUsableSolutionForRow (int ro
     return bestUsableSolutionLocal (_rows[static_cast<std::size_t> (row)].result.ik);
 }
 
+// 判定指定行是否存在可用结果：存在非碰撞且非失败状态的最优解。
 bool TaskPointTableModel::hasUsableResult (int row) const
 {
     const KinematicIkSolution* best = bestUsableSolutionForRow (row);
@@ -692,6 +818,7 @@ bool TaskPointTableModel::hasUsableResult (int row) const
            best->status != AnalysisStatus::Fail;
 }
 
+// 对单行任务点重新运行 RobotAnalysisValidation，刷新其校验警告列表。
 void TaskPointTableModel::recomputeValidation (TaskPointTableRow& row)
 {
     row.validationWarnings =

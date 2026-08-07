@@ -1,3 +1,10 @@
+// =====================================================================
+// TaskPointTableModel.hpp：任务点表格模型声明。
+//
+// 定义任务点表格的列枚举(TaskPointColumn)、单行数据结构
+// (TaskPointTableRow) 以及 QAbstractTableModel 派生类 TaskPointTableModel，
+// 供 KinematicAnalysisWidget 在 QTableView 中展示与编辑任务点。
+// =====================================================================
 #ifndef RWS_KINEMATICANALYSIS_TASKPOINTTABLEMODEL_HPP
 #define RWS_KINEMATICANALYSIS_TASKPOINTTABLEMODEL_HPP
 
@@ -98,13 +105,15 @@ class TaskPointTableModel : public QAbstractTableModel
     TaskPoint taskPointAt (int row) const;
     TaskPointReachabilityResult resultAt (int row) const;
     bool hasResultAt (int row) const;
+    //! @brief 返回指定行结果中的可用最优解指针；无结果/不可用返回 nullptr。
     const KinematicIkSolution* bestUsableSolutionForRow (int row) const;
+    //! @brief 指定行是否存在可用(非碰撞、非失败)结果。
     bool hasUsableResult (int row) const;
 
-    //! @brief 覆盖所有行(用于 CSV 导入)。原有 _lastTaskPointResults 不动。
+    //! @brief 覆盖所有行(用于 CSV 导入)，重复的非空 ID 保留首次出现的行。
     void setRowsFromTaskPoints (const std::vector< TaskPoint >& points);
 
-    //! @brief 追加一行(用于 Import current TCP)。返回新行的 row 索引。
+    //! @brief 追加一行(用于 Import current TCP)。重复 ID 时返回 -1。
     int appendTaskPoint (const TaskPoint& point);
 
     //! @brief 把单个分析结果写回对应 row(用于 analyzeSelectedTaskPointRows)。
@@ -113,6 +122,11 @@ class TaskPointTableModel : public QAbstractTableModel
     //! @brief 批量覆盖所有结果(用于 Analyze all)。
     void setResults (const std::vector< TaskPointReachabilityResult >& results,
                      double reachableRate);
+
+    //! Updates only rows whose stable task IDs occur in @p results.
+    //! @brief 按稳定任务点 ID 增量更新结果，仅更新唯一匹配的行，
+    //! 重复 ID 歧义行跳过，避免结果错位。
+    void applyResultsByTaskId (const std::vector< TaskPointReachabilityResult >& results);
 
     //! @brief 清空所有行的结果(用于 Import / Remove 时不让旧结果污染新数据)。
     void clearAllResults ();
@@ -135,18 +149,24 @@ class TaskPointTableModel : public QAbstractTableModel
     static QStringList allHeaderTexts ();
 
     //! Changes UI units only; TaskPoint values remain meters/degrees internally.
+    //! @brief 切换显示单位：仅影响表头与单元格显示换算，
+    //! 不改动 TaskPoint 内部以米/度存储的原始值。
     void setDisplayUnits (KinematicLengthUnit lengthUnit, KinematicAngleUnit angleUnit);
 
   private:
     // 内部维护的原始数据;UI 通过 QAbstractTableModel 接口读写。
     std::vector< TaskPointTableRow > _rows;
+    // 最近一次整表分析的总可达率(0..1)，由 setResults 更新，供 UI 展示。
     double _reachableRate = 0.0;
+    // 当前显示单位(仅用于显示换算，原始数据恒为米/度)。
     KinematicLengthUnit _lengthUnit = KinematicLengthUnit::Meters;
     KinematicAngleUnit _angleUnit = KinematicAngleUnit::Degrees;
 
+    // 内部工具：带单位表头 / 单元格转字符串 / 字符串转字段 / ID 唯一性检查 / 校验重算。
     QString displayHeaderText (int column) const;
     QString taskPointToString (const TaskPoint& p, int column) const;
     bool stringToTaskPointField (const QString& s, int column, TaskPoint& p) const;
+    bool containsTaskPointId (const std::string& id, int exceptRow = -1) const;
     void recomputeValidation (TaskPointTableRow& row);
 };
 

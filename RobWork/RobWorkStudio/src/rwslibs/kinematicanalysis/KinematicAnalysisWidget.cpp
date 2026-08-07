@@ -1,4 +1,5 @@
 #include "KinematicAnalysisWidget.hpp"
+#include "KinematicThresholdsDialog.hpp"
 
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicAnalyzer.hpp"
@@ -7,6 +8,7 @@
 #include "TaskPointTableModel.hpp"
 #include "TaskPointDelegates.hpp"
 #include "KinematicAnalysisPlotWidget.hpp"
+#include "KinematicPlotDialog.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "KinematicAnalysisWorkspace.hpp"
 #include "KinematicAnalysisPoseReachability.hpp"
@@ -39,7 +41,9 @@
 
 #include <QAbstractItemDelegate>
 #include <QAbstractItemView>
+#include <QAction>
 #include <QApplication>
+#include <QButtonGroup>
 #include <QMetaObject>
 #include <QPointer>
 #include <QtConcurrent/QtConcurrent>
@@ -52,6 +56,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFrame>
+#include <QFormLayout>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -60,6 +65,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollBar>
@@ -68,6 +74,7 @@
 #include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QSpinBox>
+#include <QStackedWidget>
 #include <QSet>
 #include <QStyledItemDelegate>
 #include <QTableWidget>
@@ -266,24 +273,38 @@ void setCompactTableVisibleRows (QTableWidget* table, int rows);
 //   - 用 QVBoxLayout + QScrollArea 包裹主内容区,
 //     这样插件可以在小窗口下保持可用(滚动条出现);
 //   - 顶部一行是设备 / TCP 帧选择 + Refresh 按钮;
-//   - QTabWidget 承载 6 个子页;
+//   - Three text mode buttons switch scrollable workflow pages;
 //   - 底部一个只读状态条用于反馈用户操作结果;
 //   - 末尾把所有按钮的 clicked() 信号连到对应的槽函数。
 KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     QWidget(parent),
     _studio(NULL),
     _workcell(NULL),
-    _workflowTabs(NULL),
-    _tabs(NULL),
+    _modeSelector(NULL),
+    _modeButtonGroup(NULL),
+    _modeStack(NULL),
+    _diagnoseScroll(NULL),
+    _exploreScroll(NULL),
     _diagnoseWorkflowPage(NULL),
     _validateWorkflowPage(NULL),
     _exploreWorkflowPage(NULL),
+    _mode2DataSourceCombo(NULL),
+    _mode2LoadJsonButton(NULL),
+    _mode2ValidateAllButton(NULL),
+    _mode2ValidateSelectedButton(NULL),
+    _mode2AddButton(NULL),
+    _mode2RemoveButton(NULL),
     _validateLoadRequirementsButton(NULL),
     _validateRunButton(NULL),
     _validateExportButton(NULL),
     _validateRequirementStateLabel(NULL),
     _validateTaskResultTable(NULL),
+    _validateRegionSummaryTable(NULL),
     _validateRegionCellTable(NULL),
+    _validateDiagnosticsToggle(NULL),
+    _validateDiagnosticsContent(NULL),
+    _validateProvenanceLabel(NULL),
+    _validateOrientationProbeLabel(NULL),
     _exploreRunButton(NULL),
     _exploreCancelButton(NULL),
     _exploreSamplesSpin(NULL),
@@ -292,6 +313,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _exploreGridStepsSpin(NULL),
     _exploreDirectionSamplesSpin(NULL),
     _exploreRollSamplesSpin(NULL),
+    _exploreSamplesLabel(NULL),
+    _exploreSeedLabel(NULL),
+    _exploreGridStepsLabel(NULL),
+    _exploreDirectionsLabel(NULL),
+    _exploreRollsLabel(NULL),
     _exploreStateLabel(NULL),
     _exploreRunActive(false),
     _exploreCancellationRequested(false),
@@ -309,6 +335,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _deviceCombo(NULL),
     _tcpFrameCombo(NULL),
     _refreshCurrentPoseButton(NULL),
+    _thresholdSettingsButton(NULL),
+    _reportButton(NULL),
     _status(NULL),
     _poseValueTable(NULL),
     _poseIndicatorLabel(NULL),
@@ -345,6 +373,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikCandidateFilterCombo(NULL),
     _ikSolutionTable(NULL),
     _ikDetailTable(NULL),
+    _ikResultStale(false),
     _taskPointTable(NULL),
     _taskPointModel(nullptr),
     _addTaskPointButton(NULL),
@@ -428,6 +457,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _visualPointSizeSpin(NULL),
     _visualResetViewButton(NULL),
     _visualExportPngButton(NULL),
+    _visualOpenDialogButton(NULL),
     _visualSummaryLabel(NULL),
     _visualPlot(NULL),
     _envelopeWatcher(NULL),
@@ -469,28 +499,29 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 {
     Q_UNUSED (parent);
     QVBoxLayout* root = new QVBoxLayout(this);
+    root->setSizeConstraint (QLayout::SetNoConstraint);
     root->setContentsMargins (4, 4, 4, 4);
 
-    QScrollArea* scroll = new QScrollArea(this);
-    scroll->setWidgetResizable(true);
-    scroll->setFrameShape(QFrame::NoFrame);
-    root->addWidget(scroll);
-
-    QWidget* base = new QWidget(scroll);
-    QVBoxLayout* content = new QVBoxLayout(base);
-    content->setContentsMargins(4, 4, 4, 4);
-    content->setSpacing(6);
-    scroll->setWidget(base);
-
-    QGridLayout* header = new QGridLayout();
-    header->setContentsMargins(0, 0, 0, 0);
-    header->setColumnStretch(1, 1);
-    _deviceCombo = new QComboBox(base);
-    _tcpFrameCombo = new QComboBox(base);
+    QWidget* headerWidget = new QWidget(this);
+    QVBoxLayout* header = new QVBoxLayout (headerWidget);
+    header->setContentsMargins (0, 0, 0, 0);
+    header->setSpacing (4);
+    QGridLayout* contextRow = new QGridLayout ();
+    contextRow->setContentsMargins (0, 0, 0, 0);
+    contextRow->setHorizontalSpacing (4);
+    contextRow->setColumnStretch (1, 1);
+    contextRow->setColumnStretch (3, 1);
+    QHBoxLayout* actionRow = new QHBoxLayout ();
+    actionRow->setContentsMargins (0, 0, 0, 0);
+    actionRow->setSpacing (4);
+    _deviceCombo = new QComboBox(headerWidget);
+    _tcpFrameCombo = new QComboBox(headerWidget);
     _deviceCombo->setObjectName (QStringLiteral ("deviceCombo"));
     _tcpFrameCombo->setObjectName (QStringLiteral ("tcpFrameCombo"));
-    _lengthUnitCombo = new QComboBox(base);
-    _angleUnitCombo = new QComboBox(base);
+    _lengthUnitCombo = new QComboBox(headerWidget);
+    _angleUnitCombo = new QComboBox(headerWidget);
+    _lengthUnitCombo->setObjectName (QStringLiteral ("lengthUnitCombo"));
+    _angleUnitCombo->setObjectName (QStringLiteral ("angleUnitCombo"));
     _lengthUnitCombo->addItem(tr("Meters"), static_cast<int>(KinematicLengthUnit::Meters));
     _lengthUnitCombo->addItem(tr("Centimeters"), static_cast<int>(KinematicLengthUnit::Centimeters));
     _lengthUnitCombo->addItem(tr("Millimeters"), static_cast<int>(KinematicLengthUnit::Millimeters));
@@ -499,28 +530,94 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _angleUnitCombo->addItem(tr("Radians"), static_cast<int>(KinematicAngleUnit::Radians));
     _angleUnitCombo->addItem(tr("Grads"), static_cast<int>(KinematicAngleUnit::Grads));
     _angleUnitCombo->addItem(tr("Turns"), static_cast<int>(KinematicAngleUnit::Turns));
-    _refreshCurrentPoseButton = new QPushButton(tr("Refresh"), base);
+    _refreshCurrentPoseButton = new QPushButton(tr("Refresh"), headerWidget);
     _refreshCurrentPoseButton->setObjectName (
         QStringLiteral ("diagnoseRefreshButton"));
+    _thresholdSettingsButton = new QPushButton (tr("Thresholds"), headerWidget);
+    _thresholdSettingsButton->setObjectName (QStringLiteral ("thresholdSettingsButton"));
+    _thresholdSettingsButton->setToolTip (tr("Edit kinematic analysis thresholds."));
+    _reportButton = new QPushButton (tr("Report"), headerWidget);
+    _reportButton->setObjectName (QStringLiteral ("reportButton"));
+    _reportButton->setToolTip (tr("Report actions."));
+    QMenu* reportMenu = new QMenu (_reportButton);
+    QAction* refreshReportAction = reportMenu->addAction (tr ("Refresh report"));
+    QAction* exportJsonAction = reportMenu->addAction (tr ("Export JSON"));
+    QAction* exportSummaryAction = reportMenu->addAction (tr ("Export summary CSV"));
+    QAction* exportTaskResultsAction = reportMenu->addAction (tr ("Export task-results CSV"));
+    connect (refreshReportAction, &QAction::triggered, this,
+             &KinematicAnalysisWidget::refreshReport);
+    connect (exportJsonAction, &QAction::triggered, this,
+             &KinematicAnalysisWidget::exportReportJson);
+    connect (exportSummaryAction, &QAction::triggered, this,
+             &KinematicAnalysisWidget::exportReportCsv);
+    connect (exportTaskResultsAction, &QAction::triggered, this,
+             &KinematicAnalysisWidget::exportTaskPointResultsCsv);
+    _reportButton->setMenu (reportMenu);
     _deviceCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
     _tcpFrameCombo->setSizeAdjustPolicy (QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    _deviceCombo->setMinimumContentsLength (10);
-    _tcpFrameCombo->setMinimumContentsLength (10);
-    header->addWidget(new QLabel(tr("Device:"), base), 0, 0);
-    header->addWidget(_deviceCombo, 0, 1, 1, 2);
-    header->addWidget(new QLabel(tr("TCP frame:"), base), 1, 0);
-    header->addWidget(_tcpFrameCombo, 1, 1);
-    header->addWidget(_refreshCurrentPoseButton, 1, 2);
-    header->addWidget(new QLabel(tr("Distance unit:"), base), 2, 0);
-    header->addWidget(_lengthUnitCombo, 2, 1);
-    header->addWidget(new QLabel(tr("Angle unit:"), base), 2, 2);
-    header->addWidget(_angleUnitCombo, 2, 3);
-    content->addLayout(header);
+    _deviceCombo->setMinimumWidth (0);
+    _tcpFrameCombo->setMinimumWidth (0);
+    _deviceCombo->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+    _tcpFrameCombo->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+    _lengthUnitCombo->setMinimumWidth (0);
+    _angleUnitCombo->setMinimumWidth (0);
+    _lengthUnitCombo->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+    _angleUnitCombo->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+    for (QComboBox* combo : {_deviceCombo, _tcpFrameCombo,
+                             _lengthUnitCombo, _angleUnitCombo}) {
+        combo->setToolTip (combo->currentText ());
+        connect (combo, &QComboBox::currentTextChanged, combo,
+                 [combo] (const QString& text) { combo->setToolTip (text); });
+    }
+    contextRow->addWidget (new QLabel (tr ("Device:"), headerWidget), 0, 0);
+    contextRow->addWidget (_deviceCombo, 0, 1);
+    contextRow->addWidget (new QLabel (tr ("TCP:"), headerWidget), 0, 2);
+    contextRow->addWidget (_tcpFrameCombo, 0, 3);
+    actionRow->addWidget (_lengthUnitCombo);
+    actionRow->addWidget (_angleUnitCombo);
+    actionRow->addWidget (_refreshCurrentPoseButton);
+    actionRow->addWidget (_thresholdSettingsButton);
+    actionRow->addWidget (_reportButton);
+    header->addLayout (contextRow);
+    header->addLayout (actionRow);
+    root->addWidget (headerWidget);
 
-    _workflowTabs = new QTabWidget(base);
-    _workflowTabs->setObjectName (QStringLiteral ("workflowTabs"));
-    content->addWidget(_workflowTabs);
-    _tabs = new QTabWidget(_workflowTabs);
+    // 三模式工作流外壳:Diagnose(当前位姿诊断)/ Validate(冻结需求校验)/
+    // Explore(能力探索)互斥切换,替代原 QTabWidget。每个模式页由独立
+    // QScrollArea 承载(addModePage),避免页面内容过高时超出 Dock 可视区。
+    _modeSelector = new QWidget (this);
+    _modeSelector->setObjectName (QStringLiteral ("kinematicModeSelector"));
+    QHBoxLayout* modeLayout = new QHBoxLayout (_modeSelector);
+    modeLayout->setContentsMargins (0, 0, 0, 0);
+    modeLayout->setSpacing (4);
+    _modeButtonGroup = new QButtonGroup (this);
+    _modeButtonGroup->setExclusive (true);
+    const QStringList modeNames = {tr("Diagnose"), tr("Validate"), tr("Explore")};
+    const QStringList modeDescriptions = {tr("Diagnose"), tr("Validate Requirements"),
+                                          tr("Explore Capability")};
+    for (int index = 0; index < modeNames.size (); ++index) {
+        QToolButton* button = new QToolButton (_modeSelector);
+        button->setText (modeNames.at (index));
+        button->setToolTip (modeDescriptions.at (index));
+        button->setAccessibleName (modeDescriptions.at (index));
+        button->setCheckable (true);
+        button->setToolButtonStyle (Qt::ToolButtonTextOnly);
+        button->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+        _modeButtonGroup->addButton (button, index);
+        modeLayout->addWidget (button);
+        connect (button, &QToolButton::clicked, this,
+                 [this, index] { _modeStack->setCurrentIndex (index); });
+    }
+    root->addWidget (_modeSelector);
+
+    _modeStack = new QStackedWidget (this);
+    _modeStack->setObjectName (QStringLiteral ("kinematicModeStack"));
+    root->addWidget (_modeStack, 1);
+
+    _diagnoseWorkflowPage = new QWidget ();
+    _diagnoseWorkflowPage->setObjectName (QStringLiteral ("diagnoseWorkflowPage"));
+    _validateWorkflowPage = new QWidget ();
+    _exploreWorkflowPage = new QWidget ();
 
     // -------------------- Current Pose Tab --------------------
     // 单列全宽密集布局(从上到下):
@@ -529,7 +626,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     //   3. Jacobian 全宽主表(行 vx/vy/vz/wx/wy/wz,列 q0..qn);
     //   4. Singular values 横向小表(1 行);
     //   5. Warnings 默认压成单行 \"Warnings: None\"。
-    _currentPoseTab = new QWidget(_tabs);
+    _currentPoseTab = new QWidget(_diagnoseWorkflowPage);
+    _currentPoseTab->setObjectName (QStringLiteral ("currentPoseTab"));
     QVBoxLayout* cpLayout = new QVBoxLayout(_currentPoseTab);
 
     // 共用的紧凑表格工厂:6 列内 stretch、隐藏垂直滚动条、
@@ -575,7 +673,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     // ---- Health summary: four scan-friendly metrics without another data table. ----
     cpLayout->addWidget (new QLabel (tr("Health summary"), _currentPoseTab));
-    QHBoxLayout* healthLayout = new QHBoxLayout ();
+    QFrame* healthFrame = new QFrame (_currentPoseTab);
+    healthFrame->setObjectName (QStringLiteral ("currentPoseHealthFrame"));
+    healthFrame->setFrameShape (QFrame::StyledPanel);
+    QHBoxLayout* healthLayout = new QHBoxLayout (healthFrame);
     auto makeHealthLabel = [this] () -> QLabel* {
         QLabel* label = new QLabel (_currentPoseTab);
         label->setTextFormat (Qt::RichText);
@@ -586,6 +687,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         return label;
     };
     _poseIndicatorLabel = makeHealthLabel ();
+    _poseIndicatorLabel->setObjectName (QStringLiteral ("currentPoseStatusLabel"));
     _poseConditionLabel = makeHealthLabel ();
     _poseManipulabilityLabel = makeHealthLabel ();
     _poseMarginLabel = makeHealthLabel ();
@@ -600,7 +702,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         healthLayout->addWidget (label);
     }
     healthLayout->addStretch (1);
-    cpLayout->addLayout (healthLayout);
+    cpLayout->addWidget (healthFrame);
 
     // ---- Joint status is the only primary table. ----
     cpLayout->addWidget (new QLabel(tr("Joint status"), _currentPoseTab));
@@ -614,6 +716,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     // ---- Advanced diagnostics stays out of the normal scan path. ----
     _advancedDiagnosticsToggle = new QToolButton (_currentPoseTab);
+    _advancedDiagnosticsToggle->setObjectName (QStringLiteral ("advancedDiagnosticsToggle"));
     _advancedDiagnosticsToggle->setText (tr("Advanced diagnostics"));
     _advancedDiagnosticsToggle->setCheckable (true);
     _advancedDiagnosticsToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
@@ -655,8 +758,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     cpLayout->addStretch ();
 
-    _tabs->addTab (_currentPoseTab, tr("Current pose"));
-
     // -------------------- IK Tab --------------------
     // 单列全宽密集布局(与 Current pose 一致):
     //   1. 顶部输入:Target + 单位 + 6 个 pose spin + threshold + 3 个动作按钮;
@@ -664,7 +765,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     //   3. status summary 标签;
     //   4. IK solution status table(允许滚动,横向铺满);
     //   5. 详情面板(2 行固定高度,跟随选中行更新)。
-    _ikTab         = new QWidget(_tabs);
+    _ikTab         = new QWidget(_diagnoseWorkflowPage);
+    _ikTab->setObjectName (QStringLiteral ("ikTab"));
     QVBoxLayout* ikLayout = new QVBoxLayout(_ikTab);
 
     // ---- Target pose ----
@@ -673,8 +775,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikPoseTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
     ikPoseTitleRow->addWidget (ikPoseTitle);
     ikPoseTitleRow->addStretch (1);
-    _ikImportCurrentPoseButton = new QPushButton(tr("Import current TCP pose"), _ikTab);
+    _ikImportCurrentPoseButton = new QPushButton(tr("Sync current TCP"), _ikTab);
+    _ikImportCurrentPoseButton->setObjectName (QStringLiteral ("ikSyncCurrentTcpButton"));
     _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
+    _ikSolveButton->setObjectName (QStringLiteral ("ikSolveButton"));
     ikPoseTitleRow->addWidget (_ikImportCurrentPoseButton);
     ikPoseTitleRow->addWidget (_ikSolveButton);
     ikLayout->addLayout (ikPoseTitleRow);
@@ -686,36 +790,37 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         return spin;
     };
     _ikXSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
+    _ikXSpin->setObjectName (QStringLiteral ("ikXSpin"));
     _ikYSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
+    _ikYSpin->setObjectName (QStringLiteral ("ikYSpin"));
     _ikZSpin = makePoseSpin(-1000.0, 1000.0, 0.01);
+    _ikZSpin->setObjectName (QStringLiteral ("ikZSpin"));
     _ikRollSpin = makePoseSpin(-360.0, 360.0, 1.0);
+    _ikRollSpin->setObjectName (QStringLiteral ("ikRollSpin"));
     _ikPitchSpin = makePoseSpin(-360.0, 360.0, 1.0);
+    _ikPitchSpin->setObjectName (QStringLiteral ("ikPitchSpin"));
     _ikYawSpin = makePoseSpin(-360.0, 360.0, 1.0);
+    _ikYawSpin->setObjectName (QStringLiteral ("ikYawSpin"));
     _ikDuplicateQThresholdSpin = new QDoubleSpinBox(_ikTab);
+    _ikDuplicateQThresholdSpin->setObjectName (QStringLiteral ("ikDuplicateQThresholdSpin"));
     _ikDuplicateQThresholdSpin->setRange(0.0, 1.0);
     _ikDuplicateQThresholdSpin->setDecimals(6);
     _ikDuplicateQThresholdSpin->setSingleStep(0.001);
     _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
     _ikCollisionCheck = new QCheckBox (tr("Collision"), _ikTab);
+    _ikCollisionCheck->setObjectName (QStringLiteral ("ikCollisionCheck"));
     _ikCollisionCheck->setChecked (true);
     updateUnitDisplay();
 
-    QGridLayout* ikPoseGrid = new QGridLayout();
-    ikPoseGrid->addWidget(new QLabel(tr("Position"), _ikTab), 0, 0);
-    ikPoseGrid->addWidget(new QLabel(tr("X"), _ikTab), 0, 1);
-    ikPoseGrid->addWidget(_ikXSpin, 0, 2);
-    ikPoseGrid->addWidget(new QLabel(tr("Y"), _ikTab), 0, 3);
-    ikPoseGrid->addWidget(_ikYSpin, 0, 4);
-    ikPoseGrid->addWidget(new QLabel(tr("Z"), _ikTab), 0, 5);
-    ikPoseGrid->addWidget(_ikZSpin, 0, 6);
-    ikPoseGrid->addWidget(new QLabel(tr("Orientation"), _ikTab), 1, 0);
-    ikPoseGrid->addWidget(new QLabel(tr("Roll"), _ikTab), 1, 1);
-    ikPoseGrid->addWidget(_ikRollSpin, 1, 2);
-    ikPoseGrid->addWidget(new QLabel(tr("Pitch"), _ikTab), 1, 3);
-    ikPoseGrid->addWidget(_ikPitchSpin, 1, 4);
-    ikPoseGrid->addWidget(new QLabel(tr("Yaw"), _ikTab), 1, 5);
-    ikPoseGrid->addWidget(_ikYawSpin, 1, 6);
-    ikLayout->addLayout(ikPoseGrid);
+    QFormLayout* ikPoseForm = new QFormLayout();
+    ikPoseForm->setFieldGrowthPolicy (QFormLayout::ExpandingFieldsGrow);
+    ikPoseForm->addRow (tr("Position X"), _ikXSpin);
+    ikPoseForm->addRow (tr("Position Y"), _ikYSpin);
+    ikPoseForm->addRow (tr("Position Z"), _ikZSpin);
+    ikPoseForm->addRow (tr("Orientation Roll"), _ikRollSpin);
+    ikPoseForm->addRow (tr("Orientation Pitch"), _ikPitchSpin);
+    ikPoseForm->addRow (tr("Orientation Yaw"), _ikYawSpin);
+    ikLayout->addLayout (ikPoseForm);
 
     // ---- 第 3 行:threshold + 3 个动作按钮(横排)----
     QLabel* ikOptionsTitle = new QLabel (tr("Solve options"), _ikTab);
@@ -788,6 +893,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikSolutionTitleRow->addWidget (_ikCandidateFilterCombo);
     ikLayout->addLayout (ikSolutionTitleRow);
     _ikSolutionTable = makeTable();
+    _ikSolutionTable->setObjectName (QStringLiteral ("ikSolutionTable"));
     // 把 "Q / failures" 拆成两列 — Failure(短文本) + Q(关节向量),
     // 长 Q 值不再吞掉失败原因。
     _ikSolutionTable->setColumnCount(5);
@@ -803,6 +909,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikSolutionTable->horizontalHeader()->setSectionResizeMode (4, QHeaderView::ResizeToContents);
     _ikSolutionTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _ikSolutionTable->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    _ikSolutionTable->setMaximumHeight (260);
     // Task 5:默认列宽。窄列(标签 / 布尔)+ 中列(数值)+ 宽列(Q),
     // 避免长 Q 把所有数值列挤窄。setStretchLastSection(true) 让 Q 列
     // 在窗口变宽时继续吸收多余宽度。
@@ -819,10 +926,12 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikDetailTitleRow->addWidget (ikDetailTitle);
     ikDetailTitleRow->addStretch (1);
     _ikApplyButton = new QPushButton(tr("Apply selected Q"), _ikTab);
+    _ikApplyButton->setObjectName (QStringLiteral ("ikApplyButton"));
     _ikApplyButton->setEnabled (false);
     ikDetailTitleRow->addWidget (_ikApplyButton);
     ikLayout->addLayout (ikDetailTitleRow);
     _ikDetailTable = makeTable();
+    _ikDetailTable->setObjectName (QStringLiteral ("ikDetailTable"));
     _ikDetailTable->setColumnCount(2);
     _ikDetailTable->setHorizontalHeaderLabels({tr("Field"), tr("Value")});
     _ikDetailTable->horizontalHeader()->setSectionResizeMode (0, QHeaderView::ResizeToContents);
@@ -835,11 +944,14 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     ikLayout->addWidget(_ikDetailTable);
 
     // -------------------- Task Point Tab --------------------
-    _taskPointTab  = new QWidget(_tabs);
-    _workspaceTab  = new QWidget(_tabs);
-    _poseReachTab  = new QWidget(_tabs);
-    _visualizationTab = new QWidget(_tabs);
-    _reportTab     = new QWidget(_tabs);
+    _taskPointTab  = new QWidget(_exploreWorkflowPage);
+    _taskPointTab->setObjectName (QStringLiteral ("localTasksPage"));
+    _workspaceTab  = new QWidget(_exploreWorkflowPage);
+    _poseReachTab  = new QWidget(_exploreWorkflowPage);
+    _workspaceTab->setObjectName (QStringLiteral ("workspaceTab"));
+    _poseReachTab->setObjectName (QStringLiteral ("poseReachTab"));
+    _visualizationTab = new QWidget(_exploreWorkflowPage);
+    _reportTab     = new QWidget(_exploreWorkflowPage);
 
     // 包络异步计算:watcher 监听后台包络任务完成 → onEnvelopeFinished 在 UI 线程更新;
     // debounce 定时器(singleShot)在方向数等参数变化后延迟 200ms 才请求重算,
@@ -879,22 +991,41 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              SLOT (handleCapabilityExplorationFinished ()));
 
     // 包络异步计算 watcher + 防抖定时器
-    _tabs->addTab (_ikTab,         tr("IK"));
-    _tabs->addTab (_taskPointTab,  tr("Task points"));
-    _tabs->addTab (_workspaceTab,  tr("Workspace"));
-    _tabs->addTab (_poseReachTab,  tr("Pose reachability"));
-    _tabs->addTab (_visualizationTab, tr("Visualization"));
-    _tabs->addTab (_reportTab,     tr("Report"));
-
-    _diagnoseWorkflowPage = new QWidget (_workflowTabs);
     QVBoxLayout* diagnoseLayout = new QVBoxLayout (_diagnoseWorkflowPage);
     diagnoseLayout->setContentsMargins (0, 0, 0, 0);
-    _tabs->removeTab (_tabs->indexOf (_currentPoseTab));
     diagnoseLayout->addWidget (_currentPoseTab);
+    diagnoseLayout->addWidget (_ikTab);
 
-    _validateWorkflowPage = new QWidget (_workflowTabs);
     QVBoxLayout* validateLayout = new QVBoxLayout (_validateWorkflowPage);
     validateLayout->setContentsMargins (8, 8, 8, 8);
+    _mode2DataSourceCombo = new QComboBox (_validateWorkflowPage);
+    _mode2DataSourceCombo->setObjectName (QStringLiteral ("mode2DataSourceCombo"));
+    _mode2DataSourceCombo->addItem (tr ("Local Tasks"), 0);
+    _mode2DataSourceCombo->addItem (tr ("Frozen Requirements"), 1);
+    _mode2DataSourceCombo->setToolTip (
+        tr ("Choose editable local tasks or read-only frozen requirements."));
+    validateLayout->addWidget (_mode2DataSourceCombo);
+    QHBoxLayout* mode2Toolbar = new QHBoxLayout ();
+    mode2Toolbar->setContentsMargins (0, 0, 0, 0);
+    _mode2LoadJsonButton = new QPushButton (tr ("Load JSON"), _validateWorkflowPage);
+    _mode2LoadJsonButton->setObjectName (QStringLiteral ("mode2LoadJsonButton"));
+    _mode2ValidateAllButton = new QPushButton (tr ("Validate All"), _validateWorkflowPage);
+    _mode2ValidateAllButton->setObjectName (QStringLiteral ("mode2ValidateAllButton"));
+    _mode2ValidateSelectedButton = new QPushButton (
+        tr ("Validate Selected"), _validateWorkflowPage);
+    _mode2ValidateSelectedButton->setObjectName (
+        QStringLiteral ("mode2ValidateSelectedButton"));
+    _mode2AddButton = new QPushButton (tr ("Add"), _validateWorkflowPage);
+    _mode2AddButton->setObjectName (QStringLiteral ("mode2AddButton"));
+    _mode2RemoveButton = new QPushButton (tr ("Remove"), _validateWorkflowPage);
+    _mode2RemoveButton->setObjectName (QStringLiteral ("mode2RemoveButton"));
+    mode2Toolbar->addWidget (_mode2LoadJsonButton);
+    mode2Toolbar->addWidget (_mode2ValidateAllButton);
+    mode2Toolbar->addWidget (_mode2ValidateSelectedButton);
+    mode2Toolbar->addWidget (_mode2AddButton);
+    mode2Toolbar->addWidget (_mode2RemoveButton);
+    mode2Toolbar->addStretch (1);
+    validateLayout->addLayout (mode2Toolbar);
     QHBoxLayout* validateCommands = new QHBoxLayout ();
     _validateLoadRequirementsButton = new QPushButton (
         tr("Load frozen requirements"), _validateWorkflowPage);
@@ -904,6 +1035,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateRunButton->setObjectName (QStringLiteral ("validateRunButton"));
     _validateExportButton = new QPushButton (tr("Export report"), _validateWorkflowPage);
     _validateExportButton->setObjectName (QStringLiteral ("validateExportButton"));
+    _validateLoadRequirementsButton->setVisible (false);
+    _validateRunButton->setVisible (false);
+    _validateExportButton->setVisible (false);
     validateCommands->addWidget (_validateLoadRequirementsButton);
     validateCommands->addWidget (_validateRunButton);
     validateCommands->addWidget (_validateExportButton);
@@ -925,8 +1059,43 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                        << tr("EvidenceStage") << tr("Level"));
     _validateTaskResultTable->horizontalHeader ()->setStretchLastSection (true);
     _validateTaskResultTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    _validateTaskResultTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     validateLayout->addWidget (_validateTaskResultTable);
 
+    _validateRegionSummaryTable = new QTableWidget (_validateWorkflowPage);
+    _validateRegionSummaryTable->setObjectName (QStringLiteral ("validateRegionSummaryTable"));
+    _validateRegionSummaryTable->setColumnCount (6);
+    _validateRegionSummaryTable->setHorizontalHeaderLabels (
+        QStringList () << tr ("ID") << tr ("Name") << tr ("Probes") <<
+            tr ("Feasibility") << tr ("Quality") << tr ("EvidenceStage"));
+    _validateRegionSummaryTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
+    _validateRegionSummaryTable->setSelectionBehavior (QAbstractItemView::SelectRows);
+    _validateRegionSummaryTable->setSelectionMode (QAbstractItemView::SingleSelection);
+    _validateRegionSummaryTable->horizontalHeader ()->setStretchLastSection (true);
+    _validateRegionSummaryTable->setMaximumHeight (150);
+    validateLayout->addWidget (_validateRegionSummaryTable);
+
+    _validateOrientationProbeLabel = new QLabel (
+        tr ("Orientation probes: select a frozen region."), _validateWorkflowPage);
+    _validateOrientationProbeLabel->setObjectName (
+        QStringLiteral ("validateOrientationProbeLabel"));
+    _validateOrientationProbeLabel->setWordWrap (true);
+    validateLayout->addWidget (_validateOrientationProbeLabel);
+
+    _validateDiagnosticsToggle = new QToolButton (_validateWorkflowPage);
+    _validateDiagnosticsToggle->setObjectName (QStringLiteral ("validateDiagnosticsToggle"));
+    _validateDiagnosticsToggle->setText (tr ("Diagnostics"));
+    _validateDiagnosticsToggle->setCheckable (true);
+    _validateDiagnosticsToggle->setChecked (false);
+    validateLayout->addWidget (_validateDiagnosticsToggle);
+    _validateDiagnosticsContent = new QWidget (_validateWorkflowPage);
+    _validateDiagnosticsContent->setVisible (false);
+    QVBoxLayout* frozenDiagnosticsLayout = new QVBoxLayout (_validateDiagnosticsContent);
+    frozenDiagnosticsLayout->setContentsMargins (18, 0, 0, 0);
+    _validateProvenanceLabel = new QLabel (_validateDiagnosticsContent);
+    _validateProvenanceLabel->setObjectName (QStringLiteral ("validateProvenanceLabel"));
+    _validateProvenanceLabel->setWordWrap (true);
+    frozenDiagnosticsLayout->addWidget (_validateProvenanceLabel);
     _validateRegionCellTable = new QTableWidget (_validateWorkflowPage);
     _validateRegionCellTable->setObjectName (QStringLiteral ("validateRegionCellTable"));
     _validateRegionCellTable->setColumnCount (9);
@@ -936,9 +1105,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                        << tr("Reachable orientations"));
     _validateRegionCellTable->horizontalHeader ()->setStretchLastSection (true);
     _validateRegionCellTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
-    validateLayout->addWidget (_validateRegionCellTable);
+    frozenDiagnosticsLayout->addWidget (_validateRegionCellTable);
+    validateLayout->addWidget (_validateDiagnosticsContent);
+    _taskPointTab->setParent (_validateWorkflowPage);
+    validateLayout->addWidget (_taskPointTab);
 
-    _exploreWorkflowPage = new QWidget (_workflowTabs);
     QVBoxLayout* exploreLayout = new QVBoxLayout (_exploreWorkflowPage);
     exploreLayout->setContentsMargins (0, 0, 0, 0);
     QHBoxLayout* exploreCommands = new QHBoxLayout ();
@@ -952,8 +1123,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _exploreSamplesSpin->setValue (1000);
     _exploreModeCombo = new QComboBox (_exploreWorkflowPage);
     _exploreModeCombo->setObjectName (QStringLiteral ("exploreModeCombo"));
-    _exploreModeCombo->addItem (tr ("Random uniform"), 0);
-    _exploreModeCombo->addItem (tr ("Joint grid"), 1);
+    _exploreModeCombo->addItem (tr ("Random"), 0);
+    _exploreModeCombo->addItem (tr ("Joint Grid"), 1);
+    _exploreModeCombo->addItem (tr ("Pose Reachability"), 2);
     _exploreSeedSpin = new QSpinBox (_exploreWorkflowPage);
     _exploreSeedSpin->setObjectName (QStringLiteral ("exploreSeedSpin"));
     _exploreSeedSpin->setRange (0, std::numeric_limits<int>::max ());
@@ -975,39 +1147,157 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _exploreStateLabel->setObjectName (QStringLiteral ("exploreStateLabel"));
     exploreCommands->addWidget (_exploreRunButton);
     exploreCommands->addWidget (_exploreCancelButton);
+    _exploreSamplesLabel = new QLabel (tr ("Samples"), _exploreWorkflowPage);
+    _exploreSamplesLabel->setObjectName (QStringLiteral ("exploreSamplesLabel"));
+    exploreCommands->addWidget (_exploreSamplesLabel);
     exploreCommands->addWidget (_exploreSamplesSpin);
     exploreCommands->addWidget (new QLabel (tr ("Mode"), _exploreWorkflowPage));
     exploreCommands->addWidget (_exploreModeCombo);
-    exploreCommands->addWidget (new QLabel (tr ("Seed"), _exploreWorkflowPage));
+    _exploreSeedLabel = new QLabel (tr ("Seed"), _exploreWorkflowPage);
+    _exploreSeedLabel->setObjectName (QStringLiteral ("exploreSeedLabel"));
+    exploreCommands->addWidget (_exploreSeedLabel);
     exploreCommands->addWidget (_exploreSeedSpin);
-    exploreCommands->addWidget (new QLabel (tr ("Grid"), _exploreWorkflowPage));
+    _exploreGridStepsLabel = new QLabel (tr ("Grid Steps"), _exploreWorkflowPage);
+    _exploreGridStepsLabel->setObjectName (QStringLiteral ("exploreGridStepsLabel"));
+    exploreCommands->addWidget (_exploreGridStepsLabel);
     exploreCommands->addWidget (_exploreGridStepsSpin);
-    exploreCommands->addWidget (new QLabel (tr ("Directions"), _exploreWorkflowPage));
+    _exploreDirectionsLabel = new QLabel (tr ("Directions"), _exploreWorkflowPage);
+    _exploreDirectionsLabel->setObjectName (QStringLiteral ("exploreDirectionsLabel"));
+    exploreCommands->addWidget (_exploreDirectionsLabel);
     exploreCommands->addWidget (_exploreDirectionSamplesSpin);
-    exploreCommands->addWidget (new QLabel (tr ("Rolls"), _exploreWorkflowPage));
+    _exploreRollsLabel = new QLabel (tr ("Rolls"), _exploreWorkflowPage);
+    _exploreRollsLabel->setObjectName (QStringLiteral ("exploreRollsLabel"));
+    exploreCommands->addWidget (_exploreRollsLabel);
     exploreCommands->addWidget (_exploreRollSamplesSpin);
     exploreCommands->addWidget (_exploreStateLabel);
     exploreCommands->addStretch (1);
     exploreLayout->addLayout (exploreCommands);
-    exploreLayout->addWidget (_tabs);
+    exploreLayout->addWidget (_workspaceTab);
+    exploreLayout->addWidget (_poseReachTab);
+    exploreLayout->addWidget (_visualizationTab);
+    _reportTab->setVisible (false);
+    _visualPlot->setMaximumHeight (160);
+    _visualPlot->setMinimumHeight (160);
 
-    _workflowTabs->addTab (_diagnoseWorkflowPage, tr("Diagnose"));
-    _workflowTabs->addTab (_validateWorkflowPage, tr("Validate Requirements"));
-    _workflowTabs->addTab (_exploreWorkflowPage, tr("Explore Capability"));
+    // addModePage:把某个工作流页包进独立 QScrollArea 并挂到 _modeStack,
+    // 页面内容超高时出现滚动条,保证小窗口 / 窄 Dock 下仍可用。
+    auto addModePage = [this] (QWidget* page) {
+        QScrollArea* scroll = new QScrollArea (_modeStack);
+        scroll->setWidgetResizable (true);
+        scroll->setFrameShape (QFrame::NoFrame);
+        scroll->setWidget (page);
+        _modeStack->addWidget (scroll);
+        if (page == _diagnoseWorkflowPage) {
+            scroll->setObjectName (QStringLiteral ("diagnoseScroll"));
+            _diagnoseScroll = scroll;
+        }
+        if (page == _exploreWorkflowPage)
+            _exploreScroll = scroll;
+    };
+    addModePage (_diagnoseWorkflowPage);
+    addModePage (_validateWorkflowPage);
+    addModePage (_exploreWorkflowPage);
+    _modeButtonGroup->button (0)->setChecked (true);
+    _modeStack->setCurrentIndex (0);
+    updateMode2DataSource (_mode2DataSourceCombo->currentIndex ());
 
-    _status = new QLineEdit(base);
+    _status = new QLineEdit(this);
+    _status->setObjectName (QStringLiteral ("kinematicStatus"));
     _status->setReadOnly(true);
-    content->addWidget(_status);
+    root->addWidget(_status);
 
     connect (_refreshCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (refreshCurrentPose ()));
+    connect (_thresholdSettingsButton, SIGNAL (clicked ()), this,
+             SLOT (openThresholdSettingsDialog ()));
+    connect (_mode2DataSourceCombo, SIGNAL (currentIndexChanged (int)),
+             this, SLOT (updateMode2DataSource (int)));
+    connect (_mode2LoadJsonButton, SIGNAL (clicked ()), this,
+             SLOT (openFrozenRequirementsForValidation ()));
+    connect (_mode2ValidateAllButton, &QPushButton::clicked, this, [this] () {
+        if (_mode2DataSourceCombo != nullptr && _mode2DataSourceCombo->currentIndex () == 0)
+            analyzeAllTaskPoints ();
+        else
+            validateRequirements ();
+    });
+    connect (_mode2ValidateSelectedButton, SIGNAL (clicked ()), this,
+             SLOT (validateSelectedMode2Source ()));
+    connect (_mode2AddButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
+    connect (_mode2RemoveButton, SIGNAL (clicked ()), this,
+             SLOT (removeSelectedTaskPointRow ()));
     connect (_validateLoadRequirementsButton, SIGNAL (clicked ()), this,
              SLOT (openFrozenRequirementsForValidation ()));
     connect (_validateRunButton, SIGNAL (clicked ()), this, SLOT (validateRequirements ()));
     connect (_validateExportButton, SIGNAL (clicked ()), this, SLOT (exportReportJson ()));
+    connect (_validateDiagnosticsToggle, &QToolButton::toggled,
+             _validateDiagnosticsContent, &QWidget::setVisible);
+    connect (_validateTaskResultTable->selectionModel (),
+             &QItemSelectionModel::selectionChanged, this,
+             [this] (const QItemSelection&, const QItemSelection&) {
+                 if (_validateTaskResultTable->selectionModel ()->hasSelection () &&
+                     _validateRegionSummaryTable != nullptr)
+                     _validateRegionSummaryTable->clearSelection ();
+                 refreshWorkflowControls ();
+             });
+    connect (_validateRegionSummaryTable->selectionModel (),
+             &QItemSelectionModel::selectionChanged, this,
+             [this] (const QItemSelection&, const QItemSelection&) {
+                 if (_validateRegionSummaryTable->selectionModel ()->hasSelection () &&
+                     _validateTaskResultTable != nullptr)
+                     _validateTaskResultTable->clearSelection ();
+                 const QModelIndexList rows =
+                     _validateRegionSummaryTable->selectionModel ()->selectedRows ();
+                 if (!rows.isEmpty () && _validateOrientationProbeLabel != nullptr) {
+                     QTableWidgetItem* item = _validateRegionSummaryTable->item (
+                         rows.front ().row (), 0);
+                     const QString id = item == nullptr ? QString () :
+                         item->data (Qt::UserRole).toString ();
+                     for (const RequirementExecutionRegion& region :
+                          _validateExecution.workspaceRegions) {
+                         if (QString::fromStdString (region.id) == id) {
+                             _validateOrientationProbeLabel->setText (
+                                 tr ("Orientation probes: directions %1, rolls %2.")
+                                     .arg (region.directionSamples).arg (region.rollSamples));
+                             break;
+                         }
+                     }
+                 }
+                 refreshWorkflowControls ();
+             });
     connect (_exploreRunButton, SIGNAL (clicked ()), this,
              SLOT (startCapabilityExploration ()));
     connect (_exploreCancelButton, SIGNAL (clicked ()), this,
              SLOT (cancelCapabilityExploration ()));
+    const auto updateExploreModeUi = [this] (int index) {
+        const bool poseMode = index == 2;
+        if (_workspaceTab != nullptr)
+            _workspaceTab->setVisible (!poseMode);
+        if (_poseReachTab != nullptr)
+            _poseReachTab->setVisible (poseMode);
+        if (_exploreSeedSpin != nullptr)
+            _exploreSeedSpin->setVisible (index == 0);
+        if (_exploreSeedLabel != nullptr)
+            _exploreSeedLabel->setVisible (index == 0);
+        if (_exploreSamplesSpin != nullptr)
+            _exploreSamplesSpin->setVisible (index == 0);
+        if (_exploreSamplesLabel != nullptr)
+            _exploreSamplesLabel->setVisible (index == 0);
+        if (_exploreGridStepsSpin != nullptr)
+            _exploreGridStepsSpin->setVisible (index == 1);
+        if (_exploreGridStepsLabel != nullptr)
+            _exploreGridStepsLabel->setVisible (index == 1);
+        if (_exploreDirectionSamplesSpin != nullptr)
+            _exploreDirectionSamplesSpin->setVisible (poseMode);
+        if (_exploreDirectionsLabel != nullptr)
+            _exploreDirectionsLabel->setVisible (poseMode);
+        if (_exploreRollSamplesSpin != nullptr)
+            _exploreRollSamplesSpin->setVisible (poseMode);
+        if (_exploreRollsLabel != nullptr)
+            _exploreRollsLabel->setVisible (poseMode);
+    };
+    connect (_exploreModeCombo,
+             static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
+             this, updateExploreModeUi);
+    updateExploreModeUi (_exploreModeCombo->currentIndex ());
     auto rearmCapabilityExploration = [this] (int) {
         if (!_exploreRunActive && _exploreCancellationRequested) {
             _exploreCancellationRequested = false;
@@ -1032,13 +1322,42 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     connect (_exploreRollSamplesSpin,
              static_cast< void (QSpinBox::*) (int) > (&QSpinBox::valueChanged),
              this, rearmCapabilityExploration);
+    connect (_exploreDirectionSamplesSpin,
+             static_cast< void (QSpinBox::*) (int) > (&QSpinBox::valueChanged),
+             _poseDirectionSamplesSpin, &QSpinBox::setValue);
+    connect (_exploreRollSamplesSpin,
+             static_cast< void (QSpinBox::*) (int) > (&QSpinBox::valueChanged),
+             _poseRollSamplesSpin, &QSpinBox::setValue);
+
+    // Explore owns the primary commands. Keep the legacy result pages but remove
+    // their conflicting sampling and command entry points.
+    _workspaceRunButton->setVisible (false);
+    _workspaceCancelButton->setVisible (false);
+    _workspaceModeCombo->setVisible (false);
+    _workspaceSampleCountSpin->setVisible (false);
+    _workspaceGridStepsSpin->setVisible (false);
+    _workspaceSeedSpin->setVisible (false);
+    _workspaceCollisionCheck->setVisible (false);
+    _workspaceTab->findChild< QLabel* > (QStringLiteral ("workspaceSamplingTitle"))->setVisible (false);
+    _workspaceTab->findChild< QLabel* > (QStringLiteral ("workspaceModeLabel"))->setVisible (false);
+    _workspaceTab->findChild< QLabel* > (QStringLiteral ("workspaceSamplesLabel"))->setVisible (false);
+    _workspaceTab->findChild< QLabel* > (QStringLiteral ("workspaceGridStepsLabel"))->setVisible (false);
+    _poseAnalyzeButton->setVisible (false);
+    _poseCancelButton->setVisible (false);
+    _poseDirectionSamplesSpin->setVisible (false);
+    _poseRollSamplesSpin->setVisible (false);
+    _poseReachTab->findChild< QLabel* > (QStringLiteral ("poseDirectionsLabel"))->setVisible (false);
+    _poseReachTab->findChild< QLabel* > (QStringLiteral ("poseRollsLabel"))->setVisible (false);
+    _poseDirectionSamplesSpin->setValue (_exploreDirectionSamplesSpin->value ());
+    _poseRollSamplesSpin->setValue (_exploreRollSamplesSpin->value ());
     // Task 5 step 2:勾选过滤器时即时刷新 IK 结果表与统计。
     connect (_ikCandidateFilterCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (refreshIkSolutionView ()));
     connect (_ikImportCurrentPoseButton, SIGNAL (clicked ()), this, SLOT (importCurrentPoseToIk ()));
-    auto clearIkSource = [this] (double) {
+    auto invalidateIkTarget = [this] (double) {
         if (_ikSourceLabel != NULL)
             _ikSourceLabel->setVisible (false);
+        invalidateIkResultPresentation ();
     };
     for (QDoubleSpinBox* spin :
          {_ikXSpin, _ikYSpin, _ikZSpin, _ikRollSpin, _ikPitchSpin, _ikYawSpin}) {
@@ -1046,7 +1365,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  static_cast< void (QDoubleSpinBox::*) (double) > (
                      &QDoubleSpinBox::valueChanged),
                  this,
-                 clearIkSource);
+                 invalidateIkTarget);
     }
     connect (_lengthUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateUnitDisplay ()));
     connect (_angleUnitCombo, SIGNAL (currentIndexChanged (int)), this, SLOT (updateUnitDisplay ()));
@@ -1095,24 +1414,29 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              this, [this] (const QItemSelection&, const QItemSelection&) {
                  updateTaskPointSelectionButtons ();
                  updateTaskPointDetails ();
+                 refreshWorkflowControls ();
              });
     connect (_taskPointModel, &QAbstractItemModel::dataChanged,
              this, [this] () {
+                 _lastTaskPointResults = _taskPointModel->results ();
                  refreshVisualization ();
                  updateTaskPointDetails ();
              });
     connect (_taskPointModel, &QAbstractItemModel::modelReset,
              this, [this] () {
+                 _lastTaskPointResults = _taskPointModel->results ();
                  refreshVisualization ();
                  updateTaskPointDetails ();
              });
     connect (_taskPointModel, &QAbstractItemModel::rowsInserted,
              this, [this] () {
+                 _lastTaskPointResults = _taskPointModel->results ();
                  refreshVisualization ();
                  updateTaskPointDetails ();
              });
     connect (_taskPointModel, &QAbstractItemModel::rowsRemoved,
              this, [this] () {
+                 _lastTaskPointResults = _taskPointModel->results ();
                  refreshVisualization ();
                  updateTaskPointDetails ();
              });
@@ -1237,6 +1561,8 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
             _validateTaskResultTable->setRowCount (0);
         if (_validateRegionCellTable != nullptr)
             _validateRegionCellTable->setRowCount (0);
+        if (_validateRegionSummaryTable != nullptr)
+            _validateRegionSummaryTable->setRowCount (0);
         if (_validateRequirementStateLabel != nullptr)
             _validateRequirementStateLabel->setText (
                 tr("No frozen requirement artifact loaded."));
@@ -1251,12 +1577,44 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         setStatus(tr("No device found in WorkCell."));
     else
         setStatus(tr("WorkCell loaded. Select a device and refresh analysis."));
+    if (_workcell == NULL)
+        clearVisualizationData ();
     refreshWorkflowControls ();
 }
 
 // refreshWorkflowControls:按"WorkCell → 设备 → TCP 帧"的前置条件链统一刷新
 // Diagnose / Validate / Explore 三个工作流页的按钮可用性,并在条件不满足时把
 // 具体缺失原因写到底部状态栏,避免用户在缺少前置条件时点击按钮无响应。
+// updateMode2DataSource:切换 Validate 页数据源(Local Tasks ↔ Frozen Requirements)。
+// 本地任务源显示任务点表格,冻结需求源显示校验结果表;切换时同步显隐
+// 对应控件组并刷新按钮可用性。
+void KinematicAnalysisWidget::updateMode2DataSource (int index)
+{
+    const bool localTasks = index == 0;
+    if (_taskPointTab != nullptr) {
+        _taskPointTab->setVisible (localTasks);
+        _taskPointTab->setEnabled (localTasks);
+    }
+    const QList< QWidget* > frozenControls = {
+        _validateRequirementStateLabel,
+        _validateTaskResultTable,
+        _validateRegionSummaryTable,
+        _validateOrientationProbeLabel,
+        _validateDiagnosticsToggle};
+    for (QWidget* control : frozenControls) {
+        if (control != nullptr)
+            control->setVisible (!localTasks);
+    }
+    if (_validateDiagnosticsContent != nullptr)
+        _validateDiagnosticsContent->setVisible (
+            !localTasks && _validateDiagnosticsToggle != nullptr &&
+            _validateDiagnosticsToggle->isChecked ());
+    refreshWorkflowControls ();
+}
+
+// refreshWorkflowControls:统一刷新三模式工作流页按钮可用性。按
+// "WorkCell → 设备 → TCP 帧"前置条件链逐级使能,任一缺失时禁用依赖它的按钮,
+// 并把缺失原因写入底部状态栏,避免用户在缺少前置条件时点击按钮无响应。
 void KinematicAnalysisWidget::refreshWorkflowControls ()
 {
     const bool hasWorkCell = _workcell != nullptr;
@@ -1274,11 +1632,37 @@ void KinematicAnalysisWidget::refreshWorkflowControls ()
         _validateRunButton->setEnabled (hasTcp && _validateExecutionSet);
     if (_validateExportButton != nullptr)
         _validateExportButton->setEnabled (hasTcp && _validateHasResults);
+    const bool localTasks = _mode2DataSourceCombo == nullptr ||
+                            _mode2DataSourceCombo->currentIndex () == 0;
+    const bool localSelection = _taskPointTable != nullptr &&
+                                _taskPointTable->selectionModel () != nullptr &&
+                                _taskPointTable->selectionModel ()->hasSelection ();
+    const bool frozenTaskSelection = _validateTaskResultTable != nullptr &&
+                                     _validateTaskResultTable->selectionModel () != nullptr &&
+                                     _validateTaskResultTable->selectionModel ()->hasSelection ();
+    const bool frozenRegionSelection = _validateRegionSummaryTable != nullptr &&
+                                       _validateRegionSummaryTable->selectionModel () != nullptr &&
+                                       _validateRegionSummaryTable->selectionModel ()->hasSelection ();
+    if (_mode2LoadJsonButton != nullptr)
+        _mode2LoadJsonButton->setEnabled (!localTasks && hasTcp);
+    if (_mode2ValidateAllButton != nullptr)
+        _mode2ValidateAllButton->setEnabled (
+            localTasks ? hasTcp : (hasTcp && _validateExecutionSet));
+    if (_mode2ValidateSelectedButton != nullptr)
+        _mode2ValidateSelectedButton->setEnabled (
+            hasTcp && (localTasks ? localSelection :
+                (_validateExecutionSet && (frozenTaskSelection || frozenRegionSelection))));
+    if (_mode2AddButton != nullptr)
+        _mode2AddButton->setEnabled (localTasks);
+    if (_mode2RemoveButton != nullptr)
+        _mode2RemoveButton->setEnabled (localTasks && localSelection);
     if (_exploreRunButton != nullptr)
         _exploreRunButton->setEnabled (
-            hasTcp && !_exploreRunActive && !_exploreCancellationRequested);
+            hasTcp && !_exploreRunActive && !_poseReachabilityRunActive &&
+            !_exploreCancellationRequested);
     if (_exploreCancelButton != nullptr)
-        _exploreCancelButton->setEnabled (hasTcp && _exploreRunActive);
+        _exploreCancelButton->setEnabled (
+            hasTcp && (_exploreRunActive || _poseReachabilityRunActive));
 
     if (!hasWorkCell)
         setStatus (tr("No WorkCell loaded."));
@@ -1321,6 +1705,16 @@ void KinematicAnalysisWidget::openFrozenRequirementsForValidation ()
 // handleCapabilityExplorationFinished 在 UI 线程收尾,运行期间不阻塞界面。
 void KinematicAnalysisWidget::startCapabilityExploration ()
 {
+    if (_exploreModeCombo != nullptr && _exploreModeCombo->currentIndex () == 2) {
+        _poseDirectionSamplesSpin->setValue (_exploreDirectionSamplesSpin->value ());
+        _poseRollSamplesSpin->setValue (_exploreRollSamplesSpin->value ());
+        if (_exploreStateLabel != nullptr)
+            _exploreStateLabel->setText (tr ("Estimated: Running"));
+        if (_poseAnalyzeButton != nullptr)
+            _poseAnalyzeButton->click ();
+        refreshWorkflowControls ();
+        return;
+    }
     if (_workcell == nullptr || selectedDevice () == nullptr || selectedTcpFrame () == nullptr ||
         _exploreCancellationRequested || _exploreWatcher == nullptr ||
         _exploreWatcher->isRunning ())
@@ -1393,6 +1787,14 @@ void KinematicAnalysisWidget::startCapabilityExploration ()
 // 防止重复触发。完成信号仍由 handleCapabilityExplorationFinished 统一收尾。
 void KinematicAnalysisWidget::cancelCapabilityExploration ()
 {
+    if (_exploreModeCombo != nullptr && _exploreModeCombo->currentIndex () == 2) {
+        if (_exploreStateLabel != nullptr)
+            _exploreStateLabel->setText (tr ("Estimated: Cancellation requested"));
+        if (_poseCancelButton != nullptr)
+            _poseCancelButton->click ();
+        refreshWorkflowControls ();
+        return;
+    }
     if (!_exploreRunActive)
         return;
     _exploreRunActive = false;
@@ -1498,11 +1900,15 @@ bool KinematicAnalysisWidget::loadFrozenRequirementDocument (
     _validateExecutionSet = true;
     _validateHasResults = false;
     if (_validateRequirementStateLabel != nullptr)
-        _validateRequirementStateLabel->setText (tr ("Frozen v4 execution contract loaded."));
-    if (_validateTaskResultTable != nullptr)
-        _validateTaskResultTable->setRowCount (0);
-    if (_validateRegionCellTable != nullptr)
-        _validateRegionCellTable->setRowCount (0);
+        _validateRequirementStateLabel->setText (
+            tr ("Frozen v4 execution contract loaded (not yet validated)."));
+    populateFrozenRequirementSources ();
+    if (_validateProvenanceLabel != nullptr)
+        _validateProvenanceLabel->setText (
+            tr ("Requirement: %1\nModel: %2\nEnvironment: %3")
+                .arg (QString::fromStdString (_validateExecution.provenance.requirementFingerprint))
+                .arg (QString::fromStdString (_validateExecution.provenance.robotModelFingerprint))
+                .arg (QString::fromStdString (_validateExecution.provenance.environmentFingerprint)));
     setStatus (tr ("Frozen requirement execution contract loaded."));
     refreshWorkflowControls ();
     return true;
@@ -1522,11 +1928,15 @@ bool KinematicAnalysisWidget::setRequirementExecutionDocument (const QJsonObject
     _validateExecutionSet = true;
     _validateHasResults = false;
     if (_validateRequirementStateLabel != nullptr)
-        _validateRequirementStateLabel->setText (tr ("Frozen v4 execution contract loaded."));
-    if (_validateTaskResultTable != nullptr)
-        _validateTaskResultTable->setRowCount (0);
-    if (_validateRegionCellTable != nullptr)
-        _validateRegionCellTable->setRowCount (0);
+        _validateRequirementStateLabel->setText (
+            tr ("Frozen v4 execution contract loaded (not yet validated)."));
+    populateFrozenRequirementSources ();
+    if (_validateProvenanceLabel != nullptr)
+        _validateProvenanceLabel->setText (
+            tr ("Requirement: %1\nModel: %2\nEnvironment: %3")
+                .arg (QString::fromStdString (_validateExecution.provenance.requirementFingerprint))
+                .arg (QString::fromStdString (_validateExecution.provenance.robotModelFingerprint))
+                .arg (QString::fromStdString (_validateExecution.provenance.environmentFingerprint)));
     setStatus (tr ("Frozen requirement execution contract loaded."));
     refreshWorkflowControls ();
     return true;
@@ -1539,6 +1949,57 @@ bool KinematicAnalysisWidget::setRequirementExecutionDocument (const QJsonObject
 //   - analyzer.validateRequirements 逐个评估全部 Must / Should / Info 任务;
 //   - RegionCoverageEvaluator 对每个 workspaceRegion 做网格单元级覆盖评估
 //     (逐单元采样方向并统计可达方向数 / 可行性 / 质量);
+//   - 合并进 _validateSummary,并把任务与区域单元结果分别写回两张结果表。
+// populateFrozenRequirementSources:加载冻结工件后,把任务与区域先以
+// "Not evaluated / Unvalidated" 占位行刷进结果表,让用户看到工件内容,
+// 但明确尚未跑校验;真正结果由 validateRequirements 覆盖写入。
+void KinematicAnalysisWidget::populateFrozenRequirementSources ()
+{
+    if (_validateTaskResultTable != nullptr) {
+        _validateTaskResultTable->setRowCount (0);
+        for (const RequirementExecutionTask& task : _validateExecution.tasks) {
+            const int row = _validateTaskResultTable->rowCount ();
+            _validateTaskResultTable->insertRow (row);
+            QTableWidgetItem* idItem = makeItem (QString::fromStdString (task.id));
+            idItem->setData (Qt::UserRole, idItem->text ());
+            _validateTaskResultTable->setItem (row, 0, idItem);
+            _validateTaskResultTable->setItem (row, 1, makeItem (
+                QString::fromStdString (task.name)));
+            _validateTaskResultTable->setItem (row, 2, makeItem (tr ("Not evaluated")));
+            _validateTaskResultTable->setItem (row, 3, makeItem (QStringLiteral ("-")));
+            _validateTaskResultTable->setItem (row, 4, makeItem (tr ("Unvalidated")));
+            _validateTaskResultTable->setItem (row, 5, makeItem (
+                task.level == RequirementExecutionLevel::Must ? "Must" :
+                task.level == RequirementExecutionLevel::Should ? "Should" : "Info"));
+        }
+    }
+    if (_validateRegionCellTable != nullptr)
+        _validateRegionCellTable->setRowCount (0);
+    if (_validateRegionSummaryTable != nullptr) {
+        _validateRegionSummaryTable->setRowCount (0);
+        for (const RequirementExecutionRegion& region : _validateExecution.workspaceRegions) {
+            const int row = _validateRegionSummaryTable->rowCount ();
+            _validateRegionSummaryTable->insertRow (row);
+            QTableWidgetItem* idItem = makeItem (QString::fromStdString (region.id));
+            idItem->setData (Qt::UserRole, idItem->text ());
+            _validateRegionSummaryTable->setItem (row, 0, idItem);
+            _validateRegionSummaryTable->setItem (row, 1, makeItem (
+                QString::fromStdString (region.name)));
+            _validateRegionSummaryTable->setItem (row, 2, makeItem (
+                tr ("D%1 / R%2").arg (region.directionSamples).arg (region.rollSamples)));
+            _validateRegionSummaryTable->setItem (row, 3, makeItem (tr ("Not evaluated")));
+            _validateRegionSummaryTable->setItem (row, 4, makeItem (QStringLiteral ("-")));
+            _validateRegionSummaryTable->setItem (row, 5, makeItem (tr ("Unvalidated")));
+        }
+    }
+}
+
+// validateRequirements:对冻结执行契约做 Verified 级一致性校验(批量分析入口)。
+//   - 组装 AnalysisContext(workcell / device / tcp / 碰撞检测器 / 模型与环境指纹 /
+//     阈值),碰撞对个体执行条目而言是可选能力,因此 collisionRequired 置 false,
+//     避免可选任务 / 区域检查因缺少检测器而整体退化为 DataInsufficient;
+//   - analyzer.validateRequirements 逐个评估全部 Must / Should / Info 任务;
+//   - RegionCoverageEvaluator 对每个 workspaceRegion 做网格单元级覆盖评估;
 //   - 合并进 _validateSummary,并把任务与区域单元结果分别写回两张结果表。
 void KinematicAnalysisWidget::validateRequirements ()
 {
@@ -1585,6 +2046,41 @@ void KinematicAnalysisWidget::validateRequirements ()
     for (const RequirementExecutionRegion& region : _validateExecution.workspaceRegions) {
         regionResults.push_back (regionEvaluator.evaluate (context, region));
     }
+    if (_validateRegionSummaryTable != nullptr) {
+        _validateRegionSummaryTable->setRowCount (0);
+        for (std::size_t i = 0; i < regionResults.size (); ++i) {
+            const RegionCoverageResult& result = regionResults[i];
+            const RequirementExecutionRegion* requirement =
+                i < _validateExecution.workspaceRegions.size () ?
+                    &_validateExecution.workspaceRegions[i] : nullptr;
+            const int row = _validateRegionSummaryTable->rowCount ();
+            _validateRegionSummaryTable->insertRow (row);
+            QTableWidgetItem* idItem = makeItem (
+                QString::fromStdString (requirement != nullptr ? requirement->id : result.regionId));
+            idItem->setData (Qt::UserRole, idItem->text ());
+            _validateRegionSummaryTable->setItem (row, 0, idItem);
+            _validateRegionSummaryTable->setItem (row, 1, makeItem (
+                QString::fromStdString (requirement != nullptr ? requirement->name : result.regionId)));
+            _validateRegionSummaryTable->setItem (row, 2, makeItem (
+                requirement == nullptr ? QString () :
+                    tr ("D%1 / R%2").arg (requirement->directionSamples)
+                                         .arg (requirement->rollSamples)));
+            _validateRegionSummaryTable->setItem (row, 3, makeItem (
+                QString::fromLatin1 (rws::toString (result.feasibility))));
+            _validateRegionSummaryTable->setItem (row, 4, makeItem (
+                QString::fromLatin1 (rws::toString (result.quality))));
+            _validateRegionSummaryTable->setItem (row, 5, makeItem (
+                QString::fromLatin1 (rws::toString (result.stage))));
+        }
+    }
+    if (_validateOrientationProbeLabel != nullptr) {
+        const RequirementExecutionRegion* first = _validateExecution.workspaceRegions.empty () ?
+            nullptr : &_validateExecution.workspaceRegions.front ();
+        _validateOrientationProbeLabel->setText (
+            first == nullptr ? tr ("Orientation probes: no frozen region loaded.") :
+                tr ("Orientation probes: directions %1, rolls %2.")
+                    .arg (first->directionSamples).arg (first->rollSamples));
+    }
     _validateSummary = buildRequirementValidationSummary (
         _validateExecution, taskSummary.taskResults, regionResults);
 
@@ -1596,8 +2092,10 @@ void KinematicAnalysisWidget::validateRequirements ()
             _validateTaskResultTable->insertRow (row);
             const RequirementExecutionTask* requirement =
                 i < _validateExecution.tasks.size () ? &_validateExecution.tasks[i] : nullptr;
-            _validateTaskResultTable->setItem (row, 0, makeItem (
-                QString::fromStdString (requirement != nullptr ? requirement->id : result.target.id)));
+            QTableWidgetItem* idItem = makeItem (
+                QString::fromStdString (requirement != nullptr ? requirement->id : result.target.id));
+            idItem->setData (Qt::UserRole, idItem->text ());
+            _validateTaskResultTable->setItem (row, 0, idItem);
             _validateTaskResultTable->setItem (row, 1, makeItem (
                 QString::fromStdString (requirement != nullptr ? requirement->name : result.target.name)));
             _validateTaskResultTable->setItem (row, 2, makeItem (
@@ -1618,8 +2116,9 @@ void KinematicAnalysisWidget::validateRequirements ()
             for (const RegionCellResult& cell : result.cells) {
                 const int row = _validateRegionCellTable->rowCount ();
                 _validateRegionCellTable->insertRow (row);
-                _validateRegionCellTable->setItem (row, 0, makeItem (
-                    QString::fromStdString (result.regionId)));
+                QTableWidgetItem* idItem = makeItem (QString::fromStdString (result.regionId));
+                idItem->setData (Qt::UserRole, idItem->text ());
+                _validateRegionCellTable->setItem (row, 0, idItem);
                 _validateRegionCellTable->setItem (row, 1, makeItem (cell.position[0]));
                 _validateRegionCellTable->setItem (row, 2, makeItem (cell.position[1]));
                 _validateRegionCellTable->setItem (row, 3, makeItem (cell.position[2]));
@@ -1647,6 +2146,201 @@ void KinematicAnalysisWidget::validateRequirements ()
     refreshWorkflowControls ();
 }
 
+// validateSelectedMode2Source:只校验"当前选中"的条目,避免全量重跑。
+// 本地任务源转发给 analyzeSelectedTaskPoints;冻结需求源则根据选中的是任务
+// 还是区域,单条构造 RequirementExecutionSet 分别走任务校验 / 区域覆盖评估,
+// 并把其他条目从结果表清空,使视图只反映本次选中的评估结果。
+void KinematicAnalysisWidget::validateSelectedMode2Source ()
+{
+    if (_mode2DataSourceCombo == nullptr || _mode2DataSourceCombo->currentIndex () == 0) {
+        _validateHasResults = false;
+        _validateSummary = RequirementValidationSummary ();
+        analyzeSelectedTaskPoints ();
+        return;
+    }
+    if (_workcell == nullptr || !_validateExecutionSet)
+        return;
+
+    QString selectedTaskId;
+    if (_validateTaskResultTable != nullptr &&
+        _validateTaskResultTable->selectionModel () != nullptr) {
+        const QModelIndexList rows =
+            _validateTaskResultTable->selectionModel ()->selectedRows ();
+        if (!rows.isEmpty ()) {
+            QTableWidgetItem* item = _validateTaskResultTable->item (rows.front ().row (), 0);
+            selectedTaskId = item == nullptr ? QString () : item->data (Qt::UserRole).toString ();
+        }
+    }
+    QString selectedRegionId;
+    if (selectedTaskId.isEmpty () && _validateRegionSummaryTable != nullptr &&
+        _validateRegionSummaryTable->selectionModel () != nullptr) {
+        const QModelIndexList rows =
+            _validateRegionSummaryTable->selectionModel ()->selectedRows ();
+        if (!rows.isEmpty ()) {
+            QTableWidgetItem* item = _validateRegionSummaryTable->item (rows.front ().row (), 0);
+            selectedRegionId = item == nullptr ? QString () : item->data (Qt::UserRole).toString ();
+        }
+    }
+    if (selectedTaskId.isEmpty () && selectedRegionId.isEmpty ()) {
+        setStatus (tr ("Select a frozen task or region to validate."));
+        return;
+    }
+
+    const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    const rw::core::Ptr< rw::kinematics::Frame > tcpFrame = selectedTcpFrame ();
+    if (device == nullptr || tcpFrame == nullptr) {
+        refreshWorkflowControls ();
+        return;
+    }
+    AnalysisContextInput input;
+    input.workcell = rw::core::Ptr< rw::models::WorkCell > (_workcell);
+    input.device = device;
+    input.tcpFrame = tcpFrame;
+    input.baseState = currentState ();
+    input.collisionDetector = collisionDetectorForAnalysis (true, nullptr);
+    input.deviceName = device->getName ();
+    input.tcpFrameName = tcpFrame->getName ();
+    input.modelFingerprint = _validateExecution.provenance.robotModelFingerprint.empty () ?
+        input.deviceName : _validateExecution.provenance.robotModelFingerprint;
+    input.environmentFingerprint = _validateExecution.provenance.environmentFingerprint.empty () ?
+        QStringLiteral ("current-workcell").toStdString () :
+        _validateExecution.provenance.environmentFingerprint;
+    input.thresholds = _thresholds;
+    input.collisionRequired = false;
+    AnalysisContext context;
+    std::string contextError;
+    if (!makeAnalysisContext (input, context, &contextError)) {
+        setStatus (QString::fromStdString (contextError));
+        return;
+    }
+
+    if (!selectedTaskId.isEmpty ()) {
+        const std::string id = selectedTaskId.toStdString ();
+        const auto found = std::find_if (_validateExecution.tasks.begin (),
+                                        _validateExecution.tasks.end (),
+                                        [&id] (const RequirementExecutionTask& task) {
+                                            return task.id == id;
+                                        });
+        if (found == _validateExecution.tasks.end ()) {
+            setStatus (tr ("Selected frozen task is no longer available."));
+            return;
+        }
+        RequirementExecutionSet selected;
+        selected.provenance = _validateExecution.provenance;
+        selected.tasks.push_back (*found);
+        KinematicAnalyzer analyzer;
+        analyzer.setThresholds (_thresholds);
+        const RequirementValidationSummary summary = analyzer.validateRequirements (context, selected);
+        if (_validateTaskResultTable != nullptr) {
+            _validateTaskResultTable->setRowCount (0);
+            if (!summary.taskResults.empty ()) {
+                const TargetEvaluation& result = summary.taskResults.front ();
+                _validateTaskResultTable->insertRow (0);
+                QTableWidgetItem* idItem = makeItem (selectedTaskId);
+                idItem->setData (Qt::UserRole, selectedTaskId);
+                _validateTaskResultTable->setItem (0, 0, idItem);
+                _validateTaskResultTable->setItem (0, 1, makeItem (
+                    QString::fromStdString (found->name)));
+                _validateTaskResultTable->setItem (0, 2, makeItem (
+                    QString::fromLatin1 (rws::toString (result.feasibility))));
+                _validateTaskResultTable->setItem (0, 3, makeItem (
+                    QString::fromLatin1 (rws::toString (result.quality))));
+                _validateTaskResultTable->setItem (0, 4, makeItem (
+                    QString::fromLatin1 (rws::toString (result.stage))));
+                _validateTaskResultTable->setItem (0, 5, makeItem (
+                    found->level == RequirementExecutionLevel::Must ? "Must" :
+                    found->level == RequirementExecutionLevel::Should ? "Should" : "Info"));
+            }
+        }
+        if (_validateRegionCellTable != nullptr)
+            _validateRegionCellTable->setRowCount (0);
+        if (_validateRegionSummaryTable != nullptr)
+            _validateRegionSummaryTable->setRowCount (0);
+        _validateSummary = buildRequirementValidationSummary (
+            selected, summary.taskResults, std::vector< RegionCoverageResult > ());
+        _validateHasResults = true;
+        if (_validateRequirementStateLabel != nullptr)
+            _validateRequirementStateLabel->setText (
+                tr ("Validation: %1 / %2 / %3")
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.feasibility)))
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.quality)))
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.stage))));
+        setStatus (tr ("Validated selected frozen task %1.").arg (selectedTaskId));
+    }
+    else {
+        const std::string id = selectedRegionId.toStdString ();
+        const auto found = std::find_if (_validateExecution.workspaceRegions.begin (),
+                                        _validateExecution.workspaceRegions.end (),
+                                        [&id] (const RequirementExecutionRegion& region) {
+                                            return region.id == id;
+                                        });
+        if (found == _validateExecution.workspaceRegions.end ()) {
+            setStatus (tr ("Selected frozen region is no longer available."));
+            return;
+        }
+        RegionCoverageEvaluator evaluator;
+        const RegionCoverageResult result = evaluator.evaluate (context, *found);
+        if (_validateTaskResultTable != nullptr)
+            _validateTaskResultTable->setRowCount (0);
+        if (_validateRegionSummaryTable != nullptr) {
+            _validateRegionSummaryTable->setRowCount (0);
+            _validateRegionSummaryTable->insertRow (0);
+            QTableWidgetItem* idItem = makeItem (selectedRegionId);
+            idItem->setData (Qt::UserRole, selectedRegionId);
+            _validateRegionSummaryTable->setItem (0, 0, idItem);
+            _validateRegionSummaryTable->setItem (0, 1, makeItem (
+                QString::fromStdString (found->name)));
+            _validateRegionSummaryTable->setItem (0, 2, makeItem (
+                tr ("D%1 / R%2").arg (found->directionSamples).arg (found->rollSamples)));
+            _validateRegionSummaryTable->setItem (0, 3, makeItem (
+                QString::fromLatin1 (rws::toString (result.feasibility))));
+            _validateRegionSummaryTable->setItem (0, 4, makeItem (
+                QString::fromLatin1 (rws::toString (result.quality))));
+            _validateRegionSummaryTable->setItem (0, 5, makeItem (
+                QString::fromLatin1 (rws::toString (result.stage))));
+        }
+        if (_validateRegionCellTable != nullptr) {
+            _validateRegionCellTable->setRowCount (0);
+            for (const RegionCellResult& cell : result.cells) {
+                const int row = _validateRegionCellTable->rowCount ();
+                _validateRegionCellTable->insertRow (row);
+                QTableWidgetItem* idItem = makeItem (selectedRegionId);
+                idItem->setData (Qt::UserRole, selectedRegionId);
+                _validateRegionCellTable->setItem (row, 0, idItem);
+                _validateRegionCellTable->setItem (row, 1, makeItem (cell.position[0]));
+                _validateRegionCellTable->setItem (row, 2, makeItem (cell.position[1]));
+                _validateRegionCellTable->setItem (row, 3, makeItem (cell.position[2]));
+                _validateRegionCellTable->setItem (row, 4, makeItem (
+                    QStringLiteral ("%1,%2,%3").arg (cell.index[0]).arg (cell.index[1])
+                                                 .arg (cell.index[2])));
+                _validateRegionCellTable->setItem (row, 5, makeItem (
+                    QString::fromLatin1 (rws::toString (cell.feasibility))));
+                _validateRegionCellTable->setItem (row, 6, makeItem (
+                    QString::fromLatin1 (rws::toString (cell.quality))));
+                _validateRegionCellTable->setItem (row, 7, makeItem (
+                    QString::fromLatin1 (rws::toString (result.stage))));
+                _validateRegionCellTable->setItem (row, 8, makeItem (
+                    QString::number (cell.reachableOrientationCount)));
+            }
+        }
+        RequirementExecutionSet selected;
+        selected.provenance = _validateExecution.provenance;
+        selected.workspaceRegions.push_back (*found);
+        _validateSummary = buildRequirementValidationSummary (
+            selected, std::vector< TargetEvaluation > (),
+            std::vector< RegionCoverageResult > {result});
+        _validateHasResults = true;
+        if (_validateRequirementStateLabel != nullptr)
+            _validateRequirementStateLabel->setText (
+                tr ("Validation: %1 / %2 / %3")
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.feasibility)))
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.quality)))
+                    .arg (QString::fromLatin1 (rws::toString (_validateSummary.stage))));
+        setStatus (tr ("Validated selected frozen region %1.").arg (selectedRegionId));
+    }
+    refreshWorkflowControls ();
+}
+
 // 将当前 Widget 的可编辑内容收集为项目配置。这里故意不读取 _lastIkResult、workspace
 // samples 或 pose reachability samples：这些数据可以由配置和当前 WorkCell 重新计算，且体积
 // 可能远大于项目定义；把它们写入项目会造成陈旧结果和不可控的文件膨胀。
@@ -1657,7 +2351,7 @@ QByteArray KinematicAnalysisWidget::projectDocumentSnapshot () const
     settings.tcpFrameName = _tcpFrameCombo == nullptr ? QString () : _tcpFrameCombo->currentText ();
     settings.ikPositionMeters = {{ikXInputMeters (), ikYInputMeters (), ikZInputMeters ()}};
     settings.ikRpyDeg = {{ikRollInputDeg (), ikPitchInputDeg (), ikYawInputDeg ()}};
-    settings.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
+    settings.ikDuplicateQThreshold = _thresholds.ikDuplicateQThreshold;
     settings.ikCollisionCheck = _ikCollisionCheck->isChecked ();
     settings.lengthUnit = _lengthUnit;
     settings.angleUnit = _angleUnit;
@@ -1700,6 +2394,7 @@ QByteArray KinematicAnalysisWidget::projectDocumentSnapshot () const
     settings.showLegend = _visualShowLegendCheck->isChecked ();
     settings.pointSize = _visualPointSizeSpin->value ();
     settings.thresholds = _thresholds;
+    settings.ikDuplicateQThreshold = settings.thresholds.ikDuplicateQThreshold;
     if (_taskPointModel != nullptr)
         settings.taskPoints = _taskPointModel->taskPoints ();
     return KinematicAnalysisProjectDocument::toJson (settings);
@@ -1798,6 +2493,8 @@ void KinematicAnalysisWidget::applyProjectDocumentSnapshot (const QByteArray& js
     _applyingProjectDocument = false;
 }
 
+// loadProjectDocument:从文件加载 KinematicAnalysis 项目配置。成功时记录项目
+// 路径并把当前配置快照作为脏比较基线;失败时通过 error 返回可读原因。
 bool KinematicAnalysisWidget::loadProjectDocument (const QString& path, QString* error)
 {
     QFile file (path);
@@ -1871,6 +2568,9 @@ bool KinematicAnalysisWidget::canCloseProjectDocument (QString* reason) const
     return !running;
 }
 
+// beginProjectDocument:首次编辑生成资源时建立项目内 JSON 的会话基线。该路径仅存
+// 于运行时,用于判定 Widget 已绑定项目资源;它绝不进入业务 JSON,保证项目被复制或
+// 移动后不包含失效的绝对路径。
 void KinematicAnalysisWidget::beginProjectDocument (const QString& path)
 {
     // 该路径仅存于运行时，用于判定 Widget 已绑定项目资源；它绝不进入业务 JSON，保证项目
@@ -1882,6 +2582,8 @@ void KinematicAnalysisWidget::beginProjectDocument (const QString& path)
     _pendingProjectDocumentSnapshot.clear ();
 }
 
+// clearProjectDocumentContext:项目关闭或切换时释放仅用于脏比较的路径和快照,
+// 防止旧项目的基线影响新项目。注意只清数据而不改控件状态,交给加载流程恢复。
 void KinematicAnalysisWidget::clearProjectDocumentContext ()
 {
     // 仅清理项目生命周期数据而不主动改动控件：若下一项目存在资源，加载流程会恢复其配置；
@@ -1964,6 +2666,13 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
 {
     if (_ikSolutionTable == NULL)
         return;
+    if (_ikResultStale) {
+        _ikSolutionTable->setRowCount (0);
+        setIkDetailsEmpty ();
+        if (_ikStatusLabel != NULL)
+            _ikStatusLabel->setText (tr ("<b>Status</b><br>Stale - target changed"));
+        return;
+    }
 
     // Task 3:过滤器互斥。勾 Show usable only 时强制取消 Show failed candidates
     // 并禁用,避免两个过滤器语义冲突。QSignalBlocker 防止 setChecked(false)
@@ -2012,8 +2721,10 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
         failureItem->setToolTip (failureText);
         _ikSolutionTable->setItem (displayRow, 2, failureItem);
 
-        _ikSolutionTable->setItem (displayRow, 3,
-            makeItem (isCurrentIkSolution (solution) ? tr("Yes") : tr("No")));
+        QTableWidgetItem* currentQItem =
+            makeItem (isCurrentIkSolution (solution) ? tr("Yes") : tr("No"));
+        currentQItem->setToolTip (qVectorText (solution.q));
+        _ikSolutionTable->setItem (displayRow, 3, currentQItem);
         _ikSolutionTable->setItem (displayRow, 4,
             makeItem (solution.inCollision ? tr("Yes") : tr("No")));
         // 整行的 solutionIndex 都存到 Qt::UserRole + 1,选中任一单元格
@@ -2064,6 +2775,8 @@ void KinematicAnalysisWidget::refreshIkSolutionView ()
     updateIkSolutionDetails ();
 }
 
+// updateIkSolutionDetails:把选中 IK 候选的隐藏字段(距离 / 关节裕度 / 可操作度 /
+// 条件数 / 位置与姿态误差 / Q)写入详情表,并同步 Apply 按钮可用性。
 // updateIkSolutionDetails writes the fields hidden from the candidate list.
 void KinematicAnalysisWidget::updateIkSolutionDetails ()
 {
@@ -2088,7 +2801,7 @@ void KinematicAnalysisWidget::updateIkSolutionDetails ()
 
     // 同步 Apply 按钮启用态:只有无碰撞、非 Fail 的解可写回 RobWorkStudio。
     if (_ikApplyButton != NULL)
-        _ikApplyButton->setEnabled (isUsableIkSolution (s));
+        _ikApplyButton->setEnabled (!_ikResultStale && isUsableIkSolution (s));
 
     const QString condText = std::isinf (s.conditionNumber) ?
         QStringLiteral ("inf") : QString::number (s.conditionNumber, 'g', 6);
@@ -2121,6 +2834,29 @@ void KinematicAnalysisWidget::setIkDetailsEmpty ()
     setDetailRow (_ikDetailTable, 0, tr("Selection"), tr("No IK candidate selected."));
     if (_ikApplyButton != NULL)
         _ikApplyButton->setEnabled (false);
+}
+
+// invalidateIkResultPresentation:IK 目标被修改时调用,把结果标记为过期并清空
+// 候选表 / 详情表 / 统计标签,提示用户重新 Solve;同时禁用 Apply 防止陈旧解写回。
+void KinematicAnalysisWidget::invalidateIkResultPresentation ()
+{
+    _ikResultStale = true;
+    if (_ikSolutionTable != NULL)
+        _ikSolutionTable->setRowCount (0);
+    setIkDetailsEmpty ();
+    if (_ikDisplayedLabel != NULL)
+        _ikDisplayedLabel->setText (tr ("<b>Displayed</b><br>-"));
+    if (_ikUsableLabel != NULL)
+        _ikUsableLabel->setText (tr ("<b>Usable</b><br>-"));
+    if (_ikPassLabel != NULL)
+        _ikPassLabel->setText (tr ("<b>Pass</b><br>-"));
+    if (_ikWarningLabel != NULL)
+        _ikWarningLabel->setText (tr ("<b>Warning</b><br>-"));
+    if (_ikFailLabel != NULL)
+        _ikFailLabel->setText (tr ("<b>Fail</b><br>-"));
+    if (_ikStatusLabel != NULL)
+        _ikStatusLabel->setText (tr("<b>Status</b><br>Stale - target changed"));
+    setStatus (tr("IK target changed; previous results are stale. Solve again to refresh candidates."));
 }
 
 namespace {
@@ -2880,6 +3616,7 @@ void KinematicAnalysisWidget::importCurrentPoseToIk ()
         setIkPoseMetersDeg (
             {{baseTtcp.P ()[0], baseTtcp.P ()[1], baseTtcp.P ()[2]}},
             {{rpy (0) * toDeg, rpy (1) * toDeg, rpy (2) * toDeg}});
+        invalidateIkResultPresentation ();
         if (_ikSourceLabel != NULL)
             _ikSourceLabel->setVisible (false);
         setStatus (tr("Imported current TCP pose into IK target."));
@@ -2892,6 +3629,10 @@ void KinematicAnalysisWidget::importCurrentPoseToIk ()
     }
 }
 
+// solveIk:从 IK tab 读取目标位姿(x/y/z + RPY),构造 TaskPoint 后调用
+// analyzer.analyzeIk 求解。求解期间禁用 Solve 按钮并提示 "Solving IK...",
+// 所有提前返回路径都恢复按钮;结果缓存到 _lastIkResult 由 refreshIkSolutionView
+// 统一渲染,便于切换过滤器时即时刷新而不必重解。
 void KinematicAnalysisWidget::solveIk ()
 {
     _ikSolutionTable->setRowCount(0);
@@ -2949,6 +3690,7 @@ void KinematicAnalysisWidget::solveIk ()
     // 都从这里读。表格真正填充交给 refreshIkSolutionView 统一负责,
     // 这样过滤器切换时不必再调 Solve,UI 即时刷新。
     _lastIkResult = result;
+    _ikResultStale = false;
     refreshIkSolutionView ();
 
     if (!checkCollision) {
@@ -2993,6 +3735,10 @@ bool KinematicAnalysisWidget::shouldShowIkSolution (
 //   4) refreshCurrentPose 更新 Current pose tab 与 Report tab。
 void KinematicAnalysisWidget::applySelectedIkSolution ()
 {
+    if (_ikResultStale) {
+        setStatus (tr("Cannot apply IK solution: target changed; solve again."));
+        return;
+    }
     if (_workcell == NULL || _studio == NULL) {
         setStatus(tr("Cannot apply IK solution: no WorkCell or RobWorkStudio context."));
         return;
@@ -3063,6 +3809,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
     summaryRow->addWidget (summaryTitle);
     _taskPointSummaryLabel = new QLabel (_taskPointTab);
+    _taskPointSummaryLabel->setObjectName (QStringLiteral ("taskPointSummaryLabel"));
     _taskPointSummaryLabel->setTextFormat (Qt::RichText);
     _taskPointSummaryLabel->setText (
         tr("<b>Enabled</b> 0 | <b>Pass</b> - | <b>Warning</b> - | <b>Fail</b> -"));
@@ -3091,6 +3838,37 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     listActions->addWidget (_exportTaskPointsButton);
     listActions->addWidget (_exportTaskPointResultsButton);
     listActions->addWidget (_importCurrentTcpTaskPointButton);
+    QToolButton* moreActions = new QToolButton (_taskPointTab);
+    moreActions->setObjectName (QStringLiteral ("taskPointMoreActions"));
+    moreActions->setText (tr ("More"));
+    moreActions->setPopupMode (QToolButton::InstantPopup);
+    QMenu* moreMenu = new QMenu (moreActions);
+    const auto addMoreAction = [moreMenu] (const QString& text, QPushButton* button) {
+        QAction* action = moreMenu->addAction (text);
+        QObject::connect (action, &QAction::triggered, button, &QPushButton::click);
+        return action;
+    };
+    QAction* importAction = addMoreAction (tr ("Import CSV"), _importTaskPointsButton);
+    QAction* exportTasksAction = addMoreAction (tr ("Export tasks"), _exportTaskPointsButton);
+    QAction* exportResultsAction = addMoreAction (tr ("Export results"), _exportTaskPointResultsButton);
+    QAction* addCurrentTcpAction = addMoreAction (tr ("Add current TCP"), _importCurrentTcpTaskPointButton);
+    connect (moreMenu, &QMenu::aboutToShow, moreMenu,
+             [importAction, exportTasksAction, exportResultsAction, addCurrentTcpAction,
+              this] () {
+                 importAction->setEnabled (_importTaskPointsButton->isEnabled ());
+                 exportTasksAction->setEnabled (_exportTaskPointsButton->isEnabled ());
+                 exportResultsAction->setEnabled (_exportTaskPointResultsButton->isEnabled ());
+                 addCurrentTcpAction->setEnabled (_importCurrentTcpTaskPointButton->isEnabled ());
+             });
+    moreActions->setMenu (moreMenu);
+    _addTaskPointButton->setVisible (false);
+    _removeTaskPointButton->setVisible (false);
+    _importTaskPointsButton->setVisible (false);
+    _importFrozenRequirementsButton->setVisible (false);
+    _exportTaskPointsButton->setVisible (false);
+    _exportTaskPointResultsButton->setVisible (false);
+    _importCurrentTcpTaskPointButton->setVisible (false);
+    listActions->addWidget (moreActions);
     listActions->addStretch (1);
     tpLayout->addLayout (listActions);
 
@@ -3100,6 +3878,8 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _analyzeSelectedTaskPointsButton->setEnabled (false);
     _applySelectedTaskPointBestQButton->setEnabled (false);
     _openSelectedTaskPointInIkButton->setEnabled (false);
+    _analyzeAllTaskPointsButton->setVisible (false);
+    _analyzeSelectedTaskPointsButton->setVisible (false);
 
     // P3-A:数据源用 TaskPointTableModel,view 用 QTableView。
     // model 持有 19 列任务点定义 + 8 列 IK 结果 + 验证状态;
@@ -3257,6 +4037,7 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     _workspaceSeedSpin->setRange (1, 2147483647);
     _workspaceSeedSpin->setValue (1);
     _workspaceModeCombo = new QComboBox (_workspaceTab);
+    _workspaceModeCombo->setObjectName (QStringLiteral ("workspaceModeCombo"));
     _workspaceModeCombo->addItem (tr("Random uniform"));
     _workspaceModeCombo->addItem (tr("Grid"));
     _workspaceCollisionCheck = new QCheckBox (tr("Collision"), _workspaceTab);
@@ -3265,12 +4046,14 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     _workspaceColorModeCombo->addItems ({tr("Reachability"), tr("Manipulability"),
                                          tr("Joint limit"), tr("Collision")});
     _workspaceRunButton = new QPushButton (tr("Run"), _workspaceTab);
+    _workspaceRunButton->setObjectName (QStringLiteral ("workspaceRunButton"));
     _workspaceExportButton = new QPushButton (tr("Export CSV"), _workspaceTab);
     _workspaceExportButton->setEnabled (false);
     _workspaceOpenVisualizationButton =
         new QPushButton (tr("Open in Visualization"), _workspaceTab);
     _workspaceOpenVisualizationButton->setEnabled (false);
     _workspaceCancelButton = new QPushButton (tr("Cancel"), _workspaceTab);
+    _workspaceCancelButton->setObjectName (QStringLiteral ("workspaceCancelButton"));
     _workspaceCancelButton->setEnabled (false);
     _workspaceProgressBar = new QProgressBar (_workspaceTab);
     _workspaceProgressBar->setRange (0, 1);
@@ -3279,6 +4062,7 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     _workspaceProgressLabel = new QLabel (tr("Progress: 0 / 0 sample(s)"), _workspaceTab);
 
     QLabel* samplingTitle = new QLabel (tr("Sampling"), _workspaceTab);
+    samplingTitle->setObjectName (QStringLiteral ("workspaceSamplingTitle"));
     samplingTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
     QHBoxLayout* samplingTitleRow = new QHBoxLayout ();
     samplingTitleRow->addWidget (samplingTitle);
@@ -3290,7 +4074,9 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     layout->addLayout (samplingTitleRow);
 
     QHBoxLayout* samplingControls = new QHBoxLayout ();
-    samplingControls->addWidget (new QLabel (tr("Mode"), _workspaceTab));
+    QLabel* workspaceModeLabel = new QLabel (tr("Mode"), _workspaceTab);
+    workspaceModeLabel->setObjectName (QStringLiteral ("workspaceModeLabel"));
+    samplingControls->addWidget (workspaceModeLabel);
     samplingControls->addWidget (_workspaceModeCombo);
     QLabel* samplesLabel = new QLabel (tr("Samples"), _workspaceTab);
     samplesLabel->setObjectName (QStringLiteral ("workspaceSamplesLabel"));
@@ -3307,6 +4093,7 @@ void KinematicAnalysisWidget::buildWorkspaceTab ()
     layout->addLayout (samplingControls);
 
     QToolButton* workspaceMoreToggle = new QToolButton (_workspaceTab);
+    workspaceMoreToggle->setObjectName (QStringLiteral ("workspaceMoreToggle"));
     workspaceMoreToggle->setText (tr("More..."));
     workspaceMoreToggle->setCheckable (true);
     workspaceMoreToggle->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
@@ -3451,7 +4238,9 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     setupTitleRow->addStretch (1);
 
     _poseAnalyzeButton = new QPushButton (tr("Run"), _poseReachTab);
+    _poseAnalyzeButton->setObjectName (QStringLiteral ("poseRunButton"));
     _poseCancelButton = new QPushButton (tr("Cancel"), _poseReachTab);
+    _poseCancelButton->setObjectName (QStringLiteral ("poseCancelButton"));
     _poseCancelButton->setEnabled (false);
     _poseExportButton = new QPushButton (tr("Export CSV"), _poseReachTab);
     _poseOpenVisualizationButton =
@@ -3474,19 +4263,27 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseManualSourceButton->setCheckable (true);
     _poseManualSourceButton->setAutoExclusive (true);
     _poseDirectionSamplesSpin = new QSpinBox (_poseReachTab);
+    _poseDirectionSamplesSpin->setObjectName (QStringLiteral ("poseDirectionSamplesSpin"));
     _poseDirectionSamplesSpin->setRange (0, 1000);
     _poseDirectionSamplesSpin->setValue (24);
     _poseRollSamplesSpin = new QSpinBox (_poseReachTab);
+    _poseRollSamplesSpin->setObjectName (QStringLiteral ("poseRollSamplesSpin"));
     _poseRollSamplesSpin->setRange (1, 360);
     _poseRollSamplesSpin->setValue (1);
     _poseCollisionCheck = new QCheckBox (tr("Collision"), _poseReachTab);
     _poseCollisionCheck->setChecked (true);
-    controls->addWidget (new QLabel (tr("Source:"), _poseReachTab), 0, 0);
+    QLabel* poseSourceLabel = new QLabel (tr("Source:"), _poseReachTab);
+    poseSourceLabel->setObjectName (QStringLiteral ("poseSourceLabel"));
+    controls->addWidget (poseSourceLabel, 0, 0);
     controls->addWidget (_poseTaskPointsSourceButton, 0, 1);
     controls->addWidget (_poseManualSourceButton, 0, 2);
-    controls->addWidget (new QLabel (tr("Directions:"), _poseReachTab), 0, 3);
+    QLabel* poseDirectionsLabel = new QLabel (tr("Directions:"), _poseReachTab);
+    poseDirectionsLabel->setObjectName (QStringLiteral ("poseDirectionsLabel"));
+    controls->addWidget (poseDirectionsLabel, 0, 3);
     controls->addWidget (_poseDirectionSamplesSpin, 0, 4);
-    controls->addWidget (new QLabel (tr("Rolls:"), _poseReachTab), 0, 5);
+    QLabel* poseRollsLabel = new QLabel (tr("Rolls:"), _poseReachTab);
+    poseRollsLabel->setObjectName (QStringLiteral ("poseRollsLabel"));
+    controls->addWidget (poseRollsLabel, 0, 5);
     controls->addWidget (_poseRollSamplesSpin, 0, 6);
     controls->addWidget (_poseCollisionCheck, 0, 7);
     controls->setColumnStretch (2, 1);
@@ -3642,6 +4439,10 @@ void KinematicAnalysisWidget::buildPoseReachabilityTab ()
     _poseExportButton->setEnabled (false);
 }
 
+// buildVisualizationTab:可视化子页布局。顶部一行是数据源 / 投影 / 标量模式 /
+// Fit / Export PNG / 打开独立窗口按钮;"More..." 折叠区内含渲染模式(Scatter /
+// Envelope)、包络方向数、Pass/Warning/Fail/Unknown 显示开关、标签 / 网格 / 图例 /
+// 点径;下方是内嵌 plot 与摘要标签。控件变化通过信号即时触发 refreshVisualization。
 // buildReportTab:Report 子页布局。
 //   - 顶部 summary 标签:显示当前 / 任务 / 工作空间 / 位姿可达性的综合状态;
 //   - 7 个 DoubleSpinBox 调阈值(nearLimit / cond warn / cond fail / sigma /
@@ -3659,11 +4460,13 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualSourceCombo->addItem (tr("Pose reachability"), 2);
 
     _visualProjectionCombo = new QComboBox (_visualizationTab);
+    _visualProjectionCombo->setObjectName (QStringLiteral ("visualizationProjectionCombo"));
     _visualProjectionCombo->addItem (tr("XY"), static_cast<int> (VisualProjection::XY));
     _visualProjectionCombo->addItem (tr("XZ"), static_cast<int> (VisualProjection::XZ));
     _visualProjectionCombo->addItem (tr("YZ"), static_cast<int> (VisualProjection::YZ));
 
     _visualColorModeCombo = new QComboBox (_visualizationTab);
+    _visualColorModeCombo->setObjectName (QStringLiteral ("visualizationScalarModeCombo"));
     _visualColorModeCombo->addItem (tr("Status"), static_cast<int> (VisualScalarMode::Status));
     _visualColorModeCombo->addItem (tr("Manipulability"), static_cast<int> (VisualScalarMode::Manipulability));
     _visualColorModeCombo->addItem (tr("Condition"), static_cast<int> (VisualScalarMode::Condition));
@@ -3674,6 +4477,7 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualColorModeCombo->addItem (tr("Coverage"), static_cast<int> (VisualScalarMode::Coverage));
 
     _visualRenderModeCombo = new QComboBox (_visualizationTab);
+    _visualRenderModeCombo->setObjectName (QStringLiteral ("visualizationRenderModeCombo"));
     _visualRenderModeCombo->addItem (
         visualRenderModeText (VisualRenderMode::Scatter),
         static_cast<int> (VisualRenderMode::Scatter));
@@ -3692,6 +4496,7 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     _visualShowUnknownCheck = new QCheckBox (tr("Unknown"), _visualizationTab);
     _visualShowLabelsCheck = new QCheckBox (tr("Labels"), _visualizationTab);
     _visualShowGridCheck = new QCheckBox (tr("Grid"), _visualizationTab);
+    _visualShowGridCheck->setObjectName (QStringLiteral ("visualizationShowGridCheck"));
     _visualShowLegendCheck = new QCheckBox (tr("Legend"), _visualizationTab);
     _visualShowPassCheck->setChecked (true);
     _visualShowWarningCheck->setChecked (true);
@@ -3707,6 +4512,9 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
 
     _visualResetViewButton = new QPushButton (tr("Fit"), _visualizationTab);
     _visualExportPngButton = new QPushButton (tr("Export PNG"), _visualizationTab);
+    _visualOpenDialogButton = new QPushButton (tr("Open plot window"), _visualizationTab);
+    _visualOpenDialogButton->setObjectName (
+        QStringLiteral ("visualizationOpenPlotButton"));
 
     QLabel* setupTitle = new QLabel (tr("View setup"), _visualizationTab);
     setupTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
@@ -3719,6 +4527,7 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
     controls->addWidget (_visualColorModeCombo, 0, 6);
     controls->addWidget (_visualResetViewButton, 0, 7);
     controls->addWidget (_visualExportPngButton, 0, 8);
+    controls->addWidget (_visualOpenDialogButton, 0, 9);
     controls->setColumnStretch (2, 1);
     controls->setColumnStretch (4, 1);
     controls->setColumnStretch (6, 1);
@@ -3796,6 +4605,8 @@ void KinematicAnalysisWidget::buildVisualizationTab ()
              this, SLOT (resetVisualizationView ()));
     connect (_visualExportPngButton, SIGNAL (clicked ()),
              this, SLOT (exportVisualizationPng ()));
+    connect (_visualOpenDialogButton, SIGNAL (clicked ()),
+             this, SLOT (openKinematicPlotDialog ()));
     connect (_visualRenderModeCombo, SIGNAL (currentIndexChanged (int)),
              this, SLOT (updateVisualizationControls ()));
     connect (_visualEnvelopeDirectionsSpin, SIGNAL (valueChanged (int)),
@@ -3955,6 +4766,120 @@ void KinematicAnalysisWidget::resetVisualizationView ()
     setStatus (tr("Visualization fitted to visible data."));
 }
 
+// openKinematicPlotDialog:打开无模式独立 plot 窗口。首次调用创建对话框并接入
+// 投影 / 标量模式 / 渲染模式 / Fit / PNG 导出的请求回连到主控件;之后复用同一
+// 实例(仅 raise + activateWindow),避免反复 new 造成窗口堆积。
+void KinematicAnalysisWidget::openKinematicPlotDialog ()
+{
+    if (_plotDialog != nullptr) {
+        _plotDialog->show ();
+        _plotDialog->raise ();
+        _plotDialog->activateWindow ();
+        return;
+    }
+
+    _plotDialog = new KinematicPlotDialog (this);
+    connect (_plotDialog, &KinematicPlotDialog::projectionRequested, this,
+             [this] (VisualProjection projection) {
+                 if (_visualProjectionCombo != nullptr) {
+                     const int index = _visualProjectionCombo->findData (
+                         static_cast<int> (projection));
+                     if (index >= 0)
+                         _visualProjectionCombo->setCurrentIndex (index);
+                 }
+             });
+    connect (_plotDialog, &KinematicPlotDialog::scalarModeRequested, this,
+             [this] (VisualScalarMode mode) {
+                 if (_visualColorModeCombo != nullptr) {
+                     const int index = _visualColorModeCombo->findData (
+                         static_cast<int> (mode));
+                     if (index >= 0)
+                         _visualColorModeCombo->setCurrentIndex (index);
+                     else {
+                         const VisualProjection projection =
+                             _visualProjectionCombo != nullptr ?
+                                 static_cast< VisualProjection > (
+                                     _visualProjectionCombo->currentData ().toInt ()) :
+                                 VisualProjection::XY;
+                         applyVisualDataToPlots (_visualData, projection);
+                     }
+                 }
+             });
+    connect (_plotDialog, &KinematicPlotDialog::renderModeRequested, this,
+             [this] (VisualRenderMode mode) {
+                 if (_visualRenderModeCombo != nullptr) {
+                     const int index = _visualRenderModeCombo->findData (
+                         static_cast<int> (mode));
+                     if (index >= 0)
+                         _visualRenderModeCombo->setCurrentIndex (index);
+                 }
+             });
+    connect (_plotDialog, &KinematicPlotDialog::fitRequested,
+             this, &KinematicAnalysisWidget::resetVisualizationView);
+    connect (_plotDialog, &KinematicPlotDialog::exportPngRequested,
+             this, &KinematicAnalysisWidget::exportVisualizationPng);
+    connect (_plotDialog->plotWidget (), &KinematicAnalysisPlotWidget::visualPointClicked,
+             this, &KinematicAnalysisWidget::applyVisualizationPointQ);
+
+    const VisualProjection projection = _visualProjectionCombo != nullptr ?
+        static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ()) :
+        VisualProjection::XY;
+    applyVisualDataToPlots (_visualData, projection);
+    _plotDialog->show ();
+    _plotDialog->raise ();
+    _plotDialog->activateWindow ();
+}
+
+// applyVisualDataToPlots:把同一份可视化数据推给内嵌 plot 与独立 plot 窗口。
+// 从各显示开关收集过滤条件(Pass/Warning/Fail/Unknown、标签、网格、图例、点径),
+// 再连同投影 / 渲染模式 / 长度单位一起设置;独立窗口额外更新其显示状态面板。
+void KinematicAnalysisWidget::applyVisualDataToPlots (
+    const AnalysisVisualData& data, VisualProjection projection)
+{
+    AnalysisVisualFilters filters;
+    filters.showPass = _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked ();
+    filters.showWarning = _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked ();
+    filters.showFail = _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked ();
+    filters.showUnknown = _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ();
+    const bool showLabels = _visualShowLabelsCheck != NULL && _visualShowLabelsCheck->isChecked ();
+    const bool showGrid = _visualShowGridCheck == NULL || _visualShowGridCheck->isChecked ();
+    const bool showLegend = _visualShowLegendCheck == NULL || _visualShowLegendCheck->isChecked ();
+    const double pointRadius = _visualPointSizeSpin != NULL ?
+        _visualPointSizeSpin->value () : 4.5;
+
+    const auto configurePlot = [&] (KinematicAnalysisPlotWidget* plot) {
+        if (plot == NULL)
+            return;
+        plot->setProjection (projection);
+        plot->setStatusFilters (filters.showPass, filters.showWarning, filters.showFail,
+                                filters.showUnknown);
+        plot->setShowLabels (showLabels);
+        plot->setShowGrid (showGrid);
+        plot->setShowLegend (showLegend);
+        plot->setPointRadius (pointRadius);
+        plot->setRenderMode (data.renderMode);
+        plot->setLengthUnit (_lengthUnit);
+        plot->setVisualData (data);
+    };
+    configurePlot (_visualPlot);
+    if (_plotDialog != nullptr) {
+        _plotDialog->setDisplayState (projection, data.scalarMode, data.renderMode, filters,
+                                      showLabels, showGrid, showLegend, pointRadius, _lengthUnit);
+        _plotDialog->setVisualData (data);
+    }
+}
+
+// clearVisualizationData:清空可视化数据并以空数据刷新 plot(WorkCell 卸载时调用),
+// 防止旧 WorkCell 的点集残留在可视化视图上造成误导。
+void KinematicAnalysisWidget::clearVisualizationData ()
+{
+    _visualData = AnalysisVisualData ();
+    const VisualProjection projection = _visualProjectionCombo != NULL ?
+        static_cast< VisualProjection > (_visualProjectionCombo->currentData ().toInt ()) :
+        VisualProjection::XY;
+    applyVisualDataToPlots (_visualData, projection);
+}
+
 // applyVisualizationPointQ:点击可视化点 → 把该点记录的 Q 写回 RobWorkStudio state。
 // 先校验点是否携带 Q 及维度是否与当前设备 DOF 一致,防止点击非本设备的点
 // 破坏当前姿态;校验通过后 setQ + setState 并刷新 Current pose 页。
@@ -3994,7 +4919,9 @@ void KinematicAnalysisWidget::applyVisualizationPointQ (
 // 选择的路径(渲染尺寸固定,保证导出图与 paintPlot 布局一致)。
 void KinematicAnalysisWidget::exportVisualizationPng ()
 {
-    if (_visualPlot == NULL) {
+    KinematicAnalysisPlotWidget* plot = _plotDialog != nullptr ?
+        _plotDialog->plotWidget () : _visualPlot;
+    if (plot == NULL) {
         setStatus (tr("No visualization plot to export."));
         return;
     }
@@ -4003,7 +4930,7 @@ void KinematicAnalysisWidget::exportVisualizationPng ()
         tr("PNG images (*.png)"));
     if (path.isEmpty ())
         return;
-    const QImage image = _visualPlot->renderToImage (QSize (1400, 900));
+    const QImage image = plot->renderToImage (QSize (1400, 900));
     if (!image.save (path, "PNG")) {
         setStatus (tr("Failed to export visualization PNG."));
         return;
@@ -4025,8 +4952,10 @@ void KinematicAnalysisWidget::openPoseReachabilityInVisualization ()
         if (index >= 0)
             _visualColorModeCombo->setCurrentIndex (index);
     }
-    if (_tabs != NULL && _visualizationTab != NULL)
-        _tabs->setCurrentWidget (_visualizationTab);
+    if (_modeButtonGroup != NULL && _modeButtonGroup->button (2) != NULL)
+        _modeButtonGroup->button (2)->click ();
+    if (_exploreScroll != NULL && _visualizationTab != NULL)
+        _exploreScroll->ensureWidgetVisible (_visualizationTab);
     refreshVisualization ();
 }
 
@@ -4056,6 +4985,14 @@ void KinematicAnalysisWidget::refreshVisualization ()
         _visualRenderModeCombo != NULL ?
             static_cast< VisualRenderMode > (_visualRenderModeCombo->currentData ().toInt ()) :
             VisualRenderMode::Scatter;
+    if (_workcell == NULL) {
+        AnalysisVisualData emptyData;
+        emptyData.scalarMode = scalarMode;
+        emptyData.renderMode = VisualRenderMode::Scatter;
+        _visualData = emptyData;
+        applyVisualDataToPlots (_visualData, projection);
+        return;
+    }
     if (!(sourceKind == 1 && renderMode == VisualRenderMode::Envelope))
         cancelEnvelopeRequest (false);
 
@@ -4136,7 +5073,8 @@ void KinematicAnalysisWidget::refreshVisualization ()
                     return result;
                 });
                 _envelopeWatcher->setFuture (future);
-                _visualPlot->setRenderMode (data.renderMode);
+                _visualData = data;
+                applyVisualDataToPlots (_visualData, projection);
                 return; // 异步完成后再更新 plot
             }
         }
@@ -4151,22 +5089,8 @@ void KinematicAnalysisWidget::refreshVisualization ()
         data.renderMode = VisualRenderMode::Scatter;
     }
 
-    _visualPlot->setProjection (projection);
-    _visualPlot->setStatusFilters (
-        _visualShowPassCheck == NULL || _visualShowPassCheck->isChecked (),
-        _visualShowWarningCheck == NULL || _visualShowWarningCheck->isChecked (),
-        _visualShowFailCheck == NULL || _visualShowFailCheck->isChecked (),
-        _visualShowUnknownCheck == NULL || _visualShowUnknownCheck->isChecked ());
-    _visualPlot->setShowLabels (_visualShowLabelsCheck != NULL &&
-                                _visualShowLabelsCheck->isChecked ());
-    _visualPlot->setShowGrid (_visualShowGridCheck == NULL ||
-                              _visualShowGridCheck->isChecked ());
-    _visualPlot->setShowLegend (_visualShowLegendCheck == NULL ||
-                                _visualShowLegendCheck->isChecked ());
-    _visualPlot->setPointRadius (_visualPointSizeSpin != NULL ?
-        _visualPointSizeSpin->value () : 4.5);
-    _visualPlot->setRenderMode (data.renderMode);
-    _visualPlot->setVisualData (data);
+    _visualData = data;
+    applyVisualDataToPlots (_visualData, projection);
 
     if (_visualSummaryLabel != NULL) {
         if (data.renderMode == VisualRenderMode::Envelope) {
@@ -4223,6 +5147,9 @@ void KinematicAnalysisWidget::refreshVisualization ()
 //  包络异步计算结果 / 防抖
 // =============================================================================
 
+// onEnvelopeFinished:包络后台计算完成回调(UI 线程)。先用 generation 号丢弃
+// 过期请求的返回(参数在途变化后旧任务结果无效),再依次处理取消 / 异常 /
+// 正常三种结果;正常结果会写回缓存供后续免算复用。
 void KinematicAnalysisWidget::onEnvelopeFinished ()
 {
     if (_envelopeWatcher == NULL || !_envelopeWatcher->isFinished ())
@@ -4263,8 +5190,8 @@ void KinematicAnalysisWidget::onEnvelopeFinished ()
         _envelopeCacheValid = true;
     }
 
-    _visualPlot->setRenderMode (data.renderMode);
-    _visualPlot->setVisualData (data);
+    _visualData = data;
+    applyVisualDataToPlots (_visualData, envelope.projection);
 
     if (_visualSummaryLabel != NULL) {
         if (envelope.valid) {
@@ -4287,6 +5214,9 @@ void KinematicAnalysisWidget::onEnvelopeFinished ()
     }
 }
 
+// onEnvelopeDebounceTimeout:包络方向数防抖槽。方向数 spin 每次变化都重启
+// 200ms 定时器,只有连续 200ms 无新变化才真正触发 refreshVisualization,
+// 避免用户拖动数值时频繁启动后台包络计算。若新请求会覆盖在途请求则先取消。
 void KinematicAnalysisWidget::onEnvelopeDebounceTimeout ()
 {
     if (_envelopeDebounceTimer == NULL)
@@ -4440,6 +5370,9 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
     _taskPointTable->setColumnWidth (ColStatus, 90);
 }
 
+// installTaskPointDelegates:为任务点表格安装单元格编辑器。收集 WORLD / 设备基座 /
+// WorkCell 全部 frame 名作为 refFrame 与 tcpFrame 下拉候选,再交给统一工厂
+// rws::installTaskPointDelegates 按列安装 ComboBox / 数值 / 布尔 delegate。
 void KinematicAnalysisWidget::installTaskPointDelegates ()
 {
     if (_taskPointTable == nullptr)
@@ -4490,8 +5423,6 @@ void KinematicAnalysisWidget::addTaskPointRow ()
     auto setStr = [this, row] (int col, const QString& s) {
         _taskPointModel->setData (_taskPointModel->index (row, col), s, Qt::EditRole);
     };
-    setStr (ColId,    QString ("P%1").arg (row + 1));
-    setStr (ColName,  QString ("Task %1").arg (row + 1));
     setStr (ColType,  QStringLiteral ("Generic"));
     // refFrame 默认 WORLD; tcpFrame 默认沿用顶部 TCP 下拉框。
     setStr (ColRefFrame, QStringLiteral ("WORLD"));
@@ -4890,6 +5821,7 @@ void KinematicAnalysisWidget::applyTaskPointResults (
     refreshVisualization ();
 }
 
+
 // importTaskPointsCsv:从用户选择的 CSV 文件读入任务点。
 //   - 用 RobotAnalysisCsv::taskPointsFromCsv 解析(共享 CSV 序列化);
 //   - 先清空表格,再逐点重建(覆盖式导入);
@@ -5254,6 +6186,9 @@ void KinematicAnalysisWidget::updateTaskPointSelectionButtons ()
 // analyzeSelectedTaskPoints:只分析选中且 enabled 的行。
 // disabled 行结果清空(Skipped),不影响其他行;_lastTaskPointResults
 // 按表格行号对齐,selected 之外保持上一轮结果或空。
+// updateTaskPointDetails:展示选中任务点的详情。把选中行的位姿值同步到右侧
+// 6 个 SpinBox(供快速编辑),在 detail 表显示状态 / 原因 / 可用解数 / best Q,
+// 在 more 表显示其余完整字段,并刷新顶部任务点汇总计数(Enabled/Pass/Warning/Fail)。
 // updateTaskPointDetails: show secondary fields for the selected compact-table row.
 void KinematicAnalysisWidget::updateTaskPointDetails ()
 {
@@ -5441,17 +6376,22 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
     analyzer.setThresholds (_thresholds);
 
     int analyzed = 0;
-    QSet< int > selectedRows;
-    for (const QModelIndex& idx : selected)
-        selectedRows.insert (idx.row ());
+    QSet< QString > selectedIds;
+    for (const QModelIndex& idx : selected) {
+        const QString id = _taskPointModel->data (
+            _taskPointModel->index (idx.row (), ColId), Qt::UserRole).toString ();
+        if (!id.isEmpty ())
+            selectedIds.insert (id);
+    }
 
     std::vector< int > rows;
-    rows.reserve (static_cast< std::size_t > (selectedRows.size ()));
-    for (int row : selectedRows) {
-        if (row < 0 || row >= total)
+    rows.reserve (static_cast< std::size_t > (selectedIds.size ()));
+    for (int row = 0; row < total; ++row) {
+        const TaskPoint& point = allPoints[static_cast< std::size_t > (row)];
+        if (!selectedIds.contains (QString::fromStdString (point.id)))
             continue;
         rows.push_back (row);
-        if (allPoints[static_cast<std::size_t> (row)].enabled)
+        if (point.enabled)
             ++analyzed;
     }
 
@@ -5460,7 +6400,16 @@ void KinematicAnalysisWidget::analyzeSelectedTaskPoints ()
         analyzer, _workcell, device, tcpFrame, state, allPoints, rows,
         _lastTaskPointResults, collisionDetector);
     const double rate = analyzer.calculateReachableRate (_lastTaskPointResults);
-    applyTaskPointResults (_lastTaskPointResults, rate);
+    std::vector< TaskPointReachabilityResult > selectedResults;
+    selectedResults.reserve (rows.size ());
+    for (const TaskPointReachabilityResult& result : _lastTaskPointResults) {
+        if (selectedIds.contains (QString::fromStdString (result.taskPoint.id)))
+            selectedResults.push_back (result);
+    }
+    _taskPointModel->applyResultsByTaskId (selectedResults);
+    Q_UNUSED (rate);
+    setTaskPointTableColumnWidths ();
+    refreshVisualization ();
 
     const QString collisionNote = collisionUnavailable ?
         tr (" Collision checking was unavailable.") : QString ();
@@ -5592,6 +6541,7 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
     setIkPoseMetersDeg (
         resolved.targetInDeviceBase.position,
         resolved.targetInDeviceBase.rpyDeg);
+    invalidateIkResultPresentation ();
     if (_ikSourceLabel != nullptr) {
         const QString sourceName = QString::fromStdString (
             taskPoint.name.empty () ? taskPoint.id : taskPoint.name);
@@ -5606,9 +6556,11 @@ void KinematicAnalysisWidget::openSelectedTaskPointInIk ()
         if (idx >= 0)
             _tcpFrameCombo->setCurrentIndex (idx);
     }
-    if (_tabs != nullptr && _ikTab != nullptr)
-        _tabs->setCurrentWidget (_ikTab);
-    setStatus (tr ("Opened selected task point in IK tab (resolved to device base)."));
+    if (_modeButtonGroup != nullptr && _modeButtonGroup->button (0) != nullptr)
+        _modeButtonGroup->button (0)->click ();
+    if (_diagnoseScroll != nullptr && _ikTab != nullptr)
+        _diagnoseScroll->ensureWidgetVisible (_ikTab);
+    setStatus (tr ("Opened selected task point in Diagnose IK; previous results are stale."));
 }
 
 // collectPoseReachabilityPositions:按 Source 下拉选择收集位置列表:
@@ -5879,6 +6831,9 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     _workspaceWatcher->setFuture (future);
 }
 
+// cancelWorkspaceSampling:Cancel 按钮槽。设置跨线程 atomic 取消标志,
+// worker 在采样循环内检查后尽早退出;同时禁用 Cancel 按钮避免重复触发,
+// 完成信号仍由 handleWorkspaceFinished 统一收尾。
 void KinematicAnalysisWidget::cancelWorkspaceSampling ()
 {
     if (!_workspaceRunActive || !_workspaceCancelRequested)
@@ -5891,6 +6846,9 @@ void KinematicAnalysisWidget::cancelWorkspaceSampling ()
 
 static const int MaxWorkspaceProgressBarSteps = 1000000;
 
+// updateWorkspaceProgress:后台 worker 通过 QMetaObject::invokeMethod(QueuedConnection)
+// 跨线程回调到 UI 线程,按完成比例刷新进度条与文本。进度条范围被限制在
+// MaxWorkspaceProgressBarSteps 内,但文本始终显示精确计数,避免超大采样数溢出。
 void KinematicAnalysisWidget::updateWorkspaceProgress (
     qulonglong completedSamples, qulonglong plannedSamples)
 {
@@ -5922,6 +6880,9 @@ void KinematicAnalysisWidget::updateWorkspaceProgress (
     }
 }
 
+// handleWorkspaceFinished:工作空间采样 worker 完成信号触发。恢复忙光标与按钮状态,
+// 读取结果写入 _workspaceSamples 并刷新表格 / 进度 / 报告,按取消标志区分
+// "已完成"与"被取消"的状态文案。
 void KinematicAnalysisWidget::handleWorkspaceFinished ()
 {
     QApplication::restoreOverrideCursor ();
@@ -6036,8 +6997,10 @@ void KinematicAnalysisWidget::openWorkspaceInVisualization ()
         if (index >= 0)
             _visualColorModeCombo->setCurrentIndex (index);
     }
-    if (_tabs != NULL && _visualizationTab != NULL)
-        _tabs->setCurrentWidget (_visualizationTab);
+    if (_modeButtonGroup != NULL && _modeButtonGroup->button (2) != NULL)
+        _modeButtonGroup->button (2)->click ();
+    if (_exploreScroll != NULL && _visualizationTab != NULL)
+        _exploreScroll->ensureWidgetVisible (_visualizationTab);
     refreshVisualization ();
 }
 
@@ -6397,6 +7360,12 @@ void KinematicAnalysisWidget::updatePoseReachabilityProgress (
                 .arg (static_cast< qulonglong > (plannedTargets))
                 .arg (QString::number (pct, 'f', 1)));
     }
+    if (_exploreModeCombo != NULL && _exploreModeCombo->currentIndex () == 2 &&
+        _exploreStateLabel != NULL) {
+        _exploreStateLabel->setText (
+            tr ("Estimated: Running, %1 / %2 IK target(s)")
+                .arg (completedTargets).arg (plannedTargets));
+    }
 }
 
 // handlePoseReachabilityFinished:P4 后台 worker 完成回调。
@@ -6440,6 +7409,16 @@ void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
                        .arg (static_cast< int > (_poseReachabilitySamples.size ()))
                        .arg (collisionNote));
     }
+    if (_exploreModeCombo != NULL && _exploreModeCombo->currentIndex () == 2 &&
+        _exploreStateLabel != NULL) {
+        _exploreStateLabel->setText (
+            wasCanceled
+                ? tr ("Estimated: DataInsufficient, %1 position(s)")
+                      .arg (static_cast< int > (_poseReachabilitySamples.size ()))
+                : tr ("Estimated: Completed, %1 position(s)")
+                      .arg (static_cast< int > (_poseReachabilitySamples.size ())));
+    }
+    refreshWorkflowControls ();
 }
 
 // exportPoseReachabilityCsv:把 _poseReachabilitySamples 写为 CSV,
@@ -6506,15 +7485,10 @@ void KinematicAnalysisWidget::exportPoseReachabilityCsv ()
 //   - 在 summary 标签里显示总状态、可达率、当前条件数 / 可操作度、任务点计数、
 //     工作空间总数、位姿可达性平均 coverage;
 //   - 把 result.warnings 全部写入告警表。
-void KinematicAnalysisWidget::updateReportSummary ()
+// reportFilters:从 Report tab 四个过滤下拉(Stage / Feasibility / Quality / Failure)
+// 与区域文本框读取当前视图过滤条件。只影响汇总展示与导出,不改变底层分析结果。
+KinematicAnalysisReportFilters KinematicAnalysisWidget::reportFilters () const
 {
-    if (_reportSummaryLabel == NULL)
-        return;
-    KinematicAnalyzer analyzer;
-    analyzer.setThresholds (_thresholds);
-    const KinematicAnalysisResult result = analyzer.buildAggregateResult (
-        _lastCurrentPose, _lastTaskPointResults, _workspaceSamples, _poseReachabilitySamples);
-    const KinematicAnalysisReport report = buildReportForExport ();
     KinematicAnalysisReportFilters filters;
     if (_reportStageFilterCombo != nullptr && _reportStageFilterCombo->currentIndex () > 0) {
         filters.filterStage = true;
@@ -6538,7 +7512,22 @@ void KinematicAnalysisWidget::updateReportSummary ()
     }
     if (_reportRegionFilterEdit != nullptr)
         filters.regionId = _reportRegionFilterEdit->text ().trimmed ().toStdString ();
-    const KinematicAnalysisReport filteredReport = filterReportView (report, filters);
+    return filters;
+}
+
+// updateReportSummary:Report tab 的中央汇总。聚合当前位姿 / 任务点 / 工作空间 /
+// 位姿可达性四类数据,套用 Report tab 的视图过滤(reportFilters),把总状态、
+// 可达率、工作空间统计、平均位姿覆盖度写入 summary 标签,并把告警写进告警表。
+void KinematicAnalysisWidget::updateReportSummary ()
+{
+    if (_reportSummaryLabel == NULL)
+        return;
+    KinematicAnalyzer analyzer;
+    analyzer.setThresholds (_thresholds);
+    const KinematicAnalysisResult result = analyzer.buildAggregateResult (
+        _lastCurrentPose, _lastTaskPointResults, _workspaceSamples, _poseReachabilitySamples);
+    const KinematicAnalysisReport report = buildReportForExport ();
+    const KinematicAnalysisReport filteredReport = filterReportView (report, reportFilters ());
 
     int taskPass = 0, taskWarn = 0, taskFail = 0;
     for (const TargetEvaluation& task : filteredReport.taskResults) {
@@ -6707,7 +7696,8 @@ void KinematicAnalysisWidget::exportReportJson ()
         return;
     }
 
-    const KinematicAnalysisReport report = buildReportForExport ();
+    const KinematicAnalysisReport report = filterReportView (
+        buildReportForExport (), reportFilters ());
     QFile unifiedFile (path);
     if (!unifiedFile.open (QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning (this, tr("Export error"),
@@ -6732,7 +7722,8 @@ void KinematicAnalysisWidget::exportReportCsv ()
         setStatus (tr("Report CSV export canceled."));
         return;
     }
-    const KinematicAnalysisReport report = buildReportForExport ();
+    const KinematicAnalysisReport report = filterReportView (
+        buildReportForExport (), reportFilters ());
     QFile unifiedFile (path);
     if (!unifiedFile.open (QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning (this, tr("Export error"),
@@ -6745,8 +7736,51 @@ void KinematicAnalysisWidget::exportReportCsv ()
     return;
 }
 
-// applyThresholds:把 Report tab 上的 7 个阈值 SpinBox 写回 _thresholds,
-// 仅修改内存中的阈值;不会主动重跑任何分析,提示用户按需重跑。
+// openThresholdSettingsDialog:顶部 Thresholds 按钮的槽,以事务方式编辑全部分析阈值。
+// 对话框持有阈值副本,用户点 Cancel 时不做任何控件状态修改;点 Accept 后把结果
+// 写回 _thresholds 并同步到 Report tab 各 SpinBox(QSignalBlocker 抑制回写期间
+// 的信号),同时使包络缓存失效以提示重新分析。
+// openThresholdSettingsDialog: header action keeps threshold editing
+// transactional. The dialog receives a copy; no widget state changes on Cancel.
+void KinematicAnalysisWidget::openThresholdSettingsDialog ()
+{
+    KinematicThresholdsDialog dialog (_thresholds, _lengthUnit, _angleUnit, this);
+    if (dialog.exec () != QDialog::Accepted)
+        return;
+
+    _thresholds = dialog.thresholds ();
+    // The legacy IK input remains visible in the Diagnose page, so keep it in
+    // lockstep with the threshold snapshot consumed by KinematicAnalyzer.
+    const QSignalBlocker duplicateBlocker (_ikDuplicateQThresholdSpin);
+    const QSignalBlocker nearLimitBlocker (_thresholdNearLimitSpin);
+    const QSignalBlocker warningBlocker (_thresholdConditionWarningSpin);
+    const QSignalBlocker failBlocker (_thresholdConditionFailSpin);
+    const QSignalBlocker singularBlocker (_thresholdSingularValueSpin);
+    const QSignalBlocker manipulabilityBlocker (_thresholdManipulabilitySpin);
+    const QSignalBlocker positionBlocker (_thresholdPositionToleranceSpin);
+    const QSignalBlocker orientationBlocker (_thresholdOrientationToleranceSpin);
+    _ikDuplicateQThresholdSpin->setValue (_thresholds.ikDuplicateQThreshold);
+    _thresholdNearLimitSpin->setValue (_thresholds.nearJointLimitRatio);
+    _thresholdConditionWarningSpin->setValue (_thresholds.conditionWarning);
+    _thresholdConditionFailSpin->setValue (_thresholds.conditionFail);
+    _thresholdSingularValueSpin->setValue (_thresholds.singularValueWarning);
+    _thresholdManipulabilitySpin->setValue (_thresholds.manipulabilityWarning);
+    _thresholdPositionToleranceSpin->setValue (
+        displayLengthFromMeters (_thresholds.positionToleranceMeters, _lengthUnit));
+    _thresholdOrientationToleranceSpin->setValue (
+        displayAngleFromDegrees (_thresholds.orientationToleranceDeg, _angleUnit));
+
+    invalidateEnvelopeCache ();
+    setStatus (tr("Kinematic thresholds updated. Existing analysis results are stale; re-run analyses."));
+    if (!_applyingProjectDocument)
+        Q_EMIT projectDocumentChanged ();
+}
+
+// applyThresholds:Report 页 Apply thresholds 按钮的兼容路径。把 Report tab 七个
+// SpinBox 的当前值(含单位换算)全部写入 _thresholds 供后续分析使用,并把旧的
+// duplicate-Q 阈值同步进来,保持与顶部阈值对话框同一份快照一致。
+// applyThresholds: compatibility path for the existing Report page controls.
+// It mirrors the legacy duplicate-Q value into the common threshold snapshot.
 void KinematicAnalysisWidget::applyThresholds ()
 {
     _thresholds.nearJointLimitRatio = _thresholdNearLimitSpin->value ();
@@ -6758,5 +7792,7 @@ void KinematicAnalysisWidget::applyThresholds ()
         _thresholdPositionToleranceSpin->value (), _lengthUnit);
     _thresholds.orientationToleranceDeg = degreesFromDisplayAngle (
         _thresholdOrientationToleranceSpin->value (), _angleUnit);
+    _thresholds.ikDuplicateQThreshold = _ikDuplicateQThresholdSpin->value ();
+    invalidateEnvelopeCache ();
     setStatus (tr("Kinematic thresholds updated. Re-run analyses to refresh results."));
 }

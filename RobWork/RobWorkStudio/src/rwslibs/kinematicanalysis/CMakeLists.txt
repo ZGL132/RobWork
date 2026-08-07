@@ -73,6 +73,8 @@ if(build)
     set(SrcFiles
         KinematicAnalysisPlugin.cpp
         KinematicAnalysisWidget.cpp
+        KinematicThresholdsDialog.cpp
+        KinematicPlotDialog.cpp
         KinematicAnalysisVisualizationTypes.cpp
         KinematicAnalysisPlotWidget.cpp
         KinematicAnalysisJson.cpp
@@ -88,6 +90,8 @@ if(build)
     set(SRC_FILES_HPP
         KinematicAnalysisPlugin.hpp
         KinematicAnalysisWidget.hpp
+        KinematicThresholdsDialog.hpp
+        KinematicPlotDialog.hpp
         KinematicAnalysisTypes.hpp
         KinematicMetrics.hpp
         KinematicAnalyzer.hpp
@@ -150,6 +154,8 @@ if(build)
     add_executable(sdurws_kinematicanalysis_test
         KinematicAnalysisTest.cpp
         KinematicAnalysisWidget.cpp
+        KinematicThresholdsDialog.cpp
+        KinematicPlotDialog.cpp
         KinematicAnalysisPlotWidget.cpp
         TaskPointUiLogic.cpp
         KinematicAnalysisUiLogic.cpp
@@ -281,6 +287,8 @@ if(build)
                 report
                 cache
                 workflow_ui
+                thresholds
+                plot_dialog
                 aggregate)
             add_kinematic_analysis_suite(${kinematic_suite})
         endforeach()

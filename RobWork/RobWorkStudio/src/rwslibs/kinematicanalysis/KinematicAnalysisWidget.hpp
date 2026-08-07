@@ -21,8 +21,8 @@
 #include <QByteArray>
 #include <QProgressBar>
 #include <QSize>
+#include <QPointer>
 #include <atomic>
-#include <QTabWidget>
 #include <QWidget>
 #include <QJsonObject>
 
@@ -38,23 +38,30 @@ namespace rw { namespace proximity { class CollisionDetector; } }
 
 // 提前声明 Qt UI 控件类(使用前向声明减少编译依赖)。
 class QCheckBox;
+class QButtonGroup;
 class QComboBox;
 class QDoubleSpinBox;
+class QFrame;
 class QLabel;
 class QLineEdit;
 class QListWidget;
 class QPushButton;
 class QSpinBox;
+class QScrollArea;
 class QTableView;
 class QTableWidget;
 class QToolButton;
+class QStackedWidget;
 class QString;
 
 namespace rws {
 
 class KinematicAnalysisPlotWidget;
+class KinematicPlotDialog;
+class KinematicThresholdsDialog;
 class RobWorkStudio;
 struct KinematicAnalysisReport;
+struct KinematicAnalysisReportFilters;
 
 // 包络异步计算的单次运行结果:envelope 为计算产物;generation 用于丢弃过期请求
 // (方向数 / 参数在途变化时,旧任务的返回结果会被判定为过期);cancelled 表示被
@@ -148,15 +155,26 @@ class KinematicAnalysisWidget : public QWidget
     // 项目关闭或切换时释放仅用于脏比较的路径和快照，防止旧项目的基线影响新项目。
     void clearProjectDocumentContext ();
 
+    //! Returns the canonical report for the current analysis or requirements validation state.
+    KinematicAnalysisReport buildReportForExport () const;
+
   private Q_SLOTS:
     // ===================================================================
     //  Current Pose tab
     // ===================================================================
     // 重新读 State 并填充 "current pose" tab 的表格。
     void refreshCurrentPose ();
+    // 按"WorkCell → 设备 → TCP 帧"前置条件链统一刷新工作流按钮可用性。
     void refreshWorkflowControls ();
+    // 切换校验数据源(Local Tasks ↔ Frozen Requirements)时显隐对应控件。
+    void updateMode2DataSource (int index);
     void openFrozenRequirementsForValidation ();
+    // 对冻结执行契约做 Verified 级一致性校验(批量分析入口)。
     void validateRequirements ();
+    // 只校验当前选中的本地任务行 / 冻结任务 / 冻结区域。
+    void validateSelectedMode2Source ();
+    // 加载冻结工件后,把任务与区域先以"未校验"占位行刷进结果表。
+    void populateFrozenRequirementSources ();
     void startCapabilityExploration ();
     void cancelCapabilityExploration ();
     void updateCapabilityExplorationProgress (qulonglong completedSamples,
@@ -244,6 +262,9 @@ class KinematicAnalysisWidget : public QWidget
     void resetVisualizationView ();
     // 导出当前 plot 为 PNG(1400×900 默认尺寸,布局与 paintPlot 一致)。
     void exportVisualizationPng ();
+    // Open the modeless plot window backed by the current visualization snapshot.
+    // 打开无模式独立 plot 窗口,显示与内嵌 plot 相同的可视化快照。
+    void openKinematicPlotDialog ();
     // 跳到 Visualization tab 并把 source 切到 Pose reachability。
     void openPoseReachabilityInVisualization ();
     // 接到 plot 的 visualPointClicked 信号:把点的 Q 写到 RobWorkStudio state。
@@ -264,6 +285,8 @@ class KinematicAnalysisWidget : public QWidget
 
     // 阈值 SpinBox 改后应用。
     void applyThresholds ();
+    // 打开独立阈值设置对话框(事务式:Accept 才生效,Cancel 不改任何状态)。
+    void openThresholdSettingsDialog ();
 
   Q_SIGNALS:
     // 领域配置发生实际变化后通知插件更新 Provider 脏状态；选择结果、焦点变化等
@@ -271,8 +294,6 @@ class KinematicAnalysisWidget : public QWidget
     void projectDocumentChanged ();
 
   private:
-    KinematicAnalysisReport buildReportForExport () const;
-
     // ===================================================================
     //  Tab 构建
     // ===================================================================
@@ -296,7 +317,11 @@ class KinematicAnalysisWidget : public QWidget
     void updateWorkspaceSampleDetails ();
     void applyPoseReachabilityResults (const std::vector< PoseReachabilitySample >& samples);
     void updateReportSummary ();          // 重新汇总 Report tab 数据
+    // 从 Report tab 四个过滤下拉 + 区域文本框中收集视图过滤条件。
+    KinematicAnalysisReportFilters reportFilters () const;
+    // 按紧凑模式列隐藏策略设置任务点表格列宽(Id/Name/Ref/TCP/Status 稳定可见)。
     void setTaskPointTableColumnWidths ();
+    // 安装任务点表格的单元格编辑器(refFrame/tcpFrame 下拉 + 数值/布尔 delegate)。
     void installTaskPointDelegates ();
     // 把状态消息写入顶部 status QLineEdit(只读)。
     void setStatus (const QString& message);
@@ -304,6 +329,11 @@ class KinematicAnalysisWidget : public QWidget
     QByteArray projectDocumentSnapshot () const;
     // 在加载项目文档时恢复所有可编辑输入，并清空旧 WorkCell 上下文产生的分析结果。
     void applyProjectDocumentSnapshot (const QByteArray& json, QString* error);
+    // 把同一份可视化数据推给内嵌 plot 与独立 plot 窗口(含投影/过滤/点径/单位)。
+    void applyVisualDataToPlots (const AnalysisVisualData& data,
+                                 VisualProjection projection);
+    // 清空 _visualData 并用空数据刷新 plot(WorkCell 卸载时调用)。
+    void clearVisualizationData ();
 
     // ===================================================================
     //  状态/单位换算 helper
@@ -314,11 +344,15 @@ class KinematicAnalysisWidget : public QWidget
     bool shouldShowIkSolution (const KinematicIkSolution& solution) const;
     // 清空 IK details 区域(未选中任何解时调用)。
     void setIkDetailsEmpty ();
+    // IK 目标变化后把结果标记为过期并清空候选表,防止 Apply 写入陈旧位姿。
+    void invalidateIkResultPresentation ();
     // 当前设备 combo 选中的 Device 指针;空时返回 NULL。
     rw::core::Ptr< rw::models::Device > selectedDevice () const;
     // 当前 TCP frame combo 选中的 Frame 指针;空时回退到 device->getEnd()。
     rw::core::Ptr< rw::kinematics::Frame > selectedTcpFrame () const;
+    // 请求取消在途包络计算:置取消标志、停防抖定时器、必要时等待 worker 结束。
     void cancelEnvelopeRequest (bool waitForFinished);
+    // 使包络缓存失效,任何影响包络形状的输入变化后都必须调用。
     void invalidateEnvelopeCache ();
     void stateChangedListener (const rw::kinematics::State& state);
     WorkspaceEnvelopeCacheKey makeEnvelopeCacheKey (
@@ -352,15 +386,30 @@ class KinematicAnalysisWidget : public QWidget
     rw::models::WorkCell* _workcell;
 
     // ===================================================================
-    //  Tab 容器(每个 tab 一个 QWidget)
+    //  Three-mode workflow shell
     // ===================================================================
-    QTabWidget* _workflowTabs;          // Diagnose / Validate / Explore 工作流
-    QTabWidget* _tabs;                  // Explore 内部的兼容功能页
+    QWidget* _modeSelector;
+    QButtonGroup* _modeButtonGroup;
+    QStackedWidget* _modeStack;
+    QScrollArea* _diagnoseScroll;
+    QScrollArea* _exploreScroll;
     // 三个工作流页面:Diagnose(当前位姿诊断)/ Validate Requirements(冻结需求校验)
-    // / Explore Capability(能力探索)。Explore 页内部再嵌 _tabs 兼容功能页。
+    // / Explore Capability(能力探索)。每一页由独立滚动区域承载。
     QWidget* _diagnoseWorkflowPage;
     QWidget* _validateWorkflowPage;
     QWidget* _exploreWorkflowPage;
+    // ---- Validate Requirements 页:数据源选择与批量操作按钮 ----
+    // _mode2DataSourceCombo:选择校验数据源(Local Tasks 可编辑 / Frozen Requirements 只读)。
+    // _mode2LoadJsonButton:加载冻结需求 JSON 工件。
+    // _mode2ValidateAllButton:全量校验(本地任务 → 批量 IK 分析;冻结需求 → 全量一致性校验)。
+    // _mode2ValidateSelectedButton:只校验选中条目(本地任务选中行 / 冻结任务或区域)。
+    // _mode2AddButton / _mode2RemoveButton:仅在 Local Tasks 数据源下增删任务点行。
+    QComboBox* _mode2DataSourceCombo;
+    QPushButton* _mode2LoadJsonButton;
+    QPushButton* _mode2ValidateAllButton;
+    QPushButton* _mode2ValidateSelectedButton;
+    QPushButton* _mode2AddButton;
+    QPushButton* _mode2RemoveButton;
     // ---- Validate Requirements 页:加载冻结工件 → 跑 Verified 校验 → 导出报告 ----
     // _validateLoadRequirementsButton:选择并加载冻结需求工件。
     QPushButton* _validateLoadRequirementsButton;
@@ -372,8 +421,17 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _validateRequirementStateLabel;
     // _validateTaskResultTable:任务级结果(ID/Name/Feasibility/Quality/Stage/Level)。
     QTableWidget* _validateTaskResultTable;
+    // _validateRegionSummaryTable:工作区域汇总(ID/Name/Directions/F/Quality/Stage)。
+    QTableWidget* _validateRegionSummaryTable;
     // _validateRegionCellTable:工作区域单元级结果(逐单元覆盖评估)。
     QTableWidget* _validateRegionCellTable;
+    // _validateDiagnosticsToggle:展开 / 收起"Diagnostics"诊断区(显示工件溯源与逐单元结果)。
+    QToolButton* _validateDiagnosticsToggle;
+    QWidget* _validateDiagnosticsContent;
+    // _validateProvenanceLabel:冻结工件溯源信息(需求 / 模型 / 环境指纹)。
+    QLabel* _validateProvenanceLabel;
+    // _validateOrientationProbeLabel:选中区域的方向采样数提示(Directions / Rolls)。
+    QLabel* _validateOrientationProbeLabel;
     // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
     // Run / Cancel + 采样参数(samples / mode / seed / grid / directions / rolls)。
     QPushButton* _exploreRunButton;
@@ -384,6 +442,13 @@ class KinematicAnalysisWidget : public QWidget
     QSpinBox* _exploreGridStepsSpin;
     QSpinBox* _exploreDirectionSamplesSpin;
     QSpinBox* _exploreRollSamplesSpin;
+    // 采样参数行的文字标签:随当前采样模式(随机 / 网格 / 位姿可达性)显隐。
+    QLabel* _exploreSamplesLabel;
+    QLabel* _exploreSeedLabel;
+    QLabel* _exploreGridStepsLabel;
+    QLabel* _exploreDirectionsLabel;
+    QLabel* _exploreRollsLabel;
+    // _exploreStateLabel:能力探索运行状态文本(Idle / Running / Cancellation requested)。
     QLabel* _exploreStateLabel;
     // 探索运行状态与后台执行句柄:RunActive 表示在跑,CancellationRequested 表示已请求
     // 取消;watcher 监听 QtConcurrent worker 完成,cancelToken 为跨线程取消标志,
@@ -408,6 +473,10 @@ class KinematicAnalysisWidget : public QWidget
     QComboBox* _deviceCombo;                          // 顶部 device 选择
     QComboBox* _tcpFrameCombo;                        // 顶部 TCP frame 选择
     QPushButton* _refreshCurrentPoseButton;           // 重新读 State
+    // _thresholdSettingsButton:打开阈值设置对话框(以事务方式编辑全部分析阈值)。
+    QPushButton* _thresholdSettingsButton;
+    // _reportButton:报告动作下拉菜单(Refresh / Export JSON / 导出摘要 CSV / 任务结果 CSV)。
+    QPushButton* _reportButton;
     QLineEdit* _status;                               // 状态消息(只读)
     QTableWidget* _poseValueTable;                    // 6 元 TCP 位姿 + 关节值
     QLabel* _poseIndicatorLabel;                      // 总体状态
@@ -448,6 +517,9 @@ class KinematicAnalysisWidget : public QWidget
     QComboBox* _ikCandidateFilterCombo;                // 候选显示筛选
     QTableWidget* _ikSolutionTable;                    // 候选解列表
     QTableWidget* _ikDetailTable;                      // 选中解详情
+    // _ikResultStale:IK 目标被修改后置 true,标记旧求解结果已过期,
+    // 在用户重新 Solve 前禁止 Apply 防止写入过时位姿。
+    bool _ikResultStale;
 
     // ===================================================================
     //  Task Points tab 控件
@@ -559,8 +631,14 @@ class KinematicAnalysisWidget : public QWidget
     QDoubleSpinBox* _visualPointSizeSpin;              // 散点半径
     QPushButton* _visualResetViewButton;               // Fit 视角
     QPushButton* _visualExportPngButton;                // 导出 PNG
+    QPushButton* _visualOpenDialogButton;               // 打开独立 plot 窗口
     QLabel* _visualSummaryLabel;
     KinematicAnalysisPlotWidget* _visualPlot;
+    // _plotDialog:无模式独立 plot 窗口(QPointer 防止窗口关闭后悬挂指针)。
+    QPointer< KinematicPlotDialog > _plotDialog;
+    // _visualData:最近一次 refreshVisualization 生成的可视化数据快照,
+    //              供独立 plot 窗口与内嵌 plot 共享同一份结果。
+    AnalysisVisualData _visualData;
 
     // ---- Report tab:汇总标签、过滤下拉、阈值 SpinBox 与导出/刷新按钮 ----
     // 过滤组合(Stage / Feasibility / Quality / Failure / Region)只影响视图与导出,
