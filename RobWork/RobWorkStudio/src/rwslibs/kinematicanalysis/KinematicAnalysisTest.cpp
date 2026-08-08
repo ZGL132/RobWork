@@ -5050,6 +5050,9 @@ static int testWorkflowUiStates ()
                                     modeTabs->currentIndex () == 0 && modeTabs->expanding (),
                                 "three expanding mode tabs control exactly three stack pages"))
         return rc;
+    if (const int rc = require (modeTabs->styleSheet ().contains (QStringLiteral ("QTabBar::tab")),
+                                "mode tabs use the shared Jog-style tab treatment"))
+        return rc;
     const QStringList modeLabels = {QStringLiteral ("Diagnose"),
                                     QStringLiteral ("Validate"),
                                     QStringLiteral ("Explore")};
@@ -5097,12 +5100,27 @@ static int testWorkflowUiStates ()
     QWidget* currentPosePage = widget.findChild< QWidget* > (
         QStringLiteral ("currentPoseTab"));
     QWidget* ikPage = widget.findChild< QWidget* > (QStringLiteral ("ikTab"));
+    QWidget* poseIkSection = widget.findChild< QWidget* > (QStringLiteral ("poseIkSection"));
+    const QStringList currentTcpNames = {
+        QStringLiteral ("currentTcpXLabel"), QStringLiteral ("currentTcpYLabel"),
+        QStringLiteral ("currentTcpZLabel"), QStringLiteral ("currentTcpRollLabel"),
+        QStringLiteral ("currentTcpPitchLabel"), QStringLiteral ("currentTcpYawLabel")};
+    QList< QLabel* > currentTcpValues;
+    for (const QString& objectName : currentTcpNames) {
+        QLabel* label = widget.findChild< QLabel* > (objectName);
+        if (const int rc = require (label != nullptr && label->text () == QStringLiteral ("-"),
+                                    "merged pose area exposes six initialized Current TCP values"))
+            return rc;
+        currentTcpValues.push_back (label);
+    }
     QDoubleSpinBox* ikX = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikXSpin"));
     QDoubleSpinBox* ikY = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYSpin"));
     QDoubleSpinBox* ikZ = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikZSpin"));
     QDoubleSpinBox* ikRoll = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikRollSpin"));
     QDoubleSpinBox* ikPitch = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikPitchSpin"));
     QDoubleSpinBox* ikYaw = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYawSpin"));
+    QDoubleSpinBox* ikDuplicateQ = widget.findChild< QDoubleSpinBox* > (
+        QStringLiteral ("ikDuplicateQThresholdSpin"));
     QPushButton* ikSync = widget.findChild< QPushButton* > (
         QStringLiteral ("ikSyncCurrentTcpButton"));
     QPushButton* ikSolve = widget.findChild< QPushButton* > (QStringLiteral ("ikSolveButton"));
@@ -5116,14 +5134,68 @@ static int testWorkflowUiStates ()
     QToolButton* diagnostics = widget.findChild< QToolButton* > (
         QStringLiteral ("advancedDiagnosticsToggle"));
     if (const int rc = require (
-            diagnosePage != nullptr && currentPosePage != nullptr && ikPage != nullptr &&
-                healthFrame != nullptr && ikX != nullptr && ikY != nullptr && ikZ != nullptr &&
+                diagnosePage != nullptr && currentPosePage != nullptr && ikPage != nullptr &&
+                poseIkSection != nullptr && healthFrame != nullptr && ikX != nullptr &&
+                ikY != nullptr && ikZ != nullptr &&
                 ikRoll != nullptr && ikPitch != nullptr && ikYaw != nullptr && ikSync != nullptr &&
+                ikDuplicateQ != nullptr &&
                 ikSolve != nullptr && ikApply != nullptr && ikCollision != nullptr &&
                 ikCandidates != nullptr &&
                 ikDetails != nullptr && diagnostics != nullptr,
             "Diagnose owns current pose health and IK controls"))
         return rc;
+    if (const int rc = require (
+            poseIkSection->parentWidget () == currentPosePage &&
+                widget.findChild< QTableWidget* > (QStringLiteral ("currentTcpPoseTable")) == nullptr &&
+                widget.findChild< QTableWidget* > (QStringLiteral ("tcpPoseValueTable")) == nullptr,
+            "current TCP values and IK target share one section without a standalone pose table"))
+        return rc;
+    for (QLabel* currentTcpValue : currentTcpValues) {
+        if (const int rc = require (currentTcpValue->parentWidget () == poseIkSection,
+                                    "Current TCP values are in the merged pose section"))
+            return rc;
+    }
+    const QStringList poseAxisNames = {
+        QStringLiteral ("poseAxisXLabel"), QStringLiteral ("poseAxisYLabel"),
+        QStringLiteral ("poseAxisZLabel"), QStringLiteral ("poseAxisRxLabel"),
+        QStringLiteral ("poseAxisRyLabel"), QStringLiteral ("poseAxisRzLabel")};
+    const QStringList poseAxisTexts = {QStringLiteral ("x"), QStringLiteral ("y"),
+                                       QStringLiteral ("z"), QStringLiteral ("Rx"),
+                                       QStringLiteral ("Ry"), QStringLiteral ("Rz")};
+    for (int index = 0; index < poseAxisNames.size (); ++index) {
+        QLabel* axis = widget.findChild< QLabel* > (poseAxisNames.at (index));
+        if (const int rc = require (axis != nullptr && axis->text () == poseAxisTexts.at (index) &&
+                                        axis->parentWidget () == poseIkSection,
+                                    "pose grid uses explicit compact axis labels"))
+            return rc;
+    }
+    bool hasIkResultSummary = false;
+    for (QLabel* label : ikPage->findChildren< QLabel* > ())
+        hasIkResultSummary = hasIkResultSummary ||
+            label->text ().contains (QStringLiteral ("IK result summary"));
+    if (const int rc = require (
+            widget.findChild< QLabel* > (QStringLiteral ("ikResultSummaryTitle")) == nullptr &&
+                !hasIkResultSummary,
+            "broken IK result summary block is removed"))
+        return rc;
+    if (const int rc = require (
+            ikCollision->parentWidget () == poseIkSection &&
+                ikDuplicateQ->parentWidget () == poseIkSection,
+            "solve configuration is co-located with Pose / IK target"))
+        return rc;
+    QPushButton* solveButton = widget.findChild< QPushButton* > (QStringLiteral ("ikSolveButton"));
+    QPushButton* syncButton = widget.findChild< QPushButton* > (
+        QStringLiteral ("ikSyncCurrentTcpButton"));
+    if (const int rc = require (
+            solveButton != nullptr && solveButton->property ("primaryAction").toBool () &&
+                syncButton != nullptr && syncButton->property ("secondaryAction").toBool (),
+            "Solve is primary and Sync current TCP is secondary"))
+        return rc;
+    for (QTableWidget* table : currentPosePage->findChildren< QTableWidget* > ()) {
+        if (const int rc = require (!(table->rowCount () == 2 && table->columnCount () == 3),
+                                    "Current Pose has no standalone two-row TCP table"))
+            return rc;
+    }
     if (const int rc = require (
             currentPosePage->parentWidget () == diagnosePage && ikPage->parentWidget () == diagnosePage,
             "current pose and IK pages share the Diagnose page"))
@@ -5133,7 +5205,6 @@ static int testWorkflowUiStates ()
                 !diagnostics->isChecked (),
             "IK tables are bounded and advanced diagnostics starts collapsed"))
         return rc;
-
     widget.resize (300, 620);
     widget.show ();
     modeTabs->setCurrentIndex (0);
@@ -5142,6 +5213,7 @@ static int testWorkflowUiStates ()
                                 "narrow-width checks run on a 300px dock"))
         return rc;
     const QList< QDoubleSpinBox* > targetSpins = {ikX, ikY, ikZ, ikRoll, ikPitch, ikYaw};
+    const QList< QLabel* > currentTcpLabelsAt300 = currentTcpValues;
     for (int index = 1; index < targetSpins.size (); ++index) {
         const QRect previous = targetSpins.at (index - 1)->geometry ();
         const QRect current = targetSpins.at (index)->geometry ();
@@ -5153,9 +5225,30 @@ static int testWorkflowUiStates ()
     }
     for (QDoubleSpinBox* targetSpin : targetSpins) {
         if (const int rc = require (
+                targetSpin->parentWidget () == poseIkSection &&
                 targetSpin->geometry ().left () >= 0 &&
-                    targetSpin->geometry ().right () < ikPage->width (),
+                    targetSpin->geometry ().right () < ikPage->width () &&
+                    targetSpin->width () >= 24,
                 "IK target controls do not overflow a 300px Diagnose page"))
+            return rc;
+    }
+    for (QLabel* currentTcpLabel : currentTcpLabelsAt300) {
+        if (const int rc = require (
+                currentTcpLabel->geometry ().left () >= 0 &&
+                    currentTcpLabel->geometry ().right () < poseIkSection->width () &&
+                    currentTcpLabel->width () >= 24,
+                "current TCP values do not overflow a 300px merged pose section"))
+            return rc;
+    }
+    for (QWidget* solveConfigControl : {static_cast<QWidget*> (ikCollision),
+                                        static_cast<QWidget*> (ikDuplicateQ),
+                                        static_cast<QWidget*> (ikSync),
+                                        static_cast<QWidget*> (ikSolve)}) {
+        if (const int rc = require (
+                solveConfigControl->geometry ().left () >= 0 &&
+                    solveConfigControl->geometry ().right () < poseIkSection->width () &&
+                    solveConfigControl->width () >= 24,
+                "Pose / IK actions and solve configuration fit at 300px"))
             return rc;
     }
     if (const int rc = require (healthFrame->geometry ().left () >= 0 &&
@@ -5509,6 +5602,13 @@ static int testWorkflowUiStates ()
                                 "current-state health status has a stable object name"))
         return rc;
     const QString healthBeforeSync = currentPoseStatus->text ();
+    for (QLabel* currentTcpValue : currentTcpValues) {
+        if (const int rc = require (!currentTcpValue->text ().contains (QStringLiteral ("e"),
+                                                                         Qt::CaseInsensitive) &&
+                                        currentTcpValue->text ().contains (QStringLiteral (".")),
+                                    "Current TCP values use stable fixed-point formatting"))
+            return rc;
+    }
     ikSync->click ();
     if (const int rc = require (currentPoseStatus->text () == healthBeforeSync,
                                 "Sync current TCP copies IK inputs without changing current-state health"))
@@ -5539,6 +5639,14 @@ static int testWorkflowUiStates ()
         if (const int rc = require (ikDetails->item (6, 1) != nullptr &&
                                         !ikDetails->item (6, 1)->text ().isEmpty (),
                                     "selected candidate details retain Q values"))
+            return rc;
+        const QString statusBeforeDoubleClick = widget.statusMessage ();
+        QTableWidgetItem* doubleClickItem = ikCandidates->item (0, 0);
+        if (doubleClickItem != nullptr)
+            ikCandidates->itemDoubleClicked (doubleClickItem);
+        if (const int rc = require (
+                doubleClickItem != nullptr && widget.statusMessage () != statusBeforeDoubleClick,
+                "double-clicking an IK candidate invokes the apply path"))
             return rc;
     }
     const double ikXBeforeEdit = ikX->value ();

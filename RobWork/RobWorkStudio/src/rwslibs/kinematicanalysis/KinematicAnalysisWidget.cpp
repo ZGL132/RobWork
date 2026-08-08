@@ -337,7 +337,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _thresholdSettingsButton(NULL),
     _reportButton(NULL),
     _status(NULL),
-    _poseValueTable(NULL),
+    _currentTcpValueLabels{{NULL, NULL, NULL, NULL, NULL, NULL}},
     _poseIndicatorLabel(NULL),
     _poseConditionLabel(NULL),
     _poseManipulabilityLabel(NULL),
@@ -588,6 +588,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _modeTabs->setObjectName (QStringLiteral ("kinematicModeTabs"));
     _modeTabs->setExpanding (true);
     _modeTabs->setUsesScrollButtons (false);
+    _modeTabs->setStyleSheet (QStringLiteral (
+        "QTabBar::tab { padding: 4px 10px; min-height: 22px; "
+        "border: 1px solid palette(mid); border-bottom: none; "
+        "background: palette(button); color: palette(button-text); }"
+        "QTabBar::tab:selected { background: palette(base); "
+        "color: palette(text); font-weight: bold; }"
+        "QTabBar::tab:hover { background: palette(alternate-base); }"));
     const QStringList modeNames = {tr("Diagnose"), tr("Validate"), tr("Explore")};
     const QStringList modeDescriptions = {tr("Diagnose"), tr("Validate Requirements"),
                                           tr("Explore Capability")};
@@ -611,7 +618,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     // -------------------- Current Pose Tab --------------------
     // 单列全宽密集布局(从上到下):
-    //   1. 紧凑摘要  — 2 行 6 列的位置/姿态 + 1 行关键指标;
+    //   1. 共享 Pose / IK target 六行网格 + 1 行关键指标;
     //   2. 关节状态合并表 — Joint | q | Limit margin | Status;
     //   3. Jacobian 全宽主表(行 vx/vy/vz/wx/wy/wz,列 q0..qn);
     //   4. Singular values 横向小表(1 行);
@@ -619,6 +626,60 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _currentPoseTab = new QWidget(_diagnoseWorkflowPage);
     _currentPoseTab->setObjectName (QStringLiteral ("currentPoseTab"));
     QVBoxLayout* cpLayout = new QVBoxLayout(_currentPoseTab);
+    QWidget* poseIkSection = new QWidget (_currentPoseTab);
+    poseIkSection->setObjectName (QStringLiteral ("poseIkSection"));
+    QVBoxLayout* poseIkLayout = new QVBoxLayout (poseIkSection);
+    poseIkLayout->setContentsMargins (0, 0, 0, 0);
+    QHBoxLayout* ikPoseTitleRow = new QHBoxLayout ();
+    QLabel* ikPoseTitle = new QLabel (tr("Pose / IK target"), poseIkSection);
+    ikPoseTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    ikPoseTitleRow->addWidget (ikPoseTitle);
+    ikPoseTitleRow->addStretch (1);
+    poseIkLayout->addLayout (ikPoseTitleRow);
+    QGridLayout* ikPoseGrid = new QGridLayout ();
+    ikPoseGrid->setContentsMargins (0, 0, 0, 0);
+    ikPoseGrid->setHorizontalSpacing (4);
+    ikPoseGrid->setVerticalSpacing (2);
+    ikPoseGrid->setColumnMinimumWidth (0, 34);
+    ikPoseGrid->setColumnMinimumWidth (1, 96);
+    ikPoseGrid->setColumnStretch (2, 1);
+    ikPoseGrid->addWidget (new QLabel (QString (), poseIkSection), 0, 0);
+    QLabel* currentTcpHeader = new QLabel (tr("Current TCP"), poseIkSection);
+    QLabel* ikTargetHeader = new QLabel (tr("IK target"), poseIkSection);
+    currentTcpHeader->setAlignment (Qt::AlignCenter);
+    ikTargetHeader->setAlignment (Qt::AlignCenter);
+    currentTcpHeader->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+    ikTargetHeader->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+    ikPoseGrid->addWidget (currentTcpHeader, 0, 1);
+    ikPoseGrid->addWidget (ikTargetHeader, 0, 2);
+    const QStringList poseLabels = {
+        QStringLiteral ("x"), QStringLiteral ("y"), QStringLiteral ("z"),
+        QStringLiteral ("Rx"), QStringLiteral ("Ry"), QStringLiteral ("Rz")};
+    const QStringList currentTcpNames = {
+        QStringLiteral ("currentTcpXLabel"), QStringLiteral ("currentTcpYLabel"),
+        QStringLiteral ("currentTcpZLabel"), QStringLiteral ("currentTcpRollLabel"),
+        QStringLiteral ("currentTcpPitchLabel"), QStringLiteral ("currentTcpYawLabel")};
+    const QStringList poseAxisNames = {
+        QStringLiteral ("poseAxisXLabel"), QStringLiteral ("poseAxisYLabel"),
+        QStringLiteral ("poseAxisZLabel"), QStringLiteral ("poseAxisRxLabel"),
+        QStringLiteral ("poseAxisRyLabel"), QStringLiteral ("poseAxisRzLabel")};
+    for (int index = 0; index < currentTcpNames.size (); ++index) {
+        QLabel* rowLabel = new QLabel (poseLabels.at (index), poseIkSection);
+        rowLabel->setObjectName (poseAxisNames.at (index));
+        rowLabel->setMinimumWidth (0);
+        rowLabel->setAlignment (Qt::AlignLeft | Qt::AlignVCenter);
+        rowLabel->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
+        QLabel* currentTcp = new QLabel (QStringLiteral ("-"), poseIkSection);
+        currentTcp->setObjectName (currentTcpNames.at (index));
+        currentTcp->setAlignment (Qt::AlignCenter);
+        currentTcp->setMinimumWidth (0);
+        currentTcp->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
+        _currentTcpValueLabels[static_cast< std::size_t > (index)] = currentTcp;
+        ikPoseGrid->addWidget (rowLabel, index + 1, 0);
+        ikPoseGrid->addWidget (currentTcp, index + 1, 1);
+    }
+    poseIkLayout->addLayout (ikPoseGrid);
+    cpLayout->addWidget (poseIkSection);
 
     // 共用的紧凑表格工厂:6 列内 stretch、隐藏垂直滚动条、
     // 取消垂直 header(行名通过 setVerticalHeaderLabels 自定义)。
@@ -646,20 +707,6 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         t->setSizeAdjustPolicy (QAbstractScrollArea::AdjustIgnored);
         return t;
     };
-
-    // ---- TCP pose: position and orientation are separated into two rows. ----
-    cpLayout->addWidget (new QLabel(tr("TCP pose"), _currentPoseTab));
-    _poseValueTable = makeCompactTable (3, 2);
-    _poseValueTable->setHorizontalHeaderLabels ({tr("X"), tr("Y"), tr("Z")});
-    _poseValueTable->verticalHeader ()->setVisible (true);
-    _poseValueTable->setVerticalHeaderLabels ({tr("Position"), tr("Orientation")});
-    for (int row = 0; row < 2; ++row) {
-        for (int column = 0; column < 3; ++column)
-            _poseValueTable->setItem (row, column, makeItem (QStringLiteral ("-")));
-    }
-    cpLayout->addWidget (_poseValueTable);
-    setCompactTableVisibleRows (_poseValueTable, 2);
-    _poseValueTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
     // ---- Health summary: five scan-friendly metrics without another data table. ----
     cpLayout->addWidget (new QLabel (tr("Health summary"), _currentPoseTab));
@@ -763,19 +810,23 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikTab->setObjectName (QStringLiteral ("ikTab"));
     QVBoxLayout* ikLayout = new QVBoxLayout(_ikTab);
 
-    // ---- Target pose ----
-    QHBoxLayout* ikPoseTitleRow = new QHBoxLayout();
-    QLabel* ikPoseTitle = new QLabel(tr("Target pose"), _ikTab);
-    ikPoseTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
-    ikPoseTitleRow->addWidget (ikPoseTitle);
-    ikPoseTitleRow->addStretch (1);
-    _ikImportCurrentPoseButton = new QPushButton(tr("Sync current TCP"), _ikTab);
+    // ---- Pose / IK target controls live in the shared pose section. ----
+    _ikImportCurrentPoseButton = new QPushButton(tr("Sync current TCP"), poseIkSection);
     _ikImportCurrentPoseButton->setObjectName (QStringLiteral ("ikSyncCurrentTcpButton"));
-    _ikSolveButton = new QPushButton(tr("Solve"), _ikTab);
+    _ikImportCurrentPoseButton->setProperty ("secondaryAction", true);
+    _ikImportCurrentPoseButton->setStyleSheet (QStringLiteral (
+        "QPushButton { padding: 3px 9px; }"));
+    _ikSolveButton = new QPushButton(tr("Solve"), poseIkSection);
     _ikSolveButton->setObjectName (QStringLiteral ("ikSolveButton"));
+    _ikSolveButton->setProperty ("primaryAction", true);
+    _ikSolveButton->setStyleSheet (QStringLiteral (
+        "QPushButton { padding: 3px 12px; color: white; background-color: #2563eb; "
+        "border: 1px solid #1d4ed8; border-radius: 3px; font-weight: bold; }"
+        "QPushButton:hover { background-color: #1d4ed8; }"
+        "QPushButton:pressed { background-color: #1e40af; }"
+        "QPushButton:disabled { background-color: #93c5fd; border-color: #93c5fd; }"));
     ikPoseTitleRow->addWidget (_ikImportCurrentPoseButton);
     ikPoseTitleRow->addWidget (_ikSolveButton);
-    ikLayout->addLayout (ikPoseTitleRow);
     auto makePoseSpin = [this] (double minimum, double maximum, double step) -> QDoubleSpinBox* {
         QDoubleSpinBox* spin = new QDoubleSpinBox(_ikTab);
         spin->setRange(minimum, maximum);
@@ -801,75 +852,40 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _ikDuplicateQThresholdSpin->setDecimals(6);
     _ikDuplicateQThresholdSpin->setSingleStep(0.001);
     _ikDuplicateQThresholdSpin->setValue(_thresholds.ikDuplicateQThreshold);
-    _ikCollisionCheck = new QCheckBox (tr("Collision"), _ikTab);
+    _ikDuplicateQThresholdSpin->setParent (poseIkSection);
+    _ikDuplicateQThresholdSpin->setMinimumWidth (0);
+    _ikDuplicateQThresholdSpin->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Fixed);
+    _ikCollisionCheck = new QCheckBox (tr("Collision"), poseIkSection);
     _ikCollisionCheck->setObjectName (QStringLiteral ("ikCollisionCheck"));
     _ikCollisionCheck->setChecked (true);
+    _ikCollisionCheck->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Fixed);
     updateUnitDisplay();
 
-    QFormLayout* ikPoseForm = new QFormLayout();
-    ikPoseForm->setFieldGrowthPolicy (QFormLayout::ExpandingFieldsGrow);
-    ikPoseForm->addRow (tr("Position X"), _ikXSpin);
-    ikPoseForm->addRow (tr("Position Y"), _ikYSpin);
-    ikPoseForm->addRow (tr("Position Z"), _ikZSpin);
-    ikPoseForm->addRow (tr("Orientation Roll"), _ikRollSpin);
-    ikPoseForm->addRow (tr("Orientation Pitch"), _ikPitchSpin);
-    ikPoseForm->addRow (tr("Orientation Yaw"), _ikYawSpin);
-    ikLayout->addLayout (ikPoseForm);
+    const QList< QDoubleSpinBox* > targetSpins = {
+        _ikXSpin, _ikYSpin, _ikZSpin, _ikRollSpin, _ikPitchSpin, _ikYawSpin};
+    for (int index = 0; index < targetSpins.size (); ++index) {
+        targetSpins.at (index)->setParent (poseIkSection);
+        targetSpins.at (index)->setMinimumWidth (0);
+        targetSpins.at (index)->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+        ikPoseGrid->addWidget (targetSpins.at (index), index + 1, 2);
+    }
 
     // ---- 第 3 行:threshold + 3 个动作按钮(横排)----
-    QLabel* ikOptionsTitle = new QLabel (tr("Solve options"), _ikTab);
-    ikOptionsTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
-    ikLayout->addWidget (ikOptionsTitle);
-    QHBoxLayout* ikOptionsRow = new QHBoxLayout();
-    ikOptionsRow->addWidget (_ikCollisionCheck);
-    ikOptionsRow->addSpacing (12);
-    ikOptionsRow->addWidget (new QLabel (tr("Duplicate Q threshold"), _ikTab));
-    ikOptionsRow->addWidget (_ikDuplicateQThresholdSpin);
-    ikOptionsRow->addStretch (1);
-    ikLayout->addLayout (ikOptionsRow);
+    QHBoxLayout* solveConfigRow = new QHBoxLayout ();
+    solveConfigRow->setContentsMargins (0, 0, 0, 0);
+    QLabel* solveConfigTitle = new QLabel (tr ("Solve config"), poseIkSection);
+    solveConfigTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    solveConfigRow->addWidget (solveConfigTitle);
+    solveConfigRow->addWidget (_ikCollisionCheck);
+    solveConfigRow->addWidget (new QLabel (tr ("Duplicate Q"), poseIkSection));
+    solveConfigRow->addWidget (_ikDuplicateQThresholdSpin);
+    solveConfigRow->addStretch (1);
+    poseIkLayout->addLayout (solveConfigRow);
 
     // ---- 第 4 行:过滤器 + solver 元信息 ----
-    QLabel* ikSummaryTitle = new QLabel (tr("IK result summary"), _ikTab);
-    ikSummaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
-    ikLayout->addWidget (ikSummaryTitle);
     _ikSourceLabel = new QLabel (_ikTab);
     _ikSourceLabel->setVisible (false);
     ikLayout->addWidget (_ikSourceLabel);
-    auto makeIkSummaryLabel = [this] () -> QLabel* {
-        QLabel* label = new QLabel (_ikTab);
-        label->setTextFormat (Qt::RichText);
-        label->setMinimumWidth (0);
-        label->setWordWrap (true);
-        label->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
-        return label;
-    };
-    _ikStatusLabel = makeIkSummaryLabel ();
-    _ikDisplayedLabel = makeIkSummaryLabel ();
-    _ikUsableLabel = makeIkSummaryLabel ();
-    _ikPassLabel = makeIkSummaryLabel ();
-    _ikWarningLabel = makeIkSummaryLabel ();
-    _ikFailLabel = makeIkSummaryLabel ();
-    _ikStatusLabel->setText (tr("<b>Status</b><br>-"));
-    _ikDisplayedLabel->setText (tr("<b>Displayed</b><br>-"));
-    _ikUsableLabel->setText (tr("<b>Usable</b><br>-"));
-    _ikPassLabel->setText (tr("<b>Pass</b><br>-"));
-    _ikWarningLabel->setText (tr("<b>Warning</b><br>-"));
-    _ikFailLabel->setText (tr("<b>Fail</b><br>-"));
-    QHBoxLayout* ikSummaryRow = new QHBoxLayout();
-    const std::vector< QLabel* > ikSummaryLabels = {
-        _ikStatusLabel, _ikDisplayedLabel, _ikUsableLabel,
-        _ikPassLabel, _ikWarningLabel, _ikFailLabel};
-    for (std::size_t i = 0; i < ikSummaryLabels.size (); ++i) {
-        if (i > 0) {
-            QFrame* separator = new QFrame (_ikTab);
-            separator->setFrameShape (QFrame::VLine);
-            separator->setFrameShadow (QFrame::Sunken);
-            ikSummaryRow->addWidget (separator);
-        }
-        ikSummaryRow->addWidget (ikSummaryLabels[i]);
-    }
-    ikSummaryRow->addStretch (1);
-    ikLayout->addLayout (ikSummaryRow);
 
     // ---- 第 5 行:counts summary ----
     // ---- 第 6 行:status summary 标签 ----
@@ -910,6 +926,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     // 选中行变化 → 详情表更新。
     connect (_ikSolutionTable, SIGNAL (itemSelectionChanged ()),
              this, SLOT (updateIkSolutionDetails ()));
+    connect (_ikSolutionTable, &QTableWidget::itemDoubleClicked, this,
+             [this] (QTableWidgetItem*) { applySelectedIkSolution (); });
     // 该表是页面唯一允许滚动的主表,占主导高度。
     ikLayout->addWidget(_ikSolutionTable, 1);
 
@@ -3359,11 +3377,9 @@ void KinematicAnalysisWidget::updateUnitDisplay ()
 void KinematicAnalysisWidget::refreshCurrentPose ()
 {
     // 重置所有面板为占位状态。
-    if (_poseValueTable != NULL) {
-        for (int row = 0; row < 2; ++row) {
-            for (int column = 0; column < 3; ++column)
-                _poseValueTable->setItem (row, column, makeItem (QStringLiteral ("-")));
-        }
+    for (QLabel* label : _currentTcpValueLabels) {
+        if (label != NULL)
+            label->setText (QStringLiteral ("-"));
     }
     if (_poseIndicatorLabel != NULL)
         _poseIndicatorLabel->setText (tr("<b>Status</b><br>-"));
@@ -3420,24 +3436,22 @@ void KinematicAnalysisWidget::refreshCurrentPose ()
                 : tr("<b>Collision capability</b><br>Unavailable"));
     }
 
-    // ---- 1. 紧凑摘要栏(2 行 6 列 + 关键指标) ----
-    if (_poseValueTable != NULL) {
-        _poseValueTable->setItem (0, 0, makeItem (displayLengthFromMeters (
-            result.tcpPosition[0], _lengthUnit)));
-        _poseValueTable->setItem (0, 1, makeItem (displayLengthFromMeters (
-            result.tcpPosition[1], _lengthUnit)));
-        _poseValueTable->setItem (0, 2, makeItem (displayLengthFromMeters (
-            result.tcpPosition[2], _lengthUnit)));
-        _poseValueTable->setItem (1, 0, makeItem (displayAngleFromDegrees (
-            result.tcpRpyDeg[0], _angleUnit)));
-        _poseValueTable->setItem (1, 1, makeItem (displayAngleFromDegrees (
-            result.tcpRpyDeg[1], _angleUnit)));
-        _poseValueTable->setItem (1, 2, makeItem (displayAngleFromDegrees (
-            result.tcpRpyDeg[2], _angleUnit)));
+    // ---- 1. 更新共享 Pose / IK target 网格中的 Current TCP 列 ----
+    const auto formatPoseValue = [] (double value) {
+        return QString::number (std::fabs (value) < 0.0000005 ? 0.0 : value, 'f', 6);
+    };
+    const std::array< QString, 6 > currentTcpTexts = {{
+        formatPoseValue (displayLengthFromMeters (result.tcpPosition[0], _lengthUnit)),
+        formatPoseValue (displayLengthFromMeters (result.tcpPosition[1], _lengthUnit)),
+        formatPoseValue (displayLengthFromMeters (result.tcpPosition[2], _lengthUnit)),
+        formatPoseValue (displayAngleFromDegrees (result.tcpRpyDeg[0], _angleUnit)),
+        formatPoseValue (displayAngleFromDegrees (result.tcpRpyDeg[1], _angleUnit)),
+        formatPoseValue (displayAngleFromDegrees (result.tcpRpyDeg[2], _angleUnit))}};
+    for (std::size_t index = 0; index < _currentTcpValueLabels.size (); ++index) {
+        if (_currentTcpValueLabels[index] != NULL)
+            _currentTcpValueLabels[index]->setText (currentTcpTexts[index]);
     }
     // 表头高度在初次布局后才会稳定,refresh 阶段再调一次确保紧凑。
-    if (_poseValueTable != NULL)
-        setCompactTableVisibleRows (_poseValueTable, 2);
     if (_poseIndicatorLabel != NULL) {
         const QString condText = std::isinf (result.conditionNumber) ?
             QStringLiteral ("inf") : QString::number (result.conditionNumber, 'g', 6);

@@ -477,7 +477,7 @@ class KinematicAnalysisWidget : public QWidget
     // _reportButton:报告动作下拉菜单(Refresh / Export JSON / 导出摘要 CSV / 任务结果 CSV)。
     QPushButton* _reportButton;
     QLineEdit* _status;                               // 状态消息(只读)
-    QTableWidget* _poseValueTable;                    // 6 元 TCP 位姿 + 关节值
+    std::array< QLabel*, 6 > _currentTcpValueLabels;  // Current TCP: X/Y/Z + Roll/Pitch/Yaw
     QLabel* _poseIndicatorLabel;                      // 总体状态
     QLabel* _poseConditionLabel;
     QLabel* _poseManipulabilityLabel;
