@@ -43,6 +43,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QRect>
 #include <QRectF>
 #include <QTemporaryDir>
@@ -4996,6 +4997,9 @@ static int testWorkflowUiStates ()
     if (const int rc = require (healthLabels.size () == 5,
                                 "Health summary exposes five direct metric labels before a WorkCell is set"))
         return rc;
+    if (const int rc = require (qobject_cast< QGridLayout* > (healthFrame->layout ()) != nullptr,
+                                "Health summary uses an adaptive metrics grid"))
+        return rc;
     for (QLabel* label : healthLabels) {
         if (const int rc = require (!label->text ().isEmpty () && label->text ().contains (QStringLiteral ("-")),
                                     "Health summary metrics start with visible placeholder content"))
@@ -5022,7 +5026,7 @@ static int testWorkflowUiStates ()
         QStringLiteral ("reportButton"));
     if (const int rc = require (reportButton != nullptr && reportButton->menu () != nullptr &&
                                     reportButton->isEnabled (),
-                                "Header Report is an enabled text menu"))
+                                "Validate report action is an enabled text menu"))
         return rc;
     const QList< QAction* > reportActions = reportButton->menu ()->actions ();
     if (const int rc = require (reportActions.size () == 4 &&
@@ -5030,17 +5034,17 @@ static int testWorkflowUiStates ()
                                     reportActions.at (1)->text () == QStringLiteral ("Export JSON") &&
                                     reportActions.at (2)->text () == QStringLiteral ("Export summary CSV") &&
                                     reportActions.at (3)->text () == QStringLiteral ("Export task-results CSV"),
-                                "Header Report menu exposes every report action"))
+                                "Validate report menu exposes every report action"))
         return rc;
     QComboBox* reportStageFilter = widget.findChild< QComboBox* > (
         QStringLiteral ("reportStageFilter"));
     if (const int rc = require (reportStageFilter != nullptr,
-                                "report filter state remains available to Header actions"))
+                                "report filter state remains available to Validate actions"))
         return rc;
     reportStageFilter->setCurrentIndex (2);
     reportActions.at (0)->trigger ();
     if (const int rc = require (reportStageFilter->currentIndex () == 2,
-                                "refreshing through Header Report retains filtering state"))
+                                "refreshing through Validate report retains filtering state"))
         return rc;
 
     QTabBar* modeTabs =
@@ -5267,12 +5271,6 @@ static int testWorkflowUiStates ()
     }
     modeTabs->setCurrentIndex (2);
     QCoreApplication::processEvents ();
-    for (QLabel* label : workspaceSummaryLabels) {
-        if (const int rc = require (label->isVisible () && !label->geometry ().isEmpty () &&
-                                        label->width () >= 24,
-                                    "Workspace summary metric labels remain visible in Explore at 300px"))
-            return rc;
-    }
     modeTabs->setCurrentIndex (0);
     QCoreApplication::processEvents ();
     if (const int rc = require (deviceCombo->width () >= 24 && tcpCombo->width () >= 24,
@@ -5389,13 +5387,23 @@ static int testWorkflowUiStates ()
         QStringLiteral ("exploreDirectionsLabel"));
     QLabel* exploreRollsLabel = widget.findChild< QLabel* > (
         QStringLiteral ("exploreRollsLabel"));
+    QWidget* exploreSetupSection = widget.findChild< QWidget* > (
+        QStringLiteral ("exploreSetupSection"));
+    QWidget* exploreCommandSection = widget.findChild< QWidget* > (
+        QStringLiteral ("exploreCommandSection"));
+    QWidget* exploreProgressSection = widget.findChild< QWidget* > (
+        QStringLiteral ("exploreProgressSection"));
+    QScrollArea* exploreScroll = qobject_cast< QScrollArea* > (modeStack->widget (2));
     if (const int rc = require (
             exploreMode != nullptr && exploreSamplesLabel != nullptr &&
                 exploreSeed != nullptr && exploreSeedLabel != nullptr &&
                 exploreGrid != nullptr && exploreGridLabel != nullptr &&
                 exploreDirections != nullptr && exploreDirectionsLabel != nullptr &&
-                exploreRolls != nullptr && exploreRollsLabel != nullptr,
-            "Explore Capability exposes sampling and orientation controls"))
+                exploreRolls != nullptr && exploreRollsLabel != nullptr &&
+                exploreSetupSection != nullptr && exploreCommandSection != nullptr &&
+                exploreProgressSection != nullptr && exploreScroll != nullptr &&
+                exploreScroll->horizontalScrollBarPolicy () == Qt::ScrollBarAlwaysOff,
+            "Explore groups setup, commands and progress without horizontal scrolling"))
         return rc;
     QComboBox* exploreSamplingMode = exploreMode;
     QWidget* workspacePage = widget.findChild< QWidget* > (QStringLiteral ("workspaceTab"));
@@ -5414,8 +5422,14 @@ static int testWorkflowUiStates ()
         QStringLiteral ("poseDirectionSamplesSpin"));
     QSpinBox* legacyPoseRolls = widget.findChild< QSpinBox* > (
         QStringLiteral ("poseRollSamplesSpin"));
+    QSpinBox* legacyWorkspaceSamples = widget.findChild< QSpinBox* > (
+        QStringLiteral ("workspaceSamplesSpin"));
+    QLabel* legacyWorkspaceSamplesLabel = widget.findChild< QLabel* > (
+        QStringLiteral ("workspaceSamplesLabel"));
     rws::KinematicAnalysisPlotWidget* embeddedPlot =
         widget.findChild< rws::KinematicAnalysisPlotWidget* > ();
+    QWidget* visualizationStateHost = widget.findChild< QWidget* > (
+        QStringLiteral ("visualizationStateHost"));
     QPushButton* openPlot = widget.findChild< QPushButton* > (
         QStringLiteral ("visualizationOpenPlotButton"));
     if (const int rc = require (
@@ -5426,13 +5440,13 @@ static int testWorkflowUiStates ()
                 exploreSamplingMode->itemData (1).toInt () == 1 &&
                 exploreSamplingMode->itemText (2) == QStringLiteral ("Pose Reachability") &&
                 exploreSamplingMode->itemData (2).toInt () == 2 &&
-                workspacePage != nullptr && poseReachPage != nullptr && embeddedPlot != nullptr &&
+                workspacePage != nullptr && poseReachPage != nullptr && embeddedPlot == nullptr &&
+                visualizationStateHost != nullptr && !visualizationStateHost->isVisible () &&
                 openPlot != nullptr && legacyWorkspaceRun != nullptr &&
                 legacyWorkspaceCancel != nullptr && legacyWorkspaceMode != nullptr &&
                 legacyPoseRun != nullptr && legacyPoseCancel != nullptr &&
-                legacyPoseDirections != nullptr && legacyPoseRolls != nullptr &&
-                embeddedPlot->maximumHeight () == 160,
-            "Explore exposes Random, Grid and Pose Reachability with compact visualization"))
+                legacyPoseDirections != nullptr && legacyPoseRolls != nullptr,
+            "Explore exposes Random, Grid and Pose Reachability without an embedded plot"))
         return rc;
     modeTabs->setCurrentIndex (2);
     exploreSamplingMode->setCurrentIndex (0);
@@ -5448,8 +5462,11 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             !legacyWorkspaceRun->isVisible () && !legacyWorkspaceCancel->isVisible () &&
                 !legacyWorkspaceMode->isVisible () && !legacyPoseRun->isVisible () &&
-                !legacyPoseCancel->isVisible (),
-            "Explore keeps the legacy workspace and pose Run, Cancel, and mode entry points hidden"))
+                !legacyPoseCancel->isVisible () && legacyWorkspaceSamples != nullptr &&
+                legacyWorkspaceSamplesLabel != nullptr &&
+                !legacyWorkspaceSamples->isVisible () &&
+                !legacyWorkspaceSamplesLabel->isVisible (),
+            "Explore keeps legacy workspace commands and duplicate Samples controls hidden"))
         return rc;
     exploreSamplingMode->setCurrentIndex (1);
     if (const int rc = require (
@@ -5494,6 +5511,10 @@ static int testWorkflowUiStates ()
         QStringLiteral ("validateRegionCellTable"));
     QTableWidget* demandRegions = widget.findChild< QTableWidget* > (
         QStringLiteral ("validateRegionSummaryTable"));
+    QWidget* validateSourceSection = widget.findChild< QWidget* > (
+        QStringLiteral ("validateSourceSection"));
+    QWidget* validateCommandSection = widget.findChild< QWidget* > (
+        QStringLiteral ("validateCommandSection"));
     QWidget* selectedTaskPointPanel = widget.findChild< QWidget* > (
         QStringLiteral ("selectedTaskPointPanel"));
     QLabel* taskSummary = widget.findChild< QLabel* > (
@@ -5503,7 +5524,8 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             mode2Source != nullptr && mode2Source->count () == 2 &&
                 localTasksPage != nullptr && frozenTasks != nullptr && frozenRegions != nullptr &&
-                demandRegions != nullptr && selectedTaskPointPanel != nullptr &&
+                demandRegions != nullptr && validateSourceSection != nullptr &&
+                validateCommandSection != nullptr && selectedTaskPointPanel != nullptr &&
                 taskSummary != nullptr && taskMore != nullptr &&
                 frozenTasks->editTriggers () == QAbstractItemView::NoEditTriggers &&
                 frozenRegions->editTriggers () == QAbstractItemView::NoEditTriggers,
@@ -5545,13 +5567,26 @@ static int testWorkflowUiStates ()
             "Local Tasks exposes the compact text toolbar and remains the editable 27-column source"))
         return rc;
     if (const int rc = require (
+            !mode2Load->isVisible () && mode2ValidateAll->isVisible () &&
+                mode2ValidateSelected->isVisible () && mode2Add->isVisible () &&
+                mode2Remove->isVisible (),
+            "Local Tasks hides frozen loading while retaining local task actions"))
+        return rc;
+    if (const int rc = require (
             demandRegions->columnCount () == 6 &&
+                demandRegions->isColumnHidden (4) && demandRegions->isColumnHidden (5) &&
                 demandRegions->horizontalHeaderItem (1)->text ().contains (QStringLiteral ("Level")) &&
                 demandRegions->horizontalHeaderItem (2)->text ().contains (QStringLiteral ("Position")) &&
                 demandRegions->horizontalHeaderItem (3)->text ().contains (QStringLiteral ("Orientation")),
             "Demand Regions lists level and position/orientation coverage"))
         return rc;
     mode2Source->setCurrentIndex (1);
+    if (const int rc = require (
+            mode2Load->isVisible () && mode2ValidateAll->isVisible () &&
+                mode2ValidateSelected->isVisible () && !mode2Add->isVisible () &&
+                !mode2Remove->isVisible (),
+            "Frozen Requirements exposes loading and validation without local edit actions"))
+        return rc;
     if (const int rc = require (!localTasksPage->isVisible () && frozenTasks->isVisible () &&
                                     !frozenRegions->isVisible (),
                                 "Frozen Requirements keeps cell-level diagnostics collapsed by default"))
@@ -5772,18 +5807,22 @@ static int testWorkflowUiStates ()
     const bool openedPoseReachability = QMetaObject::invokeMethod (
         &widget, "openPoseReachabilityInVisualization", Qt::DirectConnection);
     QCoreApplication::processEvents ();
-    if (const int rc = require (openedPoseReachability && modeTabs->currentIndex () == 2 &&
-                                    modeStack->currentIndex () == 2,
-                                "pose reachability navigation selects the Explore tab and page"))
+    rws::KinematicPlotDialog* workflowPlotDialog =
+        widget.findChild< rws::KinematicPlotDialog* > (QStringLiteral ("kinematicPlotDialog"));
+    if (const int rc = require (openedPoseReachability && workflowPlotDialog != nullptr &&
+                                    workflowPlotDialog->isVisible () && modeTabs->currentIndex () == 0 &&
+                                    modeStack->currentIndex () == 0,
+                                "pose reachability opens the standalone visualization without navigation"))
         return rc;
     modeTabs->setCurrentIndex (0);
     QCoreApplication::processEvents ();
     const bool openedWorkspace = QMetaObject::invokeMethod (
         &widget, "openWorkspaceInVisualization", Qt::DirectConnection);
     QCoreApplication::processEvents ();
-    if (const int rc = require (openedWorkspace && modeTabs->currentIndex () == 2 &&
-                                    modeStack->currentIndex () == 2,
-                                "workspace navigation selects the Explore tab and page"))
+    if (const int rc = require (openedWorkspace && workflowPlotDialog != nullptr &&
+                                    workflowPlotDialog->isVisible () && modeTabs->currentIndex () == 0 &&
+                                    modeStack->currentIndex () == 0,
+                                "workspace opens the standalone visualization without navigation"))
         return rc;
     modeTabs->setCurrentIndex (2);
     const bool openedInIk = QMetaObject::invokeMethod (
@@ -6090,6 +6129,27 @@ static int testWorkflowUiStates ()
                 exploreSamples != nullptr && exploreState != nullptr,
             "Explore Capability controls expose stable object names"))
         return rc;
+    QTableWidget* workspaceSamplesTable = nullptr;
+    for (QTableWidget* candidate : workspacePage->findChildren< QTableWidget* > ()) {
+        if (candidate != nullptr && candidate->columnCount () == 6) {
+            workspaceSamplesTable = candidate;
+            break;
+        }
+    }
+    QLabel* workspaceSampleCount = widget.findChild< QLabel* > (
+        QStringLiteral ("workspaceSampleCountLabel"));
+    QLabel* workspaceCollisionSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("workspaceCollisionFreeLabel"));
+    QWidget* workspaceSelectedSamplePanel = widget.findChild< QWidget* > (
+        QStringLiteral ("workspaceSelectedSamplePanel"));
+    QTableWidget* workspaceSelectedSampleDetails = widget.findChild< QTableWidget* > (
+        QStringLiteral ("workspaceDetailTable"));
+    if (const int rc = require (
+            workspaceSamplesTable != nullptr && workspaceSampleCount != nullptr &&
+                workspaceCollisionSummary != nullptr && workspaceSelectedSamplePanel != nullptr &&
+                workspaceSelectedSampleDetails != nullptr,
+            "Explore exposes the Workspace result table, summary and progressive details"))
+        return rc;
 
     widget.setWorkCell (nullptr);
     if (const int rc = require (
@@ -6150,6 +6210,40 @@ static int testWorkflowUiStates ()
             exploreRun->isEnabled (),
             "changing exploration settings re-arms the Run command"))
         return rc;
+    exploreSamples->setValue (4);
+    exploreRun->click ();
+    QElapsedTimer completionTimer;
+    completionTimer.start ();
+    while (!exploreState->text ().contains (QStringLiteral ("Completed")) &&
+           completionTimer.elapsed () < 2000)
+        QApplication::processEvents (QEventLoop::AllEvents, 20);
+    if (const int rc = require (
+            exploreState->text ().contains (QStringLiteral ("Completed")) &&
+                workspaceSamplesTable->rowCount () == 4 &&
+                workspaceSampleCount->text ().contains (QStringLiteral ("4")) &&
+                !workspaceSamplesTable->selectionModel ()->hasSelection () &&
+                !workspaceSelectedSamplePanel->isVisible () &&
+                workspaceCollisionSummary->text ().contains (QStringLiteral ("Not evaluated")) &&
+                workspaceSamplesTable->item (0, 2) != nullptr &&
+                workspaceSamplesTable->item (0, 2)->text () == QStringLiteral ("Not evaluated"),
+            "completed Explore sampling publishes Workspace rows and summary"))
+        return rc;
+    modeTabs->setCurrentIndex (2);
+    exploreSamplingMode->setCurrentIndex (0);
+    QCoreApplication::processEvents ();
+    workspaceSamplesTable->selectRow (0);
+    QCoreApplication::processEvents ();
+    if (const int rc = require (
+            workspaceSelectedSamplePanel->isVisible () &&
+                workspaceSelectedSampleDetails->rowCount () == 3 &&
+                workspaceSelectedSampleDetails->item (1, 0) != nullptr &&
+                workspaceSelectedSampleDetails->item (1, 0)->text () == QStringLiteral ("Q") &&
+                workspaceSelectedSampleDetails->item (1, 1) != nullptr &&
+                !workspaceSelectedSampleDetails->item (1, 1)->toolTip ().isEmpty () &&
+                workspaceSelectedSampleDetails->item (2, 1) != nullptr &&
+                !workspaceSelectedSampleDetails->item (2, 1)->toolTip ().isEmpty (),
+            "selecting an Explore result progressively reveals its compact Q details"))
+        return rc;
 
     taskModel->setRowsFromTaskPoints ({untouchedTask});
     taskModel->setResultForRow (0, untouchedResult);
@@ -6160,6 +6254,22 @@ static int testWorkflowUiStates ()
         return rc;
     QTableWidget* taskPointDetail = widget.findChild< QTableWidget* > (
         QStringLiteral ("taskPointDetailTable"));
+    // Project providers close before the WorkCell. Exercise that callback
+    // directly to cover the lifecycle gap behind stale task-point rows.
+    widget.clearProjectDocumentContext ();
+    if (const int rc = require (
+            taskModel->rowCount () == 0 && taskModel->results ().empty () &&
+                widget.buildReportForExport ().taskResults.empty () &&
+                !selectedTaskPointPanel->isVisible (),
+            "closing the project document clears task points before WorkCell unload"))
+        return rc;
+    widget.setWorkCell (noDevice.get ());
+    if (const int rc = require (
+            taskModel->rowCount () == 0 && taskModel->taskPoints ().empty () &&
+                !selectedTaskPointPanel->isVisible (),
+            "a different WorkCell starts with no task points from the closed project"))
+        return rc;
+    widget.setWorkCell (workcell.get ());
     widget.setWorkCell (nullptr);
     if (const int rc = require (
             taskModel->rowCount () == 0 && taskModel->results ().empty () &&

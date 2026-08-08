@@ -255,6 +255,8 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
         AnalysisVisualPoint point;
         point.position = sample.tcpPosition;
         point.status = sample.status;
+        // A legacy sample may have an explicit collision flag without the
+        // newer collisionChecked marker; a positive collision remains valid.
         point.inCollision = sample.inCollision;
         point.source = VisualPointSource::Workspace;
         point.sourceIndex = static_cast< int > (i);
@@ -279,7 +281,9 @@ AnalysisVisualData rws::visualDataFromWorkspaceSamples (
             .arg (QString::number (sample.manipulability, 'g', 6))
             .arg (QString::number (sample.conditionNumber, 'g', 6))
             .arg (QString::number (sample.minJointLimitMargin, 'g', 6))
-            .arg (sample.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No"))
+            .arg ((sample.collisionChecked || sample.inCollision) ?
+                (sample.inCollision ? QStringLiteral ("Yes") : QStringLiteral ("No")) :
+                QStringLiteral ("Not evaluated"))
             .arg (point.hasQ ? QStringLiteral ("Yes") : QStringLiteral ("No"));
         data.points.push_back (point);
     }

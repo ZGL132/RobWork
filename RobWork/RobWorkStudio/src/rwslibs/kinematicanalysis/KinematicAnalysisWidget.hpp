@@ -263,7 +263,7 @@ class KinematicAnalysisWidget : public QWidget
     // 导出当前 plot 为 PNG(1400×900 默认尺寸,布局与 paintPlot 一致)。
     void exportVisualizationPng ();
     // Open the modeless plot window backed by the current visualization snapshot.
-    // 打开无模式独立 plot 窗口,显示与内嵌 plot 相同的可视化快照。
+    // 打开无模式独立 plot 窗口,显示 Widget-owned 可视化快照。
     void openKinematicPlotDialog ();
     // 跳到 Visualization tab 并把 source 切到 Pose reachability。
     void openPoseReachabilityInVisualization ();
@@ -329,11 +329,13 @@ class KinematicAnalysisWidget : public QWidget
     QByteArray projectDocumentSnapshot () const;
     // 在加载项目文档时恢复所有可编辑输入，并清空旧 WorkCell 上下文产生的分析结果。
     void applyProjectDocumentSnapshot (const QByteArray& json, QString* error);
-    // 把同一份可视化数据推给内嵌 plot 与独立 plot 窗口(含投影/过滤/点径/单位)。
+    // 把可视化数据推给独立 plot 窗口(含投影/过滤/点径/单位)。
     void applyVisualDataToPlots (const AnalysisVisualData& data,
                                  VisualProjection projection);
     // 清空 _visualData 并用空数据刷新 plot(WorkCell 卸载时调用)。
     void clearVisualizationData ();
+    void clearCurrentPosePresentation ();
+    void clearAnalysisSessionState (bool detachWorkCell);
 
     // ===================================================================
     //  状态/单位换算 helper
@@ -466,7 +468,7 @@ class KinematicAnalysisWidget : public QWidget
     QWidget* _taskPointTab;             // Tab 2:任务点表格
     QWidget* _workspaceTab;             // Tab 3:工作空间采样
     QWidget* _poseReachTab;             // Tab 4:位姿可达性
-    QWidget* _visualizationTab;         // Tab 5:可视化
+    QWidget* _visualizationStateHost;    // Hidden state host for standalone plot dialog
     QWidget* _reportTab;                // Tab 6:报告
 
     // ===================================================================
@@ -572,6 +574,8 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _workspaceDiagnosticsLabel;                 // plan / theoretical / capped
     QTableWidget* _workspaceTable;                      // 样本表(最多 500 行)
     QTableWidget* _workspaceDetailTable;                // 选中样本详情
+    QWidget* _workspaceDetailPanel;                     // Progressive disclosure panel
+    bool _workspaceCollisionEvaluated;
 
     // ===================================================================
     //  Pose Reachability tab 控件
