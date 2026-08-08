@@ -328,6 +328,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _exploreCancelToken (std::make_shared< std::atomic_bool > (false)),
     _exploreCompletedSamples (0),
     _explorePlannedSamples (0),
+    _workcellSessionGeneration (0),
     _currentPoseTab(NULL),
     _ikTab(NULL),
     _taskPointTab(NULL),
@@ -1586,10 +1587,40 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
     cancelEnvelopeRequest (true);
     invalidateEnvelopeCache ();
     if (_workcell != workcell) {
+        ++_workcellSessionGeneration;
+        // WorkCell changes delimit project sessions. Cancel producers and
+        // discard every result/cache that belongs to the previous session so
+        // a newly created project cannot inherit stale task points or plots.
+        if (_workspaceCancelRequested)
+            _workspaceCancelRequested->store (true);
+        if (_poseReachabilityCancelRequested)
+            _poseReachabilityCancelRequested->store (true);
         if (_exploreCancelToken)
             _exploreCancelToken->store (true);
         _exploreRunActive = false;
         _exploreCancellationRequested = false;
+        _exploreCompletedSamples = 0;
+        _explorePlannedSamples = 0;
+        if (_exploreStateLabel != nullptr)
+            _exploreStateLabel->setText (tr ("Estimated: Idle"));
+
+        if (_taskPointTable != nullptr && _taskPointTable->selectionModel () != nullptr)
+            _taskPointTable->clearSelection ();
+        if (_taskPointModel != nullptr)
+            _taskPointModel->setRowsFromTaskPoints ({});
+        _lastTaskPointResults.clear ();
+        _lastCurrentPose = KinematicCurrentPoseResult ();
+        _lastIkResult = KinematicIkAnalysisResult ();
+        _ikResultStale = false;
+        _workspaceSamples.clear ();
+        _poseReachabilitySamples.clear ();
+        _workspaceCollisionUnavailable = false;
+        _poseReachabilityCollisionUnavailable = false;
+        if (_workspaceTable != nullptr)
+            _workspaceTable->setRowCount (0);
+        if (_poseResultTable != nullptr)
+            _poseResultTable->setRowCount (0);
+
         _validateExecution = RequirementExecutionSet ();
         _validateSummary = RequirementValidationSummary ();
         _validateExecutionSet = false;
@@ -1603,6 +1634,20 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         if (_validateRequirementStateLabel != nullptr)
             _validateRequirementStateLabel->setText (
                 tr("No frozen requirement artifact loaded."));
+
+        // Refresh the presentation while no WorkCell is bound; this resets
+        // Current Pose and IK tables without analyzing the incoming cell.
+        _workcell = nullptr;
+        refreshCurrentPose ();
+        refreshIkSolutionView ();
+        updateTaskPointDetails ();
+        updateTaskPointSelectionButtons ();
+        applyWorkspaceResults ({});
+        applyPoseReachabilityResults ({});
+        clearVisualizationData ();
+        if (_visualSummaryLabel != nullptr)
+            _visualSummaryLabel->setText (tr ("No visualization data."));
+        refreshReport ();
     }
     _workcell = workcell;
     populateDevices ();
@@ -1763,6 +1808,9 @@ void KinematicAnalysisWidget::startCapabilityExploration ()
     _exploreCancellationRequested = false;
     if (_exploreCancelToken)
         _exploreCancelToken->store (false);
+    _exploreWatcher->setProperty (
+        "workcellSessionGeneration",
+        QVariant::fromValue< qulonglong > (_workcellSessionGeneration));
 
     WorkspaceSamplingConfig config;
     config.sampleCount = _exploreSamplesSpin->value ();
@@ -1787,11 +1835,13 @@ void KinematicAnalysisWidget::startCapabilityExploration ()
     struct ExploreRunContext {
         std::shared_ptr< std::atomic_bool > cancelToken;
         QPointer< KinematicAnalysisWidget > widget;
+        quint64 sessionGeneration = 0;
     };
     const std::shared_ptr< ExploreRunContext > runContext =
         std::make_shared< ExploreRunContext > ();
     runContext->cancelToken = _exploreCancelToken;
     runContext->widget = this;
+    runContext->sessionGeneration = _workcellSessionGeneration;
 
     WorkspaceSamplingRunCallbacks callbacks;
     callbacks.isCancellationRequested = [] (void* userData) -> bool {
@@ -1806,10 +1856,16 @@ void KinematicAnalysisWidget::startCapabilityExploration ()
         if (context == nullptr || context->widget.isNull ())
             return;
         QMetaObject::invokeMethod (
-            context->widget.data (), "updateCapabilityExplorationProgress",
-            Qt::QueuedConnection,
-            Q_ARG (qulonglong, static_cast< qulonglong > (completed)),
-            Q_ARG (qulonglong, static_cast< qulonglong > (planned)));
+            context->widget.data (),
+            [widget = context->widget, session = context->sessionGeneration,
+             completed, planned] {
+                if (widget.isNull () || widget->_workcellSessionGeneration != session)
+                    return;
+                widget->updateCapabilityExplorationProgress (
+                    static_cast< qulonglong > (completed),
+                    static_cast< qulonglong > (planned));
+            },
+            Qt::QueuedConnection);
     };
     callbacks.userData = runContext.get ();
 
@@ -1868,6 +1924,14 @@ void KinematicAnalysisWidget::handleCapabilityExplorationFinished ()
 {
     if (_exploreWatcher == nullptr)
         return;
+    const quint64 runGeneration = _exploreWatcher->property (
+        "workcellSessionGeneration").toULongLong ();
+    if (runGeneration != _workcellSessionGeneration) {
+        _exploreRunActive = false;
+        _exploreCancellationRequested = false;
+        refreshWorkflowControls ();
+        return;
+    }
     const std::vector< WorkspaceSample > samples = _exploreWatcher->result ();
     const bool canceled = _exploreCancelToken != nullptr && _exploreCancelToken->load ();
     _exploreCompletedSamples = samples.size ();
@@ -2612,7 +2676,8 @@ void KinematicAnalysisWidget::markProjectDocumentClean ()
 // worker 完成后把结果写回已销毁 / 已切换的上下文。
 bool KinematicAnalysisWidget::canCloseProjectDocument (QString* reason) const
 {
-    const bool running = _workspaceRunActive || _poseReachabilityRunActive || _envelopeRunActive ||
+    const bool running = _exploreRunActive || _workspaceRunActive || _poseReachabilityRunActive ||
+        (_exploreWatcher != nullptr && _exploreWatcher->isRunning ()) || _envelopeRunActive ||
         (_workspaceWatcher != nullptr && _workspaceWatcher->isRunning ()) ||
         (_poseReachabilityWatcher != nullptr && _poseReachabilityWatcher->isRunning ()) ||
         (_envelopeWatcher != nullptr && _envelopeWatcher->isRunning ());
@@ -6830,7 +6895,8 @@ void KinematicAnalysisWidget::updateWorkspaceSampleDetails ()
 // 固定 randomSeed=1 以保证结果可复现,便于回归对比。
 void KinematicAnalysisWidget::sampleWorkspace ()
 {
-    if (_workspaceRunActive) {
+    if (_workspaceRunActive || _workspaceWatcher == nullptr ||
+        _workspaceWatcher->isRunning ()) {
         setStatus (tr("Workspace sampling is already running."));
         return;
     }
@@ -6874,6 +6940,9 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     _workspaceRunActive = true;
     if (_workspaceCancelRequested)
         _workspaceCancelRequested->store (false);
+    _workspaceWatcher->setProperty (
+        "workcellSessionGeneration",
+        QVariant::fromValue< qulonglong > (_workcellSessionGeneration));
     if (_workspaceRunButton != NULL)
         _workspaceRunButton->setEnabled (false);
     if (_workspaceCancelButton != NULL)
@@ -6884,11 +6953,13 @@ void KinematicAnalysisWidget::sampleWorkspace ()
     struct WorkspaceRunContext {
         std::shared_ptr< std::atomic_bool > cancelFlag;
         QPointer< KinematicAnalysisWidget > widget;
+        quint64 sessionGeneration = 0;
     };
     const std::shared_ptr< WorkspaceRunContext > runContext =
         std::make_shared< WorkspaceRunContext > ();
     runContext->cancelFlag = _workspaceCancelRequested;
     runContext->widget = this;
+    runContext->sessionGeneration = _workcellSessionGeneration;
 
     WorkspaceSamplingRunCallbacks callbacks;
     callbacks.isCancellationRequested = [] (void* userData) -> bool {
@@ -6901,10 +6972,16 @@ void KinematicAnalysisWidget::sampleWorkspace ()
         WorkspaceRunContext* ctx = static_cast< WorkspaceRunContext* > (userData);
         if (ctx == NULL || ctx->widget.isNull ()) return;
         QMetaObject::invokeMethod (
-            ctx->widget.data (), "updateWorkspaceProgress",
-            Qt::QueuedConnection,
-            Q_ARG (qulonglong, static_cast< qulonglong > (cSamples)),
-            Q_ARG (qulonglong, static_cast< qulonglong > (pSamples)));
+            ctx->widget.data (),
+            [widget = ctx->widget, session = ctx->sessionGeneration,
+             cSamples, pSamples] {
+                if (widget.isNull () || widget->_workcellSessionGeneration != session)
+                    return;
+                widget->updateWorkspaceProgress (
+                    static_cast< qulonglong > (cSamples),
+                    static_cast< qulonglong > (pSamples));
+            },
+            Qt::QueuedConnection);
     };
     callbacks.userData = runContext.get ();
 
@@ -6981,6 +7058,14 @@ void KinematicAnalysisWidget::updateWorkspaceProgress (
 void KinematicAnalysisWidget::handleWorkspaceFinished ()
 {
     QApplication::restoreOverrideCursor ();
+    const quint64 runGeneration = _workspaceWatcher == nullptr ? 0 :
+        _workspaceWatcher->property ("workcellSessionGeneration").toULongLong ();
+    if (runGeneration != _workcellSessionGeneration) {
+        _workspaceRunActive = false;
+        updateWorkspaceControls ();
+        refreshWorkflowControls ();
+        return;
+    }
     _workspaceRunActive = false;
     if (_workspaceRunButton != NULL)
         _workspaceRunButton->setEnabled (true);
@@ -7307,7 +7392,8 @@ void KinematicAnalysisWidget::applyPoseReachabilityResults (
 // 验证输入后启动异步 worker,跑完由 handlePoseReachabilityFinished 收尾。
 void KinematicAnalysisWidget::analyzePoseReachability ()
 {
-    if (_poseReachabilityRunActive) {
+    if (_poseReachabilityRunActive || _poseReachabilityWatcher == nullptr ||
+        _poseReachabilityWatcher->isRunning ()) {
         setStatus (tr("Pose reachability is already running."));
         return;
     }
@@ -7343,6 +7429,9 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     _poseReachabilityRunActive = true;
     if (_poseReachabilityCancelRequested)
         _poseReachabilityCancelRequested->store (false);
+    _poseReachabilityWatcher->setProperty (
+        "workcellSessionGeneration",
+        QVariant::fromValue< qulonglong > (_workcellSessionGeneration));
 
     // P7:重置进度条,用精确执行计数(uncapped)确保进度不会超过 100%。
     {
@@ -7371,11 +7460,13 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
     struct PoseRunContext {
         std::shared_ptr< std::atomic_bool > cancelFlag;
         QPointer< KinematicAnalysisWidget > widget;
+        quint64 sessionGeneration = 0;
     };
     const std::shared_ptr< PoseRunContext > runContext =
         std::make_shared< PoseRunContext > ();
     runContext->cancelFlag = _poseReachabilityCancelRequested;
     runContext->widget = this;
+    runContext->sessionGeneration = _workcellSessionGeneration;
 
     PoseReachabilityRunCallbacks callbacks;
     callbacks.isCancellationRequested = [] (void* userData) -> bool {
@@ -7392,10 +7483,15 @@ void KinematicAnalysisWidget::analyzePoseReachability ()
             return;
         QMetaObject::invokeMethod (
             context->widget.data (),
-            "updatePoseReachabilityProgress",
-            Qt::QueuedConnection,
-            Q_ARG (qulonglong, static_cast< qulonglong > (completedTargets)),
-            Q_ARG (qulonglong, static_cast< qulonglong > (plannedTargets)));
+            [widget = context->widget, session = context->sessionGeneration,
+             completedTargets, plannedTargets] {
+                if (widget.isNull () || widget->_workcellSessionGeneration != session)
+                    return;
+                widget->updatePoseReachabilityProgress (
+                    static_cast< qulonglong > (completedTargets),
+                    static_cast< qulonglong > (plannedTargets));
+            },
+            Qt::QueuedConnection);
     };
     callbacks.userData = runContext.get ();
 
@@ -7468,6 +7564,14 @@ void KinematicAnalysisWidget::updatePoseReachabilityProgress (
 void KinematicAnalysisWidget::handlePoseReachabilityFinished ()
 {
     QApplication::restoreOverrideCursor ();
+    const quint64 runGeneration = _poseReachabilityWatcher == nullptr ? 0 :
+        _poseReachabilityWatcher->property ("workcellSessionGeneration").toULongLong ();
+    if (runGeneration != _workcellSessionGeneration) {
+        _poseReachabilityRunActive = false;
+        updatePoseReachabilityControls ();
+        refreshWorkflowControls ();
+        return;
+    }
     _poseReachabilityRunActive = false;
     if (_poseAnalyzeButton != NULL)
         _poseAnalyzeButton->setEnabled (true);

@@ -5849,6 +5849,7 @@ static int testWorkflowUiStates ()
             "no Device disables validation commands"))
         return rc;
     widget.setWorkCell (workcell.get ());
+    taskModel->setRowsFromTaskPoints ({untouchedTask});
     tcpCombo->setCurrentIndex (-1);
     QMetaObject::invokeMethod (&widget, "refreshWorkflowControls", Qt::DirectConnection);
     if (const int rc = require (
@@ -6148,6 +6149,30 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             exploreRun->isEnabled (),
             "changing exploration settings re-arms the Run command"))
+        return rc;
+
+    taskModel->setRowsFromTaskPoints ({untouchedTask});
+    taskModel->setResultForRow (0, untouchedResult);
+    taskTable->selectRow (0);
+    QCoreApplication::processEvents ();
+    if (const int rc = require (widget.buildReportForExport ().taskResults.size () == 1,
+                                "a task result is present before closing its project session"))
+        return rc;
+    QTableWidget* taskPointDetail = widget.findChild< QTableWidget* > (
+        QStringLiteral ("taskPointDetailTable"));
+    widget.setWorkCell (nullptr);
+    if (const int rc = require (
+            taskModel->rowCount () == 0 && taskModel->results ().empty () &&
+                widget.buildReportForExport ().taskResults.empty () &&
+                !selectedTaskPointPanel->isVisible () &&
+                (taskPointDetail == nullptr || taskPointDetail->rowCount () == 1),
+            "closing a WorkCell clears local task rows, results, report cache and selection details"))
+        return rc;
+    widget.setWorkCell (workcell.get ());
+    if (const int rc = require (
+            taskModel->rowCount () == 0 && taskModel->taskPoints ().empty () &&
+                !selectedTaskPointPanel->isVisible (),
+            "a newly attached WorkCell starts without the previous project's task points"))
         return rc;
 
     // 在取消进行中卸载 WorkCell:所有命令(Diagnose/Validate/Explore)必须安全禁用,

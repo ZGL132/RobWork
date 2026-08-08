@@ -460,6 +460,7 @@ class KinematicAnalysisWidget : public QWidget
     std::shared_ptr< std::atomic_bool > _exploreCancelToken;
     std::size_t _exploreCompletedSamples;
     std::size_t _explorePlannedSamples;
+    quint64 _workcellSessionGeneration;
     QWidget* _currentPoseTab;           // Tab 0:当前位姿
     QWidget* _ikTab;                    // Tab 1:IK 求解
     QWidget* _taskPointTab;             // Tab 2:任务点表格
