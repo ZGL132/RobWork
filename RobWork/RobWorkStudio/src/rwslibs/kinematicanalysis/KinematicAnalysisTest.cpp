@@ -3631,6 +3631,10 @@ static int testTaskPointModel ()
     if (const int rc = require (model.data (id0, Qt::DisplayRole).toString () == QStringLiteral ("P1"),
                                 "default id P1"))
         return rc;
+    if (const int rc = require (model.data (e0, Qt::DisplayRole).toString ().isEmpty () &&
+                                    model.data (e0, Qt::CheckStateRole).toInt () == int (Qt::Checked),
+                                "enabled column renders a checkbox without true/false text"))
+        return rc;
     if (const int rc = require (x0.data (Qt::DisplayRole).toString () == QStringLiteral ("0"),
                                 "default x = 0"))
         return rc;
@@ -5488,6 +5492,10 @@ static int testWorkflowUiStates ()
         QStringLiteral ("validateTaskResultTable"));
     QTableWidget* frozenRegions = widget.findChild< QTableWidget* > (
         QStringLiteral ("validateRegionCellTable"));
+    QTableWidget* demandRegions = widget.findChild< QTableWidget* > (
+        QStringLiteral ("validateRegionSummaryTable"));
+    QWidget* selectedTaskPointPanel = widget.findChild< QWidget* > (
+        QStringLiteral ("selectedTaskPointPanel"));
     QLabel* taskSummary = widget.findChild< QLabel* > (
         QStringLiteral ("taskPointSummaryLabel"));
     QTableWidget* taskMore = widget.findChild< QTableWidget* > (
@@ -5495,6 +5503,7 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             mode2Source != nullptr && mode2Source->count () == 2 &&
                 localTasksPage != nullptr && frozenTasks != nullptr && frozenRegions != nullptr &&
+                demandRegions != nullptr && selectedTaskPointPanel != nullptr &&
                 taskSummary != nullptr && taskMore != nullptr &&
                 frozenTasks->editTriggers () == QAbstractItemView::NoEditTriggers &&
                 frozenRegions->editTriggers () == QAbstractItemView::NoEditTriggers,
@@ -5503,9 +5512,17 @@ static int testWorkflowUiStates ()
     modeTabs->setCurrentIndex (1);
     QCoreApplication::processEvents ();
     mode2Source->setCurrentIndex (0);
+    QWidget* validatePage = modeStack->widget (1);
+    if (const int rc = require (validatePage != nullptr &&
+                                    demandRegions->geometry ().left () >= 0 &&
+                                    demandRegions->geometry ().right () < validatePage->width () &&
+                                    demandRegions->width () >= 24,
+                                "Validate task and demand-region lists fit the narrow dock width"))
+        return rc;
     if (const int rc = require (localTasksPage->isVisible () && !frozenTasks->isVisible () &&
-                                    !frozenRegions->isVisible (),
-                                "Local Tasks source shows editable task data only"))
+                                    !frozenRegions->isVisible () && demandRegions->isVisible () &&
+                                    !selectedTaskPointPanel->isVisible (),
+                                "Local Tasks source shows the task and demand-region lists with compact selection state"))
         return rc;
 
     QPushButton* mode2Load = widget.findChild< QPushButton* > (
@@ -5526,6 +5543,13 @@ static int testWorkflowUiStates ()
                 localTaskTable->model ()->columnCount () == 27 && mode2Add->isEnabled () &&
                 !mode2Remove->isEnabled () && localTaskTable->isEnabled (),
             "Local Tasks exposes the compact text toolbar and remains the editable 27-column source"))
+        return rc;
+    if (const int rc = require (
+            demandRegions->columnCount () == 6 &&
+                demandRegions->horizontalHeaderItem (1)->text ().contains (QStringLiteral ("Level")) &&
+                demandRegions->horizontalHeaderItem (2)->text ().contains (QStringLiteral ("Position")) &&
+                demandRegions->horizontalHeaderItem (3)->text ().contains (QStringLiteral ("Orientation")),
+            "Demand Regions lists level and position/orientation coverage"))
         return rc;
     mode2Source->setCurrentIndex (1);
     if (const int rc = require (!localTasksPage->isVisible () && frozenTasks->isVisible () &&
@@ -5704,6 +5728,15 @@ static int testWorkflowUiStates ()
     taskTable->setCurrentIndex (taskModel->index (reorderedLocalTaskRow, 0));
     taskTable->selectRow (reorderedLocalTaskRow);
     QCoreApplication::processEvents ();
+    QPushButton* applyBestQ = widget.findChild< QPushButton* > (
+        QStringLiteral ("applySelectedTaskPointBestQButton"));
+    QPushButton* openTaskInIk = widget.findChild< QPushButton* > (
+        QStringLiteral ("openSelectedTaskPointInIkButton"));
+    if (const int rc = require (applyBestQ != nullptr && openTaskInIk != nullptr &&
+                                    selectedTaskPointPanel->isVisible () &&
+                                    !applyBestQ->isEnabled () && openTaskInIk->isEnabled (),
+                                "selecting a task expands its details and enables the IK action"))
+        return rc;
     modeTabs->setCurrentIndex (1);
     mode2Source->setCurrentIndex (0);
     mode2ValidateSelected->click ();

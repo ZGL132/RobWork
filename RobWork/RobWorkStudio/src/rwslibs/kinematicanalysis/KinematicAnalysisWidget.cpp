@@ -257,6 +257,8 @@ QTableWidgetItem* makeItem (const QString& text);
 QTableWidgetItem* makeItem (double v);
 const char* statusText (rws::AnalysisStatus status);
 QString qVectorText (const std::vector< double >& q);
+QString targetResidualText (const rws::TargetEvaluation& result);
+QString targetPoseCoverageText (const rws::TargetEvaluation& result);
 QString failureReasonsText (const std::vector< rws::KinematicFailureReason >& reasons);
 QString ikFailureText (const rws::KinematicIkSolution& solution);
 bool isCurrentIkSolution (const rws::KinematicIkSolution& solution);
@@ -303,6 +305,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateDiagnosticsToggle(NULL),
     _validateDiagnosticsContent(NULL),
     _validateProvenanceLabel(NULL),
+    _validateTaskSectionTitle(NULL),
+    _validateRegionSectionTitle(NULL),
     _validateOrientationProbeLabel(NULL),
     _exploreRunButton(NULL),
     _exploreCancelButton(NULL),
@@ -387,6 +391,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _applySelectedTaskPointBestQButton(NULL),
     _openSelectedTaskPointInIkButton(NULL),
     _taskPointSummaryLabel(NULL),
+    _taskPointSelectedPanel(NULL),
     _workspaceSampleCountSpin(NULL),
     _workspaceGridStepsSpin(NULL),
     _workspaceSeedSpin(NULL),
@@ -1063,27 +1068,40 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateRequirementStateLabel->setWordWrap (true);
     validateLayout->addWidget (_validateRequirementStateLabel);
 
+    _validateTaskSectionTitle = new QLabel (tr ("Key station tasks"), _validateWorkflowPage);
+    _validateTaskSectionTitle->setObjectName (QStringLiteral ("validateTaskSectionTitle"));
+    _validateTaskSectionTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    validateLayout->addWidget (_validateTaskSectionTitle);
     _validateTaskResultTable = new QTableWidget (_validateWorkflowPage);
     _validateTaskResultTable->setObjectName (QStringLiteral ("validateTaskResultTable"));
     _validateTaskResultTable->setColumnCount (6);
     _validateTaskResultTable->setHorizontalHeaderLabels (
-        QStringList () << tr("ID") << tr("Name") << tr("Feasibility") << tr("Quality")
-                       << tr("EvidenceStage") << tr("Level"));
+        QStringList () << tr("ID") << tr("Name / residual") << tr("Feasibility")
+                       << tr("Quality / pose coverage") << tr("EvidenceStage") << tr("Level"));
     _validateTaskResultTable->horizontalHeader ()->setStretchLastSection (true);
+    _validateTaskResultTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
+    _validateTaskResultTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    _validateTaskResultTable->setWordWrap (true);
     _validateTaskResultTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     _validateTaskResultTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     validateLayout->addWidget (_validateTaskResultTable);
 
+    _validateRegionSectionTitle = new QLabel (tr ("Demand regions"), _validateWorkflowPage);
+    _validateRegionSectionTitle->setObjectName (QStringLiteral ("validateRegionSectionTitle"));
+    _validateRegionSectionTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
+    validateLayout->addWidget (_validateRegionSectionTitle);
     _validateRegionSummaryTable = new QTableWidget (_validateWorkflowPage);
     _validateRegionSummaryTable->setObjectName (QStringLiteral ("validateRegionSummaryTable"));
     _validateRegionSummaryTable->setColumnCount (6);
     _validateRegionSummaryTable->setHorizontalHeaderLabels (
-        QStringList () << tr ("ID") << tr ("Name") << tr ("Probes") <<
-            tr ("Feasibility") << tr ("Quality") << tr ("EvidenceStage"));
+        QStringList () << tr ("ID") << tr ("Level") << tr ("Position coverage") <<
+            tr ("Orientation coverage") << tr ("Feasibility") << tr ("Quality"));
     _validateRegionSummaryTable->setEditTriggers (QAbstractItemView::NoEditTriggers);
     _validateRegionSummaryTable->setSelectionBehavior (QAbstractItemView::SelectRows);
     _validateRegionSummaryTable->setSelectionMode (QAbstractItemView::SingleSelection);
     _validateRegionSummaryTable->horizontalHeader ()->setStretchLastSection (true);
+    _validateRegionSummaryTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    _validateRegionSummaryTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
     _validateRegionSummaryTable->setMaximumHeight (150);
     validateLayout->addWidget (_validateRegionSummaryTable);
 
@@ -1120,7 +1138,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     frozenDiagnosticsLayout->addWidget (_validateRegionCellTable);
     validateLayout->addWidget (_validateDiagnosticsContent);
     _taskPointTab->setParent (_validateWorkflowPage);
-    validateLayout->addWidget (_taskPointTab);
+    validateLayout->addWidget (_taskPointTab, 4);
+    validateLayout->removeWidget (_taskPointTab);
+    validateLayout->insertWidget (4, _taskPointTab, 4);
 
     QVBoxLayout* exploreLayout = new QVBoxLayout (_exploreWorkflowPage);
     exploreLayout->setContentsMargins (0, 0, 0, 0);
@@ -1202,6 +1222,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         if (page == _diagnoseWorkflowPage) {
             scroll->setObjectName (QStringLiteral ("diagnoseScroll"));
             _diagnoseScroll = scroll;
+        }
+        if (page == _validateWorkflowPage) {
+            scroll->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+            page->setMinimumWidth (0);
+            page->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
         }
         if (page == _exploreWorkflowPage)
             _exploreScroll = scroll;
@@ -1609,8 +1634,8 @@ void KinematicAnalysisWidget::updateMode2DataSource (int index)
     }
     const QList< QWidget* > frozenControls = {
         _validateRequirementStateLabel,
+        _validateTaskSectionTitle,
         _validateTaskResultTable,
-        _validateRegionSummaryTable,
         _validateOrientationProbeLabel,
         _validateDiagnosticsToggle};
     for (QWidget* control : frozenControls) {
@@ -1621,6 +1646,10 @@ void KinematicAnalysisWidget::updateMode2DataSource (int index)
         _validateDiagnosticsContent->setVisible (
             !localTasks && _validateDiagnosticsToggle != nullptr &&
             _validateDiagnosticsToggle->isChecked ());
+    if (_validateRegionSectionTitle != nullptr)
+        _validateRegionSectionTitle->setVisible (true);
+    if (_validateRegionSummaryTable != nullptr)
+        _validateRegionSummaryTable->setVisible (true);
     refreshWorkflowControls ();
 }
 
@@ -1976,9 +2005,9 @@ void KinematicAnalysisWidget::populateFrozenRequirementSources ()
             idItem->setData (Qt::UserRole, idItem->text ());
             _validateTaskResultTable->setItem (row, 0, idItem);
             _validateTaskResultTable->setItem (row, 1, makeItem (
-                QString::fromStdString (task.name)));
+                QString::fromStdString (task.name) + QStringLiteral ("\n-")));
             _validateTaskResultTable->setItem (row, 2, makeItem (tr ("Not evaluated")));
-            _validateTaskResultTable->setItem (row, 3, makeItem (QStringLiteral ("-")));
+            _validateTaskResultTable->setItem (row, 3, makeItem (QStringLiteral ("-\n-")));
             _validateTaskResultTable->setItem (row, 4, makeItem (tr ("Unvalidated")));
             _validateTaskResultTable->setItem (row, 5, makeItem (
                 task.level == RequirementExecutionLevel::Must ? "Must" :
@@ -1996,13 +2025,15 @@ void KinematicAnalysisWidget::populateFrozenRequirementSources ()
             idItem->setData (Qt::UserRole, idItem->text ());
             _validateRegionSummaryTable->setItem (row, 0, idItem);
             _validateRegionSummaryTable->setItem (row, 1, makeItem (
-                QString::fromStdString (region.name)));
-            _validateRegionSummaryTable->setItem (row, 2, makeItem (
-                tr ("D%1 / R%2").arg (region.directionSamples).arg (region.rollSamples)));
-            _validateRegionSummaryTable->setItem (row, 3, makeItem (tr ("Not evaluated")));
-            _validateRegionSummaryTable->setItem (row, 4, makeItem (QStringLiteral ("-")));
-            _validateRegionSummaryTable->setItem (row, 5, makeItem (tr ("Unvalidated")));
+                region.level == RequirementExecutionLevel::Must ? QStringLiteral ("Must") :
+                region.level == RequirementExecutionLevel::Should ? QStringLiteral ("Should") :
+                    QStringLiteral ("Info")));
+            _validateRegionSummaryTable->setItem (row, 2, makeItem (QStringLiteral ("-")));
+            _validateRegionSummaryTable->setItem (row, 3, makeItem (QStringLiteral ("-")));
+            _validateRegionSummaryTable->setItem (row, 4, makeItem (tr ("Not evaluated")));
+            _validateRegionSummaryTable->setItem (row, 5, makeItem (QStringLiteral ("-")));
         }
+        _validateRegionSummaryTable->resizeRowsToContents ();
     }
 }
 
@@ -2072,17 +2103,18 @@ void KinematicAnalysisWidget::validateRequirements ()
             idItem->setData (Qt::UserRole, idItem->text ());
             _validateRegionSummaryTable->setItem (row, 0, idItem);
             _validateRegionSummaryTable->setItem (row, 1, makeItem (
-                QString::fromStdString (requirement != nullptr ? requirement->name : result.regionId)));
-            _validateRegionSummaryTable->setItem (row, 2, makeItem (
                 requirement == nullptr ? QString () :
-                    tr ("D%1 / R%2").arg (requirement->directionSamples)
-                                         .arg (requirement->rollSamples)));
+                    requirement->level == RequirementExecutionLevel::Must ? QStringLiteral ("Must") :
+                    requirement->level == RequirementExecutionLevel::Should ? QStringLiteral ("Should") :
+                        QStringLiteral ("Info")));
+            _validateRegionSummaryTable->setItem (row, 2, makeItem (
+                QString::number (100.0 * result.positionCoverage, 'f', 1) + QStringLiteral ("%")));
             _validateRegionSummaryTable->setItem (row, 3, makeItem (
-                QString::fromLatin1 (rws::toString (result.feasibility))));
+                QString::number (100.0 * result.orientationCoverage, 'f', 1) + QStringLiteral ("%")));
             _validateRegionSummaryTable->setItem (row, 4, makeItem (
-                QString::fromLatin1 (rws::toString (result.quality))));
+                QString::fromLatin1 (rws::toString (result.feasibility))));
             _validateRegionSummaryTable->setItem (row, 5, makeItem (
-                QString::fromLatin1 (rws::toString (result.stage))));
+                QString::fromLatin1 (rws::toString (result.quality))));
         }
     }
     if (_validateOrientationProbeLabel != nullptr) {
@@ -2109,11 +2141,13 @@ void KinematicAnalysisWidget::validateRequirements ()
             idItem->setData (Qt::UserRole, idItem->text ());
             _validateTaskResultTable->setItem (row, 0, idItem);
             _validateTaskResultTable->setItem (row, 1, makeItem (
-                QString::fromStdString (requirement != nullptr ? requirement->name : result.target.name)));
+                QString::fromStdString (requirement != nullptr ? requirement->name : result.target.name) +
+                QStringLiteral ("\n") + targetResidualText (result)));
             _validateTaskResultTable->setItem (row, 2, makeItem (
                 QString::fromLatin1 (rws::toString (result.feasibility))));
             _validateTaskResultTable->setItem (row, 3, makeItem (
-                QString::fromLatin1 (rws::toString (result.quality))));
+                QString::fromLatin1 (rws::toString (result.quality)) +
+                QStringLiteral ("\n") + targetPoseCoverageText (result)));
             _validateTaskResultTable->setItem (row, 4, makeItem (
                 QString::fromLatin1 (rws::toString (result.stage))));
             _validateTaskResultTable->setItem (row, 5, makeItem (
@@ -2121,6 +2155,7 @@ void KinematicAnalysisWidget::validateRequirements ()
                     requirement->level == RequirementExecutionLevel::Must ? "Must" :
                     requirement->level == RequirementExecutionLevel::Should ? "Should" : "Info")));
         }
+        _validateTaskResultTable->resizeRowsToContents ();
     }
     if (_validateRegionCellTable != nullptr) {
         _validateRegionCellTable->setRowCount (0);
@@ -2252,16 +2287,19 @@ void KinematicAnalysisWidget::validateSelectedMode2Source ()
                 idItem->setData (Qt::UserRole, selectedTaskId);
                 _validateTaskResultTable->setItem (0, 0, idItem);
                 _validateTaskResultTable->setItem (0, 1, makeItem (
-                    QString::fromStdString (found->name)));
+                    QString::fromStdString (found->name) + QStringLiteral ("\n") +
+                    targetResidualText (result)));
                 _validateTaskResultTable->setItem (0, 2, makeItem (
                     QString::fromLatin1 (rws::toString (result.feasibility))));
                 _validateTaskResultTable->setItem (0, 3, makeItem (
-                    QString::fromLatin1 (rws::toString (result.quality))));
+                    QString::fromLatin1 (rws::toString (result.quality)) + QStringLiteral ("\n") +
+                    targetPoseCoverageText (result)));
                 _validateTaskResultTable->setItem (0, 4, makeItem (
                     QString::fromLatin1 (rws::toString (result.stage))));
                 _validateTaskResultTable->setItem (0, 5, makeItem (
                     found->level == RequirementExecutionLevel::Must ? "Must" :
                     found->level == RequirementExecutionLevel::Should ? "Should" : "Info"));
+                _validateTaskResultTable->resizeRowsToContents ();
             }
         }
         if (_validateRegionCellTable != nullptr)
@@ -2301,15 +2339,18 @@ void KinematicAnalysisWidget::validateSelectedMode2Source ()
             idItem->setData (Qt::UserRole, selectedRegionId);
             _validateRegionSummaryTable->setItem (0, 0, idItem);
             _validateRegionSummaryTable->setItem (0, 1, makeItem (
-                QString::fromStdString (found->name)));
+                found->level == RequirementExecutionLevel::Must ? QStringLiteral ("Must") :
+                found->level == RequirementExecutionLevel::Should ? QStringLiteral ("Should") :
+                    QStringLiteral ("Info")));
             _validateRegionSummaryTable->setItem (0, 2, makeItem (
-                tr ("D%1 / R%2").arg (found->directionSamples).arg (found->rollSamples)));
+                QString::number (100.0 * result.positionCoverage, 'f', 1) + QStringLiteral ("%")));
             _validateRegionSummaryTable->setItem (0, 3, makeItem (
-                QString::fromLatin1 (rws::toString (result.feasibility))));
+                QString::number (100.0 * result.orientationCoverage, 'f', 1) + QStringLiteral ("%")));
             _validateRegionSummaryTable->setItem (0, 4, makeItem (
-                QString::fromLatin1 (rws::toString (result.quality))));
+                QString::fromLatin1 (rws::toString (result.feasibility))));
             _validateRegionSummaryTable->setItem (0, 5, makeItem (
-                QString::fromLatin1 (rws::toString (result.stage))));
+                QString::fromLatin1 (rws::toString (result.quality))));
+            _validateRegionSummaryTable->resizeRowsToContents ();
         }
         if (_validateRegionCellTable != nullptr) {
             _validateRegionCellTable->setRowCount (0);
@@ -2912,6 +2953,29 @@ QTableWidgetItem* makeItem (const QString& text)
 QTableWidgetItem* makeItem (double v)
 {
     return makeItem (QString::number (v));
+}
+
+QString targetResidualText (const TargetEvaluation& result)
+{
+    if (result.candidates.empty ())
+        return QStringLiteral ("-");
+    const TargetCandidate& best = result.candidates.front ();
+    return QStringLiteral ("%1 mm / %2 deg")
+        .arg (QString::number (best.positionErrorMeters * 1000.0, 'f', 2))
+        .arg (QString::number (best.orientationErrorDeg, 'f', 2));
+}
+
+QString targetPoseCoverageText (const TargetEvaluation& result)
+{
+    if (result.candidates.empty ())
+        return QStringLiteral ("-");
+    int usable = 0;
+    for (const TargetCandidate& candidate : result.candidates) {
+        if (candidate.configuration.feasibility == Feasibility::Feasible)
+            ++usable;
+    }
+    return QStringLiteral ("%1/%2 poses")
+        .arg (usable).arg (static_cast<int> (result.candidates.size ()));
 }
 
 // statusText:AnalysisStatus → 可读字符串,与 toString(KinematicFailureReason) 配套。
@@ -3813,7 +3877,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     QVBoxLayout* tpLayout = new QVBoxLayout(_taskPointTab);
 
     QHBoxLayout* summaryRow = new QHBoxLayout();
-    QLabel* summaryTitle = new QLabel (tr("Task points"), _taskPointTab);
+    QLabel* summaryTitle = new QLabel (tr("Key station tasks"), _taskPointTab);
     summaryTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
     summaryRow->addWidget (summaryTitle);
     _taskPointSummaryLabel = new QLabel (_taskPointTab);
@@ -3883,6 +3947,12 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     _analyzeSelectedTaskPointsButton = new QPushButton (tr("Analyze selected"), _taskPointTab);
     _applySelectedTaskPointBestQButton = new QPushButton (tr("Apply best Q"), _taskPointTab);
     _openSelectedTaskPointInIkButton  = new QPushButton (tr("Open in IK tab"), _taskPointTab);
+    _analyzeSelectedTaskPointsButton->setObjectName (
+        QStringLiteral ("analyzeSelectedTaskPointsButton"));
+    _applySelectedTaskPointBestQButton->setObjectName (
+        QStringLiteral ("applySelectedTaskPointBestQButton"));
+    _openSelectedTaskPointInIkButton->setObjectName (
+        QStringLiteral ("openSelectedTaskPointInIkButton"));
     _analyzeSelectedTaskPointsButton->setEnabled (false);
     _applySelectedTaskPointBestQButton->setEnabled (false);
     _openSelectedTaskPointInIkButton->setEnabled (false);
@@ -3911,6 +3981,10 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     installTaskPointDelegates ();
     tpLayout->addWidget (_taskPointTable, 4);
 
+    _taskPointSelectedPanel = new QWidget (_taskPointTab);
+    _taskPointSelectedPanel->setObjectName (QStringLiteral ("selectedTaskPointPanel"));
+    QVBoxLayout* selectedPanelLayout = new QVBoxLayout (_taskPointSelectedPanel);
+    selectedPanelLayout->setContentsMargins (0, 0, 0, 0);
     QHBoxLayout* selectedTitleRow = new QHBoxLayout();
     QLabel* selectedTitle = new QLabel (tr ("Selected point"), _taskPointTab);
     selectedTitle->setStyleSheet (QStringLiteral ("font-weight: bold;"));
@@ -3919,7 +3993,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     selectedTitleRow->addWidget (_analyzeSelectedTaskPointsButton);
     selectedTitleRow->addWidget (_applySelectedTaskPointBestQButton);
     selectedTitleRow->addWidget (_openSelectedTaskPointInIkButton);
-    tpLayout->addLayout (selectedTitleRow);
+    selectedPanelLayout->addLayout (selectedTitleRow);
 
     auto makeTaskPoseSpin = [this] (const QString& objectName, double minimum,
                                     double maximum, double step) -> QDoubleSpinBox* {
@@ -3951,7 +4025,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     poseGrid->addWidget (taskPitch, 1, 4);
     poseGrid->addWidget (new QLabel (tr ("Yaw"), _taskPointTab), 1, 5);
     poseGrid->addWidget (taskYaw, 1, 6);
-    tpLayout->addLayout (poseGrid);
+    selectedPanelLayout->addLayout (poseGrid);
 
     auto bindTaskPoseSpin = [this] (QDoubleSpinBox* spin, int column) {
         connect (spin,
@@ -3993,7 +4067,7 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     taskPointDetailTable->setVerticalScrollBarPolicy (Qt::ScrollBarAsNeeded);
     taskPointDetailTable->setMinimumHeight (110);
     taskPointDetailTable->setMaximumHeight (170);
-    tpLayout->addWidget (taskPointDetailTable, 1);
+    selectedPanelLayout->addWidget (taskPointDetailTable, 1);
 
     QToolButton* moreToggle = new QToolButton (_taskPointTab);
     moreToggle->setText (tr ("More..."));
@@ -4018,8 +4092,9 @@ void KinematicAnalysisWidget::buildTaskPointTab ()
     taskPointMoreTable->setMinimumHeight (160);
     taskPointMoreTable->setMaximumHeight (240);
     moreLayout->addWidget (taskPointMoreTable);
-    tpLayout->addWidget (moreToggle);
-    tpLayout->addWidget (moreContent);
+    selectedPanelLayout->addWidget (moreToggle);
+    selectedPanelLayout->addWidget (moreContent);
+    tpLayout->addWidget (_taskPointSelectedPanel);
     connect (moreToggle, &QToolButton::toggled, this,
              [moreToggle, moreContent] (bool expanded) {
                  moreToggle->setArrowType (expanded ? Qt::DownArrow : Qt::RightArrow);
@@ -5378,7 +5453,7 @@ void KinematicAnalysisWidget::setTaskPointTableColumnWidths ()
         _taskPointTable->setColumnHidden (column, !visible);
     }
     _taskPointTable->resizeColumnsToContents ();
-    _taskPointTable->setColumnWidth (ColEnabled, 70);
+    _taskPointTable->setColumnWidth (ColEnabled, 28);
     _taskPointTable->horizontalHeader ()->setSectionResizeMode (ColName, QHeaderView::Stretch);
     _taskPointTable->setColumnWidth (ColRefFrame, 150);
     _taskPointTable->setColumnWidth (ColTcpFrame, 150);
@@ -6263,6 +6338,8 @@ void KinematicAnalysisWidget::updateTaskPointDetails ()
         }
     };
     auto showEmpty = [&] (const QString& message) {
+        if (_taskPointSelectedPanel != nullptr)
+            _taskPointSelectedPanel->setVisible (false);
         detailTable->setRowCount (1);
         setDetailRow (detailTable, 0, tr ("Selection"), message);
         moreTable->setRowCount (0);
@@ -6286,6 +6363,9 @@ void KinematicAnalysisWidget::updateTaskPointDetails ()
         showEmpty (tr ("Selected task point is unavailable."));
         return;
     }
+
+    if (_taskPointSelectedPanel != nullptr)
+        _taskPointSelectedPanel->setVisible (true);
 
     const std::array< int, 6 > poseColumns = {{
         ColX, ColY, ColZ, ColRoll, ColPitch, ColYaw}};

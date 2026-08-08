@@ -373,7 +373,7 @@ QVariant TaskPointTableModel::data (const QModelIndex& index, int role) const
         if (role == Qt::CheckStateRole)
             return r.point.enabled ? Qt::Checked : Qt::Unchecked;
         if (role == Qt::EditRole || role == Qt::DisplayRole)
-            return r.point.enabled ? QStringLiteral ("true") : QStringLiteral ("false");
+            return QString ();
     }
 
     // Result columns are read-only and support status background/tooltips.

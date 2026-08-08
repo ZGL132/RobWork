@@ -429,6 +429,8 @@ class KinematicAnalysisWidget : public QWidget
     QWidget* _validateDiagnosticsContent;
     // _validateProvenanceLabel:冻结工件溯源信息(需求 / 模型 / 环境指纹)。
     QLabel* _validateProvenanceLabel;
+    QLabel* _validateTaskSectionTitle;
+    QLabel* _validateRegionSectionTitle;
     // _validateOrientationProbeLabel:选中区域的方向采样数提示(Directions / Rolls)。
     QLabel* _validateOrientationProbeLabel;
     // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
@@ -537,6 +539,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _applySelectedTaskPointBestQButton;   // 把选中任务点的 best Q 写回 state
     QPushButton* _openSelectedTaskPointInIkButton;        // 跳到 IK tab 并填入位姿
     QLabel* _taskPointSummaryLabel;                     // 任务点聚合状态行
+    QWidget* _taskPointSelectedPanel;
 
     // ===================================================================
     //  Workspace tab 控件
