@@ -50,8 +50,7 @@ class QScrollArea;
 class QTableView;
 class QTableWidget;
 class QToolButton;
-class QTabBar;
-class QStackedWidget;
+class QTabWidget;
 class QString;
 
 namespace rws {
@@ -107,8 +106,7 @@ struct WorkspaceEnvelopeCacheKey
 //
 // 这是 RobWorkStudio 插件"KinematicAnalysis"对应的 QWidget 主控件。
 // 设计:与 KinematicAnalyzer(纯算法)解耦,本类只负责:
-//   - 构建 5 个 tab(Current Pose / IK / Task Points / Workspace / Pose Reachability
-//     / Visualization / Report);
+//   - 构建 Diagnose / Validate / Explore 三个工作流页;
 //   - 收集 UI 配置 → 调用分析器;
 //   - 把分析器结果写回 UI 控件;
 //   - 异步执行(Workspace / Pose Reachability)时管理 worker 生命周期与取消;
@@ -124,7 +122,7 @@ class KinematicAnalysisWidget : public QWidget
     Q_OBJECT
 
   public:
-    // 构造器:在 buildTabs() 之前完成所有 connect 准备。
+    // 构造器:创建三页工作流及其信号连接。
     explicit KinematicAnalysisWidget (QWidget* parent = NULL);
 
     // 析构器:等待后台 worker 结束,恢复鼠标光标,避免卡死 UI。
@@ -159,11 +157,6 @@ class KinematicAnalysisWidget : public QWidget
     KinematicAnalysisReport buildReportForExport () const;
 
   private Q_SLOTS:
-    // ===================================================================
-    //  Current Pose tab
-    // ===================================================================
-    // 重新读 State 并填充 "current pose" tab 的表格。
-    void refreshCurrentPose ();
     // 按"WorkCell → 设备 → TCP 帧"前置条件链统一刷新工作流按钮可用性。
     void refreshWorkflowControls ();
     // 切换校验数据源(Local Tasks ↔ Frozen Requirements)时显隐对应控件。
@@ -175,25 +168,38 @@ class KinematicAnalysisWidget : public QWidget
     void validateSelectedMode2Source ();
     // 加载冻结工件后,把任务与区域先以"未校验"占位行刷进结果表。
     void populateFrozenRequirementSources ();
+    void refreshValidationSummary ();
+    void updateValidationInspector ();
+    void setValidationInspectorEmpty ();
+    void selectPreferredValidationResult ();
+    void selectValidationResult (bool region, const QString& stableId);
     void startCapabilityExploration ();
     void cancelCapabilityExploration ();
     void updateCapabilityExplorationProgress (qulonglong completedSamples,
                                               qulonglong plannedSamples);
     void handleCapabilityExplorationFinished ();
 
-    // ===================================================================
-    //  IK tab
-    // ===================================================================
-    // 用当前 _targetX/Y/Z + rpy/spin 输入,调 analyzeIk 并把解集刷到 IK tab。
+    // ---- Diagnose 候选解工作流(候选检查器)----
+    // 这是 Diagnose 页“候选解检查器”的核心交互闭环:用户编辑 IK 目标位姿后点击
+    // Solve 得到一组候选解;候选表按筛选器展示,选中某条候选时联动刷新下方的
+    // Solution inspector / Health summary / 关节表 / 雅可比汇总;双击候选行或点击
+    // Apply selected Q 即可把该解的关节值写回 RobWorkStudio state。
+    // Diagnose candidate workflow.
     void solveIk ();
-    // 用当前选中行刷 IK tab 下半部分的"details"表格。
+    // Refresh the inspector from the selected stable candidate index.
     void refreshIkSolutionView ();
-    // 选中解改变时更新 details 区域。
+    // Update candidate-owned health, joint and Jacobian diagnostics.
     void updateIkSolutionDetails ();
     // 把当前选中解的 Q 通过 setQ + setState 写回 RobWorkStudio。
+    // 该槽在点击“Apply selected Q”按钮或双击候选表行时触发;写入前会校验结果
+    // 未过期、选中解索引有效、候选解可安全应用(非 Fail / 无碰撞)且 Q 维度匹配,
+    // 任一校验不过都只提示错误而不写回,防止把陈旧或不安全位姿推入当前 state。
     void applySelectedIkSolution ();
-    // 把当前 currentPose 拷到 IK tab 的输入框。
-    void importCurrentPoseToIk ();
+    // Refresh the current TCP snapshot and synchronize it to the IK target.
+    // 点击“Refresh and Sync TCP”:先用 analyzeCurrentPose 刷新当前位姿快照,再把
+    // base→TCP 变换的平移 / RPY 按当前单位回填到 6 个 IK 目标输入框,并标记旧结果
+    // 过期;这样用户可直接在“当前位姿”基础上微调后重新 Solve。
+    void refreshAndSyncTcp ();
     // 切换长度/角度单位时刷新所有 SpinBox 文本。
     void updateUnitDisplay ();
 
@@ -211,7 +217,7 @@ class KinematicAnalysisWidget : public QWidget
     void importCurrentTcpAsTaskPoint ();
     // 把当前选中任务点的 best Q 写回 RobWorkStudio。
     void applySelectedTaskPointBestQ ();
-    // 把选中任务点跳到 IK tab 并填入其位姿。
+    // 把选中任务点打开到 Diagnose 并填入其位姿。
     void openSelectedTaskPointInIk ();
     // 选中行变化时更新 Apply/Open 按钮的可用状态。
     void updateTaskPointSelectionButtons ();
@@ -334,8 +340,9 @@ class KinematicAnalysisWidget : public QWidget
                                  VisualProjection projection);
     // 清空 _visualData 并用空数据刷新 plot(WorkCell 卸载时调用)。
     void clearVisualizationData ();
-    void clearCurrentPosePresentation ();
     void clearAnalysisSessionState (bool detachWorkCell);
+    // Refreshes the report snapshot only. Candidate diagnostics never read this state.
+    bool refreshCurrentPoseSnapshot (QString* error = nullptr);
 
     // ===================================================================
     //  状态/单位换算 helper
@@ -373,7 +380,7 @@ class KinematicAnalysisWidget : public QWidget
     double ikRollInputDeg () const;
     double ikPitchInputDeg () const;
     double ikYawInputDeg () const;
-    // 把 IK tab 输入框值写回 SpinBox(m / 度)。
+    // 把 Diagnose 目标值写回 SpinBox(m / 度)。
     void setIkPoseMetersDeg (const std::array< double, 3 >& positionMeters,
                               const std::array< double, 3 >& rpyDeg);
     bool loadFrozenRequirementDocument (const QByteArray& json,
@@ -390,8 +397,7 @@ class KinematicAnalysisWidget : public QWidget
     // ===================================================================
     //  Three-mode workflow shell
     // ===================================================================
-    QTabBar* _modeTabs;
-    QStackedWidget* _modeStack;
+    QTabWidget* _workflowTabs;
     QScrollArea* _diagnoseScroll;
     QScrollArea* _exploreScroll;
     // 三个工作流页面:Diagnose(当前位姿诊断)/ Validate Requirements(冻结需求校验)
@@ -411,17 +417,13 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _mode2ValidateSelectedButton;
     QPushButton* _mode2AddButton;
     QPushButton* _mode2RemoveButton;
-    // ---- Validate Requirements 页:加载冻结工件 → 跑 Verified 校验 → 导出报告 ----
-    // _validateLoadRequirementsButton:选择并加载冻结需求工件。
-    QPushButton* _validateLoadRequirementsButton;
-    // _validateRunButton:触发 validateRequirements 校验。
-    QPushButton* _validateRunButton;
-    // _validateExportButton:导出校验报告(JSON)。
-    QPushButton* _validateExportButton;
     // _validateRequirementStateLabel:工件加载 / 校验状态文本。
     QLabel* _validateRequirementStateLabel;
+    QLabel* _validateSummaryLabel;
+    QLabel* _validateInspectorTitleLabel;
     // _validateTaskResultTable:任务级结果(ID/Name/Feasibility/Quality/Stage/Level)。
     QTableWidget* _validateTaskResultTable;
+    QTableWidget* _validateInspectorTable;
     // _validateRegionSummaryTable:工作区域汇总(ID/Name/Directions/F/Quality/Stage)。
     QTableWidget* _validateRegionSummaryTable;
     // _validateRegionCellTable:工作区域单元级结果(逐单元覆盖评估)。
@@ -436,21 +438,18 @@ class KinematicAnalysisWidget : public QWidget
     // _validateOrientationProbeLabel:选中区域的方向采样数提示(Directions / Rolls)。
     QLabel* _validateOrientationProbeLabel;
     // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
-    // Run / Cancel + 采样参数(samples / mode / seed / grid / directions / rolls)。
+    // Run / Cancel + Workspace 采样参数。
     QPushButton* _exploreRunButton;
     QPushButton* _exploreCancelButton;
     QSpinBox* _exploreSamplesSpin;
-    QComboBox* _exploreModeCombo;
+    QComboBox* _exploreCapabilityCombo;
+    QComboBox* _workspaceSamplingStrategyCombo;
     QSpinBox* _exploreSeedSpin;
     QSpinBox* _exploreGridStepsSpin;
-    QSpinBox* _exploreDirectionSamplesSpin;
-    QSpinBox* _exploreRollSamplesSpin;
-    // 采样参数行的文字标签:随当前采样模式(随机 / 网格 / 位姿可达性)显隐。
+    // Workspace 参数行的文字标签:随采样策略(随机 / 网格)显隐。
     QLabel* _exploreSamplesLabel;
     QLabel* _exploreSeedLabel;
     QLabel* _exploreGridStepsLabel;
-    QLabel* _exploreDirectionsLabel;
-    QLabel* _exploreRollsLabel;
     // _exploreStateLabel:能力探索运行状态文本(Idle / Running / Cancellation requested)。
     QLabel* _exploreStateLabel;
     // 探索运行状态与后台执行句柄:RunActive 表示在跑,CancellationRequested 表示已请求
@@ -463,41 +462,35 @@ class KinematicAnalysisWidget : public QWidget
     std::size_t _exploreCompletedSamples;
     std::size_t _explorePlannedSamples;
     quint64 _workcellSessionGeneration;
-    QWidget* _currentPoseTab;           // Tab 0:当前位姿
-    QWidget* _ikTab;                    // Tab 1:IK 求解
     QWidget* _taskPointTab;             // Tab 2:任务点表格
     QWidget* _workspaceTab;             // Tab 3:工作空间采样
     QWidget* _poseReachTab;             // Tab 4:位姿可达性
     QWidget* _visualizationStateHost;    // Hidden state host for standalone plot dialog
     QWidget* _reportTab;                // Tab 6:报告
 
-    // ===================================================================
-    //  Current Pose tab 控件
-    // ===================================================================
     QComboBox* _deviceCombo;                          // 顶部 device 选择
     QComboBox* _tcpFrameCombo;                        // 顶部 TCP frame 选择
-    QPushButton* _refreshCurrentPoseButton;           // 重新读 State
     // _thresholdSettingsButton:打开阈值设置对话框(以事务方式编辑全部分析阈值)。
     QPushButton* _thresholdSettingsButton;
     // _reportButton:报告动作下拉菜单(Refresh / Export JSON / 导出摘要 CSV / 任务结果 CSV)。
     QPushButton* _reportButton;
     QLineEdit* _status;                               // 状态消息(只读)
-    std::array< QLabel*, 6 > _currentTcpValueLabels;  // Current TCP: X/Y/Z + Roll/Pitch/Yaw
-    QLabel* _poseIndicatorLabel;                      // 总体状态
-    QLabel* _poseConditionLabel;
-    QLabel* _poseManipulabilityLabel;
-    QLabel* _poseMarginLabel;
-    QLabel* _poseCollisionCapabilityLabel;
-    QTableWidget* _jointStatusTable;                  // 各关节裕度详情
+    // ---- Diagnose 健康摘要与高级诊断 ----
+    // _ikHealth*Label:Health summary 的四个紧凑指标(Status / Condition /
+    // Manipulability / Min joint margin),由选中候选驱动刷新;
+    // _ikJointStatusTable:逐关节的 q / 裕度 / 状态表,收纳在 Advanced diagnostics 折叠区;
+    // _advancedDiagnosticsToggle / _advancedDiagnosticsContent:展开 / 收起诊断区;
+    // _ikJacobianSummaryTable:雅可比汇总(维度 / sigma / 条件数 / 状态)。
+    QLabel* _ikHealthStatusLabel;
+    QLabel* _ikHealthConditionLabel;
+    QLabel* _ikHealthManipulabilityLabel;
+    QLabel* _ikHealthMarginLabel;
+    QTableWidget* _ikJointStatusTable;
     QToolButton* _advancedDiagnosticsToggle;
     QWidget* _advancedDiagnosticsContent;
-    QTableWidget* _jacobianTable;                     // 6×n 雅可比矩阵
-    QTableWidget* _singularTable;                     // 奇异值序列
-    QLabel* _warningLabel;                            // 综合告警文字
+    QTableWidget* _ikJacobianSummaryTable;
 
-    // ===================================================================
-    //  IK tab 控件
-    // ===================================================================
+    // Diagnose controls and candidate presentation.
     QDoubleSpinBox* _ikXSpin;                          // 目标 x (m 或显示单位)
     QDoubleSpinBox* _ikYSpin;                          // 目标 y
     QDoubleSpinBox* _ikZSpin;                          // 目标 z
@@ -508,22 +501,29 @@ class KinematicAnalysisWidget : public QWidget
     QCheckBox* _ikCollisionCheck;                      // IK 解是否启用碰撞检查
     QComboBox* _lengthUnitCombo;                       // 全局长度显示单位
     QComboBox* _angleUnitCombo;                        // 全局角度显示单位
-    QPushButton* _ikImportCurrentPoseButton;           // 导入当前 TCP
+    QPushButton* _ikSyncTcpButton;
     QPushButton* _ikSolveButton;                      // 触发 solveIk
     QPushButton* _ikApplyButton;                       // 把选中解写回 state
+    // _ikInspectorTitleLabel:Solution inspector 标题,选中候选时在
+    // “Best solution #N” 与 “Selected solution #N” 之间切换。
+    QLabel* _ikInspectorTitleLabel;
     QLabel* _ikSourceLabel;                            // Task Point 跳转来源
-    QLabel* _ikStatusLabel;                            // IK 总体状态
     QLabel* _ikDisplayedLabel;                         // 当前显示的候选数量
-    QLabel* _ikUsableLabel;                            // 可应用候选数量
-    QLabel* _ikPassLabel;
-    QLabel* _ikWarningLabel;
-    QLabel* _ikFailLabel;
     QComboBox* _ikCandidateFilterCombo;                // 候选显示筛选
     QTableWidget* _ikSolutionTable;                    // 候选解列表
-    QTableWidget* _ikDetailTable;                      // 选中解详情
+    QTableWidget* _ikInspectorTable;                   // 选中解详情
     // _ikResultStale:IK 目标被修改后置 true,标记旧求解结果已过期,
     // 在用户重新 Solve 前禁止 Apply 防止写入过时位姿。
     bool _ikResultStale;
+    // _applyingSelectedIkSolution:applySelectedIkSolution 写回 state 期间置 true,
+    // 用于抑制 stateChangedListener 的副作用,避免把刚应用的解误判为目标变化而
+    // 触发 invalidateIkResultPresentation,导致应用结果立即被标记为过期。
+    bool _applyingSelectedIkSolution;
+    // _bestIkSolutionIndex:最近一次求解选出的“最优解”索引(健康摘要 / 标题显示用)。
+    // _selectedIkSolutionIndex:候选表中当前选中解的原始索引;无选中时为 -1,
+    // 刷新候选表时据此恢复过滤后的选区。
+    int _bestIkSolutionIndex;
+    int _selectedIkSolutionIndex;
 
     // ===================================================================
     //  Task Points tab 控件
@@ -540,7 +540,7 @@ class KinematicAnalysisWidget : public QWidget
     QPushButton* _analyzeSelectedTaskPointsButton;     // 选中行分析
     QPushButton* _importCurrentTcpTaskPointButton;     // 把当前 TCP 当作任务点
     QPushButton* _applySelectedTaskPointBestQButton;   // 把选中任务点的 best Q 写回 state
-    QPushButton* _openSelectedTaskPointInIkButton;        // 跳到 IK tab 并填入位姿
+    QPushButton* _openSelectedTaskPointInIkButton;     // 跳到 Diagnose 并填入位姿
     QLabel* _taskPointSummaryLabel;                     // 任务点聚合状态行
     QWidget* _taskPointSelectedPanel;
 
@@ -594,6 +594,9 @@ class KinematicAnalysisWidget : public QWidget
     std::shared_ptr< std::atomic_bool > _poseReachabilityCancelRequested;
     QToolButton* _poseTaskPointsSourceButton;
     QToolButton* _poseManualSourceButton;
+    // 当前 Pose 数据源的即时说明。Task points 模式显示 Local Tasks 中已启用的
+    // 行数，Manual 模式显示手工位置数；它只反映输入计划，不表示已完成 IK 计算。
+    QLabel* _poseTaskPointSourceSummaryLabel;
     QPushButton* _poseRemoveRowButton;
     QLabel* _posePositionCountLabel;
     QLabel* _poseReachableLabel;
@@ -689,7 +692,7 @@ class KinematicAnalysisWidget : public QWidget
 
     // _thresholds:当前生效的阈值集合(可由用户改 Report tab)。
     // _lengthUnit / _angleUnit:插件全局的显示单位(用户切换)。
-    // _lastCurrentPose:最近一次刷新的 current pose(供回写 state 时使用)。
+    // _lastCurrentPose is retained for reports and TCP synchronization only.
     // _lastIkResult:最近一次 IK 求解结果(缓存,避免重复求解)。
     // _lastTaskPointResults:任务点分析结果(供 Report / 取消重算复用)。
     // _workspaceSamples:工作空间完整结果(供 Visualization 用)。

@@ -768,13 +768,23 @@ static int testConfigurationEvaluator ()
     rws::ConfigurationEvaluationOptions options;
     const rws::ConfigurationEvaluation requiredResult = evaluator.evaluate (
         context, device->getQ (context.baseState), options);
+    const bool requiredResultHasUnavailableWarning = std::any_of (
+        requiredResult.warnings.begin (), requiredResult.warnings.end (),
+        [] (const rws::AnalysisWarning& warning) {
+            return warning.code == "KIN_COLLISION_DETECTOR_UNAVAILABLE" &&
+                   warning.severity == rws::AnalysisStatus::Fail;
+        });
     if (const int rc = require (
             requiredResult.feasibility == rws::Feasibility::DataInsufficient &&
+                requiredResult.quality == rws::Quality::Critical &&
+                !requiredResult.collisionChecked &&
+                !requiredResult.inCollision &&
                 std::find (requiredResult.failureReasons.begin (),
                            requiredResult.failureReasons.end (),
                            rws::KinematicFailureReason::CollisionDetectorUnavailable) !=
-                    requiredResult.failureReasons.end (),
-            "required collision without a detector is DataInsufficient"))
+                    requiredResult.failureReasons.end () &&
+                requiredResultHasUnavailableWarning,
+            "required unavailable collision checks are critical and never reported clear"))
         return rc;
 
     input.collisionRequired = false;
@@ -786,6 +796,13 @@ static int testConfigurationEvaluator ()
     if (const int rc = require (!optionalResult.collisionChecked &&
                                     !optionalResult.inCollision,
                                 "optional missing collision is explicitly unchecked"))
+        return rc;
+    options.checkCollision = false;
+    const rws::ConfigurationEvaluation unrequestedResult = evaluator.evaluate (
+        context, device->getQ (context.baseState), options);
+    if (const int rc = require (!unrequestedResult.collisionChecked &&
+                                    !unrequestedResult.inCollision,
+                                "unrequested collision is explicitly unchecked"))
         return rc;
     return 0;
 }
@@ -1980,6 +1997,113 @@ static int testIkRanking ()
     return 0;
 }
 
+// 子套件 IK 碰撞 UI 逻辑:纯函数验证"碰撞证据 -> 是否可应用解 -> 首选解索引"三段
+// 决策链,是 IK 解决方案检查器(Inspector)中候选行"能否安全应用到机器人"的回归保障。
+//   (1) ikCollisionEvidence:由 (collisionCheckRequested, solution.collisionChecked,
+//       solution.inCollision) 三态推导证据等级——未请求检查 -> NotEvaluated;
+//       已请求但未完成检查 -> Unavailable;已检查且无碰撞 -> Clear;已检查且碰撞 -> Collision。
+//   (2) canApplyIkSolution:明确未请求碰撞检查或检查结果为 Clear 的解可应用;
+//       过期(stale)解不可应用(防止把旧候选应用到新目标);请求了检查但未完成检查
+//       (Unavailable)的解不可应用(不把"未检测"当"无碰撞");碰撞解在任何情况下都
+//       不可应用;status=Unknown 保持旧的非失败可应用性(向后兼容),Fail 不可应用。
+//   (3) preferredIkSolutionIndex:在可见候选集合中优先第一个无碰撞 Pass;若没有
+//       无碰撞 Pass 则回退到 Warning;全部 Fail 时保持可见顺序(返回第一个可见项)。
+// 补充说明:这三个纯函数共同定义 UI 上"Apply selected Q"按钮的可用性与默认选中行;
+// 碰撞解永远不可应用、Unavailable 不解禁,是"未检测即无碰撞"防误用语义的核心,
+// 任何改动都会直接影响 Inspector 的候选行交互。
+static int testIkCollisionUiLogic ()
+{
+    rws::KinematicIkAnalysisResult result;
+    rws::KinematicIkSolution solution;
+    solution.status = rws::AnalysisStatus::Pass;
+
+    if (const int rc = require (
+            rws::ikCollisionEvidence (result, solution) ==
+                rws::KinematicIkCollisionEvidence::NotEvaluated,
+            "unrequested IK collision is not evaluated"))
+        return rc;
+    result.collisionCheckRequested = true;
+    if (const int rc = require (
+            rws::ikCollisionEvidence (result, solution) ==
+                rws::KinematicIkCollisionEvidence::Unavailable,
+            "requested unchecked IK collision is unavailable"))
+        return rc;
+
+    solution.collisionChecked = true;
+    if (const int rc = require (
+            rws::ikCollisionEvidence (result, solution) ==
+                rws::KinematicIkCollisionEvidence::Clear,
+            "completed clear IK collision is clear"))
+        return rc;
+    solution.inCollision = true;
+    if (const int rc = require (
+            rws::ikCollisionEvidence (result, solution) ==
+                rws::KinematicIkCollisionEvidence::Collision,
+            "completed colliding IK collision is collision"))
+        return rc;
+
+    // canApplyIkSolution 阶段:验证"解能否被应用到机器人"的完整规则矩阵。
+    // 关键非显而易见点——碰撞解即使未请求检查也永远不可应用(不能绕开碰撞约束);
+    // 请求了检查但检查未完成(Unavailable)时不解禁,避免"未检测即无碰撞"误用;
+    // status=Unknown 走旧的非失败语义仍可应用(Fail 才真正阻断)。
+    solution.inCollision = false;
+    result.collisionCheckRequested = false;
+    if (const int rc = require (rws::canApplyIkSolution (result, solution, false),
+                                "clear unchecked solution applies when checking was not requested"))
+        return rc;
+    result.collisionCheckRequested = true;
+    if (const int rc = require (rws::canApplyIkSolution (result, solution, false),
+                                "clear checked solution applies when checking was requested"))
+        return rc;
+    if (const int rc = require (!rws::canApplyIkSolution (result, solution, true),
+                                "stale solution cannot apply"))
+        return rc;
+
+    solution.collisionChecked = false;
+    if (const int rc = require (!rws::canApplyIkSolution (result, solution, false),
+                                "unavailable collision check cannot apply"))
+        return rc;
+    solution.collisionChecked = true;
+    solution.inCollision = true;
+    if (const int rc = require (!rws::canApplyIkSolution (result, solution, false),
+                                "colliding solution cannot apply"))
+        return rc;
+    result.collisionCheckRequested = false;
+    if (const int rc = require (!rws::canApplyIkSolution (result, solution, false),
+                                "colliding solution cannot apply without a requested check"))
+        return rc;
+    solution.inCollision = false;
+    solution.status = rws::AnalysisStatus::Unknown;
+    if (const int rc = require (rws::canApplyIkSolution (result, solution, false),
+                                "unknown solution preserves legacy non-fail usability"))
+        return rc;
+    solution.status = rws::AnalysisStatus::Fail;
+    if (const int rc = require (!rws::canApplyIkSolution (result, solution, false),
+                                "failed solution cannot apply"))
+        return rc;
+
+    // preferredIkSolutionIndex 阶段:构造 4 条候选(Fail / Warning / 碰撞 Pass / 无碰撞
+    // Pass),验证可见集合下的默认选中行选择——先于全量可见候选时挑第一个无碰撞 Pass;
+    // 仅看到前三条(无无碰撞 Pass)时回退到 Warning;全 Fail 的可见子集保持原始顺序。
+    rws::KinematicIkAnalysisResult ranked;
+    ranked.solutions.resize (4);
+    ranked.solutions[0].status = rws::AnalysisStatus::Fail;
+    ranked.solutions[1].status = rws::AnalysisStatus::Warning;
+    ranked.solutions[2].status = rws::AnalysisStatus::Pass;
+    ranked.solutions[2].inCollision = true;
+    ranked.solutions[3].status = rws::AnalysisStatus::Pass;
+    if (const int rc = require (
+            rws::preferredIkSolutionIndex (ranked, {0, 1, 2, 3}) == 3,
+            "best candidate prefers the first collision-free Pass"))
+        return rc;
+    if (const int rc = require (
+            rws::preferredIkSolutionIndex (ranked, {0, 1, 2}) == 1,
+            "visible fallback prefers Warning before remaining candidates"))
+        return rc;
+    return require (rws::preferredIkSolutionIndex (ranked, {0, 2}) == 0,
+                    "all-fail fallback preserves visible order");
+}
+
 // 子套件 IK 当前解:当目标恰好是设备当前 TCP 位姿时,IK 结果中必须包含一条
 // 距当前 Q 距离为 0 的 Pass 解(放宽条件数/可操作性阈值以免奇异配置误判)。
 // 这保证"当前位置可达自身"这一平凡事实总被识别,UI 不会误报原地不可达。
@@ -2017,17 +2141,52 @@ static int testIkIncludesCurrentQForCurrentTcpTarget ()
     const rws::KinematicIkAnalysisResult result =
         analyzer.analyzeIk (device, device->getEnd (), state, target, NULL);
 
+    if (const int rc = require (!result.collisionCheckRequested,
+                                "IK result records an unrequested collision check"))
+        return rc;
+
     bool foundCurrentQ = false;
+    bool foundFullDiagnostics = false;
     for (const rws::KinematicIkSolution& solution : result.solutions) {
         if (solution.distanceToCurrentQ <= 1e-10) {
             foundCurrentQ = solution.status == rws::AnalysisStatus::Pass &&
                             solution.positionErrorMeters <= thresholds.positionToleranceMeters &&
                             solution.orientationErrorDeg <= thresholds.orientationToleranceDeg;
+            rw::math::Q candidateQ (solution.q.size ());
+            for (std::size_t index = 0; index < solution.q.size (); ++index)
+                candidateQ[index] = solution.q[index];
+            rws::AnalysisContext context;
+            context.device = device;
+            context.tcpFrame = device->getEnd ();
+            context.baseState = state;
+            context.thresholds = thresholds;
+            rws::ConfigurationEvaluationOptions options;
+            options.checkCollision = false;
+            const rws::ConfigurationEvaluation expected =
+                rws::ConfigurationEvaluator ().evaluate (context, candidateQ, options);
+            foundFullDiagnostics =
+                solution.jointLimitMargins == expected.jointLimitMargins &&
+                solution.jacobianRows == expected.jacobianRows &&
+                solution.jacobianCols == expected.jacobianCols &&
+                solution.jacobianRowMajor == expected.jacobianRowMajor &&
+                solution.singularValues == expected.singularValues &&
+                solution.collisionChecked == expected.collisionChecked;
             break;
         }
     }
     if (const int rc = require (foundCurrentQ,
                                 "IK includes current Q as a passing solution for current TCP target"))
+        return rc;
+    if (const int rc = require (foundFullDiagnostics,
+                                "IK preserves complete target candidate diagnostics"))
+        return rc;
+
+    const rws::KinematicIkAnalysisResult requestedResult =
+        analyzer.analyzeIk (device, device->getEnd (), state, target, NULL, true);
+    if (const int rc = require (requestedResult.collisionCheckRequested &&
+                                    !requestedResult.solutions.empty () &&
+                                    !requestedResult.solutions.front ().collisionChecked,
+                                "IK records unavailable requested collision checks"))
         return rc;
     return 0;
 }
@@ -4990,19 +5149,52 @@ static int testWorkflowUiStates ()
 {
     rws::KinematicAnalysisWidget widget;
 
-    QFrame* healthFrame = widget.findChild< QFrame* > (
-        QStringLiteral ("currentPoseHealthFrame"));
-    const QList< QLabel* > healthLabels = healthFrame == nullptr ? QList< QLabel* > () :
-        healthFrame->findChildren< QLabel* > (QString (), Qt::FindDirectChildrenOnly);
-    if (const int rc = require (healthLabels.size () == 5,
-                                "Health summary exposes five direct metric labels before a WorkCell is set"))
+    QTabWidget* workflowTabs =
+        widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs"));
+    if (const int rc = require (workflowTabs != nullptr && workflowTabs->count () == 3 &&
+                                    workflowTabs->currentIndex () == 0,
+                                "native workflow tabs own exactly three pages"))
         return rc;
-    if (const int rc = require (qobject_cast< QGridLayout* > (healthFrame->layout ()) != nullptr,
-                                "Health summary uses an adaptive metrics grid"))
+    const QStringList modeLabels = {QStringLiteral ("Diagnose"),
+                                    QStringLiteral ("Validate"),
+                                    QStringLiteral ("Explore")};
+    for (int index = 0; index < modeLabels.size (); ++index) {
+        if (const int rc = require (workflowTabs->tabText (index) == modeLabels.at (index),
+                                    "workflow tab order remains stable"))
+            return rc;
+    }
+    QTabBar* modeTabs = workflowTabs->tabBar ();
+    if (const int rc = require (workflowTabs->styleSheet ().isEmpty () &&
+                                    modeTabs != nullptr && modeTabs->styleSheet ().isEmpty (),
+                                "workflow tabs inherit the native Jog-compatible style"))
         return rc;
-    for (QLabel* label : healthLabels) {
-        if (const int rc = require (!label->text ().isEmpty () && label->text ().contains (QStringLiteral ("-")),
-                                    "Health summary metrics start with visible placeholder content"))
+    if (const int rc = require (
+            widget.findChild< QTabBar* > (QStringLiteral ("kinematicModeTabs")) == nullptr &&
+                widget.findChild< QStackedWidget* > (
+                    QStringLiteral ("kinematicModeStack")) == nullptr &&
+                widget.findChild< QWidget* > (
+                    QStringLiteral ("kinematicModeSelector")) == nullptr,
+            "the retired custom workflow shell is absent"))
+        return rc;
+
+    QScrollArea* diagnoseScroll =
+        qobject_cast< QScrollArea* > (workflowTabs->widget (0));
+    QWidget* diagnosePage = diagnoseScroll == nullptr ? nullptr : diagnoseScroll->widget ();
+    if (const int rc = require (
+            diagnoseScroll != nullptr && diagnosePage != nullptr &&
+                diagnosePage->objectName () == QStringLiteral ("diagnoseWorkflowPage") &&
+                diagnoseScroll->horizontalScrollBarPolicy () == Qt::ScrollBarAlwaysOff,
+            "Diagnose is one vertically scrollable native tab page"))
+        return rc;
+
+    const QStringList retiredObjectNames = {
+        QStringLiteral ("currentPoseTab"), QStringLiteral ("ikTab"),
+        QStringLiteral ("currentTcpXLabel"), QStringLiteral ("currentTcpYLabel"),
+        QStringLiteral ("currentTcpZLabel"), QStringLiteral ("currentTcpRollLabel"),
+        QStringLiteral ("currentTcpPitchLabel"), QStringLiteral ("currentTcpYawLabel")};
+    for (const QString& objectName : retiredObjectNames) {
+        if (const int rc = require (widget.findChild< QWidget* > (objectName) == nullptr,
+                                    "retired Current TCP and split-page objects are absent"))
             return rc;
     }
 
@@ -5047,43 +5239,6 @@ static int testWorkflowUiStates ()
                                 "refreshing through Validate report retains filtering state"))
         return rc;
 
-    QTabBar* modeTabs =
-        widget.findChild< QTabBar* > (QStringLiteral ("kinematicModeTabs"));
-    QStackedWidget* modeStack =
-        widget.findChild< QStackedWidget* > (QStringLiteral ("kinematicModeStack"));
-    if (const int rc = require (modeTabs != nullptr && modeStack != nullptr,
-                                "three-mode shell exposes stable object names"))
-        return rc;
-    if (const int rc = require (modeTabs->count () == 3 && modeStack->count () == 3 &&
-                                    modeTabs->currentIndex () == 0 && modeTabs->expanding (),
-                                "three expanding mode tabs control exactly three stack pages"))
-        return rc;
-    if (const int rc = require (modeTabs->styleSheet ().contains (QStringLiteral ("QTabBar::tab")),
-                                "mode tabs use the shared Jog-style tab treatment"))
-        return rc;
-    const QStringList modeLabels = {QStringLiteral ("Diagnose"),
-                                    QStringLiteral ("Validate"),
-                                    QStringLiteral ("Explore")};
-    const QStringList modeDescriptions = {QStringLiteral ("Diagnose"),
-                                          QStringLiteral ("Validate Requirements"),
-                                          QStringLiteral ("Explore Capability")};
-    for (int index = 0; index < modeTabs->count (); ++index) {
-        if (const int rc = require (
-                    modeTabs->tabText (index) == modeLabels.at (index) &&
-                    modeTabs->tabToolTip (index) == modeDescriptions.at (index) &&
-                    modeTabs->accessibleTabName (index) == modeDescriptions.at (index),
-                "mode tabs keep short labels with full accessible descriptions"))
-            return rc;
-    }
-    if (const int rc = require (
-            widget.findChild< QWidget* > (QStringLiteral ("kinematicModeSelector")) == nullptr &&
-                widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs")) == nullptr &&
-                widget.findChildren< QTabWidget* > ().isEmpty (),
-            "legacy selector and QTabWidget workflow containers are absent"))
-        return rc;
-
-    QPushButton* diagnoseRefresh = widget.findChild< QPushButton* > (
-        QStringLiteral ("diagnoseRefreshButton"));
     QComboBox* deviceCombo = widget.findChild< QComboBox* > (
         QStringLiteral ("deviceCombo"));
     QComboBox* tcpCombo = widget.findChild< QComboBox* > (
@@ -5097,30 +5252,16 @@ static int testWorkflowUiStates ()
     QPushButton* report = widget.findChild< QPushButton* > (QStringLiteral ("reportButton"));
     QLineEdit* status = widget.findChild< QLineEdit* > (QStringLiteral ("kinematicStatus"));
     if (const int rc = require (
-            diagnoseRefresh != nullptr && deviceCombo != nullptr && tcpCombo != nullptr &&
-                lengthUnitCombo != nullptr && angleUnitCombo != nullptr &&
+            deviceCombo != nullptr && tcpCombo != nullptr && lengthUnitCombo != nullptr &&
+                angleUnitCombo != nullptr &&
                 thresholdSettings != nullptr && report != nullptr && status != nullptr,
             "fixed shell controls expose stable object names"))
         return rc;
 
-    QWidget* diagnosePage = modeStack->widget (0)->findChild< QWidget* > (
-        QStringLiteral ("diagnoseWorkflowPage"));
-    QWidget* currentPosePage = widget.findChild< QWidget* > (
-        QStringLiteral ("currentPoseTab"));
-    QWidget* ikPage = widget.findChild< QWidget* > (QStringLiteral ("ikTab"));
-    QWidget* poseIkSection = widget.findChild< QWidget* > (QStringLiteral ("poseIkSection"));
-    const QStringList currentTcpNames = {
-        QStringLiteral ("currentTcpXLabel"), QStringLiteral ("currentTcpYLabel"),
-        QStringLiteral ("currentTcpZLabel"), QStringLiteral ("currentTcpRollLabel"),
-        QStringLiteral ("currentTcpPitchLabel"), QStringLiteral ("currentTcpYawLabel")};
-    QList< QLabel* > currentTcpValues;
-    for (const QString& objectName : currentTcpNames) {
-        QLabel* label = widget.findChild< QLabel* > (objectName);
-        if (const int rc = require (label != nullptr && label->text () == QStringLiteral ("-"),
-                                    "merged pose area exposes six initialized Current TCP values"))
-            return rc;
-        currentTcpValues.push_back (label);
-    }
+    QWidget* ikTargetSection = widget.findChild< QWidget* > (
+        QStringLiteral ("ikTargetSection"));
+    QWidget* commandGrid = widget.findChild< QWidget* > (
+        QStringLiteral ("ikCommandGrid"));
     QDoubleSpinBox* ikX = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikXSpin"));
     QDoubleSpinBox* ikY = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikYSpin"));
     QDoubleSpinBox* ikZ = widget.findChild< QDoubleSpinBox* > (QStringLiteral ("ikZSpin"));
@@ -5138,31 +5279,38 @@ static int testWorkflowUiStates ()
     QTableWidget* ikCandidates = widget.findChild< QTableWidget* > (
         QStringLiteral ("ikSolutionTable"));
     QTableWidget* ikDetails = widget.findChild< QTableWidget* > (
-        QStringLiteral ("ikDetailTable"));
+        QStringLiteral ("ikInspectorTable"));
+    QWidget* solutionInspector = widget.findChild< QWidget* > (
+        QStringLiteral ("ikSolutionInspector"));
     QToolButton* diagnostics = widget.findChild< QToolButton* > (
         QStringLiteral ("advancedDiagnosticsToggle"));
+    QWidget* diagnosticsContent = widget.findChild< QWidget* > (
+        QStringLiteral ("advancedDiagnosticsContent"));
+    QTableWidget* jointStatus = widget.findChild< QTableWidget* > (
+        QStringLiteral ("ikJointStatusTable"));
+    QTableWidget* jacobianSummary = widget.findChild< QTableWidget* > (
+        QStringLiteral ("ikJacobianSummaryTable"));
+    QFrame* healthFrame = widget.findChild< QFrame* > (
+        QStringLiteral ("ikSolutionHealthFrame"));
     if (const int rc = require (
-                diagnosePage != nullptr && currentPosePage != nullptr && ikPage != nullptr &&
-                poseIkSection != nullptr && healthFrame != nullptr && ikX != nullptr &&
-                ikY != nullptr && ikZ != nullptr &&
+                ikTargetSection != nullptr && commandGrid != nullptr && healthFrame != nullptr &&
+                ikX != nullptr && ikY != nullptr && ikZ != nullptr &&
                 ikRoll != nullptr && ikPitch != nullptr && ikYaw != nullptr && ikSync != nullptr &&
                 ikDuplicateQ != nullptr &&
                 ikSolve != nullptr && ikApply != nullptr && ikCollision != nullptr &&
-                ikCandidates != nullptr &&
-                ikDetails != nullptr && diagnostics != nullptr,
-            "Diagnose owns current pose health and IK controls"))
+                ikCandidates != nullptr && ikDetails != nullptr && solutionInspector != nullptr &&
+                diagnostics != nullptr && diagnosticsContent != nullptr && jointStatus != nullptr &&
+                jacobianSummary != nullptr,
+            "Diagnose exposes one candidate-driven master/detail inspector"))
         return rc;
-    if (const int rc = require (
-            poseIkSection->parentWidget () == currentPosePage &&
-                widget.findChild< QTableWidget* > (QStringLiteral ("currentTcpPoseTable")) == nullptr &&
-                widget.findChild< QTableWidget* > (QStringLiteral ("tcpPoseValueTable")) == nullptr,
-            "current TCP values and IK target share one section without a standalone pose table"))
+
+    bool hasIkTargetTitle = false;
+    for (QLabel* label : ikTargetSection->findChildren< QLabel* > ())
+        hasIkTargetTitle = hasIkTargetTitle || label->text () == QStringLiteral ("IK Target");
+    if (const int rc = require (hasIkTargetTitle &&
+                                    ikSync->text () == QStringLiteral ("Refresh and Sync TCP"),
+                                "Diagnose uses the approved IK Target and sync labels"))
         return rc;
-    for (QLabel* currentTcpValue : currentTcpValues) {
-        if (const int rc = require (currentTcpValue->parentWidget () == poseIkSection,
-                                    "Current TCP values are in the merged pose section"))
-            return rc;
-    }
     const QStringList poseAxisNames = {
         QStringLiteral ("poseAxisXLabel"), QStringLiteral ("poseAxisYLabel"),
         QStringLiteral ("poseAxisZLabel"), QStringLiteral ("poseAxisRxLabel"),
@@ -5173,134 +5321,151 @@ static int testWorkflowUiStates ()
     for (int index = 0; index < poseAxisNames.size (); ++index) {
         QLabel* axis = widget.findChild< QLabel* > (poseAxisNames.at (index));
         if (const int rc = require (axis != nullptr && axis->text () == poseAxisTexts.at (index) &&
-                                        axis->parentWidget () == poseIkSection,
+                                        axis->parentWidget () == ikTargetSection,
                                     "pose grid uses explicit compact axis labels"))
             return rc;
     }
-    bool hasIkResultSummary = false;
-    for (QLabel* label : ikPage->findChildren< QLabel* > ())
-        hasIkResultSummary = hasIkResultSummary ||
-            label->text ().contains (QStringLiteral ("IK result summary"));
+
+    const QList< QLabel* > healthLabels =
+        healthFrame->findChildren< QLabel* > (QString (), Qt::FindDirectChildrenOnly);
     if (const int rc = require (
-            widget.findChild< QLabel* > (QStringLiteral ("ikResultSummaryTitle")) == nullptr &&
-                !hasIkResultSummary,
-            "broken IK result summary block is removed"))
+            healthLabels.size () == 4 &&
+                qobject_cast< QGridLayout* > (healthFrame->layout ()) != nullptr,
+            "Health summary is one row of four candidate-owned metrics"))
         return rc;
-    if (const int rc = require (
-            ikCollision->parentWidget () == poseIkSection &&
-                ikDuplicateQ->parentWidget () == poseIkSection,
-            "solve configuration is co-located with Pose / IK target"))
-        return rc;
-    QPushButton* solveButton = widget.findChild< QPushButton* > (QStringLiteral ("ikSolveButton"));
-    QPushButton* syncButton = widget.findChild< QPushButton* > (
-        QStringLiteral ("ikSyncCurrentTcpButton"));
-    if (const int rc = require (
-            solveButton != nullptr && solveButton->property ("primaryAction").toBool () &&
-                syncButton != nullptr && syncButton->property ("secondaryAction").toBool (),
-            "Solve is primary and Sync current TCP is secondary"))
-        return rc;
-    for (QTableWidget* table : currentPosePage->findChildren< QTableWidget* > ()) {
-        if (const int rc = require (!(table->rowCount () == 2 && table->columnCount () == 3),
-                                    "Current Pose has no standalone two-row TCP table"))
+    for (QLabel* label : healthLabels)
+        if (const int rc = require (!label->text ().isEmpty () &&
+                                        label->text ().contains (QStringLiteral ("-")),
+                                    "Health summary starts with candidate placeholders"))
             return rc;
-    }
+
+    QGridLayout* commandLayout = qobject_cast< QGridLayout* > (commandGrid->layout ());
     if (const int rc = require (
-            currentPosePage->parentWidget () == diagnosePage && ikPage->parentWidget () == diagnosePage,
-            "current pose and IK pages share the Diagnose page"))
+            commandLayout != nullptr && commandLayout->indexOf (ikSync) >= 0 &&
+                commandLayout->indexOf (thresholdSettings) >= 0 &&
+                commandLayout->indexOf (ikCollision) >= 0 &&
+                commandLayout->indexOf (ikDuplicateQ) >= 0 &&
+                commandLayout->indexOf (ikSolve) >= 0,
+            "Thresholds, Collision and Duplicate Q all precede Solve in one command grid"))
+        return rc;
+    int solveRow = -1;
+    int solveColumn = -1;
+    int rowSpan = 0;
+    int columnSpan = 0;
+    commandLayout->getItemPosition (commandLayout->indexOf (ikSolve),
+                                    &solveRow, &solveColumn, &rowSpan, &columnSpan);
+    if (const int rc = require (solveRow == 1 && solveColumn == 2,
+                                "Solve is the final command in the two-row grid"))
+        return rc;
+
+    QVBoxLayout* diagnoseLayout = qobject_cast< QVBoxLayout* > (diagnosePage->layout ());
+    if (const int rc = require (
+            diagnoseLayout != nullptr && commandGrid->parentWidget () == ikTargetSection &&
+                diagnoseLayout->indexOf (ikTargetSection) <
+                    diagnoseLayout->indexOf (ikCandidates) &&
+                diagnoseLayout->indexOf (ikCandidates) <
+                    diagnoseLayout->indexOf (solutionInspector) &&
+                diagnoseLayout->indexOf (solutionInspector) <
+                    diagnoseLayout->indexOf (diagnostics),
+            "Diagnose follows target, commands, candidates, inspector, advanced order"))
         return rc;
     if (const int rc = require (
-            ikCandidates->maximumHeight () > 0 && ikDetails->maximumHeight () > 0 &&
-                !diagnostics->isChecked (),
-            "IK tables are bounded and advanced diagnostics starts collapsed"))
+            ikCandidates->columnCount () == 5 &&
+                ikCandidates->horizontalHeaderItem (0)->text () == QStringLiteral ("#") &&
+                ikCandidates->horizontalHeaderItem (1)->text () == QStringLiteral ("Status") &&
+                ikCandidates->horizontalHeaderItem (2)->text () ==
+                    QStringLiteral ("Position error") &&
+                ikCandidates->horizontalHeaderItem (3)->text () ==
+                    QStringLiteral ("Orientation error") &&
+                ikCandidates->horizontalHeaderItem (4)->text () == QStringLiteral ("Min margin"),
+            "IK solution status uses the compact five-column contract"))
         return rc;
-    widget.resize (300, 620);
-    widget.show ();
-    modeTabs->setCurrentIndex (0);
-    QCoreApplication::processEvents ();
-    if (const int rc = require (widget.width () == 300,
-                                "narrow-width checks run on a 300px dock"))
+    if (const int rc = require (
+            ikCandidates->styleSheet ().isEmpty () && ikSync->styleSheet ().isEmpty () &&
+                ikSolve->styleSheet ().isEmpty (),
+            "Diagnose tables and buttons inherit the native plugin style"))
+        return rc;
+    if (const int rc = require (
+            !diagnostics->isChecked () && !diagnosticsContent->isVisible () &&
+                widget.findChild< QTableWidget* > (QStringLiteral ("ikDetailTable")) == nullptr,
+            "Advanced diagnostics starts collapsed and the retired detail table is absent"))
+        return rc;
+    bool hasRetiredDiagnostics = false;
+    for (QLabel* label : diagnosticsContent->findChildren< QLabel* > ())
+        hasRetiredDiagnostics = hasRetiredDiagnostics ||
+            label->text ().contains (QStringLiteral ("Warnings"), Qt::CaseInsensitive) ||
+            label->text ().contains (QStringLiteral ("Singular values"), Qt::CaseInsensitive);
+    if (const int rc = require (!hasRetiredDiagnostics,
+                                "Advanced diagnostics omits Warnings and Singular values blocks"))
         return rc;
     const QList< QDoubleSpinBox* > targetSpins = {ikX, ikY, ikZ, ikRoll, ikPitch, ikYaw};
-    const QList< QLabel* > currentTcpLabelsAt300 = currentTcpValues;
-    for (int index = 1; index < targetSpins.size (); ++index) {
-        const QRect previous = targetSpins.at (index - 1)->geometry ();
-        const QRect current = targetSpins.at (index)->geometry ();
-        if (const int rc = require (
-                current.top () > previous.top () &&
-                    std::abs (current.left () - previous.left ()) <= 1,
-                "IK target controls use one vertical column"))
-            return rc;
-    }
-    for (QDoubleSpinBox* targetSpin : targetSpins) {
-        if (const int rc = require (
-                targetSpin->parentWidget () == poseIkSection &&
-                targetSpin->geometry ().left () >= 0 &&
-                    targetSpin->geometry ().right () < ikPage->width () &&
-                    targetSpin->width () >= 24,
-                "IK target controls do not overflow a 300px Diagnose page"))
-            return rc;
-    }
-    for (QLabel* currentTcpLabel : currentTcpLabelsAt300) {
-        if (const int rc = require (
-                currentTcpLabel->geometry ().left () >= 0 &&
-                    currentTcpLabel->geometry ().right () < poseIkSection->width () &&
-                    currentTcpLabel->width () >= 24,
-                "current TCP values do not overflow a 300px merged pose section"))
-            return rc;
-    }
-    for (QWidget* solveConfigControl : {static_cast<QWidget*> (ikCollision),
-                                        static_cast<QWidget*> (ikDuplicateQ),
-                                        static_cast<QWidget*> (ikSync),
-                                        static_cast<QWidget*> (ikSolve)}) {
-        if (const int rc = require (
-                solveConfigControl->geometry ().left () >= 0 &&
-                    solveConfigControl->geometry ().right () < poseIkSection->width () &&
-                    solveConfigControl->width () >= 24,
-                "Pose / IK actions and solve configuration fit at 300px"))
-            return rc;
-    }
-    if (const int rc = require (healthFrame->geometry ().left () >= 0 &&
-                                    healthFrame->geometry ().right () < currentPosePage->width (),
-                                "current-state health frame does not overflow a 300px Diagnose page"))
-        return rc;
-    for (QLabel* label : healthLabels) {
-        if (const int rc = require (!label->geometry ().isEmpty () && label->width () >= 24 &&
-                                        healthFrame->contentsRect ().contains (label->geometry ()),
-                                    "Health summary metric labels remain visible inside a 300px dock"))
-            return rc;
-    }
-    modeTabs->setCurrentIndex (2);
-    QCoreApplication::processEvents ();
-    modeTabs->setCurrentIndex (0);
-    QCoreApplication::processEvents ();
-    if (const int rc = require (deviceCombo->width () >= 24 && tcpCombo->width () >= 24,
-                                "Device and TCP remain usable in a 300px header"))
-        return rc;
+    const QList< QWidget* > commandControls = {
+        ikSync, thresholdSettings, ikCollision, ikDuplicateQ, ikSolve};
     const QList< QWidget* > fixedControls = {
-        deviceCombo, tcpCombo, lengthUnitCombo, angleUnitCombo, diagnoseRefresh,
-        thresholdSettings, report, status, modeTabs};
-    bool allModeTabsFitAt300 = !modeTabs->usesScrollButtons ();
-    bool hasVisibleModeTabScrollButtonAt300 = false;
-    for (int index = 0; index < modeTabs->count (); ++index) {
-        const QRect tabRect = modeTabs->tabRect (index);
-        const QPoint tabTopLeft = widget.mapFromGlobal (
-            modeTabs->mapToGlobal (tabRect.topLeft ()));
-        allModeTabsFitAt300 = allModeTabsFitAt300 && !tabRect.isEmpty () &&
-            modeTabs->rect ().contains (tabRect) &&
-            widget.rect ().contains (QRect (tabTopLeft, tabRect.size ()));
-    }
-    for (QToolButton* button : modeTabs->findChildren< QToolButton* > ())
-        hasVisibleModeTabScrollButtonAt300 = hasVisibleModeTabScrollButtonAt300 || button->isVisible ();
-    if (const int rc = require (allModeTabsFitAt300 && !hasVisibleModeTabScrollButtonAt300,
-                                "all mode tabs fit without scroll buttons in a 300px dock"))
+        deviceCombo, tcpCombo, lengthUnitCombo, angleUnitCombo, report, status, workflowTabs};
+    QString narrowFailure;
+    auto narrowDiagnoseFits = [&] (int width) {
+        narrowFailure.clear ();
+        widget.resize (width, 620);
+        widget.show ();
+        workflowTabs->setCurrentIndex (0);
+        QCoreApplication::processEvents ();
+        bool fits = widget.width () == width && deviceCombo->width () >= 24 &&
+            tcpCombo->width () >= 24;
+        if (!fits)
+            narrowFailure = QStringLiteral ("header controls at %1px").arg (width);
+        for (int index = 1; index < targetSpins.size (); ++index) {
+            const QRect previous = targetSpins.at (index - 1)->geometry ();
+            const QRect current = targetSpins.at (index)->geometry ();
+            fits = fits && current.top () > previous.top () &&
+                std::abs (current.left () - previous.left ()) <= 1;
+            if (!fits && narrowFailure.isEmpty ())
+                narrowFailure = QStringLiteral ("target spin order at %1px").arg (width);
+        }
+        for (QDoubleSpinBox* spin : targetSpins) {
+            const QRect geometry (
+                diagnoseScroll->viewport ()->mapFromGlobal (
+                    spin->mapToGlobal (QPoint (0, 0))),
+                spin->size ());
+            const bool controlFits = spin->parentWidget () == ikTargetSection &&
+                spin->width () >= 24 && diagnoseScroll->viewport ()->rect ().contains (geometry);
+            fits = fits && controlFits;
+            if (!controlFits && narrowFailure.isEmpty ())
+                narrowFailure = QStringLiteral ("%1 target geometry %2,%3 %4x%5 at %6px")
+                    .arg (spin->objectName ()).arg (geometry.x ()).arg (geometry.y ())
+                    .arg (geometry.width ()).arg (geometry.height ()).arg (width);
+        }
+        for (QWidget* control : commandControls) {
+            const QRect geometry (
+                diagnoseScroll->viewport ()->mapFromGlobal (
+                    control->mapToGlobal (QPoint (0, 0))),
+                control->size ());
+            const bool controlFits = control->width () >= 24 &&
+                diagnoseScroll->viewport ()->rect ().contains (geometry);
+            fits = fits && controlFits;
+            if (!controlFits && narrowFailure.isEmpty ())
+                narrowFailure = QStringLiteral ("%1 command geometry %2,%3 %4x%5 at %6px")
+                    .arg (control->objectName ()).arg (geometry.x ()).arg (geometry.y ())
+                    .arg (geometry.width ()).arg (geometry.height ()).arg (width);
+        }
+        for (QWidget* control : fixedControls) {
+            const QRect geometry (
+                widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0))),
+                control->size ());
+            const bool controlFits = !geometry.isEmpty () && widget.rect ().contains (geometry);
+            fits = fits && controlFits;
+            if (!controlFits && narrowFailure.isEmpty ())
+                narrowFailure = QStringLiteral ("%1 shell geometry %2,%3 %4x%5 at %6px")
+                    .arg (control->objectName ()).arg (geometry.x ()).arg (geometry.y ())
+                    .arg (geometry.width ()).arg (geometry.height ()).arg (width);
+        }
+        return fits;
+    };
+    const bool diagnoseFits300 = narrowDiagnoseFits (300);
+    if (const int rc = require (diagnoseFits300,
+                                QStringLiteral ("Diagnose 300px geometry: %1")
+                                    .arg (narrowFailure).toStdString ()))
         return rc;
-    for (QWidget* control : fixedControls) {
-        const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
-        const QRect geometry (topLeft, control->size ());
-        if (const int rc = require (!geometry.isEmpty () && widget.rect ().contains (geometry),
-                                    "fixed shell controls fit inside a 300x620 dock"))
-            return rc;
-    }
     for (int index = 0; index < modeTabs->count (); ++index) {
         modeTabs->setCurrentIndex ((index + 1) % modeTabs->count ());
         QCoreApplication::processEvents ();
@@ -5314,7 +5479,7 @@ static int testWorkflowUiStates ()
         QCoreApplication::sendEvent (modeTabs, &release);
         QCoreApplication::processEvents ();
         if (const int rc = require (modeTabs->currentIndex () == index &&
-                                    modeStack->currentIndex () == index,
+                                    workflowTabs->currentIndex () == index,
                                     "mouse-clicked mode tab changes the visible page"))
             return rc;
     }
@@ -5324,39 +5489,12 @@ static int testWorkflowUiStates ()
                 angleUnitCombo->sizePolicy ().horizontalPolicy () == QSizePolicy::Ignored,
             "unit controls can shrink inside the fixed two-row header"))
         return rc;
-    widget.resize (320, 620);
-    widget.show ();
-    modeTabs->setCurrentIndex (0);
-    QCoreApplication::processEvents ();
-    bool allModeTabsFitAt320 = !modeTabs->usesScrollButtons ();
-    bool hasVisibleModeTabScrollButtonAt320 = false;
-    for (int index = 0; index < modeTabs->count (); ++index) {
-        const QRect tabRect = modeTabs->tabRect (index);
-        const QPoint tabTopLeft = widget.mapFromGlobal (
-            modeTabs->mapToGlobal (tabRect.topLeft ()));
-        allModeTabsFitAt320 = allModeTabsFitAt320 && !tabRect.isEmpty () &&
-            modeTabs->rect ().contains (tabRect) &&
-            widget.rect ().contains (QRect (tabTopLeft, tabRect.size ()));
-    }
-    for (QToolButton* button : modeTabs->findChildren< QToolButton* > ())
-        hasVisibleModeTabScrollButtonAt320 = hasVisibleModeTabScrollButtonAt320 || button->isVisible ();
-    if (const int rc = require (allModeTabsFitAt320 && !hasVisibleModeTabScrollButtonAt320,
-                                "all mode tabs fit without scroll buttons in a 320px dock"))
+    const bool diagnoseFits320 = narrowDiagnoseFits (320);
+    if (const int rc = require (diagnoseFits320,
+                                QStringLiteral ("Diagnose 320px geometry: %1")
+                                    .arg (narrowFailure).toStdString ()))
         return rc;
-    for (QWidget* control : fixedControls) {
-        const QPoint topLeft = widget.mapFromGlobal (control->mapToGlobal (QPoint (0, 0)));
-        if (const int rc = require (!control->geometry ().isEmpty () &&
-                                        widget.rect ().contains (QRect (topLeft, control->size ())),
-                                    "fixed shell controls fit inside a 320x620 dock"))
-            return rc;
-    }
 
-    QPushButton* validateLoad = widget.findChild< QPushButton* > (
-        QStringLiteral ("validateLoadRequirementsButton"));
-    QPushButton* validateRun = widget.findChild< QPushButton* > (
-        QStringLiteral ("validateRunButton"));
-    QPushButton* validateExport = widget.findChild< QPushButton* > (
-        QStringLiteral ("validateExportButton"));
     QLabel* validateState = widget.findChild< QLabel* > (
         QStringLiteral ("validateRequirementStateLabel"));
     QPushButton* exploreRun = widget.findChild< QPushButton* > (
@@ -5367,47 +5505,58 @@ static int testWorkflowUiStates ()
         QStringLiteral ("exploreSamplesSpin"));
     QLabel* exploreState = widget.findChild< QLabel* > (
         QStringLiteral ("exploreStateLabel"));
-    QComboBox* exploreMode = widget.findChild< QComboBox* > (
-        QStringLiteral ("exploreModeCombo"));
+    QComboBox* exploreCapability = widget.findChild< QComboBox* > (
+        QStringLiteral ("exploreCapabilityCombo"));
+    QComboBox* workspaceSamplingStrategy = widget.findChild< QComboBox* > (
+        QStringLiteral ("workspaceSamplingStrategyCombo"));
     QSpinBox* exploreSeed = widget.findChild< QSpinBox* > (
         QStringLiteral ("exploreSeedSpin"));
     QSpinBox* exploreGrid = widget.findChild< QSpinBox* > (
         QStringLiteral ("exploreGridStepsSpin"));
-    QSpinBox* exploreDirections = widget.findChild< QSpinBox* > (
-        QStringLiteral ("exploreDirectionSamplesSpin"));
-    QSpinBox* exploreRolls = widget.findChild< QSpinBox* > (
-        QStringLiteral ("exploreRollSamplesSpin"));
+    QCheckBox* exploreWorkspaceCollision = widget.findChild< QCheckBox* > (
+        QStringLiteral ("exploreWorkspaceCollisionCheck"));
     QLabel* exploreSamplesLabel = widget.findChild< QLabel* > (
         QStringLiteral ("exploreSamplesLabel"));
     QLabel* exploreSeedLabel = widget.findChild< QLabel* > (
         QStringLiteral ("exploreSeedLabel"));
     QLabel* exploreGridLabel = widget.findChild< QLabel* > (
         QStringLiteral ("exploreGridStepsLabel"));
-    QLabel* exploreDirectionsLabel = widget.findChild< QLabel* > (
-        QStringLiteral ("exploreDirectionsLabel"));
-    QLabel* exploreRollsLabel = widget.findChild< QLabel* > (
-        QStringLiteral ("exploreRollsLabel"));
     QWidget* exploreSetupSection = widget.findChild< QWidget* > (
         QStringLiteral ("exploreSetupSection"));
     QWidget* exploreCommandSection = widget.findChild< QWidget* > (
         QStringLiteral ("exploreCommandSection"));
     QWidget* exploreProgressSection = widget.findChild< QWidget* > (
         QStringLiteral ("exploreProgressSection"));
-    QScrollArea* exploreScroll = qobject_cast< QScrollArea* > (modeStack->widget (2));
+    QScrollArea* exploreScroll = qobject_cast< QScrollArea* > (workflowTabs->widget (2));
     if (const int rc = require (
-            exploreMode != nullptr && exploreSamplesLabel != nullptr &&
+            exploreCapability != nullptr && workspaceSamplingStrategy != nullptr &&
+                exploreCapability->count () == 2 &&
+                exploreCapability->itemText (0) == QStringLiteral ("Workspace Sampling") &&
+                exploreCapability->itemText (1) == QStringLiteral ("Pose Reachability") &&
+                workspaceSamplingStrategy->count () == 2 &&
+                workspaceSamplingStrategy->itemText (0) == QStringLiteral ("Random") &&
+                workspaceSamplingStrategy->itemText (1) == QStringLiteral ("Joint Grid"),
+            "Explore separates analysis capabilities from workspace sampling strategies"))
+        return rc;
+    if (const int rc = require (
+            exploreCapability != nullptr && workspaceSamplingStrategy != nullptr &&
+                exploreSamplesLabel != nullptr &&
                 exploreSeed != nullptr && exploreSeedLabel != nullptr &&
                 exploreGrid != nullptr && exploreGridLabel != nullptr &&
-                exploreDirections != nullptr && exploreDirectionsLabel != nullptr &&
-                exploreRolls != nullptr && exploreRollsLabel != nullptr &&
+                exploreWorkspaceCollision != nullptr &&
                 exploreSetupSection != nullptr && exploreCommandSection != nullptr &&
                 exploreProgressSection != nullptr && exploreScroll != nullptr &&
                 exploreScroll->horizontalScrollBarPolicy () == Qt::ScrollBarAlwaysOff,
             "Explore groups setup, commands and progress without horizontal scrolling"))
         return rc;
-    QComboBox* exploreSamplingMode = exploreMode;
     QWidget* workspacePage = widget.findChild< QWidget* > (QStringLiteral ("workspaceTab"));
     QWidget* poseReachPage = widget.findChild< QWidget* > (QStringLiteral ("poseReachTab"));
+    QLabel* poseTaskPointSourceSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("poseTaskPointSourceSummaryLabel"));
+    QLabel* posePositionSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("posePositionCountLabel"));
+    QLabel* poseReachableSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("poseReachableLabel"));
     QPushButton* legacyWorkspaceRun = widget.findChild< QPushButton* > (
         QStringLiteral ("workspaceRunButton"));
     QPushButton* legacyWorkspaceCancel = widget.findChild< QPushButton* > (
@@ -5433,31 +5582,24 @@ static int testWorkflowUiStates ()
     QPushButton* openPlot = widget.findChild< QPushButton* > (
         QStringLiteral ("visualizationOpenPlotButton"));
     if (const int rc = require (
-            exploreSamplingMode->count () == 3 &&
-                exploreSamplingMode->itemText (0) == QStringLiteral ("Random") &&
-                exploreSamplingMode->itemData (0).toInt () == 0 &&
-                exploreSamplingMode->itemText (1) == QStringLiteral ("Joint Grid") &&
-                exploreSamplingMode->itemData (1).toInt () == 1 &&
-                exploreSamplingMode->itemText (2) == QStringLiteral ("Pose Reachability") &&
-                exploreSamplingMode->itemData (2).toInt () == 2 &&
-                workspacePage != nullptr && poseReachPage != nullptr && embeddedPlot == nullptr &&
+            workspacePage != nullptr && poseReachPage != nullptr && embeddedPlot == nullptr &&
                 visualizationStateHost != nullptr && !visualizationStateHost->isVisible () &&
                 openPlot != nullptr && legacyWorkspaceRun != nullptr &&
                 legacyWorkspaceCancel != nullptr && legacyWorkspaceMode != nullptr &&
                 legacyPoseRun != nullptr && legacyPoseCancel != nullptr &&
                 legacyPoseDirections != nullptr && legacyPoseRolls != nullptr,
-            "Explore exposes Random, Grid and Pose Reachability without an embedded plot"))
+            "Explore retains capability result pages without an embedded plot"))
         return rc;
     modeTabs->setCurrentIndex (2);
-    exploreSamplingMode->setCurrentIndex (0);
+    exploreCapability->setCurrentIndex (0);
+    workspaceSamplingStrategy->setCurrentIndex (0);
     if (const int rc = require (
             exploreSamples->isVisible () && exploreSamplesLabel->isVisible () &&
                 exploreSeed->isVisible () && exploreSeedLabel->isVisible () &&
                 !exploreGrid->isVisible () && !exploreGridLabel->isVisible () &&
-                !exploreDirections->isVisible () && !exploreDirectionsLabel->isVisible () &&
-                !exploreRolls->isVisible () && !exploreRollsLabel->isVisible () &&
+                exploreWorkspaceCollision->isVisible () &&
                 workspacePage->isVisible () && !poseReachPage->isVisible (),
-            "Random mode shows only Samples and Seed workspace parameters"))
+            "Random strategy shows only Samples and Seed workspace parameters"))
         return rc;
     if (const int rc = require (
             !legacyWorkspaceRun->isVisible () && !legacyWorkspaceCancel->isVisible () &&
@@ -5468,33 +5610,36 @@ static int testWorkflowUiStates ()
                 !legacyWorkspaceSamplesLabel->isVisible (),
             "Explore keeps legacy workspace commands and duplicate Samples controls hidden"))
         return rc;
-    exploreSamplingMode->setCurrentIndex (1);
+    workspaceSamplingStrategy->setCurrentIndex (1);
     if (const int rc = require (
             !exploreSamples->isVisible () && !exploreSamplesLabel->isVisible () &&
                 !exploreSeed->isVisible () && !exploreSeedLabel->isVisible () &&
-                exploreGrid->isVisible () && exploreGridLabel->isVisible () &&
-                !exploreDirections->isVisible () && !exploreDirectionsLabel->isVisible () &&
-                !exploreRolls->isVisible () && !exploreRollsLabel->isVisible (),
-            "Joint Grid mode shows only Grid Steps workspace parameters"))
+                exploreGrid->isVisible () && exploreGridLabel->isVisible (),
+            "Joint Grid strategy shows only Grid Steps workspace parameters"))
         return rc;
-    exploreSamplingMode->setCurrentIndex (2);
+    exploreCapability->setCurrentIndex (1);
     if (const int rc = require (
             !exploreSamples->isVisible () && !exploreSamplesLabel->isVisible () &&
                 !exploreSeed->isVisible () && !exploreSeedLabel->isVisible () &&
                 !exploreGrid->isVisible () && !exploreGridLabel->isVisible () &&
-                exploreDirections->isVisible () && exploreDirectionsLabel->isVisible () &&
-                exploreRolls->isVisible () && exploreRollsLabel->isVisible () &&
-                !workspacePage->isVisible () && poseReachPage->isVisible (),
-            "Pose Reachability mode shows only pose orientation parameters"))
+                !workspacePage->isVisible () && poseReachPage->isVisible () &&
+                !exploreWorkspaceCollision->isVisible () &&
+                legacyPoseDirections->isVisible () && legacyPoseRolls->isVisible () &&
+                poseTaskPointSourceSummary != nullptr && posePositionSummary != nullptr &&
+                poseReachableSummary != nullptr && posePositionSummary->isVisible () &&
+                poseReachableSummary->isVisible () &&
+                posePositionSummary->sizePolicy ().horizontalPolicy () ==
+                    QSizePolicy::MinimumExpanding,
+            "Pose Reachability exposes its own inputs and visible summary metrics"))
         return rc;
-    exploreDirections->setValue (37);
-    exploreRolls->setValue (5);
+    const bool rejectedPoseRun = QMetaObject::invokeMethod (
+        &widget, "startCapabilityExploration", Qt::DirectConnection);
     if (const int rc = require (
-            legacyPoseDirections->value () == 37 && legacyPoseRolls->value () == 5 &&
-                !legacyPoseDirections->isVisible () && !legacyPoseRolls->isVisible (),
-            "Pose orientation parameters are synchronized to the existing pipeline without duplicate controls"))
+            rejectedPoseRun && !exploreState->text ().contains (QStringLiteral ("Running")),
+            "invalid Pose Reachability input does not report a running exploration"))
         return rc;
-    exploreSamplingMode->setCurrentIndex (0);
+    exploreCapability->setCurrentIndex (0);
+    workspaceSamplingStrategy->setCurrentIndex (0);
     if (const int rc = require (
             exploreState != nullptr &&
                 exploreState->text ().contains (QStringLiteral ("Estimated")),
@@ -5521,6 +5666,12 @@ static int testWorkflowUiStates ()
         QStringLiteral ("taskPointSummaryLabel"));
     QTableWidget* taskMore = widget.findChild< QTableWidget* > (
         QStringLiteral ("taskPointMoreTable"));
+    QLabel* validateSummary = widget.findChild< QLabel* > (
+        QStringLiteral ("validateSummaryLabel"));
+    QTableWidget* validateInspector = widget.findChild< QTableWidget* > (
+        QStringLiteral ("validateInspectorTable"));
+    QToolButton* validateDiagnostics = widget.findChild< QToolButton* > (
+        QStringLiteral ("validateDiagnosticsToggle"));
     if (const int rc = require (
             mode2Source != nullptr && mode2Source->count () == 2 &&
                 localTasksPage != nullptr && frozenTasks != nullptr && frozenRegions != nullptr &&
@@ -5533,8 +5684,16 @@ static int testWorkflowUiStates ()
         return rc;
     modeTabs->setCurrentIndex (1);
     QCoreApplication::processEvents ();
+    if (const int rc = require (
+            mode2Source->currentData ().toInt () == 1 &&
+                validateSummary != nullptr &&
+                validateSummary->text ().contains (QStringLiteral ("Not validated")) &&
+                validateInspector != nullptr && validateInspector->rowCount () == 1 &&
+                validateDiagnostics != nullptr && !validateDiagnostics->isChecked (),
+            "Frozen Requirements starts Validate with an empty summary and collapsed inspector"))
+        return rc;
     mode2Source->setCurrentIndex (0);
-    QWidget* validatePage = modeStack->widget (1);
+    QWidget* validatePage = workflowTabs->widget (1);
     if (const int rc = require (validatePage != nullptr &&
                                     demandRegions->geometry ().left () >= 0 &&
                                     demandRegions->geometry ().right () < validatePage->width () &&
@@ -5603,7 +5762,7 @@ static int testWorkflowUiStates ()
 
     widget.setWorkCell (nullptr);
     if (const int rc = require (
-            !diagnoseRefresh->isEnabled (),
+            !ikSync->isEnabled (),
             "no WorkCell disables Diagnose refresh"))
         return rc;
     if (const int rc = require (
@@ -5615,7 +5774,7 @@ static int testWorkflowUiStates ()
         rw::core::ownedPtr (new rw::models::WorkCell ("NoDevice"));
     widget.setWorkCell (noDevice.get ());
     if (const int rc = require (
-            !diagnoseRefresh->isEnabled (),
+            !ikSync->isEnabled (),
             "no Device disables Diagnose refresh"))
         return rc;
     if (const int rc = require (
@@ -5640,7 +5799,7 @@ static int testWorkflowUiStates ()
                                 "workflow state refresh is invokable"))
         return rc;
     if (const int rc = require (
-            !diagnoseRefresh->isEnabled (),
+            !ikSync->isEnabled (),
             "no TCP disables Diagnose refresh"))
         return rc;
     if (const int rc = require (
@@ -5651,26 +5810,19 @@ static int testWorkflowUiStates ()
     tcpCombo->setCurrentIndex (0);
     QMetaObject::invokeMethod (&widget, "refreshWorkflowControls", Qt::DirectConnection);
     if (const int rc = require (
-            diagnoseRefresh->isEnabled (),
+            ikSync->isEnabled (),
             "valid WorkCell, Device and TCP enable Diagnose refresh"))
         return rc;
-    diagnoseRefresh->click ();
-    QLabel* currentPoseStatus = widget.findChild< QLabel* > (
-        QStringLiteral ("currentPoseStatusLabel"));
-    if (const int rc = require (currentPoseStatus != nullptr,
-                                "current-state health status has a stable object name"))
-        return rc;
-    const QString healthBeforeSync = currentPoseStatus->text ();
-    for (QLabel* currentTcpValue : currentTcpValues) {
-        if (const int rc = require (!currentTcpValue->text ().contains (QStringLiteral ("e"),
-                                                                         Qt::CaseInsensitive) &&
-                                        currentTcpValue->text ().contains (QStringLiteral (".")),
-                                    "Current TCP values use stable fixed-point formatting"))
-            return rc;
-    }
     ikSync->click ();
-    if (const int rc = require (currentPoseStatus->text () == healthBeforeSync,
-                                "Sync current TCP copies IK inputs without changing current-state health"))
+    QLabel* candidateHealthStatus = widget.findChild< QLabel* > (
+        QStringLiteral ("ikSolutionHealthStatusLabel"));
+    if (const int rc = require (candidateHealthStatus != nullptr,
+                                "candidate health status has a stable object name"))
+        return rc;
+    const QString healthBeforeSync = candidateHealthStatus->text ();
+    ikSync->click ();
+    if (const int rc = require (candidateHealthStatus->text () == healthBeforeSync,
+                                "Sync TCP does not replace candidate diagnostics with current state"))
         return rc;
     ikCollision->setChecked (false);
     for (QComboBox* combo : widget.findChildren< QComboBox* > ()) {
@@ -5688,16 +5840,30 @@ static int testWorkflowUiStates ()
         return rc;
     if (ikCandidates->rowCount () > 0) {
         for (int row = 0; row < ikCandidates->rowCount (); ++row) {
-            QTableWidgetItem* currentQ = ikCandidates->item (row, 3);
-            if (const int rc = require (currentQ != nullptr && !currentQ->toolTip ().isEmpty (),
-                                        "candidate rows retain complete Q values in tooltips"))
+            QTableWidgetItem* candidateNumber = ikCandidates->item (row, 0);
+            const int solutionIndex = candidateNumber == nullptr ? -1 :
+                candidateNumber->data (Qt::UserRole + 1).toInt ();
+            if (const int rc = require (
+                    candidateNumber != nullptr && solutionIndex >= 0 &&
+                        candidateNumber->text () == QString::number (solutionIndex + 1),
+                    "candidate rows retain stable one-based solution numbers"))
                 return rc;
         }
         ikCandidates->selectRow (0);
         QCoreApplication::processEvents ();
-        if (const int rc = require (ikDetails->item (6, 1) != nullptr &&
-                                        !ikDetails->item (6, 1)->text ().isEmpty (),
-                                    "selected candidate details retain Q values"))
+        QTableWidgetItem* selectedStatus = ikCandidates->item (0, 1);
+        if (const int rc = require (
+                ikDetails->item (8, 0) != nullptr &&
+                    ikDetails->item (8, 0)->text () == QStringLiteral ("Q") &&
+                    ikDetails->item (8, 1) != nullptr &&
+                    !ikDetails->item (8, 1)->text ().isEmpty () &&
+                    selectedStatus != nullptr &&
+                    candidateHealthStatus->text ().contains (selectedStatus->text ()) &&
+                    jointStatus->rowCount () > 0 && jacobianSummary->rowCount () == 1 &&
+                    jacobianSummary->item (0, 0) != nullptr &&
+                    jacobianSummary->item (0, 0)->toolTip ().contains (
+                        QStringLiteral ("Singular values")),
+                "selected candidate owns Inspector, Health, Joint and Jacobian diagnostics"))
             return rc;
         const QString statusBeforeDoubleClick = widget.statusMessage ();
         QTableWidgetItem* doubleClickItem = ikCandidates->item (0, 0);
@@ -5716,6 +5882,15 @@ static int testWorkflowUiStates ()
                                                                        Qt::CaseInsensitive),
                                 "editing a target invalidates the previous IK presentation"))
         return rc;
+    ikX->setValue (999.0);
+    ikY->setValue (999.0);
+    ikZ->setValue (999.0);
+    ikSolve->click ();
+    if (const int rc = require (
+            ikCandidates->rowCount () == 0 &&
+                widget.statusMessage ().contains (QStringLiteral ("IkNoSolution")),
+            "zero-candidate Solve preserves the analyzer failure reason"))
+        return rc;
 
     rws::TaskPointTableModel* taskModel = widget.findChild< rws::TaskPointTableModel* > ();
     QTableView* taskTable = nullptr;
@@ -5725,8 +5900,6 @@ static int testWorkflowUiStates ()
             break;
         }
     }
-    QScrollArea* diagnoseScroll = widget.findChild< QScrollArea* > (
-        QStringLiteral ("diagnoseScroll"));
     if (const int rc = require (taskModel != nullptr && taskTable != nullptr &&
                                     taskTable->selectionModel () != nullptr && diagnoseScroll != nullptr,
                                 "Local Task Points can route into the Diagnose scroll area"))
@@ -5755,6 +5928,13 @@ static int testWorkflowUiStates ()
     untouchedTask.id = "workflow-untouched-task";
     untouchedTask.name = "Workflow Untouched";
     taskModel->setRowsFromTaskPoints ({untouchedTask, localTask});
+    exploreCapability->setCurrentIndex (1);
+    QCoreApplication::processEvents ();
+    if (const int rc = require (
+            poseTaskPointSourceSummary->text ().contains (QStringLiteral ("2 enabled")),
+            "Pose Reachability reports enabled Local Task Points as its active source"))
+        return rc;
+    exploreCapability->setCurrentIndex (0);
     rws::TaskPointReachabilityResult untouchedResult;
     untouchedResult.taskPoint = untouchedTask;
     untouchedResult.status = rws::AnalysisStatus::Pass;
@@ -5811,7 +5991,7 @@ static int testWorkflowUiStates ()
         widget.findChild< rws::KinematicPlotDialog* > (QStringLiteral ("kinematicPlotDialog"));
     if (const int rc = require (openedPoseReachability && workflowPlotDialog != nullptr &&
                                     workflowPlotDialog->isVisible () && modeTabs->currentIndex () == 0 &&
-                                    modeStack->currentIndex () == 0,
+                                    workflowTabs->currentIndex () == 0,
                                 "pose reachability opens the standalone visualization without navigation"))
         return rc;
     modeTabs->setCurrentIndex (0);
@@ -5821,7 +6001,7 @@ static int testWorkflowUiStates ()
     QCoreApplication::processEvents ();
     if (const int rc = require (openedWorkspace && workflowPlotDialog != nullptr &&
                                     workflowPlotDialog->isVisible () && modeTabs->currentIndex () == 0 &&
-                                    modeStack->currentIndex () == 0,
+                                    workflowTabs->currentIndex () == 0,
                                 "workspace opens the standalone visualization without navigation"))
         return rc;
     modeTabs->setCurrentIndex (2);
@@ -5829,10 +6009,11 @@ static int testWorkflowUiStates ()
         &widget, "openSelectedTaskPointInIk", Qt::DirectConnection);
     QCoreApplication::processEvents ();
     const QRect ikInViewport (
-        diagnoseScroll->viewport ()->mapFromGlobal (ikPage->mapToGlobal (QPoint (0, 0))),
-        ikPage->size ());
+        diagnoseScroll->viewport ()->mapFromGlobal (
+            ikTargetSection->mapToGlobal (QPoint (0, 0))),
+        ikTargetSection->size ());
     if (const int rc = require (openedInIk && modeTabs->currentIndex () == 0 &&
-                                    modeStack->currentIndex () == 0 &&
+                                    workflowTabs->currentIndex () == 0 &&
                                     ikInViewport.intersects (diagnoseScroll->viewport ()->rect ()) &&
                                     ikCandidates->rowCount () == 0 && ikDetails->rowCount () == 1 &&
                                     !ikApply->isEnabled () &&
@@ -5865,26 +6046,31 @@ static int testWorkflowUiStates ()
                                 "removing a task prunes stale report IDs while preserving current task results"))
         return rc;
     taskModel->setRowsFromTaskPoints ({untouchedTask});
-    if (const int rc = require (widget.buildReportForExport ().taskResults.empty (),
-                                "replacing rows clears report cache entries with no current model result"))
+    if (const int rc = require (widget.buildReportForExport ().taskResults.empty () &&
+                                validateSummary->text ().contains (QStringLiteral ("Not validated")),
+                                "replacing local tasks clears report and Validate summary state"))
         return rc;
 
+    mode2Source->setCurrentIndex (1);
     if (const int rc = require (
-            validateLoad != nullptr && validateRun != nullptr &&
-                validateExport != nullptr && validateState != nullptr &&
-                !validateLoad->isVisible () && !validateRun->isVisible () &&
-                !validateExport->isVisible (),
-            "legacy frozen commands are hidden outside the single Mode 2 toolbar"))
+            validateState != nullptr &&
+                widget.findChild< QPushButton* > (
+                    QStringLiteral ("validateLoadRequirementsButton")) == nullptr &&
+                widget.findChild< QPushButton* > (
+                    QStringLiteral ("validateRunButton")) == nullptr &&
+                widget.findChild< QPushButton* > (
+                    QStringLiteral ("validateExportButton")) == nullptr,
+            "Validate removes the retired hidden command controls"))
         return rc;
     widget.setWorkCell (nullptr);
     if (const int rc = require (
-            !validateLoad->isEnabled () && !validateRun->isEnabled () &&
-                !validateExport->isEnabled (),
+            !mode2Load->isEnabled () && !mode2ValidateAll->isEnabled () &&
+                !mode2ValidateSelected->isEnabled (),
             "no WorkCell disables validation commands"))
         return rc;
     widget.setWorkCell (noDevice.get ());
     if (const int rc = require (
-            !validateLoad->isEnabled () && !validateRun->isEnabled (),
+            !mode2Load->isEnabled () && !mode2ValidateAll->isEnabled (),
             "no Device disables validation commands"))
         return rc;
     widget.setWorkCell (workcell.get ());
@@ -5892,14 +6078,14 @@ static int testWorkflowUiStates ()
     tcpCombo->setCurrentIndex (-1);
     QMetaObject::invokeMethod (&widget, "refreshWorkflowControls", Qt::DirectConnection);
     if (const int rc = require (
-            !validateRun->isEnabled (),
+            !mode2Load->isEnabled () && !mode2ValidateAll->isEnabled (),
             "no TCP disables requirement validation"))
         return rc;
     tcpCombo->setCurrentIndex (0);
     QMetaObject::invokeMethod (&widget, "refreshWorkflowControls", Qt::DirectConnection);
     if (const int rc = require (
-            validateLoad->isEnabled () && !validateRun->isEnabled () &&
-                !validateExport->isEnabled () &&
+            mode2Load->isEnabled () && !mode2ValidateAll->isEnabled () &&
+                !mode2ValidateSelected->isEnabled () &&
                 validateState->text ().contains (QStringLiteral ("No frozen")),
             "validation waits for a frozen requirement artifact"))
         return rc;
@@ -5915,7 +6101,7 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             widget.statusMessage ().contains (
                 QStringLiteral ("REQ_V3_REQUIRES_REFREEZE")) &&
-                !validateRun->isEnabled (),
+                !mode2ValidateAll->isEnabled (),
             "legacy v3 rejection reports the stable refreeze code"))
         return rc;
 
@@ -5983,7 +6169,7 @@ static int testWorkflowUiStates ()
         Q_RETURN_ARG (bool, executionAccepted),
         Q_ARG (QJsonObject, rws::RequirementExecutionJson::toObject (execution)));
     if (const int rc = require (executionInvoked && executionAccepted &&
-                                    validateRun->isEnabled (),
+                                    mode2ValidateAll->isEnabled (),
                                 "v4 execution contract enables validation"))
         return rc;
     QTableWidget* taskResults = widget.findChild< QTableWidget* > (
@@ -6035,6 +6221,13 @@ static int testWorkflowUiStates ()
             "task without a collision requirement is not blocked by a missing detector"))
         return rc;
     if (const int rc = require (
+            validateSummary->text ().contains (QStringLiteral ("Verified")) &&
+                validateInspector->rowCount () > 1 &&
+                validateInspector->item (0, 0) != nullptr &&
+                validateInspector->item (0, 0)->text () == QStringLiteral ("Type"),
+            "full frozen validation selects a result and renders its inspector"))
+        return rc;
+    if (const int rc = require (
             regionCells != nullptr && regionCells->rowCount () >= 1 &&
                 regionCells->item (0, 5) != nullptr &&
                 !regionCells->item (0, 5)->text ().isEmpty () &&
@@ -6056,17 +6249,25 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             regionSummary != nullptr && regionSummary->rowCount () == 2 &&
                 regionSummary->columnCount () <= 6 && orientationProbe != nullptr &&
-                orientationProbe->isVisible () && provenance != nullptr &&
+                !orientationProbe->isVisible () && provenance != nullptr &&
                 frozenDiagnostics != nullptr &&
                 !frozenDiagnostics->isChecked (),
             "frozen requirements expose compact region summaries and collapsed provenance diagnostics"))
         return rc;
     regionSummary->selectRow (1);
     QApplication::processEvents ();
+    frozenDiagnostics->click ();
+    QApplication::processEvents ();
     if (const int rc = require (
-            orientationProbe->text ().contains (QStringLiteral ("3")) &&
-                orientationProbe->text ().contains (QStringLiteral ("2")),
-            "selected frozen region exposes its own multi-orientation probe"))
+            orientationProbe->isVisible () && provenance->isVisible () &&
+                orientationProbe->text ().contains (QStringLiteral ("3")) &&
+                orientationProbe->text ().contains (QStringLiteral ("2")) &&
+                validateInspector->item (0, 1) != nullptr &&
+                validateInspector->item (0, 1)->text () == QStringLiteral ("Demand region") &&
+                validateInspector->item (1, 1) != nullptr &&
+                validateInspector->item (1, 1)->text () ==
+                    QStringLiteral ("workflow-region-second"),
+            "selected frozen region drives its orientation probe and inspector"))
         return rc;
     taskResults->selectRow (1);
     mode2ValidateSelected->click ();
@@ -6107,8 +6308,8 @@ static int testWorkflowUiStates ()
             "selected frozen region replaces the report summary with its readonly subset"))
         return rc;
     if (const int rc = require (
-            validateExport->isEnabled (),
-            "validated requirement results enable report export"))
+            report != nullptr && report->isEnabled (),
+            "validated requirement results remain available to the report menu"))
         return rc;
     mode2Source->setCurrentIndex (0);
     taskTable->setCurrentIndex (taskModel->index (0, 0));
@@ -6229,7 +6430,8 @@ static int testWorkflowUiStates ()
             "completed Explore sampling publishes Workspace rows and summary"))
         return rc;
     modeTabs->setCurrentIndex (2);
-    exploreSamplingMode->setCurrentIndex (0);
+    exploreCapability->setCurrentIndex (0);
+    workspaceSamplingStrategy->setCurrentIndex (0);
     QCoreApplication::processEvents ();
     workspaceSamplesTable->selectRow (0);
     QCoreApplication::processEvents ();
@@ -6293,7 +6495,7 @@ static int testWorkflowUiStates ()
     stateStructure = nullptr;
     QApplication::processEvents ();
     if (const int rc = require (
-            !diagnoseRefresh->isEnabled () && !validateRun->isEnabled () &&
+            !ikSync->isEnabled () && !mode2ValidateAll->isEnabled () &&
                 !exploreRun->isEnabled () && !exploreCancel->isEnabled (),
             "unloading WorkCell during cancellation leaves the UI safely disabled"))
         return rc;
@@ -6720,8 +6922,13 @@ int main (int argc, char** argv)
         rc = testTargetValidationAndResidual ();
     else if (suite == "pose_units")
         rc = testPoseUnitConversions ();
-    else if (suite == "ik")
+    else if (suite == "ik") {
         rc = testIkRanking ();
+        if (rc == 0)
+            rc = testIkCollisionUiLogic ();
+        if (rc == 0)
+            rc = testIkIncludesCurrentQForCurrentTcpTarget ();
+    }
     else if (suite == "ik_current_target")
         rc = testIkIncludesCurrentQForCurrentTcpTarget ();
     else if (suite == "ik_dedup")
