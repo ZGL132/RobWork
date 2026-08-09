@@ -181,10 +181,25 @@ ConfigurationEvaluation ConfigurationEvaluator::evaluate(
         // 仅当选项开启且检测器可用时执行;结果独立记录,不因碰撞检测器缺失而中断。
         if (options.checkCollision && context.collisionDetector != nullptr) {
             rw::proximity::CollisionDetector::QueryResult queryResult;
-            result.collisionChecked = true;
-            result.inCollision = context.collisionDetector->inCollision (state, &queryResult);
-            if (result.inCollision)
-                appendReason (result, KinematicFailureReason::Collision);
+            // 碰撞查询本身也可能抛异常(例如 state 中某个帧未插入碰撞树、查询
+            // 参数非法等)。这里必须用 try/catch 兜住:查询失败绝不能静默当成
+            // "无碰撞"继续评估——那会得到危险的安全误判(可能把碰撞构型放行),
+            // 因此把失败标记为 DataInsufficient + Critical,由上层决定如何呈现。
+            try {
+                result.inCollision = context.collisionDetector->inCollision (state, &queryResult);
+                result.collisionChecked = true;
+                if (result.inCollision)
+                    appendReason (result, KinematicFailureReason::Collision);
+            }
+            catch (const std::exception& ex) {
+                result.collisionChecked = false;
+                result.inCollision = false;
+                appendReason (result, KinematicFailureReason::CollisionDetectorUnavailable);
+                appendWarning (result, "KIN_COLLISION_QUERY_FAILED", ex.what (),
+                               AnalysisStatus::Fail);
+                result.feasibility = Feasibility::DataInsufficient;
+                result.quality = Quality::Critical;
+            }
         }
     }
     catch (const std::exception& ex) {

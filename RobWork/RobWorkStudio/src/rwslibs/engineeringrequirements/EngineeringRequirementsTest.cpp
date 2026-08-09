@@ -45,6 +45,7 @@
 #include <QJsonArray>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QPushButton>
 #include <QTableWidget>
 #include <QTabWidget>
@@ -1980,6 +1981,41 @@ int testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline()
     return 0;
 }
 
+// 校验工程需求 Widget 在项目资源关闭/切换时彻底清除上一项目的需求会话:
+// 1) 通过"添加关键工位点"与"添加盒体需求区域"按钮产生数据后,数据层
+//    (poseTasks/boxRegions)与 UI 层(关键工位列表、盒体区域表格)应同步出现条目;
+// 2) 调用 clearProjectDocumentContext() 后,需求集合、冻结标记以及所有对应
+//    UI 条目全部清空,保证新项目不会继承旧项目的需求上下文。
+int testWidgetProjectCloseClearsRequirementSession()
+{
+    rws::EngineeringRequirementsWidget widget;
+    QPushButton* addStation = widget.findChild<QPushButton*>("addRequirementPoseTaskButton");
+    QPushButton* addRegion = widget.findChild<QPushButton*>("addRequirementBoxRegionButton");
+    QListWidget* stationList = widget.findChild<QListWidget*>("keyStationList");
+    QTableWidget* regionTable = widget.findChild<QTableWidget*>("engineeringRequirementBoxTable");
+    REQUIRE(addStation != nullptr);
+    REQUIRE(addRegion != nullptr);
+    REQUIRE(stationList != nullptr);
+    REQUIRE(regionTable != nullptr);
+
+    widget.beginGeneratedProjectDocument(QStringLiteral("old/requirements/main.requirements.json"));
+    addStation->click();
+    addRegion->click();
+    REQUIRE(widget.requirementSet().poseTasks.size() == 1);
+    REQUIRE(widget.requirementSet().boxRegions.size() == 1);
+    REQUIRE(stationList->count() == 1);
+    REQUIRE(regionTable->rowCount() == 1);
+
+    widget.clearProjectDocumentContext();
+
+    REQUIRE(widget.requirementSet().poseTasks.empty());
+    REQUIRE(widget.requirementSet().boxRegions.empty());
+    REQUIRE(!widget.requirementSet().frozen);
+    REQUIRE(stationList->count() == 0);
+    REQUIRE(regionTable->rowCount() == 0);
+    return 0;
+}
+
 int testWidgetResolvesGeometryFeatureUsingLatestJogState()
 {
     // 构造一个可在 State 中移动的工装 Frame。默认状态保持原点，而模拟的
@@ -2418,6 +2454,12 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         return testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline();
     }
+    // 独立运行开关:仅执行"项目关闭清空需求会话"测试,便于快速回归验证,
+    // 不必等待整个 widget 子套件全部跑完。
+    if (argc > 1 && std::string(argv[1]) == "widget_project_close") {
+        QApplication app(argc, argv);
+        return testWidgetProjectCloseClearsRequirementSession();
+    }
     if (argc > 1 && std::string(argv[1]) == "widget") {
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
         QApplication app(argc, argv);
@@ -2430,6 +2472,9 @@ int main(int argc, char** argv)
         if (testWidgetDoesNotRequestPublicationWhenFreezeFails() != 0)
             return 1;
         if (testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline() != 0)
+            return 1;
+        // 项目关闭/切换必须清空上一项目的需求会话,防止新项目被旧项目需求污染。
+        if (testWidgetProjectCloseClearsRequirementSession() != 0)
             return 1;
         if (testWidgetExposesSemanticKeyStationInspector() != 0)
             return 1;

@@ -712,6 +712,20 @@ void RobotModelBuilderWidget::markProjectDocumentClean ()
     _projectSnapshotActive = true;
 }
 
+void RobotModelBuilderWidget::clearProjectDocumentContext ()
+{
+    // 项目资源关闭回调执行完整重置:清空托管输出目录、丢弃已导入的模型文档说明
+    // 与上次 URDF 导入的告警,并恢复默认机器人模型草稿,确保新工程不继承旧项目上下文。
+    setProjectOutputDirectory (QString ());
+    _importedDocument = ImportedDocumentSpec ();
+    _lastUrdfImportWarnings.clear ();
+    applyDefaultProjectModel ();
+    // 作废干净基线并关闭快照追踪:新项目尚未打开时,脏判定一律视为"干净"。
+    _projectCleanSnapshot.clear ();
+    _projectSnapshotActive = false;
+    setStatus ("No project open.");
+}
+
 // 生成当前 Widget 完整状态的二进制快照：模型 JSON + 全部编辑控件（行编辑/复选框/
 // 表格）的文本、启用态与内容。快照用于"从零构建"流程的撤销/重做与项目文档基线；
 // 任何字段超限都会置失败并返回 false，避免保存损坏的快照。

@@ -60,6 +60,9 @@ public:
     bool isProjectDocumentDirty() const;
     void markProjectDocumentClean();
     void beginGeneratedProjectDocument(const QString& path);
+    // 项目资源关闭回调(由 Provider 的 CloseHandler 触发):清空优化问题、项目路径、
+    // 托管工程根与快照基线,并把模型来源复位为"未跟踪",确保新工程不继承旧优化会话。
+    void clearProjectDocumentContext();
     bool canCloseProjectDocument(QString* reason = nullptr) const;
 
 Q_SIGNALS:

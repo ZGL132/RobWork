@@ -1480,9 +1480,23 @@ void EngineeringRequirementsWidget::beginGeneratedProjectDocument(const QString&
 // 项目关闭或切换时释放仅用于脏比较的路径与快照，防止旧项目基线污染新项目。
 void EngineeringRequirementsWidget::clearProjectDocumentContext()
 {
+    // 关闭/切换项目时执行完整会话重置:除脏比较所需的路径与快照外,还要销毁
+    // 上一项目的全部需求数据与 UI 状态,确保新项目不会继承旧项目任何内容。
+    // -- 数据层:需求集合、编译结果、冻结产物与撤销历史一并清空 --
+    _requirements = RequirementSet();
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
+    _undoStack.clear();
+    // -- 项目关联:输出目录与模型路径归零,站点朝向坐标视为已解析 --
+    _projectOutputDirectory.clear();
+    _projectModelPath.clear();
+    _stationOrientationCoordinatesResolved = true;
+    // -- 脏比较基线:项目文档路径与保存/待保存快照全部作废,避免旧基线污染新项目 --
     _projectDocumentPath.clear();
     _savedProjectDocumentSnapshot.clear();
     _pendingProjectDocumentSnapshot.clear();
+    // 重置后刷新表格,使关键工位列表与盒体区域表格立即反映清空后的状态。
+    refreshTables();
 }
 
 QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QString& documentPath) const

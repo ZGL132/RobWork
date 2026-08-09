@@ -115,12 +115,16 @@ class KinematicAnalyzer
     //   7) 调用 sortIkSolutionsForDisplay 按 UI 展示偏好排序。
     // collisionDetector == NULL 时跳过碰撞检查(快速模式);
     // 不修改入参 state(候选解评估会临时 setQ,完毕后恢复)。
+    // collisionCheckRequested:即使未显式传入 collisionDetector,也要求执行碰撞检查;
+    // 它与"collisionDetector 非空"是"或"关系,两者任一成立即开启碰撞检测
+    // (具体见 .cpp 中 analyzeIk 对 collisionCheckIntent 的并集逻辑)。
     KinematicIkAnalysisResult analyzeIk (
         rw::core::Ptr< rw::models::Device > device,
         rw::core::Ptr< const rw::kinematics::Frame > tcpFrame,
         const rw::kinematics::State& state,
         const TaskPoint& target,
-        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL) const;
+        rw::core::Ptr< rw::proximity::CollisionDetector > collisionDetector = NULL,
+        bool collisionCheckRequested = false) const;
 
     // =======================================================================
     //  analyzeTaskPoints(无 workcell):批量处理一组任务点
@@ -293,8 +297,7 @@ void addUniqueIkCandidate (std::vector< rw::math::Q >& candidates,
 // 统计 solutions 中"无碰撞 && status != Fail"的解数。
 std::size_t countUsableIkSolutions (const std::vector< KinematicIkSolution >& solutions);
 
-// 遍历 solutions,统计 total / usable / pass / warning / fail 五类计数,
-// 供 IK tab 顶部 summary 标签使用(避免每次刷新重算)。
+// 遍历 solutions,统计 total / usable / pass / warning / fail 五类计数。
 KinematicIkSummary summarizeIkSolutions (const std::vector< KinematicIkSolution >& solutions);
 
 }    // namespace rws

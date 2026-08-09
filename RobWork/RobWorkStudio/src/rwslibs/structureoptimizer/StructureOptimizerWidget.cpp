@@ -398,6 +398,20 @@ void StructureOptimizerWidget::markProjectDocumentClean()
     }
 }
 
+void StructureOptimizerWidget::clearProjectDocumentContext()
+{
+    // 项目资源关闭回调执行完整重置:清空项目路径、文档路径与托管工程根目录,
+    // 作废保存/待保存快照,并把模型来源状态复位为"未跟踪"。
+    _projectPath.clear();
+    _projectDocumentPath.clear();
+    _managedProjectRoot.clear();
+    _savedProjectDocumentSnapshot.clear();
+    _pendingProjectDocumentSnapshot.clear();
+    _modelSourceStatus = RobotModelSourceStatus::Untracked;
+    // 以空优化问题连同空托管根重建状态,确保新工程不继承上一项目的优化会话。
+    setProblemWithManagedRoot(StructureOptimizationProblem(), QString());
+}
+
 bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
 {
     if (_controller != nullptr && _controller->isRunning()) {

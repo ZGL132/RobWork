@@ -41,7 +41,9 @@ void StructureOptimizerPlugin::initialize()
             return _widget->saveProjectDocument(targetPath, error);
         },
         [this](QString* reason) { return _widget->canCloseProjectDocument(reason); },
-        CallbackProjectDocumentProvider::CloseHandler(),
+        // 项目资源关闭回调:当优化项目被关闭且无需保存时,清空 Widget 的优化问题、
+        // 项目路径与快照基线,使新工程不继承上一项目的优化会话。
+        [this]() { _widget->clearProjectDocumentContext(); },
         [this]() { _widget->markProjectDocumentClean(); });
 
     if (getRobWorkStudio() != nullptr) {

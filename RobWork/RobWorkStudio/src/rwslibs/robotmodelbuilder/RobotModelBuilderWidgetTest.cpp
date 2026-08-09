@@ -1366,5 +1366,27 @@ int main (int argc, char** argv)
                 .absoluteFilePath () != QFileInfo (relocatedScene).absoluteFilePath ())
         return fail ("Widget runtime geometry did not relocate with the managed project.");
 
+    // 项目关闭回归测试:先构造一个已绑定输出目录、含脏模型(机器人名
+    // "OldProjectRobot")的 Widget,作为"旧项目仍在打开"的夹具。
+    rws::RobotModelBuilderWidget projectCloseWidget;
+    projectCloseWidget.setProjectOutputDirectory (portableProject.path ());
+    rws::RobotModelSpec oldProjectSpec = projectCloseWidget.currentModelSpec ();
+    oldProjectSpec.robotName = "OldProjectRobot";
+    projectCloseWidget.syncFromWorkCellSpec (oldProjectSpec, {});
+    projectCloseWidget.beginGeneratedProjectDocument ();
+    if (!projectCloseWidget.isProjectDocumentDirty ())
+        return fail ("Project-close fixture must contain a dirty project model.");
+
+    projectCloseWidget.clearProjectDocumentContext ();
+
+    // 关闭后校验:输出目录必须被清空、模型名不得残留旧机器人、脏标志必须复位,
+    // 三者共同保证新工程不会继承上一项目的建模状态。
+    if (!projectCloseWidget.projectOutputDirectory ().isEmpty ())
+        return fail ("Closing a project must clear the managed robot output directory.");
+    if (projectCloseWidget.currentModelSpec ().robotName == "OldProjectRobot")
+        return fail ("Closing a project must remove the previous project robot model.");
+    if (projectCloseWidget.isProjectDocumentDirty ())
+        return fail ("Closing a project must clear the robot model document baseline.");
+
     return 0;
 }

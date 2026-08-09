@@ -69,6 +69,11 @@ class RobotModelBuilderWidget : public QWidget
     bool isProjectDocumentDirty () const;
     /** @brief 仅在 ProjectSaveTransaction 完整提交成功后更新干净快照。 */
     void markProjectDocumentClean ();
+    // 项目资源关闭回调(由 Provider 的 CloseHandler 触发):除 @brief 所述内容外,
+    // 还会清空 URDF 导入结果与告警、关闭快照追踪并把状态栏置为 "No project open.",
+    // 确保新工程完全脱离上一项目的建模上下文。
+    /** @brief 项目资源关闭时清除当前模型草稿、项目路径和持久化快照。 */
+    void clearProjectDocumentContext ();
     bool snapshotProjectDocumentState (QByteArray& snapshot, QString* error = nullptr) const;
     bool restoreProjectDocumentState (const QByteArray& snapshot, QString* error = nullptr);
 

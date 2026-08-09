@@ -4553,6 +4553,37 @@ static void testManagedRobotProjectRequiresPublishedWorkCell()
 // 子套件 异步控制器状态:用假任务循环驱动 StructureOptimizationController,验证
 // running/paused/completed 信号时序、暂停期间进度不再推进、恢复后继续推进、
 // 取消后 completed 携带 canceled 且控制器退出运行态。
+// 项目关闭/切换回归:先构造带优化变量、任务与约束的旧问题并开启项目文档,
+// 再调用 clearProjectDocumentContext(),校验任务与约束全部清空且脏标志复位,
+// 确保新项目不会继承旧项目的优化会话。
+static void testWidgetProjectCloseClearsOptimizationSession()
+{
+    rws::StructureOptimizerWidget widget;
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "old-project";
+    problem.variables.push_back({"joint1_x", "Joint 1 X", "joint1", "m",
+                                 rws::StructureVariableKind::JointPositionX,
+                                 0.0, -1.0, 1.0, 0.1});
+    rws::OptimizationTaskPoint task;
+    task.point.id = "old-task";
+    task.point.name = "Old task";
+    problem.tasks.push_back(task);
+    rws::StructureConstraint constraint;
+    constraint.id = "old-constraint";
+    problem.constraints.push_back(constraint);
+    widget.setProblem(problem);
+    widget.beginGeneratedProjectDocument(QStringLiteral("old/optimizations/main.json"));
+    REQUIRE(widget.collectProblem().tasks.size() == 1);
+    REQUIRE(widget.collectProblem().constraints.size() == 1);
+
+    widget.clearProjectDocumentContext();
+
+    const rws::StructureOptimizationProblem cleared = widget.collectProblem();
+    REQUIRE(cleared.tasks.empty());
+    REQUIRE(cleared.constraints.empty());
+    REQUIRE(!widget.isProjectDocumentDirty());
+}
+
 static void testStructureOptimizationControllerAsyncState()
 {
     std::printf("testStructureOptimizationControllerAsyncState ... ");
@@ -4710,6 +4741,18 @@ int main(int argc, char** argv)
             return 0;
         }
         std::printf("Project context test FAILED.\n");
+        return 1;
+    }
+
+    // 独立运行开关:仅执行"项目关闭清空优化会话"回归,便于快速验证而无需跑整个 widget 套件。
+    if (suite == "project_close") {
+        QApplication app(argc, argv);
+        testWidgetProjectCloseClearsOptimizationSession();
+        if (g_testFailures == 0) {
+            std::printf("Project close test passed.\n");
+            return 0;
+        }
+        std::printf("Project close test FAILED.\n");
         return 1;
     }
 

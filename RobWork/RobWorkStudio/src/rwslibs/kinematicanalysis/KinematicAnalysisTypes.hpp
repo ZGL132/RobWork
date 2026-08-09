@@ -400,8 +400,8 @@ struct TargetCandidate
 //   - target                   :被评估的任务点(输入);
 //   - candidates               :所有候选解(评分后,由高到低);
 //   - failureReasons/warnings  :聚合失败原因与告警。
-// 该结构由 TargetEvaluator 产出;旧 UI 通过 legacyIkResultFromTarget 把它转回
-// KinematicIkAnalysisResult,新执行契约流程则直接消费它,保持两代接口并存。
+// 该结构由 TargetEvaluator 产出;Diagnose 和批量接口映射为
+// KinematicIkAnalysisResult,执行契约流程则直接消费它。
 struct TargetEvaluation
 {
     AnalysisEvidenceStage stage = AnalysisEvidenceStage::Quick;
@@ -555,10 +555,23 @@ struct KinematicIkSolution
     std::vector< double > q;                          // 该解对应的关节值
     double distanceToCurrentQ    = 0.0;               // 与当前 state 的 q 之差(L2 距离)
     double minJointLimitMargin   = 0.0;               // 该解的关节最小裕度
+    // 以下字段为重构新增的细粒度评估数据:把原本只在 ConfigurationEvaluation 中的
+    // 逐关节裕度 / 雅可比 / 奇异值也复制到每个候选解上,详情表格可逐解直接展示,
+    // 无需回溯配置评估。jacobianRowMajor 与 singularValues 采用行优先扁平化存储,
+    // 便于序列化到 Report JSON 与 CSV 导出。
+    std::vector< double > jointLimitMargins;
     double manipulability        = 0.0;
     double conditionNumber       = 0.0;
+    // 该解处的 6×n 雅可比矩阵(行优先扁平化)及其维度(行通常为 6,列为 DOF)。
+    std::vector< double > jacobianRowMajor;
+    int jacobianRows             = 0;
+    int jacobianCols             = 0;
+    // 雅可比 SVD 分解得到的奇异值(降序),用于复算条件数/可操作度。
+    std::vector< double > singularValues;
     double positionErrorMeters   = 0.0;               // FK 与目标位置差(米)
     double orientationErrorDeg   = 0.0;               // FK 与目标姿态差(度)
+    // 是否对该解实际执行了碰撞检测(未执行时 inCollision 字段无意义)。
+    bool collisionChecked        = false;
     bool inCollision             = false;             // 碰撞检测器标记
     double score                 = 0.0;               // 综合评分(越小越好)
     std::vector< KinematicFailureReason > failureReasons;  // 该解的失败原因列表
@@ -579,6 +592,9 @@ struct KinematicIkAnalysisResult
     AnalysisStatus status = AnalysisStatus::Unknown;   // 所有解中"最严重程度"的状态聚合
     KinematicFailureReason failureReason = KinematicFailureReason::None;
     TaskPoint target;                                 // 输入目标点
+    // 用户是否请求了对每个候选解做碰撞检查:false 时碰撞证据应视为 NotEvaluated,
+    // Apply 判定(canApplyIkSolution)会跳过碰撞约束,只依据状态与残差。
+    bool collisionCheckRequested = false;
     std::size_t rawCandidateCount = 0;
     std::size_t usableSolutionCount = 0;
     std::vector< KinematicIkSolution > solutions;     // 已按 UI 排序规则排好

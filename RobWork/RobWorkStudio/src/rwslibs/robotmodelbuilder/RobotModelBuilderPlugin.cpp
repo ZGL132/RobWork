@@ -99,7 +99,9 @@ void RobotModelBuilderPlugin::initialize ()
             return _widget->saveProjectDocument (targetPath, error);
         },
         CallbackProjectDocumentProvider::CanCloseHandler (),
-        CallbackProjectDocumentProvider::CloseHandler (),
+        // 项目资源关闭回调:当 WorkCell/工程被关闭且无需保存时,清空 Widget 中的
+        // 模型草稿、输出目录与干净/脏快照基线,使新工程不继承上一项目的建模上下文。
+        [this] () { _widget->clearProjectDocumentContext (); },
         [this] () { _widget->markProjectDocumentClean (); },
         [this] (QByteArray* snapshot, QString* error) {
             return _widget->snapshotProjectDocumentState (*snapshot, error);
