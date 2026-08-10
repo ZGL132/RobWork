@@ -70,15 +70,34 @@ These values can be changed in the Report tab. Re-run analyses after applying ne
 - RobotModelBuilder creates and edits robot models. KinematicAnalysis consumes the loaded WorkCell and selected device.
 - Dynamics, drive selection, and trajectory validation should be separate plugins. They can consume exported task points, selected IK solutions, and KinematicAnalysisResult summaries, but should not depend on KinematicAnalysis UI classes.
 
-## IK Page Layout
+## Diagnose Layout
 
-The IK tab is split into a left input panel and a right results panel. The input panel holds the target name, units, pose spin boxes, filter checkboxes, and action buttons (Import current TCP pose, Solve, Apply selected Q). The results panel shows the status summary, a multi-column solution table, and a selected-candidate details table.
+Diagnose is a single IK candidate master/detail workflow. `IK Target` contains the target pose and the `Refresh and Sync TCP`, threshold, collision, duplicate-Q, and Solve controls. `IK solution status` lists compact candidate results; the best visible candidate is selected by default, and selecting another row updates every diagnostic below it.
 
-- IK analysis distinguishes deterministic numerical candidates from usable unique solutions. The result table can show diagnostic failed candidates, while the summary reports how many candidates are usable.
-- Count summary rows: Raw candidates, Unique candidates, Usable unique, Pass, Warning, Fail (updated each Solve and on filter changes).
-- Filters: `Show usable only` and `Show failed candidates` toggle which solution rows are visible. Selecting a row updates the details table below it.
-- `Failure` and `Q` are separate table columns so long joint vectors no longer hide diagnostic reasons.
-- `Duplicate Q threshold` controls joint-space IK candidate de-duplication. Increase it to merge tiny numerical variations around singular configurations.
+- Health summary shows the selected candidate's status, condition number, manipulability, and minimum joint margin in one row.
+- Solution inspector shows residuals, collision evidence, distance from the solve start, joint vector, and failure reasons when present.
+- Advanced diagnostics is last and collapsed by default. It contains candidate-owned joint status and a compact Jacobian summary; complete singular values remain available in the Jacobian tooltip.
+- Collision evidence distinguishes not evaluated, unavailable, clear, and collision. Applying a solution is blocked for stale, failed, colliding, or insufficiently checked candidates.
+- Candidate filters change only presentation and preserve stable solution numbering and selection where possible.
+- `Duplicate Q` controls joint-space IK candidate de-duplication. Increase it to merge tiny numerical variations around singular configurations.
+
+## Validate Layout
+
+Validate opens on `Frozen Requirements`, the Verified validation path. Load a v4 frozen
+requirements artifact, then use `Validate selected` for one task or demand region, or `Validate
+all` for the complete execution set. The command strip also provides the report menu. v3 artifacts
+are rejected and must be refrozen before validation.
+
+`Local Tasks` remains an editable Quick-analysis source. It keeps Add, Remove, selected, and full
+validation actions, along with the existing task-point editor and report behavior. It does not
+replace the Verified conclusion from a frozen artifact.
+
+The validation summary reports the active evidence level, Must conclusion, and outcome counts.
+Task and demand-region summaries remain separate because tasks report pose residuals while regions
+report position and orientation coverage. Selecting a frozen result updates the Validation
+inspector with its level, feasibility, quality, evidence stage, failures, and task- or
+region-specific evidence. Advanced diagnostics is collapsed by default and contains artifact
+provenance, orientation probes, and the per-cell region results.
 
 ## Workspace Page Layout
 

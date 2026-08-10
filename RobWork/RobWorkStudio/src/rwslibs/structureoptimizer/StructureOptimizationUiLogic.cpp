@@ -9,11 +9,36 @@ using namespace rws;
 
 namespace {
 
+/**
+ * @brief 判断一个浮点数值是否为有效的非零值。
+ * 
+ * 检查数值是否有限（非 NaN、非 Inf），且绝对值大于 1e-12（防止浮点数精度误差造成的伪非零）。
+ * 
+ * @param value 待检查的浮点数值
+ * @return true 数值有限且不为零
+ * @return false 数值为 0、NaN 或无限大
+ */
 bool nonZero(double value)
 {
     return std::isfinite(value) && std::abs(value) > 1e-12;
 }
 
+/**
+ * @brief 构建一个长度/尺寸类型的结构设计变量实例。
+ * 
+ * 统一设置长度变量的默认属性：
+ *  - 物理单位：米 ("m")
+ *  - 寻优范围：[当前值 * 0.7, 当前值 * 1.3] (即上下浮动 30%)
+ *  - 默认步长：0.001 m (1 mm)
+ *  - 偏好值：默认等于当前初始值
+ * 
+ * @param id 变量的唯一标识符
+ * @param label UI 显示标签
+ * @param target 目标关节/坐标系/几何体名称
+ * @param kind 变量种类枚举
+ * @param currentValue 变量当前的初始物理数值
+ * @return StructureDesignVariable 构造完成的设计变量结构体
+ */
 StructureDesignVariable makeLengthVariable(const std::string& id,
                                            const std::string& label,
                                            const std::string& target,
@@ -27,16 +52,28 @@ StructureDesignVariable makeLengthVariable(const std::string& id,
     variable.unit = "m";
     variable.kind = kind;
     variable.currentValue = currentValue;
+    // 默认寻优下限设为当前值的 70%
     variable.minimum = currentValue * 0.7;
+    // 默认寻优上限设为当前值的 130%
     variable.maximum = currentValue * 1.3;
+    // 若当前值为负数导致 min > max，则交换保证区间合法
     if (variable.minimum > variable.maximum)
         std::swap(variable.minimum, variable.maximum);
-    variable.step = 0.001;
-    variable.preferredValue = currentValue;
-    variable.enabled = true;
+    variable.step = 0.001; // 1 mm 默认搜索步长
+    variable.preferredValue = currentValue; // 工程师默认偏好初始构型尺寸
+    variable.enabled = true; // 默认启用该变量
     return variable;
 }
 
+/**
+ * @brief 为关节变换 (JointTransform) 的指定坐标轴添加位置平移设计变量。
+ * 
+ * 仅当指定轴向的平移位移非零时才会提取并添加为可优化变量。
+ * 
+ * @param variables [out] 收集设计变量的向量容器
+ * @param joint 关节变换规格对象
+ * @param axis 坐标轴索引 (0 -> x, 1 -> y, 2 -> z)
+ */
 void appendTransformPositionVariable(std::vector<StructureDesignVariable>& variables,
                                      const JointTransformSpec& joint,
                                      int axis)
@@ -48,6 +85,7 @@ void appendTransformPositionVariable(std::vector<StructureDesignVariable>& varia
         StructureVariableKind::JointPositionZ
     };
     const double value = joint.pos[static_cast<std::size_t>(axis)];
+    // 忽略平移为 0 的坐标轴，避免生成无效变量
     if (!nonZero(value))
         return;
 
@@ -59,6 +97,13 @@ void appendTransformPositionVariable(std::vector<StructureDesignVariable>& varia
         id.str(), label.str(), joint.name, kinds[axis], value));
 }
 
+/**
+ * @brief 为工具坐标系 (ToolFrame / TCP) 的指定坐标轴添加偏移量设计变量。
+ * 
+ * @param variables [out] 收集设计变量的向量容器
+ * @param joint 工具关节规格对象
+ * @param axis 坐标轴索引 (0 -> x, 1 -> y, 2 -> z)
+ */
 void appendTcpVariable(std::vector<StructureDesignVariable>& variables,
                        const JointTransformSpec& joint,
                        int axis)
@@ -81,12 +126,23 @@ void appendTcpVariable(std::vector<StructureDesignVariable>& variables,
         id.str(), label.str(), joint.name, kinds[axis], value));
 }
 
+/**
+ * @brief 为连杆可几何化渲染对象 (Drawable) 添加连杆截面尺寸设计变量（半径、宽、高）。
+ * 
+ * 仅对启用了 autoLinkGeometry（自动生成连杆几何）的连杆生成几何变量。
+ * 自动同步标志 syncAssociatedGeometry 会被置为 true，变异时将联动更新碰撞模型[cite: 17, 22]。
+ * 
+ * @param variables [out] 收集设计变量的向量容器
+ * @param drawable 渲染规格对象
+ */
 void appendDrawableVariables(std::vector<StructureDesignVariable>& variables,
                              const DrawableSpec& drawable)
 {
+    // 未开启自动连杆几何生成则忽略
     if (!drawable.autoLinkGeometry)
         return;
 
+    // 若存在半径属性（圆柱/圆管连杆），生成 LinkRadius 变量
     if (nonZero(drawable.radius)) {
         StructureDesignVariable variable = makeLengthVariable(
             drawable.name + "_radius",
@@ -94,10 +150,11 @@ void appendDrawableVariables(std::vector<StructureDesignVariable>& variables,
             drawable.name,
             StructureVariableKind::LinkRadius,
             drawable.radius);
-        variable.syncAssociatedGeometry = true;
+        variable.syncAssociatedGeometry = true; // 变异时联动同步碰撞网格[cite: 17, 22]
         variables.push_back(variable);
     }
 
+    // 遍历三轴尺寸（方形截面连杆），生成截面 Width(Y轴) 与 Height(Z轴) 变量
     for (int axis = 0; axis < 3; ++axis) {
         const double value = drawable.dimensions[static_cast<std::size_t>(axis)];
         if (!nonZero(value))
@@ -109,29 +166,41 @@ void appendDrawableVariables(std::vector<StructureDesignVariable>& variables,
             axis == 1 ? StructureVariableKind::LinkWidth
                       : StructureVariableKind::LinkHeight,
             value);
-        variable.syncAssociatedGeometry = true;
+        variable.syncAssociatedGeometry = true; // 变异时联动同步碰撞网格[cite: 17, 22]
         variables.push_back(variable);
     }
 }
 
 } // namespace
 
+/**
+ * @brief 根据输入的机器人设计上下文，自动分析并生成建议的设计变量列表。
+ * 
+ * 算法扫描模型的平移关节、TCP 工具、基座安装高度及连杆几何体，提取其中非零的物理尺寸作为推荐变量。
+ * 
+ * @param context 机器人设计上下文
+ * @return std::vector<StructureDesignVariable> 建议生成的结构设计变量集合
+ */
 std::vector<StructureDesignVariable>
 StructureOptimizationUiLogic::suggestVariables(const RobotDesignContext& context)
 {
     std::vector<StructureDesignVariable> variables;
     const RobotModelSpec& spec = context.modelSpec;
 
+    // 1. 遍历机器人模型的所有平移关节变换
     for (const JointTransformSpec& joint : spec.transformJoints) {
+        // 尝试提取 X, Y, Z 三轴位置变量
         for (int axis = 0; axis < 3; ++axis)
             appendTransformPositionVariable(variables, joint, axis);
 
+        // 若当前关节类型为 ToolFrame（工具末端），提取 TCP 偏置变量
         if (typeToKind(joint.type) == JointKind::ToolFrame) {
             for (int axis = 0; axis < 3; ++axis)
                 appendTcpVariable(variables, joint, axis);
         }
     }
 
+    // 2. 检查基座安装高度 Z 坐标，若非零则提取 BaseHeight 变量
     if (nonZero(spec.robotBaseFrame.pos[2])) {
         variables.push_back(makeLengthVariable(
             "base_height",
@@ -141,18 +210,31 @@ StructureOptimizationUiLogic::suggestVariables(const RobotDesignContext& context
             spec.robotBaseFrame.pos[2]));
     }
 
+    // 3. 遍历渲染模型，提取连杆截面半径/宽高尺寸变量
     for (const DrawableSpec& drawable : spec.drawables)
         appendDrawableVariables(variables, drawable);
 
     return variables;
 }
 
+/**
+ * @brief 检查当前结构优化问题的输入配置是否合法且具备可运行条件。
+ * 
+ * 该函数供 UI 界面在启动优化前进行综合门禁控制。
+ * 
+ * @param problem 待校验的优化问题定义
+ * @param reason [out] 若校验失败，用于写回展示给用户的中文提示字符串
+ * @return true 可以启动优化计算
+ * @return false 存在阻断性错误或配置缺失，拒绝启动
+ */
 bool StructureOptimizationUiLogic::hasRunnableInputs(
     const StructureOptimizationProblem& problem, std::string* reason)
 {
+    // 1. 执行深度的物理与数据模型完整性校验
     const std::vector<AnalysisWarning> warnings =
         StructureOptimizationValidation::validateProblem(problem);
     for (const AnalysisWarning& warning : warnings) {
+        // 若存在严重失败 (Fail) 或上下文无效错误，直接拒绝运行
         if (warning.severity == AnalysisStatus::Fail ||
             warning.code == "StructureOptimization.Context.Invalid") {
             if (reason != nullptr) {
@@ -166,6 +248,7 @@ bool StructureOptimizationUiLogic::hasRunnableInputs(
         }
     }
 
+    // 2. 检查变量列表，确保至少有一个处于勾选启用状态 (enabled == true) 的设计变量
     bool hasEnabledVariable = false;
     for (const StructureDesignVariable& variable : problem.variables) {
         if (variable.enabled) {
@@ -175,10 +258,11 @@ bool StructureOptimizationUiLogic::hasRunnableInputs(
     }
     if (!hasEnabledVariable) {
         if (reason != nullptr)
-            *reason = "至少需要一个启用的设计变量。";
+            *reason = "至少需要一个启用的设计变量。"; // UI 状态栏中文提示
         return false;
     }
 
+    // 3. 检查任务点列表，确保至少有一个处于勾选启用状态 (point.enabled == true) 的任务点
     bool hasEnabledTask = false;
     for (const OptimizationTaskPoint& task : problem.tasks) {
         if (task.point.enabled) {
@@ -188,10 +272,11 @@ bool StructureOptimizationUiLogic::hasRunnableInputs(
     }
     if (!hasEnabledTask) {
         if (reason != nullptr)
-            *reason = "至少需要一个启用的任务点。";
+            *reason = "至少需要一个启用的任务点。"; // UI 状态栏中文提示
         return false;
     }
 
+    // 全部校验通过，清空原因描述并返回成功
     if (reason != nullptr)
         reason->clear();
     return true;
