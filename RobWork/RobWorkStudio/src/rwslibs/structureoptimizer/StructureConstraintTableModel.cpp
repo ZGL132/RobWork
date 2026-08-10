@@ -7,15 +7,15 @@ namespace {
 QString constraintKindLabel(rws::StructureConstraintKind kind)
 {
     switch (kind) {
-        case rws::StructureConstraintKind::ModelValid: return "模型有效";
-        case rws::StructureConstraintKind::RequiredTaskReachable: return "必达任务可达";
-        case rws::StructureConstraintKind::RequiredTaskCollisionFree: return "必达任务无碰撞";
-        case rws::StructureConstraintKind::MinimumJointMargin: return "最小关节裕度";
-        case rws::StructureConstraintKind::MaximumTotalLength: return "最大总长度";
-        case rws::StructureConstraintKind::MaximumBaseHeight: return "最大基座高度";
-        case rws::StructureConstraintKind::MaximumCrossSection: return "最大横截面积";
-        case rws::StructureConstraintKind::MaximumLinkSlenderness: return "最大长细比";
-        case rws::StructureConstraintKind::MinimumWorkspaceCoverage: return "最小工作空间覆盖";
+        case rws::StructureConstraintKind::ModelValid: return "Model Valid";
+        case rws::StructureConstraintKind::RequiredTaskReachable: return "Required Task Reachable";
+        case rws::StructureConstraintKind::RequiredTaskCollisionFree: return "Required Task Collision-Free";
+        case rws::StructureConstraintKind::MinimumJointMargin: return "Minimum Joint Margin";
+        case rws::StructureConstraintKind::MaximumTotalLength: return "Maximum Total Length";
+        case rws::StructureConstraintKind::MaximumBaseHeight: return "Maximum Base Height";
+        case rws::StructureConstraintKind::MaximumCrossSection: return "Maximum Cross Section";
+        case rws::StructureConstraintKind::MaximumLinkSlenderness: return "Maximum Link Slenderness";
+        case rws::StructureConstraintKind::MinimumWorkspaceCoverage: return "Minimum Workspace Coverage";
     }
     return QString();
 }
@@ -78,13 +78,13 @@ QVariant StructureConstraintTableModel::headerData(int section,
 
     switch (section) {
         case IdColumn: return "ID";
-        case LabelColumn: return "名称";
-        case TargetColumn: return "目标";
-        case KindColumn: return "类型";
-        case ThresholdColumn: return "阈值";
-        case SecondaryThresholdColumn: return "辅助阈值";
-        case EnabledColumn: return "启用";
-        case HardColumn: return "硬约束";
+        case LabelColumn: return "Name";
+        case TargetColumn: return "Target";
+        case KindColumn: return "Type";
+        case ThresholdColumn: return "Limit";
+        case SecondaryThresholdColumn: return "Aux. Limit";
+        case EnabledColumn: return "Enabled";
+        case HardColumn: return "Hard";
         default: return QVariant();
     }
 }

@@ -309,12 +309,12 @@ bool templateKindFromGeneratorId(const std::string& generatorId, StationTemplate
 
 void addTemplateKinds(QComboBox* combo)
 {
-    combo->addItem(QString::fromUtf8("料箱取料"), static_cast<int>(StationTemplateKind::BinPicking));
-    combo->addItem(QString::fromUtf8("机床上下料"), static_cast<int>(StationTemplateKind::MachineTending));
-    combo->addItem(QString::fromUtf8("码垛"), static_cast<int>(StationTemplateKind::Palletizing));
-    combo->addItem(QString::fromUtf8("检测"), static_cast<int>(StationTemplateKind::Inspection));
-    combo->addItem(QString::fromUtf8("换工具"), static_cast<int>(StationTemplateKind::ToolChange));
-    combo->addItem(QString::fromUtf8("人机交接"), static_cast<int>(StationTemplateKind::Handover));
+    combo->addItem(QStringLiteral("Bin Picking"), static_cast<int>(StationTemplateKind::BinPicking));
+    combo->addItem(QStringLiteral("Machine Tending"), static_cast<int>(StationTemplateKind::MachineTending));
+    combo->addItem(QStringLiteral("Palletizing"), static_cast<int>(StationTemplateKind::Palletizing));
+    combo->addItem(QStringLiteral("Inspection"), static_cast<int>(StationTemplateKind::Inspection));
+    combo->addItem(QStringLiteral("Tool Change"), static_cast<int>(StationTemplateKind::ToolChange));
+    combo->addItem(QStringLiteral("Handover"), static_cast<int>(StationTemplateKind::Handover));
 }
 
 bool editTemplateRequest(QWidget* parent, const rw::models::WorkCell* workcell,
@@ -350,37 +350,37 @@ bool editTemplateRequest(QWidget* parent, const rw::models::WorkCell* workcell,
     QDoubleSpinBox* approach = nonNegativeLengthSpinBox(request.approachDistanceMeters);
     QDoubleSpinBox* retract = nonNegativeLengthSpinBox(request.retractDistanceMeters);
     QDoubleSpinBox* clearance = nonNegativeLengthSpinBox(request.clearanceMeters);
-    form->addRow(QString::fromUtf8("模板类型"), kind);
-    form->addRow(QString::fromUtf8("实例 ID"), instanceId);
-    form->addRow(QString::fromUtf8("工位 ID 前缀"), idPrefix);
-    form->addRow(QString::fromUtf8("工位名称前缀"), namePrefix);
-    form->addRow(QString::fromUtf8("参考系"), referenceFrame);
+    form->addRow(QStringLiteral("Template Type"), kind);
+    form->addRow(QStringLiteral("Instance ID"), instanceId);
+    form->addRow(QStringLiteral("Station ID Prefix"), idPrefix);
+    form->addRow(QStringLiteral("Station Name Prefix"), namePrefix);
+    form->addRow(QStringLiteral("Reference Frame"), referenceFrame);
     form->addRow("TCP", tcpFrame);
-    form->addRow(QString::fromUtf8("需求等级"), level);
-    form->addRow(QString::fromUtf8("作业偏置 X"), offsetX);
-    form->addRow(QString::fromUtf8("作业偏置 Y"), offsetY);
-    form->addRow(QString::fromUtf8("作业偏置 Z"), offsetZ);
+    form->addRow(QStringLiteral("Requirement Level"), level);
+    form->addRow(QStringLiteral("Operation Offset X"), offsetX);
+    form->addRow(QStringLiteral("Operation Offset Y"), offsetY);
+    form->addRow(QStringLiteral("Operation Offset Z"), offsetZ);
 
     // 记录专属参数所在的 FormLayout 行。后续只切换行的可见性，不销毁控件或覆盖
     // 其现有值，因此工程师在模板之间比较方案时，切回原模板仍可保留已输入的数据。
     const int rowsRow = form->rowCount();
-    form->addRow(QString::fromUtf8("行数"), rows);
+    form->addRow(QStringLiteral("Rows"), rows);
     const int columnsRow = form->rowCount();
-    form->addRow(QString::fromUtf8("列数"), columns);
+    form->addRow(QStringLiteral("Columns"), columns);
     const int layersRow = form->rowCount();
-    form->addRow(QString::fromUtf8("层数"), layers);
+    form->addRow(QStringLiteral("Layers"), layers);
     const int rowSpacingRow = form->rowCount();
-    form->addRow(QString::fromUtf8("行间距"), rowSpacing);
+    form->addRow(QStringLiteral("Row Spacing"), rowSpacing);
     const int columnSpacingRow = form->rowCount();
-    form->addRow(QString::fromUtf8("列间距"), columnSpacing);
+    form->addRow(QStringLiteral("Column Spacing"), columnSpacing);
     const int layerSpacingRow = form->rowCount();
-    form->addRow(QString::fromUtf8("层间距"), layerSpacing);
+    form->addRow(QStringLiteral("Layer Spacing"), layerSpacing);
     const int approachRow = form->rowCount();
-    form->addRow(QString::fromUtf8("接近距离"), approach);
+    form->addRow(QStringLiteral("Approach Distance"), approach);
     const int retractRow = form->rowCount();
-    form->addRow(QString::fromUtf8("撤离距离"), retract);
+    form->addRow(QStringLiteral("Retract Distance"), retract);
     const int clearanceRow = form->rowCount();
-    form->addRow(QString::fromUtf8("安全距离"), clearance);
+    form->addRow(QStringLiteral("Clearance"), clearance);
 
     const auto updateTemplateParameterRows = [form, kind, rowsRow, columnsRow, layersRow,
                                               rowSpacingRow, columnSpacingRow, layerSpacingRow,
@@ -460,10 +460,10 @@ bool templateRequestFromStation(const PoseTask& station, StationTemplateRequest&
 
 void addArrayKinds(QComboBox* combo)
 {
-    combo->addItem(QString::fromUtf8("线性阵列"), static_cast<int>(StationArrayKind::Linear));
-    combo->addItem(QString::fromUtf8("矩形阵列"), static_cast<int>(StationArrayKind::Rectangular));
-    combo->addItem(QString::fromUtf8("圆周阵列"), static_cast<int>(StationArrayKind::Circular));
-    combo->addItem(QString::fromUtf8("沿折线等距"), static_cast<int>(StationArrayKind::Polyline));
+    combo->addItem(QStringLiteral("Linear"), static_cast<int>(StationArrayKind::Linear));
+    combo->addItem(QStringLiteral("Rectangular"), static_cast<int>(StationArrayKind::Rectangular));
+    combo->addItem(QStringLiteral("Circular"), static_cast<int>(StationArrayKind::Circular));
+    combo->addItem(QStringLiteral("Polyline"), static_cast<int>(StationArrayKind::Polyline));
 }
 
 QString polylineText(const std::vector<std::array<double, 3>>& points)
@@ -498,7 +498,7 @@ bool parsePolylineText(const QString& text, std::vector<std::array<double, 3>>& 
 bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
 {
     QDialog dialog(parent);
-    dialog.setWindowTitle(QString::fromUtf8("批量生成工位"));
+    dialog.setWindowTitle(QStringLiteral("Generate Station Array"));
     QVBoxLayout* layout = new QVBoxLayout(&dialog);
     QFormLayout* form = new QFormLayout();
     QComboBox* kind = new QComboBox(&dialog);
@@ -520,22 +520,22 @@ bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
     QDoubleSpinBox* endAngle = angleSpinBox(QString()); endAngle->setValue(request.endAngleDeg);
     QLineEdit* polyline = new QLineEdit(polylineText(request.polylinePointsMeters), &dialog);
     polyline->setPlaceholderText("x,y,z; x,y,z; ...");
-    form->addRow(QString::fromUtf8("阵列类型"), kind);
-    form->addRow(QString::fromUtf8("实例 ID"), instanceId);
-    form->addRow(QString::fromUtf8("工位 ID 前缀"), idPrefix);
-    form->addRow(QString::fromUtf8("工位名称前缀"), namePrefix);
-    form->addRow(QString::fromUtf8("主方向数量"), primaryCount);
-    form->addRow(QString::fromUtf8("次方向数量"), secondaryCount);
-    form->addRow(QString::fromUtf8("主步长 X"), primaryX);
-    form->addRow(QString::fromUtf8("主步长 Y"), primaryY);
-    form->addRow(QString::fromUtf8("主步长 Z"), primaryZ);
-    form->addRow(QString::fromUtf8("次步长 X"), secondaryX);
-    form->addRow(QString::fromUtf8("次步长 Y"), secondaryY);
-    form->addRow(QString::fromUtf8("次步长 Z"), secondaryZ);
-    form->addRow(QString::fromUtf8("半径"), radius);
-    form->addRow(QString::fromUtf8("起始角"), startAngle);
-    form->addRow(QString::fromUtf8("终止角"), endAngle);
-    form->addRow(QString::fromUtf8("折线点（m）"), polyline);
+    form->addRow(QStringLiteral("Array Type"), kind);
+    form->addRow(QStringLiteral("Instance ID"), instanceId);
+    form->addRow(QStringLiteral("Station ID Prefix"), idPrefix);
+    form->addRow(QStringLiteral("Station Name Prefix"), namePrefix);
+    form->addRow(QStringLiteral("Primary Count"), primaryCount);
+    form->addRow(QStringLiteral("Secondary Count"), secondaryCount);
+    form->addRow(QStringLiteral("Primary Step X"), primaryX);
+    form->addRow(QStringLiteral("Primary Step Y"), primaryY);
+    form->addRow(QStringLiteral("Primary Step Z"), primaryZ);
+    form->addRow(QStringLiteral("Secondary Step X"), secondaryX);
+    form->addRow(QStringLiteral("Secondary Step Y"), secondaryY);
+    form->addRow(QStringLiteral("Secondary Step Z"), secondaryZ);
+    form->addRow(QStringLiteral("Radius"), radius);
+    form->addRow(QStringLiteral("Start Angle"), startAngle);
+    form->addRow(QStringLiteral("End Angle"), endAngle);
+    form->addRow(QStringLiteral("Polyline Points (m)"), polyline);
     layout->addLayout(form);
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     layout->addWidget(buttons);
@@ -555,8 +555,8 @@ bool editArrayRequest(QWidget* parent, StationArrayRequest& request)
     request.startAngleDeg = startAngle->value();
     request.endAngleDeg = endAngle->value();
     if (request.kind == StationArrayKind::Polyline && !parsePolylineText(polyline->text(), request.polylinePointsMeters)) {
-        QMessageBox::warning(parent, QString::fromUtf8("折线输入无效"),
-                             QString::fromUtf8("折线必须包含至少两个点，每个点使用 x,y,z，点之间用分号分隔。"));
+        QMessageBox::warning(parent, QStringLiteral("Invalid Polyline"),
+                             QStringLiteral("Enter at least two points as x,y,z; separate points with semicolons."));
         return false;
     }
     return true;
@@ -591,10 +591,10 @@ EngineeringRequirementsWidget::EngineeringRequirementsWidget(QWidget* parent) : 
 {
     _tabs = new QTabWidget(this);
     _tabs->setObjectName("engineeringRequirementsTabs");
-    _tabs->addTab(createPoseTaskPage(), QString::fromUtf8("关键工位"));
-    _tabs->addTab(createBoxRegionPage(), QString::fromUtf8("工作区域"));
-    _tabs->addTab(createValidationPage(), QString::fromUtf8("校验与冻结"));
-    _statusLabel = new QLabel(QString::fromUtf8("请先绑定 .rmb.json 模型，再定义研发需求。"), this);
+    _tabs->addTab(createPoseTaskPage(), QStringLiteral("Key Stations"));
+    _tabs->addTab(createBoxRegionPage(), QStringLiteral("Workspace Regions"));
+    _tabs->addTab(createValidationPage(), QStringLiteral("Validate & Freeze"));
+    _statusLabel = new QLabel(QStringLiteral("Select a .rmb.json model before defining engineering requirements."), this);
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(_tabs);
     layout->addWidget(_statusLabel);
@@ -606,36 +606,36 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QWidget* page = new QWidget(this);
     QVBoxLayout* layout = new QVBoxLayout(page);
     QHBoxLayout* actions = new QHBoxLayout();
-    QPushButton* add = new QPushButton(QString::fromUtf8("新增工位"), page); add->setObjectName("addRequirementPoseTaskButton");
-    QPushButton* duplicate = new QPushButton(QString::fromUtf8("复制工位"), page); duplicate->setObjectName("duplicateRequirementPoseTaskButton");
-    QPushButton* remove = new QPushButton(QString::fromUtf8("删除工位"), page); remove->setObjectName("removeRequirementPoseTaskButton");
-    QPushButton* capture = new QPushButton(QString::fromUtf8("从当前 TCP 捕获"), page); capture->setObjectName("captureRequirementTcpButton");
-    QPushButton* pickGeometry = new QPushButton(QString::fromUtf8("从 3D 拾取几何 Frame"), page);
+    QPushButton* add = new QPushButton(QStringLiteral("Add Station"), page); add->setObjectName("addRequirementPoseTaskButton");
+    QPushButton* duplicate = new QPushButton(QStringLiteral("Duplicate Station"), page); duplicate->setObjectName("duplicateRequirementPoseTaskButton");
+    QPushButton* remove = new QPushButton(QStringLiteral("Remove Station"), page); remove->setObjectName("removeRequirementPoseTaskButton");
+    QPushButton* capture = new QPushButton(QStringLiteral("Capture TCP Pose"), page); capture->setObjectName("captureRequirementTcpButton");
+    QPushButton* pickGeometry = new QPushButton(QStringLiteral("Pick Geometry Frame"), page);
     pickGeometry->setObjectName("pickRequirementGeometryFeatureButton");
-    pickGeometry->setToolTip(QString::fromUtf8("点击后，在 3D 视图中按住 Ctrl 双击目标工装或工件。"));
-    QPushButton* createTemplate = new QPushButton(QString::fromUtf8("工艺模板"), page);
+    pickGeometry->setToolTip(QStringLiteral("Ctrl+double-click a fixture or part in the 3D view."));
+    QPushButton* createTemplate = new QPushButton(QStringLiteral("Create from Template"), page);
     createTemplate->setObjectName("createRequirementTemplateButton");
-    createTemplate->setToolTip(QString::fromUtf8("基于料箱取料、机床上下料等工艺模板批量创建工位"));
-    QPushButton* updateTemplate = new QPushButton(QString::fromUtf8("更新模板"), page);
+    createTemplate->setToolTip(QStringLiteral("Create stations from a process template."));
+    QPushButton* updateTemplate = new QPushButton(QStringLiteral("Update Template"), page);
     updateTemplate->setObjectName("updateRequirementTemplateButton");
-    updateTemplate->setToolTip(QString::fromUtf8("更新当前模板实例中仍保持关联的工位"));
-    QPushButton* detachTemplate = new QPushButton(QString::fromUtf8("解除关联"), page);
+    updateTemplate->setToolTip(QStringLiteral("Update linked stations in this template instance."));
+    QPushButton* detachTemplate = new QPushButton(QStringLiteral("Detach Template"), page);
     detachTemplate->setObjectName("detachRequirementTemplateButton");
-    detachTemplate->setToolTip(QString::fromUtf8("将当前模板或阵列工位转为独立手工维护的工位"));
-    QPushButton* createArray = new QPushButton(QString::fromUtf8("批量阵列"), page);
+    detachTemplate->setToolTip(QStringLiteral("Convert this generated station to a manually maintained station."));
+    QPushButton* createArray = new QPushButton(QStringLiteral("Generate Array"), page);
     createArray->setObjectName("createRequirementArrayButton");
-    createArray->setToolTip(QString::fromUtf8("从当前工位生成线性、矩形或圆周阵列"));
-    QPushButton* mirror = new QPushButton(QString::fromUtf8("镜像工位"), page);
+    createArray->setToolTip(QStringLiteral("Generate a linear, rectangular, or circular array from this station."));
+    QPushButton* mirror = new QPushButton(QStringLiteral("Mirror Station"), page);
     mirror->setObjectName("mirrorRequirementStationButton");
-    mirror->setToolTip(QString::fromUtf8("以当前参考系原点为基准镜像固定姿态工位"));
-    QPushButton* import = new QPushButton(QString::fromUtf8("导入工位"), page);
+    mirror->setToolTip(QStringLiteral("Mirror this fixed-orientation station about the reference-frame origin."));
+    QPushButton* import = new QPushButton(QStringLiteral("Import Stations"), page);
     import->setObjectName("importRequirementStationsButton");
-    import->setToolTip(QString::fromUtf8("从 CSV 或 JSON 批量导入关键工位；任何错误记录均不会写入当前需求"));
-    QPushButton* undo = new QPushButton(QString::fromUtf8("撤销操作"), page);
+    import->setToolTip(QStringLiteral("Import key stations from CSV or JSON. Invalid rows are not applied."));
+    QPushButton* undo = new QPushButton(QStringLiteral("Undo"), page);
     undo->setObjectName("undoRequirementOperationButton");
-    QPushButton* redo = new QPushButton(QString::fromUtf8("重做操作"), page);
+    QPushButton* redo = new QPushButton(QStringLiteral("Redo"), page);
     redo->setObjectName("redoRequirementOperationButton");
-    undo->setToolTip(QString::fromUtf8("恢复最近一次工位、覆盖盒、模板、阵列、镜像或导入操作前的完整需求快照"));
+    undo->setToolTip(QStringLiteral("Restore the requirement set before the most recent edit."));
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry); actions->addWidget(undo); actions->addWidget(redo);
     actions->addWidget(createTemplate); actions->addWidget(updateTemplate); actions->addWidget(detachTemplate);
     actions->addWidget(createArray); actions->addWidget(mirror); actions->addWidget(import); actions->addStretch();
@@ -653,49 +653,49 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
     QFormLayout* form = new QFormLayout();
     _stationNameEdit = new QLineEdit(inspector); _stationNameEdit->setObjectName("keyStationNameEdit");
     _stationProcessTypeCombo = enumCombo("keyStationProcessTypeCombo", {
-        {QString::fromUtf8("通用"), static_cast<int>(ProcessType::Generic)}, {QString::fromUtf8("取料"), static_cast<int>(ProcessType::Pick)},
-        {QString::fromUtf8("放料"), static_cast<int>(ProcessType::Place)}, {QString::fromUtf8("机床上料"), static_cast<int>(ProcessType::MachineLoad)},
-        {QString::fromUtf8("机床下料"), static_cast<int>(ProcessType::MachineUnload)}, {QString::fromUtf8("检测"), static_cast<int>(ProcessType::Inspect)},
-        {QString::fromUtf8("焊缝起点"), static_cast<int>(ProcessType::WeldStart)}, {QString::fromUtf8("焊缝终点"), static_cast<int>(ProcessType::WeldEnd)},
-        {QString::fromUtf8("换工具"), static_cast<int>(ProcessType::ToolChange)}, {QString::fromUtf8("安全待机"), static_cast<int>(ProcessType::SafeStandby)},
-        {QString::fromUtf8("人机交接"), static_cast<int>(ProcessType::Handover)}});
+        {QStringLiteral("Generic"), static_cast<int>(ProcessType::Generic)}, {QStringLiteral("Pick"), static_cast<int>(ProcessType::Pick)},
+        {QStringLiteral("Place"), static_cast<int>(ProcessType::Place)}, {QStringLiteral("Machine Load"), static_cast<int>(ProcessType::MachineLoad)},
+        {QStringLiteral("Machine Unload"), static_cast<int>(ProcessType::MachineUnload)}, {QStringLiteral("Inspect"), static_cast<int>(ProcessType::Inspect)},
+        {QStringLiteral("Weld Start"), static_cast<int>(ProcessType::WeldStart)}, {QStringLiteral("Weld End"), static_cast<int>(ProcessType::WeldEnd)},
+        {QStringLiteral("Tool Change"), static_cast<int>(ProcessType::ToolChange)}, {QStringLiteral("Safe Standby"), static_cast<int>(ProcessType::SafeStandby)},
+        {QStringLiteral("Handover"), static_cast<int>(ProcessType::Handover)}});
     _stationLevelCombo = enumCombo("keyStationRequirementLevelCombo", {{"Must", static_cast<int>(RequirementLevel::Must)}, {"Should", static_cast<int>(RequirementLevel::Should)}, {"Info", static_cast<int>(RequirementLevel::Info)}});
     _stationReferenceFrameCombo = new QComboBox(inspector); _stationReferenceFrameCombo->setObjectName("keyStationReferenceFrameCombo");
     _stationTcpFrameCombo = new QComboBox(inspector); _stationTcpFrameCombo->setObjectName("keyStationTcpFrameCombo");
-    _stationOrientationModeCombo = enumCombo("keyStationOrientationModeCombo", {{QString::fromUtf8("固定姿态"), static_cast<int>(OrientationMode::Fixed)}, {QString::fromUtf8("对齐坐标系"), static_cast<int>(OrientationMode::AlignFrame)}, {QString::fromUtf8("对齐几何法向"), static_cast<int>(OrientationMode::AlignGeometryNormal)}, {QString::fromUtf8("指向目标"), static_cast<int>(OrientationMode::PointAtTarget)}});
+    _stationOrientationModeCombo = enumCombo("keyStationOrientationModeCombo", {{QStringLiteral("Fixed Orientation"), static_cast<int>(OrientationMode::Fixed)}, {QStringLiteral("Align Frame"), static_cast<int>(OrientationMode::AlignFrame)}, {QStringLiteral("Align Geometry Normal"), static_cast<int>(OrientationMode::AlignGeometryNormal)}, {QStringLiteral("Point at Target"), static_cast<int>(OrientationMode::PointAtTarget)}});
     _stationOrientationTargetFrameCombo = new QComboBox(inspector); _stationOrientationTargetFrameCombo->setObjectName("keyStationOrientationTargetFrameCombo");
     _stationOrientationTargetPointEdit = new QLineEdit(inspector);
     _stationOrientationTargetPointEdit->setObjectName("keyStationOrientationTargetPointEdit");
-    _stationOrientationTargetPointEdit->setPlaceholderText(QString::fromUtf8("x, y, z（相对参考系，m）"));
-    _stationOrientationTargetPointEdit->setToolTip(QString::fromUtf8("指向目标模式下可输入目标点坐标，格式为 x, y, z，单位 m；未选择目标坐标系时使用该点。"));
-    _stationFreeRollCheck = new QCheckBox(QString::fromUtf8("允许工具绕轴自由滚转"), inspector); _stationFreeRollCheck->setObjectName("keyStationFreeRollCheck");
-    form->addRow(QString::fromUtf8("名称"), _stationNameEdit); form->addRow(QString::fromUtf8("工艺类型"), _stationProcessTypeCombo);
-    form->addRow(QString::fromUtf8("要求等级"), _stationLevelCombo); form->addRow(QString::fromUtf8("参考系"), _stationReferenceFrameCombo);
-    form->addRow(QString::fromUtf8("TCP"), _stationTcpFrameCombo); form->addRow(QString::fromUtf8("姿态规则"), _stationOrientationModeCombo);
-    _stationOrientationTargetFrameLabel = new QLabel(QString::fromUtf8("姿态目标"), inspector);
-    _stationOrientationTargetPointLabel = new QLabel(QString::fromUtf8("目标点"), inspector);
+    _stationOrientationTargetPointEdit->setPlaceholderText(QStringLiteral("x, y, z (reference frame, m)"));
+    _stationOrientationTargetPointEdit->setToolTip(QStringLiteral("Enter x, y, z in meters. Used when no target frame is selected."));
+    _stationFreeRollCheck = new QCheckBox(QStringLiteral("Allow Tool Roll"), inspector); _stationFreeRollCheck->setObjectName("keyStationFreeRollCheck");
+    form->addRow(QStringLiteral("Name"), _stationNameEdit); form->addRow(QStringLiteral("Process Type"), _stationProcessTypeCombo);
+    form->addRow(QStringLiteral("Requirement Level"), _stationLevelCombo); form->addRow(QStringLiteral("Reference Frame"), _stationReferenceFrameCombo);
+    form->addRow(QStringLiteral("TCP"), _stationTcpFrameCombo); form->addRow(QStringLiteral("Orientation Rule"), _stationOrientationModeCombo);
+    _stationOrientationTargetFrameLabel = new QLabel(QStringLiteral("Orientation Target"), inspector);
+    _stationOrientationTargetPointLabel = new QLabel(QStringLiteral("Target Point"), inspector);
     form->addRow(_stationOrientationTargetFrameLabel, _stationOrientationTargetFrameCombo);
     form->addRow(_stationOrientationTargetPointLabel, _stationOrientationTargetPointEdit);
     form->addRow(QString(), _stationFreeRollCheck);
     inspectorLayout->addLayout(form);
-    QGroupBox* pathGroup = new QGroupBox(QString::fromUtf8("接近与撤离"), inspector);
+    QGroupBox* pathGroup = new QGroupBox(QStringLiteral("Approach & Retract"), inspector);
     QFormLayout* pathForm = new QFormLayout(pathGroup);
-    _stationApproachEnabled = new QCheckBox(QString::fromUtf8("沿工具 Z 轴接近"), pathGroup); _stationApproachEnabled->setObjectName("keyStationApproachEnabled");
+    _stationApproachEnabled = new QCheckBox(QStringLiteral("Approach Along Tool Z"), pathGroup); _stationApproachEnabled->setObjectName("keyStationApproachEnabled");
     _stationApproachDistance = lengthSpinBox("keyStationApproachDistance");
-    _stationRetractEnabled = new QCheckBox(QString::fromUtf8("沿参考系 Z 轴撤离"), pathGroup); _stationRetractEnabled->setObjectName("keyStationRetractEnabled");
+    _stationRetractEnabled = new QCheckBox(QStringLiteral("Retract Along Reference Z"), pathGroup); _stationRetractEnabled->setObjectName("keyStationRetractEnabled");
     _stationRetractDistance = lengthSpinBox("keyStationRetractDistance");
     _stationMinimumJointMargin = lengthSpinBox("keyStationMinimumJointMargin");
     pathForm->addRow(_stationApproachEnabled, _stationApproachDistance); pathForm->addRow(_stationRetractEnabled, _stationRetractDistance);
-    pathForm->addRow(QString::fromUtf8("最小关节裕度"), _stationMinimumJointMargin);
+    pathForm->addRow(QStringLiteral("Minimum Joint Margin"), _stationMinimumJointMargin);
     inspectorLayout->addWidget(pathGroup);
-    _stationAdvancedPoseGroup = new QGroupBox(QString::fromUtf8("高级坐标（工位坐标）"), inspector); _stationAdvancedPoseGroup->setObjectName("keyStationAdvancedPoseGroup");
+    _stationAdvancedPoseGroup = new QGroupBox(QStringLiteral("Advanced Pose (Station Frame)"), inspector); _stationAdvancedPoseGroup->setObjectName("keyStationAdvancedPoseGroup");
     QFormLayout* poseForm = new QFormLayout(_stationAdvancedPoseGroup);
     _stationAdvancedPoseSourceLabel = new QLabel(_stationAdvancedPoseGroup);
     _stationAdvancedPoseSourceLabel->setObjectName("keyStationAdvancedPoseSourceLabel");
     _stationAdvancedPoseSourceLabel->setWordWrap(true);
     _stationX = lengthSpinBox("keyStationX"); _stationY = lengthSpinBox("keyStationY"); _stationZ = lengthSpinBox("keyStationZ");
     _stationRoll = angleSpinBox("keyStationRoll"); _stationPitch = angleSpinBox("keyStationPitch"); _stationYaw = angleSpinBox("keyStationYaw");
-    poseForm->addRow(QString::fromUtf8("坐标说明"), _stationAdvancedPoseSourceLabel);
+    poseForm->addRow(QStringLiteral("Pose Source"), _stationAdvancedPoseSourceLabel);
     poseForm->addRow("X", _stationX); poseForm->addRow("Y", _stationY); poseForm->addRow("Z", _stationZ);
     poseForm->addRow("Roll", _stationRoll); poseForm->addRow("Pitch", _stationPitch); poseForm->addRow("Yaw", _stationYaw);
     inspectorLayout->addWidget(_stationAdvancedPoseGroup); inspectorLayout->addStretch();
@@ -732,14 +732,14 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     QWidget* page = new QWidget(this);
     QVBoxLayout* layout = new QVBoxLayout(page);
     QHBoxLayout* actions = new QHBoxLayout();
-    QPushButton* add = new QPushButton(QString::fromUtf8("新增覆盖盒"), page); add->setObjectName("addRequirementBoxRegionButton");
-    QPushButton* duplicate = new QPushButton(QString::fromUtf8("复制覆盖盒"), page); duplicate->setObjectName("duplicateRequirementBoxRegionButton");
-    QPushButton* remove = new QPushButton(QString::fromUtf8("删除覆盖盒"), page); remove->setObjectName("removeRequirementBoxRegionButton");
+    QPushButton* add = new QPushButton(QStringLiteral("Add Region"), page); add->setObjectName("addRequirementBoxRegionButton");
+    QPushButton* duplicate = new QPushButton(QStringLiteral("Duplicate Region"), page); duplicate->setObjectName("duplicateRequirementBoxRegionButton");
+    QPushButton* remove = new QPushButton(QStringLiteral("Remove Region"), page); remove->setObjectName("removeRequirementBoxRegionButton");
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addStretch();
     layout->addLayout(actions);
     _regionTable = new QTableWidget(page); _regionTable->setObjectName("engineeringRequirementBoxTable");
     _regionTable->setColumnCount(13);
-    _regionTable->setHorizontalHeaderLabels({"ID", "名称", "等级", "参考系", "中心 X", "中心 Y", "中心 Z", "尺寸 X", "尺寸 Y", "尺寸 Z", "最小覆盖率", "每轴采样点", "TCP Frame"});
+    _regionTable->setHorizontalHeaderLabels({"ID", "Name", "Level", "Reference Frame", "Center X", "Center Y", "Center Z", "Size X", "Size Y", "Size Z", "Minimum Coverage", "Samples per Axis", "TCP Frame"});
     _regionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     layout->addWidget(_regionTable);
     connect(add, &QPushButton::clicked, this, &EngineeringRequirementsWidget::addBoxRegion);
@@ -777,11 +777,11 @@ QWidget* EngineeringRequirementsWidget::createValidationPage()
     layout->addWidget(_modelLabel); layout->addWidget(_freezeLabel);
     layout->addWidget(_validationSummaryLabel); layout->addWidget(_diagnosticTable);
     QHBoxLayout* actions = new QHBoxLayout();
-    QPushButton* bind = new QPushButton(QString::fromUtf8("绑定模型"), page); bind->setObjectName("bindRequirementModelButton");
-    QPushButton* load = new QPushButton(QString::fromUtf8("导入需求副本"), page); load->setObjectName("loadRequirementSetButton");
-    QPushButton* save = new QPushButton(QString::fromUtf8("导出需求副本"), page); save->setObjectName("saveRequirementSetButton");
-    _freezeButton = new QPushButton(QString::fromUtf8("校验并冻结"), page); _freezeButton->setObjectName("freezeRequirementSetButton");
-    QPushButton* unfreeze = new QPushButton(QString::fromUtf8("解冻编辑"), page); unfreeze->setObjectName("unfreezeRequirementSetButton");
+    QPushButton* bind = new QPushButton(QStringLiteral("Bind Model"), page); bind->setObjectName("bindRequirementModelButton");
+    QPushButton* load = new QPushButton(QStringLiteral("Import Requirements"), page); load->setObjectName("loadRequirementSetButton");
+    QPushButton* save = new QPushButton(QStringLiteral("Export Requirements"), page); save->setObjectName("saveRequirementSetButton");
+    _freezeButton = new QPushButton(QStringLiteral("Freeze Requirements"), page); _freezeButton->setObjectName("freezeRequirementSetButton");
+    QPushButton* unfreeze = new QPushButton(QStringLiteral("Edit Requirements"), page); unfreeze->setObjectName("unfreezeRequirementSetButton");
     actions->addWidget(bind); actions->addWidget(load); actions->addWidget(save); actions->addWidget(_freezeButton); actions->addWidget(unfreeze); actions->addStretch();
     layout->addLayout(actions); layout->addStretch();
     connect(bind, &QPushButton::clicked, this, &EngineeringRequirementsWidget::bindModel);
@@ -847,18 +847,18 @@ void EngineeringRequirementsWidget::refreshTables()
     if (QPushButton* button = findChild<QPushButton*>("redoRequirementOperationButton"))
         button->setEnabled(editable && _undoStack.canRedo());
     if (_modelLabel != nullptr)
-        _modelLabel->setText(QString::fromUtf8("模型：%1\n指纹：%2").arg(QString::fromStdString(_requirements.modelBinding.sourcePath), QString::fromStdString(_requirements.modelBinding.robotModelFingerprint)));
+        _modelLabel->setText(QStringLiteral("Model: %1\nFingerprint: %2").arg(QString::fromStdString(_requirements.modelBinding.sourcePath), QString::fromStdString(_requirements.modelBinding.robotModelFingerprint)));
     if (_freezeLabel != nullptr) {
         if (_requirements.frozen) {
             // 冻结时间来自冻结工件，而不是当前界面刷新时间。工程师重新打开项目或导出报告时，
             // 因而能准确识别本次优化将消费的是哪一次经过真实 WorkCell 校验的需求快照。
             const QString frozenAt = _frozenArtifact.frozenAt.empty()
-                ? QString::fromUtf8("历史项目未记录")
+                ? QStringLiteral("Not recorded")
                 : QString::fromStdString(_frozenArtifact.frozenAt);
-            _freezeLabel->setText(QString::fromUtf8("状态：已冻结。冻结时间（UTC）：%1\n需求指纹：%2")
+            _freezeLabel->setText(QStringLiteral("Status: Frozen\nFrozen at (UTC): %1\nRequirement fingerprint: %2")
                                       .arg(frozenAt, QString::fromStdString(_compiled.requirementFingerprint)));
         } else {
-            _freezeLabel->setText(QString::fromUtf8("状态：可编辑。冻结后才可作为下游分析和优化输入。"));
+            _freezeLabel->setText(QStringLiteral("Status: Editable\nFreeze requirements before downstream analysis or optimization."));
         }
     }
     // 冻结后把审计摘要展示在冻结状态标签的悬停提示里：三个审计指纹(需求/模型/场景)
@@ -947,8 +947,8 @@ void EngineeringRequirementsWidget::refreshValidationPanel()
             for (const WorkspaceDemandRegion& region : _compiled.workspaceRegions)
                 (region.compileState == RequirementCompileState::Included ? ++included : ++excluded);
         }
-        _validationSummaryLabel->setText(QString::fromUtf8(
-            "璇婃柇锛?%1锛屽繀椤绘敼姝ｏ細%2\n缂栬瘧椤圭粺璁★細Included %3锛屼笉鍖呭惈 %4")
+        _validationSummaryLabel->setText(QStringLiteral(
+            "Diagnostics: %1 | Blocking: %2\nCompiled: Included %3 | Excluded %4")
             .arg(diagnostics.size()).arg(blocking).arg(included).arg(excluded));
     }
     // 冻结按钮门禁：仅当需求未冻结且当前没有任何阻断性诊断时才允许冻结，
@@ -1012,7 +1012,7 @@ void EngineeringRequirementsWidget::refreshKeyStationList()
     _stationList->clear();
     const std::vector<RequirementDiagnostic> diagnostics = RequirementCompiler::validateDetailed(_requirements);
     for (const PoseTask& task : _requirements.poseTasks) {
-        const QString name = task.name.empty() ? QString::fromUtf8("未命名工位") : QString::fromStdString(task.name);
+        const QString name = task.name.empty() ? QStringLiteral("Unnamed Station") : QString::fromStdString(task.name);
         QListWidgetItem* item = new QListWidgetItem(
             QString("%1  [%2]").arg(name, QString::fromLatin1(toString(task.processType))), _stationList);
         bool hasDiagnostic = false;
@@ -1068,7 +1068,7 @@ void EngineeringRequirementsWidget::refreshFrameChoices()
         if (!value.isEmpty() && combo->findData(value) < 0) combo->addItem(value, value);
     };
     addChoice(_stationReferenceFrameCombo, QStringLiteral("WORLD"));
-    _stationOrientationTargetFrameCombo->addItem(QString::fromUtf8("未指定"), QString());
+    _stationOrientationTargetFrameCombo->addItem(QStringLiteral("Not Specified"), QString());
     if (_workcell != nullptr) {
         for (rw::kinematics::Frame* frame : _workcell->getFrames()) {
             if (frame == nullptr) continue;
@@ -1104,9 +1104,9 @@ void EngineeringRequirementsWidget::refreshFrameChoices()
         }
         combo->setCurrentIndex(index);
     };
-    selectOrUnresolved(_stationReferenceFrameCombo, reference, QString::fromUtf8("未解析："));
-    selectOrUnresolved(_stationTcpFrameCombo, tcp, QString::fromUtf8("未解析："));
-    selectOrUnresolved(_stationOrientationTargetFrameCombo, target, QString::fromUtf8("未解析："));
+    selectOrUnresolved(_stationReferenceFrameCombo, reference, QStringLiteral("Unresolved: "));
+    selectOrUnresolved(_stationTcpFrameCombo, tcp, QStringLiteral("Unresolved: "));
+    selectOrUnresolved(_stationOrientationTargetFrameCombo, target, QStringLiteral("Unresolved: "));
 }
 
 void EngineeringRequirementsWidget::refreshKeyStationInspector()
@@ -1223,13 +1223,13 @@ void EngineeringRequirementsWidget::updateOrientationEditor()
             ? QStringLiteral("WORLD") : _stationReferenceFrameCombo->currentData().toString();
         if (fixed) {
             _stationAdvancedPoseSourceLabel->setText(
-                QString::fromUtf8("相对工位参考系 %1；位置和固定姿态均可编辑。").arg(reference));
+                QStringLiteral("Relative to station frame %1. Position and fixed orientation are editable.").arg(reference));
         } else if (_stationOrientationCoordinatesResolved) {
             _stationAdvancedPoseSourceLabel->setText(
-                QString::fromUtf8("相对工位参考系 %1；姿态由规则解析，仅显示。").arg(reference));
+                QStringLiteral("Relative to station frame %1. Orientation is resolved by rule and is read-only.").arg(reference));
         } else {
             _stationAdvancedPoseSourceLabel->setText(
-                QString::fromUtf8("相对工位参考系 %1；当前无法解析姿态规则，显示已保存的工位姿态。").arg(reference));
+                QStringLiteral("Relative to station frame %1. The rule cannot be resolved; showing the saved orientation.").arg(reference));
         }
     }
     // 固定姿态只显示高级 RPY；坐标系/法向模式只需选择目标 Frame；指向模式额外开放
@@ -1238,7 +1238,7 @@ void EngineeringRequirementsWidget::updateOrientationEditor()
         _stationOrientationTargetFrameCombo->setVisible(!fixed);
         _stationOrientationTargetFrameLabel->setVisible(!fixed);
         _stationOrientationTargetFrameLabel->setText(pointAtTarget
-            ? QString::fromUtf8("目标坐标系（可选）") : QString::fromUtf8("姿态目标"));
+            ? QStringLiteral("Target Frame (Optional)") : QStringLiteral("Orientation Target"));
     }
     if (_stationOrientationTargetPointEdit != nullptr) {
         _stationOrientationTargetPointEdit->setVisible(pointAtTarget);
@@ -1252,10 +1252,10 @@ void EngineeringRequirementsWidget::bindModel()
     // 冻结门禁：重新绑定会改变 modelBinding 指纹并让既有编译/冻结结果作废，
     // 因此冻结后禁止改绑，提示用户先解冻，避免工件与模型来源不一致。
     if (_requirements.frozen) {
-        setStatus(QString::fromUtf8("需求已冻结，不能重新绑定机器人模型；请先解冻。"));
+        setStatus(QStringLiteral("Requirements are frozen. Edit requirements before rebinding the robot model."));
         return;
     }
-    const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("绑定机器人模型"), QString(), "Robot model (*.rmb.json)");
+    const QString path = QFileDialog::getOpenFileName(this, QStringLiteral("Bind Robot Model"), QString(), "Robot model (*.rmb.json)");
     if (path.isEmpty()) return;
     RobotModelSpec spec;
     QString error;
@@ -1270,7 +1270,7 @@ void EngineeringRequirementsWidget::bindModel()
     // 残留的冻结审计记录被当作新模型的已验证证据使用。
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
-    setStatus(QString::fromUtf8("已绑定模型，需求将使用模型内容指纹追溯。")); refreshTables();
+    setStatus(QStringLiteral("Model bound. Requirements track the model content fingerprint.")); refreshTables();
     // 绑定模型会改变需求资源中的 modelBinding。发出统一领域变更通知，使项目标题栏
     // 和 Provider 脏状态与其他需求编辑操作保持一致。
     Q_EMIT requirementsChanged();
@@ -1321,7 +1321,7 @@ bool EngineeringRequirementsWidget::loadRobotModelDocument(const QString& path,
     QFile modelFile(path);
     if (!modelFile.open(QFile::ReadOnly)) {
         if (error != nullptr)
-            *error = QString::fromUtf8("无法读取机器人模型：%1").arg(path);
+            *error = QStringLiteral("Cannot read robot model: %1").arg(path);
         return false;
     }
 
@@ -1355,17 +1355,17 @@ bool EngineeringRequirementsWidget::loadRobotModelDocument(const QString& path,
 bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
 {
     if (_workcell == nullptr) {
-        if (error != nullptr) *error = QString::fromUtf8("当前没有打开 WorkCell。");
+        if (error != nullptr) *error = QStringLiteral("No WorkCell is open.");
         return false;
     }
     if (_projectOutputDirectory.isEmpty()) {
-        if (error != nullptr) *error = QString::fromUtf8("当前没有打开项目。");
+        if (error != nullptr) *error = QStringLiteral("No project is open.");
         return false;
     }
 
     if (_projectModelPath.isEmpty()) {
         if (error != nullptr)
-            *error = QString::fromUtf8("项目清单中没有 robot-model.main 模型资源，请先在 RoboModelBuilder 中保存并加载模型。");
+            *error = QStringLiteral("The project has no robot-model.main resource. Save and load a model in RobotModelBuilder first.");
         return false;
     }
 
@@ -1374,7 +1374,7 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
     QString modelError;
     if (!loadRobotModelDocument(path, _projectOutputDirectory, model, &modelError)) {
         if (error != nullptr)
-            *error = QString::fromUtf8("项目机器人模型无效：%1").arg(modelError);
+            *error = QStringLiteral("Project robot model is invalid: %1").arg(modelError);
         return false;
     }
 
@@ -1388,7 +1388,7 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
     }
     if (!matchesDevice) {
         if (error != nullptr)
-            *error = QString::fromUtf8("项目模型的机器人名称与当前 WorkCell 设备不匹配。");
+            *error = QStringLiteral("The project model robot does not match the current WorkCell device.");
         return false;
     }
 
@@ -1406,20 +1406,20 @@ void EngineeringRequirementsWidget::saveRequirements()
 {
     syncTablesToRequirements();
     const QString path = QFileDialog::getSaveFileName(
-        this, QString::fromUtf8("保存研发需求"),
+        this, QStringLiteral("Export Requirements"),
         requirementCopyExportPath(_projectOutputDirectory), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QString error;
     // 此按钮现在表示“导出一份项目外需求文件”。它复用相同的格式写入逻辑，但故意
     // 不调用 markProjectDocumentClean()，以免导出文件被误认为已保存回 rwproj 资源。
     if (!writeRequirementDocument(path, &error)) { setStatus(error); return; }
-    setStatus(QString::fromUtf8("研发需求已保存。"));
+    setStatus(QStringLiteral("Requirements exported."));
 }
 
 void EngineeringRequirementsWidget::loadRequirements()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, QString::fromUtf8("加载研发需求"),
+        this, QStringLiteral("Import Requirements"),
         requirementCopyImportDirectory(_projectOutputDirectory), "Requirement set (*.requirements.json)");
     if (path.isEmpty()) return;
     QString error;
@@ -1555,12 +1555,12 @@ bool EngineeringRequirementsWidget::writeRequirementDocument(const QString& targ
     QSaveFile file(targetPath);
     if (!file.open(QIODevice::WriteOnly)) {
         if (error != nullptr)
-            *error = QString::fromUtf8("无法保存需求文件：%1").arg(file.errorString());
+            *error = QStringLiteral("Cannot save requirements file: %1").arg(file.errorString());
         return false;
     }
     if (file.write(serializedProjectDocument(targetPath)) < 0 || !file.commit()) {
         if (error != nullptr)
-            *error = QString::fromUtf8("无法提交需求文件：%1").arg(file.errorString());
+            *error = QStringLiteral("Cannot commit requirements file: %1").arg(file.errorString());
         return false;
     }
     if (error != nullptr)
@@ -1576,11 +1576,11 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
                                                             QString* error,
                                                             const QString& projectRoot)
 {
-    QFile file(path); if (!file.open(QFile::ReadOnly)) { if (error != nullptr) *error = QString::fromUtf8("无法读取需求文件：%1").arg(file.errorString()); return false; }
+    QFile file(path); if (!file.open(QFile::ReadOnly)) { if (error != nullptr) *error = QStringLiteral("Cannot read requirements file: %1").arg(file.errorString()); return false; }
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
     if (parseError.error != QJsonParseError::NoError || !document.isObject()) {
-        if (error != nullptr) *error = QString::fromUtf8("需求文件不是有效 JSON：%1").arg(parseError.errorString());
+        if (error != nullptr) *error = QStringLiteral("Requirements file is not valid JSON: %1").arg(parseError.errorString());
         return false;
     }
     QJsonObject project = document.object();
@@ -1604,11 +1604,11 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
     const QString validationRoot = projectRoot.trimmed().isEmpty()
         ? _projectOutputDirectory
         : QFileInfo(projectRoot).absoluteFilePath();
-    QString loadStatus = QString::fromUtf8("研发需求已加载，处于可编辑状态。");
+    QString loadStatus = QStringLiteral("Requirements loaded and editable.");
     const QJsonValue artifactValue = project.value("frozenArtifact");
     if (!artifactValue.isUndefined()) {
         if (!artifactValue.isObject() || !FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &parseMessage)) {
-            if (error != nullptr) *error = QString::fromUtf8("冻结审计工件无效：%1").arg(QString::fromStdString(parseMessage));
+            if (error != nullptr) *error = QStringLiteral("Frozen audit artifact is invalid: %1").arg(QString::fromStdString(parseMessage));
             return false;
         }
 
@@ -1643,22 +1643,22 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;
-            loadStatus = QString::fromUtf8("研发需求及冻结审计工件已加载，且与当前模型和 WorkCell 一致。");
+            loadStatus = QStringLiteral("Requirements and frozen audit artifact loaded and match the current model and WorkCell.");
             for (const std::string& warning : validationResult.warnings)
-                loadStatus += QString::fromUtf8("\n警告：%1").arg(QString::fromStdString(warning));
+                loadStatus += QStringLiteral("\nWarning: %1").arg(QString::fromStdString(warning));
         } else {
             parsed.frozen = false;
             artifact = FrozenRequirementArtifact();
             const QString reason = modelReadable && _workcell == nullptr ?
-                QString::fromUtf8("当前未打开 WorkCell") : QString::fromStdString(parseMessage);
-            loadStatus = QString::fromUtf8("研发需求已加载，但冻结证据已过期或无法验证（%1）；请重新冻结。")
+                QStringLiteral("No WorkCell is open") : QString::fromStdString(parseMessage);
+            loadStatus = QStringLiteral("Requirements loaded, but frozen evidence is stale or cannot be verified (%1). Freeze again.")
                 .arg(reason);
         }
     } else if (parsed.frozen) {
         // 兼容旧项目：旧格式只有 frozen 标志而没有工件、环境和模型证据，必须
         // 视为未验证，不能让它绕过当前版本的冻结门禁。
         parsed.frozen = false;
-        loadStatus = QString::fromUtf8("研发需求已加载；旧文件缺少冻结审计工件，请重新冻结。" );
+        loadStatus = QStringLiteral("Requirements loaded. The legacy file has no frozen audit artifact; freeze again.");
     }
 
     _requirements = parsed;
@@ -1683,12 +1683,12 @@ void EngineeringRequirementsWidget::importStations()
 {
     if (_requirements.frozen) return;
     syncTablesToRequirements();
-    const QString path = QFileDialog::getOpenFileName(this, QString::fromUtf8("导入关键工位"), QString(),
+    const QString path = QFileDialog::getOpenFileName(this, QStringLiteral("Import Key Stations"), QString(),
         "Station data (*.csv *.json);;CSV (*.csv);;JSON (*.json)");
     if (path.isEmpty()) return;
     QFile file(path);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        setStatus(QString::fromUtf8("无法读取工位导入文件。"));
+        setStatus(QStringLiteral("Cannot read station import file."));
         return;
     }
     const RequirementSet before = _requirements;
@@ -1701,18 +1701,18 @@ void EngineeringRequirementsWidget::importStations()
     if (!imported) {
         QStringList details;
         for (const StationImportDiagnostic& diagnostic : result.diagnostics) {
-            details.push_back(QString::fromUtf8("记录 %1：%2").arg(diagnostic.recordNumber).arg(QString::fromStdString(diagnostic.message)));
+            details.push_back(QStringLiteral("Record %1: %2").arg(diagnostic.recordNumber).arg(QString::fromStdString(diagnostic.message)));
             if (details.size() == 8) break;
         }
         const QString message = details.isEmpty() ? QString::fromStdString(error) : details.join('\n');
-        QMessageBox::warning(this, QString::fromUtf8("工位导入失败"), message);
-        setStatus(QString::fromUtf8("导入未写入任何工位：请根据逐行诊断修正源文件后重试。"));
+        QMessageBox::warning(this, QStringLiteral("Station Import Failed"), message);
+        setStatus(QStringLiteral("No stations imported. Fix the record diagnostics and try again."));
         return;
     }
     // 服务成功后才记录操作前快照，保证撤销栈中不出现失败导入或用户取消的伪操作。
     pushUndoSnapshot(before);
     refreshTables();
-    setStatus(QString::fromUtf8("已从“%1”原子导入 %2 个关键工位；每个工位都保留来源文件和原始记录号。").arg(path).arg(result.importedCount));
+    setStatus(QStringLiteral("Imported %2 key stations from %1.").arg(path).arg(result.importedCount));
     Q_EMIT requirementsChanged();
 }
 
@@ -1720,13 +1720,13 @@ void EngineeringRequirementsWidget::undoLastOperation()
 {
     if (_requirements.frozen) return;
     if (!_undoStack.undo(_requirements)) {
-        setStatus(QString::fromUtf8("当前没有可撤销的批量操作。"));
+        setStatus(QStringLiteral("No batch operation to undo."));
         return;
     }
     // 撤销后原冻结编译产物不再可信，必须等待工程师重新校验并冻结。
     _compiled = CompiledRequirementSet();
     refreshTables();
-    setStatus(QString::fromUtf8("已恢复最近一次批量操作前的完整需求快照。"));
+    setStatus(QStringLiteral("Restored requirements from before the last batch operation."));
     Q_EMIT requirementsChanged();
 }
 
@@ -1737,7 +1737,7 @@ void EngineeringRequirementsWidget::redoLastOperation()
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
     refreshTables();
-    setStatus(QString::fromUtf8("已重做最近一次需求编辑操作。"));
+    setStatus(QStringLiteral("Redid the last requirements edit."));
     Q_EMIT requirementsChanged();
 }
 
@@ -1752,7 +1752,7 @@ void EngineeringRequirementsWidget::freezeRequirements()
     }
     syncTablesToRequirements();
     if (_workcell == nullptr) {
-        setStatus(QString::fromUtf8("无法冻结需求：请先打开实际 WorkCell，以验证 Frame、TCP 与工装状态。"));
+        setStatus(QStringLiteral("Cannot freeze requirements. Open the WorkCell to validate frames, TCPs, and fixtures."));
         return;
     }
     // 编辑态未绑定模型时，尝试绑定项目清单中的 robot-model.main 工程模型；
@@ -1761,8 +1761,8 @@ void EngineeringRequirementsWidget::freezeRequirements()
         QString bindingError;
         if (!bindGeneratedProjectModel(&bindingError)) {
             setStatus(QString::fromUtf8(
-                "无法冻结需求：当前机器人尚无可自动绑定的项目模型；请在 RobotModelBuilder 生成并保存匹配的 .rmb.json。%1")
-                .arg(bindingError.isEmpty() ? QString() : QString::fromUtf8("原因：") + bindingError));
+                "Cannot freeze requirements. Create and save a matching .rmb.json model in RobotModelBuilder. %1")
+                .arg(bindingError.isEmpty() ? QString() : QStringLiteral("Reason: ") + bindingError));
             return;
         }
     }
@@ -1775,7 +1775,7 @@ void EngineeringRequirementsWidget::freezeRequirements()
     if (!loadRobotModelDocument(
             QString::fromStdString(_requirements.modelBinding.sourcePath),
             _projectOutputDirectory, model, &modelError)) {
-        setStatus(QString::fromUtf8("无法冻结需求：%1").arg(modelError));
+        setStatus(QStringLiteral("Cannot freeze requirements: %1").arg(modelError));
         return;
     }
 
@@ -1807,7 +1807,7 @@ void EngineeringRequirementsWidget::freezeRequirements()
         if (!diagnostic.blocking && !diagnostic.requirementId.empty())
             advisoryRequirementIds.insert(diagnostic.requirementId);
     }
-    setStatus(QString::fromUtf8("需求已校验并冻结：%1 个工位可用于 P2 运动学优化；%2 项建议需求未验证，未进入优化；%3 个接近/撤离规则已记录，连续 IK 与路径碰撞将在 P3 验证。")
+    setStatus(QStringLiteral("Requirements frozen: %1 stations are available for kinematic optimization; %2 optional requirements are excluded; %3 approach/retract rules are recorded.")
         .arg(availableTasks).arg(advisoryRequirementIds.size()).arg(pathPending));
     refreshTables();
     Q_EMIT requirementsChanged();
@@ -1824,7 +1824,7 @@ void EngineeringRequirementsWidget::unfreezeRequirements()
     _requirements.frozen = false;
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
-    setStatus(QString::fromUtf8("需求已解冻，可继续编辑。"));
+    setStatus(QStringLiteral("Requirements are editable."));
     refreshTables();
     Q_EMIT requirementsChanged();
 }
@@ -1835,7 +1835,7 @@ void EngineeringRequirementsWidget::addPoseTask()
     const RequirementSet before = _requirements;
     PoseTask task;
     task.id = "station_" + std::to_string(_requirements.poseTasks.size() + 1);
-    task.name = QString::fromUtf8("关键工位 %1").arg(_requirements.poseTasks.size() + 1).toStdString();
+    task.name = QStringLiteral("Key Station %1").arg(_requirements.poseTasks.size() + 1).toStdString();
     task.refFrame = "WORLD";
     _requirements.poseTasks.push_back(task);
     recordRequirementEdit(before);
@@ -1871,7 +1871,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
 {
     if (_requirements.frozen) return;
     if (_workcell == nullptr || _workcell->getDevices().empty()) {
-        setStatus(QString::fromUtf8("无法捕获当前 TCP：未打开包含设备的 WorkCell。"));
+        setStatus(QStringLiteral("Cannot capture TCP pose. Open a WorkCell with a device."));
         return;
     }
     // 捕获 TCP 优先取绑定模型对应的设备，确保捕获到的末端就是实际用于分析的
@@ -1882,7 +1882,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
     if (device == nullptr)
         device = _workcell->getDevices().front();
     if (device == nullptr || device->getBase() == nullptr || device->getEnd() == nullptr) {
-        setStatus(QString::fromUtf8("无法捕获当前 TCP：默认设备没有有效的 Base 或 TCP。"));
+        setStatus(QStringLiteral("Cannot capture TCP pose. The default device has no valid base or TCP."));
         return;
     }
     try {
@@ -1893,7 +1893,7 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
         const RequirementSet before = _requirements;
         PoseTask task;
         task.id = "station_" + std::to_string(_requirements.poseTasks.size() + 1);
-        task.name = QString::fromUtf8("TCP 捕获工位 %1").arg(_requirements.poseTasks.size() + 1).toStdString();
+        task.name = QStringLiteral("TCP Capture %1").arg(_requirements.poseTasks.size() + 1).toStdString();
         task.source = PoseTaskSource::CapturedTcp;
         task.refFrame = device->getBase()->getName();
         task.tcpFrame = device->getEnd()->getName();
@@ -1903,32 +1903,32 @@ void EngineeringRequirementsWidget::captureCurrentTcp()
         }
         task.note = "Captured from current WorkCell TCP.";
         _requirements.poseTasks.push_back(task);
-        setStatus(QString::fromUtf8("已从当前设备 TCP 捕获位姿；可在冻结前调整其等级和公差。"));
+        setStatus(QStringLiteral("TCP pose captured. Adjust its level and tolerance before freezing."));
         recordRequirementEdit(before);
     } catch (const std::exception& exception) {
-        setStatus(QString::fromUtf8("无法捕获当前 TCP：%1").arg(QString::fromUtf8(exception.what())));
+        setStatus(QStringLiteral("Cannot capture TCP pose: %1").arg(QString::fromUtf8(exception.what())));
     }
 }
 void EngineeringRequirementsWidget::requestGeometryFeaturePick()
 {
     if (_requirements.frozen || _workcell == nullptr || selectedKeyStationIndex() < 0) {
-        setStatus(QString::fromUtf8("请先打开 WorkCell、选择关键工位，并保持需求处于可编辑状态。"));
+        setStatus(QStringLiteral("Open a WorkCell, select a key station, and keep requirements editable."));
         return;
     }
-    setStatus(QString::fromUtf8("几何拾取已启用：请在 3D 视图中按住 Ctrl 双击目标工装或工件的 Frame。"));
+    setStatus(QStringLiteral("Geometry pick enabled. Ctrl+double-click a fixture or part frame in the 3D view."));
     Q_EMIT geometryFeaturePickRequested();
 }
 bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& frameName, QString* error)
 {
     if (_requirements.frozen || _workcell == nullptr) {
-        const QString message = QString::fromUtf8("请在已打开 WorkCell 且需求未冻结时拾取几何特征。");
+        const QString message = QStringLiteral("Open a WorkCell and edit requirements before picking geometry.");
         if (error != nullptr) *error = message;
         setStatus(message);
         return false;
     }
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
-        const QString message = QString::fromUtf8("请先在关键工位列表中选择一个工位。");
+        const QString message = QStringLiteral("Select a key station first.");
         if (error != nullptr) *error = message;
         setStatus(message);
         return false;
@@ -1948,7 +1948,7 @@ bool EngineeringRequirementsWidget::applyGeometryFeatureFrame(const QString& fra
         return false;
     }
     recordRequirementEdit(before);
-    setStatus(QString::fromUtf8("已关联几何 Frame“%1”：作业位会随当前 WorkCell 重新解析；面法向姿态已记录，连续路径验证将在 P3 执行。").arg(frameName));
+    setStatus(QStringLiteral("Geometry frame %1 linked. The station resolves against the current WorkCell.").arg(frameName));
     if (error != nullptr) error->clear();
     return true;
 }
@@ -1967,19 +1967,19 @@ void EngineeringRequirementsWidget::createTemplateStations()
     request.instanceId = uniqueInstanceId(_requirements, "template");
     request.idPrefix = "station";
     request.namePrefix = "Template";
-    if (!editTemplateRequest(this, _workcell, request, false, QString::fromUtf8("创建工艺模板工位")))
+    if (!editTemplateRequest(this, _workcell, request, false, QStringLiteral("Create Template Stations")))
         return;
     const RequirementSet before = _requirements;
     const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
     std::string error;
     if (!StationTemplateService::appendTemplate(_requirements, request, &error)) {
-        QMessageBox::warning(this, QString::fromUtf8("无法创建模板"), QString::fromStdString(error));
+        QMessageBox::warning(this, QStringLiteral("Cannot Create Template"), QString::fromStdString(error));
         return;
     }
     pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
-    setStatus(QString::fromUtf8("已创建工艺模板实例“%1”，其生成工位保持关联，可在后续统一更新或解除关联。").arg(QString::fromStdString(request.instanceId)));
+    setStatus(QStringLiteral("Template instance %1 created. Its stations remain linked for later updates.").arg(QString::fromStdString(request.instanceId)));
     Q_EMIT requirementsChanged();
 }
 
@@ -1989,36 +1989,36 @@ void EngineeringRequirementsWidget::updateSelectedTemplateStations()
     syncTablesToRequirements();
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
-        setStatus(QString::fromUtf8("请先选择一个仍与工艺模板保持关联的关键工位。"));
+        setStatus(QStringLiteral("Select a key station that is still linked to a template."));
         return;
     }
     const PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     StationTemplateRequest request;
     if (!station.generation.linked || !templateRequestFromStation(station, request)) {
-        setStatus(QString::fromUtf8("当前工位不是可更新的模板关联工位；阵列和已解除关联的工位不会被模板更新覆盖。"));
+        setStatus(QStringLiteral("This station is not an updatable template station."));
         return;
     }
-    if (!editTemplateRequest(this, _workcell, request, true, QString::fromUtf8("更新工艺模板")))
+    if (!editTemplateRequest(this, _workcell, request, true, QStringLiteral("Update Template")))
         return;
     TemplateUpdatePreview preview;
     std::string error;
     if (!StationTemplateService::previewTemplateUpdate(_requirements, station.generation.instanceId, request, preview, &error)) {
-        QMessageBox::warning(this, QString::fromUtf8("无法预览模板更新"), QString::fromStdString(error));
+        QMessageBox::warning(this, QStringLiteral("Cannot Preview Template Update"), QString::fromStdString(error));
         return;
     }
-    const QString message = QString::fromUtf8("本次更新将替换 %1 个仍保持关联的工位，并生成 %2 个新工位。已解除关联的工位不会修改。是否继续？")
+    const QString message = QStringLiteral("This update replaces %1 linked stations and creates %2 new stations. Detached stations are unchanged. Continue?")
         .arg(preview.replacedStationIds.size()).arg(preview.generatedStations.size());
-    if (QMessageBox::question(this, QString::fromUtf8("确认模板更新"), message,
+    if (QMessageBox::question(this, QStringLiteral("Confirm Template Update"), message,
                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
         return;
     const RequirementSet before = _requirements;
     if (!StationTemplateService::applyTemplateUpdate(_requirements, preview, &error)) {
-        QMessageBox::warning(this, QString::fromUtf8("无法应用模板更新"), QString::fromStdString(error));
+        QMessageBox::warning(this, QStringLiteral("Cannot Apply Template Update"), QString::fromStdString(error));
         return;
     }
     pushUndoSnapshot(before);
     refreshTables();
-    setStatus(QString::fromUtf8("模板实例“%1”已更新；解除关联的工位保持原样。").arg(QString::fromStdString(request.instanceId)));
+    setStatus(QStringLiteral("Template instance %1 updated. Detached stations are unchanged.").arg(QString::fromStdString(request.instanceId)));
     Q_EMIT requirementsChanged();
 }
 
@@ -2028,27 +2028,27 @@ void EngineeringRequirementsWidget::detachSelectedTemplateStation()
     syncTablesToRequirements();
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
-        setStatus(QString::fromUtf8("请先选择一个由模板或阵列生成的关键工位。"));
+        setStatus(QStringLiteral("Select a key station generated by a template or array."));
         return;
     }
     PoseTask& station = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     if (station.generation.instanceId.empty()) {
-        setStatus(QString::fromUtf8("当前工位不是由模板或阵列生成，已经是独立工位。"));
+        setStatus(QStringLiteral("This station is already independent."));
         return;
     }
     if (!station.generation.linked) {
-        setStatus(QString::fromUtf8("当前工位已经解除关联，之后的模板更新不会覆盖它。"));
+        setStatus(QStringLiteral("This station is detached and will not be updated by its template."));
         return;
     }
     const RequirementSet before = _requirements;
     std::string error;
     if (!StationTemplateService::detachStation(_requirements, station.id, &error)) {
-        QMessageBox::warning(this, QString::fromUtf8("无法解除关联"), QString::fromStdString(error));
+        QMessageBox::warning(this, QStringLiteral("Cannot Detach Template"), QString::fromStdString(error));
         return;
     }
     pushUndoSnapshot(before);
     refreshTables();
-    setStatus(QString::fromUtf8("工位“%1”已解除与模板的关联，可单独调整且不会被后续模板更新覆盖。").arg(QString::fromStdString(station.name)));
+    setStatus(QStringLiteral("Station %1 detached from its template.").arg(QString::fromStdString(station.name)));
     Q_EMIT requirementsChanged();
 }
 
@@ -2058,7 +2058,7 @@ void EngineeringRequirementsWidget::createStationArray()
     syncTablesToRequirements();
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
-        setStatus(QString::fromUtf8("请先选择一个关键工位，批量阵列会从该工位复制工艺语义、姿态规则和验证要求。"));
+        setStatus(QStringLiteral("Select a key station to generate an array."));
         return;
     }
     const PoseTask source = _requirements.poseTasks[static_cast<std::size_t>(selected)];
@@ -2075,13 +2075,13 @@ void EngineeringRequirementsWidget::createStationArray()
     const int firstGeneratedRow = static_cast<int>(_requirements.poseTasks.size());
     std::string error;
     if (!StationTemplateService::appendArray(_requirements, source.id, request, &error)) {
-        QMessageBox::warning(this, QString::fromUtf8("无法生成阵列"), QString::fromStdString(error));
+        QMessageBox::warning(this, QStringLiteral("Cannot Generate Array"), QString::fromStdString(error));
         return;
     }
     pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(firstGeneratedRow);
-    setStatus(QString::fromUtf8("已从工位“%1”生成阵列实例“%2”；阵列工位独立维护，不受模板更新影响。")
+    setStatus(QStringLiteral("Array instance %2 generated from station %1.")
         .arg(QString::fromStdString(source.name), QString::fromStdString(request.instanceId)));
     Q_EMIT requirementsChanged();
 }
@@ -2092,18 +2092,18 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
     syncTablesToRequirements();
     const int selected = selectedKeyStationIndex();
     if (selected < 0 || selected >= static_cast<int>(_requirements.poseTasks.size())) {
-        setStatus(QString::fromUtf8("请先选择需要镜像的关键工位。"));
+        setStatus(QStringLiteral("Select a key station to mirror."));
         return;
     }
     const PoseTask& source = _requirements.poseTasks[static_cast<std::size_t>(selected)];
     if (source.orientation.mode != OrientationMode::Fixed) {
-        setStatus(QString::fromUtf8("当前镜像只支持固定姿态工位；基于 Frame、几何法向或目标指向的姿态规则需要在 P3 结合场景镜像后再解析。"));
+        setStatus(QStringLiteral("Only fixed-orientation stations can be mirrored."));
         return;
     }
     bool accepted = false;
     const QStringList planes = {"YZ (X=0)", "XZ (Y=0)", "XY (Z=0)"};
-    const QString selectedPlane = QInputDialog::getItem(this, QString::fromUtf8("镜像关键工位"),
-        QString::fromUtf8("以当前参考系原点为基准的镜像平面"), planes, 0, false, &accepted);
+    const QString selectedPlane = QInputDialog::getItem(this, QStringLiteral("Mirror Key Station"),
+        QStringLiteral("Mirror plane through the reference-frame origin"), planes, 0, false, &accepted);
     if (!accepted)
         return;
     const int axis = planes.indexOf(selectedPlane);
@@ -2130,7 +2130,7 @@ void EngineeringRequirementsWidget::mirrorSelectedStation()
     pushUndoSnapshot(before);
     refreshTables();
     if (_stationList != nullptr) _stationList->setCurrentRow(static_cast<int>(_requirements.poseTasks.size()) - 1);
-    setStatus(QString::fromUtf8("已创建镜像工位“%1”；位置和固定姿态均已在当前参考系内进行合法镜像。")
+    setStatus(QStringLiteral("Mirrored station %1 created.")
         .arg(QString::fromStdString(mirrored.name)));
     Q_EMIT requirementsChanged();
 }
@@ -2142,7 +2142,7 @@ void EngineeringRequirementsWidget::addBoxRegion()
     const RequirementSet before = _requirements;
     BoxRegion region;
     region.id = "box_" + std::to_string(_requirements.boxRegions.size() + 1);
-    region.name = QString::fromUtf8("工作区域 %1").arg(_requirements.boxRegions.size() + 1).toStdString();
+    region.name = QStringLiteral("Workspace Region %1").arg(_requirements.boxRegions.size() + 1).toStdString();
     // 新建覆盖盒的默认 TCP 优先取绑定设备末端，避免默认值指向非绑定设备。
     region.tcpFrame = defaultTcpFrame(_workcell, _requirements.modelBinding.robotName);
     _requirements.boxRegions.push_back(region);
@@ -2184,8 +2184,8 @@ void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell)
     _requirements.frozen = false;
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
-    setStatus(workcell == nullptr ? QString::fromUtf8("当前未打开 WorkCell；引用 Frame 会显示为未解析。")
-                                : QString::fromUtf8("已连接当前 WorkCell，等待接收最新场景状态。"));
+    setStatus(workcell == nullptr ? QStringLiteral("No WorkCell is open. Referenced frames are unresolved.")
+                                : QStringLiteral("Connected to the current WorkCell."));
     refreshTables();
 }
 
@@ -2215,15 +2215,15 @@ void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, co
 {
     if (saved) {
         setStatus(QString::fromUtf8(
-            "需求已校验、冻结并随完整项目事务保存；下游插件可直接读取最新冻结工件。"));
+            "Requirements validated, frozen, and saved with the project. Downstream plugins can read the latest frozen artifact."));
         return;
     }
 
     const QString detail = error.trimmed().isEmpty()
-        ? QString::fromUtf8("未知保存错误。")
+        ? QStringLiteral("Unknown save error.")
         : error.trimmed();
     setStatus(QString::fromUtf8(
-        "需求已冻结在内存中，但项目保存失败，冻结工件尚未发布。请修复保存问题后执行“保存项目”。原因：%1")
+        "Requirements are frozen in memory, but project save failed and the frozen artifact was not published. Save the project after fixing the error. Reason: %1")
                   .arg(detail));
 }
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)

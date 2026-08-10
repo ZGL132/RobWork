@@ -74,15 +74,15 @@ std::string uniqueId(const std::string& prefix, const std::vector<std::string>& 
 QString constraintKindLabel(StructureConstraintKind kind)
 {
     switch (kind) {
-    case StructureConstraintKind::ModelValid: return "模型有效";
-    case StructureConstraintKind::RequiredTaskReachable: return "必达任务可达";
-    case StructureConstraintKind::RequiredTaskCollisionFree: return "必达任务无碰撞";
-    case StructureConstraintKind::MinimumJointMargin: return "最小关节裕度";
-    case StructureConstraintKind::MaximumTotalLength: return "最大总长度";
-    case StructureConstraintKind::MaximumBaseHeight: return "最大基座高度";
-    case StructureConstraintKind::MaximumCrossSection: return "最大横截面积";
-    case StructureConstraintKind::MaximumLinkSlenderness: return "最大长细比";
-    case StructureConstraintKind::MinimumWorkspaceCoverage: return "最小工作空间覆盖";
+    case StructureConstraintKind::ModelValid: return "Model Valid";
+    case StructureConstraintKind::RequiredTaskReachable: return "Required Tasks Reachable";
+    case StructureConstraintKind::RequiredTaskCollisionFree: return "Required Tasks Collision-Free";
+    case StructureConstraintKind::MinimumJointMargin: return "Minimum Joint Margin";
+    case StructureConstraintKind::MaximumTotalLength: return "Maximum Total Length";
+    case StructureConstraintKind::MaximumBaseHeight: return "Maximum Base Height";
+    case StructureConstraintKind::MaximumCrossSection: return "Maximum Cross-Section";
+    case StructureConstraintKind::MaximumLinkSlenderness: return "Maximum Link Slenderness";
+    case StructureConstraintKind::MinimumWorkspaceCoverage: return "Minimum Workspace Coverage";
     }
     return QString();
 }
@@ -130,21 +130,21 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
 {
     _tabs = new QTabWidget(this);
     _tabs->setObjectName("structureOptimizerTabs");
-    _tabs->addTab(createVariablePage(), "设计变量");
-    _tabs->addTab(createTaskPage(), "任务与约束");
-    _tabs->addTab(createSettingsPage(), "优化设置");
-    _tabs->addTab(createCandidatePage(), "候选方案");
-    _tabs->addTab(createReportPage(), "报告导出");
+    _tabs->addTab(createVariablePage(), "Design Variables");
+    _tabs->addTab(createTaskPage(), "Tasks & Constraints");
+    _tabs->addTab(createSettingsPage(), "Optimization Settings");
+    _tabs->addTab(createCandidatePage(), "Candidates");
+    _tabs->addTab(createReportPage(), "Export Report");
 
-    _startButton = new QPushButton("开始优化", this);
+    _startButton = new QPushButton("Start Optimization", this);
     _startButton->setObjectName("startOptimizationButton");
-    _pauseButton = new QPushButton("暂停", this);
+    _pauseButton = new QPushButton("Pause", this);
     _pauseButton->setObjectName("pauseOptimizationButton");
-    _cancelButton = new QPushButton("取消", this);
+    _cancelButton = new QPushButton("Cancel", this);
     _cancelButton->setObjectName("cancelOptimizationButton");
-    _statusLabel = new QLabel("等待加载结构优化项目。", this);
+    _statusLabel = new QLabel("Load or create an optimization project.", this);
     _statusLabel->setObjectName("structureOptimizationStatusLabel");
-    _progressLabel = new QLabel("尚未运行", this);
+    _progressLabel = new QLabel("Not started", this);
     _progressLabel->setObjectName("structureOptimizationProgressLabel");
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
@@ -416,7 +416,7 @@ bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
 {
     if (_controller != nullptr && _controller->isRunning()) {
         if (reason != nullptr)
-            *reason = QString::fromUtf8("结构优化任务仍在运行，请先取消或等待任务完成。");
+            *reason = QStringLiteral("Optimization is still running. Cancel it or wait for completion.");
         return false;
     }
     if (reason != nullptr)
@@ -454,11 +454,11 @@ QWidget* StructureOptimizerWidget::createTaskPage()
     _taskView = makeTableView(_taskModel, "optimizationTaskTable");
     layout->addWidget(_taskView);
     QHBoxLayout* taskActions = new QHBoxLayout();
-    QPushButton* addTask = new QPushButton("新增任务", page);
+    QPushButton* addTask = new QPushButton("Add Task", page);
     addTask->setObjectName("addOptimizationTaskButton");
-    QPushButton* duplicateTask = new QPushButton("复制任务", page);
+    QPushButton* duplicateTask = new QPushButton("Duplicate Task", page);
     duplicateTask->setObjectName("duplicateOptimizationTaskButton");
-    QPushButton* removeTask = new QPushButton("删除任务", page);
+    QPushButton* removeTask = new QPushButton("Remove Task", page);
     removeTask->setObjectName("removeOptimizationTaskButton");
     taskActions->addWidget(addTask);
     taskActions->addWidget(duplicateTask);
@@ -471,7 +471,7 @@ QWidget* StructureOptimizerWidget::createTaskPage()
     connect(removeTask, &QPushButton::clicked,
             this, &StructureOptimizerWidget::removeSelectedTask);
 
-    QGroupBox* constraints = new QGroupBox("约束条件");
+    QGroupBox* constraints = new QGroupBox("Constraints");
     QVBoxLayout* constraintLayout = new QVBoxLayout(constraints);
     _constraintView = makeTableView(_constraintModel, "structureConstraintTable");
     constraintLayout->addWidget(_constraintView);
@@ -483,11 +483,11 @@ QWidget* StructureOptimizerWidget::createTaskPage()
         const StructureConstraintKind value = static_cast<StructureConstraintKind>(kind);
         _newConstraintKindCombo->addItem(constraintKindLabel(value), kind);
     }
-    QPushButton* addConstraint = new QPushButton("新增约束", constraints);
+    QPushButton* addConstraint = new QPushButton("Add Constraint", constraints);
     addConstraint->setObjectName("addStructureConstraintButton");
-    QPushButton* duplicateConstraint = new QPushButton("复制约束", constraints);
+    QPushButton* duplicateConstraint = new QPushButton("Duplicate Constraint", constraints);
     duplicateConstraint->setObjectName("duplicateStructureConstraintButton");
-    QPushButton* removeConstraint = new QPushButton("删除约束", constraints);
+    QPushButton* removeConstraint = new QPushButton("Remove Constraint", constraints);
     removeConstraint->setObjectName("removeStructureConstraintButton");
     constraintActions->addWidget(_newConstraintKindCombo);
     constraintActions->addWidget(addConstraint);
@@ -517,40 +517,40 @@ QWidget* StructureOptimizerWidget::createSettingsPage()
     _strategyCombo->addItem("Random", static_cast<int>(StructureStrategyKind::Random));
     _strategyCombo->addItem("Grid", static_cast<int>(StructureStrategyKind::Grid));
     _strategyCombo->setObjectName("structureOptimizationStrategyCombo");
-    layout->addRow("策略", _strategyCombo);
+    layout->addRow("Strategy", _strategyCombo);
 
     _candidateCountSpin = makeSpinBox(1, 100000, _loadedProblem.run.candidateCount);
     _candidateCountSpin->setObjectName("structureOptimizationCandidateCount");
-    layout->addRow("候选数量", _candidateCountSpin);
+    layout->addRow("Candidates", _candidateCountSpin);
 
     _eliteCountSpin = makeSpinBox(1, 10000, _loadedProblem.run.eliteCount);
     _eliteCountSpin->setObjectName("structureOptimizationEliteCount");
-    layout->addRow("精英数量", _eliteCountSpin);
+    layout->addRow("Elite Candidates", _eliteCountSpin);
 
     _localEliteCountSpin = makeSpinBox(1, 10000, _loadedProblem.run.localEliteCount);
     _localEliteCountSpin->setObjectName("structureOptimizationLocalEliteCount");
-    layout->addRow("局部精修精英数", _localEliteCountSpin);
+    layout->addRow("Local Refinement Elites", _localEliteCountSpin);
 
     _finalVerificationCountSpin = makeSpinBox(1, 10000,
                                               _loadedProblem.run.finalVerificationCount);
     _finalVerificationCountSpin->setObjectName("structureOptimizationFinalVerificationCount");
-    layout->addRow("最终复核数", _finalVerificationCountSpin);
+    layout->addRow("Final Verification Candidates", _finalVerificationCountSpin);
 
     _maxLocalSweepsSpin = makeSpinBox(1, 1000, _loadedProblem.run.maxLocalSweeps);
     _maxLocalSweepsSpin->setObjectName("structureOptimizationMaxLocalSweeps");
-    layout->addRow("局部搜索轮数", _maxLocalSweepsSpin);
+    layout->addRow("Local Search Sweeps", _maxLocalSweepsSpin);
 
     _gridStepsSpin = makeSpinBox(2, 100, _loadedProblem.run.gridSteps);
     _gridStepsSpin->setObjectName("structureOptimizationGridSteps");
-    layout->addRow("网格步数", _gridStepsSpin);
+    layout->addRow("Grid Steps", _gridStepsSpin);
 
     _seedSpin = makeSpinBox(0, 2147483647,
                             static_cast<int>(_loadedProblem.run.randomSeed));
     _seedSpin->setObjectName("structureOptimizationSeed");
-    layout->addRow("随机种子", _seedSpin);
+    layout->addRow("Random Seed", _seedSpin);
 
     QGridLayout* weights = new QGridLayout();
-    const QStringList names = {"可达率", "操纵度", "关节裕度", "碰撞", "紧凑性", "偏好"};
+    const QStringList names = {"Reachability", "Manipulability", "Joint Margin", "Collision", "Compactness", "Preference"};
     const QStringList objectNames = {
         "structureOptimizationWeightReachability",
         "structureOptimizationWeightManipulability",
@@ -567,7 +567,7 @@ QWidget* StructureOptimizerWidget::createSettingsPage()
         weights->addWidget(new QLabel(names[i], page), i / 2, (i % 2) * 2);
         weights->addWidget(weight, i / 2, (i % 2) * 2 + 1);
     }
-    layout->addRow("权重", weights);
+    layout->addRow("Objective Weights", weights);
 
     page->setLayout(layout);
     return page;
@@ -580,9 +580,9 @@ QWidget* StructureOptimizerWidget::createCandidatePage()
     _candidateView = makeTableView(_candidateModel, "structureCandidateTable");
     layout->addWidget(_candidateView);
     QHBoxLayout* actions = new QHBoxLayout();
-    QPushButton* preview = new QPushButton("预览候选", page);
+    QPushButton* preview = new QPushButton("Preview Candidate", page);
     preview->setObjectName("previewStructureCandidateButton");
-    QPushButton* clear = new QPushButton("清除预览", page);
+    QPushButton* clear = new QPushButton("Clear Preview", page);
     clear->setObjectName("clearStructureCandidatePreviewButton");
     actions->addWidget(preview);
     actions->addWidget(clear);
@@ -600,15 +600,15 @@ QWidget* StructureOptimizerWidget::createReportPage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    QPushButton* newFromModel = new QPushButton("从模型快照新建项目", page);
+    QPushButton* newFromModel = new QPushButton("New Project from Model Snapshot", page);
     newFromModel->setObjectName("newStructureOptimizationProjectFromModelButton");
-    QPushButton* newFromRequirements = new QPushButton("从冻结需求创建项目", page);
+    QPushButton* newFromRequirements = new QPushButton("New Project from Frozen Requirements", page);
     newFromRequirements->setObjectName("newStructureOptimizationProjectFromFrozenRequirementButton");
-    QPushButton* open = new QPushButton("导入项目副本", page);
+    QPushButton* open = new QPushButton("Import Project", page);
     open->setObjectName("openStructureOptimizationProjectButton");
-    QPushButton* save = new QPushButton("导出项目副本", page);
+    QPushButton* save = new QPushButton("Export Project", page);
     save->setObjectName("saveStructureOptimizationProjectButton");
-    QPushButton* exportAll = new QPushButton("导出报告和候选模型", page);
+    QPushButton* exportAll = new QPushButton("Export Report & Models", page);
     exportAll->setObjectName("exportStructureOptimizationResultButton");
     layout->addWidget(newFromModel);
     layout->addWidget(newFromRequirements);
@@ -638,7 +638,7 @@ void StructureOptimizerWidget::updateRunState()
     if (runnable) {
         updateModelSourceStatus();
         if (_modelSourceStatus == RobotModelSourceStatus::Current)
-            _statusLabel->setText("结构优化项目已就绪。");
+            _statusLabel->setText("Optimization project ready.");
     }
     else
         _statusLabel->setText(QString::fromStdString(reason));
@@ -654,16 +654,16 @@ void StructureOptimizerWidget::updateModelSourceStatus()
         case RobotModelSourceStatus::Current:
             return;
         case RobotModelSourceStatus::Untracked:
-            _statusLabel->setText("模型来源未追踪，当前优化使用项目内冻结快照。");
+            _statusLabel->setText("Model source is untracked. Using the embedded frozen snapshot.");
             return;
         case RobotModelSourceStatus::Stale:
-            _statusLabel->setText("模型快照已过期，当前优化仍使用项目内冻结快照。");
+            _statusLabel->setText("Model snapshot is stale. Using the embedded frozen snapshot.");
             return;
         case RobotModelSourceStatus::SourceMissing:
-            _statusLabel->setText("模型源文件缺失，当前优化仍使用项目内冻结快照。");
+            _statusLabel->setText("Model source is missing. Using the embedded frozen snapshot.");
             return;
         case RobotModelSourceStatus::SourceInvalid:
-            _statusLabel->setText("模型源文件无效，当前优化仍使用项目内冻结快照。");
+            _statusLabel->setText("Model source is invalid. Using the embedded frozen snapshot.");
             return;
     }
 }
@@ -689,7 +689,7 @@ void StructureOptimizerWidget::startOptimization()
     StructureOptimizationProblem problem = collectProblem();
     if (!_controller->start(problem))
         return;
-    _statusLabel->setText("结构优化正在后台运行。");
+    _statusLabel->setText("Optimization running in the background.");
 }
 
 void StructureOptimizerWidget::togglePause()
@@ -703,7 +703,7 @@ void StructureOptimizerWidget::togglePause()
 void StructureOptimizerWidget::cancelOptimization()
 {
     _controller->cancel();
-    _statusLabel->setText("正在取消结构优化。");
+    _statusLabel->setText("Canceling optimization.");
 }
 
 void StructureOptimizerWidget::handleRunningChanged(bool running)
@@ -718,12 +718,12 @@ void StructureOptimizerWidget::handleRunningChanged(bool running)
 
 void StructureOptimizerWidget::handlePausedChanged(bool paused)
 {
-    _pauseButton->setText(paused ? "继续" : "暂停");
+    _pauseButton->setText(paused ? "Resume" : "Pause");
 }
 
 void StructureOptimizerWidget::handleProgress(const StructureProgress& progress)
 {
-    _progressLabel->setText(QString("%1 %2/%3，最佳分 %4")
+    _progressLabel->setText(QString("%1 %2/%3, best score %4")
                                 .arg(QString::fromStdString(progress.stage))
                                 .arg(progress.completed)
                                 .arg(progress.planned)
@@ -735,14 +735,14 @@ void StructureOptimizerWidget::handleCompleted(
 {
     _lastResult = result;
     _candidateModel->setResult(result);
-    QString status = QString("%1最终复核 %2，缓存命中 %3，灵敏度 %4。")
-        .arg(result.canceled ? "结构优化已取消。" : "结构优化已完成。")
+    QString status = QString("%1 Final Verified %2, cache hits %3, sensitivity %4.")
+        .arg(result.canceled ? "Optimization canceled." : "Optimization complete.")
         .arg(result.diagnostics.finalVerifiedCandidates)
         .arg(result.diagnostics.cacheHits)
         .arg(QString::fromStdString(result.sensitivity.robustnessGrade));
     if (_loadedProblem.evaluation.coverageBox.enabled) {
         const std::array<int, 3>& cells = _loadedProblem.evaluation.coverageBox.cells;
-        status += QString("工作空间采样 Quick %1 / Verified %2，网格 %3x%4x%5。")
+        status += QString(" Workspace sampling Quick %1 / Verified %2, grid %3x%4x%5.")
             .arg(_loadedProblem.evaluation.quickWorkspace.sampleCount)
             .arg(_loadedProblem.evaluation.verifiedWorkspace.sampleCount)
             .arg(cells[0])
@@ -760,7 +760,7 @@ void StructureOptimizerWidget::handleFailed(const QString& message)
 void StructureOptimizerWidget::previewSelectedCandidate()
 {
     if (!_previewController || !_candidateView || !_candidateView->currentIndex().isValid()) {
-        _statusLabel->setText("没有可预览的候选方案。");
+        _statusLabel->setText("No candidate selected for preview.");
         return;
     }
     const int row = _candidateView->currentIndex().row();
@@ -768,7 +768,7 @@ void StructureOptimizerWidget::previewSelectedCandidate()
     const StructureCandidateResult* candidate =
         _candidateModel->candidateByIndex(index.data().toInt());
     if (candidate == nullptr || !candidate->feasible) {
-        _statusLabel->setText("只能预览可行候选方案。");
+        _statusLabel->setText("Only feasible candidates can be previewed.");
         return;
     }
     QString error;
@@ -776,7 +776,7 @@ void StructureOptimizerWidget::previewSelectedCandidate()
         _statusLabel->setText(error);
         return;
     }
-    _statusLabel->setText(QString("正在预览候选方案 #%1。").arg(candidate->index));
+    _statusLabel->setText(QString("Previewing candidate #%1.").arg(candidate->index));
 }
 
 void StructureOptimizerWidget::clearCandidatePreview()
@@ -788,21 +788,21 @@ void StructureOptimizerWidget::clearCandidatePreview()
 void StructureOptimizerWidget::newProjectFromModelSpec()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, "从模型快照新建结构优化项目", _projectPath,
+        this, "New Project from Model Snapshot", _projectPath,
         "Robot model snapshot (*.rmb.json)");
     if (path.isEmpty())
         return;
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::warning(this, "读取模型快照失败", file.errorString());
+        QMessageBox::warning(this, "Cannot Read Model Snapshot", file.errorString());
         return;
     }
 
     RobotModelSpec spec;
     std::string parseError;
     if (!RobotModelSpecJson::fromJson(file.readAll().toStdString(), spec, &parseError)) {
-        QMessageBox::warning(this, "读取模型快照失败",
+        QMessageBox::warning(this, "Cannot Read Model Snapshot",
                              QString::fromStdString(parseError));
         return;
     }
@@ -810,7 +810,7 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
     StructureOptimizationProblem problem;
     std::string factoryError;
     if (!StructureOptimizationProjectFactory::create(spec, path, problem, &factoryError)) {
-        QMessageBox::warning(this, "创建结构优化项目失败",
+        QMessageBox::warning(this, "Cannot Create Optimization Project",
                              QString::fromStdString(factoryError));
         return;
     }
@@ -818,7 +818,7 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
     _projectPath.clear();
     _managedProjectRoot.clear();
     setProblem(problem);
-    _statusLabel->setText("已从模型快照创建结构优化项目，请添加任务点后开始优化。");
+    _statusLabel->setText("Optimization project created from the model snapshot. Add task points before starting.");
 }
 
 void StructureOptimizerWidget::newProjectFromFrozenRequirements()
@@ -836,7 +836,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
             QStringLiteral("engineering-requirements.main"), path, &resolveError);
     if (managedRequirement && !_studio->confirmSaveBeforeProjectResourceRead(this)) {
         _statusLabel->setText(
-            "已取消导入：项目修改尚未保存，未读取可能过期的冻结需求。");
+            "Import canceled. Save project changes before reading frozen requirements.");
         return;
     }
     if (path.isEmpty()) {
@@ -844,7 +844,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
             ? QDir(_studio->projectDirectory()).filePath(QStringLiteral("requirements"))
             : _projectPath;
         path = QFileDialog::getOpenFileName(
-            this, "从冻结需求创建结构优化项目", initialDirectory,
+            this, "New Project from Frozen Requirements", initialDirectory,
             "Frozen engineering requirement (*.requirements.json *.json)");
     }
     if (path.isEmpty())
@@ -868,7 +868,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
         : FrozenRequirementProjectImportService::createProblem(
               path, *_scenarioWorkCell, _scenarioState, problem, &validation, &importError);
     if (!imported) {
-        QMessageBox::warning(this, "创建结构优化项目失败",
+        QMessageBox::warning(this, "Cannot Create Optimization Project",
                              QString::fromStdString(importError));
         return;
     }
@@ -879,7 +879,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
     setProblemWithManagedRoot(
         problem, managedRequirement ? _studio->projectDirectory() : QString());
     _statusLabel->setText(
-        "已从冻结研发需求创建项目：当前执行运动学结构优化；轨迹、动力学和驱动选型评价未启用。");
+        "Optimization project created from frozen requirements.");
     QString validationStatus =
         tr("Created a structure optimization project from frozen requirements.");
     if (validation.robotStateChanged) {
@@ -896,7 +896,7 @@ void StructureOptimizerWidget::newProjectFromFrozenRequirements()
 void StructureOptimizerWidget::openProject()
 {
     const QString path = QFileDialog::getOpenFileName(
-        this, "导入结构优化项目副本", _projectPath,
+        this, "Import Optimization Project", _projectPath,
         "Structure optimization project (*.structure-optimization.json)");
     if (path.isEmpty())
         return;
@@ -905,14 +905,14 @@ void StructureOptimizerWidget::openProject()
     QString error;
     if (!StructureOptimizationProjectAdapter::loadProject(
             path, problem, &selectedCandidateIndex, &error)) {
-        QMessageBox::warning(this, "打开项目失败", error);
+        QMessageBox::warning(this, "Cannot Open Project", error);
         return;
     }
     _projectPath = path;
     _managedProjectRoot.clear();
     setProblem(problem);
     if (_modelSourceStatus == RobotModelSourceStatus::Current)
-        _statusLabel->setText("结构优化项目已载入。");
+        _statusLabel->setText("Optimization project loaded.");
 }
 
 void StructureOptimizerWidget::saveProject()
@@ -920,7 +920,7 @@ void StructureOptimizerWidget::saveProject()
     // 活动 rwproj 的正式资源由主窗口 Registry 通过 Provider 保存；此按钮只导出一份
     // 项目外副本，始终要求用户选择目标路径，避免绕过多资源事务直接覆盖正式资源。
     const QString path = QFileDialog::getSaveFileName(
-        this, "导出结构优化项目副本", _projectPath.isEmpty()
+        this, "Export Optimization Project", _projectPath.isEmpty()
             ? QStringLiteral("structure-optimization.structure-optimization.json") : _projectPath,
         "Structure optimization project (*.structure-optimization.json)");
     if (path.isEmpty())
@@ -932,21 +932,21 @@ void StructureOptimizerWidget::saveProject()
     QString error;
     if (!StructureOptimizationProjectAdapter::saveProject(
             path, collectProblem(), selectedCandidateIndex, &error)) {
-        QMessageBox::warning(this, "保存项目失败", error);
+        QMessageBox::warning(this, "Cannot Export Project", error);
         return;
     }
     _projectPath = path;
-    _statusLabel->setText("结构优化项目已保存。");
+    _statusLabel->setText("Optimization project exported.");
 }
 
 void StructureOptimizerWidget::exportResult()
 {
     if (_lastResult.candidates.empty()) {
-        QMessageBox::information(this, "导出报告", "尚无可导出的优化结果。");
+        QMessageBox::information(this, "Export Report", "No optimization results to export.");
         return;
     }
     const QString directory = QFileDialog::getExistingDirectory(
-        this, "选择导出目录", _projectPath.isEmpty() ? QString() : QFileInfo(_projectPath).absolutePath());
+        this, "Select Export Directory", _projectPath.isEmpty() ? QString() : QFileInfo(_projectPath).absolutePath());
     if (directory.isEmpty())
         return;
     StructureOptimizationExportRequest request;
@@ -963,10 +963,10 @@ void StructureOptimizerWidget::exportResult()
     const StructureOptimizationExportResult exported =
         StructureOptimizationExportService::exportAll(collectProblem(), _lastResult, request);
     if (!exported.ok) {
-        QMessageBox::warning(this, "导出失败", exported.errors.join("\n"));
+        QMessageBox::warning(this, "Export Failed", exported.errors.join("\n"));
         return;
     }
-    _statusLabel->setText("结构优化报告已导出到 " + directory);
+    _statusLabel->setText("Report exported to " + directory);
 }
 
 void StructureOptimizerWidget::addTask()
@@ -977,7 +977,7 @@ void StructureOptimizerWidget::addTask()
 
     OptimizationTaskPoint task;
     task.point.id = uniqueId("task", ids);
-    task.point.name = "新任务";
+    task.point.name = "New Task";
     task.point.refFrame = "WORLD";
     // Empty means that the evaluator uses the project's default device end frame.
     task.point.tcpFrame.clear();
@@ -1001,7 +1001,7 @@ void StructureOptimizerWidget::duplicateSelectedTask()
         ids.push_back(task.point.id);
     OptimizationTaskPoint copy = tasks[static_cast<std::size_t>(sourceRow)];
     copy.point.id = uniqueId("task", ids);
-    copy.point.name += " (副本)";
+    copy.point.name += " (Copy)";
     const int row = _taskModel->appendTask(copy);
     _taskView->selectRow(row);
     updateRunState();
@@ -1042,7 +1042,7 @@ void StructureOptimizerWidget::duplicateSelectedConstraint()
         ids.push_back(constraint.id);
     StructureConstraint copy = constraints[static_cast<std::size_t>(sourceRow)];
     copy.id = uniqueId("constraint", ids);
-    copy.label += " (副本)";
+    copy.label += " (Copy)";
     const int row = _constraintModel->appendConstraint(copy);
     _constraintView->selectRow(row);
     updateRunState();

@@ -29,7 +29,7 @@ QVariant StructureCandidateTableModel::data(const QModelIndex& index, int role) 
 
     switch (index.column()) {
         case IndexColumn: return candidate.index;
-        case FeasibleColumn: return candidate.feasible ? "是" : "否";
+        case FeasibleColumn: return candidate.feasible ? "Yes" : "No";
         case TotalScoreColumn: return candidate.totalScore;
         case ReachabilityColumn: return candidate.scores.reachability;
         case ManipulabilityColumn: return candidate.scores.manipulability;
@@ -55,15 +55,15 @@ QVariant StructureCandidateTableModel::headerData(int section,
         return section + 1;
 
     switch (section) {
-        case IndexColumn: return "编号";
-        case FeasibleColumn: return "可行性";
-        case TotalScoreColumn: return "总分";
-        case ReachabilityColumn: return "可达率";
-        case ManipulabilityColumn: return "操纵度";
-        case JointMarginColumn: return "关节裕度";
-        case CollisionColumn: return "碰撞安全";
-        case TotalLengthColumn: return "总长度";
-        case ImprovementColumn: return "相对基准改善";
+        case IndexColumn: return "#";
+        case FeasibleColumn: return "Feasible";
+        case TotalScoreColumn: return "Score";
+        case ReachabilityColumn: return "Reachability";
+        case ManipulabilityColumn: return "Manipulability";
+        case JointMarginColumn: return "Joint Margin";
+        case CollisionColumn: return "Collision-Free";
+        case TotalLengthColumn: return "Length";
+        case ImprovementColumn: return "Improvement";
         default: return QVariant();
     }
 }

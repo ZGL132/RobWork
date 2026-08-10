@@ -2361,6 +2361,68 @@ static void testUiTableModelsAndSuggestions()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testStructureOptimizerWidgetUsesEnglishCopy()
+{
+    rws::StructureOptimizerWidget widget;
+    QTabWidget* tabs = widget.findChild<QTabWidget*>("structureOptimizerTabs");
+    REQUIRE(tabs != nullptr);
+    REQUIRE(tabs->tabText(0) == "Design Variables");
+    REQUIRE(tabs->tabText(1) == "Tasks & Constraints");
+    REQUIRE(tabs->tabText(2) == "Optimization Settings");
+    REQUIRE(tabs->tabText(3) == "Candidates");
+    REQUIRE(tabs->tabText(4) == "Export Report");
+
+    const auto requireButtonText = [&widget](const char* objectName, const QString& expected) {
+        QPushButton* button = widget.findChild<QPushButton*>(objectName);
+        REQUIRE(button != nullptr);
+        REQUIRE(button->text() == expected);
+    };
+    requireButtonText("addOptimizationTaskButton", "Add Task");
+    requireButtonText("previewStructureCandidateButton", "Preview Candidate");
+    requireButtonText("exportStructureOptimizationResultButton", "Export Report & Models");
+
+    QTableView* variableTable = widget.findChild<QTableView*>("structureVariableTable");
+    REQUIRE(variableTable != nullptr);
+    if (variableTable != nullptr) {
+        const QStringList expectedHeaders = {
+            "ID", "Name", "Target", "Type", "Current", "Min", "Max", "Step", "Enabled"};
+        for (int column = 0; column < expectedHeaders.size(); ++column) {
+            REQUIRE(variableTable->model()->headerData(
+                        column, Qt::Horizontal, Qt::DisplayRole).toString() ==
+                    expectedHeaders[column]);
+        }
+    }
+
+    const auto requireTableHeaders = [&widget](const char* objectName,
+                                                const QStringList& expectedHeaders) {
+        QTableView* table = widget.findChild<QTableView*>(objectName);
+        REQUIRE(table != nullptr);
+        if (table != nullptr) {
+            for (int column = 0; column < expectedHeaders.size(); ++column) {
+                REQUIRE(table->model()->headerData(
+                            column, Qt::Horizontal, Qt::DisplayRole).toString() ==
+                        expectedHeaders[column]);
+            }
+        }
+    };
+    requireTableHeaders("optimizationTaskTable",
+                        {"ID", "Name", "Required", "Enabled", "X", "Y", "Z", "Roll",
+                         "Pitch", "Yaw", "Frame", "TCP", "Weight"});
+    requireTableHeaders("structureConstraintTable",
+                        {"ID", "Name", "Target", "Type", "Limit", "Aux. Limit", "Enabled",
+                         "Hard"});
+    requireTableHeaders("structureCandidateTable",
+                        {"#", "Feasible", "Score", "Reachability", "Manipulability",
+                         "Joint Margin", "Collision-Free", "Length", "Improvement"});
+
+    rws::StructureCandidateResult feasibleCandidate;
+    feasibleCandidate.feasible = true;
+    rws::StructureCandidateTableModel candidateModel;
+    candidateModel.setCandidates({feasibleCandidate});
+    REQUIRE(candidateModel.data(candidateModel.index(
+                0, rws::StructureCandidateTableModel::FeasibleColumn)).toString() == "Yes");
+}
+
 // 子套件 约束表模型 + 项目适配器:验证约束表模型能编辑阈值;项目 saveProject/
 // loadProject 往返保留约束、策略、局部精英数、权重等设置,且保存的模型输出目录是
 // 相对路径(项目可整体搬迁),加载后仍被解析回可直接使用的绝对目录。
@@ -4163,11 +4225,11 @@ static void testStructureOptimizerWidgetState()
     REQUIRE(tabs != nullptr);
     if (tabs != nullptr) {
         REQUIRE(tabs->count() == 5);
-        REQUIRE(tabs->tabText(0).toStdString() == "设计变量");
-        REQUIRE(tabs->tabText(1).toStdString() == "任务与约束");
-        REQUIRE(tabs->tabText(2).toStdString() == "优化设置");
-        REQUIRE(tabs->tabText(3).toStdString() == "候选方案");
-        REQUIRE(tabs->tabText(4).toStdString() == "报告导出");
+        REQUIRE(tabs->tabText(0).toStdString() == "Design Variables");
+        REQUIRE(tabs->tabText(1).toStdString() == "Tasks & Constraints");
+        REQUIRE(tabs->tabText(2).toStdString() == "Optimization Settings");
+        REQUIRE(tabs->tabText(3).toStdString() == "Candidates");
+        REQUIRE(tabs->tabText(4).toStdString() == "Export Report");
     }
 
     QPushButton* startButton =
@@ -4262,7 +4324,7 @@ static void testStructureOptimizerWidgetState()
             REQUIRE(constraintView->model()->data(
                         constraintView->model()->index(
                             1, rws::StructureConstraintTableModel::KindColumn))
-                        .toString() == "最小关节裕度");
+                        .toString() == "Minimum Joint Margin");
             REQUIRE(constraintView->model()->data(
                         constraintView->model()->index(
                             1, rws::StructureConstraintTableModel::ThresholdColumn))
@@ -4370,7 +4432,7 @@ static void testStructureOptimizerWidgetState()
     widget.setProblem(staleProblem);
     if (startButton != nullptr)
         REQUIRE(startButton->isEnabled());
-    REQUIRE(widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
 
     QTemporaryDir managedStatusDirectory;
     REQUIRE(managedStatusDirectory.isValid());
@@ -4424,7 +4486,7 @@ static void testStructureOptimizerWidgetState()
         managedStatusDocument, managedStatusProblem, -1, &projectDocumentError));
     REQUIRE(widget.loadProjectDocument(
         managedStatusDocument, &projectDocumentError, managedStatusRoot));
-    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
     rws::StructureOptimizationProblem standaloneStatusProblem;
     REQUIRE(rws::StructureOptimizationProjectFactory::create(
         managedPortable, managedStatusSource, standaloneStatusProblem, &staleFactoryError));
@@ -4435,12 +4497,12 @@ static void testStructureOptimizerWidgetState()
     standaloneStatusProblem.weights = problem.weights;
     standaloneStatusProblem.objectives = problem.objectives;
     widget.setProblem(standaloneStatusProblem);
-    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
     REQUIRE(widget.loadProjectDocument(
         managedStatusDocument, &projectDocumentError, managedStatusRoot));
-    REQUIRE(!widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
     REQUIRE(widget.loadProjectDocument(managedStatusDocument, &projectDocumentError));
-    REQUIRE(widget.statusText().contains(QString::fromUtf8("模型快照已过期")));
+    REQUIRE(widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
 
     const rws::StructureOptimizationProblem collected = widget.collectProblem();
     REQUIRE(collected.variables.size() == 1);
@@ -4759,6 +4821,7 @@ int main(int argc, char** argv)
     if (suite == "widget") {
         QApplication app(argc, argv);
         testStructureOptimizerWidgetState();
+        testStructureOptimizerWidgetUsesEnglishCopy();
         std::fflush(stdout);
         if (g_testFailures == 0)
         {
@@ -4778,6 +4841,12 @@ int main(int argc, char** argv)
         }
         std::printf("Managed project gate test FAILED.\n");
         return 1;
+    }
+
+    if (suite == "copy") {
+        QApplication app(argc, argv);
+        testStructureOptimizerWidgetUsesEnglishCopy();
+        return g_testFailures == 0 ? 0 : 1;
     }
 
     QCoreApplication app(argc, argv);
@@ -4902,6 +4971,7 @@ int main(int argc, char** argv)
     testAuditableEvidenceOutput();
     testCsvExport();
     testUiTableModelsAndSuggestions();
+    testStructureOptimizerWidgetUsesEnglishCopy();
     testConstraintModelAndProjectAdapter();
     testFrozenEngineeringRequirementArtifactAdapter();
     testFrozenRequirementProjectImportCreatesAuditableProblem();

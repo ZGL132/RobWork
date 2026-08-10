@@ -1736,13 +1736,35 @@ int testWidgetBuildsEngineeringRequirementWorkflow()
     QTabWidget* tabs = widget.findChild<QTabWidget*>("engineeringRequirementsTabs");
     REQUIRE(tabs != nullptr);
     REQUIRE(tabs->count() == 3);
-    REQUIRE(tabs->tabText(0) == QString::fromUtf8("关键工位"));
+    REQUIRE(tabs->tabText(0) == QStringLiteral("Key Stations"));
     REQUIRE(widget.findChild<QPushButton*>("addRequirementPoseTaskButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("addRequirementBoxRegionButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("freezeRequirementSetButton") != nullptr);
     REQUIRE(widget.findChild<QPushButton*>("saveRequirementSetButton") != nullptr);
     REQUIRE(widget.findChild<QTableWidget*>("engineeringRequirementsDiagnosticTable") != nullptr);
     REQUIRE(widget.findChild<QLabel*>("engineeringRequirementsValidationSummaryLabel") != nullptr);
+    return 0;
+}
+
+int testEngineeringRequirementsWidgetUsesEnglishCopy()
+{
+    rws::EngineeringRequirementsWidget widget;
+    QTabWidget* tabs = widget.findChild<QTabWidget*>("engineeringRequirementsTabs");
+    REQUIRE(tabs != nullptr);
+    REQUIRE(tabs->tabText(0) == "Key Stations");
+    REQUIRE(tabs->tabText(1) == "Workspace Regions");
+    REQUIRE(tabs->tabText(2) == "Validate & Freeze");
+
+    const auto requireButtonText = [&widget](const char* objectName, const QString& expected) {
+        QPushButton* button = widget.findChild<QPushButton*>(objectName);
+        REQUIRE(button != nullptr);
+        REQUIRE(button->text() == expected);
+        return 0;
+    };
+    REQUIRE(requireButtonText("addRequirementPoseTaskButton", "Add Station") == 0);
+    REQUIRE(requireButtonText("captureRequirementTcpButton", "Capture TCP Pose") == 0);
+    REQUIRE(requireButtonText("bindRequirementModelButton", "Bind Model") == 0);
+    REQUIRE(requireButtonText("freezeRequirementSetButton", "Freeze Requirements") == 0);
     return 0;
 }
 
@@ -2378,7 +2400,7 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
     REQUIRE(mode != nullptr);
     REQUIRE(x != nullptr);
     REQUIRE(roll != nullptr);
-    REQUIRE(coordinates->title() == QString::fromUtf8("高级坐标（工位坐标）"));
+    REQUIRE(coordinates->title() == QStringLiteral("Advanced Pose (Station Frame)"));
     REQUIRE(!coordinates->isHidden());
     REQUIRE(!x->isReadOnly());
     REQUIRE(!roll->isReadOnly());
@@ -2465,6 +2487,8 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         if (testWidgetBuildsEngineeringRequirementWorkflow() != 0)
             return 1;
+        if (testEngineeringRequirementsWidgetUsesEnglishCopy() != 0)
+            return 1;
         if (testWidgetProjectDocumentSnapshotTracksRequirementEdits() != 0)
             return 1;
         if (testWidgetFreezeAndUnfreezeEmitRequirementChanges() != 0)
@@ -2493,6 +2517,10 @@ int main(int argc, char** argv)
         if (testWidgetEditsPointAtTargetCoordinates() != 0)
             return 1;
         return testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation();
+    }
+    if (argc > 1 && std::string(argv[1]) == "copy") {
+        QApplication app(argc, argv);
+        return testEngineeringRequirementsWidgetUsesEnglishCopy();
     }
     QCoreApplication app(argc, argv);
     (void)app;

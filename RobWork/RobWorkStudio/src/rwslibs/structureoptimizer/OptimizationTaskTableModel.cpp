@@ -65,18 +65,18 @@ QVariant OptimizationTaskTableModel::headerData(int section,
 
     switch (section) {
         case IdColumn: return "ID";
-        case NameColumn: return "名称";
-        case RequiredColumn: return "必达";
-        case EnabledColumn: return "启用";
+        case NameColumn: return "Name";
+        case RequiredColumn: return "Required";
+        case EnabledColumn: return "Enabled";
         case XColumn: return "X";
         case YColumn: return "Y";
         case ZColumn: return "Z";
         case RollColumn: return "Roll";
         case PitchColumn: return "Pitch";
         case YawColumn: return "Yaw";
-        case RefFrameColumn: return "参考系";
+        case RefFrameColumn: return "Frame";
         case TcpFrameColumn: return "TCP";
-        case WeightColumn: return "权重";
+        case WeightColumn: return "Weight";
         default: return QVariant();
     }
 }

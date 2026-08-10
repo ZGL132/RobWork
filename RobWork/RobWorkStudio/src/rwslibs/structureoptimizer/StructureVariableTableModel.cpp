@@ -84,14 +84,14 @@ QVariant StructureVariableTableModel::headerData(int section,
 
     switch (section) {
         case IdColumn: return "ID";
-        case LabelColumn: return "名称";
-        case TargetColumn: return "目标";
-        case KindColumn: return "类型";
-        case CurrentColumn: return "当前值";
-        case MinimumColumn: return "最小值";
-        case MaximumColumn: return "最大值";
-        case StepColumn: return "步长";
-        case EnabledColumn: return "启用";
+        case LabelColumn: return "Name";
+        case TargetColumn: return "Target";
+        case KindColumn: return "Type";
+        case CurrentColumn: return "Current";
+        case MinimumColumn: return "Min";
+        case MaximumColumn: return "Max";
+        case StepColumn: return "Step";
+        case EnabledColumn: return "Enabled";
         default: return QVariant();
     }
 }
