@@ -776,6 +776,45 @@ int main (int argc, char** argv)
     if (!RobotModelXmlWriter::validate (spec, errors))
         return fail ("Default model did not validate: " + errors.join ("; "));
 
+    // The new-project six-axis template uses the compact UR5 proportions from
+    // testfiles/workcells/UR/UR.wc.xml, while remaining a portable primitive-only model.
+    const double expectedUrOffsets[6][3] = {
+        {0.0, 0.0, 0.0892}, {0.0, 0.0, 0.0}, {-0.425, 0.0, 0.0},
+        {-0.39243, 0.0, 0.0}, {0.0, 0.0, 0.109}, {0.0, 0.0, 0.093}};
+    for (int i = 0; i < 6; ++i) {
+        for (int axis = 0; axis < 3; ++axis) {
+            if (!nearlyEqual (spec.transformJoints[static_cast< size_t > (i)].pos[axis],
+                               expectedUrOffsets[i][axis]))
+                return fail ("Default joint offsets should follow the UR5 reference model.");
+        }
+    }
+    const double expectedLimitMin[6] = {-180, -270, -180, -270, -180, -180};
+    const double expectedLimitMax[6] = {180, 90, 180, 90, 180, 180};
+    for (int i = 0; i < 6; ++i) {
+        const JointLimitSpec& limit = spec.limits[static_cast< size_t > (i)];
+        if (!nearlyEqual (limit.posMin, expectedLimitMin[i]) ||
+            !nearlyEqual (limit.posMax, expectedLimitMax[i]) ||
+            !nearlyEqual (limit.velMax, 60.0) || !nearlyEqual (limit.accMax, 120.0))
+            return fail ("Default joint limits should follow the UR5 reference model.");
+    }
+    const auto findDrawable = [&spec] (const std::string& name) -> const DrawableSpec* {
+        for (const DrawableSpec& drawable : spec.drawables) {
+            if (drawable.name == name)
+                return &drawable;
+        }
+        return nullptr;
+    };
+    const DrawableSpec* basePedestal = findDrawable ("BasePedestal");
+    const DrawableSpec* upperArm = findDrawable ("UpperArmShell");
+    const DrawableSpec* forearm = findDrawable ("ForearmShell");
+    if (basePedestal == nullptr || upperArm == nullptr || forearm == nullptr ||
+        basePedestal->shape != "Cylinder" || upperArm->shape != "Box" ||
+        forearm->shape != "Box" || !basePedestal->filePath.empty () ||
+        !upperArm->filePath.empty () || !forearm->filePath.empty () ||
+        !nearlyEqual (upperArm->dimensions[0], 0.425) ||
+        !nearlyEqual (forearm->dimensions[0], 0.39243))
+        return fail ("Default model should use portable UR-proportioned simplified geometry.");
+
     const QString serialXml = RobotModelXmlWriter::makeSerialDeviceXml (spec);
     const QString sceneXml  = RobotModelXmlWriter::makeSceneXml (spec);
 
@@ -792,14 +831,14 @@ int main (int argc, char** argv)
     if (!contains (serialXml,
                    "<Joint name=\"Joint2\" type=\"Revolute\">\n"
                    "    <RPY>0 0 90</RPY>\n"
-                   "    <Pos>0.12 0 0</Pos>"))
+                   "    <Pos>0 0 0</Pos>"))
         return fail ("Joint RPY+Pos defaults should convert DH alpha to RobWork RPY Z-Y-X order.");
     // 默认 Drawable 不应该再包含坐标轴几何(老版本遗留)
     if (contains (serialXml, "<Drawable name=\"Joint1Axis\""))
         return fail ("Default drawables should not include coordinate-axis geometry.");
     // 默认应包含关节外壳
-    if (!contains (serialXml, "<Drawable name=\"Joint1Housing\""))
-        return fail ("Serial XML missing default joint housing drawable.");
+    if (!contains (serialXml, "<Drawable name=\"ShoulderHousing\""))
+        return fail ("Serial XML missing default shoulder drawable.");
     // 默认应包含关节限位
     if (!contains (serialXml, "<PosLimit refjoint=\"Joint1\""))
         return fail ("Serial XML missing position limit.");
@@ -807,7 +846,7 @@ int main (int argc, char** argv)
     if (contains (serialXml, "<Q name=\"Home\">"))
         return fail ("Default model should not use Home because RobWork loads it as the initial state.");
     // Ready 位姿应当转为弧度:0, -pi/2, pi/2, 0, 0, 0
-    if (!contains (serialXml, "<Q name=\"Ready\">0 -1.5707963267949 1.5707963267949 0 0 0</Q>"))
+    if (!contains (serialXml, "<Q name=\"Ready\">0 -1.5707963267949 0 -1.5707963267949 0 0</Q>"))
         return fail ("Ready pose was not converted to radians.");
     // Scene XML 应通过 <Include> 引用机器人文件
     if (!contains (sceneXml, "<Include file=\"GenericSixAxis.wc.xml\" />"))
@@ -908,19 +947,11 @@ int main (int argc, char** argv)
     // ---- 隐藏高级选项:只有全部 Revolute 且 SE(3) 可无损投影为 DH 时才允许 <DHJoint> ----
     RobotModelSpec dhSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     dhSpec.exportDhJointsAdvanced = true;
-    if (!RobotModelXmlWriter::canExportDhJoints (dhSpec, &errors))
-        return fail ("Default SE(3) model should be lossless DH exportable: " + errors.join ("; "));
+    if (RobotModelXmlWriter::canExportDhJoints (dhSpec, &errors))
+        return fail ("UR-proportioned default should keep its authoritative SE(3) representation.");
     const QString dhXml = RobotModelXmlWriter::makeSerialDeviceXml (dhSpec);
-    if (dhXml.count ("<DHJoint name=\"") != 6)
-        return fail ("Advanced DH export must contain six DHJoint elements.");
-    if (dhXml.count ("<Joint name=\"") != 0)
-        return fail ("Advanced DH export should not also contain explicit Joint elements.");
-    if (!contains (dhXml,
-                   "<DHJoint name=\"Joint1\" alpha=\"0\" a=\"0\" d=\"0.35\" offset=\"0\" "
-                   "type=\"schilling\">\n"
-                   "    <Property name=\"ShowFrameAxis\">true</Property>\n"
-                   "  </DHJoint>"))
-        return fail ("Advanced DH export should emit ShowFrameAxis inside DHJoint elements.");
+    if (dhXml.count ("<DHJoint name=\"") != 0 || dhXml.count ("<Joint name=\"") != 6)
+        return fail ("Lossy advanced DH export must fall back to the six authoritative Joint elements.");
 
     RobotModelSpec lossyDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     lossyDh.exportDhJointsAdvanced = true;
@@ -1010,14 +1041,14 @@ int main (int argc, char** argv)
         viewOnly.dhJoints[1].a         = 0.4;
         viewOnly.dhJoints[1].d         = 0.2;
         viewOnly.dhJoints[1].offsetDeg = 90;
+        RobotModelXmlWriter::applyDefaultDrawables (viewOnly);
         RobotModelXmlWriter::applyLinkGeometry (viewOnly);
         bool foundViewOnly = false;
         for (const DrawableSpec& d : viewOnly.drawables) {
-            if (QString::fromStdString (d.name) == "Link1To2") {
+            if (QString::fromStdString (d.name) == "Link2To3") {
                 foundViewOnly = true;
-                // SE(3) Joint2 的 pos = (0.12, 0, 0),所以 Link1To2 应是 (0.06, 0, 0)
-                if (std::abs (d.length - 0.12) > 1e-6 ||
-                    std::abs (d.pos[0] - 0.06) > 1e-6 ||
+                if (std::abs (d.length - 0.425) > 1e-6 ||
+                    std::abs (d.pos[0] + 0.2125) > 1e-6 ||
                     std::abs (d.pos[1]) > 1e-6 ||
                     std::abs (d.pos[2]) > 1e-6)
                     return fail ("DH view-only edit should not affect link geometry.");
@@ -1054,9 +1085,10 @@ int main (int argc, char** argv)
         return fail ("DWC XML missing base MaterialID.");
 
     // ---- 斜向关节:计算 Link1To2 长度与位置 ----
-    RobotModelSpec skewed = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-    skewed.transformJoints[1].pos = {{0.3, 0, 0.4}};
-    RobotModelXmlWriter::applyLinkGeometry (skewed);
+        RobotModelSpec skewed = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        skewed.transformJoints[1].pos = {{0.3, 0, 0.4}};
+        RobotModelXmlWriter::applyDefaultDrawables (skewed);
+        RobotModelXmlWriter::applyLinkGeometry (skewed);
     bool foundLink = false;
     for (const DrawableSpec& d : skewed.drawables) {
         if (QString::fromStdString (d.name) == "Link1To2") {
@@ -1087,9 +1119,10 @@ int main (int argc, char** argv)
         return fail ("Could not find Link1To2 drawable.");
 
     // ---- Y 方向有分量的斜向关节:Drawable RPY 必须让圆柱局部 +Z 对齐 Pos 向量 ----
-    RobotModelSpec ySkewed = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
-    ySkewed.transformJoints[1].pos = {{0.12, 0.5, 0.12}};
-    RobotModelXmlWriter::applyLinkGeometry (ySkewed);
+        RobotModelSpec ySkewed = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        ySkewed.transformJoints[1].pos = {{0.12, 0.5, 0.12}};
+        RobotModelXmlWriter::applyDefaultDrawables (ySkewed);
+        RobotModelXmlWriter::applyLinkGeometry (ySkewed);
     bool foundYLink = false;
     for (const DrawableSpec& d : ySkewed.drawables) {
         if (QString::fromStdString (d.name) == "Link1To2") {
@@ -1119,13 +1152,13 @@ int main (int argc, char** argv)
     for (const DrawableSpec& d : standardDh.drawables) {
         if (QString::fromStdString (d.name) == "Link4To5") {
             foundDhLink = true;
-            if (std::abs (d.length - 0.38) > 1e-6)
-                return fail (QString ("Link4To5 length should be 0.38 from SE(3) truth, got %1")
-                                 .arg (d.length));
+            if (std::abs (d.length - 0.109) > 1e-6)
+                return fail (QString ("Link4To5 length should be 0.109 from SE(3) truth, got %1")
+                                  .arg (d.length));
             if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1]) > 1e-6 ||
-                std::abs (d.pos[2] - 0.19) > 1e-6)
+                std::abs (d.pos[2] - 0.0545) > 1e-6)
                 return fail (
-                    QString ("Link4To5 pos should be 0 0 0.19 in standard DH, got %1 %2 %3")
+                    QString ("Link4To5 pos should be 0 0 0.0545 in standard DH, got %1 %2 %3")
                         .arg (d.pos[0])
                         .arg (d.pos[1])
                         .arg (d.pos[2]));
@@ -1139,17 +1172,18 @@ int main (int argc, char** argv)
     RobotModelSpec offsetDh = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     offsetDh.mode           = KinematicsViewMode::DHProjection;
     offsetDh.dhJoints[1].alphaDeg  = 0;
-    offsetDh.dhJoints[1].a         = 0.4;
-    offsetDh.dhJoints[1].d         = 0.2;
-    offsetDh.dhJoints[1].offsetDeg = 90;
-    RobotModelXmlWriter::applyLinkGeometry (offsetDh);
-    bool foundOffsetLink = false;
-    for (const DrawableSpec& d : offsetDh.drawables) {
-        if (QString::fromStdString (d.name) == "Link1To2") {
-            foundOffsetLink = true;
-            if (std::abs (d.length - 0.12) > 1e-6 ||
-                std::abs (d.pos[0] - 0.06) > 1e-6 ||
-                std::abs (d.pos[1]) > 1e-6 ||
+        offsetDh.dhJoints[1].a         = 0.4;
+        offsetDh.dhJoints[1].d         = 0.2;
+        offsetDh.dhJoints[1].offsetDeg = 90;
+        RobotModelXmlWriter::applyDefaultDrawables (offsetDh);
+        RobotModelXmlWriter::applyLinkGeometry (offsetDh);
+        bool foundOffsetLink = false;
+        for (const DrawableSpec& d : offsetDh.drawables) {
+            if (QString::fromStdString (d.name) == "Link2To3") {
+                foundOffsetLink = true;
+                if (std::abs (d.length - 0.425) > 1e-6 ||
+                    std::abs (d.pos[0] + 0.2125) > 1e-6 ||
+                    std::abs (d.pos[1]) > 1e-6 ||
                 std::abs (d.pos[2]) > 1e-6)
                 return fail ("Link1To2 geometry should follow SE(3) truth, not edited DH projection.");
             break;
@@ -1160,13 +1194,14 @@ int main (int argc, char** argv)
 
     // ---- 自动 Drawable 应跟随关节几何重算,而不是用用户改的值 ----
     RobotModelSpec autoDrawable = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    RobotModelXmlWriter::applyDefaultDrawables (autoDrawable);
     autoDrawable.drawables[6].length = 0.33;
     autoDrawable.drawables[6].rpyDeg = {{10, 20, 30}};
     autoDrawable.drawables[6].pos    = {{0.11, 0.22, 0.33}};
     RobotModelXmlWriter::applyLinkGeometry (autoDrawable);
-    if (std::abs (autoDrawable.drawables[6].length - 0.12) > 1e-6 ||
-        std::abs (autoDrawable.drawables[6].rpyDeg[1] - 90) > 1e-6 ||
-        std::abs (autoDrawable.drawables[6].pos[0] - 0.06) > 1e-6)
+    if (std::abs (autoDrawable.drawables[6].length - 0.425) > 1e-6 ||
+        std::abs (autoDrawable.drawables[6].rpyDeg[1] + 90) > 1e-6 ||
+        std::abs (autoDrawable.drawables[6].pos[0] + 0.2125) > 1e-6)
         return fail ("Auto Link1To2 drawable geometry should be derived from kinematics.");
 
     // ---- 非法输入应被 validate 拦截 ----
@@ -1526,9 +1561,9 @@ int main (int argc, char** argv)
         // Revolute limit(Joint1 = +/- 180 度)在 XML 中应该已经被换算成弧度 (-3.14159)
         if (!contains (xmlRP, "<PosLimit refjoint=\"Joint1\" min=\"-180\" max=\"180\" />"))
             return fail ("Revolute position limit should be emitted in degrees.");
-        if (!contains (xmlRP, "<VelLimit refjoint=\"Joint1\" max=\"120\" />"))
+        if (!contains (xmlRP, "<VelLimit refjoint=\"Joint1\" max=\"60\" />"))
             return fail ("Revolute velocity limit should be emitted in deg/s.");
-        if (!contains (xmlRP, "<AccLimit refjoint=\"Joint1\" max=\"360\" />"))
+        if (!contains (xmlRP, "<AccLimit refjoint=\"Joint1\" max=\"120\" />"))
             return fail ("Revolute acceleration limit should be emitted in deg/s^2.");
     }
 
@@ -1679,13 +1714,17 @@ int main (int argc, char** argv)
         zero.name = "Zero";
         zero.q    = {0.0, 0.0, 0.0};
         threeAxis.poses.push_back (zero);
-        // 同步 drawables:删 housings / auto link drawables
+        // Keep only geometry attached to the surviving kinematic chain.
         threeAxis.drawables.erase (
             std::remove_if (threeAxis.drawables.begin (), threeAxis.drawables.end (),
-                            [&] (const DrawableSpec& d) {
-                                const QString n = QString::fromStdString (d.name);
-                                return n.endsWith ("Housing") ||
-                                       QRegularExpression ("^Link\\d+To\\d+$").match (n).hasMatch ();
+                            [&threeAxis] (const DrawableSpec& d) {
+                                if (d.refFrame == "Base" || d.refFrame == "TCP")
+                                    return false;
+                                return std::none_of (threeAxis.transformJoints.begin (),
+                                                     threeAxis.transformJoints.end (),
+                                                     [&d] (const JointTransformSpec& joint) {
+                                                         return joint.name == d.refFrame;
+                                                     });
                             }),
             threeAxis.drawables.end ());
         QStringList err3;
@@ -2122,10 +2161,11 @@ int main (int argc, char** argv)
     // ---- Milestone 4:自动连杆圆柱 + 用户可编辑几何保留 ----
     {
         RobotModelSpec links = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        RobotModelXmlWriter::applyDefaultDrawables (links);
         bool sawLinkCylinder      = false;
         bool sawHousingEditableShape = false;
         for (const DrawableSpec& d : links.drawables) {
-            if (d.name == "Link1To2" && d.shape == "Cylinder" && d.autoLinkGeometry)
+            if (d.name == "Link2To3" && d.shape == "Cylinder" && d.autoLinkGeometry)
                 sawLinkCylinder = true;
             if (d.name == "Joint1Housing" && d.shape == "Cylinder" && !d.autoLinkGeometry)
                 sawHousingEditableShape = true;
