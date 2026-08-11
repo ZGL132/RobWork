@@ -21,6 +21,8 @@
 #include "RobWorkStudioPlugin.hpp"
 
 #include <QFileInfo>
+#include <QFile>
+#include <QCryptographicHash>
 #include <QHash>
 #include <QLayout>
 #include <QObject>
@@ -34,22 +36,60 @@
 
 namespace {
 
-const QString RequirementsDock = QStringLiteral ("EngineeringRequirements");
-const QString BuilderDock = QStringLiteral ("RobotModelBuilder");
-const QString AnalysisDock = QStringLiteral ("KinematicAnalysis");
-const QString OptimizerDock = QStringLiteral ("StructureOptimizer");
-const QString JogDock = QStringLiteral ("Jog");
+const QString RequirementsDock = QStringLiteral ("workflow.requirements");
+const QString BuilderDock = QStringLiteral ("workflow.modeling");
+const QString AnalysisDock = QStringLiteral ("workflow.kinematics");
+const QString OptimizerDock = QStringLiteral ("workflow.optimization");
+const QString JogDock = QStringLiteral ("workflow.jog");
 
-const QStringList WorkflowDockNames = {RequirementsDock, BuilderDock, AnalysisDock, OptimizerDock,
+const QStringList WorkflowDockNames = {BuilderDock, RequirementsDock, AnalysisDock, OptimizerDock,
                                        JogDock};
-const QStringList LeftWorkflowDockNames = {RequirementsDock, BuilderDock, AnalysisDock,
+const QStringList LeftWorkflowDockNames = {BuilderDock, RequirementsDock, AnalysisDock,
                                            OptimizerDock};
 
 // 工作流 Dock 统一宽度策略：初始宽度 280px，手动可缩至最小 240px；布局版本号用于
 // 让老用户配置只重置一次。
 constexpr int WorkflowDockInitialWidth = 280;
 constexpr int WorkflowDockMinimumWidth = 240;
-constexpr int WorkflowDockLayoutVersion = 7;
+constexpr int WorkflowDockLayoutVersion = 8;
+
+QString pluginNameForDockId (const QString& dockId)
+{
+    if (dockId == BuilderDock)
+        return QStringLiteral ("RobotModelBuilder");
+    if (dockId == RequirementsDock)
+        return QStringLiteral ("EngineeringRequirements");
+    if (dockId == AnalysisDock)
+        return QStringLiteral ("KinematicAnalysis");
+    if (dockId == OptimizerDock)
+        return QStringLiteral ("StructureOptimizer");
+    return QStringLiteral ("Jog");
+}
+
+QString dockTitle (const QString& dockId)
+{
+    if (dockId == BuilderDock)
+        return QStringLiteral ("1. Modeling");
+    if (dockId == RequirementsDock)
+        return QStringLiteral ("2. Requirements");
+    if (dockId == AnalysisDock)
+        return QStringLiteral ("3. Kinematics");
+    return QStringLiteral ("4. Structural Optimization");
+}
+
+void assignWorkflowDockIds (rws::RobWorkStudio* studio)
+{
+    for (rws::RobWorkStudioPlugin* plugin : studio->getPlugins ()) {
+        for (const QString& dockId : WorkflowDockNames) {
+            if (plugin->name () == pluginNameForDockId (dockId)) {
+                plugin->setObjectName (dockId);
+                if (dockId != JogDock)
+                    plugin->setWindowTitle (dockTitle (dockId));
+                break;
+            }
+        }
+    }
+}
 
 // 放宽 Dock 的水平宽度约束：Dock 外层只要求 >= 最小宽度 240，内容 widget 的最小宽度
 // 归零并把水平策略设为 Ignored，使 Dock 宽度完全由用户拖动控制，而不是被插件内容
@@ -71,8 +111,8 @@ QHash< QString, rws::RobWorkStudioPlugin* > workflowDocks (const rws::RobWorkStu
 {
     QHash< QString, rws::RobWorkStudioPlugin* > docks;
     for (rws::RobWorkStudioPlugin* plugin : studio->getPlugins ()) {
-        if (WorkflowDockNames.contains (plugin->name ()))
-            docks.insert (plugin->name (), plugin);
+        if (WorkflowDockNames.contains (plugin->objectName ()))
+            docks.insert (plugin->objectName (), plugin);
     }
     for (const QString& name : WorkflowDockNames) {
         if (!docks.contains (name))
@@ -86,6 +126,17 @@ QString canonicalFileName (const QString& filename)
     return QFileInfo (filename).canonicalFilePath ();
 }
 
+QString fileFingerprint (const QString& filename)
+{
+    QFile file (filename);
+    if (!file.open (QIODevice::ReadOnly))
+        return QString ();
+    QCryptographicHash digest (QCryptographicHash::Sha256);
+    while (!file.atEnd ())
+        digest.addData (file.read (64 * 1024));
+    return QString::fromLatin1 (digest.result ().toHex ());
+}
+
 QString activeWorkCellFileName (const rws::RobWorkStudio* studio)
 {
     const rw::models::WorkCell::Ptr workcell = const_cast< rws::RobWorkStudio* > (studio)->getWorkCell ();
@@ -94,20 +145,30 @@ QString activeWorkCellFileName (const rws::RobWorkStudio* studio)
     return canonicalFileName (QString::fromStdString (workcell->getFilename ()));
 }
 
-int tabIndex (const QTabBar* tabBar, const QString& name)
+QTabBar* workflowTabBar (rws::RobWorkStudio* studio)
 {
-    for (int index = 0; index < tabBar->count (); ++index) {
-        if (tabBar->tabText (index) == name)
-            return index;
+    for (QTabBar* tabBar : studio->findChildren< QTabBar* > ()) {
+        if (tabBar->objectName () == QStringLiteral ("workflow.tabs"))
+            return tabBar;
     }
-    return -1;
+    return nullptr;
+}
+
+void identifyWorkflowTabBar (rws::RobWorkStudio* studio)
+{
+    if (workflowTabBar (studio) != nullptr)
+        return;
+    for (QTabBar* tabBar : studio->findChildren< QTabBar* > ()) {
+        if (tabBar->count () == LeftWorkflowDockNames.size ()) {
+            tabBar->setObjectName (QStringLiteral ("workflow.tabs"));
+            return;
+        }
+    }
 }
 
 bool isWorkflowTabBar (const QTabBar* tabBar)
 {
-    return tabBar->count () == LeftWorkflowDockNames.size () &&
-           std::all_of (LeftWorkflowDockNames.cbegin (), LeftWorkflowDockNames.cend (),
-                        [tabBar] (const QString& name) { return tabIndex (tabBar, name) >= 0; });
+    return tabBar->objectName () == QStringLiteral ("workflow.tabs");
 }
 
 }    // namespace
@@ -125,6 +186,7 @@ WorkflowDockLayoutController::WorkflowDockLayoutController (RobWorkStudio* studi
 
 void WorkflowDockLayoutController::applyLayout ()
 {
+    assignWorkflowDockIds (_studio);
     const QHash< QString, RobWorkStudioPlugin* > docks = workflowDocks (_studio);
     if (docks.isEmpty ())
         return;
@@ -148,8 +210,8 @@ void WorkflowDockLayoutController::applyLayout ()
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
         relaxDockWidthConstraints (dock);
 
-    _studio->tabifyDockWidget (requirements, builder);
-    _studio->tabifyDockWidget (builder, analysis);
+    _studio->tabifyDockWidget (builder, requirements);
+    _studio->tabifyDockWidget (requirements, analysis);
     _studio->tabifyDockWidget (analysis, optimizer);
 
     // Apply each revised width policy once to both existing and fresh settings.
@@ -163,6 +225,10 @@ void WorkflowDockLayoutController::applyLayout ()
 
     for (RobWorkStudioPlugin* dock : {requirements, builder, analysis, optimizer, jog})
         dock->setVisible (true);
+    QTimer::singleShot (0, _studio, [this] () {
+        identifyWorkflowTabBar (_studio);
+        refreshTabEnablement ();
+    });
     revalidateReadiness ();
 }
 
@@ -188,23 +254,28 @@ void WorkflowDockLayoutController::notifyRobotModelLoaded (const QString& filena
 
 void WorkflowDockLayoutController::revalidateReadiness ()
 {
-    bool ready = false;
+    WorkflowProjectSnapshot projectSnapshot = _studio->workflowProjectState ();
     const QString activeScene = activeWorkCellFileName (_studio);
     if (!_studio->projectDirectory ().isEmpty ()) {
         const QString mainSceneResourceId = _studio->mainWorkCellResourceId ();
         QString modelPath;
         QString scenePath;
-        ready = !mainSceneResourceId.isEmpty () &&
-                _studio->resolveProjectResource (QStringLiteral ("robot-model.main"), modelPath) &&
-                QFileInfo (modelPath).isFile () &&
-                _studio->resolveProjectResource (mainSceneResourceId, scenePath) &&
-                QFileInfo (scenePath).isFile () &&
-                activeScene == canonicalFileName (scenePath);
+        projectSnapshot.modelAvailable =
+            _studio->resolveProjectResource (QStringLiteral ("robot-model.main"), modelPath) &&
+            QFileInfo (modelPath).isFile ();
+        projectSnapshot.sceneAvailable = !mainSceneResourceId.isEmpty () &&
+            _studio->resolveProjectResource (mainSceneResourceId, scenePath) &&
+            QFileInfo (scenePath).isFile () && activeScene == canonicalFileName (scenePath);
+        projectSnapshot.modelFingerprint = fileFingerprint (modelPath);
+        projectSnapshot.sceneFingerprint = fileFingerprint (scenePath);
     }
     else {
-        ready = !_standaloneModelFilename.isEmpty () && activeScene == _standaloneModelFilename;
+        projectSnapshot.modelAvailable = !_standaloneModelFilename.isEmpty ();
+        projectSnapshot.sceneAvailable = activeScene == _standaloneModelFilename;
+        projectSnapshot.modelFingerprint = fileFingerprint (_standaloneModelFilename);
+        projectSnapshot.sceneFingerprint = fileFingerprint (activeScene);
     }
-    setReady (ready);
+    applyStageSnapshot (WorkflowStageController::evaluate (projectSnapshot));
 }
 
 QString WorkflowDockLayoutController::activeDockName () const
@@ -213,16 +284,16 @@ QString WorkflowDockLayoutController::activeDockName () const
     if (docks.isEmpty ())
         return QString ();
 
-    for (QTabBar* tabBar : _studio->findChildren< QTabBar* > ()) {
-        if (isWorkflowTabBar (tabBar) && tabBar->currentIndex () >= 0)
-            return tabBar->tabText (tabBar->currentIndex ());
-    }
-    return BuilderDock;
+    QTabBar* tabBar = workflowTabBar (_studio);
+    if (tabBar == nullptr || tabBar->currentIndex () < 0 ||
+        tabBar->currentIndex () >= LeftWorkflowDockNames.size ())
+        return pluginNameForDockId (BuilderDock);
+    return pluginNameForDockId (LeftWorkflowDockNames.at (tabBar->currentIndex ()));
 }
 
-void WorkflowDockLayoutController::setReady (bool ready)
+void WorkflowDockLayoutController::applyStageSnapshot (const WorkflowStageSnapshot& snapshot)
 {
-    _ready = ready;
+    _stageSnapshot = snapshot;
     const QHash< QString, RobWorkStudioPlugin* > docks = workflowDocks (_studio);
     if (docks.isEmpty ())
         return;
@@ -236,7 +307,16 @@ void WorkflowDockLayoutController::setReady (bool ready)
         // 插件整体启用条件 = 项目上下文可用 且 (工作流就绪 或 该 Dock 是构建器)。
         // 未打开项目时，所有要求项目上下文的 Dock 都被禁用；BuilderDock 特殊，
         // 在就绪前也保持可用(用于新建机器人流程)，但前提同样是项目上下文可用。
-        const bool enabled = projectContextAvailable && (ready || name == BuilderDock);
+        WorkflowStage stage = WorkflowStage::Modeling;
+        if (name == RequirementsDock)
+            stage = WorkflowStage::Requirements;
+        else if (name == AnalysisDock)
+            stage = WorkflowStage::Kinematics;
+        else if (name == OptimizerDock)
+            stage = WorkflowStage::StructuralOptimization;
+        const WorkflowStageState stageState = _stageSnapshot.at (stage).state;
+        const bool enabled = projectContextAvailable &&
+                             WorkflowStageController::isStageAccessible (stageState);
         dock->setEnabled (enabled);
         dock->visibilityAction ()->setEnabled (enabled);
     }
@@ -249,7 +329,7 @@ void WorkflowDockLayoutController::setReady (bool ready)
         docks.value (BuilderDock)->setVisible (false);
     }
     // 否则按原有逻辑：工作流未就绪时把构建器 Dock 置顶显示。
-    else if (!ready) {
+    else if (_stageSnapshot.at (WorkflowStage::Modeling).state != WorkflowStageState::Complete) {
         docks.value (BuilderDock)->setVisible (true);
         docks.value (BuilderDock)->raise ();
     }
@@ -262,11 +342,15 @@ void WorkflowDockLayoutController::refreshTabEnablement ()
     if (docks.isEmpty ())
         return;
 
+    identifyWorkflowTabBar (_studio);
+
     for (QTabBar* tabBar : _studio->findChildren< QTabBar* > ()) {
         if (!isWorkflowTabBar (tabBar))
             continue;
         for (int index = 0; index < tabBar->count (); ++index) {
-            const QString name = tabBar->tabText (index);
+            if (index >= LeftWorkflowDockNames.size ())
+                continue;
+            const QString& name = LeftWorkflowDockNames.at (index);
             if (LeftWorkflowDockNames.contains (name)) {
                 RobWorkStudioPlugin* dock = docks.value (name);
                 // 与 setReady 中的判定保持一致：Tab 页可用 = 项目上下文可用
@@ -274,8 +358,17 @@ void WorkflowDockLayoutController::refreshTabEnablement ()
                 // (或该 Tab 是构建器)。刷新 Tab 使能状态，使门控同时作用于 Tab 页。
                 const bool projectContextAvailable =
                     !dock->requiresProjectContext () || !_studio->projectDirectory ().isEmpty ();
-                tabBar->setTabEnabled (index,
-                                       projectContextAvailable && (_ready || name == BuilderDock));
+                WorkflowStage stage = WorkflowStage::Modeling;
+                if (name == RequirementsDock)
+                    stage = WorkflowStage::Requirements;
+                else if (name == AnalysisDock)
+                    stage = WorkflowStage::Kinematics;
+                else if (name == OptimizerDock)
+                    stage = WorkflowStage::StructuralOptimization;
+                const WorkflowStageState stageState = _stageSnapshot.at (stage).state;
+                tabBar->setTabEnabled (
+                    index, projectContextAvailable &&
+                        WorkflowStageController::isStageAccessible (stageState));
             }
         }
         return;

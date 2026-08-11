@@ -2,6 +2,7 @@
 #define RWS_ROBOTPROJECTSOURCEPACKAGER_HPP
 
 #include "ProjectManifest.hpp"
+#include "RobotProjectImportOptions.hpp"
 
 #include <QMap>
 
@@ -24,6 +25,11 @@ class RobotProjectSourcePackager
   public:
     static bool prepare (const QString& sourceUrdfPath,
                          const QString& targetProjectFilePath,
+                         PackagedRobotSource& packaged,
+                         QString* error = nullptr);
+    static bool prepare (const QString& sourceUrdfPath,
+                         const QString& targetProjectFilePath,
+                         const RobotProjectImportOptions& options,
                          PackagedRobotSource& packaged,
                          QString* error = nullptr);
 

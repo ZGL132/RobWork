@@ -14,6 +14,7 @@
 #define RWS_ROBOTMODELBUILDER_ROBOTMODELURDFIMPORTER_HPP
 
 #include "RobotModelSpec.hpp"
+#include "../../rws/RobotProjectImportOptions.hpp"
 
 #include <QString>
 #include <QStringList>
@@ -28,6 +29,8 @@ struct UrdfImportOptions
     bool generateScene = true;                        // 是否生成场景 WorkCell
     bool generateDrawables = true;                    // 是否输出 Drawable / 默认几何
     bool generateDynamicWorkCell = true;              // 是否生成 DWC
+    MeshImportMode meshImportMode = MeshImportMode::VisualAndCollision;
+    MissingMeshPolicy missingMeshPolicy = MissingMeshPolicy::Fail;
 };
 
 /// 导入结果:已填充好的 RobotModelSpec + 过程警告

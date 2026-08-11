@@ -1,0 +1,296 @@
+{
+    "boxRegions": [
+        {
+            "center": [
+                0,
+                0,
+                0
+            ],
+            "collisionFreeRequired": true,
+            "directionSamples": 1,
+            "fixedRpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "id": "box_1",
+            "level": "Must",
+            "minimumCoverage": 0.8,
+            "minimumJointMargin": 0,
+            "minimumManipulability": 0,
+            "minimumOrientationCoverage": 0,
+            "minimumVerificationStage": "Verified",
+            "name": "Workspace Region 1",
+            "orientationMode": "Fixed",
+            "orientationTargetFrame": "",
+            "orientationTargetGeometry": "",
+            "orientationTargetPoint": "",
+            "orientationToleranceDeg": 1,
+            "positionToleranceMeters": 0.001,
+            "refFrame": "WORLD",
+            "rollSamples": 1,
+            "samplesPerAxis": 5,
+            "size": [
+                0.1,
+                0.1,
+                0.1
+            ],
+            "tcpFrame": "UR-6-85-5-A.TCP"
+        },
+        {
+            "center": [
+                0,
+                0,
+                0
+            ],
+            "collisionFreeRequired": true,
+            "directionSamples": 1,
+            "fixedRpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "id": "box_2",
+            "level": "Must",
+            "minimumCoverage": 0.8,
+            "minimumJointMargin": 0,
+            "minimumManipulability": 0,
+            "minimumOrientationCoverage": 0,
+            "minimumVerificationStage": "Verified",
+            "name": "Workspace Region 2",
+            "orientationMode": "Fixed",
+            "orientationTargetFrame": "",
+            "orientationTargetGeometry": "",
+            "orientationTargetPoint": "",
+            "orientationToleranceDeg": 1,
+            "positionToleranceMeters": 0.001,
+            "refFrame": "WORLD",
+            "rollSamples": 1,
+            "samplesPerAxis": 5,
+            "size": [
+                0.1,
+                0.1,
+                0.1
+            ],
+            "tcpFrame": "UR-6-85-5-A.TCP"
+        }
+    ],
+    "frozen": false,
+    "modelBinding": {
+        "robotModelFingerprint": "",
+        "robotName": "",
+        "sourcePath": ""
+    },
+    "name": "",
+    "poseTasks": [
+        {
+            "allowToolRollFree": false,
+            "approach": {
+                "axis": "ToolZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "confidence": 1,
+            "generation": {
+                "generatorId": "",
+                "instanceId": "",
+                "linked": false,
+                "parameters": [
+                ]
+            },
+            "geometryFeature": {
+                "frameName": "",
+                "geometryName": "",
+                "objectName": "",
+                "type": "None"
+            },
+            "id": "station_1",
+            "importProvenance": {
+                "recordNumber": 0,
+                "sourcePath": ""
+            },
+            "level": "Must",
+            "name": "Key Station 1",
+            "note": "",
+            "orientation": {
+                "allowToolRollFree": false,
+                "invertNormal": false,
+                "mode": "Fixed",
+                "resolutionEvidence": "",
+                "rollMaximumDeg": 180,
+                "rollMinimumDeg": -180,
+                "targetFrame": "",
+                "targetGeometry": "",
+                "targetPoint": ""
+            },
+            "orientationToleranceDeg": 1,
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "positionToleranceMeters": 0.001,
+            "processType": "Generic",
+            "refFrame": "WORLD",
+            "retract": {
+                "axis": "ReferenceZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "rpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "source": "Manual",
+            "tcpFrame": "UR-6-85-5-A.TCP",
+            "validation": {
+                "collisionFreeRequired": true,
+                "minimumJointMargin": 0,
+                "minimumManipulability": 0
+            }
+        },
+        {
+            "allowToolRollFree": false,
+            "approach": {
+                "axis": "ToolZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "confidence": 1,
+            "generation": {
+                "generatorId": "",
+                "instanceId": "",
+                "linked": false,
+                "parameters": [
+                ]
+            },
+            "geometryFeature": {
+                "frameName": "",
+                "geometryName": "",
+                "objectName": "",
+                "type": "None"
+            },
+            "id": "station_2",
+            "importProvenance": {
+                "recordNumber": 0,
+                "sourcePath": ""
+            },
+            "level": "Must",
+            "name": "Key Station 2",
+            "note": "",
+            "orientation": {
+                "allowToolRollFree": false,
+                "invertNormal": false,
+                "mode": "Fixed",
+                "resolutionEvidence": "",
+                "rollMaximumDeg": 180,
+                "rollMinimumDeg": -180,
+                "targetFrame": "",
+                "targetGeometry": "",
+                "targetPoint": ""
+            },
+            "orientationToleranceDeg": 1,
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "positionToleranceMeters": 0.001,
+            "processType": "Generic",
+            "refFrame": "WORLD",
+            "retract": {
+                "axis": "ReferenceZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "rpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "source": "Manual",
+            "tcpFrame": "UR-6-85-5-A.TCP",
+            "validation": {
+                "collisionFreeRequired": true,
+                "minimumJointMargin": 0,
+                "minimumManipulability": 0
+            }
+        },
+        {
+            "allowToolRollFree": false,
+            "approach": {
+                "axis": "ToolZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "confidence": 1,
+            "generation": {
+                "generatorId": "",
+                "instanceId": "",
+                "linked": false,
+                "parameters": [
+                ]
+            },
+            "geometryFeature": {
+                "frameName": "",
+                "geometryName": "",
+                "objectName": "",
+                "type": "None"
+            },
+            "id": "station_3",
+            "importProvenance": {
+                "recordNumber": 0,
+                "sourcePath": ""
+            },
+            "level": "Must",
+            "name": "Key Station 3",
+            "note": "",
+            "orientation": {
+                "allowToolRollFree": false,
+                "invertNormal": false,
+                "mode": "Fixed",
+                "resolutionEvidence": "",
+                "rollMaximumDeg": 180,
+                "rollMinimumDeg": -180,
+                "targetFrame": "",
+                "targetGeometry": "",
+                "targetPoint": ""
+            },
+            "orientationToleranceDeg": 1,
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "positionToleranceMeters": 0.001,
+            "processType": "Generic",
+            "refFrame": "WORLD",
+            "retract": {
+                "axis": "ReferenceZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "rpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "source": "Manual",
+            "tcpFrame": "UR-6-85-5-A.TCP",
+            "validation": {
+                "collisionFreeRequired": true,
+                "minimumJointMargin": 0,
+                "minimumManipulability": 0
+            }
+        }
+    ],
+    "schemaVersion": 1,
+    "version": 1
+}

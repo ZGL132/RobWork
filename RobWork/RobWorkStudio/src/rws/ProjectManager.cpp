@@ -5,6 +5,7 @@
 #include "ProjectPackage.hpp"
 #include "ProjectPathResolver.hpp"
 #include "ProjectSaveTransaction.hpp"
+#include "WorkCellProjectImportInspector.hpp"
 
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/models/WorkCell.hpp>
@@ -15,6 +16,9 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QSaveFile>
 #include <QSet>
 #include <QTemporaryDir>
@@ -537,6 +541,8 @@ bool ProjectManager::createProject (const QString& projectFilePath,
 
     const QFileInfo projectInfo (projectFilePath);
     const QString absoluteProjectFile = projectInfo.absoluteFilePath ();
+    if (!ProjectPathResolver::validateRobWorkCompatiblePath (absoluteProjectFile, error))
+        return false;
     // 目标目录可能尚未创建（例如用户在保存对话框中输入了新目录名），这里主动补建。
     if (!QDir ().mkpath (projectInfo.absolutePath ())) {
         setError (error,
@@ -557,6 +563,15 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
                                                 const QString& sourceWorkCellPath,
                                                 QString* error)
 {
+    return createProjectFromWorkCell (
+        projectFilePath, sourceWorkCellPath, WorkCellProjectImportOptions {}, error);
+}
+
+bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
+                                                const QString& sourceWorkCellPath,
+                                                const WorkCellProjectImportOptions& options,
+                                                QString* error)
+{
     // 先校验源文件和项目清单路径，避免复制已经完成后才发现无法创建项目文件。这里刻意
     // 拒绝覆盖同名 .rwproj，防止“从 WorkCell 创建”误把已有项目的清单替换掉。
     const QFileInfo sourceInfo (sourceWorkCellPath);
@@ -570,8 +585,20 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
         setError (error, QString::fromUtf8 ("项目文件路径不能为空。"));
         return false;
     }
+    if (!ProjectPathResolver::validateRobWorkCompatiblePath (sourceInfo.absoluteFilePath (), error))
+        return false;
+    if (!options.targetDeviceName.isEmpty () || !options.tcpFrameName.isEmpty ()) {
+        WorkCellProjectImportInspection inspection;
+        if (!WorkCellProjectImportInspector::inspect (sourceInfo.absoluteFilePath (), inspection, error) ||
+            !WorkCellProjectImportInspector::validateSelection (
+                inspection, options.targetDeviceName, options.tcpFrameName, error)) {
+            return false;
+        }
+    }
 
     const QString absoluteProjectFile = QFileInfo (projectFilePath).absoluteFilePath ();
+    if (!ProjectPathResolver::validateRobWorkCompatiblePath (absoluteProjectFile, error))
+        return false;
     if (QFileInfo::exists (absoluteProjectFile)) {
         setError (error,
                   QString::fromUtf8 ("目标项目文件已存在，拒绝覆盖：%1。").arg (
@@ -648,10 +675,86 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
         passiveAssets.push_back (asset);
         workCell.dependencies.push_back (asset.id);
     }
+
+    QJsonArray companionBindings;
+    int companionIndex = 0;
+    for (const QString& companionSource : options.companionFiles) {
+        const QFileInfo companionInfo (companionSource);
+        if (!companionInfo.exists () || !companionInfo.isFile ()) {
+            setError (error, QStringLiteral ("Selected companion file does not exist: %1").arg (
+                                 companionSource));
+            removeCopiedWorkCellDependencies (copiedTargetPaths);
+            return false;
+        }
+        if (QDir::cleanPath (companionInfo.absoluteFilePath ()) ==
+            QDir::cleanPath (sourceInfo.absoluteFilePath ()))
+            continue;
+
+        const QString targetRelative = QStringLiteral ("scenes/companions/%1_%2")
+                                           .arg (++companionIndex)
+                                           .arg (companionInfo.fileName ());
+        const QString targetPath = projectDirectory.filePath (targetRelative);
+        if (!ProjectPathResolver::validateContainedWritePath (
+                projectDirectory.absolutePath (), targetPath, error) ||
+            !QDir ().mkpath (QFileInfo (targetPath).absolutePath ()) ||
+            !QFile::copy (companionInfo.absoluteFilePath (), targetPath)) {
+            if (error != nullptr && error->isEmpty ())
+                *error = QStringLiteral ("Unable to copy companion file: %1").arg (companionSource);
+            removeCopiedWorkCellDependencies (copiedTargetPaths);
+            return false;
+        }
+        copiedTargetPaths.push_back (targetPath);
+        ProjectResource companion;
+        companion.id = QStringLiteral ("workcell.companion.%1").arg (companionIndex);
+        companion.kind = QStringLiteral ("robwork.passive-asset");
+        companion.path = targetRelative;
+        companion.ownership = QStringLiteral ("project");
+        companion.required = true;
+        passiveAssets.push_back (companion);
+        QJsonObject entry;
+        entry.insert (QStringLiteral ("projectPath"), targetRelative);
+        companionBindings.append (entry);
+    }
+
+    ProjectResource binding;
+    binding.id = QStringLiteral ("workcell.binding.main");
+    // The binding is immutable import metadata read by ModelBuilder, not an editable
+    // document. Keep it as a required passive asset so it participates in integrity
+    // checks, cloning, and packaging without requiring a document provider.
+    binding.kind = QStringLiteral ("robwork.passive-asset");
+    binding.path = QStringLiteral ("bindings/workcell-binding.main.json");
+    binding.ownership = QStringLiteral ("project");
+    binding.required = true;
+    const QString bindingPath = projectDirectory.filePath (binding.path);
+    if (!ProjectPathResolver::validateContainedWritePath (
+            projectDirectory.absolutePath (), bindingPath, error) ||
+        !QDir ().mkpath (QFileInfo (bindingPath).absolutePath ())) {
+        removeCopiedWorkCellDependencies (copiedTargetPaths);
+        return false;
+    }
+    QJsonObject bindingJson;
+    bindingJson.insert (QStringLiteral ("version"), 1);
+    bindingJson.insert (QStringLiteral ("targetDevice"), options.targetDeviceName);
+    bindingJson.insert (QStringLiteral ("tcpFrame"), options.tcpFrameName);
+    bindingJson.insert (QStringLiteral ("companions"), companionBindings);
+    QSaveFile bindingFile (bindingPath);
+    const QByteArray bindingContent = QJsonDocument (bindingJson).toJson (QJsonDocument::Indented);
+    if (!bindingFile.open (QIODevice::WriteOnly) ||
+        bindingFile.write (bindingContent) != bindingContent.size () ||
+        !bindingFile.commit ()) {
+        setError (error, QStringLiteral ("Unable to write WorkCell import binding: %1").arg (
+                             bindingPath));
+        removeCopiedWorkCellDependencies (copiedTargetPaths);
+        return false;
+    }
+    copiedTargetPaths.push_back (bindingPath);
+
     manifest.resources.push_back (workCell);
     for (const ProjectResource& asset : passiveAssets)
         manifest.resources.push_back (asset);
+    manifest.resources.push_back (binding);
     manifest.entryPoints.insert (QStringLiteral ("mainWorkCell"), workCell.id);
+    manifest.entryPoints.insert (QStringLiteral ("workCellImportBinding"), binding.id);
 
     // createProject 仅在写入清单成功后才接管当前上下文。若清单写入失败，刚复制的资源不再
     // 有任何清单引用，因此主动删除它，避免在目标目录留下误导性的半成品项目。
@@ -664,6 +767,7 @@ bool ProjectManager::createProjectFromWorkCell (const QString& projectFilePath,
 
 bool ProjectManager::prepareProjectFromRobotFile (const QString& projectFilePath,
                                                   const QString& sourceUrdfPath,
+                                                  const RobotProjectImportOptions& options,
                                                   PreparedRobotProject& prepared,
                                                   QString* error) const
 {
@@ -678,7 +782,7 @@ bool ProjectManager::prepareProjectFromRobotFile (const QString& projectFilePath
     const QString absoluteProjectFile = QFileInfo (projectFilePath).absoluteFilePath ();
     PackagedRobotSource packaged;
     if (!RobotProjectSourcePackager::prepare (
-            sourceUrdfPath, absoluteProjectFile, packaged, error)) {
+            sourceUrdfPath, absoluteProjectFile, options, packaged, error)) {
         return false;
     }
 
@@ -703,6 +807,15 @@ bool ProjectManager::prepareProjectFromRobotFile (const QString& projectFilePath
     prepared.manifest = manifest;
     prepared.packaged = packaged;
     return true;
+}
+
+bool ProjectManager::prepareProjectFromRobotFile (const QString& projectFilePath,
+                                                  const QString& sourceUrdfPath,
+                                                  PreparedRobotProject& prepared,
+                                                  QString* error) const
+{
+    return prepareProjectFromRobotFile (
+        projectFilePath, sourceUrdfPath, RobotProjectImportOptions {}, prepared, error);
 }
 
 bool ProjectManager::activatePreparedRobotProject (PreparedRobotProject& prepared, QString* error)
@@ -893,6 +1006,18 @@ bool ProjectManager::openProject (const QString& projectFilePath, QString* error
         }
     }
 
+    const QString projectRoot = projectInfo.absolutePath ();
+    const QString bindingPath = QDir (projectRoot).filePath (QStringLiteral ("workflow/binding.json"));
+    if (QFileInfo (bindingPath).isFile ()) {
+        WorkflowBinding binding;
+        if (!WorkflowBinding::read (projectRoot, binding, error))
+            return false;
+        if (binding.projectId != candidate.project.id) {
+            setError (error, QStringLiteral ("Workflow binding belongs to a different project."));
+            return false;
+        }
+    }
+
     _projectFilePath = QDir::cleanPath (projectInfo.absoluteFilePath ());
     _manifest = candidate;
     _dirty = false;
@@ -917,6 +1042,62 @@ bool ProjectManager::saveProject (QString* error)
     // 写盘成功后，用写入过的副本替换内存清单，并清除脏标记。
     _manifest = candidate;
     _dirty = false;
+    return true;
+}
+
+bool ProjectManager::saveWorkflowBinding (const WorkflowBinding& binding, QString* error)
+{
+    if (!hasProject ()) {
+        setError (error, QStringLiteral ("No project is open."));
+        return false;
+    }
+    if (binding.projectId != _manifest.project.id) {
+        setError (error, QStringLiteral ("Workflow binding belongs to a different project."));
+        return false;
+    }
+    return binding.write (QFileInfo (_projectFilePath).absolutePath (), error);
+}
+
+bool ProjectManager::setWorkflowProjectState (const WorkflowProjectSnapshot& state,
+                                              QString* error)
+{
+    if (!hasProject ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Cannot update workflow state without an open project.");
+        return false;
+    }
+    WorkflowProjectState::write (_manifest.plugins, state);
+    _dirty = true;
+    if (error != nullptr)
+        error->clear ();
+    return true;
+}
+
+bool ProjectManager::invalidateWorkflowStateFrom (WorkflowStage stage, QString* error)
+{
+    if (!hasProject ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Cannot invalidate workflow state without an open project.");
+        return false;
+    }
+
+    WorkflowProjectSnapshot state = workflowProjectState ();
+    WorkflowStageController::invalidateFrom (state, stage);
+    return setWorkflowProjectState (state, error);
+}
+
+bool ProjectManager::loadWorkflowBinding (WorkflowBinding& binding, QString* error) const
+{
+    if (!hasProject ()) {
+        setError (error, QStringLiteral ("No project is open."));
+        return false;
+    }
+    if (!WorkflowBinding::read (QFileInfo (_projectFilePath).absolutePath (), binding, error))
+        return false;
+    if (binding.projectId != _manifest.project.id) {
+        setError (error, QStringLiteral ("Workflow binding belongs to a different project."));
+        return false;
+    }
     return true;
 }
 
@@ -1195,6 +1376,21 @@ bool ProjectManager::cloneProject (const QString& targetProjectFilePath, QString
         copiedTargetPaths.insert (targetPath);
     }
 
+    const QString sourceBindingPath =
+        QDir (QFileInfo (_projectFilePath).absolutePath ()).filePath (QStringLiteral ("workflow/binding.json"));
+    if (QFileInfo (sourceBindingPath).isFile ()) {
+        WorkflowBinding binding;
+        if (!WorkflowBinding::read (QFileInfo (_projectFilePath).absolutePath (), binding, error))
+            return false;
+        if (binding.projectId != _manifest.project.id) {
+            setError (error, QStringLiteral ("Workflow binding belongs to a different project."));
+            return false;
+        }
+        binding.projectId = candidate.project.id;
+        if (!binding.write (stagingDirectory.path (), error))
+            return false;
+    }
+
     if (!writeManifest (stagedProjectFile, candidate, error))
         return false;
     if (!QDir ().rename (stagingDirectory.path (), targetDirectory)) {
@@ -1251,6 +1447,15 @@ bool ProjectManager::createAutosaveSnapshot (ProjectDocumentRegistry* documents,
             _projectFilePath, _manifest, stagedProjectFile, true, error)) ||
         !writeManifest (stagedProjectFile, _manifest, error))
         return false;
+
+    const QString sourceBinding = QDir (QFileInfo (_projectFilePath).absolutePath ()).filePath (
+        QStringLiteral ("workflow/binding.json"));
+    if (QFileInfo (sourceBinding).isFile ()) {
+        const QString stagedBinding = QDir (stagingDirectory.path ()).filePath (
+            QStringLiteral ("workflow/binding.json"));
+        if (!copyFileAtomically (sourceBinding, stagedBinding, error, true))
+            return false;
+    }
 
     const QString activeSlot = activeAutosaveSlot (_projectFilePath);
     const QString inactiveSlot = activeSlot == QStringLiteral ("a") ? QStringLiteral ("b") : QStringLiteral ("a");
@@ -1324,6 +1529,20 @@ bool ProjectManager::restoreAutosaveSnapshot (QString* error)
         if (!stagedTargets.contains (targetPath) && !transaction.stageCopy (sourcePath, targetPath, error))
             return false;
         stagedTargets.insert (targetPath);
+    }
+    const QString snapshotBinding = QDir (QFileInfo (snapshotFile).absolutePath ()).filePath (
+        QStringLiteral ("workflow/binding.json"));
+    if (QFileInfo (snapshotBinding).isFile ()) {
+        WorkflowBinding binding;
+        if (!WorkflowBinding::read (QFileInfo (snapshotFile).absolutePath (), binding, error) ||
+            binding.projectId != snapshot.project.id) {
+            setError (error, QStringLiteral ("Autosave workflow binding belongs to a different project."));
+            return false;
+        }
+        const QString targetBinding = QDir (QFileInfo (_projectFilePath).absolutePath ()).filePath (
+            QStringLiteral ("workflow/binding.json"));
+        if (!transaction.stageCopy (snapshotBinding, targetBinding, error))
+            return false;
     }
     if (!transaction.stageBytes (snapshotJson, _projectFilePath, error) || !transaction.commit (error))
         return false;

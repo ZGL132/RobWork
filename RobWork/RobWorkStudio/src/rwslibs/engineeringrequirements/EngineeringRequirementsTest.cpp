@@ -47,6 +47,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QToolButton>
 #include <QTableWidget>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -1771,6 +1772,15 @@ int testEngineeringRequirementsWidgetUsesEnglishCopy()
 int testWidgetExposesSemanticKeyStationInspector()
 {
     rws::EngineeringRequirementsWidget widget;
+    QWidget* toolbar = widget.findChild<QWidget*>("keyStationCompactToolbar");
+    REQUIRE(toolbar != nullptr);
+    REQUIRE(toolbar->sizePolicy().verticalPolicy() == QSizePolicy::Fixed);
+    REQUIRE(toolbar->findChildren<QPushButton*>().size() == 2);
+    REQUIRE(toolbar->findChildren<QToolButton*>().size() == 5);
+    REQUIRE(widget.findChild<QToolButton*>("keyStationEditMenu") != nullptr);
+    REQUIRE(widget.findChild<QToolButton*>("keyStationTemplateMenu") != nullptr);
+    REQUIRE(widget.findChild<QToolButton*>("keyStationGenerateMenu") != nullptr);
+    REQUIRE(widget.findChild<QToolButton*>("keyStationMoreMenu") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationList") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationProcessTypeCombo") != nullptr);
     REQUIRE(widget.findChild<QWidget*>("keyStationOrientationModeCombo") != nullptr);
@@ -2481,6 +2491,10 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "widget_project_close") {
         QApplication app(argc, argv);
         return testWidgetProjectCloseClearsRequirementSession();
+    }
+    if (argc > 1 && std::string(argv[1]) == "key_station_toolbar") {
+        QApplication app(argc, argv);
+        return testWidgetExposesSemanticKeyStationInspector();
     }
     if (argc > 1 && std::string(argv[1]) == "widget") {
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);

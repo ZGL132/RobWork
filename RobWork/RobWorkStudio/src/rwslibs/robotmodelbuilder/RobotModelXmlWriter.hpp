@@ -158,6 +158,13 @@ class RobotModelXmlWriter
                                        double paddingBeforeFirst = 0.0);
 
     /**
+     * @brief Rebuild only generated inter-joint cylinder helpers.
+     * @details Preserves user-authored and simplified shell drawables while
+     * removing/recreating the `LinkNToM` geometry derived from joint offsets.
+     */
+    static void regenerateAutoLinkDrawables (RobotModelSpec& spec);
+
+    /**
      * @brief 重新计算所有标记为 `autoLinkGeometry=true` 的连杆几何属性（位置、姿态和长度）。
      * @note 建议在导出或保存 XML 前调用，以确保连杆几何与最新的关节参数同步。
      */

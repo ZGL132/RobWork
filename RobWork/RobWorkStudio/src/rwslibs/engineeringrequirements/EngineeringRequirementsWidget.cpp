@@ -40,6 +40,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QInputDialog>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSaveFile>
@@ -47,6 +48,7 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTableWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QSignalBlocker>
 #include <QSpinBox>
@@ -605,41 +607,110 @@ QWidget* EngineeringRequirementsWidget::createPoseTaskPage()
 {
     QWidget* page = new QWidget(this);
     QVBoxLayout* layout = new QVBoxLayout(page);
-    QHBoxLayout* actions = new QHBoxLayout();
+    QWidget* toolbar = new QWidget(page);
+    toolbar->setObjectName("keyStationCompactToolbar");
+    toolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    QHBoxLayout* actions = new QHBoxLayout(toolbar);
+    actions->setContentsMargins(0, 0, 0, 0);
+    actions->setSpacing(4);
+    QWidget* actionHost = new QWidget(page);
+    actionHost->setVisible(false);
     QPushButton* add = new QPushButton(QStringLiteral("Add Station"), page); add->setObjectName("addRequirementPoseTaskButton");
-    QPushButton* duplicate = new QPushButton(QStringLiteral("Duplicate Station"), page); duplicate->setObjectName("duplicateRequirementPoseTaskButton");
-    QPushButton* remove = new QPushButton(QStringLiteral("Remove Station"), page); remove->setObjectName("removeRequirementPoseTaskButton");
+    QPushButton* duplicate = new QPushButton(QStringLiteral("Duplicate Station"), actionHost); duplicate->setObjectName("duplicateRequirementPoseTaskButton");
+    QPushButton* remove = new QPushButton(QStringLiteral("Remove Station"), actionHost); remove->setObjectName("removeRequirementPoseTaskButton");
     QPushButton* capture = new QPushButton(QStringLiteral("Capture TCP Pose"), page); capture->setObjectName("captureRequirementTcpButton");
-    QPushButton* pickGeometry = new QPushButton(QStringLiteral("Pick Geometry Frame"), page);
+    QPushButton* pickGeometry = new QPushButton(QStringLiteral("Pick Geometry Frame"), actionHost);
     pickGeometry->setObjectName("pickRequirementGeometryFeatureButton");
     pickGeometry->setToolTip(QStringLiteral("Ctrl+double-click a fixture or part in the 3D view."));
-    QPushButton* createTemplate = new QPushButton(QStringLiteral("Create from Template"), page);
+    QPushButton* createTemplate = new QPushButton(QStringLiteral("Create from Template"), actionHost);
     createTemplate->setObjectName("createRequirementTemplateButton");
     createTemplate->setToolTip(QStringLiteral("Create stations from a process template."));
-    QPushButton* updateTemplate = new QPushButton(QStringLiteral("Update Template"), page);
+    QPushButton* updateTemplate = new QPushButton(QStringLiteral("Update Template"), actionHost);
     updateTemplate->setObjectName("updateRequirementTemplateButton");
     updateTemplate->setToolTip(QStringLiteral("Update linked stations in this template instance."));
-    QPushButton* detachTemplate = new QPushButton(QStringLiteral("Detach Template"), page);
+    QPushButton* detachTemplate = new QPushButton(QStringLiteral("Detach Template"), actionHost);
     detachTemplate->setObjectName("detachRequirementTemplateButton");
     detachTemplate->setToolTip(QStringLiteral("Convert this generated station to a manually maintained station."));
-    QPushButton* createArray = new QPushButton(QStringLiteral("Generate Array"), page);
+    QPushButton* createArray = new QPushButton(QStringLiteral("Generate Array"), actionHost);
     createArray->setObjectName("createRequirementArrayButton");
     createArray->setToolTip(QStringLiteral("Generate a linear, rectangular, or circular array from this station."));
-    QPushButton* mirror = new QPushButton(QStringLiteral("Mirror Station"), page);
+    QPushButton* mirror = new QPushButton(QStringLiteral("Mirror Station"), actionHost);
     mirror->setObjectName("mirrorRequirementStationButton");
     mirror->setToolTip(QStringLiteral("Mirror this fixed-orientation station about the reference-frame origin."));
-    QPushButton* import = new QPushButton(QStringLiteral("Import Stations"), page);
+    QPushButton* import = new QPushButton(QStringLiteral("Import Stations"), actionHost);
     import->setObjectName("importRequirementStationsButton");
     import->setToolTip(QStringLiteral("Import key stations from CSV or JSON. Invalid rows are not applied."));
-    QPushButton* undo = new QPushButton(QStringLiteral("Undo"), page);
+    QPushButton* undo = new QPushButton(QStringLiteral("Undo"), actionHost);
     undo->setObjectName("undoRequirementOperationButton");
-    QPushButton* redo = new QPushButton(QStringLiteral("Redo"), page);
+    QPushButton* redo = new QPushButton(QStringLiteral("Redo"), actionHost);
     redo->setObjectName("redoRequirementOperationButton");
     undo->setToolTip(QStringLiteral("Restore the requirement set before the most recent edit."));
-    actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addWidget(capture); actions->addWidget(pickGeometry); actions->addWidget(undo); actions->addWidget(redo);
-    actions->addWidget(createTemplate); actions->addWidget(updateTemplate); actions->addWidget(detachTemplate);
-    actions->addWidget(createArray); actions->addWidget(mirror); actions->addWidget(import); actions->addStretch();
-    layout->addLayout(actions);
+
+    const auto addMenuAction = [] (QMenu* menu, QPushButton* button) {
+        QAction* action = menu->addAction(button->text());
+        action->setToolTip(button->toolTip());
+        QObject::connect(action, &QAction::triggered, button, &QPushButton::click);
+        QObject::connect(menu, &QMenu::aboutToShow, action,
+                         [action, button] () { action->setEnabled(button->isEnabled()); });
+    };
+    const auto createMenuButton = [page] (const QString& text, const QString& objectName,
+                                          QMenu* menu, const QString& toolTip) {
+        QToolButton* button = new QToolButton(page);
+        button->setText(text);
+        button->setObjectName(objectName);
+        button->setToolTip(toolTip);
+        button->setMenu(menu);
+        button->setPopupMode(QToolButton::InstantPopup);
+        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        return button;
+    };
+
+    QToolButton* pick = new QToolButton(page);
+    pick->setObjectName("keyStationPickFrameButton");
+    pick->setText(QStringLiteral("Pick Frame"));
+    pick->setToolTip(pickGeometry->toolTip());
+    pick->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    QObject::connect(pick, &QToolButton::clicked, pickGeometry, &QPushButton::click);
+
+    QMenu* editMenu = new QMenu(page);
+    addMenuAction(editMenu, duplicate);
+    addMenuAction(editMenu, remove);
+    editMenu->addSeparator();
+    addMenuAction(editMenu, undo);
+    addMenuAction(editMenu, redo);
+    QToolButton* edit = createMenuButton(QStringLiteral("Edit"), "keyStationEditMenu",
+                                          editMenu, QStringLiteral("Station editing and history actions."));
+
+    QMenu* templateMenu = new QMenu(page);
+    addMenuAction(templateMenu, createTemplate);
+    addMenuAction(templateMenu, updateTemplate);
+    addMenuAction(templateMenu, detachTemplate);
+    QToolButton* templates = createMenuButton(QStringLiteral("Templates"), "keyStationTemplateMenu",
+                                               templateMenu, QStringLiteral("Station template actions."));
+
+    QMenu* generateMenu = new QMenu(page);
+    addMenuAction(generateMenu, createArray);
+    addMenuAction(generateMenu, mirror);
+    QToolButton* generate = createMenuButton(QStringLiteral("Generate"), "keyStationGenerateMenu",
+                                              generateMenu, QStringLiteral("Create station variants."));
+
+    QMenu* moreMenu = new QMenu(page);
+    addMenuAction(moreMenu, import);
+    QToolButton* more = createMenuButton(QStringLiteral("More"), "keyStationMoreMenu",
+                                          moreMenu, QStringLiteral("Additional station actions."));
+
+    add->setProperty("primaryAction", true);
+    capture->setProperty("secondaryAction", true);
+    actions->addWidget(add);
+    actions->addWidget(capture);
+    actions->addWidget(pick);
+    actions->addWidget(edit);
+    actions->addWidget(templates);
+    actions->addWidget(generate);
+    actions->addWidget(more);
+    actions->addStretch();
+    layout->addWidget(toolbar);
     QSplitter* splitter = new QSplitter(Qt::Horizontal, page);
     _stationList = new QListWidget(splitter); _stationList->setObjectName("keyStationList");
     // 允许 Dock 缩至 240px：工位列表最小宽度降到 100，水平策略 Ignored 不再撑开 Dock。
@@ -1827,6 +1898,7 @@ void EngineeringRequirementsWidget::unfreezeRequirements()
     setStatus(QStringLiteral("Requirements are editable."));
     refreshTables();
     Q_EMIT requirementsChanged();
+    Q_EMIT requirementsUnfrozen();
 }
 void EngineeringRequirementsWidget::addPoseTask()
 {

@@ -2139,6 +2139,21 @@ void RobotModelXmlWriter::applyDefaultDrawables (RobotModelSpec& spec,
     applyLinkGeometry (spec);
 }
 
+void RobotModelXmlWriter::regenerateAutoLinkDrawables (RobotModelSpec& spec)
+{
+    spec.drawables.erase (
+        std::remove_if (spec.drawables.begin (), spec.drawables.end (),
+                        [] (const DrawableSpec& drawable) {
+                            return drawable.autoLinkGeometry ||
+                                   QRegularExpression ("^Link\\d+To\\d+$")
+                                       .match (QString::fromStdString (drawable.name))
+                                       .hasMatch ();
+                        }),
+        spec.drawables.end ());
+    appendLinks (spec);
+    applyLinkGeometry (spec);
+}
+
 JointTransformSpec RobotModelXmlWriter::dhJointToTransform (const DHJointSpec& dh,
                                                             const std::string& existingType)
 {

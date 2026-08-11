@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WorkCell name="">
+ <Frame name="WORLD" refframe="WORLD" type="Fixed">
+  <RPY>0 -0 0</RPY>
+  <Pos>0 0 0</Pos>
+  <Property name="ShowFrameAxis" desc="">false</Property>
+ </Frame>
+ <SerialDevice name="GenericSixAxis">
+  <Frame name="Base" refframe="WORLD">
+   <RPY>0 0 0</RPY>
+   <Pos>0 0 0</Pos>
+   <Property name="ShowFrameAxis" desc="">true</Property>
+  </Frame>
+  <Joint name="Joint1" refframe="Base" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>0 0 0.0892</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+  </Joint>
+  <Joint name="Joint2" refframe="Joint1" type="Revolute">
+   <RPY>0 -0 90</RPY>
+   <Pos>0 0 0</Pos>
+   <PosLimit min="-270" max="90"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Link2To3" refframe="GenericSixAxis.Joint2">
+    <RPY>0 -90 0</RPY>
+    <Pos>-0.2125 0 0</Pos>
+    <Cylinder radius="0.05000000074505806" z="0.42500001192092896"/>
+   </Drawable>
+  </Joint>
+  <Joint name="Joint3" refframe="Joint2" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>-0.425 0 0</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Link3To4" refframe="GenericSixAxis.Joint3">
+    <RPY>0 -90 0</RPY>
+    <Pos>-0.196215 0 0</Pos>
+    <Cylinder radius="0.045000001788139343" z="0.39243000745773315"/>
+   </Drawable>
+  </Joint>
+  <Joint name="Joint4" refframe="Joint3" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>-0.3924300000000001 0 0</Pos>
+   <PosLimit min="-270" max="90"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Link4To5" refframe="GenericSixAxis.Joint4">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.0545</Pos>
+    <Cylinder radius="0.039999999105930328" z="0.10899999737739563"/>
+   </Drawable>
+  </Joint>
+  <Joint name="Joint5" refframe="Joint4" type="Revolute">
+   <RPY>0 -0 90</RPY>
+   <Pos>0 0 0.109</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Link5To6" refframe="GenericSixAxis.Joint5">
+    <RPY>0 0 0</RPY>
+    <Pos>0 0 0.0465</Pos>
+    <Cylinder radius="0.035000000149011612" z="0.093000002205371857"/>
+   </Drawable>
+  </Joint>
+  <Joint name="Joint6" refframe="Joint5" type="Revolute">
+   <RPY>0 0 -90</RPY>
+   <Pos>0 0 0.093</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+  </Joint>
+  <Frame name="TCP" refframe="Joint6">
+   <RPY>0 0 0</RPY>
+   <Pos>0 0 0</Pos>
+   <Property name="ShowFrameAxis" desc="">true</Property>
+  </Frame>
+  <Q name="Home">0 0 0 0 0 0</Q>
+ </SerialDevice>
+</WorkCell>

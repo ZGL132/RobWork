@@ -1565,6 +1565,27 @@ void RobotModelBuilderWidget::buildUi ()
                         << "RGB",
         0);
     drawablesLay->addWidget (_drawablesTable);
+    QWidget* drawableButtons = new QWidget (drawablesTab);
+    QHBoxLayout* drawableBtnLay = new QHBoxLayout (drawableButtons);
+    QPushButton* addDrawableBtn = new QPushButton ("Add Geometry", drawableButtons);
+    QPushButton* duplicateDrawableBtn = new QPushButton ("Duplicate Geometry", drawableButtons);
+    QPushButton* removeDrawableBtn = new QPushButton ("Remove Geometry", drawableButtons);
+    QPushButton* regenerateLinksBtn = new QPushButton ("Regenerate Link Helpers", drawableButtons);
+    addDrawableBtn->setObjectName ("addDrawableButton");
+    duplicateDrawableBtn->setObjectName ("duplicateDrawableButton");
+    removeDrawableBtn->setObjectName ("removeDrawableButton");
+    regenerateLinksBtn->setObjectName ("regenerateLinkHelpersButton");
+    addDrawableBtn->setToolTip ("Add an editable Box drawable.");
+    duplicateDrawableBtn->setToolTip ("Duplicate the selected drawable as editable geometry.");
+    removeDrawableBtn->setToolTip ("Remove the selected drawable.");
+    regenerateLinksBtn->setToolTip ("Rebuild generated inter-joint link helpers without changing shell geometry.");
+    drawableBtnLay->setContentsMargins (0, 0, 0, 0);
+    drawableBtnLay->addWidget (addDrawableBtn);
+    drawableBtnLay->addWidget (duplicateDrawableBtn);
+    drawableBtnLay->addWidget (removeDrawableBtn);
+    drawableBtnLay->addWidget (regenerateLinksBtn);
+    drawableBtnLay->addStretch ();
+    drawablesLay->addWidget (drawableButtons);
     QGroupBox* drawablesOutputFiles = new QGroupBox ("Output Files");
     QFormLayout* drawablesOutputForm = new QFormLayout (drawablesOutputFiles);
     drawablesOutputForm->addRow ("Device file", _deviceFile);
@@ -1870,6 +1891,10 @@ void RobotModelBuilderWidget::buildUi ()
     connect (delJointBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedJoint ()));
     connect (upJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointUp ()));
     connect (downJointBtn, SIGNAL (clicked ()), this, SLOT (moveSelectedJointDown ()));
+    connect (addDrawableBtn, SIGNAL (clicked ()), this, SLOT (addDrawable ()));
+    connect (duplicateDrawableBtn, SIGNAL (clicked ()), this, SLOT (duplicateSelectedDrawable ()));
+    connect (removeDrawableBtn, SIGNAL (clicked ()), this, SLOT (removeSelectedDrawable ()));
+    connect (regenerateLinksBtn, SIGNAL (clicked ()), this, SLOT (regenerateLinkHelpers ()));
 
     // Transform 表被编辑后刷新 DH 投影视图;DH 表不反向修改真值。
     // _syncingTables 防止 setItem 触发 _dhTable->itemChanged 引起无谓递归。
@@ -2130,6 +2155,16 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
                                                  QStringList& warnings,
                                                  QString* error) const
 {
+    return preflightUrdfFile (path, projectRoot, RobotProjectImportOptions {}, parsed, warnings, error);
+}
+
+bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
+                                                 const QString& projectRoot,
+                                                 const RobotProjectImportOptions& importOptions,
+                                                 RobotModelSpec& parsed,
+                                                 QStringList& warnings,
+                                                 QString* error) const
+{
     if (error != NULL)
         error->clear ();
     if (path.isEmpty ()) {
@@ -2167,6 +2202,7 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
         options.saveDirectory = validationDirectory.path ();
     }
     const QDir urdfDir (QFileInfo (path).absolutePath ());
+    options.packageRoots = importOptions.packageRoots;
     options.packageRoots << urdfDir.absolutePath ();
     QDir parentDir = urdfDir;
     if (parentDir.cdUp ())
@@ -2175,6 +2211,8 @@ bool RobotModelBuilderWidget::preflightUrdfFile (const QString& path,
     if (packageParentDir.cdUp ())
         options.packageRoots << packageParentDir.absolutePath ();
     options.packageRoots.removeDuplicates ();
+    options.meshImportMode = importOptions.meshImportMode;
+    options.missingMeshPolicy = importOptions.missingMeshPolicy;
     options.generateScene          = _generateScene->isChecked ();
     options.generateDrawables      = _generateDrawables->isChecked ();
     options.generateDynamicWorkCell = _generateDwc->isChecked ();
@@ -2355,6 +2393,94 @@ void RobotModelBuilderWidget::moveSelectedJointDown ()
     fillFromSpec (spec);
     if (static_cast< size_t >(row + 1) < spec.transformJoints.size ())
         _transformTable->setCurrentCell (row + 1, 0);
+}
+
+void RobotModelBuilderWidget::addDrawable ()
+{
+    RobotModelSpec spec = collectSpec ();
+    std::set< std::string > names;
+    for (const DrawableSpec& drawable : spec.drawables)
+        names.insert (drawable.name);
+    int index = 1;
+    std::string name;
+    do {
+        name = "Geometry" + std::to_string (index++);
+    } while (names.find (name) != names.end ());
+
+    DrawableSpec drawable;
+    drawable.name       = name;
+    drawable.refFrame   = spec.transformJoints.empty () ? "Base" : spec.transformJoints.front ().name;
+    drawable.shape      = "Box";
+    drawable.dimensions = {{0.1, 0.1, 0.1}};
+    drawable.radius     = 0.05;
+    drawable.length     = 0.1;
+    drawable.rgb        = {{0.65, 0.65, 0.68}};
+    spec.drawables.push_back (drawable);
+    fillFromSpec (spec);
+    _drawablesTable->setCurrentCell (_drawablesTable->rowCount () - 1, 0);
+    generatePreview ();
+    setStatus (QString ("Added drawable %1.").arg (QString::fromStdString (name)));
+}
+
+void RobotModelBuilderWidget::duplicateSelectedDrawable ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const int row = _drawablesTable->currentRow ();
+    if (row < 0 || row >= static_cast< int > (spec.drawables.size ())) {
+        setStatus ("Select a drawable to duplicate.");
+        return;
+    }
+
+    DrawableSpec duplicate = spec.drawables[static_cast< size_t > (row)];
+    std::set< std::string > names;
+    for (const DrawableSpec& drawable : spec.drawables)
+        names.insert (drawable.name);
+    const std::string base = duplicate.name.empty () ? "Geometry" : duplicate.name + " Copy";
+    duplicate.name = base;
+    int suffix = 2;
+    while (names.find (duplicate.name) != names.end ())
+        duplicate.name = base + " " + std::to_string (suffix++);
+    // A copied helper becomes independent, editable geometry instead of being
+    // overwritten by the next automatic-link update.
+    duplicate.autoGenerated = false;
+    duplicate.autoLinkGeometry = false;
+    spec.drawables.push_back (duplicate);
+    fillFromSpec (spec);
+    _drawablesTable->setCurrentCell (_drawablesTable->rowCount () - 1, 0);
+    generatePreview ();
+    setStatus (QString ("Duplicated drawable as %1.")
+                   .arg (QString::fromStdString (duplicate.name)));
+}
+
+void RobotModelBuilderWidget::removeSelectedDrawable ()
+{
+    RobotModelSpec spec = collectSpec ();
+    const int row = _drawablesTable->currentRow ();
+    if (row < 0 || row >= static_cast< int > (spec.drawables.size ())) {
+        setStatus ("Select a drawable to remove.");
+        return;
+    }
+    const QString name = QString::fromStdString (spec.drawables[static_cast< size_t > (row)].name);
+    spec.drawables.erase (spec.drawables.begin () + row);
+    fillFromSpec (spec);
+    if (_drawablesTable->rowCount () > 0)
+        _drawablesTable->setCurrentCell (std::min (row, _drawablesTable->rowCount () - 1), 0);
+    generatePreview ();
+    setStatus (QString ("Removed drawable %1.").arg (name));
+}
+
+void RobotModelBuilderWidget::regenerateLinkHelpers ()
+{
+    RobotModelSpec spec = collectSpec ();
+    RobotModelXmlWriter::regenerateAutoLinkDrawables (spec);
+    const int helperCount = static_cast< int > (std::count_if (
+        spec.drawables.begin (), spec.drawables.end (), [] (const DrawableSpec& drawable) {
+            return drawable.autoLinkGeometry;
+        }));
+    fillFromSpec (spec);
+    generatePreview ();
+    setStatus (QString ("Regenerated %1 link helpers (%2 drawables total).").arg (helperCount).arg (
+                   static_cast< int > (spec.drawables.size ())));
 }
 
 // =============================================================================

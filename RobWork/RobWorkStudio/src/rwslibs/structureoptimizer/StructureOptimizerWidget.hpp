@@ -13,9 +13,11 @@
 #include <array>
 
 class QLabel;
+class QCheckBox;
 class QPushButton;
 class QComboBox;
 class QDoubleSpinBox;
+class QLineEdit;
 class QSpinBox;
 class QTabWidget;
 class QTableView;
@@ -29,6 +31,7 @@ class StructureCandidateTableModel;
 class StructureConstraintTableModel;
 class StructureOptimizationController;
 class StructureVariableTableModel;
+class StructureVariableFilterProxyModel;
 class RobWorkStudio;
 
 /**
@@ -160,6 +163,7 @@ Q_SIGNALS:
      * 插件捕获此信号并更新 Provider 的脏状态（Dirty Status），避免仅刷新运行进度时误标记。
      */
     void projectDocumentChanged();
+    void optimizationCompletedForWorkflow (bool completed);
 
 private:
     // ---- 界面与逻辑内部辅助函数 ----
@@ -172,6 +176,13 @@ private:
     QWidget* createReportPage();        //!< 构建页签 5: 项目导入导出与报告页
 
     void updateRunState();              //!< 动态更新“开始优化”等按钮的可点击状态及状态栏提示
+    std::vector<StructureDesignVariable> availableSuggestedVariables() const;
+    void updateVariableActionState();
+    void addVariable();
+    void addMissingSuggestedVariables();
+    void duplicateSelectedVariable();
+    void removeSelectedVariables();
+    void restoreModelBaseline();
     void updateModelSourceStatus();     //!< 检查磁盘模型陈旧度（Staleness）并更新状态提示
     void setEditingEnabled(bool enabled); //!< 优化运行期间禁用/恢复界面的编辑控件
     void startOptimization();           //!< 点击按钮：启动后台异步优化
@@ -200,6 +211,7 @@ private:
     // ---- 底层数据与控制对象指针 ----
     StructureOptimizationProblem _loadedProblem;                     //!< 当前加载的优化问题容器
     StructureVariableTableModel* _variableModel = nullptr;          //!< 设计变量表格 MVC 模型
+    StructureVariableFilterProxyModel* _variableFilterModel = nullptr;
     OptimizationTaskTableModel* _taskModel = nullptr;               //!< 任务点表格 MVC 模型
     StructureConstraintTableModel* _constraintModel = nullptr;      //!< 约束条件表格 MVC 模型
     StructureCandidateTableModel* _candidateModel = nullptr;        //!< 候选解结果表格 MVC 模型
@@ -218,12 +230,21 @@ private:
 
     // ---- GUI 图形控件指针 ----
     QTabWidget* _tabs = nullptr;                       //!< 五页签的主 Tab 控件
+    QTableView* _variableView = nullptr;
     QTableView* _taskView = nullptr;                   //!< 任务点表格视图
     QTableView* _constraintView = nullptr;             //!< 约束条件表格视图
     QTableView* _candidateView = nullptr;              //!< 候选解结果表格视图
     QPushButton* _startButton = nullptr;               //!< 开始优化按钮
     QPushButton* _pauseButton = nullptr;               //!< 暂停/继续按钮
     QPushButton* _cancelButton = nullptr;              //!< 取消优化按钮
+    QPushButton* _addVariableButton = nullptr;
+    QPushButton* _addMissingSuggestionsButton = nullptr;
+    QPushButton* _duplicateVariableButton = nullptr;
+    QPushButton* _removeVariablesButton = nullptr;
+    QPushButton* _restoreVariableBaselineButton = nullptr;
+    QLineEdit* _variableSearch = nullptr;
+    QComboBox* _variableTypeFilter = nullptr;
+    QCheckBox* _showVariableAdvanced = nullptr;
     QLabel* _statusLabel = nullptr;                    //!< 底部状态栏信息标签
     QLabel* _progressLabel = nullptr;                  //!< 优化阶段与进度标签
     QSpinBox* _candidateCountSpin = nullptr;           //!< 候选解总数输入框

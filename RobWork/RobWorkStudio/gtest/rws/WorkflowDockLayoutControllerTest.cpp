@@ -117,11 +117,7 @@ QStringList tabNames (const QTabBar& tabBar)
 QTabBar* workflowTabBar (rws::RobWorkStudio& studio)
 {
     for (QTabBar* tabBar : studio.findChildren< QTabBar* > ()) {
-        if (tabNames (*tabBar) ==
-            QStringList {QStringLiteral ("EngineeringRequirements"),
-                         QStringLiteral ("RobotModelBuilder"),
-                         QStringLiteral ("KinematicAnalysis"),
-                         QStringLiteral ("StructureOptimizer")})
+        if (tabBar->objectName () == QStringLiteral ("workflow.tabs"))
             return tabBar;
     }
     return nullptr;
@@ -174,13 +170,13 @@ TEST (WorkflowDockLayout, InitialLayoutIsLocked)
 
     QTabBar* tabs = workflowTabBar (studio);
     ASSERT_NE (nullptr, tabs);
-    EXPECT_EQ ((QStringList {QStringLiteral ("EngineeringRequirements"),
-                             QStringLiteral ("RobotModelBuilder"),
-                             QStringLiteral ("KinematicAnalysis"),
-                             QStringLiteral ("StructureOptimizer")} ),
+    EXPECT_EQ ((QStringList {QStringLiteral ("1. Modeling"),
+                             QStringLiteral ("2. Requirements"),
+                             QStringLiteral ("3. Kinematics"),
+                             QStringLiteral ("4. Structural Optimization")} ),
                tabNames (*tabs));
-    EXPECT_FALSE (tabs->isTabEnabled (0));
-    EXPECT_TRUE (tabs->isTabEnabled (1));
+    EXPECT_TRUE (tabs->isTabEnabled (0));
+    EXPECT_FALSE (tabs->isTabEnabled (1));
     EXPECT_FALSE (tabs->isTabEnabled (2));
     EXPECT_FALSE (tabs->isTabEnabled (3));
 
@@ -314,7 +310,8 @@ TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)
     EXPECT_FALSE (actions[0]->isEnabled ());
     EXPECT_FALSE (actions[2]->isEnabled ());
     EXPECT_FALSE (actions[3]->isEnabled ());
-    EXPECT_FALSE (lockedTabs->isTabEnabled (0));
+    EXPECT_TRUE (lockedTabs->isTabEnabled (0));
+    EXPECT_FALSE (lockedTabs->isTabEnabled (1));
     EXPECT_FALSE (lockedTabs->isTabEnabled (2));
     EXPECT_FALSE (lockedTabs->isTabEnabled (3));
 
@@ -323,21 +320,21 @@ TEST (WorkflowDockLayout, ExplicitModelLoadUnlocksDownstreamDocks)
 
     EXPECT_TRUE (docks[0]->isEnabled ());
     EXPECT_TRUE (docks[1]->isEnabled ());
-    EXPECT_TRUE (docks[2]->isEnabled ());
-    EXPECT_TRUE (docks[3]->isEnabled ());
+    EXPECT_FALSE (docks[2]->isEnabled ());
+    EXPECT_FALSE (docks[3]->isEnabled ());
     EXPECT_TRUE (docks[4]->isEnabled ());
     EXPECT_TRUE (actions[0]->isEnabled ());
     EXPECT_TRUE (actions[1]->isEnabled ());
-    EXPECT_TRUE (actions[2]->isEnabled ());
-    EXPECT_TRUE (actions[3]->isEnabled ());
+    EXPECT_FALSE (actions[2]->isEnabled ());
+    EXPECT_FALSE (actions[3]->isEnabled ());
     EXPECT_TRUE (actions[4]->isEnabled ());
 
     QTabBar* tabs = workflowTabBar (studio);
     ASSERT_NE (nullptr, tabs);
     EXPECT_TRUE (tabs->isTabEnabled (0));
     EXPECT_TRUE (tabs->isTabEnabled (1));
-    EXPECT_TRUE (tabs->isTabEnabled (2));
-    EXPECT_TRUE (tabs->isTabEnabled (3));
+    EXPECT_FALSE (tabs->isTabEnabled (2));
+    EXPECT_FALSE (tabs->isTabEnabled (3));
 }
 
 TEST (WorkflowDockLayout, ClosingActiveModelWorkCellRelocksDownstreamDocks)
@@ -373,14 +370,14 @@ TEST (WorkflowDockLayout, ClosingActiveModelWorkCellRelocksDownstreamDocks)
     QTabBar* tabs = workflowTabBar (studio);
     ASSERT_NE (nullptr, tabs);
     EXPECT_TRUE (docks[0]->isEnabled ());
-    EXPECT_TRUE (docks[2]->isEnabled ());
-    EXPECT_TRUE (docks[3]->isEnabled ());
+    EXPECT_FALSE (docks[2]->isEnabled ());
+    EXPECT_FALSE (docks[3]->isEnabled ());
     EXPECT_TRUE (actions[0]->isEnabled ());
-    EXPECT_TRUE (actions[2]->isEnabled ());
-    EXPECT_TRUE (actions[3]->isEnabled ());
+    EXPECT_FALSE (actions[2]->isEnabled ());
+    EXPECT_FALSE (actions[3]->isEnabled ());
     EXPECT_TRUE (tabs->isTabEnabled (0));
-    EXPECT_TRUE (tabs->isTabEnabled (2));
-    EXPECT_TRUE (tabs->isTabEnabled (3));
+    EXPECT_FALSE (tabs->isTabEnabled (2));
+    EXPECT_FALSE (tabs->isTabEnabled (3));
 
     studio.closeWorkCell ();
     processUiEvents ();
@@ -395,8 +392,8 @@ TEST (WorkflowDockLayout, ClosingActiveModelWorkCellRelocksDownstreamDocks)
     EXPECT_FALSE (actions[2]->isEnabled ());
     EXPECT_FALSE (actions[3]->isEnabled ());
     EXPECT_TRUE (actions[4]->isEnabled ());
-    EXPECT_FALSE (tabs->isTabEnabled (0));
-    EXPECT_TRUE (tabs->isTabEnabled (1));
+    EXPECT_TRUE (tabs->isTabEnabled (0));
+    EXPECT_FALSE (tabs->isTabEnabled (1));
     EXPECT_FALSE (tabs->isTabEnabled (2));
     EXPECT_FALSE (tabs->isTabEnabled (3));
     EXPECT_EQ (QStringLiteral ("RobotModelBuilder"), studio.activeWorkflowDockName ());
@@ -420,8 +417,8 @@ TEST (WorkflowDockLayout, IgnoresUnrelatedTabBarsWhenLockingAndSelectingActiveDo
 
     QTabBar* tabs = workflowTabBar (studio);
     ASSERT_NE (nullptr, tabs);
-    EXPECT_FALSE (tabs->isTabEnabled (0));
-    EXPECT_TRUE (tabs->isTabEnabled (1));
+    EXPECT_TRUE (tabs->isTabEnabled (0));
+    EXPECT_FALSE (tabs->isTabEnabled (1));
     EXPECT_FALSE (tabs->isTabEnabled (2));
     EXPECT_FALSE (tabs->isTabEnabled (3));
     EXPECT_EQ (QStringLiteral ("RobotModelBuilder"), studio.activeWorkflowDockName ());

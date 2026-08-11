@@ -196,7 +196,7 @@ class KinematicAnalysisWidget : public QWidget
     // 任一校验不过都只提示错误而不写回,防止把陈旧或不安全位姿推入当前 state。
     void applySelectedIkSolution ();
     // Refresh the current TCP snapshot and synchronize it to the IK target.
-    // 点击“Refresh and Sync TCP”:先用 analyzeCurrentPose 刷新当前位姿快照,再把
+    // 点击“Refresh TCP Pose to IK Target”:先用 analyzeCurrentPose 刷新当前位姿快照,再把
     // base→TCP 变换的平移 / RPY 按当前单位回填到 6 个 IK 目标输入框,并标记旧结果
     // 过期;这样用户可直接在“当前位姿”基础上微调后重新 Solve。
     void refreshAndSyncTcp ();
@@ -298,11 +298,16 @@ class KinematicAnalysisWidget : public QWidget
     // 领域配置发生实际变化后通知插件更新 Provider 脏状态；选择结果、焦点变化等
     // 界面状态不会触发该信号，因为它们不属于项目文档内容。
     void projectDocumentChanged ();
+    void frozenRequirementValidationCompleted (const QString& requirementFingerprint,
+                                               bool passed);
 
   private:
     // ===================================================================
     //  Tab 构建
     // ===================================================================
+    void refreshProjectDefaultContext ();
+    void updateProjectDefaultTcpControl ();
+    void setSelectedTcpAsProjectDefault ();
     void populateDevices ();    // 填充顶部 device combo
     void populateTcpFrames ();  // 填充 TCP frame combo
     void buildTaskPointTab ();
@@ -470,6 +475,10 @@ class KinematicAnalysisWidget : public QWidget
 
     QComboBox* _deviceCombo;                          // 顶部 device 选择
     QComboBox* _tcpFrameCombo;                        // 顶部 TCP frame 选择
+    QString _projectDefaultDeviceName;
+    QString _projectDefaultTcpFrameName;
+    bool _projectImportBindingAvailable;
+    QPushButton* _setProjectDefaultTcpButton;
     // _thresholdSettingsButton:打开阈值设置对话框(以事务方式编辑全部分析阈值)。
     QPushButton* _thresholdSettingsButton;
     // _reportButton:报告动作下拉菜单(Refresh / Export JSON / 导出摘要 CSV / 任务结果 CSV)。

@@ -47,6 +47,10 @@ if(build)
         ImageUtil.cpp
         RobWorkStudio.cpp
         WorkflowDockLayoutController.cpp
+        WorkflowStageController.cpp
+        WorkflowProjectState.cpp
+        WorkflowBinding.cpp
+        ProjectCreationWizard.cpp
         RWStudioView3D.cpp
         SceneOpenGLViewer.cpp
         RobWorkStudioPlugin.cpp
@@ -61,6 +65,10 @@ if(build)
         ProjectPackage.cpp
         ProjectPathResolver.cpp
         RobotProjectSourcePackager.cpp
+        RobotProjectXacroExpander.cpp
+        RobotProjectImportWizard.cpp
+        WorkCellProjectImportInspector.cpp
+        WorkCellProjectImportWizard.cpp
         ProjectSaveTransaction.cpp
         WorkCellProjectDocumentProvider.cpp
         propertyview/PropertyViewEditor.cpp
@@ -74,6 +82,10 @@ if(build)
         # FixedAxisController.hpp
         RobWorkStudio.hpp
         WorkflowDockLayoutController.hpp
+        WorkflowStageController.hpp
+        WorkflowProjectState.hpp
+        WorkflowBinding.hpp
+        ProjectCreationWizard.hpp
         RWSSpinBox.hpp
         SceneOpenGLViewer.hpp
         RobWorkStudioPlugin.hpp
@@ -90,6 +102,12 @@ if(build)
         ProjectPackage.hpp
         ProjectPathResolver.hpp
         ProjectSaveTransaction.hpp
+        RobotProjectImportOptions.hpp
+        RobotProjectXacroExpander.hpp
+        RobotProjectImportWizard.hpp
+        WorkCellProjectImportOptions.hpp
+        WorkCellProjectImportInspector.hpp
+        WorkCellProjectImportWizard.hpp
         WorkCellProjectDocumentProvider.hpp
     )
     set(SRC_FILES_HPP_propertyview propertyview/PropertyViewEditor.hpp

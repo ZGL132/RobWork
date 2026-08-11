@@ -1568,6 +1568,8 @@ TEST (RobWorkStudio, ClassifiesRobotProjectXmlBeforeDispatch)
                                        QByteArray ("<WorkCell name=\"Example\"/>\n"));
     const QString unknown = writeXml (QStringLiteral ("unknown.xml"),
                                       QByteArray ("<configuration/>\n"));
+    const QString xacro = writeXml (QStringLiteral ("robot.xacro"),
+                                    QByteArray ("<robot name=\"Example\"/>\n"));
 
     QString error;
     EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Urdf,
@@ -1582,6 +1584,25 @@ TEST (RobWorkStudio, ClassifiesRobotProjectXmlBeforeDispatch)
     EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Unsupported,
                RobWorkStudio::classifyRobotProjectSource (unknown, &error));
     EXPECT_FALSE (error.isEmpty ());
+    EXPECT_EQ (RobWorkStudio::RobotProjectSourceKind::Urdf,
+               RobWorkStudio::classifyRobotProjectSource (xacro, &error));
+    EXPECT_TRUE (error.isEmpty ());
+}
+
+TEST (RobWorkStudio, DefersXacroRootValidationUntilExpansion)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString sourcePath = directory.filePath (QStringLiteral ("robot.xacro"));
+    QFile source (sourcePath);
+    ASSERT_TRUE (source.open (QIODevice::WriteOnly));
+    source.write ("<xacro:macro xmlns:xacro=\"http://www.ros.org/wiki/xacro\" name=\"robot\"/>\n");
+    source.close ();
+
+    QString error;
+    EXPECT_EQ (rws::RobWorkStudio::RobotProjectSourceKind::Urdf,
+               rws::RobWorkStudio::classifyRobotProjectSource (sourcePath, &error));
+    EXPECT_TRUE (error.isEmpty ());
 }
 
 TEST (RobWorkStudio, RobotProjectPreflightFailurePreservesCurrentProject)
@@ -3405,7 +3426,7 @@ TEST (RobWorkStudio, NewRobotProjectSuccessKeepsEmptyWorkCellAndDirtyBootstrapRe
     };
 
     ASSERT_TRUE (studio.createProjectWithRobotModelBuilderPaths (
-        targetProject, callbacks, &error)) << error.toStdString ();
+        targetProject, QStringLiteral ("Modeling Cell"), callbacks, &error)) << error.toStdString ();
     EXPECT_EQ (QDir::cleanPath (target.path ()), QDir::cleanPath (studio.projectDirectory ()));
     EXPECT_TRUE (studio.mainWorkCellResourceId ().isEmpty ());
     EXPECT_TRUE (studio.hasUnsavedProjectChanges ());
@@ -3426,6 +3447,7 @@ TEST (RobWorkStudio, NewRobotProjectSuccessKeepsEmptyWorkCellAndDirtyBootstrapRe
     ASSERT_TRUE (studio.saveCurrentProject (&error)) << error.toStdString ();
     ProjectManager verification;
     ASSERT_TRUE (verification.openProject (targetProject, &error)) << error.toStdString ();
+    EXPECT_EQ (QStringLiteral ("Modeling Cell"), verification.manifest ().project.name);
     ProjectResource model;
     EXPECT_TRUE (verification.manifest ().findResource (QStringLiteral ("robot-model.main"), model));
 }

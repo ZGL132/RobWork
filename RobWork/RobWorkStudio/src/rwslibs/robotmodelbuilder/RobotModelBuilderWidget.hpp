@@ -5,6 +5,7 @@
 #define RWS_ROBOTMODELBUILDER_WIDGET_HPP
 
 #include "RobotModelSpec.hpp"
+#include "../../rws/RobotProjectImportOptions.hpp"
 
 #include <QByteArray>
 #include <QWidget>
@@ -31,6 +32,12 @@ class RobotModelBuilderWidget : public QWidget
     void syncFromWorkCellSpec (const RobotModelSpec& spec, const QStringList& warnings);
     bool preflightUrdfFile (const QString& path,
                             const QString& projectRoot,
+                            RobotModelSpec& parsed,
+                            QStringList& warnings,
+                            QString* error = nullptr) const;
+    bool preflightUrdfFile (const QString& path,
+                            const QString& projectRoot,
+                            const RobotProjectImportOptions& importOptions,
                             RobotModelSpec& parsed,
                             QStringList& warnings,
                             QString* error = nullptr) const;
@@ -95,6 +102,10 @@ class RobotModelBuilderWidget : public QWidget
     void removeSelectedJoint ();
     void moveSelectedJointUp ();
     void moveSelectedJointDown ();
+    void addDrawable ();
+    void duplicateSelectedDrawable ();
+    void removeSelectedDrawable ();
+    void regenerateLinkHelpers ();
     void addSceneFrame ();
     void removeSelectedSceneFrame ();
     void addSceneGeometry ();

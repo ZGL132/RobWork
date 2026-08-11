@@ -1,6 +1,7 @@
 #include "RobotProjectSourcePackager.hpp"
 
 #include "ProjectPathResolver.hpp"
+#include "RobotProjectXacroExpander.hpp"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -112,6 +113,7 @@ QString sanitizedRelativePath (const QString& relativePath)
 
 bool resolveMeshReference (const QString& original,
                            const QString& urdfPath,
+                           const QStringList& packageRoots,
                            QString& canonicalSourcePath,
                            QString& proposedProjectPath,
                            QString* error)
@@ -129,10 +131,11 @@ bool resolveMeshReference (const QString& original,
         if (!normalizedPackagePath (trimmed, packageName, relativePath, error))
             return false;
 
+        QStringList roots = packageRoots;
         QDir root = QFileInfo (urdfPath).absoluteDir ();
-        QStringList roots;
         for (int depth = 0; depth < 3; ++depth) {
-            roots.push_back (root.absolutePath ());
+            if (!roots.contains (root.absolutePath ()))
+                roots.push_back (root.absolutePath ());
             root.cdUp ();
         }
         for (const QString& packageRoot : roots) {
@@ -186,6 +189,7 @@ bool resolveMeshReference (const QString& original,
 
 bool collectMeshReferences (const QByteArray& sourceXml,
                             const QString& sourcePath,
+                            const QStringList& packageRoots,
                             QVector< MeshReference >& references,
                             QString* error)
 {
@@ -211,6 +215,7 @@ bool collectMeshReferences (const QByteArray& sourceXml,
         reference.original = xml.attributes ().value (QStringLiteral ("filename")).toString ();
         if (!resolveMeshReference (reference.original,
                                    sourcePath,
+                                   packageRoots,
                                    reference.canonicalSourcePath,
                                    reference.proposedProjectPath,
                                    error)) {
@@ -262,6 +267,7 @@ void assignFinalProjectPaths (QVector< MeshReference >& references)
 
 QByteArray rewriteUrdf (const QByteArray& sourceXml,
                         const QVector< MeshReference >& references,
+                        bool externalAssets,
                         QString* error)
 {
     QByteArray rewritten;
@@ -284,8 +290,10 @@ QByteArray rewriteUrdf (const QByteArray& sourceXml,
             for (const QXmlStreamAttribute& attribute : reader.attributes ()) {
                 if (attribute.name ().compare (QStringLiteral ("filename"),
                                                 Qt::CaseInsensitive) == 0) {
-                    const QString relative = QDir::cleanPath (
-                        QStringLiteral ("../../") + references[meshIndex].finalProjectPath);
+                    const QString relative = externalAssets
+                        ? references[meshIndex].canonicalSourcePath
+                        : QDir::cleanPath (QStringLiteral ("../../") +
+                                           references[meshIndex].finalProjectPath);
                     writer.writeAttribute (attribute.qualifiedName ().toString (),
                                            QDir::fromNativeSeparators (relative));
                 }
@@ -325,11 +333,18 @@ bool verifyManagedUrdf (const QString& managedUrdf,
         }
         const QString reference =
             xml.attributes ().value (QStringLiteral ("filename")).toString ();
-        if (reference.isEmpty () || QFileInfo (reference).isAbsolute ()) {
+        if (reference.isEmpty ()) {
             setError (error,
                       QStringLiteral ("Managed URDF contains an invalid mesh path: %1")
                           .arg (reference));
             return false;
+        }
+        if (QFileInfo (reference).isAbsolute ()) {
+            if (!QFileInfo (reference).isFile ()) {
+                setError (error, QStringLiteral ("Managed URDF external mesh is missing: %1")
+                                     .arg (reference));
+            }
+            continue;
         }
         const QString resolved = QFileInfo (managedUrdf).absoluteDir ().absoluteFilePath (reference);
         if (!isInsideRoot (stagingRoot, resolved) || !QFileInfo (resolved).isFile ()) {
@@ -355,6 +370,16 @@ bool directoryIsEmpty (const QString& path)
 
 bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
                                           const QString& targetProjectFilePath,
+                                          PackagedRobotSource& packaged,
+                                          QString* error)
+{
+    return prepare (sourceUrdfPath, targetProjectFilePath, RobotProjectImportOptions {},
+                    packaged, error);
+}
+
+bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
+                                          const QString& targetProjectFilePath,
+                                          const RobotProjectImportOptions& options,
                                           PackagedRobotSource& packaged,
                                           QString* error)
 {
@@ -386,16 +411,35 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
                       .arg (sourceInfo.absoluteFilePath (), sourceFile.errorString ())) ;
         return false;
     }
-    const QByteArray sourceXml = sourceFile.readAll ();
+    QByteArray sourceXml;
+    if (sourceInfo.suffix ().compare (QStringLiteral ("xacro"), Qt::CaseInsensitive) == 0) {
+        XacroExpansionResult expansion;
+        if (!RobotProjectXacroExpander::expand (sourceInfo.absoluteFilePath (),
+                                                options.xacroExecutable, options.xacroArguments,
+                                                expansion, error))
+            return false;
+        sourceXml = expansion.urdf;
+    }
+    else {
+        sourceXml = sourceFile.readAll ();
+    }
     QVector< MeshReference > references;
-    if (!collectMeshReferences (sourceXml, sourceInfo.absoluteFilePath (), references, error))
+    if (!collectMeshReferences (
+            sourceXml, sourceInfo.absoluteFilePath (), options.packageRoots, references, error))
         return false;
-    assignFinalProjectPaths (references);
+    if (options.assetPolicy == AssetImportPolicy::ManagedCopy)
+        assignFinalProjectPaths (references);
+    else {
+        for (MeshReference& reference : references)
+            reference.finalProjectPath = reference.canonicalSourcePath;
+    }
 
     const QString managedProjectPath = QStringLiteral ("sources/robot/robot.urdf");
     QMap< QString, QString > sourceByProjectPath;
-    for (const MeshReference& reference : references)
-        sourceByProjectPath.insert (reference.finalProjectPath, reference.canonicalSourcePath);
+    if (options.assetPolicy == AssetImportPolicy::ManagedCopy) {
+        for (const MeshReference& reference : references)
+            sourceByProjectPath.insert (reference.finalProjectPath, reference.canonicalSourcePath);
+    }
 
     QStringList finalProjectPaths = sourceByProjectPath.keys ();
     finalProjectPaths.push_back (managedProjectPath);
@@ -470,7 +514,8 @@ bool RobotProjectSourcePackager::prepare (const QString& sourceUrdfPath,
         resourceIdByPath.insert (projectPath, asset.id);
     }
 
-    const QByteArray rewritten = rewriteUrdf (sourceXml, references, error);
+    const QByteArray rewritten = rewriteUrdf (
+        sourceXml, references, options.assetPolicy == AssetImportPolicy::ExternalReference, error);
     if (rewritten.isEmpty ()) {
         discard (candidate);
         return false;

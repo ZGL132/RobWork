@@ -1606,4 +1606,25 @@ bool ProjectWriteGuard::validateRootIdentity (QString* error) const
     return true;
 }
 
+bool ProjectPathResolver::validateRobWorkCompatiblePath (const QString& path,
+                                                          QString* error)
+{
+#ifdef Q_OS_WIN
+    for (const QChar character : path) {
+        if (character.unicode () > 0x7f) {
+            setError (error,
+                      QStringLiteral ("RobWork's Windows XML loader requires an ASCII-only "
+                                      "project and WorkCell path. Choose a location and project "
+                                      "name containing only English letters, digits, and symbols."));
+            return false;
+        }
+    }
+#else
+    Q_UNUSED (path);
+#endif
+    if (error != nullptr)
+        error->clear ();
+    return true;
+}
+
 }    // namespace rws

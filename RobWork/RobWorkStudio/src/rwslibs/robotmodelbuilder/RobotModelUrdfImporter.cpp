@@ -1099,14 +1099,28 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
 
         // 1. 处理视觉模型 (Visual -> DrawableSpec)
         for (const UrdfGeometry& visual : link.visuals) {
+            const bool meshGeometry = visual.shape == "Mesh" || visual.shape == "STL";
+            if (meshGeometry && options.meshImportMode == MeshImportMode::Disabled) {
+                result.warnings << QString ("Skipped mesh geometry for link %1.").arg (item.first);
+                continue;
+            }
             DrawableSpec drawable;
             drawable.name            = visual.name.toStdString ();
             drawable.refFrame        = refFrame.toStdString ();
             drawable.shape           = visual.shape.toStdString ();
             // 解析 package:// 或相对网格路径为系统绝对路径
-            drawable.filePath        =
-                resolveMeshPath (visual.filePath, urdfPath, options, result.warnings)
-                    .toStdString ();
+            const QString resolvedVisualPath =
+                resolveMeshPath (visual.filePath, urdfPath, options, result.warnings);
+            drawable.filePath = resolvedVisualPath.toStdString ();
+            if (meshGeometry && options.missingMeshPolicy == MissingMeshPolicy::GenerateCylinder &&
+                !QFileInfo (resolvedVisualPath).isFile ()) {
+                drawable.shape = "Cylinder";
+                drawable.filePath.clear ();
+                drawable.radius = 0.05;
+                drawable.length = 0.20;
+                result.warnings << QString ("Generated cylinder fallback for missing visual mesh %1.")
+                                       .arg (visual.filePath);
+            }
             drawable.dimensions      = visual.dimensions;
             drawable.radius          = visual.radius;
             drawable.length          = visual.length;
@@ -1126,6 +1140,12 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
 
         // 2. 处理碰撞模型 (Collision -> CollisionModelSpec)
         for (const UrdfGeometry& collisionGeometry : link.collisions) {
+            const bool meshGeometry = collisionGeometry.shape == "Mesh" ||
+                collisionGeometry.shape == "STL";
+            if (meshGeometry && options.meshImportMode != MeshImportMode::VisualAndCollision) {
+                result.warnings << QString ("Skipped collision mesh for link %1.").arg (item.first);
+                continue;
+            }
             CollisionModelSpec collision;
             collision.name        = collisionGeometry.name.toStdString ();
             collision.refFrame    = refFrame.toStdString ();
@@ -1134,9 +1154,18 @@ bool RobotModelUrdfImporter::importFile (const QString& urdfPath,
                                collisionGeometry.shape == "STL")
                                         ? std::string ("Mesh")
                                         : collisionGeometry.shape.toStdString ();
-            collision.filePath    =
-                resolveMeshPath (collisionGeometry.filePath, urdfPath, options, result.warnings)
-                    .toStdString ();
+            const QString resolvedCollisionPath =
+                resolveMeshPath (collisionGeometry.filePath, urdfPath, options, result.warnings);
+            collision.filePath = resolvedCollisionPath.toStdString ();
+            if (meshGeometry && options.missingMeshPolicy == MissingMeshPolicy::GenerateCylinder &&
+                !QFileInfo (resolvedCollisionPath).isFile ()) {
+                collision.shape = "Cylinder";
+                collision.filePath.clear ();
+                collision.radius = 0.05;
+                collision.length = 0.20;
+                result.warnings << QString ("Generated cylinder fallback for missing collision mesh %1.")
+                                       .arg (collisionGeometry.filePath);
+            }
             collision.dimensions  = collisionGeometry.dimensions;
             collision.radius      = collisionGeometry.radius;
             collision.length      = collisionGeometry.length;

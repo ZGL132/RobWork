@@ -15,6 +15,7 @@
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
+#include "StructureVariableFilterProxyModel.hpp"
 #include "OptimizationTaskTableModel.hpp"
 #include "StructureCandidateTableModel.hpp"
 #include "StructureOptimizationUiLogic.hpp"
@@ -70,6 +71,7 @@
 #include <rw/math/RPY.hpp>
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QComboBox>
@@ -79,8 +81,10 @@
 #include <QEventLoop>
 #include <QFile>
 #include <QFileInfo>
+#include <QHeaderView>
 #include <QMetaObject>
 #include <QJsonDocument>
+#include <QLineEdit>
 #include <QMap>
 #include <QSet>
 #include <QPushButton>
@@ -94,6 +98,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
+#include <limits>
 #include <string>
 #include <thread>
 #include <vector>
@@ -2361,6 +2366,239 @@ static void testUiTableModelsAndSuggestions()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testStructureVariableTableDisplayRoles()
+{
+    std::printf("testStructureVariableTableDisplayRoles ... ");
+
+    rws::StructureDesignVariable length;
+    length.id = "link_length";
+    length.label = "Link Length";
+    length.targetName = "Link1";
+    length.kind = rws::StructureVariableKind::LinkHeight;
+    length.unit = "m";
+    length.currentValue = 0.4;
+    length.minimum = 0.2;
+    length.maximum = 0.8;
+    length.step = 0.01;
+
+    rws::StructureDesignVariable angle = length;
+    angle.id = "joint_angle";
+    angle.kind = rws::StructureVariableKind::JointRotationYaw;
+    angle.unit = "deg";
+    angle.currentValue = 12.345;
+
+    rws::StructureVariableTableModel model;
+    model.setVariables({length, angle});
+
+    const QModelIndex lengthCurrent = model.index(
+        0, rws::StructureVariableTableModel::CurrentColumn);
+    const QModelIndex angleCurrent = model.index(
+        1, rws::StructureVariableTableModel::CurrentColumn);
+    REQUIRE(model.data(lengthCurrent, Qt::DisplayRole).toString() == "0.400 m");
+    REQUIRE(model.data(angleCurrent, Qt::DisplayRole).toString() == "12.35 deg");
+    REQUIRE(std::abs(model.data(lengthCurrent, Qt::EditRole).toDouble() - 0.4) < 1e-12);
+    REQUIRE(model.data(lengthCurrent, Qt::TextAlignmentRole).toInt() ==
+            static_cast<int>(Qt::AlignRight | Qt::AlignVCenter));
+    REQUIRE(model.data(model.index(0, rws::StructureVariableTableModel::EnabledColumn),
+                       Qt::TextAlignmentRole).toInt() ==
+            static_cast<int>(Qt::AlignCenter));
+    REQUIRE(!(model.flags(model.index(0, rws::StructureVariableTableModel::KindColumn)) &
+              Qt::ItemIsEditable));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureVariableTableActions()
+{
+    std::printf("testStructureVariableTableActions ... ");
+
+    rws::StructureDesignVariable first;
+    first.id = "first";
+    first.label = "First";
+    first.targetName = "Joint1";
+    first.kind = rws::StructureVariableKind::JointPositionX;
+
+    rws::StructureDesignVariable second = first;
+    second.id = "second";
+    second.label = "Second";
+
+    rws::StructureDesignVariable third = first;
+    third.id = "third";
+    third.label = "Third";
+
+    rws::StructureVariableTableModel model;
+    model.setVariables({first, third});
+    REQUIRE(model.appendVariable(second));
+    REQUIRE(model.rowCount() == 3);
+    REQUIRE(model.variables().at(2).id == "second");
+    REQUIRE(!model.appendVariable(second));
+    REQUIRE(model.rowCount() == 3);
+
+    const QModelIndexList selectedIndexes = {
+        model.index(2, rws::StructureVariableTableModel::LabelColumn),
+        model.index(0, rws::StructureVariableTableModel::IdColumn),
+        model.index(2, rws::StructureVariableTableModel::CurrentColumn),
+        model.index(0, rws::StructureVariableTableModel::EnabledColumn)};
+    REQUIRE(model.removeRows(selectedIndexes) == 2);
+    REQUIRE(model.rowCount() == 1);
+    REQUIRE(model.variables().at(0).id == "third");
+
+    const QModelIndexList lastRow = {
+        model.index(0, rws::StructureVariableTableModel::IdColumn)};
+    REQUIRE(model.removeRows(lastRow) == 1);
+    REQUIRE(model.rowCount() == 0);
+    REQUIRE(model.removeRows(lastRow) == 0);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureVariableTableBoundaries()
+{
+    std::printf("testStructureVariableTableBoundaries ... ");
+
+    rws::StructureDesignVariable baseline;
+    baseline.id = "length";
+    baseline.label = "Link Length";
+    baseline.targetName = "Link1";
+    baseline.kind = rws::StructureVariableKind::LinkHeight;
+    baseline.unit = "m";
+    baseline.currentValue = 0.5;
+    baseline.minimum = 0.0;
+    baseline.maximum = 1.0;
+    baseline.step = 0.1;
+    baseline.preferredValue = 0.5;
+    baseline.preferenceWeight = 0.0;
+
+    rws::StructureVariableTableModel model;
+    model.setVariables({baseline});
+    const auto requireReadOnly = [&model](rws::StructureVariableTableModel::Column column) {
+        REQUIRE(!(model.flags(model.index(0, column)) & Qt::ItemIsEditable));
+    };
+    requireReadOnly(rws::StructureVariableTableModel::IdColumn);
+    requireReadOnly(rws::StructureVariableTableModel::LabelColumn);
+    requireReadOnly(rws::StructureVariableTableModel::TargetColumn);
+    requireReadOnly(rws::StructureVariableTableModel::KindColumn);
+    REQUIRE(model.flags(model.index(0, rws::StructureVariableTableModel::EnabledColumn)) &
+            Qt::ItemIsUserCheckable);
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::IdColumn), "changed"));
+
+    REQUIRE(model.setData(
+        model.index(0, rws::StructureVariableTableModel::CurrentColumn), 0.6));
+    REQUIRE(model.setData(
+        model.index(0, rws::StructureVariableTableModel::MinimumColumn), 0.5));
+    REQUIRE(model.setData(
+        model.index(0, rws::StructureVariableTableModel::MaximumColumn), 0.8));
+    REQUIRE(model.setData(
+        model.index(0, rws::StructureVariableTableModel::StepColumn), 0.05));
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::CurrentColumn), 0.9));
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::MinimumColumn), 0.7));
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::MaximumColumn), 0.55));
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::StepColumn), 0.0));
+    REQUIRE(!model.setData(
+        model.index(0, rws::StructureVariableTableModel::StepColumn),
+        std::numeric_limits<double>::quiet_NaN()));
+    REQUIRE(std::abs(model.variables().at(0).currentValue - 0.6) < 1e-12);
+    REQUIRE(std::abs(model.variables().at(0).minimum - 0.5) < 1e-12);
+    REQUIRE(std::abs(model.variables().at(0).maximum - 0.8) < 1e-12);
+    REQUIRE(std::abs(model.variables().at(0).step - 0.05) < 1e-12);
+
+    REQUIRE(model.setPreferences(0, 0.65, 0.4));
+    REQUIRE(!model.setPreferences(0, 0.65, 1.1));
+    REQUIRE(!model.setPreferences(0, std::numeric_limits<double>::quiet_NaN(), 0.4));
+    REQUIRE(std::abs(model.variables().at(0).preferredValue - 0.65) < 1e-12);
+    REQUIRE(std::abs(model.variables().at(0).preferenceWeight - 0.4) < 1e-12);
+
+    REQUIRE(model.duplicateVariable(0) == 1);
+    REQUIRE(model.rowCount() == 2);
+    REQUIRE(model.variables().at(1).id == "length_copy_1");
+    REQUIRE(model.variables().at(1).label == "Link Length (Copy)");
+    REQUIRE(model.removeVariable(0));
+    REQUIRE(model.rowCount() == 1);
+    REQUIRE(model.variables().at(0).id == "length_copy_1");
+    REQUIRE(!model.removeVariable(4));
+    REQUIRE(model.duplicateVariable(4) == -1);
+
+    model.resetVariables({baseline});
+    REQUIRE(model.rowCount() == 1);
+    REQUIRE(model.variables().at(0).id == "length");
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureVariableFilterProxy()
+{
+    std::printf("testStructureVariableFilterProxy ... " );
+    rws::StructureDesignVariable first;
+    first.id = "joint1_x"; first.label = "Joint One X"; first.targetName = "Joint1";
+    first.kind = rws::StructureVariableKind::JointPositionX;
+    rws::StructureDesignVariable second = first;
+    second.id = "link_radius"; second.label = "Link Radius"; second.targetName = "Link1";
+    second.kind = rws::StructureVariableKind::LinkRadius;
+    rws::StructureVariableTableModel source;
+    source.setVariables({first, second});
+    rws::StructureVariableFilterProxyModel proxy;
+    proxy.setSourceModel(&source);
+    proxy.setKeyword(QStringLiteral("joint1"));
+    REQUIRE(proxy.rowCount() == 1);
+    REQUIRE(proxy.index(0, rws::StructureVariableTableModel::IdColumn).data().toString() ==
+            QStringLiteral("joint1_x"));
+    proxy.setKeyword(QStringLiteral("link"));
+    proxy.setKindFilter(rws::StructureVariableKind::JointPositionX);
+    REQUIRE(proxy.rowCount() == 0);
+    proxy.setKindFilter(std::nullopt);
+    REQUIRE(proxy.rowCount() == 1);
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureVariableAdvancedColumns()
+{
+    std::printf("testStructureVariableAdvancedColumns ... " );
+    rws::StructureDesignVariable variable;
+    variable.id = "joint1_x"; variable.label = "Joint One X";
+    variable.targetName = "Joint1"; variable.unit = "m";
+    variable.kind = rws::StructureVariableKind::JointPositionX;
+    variable.currentValue = 0.2; variable.minimum = 0.0; variable.maximum = 1.0;
+    variable.step = 0.1; variable.preferredValue = 0.3; variable.preferenceWeight = 0.4;
+    rws::StructureVariableTableModel model;
+    model.setVariables({variable});
+    REQUIRE(model.headerData(rws::StructureVariableTableModel::PreferredColumn, Qt::Horizontal)
+                .toString() == QStringLiteral("Preferred"));
+    REQUIRE(model.headerData(rws::StructureVariableTableModel::PreferenceWeightColumn,
+                             Qt::Horizontal).toString() == QStringLiteral("Preference Weight"));
+    REQUIRE(model.data(model.index(0, rws::StructureVariableTableModel::PreferredColumn),
+                       Qt::EditRole).toDouble() == 0.3);
+    REQUIRE(model.data(model.index(0, rws::StructureVariableTableModel::PreferenceWeightColumn),
+                       Qt::TextAlignmentRole).toInt() ==
+            static_cast<int>(Qt::AlignRight | Qt::AlignVCenter));
+    REQUIRE(model.setData(model.index(0, rws::StructureVariableTableModel::PreferredColumn),
+                          0.5));
+    REQUIRE(model.setData(model.index(0,
+                                      rws::StructureVariableTableModel::PreferenceWeightColumn),
+                          0.8));
+    REQUIRE(!model.setData(model.index(0,
+                                       rws::StructureVariableTableModel::PreferenceWeightColumn),
+                           1.1));
+    REQUIRE(std::abs(model.variables().at(0).preferredValue - 0.5) < 1e-12);
+    REQUIRE(std::abs(model.variables().at(0).preferenceWeight - 0.8) < 1e-12);
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testStructureOptimizerWidgetUsesEnglishCopy()
 {
     rws::StructureOptimizerWidget widget;
@@ -2380,17 +2618,41 @@ static void testStructureOptimizerWidgetUsesEnglishCopy()
     requireButtonText("addOptimizationTaskButton", "Add Task");
     requireButtonText("previewStructureCandidateButton", "Preview Candidate");
     requireButtonText("exportStructureOptimizationResultButton", "Export Report & Models");
+    requireButtonText("addStructureVariableButton", "Add Variable");
+    requireButtonText("duplicateStructureVariableButton", "Duplicate Selected");
+    requireButtonText("removeStructureVariablesButton", "Remove Selected");
+    requireButtonText("restoreStructureVariableBaselineButton", "Restore Model Baseline");
+
+    QPushButton* removeVariablesButton =
+        widget.findChild<QPushButton*>("removeStructureVariablesButton");
+    QPushButton* duplicateVariableButton =
+        widget.findChild<QPushButton*>("duplicateStructureVariableButton");
+    REQUIRE(removeVariablesButton != nullptr);
+    REQUIRE(duplicateVariableButton != nullptr);
+    if (removeVariablesButton != nullptr)
+        REQUIRE(!removeVariablesButton->isEnabled());
+    if (duplicateVariableButton != nullptr)
+        REQUIRE(!duplicateVariableButton->isEnabled());
 
     QTableView* variableTable = widget.findChild<QTableView*>("structureVariableTable");
     REQUIRE(variableTable != nullptr);
     if (variableTable != nullptr) {
         const QStringList expectedHeaders = {
-            "ID", "Name", "Target", "Type", "Current", "Min", "Max", "Step", "Enabled"};
+            "ID", "Name", "Target", "Type", "Current", "Min", "Max", "Step",
+            "Preferred", "Preference Weight", "Enabled"};
         for (int column = 0; column < expectedHeaders.size(); ++column) {
             REQUIRE(variableTable->model()->headerData(
                         column, Qt::Horizontal, Qt::DisplayRole).toString() ==
                     expectedHeaders[column]);
         }
+        REQUIRE(variableTable->alternatingRowColors());
+        REQUIRE(variableTable->selectionBehavior() == QAbstractItemView::SelectRows);
+        REQUIRE(variableTable->selectionMode() == QAbstractItemView::ExtendedSelection);
+        REQUIRE(variableTable->horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded);
+        REQUIRE(variableTable->horizontalHeader()->sectionResizeMode(
+                    rws::StructureVariableTableModel::EnabledColumn) == QHeaderView::Fixed);
+        REQUIRE(variableTable->columnWidth(
+                    rws::StructureVariableTableModel::EnabledColumn) == 56);
     }
 
     const auto requireTableHeaders = [&widget](const char* objectName,
@@ -2421,6 +2683,77 @@ static void testStructureOptimizerWidgetUsesEnglishCopy()
     candidateModel.setCandidates({feasibleCandidate});
     REQUIRE(candidateModel.data(candidateModel.index(
                 0, rws::StructureCandidateTableModel::FeasibleColumn)).toString() == "Yes");
+}
+
+static void testStructureOptimizerWidgetVariableEfficiencyControls()
+{
+    rws::StructureOptimizerWidget widget;
+    QTableView* table = widget.findChild<QTableView*>("structureVariableTable");
+    QLineEdit* search = widget.findChild<QLineEdit*>("structureVariableSearch");
+    QComboBox* typeFilter = widget.findChild<QComboBox*>("structureVariableTypeFilter");
+    QCheckBox* showAdvanced = widget.findChild<QCheckBox*>("showStructureVariableAdvanced");
+    QPushButton* addMissing =
+        widget.findChild<QPushButton*>("addMissingStructureVariablesButton");
+    QPushButton* duplicate =
+        widget.findChild<QPushButton*>("duplicateStructureVariableButton");
+    REQUIRE(table != nullptr);
+    REQUIRE(search != nullptr);
+    REQUIRE(typeFilter != nullptr);
+    REQUIRE(showAdvanced != nullptr);
+    REQUIRE(addMissing != nullptr);
+    REQUIRE(duplicate != nullptr);
+    if (table == nullptr || search == nullptr || typeFilter == nullptr ||
+        showAdvanced == nullptr || addMissing == nullptr || duplicate == nullptr)
+        return;
+
+    REQUIRE(qobject_cast<rws::StructureVariableFilterProxyModel*>(table->model()) != nullptr);
+    REQUIRE(table->isColumnHidden(rws::StructureVariableTableModel::PreferredColumn));
+    REQUIRE(table->isColumnHidden(rws::StructureVariableTableModel::PreferenceWeightColumn));
+    showAdvanced->setChecked(true);
+    REQUIRE(!table->isColumnHidden(rws::StructureVariableTableModel::PreferredColumn));
+    REQUIRE(!table->isColumnHidden(rws::StructureVariableTableModel::PreferenceWeightColumn));
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec = rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+    const std::vector<rws::StructureDesignVariable> suggested =
+        rws::StructureOptimizationUiLogic::suggestVariables(problem.context);
+    REQUIRE(!suggested.empty());
+    if (suggested.empty())
+        return;
+    rws::StructureDesignVariable edited = suggested.front();
+    edited.currentValue = edited.minimum + (edited.maximum - edited.minimum) * 0.25;
+    problem.variables = {edited};
+    widget.setProblem(problem);
+    REQUIRE(table->model()->rowCount() == 1);
+    REQUIRE(addMissing->isEnabled());
+    addMissing->click();
+    const rws::StructureOptimizationProblem completed = widget.collectProblem();
+    REQUIRE(completed.variables.size() == suggested.size());
+    const auto editedIt = std::find_if(completed.variables.begin(), completed.variables.end(),
+                                       [&edited](const rws::StructureDesignVariable& variable) {
+                                           return variable.id == edited.id;
+                                       });
+    REQUIRE(editedIt != completed.variables.end());
+    if (editedIt != completed.variables.end())
+        REQUIRE(std::abs(editedIt->currentValue - edited.currentValue) < 1e-12);
+
+    search->setText(QStringLiteral("not-a-variable"));
+    REQUIRE(table->model()->rowCount() == 0);
+    search->clear();
+    typeFilter->setCurrentIndex(0);
+    REQUIRE(table->model()->rowCount() == static_cast<int>(suggested.size()));
+    table->selectRow(0);
+    const QString selectedId = table->model()->index(
+        0, rws::StructureVariableTableModel::IdColumn).data().toString();
+    duplicate->click();
+    const rws::StructureOptimizationProblem duplicated = widget.collectProblem();
+    REQUIRE(duplicated.variables.size() == suggested.size() + 1);
+    REQUIRE(std::any_of(duplicated.variables.begin(), duplicated.variables.end(),
+                        [&selectedId](const rws::StructureDesignVariable& variable) {
+                            return variable.id == (selectedId + QStringLiteral("_copy_1")).toStdString();
+                        }));
 }
 
 // 子套件 约束表模型 + 项目适配器:验证约束表模型能编辑阈值;项目 saveProject/
@@ -4403,6 +4736,24 @@ static void testStructureOptimizerWidgetState()
         widget.markProjectDocumentClean();
         REQUIRE(!widget.isProjectDocumentDirty());
     }
+    QTableView* variableTable = widget.findChild<QTableView*>("structureVariableTable");
+    QPushButton* duplicateVariableButton =
+        widget.findChild<QPushButton*>("duplicateStructureVariableButton");
+    REQUIRE(variableTable != nullptr);
+    REQUIRE(duplicateVariableButton != nullptr);
+    if (variableTable != nullptr && duplicateVariableButton != nullptr) {
+        REQUIRE(variableTable->model()->setData(
+            variableTable->model()->index(
+                0, rws::StructureVariableTableModel::CurrentColumn), 0.3));
+        REQUIRE(widget.isProjectDocumentDirty());
+        REQUIRE(widget.saveProjectDocument(projectDocument, &projectDocumentError));
+        widget.markProjectDocumentClean();
+        variableTable->selectRow(0);
+        REQUIRE(duplicateVariableButton->isEnabled());
+        duplicateVariableButton->click();
+        REQUIRE(variableTable->model()->rowCount() == 2);
+        REQUIRE(widget.isProjectDocumentDirty());
+    }
     REQUIRE(widget.canCloseProjectDocument(&projectDocumentError));
 
     QTemporaryDir provenanceDirectory;
@@ -4762,6 +5113,21 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    if (suite == "variable_table") {
+        QCoreApplication app(argc, argv);
+        testStructureVariableTableDisplayRoles();
+        testStructureVariableFilterProxy();
+        testStructureVariableAdvancedColumns();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "variable_actions") {
+        QApplication app(argc, argv);
+        testStructureVariableTableActions();
+        testStructureVariableTableBoundaries();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     if (suite == "accepted_ur") {
         QCoreApplication app(argc, argv);
         testAcceptedUr6585AProject();
@@ -4822,6 +5188,7 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         testStructureOptimizerWidgetState();
         testStructureOptimizerWidgetUsesEnglishCopy();
+        testStructureOptimizerWidgetVariableEfficiencyControls();
         std::fflush(stdout);
         if (g_testFailures == 0)
         {
@@ -4849,7 +5216,7 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
-    QCoreApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     testHistoricalStructureOptimizerAbiRemainsLinkable();
 
@@ -4909,6 +5276,9 @@ int main(int argc, char** argv)
 
     if (suite == "ui") {
         testUiTableModelsAndSuggestions();
+        testStructureVariableTableDisplayRoles();
+        testStructureVariableTableActions();
+        testStructureVariableTableBoundaries();
         testConstraintModelAndProjectAdapter();
         testProjectFactory();
         testProjectFactoryProvenance();
@@ -4971,6 +5341,9 @@ int main(int argc, char** argv)
     testAuditableEvidenceOutput();
     testCsvExport();
     testUiTableModelsAndSuggestions();
+    testStructureVariableTableDisplayRoles();
+    testStructureVariableTableActions();
+    testStructureVariableTableBoundaries();
     testStructureOptimizerWidgetUsesEnglishCopy();
     testConstraintModelAndProjectAdapter();
     testFrozenEngineeringRequirementArtifactAdapter();

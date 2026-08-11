@@ -20,6 +20,8 @@
 
 #include <QString>
 
+#include "WorkflowStageController.hpp"
+
 namespace rws {
 
 class RobWorkStudio;
@@ -38,12 +40,12 @@ class WorkflowDockLayoutController
     QString activeDockName () const;
 
   private:
-    void setReady (bool ready);
+    void applyStageSnapshot (const WorkflowStageSnapshot& snapshot);
     void refreshTabEnablement ();
 
     RobWorkStudio* _studio;
     QString _standaloneModelFilename;
-    bool _ready = false;
+    WorkflowStageSnapshot _stageSnapshot;
     bool _initialWidthPending = false;
     int _initialWidth = 0;
 };

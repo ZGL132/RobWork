@@ -1,7 +1,13 @@
 #include <rws/ProjectManager.hpp>
+#include <rws/ProjectDocumentRegistry.hpp>
 #include <rws/ProjectManifestJson.hpp>
 #include <rws/ProjectPathResolver.hpp>
+#include <rws/CallbackProjectDocumentProvider.hpp>
 #include <rws/RobotProjectSourcePackager.hpp>
+#include <rws/RobotProjectImportOptions.hpp>
+#include <rws/RobotProjectXacroExpander.hpp>
+#include <rws/WorkCellProjectImportInspector.hpp>
+#include <rws/WorkCellProjectImportOptions.hpp>
 
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/models/Device.hpp>
@@ -12,6 +18,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMap>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QProcess>
 #include <QTemporaryDir>
 #include <QXmlStreamReader>
@@ -999,6 +1008,104 @@ TEST (ProjectSystemTest, ManagerCreatesSavesAndReopensProject)
     EXPECT_EQ ("scene.main", manager.manifest ().entryPoints.value ("mainWorkCell"));
 }
 
+TEST (ProjectSystemTest, WorkflowStateSurvivesProjectReopen)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("workflow.rwproj");
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error))
+        << error.toStdString ();
+
+    rws::WorkflowProjectSnapshot expected;
+    expected.modelAvailable = true;
+    expected.sceneAvailable = true;
+    expected.modelFingerprint = QStringLiteral ("model-1");
+    expected.sceneFingerprint = QStringLiteral ("scene-1");
+    expected.requirementsFrozen = true;
+    expected.requirementFingerprint = QStringLiteral ("requirements-1");
+    expected.requirementModelFingerprint = expected.modelFingerprint;
+    expected.requirementSceneFingerprint = expected.sceneFingerprint;
+    expected.kinematicValidationPassed = true;
+    expected.kinematicValidationFingerprint = QStringLiteral ("kinematics-1");
+    expected.kinematicModelFingerprint = expected.modelFingerprint;
+    expected.kinematicRequirementFingerprint = expected.requirementFingerprint;
+    expected.kinematicSceneFingerprint = expected.sceneFingerprint;
+    expected.optimizationArtifactAvailable = true;
+    expected.optimizationModelFingerprint = expected.modelFingerprint;
+    expected.optimizationRequirementFingerprint = expected.requirementFingerprint;
+    expected.optimizationKinematicFingerprint = expected.kinematicValidationFingerprint;
+    expected.optimizationSceneFingerprint = expected.sceneFingerprint;
+
+    ASSERT_TRUE (manager.setWorkflowProjectState (expected, &error))
+        << error.toStdString ();
+    ASSERT_TRUE (manager.saveProject (&error)) << error.toStdString ();
+
+    ASSERT_TRUE (QDir (directory.path ()).mkpath (QStringLiteral ("scenes")));
+    QFile requiredWorkCell (QDir (directory.path ()).filePath (QStringLiteral ("scenes/main.wc.xml")));
+    ASSERT_TRUE (requiredWorkCell.open (QIODevice::WriteOnly));
+    requiredWorkCell.close ();
+
+    manager.closeProject ();
+    ASSERT_TRUE (manager.openProject (projectFile, &error)) << error.toStdString ();
+
+    const rws::WorkflowProjectSnapshot actual = manager.workflowProjectState ();
+    // Resource availability/fingerprints are runtime observations and are recomputed after
+    // reopening; the persisted contract is the evidence attached to each downstream stage.
+    EXPECT_EQ (actual.requirementsFrozen, expected.requirementsFrozen);
+    EXPECT_EQ (actual.requirementFingerprint, expected.requirementFingerprint);
+    EXPECT_EQ (actual.requirementModelFingerprint, expected.requirementModelFingerprint);
+    EXPECT_EQ (actual.requirementSceneFingerprint, expected.requirementSceneFingerprint);
+    EXPECT_EQ (actual.kinematicValidationPassed, expected.kinematicValidationPassed);
+    EXPECT_EQ (actual.kinematicValidationFingerprint,
+               expected.kinematicValidationFingerprint);
+    EXPECT_EQ (actual.kinematicModelFingerprint, expected.kinematicModelFingerprint);
+    EXPECT_EQ (actual.kinematicRequirementFingerprint,
+               expected.kinematicRequirementFingerprint);
+    EXPECT_EQ (actual.kinematicSceneFingerprint, expected.kinematicSceneFingerprint);
+    EXPECT_EQ (actual.optimizationArtifactAvailable, expected.optimizationArtifactAvailable);
+    EXPECT_EQ (actual.optimizationModelFingerprint, expected.optimizationModelFingerprint);
+    EXPECT_EQ (actual.optimizationRequirementFingerprint,
+               expected.optimizationRequirementFingerprint);
+    EXPECT_EQ (actual.optimizationKinematicFingerprint,
+               expected.optimizationKinematicFingerprint);
+    EXPECT_EQ (actual.optimizationSceneFingerprint, expected.optimizationSceneFingerprint);
+}
+
+TEST (ProjectSystemTest, InvalidatingFrozenRequirementsClearsAllDownstreamEvidence)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("invalidate.rwproj");
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProject (projectFile, makeManifest (), &error))
+        << error.toStdString ();
+
+    rws::WorkflowProjectSnapshot state;
+    state.requirementsFrozen = true;
+    state.requirementFingerprint = QStringLiteral ("requirements-1");
+    state.kinematicValidationPassed = true;
+    state.kinematicValidationFingerprint = QStringLiteral ("kinematics-1");
+    state.optimizationArtifactAvailable = true;
+    state.optimizationKinematicFingerprint = state.kinematicValidationFingerprint;
+    ASSERT_TRUE (manager.setWorkflowProjectState (state, &error)) << error.toStdString ();
+
+    ASSERT_TRUE (manager.invalidateWorkflowStateFrom (rws::WorkflowStage::Requirements, &error))
+        << error.toStdString ();
+
+    const rws::WorkflowProjectSnapshot invalidated = manager.workflowProjectState ();
+    EXPECT_FALSE (invalidated.requirementsFrozen);
+    EXPECT_TRUE (invalidated.requirementFingerprint.isEmpty ());
+    EXPECT_FALSE (invalidated.kinematicValidationPassed);
+    EXPECT_TRUE (invalidated.kinematicValidationFingerprint.isEmpty ());
+    EXPECT_FALSE (invalidated.optimizationArtifactAvailable);
+    EXPECT_TRUE (invalidated.optimizationKinematicFingerprint.isEmpty ());
+}
+
 // 迁移测试：从历史 WorkCell 文件创建项目时，源文件必须被复制到项目内部，避免清单继续
 // 引用原工作目录；创建后的项目重新打开时也必须能仅依赖项目目录正常解析入口资源。
 TEST (ProjectSystemTest, ManagerCreatesProjectFromExistingWorkCell)
@@ -1150,6 +1257,130 @@ TEST (ProjectSystemTest, ManagerCreatesLoadableProjectFromTopLevelUrDevice)
     EXPECT_EQ (sourceBefore, readFile (source));
     EXPECT_EQ (16, managedGeometryResourceCount (manager.manifest ()))
         << "Every .ac and .stl dependency must be a managed project resource.";
+}
+
+TEST (ProjectSystemTest, ManagerRejectsUnicodeWorkCellProjectPathBeforeCopying)
+{
+    QTemporaryDir target;
+    ASSERT_TRUE (target.isValid ());
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    const QString projectFile = QDir (target.path ()).filePath (
+        QString::fromUtf8 ("新建项目/UnicodeProject.rwproj"));
+
+    rws::ProjectManager manager;
+    QString error;
+    EXPECT_FALSE (manager.createProjectFromWorkCell (projectFile, source, &error));
+    EXPECT_TRUE (error.contains (QStringLiteral ("ASCII"), Qt::CaseInsensitive))
+        << error.toStdString ();
+    EXPECT_FALSE (QFileInfo::exists (projectFile));
+}
+
+TEST (ProjectSystemTest, WorkCellImportInspectorSelectsSingleRobotAndEndTcp)
+{
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    rws::WorkCellProjectImportInspection inspection;
+    QString error;
+    ASSERT_TRUE (rws::WorkCellProjectImportInspector::inspect (source, inspection, &error))
+        << error.toStdString ();
+    ASSERT_EQ (1, inspection.devices.size ());
+    EXPECT_EQ (inspection.devices.front ().name, inspection.selectedDeviceName);
+    EXPECT_FALSE (inspection.selectedTcpFrameName.isEmpty ());
+    EXPECT_GE (inspection.devices.front ().dof, 1);
+}
+
+TEST (ProjectSystemTest, ManagerCreatesWorkCellBindingAsPartOfProjectCreation)
+{
+    QTemporaryDir target;
+    ASSERT_TRUE (target.isValid ());
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    rws::WorkCellProjectImportInspection inspection;
+    QString error;
+    ASSERT_TRUE (rws::WorkCellProjectImportInspector::inspect (source, inspection, &error))
+        << error.toStdString ();
+
+    rws::WorkCellProjectImportOptions options;
+    options.targetDeviceName = inspection.selectedDeviceName;
+    options.tcpFrameName = inspection.selectedTcpFrameName;
+    const QString companionPath = QDir (target.path ()).filePath (QStringLiteral ("CollisionSetup.manual.xml"));
+    ASSERT_TRUE (writeFile (companionPath, "<CollisionSetup/>\n"));
+    options.companionFiles << companionPath;
+    const QString projectFile = QDir (target.path ()).filePath (QStringLiteral ("Imported.rwproj"));
+    rws::ProjectManager manager;
+    ASSERT_TRUE (manager.createProjectFromWorkCell (projectFile, source, options, &error))
+        << error.toStdString ();
+
+    rws::ProjectResource binding;
+    ASSERT_TRUE (manager.manifest ().findResource (QStringLiteral ("workcell.binding.main"), binding));
+    EXPECT_EQ (QStringLiteral ("robwork.passive-asset"), binding.kind);
+    const QString bindingPath = QDir (target.path ()).filePath (binding.path);
+    EXPECT_TRUE (QFileInfo::exists (bindingPath));
+    const QJsonObject bindingJson = QJsonDocument::fromJson (readFile (bindingPath)).object ();
+    EXPECT_EQ (inspection.selectedDeviceName, bindingJson.value (QStringLiteral ("targetDevice")).toString ());
+    EXPECT_EQ (inspection.selectedTcpFrameName, bindingJson.value (QStringLiteral ("tcpFrame")).toString ());
+    ASSERT_EQ (1, bindingJson.value (QStringLiteral ("companions")).toArray ().size ());
+    EXPECT_FALSE (bindingJson.value (QStringLiteral ("companions")).toArray ().at (0).toObject ().value (
+        QStringLiteral ("projectPath")).toString ().isEmpty ());
+}
+
+TEST (ProjectSystemTest, WorkCellImportBindingDoesNotRequireAProjectDocumentProvider)
+{
+    QTemporaryDir target;
+    ASSERT_TRUE (target.isValid ());
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    const QString projectFile = QDir (target.path ()).filePath (QStringLiteral ("Imported.rwproj"));
+
+    rws::ProjectManager manager;
+    QString error;
+    ASSERT_TRUE (manager.createProjectFromWorkCell (projectFile, source, &error))
+        << error.toStdString ();
+
+    rws::CallbackProjectDocumentProvider workCellProvider (
+        QStringLiteral ("test.workcell-provider"),
+        QStringLiteral ("robwork.workcell"),
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        rws::CallbackProjectDocumentProvider::SaveHandler ());
+    rws::ProjectDocumentRegistry registry;
+    ASSERT_TRUE (registry.registerProvider (&workCellProvider, &error)) << error.toStdString ();
+
+    EXPECT_TRUE (registry.loadProjectResources (manager.manifest (), projectFile, &error))
+        << error.toStdString ();
+
+    rws::ProjectManifest legacyManifest = manager.manifest ();
+    for (rws::ProjectResource& resource : legacyManifest.resources) {
+        if (resource.id == QStringLiteral ("workcell.binding.main"))
+            resource.kind = QStringLiteral ("workcell.import-binding");
+    }
+    rws::CallbackProjectDocumentProvider legacyWorkCellProvider (
+        QStringLiteral ("test.legacy-workcell-provider"),
+        QStringLiteral ("robwork.workcell"),
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        rws::CallbackProjectDocumentProvider::SaveHandler ());
+    rws::ProjectDocumentRegistry legacyRegistry;
+    ASSERT_TRUE (legacyRegistry.registerProvider (&legacyWorkCellProvider, &error))
+        << error.toStdString ();
+    EXPECT_TRUE (legacyRegistry.loadProjectResources (legacyManifest, projectFile, &error))
+        << error.toStdString ();
+}
+
+TEST (ProjectSystemTest, ManagerRejectsInvalidWorkCellTargetBinding)
+{
+    QTemporaryDir target;
+    ASSERT_TRUE (target.isValid ());
+    const QString source = sourcePath (
+        QStringLiteral ("RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/UR.wc.xml"));
+    rws::WorkCellProjectImportOptions options;
+    options.targetDeviceName = QStringLiteral ("not-a-device");
+    options.tcpFrameName = QStringLiteral ("not-a-frame");
+    const QString projectFile = QDir (target.path ()).filePath (QStringLiteral ("Invalid.rwproj"));
+    rws::ProjectManager manager;
+    QString error;
+    EXPECT_FALSE (manager.createProjectFromWorkCell (projectFile, source, options, &error));
+    EXPECT_FALSE (error.isEmpty ());
+    EXPECT_FALSE (QFileInfo::exists (projectFile));
 }
 
 TEST (ProjectSystemTest, ManagerRejectsCopiedWorkCellThatRobWorkCannotLoad)
@@ -1571,6 +1802,67 @@ TEST (ProjectSystemTest, ManagerReportsMissingUnreferencedAndChangedResources)
 
 // 归档回归：rwpack 必须使用项目相对目录保存自有资源。解包到全新目录后，清单及其
 // WorkCell 仍可按原路径解析，证明归档没有携带机器相关的绝对路径。
+TEST (ProjectSystemTest, RobotSourcePackagerUsesExplicitPackageRoots)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString packageRoot = directory.filePath (QStringLiteral ("packages"));
+    const QString meshPath = QDir (packageRoot).filePath (
+        QStringLiteral ("external_robot/meshes/link.stl"));
+    ASSERT_TRUE (writeFile (meshPath, QByteArray ("solid link\nendsolid link\n")));
+    const QString urdfPath = writeUrdf (
+        directory.filePath (QStringLiteral ("source")),
+        {QStringLiteral ("package://external_robot/meshes/link.stl")});
+    ASSERT_FALSE (urdfPath.isEmpty ());
+
+    rws::RobotProjectImportOptions options;
+    options.packageRoots.push_back (packageRoot);
+    rws::PackagedRobotSource packaged;
+    QString error;
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdfPath, directory.filePath (QStringLiteral ("Project.rwproj")), options, packaged, &error))
+        << error.toStdString ();
+    EXPECT_EQ (1, packaged.assetResources.size ());
+    rws::RobotProjectSourcePackager::discard (packaged);
+}
+
+TEST (ProjectSystemTest, RobotSourcePackagerSupportsExternalMeshReferences)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString urdfPath = writeUrdf (
+        directory.filePath (QStringLiteral ("source")), {QStringLiteral ("mesh.stl")});
+    ASSERT_FALSE (urdfPath.isEmpty ());
+    const QString meshPath = QFileInfo (urdfPath).absoluteDir ().filePath (QStringLiteral ("mesh.stl"));
+    ASSERT_TRUE (writeFile (meshPath, QByteArray ("solid mesh\nendsolid mesh\n")));
+
+    rws::RobotProjectImportOptions options;
+    options.assetPolicy = rws::AssetImportPolicy::ExternalReference;
+    rws::PackagedRobotSource packaged;
+    QString error;
+    const QString projectFile = directory.filePath (QStringLiteral ("Project.rwproj"));
+    ASSERT_TRUE (rws::RobotProjectSourcePackager::prepare (
+        urdfPath, projectFile, options, packaged, &error)) << error.toStdString ();
+    EXPECT_TRUE (packaged.assetResources.isEmpty ());
+    QFile managed (packaged.stagedManagedUrdfPath);
+    ASSERT_TRUE (managed.open (QIODevice::ReadOnly));
+    EXPECT_TRUE (managed.readAll ().contains (QFileInfo (meshPath).canonicalFilePath ().toUtf8 ()));
+    rws::RobotProjectSourcePackager::discard (packaged);
+}
+
+TEST (ProjectSystemTest, XacroExpansionRejectsUnavailableExplicitExecutable)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString source = directory.filePath (QStringLiteral ("robot.xacro"));
+    ASSERT_TRUE (writeFile (source, QByteArray ("<robot name=\"r\"/>")));
+    rws::XacroExpansionResult result;
+    QString error;
+    EXPECT_FALSE (rws::RobotProjectXacroExpander::expand (
+        source, directory.filePath (QStringLiteral ("missing-xacro.exe")), result, &error));
+    EXPECT_TRUE (error.contains (QStringLiteral ("Could not start"), Qt::CaseInsensitive));
+}
+
 TEST (ProjectSystemTest, ManagerPackagesAndExtractsPortableProject)
 {
     QTemporaryDir directory;

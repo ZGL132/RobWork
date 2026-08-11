@@ -106,6 +106,19 @@ void KinematicAnalysisPlugin::initialize()
         _projectProvider->setDirty(_widget->isProjectDocumentDirty());
         currentStudio->notifyProjectDocumentChanged();
     });
+
+    connect (_widget, &KinematicAnalysisWidget::frozenRequirementValidationCompleted,
+             this, [this] (const QString& requirementFingerprint, bool passed) {
+                 RobWorkStudio* studio = getRobWorkStudio ();
+                 if (studio == nullptr || studio->projectDirectory ().isEmpty ())
+                     return;
+                 QString error;
+                 if (!studio->publishWorkflowKinematicValidation (
+                         requirementFingerprint, passed, &error)) {
+                     RW_WARN ("Kinematic validation workflow publication failed: "
+                              << error.toStdString ());
+                 }
+             });
 }
 
 // open:WorkCell 切换后被调用,把新 WorkCell 推给 Widget,触发设备/帧下拉刷新。

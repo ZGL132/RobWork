@@ -21,6 +21,9 @@
 #include "AboutBox.hpp"
 #include "HelpAssistant.hpp"
 #include "ProjectPathResolver.hpp"
+#include "ProjectCreationWizard.hpp"
+#include "RobotProjectImportWizard.hpp"
+#include "WorkCellProjectImportWizard.hpp"
 #include "ProjectSaveTransaction.hpp"
 #include "RobWorkStudioPlugin.hpp"
 #include "WorkflowDockLayoutController.hpp"
@@ -47,6 +50,8 @@
 #include <QCloseEvent>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QCryptographicHash>
+#include <QFile>
 #include <QDirIterator>
 #include <QFile>
 #include <QFileDialog>
@@ -54,6 +59,9 @@
 #include <QHash>
 #include <QIcon>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMetaMethod>
@@ -65,6 +73,7 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QScopedValueRollback>
+#include <QSaveFile>
 #include <QSet>
 #include <QShowEvent>
 #include <QStorageInfo>
@@ -465,7 +474,7 @@ void RobWorkStudio::setupFileActions ()
 
     // 第十一阶段新增：从 URDF/XML 机器人文件创建草稿项目，交由 RobotModelBuilder 导入。
     QAction* createRobotProjectAction =
-        new QAction (tr ("Create Project from &Robot File..."), this);    // owned
+        new QAction (tr ("Create Project from Robot &URDF..."), this);    // owned
     connect (createRobotProjectAction, SIGNAL (triggered ()), this,
              SLOT (createProjectFromRobotFile ()));
 
@@ -1289,17 +1298,18 @@ void RobWorkStudio::newProject ()
 
     const QString previousDirectory = QString::fromStdString (
         _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
-    QString projectFile = QFileDialog::getSaveFileName (this,
-                                                        tr ("New RobWorkStudio Project"),
-                                                        previousDirectory,
-                                                        tr ("RobWorkStudio Project (*.rwproj)"));
-    if (projectFile.isEmpty ())
+    ProjectCreationWizard wizard (previousDirectory, this);
+    if (wizard.exec () != QDialog::Accepted)
         return;
-    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
-        projectFile += QStringLiteral (".rwproj");
+    const ProjectCreationRequest request = wizard.request ();
+    if (!request.isValid (&error)) {
+        QMessageBox::warning (this, tr ("Project Details"), error);
+        return;
+    }
 
     error.clear ();
-    if (!createProjectWithRobotModelBuilderPaths (projectFile, callbacks, &error)) {
+    if (!createProjectWithRobotModelBuilderPaths (
+            request.projectFilePath (), request.projectName, callbacks, &error)) {
         if (!error.isEmpty ())
             QMessageBox::critical (this, tr ("Create Project Failed"), error);
         return;
@@ -1337,7 +1347,7 @@ bool RobWorkStudio::createProjectFromRobotFilePaths (
 
     PreparedRobotProject prepared;
     if (!_projectManager.prepareProjectFromRobotFile (
-            absoluteProjectFile, sourcePath, prepared, error))
+            absoluteProjectFile, sourcePath, callbacks.options, prepared, error))
         return false;
 
     const QString managedSourceProjectPath = prepared.packaged.sourceResource.path;
@@ -1434,6 +1444,15 @@ bool RobWorkStudio::createProjectFromRobotFilePaths (
 
 bool RobWorkStudio::createProjectWithRobotModelBuilderPaths (
     const QString& projectFile,
+    const NewRobotProjectCallbacks& callbacks,
+    QString* error)
+{
+    return createProjectWithRobotModelBuilderPaths (projectFile, QString (), callbacks, error);
+}
+
+bool RobWorkStudio::createProjectWithRobotModelBuilderPaths (
+    const QString& projectFile,
+    const QString& projectName,
     const NewRobotProjectCallbacks& callbacks,
     QString* error)
 {
@@ -2292,8 +2311,19 @@ bool RobWorkStudio::createProjectWithRobotModelBuilderPaths (
     };
 
     const ProjectManager previousManager = _projectManager;
+    const QString trimmedProjectName = projectName.trimmed ();
+    if (!trimmedProjectName.isEmpty () &&
+        (trimmedProjectName == QStringLiteral (".") || trimmedProjectName == QStringLiteral ("..") ||
+         QFileInfo (trimmedProjectName).fileName () != trimmedProjectName)) {
+        if (error != nullptr)
+            *error = QStringLiteral ("The project name must be a single file name.");
+        return false;
+    }
+
     ProjectManifest candidateManifest;
-    candidateManifest.project.name = QFileInfo (absoluteProjectFile).completeBaseName ();
+    candidateManifest.project.name = trimmedProjectName.isEmpty ()
+        ? QFileInfo (absoluteProjectFile).completeBaseName ()
+        : trimmedProjectName;
     candidateManifest.project.description =
         QStringLiteral ("Empty RobotModelBuilder project awaiting bootstrap.");
     candidateManifest.settings.insert (QStringLiteral ("pathPolicy"),
@@ -2541,11 +2571,16 @@ void RobWorkStudio::createProjectFromRobotFile ()
 {
     const QString previousDirectory = QString::fromStdString (
         _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
-    const QString sourcePath = QFileDialog::getOpenFileName (
-        this, tr ("Create Project from Robot File"), previousDirectory,
-        tr ("URDF Robot Files (*.urdf *.xml);;All Files (*.*)"));
-    if (sourcePath.isEmpty ())
+    RobotProjectImportWizard importWizard (previousDirectory, this);
+    if (importWizard.exec () != QDialog::Accepted)
         return;
+    const RobotProjectImportRequest importRequest = importWizard.request ();
+    QString requestError;
+    if (!importRequest.isValid (&requestError)) {
+        QMessageBox::warning (this, tr ("Import Settings"), requestError);
+        return;
+    }
+    const QString sourcePath = importRequest.sourcePath;
 
     QString sourceError;
     const RobotProjectSourceKind sourceKind = classifyRobotProjectSource (sourcePath, &sourceError);
@@ -2585,23 +2620,33 @@ void RobWorkStudio::createProjectFromRobotFile ()
         return;
     }
 
-    QString projectFile = QFileDialog::getSaveFileName (
-        this, tr ("New RobWorkStudio Project"), QFileInfo (sourcePath).absolutePath (),
-        tr ("RobWorkStudio Project (*.rwproj)"));
-    if (projectFile.isEmpty ())
-        return;
-    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
-        projectFile += QStringLiteral (".rwproj");
+    const QString projectFile = importRequest.projectFilePath ();
 
     RobotProjectImportCallbacks callbacks;
-    callbacks.preflight = [builder] (const QString& path,
+    callbacks.options = importRequest.options;
+    QVariantMap builderImportOptions;
+    builderImportOptions.insert (QStringLiteral ("meshImportMode"),
+                                 static_cast< int > (importRequest.options.meshImportMode));
+    builderImportOptions.insert (QStringLiteral ("missingMeshPolicy"),
+                                 static_cast< int > (importRequest.options.missingMeshPolicy));
+    builderImportOptions.insert (QStringLiteral ("packageRoots"), importRequest.options.packageRoots);
+    const QByteArray optionsPreflightSignature = QMetaObject::normalizedSignature (
+        "preflightRobotProjectSourceWithOptions(QString,QString,QVariantMap)");
+    const bool supportsImportOptions = builder->metaObject ()->indexOfMethod (optionsPreflightSignature) >= 0;
+    callbacks.preflight = [builder, builderImportOptions, supportsImportOptions] (const QString& path,
                                      const QString& projectRoot,
                                      QString* error) {
         QString result;
-        if (!QMetaObject::invokeMethod (
-                builder, "preflightRobotProjectSource", Qt::DirectConnection,
-                Q_RETURN_ARG (QString, result), Q_ARG (QString, path),
-                Q_ARG (QString, projectRoot))) {
+        const bool invoked = supportsImportOptions
+            ? QMetaObject::invokeMethod (
+                  builder, "preflightRobotProjectSourceWithOptions", Qt::DirectConnection,
+                  Q_RETURN_ARG (QString, result), Q_ARG (QString, path),
+                  Q_ARG (QString, projectRoot), Q_ARG (QVariantMap, builderImportOptions))
+            : QMetaObject::invokeMethod (
+                  builder, "preflightRobotProjectSource", Qt::DirectConnection,
+                  Q_RETURN_ARG (QString, result), Q_ARG (QString, path),
+                  Q_ARG (QString, projectRoot));
+        if (!invoked) {
             if (error != nullptr)
                 *error = QStringLiteral ("RobotModelBuilder preflight invocation failed.");
             return false;
@@ -2640,6 +2685,48 @@ void RobWorkStudio::createProjectFromRobotFile ()
             QMessageBox::critical (this, tr ("Create Project Failed"), error);
         return;
     }
+    {
+        const QString seedPath = QDir (QFileInfo (projectFile).absolutePath ()).filePath (
+            QStringLiteral ("structure-optimization-seed.main.json"));
+        ProjectResource seedResource;
+        seedResource.id = QStringLiteral ("structure-optimization-seed.main");
+        seedResource.kind = QStringLiteral ("rws.structure-optimization-seed");
+        seedResource.path = QStringLiteral ("structure-optimization-seed.main.json");
+        seedResource.ownership = QStringLiteral ("generated");
+        seedResource.required = false;
+        QString seedError;
+        QJsonObject seed;
+        seed.insert (QStringLiteral ("schemaVersion"), 1);
+        seed.insert (QStringLiteral ("sourceKind"), QStringLiteral ("urdf"));
+        QJsonArray links;
+        for (const QString& link : importRequest.mutableLinks)
+            links.append (link);
+        seed.insert (QStringLiteral ("mutableLinks"), links);
+        QJsonObject ranges;
+        for (auto range = importRequest.mutableLinkRanges.constBegin ();
+             range != importRequest.mutableLinkRanges.constEnd ();
+             ++range) {
+            QJsonObject values;
+            values.insert (QStringLiteral ("minimum"), range.value ().first);
+            values.insert (QStringLiteral ("maximum"), range.value ().second);
+            ranges.insert (range.key (), values);
+        }
+        seed.insert (QStringLiteral ("mutableLinkRanges"), ranges);
+        QSaveFile file (seedPath);
+        if (!file.open (QIODevice::WriteOnly) ||
+            file.write (QJsonDocument (seed).toJson (QJsonDocument::Indented)) < 0 ||
+            !file.commit ()) {
+            if (seedError.isEmpty ())
+                seedError = QStringLiteral ("Could not persist the structure optimization seed.");
+            QMessageBox::critical (this, tr ("Create Project Failed"), seedError);
+            return;
+        }
+        if (!_projectManager.addGeneratedResource (seedResource, &seedError) ||
+            !_projectManager.saveProject (&seedError)) {
+            QMessageBox::critical (this, tr ("Create Project Failed"), seedError);
+            return;
+        }
+    }
     if (!builder->isVisible ())
         builder->showPlugin ();
 }
@@ -2650,29 +2737,24 @@ void RobWorkStudio::createProjectFromWorkCell ()
 {
     const QString previousDirectory = QString::fromStdString (
         _settingsMap->get< std::string > ("PreviousOpenDirectory", ""));
-    const QString sourceWorkCell = QFileDialog::getOpenFileName (
-        this,
-        tr ("Create Project from WorkCell"),
-        previousDirectory,
-        tr ("WorkCell Files (*.wc.xml *.wc *.xml);;All Files (*.*)"));
-    if (sourceWorkCell.isEmpty ())
+    WorkCellProjectImportWizard importWizard (previousDirectory, this);
+    if (importWizard.exec () != QDialog::Accepted)
         return;
-
-    QString projectFile = QFileDialog::getSaveFileName (
-        this,
-        tr ("New RobWorkStudio Project"),
-        QFileInfo (sourceWorkCell).absolutePath (),
-        tr ("RobWorkStudio Project (*.rwproj)"));
-    if (projectFile.isEmpty ())
+    const WorkCellProjectImportRequest importRequest = importWizard.request ();
+    QString requestError;
+    if (!importRequest.isValid (&requestError)) {
+        QMessageBox::warning (this, tr ("Import Settings"), requestError);
         return;
-    if (!projectFile.endsWith (QStringLiteral (".rwproj"), Qt::CaseInsensitive))
-        projectFile += QStringLiteral (".rwproj");
+    }
+    const QString projectFile = importRequest.projectFilePath ();
+    const QString sourceWorkCell = importRequest.sourcePath;
 
     if (!confirmProjectClose ())
         return;
 
     QString error;
-    if (!_projectManager.createProjectFromWorkCell (projectFile, sourceWorkCell, &error)) {
+    if (!_projectManager.createProjectFromWorkCell (
+            projectFile, sourceWorkCell, importRequest.options, &error)) {
         QMessageBox::critical (this, tr ("Create Project Failed"), error);
         return;
     }
@@ -2684,6 +2766,13 @@ void RobWorkStudio::createProjectFromWorkCell ()
     if (!openProjectFile (projectFile, &error)) {
         QMessageBox::critical (this, tr ("Open Created Project Failed"), error);
         return;
+    }
+    for (RobWorkStudioPlugin* plugin : getPlugins ()) {
+        if (plugin != NULL && plugin->name () == QStringLiteral ("RobotModelBuilder")) {
+            if (!plugin->isVisible ())
+                plugin->showPlugin ();
+            break;
+        }
     }
 
     _settingsMap->set< std::string > ("PreviousOpenDirectory",
@@ -3004,6 +3093,8 @@ RobWorkStudio::RobotProjectSourceKind RobWorkStudio::classifyRobotProjectSource 
             *error = tr ("Could not open the selected robot file: %1").arg (file.errorString ());
         return RobotProjectSourceKind::Unsupported;
     }
+    if (QFileInfo (sourcePath).suffix ().compare (QStringLiteral ("xacro"), Qt::CaseInsensitive) == 0)
+        return RobotProjectSourceKind::Urdf;
 
     QXmlStreamReader xml (&file);
     while (!xml.atEnd ()) {
@@ -3223,6 +3314,165 @@ void RobWorkStudio::notifyProjectDocumentChanged ()
     // 不在这里调用保存或修改清单。Provider 的 isDirty 由 Registry 聚合，标题栏只是
     // 可视反馈；真正写入仍必须经过多文件暂存事务，避免一次控件编辑绕过失败回滚。
     updateProjectWindowTitle ();
+}
+
+namespace {
+
+QString workflowFileFingerprint (const QString& path)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly))
+        return QString ();
+    QCryptographicHash digest (QCryptographicHash::Sha256);
+    while (!file.atEnd ())
+        digest.addData (file.read (64 * 1024));
+    return QString::fromLatin1 (digest.result ().toHex ());
+}
+
+WorkflowProjectSnapshot currentWorkflowSnapshot (RobWorkStudio* studio)
+{
+    WorkflowProjectSnapshot snapshot = studio->workflowProjectState ();
+    QString modelPath;
+    QString scenePath;
+    const QString sceneResourceId = studio->mainWorkCellResourceId ();
+    snapshot.modelAvailable = studio->resolveProjectResource (
+        QStringLiteral ("robot-model.main"), modelPath) && QFileInfo (modelPath).isFile ();
+    snapshot.sceneAvailable = !sceneResourceId.isEmpty () &&
+                              studio->resolveProjectResource (sceneResourceId, scenePath) &&
+                              QFileInfo (scenePath).isFile ();
+    snapshot.modelFingerprint = workflowFileFingerprint (modelPath);
+    snapshot.sceneFingerprint = workflowFileFingerprint (scenePath);
+    return snapshot;
+}
+
+QString workflowEvidenceFingerprint (const QString& stage,
+                                     const QString& requirementFingerprint,
+                                     const WorkflowProjectSnapshot& snapshot)
+{
+    const QByteArray source = stage.toUtf8 () + '\n' + requirementFingerprint.toUtf8 () + '\n' +
+                              snapshot.modelFingerprint.toUtf8 () + '\n' +
+                              snapshot.sceneFingerprint.toUtf8 ();
+    return QString::fromLatin1 (
+        QCryptographicHash::hash (source, QCryptographicHash::Sha256).toHex ());
+}
+
+bool publishWorkflowState (RobWorkStudio* studio,
+                           WorkflowStage stage,
+                           const QString& requirementFingerprint,
+                           bool completed,
+                           QString* error)
+{
+    if (studio->projectDirectory ().isEmpty ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Workflow stage publication requires an open project.");
+        return false;
+    }
+
+    const WorkflowProjectSnapshot previous = studio->workflowProjectState ();
+    WorkflowProjectSnapshot next = currentWorkflowSnapshot (studio);
+    if (stage == WorkflowStage::Requirements) {
+        WorkflowStageController::invalidateFrom (next, WorkflowStage::Requirements);
+        next.requirementsFrozen = completed;
+        if (completed) {
+            next.requirementFingerprint = requirementFingerprint;
+            next.requirementModelFingerprint = next.modelFingerprint;
+            next.requirementSceneFingerprint = next.sceneFingerprint;
+        }
+    }
+    else if (stage == WorkflowStage::Kinematics) {
+        next.kinematicValidationPassed = completed;
+        if (completed) {
+            next.kinematicValidationFingerprint =
+                workflowEvidenceFingerprint (QStringLiteral ("kinematics"),
+                                             requirementFingerprint, next);
+            next.kinematicModelFingerprint = next.modelFingerprint;
+            next.kinematicRequirementFingerprint = requirementFingerprint;
+            next.kinematicSceneFingerprint = next.sceneFingerprint;
+        }
+        else
+            WorkflowStageController::invalidateFrom (next, WorkflowStage::Kinematics);
+    }
+    else if (stage == WorkflowStage::StructuralOptimization) {
+        next.optimizationArtifactAvailable = completed;
+        if (completed) {
+            next.optimizationModelFingerprint = next.modelFingerprint;
+            next.optimizationRequirementFingerprint = next.requirementFingerprint;
+            next.optimizationKinematicFingerprint = next.kinematicValidationFingerprint;
+            next.optimizationSceneFingerprint = next.sceneFingerprint;
+        }
+        else
+            WorkflowStageController::invalidateFrom (next,
+                                                      WorkflowStage::StructuralOptimization);
+    }
+
+    if (!studio->setWorkflowProjectState (next, error) ||
+        !studio->saveCurrentProject (error)) {
+        QString ignored;
+        studio->setWorkflowProjectState (previous, &ignored);
+        return false;
+    }
+    studio->notifyWorkflowStageChanged ();
+    return true;
+}
+
+}    // namespace
+
+bool RobWorkStudio::publishWorkflowRequirements (const QString& requirementFingerprint,
+                                                 QString* error)
+{
+    return publishWorkflowState (this, WorkflowStage::Requirements,
+                                 requirementFingerprint, true, error);
+}
+
+bool RobWorkStudio::publishWorkflowKinematicValidation (const QString& requirementFingerprint,
+                                                        bool passed,
+                                                        QString* error)
+{
+    return publishWorkflowState (this, WorkflowStage::Kinematics,
+                                 requirementFingerprint, passed, error);
+}
+
+bool RobWorkStudio::publishWorkflowOptimization (bool completed, QString* error)
+{
+    return publishWorkflowState (this, WorkflowStage::StructuralOptimization,
+                                 QString (), completed, error);
+}
+
+bool RobWorkStudio::invalidateWorkflowStateFrom (WorkflowStage stage, QString* error)
+{
+    if (projectDirectory ().isEmpty ()) {
+        if (error != nullptr)
+            *error = QStringLiteral ("Workflow state invalidation requires an open project.");
+        return false;
+    }
+
+    const WorkflowProjectSnapshot previous = workflowProjectState ();
+    if (!_projectManager.invalidateWorkflowStateFrom (stage, error) ||
+        !saveCurrentProject (error)) {
+        QString ignored;
+        _projectManager.setWorkflowProjectState (previous, &ignored);
+        return false;
+    }
+    notifyWorkflowStageChanged ();
+    return true;
+}
+
+WorkflowProjectSnapshot RobWorkStudio::workflowProjectState () const
+{
+    return _projectManager.workflowProjectState ();
+}
+
+bool RobWorkStudio::setWorkflowProjectState (const WorkflowProjectSnapshot& state,
+                                             QString* error)
+{
+    return _projectManager.setWorkflowProjectState (state, error);
+}
+
+void RobWorkStudio::notifyWorkflowStageChanged ()
+{
+    if (_workflowDockLayoutController == nullptr)
+        _workflowDockLayoutController = std::make_unique< WorkflowDockLayoutController > (this);
+    _workflowDockLayoutController->revalidateReadiness ();
 }
 
 bool RobWorkStudio::hasUnsavedProjectChanges () const

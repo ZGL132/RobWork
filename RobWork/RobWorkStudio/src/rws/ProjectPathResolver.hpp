@@ -48,6 +48,13 @@ class ProjectPathResolver
                                             const QString& candidatePath,
                                             QString* error = nullptr);
 
+    /**
+     * RobWork's Windows XML loader currently receives narrow paths and cannot open
+     * non-ASCII paths. Reject those paths before a project transaction starts.
+     */
+    static bool validateRobWorkCompatiblePath (const QString& path,
+                                                QString* error = nullptr);
+
     static bool isLinkOrReparsePoint (const QString& path);
     static bool removeContainedUnsafeEntry (const QString& projectRoot,
                                              const QString& entryPath,

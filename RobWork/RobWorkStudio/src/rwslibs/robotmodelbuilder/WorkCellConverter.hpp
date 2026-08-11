@@ -46,6 +46,12 @@ class WorkCellConverter
                                    const std::string& saveDirectory,
                                    QStringList& warnings);
 
+    static RobotModelSpec convert (const rw::models::WorkCell& workcell,
+                                   const rw::kinematics::State& state,
+                                   const std::string& saveDirectory,
+                                   QStringList& warnings,
+                                   const std::string& targetDeviceName);
+
     /// 检查 WorkCell 中是否包含可转换的机器人设备 (JointDevice)
     static bool hasSerialDevice (const rw::models::WorkCell& workcell);
     
@@ -64,7 +70,8 @@ class WorkCellConverter
     /// 从 WorkCell 提取主串联机器人设备 (SerialDevice)
     static bool extractSerialDevice (const rw::models::WorkCell& workcell,
                                      RobotModelSpec& spec,
-                                     QStringList& warnings);
+                                     QStringList& warnings,
+                                     const std::string& targetDeviceName);
                                      
     /// 提取关节 (Joints) 的坐标系变换与类型
     static void extractJoints (const rw::models::JointDevice& device,

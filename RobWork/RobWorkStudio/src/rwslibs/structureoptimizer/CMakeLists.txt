@@ -98,6 +98,8 @@ if(build)
         StructureOptimizerPlugin.hpp
         StructureVariableTableModel.cpp
         StructureVariableTableModel.hpp
+        StructureVariableFilterProxyModel.cpp
+        StructureVariableFilterProxyModel.hpp
         OptimizationTaskTableModel.cpp
         OptimizationTaskTableModel.hpp
         StructureCandidateTableModel.cpp
@@ -135,6 +137,7 @@ if(build)
         StructureOptimizerPlugin.cpp
         StructureOptimizerWidget.cpp
         StructureVariableTableModel.cpp
+        StructureVariableFilterProxyModel.cpp
         OptimizationTaskTableModel.cpp
         StructureCandidateTableModel.cpp
         StructureOptimizationController.cpp
@@ -145,6 +148,7 @@ if(build)
         StructureOptimizerPlugin.hpp
         StructureOptimizerWidget.hpp
         StructureVariableTableModel.hpp
+        StructureVariableFilterProxyModel.hpp
         OptimizationTaskTableModel.hpp
         StructureCandidateTableModel.hpp
         StructureOptimizationController.hpp
@@ -185,6 +189,11 @@ if(build)
 
     # ── CTest 注册 ───────────────────────────────────────────────────────
     if(BUILD_TESTING)
+        if(WIN32)
+            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM windows)
+        else()
+            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM offscreen)
+        endif()
         add_test(
             NAME sdurws_structureoptimizer_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test>
@@ -193,6 +202,7 @@ if(build)
             sdurws_structureoptimizer_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
         add_test(
             NAME sdurws_structureoptimizer_test_evaluator_consistency
@@ -216,11 +226,6 @@ if(build)
             NAME sdurws_structureoptimizer_resource_dependencies_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> resource_dependencies
         )
-        if(WIN32)
-            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM windows)
-        else()
-            set(STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM offscreen)
-        endif()
         set_tests_properties(
             sdurws_structureoptimizer_resource_dependencies_test
             PROPERTIES

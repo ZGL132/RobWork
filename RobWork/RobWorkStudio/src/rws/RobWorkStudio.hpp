@@ -27,6 +27,7 @@
 #include "RWStudioView3D.hpp"
 #include "ProjectDocumentRegistry.hpp"
 #include "ProjectManager.hpp"
+#include "WorkflowStageController.hpp"
 #include "WorkCellProjectDocumentProvider.hpp"
 
 #include <rw/core/Event.hpp>
@@ -75,6 +76,7 @@ QString robotProjectWorkCellReadinessError (const RobWorkStudio* studio);
 
 struct RobotProjectImportCallbacks
 {
+    RobotProjectImportOptions options;
     std::function< bool (const QString&, const QString&, QString*) > preflight;
     std::function< bool (QString*) > confirmClose;
     std::function< bool (const QString&, const QString&, QString*) > commit;
@@ -138,6 +140,11 @@ class RobWorkStudio : public QMainWindow
         const QString& projectFile,
         const NewRobotProjectCallbacks& callbacks,
         QString* error = nullptr);
+    bool createProjectWithRobotModelBuilderPaths (
+        const QString& projectFile,
+        const QString& projectName,
+        const NewRobotProjectCallbacks& callbacks,
+        QString* error = nullptr);
 
     /**
      * @brief 注册由业务插件拥有的项目文档 Provider。
@@ -179,6 +186,18 @@ class RobWorkStudio : public QMainWindow
      * 仍由“保存项目”命令和 ProjectSaveTransaction 负责。
      */
     void notifyProjectDocumentChanged ();
+
+    bool publishWorkflowRequirements (const QString& requirementFingerprint,
+                                      QString* error = nullptr);
+    bool publishWorkflowKinematicValidation (const QString& requirementFingerprint,
+                                             bool passed,
+                                             QString* error = nullptr);
+    bool publishWorkflowOptimization (bool completed, QString* error = nullptr);
+    bool invalidateWorkflowStateFrom (WorkflowStage stage, QString* error = nullptr);
+    WorkflowProjectSnapshot workflowProjectState () const;
+    bool setWorkflowProjectState (const WorkflowProjectSnapshot& state,
+                                  QString* error = nullptr);
+    void notifyWorkflowStageChanged ();
 
     /** @brief Returns true when the project manifest or any managed document is dirty. */
     bool hasUnsavedProjectChanges () const;

@@ -637,6 +637,15 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
                                            const std::string& saveDirectory,
                                            QStringList& warnings)
 {
+    return convert (workcell, state, saveDirectory, warnings, std::string ());
+}
+
+RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
+                                           const rw::kinematics::State& state,
+                                           const std::string& saveDirectory,
+                                           QStringList& warnings,
+                                           const std::string& targetDeviceName)
+{
     RobotModelSpec spec;
 
     // ---- 1. 自动提取与整理机器人模型名称 ----
@@ -659,7 +668,7 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
 
     // ---- 3. 从 C++ 内存 WorkCell 对象中提取骨架数据 ----
     // 3.1 提取串联关节设备 (JointDevice): 包含 Joint 名称、类型、相对 SE(3) 矩阵、Limits 及预设 Q 位姿
-    extractSerialDevice (workcell, spec, warnings);
+    extractSerialDevice (workcell, spec, warnings, targetDeviceName);
     // 3.2 提取场景级别的独立坐标系 (Scene Frames, 如 Table, Workpiece 等)
     extractSceneFrames (workcell, state, spec);
     // 3.3 初步提取渲染几何对象 (此时内存中的 Geometry 形状信息尚不完整)
@@ -771,7 +780,8 @@ bool WorkCellConverter::hasConvertibleRobotModel (const RobotModelSpec& spec)
 // =============================================================================
 bool WorkCellConverter::extractSerialDevice (const rw::models::WorkCell& workcell,
                                              RobotModelSpec& spec,
-                                             QStringList& warnings)
+                                             QStringList& warnings,
+                                             const std::string& targetDeviceName)
 {
     // ---- 1. 获取 WorkCell 中加载的所有设备列表 ----
     const std::vector< rw::core::Ptr< rw::models::Device > > devices = workcell.getDevices ();
@@ -780,14 +790,18 @@ bool WorkCellConverter::extractSerialDevice (const rw::models::WorkCell& workcel
     // 遍历设备列表，寻找第一个可以成功转型为 JointDevice (关节设备/串联机械臂) 的对象
     for (const rw::core::Ptr< rw::models::Device >& dev : devices) {
         jointDevice = dev.cast< rw::models::JointDevice > ();
-        if (jointDevice != NULL)
+        if (jointDevice != NULL &&
+            (targetDeviceName.empty () || jointDevice->getName () == targetDeviceName))
             break; // 优先选取找到的第一个主关节设备
     }
 
     // ---- 2. 检查是否找到有效的 JointDevice ----
     if (jointDevice == NULL) {
         // 如果 WorkCell 中完全没有关节设备 (例如只有静态环境或物体)，记录警告并中断提取
-        warnings << "No JointDevice found in WorkCell. Cannot extract robot kinematics.";
+        warnings << (targetDeviceName.empty ()
+                         ? QStringLiteral ("No JointDevice found in WorkCell. Cannot extract robot kinematics.")
+                         : QStringLiteral ("Selected target device '%1' was not found in WorkCell.").arg (
+                               QString::fromStdString (targetDeviceName)));
         return false;
     }
 

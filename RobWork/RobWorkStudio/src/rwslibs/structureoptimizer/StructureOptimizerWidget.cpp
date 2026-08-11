@@ -11,6 +11,7 @@
 #include "StructureOptimizationProjectFactory.hpp"
 #include "FrozenRequirementProjectImportService.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureVariableFilterProxyModel.hpp"
 #include "StructureVariableTableModel.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
@@ -18,6 +19,7 @@
 #include <rws/RobWorkStudio.hpp>
 
 #include <QComboBox>
+#include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QDir>
 #include <QFormLayout>
@@ -28,15 +30,23 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QInputDialog>
+#include <QItemSelectionModel>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QSet>
 #include <QTabWidget>
 #include <QTableView>
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <optional>
 #include <sstream>
 
 using namespace rws;
@@ -59,6 +69,55 @@ QSpinBox* makeSpinBox(int minimum, int maximum, int value)
     spinBox->setRange(minimum, maximum);
     spinBox->setValue(value);
     return spinBox;
+}
+
+QString applyRobotImportSeed(RobWorkStudio* studio, StructureOptimizationProblem& problem)
+{
+    if (studio == nullptr)
+        return QString();
+    QString seedPath;
+    if (!studio->resolveProjectResource(QStringLiteral("structure-optimization-seed.main"),
+                                        seedPath, nullptr))
+        return QString();
+    QFile seedFile(seedPath);
+    if (!seedFile.open(QIODevice::ReadOnly))
+        return QObject::tr("The robot import seed could not be read: %1").arg(seedFile.errorString());
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(seedFile.readAll(), &parseError);
+    if (!document.isObject())
+        return QObject::tr("The robot import seed is invalid: %1").arg(parseError.errorString());
+
+    const QJsonObject root = document.object();
+    QSet<QString> selectedLinks;
+    for (const QJsonValue& value : root.value(QStringLiteral("mutableLinks")).toArray())
+        selectedLinks.insert(value.toString());
+    if (selectedLinks.isEmpty())
+        return QString();
+
+    const QJsonObject ranges = root.value(QStringLiteral("mutableLinkRanges")).toObject();
+    int applied = 0;
+    for (StructureDesignVariable& variable : problem.variables) {
+        const QString target = QString::fromStdString(variable.targetName);
+        if (!selectedLinks.contains(target))
+            continue;
+        variable.enabled = true;
+        variable.syncAssociatedGeometry = true;
+        const QJsonObject range = ranges.value(target).toObject();
+        if (!range.isEmpty()) {
+            const double minimum = range.value(QStringLiteral("minimum")).toDouble(variable.minimum);
+            const double maximum = range.value(QStringLiteral("maximum")).toDouble(variable.maximum);
+            if (minimum < maximum) {
+                variable.minimum = minimum;
+                variable.maximum = maximum;
+                variable.currentValue = std::clamp(variable.currentValue, minimum, maximum);
+                variable.preferredValue = std::clamp(variable.preferredValue, minimum, maximum);
+            }
+        }
+        ++applied;
+    }
+    return applied == 0
+        ? QObject::tr("The robot import seed contains links that have no matching design variables.")
+        : QObject::tr("Applied %1 robot import link seed variable(s).").arg(applied);
 }
 
 std::string uniqueId(const std::string& prefix, const std::vector<std::string>& existing)
@@ -85,6 +144,28 @@ QString constraintKindLabel(StructureConstraintKind kind)
     case StructureConstraintKind::MinimumWorkspaceCoverage: return "Minimum Workspace Coverage";
     }
     return QString();
+}
+
+QString variableKindLabel(StructureVariableKind kind)
+{
+    switch (kind) {
+        case StructureVariableKind::JointPositionX: return "JointPositionX";
+        case StructureVariableKind::JointPositionY: return "JointPositionY";
+        case StructureVariableKind::JointPositionZ: return "JointPositionZ";
+        case StructureVariableKind::JointRotationRoll: return "JointRotationRoll";
+        case StructureVariableKind::JointRotationPitch: return "JointRotationPitch";
+        case StructureVariableKind::JointRotationYaw: return "JointRotationYaw";
+        case StructureVariableKind::DhA: return "DhA";
+        case StructureVariableKind::DhD: return "DhD";
+        case StructureVariableKind::BaseHeight: return "BaseHeight";
+        case StructureVariableKind::TcpOffsetX: return "TcpOffsetX";
+        case StructureVariableKind::TcpOffsetY: return "TcpOffsetY";
+        case StructureVariableKind::TcpOffsetZ: return "TcpOffsetZ";
+        case StructureVariableKind::LinkRadius: return "LinkRadius";
+        case StructureVariableKind::LinkWidth: return "LinkWidth";
+        case StructureVariableKind::LinkHeight: return "LinkHeight";
+    }
+    return "Unknown";
 }
 
 StructureConstraint makeDefaultConstraint(StructureConstraintKind kind,
@@ -123,11 +204,13 @@ StructureConstraint makeDefaultConstraint(StructureConstraintKind kind,
 StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     : QWidget(parent),
       _variableModel(new StructureVariableTableModel(this)),
+      _variableFilterModel(new StructureVariableFilterProxyModel(this)),
       _taskModel(new OptimizationTaskTableModel(this)),
       _constraintModel(new StructureConstraintTableModel(this)),
       _candidateModel(new StructureCandidateTableModel(this)),
       _controller(new StructureOptimizationController(this))
 {
+    _variableFilterModel->setSourceModel(_variableModel);
     _tabs = new QTabWidget(this);
     _tabs->setObjectName("structureOptimizerTabs");
     _tabs->addTab(createVariablePage(), "Design Variables");
@@ -168,6 +251,8 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::cancelOptimization);
     connect(_variableModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
+    connect(_variableModel, &StructureVariableTableModel::editRejected, this,
+            [this](const QString& message) { _statusLabel->setText(message); });
     connect(_taskModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
     connect(_constraintModel, &QAbstractItemModel::dataChanged,
@@ -442,7 +527,119 @@ QWidget* StructureOptimizerWidget::createVariablePage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    layout->addWidget(makeTableView(_variableModel, "structureVariableTable"));
+    _variableView = makeTableView(_variableFilterModel, "structureVariableTable");
+    _variableView->setAlternatingRowColors(true);
+    _variableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _variableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    _variableView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    QHeaderView* header = _variableView->horizontalHeader();
+    header->setStretchLastSection(false);
+    for (const int column : {StructureVariableTableModel::IdColumn,
+                             StructureVariableTableModel::LabelColumn,
+                             StructureVariableTableModel::TargetColumn,
+                             StructureVariableTableModel::KindColumn}) {
+        header->setSectionResizeMode(column, QHeaderView::Interactive);
+    }
+    for (const int column : {StructureVariableTableModel::CurrentColumn,
+                             StructureVariableTableModel::MinimumColumn,
+                             StructureVariableTableModel::MaximumColumn,
+                             StructureVariableTableModel::StepColumn,
+                             StructureVariableTableModel::PreferredColumn,
+                             StructureVariableTableModel::PreferenceWeightColumn}) {
+        header->setSectionResizeMode(column, QHeaderView::Fixed);
+        _variableView->setColumnWidth(column, 96);
+    }
+    header->setSectionResizeMode(StructureVariableTableModel::EnabledColumn,
+                                 QHeaderView::Fixed);
+    _variableView->setColumnWidth(StructureVariableTableModel::EnabledColumn, 56);
+
+    _variableView->setColumnWidth(StructureVariableTableModel::IdColumn, 140);
+    _variableView->setColumnWidth(StructureVariableTableModel::LabelColumn, 180);
+    _variableView->setColumnWidth(StructureVariableTableModel::TargetColumn, 160);
+    _variableView->setColumnWidth(StructureVariableTableModel::KindColumn, 160);
+    _variableView->setColumnHidden(StructureVariableTableModel::PreferredColumn, true);
+    _variableView->setColumnHidden(StructureVariableTableModel::PreferenceWeightColumn, true);
+    layout->addWidget(_variableView);
+
+    QHBoxLayout* variableActions = new QHBoxLayout();
+    _variableSearch = new QLineEdit(page);
+    _variableSearch->setObjectName("structureVariableSearch");
+    _variableSearch->setPlaceholderText("Search variables");
+    _variableTypeFilter = new QComboBox(page);
+    _variableTypeFilter->setObjectName("structureVariableTypeFilter");
+    _variableTypeFilter->addItem("All Types");
+    for (int kind = static_cast<int>(StructureVariableKind::JointPositionX);
+         kind <= static_cast<int>(StructureVariableKind::LinkHeight); ++kind) {
+        const StructureVariableKind value = static_cast<StructureVariableKind>(kind);
+        _variableTypeFilter->addItem(variableKindLabel(value), kind);
+    }
+    _showVariableAdvanced = new QCheckBox("Show Advanced", page);
+    _showVariableAdvanced->setObjectName("showStructureVariableAdvanced");
+    _addMissingSuggestionsButton = new QPushButton("Add Missing Suggestions", page);
+    _addMissingSuggestionsButton->setObjectName("addMissingStructureVariablesButton");
+    _addVariableButton = new QPushButton("Add Variable", page);
+    _addVariableButton->setObjectName("addStructureVariableButton");
+    _duplicateVariableButton = new QPushButton("Duplicate Selected", page);
+    _duplicateVariableButton->setObjectName("duplicateStructureVariableButton");
+    _removeVariablesButton = new QPushButton("Remove Selected", page);
+    _removeVariablesButton->setObjectName("removeStructureVariablesButton");
+    _restoreVariableBaselineButton = new QPushButton("Restore Model Baseline", page);
+    _restoreVariableBaselineButton->setObjectName("restoreStructureVariableBaselineButton");
+    variableActions->addWidget(_variableSearch);
+    variableActions->addWidget(_variableTypeFilter);
+    variableActions->addWidget(_showVariableAdvanced);
+    variableActions->addWidget(_addMissingSuggestionsButton);
+    variableActions->addWidget(_addVariableButton);
+    variableActions->addWidget(_duplicateVariableButton);
+    variableActions->addWidget(_removeVariablesButton);
+    variableActions->addWidget(_restoreVariableBaselineButton);
+    variableActions->addStretch();
+    layout->addLayout(variableActions);
+
+    connect(_addVariableButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::addVariable);
+    connect(_addMissingSuggestionsButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::addMissingSuggestedVariables);
+    connect(_duplicateVariableButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::duplicateSelectedVariable);
+    connect(_removeVariablesButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::removeSelectedVariables);
+    connect(_restoreVariableBaselineButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::restoreModelBaseline);
+    connect(_variableView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, [this]() { updateVariableActionState(); });
+    connect(_variableSearch, &QLineEdit::textChanged, this, [this](const QString& keyword) {
+        _variableFilterModel->setKeyword(keyword);
+        updateVariableActionState();
+    });
+    connect(_variableTypeFilter, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            [this](int) {
+                const QVariant value = _variableTypeFilter->currentData();
+                _variableFilterModel->setKindFilter(value.isValid()
+                    ? std::optional<StructureVariableKind>(
+                        static_cast<StructureVariableKind>(value.toInt()))
+                    : std::nullopt);
+                updateVariableActionState();
+            });
+    connect(_showVariableAdvanced, &QCheckBox::toggled, this, [this](bool visible) {
+        _variableView->setColumnHidden(StructureVariableTableModel::PreferredColumn, !visible);
+        _variableView->setColumnHidden(
+            StructureVariableTableModel::PreferenceWeightColumn, !visible);
+    });
+    connect(_variableModel, &QAbstractItemModel::modelReset,
+            this, [this]() { updateVariableActionState(); });
+    connect(_variableModel, &QAbstractItemModel::rowsInserted, this,
+            [this](const QModelIndex&, int, int) { updateVariableActionState(); });
+    connect(_variableModel, &QAbstractItemModel::rowsRemoved, this,
+            [this](const QModelIndex&, int, int) { updateVariableActionState(); });
+    connect(_variableFilterModel, &QAbstractItemModel::modelReset,
+            this, [this]() { updateVariableActionState(); });
+    connect(_variableFilterModel, &QAbstractItemModel::rowsInserted, this,
+            [this](const QModelIndex&, int, int) { updateVariableActionState(); });
+    connect(_variableFilterModel, &QAbstractItemModel::rowsRemoved, this,
+            [this](const QModelIndex&, int, int) { updateVariableActionState(); });
+    updateVariableActionState();
     page->setLayout(layout);
     return page;
 }
@@ -627,6 +824,182 @@ QWidget* StructureOptimizerWidget::createReportPage()
     return page;
 }
 
+std::vector<StructureDesignVariable>
+StructureOptimizerWidget::availableSuggestedVariables() const
+{
+    const std::vector<StructureDesignVariable> suggested =
+        StructureOptimizationUiLogic::suggestVariables(_loadedProblem.context);
+    const std::vector<StructureDesignVariable>& current = _variableModel->variables();
+    std::vector<StructureDesignVariable> available;
+    available.reserve(suggested.size());
+    for (const StructureDesignVariable& candidate : suggested) {
+        const bool alreadyAdded = std::any_of(
+            current.begin(), current.end(), [&candidate](const StructureDesignVariable& variable) {
+                return variable.id == candidate.id;
+            });
+        if (!alreadyAdded)
+            available.push_back(candidate);
+    }
+    return available;
+}
+
+void StructureOptimizerWidget::updateVariableActionState()
+{
+    if (_variableView == nullptr || _addVariableButton == nullptr ||
+        _addMissingSuggestionsButton == nullptr || _duplicateVariableButton == nullptr ||
+        _removeVariablesButton == nullptr || _restoreVariableBaselineButton == nullptr ||
+        _variableSearch == nullptr || _variableTypeFilter == nullptr ||
+        _showVariableAdvanced == nullptr)
+        return;
+
+    const bool editable = _tabs != nullptr && _tabs->isEnabled() &&
+                          (_controller == nullptr || !_controller->isRunning());
+    _variableView->setEnabled(editable);
+    _variableSearch->setEnabled(editable);
+    _variableTypeFilter->setEnabled(editable);
+    _showVariableAdvanced->setEnabled(editable);
+    _addMissingSuggestionsButton->setEnabled(editable && !availableSuggestedVariables().empty());
+    _addVariableButton->setEnabled(editable && !availableSuggestedVariables().empty());
+    const bool hasSelection =
+        editable && _variableView->selectionModel() != nullptr &&
+        !_variableView->selectionModel()->selectedRows().isEmpty();
+    _duplicateVariableButton->setEnabled(hasSelection);
+    _removeVariablesButton->setEnabled(hasSelection);
+    _restoreVariableBaselineButton->setEnabled(editable);
+}
+
+void StructureOptimizerWidget::addVariable()
+{
+    if (_controller->isRunning())
+        return;
+
+    const std::vector<StructureDesignVariable> available = availableSuggestedVariables();
+    if (available.empty())
+        return;
+
+    QStringList labels;
+    labels.reserve(static_cast<int>(available.size()));
+    for (const StructureDesignVariable& candidate : available) {
+        labels.append(QString("%1 (%2)")
+                          .arg(QString::fromStdString(candidate.label),
+                               QString::fromStdString(candidate.id)));
+    }
+
+    bool accepted = false;
+    const QString selected = QInputDialog::getItem(
+        this, "Add Design Variable", "Available model variables:", labels, 0, false, &accepted);
+    if (!accepted)
+        return;
+    const int selectedIndex = labels.indexOf(selected);
+    if (selectedIndex < 0)
+        return;
+
+    if (_variableModel->appendVariable(available[static_cast<std::size_t>(selectedIndex)])) {
+        updateVariableActionState();
+        updateRunState();
+    }
+}
+
+void StructureOptimizerWidget::addMissingSuggestedVariables()
+{
+    if (_controller->isRunning())
+        return;
+
+    int added = 0;
+    for (const StructureDesignVariable& variable : availableSuggestedVariables()) {
+        if (_variableModel->appendVariable(variable))
+            ++added;
+    }
+    if (added > 0) {
+        updateVariableActionState();
+        updateRunState();
+    }
+}
+
+void StructureOptimizerWidget::duplicateSelectedVariable()
+{
+    if (_controller->isRunning() || _variableView == nullptr ||
+        !_variableView->currentIndex().isValid())
+        return;
+
+    const QModelIndex sourceIndex =
+        _variableFilterModel->mapToSource(_variableView->currentIndex());
+    if (!sourceIndex.isValid())
+        return;
+    const int row = _variableModel->duplicateVariable(sourceIndex.row());
+    if (row < 0)
+        return;
+
+    const QModelIndex duplicateIndex = _variableFilterModel->mapFromSource(
+        _variableModel->index(row, StructureVariableTableModel::IdColumn));
+    if (duplicateIndex.isValid()) {
+        _variableView->selectionModel()->setCurrentIndex(
+            duplicateIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    }
+    updateVariableActionState();
+    updateRunState();
+}
+
+void StructureOptimizerWidget::removeSelectedVariables()
+{
+    if (_controller->isRunning() || _variableView == nullptr ||
+        _variableView->selectionModel() == nullptr)
+        return;
+
+    const QModelIndexList selectedRows = _variableView->selectionModel()->selectedRows();
+    if (selectedRows.isEmpty())
+        return;
+
+    const std::vector<StructureDesignVariable>& variables = _variableModel->variables();
+    QModelIndexList sourceRows;
+    QStringList names;
+    for (const QModelIndex& index : selectedRows) {
+        const QModelIndex sourceIndex = _variableFilterModel->mapToSource(index);
+        if (sourceIndex.isValid() && sourceIndex.row() >= 0 &&
+            sourceIndex.row() < static_cast<int>(variables.size())) {
+            const StructureDesignVariable& variable =
+                variables[static_cast<std::size_t>(sourceIndex.row())];
+            names.append(QString::fromStdString(
+                variable.label.empty() ? variable.id : variable.label));
+            sourceRows.append(sourceIndex);
+        }
+    }
+    if (names.isEmpty())
+        return;
+
+    const QString text = QString("Remove %1 selected design variable(s)?\n\n%2")
+        .arg(names.size())
+        .arg(names.join("\n"));
+    if (QMessageBox::question(this, "Remove Design Variables", text,
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::No) != QMessageBox::Yes)
+        return;
+
+    if (_variableModel->removeRows(sourceRows) > 0) {
+        updateVariableActionState();
+        updateRunState();
+    }
+}
+
+void StructureOptimizerWidget::restoreModelBaseline()
+{
+    if (_controller->isRunning())
+        return;
+
+    const QString text =
+        "Restore the complete model baseline?\n\n"
+        "This overwrites all variable additions, removals, ranges, values, and enabled states.";
+    if (QMessageBox::question(this, "Restore Model Baseline", text,
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::No) != QMessageBox::Yes)
+        return;
+
+    _variableModel->resetVariables(
+        StructureOptimizationUiLogic::suggestVariables(_loadedProblem.context));
+    updateVariableActionState();
+    updateRunState();
+}
+
 void StructureOptimizerWidget::updateRunState()
 {
     std::string reason;
@@ -681,6 +1054,7 @@ void StructureOptimizerWidget::setEditingEnabled(bool enabled)
     _strategyCombo->setEnabled(enabled);
     for (QDoubleSpinBox* weight : _weightSpins)
         weight->setEnabled(enabled);
+    updateVariableActionState();
 }
 
 void StructureOptimizerWidget::startOptimization()
@@ -750,6 +1124,8 @@ void StructureOptimizerWidget::handleCompleted(
             .arg(cells[2]);
     }
     _statusLabel->setText(status);
+    Q_EMIT projectDocumentChanged ();
+    Q_EMIT optimizationCompletedForWorkflow (!result.canceled && !result.candidates.empty ());
 }
 
 void StructureOptimizerWidget::handleFailed(const QString& message)
@@ -815,10 +1191,14 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
         return;
     }
 
+    const QString seedStatus = applyRobotImportSeed(_studio, problem);
+
     _projectPath.clear();
     _managedProjectRoot.clear();
     setProblem(problem);
-    _statusLabel->setText("Optimization project created from the model snapshot. Add task points before starting.");
+    _statusLabel->setText(seedStatus.isEmpty()
+                              ? QStringLiteral("Optimization project created from the model snapshot. Add task points before starting.")
+                              : seedStatus);
 }
 
 void StructureOptimizerWidget::newProjectFromFrozenRequirements()

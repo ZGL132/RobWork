@@ -67,6 +67,9 @@ SET(RWS_TEST_SRC
   rws/ProjectSystemTest.cpp
   rws/RobWorkStudioTest.cpp
   rws/WorkflowDockLayoutControllerTest.cpp
+  rws/WorkflowStageControllerTest.cpp
+  rws/WorkflowBindingTest.cpp
+  rws/ProjectCreationWizardTest.cpp
 )
 add_executable( sdurws_sdurws-gtest ${RWS_TEST_SRC})
 target_link_libraries( sdurws_sdurws-gtest PRIVATE ${RWS_TEST_LIBRARIES})
@@ -75,6 +78,11 @@ target_compile_definitions(sdurws_sdurws-gtest PRIVATE
   RWS_TEST_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
 ADD_RWS_GTEST(sdurws_sdurws-gtest)
+if(WIN32)
+  set_tests_properties(sdurws_sdurws-gtest PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=windows"
+  )
+endif()
 
 
 ########################################################################

@@ -113,6 +113,17 @@ bool rws::WorkspaceEnvelopeCacheKey::operator== (
 }
 
 namespace {
+bool belongsToDevice (const rw::kinematics::Frame* frame,
+                      const rw::kinematics::Frame* deviceBase,
+                      const rw::kinematics::State& state)
+{
+    for (const rw::kinematics::Frame* current = frame; current != nullptr;
+         current = current->getParent (state)) {
+        if (current == deviceBase)
+            return true;
+    }
+    return false;
+}
 // Task point 表格列索引枚举,统一所有读写代码,避免列号硬编码漂移。
 // 前 19 列对应 RobotAnalysisCsv 标准字段 + UI 衍生 status / reason;
 // 后 8 列是 P1 新增的批量 IK 结果列(raw / usable / bestQ / posErr /
@@ -329,6 +340,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _reportTab(NULL),
     _deviceCombo(NULL),
     _tcpFrameCombo(NULL),
+    _projectDefaultDeviceName(),
+    _projectDefaultTcpFrameName(),
+    _projectImportBindingAvailable(false),
+    _setProjectDefaultTcpButton(NULL),
     _thresholdSettingsButton(NULL),
     _reportButton(NULL),
     _status(NULL),
@@ -526,6 +541,11 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _thresholdSettingsButton = new QPushButton (tr("Thresholds"), headerWidget);
     _thresholdSettingsButton->setObjectName (QStringLiteral ("thresholdSettingsButton"));
     _thresholdSettingsButton->setToolTip (tr("Edit kinematic analysis thresholds."));
+    _setProjectDefaultTcpButton = new QPushButton (tr("Set Project TCP"), headerWidget);
+    _setProjectDefaultTcpButton->setObjectName (QStringLiteral ("setProjectDefaultTcpButton"));
+    _setProjectDefaultTcpButton->setToolTip (
+        tr("Set the selected device and TCP as the project default."));
+    _setProjectDefaultTcpButton->setVisible (false);
     _reportButton = new QPushButton (tr("Report"), headerWidget);
     _reportButton->setObjectName (QStringLiteral ("reportButton"));
     _reportButton->setToolTip (tr("Report actions."));
@@ -565,6 +585,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     contextRow->addWidget (_tcpFrameCombo, 0, 3);
     actionRow->addWidget (_lengthUnitCombo);
     actionRow->addWidget (_angleUnitCombo);
+    actionRow->addWidget (_setProjectDefaultTcpButton);
     header->addLayout (contextRow);
     header->addLayout (actionRow);
     root->addWidget (headerWidget);
@@ -730,8 +751,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
 
     // ---- Pose / IK target controls live in the shared pose section. ----
     // 位姿 / IK 目标相关的操作按钮与目标输入框同放在 poseIkSection 中,保持
-    // “目标上下文”集中:Refresh and Sync TCP 回填当前位姿,Solve 触发求解。
-    _ikSyncTcpButton = new QPushButton(tr("Refresh and Sync TCP"), poseIkSection);
+    // “目标上下文”集中:Refresh TCP Pose to IK Target 回填当前位姿,Solve 触发求解。
+    _ikSyncTcpButton = new QPushButton(tr("Refresh TCP Pose to IK Target"), poseIkSection);
     _ikSyncTcpButton->setObjectName (QStringLiteral ("ikSyncCurrentTcpButton"));
     _ikSyncTcpButton->setProperty ("secondaryAction", true);
     _ikSolveButton = new QPushButton(tr("Solve"), poseIkSection);
@@ -782,7 +803,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
         ikPoseGrid->addWidget (targetSpins.at (index), index, 1);
     }
 
-    // 命令网格(2 行 × 3 列,各列等宽):第 1 行为 Refresh and Sync TCP /
+    // 命令网格(2 行 × 3 列,各列等宽):第 1 行为 Refresh TCP Pose to IK Target /
     // Thresholds / Collision 勾选,第 2 行为 Duplicate Q 阈值与 Solve 主按钮;
     // 三列等宽配合按钮 sizePolicy=Ignored,保证 300px 窄 Dock 下不横向溢出。
     QWidget* commandGrid = new QWidget (poseIkSection);
@@ -1442,6 +1463,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  installTaskPointDelegates ();
                  updateVisualizationControls ();
                  refreshWorkflowControls ();
+                 updateProjectDefaultTcpControl ();
              });
     connect (_tcpFrameCombo,
              static_cast< void (QComboBox::*) (int) > (&QComboBox::currentIndexChanged),
@@ -1453,7 +1475,10 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  refreshCurrentPoseSnapshot ();
                  updateVisualizationControls ();
                  refreshWorkflowControls ();
+                 updateProjectDefaultTcpControl ();
              });
+    connect (_setProjectDefaultTcpButton, &QPushButton::clicked, this,
+             [this] () { setSelectedTcpAsProjectDefault (); });
     connect (_ikSolveButton, SIGNAL (clicked ()), this, SLOT (solveIk ()));
     connect (_ikApplyButton, SIGNAL (clicked ()), this, SLOT (applySelectedIkSolution ()));
     connect (_addTaskPointButton, SIGNAL (clicked ()), this, SLOT (addTaskPointRow ()));
@@ -1707,8 +1732,10 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         clearAnalysisSessionState (true);
     }
     _workcell = workcell;
+    refreshProjectDefaultContext ();
     populateDevices ();
     populateTcpFrames ();
+    updateProjectDefaultTcpControl ();
     installTaskPointDelegates ();
     if (_workcell == NULL)
         setStatus(tr("No WorkCell loaded."));
@@ -2611,6 +2638,9 @@ void KinematicAnalysisWidget::validateRequirements ()
     selectPreferredValidationResult ();
     updateValidationInspector ();
     refreshWorkflowControls ();
+    Q_EMIT frozenRequirementValidationCompleted (
+        QString::fromStdString (_validateExecution.provenance.requirementFingerprint),
+        _validateSummary.feasibility == Feasibility::Feasible);
 }
 
 // validateSelectedMode2Source:只校验"当前选中"的条目,避免全量重跑。
@@ -3084,6 +3114,82 @@ void KinematicAnalysisWidget::clearProjectDocumentContext ()
 }
 
 // populateDevices:把 WorkCell 中的 Device 全部填进 _deviceCombo。
+void KinematicAnalysisWidget::refreshProjectDefaultContext ()
+{
+    _projectDefaultDeviceName.clear ();
+    _projectDefaultTcpFrameName.clear ();
+    _projectImportBindingAvailable = false;
+    if (_studio == nullptr || _studio->projectDirectory ().isEmpty ())
+        return;
+
+    const QString bindingPath = QDir (_studio->projectDirectory ()).filePath (
+        QStringLiteral ("bindings/workcell-binding.main.json"));
+    QFile bindingFile (bindingPath);
+    if (!bindingFile.open (QIODevice::ReadOnly))
+        return;
+    const QJsonDocument document = QJsonDocument::fromJson (bindingFile.readAll ());
+    if (!document.isObject ())
+        return;
+    const QJsonObject binding = document.object ();
+    const QString deviceName = binding.value (QStringLiteral ("targetDevice")).toString ();
+    const QString tcpFrameName = binding.value (QStringLiteral ("tcpFrame")).toString ();
+    if (deviceName.isEmpty () || tcpFrameName.isEmpty ())
+        return;
+
+    _projectDefaultDeviceName = deviceName;
+    _projectDefaultTcpFrameName = tcpFrameName;
+    _projectImportBindingAvailable = true;
+}
+
+void KinematicAnalysisWidget::updateProjectDefaultTcpControl ()
+{
+    if (_setProjectDefaultTcpButton == nullptr)
+        return;
+    const bool hasSelection = _deviceCombo != nullptr && _tcpFrameCombo != nullptr &&
+        !_deviceCombo->currentText ().isEmpty () && !_tcpFrameCombo->currentText ().isEmpty ();
+    _setProjectDefaultTcpButton->setVisible (_projectImportBindingAvailable);
+    _setProjectDefaultTcpButton->setEnabled (_projectImportBindingAvailable && hasSelection);
+}
+
+void KinematicAnalysisWidget::setSelectedTcpAsProjectDefault ()
+{
+    if (!_projectImportBindingAvailable || _studio == nullptr ||
+        _studio->projectDirectory ().isEmpty () || selectedDevice () == nullptr ||
+        selectedTcpFrame () == nullptr) {
+        setStatus (tr ("Cannot update the project TCP without a valid WorkCell import binding."));
+        return;
+    }
+
+    const QString bindingPath = QDir (_studio->projectDirectory ()).filePath (
+        QStringLiteral ("bindings/workcell-binding.main.json"));
+    QFile bindingFile (bindingPath);
+    if (!bindingFile.open (QIODevice::ReadOnly)) {
+        setStatus (tr ("Cannot read the WorkCell project binding."));
+        return;
+    }
+    const QJsonDocument document = QJsonDocument::fromJson (bindingFile.readAll ());
+    bindingFile.close ();
+    if (!document.isObject ()) {
+        setStatus (tr ("Cannot update an invalid WorkCell project binding."));
+        return;
+    }
+
+    QJsonObject binding = document.object ();
+    binding.insert (QStringLiteral ("targetDevice"), _deviceCombo->currentText ());
+    binding.insert (QStringLiteral ("tcpFrame"), _tcpFrameCombo->currentText ());
+    const QByteArray content = QJsonDocument (binding).toJson (QJsonDocument::Indented);
+    QSaveFile saveFile (bindingPath);
+    if (!saveFile.open (QIODevice::WriteOnly) || saveFile.write (content) != content.size () ||
+        !saveFile.commit ()) {
+        setStatus (tr ("Cannot write the WorkCell project binding."));
+        return;
+    }
+
+    _projectDefaultDeviceName = _deviceCombo->currentText ();
+    _projectDefaultTcpFrameName = _tcpFrameCombo->currentText ();
+    setStatus (tr ("Updated the project default device and TCP."));
+}
+
 void KinematicAnalysisWidget::populateDevices ()
 {
     _deviceCombo->clear ();
@@ -3096,8 +3202,12 @@ void KinematicAnalysisWidget::populateDevices ()
             continue;
         _deviceCombo->addItem (QString::fromStdString (dev->getName ()));
     }
-    if (_deviceCombo->count () > 0)
-        _deviceCombo->setCurrentIndex (0);
+    if (_deviceCombo->count () > 0) {
+        int selectedIndex = _deviceCombo->findText (_projectDefaultDeviceName);
+        if (selectedIndex < 0)
+            selectedIndex = 0;
+        _deviceCombo->setCurrentIndex (selectedIndex);
+    }
 }
 
 // populateTcpFrames:用 Kinematics::findAllFrames 收集 WorkCell 中所有帧,
@@ -3110,15 +3220,20 @@ void KinematicAnalysisWidget::populateTcpFrames ()
         return;
     }
     rw::kinematics::State workcellState = _workcell->getDefaultState ();
+    const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == nullptr)
+        return;
     std::vector< rw::kinematics::Frame* > frames =
         rw::kinematics::Kinematics::findAllFrames (_workcell->getWorldFrame (), workcellState);
     for (const rw::kinematics::Frame* frame : frames) {
-        if (frame == NULL)
+        if (frame == NULL || !belongsToDevice (frame, device->getBase (), workcellState))
             continue;
         _tcpFrameCombo->addItem (QString::fromStdString (frame->getName ()));
     }
-    const QString preferredTcp =
-        QString::fromStdString (defaultTcpFrameName (selectedDevice ().get ()));
+    QString preferredTcp = QString::fromStdString (defaultTcpFrameName (device.get ()));
+    if (_deviceCombo->currentText () == _projectDefaultDeviceName &&
+        !_projectDefaultTcpFrameName.isEmpty ())
+        preferredTcp = _projectDefaultTcpFrameName;
     int preferredIndex = _tcpFrameCombo->findText (preferredTcp);
     if (preferredIndex < 0 && _tcpFrameCombo->count () > 0)
         preferredIndex = 0;

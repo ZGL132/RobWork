@@ -35,6 +35,18 @@ ProjectDocumentContext makeContext (const ProjectManifest& manifest,
     return context;
 }
 
+bool isPassiveProjectAsset (const ProjectResource& resource)
+{
+    if (resource.kind == QStringLiteral ("robwork.passive-asset"))
+        return true;
+
+    // WorkCell import bindings written before the metadata/asset split used a
+    // document-only kind. They never had a provider and are consumed directly
+    // by ModelBuilder, so retain a narrowly-scoped compatibility path.
+    return resource.id == QStringLiteral ("workcell.binding.main") &&
+           resource.kind == QStringLiteral ("workcell.import-binding");
+}
+
 }    // namespace
 
 // 注册 Provider：先做完整合法性校验（非空、providerId 唯一、kind 非空且不冲突），
@@ -110,7 +122,7 @@ bool ProjectDocumentRegistry::loadProjectResources (const ProjectManifest& manif
     for (const ProjectResource& resource : ordered) {
         // 被动资产只用于完整性、克隆和打包，不代表可编辑文档。文件存在性由
         // ProjectManager 在打开项目时统一校验，因此这里无需虚构一个空 Provider。
-        if (resource.kind == QStringLiteral ("robwork.passive-asset"))
+        if (isPassiveProjectAsset (resource))
             continue;
         // 按 kind 找 Provider：可选资源缺 Provider 直接跳过；必需资源缺 Provider
         // 会让项目无法在缺少关键能力时正确工作，必须整体失败。
@@ -505,6 +517,8 @@ bool ProjectDocumentRegistry::validateCandidateResources (
         return false;
 
     for (const ProjectResource& resource : resources) {
+        if (isPassiveProjectAsset (resource))
+            continue;
         QSet< QString > dependencies;
         for (const QString& dependency : resource.dependencies) {
             if (dependencies.contains (dependency)) {
@@ -540,8 +554,10 @@ bool ProjectDocumentRegistry::preflightCandidateTransition (
 
     if (!validateCandidateResources (resources, error))
         return false;
-    for (const ProjectResource& resource : resources)
-        reservation._providers.insert (providerForKind (resource.kind));
+    for (const ProjectResource& resource : resources) {
+        if (!isPassiveProjectAsset (resource))
+            reservation._providers.insert (providerForKind (resource.kind));
+    }
 
     for (ProjectDocumentProvider* provider : reservation._providers) {
         if (!snapshotProviderResources (provider, _loaded, reservation._snapshots, error)) {

@@ -8,6 +8,7 @@
 #define RWS_ROBOTMODELBUILDER_PLUGIN_HPP
 
 #include <rws/RobWorkStudioPlugin.hpp>
+#include <rws/RobotProjectImportOptions.hpp>
 
 #include <QVariantMap>
 
@@ -48,6 +49,8 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
 
     Q_INVOKABLE QString preflightRobotProjectSource (const QString& sourcePath,
                                                       const QString& projectRoot);
+    Q_INVOKABLE QString preflightRobotProjectSourceWithOptions (
+        const QString& sourcePath, const QString& projectRoot, const QVariantMap& options);
     Q_INVOKABLE QString commitRobotProjectSource (const QString& sourcePath,
                                                    const QString& projectRoot);
     Q_INVOKABLE QString preflightNewRobotProject (const QString& projectRoot);
@@ -74,6 +77,7 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
     // 项目 Provider 由插件拥有，主窗口 Registry 只保存非拥有型引用。
     CallbackProjectDocumentProvider* _projectProvider;
     bool _ignoreNextOpenFromSelfLoad;
+    RobotProjectImportOptions _robotProjectImportOptions;
 
     void syncFromWorkCell (rw::models::WorkCell* workcell);
 };

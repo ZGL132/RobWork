@@ -4,6 +4,8 @@
 #include "StructureOptimizationTypes.hpp"
 
 #include <QAbstractTableModel>
+#include <QModelIndexList>
+#include <QString>
 
 namespace rws {
 
@@ -16,6 +18,8 @@ namespace rws {
  */
 class StructureVariableTableModel : public QAbstractTableModel
 {
+    Q_OBJECT
+
 public:
     /**
      * @brief 表格模型列索引定义枚举。
@@ -30,7 +34,9 @@ public:
         MinimumColumn,   //!< 第 5 列: 寻优搜索范围下限 (双精度浮点数)
         MaximumColumn,   //!< 第 6 列: 寻优搜索范围上限 (双精度浮点数)
         StepColumn,      //!< 第 7 列: 搜索步长/量化网格步长 (双精度浮点数)
-        EnabledColumn,   //!< 第 8 列: 是否勾选启用该变量参与优化 (复选框 CheckBox)
+        PreferredColumn, //!< 工程偏好值 (高级列)
+        PreferenceWeightColumn, //!< 工程偏好权重 [0, 1] (高级列)
+        EnabledColumn,   //!< 是否勾选启用该变量参与优化 (复选框 CheckBox)
         ColumnCount      //!< 总列数统计 (用于 columnCount 函数返回)
     };
 
@@ -111,6 +117,22 @@ public:
      */
     void setVariables(const std::vector<StructureDesignVariable>& variables);
 
+    bool appendVariable(const StructureDesignVariable& variable);
+
+    int removeRows(const QModelIndexList& indexes);
+
+    bool removeVariable(int row);
+
+    int duplicateVariable(int row);
+
+    bool setPreferences(int row, double preferredValue, double preferenceWeight);
+
+    void resetVariables(const std::vector<StructureDesignVariable>& variables);
+
+Q_SIGNALS:
+    void editRejected(const QString& message);
+
+public:
     /**
      * @brief 获取当前模型中保存的所有设计变量数据的只读引用。
      * 

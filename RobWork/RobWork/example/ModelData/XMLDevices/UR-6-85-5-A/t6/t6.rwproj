@@ -1,0 +1,22 @@
+{
+    "entryPoints": {
+    },
+    "format": "RobWorkStudioProject",
+    "plugins": {
+    },
+    "project": {
+        "application": "RobWorkStudio",
+        "applicationVersion": "",
+        "createdAt": "2026-08-11T11:44:02Z",
+        "description": "Empty RobotModelBuilder project awaiting bootstrap.",
+        "id": "22148456-6f5f-4ea4-b1ea-d09ddea4d056",
+        "modifiedAt": "2026-08-11T11:44:02Z",
+        "name": "t6"
+    },
+    "resources": [
+    ],
+    "schemaVersion": 1,
+    "settings": {
+        "pathPolicy": "project-relative"
+    }
+}

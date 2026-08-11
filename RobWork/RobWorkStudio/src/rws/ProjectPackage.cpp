@@ -98,6 +98,9 @@ bool ProjectPackage::create (const QString& projectFilePath,
         const QString relative = QDir::fromNativeSeparators (QDir (root).relativeFilePath (source));
         ok = safeArchivePath (relative) && addFile (archive, source, relative, error);
     }
+    const QString bindingPath = QDir (root).filePath (QStringLiteral ("workflow/binding.json"));
+    if (ok && QFileInfo (bindingPath).isFile ())
+        ok = addFile (archive, bindingPath, QStringLiteral ("workflow/binding.json"), error);
     if (!ok) {
         zip_discard (archive);
         QFile::remove (stagedPackagePath);

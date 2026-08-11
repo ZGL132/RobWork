@@ -1,0 +1,47 @@
+<h2>Explore capability: corrected hierarchy</h2>
+<p class="subtitle">The first choice is the analysis capability. Sampling strategy appears only inside Workspace Sampling.</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Workspace Sampling</div>
+    <div class="mockup-body" style="padding:14px;font-size:12px">
+      <div style="display:flex;gap:4px;margin-bottom:12px">
+        <span class="mock-button">Workspace Sampling</span>
+        <span class="mock-input">Pose Reachability</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;border-top:1px solid #d9dde2;padding-top:10px">
+        <span class="label">Sampling strategy</span>
+        <span class="mock-button">Random</span><span class="mock-input">Joint Grid</span>
+        <span style="margin-left:auto" class="mock-button">Run</span><span>Cancel</span>
+      </div>
+      <div style="display:flex;gap:8px;margin:10px 0"><span class="mock-input">Sample count 1,000</span><span class="mock-input">Seed 1</span><span style="margin-left:auto;color:#4e7e53">Idle · estimated</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0"><div class="placeholder">1,000<br><small>samples</small></div><div class="placeholder">94.2%<br><small>pass</small></div><div class="placeholder">--<br><small>collision</small></div><div class="placeholder">0.31<br><small>avg manip.</small></div></div>
+      <div class="placeholder" style="height:92px;text-align:left">Workspace result table<br><small># · Status · Collision · TCP · Manipulability · Margin</small></div>
+      <div class="placeholder" style="margin-top:8px;height:44px;text-align:left">Selected sample: Q · TCP · metrics</div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Pose Reachability</div>
+    <div class="mockup-body" style="padding:14px;font-size:12px">
+      <div style="display:flex;gap:4px;margin-bottom:12px"><span class="mock-input">Workspace Sampling</span><span class="mock-button">Pose Reachability</span></div>
+      <div style="display:flex;align-items:center;gap:8px;border-top:1px solid #d9dde2;padding-top:10px"><span class="label">Target source</span><span class="mock-button">Task points</span><span class="mock-input">Manual positions</span><span style="margin-left:auto" class="mock-button">Run</span><span>Cancel</span></div>
+      <div style="display:flex;gap:8px;margin:10px 0"><span class="mock-input">Directions 24</span><span class="mock-input">Rolls 1</span><span class="mock-input">☑ Collision</span><span style="margin-left:auto;color:#4e7e53">Plan: 0 targets</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0"><div class="placeholder">--<br><small>positions</small></div><div class="placeholder">--<br><small>reachable</small></div><div class="placeholder">--<br><small>coverage</small></div><div class="placeholder">--<br><small>pass</small></div></div>
+      <div class="placeholder" style="height:92px;text-align:left">Reachability result table<br><small># · Status · Position · Coverage</small></div>
+      <div style="display:flex;gap:8px;margin-top:8px"><span class="mock-input">More diagnostics ▸</span><span class="mock-input">Export CSV</span><span class="mock-input">Open visualization</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="capability-first" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content"><h3>Capability-first hierarchy</h3><p>Recommended: top-level segmented control for Workspace Sampling and Pose Reachability; strategy stays local to workspace sampling.</p></div>
+  </div>
+  <div class="option" data-choice="separate-tabs" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content"><h3>Separate sub-tabs</h3><p>Use tabs under Explore for each capability. Clear, but adds a navigation layer and disconnects the common run state.</p></div>
+  </div>
+</div>
+
+<p class="subtitle">Click A or B. The recommended structure also lets each capability keep its own result vocabulary and summary metrics without false equivalence.</p>

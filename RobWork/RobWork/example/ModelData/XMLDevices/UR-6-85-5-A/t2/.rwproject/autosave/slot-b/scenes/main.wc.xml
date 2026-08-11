@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WorkCell name="">
+ <Frame name="WORLD" refframe="WORLD" type="Fixed">
+  <RPY>0 -0 0</RPY>
+  <Pos>0 0 0</Pos>
+  <Property name="ShowFrameAxis" desc="">false</Property>
+ </Frame>
+ <SerialDevice name="UR-6-85-5-A">
+  <Frame name="Base" refframe="WORLD">
+   <RPY>0 0 0</RPY>
+   <Pos>0 0 0</Pos>
+   <Property name="ShowFrameAxis" desc="">true</Property>
+   <Drawable name="flangeGeo" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+    <Polytope file="geometry/robotFlange"/>
+   </Drawable>
+   <CollisionModel name="BaseGeo" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+   </CollisionModel>
+   <CollisionModel name="BaseGeoCollision" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+   </CollisionModel>
+   <Drawable name="BaseGeo" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+    <Polytope file="geometry/base"/>
+   </Drawable>
+   <CollisionModel name="flangeGeo" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+   </CollisionModel>
+   <CollisionModel name="BaseGeoCollision" refframe="UR-6-85-5-A.Base">
+    <RPY>0 90 180</RPY>
+    <Pos>0 0 0.003</Pos>
+   </CollisionModel>
+  </Frame>
+  <Joint name="Joint0" refframe="Base" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>0 0 0</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint0Geo" refframe="UR-6-85-5-A.Joint0">
+    <RPY>0 90 -180</RPY>
+    <Pos>0 0 0.003</Pos>
+    <Polytope file="geometry/joint0"/>
+   </Drawable>
+   <CollisionModel name="Joint0GeoCollision" refframe="UR-6-85-5-A.Joint0">
+    <RPY>0 90 -180</RPY>
+    <Pos>0 0 0.003</Pos>
+   </CollisionModel>
+  </Joint>
+  <Joint name="Joint1" refframe="Joint0" type="Revolute">
+   <RPY>0 -0 90</RPY>
+   <Pos>0 0 0.0892</Pos>
+   <PosLimit min="-270" max="90"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint1Geo" refframe="UR-6-85-5-A.Joint1">
+    <RPY>0 0 90</RPY>
+    <Pos>0.0862 0 0</Pos>
+    <Polytope file="geometry/joint1"/>
+   </Drawable>
+   <CollisionModel name="Joint1GeoCollision" refframe="UR-6-85-5-A.Joint1">
+    <RPY>0 0 90</RPY>
+    <Pos>0.0862 0 0</Pos>
+   </CollisionModel>
+  </Joint>
+  <Joint name="Joint2" refframe="Joint1" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>-0.425 0 0</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint2Geo" refframe="UR-6-85-5-A.Joint2">
+    <RPY>0 0 90</RPY>
+    <Pos>0.5112 0 0</Pos>
+    <Polytope file="geometry/joint2"/>
+   </Drawable>
+   <CollisionModel name="Joint2GeoCollision" refframe="UR-6-85-5-A.Joint2">
+    <RPY>0 0 90</RPY>
+    <Pos>0.5112 0 0</Pos>
+   </CollisionModel>
+  </Joint>
+  <Joint name="Joint3" refframe="Joint2" type="Revolute">
+   <RPY>0 -0 0</RPY>
+   <Pos>-0.3924300000000001 0 0</Pos>
+   <PosLimit min="-270" max="90"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint3Geo" refframe="UR-6-85-5-A.Joint3">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.90363 0</Pos>
+    <Polytope file="geometry/joint3"/>
+   </Drawable>
+   <CollisionModel name="Joint3GeoCollision" refframe="UR-6-85-5-A.Joint3">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.90363 0</Pos>
+   </CollisionModel>
+  </Joint>
+  <Joint name="Joint4" refframe="Joint3" type="Revolute">
+   <RPY>0 -0 90</RPY>
+   <Pos>0 0 0.109</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint4Geo" refframe="UR-6-85-5-A.Joint4">
+    <RPY>0 90 0</RPY>
+    <Pos>0 -0.109 -0.90363</Pos>
+    <Polytope file="geometry/joint4"/>
+   </Drawable>
+   <CollisionModel name="Joint4GeoCollision" refframe="UR-6-85-5-A.Joint4">
+    <RPY>0 90 0</RPY>
+    <Pos>0 -0.109 -0.90363</Pos>
+   </CollisionModel>
+  </Joint>
+  <Joint name="Joint5" refframe="Joint4" type="Revolute">
+   <RPY>0 0 -90</RPY>
+   <Pos>0 0 0.093</Pos>
+   <PosLimit min="-180" max="180"/>
+   <VelLimit max="59.999999999999993"/>
+   <AccLimit max="119.99999999999999"/>
+   <Drawable name="Joint5Geo" refframe="UR-6-85-5-A.Joint5">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.9966300000000001 -0.109</Pos>
+    <Polytope file="geometry/joint5"/>
+   </Drawable>
+   <CollisionModel name="Joint5GeoCollision" refframe="UR-6-85-5-A.Joint5">
+    <RPY>90 0 90</RPY>
+    <Pos>0 0.9966300000000001 -0.109</Pos>
+   </CollisionModel>
+  </Joint>
+  <Frame name="TCP" refframe="Joint5">
+   <RPY>0 0 0</RPY>
+   <Pos>0 0 0</Pos>
+   <Property name="ShowFrameAxis" desc="">true</Property>
+  </Frame>
+  <Q name="Home">0 -1.5707963267949 0 -1.5707963267949 0 0</Q>
+ </SerialDevice>
+</WorkCell>

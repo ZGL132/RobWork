@@ -5126,6 +5126,87 @@ static int testManagedRobotProjectRequiresPublishedWorkCell ()
     return 0;
 }
 
+static int testWorkCellProjectDefaultTcpContext ()
+{
+    QTemporaryDir directory;
+    if (!directory.isValid ())
+        return fail ("could not create WorkCell TCP default fixture");
+    const QString projectPath = directory.filePath ("WorkCellDefaults.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("workcell-defaults");
+    manifest.project.name = QStringLiteral ("WorkCellDefaults");
+    QString error;
+    rws::ProjectManager manager;
+    if (!manager.createProject (projectPath, manifest, &error))
+        return fail ("could not create WorkCell TCP default fixture: " + error.toStdString ());
+    manager.closeProject ();
+
+    const QString bindingPath = QDir (QFileInfo (projectPath).absolutePath ()).filePath (
+        QStringLiteral ("bindings/workcell-binding.main.json"));
+    if (!QDir ().mkpath (QFileInfo (bindingPath).absolutePath ()))
+        return fail ("could not create WorkCell TCP binding fixture directory");
+    QFile bindingFile (bindingPath);
+    const QByteArray bindingJson =
+        QByteArrayLiteral ("{\"version\":1,\"targetDevice\":\"GenericSixAxis\","
+                           "\"tcpFrame\":\"ToolTcp\"}");
+    if (!bindingFile.open (QIODevice::WriteOnly) ||
+        bindingFile.write (bindingJson) != bindingJson.size ())
+        return fail ("could not write WorkCell TCP binding fixture");
+    bindingFile.close ();
+
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio (properties);
+    studio.openFile (projectPath.toStdString ());
+    if (studio.projectDirectory ().isEmpty ())
+        return fail ("could not open WorkCell TCP default fixture");
+
+    rw::kinematics::StateStructure::Ptr stateStructure =
+        rw::core::ownedPtr (new rw::kinematics::StateStructure ());
+    rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    const rw::kinematics::Frame::Ptr toolTcp = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("ToolTcp", rw::math::Transform3D<>::identity ()));
+    const rw::kinematics::Frame::Ptr localTcp = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("LocalTcp", rw::math::Transform3D<>::identity ()));
+    stateStructure->addFrame (toolTcp, device->getEnd ());
+    stateStructure->addFrame (localTcp, device->getEnd ());
+    rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr (
+        new rw::models::WorkCell (stateStructure, "BindingFixture", ""));
+    workcell->addDevice (device);
+
+    rws::KinematicAnalysisWidget widget;
+    widget.setRobWorkStudio (&studio);
+    widget.setWorkCell (workcell.get ());
+    QComboBox* selectedDevice =
+        widget.findChild< QComboBox* > (QStringLiteral ("deviceCombo"));
+    QComboBox* selectedTcp =
+        widget.findChild< QComboBox* > (QStringLiteral ("tcpFrameCombo"));
+    if (selectedDevice == nullptr || selectedTcp == nullptr ||
+        selectedDevice->currentText () != QStringLiteral ("GenericSixAxis") ||
+        selectedTcp->currentText () != QStringLiteral ("ToolTcp"))
+        return fail ("kinematic analysis did not restore the WorkCell project default TCP");
+    const int localTcpIndex = selectedTcp->findText (QStringLiteral ("LocalTcp"));
+    if (localTcpIndex < 0)
+        return fail ("kinematic analysis did not expose the local device TCP");
+    selectedTcp->setCurrentIndex (localTcpIndex);
+    if (!bindingFile.open (QIODevice::ReadOnly) ||
+        QJsonDocument::fromJson (bindingFile.readAll ()).object ().value (
+            QStringLiteral ("tcpFrame")).toString () != QStringLiteral ("ToolTcp"))
+        return fail ("changing the analysis TCP unexpectedly changed the project default");
+    bindingFile.close ();
+    QPushButton* setProjectTcp = widget.findChild< QPushButton* > (
+        QStringLiteral ("setProjectDefaultTcpButton"));
+    if (setProjectTcp == nullptr)
+        return fail ("kinematic analysis does not expose an explicit project TCP command");
+    setProjectTcp->click ();
+    if (!bindingFile.open (QIODevice::ReadOnly) ||
+        QJsonDocument::fromJson (bindingFile.readAll ()).object ().value (
+            QStringLiteral ("tcpFrame")).toString () != QStringLiteral ("LocalTcp"))
+        return fail ("explicit project TCP command did not update the WorkCell binding");
+    bindingFile.close ();
+    studio.close ();
+    return 0;
+}
+
 // 子套件 工作流 UI 状态机:驱动 KinematicAnalysisWidget 的三个页签
 // (Diagnose / Validate Requirements / Explore Capability),验证:
 //   - WorkCell/设备/TCP 任一缺失时各命令按钮按预期禁用并给出可操作状态文案;
@@ -5308,7 +5389,8 @@ static int testWorkflowUiStates ()
     for (QLabel* label : ikTargetSection->findChildren< QLabel* > ())
         hasIkTargetTitle = hasIkTargetTitle || label->text () == QStringLiteral ("IK Target");
     if (const int rc = require (hasIkTargetTitle &&
-                                    ikSync->text () == QStringLiteral ("Refresh and Sync TCP"),
+                                    ikSync->text () == QStringLiteral (
+                                        "Refresh TCP Pose to IK Target"),
                                 "Diagnose uses the approved IK Target and sync labels"))
         return rc;
     const QStringList poseAxisNames = {
@@ -5785,11 +5867,22 @@ static int testWorkflowUiStates ()
     rw::kinematics::StateStructure::Ptr stateStructure =
         rw::core::ownedPtr (new rw::kinematics::StateStructure ());
     rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*stateStructure);
+    const rw::kinematics::Frame::Ptr toolTcp = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("ToolTcp", rw::math::Transform3D<>::identity ()));
+    const rw::kinematics::Frame::Ptr foreignTcp = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("ForeignTcp", rw::math::Transform3D<>::identity ()));
+    stateStructure->addFrame (toolTcp, device->getEnd ());
+    stateStructure->addFrame (foreignTcp, stateStructure->getRoot ());
     rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr (
         new rw::models::WorkCell (stateStructure, "WorkflowUi", ""));
     workcell->addDevice (device);
     widget.setWorkCell (workcell.get ());
     if (const int rc = require (tcpCombo->count () > 0, "valid WorkCell exposes a TCP"))
+        return rc;
+    if (const int rc = require (
+            tcpCombo->findText (QStringLiteral ("ToolTcp")) >= 0 &&
+                tcpCombo->findText (QStringLiteral ("ForeignTcp")) < 0,
+            "TCP selector only exposes frames belonging to the selected device"))
         return rc;
 
     tcpCombo->setCurrentIndex (-1);
@@ -6862,6 +6955,13 @@ int main (int argc, char** argv)
         const int rc = testManagedRobotProjectRequiresPublishedWorkCell ();
         if (rc == 0)
             std::cout << "KinematicAnalysis managed_project_gate test passed." << std::endl;
+        return rc;
+    }
+    if (requestedSuite == "workcell_project_defaults") {
+        QApplication app (argc, argv);
+        const int rc = testWorkCellProjectDefaultTcpContext ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis workcell_project_defaults test passed." << std::endl;
         return rc;
     }
     if (requestedSuite == "workflow_ui") {

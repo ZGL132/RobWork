@@ -3,6 +3,9 @@
 
 #include "ProjectManifest.hpp"
 #include "RobotProjectSourcePackager.hpp"
+#include "WorkCellProjectImportOptions.hpp"
+#include "WorkflowBinding.hpp"
+#include "WorkflowProjectState.hpp"
 
 #include <QHash>
 
@@ -57,7 +60,16 @@ class ProjectManager
     bool createProjectFromWorkCell (const QString& projectFilePath,
                                     const QString& sourceWorkCellPath,
                                     QString* error = nullptr);
+    bool createProjectFromWorkCell (const QString& projectFilePath,
+                                    const QString& sourceWorkCellPath,
+                                    const WorkCellProjectImportOptions& options,
+                                    QString* error = nullptr);
 
+    bool prepareProjectFromRobotFile (const QString& projectFilePath,
+                                      const QString& sourceUrdfPath,
+                                      const RobotProjectImportOptions& options,
+                                      PreparedRobotProject& prepared,
+                                      QString* error = nullptr) const;
     bool prepareProjectFromRobotFile (const QString& projectFilePath,
                                       const QString& sourceUrdfPath,
                                       PreparedRobotProject& prepared,
@@ -74,6 +86,17 @@ class ProjectManager
 
     // 保存当前项目：把内存中的清单写回磁盘。没有打开任何项目时直接失败。
     bool saveProject (QString* error = nullptr);
+
+    bool saveWorkflowBinding (const WorkflowBinding& binding, QString* error = nullptr);
+    bool loadWorkflowBinding (WorkflowBinding& binding, QString* error = nullptr) const;
+
+    WorkflowProjectSnapshot workflowProjectState () const
+    {
+        return WorkflowProjectState::read (_manifest.plugins);
+    }
+    bool setWorkflowProjectState (const WorkflowProjectSnapshot& state,
+                                  QString* error = nullptr);
+    bool invalidateWorkflowStateFrom (WorkflowStage stage, QString* error = nullptr);
 
     // 把项目外的历史 XML/JSON 文件导入当前项目。resource.path 必须是项目内相对路径，
     // ownership 为空时自动设为 project；复制成功后才更新内存清单并置脏，调用方随后通过

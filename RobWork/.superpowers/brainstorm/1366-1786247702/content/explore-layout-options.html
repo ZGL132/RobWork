@@ -1,0 +1,63 @@
+<h2>Explore capability: layout direction</h2>
+<p class="subtitle">All options retain Random, Joint Grid and Pose Reachability sampling, cancellation, result selection, visualization, and export.</p>
+
+<div class="cards">
+  <div class="card" data-choice="workbench" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup" style="font-size:11px;min-height:280px">
+        <div class="mockup-header">Explore capability</div>
+        <div class="mockup-body" style="padding:10px">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:9px">
+            <span class="label">MODE</span><span class="mock-input" style="flex:1">Random ▾</span>
+            <span class="mock-button">Run</span><span style="opacity:.65">Cancel</span>
+          </div>
+          <div style="border-top:1px solid #d9dde2;padding-top:8px;display:flex;gap:7px;margin-bottom:8px">
+            <span class="mock-input">Samples 1,000</span><span class="mock-input">Seed 1</span><span style="margin-left:auto;color:#4e7e53">Idle · estimated</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px">
+            <div class="placeholder">1,000<br><small>samples</small></div><div class="placeholder">94.2%<br><small>pass</small></div><div class="placeholder">--<br><small>collision</small></div><div class="placeholder">0.31<br><small>avg manip.</small></div>
+          </div>
+          <div style="display:grid;grid-template-columns:3fr 2fr;gap:7px">
+            <div class="placeholder" style="height:84px;text-align:left">Results table<br><small># · Status · TCP · Manip. · Margin</small></div>
+            <div class="placeholder" style="height:84px;text-align:left">Selected sample<br><small>Q · TCP · metrics</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>A. Results Workbench</h3><p>Recommended. A compact run strip stays at the top; summary, table and selected-sample inspector form one scanable results surface.</p></div>
+  </div>
+
+  <div class="card" data-choice="stacked" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup" style="font-size:11px;min-height:280px">
+        <div class="mockup-header">Explore capability</div>
+        <div class="mockup-body" style="padding:10px">
+          <div class="placeholder" style="height:36px;text-align:left">Mode + active parameters <span style="float:right">Run · Cancel</span></div>
+          <div class="placeholder" style="height:42px;text-align:left;margin-top:8px">Run status and progress<br><small>Estimated: idle</small></div>
+          <div class="placeholder" style="height:48px;text-align:left;margin-top:8px">Summary: samples · pass · warning · fail · collision</div>
+          <div class="placeholder" style="height:70px;text-align:left;margin-top:8px">Result table</div>
+          <div class="placeholder" style="height:42px;text-align:left;margin-top:8px">Selected sample inspector</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>B. Guided Vertical Flow</h3><p>Strongest procedural order for narrow docks, but result comparison requires more scrolling after a run.</p></div>
+  </div>
+
+  <div class="card" data-choice="mode-tabs" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup" style="font-size:11px;min-height:280px">
+        <div class="mockup-header">Explore capability</div>
+        <div class="mockup-body" style="padding:10px">
+          <div style="display:flex;gap:2px;margin-bottom:8px"><span class="mock-button">Workspace</span><span class="mock-input">Pose reachability</span><span class="mock-input">Visualization</span></div>
+          <div class="placeholder" style="height:38px;text-align:left">Mode-specific settings <span style="float:right">Run</span></div>
+          <div class="placeholder" style="height:44px;text-align:left;margin-top:8px">Summary metrics</div>
+          <div class="placeholder" style="height:96px;text-align:left;margin-top:8px">Results table</div>
+          <div class="placeholder" style="height:30px;text-align:left;margin-top:8px">Selected-sample details</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body"><h3>C. Output Tabs</h3><p>Separates modes and visual output clearly, but adds navigation and can hide the active run context.</p></div>
+  </div>
+</div>
+
+<p class="subtitle">Click an option to record your preference. My recommendation is A: it matches the Diagnose and Validate pattern of compact commands, one-line health summary, and selection-driven details.</p>

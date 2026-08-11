@@ -144,6 +144,18 @@ void StructureOptimizerPlugin::initialize()
         // Widget 自身比较可移植 JSON 快照；因此用户撤销到原始配置时也可自动清除脏状态[cite: 24, 25]。
         _projectProvider->setDirty(_widget->isProjectDocumentDirty());
     });
+
+    connect (_widget, &StructureOptimizerWidget::optimizationCompletedForWorkflow,
+             this, [this] (bool completed) {
+                 RobWorkStudio* studio = getRobWorkStudio ();
+                 if (studio == nullptr || studio->projectDirectory ().isEmpty ())
+                     return;
+                 QString error;
+                 if (!studio->publishWorkflowOptimization (completed, &error)) {
+                     RW_WARN ("Structure optimization workflow publication failed: "
+                              << error.toStdString ());
+                 }
+             });
 }
 
 /**

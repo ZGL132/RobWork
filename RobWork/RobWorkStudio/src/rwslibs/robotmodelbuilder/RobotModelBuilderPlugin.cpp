@@ -17,7 +17,10 @@
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QScopedValueRollback>
 
@@ -185,8 +188,24 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
     // ---- 3. 执行核心场景转换 ----
     // 将内存中的 WorkCell 对象、默认状态 (State) 及目标保存目录传入转换器，
     // 提取串联关节、SE(3) 矩阵、几何体、碰撞矩阵及伴生 XML 配置文件，构建出纯数据结构 spec
-    RobotModelSpec spec =
-        WorkCellConverter::convert (*workcell, workcell->getDefaultState (), saveDirectory, warnings);
+    QString selectedDeviceName;
+    QString selectedTcpFrameName;
+    if (getRobWorkStudio () != NULL && !getRobWorkStudio ()->projectDirectory ().isEmpty ()) {
+        QFile bindingFile (QDir (getRobWorkStudio ()->projectDirectory ()).filePath (
+            QStringLiteral ("bindings/workcell-binding.main.json")));
+        if (bindingFile.open (QIODevice::ReadOnly)) {
+            const QJsonDocument binding = QJsonDocument::fromJson (bindingFile.readAll ());
+            if (binding.isObject ()) {
+                selectedDeviceName = binding.object ().value (QStringLiteral ("targetDevice")).toString ();
+                selectedTcpFrameName = binding.object ().value (QStringLiteral ("tcpFrame")).toString ();
+            }
+        }
+    }
+    RobotModelSpec spec = WorkCellConverter::convert (
+        *workcell, workcell->getDefaultState (), saveDirectory, warnings,
+        selectedDeviceName.toStdString ());
+    if (!selectedTcpFrameName.isEmpty ())
+        warnings << tr ("WorkCell project binding uses TCP frame '%1'.").arg (selectedTcpFrameName);
 
     // ---- 4. 检查模型有效性 ----
     // 验证转换出来的 spec 是否包含可编辑/可转换的机器人模型
@@ -240,14 +259,29 @@ void RobotModelBuilderPlugin::syncFromWorkCell (rw::models::WorkCell* workcell)
 QString RobotModelBuilderPlugin::preflightRobotProjectSource (const QString& sourcePath,
                                                               const QString& projectRoot)
 {
+    return preflightRobotProjectSourceWithOptions (sourcePath, projectRoot, QVariantMap ());
+}
+
+QString RobotModelBuilderPlugin::preflightRobotProjectSourceWithOptions (
+    const QString& sourcePath, const QString& projectRoot, const QVariantMap& optionMap)
+{
     if (_widget == NULL)
         return QStringLiteral ("RobotModelBuilder is not initialized.");
 
     RobotModelSpec parsed;
     QStringList warnings;
     QString error;
+    if (optionMap.contains (QStringLiteral ("meshImportMode")))
+        _robotProjectImportOptions.meshImportMode = static_cast< MeshImportMode > (
+            optionMap.value (QStringLiteral ("meshImportMode")).toInt ());
+    if (optionMap.contains (QStringLiteral ("missingMeshPolicy")))
+        _robotProjectImportOptions.missingMeshPolicy = static_cast< MissingMeshPolicy > (
+            optionMap.value (QStringLiteral ("missingMeshPolicy")).toInt ());
+    if (optionMap.contains (QStringLiteral ("packageRoots")))
+        _robotProjectImportOptions.packageRoots = optionMap.value (
+            QStringLiteral ("packageRoots")).toStringList ();
     if (!_widget->preflightUrdfFile (
-            sourcePath, projectRoot, parsed, warnings, &error))
+            sourcePath, projectRoot, _robotProjectImportOptions, parsed, warnings, &error))
         return error.isEmpty () ? QStringLiteral ("The robot source could not be parsed.") : error;
     return QString ();
 }
@@ -274,7 +308,7 @@ QString RobotModelBuilderPlugin::commitRobotProjectSource (const QString& source
     QStringList warnings;
     QString error;
     if (!_widget->preflightUrdfFile (
-            sourcePath, requestedRoot, parsed, warnings, &error))
+            sourcePath, requestedRoot, _robotProjectImportOptions, parsed, warnings, &error))
         return error.isEmpty () ? QStringLiteral ("The managed robot source could not be parsed.")
                                 : error;
 

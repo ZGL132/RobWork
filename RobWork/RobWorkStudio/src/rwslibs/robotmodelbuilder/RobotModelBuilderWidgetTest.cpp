@@ -13,6 +13,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMetaObject>
+#include <QPushButton>
 #include <QMessageBox>
 #include <QProcess>
 #include <QSignalBlocker>
@@ -1105,6 +1106,45 @@ int main (int argc, char** argv)
         !isSelectionCombo (dynamicsLinks, 0, 1) || !isSelectionCombo (forceLimits, 0, 0) ||
         !isSelectionCombo (sceneFrames, 0, 1) || !isSelectionCombo (sceneGeometries, 0, 1))
         return fail ("Reference columns should use non-editable selection combos.");
+
+    QPushButton* addDrawable = widget.findChild< QPushButton* > ("addDrawableButton");
+    QPushButton* duplicateDrawable = widget.findChild< QPushButton* > ("duplicateDrawableButton");
+    QPushButton* removeDrawable = widget.findChild< QPushButton* > ("removeDrawableButton");
+    QPushButton* regenerateLinks = widget.findChild< QPushButton* > ("regenerateLinkHelpersButton");
+    if (addDrawable == NULL || duplicateDrawable == NULL || removeDrawable == NULL ||
+        regenerateLinks == NULL)
+        return fail ("Drawables tab should expose add, duplicate, remove, and link helper actions.");
+
+    const int defaultDrawableCount = drawables->rowCount ();
+    if (!QMetaObject::invokeMethod (&widget, "addDrawable", Qt::DirectConnection) ||
+        drawables->rowCount () != defaultDrawableCount + 1)
+        return fail ("Add Geometry should append an editable drawable.");
+    const int addedRow = drawables->rowCount () - 1;
+    drawables->setCurrentCell (addedRow, 0);
+    if (!QMetaObject::invokeMethod (&widget, "duplicateSelectedDrawable", Qt::DirectConnection) ||
+        drawables->rowCount () != defaultDrawableCount + 2)
+        return fail ("Duplicate Geometry should append a copy of the selected drawable.");
+    drawables->setCurrentCell (drawables->rowCount () - 1, 0);
+    if (!QMetaObject::invokeMethod (&widget, "removeSelectedDrawable", Qt::DirectConnection) ||
+        drawables->rowCount () != defaultDrawableCount + 1)
+        return fail ("Remove Geometry should remove the selected drawable.");
+
+    int helperRow = -1;
+    for (int row = 0; row < drawables->rowCount (); ++row) {
+        if (drawables->item (row, 0)->text ().startsWith ("Link")) {
+            helperRow = row;
+            break;
+        }
+    }
+    if (helperRow < 0)
+        return fail ("Default model should contain a generated link helper.");
+    drawables->setCurrentCell (helperRow, 0);
+    if (!QMetaObject::invokeMethod (&widget, "removeSelectedDrawable", Qt::DirectConnection))
+        return fail ("Could not remove a generated link helper.");
+    const int countWithoutHelper = drawables->rowCount ();
+    if (!QMetaObject::invokeMethod (&widget, "regenerateLinkHelpers", Qt::DirectConnection) ||
+        drawables->rowCount () != countWithoutHelper + 1)
+        return fail ("Regenerate Link Helpers should restore only the missing link helper.");
 
     QCheckBox* sceneGeneration = NULL;
     const QList< QCheckBox* > checkboxes = widget.findChildren< QCheckBox* > ();
