@@ -14,6 +14,7 @@ namespace rws {
  */
 enum class RobotModelSourceStatus
 {
+    ModelSpecIncomplete, //!< 嵌入式模型快照缺少机器人名称或关节定义
     Untracked,     //!< 未跟踪：未关联外部源模型文件，或项目独立运行
     Current,       //!< 最新/一致：磁盘源模型文件与项目内的冻结快照内容完全吻合
     Stale,         //!< 陈旧/过期：磁盘外部源模型已被修改，项目内的快照已过期

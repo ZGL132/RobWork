@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
+#include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -230,6 +231,34 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     _progressLabel = new QLabel("Not started", this);
     _progressLabel->setObjectName("structureOptimizationProgressLabel");
 
+    QFrame* modelStatusBanner = new QFrame(this);
+    modelStatusBanner->setObjectName("structureModelStatusBanner");
+    modelStatusBanner->setFrameShape(QFrame::StyledPanel);
+    QVBoxLayout* modelStatusLayout = new QVBoxLayout(modelStatusBanner);
+    _modelStatusBannerText = new QLabel(modelStatusBanner);
+    _modelStatusBannerText->setObjectName("structureModelStatusBannerText");
+    _modelStatusBannerText->setWordWrap(true);
+    _modelStatusBannerSource = new QLabel(modelStatusBanner);
+    _modelStatusBannerSource->setObjectName("structureModelStatusBannerSource");
+    _modelStatusBannerSource->setWordWrap(true);
+    QHBoxLayout* modelStatusActions = new QHBoxLayout();
+    _newProjectFromModelBannerButton =
+        new QPushButton("New Project from Model Snapshot", modelStatusBanner);
+    _newProjectFromModelBannerButton->setObjectName(
+        "newStructureOptimizationProjectFromModelBannerButton");
+    _newProjectFromFrozenRequirementBannerButton =
+        new QPushButton("New Project from Frozen Requirements", modelStatusBanner);
+    _newProjectFromFrozenRequirementBannerButton->setObjectName(
+        "newStructureOptimizationProjectFromFrozenRequirementBannerButton");
+    modelStatusActions->addWidget(_newProjectFromModelBannerButton);
+    modelStatusActions->addWidget(_newProjectFromFrozenRequirementBannerButton);
+    modelStatusActions->addStretch();
+    modelStatusLayout->addWidget(_modelStatusBannerText);
+    modelStatusLayout->addWidget(_modelStatusBannerSource);
+    modelStatusLayout->addLayout(modelStatusActions);
+    modelStatusBanner->hide();
+    _modelStatusBanner = modelStatusBanner;
+
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(_startButton);
     buttonLayout->addWidget(_pauseButton);
@@ -238,6 +267,7 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     buttonLayout->addWidget(_progressLabel);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(_modelStatusBanner);
     mainLayout->addWidget(_tabs);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addWidget(_statusLabel);
@@ -249,6 +279,10 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::togglePause);
     connect(_cancelButton, &QPushButton::clicked,
             this, &StructureOptimizerWidget::cancelOptimization);
+    connect(_newProjectFromModelBannerButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::newProjectFromModelSpec);
+    connect(_newProjectFromFrozenRequirementBannerButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::newProjectFromFrozenRequirements);
     connect(_variableModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
     connect(_variableModel, &StructureVariableTableModel::editRejected, this,
@@ -1002,6 +1036,7 @@ void StructureOptimizerWidget::restoreModelBaseline()
 
 void StructureOptimizerWidget::updateRunState()
 {
+    updateModelSourceStatus();
     std::string reason;
     const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(
         collectProblem(), &reason);
@@ -1009,7 +1044,6 @@ void StructureOptimizerWidget::updateRunState()
     _pauseButton->setEnabled(_controller->isRunning());
     _cancelButton->setEnabled(_controller->isRunning());
     if (runnable) {
-        updateModelSourceStatus();
         if (_modelSourceStatus == RobotModelSourceStatus::Current)
             _statusLabel->setText("Optimization project ready.");
     }
@@ -1023,20 +1057,47 @@ void StructureOptimizerWidget::updateModelSourceStatus()
         RobotModelStalenessChecker::checkManaged(
             _loadedProblem.context, _projectPath, _managedProjectRoot);
     _modelSourceStatus = result.status;
+    if (_modelStatusBanner == nullptr || _modelStatusBannerText == nullptr ||
+        _modelStatusBannerSource == nullptr)
+        return;
+
+    if (result.status == RobotModelSourceStatus::Current) {
+        _modelStatusBanner->hide();
+        return;
+    }
+
+    _modelStatusBanner->show();
+    _modelStatusBannerSource->setVisible(!result.resolvedSourcePath.isEmpty());
+    _modelStatusBannerSource->setText(
+        result.resolvedSourcePath.isEmpty()
+            ? QString()
+            : QString("Tracked source: %1").arg(result.resolvedSourcePath));
     switch (result.status) {
+        case RobotModelSourceStatus::ModelSpecIncomplete:
+            _modelStatusBannerText->setText(
+                "The embedded model snapshot is incomplete. Load a complete model snapshot or "
+                "create a new project from frozen requirements.");
+            return;
         case RobotModelSourceStatus::Current:
             return;
         case RobotModelSourceStatus::Untracked:
-            _statusLabel->setText("Model source is untracked. Using the embedded frozen snapshot.");
+            _modelStatusBannerText->setText(
+                "Model source is untracked. This project uses its embedded frozen snapshot.");
             return;
         case RobotModelSourceStatus::Stale:
-            _statusLabel->setText("Model snapshot is stale. Using the embedded frozen snapshot.");
+            _modelStatusBannerText->setText(
+                "Model source is stale. This project continues to use its embedded frozen "
+                "snapshot; it is not synchronized automatically.");
             return;
         case RobotModelSourceStatus::SourceMissing:
-            _statusLabel->setText("Model source is missing. Using the embedded frozen snapshot.");
+            _modelStatusBannerText->setText(
+                "Model source is missing. This project continues to use its embedded frozen "
+                "snapshot.");
             return;
         case RobotModelSourceStatus::SourceInvalid:
-            _statusLabel->setText("Model source is invalid. Using the embedded frozen snapshot.");
+            _modelStatusBannerText->setText(
+                "Model source is invalid. This project continues to use its embedded frozen "
+                "snapshot.");
             return;
     }
 }

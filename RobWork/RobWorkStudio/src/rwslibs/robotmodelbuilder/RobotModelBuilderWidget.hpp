@@ -86,6 +86,7 @@ class RobotModelBuilderWidget : public QWidget
 
   Q_SIGNALS:
     void loadSceneRequested (const QString& filename);
+    void drawableSelectionChanged (const QString& drawableName);
     // 用户交互后通知插件重新比较快照；信号本身不表示数据一定发生了变化。
     void projectDocumentInteraction ();
 

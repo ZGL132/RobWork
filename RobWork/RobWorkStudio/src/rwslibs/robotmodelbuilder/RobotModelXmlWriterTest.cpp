@@ -176,6 +176,29 @@ int main (int argc, char** argv)
     if (argc > 1)
         return runExternalUrdfImport (QString::fromLocal8Bit (argv[1]));
 
+    // A fresh standard project uses automatic links for its arm silhouette.  The
+    // first joint pair has zero separation, so four effective links plus the
+    // base, shoulder turntable, and tool flange remain as fixed details.
+    {
+        const RobotModelSpec defaultSpec =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        size_t autoLinkCount = 0;
+        size_t fixedDetailCount = 0;
+        for (const DrawableSpec& drawable : defaultSpec.drawables) {
+            if (drawable.autoLinkGeometry)
+                ++autoLinkCount;
+            else if (drawable.name == "BasePedestal" || drawable.name == "ShoulderHousing" ||
+                     drawable.name == "ToolFlange")
+                ++fixedDetailCount;
+            else
+                return fail ("Default six-axis model contains an unnecessary fixed drawable: " +
+                             QString::fromStdString (drawable.name));
+        }
+        if (autoLinkCount != 4 || fixedDetailCount != 3 ||
+            defaultSpec.drawables.size () != autoLinkCount + fixedDetailCount)
+            return fail ("Default six-axis model should contain four automatic links and three fixed details.");
+    }
+
     // =====================================================================
     //  URDF 导入 — Task 2:最小 URDF robot name / joint / origin xyz / rpy
     //                    (rad -> deg) / revolute limit (rad -> deg) /
@@ -805,15 +828,19 @@ int main (int argc, char** argv)
         return nullptr;
     };
     const DrawableSpec* basePedestal = findDrawable ("BasePedestal");
-    const DrawableSpec* upperArm = findDrawable ("UpperArmShell");
-    const DrawableSpec* forearm = findDrawable ("ForearmShell");
-    if (basePedestal == nullptr || upperArm == nullptr || forearm == nullptr ||
-        basePedestal->shape != "Cylinder" || upperArm->shape != "Box" ||
-        forearm->shape != "Box" || !basePedestal->filePath.empty () ||
-        !upperArm->filePath.empty () || !forearm->filePath.empty () ||
-        !nearlyEqual (upperArm->dimensions[0], 0.425) ||
-        !nearlyEqual (forearm->dimensions[0], 0.39243))
-        return fail ("Default model should use portable UR-proportioned simplified geometry.");
+    const DrawableSpec* shoulderHousing = findDrawable ("ShoulderHousing");
+    const DrawableSpec* toolFlange = findDrawable ("ToolFlange");
+    const DrawableSpec* upperArm = findDrawable ("Link2To3");
+    const DrawableSpec* forearm = findDrawable ("Link3To4");
+    if (basePedestal == nullptr || shoulderHousing == nullptr || toolFlange == nullptr ||
+        upperArm == nullptr || forearm == nullptr || basePedestal->shape != "Cylinder" ||
+        shoulderHousing->shape != "Cylinder" || toolFlange->shape != "Cylinder" ||
+        upperArm->shape != "Cylinder" || forearm->shape != "Cylinder" ||
+        !basePedestal->filePath.empty () || !shoulderHousing->filePath.empty () ||
+        !toolFlange->filePath.empty () || !upperArm->autoLinkGeometry ||
+        !forearm->autoLinkGeometry || !nearlyEqual (upperArm->radius, 0.070) ||
+        !nearlyEqual (forearm->radius, 0.062))
+        return fail ("Default model should use portable automatic links with minimal fixed details.");
 
     const QString serialXml = RobotModelXmlWriter::makeSerialDeviceXml (spec);
     const QString sceneXml  = RobotModelXmlWriter::makeSceneXml (spec);

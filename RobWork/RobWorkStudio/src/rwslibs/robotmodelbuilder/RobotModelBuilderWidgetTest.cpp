@@ -1107,6 +1107,18 @@ int main (int argc, char** argv)
         !isSelectionCombo (sceneFrames, 0, 1) || !isSelectionCombo (sceneGeometries, 0, 1))
         return fail ("Reference columns should use non-editable selection combos.");
 
+    QString highlightedDrawable;
+    QObject::connect (&widget, &rws::RobotModelBuilderWidget::drawableSelectionChanged,
+                      [&highlightedDrawable] (const QString& name) { highlightedDrawable = name; });
+    drawables->setCurrentCell (0, 0);
+    QApplication::processEvents ();
+    if (highlightedDrawable != drawables->item (0, 0)->text ())
+        return fail ("Selecting a drawable row should report its name for 3D highlighting.");
+    drawables->clearSelection ();
+    QApplication::processEvents ();
+    if (!highlightedDrawable.isEmpty ())
+        return fail ("Clearing the drawable selection should clear the 3D highlight.");
+
     QPushButton* addDrawable = widget.findChild< QPushButton* > ("addDrawableButton");
     QPushButton* duplicateDrawable = widget.findChild< QPushButton* > ("duplicateDrawableButton");
     QPushButton* removeDrawable = widget.findChild< QPushButton* > ("removeDrawableButton");

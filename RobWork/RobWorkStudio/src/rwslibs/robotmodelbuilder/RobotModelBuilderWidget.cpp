@@ -1564,6 +1564,14 @@ void RobotModelBuilderWidget::buildUi ()
                         << "Pos m"
                         << "RGB",
         0);
+    connect (_drawablesTable, &QTableWidget::itemSelectionChanged, this, [this] () {
+        const int row = _drawablesTable->currentRow ();
+        if (row < 0 || _drawablesTable->selectedItems ().isEmpty ()) {
+            Q_EMIT drawableSelectionChanged (QString ());
+            return;
+        }
+        Q_EMIT drawableSelectionChanged (itemText (_drawablesTable, row, 0));
+    });
     drawablesLay->addWidget (_drawablesTable);
     QWidget* drawableButtons = new QWidget (drawablesTab);
     QHBoxLayout* drawableBtnLay = new QHBoxLayout (drawableButtons);

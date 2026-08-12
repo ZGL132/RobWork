@@ -84,6 +84,7 @@
 #include <QHeaderView>
 #include <QMetaObject>
 #include <QJsonDocument>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMap>
 #include <QSet>
@@ -3670,7 +3671,7 @@ static void testProjectFactoryProvenance()
 
     rws::RobotDesignContext legacyContext;
     REQUIRE(rws::RobotModelStalenessChecker::check(legacyContext, projectPath).status ==
-            rws::RobotModelSourceStatus::Untracked);
+            rws::RobotModelSourceStatus::ModelSpecIncomplete);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -4553,6 +4554,14 @@ static void testStructureOptimizerWidgetState()
     std::printf("testStructureOptimizerWidgetState ... ");
 
     rws::StructureOptimizerWidget widget;
+    QWidget* modelStatusBanner =
+        widget.findChild<QWidget*>("structureModelStatusBanner");
+    QLabel* modelStatusBannerText =
+        widget.findChild<QLabel*>("structureModelStatusBannerText");
+    REQUIRE(modelStatusBanner != nullptr);
+    REQUIRE(modelStatusBannerText != nullptr);
+    if (modelStatusBanner == nullptr || modelStatusBannerText == nullptr)
+        return;
 
     QTabWidget* tabs = widget.findChild<QTabWidget*>("structureOptimizerTabs");
     REQUIRE(tabs != nullptr);
@@ -4691,8 +4700,8 @@ static void testStructureOptimizerWidgetState()
     variable.targetName = problem.context.modelSpec.transformJoints[0].name;
     variable.kind = rws::StructureVariableKind::JointPositionZ;
     variable.currentValue = problem.context.modelSpec.transformJoints[0].pos[2];
-    variable.minimum = 0.1;
-    variable.maximum = 0.5;
+    variable.minimum = variable.currentValue - 0.1;
+    variable.maximum = variable.currentValue + 0.1;
     variable.step = 0.001;
     variable.enabled = true;
     problem.variables.push_back(variable);
@@ -4744,7 +4753,7 @@ static void testStructureOptimizerWidgetState()
     if (variableTable != nullptr && duplicateVariableButton != nullptr) {
         REQUIRE(variableTable->model()->setData(
             variableTable->model()->index(
-                0, rws::StructureVariableTableModel::CurrentColumn), 0.3));
+                0, rws::StructureVariableTableModel::CurrentColumn), 0.1));
         REQUIRE(widget.isProjectDocumentDirty());
         REQUIRE(widget.saveProjectDocument(projectDocument, &projectDocumentError));
         widget.markProjectDocumentClean();
@@ -4783,7 +4792,9 @@ static void testStructureOptimizerWidgetState()
     widget.setProblem(staleProblem);
     if (startButton != nullptr)
         REQUIRE(startButton->isEnabled());
-    REQUIRE(widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
+    REQUIRE(!modelStatusBanner->isHidden());
+    REQUIRE(modelStatusBannerText->text().contains(
+        QStringLiteral("stale"), Qt::CaseInsensitive));
 
     QTemporaryDir managedStatusDirectory;
     REQUIRE(managedStatusDirectory.isValid());
@@ -4837,7 +4848,7 @@ static void testStructureOptimizerWidgetState()
         managedStatusDocument, managedStatusProblem, -1, &projectDocumentError));
     REQUIRE(widget.loadProjectDocument(
         managedStatusDocument, &projectDocumentError, managedStatusRoot));
-    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
+    REQUIRE(modelStatusBanner->isHidden());
     rws::StructureOptimizationProblem standaloneStatusProblem;
     REQUIRE(rws::StructureOptimizationProjectFactory::create(
         managedPortable, managedStatusSource, standaloneStatusProblem, &staleFactoryError));
@@ -4848,12 +4859,14 @@ static void testStructureOptimizerWidgetState()
     standaloneStatusProblem.weights = problem.weights;
     standaloneStatusProblem.objectives = problem.objectives;
     widget.setProblem(standaloneStatusProblem);
-    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
+    REQUIRE(modelStatusBanner->isHidden());
     REQUIRE(widget.loadProjectDocument(
         managedStatusDocument, &projectDocumentError, managedStatusRoot));
-    REQUIRE(!widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
+    REQUIRE(modelStatusBanner->isHidden());
     REQUIRE(widget.loadProjectDocument(managedStatusDocument, &projectDocumentError));
-    REQUIRE(widget.statusText().contains(QStringLiteral("Model snapshot is stale.")));
+    REQUIRE(!modelStatusBanner->isHidden());
+    REQUIRE(modelStatusBannerText->text().contains(
+        QStringLiteral("stale"), Qt::CaseInsensitive));
 
     const rws::StructureOptimizationProblem collected = widget.collectProblem();
     REQUIRE(collected.variables.size() == 1);
@@ -4887,6 +4900,80 @@ static void testStructureOptimizerWidgetState()
         REQUIRE(!startButton->isEnabled());
     REQUIRE(widget.statusText().toStdString().find(
                 "RobotDesignContext.ModelSpec.Incomplete") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testStructureOptimizerModelStatusGuidance()
+{
+    std::printf("testStructureOptimizerModelStatusGuidance ... ");
+    rws::StructureOptimizerWidget widget;
+    QWidget* banner = widget.findChild<QWidget*>("structureModelStatusBanner");
+    QLabel* bannerText = widget.findChild<QLabel*>("structureModelStatusBannerText");
+    QLabel* bannerSource = widget.findChild<QLabel*>("structureModelStatusBannerSource");
+    QPushButton* newFromModel = widget.findChild<QPushButton*>(
+        "newStructureOptimizationProjectFromModelBannerButton");
+    QPushButton* newFromRequirements = widget.findChild<QPushButton*>(
+        "newStructureOptimizationProjectFromFrozenRequirementBannerButton");
+    REQUIRE(banner != nullptr);
+    REQUIRE(bannerText != nullptr);
+    REQUIRE(bannerSource != nullptr);
+    REQUIRE(newFromModel != nullptr);
+    REQUIRE(newFromRequirements != nullptr);
+    if (banner == nullptr || bannerText == nullptr || bannerSource == nullptr ||
+        newFromModel == nullptr || newFromRequirements == nullptr)
+        return;
+
+    rws::StructureOptimizationProblem untracked;
+    untracked.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    untracked.context.robotName = untracked.context.modelSpec.robotName;
+    untracked.context.deviceName = untracked.context.modelSpec.robotName;
+    widget.setProblem(untracked);
+    REQUIRE(!banner->isHidden());
+    REQUIRE(bannerText->text().contains(QStringLiteral("untracked"), Qt::CaseInsensitive));
+    REQUIRE(!newFromModel->isHidden());
+    REQUIRE(!newFromRequirements->isHidden());
+
+    QTemporaryDir sourceDirectory;
+    REQUIRE(sourceDirectory.isValid());
+    rws::RobotModelSpec sourceSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(sourceDirectory.path());
+    sourceSpec.robotName = "StatusGuidanceRobot";
+    QStringList saveErrors;
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(sourceSpec, saveErrors));
+    const QString sourcePath = rws::RobotModelXmlWriter::specSidecarFilePath(sourceSpec);
+    rws::StructureOptimizationProblem tracked;
+    std::string factoryError;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        sourceSpec, sourcePath, tracked, &factoryError));
+    widget.setProblem(tracked);
+    REQUIRE(banner->isHidden());
+
+    rws::RobotModelSpec changed = sourceSpec;
+    const double frozenPosition = tracked.context.modelSpec.transformJoints.at(1).pos[0];
+    changed.transformJoints.at(1).pos[0] += 0.005;
+    saveErrors.clear();
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(changed, saveErrors));
+    widget.setProblem(tracked);
+    REQUIRE(!banner->isHidden());
+    REQUIRE(bannerText->text().contains(QStringLiteral("stale"), Qt::CaseInsensitive));
+    REQUIRE(bannerSource->text().contains(sourcePath));
+    REQUIRE(std::abs(widget.collectProblem().context.modelSpec.transformJoints.at(1).pos[0] -
+                     frozenPosition) < 1e-12);
+
+    REQUIRE(QFile::remove(sourcePath));
+    widget.setProblem(tracked);
+    REQUIRE(bannerText->text().contains(QStringLiteral("missing"), Qt::CaseInsensitive));
+
+    rws::StructureOptimizationProblem incomplete;
+    widget.setProblem(incomplete);
+    REQUIRE(!banner->isHidden());
+    REQUIRE(bannerText->text().contains(QStringLiteral("incomplete"), Qt::CaseInsensitive));
+    REQUIRE(!widget.findChild<QPushButton*>("startOptimizationButton")->isEnabled());
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -5187,6 +5274,7 @@ int main(int argc, char** argv)
     if (suite == "widget") {
         QApplication app(argc, argv);
         testStructureOptimizerWidgetState();
+        testStructureOptimizerModelStatusGuidance();
         testStructureOptimizerWidgetUsesEnglishCopy();
         testStructureOptimizerWidgetVariableEfficiencyControls();
         std::fflush(stdout);

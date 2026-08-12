@@ -247,6 +247,11 @@ private:
     QCheckBox* _showVariableAdvanced = nullptr;
     QLabel* _statusLabel = nullptr;                    //!< 底部状态栏信息标签
     QLabel* _progressLabel = nullptr;                  //!< 优化阶段与进度标签
+    QWidget* _modelStatusBanner = nullptr;
+    QLabel* _modelStatusBannerText = nullptr;
+    QLabel* _modelStatusBannerSource = nullptr;
+    QPushButton* _newProjectFromModelBannerButton = nullptr;
+    QPushButton* _newProjectFromFrozenRequirementBannerButton = nullptr;
     QSpinBox* _candidateCountSpin = nullptr;           //!< 候选解总数输入框
     QSpinBox* _eliteCountSpin = nullptr;               //!< 精英候选解数量输入框
     QSpinBox* _localEliteCountSpin = nullptr;          //!< 局部搜索精英解数量输入框

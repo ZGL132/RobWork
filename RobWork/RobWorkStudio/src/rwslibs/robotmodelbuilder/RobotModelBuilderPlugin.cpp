@@ -86,6 +86,8 @@ void RobotModelBuilderPlugin::initialize ()
     // 当 Widget 完成 "Save and Load" 操作时,会发出场景文件名,我们在这里负责真正去加载它
     connect (_widget, SIGNAL (loadSceneRequested (const QString&)), this,
              SLOT (loadSceneFile (const QString&)));
+    connect (_widget, &RobotModelBuilderWidget::drawableSelectionChanged, this,
+             &RobotModelBuilderPlugin::highlightSelectedDrawable);
 
     _projectProvider = new CallbackProjectDocumentProvider (
         QStringLiteral ("rws.robot-model-builder"),
@@ -138,6 +140,7 @@ void RobotModelBuilderPlugin::initialize ()
 // -----------------------------------------------------------------------------
 void RobotModelBuilderPlugin::open (rw::models::WorkCell* workcell)
 {
+    clearDrawableHighlight ();
     if (_ignoreNextOpenFromSelfLoad) {
         _ignoreNextOpenFromSelfLoad = false;
         return;
@@ -146,7 +149,43 @@ void RobotModelBuilderPlugin::open (rw::models::WorkCell* workcell)
 }
 
 void RobotModelBuilderPlugin::close ()
-{}
+{
+    clearDrawableHighlight ();
+}
+
+void RobotModelBuilderPlugin::clearDrawableHighlight ()
+{
+    for (size_t index = 0; index < _highlightedDrawables.size (); ++index) {
+        const rw::graphics::DrawableNode::Ptr& drawable = _highlightedDrawables[index];
+        if (drawable != NULL)
+            drawable->setHighlighted (_highlightedDrawableStates[index]);
+    }
+    _highlightedDrawables.clear ();
+    _highlightedDrawableStates.clear ();
+}
+
+void RobotModelBuilderPlugin::highlightSelectedDrawable (const QString& drawableName)
+{
+    RobWorkStudio* studio = getRobWorkStudio ();
+    clearDrawableHighlight ();
+    if (studio == NULL || drawableName.isEmpty () || studio->getView () == NULL)
+        return;
+
+    const rw::graphics::WorkCellScene::Ptr scene = studio->getView ()->getWorkCellScene ();
+    if (scene == NULL)
+        return;
+
+    const std::vector< rw::graphics::DrawableNode::Ptr > drawables =
+        scene->findDrawables (drawableName.toStdString ());
+    for (const rw::graphics::DrawableNode::Ptr& drawable : drawables) {
+        if (drawable == NULL)
+            continue;
+        _highlightedDrawables.push_back (drawable);
+        _highlightedDrawableStates.push_back (drawable->isHighlighted ());
+        drawable->setHighlighted (true);
+    }
+    studio->updateAndRepaint ();
+}
 
 // =============================================================================
 //  syncFromWorkCell

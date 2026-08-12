@@ -10,7 +10,11 @@
 #include <rws/RobWorkStudioPlugin.hpp>
 #include <rws/RobotProjectImportOptions.hpp>
 
+#include <rw/graphics/DrawableNode.hpp>
+
 #include <QVariantMap>
+
+#include <vector>
 
 namespace rws {
 
@@ -70,6 +74,7 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
      * @param filename 由 Widget 拼装好的场景 XML 路径(Scene.wc.xml)
      */
     void loadSceneFile (const QString& filename);
+    void highlightSelectedDrawable (const QString& drawableName);
 
   private:
     /// 实际的 UI 与业务逻辑对象,由本插件创建并管理生命周期
@@ -78,8 +83,11 @@ class RobotModelBuilderPlugin : public RobWorkStudioPlugin
     CallbackProjectDocumentProvider* _projectProvider;
     bool _ignoreNextOpenFromSelfLoad;
     RobotProjectImportOptions _robotProjectImportOptions;
+    std::vector< rw::graphics::DrawableNode::Ptr > _highlightedDrawables;
+    std::vector< bool > _highlightedDrawableStates;
 
     void syncFromWorkCell (rw::models::WorkCell* workcell);
+    void clearDrawableHighlight ();
 };
 
 }    // namespace rws

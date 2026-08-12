@@ -43,6 +43,11 @@ RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
     const RobotDesignContext& context, const QString& projectPath,
     const QString& managedProjectRoot)
 {
+    if (context.modelSpec.robotName.empty() || context.modelSpec.transformJoints.empty()) {
+        return {RobotModelSourceStatus::ModelSpecIncomplete, QString(),
+                "The embedded model snapshot is incomplete."};
+    }
+
     const RobotModelProvenance& provenance = context.modelProvenance;
     if (provenance.sourceModelPath.empty() || provenance.sourceFingerprint.empty() ||
         provenance.snapshotFingerprint.empty()) {
