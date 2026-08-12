@@ -1554,6 +1554,8 @@ void EngineeringRequirementsWidget::clearProjectDocumentContext()
     // 关闭/切换项目时执行完整会话重置:除脏比较所需的路径与快照外,还要销毁
     // 上一项目的全部需求数据与 UI 状态,确保新项目不会继承旧项目任何内容。
     // -- 数据层:需求集合、编译结果、冻结产物与撤销历史一并清空 --
+    _pendingFrozenArtifactValidation = false;
+    _pendingFrozenArtifactProjectRoot.clear();
     _requirements = RequirementSet();
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
@@ -1647,6 +1649,8 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
                                                             QString* error,
                                                             const QString& projectRoot)
 {
+    _pendingFrozenArtifactValidation = false;
+    _pendingFrozenArtifactProjectRoot.clear();
     QFile file(path); if (!file.open(QFile::ReadOnly)) { if (error != nullptr) *error = QStringLiteral("Cannot read requirements file: %1").arg(file.errorString()); return false; }
     QJsonParseError parseError;
     const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
@@ -1706,24 +1710,33 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
                                    validationRoot, model, &modelError);
         if (!modelReadable)
             parseMessage = modelError.toStdString();
-        FrozenRequirementValidationResult validationResult;
-        const bool artifactCurrent = modelReadable && _workcell != nullptr &&
-            RequirementFreezer::isCurrent(
-                artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
-                validationRoot.toStdString(), &validationResult);
-        if (artifactCurrent) {
+        if (_workcell == nullptr) {
+            // Project resources are loaded before RobWorkStudio opens the WorkCell.
+            // Preserve the artifact and verify it when the WorkCell arrives.
+            parsed.frozen = false;
+            _pendingFrozenArtifactValidation = true;
+            _pendingFrozenArtifactProjectRoot = validationRoot;
+            loadStatus = QStringLiteral(
+                "Requirements and frozen audit artifact loaded; waiting for the WorkCell to verify them.");
+        } else {
+            FrozenRequirementValidationResult validationResult;
+            const bool artifactCurrent = modelReadable &&
+                RequirementFreezer::isCurrent(
+                    artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
+                    validationRoot.toStdString(), &validationResult);
+            if (artifactCurrent) {
             parsed.frozen = true;
             compiled = artifact.compiled;
             loadStatus = QStringLiteral("Requirements and frozen audit artifact loaded and match the current model and WorkCell.");
             for (const std::string& warning : validationResult.warnings)
                 loadStatus += QStringLiteral("\nWarning: %1").arg(QString::fromStdString(warning));
-        } else {
+            } else {
             parsed.frozen = false;
             artifact = FrozenRequirementArtifact();
-            const QString reason = modelReadable && _workcell == nullptr ?
-                QStringLiteral("No WorkCell is open") : QString::fromStdString(parseMessage);
+            const QString reason = QString::fromStdString(parseMessage);
             loadStatus = QStringLiteral("Requirements loaded, but frozen evidence is stale or cannot be verified (%1). Freeze again.")
                 .arg(reason);
+            }
         }
     } else if (parsed.frozen) {
         // 兼容旧项目：旧格式只有 frozen 标志而没有工件、环境和模型证据，必须
@@ -1748,6 +1761,52 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
     Q_EMIT requirementsChanged();
     if (error != nullptr) error->clear();
     return true;
+}
+
+void EngineeringRequirementsWidget::validateLoadedFrozenArtifact()
+{
+    if (!_pendingFrozenArtifactValidation || _workcell == nullptr)
+        return;
+
+    _pendingFrozenArtifactValidation = false;
+    const QString validationRoot = _pendingFrozenArtifactProjectRoot;
+    _pendingFrozenArtifactProjectRoot.clear();
+    RobotModelSpec model;
+    QString modelError;
+    std::string validationMessage;
+    const bool modelReadable = !_requirements.modelBinding.sourcePath.empty() &&
+        loadRobotModelDocument(QString::fromStdString(_requirements.modelBinding.sourcePath),
+                               validationRoot, model, &modelError);
+    if (!modelReadable)
+        validationMessage = modelError.toStdString();
+    FrozenRequirementValidationResult validationResult;
+    const bool artifactCurrent = modelReadable &&
+        RequirementFreezer::isCurrent(
+            _frozenArtifact, _requirements, *_workcell, activeWorkCellState(), model,
+            &validationMessage, validationRoot.toStdString(), &validationResult);
+    if (artifactCurrent) {
+        _requirements.frozen = true;
+        _compiled = _frozenArtifact.compiled;
+        QString status = QStringLiteral(
+            "Requirements and frozen audit artifact loaded and match the current model and WorkCell.");
+        for (const std::string& warning : validationResult.warnings)
+            status += QStringLiteral("\nWarning: %1").arg(QString::fromStdString(warning));
+        setStatus(status);
+    } else {
+        _requirements.frozen = false;
+        _compiled = CompiledRequirementSet();
+        _frozenArtifact = FrozenRequirementArtifact();
+        const QString reason = validationMessage.empty() ?
+            QStringLiteral("Frozen evidence could not be verified") :
+            QString::fromStdString(validationMessage);
+        setStatus(QStringLiteral(
+            "Requirements loaded, but frozen evidence is stale or cannot be verified (%1). Freeze again.")
+                      .arg(reason));
+    }
+    refreshTables();
+    if (!_projectDocumentPath.isEmpty())
+        _savedProjectDocumentSnapshot = serializedProjectDocument(_projectDocumentPath);
+    Q_EMIT requirementsChanged();
 }
 
 void EngineeringRequirementsWidget::importStations()
@@ -2251,11 +2310,17 @@ void EngineeringRequirementsWidget::setWorkCell(rw::models::WorkCell* workcell)
     // 配置被用于新场景中的 TCP 捕获、几何解析或冻结环境指纹计算。
     _workcell = workcell;
     _currentState.reset();
+    if (workcell != nullptr && _pendingFrozenArtifactValidation) {
+        validateLoadedFrozenArtifact();
+        return;
+    }
     // 切换 WorkCell 会改变场景/环境指纹，旧的冻结与编译结果全部失效：解冻需求并
     // 清空编译快照与冻结工件，防止上一场景的"已验证"证据被带入新场景。
     _requirements.frozen = false;
     _compiled = CompiledRequirementSet();
     _frozenArtifact = FrozenRequirementArtifact();
+    _pendingFrozenArtifactValidation = false;
+    _pendingFrozenArtifactProjectRoot.clear();
     setStatus(workcell == nullptr ? QStringLiteral("No WorkCell is open. Referenced frames are unresolved.")
                                 : QStringLiteral("Connected to the current WorkCell."));
     refreshTables();

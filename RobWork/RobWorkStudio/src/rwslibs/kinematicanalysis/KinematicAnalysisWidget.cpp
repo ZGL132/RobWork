@@ -1735,6 +1735,16 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
     refreshProjectDefaultContext ();
     populateDevices ();
     populateTcpFrames ();
+    if (_workcell != nullptr && !_deferredProjectDocumentSnapshot.isEmpty ()) {
+        const QByteArray deferredSnapshot = _deferredProjectDocumentSnapshot;
+        _deferredProjectDocumentSnapshot.clear ();
+        QString applyError;
+        applyProjectDocumentSnapshot (deferredSnapshot, &applyError);
+        if (!applyError.isEmpty ())
+            setStatus (applyError);
+        else
+            _savedProjectDocumentSnapshot = projectDocumentSnapshot ();
+    }
     updateProjectDefaultTcpControl ();
     installTaskPointDelegates ();
     if (_workcell == NULL)
@@ -3016,14 +3026,23 @@ bool KinematicAnalysisWidget::loadProjectDocument (const QString& path, QString*
     }
     const QByteArray json = file.readAll ();
     QString applyError;
-    applyProjectDocumentSnapshot (json, &applyError);
+    KinematicAnalysisProjectSettings settings;
+    if (!KinematicAnalysisProjectDocument::fromJson (json, settings, &applyError)) {
+        if (error != nullptr)
+            *error = applyError;
+        return false;
+    }
+    if (_workcell == nullptr)
+        _deferredProjectDocumentSnapshot = json;
+    else
+        applyProjectDocumentSnapshot (json, &applyError);
     if (!applyError.isEmpty ()) {
         if (error != nullptr)
             *error = applyError;
         return false;
     }
     _projectDocumentPath = QFileInfo (path).absoluteFilePath ();
-    _savedProjectDocumentSnapshot = projectDocumentSnapshot ();
+    _savedProjectDocumentSnapshot = _workcell == nullptr ? json : projectDocumentSnapshot ();
     _pendingProjectDocumentSnapshot.clear ();
     return true;
 }
@@ -3091,6 +3110,7 @@ void KinematicAnalysisWidget::beginProjectDocument (const QString& path)
     // ProjectSaveTransaction 原子创建目标文件。
     _savedProjectDocumentSnapshot.clear ();
     _pendingProjectDocumentSnapshot.clear ();
+    _deferredProjectDocumentSnapshot.clear ();
 }
 
 // clearProjectDocumentContext:项目关闭或切换时释放仅用于脏比较的路径和快照,
@@ -3111,6 +3131,7 @@ void KinematicAnalysisWidget::clearProjectDocumentContext ()
     _projectDocumentPath.clear ();
     _savedProjectDocumentSnapshot.clear ();
     _pendingProjectDocumentSnapshot.clear ();
+    _deferredProjectDocumentSnapshot.clear ();
 }
 
 // populateDevices:把 WorkCell 中的 Device 全部填进 _deviceCombo。

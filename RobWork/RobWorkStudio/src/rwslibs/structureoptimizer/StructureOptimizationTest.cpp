@@ -93,6 +93,7 @@
 #include <QTimer>
 #include <QTableView>
 #include <QTabWidget>
+#include <QToolButton>
 
 #include <algorithm>
 #include <cmath>
@@ -2654,6 +2655,12 @@ static void testStructureOptimizerWidgetUsesEnglishCopy()
                     rws::StructureVariableTableModel::EnabledColumn) == QHeaderView::Fixed);
         REQUIRE(variableTable->columnWidth(
                     rws::StructureVariableTableModel::EnabledColumn) == 56);
+        for (const int column : {rws::StructureVariableTableModel::CurrentColumn,
+                                 rws::StructureVariableTableModel::MinimumColumn,
+                                 rws::StructureVariableTableModel::MaximumColumn,
+                                 rws::StructureVariableTableModel::StepColumn})
+            REQUIRE(variableTable->horizontalHeader()->sectionResizeMode(column) ==
+                    QHeaderView::Stretch);
     }
 
     const auto requireTableHeaders = [&widget](const char* objectName,
@@ -2697,15 +2704,20 @@ static void testStructureOptimizerWidgetVariableEfficiencyControls()
         widget.findChild<QPushButton*>("addMissingStructureVariablesButton");
     QPushButton* duplicate =
         widget.findChild<QPushButton*>("duplicateStructureVariableButton");
+    QToolButton* more = widget.findChild<QToolButton*>("structureVariableMoreButton");
     REQUIRE(table != nullptr);
     REQUIRE(search != nullptr);
     REQUIRE(typeFilter != nullptr);
     REQUIRE(showAdvanced != nullptr);
     REQUIRE(addMissing != nullptr);
     REQUIRE(duplicate != nullptr);
+    REQUIRE(more != nullptr);
     if (table == nullptr || search == nullptr || typeFilter == nullptr ||
-        showAdvanced == nullptr || addMissing == nullptr || duplicate == nullptr)
+        showAdvanced == nullptr || addMissing == nullptr || duplicate == nullptr || more == nullptr)
         return;
+
+    REQUIRE(addMissing->isHidden());
+    REQUIRE(more->menu() != nullptr);
 
     REQUIRE(qobject_cast<rws::StructureVariableFilterProxyModel*>(table->model()) != nullptr);
     REQUIRE(table->isColumnHidden(rws::StructureVariableTableModel::PreferredColumn));
@@ -4580,10 +4592,14 @@ static void testStructureOptimizerWidgetState()
     if (startButton != nullptr)
         REQUIRE(!startButton->isEnabled());
     REQUIRE(widget.findChild<QPushButton*>(
-                "newStructureOptimizationProjectFromModelButton") != nullptr);
+                "newStructureOptimizationProjectFromModelBannerButton") != nullptr);
     // 需求定义插件冻结后的工件必须有明确入口，避免工程师重新手工录入已经校验的任务点。
     REQUIRE(widget.findChild<QPushButton*>(
-                "newStructureOptimizationProjectFromFrozenRequirementButton") != nullptr);
+                "newStructureOptimizationProjectFromFrozenRequirementBannerButton") != nullptr);
+    REQUIRE(widget.findChild<QPushButton*>(
+                "newStructureOptimizationProjectFromModelButton") == nullptr);
+    REQUIRE(widget.findChild<QPushButton*>(
+                "newStructureOptimizationProjectFromFrozenRequirementButton") == nullptr);
 
     rws::StructureOptimizationProblem emptyTaskProject;
     std::string factoryError;
@@ -5040,7 +5056,7 @@ static void testManagedRobotProjectRequiresPublishedWorkCell()
     widget.setRobWorkStudio(&studio);
     widget.setScenarioContext(placeholder.get(), placeholder->getDefaultState());
     QPushButton* create = widget.findChild<QPushButton*>(
-        "newStructureOptimizationProjectFromFrozenRequirementButton");
+        "newStructureOptimizationProjectFromFrozenRequirementBannerButton");
     REQUIRE(create != nullptr);
     if (create != nullptr)
         create->click();

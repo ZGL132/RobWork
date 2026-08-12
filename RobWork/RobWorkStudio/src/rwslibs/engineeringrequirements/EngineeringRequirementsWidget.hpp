@@ -108,6 +108,7 @@ private:
     void refreshKeyStationList();
     void refreshKeyStationInspector();
     void refreshFrameChoices();
+    void validateLoadedFrozenArtifact();
     bool loadRequirementDocument(const QString& path, bool captureProjectSnapshot, QString* error,
                                  const QString& projectRoot = QString());
     bool loadRobotModelDocument(const QString& path, const QString& projectRoot,
@@ -156,6 +157,10 @@ private:
     // 冻结工件保留完整的编译结果、环境指纹和诊断，后续保存/下游交接不能仅
     // 依赖可编辑的 RequirementSet.frozen 标记来判断其是否已经经过真实校验。
     FrozenRequirementArtifact _frozenArtifact;
+    // A project document is restored before RobWorkStudio publishes its WorkCell.
+    // Keep parsed frozen evidence until the WorkCell is available for verification.
+    bool _pendingFrozenArtifactValidation = false;
+    QString _pendingFrozenArtifactProjectRoot;
     RequirementSetUndoStack _undoStack;
     rw::models::WorkCell* _workcell = nullptr;
     QString _projectOutputDirectory;

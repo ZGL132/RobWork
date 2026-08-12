@@ -1358,11 +1358,16 @@ int testWidgetManagedLoadUsesExplicitProjectRoot()
         &freezeError, oldRoot.toStdString()));
     REQUIRE(!oldRootValidation.warnings.empty());
 
+    QString error;
     rws::EngineeringRequirementsWidget widget;
+    widget.setProjectOutputDirectory(newRoot);
+    REQUIRE(widget.loadProjectDocument(documentPath, &error, newRoot));
+    REQUIRE(!widget.requirementSet().frozen);
     widget.setWorkCell(workcell.get());
     widget.setCurrentState(workcell->getDefaultState());
+    REQUIRE(widget.requirementSet().frozen);
+
     widget.setProjectOutputDirectory(oldRoot);
-    QString error;
     REQUIRE(widget.loadProjectDocument(documentPath, &error, oldRoot));
     REQUIRE(widget.requirementSet().frozen);
     REQUIRE(widget.statusText().contains("source WorkCell file is missing or has changed"));
@@ -2475,6 +2480,10 @@ int main(int argc, char** argv)
         return testRelativeSourceWithoutBaseDoesNotReadCurrentDirectory();
     }
     if (argc > 1 && std::string(argv[1]) == "managed_project_root") {
+        QApplication app(argc, argv);
+        return testWidgetManagedLoadUsesExplicitProjectRoot();
+    }
+    if (argc > 1 && std::string(argv[1]) == "deferred_frozen_artifact") {
         QApplication app(argc, argv);
         return testWidgetManagedLoadUsesExplicitProjectRoot();
     }

@@ -728,6 +728,9 @@ class KinematicAnalysisWidget : public QWidget
     QByteArray _savedProjectDocumentSnapshot;
     // _pendingProjectDocumentSnapshot:暂存到目标路径但尚未确认的快照
     QByteArray _pendingProjectDocumentSnapshot;
+    // Project resources load before the WorkCell. Retain the validated document
+    // until device and TCP controls can resolve their named bindings.
+    QByteArray _deferredProjectDocumentSnapshot;
     // 加载项目文档期间为 true,抑制所有控件的 projectDocumentChanged 信号,
     // 避免"恢复配置"被误判为用户编辑而标记脏。
     bool _applyingProjectDocument = false;

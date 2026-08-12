@@ -5126,6 +5126,53 @@ static int testManagedRobotProjectRequiresPublishedWorkCell ()
     return 0;
 }
 
+static int testProjectDocumentRestoresBindingsAfterWorkCellArrival ()
+{
+    QTemporaryDir directory;
+    if (!directory.isValid ())
+        return fail ("could not create deferred project-document fixture");
+
+    rws::KinematicAnalysisProjectSettings settings;
+    settings.deviceName = QStringLiteral ("GenericSixAxis");
+    settings.tcpFrameName = QStringLiteral ("AlternateTcp");
+    const QString documentPath = directory.filePath ("kinematic-analysis.json");
+    QFile document (documentPath);
+    if (!document.open (QIODevice::WriteOnly | QIODevice::Text) ||
+        document.write (rws::KinematicAnalysisProjectDocument::toJson (settings)) < 0)
+        return fail ("could not write deferred project-document fixture");
+    document.close ();
+
+    rws::KinematicAnalysisWidget widget;
+    QString error;
+    if (const int rc = require (widget.loadProjectDocument (documentPath, &error),
+                                "project document loads before WorkCell arrival"))
+        return rc;
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr (new rw::kinematics::StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*structure);
+    const rw::kinematics::FixedFrame::Ptr alternateTcp = rw::core::ownedPtr (
+        new rw::kinematics::FixedFrame ("AlternateTcp", rw::math::Transform3D<> ()));
+    structure->addFrame (alternateTcp, device->getEnd ());
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr (
+        new rw::models::WorkCell (structure, "DeferredRestoreWorkCell"));
+    workcell->addDevice (device);
+    widget.setWorkCell (workcell.get ());
+
+    QComboBox* deviceCombo = widget.findChild< QComboBox* > (
+        QStringLiteral ("deviceCombo"));
+    QComboBox* tcpCombo = widget.findChild< QComboBox* > (
+        QStringLiteral ("tcpFrameCombo"));
+    if (const int rc = require (deviceCombo != nullptr && tcpCombo != nullptr,
+                                "binding controls are available"))
+        return rc;
+    if (const int rc = require (deviceCombo->currentText () == settings.deviceName,
+                                "deferred document restores its selected device"))
+        return rc;
+    return require (tcpCombo->currentText () == settings.tcpFrameName,
+                    "deferred document restores its selected TCP frame");
+}
+
 static int testWorkCellProjectDefaultTcpContext ()
 {
     QTemporaryDir directory;
@@ -6962,6 +7009,13 @@ int main (int argc, char** argv)
         const int rc = testWorkCellProjectDefaultTcpContext ();
         if (rc == 0)
             std::cout << "KinematicAnalysis workcell_project_defaults test passed." << std::endl;
+        return rc;
+    }
+    if (requestedSuite == "deferred_project_document") {
+        QApplication app (argc, argv);
+        const int rc = testProjectDocumentRestoresBindingsAfterWorkCellArrival ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis deferred_project_document test passed." << std::endl;
         return rc;
     }
     if (requestedSuite == "workflow_ui") {

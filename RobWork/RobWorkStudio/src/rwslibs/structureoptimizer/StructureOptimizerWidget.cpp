@@ -44,6 +44,8 @@
 #include <QSet>
 #include <QTabWidget>
 #include <QTableView>
+#include <QMenu>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
@@ -241,23 +243,31 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     _modelStatusBannerSource = new QLabel(modelStatusBanner);
     _modelStatusBannerSource->setObjectName("structureModelStatusBannerSource");
     _modelStatusBannerSource->setWordWrap(true);
-    QHBoxLayout* modelStatusActions = new QHBoxLayout();
+    QToolButton* modelStatusDetails = new QToolButton(modelStatusBanner);
+    modelStatusDetails->setObjectName("structureModelStatusBannerDetailsButton");
+    modelStatusDetails->setText("Details");
+    modelStatusDetails->setCheckable(true);
     _newProjectFromModelBannerButton =
-        new QPushButton("New Project from Model Snapshot", modelStatusBanner);
+        new QPushButton("New Project from Model Snapshot", this);
     _newProjectFromModelBannerButton->setObjectName(
         "newStructureOptimizationProjectFromModelBannerButton");
     _newProjectFromFrozenRequirementBannerButton =
-        new QPushButton("New Project from Frozen Requirements", modelStatusBanner);
+        new QPushButton("New Project from Frozen Requirements", this);
     _newProjectFromFrozenRequirementBannerButton->setObjectName(
         "newStructureOptimizationProjectFromFrozenRequirementBannerButton");
-    modelStatusActions->addWidget(_newProjectFromModelBannerButton);
-    modelStatusActions->addWidget(_newProjectFromFrozenRequirementBannerButton);
-    modelStatusActions->addStretch();
+    _modelStatusBannerSource->setVisible(false);
+    _modelStatusBannerSource->setToolTip("The absolute path of the tracked model source.");
     modelStatusLayout->addWidget(_modelStatusBannerText);
+    modelStatusLayout->addWidget(modelStatusDetails, 0, Qt::AlignLeft);
     modelStatusLayout->addWidget(_modelStatusBannerSource);
-    modelStatusLayout->addLayout(modelStatusActions);
     modelStatusBanner->hide();
     _modelStatusBanner = modelStatusBanner;
+
+    QHBoxLayout* projectToolbar = new QHBoxLayout();
+    projectToolbar->setObjectName("structureProjectToolbar");
+    projectToolbar->addWidget(_newProjectFromModelBannerButton);
+    projectToolbar->addWidget(_newProjectFromFrozenRequirementBannerButton);
+    projectToolbar->addStretch();
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(_startButton);
@@ -267,6 +277,7 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     buttonLayout->addWidget(_progressLabel);
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout->addLayout(projectToolbar);
     mainLayout->addWidget(_modelStatusBanner);
     mainLayout->addWidget(_tabs);
     mainLayout->addLayout(buttonLayout);
@@ -283,6 +294,8 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::newProjectFromModelSpec);
     connect(_newProjectFromFrozenRequirementBannerButton, &QPushButton::clicked,
             this, &StructureOptimizerWidget::newProjectFromFrozenRequirements);
+    connect(modelStatusDetails, &QToolButton::toggled,
+            _modelStatusBannerSource, &QLabel::setVisible);
     connect(_variableModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
     connect(_variableModel, &StructureVariableTableModel::editRejected, this,
@@ -580,10 +593,8 @@ QWidget* StructureOptimizerWidget::createVariablePage()
                              StructureVariableTableModel::MaximumColumn,
                              StructureVariableTableModel::StepColumn,
                              StructureVariableTableModel::PreferredColumn,
-                             StructureVariableTableModel::PreferenceWeightColumn}) {
-        header->setSectionResizeMode(column, QHeaderView::Fixed);
-        _variableView->setColumnWidth(column, 96);
-    }
+                             StructureVariableTableModel::PreferenceWeightColumn})
+        header->setSectionResizeMode(column, QHeaderView::Stretch);
     header->setSectionResizeMode(StructureVariableTableModel::EnabledColumn,
                                  QHeaderView::Fixed);
     _variableView->setColumnWidth(StructureVariableTableModel::EnabledColumn, 56);
@@ -594,8 +605,6 @@ QWidget* StructureOptimizerWidget::createVariablePage()
     _variableView->setColumnWidth(StructureVariableTableModel::KindColumn, 160);
     _variableView->setColumnHidden(StructureVariableTableModel::PreferredColumn, true);
     _variableView->setColumnHidden(StructureVariableTableModel::PreferenceWeightColumn, true);
-    layout->addWidget(_variableView);
-
     QHBoxLayout* variableActions = new QHBoxLayout();
     _variableSearch = new QLineEdit(page);
     _variableSearch->setObjectName("structureVariableSearch");
@@ -620,16 +629,30 @@ QWidget* StructureOptimizerWidget::createVariablePage()
     _removeVariablesButton->setObjectName("removeStructureVariablesButton");
     _restoreVariableBaselineButton = new QPushButton("Restore Model Baseline", page);
     _restoreVariableBaselineButton->setObjectName("restoreStructureVariableBaselineButton");
+    _variableSearch->setMinimumWidth(180);
+    _variableTypeFilter->setMinimumWidth(130);
+    QToolButton* variableMore = new QToolButton(page);
+    variableMore->setObjectName("structureVariableMoreButton");
+    variableMore->setText("More");
+    variableMore->setPopupMode(QToolButton::InstantPopup);
+    QMenu* variableMenu = new QMenu(variableMore);
+    _addMissingSuggestionsAction = variableMenu->addAction(
+        "Add Missing Suggestions", _addMissingSuggestionsButton, &QPushButton::click);
+    _restoreVariableBaselineAction = variableMenu->addAction(
+        "Restore Model Baseline", _restoreVariableBaselineButton, &QPushButton::click);
+    variableMore->setMenu(variableMenu);
     variableActions->addWidget(_variableSearch);
     variableActions->addWidget(_variableTypeFilter);
     variableActions->addWidget(_showVariableAdvanced);
-    variableActions->addWidget(_addMissingSuggestionsButton);
     variableActions->addWidget(_addVariableButton);
     variableActions->addWidget(_duplicateVariableButton);
     variableActions->addWidget(_removeVariablesButton);
-    variableActions->addWidget(_restoreVariableBaselineButton);
+    variableActions->addWidget(variableMore);
     variableActions->addStretch();
+    _addMissingSuggestionsButton->setVisible(false);
+    _restoreVariableBaselineButton->setVisible(false);
     layout->addLayout(variableActions);
+    layout->addWidget(_variableView);
 
     connect(_addVariableButton, &QPushButton::clicked,
             this, &StructureOptimizerWidget::addVariable);
@@ -831,26 +854,16 @@ QWidget* StructureOptimizerWidget::createReportPage()
 {
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
-    QPushButton* newFromModel = new QPushButton("New Project from Model Snapshot", page);
-    newFromModel->setObjectName("newStructureOptimizationProjectFromModelButton");
-    QPushButton* newFromRequirements = new QPushButton("New Project from Frozen Requirements", page);
-    newFromRequirements->setObjectName("newStructureOptimizationProjectFromFrozenRequirementButton");
     QPushButton* open = new QPushButton("Import Project", page);
     open->setObjectName("openStructureOptimizationProjectButton");
     QPushButton* save = new QPushButton("Export Project", page);
     save->setObjectName("saveStructureOptimizationProjectButton");
     QPushButton* exportAll = new QPushButton("Export Report & Models", page);
     exportAll->setObjectName("exportStructureOptimizationResultButton");
-    layout->addWidget(newFromModel);
-    layout->addWidget(newFromRequirements);
     layout->addWidget(open);
     layout->addWidget(save);
     layout->addWidget(exportAll);
     layout->addStretch();
-    connect(newFromModel, &QPushButton::clicked,
-            this, &StructureOptimizerWidget::newProjectFromModelSpec);
-    connect(newFromRequirements, &QPushButton::clicked,
-            this, &StructureOptimizerWidget::newProjectFromFrozenRequirements);
     connect(open, &QPushButton::clicked, this, &StructureOptimizerWidget::openProject);
     connect(save, &QPushButton::clicked, this, &StructureOptimizerWidget::saveProject);
     connect(exportAll, &QPushButton::clicked, this, &StructureOptimizerWidget::exportResult);
@@ -893,6 +906,9 @@ void StructureOptimizerWidget::updateVariableActionState()
     _variableTypeFilter->setEnabled(editable);
     _showVariableAdvanced->setEnabled(editable);
     _addMissingSuggestionsButton->setEnabled(editable && !availableSuggestedVariables().empty());
+    if (_addMissingSuggestionsAction != nullptr)
+        _addMissingSuggestionsAction->setEnabled(
+            editable && !availableSuggestedVariables().empty());
     _addVariableButton->setEnabled(editable && !availableSuggestedVariables().empty());
     const bool hasSelection =
         editable && _variableView->selectionModel() != nullptr &&
@@ -900,6 +916,8 @@ void StructureOptimizerWidget::updateVariableActionState()
     _duplicateVariableButton->setEnabled(hasSelection);
     _removeVariablesButton->setEnabled(hasSelection);
     _restoreVariableBaselineButton->setEnabled(editable);
+    if (_restoreVariableBaselineAction != nullptr)
+        _restoreVariableBaselineAction->setEnabled(editable);
 }
 
 void StructureOptimizerWidget::addVariable()
@@ -1067,11 +1085,17 @@ void StructureOptimizerWidget::updateModelSourceStatus()
     }
 
     _modelStatusBanner->show();
-    _modelStatusBannerSource->setVisible(!result.resolvedSourcePath.isEmpty());
+    QToolButton* detailsButton = _modelStatusBanner->findChild<QToolButton*>(
+        QStringLiteral("structureModelStatusBannerDetailsButton"));
+    if (detailsButton != nullptr)
+        detailsButton->setVisible(!result.resolvedSourcePath.isEmpty());
+    _modelStatusBannerSource->setVisible(detailsButton != nullptr && detailsButton->isChecked());
     _modelStatusBannerSource->setText(
         result.resolvedSourcePath.isEmpty()
             ? QString()
             : QString("Tracked source: %1").arg(result.resolvedSourcePath));
+    _modelStatusBannerSource->setToolTip(_modelStatusBannerSource->text());
+    _modelStatusBanner->setToolTip(_modelStatusBannerSource->text());
     switch (result.status) {
         case RobotModelSourceStatus::ModelSpecIncomplete:
             _modelStatusBannerText->setText(

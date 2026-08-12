@@ -13,6 +13,7 @@
 #include <array>
 
 class QLabel;
+class QAction;
 class QCheckBox;
 class QPushButton;
 class QComboBox;
@@ -242,6 +243,8 @@ private:
     QPushButton* _duplicateVariableButton = nullptr;
     QPushButton* _removeVariablesButton = nullptr;
     QPushButton* _restoreVariableBaselineButton = nullptr;
+    QAction* _addMissingSuggestionsAction = nullptr;
+    QAction* _restoreVariableBaselineAction = nullptr;
     QLineEdit* _variableSearch = nullptr;
     QComboBox* _variableTypeFilter = nullptr;
     QCheckBox* _showVariableAdvanced = nullptr;
