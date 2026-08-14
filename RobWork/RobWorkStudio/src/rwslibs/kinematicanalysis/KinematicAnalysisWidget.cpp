@@ -502,6 +502,9 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _poseReachabilitySamples(),
     _validateExecution(),
     _validateSummary(),
+    _validateWatcher(new QFutureWatcher< RequirementValidationRunResult > (this)),
+    _validateCancelRequested(std::make_shared< std::atomic_bool > (false)),
+    _validateRunActive(false),
     _validateExecutionSet(false),
     _validateHasResults(false)
 {
@@ -999,6 +1002,8 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
              SIGNAL (finished ()) ,
              this,
              SLOT (handleCapabilityExplorationFinished ()));
+    connect (_validateWatcher, &QFutureWatcher< RequirementValidationRunResult >::finished,
+             this, &KinematicAnalysisWidget::handleRequirementValidationFinished);
 
     QVBoxLayout* validateLayout = new QVBoxLayout (_validateWorkflowPage);
     validateLayout->setContentsMargins (8, 8, 8, 8);
@@ -1602,6 +1607,8 @@ KinematicAnalysisWidget::~KinematicAnalysisWidget ()
         _poseReachabilityCancelRequested->store (true);
     if (_exploreCancelToken)
         _exploreCancelToken->store (true);
+    if (_validateCancelRequested)
+        _validateCancelRequested->store (true);
     cancelEnvelopeRequest (true);
     if (_workspaceWatcher != NULL && _workspaceWatcher->isRunning ())
         _workspaceWatcher->waitForFinished ();
@@ -1609,6 +1616,8 @@ KinematicAnalysisWidget::~KinematicAnalysisWidget ()
         _poseReachabilityWatcher->waitForFinished ();
     if (_exploreWatcher != NULL && _exploreWatcher->isRunning ())
         _exploreWatcher->waitForFinished ();
+    if (_validateWatcher != NULL && _validateWatcher->isRunning ())
+        _validateWatcher->waitForFinished ();
     if (_workspaceRunActive)
         QApplication::restoreOverrideCursor ();
     if (_poseReachabilityRunActive)
@@ -1660,6 +1669,9 @@ void KinematicAnalysisWidget::clearAnalysisSessionState (bool detachWorkCell)
         _poseReachabilityCancelRequested->store (true);
     if (_exploreCancelToken)
         _exploreCancelToken->store (true);
+    if (_validateCancelRequested)
+        _validateCancelRequested->store (true);
+    _validateRunActive = false;
     _exploreRunActive = false;
     _exploreCancellationRequested = false;
     _exploreCompletedSamples = 0;
@@ -1807,6 +1819,8 @@ void KinematicAnalysisWidget::updateMode2DataSource (int index)
 // 并把缺失原因写入底部状态栏,避免用户在缺少前置条件时点击按钮无响应。
 void KinematicAnalysisWidget::refreshWorkflowControls ()
 {
+    const bool validationIdle = !_validateRunActive &&
+        (_validateWatcher == nullptr || !_validateWatcher->isRunning ());
     const bool hasWorkCell = _workcell != nullptr;
     const bool hasDevice = hasWorkCell && _deviceCombo != nullptr &&
                            _deviceCombo->currentIndex () >= 0 &&
@@ -1815,9 +1829,13 @@ void KinematicAnalysisWidget::refreshWorkflowControls ()
                         _tcpFrameCombo->currentIndex () >= 0 &&
                         selectedTcpFrame () != nullptr;
     if (_ikSyncTcpButton != nullptr)
-        _ikSyncTcpButton->setEnabled (hasTcp);
+        _ikSyncTcpButton->setEnabled (hasTcp && validationIdle);
     if (_ikSolveButton != nullptr)
-        _ikSolveButton->setEnabled (hasTcp);
+        _ikSolveButton->setEnabled (hasTcp && validationIdle);
+    if (_deviceCombo != nullptr)
+        _deviceCombo->setEnabled (validationIdle);
+    if (_tcpFrameCombo != nullptr)
+        _tcpFrameCombo->setEnabled (validationIdle);
     const bool localTasks = _mode2DataSourceCombo == nullptr ||
                             _mode2DataSourceCombo->currentIndex () == 0;
     const bool localSelection = _taskPointTable != nullptr &&
@@ -1830,13 +1848,13 @@ void KinematicAnalysisWidget::refreshWorkflowControls ()
                                        _validateRegionSummaryTable->selectionModel () != nullptr &&
                                        _validateRegionSummaryTable->selectionModel ()->hasSelection ();
     if (_mode2LoadJsonButton != nullptr)
-        _mode2LoadJsonButton->setEnabled (!localTasks && hasTcp);
+        _mode2LoadJsonButton->setEnabled (!localTasks && hasTcp && validationIdle);
     if (_mode2ValidateAllButton != nullptr)
         _mode2ValidateAllButton->setEnabled (
-            localTasks ? hasTcp : (hasTcp && _validateExecutionSet));
+            validationIdle && (localTasks ? hasTcp : (hasTcp && _validateExecutionSet)));
     if (_mode2ValidateSelectedButton != nullptr)
         _mode2ValidateSelectedButton->setEnabled (
-            hasTcp && (localTasks ? localSelection :
+            validationIdle && hasTcp && (localTasks ? localSelection :
                 (_validateExecutionSet && (frozenTaskSelection || frozenRegionSelection))));
     if (_mode2AddButton != nullptr)
         _mode2AddButton->setEnabled (localTasks);
@@ -2507,12 +2525,14 @@ void KinematicAnalysisWidget::validateRequirements ()
         return;
     }
 
+    if (_validateRunActive || _validateWatcher == nullptr || _validateWatcher->isRunning ())
+        return;
+
     AnalysisContextInput input;
     input.workcell = rw::core::Ptr< rw::models::WorkCell > (_workcell);
     input.device = device;
     input.tcpFrame = tcpFrame;
     input.baseState = currentState ();
-    input.collisionDetector = collisionDetectorForAnalysis (true, nullptr);
     input.deviceName = device->getName ();
     input.tcpFrameName = tcpFrame->getName ();
     input.modelFingerprint = _validateExecution.provenance.robotModelFingerprint.empty ()
@@ -2532,17 +2552,92 @@ void KinematicAnalysisWidget::validateRequirements ()
         return;
     }
 
-    KinematicAnalyzer analyzer;
-    analyzer.setThresholds (_thresholds);
-    const RequirementValidationSummary taskSummary =
-        analyzer.validateRequirements (context, _validateExecution);
+    _validateRunActive = true;
+    if (_validateCancelRequested)
+        _validateCancelRequested->store (false);
+    _validateWatcher->setProperty (
+        "workcellSessionGeneration", QVariant::fromValue< qulonglong > (_workcellSessionGeneration));
+    if (_mode2ValidateAllButton != nullptr)
+        _mode2ValidateAllButton->setEnabled (false);
+    if (_mode2ValidateSelectedButton != nullptr)
+        _mode2ValidateSelectedButton->setEnabled (false);
+    setStatus (tr ("Frozen requirements validation running..."));
+    const RequirementExecutionSet execution = _validateExecution;
+    const quint64 session = _workcellSessionGeneration;
+    const auto cancel = _validateCancelRequested;
+    const rw::core::Ptr< rw::models::WorkCell > runWorkCell = context.workcell;
+    QFuture< RequirementValidationRunResult > future = QtConcurrent::run (
+        [context, execution, session, cancel, runWorkCell] () mutable {
+            RequirementValidationRunResult result;
+            result.execution = execution;
+            result.sessionGeneration = session;
+            try {
+                context.collisionDetector = makeKinematicAnalysisCollisionDetector (runWorkCell);
+                KinematicAnalyzer analyzer;
+                analyzer.setThresholds (context.thresholds);
+                CancellationToken token;
+                token.isCancellationRequested = [] (void* userData) {
+                    const auto* cancellation =
+                        static_cast< const std::shared_ptr< std::atomic_bool >* > (userData);
+                    return cancellation != nullptr && *cancellation != nullptr &&
+                        (*cancellation)->load ();
+                };
+                token.userData = const_cast< std::shared_ptr< std::atomic_bool >* > (&cancel);
+                result.taskSummary = analyzer.validateRequirements (
+                    context, execution, BatchRunOptions (), token);
+                if (cancel->load ()) {
+                    result.cancelled = true;
+                    return result;
+                }
+                RegionCoverageEvaluator evaluator;
+                result.regionResults.reserve (execution.workspaceRegions.size ());
+                for (const RequirementExecutionRegion& region : execution.workspaceRegions) {
+                    if (cancel->load ()) {
+                        result.cancelled = true;
+                        break;
+                    }
+                    result.regionResults.push_back (evaluator.evaluate (context, region, token));
+                }
+            }
+            catch (const std::exception& error) {
+                result.errorMessage = QString::fromLocal8Bit (error.what ());
+            }
+            catch (...) {
+                result.errorMessage = QStringLiteral ("Unknown validation error.");
+            }
+            return result;
+        });
+    _validateWatcher->setFuture (future);
+}
 
-    RegionCoverageEvaluator regionEvaluator;
-    std::vector< RegionCoverageResult > regionResults;
-    regionResults.reserve (_validateExecution.workspaceRegions.size ());
-    for (const RequirementExecutionRegion& region : _validateExecution.workspaceRegions) {
-        regionResults.push_back (regionEvaluator.evaluate (context, region));
+void KinematicAnalysisWidget::handleRequirementValidationFinished ()
+{
+    if (_validateWatcher == nullptr || !_validateWatcher->isFinished ())
+        return;
+    const RequirementValidationRunResult result = _validateWatcher->result ();
+    _validateRunActive = false;
+    const quint64 session = _validateWatcher->property (
+        "workcellSessionGeneration").toULongLong ();
+    if (result.cancelled || result.sessionGeneration != session ||
+        result.sessionGeneration != _workcellSessionGeneration) {
+        refreshWorkflowControls ();
+        return;
     }
+    if (!result.errorMessage.isEmpty ()) {
+        setStatus (tr ("Frozen requirements validation failed: %1")
+                       .arg (result.errorMessage));
+        refreshWorkflowControls ();
+        return;
+    }
+    applyRequirementValidationResult (result);
+}
+
+void KinematicAnalysisWidget::applyRequirementValidationResult (
+    const RequirementValidationRunResult& validationResult)
+{
+    _validateExecution = validationResult.execution;
+    const RequirementValidationSummary& taskSummary = validationResult.taskSummary;
+    const std::vector< RegionCoverageResult >& regionResults = validationResult.regionResults;
     if (_validateRegionSummaryTable != nullptr) {
         _validateRegionSummaryTable->setRowCount (0);
         for (std::size_t i = 0; i < regionResults.size (); ++i) {
@@ -3088,7 +3183,8 @@ void KinematicAnalysisWidget::markProjectDocumentClean ()
 // worker 完成后把结果写回已销毁 / 已切换的上下文。
 bool KinematicAnalysisWidget::canCloseProjectDocument (QString* reason) const
 {
-    const bool running = _exploreRunActive || _workspaceRunActive || _poseReachabilityRunActive ||
+    const bool running = _validateRunActive || _exploreRunActive || _workspaceRunActive || _poseReachabilityRunActive ||
+        (_validateWatcher != nullptr && _validateWatcher->isRunning ()) ||
         (_exploreWatcher != nullptr && _exploreWatcher->isRunning ()) || _envelopeRunActive ||
         (_workspaceWatcher != nullptr && _workspaceWatcher->isRunning ()) ||
         (_poseReachabilityWatcher != nullptr && _poseReachabilityWatcher->isRunning ()) ||

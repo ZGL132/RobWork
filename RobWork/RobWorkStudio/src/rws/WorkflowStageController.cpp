@@ -7,6 +7,18 @@ bool equalIfPresent (const QString& expected, const QString& actual)
     return expected.isEmpty () || expected == actual;
 }
 
+bool sceneEvidenceMatches (const rws::WorkflowProjectSnapshot& snapshot,
+                           const QString& expected)
+{
+    if (expected.isEmpty ())
+        return true;
+    // Accept raw-file evidence as a compatibility path for projects written
+    // before canonical XML fingerprints were persisted. The next workflow
+    // publication rewrites it to the canonical value.
+    return expected == snapshot.sceneFingerprint ||
+           expected == snapshot.legacySceneFingerprint;
+}
+
 void addRequired (rws::WorkflowStageStatus& status, const QString& resourceId)
 {
     if (!status.requiredResourceIds.contains (resourceId))
@@ -46,7 +58,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
         addRequired (requirements, QStringLiteral ("engineering-requirements.main"));
     }
     else if (!equalIfPresent (snapshot.requirementModelFingerprint, snapshot.modelFingerprint) ||
-             !equalIfPresent (snapshot.requirementSceneFingerprint, snapshot.sceneFingerprint)) {
+             !sceneEvidenceMatches (snapshot, snapshot.requirementSceneFingerprint)) {
         requirements.state = WorkflowStageState::Stale;
         requirements.reason = QStringLiteral ("Requirements no longer match the current model or scene.");
     }
@@ -57,7 +69,10 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
     WorkflowStageStatus& kinematics = result.at (WorkflowStage::Kinematics);
     kinematics.modelFingerprint = snapshot.modelFingerprint;
     kinematics.requirementFingerprint = snapshot.requirementFingerprint;
-    if (requirements.state == WorkflowStageState::Complete) {
+    // A stale requirement set is still actionable. Keep Kinematics open so
+    // the user can re-run validation and repair the published evidence.
+    if (requirements.state == WorkflowStageState::Complete ||
+        requirements.state == WorkflowStageState::Stale) {
         if (!snapshot.kinematicValidationPassed || snapshot.kinematicValidationFingerprint.isEmpty ()) {
             kinematics.state = WorkflowStageState::Available;
             kinematics.reason = QStringLiteral ("Run kinematic validation before optimization.");
@@ -66,7 +81,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
         else if (!equalIfPresent (snapshot.kinematicModelFingerprint, snapshot.modelFingerprint) ||
                  !equalIfPresent (snapshot.kinematicRequirementFingerprint,
                                   snapshot.requirementFingerprint) ||
-                 !equalIfPresent (snapshot.kinematicSceneFingerprint, snapshot.sceneFingerprint)) {
+                 !sceneEvidenceMatches (snapshot, snapshot.kinematicSceneFingerprint)) {
             kinematics.state = WorkflowStageState::Stale;
             kinematics.reason = QStringLiteral ("Kinematic validation is stale for the current inputs.");
         }
@@ -81,7 +96,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
     WorkflowStageStatus& optimization = result.at (WorkflowStage::StructuralOptimization);
     optimization.modelFingerprint = snapshot.modelFingerprint;
     optimization.requirementFingerprint = snapshot.requirementFingerprint;
-    if (requirements.state == WorkflowStageState::Complete) {
+    if (kinematics.state == WorkflowStageState::Complete) {
         if (!snapshot.optimizationArtifactAvailable) {
             optimization.state = WorkflowStageState::Available;
             optimization.reason = QStringLiteral ("Create a structural optimization result.");
@@ -92,7 +107,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
                                   snapshot.requirementFingerprint) ||
                  !equalIfPresent (snapshot.optimizationKinematicFingerprint,
                                   snapshot.kinematicValidationFingerprint) ||
-                 !equalIfPresent (snapshot.optimizationSceneFingerprint, snapshot.sceneFingerprint)) {
+                 !sceneEvidenceMatches (snapshot, snapshot.optimizationSceneFingerprint)) {
             optimization.state = WorkflowStageState::Stale;
             optimization.reason = QStringLiteral ("Optimization result is stale for the current inputs.");
         }
@@ -101,7 +116,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
         }
     }
     else {
-        optimization.reason = QStringLiteral ("Complete and freeze requirements first.");
+        optimization.reason = QStringLiteral ("Pass kinematic validation before optimization.");
     }
     return result;
 }

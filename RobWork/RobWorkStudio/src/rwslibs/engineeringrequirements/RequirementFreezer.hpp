@@ -90,6 +90,15 @@ struct FrozenRequirementValidationResult {
  * RobotModelSpec、WorkCell 与运动学 State 下完成环境解析后的只读输入。下游优化器
  * 只能消费该工件，避免将“尚未解析的名称字符串”误当成已经满足的工程条件。
  */
+/** User-facing publication identity kept alongside technical evidence. */
+struct RequirementPublication {
+    int revisionNumber = 0;
+    std::string revisionId;
+    std::string state;
+    std::string publishedAt;
+    std::string parentRevisionId;
+};
+
 struct FrozenRequirementArtifact {
     int schemaVersion = 4;
     std::string requirementFingerprint;
@@ -98,6 +107,7 @@ struct FrozenRequirementArtifact {
     std::string workcellFingerprint;
     std::string compilerVersion = "EngineeringRequirements.Freezer.1";
     std::string frozenAt;
+    RequirementPublication publication;
     RobotModelBinding modelBinding;
     FrozenRobotStateSnapshot frozenRobotState;
     FrozenWorkCellScenarioSnapshot scenario;

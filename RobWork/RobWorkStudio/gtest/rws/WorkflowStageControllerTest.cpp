@@ -15,6 +15,7 @@ namespace {
 rws::WorkflowProjectSnapshot completeModelSnapshot ()
 {
     rws::WorkflowProjectSnapshot snapshot;
+    snapshot.fingerprintVersion = 2;
     snapshot.modelAvailable = true;
     snapshot.sceneAvailable = true;
     snapshot.modelFingerprint = QStringLiteral ("model-v1");
@@ -22,7 +23,7 @@ rws::WorkflowProjectSnapshot completeModelSnapshot ()
     return snapshot;
 }
 
-TEST (WorkflowStageController, UnlocksStructuralOptimizationAfterFrozenRequirements)
+TEST (WorkflowStageController, UnlocksStagesInWorkflowOrder)
 {
     rws::WorkflowProjectSnapshot snapshot = completeModelSnapshot ();
     const rws::WorkflowStageSnapshot states = rws::WorkflowStageController::evaluate (snapshot);
@@ -46,7 +47,7 @@ TEST (WorkflowStageController, UnlocksStructuralOptimizationAfterFrozenRequireme
                requirementsReady.at (rws::WorkflowStage::Requirements).state);
     EXPECT_EQ (rws::WorkflowStageState::Available,
                requirementsReady.at (rws::WorkflowStage::Kinematics).state);
-    EXPECT_EQ (rws::WorkflowStageState::Available,
+    EXPECT_EQ (rws::WorkflowStageState::Locked,
                requirementsReady.at (rws::WorkflowStage::StructuralOptimization).state);
 
     snapshot.kinematicValidationPassed = true;
@@ -60,6 +61,27 @@ TEST (WorkflowStageController, UnlocksStructuralOptimizationAfterFrozenRequireme
                kinematicsReady.at (rws::WorkflowStage::Kinematics).state);
     EXPECT_EQ (rws::WorkflowStageState::Available,
                kinematicsReady.at (rws::WorkflowStage::StructuralOptimization).state);
+}
+
+TEST (WorkflowStageController, FailedValidationKeepsKinematicsAvailableForRepair)
+{
+    rws::WorkflowProjectSnapshot snapshot = completeModelSnapshot ();
+    snapshot.requirementsFrozen = true;
+    snapshot.requirementFingerprint = QStringLiteral ("requirements-v1");
+    snapshot.requirementModelFingerprint = snapshot.modelFingerprint;
+    snapshot.requirementSceneFingerprint = snapshot.sceneFingerprint;
+    snapshot.kinematicValidationPassed = false;
+
+    const rws::WorkflowStageSnapshot states = rws::WorkflowStageController::evaluate (snapshot);
+
+    EXPECT_EQ (rws::WorkflowStageState::Complete,
+               states.at (rws::WorkflowStage::Requirements).state);
+    EXPECT_EQ (rws::WorkflowStageState::Available,
+               states.at (rws::WorkflowStage::Kinematics).state);
+    EXPECT_TRUE (rws::WorkflowStageController::isStageAccessible (
+        states.at (rws::WorkflowStage::Kinematics).state));
+    EXPECT_EQ (rws::WorkflowStageState::Locked,
+               states.at (rws::WorkflowStage::StructuralOptimization).state);
 }
 
 TEST (WorkflowStageController, DetectsStaleArtifactsAndLocksDownstreamStages)
@@ -85,7 +107,7 @@ TEST (WorkflowStageController, DetectsStaleArtifactsAndLocksDownstreamStages)
         rws::WorkflowStageController::evaluate (snapshot);
     EXPECT_EQ (rws::WorkflowStageState::Stale,
                modelChanged.at (rws::WorkflowStage::Requirements).state);
-    EXPECT_EQ (rws::WorkflowStageState::Locked,
+    EXPECT_EQ (rws::WorkflowStageState::Available,
                modelChanged.at (rws::WorkflowStage::Kinematics).state);
     EXPECT_EQ (rws::WorkflowStageState::Locked,
                modelChanged.at (rws::WorkflowStage::StructuralOptimization).state);
@@ -107,6 +129,28 @@ TEST (WorkflowStageController, DetectsStaleArtifactsAndLocksDownstreamStages)
                requirementsChanged.at (rws::WorkflowStage::Requirements).state);
     EXPECT_EQ (rws::WorkflowStageState::Stale,
                requirementsChanged.at (rws::WorkflowStage::Kinematics).state);
+}
+
+TEST (WorkflowStageController, AcceptsLegacySceneEvidenceOnlyWhenRawFingerprintMatches)
+{
+    rws::WorkflowProjectSnapshot snapshot = completeModelSnapshot ();
+    snapshot.fingerprintVersion = 1;
+    snapshot.legacySceneFingerprint = QStringLiteral ("legacy-scene-v1");
+    snapshot.requirementsFrozen = true;
+    snapshot.requirementFingerprint = QStringLiteral ("requirements-v1");
+    snapshot.requirementModelFingerprint = snapshot.modelFingerprint;
+    snapshot.requirementSceneFingerprint = snapshot.legacySceneFingerprint;
+
+    const rws::WorkflowStageSnapshot matching =
+        rws::WorkflowStageController::evaluate (snapshot);
+    EXPECT_EQ (rws::WorkflowStageState::Complete,
+               matching.at (rws::WorkflowStage::Requirements).state);
+
+    snapshot.legacySceneFingerprint = QStringLiteral ("legacy-scene-v2");
+    const rws::WorkflowStageSnapshot changed =
+        rws::WorkflowStageController::evaluate (snapshot);
+    EXPECT_EQ (rws::WorkflowStageState::Stale,
+               changed.at (rws::WorkflowStage::Requirements).state);
 }
 
 TEST (WorkflowStageController, MissingResourcesKeepLaterStagesLocked)
@@ -164,6 +208,24 @@ TEST (WorkflowProjectState, PersistsEvidenceAndInvalidatesDownstreamStages)
     EXPECT_FALSE (invalidated.requirementsFrozen);
     EXPECT_FALSE (invalidated.kinematicValidationPassed);
     EXPECT_FALSE (invalidated.optimizationArtifactAvailable);
+}
+
+TEST (WorkflowProjectState, PreservesLegacyFingerprintVersionUntilEvidenceIsMigrated)
+{
+    rws::WorkflowProjectSnapshot snapshot;
+    snapshot.fingerprintVersion = 1;
+    snapshot.requirementsFrozen = true;
+    snapshot.requirementFingerprint = QStringLiteral ("requirements-v1");
+    snapshot.requirementSceneFingerprint = QStringLiteral ("legacy-scene-v1");
+
+    QJsonObject plugins;
+    rws::WorkflowProjectState::write (plugins, snapshot);
+
+    const rws::WorkflowProjectSnapshot restored =
+        rws::WorkflowProjectState::read (plugins);
+    EXPECT_EQ (1, restored.fingerprintVersion);
+    EXPECT_EQ (snapshot.requirementSceneFingerprint,
+               restored.requirementSceneFingerprint);
 }
 
 }    // namespace

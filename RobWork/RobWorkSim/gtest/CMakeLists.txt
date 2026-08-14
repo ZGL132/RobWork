@@ -30,6 +30,11 @@ endmacro(ADD_RWSIM_GTEST)
 
 add_library(sdurwsim-gtest-main STATIC TestEnvironment.cpp test-main.cpp)
 target_link_libraries(sdurwsim-gtest-main ${RW_BUILD_WITH_LIBRARIES_GTEST} RW::sdurw_core sdurwsim_test)
+target_include_directories(sdurwsim-gtest-main PUBLIC ${RW_BUILD_WITH_GTEST_INCLUDE_DIRS})
+
+function(RWSIM_GTEST_INCLUDE_DIRS target)
+    target_include_directories(${target} PRIVATE ${RW_BUILD_WITH_GTEST_INCLUDE_DIRS})
+endfunction()
 
 # ##################################################################################################
 # Common
@@ -41,6 +46,7 @@ if(TARGET sdurwsim)
 
     add_executable(sdurwsim_common-gtest ${COMMON_TEST_SRC})
     target_link_libraries(sdurwsim_common-gtest ${COMMON_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_common-gtest)
     add_rwsim_gtest(sdurwsim_common-gtest)
 endif()
 # ##################################################################################################
@@ -54,6 +60,7 @@ if(TARGET sdurwsim)
 
     add_executable(sdurwsim_dynamics-gtest ${DYNAMICS_TEST_SRC})
     target_link_libraries(sdurwsim_dynamics-gtest ${DYNAMICS_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_dynamics-gtest)
     add_rwsim_gtest(sdurwsim_dynamics-gtest)
 endif()
 # ##################################################################################################
@@ -70,6 +77,7 @@ if(TARGET sdurwsim_ode)
 
     add_executable(sdurwsim_ode-gtest ${ODE_TEST_SRC})
     target_link_libraries(sdurwsim_ode-gtest ${ODE_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_ode-gtest)
     add_rwsim_gtest(sdurwsim_ode-gtest)
 
 endif()
@@ -89,6 +97,7 @@ if(TARGET sdurwsim_ode)
 
     add_executable(sdurwsim_performance-gtest ${PERFORMANCE_TEST_SRC})
     target_link_libraries(sdurwsim_performance-gtest ${PERFORMANCE_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_performance-gtest)
     add_rwsim_gtest(sdurwsim_performance-gtest)
 
 endif()
@@ -106,6 +115,7 @@ if(TARGET sdurwsim_ode)
 
     add_executable(sdurwsim_sensors-gtest ${SENSORS_TEST_SRC})
     target_link_libraries(sdurwsim_sensors-gtest ${SENSORS_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_sensors-gtest)
     add_rwsim_gtest(sdurwsim_sensors-gtest)
 
 endif()
@@ -119,6 +129,7 @@ if(TARGET sdurwsim)
     set(SIMULATOR_TEST_SRC simulator/PhysicsEngineTest.cpp)
     add_executable(sdurwsim_simulator-gtest ${SIMULATOR_TEST_SRC})
     target_link_libraries(sdurwsim_simulator-gtest ${SIMULATOR_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_simulator-gtest)
     add_rwsim_gtest(sdurwsim_simulator-gtest)
 endif()
 
@@ -134,6 +145,7 @@ if(TARGET sdurwsim_ode)
     set(TASKSIMULATION_TEST_SRC tasksimulation/GraspTaskSimulation.cpp)
     add_executable(sdurwsim_tasksimulation-gtest ${TASKSIMULATION_TEST_SRC})
     target_link_libraries(sdurwsim_tasksimulation-gtest ${TASKSIMULATION_TEST_LIBRARIES})
+    RWSIM_GTEST_INCLUDE_DIRS(sdurwsim_tasksimulation-gtest)
     add_rwsim_gtest(sdurwsim_tasksimulation-gtest)
 endif()
 

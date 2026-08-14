@@ -595,7 +595,7 @@ EngineeringRequirementsWidget::EngineeringRequirementsWidget(QWidget* parent) : 
     _tabs->setObjectName("engineeringRequirementsTabs");
     _tabs->addTab(createPoseTaskPage(), QStringLiteral("Key Stations"));
     _tabs->addTab(createBoxRegionPage(), QStringLiteral("Workspace Regions"));
-    _tabs->addTab(createValidationPage(), QStringLiteral("Validate & Freeze"));
+    _tabs->addTab(createValidationPage(), QStringLiteral("Validate & Publish"));
     _statusLabel = new QLabel(QStringLiteral("Select a .rmb.json model before defining engineering requirements."), this);
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(_tabs);
@@ -851,7 +851,7 @@ QWidget* EngineeringRequirementsWidget::createValidationPage()
     QPushButton* bind = new QPushButton(QStringLiteral("Bind Model"), page); bind->setObjectName("bindRequirementModelButton");
     QPushButton* load = new QPushButton(QStringLiteral("Import Requirements"), page); load->setObjectName("loadRequirementSetButton");
     QPushButton* save = new QPushButton(QStringLiteral("Export Requirements"), page); save->setObjectName("saveRequirementSetButton");
-    _freezeButton = new QPushButton(QStringLiteral("Freeze Requirements"), page); _freezeButton->setObjectName("freezeRequirementSetButton");
+    _freezeButton = new QPushButton(QStringLiteral("Check and Publish"), page); _freezeButton->setObjectName("freezeRequirementSetButton");
     QPushButton* unfreeze = new QPushButton(QStringLiteral("Edit Requirements"), page); unfreeze->setObjectName("unfreezeRequirementSetButton");
     actions->addWidget(bind); actions->addWidget(load); actions->addWidget(save); actions->addWidget(_freezeButton); actions->addWidget(unfreeze); actions->addStretch();
     layout->addLayout(actions); layout->addStretch();
@@ -918,7 +918,7 @@ void EngineeringRequirementsWidget::refreshTables()
     if (QPushButton* button = findChild<QPushButton*>("redoRequirementOperationButton"))
         button->setEnabled(editable && _undoStack.canRedo());
     if (_modelLabel != nullptr)
-        _modelLabel->setText(QStringLiteral("Model: %1\nFingerprint: %2").arg(QString::fromStdString(_requirements.modelBinding.sourcePath), QString::fromStdString(_requirements.modelBinding.robotModelFingerprint)));
+        _modelLabel->setText(QStringLiteral("Model: %1").arg(QString::fromStdString(_requirements.modelBinding.sourcePath)));
     if (_freezeLabel != nullptr) {
         if (_requirements.frozen) {
             // 冻结时间来自冻结工件，而不是当前界面刷新时间。工程师重新打开项目或导出报告时，
@@ -926,10 +926,13 @@ void EngineeringRequirementsWidget::refreshTables()
             const QString frozenAt = _frozenArtifact.frozenAt.empty()
                 ? QStringLiteral("Not recorded")
                 : QString::fromStdString(_frozenArtifact.frozenAt);
-            _freezeLabel->setText(QStringLiteral("Status: Frozen\nFrozen at (UTC): %1\nRequirement fingerprint: %2")
-                                      .arg(frozenAt, QString::fromStdString(_compiled.requirementFingerprint)));
+            const QString revision = _frozenArtifact.publication.revisionId.empty()
+                ? QStringLiteral("Unnumbered")
+                : QString::fromStdString(_frozenArtifact.publication.revisionId);
+            _freezeLabel->setText(QStringLiteral("Status: Published\nVersion: %1\nPublished at (UTC): %2\nModel status: Verified")
+                                      .arg(revision, frozenAt));
         } else {
-            _freezeLabel->setText(QStringLiteral("Status: Editable\nFreeze requirements before downstream analysis or optimization."));
+            _freezeLabel->setText(QStringLiteral("Status: Draft\nCheck and publish before downstream analysis or optimization."));
         }
     }
     // 冻结后把审计摘要展示在冻结状态标签的悬停提示里：三个审计指纹(需求/模型/场景)
@@ -946,7 +949,7 @@ void EngineeringRequirementsWidget::refreshTables()
             (region.compileState == RequirementCompileState::Included ? ++included : ++excluded);
             (region.minimumVerificationStage == RequirementVerificationStage::Quick ? ++quick : ++verified);
         }
-        _freezeLabel->setToolTip(QStringLiteral("Requirement fingerprint: %1; Robot model fingerprint: %2; WorkCell fingerprint: %3; Included %4; Excluded %5; Quick %6; Verified %7; schema v%8")
+        _freezeLabel->setToolTip(QStringLiteral("Technical evidence: requirement=%1; model=%2; WorkCell=%3; Included %4; Excluded %5; Quick %6; Verified %7; schema v%8")
                                  .arg(QString::fromStdString(_frozenArtifact.requirementFingerprint),
                                       QString::fromStdString(_frozenArtifact.modelBinding.robotModelFingerprint),
                                       QString::fromStdString(_frozenArtifact.workcellFingerprint))
@@ -1919,6 +1922,10 @@ void EngineeringRequirementsWidget::freezeRequirements()
     }
     _requirements.frozen = true;
     _compiled = artifact.compiled;
+    artifact.publication.revisionNumber = std::max(1, _requirements.version);
+    artifact.publication.revisionId = "REQ-" + std::to_string(artifact.publication.revisionNumber);
+    artifact.publication.state = "published";
+    artifact.publication.publishedAt = artifact.frozenAt;
     _frozenArtifact = artifact;
     // 统计实际进入 P2 优化的工位数：只计 Included 且非 Info 级(Info 仅作审计记录)。
     const int availableTasks = static_cast<int>(std::count_if(
@@ -2352,7 +2359,7 @@ void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, co
 {
     if (saved) {
         setStatus(QString::fromUtf8(
-            "Requirements validated, frozen, and saved with the project. Downstream plugins can read the latest frozen artifact."));
+            "Requirements checked and published. Downstream plugins can read the latest published version."));
         return;
     }
 
@@ -2360,7 +2367,7 @@ void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, co
         ? QStringLiteral("Unknown save error.")
         : error.trimmed();
     setStatus(QString::fromUtf8(
-        "Requirements are frozen in memory, but project save failed and the frozen artifact was not published. Save the project after fixing the error. Reason: %1")
+        "Requirements checked successfully, but publishing failed. The project was not updated. Reason: %1")
                   .arg(detail));
 }
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)

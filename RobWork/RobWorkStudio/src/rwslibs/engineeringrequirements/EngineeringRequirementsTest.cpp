@@ -1013,6 +1013,10 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     artifact.frozenRobotState.q.push_back(0.0);
     artifact.frozenRobotState.tcpWorldPose[15] = 1.0;
     artifact.frozenRobotState.capturedAt = "2026-07-31T00:00:00.000Z";
+    artifact.publication.revisionNumber = 7;
+    artifact.publication.revisionId = "REQ-007";
+    artifact.publication.state = "published";
+    artifact.publication.publishedAt = artifact.frozenRobotState.capturedAt;
 
     // 项目文件需要把冻结工件嵌入编辑态需求 JSON，因此读写器必须提供对象级
     // 接口，而不仅是独立字符串 API；两种入口应还原同一份可审计编译结果。
@@ -1028,6 +1032,8 @@ int testFrozenArtifactRoundTripRetainsCompiledEvidence()
     REQUIRE(objectRestored.scenario.sourceFileFingerprint == "scene-file-sha256");
     REQUIRE(objectRestored.scenario.snapshotFingerprint == "scene-snapshot-sha256");
     REQUIRE(objectRestored.scenario.deviceName == "FreezeRobot");
+    REQUIRE(objectRestored.publication.revisionId == "REQ-007");
+    REQUIRE(objectRestored.publication.state == "published");
 
     const std::string json = rws::FrozenRequirementArtifactJson::toJson(artifact);
     rws::FrozenRequirementArtifact restored;
@@ -1759,7 +1765,7 @@ int testEngineeringRequirementsWidgetUsesEnglishCopy()
     REQUIRE(tabs != nullptr);
     REQUIRE(tabs->tabText(0) == "Key Stations");
     REQUIRE(tabs->tabText(1) == "Workspace Regions");
-    REQUIRE(tabs->tabText(2) == "Validate & Freeze");
+    REQUIRE(tabs->tabText(2) == "Validate & Publish");
 
     const auto requireButtonText = [&widget](const char* objectName, const QString& expected) {
         QPushButton* button = widget.findChild<QPushButton*>(objectName);
@@ -1770,7 +1776,7 @@ int testEngineeringRequirementsWidgetUsesEnglishCopy()
     REQUIRE(requireButtonText("addRequirementPoseTaskButton", "Add Station") == 0);
     REQUIRE(requireButtonText("captureRequirementTcpButton", "Capture TCP Pose") == 0);
     REQUIRE(requireButtonText("bindRequirementModelButton", "Bind Model") == 0);
-    REQUIRE(requireButtonText("freezeRequirementSetButton", "Freeze Requirements") == 0);
+    REQUIRE(requireButtonText("freezeRequirementSetButton", "Check and Publish") == 0);
     return 0;
 }
 

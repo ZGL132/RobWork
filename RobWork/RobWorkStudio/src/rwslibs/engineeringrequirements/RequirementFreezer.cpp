@@ -1163,6 +1163,16 @@ QJsonObject FrozenRequirementArtifactJson::toObject(const FrozenRequirementArtif
     object["workcellFingerprint"] = QString::fromStdString(artifact.workcellFingerprint);
     object["compilerVersion"] = QString::fromStdString(artifact.compilerVersion);
     object["frozenAt"] = QString::fromStdString(artifact.frozenAt);
+    if (!artifact.publication.revisionId.empty() || artifact.publication.revisionNumber > 0 ||
+        !artifact.publication.state.empty()) {
+        QJsonObject publication;
+        publication["revisionNumber"] = artifact.publication.revisionNumber;
+        publication["revisionId"] = QString::fromStdString(artifact.publication.revisionId);
+        publication["state"] = QString::fromStdString(artifact.publication.state);
+        publication["publishedAt"] = QString::fromStdString(artifact.publication.publishedAt);
+        publication["parentRevisionId"] = QString::fromStdString(artifact.publication.parentRevisionId);
+        object["publication"] = publication;
+    }
     QJsonObject binding;
     binding["sourcePath"] = QString::fromStdString(artifact.modelBinding.sourcePath);
     binding["robotModelFingerprint"] = QString::fromStdString(artifact.modelBinding.robotModelFingerprint);
@@ -1314,6 +1324,14 @@ bool FrozenRequirementArtifactJson::fromObject(const QJsonObject& object,
     parsed.workcellFingerprint = object.value("workcellFingerprint").toString().toStdString();
     parsed.compilerVersion = object.value("compilerVersion").toString("EngineeringRequirements.Freezer.1").toStdString();
     parsed.frozenAt = object.value("frozenAt").toString().toStdString();
+    if (object.value("publication").isObject()) {
+        const QJsonObject publication = object.value("publication").toObject();
+        parsed.publication.revisionNumber = publication.value("revisionNumber").toInt();
+        parsed.publication.revisionId = publication.value("revisionId").toString().toStdString();
+        parsed.publication.state = publication.value("state").toString().toStdString();
+        parsed.publication.publishedAt = publication.value("publishedAt").toString().toStdString();
+        parsed.publication.parentRevisionId = publication.value("parentRevisionId").toString().toStdString();
+    }
     const QJsonObject binding = object.value("modelBinding").toObject();
     parsed.modelBinding.sourcePath = binding.value("sourcePath").toString().toStdString();
     parsed.modelBinding.robotModelFingerprint = binding.value("robotModelFingerprint").toString().toStdString();

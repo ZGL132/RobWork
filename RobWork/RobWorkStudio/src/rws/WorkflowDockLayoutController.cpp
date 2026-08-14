@@ -31,6 +31,7 @@
 #include <QTabWidget>
 #include <QTimer>
 #include <QWidget>
+#include <QXmlStreamReader>
 
 #include <algorithm>
 
@@ -135,6 +136,56 @@ QString fileFingerprint (const QString& filename)
     while (!file.atEnd ())
         digest.addData (file.read (64 * 1024));
     return QString::fromLatin1 (digest.result ().toHex ());
+}
+
+QString sceneFingerprint (const QString& filename)
+{
+    QFile file (filename);
+    if (!file.open (QIODevice::ReadOnly))
+        return QString ();
+    QXmlStreamReader reader (&file);
+    QByteArray canonical;
+    int ignoredStateDepth = 0;
+    while (!reader.atEnd ()) {
+        reader.readNext ();
+        if (reader.isStartElement ()) {
+            if (ignoredStateDepth > 0) {
+                ++ignoredStateDepth;
+                continue;
+            }
+            if (reader.name () == QStringLiteral ("State")) {
+                ignoredStateDepth = 1;
+                continue;
+            }
+            canonical.append ('<');
+            canonical.append (reader.name ().toUtf8 ());
+            QStringList attributes;
+            for (const auto& attribute : reader.attributes ())
+                attributes.append (attribute.name ().toString () +
+                                   QLatin1Char ('=') + attribute.value ().toString ());
+            std::sort (attributes.begin (), attributes.end ());
+            for (const QString& attribute : attributes) {
+                canonical.append (' ');
+                canonical.append (attribute.toUtf8 ());
+            }
+            canonical.append ('>');
+        }
+        else if (reader.isEndElement ()) {
+            if (ignoredStateDepth > 0) {
+                --ignoredStateDepth;
+                continue;
+            }
+            canonical.append ("</");
+            canonical.append (reader.name ().toUtf8 ());
+            canonical.append ('>');
+        }
+        else if (reader.isCharacters () && !reader.isWhitespace () && ignoredStateDepth == 0)
+            canonical += reader.text ().toString ().simplified ().toUtf8 ();
+    }
+    if (reader.hasError ())
+        return QString ();
+    return QString::fromLatin1 (
+        QCryptographicHash::hash (canonical, QCryptographicHash::Sha256).toHex ());
 }
 
 QString activeWorkCellFileName (const rws::RobWorkStudio* studio)
@@ -267,13 +318,15 @@ void WorkflowDockLayoutController::revalidateReadiness ()
             _studio->resolveProjectResource (mainSceneResourceId, scenePath) &&
             QFileInfo (scenePath).isFile () && activeScene == canonicalFileName (scenePath);
         projectSnapshot.modelFingerprint = fileFingerprint (modelPath);
-        projectSnapshot.sceneFingerprint = fileFingerprint (scenePath);
+        projectSnapshot.sceneFingerprint = sceneFingerprint (scenePath);
+        projectSnapshot.legacySceneFingerprint = fileFingerprint (scenePath);
     }
     else {
         projectSnapshot.modelAvailable = !_standaloneModelFilename.isEmpty ();
         projectSnapshot.sceneAvailable = activeScene == _standaloneModelFilename;
         projectSnapshot.modelFingerprint = fileFingerprint (_standaloneModelFilename);
-        projectSnapshot.sceneFingerprint = fileFingerprint (activeScene);
+        projectSnapshot.sceneFingerprint = sceneFingerprint (activeScene);
+        projectSnapshot.legacySceneFingerprint = fileFingerprint (activeScene);
     }
     applyStageSnapshot (WorkflowStageController::evaluate (projectSnapshot));
 }

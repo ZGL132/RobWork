@@ -6342,9 +6342,19 @@ static int testWorkflowUiStates ()
             "selected frozen task validates before a full frozen validation"))
         return rc;
     mode2ValidateAll->click ();
-    QApplication::processEvents ();
     if (const int rc = require (
-            taskResults != nullptr && taskResults->rowCount () == 2,
+            !mode2ValidateAll->isEnabled () &&
+                widget.statusMessage ().contains (QStringLiteral ("running"),
+                                                   Qt::CaseInsensitive),
+            "full frozen validation returns immediately in a visible running state"))
+        return rc;
+    QElapsedTimer validationTimeout;
+    validationTimeout.start ();
+    while (!mode2ValidateAll->isEnabled () && validationTimeout.elapsed () < 10000)
+        QApplication::processEvents (QEventLoop::AllEvents, 20);
+    if (const int rc = require (
+            mode2ValidateAll->isEnabled () && taskResults != nullptr &&
+                taskResults->rowCount () == 2,
             "Must and Should task results are displayed separately"))
         return rc;
     if (const int rc = require (
@@ -6427,7 +6437,14 @@ static int testWorkflowUiStates ()
             "selected frozen task replaces the report summary with its readonly subset"))
         return rc;
     mode2ValidateAll->click ();
-    QApplication::processEvents ();
+    QElapsedTimer secondValidationTimeout;
+    secondValidationTimeout.start ();
+    while (!mode2ValidateAll->isEnabled () && secondValidationTimeout.elapsed () < 10000)
+        QApplication::processEvents (QEventLoop::AllEvents, 20);
+    if (const int rc = require (
+            mode2ValidateAll->isEnabled () && regionSummary->rowCount () == 2,
+            "second full frozen validation completes before selecting a region"))
+        return rc;
     regionSummary->selectRow (1);
     mode2ValidateSelected->click ();
     QApplication::processEvents ();

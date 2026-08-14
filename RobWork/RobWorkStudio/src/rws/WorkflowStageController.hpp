@@ -26,10 +26,12 @@ enum class WorkflowStageState
 
 struct WorkflowProjectSnapshot
 {
+    int fingerprintVersion = 1;
     bool modelAvailable = false;
     bool sceneAvailable = false;
     QString modelFingerprint;
     QString sceneFingerprint;
+    QString legacySceneFingerprint;
 
     bool requirementsFrozen = false;
     QString requirementFingerprint;

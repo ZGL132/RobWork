@@ -77,6 +77,16 @@ struct WorkspaceEnvelopeRunResult
     QString errorMessage;
 };
 
+struct RequirementValidationRunResult
+{
+    RequirementExecutionSet execution;
+    RequirementValidationSummary taskSummary;
+    std::vector< RegionCoverageResult > regionResults;
+    quint64 sessionGeneration = 0;
+    bool cancelled = false;
+    QString errorMessage;
+};
+
 // 包络缓存键:完全刻画"当前请求的包络输入"。除显式配置(投影 / 方向数 / 坐标迭代)
 // 外还包含设备与 TCP 指针及关节上下限——关节界限变化会显著改变包络形状,
 // 因此必须作为缓存键的一部分参与相等比较,否则会误命中陈旧包络。
@@ -164,6 +174,7 @@ class KinematicAnalysisWidget : public QWidget
     void openFrozenRequirementsForValidation ();
     // 对冻结执行契约做 Verified 级一致性校验(批量分析入口)。
     void validateRequirements ();
+    void handleRequirementValidationFinished ();
     // 只校验当前选中的本地任务行 / 冻结任务 / 冻结区域。
     void validateSelectedMode2Source ();
     // 加载冻结工件后,把任务与区域先以"未校验"占位行刷进结果表。
@@ -173,6 +184,7 @@ class KinematicAnalysisWidget : public QWidget
     void setValidationInspectorEmpty ();
     void selectPreferredValidationResult ();
     void selectValidationResult (bool region, const QString& stableId);
+    void applyRequirementValidationResult (const RequirementValidationRunResult& result);
     void startCapabilityExploration ();
     void cancelCapabilityExploration ();
     void updateCapabilityExplorationProgress (qulonglong completedSamples,
@@ -719,6 +731,9 @@ class KinematicAnalysisWidget : public QWidget
     // 标志分别表示"契约是否已加载"与"是否已产出结果"(后者决定 Export 按钮可用性)。
     RequirementExecutionSet _validateExecution;
     RequirementValidationSummary _validateSummary;
+    QFutureWatcher< RequirementValidationRunResult >* _validateWatcher;
+    std::shared_ptr< std::atomic_bool > _validateCancelRequested;
+    bool _validateRunActive;
     bool _validateExecutionSet;
     bool _validateHasResults;
 

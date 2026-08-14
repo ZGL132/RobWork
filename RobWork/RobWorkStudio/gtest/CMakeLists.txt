@@ -27,6 +27,17 @@ ENDMACRO(ADD_RWS_GTEST)
 
 SET(ROBWORKSTUDIO_TESTFILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/testfiles)
 
+# Older RobWork build configs can report GTest libraries without exporting the
+# include directory. Recover it from the find-module variables before targets
+# are created so <gtest/gtest.h> remains available to every test target.
+if(NOT RW_BUILD_WITH_GTEST_INCLUDE_DIRS)
+  if(DEFINED GTEST_INCLUDE_DIRS)
+    set(RW_BUILD_WITH_GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
+  elseif(DEFINED GTEST_INCLUDE_DIR)
+    set(RW_BUILD_WITH_GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIR})
+  endif()
+endif()
+
 CONFIGURE_FILE(
   ${CMAKE_CURRENT_SOURCE_DIR}/TestSuiteConfig.xml.in
   ${CMAKE_CURRENT_SOURCE_DIR}/TestSuiteConfig.xml.generated

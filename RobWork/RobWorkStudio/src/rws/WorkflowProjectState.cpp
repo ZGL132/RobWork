@@ -31,6 +31,7 @@ WorkflowProjectSnapshot WorkflowProjectState::read (const QJsonObject& plugins)
     const QJsonObject root = plugins.value (QStringLiteral ("workflow")).toObject ();
     if (root.value (QStringLiteral ("schemaVersion")).toInt () != SchemaVersion)
         return snapshot;
+    snapshot.fingerprintVersion = root.value (QStringLiteral ("fingerprintVersion")).toInt (1);
 
     const QJsonObject requirements = readObject (root, QStringLiteral ("requirements"));
     snapshot.requirementsFrozen = requirements.value (QStringLiteral ("frozen")).toBool ();
@@ -69,6 +70,7 @@ void WorkflowProjectState::write (QJsonObject& plugins, const WorkflowProjectSna
 {
     QJsonObject root;
     root.insert (QStringLiteral ("schemaVersion"), SchemaVersion);
+    root.insert (QStringLiteral ("fingerprintVersion"), snapshot.fingerprintVersion);
 
     QJsonObject requirements;
     requirements.insert (QStringLiteral ("frozen"), snapshot.requirementsFrozen);

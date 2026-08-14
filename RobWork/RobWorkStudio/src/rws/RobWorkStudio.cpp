@@ -51,6 +51,7 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QCryptographicHash>
+#include <QXmlStreamReader>
 #include <QFile>
 #include <QDirIterator>
 #include <QFile>
@@ -3329,6 +3330,61 @@ QString workflowFileFingerprint (const QString& path)
     return QString::fromLatin1 (digest.result ().toHex ());
 }
 
+QString workflowSceneFingerprint (const QString& path)
+{
+    QFile file (path);
+    if (!file.open (QIODevice::ReadOnly))
+        return QString ();
+    // WorkCell XML is rewritten when the current runtime State is saved.  The
+    // workflow evidence must describe model/environment structure, not that
+    // transient pose or serializer whitespace.  Canonicalize XML tokens and
+    // omit the optional State subtree before hashing.
+    QXmlStreamReader reader (&file);
+    QByteArray canonical;
+    int ignoredStateDepth = 0;
+    while (!reader.atEnd ()) {
+        reader.readNext ();
+        if (reader.isStartElement ()) {
+            if (ignoredStateDepth > 0) {
+                ++ignoredStateDepth;
+                continue;
+            }
+            if (reader.name () == QStringLiteral ("State")) {
+                ignoredStateDepth = 1;
+                continue;
+            }
+            canonical.append ('<');
+            canonical.append (reader.name ().toUtf8 ());
+            QStringList attributes;
+            for (const auto& attribute : reader.attributes ())
+                attributes.append (attribute.name ().toString () +
+                                   QLatin1Char ('=') + attribute.value ().toString ());
+            std::sort (attributes.begin (), attributes.end ());
+            for (const QString& attribute : attributes) {
+                canonical.append (' ');
+                canonical.append (attribute.toUtf8 ());
+            }
+            canonical.append ('>');
+        }
+        else if (reader.isEndElement ()) {
+            if (ignoredStateDepth > 0) {
+                --ignoredStateDepth;
+                continue;
+            }
+            canonical.append ("</");
+            canonical.append (reader.name ().toUtf8 ());
+            canonical.append ('>');
+        }
+        else if (reader.isCharacters () && !reader.isWhitespace () && ignoredStateDepth == 0) {
+            canonical += reader.text ().toString ().simplified ().toUtf8 ();
+        }
+    }
+    if (reader.hasError ())
+        return QString ();
+    return QString::fromLatin1 (
+        QCryptographicHash::hash (canonical, QCryptographicHash::Sha256).toHex ());
+}
+
 WorkflowProjectSnapshot currentWorkflowSnapshot (RobWorkStudio* studio)
 {
     WorkflowProjectSnapshot snapshot = studio->workflowProjectState ();
@@ -3341,7 +3397,24 @@ WorkflowProjectSnapshot currentWorkflowSnapshot (RobWorkStudio* studio)
                               studio->resolveProjectResource (sceneResourceId, scenePath) &&
                               QFileInfo (scenePath).isFile ();
     snapshot.modelFingerprint = workflowFileFingerprint (modelPath);
-    snapshot.sceneFingerprint = workflowFileFingerprint (scenePath);
+    snapshot.sceneFingerprint = workflowSceneFingerprint (scenePath);
+    snapshot.legacySceneFingerprint = workflowFileFingerprint (scenePath);
+    // Version 2 projects created before the canonical XML fingerprint was
+    // introduced may already be labelled as v2 while still storing the raw
+    // WorkCell file hash. Migrate only evidence that proves it belongs to the
+    // current file; a changed file remains stale and is never silently accepted.
+    bool migratedLegacyEvidence = false;
+    const auto migrateLegacyEvidence = [&] (QString& evidence) {
+        if (!evidence.isEmpty () && evidence == snapshot.legacySceneFingerprint) {
+            evidence = snapshot.sceneFingerprint;
+            migratedLegacyEvidence = true;
+        }
+    };
+    migrateLegacyEvidence (snapshot.requirementSceneFingerprint);
+    migrateLegacyEvidence (snapshot.kinematicSceneFingerprint);
+    migrateLegacyEvidence (snapshot.optimizationSceneFingerprint);
+    if (snapshot.fingerprintVersion < 2 || migratedLegacyEvidence)
+        snapshot.fingerprintVersion = 2;
     return snapshot;
 }
 
@@ -3369,7 +3442,20 @@ bool publishWorkflowState (RobWorkStudio* studio,
     }
 
     const WorkflowProjectSnapshot previous = studio->workflowProjectState ();
+    const WorkflowProjectSnapshot beforeSave = currentWorkflowSnapshot (studio);
+    // Commit dirty resources first.  WorkCell serialization can change the
+    // scene bytes, so workflow evidence must be derived from the committed
+    // resources rather than the pre-save files.
+    if (!studio->saveCurrentProject (error))
+        return false;
     WorkflowProjectSnapshot next = currentWorkflowSnapshot (studio);
+    const auto migrateEvidenceAcrossSave = [&] (QString& evidence) {
+        if (!evidence.isEmpty () && evidence == beforeSave.legacySceneFingerprint)
+            evidence = next.sceneFingerprint;
+    };
+    migrateEvidenceAcrossSave (next.requirementSceneFingerprint);
+    migrateEvidenceAcrossSave (next.kinematicSceneFingerprint);
+    migrateEvidenceAcrossSave (next.optimizationSceneFingerprint);
     if (stage == WorkflowStage::Requirements) {
         WorkflowStageController::invalidateFrom (next, WorkflowStage::Requirements);
         next.requirementsFrozen = completed;

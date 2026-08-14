@@ -302,9 +302,9 @@ void EngineeringRequirementsPlugin::initialize() {
         _widget->reportFreezePublicationResult(saved, error);
         if (!saved) {
             QMessageBox::warning(
-                _widget, tr("Freeze Not Published"),
-                tr("The requirements are frozen in memory, but the complete project transaction "
-                   "could not be saved. Downstream plugins will not read this unpublished artifact.\n\n%1")
+                _widget, tr("Publish Failed"),
+                tr("The requirements were checked, but the complete project transaction "
+                   "could not be saved. Downstream plugins will not read this unpublished version.\n\n%1")
                     .arg(error));
         }
     });
