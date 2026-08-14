@@ -96,7 +96,11 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
     WorkflowStageStatus& optimization = result.at (WorkflowStage::StructuralOptimization);
     optimization.modelFingerprint = snapshot.modelFingerprint;
     optimization.requirementFingerprint = snapshot.requirementFingerprint;
-    if (kinematics.state == WorkflowStageState::Complete) {
+    // Structural optimization can be opened as soon as requirements have
+    // been published. The evaluator runs its own kinematic checks for each
+    // candidate; a saved Kinematics page result is not a prerequisite.
+    if (requirements.state == WorkflowStageState::Complete ||
+        requirements.state == WorkflowStageState::Stale) {
         if (!snapshot.optimizationArtifactAvailable) {
             optimization.state = WorkflowStageState::Available;
             optimization.reason = QStringLiteral ("Create a structural optimization result.");
@@ -105,8 +109,6 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
         else if (!equalIfPresent (snapshot.optimizationModelFingerprint, snapshot.modelFingerprint) ||
                  !equalIfPresent (snapshot.optimizationRequirementFingerprint,
                                   snapshot.requirementFingerprint) ||
-                 !equalIfPresent (snapshot.optimizationKinematicFingerprint,
-                                  snapshot.kinematicValidationFingerprint) ||
                  !sceneEvidenceMatches (snapshot, snapshot.optimizationSceneFingerprint)) {
             optimization.state = WorkflowStageState::Stale;
             optimization.reason = QStringLiteral ("Optimization result is stale for the current inputs.");
@@ -116,7 +118,7 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
         }
     }
     else {
-        optimization.reason = QStringLiteral ("Pass kinematic validation before optimization.");
+        optimization.reason = QStringLiteral ("Publish requirements before optimization.");
     }
     return result;
 }
