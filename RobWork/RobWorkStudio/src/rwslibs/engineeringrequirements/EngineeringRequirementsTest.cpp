@@ -2139,6 +2139,40 @@ int testWidgetBindsMatchingGeneratedProjectModel()
     REQUIRE(ambiguousWidget.bindGeneratedProjectModel(&error));
     REQUIRE(error.isEmpty());
     REQUIRE(ambiguousWidget.requirementSet().modelBinding.sourcePath == modelPath.toStdString());
+
+    // Bind Model 按钮在项目模型可用时必须直接采用 robot-model.main，不能再弹出
+    // 文件选择框让用户从同目录旁车中二次选择。
+    rws::EngineeringRequirementsWidget buttonWidget;
+    buttonWidget.setProjectOutputDirectory(projectDirectory.path());
+    buttonWidget.setProjectModelPath(modelPath);
+    buttonWidget.setWorkCell(workcell.get());
+    int bindingChanges = 0;
+    QObject::connect(&buttonWidget, &rws::EngineeringRequirementsWidget::requirementsChanged,
+                     [&]() { ++bindingChanges; });
+    bool dialogShown = false;
+    QTimer dialogResponder;
+    dialogResponder.setInterval(5);
+    QObject::connect(&dialogResponder, &QTimer::timeout, [&]() {
+        for (QWidget* topLevel : QApplication::topLevelWidgets()) {
+            QFileDialog* dialog = qobject_cast<QFileDialog*>(topLevel);
+            if (dialog == nullptr || !dialog->isVisible())
+                continue;
+            dialogShown = true;
+            static_cast<QDialog*>(dialog)->reject();
+            return;
+        }
+    });
+    QPushButton* bind = buttonWidget.findChild<QPushButton*>("bindRequirementModelButton");
+    REQUIRE(bind != nullptr);
+    dialogResponder.start();
+    bind->click();
+    QCoreApplication::processEvents();
+    dialogResponder.stop();
+    REQUIRE(!dialogShown);
+    REQUIRE(bindingChanges == 1);
+    REQUIRE(buttonWidget.requirementSet().modelBinding.sourcePath == modelPath.toStdString());
+    REQUIRE(buttonWidget.requirementSet().modelBinding.robotModelFingerprint ==
+            rws::RobotModelFingerprint::canonicalSha256(model));
     return 0;
 }
 
@@ -2205,13 +2239,8 @@ int testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing()
 
     rws::EngineeringRequirementsWidget widget;
     widget.setProjectOutputDirectory(projectRoot);
-    widget.setProjectModelPath(modelPath);
     widget.setWorkCell(workcell.get());
     QString error;
-    REQUIRE(widget.bindGeneratedProjectModel(&error));
-    REQUIRE(widget.requirementSet().modelBinding.robotModelFingerprint ==
-            rws::RobotModelFingerprint::canonicalSha256(runtimeModel));
-
     int manualBindingChanges = 0;
     QObject::connect(&widget, &rws::EngineeringRequirementsWidget::requirementsChanged,
                      [&]() { ++manualBindingChanges; });
@@ -2237,7 +2266,7 @@ int testWidgetManualBindingResolvesPortableProjectModelBeforeFreezing()
     REQUIRE(modelSelected);
     REQUIRE(manualBindingChanges == 1);
     REQUIRE(widget.statusText() ==
-            QString::fromUtf8("已绑定模型，需求将使用模型内容指纹追溯。"));
+            QStringLiteral("Model bound. Requirements track the model content fingerprint."));
     REQUIRE(widget.requirementSet().modelBinding.sourcePath == modelPath.toStdString());
     REQUIRE(widget.requirementSet().modelBinding.robotModelFingerprint ==
             rws::RobotModelFingerprint::canonicalSha256(runtimeModel));
@@ -2510,6 +2539,11 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "key_station_toolbar") {
         QApplication app(argc, argv);
         return testWidgetExposesSemanticKeyStationInspector();
+    }
+    if (argc > 1 && std::string(argv[1]) == "widget_auto_bind") {
+        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+        QApplication app(argc, argv);
+        return testWidgetBindsMatchingGeneratedProjectModel();
     }
     if (argc > 1 && std::string(argv[1]) == "widget") {
         QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);

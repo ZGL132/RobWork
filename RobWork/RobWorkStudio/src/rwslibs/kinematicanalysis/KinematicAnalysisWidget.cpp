@@ -1876,20 +1876,57 @@ void KinematicAnalysisWidget::refreshWorkflowControls ()
         setStatus (tr("No TCP frame selected."));
 }
 
-// openFrozenRequirementsForValidation:弹出文件选择框加载已冻结的工程需求工件。
-// 文件内容直接交给 loadFrozenRequirementDocument 解析并校验;失败时用消息框
-// 回显具体原因(statusMessage),成功则刷新 Run Validation 按钮可用性。
+// openFrozenRequirementsForValidation:优先读取当前项目清单中的冻结需求资源；
+// 项目资源不存在或无法解析时回退到原有文件选择框。文件内容直接交给
+// loadFrozenRequirementDocument 解析并校验，成功则刷新 Run Validation 按钮可用性。
 void KinematicAnalysisWidget::openFrozenRequirementsForValidation ()
 {
     if (_workcell == nullptr || selectedDevice () == nullptr || selectedTcpFrame () == nullptr) {
         refreshWorkflowControls ();
         return;
     }
+    QString projectPath;
+    QString resolveError;
+    const bool managedRequirement =
+        _studio != nullptr &&
+        _studio->resolveProjectResource (
+            QStringLiteral ("engineering-requirements.main"), projectPath, &resolveError);
+    QString autoError;
+    if (managedRequirement && !projectPath.isEmpty ()) {
+        if (!_studio->confirmSaveBeforeProjectResourceRead (this)) {
+            setStatus (tr ("Frozen requirement loading canceled: project changes were not published."));
+            return;
+        }
+        QFile projectFile (projectPath);
+        if (projectFile.open (QIODevice::ReadOnly | QIODevice::Text)) {
+            const bool loaded = loadFrozenRequirementDocument (
+                projectFile.readAll (), _studio->projectDirectory ().toStdString ());
+            projectFile.close ();
+            if (loaded)
+                return;
+            autoError = statusMessage ();
+        } else {
+            autoError = tr ("could not open project resource %1").arg (projectPath);
+        }
+    } else if (!resolveError.isEmpty ()) {
+        autoError = resolveError;
+    }
+    if (!autoError.isEmpty ()) {
+        setStatus (tr ("Project frozen requirement auto-loading failed: %1 Select a file manually.")
+                       .arg (autoError));
+    }
+    const QString initialDirectory = _studio != nullptr && !_studio->projectDirectory ().isEmpty ()
+        ? QDir (_studio->projectDirectory ()).filePath (QStringLiteral ("requirements"))
+        : QString ();
     const QString path = QFileDialog::getOpenFileName (
-        this, tr ("Load frozen engineering requirements"), QString (),
+        this, tr ("Load frozen engineering requirements"), initialDirectory,
         tr ("Engineering requirements (*.requirements.json *.json);;All files (*)"));
     if (path.isEmpty ()) {
-        setStatus (tr ("Frozen requirement loading canceled."));
+        if (autoError.isEmpty ())
+            setStatus (tr ("Frozen requirement loading canceled."));
+        else
+            setStatus (tr ("Project frozen requirement auto-loading failed: %1 Manual file selection was canceled.")
+                           .arg (autoError));
         return;
     }
     QFile file (path);

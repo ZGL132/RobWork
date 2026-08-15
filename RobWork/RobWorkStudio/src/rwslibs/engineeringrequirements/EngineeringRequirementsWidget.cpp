@@ -1329,7 +1329,23 @@ void EngineeringRequirementsWidget::bindModel()
         setStatus(QStringLiteral("Requirements are frozen. Edit requirements before rebinding the robot model."));
         return;
     }
-    const QString path = QFileDialog::getOpenFileName(this, QStringLiteral("Bind Robot Model"), QString(), "Robot model (*.rmb.json)");
+    // 项目上下文中的 robot-model.main 是权威模型来源。优先使用它，避免用户在
+    // generated/robot-models 下再次挑选旁车或过期 sidecar；项目资源不可用时仍保留
+    // 独立 WorkCell 工作流的手动选择能力。
+    QString autoError;
+    if (bindGeneratedProjectModel(&autoError)) {
+        setStatus(QStringLiteral("Model bound. Requirements track the model content fingerprint."));
+        return;
+    }
+    if (!autoError.isEmpty()) {
+        setStatus(QStringLiteral("Project model auto-binding unavailable: %1 Select a model file manually.")
+                      .arg(autoError));
+    }
+    const QString initialDirectory = _projectOutputDirectory.isEmpty()
+        ? QString()
+        : QDir(_projectOutputDirectory).filePath(QStringLiteral("generated/robot-models"));
+    const QString path = QFileDialog::getOpenFileName(this, QStringLiteral("Bind Robot Model"),
+                                                       initialDirectory, "Robot model (*.rmb.json)");
     if (path.isEmpty()) return;
     RobotModelSpec spec;
     QString error;
@@ -1470,6 +1486,9 @@ bool EngineeringRequirementsWidget::bindGeneratedProjectModel(QString* error)
     _requirements.modelBinding.sourcePath = path.toStdString();
     _requirements.modelBinding.robotName = model.robotName;
     _requirements.modelBinding.robotModelFingerprint = RobotModelFingerprint::canonicalSha256(model);
+    // 与手动换绑保持一致：模型来源变化后，旧编译结果和冻结工件不再能证明当前绑定。
+    _compiled = CompiledRequirementSet();
+    _frozenArtifact = FrozenRequirementArtifact();
     if (error != nullptr) error->clear();
     refreshTables();
     Q_EMIT requirementsChanged();

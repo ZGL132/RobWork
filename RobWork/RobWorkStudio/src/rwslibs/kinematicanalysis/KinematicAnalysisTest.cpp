@@ -51,6 +51,7 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QDialog>
+#include <QFileDialog>
 #include <QLabel>
 #include <QMouseEvent>
 #include <QJsonArray>
@@ -65,6 +66,7 @@
 #include <QTabWidget>
 #include <QToolButton>
 #include <QMenu>
+#include <QTimer>
 
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/FixedFrame.hpp>
@@ -5126,6 +5128,138 @@ static int testManagedRobotProjectRequiresPublishedWorkCell ()
     return 0;
 }
 
+// Validate 页的 Load JSON 在托管项目中应直接读取清单里的
+// engineering-requirements.main；只有项目资源不可用时才弹文件选择框。
+static int testManagedFrozenRequirementsAutoLoadForValidation ()
+{
+    QTemporaryDir directory;
+    if (!directory.isValid ())
+        return fail ("could not create managed frozen requirement fixture");
+
+    const QString projectPath = directory.filePath ("ManagedRequirements.rwproj");
+    rws::ProjectManifest manifest;
+    manifest.project.id = QStringLiteral ("managed-requirements");
+    manifest.project.name = QStringLiteral ("ManagedRequirements");
+    rws::ProjectResource requirementResource;
+    requirementResource.id = QStringLiteral ("engineering-requirements.main");
+    requirementResource.kind = QStringLiteral ("robwork.passive-asset");
+    requirementResource.path = QStringLiteral ("requirements/main.requirements.json");
+    requirementResource.ownership = QStringLiteral ("project");
+    requirementResource.required = false;
+    manifest.resources = {requirementResource};
+    QString error;
+    rws::ProjectManager manager;
+    if (!manager.createProject (projectPath, manifest, &error))
+        return fail ("could not create managed frozen requirement project: " +
+                     error.toStdString ());
+    manager.closeProject ();
+
+    const QString projectRoot = QFileInfo (projectPath).absolutePath ();
+    const QString workcellPath = QDir (projectRoot).filePath ("scenes/source.wc.xml");
+    if (!QDir ().mkpath (QFileInfo (workcellPath).absolutePath ()))
+        return fail ("could not create managed frozen requirement scene directory");
+    QFile workcellFile (workcellPath);
+    if (!workcellFile.open (QIODevice::WriteOnly | QIODevice::Text) ||
+        workcellFile.write ("<WorkCell name=\"ManagedRequirementCell\" />\n") <= 0)
+        return fail ("could not write managed frozen requirement scene");
+    workcellFile.close ();
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr (new rw::kinematics::StateStructure ());
+    const rw::models::SerialDevice::Ptr device = makeGenericSixAxis (*structure);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr (
+        new rw::models::WorkCell (
+            structure, "ManagedRequirementCell", workcellPath.toStdString ()));
+    workcell->addDevice (device);
+    rws::RobotModelSpec model;
+    model.robotName = device->getName ();
+
+    rws::RequirementSet requirements;
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256 (model);
+    rws::PoseTask task;
+    task.id = "managed-station";
+    task.name = "Managed station";
+    task.refFrame = device->getBase ()->getName ();
+    task.tcpFrame = device->getEnd ()->getName ();
+    requirements.poseTasks.push_back (task);
+    rws::FrozenRequirementArtifact artifact;
+    std::string freezeError;
+    if (!rws::RequirementFreezer::freeze (
+            requirements, *workcell, workcell->getDefaultState (), model, artifact,
+            &freezeError, projectRoot.toStdString ()))
+        return fail ("could not freeze managed requirement fixture: " + freezeError);
+
+    const QString requirementPath =
+        QDir (projectRoot).filePath (requirementResource.path);
+    if (!QDir ().mkpath (QFileInfo (requirementPath).absolutePath ()))
+        return fail ("could not create managed requirement directory");
+    QFile requirementFile (requirementPath);
+    const QByteArray artifactJson = QByteArray::fromStdString (
+        rws::FrozenRequirementArtifactJson::toJson (artifact));
+    if (!requirementFile.open (QIODevice::WriteOnly | QIODevice::Text) ||
+        requirementFile.write (artifactJson) != artifactJson.size ())
+        return fail ("could not write managed frozen requirement artifact");
+    requirementFile.close ();
+
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio (properties);
+    rws::CallbackProjectDocumentProvider requirementProvider (
+        QStringLiteral ("test.managed-requirements"),
+        QStringLiteral ("robwork.passive-asset"),
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; },
+        [] (const QString&, const rws::ProjectDocumentContext&, QString*) { return true; });
+    if (!studio.registerProjectDocumentProvider (&requirementProvider, &error))
+        return fail ("could not register managed requirement fixture provider: " +
+                     error.toStdString ());
+    studio.openFile (projectPath.toStdString ());
+    if (studio.projectDirectory ().isEmpty ())
+        return fail ("managed frozen requirement project did not open");
+    studio.setWorkCell (workcell);
+
+    rws::KinematicAnalysisWidget widget;
+    widget.setRobWorkStudio (&studio);
+    widget.setWorkCell (workcell.get ());
+    QComboBox* source = widget.findChild< QComboBox* > (
+        QStringLiteral ("mode2DataSourceCombo"));
+    QPushButton* load = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2LoadJsonButton"));
+    QPushButton* validateAll = widget.findChild< QPushButton* > (
+        QStringLiteral ("mode2ValidateAllButton"));
+    if (source == nullptr || load == nullptr || validateAll == nullptr)
+        return fail ("managed frozen requirement validation controls were not found");
+    source->setCurrentIndex (1);
+
+    bool dialogShown = false;
+    QTimer dialogResponder;
+    dialogResponder.setInterval (5);
+    QObject::connect (&dialogResponder, &QTimer::timeout, [&] () {
+        for (QWidget* topLevel : QApplication::topLevelWidgets ()) {
+            QFileDialog* dialog = qobject_cast< QFileDialog* > (topLevel);
+            if (dialog == nullptr || !dialog->isVisible ())
+                continue;
+            dialogShown = true;
+            dialog->reject ();
+            return;
+        }
+    });
+    dialogResponder.start ();
+    load->click ();
+    QCoreApplication::processEvents ();
+    dialogResponder.stop ();
+    if (dialogShown)
+        return fail ("managed frozen requirement loading opened a file dialog");
+    if (widget.statusMessage () !=
+        QStringLiteral ("Frozen requirement execution contract loaded."))
+        return fail ("managed frozen requirement resource was not loaded automatically: " +
+                     widget.statusMessage ().toStdString ());
+    if (!validateAll->isEnabled ())
+        return fail ("managed frozen requirement loading did not enable validation");
+    studio.close ();
+    return 0;
+}
+
 static int testProjectDocumentRestoresBindingsAfterWorkCellArrival ()
 {
     QTemporaryDir directory;
@@ -7019,6 +7153,15 @@ int main (int argc, char** argv)
         const int rc = testManagedRobotProjectRequiresPublishedWorkCell ();
         if (rc == 0)
             std::cout << "KinematicAnalysis managed_project_gate test passed." << std::endl;
+        return rc;
+    }
+    if (requestedSuite == "managed_requirement_auto_load") {
+        QCoreApplication::setAttribute (Qt::AA_DontUseNativeDialogs);
+        QApplication app (argc, argv);
+        const int rc = testManagedFrozenRequirementsAutoLoadForValidation ();
+        if (rc == 0)
+            std::cout << "KinematicAnalysis managed_requirement_auto_load test passed."
+                      << std::endl;
         return rc;
     }
     if (requestedSuite == "workcell_project_defaults") {
