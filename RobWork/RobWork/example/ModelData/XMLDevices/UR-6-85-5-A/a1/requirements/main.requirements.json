@@ -1,0 +1,1388 @@
+{
+    "boxRegions": [
+        {
+            "center": [
+                0,
+                0,
+                0
+            ],
+            "collisionFreeRequired": true,
+            "directionSamples": 1,
+            "fixedRpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "id": "box_1",
+            "level": "Must",
+            "minimumCoverage": 0.8,
+            "minimumJointMargin": 0,
+            "minimumManipulability": 0,
+            "minimumOrientationCoverage": 0,
+            "minimumVerificationStage": "Verified",
+            "name": "Workspace Region 1",
+            "orientationMode": "Fixed",
+            "orientationTargetFrame": "",
+            "orientationTargetGeometry": "",
+            "orientationTargetPoint": "",
+            "orientationToleranceDeg": 1,
+            "positionToleranceMeters": 0.001,
+            "refFrame": "WORLD",
+            "rollSamples": 1,
+            "samplesPerAxis": 5,
+            "size": [
+                0.1,
+                0.1,
+                0.1
+            ],
+            "tcpFrame": "UR-6-85-5-A.TCP"
+        }
+    ],
+    "frozen": true,
+    "frozenArtifact": {
+        "compiledItems": [
+            {
+                "compileState": "Included",
+                "excludedReason": "",
+                "id": "station_1",
+                "kind": "PoseTask",
+                "provenance": {
+                    "diagnostics": [
+                    ],
+                    "sourceId": "station_1",
+                    "sourceKind": "Manual"
+                }
+            },
+            {
+                "compileState": "Included",
+                "excludedReason": "",
+                "id": "station_2",
+                "kind": "PoseTask",
+                "provenance": {
+                    "diagnostics": [
+                    ],
+                    "sourceId": "station_2",
+                    "sourceKind": "Manual"
+                }
+            },
+            {
+                "compileState": "Included",
+                "excludedReason": "",
+                "id": "box_1",
+                "kind": "WorkspaceRegion",
+                "provenance": {
+                    "diagnostics": [
+                    ],
+                    "sourceId": "box_1",
+                    "sourceKind": "BoxRegion"
+                }
+            }
+        ],
+        "compiledRequirements": {
+            "boxRegions": [
+                {
+                    "center": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "collisionFreeRequired": true,
+                    "directionSamples": 1,
+                    "fixedRpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "id": "box_1",
+                    "level": "Must",
+                    "minimumCoverage": 0.8,
+                    "minimumJointMargin": 0,
+                    "minimumManipulability": 0,
+                    "minimumOrientationCoverage": 0,
+                    "minimumVerificationStage": "Verified",
+                    "name": "Workspace Region 1",
+                    "orientationMode": "Fixed",
+                    "orientationTargetFrame": "",
+                    "orientationTargetGeometry": "",
+                    "orientationTargetPoint": "",
+                    "orientationToleranceDeg": 1,
+                    "positionToleranceMeters": 0.001,
+                    "refFrame": "WORLD",
+                    "rollSamples": 1,
+                    "samplesPerAxis": 5,
+                    "size": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "tcpFrame": "UR-6-85-5-A.TCP"
+                }
+            ],
+            "frozen": true,
+            "modelBinding": {
+                "robotModelFingerprint": "8ba77057f4c662a685cea17bc72bc3280c2710b1c79ab0a1078b93dec4358b94",
+                "robotName": "UR-6-85-5-A",
+                "sourcePath": "../generated/robot-models/UR-6-85-5-A.rmb.json"
+            },
+            "name": "",
+            "poseTasks": [
+                {
+                    "allowToolRollFree": false,
+                    "approach": {
+                        "axis": "ToolZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 0,
+                        "enabled": false
+                    },
+                    "confidence": 1,
+                    "generation": {
+                        "generatorId": "",
+                        "instanceId": "",
+                        "linked": false,
+                        "parameters": [
+                        ]
+                    },
+                    "geometryFeature": {
+                        "frameName": "",
+                        "geometryName": "",
+                        "objectName": "",
+                        "type": "None"
+                    },
+                    "id": "station_1",
+                    "importProvenance": {
+                        "recordNumber": 0,
+                        "sourcePath": ""
+                    },
+                    "level": "Must",
+                    "name": "Key Station 1",
+                    "note": "",
+                    "orientation": {
+                        "allowToolRollFree": false,
+                        "invertNormal": false,
+                        "mode": "Fixed",
+                        "resolutionEvidence": "resolver=OrientationRuleResolver.1;mode=Fixed;referenceFrame=WORLD;target=fixed-rpy;invertNormal=false;rpyDeg=0,0,0",
+                        "rollMaximumDeg": 180,
+                        "rollMinimumDeg": -180,
+                        "targetFrame": "",
+                        "targetGeometry": "",
+                        "targetPoint": ""
+                    },
+                    "orientationToleranceDeg": 1,
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "positionToleranceMeters": 0.001,
+                    "processType": "Generic",
+                    "refFrame": "WORLD",
+                    "retract": {
+                        "axis": "ReferenceZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 0,
+                        "enabled": false
+                    },
+                    "rpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "source": "Manual",
+                    "tcpFrame": "UR-6-85-5-A.TCP",
+                    "validation": {
+                        "collisionFreeRequired": true,
+                        "minimumJointMargin": 0,
+                        "minimumManipulability": 0
+                    }
+                },
+                {
+                    "allowToolRollFree": true,
+                    "approach": {
+                        "axis": "ToolZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 1,
+                        "enabled": false
+                    },
+                    "confidence": 1,
+                    "generation": {
+                        "generatorId": "",
+                        "instanceId": "",
+                        "linked": false,
+                        "parameters": [
+                        ]
+                    },
+                    "geometryFeature": {
+                        "frameName": "",
+                        "geometryName": "",
+                        "objectName": "",
+                        "type": "None"
+                    },
+                    "id": "station_2",
+                    "importProvenance": {
+                        "recordNumber": 0,
+                        "sourcePath": ""
+                    },
+                    "level": "Must",
+                    "name": "Key Station 2",
+                    "note": "",
+                    "orientation": {
+                        "allowToolRollFree": true,
+                        "invertNormal": false,
+                        "mode": "Fixed",
+                        "resolutionEvidence": "resolver=OrientationRuleResolver.1;mode=Fixed;referenceFrame=WORLD;target=fixed-rpy;invertNormal=false;rpyDeg=0,0,0",
+                        "rollMaximumDeg": 180,
+                        "rollMinimumDeg": -180,
+                        "targetFrame": "",
+                        "targetGeometry": "",
+                        "targetPoint": ""
+                    },
+                    "orientationToleranceDeg": 1,
+                    "position": [
+                        0.5,
+                        0,
+                        0
+                    ],
+                    "positionToleranceMeters": 0.001,
+                    "processType": "Generic",
+                    "refFrame": "WORLD",
+                    "retract": {
+                        "axis": "ReferenceZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 1,
+                        "enabled": false
+                    },
+                    "rpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "source": "Manual",
+                    "tcpFrame": "UR-6-85-5-A.TCP",
+                    "validation": {
+                        "collisionFreeRequired": true,
+                        "minimumJointMargin": 1,
+                        "minimumManipulability": 0
+                    }
+                }
+            ],
+            "schemaVersion": 1,
+            "version": 1
+        },
+        "compilerVersion": "EngineeringRequirements.Freezer.1",
+        "diagnostics": [
+        ],
+        "environmentFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a",
+        "execution": {
+            "diagnostics": [
+            ],
+            "provenance": {
+                "compilerVersion": "EngineeringRequirements.Freezer.1",
+                "environmentFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a",
+                "frozenAt": "2026-08-14T08:22:08.056Z",
+                "requirementFingerprint": "38e883afe75d8d5d27825bd18a0c8b89d0e1182140ef0086e68a449f4c67bfc2",
+                "robotModelFingerprint": "8ba77057f4c662a685cea17bc72bc3280c2710b1c79ab0a1078b93dec4358b94",
+                "sourcePath": "../generated/robot-models/UR-6-85-5-A.rmb.json",
+                "workcellFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a"
+            },
+            "schemaVersion": 1,
+            "tasks": [
+                {
+                    "allowToolRollFree": false,
+                    "approach": {
+                        "axis": "ToolZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 0,
+                        "enabled": false
+                    },
+                    "collisionFreeRequired": true,
+                    "compileState": "Included",
+                    "diagnostics": [
+                    ],
+                    "excludedReason": "",
+                    "id": "station_1",
+                    "invertNormal": false,
+                    "level": "Must",
+                    "minimumJointMargin": 0,
+                    "minimumManipulability": 0,
+                    "name": "Key Station 1",
+                    "orientationMode": "Fixed",
+                    "orientationTargetFrame": "",
+                    "orientationTargetGeometry": "",
+                    "orientationTargetPoint": "",
+                    "orientationToleranceDeg": 1,
+                    "pathValidationPending": false,
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "positionToleranceMeters": 0.001,
+                    "processType": "Generic",
+                    "provenance": {
+                        "diagnostics": [
+                        ],
+                        "sourceId": "station_1",
+                        "sourceKind": "Manual"
+                    },
+                    "refFrame": "WORLD",
+                    "resolutionEvidence": "resolver=OrientationRuleResolver.1;mode=Fixed;referenceFrame=WORLD;target=fixed-rpy;invertNormal=false;rpyDeg=0,0,0",
+                    "retract": {
+                        "axis": "ReferenceZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 0,
+                        "enabled": false
+                    },
+                    "rollMaximumDeg": 180,
+                    "rollMinimumDeg": -180,
+                    "rpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "tcpFrame": "UR-6-85-5-A.TCP"
+                },
+                {
+                    "allowToolRollFree": true,
+                    "approach": {
+                        "axis": "ToolZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 1,
+                        "enabled": false
+                    },
+                    "collisionFreeRequired": true,
+                    "compileState": "Included",
+                    "diagnostics": [
+                    ],
+                    "excludedReason": "",
+                    "id": "station_2",
+                    "invertNormal": false,
+                    "level": "Must",
+                    "minimumJointMargin": 1,
+                    "minimumManipulability": 0,
+                    "name": "Key Station 2",
+                    "orientationMode": "Fixed",
+                    "orientationTargetFrame": "",
+                    "orientationTargetGeometry": "",
+                    "orientationTargetPoint": "",
+                    "orientationToleranceDeg": 1,
+                    "pathValidationPending": false,
+                    "position": [
+                        0.5,
+                        0,
+                        0
+                    ],
+                    "positionToleranceMeters": 0.001,
+                    "processType": "Generic",
+                    "provenance": {
+                        "diagnostics": [
+                        ],
+                        "sourceId": "station_2",
+                        "sourceKind": "Manual"
+                    },
+                    "refFrame": "WORLD",
+                    "resolutionEvidence": "resolver=OrientationRuleResolver.1;mode=Fixed;referenceFrame=WORLD;target=fixed-rpy;invertNormal=false;rpyDeg=0,0,0",
+                    "retract": {
+                        "axis": "ReferenceZ",
+                        "collisionFreeRequired": true,
+                        "distanceMeters": 1,
+                        "enabled": false
+                    },
+                    "rollMaximumDeg": 180,
+                    "rollMinimumDeg": -180,
+                    "rpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "tcpFrame": "UR-6-85-5-A.TCP"
+                }
+            ],
+            "type": "RequirementExecutionSet",
+            "workspaceRegions": [
+                {
+                    "center": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "collisionFreeRequired": true,
+                    "compileState": "Included",
+                    "diagnostics": [
+                    ],
+                    "directionSamples": 1,
+                    "excludedReason": "",
+                    "fixedRpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "id": "box_1",
+                    "level": "Must",
+                    "minimumCoverage": 0.8,
+                    "minimumJointMargin": 0,
+                    "minimumManipulability": 0,
+                    "minimumOrientationCoverage": 0,
+                    "minimumVerificationStage": "Verified",
+                    "name": "Workspace Region 1",
+                    "orientationMode": "Fixed",
+                    "orientationTargetFrame": "",
+                    "orientationTargetGeometry": "",
+                    "orientationTargetPoint": "",
+                    "orientationToleranceDeg": 1,
+                    "positionToleranceMeters": 0.001,
+                    "provenance": {
+                        "diagnostics": [
+                        ],
+                        "sourceId": "box_1",
+                        "sourceKind": "BoxRegion"
+                    },
+                    "refFrame": "WORLD",
+                    "rollSamples": 1,
+                    "samplesPerAxis": 5,
+                    "size": [
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "tcpFrame": "UR-6-85-5-A.TCP"
+                }
+            ]
+        },
+        "executionFingerprint": "28ca2c776267517e28636781809e328a1f2ac36474b8afc0f2c72f997b15b9f0",
+        "frozenAt": "2026-08-14T08:22:08.056Z",
+        "frozenRobotState": {
+            "capturedAt": "2026-08-14T08:22:08.056Z",
+            "deviceName": "UR-6-85-5-A",
+            "kinematicFingerprint": "98c65c8b043845e501e26e0f254c5d117a66adcd5287fac65d36746c70721e57",
+            "q": [
+                0,
+                -1.5707963267949,
+                0,
+                -1.5707963267949,
+                0,
+                0
+            ],
+            "tcpFrameName": "UR-6-85-5-A.TCP",
+            "tcpWorldPose": [
+                -1,
+                -6.982962677686267e-15,
+                0,
+                4.275831445896959e-31,
+                -6.123233995736766e-17,
+                -1,
+                6.982962677686267e-15,
+                -1,
+                6.123233995736766e-17,
+                3.5034571198353656e-15,
+                -0.10899999999999994,
+                0.99963,
+                0,
+                0,
+                0,
+                1
+            ]
+        },
+        "modelBinding": {
+            "robotModelFingerprint": "8ba77057f4c662a685cea17bc72bc3280c2710b1c79ab0a1078b93dec4358b94",
+            "robotName": "UR-6-85-5-A",
+            "sourcePath": "../generated/robot-models/UR-6-85-5-A.rmb.json"
+        },
+        "publication": {
+            "parentRevisionId": "",
+            "publishedAt": "2026-08-14T08:22:08.056Z",
+            "revisionId": "REQ-1",
+            "revisionNumber": 1,
+            "state": "published"
+        },
+        "requirementFingerprint": "38e883afe75d8d5d27825bd18a0c8b89d0e1182140ef0086e68a449f4c67bfc2",
+        "scenario": {
+            "deviceName": "UR-6-85-5-A",
+            "environmentFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a",
+            "sceneSpec": {
+                "collisionModels": [
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/robotFlange",
+                        "length": 0.1,
+                        "name": "BaseGeoCollision",
+                        "pos": [
+                            0,
+                            0,
+                            0.003
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Base",
+                        "rpyDeg": [
+                            0,
+                            90,
+                            180
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint0",
+                        "length": 0.1,
+                        "name": "Joint0GeoCollision",
+                        "pos": [
+                            0,
+                            0,
+                            0.003
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint0",
+                        "rpyDeg": [
+                            180,
+                            90,
+                            0
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint1",
+                        "length": 0.1,
+                        "name": "Joint1GeoCollision",
+                        "pos": [
+                            0.0862,
+                            0,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint1",
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint2",
+                        "length": 0.1,
+                        "name": "Joint2GeoCollision",
+                        "pos": [
+                            0.5112,
+                            0,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint2",
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint3",
+                        "length": 0.1,
+                        "name": "Joint3GeoCollision",
+                        "pos": [
+                            0,
+                            0.90363,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint3",
+                        "rpyDeg": [
+                            90,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint4",
+                        "length": 0.1,
+                        "name": "Joint4GeoCollision",
+                        "pos": [
+                            0,
+                            -0.109,
+                            -0.90363
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint4",
+                        "rpyDeg": [
+                            0,
+                            90,
+                            0
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "enabled": true,
+                        "filePath": "scenes/geometry/joint5",
+                        "length": 0.1,
+                        "name": "Joint5GeoCollision",
+                        "pos": [
+                            0,
+                            0.99663,
+                            -0.109
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint5",
+                        "rpyDeg": [
+                            90,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    }
+                ],
+                "collisionSetup": {
+                    "enabled": true,
+                    "excludeAdjacentLinkPairs": true,
+                    "excludeBaseToFirstJoint": true,
+                    "excludePairs": [
+                        {
+                            "enabled": true,
+                            "first": "TCP",
+                            "reason": "",
+                            "second": "Joint5",
+                            "source": "Imported"
+                        }
+                    ],
+                    "excludeStaticPairs": false,
+                    "volatileFrames": [
+                    ]
+                },
+                "dhJoints": [
+                ],
+                "drawables": [
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/robotFlange",
+                        "length": 0.1,
+                        "name": "flangeGeo",
+                        "pos": [
+                            0,
+                            0,
+                            0.003
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Base",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            0,
+                            90,
+                            180
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/base",
+                        "length": 0.1,
+                        "name": "BaseGeo",
+                        "pos": [
+                            0,
+                            0,
+                            0.003
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Base",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            0,
+                            90,
+                            180
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint0",
+                        "length": 0.1,
+                        "name": "Joint0Geo",
+                        "pos": [
+                            0,
+                            0,
+                            0.003
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint0",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            180,
+                            90,
+                            0
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint1",
+                        "length": 0.1,
+                        "name": "Joint1Geo",
+                        "pos": [
+                            0.0862,
+                            0,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint1",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint2",
+                        "length": 0.1,
+                        "name": "Joint2Geo",
+                        "pos": [
+                            0.5112,
+                            0,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint2",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint3",
+                        "length": 0.1,
+                        "name": "Joint3Geo",
+                        "pos": [
+                            0,
+                            0.90363,
+                            0
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint3",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            90,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint4",
+                        "length": 0.1,
+                        "name": "Joint4Geo",
+                        "pos": [
+                            0,
+                            -0.109,
+                            -0.90363
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint4",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            0,
+                            90,
+                            0
+                        ],
+                        "shape": "Polytope"
+                    },
+                    {
+                        "autoGenerated": false,
+                        "autoLinkGeometry": false,
+                        "dimensions": [
+                            0.1,
+                            0.1,
+                            0.1
+                        ],
+                        "filePath": "scenes/geometry/joint5",
+                        "length": 0.1,
+                        "name": "Joint5Geo",
+                        "pos": [
+                            0,
+                            0.99663,
+                            -0.109
+                        ],
+                        "radius": 0.05,
+                        "refFrame": "Joint5",
+                        "rgb": [
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        "rpyDeg": [
+                            90,
+                            0,
+                            90
+                        ],
+                        "shape": "Polytope"
+                    }
+                ],
+                "dynamics": {
+                    "baseFrame": "Base",
+                    "baseMaterial": "Steel",
+                    "forceLimits": [
+                    ],
+                    "generateDynamicWorkCell": false,
+                    "links": [
+                    ]
+                },
+                "exportDhJointsAdvanced": false,
+                "exportLayout": {
+                    "collisionSetupFile": "",
+                    "deviceFile": "",
+                    "dynamicWorkCellFile": "",
+                    "preserveImportedFileLayout": false,
+                    "proximitySetupFile": "",
+                    "sceneFile": ""
+                },
+                "generateDrawables": true,
+                "generateScene": true,
+                "imported": {
+                    "active": true,
+                    "deviceExtensions": [
+                    ],
+                    "sourceCollisionSetupFile": "",
+                    "sourceDeviceFile": "main.wc.xml",
+                    "sourceProximitySetupFile": "",
+                    "sourceSceneFile": "",
+                    "workcellExtensions": [
+                    ]
+                },
+                "includes": [
+                ],
+                "limits": [
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint0",
+                        "posMax": 180,
+                        "posMin": -180,
+                        "velMax": 59.99999999999999
+                    },
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint1",
+                        "posMax": 90,
+                        "posMin": -270,
+                        "velMax": 59.99999999999999
+                    },
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint2",
+                        "posMax": 180,
+                        "posMin": -180,
+                        "velMax": 59.99999999999999
+                    },
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint3",
+                        "posMax": 90,
+                        "posMin": -270,
+                        "velMax": 59.99999999999999
+                    },
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint4",
+                        "posMax": 180,
+                        "posMin": -180,
+                        "velMax": 59.99999999999999
+                    },
+                    {
+                        "accMax": 119.99999999999999,
+                        "jointName": "Joint5",
+                        "posMax": 180,
+                        "posMin": -180,
+                        "velMax": 59.99999999999999
+                    }
+                ],
+                "mode": "JointRPYPos",
+                "poses": [
+                    {
+                        "name": "Home",
+                        "q": [
+                            0,
+                            -90.0000000000002,
+                            0,
+                            -90.0000000000002,
+                            0,
+                            0
+                        ]
+                    }
+                ],
+                "proximitySetup": {
+                    "enabled": true,
+                    "rules": [
+                        {
+                            "kind": "Exclude",
+                            "patternA": "TCP",
+                            "patternB": "Joint5"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "TCP",
+                            "patternB": "Joint5"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint5",
+                            "patternB": "Joint4"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint5",
+                            "patternB": "Joint4"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint4",
+                            "patternB": "Joint3"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint4",
+                            "patternB": "Joint3"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint3",
+                            "patternB": "Joint2"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint3",
+                            "patternB": "Joint2"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint2",
+                            "patternB": "Joint1"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint2",
+                            "patternB": "Joint1"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint1",
+                            "patternB": "Joint0"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint1",
+                            "patternB": "Joint0"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint0",
+                            "patternB": "Base"
+                        },
+                        {
+                            "kind": "Exclude",
+                            "patternA": "Joint0",
+                            "patternB": "Base"
+                        }
+                    ],
+                    "useExcludeStaticPairs": true,
+                    "useIncludeAll": true
+                },
+                "robotBaseFrame": {
+                    "daf": false,
+                    "frameType": "Fixed",
+                    "name": "RobotBase",
+                    "pos": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "poseMode": "RPYPos",
+                    "refFrame": "WORLD",
+                    "rpyDeg": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "transform": [
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1
+                    ]
+                },
+                "robotName": "UR-6-85-5-A",
+                "saveDirectory": "scenes",
+                "sceneFrames": [
+                ],
+                "sceneGeometries": [
+                ],
+                "showFrameAxes": true,
+                "transformJoints": [
+                    {
+                        "name": "Joint0",
+                        "pos": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "type": "Revolute"
+                    },
+                    {
+                        "name": "Joint1",
+                        "pos": [
+                            0,
+                            0,
+                            0.0892
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "type": "Revolute"
+                    },
+                    {
+                        "name": "Joint2",
+                        "pos": [
+                            -0.425,
+                            0,
+                            0
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "type": "Revolute"
+                    },
+                    {
+                        "name": "Joint3",
+                        "pos": [
+                            -0.39243000000000006,
+                            0,
+                            0
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "type": "Revolute"
+                    },
+                    {
+                        "name": "Joint4",
+                        "pos": [
+                            0,
+                            0,
+                            0.109
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            90
+                        ],
+                        "type": "Revolute"
+                    },
+                    {
+                        "name": "Joint5",
+                        "pos": [
+                            0,
+                            0,
+                            0.093
+                        ],
+                        "rpyDeg": [
+                            0,
+                            0,
+                            -90
+                        ],
+                        "type": "Revolute"
+                    }
+                ]
+            },
+            "schemaVersion": 2,
+            "snapshotFingerprint": "4cd6832f7a181dd0e608f724767cc0ee28d3dd6f9be9ca79dcab69375865a73c",
+            "sourceFileFingerprint": "0aee171bf0c93dfb03f38786b4812fafc4ffdab5b72b451578c7aee4f4cfb874",
+            "sourceWorkCellPath": "scenes/main.wc.xml",
+            "stateFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a"
+        },
+        "schemaVersion": 4,
+        "type": "FrozenEngineeringRequirementArtifact",
+        "workcellFingerprint": "fec1d61a7e9474a4d11516775d7f185a8c2e215eebacd38b1e00b91b06d9042a"
+    },
+    "modelBinding": {
+        "robotModelFingerprint": "8ba77057f4c662a685cea17bc72bc3280c2710b1c79ab0a1078b93dec4358b94",
+        "robotName": "UR-6-85-5-A",
+        "sourcePath": "../generated/robot-models/UR-6-85-5-A.rmb.json"
+    },
+    "name": "",
+    "poseTasks": [
+        {
+            "allowToolRollFree": false,
+            "approach": {
+                "axis": "ToolZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "confidence": 1,
+            "generation": {
+                "generatorId": "",
+                "instanceId": "",
+                "linked": false,
+                "parameters": [
+                ]
+            },
+            "geometryFeature": {
+                "frameName": "",
+                "geometryName": "",
+                "objectName": "",
+                "type": "None"
+            },
+            "id": "station_1",
+            "importProvenance": {
+                "recordNumber": 0,
+                "sourcePath": ""
+            },
+            "level": "Must",
+            "name": "Key Station 1",
+            "note": "",
+            "orientation": {
+                "allowToolRollFree": false,
+                "invertNormal": false,
+                "mode": "Fixed",
+                "resolutionEvidence": "",
+                "rollMaximumDeg": 180,
+                "rollMinimumDeg": -180,
+                "targetFrame": "",
+                "targetGeometry": "",
+                "targetPoint": ""
+            },
+            "orientationToleranceDeg": 1,
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "positionToleranceMeters": 0.001,
+            "processType": "Generic",
+            "refFrame": "WORLD",
+            "retract": {
+                "axis": "ReferenceZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 0,
+                "enabled": false
+            },
+            "rpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "source": "Manual",
+            "tcpFrame": "UR-6-85-5-A.TCP",
+            "validation": {
+                "collisionFreeRequired": true,
+                "minimumJointMargin": 0,
+                "minimumManipulability": 0
+            }
+        },
+        {
+            "allowToolRollFree": true,
+            "approach": {
+                "axis": "ToolZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 1,
+                "enabled": false
+            },
+            "confidence": 1,
+            "generation": {
+                "generatorId": "",
+                "instanceId": "",
+                "linked": false,
+                "parameters": [
+                ]
+            },
+            "geometryFeature": {
+                "frameName": "",
+                "geometryName": "",
+                "objectName": "",
+                "type": "None"
+            },
+            "id": "station_2",
+            "importProvenance": {
+                "recordNumber": 0,
+                "sourcePath": ""
+            },
+            "level": "Must",
+            "name": "Key Station 2",
+            "note": "",
+            "orientation": {
+                "allowToolRollFree": true,
+                "invertNormal": false,
+                "mode": "Fixed",
+                "resolutionEvidence": "",
+                "rollMaximumDeg": 180,
+                "rollMinimumDeg": -180,
+                "targetFrame": "",
+                "targetGeometry": "",
+                "targetPoint": ""
+            },
+            "orientationToleranceDeg": 1,
+            "position": [
+                0.5,
+                0,
+                0
+            ],
+            "positionToleranceMeters": 0.001,
+            "processType": "Generic",
+            "refFrame": "WORLD",
+            "retract": {
+                "axis": "ReferenceZ",
+                "collisionFreeRequired": true,
+                "distanceMeters": 1,
+                "enabled": false
+            },
+            "rpyDeg": [
+                0,
+                0,
+                0
+            ],
+            "source": "Manual",
+            "tcpFrame": "UR-6-85-5-A.TCP",
+            "validation": {
+                "collisionFreeRequired": true,
+                "minimumJointMargin": 1,
+                "minimumManipulability": 0
+            }
+        }
+    ],
+    "schemaVersion": 1,
+    "version": 1
+}

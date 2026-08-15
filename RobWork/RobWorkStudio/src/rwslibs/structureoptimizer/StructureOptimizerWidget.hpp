@@ -179,6 +179,13 @@ private:
     void updateRunState();              //!< 动态更新“开始优化”等按钮的可点击状态及状态栏提示
     std::vector<StructureDesignVariable> availableSuggestedVariables() const;
     void updateVariableActionState();
+    void applyOptimizationTemplate();
+    void runStructurePreflight();
+    void evaluateStructureBaseline();
+    void compareStructureCandidates();
+    void handleBaselineCompleted(const StructureOptimizationResult& result);
+    void handleBaselineFailed(const QString& message);
+    void handleBaselineRunningChanged(bool running);
     void addVariable();
     void addMissingSuggestedVariables();
     void duplicateSelectedVariable();
@@ -231,6 +238,8 @@ private:
 
     // ---- GUI 图形控件指针 ----
     QTabWidget* _tabs = nullptr;                       //!< 五页签的主 Tab 控件
+    StructureOptimizationResult _baselineResult;
+    bool _baselineOnlyRunning = false;
     QTableView* _variableView = nullptr;
     QTableView* _taskView = nullptr;                   //!< 任务点表格视图
     QTableView* _constraintView = nullptr;             //!< 约束条件表格视图
@@ -251,6 +260,14 @@ private:
     QLabel* _statusLabel = nullptr;                    //!< 底部状态栏信息标签
     QLabel* _progressLabel = nullptr;                  //!< 优化阶段与进度标签
     QWidget* _modelStatusBanner = nullptr;
+    QComboBox* _templateCombo = nullptr;
+    QPushButton* _applyTemplateButton = nullptr;
+    QPushButton* _preflightButton = nullptr;
+    QPushButton* _baselineButton = nullptr;
+    QPushButton* _compareButton = nullptr;
+    QLabel* _preflightLabel = nullptr;
+    QLabel* _baselineLabel = nullptr;
+    QLabel* _comparisonLabel = nullptr;
     QLabel* _modelStatusBannerText = nullptr;
     QLabel* _modelStatusBannerSource = nullptr;
     QPushButton* _newProjectFromModelBannerButton = nullptr;

@@ -119,7 +119,24 @@ model independently of this optimization-project check.
 4. Export produces `project.structure-optimization.json`,
    `result.structure-optimization.json`, `candidates.csv`,
    `task-details.csv`, `audit.csv`, and `report.md`. If a feasible candidate is selected,
-   its XML package is exported under `candidate-<index>/`.
+    its XML package is exported under `candidate-<index>/`.
+
+### Phase 1 Guided Workflow
+
+The setup bar supports the repeatable engineering sequence:
+
+1. Choose and apply one of the templates: `balanced`, `reachability-first`,
+   `compactness-first`, or `workspace-first`.
+2. Run preflight. `Fail` findings block optimization, while `Warning` findings
+   are recorded but allow sampling to continue.
+3. Evaluate the current model baseline independently before starting a search.
+4. Run optimization, then select up to three candidates and compare their score,
+   reachability, manipulability, joint-margin, collision, and length deltas
+   against the baseline.
+
+The first phase evaluates structure dimensions and kinematics only. Trajectory,
+dynamics, motor, and reducer evaluators remain explicit extension points and are
+not enabled by these templates.
 
 ## Accepted Example
 

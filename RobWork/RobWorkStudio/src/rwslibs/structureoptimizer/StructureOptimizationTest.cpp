@@ -19,6 +19,8 @@
 #include "OptimizationTaskTableModel.hpp"
 #include "StructureCandidateTableModel.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizationTemplate.hpp"
+#include "StructureCandidateComparison.hpp"
 #include "StructureOptimizerPlugin.hpp"
 #include "StructureOptimizerWidget.hpp"
 #include "StructureOptimizationController.hpp"
@@ -214,6 +216,113 @@ static void testProblemDefaultsAndValidation()
         std::printf("PASSED\n");
     else
         std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testPhaseOneTemplatesAndPreflight()
+{
+    std::printf("testPhaseOneTemplatesAndPreflight ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec.robotName = "TemplateRobot";
+    problem.context.modelSpec.transformJoints.resize(1);
+    problem.context.modelProvenance.sourceFingerprint = "source";
+    problem.context.modelProvenance.snapshotFingerprint = "snapshot";
+    rws::StructureDesignVariable variable;
+    variable.id = "link_length";
+    variable.label = "Link Length";
+    variable.targetName = "link1";
+    variable.unit = "m";
+    variable.currentValue = 0.5;
+    variable.minimum = 0.3;
+    variable.maximum = 0.8;
+    variable.step = 0.01;
+    problem.variables.push_back(variable);
+    rws::OptimizationTaskPoint task;
+    task.point.id = "task1";
+    task.point.enabled = true;
+    problem.tasks.push_back(task);
+
+    REQUIRE(rws::StructureOptimizationTemplate::apply(
+        rws::StructureOptimizationTemplateKind::ReachabilityFirst, problem));
+    REQUIRE(problem.context.modelProvenance.snapshotFingerprint == "snapshot");
+    REQUIRE(!problem.objectives.empty());
+    REQUIRE(problem.objectives.front().metricId ==
+            "kinematics.reachability.weighted");
+    REQUIRE(problem.objectives.front().weight > problem.objectives.back().weight);
+    REQUIRE(problem.run.candidateCount >= 300);
+
+    const std::vector<rws::StructurePreflightFinding> validFindings =
+        rws::StructureOptimizationUiLogic::preflight(problem);
+    REQUIRE(std::none_of(validFindings.begin(), validFindings.end(),
+                         [](const rws::StructurePreflightFinding& finding) {
+                             return finding.severity == rws::AnalysisStatus::Fail;
+                         }));
+
+    problem.variables.front().step = 0.0;
+    const std::vector<rws::StructurePreflightFinding> invalidFindings =
+        rws::StructureOptimizationUiLogic::preflight(problem);
+    REQUIRE(std::any_of(invalidFindings.begin(), invalidFindings.end(),
+                        [](const rws::StructurePreflightFinding& finding) {
+                            return finding.code == "StructureOptimization.Variable.InvalidBounds" &&
+                                   finding.severity == rws::AnalysisStatus::Fail;
+                        }));
+
+    problem.variables.front().step = 0.0000001;
+    problem.run.candidateCount = 1;
+    const std::vector<rws::StructurePreflightFinding> largeSearchFindings =
+        rws::StructureOptimizationUiLogic::preflight(problem);
+    REQUIRE(std::any_of(largeSearchFindings.begin(), largeSearchFindings.end(),
+                        [](const rws::StructurePreflightFinding& finding) {
+                            return finding.code == "StructureOptimization.Run.SearchSpaceLarge" &&
+                                   finding.severity == rws::AnalysisStatus::Warning;
+                        }));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testPhaseOneCandidateComparison()
+{
+    std::printf("testPhaseOneCandidateComparison ... ");
+    rws::StructureOptimizationResult result;
+    result.baselineCandidateIndex = 0;
+    rws::StructureCandidateResult baseline;
+    baseline.index = 0;
+    baseline.totalScore = 40.0;
+    baseline.feasible = false;
+    baseline.scores.reachability = 0.4;
+    baseline.scores.manipulability = 0.2;
+    baseline.raw.totalKinematicLength = 1.2;
+    rws::StructureCandidateResult candidate = baseline;
+    candidate.index = 7;
+    candidate.totalScore = 75.0;
+    candidate.feasible = true;
+    candidate.scores.reachability = 0.9;
+    candidate.scores.manipulability = 0.7;
+    candidate.raw.totalKinematicLength = 1.0;
+    result.candidates = {baseline, candidate};
+
+    const rws::StructureCandidateComparison comparison =
+        rws::StructureCandidateComparison::compare(result, {7});
+    REQUIRE(comparison.valid);
+    REQUIRE(comparison.rows.size() == 1);
+    REQUIRE(comparison.rows.front().candidateIndex == 7);
+    REQUIRE(std::abs(comparison.rows.front().scoreDelta - 35.0) < 1e-12);
+    REQUIRE(std::abs(comparison.rows.front().reachabilityDelta - 0.5) < 1e-12);
+    REQUIRE(std::abs(comparison.rows.front().lengthDelta + 0.2) < 1e-12);
+
+    const rws::StructureCandidateComparison duplicate =
+        rws::StructureCandidateComparison::compare(result, {7, 7});
+    REQUIRE(!duplicate.valid);
+    REQUIRE(duplicate.error == "Candidate selections must be unique.");
+
+    const rws::StructureCandidateComparison missing =
+        rws::StructureCandidateComparison::compare(result, {99});
+    REQUIRE(!missing.valid);
+    REQUIRE(missing.error == "Selected candidate was not found.");
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
 // =============================================================================
@@ -2691,6 +2800,64 @@ static void testStructureOptimizerWidgetUsesEnglishCopy()
     candidateModel.setCandidates({feasibleCandidate});
     REQUIRE(candidateModel.data(candidateModel.index(
                 0, rws::StructureCandidateTableModel::FeasibleColumn)).toString() == "Yes");
+}
+
+static void testStructureOptimizerWidgetPhaseOneControls()
+{
+    std::printf("testStructureOptimizerWidgetPhaseOneControls ... ");
+    rws::StructureOptimizerWidget widget;
+    QComboBox* templates = widget.findChild<QComboBox*>(
+        "structureOptimizationTemplateCombo");
+    QPushButton* applyTemplate = widget.findChild<QPushButton*>(
+        "applyStructureOptimizationTemplateButton");
+    QPushButton* preflight = widget.findChild<QPushButton*>(
+        "preflightStructureOptimizationButton");
+    QPushButton* baseline = widget.findChild<QPushButton*>(
+        "evaluateStructureBaselineButton");
+    QPushButton* compare = widget.findChild<QPushButton*>(
+        "compareStructureCandidatesButton");
+    QLabel* preflightSummary = widget.findChild<QLabel*>(
+        "structureOptimizationPreflightLabel");
+    QLabel* baselineSummary = widget.findChild<QLabel*>(
+        "structureOptimizationBaselineLabel");
+    QLabel* comparisonSummary = widget.findChild<QLabel*>(
+        "structureCandidateComparisonLabel");
+    REQUIRE(templates != nullptr);
+    REQUIRE(applyTemplate != nullptr);
+    REQUIRE(preflight != nullptr);
+    REQUIRE(baseline != nullptr);
+    REQUIRE(compare != nullptr);
+    REQUIRE(preflightSummary != nullptr);
+    REQUIRE(baselineSummary != nullptr);
+    REQUIRE(comparisonSummary != nullptr);
+    REQUIRE(templates != nullptr && templates->count() == 4);
+    REQUIRE(preflight != nullptr && preflight->isEnabled());
+    REQUIRE(baseline != nullptr && !baseline->isEnabled());
+    REQUIRE(compare != nullptr && !compare->isEnabled());
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+    problem.variables = rws::StructureOptimizationUiLogic::suggestVariables(problem.context);
+    rws::OptimizationTaskPoint task;
+    task.point.id = "phase1-task";
+    task.point.enabled = true;
+    task.point.position = {0.3, 0.0, 0.3};
+    problem.tasks.push_back(task);
+    widget.setProblem(problem);
+    REQUIRE(applyTemplate->isEnabled());
+    templates->setCurrentIndex(1);
+    applyTemplate->click();
+    REQUIRE(widget.collectProblem().objectives.front().metricId ==
+            "kinematics.reachability.weighted");
+    REQUIRE(preflightSummary->text().contains(QStringLiteral("Preflight"),
+                                              Qt::CaseInsensitive));
+    REQUIRE(baseline->isEnabled());
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
 static void testStructureOptimizerWidgetVariableEfficiencyControls()
@@ -5242,6 +5409,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if (suite == "phase1_core") {
+        QCoreApplication app(argc, argv);
+        testPhaseOneTemplatesAndPreflight();
+        testPhaseOneCandidateComparison();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     if (suite == "robot_file_acceptance") {
         QApplication app(argc, argv);
         testPortable300kgRobotFileProjectAcceptance();
@@ -5293,6 +5467,7 @@ int main(int argc, char** argv)
         testStructureOptimizerModelStatusGuidance();
         testStructureOptimizerWidgetUsesEnglishCopy();
         testStructureOptimizerWidgetVariableEfficiencyControls();
+        testStructureOptimizerWidgetPhaseOneControls();
         std::fflush(stdout);
         if (g_testFailures == 0)
         {

@@ -71,6 +71,7 @@ public:
      * @return false 当前已处于运行状态，拒绝重复启动
      */
     bool start(const StructureOptimizationProblem& problem);
+    bool startBaselineEvaluation(const StructureOptimizationProblem& problem);
 
     /**
      * @brief 请求暂停当前的后台优化计算。
@@ -101,6 +102,7 @@ public:
      * @return true 已暂停；false 未暂停
      */
     bool isPaused() const;
+    bool isBaselineRunning() const;
 
 Q_SIGNALS:
     /**
@@ -133,6 +135,9 @@ Q_SIGNALS:
      * @param paused 当前是否处于暂停状态
      */
     void pausedChanged(bool paused);
+    void baselineCompleted(const rws::StructureOptimizationResult& result);
+    void baselineFailed(const QString& message);
+    void baselineRunningChanged(bool running);
 
 private:
     struct OptimizationControlState; //!< 内部使用的线程同步控制状态结构体 (包含互斥锁、条件变量及原子标志)
@@ -141,6 +146,9 @@ private:
      * @brief 系统默认的优化入口：内部实例化 HybridStructureOptimizer 和 KinematicEngineeringEvaluator 执行计算。
      */
     static StructureOptimizationResult runDefaultOptimization(
+        const StructureOptimizationProblem& problem,
+        const StructureOptimizationCallbacks& callbacks);
+    static StructureOptimizationResult runDefaultBaselineEvaluation(
         const StructureOptimizationProblem& problem,
         const StructureOptimizationCallbacks& callbacks);
 
@@ -158,12 +166,17 @@ private:
      * @brief 设置 paused 状态并安全发射 pausedChanged 信号。
      */
     void setPaused(bool paused);
+    void finishBaselineRun();
+    void setBaselineRunning(bool running);
 
-    QFutureWatcher<StructureOptimizationResult> _watcher; //!< Qt 异步计算监听器，用于跨线程捕获后台函数的返回值与完成状态
+    QFutureWatcher<StructureOptimizationResult> _watcher;
+    QFutureWatcher<StructureOptimizationResult> _baselineWatcher;
     RunFunction _runFunction;                             //!< 绑定的算法执行函数对象
     std::shared_ptr<OptimizationControlState> _control;  //!< 跨线程共享的同步控制状态对象智能指针
     bool _running = false;                                //!< 当前控制器运行状态标志
-    bool _paused = false;                                 //!< 当前控制器暂停状态标志
+    bool _paused = false;
+    std::shared_ptr<OptimizationControlState> _baselineControl;
+    bool _baselineRunning = false;
 };
 
 } // namespace rws

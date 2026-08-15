@@ -161,9 +161,25 @@ std::string StructureOptimizationReportWriter::write(
     out << "- Sensitivity evaluations: "
         << result.diagnostics.sensitivityEvaluations << "\n";
     out << "- Cache hits: " << result.diagnostics.cacheHits << "\n";
+    const StructureCandidateResult* baseline = findCandidate(result, result.baselineCandidateIndex);
     const StructureCandidateResult* best = findCandidate(result, result.bestCandidateIndex);
+    if (baseline != nullptr) {
+        out << "\n## Baseline Comparison\n\n";
+        out << "- Baseline score: " << baseline->totalScore << "\n";
+        out << "- Baseline reachability: " << baseline->raw.weightedReachability << "\n";
+        out << "- Baseline manipulability P10: " << baseline->raw.manipulabilityP10 << "\n";
+        out << "- Baseline joint margin P10: " << baseline->raw.jointMarginP10 << "\n";
+        out << "- Baseline kinematic length: " << baseline->raw.totalKinematicLength << " m\n";
+    }
     if (best != nullptr) {
         out << std::fixed << std::setprecision(3);
+        if (baseline != nullptr) {
+            out << "- Best score delta: " << (best->totalScore - baseline->totalScore) << "\n";
+            out << "- Best reachability delta: "
+                << (best->raw.weightedReachability - baseline->raw.weightedReachability) << "\n";
+            out << "- Best length delta: "
+                << (best->raw.totalKinematicLength - baseline->raw.totalKinematicLength) << " m\n";
+        }
         out << "- Workspace coverage: " << best->raw.workspaceCoverage << " ("
             << best->raw.workspaceOccupiedCellCount << "/"
             << best->raw.workspaceTotalCellCount << " cells)\n";

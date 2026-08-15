@@ -1,0 +1,249 @@
+{
+    "entryPoints": {
+        "mainWorkCell": "scene.main",
+        "workCellImportBinding": "workcell.binding.main"
+    },
+    "format": "RobWorkStudioProject",
+    "plugins": {
+        "workflow": {
+            "fingerprintVersion": 2,
+            "kinematics": {
+                "passed": false
+            },
+            "optimization": {
+                "available": false
+            },
+            "requirements": {
+                "fingerprint": "38e883afe75d8d5d27825bd18a0c8b89d0e1182140ef0086e68a449f4c67bfc2",
+                "frozen": true,
+                "modelFingerprint": "1cd7191883d91f7fcff529b2bc0d9196ee5c9a826467a78cf07f8a6f063bd987",
+                "sceneFingerprint": "3d5ce4188f6a3447f091a6e69cfd74ce690bce0ca61f2be8220b926e8eb96fe8"
+            },
+            "schemaVersion": 1
+        }
+    },
+    "project": {
+        "application": "RobWorkStudio",
+        "applicationVersion": "",
+        "createdAt": "2026-08-14T08:20:18Z",
+        "description": "从现有 WorkCell 迁移创建的项目",
+        "id": "0d1c1418-46db-4d87-b8ba-b3cb5320bcca",
+        "modifiedAt": "2026-08-14T08:22:20Z",
+        "name": "a1"
+    },
+    "resources": [
+        {
+            "dependencies": [
+                "scene.asset.1",
+                "scene.asset.2",
+                "scene.asset.3",
+                "scene.asset.4",
+                "scene.asset.5",
+                "scene.asset.6",
+                "scene.asset.7",
+                "scene.asset.8",
+                "scene.asset.9",
+                "scene.asset.10",
+                "scene.asset.11",
+                "scene.asset.12",
+                "scene.asset.13",
+                "scene.asset.14",
+                "scene.asset.15",
+                "scene.asset.16"
+            ],
+            "id": "scene.main",
+            "kind": "robwork.workcell",
+            "ownership": "project",
+            "path": "scenes/main.wc.xml",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.1",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/robotFlange.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.2",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/robotFlange.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.3",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/base.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.4",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/base.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.5",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint0.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.6",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint0.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.7",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint1.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.8",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint1.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.9",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint2.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.10",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint2.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.11",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint3.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.12",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint3.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.13",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint4.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.14",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint4.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.15",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint5.ac",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "scene.asset.16",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "scenes/geometry/joint5.stl",
+            "required": true
+        },
+        {
+            "dependencies": [
+            ],
+            "id": "workcell.binding.main",
+            "kind": "robwork.passive-asset",
+            "ownership": "project",
+            "path": "bindings/workcell-binding.main.json",
+            "required": true
+        },
+        {
+            "dependencies": [
+                "scene.main"
+            ],
+            "id": "kinematic-analysis.main",
+            "kind": "rws.kinematic-analysis",
+            "ownership": "project",
+            "path": "analysis/kinematic-analysis.json",
+            "required": false
+        },
+        {
+            "dependencies": [
+                "scene.main"
+            ],
+            "id": "robot-model.main",
+            "kind": "robwork.robot-model",
+            "ownership": "generated",
+            "path": "generated/robot-models/UR-6-85-5-A.rmb.json",
+            "required": true
+        },
+        {
+            "dependencies": [
+                "scene.main",
+                "robot-model.main"
+            ],
+            "id": "engineering-requirements.main",
+            "kind": "rws.engineering-requirements",
+            "ownership": "generated",
+            "path": "requirements/main.requirements.json",
+            "required": false
+        }
+    ],
+    "schemaVersion": 1,
+    "settings": {
+        "pathPolicy": "project-relative"
+    }
+}

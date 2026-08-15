@@ -3,11 +3,29 @@
 #include "StructureOptimizationValidation.hpp"
 
 #include <cmath>
+#include <limits>
 #include <sstream>
 
 using namespace rws;
 
 namespace {
+
+std::string remediationFor(const std::string& code)
+{
+    if (code.find("Context") != std::string::npos)
+        return "Load or create a complete robot model snapshot.";
+    if (code.find("Variable") != std::string::npos)
+        return "Review enabled variables, bounds and search steps.";
+    if (code.find("Task") != std::string::npos)
+        return "Enable at least one task point or import frozen requirements.";
+    if (code.find("Weights") != std::string::npos || code.find("Objective") != std::string::npos)
+        return "Choose a template or adjust objective weights and normalization.";
+    if (code.find("Workspace") != std::string::npos)
+        return "Review workspace regions and their grid resolution.";
+    if (code.find("Run") != std::string::npos)
+        return "Choose a run preset or reduce the candidate and refinement counts.";
+    return "Review the highlighted optimization input.";
+}
 
 /**
  * @brief 判断一个浮点数值是否为有效的非零值。
@@ -217,6 +235,43 @@ StructureOptimizationUiLogic::suggestVariables(const RobotDesignContext& context
     return variables;
 }
 
+std::vector<StructurePreflightFinding>
+StructureOptimizationUiLogic::preflight(const StructureOptimizationProblem& problem)
+{
+    std::vector<StructurePreflightFinding> findings;
+    for (const AnalysisWarning& warning : StructureOptimizationValidation::validateProblem(problem)) {
+        findings.push_back({warning.severity, warning.code, warning.message,
+                            remediationFor(warning.code)});
+    }
+
+    long double combinations = 1.0L;
+    bool hasSearchDimension = false;
+    for (const StructureDesignVariable& variable : problem.variables) {
+        if (!variable.enabled || !std::isfinite(variable.minimum) ||
+            !std::isfinite(variable.maximum) || !std::isfinite(variable.step) ||
+            variable.step <= 0.0 || variable.maximum < variable.minimum)
+            continue;
+        hasSearchDimension = true;
+        const long double values = std::floor(
+            (static_cast<long double>(variable.maximum) - variable.minimum) /
+            variable.step) + 1.0L;
+        combinations = std::min(combinations * std::max(values, 1.0L),
+                                static_cast<long double>(std::numeric_limits<long long>::max()));
+    }
+    if (hasSearchDimension && combinations > 1000000.0L) {
+        std::ostringstream message;
+        message << "The enabled variable ranges contain approximately "
+                << static_cast<long long>(combinations)
+                << " grid combinations; the selected run will use sampling instead.";
+        findings.push_back({AnalysisStatus::Warning,
+                            "StructureOptimization.Run.SearchSpaceLarge",
+                            message.str(),
+                            "Narrow the ranges, increase the step, or use the Quick preset."});
+    }
+
+    return findings;
+}
+
 /**
  * @brief 检查当前结构优化问题的输入配置是否合法且具备可运行条件。
  * 
@@ -230,19 +285,17 @@ StructureOptimizationUiLogic::suggestVariables(const RobotDesignContext& context
 bool StructureOptimizationUiLogic::hasRunnableInputs(
     const StructureOptimizationProblem& problem, std::string* reason)
 {
-    // 1. 执行深度的物理与数据模型完整性校验
-    const std::vector<AnalysisWarning> warnings =
-        StructureOptimizationValidation::validateProblem(problem);
-    for (const AnalysisWarning& warning : warnings) {
+    const std::vector<StructurePreflightFinding> findings = preflight(problem);
+    for (const StructurePreflightFinding& finding : findings) {
         // 若存在严重失败 (Fail) 或上下文无效错误，直接拒绝运行
-        if (warning.severity == AnalysisStatus::Fail ||
-            warning.code == "StructureOptimization.Context.Invalid") {
+        if (finding.severity == AnalysisStatus::Fail ||
+            finding.code == "StructureOptimization.Context.Invalid") {
             if (reason != nullptr) {
-                if (warning.code == "StructureOptimization.Context.Invalid")
+                if (finding.code == "StructureOptimization.Context.Invalid")
                     *reason = "RobotDesignContext.ModelSpec.Incomplete: " +
-                              warning.message;
+                              finding.message;
                 else
-                    *reason = warning.code + ": " + warning.message;
+                    *reason = finding.code + ": " + finding.message;
             }
             return false;
         }

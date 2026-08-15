@@ -1434,3 +1434,17 @@ flowchart LR
 | **问题验证** | 返回警告列表（UI 自行判断严重性） | 灵活，不阻碍用户配置 |
 | **随机数** | 自实现 LCG（非 std::mt19937） | 保证跨平台种子完全一致，结果可重复 |
 | **排序** | 多级排序（可行→可达→碰撞→总分→长度） | 确定性择优，不依赖随机平局 |
+## Phase 1 Guided Workflow
+
+The Qt widget keeps the existing variable, task, constraint, settings, candidate,
+and export tabs and adds a thin orchestration bar above them. Templates update
+only first-phase structure and kinematic fields. `StructureOptimizationUiLogic::preflight`
+returns blocking `Fail` findings and non-blocking `Warning` findings, so the same
+diagnostics drive both the summary label and the start gate.
+
+Baseline evaluation uses a separate controller future that evaluates the current
+variable values once with `KinematicEngineeringEvaluator` at `Verified` precision;
+it never invokes candidate generation or ranking. Candidate comparison consumes
+stable candidate indices and computes score, reachability, manipulability,
+joint-margin, collision, and kinematic-length deltas against the result baseline.
+Trajectory, dynamics, motor, and reducer evaluators remain extension points.

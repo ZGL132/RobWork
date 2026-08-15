@@ -11,6 +11,8 @@
 #include "StructureOptimizationProjectFactory.hpp"
 #include "FrozenRequirementProjectImportService.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizationTemplate.hpp"
+#include "StructureCandidateComparison.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
 #include "StructureVariableTableModel.hpp"
 
@@ -233,6 +235,28 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     _progressLabel = new QLabel("Not started", this);
     _progressLabel->setObjectName("structureOptimizationProgressLabel");
 
+    _templateCombo = new QComboBox(this);
+    _templateCombo->setObjectName("structureOptimizationTemplateCombo");
+    for (const StructureOptimizationTemplateInfo& info : StructureOptimizationTemplate::available())
+        _templateCombo->addItem(QString::fromStdString(info.label),
+                                static_cast<int>(info.kind));
+    _applyTemplateButton = new QPushButton("Apply Template", this);
+    _applyTemplateButton->setObjectName("applyStructureOptimizationTemplateButton");
+    _preflightButton = new QPushButton("Preflight", this);
+    _preflightButton->setObjectName("preflightStructureOptimizationButton");
+    _baselineButton = new QPushButton("Evaluate Baseline", this);
+    _baselineButton->setObjectName("evaluateStructureBaselineButton");
+    _compareButton = new QPushButton("Compare Selected", this);
+    _compareButton->setObjectName("compareStructureCandidatesButton");
+    _preflightLabel = new QLabel("Preflight not run.", this);
+    _preflightLabel->setObjectName("structureOptimizationPreflightLabel");
+    _baselineLabel = new QLabel("Baseline not evaluated.", this);
+    _baselineLabel->setObjectName("structureOptimizationBaselineLabel");
+    _comparisonLabel = new QLabel("Select candidates to compare.", this);
+    _comparisonLabel->setObjectName("structureCandidateComparisonLabel");
+    for (QLabel* label : {_preflightLabel, _baselineLabel, _comparisonLabel})
+        label->setWordWrap(true);
+
     QFrame* modelStatusBanner = new QFrame(this);
     modelStatusBanner->setObjectName("structureModelStatusBanner");
     modelStatusBanner->setFrameShape(QFrame::StyledPanel);
@@ -269,6 +293,16 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     projectToolbar->addWidget(_newProjectFromFrozenRequirementBannerButton);
     projectToolbar->addStretch();
 
+    QHBoxLayout* workflowToolbar = new QHBoxLayout();
+    workflowToolbar->setObjectName("structureOptimizationWorkflowToolbar");
+    workflowToolbar->addWidget(new QLabel("Template", this));
+    workflowToolbar->addWidget(_templateCombo);
+    workflowToolbar->addWidget(_applyTemplateButton);
+    workflowToolbar->addWidget(_preflightButton);
+    workflowToolbar->addWidget(_baselineButton);
+    workflowToolbar->addWidget(_compareButton);
+    workflowToolbar->addStretch();
+
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(_startButton);
     buttonLayout->addWidget(_pauseButton);
@@ -278,6 +312,10 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(projectToolbar);
+    mainLayout->addLayout(workflowToolbar);
+    mainLayout->addWidget(_preflightLabel);
+    mainLayout->addWidget(_baselineLabel);
+    mainLayout->addWidget(_comparisonLabel);
     mainLayout->addWidget(_modelStatusBanner);
     mainLayout->addWidget(_tabs);
     mainLayout->addLayout(buttonLayout);
@@ -290,6 +328,14 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::togglePause);
     connect(_cancelButton, &QPushButton::clicked,
             this, &StructureOptimizerWidget::cancelOptimization);
+    connect(_applyTemplateButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::applyOptimizationTemplate);
+    connect(_preflightButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::runStructurePreflight);
+    connect(_baselineButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::evaluateStructureBaseline);
+    connect(_compareButton, &QPushButton::clicked,
+            this, &StructureOptimizerWidget::compareStructureCandidates);
     connect(_newProjectFromModelBannerButton, &QPushButton::clicked,
             this, &StructureOptimizerWidget::newProjectFromModelSpec);
     connect(_newProjectFromFrozenRequirementBannerButton, &QPushButton::clicked,
@@ -353,6 +399,12 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::handleCompleted);
     connect(_controller, &StructureOptimizationController::failed,
             this, &StructureOptimizerWidget::handleFailed);
+    connect(_controller, &StructureOptimizationController::baselineCompleted,
+            this, &StructureOptimizerWidget::handleBaselineCompleted);
+    connect(_controller, &StructureOptimizationController::baselineFailed,
+            this, &StructureOptimizerWidget::handleBaselineFailed);
+    connect(_controller, &StructureOptimizationController::baselineRunningChanged,
+            this, &StructureOptimizerWidget::handleBaselineRunningChanged);
 
     updateRunState();
 }
@@ -408,6 +460,14 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
     _constraintModel->setConstraints(_loadedProblem.constraints);
     _candidateModel->setCandidates({});
     _lastResult = StructureOptimizationResult();
+    _baselineResult = StructureOptimizationResult();
+    _baselineOnlyRunning = false;
+    if (_preflightLabel != nullptr)
+        _preflightLabel->setText("Preflight not run.");
+    if (_baselineLabel != nullptr)
+        _baselineLabel->setText("Baseline not evaluated.");
+    if (_comparisonLabel != nullptr)
+        _comparisonLabel->setText("Select candidates to compare.");
 
     _candidateCountSpin->setValue(_loadedProblem.run.candidateCount);
     _eliteCountSpin->setValue(_loadedProblem.run.eliteCount);
@@ -832,6 +892,7 @@ QWidget* StructureOptimizerWidget::createCandidatePage()
     QWidget* page = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(page);
     _candidateView = makeTableView(_candidateModel, "structureCandidateTable");
+    _candidateView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     layout->addWidget(_candidateView);
     QHBoxLayout* actions = new QHBoxLayout();
     QPushButton* preview = new QPushButton("Preview Candidate", page);
@@ -1056,9 +1117,16 @@ void StructureOptimizerWidget::updateRunState()
 {
     updateModelSourceStatus();
     std::string reason;
-    const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(
-        collectProblem(), &reason);
-    _startButton->setEnabled(runnable && !_controller->isRunning());
+    const StructureOptimizationProblem problem = collectProblem();
+    const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason);
+    const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
+                            !problem.context.modelSpec.transformJoints.empty();
+    _startButton->setEnabled(runnable && !_controller->isRunning() && !_baselineOnlyRunning);
+    _applyTemplateButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
+    _preflightButton->setEnabled(!_controller->isRunning() && !_baselineOnlyRunning);
+    _baselineButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
+    _compareButton->setEnabled(_lastResult.candidates.size() > 1 &&
+                               !_controller->isRunning() && !_baselineOnlyRunning);
     _pauseButton->setEnabled(_controller->isRunning());
     _cancelButton->setEnabled(_controller->isRunning());
     if (runnable) {
@@ -1129,6 +1197,11 @@ void StructureOptimizerWidget::updateModelSourceStatus()
 void StructureOptimizerWidget::setEditingEnabled(bool enabled)
 {
     _tabs->setEnabled(enabled);
+    _templateCombo->setEnabled(enabled);
+    _applyTemplateButton->setEnabled(enabled);
+    _preflightButton->setEnabled(enabled);
+    _baselineButton->setEnabled(enabled);
+    _compareButton->setEnabled(enabled);
     _candidateCountSpin->setEnabled(enabled);
     _eliteCountSpin->setEnabled(enabled);
     _localEliteCountSpin->setEnabled(enabled);
@@ -1140,6 +1213,98 @@ void StructureOptimizerWidget::setEditingEnabled(bool enabled)
     for (QDoubleSpinBox* weight : _weightSpins)
         weight->setEnabled(enabled);
     updateVariableActionState();
+}
+
+void StructureOptimizerWidget::applyOptimizationTemplate()
+{
+    if (_templateCombo == nullptr)
+        return;
+    StructureOptimizationProblem problem = collectProblem();
+    std::string error;
+    const auto kind = static_cast<StructureOptimizationTemplateKind>(
+        _templateCombo->currentData().toInt());
+    if (!StructureOptimizationTemplate::apply(kind, problem, &error)) {
+        _statusLabel->setText(QString::fromStdString(error));
+        return;
+    }
+    setProblemWithManagedRoot(problem, _managedProjectRoot);
+    runStructurePreflight();
+    _statusLabel->setText(QString("Applied template: %1.")
+                              .arg(_templateCombo->currentText()));
+    Q_EMIT projectDocumentChanged();
+}
+
+void StructureOptimizerWidget::runStructurePreflight()
+{
+    const std::vector<StructurePreflightFinding> findings =
+        StructureOptimizationUiLogic::preflight(collectProblem());
+    int failures = 0;
+    int warnings = 0;
+    for (const StructurePreflightFinding& finding : findings) {
+        if (finding.severity == AnalysisStatus::Fail)
+            ++failures;
+        else if (finding.severity == AnalysisStatus::Warning)
+            ++warnings;
+    }
+    if (findings.empty()) {
+        _preflightLabel->setText("Preflight: ready. No blocking findings.");
+        return;
+    }
+    QString summary = QString("Preflight: %1 blocking, %2 warning(s).")
+                          .arg(failures).arg(warnings);
+    if (!findings.front().message.empty())
+        summary += " " + QString::fromStdString(findings.front().message);
+    _preflightLabel->setText(summary);
+}
+
+void StructureOptimizerWidget::evaluateStructureBaseline()
+{
+    runStructurePreflight();
+    const StructureOptimizationProblem problem = collectProblem();
+    const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
+                            !problem.context.modelSpec.transformJoints.empty();
+    if (!modelReady || !_controller->startBaselineEvaluation(problem)) {
+        _statusLabel->setText("Baseline evaluation could not be started.");
+        return;
+    }
+    _baselineLabel->setText("Baseline: evaluating current model...");
+    _statusLabel->setText("Evaluating the current model baseline.");
+}
+
+void StructureOptimizerWidget::compareStructureCandidates()
+{
+    if (_candidateView == nullptr || _candidateView->selectionModel() == nullptr) {
+        _comparisonLabel->setText("Comparison: no candidate table is available.");
+        return;
+    }
+    std::vector<int> indices;
+    QSet<int> unique;
+    for (const QModelIndex& row : _candidateView->selectionModel()->selectedRows()) {
+        const int index = _candidateModel->index(row.row(), StructureCandidateTableModel::IndexColumn)
+                              .data().toInt();
+        if (!unique.contains(index)) {
+            unique.insert(index);
+            indices.push_back(index);
+        }
+    }
+    const StructureCandidateComparison comparison =
+        StructureCandidateComparison::compare(_lastResult, indices);
+    if (!comparison.valid) {
+        _comparisonLabel->setText(QString("Comparison: %1")
+                                      .arg(QString::fromStdString(comparison.error)));
+        return;
+    }
+    QStringList entries;
+    for (const StructureCandidateComparisonRow& row : comparison.rows) {
+        entries.push_back(QString("#%1 score %2 (%3%4)")
+                              .arg(row.candidateIndex)
+                              .arg(row.score, 0, 'f', 3)
+                              .arg(row.scoreDelta >= 0.0 ? "+" : "")
+                              .arg(row.scoreDelta, 0, 'f', 3));
+    }
+    _comparisonLabel->setText(QString("Comparison vs baseline #%1: %2")
+                                  .arg(comparison.baselineCandidateIndex)
+                                  .arg(entries.join("; ")));
 }
 
 void StructureOptimizerWidget::startOptimization()
@@ -1194,6 +1359,9 @@ void StructureOptimizerWidget::handleCompleted(
 {
     _lastResult = result;
     _candidateModel->setResult(result);
+    int feasibleCount = 0;
+    for (const StructureCandidateResult& candidate : result.candidates)
+        feasibleCount += candidate.feasible ? 1 : 0;
     QString status = QString("%1 Final Verified %2, cache hits %3, sensitivity %4.")
         .arg(result.canceled ? "Optimization canceled." : "Optimization complete.")
         .arg(result.diagnostics.finalVerifiedCandidates)
@@ -1208,7 +1376,26 @@ void StructureOptimizerWidget::handleCompleted(
             .arg(cells[1])
             .arg(cells[2]);
     }
+    status += QString(" Feasible candidates %1, best #%2.")
+                  .arg(feasibleCount).arg(result.bestCandidateIndex);
     _statusLabel->setText(status);
+    if (result.baselineCandidateIndex >= 0 && result.bestCandidateIndex >= 0) {
+        const StructureCandidateComparison comparison =
+            StructureCandidateComparison::compare(result, {result.bestCandidateIndex});
+        if (comparison.valid && !comparison.rows.empty()) {
+            const StructureCandidateComparisonRow& row = comparison.rows.front();
+            _comparisonLabel->setText(
+                QString("Best #%1 vs baseline #%2: score %3%4, reachability %5%6, length %7%8 m.")
+                    .arg(row.candidateIndex)
+                    .arg(comparison.baselineCandidateIndex)
+                    .arg(row.scoreDelta >= 0.0 ? "+" : "")
+                    .arg(row.scoreDelta, 0, 'f', 3)
+                    .arg(row.reachabilityDelta >= 0.0 ? "+" : "")
+                    .arg(row.reachabilityDelta * 100.0, 0, 'f', 1)
+                    .arg(row.lengthDelta >= 0.0 ? "+" : "")
+                    .arg(row.lengthDelta, 0, 'f', 3));
+        }
+    }
     Q_EMIT projectDocumentChanged ();
     Q_EMIT optimizationCompletedForWorkflow (!result.canceled && !result.candidates.empty ());
 }
@@ -1216,6 +1403,45 @@ void StructureOptimizerWidget::handleCompleted(
 void StructureOptimizerWidget::handleFailed(const QString& message)
 {
     _statusLabel->setText(message);
+}
+
+void StructureOptimizerWidget::handleBaselineCompleted(
+    const StructureOptimizationResult& result)
+{
+    _baselineResult = result;
+    if (result.candidates.empty()) {
+        _baselineLabel->setText("Baseline: no result was produced.");
+        return;
+    }
+    const StructureCandidateResult& candidate = result.candidates.front();
+    _baselineLabel->setText(QString("Baseline: score %1, reachability %2, length %3 m.")
+                                .arg(candidate.totalScore, 0, 'f', 3)
+                                .arg(candidate.raw.weightedReachability * 100.0, 0, 'f', 1)
+                                .arg(candidate.raw.totalKinematicLength, 0, 'f', 3));
+    _statusLabel->setText("Current model baseline evaluated.");
+    Q_EMIT projectDocumentChanged();
+}
+
+void StructureOptimizerWidget::handleBaselineFailed(const QString& message)
+{
+    _baselineLabel->setText("Baseline: evaluation failed.");
+    _statusLabel->setText(message);
+}
+
+void StructureOptimizerWidget::handleBaselineRunningChanged(bool running)
+{
+    _baselineOnlyRunning = running;
+    if (running) {
+        _tabs->setEnabled(false);
+        _templateCombo->setEnabled(false);
+        _applyTemplateButton->setEnabled(false);
+        _preflightButton->setEnabled(false);
+        _baselineButton->setEnabled(false);
+        _compareButton->setEnabled(false);
+    } else {
+        _tabs->setEnabled(true);
+        updateRunState();
+    }
 }
 
 void StructureOptimizerWidget::previewSelectedCandidate()

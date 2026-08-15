@@ -3,7 +3,18 @@
 
 #include "StructureOptimizationTypes.hpp"
 
+#include <string>
+#include <vector>
+
 namespace rws {
+
+struct StructurePreflightFinding
+{
+    AnalysisStatus severity = AnalysisStatus::Unknown;
+    std::string code;
+    std::string message;
+    std::string remediation;
+};
 
 /**
  * @brief 结构优化 UI 业务逻辑与智能辅助工具类。
@@ -27,6 +38,9 @@ public:
      */
     static std::vector<StructureDesignVariable> suggestVariables(
         const RobotDesignContext& context);
+
+    static std::vector<StructurePreflightFinding> preflight(
+        const StructureOptimizationProblem& problem);
 
     /**
      * @brief 检查当前结构优化问题的输入配置是否合法且具备可运行条件。

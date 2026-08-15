@@ -44,6 +44,8 @@ if(build)
         StructureOptimizationExportService.cpp
         StructureOptimizationProjectFactory.cpp
         StructureOptimizationUiLogic.cpp
+        StructureOptimizationTemplate.cpp
+        StructureCandidateComparison.cpp
         StructureWorkspaceCoverage.cpp
         RobotModelStalenessChecker.cpp
         EngineeringRequirementArtifactAdapter.cpp
@@ -73,6 +75,8 @@ if(build)
         StructureOptimizationExportService.hpp
         StructureOptimizationProjectFactory.hpp
         StructureOptimizationUiLogic.hpp
+        StructureOptimizationTemplate.hpp
+        StructureCandidateComparison.hpp
         StructureWorkspaceCoverage.hpp
         RobotModelStalenessChecker.hpp
         EngineeringRequirementArtifactAdapter.hpp
