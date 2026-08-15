@@ -61,6 +61,62 @@ bool readArtifactHeader(const QJsonObject& input, int& schemaVersion, std::strin
 
 } // namespace
 
+bool migrateRequirementDocument(const QJsonObject& input,
+                                RequirementDocumentMigrationResult& result,
+                                std::string* error)
+{
+    result = RequirementDocumentMigrationResult();
+    result.document = input;
+
+    if (!input.contains("extensions")) {
+        if (error != nullptr) error->clear();
+        return true;
+    }
+    const QJsonValue extensionsValue = input.value("extensions");
+    if (!extensionsValue.isObject()) {
+        if (error != nullptr) *error = "extensions must be an object.";
+        return false;
+    }
+
+    QJsonObject extensions = extensionsValue.toObject();
+    if (!extensions.contains("frozenArtifact")) {
+        if (error != nullptr) error->clear();
+        return true;
+    }
+    const QJsonValue legacyArtifact = extensions.value("frozenArtifact");
+    if (!legacyArtifact.isObject()) {
+        if (error != nullptr)
+            *error = "Historical extensions.frozenArtifact must be an object.";
+        return false;
+    }
+
+    if (result.document.contains("frozenArtifact")) {
+        if (result.document.value("frozenArtifact") == legacyArtifact) {
+            result.warnings.push_back(
+                "Historical duplicate extensions.frozenArtifact was removed; the canonical "
+                "top-level artifact was retained.");
+        } else {
+            result.warnings.push_back(
+                "Historical extensions.frozenArtifact was discarded in favor of the canonical "
+                "top-level artifact.");
+        }
+    } else {
+        result.document.insert("frozenArtifact", legacyArtifact);
+        result.warnings.push_back(
+            "Historical extensions.frozenArtifact was promoted to the canonical top-level "
+            "artifact.");
+    }
+
+    extensions.remove("frozenArtifact");
+    if (extensions.isEmpty())
+        result.document.remove("extensions");
+    else
+        result.document.insert("extensions", extensions);
+    result.migrated = true;
+    if (error != nullptr) error->clear();
+    return true;
+}
+
 bool migrateRequirementArtifact(const QJsonObject& input,
                                 QJsonObject& output,
                                 std::vector<RequirementDiagnostic>& diagnostics,

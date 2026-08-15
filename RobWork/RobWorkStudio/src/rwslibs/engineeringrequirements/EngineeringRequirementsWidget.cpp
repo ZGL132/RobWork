@@ -2,6 +2,7 @@
 
 #include "RequirementCompiler.hpp"
 #include "RequirementFreezer.hpp"
+#include "RequirementMigration.hpp"
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include "GeometryFeatureResolver.hpp"
 #include "OrientationRuleResolver.hpp"
@@ -1544,6 +1545,8 @@ bool EngineeringRequirementsWidget::isProjectDocumentDirty()
 {
     if (_projectDocumentPath.isEmpty())
         return false;
+    if (_projectDocumentMigrationPending)
+        return true;
     // 表格编辑器可能尚未触发失焦提交。比较前强制同步，令项目脏状态和最终保存内容
     // 使用同一份领域数据，避免“显示干净但保存后发生变化”的不一致。
     syncTablesToRequirements();
@@ -1559,6 +1562,7 @@ void EngineeringRequirementsWidget::markProjectDocumentClean()
         // 打开项目时没有保存暂存文件，直接从当前模型生成基线快照。
         _savedProjectDocumentSnapshot = serializedProjectDocument(_projectDocumentPath);
     }
+    _projectDocumentMigrationPending = false;
 }
 
 // 首次编辑生成资源后建立会话基线：记录项目内路径并以当前配置为已保存快照，
@@ -1568,6 +1572,7 @@ void EngineeringRequirementsWidget::beginGeneratedProjectDocument(const QString&
     _projectDocumentPath = path;
     _pendingProjectDocumentSnapshot.clear();
     _savedProjectDocumentSnapshot = serializedProjectDocument(path);
+    _projectDocumentMigrationPending = false;
 }
 
 // 项目关闭或切换时释放仅用于脏比较的路径与快照，防止旧项目基线污染新项目。
@@ -1590,6 +1595,7 @@ void EngineeringRequirementsWidget::clearProjectDocumentContext()
     _projectDocumentPath.clear();
     _savedProjectDocumentSnapshot.clear();
     _pendingProjectDocumentSnapshot.clear();
+    _projectDocumentMigrationPending = false;
     // 重置后刷新表格,使关键工位列表与盒体区域表格立即反映清空后的状态。
     refreshTables();
 }
@@ -1599,6 +1605,16 @@ QByteArray EngineeringRequirementsWidget::serializedProjectDocument(const QStrin
     // 工程目录可以整体搬迁，故模型引用必须相对于所属需求 JSON 保存。绝对路径只在
     // 内存中参与模型读取与冻结校验，绝不被写进项目资源。
     QJsonObject project = RequirementSetJson::toObject(_requirements);
+    // frozenArtifact 属于完整需求文档的 envelope，不属于 RequirementSet 扩展。
+    // 即使内存数据来自受影响的旧版本，也只允许在顶层写出一份规范工件。
+    if (project.value("extensions").isObject()) {
+        QJsonObject extensions = project.value("extensions").toObject();
+        extensions.remove("frozenArtifact");
+        if (extensions.isEmpty())
+            project.remove("extensions");
+        else
+            project["extensions"] = extensions;
+    }
     const QDir documentDirectory(QFileInfo(documentPath).absolutePath());
     const auto relativizeBinding = [&documentDirectory](QJsonObject& binding) {
         const QString sourcePath = binding.value("sourcePath").toString();
@@ -1680,7 +1696,18 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         if (error != nullptr) *error = QStringLiteral("Requirements file is not valid JSON: %1").arg(parseError.errorString());
         return false;
     }
-    QJsonObject project = document.object();
+    RequirementDocumentMigrationResult documentMigration;
+    std::string migrationError;
+    if (!migrateRequirementDocument(document.object(), documentMigration, &migrationError)) {
+        if (error != nullptr) *error = QString::fromStdString(migrationError);
+        return false;
+    }
+    QJsonObject project = documentMigration.document;
+    const QJsonValue artifactValue = project.value("frozenArtifact");
+    // RequirementSetJson 仍保持对未知扩展冲突的严格保护。仅在完整文档边界移除
+    // 已明确归属 envelope 的 frozenArtifact，避免它再次进入 RequirementSet.extensions。
+    QJsonObject requirementSetObject = project;
+    requirementSetObject.remove("frozenArtifact");
     // 将项目内保存的相对模型路径恢复为绝对路径，后续冻结真实性校验与模型读取接口
     // 仍可沿用既有约定；冻结工件中的模型绑定也必须同步恢复。
     const QDir documentDirectory(QFileInfo(path).absolutePath());
@@ -1689,12 +1716,12 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         if (!sourcePath.isEmpty() && QFileInfo(sourcePath).isRelative())
             binding["sourcePath"] = documentDirectory.absoluteFilePath(sourcePath);
     };
-    QJsonObject modelBinding = project.value("modelBinding").toObject();
+    QJsonObject modelBinding = requirementSetObject.value("modelBinding").toObject();
     resolveBinding(modelBinding);
-    project["modelBinding"] = modelBinding;
+    requirementSetObject["modelBinding"] = modelBinding;
     RequirementSet parsed;
     std::string parseMessage;
-    if (!RequirementSetJson::fromObject(project, parsed, &parseMessage)) { if (error != nullptr) *error = QString::fromStdString(parseMessage); return false; }
+    if (!RequirementSetJson::fromObject(requirementSetObject, parsed, &parseMessage)) { if (error != nullptr) *error = QString::fromStdString(parseMessage); return false; }
 
     CompiledRequirementSet compiled;
     FrozenRequirementArtifact artifact;
@@ -1702,62 +1729,75 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         ? _projectOutputDirectory
         : QFileInfo(projectRoot).absoluteFilePath();
     QString loadStatus = QStringLiteral("Requirements loaded and editable.");
-    const QJsonValue artifactValue = project.value("frozenArtifact");
     if (!artifactValue.isUndefined()) {
-        if (!artifactValue.isObject() || !FrozenRequirementArtifactJson::fromObject(artifactValue.toObject(), artifact, &parseMessage)) {
-            if (error != nullptr) *error = QStringLiteral("Frozen audit artifact is invalid: %1").arg(QString::fromStdString(parseMessage));
-            return false;
-        }
-
-        // Validate the portable artifact before resolving paths. Afterwards restore
-        // every duplicated path in memory and rehash its execution contract so its
-        // internal provenance remains coherent at the moved project location.
-        const auto resolveArtifactPath = [&documentDirectory] (std::string& sourcePath) {
-            if (sourcePath.empty()) return;
-            const QFileInfo sourceInfo(QString::fromStdString(sourcePath));
-            if (sourceInfo.isRelative())
-                sourcePath = documentDirectory.absoluteFilePath(sourceInfo.filePath()).toStdString();
-        };
-        resolveArtifactPath(artifact.modelBinding.sourcePath);
-        resolveArtifactPath(artifact.compiled.modelBinding.sourcePath);
-        resolveArtifactPath(artifact.execution.provenance.sourcePath);
-        artifact.executionFingerprint = RequirementExecutionJson::fingerprint(artifact.execution);
-
-        // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
-        // 会将需求降级为编辑态，明确要求工程师在当前工程环境中再次冻结。
-        RobotModelSpec model;
-        QString modelError;
-        const bool modelReadable = !parsed.modelBinding.sourcePath.empty() &&
-            loadRobotModelDocument(QString::fromStdString(parsed.modelBinding.sourcePath),
-                                   validationRoot, model, &modelError);
-        if (!modelReadable)
-            parseMessage = modelError.toStdString();
-        if (_workcell == nullptr) {
-            // Project resources are loaded before RobWorkStudio opens the WorkCell.
-            // Preserve the artifact and verify it when the WorkCell arrives.
-            parsed.frozen = false;
-            _pendingFrozenArtifactValidation = true;
-            _pendingFrozenArtifactProjectRoot = validationRoot;
-            loadStatus = QStringLiteral(
-                "Requirements and frozen audit artifact loaded; waiting for the WorkCell to verify them.");
-        } else {
-            FrozenRequirementValidationResult validationResult;
-            const bool artifactCurrent = modelReadable &&
-                RequirementFreezer::isCurrent(
-                    artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
-                    validationRoot.toStdString(), &validationResult);
-            if (artifactCurrent) {
-            parsed.frozen = true;
-            compiled = artifact.compiled;
-            loadStatus = QStringLiteral("Requirements and frozen audit artifact loaded and match the current model and WorkCell.");
-            for (const std::string& warning : validationResult.warnings)
-                loadStatus += QStringLiteral("\nWarning: %1").arg(QString::fromStdString(warning));
-            } else {
+        const bool artifactParsed = artifactValue.isObject() &&
+            FrozenRequirementArtifactJson::fromObject(
+                artifactValue.toObject(), artifact, &parseMessage);
+        if (!artifactParsed) {
             parsed.frozen = false;
             artifact = FrozenRequirementArtifact();
-            const QString reason = QString::fromStdString(parseMessage);
-            loadStatus = QStringLiteral("Requirements loaded, but frozen evidence is stale or cannot be verified (%1). Freeze again.")
-                .arg(reason);
+            const QString reason = artifactValue.isObject()
+                ? QString::fromStdString(parseMessage)
+                : QStringLiteral("frozenArtifact must be an object");
+            loadStatus = QStringLiteral(
+                "Requirements loaded, but frozen evidence is invalid (%1). Freeze again.")
+                             .arg(reason);
+        } else {
+            // Validate the portable artifact before resolving paths. Afterwards restore
+            // every duplicated path in memory and rehash its execution contract so its
+            // internal provenance remains coherent at the moved project location.
+            const auto resolveArtifactPath = [&documentDirectory] (std::string& sourcePath) {
+                if (sourcePath.empty()) return;
+                const QFileInfo sourceInfo(QString::fromStdString(sourcePath));
+                if (sourceInfo.isRelative())
+                    sourcePath = documentDirectory.absoluteFilePath(sourceInfo.filePath()).toStdString();
+            };
+            resolveArtifactPath(artifact.modelBinding.sourcePath);
+            resolveArtifactPath(artifact.compiled.modelBinding.sourcePath);
+            resolveArtifactPath(artifact.execution.provenance.sourcePath);
+            artifact.executionFingerprint = RequirementExecutionJson::fingerprint(artifact.execution);
+
+            // 重开项目时重新读取模型并比对当前 WorkCell/State。任何一项不一致都
+            // 会将需求降级为编辑态，明确要求工程师在当前工程环境中再次冻结。
+            RobotModelSpec model;
+            QString modelError;
+            const bool modelReadable = !parsed.modelBinding.sourcePath.empty() &&
+                loadRobotModelDocument(QString::fromStdString(parsed.modelBinding.sourcePath),
+                                       validationRoot, model, &modelError);
+            if (!modelReadable)
+                parseMessage = modelError.toStdString();
+            if (_workcell == nullptr) {
+                // Project resources are loaded before RobWorkStudio opens the WorkCell.
+                // Preserve the artifact and verify it when the WorkCell arrives.
+                parsed.frozen = false;
+                _pendingFrozenArtifactValidation = true;
+                _pendingFrozenArtifactProjectRoot = validationRoot;
+                loadStatus = QStringLiteral(
+                    "Requirements and frozen audit artifact loaded; waiting for the WorkCell to verify them.");
+            } else {
+                FrozenRequirementValidationResult validationResult;
+                const bool artifactCurrent = modelReadable &&
+                    RequirementFreezer::isCurrent(
+                        artifact, parsed, *_workcell, activeWorkCellState(), model, &parseMessage,
+                        validationRoot.toStdString(), &validationResult);
+                if (artifactCurrent) {
+                    parsed.frozen = true;
+                    compiled = artifact.compiled;
+                    loadStatus = QStringLiteral(
+                        "Requirements and frozen audit artifact loaded and match the current "
+                        "model and WorkCell.");
+                    for (const std::string& warning : validationResult.warnings)
+                        loadStatus += QStringLiteral("\nWarning: %1")
+                                          .arg(QString::fromStdString(warning));
+                } else {
+                    parsed.frozen = false;
+                    artifact = FrozenRequirementArtifact();
+                    const QString reason = QString::fromStdString(parseMessage);
+                    loadStatus = QStringLiteral(
+                        "Requirements loaded, but frozen evidence is stale or cannot be "
+                        "verified (%1). Freeze again.")
+                                     .arg(reason);
+                }
             }
         }
     } else if (parsed.frozen) {
@@ -1765,6 +1805,14 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         // 视为未验证，不能让它绕过当前版本的冻结门禁。
         parsed.frozen = false;
         loadStatus = QStringLiteral("Requirements loaded. The legacy file has no frozen audit artifact; freeze again.");
+    }
+    if (documentMigration.migrated) {
+        loadStatus += QStringLiteral(
+            "\nHistorical requirements document format was migrated. Save the project to "
+            "persist the normalized format.");
+        for (const std::string& warning : documentMigration.warnings)
+            loadStatus += QStringLiteral("\nMigration warning: %1")
+                              .arg(QString::fromStdString(warning));
     }
 
     _requirements = parsed;
@@ -1779,6 +1827,7 @@ bool EngineeringRequirementsWidget::loadRequirementDocument(const QString& path,
         _projectDocumentPath = path;
         _pendingProjectDocumentSnapshot.clear();
         _savedProjectDocumentSnapshot = serializedProjectDocument(path);
+        _projectDocumentMigrationPending = documentMigration.migrated;
     }
     Q_EMIT requirementsChanged();
     if (error != nullptr) error->clear();
@@ -1824,6 +1873,11 @@ void EngineeringRequirementsWidget::validateLoadedFrozenArtifact()
         setStatus(QStringLiteral(
             "Requirements loaded, but frozen evidence is stale or cannot be verified (%1). Freeze again.")
                       .arg(reason));
+    }
+    if (_projectDocumentMigrationPending) {
+        setStatus(statusText() + QStringLiteral(
+            "\nHistorical requirements document format was migrated. Save the project to "
+            "persist the normalized format."));
     }
     refreshTables();
     if (!_projectDocumentPath.isEmpty())

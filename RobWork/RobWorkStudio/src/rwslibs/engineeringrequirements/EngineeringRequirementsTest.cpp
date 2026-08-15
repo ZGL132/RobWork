@@ -663,6 +663,62 @@ int testRequirementArtifactMigrationRejectsWrongHeaderTypes()
     return 0;
 }
 
+int testRequirementDocumentEnvelopeMigration()
+{
+    const QJsonObject canonicalArtifact{{"fingerprint", "canonical"}};
+    const QJsonObject staleArtifact{{"fingerprint", "stale"}};
+    rws::RequirementDocumentMigrationResult result;
+    std::string error;
+
+    QJsonObject topLevelOnly{{"name", "top-level-only"},
+                             {"frozenArtifact", canonicalArtifact}};
+    REQUIRE(rws::migrateRequirementDocument(topLevelOnly, result, &error));
+    REQUIRE(!result.migrated);
+    REQUIRE(result.document == topLevelOnly);
+    REQUIRE(result.warnings.empty());
+
+    QJsonObject extensionOnly{{"name", "extension-only"},
+                              {"extensions", QJsonObject{
+                                  {"frozenArtifact", canonicalArtifact},
+                                  {"futureField", 7}}}};
+    REQUIRE(rws::migrateRequirementDocument(extensionOnly, result, &error));
+    REQUIRE(result.migrated);
+    REQUIRE(result.document.value("frozenArtifact").toObject() == canonicalArtifact);
+    REQUIRE(!result.document.value("extensions").toObject().contains("frozenArtifact"));
+    REQUIRE(result.document.value("extensions").toObject().value("futureField").toInt() == 7);
+    REQUIRE(result.warnings.size() == 1);
+
+    QJsonObject identicalDuplicate{
+        {"name", "identical-duplicate"},
+        {"frozenArtifact", canonicalArtifact},
+        {"extensions", QJsonObject{{"frozenArtifact", canonicalArtifact}}}};
+    REQUIRE(rws::migrateRequirementDocument(identicalDuplicate, result, &error));
+    REQUIRE(result.migrated);
+    REQUIRE(result.document.value("frozenArtifact").toObject() == canonicalArtifact);
+    REQUIRE(!result.document.contains("extensions"));
+    REQUIRE(result.warnings.size() == 1);
+    REQUIRE(result.warnings.front().find("duplicate") != std::string::npos);
+
+    QJsonObject duplicate{{"name", "duplicate"},
+                          {"frozenArtifact", canonicalArtifact},
+                          {"extensions", QJsonObject{{"frozenArtifact", staleArtifact}}}};
+    REQUIRE(rws::migrateRequirementDocument(duplicate, result, &error));
+    REQUIRE(result.migrated);
+    REQUIRE(result.document.value("frozenArtifact").toObject() == canonicalArtifact);
+    REQUIRE(!result.document.contains("extensions"));
+    REQUIRE(result.warnings.size() == 1);
+    REQUIRE(result.warnings.front().find("discarded") != std::string::npos);
+
+    QJsonObject invalidLegacy{{"extensions", QJsonObject{{"frozenArtifact", true}}}};
+    REQUIRE(!rws::migrateRequirementDocument(invalidLegacy, result, &error));
+    REQUIRE(error.find("extensions.frozenArtifact") != std::string::npos);
+
+    QJsonObject invalidExtensions{{"extensions", QJsonArray{1, 2, 3}}};
+    REQUIRE(!rws::migrateRequirementDocument(invalidExtensions, result, &error));
+    REQUIRE(error.find("extensions must be an object") != std::string::npos);
+    return 0;
+}
+
 int testGeometryFrameFeatureResolvesAndCompiles()
 {
     using namespace rw::kinematics;
@@ -1836,6 +1892,139 @@ int testWidgetProjectDocumentSnapshotTracksRequirementEdits()
     return 0;
 }
 
+// 历史版本曾把文档级 frozenArtifact 同时写入顶层和 RequirementSet.extensions。
+// 打开这种项目时应以顶层工件为准完成文档级迁移，并保持项目为脏状态，提示用户
+// 通过正常的 Save Project 将规范格式持久化；不能再让通用扩展冲突检查跳过资源。
+int testWidgetMigratesDuplicateHistoricalFrozenArtifactDocument()
+{
+    QTemporaryDir projectDirectory;
+    REQUIRE(projectDirectory.isValid());
+    const QString projectDocument = projectDirectory.filePath("requirements.json");
+    const QString modelPath = projectDirectory.filePath("robot.rmb.json");
+
+    rws::RobotModelSpec model;
+    model.robotName = "HistoricalMigrationRobot";
+    const QByteArray modelContents =
+        QByteArray::fromStdString(rws::RobotModelSpecJson::toJson(model));
+    QFile modelFile(modelPath);
+    REQUIRE(modelFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(modelFile.write(modelContents) == modelContents.size());
+    modelFile.close();
+
+    rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("HistoricalMigrationBase", rw::math::Transform3D<>()));
+    const rw::kinematics::MovableFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::MovableFrame("HistoricalMigrationTcp"));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(tcp, base);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "HistoricalMigrationWorkCell", ""));
+    workcell->addDevice(rw::core::ownedPtr(new rw::models::SerialDevice(
+        base.get(), tcp.get(), model.robotName, structure->getDefaultState())));
+
+    rws::RequirementSet requirements;
+    requirements.name = "Historical duplicate artifact";
+    requirements.modelBinding.sourcePath = modelPath.toStdString();
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    QJsonObject project = rws::RequirementSetJson::toObject(requirements);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string freezeError;
+    REQUIRE(rws::RequirementFreezer::freeze(
+        requirements, *workcell, workcell->getDefaultState(), model, artifact,
+        &freezeError, projectDirectory.path().toStdString()));
+
+    const QJsonObject canonicalArtifact =
+        rws::FrozenRequirementArtifactJson::toObject(artifact);
+    QJsonObject staleArtifact = canonicalArtifact;
+    staleArtifact["requirementFingerprint"] = "stale-extension-copy";
+    project["frozenArtifact"] = canonicalArtifact;
+    QJsonObject extensions;
+    extensions["frozenArtifact"] = staleArtifact;
+    project["extensions"] = extensions;
+
+    QFile file(projectDocument);
+    const QByteArray contents = QJsonDocument(project).toJson(QJsonDocument::Indented);
+    REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(file.write(contents) == contents.size());
+    file.close();
+
+    // 正常项目打开时需求资源可能先于 WorkCell 到达；延迟验证之后仍须保留迁移保存提示。
+    rws::EngineeringRequirementsWidget deferredWidget;
+    QString error;
+    REQUIRE(deferredWidget.loadProjectDocument(
+        projectDocument, &error, projectDirectory.path()));
+    REQUIRE(deferredWidget.isProjectDocumentDirty());
+    REQUIRE(deferredWidget.statusText().contains(
+        QStringLiteral("historical"), Qt::CaseInsensitive));
+    deferredWidget.setWorkCell(workcell.get());
+    deferredWidget.setCurrentState(workcell->getDefaultState());
+    REQUIRE(deferredWidget.requirementSet().frozen);
+    REQUIRE(deferredWidget.statusText().contains(
+        QStringLiteral("historical"), Qt::CaseInsensitive));
+
+    rws::EngineeringRequirementsWidget widget;
+    widget.setWorkCell(workcell.get());
+    widget.setCurrentState(workcell->getDefaultState());
+    REQUIRE(widget.loadProjectDocument(projectDocument, &error, projectDirectory.path()));
+    REQUIRE(error.isEmpty());
+    REQUIRE(widget.requirementSet().frozen);
+    REQUIRE(widget.isProjectDocumentDirty());
+    REQUIRE(widget.statusText().contains(QStringLiteral("historical"), Qt::CaseInsensitive));
+
+    REQUIRE(widget.saveProjectDocument(projectDocument, &error));
+    REQUIRE(widget.isProjectDocumentDirty());
+    QFile migratedFile(projectDocument);
+    REQUIRE(migratedFile.open(QIODevice::ReadOnly));
+    const QByteArray firstSave = migratedFile.readAll();
+    migratedFile.close();
+    const QJsonDocument migratedDocument = QJsonDocument::fromJson(firstSave);
+    REQUIRE(migratedDocument.isObject());
+    REQUIRE(migratedDocument.object().value("frozenArtifact").isObject());
+    REQUIRE(migratedDocument.object().value("frozenArtifact").toObject()
+                .value("requirementFingerprint").toString() ==
+            QString::fromStdString(artifact.requirementFingerprint));
+    REQUIRE(!migratedDocument.object().value("extensions").toObject()
+                 .contains("frozenArtifact"));
+
+    widget.markProjectDocumentClean();
+    REQUIRE(!widget.isProjectDocumentDirty());
+    REQUIRE(widget.loadProjectDocument(projectDocument, &error, projectDirectory.path()));
+    REQUIRE(!widget.isProjectDocumentDirty());
+    REQUIRE(widget.saveProjectDocument(projectDocument, &error));
+    QFile idempotentFile(projectDocument);
+    REQUIRE(idempotentFile.open(QIODevice::ReadOnly));
+    REQUIRE(idempotentFile.readAll() == firstSave);
+
+    // 顶层规范工件即使无效也仍然拥有优先级：加载应降级为编辑态并要求重新冻结，
+    // 绝不能偷偷回退到 extensions 中那份可解析但可能已经过期的副本。
+    const QString invalidDocumentPath = projectDirectory.filePath("invalid-requirements.json");
+    QJsonObject invalidCanonicalProject = project;
+    invalidCanonicalProject["frozenArtifact"] = QJsonObject{{"type", "BrokenArtifact"}};
+    invalidCanonicalProject["extensions"] =
+        QJsonObject{{"frozenArtifact", canonicalArtifact}};
+    QFile invalidFile(invalidDocumentPath);
+    const QByteArray invalidContents =
+        QJsonDocument(invalidCanonicalProject).toJson(QJsonDocument::Indented);
+    REQUIRE(invalidFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(invalidFile.write(invalidContents) == invalidContents.size());
+    invalidFile.close();
+
+    rws::EngineeringRequirementsWidget invalidWidget;
+    invalidWidget.setWorkCell(workcell.get());
+    invalidWidget.setCurrentState(workcell->getDefaultState());
+    REQUIRE(invalidWidget.loadProjectDocument(
+        invalidDocumentPath, &error, projectDirectory.path()));
+    REQUIRE(!invalidWidget.requirementSet().frozen);
+    REQUIRE(invalidWidget.isProjectDocumentDirty());
+    REQUIRE(invalidWidget.statusText().contains(QStringLiteral("invalid"), Qt::CaseInsensitive));
+    return 0;
+}
+
 // 冻结/解冻也必须发出 requirementsChanged，使 Provider 脏状态与标题栏同步更新。
 int testWidgetFreezeAndUnfreezeEmitRequirementChanges()
 {
@@ -2506,6 +2695,10 @@ int main(int argc, char** argv)
         QCoreApplication app(argc, argv);
         return testRequirementArtifactMigrationRejectsWrongHeaderTypes();
     }
+    if (argc > 1 && std::string(argv[1]) == "document_migration") {
+        QCoreApplication app(argc, argv);
+        return testRequirementDocumentEnvelopeMigration();
+    }
     if (argc > 1 && std::string(argv[1]) == "abi") {
         QCoreApplication app(argc, argv);
         return testHistoricalRequirementFreezerAbiRemainsLinkable();
@@ -2530,6 +2723,10 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         return testWidgetUsesProjectRequirementCopyPathsAndGeneratedDocumentBaseline();
     }
+    if (argc > 1 && std::string(argv[1]) == "widget_document_migration") {
+        QApplication app(argc, argv);
+        return testWidgetMigratesDuplicateHistoricalFrozenArtifactDocument();
+    }
     // 独立运行开关:仅执行"项目关闭清空需求会话"测试,便于快速回归验证,
     // 不必等待整个 widget 子套件全部跑完。
     if (argc > 1 && std::string(argv[1]) == "widget_project_close") {
@@ -2553,6 +2750,8 @@ int main(int argc, char** argv)
         if (testEngineeringRequirementsWidgetUsesEnglishCopy() != 0)
             return 1;
         if (testWidgetProjectDocumentSnapshotTracksRequirementEdits() != 0)
+            return 1;
+        if (testWidgetMigratesDuplicateHistoricalFrozenArtifactDocument() != 0)
             return 1;
         if (testWidgetFreezeAndUnfreezeEmitRequirementChanges() != 0)
             return 1;

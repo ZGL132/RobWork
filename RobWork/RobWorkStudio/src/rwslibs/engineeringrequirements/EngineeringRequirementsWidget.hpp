@@ -210,6 +210,9 @@ private:
     QString _projectDocumentPath;
     QByteArray _savedProjectDocumentSnapshot;
     QByteArray _pendingProjectDocumentSnapshot;
+    // 历史文档在内存中规范化后，即使业务字段未编辑也必须保持脏状态，直到项目
+    // 保存事务成功，确保 extensions.frozenArtifact 的清理真正持久化到磁盘。
+    bool _projectDocumentMigrationPending = false;
 };
 
 } // namespace rws
