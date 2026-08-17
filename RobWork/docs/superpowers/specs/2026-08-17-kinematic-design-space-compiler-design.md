@@ -144,7 +144,20 @@ KinematicLink
 
 ## 6. 设计变量与变量域
 
-### 6.1 变量定义
+### 6.1 创建流程
+
+变量创建不再根据当前值是否为零进行推断，而按以下流程完成：
+
+1. `KinematicModelImporter` 导入规范运动学模型和基线快照；
+2. 用户选择变量模板；
+3. 模板根据模型拓扑、关节类型和已注册适配器生成变量定义；
+4. UI 预览新增、冲突、未绑定和不适用变量；
+5. 用户确认后写入 `DesignSpaceRegistry`；
+6. 运行前执行范围、依赖、坐标系、单位和适配器预检查。
+
+名义值为零的参数仍然生成并显示。模板不能静默覆盖已经被用户修改过的变量。
+
+### 6.2 变量定义
 
 ```text
 DesignVariableDefinition
@@ -155,42 +168,176 @@ DesignVariableDefinition
   minimum
   maximum
   step                 # 整数/离散变量可选
-  unit
+  unit                 # 内部单位：m 或 rad；UI 可显示 mm 或 deg
+  frameId              # 对位置/姿态变量必填
   domain: Continuous | Integer | Discrete
   discreteOptions[]
   enabled
   dependencies[]
   adapterId
   source: User | Template | Imported | Legacy
+  applicability        # joint/link type 和模型能力条件
   description
 ```
 
-`nominalValue` 永远独立于 `enabled`。名义值为零时仍必须显示和可启用。
+`nominalValue` 永远独立于 `enabled`。每个变量必须能追溯到唯一语义路径、坐标系和真实适配器。
 
-### 6.2 第一阶段语义类型
+### 6.3 第一阶段六大变量类别
 
-| semanticKind | 示例目标 | 域 | 适配器 |
-| --- | --- | --- | --- |
-| `LinkLength` | `links[2].length` | 连续 | `LinkPoseAdapter` |
-| `JointAxisTiltX` | `joints[2].axis.tiltX` | 连续 | `JointAxisAdapter` |
-| `JointAxisTiltY` | `joints[2].axis.tiltY` | 连续 | `JointAxisAdapter` |
-| `JointZeroOffset` | `joints[2].zeroOffset` | 连续 | `JointPoseAdapter` |
-| `BasePoseTranslation` | `base.tx` | 连续 | `BasePoseAdapter` |
-| `BasePoseRotation` | `base.rx` | 连续 | `BasePoseAdapter` |
-| `TcpPoseTranslation` | `tcp.tx` | 连续 | `TcpPoseAdapter` |
-| `TcpPoseRotation` | `tcp.rx` | 连续 | `TcpPoseAdapter` |
-| `JointLimitLower` | `limits[2].lower` | 连续 | `JointLimitAdapter` |
-| `JointLimitUpper` | `limits[2].upper` | 连续 | `JointLimitAdapter` |
+第一阶段只优化机械臂运动学结构和参数化几何，不包含质量、惯量、电机、减速器或轨迹参数。
 
-### 6.3 模板
+#### A. 连杆与关节安装位置
 
-模板必须是静态、可版本化的变量生成规则，而不是运行时猜测：`Kinematic Basic`（连杆长度、零位偏置、关节限位）、`Kinematic + Joint Axis`（增加关节轴 X/Y 偏转）、`Kinematic + Base/TCP`（增加基座和 TCP 6D 位姿）、`Full Kinematic Design`（启用全部第一阶段变量）。
+| semanticKind | 含义 | 适用条件 |
+| --- | --- | --- |
+| `LinkLength(linkId)` | `Joint[i]` 到 `Joint[i+1]` 的结构长度 | 连杆存在参数化长度适配器 |
+| `JointOriginOffsetX/Y/Z(jointId)` | 父连杆坐标系到当前关节原点的固定平移 | 关节原点采用笛卡尔偏置表达 |
+| `JointOffsetAlongAxis(jointId)` | 沿当前关节基准轴的固定偏置 | 模型选择轴向偏置表达 |
 
-模板应用流程为：预览新增/更新/冲突变量 -> 用户确认 -> 写入设计空间 -> 执行依赖和范围检查。已有用户变量不能被模板静默覆盖，冲突必须显示差异。
+`JointOriginOffsetX/Y/Z` 与 `JointOffsetAlongAxis` 不能同时表达同一物理自由度。`LinkLength` 与相邻关节原点距离也必须明确一个为主变量，另一个只能作为派生值。
 
-### 6.4 依赖规则
+#### B. 关节轴线
 
-变量依赖用于表达上下界和联动关系，例如 `JointLimitLower < JointLimitUpper`、轴偏转总角不超过给定锥角。依赖图必须是有向无环图。循环、未知变量和不满足的范围关系均阻止运行。
+| semanticKind | 含义 | 适用条件 |
+| --- | --- | --- |
+| `JointAxisTiltX(jointId)` | 基准轴局部 X 方向偏转 | Revolute 或 Prismatic |
+| `JointAxisTiltY(jointId)` | 基准轴局部 Y 方向偏转 | Revolute 或 Prismatic |
+
+基准轴来自导入模型的关节局部坐标系，不是世界坐标系。编译器将 `nominalAxis` 和旋转增量转换为新的单位轴向量，并检查：
+
+```text
+axis.norm == 1
+axisTiltMagnitude <= maxTiltAngle
+```
+
+通常不开放绕关节自身轴的旋转变量，因为它会与 `JointZeroOffset` 重复。
+
+#### C. 关节零位与运动范围
+
+| semanticKind | 含义 | 适用条件 |
+| --- | --- | --- |
+| `JointZeroOffset(jointId)` | 编码器零位或机械零位的关节位置偏置 | 可动关节 |
+| `JointLimitLower(jointId)` | 关节运动下限 | 可动关节 |
+| `JointLimitUpper(jointId)` | 关节运动上限 | 可动关节 |
+
+必须满足：
+
+```text
+JointLimitLower < JointLimitUpper
+```
+
+转动关节使用弧度存储、角度显示；移动关节使用米存储，可显示毫米。零位偏置不改变关节轴方向。
+
+#### D. 基座位姿
+
+| semanticKind | 含义 |
+| --- | --- |
+| `BaseTx` / `BaseTy` / `BaseTz` | 基座相对于场景参考系的 X/Y/Z 平移 |
+| `BaseRx` / `BaseRy` / `BaseRz` | 相对于原始基座姿态的旋转增量 |
+
+`BaseTz` 包含传统 `BaseHeight` 的语义，但不再限制只能优化 Z 方向。位置变量必须声明场景参考系；旋转变量内部使用旋转向量或 SO(3) 增量，不能把欧拉角作为运行时主状态。
+
+#### E. TCP / 法兰位姿
+
+| semanticKind | 含义 | 适用条件 |
+| --- | --- | --- |
+| `TcpTx` / `TcpTy` / `TcpTz` | 法兰到 TCP 的平移偏置 | 模型定义 TCP |
+| `TcpRx` / `TcpRy` / `TcpRz` | 法兰到 TCP 的旋转偏置 | 模型定义 TCP |
+| `FlangeOffsetX/Y/Z` | 法兰安装偏置 | 模型显式区分法兰 |
+| `FlangeRotationX/Y/Z` | 法兰安装旋转偏置 | 模型显式区分法兰 |
+
+`Tcp*` 与 `Flange*` 必须根据模型边界分工，不能同时修改同一个末端刚体变换。若模型没有显式法兰层，则只开放 TCP 变量。
+
+#### F. 参数化连杆几何
+
+| semanticKind | 含义 | 适用条件 |
+| --- | --- | --- |
+| `LinkRadius(linkId)` | 圆柱/圆管连杆半径 | `ParameterizedGeometryAdapter` |
+| `LinkWidth(linkId)` | 矩形或盒状截面宽度 | 参数化矩形截面 |
+| `LinkHeight(linkId)` | 矩形或盒状截面高度 | 参数化矩形截面 |
+| `LinkCrossSectionX/Y(linkId)` | 截面参数 | 对应截面适配器 |
+| `LinkWallThickness(linkId)` | 管壁厚度 | 管状几何适配器 |
+
+普通 STL/Polytope 网格不能虚构出半径、宽度或高度变量。真实网格只有在注册 `MeshTransformAdapter` 或参数化重建适配器后，才能开放对应变量。
+
+### 6.4 第一阶段完整语义白名单
+
+```text
+LinkLength
+JointOriginOffsetX
+JointOriginOffsetY
+JointOriginOffsetZ
+JointOffsetAlongAxis
+JointAxisTiltX
+JointAxisTiltY
+JointZeroOffset
+JointLimitLower
+JointLimitUpper
+BaseTx
+BaseTy
+BaseTz
+BaseRx
+BaseRy
+BaseRz
+TcpTx
+TcpTy
+TcpTz
+TcpRx
+TcpRy
+TcpRz
+FlangeOffsetX
+FlangeOffsetY
+FlangeOffsetZ
+FlangeRotationX
+FlangeRotationY
+FlangeRotationZ
+LinkRadius
+LinkWidth
+LinkHeight
+LinkCrossSectionX
+LinkCrossSectionY
+LinkWallThickness
+```
+
+白名单表示系统允许注册的语义类型，不代表每个机器人都会拥有全部变量。实际变量集合由模型拓扑、关节类型、几何能力、模板和适配器共同决定。
+
+### 6.5 不作为第一阶段主变量的类型
+
+以下类型不进入新方案的第一阶段主变量白名单：
+
+```text
+JointRotationRoll
+JointRotationPitch
+JointRotationYaw
+DhA
+DhD
+```
+
+关节轴姿态统一使用 `JointAxisTiltX/Y`，关节零位统一使用 `JointZeroOffset`。DH `a/d` 只作为规范模型的投影、检查和导出视图，不作为第二套运行时状态；不允许 DH 参数与规范 Transform/轴变量同时修改同一运动学关系。
+
+### 6.6 坐标系、单位和表达互斥
+
+- 长度内部统一使用米，角度内部统一使用弧度；UI 可显示毫米和度；
+- `JointOriginOffset*` 的坐标系必须是父连杆/父关节局部坐标系，并写入 `frameId`；
+- `JointOffsetAlongAxis` 使用当前关节的基准轴，而非世界轴；
+- `BaseT*` 使用明确的场景参考系；
+- `Tcp*` 使用法兰到 TCP 的末端局部变换；
+- `Flange*` 只有存在独立法兰层时启用；
+- `JointOriginOffset*` 与 `JointOffsetAlongAxis`、`Tcp*` 与 `Flange*`、主变量与其派生值均不得重复修改同一物理自由度；
+- DH `a/d` 只作为检查或导出视图，不作为第一阶段主变量。
+
+### 6.7 模板
+
+模板必须是静态、可版本化的变量生成规则：
+
+- `Kinematic Basic`：连杆长度、安装位置、零位偏置、关节限位；
+- `Kinematic + Joint Axis`：增加关节轴 X/Y 偏转；
+- `Kinematic + Base/TCP`：增加基座、法兰或 TCP 位姿；
+- `Full Kinematic Design`：启用所有满足模型适用条件的第一阶段变量。
+
+### 6.8 依赖和适用性规则
+
+依赖用于表达 `JointLimitLower < JointLimitUpper`、轴偏转总角限制、最小连杆长度、截面尺寸正值等关系。依赖图必须是有向无环图。未知变量、循环依赖、单位不一致、变量不适用于当前关节/几何类型，均阻止运行。
 
 ## 7. 适配器与候选模型编译器
 
