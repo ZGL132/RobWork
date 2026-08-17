@@ -510,7 +510,42 @@ IEvaluationStage
 
 ## 9. 目标与约束
 
-### 9.1 目标项
+目标回答“在满足工程要求的候选中哪个更好”，约束回答“哪些候选不能接受”。指标只是评估结果，同一个指标可以同时被目标和约束引用。
+
+### 9.1 指标注册
+
+指标由注册表提供，不由 UI 自由输入。每个指标至少声明：
+
+```text
+EngineeringMetric
+  metricId
+  displayName
+  unit
+  directionHint
+  validRange
+  producerStage
+  availabilityConditions
+```
+
+第一阶段内置指标包括：
+
+| metricId | 含义 | 方向 |
+| --- | --- | --- |
+| `kinematics.reachability.weighted` | 任务点加权可达率 | 越大越好 |
+| `kinematics.workspace.coverage` | 工作空间区域覆盖率 | 越大越好 |
+| `kinematics.manipulability.p10` | 可操作度第 10 百分位 | 越大越好 |
+| `collision.free_rate` | 无碰撞采样比例 | 越大越好 |
+| `kinematics.joint_margin.p10` | 关节裕度第 10 百分位 | 越大越好 |
+| `kinematics.joint_margin.minimum` | 全局最小关节裕度 | 越大越好 |
+| `geometry.total_kinematic_length` | 运动链总长度 | 越小越好 |
+| `geometry.base_height` | 基座高度 | 越小越好 |
+| `geometry.max_cross_section` | 最大截面尺寸/面积 | 越小越好 |
+| `geometry.max_link_slenderness` | 最大连杆长细比 | 越小越好 |
+| `structure.preference` | 对工程偏好值的吻合度 | 越大越好 |
+
+指标缺少有效数据时必须返回 `Unavailable` 或 `InsufficientData`，不能静默当作零分。
+
+### 9.2 目标项
 
 ```text
 ObjectiveTerm
@@ -518,28 +553,132 @@ ObjectiveTerm
   metricId
   direction: Maximize | Minimize
   weight
-  normalization: None | FixedRange | BaselineRelative
+  normalization
   enabled
 ```
 
-第一阶段内置指标：`ReachabilityRate`、`WorkspaceCoverage`、`ManipulabilityP10`、`CollisionFreeRate`、`JointMarginP10`、`TotalKinematicLength`、`BaseHeight`、`MaxCrossSection`。
+目标方向只有最大化和最小化。不同单位的指标不能直接相加，必须先归一化到统一评分空间，通常为 `[0, 1]`：
 
-### 9.2 约束项
+```text
+high-is-better: score = (value - bad) / (good - bad)
+low-is-better:  score = 1 - (value - good) / (bad - good)
+score = clamp(score, 0, 1)
+```
+
+支持三种归一化方式：
+
+- `None`：指标已经在 `[0, 1]`，例如可达率和碰撞安全率；
+- `FixedRange`：使用配置的 good/bad 工程范围；
+- `BaselineRelative`：相对基线候选计算改善或退化。
+
+加权总分为：
+
+```text
+TotalObjectiveScore =
+  sum(objective.weight * normalizedMetricScore)
+```
+
+建议启用目标的权重和为 `1.0`。权重只用于比较可行候选，不能让高目标分抵消硬约束违反。每个分项得分、归一化参数和权重必须写入结果报告。
+
+推荐的第一阶段默认目标配置为：
+
+```text
+Reachability             0.35  maximize
+WorkspaceCoverage        0.20  maximize
+ManipulabilityP10        0.15  maximize
+JointMarginP10           0.15  maximize
+CollisionFreeRate        0.10  maximize
+TotalKinematicLength     0.05  minimize
+```
+
+默认配置只是模板，工程师可以按项目调整，不能覆盖项目中已明确保存的目标配置。
+
+### 9.3 约束项
 
 ```text
 ConstraintRule
   id
-  metricId
+  metricId 或 expression
   relation: LessEqual | GreaterEqual | Equal | InRange
   lower
   upper
+  threshold
   tolerance
   severity: Hard | Soft
   penalty
   enabled
 ```
 
-未知指标、无效范围和单位不一致在运行前阻止执行。硬约束违反会将候选标记为不可行；软约束记录违反量并加入总分惩罚，同时保留原始指标。
+约束分为五类：
+
+1. **变量/模型合法性约束**：长度为正、轴向量为单位向量、轴偏转不超过最大角、关节上下限有序；
+2. **结构几何约束**：总长度、基座高度、最大截面、最大长细比；
+3. **任务约束**：必需任务点可达、必需任务点无碰撞；
+4. **工作空间约束**：指定区域的覆盖率达到阈值；
+5. **运动学安全约束**：最小关节裕度达到阈值。
+
+典型约束示例：
+
+```text
+JointLimitLower < JointLimitUpper
+LinkLength >= minimumLength
+kinematics.reachability.weighted >= 1.0
+collision.free_rate >= 1.0
+kinematics.workspace.coverage >= 0.75
+kinematics.joint_margin.minimum >= 0.10
+geometry.total_kinematic_length <= 2.0 m
+```
+
+未知指标、无效范围、单位不一致、缺少生产阶段或表达式引用不存在的变量，均在运行前阻止执行。
+
+### 9.4 硬约束与软约束
+
+**硬约束**是最终方案必须满足的工程条件。违反后候选标记为 `Infeasible`，但仍保留在结果中并记录违反证据。例如必需任务点不可达、发生碰撞或关节上下限非法。
+
+**软约束**表示偏好或可接受程度。违反时不直接淘汰候选，而是根据违反量计算惩罚：
+
+```text
+TotalScore = TotalObjectiveScore - SoftConstraintPenalty
+```
+
+软约束必须记录原始值、阈值、违反量、惩罚系数和惩罚结果。安全红线不能配置成软约束。
+
+### 9.5 变量约束、指标约束和目标的执行顺序
+
+```text
+1. 设计空间预检查
+2. 独立变量/派生变量解析
+3. 候选模型编译
+4. 变量和模型合法性检查
+5. 运动学、碰撞和工作空间评估
+6. 硬约束检查
+7. 指标归一化
+8. 目标加权
+9. 软约束惩罚
+10. 输出可行性、总分和诊断
+```
+
+先判断候选是否合法，再计算目标分数。高可达率不能抵消非法关节范围，低结构重量也不能抵消必需任务不可达。
+
+### 9.6 结果解释
+
+每个候选结果必须分别保存：
+
+```text
+rawMetrics
+normalizedObjectiveScores
+objectiveContributions
+violatedHardConstraints
+softConstraintViolations
+penalties
+feasible
+```
+
+UI 和报告应能回答：候选总分是多少、每个目标贡献多少、违反了哪条约束、是编译失败还是评估失败、与基线相比改善或退化多少。
+
+### 9.7 与现有实现的兼容
+
+现有 `ObjectiveTerm`、`ConstraintRule`、`StructureOptimizationWeights` 和 `metricConstraints` 继续作为兼容层。旧版固定权重可转换为目标项；旧版结构约束转换为指标约束或保留为专用约束类型。新注册表和流水线负责扩展指标，但不改变旧项目的目标方向和硬约束语义。
 
 ## 10. 优化算法适配
 
