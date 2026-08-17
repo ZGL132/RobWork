@@ -93,6 +93,7 @@ WorkCell / RobotModelSpec / Requirement
 | `ObjectiveAggregator` | 归一化并计算加权结果 | 不访问 UI |
 | `EvaluationPipeline` | 编排阶段、缓存、取消和阶段结果 | 不持有 Qt 控件 |
 | `StructureOptimizerWidget` | 编辑配置、展示状态和触发控制器 | 不计算工程指标 |
+| `DesignSpaceCompiler` | 解析参数化模式、独立变量、派生变量和依赖图 | 不修改候选模型 |
 
 ## 5. 规范运动学模型
 
@@ -339,6 +340,108 @@ DhD
 
 依赖用于表达 `JointLimitLower < JointLimitUpper`、轴偏转总角限制、最小连杆长度、截面尺寸正值等关系。依赖图必须是有向无环图。未知变量、循环依赖、单位不一致、变量不适用于当前关节/几何类型，均阻止运行。
 
+### 6.9 最小独立设计自由度
+
+界面变量不等于优化器变量。优化器只搜索经过参数化选择和依赖解析后的最小独立设计自由度集合，避免多个变量重复表达同一个物理变化。
+
+每个变量增加以下关系属性：
+
+```text
+role: Independent | Derived
+groupId
+parameterizationMode
+dependencies[]
+derivedExpression
+```
+
+- `Independent`：进入 `DesignVector`，由优化器直接采样；
+- `Derived`：由其他变量计算，只用于显示、编译和报告，不进入搜索向量；
+- `groupId`：表示一组必须联动的变量；
+- `parameterizationMode`：表示当前物理自由度采用的主表达方式；
+- `derivedExpression`：定义派生变量或派生模型字段的计算规则。
+
+设计空间必须在运行前经过以下编译流程：
+
+```text
+UI variable definitions
+  -> parameterization mode resolution
+  -> independent-variable selection
+  -> dependency DAG validation
+  -> derived-expression expansion
+  -> DesignVector schema
+  -> CandidateModelCompiler
+```
+
+### 6.10 主变量、派生变量和互斥参数化
+
+#### 连杆长度与关节原点
+
+`LinkLength(linkId)` 与相邻关节原点之间的距离只能选择一个作为主变量。若长度是主变量，则关节位置由编译器计算；若关节原点偏置是主变量，则长度是派生值。两者不能同时独立搜索同一个物理距离。
+
+#### 笛卡尔偏置与轴向偏置
+
+以下两组参数化方式互斥：
+
+```text
+JointOriginOffsetX/Y/Z
+JointOffsetAlongAxis
+```
+
+设计空间通过 `JointOffsetMode = Cartesian | AlongAxis` 选择一种主表达方式。另一组变量显示为 `DisabledByParameterization`，而不是静默删除。
+
+#### TCP 与法兰末端变换
+
+```text
+TcpOffset/TcpRotation
+FlangeOffset/FlangeRotation
+```
+
+如果模型没有独立法兰层，只允许 TCP 变量；如果模型显式区分法兰和 TCP，则分别绑定不同变换。任何两个变量都不能修改同一个末端刚体变换。
+
+#### 关节轴和零位
+
+`JointAxisTiltX/Y` 修改单位轴向量，`JointZeroOffset` 修改关节位置零点。禁止使用 `JointRotationRoll/Pitch/Yaw` 同时表达轴方向和零位偏置，避免自由度重复。
+
+### 6.11 约束变量与成组变量
+
+变量可以保持独立，但通过约束保证物理可行：
+
+```text
+JointLimitLower < JointLimitUpper
+JointLimitUpper - JointLimitLower >= minimumRange
+LinkLength >= minimumLength
+TotalKinematicLength <= maximumLength
+```
+
+需要同步变化的参数使用变量组。例如截面保持比例时，不独立搜索宽度和高度，而定义：
+
+```text
+LinkScale(linkId)
+LinkWidth  = nominalWidth  * LinkScale
+LinkHeight = nominalHeight * LinkScale
+```
+
+如果宽度和高度确实允许独立设计，则保留两个独立变量，并增加比例约束：
+
+```text
+minRatio <= LinkWidth / LinkHeight <= maxRatio
+```
+
+### 6.12 设计空间编译结果
+
+```text
+CompiledDesignSpace
+  independentVariables[]
+  derivedVariables[]
+  variableGroups[]
+  parameterizationModes[]
+  dependencyOrder[]
+  disabledReasons[]
+  diagnostics[]
+```
+
+`DesignVector` 只包含 `independentVariables[]`。候选生成器不读取 UI 表格中的全部行，而是读取 `CompiledDesignSpace`，并按 `dependencyOrder` 计算派生值。若参数化冲突、循环依赖或派生表达式无法求值，优化不得启动。
+
 ## 7. 适配器与候选模型编译器
 
 ### 7.1 适配器接口契约
@@ -448,7 +551,7 @@ ConstraintRule
 
 ### 11.1 设计空间区
 
-模板选择、模板版本和应用预览；按链、关节、基座、TCP、几何分类的变量树；表格列包括启用、名称、语义、当前值、名义值、最小值、最大值、单位、域、适配器、来源和状态；右侧详情显示目标路径、依赖、适配器效果、范围错误和基线恢复按钮。
+模板选择、模板版本和应用预览；按链、关节、基座、TCP、几何分类的变量树；表格列包括启用、名称、语义、角色（独立/派生）、当前值、名义值、最小值、最大值、单位、域、参数化模式、适配器、来源和状态；右侧详情显示目标路径、依赖、所属变量组、适配器效果、禁用原因、范围错误和基线恢复按钮。被互斥参数化禁用的变量必须显示具体原因，例如 `DisabledByParameterization: JointOffsetMode=AlongAxis`。
 
 ### 11.2 目标与约束区
 
@@ -532,6 +635,9 @@ Diagnostic
 - 编译失败和约束失败均保留候选诊断；
 - 旧项目可加载，未绑定字段不会静默参与优化；
 - 候选预览使用编译结果，恢复基线后宿主 WorkCell 不残留候选修改。
+- 具有依赖关系的变量经过设计空间编译后，只将最小独立变量集合放入 `DesignVector`；派生变量不增加搜索维度。
+- 互斥参数化、联动变量组和派生表达式均能在运行前显示并验证。
+- 对同一物理自由度不会同时产生重复的主变量，且禁用原因可追溯。
 
 ### 质量验收
 
