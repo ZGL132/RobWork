@@ -49,13 +49,14 @@
 - 现象：`RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/` 递归文件数为 0；工作树显示该目录下资源全部为删除改动。
 - 影响：不能把真实项目交叉验收失败归因于插件代码，必须区分 fixture 缺失与功能错误。
 
-### F-003：CTest 未指定配置时将所有多配置测试报告为 Not Run
+### F-003：CTest 未指定配置时将所有多配置测试报告为 Not Run（已修复）
 
 - 严重级别：P2（测试基础设施易用性）
-- 状态：OPEN
+- 状态：RESOLVED
 - 复现：在 `build/codex-vs-debug5` 执行 `ctest -R '^sdurws_engineeringrequirements_' -j1`，6 项全部显示 `Test not available without configuration (Missing "-C <config>?")`，退出码 8。
 - 正确命令：`ctest -C Debug -R '^sdurws_engineeringrequirements_' -j1 --output-on-failure`。
-- 影响：未指定 `-C Debug` 的 CI/人工命令会产生假失败；计划和 CI 包装脚本应固定配置参数。
+- 修复：新增 `RobWork/scripts/run-four-plugin-tests.ps1`，默认配置为 Debug，统一设置 `QT_QPA_PLATFORM=windows`、配置 DLL 搜索路径，并强制调用 `ctest -C <Configuration> -j1 --output-on-failure`；空构建目录返回退出码 2，CTest 非零结果原样传播。
+- 验证：旧命令仍按预期复现 6/6 Not Run、CTest 退出码 8；新脚本运行 RobotModelBuilder 5/5 PASS、退出码 0；空构建目录检查返回退出码 2。
 
 ### F-004：EngineeringRequirements managed-project gate 状态文本断言失败（已修复）
 
@@ -87,6 +88,12 @@
 | 发布门 | 4 个 Phase 8 聚合门 | 4 | 0 | 0 | 0 |
 
 ## 执行证据
+
+### S-A3 多配置 CTest 入口
+
+- 旧行为复现：`ctest --test-dir RobWork/build/codex-vs-debug5 -R '^sdurws_engineeringrequirements_' -j1 --output-on-failure`，6 项均 `***Not Run`，CTest 退出码 8。
+- 新入口：`RobWork/scripts/run-four-plugin-tests.ps1 -Configuration Debug -Regex '^sdurws_robotmodelbuilder_'`，5/5 PASS，退出码 0，总耗时 14.39 秒。
+- 参数校验：空 `BuildDirectory` 返回退出码 2，并输出 `BuildDirectory must not be empty`。
 
 ### RobotModelBuilder（5/5）
 
