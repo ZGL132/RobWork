@@ -2147,6 +2147,7 @@ int testWidgetBlocksFreezeUntilManagedWorkCellExists()
     });
     QPushButton* freeze = widget.findChild<QPushButton*>("freezeRequirementSetButton");
     REQUIRE(freeze != nullptr);
+    REQUIRE(freeze->isEnabled());
     freeze->click();
     REQUIRE(widget.statusText() == QStringLiteral(
         "The robot project has not generated its managed WorkCell. Review the model in "

@@ -1026,10 +1026,23 @@ void EngineeringRequirementsWidget::refreshValidationPanel()
             "Diagnostics: %1 | Blocking: %2\nCompiled: Included %3 | Excluded %4")
             .arg(diagnostics.size()).arg(blocking).arg(included).arg(excluded));
     }
-    // 冻结按钮门禁：仅当需求未冻结且当前没有任何阻断性诊断时才允许冻结，
-    // 防止带着 Must 级违规强行生成不可用的冻结工件。
+    // 冻结按钮门禁：通常仅当需求未冻结且没有阻断性诊断时才允许冻结。
+    // 但“缺少机器人模型指纹”必须保留可点击入口，才能让宿主项目门禁优先
+    // 给出“先在 RobotModelBuilder 生成并加载 managed WorkCell”的明确反馈，
+    // 而不是被编辑器按钮静默禁用并显示泛化的初始状态。
+    bool onlyMissingRobotModelFingerprint = blocking == 1;
+    if (onlyMissingRobotModelFingerprint) {
+        for (const RequirementDiagnostic& diagnostic : diagnostics) {
+            if (diagnostic.blocking &&
+                diagnostic.message != "A robot model fingerprint is required.") {
+                onlyMissingRobotModelFingerprint = false;
+                break;
+            }
+        }
+    }
     if (_freezeButton != nullptr)
-        _freezeButton->setEnabled(!_requirements.frozen && blocking == 0);
+        _freezeButton->setEnabled(!_requirements.frozen &&
+                                  (blocking == 0 || onlyMissingRobotModelFingerprint));
 }
 
 void EngineeringRequirementsWidget::syncTablesToRequirements()
