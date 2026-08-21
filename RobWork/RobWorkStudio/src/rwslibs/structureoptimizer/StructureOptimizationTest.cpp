@@ -84,6 +84,7 @@
 #include "StructureOptimizationWorkflowResolver.hpp"
 #include "OptimizationPreflight.hpp"
 #include "Phase8Acceptance.hpp"
+#include "Phase8PerformanceAudit.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11443,6 +11444,40 @@ static void testPhase8Acceptance()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 8/S82：验证性能预算区分数据错误与预算超限警告，并计算缓存命中率门。
+static void testPhase8PerformanceAudit()
+{
+    std::printf("testPhase8PerformanceAudit ... ");
+    rws::StructureOptimizationResult result;
+    result.diagnostics.generatedCandidates = 120;
+    result.diagnostics.evaluatedCandidates = 100;
+    result.diagnostics.cacheHits = 20;
+    result.diagnostics.totalSeconds = 12.0;
+    result.diagnostics.modelBuildSeconds = 2.0;
+    result.diagnostics.kinematicEvaluationSeconds = 7.0;
+    result.diagnostics.workspaceEvaluationSeconds = 1.0;
+    rws::Phase8PerformanceBudget budget;
+    budget.maxGeneratedCandidates = 100;
+    budget.maxTotalSeconds = 10.0;
+    budget.minimumCacheHitRate = 0.25;
+    const rws::Phase8PerformanceAuditResult audited =
+        rws::Phase8PerformanceAudit::audit(result, budget);
+    REQUIRE(audited.valid);
+    REQUIRE(!audited.withinBudget);
+    REQUIRE(audited.hasCode("Phase8.Performance.CandidateBudgetExceeded"));
+    REQUIRE(audited.hasCode("Phase8.Performance.TotalBudgetExceeded"));
+    REQUIRE(audited.hasCode("Phase8.Performance.CacheHitRateLow"));
+
+    result.diagnostics.cacheHits = 101;
+    const rws::Phase8PerformanceAuditResult invalid =
+        rws::Phase8PerformanceAudit::audit(result);
+    REQUIRE(!invalid.valid);
+    REQUIRE(invalid.hasCode("Phase8.Performance.DiagnosticsInvalid"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testOptimizationRunStore()
 {
     std::printf("testOptimizationRunStore ... ");
@@ -12075,6 +12110,12 @@ int main(int argc, char** argv)
     if (suite == "phase8_acceptance") {
         QCoreApplication app(argc, argv);
         testPhase8Acceptance();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "phase8_performance") {
+        QCoreApplication app(argc, argv);
+        testPhase8PerformanceAudit();
         return g_testFailures == 0 ? 0 : 1;
     }
 
