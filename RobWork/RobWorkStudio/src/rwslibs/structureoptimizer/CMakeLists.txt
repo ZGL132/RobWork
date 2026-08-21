@@ -104,6 +104,7 @@ if(build)
         OptimizationRunJson.cpp
         OptimizationRunStore.cpp
         StructureOptimizationWorkflowResolver.cpp
+        OptimizationPreflight.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -211,6 +212,7 @@ if(build)
         OptimizationRunJson.hpp
         OptimizationRunStore.hpp
         StructureOptimizationWorkflowResolver.hpp
+        OptimizationPreflight.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
@@ -540,10 +542,15 @@ if(build)
             NAME sdurws_structureoptimizer_workflow_resolver_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> workflow_resolver
         )
+        add_test(
+            NAME sdurws_structureoptimizer_preflight_core_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> preflight_core
+        )
         set_tests_properties(
             sdurws_structureoptimizer_run_snapshot_test
             sdurws_structureoptimizer_run_store_test
             sdurws_structureoptimizer_workflow_resolver_test
+            sdurws_structureoptimizer_preflight_core_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

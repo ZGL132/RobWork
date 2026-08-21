@@ -82,6 +82,7 @@
 #include "OptimizationRunJson.hpp"
 #include "OptimizationRunStore.hpp"
 #include "StructureOptimizationWorkflowResolver.hpp"
+#include "OptimizationPreflight.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11478,6 +11479,26 @@ static void testStructureOptimizationWorkflowResolver()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testOptimizationPreflightCore()
+{
+    std::printf("testOptimizationPreflightCore ... ");
+    rws::OptimizationPreflightInput input;
+    input.hasModel = false;
+    input.hasRequirements = false;
+    input.hasKinematicValidation = false;
+    const rws::OptimizationPreflightResult result = rws::OptimizationPreflight::run(input);
+    REQUIRE(!result.canStart);
+    REQUIRE(result.hasCode("MODEL_MISSING"));
+    REQUIRE(result.hasCode("REQUIREMENT_MISSING"));
+    REQUIRE(result.hasCode("KINEMATIC_VALIDATION_MISSING"));
+    input.hasModel = input.hasRequirements = input.hasKinematicValidation = true;
+    input.independentVariableCount = 1;
+    const rws::OptimizationPreflightResult ready = rws::OptimizationPreflight::run(input);
+    REQUIRE(ready.canStart);
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // S61：旧文档只能迁入当前权威 Envelope。迁移不回写输入，也不能让未绑定变量
 // 在迁移过程中被静默启用；legacy 字段仅作为审计扩展保留。
 static void testLegacyJsonMigration()
@@ -11996,6 +12017,12 @@ int main(int argc, char** argv)
     if (suite == "workflow_resolver") {
         QCoreApplication app(argc, argv);
         testStructureOptimizationWorkflowResolver();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "preflight_core") {
+        QCoreApplication app(argc, argv);
+        testOptimizationPreflightCore();
         return g_testFailures == 0 ? 0 : 1;
     }
 
