@@ -85,6 +85,7 @@
 #include "OptimizationPreflight.hpp"
 #include "Phase8Acceptance.hpp"
 #include "Phase8PerformanceAudit.hpp"
+#include "Phase8ResourceAudit.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11478,6 +11479,39 @@ static void testPhase8PerformanceAudit()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 8/S83：验证控制器状态互斥和结果临时路径审计。
+static void testPhase8ResourceAudit()
+{
+    std::printf("testPhase8ResourceAudit ... ");
+    rws::Phase8ControllerSnapshot valid;
+    const rws::Phase8ResourceAuditResult validState =
+        rws::Phase8ResourceAudit::auditController(valid);
+    REQUIRE(validState.passed);
+
+    rws::Phase8ControllerSnapshot invalid = valid;
+    invalid.running = true;
+    invalid.state = rws::OptimizationRunState::Idle;
+    invalid.baselineRunning = true;
+    const rws::Phase8ResourceAuditResult invalidState =
+        rws::Phase8ResourceAudit::auditController(invalid);
+    REQUIRE(!invalidState.passed);
+    REQUIRE(invalidState.hasCode("Phase8.Controller.RunningStateMismatch"));
+    REQUIRE(invalidState.hasCode("Phase8.Controller.ConcurrentRuns"));
+
+    rws::StructureOptimizationResult result;
+    rws::AnalysisWarning warning;
+    warning.code = "StructureOptimization.Preview.OpenFailed";
+    warning.message = "structure-optimizer-preview-abc";
+    result.warnings.push_back(warning);
+    const rws::Phase8ResourceAuditResult resource =
+        rws::Phase8ResourceAudit::auditResult(result);
+    REQUIRE(!resource.passed);
+    REQUIRE(resource.hasCode("Phase8.Result.TemporaryPath"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testOptimizationRunStore()
 {
     std::printf("testOptimizationRunStore ... ");
@@ -12116,6 +12150,12 @@ int main(int argc, char** argv)
     if (suite == "phase8_performance") {
         QCoreApplication app(argc, argv);
         testPhase8PerformanceAudit();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "phase8_resource") {
+        QCoreApplication app(argc, argv);
+        testPhase8ResourceAudit();
         return g_testFailures == 0 ? 0 : 1;
     }
 

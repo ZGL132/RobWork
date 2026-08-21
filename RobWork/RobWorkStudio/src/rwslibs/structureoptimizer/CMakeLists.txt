@@ -107,6 +107,7 @@ if(build)
         OptimizationPreflight.cpp
         Phase8Acceptance.cpp
         Phase8PerformanceAudit.cpp
+        Phase8ResourceAudit.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -217,6 +218,7 @@ if(build)
         OptimizationPreflight.hpp
         Phase8Acceptance.hpp
         Phase8PerformanceAudit.hpp
+        Phase8ResourceAudit.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
