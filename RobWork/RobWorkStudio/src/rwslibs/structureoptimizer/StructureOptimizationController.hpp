@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 namespace rws {
 
@@ -188,6 +189,9 @@ private:
     bool _baselineRunning = false;
     // 仅主优化会话使用该状态机；Baseline 有独立 watcher，不能伪装成同一队列的恢复点。
     OptimizationRunStateMachine _runStateMachine;
+    // 每次提交后台任务都会生成新代号，旧任务的排队信号不得污染新会话。
+    std::uint64_t _runId = 0;
+    std::uint64_t _baselineRunId = 0;
 };
 
 } // namespace rws

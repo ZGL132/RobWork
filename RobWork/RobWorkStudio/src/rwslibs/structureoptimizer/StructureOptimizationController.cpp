@@ -68,9 +68,10 @@ bool StructureOptimizationController::start(
     const std::shared_ptr<OptimizationControlState> control = _control;
     StructureOptimizationController* receiver = this;
     RunFunction runFunction = _runFunction;
+    const std::uint64_t runId = ++_runId;
 
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
-        [snapshot, control, receiver, runFunction]() {
+        [snapshot, control, receiver, runFunction, runId]() {
             StructureOptimizationCallbacks callbacks;
             callbacks.isCancellationRequested = [control]() {
                 return control->canceled.load();
@@ -81,10 +82,13 @@ bool StructureOptimizationController::start(
                     return !control->paused.load() || control->canceled.load();
                 });
             };
-            callbacks.onProgress = [receiver](const StructureProgress& progress) {
+            callbacks.onProgress = [receiver, runId](const StructureProgress& progress) {
                 QMetaObject::invokeMethod(
                     receiver,
-                    [receiver, progress]() { Q_EMIT receiver->progressChanged(progress); },
+                    [receiver, progress, runId]() {
+                        if (receiver->_runId == runId)
+                            Q_EMIT receiver->progressChanged(progress);
+                    },
                     Qt::QueuedConnection);
             };
 
@@ -125,8 +129,9 @@ bool StructureOptimizationController::startBaselineEvaluation(
     const StructureOptimizationProblem snapshot = problem;
     const std::shared_ptr<OptimizationControlState> control = _baselineControl;
     StructureOptimizationController* receiver = this;
+    const std::uint64_t runId = ++_baselineRunId;
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
-        [snapshot, control, receiver]() {
+        [snapshot, control, receiver, runId]() {
             StructureOptimizationCallbacks callbacks;
             callbacks.isCancellationRequested = [control]() {
                 return control->canceled.load();
@@ -137,10 +142,13 @@ bool StructureOptimizationController::startBaselineEvaluation(
                     return !control->paused.load() || control->canceled.load();
                 });
             };
-            callbacks.onProgress = [receiver](const StructureProgress& progress) {
+            callbacks.onProgress = [receiver, runId](const StructureProgress& progress) {
                 QMetaObject::invokeMethod(
                     receiver,
-                    [receiver, progress]() { Q_EMIT receiver->progressChanged(progress); },
+                    [receiver, progress, runId]() {
+                        if (receiver->_baselineRunId == runId)
+                            Q_EMIT receiver->progressChanged(progress);
+                    },
                     Qt::QueuedConnection);
             };
             try {
