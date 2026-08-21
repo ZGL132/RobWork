@@ -32,6 +32,8 @@ if(build)
         KinematicMetricAggregator.cpp
         CandidateResult.cpp
         QuickScreeningPolicy.cpp
+        EliteSelector.cpp
+        HybridOptimizer.cpp
         CacheKey.cpp
         EvaluationCache.cpp
         DeterministicSeed.cpp
@@ -116,6 +118,8 @@ if(build)
         KinematicMetricAggregator.hpp
         CandidateResult.hpp
         QuickScreeningPolicy.hpp
+        EliteSelector.hpp
+        HybridOptimizer.hpp
         CacheKey.hpp
         EvaluationCache.hpp
         DeterministicSeed.hpp
@@ -428,6 +432,24 @@ if(build)
         add_test(
             NAME sdurws_structureoptimizer_quick_screening_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> quick_screening
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_elite_selector_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> elite_selector
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_elite_selector_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_hybrid_optimizer_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> hybrid_optimizer
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_hybrid_optimizer_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
         set_tests_properties(
             sdurws_structureoptimizer_quick_screening_test

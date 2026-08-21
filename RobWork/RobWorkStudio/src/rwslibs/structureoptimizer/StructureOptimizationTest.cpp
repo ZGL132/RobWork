@@ -10,6 +10,8 @@
 #include "KinematicMetricAggregator.hpp"
 #include "CandidateResult.hpp"
 #include "QuickScreeningPolicy.hpp"
+#include "EliteSelector.hpp"
+#include "HybridOptimizer.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
@@ -572,6 +574,198 @@ static void testQuickScreeningPolicy()
     screened = policy.evaluate(input);
     REQUIRE(screened.decision == rws::QuickScreeningDecision::Promote);
     REQUIRE(screened.eligibleForFinalBest);
+
+    std::printf("PASSED\n");
+}
+
+static rws::CandidateResult makeEliteCandidate(const char* id,
+                                               rws::Feasibility feasibility,
+                                               rws::AnalysisEvidenceStage stage,
+                                               double score,
+                                               std::initializer_list<double> design)
+{
+    rws::CandidateResult result;
+    result.candidateId = id;
+    result.lifecycle = rws::CandidateLifecycle::Completed;
+    result.feasibility = feasibility;
+    result.evidenceStage = stage;
+    rws::ObjectiveResult objective;
+    objective.usable = true;
+    objective.contribution = score;
+    result.objectives.push_back(objective);
+    result.representativeQ = design;
+    return result;
+}
+
+static void testEliteSelector()
+{
+    std::printf("testEliteSelector ... ");
+
+    std::vector<rws::EliteSelectionCandidate> candidates;
+    candidates.push_back({0, makeEliteCandidate("quick", rws::Feasibility::Feasible,
+                                                rws::AnalysisEvidenceStage::Quick, 99.0,
+                                                {0.0, 0.0}), {0.0, 0.0},
+                          rws::QuickScreeningDecision::Promote});
+    candidates.push_back({1, makeEliteCandidate("verified", rws::Feasibility::Feasible,
+                                                rws::AnalysisEvidenceStage::Verified, 10.0,
+                                                {0.1, 0.1}), {0.1, 0.1},
+                          rws::QuickScreeningDecision::Promote});
+    candidates.push_back({2, makeEliteCandidate("infeasible", rws::Feasibility::Infeasible,
+                                                rws::AnalysisEvidenceStage::Verified, 100.0,
+                                                {0.2, 0.2}), {0.2, 0.2},
+                          rws::QuickScreeningDecision::DefinitelyReject});
+    candidates.push_back({3, makeEliteCandidate("uncertain", rws::Feasibility::DataInsufficient,
+                                                rws::AnalysisEvidenceStage::Quick, 1000.0,
+                                                {0.9, 0.9}), {0.9, 0.9},
+                          rws::QuickScreeningDecision::Uncertain});
+
+    rws::ConstraintResult violation;
+    violation.hard = true;
+    violation.satisfied = false;
+    violation.priority = 4;
+    violation.normalizedViolation = 0.25;
+    candidates[2].result.constraints.push_back(violation);
+
+    rws::EliteSelectorConfig config;
+    config.eliteCount = 3;
+    config.uncertainQuota = 1;
+    config.diversityWeight = 0.5;
+    const auto selected = rws::EliteSelector::select(candidates, config);
+    REQUIRE(selected.indices.size() == 3);
+    REQUIRE(selected.indices[0] == 1); // Verified Feasible outranks Quick Feasible.
+    REQUIRE(selected.indices[1] == 0);
+    REQUIRE(std::find(selected.indices.begin(), selected.indices.end(), 3) !=
+            selected.indices.end());
+    REQUIRE(std::find(selected.indices.begin(), selected.indices.end(), 2) ==
+            selected.indices.end()); // uncertain quota displaces infeasible tail.
+
+    // A violated higher-priority hard constraint must not be hidden by a
+    // lower-priority sibling when infeasible candidates are compared.
+    rws::CandidateResult highPriorityViolation =
+        makeEliteCandidate("high-priority-violation", rws::Feasibility::Infeasible,
+                           rws::AnalysisEvidenceStage::Verified, 0.0, {0.3, 0.3});
+    rws::ConstraintResult highPriority;
+    highPriority.hard = true;
+    highPriority.satisfied = false;
+    highPriority.priority = 10;
+    highPriority.normalizedViolation = 0.01;
+    highPriorityViolation.constraints.push_back(highPriority);
+    rws::ConstraintResult lowPriority;
+    lowPriority.hard = true;
+    lowPriority.satisfied = false;
+    lowPriority.priority = 1;
+    lowPriority.normalizedViolation = 0.01;
+    highPriorityViolation.constraints.push_back(lowPriority);
+
+    rws::CandidateResult lowPriorityViolation =
+        makeEliteCandidate("low-priority-violation", rws::Feasibility::Infeasible,
+                           rws::AnalysisEvidenceStage::Verified, 0.0, {0.4, 0.4});
+    lowPriority.normalizedViolation = 0.5;
+    lowPriorityViolation.constraints.push_back(lowPriority);
+    std::vector<rws::EliteSelectionCandidate> infeasibleCandidates = {
+        {10, highPriorityViolation, {0.3, 0.3}, rws::QuickScreeningDecision::DefinitelyReject},
+        {11, lowPriorityViolation, {0.4, 0.4}, rws::QuickScreeningDecision::DefinitelyReject}};
+    config.eliteCount = 1;
+    config.uncertainQuota = 0;
+    config.diversityWeight = 0.0;
+    const auto infeasible = rws::EliteSelector::select(infeasibleCandidates, config);
+    REQUIRE(infeasible.indices.size() == 1);
+    REQUIRE(infeasible.indices.front() == 11);
+
+    // Stable tie break is by stable index, not insertion order.
+    std::swap(candidates[0], candidates[1]);
+    candidates[0].stableIndex = 7;
+    candidates[1].stableIndex = 6;
+    candidates[1].result.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    candidates[1].result.objectives[0].contribution = 10.0;
+    config.eliteCount = 2;
+    config.uncertainQuota = 0;
+    const auto tie = rws::EliteSelector::select(candidates, config);
+    REQUIRE(tie.indices[0] == 6);
+
+    std::printf("PASSED\n");
+}
+
+static void testHybridOptimizer()
+{
+    std::printf("testHybridOptimizer ... ");
+
+    std::vector<rws::HybridCandidateSeed> seeds;
+    for (std::size_t i = 0; i < 4; ++i) {
+        rws::HybridCandidateSeed seed;
+        seed.stableIndex = i;
+        seed.normalizedDesign = {static_cast<double>(i) / 3.0};
+        seed.quickFacts.clearFeasibleEvidence = i != 3;
+        seeds.push_back(seed);
+    }
+
+    int quickCalls = 0;
+    int verifiedCalls = 0;
+    rws::HybridOptimizerConfig config;
+    config.eliteCount = 2;
+    config.uncertainQuota = 1;
+    config.maxEvaluationCount = 8;
+    rws::HybridOptimizerCallbacks callbacks;
+    bool cancel = false;
+    callbacks.isCancellationRequested = [&cancel]() { return cancel; };
+
+    const auto evaluator = [&](const rws::HybridCandidateSeed& seed,
+                               rws::AnalysisEvidenceStage stage) {
+        rws::CandidateResult result;
+        result.candidateId = "candidate-" + std::to_string(seed.stableIndex);
+        result.lifecycle = rws::CandidateLifecycle::Completed;
+        result.feasibility = seed.stableIndex == 3 ? rws::Feasibility::DataInsufficient
+                                                    : rws::Feasibility::Feasible;
+        result.evidenceStage = stage;
+        rws::ObjectiveResult objective;
+        objective.usable = true;
+        objective.contribution = static_cast<double>(seed.stableIndex);
+        result.objectives.push_back(objective);
+        if (stage == rws::AnalysisEvidenceStage::Quick)
+            ++quickCalls;
+        else
+            ++verifiedCalls;
+        return result;
+    };
+
+    const auto run = rws::HybridOptimizer::run(seeds, config, evaluator, callbacks);
+    REQUIRE(!run.canceled);
+    REQUIRE(run.evaluatedCount == 6);
+    REQUIRE(quickCalls == 4);
+    REQUIRE(verifiedCalls == 2);
+    REQUIRE(run.eliteIndices.size() == 2);
+    REQUIRE(run.bestCandidateIndex.has_value());
+    REQUIRE(run.bestCandidateIndex.value() != 3);
+
+    // Cancellation is checked at the batch boundary: Quick completes, Verified never starts.
+    cancel = true;
+    quickCalls = verifiedCalls = 0;
+    const auto canceled = rws::HybridOptimizer::run(seeds, config, evaluator, callbacks);
+    REQUIRE(canceled.canceled);
+    REQUIRE(verifiedCalls == 0);
+
+    config.maxEvaluationCount = 3;
+    cancel = false;
+    const auto budgeted = rws::HybridOptimizer::run(seeds, config, evaluator, callbacks);
+    REQUIRE(budgeted.evaluatedCount == 3);
+    REQUIRE(budgeted.eliteIndices.size() == 2);
+    REQUIRE(!budgeted.bestCandidateIndex.has_value());
+
+    // Cancellation after the Quick batch must prevent the Verified batch.
+    cancel = false;
+    quickCalls = verifiedCalls = 0;
+    rws::HybridOptimizerCallbacks batchCancelCallbacks;
+    batchCancelCallbacks.isCancellationRequested = [&cancel, &quickCalls]() {
+        if (quickCalls == 4)
+            cancel = true;
+        return cancel;
+    };
+    config.maxEvaluationCount = 8;
+    const auto batchCanceled =
+        rws::HybridOptimizer::run(seeds, config, evaluator, batchCancelCallbacks);
+    REQUIRE(batchCanceled.canceled);
+    REQUIRE(quickCalls == 4);
+    REQUIRE(verifiedCalls == 0);
 
     std::printf("PASSED\n");
 }
@@ -10943,6 +11137,18 @@ int main(int argc, char** argv)
     if (suite == "quick_screening") {
         QCoreApplication app(argc, argv);
         testQuickScreeningPolicy();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "elite_selector") {
+        QCoreApplication app(argc, argv);
+        testEliteSelector();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "hybrid_optimizer") {
+        QCoreApplication app(argc, argv);
+        testHybridOptimizer();
         return g_testFailures == 0 ? 0 : 1;
     }
 

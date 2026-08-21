@@ -839,6 +839,35 @@ evaluation pipeline until its designated later migration gates are complete.
   CTest set passed 8/8; `git diff --check` reported no whitespace errors
   (only existing LF-to-CRLF conversion warnings).
 
+## Phase 5 / S53-S54 evidence (2026-08-21)
+
+- S53 added the pure `QuickScreeningPolicy`. Deterministic compile/model/
+  geometry/collision failures are rejected; low-sample, partial, canceled, and
+  missing evidence remain `Uncertain`; clear feasibility is promoted, while a
+  Quick-only candidate can never be final-best eligible.
+- S54 added pure `EliteSelector` and one-round `HybridOptimizer` skeletons.
+  Elite selection is feasibility/evidence-first, compares objective
+  contributions, ranks infeasible candidates by hard normalized violations,
+  applies normalized design-space diversity, preserves stable-index ties, and
+  enforces an explicit uncertain quota. The hybrid round evaluates the initial
+  pool in Quick, promotes only selected elites to Verified, honors a total
+  evaluation budget, checks cancellation between batches, and exposes a best
+  candidate only when it is `Feasible + Verified`; local search and global
+  optimality claims remain out of scope.
+- RED evidence: the S54 test first failed to compile because the new selector
+  headers were absent. GREEN evidence: a fresh VS x64/MSVC Debug build via
+  `scripts/build-msvc-debug.cmd sdurws_structureoptimizer_test` succeeded.
+  With `QT_QPA_PLATFORM=windows`, the absolute test executable exited 0 for
+  `elite_selector` and `hybrid_optimizer`.
+- Follow-up S54 audit added regression coverage for multiple violated hard
+  constraints and cancellation immediately after the Quick batch. Elite
+  ranking now preserves the existing descending constraint-priority contract
+  by representing the highest-priority violated hard constraint; Hybrid still
+  refuses to start Verified after a batch-boundary cancellation. A rebuild
+  through the same helper and fresh absolute-path launches exited 0 for both
+  focused suites. The adjacent `quick_screening`, `cache_key`, and
+  `initial_sampler` suites also exited 0.
+
 ## Phase 5 / S51 evidence (2026-08-21)
 
 - Added deterministic `DeterministicSeed` and independent `InitialSampler`
