@@ -906,3 +906,55 @@ evaluation pipeline until its designated later migration gates are complete.
   succeeded; the absolute Windows Qt executable exited 0 for `initial_sampler`;
   the focused S40-S51 CTest set passed 9/9; `git diff --check` reported no
   whitespace errors (only existing LF-to-CRLF conversion warnings).
+
+## Phase 5 / S56 evidence (2026-08-21)
+
+- S56 added `FinalValidationPlan` and `IndependentFinalVerifier` as a pure
+  orchestration boundary for Independent Final Verification. The final plan
+  freezes an explicit, unique verification-seed order and derives a canonical
+  fingerprint that is distinct from the search-plan fingerprint. The verifier
+  invokes the caller-owned evaluator at the `Verified` evidence stage, retains
+  completed samples when cancellation occurs between seeds, rejects empty or
+  repeated evidence keys, and distinguishes `Incomplete`, `Complete`, and
+  `Failed` outcomes. A result is eligible for final-best publication only when
+  every independent sample is new and complete and the aggregate result is
+  `Feasible + Verified`; search-stage `CandidateResult` data remains preserved
+  separately.
+- All new public APIs and the focused regression tests include detailed Chinese
+  comments explaining the seed identity, evidence de-duplication, cancellation
+  boundary, failure downgrade, and final-best eligibility gate. Compilation and
+  kinematic/evaluator logic remain delegated to the existing caller callback;
+  S56 does not duplicate the legacy evaluator implementation.
+- RED evidence: the first S56 focused build failed because
+  `IndependentFinalVerifier.hpp` did not exist. GREEN evidence: the fresh VS
+  x64/MSVC Debug build via `scripts/build-msvc-debug.cmd
+  sdurws_structureoptimizer_test` completed successfully (`ninja: no work to
+  do` after the final source registration). With `QT_QPA_PLATFORM=windows`,
+  absolute-path launches of `independent_final_verifier`, `local_search`,
+  `elite_selector`, and `hybrid_optimizer` each exited 0 and reported
+  `PASSED`. CTest registration listed all four tests, and the corresponding
+  focused CTest run passed 4/4 with no failures.
+
+## Phase 5 / S57 evidence (2026-08-21)
+
+- 前置审计确认现有 `StructureOptimizationController` 只负责把整次运行投递到
+  `QtConcurrent` 后台线程，候选级 evaluator 已通过回调边界复用；WorkCell、
+  State、CollisionDetector 和 IK solver 均没有被新的调度器隐式共享。S57 因此
+  新增纯核心 `CandidateEvaluationScheduler`：任务闭包接收 `workerIndex`，由调用
+  方为每个 worker 绑定独立的 State/碰撞上下文；调度器不访问 Qt/UI，也不复制或
+  修改 live WorkCell。
+- 调度器支持 `parallelism=1` 串行基线和 `2/N` 候选级并行；每个任务用唯一
+  `stableIndex` 标识，worker 完成顺序不参与结果身份，join 后统一按 stable index
+  升序合并。缺少 evaluator、抛出标准/未知异常和 evaluator 返回 Failed 都只影响
+  当前候选并保留诊断；取消只阻止领取尚未启动的任务，已经启动的 evaluator 自行
+  完成或通过既有取消协议退出，已完成结果始终保留。
+- 所有新增接口、异常隔离、取消边界和线程所有权说明均使用详细中文注释；UI
+  进度更新明确留给上层 queued signal，不在 worker 中触碰 QObject。
+- RED evidence: S57 测试先因 `CandidateEvaluationScheduler.hpp` 缺失而构建失败。
+  GREEN evidence: VS x64/MSVC Debug 构建通过；在 `QT_QPA_PLATFORM=windows` 下，
+  绝对路径 `candidate_evaluation_scheduler` focused suite 连续重复 10 次均退出
+  0。该 suite 覆盖串/并行结果一致、完成顺序扰动后的稳定合并、worker 线程隔离、
+  重复 stable index 拒绝、异常单候选隔离和取消停止新任务。相邻
+  `independent_final_verifier`、`local_search`、`elite_selector`、
+  `hybrid_optimizer` 四项也分别退出 0；CTest 注册列出全部 5 项，定向 CTest
+  运行通过 5/5。

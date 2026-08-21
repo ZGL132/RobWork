@@ -35,6 +35,9 @@ if(build)
         EliteSelector.cpp
         HybridOptimizer.cpp
         LocalSearch.cpp
+        FinalValidationPlan.cpp
+        IndependentFinalVerifier.cpp
+        CandidateEvaluationScheduler.cpp
         CacheKey.cpp
         EvaluationCache.cpp
         DeterministicSeed.cpp
@@ -122,6 +125,9 @@ if(build)
         EliteSelector.hpp
         HybridOptimizer.hpp
         LocalSearch.hpp
+        FinalValidationPlan.hpp
+        IndependentFinalVerifier.hpp
+        CandidateEvaluationScheduler.hpp
         CacheKey.hpp
         EvaluationCache.hpp
         DeterministicSeed.hpp
@@ -459,6 +465,24 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_local_search_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_independent_final_verifier_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> independent_final_verifier
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_independent_final_verifier_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_candidate_evaluation_scheduler_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> candidate_evaluation_scheduler
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_candidate_evaluation_scheduler_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

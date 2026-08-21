@@ -13,6 +13,8 @@
 #include "EliteSelector.hpp"
 #include "HybridOptimizer.hpp"
 #include "LocalSearch.hpp"
+#include "IndependentFinalVerifier.hpp"
+#include "CandidateEvaluationScheduler.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
@@ -164,6 +166,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <chrono>
+#include <stdexcept>
 #include <limits>
 #include <cstdlib>
 #include <memory>
@@ -889,6 +893,211 @@ static void testLocalSearch()
         callbacks);
     REQUIRE(canceled.canceled);
     REQUIRE(canceled.evaluatedCount == 0);
+
+    std::printf("PASSED\n");
+}
+
+static rws::CandidateResult makeFinalVerificationCandidate(
+    const char* id,
+    rws::Feasibility feasibility = rws::Feasibility::Feasible,
+    rws::AnalysisEvidenceStage stage = rws::AnalysisEvidenceStage::Verified)
+{
+    rws::CandidateResult result = makeEliteCandidate(id, feasibility, stage, 2.0, {});
+    result.lifecycle = rws::CandidateLifecycle::Completed;
+    return result;
+}
+
+static void testIndependentFinalVerifier()
+{
+    std::printf("testIndependentFinalVerifier ... ");
+
+    const auto plan = rws::FinalValidationPlan::create(
+        "search-plan-fingerprint", {"final-seed-a", "final-seed-b"});
+    REQUIRE(plan.ok);
+    REQUIRE(!plan.plan.fingerprint.empty());
+    REQUIRE(plan.plan.fingerprint != plan.plan.searchPlanFingerprint);
+    const auto repeated = rws::FinalValidationPlan::create(
+        "search-plan-fingerprint", {"final-seed-a", "final-seed-b"});
+    REQUIRE(repeated.ok);
+    REQUIRE(repeated.plan.fingerprint == plan.plan.fingerprint);
+
+    const rws::CandidateResult searchResult = makeFinalVerificationCandidate(
+        "candidate", rws::Feasibility::Feasible, rws::AnalysisEvidenceStage::Quick);
+    int calls = 0;
+    const auto evaluator = [&calls](const std::string& seed,
+                                     rws::AnalysisEvidenceStage stage) {
+        ++calls;
+        REQUIRE(stage == rws::AnalysisEvidenceStage::Verified);
+        rws::FinalEvaluationSample sample;
+        sample.evidenceKey = seed + "-independent-evidence";
+        sample.result = makeFinalVerificationCandidate(seed.c_str());
+        return sample;
+    };
+
+    const auto complete = rws::IndependentFinalVerifier::verify(
+        plan.plan, searchResult, {}, evaluator);
+    REQUIRE(calls == 2);
+    REQUIRE(complete.status == rws::FinalValidationStatus::Complete);
+    REQUIRE(complete.requestedCount == 2);
+    REQUIRE(complete.completedCount == 2);
+    REQUIRE(complete.newEvidenceCount == 2);
+    REQUIRE(complete.eligibleForFinalBest());
+    REQUIRE(complete.searchResult.evidenceStage == rws::AnalysisEvidenceStage::Quick);
+    REQUIRE(complete.finalResult.evidenceStage == rws::AnalysisEvidenceStage::Verified);
+    REQUIRE(complete.finalResult.feasibility == rws::Feasibility::Feasible);
+
+    // 与搜索阶段完全相同的确定性证据不能再次伪造新的置信度。
+    const auto duplicate = rws::IndependentFinalVerifier::verify(
+        plan.plan, searchResult, {"final-seed-a-independent-evidence"}, evaluator);
+    REQUIRE(duplicate.completedCount == 2);
+    REQUIRE(duplicate.newEvidenceCount == 1);
+    REQUIRE(duplicate.status == rws::FinalValidationStatus::Incomplete);
+    REQUIRE(duplicate.finalResult.feasibility == rws::Feasibility::DataInsufficient);
+    REQUIRE(!duplicate.eligibleForFinalBest());
+
+    // 任一独立验证失败都会阻止 final best，即使搜索阶段本身是可行的。
+    const auto failure = rws::IndependentFinalVerifier::verify(
+        plan.plan, searchResult, {},
+        [](const std::string& seed, rws::AnalysisEvidenceStage) {
+            rws::FinalEvaluationSample sample;
+            sample.evidenceKey = seed + "-failure-evidence";
+            sample.result = makeFinalVerificationCandidate(
+                seed.c_str(), seed == "final-seed-b" ? rws::Feasibility::Infeasible
+                                                       : rws::Feasibility::Feasible);
+            return sample;
+        });
+    REQUIRE(failure.status == rws::FinalValidationStatus::Failed);
+    REQUIRE(failure.finalResult.feasibility == rws::Feasibility::Infeasible);
+    REQUIRE(!failure.eligibleForFinalBest());
+
+    // 取消发生在 seed 批次之间时，保留已完成样本但标记为不完整。
+    bool cancel = false;
+    rws::IndependentFinalCallbacks callbacks;
+    callbacks.isCancellationRequested = [&cancel]() { return cancel; };
+    const auto canceled = rws::IndependentFinalVerifier::verify(
+        plan.plan, searchResult, {},
+        [&cancel](const std::string& seed, rws::AnalysisEvidenceStage) {
+            rws::FinalEvaluationSample sample;
+            sample.evidenceKey = seed + "-cancel-evidence";
+            sample.result = makeFinalVerificationCandidate(seed.c_str());
+            cancel = true;
+            return sample;
+        },
+        callbacks);
+    REQUIRE(canceled.canceled);
+    REQUIRE(canceled.status == rws::FinalValidationStatus::Incomplete);
+    REQUIRE(canceled.completedCount == 1);
+    REQUIRE(!canceled.eligibleForFinalBest());
+
+    std::printf("PASSED\n");
+}
+
+static void testCandidateEvaluationScheduler()
+{
+    std::printf("testCandidateEvaluationScheduler ... ");
+
+    const std::thread::id callerThread = std::this_thread::get_id();
+    std::mutex threadMutex;
+    std::set<std::thread::id> workerThreads;
+    std::mutex completionMutex;
+    std::vector<std::size_t> completionOrder;
+    std::vector<rws::CandidateEvaluationTask> tasks;
+    for (std::size_t index = 0; index < 6; ++index) {
+        rws::CandidateEvaluationTask task;
+        task.stableIndex = index;
+        task.evaluate = [&, index](std::size_t) {
+            {
+                std::lock_guard<std::mutex> lock(threadMutex);
+                workerThreads.insert(std::this_thread::get_id());
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds((5 - index) * 2));
+            {
+                std::lock_guard<std::mutex> lock(completionMutex);
+                completionOrder.push_back(index);
+            }
+            rws::CandidateResult result = makeFinalVerificationCandidate(
+                (std::string("candidate-") + std::to_string(index)).c_str());
+            result.representativeQ = {static_cast<double>(index)};
+            return result;
+        };
+        tasks.push_back(std::move(task));
+    }
+
+    rws::CandidateEvaluationSchedulerConfig serialConfig;
+    serialConfig.parallelism = 1;
+    const auto serial = rws::CandidateEvaluationScheduler::run(tasks, serialConfig);
+    REQUIRE(serial.results.size() == tasks.size());
+    REQUIRE(serial.results.front().stableIndex == 0);
+    REQUIRE(serial.results.back().stableIndex == 5);
+    REQUIRE(serial.failedCount == 0);
+    REQUIRE(workerThreads.size() == 1);
+    REQUIRE(*workerThreads.begin() != callerThread);
+
+    rws::CandidateEvaluationSchedulerConfig parallelConfig;
+    parallelConfig.parallelism = 3;
+    workerThreads.clear();
+    completionOrder.clear();
+    const auto parallel = rws::CandidateEvaluationScheduler::run(tasks, parallelConfig);
+    REQUIRE(parallel.results.size() == serial.results.size());
+    REQUIRE(parallel.results.front().stableIndex == 0);
+    REQUIRE(parallel.results.back().stableIndex == 5);
+    for (std::size_t i = 0; i < serial.results.size(); ++i) {
+        REQUIRE(parallel.results[i].stableIndex == serial.results[i].stableIndex);
+        REQUIRE(parallel.results[i].result.representativeQ ==
+                serial.results[i].result.representativeQ);
+    }
+    REQUIRE(workerThreads.size() >= 2);
+    REQUIRE(workerThreads.size() <= 3);
+    REQUIRE(completionOrder.size() == tasks.size());
+    std::sort(completionOrder.begin(), completionOrder.end());
+    for (std::size_t index = 0; index < tasks.size(); ++index)
+        REQUIRE(completionOrder[index] == index);
+
+    // 稳定索引重复时立即拒绝，避免结果槽位和审计身份发生歧义。
+    std::vector<rws::CandidateEvaluationTask> duplicateTasks = tasks;
+    duplicateTasks[1].stableIndex = duplicateTasks[0].stableIndex;
+    const auto duplicate = rws::CandidateEvaluationScheduler::run(
+        duplicateTasks, parallelConfig);
+    REQUIRE(duplicate.results.empty());
+    REQUIRE(!duplicate.diagnostic.empty());
+
+    // worker 异常只能污染当前候选，不得破坏其余任务和稳定索引排序。
+    tasks[2].evaluate = [](std::size_t) -> rws::CandidateResult {
+        throw std::runtime_error("synthetic worker failure");
+    };
+    const auto failure = rws::CandidateEvaluationScheduler::run(tasks, parallelConfig);
+    REQUIRE(failure.results.size() == tasks.size());
+    REQUIRE(failure.failedCount == 1);
+    REQUIRE(failure.results[2].stableIndex == 2);
+    REQUIRE(failure.results[2].result.lifecycle == rws::CandidateLifecycle::Failed);
+    REQUIRE(failure.results[2].diagnostic.find("synthetic worker failure") != std::string::npos);
+    REQUIRE(failure.results[3].result.lifecycle == rws::CandidateLifecycle::Completed);
+
+    // 取消只阻止尚未启动的任务；已经完成的结果保留，结果仍按 stable index 合并。
+    bool cancel = false;
+    std::size_t started = 0;
+    rws::CandidateEvaluationSchedulerCallbacks callbacks;
+    callbacks.isCancellationRequested = [&cancel]() { return cancel; };
+    rws::CandidateEvaluationSchedulerConfig cancelConfig;
+    cancelConfig.parallelism = 1;
+    std::vector<rws::CandidateEvaluationTask> cancelTasks;
+    for (std::size_t index = 0; index < 4; ++index) {
+        rws::CandidateEvaluationTask task;
+        task.stableIndex = index;
+        task.evaluate = [&, index](std::size_t) {
+            ++started;
+            cancel = true;
+            return makeFinalVerificationCandidate(
+                (std::string("cancel-") + std::to_string(index)).c_str());
+        };
+        cancelTasks.push_back(std::move(task));
+    }
+    const auto canceled = rws::CandidateEvaluationScheduler::run(
+        cancelTasks, cancelConfig, callbacks);
+    REQUIRE(canceled.canceled);
+    REQUIRE(canceled.results.size() == 1);
+    REQUIRE(started == 1);
+    REQUIRE(canceled.results.front().stableIndex == 0);
 
     std::printf("PASSED\n");
 }
@@ -11278,6 +11487,18 @@ int main(int argc, char** argv)
     if (suite == "local_search") {
         QCoreApplication app(argc, argv);
         testLocalSearch();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "independent_final_verifier") {
+        QCoreApplication app(argc, argv);
+        testIndependentFinalVerifier();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "candidate_evaluation_scheduler") {
+        QCoreApplication app(argc, argv);
+        testCandidateEvaluationScheduler();
         return g_testFailures == 0 ? 0 : 1;
     }
 
