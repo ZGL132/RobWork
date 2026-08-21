@@ -4,6 +4,7 @@
 #include "StructureOptimizationTypes.hpp"
 
 #include <QAbstractTableModel>
+#include <QString>
 
 namespace rws {
 
@@ -16,6 +17,7 @@ namespace rws {
  */
 class StructureConstraintTableModel : public QAbstractTableModel
 {
+    Q_OBJECT
 public:
     /**
      * @brief 表格模型列索引定义枚举。
@@ -133,6 +135,9 @@ public:
      * @return const std::vector<StructureConstraint>& 最新的约束条件列表引用
      */
     const std::vector<StructureConstraint>& constraints() const;
+
+Q_SIGNALS:
+    void editRejected(const QString& message);
 
 private:
     std::vector<StructureConstraint> _constraints; //!< 底层真正保存所有约束定义数据的容器

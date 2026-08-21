@@ -1,5 +1,7 @@
 #include "StructureConstraintTableModel.hpp"
 
+#include <cmath>
+
 using namespace rws;
 
 namespace {
@@ -18,6 +20,13 @@ QString constraintKindLabel(rws::StructureConstraintKind kind)
         case rws::StructureConstraintKind::MinimumWorkspaceCoverage: return "Minimum Workspace Coverage";
     }
     return QString();
+}
+
+bool isSafetyConstraint(const StructureConstraint& constraint)
+{
+    // 模型有效性与碰撞安全约束属于 Must 规则，不能在 UI 中降级为软约束。
+    return constraint.kind == StructureConstraintKind::ModelValid ||
+           constraint.kind == StructureConstraintKind::RequiredTaskCollisionFree;
 }
 
 } // namespace
@@ -51,6 +60,8 @@ QVariant StructureConstraintTableModel::data(const QModelIndex& index, int role)
         if (index.column() == HardColumn)
             return constraint.hard ? Qt::Checked : Qt::Unchecked;
     }
+    if (role == Qt::UserRole && index.column() == HardColumn)
+        return isSafetyConstraint(constraint);
     if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
@@ -96,6 +107,9 @@ Qt::ItemFlags StructureConstraintTableModel::flags(const QModelIndex& index) con
     Qt::ItemFlags result = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
     if (index.column() == EnabledColumn || index.column() == HardColumn)
         result |= Qt::ItemIsUserCheckable;
+    if (index.column() == HardColumn && isSafetyConstraint(
+            _constraints[static_cast<std::size_t>(index.row())]))
+        result &= ~Qt::ItemIsEditable;
     return result;
 }
 
@@ -107,17 +121,30 @@ bool StructureConstraintTableModel::setData(const QModelIndex& index, const QVar
         (role != Qt::EditRole && role != Qt::CheckStateRole))
         return false;
 
-    StructureConstraint& constraint = _constraints[static_cast<std::size_t>(index.row())];
+    StructureConstraint updated = _constraints[static_cast<std::size_t>(index.row())];
     switch (index.column()) {
-        case IdColumn: constraint.id = value.toString().toStdString(); break;
-        case LabelColumn: constraint.label = value.toString().toStdString(); break;
-        case TargetColumn: constraint.targetName = value.toString().toStdString(); break;
-        case ThresholdColumn: constraint.threshold = value.toDouble(); break;
-        case SecondaryThresholdColumn: constraint.secondaryThreshold = value.toDouble(); break;
-        case EnabledColumn: constraint.enabled = value.toBool() || value.toInt() == Qt::Checked; break;
-        case HardColumn: constraint.hard = value.toBool() || value.toInt() == Qt::Checked; break;
+        case IdColumn: updated.id = value.toString().toStdString(); break;
+        case LabelColumn: updated.label = value.toString().toStdString(); break;
+        case TargetColumn: updated.targetName = value.toString().toStdString(); break;
+        case ThresholdColumn: updated.threshold = value.toDouble(); break;
+        case SecondaryThresholdColumn: updated.secondaryThreshold = value.toDouble(); break;
+        case EnabledColumn: updated.enabled = value.toBool() || value.toInt() == Qt::Checked; break;
+        case HardColumn: updated.hard = value.toBool() || value.toInt() == Qt::Checked; break;
         default: return false;
     }
+    if (!std::isfinite(updated.threshold) || !std::isfinite(updated.secondaryThreshold)) {
+        Q_EMIT editRejected(QStringLiteral("Constraint thresholds must be finite."));
+        return false;
+    }
+    if (isSafetyConstraint(updated) && !updated.hard) {
+        Q_EMIT editRejected(QStringLiteral("Safety constraints must remain hard constraints."));
+        return false;
+    }
+    if (updated.id.empty()) {
+        Q_EMIT editRejected(QStringLiteral("Constraint ID must not be empty."));
+        return false;
+    }
+    _constraints[static_cast<std::size_t>(index.row())] = updated;
     Q_EMIT dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole, Qt::CheckStateRole});
     return true;
 }

@@ -350,6 +350,8 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
             this, &StructureOptimizerWidget::updateRunState);
     connect(_constraintModel, &QAbstractItemModel::dataChanged,
             this, &StructureOptimizerWidget::updateRunState);
+    connect(_constraintModel, &StructureConstraintTableModel::editRejected, this,
+            [this](const QString& message) { _statusLabel->setText(message); });
 
     // 表格模型的行增删和单元格编辑都会改变项目问题。保留原有 updateRunState 连接，
     // 并额外集中发出文档通知，交由插件进行快照比较而不是盲目置脏。
