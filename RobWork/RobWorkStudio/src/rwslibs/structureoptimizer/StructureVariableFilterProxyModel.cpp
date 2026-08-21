@@ -100,3 +100,20 @@ bool StructureVariableFilterProxyModel::filterAcceptsRow(
     }
     return false;
 }
+
+bool StructureVariableFilterProxyModel::lessThan(const QModelIndex& left,
+                                                 const QModelIndex& right) const
+{
+    // 排序只发生在代理模型，源变量向量顺序保持不变，避免候选绑定因展示排序漂移。
+    const QAbstractItemModel* source = sourceModel();
+    if (source == nullptr)
+        return false;
+    const QVariant leftValue = source->data(left, Qt::EditRole);
+    const QVariant rightValue = source->data(right, Qt::EditRole);
+    if (leftValue.canConvert<double>() && rightValue.canConvert<double>())
+        return leftValue.toDouble() < rightValue.toDouble();
+    const QString leftText = source->data(left, Qt::DisplayRole).toString();
+    const QString rightText = source->data(right, Qt::DisplayRole).toString();
+    const int comparison = QString::compare(leftText, rightText, Qt::CaseInsensitive);
+    return comparison == 0 ? left.row() < right.row() : comparison < 0;
+}

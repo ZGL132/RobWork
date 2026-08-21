@@ -638,6 +638,9 @@ QWidget* StructureOptimizerWidget::createVariablePage()
     _variableView->setAlternatingRowColors(true);
     _variableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     _variableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    // 允许用户排序展示行；所有编辑/删除仍通过代理到源模型映射完成。
+    _variableView->setSortingEnabled(true);
+    _variableView->sortByColumn(StructureVariableTableModel::IdColumn, Qt::AscendingOrder);
     _variableView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     QHeaderView* header = _variableView->horizontalHeader();
@@ -1120,7 +1123,8 @@ void StructureOptimizerWidget::updateRunState()
     const StructureOptimizationProblem problem = collectProblem();
     const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason);
     const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
-                            !problem.context.modelSpec.transformJoints.empty();
+                            (!problem.context.modelSpec.transformJoints.empty() ||
+                             !problem.context.modelSpec.dhJoints.empty());
     _startButton->setEnabled(runnable && !_controller->isRunning() && !_baselineOnlyRunning);
     _applyTemplateButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
     _preflightButton->setEnabled(!_controller->isRunning() && !_baselineOnlyRunning);
