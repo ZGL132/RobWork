@@ -1,6 +1,9 @@
 #include "OptimizationPreflight.hpp"
 
-#include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizationValidation.hpp"
+
+#include <cmath>
+#include <limits>
 
 namespace rws {
 
@@ -42,20 +45,43 @@ OptimizationPreflightResult OptimizationPreflight::run(const OptimizationPreflig
 OptimizationPreflightResult OptimizationPreflight::run(const StructureOptimizationProblem& problem)
 {
     OptimizationPreflightResult result;
-    for (const StructurePreflightFinding& finding : StructureOptimizationUiLogic::preflight(problem)) {
-        const OptimizationPreflightSeverity severity = finding.severity == AnalysisStatus::Fail
-                                                            ? OptimizationPreflightSeverity::Error
-                                                            : finding.severity == AnalysisStatus::Warning
-                                                                  ? OptimizationPreflightSeverity::Warning
-                                                                  : OptimizationPreflightSeverity::Info;
-        result.findings.push_back({severity, finding.code, {}, {}, finding.message, finding.remediation});
+    // 核心门禁只调用核心验证器；UI 不得重新实现一套可运行性判断。
+    for (const AnalysisWarning& warning : StructureOptimizationValidation::validateProblem(problem)) {
+        const OptimizationPreflightSeverity severity =
+            warning.severity == AnalysisStatus::Fail
+                ? OptimizationPreflightSeverity::Error
+                : warning.severity == AnalysisStatus::Warning
+                      ? OptimizationPreflightSeverity::Warning
+                      : OptimizationPreflightSeverity::Info;
+        result.findings.push_back({severity, warning.code, {}, {}, warning.message,
+                                   "Review the highlighted optimization input."});
     }
+
     OptimizationPreflightInput input;
-    input.hasModel = !problem.context.modelSpec.transformJoints.empty();
+    input.hasModel = !problem.context.modelSpec.transformJoints.empty() ||
+                     !problem.context.modelSpec.dhJoints.empty();
     input.independentVariableCount = 0;
-    for (const auto& variable : problem.variables) if (variable.enabled) ++input.independentVariableCount;
+    long double gridSize = 1.0L;
+    bool hasSearchDimension = false;
+    for (const auto& variable : problem.variables) {
+        if (variable.enabled) {
+            ++input.independentVariableCount;
+            if (std::isfinite(variable.minimum) && std::isfinite(variable.maximum) &&
+                std::isfinite(variable.step) && variable.step > 0.0 &&
+                variable.maximum >= variable.minimum) {
+                hasSearchDimension = true;
+                const long double values =
+                    std::floor((static_cast<long double>(variable.maximum) - variable.minimum) /
+                               variable.step) + 1.0L;
+                gridSize = std::min(gridSize * std::max(values, 1.0L),
+                                    static_cast<long double>(std::numeric_limits<long long>::max()));
+            }
+        }
+    }
+    input.estimatedGridSize = hasSearchDimension ? static_cast<long long>(gridSize) : 1;
     input.candidateCount = problem.run.candidateCount;
     input.finalVerificationCount = problem.run.finalVerificationCount;
+    // 运行数量和变量数量是结构化门禁的一部分，Start 与 banner 共享同一结果。
     const OptimizationPreflightResult basic = run(input);
     result.findings.insert(result.findings.end(), basic.findings.begin(), basic.findings.end());
     result.canStart = true;

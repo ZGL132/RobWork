@@ -1,6 +1,6 @@
 #include "StructureOptimizationUiLogic.hpp"
 
-#include "StructureOptimizationValidation.hpp"
+#include "OptimizationPreflight.hpp"
 
 #include <cmath>
 #include <limits>
@@ -239,36 +239,18 @@ std::vector<StructurePreflightFinding>
 StructureOptimizationUiLogic::preflight(const StructureOptimizationProblem& problem)
 {
     std::vector<StructurePreflightFinding> findings;
-    for (const AnalysisWarning& warning : StructureOptimizationValidation::validateProblem(problem)) {
-        findings.push_back({warning.severity, warning.code, warning.message,
-                            remediationFor(warning.code)});
+    // UI 只把核心结构化结果投影成旧表格需要的类型，避免 Start/banner 分叉。
+    const OptimizationPreflightResult core = OptimizationPreflight::run(problem);
+    for (const PreflightFinding& finding : core.findings) {
+        const AnalysisStatus severity = finding.severity == OptimizationPreflightSeverity::Error
+                                            ? AnalysisStatus::Fail
+                                            : finding.severity == OptimizationPreflightSeverity::Warning
+                                                  ? AnalysisStatus::Warning
+                                                  : AnalysisStatus::Pass;
+        findings.push_back({severity, finding.code, finding.message,
+                            finding.remediation.empty() ? remediationFor(finding.code)
+                                                        : finding.remediation});
     }
-
-    long double combinations = 1.0L;
-    bool hasSearchDimension = false;
-    for (const StructureDesignVariable& variable : problem.variables) {
-        if (!variable.enabled || !std::isfinite(variable.minimum) ||
-            !std::isfinite(variable.maximum) || !std::isfinite(variable.step) ||
-            variable.step <= 0.0 || variable.maximum < variable.minimum)
-            continue;
-        hasSearchDimension = true;
-        const long double values = std::floor(
-            (static_cast<long double>(variable.maximum) - variable.minimum) /
-            variable.step) + 1.0L;
-        combinations = std::min(combinations * std::max(values, 1.0L),
-                                static_cast<long double>(std::numeric_limits<long long>::max()));
-    }
-    if (hasSearchDimension && combinations > 1000000.0L) {
-        std::ostringstream message;
-        message << "The enabled variable ranges contain approximately "
-                << static_cast<long long>(combinations)
-                << " grid combinations; the selected run will use sampling instead.";
-        findings.push_back({AnalysisStatus::Warning,
-                            "StructureOptimization.Run.SearchSpaceLarge",
-                            message.str(),
-                            "Narrow the ranges, increase the step, or use the Quick preset."});
-    }
-
     return findings;
 }
 
