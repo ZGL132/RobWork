@@ -31,6 +31,7 @@ if(build)
         OrientationCoverageStage.cpp
         KinematicMetricAggregator.cpp
         CandidateResult.cpp
+        QuickScreeningPolicy.cpp
         CacheKey.cpp
         EvaluationCache.cpp
         DeterministicSeed.cpp
@@ -114,6 +115,7 @@ if(build)
         OrientationCoverageStage.hpp
         KinematicMetricAggregator.hpp
         CandidateResult.hpp
+        QuickScreeningPolicy.hpp
         CacheKey.hpp
         EvaluationCache.hpp
         DeterministicSeed.hpp
@@ -420,6 +422,15 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_candidate_result_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_quick_screening_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> quick_screening
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_quick_screening_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

@@ -9,6 +9,7 @@
 #include "OrientationCoverageStage.hpp"
 #include "KinematicMetricAggregator.hpp"
 #include "CandidateResult.hpp"
+#include "QuickScreeningPolicy.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
@@ -477,6 +478,101 @@ static void testCandidateResultAssembly()
     insufficient.feasibility = rws::Feasibility::DataInsufficient;
     const auto insufficientResult = rws::CandidateResultAssembler::assemble(insufficient);
     REQUIRE(rws::CandidateResultAssembler::betterForRanking(result, insufficientResult));
+    std::printf("PASSED\n");
+}
+
+// S53 快速保守筛选：硬证据可以拒绝，证据不足只能保留为不确定。
+static void testQuickScreeningPolicy()
+{
+    std::printf("testQuickScreeningPolicy ... ");
+
+    rws::CandidateResult candidate;
+    candidate.candidateId = "quick-1";
+    candidate.lifecycle = rws::CandidateLifecycle::Completed;
+    candidate.feasibility = rws::Feasibility::Feasible;
+    candidate.evidenceStage = rws::AnalysisEvidenceStage::Quick;
+
+    rws::QuickScreeningPolicy policy;
+    rws::QuickScreeningPolicyInput input;
+    input.candidate = &candidate;
+
+    input.compileStatus = rws::CandidateCompileStatus::CompileFailed;
+    auto screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::DefinitelyReject);
+    REQUIRE(screened.reasonCode == "COMPILE_FAILED");
+
+    input.compileStatus = rws::CandidateCompileStatus::Compiled;
+    input.invalidModel = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::DefinitelyReject);
+    REQUIRE(screened.reasonCode == "INVALID_MODEL");
+
+    input.invalidModel = false;
+    input.deterministicHardGeometryViolation = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::DefinitelyReject);
+    REQUIRE(screened.reasonCode == "HARD_GEOMETRY_VIOLATION");
+
+    input.deterministicHardGeometryViolation = false;
+    input.confirmedCollision = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::DefinitelyReject);
+    REQUIRE(screened.reasonCode == "CONFIRMED_COLLISION");
+
+    input.confirmedCollision = false;
+    input.lowSampleNoIkSolution = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.reasonCode == "LOW_SAMPLE_NO_IK_SOLUTION");
+
+    input.lowSampleNoIkSolution = false;
+    input.partial = true;
+    input.uncertainPromotionCount = 3;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.reasonCode == "PARTIAL_EVALUATION");
+    REQUIRE(screened.uncertainPromotionCount == 3);
+
+    input.partial = false;
+    input.canceled = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.reasonCode == "CANCELED_EVALUATION");
+
+    input.canceled = false;
+    candidate.completion.requestedCount = 4;
+    candidate.completion.completedCount = 2;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.reasonCode == "PARTIAL_EVALUATION");
+
+    candidate.completion.requestedCount = 0;
+    candidate.completion.completedCount = 0;
+    candidate.lifecycle = rws::CandidateLifecycle::Canceled;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.reasonCode == "CANCELED_EVALUATION");
+
+    candidate.lifecycle = rws::CandidateLifecycle::Completed;
+
+    input.canceled = false;
+    input.clearFeasibleEvidence = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Promote);
+    REQUIRE(screened.reasonCode == "CLEAR_FEASIBLE_EVIDENCE");
+    REQUIRE(screened.eligibleForFinalBest == false);
+
+    input.clearFeasibleEvidence = false;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Uncertain);
+    REQUIRE(screened.eligibleForFinalBest == false);
+
+    candidate.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    input.clearFeasibleEvidence = true;
+    screened = policy.evaluate(input);
+    REQUIRE(screened.decision == rws::QuickScreeningDecision::Promote);
+    REQUIRE(screened.eligibleForFinalBest);
+
     std::printf("PASSED\n");
 }
 
@@ -10841,6 +10937,12 @@ int main(int argc, char** argv)
     if (suite == "candidate_result") {
         QCoreApplication app(argc, argv);
         testCandidateResultAssembly();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "quick_screening") {
+        QCoreApplication app(argc, argv);
+        testQuickScreeningPolicy();
         return g_testFailures == 0 ? 0 : 1;
     }
 
