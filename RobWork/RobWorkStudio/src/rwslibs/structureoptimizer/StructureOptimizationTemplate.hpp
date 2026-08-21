@@ -2,6 +2,7 @@
 #define RWS_STRUCTUREOPTIMIZATION_STRUCTUREOPTIMIZATIONTEMPLATE_HPP
 
 #include "StructureOptimizationTypes.hpp"
+#include "DesignVariable.hpp"
 
 #include <string>
 #include <vector>
@@ -24,6 +25,27 @@ struct StructureOptimizationTemplateInfo
     std::string description;
 };
 
+/**
+ * Core-only design-space intent.  This is intentionally separate from the
+ * legacy objective-weight presets above, which remain the Widget's API.
+ */
+enum class DesignIntentTemplateKind
+{
+    KinematicBasic,
+    KinematicWithJointAxis,
+    KinematicWithBaseTcp,
+    FullKinematicDesign
+};
+
+struct DesignIntentTemplateInfo
+{
+    DesignIntentTemplateKind kind = DesignIntentTemplateKind::KinematicBasic;
+    std::string id;
+    std::string version;
+    std::string label;
+    std::vector< SemanticKind > semanticKinds;
+};
+
 class StructureOptimizationTemplate
 {
 public:
@@ -34,6 +56,9 @@ public:
                       std::string* error = nullptr);
 
     static const char* id(StructureOptimizationTemplateKind kind);
+
+    static std::vector< DesignIntentTemplateInfo > availableDesignIntents();
+    static const DesignIntentTemplateInfo* designIntent(DesignIntentTemplateKind kind);
 };
 
 } // namespace rws

@@ -61,6 +61,45 @@ std::vector<ObjectiveTerm> objectivesFor(
     }
 }
 
+const std::vector< DesignIntentTemplateInfo >& designIntentDefinitions()
+{
+    static const std::vector< DesignIntentTemplateInfo > definitions = {
+        {DesignIntentTemplateKind::KinematicBasic, "kinematic-basic", "1", "Kinematic Basic",
+         {SemanticKind::LinkLength, SemanticKind::JointOriginOffsetX,
+          SemanticKind::JointOriginOffsetY, SemanticKind::JointOriginOffsetZ,
+          SemanticKind::JointOffsetAlongAxis}},
+        {DesignIntentTemplateKind::KinematicWithJointAxis, "kinematic-with-joint-axis", "1",
+         "Kinematic With Joint Axis",
+         {SemanticKind::JointAxisTiltU, SemanticKind::JointAxisTiltV}},
+        {DesignIntentTemplateKind::KinematicWithBaseTcp, "kinematic-with-base-tcp", "1",
+         "Kinematic With Base/TCP",
+         {SemanticKind::BaseTx, SemanticKind::BaseTy, SemanticKind::BaseTz,
+          SemanticKind::BaseRotationVectorX, SemanticKind::BaseRotationVectorY,
+          SemanticKind::BaseRotationVectorZ, SemanticKind::TcpTx, SemanticKind::TcpTy,
+          SemanticKind::TcpTz, SemanticKind::TcpRotationVectorX,
+          SemanticKind::TcpRotationVectorY, SemanticKind::TcpRotationVectorZ}},
+        {DesignIntentTemplateKind::FullKinematicDesign, "full-kinematic-design", "1",
+         "Full Kinematic Design",
+         {SemanticKind::LinkLength, SemanticKind::JointOriginOffsetX,
+          SemanticKind::JointOriginOffsetY, SemanticKind::JointOriginOffsetZ,
+          SemanticKind::JointOffsetAlongAxis, SemanticKind::JointAxisTiltU,
+          SemanticKind::JointAxisTiltV,
+          SemanticKind::BaseTx, SemanticKind::BaseTy, SemanticKind::BaseTz,
+          SemanticKind::BaseRotationVectorX, SemanticKind::BaseRotationVectorY,
+          SemanticKind::BaseRotationVectorZ, SemanticKind::TcpTx, SemanticKind::TcpTy,
+          SemanticKind::TcpTz, SemanticKind::TcpRotationVectorX,
+          SemanticKind::TcpRotationVectorY, SemanticKind::TcpRotationVectorZ,
+          SemanticKind::FlangeTx, SemanticKind::FlangeTy, SemanticKind::FlangeTz,
+          SemanticKind::FlangeRotationVectorX, SemanticKind::FlangeRotationVectorY,
+          SemanticKind::FlangeRotationVectorZ, SemanticKind::LinkRadius,
+          SemanticKind::LinkWidth, SemanticKind::LinkHeight,
+          SemanticKind::LinkCrossSectionX, SemanticKind::LinkCrossSectionY,
+          SemanticKind::LinkWallThickness, SemanticKind::LinkScale,
+          SemanticKind::ParameterizedMaterial}}
+    };
+    return definitions;
+}
+
 } // namespace
 
 std::vector<StructureOptimizationTemplateInfo>
@@ -91,6 +130,22 @@ const char* StructureOptimizationTemplate::id(StructureOptimizationTemplateKind 
     default:
         return "balanced";
     }
+}
+
+std::vector< DesignIntentTemplateInfo > StructureOptimizationTemplate::availableDesignIntents()
+{
+    return designIntentDefinitions();
+}
+
+const DesignIntentTemplateInfo* StructureOptimizationTemplate::designIntent(
+    DesignIntentTemplateKind kind)
+{
+    const std::vector< DesignIntentTemplateInfo >& definitions = designIntentDefinitions();
+    const auto found = std::find_if(
+        definitions.begin(), definitions.end(), [kind](const DesignIntentTemplateInfo& definition) {
+            return definition.kind == kind;
+        });
+    return found == definitions.end() ? nullptr : &*found;
 }
 
 bool StructureOptimizationTemplate::apply(StructureOptimizationTemplateKind kind,
