@@ -100,6 +100,9 @@ if(build)
         StructureSensitivityAnalyzer.cpp
         StructureOptimizationJson.cpp
         StructureOptimizationMigration.cpp
+        OptimizationRunSnapshot.cpp
+        OptimizationRunJson.cpp
+        OptimizationRunStore.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -203,6 +206,9 @@ if(build)
         StructureSensitivityAnalyzer.hpp
         StructureOptimizationJson.hpp
         StructureOptimizationMigration.hpp
+        OptimizationRunSnapshot.hpp
+        OptimizationRunJson.hpp
+        OptimizationRunStore.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
@@ -519,6 +525,20 @@ if(build)
         add_test(
             NAME sdurws_structureoptimizer_legacy_json_migration_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> legacy_json_migration
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_run_snapshot_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> run_snapshot
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_run_store_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> run_store
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_run_snapshot_test
+            sdurws_structureoptimizer_run_store_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
         set_tests_properties(
             sdurws_structureoptimizer_legacy_json_migration_test

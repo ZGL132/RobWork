@@ -78,6 +78,9 @@
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationDocument.hpp"
 #include "StructureOptimizationMigration.hpp"
+#include "OptimizationRunSnapshot.hpp"
+#include "OptimizationRunJson.hpp"
+#include "OptimizationRunStore.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11362,6 +11365,74 @@ static void testManagedRobotProjectRequiresPublishedWorkCell()
     studio.close();
 }
 
+// S62：运行快照必须冻结输入，候选结果必须是独立的项目相对资源。
+static void testOptimizationRunSnapshot()
+{
+    std::printf("testOptimizationRunSnapshot ... ");
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "snapshot";
+    problem.context.robotName = "robot";
+    problem.run.randomSeed = 42;
+    problem.run.candidateCount = 7;
+
+    rws::OptimizationRunSnapshot snapshot = rws::makeOptimizationRunSnapshot(
+        "run-42", problem, "{}", "plan", "{}", "final", "model", "environment",
+        "requirements", "tool", "adapters");
+    REQUIRE(rws::optimizationRunSnapshotValid(snapshot));
+    REQUIRE(snapshot.randomSeed == 42);
+    REQUIRE(snapshot.requestedCandidateCount == 7);
+    REQUIRE(snapshot.currentEnvelopeJson.find("baseDirectory") == std::string::npos);
+
+    const std::string json = rws::optimizationRunSnapshotToJson(snapshot);
+    rws::OptimizationRunSnapshot parsed;
+    std::string error;
+    REQUIRE(rws::optimizationRunSnapshotFromJson(json, parsed, &error));
+    REQUIRE(parsed.randomSeed == 42);
+    REQUIRE(parsed.input.modelFingerprint == "model");
+    REQUIRE(!rws::optimizationRunSnapshotStatusFromString("Unknown", parsed.status, &error));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testOptimizationRunStore()
+{
+    std::printf("testOptimizationRunStore ... ");
+    QTemporaryDir temporary;
+    REQUIRE(temporary.isValid());
+    rws::OptimizationRunStore store(temporary.path().toStdString());
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "store";
+    problem.context.robotName = "robot";
+    rws::OptimizationRunSnapshot snapshot = rws::makeOptimizationRunSnapshot(
+        "store-run", problem, "{}", "plan", "{}", "final", "model", "environment",
+        "requirements", "tool", "adapters");
+    rws::CandidateResult candidate;
+    candidate.candidateId = "candidate-a";
+    rws::OptimizationRunResourceRef ref;
+    std::string error;
+    REQUIRE(store.publishCandidateResult(snapshot.runId, candidate, ref, &error));
+    snapshot.candidateResults.push_back(ref);
+    const bool saved = store.saveSnapshot(snapshot, &error);
+    REQUIRE(saved);
+    if (!saved) std::printf("(%s) ", error.c_str());
+    rws::OptimizationRunSnapshot loaded;
+    REQUIRE(store.loadSnapshot(snapshot.runId, loaded, &error));
+    const rws::OptimizationResourceLoadResult resource = store.loadCandidateResult(ref);
+    REQUIRE(resource.availability == rws::OptimizationResourceAvailability::Available);
+    REQUIRE(resource.candidate.candidateId == "candidate-a");
+    snapshot.status = rws::OptimizationRunSnapshotStatus::Completed;
+    snapshot.completedAt = "2026-08-21T00:00:00Z";
+    snapshot.generatedCandidateCount = snapshot.requestedCandidateCount;
+    snapshot.completedCandidateCount = snapshot.requestedCandidateCount;
+    REQUIRE(store.saveSnapshot(snapshot, &error));
+    snapshot.randomSeed = 43;
+    REQUIRE(!store.saveSnapshot(snapshot, &error));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // S61：旧文档只能迁入当前权威 Envelope。迁移不回写输入，也不能让未绑定变量
 // 在迁移过程中被静默启用；legacy 字段仅作为审计扩展保留。
 static void testLegacyJsonMigration()
@@ -11862,6 +11933,18 @@ int main(int argc, char** argv)
     if (suite == "legacy_json_migration") {
         QCoreApplication app(argc, argv);
         testLegacyJsonMigration();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "run_snapshot") {
+        QCoreApplication app(argc, argv);
+        testOptimizationRunSnapshot();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "run_store") {
+        QCoreApplication app(argc, argv);
+        testOptimizationRunStore();
         return g_testFailures == 0 ? 0 : 1;
     }
 
