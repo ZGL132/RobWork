@@ -86,6 +86,7 @@
 #include "Phase8Acceptance.hpp"
 #include "Phase8PerformanceAudit.hpp"
 #include "Phase8ResourceAudit.hpp"
+#include "Phase8ReleaseManifest.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11512,6 +11513,58 @@ static void testPhase8ResourceAudit()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 8/S84：验证发布清单字段完整、资源 ID 可移植且 JSON 序列化稳定。
+static void testPhase8ReleaseManifest()
+{
+    std::printf("testPhase8ReleaseManifest ... ");
+    rws::Phase8ReleaseManifest manifest;
+    manifest.productVersion = "8.0.0";
+    manifest.evaluatorId = "structure.kinematics";
+    manifest.evaluatorVersion = "1";
+    manifest.buildIdentifier = "robwork-ci-20260822";
+    manifest.totalRunSeconds = 12.5;
+    rws::Phase8ReleaseArtifact report;
+    report.id = "report";
+    report.projectResourceId = "structure-optimization/report.json";
+    report.fingerprint = "report-fingerprint";
+    report.sizeMegabytes = 0.25;
+    rws::Phase8ReleaseArtifact model = report;
+    model.id = "model";
+    model.projectResourceId = "structure-optimization/candidate.main";
+    model.fingerprint = "model-fingerprint";
+    manifest.artifacts = {report, model};
+
+    const rws::Phase8ReleaseAuditResult audited =
+        rws::Phase8ReleaseManifestAudit::audit(manifest);
+    REQUIRE(audited.passed);
+    REQUIRE(audited.serializable);
+    REQUIRE(audited.stableJson.find("{\"artifacts\"") == 0);
+
+    rws::Phase8ReleaseManifest reordered = manifest;
+    std::reverse(reordered.artifacts.begin(), reordered.artifacts.end());
+    const rws::Phase8ReleaseAuditResult reorderedAudit =
+        rws::Phase8ReleaseManifestAudit::audit(reordered);
+    REQUIRE(reorderedAudit.passed);
+    REQUIRE(reorderedAudit.stableJson == audited.stableJson);
+
+    rws::Phase8ReleaseManifest invalid = manifest;
+    invalid.artifacts.front().projectResourceId = "C:/temp/report.json";
+    const rws::Phase8ReleaseAuditResult invalidPath =
+        rws::Phase8ReleaseManifestAudit::audit(invalid);
+    REQUIRE(!invalidPath.passed);
+    REQUIRE(invalidPath.hasCode("Phase8.Release.ResourceIdNotRelative"));
+
+    invalid = manifest;
+    invalid.totalRunSeconds = std::numeric_limits<double>::quiet_NaN();
+    const rws::Phase8ReleaseAuditResult invalidNumber =
+        rws::Phase8ReleaseManifestAudit::audit(invalid);
+    REQUIRE(!invalidNumber.passed);
+    REQUIRE(invalidNumber.hasCode("Phase8.Release.NonFiniteNumber"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testOptimizationRunStore()
 {
     std::printf("testOptimizationRunStore ... ");
@@ -12156,6 +12209,12 @@ int main(int argc, char** argv)
     if (suite == "phase8_resource") {
         QCoreApplication app(argc, argv);
         testPhase8ResourceAudit();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "phase8_manifest") {
+        QCoreApplication app(argc, argv);
+        testPhase8ReleaseManifest();
         return g_testFailures == 0 ? 0 : 1;
     }
 

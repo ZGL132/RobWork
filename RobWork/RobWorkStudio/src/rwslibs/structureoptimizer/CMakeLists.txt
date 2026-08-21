@@ -108,6 +108,7 @@ if(build)
         Phase8Acceptance.cpp
         Phase8PerformanceAudit.cpp
         Phase8ResourceAudit.cpp
+        Phase8ReleaseManifest.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -219,6 +220,7 @@ if(build)
         Phase8Acceptance.hpp
         Phase8PerformanceAudit.hpp
         Phase8ResourceAudit.hpp
+        Phase8ReleaseManifest.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
