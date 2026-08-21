@@ -8,12 +8,14 @@
 
 namespace rws {
 
+struct KinematicImportRequest;
+
 /**
  * @brief 结构优化项目磁盘文件持久化适配器类。
- * 
- * 负责结构优化项目工程文件 (通常为 .sop.json 格式) 的磁盘读取 (load)、写入 (save) 
+ *
+ * 负责结构优化项目工程文件 (通常为 .sop.json 格式) 的磁盘读取 (load)、写入 (save)
  * 以及标准 JSON 字节流序列化 (serialize)。
- * 
+ *
  * 设计哲学：
  * 1. 强一致性路径：序列化逻辑集中收口于 serializeProject()，确保 UI 脏状态比较 (Dirty-State Check)
  *    与实际写盘使用相同的路径转换与 Schema 版本；
@@ -24,13 +26,13 @@ class StructureOptimizationProjectAdapter
 public:
     /**
      * @brief 从指定磁盘路径加载结构优化工程文件。
-     * 
+     *
      * 内部流程：
      *  1. 读取磁盘文件内容为 QJsonDocument；
      *  2. 校验文件 schemaVersion 版本号；
      *  3. 反序列化变量、任务点、约束、运行策略及历史候选解结果到 out 结构体中；
      *  4. 恢复用户上次在界面选中的候选解索引 selectedCandidateIndex。
-     * 
+     *
      * @param path 工程 JSON 文件的绝对路径
      * @param out [out] 用于接收反序列化还原后的结构优化问题定义结构体
      * @param selectedCandidateIndex [out] 可选输出参数，接收上次选中的候选解索引 (缺省 -1)
@@ -44,10 +46,10 @@ public:
 
     /**
      * @brief 重载版本的 loadProject，显式指定工程根目录以解析外部 CAD/模型资源相对路径。
-     * 
+     *
      * 当工程架构采用托管工程 (Managed Project) 时，使用指定的 projectRoot 作为相对路径解析基准，
      * 确保模型输出目录、CAD 几何及快照资源的绝对路径能够被一致、无缝地还原。
-     * 
+     *
      * @param path 工程 JSON 文件的绝对路径
      * @param out [out] 接收还原后的结构优化问题对象
      * @param selectedCandidateIndex [out] 接收上次选中的候选解索引
@@ -59,11 +61,17 @@ public:
                             int* selectedCandidateIndex, QString* error,
                             const QString& projectRoot);
 
+    /** Loads a project and refreshes the optional canonical shadow from an explicit source. */
+    static bool loadProject(const QString& path, const KinematicImportRequest& importRequest,
+                            StructureOptimizationProblem& out,
+                            int* selectedCandidateIndex = nullptr,
+                            QString* error = nullptr);
+
     /**
      * @brief 将当前结构优化问题及界面选择状态保存写盘为工程文件。
-     * 
+     *
      * 内部会调用 serializeProject() 生成规范 JSON 文本，并安全写回磁盘文件（包含临时文件替换机制以防落盘中断破坏原文件）。
-     * 
+     *
      * @param path 目标工程 JSON 文件的保存路径
      * @param problem 待保存的结构优化问题定义对象 (只读)
      * @param selectedCandidateIndex 当前在界面表格中选中的候选解索引 (缺省 -1)
@@ -76,12 +84,12 @@ public:
 
     /**
      * @brief 生成与 saveProject 完全一致的规范 JSON 字节流，用于项目 Provider 的脏状态快照比较。
-     * 
+     *
      * 核心设计哲学：
      * 单独公开序列化接口，而不是让 UI Widget 复制拼装逻辑！
      * 能够保证模型输出目录的相对路径转换、schemaVersion 版本标头与 UI 元数据在
      * “内存比较 (Is Dirty?)” 和 “实际写盘 (Save)” 两条路径中严格完全一致，彻底杜绝假脏状态误报。
-     * 
+     *
      * @param path 工程文件的磁盘基准路径 (用于计算相对路径转换)
      * @param problem 待序列化的结构优化问题对象
      * @param selectedCandidateIndex 当前选中的候选解索引

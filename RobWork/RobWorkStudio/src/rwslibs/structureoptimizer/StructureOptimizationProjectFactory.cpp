@@ -1,5 +1,6 @@
 #include "StructureOptimizationProjectFactory.hpp"
 
+#include "CanonicalModelShadowService.hpp"
 #include "StructureOptimizationUiLogic.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -45,6 +46,28 @@ bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
         problem.context.modelProvenance = {problem.context.sourceModelPath, fingerprint,
                                            fingerprint};
     }
+    return true;
+}
+
+bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
+                                                 const KinematicImportRequest& importRequest,
+                                                 StructureOptimizationProblem& problem,
+                                                 std::string* error)
+{
+    StructureOptimizationProblem created;
+    if (!create(spec, created, error))
+        return false;
+
+    KinematicImportRequest request = importRequest;
+    if (request.sourceSnapshot == nullptr)
+        request.sourceSnapshot = &spec;
+    if (request.sourceFingerprint.empty())
+        request.sourceFingerprint = RobotModelFingerprint::canonicalSha256(spec);
+    if (!CanonicalModelShadowService::attach(request, created, error))
+        return false;
+
+    problem = std::move(created);
+    if (error != nullptr) error->clear();
     return true;
 }
 

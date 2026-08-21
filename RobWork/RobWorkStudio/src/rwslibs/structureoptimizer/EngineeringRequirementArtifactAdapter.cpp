@@ -82,6 +82,16 @@ bool isWorld(const std::string& frame)
     return frame.empty() || frame == "WORLD";
 }
 
+const char* executionCompileStateName(RequirementExecutionCompileState value)
+{
+    switch (value) {
+    case RequirementExecutionCompileState::Included: return "Included";
+    case RequirementExecutionCompileState::Excluded: return "Excluded";
+    case RequirementExecutionCompileState::Invalid: return "Invalid";
+    }
+    return "Unknown";
+}
+
 // 把执行契约中的工艺类型枚举还原为需求域的 ProcessType，供上层通用流程使用。
 ProcessType toProcessType(RequirementExecutionProcessType value)
 {
@@ -103,29 +113,35 @@ ProcessType toProcessType(RequirementExecutionProcessType value)
 
 // 把冻结工件转换/审计为优化器可消费的编译快照（CompiledRequirementSet）。
 //  - v3 及更早：无 Verified 证据契约，覆盖盒降级为 Quick 阶段检查，仍可读取；
-//  - v4：先做执行契约一致性审计（指纹与 provenance），任一不符返回空快照，
+//  - v4：先做执行契约一致性审计（指纹与 provenance），任一不符明确返回 false，
 //    随后把执行契约中的任务/区域完整翻译为编译快照供下游生成约束与任务。
-CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifact,
-                                         std::string* error)
+bool executionSnapshot(const FrozenRequirementArtifact& artifact,
+                       CompiledRequirementSet& snapshot,
+                       std::string* error)
 {
-    CompiledRequirementSet snapshot = artifact.compiled;
+    snapshot = artifact.compiled;
     if (artifact.schemaVersion < 4) {
         // v3 工件早于 Verified 工作区证据契约：为兼容性仍可读取，但覆盖盒必须作为
         // Quick 检查进入下游优化，直到需求被重新冻结产生 v4 工件，避免把未经
         // Verified 证据的覆盖盒当作已验证输入。
         for (WorkspaceDemandRegion& region : snapshot.workspaceRegions)
             region.minimumVerificationStage = RequirementVerificationStage::Quick;
-        return snapshot;
+        return true;
     }
-    // v4 工件先做执行契约一致性审计，任何一环不符即返回空快照(调用方按失败处理)。
-    if (!RequirementFreezer::validateExecutionConsistency(artifact, error))
-        return CompiledRequirementSet();
+    // The execution contract is the sole v4 input.  Do not re-derive it from
+    // the editable/compiled requirement snapshot here: that would make the
+    // optimizer silently reinterpret a frozen cross-plugin hand-off.
     if (artifact.executionFingerprint.empty() ||
-        artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution) ||
-        !RequirementExecutionJson::validate(artifact.execution, error)) {
-        if (error != nullptr && error->empty())
-            *error = "Requirement execution contract is missing or has been modified.";
-        return CompiledRequirementSet();
+        artifact.executionFingerprint != RequirementExecutionJson::fingerprint(artifact.execution)) {
+        if (error != nullptr)
+            *error = "REQ_EXECUTION_FINGERPRINT_MISMATCH: Requirement execution contract is missing or has been modified.";
+        return false;
+    }
+    std::string executionValidationError;
+    if (!RequirementExecutionJson::validate(artifact.execution, &executionValidationError)) {
+        if (error != nullptr)
+            *error = "REQ_EXECUTION_INVALID: " + executionValidationError;
+        return false;
     }
     const RequirementExecutionProvenance& provenance = artifact.execution.provenance;
     if (artifact.execution.schemaVersion < 1 ||
@@ -137,7 +153,7 @@ CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifa
         provenance.frozenAt != artifact.frozenAt) {
         if (error != nullptr)
             *error = "Requirement execution contract provenance does not match the frozen artifact.";
-        return CompiledRequirementSet();
+        return false;
     }
     snapshot.poseTasks.clear();
     for (const RequirementExecutionTask& source : artifact.execution.tasks) {
@@ -210,7 +226,7 @@ CompiledRequirementSet executionSnapshot(const FrozenRequirementArtifact& artifa
         target.excludedReason = source.excludedReason;
         snapshot.workspaceRegions.push_back(target);
     }
-    return snapshot;
+    return true;
 }
 
 } // namespace
@@ -222,24 +238,23 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
                                                    StructureOptimizationProblem& problem,
                                                    std::string* error)
 {
+    if (error != nullptr) error->clear();
     // 冻结标识、完整审计指纹和内部模型绑定是跨插件交付的最低门槛。仅有 UI 的
     // frozen 标记不能证明任务已经在真实场景中解析，因此这里必须同时检查三者。
     // 结构优化只接受 v4 工件：v3 及更早版本缺少 Verified 工作区证据契约，不能作为
     // 已验证的结构优化输入，需重新冻结后再进行优化。
     if (artifact.schemaVersion != 4) {
         if (error != nullptr)
-            *error = "Structure optimization requires a v4 frozen engineering requirement artifact. Validate and freeze the requirements again.";
+            *error = "REQ_V3_REQUIRES_REFREEZE: Structure optimization requires a v4 frozen engineering requirement artifact.";
         return false;
     }
-    if (!artifact.compiled.frozen || artifact.requirementFingerprint.empty() ||
-        artifact.environmentFingerprint.empty() || artifact.frozenRobotState.deviceName.empty() ||
+    if (artifact.requirementFingerprint.empty() || artifact.environmentFingerprint.empty() ||
+        artifact.frozenRobotState.deviceName.empty() ||
         artifact.frozenRobotState.tcpFrameName.empty() ||
         artifact.frozenRobotState.kinematicFingerprint.empty() ||
         artifact.frozenRobotState.capturedAt.empty() ||
         artifact.scenario.environmentFingerprint != artifact.environmentFingerprint ||
-        artifact.modelBinding.robotModelFingerprint.empty() ||
-        artifact.compiled.modelBinding.robotModelFingerprint != artifact.modelBinding.robotModelFingerprint ||
-        artifact.compiled.requirementFingerprint != artifact.requirementFingerprint) {
+        artifact.modelBinding.robotModelFingerprint.empty()) {
         if (error != nullptr) *error = "Engineering requirement artifact is not a complete frozen artifact.";
         return false;
     }
@@ -255,9 +270,34 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         return false;
     }
 
-    const CompiledRequirementSet compiled = executionSnapshot(artifact, error);
-    if (artifact.schemaVersion >= 4 && compiled.frozen == false)
+    if (artifact.execution.provenance.sourcePath != artifact.modelBinding.sourcePath) {
+        if (error != nullptr)
+            *error = "Requirement execution contract provenance does not match the frozen artifact.";
         return false;
+    }
+
+    CompiledRequirementSet compiled;
+    if (!executionSnapshot(artifact, compiled, error)) return false;
+    // A frozen Must item is a hard delivery obligation.  It must never be
+    // silently filtered out by the legacy task/coverage projection below.
+    for (const RequirementExecutionTask& task : artifact.execution.tasks) {
+        if (task.level == RequirementExecutionLevel::Must &&
+            task.compileState != RequirementExecutionCompileState::Included) {
+            if (error != nullptr)
+                *error = "REQ_MUST_EXECUTION_ITEM_NOT_INCLUDED: task '" + task.id +
+                    "' is " + executionCompileStateName(task.compileState) + ".";
+            return false;
+        }
+    }
+    for (const RequirementExecutionRegion& region : artifact.execution.workspaceRegions) {
+        if (region.level == RequirementExecutionLevel::Must &&
+            region.compileState != RequirementExecutionCompileState::Included) {
+            if (error != nullptr)
+                *error = "REQ_MUST_EXECUTION_ITEM_NOT_INCLUDED: region '" + region.id +
+                    "' is " + executionCompileStateName(region.compileState) + ".";
+            return false;
+        }
+    }
 
     // 结构优化目前只评价"位置可达覆盖"，不含姿态可达性验证。因此带姿态约束的覆盖盒
     // (非 Fixed 朝向、多方向样本、多翻滚样本或要求朝向覆盖率)不能静默降级为仅位置，

@@ -7,12 +7,18 @@
 #include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 #include <rwslibs/kinematicanalysis/KinematicAnalysisTypes.hpp>
 
+#include <QJsonObject>
+
+#include <memory>
+
 #include <array>
 #include <functional>
 #include <string>
 #include <vector>
 
 namespace rws {
+
+struct KinematicBaselineSnapshot;
 
 // =============================================================================
 //  设计变量 / 约束 / 策略 / 状态枚举
@@ -131,6 +137,15 @@ struct StructureOptimizationScenarioSnapshot
     // 快照是否可用于重建场景：只有同时具备版本号与指纹才算有效，
     // 避免"仅有版本号而无指纹"的半填充对象被误用作重建输入。
     bool available() const { return schemaVersion > 0 && !snapshotFingerprint.empty(); }
+};
+
+enum class CanonicalModelShadowStatus { CanonicalModelMissing, Current, Stale, Invalid };
+
+struct CanonicalModelShadow
+{
+    CanonicalModelShadowStatus status = CanonicalModelShadowStatus::CanonicalModelMissing;
+    std::shared_ptr< KinematicBaselineSnapshot > snapshot;
+    bool hasSnapshot() const { return snapshot != nullptr; }
 };
 
 // =============================================================================
@@ -413,6 +428,8 @@ struct StructureOptimizationProblem
     EngineeringRequirementProvenance requirementProvenance; //!< 可选的需求冻结工件审计来源
     RequirementExecutionSet requirementExecution; //!< 冻结执行契约，供公共 evaluator 直接消费
     StructureOptimizationScenarioSnapshot scenarioSnapshot; //!< 冻结场景重建信息
+    CanonicalModelShadow canonicalModelShadow; //!< Optional canonical migration shadow.
+    QJsonObject extensions; //!< Unknown root JSON fields retained for forward-compatible read/save.
 };
 
 // =============================================================================

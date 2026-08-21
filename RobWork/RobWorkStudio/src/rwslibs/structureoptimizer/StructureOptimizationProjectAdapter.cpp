@@ -1,5 +1,6 @@
 #include "StructureOptimizationProjectAdapter.hpp"
 
+#include "CanonicalModelShadowService.hpp"
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationValidation.hpp"
 
@@ -120,6 +121,26 @@ bool StructureOptimizationProjectAdapter::loadProject(
     out = loaded;
     if (error != nullptr)
         error->clear();
+    return true;
+}
+
+bool StructureOptimizationProjectAdapter::loadProject(
+    const QString& path, const KinematicImportRequest& importRequest,
+    StructureOptimizationProblem& out, int* selectedCandidateIndex, QString* error)
+{
+    StructureOptimizationProblem loaded;
+    if (!loadProject(path, loaded, selectedCandidateIndex, error))
+        return false;
+
+    const KinematicImportResult imported = KinematicModelImporter::import(importRequest);
+    if (!imported.ok) {
+        setError(error, "StructureOptimization.Project.CanonicalSourceInvalid");
+        return false;
+    }
+    loaded.canonicalModelShadow.status = CanonicalModelShadowService::assess(
+        loaded.canonicalModelShadow, imported.model);
+    out = std::move(loaded);
+    if (error != nullptr) error->clear();
     return true;
 }
 

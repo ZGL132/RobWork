@@ -1,5 +1,7 @@
 #include "StructureOptimizationJson.hpp"
 
+#include "KinematicBaselineSnapshot.hpp"
+
 #include "StructureOptimizationObjectiveProfile.hpp"
 #include "StructureOptimizationTypes.hpp"
 
@@ -11,11 +13,88 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <rw/math/Rotation3D.hpp>
+
+#include <cmath>
+
 namespace rws {
 
 // =============================================================================
 //  内部辅助函数
 // =============================================================================
+
+// JSON has no NaN or infinity literal.  Keep the policy explicit instead of
+// relying on Qt's implementation-specific coercion: every non-finite value is
+// persisted as JSON null.  Result metrics add a companion availability field
+// at their call site so null never silently means a numeric zero.
+static QJsonValue jsonFiniteNumber(double value)
+{
+    return std::isfinite(value) ? QJsonValue(value) : QJsonValue(QJsonValue::Null);
+}
+
+static void appendFiniteNumber(QJsonArray& array, double value)
+{
+    array.append(jsonFiniteNumber(value));
+}
+
+static bool isKnownProblemKey(const QString& key)
+{
+    static const char* const knownKeys[] = {
+        "schemaVersion", "type", "context", "tasks",
+        "engineeringRequirementProvenance", "requirementExecution",
+        "frozenScenarioSnapshot", "variables", "constraints", "weights",
+        "objectives", "metricConstraints", "evaluationConfig", "runConfig", "canonicalModelShadow"
+    };
+    for (const char* knownKey : knownKeys)
+        if (key == QLatin1String(knownKey)) return true;
+    return false;
+}
+
+// Preserve both the explicit extensions envelope and legacy top-level unknown
+// fields.  A conflict is rejected because an extension must never override a
+// field that has defined optimizer semantics.
+static bool readProblemExtensions(const QJsonObject& object, QJsonObject& extensions,
+                                  std::string* error)
+{
+    extensions = QJsonObject();
+    if (object.contains("extensions")) {
+        if (!object.value("extensions").isObject()) {
+            if (error != nullptr) *error = "Structure optimization extensions must be an object.";
+            return false;
+        }
+        const QJsonObject explicitExtensions = object.value("extensions").toObject();
+        for (const QString& key : explicitExtensions.keys()) {
+            if (isKnownProblemKey(key) || key == QLatin1String("extensions")) {
+                if (error != nullptr)
+                    *error = "Structure optimization extensions cannot override known field '" +
+                             key.toStdString() + "'.";
+                return false;
+            }
+            extensions.insert(key, explicitExtensions.value(key));
+        }
+    }
+    for (const QString& key : object.keys()) {
+        if (key == QLatin1String("extensions") || isKnownProblemKey(key)) continue;
+        if (extensions.contains(key)) {
+            if (error != nullptr)
+                *error = "Structure optimization top-level extension field '" +
+                         key.toStdString() + "' conflicts with explicit extensions.";
+            return false;
+        }
+        extensions.insert(key, object.value(key));
+    }
+    return true;
+}
+
+static void writeProblemExtensions(QJsonObject& object, const QJsonObject& extensions)
+{
+    QJsonObject filtered;
+    for (const QString& key : extensions.keys()) {
+        if (!isKnownProblemKey(key) && key != QLatin1String("extensions"))
+            filtered.insert(key, extensions.value(key));
+    }
+    if (!filtered.isEmpty()) object["extensions"] = filtered;
+}
 
 // 把设计变量种类枚举映射为稳定的 JSON 字符串。以文本而非数值序列化，
 // 保证枚举值顺序调整或新增种类后仍能与旧项目文件兼容。
@@ -45,6 +124,8 @@ static QJsonObject variableKindToJson(StructureVariableKind kind)
 // 置 false，让上层显式报错而不是静默回退到默认种类。
 static StructureVariableKind variableKindFromJson(const QJsonObject& obj, bool* ok = nullptr)
 {
+    if (ok) *ok = true;
+    if (!obj.contains("kind")) return StructureVariableKind::JointPositionX;
     const QString k = obj["kind"].toString();
     if (k == "JointPositionX")     return StructureVariableKind::JointPositionX;
     if (k == "JointPositionY")     return StructureVariableKind::JointPositionY;
@@ -76,11 +157,14 @@ static QString variableDomainToString(DesignVariableDomain domain)
     return "Continuous";
 }
 
-// 逆映射：未知字符串按 Continuous 处理，保持对旧数据的宽容读取。
-static DesignVariableDomain variableDomainFromString(const QString& value)
+// 逆映射：字段缺失按旧版本的 Continuous 默认值处理；未知字符串由调用者拒绝。
+static DesignVariableDomain variableDomainFromString(const QString& value, bool* ok = nullptr)
 {
+    if (ok) *ok = true;
+    if (value.isEmpty() || value == "Continuous") return DesignVariableDomain::Continuous;
     if (value == "Integer") return DesignVariableDomain::Integer;
     if (value == "Discrete") return DesignVariableDomain::Discrete;
+    if (ok) *ok = false;
     return DesignVariableDomain::Continuous;
 }
 
@@ -90,11 +174,14 @@ static QString directionToString(OptimizationDirection direction)
     return direction == OptimizationDirection::Minimize ? "Minimize" : "Maximize";
 }
 
-// 逆映射，默认按 Maximize 处理。
-static OptimizationDirection directionFromString(const QString& value)
+// 逆映射：字段缺失按旧版本的 Maximize 默认值处理；未知字符串由调用者拒绝。
+static OptimizationDirection directionFromString(const QString& value, bool* ok = nullptr)
 {
-    return value == "Minimize" ? OptimizationDirection::Minimize :
-                                  OptimizationDirection::Maximize;
+    if (ok) *ok = true;
+    if (value.isEmpty() || value == "Maximize") return OptimizationDirection::Maximize;
+    if (value == "Minimize") return OptimizationDirection::Minimize;
+    if (ok) *ok = false;
+    return OptimizationDirection::Maximize;
 }
 
 // 指标比较运算符到字符串。
@@ -108,11 +195,15 @@ static QString comparisonToString(ComparisonOperator comparison)
     return "GreaterThanOrEqual";
 }
 
-// 逆映射，默认 GreaterThanOrEqual。
-static ComparisonOperator comparisonFromString(const QString& value)
+// 逆映射：字段缺失按旧版本的 GreaterThanOrEqual 默认值处理；未知字符串由调用者拒绝。
+static ComparisonOperator comparisonFromString(const QString& value, bool* ok = nullptr)
 {
+    if (ok) *ok = true;
+    if (value.isEmpty() || value == "GreaterThanOrEqual")
+        return ComparisonOperator::GreaterThanOrEqual;
     if (value == "LessThanOrEqual") return ComparisonOperator::LessThanOrEqual;
     if (value == "Equal") return ComparisonOperator::Equal;
+    if (ok) *ok = false;
     return ComparisonOperator::GreaterThanOrEqual;
 }
 
@@ -136,6 +227,8 @@ static QJsonObject constraintKindToJson(StructureConstraintKind kind)
 // 逆映射：未知字符串返回 ModelValid 并置 ok=false，避免静默接受错误类型。
 static StructureConstraintKind constraintKindFromJson(const QJsonObject& obj, bool* ok = nullptr)
 {
+    if (ok) *ok = true;
+    if (!obj.contains("kind")) return StructureConstraintKind::ModelValid;
     const QString k = obj["kind"].toString();
     if (k == "ModelValid")               return StructureConstraintKind::ModelValid;
     if (k == "RequiredTaskReachable")    return StructureConstraintKind::RequiredTaskReachable;
@@ -163,15 +256,19 @@ static QJsonObject candidateStatusToJson(StructureCandidateStatus s)
     return {{"status", "Unknown"}};
 }
 
-// 逆映射：未知状态回退 Pending，保证缺字段的旧结果文件仍可读取。
-static StructureCandidateStatus candidateStatusFromJson(const QJsonObject& obj)
+// 逆映射：缺少 status 仍按旧结果文件的 Pending 默认值处理；未知字符串必须由
+// 调用方根据 ok 拒绝，不能把未来状态伪装成 Pending。
+static StructureCandidateStatus candidateStatusFromJson(const QJsonObject& obj, bool* ok = nullptr)
 {
+    if (ok) *ok = true;
+    if (!obj.contains("status")) return StructureCandidateStatus::Pending;
     const QString s = obj["status"].toString();
     if (s == "Pending")    return StructureCandidateStatus::Pending;
     if (s == "Feasible")   return StructureCandidateStatus::Feasible;
     if (s == "Infeasible") return StructureCandidateStatus::Infeasible;
     if (s == "Failed")     return StructureCandidateStatus::Failed;
     if (s == "Canceled")   return StructureCandidateStatus::Canceled;
+    if (ok) *ok = false;
     return StructureCandidateStatus::Pending;
 }
 
@@ -189,17 +286,17 @@ static QJsonObject taskPointToJson(const TaskPoint& pt)
     obj["refFrame"] = QString::fromStdString(pt.refFrame);
     obj["tcpFrame"] = QString::fromStdString(pt.tcpFrame);
     QJsonArray pos;
-    pos.append(pt.position[0]);
-    pos.append(pt.position[1]);
-    pos.append(pt.position[2]);
+    appendFiniteNumber(pos, pt.position[0]);
+    appendFiniteNumber(pos, pt.position[1]);
+    appendFiniteNumber(pos, pt.position[2]);
     obj["position"] = pos;
     QJsonArray rpy;
-    rpy.append(pt.rpyDeg[0]);
-    rpy.append(pt.rpyDeg[1]);
-    rpy.append(pt.rpyDeg[2]);
+    appendFiniteNumber(rpy, pt.rpyDeg[0]);
+    appendFiniteNumber(rpy, pt.rpyDeg[1]);
+    appendFiniteNumber(rpy, pt.rpyDeg[2]);
     obj["rpyDeg"] = rpy;
     obj["enabled"] = pt.enabled;
-    obj["weight"]  = pt.weight;
+    obj["weight"]  = jsonFiniteNumber(pt.weight);
     return obj;
 }
 
@@ -243,12 +340,12 @@ static QJsonObject designVariableToJson(const StructureDesignVariable& var)
     obj["targetName"]     = QString::fromStdString(var.targetName);
     obj["unit"]           = QString::fromStdString(var.unit);
     obj["kind"]           = variableKindToJson(var.kind)["kind"].toString();
-    obj["currentValue"]   = var.currentValue;
-    obj["minimum"]        = var.minimum;
-    obj["maximum"]        = var.maximum;
-    obj["step"]           = var.step;
-    obj["preferredValue"] = var.preferredValue;
-    obj["preferenceWeight"] = var.preferenceWeight;
+    obj["currentValue"]   = jsonFiniteNumber(var.currentValue);
+    obj["minimum"]        = jsonFiniteNumber(var.minimum);
+    obj["maximum"]        = jsonFiniteNumber(var.maximum);
+    obj["step"]           = jsonFiniteNumber(var.step);
+    obj["preferredValue"] = jsonFiniteNumber(var.preferredValue);
+    obj["preferenceWeight"] = jsonFiniteNumber(var.preferenceWeight);
     obj["enabled"]        = var.enabled;
     obj["syncAssociatedGeometry"] = var.syncAssociatedGeometry;
     obj["domain"] = variableDomainToString(var.domainDefinition.domain);
@@ -260,14 +357,21 @@ static QJsonObject designVariableToJson(const StructureDesignVariable& var)
 }
 
 // 逆过程：discreteOptions 缺省为空数组，不改变既有默认值。
-static StructureDesignVariable designVariableFromJson(const QJsonObject& obj)
+static bool designVariableFromJson(const QJsonObject& obj, StructureDesignVariable& var,
+                                   std::string* error)
 {
-    StructureDesignVariable var;
     var.id             = obj["id"].toString().toStdString();
     var.label          = obj["label"].toString().toStdString();
     var.targetName     = obj["targetName"].toString().toStdString();
     var.unit           = obj["unit"].toString().toStdString();
-    var.kind           = variableKindFromJson(obj);
+    bool kindOk = true;
+    var.kind           = variableKindFromJson(obj, &kindOk);
+    if (!kindOk) {
+        if (error != nullptr)
+            *error = "Unknown StructureVariableKind value: " +
+                     obj.value("kind").toString().toStdString();
+        return false;
+    }
     var.currentValue   = obj["currentValue"].toDouble();
     var.minimum        = obj["minimum"].toDouble();
     var.maximum        = obj["maximum"].toDouble();
@@ -276,10 +380,17 @@ static StructureDesignVariable designVariableFromJson(const QJsonObject& obj)
     var.preferenceWeight = obj["preferenceWeight"].toDouble();
     var.enabled        = obj["enabled"].toBool(true);
     var.syncAssociatedGeometry = obj["syncAssociatedGeometry"].toBool(false);
-    var.domainDefinition.domain = variableDomainFromString(obj["domain"].toString());
+    bool domainOk = true;
+    var.domainDefinition.domain = variableDomainFromString(obj["domain"].toString(), &domainOk);
+    if (!domainOk) {
+        if (error != nullptr)
+            *error = "Unknown DesignVariableDomain value: " +
+                     obj.value("domain").toString().toStdString();
+        return false;
+    }
     for (const QJsonValue& option : obj["discreteOptions"].toArray())
         var.domainDefinition.discreteOptions.push_back(option.toString().toStdString());
-    return var;
+    return true;
 }
 
 // 结构约束序列化：含主/次阈值、启用状态与硬/软属性。
@@ -290,38 +401,45 @@ static QJsonObject constraintToJson(const StructureConstraint& con)
     obj["label"]             = QString::fromStdString(con.label);
     obj["targetName"]        = QString::fromStdString(con.targetName);
     obj["kind"]              = constraintKindToJson(con.kind)["kind"].toString();
-    obj["threshold"]         = con.threshold;
-    obj["secondaryThreshold"] = con.secondaryThreshold;
+    obj["threshold"]         = jsonFiniteNumber(con.threshold);
+    obj["secondaryThreshold"] = jsonFiniteNumber(con.secondaryThreshold);
     obj["enabled"]           = con.enabled;
     obj["hard"]              = con.hard;
     return obj;
 }
 
 // 逆过程：enabled/hard 缺省取 true，与历史版本默认保持一致。
-static StructureConstraint constraintFromJson(const QJsonObject& obj)
+static bool constraintFromJson(const QJsonObject& obj, StructureConstraint& con,
+                               std::string* error)
 {
-    StructureConstraint con;
     con.id                = obj["id"].toString().toStdString();
     con.label             = obj["label"].toString().toStdString();
     con.targetName        = obj["targetName"].toString().toStdString();
-    con.kind              = constraintKindFromJson(obj);
+    bool kindOk = true;
+    con.kind              = constraintKindFromJson(obj, &kindOk);
+    if (!kindOk) {
+        if (error != nullptr)
+            *error = "Unknown StructureConstraintKind value: " +
+                     obj.value("kind").toString().toStdString();
+        return false;
+    }
     con.threshold         = obj["threshold"].toDouble();
     con.secondaryThreshold = obj["secondaryThreshold"].toDouble();
     con.enabled           = obj["enabled"].toBool(true);
     con.hard              = obj["hard"].toBool(true);
-    return con;
+    return true;
 }
 
 // 多目标权重序列化。weights 仅用于旧版兼容，新版本以 objectives 为准。
 static QJsonObject weightsToJson(const StructureOptimizationWeights& w)
 {
     QJsonObject obj;
-    obj["reachability"  ] = w.reachability;
-    obj["manipulability"] = w.manipulability;
-    obj["jointMargin"   ] = w.jointMargin;
-    obj["collision"     ] = w.collision;
-    obj["compactness"   ] = w.compactness;
-    obj["preference"    ] = w.preference;
+    obj["reachability"  ] = jsonFiniteNumber(w.reachability);
+    obj["manipulability"] = jsonFiniteNumber(w.manipulability);
+    obj["jointMargin"   ] = jsonFiniteNumber(w.jointMargin);
+    obj["collision"     ] = jsonFiniteNumber(w.collision);
+    obj["compactness"   ] = jsonFiniteNumber(w.compactness);
+    obj["preference"    ] = jsonFiniteNumber(w.preference);
     return obj;
 }
 
@@ -342,27 +460,36 @@ static QJsonObject objectiveToJson(const ObjectiveTerm& objective)
     QJsonObject obj;
     obj["metricId"] = QString::fromStdString(objective.metricId);
     obj["direction"] = directionToString(objective.direction);
-    obj["normalization"] = QJsonObject{{"good", objective.normalization.good},
-                                         {"bad", objective.normalization.bad},
-                                         {"clamp", objective.normalization.clamp}};
-    obj["weight"] = objective.weight;
+    QJsonObject normalization;
+    normalization["good"] = jsonFiniteNumber(objective.normalization.good);
+    normalization["bad"] = jsonFiniteNumber(objective.normalization.bad);
+    normalization["clamp"] = objective.normalization.clamp;
+    obj["normalization"] = normalization;
+    obj["weight"] = jsonFiniteNumber(objective.weight);
     obj["enabled"] = objective.enabled;
     return obj;
 }
 
 // 逆过程：归一化缺省 good=1.0/bad=0.0 并启用 clamp，保证可复现评分语义。
-static ObjectiveTerm objectiveFromJson(const QJsonObject& obj)
+static bool objectiveFromJson(const QJsonObject& obj, ObjectiveTerm& objective,
+                              std::string* error)
 {
-    ObjectiveTerm objective;
     objective.metricId = obj["metricId"].toString().toStdString();
-    objective.direction = directionFromString(obj["direction"].toString());
+    bool directionOk = true;
+    objective.direction = directionFromString(obj["direction"].toString(), &directionOk);
+    if (!directionOk) {
+        if (error != nullptr)
+            *error = "Unknown OptimizationDirection value: " +
+                     obj.value("direction").toString().toStdString();
+        return false;
+    }
     const QJsonObject normalization = obj["normalization"].toObject();
     objective.normalization.good = normalization["good"].toDouble(1.0);
     objective.normalization.bad = normalization["bad"].toDouble(0.0);
     objective.normalization.clamp = normalization["clamp"].toBool(true);
     objective.weight = obj["weight"].toDouble();
     objective.enabled = obj["enabled"].toBool(true);
-    return objective;
+    return true;
 }
 
 // 通用指标硬/软约束序列化。
@@ -371,22 +498,29 @@ static QJsonObject metricConstraintToJson(const ConstraintRule& constraint)
     QJsonObject obj;
     obj["metricId"] = QString::fromStdString(constraint.metricId);
     obj["comparison"] = comparisonToString(constraint.comparison);
-    obj["threshold"] = constraint.threshold;
+    obj["threshold"] = jsonFiniteNumber(constraint.threshold);
     obj["hard"] = constraint.hard;
     obj["enabled"] = constraint.enabled;
     return obj;
 }
 
 // 逆过程：hard/enabled 缺省为 true。
-static ConstraintRule metricConstraintFromJson(const QJsonObject& obj)
+static bool metricConstraintFromJson(const QJsonObject& obj, ConstraintRule& constraint,
+                                     std::string* error)
 {
-    ConstraintRule constraint;
     constraint.metricId = obj["metricId"].toString().toStdString();
-    constraint.comparison = comparisonFromString(obj["comparison"].toString());
+    bool comparisonOk = true;
+    constraint.comparison = comparisonFromString(obj["comparison"].toString(), &comparisonOk);
+    if (!comparisonOk) {
+        if (error != nullptr)
+            *error = "Unknown ComparisonOperator value: " +
+                     obj.value("comparison").toString().toStdString();
+        return false;
+    }
     constraint.threshold = obj["threshold"].toDouble();
     constraint.hard = obj["hard"].toBool(true);
     constraint.enabled = obj["enabled"].toBool(true);
-    return constraint;
+    return true;
 }
 
 // 评估配置序列化：粗评/精评采样参数、碰撞开关与覆盖盒集合。
@@ -418,8 +552,8 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
         QJsonArray maximum;
         QJsonArray cells;
         for (std::size_t i = 0; i < box.minimum.size(); ++i) {
-            minimum.append(box.minimum[i]);
-            maximum.append(box.maximum[i]);
+            appendFiniteNumber(minimum, box.minimum[i]);
+            appendFiniteNumber(maximum, box.maximum[i]);
             cells.append(box.cells[i]);
         }
         coverage["minimum"] = minimum;
@@ -438,7 +572,8 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
 }
 
 // 逆过程：各子对象均为"缺失即保留默认"，因此旧项目文件可以直接打开。
-static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig& cfg)
+static bool evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig& cfg,
+                               std::string* error)
 {
     cfg.checkCollision = obj["checkCollision"].toBool(true);
     cfg.evaluatorId = obj["evaluatorId"].toString(
@@ -446,11 +581,23 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
     cfg.evaluatorVersion = obj["evaluatorVersion"].toString(
         QString::fromStdString(cfg.evaluatorVersion)).toStdString();
     const auto workspaceFromJson = [](const QJsonObject& value,
-                                      WorkspaceSamplingConfig& sampling) {
+                                       WorkspaceSamplingConfig& sampling,
+                                       std::string* parseError) {
         if (value.isEmpty())
-            return;
-        sampling.mode = static_cast<WorkspaceSamplingMode>(
-            value["mode"].toInt(static_cast<int>(sampling.mode)));
+            return true;
+        if (value.contains("mode")) {
+            const QJsonValue modeValue = value.value("mode");
+            const int mode = modeValue.toInt(-1);
+            if (!modeValue.isDouble() ||
+                (mode != static_cast<int>(WorkspaceSamplingMode::RandomUniform) &&
+                 mode != static_cast<int>(WorkspaceSamplingMode::Grid))) {
+                if (parseError != nullptr)
+                    *parseError = "Unknown WorkspaceSamplingMode value: " +
+                                  std::to_string(mode);
+                return false;
+            }
+            sampling.mode = static_cast<WorkspaceSamplingMode>(mode);
+        }
         sampling.sampleCount = value["sampleCount"].toInt(sampling.sampleCount);
         sampling.gridStepsPerJoint = value["gridStepsPerJoint"].toInt(
             sampling.gridStepsPerJoint);
@@ -458,9 +605,11 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
             sampling.checkCollision);
         sampling.randomSeed = static_cast<unsigned int>(value["randomSeed"].toInt(
             static_cast<int>(sampling.randomSeed)));
+        return true;
     };
-    workspaceFromJson(obj["quickWorkspace"].toObject(), cfg.quickWorkspace);
-    workspaceFromJson(obj["verifiedWorkspace"].toObject(), cfg.verifiedWorkspace);
+    if (!workspaceFromJson(obj["quickWorkspace"].toObject(), cfg.quickWorkspace, error) ||
+        !workspaceFromJson(obj["verifiedWorkspace"].toObject(), cfg.verifiedWorkspace, error))
+        return false;
 
     const auto coverageFromJson = [](const QJsonObject& coverage, WorkspaceCoverageBox& box) {
         if (coverage.isEmpty()) return;
@@ -490,6 +639,7 @@ static void evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
         coverageFromJson(value.toObject(), box);
         cfg.coverageBoxes.push_back(box);
     }
+    return true;
 }
 
 // 优化运行配置序列化。
@@ -508,9 +658,22 @@ static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
 }
 
 // 逆过程：默认值与历史版本一致，保证旧项目重载后搜索行为不变。
-static void runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunConfig& run)
+static bool runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunConfig& run,
+                              std::string* error)
 {
-    run.strategy               = static_cast<StructureStrategyKind>(obj["strategy"].toInt(2));
+    if (obj.contains("strategy")) {
+        const QJsonValue strategyValue = obj.value("strategy");
+        const int strategy = strategyValue.toInt(-1);
+        if (!strategyValue.isDouble() ||
+            (strategy != static_cast<int>(StructureStrategyKind::Random) &&
+             strategy != static_cast<int>(StructureStrategyKind::Grid) &&
+             strategy != static_cast<int>(StructureStrategyKind::Hybrid))) {
+            if (error != nullptr)
+                *error = "Unknown StructureStrategyKind value: " + std::to_string(strategy);
+            return false;
+        }
+        run.strategy = static_cast<StructureStrategyKind>(strategy);
+    }
     run.candidateCount         = obj["candidateCount"].toInt(300);
     run.eliteCount             = obj["eliteCount"].toInt(20);
     run.localEliteCount        = obj["localEliteCount"].toInt(5);
@@ -518,6 +681,7 @@ static void runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunCo
     run.maxLocalSweeps         = obj["maxLocalSweeps"].toInt(20);
     run.gridSteps              = obj["gridSteps"].toInt(3);
     run.randomSeed             = static_cast<unsigned int>(obj["randomSeed"].toInt(1));
+    return true;
 }
 
 // =============================================================================
@@ -529,9 +693,9 @@ static QJsonObject sensitivityEntryToJson(const StructureSensitivityEntry& e)
 {
     QJsonObject obj;
     obj["variableId"]       = QString::fromStdString(e.variableId);
-    obj["delta"]            = e.delta;
-    obj["perturbedValue"]   = e.perturbedValue;
-    obj["scoreDrop"]        = e.scoreDrop;
+    obj["delta"]            = jsonFiniteNumber(e.delta);
+    obj["perturbedValue"]   = jsonFiniteNumber(e.perturbedValue);
+    obj["scoreDrop"]        = jsonFiniteNumber(e.scoreDrop);
     obj["feasible"]         = e.feasible;
     QJsonArray vc;
     for (const auto& c : e.violatedConstraints)
@@ -548,14 +712,393 @@ static QJsonObject sensitivityResultToJson(const StructureSensitivityResult& sr)
     for (const auto& e : sr.entries)
         arr.append(sensitivityEntryToJson(e));
     obj["entries"]           = arr;
-    obj["maximumScoreDrop"]  = sr.maximumScoreDrop;
-    obj["meanScoreDrop"]     = sr.meanScoreDrop;
+    obj["maximumScoreDrop"]  = jsonFiniteNumber(sr.maximumScoreDrop);
+    obj["meanScoreDrop"]     = jsonFiniteNumber(sr.meanScoreDrop);
     QJsonArray cids;
     for (const auto& id : sr.criticalVariableIds)
         cids.append(QString::fromStdString(id));
     obj["criticalVariableIds"] = cids;
     obj["robustnessGrade"]   = QString::fromStdString(sr.robustnessGrade);
     return obj;
+}
+
+static QString canonicalFrameTypeToString(CanonicalFrameType type)
+{
+    switch (type) {
+    case CanonicalFrameType::Base: return "Base";
+    case CanonicalFrameType::Link: return "Link";
+    case CanonicalFrameType::Fixed: return "Fixed";
+    case CanonicalFrameType::Flange: return "Flange";
+    case CanonicalFrameType::Tool: return "Tool";
+    case CanonicalFrameType::Auxiliary: return "Auxiliary";
+    }
+    return "Unknown";
+}
+
+static bool canonicalFrameTypeFromString(const QString& value, CanonicalFrameType& type)
+{
+    if (value == "Base") { type = CanonicalFrameType::Base; return true; }
+    if (value == "Link") { type = CanonicalFrameType::Link; return true; }
+    if (value == "Fixed") { type = CanonicalFrameType::Fixed; return true; }
+    if (value == "Flange") { type = CanonicalFrameType::Flange; return true; }
+    if (value == "Tool") { type = CanonicalFrameType::Tool; return true; }
+    if (value == "Auxiliary") { type = CanonicalFrameType::Auxiliary; return true; }
+    return false;
+}
+
+static QString canonicalJointTypeToString(CanonicalJointType type)
+{
+    switch (type) {
+    case CanonicalJointType::Revolute: return "Revolute";
+    case CanonicalJointType::Prismatic: return "Prismatic";
+    case CanonicalJointType::Fixed: return "Fixed";
+    }
+    return "Unknown";
+}
+
+static bool canonicalJointTypeFromString(const QString& value, CanonicalJointType& type)
+{
+    if (value == "Revolute") { type = CanonicalJointType::Revolute; return true; }
+    if (value == "Prismatic") { type = CanonicalJointType::Prismatic; return true; }
+    if (value == "Fixed") { type = CanonicalJointType::Fixed; return true; }
+    return false;
+}
+
+static QString canonicalCoordinateUnitToString(CanonicalCoordinateUnit unit)
+{
+    return unit == CanonicalCoordinateUnit::Radians ? "Radians" : "Metres";
+}
+
+static bool canonicalCoordinateUnitFromString(const QString& value,
+                                               CanonicalCoordinateUnit& unit)
+{
+    if (value == "Radians") { unit = CanonicalCoordinateUnit::Radians; return true; }
+    if (value == "Metres") { unit = CanonicalCoordinateUnit::Metres; return true; }
+    return false;
+}
+
+static bool finiteJsonNumber(const QJsonValue& value, double& number)
+{
+    if (!value.isDouble()) return false;
+    number = value.toDouble();
+    return std::isfinite(number);
+}
+
+static QJsonArray canonicalVectorToJson(const rw::math::Vector3D<>& vector)
+{
+    QJsonArray result;
+    appendFiniteNumber(result, vector(0));
+    appendFiniteNumber(result, vector(1));
+    appendFiniteNumber(result, vector(2));
+    return result;
+}
+
+static bool canonicalVectorFromJson(const QJsonValue& value, rw::math::Vector3D<>& vector)
+{
+    if (!value.isArray()) return false;
+    const QJsonArray array = value.toArray();
+    if (array.size() != 3) return false;
+    double x = 0.0, y = 0.0, z = 0.0;
+    if (!finiteJsonNumber(array.at(0), x) || !finiteJsonNumber(array.at(1), y) ||
+        !finiteJsonNumber(array.at(2), z)) return false;
+    vector = rw::math::Vector3D<>(x, y, z);
+    return true;
+}
+
+static QJsonObject canonicalTransformToJson(const rw::math::Transform3D<>& transform)
+{
+    QJsonObject result;
+    result["position"] = canonicalVectorToJson(transform.P());
+    QJsonArray rotation;
+    for (std::size_t row = 0; row < 3; ++row) {
+        QJsonArray values;
+        for (std::size_t column = 0; column < 3; ++column)
+            appendFiniteNumber(values, transform.R()(row, column));
+        rotation.append(values);
+    }
+    result["rotation"] = rotation;
+    return result;
+}
+
+static bool canonicalTransformFromJson(const QJsonValue& value,
+                                       rw::math::Transform3D<>& transform)
+{
+    if (!value.isObject()) return false;
+    const QJsonObject object = value.toObject();
+    rw::math::Vector3D<> position;
+    if (!canonicalVectorFromJson(object.value("position"), position) ||
+        !object.value("rotation").isArray()) return false;
+    const QJsonArray rows = object.value("rotation").toArray();
+    if (rows.size() != 3) return false;
+    double matrix[3][3];
+    for (std::size_t row = 0; row < 3; ++row) {
+        if (!rows.at(static_cast< int >(row)).isArray()) return false;
+        const QJsonArray columns = rows.at(static_cast< int >(row)).toArray();
+        if (columns.size() != 3) return false;
+        for (std::size_t column = 0; column < 3; ++column)
+            if (!finiteJsonNumber(columns.at(static_cast< int >(column)), matrix[row][column]))
+                return false;
+    }
+    transform = rw::math::Transform3D<>(
+        position, rw::math::Rotation3D<>(matrix[0][0], matrix[0][1], matrix[0][2],
+                                         matrix[1][0], matrix[1][1], matrix[1][2],
+                                         matrix[2][0], matrix[2][1], matrix[2][2]));
+    return transform.R().isProperRotation(1e-9);
+}
+
+static QJsonObject canonicalLimitsToJson(const CanonicalJointLimits& limits)
+{
+    QJsonObject result;
+    result["enabled"] = limits.enabled;
+    result["lower"] = jsonFiniteNumber(limits.lower);
+    result["upper"] = jsonFiniteNumber(limits.upper);
+    result["unit"] = canonicalCoordinateUnitToString(limits.unit);
+    result["coordinateConvention"] =
+        QString::fromStdString(jointCoordinateConventionToString(limits.coordinateConvention));
+    return result;
+}
+
+static bool canonicalLimitsFromJson(const QJsonValue& value, CanonicalJointLimits& limits)
+{
+    if (!value.isObject()) return false;
+    const QJsonObject object = value.toObject();
+    if (!object.value("enabled").isBool() ||
+        !finiteJsonNumber(object.value("lower"), limits.lower) ||
+        !finiteJsonNumber(object.value("upper"), limits.upper) ||
+        !canonicalCoordinateUnitFromString(object.value("unit").toString(), limits.unit) ||
+        !jointCoordinateConventionFromString(
+            object.value("coordinateConvention").toString().toStdString(),
+            limits.coordinateConvention))
+        return false;
+    limits.enabled = object.value("enabled").toBool();
+    return true;
+}
+
+static QJsonArray canonicalStringArrayToJson(const std::vector< std::string >& values)
+{
+    QJsonArray result;
+    for (const std::string& value : values)
+        result.append(QString::fromStdString(value));
+    return result;
+}
+
+static bool canonicalStringArrayFromJson(const QJsonValue& value,
+                                         std::vector< std::string >& values)
+{
+    if (!value.isArray()) return false;
+    values.clear();
+    for (const QJsonValue& element : value.toArray()) {
+        if (!element.isString()) return false;
+        values.push_back(element.toString().toStdString());
+    }
+    return true;
+}
+
+static QJsonObject canonicalModelToJson(const CanonicalKinematicModel& model)
+{
+    QJsonObject result;
+    result["schemaVersion"] = model.schemaVersion;
+    result["modelId"] = QString::fromStdString(model.modelId);
+    result["sourceFingerprint"] = QString::fromStdString(model.sourceFingerprint);
+    result["environmentFingerprint"] = QString::fromStdString(model.environmentFingerprint);
+    result["rootFrameId"] = QString::fromStdString(model.rootFrameId);
+    result["baseFrameId"] = QString::fromStdString(model.baseFrameId);
+    result["activeDeviceChainId"] = QString::fromStdString(model.activeDeviceChainId);
+    QJsonArray frames;
+    for (const FrameNode& frame : model.frames) {
+        QJsonObject object;
+        object["id"] = QString::fromStdString(frame.id);
+        object["name"] = QString::fromStdString(frame.name);
+        object["type"] = canonicalFrameTypeToString(frame.type);
+        object["sourceObjectId"] = QString::fromStdString(frame.sourceObjectId);
+        frames.append(object);
+    }
+    result["frames"] = frames;
+    QJsonArray joints;
+    for (const JointEdge& joint : model.joints) {
+        QJsonObject object;
+        object["id"] = QString::fromStdString(joint.id);
+        object["name"] = QString::fromStdString(joint.name);
+        object["type"] = canonicalJointTypeToString(joint.type);
+        object["parentFrameId"] = QString::fromStdString(joint.parentFrameId);
+        object["childFrameId"] = QString::fromStdString(joint.childFrameId);
+        object["parentToJointZero"] = canonicalTransformToJson(joint.parentToJointZero);
+        object["motionAxisInJoint"] = canonicalVectorToJson(joint.motionAxisInJoint);
+        object["jointMotionToChild"] = canonicalTransformToJson(joint.jointMotionToChild);
+        object["zeroPositionOffset"] = jsonFiniteNumber(joint.zeroPositionOffset);
+        object["physicalLimits"] = canonicalLimitsToJson(joint.physicalLimits);
+        object["operationalLimits"] = canonicalLimitsToJson(joint.operationalLimits);
+        object["dofId"] = QString::fromStdString(joint.dofId);
+        object["sourceObjectId"] = QString::fromStdString(joint.sourceObjectId);
+        joints.append(object);
+    }
+    result["joints"] = joints;
+    QJsonArray dofs;
+    for (const DofDefinition& dof : model.dofs) {
+        QJsonObject object;
+        object["id"] = QString::fromStdString(dof.id);
+        object["jointId"] = QString::fromStdString(dof.jointId);
+        object["qIndex"] = static_cast< qint64 >(dof.qIndex);
+        object["type"] = canonicalJointTypeToString(dof.type);
+        object["unit"] = canonicalCoordinateUnitToString(dof.unit);
+        dofs.append(object);
+    }
+    result["dofs"] = dofs;
+    QJsonArray chains;
+    for (const DeviceChain& chain : model.deviceChains) {
+        QJsonObject object;
+        object["id"] = QString::fromStdString(chain.id);
+        object["rootFrameId"] = QString::fromStdString(chain.rootFrameId);
+        object["tipFrameId"] = QString::fromStdString(chain.tipFrameId);
+        object["orderedJointIds"] = canonicalStringArrayToJson(chain.orderedJointIds);
+        object["orderedDofIds"] = canonicalStringArrayToJson(chain.orderedDofIds);
+        chains.append(object);
+    }
+    result["deviceChains"] = chains;
+    QJsonArray bindings;
+    for (const ToolBinding& binding : model.toolBindings) {
+        QJsonObject object;
+        object["id"] = QString::fromStdString(binding.id);
+        object["flangeFrameId"] = QString::fromStdString(binding.flangeFrameId);
+        object["tcpFrameId"] = QString::fromStdString(binding.tcpFrameId);
+        object["flangeToTcp"] = canonicalTransformToJson(binding.flangeToTcp);
+        object["geometryBindingIds"] = canonicalStringArrayToJson(binding.geometryBindingIds);
+        object["collisionBindingIds"] = canonicalStringArrayToJson(binding.collisionBindingIds);
+        bindings.append(object);
+    }
+    result["toolBindings"] = bindings;
+    return result;
+}
+
+static bool canonicalModelFromJson(const QJsonValue& value, CanonicalKinematicModel& model)
+{
+    if (!value.isObject()) return false;
+    const QJsonObject object = value.toObject();
+    if (!object.value("schemaVersion").isDouble() || !object.value("modelId").isString() ||
+        !object.value("sourceFingerprint").isString() ||
+        !object.value("environmentFingerprint").isString() ||
+        !object.value("rootFrameId").isString() || !object.value("baseFrameId").isString() ||
+        !object.value("activeDeviceChainId").isString() || !object.value("frames").isArray() ||
+        !object.value("joints").isArray() || !object.value("dofs").isArray() ||
+        !object.value("deviceChains").isArray() || !object.value("toolBindings").isArray())
+        return false;
+    model = CanonicalKinematicModel();
+    model.schemaVersion = object.value("schemaVersion").toInt();
+    model.modelId = object.value("modelId").toString().toStdString();
+    model.sourceFingerprint = object.value("sourceFingerprint").toString().toStdString();
+    model.environmentFingerprint = object.value("environmentFingerprint").toString().toStdString();
+    model.rootFrameId = object.value("rootFrameId").toString().toStdString();
+    model.baseFrameId = object.value("baseFrameId").toString().toStdString();
+    model.activeDeviceChainId = object.value("activeDeviceChainId").toString().toStdString();
+    for (const QJsonValue& value : object.value("frames").toArray()) {
+        if (!value.isObject()) return false;
+        const QJsonObject frame = value.toObject();
+        FrameNode parsed;
+        if (!frame.value("id").isString() || !frame.value("name").isString() ||
+            !frame.value("sourceObjectId").isString() ||
+            !canonicalFrameTypeFromString(frame.value("type").toString(), parsed.type)) return false;
+        parsed.id = frame.value("id").toString().toStdString();
+        parsed.name = frame.value("name").toString().toStdString();
+        parsed.sourceObjectId = frame.value("sourceObjectId").toString().toStdString();
+        model.frames.push_back(parsed);
+    }
+    for (const QJsonValue& value : object.value("joints").toArray()) {
+        if (!value.isObject()) return false;
+        const QJsonObject joint = value.toObject();
+        JointEdge parsed;
+        if (!joint.value("id").isString() || !joint.value("name").isString() ||
+            !joint.value("parentFrameId").isString() || !joint.value("childFrameId").isString() ||
+            !joint.value("dofId").isString() || !joint.value("sourceObjectId").isString() ||
+            !canonicalJointTypeFromString(joint.value("type").toString(), parsed.type) ||
+            !canonicalTransformFromJson(joint.value("parentToJointZero"), parsed.parentToJointZero) ||
+            !canonicalVectorFromJson(joint.value("motionAxisInJoint"), parsed.motionAxisInJoint) ||
+            !canonicalTransformFromJson(joint.value("jointMotionToChild"), parsed.jointMotionToChild) ||
+            !finiteJsonNumber(joint.value("zeroPositionOffset"), parsed.zeroPositionOffset) ||
+            !canonicalLimitsFromJson(joint.value("physicalLimits"), parsed.physicalLimits) ||
+            !canonicalLimitsFromJson(joint.value("operationalLimits"), parsed.operationalLimits)) return false;
+        parsed.id = joint.value("id").toString().toStdString();
+        parsed.name = joint.value("name").toString().toStdString();
+        parsed.parentFrameId = joint.value("parentFrameId").toString().toStdString();
+        parsed.childFrameId = joint.value("childFrameId").toString().toStdString();
+        parsed.dofId = joint.value("dofId").toString().toStdString();
+        parsed.sourceObjectId = joint.value("sourceObjectId").toString().toStdString();
+        model.joints.push_back(parsed);
+    }
+    for (const QJsonValue& value : object.value("dofs").toArray()) {
+        if (!value.isObject()) return false;
+        const QJsonObject dof = value.toObject();
+        DofDefinition parsed;
+        if (!dof.value("id").isString() || !dof.value("jointId").isString() ||
+            !dof.value("qIndex").isDouble() || dof.value("qIndex").toDouble() < 0.0 ||
+            std::floor(dof.value("qIndex").toDouble()) != dof.value("qIndex").toDouble() ||
+            !canonicalJointTypeFromString(dof.value("type").toString(), parsed.type) ||
+            !canonicalCoordinateUnitFromString(dof.value("unit").toString(), parsed.unit)) return false;
+        parsed.id = dof.value("id").toString().toStdString();
+        parsed.jointId = dof.value("jointId").toString().toStdString();
+        parsed.qIndex = static_cast< std::size_t >(dof.value("qIndex").toDouble());
+        model.dofs.push_back(parsed);
+    }
+    for (const QJsonValue& value : object.value("deviceChains").toArray()) {
+        if (!value.isObject()) return false;
+        const QJsonObject chain = value.toObject();
+        DeviceChain parsed;
+        if (!chain.value("id").isString() || !chain.value("rootFrameId").isString() ||
+            !chain.value("tipFrameId").isString() ||
+            !canonicalStringArrayFromJson(chain.value("orderedJointIds"), parsed.orderedJointIds) ||
+            !canonicalStringArrayFromJson(chain.value("orderedDofIds"), parsed.orderedDofIds)) return false;
+        parsed.id = chain.value("id").toString().toStdString();
+        parsed.rootFrameId = chain.value("rootFrameId").toString().toStdString();
+        parsed.tipFrameId = chain.value("tipFrameId").toString().toStdString();
+        model.deviceChains.push_back(parsed);
+    }
+    for (const QJsonValue& value : object.value("toolBindings").toArray()) {
+        if (!value.isObject()) return false;
+        const QJsonObject binding = value.toObject();
+        ToolBinding parsed;
+        if (!binding.value("id").isString() || !binding.value("flangeFrameId").isString() ||
+            !binding.value("tcpFrameId").isString() ||
+            !canonicalTransformFromJson(binding.value("flangeToTcp"), parsed.flangeToTcp) ||
+            !canonicalStringArrayFromJson(binding.value("geometryBindingIds"), parsed.geometryBindingIds) ||
+            !canonicalStringArrayFromJson(binding.value("collisionBindingIds"), parsed.collisionBindingIds)) return false;
+        parsed.id = binding.value("id").toString().toStdString();
+        parsed.flangeFrameId = binding.value("flangeFrameId").toString().toStdString();
+        parsed.tcpFrameId = binding.value("tcpFrameId").toString().toStdString();
+        model.toolBindings.push_back(parsed);
+    }
+    return CanonicalKinematicModelValidator::validate(model).valid;
+}
+
+static QJsonObject canonicalSnapshotToJson(const KinematicBaselineSnapshot& snapshot)
+{
+    QJsonObject result;
+    result["schemaVersion"] = snapshot.schemaVersion;
+    result["fingerprintAlgorithmId"] = QString::fromStdString(snapshot.fingerprintAlgorithmId);
+    result["serializationVersion"] = QString::fromStdString(snapshot.serializationVersion);
+    result["modelFingerprint"] = QString::fromStdString(snapshot.modelFingerprint);
+    result["environmentFingerprint"] = QString::fromStdString(snapshot.environmentFingerprint);
+    result["toolFingerprint"] = QString::fromStdString(snapshot.toolFingerprint);
+    result["model"] = canonicalModelToJson(snapshot.model);
+    return result;
+}
+
+static bool canonicalSnapshotFromJson(const QJsonValue& value, KinematicBaselineSnapshot& snapshot)
+{
+    if (!value.isObject()) return false;
+    const QJsonObject object = value.toObject();
+    if (!object.value("schemaVersion").isDouble() ||
+        !object.value("fingerprintAlgorithmId").isString() ||
+        !object.value("serializationVersion").isString() ||
+        !object.value("modelFingerprint").isString() ||
+        !object.value("environmentFingerprint").isString() ||
+        !object.value("toolFingerprint").isString() ||
+        !canonicalModelFromJson(object.value("model"), snapshot.model)) return false;
+    snapshot.schemaVersion = object.value("schemaVersion").toInt();
+    snapshot.fingerprintAlgorithmId = object.value("fingerprintAlgorithmId").toString().toStdString();
+    snapshot.serializationVersion = object.value("serializationVersion").toString().toStdString();
+    snapshot.modelFingerprint = object.value("modelFingerprint").toString().toStdString();
+    snapshot.environmentFingerprint = object.value("environmentFingerprint").toString().toStdString();
+    snapshot.toolFingerprint = object.value("toolFingerprint").toString().toStdString();
+    return true;
 }
 
 // =============================================================================
@@ -625,6 +1168,19 @@ std::string StructureOptimizationJson::problemToJson(
         scenario["sceneSpec"] = RobotModelSpecJson::toObject(problem.scenarioSnapshot.sceneSpec);
         root["frozenScenarioSnapshot"] = scenario;
     }
+    if (problem.canonicalModelShadow.hasSnapshot()) {
+        QJsonObject shadow;
+        switch (problem.canonicalModelShadow.status) {
+        case CanonicalModelShadowStatus::Current: shadow["status"] = "Current"; break;
+        case CanonicalModelShadowStatus::Stale: shadow["status"] = "Stale"; break;
+        case CanonicalModelShadowStatus::Invalid: shadow["status"] = "Invalid"; break;
+        case CanonicalModelShadowStatus::CanonicalModelMissing:
+            shadow["status"] = "CanonicalModelMissing";
+            break;
+        }
+        shadow["snapshot"] = canonicalSnapshotToJson(*problem.canonicalModelShadow.snapshot);
+        root["canonicalModelShadow"] = shadow;
+    }
 
     // variables
     QJsonArray varsArr;
@@ -662,6 +1218,8 @@ std::string StructureOptimizationJson::problemToJson(
     // runConfig
     root["runConfig"] = runConfigToJson(problem.run);
 
+    writeProblemExtensions(root, problem.extensions);
+
     QJsonDocument doc(root);
     return doc.toJson(QJsonDocument::Indented).toStdString();
 }
@@ -687,6 +1245,9 @@ bool StructureOptimizationJson::problemFromJson(
     }
 
     QJsonObject root = doc.object();
+
+    QJsonObject extensions;
+    if (!readProblemExtensions(root, extensions, error)) return false;
 
     // schemaVersion
     const int sv = root["schemaVersion"].toInt();
@@ -771,14 +1332,49 @@ bool StructureOptimizationJson::problemFromJson(
     // variables
     problem.variables.clear();
     QJsonArray varsArr = root["variables"].toArray();
-    for (const auto& val : varsArr)
-        problem.variables.push_back(designVariableFromJson(val.toObject()));
+    for (const auto& val : varsArr) {
+        StructureDesignVariable variable;
+        if (!designVariableFromJson(val.toObject(), variable, error)) return false;
+        problem.variables.push_back(variable);
+    }
+    problem.canonicalModelShadow = CanonicalModelShadow();
+    if (root.contains("canonicalModelShadow")) {
+        if (!root["canonicalModelShadow"].isObject()) {
+            if (error != nullptr) *error = "Canonical model shadow must be an object.";
+            return false;
+        }
+        const QJsonObject shadow = root["canonicalModelShadow"].toObject();
+        const QString status = shadow["status"].toString();
+        if (status == "Current")
+            problem.canonicalModelShadow.status = CanonicalModelShadowStatus::Current;
+        else if (status == "Stale")
+            problem.canonicalModelShadow.status = CanonicalModelShadowStatus::Stale;
+        else if (status == "Invalid")
+            problem.canonicalModelShadow.status = CanonicalModelShadowStatus::Invalid;
+        else if (status == "CanonicalModelMissing")
+            problem.canonicalModelShadow.status = CanonicalModelShadowStatus::CanonicalModelMissing;
+        else {
+            if (error != nullptr) *error = "Unknown canonical model shadow status: " +
+                                           status.toStdString();
+            return false;
+        }
+        KinematicBaselineSnapshot snapshot;
+        if (!canonicalSnapshotFromJson(shadow.value("snapshot"), snapshot)) {
+            if (error != nullptr) *error = "Invalid canonical model shadow snapshot.";
+            return false;
+        }
+        problem.canonicalModelShadow.snapshot =
+            std::make_shared< KinematicBaselineSnapshot >(snapshot);
+    }
 
     // constraints
     problem.constraints.clear();
     QJsonArray consArr = root["constraints"].toArray();
-    for (const auto& val : consArr)
-        problem.constraints.push_back(constraintFromJson(val.toObject()));
+    for (const auto& val : consArr) {
+        StructureConstraint constraint;
+        if (!constraintFromJson(val.toObject(), constraint, error)) return false;
+        problem.constraints.push_back(constraint);
+    }
 
     // weights
     if (root.contains("weights"))
@@ -787,24 +1383,34 @@ bool StructureOptimizationJson::problemFromJson(
     // objectives 反序列化：优先读取新字段；缺失时回退为按旧 weights 推导的目标。
     problem.objectives.clear();
     if (root.contains("objectives")) {
-        for (const QJsonValue& value : root["objectives"].toArray())
-            problem.objectives.push_back(objectiveFromJson(value.toObject()));
+        for (const QJsonValue& value : root["objectives"].toArray()) {
+            ObjectiveTerm objective;
+            if (!objectiveFromJson(value.toObject(), objective, error)) return false;
+            problem.objectives.push_back(objective);
+        }
     }
     else {
         problem.objectives = StructureOptimizationObjectiveProfile::legacyObjectives(problem.weights);
     }
 
     problem.metricConstraints.clear();
-    for (const QJsonValue& value : root["metricConstraints"].toArray())
-        problem.metricConstraints.push_back(metricConstraintFromJson(value.toObject()));
+    for (const QJsonValue& value : root["metricConstraints"].toArray()) {
+        ConstraintRule constraint;
+        if (!metricConstraintFromJson(value.toObject(), constraint, error)) return false;
+        problem.metricConstraints.push_back(constraint);
+    }
 
     // evaluationConfig
     if (root.contains("evaluationConfig"))
-        evalConfigFromJson(root["evaluationConfig"].toObject(), problem.evaluation);
+        if (!evalConfigFromJson(root["evaluationConfig"].toObject(), problem.evaluation, error))
+            return false;
 
     // runConfig
     if (root.contains("runConfig"))
-        runConfigFromJson(root["runConfig"].toObject(), problem.run);
+        if (!runConfigFromJson(root["runConfig"].toObject(), problem.run, error))
+            return false;
+
+    problem.extensions = extensions;
 
     return true;
 }
@@ -840,10 +1446,12 @@ std::string StructureOptimizationJson::resultToJson(
         cObj["index"]       = c.index;
         cObj["status"]      = candidateStatusToJson(c.status)["status"].toString();
         cObj["feasible"]    = c.feasible;
-        cObj["totalScore"]  = c.totalScore;
+        cObj["totalScore"]  = jsonFiniteNumber(c.totalScore);
+        if (!std::isfinite(c.totalScore))
+            cObj["totalScoreAvailability"] = "Unavailable";
         QJsonArray vals;
         for (double v : c.values)
-            vals.append(v);
+            appendFiniteNumber(vals, v);
         cObj["values"] = vals;
         candArr.append(cObj);
     }
@@ -858,10 +1466,12 @@ std::string StructureOptimizationJson::resultToJson(
     diag["verifiedEliteCandidates"] = result.diagnostics.verifiedEliteCandidates;
     diag["finalVerifiedCandidates"] = result.diagnostics.finalVerifiedCandidates;
     diag["sensitivityEvaluations"] = result.diagnostics.sensitivityEvaluations;
-    diag["totalSeconds"]         = result.diagnostics.totalSeconds;
-    diag["modelBuildSeconds"]    = result.diagnostics.modelBuildSeconds;
-    diag["kinematicEvaluationSeconds"] = result.diagnostics.kinematicEvaluationSeconds;
-    diag["workspaceEvaluationSeconds"] = result.diagnostics.workspaceEvaluationSeconds;
+    diag["totalSeconds"]         = jsonFiniteNumber(result.diagnostics.totalSeconds);
+    diag["modelBuildSeconds"]    = jsonFiniteNumber(result.diagnostics.modelBuildSeconds);
+    diag["kinematicEvaluationSeconds"] =
+        jsonFiniteNumber(result.diagnostics.kinematicEvaluationSeconds);
+    diag["workspaceEvaluationSeconds"] =
+        jsonFiniteNumber(result.diagnostics.workspaceEvaluationSeconds);
     root["diagnostics"] = diag;
 
     // sensitivity
