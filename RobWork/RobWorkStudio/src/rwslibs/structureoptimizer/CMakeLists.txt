@@ -42,6 +42,7 @@ if(build)
         CandidatePatchMerge.cpp
         CandidatePatchApply.cpp
         CandidateCompiler.cpp
+        CanonicalBaselineEvaluationBridge.cpp
         RobotModelSpecProjectionAdapter.cpp
         EvaluationDeviceBuilder.cpp
         CanonicalForwardKinematics.cpp
@@ -125,6 +126,7 @@ if(build)
         CandidatePatchMerge.hpp
         CandidatePatchApply.hpp
         CandidateCompiler.hpp
+        CanonicalBaselineEvaluationBridge.hpp
         RobotModelSpecProjectionAdapter.hpp
         EvaluationDeviceBuilder.hpp
         CompiledCandidate.hpp
@@ -438,6 +440,16 @@ if(build)
             sdurws_structureoptimizer_initial_sampler_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_canonical_baseline_bridge_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> canonical_baseline_bridge
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_canonical_baseline_bridge_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
         set(ROBOT_FILE_300KG_URDF
             "${CMAKE_SOURCE_DIR}/RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/300kg_urdf/output/300kg.urdf")

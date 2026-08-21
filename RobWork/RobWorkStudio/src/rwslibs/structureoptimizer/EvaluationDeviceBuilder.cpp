@@ -45,6 +45,10 @@ EvaluationDeviceBuildResult EvaluationDeviceBuilder::build(
     // while retaining an explicit post-build name check below.
     buildRequest.tcpFrame.clear();
     buildRequest.checkCollision = request.checkCollision;
+    // Frozen fixtures and their asset-root are part of the evaluation identity;
+    // forwarding them keeps canonical baseline and candidate device builds equal.
+    buildRequest.scenarioSnapshot = request.scenarioSnapshot;
+    buildRequest.scenarioBaseDirectory = request.scenarioBaseDirectory;
     const CandidateModelBuildResult built = factory.build(buildRequest);
     if (!built.ok) {
         for (const AnalysisWarning& warning : built.warnings) {

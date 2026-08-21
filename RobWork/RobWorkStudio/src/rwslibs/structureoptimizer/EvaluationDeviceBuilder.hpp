@@ -12,6 +12,8 @@ struct EvaluationDeviceBuildRequest
     std::string deviceName;
     std::string tcpFrame;
     const RobotModelSpec* sourceSnapshot = nullptr;
+    const StructureOptimizationScenarioSnapshot* scenarioSnapshot = nullptr;
+    std::string scenarioBaseDirectory;
     bool checkCollision = true;
 };
 

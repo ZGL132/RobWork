@@ -3,6 +3,7 @@
 #include "EngineeringEvaluatorPipeline.hpp"
 #include "KinematicEngineeringEvaluator.hpp"
 #include "SystemEngineeringOptimizer.hpp"
+#include "CanonicalBaselineEvaluationBridge.hpp"
 
 #include <QMetaObject>
 #include <QtConcurrent>
@@ -258,15 +259,57 @@ StructureOptimizationController::runDefaultBaselineEvaluation(
     const StructureOptimizationCallbacks& callbacks)
 {
     StructureOptimizationResult result;
-    StructureCandidateResult baseline;
-    baseline.index = 0;
-    baseline.values.reserve(problem.variables.size());
-    for (const StructureDesignVariable& variable : problem.variables)
-        baseline.values.push_back(variable.currentValue);
-    KinematicEngineeringEvaluator evaluator(problem);
-    evaluator.evaluateLegacy(baseline, StructureEvaluationStage::Verified, callbacks, nullptr);
-    result.baselineCandidateIndex = 0;
-    result.candidates.push_back(std::move(baseline));
+    struct CancellationBridge {
+        const std::function<bool()>* callback = nullptr;
+    } cancellationBridge;
+    cancellationBridge.callback = &callbacks.isCancellationRequested;
+    const auto cancellationRequested = [](void* userData) {
+        const CancellationBridge* bridge = static_cast<const CancellationBridge*>(userData);
+        return bridge != nullptr && bridge->callback != nullptr &&
+               *bridge->callback && (*bridge->callback)();
+    };
+
+    CanonicalBaselineEvaluationRequest request;
+    request.problem = &problem;
+    request.deviceName = problem.context.deviceName;
+    request.tcpFrame = problem.context.tcpFrame;
+    request.checkCollision = true;
+    request.cancellation = {cancellationRequested, &cancellationBridge};
+    request.planOptions.capabilities.insert("target");
+    const BaselineEvaluationResult baseline =
+        CanonicalBaselineEvaluationBridge::evaluate(request);
+    result.baselineCandidateIndex = baseline.baselineIndex;
+    result.baselineAudit.index = baseline.baselineIndex;
+    result.baselineAudit.candidateFingerprint = baseline.candidateFingerprint;
+    result.baselineAudit.modelFingerprint = baseline.modelFingerprint;
+    result.baselineAudit.environmentFingerprint = baseline.environmentFingerprint;
+    result.baselineAudit.toolFingerprint = baseline.toolFingerprint;
+    result.baselineAudit.planFingerprint = baseline.planFingerprint;
+    if (!baseline.ok) {
+        for (const StructureOptimizationDiagnostic& diagnostic : baseline.diagnostics) {
+            AnalysisWarning warning;
+            warning.code = diagnostic.code;
+            warning.message = diagnostic.message;
+            warning.severity = AnalysisStatus::Fail;
+            result.warnings.push_back(std::move(warning));
+        }
+        if (baseline.candidateResult.lifecycle == CandidateLifecycle::Canceled)
+            result.canceled = true;
+    }
+    // Hard bridge failures are reported through baselineFailed; do not add a
+    // failed projection to candidates, otherwise finishBaselineRun would emit
+    // baselineCompleted and the UI would present an invalid baseline as valid.
+    if (baseline.ok) {
+        StructureCandidateResult legacy =
+            CandidateResultAssembler::toLegacy(baseline.candidateResult,
+                                               baseline.baselineIndex);
+        legacy.stage = StructureEvaluationStage::Verified;
+        legacy.feasible = baseline.candidateResult.feasibility == Feasibility::Feasible;
+        legacy.values.reserve(baseline.designVector.values.size());
+        for (const DesignVectorValue& value : baseline.designVector.values)
+            legacy.values.push_back(value.engineeringValue);
+        result.candidates.push_back(std::move(legacy));
+    }
     return result;
 }
 
