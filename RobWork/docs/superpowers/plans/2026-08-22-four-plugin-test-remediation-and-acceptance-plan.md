@@ -63,7 +63,8 @@
 - [ ] 运行元对象测试：
   `sdurws_robotmodelbuilder_metatest.exe`
 - [ ] 更新报告中的 F-005 为 RESOLVED；若仍有加载错误，保留完整 XML/runtime/DLL 路径作为新缺陷证据。
-- [ ] Commit：`修复 Windows 测试插件运行库部署`
+- [x] 已完成并验证：XML 与 DLL 同目录部署，RobotModelBuilder Widget/Meta 测试在 Windows Qt 平台下分别返回 0，未再出现插件加载错误。
+- [x] Commit：`修复 Windows 测试插件运行库部署`
 
 ## S-A3：固定多配置 CTest 执行入口（P2）
 

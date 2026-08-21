@@ -67,12 +67,13 @@
 - 修复：保留该唯一诊断的可点击入口，使宿主 managed-project readiness 检查优先给出明确门禁文案；其他阻断性诊断仍继续禁用冻结按钮。
 - 验证：`ctest -C Debug -R '^sdurws_engineeringrequirements_' -j1 --output-on-failure`，6/6 PASS，11.10 秒。
 
-### F-005：测试插件运行库缺失，插件加载器每次测试输出错误
+### F-005：测试插件运行库缺失，插件加载器每次测试输出错误（已修复）
 
 - 严重级别：P2（测试环境/插件发现）
-- 状态：OPEN
+- 状态：RESOLVED
 - 现象：RobotModelBuilder、EngineeringRequirements、StructureOptimizer 的 Widget/宿主相关测试反复输出 `Error loading plugin ... test_plugin.rwplugin.xml ... plugin file ... does not exist`；构建树只有 `test_plugin.rwplugin.xml`，没有对应 `test_plugin.rwplugin.dll`。
-- 影响：相关测试仍返回 0/通过，但测试插件扩展点的真实动态加载没有被验证；发布前应补齐 DLL 或将测试插件加载设为明确的可选门。
+- 修复：在 Windows MODULE 目标上补充 `RUNTIME_OUTPUT_DIRECTORY`，使 `test_plugin.rwplugin.dll` 与 XML 清单部署到同一 Debug 目录；新增部署检查脚本，避免清单存在而运行库缺失。
+- 验证：`test-test-plugin-deployment.ps1` 返回 0；`sdurws_robotmodelbuilder_widgettest.exe` 和 `sdurws_robotmodelbuilder_metatest.exe` 在 `QT_QPA_PLATFORM=windows` 下分别以绝对路径启动并返回 0，未再出现 `Error loading plugin`。
 
 ## 用例执行总表
 
@@ -94,6 +95,7 @@
 - `sdurws_robotmodelbuilder_workcellconvertertest.exe`：PASS，退出码 0；WorkCell converter smoke 通过。
 - `sdurws_robotmodelbuilder_metatest.exe`：PASS，退出码 0；元对象/插件元数据测试通过。
 - `sdurws_robotmodelbuilder_widgettest.exe`：PASS，退出码 0；同时观察到预期的 cyclic-dependency 负向场景日志，未导致进程失败。
+- S-A2 动态加载复核：`test_plugin.rwplugin.xml` 与 `test_plugin.rwplugin.dll` 同目录部署检查 PASS；Widget/Meta 两个 executable 单独启动均退出码 0，未出现插件清单加载错误。
 
 CTest 复核命令：`ctest -C Debug -R '^sdurws_robotmodelbuilder_' -j1 --output-on-failure`，5/5 PASS，16.08 秒。
 

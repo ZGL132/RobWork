@@ -90,7 +90,11 @@ if(TARGET sdurw_core)
     add_library(test_plugin.rwplugin MODULE core/TestPlugin.cpp)
     target_link_libraries(test_plugin.rwplugin sdurw_core)
     set_target_properties(
-        test_plugin.rwplugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        test_plugin.rwplugin PROPERTIES
+            # Windows MODULE targets place the loadable DLL in RUNTIME_OUTPUT_DIRECTORY;
+            # keep it next to the generated manifest so plugin discovery tests load it.
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 
     # Create XML file for lazy-loading of Test plugin
