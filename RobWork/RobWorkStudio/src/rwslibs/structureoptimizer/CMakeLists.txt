@@ -612,5 +612,33 @@ if(build)
                                      WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
                                      ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}")
         endif()
+
+        # Phase 7 每个 UI/报告门使用独立进程，Windows 下统一明确使用 windows 平台插件。
+        add_test(NAME sdurws_structureoptimizer_phase7_variable_table_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> variable_table)
+        add_test(NAME sdurws_structureoptimizer_phase7_variable_actions_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> variable_actions)
+        add_test(NAME sdurws_structureoptimizer_phase7_controller_state_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> controller_state)
+        add_test(NAME sdurws_structureoptimizer_phase7_candidate_comparison_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase1_core)
+        add_test(NAME sdurws_structureoptimizer_phase7_preview_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> preview)
+        add_test(NAME sdurws_structureoptimizer_phase7_report_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> report)
+        add_test(NAME sdurws_structureoptimizer_phase7_gui_integration_test
+                 COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> widget)
+        set_tests_properties(
+            sdurws_structureoptimizer_phase7_variable_table_test
+            sdurws_structureoptimizer_phase7_variable_actions_test
+            sdurws_structureoptimizer_phase7_controller_state_test
+            sdurws_structureoptimizer_phase7_candidate_comparison_test
+            sdurws_structureoptimizer_phase7_preview_test
+            sdurws_structureoptimizer_phase7_report_test
+            sdurws_structureoptimizer_phase7_gui_integration_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
+        )
     endif()
 endif()

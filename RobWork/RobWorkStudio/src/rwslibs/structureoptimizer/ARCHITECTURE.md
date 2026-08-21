@@ -362,6 +362,10 @@ sequenceDiagram
 
 [Controller](StructureOptimizationController.cpp) 是异步运行控制器，基于 `QtConcurrent::run` + `QFutureWatcher` 实现。
 
+### Phase 7 UI 集成门
+
+Phase 7 将核心前置检查、设计空间代理排序、约束安全锁定、异步运行代号、候选状态/证据展示、隔离预览以及 staging 导出收口为可独立验收的 UI 套件。每个测试套件以稳定的绝对可执行路径单独启动；Windows GUI 测试必须使用 `QT_QPA_PLATFORM=windows`，不得以 offscreen 代替。
+
 **状态控制**：
 
 ```cpp
