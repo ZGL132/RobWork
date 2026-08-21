@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QFile>
 #include <QSaveFile>
+#include <QTemporaryDir>
 
 namespace rws {
 
@@ -28,6 +29,20 @@ bool writeTextFile(const QString& path, const std::string& content, QString* err
         return false;
     }
     return true;
+}
+
+bool removePath(const QString& path)
+{
+    if (QFileInfo(path).isDir())
+        return QDir(path).removeRecursively();
+    return !QFile::exists(path) || QFile::remove(path);
+}
+
+bool movePath(const QString& source, const QString& target)
+{
+    if (QFileInfo(source).isDir())
+        return QDir().rename(source, target);
+    return QFile::rename(source, target);
 }
 
 const StructureCandidateResult* findCandidate(
@@ -65,6 +80,20 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
         "task-details.csv",
         "audit.csv",
         "report.md"};
+
+    const StructureCandidateResult* selectedCandidate = nullptr;
+    QString candidateDirectoryName;
+    if (request.exportCandidateModel) {
+        selectedCandidate = findCandidate(result, request.selectedCandidateIndex);
+        if (selectedCandidate == nullptr || !selectedCandidate->feasible ||
+            selectedCandidate->status == StructureCandidateStatus::Infeasible ||
+            selectedCandidate->status == StructureCandidateStatus::Failed ||
+            selectedCandidate->status == StructureCandidateStatus::Canceled) {
+            output.errors << "StructureOptimization.Export.CandidateNotFeasible";
+            return output;
+        }
+        candidateDirectoryName = QString("candidate-%1").arg(selectedCandidate->index);
+    }
     if (!request.overwrite) {
         for (const QString& name : names) {
             if (QFile::exists(directory.filePath(name))) {
@@ -72,10 +101,22 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
                 return output;
             }
         }
+        if (!candidateDirectoryName.isEmpty() &&
+            QFileInfo::exists(directory.filePath(candidateDirectoryName))) {
+            output.errors << "StructureOptimization.Export.FileExists: " + candidateDirectoryName;
+            return output;
+        }
+    }
+
+    // 先在目标目录内创建 staging，确保导出失败时 QTemporaryDir 自动清理所有半成品。
+    QTemporaryDir staging(directory.filePath(".structure-optimization-export-XXXXXX"));
+    if (!staging.isValid()) {
+        output.errors << "StructureOptimization.Export.StagingDirectoryFailed";
+        return output;
     }
 
     QString error;
-    const QString projectPath = directory.filePath(names[0]);
+    const QString projectPath = QDir(staging.path()).filePath(names[0]);
     if (!StructureOptimizationProjectAdapter::saveProject(
             projectPath, problem, request.selectedCandidateIndex, &error)) {
         output.errors << error;
@@ -84,40 +125,64 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
     output.writtenFiles << projectPath;
 
     const std::vector<std::pair<QString, std::string> > textFiles = {
-        {directory.filePath(names[1]), StructureOptimizationJson::resultToJson(problem, result)},
-        {directory.filePath(names[2]), StructureOptimizationCsv::candidatesCsv(problem, result)},
-        {directory.filePath(names[3]), StructureOptimizationCsv::taskDetailCsv(problem, result)},
-        {directory.filePath(names[4]), StructureOptimizationCsv::auditCsv(problem, result)},
-        {directory.filePath(names[5]), StructureOptimizationReportWriter::write(problem, result)}};
+        {QDir(staging.path()).filePath(names[1]), StructureOptimizationJson::resultToJson(problem, result)},
+        {QDir(staging.path()).filePath(names[2]), StructureOptimizationCsv::candidatesCsv(problem, result)},
+        {QDir(staging.path()).filePath(names[3]), StructureOptimizationCsv::taskDetailCsv(problem, result)},
+        {QDir(staging.path()).filePath(names[4]), StructureOptimizationCsv::auditCsv(problem, result)},
+        {QDir(staging.path()).filePath(names[5]), StructureOptimizationReportWriter::write(problem, result)}};
     for (const auto& entry : textFiles) {
         if (!writeTextFile(entry.first, entry.second, &error)) {
             output.errors << "StructureOptimization.Export.WriteFailed: " + entry.first +
                                  ": " + error;
-            for (const QString& written : output.writtenFiles)
-                QFile::remove(written);
-            output.writtenFiles.clear();
             return output;
         }
-        output.writtenFiles << entry.first;
     }
 
     if (request.exportCandidateModel) {
-        const StructureCandidateResult* candidate =
-            findCandidate(result, request.selectedCandidateIndex);
-        if (candidate == nullptr || !candidate->feasible) {
-            output.errors << "StructureOptimization.Export.CandidateNotFeasible";
-            return output;
-        }
-        const QString modelDirectory = directory.filePath(
-            QString("candidate-%1").arg(candidate->index));
+        const QString modelDirectory = QDir(staging.path()).filePath(candidateDirectoryName);
         QStringList exportErrors;
-        if (!StructureCandidateExporter::exportModel(problem, *candidate, modelDirectory,
+        if (!StructureCandidateExporter::exportModel(problem, *selectedCandidate, modelDirectory,
                                                       exportErrors)) {
             output.errors.append(exportErrors);
             return output;
         }
-        output.writtenFiles << modelDirectory;
     }
+
+    // 发布阶段只移动已完成的工件；发生冲突或移动失败时回滚已发布文件。
+    QStringList relativePaths = names;
+    if (!candidateDirectoryName.isEmpty())
+        relativePaths << candidateDirectoryName;
+    QStringList backups;
+    QStringList backupTargets;
+    QStringList published;
+    for (int i = 0; i < relativePaths.size(); ++i) {
+        const QString relative = relativePaths[i];
+        const QString target = directory.filePath(relative);
+        const QString source = QDir(staging.path()).filePath(relative);
+        if (QFileInfo::exists(target)) {
+            if (!request.overwrite || !movePath(target, QDir(staging.path()).filePath(
+                                                    QString(".backup-%1").arg(i)))) {
+                for (int j = backups.size() - 1; j >= 0; --j)
+                    movePath(backups[j], backupTargets[j]);
+                output.errors << "StructureOptimization.Export.FileExists: " + relative;
+                return output;
+            }
+            backups << QDir(staging.path()).filePath(QString(".backup-%1").arg(i));
+            backupTargets << target;
+        }
+        if (!movePath(source, target)) {
+            for (const QString& path : published)
+                removePath(path);
+            for (int j = backups.size() - 1; j >= 0; --j)
+                movePath(backups[j], backupTargets[j]);
+            output.errors << "StructureOptimization.Export.PublishFailed: " + relative;
+            return output;
+        }
+        published << target;
+    }
+    for (const QString& backup : backups)
+        removePath(backup);
+    output.writtenFiles = published;
 
     output.ok = output.errors.isEmpty();
     return output;

@@ -12073,6 +12073,15 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    // Phase 7/S76 报告门：单独覆盖文本报告、CSV 和审计输出，避免 GUI 全套件阻塞。
+    if (suite == "report") {
+        QCoreApplication app(argc, argv);
+        testCsvExport();
+        testAuditableEvidenceOutput();
+        testExportService();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     if (suite == "accepted_ur") {
         QCoreApplication app(argc, argv);
         testAcceptedUr6585AProject();
