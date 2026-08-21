@@ -12066,6 +12066,13 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    // Phase 7/S75 独立 GUI 预览门：只启动一次宿主模拟，验证清理/恢复幂等性。
+    if (suite == "preview") {
+        QApplication app(argc, argv);
+        testCandidatePreviewController();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     if (suite == "accepted_ur") {
         QCoreApplication app(argc, argv);
         testAcceptedUr6585AProject();

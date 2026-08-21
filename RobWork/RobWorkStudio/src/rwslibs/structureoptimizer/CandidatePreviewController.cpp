@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QTemporaryDir>
 
+#include <cmath>
+
 namespace rws {
 
 CandidatePreviewController::CandidatePreviewController(IWorkCellPreviewHost* host)
@@ -21,10 +23,20 @@ bool CandidatePreviewController::preview(
     const StructureOptimizationProblem& problem, const StructureCandidateResult& candidate,
     QString* error)
 {
-    if (_host == nullptr || !candidate.feasible) {
+    if (_host == nullptr || !candidate.feasible ||
+        candidate.status != StructureCandidateStatus::Feasible) {
         if (error != nullptr)
-            *error = "StructureOptimization.Preview.CandidateNotFeasible";
+            *error = candidate.status == StructureCandidateStatus::Pending
+                         ? "StructureOptimization.Preview.CandidateStale"
+                         : "StructureOptimization.Preview.CandidateNotFeasible";
         return false;
+    }
+    for (double value : candidate.values) {
+        if (!std::isfinite(value)) {
+            if (error != nullptr)
+                *error = "StructureOptimization.Preview.CandidateArtifactInvalid";
+            return false;
+        }
     }
 
     std::unique_ptr<QTemporaryDir> temporary(new QTemporaryDir(
@@ -61,6 +73,7 @@ bool CandidatePreviewController::preview(
         return false;
     }
 
+    // 只有候选工件已经成功加载后才替换当前临时目录和源路径，失败不会污染预览状态。
     _sourceWorkCellPath = source;
     _temporaryDirectory = std::move(temporary);
     _previewedCandidateIndex = candidate.index;
