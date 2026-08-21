@@ -32,23 +32,29 @@ struct WorkflowProjectSnapshot
     QString modelFingerprint;
     QString sceneFingerprint;
     QString legacySceneFingerprint;
+    QString environmentFingerprint;
 
     bool requirementsFrozen = false;
     QString requirementFingerprint;
     QString requirementModelFingerprint;
     QString requirementSceneFingerprint;
+    QString requirementEnvironmentFingerprint;
 
     bool kinematicValidationPassed = false;
     QString kinematicValidationFingerprint;
     QString kinematicModelFingerprint;
     QString kinematicRequirementFingerprint;
     QString kinematicSceneFingerprint;
+    QString kinematicEnvironmentFingerprint;
 
     bool optimizationArtifactAvailable = false;
     QString optimizationModelFingerprint;
     QString optimizationRequirementFingerprint;
     QString optimizationKinematicFingerprint;
     QString optimizationSceneFingerprint;
+    QString optimizationEnvironmentFingerprint;
+    QString optimizationEvaluatorVersion;
+    QString optimizationCompilerVersion;
 };
 
 struct WorkflowStageStatus
@@ -58,6 +64,7 @@ struct WorkflowStageStatus
     QStringList requiredResourceIds;
     QString modelFingerprint;
     QString requirementFingerprint;
+    QString reasonCode;
 };
 
 class WorkflowStageSnapshot

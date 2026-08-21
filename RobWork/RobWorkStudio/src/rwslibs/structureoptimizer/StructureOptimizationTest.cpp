@@ -81,6 +81,7 @@
 #include "OptimizationRunSnapshot.hpp"
 #include "OptimizationRunJson.hpp"
 #include "OptimizationRunStore.hpp"
+#include "StructureOptimizationWorkflowResolver.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11433,6 +11434,50 @@ static void testOptimizationRunStore()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+static void testStructureOptimizationWorkflowResolver()
+{
+    std::printf("testStructureOptimizationWorkflowResolver ... ");
+    rws::StructureOptimizationWorkflowInputs inputs;
+    inputs.projectOpen = true;
+    inputs.binding.projectId = "project";
+    inputs.binding.targetDevice = "robot";
+    inputs.binding.tcpFrame = "TCP";
+    inputs.binding.sceneResourceId = "scene";
+    inputs.binding.modelResourceId = "model";
+    inputs.binding.sourceKind = "managed";
+    inputs.binding.sourceFingerprint = "binding-fp";
+    inputs.currentProjectId = "project";
+    inputs.currentModelFingerprint = "model-fp";
+    inputs.currentSceneFingerprint = "scene-fp";
+    inputs.currentEnvironmentFingerprint = "env-fp";
+    inputs.currentRequirementFingerprint = "req-fp";
+    inputs.currentKinematicValidationFingerprint = "kin-fp";
+    inputs.persistedModelFingerprint = "model-fp";
+    inputs.persistedSceneFingerprint = "scene-fp";
+    inputs.persistedEnvironmentFingerprint = "env-fp";
+    inputs.persistedRequirementFingerprint = "req-fp";
+    inputs.persistedKinematicValidationFingerprint = "kin-fp";
+    inputs.currentTcpFrame = "TCP";
+    inputs.persistedTcpFrame = "TCP";
+    inputs.currentEvaluatorVersion = "2";
+    inputs.persistedEvaluatorVersion = "1";
+    const rws::OptimizationRunPreconditions ready =
+        rws::StructureOptimizationWorkflowResolver::resolve(inputs);
+    REQUIRE(ready.canStart);
+    REQUIRE(!ready.cacheReusable);
+    REQUIRE(ready.historicalRunsReadable);
+    REQUIRE(ready.staleCodes.contains("EvaluatorVersionChanged"));
+
+    inputs.currentSceneFingerprint = "changed";
+    const rws::OptimizationRunPreconditions stale =
+        rws::StructureOptimizationWorkflowResolver::resolve(inputs);
+    REQUIRE(!stale.canStart);
+    REQUIRE(stale.blockingCodes.contains("SceneFingerprintMismatch"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // S61：旧文档只能迁入当前权威 Envelope。迁移不回写输入，也不能让未绑定变量
 // 在迁移过程中被静默启用；legacy 字段仅作为审计扩展保留。
 static void testLegacyJsonMigration()
@@ -11945,6 +11990,12 @@ int main(int argc, char** argv)
     if (suite == "run_store") {
         QCoreApplication app(argc, argv);
         testOptimizationRunStore();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "workflow_resolver") {
+        QCoreApplication app(argc, argv);
+        testStructureOptimizationWorkflowResolver();
         return g_testFailures == 0 ? 0 : 1;
     }
 

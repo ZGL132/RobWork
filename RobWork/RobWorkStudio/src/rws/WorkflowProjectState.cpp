@@ -40,6 +40,8 @@ WorkflowProjectSnapshot WorkflowProjectState::read (const QJsonObject& plugins)
         stringValue (requirements, QStringLiteral ("modelFingerprint"));
     snapshot.requirementSceneFingerprint =
         stringValue (requirements, QStringLiteral ("sceneFingerprint"));
+    snapshot.requirementEnvironmentFingerprint =
+        stringValue (requirements, QStringLiteral ("environmentFingerprint"));
 
     const QJsonObject kinematics = readObject (root, QStringLiteral ("kinematics"));
     snapshot.kinematicValidationPassed = kinematics.value (QStringLiteral ("passed")).toBool ();
@@ -51,6 +53,8 @@ WorkflowProjectSnapshot WorkflowProjectState::read (const QJsonObject& plugins)
         stringValue (kinematics, QStringLiteral ("requirementFingerprint"));
     snapshot.kinematicSceneFingerprint =
         stringValue (kinematics, QStringLiteral ("sceneFingerprint"));
+    snapshot.kinematicEnvironmentFingerprint =
+        stringValue (kinematics, QStringLiteral ("environmentFingerprint"));
 
     const QJsonObject optimization = readObject (root, QStringLiteral ("optimization"));
     snapshot.optimizationArtifactAvailable =
@@ -63,6 +67,12 @@ WorkflowProjectSnapshot WorkflowProjectState::read (const QJsonObject& plugins)
         stringValue (optimization, QStringLiteral ("kinematicFingerprint"));
     snapshot.optimizationSceneFingerprint =
         stringValue (optimization, QStringLiteral ("sceneFingerprint"));
+    snapshot.optimizationEnvironmentFingerprint =
+        stringValue (optimization, QStringLiteral ("environmentFingerprint"));
+    snapshot.optimizationEvaluatorVersion =
+        stringValue (optimization, QStringLiteral ("evaluatorVersion"));
+    snapshot.optimizationCompilerVersion =
+        stringValue (optimization, QStringLiteral ("compilerVersion"));
     return snapshot;
 }
 
@@ -79,6 +89,8 @@ void WorkflowProjectState::write (QJsonObject& plugins, const WorkflowProjectSna
                snapshot.requirementModelFingerprint);
     putString (requirements, QStringLiteral ("sceneFingerprint"),
                snapshot.requirementSceneFingerprint);
+    putString (requirements, QStringLiteral ("environmentFingerprint"),
+               snapshot.requirementEnvironmentFingerprint);
     root.insert (QStringLiteral ("requirements"), requirements);
 
     QJsonObject kinematics;
@@ -91,6 +103,8 @@ void WorkflowProjectState::write (QJsonObject& plugins, const WorkflowProjectSna
                snapshot.kinematicRequirementFingerprint);
     putString (kinematics, QStringLiteral ("sceneFingerprint"),
                snapshot.kinematicSceneFingerprint);
+    putString (kinematics, QStringLiteral ("environmentFingerprint"),
+               snapshot.kinematicEnvironmentFingerprint);
     root.insert (QStringLiteral ("kinematics"), kinematics);
 
     QJsonObject optimization;
@@ -103,6 +117,12 @@ void WorkflowProjectState::write (QJsonObject& plugins, const WorkflowProjectSna
                snapshot.optimizationKinematicFingerprint);
     putString (optimization, QStringLiteral ("sceneFingerprint"),
                snapshot.optimizationSceneFingerprint);
+    putString (optimization, QStringLiteral ("environmentFingerprint"),
+               snapshot.optimizationEnvironmentFingerprint);
+    putString (optimization, QStringLiteral ("evaluatorVersion"),
+               snapshot.optimizationEvaluatorVersion);
+    putString (optimization, QStringLiteral ("compilerVersion"),
+               snapshot.optimizationCompilerVersion);
     root.insert (QStringLiteral ("optimization"), optimization);
 
     plugins.insert (QStringLiteral ("workflow"), root);

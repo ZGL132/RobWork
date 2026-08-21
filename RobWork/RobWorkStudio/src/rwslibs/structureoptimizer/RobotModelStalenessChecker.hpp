@@ -30,6 +30,7 @@ struct RobotModelStalenessResult
     RobotModelSourceStatus status = RobotModelSourceStatus::Untracked; //!< 源模型校验状态
     QString resolvedSourcePath;                                         //!< 解析出的磁盘源模型文件绝对路径
     QString message;                                                    //!< 详细的诊断/状态描述信息（用于 UI 状态栏或日志显示）
+    QString reasonCode;                                                 //!< 稳定机器可读原因码
 };
 
 /**

@@ -19,6 +19,15 @@ bool sceneEvidenceMatches (const rws::WorkflowProjectSnapshot& snapshot,
            expected == snapshot.legacySceneFingerprint;
 }
 
+void deriveReasonCode (rws::WorkflowStageStatus& status)
+{
+    if (status.reason.contains (QStringLiteral ("not available"))) status.reasonCode = QStringLiteral ("ResourceMissing");
+    else if (status.reason.contains (QStringLiteral ("stale"), Qt::CaseInsensitive)) status.reasonCode = QStringLiteral ("FingerprintMismatch");
+    else if (status.reason.contains (QStringLiteral ("requirements"), Qt::CaseInsensitive)) status.reasonCode = QStringLiteral ("RequirementsNotReady");
+    else if (status.reason.contains (QStringLiteral ("kinematic"), Qt::CaseInsensitive)) status.reasonCode = QStringLiteral ("KinematicValidationMissing");
+    else if (status.reason.contains (QStringLiteral ("optimization"), Qt::CaseInsensitive)) status.reasonCode = QStringLiteral ("OptimizationArtifactMissing");
+}
+
 void addRequired (rws::WorkflowStageStatus& status, const QString& resourceId)
 {
     if (!status.requiredResourceIds.contains (resourceId))
@@ -113,13 +122,16 @@ WorkflowStageSnapshot WorkflowStageController::evaluate (const WorkflowProjectSn
             optimization.state = WorkflowStageState::Stale;
             optimization.reason = QStringLiteral ("Optimization result is stale for the current inputs.");
         }
-        else {
-            optimization.state = WorkflowStageState::Complete;
-        }
+    else {
+        optimization.state = WorkflowStageState::Complete;
+    }
     }
     else {
         optimization.reason = QStringLiteral ("Publish requirements before optimization.");
     }
+    for (WorkflowStage stage : {WorkflowStage::Modeling, WorkflowStage::Requirements,
+                                WorkflowStage::Kinematics, WorkflowStage::StructuralOptimization})
+        deriveReasonCode(result.at(stage));
     return result;
 }
 

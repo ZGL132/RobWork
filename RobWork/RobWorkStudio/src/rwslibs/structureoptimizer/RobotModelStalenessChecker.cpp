@@ -45,14 +45,14 @@ RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
 {
     if (context.modelSpec.robotName.empty() || context.modelSpec.transformJoints.empty()) {
         return {RobotModelSourceStatus::ModelSpecIncomplete, QString(),
-                "The embedded model snapshot is incomplete."};
+                "The embedded model snapshot is incomplete.", "ModelSpecIncomplete"};
     }
 
     const RobotModelProvenance& provenance = context.modelProvenance;
     if (provenance.sourceModelPath.empty() || provenance.sourceFingerprint.empty() ||
         provenance.snapshotFingerprint.empty()) {
         return {RobotModelSourceStatus::Untracked, QString(),
-                "The optimization project has no complete model provenance."};
+                "The optimization project has no complete model provenance.", "Untracked"};
     }
 
     const QString sourcePath = QString::fromStdString(provenance.sourceModelPath);
@@ -64,13 +64,13 @@ RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
     const QFileInfo resolvedInfo(resolvedPath);
     if (!resolvedInfo.exists() || !resolvedInfo.isFile()) {
         return {RobotModelSourceStatus::SourceMissing, resolvedPath,
-                "The tracked model source file is missing."};
+                "The tracked model source file is missing.", "SourceMissing"};
     }
 
     QFile sourceFile(resolvedPath);
     if (!sourceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return {RobotModelSourceStatus::SourceMissing, resolvedPath,
-                "The tracked model source file cannot be read."};
+                "The tracked model source file cannot be read.", "SourceMissing"};
     }
 
     RobotModelSpec sourceSpec;
@@ -79,7 +79,7 @@ RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
                                       &parseError)) {
         return {RobotModelSourceStatus::SourceInvalid, resolvedPath,
                 "The tracked model source file is invalid: " +
-                    QString::fromStdString(parseError)};
+                    QString::fromStdString(parseError), "SourceInvalid"};
     }
 
     RobotModelSpec fingerprintSpec = sourceSpec;
@@ -98,11 +98,11 @@ RobotModelStalenessResult RobotModelStalenessChecker::checkManaged(
     if (sourceFingerprint != provenance.sourceFingerprint ||
         sourceFingerprint != provenance.snapshotFingerprint) {
         return {RobotModelSourceStatus::Stale, resolvedPath,
-                "The tracked model source differs from the frozen project snapshot."};
+                "The tracked model source differs from the frozen project snapshot.", "ModelFingerprintMismatch"};
     }
 
     return {RobotModelSourceStatus::Current, resolvedPath,
-            "The tracked model source matches the frozen project snapshot."};
+            "The tracked model source matches the frozen project snapshot.", "None"};
 }
 
 } // namespace rws
