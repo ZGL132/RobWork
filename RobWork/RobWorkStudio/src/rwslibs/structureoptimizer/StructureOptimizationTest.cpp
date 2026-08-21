@@ -77,6 +77,7 @@
 #include "StructureSensitivityAnalyzer.hpp"
 #include "StructureOptimizationJson.hpp"
 #include "StructureOptimizationDocument.hpp"
+#include "StructureOptimizationMigration.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11361,6 +11362,70 @@ static void testManagedRobotProjectRequiresPublishedWorkCell()
     studio.close();
 }
 
+// S61：旧文档只能迁入当前权威 Envelope。迁移不回写输入，也不能让未绑定变量
+// 在迁移过程中被静默启用；legacy 字段仅作为审计扩展保留。
+static void testLegacyJsonMigration()
+{
+    std::printf("testLegacyJsonMigration ... ");
+
+    rws::StructureOptimizationProblem legacyProblem;
+    legacyProblem.context.projectName = "legacy";
+    legacyProblem.context.robotName = "robot";
+    rws::StructureDesignVariable legacyVariable;
+    legacyVariable.id = "dh-a";
+    legacyVariable.label = "DH A";
+    legacyVariable.unit = "mm";
+    legacyVariable.kind = rws::StructureVariableKind::DhA;
+    legacyVariable.minimum = 100.0;
+    legacyVariable.maximum = 300.0;
+    legacyVariable.step = 10.0;
+    legacyProblem.variables.push_back(legacyVariable);
+    rws::StructureConstraint legacyConstraint;
+    legacyConstraint.id = "must";
+    legacyProblem.constraints.push_back(legacyConstraint);
+    QJsonDocument legacyDocument = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::problemToJson(legacyProblem)));
+    QJsonObject legacyObject = legacyDocument.object();
+    legacyObject.insert(QStringLiteral("thirdParty"), QJsonObject{{QStringLiteral("audit"),
+                                                                   QStringLiteral("retain")}});
+    const std::string legacy = QJsonDocument(legacyObject).toJson(QJsonDocument::Compact).toStdString();
+
+    rws::StructureOptimizationMigrationResult migrated;
+    std::string error;
+    const bool migratedOk = rws::StructureOptimizationMigration::migrate(legacy, migrated, &error);
+    REQUIRE(migratedOk);
+    if (!migratedOk) {
+        std::printf("(%s)\n", error.c_str());
+        return;
+    }
+    REQUIRE(migrated.source == rws::StructureOptimizationMigrationSource::Legacy);
+    REQUIRE(migrated.dirty);
+    REQUIRE(!migrated.currentJson.empty());
+    REQUIRE(migrated.problem.variables.size() == 1);
+    REQUIRE(!migrated.problem.variables.front().enabled);
+    const QJsonObject migratedRoot = QJsonDocument::fromJson(
+        QByteArray::fromStdString(migrated.currentJson)).object();
+    REQUIRE(migratedRoot.value("designSpace").toObject().value("variables").toArray()
+                .at(0).toObject().value("unit").toString() == "m");
+    REQUIRE(migrated.problem.extensions.contains("legacy"));
+
+    rws::StructureOptimizationMigrationResult repeated;
+    REQUIRE(rws::StructureOptimizationMigration::migrate(migrated.currentJson, repeated, &error));
+    REQUIRE(repeated.source == rws::StructureOptimizationMigrationSource::Current);
+    REQUIRE(!repeated.dirty);
+    REQUIRE(repeated.currentJson == migrated.currentJson);
+
+    rws::StructureOptimizationMigrationResult malformed;
+    REQUIRE(!rws::StructureOptimizationMigration::migrate("{\"schemaVersion\":2}", malformed,
+                                                           &error));
+    REQUIRE(!error.empty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 异步控制器状态:用假任务循环驱动 StructureOptimizationController,验证
 // running/paused/completed 信号时序、暂停期间进度不再推进、恢复后继续推进、
 // 取消后 completed 携带 canceled 且控制器退出运行态。
@@ -11791,6 +11856,12 @@ int main(int argc, char** argv)
     if (suite == "current_json_envelope") {
         QCoreApplication app(argc, argv);
         testCurrentJsonEnvelope();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "legacy_json_migration") {
+        QCoreApplication app(argc, argv);
+        testLegacyJsonMigration();
         return g_testFailures == 0 ? 0 : 1;
     }
 
