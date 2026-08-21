@@ -53,7 +53,15 @@ StructureCandidateComparison StructureCandidateComparison::compare(
         }
         StructureCandidateComparisonRow row;
         row.candidateIndex = candidate->index;
-        row.feasible = candidate->feasible;
+        // DataInsufficient/Pending/Failed 绝不能因旧字段残留而显示为 Feasible。
+        const bool dataInsufficient = candidate->status == StructureCandidateStatus::Pending &&
+                                      !candidate->warnings.empty();
+        row.feasible = candidate->feasible && !dataInsufficient &&
+                       candidate->status != StructureCandidateStatus::Failed &&
+                       candidate->status != StructureCandidateStatus::Canceled &&
+                       candidate->status != StructureCandidateStatus::Infeasible;
+        row.status = candidate->status;
+        row.stage = candidate->stage;
         row.score = candidate->totalScore;
         row.scoreDelta = candidate->totalScore - baseline->totalScore;
         row.reachabilityDelta = candidate->scores.reachability - baseline->scores.reachability;
@@ -62,6 +70,7 @@ StructureCandidateComparison StructureCandidateComparison::compare(
         row.collisionDelta = candidate->scores.collision - baseline->scores.collision;
         row.lengthDelta = candidate->raw.totalKinematicLength - baseline->raw.totalKinematicLength;
         row.violatedConstraints = candidate->violatedConstraints;
+        row.warnings = candidate->warnings;
         comparison.rows.push_back(std::move(row));
     }
     comparison.valid = true;

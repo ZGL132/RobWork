@@ -33,7 +33,10 @@ public:
         CollisionColumn,       //!< 第 6 列: 无碰撞率 (Collision-Free Rate，百分比或比率)
         TotalLengthColumn,     //!< 第 7 列: 连杆运动链总长度 (m，反映机械臂本体紧凑度)
         ImprovementColumn,     //!< 第 8 列: 相比原始基线 (Baseline) 模型的综合性能提升幅度 (%)
-        ColumnCount            //!< 总列数统计 (用于 columnCount 函数返回 9)
+        StatusColumn,          //!< 第 9 列: 生命周期/数据状态
+        StageColumn,           //!< 第 10 列: Quick 或 Verified 证据阶段
+        ViolationsColumn,      //!< 第 11 列: 硬约束违反摘要
+        ColumnCount            //!< 总列数统计（包含状态、证据阶段和硬约束摘要）
     };
 
     /**

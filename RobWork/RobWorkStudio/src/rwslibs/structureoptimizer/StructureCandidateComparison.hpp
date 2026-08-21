@@ -12,6 +12,8 @@ struct StructureCandidateComparisonRow
 {
     int candidateIndex = -1;
     bool feasible = false;
+    StructureCandidateStatus status = StructureCandidateStatus::Pending;
+    StructureEvaluationStage stage = StructureEvaluationStage::Quick;
     double score = 0.0;
     double scoreDelta = 0.0;
     double reachabilityDelta = 0.0;
@@ -20,6 +22,7 @@ struct StructureCandidateComparisonRow
     double collisionDelta = 0.0;
     double lengthDelta = 0.0;
     std::vector<std::string> violatedConstraints;
+    std::vector<std::string> warnings;
 };
 
 struct StructureCandidateComparison

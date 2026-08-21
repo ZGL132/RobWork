@@ -1,6 +1,30 @@
 #include "StructureCandidateTableModel.hpp"
 
+#include <QStringList>
+
 using namespace rws;
+
+namespace {
+
+QString statusText(const StructureCandidateResult& candidate)
+{
+    switch (candidate.status) {
+        case StructureCandidateStatus::Feasible: return "Feasible";
+        case StructureCandidateStatus::Infeasible: return "Infeasible";
+        case StructureCandidateStatus::Failed: return "Failed";
+        case StructureCandidateStatus::Canceled: return "Canceled";
+        case StructureCandidateStatus::Pending:
+            return candidate.warnings.empty() ? "Pending" : "Data Insufficient";
+    }
+    return "Unknown";
+}
+
+QString stageText(StructureEvaluationStage stage)
+{
+    return stage == StructureEvaluationStage::Verified ? "Verified" : "Quick";
+}
+
+} // namespace
 
 StructureCandidateTableModel::StructureCandidateTableModel(QObject* parent)
     : QAbstractTableModel(parent)
@@ -29,7 +53,15 @@ QVariant StructureCandidateTableModel::data(const QModelIndex& index, int role) 
 
     switch (index.column()) {
         case IndexColumn: return candidate.index;
-        case FeasibleColumn: return candidate.feasible ? "Yes" : "No";
+        case FeasibleColumn: {
+            const bool dataInsufficient = candidate.status == StructureCandidateStatus::Pending &&
+                                          !candidate.warnings.empty();
+            const bool shownFeasible = candidate.feasible && !dataInsufficient &&
+                                        candidate.status != StructureCandidateStatus::Failed &&
+                                        candidate.status != StructureCandidateStatus::Canceled &&
+                                        candidate.status != StructureCandidateStatus::Infeasible;
+            return shownFeasible ? "Yes" : "No";
+        }
         case TotalScoreColumn: return candidate.totalScore;
         case ReachabilityColumn: return candidate.scores.reachability;
         case ManipulabilityColumn: return candidate.scores.manipulability;
@@ -40,6 +72,14 @@ QVariant StructureCandidateTableModel::data(const QModelIndex& index, int role) 
             const StructureCandidateResult* baseline =
                 candidateByIndex(_baselineCandidateIndex);
             return baseline != nullptr ? candidate.totalScore - baseline->totalScore : 0.0;
+        }
+        case StatusColumn: return statusText(candidate);
+        case StageColumn: return stageText(candidate.stage);
+        case ViolationsColumn: {
+            QStringList values;
+            for (const std::string& violation : candidate.violatedConstraints)
+                values << QString::fromStdString(violation);
+            return values.join(", ");
         }
         default: return QVariant();
     }
@@ -64,6 +104,9 @@ QVariant StructureCandidateTableModel::headerData(int section,
         case CollisionColumn: return "Collision-Free";
         case TotalLengthColumn: return "Length";
         case ImprovementColumn: return "Improvement";
+        case StatusColumn: return "Status";
+        case StageColumn: return "Evidence";
+        case ViolationsColumn: return "Hard Violations";
         default: return QVariant();
     }
 }

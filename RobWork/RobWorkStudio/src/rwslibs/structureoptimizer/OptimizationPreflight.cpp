@@ -33,7 +33,10 @@ OptimizationPreflightResult OptimizationPreflight::run(const OptimizationPreflig
     if (!input.normalizationValid) add("NORMALIZATION_INVALID", "Objective normalization is invalid.", "Repair good/bad normalization bounds.");
     if (!input.evidenceStagePossible) add("EVIDENCE_STAGE_IMPOSSIBLE", "The requested evidence stage cannot be produced.", "Choose a supported validation stage.");
     if (!input.baselineAvailable) add("BASELINE_UNAVAILABLE", "The baseline evaluation is unavailable.", "Evaluate and freeze a baseline.");
-    if (input.estimatedGridSize > 1000000) add("GRID_OVERSIZED", "The estimated grid is oversized; sampling is required.", "Reduce ranges or increase the step.", OptimizationPreflightSeverity::Warning);
+    if (input.estimatedGridSize > 1000000)
+        add("StructureOptimization.Run.SearchSpaceLarge",
+            "The estimated grid is oversized; sampling is required.",
+            "Reduce ranges or increase the step.", OptimizationPreflightSeverity::Warning);
     if (input.candidateCount <= 0 || input.finalVerificationCount < 0 || input.finalVerificationCount > input.candidateCount)
         add("COUNT_CONTRADICTORY", "Candidate and verification counts are contradictory.", "Repair run budgets.");
     result.canStart = true;
