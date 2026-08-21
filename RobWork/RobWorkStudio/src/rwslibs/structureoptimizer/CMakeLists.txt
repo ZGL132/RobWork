@@ -23,6 +23,59 @@ if(build)
 
     # 核心库 — 纯数据类型、验证逻辑、设计变量突变、目标评分、模型工厂，无 UI 依赖。
     set(CoreSrcFiles
+        EvaluationPlan.cpp
+        EvaluationStage.cpp
+        TaskEvaluationStage.cpp
+        EstimatedWorkspaceStage.cpp
+        VerifiedRegionStage.cpp
+        OrientationCoverageStage.cpp
+        KinematicMetricAggregator.cpp
+        CandidateResult.cpp
+        CacheKey.cpp
+        EvaluationCache.cpp
+        DeterministicSeed.cpp
+        InitialSampler.cpp
+        MetricRegistry.cpp
+        ConstraintObjective.cpp
+        AdapterRegistry.cpp
+        CandidatePatch.cpp
+        CandidatePatchMerge.cpp
+        CandidatePatchApply.cpp
+        CandidateCompiler.cpp
+        RobotModelSpecProjectionAdapter.cpp
+        EvaluationDeviceBuilder.cpp
+        CanonicalForwardKinematics.cpp
+        CanonicalKinematicModel.cpp
+        CanonicalModelShadowService.cpp
+        DesignVariable.cpp
+        DesignSpaceRegistry.cpp
+        DesignTemplateApplication.cpp
+        DerivedExpression.cpp
+        DependencyGraph.cpp
+        DesignSpaceCompiler.cpp
+        DesignVector.cpp
+        DhProjection.cpp
+        KinematicBaselineSnapshot.cpp
+        KinematicFingerprint.cpp
+        KinematicModelImporter.cpp
+        PoseDelta.cpp
+        BasePlacementAdapter.cpp
+        FlangePoseAdapter.cpp
+        TcpPoseAdapter.cpp
+        JointAxisAdapter.cpp
+        JointLimitAdapter.cpp
+        JointOriginAdapter.cpp
+        JointZeroAdapter.cpp
+        LegacyDesignSpaceAdapter.cpp
+        ParameterizedLinkAdapter.cpp
+        ParameterizedGeometryAdapter.cpp
+        ParameterizedCollisionAdapter.cpp
+        MeshTransformAdapter.cpp
+        ParameterBinding.cpp
+        ParameterizationMode.cpp
+        WriteSetValidator.cpp
+        KinematicConventions.cpp
+        StructureOptimizationContracts.cpp
         StructureOptimizationValidation.cpp
         StructureDesignMutator.cpp
         StructureObjectiveScorer.cpp
@@ -52,6 +105,66 @@ if(build)
         FrozenRequirementProjectImportService.cpp
     )
     set(CoreHeaderFiles
+        EvaluationPlan.hpp
+        EvaluationStage.hpp
+        TaskEvaluationStage.hpp
+        EstimatedWorkspaceStage.hpp
+        VerifiedRegionStage.hpp
+        OrientationCoverageStage.hpp
+        KinematicMetricAggregator.hpp
+        CandidateResult.hpp
+        CacheKey.hpp
+        EvaluationCache.hpp
+        DeterministicSeed.hpp
+        InitialSampler.hpp
+        MetricRegistry.hpp
+        ConstraintObjective.hpp
+        AdapterRegistry.hpp
+        CandidateCompilerDiagnostics.hpp
+        CandidatePatch.hpp
+        CandidatePatchMerge.hpp
+        CandidatePatchApply.hpp
+        CandidateCompiler.hpp
+        RobotModelSpecProjectionAdapter.hpp
+        EvaluationDeviceBuilder.hpp
+        CompiledCandidate.hpp
+        CanonicalForwardKinematics.hpp
+        CanonicalKinematicModel.hpp
+        CanonicalModelShadowService.hpp
+        DesignVariable.hpp
+        DesignSpaceRegistry.hpp
+        DesignTemplateApplication.hpp
+        DerivedExpression.hpp
+        DependencyGraph.hpp
+        CompiledDesignSpace.hpp
+        DesignSpaceCompiler.hpp
+        DesignVector.hpp
+        AdapterCapability.hpp
+        DhProjection.hpp
+        KinematicBaselineSnapshot.hpp
+        KinematicFingerprint.hpp
+        KinematicImportResult.hpp
+        KinematicModelImporter.hpp
+        PoseDelta.hpp
+        BasePlacementAdapter.hpp
+        FlangePoseAdapter.hpp
+        TcpPoseAdapter.hpp
+        JointAxisAdapter.hpp
+        JointLimitAdapter.hpp
+        JointOriginAdapter.hpp
+        JointZeroAdapter.hpp
+        LegacyDesignSpaceAdapter.hpp
+        ModelParameterAdapter.hpp
+        ParameterBinding.hpp
+        ParameterizedLinkAdapter.hpp
+        ParameterizedGeometryAdapter.hpp
+        ParameterizedCollisionAdapter.hpp
+        MeshTransformAdapter.hpp
+        GeometryAdapterSupport.hpp
+        ParameterizationMode.hpp
+        WriteSetValidator.hpp
+        KinematicConventions.hpp
+        StructureOptimizationContracts.hpp
         StructureOptimizationTypes.hpp
         StructureOptimizationValidation.hpp
         StructureDesignMutator.hpp
@@ -242,6 +355,87 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_project_context_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_evaluation_plan_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> evaluation_plan
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_evaluation_plan_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_evaluation_pipeline_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> evaluation_pipeline
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_evaluation_pipeline_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_constraint_objective_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> constraint_objective
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_constraint_objective_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_task_evaluation_stage_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> task_evaluation_stage
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_task_evaluation_stage_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_spatial_evaluation_stages_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> spatial_evaluation_stages
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_spatial_evaluation_stages_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_kinematic_metric_aggregator_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> kinematic_metric_aggregator
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_kinematic_metric_aggregator_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_candidate_result_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> candidate_result
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_candidate_result_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_cache_key_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> cache_key
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_cache_key_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_initial_sampler_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> initial_sampler
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_initial_sampler_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

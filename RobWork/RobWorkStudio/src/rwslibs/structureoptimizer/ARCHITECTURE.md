@@ -121,6 +121,34 @@
 
 ---
 
+## Phase 0 contract boundary (2026-08-18)
+
+The refactoring implementation begins by freezing core-only contracts without
+changing the legacy optimizer, candidate compiler, or UI path:
+
+- `StructureOptimizationContracts.hpp/.cpp` defines the orthogonal candidate
+  lifecycle, feasibility/evidence/quality projection, completion facts, and
+  stable diagnostics.  Legacy `StructureCandidateStatus` remains supported
+  through one explicit projection.
+- `KinematicConventions.hpp/.cpp` is the single mathematical convention for
+  the canonical model: `T_parent_child = T_parent_jointZero * Motion(axis,
+  q_input + zeroOffset) * T_jointMotion_child`; lengths are metres and angles
+  are radians.  DH and Euler values are not truth sources here.
+- `EngineeringRequirementArtifactAdapter` accepts frozen requirement execution
+  data only.  It verifies the v4 execution contract, provenance and
+  fingerprints; a v3 artifact requested for Verified evaluation fails with
+  `REQ_V3_REQUIRES_REFREEZE`.
+- JSON writes no NaN or infinity: unavailable numbers are represented by
+  `null` plus explicit availability.  Root extensions are preserved and
+  unknown enum values fail parsing rather than silently defaulting.
+
+These boundaries are covered by focused tests and by the full registered
+StructureOptimizer suite.  Phase 1 adds the canonical model as a core-only
+shadow; no UI or optimization workflow is switched until its FK equivalence
+gate has passed.
+
+---
+
 ## 2. 核心数据结构
 
 [StructureOptimizationTypes.hpp](StructureOptimizationTypes.hpp) 是整个插件的数据类型中枢，所有模块都依赖它。
@@ -1448,3 +1476,13 @@ it never invokes candidate generation or ranking. Candidate comparison consumes
 stable candidate indices and computes score, reachability, manipulability,
 joint-margin, collision, and kinematic-length deltas against the result baseline.
 Trajectory, dynamics, motor, and reducer evaluators remain extension points.
+
+## Phase 1 canonical-model shadow (2026-08-19)
+
+The optional `CanonicalModelShadow` is a persistence and audit boundary, not a
+replacement evaluator input.  It contains a fully serializable
+`KinematicBaselineSnapshot` generated only by an explicit WorkCell/SerialDevice/TCP
+import.  Project creation and source-aware loading may refresh the shadow's
+`Current`/`Stale`/`Invalid` state, while old projects retain
+`CanonicalModelMissing`.  The legacy `RobotModelSpec`, variables, candidate
+compiler, scorer, and evaluation pipeline remain unchanged in this phase.

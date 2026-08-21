@@ -1,4 +1,58 @@
 #include "StructureOptimizationTypes.hpp"
+#include "EvaluationPlan.hpp"
+#include "EvaluationStage.hpp"
+#include "MetricRegistry.hpp"
+#include "ConstraintObjective.hpp"
+#include "TaskEvaluationStage.hpp"
+#include "EstimatedWorkspaceStage.hpp"
+#include "VerifiedRegionStage.hpp"
+#include "OrientationCoverageStage.hpp"
+#include "KinematicMetricAggregator.hpp"
+#include "CandidateResult.hpp"
+#include "CacheKey.hpp"
+#include "EvaluationCache.hpp"
+#include "DeterministicSeed.hpp"
+#include "InitialSampler.hpp"
+#include "StructureOptimizationContracts.hpp"
+#include "KinematicConventions.hpp"
+#include "CanonicalKinematicModel.hpp"
+#include "CanonicalForwardKinematics.hpp"
+#include "KinematicModelImporter.hpp"
+#include "DhProjection.hpp"
+#include "KinematicFingerprint.hpp"
+#include "KinematicBaselineSnapshot.hpp"
+#include "CanonicalModelShadowService.hpp"
+#include "DesignVariable.hpp"
+#include "ParameterBinding.hpp"
+#include "DesignSpaceRegistry.hpp"
+#include "DesignTemplateApplication.hpp"
+#include "ParameterizationMode.hpp"
+#include "WriteSetValidator.hpp"
+#include "DerivedExpression.hpp"
+#include "DependencyGraph.hpp"
+#include "DesignSpaceCompiler.hpp"
+#include "DesignVector.hpp"
+#include "LegacyDesignSpaceAdapter.hpp"
+#include "CandidatePatch.hpp"
+#include "CandidatePatchMerge.hpp"
+#include "CandidatePatchApply.hpp"
+#include "CandidateCompiler.hpp"
+#include "RobotModelSpecProjectionAdapter.hpp"
+#include "EvaluationDeviceBuilder.hpp"
+#include "ModelParameterAdapter.hpp"
+#include "AdapterRegistry.hpp"
+#include "JointOriginAdapter.hpp"
+#include "ParameterizedLinkAdapter.hpp"
+#include "JointAxisAdapter.hpp"
+#include "JointZeroAdapter.hpp"
+#include "JointLimitAdapter.hpp"
+#include "BasePlacementAdapter.hpp"
+#include "FlangePoseAdapter.hpp"
+#include "TcpPoseAdapter.hpp"
+#include "ParameterizedGeometryAdapter.hpp"
+#include "ParameterizedCollisionAdapter.hpp"
+#include "MeshTransformAdapter.hpp"
+#include "PoseDelta.hpp"
 #include "StructureOptimizationValidation.hpp"
 #include "StructureDesignMutator.hpp"
 #include "StructureObjectiveScorer.hpp"
@@ -47,6 +101,7 @@
 #include <rwslibs/kinematicanalysis/KinematicAnalysisContext.hpp>
 #include <rwslibs/kinematicanalysis/RegionCoverageEvaluator.hpp>
 #include <rwslibs/kinematicanalysis/TargetEvaluator.hpp>
+#include <rwslibs/kinematicanalysis/OrientationCoverageEvaluator.hpp>
 
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderPlugin.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelBuilderWidget.hpp>
@@ -68,9 +123,12 @@
 #include <rw/kinematics/MovableFrame.hpp>
 #include <rw/kinematics/StateStructure.hpp>
 #include <rw/models/RevoluteJoint.hpp>
+#include <rw/models/PrismaticJoint.hpp>
 #include <rw/models/SerialDevice.hpp>
+#include <rw/models/UniversalJoint.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/math/RPY.hpp>
+#include <rw/math/Q.hpp>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -85,6 +143,7 @@
 #include <QFileInfo>
 #include <QHeaderView>
 #include <QMetaObject>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QLabel>
 #include <QLineEdit>
@@ -100,9 +159,11 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <limits>
 #include <cstdlib>
 #include <memory>
 #include <limits>
+#include <set>
 #include <string>
 #include <thread>
 #include <vector>
@@ -123,6 +184,544 @@ static void require(bool condition, const char* file, int line, const char* expr
 }
 
 #define REQUIRE(cond) require((cond), __FILE__, __LINE__, #cond)
+
+class PassingEvaluationStage final : public rws::EvaluationStage
+{
+  public:
+    std::string id() const override { return "passing"; }
+    std::vector<std::string> requiredCapabilities() const override { return {"target"}; }
+    rws::EvaluationStageResult run(const rws::EvaluationStageContext&, std::atomic_bool*) const override
+    {
+        rws::EvaluationStageResult result;
+        result.status = rws::EvaluationStageStatus::Passed;
+        result.completedCount = 1;
+        result.requestedCount = 1;
+        return result;
+    }
+};
+
+static void testEvaluationPipelineAndMetricRegistry()
+{
+    std::printf("testEvaluationPipelineAndMetricRegistry ... ");
+    rws::RequirementExecutionSet requirements;
+    requirements.schemaVersion = 4;
+    requirements.provenance.requirementFingerprint = "req";
+    rws::EvaluationPlanCompilerOptions options;
+    options.modelFingerprint = "model";
+    options.capabilities.insert("target");
+    const rws::EvaluationPlan plan = rws::EvaluationPlanCompiler::compile(requirements, options);
+    rws::EvaluationPipeline pipeline;
+    pipeline.addStage(std::make_shared<PassingEvaluationStage>());
+    const auto results = pipeline.run(plan, "candidate");
+    REQUIRE(results.size() == 1);
+    REQUIRE(results[0].stageId == "passing");
+    REQUIRE(results[0].status == rws::EvaluationStageStatus::Passed);
+
+    rws::EvaluationPlan withoutCapability = plan;
+    withoutCapability.capabilities.clear();
+    const auto insufficient = pipeline.run(withoutCapability);
+    REQUIRE(insufficient.size() == 1);
+    REQUIRE(insufficient[0].status == rws::EvaluationStageStatus::DataInsufficient);
+
+    rws::MetricRegistry registry;
+    std::string error;
+    REQUIRE(registry.registerMetric({"custom.metric", "m", "test", true, true, false, true}, &error));
+    REQUIRE(!registry.registerMetric({"custom.metric", "m", "test", true, true, false, true}, &error));
+    REQUIRE(registry.find("custom.metric") != nullptr);
+    const rws::MetricResult unavailable{"custom.metric", 0.0, "m",
+                                        rws::MetricAvailability::InsufficientData};
+    REQUIRE(!unavailable.usable());
+    REQUIRE(rws::MetricRegistry::standard().find("jacobian.manipulability_normalized") != nullptr);
+    std::printf("PASSED\n");
+}
+
+static void testConstraintObjectiveAggregation()
+{
+    std::printf("testConstraintObjectiveAggregation ... ");
+    const rws::MetricResult metric{"m", 0.4, "ratio", rws::MetricAvailability::Available};
+    rws::ConstraintSpec hard;
+    hard.id = "hard";
+    hard.metricId = "m";
+    hard.threshold = 0.8;
+    const rws::ConstraintResult hardResult = rws::ConstraintEvaluator::evaluate(hard, metric);
+    REQUIRE(!hardResult.satisfied);
+    REQUIRE(hardResult.evidenceAvailable);
+
+    rws::ObjectiveSpec objective;
+    objective.id = "maximize";
+    objective.metricId = "m";
+    objective.weight = 1.0;
+    const auto objectiveResult = rws::ObjectiveAggregator::evaluate(objective, metric);
+    REQUIRE(objectiveResult.usable);
+    const auto aggregate = rws::ObjectiveAggregator::aggregate({hardResult}, {objectiveResult});
+    REQUIRE(!aggregate.feasible);
+    REQUIRE(aggregate.score > 0.0);
+
+    const rws::MetricResult missing{"m", 0.0, "ratio", rws::MetricAvailability::InsufficientData};
+    const auto missingResult = rws::ConstraintEvaluator::evaluate(hard, missing);
+    REQUIRE(!missingResult.evidenceAvailable);
+    REQUIRE(!rws::ObjectiveAggregator::evaluate(objective, missing).usable);
+
+    rws::MetricResult verified = metric;
+    verified.evidenceStage = "Quick";
+    rws::ConstraintSpec evidenceConstraint = hard;
+    evidenceConstraint.requiredEvidenceStage = "Verified";
+    const auto insufficientStage =
+        rws::ConstraintEvaluator::evaluate(evidenceConstraint, verified);
+    REQUIRE(!insufficientStage.evidenceAvailable);
+
+    rws::ConstraintSpec less;
+    less.id = "less";
+    less.comparison = rws::ConstraintComparison::LessThanOrEqual;
+    less.threshold = 0.5;
+    less.tolerance = 0.1;
+    REQUIRE(rws::ConstraintEvaluator::evaluate(less, metric).satisfied);
+    rws::ConstraintSpec equal;
+    equal.id = "equal";
+    equal.comparison = rws::ConstraintComparison::Equal;
+    equal.threshold = 0.4;
+    equal.tolerance = 0.01;
+    REQUIRE(rws::ConstraintEvaluator::evaluate(equal, metric).satisfied);
+    rws::ConstraintSpec range;
+    range.id = "range";
+    range.comparison = rws::ConstraintComparison::InRange;
+    range.threshold = 0.3;
+    range.upperThreshold = 0.5;
+    REQUIRE(rws::ConstraintEvaluator::evaluate(range, metric).satisfied);
+
+    rws::ConstraintSpec highPriority = hard;
+    highPriority.id = "high";
+    highPriority.priority = 10;
+    rws::ConstraintSpec lowPriority = hard;
+    lowPriority.id = "low";
+    lowPriority.priority = 1;
+    const auto ordered = rws::ObjectiveAggregator::aggregate(
+        {rws::ConstraintEvaluator::evaluate(lowPriority, metric),
+         rws::ConstraintEvaluator::evaluate(highPriority, metric)}, {});
+    REQUIRE(ordered.constraints.front().id == "high");
+    std::printf("PASSED\n");
+}
+
+static bool cancellationRequested(void* data)
+{
+    return data != nullptr && *static_cast<bool*>(data);
+}
+
+static void testTaskEvaluationStage()
+{
+    std::printf("testTaskEvaluationStage ... ");
+    rws::EvaluationPlan plan;
+    plan.status = rws::EvaluationPlanStatus::Valid;
+    rws::EvaluationPlanTask must;
+    must.source.id = "must-target";
+    must.source.compileState = rws::RequirementExecutionCompileState::Included;
+    must.source.level = rws::RequirementExecutionLevel::Must;
+    must.hardConstraint = true;
+    plan.tasks.push_back(must);
+
+    rws::AnalysisContext context;
+    const rws::TaskEvaluationResult result =
+        rws::TaskEvaluationStage().evaluate(context, plan);
+    REQUIRE(result.tasks.size() == 1);
+    REQUIRE(result.tasks.front().taskId == "must-target");
+    REQUIRE(result.stage.status == rws::EvaluationStageStatus::DataInsufficient);
+    REQUIRE(result.stage.completedCount == 1);
+    REQUIRE(result.mustFeasibility == rws::Feasibility::DataInsufficient);
+    REQUIRE(!result.tasks.front().failureCodes.empty());
+
+    bool cancel = true;
+    rws::CancellationToken token;
+    token.isCancellationRequested = &cancellationRequested;
+    token.userData = &cancel;
+    const rws::TaskEvaluationResult canceled =
+        rws::TaskEvaluationStage().evaluate(context, plan, token);
+    REQUIRE(canceled.stage.status == rws::EvaluationStageStatus::Canceled);
+    REQUIRE(canceled.stage.completedCount == 0);
+    REQUIRE(canceled.mustFeasibility == rws::Feasibility::NotEvaluated);
+    std::printf("PASSED\n");
+}
+
+static void testSpatialEvaluationStages()
+{
+    std::printf("testSpatialEvaluationStages ... ");
+    rws::AnalysisContext context;
+    rws::EvaluationPlan plan;
+    plan.status = rws::EvaluationPlanStatus::Valid;
+
+    rws::WorkspaceSamplingConfig sampling;
+    sampling.sampleCount = 0;
+    const auto estimated = rws::EstimatedWorkspaceStage().evaluate(context, sampling);
+    REQUIRE(estimated.stage.status == rws::EvaluationStageStatus::NotEvaluated);
+    REQUIRE(estimated.stage.completedCount == 0);
+    REQUIRE(estimated.samples.empty());
+
+    const auto regions = rws::VerifiedRegionStage().evaluate(context, plan);
+    REQUIRE(regions.stage.status == rws::EvaluationStageStatus::NotEvaluated);
+    REQUIRE(regions.regions.empty());
+
+    rws::PoseReachabilityConfig orientationConfig;
+    orientationConfig.directionSamples = 3;
+    orientationConfig.rollSamples = 2;
+    const auto orientationSamples = rws::generateOrientationTargetSamples(orientationConfig);
+    REQUIRE(orientationSamples.size() == 6);
+    REQUIRE(orientationSamples[0].directionIndex == 0);
+    REQUIRE(orientationSamples[0].rollIndex == 0);
+    REQUIRE(orientationSamples[1].directionIndex == 0);
+    REQUIRE(orientationSamples[1].rollIndex == 1);
+
+    const auto orientation = rws::OrientationCoverageStage().evaluate(
+        context, {{{0.0, 0.0, 0.0}}}, orientationConfig);
+    REQUIRE(orientation.stage.status == rws::EvaluationStageStatus::DataInsufficient);
+    REQUIRE(orientation.samples.size() == 1);
+    REQUIRE(orientation.samples.front().sampledOrientationSamples == 6);
+    std::printf("PASSED\n");
+}
+
+static void testKinematicMetricAggregator()
+{
+    std::printf("testKinematicMetricAggregator ... ");
+    std::vector<rws::KinematicMetricSample> samples;
+    for (int i = 1; i <= 10; ++i) {
+        rws::KinematicMetricSample sample;
+        sample.evidenceId = "sample-" + std::to_string(i);
+        sample.manipulability = static_cast<double>(i);
+        sample.jointMargin = static_cast<double>(i) / 10.0;
+        sample.collisionChecked = i <= 5;
+        sample.inCollision = i == 1;
+        samples.push_back(sample);
+    }
+    const auto aggregate = rws::KinematicMetricAggregator::aggregate(samples, 10, 2.0);
+    REQUIRE(aggregate.manipulabilityP10.availability == rws::MetricAvailability::Available);
+    REQUIRE(aggregate.manipulabilityP10.value == 1.0);
+    REQUIRE(aggregate.manipulabilityP90.value == 9.0);
+    REQUIRE(aggregate.manipulabilityP10Normalized.value == 0.125);
+    REQUIRE(aggregate.jointMarginP10.value == 0.1);
+    REQUIRE(aggregate.collisionRate.availability == rws::MetricAvailability::Partial);
+    REQUIRE(aggregate.collisionRate.sampleCount == 5);
+    REQUIRE(aggregate.collisionRate.value == 0.2);
+    REQUIRE(aggregate.minimumDistance.availability == rws::MetricAvailability::InsufficientData);
+
+    for (auto& sample : samples)
+        sample.collisionChecked = true;
+    const auto completeCollision = rws::KinematicMetricAggregator::aggregate(samples, 10, 2.0);
+    REQUIRE(completeCollision.collisionRate.availability == rws::MetricAvailability::Available);
+
+    const auto partial = rws::KinematicMetricAggregator::aggregate(samples, 20, 2.0);
+    REQUIRE(partial.manipulabilityP10.availability == rws::MetricAvailability::Partial);
+    const auto empty = rws::KinematicMetricAggregator::aggregate({}, 5, 2.0);
+    REQUIRE(empty.manipulabilityP10.availability == rws::MetricAvailability::InsufficientData);
+    std::printf("PASSED\n");
+}
+
+static void testCandidateResultAssembly()
+{
+    std::printf("testCandidateResultAssembly ... ");
+    rws::CandidateAssemblyInput input;
+    input.candidateId = "candidate-1";
+    input.feasibility = rws::Feasibility::Feasible;
+    input.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    input.quality = rws::Quality::Good;
+    input.completion.requestedCount = 2;
+    input.completion.completedCount = 2;
+    input.representativeQ = {1.0, 2.0};
+    input.metrics.push_back({"m", 0.8, "ratio", rws::MetricAvailability::Available});
+    rws::ConstraintResult constraint;
+    constraint.id = "hard";
+    constraint.hard = true;
+    constraint.satisfied = true;
+    constraint.evidenceAvailable = true;
+    input.constraints.push_back(constraint);
+    rws::ObjectiveResult objective;
+    objective.id = "score";
+    objective.usable = true;
+    objective.contribution = 0.8;
+    input.objectives.push_back(objective);
+    rws::EvaluationStageResult stage;
+    stage.stageId = "task_evaluation";
+    stage.status = rws::EvaluationStageStatus::Passed;
+    stage.requestedCount = 2;
+    stage.completedCount = 2;
+    input.stages.push_back(stage);
+
+    const auto result = rws::CandidateResultAssembler::assemble(input);
+    REQUIRE(result.lifecycle == rws::CandidateLifecycle::Completed);
+    REQUIRE(result.feasibility == rws::Feasibility::Feasible);
+    REQUIRE(result.stages.size() == 1);
+    REQUIRE(result.metrics.size() == 1);
+    REQUIRE(result.representativeQ.size() == 2);
+    REQUIRE(rws::CandidateResultAssembler::toLegacy(result, 3).status ==
+            rws::StructureCandidateStatus::Feasible);
+
+    input.compileSucceeded = false;
+    input.compileDiagnostic = "compile failed";
+    const auto compileFailure = rws::CandidateResultAssembler::assemble(input);
+    REQUIRE(compileFailure.lifecycle == rws::CandidateLifecycle::Failed);
+    REQUIRE(compileFailure.feasibility == rws::Feasibility::NotEvaluated);
+
+    input.compileSucceeded = true;
+    input.evaluationSucceeded = false;
+    input.evaluationDiagnostic = "evaluation failed";
+    const auto evaluationFailure = rws::CandidateResultAssembler::assemble(input);
+    REQUIRE(evaluationFailure.lifecycle == rws::CandidateLifecycle::Failed);
+    REQUIRE(evaluationFailure.feasibility == rws::Feasibility::DataInsufficient);
+
+    input.evaluationSucceeded = true;
+    input.completion.canceled = true;
+    const auto canceled = rws::CandidateResultAssembler::assemble(input);
+    REQUIRE(canceled.lifecycle == rws::CandidateLifecycle::Canceled);
+    REQUIRE(canceled.feasibility == rws::Feasibility::DataInsufficient);
+
+    rws::CandidateAssemblyInput insufficient = input;
+    insufficient.completion.canceled = false;
+    insufficient.feasibility = rws::Feasibility::DataInsufficient;
+    const auto insufficientResult = rws::CandidateResultAssembler::assemble(insufficient);
+    REQUIRE(rws::CandidateResultAssembler::betterForRanking(result, insufficientResult));
+    std::printf("PASSED\n");
+}
+
+static rws::CacheKeyInput cacheKeyFixture()
+{
+    rws::CacheKeyInput input;
+    input.modelFingerprint = "model-a";
+    input.environmentFingerprint = "environment-a";
+    input.requirementFingerprint = "requirements-a";
+    input.evaluationPlanFingerprint = "plan-a";
+    input.designSpaceFingerprint = "space-a";
+    input.designVectorFingerprint = "vector-a";
+    input.compilerId = "candidate-compiler";
+    input.compilerVersion = "1";
+    input.compilerConfiguration = "compiler-config-a";
+    input.evaluatorId = "target-evaluator";
+    input.evaluatorVersion = "2";
+    input.evaluatorConfiguration = "evaluator-config-a";
+    input.solverId = "ik-solver";
+    input.solverVersion = "3";
+    input.solverConfiguration = "solver-config-a";
+    input.toolFingerprint = "tool-a";
+    input.samplingPlan = {"task-a:seed=7", "region-a:seed=11"};
+    input.samplingMethod = "deterministic-random";
+    input.samplingSeed = 17;
+    input.positionToleranceMeters = 1e-3;
+    input.orientationToleranceRadians = 2e-3;
+    input.evidenceStage = rws::AnalysisEvidenceStage::Quick;
+    input.platformNumericPolicy = "msvc-x64-fp64";
+    return input;
+}
+
+static void testCanonicalCacheKey()
+{
+    std::printf("testCanonicalCacheKey ... ");
+    const rws::CacheKeyInput input = cacheKeyFixture();
+    const rws::CacheKeyResult first = rws::CacheKey::create(input);
+    const rws::CacheKeyResult repeated = rws::CacheKey::create(input);
+    REQUIRE(first.ok);
+    REQUIRE(repeated.ok);
+    REQUIRE(first.key == repeated.key);
+    REQUIRE(!first.key.fingerprint.empty());
+
+    rws::CacheKeyInput reordered = input;
+    std::reverse(reordered.samplingPlan.begin(), reordered.samplingPlan.end());
+    REQUIRE(rws::CacheKey::create(reordered).key == first.key);
+
+    rws::CacheKeyInput changed = input;
+    changed.environmentFingerprint = "environment-b";
+    REQUIRE(rws::CacheKey::create(changed).key != first.key);
+    changed = input;
+    changed.evaluatorConfiguration = "evaluator-config-b";
+    REQUIRE(rws::CacheKey::create(changed).key != first.key);
+    changed = input;
+    changed.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    REQUIRE(rws::CacheKey::create(changed).key != first.key);
+
+    changed = input;
+    changed.positionToleranceMeters = std::numeric_limits<double>::quiet_NaN();
+    REQUIRE(!rws::CacheKey::create(changed).ok);
+
+    rws::EvaluationCache cache;
+    rws::CandidateResult candidate;
+    candidate.candidateId = "candidate-a";
+    candidate.feasibility = rws::Feasibility::Feasible;
+    REQUIRE(cache.put(input, candidate));
+    rws::CandidateResult hit;
+    REQUIRE(cache.find(input, hit));
+    REQUIRE(hit.candidateId == candidate.candidateId);
+    rws::CacheKeyInput verified = input;
+    verified.evidenceStage = rws::AnalysisEvidenceStage::Verified;
+    REQUIRE(!cache.find(verified, hit));
+    std::printf("PASSED\n");
+}
+
+static rws::CompiledDesignSpace samplerFixture(bool reversed = false)
+{
+    rws::DesignVariableDefinition length;
+    length.id = "length";
+    length.semanticKind = rws::SemanticKind::LinkLength;
+    length.unit = rws::DesignVariableUnit::Metres;
+    length.minimum = 0.1;
+    length.maximum = 0.5;
+    length.step = 0.1;
+    length.nominalValue = 0.3;
+    length.currentValue = 0.3;
+
+    rws::DesignVariableDefinition count;
+    count.id = "count";
+    count.semanticKind = rws::SemanticKind::LinkWidth;
+    count.domain = rws::VariableDomain::Integer;
+    count.unit = rws::DesignVariableUnit::Unitless;
+    count.minimum = 1.0;
+    count.maximum = 3.0;
+    count.step = 1.0;
+    count.nominalValue = 2.0;
+    count.currentValue = 2.0;
+
+    rws::DesignVariableDefinition material;
+    material.id = "material";
+    material.semanticKind = rws::SemanticKind::ParameterizedMaterial;
+    material.domain = rws::VariableDomain::Discrete;
+    material.discreteOptions = {{"steel", "Steel", "steel.json"},
+                                {"aluminum", "Aluminum", "aluminum.json"}};
+
+    rws::CompiledDesignSpace space;
+    space.schemaVersion = 1;
+    space.fingerprint = "sampler-space";
+    space.independentVariables = reversed
+        ? std::vector<rws::DesignVariableDefinition>{material, length, count}
+        : std::vector<rws::DesignVariableDefinition>{length, count, material};
+    std::sort(space.independentVariables.begin(), space.independentVariables.end(),
+              [](const auto& left, const auto& right) { return left.id < right.id; });
+    for (std::size_t index = 0; index < space.independentVariables.size(); ++index)
+        space.canonicalVectorSchema.push_back(
+            {space.independentVariables[index].id, index, space.independentVariables[index].unit});
+    return space;
+}
+
+static void testDeterministicInitialSampler()
+{
+    std::printf("testDeterministicInitialSampler ... ");
+    REQUIRE(rws::DeterministicSeed::candidateSeed(42, 0) ==
+            rws::DeterministicSeed::candidateSeed(42, 0));
+    REQUIRE(rws::DeterministicSeed::candidateSeed(42, 0) !=
+            rws::DeterministicSeed::candidateSeed(42, 1));
+
+    const auto space = samplerFixture();
+    rws::InitialSamplingSpec spec;
+    spec.method = rws::InitialSamplingMethod::Random;
+    spec.count = 8;
+    spec.rootSeed = 42;
+    const auto first = rws::InitialSampler::generate(space, spec);
+    const auto repeated = rws::InitialSampler::generate(space, spec);
+    REQUIRE(first.ok);
+    REQUIRE(first.candidates.size() == repeated.candidates.size());
+    REQUIRE(first.candidates.size() == 9); // baseline + 8 unique random candidates
+    for (std::size_t i = 0; i < first.candidates.size(); ++i) {
+        REQUIRE(first.candidates[i].index == i);
+        REQUIRE(first.candidates[i].vector.fingerprint == repeated.candidates[i].vector.fingerprint);
+    }
+    const auto nominalLength = std::find_if(
+        first.candidates.front().vector.values.begin(), first.candidates.front().vector.values.end(),
+        [](const auto& value) { return value.variableId == "length"; });
+    REQUIRE(nominalLength != first.candidates.front().vector.values.end());
+    if (nominalLength != first.candidates.front().vector.values.end())
+        REQUIRE(std::fabs(nominalLength->engineeringValue - 0.3) < 1e-12);
+
+    spec.method = rws::InitialSamplingMethod::LatinHypercube;
+    spec.count = 5;
+    const auto lhs = rws::InitialSampler::generate(space, spec);
+    REQUIRE(lhs.ok);
+    REQUIRE(lhs.candidates.size() >= 2);
+    std::set<int> integerLevels;
+    for (std::size_t i = 1; i < lhs.candidates.size(); ++i)
+        integerLevels.insert(static_cast<int>(lhs.candidates[i].vector.values[0].engineeringValue * 10.0));
+    REQUIRE(!integerLevels.empty());
+
+    spec.method = rws::InitialSamplingMethod::Grid;
+    spec.gridStepsPerVariable = 2;
+    spec.maximumCount = 8;
+    const auto grid = rws::InitialSampler::generate(space, spec);
+    REQUIRE(grid.ok);
+    REQUIRE(grid.candidates.size() == 9); // baseline plus 2*2*2 unique grid points
+    const auto firstGridLength = std::find_if(
+        grid.candidates[1].vector.values.begin(), grid.candidates[1].vector.values.end(),
+        [](const auto& value) { return value.variableId == "length"; });
+    REQUIRE(firstGridLength != grid.candidates[1].vector.values.end());
+    if (firstGridLength != grid.candidates[1].vector.values.end())
+        REQUIRE(std::fabs(firstGridLength->engineeringValue - 0.1) < 1e-12);
+
+    auto reordered = samplerFixture(true);
+    const auto reorderedGrid = rws::InitialSampler::generate(reordered, spec);
+    REQUIRE(reorderedGrid.ok);
+    REQUIRE(grid.candidates.size() == reorderedGrid.candidates.size());
+    for (std::size_t i = 0; i < grid.candidates.size(); ++i)
+        REQUIRE(grid.candidates[i].vector.fingerprint == reorderedGrid.candidates[i].vector.fingerprint);
+
+    spec.maximumCount = 1;
+    const auto capped = rws::InitialSampler::generate(space, spec);
+    REQUIRE(!capped.ok);
+    REQUIRE(!capped.diagnostics.empty());
+    std::printf("PASSED\n");
+}
+
+static void testEvaluationPlanCompiler()
+{
+    std::printf("testEvaluationPlanCompiler ... ");
+    rws::RequirementExecutionSet requirements;
+    requirements.schemaVersion = 4;
+    requirements.provenance.requirementFingerprint = "req-1";
+    requirements.provenance.robotModelFingerprint = "model-1";
+    requirements.provenance.environmentFingerprint = "scene-1";
+
+    rws::RequirementExecutionTask must;
+    must.id = "must-target";
+    must.level = rws::RequirementExecutionLevel::Must;
+    must.collisionFreeRequired = false;
+    requirements.tasks.push_back(must);
+    rws::RequirementExecutionTask should;
+    should.id = "should-target";
+    should.level = rws::RequirementExecutionLevel::Should;
+    should.collisionFreeRequired = false;
+    requirements.tasks.push_back(should);
+
+    rws::RequirementExecutionRegion region;
+    region.id = "region";
+    region.level = rws::RequirementExecutionLevel::Must;
+    region.collisionFreeRequired = false;
+    requirements.workspaceRegions.push_back(region);
+
+    rws::EvaluationPlanCompilerOptions options;
+    options.modelFingerprint = "model-1";
+    options.environmentFingerprint = "scene-1";
+    options.toolFingerprint = "tool-1";
+    options.capabilities.insert("target");
+    const rws::EvaluationPlan first =
+        rws::EvaluationPlanCompiler::compile(requirements, options);
+    const rws::EvaluationPlan second =
+        rws::EvaluationPlanCompiler::compile(requirements, options);
+    REQUIRE(first.valid());
+    REQUIRE(first.tasks.size() == 2);
+    REQUIRE(first.tasks[0].hardConstraint);
+    REQUIRE(!first.tasks[1].hardConstraint);
+    REQUIRE(first.regions.size() == 1);
+    REQUIRE(first.fingerprint == second.fingerprint);
+
+    options.capabilities.clear();
+    must.collisionFreeRequired = true;
+    requirements.tasks[0] = must;
+    const rws::EvaluationPlan missingCapability =
+        rws::EvaluationPlanCompiler::compile(requirements, options);
+    REQUIRE(!missingCapability.valid());
+    REQUIRE(missingCapability.hasBlockingDiagnostics());
+
+    requirements.schemaVersion = 3;
+    const rws::EvaluationPlan v3 =
+        rws::EvaluationPlanCompiler::compile(requirements, options);
+    REQUIRE(!v3.valid());
+    bool sawVerifiedRejection = false;
+    for (const auto& item : v3.diagnostics)
+        sawVerifiedRejection = sawVerifiedRejection ||
+                               item.code == "REQUIREMENT_SCHEMA_VERIFIED_UNSUPPORTED";
+    REQUIRE(sawVerifiedRejection);
+    std::printf("PASSED\n");
+}
 
 // 子套件 ABI:验证结构优化域的几个历史公开入口仍按既有函数指针类型可链接——
 // resolveExternalAssetPaths / loadProject / createProblem / check。
@@ -154,9 +753,4266 @@ static void testHistoricalStructureOptimizerAbiRemainsLinkable()
     REQUIRE(checkStaleness != nullptr);
 }
 
+// Phase 0/S03: the new result contract keeps lifecycle, feasibility, evidence,
+// quality, and completion orthogonal.  This is deliberately model-only so it
+// can protect core semantics without a Qt Widgets platform dependency.
+static void testOptimizationResultContract()
+{
+    rws::CandidateLifecycle lifecycle = rws::CandidateLifecycle::Canceled;
+    rws::EvaluationCompletion completion;
+    completion.requestedCount = 10;
+    completion.completedCount = 4;
+    completion.canceled = true;
+    completion.partialReason = "CanceledByUser";
+
+    REQUIRE(std::string(rws::toString(lifecycle)) == "Canceled");
+    REQUIRE(std::string(rws::toString(rws::Feasibility::DataInsufficient)) ==
+            "DataInsufficient");
+    REQUIRE(std::string(rws::toString(rws::AnalysisEvidenceStage::Quick)) == "Quick");
+    REQUIRE(std::string(rws::toString(rws::Quality::Unknown)) == "Unknown");
+    REQUIRE(!completion.complete());
+    REQUIRE(completion.canceled);
+    REQUIRE(completion.partial());
+
+    rws::CandidateLifecycle parsedLifecycle = rws::CandidateLifecycle::Pending;
+    std::string error;
+    REQUIRE(rws::candidateLifecycleFromString("Canceled", parsedLifecycle, &error));
+    REQUIRE(parsedLifecycle == rws::CandidateLifecycle::Canceled);
+    REQUIRE(error.empty());
+    REQUIRE(!rws::candidateLifecycleFromString("NotAState", parsedLifecycle, &error));
+    REQUIRE(!error.empty());
+
+    rws::StructureCandidateStatus legacy = rws::StructureCandidateStatus::Canceled;
+    const rws::CandidateStateProjection projected =
+        rws::projectLegacyCandidateStatus(legacy);
+    REQUIRE(projected.lifecycle == rws::CandidateLifecycle::Canceled);
+    REQUIRE(projected.feasibility == rws::Feasibility::DataInsufficient);
+    REQUIRE(projected.evidenceStage == rws::AnalysisEvidenceStage::Quick);
+    REQUIRE(projected.quality == rws::Quality::Unknown);
+}
+
+// Phase 0/S04: freeze the SE(3) convention before it is used by any importer
+// or candidate compiler.  These tests intentionally use no WorkCell objects.
+static void testKinematicConventions()
+{
+    using namespace rw::math;
+
+    REQUIRE(std::fabs(rws::KinematicConventions::modelCoordinate(0.3, -0.1) - 0.2) <
+            1e-12);
+
+    const Transform3D<> revolute = rws::KinematicConventions::jointMotion(
+        rws::CanonicalJointMotion::Revolute, Vector3D<>::z(), rw::math::Pi / 2.0);
+    REQUIRE(std::fabs(revolute.R()(0, 0)) < 1e-12);
+    REQUIRE(std::fabs(revolute.R()(1, 0) - 1.0) < 1e-12);
+    REQUIRE(rws::KinematicConventions::isProperRotation(revolute.R()));
+
+    const Transform3D<> prismatic = rws::KinematicConventions::jointMotion(
+        rws::CanonicalJointMotion::Prismatic, Vector3D<>::x(), 0.25);
+    REQUIRE(std::fabs(prismatic.P()(0) - 0.25) < 1e-12);
+    REQUIRE(std::fabs(prismatic.P()(1)) < 1e-12);
+    REQUIRE(std::fabs(prismatic.P()(2)) < 1e-12);
+
+    const Transform3D<> fixed = rws::KinematicConventions::jointMotion(
+        rws::CanonicalJointMotion::Fixed, Vector3D<>::z(), 42.0);
+    REQUIRE(std::fabs(fixed.P().norm2()) < 1e-12);
+    REQUIRE(rws::KinematicConventions::isProperRotation(fixed.R()));
+
+    const Transform3D<> parentToJoint(Vector3D<>(1.0, 0.0, 0.0));
+    const Transform3D<> motionToChild(Vector3D<>(0.0, 2.0, 0.0));
+    const Transform3D<> composed = rws::KinematicConventions::composeJointTransform(
+        parentToJoint, rws::CanonicalJointMotion::Prismatic, Vector3D<>::z(), 0.5, 0.25,
+        motionToChild);
+    REQUIRE(std::fabs(composed.P()(0) - 1.0) < 1e-12);
+    REQUIRE(std::fabs(composed.P()(1) - 2.0) < 1e-12);
+    REQUIRE(std::fabs(composed.P()(2) - 0.75) < 1e-12);
+
+    const rws::TangentBasis basis =
+        rws::KinematicConventions::stableTangentBasis(Vector3D<>(0.0, 0.0, -1.0));
+    REQUIRE(basis.valid);
+    REQUIRE(std::fabs(dot(basis.first, Vector3D<>(0.0, 0.0, -1.0))) < 1e-12);
+    REQUIRE(std::fabs(dot(basis.second, Vector3D<>(0.0, 0.0, -1.0))) < 1e-12);
+    REQUIRE(std::fabs(dot(basis.first, basis.second)) < 1e-12);
+
+    const Vector3D<> reference = Vector3D<>::z();
+    const Vector3D<> tilted = rws::KinematicConventions::tiltedAxis(reference, 0.3, 0.4);
+    REQUIRE(std::fabs(tilted.norm2() - 1.0) < 1e-12);
+    REQUIRE(std::fabs(rws::KinematicConventions::angleBetween(reference, tilted) - 0.5) <
+            1e-12);
+    const Vector3D<> unchanged = rws::KinematicConventions::tiltedAxis(reference, 0.0, 0.0);
+    REQUIRE(std::fabs((unchanged - reference).norm2()) < 1e-12);
+}
+
+// Phase 1/S10: the canonical model owns explicit Frame/Joint/DOF topology.
+// This fixture intentionally contains a Tool frame and a Fixed joint so the
+// validator cannot accidentally equate frame count with the Q dimension.
+static rws::CanonicalKinematicModel validCanonicalModelFixture()
+{
+    rws::CanonicalKinematicModel model;
+    model.schemaVersion = 1;
+    model.modelId = "canonical-fixture";
+    model.rootFrameId = "base";
+    model.baseFrameId = "base";
+    model.activeDeviceChainId = "arm";
+
+    model.frames = {{"base", "Base", rws::CanonicalFrameType::Base},
+                    {"link", "Link", rws::CanonicalFrameType::Link},
+                    {"guide", "Fixed guide", rws::CanonicalFrameType::Fixed},
+                    {"flange", "Flange", rws::CanonicalFrameType::Flange},
+                    {"tcp", "Tool", rws::CanonicalFrameType::Tool}};
+
+    rws::JointEdge joint;
+    joint.id = "joint-1";
+    joint.name = "Joint 1";
+    joint.type = rws::CanonicalJointType::Revolute;
+    joint.parentFrameId = "base";
+    joint.childFrameId = "link";
+    joint.motionAxisInJoint = rw::math::Vector3D<>::z();
+    joint.dofId = "dof-0";
+    model.joints.push_back(joint);
+
+    rws::JointEdge fixed;
+    fixed.id = "fixed-flange";
+    fixed.name = "Flange mount";
+    fixed.type = rws::CanonicalJointType::Fixed;
+    fixed.parentFrameId = "link";
+    fixed.childFrameId = "guide";
+    fixed.motionAxisInJoint = rw::math::Vector3D<>::z();
+    model.joints.push_back(fixed);
+
+    rws::JointEdge prismatic;
+    prismatic.id = "joint-2";
+    prismatic.name = "Joint 2";
+    prismatic.type = rws::CanonicalJointType::Prismatic;
+    prismatic.parentFrameId = "guide";
+    prismatic.childFrameId = "flange";
+    prismatic.motionAxisInJoint = rw::math::Vector3D<>::x();
+    prismatic.dofId = "dof-1";
+    model.joints.push_back(prismatic);
+
+    model.dofs = {{"dof-0", "joint-1", 0, rws::CanonicalJointType::Revolute,
+                   rws::CanonicalCoordinateUnit::Radians},
+                  {"dof-1", "joint-2", 1, rws::CanonicalJointType::Prismatic,
+                   rws::CanonicalCoordinateUnit::Metres}};
+    model.deviceChains = {{"arm", "base", "flange",
+                           {"joint-1", "fixed-flange", "joint-2"},
+                           {"dof-0", "dof-1"}}};
+    model.toolBindings = {{"tool", "flange", "tcp"}};
+    return model;
+}
+
+static bool hasCanonicalDiagnostic(const rws::CanonicalKinematicModelValidationResult& result,
+                                   const std::string& code)
+{
+    return std::any_of(result.diagnostics.begin(), result.diagnostics.end(),
+                       [&code](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                           return diagnostic.code == code;
+                       });
+}
+
+static void testCanonicalKinematicModelValidation()
+{
+    const rws::CanonicalKinematicModel valid = validCanonicalModelFixture();
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(valid).valid);
+
+    rws::CanonicalKinematicModel duplicateFrame = valid;
+    duplicateFrame.frames.push_back(duplicateFrame.frames.front());
+    const auto duplicateFrameResult =
+        rws::CanonicalKinematicModelValidator::validate(duplicateFrame);
+    REQUIRE(!duplicateFrameResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(duplicateFrameResult, "KINEMATIC_FRAME_ID_DUPLICATE"));
+
+    rws::CanonicalKinematicModel fixedWithDof = valid;
+    fixedWithDof.joints[1].dofId = "dof-0";
+    const auto fixedWithDofResult =
+        rws::CanonicalKinematicModelValidator::validate(fixedWithDof);
+    REQUIRE(!fixedWithDofResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(fixedWithDofResult, "KINEMATIC_FIXED_JOINT_HAS_DOF"));
+
+    rws::CanonicalKinematicModel movableWithoutDof = valid;
+    movableWithoutDof.joints[0].dofId.clear();
+    const auto movableWithoutDofResult =
+        rws::CanonicalKinematicModelValidator::validate(movableWithoutDof);
+    REQUIRE(!movableWithoutDofResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(movableWithoutDofResult,
+                                   "KINEMATIC_MOVABLE_JOINT_MISSING_DOF"));
+
+    rws::CanonicalKinematicModel duplicateMovableDof = valid;
+    duplicateMovableDof.joints[2].dofId = "dof-0";
+    const auto duplicateMovableDofResult =
+        rws::CanonicalKinematicModelValidator::validate(duplicateMovableDof);
+    REQUIRE(!duplicateMovableDofResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(duplicateMovableDofResult,
+                                   "KINEMATIC_MOVABLE_JOINT_DOF_DUPLICATE"));
+
+    rws::CanonicalKinematicModel nonContiguousQ = valid;
+    nonContiguousQ.dofs[0].qIndex = 1;
+    const auto nonContiguousQResult = rws::CanonicalKinematicModelValidator::validate(nonContiguousQ);
+    REQUIRE(!nonContiguousQResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(nonContiguousQResult,
+                                   "KINEMATIC_DOF_QINDEX_NOT_CONTIGUOUS"));
+
+    rws::CanonicalKinematicModel wrongUnit = valid;
+    wrongUnit.dofs[0].unit = rws::CanonicalCoordinateUnit::Metres;
+    const auto wrongUnitResult = rws::CanonicalKinematicModelValidator::validate(wrongUnit);
+    REQUIRE(!wrongUnitResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(wrongUnitResult, "KINEMATIC_DOF_UNIT_MISMATCH"));
+
+    rws::CanonicalKinematicModel disconnectedChain = valid;
+    disconnectedChain.deviceChains[0].tipFrameId = "tcp";
+    const auto disconnectedChainResult =
+        rws::CanonicalKinematicModelValidator::validate(disconnectedChain);
+    REQUIRE(!disconnectedChainResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(disconnectedChainResult, "KINEMATIC_CHAIN_DISCONNECTED"));
+
+    rws::CanonicalKinematicModel invalidTool = valid;
+    invalidTool.toolBindings[0].flangeFrameId = "link";
+    const auto invalidToolResult = rws::CanonicalKinematicModelValidator::validate(invalidTool);
+    REQUIRE(!invalidToolResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(invalidToolResult, "KINEMATIC_TOOL_BINDING_INVALID"));
+
+    rws::CanonicalKinematicModel duplicateToolBinding = valid;
+    duplicateToolBinding.toolBindings.push_back(duplicateToolBinding.toolBindings.front());
+    const auto duplicateToolBindingResult =
+        rws::CanonicalKinematicModelValidator::validate(duplicateToolBinding);
+    REQUIRE(!duplicateToolBindingResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(duplicateToolBindingResult,
+                                   "KINEMATIC_TOOL_BINDING_ID_DUPLICATE"));
+
+    rws::CanonicalKinematicModel invalidPhysicalLimits = valid;
+    invalidPhysicalLimits.joints[0].physicalLimits = {
+        true, std::numeric_limits< double >::quiet_NaN(), 1.0,
+        rws::CanonicalCoordinateUnit::Radians, rws::JointCoordinateConvention::QInput};
+    const auto invalidPhysicalLimitsResult =
+        rws::CanonicalKinematicModelValidator::validate(invalidPhysicalLimits);
+    REQUIRE(!invalidPhysicalLimitsResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(invalidPhysicalLimitsResult,
+                                   "KINEMATIC_PHYSICAL_LIMITS_NONFINITE"));
+
+    rws::CanonicalKinematicModel wrongOperationalUnit = valid;
+    wrongOperationalUnit.joints[2].operationalLimits = {
+        true, -0.2, 0.2, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QInput};
+    const auto wrongOperationalUnitResult =
+        rws::CanonicalKinematicModelValidator::validate(wrongOperationalUnit);
+    REQUIRE(!wrongOperationalUnitResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(wrongOperationalUnitResult,
+                                   "KINEMATIC_OPERATIONAL_LIMITS_UNIT_MISMATCH"));
+
+    rws::CanonicalKinematicModel fixedLimitModel = valid;
+    fixedLimitModel.joints[1].physicalLimits = {
+        true, -1.0, 1.0, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QInput};
+    const auto fixedLimitModelResult =
+        rws::CanonicalKinematicModelValidator::validate(fixedLimitModel);
+    REQUIRE(!fixedLimitModelResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(fixedLimitModelResult,
+                                   "KINEMATIC_FIXED_JOINT_LIMITS_FORBIDDEN"));
+}
+
+static bool sameTransform(const rw::math::Transform3D<>& first,
+                          const rw::math::Transform3D<>& second,
+                          double tolerance = 1e-12)
+{
+    if ((first.P() - second.P()).norm2() >= tolerance)
+        return false;
+    for (std::size_t row = 0; row < 3; ++row) {
+        for (std::size_t column = 0; column < 3; ++column) {
+            if (std::fabs(first.R()(row, column) - second.R()(row, column)) >= tolerance)
+                return false;
+        }
+    }
+    return true;
+}
+
+static bool hasCanonicalDiagnostic(const rws::CanonicalForwardKinematicsResult& result,
+                                   const std::string& code)
+{
+    return std::any_of(result.diagnostics.begin(), result.diagnostics.end(),
+                       [&code](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                           return diagnostic.code == code;
+                       });
+}
+
+// Phase 1/S11: canonical FK evaluates the only frozen joint equation and
+// never mutates the source model or supplied Q vector.
+static void testCanonicalForwardKinematics()
+{
+    using rw::math::Transform3D;
+    using rw::math::Vector3D;
+
+    rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    model.joints[0].parentToJointZero = Transform3D<>(Vector3D<>(1.0, 0.0, 0.0));
+    model.joints[0].jointMotionToChild = Transform3D<>(Vector3D<>(0.0, 1.0, 0.0));
+    model.joints[0].zeroPositionOffset = 0.1;
+    model.joints[1].parentToJointZero = Transform3D<>(Vector3D<>(0.0, 0.0, 0.5));
+    model.joints[1].jointMotionToChild = Transform3D<>(Vector3D<>(0.0, 0.0, 0.2));
+    model.joints[2].parentToJointZero = Transform3D<>(Vector3D<>(0.0, 2.0, 0.0));
+    model.joints[2].jointMotionToChild = Transform3D<>(Vector3D<>(0.0, 0.0, 0.3));
+    model.joints[2].zeroPositionOffset = 0.05;
+    model.toolBindings[0].flangeToTcp = Transform3D<>(Vector3D<>(0.0, 0.0, 0.4));
+
+    const std::vector< double > zeroQ = {0.0, 0.0};
+    const rws::CanonicalForwardKinematicsResult zeroResult =
+        rws::CanonicalForwardKinematics::evaluate(model, zeroQ);
+    REQUIRE(zeroResult.valid);
+
+    const std::vector< double > q = {0.2, 0.4};
+    const rws::CanonicalForwardKinematicsResult result =
+        rws::CanonicalForwardKinematics::evaluate(model, q);
+    REQUIRE(result.valid);
+    REQUIRE(q[0] == 0.2);
+    REQUIRE(q[1] == 0.4);
+
+    const Transform3D<> expectedLink =
+        model.joints[0].parentToJointZero *
+        rws::KinematicConventions::jointMotion(rws::CanonicalJointMotion::Revolute,
+                                                Vector3D<>::z(), 0.3) *
+        model.joints[0].jointMotionToChild;
+    const Transform3D<> expectedGuide =
+        expectedLink * model.joints[1].parentToJointZero * model.joints[1].jointMotionToChild;
+    const Transform3D<> expectedFlange =
+        expectedGuide * model.joints[2].parentToJointZero *
+        rws::KinematicConventions::jointMotion(rws::CanonicalJointMotion::Prismatic,
+                                                Vector3D<>::x(), 0.45) *
+        model.joints[2].jointMotionToChild;
+    const Transform3D<> expectedTcp = expectedFlange * model.toolBindings[0].flangeToTcp;
+
+    Transform3D<> actual;
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(result, "link", actual));
+    REQUIRE(sameTransform(actual, expectedLink));
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(result, "guide", actual));
+    REQUIRE(sameTransform(actual, expectedGuide));
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(result, "flange", actual));
+    REQUIRE(sameTransform(actual, expectedFlange));
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(result, "tcp", actual));
+    REQUIRE(sameTransform(actual, expectedTcp));
+
+    rws::StructureOptimizationDiagnostic missingFrame;
+    REQUIRE(!rws::CanonicalForwardKinematics::frameTransform(result, "not-a-frame", actual,
+                                                               &missingFrame));
+    REQUIRE(missingFrame.code == "KINEMATIC_FK_FRAME_NOT_FOUND");
+
+    const rws::CanonicalForwardKinematicsResult invalidQ =
+        rws::CanonicalForwardKinematics::evaluate(model, {0.2});
+    REQUIRE(!invalidQ.valid);
+    REQUIRE(hasCanonicalDiagnostic(invalidQ, "KINEMATIC_FK_Q_DIMENSION_MISMATCH"));
+}
+
+// Phase 1/S12: the formal WorkCell/Device/TCP boundary is the source of
+// canonical kinematics.  Fixed frames stay out of Q, while a prismatic joint
+// retains its metre coordinate and every imported node remains traceable to
+// its RobWork object.
+static void testKinematicModelImporter()
+{
+    const rw::kinematics::StateStructure::Ptr structure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr base = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ImporterBase",
+                                       rw::math::Transform3D<>(rw::math::Vector3D<>(0.3, 0.0, 0.0),
+                                                                rw::math::RPY<>(0.1, -0.2, 0.3).toRotation3D())));
+    const rw::models::RevoluteJoint::Ptr revolute = rw::core::ownedPtr(
+        new rw::models::RevoluteJoint("ImporterRevolute",
+                                      rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.1, 0.0),
+                                                               rw::math::RPY<>(0.0, 0.2, 0.1).toRotation3D())));
+    const rw::kinematics::FixedFrame::Ptr fixed = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ImporterFixed",
+                                       rw::math::Transform3D<>(rw::math::Vector3D<>(0.1, 0.0, 0.0),
+                                                                rw::math::RPY<>(0.0, 0.4, 0.0).toRotation3D())));
+    const rw::models::PrismaticJoint::Ptr prismatic = rw::core::ownedPtr(
+        new rw::models::PrismaticJoint("ImporterPrismatic",
+                                       rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.2, 0.0),
+                                                                rw::math::RPY<>(0.2, 0.0, 0.1).toRotation3D())));
+    const rw::kinematics::FixedFrame::Ptr tcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("ImporterTcp",
+                                       rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.0, 0.2),
+                                                                rw::math::RPY<>(0.1, 0.0, -0.2).toRotation3D())));
+    structure->addFrame(base, structure->getRoot());
+    structure->addFrame(revolute, base);
+    structure->addFrame(fixed, revolute);
+    structure->addFrame(prismatic, fixed);
+    structure->addFrame(tcp, prismatic);
+    const rw::models::WorkCell::Ptr workcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(structure, "ImporterWorkCell"));
+    const rw::models::SerialDevice::Ptr device = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base, tcp, "ImporterDevice", structure->getDefaultState()));
+    workcell->addDevice(device);
+
+    rws::KinematicImportRequest request;
+    request.workcell = workcell.get();
+    request.device = device.get();
+    request.tcpFrame = tcp.get();
+    rws::RobotModelSpec sourceSnapshot;
+    sourceSnapshot.robotName = "CapturedRobotModelSnapshot";
+    request.sourceSnapshot = &sourceSnapshot;
+    request.sourceFingerprint = "source-fingerprint";
+    request.environmentFingerprint = "environment-fingerprint";
+    const rws::KinematicImportResult result = rws::KinematicModelImporter::import(request);
+
+    REQUIRE(result.ok);
+    REQUIRE(result.diagnostics.empty());
+    REQUIRE(result.model.dofs.size() == 2);
+    REQUIRE(result.model.dofs.at(0).unit == rws::CanonicalCoordinateUnit::Radians);
+    REQUIRE(result.model.dofs.at(1).unit == rws::CanonicalCoordinateUnit::Metres);
+    REQUIRE(std::all_of(result.model.joints.begin(), result.model.joints.end(),
+                        [](const rws::JointEdge& joint) {
+                            return joint.type == rws::CanonicalJointType::Fixed ||
+                                   (joint.physicalLimits.coordinateConvention ==
+                                        rws::JointCoordinateConvention::QInput &&
+                                    joint.operationalLimits.coordinateConvention ==
+                                        rws::JointCoordinateConvention::QInput);
+                        }));
+    REQUIRE(result.model.frames.size() == 6);
+    REQUIRE(result.model.deviceChains.size() == 1);
+    REQUIRE(result.model.deviceChains.at(0).orderedJointIds.size() == 5);
+    REQUIRE(result.model.deviceChains.at(0).orderedDofIds.size() == 2);
+    REQUIRE(result.model.joints.at(2).type == rws::CanonicalJointType::Fixed);
+    REQUIRE(result.model.joints.at(2).dofId.empty());
+    REQUIRE(result.model.sourceFingerprint == "source-fingerprint");
+    REQUIRE(result.model.environmentFingerprint == "environment-fingerprint");
+    REQUIRE(result.provenance.workcellName == "ImporterWorkCell");
+    REQUIRE(result.provenance.deviceId == "ImporterDevice");
+    REQUIRE(result.provenance.tcpFrameId == "ImporterTcp");
+    REQUIRE(result.hasSourceSnapshot);
+    REQUIRE(result.sourceSnapshot.robotName == "CapturedRobotModelSnapshot");
+    REQUIRE(result.model.modelId == "ImporterDevice");
+    rws::StructureOptimizationProblem shadowedProblem;
+    shadowedProblem.context.robotName = "legacy-evaluator-input";
+    std::string shadowError;
+    REQUIRE(rws::CanonicalModelShadowService::attach(request, shadowedProblem, &shadowError));
+    REQUIRE(shadowedProblem.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::Current);
+    REQUIRE(shadowedProblem.canonicalModelShadow.hasSnapshot());
+    REQUIRE(shadowedProblem.canonicalModelShadow.snapshot->modelFingerprint ==
+            rws::KinematicFingerprint::forModel(result.model).value);
+    REQUIRE(shadowedProblem.context.robotName == "legacy-evaluator-input");
+    rws::StructureOptimizationProblem createdProject;
+    const rws::RobotModelSpec projectSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        projectSpec, request, createdProject, &shadowError));
+    REQUIRE(createdProject.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::Current);
+    REQUIRE(createdProject.canonicalModelShadow.hasSnapshot());
+    REQUIRE(createdProject.canonicalModelShadow.snapshot->modelFingerprint ==
+            rws::KinematicFingerprint::forModel(result.model).value);
+    REQUIRE(createdProject.context.modelSpec.robotName == projectSpec.robotName);
+    QTemporaryDir shadowProjectDirectory;
+    REQUIRE(shadowProjectDirectory.isValid());
+    const QString shadowProjectPath = shadowProjectDirectory.filePath("canonical-shadow.sop.json");
+    QString shadowProjectError;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        shadowProjectPath, createdProject, -1, &shadowProjectError));
+    rws::StructureOptimizationProblem loadedCurrentProject;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        shadowProjectPath, request, loadedCurrentProject, nullptr, &shadowProjectError));
+    REQUIRE(loadedCurrentProject.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::Current);
+    rws::KinematicImportRequest changedSourceRequest = request;
+    changedSourceRequest.sourceFingerprint = "changed-source-fingerprint";
+    rws::StructureOptimizationProblem loadedStaleProject;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        shadowProjectPath, changedSourceRequest, loadedStaleProject, nullptr,
+        &shadowProjectError));
+    REQUIRE(loadedStaleProject.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::Stale);
+    rws::StructureOptimizationProblem legacyProject;
+    REQUIRE(rws::StructureOptimizationProjectFactory::create(
+        projectSpec, legacyProject, &shadowError));
+    const QString legacyProjectPath = shadowProjectDirectory.filePath("legacy.sop.json");
+    REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+        legacyProjectPath, legacyProject, -1, &shadowProjectError));
+    rws::StructureOptimizationProblem loadedLegacyProject;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        legacyProjectPath, request, loadedLegacyProject, nullptr, &shadowProjectError));
+    REQUIRE(loadedLegacyProject.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::CanonicalModelMissing);
+    REQUIRE(!loadedLegacyProject.canonicalModelShadow.hasSnapshot());
+
+    rws::StructureOptimizationProblem legacyScoreProblem;
+    rws::StructureCandidateResult legacyCandidate;
+    legacyCandidate.index = 7;
+    legacyCandidate.raw.modelValid = true;
+    legacyCandidate.raw.requiredTaskCount = 5;
+    legacyCandidate.raw.requiredReachableCount = 4;
+    legacyCandidate.raw.weightedReachability = 0.8;
+    legacyCandidate.raw.manipulabilityP10 = 0.5;
+    legacyCandidate.raw.jointMarginP10 = 0.4;
+    legacyCandidate.raw.totalKinematicLength = 1.2;
+    legacyCandidate.raw.collisionFreeRate = 0.9;
+    legacyCandidate.raw.engineeringPreference = 0.7;
+    rws::StructureCandidateResult shadowCandidate = legacyCandidate;
+    rws::StructureOptimizationProblem shadowScoreProblem = legacyScoreProblem;
+    shadowScoreProblem.canonicalModelShadow = createdProject.canonicalModelShadow;
+    rws::StructureObjectiveScorer scorer;
+    scorer.score(legacyScoreProblem, legacyCandidate);
+    scorer.score(shadowScoreProblem, shadowCandidate);
+    REQUIRE(shadowCandidate.totalScore == legacyCandidate.totalScore);
+    REQUIRE(shadowCandidate.feasible == legacyCandidate.feasible);
+    REQUIRE(shadowCandidate.status == legacyCandidate.status);
+    REQUIRE(shadowCandidate.violatedConstraints == legacyCandidate.violatedConstraints);
+    const rws::CanonicalForwardKinematicsResult importedFk =
+        rws::CanonicalForwardKinematics::evaluate(result.model, {0.0, 0.0});
+    REQUIRE(importedFk.valid);
+    rw::math::Transform3D<> importedTcp;
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(importedFk, "ImporterTcp", importedTcp));
+    const rw::math::Transform3D<> workcellTcp = rw::kinematics::Kinematics::frameTframe(
+        workcell->getWorldFrame(), tcp.get(), workcell->getDefaultState());
+    REQUIRE(sameTransform(importedTcp, workcellTcp));
+
+    rw::kinematics::State nonzeroState = workcell->getDefaultState();
+    device->setQ(rw::math::Q(2, 0.25, 0.15), nonzeroState);
+    const rws::CanonicalForwardKinematicsResult nonzeroImportedFk =
+        rws::CanonicalForwardKinematics::evaluate(result.model, {0.25, 0.15});
+    REQUIRE(nonzeroImportedFk.valid);
+    const std::vector< const rw::kinematics::Frame* > keyFrames = {
+        revolute.get(), fixed.get(), prismatic.get(), tcp.get()};
+    for (const rw::kinematics::Frame* keyFrame : keyFrames) {
+        rw::math::Transform3D<> importedTransform;
+        REQUIRE(rws::CanonicalForwardKinematics::frameTransform(
+            nonzeroImportedFk, keyFrame->getName(), importedTransform));
+        const rw::math::Transform3D<> workcellTransform = rw::kinematics::Kinematics::frameTframe(
+            workcell->getWorldFrame(), keyFrame, nonzeroState);
+        REQUIRE(sameTransform(importedTransform, workcellTransform));
+    }
+
+    const rw::kinematics::StateStructure::Ptr sixAxisStructure =
+        rw::core::ownedPtr(new rw::kinematics::StateStructure());
+    const rw::kinematics::FixedFrame::Ptr sixAxisBase = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("SixAxisBase", rw::math::Transform3D<>()));
+    sixAxisStructure->addFrame(sixAxisBase, sixAxisStructure->getRoot());
+    rw::core::Ptr< rw::kinematics::Frame > sixAxisParent = sixAxisBase;
+    std::vector< rw::models::RevoluteJoint::Ptr > sixAxisJoints;
+    for (int index = 0; index < 6; ++index) {
+        const rw::models::RevoluteJoint::Ptr joint = rw::core::ownedPtr(
+            new rw::models::RevoluteJoint("SixAxisJoint" + std::to_string(index + 1),
+                                          rw::math::Transform3D<>(
+                                              rw::math::Vector3D<>(0.05 * (index + 1),
+                                                                   0.01 * index, 0.1))));
+        sixAxisStructure->addFrame(joint, sixAxisParent);
+        sixAxisParent = joint;
+        sixAxisJoints.push_back(joint);
+    }
+    const rw::kinematics::FixedFrame::Ptr sixAxisTcp = rw::core::ownedPtr(
+        new rw::kinematics::FixedFrame("SixAxisTcp",
+                                       rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.0, 0.15))));
+    sixAxisStructure->addFrame(sixAxisTcp, sixAxisParent);
+    const rw::models::WorkCell::Ptr sixAxisWorkcell = rw::core::ownedPtr(
+        new rw::models::WorkCell(sixAxisStructure, "SixAxisWorkCell"));
+    const rw::models::SerialDevice::Ptr sixAxisDevice = rw::core::ownedPtr(
+        new rw::models::SerialDevice(sixAxisBase, sixAxisTcp, "SixAxisDevice",
+                                     sixAxisStructure->getDefaultState()));
+    sixAxisWorkcell->addDevice(sixAxisDevice);
+    rws::KinematicImportRequest sixAxisRequest;
+    sixAxisRequest.workcell = sixAxisWorkcell.get();
+    sixAxisRequest.device = sixAxisDevice.get();
+    sixAxisRequest.tcpFrame = sixAxisTcp.get();
+    const rws::KinematicImportResult sixAxisResult =
+        rws::KinematicModelImporter::import(sixAxisRequest);
+    REQUIRE(sixAxisResult.ok);
+    REQUIRE(sixAxisResult.model.dofs.size() == 6);
+    const std::vector< std::vector< double > > sixAxisSamples = {
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.1, -0.2, 0.3, -0.4, 0.5, -0.6},
+        {-0.35, 0.25, -0.15, 0.45, -0.55, 0.65}};
+    for (const std::vector< double >& sample : sixAxisSamples) {
+        rw::kinematics::State sixAxisState = sixAxisWorkcell->getDefaultState();
+        rw::math::Q sixAxisQ(sample.size());
+        for (std::size_t index = 0; index < sample.size(); ++index)
+            sixAxisQ(index) = sample[index];
+        sixAxisDevice->setQ(sixAxisQ, sixAxisState);
+        const rws::CanonicalForwardKinematicsResult sixAxisFk =
+            rws::CanonicalForwardKinematics::evaluate(sixAxisResult.model, sample);
+        REQUIRE(sixAxisFk.valid);
+        for (const rw::models::RevoluteJoint::Ptr& joint : sixAxisJoints) {
+            rw::math::Transform3D<> importedTransform;
+            REQUIRE(rws::CanonicalForwardKinematics::frameTransform(
+                sixAxisFk, joint->getName(), importedTransform));
+            const rw::math::Transform3D<> workcellTransform = rw::kinematics::Kinematics::frameTframe(
+                sixAxisWorkcell->getWorldFrame(), joint.get(), sixAxisState);
+            REQUIRE(sameTransform(importedTransform, workcellTransform));
+        }
+        rw::math::Transform3D<> sixAxisImportedTcp;
+        REQUIRE(rws::CanonicalForwardKinematics::frameTransform(
+            sixAxisFk, "SixAxisTcp", sixAxisImportedTcp));
+        const rw::math::Transform3D<> sixAxisWorkcellTcp = rw::kinematics::Kinematics::frameTframe(
+            sixAxisWorkcell->getWorldFrame(), sixAxisTcp.get(), sixAxisState);
+        REQUIRE(sameTransform(sixAxisImportedTcp, sixAxisWorkcellTcp));
+    }
+
+    REQUIRE(result.sourceMappings.size() == 11);
+    REQUIRE(result.sourceMappings.at(1).sourceObjectId == "ImporterBase");
+    REQUIRE(result.sourceMappings.at(1).fieldPath ==
+            "workcell.devices['ImporterDevice'].frames[0]");
+
+    rws::KinematicImportRequest missingTcp = request;
+    missingTcp.tcpFrame = nullptr;
+    const rws::KinematicImportResult missingTcpResult =
+        rws::KinematicModelImporter::import(missingTcp);
+    REQUIRE(!missingTcpResult.ok);
+    REQUIRE(!missingTcpResult.diagnostics.empty());
+    if (!missingTcpResult.diagnostics.empty()) {
+        REQUIRE(missingTcpResult.diagnostics.at(0).code == "KINEMATIC_IMPORT_TCP_MISSING");
+        REQUIRE(missingTcpResult.diagnostics.at(0).fieldPath == "tcpFrame");
+        REQUIRE(missingTcpResult.diagnostics.at(0).objectId == "ImporterDevice");
+    }
+
+    rws::KinematicImportRequest missingWorkcell = request;
+    missingWorkcell.workcell = nullptr;
+    const rws::KinematicImportResult missingWorkcellResult =
+        rws::KinematicModelImporter::import(missingWorkcell);
+    REQUIRE(!missingWorkcellResult.ok);
+    REQUIRE(!missingWorkcellResult.diagnostics.empty());
+    if (!missingWorkcellResult.diagnostics.empty()) {
+        REQUIRE(missingWorkcellResult.diagnostics.at(0).code ==
+                "KINEMATIC_IMPORT_WORKCELL_MISSING");
+        REQUIRE(missingWorkcellResult.diagnostics.at(0).objectId == "ImporterDevice");
+        REQUIRE(missingWorkcellResult.diagnostics.at(0).fieldPath == "workcell");
+    }
+
+    const rw::models::SerialDevice::Ptr secondDevice = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base, tcp, "SecondImporterDevice", structure->getDefaultState()));
+    workcell->addDevice(secondDevice);
+    rws::KinematicImportRequest missingDevice = request;
+    missingDevice.device = nullptr;
+    const rws::KinematicImportResult missingDeviceResult =
+        rws::KinematicModelImporter::import(missingDevice);
+    REQUIRE(!missingDeviceResult.ok);
+    REQUIRE(!missingDeviceResult.diagnostics.empty());
+    if (!missingDeviceResult.diagnostics.empty()) {
+        REQUIRE(missingDeviceResult.diagnostics.at(0).code == "KINEMATIC_IMPORT_DEVICE_MISSING");
+        REQUIRE(missingDeviceResult.diagnostics.at(0).fieldPath == "device");
+        REQUIRE(missingDeviceResult.diagnostics.at(0).objectId == "ImporterWorkCell");
+    }
+
+    const rw::kinematics::FixedFrame outsideTcp("OutsideImporterTcp", rw::math::Transform3D<>());
+    rws::KinematicImportRequest outsideTcpRequest = request;
+    outsideTcpRequest.tcpFrame = &outsideTcp;
+    const rws::KinematicImportResult outsideTcpResult =
+        rws::KinematicModelImporter::import(outsideTcpRequest);
+    REQUIRE(!outsideTcpResult.ok);
+    REQUIRE(!outsideTcpResult.diagnostics.empty());
+    if (!outsideTcpResult.diagnostics.empty()) {
+        REQUIRE(outsideTcpResult.diagnostics.at(0).code == "KINEMATIC_IMPORT_TCP_NOT_IN_CHAIN");
+        REQUIRE(outsideTcpResult.diagnostics.at(0).objectId == "OutsideImporterTcp");
+        REQUIRE(outsideTcpResult.diagnostics.at(0).fieldPath == "tcpFrame");
+    }
+
+    prismatic->setBounds(rw::math::Q(1, 1.0), rw::math::Q(1, -1.0));
+    const rws::KinematicImportResult invalidLimitResult =
+        rws::KinematicModelImporter::import(request);
+    REQUIRE(!invalidLimitResult.ok);
+    REQUIRE(!invalidLimitResult.diagnostics.empty());
+    if (!invalidLimitResult.diagnostics.empty()) {
+        REQUIRE(invalidLimitResult.diagnostics.at(0).code == "KINEMATIC_IMPORT_LIMIT_INVALID");
+        REQUIRE(invalidLimitResult.diagnostics.at(0).objectId == "ImporterPrismatic");
+        REQUIRE(invalidLimitResult.diagnostics.at(0).fieldPath ==
+                "workcell.devices['ImporterDevice'].frames[3].bounds");
+    }
+
+    prismatic->setBounds(rw::math::Q(1, -0.5), rw::math::Q(1, 0.5));
+    const rw::models::UniversalJoint::Ptr unsupportedJoint = rw::core::ownedPtr(
+        new rw::models::UniversalJoint("UnsupportedImporterJoint", rw::math::Transform3D<>()));
+    structure->addFrame(unsupportedJoint, tcp);
+    const rw::models::SerialDevice::Ptr unsupportedDevice = rw::core::ownedPtr(
+        new rw::models::SerialDevice(base, unsupportedJoint, "UnsupportedImporterDevice",
+                                     structure->getDefaultState()));
+    workcell->addDevice(unsupportedDevice);
+    rws::KinematicImportRequest unsupportedJointRequest = request;
+    unsupportedJointRequest.device = unsupportedDevice.get();
+    unsupportedJointRequest.tcpFrame = unsupportedJoint.get();
+    const rws::KinematicImportResult unsupportedJointResult =
+        rws::KinematicModelImporter::import(unsupportedJointRequest);
+    REQUIRE(!unsupportedJointResult.ok);
+    REQUIRE(!unsupportedJointResult.diagnostics.empty());
+    if (!unsupportedJointResult.diagnostics.empty()) {
+        REQUIRE(unsupportedJointResult.diagnostics.at(0).code ==
+                "KINEMATIC_IMPORT_JOINT_TYPE_UNSUPPORTED");
+        REQUIRE(unsupportedJointResult.diagnostics.at(0).objectId == "UnsupportedImporterJoint");
+        REQUIRE(unsupportedJointResult.diagnostics.at(0).fieldPath ==
+                "workcell.devices['UnsupportedImporterDevice'].frames[5].jointType");
+    }
+
+}
+
+// Phase 1/S14: DH is a read-only compatibility projection. It can report an
+// exact restricted standard-DH view, but pitch, lateral offsets, and tilted
+// axes are explicit lossy/unsupported conditions rather than hidden write-back.
+static void testDhProjection()
+{
+    rws::CanonicalKinematicModel exactModel = validCanonicalModelFixture();
+    exactModel.joints[2].motionAxisInJoint = rw::math::Vector3D<>::z();
+    const rws::DhProjectionResult exact = rws::DhProjection::project(exactModel);
+    REQUIRE(exact.status == rws::DhProjectionStatus::Exact);
+    REQUIRE(exact.rows.size() == 2);
+    REQUIRE(exact.lostComponents.empty());
+    REQUIRE(exact.diagnostics.empty());
+
+    rws::CanonicalKinematicModel pitchModel = exactModel;
+    const rw::math::Transform3D<> originalPitchTransform(
+        rw::math::Vector3D<>(), rw::math::RPY<>(0.0, 0.25, 0.0).toRotation3D());
+    pitchModel.joints[0].parentToJointZero = originalPitchTransform;
+    const rws::DhProjectionResult pitch = rws::DhProjection::project(pitchModel);
+    REQUIRE(pitch.status == rws::DhProjectionStatus::Lossy);
+    REQUIRE(!pitch.lostComponents.empty());
+    REQUIRE(!pitch.diagnostics.empty());
+    REQUIRE(pitch.diagnostics.at(0).code == "DH_PROJECTION_PARENT_ROTATION_LOSSY");
+    REQUIRE(sameTransform(pitchModel.joints[0].parentToJointZero, originalPitchTransform));
+
+    rws::CanonicalKinematicModel lateralModel = exactModel;
+    lateralModel.joints[0].jointMotionToChild =
+        rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.1, 0.0));
+    const rws::DhProjectionResult lateral = rws::DhProjection::project(lateralModel);
+    REQUIRE(lateral.status == rws::DhProjectionStatus::Lossy);
+    REQUIRE(!lateral.lostComponents.empty());
+    REQUIRE(!lateral.diagnostics.empty());
+    REQUIRE(lateral.diagnostics.at(0).code == "DH_PROJECTION_CHILD_TRANSLATION_LOSSY");
+
+    rws::CanonicalKinematicModel tiltedAxisModel = exactModel;
+    tiltedAxisModel.joints[0].motionAxisInJoint = rw::math::Vector3D<>::x();
+    const rws::DhProjectionResult tiltedAxis = rws::DhProjection::project(tiltedAxisModel);
+    REQUIRE(tiltedAxis.status == rws::DhProjectionStatus::Unsupported);
+    REQUIRE(!tiltedAxis.diagnostics.empty());
+    REQUIRE(tiltedAxis.diagnostics.at(0).code == "DH_PROJECTION_AXIS_UNSUPPORTED");
+}
+
+// Phase 1/S15: fingerprints are content hashes of canonical data, not memory
+// layouts or insertion order. Any semantic kinematic change must invalidate a
+// baseline snapshot and non-finite data must never enter a hash.
+static void testKinematicFingerprint()
+{
+    const rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    const rws::KinematicFingerprintResult baseline =
+        rws::KinematicFingerprint::forModel(model);
+    REQUIRE(baseline.ok);
+    REQUIRE(baseline.algorithmId == "fnv1a-64");
+    REQUIRE(baseline.serializationVersion == "canonical-kinematic-model-v1");
+    REQUIRE(!baseline.value.empty());
+    REQUIRE(!rws::KinematicFingerprint::visualColorAffectsFingerprint());
+    REQUIRE(rws::KinematicFingerprint::forModel(model).value == baseline.value);
+
+    const rws::KinematicFingerprintResult baselineEnvironment =
+        rws::KinematicFingerprint::forEnvironment(model);
+    const rws::KinematicFingerprintResult baselineTool =
+        rws::KinematicFingerprint::forTool(model);
+    REQUIRE(baselineEnvironment.ok);
+    REQUIRE(baselineTool.ok);
+
+    rws::CanonicalKinematicModel reordered = model;
+    std::reverse(reordered.frames.begin(), reordered.frames.end());
+    std::reverse(reordered.joints.begin(), reordered.joints.end());
+    std::reverse(reordered.dofs.begin(), reordered.dofs.end());
+    const rws::KinematicFingerprintResult reorderedFingerprint =
+        rws::KinematicFingerprint::forModel(reordered);
+    REQUIRE(reorderedFingerprint.ok);
+    REQUIRE(reorderedFingerprint.value == baseline.value);
+
+    rws::CanonicalKinematicModel reorderedBindings = model;
+    reorderedBindings.toolBindings[0].geometryBindingIds = {"geometry-a", "geometry-b"};
+    reorderedBindings.toolBindings[0].collisionBindingIds = {"collision-a", "collision-b"};
+    const rws::KinematicFingerprintResult orderedTool =
+        rws::KinematicFingerprint::forTool(reorderedBindings);
+    const rws::KinematicFingerprintResult orderedEnvironment =
+        rws::KinematicFingerprint::forEnvironment(reorderedBindings);
+    std::reverse(reorderedBindings.toolBindings[0].geometryBindingIds.begin(),
+                 reorderedBindings.toolBindings[0].geometryBindingIds.end());
+    std::reverse(reorderedBindings.toolBindings[0].collisionBindingIds.begin(),
+                 reorderedBindings.toolBindings[0].collisionBindingIds.end());
+    REQUIRE(rws::KinematicFingerprint::forTool(reorderedBindings).value == orderedTool.value);
+    REQUIRE(rws::KinematicFingerprint::forEnvironment(reorderedBindings).value ==
+            orderedEnvironment.value);
+
+    rws::CanonicalKinematicModel transformChanged = model;
+    transformChanged.joints[0].parentToJointZero.P()(0) = 0.01;
+    REQUIRE(rws::KinematicFingerprint::forModel(transformChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel rotationChanged = model;
+    rotationChanged.joints[0].parentToJointZero.R() =
+        rw::math::RPY<>(0.0, 0.0, 0.1).toRotation3D();
+    REQUIRE(rws::KinematicFingerprint::forModel(rotationChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel childTransformChanged = model;
+    childTransformChanged.joints[0].jointMotionToChild.P()(1) = 0.01;
+    REQUIRE(rws::KinematicFingerprint::forModel(childTransformChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel axisChanged = model;
+    axisChanged.joints[0].motionAxisInJoint = rw::math::Vector3D<>::x();
+    REQUIRE(rws::KinematicFingerprint::forModel(axisChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel limitChanged = model;
+    limitChanged.joints[0].physicalLimits.enabled = true;
+    limitChanged.joints[0].physicalLimits.lower = -1.0;
+    limitChanged.joints[0].physicalLimits.upper = 1.0;
+    limitChanged.joints[0].physicalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QInput;
+    REQUIRE(rws::KinematicFingerprint::forModel(limitChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel operationalLimitChanged = model;
+    operationalLimitChanged.joints[0].operationalLimits.enabled = true;
+    operationalLimitChanged.joints[0].operationalLimits.lower = -0.5;
+    operationalLimitChanged.joints[0].operationalLimits.upper = 0.5;
+    operationalLimitChanged.joints[0].operationalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QInput;
+    REQUIRE(rws::KinematicFingerprint::forModel(operationalLimitChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel limitConventionChanged = limitChanged;
+    limitConventionChanged.joints[0].physicalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QModel;
+    REQUIRE(rws::KinematicFingerprint::forModel(limitConventionChanged).value !=
+            rws::KinematicFingerprint::forModel(limitChanged).value);
+
+    rws::CanonicalKinematicModel dofChanged = model;
+    std::swap(dofChanged.dofs[0].qIndex, dofChanged.dofs[1].qIndex);
+    REQUIRE(rws::KinematicFingerprint::forModel(dofChanged).value != baseline.value);
+
+    rws::CanonicalKinematicModel toolChanged = model;
+    toolChanged.toolBindings[0].flangeToTcp.P()(2) = 0.02;
+    REQUIRE(rws::KinematicFingerprint::forModel(toolChanged).value == baseline.value);
+    REQUIRE(rws::KinematicFingerprint::forTool(toolChanged).value != baselineTool.value);
+
+    rws::CanonicalKinematicModel geometryChanged = model;
+    geometryChanged.toolBindings[0].geometryBindingIds.push_back("geometry-change");
+    REQUIRE(rws::KinematicFingerprint::forModel(geometryChanged).value == baseline.value);
+    REQUIRE(rws::KinematicFingerprint::forEnvironment(geometryChanged).value ==
+            baselineEnvironment.value);
+    REQUIRE(rws::KinematicFingerprint::forTool(geometryChanged).value != baselineTool.value);
+
+    rws::CanonicalKinematicModel collisionChanged = model;
+    collisionChanged.toolBindings[0].collisionBindingIds.push_back("collision-change");
+    REQUIRE(rws::KinematicFingerprint::forModel(collisionChanged).value == baseline.value);
+    REQUIRE(rws::KinematicFingerprint::forTool(collisionChanged).value == baselineTool.value);
+    REQUIRE(rws::KinematicFingerprint::forEnvironment(collisionChanged).value !=
+            baselineEnvironment.value);
+
+    rws::CanonicalKinematicModel nonFinite = model;
+    nonFinite.joints[0].parentToJointZero.P()(0) = std::numeric_limits< double >::infinity();
+    const rws::KinematicFingerprintResult nonFiniteResult =
+        rws::KinematicFingerprint::forModel(nonFinite);
+    REQUIRE(!nonFiniteResult.ok);
+    REQUIRE(!nonFiniteResult.diagnostics.empty());
+    REQUIRE(nonFiniteResult.diagnostics.at(0).code == "KINEMATIC_FINGERPRINT_NONFINITE");
+
+    rws::CanonicalKinematicModel nanModel = model;
+    nanModel.joints[0].jointMotionToChild.P()(1) =
+        std::numeric_limits< double >::quiet_NaN();
+    const rws::KinematicFingerprintResult nanResult =
+        rws::KinematicFingerprint::forModel(nanModel);
+    REQUIRE(!nanResult.ok);
+    REQUIRE(!nanResult.diagnostics.empty());
+    REQUIRE(nanResult.diagnostics.at(0).code == "KINEMATIC_FINGERPRINT_NONFINITE");
+
+    rws::CanonicalKinematicModel toolNanModel = model;
+    toolNanModel.toolBindings[0].flangeToTcp.P()(0) =
+        std::numeric_limits< double >::quiet_NaN();
+    REQUIRE(!rws::KinematicFingerprint::forModel(toolNanModel).ok);
+    REQUIRE(!rws::KinematicFingerprint::forEnvironment(toolNanModel).ok);
+    REQUIRE(!rws::KinematicFingerprint::forTool(toolNanModel).ok);
+
+    const rws::KinematicBaselineSnapshotResult snapshot =
+        rws::KinematicBaselineSnapshot::create(model);
+    REQUIRE(snapshot.ok);
+    REQUIRE(snapshot.snapshot.serializationVersion == baseline.serializationVersion);
+    REQUIRE(snapshot.snapshot.modelFingerprint == baseline.value);
+    REQUIRE(snapshot.snapshot.environmentFingerprint == baselineEnvironment.value);
+    REQUIRE(snapshot.snapshot.toolFingerprint == baselineTool.value);
+    REQUIRE(snapshot.snapshot.model.modelId == model.modelId);
+    REQUIRE(rws::KinematicFingerprint::forModel(snapshot.snapshot.model).value ==
+            snapshot.snapshot.modelFingerprint);
+    REQUIRE(rws::KinematicFingerprint::forEnvironment(snapshot.snapshot.model).value ==
+            snapshot.snapshot.environmentFingerprint);
+    REQUIRE(rws::KinematicFingerprint::forTool(snapshot.snapshot.model).value ==
+            snapshot.snapshot.toolFingerprint);
+}
+
+// Phase 1/S16: canonical kinematics is a persisted shadow only.  Legacy
+// projects retain their original evaluator input and explicitly report that
+// the canonical shadow is absent.
+static void testCanonicalModelShadow()
+{
+    rws::StructureOptimizationProblem legacy;
+    REQUIRE(legacy.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::CanonicalModelMissing);
+    REQUIRE(!legacy.canonicalModelShadow.hasSnapshot());
+
+    const rws::KinematicBaselineSnapshotResult snapshot =
+        rws::KinematicBaselineSnapshot::create(validCanonicalModelFixture());
+    REQUIRE(snapshot.ok);
+    rws::StructureOptimizationProblem problem;
+    problem.canonicalModelShadow.snapshot =
+        std::make_shared< rws::KinematicBaselineSnapshot >(snapshot.snapshot);
+    problem.canonicalModelShadow.status = rws::CanonicalModelShadowStatus::Current;
+    REQUIRE(problem.canonicalModelShadow.hasSnapshot());
+
+    const std::string serialized = rws::StructureOptimizationJson::problemToJson(problem);
+    REQUIRE(serialized.find("canonicalModelShadow") != std::string::npos);
+    rws::StructureOptimizationProblem restored;
+    std::string error;
+    REQUIRE(rws::StructureOptimizationJson::problemFromJson(serialized, restored, &error));
+    REQUIRE(restored.canonicalModelShadow.status == rws::CanonicalModelShadowStatus::Current);
+    REQUIRE(restored.canonicalModelShadow.hasSnapshot());
+    REQUIRE(restored.canonicalModelShadow.snapshot->modelFingerprint ==
+            snapshot.snapshot.modelFingerprint);
+    REQUIRE(restored.canonicalModelShadow.snapshot->environmentFingerprint ==
+            snapshot.snapshot.environmentFingerprint);
+    REQUIRE(restored.canonicalModelShadow.snapshot->toolFingerprint ==
+            snapshot.snapshot.toolFingerprint);
+    const rws::CanonicalKinematicModelValidationResult restoredValidation =
+        rws::CanonicalKinematicModelValidator::validate(
+            restored.canonicalModelShadow.snapshot->model);
+    REQUIRE(restoredValidation.valid);
+    REQUIRE(restored.canonicalModelShadow.snapshot->model.frames.size() ==
+            snapshot.snapshot.model.frames.size());
+    REQUIRE(restored.canonicalModelShadow.snapshot->model.joints.size() ==
+            snapshot.snapshot.model.joints.size());
+    REQUIRE(restored.canonicalModelShadow.snapshot->model.toolBindings.size() ==
+            snapshot.snapshot.model.toolBindings.size());
+    REQUIRE(sameTransform(
+        restored.canonicalModelShadow.snapshot->model.joints.at(0).parentToJointZero,
+        snapshot.snapshot.model.joints.at(0).parentToJointZero));
+    REQUIRE(rws::KinematicFingerprint::forModel(
+                restored.canonicalModelShadow.snapshot->model).value ==
+            snapshot.snapshot.modelFingerprint);
+    REQUIRE(rws::KinematicFingerprint::forEnvironment(
+                restored.canonicalModelShadow.snapshot->model).value ==
+            snapshot.snapshot.environmentFingerprint);
+    REQUIRE(rws::KinematicFingerprint::forTool(
+                restored.canonicalModelShadow.snapshot->model).value ==
+            snapshot.snapshot.toolFingerprint);
+    REQUIRE(rws::CanonicalModelShadowService::assess(
+                restored.canonicalModelShadow, snapshot.snapshot.model) ==
+            rws::CanonicalModelShadowStatus::Current);
+    rws::CanonicalKinematicModel changedSource = snapshot.snapshot.model;
+    changedSource.joints.at(0).parentToJointZero.P()(0) += 0.001;
+    REQUIRE(rws::CanonicalModelShadowService::assess(
+                restored.canonicalModelShadow, changedSource) ==
+            rws::CanonicalModelShadowStatus::Stale);
+}
+
+// Phase 2/S20: typed design-space PODs are independent from the legacy Qt
+// table model.  Stable semantic/property enums, not display paths, define the
+// compiler-facing identity of a variable and its binding.
+static void testTypedDesignVariableAndBinding()
+{
+    rws::DesignVariableDefinition valid;
+    valid.id = "joint-1-origin-x";
+    valid.displayName = "Joint 1 origin X";
+    valid.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    valid.role = rws::VariableRole::Independent;
+    valid.domain = rws::VariableDomain::Continuous;
+    valid.nominalValue = 0.0;
+    valid.currentValue = 0.1;
+    valid.minimum = -0.5;
+    valid.maximum = 0.5;
+    valid.step = 0.01;
+    valid.unit = rws::DesignVariableUnit::Metres;
+    valid.frameId = "base";
+    valid.bindingId = "binding:joint-1-origin-x";
+    const rws::DesignVariableValidationResult validResult =
+        rws::DesignVariableValidator::validate({valid});
+    REQUIRE(validResult.valid);
+
+    rws::DesignVariableDefinition duplicateId = valid;
+    const rws::DesignVariableValidationResult duplicateResult =
+        rws::DesignVariableValidator::validate({valid, duplicateId});
+    REQUIRE(!duplicateResult.valid);
+    REQUIRE(std::any_of(duplicateResult.diagnostics.begin(), duplicateResult.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "DESIGN_VARIABLE_ID_DUPLICATE";
+                        }));
+
+    rws::DesignVariableDefinition nonFinite = valid;
+    nonFinite.currentValue = std::numeric_limits< double >::quiet_NaN();
+    REQUIRE(!rws::DesignVariableValidator::validate({nonFinite}).valid);
+    rws::DesignVariableDefinition invalidRange = valid;
+    invalidRange.currentValue = 0.6;
+    REQUIRE(!rws::DesignVariableValidator::validate({invalidRange}).valid);
+    rws::DesignVariableDefinition invalidStep = valid;
+    invalidStep.step = 0.0;
+    REQUIRE(!rws::DesignVariableValidator::validate({invalidStep}).valid);
+
+    rws::DesignVariableDefinition discrete = valid;
+    discrete.id = "discrete-material";
+    discrete.semanticKind = rws::SemanticKind::ParameterizedMaterial;
+    discrete.domain = rws::VariableDomain::Discrete;
+    discrete.discreteOptions = {{"steel", "Steel", "material:steel"}};
+    REQUIRE(rws::DesignVariableValidator::validate({discrete}).valid);
+    discrete.discreteOptions.front().id.clear();
+    REQUIRE(!rws::DesignVariableValidator::validate({discrete}).valid);
+
+    rws::DesignVariableDefinition positionWithoutFrame = valid;
+    positionWithoutFrame.frameId.clear();
+    REQUIRE(!rws::DesignVariableValidator::validate({positionWithoutFrame}).valid);
+    rws::DesignVariableDefinition derived = valid;
+    derived.id = "derived-clearance";
+    derived.role = rws::VariableRole::Derived;
+    derived.minimum = 10.0;
+    derived.maximum = -10.0;
+    derived.step = 0.0;
+    derived.derivedExpressionId = "expression:clearance";
+    REQUIRE(rws::DesignVariableValidator::validate({derived}).valid);
+    derived.derivedExpressionId.clear();
+    REQUIRE(!rws::DesignVariableValidator::validate({derived}).valid);
+
+    rws::ParameterBinding binding;
+    binding.id = "binding:joint-1-origin-x";
+    binding.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = "joint-1";
+    binding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    binding.coordinateFrameId = "base";
+    binding.ownerAdapterId = "JointOriginAdapter";
+    binding.ownerAdapterVersion = 1;
+    binding.displayPath = "Robot / Joint 1 / Origin X";
+    binding.writeSet = {{rws::TargetObjectType::Joint, "joint-1",
+                         rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+    REQUIRE(rws::ParameterBindingValidator::validate(binding).valid);
+    rws::ParameterBinding missingObject = binding;
+    missingObject.targetObjectId.clear();
+    REQUIRE(!rws::ParameterBindingValidator::validate(missingObject).valid);
+    rws::ParameterBinding missingProperty = binding;
+    missingProperty.targetPropertyId = rws::TargetPropertyId::Unknown;
+    REQUIRE(!rws::ParameterBindingValidator::validate(missingProperty).valid);
+    rws::ParameterBinding alternateDisplay = binding;
+    alternateDisplay.displayPath = "Renamed display path";
+    REQUIRE(binding.runtimeEquals(alternateDisplay));
+
+    rws::SemanticKind parsedSemantic = rws::SemanticKind::LinkLength;
+    REQUIRE(rws::semanticKindToString(rws::SemanticKind::JointOriginOffsetX) ==
+            "JointOriginOffsetX");
+    REQUIRE(rws::semanticKindFromString("JointOriginOffsetX", parsedSemantic));
+    REQUIRE(parsedSemantic == rws::SemanticKind::JointOriginOffsetX);
+    REQUIRE(!rws::semanticKindFromString("FutureSemantic", parsedSemantic));
+}
+
+// Phase 2/S21: suggestions originate only from the first-phase semantic
+// whitelist plus adapter-declared capabilities; nominal zero values and mesh
+// names never stand in for a declared parameterization capability.
+static void testDesignSpaceRegistryCapabilities()
+{
+    rws::DesignSpaceRegistry registry;
+    rws::SemanticMetadata metadata;
+    metadata.semanticKind = rws::SemanticKind::JointZeroOffset;
+    metadata.domain = rws::VariableDomain::Continuous;
+    metadata.unit = rws::DesignVariableUnit::Radians;
+    metadata.applicability = rws::SemanticApplicability::MovableJoint;
+    REQUIRE(registry.registerSemantic(metadata));
+    REQUIRE(!registry.registerSemantic(metadata));
+
+    const rws::DesignSpaceRegistry firstPhase = rws::DesignSpaceRegistry::firstPhase();
+    const rws::SemanticMetadata* linkLength =
+        firstPhase.find(rws::SemanticKind::LinkLength);
+    REQUIRE(linkLength != nullptr);
+    REQUIRE(linkLength->unit == rws::DesignVariableUnit::Metres);
+    REQUIRE(linkLength->domain == rws::VariableDomain::Continuous);
+    REQUIRE(linkLength->applicability == rws::SemanticApplicability::ParameterizedLink);
+    const rws::SemanticMetadata* flangePose = firstPhase.find(rws::SemanticKind::FlangeTx);
+    REQUIRE(flangePose != nullptr);
+    REQUIRE(flangePose->applicability == rws::SemanticApplicability::FlangeFrame);
+    const rws::SemanticMetadata* flangeRotation =
+        firstPhase.find(rws::SemanticKind::FlangeRotationVectorZ);
+    REQUIRE(flangeRotation != nullptr);
+    REQUIRE(flangeRotation->applicability == rws::SemanticApplicability::FlangeFrame);
+    const rws::SemanticMetadata* tcpPose = firstPhase.find(rws::SemanticKind::TcpTx);
+    REQUIRE(tcpPose != nullptr);
+    REQUIRE(tcpPose->applicability == rws::SemanticApplicability::ToolBinding);
+
+    // The registry is the first-phase semantic whitelist, not merely the
+    // subset whose suggestion factory happens to be implemented today.
+    const rws::SemanticKind firstPhaseSemantics[] = {
+        rws::SemanticKind::JointOffsetAlongAxis,
+        rws::SemanticKind::JointLimitLower,
+        rws::SemanticKind::JointLimitUpper,
+        rws::SemanticKind::BaseTx,
+        rws::SemanticKind::BaseRotationVectorX,
+        rws::SemanticKind::TcpTx,
+        rws::SemanticKind::TcpRotationVectorX,
+        rws::SemanticKind::FlangeTx,
+        rws::SemanticKind::FlangeRotationVectorX,
+        rws::SemanticKind::LinkCrossSectionX,
+        rws::SemanticKind::LinkWallThickness,
+        rws::SemanticKind::LinkScale,
+        rws::SemanticKind::ParameterizedMaterial};
+    for (const rws::SemanticKind semantic : firstPhaseSemantics)
+        REQUIRE(firstPhase.find(semantic) != nullptr);
+
+    const rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointZeroOffset);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-2",
+                       rws::AdapterCapability::JointZeroOffset);
+    capabilities.grant(rws::TargetObjectType::Joint, "fixed-flange",
+                       rws::AdapterCapability::JointZeroOffset);
+    const std::vector< rws::DesignVariableSuggestion > suggestions =
+        firstPhase.suggest(model, capabilities);
+    REQUIRE(suggestions.empty());
+    REQUIRE(std::none_of(suggestions.begin(), suggestions.end(),
+                         [](const rws::DesignVariableSuggestion& suggestion) {
+                             return suggestion.variable.semanticKind ==
+                                    rws::SemanticKind::LinkRadius;
+                         }));
+    REQUIRE(std::all_of(suggestions.begin(), suggestions.end(),
+                        [](const rws::DesignVariableSuggestion& suggestion) {
+                            return suggestion.binding.targetObjectId != "fixed-flange";
+                        }));
+    // Joint-zero coordinates remain available only through an explicit project
+    // binding.  Default capability discovery must not silently open this home
+    // / calibration-sensitive parameter.
+    rws::DesignVariableDefinition explicitZero;
+    explicitZero.id = "explicit-zero:joint-1";
+    explicitZero.semanticKind = rws::SemanticKind::JointZeroOffset;
+    explicitZero.role = rws::VariableRole::Independent;
+    explicitZero.domain = rws::VariableDomain::Continuous;
+    explicitZero.minimum = -0.5;
+    explicitZero.maximum = 0.5;
+    explicitZero.step = 0.01;
+    explicitZero.unit = rws::DesignVariableUnit::Radians;
+    explicitZero.frameId = "base";
+    explicitZero.bindingId = "binding:explicit-zero:joint-1";
+    rws::ParameterBinding explicitZeroBinding;
+    explicitZeroBinding.id = explicitZero.bindingId;
+    explicitZeroBinding.semanticKind = explicitZero.semanticKind;
+    explicitZeroBinding.targetObjectType = rws::TargetObjectType::Joint;
+    explicitZeroBinding.targetObjectId = "joint-1";
+    explicitZeroBinding.targetPropertyId = rws::TargetPropertyId::ZeroPositionOffset;
+    explicitZeroBinding.coordinateFrameId = "base";
+    explicitZeroBinding.ownerAdapterId = "JointZeroAdapter";
+    explicitZeroBinding.ownerAdapterVersion = 1;
+    explicitZeroBinding.readSet = {{rws::TargetObjectType::Joint, "joint-1",
+                                    rws::TargetPropertyId::ZeroPositionOffset, "base"}};
+    explicitZeroBinding.writeSet = explicitZeroBinding.readSet;
+    rws::AdapterRegistry adapterRegistry;
+    REQUIRE(adapterRegistry.registerAdapter(std::make_shared< rws::JointZeroAdapter >()).ok);
+    rws::DesignSpaceCompileRequest compileRequest;
+    compileRequest.model = &model;
+    compileRequest.registry = &firstPhase;
+    compileRequest.capabilities = &capabilities;
+    compileRequest.adapterRegistry = &adapterRegistry;
+    compileRequest.variables = {explicitZero};
+    compileRequest.bindings = {explicitZeroBinding};
+    REQUIRE(rws::DesignSpaceCompiler::compile(compileRequest).ok);
+}
+
+// Phase 2/S22: design-intent templates are pure previews.  They select only
+// capability-backed registry suggestions, retain user-owned variables, and do
+// not alter the legacy objective-weight template API.
+static void testDesignTemplateApplication()
+{
+    const rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    const rws::DesignSpaceRegistry registry = rws::DesignSpaceRegistry::firstPhase();
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointAxisTilt);
+
+    const rws::TemplateApplicationPreview preview =
+        rws::DesignTemplateApplication::preview(
+            rws::DesignIntentTemplateKind::KinematicWithJointAxis, model, registry,
+            capabilities, {});
+    REQUIRE(preview.templateId == "kinematic-with-joint-axis");
+    REQUIRE(preview.templateVersion == "1");
+    REQUIRE(preview.toAdd.size() == 2);
+    REQUIRE(std::all_of(preview.toAdd.begin(), preview.toAdd.end(),
+                        [](const rws::DesignVariableSuggestion& suggestion) {
+                            return suggestion.variable.semanticKind ==
+                                       rws::SemanticKind::JointAxisTiltU ||
+                                   suggestion.variable.semanticKind ==
+                                       rws::SemanticKind::JointAxisTiltV;
+                        }));
+    REQUIRE(std::all_of(preview.toAdd.begin(), preview.toAdd.end(),
+                        [](const rws::DesignVariableSuggestion& suggestion) {
+                            return suggestion.variable.currentValue == 0.0;
+                        }));
+
+    std::vector< rws::DesignVariableDefinition > existing;
+    rws::DesignVariableDefinition userEdited = preview.toAdd.front().variable;
+    userEdited.currentValue = 0.12;
+    userEdited.source = rws::DesignVariableSource::User;
+    existing.push_back(userEdited);
+    const rws::TemplateApplicationPreview repeated =
+        rws::DesignTemplateApplication::preview(
+            rws::DesignIntentTemplateKind::KinematicWithJointAxis, model, registry,
+            capabilities, existing);
+    REQUIRE(repeated.templateVersion == preview.templateVersion);
+    REQUIRE(repeated.alreadyPresent.size() == 1);
+    REQUIRE(repeated.alreadyPresent.front().currentValue == 0.12);
+    REQUIRE(repeated.toAdd.size() == 1);
+
+    const rws::TemplateApplicationPreview unsupported =
+        rws::DesignTemplateApplication::preview(
+            rws::DesignIntentTemplateKind::KinematicWithBaseTcp, model, registry,
+            rws::AdapterCapabilityQuery(), {});
+    REQUIRE(!unsupported.inapplicable.empty());
+    REQUIRE(unsupported.inapplicable.front().reason == "BindingUnavailable");
+}
+
+// Phase 2/S23: selected parameterization modes disable alternative physical
+// representations before write-set validation.  Read sharing is harmless, but
+// two active owners must never write the same physical target.
+static void testParameterizationAndWriteSetValidation()
+{
+    rws::DesignVariableDefinition cartesian;
+    cartesian.id = "cartesian-origin";
+    cartesian.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    cartesian.role = rws::VariableRole::Independent;
+    cartesian.domain = rws::VariableDomain::Continuous;
+    cartesian.minimum = -1.0;
+    cartesian.maximum = 1.0;
+    cartesian.step = 0.1;
+    cartesian.unit = rws::DesignVariableUnit::Metres;
+    cartesian.frameId = "base";
+    cartesian.bindingId = "binding:cartesian-origin";
+    cartesian.parameterizationModeId = "JointOriginMode=Cartesian";
+
+    rws::DesignVariableDefinition alongAxis = cartesian;
+    alongAxis.id = "along-axis";
+    alongAxis.semanticKind = rws::SemanticKind::JointOffsetAlongAxis;
+    alongAxis.bindingId = "binding:along-axis";
+    alongAxis.parameterizationModeId = "JointOriginMode=AlongAxis";
+
+    const rws::ParameterizationResolution resolution =
+        rws::ParameterizationModeResolver::resolve(
+            {cartesian, alongAxis}, rws::ParameterizationModeRegistry::firstPhase(),
+            {{"JointOriginMode", "JointOriginMode=AlongAxis"}});
+    REQUIRE(resolution.valid);
+    REQUIRE(resolution.variables.at(0).status ==
+            rws::DesignVariableStatus::DisabledByParameterization);
+    REQUIRE(resolution.disabledReasons.at("cartesian-origin") ==
+            "DisabledByParameterization: JointOriginMode=AlongAxis");
+    REQUIRE(resolution.variables.at(1).status == rws::DesignVariableStatus::Available);
+
+    rws::ParameterBinding first;
+    first.id = "binding:cartesian-origin";
+    first.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    first.targetObjectType = rws::TargetObjectType::Joint;
+    first.targetObjectId = "joint-1";
+    first.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    first.ownerAdapterId = "JointOriginAdapter";
+    first.ownerAdapterVersion = 1;
+    first.writeSet = {{rws::TargetObjectType::Joint, "joint-1",
+                       rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+    first.readSet = {{rws::TargetObjectType::Joint, "joint-1",
+                      rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+    rws::ParameterBinding second = first;
+    second.id = "binding:along-axis";
+    second.ownerAdapterId = "ParameterizedLinkAdapter";
+
+    const rws::WriteSetValidationResult disabledAlternative =
+        rws::WriteSetValidator::validate(resolution.variables, {first, second});
+    REQUIRE(disabledAlternative.valid);
+
+    rws::DesignVariableDefinition conflicting = cartesian;
+    conflicting.parameterizationModeId.clear();
+    const rws::WriteSetValidationResult conflict = rws::WriteSetValidator::validate(
+        {alongAxis, conflicting}, {first, second});
+    REQUIRE(!conflict.valid);
+    REQUIRE(std::any_of(conflict.diagnostics.begin(), conflict.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "PARAMETER_WRITE_CONFLICT";
+                        }));
+}
+
+// Phase 2/S24: derived values form a typed, deterministic DAG.  Evaluation
+// reads resolved variables only, returns no partial values on failure, and
+// never turns a limit relationship into a derived overwrite.
+static void testDerivedExpressionsAndDependencyGraph()
+{
+    rws::DerivedExpression width;
+    width.id = "width-from-scale";
+    width.kind = rws::DerivedExpressionKind::Multiply;
+    width.operands = {rws::DerivedExpressionOperand::variable("link-scale"),
+                      rws::DerivedExpressionOperand::constant(0.10,
+                                                               rws::DesignVariableUnit::Metres)};
+    rws::DerivedExpression height = width;
+    height.id = "height-from-scale";
+    height.operands[1] = rws::DerivedExpressionOperand::constant(
+        0.20, rws::DesignVariableUnit::Metres);
+
+    const rws::DerivedExpressionEvaluationResult evaluated =
+        rws::DependencyGraph::evaluate(
+            {width, height}, {{"link-scale", {2.0, rws::DesignVariableUnit::Unitless}}});
+    REQUIRE(evaluated.ok);
+    REQUIRE(evaluated.evaluationOrder ==
+            std::vector< std::string >({"height-from-scale", "width-from-scale"}));
+    REQUIRE(evaluated.values.at("width-from-scale").value == 0.20);
+    REQUIRE(evaluated.values.at("height-from-scale").value == 0.40);
+    REQUIRE(evaluated.values.at("width-from-scale").unit == rws::DesignVariableUnit::Metres);
+
+    rws::DerivedExpression unknown = rws::DerivedExpression::variableReference("unknown-ref", "missing");
+    const rws::DerivedExpressionEvaluationResult missing =
+        rws::DependencyGraph::evaluate({unknown}, {});
+    REQUIRE(!missing.ok);
+    REQUIRE(missing.values.empty());
+    REQUIRE(missing.diagnostics.front().code == "DERIVED_EXPRESSION_REFERENCE_UNKNOWN");
+
+    rws::DerivedExpression cycleA = rws::DerivedExpression::variableReference("cycle-a", "cycle-b");
+    rws::DerivedExpression cycleB = rws::DerivedExpression::variableReference("cycle-b", "cycle-a");
+    const rws::DerivedExpressionEvaluationResult cycle =
+        rws::DependencyGraph::evaluate({cycleA, cycleB}, {});
+    REQUIRE(!cycle.ok);
+    REQUIRE(cycle.values.empty());
+    REQUIRE(cycle.diagnostics.front().code == "DERIVED_EXPRESSION_CYCLE");
+
+    rws::DerivedExpression clamp;
+    clamp.id = "clamp";
+    clamp.kind = rws::DerivedExpressionKind::Clamp;
+    clamp.operands = {rws::DerivedExpressionOperand::constant(2.0, rws::DesignVariableUnit::Metres),
+                      rws::DerivedExpressionOperand::constant(0.0, rws::DesignVariableUnit::Metres),
+                      rws::DerivedExpressionOperand::constant(1.0, rws::DesignVariableUnit::Metres)};
+    rws::DerivedExpression norm;
+    norm.id = "norm";
+    norm.kind = rws::DerivedExpressionKind::Norm;
+    norm.operands = {rws::DerivedExpressionOperand::constant(3.0, rws::DesignVariableUnit::Metres),
+                     rws::DerivedExpressionOperand::constant(4.0, rws::DesignVariableUnit::Metres)};
+    const rws::DerivedExpressionEvaluationResult extended =
+        rws::DependencyGraph::evaluate({clamp, norm}, {});
+    REQUIRE(extended.ok);
+    REQUIRE(extended.values.at("clamp").value == 1.0);
+    REQUIRE(extended.values.at("norm").value == 5.0);
+
+    rws::DerivedExpression unitMismatch;
+    unitMismatch.id = "unit-mismatch";
+    unitMismatch.kind = rws::DerivedExpressionKind::Add;
+    unitMismatch.operands = {rws::DerivedExpressionOperand::constant(1.0, rws::DesignVariableUnit::Metres),
+                             rws::DerivedExpressionOperand::constant(1.0, rws::DesignVariableUnit::Radians)};
+    const rws::DerivedExpressionEvaluationResult invalidUnits =
+        rws::DependencyGraph::evaluate({unitMismatch}, {});
+    REQUIRE(!invalidUnits.ok);
+    REQUIRE(invalidUnits.values.empty());
+    REQUIRE(invalidUnits.diagnostics.front().code == "DERIVED_EXPRESSION_UNIT_MISMATCH");
+
+    rws::DerivedExpression divideByZero = width;
+    divideByZero.id = "divide-by-zero";
+    divideByZero.kind = rws::DerivedExpressionKind::Divide;
+    divideByZero.operands[1] = rws::DerivedExpressionOperand::constant(
+        0.0, rws::DesignVariableUnit::Unitless);
+    const rws::DerivedExpressionEvaluationResult invalidDivision =
+        rws::DependencyGraph::evaluate({divideByZero}, {{"link-scale", {2.0, rws::DesignVariableUnit::Unitless}}});
+    REQUIRE(!invalidDivision.ok);
+    REQUIRE(invalidDivision.values.empty());
+    REQUIRE(invalidDivision.diagnostics.front().code == "DERIVED_EXPRESSION_DIVIDE_BY_ZERO");
+
+    rws::DerivedExpression absolute;
+    absolute.id = "absolute";
+    absolute.kind = rws::DerivedExpressionKind::RegisteredFunction;
+    absolute.registeredFunctionId = "abs";
+    absolute.operands = {rws::DerivedExpressionOperand::constant(
+        -2.0, rws::DesignVariableUnit::Metres)};
+    const rws::DerivedExpressionEvaluationResult registered =
+        rws::DependencyGraph::evaluate({absolute}, {});
+    REQUIRE(registered.ok);
+    REQUIRE(registered.values.at("absolute").value == 2.0);
+    REQUIRE(registered.values.at("absolute").unit == rws::DesignVariableUnit::Metres);
+
+    rws::DerivedExpression indirectA = rws::DerivedExpression::variableReference("indirect-a", "indirect-b");
+    rws::DerivedExpression indirectB = rws::DerivedExpression::variableReference("indirect-b", "indirect-c");
+    rws::DerivedExpression cycleC = rws::DerivedExpression::variableReference("indirect-c", "indirect-a");
+    const rws::DerivedExpressionEvaluationResult indirectCycle =
+        rws::DependencyGraph::evaluate({indirectA, indirectB, cycleC}, {});
+    REQUIRE(!indirectCycle.ok);
+    REQUIRE(indirectCycle.values.empty());
+
+    rws::DerivedExpression divide;
+    divide.id = "metres-per-unitless";
+    divide.kind = rws::DerivedExpressionKind::Divide;
+    divide.operands = {rws::DerivedExpressionOperand::constant(
+                           0.10, rws::DesignVariableUnit::Metres),
+                       rws::DerivedExpressionOperand::constant(
+                           2.0, rws::DesignVariableUnit::Unitless)};
+    const rws::DerivedExpressionEvaluationResult division =
+        rws::DependencyGraph::evaluate({divide}, {});
+    REQUIRE(division.ok);
+    REQUIRE(division.values.at("metres-per-unitless").unit == rws::DesignVariableUnit::Metres);
+
+    rws::DerivedExpression nonFinite = rws::DerivedExpression::variableReference("non-finite", "bad");
+    const rws::DerivedExpressionEvaluationResult invalidNumeric =
+        rws::DependencyGraph::evaluate({nonFinite}, {{"bad", {std::numeric_limits<double>::infinity(),
+                                                               rws::DesignVariableUnit::Metres}}});
+    REQUIRE(!invalidNumeric.ok);
+    REQUIRE(invalidNumeric.values.empty());
+    REQUIRE(invalidNumeric.diagnostics.front().code == "DERIVED_EXPRESSION_NONFINITE");
+
+    rws::DesignVariableDefinition limit;
+    limit.id = "joint-limit-lower";
+    limit.role = rws::VariableRole::Derived;
+    limit.semanticKind = rws::SemanticKind::JointLimitLower;
+    limit.derivedExpressionId = "width-from-scale";
+    const rws::DerivedExpressionTargetValidationResult limitTarget =
+        rws::DerivedExpressionTargetValidator::validate({limit});
+    REQUIRE(!limitTarget.valid);
+    REQUIRE(limitTarget.diagnostics.front().code ==
+            "DERIVED_EXPRESSION_TARGET_CONSTRAINT_ONLY");
+}
+
+// Phase 2/S25: compiler normalization is the sole runtime design-space entry.
+// Equivalent input order must yield one independent-only vector schema and
+// one fingerprint, with disabled variables retained only as diagnostics.
+static void testDesignSpaceCompiler()
+{
+    rws::DesignVariableDefinition first;
+    first.id = "first";
+    first.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    first.role = rws::VariableRole::Independent;
+    first.domain = rws::VariableDomain::Continuous;
+    first.minimum = -1.0;
+    first.maximum = 1.0;
+    first.step = 0.1;
+    first.unit = rws::DesignVariableUnit::Metres;
+    first.frameId = "base";
+    first.bindingId = "binding:first";
+    rws::DesignVariableDefinition second = first;
+    second.id = "second";
+    second.bindingId = "binding:second";
+    second.semanticKind = rws::SemanticKind::JointOffsetAlongAxis;
+
+    rws::ParameterBinding firstBinding;
+    firstBinding.id = first.bindingId;
+    firstBinding.semanticKind = first.semanticKind;
+    firstBinding.targetObjectType = rws::TargetObjectType::Joint;
+    firstBinding.targetObjectId = "joint-1";
+    firstBinding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    firstBinding.ownerAdapterId = "JointOriginAdapter";
+    firstBinding.ownerAdapterVersion = 1;
+    firstBinding.writeSet = {{rws::TargetObjectType::Joint, "joint-1",
+                              rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+    rws::ParameterBinding secondBinding = firstBinding;
+    secondBinding.id = second.bindingId;
+    secondBinding.semanticKind = second.semanticKind;
+    secondBinding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationY;
+    secondBinding.writeSet.front().propertyId = secondBinding.targetPropertyId;
+
+    const rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    const rws::DesignSpaceRegistry registry = rws::DesignSpaceRegistry::firstPhase();
+    rws::AdapterRegistry adapterRegistry;
+    REQUIRE(adapterRegistry.registerAdapter(std::make_shared< rws::JointOriginAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    rws::DesignSpaceCompileRequest request;
+    request.model = &model;
+    request.registry = &registry;
+    request.capabilities = &capabilities;
+    request.adapterRegistry = &adapterRegistry;
+    request.variables = {second, first};
+    request.bindings = {secondBinding, firstBinding};
+    const rws::DesignSpaceCompileResult compiled = rws::DesignSpaceCompiler::compile(request);
+    REQUIRE(compiled.ok);
+    REQUIRE(compiled.designSpace.independentVariables.size() == 2);
+    REQUIRE(compiled.designSpace.canonicalVectorSchema.at(0).variableId == "first");
+    REQUIRE(compiled.designSpace.canonicalVectorSchema.at(1).variableId == "second");
+    REQUIRE(!compiled.designSpace.fingerprint.empty());
+
+    rws::DesignSpaceCompileRequest missingAdapterRegistryMaterial = request;
+    missingAdapterRegistryMaterial.adapterRegistry = nullptr;
+    const rws::DesignSpaceCompileResult missingAdapterRegistry =
+        rws::DesignSpaceCompiler::compile(missingAdapterRegistryMaterial);
+    REQUIRE(!missingAdapterRegistry.ok);
+    REQUIRE(std::any_of(missingAdapterRegistry.diagnostics.begin(),
+                        missingAdapterRegistry.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code ==
+                                "DESIGN_SPACE_ADAPTER_REGISTRY_REQUIRED";
+                        }));
+
+    rws::DesignSpaceCompileRequest allDisabledWithoutRegistry = request;
+    for (rws::DesignVariableDefinition& variable : allDisabledWithoutRegistry.variables)
+        variable.parameterizationModeId = "LinkPlacementMode=AlongReferenceDirection";
+    allDisabledWithoutRegistry.parameterizationSelections = {
+        {"LinkPlacementMode", "LinkPlacementMode=CartesianJointOrigin"}};
+    const rws::ParameterizationResolution allDisabledResolution =
+        rws::ParameterizationModeResolver::resolve(
+            allDisabledWithoutRegistry.variables, rws::ParameterizationModeRegistry::firstPhase(),
+            allDisabledWithoutRegistry.parameterizationSelections);
+    REQUIRE(allDisabledResolution.valid);
+    REQUIRE(std::all_of(allDisabledResolution.variables.begin(), allDisabledResolution.variables.end(),
+                        [](const rws::DesignVariableDefinition& variable) {
+                            return !variable.enabled &&
+                                variable.status == rws::DesignVariableStatus::DisabledByParameterization;
+                        }));
+    allDisabledWithoutRegistry.adapterRegistry = nullptr;
+    const rws::DesignSpaceCompileResult allDisabledMissingRegistry =
+        rws::DesignSpaceCompiler::compile(allDisabledWithoutRegistry);
+    REQUIRE(!allDisabledMissingRegistry.ok);
+    REQUIRE(std::any_of(allDisabledMissingRegistry.diagnostics.begin(),
+                        allDisabledMissingRegistry.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code ==
+                                "DESIGN_SPACE_ADAPTER_REGISTRY_REQUIRED";
+                        }));
+
+    rws::DesignSpaceCompileRequest reordered = request;
+    reordered.variables = {first, second};
+    reordered.bindings = {firstBinding, secondBinding};
+    const rws::DesignSpaceCompileResult reorderedCompiled =
+        rws::DesignSpaceCompiler::compile(reordered);
+    REQUIRE(reorderedCompiled.ok);
+    REQUIRE(reorderedCompiled.designSpace.fingerprint == compiled.designSpace.fingerprint);
+    REQUIRE(reorderedCompiled.designSpace.canonicalVectorSchema ==
+            compiled.designSpace.canonicalVectorSchema);
+
+    rws::AdapterCapabilityQuery changedCapabilities;
+    changedCapabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                              rws::AdapterCapability::JointOrigin);
+    rws::DesignSpaceCompileRequest capabilityChanged = request;
+    capabilityChanged.capabilities = &changedCapabilities;
+    const rws::DesignSpaceCompileResult capabilityChangedCompiled =
+        rws::DesignSpaceCompiler::compile(capabilityChanged);
+    REQUIRE(capabilityChangedCompiled.ok);
+    REQUIRE(capabilityChangedCompiled.designSpace.fingerprint != compiled.designSpace.fingerprint);
+
+    rws::DesignVariableDefinition derived = first;
+    derived.id = "derived";
+    derived.role = rws::VariableRole::Derived;
+    derived.semanticKind = rws::SemanticKind::JointOriginOffsetZ;
+    derived.bindingId = "binding:derived";
+    derived.derivedExpressionId = "expression:derived";
+    rws::ParameterBinding derivedBinding = firstBinding;
+    derivedBinding.id = derived.bindingId;
+    derivedBinding.semanticKind = derived.semanticKind;
+    derivedBinding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationZ;
+    derivedBinding.writeSet.front().propertyId = derivedBinding.targetPropertyId;
+    const rws::DerivedExpression derivedExpression =
+        rws::DerivedExpression::variableReference(derived.derivedExpressionId, first.id);
+    rws::DesignSpaceCompileRequest withDerived = request;
+    withDerived.variables = {derived, second, first};
+    withDerived.bindings = {derivedBinding, secondBinding, firstBinding};
+    withDerived.derivedExpressions = {derivedExpression};
+    const rws::DesignSpaceCompileResult derivedCompiled =
+        rws::DesignSpaceCompiler::compile(withDerived);
+    REQUIRE(derivedCompiled.ok);
+    REQUIRE(derivedCompiled.designSpace.independentVariables.size() == 2);
+    REQUIRE(derivedCompiled.designSpace.derivedVariables.size() == 1);
+    REQUIRE(derivedCompiled.designSpace.dependencyOrder.size() == 1);
+    REQUIRE(derivedCompiled.designSpace.dependencyOrder.front() == derived.id);
+
+    rws::DesignVariableDefinition disabled = first;
+    disabled.id = "disabled";
+    disabled.bindingId = "binding:disabled";
+    disabled.semanticKind = rws::SemanticKind::LinkLength;
+    disabled.parameterizationModeId = "LinkPlacementMode=AlongReferenceDirection";
+    rws::ParameterBinding disabledBinding = firstBinding;
+    disabledBinding.id = disabled.bindingId;
+    disabledBinding.semanticKind = disabled.semanticKind;
+    disabledBinding.referenceDirectionFrameId = "base";
+    disabledBinding.referenceDirection = rw::math::Vector3D<>::x();
+    rws::DesignSpaceCompileRequest withDisabled = request;
+    withDisabled.variables = {first, disabled};
+    withDisabled.bindings = {firstBinding, disabledBinding};
+    withDisabled.parameterizationSelections = {
+        {"LinkPlacementMode", "LinkPlacementMode=CartesianJointOrigin"}};
+    const rws::DesignSpaceCompileResult disabledCompiled =
+        rws::DesignSpaceCompiler::compile(withDisabled);
+    REQUIRE(disabledCompiled.ok);
+    REQUIRE(disabledCompiled.designSpace.independentVariables.size() == 1);
+    REQUIRE(disabledCompiled.designSpace.disabledReasons.count(disabled.id) == 1);
+    REQUIRE(std::any_of(disabledCompiled.diagnostics.begin(), disabledCompiled.diagnostics.end(),
+                        [&disabled](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "DESIGN_SPACE_VARIABLE_DISABLED" &&
+                                   diagnostic.fieldPath == disabled.id;
+                        }));
+
+    rws::DesignVariableDefinition conflicting = second;
+    conflicting.id = "conflicting";
+    conflicting.bindingId = "binding:conflicting";
+    rws::ParameterBinding conflictingBinding = firstBinding;
+    conflictingBinding.id = conflicting.bindingId;
+    conflictingBinding.semanticKind = conflicting.semanticKind;
+    rws::DesignSpaceCompileRequest withConflict = request;
+    withConflict.variables = {first, conflicting};
+    withConflict.bindings = {firstBinding, conflictingBinding};
+    REQUIRE(!rws::DesignSpaceCompiler::compile(withConflict).ok);
+
+    rws::DesignSpaceCompileRequest unbound = request;
+    unbound.bindings.clear();
+    REQUIRE(!rws::DesignSpaceCompiler::compile(unbound).ok);
+
+    rws::DerivedExpression badUnitExpression = derivedExpression;
+    badUnitExpression.operands = {
+        rws::DerivedExpressionOperand::constant(1.0, rws::DesignVariableUnit::Radians)};
+    rws::DesignSpaceCompileRequest badUnit = withDerived;
+    badUnit.derivedExpressions = {badUnitExpression};
+    REQUIRE(!rws::DesignSpaceCompiler::compile(badUnit).ok);
+
+    rws::DesignVariableDefinition cycle = derived;
+    cycle.id = "cycle";
+    cycle.bindingId = "binding:cycle";
+    cycle.derivedExpressionId = "expression:cycle";
+    rws::ParameterBinding cycleBinding = derivedBinding;
+    cycleBinding.id = cycle.bindingId;
+    cycleBinding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationY;
+    cycleBinding.writeSet.front().propertyId = cycleBinding.targetPropertyId;
+    rws::DerivedExpression cycleExpression = rws::DerivedExpression::variableReference(
+        cycle.derivedExpressionId, derived.derivedExpressionId);
+    rws::DerivedExpression derivedCycleExpression = rws::DerivedExpression::variableReference(
+        derived.derivedExpressionId, cycle.derivedExpressionId);
+    rws::DesignSpaceCompileRequest cyclic = request;
+    cyclic.variables = {first, derived, cycle};
+    cyclic.bindings = {firstBinding, derivedBinding, cycleBinding};
+    cyclic.derivedExpressions = {cycleExpression, derivedCycleExpression};
+    REQUIRE(!rws::DesignSpaceCompiler::compile(cyclic).ok);
+}
+
+static rws::CompiledDesignSpace designVectorSpaceFixture()
+{
+    rws::CompiledDesignSpace space;
+    space.fingerprint = "design-space-fixture";
+
+    rws::DesignVariableDefinition length;
+    length.id = "length";
+    length.domain = rws::VariableDomain::Continuous;
+    length.minimum = -1.0;
+    length.maximum = 1.0;
+    length.step = 0.1;
+    length.unit = rws::DesignVariableUnit::Metres;
+    rws::DesignVariableDefinition count = length;
+    count.id = "count";
+    count.domain = rws::VariableDomain::Integer;
+    count.minimum = 0.0;
+    count.maximum = 10.0;
+    count.step = 2.0;
+    count.unit = rws::DesignVariableUnit::Unitless;
+    rws::DesignVariableDefinition material = count;
+    material.id = "material";
+    material.domain = rws::VariableDomain::Discrete;
+    material.minimum = 0.0;
+    material.maximum = 0.0;
+    material.step = 0.0;
+    material.discreteOptions = {{"aluminum", "Aluminum", "Al"}, {"steel", "Steel", "Fe"}};
+    space.independentVariables = {length, count, material};
+    space.canonicalVectorSchema = {{length.id, 0, length.unit}, {count.id, 1, count.unit},
+                                   {material.id, 2, material.unit}};
+    return space;
+}
+
+static void testDesignVector()
+{
+    const rws::CompiledDesignSpace space = designVectorSpaceFixture();
+    const std::vector< rws::NormalizedDesignValue > normalized = {
+        {0.75, ""}, {0.4, ""}, {0.0, "steel"}};
+    const rws::DesignVectorResult decoded =
+        rws::DesignVectorCodec::fromNormalized(space, normalized);
+    REQUIRE(decoded.ok);
+    REQUIRE(decoded.vector.values.size() == 3);
+    REQUIRE(std::abs(decoded.vector.values[0].engineeringValue - 0.5) < 1e-12);
+    REQUIRE(std::abs(decoded.vector.values[1].engineeringValue - 4.0) < 1e-12);
+    REQUIRE(decoded.vector.values[2].discreteOptionId == "steel");
+
+    const rws::NormalizedDesignVectorResult encoded =
+        rws::DesignVectorCodec::toNormalized(space, decoded.vector);
+    REQUIRE(encoded.ok);
+    REQUIRE(std::abs(encoded.values[0].normalizedValue - normalized[0].normalizedValue) < 1e-12);
+    REQUIRE(std::abs(encoded.values[1].normalizedValue - normalized[1].normalizedValue) < 1e-12);
+    REQUIRE(encoded.values[2].discreteOptionId == "steel");
+
+    const std::vector< rws::EngineeringDesignValue > engineering = {
+        {"length", rws::DesignVariableUnit::Metres, -0.0, ""},
+        {"count", rws::DesignVariableUnit::Unitless, 4.0, ""},
+        {"material", rws::DesignVariableUnit::Unitless, 0.0, "steel"}};
+    const rws::DesignVectorResult fromEngineering =
+        rws::DesignVectorCodec::fromEngineering(space, engineering);
+    REQUIRE(fromEngineering.ok);
+    const rws::NormalizedDesignVectorResult engineeringNormalized =
+        rws::DesignVectorCodec::toNormalized(space, fromEngineering.vector);
+    REQUIRE(engineeringNormalized.ok);
+    const rws::DesignVectorResult engineeringRoundTrip =
+        rws::DesignVectorCodec::fromNormalized(space, engineeringNormalized.values);
+    REQUIRE(engineeringRoundTrip.ok);
+    REQUIRE(engineeringRoundTrip.vector.canonicalBytes == fromEngineering.vector.canonicalBytes);
+    const std::vector< rws::EngineeringDesignValue > positiveZeroEngineering = {
+        {"length", rws::DesignVariableUnit::Metres, 0.0, ""},
+        {"count", rws::DesignVariableUnit::Unitless, 4.0, ""},
+        {"material", rws::DesignVariableUnit::Unitless, 0.0, "steel"}};
+    const rws::DesignVectorResult positiveZero =
+        rws::DesignVectorCodec::fromEngineering(space, positiveZeroEngineering);
+    REQUIRE(positiveZero.ok);
+    REQUIRE(fromEngineering.vector.canonicalBytes == positiveZero.vector.canonicalBytes);
+    REQUIRE(fromEngineering.vector.fingerprint == positiveZero.vector.fingerprint);
+    REQUIRE(!fromEngineering.vector.canonicalBytes.empty());
+    REQUIRE(!fromEngineering.vector.fingerprint.empty());
+
+    std::vector< rws::NormalizedDesignValue > badContinuous = normalized;
+    badContinuous[0].normalizedValue = 1.1;
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(space, badContinuous).ok);
+    std::vector< rws::EngineeringDesignValue > badRange = engineering;
+    badRange[0].engineeringValue = 1.1;
+    REQUIRE(!rws::DesignVectorCodec::fromEngineering(space, badRange).ok);
+
+    std::vector< rws::NormalizedDesignValue > badInteger = normalized;
+    badInteger[1].normalizedValue = 0.35;
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(space, badInteger).ok);
+    std::vector< rws::EngineeringDesignValue > badIntegerEngineering = engineering;
+    badIntegerEngineering[1].engineeringValue = 5.0;
+    REQUIRE(!rws::DesignVectorCodec::fromEngineering(space, badIntegerEngineering).ok);
+
+    std::vector< rws::NormalizedDesignValue > badDiscrete = normalized;
+    badDiscrete[2].discreteOptionId = "display-name-is-not-an-id";
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(space, badDiscrete).ok);
+    badDiscrete = normalized;
+    badDiscrete[2].normalizedValue = 0.5;
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(space, badDiscrete).ok);
+    std::vector< rws::EngineeringDesignValue > badDiscreteEngineering = engineering;
+    badDiscreteEngineering[2].engineeringValue = 1.0;
+    REQUIRE(!rws::DesignVectorCodec::fromEngineering(space, badDiscreteEngineering).ok);
+    rws::DesignVector malformedDiscreteVector = decoded.vector;
+    malformedDiscreteVector.values[2].engineeringValue = 1.0;
+    REQUIRE(!rws::DesignVectorCodec::toNormalized(space, malformedDiscreteVector).ok);
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(
+        space, std::vector< rws::NormalizedDesignValue >{normalized[0]}).ok);
+    rws::CompiledDesignSpace malformedSchema = space;
+    malformedSchema.canonicalVectorSchema[0].index = 1;
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(malformedSchema, normalized).ok);
+    rws::CompiledDesignSpace duplicateDiscreteOption = space;
+    duplicateDiscreteOption.independentVariables[2].discreteOptions.push_back(
+        {"steel", "Duplicate steel", "Duplicate"});
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(duplicateDiscreteOption, normalized).ok);
+
+    std::vector< rws::NormalizedDesignValue > nonFinite = normalized;
+    nonFinite[0].normalizedValue = std::numeric_limits< double >::infinity();
+    REQUIRE(!rws::DesignVectorCodec::fromNormalized(space, nonFinite).ok);
+
+    rws::CompiledDesignSpace withDerivedAndDisabled = space;
+    rws::DesignVariableDefinition derived = withDerivedAndDisabled.independentVariables.front();
+    derived.id = "derived";
+    derived.role = rws::VariableRole::Derived;
+    withDerivedAndDisabled.derivedVariables.push_back(derived);
+    withDerivedAndDisabled.disabledReasons["disabled"] = "DisabledByParameterization";
+    const rws::DesignVectorResult independentOnly =
+        rws::DesignVectorCodec::fromNormalized(withDerivedAndDisabled, normalized);
+    REQUIRE(independentOnly.ok);
+    REQUIRE(independentOnly.vector.values.size() == 3);
+    REQUIRE(std::none_of(independentOnly.vector.values.begin(), independentOnly.vector.values.end(),
+                         [](const rws::DesignVectorValue& value) {
+                             return value.variableId == "derived" || value.variableId == "disabled";
+                         }));
+}
+
+static void testLegacyDesignSpaceMigrationPreview()
+{
+    rws::StructureOptimizationProblem problem;
+    rws::StructureDesignVariable linkLength;
+    linkLength.id = "legacy-link-length";
+    linkLength.label = "Legacy link length";
+    linkLength.targetName = "Link1";
+    linkLength.unit = "mm";
+    linkLength.kind = rws::StructureVariableKind::JointPositionX;
+    linkLength.currentValue = 500.0;
+    linkLength.minimum = 400.0;
+    linkLength.maximum = 700.0;
+    linkLength.step = 10.0;
+    rws::StructureDesignVariable baseHeight = linkLength;
+    baseHeight.id = "legacy-base-height";
+    baseHeight.label = "Legacy base height";
+    baseHeight.targetName = "Base";
+    baseHeight.unit = "m";
+    baseHeight.kind = rws::StructureVariableKind::BaseHeight;
+    baseHeight.currentValue = 0.5;
+    baseHeight.minimum = 0.3;
+    baseHeight.maximum = 0.7;
+    baseHeight.step = 0.01;
+    rws::StructureDesignVariable dh = linkLength;
+    dh.id = "legacy-dh-a";
+    dh.kind = rws::StructureVariableKind::DhA;
+    rws::StructureDesignVariable unbound = linkLength;
+    unbound.id = "legacy-unbound";
+    unbound.targetName.clear();
+    unbound.kind = rws::StructureVariableKind::JointPositionY;
+    problem.variables = {linkLength, baseHeight, dh, unbound};
+
+    rws::LegacyDesignSpaceBindingHint linkLengthHint;
+    linkLengthHint.legacyVariableId = linkLength.id;
+    linkLengthHint.semanticKind = rws::SemanticKind::LinkLength;
+    linkLengthHint.binding.id = "binding:legacy-link-length";
+    linkLengthHint.binding.semanticKind = rws::SemanticKind::LinkLength;
+    linkLengthHint.binding.targetObjectType = rws::TargetObjectType::Joint;
+    linkLengthHint.binding.targetObjectId = "joint-2";
+    linkLengthHint.binding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    linkLengthHint.binding.coordinateFrameId = "base";
+    linkLengthHint.binding.ownerAdapterId = "ParameterizedLinkAdapter";
+    linkLengthHint.binding.ownerAdapterVersion = 1;
+    linkLengthHint.binding.referenceDirectionFrameId = "base";
+    linkLengthHint.binding.referenceDirection = rw::math::Vector3D<>::x();
+    linkLengthHint.binding.writeSet = {{rws::TargetObjectType::Joint, "joint-2",
+                                       rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+
+    const rws::LegacyDesignSpaceMigrationPreview preview =
+        rws::LegacyDesignSpaceAdapter::preview(problem, {linkLengthHint});
+    REQUIRE(preview.mappedVariables.size() == 2);
+    REQUIRE(preview.bindings.size() == 2);
+    REQUIRE(preview.entries.size() == problem.variables.size());
+    REQUIRE(preview.entries[0].mapped);
+    REQUIRE(preview.entries[0].variable.semanticKind == rws::SemanticKind::LinkLength);
+    REQUIRE(preview.entries[0].variable.source == rws::DesignVariableSource::Legacy);
+    REQUIRE(preview.entries[0].source.unit == "mm");
+    REQUIRE(std::abs(preview.entries[0].source.minimum - linkLength.minimum) < 1e-12);
+    REQUIRE(std::abs(preview.entries[0].variable.currentValue - 0.5) < 1e-12);
+    REQUIRE(std::abs(preview.entries[0].variable.minimum - 0.4) < 1e-12);
+    REQUIRE(std::abs(preview.entries[0].variable.maximum - 0.7) < 1e-12);
+    REQUIRE(std::abs(preview.entries[0].variable.step - 0.01) < 1e-12);
+    REQUIRE(preview.entries[0].variable.unit == rws::DesignVariableUnit::Metres);
+    REQUIRE(preview.entries[1].mapped);
+    REQUIRE(preview.entries[1].variable.semanticKind == rws::SemanticKind::BaseTz);
+    REQUIRE(preview.entries[1].binding.targetPropertyId == rws::TargetPropertyId::BaseTranslationZ);
+    REQUIRE(preview.entries[2].disposition == "legacy/projection-only");
+    REQUIRE(!preview.entries[2].variable.enabled);
+    REQUIRE(preview.entries[3].disposition == "legacy/unbound");
+    REQUIRE(!preview.entries[3].variable.enabled);
+    REQUIRE(std::any_of(preview.diagnostics.begin(), preview.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "LEGACY_DH_PROJECTION_ONLY";
+                        }));
+    REQUIRE(std::any_of(preview.diagnostics.begin(), preview.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "LEGACY_VARIABLE_UNBOUND";
+                        }));
+    REQUIRE(problem.variables.size() == 4);
+    REQUIRE(problem.variables[0].unit == "mm");
+    REQUIRE(std::abs(problem.variables[0].currentValue - 500.0) < 1e-12);
+
+    const rws::LegacyDesignSpaceMigrationPreview repeated =
+        rws::LegacyDesignSpaceAdapter::preview(problem, {linkLengthHint});
+    REQUIRE(repeated.entries.size() == preview.entries.size());
+    REQUIRE(repeated.mappedVariables.size() == preview.mappedVariables.size());
+    REQUIRE(repeated.entries[0].variable.id == preview.entries[0].variable.id);
+    REQUIRE(repeated.entries[0].variable.bindingId == preview.entries[0].variable.bindingId);
+    REQUIRE(repeated.entries[2].disposition == preview.entries[2].disposition);
+}
+
+// Phase 3/S30: registry and adapters are pure compiler contracts.  The mock
+// does not retain a WorkCell and only returns a typed patch; later slices add
+// the real adapters without changing this contract.
+class AdapterRegistryTestAdapter : public rws::IModelParameterAdapter
+{
+  public:
+    explicit AdapterRegistryTestAdapter(const std::string& id = "test-joint-origin",
+                                        int version = 1,
+                                        bool declareWrites = true,
+                                        bool bypassGenericBindingValidation = false,
+                                        bool emitUncontextualizedDiagnostic = false,
+                                        bool emitUncontextualizedValidationDiagnostic = false,
+                                        bool emitOkResultError = false,
+                                        bool emitOkPatchError = false)
+        : _id(id), _version(version), _declareWrites(declareWrites),
+          _bypassGenericBindingValidation(bypassGenericBindingValidation),
+          _emitUncontextualizedDiagnostic(emitUncontextualizedDiagnostic),
+          _emitUncontextualizedValidationDiagnostic(emitUncontextualizedValidationDiagnostic),
+          _emitOkResultError(emitOkResultError), _emitOkPatchError(emitOkPatchError)
+    {}
+
+    std::string adapterId() const override { return _id; }
+    int adapterVersion() const override { return _version; }
+    std::vector< rws::SemanticKind > supportedSemanticKinds() const override
+    {
+        return {rws::SemanticKind::JointOriginOffsetX};
+    }
+    std::vector< rws::AdapterCapability > requiredCapabilities() const override
+    {
+        return {rws::AdapterCapability::JointOrigin};
+    }
+    rws::AdapterBindingValidationResult validateBinding(
+        const rws::ParameterBinding& binding,
+        const rws::CanonicalKinematicModel&) const override
+    {
+        rws::AdapterBindingValidationResult result;
+        if (_emitUncontextualizedValidationDiagnostic) {
+            rws::StructureOptimizationDiagnostic diagnostic;
+            diagnostic.code = "ADAPTER_TEST_VALIDATE_UNCONTEXTUALIZED";
+            diagnostic.message = "Test adapter emitted a raw validation diagnostic.";
+            result.diagnostics.push_back(diagnostic);
+        }
+        if (_bypassGenericBindingValidation)
+            return result;
+        const rws::ParameterBindingValidationResult bindingValidation =
+            rws::ParameterBindingValidator::validate(binding);
+        result.valid = bindingValidation.valid;
+        result.diagnostics.insert(result.diagnostics.end(), bindingValidation.diagnostics.begin(),
+                                  bindingValidation.diagnostics.end());
+        return result;
+    }
+    std::vector< rws::ReadWriteTarget > declaredReadSet(
+        const rws::ParameterBinding& binding) const override
+    {
+        return binding.readSet;
+    }
+    std::vector< rws::ReadWriteTarget > declaredWriteSet(
+        const rws::ParameterBinding& binding) const override
+    {
+        return _declareWrites ? binding.writeSet : std::vector< rws::ReadWriteTarget >();
+    }
+    rws::AdapterPatchCompileResult compilePatch(
+        const rws::AdapterPatchCompileRequest& request) const override
+    {
+        rws::AdapterPatchCompileResult result;
+        if (_emitUncontextualizedDiagnostic) {
+            rws::StructureOptimizationDiagnostic diagnostic;
+            diagnostic.code = "ADAPTER_TEST_UNCONTEXTUALIZED";
+            diagnostic.message = "Test adapter emitted a raw diagnostic.";
+            result.diagnostics.push_back(diagnostic);
+            return result;
+        }
+        if (request.binding == nullptr) {
+            result.diagnostics.push_back(rws::makeAdapterDiagnostic(
+                _id, "", "", "binding", "ADAPTER_TEST_BINDING_REQUIRED",
+                "Test adapter requires a binding."));
+            return result;
+        }
+        result.ok = true;
+        result.patch.adapterId = _id;
+        result.patch.adapterVersion = _version;
+        result.patch.bindingId = request.binding->id;
+        const rws::ReadWriteTarget target = request.binding->writeSet.empty() ?
+            rws::ReadWriteTarget() : request.binding->writeSet.front();
+        result.patch.writes.push_back({target, rws::CandidatePatchValue::scalar(0.25)});
+        if (_emitOkResultError) {
+            rws::StructureOptimizationDiagnostic diagnostic;
+            diagnostic.code = "ADAPTER_TEST_RESULT_ERROR";
+            diagnostic.severity = "Error";
+            diagnostic.message = "Test adapter returned an Error with ok=true.";
+            result.diagnostics.push_back(diagnostic);
+        }
+        if (_emitOkPatchError) {
+            rws::StructureOptimizationDiagnostic diagnostic;
+            diagnostic.code = "ADAPTER_TEST_PATCH_ERROR";
+            diagnostic.severity = "Error";
+            diagnostic.message = "Test adapter patch contains an Error with ok=true.";
+            result.patch.diagnostics.push_back(diagnostic);
+        }
+        return result;
+    }
+    std::string describeEffect(const rws::ParameterBinding&) const override
+    {
+        return "test-only typed joint-origin patch";
+    }
+
+  private:
+    std::string _id;
+    int _version;
+    bool _declareWrites;
+    bool _bypassGenericBindingValidation;
+    bool _emitUncontextualizedDiagnostic;
+    bool _emitUncontextualizedValidationDiagnostic;
+    bool _emitOkResultError;
+    bool _emitOkPatchError;
+};
+
+static bool hasAdapterDiagnostic(const std::vector< rws::StructureOptimizationDiagnostic >& diagnostics,
+                                 const std::string& code)
+{
+    return std::any_of(diagnostics.begin(), diagnostics.end(),
+                       [&code](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                           return diagnostic.code == code;
+                       });
+}
+
+static rws::ParameterBinding adapterRegistryBinding()
+{
+    rws::ParameterBinding binding;
+    binding.id = "binding:test-joint-origin";
+    binding.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = "joint-1";
+    binding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    binding.coordinateFrameId = "base";
+    binding.ownerAdapterId = "test-joint-origin";
+    binding.ownerAdapterVersion = 1;
+    binding.readSet = {{rws::TargetObjectType::Joint, "joint-1",
+                        rws::TargetPropertyId::ParentToJointTranslationX, "base"}};
+    binding.writeSet = binding.readSet;
+    return binding;
+}
+
+static void testAdapterRegistryAndCandidatePatch()
+{
+    rws::AdapterRegistry registry;
+    const std::shared_ptr< AdapterRegistryTestAdapter > adapter =
+        std::make_shared< AdapterRegistryTestAdapter >();
+    const rws::AdapterRegistryRegistrationResult registered = registry.registerAdapter(adapter);
+    REQUIRE(registered.ok);
+    REQUIRE(registry.supports(rws::SemanticKind::JointOriginOffsetX));
+    REQUIRE(!registry.supports(rws::SemanticKind::TcpTx));
+    REQUIRE(registry.fingerprintMaterial().find("test-joint-origin|1") != std::string::npos);
+
+    const rws::AdapterRegistryRegistrationResult duplicate = registry.registerAdapter(adapter);
+    REQUIRE(!duplicate.ok);
+    REQUIRE(hasAdapterDiagnostic(duplicate.diagnostics, "ADAPTER_REGISTRY_DUPLICATE_ID_VERSION"));
+
+    const rws::ParameterBinding binding = adapterRegistryBinding();
+    const rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointOrigin);
+    rws::AdapterPatchCompileRequest request;
+    request.baseline = &baseline;
+    request.binding = &binding;
+    request.values = {{"offset-x", rws::DesignVariableUnit::Metres, 0.25, ""}};
+
+    const rws::AdapterPatchCompileResult compiled = registry.compilePatch(request, capabilities);
+    REQUIRE(compiled.ok);
+    REQUIRE(compiled.patch.writes.size() == 1);
+    REQUIRE(compiled.patch.writes.front().target.objectType == rws::TargetObjectType::Joint);
+    REQUIRE(compiled.patch.writes.front().target.propertyId ==
+            rws::TargetPropertyId::ParentToJointTranslationX);
+
+    rws::ParameterBinding zeroOwnerVersion = binding;
+    zeroOwnerVersion.ownerAdapterVersion = 0;
+    const rws::AdapterPatchCompileResult zeroOwnerVersionResult = registry.compilePatch(
+        {&baseline, &zeroOwnerVersion, request.values}, capabilities);
+    REQUIRE(!zeroOwnerVersionResult.ok);
+    REQUIRE(hasAdapterDiagnostic(zeroOwnerVersionResult.diagnostics,
+                                 "PARAMETER_BINDING_OWNER_VERSION_INVALID"));
+
+    rws::ParameterBinding mismatchedOwnerVersion = binding;
+    mismatchedOwnerVersion.ownerAdapterVersion = 2;
+    const rws::AdapterPatchCompileResult mismatchedOwnerVersionResult = registry.compilePatch(
+        {&baseline, &mismatchedOwnerVersion, request.values}, capabilities);
+    REQUIRE(!mismatchedOwnerVersionResult.ok);
+    REQUIRE(hasAdapterDiagnostic(mismatchedOwnerVersionResult.diagnostics,
+                                 "ADAPTER_REGISTRY_BINDING_VERSION_MISMATCH"));
+
+    rws::ParameterBinding invalidBinding = binding;
+    invalidBinding.targetObjectType = rws::TargetObjectType::Unknown;
+    const rws::AdapterPatchCompileResult invalid = registry.compilePatch(
+        {&baseline, &invalidBinding, request.values}, capabilities);
+    REQUIRE(!invalid.ok);
+    REQUIRE(hasAdapterDiagnostic(invalid.diagnostics, "PARAMETER_BINDING_TARGET_OBJECT_REQUIRED"));
+
+    rws::AdapterRegistry bypassRegistry;
+    REQUIRE(bypassRegistry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >(
+        "bypasses-binding-validation", 1, true, true)).ok);
+    rws::ParameterBinding bypassedInvalidBinding = binding;
+    bypassedInvalidBinding.ownerAdapterId = "bypasses-binding-validation";
+    bypassedInvalidBinding.targetObjectType = rws::TargetObjectType::Unknown;
+    const rws::AdapterPatchCompileResult genericValidationCannotBeBypassed =
+        bypassRegistry.compilePatch({&baseline, &bypassedInvalidBinding, request.values}, capabilities);
+    REQUIRE(!genericValidationCannotBeBypassed.ok);
+    REQUIRE(hasAdapterDiagnostic(genericValidationCannotBeBypassed.diagnostics,
+                                 "PARAMETER_BINDING_TARGET_OBJECT_REQUIRED"));
+
+    rws::ParameterBinding missingOwnerBinding = binding;
+    missingOwnerBinding.ownerAdapterId.clear();
+    const rws::AdapterPatchCompileResult missingOwner = registry.compilePatch(
+        {&baseline, &missingOwnerBinding, request.values}, capabilities);
+    REQUIRE(!missingOwner.ok);
+    REQUIRE(hasAdapterDiagnostic(missingOwner.diagnostics,
+                                 "PARAMETER_BINDING_OWNER_REQUIRED"));
+
+    const rws::AdapterPatchCompileResult missingCapability = registry.compilePatch(
+        request, rws::AdapterCapabilityQuery());
+    REQUIRE(!missingCapability.ok);
+    REQUIRE(hasAdapterDiagnostic(missingCapability.diagnostics,
+                                 "ADAPTER_REGISTRY_CAPABILITY_REQUIRED"));
+
+    rws::ParameterBinding missingReadBinding = binding;
+    missingReadBinding.readSet.clear();
+    const rws::AdapterPatchCompileResult missingRead = registry.compilePatch(
+        {&baseline, &missingReadBinding, request.values}, capabilities);
+    REQUIRE(!missingRead.ok);
+    REQUIRE(hasAdapterDiagnostic(missingRead.diagnostics,
+                                 "ADAPTER_DECLARED_READ_SET_REQUIRED"));
+
+    rws::AdapterRegistry undeclaredRegistry;
+    REQUIRE(undeclaredRegistry.registerAdapter(
+        std::make_shared< AdapterRegistryTestAdapter >("undeclared", 1, false)).ok);
+    rws::ParameterBinding undeclaredBinding = binding;
+    undeclaredBinding.ownerAdapterId = "undeclared";
+    const rws::AdapterPatchCompileResult undeclared = undeclaredRegistry.compilePatch(
+        {&baseline, &undeclaredBinding, request.values}, capabilities);
+    REQUIRE(!undeclared.ok);
+    REQUIRE(hasAdapterDiagnostic(undeclared.diagnostics,
+                                 "ADAPTER_DECLARED_WRITE_SET_REQUIRED"));
+
+    rws::CandidatePatch malformedPatch = compiled.patch;
+    malformedPatch.writes.front().target = {rws::TargetObjectType::Unknown, "",
+                                             rws::TargetPropertyId::Unknown, ""};
+    const rws::CandidatePatchValidationResult malformed =
+        rws::CandidatePatchValidator::validate(malformedPatch, binding.writeSet);
+    REQUIRE(!malformed.valid);
+    REQUIRE(hasAdapterDiagnostic(malformed.diagnostics, "CANDIDATE_PATCH_WRITE_TARGET_INVALID"));
+
+    rws::CandidatePatch undeclaredPatch = compiled.patch;
+    undeclaredPatch.writes.front().target.propertyId = rws::TargetPropertyId::ZeroPositionOffset;
+    const rws::CandidatePatchValidationResult undeclaredWrite =
+        rws::CandidatePatchValidator::validate(undeclaredPatch, binding.writeSet);
+    REQUIRE(!undeclaredWrite.valid);
+    REQUIRE(hasAdapterDiagnostic(undeclaredWrite.diagnostics,
+                                 "CANDIDATE_PATCH_WRITE_UNDECLARED"));
+
+    const rws::StructureOptimizationDiagnostic adapterError = rws::makeAdapterDiagnostic(
+        "test-joint-origin", binding.id, binding.targetObjectId, "writeSet[0]",
+        "ADAPTER_TEST_ERROR", "The test adapter rejected a declared field.");
+    REQUIRE(adapterError.objectId == binding.targetObjectId);
+    REQUIRE(adapterError.fieldPath == "writeSet[0]");
+    REQUIRE(std::find(adapterError.evidenceIds.begin(), adapterError.evidenceIds.end(), binding.id) !=
+            adapterError.evidenceIds.end());
+
+    rws::AdapterRegistry diagnosticsRegistry;
+    REQUIRE(diagnosticsRegistry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >(
+        "uncontextualized-diagnostic", 1, true, false, true, true)).ok);
+    rws::ParameterBinding diagnosticBinding = binding;
+    diagnosticBinding.ownerAdapterId = "uncontextualized-diagnostic";
+    diagnosticBinding.displayPath = "variables[JointOriginOffsetX]";
+    const rws::AdapterPatchCompileResult contextualized = diagnosticsRegistry.compilePatch(
+        {&baseline, &diagnosticBinding, request.values}, capabilities);
+    REQUIRE(!contextualized.ok);
+    const auto contextualizedCompileDiagnostic = std::find_if(
+        contextualized.diagnostics.begin(), contextualized.diagnostics.end(),
+        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+            return diagnostic.code == "ADAPTER_TEST_UNCONTEXTUALIZED";
+        });
+    const auto contextualizedValidationDiagnostic = std::find_if(
+        contextualized.diagnostics.begin(), contextualized.diagnostics.end(),
+        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+            return diagnostic.code == "ADAPTER_TEST_VALIDATE_UNCONTEXTUALIZED";
+        });
+    REQUIRE(contextualizedCompileDiagnostic != contextualized.diagnostics.end());
+    REQUIRE(contextualizedValidationDiagnostic != contextualized.diagnostics.end());
+    for (const auto diagnostic : {contextualizedCompileDiagnostic,
+                                  contextualizedValidationDiagnostic}) {
+        if (diagnostic == contextualized.diagnostics.end())
+            continue;
+        REQUIRE(diagnostic->objectId == diagnosticBinding.targetObjectId);
+        REQUIRE(diagnostic->fieldPath == diagnosticBinding.displayPath);
+        REQUIRE(std::find(diagnostic->evidenceIds.begin(), diagnostic->evidenceIds.end(),
+                diagnosticBinding.id) != diagnostic->evidenceIds.end());
+    }
+
+    const auto requireContextualizedError = [&baseline, &binding, &capabilities, &request](
+                                               const std::string& adapterId,
+                                               bool resultError, bool patchError,
+                                               const std::string& code) {
+        rws::AdapterRegistry errorRegistry;
+        REQUIRE(errorRegistry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >(
+            adapterId, 1, true, false, false, false, resultError, patchError)).ok);
+        rws::ParameterBinding errorBinding = binding;
+        errorBinding.ownerAdapterId = adapterId;
+        errorBinding.displayPath = "variables[error-channel]";
+        const rws::AdapterPatchCompileResult errorResult = errorRegistry.compilePatch(
+            {&baseline, &errorBinding, request.values}, capabilities);
+        REQUIRE(!errorResult.ok);
+        const auto error = std::find_if(
+            errorResult.diagnostics.begin(), errorResult.diagnostics.end(),
+            [&code](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                return diagnostic.code == code;
+            });
+        REQUIRE(error != errorResult.diagnostics.end());
+        if (error != errorResult.diagnostics.end()) {
+            REQUIRE(error->severity == "Error");
+            REQUIRE(error->objectId == errorBinding.targetObjectId);
+            REQUIRE(error->fieldPath == errorBinding.displayPath);
+            REQUIRE(std::find(error->evidenceIds.begin(), error->evidenceIds.end(),
+                              errorBinding.id) != error->evidenceIds.end());
+        }
+    };
+    requireContextualizedError("ok-result-error", true, false,
+                              "ADAPTER_TEST_RESULT_ERROR");
+    requireContextualizedError("ok-patch-error", false, true,
+                              "ADAPTER_TEST_PATCH_ERROR");
+
+    rws::AdapterRegistry versionOneRegistry;
+    rws::AdapterRegistry versionTwoRegistry;
+    REQUIRE(versionOneRegistry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >(
+        "design-space-fingerprint-adapter", 1)).ok);
+    REQUIRE(versionTwoRegistry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >(
+        "design-space-fingerprint-adapter", 2)).ok);
+    rws::DesignVariableDefinition designVariable;
+    designVariable.id = "design-space-fingerprint-variable";
+    designVariable.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    designVariable.role = rws::VariableRole::Independent;
+    designVariable.domain = rws::VariableDomain::Continuous;
+    designVariable.minimum = -1.0;
+    designVariable.maximum = 1.0;
+    designVariable.step = 0.1;
+    designVariable.unit = rws::DesignVariableUnit::Metres;
+    designVariable.frameId = "base";
+    designVariable.bindingId = "binding:design-space-fingerprint";
+    rws::ParameterBinding designBinding = adapterRegistryBinding();
+    designBinding.id = designVariable.bindingId;
+    designBinding.ownerAdapterId = "design-space-fingerprint-adapter";
+    designBinding.ownerAdapterVersion = 1;
+    const rws::DesignSpaceRegistry designRegistry = rws::DesignSpaceRegistry::firstPhase();
+    rws::DesignSpaceCompileRequest designRequest;
+    designRequest.model = &baseline;
+    designRequest.registry = &designRegistry;
+    designRequest.capabilities = &capabilities;
+    designRequest.variables = {designVariable};
+    designRequest.bindings = {designBinding};
+    designRequest.adapterRegistry = &versionOneRegistry;
+    const rws::DesignSpaceCompileResult versionOneSpace =
+        rws::DesignSpaceCompiler::compile(designRequest);
+    REQUIRE(versionOneSpace.ok);
+    designRequest.adapterRegistry = &versionTwoRegistry;
+    const rws::DesignSpaceCompileResult versionMismatch =
+        rws::DesignSpaceCompiler::compile(designRequest);
+    REQUIRE(!versionMismatch.ok);
+    REQUIRE(std::any_of(versionMismatch.diagnostics.begin(), versionMismatch.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "DESIGN_SPACE_ADAPTER_VERSION_MISMATCH";
+                        }));
+    designRequest.bindings[0].ownerAdapterVersion = 2;
+    const rws::DesignSpaceCompileResult versionTwoSpace =
+        rws::DesignSpaceCompiler::compile(designRequest);
+    REQUIRE(versionTwoSpace.ok);
+    REQUIRE(versionOneSpace.designSpace.fingerprint != versionTwoSpace.designSpace.fingerprint);
+
+    rws::DesignSpaceCompileRequest unknownOwner = designRequest;
+    unknownOwner.bindings[0].ownerAdapterId = "not-registered";
+    const rws::DesignSpaceCompileResult unknownOwnerResult =
+        rws::DesignSpaceCompiler::compile(unknownOwner);
+    REQUIRE(!unknownOwnerResult.ok);
+    REQUIRE(std::any_of(unknownOwnerResult.diagnostics.begin(), unknownOwnerResult.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "DESIGN_SPACE_ADAPTER_OWNER_UNREGISTERED";
+                        }));
+
+    rws::DesignSpaceCompileRequest unsupportedSemantic = designRequest;
+    unsupportedSemantic.variables[0].semanticKind = rws::SemanticKind::TcpTx;
+    unsupportedSemantic.bindings[0].semanticKind = rws::SemanticKind::TcpTx;
+    const rws::DesignSpaceCompileResult unsupportedSemanticResult =
+        rws::DesignSpaceCompiler::compile(unsupportedSemantic);
+    REQUIRE(!unsupportedSemanticResult.ok);
+    REQUIRE(std::any_of(unsupportedSemanticResult.diagnostics.begin(),
+                        unsupportedSemanticResult.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "DESIGN_SPACE_ADAPTER_SEMANTIC_MISMATCH";
+                        }));
+}
+
+// Phase 3/S31: real origin and link adapters compile baseline-relative
+// translation patches only.  Applying those writes here is deliberately
+// test-local; the generic production patch applier belongs to S36.
+static rws::ReadWriteTarget jointTranslationTarget(const std::string& jointId,
+                                                    rws::TargetPropertyId property,
+                                                    const std::string& parentFrame)
+{
+    return {rws::TargetObjectType::Joint, jointId, property, parentFrame};
+}
+
+static rws::ParameterBinding jointTranslationBinding(const std::string& id,
+                                                     rws::SemanticKind semantic,
+                                                     const std::string& adapterId,
+                                                     const std::string& jointId,
+                                                     const std::string& parentFrame)
+{
+    rws::ParameterBinding binding;
+    binding.id = id;
+    binding.semanticKind = semantic;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = jointId;
+    binding.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationX;
+    binding.coordinateFrameId = parentFrame;
+    binding.ownerAdapterId = adapterId;
+    binding.ownerAdapterVersion = 1;
+    binding.readSet = {
+        jointTranslationTarget(jointId, rws::TargetPropertyId::ParentToJointTranslationX, parentFrame),
+        jointTranslationTarget(jointId, rws::TargetPropertyId::ParentToJointTranslationY, parentFrame),
+        jointTranslationTarget(jointId, rws::TargetPropertyId::ParentToJointTranslationZ, parentFrame)};
+    binding.writeSet = binding.readSet;
+    return binding;
+}
+
+static void applyTranslationPatchForTest(rws::CanonicalKinematicModel& model,
+                                         const rws::CandidatePatch& patch)
+{
+    for (const rws::CandidatePatchWrite& write : patch.writes) {
+        for (rws::JointEdge& joint : model.joints) {
+            if (joint.id != write.target.objectId)
+                continue;
+            rw::math::Vector3D<> translation = joint.parentToJointZero.P();
+            if (write.target.propertyId == rws::TargetPropertyId::ParentToJointTranslationX)
+                translation(0) = write.value.scalarValue;
+            else if (write.target.propertyId == rws::TargetPropertyId::ParentToJointTranslationY)
+                translation(1) = write.value.scalarValue;
+            else if (write.target.propertyId == rws::TargetPropertyId::ParentToJointTranslationZ)
+                translation(2) = write.value.scalarValue;
+            joint.parentToJointZero = rw::math::Transform3D<>(translation,
+                                                               joint.parentToJointZero.R());
+        }
+    }
+}
+
+static void testJointOriginAndParameterizedLinkAdapters()
+{
+    rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    baseline.joints[0].parentToJointZero = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(1.0, 2.0, 3.0), rw::math::RPY<>(0.0, 0.0, rw::math::Pi / 2.0).toRotation3D());
+    baseline.joints[0].motionAxisInJoint = rw::math::Vector3D<>(2.0, 0.0, 0.0);
+    const rws::CanonicalKinematicModel sourceCopy = baseline;
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::JointOriginAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::ParameterizedLinkAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1", rws::AdapterCapability::JointOrigin);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1", rws::AdapterCapability::ParameterizedLink);
+
+    rws::ParameterBinding cartesian = jointTranslationBinding(
+        "origin-x", rws::SemanticKind::JointOriginOffsetX, "JointOriginAdapter", "joint-1", "base");
+    const rws::AdapterPatchCompileResult cartesianPatch = registry.compilePatch(
+        {&baseline, &cartesian, {{"origin-x", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(cartesianPatch.ok);
+    REQUIRE(cartesianPatch.patch.writes.size() == 3);
+    REQUIRE(std::fabs(cartesianPatch.patch.writes[0].value.scalarValue - 1.25) < 1e-12);
+    REQUIRE(std::fabs(cartesianPatch.patch.writes[1].value.scalarValue - 2.0) < 1e-12);
+    REQUIRE(std::fabs(cartesianPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+    REQUIRE(cartesianPatch.patch.writes[0].target == cartesian.writeSet[0]);
+    REQUIRE(cartesianPatch.patch.writes[1].target == cartesian.writeSet[1]);
+    REQUIRE(cartesianPatch.patch.writes[2].target == cartesian.writeSet[2]);
+
+    rws::ParameterBinding cartesianY = jointTranslationBinding(
+        "origin-y", rws::SemanticKind::JointOriginOffsetY, "JointOriginAdapter", "joint-1", "base");
+    cartesianY.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationY;
+    const rws::AdapterPatchCompileResult cartesianYPatch = registry.compilePatch(
+        {&baseline, &cartesianY, {{"origin-y", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(cartesianYPatch.ok);
+    REQUIRE(std::fabs(cartesianYPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
+    REQUIRE(std::fabs(cartesianYPatch.patch.writes[1].value.scalarValue - 2.25) < 1e-12);
+    REQUIRE(std::fabs(cartesianYPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+
+    rws::ParameterBinding cartesianZ = jointTranslationBinding(
+        "origin-z", rws::SemanticKind::JointOriginOffsetZ, "JointOriginAdapter", "joint-1", "base");
+    cartesianZ.targetPropertyId = rws::TargetPropertyId::ParentToJointTranslationZ;
+    const rws::AdapterPatchCompileResult cartesianZPatch = registry.compilePatch(
+        {&baseline, &cartesianZ, {{"origin-z", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(cartesianZPatch.ok);
+    REQUIRE(std::fabs(cartesianZPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
+    REQUIRE(std::fabs(cartesianZPatch.patch.writes[1].value.scalarValue - 2.0) < 1e-12);
+    REQUIRE(std::fabs(cartesianZPatch.patch.writes[2].value.scalarValue - 3.25) < 1e-12);
+
+    rws::ParameterBinding alongAxis = jointTranslationBinding(
+        "origin-axis", rws::SemanticKind::JointOffsetAlongAxis, "JointOriginAdapter", "joint-1", "base");
+    const rws::AdapterPatchCompileResult alongAxisPatch = registry.compilePatch(
+        {&baseline, &alongAxis, {{"origin-axis", rws::DesignVariableUnit::Metres, 0.5, ""}}}, capabilities);
+    REQUIRE(alongAxisPatch.ok);
+    // The offset follows the immutable joint-local axis transformed into its
+    // parent frame, so no hidden world-axis default can satisfy this check.
+    rw::math::Vector3D<> parentAxis = baseline.joints[0].parentToJointZero.R() *
+        baseline.joints[0].motionAxisInJoint;
+    parentAxis /= parentAxis.norm2();
+    REQUIRE(std::fabs(alongAxisPatch.patch.writes[0].value.scalarValue -
+                      (1.0 + 0.5 * parentAxis(0))) < 1e-12);
+    REQUIRE(std::fabs(alongAxisPatch.patch.writes[1].value.scalarValue -
+                      (2.0 + 0.5 * parentAxis(1))) < 1e-12);
+    REQUIRE(std::fabs(alongAxisPatch.patch.writes[2].value.scalarValue -
+                      (3.0 + 0.5 * parentAxis(2))) < 1e-12);
+
+    rws::CanonicalKinematicModel nonUnitZAxisBaseline = baseline;
+    nonUnitZAxisBaseline.joints[0].motionAxisInJoint = rw::math::Vector3D<>(0.0, 0.0, 2.0);
+    const rws::AdapterPatchCompileResult nonUnitZAxis = registry.compilePatch(
+        {&nonUnitZAxisBaseline, &alongAxis,
+         {{"origin-axis", rws::DesignVariableUnit::Metres, 0.5, ""}}}, capabilities);
+    REQUIRE(nonUnitZAxis.ok);
+    const rw::math::Vector3D<> zAxisDisplacement(
+        nonUnitZAxis.patch.writes[0].value.scalarValue - 1.0,
+        nonUnitZAxis.patch.writes[1].value.scalarValue - 2.0,
+        nonUnitZAxis.patch.writes[2].value.scalarValue - 3.0);
+    REQUIRE(std::fabs(zAxisDisplacement.norm2() - 0.5) < 1e-12);
+
+    rws::CanonicalKinematicModel zeroAxisBaseline = baseline;
+    zeroAxisBaseline.joints[0].motionAxisInJoint = rw::math::Vector3D<>();
+    const rws::AdapterPatchCompileResult zeroAxis = registry.compilePatch(
+        {&zeroAxisBaseline, &alongAxis,
+         {{"origin-axis", rws::DesignVariableUnit::Metres, 0.5, ""}}}, capabilities);
+    REQUIRE(!zeroAxis.ok);
+    REQUIRE(zeroAxis.patch.writes.empty());
+    REQUIRE(hasAdapterDiagnostic(zeroAxis.diagnostics, "JOINT_ORIGIN_AXIS_INVALID"));
+
+    rws::CanonicalKinematicModel nonFiniteAxisBaseline = baseline;
+    nonFiniteAxisBaseline.joints[0].motionAxisInJoint = rw::math::Vector3D<>(
+        std::numeric_limits< double >::infinity(), 0.0, 0.0);
+    const rws::AdapterPatchCompileResult nonFiniteAxis = registry.compilePatch(
+        {&nonFiniteAxisBaseline, &alongAxis,
+         {{"origin-axis", rws::DesignVariableUnit::Metres, 0.5, ""}}}, capabilities);
+    REQUIRE(!nonFiniteAxis.ok);
+    REQUIRE(nonFiniteAxis.patch.writes.empty());
+    REQUIRE(hasAdapterDiagnostic(nonFiniteAxis.diagnostics, "JOINT_ORIGIN_AXIS_INVALID"));
+
+    rws::ParameterBinding permutedSets = cartesian;
+    std::reverse(permutedSets.readSet.begin(), permutedSets.readSet.end());
+    std::rotate(permutedSets.writeSet.begin(), permutedSets.writeSet.begin() + 1,
+                permutedSets.writeSet.end());
+    const rws::AdapterPatchCompileResult permuted = registry.compilePatch(
+        {&baseline, &permutedSets,
+         {{"origin-x", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(permuted.ok);
+    rws::ParameterBinding duplicateSet = cartesian;
+    duplicateSet.writeSet.push_back(duplicateSet.writeSet.front());
+    const rws::AdapterPatchCompileResult duplicate = registry.compilePatch(
+        {&baseline, &duplicateSet,
+         {{"origin-x", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(!duplicate.ok);
+    REQUIRE(hasAdapterDiagnostic(duplicate.diagnostics, "JOINT_ORIGIN_TRANSLATION_SET_INVALID"));
+
+    rws::ParameterBinding wrongPrimaryProperty = cartesian;
+    wrongPrimaryProperty.targetPropertyId = rws::TargetPropertyId::MotionAxisTiltU;
+    const rws::AdapterPatchCompileResult wrongPrimary = registry.compilePatch(
+        {&baseline, &wrongPrimaryProperty,
+         {{"origin-x", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
+    REQUIRE(!wrongPrimary.ok);
+    REQUIRE(hasAdapterDiagnostic(wrongPrimary.diagnostics,
+                                 "JOINT_ORIGIN_PRIMARY_PROPERTY_INVALID"));
+
+    rws::ParameterBinding length = jointTranslationBinding(
+        "link-length", rws::SemanticKind::LinkLength, "ParameterizedLinkAdapter", "joint-1", "base");
+    length.referenceDirectionFrameId = "base";
+    length.referenceDirection = rw::math::Vector3D<>::y();
+    const rws::AdapterPatchCompileResult lengthPatch = registry.compilePatch(
+        {&baseline, &length, {{"link-length", rws::DesignVariableUnit::Metres, 3.0, ""}}}, capabilities);
+    REQUIRE(lengthPatch.ok);
+    REQUIRE(std::fabs(lengthPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
+    REQUIRE(std::fabs(lengthPatch.patch.writes[1].value.scalarValue - 3.0) < 1e-12);
+    REQUIRE(std::fabs(lengthPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+
+    rws::CanonicalKinematicModel zeroNominalBaseline = baseline;
+    zeroNominalBaseline.joints[0].parentToJointZero = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(1.0, 0.0, 3.0), baseline.joints[0].parentToJointZero.R());
+    const rws::AdapterPatchCompileResult zeroNominalPatch = registry.compilePatch(
+        {&zeroNominalBaseline, &length,
+         {{"link-length", rws::DesignVariableUnit::Metres, 0.4, ""}}}, capabilities);
+    REQUIRE(zeroNominalPatch.ok);
+    REQUIRE(std::fabs(zeroNominalPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
+    REQUIRE(std::fabs(zeroNominalPatch.patch.writes[1].value.scalarValue - 0.4) < 1e-12);
+    REQUIRE(std::fabs(zeroNominalPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+
+    rws::ParameterBinding missingDirection = length;
+    missingDirection.referenceDirectionFrameId.clear();
+    const rws::AdapterPatchCompileResult missingDirectionResult = registry.compilePatch(
+        {&baseline, &missingDirection,
+         {{"link-length", rws::DesignVariableUnit::Metres, 3.0, ""}}}, capabilities);
+    REQUIRE(!missingDirectionResult.ok);
+    REQUIRE(hasAdapterDiagnostic(missingDirectionResult.diagnostics,
+                                 "PARAMETER_BINDING_REFERENCE_DIRECTION_FRAME_REQUIRED"));
+
+    rws::ParameterBinding linkWrongPrimaryProperty = length;
+    linkWrongPrimaryProperty.targetPropertyId = rws::TargetPropertyId::MotionAxisTiltU;
+    const rws::AdapterPatchCompileResult linkWrongPrimary = registry.compilePatch(
+        {&baseline, &linkWrongPrimaryProperty,
+         {{"link-length", rws::DesignVariableUnit::Metres, 3.0, ""}}}, capabilities);
+    REQUIRE(!linkWrongPrimary.ok);
+    REQUIRE(hasAdapterDiagnostic(linkWrongPrimary.diagnostics,
+                                 "PARAMETERIZED_LINK_PRIMARY_PROPERTY_INVALID"));
+
+    const rws::AdapterPatchCompileResult tooShort = registry.compilePatch(
+        {&baseline, &length, {{"link-length", rws::DesignVariableUnit::Metres, 1e-7, ""}}}, capabilities);
+    REQUIRE(!tooShort.ok);
+    REQUIRE(hasAdapterDiagnostic(tooShort.diagnostics, "PARAMETERIZED_LINK_LENGTH_TOO_SMALL"));
+
+    rws::CanonicalKinematicModel patched = baseline;
+    applyTranslationPatchForTest(patched, cartesianPatch.patch);
+    const rws::CanonicalForwardKinematicsResult nominalFk =
+        rws::CanonicalForwardKinematics::evaluate(baseline, {0.0, 0.0});
+    const rws::CanonicalForwardKinematicsResult patchedFk =
+        rws::CanonicalForwardKinematics::evaluate(patched, {0.0, 0.0});
+    REQUIRE(nominalFk.valid);
+    REQUIRE(patchedFk.valid);
+    REQUIRE(std::fabs(patchedFk.frameTransforms.at("link").P()(0) -
+                      nominalFk.frameTransforms.at("link").P()(0) - 0.25) < 1e-12);
+    REQUIRE(sameTransform(baseline.joints[0].parentToJointZero,
+                          sourceCopy.joints[0].parentToJointZero));
+    const rws::AdapterPatchCompileResult repeated = registry.compilePatch(
+        {&baseline, &length, {{"link-length", rws::DesignVariableUnit::Metres, 3.0, ""}}}, capabilities);
+    REQUIRE(repeated.ok);
+    REQUIRE(repeated.patch.writes.size() == lengthPatch.patch.writes.size());
+    for (std::size_t index = 0; index < repeated.patch.writes.size(); ++index) {
+        REQUIRE(repeated.patch.writes[index].target == lengthPatch.patch.writes[index].target);
+        REQUIRE(std::fabs(repeated.patch.writes[index].value.scalarValue -
+                          lengthPatch.patch.writes[index].value.scalarValue) < 1e-12);
+    }
+}
+
+// Phase 3/S32: axis tilt remains a pair of typed scalar writes.  The only
+// combination of U/V below is intentionally test-local; S36 owns generic
+// Patch application to a candidate model.
+static rws::ParameterBinding jointAxisBinding(const std::string& id,
+                                              rws::SemanticKind semantic,
+                                              const std::string& jointId,
+                                              const std::string& parentFrame,
+                                              double maxTiltAngle)
+{
+    rws::ParameterBinding binding;
+    binding.id = id;
+    binding.semanticKind = semantic;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = jointId;
+    binding.targetPropertyId = semantic == rws::SemanticKind::JointAxisTiltU ?
+        rws::TargetPropertyId::MotionAxisTiltU : rws::TargetPropertyId::MotionAxisTiltV;
+    binding.coordinateFrameId = parentFrame;
+    binding.ownerAdapterId = "JointAxisAdapter";
+    binding.ownerAdapterVersion = 1;
+    binding.maxAxisTiltAngle = maxTiltAngle;
+    binding.axisTiltGroupId = "axis-tilt:" + jointId;
+    const rws::ReadWriteTarget target = {rws::TargetObjectType::Joint, jointId,
+                                         binding.targetPropertyId, parentFrame};
+    binding.readSet = {target};
+    binding.writeSet = {target};
+    return binding;
+}
+
+static double axisTiltValueForTest(const rws::CandidatePatch& patch,
+                                   rws::TargetPropertyId property)
+{
+    for (const rws::CandidatePatchWrite& write : patch.writes)
+        if (write.target.propertyId == property)
+            return write.value.scalarValue;
+    return std::numeric_limits< double >::quiet_NaN();
+}
+
+static void testJointAxisAdapter()
+{
+    const double maxTilt = rw::math::Pi / 6.0;
+    rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    baseline.joints[0].motionAxisInJoint = rw::math::Vector3D<>(0.0, 0.0, 2.0);
+    const rws::CanonicalKinematicModel sourceCopy = baseline;
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::JointAxisAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1", rws::AdapterCapability::JointAxisTilt);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-2", rws::AdapterCapability::JointAxisTilt);
+    capabilities.grant(rws::TargetObjectType::Joint, "fixed-flange", rws::AdapterCapability::JointAxisTilt);
+
+    const rws::ParameterBinding u = jointAxisBinding("axis-u", rws::SemanticKind::JointAxisTiltU,
+                                                      "joint-1", "base", maxTilt);
+    const rws::ParameterBinding v = jointAxisBinding("axis-v", rws::SemanticKind::JointAxisTiltV,
+                                                      "joint-1", "base", maxTilt);
+    const std::vector< rws::ResolvedAdapterValue > zeroValues = {
+        {"axis-u", rws::DesignVariableUnit::Radians, 0.0, "", rws::SemanticKind::JointAxisTiltU,
+         "axis-tilt:joint-1"},
+        {"axis-v", rws::DesignVariableUnit::Radians, 0.0, "", rws::SemanticKind::JointAxisTiltV,
+         "axis-tilt:joint-1"}};
+    const rws::AdapterPatchCompileResult zero = registry.compilePatch(
+        {&baseline, &u, zeroValues}, capabilities);
+    REQUIRE(zero.ok);
+    REQUIRE(zero.patch.writes.size() == 1);
+    REQUIRE(zero.patch.writes.front().target == u.writeSet.front());
+    REQUIRE(std::fabs(axisTiltValueForTest(zero.patch, rws::TargetPropertyId::MotionAxisTiltU)) < 1e-12);
+    REQUIRE(std::fabs((rws::KinematicConventions::tiltedAxis(
+        baseline.joints[0].motionAxisInJoint,
+        axisTiltValueForTest(zero.patch, rws::TargetPropertyId::MotionAxisTiltU), 0.0) -
+        rw::math::normalize(baseline.joints[0].motionAxisInJoint)).norm2()) < 1e-12);
+    const rws::AdapterPatchCompileResult tiny = registry.compilePatch(
+        {&baseline, &u,
+         {{"axis-u", rws::DesignVariableUnit::Radians, 1e-13, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:joint-1"},
+          {"axis-v", rws::DesignVariableUnit::Radians, 0.0, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:joint-1"}}}, capabilities);
+    REQUIRE(tiny.ok);
+    REQUIRE(axisTiltValueForTest(tiny.patch, rws::TargetPropertyId::MotionAxisTiltU) == 1e-13);
+    REQUIRE((rws::KinematicConventions::tiltedAxis(
+        baseline.joints[0].motionAxisInJoint,
+        axisTiltValueForTest(tiny.patch, rws::TargetPropertyId::MotionAxisTiltU), 0.0) -
+        rw::math::normalize(baseline.joints[0].motionAxisInJoint)).norm2() > 0.0);
+
+    const double alpha = 0.3;
+    const double beta = -0.4;
+    const std::vector< rws::ResolvedAdapterValue > signedValues = {
+        {"axis-u", rws::DesignVariableUnit::Radians, alpha, "", rws::SemanticKind::JointAxisTiltU,
+         "axis-tilt:joint-1"},
+        {"axis-v", rws::DesignVariableUnit::Radians, beta, "", rws::SemanticKind::JointAxisTiltV,
+         "axis-tilt:joint-1"}};
+    const rws::AdapterPatchCompileResult signedU = registry.compilePatch(
+        {&baseline, &u, signedValues}, capabilities);
+    const rws::AdapterPatchCompileResult signedV = registry.compilePatch(
+        {&baseline, &v, signedValues}, capabilities);
+    REQUIRE(signedU.ok);
+    REQUIRE(signedV.ok);
+    REQUIRE(std::fabs(axisTiltValueForTest(signedU.patch, rws::TargetPropertyId::MotionAxisTiltU) - alpha) < 1e-12);
+    REQUIRE(std::fabs(axisTiltValueForTest(signedV.patch, rws::TargetPropertyId::MotionAxisTiltV) - beta) < 1e-12);
+    const rw::math::Vector3D<> tilted = rws::KinematicConventions::tiltedAxis(
+        baseline.joints[0].motionAxisInJoint,
+        axisTiltValueForTest(signedU.patch, rws::TargetPropertyId::MotionAxisTiltU),
+        axisTiltValueForTest(signedV.patch, rws::TargetPropertyId::MotionAxisTiltV));
+    REQUIRE(std::fabs(tilted.norm2() - 1.0) < 1e-12);
+    REQUIRE(std::fabs(rws::KinematicConventions::angleBetween(
+        baseline.joints[0].motionAxisInJoint, tilted) - 0.5) < 1e-12);
+    const rws::TangentBasis firstBasis = rws::KinematicConventions::stableTangentBasis(
+        baseline.joints[0].motionAxisInJoint);
+    const rws::TangentBasis secondBasis = rws::KinematicConventions::stableTangentBasis(
+        baseline.joints[0].motionAxisInJoint);
+    REQUIRE(firstBasis.valid && secondBasis.valid);
+    REQUIRE((firstBasis.first - secondBasis.first).norm2() < 1e-12);
+    REQUIRE((firstBasis.second - secondBasis.second).norm2() < 1e-12);
+
+    const std::vector< rws::ResolvedAdapterValue > boundaryValues = {
+        {"axis-u", rws::DesignVariableUnit::Radians, maxTilt, "", rws::SemanticKind::JointAxisTiltU,
+         "axis-tilt:joint-1"},
+        {"axis-v", rws::DesignVariableUnit::Radians, 0.0, "", rws::SemanticKind::JointAxisTiltV,
+         "axis-tilt:joint-1"}};
+    const rws::AdapterPatchCompileResult boundary = registry.compilePatch(
+        {&baseline, &u, boundaryValues}, capabilities);
+    REQUIRE(boundary.ok);
+    const std::vector< rws::ResolvedAdapterValue > beyondValues = {
+        {"axis-u", rws::DesignVariableUnit::Radians, maxTilt + 1e-6, "", rws::SemanticKind::JointAxisTiltU,
+         "axis-tilt:joint-1"},
+        {"axis-v", rws::DesignVariableUnit::Radians, 0.0, "", rws::SemanticKind::JointAxisTiltV,
+         "axis-tilt:joint-1"}};
+    const rws::AdapterPatchCompileResult beyond = registry.compilePatch(
+        {&baseline, &u, beyondValues}, capabilities);
+    REQUIRE(!beyond.ok);
+    REQUIRE(hasAdapterDiagnostic(beyond.diagnostics, "JOINT_AXIS_TILT_CONE_EXCEEDED"));
+    rws::ParameterBinding widerThanPi = u;
+    widerThanPi.id = "axis-u-wide-cone";
+    widerThanPi.maxAxisTiltAngle = rw::math::Pi + 1e-6;
+    const rws::AdapterPatchCompileResult invalidWideCone = registry.compilePatch(
+        {&baseline, &widerThanPi, signedValues}, capabilities);
+    REQUIRE(!invalidWideCone.ok);
+    REQUIRE(hasAdapterDiagnostic(invalidWideCone.diagnostics,
+                                 "PARAMETER_BINDING_AXIS_TILT_CONE_INVALID"));
+    const rws::ParameterBinding piCone = jointAxisBinding("axis-u-pi-cone",
+        rws::SemanticKind::JointAxisTiltU, "joint-1", "base", rw::math::Pi);
+    const rws::AdapterPatchCompileResult piBoundary = registry.compilePatch(
+        {&baseline, &piCone,
+         {{"axis-u-pi-cone", rws::DesignVariableUnit::Radians, rw::math::Pi, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:joint-1"},
+          {"axis-v-pi-cone", rws::DesignVariableUnit::Radians, 0.0, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:joint-1"}}}, capabilities);
+    REQUIRE(piBoundary.ok);
+    const rws::ParameterBinding zeroCone = jointAxisBinding("axis-u-zero-cone",
+        rws::SemanticKind::JointAxisTiltU, "joint-1", "base", 0.0);
+    const rws::AdapterPatchCompileResult folded = registry.compilePatch(
+        {&baseline, &zeroCone,
+         {{"axis-u-zero-cone", rws::DesignVariableUnit::Radians, 2.0 * rw::math::Pi, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:joint-1"},
+          {"axis-v-zero-cone", rws::DesignVariableUnit::Radians, 0.0, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:joint-1"}}}, capabilities);
+    REQUIRE(!folded.ok);
+    REQUIRE(hasAdapterDiagnostic(folded.diagnostics, "JOINT_AXIS_TILT_CONE_EXCEEDED"));
+    const rws::AdapterPatchCompileResult crossGroup = registry.compilePatch(
+        {&baseline, &u,
+         {{"axis-u", rws::DesignVariableUnit::Radians, 0.1, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:joint-1"},
+          {"axis-v-other-joint", rws::DesignVariableUnit::Radians, 0.2, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:joint-2"}}}, capabilities);
+    REQUIRE(!crossGroup.ok);
+    REQUIRE(hasAdapterDiagnostic(crossGroup.diagnostics, "JOINT_AXIS_TILT_GROUP_MISMATCH"));
+    rws::ParameterBinding forgedGroup = u;
+    forgedGroup.id = "axis-u-forged-group";
+    forgedGroup.axisTiltGroupId = "shared-axis-group";
+    const rws::AdapterPatchCompileResult forged = registry.compilePatch(
+        {&baseline, &forgedGroup,
+         {{"axis-u-forged-group", rws::DesignVariableUnit::Radians, 0.1, "",
+           rws::SemanticKind::JointAxisTiltU, "shared-axis-group"},
+          {"axis-v-joint-2-forged", rws::DesignVariableUnit::Radians, 0.2, "",
+           rws::SemanticKind::JointAxisTiltV, "shared-axis-group"}}}, capabilities);
+    REQUIRE(!forged.ok);
+    REQUIRE(hasAdapterDiagnostic(forged.diagnostics, "PARAMETER_BINDING_AXIS_TILT_GROUP_INVALID"));
+
+    rws::ParameterBinding prismatic = jointAxisBinding("axis-u-prismatic",
+        rws::SemanticKind::JointAxisTiltU, "joint-2", "guide", maxTilt);
+    const rws::AdapterPatchCompileResult prismaticResult = registry.compilePatch(
+        {&baseline, &prismatic,
+         {{"axis-u-prismatic", rws::DesignVariableUnit::Radians, 0.1, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:joint-2"},
+          {"axis-v-prismatic", rws::DesignVariableUnit::Radians, 0.2, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:joint-2"}}}, capabilities);
+    REQUIRE(prismaticResult.ok);
+    rws::ParameterBinding fixed = jointAxisBinding("axis-u-fixed", rws::SemanticKind::JointAxisTiltU,
+        "fixed-flange", "link", maxTilt);
+    const rws::AdapterPatchCompileResult fixedResult = registry.compilePatch(
+        {&baseline, &fixed,
+         {{"axis-u-fixed", rws::DesignVariableUnit::Radians, 0.1, "",
+           rws::SemanticKind::JointAxisTiltU, "axis-tilt:fixed-flange"},
+          {"axis-v-fixed", rws::DesignVariableUnit::Radians, 0.0, "",
+           rws::SemanticKind::JointAxisTiltV, "axis-tilt:fixed-flange"}}}, capabilities);
+    REQUIRE(!fixedResult.ok);
+    REQUIRE(hasAdapterDiagnostic(fixedResult.diagnostics, "JOINT_AXIS_MOVABLE_JOINT_REQUIRED"));
+    REQUIRE(std::fabs(baseline.joints[0].zeroPositionOffset - sourceCopy.joints[0].zeroPositionOffset) < 1e-12);
+    REQUIRE(sameTransform(baseline.joints[0].parentToJointZero,
+                          sourceCopy.joints[0].parentToJointZero));
+    REQUIRE((baseline.joints[0].motionAxisInJoint - sourceCopy.joints[0].motionAxisInJoint).norm2() < 1e-12);
+    const rws::AdapterPatchCompileResult repeat = registry.compilePatch(
+        {&baseline, &u, signedValues}, capabilities);
+    REQUIRE(repeat.ok);
+    REQUIRE(repeat.patch.writes.size() == signedU.patch.writes.size());
+    REQUIRE(repeat.patch.writes.front().target == signedU.patch.writes.front().target);
+    REQUIRE(std::fabs(repeat.patch.writes.front().value.scalarValue -
+                      signedU.patch.writes.front().value.scalarValue) < 1e-12);
+}
+
+// Phase 3/S33: zero offsets and joint limits have independent, explicit
+// contracts.  The test-local patch application below deliberately is not a
+// production applier (that is S36); it only proves the frozen coordinate
+// semantics without creating a second runtime mutation path.
+static rws::ParameterBinding jointZeroBinding(const std::string& id,
+                                              const std::string& jointId,
+                                              const std::string& parentFrame)
+{
+    rws::ParameterBinding binding;
+    binding.id = id;
+    binding.semanticKind = rws::SemanticKind::JointZeroOffset;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = jointId;
+    binding.targetPropertyId = rws::TargetPropertyId::ZeroPositionOffset;
+    binding.coordinateFrameId = parentFrame;
+    binding.ownerAdapterId = "JointZeroAdapter";
+    binding.ownerAdapterVersion = 1;
+    binding.readSet = {{rws::TargetObjectType::Joint, jointId,
+                        rws::TargetPropertyId::ZeroPositionOffset, parentFrame}};
+    binding.writeSet = binding.readSet;
+    return binding;
+}
+
+static rws::ParameterBinding jointLimitBinding(const std::string& id,
+                                               rws::SemanticKind semantic,
+                                               const std::string& jointId,
+                                               const std::string& parentFrame,
+                                               rws::JointLimitScope scope)
+{
+    rws::ParameterBinding binding;
+    binding.id = id;
+    binding.semanticKind = semantic;
+    binding.targetObjectType = rws::TargetObjectType::Joint;
+    binding.targetObjectId = jointId;
+    binding.targetPropertyId = semantic == rws::SemanticKind::JointLimitLower ?
+        (scope == rws::JointLimitScope::Physical ? rws::TargetPropertyId::PhysicalLimitLower :
+                                                  rws::TargetPropertyId::OperationalLimitLower) :
+        (scope == rws::JointLimitScope::Physical ? rws::TargetPropertyId::PhysicalLimitUpper :
+                                                  rws::TargetPropertyId::OperationalLimitUpper);
+    binding.coordinateFrameId = parentFrame;
+    binding.ownerAdapterId = "JointLimitAdapter";
+    binding.ownerAdapterVersion = 1;
+    binding.jointLimitScope = scope;
+    binding.jointLimitCoordinateConvention = rws::JointCoordinateConvention::QInput;
+    binding.jointLimitGroupId = "joint-limits:" + jointId;
+    binding.minimumJointLimitRange = 0.1;
+    binding.absoluteJointLimitLower = -3.0;
+    binding.absoluteJointLimitUpper = 3.0;
+    binding.readSet = {{rws::TargetObjectType::Joint, jointId, binding.targetPropertyId,
+                        parentFrame}};
+    binding.writeSet = binding.readSet;
+    return binding;
+}
+
+static double scalarPatchValueForTest(const rws::CandidatePatch& patch,
+                                      rws::TargetPropertyId property)
+{
+    for (const rws::CandidatePatchWrite& write : patch.writes)
+        if (write.target.propertyId == property)
+            return write.value.scalarValue;
+    return std::numeric_limits< double >::quiet_NaN();
+}
+
+static void applyS33PatchForTest(rws::CanonicalKinematicModel& model,
+                                 const rws::CandidatePatch& patch)
+{
+    for (const rws::CandidatePatchWrite& write : patch.writes) {
+        for (rws::JointEdge& joint : model.joints) {
+            if (joint.id != write.target.objectId)
+                continue;
+            if (write.target.propertyId == rws::TargetPropertyId::ZeroPositionOffset)
+                joint.zeroPositionOffset = write.value.scalarValue;
+            else if (write.target.propertyId == rws::TargetPropertyId::PhysicalLimitLower) {
+                joint.physicalLimits.enabled = true;
+                joint.physicalLimits.lower = write.value.scalarValue;
+            } else if (write.target.propertyId == rws::TargetPropertyId::PhysicalLimitUpper) {
+                joint.physicalLimits.enabled = true;
+                joint.physicalLimits.upper = write.value.scalarValue;
+            } else if (write.target.propertyId == rws::TargetPropertyId::OperationalLimitLower) {
+                joint.operationalLimits.enabled = true;
+                joint.operationalLimits.lower = write.value.scalarValue;
+            } else if (write.target.propertyId == rws::TargetPropertyId::OperationalLimitUpper) {
+                joint.operationalLimits.enabled = true;
+                joint.operationalLimits.upper = write.value.scalarValue;
+            }
+        }
+    }
+}
+
+static void testJointZeroAndLimitAdapters()
+{
+    rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    baseline.joints[0].physicalLimits = {true, -2.0, 2.0,
+                                         rws::CanonicalCoordinateUnit::Radians,
+                                         rws::JointCoordinateConvention::QInput};
+    baseline.joints[2].physicalLimits = {true, -2.0, 2.0,
+                                         rws::CanonicalCoordinateUnit::Metres,
+                                         rws::JointCoordinateConvention::QInput};
+    baseline.joints[0].operationalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QInput;
+    baseline.joints[2].operationalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QInput;
+    const rws::CanonicalKinematicModel sourceCopy = baseline;
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::JointZeroAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::JointLimitAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointZeroOffset);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-2",
+                       rws::AdapterCapability::JointZeroOffset);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointLimits);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-2",
+                       rws::AdapterCapability::JointLimits);
+
+    const rws::ParameterBinding revoluteZero =
+        jointZeroBinding("zero-revolute", "joint-1", "base");
+    const rws::AdapterPatchCompileResult zero = registry.compilePatch(
+        {&baseline, &revoluteZero,
+         {{"zero-revolute", rws::DesignVariableUnit::Radians, 0.25, "",
+           rws::SemanticKind::JointZeroOffset, ""}}}, capabilities);
+    REQUIRE(zero.ok);
+    REQUIRE(zero.patch.writes.size() == 1);
+    REQUIRE(zero.patch.writes.front().target.propertyId ==
+            rws::TargetPropertyId::ZeroPositionOffset);
+    REQUIRE(std::fabs(zero.patch.writes.front().value.scalarValue - 0.25) < 1e-12);
+    rws::CanonicalKinematicModel zeroApplied = baseline;
+    applyS33PatchForTest(zeroApplied, zero.patch);
+    REQUIRE(std::fabs(rws::KinematicConventions::modelCoordinate(0.0,
+                 zeroApplied.joints[0].zeroPositionOffset) - 0.25) < 1e-12);
+    REQUIRE((zeroApplied.joints[0].motionAxisInJoint -
+             baseline.joints[0].motionAxisInJoint).norm2() < 1e-12);
+    REQUIRE(sameTransform(zeroApplied.joints[0].parentToJointZero,
+                          baseline.joints[0].parentToJointZero));
+    const rws::CanonicalForwardKinematicsResult zeroFk =
+        rws::CanonicalForwardKinematics::evaluate(zeroApplied, {0.0, 0.0});
+    REQUIRE(zeroFk.valid);
+    REQUIRE(std::fabs(zeroFk.frameTransforms.at("link").R()(0, 0) - std::cos(0.25)) < 1e-12);
+
+    const rws::ParameterBinding prismaticZero =
+        jointZeroBinding("zero-prismatic", "joint-2", "guide");
+    const rws::AdapterPatchCompileResult prismaticZeroResult = registry.compilePatch(
+        {&baseline, &prismaticZero,
+         {{"zero-prismatic", rws::DesignVariableUnit::Metres, 0.05, "",
+           rws::SemanticKind::JointZeroOffset, ""}}}, capabilities);
+    REQUIRE(prismaticZeroResult.ok);
+    const rws::AdapterPatchCompileResult wrongZeroUnit = registry.compilePatch(
+        {&baseline, &prismaticZero,
+         {{"zero-prismatic", rws::DesignVariableUnit::Radians, 0.05, "",
+           rws::SemanticKind::JointZeroOffset, ""}}}, capabilities);
+    REQUIRE(!wrongZeroUnit.ok);
+    REQUIRE(hasAdapterDiagnostic(wrongZeroUnit.diagnostics, "JOINT_ZERO_VALUE_UNIT_INVALID"));
+    const rws::ParameterBinding fixedZero =
+        jointZeroBinding("zero-fixed", "fixed-flange", "link");
+    const rws::AdapterPatchCompileResult fixedZeroResult = registry.compilePatch(
+        {&baseline, &fixedZero,
+         {{"zero-fixed", rws::DesignVariableUnit::Radians, 0.1, "",
+           rws::SemanticKind::JointZeroOffset, ""}}}, capabilities);
+    REQUIRE(!fixedZeroResult.ok);
+    REQUIRE(hasAdapterDiagnostic(fixedZeroResult.diagnostics, "JOINT_ZERO_MOVABLE_JOINT_REQUIRED"));
+
+    rws::ParameterBinding physicalLower = jointLimitBinding(
+        "physical-lower", rws::SemanticKind::JointLimitLower, "joint-1", "base",
+        rws::JointLimitScope::Physical);
+    rws::ParameterBinding physicalUpper = jointLimitBinding(
+        "physical-upper", rws::SemanticKind::JointLimitUpper, "joint-1", "base",
+        rws::JointLimitScope::Physical);
+    physicalLower.allowPhysicalLimitModification = true;
+    physicalUpper.allowPhysicalLimitModification = true;
+    const std::vector< rws::ResolvedAdapterValue > physicalValues = {
+        {"physical-lower", rws::DesignVariableUnit::Radians, -1.5, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Physical},
+        {"physical-upper", rws::DesignVariableUnit::Radians, 1.5, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Physical}};
+    const rws::AdapterPatchCompileResult physical = registry.compilePatch(
+        {&baseline, &physicalLower, physicalValues}, capabilities);
+    REQUIRE(physical.ok);
+    REQUIRE(physical.patch.affectsStructuralCapability);
+    REQUIRE(physical.patch.writes.size() == 1);
+    REQUIRE(std::fabs(scalarPatchValueForTest(physical.patch,
+                                               rws::TargetPropertyId::PhysicalLimitLower) + 1.5) < 1e-12);
+    // Limits declare whether their values constrain q_input or q_model.  A
+    // non-zero calibration offset is therefore never silently combined with
+    // a bound expressed in the other coordinate convention.
+    rws::CanonicalKinematicModel qModelBaseline = baseline;
+    qModelBaseline.joints[0].zeroPositionOffset = 0.25;
+    qModelBaseline.joints[0].physicalLimits.coordinateConvention =
+        rws::JointCoordinateConvention::QModel;
+    const rws::AdapterPatchCompileResult qInputMismatch = registry.compilePatch(
+        {&qModelBaseline, &physicalLower, physicalValues}, capabilities);
+    REQUIRE(!qInputMismatch.ok);
+    REQUIRE(hasAdapterDiagnostic(qInputMismatch.diagnostics,
+                                 "JOINT_LIMIT_COORDINATE_CONVENTION_MISMATCH"));
+    rws::ParameterBinding qModelPhysicalLower = physicalLower;
+    qModelPhysicalLower.jointLimitCoordinateConvention =
+        rws::JointCoordinateConvention::QModel;
+    const rws::AdapterPatchCompileResult qModelLimit = registry.compilePatch(
+        {&qModelBaseline, &qModelPhysicalLower, physicalValues}, capabilities);
+    REQUIRE(qModelLimit.ok);
+    REQUIRE(std::fabs(rws::KinematicConventions::modelCoordinate(
+                 0.0, qModelBaseline.joints[0].zeroPositionOffset) - 0.25) < 1e-12);
+    rws::CanonicalKinematicModel nanLimitBaseline = baseline;
+    nanLimitBaseline.joints[0].physicalLimits.lower =
+        std::numeric_limits< double >::infinity();
+    rws::JointLimitAdapter directBaselineValidation;
+    const rws::AdapterPatchCompileResult nanLimitDirect = directBaselineValidation.compilePatch(
+        {&nanLimitBaseline, &physicalLower, physicalValues});
+    REQUIRE(!nanLimitDirect.ok);
+    REQUIRE(hasAdapterDiagnostic(nanLimitDirect.diagnostics,
+                                 "KINEMATIC_PHYSICAL_LIMITS_NONFINITE"));
+    rws::CanonicalKinematicModel unitMismatchBaseline = baseline;
+    unitMismatchBaseline.joints[0].operationalLimits = {
+        true, -1.0, 1.0, rws::CanonicalCoordinateUnit::Metres,
+        rws::JointCoordinateConvention::QInput};
+    const rws::AdapterPatchCompileResult unitMismatchDirect = directBaselineValidation.compilePatch(
+        {&unitMismatchBaseline, &physicalLower, physicalValues});
+    REQUIRE(!unitMismatchDirect.ok);
+    REQUIRE(hasAdapterDiagnostic(unitMismatchDirect.diagnostics,
+                                 "KINEMATIC_OPERATIONAL_LIMITS_UNIT_MISMATCH"));
+    rws::ParameterBinding lockedBinding = jointLimitBinding(
+        "physical-locked", rws::SemanticKind::JointLimitLower, "joint-1", "base",
+        rws::JointLimitScope::Physical);
+    const rws::AdapterPatchCompileResult locked = registry.compilePatch(
+        {&baseline, &lockedBinding,
+         physicalValues}, capabilities);
+    REQUIRE(!locked.ok);
+    // Generic binding validation runs before adapter compilation, making the
+    // physical-lock policy impossible to bypass through a direct registry call.
+    REQUIRE(hasAdapterDiagnostic(locked.diagnostics,
+                                 "PARAMETER_BINDING_JOINT_LIMIT_PHYSICAL_LOCKED"));
+
+    rws::ParameterBinding operationalLower = jointLimitBinding(
+        "operational-lower", rws::SemanticKind::JointLimitLower, "joint-1", "base",
+        rws::JointLimitScope::Operational);
+    const std::vector< rws::ResolvedAdapterValue > operationalValues = {
+        {"operational-lower", rws::DesignVariableUnit::Radians, -1.0, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Operational},
+        {"operational-upper", rws::DesignVariableUnit::Radians, 1.0, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Operational}};
+    const rws::AdapterPatchCompileResult operational = registry.compilePatch(
+        {&baseline, &operationalLower, operationalValues}, capabilities);
+    REQUIRE(operational.ok);
+    REQUIRE(!operational.patch.affectsStructuralCapability);
+
+    // Disabled canonical limits may retain Unknown, but a binding never may:
+    // an unrecognized enum value must not pass merely because both sides hold
+    // the same cast value.  Keep physical limits disabled too so this reaches
+    // binding validation rather than the physical-envelope comparison.
+    const rws::JointCoordinateConvention invalidConvention =
+        static_cast< rws::JointCoordinateConvention >(77);
+    rws::CanonicalKinematicModel disabledScopedBaseline = baseline;
+    disabledScopedBaseline.joints[0].physicalLimits.enabled = false;
+    disabledScopedBaseline.joints[0].operationalLimits = {
+        false, -1.0, 1.0, rws::CanonicalCoordinateUnit::Radians, invalidConvention};
+    rws::ParameterBinding invalidConventionBinding = operationalLower;
+    invalidConventionBinding.jointLimitCoordinateConvention = invalidConvention;
+    const rws::AdapterPatchCompileResult invalidConventionRegistry = registry.compilePatch(
+        {&disabledScopedBaseline, &invalidConventionBinding, operationalValues}, capabilities);
+    REQUIRE(!invalidConventionRegistry.ok);
+    REQUIRE(hasAdapterDiagnostic(invalidConventionRegistry.diagnostics,
+                                 "PARAMETER_BINDING_JOINT_LIMIT_COORDINATE_INVALID"));
+    rws::JointLimitAdapter directInvalidConventionAdapter;
+    const rws::AdapterPatchCompileResult invalidConventionDirect =
+        directInvalidConventionAdapter.compilePatch(
+            {&disabledScopedBaseline, &invalidConventionBinding, operationalValues});
+    REQUIRE(!invalidConventionDirect.ok);
+    REQUIRE(hasAdapterDiagnostic(invalidConventionDirect.diagnostics,
+                                 "JOINT_LIMIT_COORDINATE_CONVENTION_INVALID"));
+
+    // An operational q_model range must be compared to physical q_input
+    // bounds after applying the frozen q_model = q_input + zeroOffset rule.
+    // [-1, 1] in q_model with offset +.25 is really [-1.25, .75] in
+    // q_input, and therefore exceeds the physical lower stop.
+    rws::CanonicalKinematicModel crossConventionBaseline = baseline;
+    crossConventionBaseline.joints[0].zeroPositionOffset = 0.25;
+    crossConventionBaseline.joints[0].physicalLimits = {
+        true, -1.0, 1.0, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QInput};
+    crossConventionBaseline.joints[0].operationalLimits = {
+        true, -1.0, 1.0, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QModel};
+    rws::ParameterBinding qModelOperationalLower = operationalLower;
+    qModelOperationalLower.jointLimitCoordinateConvention =
+        rws::JointCoordinateConvention::QModel;
+    const rws::AdapterPatchCompileResult crossConventionOutside = registry.compilePatch(
+        {&crossConventionBaseline, &qModelOperationalLower, operationalValues}, capabilities);
+    REQUIRE(!crossConventionOutside.ok);
+    REQUIRE(hasAdapterDiagnostic(crossConventionOutside.diagnostics,
+                                 "JOINT_LIMIT_OPERATIONAL_OUTSIDE_PHYSICAL"));
+    rws::JointLimitAdapter directCrossConventionAdapter;
+    const rws::AdapterPatchCompileResult directCrossConventionOutside =
+        directCrossConventionAdapter.compilePatch(
+            {&crossConventionBaseline, &qModelOperationalLower, operationalValues});
+    REQUIRE(!directCrossConventionOutside.ok);
+    REQUIRE(hasAdapterDiagnostic(directCrossConventionOutside.diagnostics,
+                                 "JOINT_LIMIT_OPERATIONAL_OUTSIDE_PHYSICAL"));
+    const std::vector< rws::ResolvedAdapterValue > convertedOperationalValues = {
+        {"operational-lower", rws::DesignVariableUnit::Radians, -0.75, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Operational},
+        {"operational-upper", rws::DesignVariableUnit::Radians, 1.25, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Operational}};
+    const rws::AdapterPatchCompileResult convertedOperational =
+        directCrossConventionAdapter.compilePatch(
+            {&crossConventionBaseline, &qModelOperationalLower, convertedOperationalValues});
+    REQUIRE(convertedOperational.ok);
+    REQUIRE(!convertedOperational.patch.affectsStructuralCapability);
+    std::vector< rws::ResolvedAdapterValue > mixedScopeValues = operationalValues;
+    mixedScopeValues.front().jointLimitScope = rws::JointLimitScope::Operational;
+    mixedScopeValues.back().jointLimitScope = rws::JointLimitScope::Physical;
+    const rws::AdapterPatchCompileResult mixedScope = registry.compilePatch(
+        {&baseline, &operationalLower, mixedScopeValues}, capabilities);
+    REQUIRE(!mixedScope.ok);
+    REQUIRE(hasAdapterDiagnostic(mixedScope.diagnostics, "JOINT_LIMIT_GROUP_SCOPE_MISMATCH"));
+    std::vector< rws::ResolvedAdapterValue > crossJointValues = operationalValues;
+    crossJointValues.back().groupId = "joint-limits:joint-2";
+    crossJointValues.front().jointLimitScope = rws::JointLimitScope::Operational;
+    crossJointValues.back().jointLimitScope = rws::JointLimitScope::Operational;
+    const rws::AdapterPatchCompileResult crossJoint = registry.compilePatch(
+        {&baseline, &operationalLower, crossJointValues}, capabilities);
+    REQUIRE(!crossJoint.ok);
+    REQUIRE(hasAdapterDiagnostic(crossJoint.diagnostics, "JOINT_LIMIT_GROUP_MISMATCH"));
+    const std::vector< rws::ResolvedAdapterValue > enlargedOperationalValues = {
+        {"operational-lower", rws::DesignVariableUnit::Radians, -2.5, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Operational},
+        {"operational-upper", rws::DesignVariableUnit::Radians, 1.0, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Operational}};
+    const rws::AdapterPatchCompileResult enlargedOperational = registry.compilePatch(
+        {&baseline, &operationalLower, enlargedOperationalValues}, capabilities);
+    REQUIRE(!enlargedOperational.ok);
+    REQUIRE(hasAdapterDiagnostic(enlargedOperational.diagnostics,
+                                 "JOINT_LIMIT_OPERATIONAL_OUTSIDE_PHYSICAL"));
+    const rws::AdapterPatchCompileResult missingOperational = registry.compilePatch(
+        {&baseline, &operationalLower, {operationalValues.front()}}, capabilities);
+    REQUIRE(!missingOperational.ok);
+    REQUIRE(hasAdapterDiagnostic(missingOperational.diagnostics,
+                                 "JOINT_LIMIT_GROUP_VALUE_REQUIRED"));
+    std::vector< rws::ResolvedAdapterValue > duplicateOperationalValues = operationalValues;
+    duplicateOperationalValues.push_back(operationalValues.front());
+    const rws::AdapterPatchCompileResult duplicateOperational = registry.compilePatch(
+        {&baseline, &operationalLower, duplicateOperationalValues}, capabilities);
+    REQUIRE(!duplicateOperational.ok);
+    REQUIRE(hasAdapterDiagnostic(duplicateOperational.diagnostics,
+                                 "JOINT_LIMIT_GROUP_VALUE_DUPLICATE"));
+    rws::ParameterBinding incompleteBoundaryBinding = operationalLower;
+    incompleteBoundaryBinding.absoluteJointLimitUpper = std::numeric_limits< double >::quiet_NaN();
+    const rws::AdapterPatchCompileResult incompleteBoundary = registry.compilePatch(
+        {&baseline, &incompleteBoundaryBinding, operationalValues}, capabilities);
+    REQUIRE(!incompleteBoundary.ok);
+    REQUIRE(hasAdapterDiagnostic(incompleteBoundary.diagnostics,
+                                 "PARAMETER_BINDING_JOINT_LIMIT_ABSOLUTE_BOUNDS_INVALID"));
+    // Even before S36, adapter callers cannot bypass the binding contract by
+    // calling a concrete adapter directly instead of through the registry.
+    rws::ParameterBinding unscopedBinding = operationalLower;
+    unscopedBinding.jointLimitScope = rws::JointLimitScope::Unknown;
+    rws::JointLimitAdapter directLimitAdapter;
+    const rws::AdapterPatchCompileResult unscopedDirect = directLimitAdapter.compilePatch(
+        {&baseline, &unscopedBinding, operationalValues});
+    REQUIRE(!unscopedDirect.ok);
+    REQUIRE(hasAdapterDiagnostic(unscopedDirect.diagnostics, "JOINT_LIMIT_SCOPE_REQUIRED"));
+
+    const std::vector< rws::ResolvedAdapterValue > crossedValues = {
+        {"physical-lower", rws::DesignVariableUnit::Radians, 1.0, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Physical},
+        {"physical-upper", rws::DesignVariableUnit::Radians, 1.0, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Physical}};
+    const rws::AdapterPatchCompileResult crossed = registry.compilePatch(
+        {&baseline, &physicalLower, crossedValues}, capabilities);
+    REQUIRE(!crossed.ok);
+    REQUIRE(hasAdapterDiagnostic(crossed.diagnostics, "JOINT_LIMIT_RANGE_ORDER_INVALID"));
+    const std::vector< rws::ResolvedAdapterValue > narrowValues = {
+        {"physical-lower", rws::DesignVariableUnit::Radians, -0.01, "",
+         rws::SemanticKind::JointLimitLower, "joint-limits:joint-1", rws::JointLimitScope::Physical},
+        {"physical-upper", rws::DesignVariableUnit::Radians, 0.01, "",
+         rws::SemanticKind::JointLimitUpper, "joint-limits:joint-1", rws::JointLimitScope::Physical}};
+    const rws::AdapterPatchCompileResult narrow = registry.compilePatch(
+        {&baseline, &physicalLower, narrowValues}, capabilities);
+    REQUIRE(!narrow.ok);
+    REQUIRE(hasAdapterDiagnostic(narrow.diagnostics, "JOINT_LIMIT_MINIMUM_RANGE_INVALID"));
+
+    const rws::ParameterBinding fixedLimit = jointLimitBinding(
+        "fixed-limit", rws::SemanticKind::JointLimitLower, "fixed-flange", "link",
+        rws::JointLimitScope::Operational);
+    const rws::AdapterPatchCompileResult fixedLimitResult = registry.compilePatch(
+        {&baseline, &fixedLimit,
+         {{"fixed-limit", rws::DesignVariableUnit::Radians, -1.0, "",
+           rws::SemanticKind::JointLimitLower, "joint-limits:fixed-flange", rws::JointLimitScope::Operational},
+          {"fixed-limit-upper", rws::DesignVariableUnit::Radians, 1.0, "",
+           rws::SemanticKind::JointLimitUpper, "joint-limits:fixed-flange", rws::JointLimitScope::Operational}}}, capabilities);
+    REQUIRE(!fixedLimitResult.ok);
+    REQUIRE(hasAdapterDiagnostic(fixedLimitResult.diagnostics,
+                                 "JOINT_LIMIT_MOVABLE_JOINT_REQUIRED"));
+
+    // Templates never auto-open physical range variables; projects must opt
+    // in with both scoped boundary bindings.
+    const rws::DesignIntentTemplateInfo* full = rws::StructureOptimizationTemplate::designIntent(
+        rws::DesignIntentTemplateKind::FullKinematicDesign);
+    REQUIRE(full != nullptr);
+    REQUIRE(std::find(full->semanticKinds.begin(), full->semanticKinds.end(),
+                      rws::SemanticKind::JointZeroOffset) == full->semanticKinds.end());
+    REQUIRE(std::find(full->semanticKinds.begin(), full->semanticKinds.end(),
+                      rws::SemanticKind::JointLimitLower) == full->semanticKinds.end());
+    REQUIRE(std::find(full->semanticKinds.begin(), full->semanticKinds.end(),
+                      rws::SemanticKind::JointLimitUpper) == full->semanticKinds.end());
+
+    // Target-joint coordinate semantics override the registry's generic radian
+    // metadata: zero and limit variables for prismatic joints compile in metres.
+    rws::DesignVariableDefinition prismaticZeroVariable;
+    prismaticZeroVariable.id = "zero-prismatic-variable";
+    prismaticZeroVariable.semanticKind = rws::SemanticKind::JointZeroOffset;
+    prismaticZeroVariable.role = rws::VariableRole::Independent;
+    prismaticZeroVariable.domain = rws::VariableDomain::Continuous;
+    prismaticZeroVariable.minimum = -0.2;
+    prismaticZeroVariable.maximum = 0.2;
+    prismaticZeroVariable.step = 0.01;
+    prismaticZeroVariable.unit = rws::DesignVariableUnit::Metres;
+    prismaticZeroVariable.frameId = "guide";
+    prismaticZeroVariable.bindingId = prismaticZero.id;
+    rws::DesignVariableDefinition prismaticLowerVariable = prismaticZeroVariable;
+    prismaticLowerVariable.id = "limit-prismatic-lower";
+    prismaticLowerVariable.semanticKind = rws::SemanticKind::JointLimitLower;
+    prismaticLowerVariable.bindingId = "limit-prismatic-lower-binding";
+    prismaticLowerVariable.groupId = "joint-limits:joint-2";
+    prismaticLowerVariable.minimum = -1.5;
+    prismaticLowerVariable.maximum = -0.1;
+    prismaticLowerVariable.nominalValue = -1.0;
+    prismaticLowerVariable.currentValue = -1.0;
+    rws::DesignVariableDefinition prismaticUpperVariable = prismaticLowerVariable;
+    prismaticUpperVariable.id = "limit-prismatic-upper";
+    prismaticUpperVariable.semanticKind = rws::SemanticKind::JointLimitUpper;
+    prismaticUpperVariable.bindingId = "limit-prismatic-upper-binding";
+    prismaticUpperVariable.minimum = 0.1;
+    prismaticUpperVariable.maximum = 1.5;
+    prismaticUpperVariable.nominalValue = 1.0;
+    prismaticUpperVariable.currentValue = 1.0;
+    rws::ParameterBinding prismaticLowerBinding = jointLimitBinding(
+        prismaticLowerVariable.bindingId, rws::SemanticKind::JointLimitLower, "joint-2", "guide",
+        rws::JointLimitScope::Physical);
+    rws::ParameterBinding prismaticUpperBinding = jointLimitBinding(
+        prismaticUpperVariable.bindingId, rws::SemanticKind::JointLimitUpper, "joint-2", "guide",
+        rws::JointLimitScope::Physical);
+    prismaticLowerBinding.allowPhysicalLimitModification = true;
+    prismaticUpperBinding.allowPhysicalLimitModification = true;
+    rws::AdapterRegistry compilerRegistry;
+    REQUIRE(compilerRegistry.registerAdapter(std::make_shared< rws::JointZeroAdapter >()).ok);
+    REQUIRE(compilerRegistry.registerAdapter(std::make_shared< rws::JointLimitAdapter >()).ok);
+    const rws::DesignSpaceRegistry semanticRegistry = rws::DesignSpaceRegistry::firstPhase();
+    rws::DesignSpaceCompileRequest compilerRequest;
+    compilerRequest.model = &baseline;
+    compilerRequest.registry = &semanticRegistry;
+    compilerRequest.capabilities = &capabilities;
+    compilerRequest.adapterRegistry = &compilerRegistry;
+    compilerRequest.variables = {prismaticZeroVariable, prismaticLowerVariable,
+                                 prismaticUpperVariable};
+    compilerRequest.bindings = {prismaticZero, prismaticLowerBinding, prismaticUpperBinding};
+    const rws::DesignSpaceCompileResult prismaticCompiled =
+        rws::DesignSpaceCompiler::compile(compilerRequest);
+    REQUIRE(prismaticCompiled.ok);
+    rws::DesignSpaceCompileRequest wrongPrismaticUnit = compilerRequest;
+    wrongPrismaticUnit.variables.front().unit = rws::DesignVariableUnit::Radians;
+    const rws::DesignSpaceCompileResult rejectedPrismaticUnit =
+        rws::DesignSpaceCompiler::compile(wrongPrismaticUnit);
+    REQUIRE(!rejectedPrismaticUnit.ok);
+    REQUIRE(hasAdapterDiagnostic(rejectedPrismaticUnit.diagnostics,
+                                 "DESIGN_SPACE_VARIABLE_UNIT_MISMATCH"));
+    REQUIRE(std::fabs(baseline.joints[0].zeroPositionOffset - sourceCopy.joints[0].zeroPositionOffset) < 1e-12);
+    REQUIRE((baseline.joints[0].motionAxisInJoint - sourceCopy.joints[0].motionAxisInJoint).norm2() < 1e-12);
+}
+
 static QString sourcePath(const QString& relativePath)
 {
     return QDir(QStringLiteral(STRUCTUREOPTIMIZER_TEST_SOURCE_DIR)).filePath(relativePath);
+}
+
+// Phase 3/S34: placements remain typed data-only Patches.  S36 owns generic
+// Patch application, while this suite freezes the declared coordinate frame
+// and right-multiplied SO(3) delta convention used by all pose adapters.
+static rws::CanonicalKinematicModel independentFlangeFixture()
+{
+    rws::CanonicalKinematicModel model = validCanonicalModelFixture();
+    model.frames.push_back({"arm-tip", "Arm tip", rws::CanonicalFrameType::Link});
+    model.joints[2].childFrameId = "arm-tip";
+    rws::JointEdge flangeMount;
+    flangeMount.id = "flange-mount";
+    flangeMount.name = "Independent flange mount";
+    flangeMount.type = rws::CanonicalJointType::Fixed;
+    flangeMount.parentFrameId = "arm-tip";
+    flangeMount.childFrameId = "flange";
+    flangeMount.parentToJointZero = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(0.3, -0.2, 0.1),
+        rw::math::RPY<>(0.0, 0.0, rw::math::Pi / 2.0).toRotation3D());
+    model.joints.push_back(flangeMount);
+    model.deviceChains[0].orderedJointIds.push_back(flangeMount.id);
+    model.toolBindings[0].flangeToTcp = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(0.2, 0.0, 0.0), rw::math::Rotation3D<>());
+    return model;
+}
+
+static rws::ParameterBinding poseBinding(const std::string& id, rws::SemanticKind semantic,
+                                         const std::string& adapterId,
+                                         rws::TargetObjectType targetType,
+                                         const std::string& targetId,
+                                         rws::TargetPropertyId property,
+                                         const std::string& coordinateFrame,
+                                         const std::string& poseGroup)
+{
+    rws::ParameterBinding binding;
+    binding.id = id;
+    binding.semanticKind = semantic;
+    binding.targetObjectType = targetType;
+    binding.targetObjectId = targetId;
+    binding.targetPropertyId = property;
+    binding.coordinateFrameId = coordinateFrame;
+    binding.ownerAdapterId = adapterId;
+    binding.ownerAdapterVersion = 1;
+    binding.poseDeltaGroupId = poseGroup;
+    binding.poseDeltaComposition = rws::PoseDeltaComposition::Right;
+    const rws::ReadWriteTarget target = {targetType, targetId, property, coordinateFrame};
+    binding.readSet = {target};
+    binding.writeSet = {target};
+    return binding;
+}
+
+static void testParameterizedGeometryAndCollisionAdapters()
+{
+    rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    rws::GeometryBinding visual;
+    visual.id = "visual-cylinder";
+    visual.referenceFrameId = "base";
+    visual.kind = rws::CanonicalGeometryKind::Cylinder;
+    visual.optimizationOwned = true;
+    visual.radius = 0.10;
+    visual.length = 0.60;
+    baseline.geometryBindings.push_back(visual);
+    rws::CollisionBinding collision;
+    collision.id = "collision-box";
+    collision.referenceFrameId = "base";
+    collision.kind = rws::CanonicalGeometryKind::Box;
+    collision.optimizationOwned = true;
+    collision.width = 0.20;
+    collision.height = 0.30;
+    collision.depth = 0.40;
+    baseline.collisionBindings.push_back(collision);
+    rws::GeometryBinding tube;
+    tube.id = "visual-tube";
+    tube.referenceFrameId = "base";
+    tube.kind = rws::CanonicalGeometryKind::Tube;
+    tube.optimizationOwned = true;
+    tube.radius = 0.20;
+    tube.length = 0.50;
+    tube.wallThickness = 0.05;
+    baseline.geometryBindings.push_back(tube);
+    rws::GeometryBinding mesh;
+    mesh.id = "owned-mesh";
+    mesh.referenceFrameId = "base";
+    mesh.kind = rws::CanonicalGeometryKind::Mesh;
+    mesh.optimizationOwned = true;
+    mesh.allowRigidTransform = true;
+    baseline.geometryBindings.push_back(mesh);
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(baseline).valid);
+
+    const auto geometryBinding = [] (const std::string& id, const rws::SemanticKind semantic,
+                                     const rws::TargetObjectType type, const std::string& target,
+                                     const rws::TargetPropertyId property, const std::string& owner,
+                                     const std::string& group) {
+        rws::ParameterBinding binding;
+        binding.id = id; binding.semanticKind = semantic; binding.targetObjectType = type;
+        binding.targetObjectId = target; binding.targetPropertyId = property;
+        binding.coordinateFrameId = "base"; binding.ownerAdapterId = owner;
+        binding.ownerAdapterVersion = 1; binding.geometryGroupId = group;
+        const rws::ReadWriteTarget rw = {type, target, property, "base"};
+        binding.readSet = {rw}; binding.writeSet = {rw};
+        return binding;
+    };
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::ParameterizedGeometryAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::ParameterizedCollisionAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::MeshTransformAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Geometry, "visual-cylinder",
+                       rws::AdapterCapability::ParameterizedGeometry);
+    capabilities.grant(rws::TargetObjectType::Geometry, "visual-tube",
+                       rws::AdapterCapability::ParameterizedGeometry);
+    capabilities.grant(rws::TargetObjectType::CollisionGeometry, "collision-box",
+                       rws::AdapterCapability::ParameterizedCollision);
+    const rws::ParameterBinding radius = geometryBinding(
+        "visual-radius", rws::SemanticKind::GeometryRadius, rws::TargetObjectType::Geometry,
+        "visual-cylinder", rws::TargetPropertyId::GeometryRadius, "ParameterizedGeometryAdapter",
+        "geometry:visual:visual-cylinder");
+    const rws::AdapterPatchCompileResult visualPatch = registry.compilePatch(
+        {&baseline, &radius, {{"visual-radius", rws::DesignVariableUnit::Metres, 0.15, "",
+                               rws::SemanticKind::GeometryRadius, "geometry:visual:visual-cylinder"}}},
+        capabilities);
+    REQUIRE(visualPatch.ok);
+    REQUIRE(visualPatch.patch.generatedArtifacts.size() == 1);
+    REQUIRE(visualPatch.patch.generatedArtifacts.front().find("geometry-artifact-v1:") == 0);
+    REQUIRE(std::fabs(visualPatch.patch.writes.front().value.scalarValue - 0.15) < 1e-12);
+    rws::DesignVariableDefinition radiusVariable;
+    radiusVariable.id = "visual-radius-variable";
+    radiusVariable.semanticKind = rws::SemanticKind::GeometryRadius;
+    radiusVariable.role = rws::VariableRole::Independent;
+    radiusVariable.groupId = radius.geometryGroupId;
+    radiusVariable.nominalValue = 0.10;
+    radiusVariable.currentValue = 0.15;
+    radiusVariable.domain = rws::VariableDomain::Continuous;
+    radiusVariable.minimum = 0.01;
+    radiusVariable.maximum = 0.50;
+    radiusVariable.step = 0.01;
+    radiusVariable.unit = rws::DesignVariableUnit::Metres;
+    radiusVariable.frameId = "base";
+    radiusVariable.bindingId = radius.id;
+    const rws::DesignSpaceRegistry semanticRegistry = rws::DesignSpaceRegistry::firstPhase();
+    rws::DesignSpaceCompileRequest visualDesignRequest;
+    visualDesignRequest.model = &baseline;
+    visualDesignRequest.registry = &semanticRegistry;
+    visualDesignRequest.capabilities = &capabilities;
+    visualDesignRequest.adapterRegistry = &registry;
+    visualDesignRequest.variables = {radiusVariable};
+    visualDesignRequest.bindings = {radius};
+    const rws::DesignSpaceCompileResult visualDesign =
+        rws::DesignSpaceCompiler::compile(visualDesignRequest);
+    REQUIRE(visualDesign.ok);
+    REQUIRE(!visualDesign.designSpace.fingerprint.empty());
+    const rws::ParameterBinding cylinderLength = geometryBinding(
+        "visual-length", rws::SemanticKind::GeometryLength, rws::TargetObjectType::Geometry,
+        "visual-cylinder", rws::TargetPropertyId::GeometryLength, "ParameterizedGeometryAdapter",
+        "geometry:visual:visual-cylinder");
+    const rws::AdapterPatchCompileResult lengthPatch = registry.compilePatch(
+        {&baseline, &cylinderLength, {{"visual-length", rws::DesignVariableUnit::Metres, 0.75, "",
+                                       rws::SemanticKind::GeometryLength, "geometry:visual:visual-cylinder"}}},
+        capabilities);
+    REQUIRE(lengthPatch.ok);
+    REQUIRE(lengthPatch.patch.generatedArtifacts != visualPatch.patch.generatedArtifacts);
+    rws::CanonicalKinematicModel movedVisual = baseline;
+    movedVisual.geometryBindings[0].referenceToGeometry =
+        rw::math::Transform3D<>(rw::math::Vector3D<>(0.01, 0.0, 0.0));
+    const rws::AdapterPatchCompileResult movedVisualPatch = registry.compilePatch(
+        {&movedVisual, &radius, {{"visual-radius", rws::DesignVariableUnit::Metres, 0.15, "",
+                                  rws::SemanticKind::GeometryRadius,
+                                  "geometry:visual:visual-cylinder"}}}, capabilities);
+    REQUIRE(movedVisualPatch.ok);
+    REQUIRE(movedVisualPatch.patch.generatedArtifacts != visualPatch.patch.generatedArtifacts);
+
+    const rws::ParameterBinding boxWidth = geometryBinding(
+        "collision-width", rws::SemanticKind::GeometryWidth, rws::TargetObjectType::CollisionGeometry,
+        "collision-box", rws::TargetPropertyId::GeometryWidth, "ParameterizedCollisionAdapter",
+        "geometry:collision:collision-box");
+    const rws::AdapterPatchCompileResult collisionPatch = registry.compilePatch(
+        {&baseline, &boxWidth, {{"collision-width", rws::DesignVariableUnit::Metres, 0.25, "",
+                                 rws::SemanticKind::GeometryWidth, "geometry:collision:collision-box"}}},
+        capabilities);
+    REQUIRE(collisionPatch.ok);
+    REQUIRE(collisionPatch.patch.generatedArtifacts.size() == 1);
+    REQUIRE(collisionPatch.patch.generatedArtifacts.front().find("collision-artifact-v1:") == 0);
+    REQUIRE(collisionPatch.patch.generatedArtifacts != visualPatch.patch.generatedArtifacts);
+    for (const std::pair< rws::SemanticKind, rws::TargetPropertyId >& dimension :
+         std::vector< std::pair< rws::SemanticKind, rws::TargetPropertyId > >{
+             {rws::SemanticKind::GeometryHeight, rws::TargetPropertyId::GeometryHeight},
+             {rws::SemanticKind::GeometryDepth, rws::TargetPropertyId::GeometryDepth}}) {
+        const rws::ParameterBinding boxDimension = geometryBinding(
+            "collision-box-dimension", dimension.first, rws::TargetObjectType::CollisionGeometry,
+            "collision-box", dimension.second, "ParameterizedCollisionAdapter",
+            "geometry:collision:collision-box");
+        const rws::AdapterPatchCompileResult boxPatch = registry.compilePatch(
+            {&baseline, &boxDimension, {{"collision-box-dimension", rws::DesignVariableUnit::Metres,
+                                          0.35, "", dimension.first,
+                                          "geometry:collision:collision-box"}}}, capabilities);
+        REQUIRE(boxPatch.ok);
+    }
+
+    const rws::ParameterBinding tubeWall = geometryBinding(
+        "tube-wall", rws::SemanticKind::GeometryWallThickness, rws::TargetObjectType::Geometry,
+        "visual-tube", rws::TargetPropertyId::GeometryWallThickness, "ParameterizedGeometryAdapter",
+        "geometry:visual:visual-tube");
+    const rws::AdapterPatchCompileResult validWall = registry.compilePatch(
+        {&baseline, &tubeWall, {{"tube-wall", rws::DesignVariableUnit::Metres, 0.10, "",
+                                 rws::SemanticKind::GeometryWallThickness, "geometry:visual:visual-tube"}}},
+        capabilities);
+    REQUIRE(validWall.ok);
+    const rws::AdapterPatchCompileResult invalidWall = registry.compilePatch(
+        {&baseline, &tubeWall, {{"tube-wall", rws::DesignVariableUnit::Metres, 0.20, "",
+                                 rws::SemanticKind::GeometryWallThickness, "geometry:visual:visual-tube"}}},
+        capabilities);
+    REQUIRE(!invalidWall.ok);
+
+    const rw::math::Transform3D<> up = rws::ParameterizedGeometryAdapter::segmentTransform(
+        rw::math::Vector3D<>(0, 0, 0), rw::math::Vector3D<>(0, 0, 1));
+    const rw::math::Transform3D<> down = rws::ParameterizedGeometryAdapter::segmentTransform(
+        rw::math::Vector3D<>(0, 0, 0), rw::math::Vector3D<>(0, 0, -1));
+    const rw::math::Transform3D<> slanted = rws::ParameterizedGeometryAdapter::segmentTransform(
+        rw::math::Vector3D<>(1, 2, 3), rw::math::Vector3D<>(2, 4, 6));
+    REQUIRE((up.R() * rw::math::Vector3D<>::z() - rw::math::Vector3D<>::z()).norm2() < 1e-12);
+    REQUIRE((down.R() * rw::math::Vector3D<>::z() + rw::math::Vector3D<>::z()).norm2() < 1e-12);
+    REQUIRE(std::fabs(down.R()(0, 0) - 1.0) < 1e-12); // not a spurious Z-axis rotation
+    const rw::math::Vector3D<> actualSlanted = slanted.R() * rw::math::Vector3D<>::z();
+    const rw::math::Vector3D<> expectedSlanted = rw::math::Vector3D<>(1, 2, 3) /
+                                                 rw::math::Vector3D<>(1, 2, 3).norm2();
+    REQUIRE((actualSlanted - expectedSlanted).norm2() < 1e-12);
+
+    const rws::ParameterBinding meshTransform = geometryBinding(
+        "mesh-transform", rws::SemanticKind::GeometryRigidTransform, rws::TargetObjectType::Geometry,
+        "owned-mesh", rws::TargetPropertyId::GeometryRigidTransform, "MeshTransformAdapter",
+        "geometry:mesh:owned-mesh");
+    const rws::AdapterPatchCompileResult noMeshCapability = registry.compilePatch(
+        {&baseline, &meshTransform, {{"mesh-transform", rws::DesignVariableUnit::Unitless, 1.0, "",
+                                      rws::SemanticKind::GeometryRigidTransform, "geometry:mesh:owned-mesh"}}},
+        capabilities);
+    REQUIRE(!noMeshCapability.ok);
+    capabilities.grant(rws::TargetObjectType::Geometry, "owned-mesh",
+                       rws::AdapterCapability::ParameterizedGeometry);
+    const rws::AdapterPatchCompileResult allowedMeshTransform = registry.compilePatch(
+        {&baseline, &meshTransform, {{"mesh-transform", rws::DesignVariableUnit::Unitless, 1.0, "",
+                                      rws::SemanticKind::GeometryRigidTransform, "geometry:mesh:owned-mesh"}}},
+        capabilities);
+    REQUIRE(allowedMeshTransform.ok);
+
+    rws::CanonicalKinematicModel manualGeometry = baseline;
+    manualGeometry.geometryBindings[0].optimizationOwned = false;
+    const rws::AdapterPatchCompileResult manualRejected = registry.compilePatch(
+        {&manualGeometry, &radius, {{"visual-radius", rws::DesignVariableUnit::Metres, 0.15, "",
+                                     rws::SemanticKind::GeometryRadius, "geometry:visual:visual-cylinder"}}},
+        capabilities);
+    REQUIRE(!manualRejected.ok);
+    REQUIRE(hasAdapterDiagnostic(manualRejected.diagnostics, "PARAMETERIZED_GEOMETRY_OWNER_REQUIRED"));
+
+    rws::CanonicalKinematicModel invalidCollisionReference = baseline;
+    invalidCollisionReference.collisionBindings[0].referenceFrameId = "missing-frame";
+    const rws::AdapterPatchCompileResult invalidCollision = registry.compilePatch(
+        {&invalidCollisionReference, &boxWidth, {{"collision-width", rws::DesignVariableUnit::Metres,
+                                                  0.25, "", rws::SemanticKind::GeometryWidth,
+                                                  "geometry:collision:collision-box"}}}, capabilities);
+    REQUIRE(!invalidCollision.ok);
+    REQUIRE(hasAdapterDiagnostic(invalidCollision.diagnostics,
+                                 "PARAMETERIZED_COLLISION_REF_FRAME_INVALID"));
+}
+
+// Phase 3/S36: patch merging and application are pure canonical-model
+// operations.  The baseline must remain unchanged and conflicts must fail
+// before any candidate model is returned.
+static void testCandidatePatchMergeAndApply()
+{
+    const rws::CandidatePatchMergeResult emptyMerge =
+        rws::CandidatePatchMerger::merge({});
+    REQUIRE(emptyMerge.ok);
+    const rws::CanonicalKinematicModel emptyBaseline = validCanonicalModelFixture();
+    const rws::CandidatePatchApplyResult emptyApply =
+        rws::CandidatePatchApplier::apply(emptyBaseline, emptyMerge.patch);
+    REQUIRE(emptyApply.ok);
+    REQUIRE(emptyApply.model.frames.size() == emptyBaseline.frames.size());
+
+    const rws::ReadWriteTarget target = {
+        rws::TargetObjectType::Joint, "joint-1",
+        rws::TargetPropertyId::ParentToJointTranslationX, "base"};
+
+    rws::CandidatePatch first;
+    first.adapterId = "JointOriginAdapter";
+    first.adapterVersion = 1;
+    first.bindingId = "origin-x";
+    first.writes = {{target, rws::CandidatePatchValue::scalar(1.25)}};
+    first.generatedArtifacts = {"artifact-a", "artifact-a"};
+
+    rws::CandidatePatch identical = first;
+    identical.bindingId = "origin-x-copy";
+    identical.generatedArtifacts.push_back("artifact-b");
+
+    const rws::CandidatePatchMergeResult merged =
+        rws::CandidatePatchMerger::merge({first, identical});
+    REQUIRE(merged.ok);
+    REQUIRE(merged.patch.writes.size() == 1);
+    REQUIRE(merged.patch.writes.front().target == target);
+    REQUIRE(std::fabs(merged.patch.writes.front().value.scalarValue - 1.25) < 1e-12);
+    REQUIRE(merged.patch.generatedArtifacts.size() == 2);
+    REQUIRE(merged.patch.generatedArtifacts[0] == "artifact-a");
+    REQUIRE(merged.patch.generatedArtifacts[1] == "artifact-b");
+    REQUIRE(merged.patch.diagnostics.empty());
+
+    rws::CandidatePatch reverseArtifacts = first;
+    reverseArtifacts.bindingId = "origin-x-reverse";
+    reverseArtifacts.generatedArtifacts = {"artifact-c", "artifact-a"};
+    reverseArtifacts.derivedValueIds = {"derived-c", "derived-a"};
+    rws::CandidatePatch derivedArtifacts = first;
+    derivedArtifacts.bindingId = "origin-x-derived";
+    derivedArtifacts.generatedArtifacts = {"artifact-b"};
+    derivedArtifacts.derivedValueIds = {"derived-b", "derived-a"};
+    const rws::CandidatePatchMergeResult sortedArtifacts =
+        rws::CandidatePatchMerger::merge({reverseArtifacts, derivedArtifacts});
+    REQUIRE(sortedArtifacts.ok);
+    REQUIRE(sortedArtifacts.patch.generatedArtifacts ==
+            std::vector< std::string >({"artifact-a", "artifact-b", "artifact-c"}));
+    REQUIRE(sortedArtifacts.patch.derivedValueIds ==
+            std::vector< std::string >({"derived-a", "derived-b", "derived-c"}));
+
+    rws::CandidatePatch poseA = first;
+    poseA.bindingId = "pose-a";
+    poseA.poseDeltaComposition = rws::PoseDeltaComposition::Right;
+    poseA.poseDeltaGroupId = "pose:a";
+    rws::CandidatePatch poseB = poseA;
+    poseB.bindingId = "pose-b";
+    poseB.poseDeltaGroupId = "pose:b";
+    const rws::CandidatePatchMergeResult poseConflict =
+        rws::CandidatePatchMerger::merge({poseA, poseB});
+    REQUIRE(!poseConflict.ok);
+    REQUIRE(hasAdapterDiagnostic(poseConflict.diagnostics,
+                                 "CANDIDATE_PATCH_POSE_GROUP_CONFLICT"));
+    REQUIRE(poseConflict.patch.diagnostics.size() == poseConflict.diagnostics.size());
+
+    rws::CandidatePatch conflicting = first;
+    conflicting.bindingId = "origin-x-conflict";
+    conflicting.writes.front().value = rws::CandidatePatchValue::scalar(1.5);
+    const rws::CandidatePatchMergeResult conflict =
+        rws::CandidatePatchMerger::merge({first, conflicting});
+    REQUIRE(!conflict.ok);
+    REQUIRE(hasAdapterDiagnostic(conflict.diagnostics,
+                                 "CANDIDATE_PATCH_WRITE_CONFLICT"));
+
+    rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    baseline.joints[0].parentToJointZero =
+        rw::math::Transform3D<>(rw::math::Vector3D<>(1.0, 2.0, 3.0));
+    const rws::CanonicalKinematicModel baselineCopy = baseline;
+    const rws::CandidatePatchApplyResult applied =
+        rws::CandidatePatchApplier::apply(baseline, merged.patch);
+    REQUIRE(applied.ok);
+    REQUIRE(std::fabs(applied.model.joints[0].parentToJointZero.P()(0) - 1.25) < 1e-12);
+    REQUIRE(std::fabs(applied.model.joints[0].parentToJointZero.P()(1) - 2.0) < 1e-12);
+    REQUIRE(sameTransform(baseline.joints[0].parentToJointZero,
+                          baselineCopy.joints[0].parentToJointZero));
+
+    rws::CandidatePatch invalid = merged.patch;
+    invalid.writes.front().target = {
+        rws::TargetObjectType::Joint, "missing-joint",
+        rws::TargetPropertyId::ParentToJointTranslationX, "base"};
+    const rws::CandidatePatchApplyResult rejected =
+        rws::CandidatePatchApplier::apply(baseline, invalid);
+    REQUIRE(!rejected.ok);
+    REQUIRE(rejected.model.frames.empty());
+    REQUIRE(hasAdapterDiagnostic(rejected.diagnostics,
+                                 "CANDIDATE_PATCH_TARGET_NOT_FOUND"));
+
+    rws::CanonicalKinematicModel axisBaseline = validCanonicalModelFixture();
+    const rws::ReadWriteTarget axisUTarget = {
+        rws::TargetObjectType::Joint, "joint-1",
+        rws::TargetPropertyId::MotionAxisTiltU, "base"};
+    const rws::ReadWriteTarget axisVTarget = {
+        rws::TargetObjectType::Joint, "joint-1",
+        rws::TargetPropertyId::MotionAxisTiltV, "base"};
+    rws::CandidatePatch axisU;
+    axisU.adapterId = "JointAxisAdapter";
+    axisU.adapterVersion = 1;
+    axisU.bindingId = "axis-u";
+    axisU.writes = {{axisUTarget, rws::CandidatePatchValue::scalar(0.1)}};
+    rws::CandidatePatch axisV = axisU;
+    axisV.bindingId = "axis-v";
+    axisV.writes = {{axisVTarget, rws::CandidatePatchValue::scalar(-0.2)}};
+    const rws::CandidatePatchMergeResult mergedAxis =
+        rws::CandidatePatchMerger::merge({axisU, axisV});
+    REQUIRE(mergedAxis.ok);
+    const rws::CandidatePatchApplyResult axisApply =
+        rws::CandidatePatchApplier::apply(axisBaseline, mergedAxis.patch);
+    REQUIRE(axisApply.ok);
+    REQUIRE(std::fabs(axisApply.model.joints[0].motionAxisInJoint.norm2() - 1.0) < 1e-12);
+    REQUIRE(std::fabs((axisApply.model.joints[0].motionAxisInJoint -
+                       axisBaseline.joints[0].motionAxisInJoint).norm2()) > 1e-6);
+
+    const rws::CandidatePatchApplyResult axisOnlyUApply =
+        rws::CandidatePatchApplier::apply(axisBaseline, axisU);
+    REQUIRE(!axisOnlyUApply.ok);
+    REQUIRE(axisOnlyUApply.model.frames.empty());
+    REQUIRE(hasAdapterDiagnostic(axisOnlyUApply.diagnostics,
+                                 "CANDIDATE_PATCH_AXIS_SIBLING_REQUIRED"));
+
+    rws::GeometryBinding geometry;
+    geometry.id = "visual-cylinder";
+    geometry.referenceFrameId = "base";
+    geometry.kind = rws::CanonicalGeometryKind::Cylinder;
+    geometry.optimizationOwned = true;
+    geometry.radius = 0.10;
+    geometry.length = 0.50;
+    axisBaseline.geometryBindings.push_back(geometry);
+    const rws::ReadWriteTarget geometryTarget = {
+        rws::TargetObjectType::Geometry, "visual-cylinder",
+        rws::TargetPropertyId::GeometryRadius, "base"};
+    rws::CandidatePatch geometryPatch;
+    geometryPatch.adapterId = "ParameterizedGeometryAdapter";
+    geometryPatch.adapterVersion = 1;
+    geometryPatch.bindingId = "visual-radius";
+    geometryPatch.writes = {{geometryTarget, rws::CandidatePatchValue::scalar(0.25)}};
+    const rws::CandidatePatchApplyResult geometryApply =
+        rws::CandidatePatchApplier::apply(axisBaseline, geometryPatch);
+    REQUIRE(geometryApply.ok);
+    REQUIRE(std::fabs(geometryApply.model.geometryBindings.front().radius - 0.25) < 1e-12);
+
+    rws::CanonicalKinematicModel poseBaseline = independentFlangeFixture();
+    const rw::math::Vector3D<> mountTranslation =
+        poseBaseline.joints.back().parentToJointZero.P();
+    rws::CandidatePatch flangePatch;
+    flangePatch.adapterId = "FlangePoseAdapter";
+    flangePatch.adapterVersion = 1;
+    flangePatch.bindingId = "flange-x";
+    flangePatch.poseDeltaComposition = rws::PoseDeltaComposition::Right;
+    flangePatch.poseDeltaGroupId = "flange-pose:flange";
+    flangePatch.writes = {rws::CandidatePatchWrite{
+        {rws::TargetObjectType::Frame, "flange",
+         rws::TargetPropertyId::ParentToFlangeTranslationX, "arm-tip"},
+        rws::CandidatePatchValue::scalar(mountTranslation(0) + 0.1)}};
+    const rws::CandidatePatchApplyResult flangeApply =
+        rws::CandidatePatchApplier::apply(poseBaseline, flangePatch);
+    REQUIRE(flangeApply.ok);
+    REQUIRE(std::fabs(flangeApply.model.joints.back().parentToJointZero.P()(0) -
+                      mountTranslation(0) - 0.1) < 1e-12);
+
+    rws::CandidatePatch tcpPatch;
+    tcpPatch.adapterId = "TcpPoseAdapter";
+    tcpPatch.adapterVersion = 1;
+    tcpPatch.bindingId = "tcp-x";
+    tcpPatch.poseDeltaComposition = rws::PoseDeltaComposition::Right;
+    tcpPatch.poseDeltaGroupId = "tcp-pose:tool";
+    tcpPatch.writes = {rws::CandidatePatchWrite{
+        {rws::TargetObjectType::ToolBinding, "tool",
+         rws::TargetPropertyId::FlangeToTcpTranslationX, "flange"},
+        rws::CandidatePatchValue::scalar(0.4)}};
+    const rws::CandidatePatchApplyResult tcpApply =
+        rws::CandidatePatchApplier::apply(poseBaseline, tcpPatch);
+    REQUIRE(tcpApply.ok);
+    REQUIRE(std::fabs(tcpApply.model.toolBindings.front().flangeToTcp.P()(0) - 0.4) < 1e-12);
+
+    rws::CanonicalKinematicModel limitBaseline = validCanonicalModelFixture();
+    limitBaseline.joints[0].physicalLimits = {
+        true, -1.0, 1.0, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QInput};
+    limitBaseline.joints[0].operationalLimits = {
+        true, -0.8, 0.8, rws::CanonicalCoordinateUnit::Radians,
+        rws::JointCoordinateConvention::QInput};
+    rws::CandidatePatch limitPatch;
+    limitPatch.adapterId = "JointLimitAdapter";
+    limitPatch.adapterVersion = 1;
+    limitPatch.bindingId = "limit-upper";
+    limitPatch.writes = {rws::CandidatePatchWrite{
+        {rws::TargetObjectType::Joint, "joint-1",
+         rws::TargetPropertyId::OperationalLimitUpper, "base"},
+        rws::CandidatePatchValue::scalar(0.6)}};
+    const rws::CandidatePatchApplyResult limitApply =
+        rws::CandidatePatchApplier::apply(limitBaseline, limitPatch);
+    REQUIRE(limitApply.ok);
+    REQUIRE(std::fabs(limitApply.model.joints[0].operationalLimits.upper - 0.6) < 1e-12);
+    REQUIRE(std::fabs(limitApply.model.joints[0].physicalLimits.upper - 1.0) < 1e-12);
+
+    rws::CollisionBinding collision;
+    collision.id = "collision-box";
+    collision.referenceFrameId = "base";
+    collision.kind = rws::CanonicalGeometryKind::Box;
+    collision.optimizationOwned = true;
+    collision.width = 0.2;
+    collision.height = 0.3;
+    collision.depth = 0.4;
+    limitBaseline.collisionBindings.push_back(collision);
+    rws::CandidatePatch collisionPatch;
+    collisionPatch.adapterId = "ParameterizedCollisionAdapter";
+    collisionPatch.adapterVersion = 1;
+    collisionPatch.bindingId = "collision-width";
+    collisionPatch.writes = {rws::CandidatePatchWrite{
+        {rws::TargetObjectType::CollisionGeometry, "collision-box",
+         rws::TargetPropertyId::GeometryWidth, "base"},
+        rws::CandidatePatchValue::scalar(0.5)}};
+    const rws::CandidatePatchApplyResult collisionApply =
+        rws::CandidatePatchApplier::apply(limitBaseline, collisionPatch);
+    REQUIRE(collisionApply.ok);
+    REQUIRE(std::fabs(collisionApply.model.collisionBindings.front().width - 0.5) < 1e-12);
+    REQUIRE(collisionApply.model.geometryBindings.size() ==
+            limitBaseline.geometryBindings.size());
+}
+
+// Phase 3/S37: candidate compilation resolves one immutable design vector,
+// evaluates compiled expressions, compiles grouped bindings, and publishes
+// only an atomically validated canonical candidate.
+static void testCandidateCompiler()
+{
+    const rws::CanonicalKinematicModel baseline = validCanonicalModelFixture();
+    rws::CompiledDesignSpace space;
+    space.schemaVersion = 1;
+    space.fingerprint = "candidate-space-fixture";
+
+    rws::DesignVariableDefinition input;
+    input.id = "input-length";
+    input.semanticKind = rws::SemanticKind::JointOriginOffsetX;
+    input.role = rws::VariableRole::Independent;
+    input.domain = rws::VariableDomain::Continuous;
+    input.minimum = 0.0;
+    input.maximum = 1.0;
+    input.step = 0.1;
+    input.unit = rws::DesignVariableUnit::Metres;
+    rws::DesignVariableDefinition derived = input;
+    derived.id = "derived-length";
+    derived.role = rws::VariableRole::Derived;
+    derived.bindingId = "binding:candidate";
+    derived.derivedExpressionId = "expression:candidate";
+    space.independentVariables = {input};
+    space.derivedVariables = {derived};
+    space.canonicalVectorSchema = {{input.id, 0, input.unit}};
+    space.dependencyOrder = {derived.id};
+    space.derivedExpressions = {
+        rws::DerivedExpression::variableReference(derived.derivedExpressionId, input.id)};
+
+    rws::ParameterBinding binding = adapterRegistryBinding();
+    binding.id = derived.bindingId;
+    space.resolvedBindings = {binding};
+
+    const rws::DesignVectorResult vectorResult = rws::DesignVectorCodec::fromEngineering(
+        space, {{input.id, input.unit, 0.25, ""}});
+    REQUIRE(vectorResult.ok);
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< AdapterRegistryTestAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointOrigin);
+
+    rws::CandidateCompileRequest request;
+    request.baseline = &baseline;
+    request.designSpace = &space;
+    request.designVector = &vectorResult.vector;
+    request.adapterRegistry = &registry;
+    request.capabilities = &capabilities;
+    const rws::CandidateCompileResult compiled = rws::CandidateCompiler::compile(request);
+    REQUIRE(compiled.ok);
+    REQUIRE(compiled.candidate.status == rws::CandidateCompileStatus::Compiled);
+    REQUIRE(compiled.candidate.derivedValues.at(derived.id).value == 0.25);
+    REQUIRE(compiled.candidate.derivedValues.at(derived.id).unit == input.unit);
+    REQUIRE(std::fabs(compiled.candidate.kinematicModel.joints[0].parentToJointZero.P()(0) -
+                      0.25) < 1e-12);
+    REQUIRE(!compiled.candidate.fingerprint.empty());
+    REQUIRE(compiled.candidate.candidateId == compiled.candidate.fingerprint);
+    REQUIRE(compiled.candidate.diagnostics.size() == compiled.diagnostics.size());
+    REQUIRE(std::equal(compiled.candidate.diagnostics.begin(), compiled.candidate.diagnostics.end(),
+                       compiled.diagnostics.begin(),
+                       [](const rws::StructureOptimizationDiagnostic& first,
+                          const rws::StructureOptimizationDiagnostic& second) {
+                           return first.code == second.code && first.fieldPath == second.fieldPath;
+                       }));
+    REQUIRE(std::fabs(baseline.joints[0].parentToJointZero.P()(0)) < 1e-12);
+
+    rws::DesignVector tamperedVector = vectorResult.vector;
+    tamperedVector.canonicalBytes += "tampered";
+    const rws::CandidateCompileResult tampered = rws::CandidateCompiler::compile(
+        {&baseline, &space, &tamperedVector, &registry, &capabilities});
+    REQUIRE(!tampered.ok);
+    REQUIRE(hasAdapterDiagnostic(tampered.diagnostics,
+                                 "CANDIDATE_COMPILE_DESIGN_VECTOR_FINGERPRINT_MISSING"));
+
+    const rws::CandidateCompileResult repeated = rws::CandidateCompiler::compile(request);
+    REQUIRE(repeated.ok);
+    REQUIRE(repeated.candidate.fingerprint == compiled.candidate.fingerprint);
+    REQUIRE(repeated.candidate.kinematicModel.joints[0].parentToJointZero.P()(0) ==
+            compiled.candidate.kinematicModel.joints[0].parentToJointZero.P()(0));
+
+    rws::DesignVector wrongSchema = vectorResult.vector;
+    wrongSchema.designSpaceFingerprint = "different-space";
+    const rws::CandidateCompileResult schemaMismatch = rws::CandidateCompiler::compile(
+        {&baseline, &space, &wrongSchema, &registry, &capabilities});
+    REQUIRE(!schemaMismatch.ok);
+    REQUIRE(schemaMismatch.candidate.status == rws::CandidateCompileStatus::CompileFailed);
+    REQUIRE(schemaMismatch.candidate.kinematicModel.frames.empty());
+    REQUIRE(hasAdapterDiagnostic(schemaMismatch.diagnostics,
+                                 "CANDIDATE_COMPILE_DESIGN_VECTOR_SCHEMA_MISMATCH"));
+
+    rws::CompiledDesignSpace missingExpression = space;
+    missingExpression.derivedExpressions.clear();
+    const rws::CandidateCompileResult missingExpressionResult = rws::CandidateCompiler::compile(
+        {&baseline, &missingExpression, &vectorResult.vector, &registry, &capabilities});
+    REQUIRE(!missingExpressionResult.ok);
+    REQUIRE(hasAdapterDiagnostic(missingExpressionResult.diagnostics,
+                                 "CANDIDATE_COMPILE_DERIVED_EXPRESSION_MISSING"));
+
+    rws::CanonicalKinematicModel invalidBaseline = baseline;
+    invalidBaseline.rootFrameId = "missing-root";
+    const rws::CandidateCompileResult invalidModel = rws::CandidateCompiler::compile(
+        {&invalidBaseline, &space, &vectorResult.vector, &registry, &capabilities});
+    REQUIRE(!invalidModel.ok);
+    REQUIRE(hasAdapterDiagnostic(invalidModel.diagnostics,
+                                 "CANDIDATE_COMPILE_BASELINE_INVALID"));
+
+    rws::CanonicalKinematicModel combinedBaseline = validCanonicalModelFixture();
+    combinedBaseline.frames.insert(combinedBaseline.frames.begin(),
+                                  {"world", "System root", rws::CanonicalFrameType::Fixed});
+    rws::JointEdge baseInstallation;
+    baseInstallation.id = "world-to-base";
+    baseInstallation.type = rws::CanonicalJointType::Fixed;
+    baseInstallation.parentFrameId = "world";
+    baseInstallation.childFrameId = "base";
+    combinedBaseline.joints.insert(combinedBaseline.joints.begin(), baseInstallation);
+    combinedBaseline.rootFrameId = "world";
+    combinedBaseline.deviceChains[0].rootFrameId = "world";
+    combinedBaseline.deviceChains[0].orderedJointIds.insert(
+        combinedBaseline.deviceChains[0].orderedJointIds.begin(), baseInstallation.id);
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(combinedBaseline).valid);
+
+    rws::ParameterBinding link = jointTranslationBinding(
+        "binding:link", rws::SemanticKind::LinkLength, "ParameterizedLinkAdapter", "joint-1", "base");
+    link.referenceDirectionFrameId = "base";
+    link.referenceDirection = rw::math::Vector3D<>::x();
+    const rws::ParameterBinding axisU = jointAxisBinding(
+        "binding:axis-u", rws::SemanticKind::JointAxisTiltU, "joint-1", "base", rw::math::Pi / 4.0);
+    const rws::ParameterBinding axisV = jointAxisBinding(
+        "binding:axis-v", rws::SemanticKind::JointAxisTiltV, "joint-1", "base", rw::math::Pi / 4.0);
+    const rws::ParameterBinding baseX = poseBinding(
+        "binding:base-x", rws::SemanticKind::BaseTx, "BasePlacementAdapter",
+        rws::TargetObjectType::Frame, "base", rws::TargetPropertyId::BaseTranslationX,
+        "world", "base-pose:base");
+    const rws::ParameterBinding tcpX = poseBinding(
+        "binding:tcp-x", rws::SemanticKind::TcpTx, "TcpPoseAdapter",
+        rws::TargetObjectType::ToolBinding, "tool",
+        rws::TargetPropertyId::FlangeToTcpTranslationX, "flange", "tcp-pose:tool");
+
+    const auto independent = [](const std::string& id, const rws::SemanticKind semantic,
+                                const rws::DesignVariableUnit unit, const std::string& group,
+                                const std::string& bindingId) {
+        rws::DesignVariableDefinition variable;
+        variable.id = id;
+        variable.semanticKind = semantic;
+        variable.role = rws::VariableRole::Independent;
+        variable.domain = rws::VariableDomain::Continuous;
+        variable.minimum = -1.0;
+        variable.maximum = 1.0;
+        variable.step = 0.01;
+        variable.unit = unit;
+        variable.groupId = group;
+        variable.bindingId = bindingId;
+        return variable;
+    };
+    const rws::DesignVariableDefinition linkVariable = independent(
+        "link-length", rws::SemanticKind::LinkLength, rws::DesignVariableUnit::Metres,
+        "link:joint-1", link.id);
+    const rws::DesignVariableDefinition axisUVariable = independent(
+        "axis-u", rws::SemanticKind::JointAxisTiltU, rws::DesignVariableUnit::Radians,
+        "axis-tilt:joint-1", axisU.id);
+    const rws::DesignVariableDefinition axisVVariable = independent(
+        "axis-v", rws::SemanticKind::JointAxisTiltV, rws::DesignVariableUnit::Radians,
+        "axis-tilt:joint-1", axisV.id);
+    const rws::DesignVariableDefinition baseVariable = independent(
+        "base-x", rws::SemanticKind::BaseTx, rws::DesignVariableUnit::Metres,
+        "base-pose:base", baseX.id);
+    const rws::DesignVariableDefinition tcpVariable = independent(
+        "tcp-x", rws::SemanticKind::TcpTx, rws::DesignVariableUnit::Metres,
+        "tcp-pose:tool", tcpX.id);
+    rws::CompiledDesignSpace combinedSpace;
+    combinedSpace.fingerprint = "candidate-combination-space";
+    combinedSpace.independentVariables = {linkVariable, axisUVariable, axisVVariable,
+                                          baseVariable, tcpVariable};
+    for (std::size_t index = 0; index < combinedSpace.independentVariables.size(); ++index) {
+        const rws::DesignVariableDefinition& variable = combinedSpace.independentVariables[index];
+        combinedSpace.canonicalVectorSchema.push_back({variable.id, index, variable.unit});
+    }
+    combinedSpace.resolvedBindings = {link, axisU, axisV, baseX, tcpX};
+    const rws::DesignVectorResult combinedVector = rws::DesignVectorCodec::fromEngineering(
+        combinedSpace, {{linkVariable.id, linkVariable.unit, 0.4, ""},
+                        {axisUVariable.id, axisUVariable.unit, 0.1, ""},
+                        {axisVVariable.id, axisVVariable.unit, -0.2, ""},
+                        {baseVariable.id, baseVariable.unit, 0.3, ""},
+                        {tcpVariable.id, tcpVariable.unit, 0.2, ""}});
+    REQUIRE(combinedVector.ok);
+
+    rws::AdapterRegistry combinedRegistry;
+    REQUIRE(combinedRegistry.registerAdapter(std::make_shared< rws::ParameterizedLinkAdapter >()).ok);
+    REQUIRE(combinedRegistry.registerAdapter(std::make_shared< rws::JointAxisAdapter >()).ok);
+    REQUIRE(combinedRegistry.registerAdapter(std::make_shared< rws::BasePlacementAdapter >()).ok);
+    REQUIRE(combinedRegistry.registerAdapter(std::make_shared< rws::TcpPoseAdapter >()).ok);
+    rws::AdapterCapabilityQuery combinedCapabilities;
+    combinedCapabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                               rws::AdapterCapability::ParameterizedLink);
+    combinedCapabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                               rws::AdapterCapability::JointAxisTilt);
+    combinedCapabilities.grant(rws::TargetObjectType::Frame, "base",
+                               rws::AdapterCapability::BasePlacement);
+    combinedCapabilities.grant(rws::TargetObjectType::ToolBinding, "tool",
+                               rws::AdapterCapability::TcpPose);
+    combinedCapabilities.grant(rws::TargetObjectType::ToolBinding, "tool",
+                               rws::AdapterCapability::ParameterizedGeometry);
+    combinedCapabilities.grant(rws::TargetObjectType::ToolBinding, "tool",
+                               rws::AdapterCapability::ParameterizedCollision);
+    const rws::CandidateCompileResult combined = rws::CandidateCompiler::compile(
+        {&combinedBaseline, &combinedSpace, &combinedVector.vector, &combinedRegistry,
+         &combinedCapabilities});
+    REQUIRE(combined.ok);
+    REQUIRE(std::fabs(combined.candidate.kinematicModel.joints[1].parentToJointZero.P()(0) -
+                      0.4) < 1e-12);
+    REQUIRE(std::fabs((combined.candidate.kinematicModel.joints[1].motionAxisInJoint -
+                       combinedBaseline.joints[1].motionAxisInJoint).norm2()) > 1e-6);
+    REQUIRE(std::fabs(combined.candidate.kinematicModel.joints[0].parentToJointZero.P()(0) -
+                      0.3) < 1e-12);
+    REQUIRE(std::fabs(combined.candidate.kinematicModel.toolBindings[0].flangeToTcp.P()(0) -
+                      0.2) < 1e-12);
+    REQUIRE(std::fabs(combinedBaseline.joints[0].parentToJointZero.P()(0)) < 1e-12);
+    REQUIRE(std::fabs(combinedBaseline.toolBindings[0].flangeToTcp.P()(0)) < 1e-12);
+}
+
+// Phase 3/S38: projection is an output boundary.  It must preserve the
+// canonical chain semantics without producing a DH view, and the worker
+// builder must compile an isolated WorkCell whose FK agrees with canonical FK.
+static rws::CanonicalKinematicModel s38ProjectionFixture()
+{
+    rws::CanonicalKinematicModel model;
+    model.modelId = "S38ProjectionRobot";
+    model.rootFrameId = "Base";
+    model.baseFrameId = "Base";
+    model.activeDeviceChainId = "S38ProjectionRobot:chain";
+    model.frames = {{"Base", "Base", rws::CanonicalFrameType::Base},
+                    {"Joint1", "Joint1", rws::CanonicalFrameType::Link},
+                    {"FixedGuide", "FixedGuide", rws::CanonicalFrameType::Fixed},
+                    {"TCP", "TCP", rws::CanonicalFrameType::Tool}};
+
+    rws::JointEdge revolute;
+    revolute.id = "edge:Joint1";
+    revolute.name = "Joint1";
+    revolute.type = rws::CanonicalJointType::Revolute;
+    revolute.parentFrameId = "Base";
+    revolute.childFrameId = "Joint1";
+    revolute.parentToJointZero = rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.0, 0.2));
+    revolute.motionAxisInJoint = rw::math::Vector3D<>::z();
+    revolute.dofId = "dof:Joint1";
+    revolute.physicalLimits = {true, -rw::math::Pi, rw::math::Pi,
+                               rws::CanonicalCoordinateUnit::Radians,
+                               rws::JointCoordinateConvention::QInput};
+
+    rws::JointEdge fixed;
+    fixed.id = "edge:TCP";
+    fixed.name = "TCP";
+    fixed.type = rws::CanonicalJointType::Fixed;
+    fixed.parentFrameId = "Joint1";
+    fixed.childFrameId = "TCP";
+    fixed.parentToJointZero = rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.0, 0.15));
+    model.joints = {revolute, fixed};
+    model.dofs = {{"dof:Joint1", revolute.id, 0, rws::CanonicalJointType::Revolute,
+                   rws::CanonicalCoordinateUnit::Radians}};
+    model.deviceChains = {{model.activeDeviceChainId, "Base", "TCP",
+                           {revolute.id, fixed.id}, {"dof:Joint1"}}};
+
+    rws::GeometryBinding visual;
+    visual.id = "visual:Joint1";
+    visual.referenceFrameId = "Joint1";
+    visual.kind = rws::CanonicalGeometryKind::Cylinder;
+    visual.optimizationOwned = true;
+    visual.radius = 0.03;
+    visual.length = 0.2;
+    model.geometryBindings.push_back(visual);
+
+    rws::CollisionBinding collision;
+    collision.id = "collision:Joint1";
+    collision.referenceFrameId = "Joint1";
+    collision.kind = rws::CanonicalGeometryKind::Box;
+    collision.optimizationOwned = true;
+    collision.width = 0.1;
+    collision.height = 0.1;
+    collision.depth = 0.2;
+    model.collisionBindings.push_back(collision);
+    return model;
+}
+
+static void testS38ProjectionAndEvaluationDevice()
+{
+    const rws::CanonicalKinematicModel model = s38ProjectionFixture();
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(model).valid);
+
+    const rws::RobotModelSpecProjectionResult projection =
+        rws::RobotModelSpecProjectionAdapter::project({&model, "S38ProjectionRobot", "", nullptr});
+    REQUIRE(projection.ok);
+    if (!projection.ok)
+        return;
+    REQUIRE(projection.spec.mode == rws::KinematicsViewMode::JointRPYPos);
+    REQUIRE(!projection.spec.exportDhJointsAdvanced);
+    REQUIRE(projection.spec.dhJoints.empty());
+    REQUIRE(projection.spec.transformJoints.size() == 2);
+    REQUIRE(projection.spec.transformJoints[0].type == "Revolute");
+    REQUIRE(projection.spec.transformJoints[1].type == "ToolFrame");
+    REQUIRE(projection.spec.transformJoints[0].name == "Joint1");
+    REQUIRE(projection.spec.transformJoints[1].name == "TCP");
+    REQUIRE(projection.spec.drawables.size() == 1);
+    REQUIRE(projection.spec.collisionModels.size() == 1);
+
+    rws::EvaluationDeviceBuildRequest request;
+    request.model = &model;
+    request.deviceName = "S38ProjectionRobot";
+    request.tcpFrame = "TCP";
+    request.checkCollision = false;
+    const rws::EvaluationDeviceBuildResult built =
+        rws::EvaluationDeviceBuilder::build(request);
+    REQUIRE(built.ok);
+    REQUIRE(!built.artifact.workcell.isNull());
+    REQUIRE(!built.artifact.device.isNull());
+    REQUIRE(built.artifact.tcpFrame->getName() == "TCP" ||
+            built.artifact.tcpFrame->getName().find(".TCP") != std::string::npos);
+
+    const std::vector< double > q = {0.35};
+    const rws::CanonicalForwardKinematicsResult canonicalFk =
+        rws::CanonicalForwardKinematics::evaluate(model, q);
+    REQUIRE(canonicalFk.valid);
+    rw::kinematics::State state = built.artifact.workcell->getDefaultState();
+    built.artifact.device->setQ(rw::math::Q(1, q[0]), state);
+    const rw::math::Transform3D<> generatedTcp = rw::kinematics::Kinematics::frameTframe(
+        built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(), state);
+    rw::math::Transform3D<> canonicalTcp;
+    REQUIRE(rws::CanonicalForwardKinematics::frameTransform(canonicalFk, "TCP", canonicalTcp));
+    REQUIRE(sameTransform(generatedTcp, canonicalTcp));
+
+    rws::CanonicalKinematicModel flangeTool = model;
+    flangeTool.frames[1].type = rws::CanonicalFrameType::Flange;
+    flangeTool.joints.erase(flangeTool.joints.begin() + 1);
+    flangeTool.deviceChains.front().tipFrameId = "Joint1";
+    flangeTool.deviceChains.front().orderedJointIds.pop_back();
+    flangeTool.toolBindings = {{"tool", "Joint1", "TCP",
+                                rw::math::Transform3D<>(rw::math::Vector3D<>(0.0, 0.0, 0.15))}};
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(flangeTool).valid);
+    const auto flangeProjection = rws::RobotModelSpecProjectionAdapter::project(
+        {&flangeTool, "S38FlangeTool", "", nullptr});
+    REQUIRE(flangeProjection.ok);
+    REQUIRE(flangeProjection.spec.transformJoints.size() == 2);
+    REQUIRE(flangeProjection.spec.transformJoints.back().type == "ToolFrame");
+    const auto flangeBuilt = rws::EvaluationDeviceBuilder::build(
+        {&flangeTool, "S38FlangeTool", "TCP", nullptr, false});
+    REQUIRE(flangeBuilt.ok);
+
+    rws::CanonicalKinematicModel installed = model;
+    installed.frames.insert(installed.frames.begin(),
+                            {"WorldMount", "WorldMount", rws::CanonicalFrameType::Fixed});
+    rws::JointEdge installation;
+    installation.id = "edge:WorldMount";
+    installation.name = "WorldMount";
+    installation.type = rws::CanonicalJointType::Fixed;
+    installation.parentFrameId = "WorldMount";
+    installation.childFrameId = "Base";
+    installation.parentToJointZero = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(0.1, 0.2, 0.3));
+    installed.joints.insert(installed.joints.begin(), installation);
+    installed.rootFrameId = "WorldMount";
+    installed.deviceChains.front().rootFrameId = "WorldMount";
+    installed.deviceChains.front().orderedJointIds.insert(
+        installed.deviceChains.front().orderedJointIds.begin(), installation.id);
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(installed).valid);
+    const auto installedProjection = rws::RobotModelSpecProjectionAdapter::project(
+        {&installed, "S38Installed", "", nullptr});
+    REQUIRE(installedProjection.ok);
+    REQUIRE(std::fabs(installedProjection.spec.robotBaseFrame.pos[0] - 0.1) < 1e-12);
+
+    const rws::EvaluationDeviceBuildResult failed =
+        rws::EvaluationDeviceBuilder::build({nullptr, "S38ProjectionRobot", "TCP", nullptr, false});
+    REQUIRE(!failed.ok);
+    REQUIRE(failed.artifact.workcell.isNull());
+}
+
+static void testBaseFlangeAndTcpAdapters()
+{
+    const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
+    const rws::CanonicalKinematicModel sourceCopy = baseline;
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(baseline).valid);
+
+    rws::AdapterRegistry registry;
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::BasePlacementAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::FlangePoseAdapter >()).ok);
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::TcpPoseAdapter >()).ok);
+    rws::AdapterCapabilityQuery capabilities;
+    capabilities.grant(rws::TargetObjectType::Frame, "base", rws::AdapterCapability::BasePlacement);
+    capabilities.grant(rws::TargetObjectType::Frame, "flange", rws::AdapterCapability::FlangePose);
+    capabilities.grant(rws::TargetObjectType::ToolBinding, "tool", rws::AdapterCapability::TcpPose);
+
+    const rws::ParameterBinding baseX = poseBinding(
+        "base-x", rws::SemanticKind::BaseTx, "BasePlacementAdapter", rws::TargetObjectType::Frame,
+        "base", rws::TargetPropertyId::BaseTranslationX, "base", "base-pose:base");
+    const rws::AdapterPatchCompileResult basePatch = registry.compilePatch(
+        {&baseline, &baseX, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+                              rws::SemanticKind::BaseTx, "base-pose:base"}}}, capabilities);
+    REQUIRE(basePatch.ok);
+    REQUIRE(basePatch.patch.writes.size() == 1);
+    REQUIRE(basePatch.patch.writes.front().target.objectType == rws::TargetObjectType::Frame);
+    REQUIRE(basePatch.patch.writes.front().target.objectId == "base");
+    REQUIRE(basePatch.patch.writes.front().target.propertyId ==
+            rws::TargetPropertyId::BaseTranslationX);
+    REQUIRE(basePatch.patch.writes.front().target.coordinateFrameId == "base");
+    REQUIRE(std::fabs(basePatch.patch.writes.front().value.scalarValue - 0.25) < 1e-12);
+    REQUIRE(basePatch.patch.poseDeltaComposition == rws::PoseDeltaComposition::Right);
+    REQUIRE(basePatch.patch.poseDeltaGroupId == "base-pose:base");
+    rws::ParameterBinding baseMissingId = baseX;
+    baseMissingId.id.clear();
+    rws::BasePlacementAdapter directBase;
+    const rws::AdapterPatchCompileResult directBaseMalformed = directBase.compilePatch(
+        {&baseline, &baseMissingId, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+                                      rws::SemanticKind::BaseTx, "base-pose:base"}}});
+    REQUIRE(!directBaseMalformed.ok);
+    REQUIRE(hasAdapterDiagnostic(directBaseMalformed.diagnostics,
+                                 "PARAMETER_BINDING_ID_REQUIRED"));
+    // The Patch names only the base placement; it has no task/environment write
+    // and compilation leaves the imported canonical baseline immutable.
+    REQUIRE(basePatch.patch.writes.front().target.objectId != baseline.rootFrameId ||
+            baseline.rootFrameId == baseline.baseFrameId);
+    REQUIRE(sameTransform(baseline.joints[0].parentToJointZero,
+                          sourceCopy.joints[0].parentToJointZero));
+
+    // Compiler identity must preserve the frame in which a spatial variable
+    // is expressed; a UI frame label may never silently disagree with its
+    // adapter binding coordinate frame.
+    rws::DesignVariableDefinition baseVariable;
+    baseVariable.id = "base-x-frame-check";
+    baseVariable.semanticKind = rws::SemanticKind::BaseTx;
+    baseVariable.role = rws::VariableRole::Independent;
+    baseVariable.domain = rws::VariableDomain::Continuous;
+    baseVariable.minimum = -1.0;
+    baseVariable.maximum = 1.0;
+    baseVariable.step = 0.01;
+    baseVariable.unit = rws::DesignVariableUnit::Metres;
+    baseVariable.frameId = "flange"; // deliberately not binding.coordinateFrameId == base
+    baseVariable.bindingId = baseX.id;
+    const rws::DesignSpaceRegistry semanticRegistry = rws::DesignSpaceRegistry::firstPhase();
+    rws::DesignSpaceCompileRequest mismatchedFrameRequest;
+    mismatchedFrameRequest.model = &baseline;
+    mismatchedFrameRequest.registry = &semanticRegistry;
+    mismatchedFrameRequest.capabilities = &capabilities;
+    mismatchedFrameRequest.adapterRegistry = &registry;
+    mismatchedFrameRequest.variables = {baseVariable};
+    mismatchedFrameRequest.bindings = {baseX};
+    const rws::DesignSpaceCompileResult mismatchedFrame =
+        rws::DesignSpaceCompiler::compile(mismatchedFrameRequest);
+    REQUIRE(!mismatchedFrame.ok);
+    REQUIRE(hasAdapterDiagnostic(mismatchedFrame.diagnostics,
+                                 "DESIGN_SPACE_VARIABLE_BINDING_FRAME_MISMATCH"));
+
+    // The rule is deliberately narrow: joint-coordinate values are not pose
+    // vectors and retain their established coordinate-frame contract.
+    REQUIRE(registry.registerAdapter(std::make_shared< rws::JointZeroAdapter >()).ok);
+    capabilities.grant(rws::TargetObjectType::Joint, "joint-1",
+                       rws::AdapterCapability::JointZeroOffset);
+    rws::DesignVariableDefinition jointZeroVariable = baseVariable;
+    jointZeroVariable.id = "joint-zero-nonspatial-frame";
+    jointZeroVariable.semanticKind = rws::SemanticKind::JointZeroOffset;
+    jointZeroVariable.unit = rws::DesignVariableUnit::Radians;
+    jointZeroVariable.frameId = "flange";
+    jointZeroVariable.bindingId = "joint-zero-nonspatial-frame";
+    const rws::ParameterBinding jointZero = jointZeroBinding(
+        jointZeroVariable.bindingId, "joint-1", "base");
+    rws::DesignSpaceCompileRequest nonSpatialFrameRequest = mismatchedFrameRequest;
+    nonSpatialFrameRequest.variables = {jointZeroVariable};
+    nonSpatialFrameRequest.bindings = {jointZero};
+    const rws::DesignSpaceCompileResult nonSpatialFrame =
+        rws::DesignSpaceCompiler::compile(nonSpatialFrameRequest);
+    REQUIRE(nonSpatialFrame.ok);
+    REQUIRE(!hasAdapterDiagnostic(nonSpatialFrame.diagnostics,
+                                  "DESIGN_SPACE_VARIABLE_BINDING_FRAME_MISMATCH"));
+
+    rws::ParameterBinding wrongBaseFrame = baseX;
+    wrongBaseFrame.coordinateFrameId = "flange";
+    wrongBaseFrame.readSet.front().coordinateFrameId = "flange";
+    wrongBaseFrame.writeSet.front().coordinateFrameId = "flange";
+    const rws::AdapterPatchCompileResult badBase = registry.compilePatch(
+        {&baseline, &wrongBaseFrame, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+                                      rws::SemanticKind::BaseTx, "base-pose:base"}}}, capabilities);
+    REQUIRE(!badBase.ok);
+    REQUIRE(hasAdapterDiagnostic(badBase.diagnostics, "BASE_PLACEMENT_ROOT_FRAME_REQUIRED"));
+
+    // All S34 rotation-vector updates are right increments: R' = R * Exp(r).
+    // Choosing noncommuting X/Z rotations makes an accidental left update fail.
+    const rw::math::Transform3D<> initialRotation(
+        rw::math::Vector3D<>(), rw::math::RPY<>(0.0, 0.0, rw::math::Pi / 2.0).toRotation3D());
+    const rw::math::Vector3D<> deltaRotation(0.0, 0.0, rw::math::Pi / 2.0);
+    const rw::math::Transform3D<> rightRotated =
+        rws::PoseDelta::applyRotationVectorDelta(initialRotation, deltaRotation,
+                                                   rws::PoseDeltaComposition::Right);
+    const rw::math::Transform3D<> expectedRight = initialRotation * rw::math::Transform3D<>(
+        rw::math::Vector3D<>(), rw::math::RPY<>(rw::math::Pi / 2.0, 0.0, 0.0).toRotation3D());
+    const rw::math::Transform3D<> leftRotated = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(), rw::math::RPY<>(rw::math::Pi / 2.0, 0.0, 0.0).toRotation3D()) *
+        initialRotation;
+    REQUIRE(sameTransform(rightRotated, expectedRight));
+    REQUIRE(!sameTransform(rightRotated, leftRotated));
+
+    const rws::ParameterBinding flangeY = poseBinding(
+        "flange-y", rws::SemanticKind::FlangeTy, "FlangePoseAdapter",
+        rws::TargetObjectType::Frame, "flange", rws::TargetPropertyId::ParentToFlangeTranslationY,
+        "arm-tip", "flange-pose:flange");
+    const rws::AdapterPatchCompileResult flangePatch = registry.compilePatch(
+        {&baseline, &flangeY, {{"flange-y", rws::DesignVariableUnit::Metres, 0.4, "",
+                                rws::SemanticKind::FlangeTy, "flange-pose:flange"}}}, capabilities);
+    REQUIRE(flangePatch.ok);
+    REQUIRE(flangePatch.patch.writes.size() == 1);
+    REQUIRE(flangePatch.patch.writes.front().target.coordinateFrameId == "arm-tip");
+    // parent-to-flange coordinates are the declared parent-frame coordinates;
+    // the baseline Y=-.2 plus .4 delta yields +.2 without Euler state.
+    REQUIRE(std::fabs(flangePatch.patch.writes.front().value.scalarValue - 0.2) < 1e-12);
+    rws::ParameterBinding flangeMissingOwnerVersion = flangeY;
+    flangeMissingOwnerVersion.ownerAdapterVersion = 0;
+    rws::FlangePoseAdapter directFlange;
+    const rws::AdapterPatchCompileResult directFlangeMalformed = directFlange.compilePatch(
+        {&baseline, &flangeMissingOwnerVersion,
+         {{"flange-y", rws::DesignVariableUnit::Metres, 0.4, "",
+           rws::SemanticKind::FlangeTy, "flange-pose:flange"}}});
+    REQUIRE(!directFlangeMalformed.ok);
+    REQUIRE(hasAdapterDiagnostic(directFlangeMalformed.diagnostics,
+                                 "PARAMETER_BINDING_OWNER_VERSION_INVALID"));
+
+    // A flange frame may exist on a valid side branch, but it is not a design
+    // target unless its unique fixed mount belongs to the active device chain.
+    rws::CanonicalKinematicModel inactiveFlangeMount = baseline;
+    inactiveFlangeMount.deviceChains[0].tipFrameId = "arm-tip";
+    inactiveFlangeMount.deviceChains[0].orderedJointIds.pop_back();
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(inactiveFlangeMount).valid);
+    const rws::AdapterPatchCompileResult inactiveFlange = registry.compilePatch(
+        {&inactiveFlangeMount, &flangeY,
+         {{"flange-y", rws::DesignVariableUnit::Metres, 0.4, "",
+           rws::SemanticKind::FlangeTy, "flange-pose:flange"}}}, capabilities);
+    REQUIRE(!inactiveFlange.ok);
+    REQUIRE(hasAdapterDiagnostic(inactiveFlange.diagnostics,
+                                 "FLANGE_POSE_INDEPENDENT_FLANGE_REQUIRED"));
+
+    // Even if the active path reaches the flange through a movable joint, an
+    // additional side fixed edge makes the flange installation ambiguous.
+    rws::CanonicalKinematicModel multipleFlangeInputs = baseline;
+    multipleFlangeInputs.joints[2].childFrameId = "flange";
+    multipleFlangeInputs.deviceChains[0].tipFrameId = "flange";
+    multipleFlangeInputs.deviceChains[0].orderedJointIds.pop_back();
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(multipleFlangeInputs).valid);
+    const rws::AdapterPatchCompileResult multipleInputs = registry.compilePatch(
+        {&multipleFlangeInputs, &flangeY,
+         {{"flange-y", rws::DesignVariableUnit::Metres, 0.4, "",
+           rws::SemanticKind::FlangeTy, "flange-pose:flange"}}}, capabilities);
+    REQUIRE(!multipleInputs.ok);
+    REQUIRE(hasAdapterDiagnostic(multipleInputs.diagnostics,
+                                 "FLANGE_POSE_INDEPENDENT_FLANGE_REQUIRED"));
+
+    const rws::ParameterBinding nonIndependentFlange = poseBinding(
+        "bad-flange", rws::SemanticKind::FlangeTx, "FlangePoseAdapter",
+        rws::TargetObjectType::Frame, "flange", rws::TargetPropertyId::ParentToFlangeTranslationX,
+        "guide", "flange-pose:flange");
+    const rws::CanonicalKinematicModel noIndependentFlange = validCanonicalModelFixture();
+    const rws::AdapterPatchCompileResult blockedFlange = registry.compilePatch(
+        {&noIndependentFlange, &nonIndependentFlange,
+         {{"bad-flange", rws::DesignVariableUnit::Metres, 0.1, "",
+           rws::SemanticKind::FlangeTx, "flange-pose:flange"}}}, capabilities);
+    REQUIRE(!blockedFlange.ok);
+    REQUIRE(hasAdapterDiagnostic(blockedFlange.diagnostics,
+                                 "FLANGE_POSE_INDEPENDENT_FLANGE_REQUIRED"));
+
+    const rws::ParameterBinding tcpX = poseBinding(
+        "tcp-x", rws::SemanticKind::TcpTx, "TcpPoseAdapter", rws::TargetObjectType::ToolBinding,
+        "tool", rws::TargetPropertyId::FlangeToTcpTranslationX, "flange", "tcp-pose:tool");
+    const rws::AdapterPatchCompileResult tcpWithoutToolArtifacts = registry.compilePatch(
+        {&baseline, &tcpX, {{"tcp-x", rws::DesignVariableUnit::Metres, 0.15, "",
+                             rws::SemanticKind::TcpTx, "tcp-pose:tool"}}}, capabilities);
+    REQUIRE(!tcpWithoutToolArtifacts.ok);
+    REQUIRE(hasAdapterDiagnostic(tcpWithoutToolArtifacts.diagnostics,
+                                 "ADAPTER_REGISTRY_CAPABILITY_REQUIRED"));
+    capabilities.grant(rws::TargetObjectType::ToolBinding, "tool",
+                       rws::AdapterCapability::ParameterizedGeometry);
+    capabilities.grant(rws::TargetObjectType::ToolBinding, "tool",
+                       rws::AdapterCapability::ParameterizedCollision);
+    const rws::AdapterPatchCompileResult tcpPatch = registry.compilePatch(
+        {&baseline, &tcpX, {{"tcp-x", rws::DesignVariableUnit::Metres, 0.15, "",
+                             rws::SemanticKind::TcpTx, "tcp-pose:tool"}}}, capabilities);
+    REQUIRE(tcpPatch.ok);
+    REQUIRE(tcpPatch.patch.writes.size() == 1);
+    REQUIRE(tcpPatch.patch.writes.front().target.objectType == rws::TargetObjectType::ToolBinding);
+    REQUIRE(tcpPatch.patch.writes.front().target.objectId == "tool");
+    REQUIRE(tcpPatch.patch.writes.front().target.coordinateFrameId == "flange");
+    REQUIRE(std::fabs(tcpPatch.patch.writes.front().value.scalarValue - 0.35) < 1e-12);
+    rws::ParameterBinding tcpMissingBindingVersion = tcpX;
+    tcpMissingBindingVersion.bindingVersion = 0;
+    rws::TcpPoseAdapter directTcp;
+    const rws::AdapterPatchCompileResult directTcpMalformed = directTcp.compilePatch(
+        {&baseline, &tcpMissingBindingVersion,
+         {{"tcp-x", rws::DesignVariableUnit::Metres, 0.15, "",
+           rws::SemanticKind::TcpTx, "tcp-pose:tool"}}});
+    REQUIRE(!directTcpMalformed.ok);
+    REQUIRE(hasAdapterDiagnostic(directTcpMalformed.diagnostics,
+                                 "PARAMETER_BINDING_VERSION_INVALID"));
+
+    // The typed writer key makes a bad shared TCP/Flange target fail before a
+    // candidate is ever created, rather than silently choosing one adapter.
+    rws::ParameterBinding flangeClaimsTcp = flangeY;
+    flangeClaimsTcp.targetObjectType = rws::TargetObjectType::ToolBinding;
+    flangeClaimsTcp.targetObjectId = "tool";
+    flangeClaimsTcp.targetPropertyId = rws::TargetPropertyId::FlangeToTcpTranslationX;
+    flangeClaimsTcp.coordinateFrameId = "flange";
+    flangeClaimsTcp.writeSet = {{rws::TargetObjectType::ToolBinding, "tool",
+                                 rws::TargetPropertyId::FlangeToTcpTranslationX, "flange"}};
+    rws::DesignVariableDefinition flangeVariable;
+    flangeVariable.id = "flange-conflict";
+    flangeVariable.bindingId = flangeClaimsTcp.id;
+    rws::DesignVariableDefinition tcpVariable;
+    tcpVariable.id = "tcp-conflict";
+    tcpVariable.bindingId = tcpX.id;
+    const rws::WriteSetValidationResult conflict = rws::WriteSetValidator::validate(
+        {flangeVariable, tcpVariable}, {flangeClaimsTcp, tcpX});
+    REQUIRE(!conflict.valid);
+    REQUIRE(hasAdapterDiagnostic(conflict.diagnostics, "PARAMETER_WRITE_CONFLICT"));
 }
 
 // =============================================================================
@@ -1695,6 +6551,111 @@ static void testJsonRoundTrip()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 0/S07: Persisted structure-optimization JSON must remain valid when
+// numerical evaluation data is unavailable.  Unknown forward-compatible fields
+// are carried through a legacy read/save cycle, while unknown enum strings are
+// rejected instead of being silently treated as a valid default.
+static void testJsonSafetyContract()
+{
+    std::printf("testJsonSafetyContract ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.variables = {
+        {"distance", "Distance", "joint1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         std::numeric_limits<double>::quiet_NaN(),
+         -std::numeric_limits<double>::infinity(),
+         std::numeric_limits<double>::infinity(), 0.1}
+    };
+
+    const QJsonDocument problemDocument = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::problemToJson(problem)));
+    REQUIRE(!problemDocument.isNull());
+    const QJsonObject serializedVariable =
+        problemDocument.object().value("variables").toArray().at(0).toObject();
+    REQUIRE(serializedVariable.value("unit").toString() == "mm");
+    REQUIRE(serializedVariable.value("currentValue").isNull());
+    REQUIRE(serializedVariable.value("minimum").isNull());
+    REQUIRE(serializedVariable.value("maximum").isNull());
+
+    rws::StructureOptimizationResult result;
+    rws::StructureCandidateResult candidate;
+    candidate.index = 7;
+    candidate.totalScore = std::numeric_limits<double>::infinity();
+    candidate.values = {std::numeric_limits<double>::quiet_NaN(),
+                        -std::numeric_limits<double>::infinity()};
+    result.candidates.push_back(candidate);
+    const QJsonDocument resultDocument = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::resultToJson(problem, result)));
+    REQUIRE(!resultDocument.isNull());
+    const QJsonObject serializedCandidate =
+        resultDocument.object().value("candidates").toArray().at(0).toObject();
+    REQUIRE(serializedCandidate.value("totalScore").isNull());
+    REQUIRE(serializedCandidate.value("totalScoreAvailability").toString() == "Unavailable");
+    const QJsonArray serializedValues = serializedCandidate.value("values").toArray();
+    REQUIRE(serializedValues.at(0).isNull());
+    REQUIRE(serializedValues.at(1).isNull());
+
+    const std::string legacyWithExtension = R"json({
+        "schemaVersion": 1,
+        "type": "StructureOptimizationProblem",
+        "weights": {},
+        "futureVendorField": {"revision": 3},
+        "extensions": {"futureExtension": ["keep", 5]}
+    })json";
+    rws::StructureOptimizationProblem parsed;
+    std::string error;
+    REQUIRE(rws::StructureOptimizationJson::problemFromJson(
+        legacyWithExtension, parsed, &error));
+    const QJsonDocument roundTripped = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::problemToJson(parsed)));
+    REQUIRE(roundTripped.object().value("extensions").toObject().value("futureVendorField").
+            toObject().value("revision").toInt() == 3);
+    REQUIRE(roundTripped.object().value("extensions").toObject().value("futureExtension").
+            toArray().at(0).toString() == "keep");
+
+    const std::string unknownVariableKind = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "variables": [{"kind": "FutureVariableKind"}]
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        unknownVariableKind, parsed, &error));
+    REQUIRE(error.find("FutureVariableKind") != std::string::npos);
+
+    const std::string unknownEnumValues = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "constraints": [{"kind": "FutureConstraintKind"}]
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        unknownEnumValues, parsed, &error));
+    REQUIRE(error.find("FutureConstraintKind") != std::string::npos);
+
+    const std::string unknownWorkspaceMode = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "evaluationConfig": {"quickWorkspace": {"mode": 99}}
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        unknownWorkspaceMode, parsed, &error));
+    REQUIRE(error.find("WorkspaceSamplingMode") != std::string::npos);
+
+    const std::string unknownStrategy = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "runConfig": {"strategy": 99}
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        unknownStrategy, parsed, &error));
+    REQUIRE(error.find("StructureStrategyKind") != std::string::npos);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 审计证据输出:构造带模型溯源(源路径/源指纹/快照指纹)与区域级覆盖率
 // 指标的候选结果,验证报告、结果 JSON、审计 CSV 三种导出形式都保留证据阶段统计、
 // 灵敏度来源与关键变量、各区域覆盖率及本地参考系,供工程师复核是哪个工装区域
@@ -2030,10 +6991,13 @@ static void testSharedTargetEvaluatorConsistency()
     REQUIRE(built.ok);
     REQUIRE(!built.artifact.collisionDetector.isNull());
     if (!built.ok) return;
+    rw::kinematics::State referenceState = built.artifact.state;
+    built.artifact.device->setQ(rw::math::Q(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7),
+                                referenceState);
 
     const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
         built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
-        built.artifact.state);
+        referenceState);
     const rw::math::RPY<> targetRpy(worldTtcp.R());
 
     rws::RequirementExecutionTask requirementTask;
@@ -2159,9 +7123,12 @@ static void testVerifiedRegionUsesSharedEvaluator()
         rws::CandidateModelFactory().build(buildRequest);
     REQUIRE(built.ok);
     if (!built.ok) return;
+    rw::kinematics::State referenceState = built.artifact.state;
+    built.artifact.device->setQ(rw::math::Q(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7),
+                                referenceState);
     const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
         built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
-        built.artifact.state);
+        referenceState);
     const rw::math::RPY<> currentRpy(worldTtcp.R());
 
     rws::RequirementExecutionRegion region;
@@ -2237,10 +7204,13 @@ static void testVerifiedRegionPreservesPositionCoverage()
         rws::CandidateModelFactory().build(buildRequest);
     REQUIRE(built.ok);
     if (!built.ok) return;
+    rw::kinematics::State referenceState = built.artifact.state;
+    built.artifact.device->setQ(rw::math::Q(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7),
+                                referenceState);
 
     const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
         built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
-        built.artifact.state);
+        referenceState);
     const rw::math::Vector3D<> orientationTarget =
         worldTtcp.P() + worldTtcp.R().getCol(2);
 
@@ -2268,7 +7238,7 @@ static void testVerifiedRegionPreservesPositionCoverage()
     contextInput.workcell = built.artifact.workcell;
     contextInput.device = built.artifact.device;
     contextInput.tcpFrame = built.artifact.tcpFrame;
-    contextInput.baseState = built.artifact.state;
+    contextInput.baseState = referenceState;
     contextInput.modelFingerprint = "position-versus-orientation-model";
     contextInput.environmentFingerprint = "position-versus-orientation-environment";
     contextInput.thresholds = problem.evaluation.thresholds;
@@ -3082,13 +8052,20 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     region.directionSamples = 2;
     region.rollSamples = 3;
     region.minimumOrientationCoverage = 0.5;
-    region.minimumVerificationStage = rws::RequirementVerificationStage::Quick;
+    region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
     region.collisionFreeRequired = false;
     artifact.compiled.workspaceRegions.push_back(region);
 
-    // 结构优化适配器只接受 v4 工件，因此测试须手工构造与 compiled 快照一致的执行契约
-    // (execution)：provenance 逐项对齐工件顶层指纹，工位与覆盖盒从 compiled 投影而来，
-    // 最后计算执行指纹。这样适配器的一致性审计(validateExecutionConsistency)才会通过。
+    // Excluded entries do not become executable tasks, but their reason must
+    // remain in the frozen execution diagnostics for downstream audit.
+    rws::CompiledPoseTask excludedShouldStation = shouldStation;
+    excludedShouldStation.id = "optional_legacy_station";
+    excludedShouldStation.compileState = rws::RequirementCompileState::Excluded;
+    excludedShouldStation.excludedReason = "REQ_FRAME_NOT_RESOLVED";
+    artifact.compiled.poseTasks.push_back(excludedShouldStation);
+
+    // 结构优化器只消费冻结 execution 契约：provenance 与顶层指纹逐项对齐，
+    // 工位与覆盖盒作为完整已冻结执行输入，最后计算其不可变执行指纹。
     artifact.execution.schemaVersion = 1;
     artifact.execution.provenance.requirementFingerprint = artifact.requirementFingerprint;
     artifact.execution.provenance.robotModelFingerprint = artifact.modelBinding.robotModelFingerprint;
@@ -3099,6 +8076,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     artifact.execution.provenance.sourcePath = artifact.modelBinding.sourcePath;
     // 工位任务点从 compiled 投影到执行契约类型(枚举用 static_cast 同序映射)。
     for (const rws::CompiledPoseTask& source : artifact.compiled.poseTasks) {
+        if (source.compileState != rws::RequirementCompileState::Included) continue;
         rws::RequirementExecutionTask task;
         task.id = source.id;
         task.name = source.name;
@@ -3116,6 +8094,14 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         task.collisionFreeRequired = source.validation.collisionFreeRequired;
         artifact.execution.tasks.push_back(task);
     }
+    rws::RequirementExecutionDiagnostic excludedDiagnostic;
+    excludedDiagnostic.code = "REQ_FRAME_NOT_RESOLVED";
+    excludedDiagnostic.severity = rws::RequirementExecutionDiagnosticSeverity::Warning;
+    excludedDiagnostic.requirementId = excludedShouldStation.id;
+    excludedDiagnostic.field = "refFrame";
+    excludedDiagnostic.message = excludedShouldStation.excludedReason;
+    excludedDiagnostic.source = "EngineeringRequirements";
+    artifact.execution.diagnostics.push_back(excludedDiagnostic);
     // 覆盖盒同样投影到执行契约类型。
     for (const rws::WorkspaceDemandRegion& source : artifact.compiled.workspaceRegions) {
         rws::RequirementExecutionRegion executionRegion;
@@ -3164,7 +8150,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.requirementExecution.workspaceRegions.size() ==
             artifact.execution.workspaceRegions.size());
     REQUIRE(problem.requirementExecution.workspaceRegions.front().minimumVerificationStage ==
-            rws::RequirementExecutionStage::Quick);
+            rws::RequirementExecutionStage::Verified);
     REQUIRE(problem.requirementExecution.workspaceRegions.front().orientationMode ==
             artifact.execution.workspaceRegions.front().orientationMode);
     REQUIRE(problem.requirementExecution.workspaceRegions.front().orientationTargetPoint ==
@@ -3173,6 +8159,157 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(problem.requirementExecution.workspaceRegions.front().rollSamples == 3);
     REQUIRE(std::abs(problem.requirementExecution.workspaceRegions.front().minimumOrientationCoverage - 0.5) < 1e-12);
     REQUIRE(!problem.requirementExecution.workspaceRegions.front().collisionFreeRequired);
+    REQUIRE(problem.requirementExecution.diagnostics.size() == 1);
+    REQUIRE(problem.requirementExecution.diagnostics.front().requirementId ==
+            "optional_legacy_station");
+    REQUIRE(problem.requirementExecution.diagnostics.front().message ==
+            "REQ_FRAME_NOT_RESOLVED");
+
+    const auto requireFailedApplyUnchanged = [] (
+        const rws::StructureOptimizationProblem& before,
+        const rws::StructureOptimizationProblem& after) {
+        REQUIRE(rws::StructureOptimizationJson::problemToJson(after) ==
+                rws::StructureOptimizationJson::problemToJson(before));
+        REQUIRE(after.tasks.size() == before.tasks.size());
+        REQUIRE(after.context.taskPoints.size() == before.context.taskPoints.size());
+        REQUIRE(after.evaluation.coverageBoxes.size() == before.evaluation.coverageBoxes.size());
+        REQUIRE(after.requirementExecution.tasks.size() == before.requirementExecution.tasks.size());
+        REQUIRE(after.requirementExecution.workspaceRegions.size() ==
+                before.requirementExecution.workspaceRegions.size());
+        REQUIRE(after.requirementExecution.diagnostics.size() ==
+                before.requirementExecution.diagnostics.size());
+        REQUIRE(after.requirementProvenance.requirementFingerprint ==
+                before.requirementProvenance.requirementFingerprint);
+        REQUIRE(after.requirementProvenance.executionFingerprint ==
+                before.requirementProvenance.executionFingerprint);
+    };
+
+    // A Must execution item may never be silently skipped merely because its
+    // frozen compile state is Excluded or Invalid.
+    rws::FrozenRequirementArtifact excludedMustTaskArtifact = artifact;
+    excludedMustTaskArtifact.execution.tasks.front().compileState =
+        rws::RequirementExecutionCompileState::Excluded;
+    excludedMustTaskArtifact.executionFingerprint =
+        rws::RequirementExecutionJson::fingerprint(excludedMustTaskArtifact.execution);
+    const rws::StructureOptimizationProblem excludedMustTaskBaseline = problem;
+    rws::StructureOptimizationProblem excludedMustTaskTarget = excludedMustTaskBaseline;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        excludedMustTaskArtifact, excludedMustTaskTarget, &error));
+    REQUIRE(error.find("pick") != std::string::npos);
+    REQUIRE(error.find("Excluded") != std::string::npos);
+    requireFailedApplyUnchanged(excludedMustTaskBaseline, excludedMustTaskTarget);
+
+    rws::FrozenRequirementArtifact invalidMustRegionArtifact = artifact;
+    invalidMustRegionArtifact.execution.workspaceRegions.front().compileState =
+        rws::RequirementExecutionCompileState::Invalid;
+    invalidMustRegionArtifact.executionFingerprint =
+        rws::RequirementExecutionJson::fingerprint(invalidMustRegionArtifact.execution);
+    const rws::StructureOptimizationProblem invalidMustRegionBaseline = problem;
+    rws::StructureOptimizationProblem invalidMustRegionTarget = invalidMustRegionBaseline;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        invalidMustRegionArtifact, invalidMustRegionTarget, &error));
+    REQUIRE(error.find("work_area") != std::string::npos);
+    REQUIRE(error.find("Invalid") != std::string::npos);
+    requireFailedApplyUnchanged(invalidMustRegionBaseline, invalidMustRegionTarget);
+
+    rws::FrozenRequirementArtifact sourcePathMismatchArtifact = artifact;
+    sourcePathMismatchArtifact.execution.provenance.sourcePath = "tampered-requirements.json";
+    sourcePathMismatchArtifact.executionFingerprint =
+        rws::RequirementExecutionJson::fingerprint(sourcePathMismatchArtifact.execution);
+    REQUIRE(sourcePathMismatchArtifact.execution.provenance.sourcePath !=
+            sourcePathMismatchArtifact.modelBinding.sourcePath);
+    const rws::StructureOptimizationProblem sourcePathMismatchBaseline = problem;
+    rws::StructureOptimizationProblem sourcePathMismatchTarget = sourcePathMismatchBaseline;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        sourcePathMismatchArtifact, sourcePathMismatchTarget, &error));
+    REQUIRE(error.find("provenance") != std::string::npos);
+    requireFailedApplyUnchanged(sourcePathMismatchBaseline, sourcePathMismatchTarget);
+
+    // v4 execution is authoritative.  A stale compiled audit snapshot must
+    // neither reject the frozen execution contract nor leak its tasks/regions.
+    rws::FrozenRequirementArtifact compiledDriftArtifact = artifact;
+    compiledDriftArtifact.compiled.frozen = false;
+    compiledDriftArtifact.compiled.requirementFingerprint = "compiled-drift";
+    compiledDriftArtifact.compiled.modelBinding.robotModelFingerprint = "compiled-drift";
+    compiledDriftArtifact.compiled.poseTasks.clear();
+    compiledDriftArtifact.compiled.workspaceRegions.clear();
+    compiledDriftArtifact.compiled.diagnostics.clear();
+    rws::StructureOptimizationProblem executionAuthorityProblem = problem;
+    REQUIRE(rws::EngineeringRequirementArtifactAdapter::apply(
+        compiledDriftArtifact, executionAuthorityProblem, &error));
+    REQUIRE(executionAuthorityProblem.tasks.size() == artifact.execution.tasks.size());
+    REQUIRE(executionAuthorityProblem.tasks[0].point.id == "pick");
+    REQUIRE(executionAuthorityProblem.evaluation.coverageBoxes.size() == 1);
+    REQUIRE(executionAuthorityProblem.evaluation.coverageBoxes.front().id == "work_area");
+    REQUIRE(executionAuthorityProblem.requirementExecution.diagnostics.size() == 1);
+    REQUIRE(executionAuthorityProblem.requirementExecution.diagnostics.front().requirementId ==
+            "optional_legacy_station");
+
+    const auto requireProblemUnchanged = [] (const rws::StructureOptimizationProblem& before,
+                                             const rws::StructureOptimizationProblem& after) {
+        REQUIRE(rws::StructureOptimizationJson::problemToJson(after) ==
+                rws::StructureOptimizationJson::problemToJson(before));
+        REQUIRE(after.tasks.size() == before.tasks.size());
+        REQUIRE(after.context.taskPoints.size() == before.context.taskPoints.size());
+        REQUIRE(after.evaluation.coverageBoxes.size() == before.evaluation.coverageBoxes.size());
+        REQUIRE(after.requirementExecution.tasks.size() == before.requirementExecution.tasks.size());
+        REQUIRE(after.requirementExecution.workspaceRegions.size() ==
+                before.requirementExecution.workspaceRegions.size());
+        REQUIRE(after.requirementExecution.diagnostics.size() ==
+                before.requirementExecution.diagnostics.size());
+        REQUIRE(after.requirementProvenance.requirementFingerprint ==
+                before.requirementProvenance.requirementFingerprint);
+        REQUIRE(after.requirementProvenance.executionFingerprint ==
+                before.requirementProvenance.executionFingerprint);
+        REQUIRE(after.requirementExecution.provenance.requirementFingerprint ==
+                before.requirementExecution.provenance.requirementFingerprint);
+        if (after.tasks.empty() || after.context.taskPoints.empty() ||
+            after.evaluation.coverageBoxes.empty() || after.requirementExecution.tasks.empty() ||
+            after.requirementExecution.workspaceRegions.empty()) return;
+        REQUIRE(after.tasks.front().point.id == before.tasks.front().point.id);
+        REQUIRE(after.context.taskPoints.front().id == before.context.taskPoints.front().id);
+        REQUIRE(after.evaluation.coverageBoxes.front().id ==
+                before.evaluation.coverageBoxes.front().id);
+        REQUIRE(after.requirementExecution.tasks.front().id ==
+                before.requirementExecution.tasks.front().id);
+        REQUIRE(after.requirementExecution.workspaceRegions.front().id ==
+                before.requirementExecution.workspaceRegions.front().id);
+    };
+
+    // A malformed v4 execution contract must not be mistaken for a valid empty
+    // contract or atomically replace the problem with empty legacy projections.
+    const rws::StructureOptimizationProblem problemBeforeMalformedExecution = problem;
+    rws::FrozenRequirementArtifact fingerprintTamperedArtifact = artifact;
+    fingerprintTamperedArtifact.executionFingerprint = "tampered-execution-fingerprint";
+    rws::StructureOptimizationProblem fingerprintTarget = problemBeforeMalformedExecution;
+    error = "stale adapter error";
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        fingerprintTamperedArtifact, fingerprintTarget, &error));
+    REQUIRE(error.find("REQ_EXECUTION_FINGERPRINT_MISMATCH") != std::string::npos);
+    REQUIRE(error.find("stale adapter error") == std::string::npos);
+    requireProblemUnchanged(problemBeforeMalformedExecution, fingerprintTarget);
+
+    rws::FrozenRequirementArtifact invalidEnumArtifact = artifact;
+    invalidEnumArtifact.execution.tasks.front().level =
+        static_cast<rws::RequirementExecutionLevel>(999);
+    invalidEnumArtifact.executionFingerprint =
+        rws::RequirementExecutionJson::fingerprint(invalidEnumArtifact.execution);
+    rws::StructureOptimizationProblem invalidEnumTarget = problemBeforeMalformedExecution;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        invalidEnumArtifact, invalidEnumTarget, &error));
+    REQUIRE(error.find("REQ_EXECUTION_INVALID") != std::string::npos);
+    requireProblemUnchanged(problemBeforeMalformedExecution, invalidEnumTarget);
+
+    rws::FrozenRequirementArtifact provenanceTamperedArtifact = artifact;
+    provenanceTamperedArtifact.execution.provenance.environmentFingerprint =
+        "tampered-environment-fingerprint";
+    provenanceTamperedArtifact.executionFingerprint =
+        rws::RequirementExecutionJson::fingerprint(provenanceTamperedArtifact.execution);
+    rws::StructureOptimizationProblem provenanceTarget = problemBeforeMalformedExecution;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(
+        provenanceTamperedArtifact, provenanceTarget, &error));
+    requireProblemUnchanged(problemBeforeMalformedExecution, provenanceTarget);
+
     rws::StructureOptimizationProblem restoredProblem;
     const std::string problemJson = rws::StructureOptimizationJson::problemToJson(problem);
     REQUIRE(rws::StructureOptimizationJson::problemFromJson(
@@ -3192,11 +8329,20 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     REQUIRE(std::abs(restoredProblem.requirementExecution.workspaceRegions.front().minimumOrientationCoverage - 0.5) < 1e-12);
     REQUIRE(!restoredProblem.requirementExecution.workspaceRegions.front().collisionFreeRequired);
 
-    // 旧版 v3 工件必须被结构优化适配器拒绝，错误信息应明确要求 v4(带 Verified 证据)。
+    // v3 Quick-only 工件不能满足 Verified 请求，必须给出可机读的重冻结诊断。
     rws::FrozenRequirementArtifact legacyArtifact = artifact;
     legacyArtifact.schemaVersion = 3;
+    legacyArtifact.execution.workspaceRegions.front().minimumVerificationStage =
+        rws::RequirementExecutionStage::Quick;
     REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(legacyArtifact, problem, &error));
-    REQUIRE(error.find("v4") != std::string::npos);
+    REQUIRE(error.find("REQ_V3_REQUIRES_REFREEZE") != std::string::npos);
+
+    rws::FrozenRequirementArtifact mismatchedArtifact = artifact;
+    mismatchedArtifact.modelBinding.robotModelFingerprint = "wrong-model-fingerprint";
+    mismatchedArtifact.compiled.modelBinding.robotModelFingerprint =
+        mismatchedArtifact.modelBinding.robotModelFingerprint;
+    REQUIRE(!rws::EngineeringRequirementArtifactAdapter::apply(mismatchedArtifact, problem, &error));
+    REQUIRE(error.find("RobotModelSpec") != std::string::npos);
 
     // 追加第二个 Must 覆盖盒：compiled 与 execution 都必须同步加入，并重算执行指纹，
     // 保持两契约一致，否则适配器的一致性校验会失败。
@@ -5380,6 +10526,228 @@ int main(int argc, char** argv)
     if (suite == "abi") {
         QCoreApplication app(argc, argv);
         testHistoricalStructureOptimizerAbiRemainsLinkable();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "contracts") {
+        QCoreApplication app(argc, argv);
+        testOptimizationResultContract();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "kinematic_conventions") {
+        QCoreApplication app(argc, argv);
+        testKinematicConventions();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "canonical_model") {
+        QCoreApplication app(argc, argv);
+        testCanonicalKinematicModelValidation();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "canonical_fk") {
+        QCoreApplication app(argc, argv);
+        testCanonicalForwardKinematics();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "canonical_importer") {
+        QCoreApplication app(argc, argv);
+        testKinematicModelImporter();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "dh_projection") {
+        QCoreApplication app(argc, argv);
+        testDhProjection();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "kinematic_fingerprint") {
+        QCoreApplication app(argc, argv);
+        testKinematicFingerprint();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "canonical_shadow") {
+        QCoreApplication app(argc, argv);
+        testCanonicalModelShadow();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "design_variable") {
+        QCoreApplication app(argc, argv);
+        testTypedDesignVariableAndBinding();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "design_registry") {
+        QCoreApplication app(argc, argv);
+        testDesignSpaceRegistryCapabilities();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "design_template") {
+        QCoreApplication app(argc, argv);
+        testDesignTemplateApplication();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "parameterization") {
+        QCoreApplication app(argc, argv);
+        testParameterizationAndWriteSetValidation();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "derived_expression") {
+        QCoreApplication app(argc, argv);
+        testDerivedExpressionsAndDependencyGraph();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "design_space_compiler") {
+        QCoreApplication app(argc, argv);
+        testDesignSpaceCompiler();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "design_vector") {
+        QCoreApplication app(argc, argv);
+        testDesignVector();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "legacy_design_space") {
+        QCoreApplication app(argc, argv);
+        testLegacyDesignSpaceMigrationPreview();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "adapter_registry") {
+        QCoreApplication app(argc, argv);
+        testAdapterRegistryAndCandidatePatch();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "joint_origin_link_adapter") {
+        QCoreApplication app(argc, argv);
+        testJointOriginAndParameterizedLinkAdapters();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "joint_axis_adapter") {
+        QCoreApplication app(argc, argv);
+        testJointAxisAdapter();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "joint_zero_limit_adapter") {
+        QCoreApplication app(argc, argv);
+        testJointZeroAndLimitAdapters();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "base_flange_tcp_adapter") {
+        QCoreApplication app(argc, argv);
+        testBaseFlangeAndTcpAdapters();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "parameterized_geometry_collision_adapter") {
+        QCoreApplication app(argc, argv);
+        testParameterizedGeometryAndCollisionAdapters();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "candidate_patch_merge_apply") {
+        QCoreApplication app(argc, argv);
+        testCandidatePatchMergeAndApply();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "candidate_compiler") {
+        QCoreApplication app(argc, argv);
+        testCandidateCompiler();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "s38_projection") {
+        QCoreApplication app(argc, argv);
+        testS38ProjectionAndEvaluationDevice();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "evaluation_plan") {
+        QCoreApplication app(argc, argv);
+        testEvaluationPlanCompiler();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "evaluation_pipeline") {
+        QCoreApplication app(argc, argv);
+        testEvaluationPipelineAndMetricRegistry();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "constraint_objective") {
+        QCoreApplication app(argc, argv);
+        testConstraintObjectiveAggregation();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "task_evaluation_stage") {
+        QCoreApplication app(argc, argv);
+        testTaskEvaluationStage();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "spatial_evaluation_stages") {
+        QCoreApplication app(argc, argv);
+        testSpatialEvaluationStages();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "kinematic_metric_aggregator") {
+        QCoreApplication app(argc, argv);
+        testKinematicMetricAggregator();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "candidate_result") {
+        QCoreApplication app(argc, argv);
+        testCandidateResultAssembly();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "cache_key") {
+        QCoreApplication app(argc, argv);
+        testCanonicalCacheKey();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "initial_sampler") {
+        QCoreApplication app(argc, argv);
+        testDeterministicInitialSampler();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "json_safety") {
+        QCoreApplication app(argc, argv);
+        testJsonSafetyContract();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "json_roundtrip") {
+        QCoreApplication app(argc, argv);
+        testJsonRoundTrip();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "frozen_adapter") {
+        QCoreApplication app(argc, argv);
+        testFrozenEngineeringRequirementArtifactAdapter();
         return g_testFailures == 0 ? 0 : 1;
     }
 
