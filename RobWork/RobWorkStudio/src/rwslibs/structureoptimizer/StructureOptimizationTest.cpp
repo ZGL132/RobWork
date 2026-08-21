@@ -76,6 +76,7 @@
 #include "StructureOptimizationStrategy.hpp"
 #include "StructureSensitivityAnalyzer.hpp"
 #include "StructureOptimizationJson.hpp"
+#include "StructureOptimizationDocument.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -7460,6 +7461,183 @@ static void testJsonSafetyContract()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 6/S60：当前 JSON Envelope 契约测试。
+//
+// 这些断言刻意只关注持久化边界，而不依赖 UI 或运行时 WorkCell：当前文档必须有
+// 唯一根类型、各 canonical 分区的独立版本号、稳定的绑定元数据和可重现指纹；
+// 运行时指针、候选结果等不属于主配置，不能因为“顺手保存”而进入 Envelope。
+static void testCurrentJsonEnvelope()
+{
+    std::printf("testCurrentJsonEnvelope ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "S60Project";
+    problem.context.robotName = "S60Robot";
+    problem.variables = {
+        {"joint-offset", "Joint offset", "Joint1", "mm",
+         rws::StructureVariableKind::JointPositionX,
+         12.0, -25.0, 25.0, 1.0, 0.0, 0.5, true, false}
+    };
+    problem.variables[0].domainDefinition.domain = rws::DesignVariableDomain::Continuous;
+    problem.tasks.push_back({{}, true});
+    problem.tasks.back().point.id = "task-1";
+    problem.objectives.push_back({"reachability", rws::OptimizationDirection::Maximize,
+                                  {1.0, 0.0, true}, 1.0, true});
+    problem.metricConstraints.push_back({"collision.free_rate",
+                                         rws::ComparisonOperator::GreaterThanOrEqual,
+                                         0.9, true, true});
+    problem.extensions["vendorExtension"] = QJsonObject{{"revision", 3}};
+
+    const std::string json = rws::StructureOptimizationJson::currentEnvelopeToJson(problem);
+    const QJsonDocument document = QJsonDocument::fromJson(QByteArray::fromStdString(json));
+    REQUIRE(!document.isNull());
+    REQUIRE(document.isObject());
+    const QJsonObject root = document.object();
+    REQUIRE(root.value("type").toString() == "StructureOptimizationDocument");
+    REQUIRE(root.value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::SchemaVersion);
+
+    const QJsonObject designSpace = root.value("designSpace").toObject();
+    const QJsonObject binding = designSpace.value("bindings").toArray().at(0).toObject();
+    REQUIRE(designSpace.value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::DesignSpaceSchemaVersion);
+    REQUIRE(designSpace.value("variables").toArray().at(0).toObject().value("unit").toString() ==
+            "m");
+    REQUIRE(designSpace.value("variables").toArray().at(0).toObject().value("kind").toString() ==
+            "JointPositionX");
+    REQUIRE(binding.value("id").toString() == "joint-offset");
+    REQUIRE(binding.value("adapterId").toString() == "structure.legacy-variable");
+    REQUIRE(binding.value("version").toInt() == 1);
+    REQUIRE(!binding.contains("runtimePointer"));
+
+    REQUIRE(root.value("plan").toObject().value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::PlanSchemaVersion);
+    REQUIRE(root.value("objectives").toObject().value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::ObjectivesSchemaVersion);
+    REQUIRE(root.value("objectives").toObject().value("items").toArray().at(0)
+                .toObject().value("direction").toString() == "Maximize");
+    REQUIRE(root.value("constraints").toObject().value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::ConstraintsSchemaVersion);
+    REQUIRE(root.value("constraints").toObject().value("metric").toArray().at(0)
+                .toObject().value("comparison").toString() == "GreaterThanOrEqual");
+    REQUIRE(root.value("config").toObject().value("schemaVersion").toInt() ==
+            rws::StructureOptimizationDocument::ConfigSchemaVersion);
+    REQUIRE(root.value("results").isUndefined());
+    REQUIRE(json.find("runtimePointer") == std::string::npos);
+    REQUIRE(json.find("StructureOptimizationResult") == std::string::npos);
+    REQUIRE(root.value("extensions").toObject().value("vendorExtension")
+                .toObject().value("revision").toInt() == 3);
+
+    rws::StructureOptimizationProblem parsed;
+    std::string error;
+
+    // 当前 Envelope 的未知根字段必须归档到 extensions，不能在严格读取时静默丢失。
+    QJsonObject withFutureField = root;
+    withFutureField["futureRootField"] = QJsonObject{{"revision", 4}};
+    rws::StructureOptimizationProblem futureParsed;
+    REQUIRE(rws::StructureOptimizationJson::currentEnvelopeFromJson(
+        QJsonDocument(withFutureField).toJson(QJsonDocument::Compact).toStdString(),
+        futureParsed, &error));
+    REQUIRE(futureParsed.extensions.value("futureRootField").toObject()
+                .value("revision").toInt() == 4);
+
+    // Binding 是跨运行时适配器的持久化契约；缺少稳定 ID、适配器 ID 或版本号时，
+    // reader 必须拒绝，而不是生成一个无法重新绑定的半有效文档。
+    QJsonObject invalidBindingRoot = root;
+    QJsonArray invalidBindings = designSpace.value("bindings").toArray();
+    invalidBindings[0] = QJsonObject{{"id", "joint-offset"}};
+    QJsonObject invalidDesignSpace = designSpace;
+    invalidDesignSpace["bindings"] = invalidBindings;
+    invalidBindingRoot["designSpace"] = invalidDesignSpace;
+    rws::StructureOptimizationProblem invalidBindingProblem;
+    error.clear();
+    REQUIRE(!rws::StructureOptimizationJson::currentEnvelopeFromJson(
+        QJsonDocument(invalidBindingRoot).toJson(QJsonDocument::Compact).toStdString(),
+        invalidBindingProblem, &error));
+    REQUIRE(error.find("binding") != std::string::npos);
+
+    REQUIRE(rws::StructureOptimizationJson::currentEnvelopeFromJson(json, parsed, &error));
+    REQUIRE(parsed.variables.size() == 1);
+    REQUIRE(parsed.variables[0].unit == "m");
+    REQUIRE(std::abs(parsed.variables[0].currentValue - 0.012) < 1e-12);
+    REQUIRE(parsed.extensions.value("vendorExtension").toObject().value("revision").toInt() == 3);
+
+    const std::string firstFingerprint =
+        rws::StructureOptimizationJson::currentEnvelopeFingerprint(problem);
+    const std::string secondFingerprint =
+        rws::StructureOptimizationJson::currentEnvelopeFingerprint(
+            rws::StructureOptimizationJson::currentEnvelopeToJson(parsed));
+    REQUIRE(!firstFingerprint.empty());
+    REQUIRE(firstFingerprint == secondFingerprint);
+
+    // 对所有对象递归重排字段插入顺序，规范指纹必须保持不变。
+    std::function<QJsonValue(const QJsonValue&)> reverseObjectOrder =
+        [&reverseObjectOrder](const QJsonValue& value) -> QJsonValue {
+        if (value.isArray()) {
+            QJsonArray result;
+            for (const QJsonValue& item : value.toArray())
+                result.append(reverseObjectOrder(item));
+            return result;
+        }
+        if (!value.isObject()) return value;
+        const QJsonObject source = value.toObject();
+        const QStringList keys = source.keys();
+        QJsonObject result;
+        for (auto it = keys.crbegin(); it != keys.crend(); ++it)
+            result[*it] = reverseObjectOrder(source.value(*it));
+        return result;
+    };
+    const std::string reorderedJson = QJsonDocument(
+        reverseObjectOrder(document.object()).toObject()).toJson(QJsonDocument::Compact).toStdString();
+    REQUIRE(firstFingerprint == rws::StructureOptimizationJson::currentEnvelopeFingerprint(
+        reorderedJson));
+
+    // 非有限数值必须变成 null，不能产生非法 JSON 或隐式的伪零值。
+    problem.variables[0].currentValue = std::numeric_limits<double>::quiet_NaN();
+    const QJsonObject unsafe = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::currentEnvelopeToJson(problem)))
+                                   .object();
+    REQUIRE(unsafe.value("designSpace").toObject().value("variables").toArray().at(0)
+                .toObject().value("currentValue").isNull());
+    problem.variables[0].maximum = std::numeric_limits<double>::infinity();
+    const QJsonObject unsafeInf = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::currentEnvelopeToJson(problem)))
+                                         .object();
+    REQUIRE(unsafeInf.value("designSpace").toObject().value("variables").toArray().at(0)
+                .toObject().value("maximum").isNull());
+
+    // 写入门不能把无法解释的单位静默改标成 SI：未知单位或与变量种类不匹配的
+    // 单位必须让写出门显式失败，否则 canonical 文档会携带被伪造的米/弧度语义。
+    problem.variables[0].currentValue = 12.0;
+    problem.variables[0].minimum = -25.0;
+    problem.variables[0].maximum = 25.0;
+    problem.variables[0].step = 1.0;
+    problem.variables[0].preferredValue = 0.5;
+    auto writesRejected = [](const rws::StructureOptimizationProblem& candidate) {
+        try {
+            rws::StructureOptimizationJson::currentEnvelopeToJson(candidate);
+        } catch (const std::exception&) {
+            return true;
+        }
+        return false;
+    };
+    rws::StructureOptimizationProblem unknownUnit = problem;
+    unknownUnit.variables[0].unit = "in";
+    REQUIRE(writesRejected(unknownUnit));
+    rws::StructureOptimizationProblem missingUnit = problem;
+    missingUnit.variables[0].unit.clear();
+    REQUIRE(writesRejected(missingUnit));
+    rws::StructureOptimizationProblem wrongFamily = problem;
+    wrongFamily.variables[0].kind = rws::StructureVariableKind::JointRotationRoll;
+    wrongFamily.variables[0].unit = "mm";
+    REQUIRE(writesRejected(wrongFamily));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 审计证据输出:构造带模型溯源(源路径/源指纹/快照指纹)与区域级覆盖率
 // 指标的候选结果,验证报告、结果 JSON、审计 CSV 三种导出形式都保留证据阶段统计、
 // 灵敏度来源与关键变量、各区域覆盖率及本地参考系,供工程师复核是哪个工装区域
@@ -11607,6 +11785,12 @@ int main(int argc, char** argv)
     if (suite == "json_roundtrip") {
         QCoreApplication app(argc, argv);
         testJsonRoundTrip();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "current_json_envelope") {
+        QCoreApplication app(argc, argv);
+        testCurrentJsonEnvelope();
         return g_testFailures == 0 ? 0 : 1;
     }
 

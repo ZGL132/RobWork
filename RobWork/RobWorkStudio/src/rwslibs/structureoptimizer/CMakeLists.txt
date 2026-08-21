@@ -99,6 +99,7 @@ if(build)
         HybridStructureOptimizer.cpp
         StructureSensitivityAnalyzer.cpp
         StructureOptimizationJson.cpp
+        StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
         StructureCandidateExporter.cpp
@@ -200,6 +201,7 @@ if(build)
         HybridStructureOptimizer.hpp
         StructureSensitivityAnalyzer.hpp
         StructureOptimizationJson.hpp
+        StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
         StructureCandidateExporter.hpp
@@ -500,6 +502,15 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_controller_state_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_current_json_envelope_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> current_json_envelope
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_current_json_envelope_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

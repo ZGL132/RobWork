@@ -1,4 +1,5 @@
 #include "StructureOptimizationJson.hpp"
+#include "StructureOptimizationDocument.hpp"
 
 #include "KinematicBaselineSnapshot.hpp"
 
@@ -12,10 +13,15 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QCryptographicHash>
 
 #include <rw/math/Rotation3D.hpp>
 
 #include <cmath>
+#include <algorithm>
+#include <functional>
+#include <set>
+#include <stdexcept>
 
 namespace rws {
 
@@ -1502,6 +1508,395 @@ std::string StructureOptimizationJson::resultToJson(
 
     QJsonDocument doc(root);
     return doc.toJson(QJsonDocument::Indented).toStdString();
+}
+
+// =============================================================================
+//  S60 当前权威 JSON Envelope
+// =============================================================================
+
+namespace {
+
+// 当前文档的 canonical 单位始终是 SI。旧问题对象仍可能来自 UI，带有 mm/cm/deg
+// 等显示单位，因此这里只在写当前 Envelope 时做一次明确的边界转换；运行时对象
+// 本身不会被修改，也不会把显示单位重新写回 canonical 文档。无法解释的单位不允
+// 许进入当前文档，否则会伪造米/弧度语义。
+static bool isAngleVariable(const QString& kind)
+{
+    return kind == QLatin1String("JointRotationRoll") ||
+           kind == QLatin1String("JointRotationPitch") ||
+           kind == QLatin1String("JointRotationYaw");
+}
+
+// 只接受与变量种类同族、且含义明确的单位；返回 false 表示写出门必须拒绝。
+static bool siFactor(const QString& sourceUnit, bool angle, double* factor)
+{
+    const QString unit = sourceUnit.trimmed().toLower();
+    if (angle) {
+        if (unit == "rad") { *factor = 1.0; return true; }
+        if (unit == "deg" || unit == "degree" || unit == "degrees") {
+            *factor = 3.141592653589793238462643383279502884 / 180.0;
+            return true;
+        }
+        return false;
+    }
+    if (unit == "m") { *factor = 1.0; return true; }
+    if (unit == "mm") { *factor = 1.0e-3; return true; }
+    if (unit == "cm") { *factor = 1.0e-2; return true; }
+    if (unit == "um" || unit == "µm") { *factor = 1.0e-6; return true; }
+    return false;
+}
+
+static void convertVariableToSi(QJsonObject& variable)
+{
+    const QString kind = variable.value("kind").toString();
+    const bool angle = isAngleVariable(kind);
+    double factor = 0.0;
+    if (!siFactor(variable.value("unit").toString(), angle, &factor)) {
+        throw std::invalid_argument(
+            "StructureOptimizationJson: cannot interpret unit '" +
+            variable.value("unit").toString().toStdString() +
+            "' for kind '" + kind.toStdString() + "' as a canonical SI quantity.");
+    }
+    variable["unit"] = angle ? QStringLiteral("rad") : QStringLiteral("m");
+    const char* const numericFields[] = {
+        "currentValue", "minimum", "maximum", "step", "preferredValue"
+    };
+    for (const char* field : numericFields) {
+        const QJsonValue value = variable.value(QLatin1String(field));
+        if (value.isDouble()) variable[QLatin1String(field)] = jsonFiniteNumber(value.toDouble() * factor);
+    }
+    const QJsonArray oldOptions = variable.value("discreteOptions").toArray();
+    if (!oldOptions.isEmpty()) {
+        QJsonArray options;
+        for (const QJsonValue& option : oldOptions) {
+            bool ok = false;
+            const double number = option.toString().toDouble(&ok);
+            options.append(ok ? jsonFiniteNumber(number * factor) : option);
+        }
+        variable["discreteOptions"] = options;
+    }
+}
+
+// Qt 的 QJsonObject 保留插入顺序，而对象字段插入顺序不应改变文档身份。此递归
+// 编码器按 key 排序后再计算 SHA-256，数组顺序仍然保留，因为变量/任务的顺序是
+// 设计空间的语义组成部分。
+static QByteArray canonicalJsonValue(const QJsonValue& value)
+{
+    if (value.isObject()) {
+        const QJsonObject object = value.toObject();
+        QStringList keys = object.keys();
+        std::sort(keys.begin(), keys.end());
+        QByteArray result("{");
+        bool first = true;
+        for (const QString& key : keys) {
+            if (!first) result.append(',');
+            first = false;
+            const QByteArray encodedKey = QJsonDocument(QJsonObject{{key, key}})
+                .toJson(QJsonDocument::Compact);
+            const int colon = encodedKey.indexOf(':');
+            result.append(encodedKey.left(colon));
+            result.append(':');
+            result.append(canonicalJsonValue(object.value(key)));
+        }
+        result.append('}');
+        return result;
+    }
+    if (value.isArray()) {
+        QByteArray result("[");
+        const QJsonArray array = value.toArray();
+        for (int i = 0; i < array.size(); ++i) {
+            if (i != 0) result.append(',');
+            result.append(canonicalJsonValue(array.at(i)));
+        }
+        result.append(']');
+        return result;
+    }
+    if (value.isNull()) return QByteArray("null");
+    if (value.isBool()) return value.toBool() ? QByteArray("true") : QByteArray("false");
+    if (value.isDouble()) return QByteArray::number(value.toDouble(), 'g', 17);
+    if (value.isString()) {
+        const QByteArray encoded = QJsonDocument(QJsonArray{value})
+            .toJson(QJsonDocument::Compact);
+        return encoded.mid(1, encoded.size() - 2);
+    }
+    return QByteArray("null");
+}
+
+static bool requireSection(const QJsonObject& root, const char* name, int version,
+                           std::string* error)
+{
+    const QJsonValue sectionValue = root.value(QLatin1String(name));
+    if (!sectionValue.isObject() || sectionValue.toObject().value("schemaVersion").toInt() != version) {
+        if (error != nullptr)
+            *error = std::string("Current Envelope missing or unsupported section: ") + name;
+        return false;
+    }
+    return true;
+}
+
+// 当前 Envelope 的根字段与旧 problem 文档不同，因此不能直接复用旧 reader 的
+// known-key 表。未知根字段统一进入 extensions；已声明的扩展若与协议字段冲突，
+// 立即拒绝，避免未来字段覆盖当前语义。
+static bool readCurrentEnvelopeExtensions(const QJsonObject& root,
+                                          QJsonObject& extensions,
+                                          std::string* error)
+{
+    auto isKnownRootKey = [](const QString& key) {
+        static const char* const keys[] = {
+            "type", "schemaVersion", "designSpace", "plan", "objectives",
+            "constraints", "config", "extensions"
+        };
+        for (const char* known : keys)
+            if (key == QLatin1String(known)) return true;
+        return false;
+    };
+
+    extensions = QJsonObject();
+    if (root.contains("extensions")) {
+        if (!root.value("extensions").isObject()) {
+            if (error != nullptr) *error = "Current Envelope extensions must be an object.";
+            return false;
+        }
+        const QJsonObject explicitExtensions = root.value("extensions").toObject();
+        for (const QString& key : explicitExtensions.keys()) {
+            if (isKnownRootKey(key)) {
+                if (error != nullptr)
+                    *error = "Current Envelope extensions cannot override root field '" +
+                             key.toStdString() + "'.";
+                return false;
+            }
+            extensions.insert(key, explicitExtensions.value(key));
+        }
+    }
+    for (const QString& key : root.keys()) {
+        if (isKnownRootKey(key)) continue;
+        if (extensions.contains(key)) {
+            if (error != nullptr)
+                *error = "Current Envelope root extension field '" + key.toStdString() +
+                         "' conflicts with explicit extensions.";
+            return false;
+        }
+        extensions.insert(key, root.value(key));
+    }
+    return true;
+}
+
+// Binding 是持久化层与运行时适配器之间唯一稳定的连接点。这里只接受纯数据：
+// id/adapterId/version 必须存在且类型正确，且同一变量不能出现两个绑定。
+static bool validateCurrentBindings(const QJsonObject& designSpace, std::string* error)
+{
+    const QJsonArray variableArray = designSpace.value("variables").toArray();
+    const QJsonArray bindingArray = designSpace.value("bindings").toArray();
+    std::set<QString> variableIds;
+    for (const QJsonValue& value : variableArray) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Current Envelope designSpace variable must be an object.";
+            return false;
+        }
+        const QString id = value.toObject().value("id").toString();
+        if (id.isEmpty() || variableIds.find(id) != variableIds.end()) {
+            if (error != nullptr) *error = "Current Envelope variable ids must be unique and non-empty.";
+            return false;
+        }
+        variableIds.insert(id);
+    }
+    std::set<QString> bindingIds;
+    for (const QJsonValue& value : bindingArray) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Current Envelope binding must be an object.";
+            return false;
+        }
+        const QJsonObject binding = value.toObject();
+        const QJsonValue idValue = binding.value("id");
+        const QJsonValue adapterValue = binding.value("adapterId");
+        const QJsonValue versionValue = binding.value("version");
+        const QString id = idValue.toString();
+        const double version = versionValue.toDouble(-1.0);
+        if (!idValue.isString() || id.isEmpty() || !adapterValue.isString() ||
+            adapterValue.toString().isEmpty() || !versionValue.isDouble() ||
+            !std::isfinite(version) || version <= 0.0 || std::floor(version) != version ||
+            bindingIds.find(id) != bindingIds.end()) {
+            if (error != nullptr)
+                *error = "Current Envelope binding requires unique id, adapterId and positive version.";
+            return false;
+        }
+        if (variableIds.find(id) == variableIds.end()) {
+            if (error != nullptr)
+                *error = "Current Envelope binding references an unknown variable id '" +
+                         id.toStdString() + "'.";
+            return false;
+        }
+        const QJsonObject variable = [&variableArray, &id]() {
+            for (const QJsonValue& value : variableArray)
+                if (value.toObject().value("id").toString() == id) return value.toObject();
+            return QJsonObject();
+        }();
+        const QString expectedUnit = isAngleVariable(variable.value("kind").toString())
+                                         ? QStringLiteral("rad")
+                                         : QStringLiteral("m");
+        if (variable.value("unit").toString() != expectedUnit ||
+            (binding.contains("unit") && binding.value("unit").toString() != expectedUnit)) {
+            if (error != nullptr)
+                *error = "Current Envelope designSpace values must use SI units for binding '" +
+                         id.toStdString() + "'.";
+            return false;
+        }
+        bindingIds.insert(id);
+    }
+    return true;
+}
+
+} // namespace
+
+std::string StructureOptimizationJson::currentEnvelopeToJson(
+    const StructureOptimizationProblem& problem)
+{
+    const QJsonDocument legacyDocument = QJsonDocument::fromJson(
+        QByteArray::fromStdString(problemToJson(problem)));
+    const QJsonObject legacy = legacyDocument.object();
+
+    QJsonObject root;
+    root["type"] = "StructureOptimizationDocument";
+    root["schemaVersion"] = StructureOptimizationDocument::SchemaVersion;
+
+    QJsonObject designSpace;
+    designSpace["schemaVersion"] = StructureOptimizationDocument::DesignSpaceSchemaVersion;
+    designSpace["context"] = legacy.value("context");
+    QJsonArray variables;
+    for (const QJsonValue& value : legacy.value("variables").toArray()) {
+        QJsonObject variable = value.toObject();
+        convertVariableToSi(variable);
+        variables.append(variable);
+    }
+    designSpace["variables"] = variables;
+    QJsonArray bindings;
+    for (const QJsonValue& value : variables) {
+        const QJsonObject variable = value.toObject();
+        QJsonObject binding;
+        binding["id"] = variable.value("id");
+        binding["adapterId"] = "structure.legacy-variable";
+        binding["version"] = StructureOptimizationDocument::BindingSchemaVersion;
+        binding["targetName"] = variable.value("targetName");
+        binding["kind"] = variable.value("kind");
+        binding["unit"] = variable.value("unit");
+        bindings.append(binding);
+    }
+    designSpace["bindings"] = bindings;
+    root["designSpace"] = designSpace;
+
+    QJsonObject plan;
+    plan["schemaVersion"] = StructureOptimizationDocument::PlanSchemaVersion;
+    plan["tasks"] = legacy.value("tasks");
+    root["plan"] = plan;
+
+    QJsonObject objectives;
+    objectives["schemaVersion"] = StructureOptimizationDocument::ObjectivesSchemaVersion;
+    objectives["items"] = legacy.value("objectives");
+    root["objectives"] = objectives;
+
+    QJsonObject constraints;
+    constraints["schemaVersion"] = StructureOptimizationDocument::ConstraintsSchemaVersion;
+    constraints["structural"] = legacy.value("constraints");
+    constraints["metric"] = legacy.value("metricConstraints");
+    root["constraints"] = constraints;
+
+    QJsonObject config;
+    config["schemaVersion"] = StructureOptimizationDocument::ConfigSchemaVersion;
+    config["weights"] = legacy.value("weights");
+    config["evaluation"] = legacy.value("evaluationConfig");
+    config["run"] = legacy.value("runConfig");
+    for (const char* key : {"engineeringRequirementProvenance", "requirementExecution",
+                            "frozenScenarioSnapshot", "canonicalModelShadow"}) {
+        if (legacy.contains(QLatin1String(key))) config[QLatin1String(key)] = legacy.value(QLatin1String(key));
+    }
+    root["config"] = config;
+    if (legacy.value("extensions").isObject()) root["extensions"] = legacy.value("extensions");
+
+    return QJsonDocument(root).toJson(QJsonDocument::Indented).toStdString();
+}
+
+bool StructureOptimizationJson::currentEnvelopeFromJson(
+    const std::string& json, StructureOptimizationProblem& problem, std::string* error)
+{
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(
+        QByteArray::fromStdString(json), &parseError);
+    if (!document.isObject()) {
+        if (error != nullptr) *error = "Current Envelope JSON root is not an object.";
+        return false;
+    }
+    const QJsonObject root = document.object();
+    if (root.value("type").toString() != "StructureOptimizationDocument" ||
+        root.value("schemaVersion").toInt() != StructureOptimizationDocument::SchemaVersion) {
+        if (error != nullptr) *error = "Unsupported current StructureOptimizationDocument schema.";
+        return false;
+    }
+    if (!requireSection(root, "designSpace", StructureOptimizationDocument::DesignSpaceSchemaVersion, error) ||
+        !requireSection(root, "plan", StructureOptimizationDocument::PlanSchemaVersion, error) ||
+        !requireSection(root, "objectives", StructureOptimizationDocument::ObjectivesSchemaVersion, error) ||
+        !requireSection(root, "constraints", StructureOptimizationDocument::ConstraintsSchemaVersion, error) ||
+        !requireSection(root, "config", StructureOptimizationDocument::ConfigSchemaVersion, error))
+        return false;
+
+    const QJsonObject designSpace = root.value("designSpace").toObject();
+    const QJsonObject plan = root.value("plan").toObject();
+    const QJsonObject objectives = root.value("objectives").toObject();
+    const QJsonObject constraints = root.value("constraints").toObject();
+    const QJsonObject config = root.value("config").toObject();
+    if (!designSpace.value("context").isObject() || !designSpace.value("variables").isArray() ||
+        !designSpace.value("bindings").isArray() || !plan.value("tasks").isArray() ||
+        !objectives.value("items").isArray() || !constraints.value("structural").isArray() ||
+        !constraints.value("metric").isArray()) {
+        if (error != nullptr) *error = "Current Envelope canonical section has invalid shape.";
+        return false;
+    }
+    if (!validateCurrentBindings(designSpace, error)) return false;
+
+    QJsonObject legacy;
+    legacy["schemaVersion"] = SchemaVersion;
+    legacy["type"] = "StructureOptimizationProblem";
+    legacy["context"] = designSpace.value("context");
+    legacy["variables"] = designSpace.value("variables");
+    legacy["tasks"] = plan.value("tasks");
+    legacy["objectives"] = objectives.value("items");
+    legacy["constraints"] = constraints.value("structural");
+    legacy["metricConstraints"] = constraints.value("metric");
+    legacy["weights"] = config.value("weights");
+    legacy["evaluationConfig"] = config.value("evaluation");
+    legacy["runConfig"] = config.value("run");
+    for (const char* key : {"engineeringRequirementProvenance", "requirementExecution",
+                            "frozenScenarioSnapshot", "canonicalModelShadow"}) {
+        if (config.contains(QLatin1String(key))) legacy[QLatin1String(key)] = config.value(QLatin1String(key));
+    }
+    QJsonObject extensions;
+    if (!readCurrentEnvelopeExtensions(root, extensions, error)) return false;
+    if (!extensions.isEmpty()) legacy["extensions"] = extensions;
+
+    StructureOptimizationProblem parsed;
+    std::string parseMessage;
+    if (!problemFromJson(QJsonDocument(legacy).toJson(QJsonDocument::Compact).toStdString(),
+                         parsed, &parseMessage)) {
+        if (error != nullptr) *error = "Current Envelope problem validation failed: " + parseMessage;
+        return false;
+    }
+    problem = std::move(parsed);
+    if (error != nullptr) error->clear();
+    return true;
+}
+
+std::string StructureOptimizationJson::currentEnvelopeFingerprint(
+    const StructureOptimizationProblem& problem)
+{
+    return currentEnvelopeFingerprint(currentEnvelopeToJson(problem));
+}
+
+std::string StructureOptimizationJson::currentEnvelopeFingerprint(const std::string& json)
+{
+    QJsonParseError parseError;
+    const QJsonDocument document = QJsonDocument::fromJson(QByteArray::fromStdString(json), &parseError);
+    if (!document.isObject()) return std::string();
+    return QCryptographicHash::hash(canonicalJsonValue(document.object()), QCryptographicHash::Sha256)
+        .toHex().toStdString();
 }
 
 } // namespace rws

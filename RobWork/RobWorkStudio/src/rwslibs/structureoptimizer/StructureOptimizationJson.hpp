@@ -24,6 +24,19 @@ class StructureOptimizationJson {
     //! @brief 将优化问题 + 结果合并序列化为 JSON 字符串。
     static std::string resultToJson(const StructureOptimizationProblem& problem,
                                     const StructureOptimizationResult& result);
+
+    //! @brief 写出 S60 唯一当前 Envelope；旧 problemToJson 仅保留为兼容入口。
+    //! @throw std::invalid_argument 当变量单位无法解释为该种类的 canonical SI 单位时。
+    static std::string currentEnvelopeToJson(const StructureOptimizationProblem& problem);
+
+    //! @brief 严格读取当前 Envelope，不接受旧的根类型或缺失 canonical 分区。
+    static bool currentEnvelopeFromJson(const std::string& json,
+                                        StructureOptimizationProblem& problem,
+                                        std::string* error = nullptr);
+
+    //! @brief 对当前 Envelope 的规范紧凑 JSON 计算 SHA-256 指纹。
+    static std::string currentEnvelopeFingerprint(const StructureOptimizationProblem& problem);
+    static std::string currentEnvelopeFingerprint(const std::string& json);
 };
 
 } // namespace rws
