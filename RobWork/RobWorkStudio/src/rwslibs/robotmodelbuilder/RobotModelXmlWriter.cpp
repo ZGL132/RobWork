@@ -20,6 +20,7 @@
 #include <QTextStream>
 
 #include <cmath>
+#include <algorithm>
 #include <set>
 
 using namespace rws;
@@ -1265,19 +1266,25 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         }
     }
 
-    // 3. 动态配置末端工具坐标系 (TCP)
-    // 说明: TCP 默认挂载于运动链中最后一个“可动关节”上；若无可动关节则挂载至 Base
-    QString tcpRef = "Base";
+    // 3. 动态配置末端工具坐标系 (TCP)。Canonical projection may provide an
+    // explicit ToolFrame; in that case it is already emitted by the loop above
+    // and must not be shadowed by the historical zero TCP fallback.
+    const bool hasExplicitToolFrame = std::any_of(
+        spec.transformJoints.begin(), spec.transformJoints.end(),
+        [](const JointTransformSpec& joint) { return isToolFrameType(joint.type); });
     const std::vector< size_t > movable = movableJointIndices (spec);
-    if (!movable.empty ())
-        tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
+    if (!hasExplicitToolFrame) {
+        QString tcpRef = "Base";
+        if (!movable.empty ())
+            tcpRef = QString::fromStdString (spec.transformJoints[movable.back ()].name);
 
-    out << "  <Frame name=\"TCP\" refframe=\"" << xmlEscaped (tcpRef) << "\">\n";
-    out << "    <RPY>0 0 0</RPY>\n";
-    out << "    <Pos>0 0 0</Pos>\n";
-    if (spec.showFrameAxes)
-        out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
-    out << "  </Frame>\n";
+        out << "  <Frame name=\"TCP\" refframe=\"" << xmlEscaped (tcpRef) << "\">\n";
+        out << "    <RPY>0 0 0</RPY>\n";
+        out << "    <Pos>0 0 0</Pos>\n";
+        if (spec.showFrameAxes)
+            out << "    <Property name=\"ShowFrameAxis\">true</Property>\n";
+        out << "  </Frame>\n";
+    }
 
     // 4. 写入视觉几何绘制实体 (<Drawable>)
     if (spec.generateDrawables) {
