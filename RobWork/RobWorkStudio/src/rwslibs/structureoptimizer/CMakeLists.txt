@@ -38,6 +38,8 @@ if(build)
         FinalValidationPlan.cpp
         IndependentFinalVerifier.cpp
         CandidateEvaluationScheduler.cpp
+        OptimizationRunStateMachine.cpp
+        OptimizationCheckpoint.cpp
         CacheKey.cpp
         EvaluationCache.cpp
         DeterministicSeed.cpp
@@ -128,6 +130,8 @@ if(build)
         FinalValidationPlan.hpp
         IndependentFinalVerifier.hpp
         CandidateEvaluationScheduler.hpp
+        OptimizationRunStateMachine.hpp
+        OptimizationCheckpoint.hpp
         CacheKey.hpp
         EvaluationCache.hpp
         DeterministicSeed.hpp
@@ -480,6 +484,24 @@ if(build)
         add_test(
             NAME sdurws_structureoptimizer_candidate_evaluation_scheduler_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> candidate_evaluation_scheduler
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_optimization_checkpoint_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> optimization_checkpoint
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_optimization_checkpoint_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_controller_state_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> controller_state
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_controller_state_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
         set_tests_properties(
             sdurws_structureoptimizer_candidate_evaluation_scheduler_test

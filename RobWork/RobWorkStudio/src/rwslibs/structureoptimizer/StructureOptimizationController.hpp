@@ -2,6 +2,7 @@
 #define RWS_STRUCTUREOPTIMIZATION_STRUCTUREOPTIMIZATIONCONTROLLER_HPP
 
 #include "StructureOptimizationStrategy.hpp"
+#include "OptimizationRunStateMachine.hpp"
 
 #include <QFutureWatcher>
 #include <QObject>
@@ -104,6 +105,14 @@ public:
     bool isPaused() const;
     bool isBaselineRunning() const;
 
+    /**
+     * @brief 返回主优化会话的纯生命周期状态。
+     *
+     * 该查询只反映 start/pause/resume/cancel/finish 的调度状态，候选是否可行仍由
+     * StructureOptimizationResult 中的独立 CandidateResult 字段表达。
+     */
+    OptimizationRunState runState() const;
+
 Q_SIGNALS:
     /**
      * @brief 优化计算进度更新信号。
@@ -177,6 +186,8 @@ private:
     bool _paused = false;
     std::shared_ptr<OptimizationControlState> _baselineControl;
     bool _baselineRunning = false;
+    // 仅主优化会话使用该状态机；Baseline 有独立 watcher，不能伪装成同一队列的恢复点。
+    OptimizationRunStateMachine _runStateMachine;
 };
 
 } // namespace rws

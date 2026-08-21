@@ -54,6 +54,11 @@ bool StructureOptimizationController::start(
 {
     if (_running || _watcher.isRunning() || _baselineRunning || _baselineWatcher.isRunning())
         return false;
+    // 结束态必须先复位为 Idle 才能开始下一轮，防止旧会话的取消状态泄漏。
+    if (_runStateMachine.state() != OptimizationRunState::Idle)
+        _runStateMachine.reset();
+    if (!_runStateMachine.start().ok)
+        return false;
 
     _control.reset(new OptimizationControlState());
     setPaused(false);
@@ -166,6 +171,8 @@ void StructureOptimizationController::pause()
 {
     if (!_running || !_control)
         return;
+    if (!_runStateMachine.pause().ok)
+        return;
     {
         std::lock_guard<std::mutex> lock(_control->mutex);
         _control->paused.store(true);
@@ -176,6 +183,8 @@ void StructureOptimizationController::pause()
 void StructureOptimizationController::resume()
 {
     if (!_control)
+        return;
+    if (!_runStateMachine.resume().ok)
         return;
     {
         std::lock_guard<std::mutex> lock(_control->mutex);
@@ -197,6 +206,11 @@ void StructureOptimizationController::cancel()
         }
         control->condition.notify_all();
     };
+    // 对主会话使用幂等状态机；析构、项目关闭和用户按钮可安全重复调用 cancel。
+    const OptimizationRunState state = _runStateMachine.state();
+    if (state == OptimizationRunState::Running || state == OptimizationRunState::Paused ||
+        state == OptimizationRunState::CancelRequested)
+        _runStateMachine.requestCancel();
     cancelControl(_control);
     cancelControl(_baselineControl);
     setPaused(false);
@@ -239,6 +253,11 @@ bool StructureOptimizationController::isPaused() const
 bool StructureOptimizationController::isBaselineRunning() const
 {
     return _baselineRunning;
+}
+
+OptimizationRunState StructureOptimizationController::runState() const
+{
+    return _runStateMachine.state();
 }
 
 StructureOptimizationResult
@@ -322,6 +341,15 @@ void StructureOptimizationController::finishCurrentRun()
 
     setRunning(false);
     setPaused(false);
+
+    // Future 已收束后才允许离开运行态。受保护性异常会生成“无候选且有警告”的
+    // 硬失败；它必须进入 Failed。正常完成和协作取消则都进入 Completed，取消本身
+    // 是完整的调度终态，不应被误投影为工程计算失败。
+    if (hasFailure)
+        _runStateMachine.fail();
+    else if (_runStateMachine.state() == OptimizationRunState::Running ||
+             _runStateMachine.state() == OptimizationRunState::CancelRequested)
+        _runStateMachine.complete();
 
     if (hasFailure) {
         QString message = QString::fromStdString(result.warnings.front().code);

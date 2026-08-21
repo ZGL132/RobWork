@@ -958,3 +958,28 @@ evaluation pipeline until its designated later migration gates are complete.
   `independent_final_verifier`、`local_search`、`elite_selector`、
   `hybrid_optimizer` 四项也分别退出 0；CTest 注册列出全部 5 项，定向 CTest
   运行通过 5/5。
+
+## Phase 5 / S58 evidence (2026-08-21)
+
+- 前置审计确认已有 `StructureOptimizationController` 已拥有唯一的 QtConcurrent
+  主优化会话、暂停条件变量和协作式取消标记；S58 在该 Controller 上接入
+  `OptimizationRunStateMachine`，没有创建竞争性的第二 Controller。状态机将
+  `Idle -> Running -> Paused -> Running -> CancelRequested -> Completed` 等合法
+  转移冻结为纯核心规则，重复 cancel 保持幂等，受保护性异常形成的硬失败进入
+  `Failed`，而协作取消仍是可审计的 `Completed` 调度终态。
+- 新增纯核心 `OptimizationCheckpoint` 内存契约。检查点仅保存模型、环境、需求和
+  设计空间的内容指纹，随机 seed、下一个候选索引、待处理 stable index、已完成结果
+  与活动候选的部分结果；不保存 WorkCell、State、CollisionDetector、QObject 或
+  求解器指针。活动候选保存时被显式投影为 `Canceled + DataInsufficient`，保留
+  completedCount 和部分原因，禁止恢复后把不完整证据当作可行结论。
+- 恢复只接受四类当前输入指纹完全一致的 checkpoint；缺失指纹或任何不匹配均以
+  稳定诊断拒绝。随机 seed、队列顺序和已完成结果按原值保留，使上层可从同一
+  确定性采样/优化状态继续，而不重排已完成候选。
+- 所有新增状态转移、取消幂等、部分结果降级、指纹门控和 Controller 接线均加入
+  详细中文注释。Controller 的 UI 信号仍经既有 queued connection 发送，核心
+  checkpoint 不访问 UI 线程对象。
+- GREEN evidence: VS x64/MSVC Debug 构建成功；在 `QT_QPA_PLATFORM=windows` 下，
+  绝对路径 `optimization_checkpoint` focused suite 连续运行 5 次均退出 0，
+  `controller_state` suite 退出 0。CTest 注册列出 S56-S58 的 4 项定向测试，
+  定向 CTest 运行通过 4/4；相邻 `candidate_evaluation_scheduler` 和
+  `independent_final_verifier` focused suites 同样退出 0。

@@ -15,6 +15,8 @@
 #include "LocalSearch.hpp"
 #include "IndependentFinalVerifier.hpp"
 #include "CandidateEvaluationScheduler.hpp"
+#include "OptimizationRunStateMachine.hpp"
+#include "OptimizationCheckpoint.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
@@ -1098,6 +1100,70 @@ static void testCandidateEvaluationScheduler()
     REQUIRE(canceled.results.size() == 1);
     REQUIRE(started == 1);
     REQUIRE(canceled.results.front().stableIndex == 0);
+
+    std::printf("PASSED\n");
+}
+
+static void testOptimizationCheckpoint()
+{
+    std::printf("testOptimizationCheckpoint ... ");
+
+    // 状态机只允许有意义的生命周期转移，非法转移返回稳定诊断码。
+    rws::OptimizationRunStateMachine state;
+    REQUIRE(state.state() == rws::OptimizationRunState::Idle);
+    REQUIRE(state.start().ok);
+    REQUIRE(state.pause().ok);
+    REQUIRE(state.resume().ok);
+    REQUIRE(state.requestCancel().ok);
+    REQUIRE(state.requestCancel().ok); // cancel 必须幂等。
+    REQUIRE(state.complete().ok);
+    REQUIRE(state.state() == rws::OptimizationRunState::Completed);
+    REQUIRE(!state.pause().ok);
+    REQUIRE(state.pause().diagnostic == "RUN_PAUSE_NOT_ALLOWED");
+    state.reset();
+    REQUIRE(!state.resume().ok);
+    REQUIRE(state.resume().diagnostic == "RUN_RESUME_NOT_ALLOWED");
+
+    rws::OptimizationCheckpointFingerprints fingerprints;
+    fingerprints.model = "model-fingerprint";
+    fingerprints.environment = "environment-fingerprint";
+    fingerprints.requirements = "requirements-fingerprint";
+    fingerprints.designSpace = "design-space-fingerprint";
+
+    const rws::CandidateResult completed = makeFinalVerificationCandidate("completed");
+    rws::CandidateResult active = makeFinalVerificationCandidate("active");
+    active.completion.requestedCount = 10;
+    active.completion.completedCount = 3;
+    active.lifecycle = rws::CandidateLifecycle::Evaluating;
+    const auto checkpoint = rws::OptimizationCheckpoint::create(
+        fingerprints, 42, 7, {7, 8, 9}, {completed}, {active});
+    REQUIRE(checkpoint.valid());
+    REQUIRE(checkpoint.randomSeed == 42);
+    REQUIRE(checkpoint.nextCandidateIndex == 7);
+    REQUIRE(checkpoint.pendingStableIndices.size() == 3);
+    REQUIRE(checkpoint.completedResults.size() == 1);
+    REQUIRE(checkpoint.partialResults.size() == 1);
+    REQUIRE(checkpoint.partialResults.front().lifecycle == rws::CandidateLifecycle::Canceled);
+    REQUIRE(checkpoint.partialResults.front().feasibility == rws::Feasibility::DataInsufficient);
+    REQUIRE(checkpoint.partialResults.front().completion.canceled);
+    REQUIRE(checkpoint.partialResults.front().completion.completedCount == 3);
+
+    const auto restored = rws::restoreCheckpoint(checkpoint, fingerprints);
+    REQUIRE(restored.ok);
+    REQUIRE(restored.checkpoint.randomSeed == 42);
+    REQUIRE(restored.checkpoint.partialResults.size() == 1);
+
+    auto mismatched = fingerprints;
+    mismatched.environment = "changed-environment";
+    const auto rejected = rws::restoreCheckpoint(checkpoint, mismatched);
+    REQUIRE(!rejected.ok);
+    REQUIRE(rejected.diagnostic == "CHECKPOINT_FINGERPRINT_MISMATCH");
+
+    auto invalid = fingerprints;
+    invalid.designSpace.clear();
+    const auto invalidRestore = rws::restoreCheckpoint(checkpoint, invalid);
+    REQUIRE(!invalidRestore.ok);
+    REQUIRE(invalidRestore.diagnostic == "CHECKPOINT_CURRENT_FINGERPRINTS_INVALID");
 
     std::printf("PASSED\n");
 }
@@ -11206,12 +11272,14 @@ static void testStructureOptimizationControllerAsyncState()
     problem.run.candidateCount = 200;
     REQUIRE(controller.start(problem));
     REQUIRE(sawRunning);
+    REQUIRE(controller.runState() == rws::OptimizationRunState::Running);
 
     QEventLoop waitForProgress;
     QTimer::singleShot(80, &waitForProgress, SLOT(quit()));
     waitForProgress.exec();
     controller.pause();
     REQUIRE(sawPaused);
+    REQUIRE(controller.runState() == rws::OptimizationRunState::Paused);
     const int pausedCount = shared->progressCount;
 
     QEventLoop pausedLoop;
@@ -11220,12 +11288,15 @@ static void testStructureOptimizationControllerAsyncState()
     REQUIRE(shared->progressCount <= pausedCount + 1);
 
     controller.resume();
+    REQUIRE(controller.runState() == rws::OptimizationRunState::Running);
     QEventLoop resumedLoop;
     QTimer::singleShot(80, &resumedLoop, SLOT(quit()));
     resumedLoop.exec();
     REQUIRE(shared->progressCount > pausedCount);
 
     controller.cancel();
+    REQUIRE(controller.runState() == rws::OptimizationRunState::CancelRequested);
+    controller.cancel(); // 项目关闭与用户取消同时到达时必须安全幂等。
     QEventLoop finishedLoop;
     QObject::connect(&controller, &rws::StructureOptimizationController::completed,
                      &finishedLoop, [&finishedLoop](const rws::StructureOptimizationResult&) {
@@ -11238,6 +11309,7 @@ static void testStructureOptimizationControllerAsyncState()
     REQUIRE(sawCompleted);
     REQUIRE(completedCanceled);
     REQUIRE(!controller.isRunning());
+    REQUIRE(controller.runState() == rws::OptimizationRunState::Completed);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -11499,6 +11571,18 @@ int main(int argc, char** argv)
     if (suite == "candidate_evaluation_scheduler") {
         QCoreApplication app(argc, argv);
         testCandidateEvaluationScheduler();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "optimization_checkpoint") {
+        QCoreApplication app(argc, argv);
+        testOptimizationCheckpoint();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "controller_state") {
+        QCoreApplication app(argc, argv);
+        testStructureOptimizationControllerAsyncState();
         return g_testFailures == 0 ? 0 : 1;
     }
 
