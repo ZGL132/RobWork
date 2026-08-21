@@ -558,14 +558,41 @@ if(build)
             NAME sdurws_structureoptimizer_phase6_integration_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase6_integration
         )
+        # Phase 8 发布门：四个独立审计加一个聚合门，均使用同一绝对目标文件。
+        add_test(
+            NAME sdurws_structureoptimizer_phase8_acceptance_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase8_acceptance
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_phase8_performance_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase8_performance
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_phase8_resource_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase8_resource
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_phase8_manifest_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase8_manifest
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_phase8_release_gate
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> phase8_release_gate
+        )
         set_tests_properties(
             sdurws_structureoptimizer_run_snapshot_test
             sdurws_structureoptimizer_run_store_test
             sdurws_structureoptimizer_workflow_resolver_test
             sdurws_structureoptimizer_preflight_core_test
             sdurws_structureoptimizer_phase6_integration_test
+            sdurws_structureoptimizer_phase8_acceptance_test
+            sdurws_structureoptimizer_phase8_performance_test
+            sdurws_structureoptimizer_phase8_resource_test
+            sdurws_structureoptimizer_phase8_manifest_test
+            sdurws_structureoptimizer_phase8_release_gate
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+                ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
         set_tests_properties(
             sdurws_structureoptimizer_legacy_json_migration_test

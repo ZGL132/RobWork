@@ -12218,6 +12218,21 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    // Phase 8/S86：发布门聚合四个纯核心审计，便于本地和 CI 一次收集完整证据。
+    if (suite == "phase8_release_gate") {
+        QCoreApplication app(argc, argv);
+        testPhase8Acceptance();
+        testPhase8PerformanceAudit();
+        testPhase8ResourceAudit();
+        testPhase8ReleaseManifest();
+        if (g_testFailures == 0) {
+            std::printf("Phase 8 release gate passed.\n");
+            return 0;
+        }
+        std::printf("Phase 8 release gate FAILED (%d test(s)).\n", g_testFailures);
+        return 1;
+    }
+
     // Phase 6/S65：集成门把持久化、迁移、快照、失效和启动前置检查
     // 放在同一进程中回归，确保各边界契约可以连续协作且不会互相污染。
     if (suite == "phase6_integration") {
