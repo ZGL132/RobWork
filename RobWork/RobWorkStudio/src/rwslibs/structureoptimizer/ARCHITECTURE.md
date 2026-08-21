@@ -119,6 +119,10 @@
 | `StructureOptimizationExportService.hpp/.cpp` | 一站式导出服务 |
 | `StructureCandidateExporter.hpp/.cpp` | 候选模型 XML 导出 |
 | `StructureOptimizationReportWriter.hpp/.cpp` | Markdown 报告生成 |
+| `Phase8Acceptance.hpp/.cpp` | 全链确定性与可行性验收 |
+| `Phase8PerformanceAudit.hpp/.cpp` | 性能预算与运行诊断审计 |
+| `Phase8ResourceAudit.hpp/.cpp` | 资源、线程和取消安全审计 |
+| `Phase8ReleaseManifest.hpp/.cpp` | 发布清单、工件指纹和稳定 JSON |
 
 #### 测试（1 组）
 | 文件 | 角色 |
@@ -180,6 +184,30 @@ The `current_json_envelope`, `legacy_json_migration`, `run_snapshot`,
 `run_store`, `workflow_resolver`, `model_staleness`, `preflight_core`, and
 `phase6_integration` suites provide both isolated diagnostics and a continuous
 cross-boundary gate.
+
+## Phase 8 全链验收、性能审计与发布（2026-08-22）
+
+Phase 8 将“能运行”收口为可复现、可审计、可发布的准入契约。验收器只消费
+结构化核心数据，不从 Qt 文案推断状态：
+
+- `Phase8Acceptance` 比较重复运行的候选顺序、稳定索引、变量值、得分和可行性，
+  并拒绝缺失基线、错误 Feasible 标记、重复索引与非有限结果。
+- `Phase8PerformanceAudit` 校验生成/评估计数、模型构建和评估耗时、缓存命中率及
+  灵敏度计数。预算超限是 Warning；负数、计数矛盾或 NaN/Inf 是 Error。
+- `Phase8ResourceAudit` 检查运行控制器的 Idle/Completed/Failed 合法终态、重复启动
+  与并发基线，且拒绝结果或候选警告中的临时预览目录引用。
+- `Phase8ReleaseManifest` 记录产品版本、Envelope schema、评价器版本、构建标识、
+  必需工件和指纹。清单中的资源只能是项目相对 ID，稳定 JSON 会按工件 ID 排序，
+  并在序列化前拒绝绝对路径、临时路径及非有限数值。
+
+发布门必须保留以下证据：固定随机种子、输入模型/需求/环境指纹、性能审计摘要、
+候选/任务/审计 CSV、Markdown 报告和候选模型包。历史报告只按其自身 Envelope/schema
+版本读取；版本不兼容或指纹失效时只能显示历史证据，不得复用缓存或继续运行。
+
+发布前必须清理所有 `QTemporaryDir`、`structure-optimizer-preview-*` 目录和未发布的
+staging 工件；清单只能引用已登记的 ProjectResource。Windows GUI 测试需在 Visual
+Studio x64 开发环境中设置 `QT_QPA_PLATFORM=windows`，每次只启动一个绝对路径可执行文件，
+不得使用 `offscreen` 替代真实平台插件。
 
 ---
 

@@ -25,6 +25,7 @@ The plugin is split into two layers:
 - `StructureSensitivityAnalyzer` - Per-variable +/-step sensitivity analysis
 - `StructureOptimizationJson` / `StructureOptimizationCsv` - Export formats and audit CSV
 - `StructureCandidateExporter` - Candidate model XML packaging
+- `Phase8*` - Deterministic acceptance, performance/resource audits, and release manifest
 
 ## Scoring Formula
 
@@ -137,6 +138,14 @@ The setup bar supports the repeatable engineering sequence:
 The first phase evaluates structure dimensions and kinematics only. Trajectory,
 dynamics, motor, and reducer evaluators remain explicit extension points and are
 not enabled by these templates.
+
+### Phase 8 Release Gate
+
+See [PHASE8_RELEASE.md](PHASE8_RELEASE.md) for the fixed-seed reproduction commands,
+Windows Qt launch rules, performance-budget interpretation, historical-report rules,
+and release cleanup checklist. A release is admissible only when all four `phase8_*`
+model-only suites pass and the release manifest contains project-relative resource IDs
+and stable fingerprints.
 
 ## Accepted Example
 
