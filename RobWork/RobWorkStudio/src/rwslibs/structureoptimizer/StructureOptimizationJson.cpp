@@ -1438,6 +1438,19 @@ std::string StructureOptimizationJson::resultToJson(
     root["canceled"]              = result.canceled;
     root["baselineCandidateIndex"] = result.baselineCandidateIndex;
     root["bestCandidateIndex"]    = result.bestCandidateIndex;
+    QJsonObject baselineAudit;
+    baselineAudit["index"] = result.baselineAudit.index;
+    baselineAudit["candidateFingerprint"] =
+        QString::fromStdString(result.baselineAudit.candidateFingerprint);
+    baselineAudit["modelFingerprint"] =
+        QString::fromStdString(result.baselineAudit.modelFingerprint);
+    baselineAudit["environmentFingerprint"] =
+        QString::fromStdString(result.baselineAudit.environmentFingerprint);
+    baselineAudit["toolFingerprint"] =
+        QString::fromStdString(result.baselineAudit.toolFingerprint);
+    baselineAudit["planFingerprint"] =
+        QString::fromStdString(result.baselineAudit.planFingerprint);
+    root["baselineAudit"] = baselineAudit;
 
     // candidates — 摘要
     QJsonArray candArr;

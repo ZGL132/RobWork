@@ -459,6 +459,22 @@ struct StructureSensitivityResult
 // =============================================================================
 //  优化结果
 // =============================================================================
+/**
+ * @brief 基线候选的不可变审计身份。
+ *
+ * legacy candidates 仅用于现有 UI 展示；本结构保存新流水线的候选、模型、环境、
+ * 工具与计划指纹，避免后续候选投影覆盖基线的可追溯性。
+ */
+struct BaselineEvaluationAudit
+{
+    int index = -1;
+    std::string candidateFingerprint;
+    std::string modelFingerprint;
+    std::string environmentFingerprint;
+    std::string toolFingerprint;
+    std::string planFingerprint;
+};
+
 //! @brief 结构优化运行结果。
 struct StructureOptimizationResult
 {
@@ -469,6 +485,7 @@ struct StructureOptimizationResult
 
     int baselineCandidateIndex = -1;      //!< 基线候选解 (原始设计) 索引
     int bestCandidateIndex     = -1;      //!< 最佳候选解索引
+    BaselineEvaluationAudit baselineAudit; //!< 新流水线基线的审计身份
 
     std::vector< StructureCandidateResult > candidates;   //!< 所有候选解
     StructureRunDiagnostics                 diagnostics;   //!< 运行诊断

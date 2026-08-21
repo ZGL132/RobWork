@@ -9,6 +9,7 @@
 #include "OrientationCoverageStage.hpp"
 #include "KinematicMetricAggregator.hpp"
 #include "CandidateResult.hpp"
+#include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
 #include "DeterministicSeed.hpp"
@@ -4740,8 +4741,12 @@ static void testS38ProjectionAndEvaluationDevice()
     REQUIRE(flangeProjection.ok);
     REQUIRE(flangeProjection.spec.transformJoints.size() == 2);
     REQUIRE(flangeProjection.spec.transformJoints.back().type == "ToolFrame");
-    const auto flangeBuilt = rws::EvaluationDeviceBuilder::build(
-        {&flangeTool, "S38FlangeTool", "TCP", nullptr, false});
+    rws::EvaluationDeviceBuildRequest flangeRequest;
+    flangeRequest.model = &flangeTool;
+    flangeRequest.deviceName = "S38FlangeTool";
+    flangeRequest.tcpFrame = "TCP";
+    flangeRequest.checkCollision = false;
+    const auto flangeBuilt = rws::EvaluationDeviceBuilder::build(flangeRequest);
     REQUIRE(flangeBuilt.ok);
 
     rws::CanonicalKinematicModel installed = model;
@@ -4766,10 +4771,121 @@ static void testS38ProjectionAndEvaluationDevice()
     REQUIRE(installedProjection.ok);
     REQUIRE(std::fabs(installedProjection.spec.robotBaseFrame.pos[0] - 0.1) < 1e-12);
 
+    rws::EvaluationDeviceBuildRequest invalidRequest;
+    invalidRequest.deviceName = "S38ProjectionRobot";
+    invalidRequest.tcpFrame = "TCP";
+    invalidRequest.checkCollision = false;
     const rws::EvaluationDeviceBuildResult failed =
-        rws::EvaluationDeviceBuilder::build({nullptr, "S38ProjectionRobot", "TCP", nullptr, false});
+        rws::EvaluationDeviceBuilder::build(invalidRequest);
     REQUIRE(!failed.ok);
     REQUIRE(failed.artifact.workcell.isNull());
+}
+
+// S52: the baseline is a canonical candidate at stable index zero.  It must
+// traverse the same compiler and Verified task path as later candidates.
+static void testCanonicalBaselineEvaluationBridge()
+{
+    std::printf("testCanonicalBaselineEvaluationBridge ... ");
+    const rws::CanonicalKinematicModel model = s38ProjectionFixture();
+    const rws::KinematicBaselineSnapshotResult snapshot =
+        rws::KinematicBaselineSnapshot::create(model);
+    REQUIRE(snapshot.ok);
+    if (!snapshot.ok)
+        return;
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.deviceName = model.modelId;
+    problem.canonicalModelShadow.status = rws::CanonicalModelShadowStatus::Current;
+    problem.canonicalModelShadow.snapshot =
+        std::make_shared< rws::KinematicBaselineSnapshot >(snapshot.snapshot);
+    problem.requirementExecution.schemaVersion = 4;
+    problem.requirementExecution.provenance.requirementFingerprint = "s52-baseline";
+    rws::RequirementExecutionTask target;
+    target.id = "nominal-tcp";
+    target.refFrame = "Base";
+    target.tcpFrame = "TCP";
+    target.position = {{0.0, 0.0, 0.35}};
+    target.rpyDeg = {{0.0, 0.0, 0.0}};
+    target.positionToleranceMeters = 1e-6;
+    target.orientationToleranceDeg = 1e-4;
+    target.collisionFreeRequired = false;
+    problem.requirementExecution.tasks.push_back(target);
+
+    rws::CanonicalBaselineEvaluationRequest request;
+    request.problem = &problem;
+    request.deviceName = model.modelId;
+    request.tcpFrame = "TCP";
+    request.checkCollision = false;
+    request.planOptions.capabilities.insert("target");
+    const rws::BaselineEvaluationResult result =
+        rws::CanonicalBaselineEvaluationBridge::evaluate(request);
+
+    REQUIRE(result.ok);
+    REQUIRE(result.baselineIndex == 0);
+    REQUIRE(result.designVector.values.empty());
+    REQUIRE(result.candidateResult.lifecycle == rws::CandidateLifecycle::Completed);
+    REQUIRE(result.candidateResult.evidenceStage == rws::AnalysisEvidenceStage::Verified);
+    // This one-DOF fixture has evidence of an unreachable 6D target.  The
+    // baseline remains completed, is explicitly Infeasible, and carries the
+    // bridge warning instead of being silently discarded.
+    REQUIRE(result.candidateResult.feasibility == rws::Feasibility::Infeasible);
+    REQUIRE(!result.candidateResult.warnings.empty());
+    REQUIRE(!result.candidateFingerprint.empty());
+    REQUIRE(!result.modelFingerprint.empty());
+    REQUIRE(!result.planFingerprint.empty());
+    REQUIRE(result.plan.fingerprint == result.planFingerprint);
+    const rws::BaselineEvaluationResult repeated =
+        rws::CanonicalBaselineEvaluationBridge::evaluate(request);
+    REQUIRE(repeated.ok);
+    REQUIRE(repeated.baselineIndex == result.baselineIndex);
+    REQUIRE(repeated.candidateFingerprint == result.candidateFingerprint);
+    REQUIRE(repeated.planFingerprint == result.planFingerprint);
+    std::printf("PASSED\n");
+}
+
+// S52: the asynchronous controller keeps baseline provenance in its legacy
+// result instead of letting a later candidate/result projection overwrite it.
+static void testStructureOptimizationControllerBaselineBridge()
+{
+    std::printf("testStructureOptimizationControllerBaselineBridge ... ");
+    const rws::CanonicalKinematicModel model = s38ProjectionFixture();
+    const rws::KinematicBaselineSnapshotResult snapshot =
+        rws::KinematicBaselineSnapshot::create(model);
+    REQUIRE(snapshot.ok);
+    if (!snapshot.ok)
+        return;
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.deviceName = model.modelId;
+    problem.context.tcpFrame = "TCP";
+    problem.canonicalModelShadow.status = rws::CanonicalModelShadowStatus::Current;
+    problem.canonicalModelShadow.snapshot =
+        std::make_shared< rws::KinematicBaselineSnapshot >(snapshot.snapshot);
+    problem.requirementExecution.schemaVersion = 4;
+    problem.requirementExecution.provenance.requirementFingerprint = "s52-controller";
+
+    rws::StructureOptimizationController controller;
+    rws::StructureOptimizationResult completed;
+    bool received = false;
+    QEventLoop loop;
+    QObject::connect(&controller, &rws::StructureOptimizationController::baselineCompleted,
+                     [&completed, &received, &loop](const rws::StructureOptimizationResult& result) {
+                         completed = result;
+                         received = true;
+                         loop.quit();
+                     });
+    REQUIRE(controller.startBaselineEvaluation(problem));
+    QTimer::singleShot(5000, &loop, SLOT(quit()));
+    loop.exec();
+
+    REQUIRE(received);
+    REQUIRE(completed.baselineCandidateIndex == 0);
+    REQUIRE(!completed.baselineAudit.candidateFingerprint.empty());
+    REQUIRE(!completed.baselineAudit.modelFingerprint.empty());
+    REQUIRE(!completed.baselineAudit.planFingerprint.empty());
+    REQUIRE(completed.candidates.size() == 1);
+    REQUIRE(completed.candidates.front().index == completed.baselineCandidateIndex);
+    std::printf("PASSED\n");
 }
 
 static void testBaseFlangeAndTcpAdapters()
@@ -10676,6 +10792,13 @@ int main(int argc, char** argv)
     if (suite == "s38_projection") {
         QCoreApplication app(argc, argv);
         testS38ProjectionAndEvaluationDevice();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "canonical_baseline_bridge") {
+        QCoreApplication app(argc, argv);
+        testCanonicalBaselineEvaluationBridge();
+        testStructureOptimizationControllerBaselineBridge();
         return g_testFailures == 0 ? 0 : 1;
     }
 
