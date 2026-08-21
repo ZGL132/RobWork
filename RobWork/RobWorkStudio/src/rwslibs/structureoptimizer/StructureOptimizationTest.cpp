@@ -83,6 +83,7 @@
 #include "OptimizationRunStore.hpp"
 #include "StructureOptimizationWorkflowResolver.hpp"
 #include "OptimizationPreflight.hpp"
+#include "Phase8Acceptance.hpp"
 #include "StructureOptimizationCsv.hpp"
 #include "StructureVariableTableModel.hpp"
 #include "StructureVariableFilterProxyModel.hpp"
@@ -11397,6 +11398,51 @@ static void testOptimizationRunSnapshot()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// Phase 8/S81：验证重复运行的稳定候选身份、最佳候选门禁以及 DataInsufficient 保护。
+static void testPhase8Acceptance()
+{
+    std::printf("testPhase8Acceptance ... ");
+    rws::StructureOptimizationResult first;
+    first.baselineCandidateIndex = 0;
+    first.bestCandidateIndex = 1;
+    first.diagnostics.generatedCandidates = 2;
+    first.diagnostics.evaluatedCandidates = 2;
+    rws::StructureCandidateResult baseline;
+    baseline.index = 0;
+    baseline.status = rws::StructureCandidateStatus::Infeasible;
+    rws::StructureCandidateResult best;
+    best.index = 1;
+    best.status = rws::StructureCandidateStatus::Feasible;
+    best.feasible = true;
+    best.values = {0.5, 1.0};
+    best.totalScore = 82.0;
+    first.candidates = {baseline, best};
+    const rws::Phase8AcceptanceResult valid = rws::Phase8Acceptance::validateResult(first);
+    REQUIRE(valid.passed);
+
+    const rws::Phase8AcceptanceResult repeated =
+        rws::Phase8Acceptance::compareDeterministic(first, first);
+    REQUIRE(repeated.passed);
+
+    rws::StructureOptimizationResult changed = first;
+    changed.candidates[1].values[0] = 0.51;
+    const rws::Phase8AcceptanceResult mismatch =
+        rws::Phase8Acceptance::compareDeterministic(first, changed);
+    REQUIRE(!mismatch.passed);
+    REQUIRE(mismatch.hasCode("Phase8.Determinism.CandidateMismatch"));
+
+    rws::StructureOptimizationResult insufficient = first;
+    insufficient.candidates[1].status = rws::StructureCandidateStatus::Pending;
+    insufficient.candidates[1].feasible = true;
+    const rws::Phase8AcceptanceResult rejected =
+        rws::Phase8Acceptance::validateResult(insufficient);
+    REQUIRE(!rejected.passed);
+    REQUIRE(rejected.hasCode("Phase8.Candidate.FalseFeasible"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testOptimizationRunStore()
 {
     std::printf("testOptimizationRunStore ... ");
@@ -12023,6 +12069,12 @@ int main(int argc, char** argv)
     if (suite == "preflight_core") {
         QCoreApplication app(argc, argv);
         testOptimizationPreflightCore();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "phase8_acceptance") {
+        QCoreApplication app(argc, argv);
+        testPhase8Acceptance();
         return g_testFailures == 0 ? 0 : 1;
     }
 

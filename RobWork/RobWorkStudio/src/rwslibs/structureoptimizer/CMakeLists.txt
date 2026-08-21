@@ -105,6 +105,7 @@ if(build)
         OptimizationRunStore.cpp
         StructureOptimizationWorkflowResolver.cpp
         OptimizationPreflight.cpp
+        Phase8Acceptance.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -213,6 +214,7 @@ if(build)
         OptimizationRunStore.hpp
         StructureOptimizationWorkflowResolver.hpp
         OptimizationPreflight.hpp
+        Phase8Acceptance.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
