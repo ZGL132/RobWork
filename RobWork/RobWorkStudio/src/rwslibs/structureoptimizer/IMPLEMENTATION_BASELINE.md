@@ -983,3 +983,36 @@ evaluation pipeline until its designated later migration gates are complete.
   `controller_state` suite 退出 0。CTest 注册列出 S56-S58 的 4 项定向测试，
   定向 CTest 运行通过 4/4；相邻 `candidate_evaluation_scheduler` 和
   `independent_final_verifier` focused suites 同样退出 0。
+
+## Phase 6 / S60-S65 evidence (2026-08-21)
+
+- S60 defines `StructureOptimizationDocument` as the current authoritative JSON
+  Envelope. Canonical partitions carry independent schema versions; writes
+  normalize SI units and persist explicit bindings, while results and runtime
+  pointers stay out of the main configuration. Reads reject malformed or
+  incompatible canonical partitions and preserve unknown root fields as
+  extensions.
+- S61 provides a read-only legacy migration into the current Envelope. The
+  migration report retains warnings and unbound-variable diagnostics, and legacy
+  input is never rewritten in place.
+- S62 adds `OptimizationRunSnapshot`, `OptimizationRunJson`, and
+  `OptimizationRunStore`. Snapshots freeze project/model/environment/
+  requirement/design-space/evaluation fingerprints and toolchain identity;
+  candidate results and evidence are independent checksummed project-relative
+  resources.
+- S63 adds `StructureOptimizationWorkflowResolver`, which compares current and
+  persisted project identity and emits stable blocking/stale codes for model,
+  scene, environment, requirement, kinematic validation, TCP, evaluator,
+  compiler, and adapter changes.
+- S64 adds the pure-core `OptimizationPreflight` start gate with structured
+  findings for missing inputs, stale fingerprints, unavailable capabilities,
+  invalid normalization/evidence, unsafe Grid size, and count contradictions.
+- S65 adds the continuous `phase6_integration` gate and registers it beside the
+  isolated S60-S64 CTest entries, preserving both diagnosis and cross-boundary
+  coverage.
+- GREEN evidence: a fresh VS x64/MSVC Debug build of
+  `sdurws_structureoptimizer_test` succeeded. With `QT_QPA_PLATFORM=windows`,
+  the absolute-path executable passed `phase6_integration` (7 checks, exit 0),
+  and the isolated S60-S64 suites plus adjacent StructureOptimizer core suites
+  were run as the final gate. `git diff --check` passed with only existing
+  LF-to-CRLF conversion warnings.

@@ -109,6 +109,12 @@
 | `StructureOptimizationProjectAdapter.hpp/.cpp` | 项目文件的打开/保存 |
 | `StructureOptimizationProjectFactory.hpp/.cpp` | 从模型快照创建项目 |
 | `StructureOptimizationJson.hpp/.cpp` | JSON 序列化 |
+| `StructureOptimizationDocument.hpp/.cpp` | S60 当前权威 Envelope 的 schema 目录 |
+| `StructureOptimizationMigration.hpp/.cpp` | S61 旧版 JSON 单向迁移 |
+| `OptimizationRunSnapshot.hpp/.cpp` | S62 运行输入冻结与状态快照 |
+| `OptimizationRunStore.hpp/.cpp` | S62 候选结果/证据资源存储 |
+| `StructureOptimizationWorkflowResolver.hpp/.cpp` | S63 工作流失效与运行前置条件解析 |
+| `OptimizationPreflight.hpp/.cpp` | S64 纯核心启动前置检查 |
 | `StructureOptimizationCsv.hpp/.cpp` | CSV 导出（候选/任务明细/审计） |
 | `StructureOptimizationExportService.hpp/.cpp` | 一站式导出服务 |
 | `StructureCandidateExporter.hpp/.cpp` | 候选模型 XML 导出 |
@@ -146,6 +152,34 @@ These boundaries are covered by focused tests and by the full registered
 StructureOptimizer suite.  Phase 1 adds the canonical model as a core-only
 shadow; no UI or optimization workflow is switched until its FK equivalence
 gate has passed.
+
+## Phase 6 persistence, migration, and workflow invalidation (2026-08-21)
+
+Phase 6 makes persistence an explicit protocol boundary rather than a side
+effect of the legacy serializer:
+
+- `StructureOptimizationDocument` is the only current JSON Envelope. Each
+  canonical partition has its own schema version, SI units are validated at the
+  write/read boundary, and unknown root fields are preserved as extensions.
+- `StructureOptimizationMigration` accepts legacy JSON read-only and emits a
+  migration report plus a canonical Envelope; it never writes legacy fields
+  back into the current document.
+- `OptimizationRunSnapshot` freezes all input and toolchain fingerprints.
+  `OptimizationRunStore` writes candidate results and evidence as independent,
+  checksummed project-relative resources, keeping runtime pointers out of the
+  main configuration.
+- `StructureOptimizationWorkflowResolver` turns current/persisted identity
+  comparisons into stable stale and blocking codes. A stale project cannot
+  reuse an old cache or silently resume an incompatible run.
+- `OptimizationPreflight` is the pure-core start gate. It reports structured
+  findings for missing inputs, stale fingerprints, unavailable capabilities,
+  invalid normalization/evidence, and unsafe search sizes before any worker is
+  started.
+
+The `current_json_envelope`, `legacy_json_migration`, `run_snapshot`,
+`run_store`, `workflow_resolver`, `model_staleness`, `preflight_core`, and
+`phase6_integration` suites provide both isolated diagnostics and a continuous
+cross-boundary gate.
 
 ---
 

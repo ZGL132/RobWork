@@ -470,3 +470,17 @@ Phase 1 已关闭。Phase 2 仅可引入独立的类型化设计空间 POD 以�
 * 契约审计发现并修复一个缺口：写入门原先会把无法解释的单位（如 "in"、空串）静默改标为 m/rad，伪造 canonical 语义。现在 `siFactor` 只接受与变量种类同族的明确单位，其余情况 `currentEnvelopeToJson` 抛出 `std::invalid_argument`，写出门显式失败而不是产出损坏文档。
 
 * RED 证据一：新增断言暴露未知根字段被 reader 静默丢弃、缺失 id/adapterId/version 的 Binding 被接受，两处失败。RED 证据二：单位审计断言（未知单位/空单位/角度种类配长度单位）在收紧前全部失败（FAILED (3)）。GREEN 证据：VS x64/MSVC Debug 增量构建成功；`QT_QPA_PLATFORM=windows` 下绝对路径可执行文件 `current_json_envelope`、`json_roundtrip`、`json_safety` 与完整 `ui` 相邻回归退出代码均为 0；CTest 注册确认 25 个 structureoptimizer 测试项，`sdurws_structureoptimizer_current_json_envelope_test` 通过；`git diff --check` 无空白字符错误（仅既有 LF 转 CRLF 警告）。
+
+## Phase 6 / S61-S65 证据 (2026-08-21)
+
+* S61 将旧版根 JSON 作为只读输入迁入 S60 当前 Envelope。迁移结果保留显式迁移报告、警告和未绑定变量诊断；输入 JSON 不被回写，未知字段不会伪装成当前协议字段，迁移后的输出只能经 `currentEnvelopeToJson` 写出。
+
+* S62 新增 `OptimizationRunSnapshot`、`OptimizationRunJson` 和 `OptimizationRunStore`。运行快照冻结项目 Envelope、模型/环境/需求/设计空间/评估计划/最终验证计划、工具链和适配器注册表指纹；候选结果和证据以带 SHA-256、字节数和相对路径的项目资源引用保存，运行时指针、WorkCell、State、QObject 和求解器对象不进入持久化结果。
+
+* S63 新增 `StructureOptimizationWorkflowResolver`，把项目打开状态、绑定目标、当前与持久化指纹、评估器/编译器版本和适配器注册表统一解析为可启动、缓存可复用、历史运行可读三类门控结果。模型、场景、环境、需求、运动学验证、TCP、版本或适配器变化会生成稳定失效码；失效只能阻止复用，不能静默继续旧运行。
+
+* S64 新增纯核心 `OptimizationPreflight`。启动前逐项检查模型、需求、运动学验证、内容指纹、设计空间、适配器、指标、评估器、归一化、证据阶段、基线、独立变量、Grid 规模、候选/最终验证计数，并为每个发现提供稳定 code、对象、字段路径、中文说明和修复建议；现有 UI preflight 仍可复用同一入口。
+
+* S65 增加 `phase6_integration` 集成门，将当前 Envelope、旧版迁移、运行快照、运行资源存储、工作流失效、启动前检查和模型过期性放入同一进程连续回归；CTest 同时注册各独立套件和集成门，确保单项定位与跨边界协作均可审计。
+
+* GREEN 证据：VS x64/MSVC Debug 目标 `sdurws_structureoptimizer_test` 全新构建成功；`QT_QPA_PLATFORM=windows` 下绝对路径可执行文件的 `phase6_integration` 通过 7 项（退出代码 0），S60-S64 独立套件和相邻 StructureOptimizer 核心套件均作为最终门控运行；`git diff --check` 通过（仅既有 LF 转 CRLF 警告）。

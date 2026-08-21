@@ -12026,6 +12026,25 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    // Phase 6/S65：集成门把持久化、迁移、快照、失效和启动前置检查
+    // 放在同一进程中回归，确保各边界契约可以连续协作且不会互相污染。
+    if (suite == "phase6_integration") {
+        QCoreApplication app(argc, argv);
+        testCurrentJsonEnvelope();
+        testLegacyJsonMigration();
+        testOptimizationRunSnapshot();
+        testOptimizationRunStore();
+        testStructureOptimizationWorkflowResolver();
+        testOptimizationPreflightCore();
+        testProjectFactoryProvenance();
+        if (g_testFailures == 0) {
+            std::printf("Phase 6 integration gate passed.\n");
+            return 0;
+        }
+        std::printf("Phase 6 integration gate FAILED (%d test(s)).\n", g_testFailures);
+        return 1;
+    }
+
     if (suite == "frozen_adapter") {
         QCoreApplication app(argc, argv);
         testFrozenEngineeringRequirementArtifactAdapter();
