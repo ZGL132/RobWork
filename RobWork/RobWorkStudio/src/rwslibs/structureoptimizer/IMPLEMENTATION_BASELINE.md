@@ -868,6 +868,25 @@ evaluation pipeline until its designated later migration gates are complete.
   focused suites. The adjacent `quick_screening`, `cache_key`, and
   `initial_sampler` suites also exited 0.
 
+## Phase 5 / S55 evidence (2026-08-21)
+
+- S55 added a pure deterministic `LocalSearch` boundary. The implementation
+  generates single-variable and declared group neighbors in normalized design
+  coordinates, converts integer engineering steps without mixing units,
+  skips derived variables, supports Clamp/Reflect/Skip boundary handling,
+  removes duplicate vectors, applies improvement tolerance, enforces sweep
+  and evaluation budgets, and checks cancellation before each neighbor.
+- Every local neighbor is sent back through the caller's `Verified` evaluator;
+  only `Feasible + Verified` results that exceed the configured improvement
+  tolerance can replace the center. The implementation does not duplicate
+  CandidateCompiler or evaluator logic and does not claim global optimality.
+- RED evidence: the focused S55 build first failed because `LocalSearch.hpp`
+  was absent. GREEN evidence: a fresh VS x64/MSVC Debug build via
+  `scripts/build-msvc-debug.cmd sdurws_structureoptimizer_test` succeeded.
+  With `QT_QPA_PLATFORM=windows`, the absolute test executable exited 0 for
+  `local_search`; focused S54 `elite_selector` and `hybrid_optimizer` suites
+  remained green.
+
 ## Phase 5 / S51 evidence (2026-08-21)
 
 - Added deterministic `DeterministicSeed` and independent `InitialSampler`

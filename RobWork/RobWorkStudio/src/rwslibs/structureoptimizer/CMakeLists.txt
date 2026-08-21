@@ -34,6 +34,7 @@ if(build)
         QuickScreeningPolicy.cpp
         EliteSelector.cpp
         HybridOptimizer.cpp
+        LocalSearch.cpp
         CacheKey.cpp
         EvaluationCache.cpp
         DeterministicSeed.cpp
@@ -120,6 +121,7 @@ if(build)
         QuickScreeningPolicy.hpp
         EliteSelector.hpp
         HybridOptimizer.hpp
+        LocalSearch.hpp
         CacheKey.hpp
         EvaluationCache.hpp
         DeterministicSeed.hpp
@@ -448,6 +450,15 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_hybrid_optimizer_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
+        add_test(
+            NAME sdurws_structureoptimizer_local_search_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> local_search
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_local_search_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

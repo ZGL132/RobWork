@@ -12,6 +12,7 @@
 #include "QuickScreeningPolicy.hpp"
 #include "EliteSelector.hpp"
 #include "HybridOptimizer.hpp"
+#include "LocalSearch.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
 #include "CacheKey.hpp"
 #include "EvaluationCache.hpp"
@@ -766,6 +767,128 @@ static void testHybridOptimizer()
     REQUIRE(batchCanceled.canceled);
     REQUIRE(quickCalls == 4);
     REQUIRE(verifiedCalls == 0);
+
+    std::printf("PASSED\n");
+}
+
+static rws::CandidateResult makeLocalSearchResult(const std::vector<double>& design,
+                                                  double score,
+                                                  rws::Feasibility feasibility =
+                                                      rws::Feasibility::Feasible,
+                                                  rws::AnalysisEvidenceStage stage =
+                                                      rws::AnalysisEvidenceStage::Verified)
+{
+    rws::CandidateResult result = makeEliteCandidate("local", feasibility, stage, score, {});
+    result.representativeQ = design;
+    return result;
+}
+
+static void testLocalSearch()
+{
+    std::printf("testLocalSearch ... ");
+
+    std::vector<rws::LocalSearchVariable> variables = {
+        {"continuous", rws::VariableRole::Independent, rws::VariableDomain::Continuous,
+         0.0, 1.0, 0.25, 0, true, "arm"},
+        {"integer", rws::VariableRole::Independent, rws::VariableDomain::Integer,
+         0.0, 10.0, 2.0, 0, true, "arm"},
+        {"discrete", rws::VariableRole::Independent, rws::VariableDomain::Discrete,
+         0.0, 1.0, 0.0, 3, true, "tool"},
+        {"derived", rws::VariableRole::Derived, rws::VariableDomain::Continuous,
+         0.0, 1.0, 0.25, 0, true, "derived"}};
+    rws::LocalSearchCenter center;
+    center.stableIndex = 5;
+    center.normalizedDesign = {0.5, 0.4, 0.5, 0.7};
+    center.result = makeLocalSearchResult(center.normalizedDesign, 1.0);
+
+    rws::LocalSearchConfig config;
+    config.maxSweeps = 4;
+    config.maxEvaluations = 32;
+    config.improvementTolerance = 0.01;
+    config.boundary = rws::LocalSearchBoundaryHandling::Clamp;
+    config.radii = {0.25, 0.2, 0.0, 0.5};
+    config.groups = {{0, 1}};
+
+    std::vector<std::vector<double>> evaluated;
+    const auto evaluator = [&evaluated](const std::vector<double>& design,
+                                        rws::AnalysisEvidenceStage stage) {
+        evaluated.push_back(design);
+        REQUIRE(stage == rws::AnalysisEvidenceStage::Verified);
+        // The optimum requires a + continuous move, a + integer neighbor, and
+        // the third discrete option.  Derived coordinates must be untouched.
+        const double score = design[0] + design[1] * 0.1 + design[2];
+        return makeLocalSearchResult(design, score);
+    };
+
+    const auto result = rws::LocalSearch::run(variables, center, config, evaluator);
+    REQUIRE(!result.canceled);
+    REQUIRE(result.evaluatedCount > 0);
+    REQUIRE(result.best.normalizedDesign[0] == 1.0);
+    REQUIRE(result.best.normalizedDesign[1] == 1.0);
+    REQUIRE(result.best.normalizedDesign[2] == 1.0);
+    REQUIRE(result.best.normalizedDesign[3] == 0.7);
+    REQUIRE(result.sweeps > 0);
+
+    // Every generated vector is unique and the grouped arm move is present.
+    for (std::size_t i = 0; i < evaluated.size(); ++i)
+        for (std::size_t j = i + 1; j < evaluated.size(); ++j)
+            REQUIRE(evaluated[i] != evaluated[j]);
+    bool sawGroupMove = false;
+    for (const auto& design : evaluated)
+        if (design[0] == 0.75 && design[1] == 0.6)
+            sawGroupMove = true;
+    REQUIRE(sawGroupMove);
+
+    // A Quick result is evaluated but cannot replace a Verified center.
+    rws::LocalSearchCenter quickCenter = center;
+    rws::LocalSearchConfig oneStep = config;
+    oneStep.maxSweeps = 1;
+    const auto quickResult = rws::LocalSearch::run(
+        variables, quickCenter, oneStep,
+        [](const std::vector<double>& design, rws::AnalysisEvidenceStage) {
+            return makeLocalSearchResult(design, 100.0, rws::Feasibility::Feasible,
+                                         rws::AnalysisEvidenceStage::Quick);
+        });
+    REQUIRE(quickResult.best.normalizedDesign == center.normalizedDesign);
+
+    // Boundary skip rejects an out-of-range neighbor rather than duplicating
+    // the clamped boundary point.
+    rws::LocalSearchCenter boundaryCenter;
+    boundaryCenter.normalizedDesign = {0.0};
+    boundaryCenter.result = makeLocalSearchResult({0.0}, 0.0);
+    rws::LocalSearchConfig skipConfig;
+    skipConfig.maxSweeps = 1;
+    skipConfig.boundary = rws::LocalSearchBoundaryHandling::Skip;
+    skipConfig.radii = {0.5};
+    const auto skipped = rws::LocalSearch::run(
+        {variables.front()}, boundaryCenter, skipConfig,
+        [](const std::vector<double>& design, rws::AnalysisEvidenceStage) {
+            return makeLocalSearchResult(design, design.front());
+        });
+    REQUIRE(skipped.evaluatedCount == 1);
+
+    // Budget and cancellation stop generation deterministically.
+    rws::LocalSearchConfig budgetConfig = config;
+    budgetConfig.maxEvaluations = 1;
+    const auto budgeted = rws::LocalSearch::run(
+        variables, center, budgetConfig,
+        [](const std::vector<double>& design, rws::AnalysisEvidenceStage) {
+            return makeLocalSearchResult(design, design.front());
+        });
+    REQUIRE(budgeted.evaluatedCount == 1);
+
+    bool cancel = false;
+    rws::LocalSearchCallbacks callbacks;
+    callbacks.isCancellationRequested = [&cancel]() { return cancel; };
+    cancel = true;
+    const auto canceled = rws::LocalSearch::run(
+        variables, center, config,
+        [](const std::vector<double>& design, rws::AnalysisEvidenceStage) {
+            return makeLocalSearchResult(design, design.front());
+        },
+        callbacks);
+    REQUIRE(canceled.canceled);
+    REQUIRE(canceled.evaluatedCount == 0);
 
     std::printf("PASSED\n");
 }
@@ -11149,6 +11272,12 @@ int main(int argc, char** argv)
     if (suite == "hybrid_optimizer") {
         QCoreApplication app(argc, argv);
         testHybridOptimizer();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "local_search") {
+        QCoreApplication app(argc, argv);
+        testLocalSearch();
         return g_testFailures == 0 ? 0 : 1;
     }
 
