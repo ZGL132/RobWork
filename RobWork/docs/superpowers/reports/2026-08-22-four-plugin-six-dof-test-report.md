@@ -134,9 +134,17 @@ FK/IK、目标姿态、批处理、取消、verified region、指标、当前姿
   - Scene：`4B955643C6AE2648B604E81E7A97C23F3A1DB4C8A9F65991A0A2D0AD83FA2CE2`
 - 6DOF 结构断言：PASS（设备、关节数量/名称、TCP、限位数量）。
 
+### S-B1 四插件 acceptance fixture
+
+- 新增目标：`sdurws_fourplugin_acceptance_test`，路径为 `RobWork/RobWorkStudio/src/rwslibs/fourpluginacceptance/`。
+- 直接绝对路径执行：`sdurws_fourplugin_acceptance_test.exe`，输出 `S-B1-FIXTURE PASS error-code=none`，退出码 0。
+- CTest：`ctest -C Debug -R '^sdurws_fourplugin_acceptance_test$' -j1 --output-on-failure`，1/1 PASS，总耗时 1.02 秒。
+- 机器可读工件：`four-plugin-cases.csv`、`four-plugin-summary.json`，字段包含 case-id/status/duration-ms/error-code/artifact-path、资源相对路径、SHA-256、设备/关节/TCP/限位结构断言；工件在测试目标工作目录生成，未纳入源码提交。
+- 资源指纹（XMLDevices/GenericSixAxis）：WorkCell `ecb71e2f141806cb60afe67f353073ffd070427a08ffb75f8d3c0faf9c4da51c`；Scene `657159878b8bd2fb750465ece05d9eaa654685d977b664373b2bfb5ded270586`。
+
 ## 尚未完成或不能宣称通过的验收项
 
-- 独立 OPT-DATA-01 729 候选 CSV oracle 与 optimizer 逐行/逐分数比对：NOT_RUN；当前仓库未找到独立 oracle 工件或 `fourpluginacceptance` 测试目标。
+- 独立 OPT-DATA-01 729 候选 CSV oracle 与 optimizer 逐行/逐分数比对：NOT_RUN；S-B1 fixture 已建立，但 S-B2 oracle 尚未实现。
 - 真实 GenericSixAxis 离散设计域完整枚举、邻域扰动证明、重复 10 次排序一致性：NOT_RUN；现有 StructureOptimizer 测试覆盖算法契约和长时优化，但没有计划要求的独立全枚举证据。
 - E2E-U01–E2E-U08 四插件跨插件资源/指纹/失效交互：BLOCKED/NOT_RUN；未生成 `fourpluginacceptance` 目标，且 RobWorkStudio GUI 主程序 executable 未出现在 Debug 输出目录。
 - 真实 UR-6-85-5-A 交叉验收：BLOCKED，见 F-002。

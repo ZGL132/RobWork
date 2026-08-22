@@ -101,7 +101,8 @@
 - [ ] 所有 JSON/CSV 输出使用项目相对资源路径，不写入绝对路径、临时目录或 NaN/Inf。
 - [ ] 增加 `sdurws_fourplugin_acceptance_test` CTest 目标，Debug 配置可直接运行。
 - [ ] 先只运行 fixture 自检；失败时阻断后续 oracle/E2E，不伪造 PASS。
-- [ ] Commit：`建立四插件六自由度验收测试夹具`
+- [x] 已完成并验证：`sdurws_fourplugin_acceptance_test` 加载 WorkCell/Scene，断言设备、6 个关节、TCP 和有限限位，并输出 CSV/JSON；CTest 1/1 PASS。
+- [x] Commit：`建立四插件六自由度验收测试夹具`
 
 ## S-B2：实现 OPT-DATA-01 独立 729 候选 oracle
 

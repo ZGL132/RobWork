@@ -32,6 +32,7 @@ add_subdirectory(robotanalysiscore)
 add_subdirectory(engineeringrequirements)
 add_subdirectory(kinematicanalysis)
 add_subdirectory(structureoptimizer)
+add_subdirectory(fourpluginacceptance)
 # depends on all above
 add_subdirectory(rwstudioapp)
 # depends on rwstudio
