@@ -184,6 +184,8 @@ class KinematicAnalysisWidget : public QWidget
     void setValidationInspectorEmpty ();
     void selectPreferredValidationResult ();
     void selectValidationResult (bool region, const QString& stableId);
+    // 双击 Validate 任务行时,将该任务排序后的最佳 IK 候选解写回 3D 状态。
+    void applyValidatedTaskBestCandidate (const QString& taskId);
     void applyRequirementValidationResult (const RequirementValidationRunResult& result);
     void startCapabilityExploration ();
     void cancelCapabilityExploration ();

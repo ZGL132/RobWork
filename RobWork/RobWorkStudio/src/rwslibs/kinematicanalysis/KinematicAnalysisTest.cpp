@@ -5409,7 +5409,10 @@ static int testWorkCellProjectDefaultTcpContext ()
 //   (8) 卸载 WorkCell 时所有命令安全禁用。
 static int testWorkflowUiStates ()
 {
+    rw::core::PropertyMap properties;
+    rws::RobWorkStudio studio (properties);
     rws::KinematicAnalysisWidget widget;
+    widget.setRobWorkStudio (&studio);
 
     QTabWidget* workflowTabs =
         widget.findChild< QTabWidget* > (QStringLiteral ("workflowTabs"));
@@ -6503,6 +6506,30 @@ static int testWorkflowUiStates ()
     if (const int rc = require (
             taskResults->item (0, 2)->text () != QStringLiteral ("DataInsufficient"),
             "task without a collision requirement is not blocked by a missing detector"))
+        return rc;
+    const rws::KinematicAnalysisReport validatedReport = widget.buildReportForExport ();
+    if (validatedReport.taskResults.empty () ||
+        validatedReport.taskResults.front ().candidates.empty ())
+        return fail ("validated task did not expose a best IK candidate");
+    const rw::math::Q expectedBestQ =
+        validatedReport.taskResults.front ().candidates.front ().configuration.q;
+    rw::kinematics::State perturbedState = workcell->getDefaultState ();
+    rw::math::Q perturbedQ (device->getDOF ());
+    for (std::size_t i = 0; i < perturbedQ.size (); ++i)
+        perturbedQ (i) = 0.25 + 0.03 * static_cast< double > (i);
+    device->setQ (perturbedQ, perturbedState);
+    studio.setState (perturbedState);
+    taskResults->selectRow (0);
+    QTableWidgetItem* validatedTaskItem = taskResults->item (0, 0);
+    if (validatedTaskItem != nullptr)
+        taskResults->itemDoubleClicked (validatedTaskItem);
+    const rw::math::Q appliedBestQ = device->getQ (studio.getState ());
+    bool appliedExpectedBestQ = validatedTaskItem != nullptr &&
+        expectedBestQ.size () == appliedBestQ.size ();
+    for (std::size_t i = 0; appliedExpectedBestQ && i < expectedBestQ.size (); ++i)
+        appliedExpectedBestQ = std::fabs (expectedBestQ (i) - appliedBestQ (i)) < 1e-9;
+    if (const int rc = require (appliedExpectedBestQ,
+                                "double-clicking a validated task applies its best IK candidate to the 3D state"))
         return rc;
     if (const int rc = require (
             validateSummary->text ().contains (QStringLiteral ("Verified")) &&

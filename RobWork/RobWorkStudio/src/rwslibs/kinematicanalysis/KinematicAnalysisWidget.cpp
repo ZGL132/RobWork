@@ -1079,7 +1079,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateTaskResultTable->setColumnCount (6);
     _validateTaskResultTable->setHorizontalHeaderLabels (
         QStringList () << tr("ID") << tr("Name / residual") << tr("Feasibility")
-                       << tr("Quality / pose coverage") << tr("EvidenceStage") << tr("Level"));
+                       << tr("Quality / candidate coverage") << tr("EvidenceStage") << tr("Level"));
     _validateTaskResultTable->horizontalHeader ()->setStretchLastSection (true);
     _validateTaskResultTable->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
     _validateTaskResultTable->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -1307,6 +1307,16 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  }
                  updateValidationInspector ();
                  refreshWorkflowControls ();
+             });
+    connect (_validateTaskResultTable, &QTableWidget::itemDoubleClicked, this,
+             [this] (QTableWidgetItem* item) {
+                 if (item == nullptr)
+                     return;
+                 const QTableWidgetItem* idItem =
+                     _validateTaskResultTable->item (item->row (), 0);
+                 if (idItem != nullptr)
+                     applyValidatedTaskBestCandidate (
+                         idItem->data (Qt::UserRole).toString ());
              });
     connect (_validateRegionSummaryTable->selectionModel (),
              &QItemSelectionModel::selectionChanged, this,
@@ -2360,6 +2370,64 @@ void KinematicAnalysisWidget::setValidationInspectorEmpty ()
         _validateInspectorTitleLabel->setText (tr ("Validation inspector"));
 }
 
+// applyValidatedTaskBestCandidate:把 Validate 任务行中已排序的最佳候选解写回
+// RobWorkStudio 当前状态。Validate 结果来自当前 WorkCell 会话,因此只做上下文、
+// Feasible、碰撞和关节维度校验,不重新求解也不改变验证快照。
+void KinematicAnalysisWidget::applyValidatedTaskBestCandidate (const QString& taskId)
+{
+    if (_validateRunActive) {
+        setStatus (tr ("Cannot apply validated task: validation is still running."));
+        return;
+    }
+    if (!_validateHasResults || taskId.isEmpty ()) {
+        setStatus (tr ("Cannot apply validated task: no validated task result is selected."));
+        return;
+    }
+    if (_workcell == nullptr || _studio == nullptr) {
+        setStatus (tr ("Cannot apply validated task: no WorkCell or RobWorkStudio context."));
+        return;
+    }
+
+    const auto result = std::find_if (
+        _validateSummary.taskResults.begin (), _validateSummary.taskResults.end (),
+        [&taskId] (const TargetEvaluation& value) {
+            return QString::fromStdString (value.target.id) == taskId;
+        });
+    if (result == _validateSummary.taskResults.end () || result->candidates.empty ()) {
+        setStatus (tr ("Cannot apply validated task: no IK candidate is available."));
+        return;
+    }
+
+    const TargetCandidate& best = result->candidates.front ();
+    if (best.configuration.feasibility != Feasibility::Feasible) {
+        setStatus (tr ("Cannot apply validated task: the best IK candidate is not feasible."));
+        return;
+    }
+    if (best.configuration.inCollision) {
+        setStatus (tr ("Cannot apply validated task: the best IK candidate is in collision."));
+        return;
+    }
+
+    const rw::core::Ptr< rw::models::Device > device = selectedDevice ();
+    if (device == nullptr) {
+        setStatus (tr ("Cannot apply validated task: no device is selected."));
+        return;
+    }
+    if (best.configuration.q.size () != device->getDOF ()) {
+        setStatus (tr ("Cannot apply validated task: Q dimension does not match device."));
+        return;
+    }
+
+    rw::kinematics::State state = currentState ();
+    device->setQ (best.configuration.q, state);
+    const QScopedValueRollback< bool > applyingGuard (
+        _applyingSelectedIkSolution, true);
+    _studio->setState (state);
+    refreshCurrentPoseSnapshot ();
+    updateValidationInspector ();
+    setStatus (tr ("Applied best IK candidate for validated task %1.").arg (taskId));
+}
+
 // updateValidationInspector:根据当前选中条目(冻结任务 / 需求区域)刷新 Validate
 // 检查器。通过表项 Qt::UserRole 中保存的稳定 ID 反查评估结果,任务展示残差与
 // 姿态覆盖率,区域展示位置 / 姿态覆盖率、采样单元数与方向 / 滚动采样数;标题
@@ -2424,7 +2492,7 @@ void KinematicAnalysisWidget::updateValidationInspector ()
                           tr ("None") : failureReasonsText (result->failureReasons));
         setDetailRow (_validateInspectorTable, 7, tr ("Position residual"),
                       targetResidualText (*result));
-        setDetailRow (_validateInspectorTable, 8, tr ("Pose coverage"),
+        setDetailRow (_validateInspectorTable, 8, tr ("Candidate coverage"),
                       targetPoseCoverageText (*result));
         setDetailRow (_validateInspectorTable, 9, tr ("Candidate solutions"),
                       QString::number (static_cast< int > (result->candidates.size ())));
@@ -3764,9 +3832,8 @@ QString targetResidualText (const TargetEvaluation& result)
         .arg (QString::number (best.orientationErrorDeg, 'f', 2));
 }
 
-// targetPoseCoverageText:统计候选解中“Feasible(可用)”的数量,输出 “可用/总数 poses”。
-// 姿态覆盖率 = 该任务在全部候选姿态中可到达的比例,供 Validate 任务表的
-// “Quality / pose coverage”列与检查器展示。
+// targetPoseCoverageText:统计候选解中“Feasible(可用)”的数量,输出 “可用/总数 candidates”。
+// 该数量描述同一目标位姿的 IK 候选解覆盖,供 Validate 任务表与检查器展示。
 QString targetPoseCoverageText (const TargetEvaluation& result)
 {
     if (result.candidates.empty ())
@@ -3776,7 +3843,7 @@ QString targetPoseCoverageText (const TargetEvaluation& result)
         if (candidate.configuration.feasibility == Feasibility::Feasible)
             ++usable;
     }
-    return QStringLiteral ("%1/%2 poses")
+    return QStringLiteral ("%1/%2 candidates")
         .arg (usable).arg (static_cast<int> (result.candidates.size ()));
 }
 
