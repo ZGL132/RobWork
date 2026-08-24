@@ -24,6 +24,11 @@
 #include <QMessageBox>
 #include <QScopedValueRollback>
 
+void initializeRobotModelBuilderResources ()
+{
+    Q_INIT_RESOURCE (robotmodelbuilder_resources);
+}
+
 using namespace rws;
 
 // -----------------------------------------------------------------------------
@@ -32,7 +37,10 @@ using namespace rws;
 //        _widget 暂时为空指针,待 initialize() 中再实例化。
 // -----------------------------------------------------------------------------
 RobotModelBuilderPlugin::RobotModelBuilderPlugin () :
-    RobWorkStudioPlugin ("RobotModelBuilder", QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png")),
+    RobWorkStudioPlugin (
+        "RobotModelBuilder",
+        (initializeRobotModelBuilderResources (),
+         QIcon (":/robotmodelbuilder/robotmodelbuilder_icon.png"))),
     _widget (NULL),
     _projectProvider (NULL),
     _ignoreNextOpenFromSelfLoad (false)

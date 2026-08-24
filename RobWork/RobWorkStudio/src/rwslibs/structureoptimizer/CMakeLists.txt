@@ -250,10 +250,17 @@ if(build)
     )
     set_target_properties(sdurws_structureoptimizer_core PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
+    if(DEFINED Qt6Core_VERSION)
+        qt_add_resources(RccSrcFiles structureoptimizer_resources.qrc)
+    else()
+        qt5_add_resources(RccSrcFiles structureoptimizer_resources.qrc)
+    endif()
+
     # ── 测试可执行文件 ────────────────────────────────────────────────────
     add_executable(sdurws_structureoptimizer_test
         StructureOptimizationTest.cpp
         StructureOptimizerPlugin.cpp
+        ${RccSrcFiles}
         StructureOptimizerPlugin.hpp
         StructureVariableTableModel.cpp
         StructureVariableTableModel.hpp
@@ -314,12 +321,6 @@ if(build)
         StructureConstraintTableModel.hpp
         CandidatePreviewController.hpp
     )
-    if(DEFINED Qt6Core_VERSION)
-        qt_add_resources(RccSrcFiles resources.qrc)
-    else()
-        qt5_add_resources(RccSrcFiles resources.qrc)
-    endif()
-
     rws_add_plugin(
         ${SUBSYS_NAME}
         ${RWS_DEFAULT_LIB_TYPE}

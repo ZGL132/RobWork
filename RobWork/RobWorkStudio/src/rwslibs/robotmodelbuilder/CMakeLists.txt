@@ -60,9 +60,9 @@ if(build)
 
     # ---- 资源文件:按 Qt 版本选 API ----
     if(DEFINED Qt6Core_VERSION)
-        qt_add_resources(RccSrcFiles resources.qrc)
+        qt_add_resources(RccSrcFiles robotmodelbuilder_resources.qrc)
     else()
-        qt5_add_resources(RccSrcFiles resources.qrc)
+        qt5_add_resources(RccSrcFiles robotmodelbuilder_resources.qrc)
     endif()
 
     # ---- 注册为 RobWorkStudio 插件 ----

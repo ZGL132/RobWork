@@ -21,6 +21,7 @@
 
 #include <QMenu>
 #include <QToolBar>
+#include <QToolButton>
 
 using rw::core::RobWork;
 using namespace rw::core;
@@ -122,6 +123,20 @@ void RobWorkStudioPlugin::setupMenu (QMenu* menu)
 void RobWorkStudioPlugin::setupToolBar (QToolBar* toolbar)
 {
     toolbar->addAction (&_showAction);
+    _showAction.setToolTip (_name);
+    _showAction.setStatusTip (_name);
+
+    const bool iconOnly =
+        _name == QStringLiteral ("EngineeringRequirements") ||
+        _name == QStringLiteral ("RobotModelBuilder") ||
+        _name == QStringLiteral ("KinematicAnalysis") ||
+        _name == QStringLiteral ("StructureOptimizer");
+    if (iconOnly) {
+        if (QToolButton* button = qobject_cast< QToolButton* > (
+                toolbar->widgetForAction (&_showAction))) {
+            button->setToolButtonStyle (Qt::ToolButtonIconOnly);
+        }
+    }
 }
 
 QString RobWorkStudioPlugin::name () const

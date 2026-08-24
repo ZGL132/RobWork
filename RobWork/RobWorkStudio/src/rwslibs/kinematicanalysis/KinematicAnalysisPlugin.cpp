@@ -7,11 +7,19 @@
 
 #include <QDir>
 
+void initializeKinematicAnalysisResources ()
+{
+    Q_INIT_RESOURCE (kinematicanalysis_resources);
+}
+
 namespace rws {
 
-// 插件构造:RobWorkStudioPlugin 接收插件名(用于显示)和图标(此处使用空图标)。
+// 插件构造：初始化插件名称与工具栏图标。
 KinematicAnalysisPlugin::KinematicAnalysisPlugin() :
-    RobWorkStudioPlugin("KinematicAnalysis", QIcon(":/kinematicanalysis/kinematicanalysis_icon.png")),
+    RobWorkStudioPlugin(
+        "KinematicAnalysis",
+        (initializeKinematicAnalysisResources (),
+         QIcon (":/kinematicanalysis/kinematicanalysis_icon.png"))),
     _widget(NULL), _projectProvider(NULL), _projectResourceActive(false)
 {
     // 声明本插件需要"已打开项目"作为前置上下文：未打开项目时由主窗口禁用并隐藏

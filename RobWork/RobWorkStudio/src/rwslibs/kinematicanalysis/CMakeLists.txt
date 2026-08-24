@@ -113,9 +113,9 @@ if(build)
 
     # Qt5 / Qt6 资源编译命令不同,这里做兼容分发。
     if(DEFINED Qt6Core_VERSION)
-        qt_add_resources(RccSrcFiles resources.qrc)
+        qt_add_resources(RccSrcFiles kinematicanalysis_resources.qrc)
     else()
-        qt5_add_resources(RccSrcFiles resources.qrc)
+        qt5_add_resources(RccSrcFiles kinematicanalysis_resources.qrc)
     endif()
 
     # 注册成 RobWorkStudio 插件。RWS_DEFAULT_LIB_TYPE 控制 STATIC / SHARED。

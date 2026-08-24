@@ -50,7 +50,12 @@ if(build)
         EngineeringRequirementsPlugin.hpp
         EngineeringRequirementsWidget.hpp
     )
-    rws_add_plugin(${SUBSYS_NAME} ${RWS_DEFAULT_LIB_TYPE} ${PluginSrcFiles})
+    if(DEFINED Qt6Core_VERSION)
+        qt_add_resources(RccSrcFiles engineeringrequirements_resources.qrc)
+    else()
+        qt5_add_resources(RccSrcFiles engineeringrequirements_resources.qrc)
+    endif()
+    rws_add_plugin(${SUBSYS_NAME} ${RWS_DEFAULT_LIB_TYPE} ${PluginSrcFiles} ${RccSrcFiles})
     rw_add_includes(${SUBSYS_NAME} "rwslibs/engineeringrequirements" ${PluginHeaderFiles})
     target_link_libraries(${SUBSYS_NAME} PUBLIC ${SUBSYS_DEPS} ${QT_LIBRARIES}
                            PRIVATE sdurws_engineeringrequirements_core)
@@ -171,9 +176,21 @@ if(build)
             endforeach()
         endif()
     endif()
+    add_executable(sdurws_engineeringrequirements_icon_test
+        EngineeringRequirementsPluginIconTest.cpp
+    )
+    target_link_libraries(sdurws_engineeringrequirements_icon_test
+        PRIVATE ${SUBSYS_NAME} ${QT_LIBRARIES}
+    )
+    target_include_directories(sdurws_engineeringrequirements_icon_test
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
     if(BUILD_TESTING)
         add_test(NAME sdurws_engineeringrequirements_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test>)
+        add_test(NAME sdurws_engineeringrequirements_icon_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_icon_test>)
         add_test(NAME sdurws_engineeringrequirements_migration_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> migration)
         add_test(NAME sdurws_engineeringrequirements_region_visualization_test
@@ -198,6 +215,11 @@ if(build)
         else()
             set(ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM offscreen)
         endif()
+        set_tests_properties(
+            sdurws_engineeringrequirements_icon_test
+            PROPERTIES
+                ENVIRONMENT "QT_QPA_PLATFORM=${ENGINEERINGREQUIREMENTS_TEST_QPA_PLATFORM}"
+        )
         set_tests_properties(
             sdurws_engineeringrequirements_widget_test
             sdurws_engineeringrequirements_managed_project_gate_test

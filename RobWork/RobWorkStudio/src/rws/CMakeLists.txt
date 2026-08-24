@@ -187,6 +187,24 @@ if(build)
     rw_add_includes(sdurws "rws/pythonpluginloader" ${SRC_FILES_HPP_python})
     rw_add_includes(sdurws "rws/propertyview" ${SRC_FILES_HPP_propertyview})
 
+    if(BUILD_TESTING)
+        add_executable(sdurws_plugin_toolbar_test
+            RobWorkStudioPluginToolbarTest.cpp
+        )
+        target_link_libraries(sdurws_plugin_toolbar_test
+            PRIVATE sdurws ${QT_LIBRARIES}
+        )
+        target_include_directories(sdurws_plugin_toolbar_test
+            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+        add_test(NAME sdurws_plugin_toolbar_test
+                 COMMAND $<TARGET_FILE:sdurws_plugin_toolbar_test>)
+        if(WIN32)
+            set_tests_properties(sdurws_plugin_toolbar_test
+                PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=windows")
+        endif()
+    endif()
+
     if(RWS_USE_PYTHON)
         target_compile_definitions(sdurws PRIVATE PYTHON_VERSION_MINOR=${PYTHON_VERSION_MINOR})
     endif()
