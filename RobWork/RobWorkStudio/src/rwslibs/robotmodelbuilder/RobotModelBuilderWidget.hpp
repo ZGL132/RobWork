@@ -120,6 +120,8 @@ class RobotModelBuilderWidget : public QWidget
     void sceneGenerationToggled (bool checked);
     void onDhTableCellChanged (QTableWidgetItem* item);
     void onTransformTableCellChanged (QTableWidgetItem* item);
+    void onDrawableShapeChanged (int row, const QString& previousShape,
+                                 const QString& shape);
 
   private:
     void buildUi ();

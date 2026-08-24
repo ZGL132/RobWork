@@ -392,27 +392,44 @@ void computeLinkPose (const RobotModelSpec& spec, int linkIndex,
     rpyDegOut[2] = xAngle * 180.0 / Pi;
 }
 
-/// 把 spec 里所有 autoLinkGeometry=true 的 Link{i}To{i+1} Drawable 用上面的算法重算一次
-/// 现在允许 transformJoints.size() >= 2 的任意长度。
+/// Resolve the transform-joint index that owns an automatic link drawable.
+/// New user-converted drawables use refFrame as the stable source of truth;
+/// legacy Link{i}To{i+1} names remain accepted for old sidecars.
+int autoLinkStartIndex (const RobotModelSpec& spec, const DrawableSpec& drawable)
+{
+    const QString refFrame = QString::fromStdString (drawable.refFrame).trimmed ();
+    for (int index = 0; index < static_cast< int >(spec.transformJoints.size ()); ++index) {
+        if (QString::fromStdString (spec.transformJoints[index].name).trimmed () == refFrame)
+            return index;
+    }
+
+    const QRegularExpressionMatch match =
+        QRegularExpression ("^Link(\\d+)To(\\d+)$")
+            .match (QString::fromStdString (drawable.name));
+    if (!match.hasMatch ())
+        return -1;
+    const int linkCounter = match.captured (1).toInt () - 1;
+    const int endCounter  = match.captured (2).toInt () - 1;
+    if (linkCounter < 0 || endCounter != linkCounter + 1 ||
+        linkCounter >= static_cast< int >(spec.transformJoints.size ()) - 1)
+        return -1;
+    return linkCounter;
+}
+
+/// Recompute every explicitly automatic drawable from adjacent joint frames.
+/// Length, center and orientation are derived; radius, color, dimensions and
+/// file path remain user-owned values.
 void applyLinkGeometry (RobotModelSpec& spec)
 {
-    const int maxLinks = static_cast< int >(spec.transformJoints.size ()) - 1;
     for (DrawableSpec& drawable : spec.drawables) {
-        const QString name = QString::fromStdString (drawable.name);
-        if (!name.startsWith ("Link") || !name.contains ("To"))
-            continue;
         if (!drawable.autoLinkGeometry)
             continue;
-        const QRegularExpressionMatch match =
-            QRegularExpression ("^Link(\\d+)To(\\d+)$").match (name);
-        if (!match.hasMatch ())
-            continue;
-        const int linkCounter = match.captured (1).toInt () - 1;
-        if (linkCounter < 0 || linkCounter >= maxLinks)
+        const int linkIndex = autoLinkStartIndex (spec, drawable);
+        if (linkIndex < 0)
             continue;
         std::array< double, 3 > pos, rpy;
         double length = 0;
-        computeLinkPose (spec, linkCounter, pos, rpy, length);
+        computeLinkPose (spec, linkIndex, pos, rpy, length);
         if (length > 1e-9)
             drawable.length = length;
         drawable.pos    = pos;

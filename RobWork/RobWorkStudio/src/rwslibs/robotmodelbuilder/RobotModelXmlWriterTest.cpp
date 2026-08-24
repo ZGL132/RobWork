@@ -196,7 +196,46 @@ int main (int argc, char** argv)
         }
         if (autoLinkCount != 4 || fixedDetailCount != 3 ||
             defaultSpec.drawables.size () != autoLinkCount + fixedDetailCount)
-            return fail ("Default six-axis model should contain four automatic links and three fixed details.");
+             return fail ("Default six-axis model should contain four automatic links and three fixed details.");
+    }
+
+    // A user-converted URDF visual keeps its original name.  Explicit
+    // autoLinkGeometry state, rather than the legacy Link1To2 name convention,
+    // must still derive the full link pose from adjacent joint frames.
+    {
+        RobotModelSpec spec;
+        JointTransformSpec first;
+        first.name = "Joint1";
+        first.type = "Revolute";
+        first.rpyDeg = {{0, 0, 0}};
+        first.pos = {{0, 0, 0}};
+        spec.transformJoints.push_back (first);
+        JointTransformSpec second;
+        second.name = "Joint2";
+        second.type = "Revolute";
+        second.rpyDeg = {{0, 0, 0}};
+        second.pos = {{0.12, 0.50, 0.12}};
+        spec.transformJoints.push_back (second);
+
+        DrawableSpec converted;
+        converted.name = "link1_visual_1";
+        converted.refFrame = "Joint1";
+        converted.shape = "Cylinder";
+        converted.radius = 0.04;
+        converted.length = 0.2;
+        converted.autoLinkGeometry = true;
+        spec.drawables.push_back (converted);
+
+        RobotModelXmlWriter::applyLinkGeometry (spec);
+        const DrawableSpec& drawable = spec.drawables.front ();
+        const double expectedLength = std::sqrt (0.12 * 0.12 + 0.50 * 0.50 + 0.12 * 0.12);
+        if (!nearlyEqual (drawable.length, expectedLength) ||
+            !nearlyEqual (drawable.pos[0], 0.06) || !nearlyEqual (drawable.pos[1], 0.25) ||
+            !nearlyEqual (drawable.pos[2], 0.06))
+            return fail ("Explicit auto-link state should derive a user-named drawable pose.");
+        if (nearlyEqual (drawable.rpyDeg[0], 0.0) && nearlyEqual (drawable.rpyDeg[1], 90.0) &&
+            nearlyEqual (drawable.rpyDeg[2], 0.0))
+            return fail ("Derived diagonal link pose must not use the old hard-coded orientation.");
     }
 
     // =====================================================================

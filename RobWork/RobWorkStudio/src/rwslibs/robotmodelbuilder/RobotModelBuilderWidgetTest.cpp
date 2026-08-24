@@ -21,8 +21,10 @@
 #include <QTableWidget>
 #include <QTemporaryDir>
 #include <QTextEdit>
+#include <QTextStream>
 #include <QTimer>
 
+#include <cmath>
 #include <iostream>
 
 namespace {
@@ -71,6 +73,114 @@ QTextEdit* previewAt (QTabWidget* tabs, const QString& name)
             return qobject_cast< QTextEdit* > (tabs->widget (index));
     }
     return NULL;
+}
+
+QTableWidget* findTable (const rws::RobotModelBuilderWidget& widget,
+                         const QString& firstHeader, const QString& secondHeader,
+                         int columnCount);
+
+bool verifyMeshToAutoLinkConversion (QString* failure)
+{
+    QTemporaryDir temporary;
+    if (!temporary.isValid ()) {
+        *failure = "Could not create a temporary directory for auto-link conversion test.";
+        return false;
+    }
+
+    const QString meshPath = QDir (temporary.path ()).filePath ("link1.stl");
+    QFile mesh (meshPath);
+    if (!mesh.open (QFile::WriteOnly | QFile::Text) || mesh.write ("solid link1\nendsolid link1\n") < 0) {
+        *failure = "Could not create the test STL file.";
+        return false;
+    }
+    mesh.close ();
+
+    const QString urdfPath = QDir (temporary.path ()).filePath ("simplified.urdf");
+    QFile urdf (urdfPath);
+    if (!urdf.open (QFile::WriteOnly | QFile::Text)) {
+        *failure = "Could not create the auto-link conversion URDF.";
+        return false;
+    }
+    QTextStream out (&urdf);
+    out << "<robot name=\"SimplifiedBot\">\n"
+        << "  <link name=\"base\"/>\n"
+        << "  <link name=\"link1\"><visual name=\"link1_visual\"><geometry>"
+        << "<mesh filename=\"link1.stl\"/></geometry></visual></link>\n"
+        << "  <link name=\"link2\"/>\n"
+        << "  <joint name=\"Joint1\" type=\"revolute\"><parent link=\"base\"/>"
+        << "<child link=\"link1\"/><origin xyz=\"0 0 0\"/></joint>\n"
+        << "  <joint name=\"Joint2\" type=\"revolute\"><parent link=\"link1\"/>"
+        << "<child link=\"link2\"/><origin xyz=\"0.12 0.50 0.12\"/></joint>\n"
+        << "</robot>\n";
+    urdf.close ();
+
+    rws::RobotModelBuilderWidget widget;
+    QString importError;
+    if (!widget.importUrdfFile (urdfPath, &importError)) {
+        *failure = "Auto-link conversion URDF import failed: " + importError;
+        return false;
+    }
+
+    QTableWidget* drawables = findTable (widget, "Name", "RefFrame", 10);
+    if (drawables == NULL) {
+        *failure = "Could not find Drawables table for auto-link conversion test.";
+        return false;
+    }
+    int visualRow = -1;
+    for (int row = 0; row < drawables->rowCount (); ++row) {
+        if (drawables->item (row, 0) != NULL &&
+            drawables->item (row, 0)->text () == "link1_visual") {
+            visualRow = row;
+            break;
+        }
+    }
+    if (visualRow < 0) {
+        *failure = "Imported STL visual was not found in Drawables table.";
+        return false;
+    }
+
+    QComboBox* shape = qobject_cast< QComboBox* > (drawables->cellWidget (visualRow, 2));
+    if (shape == NULL) {
+        *failure = "Imported Drawable Shape cell is not a combo box.";
+        return false;
+    }
+    shape->setCurrentText ("Cylinder");
+    QApplication::processEvents ();
+
+    const rws::RobotModelSpec converted = widget.currentModelSpec ();
+    const rws::DrawableSpec* drawable = NULL;
+    for (const rws::DrawableSpec& candidate : converted.drawables) {
+        if (candidate.name == "link1_visual") {
+            drawable = &candidate;
+            break;
+        }
+    }
+    if (drawable == NULL || !drawable->autoLinkGeometry || drawable->shape != "Cylinder" ||
+        !drawable->filePath.empty ()) {
+        *failure = "STL to Cylinder conversion did not enter explicit auto-link mode.";
+        return false;
+    }
+    const double expectedLength = std::sqrt (0.12 * 0.12 + 0.50 * 0.50 + 0.12 * 0.12);
+    if (std::abs (drawable->length - expectedLength) > 1e-6 ||
+        std::abs (drawable->pos[0] - 0.06) > 1e-6 ||
+        std::abs (drawable->pos[1] - 0.25) > 1e-6 ||
+        std::abs (drawable->pos[2] - 0.06) > 1e-6) {
+        *failure = "Converted Cylinder did not receive the adjacent-joint length and pose.";
+        return false;
+    }
+
+    QComboBox* convertedShape =
+        qobject_cast< QComboBox* > (drawables->cellWidget (visualRow, 2));
+    convertedShape->setCurrentText ("STL");
+    QApplication::processEvents ();
+    const rws::RobotModelSpec manual = widget.currentModelSpec ();
+    for (const rws::DrawableSpec& candidate : manual.drawables) {
+        if (candidate.name == "link1_visual" && candidate.autoLinkGeometry) {
+            *failure = "Switching back to STL did not leave auto-link mode.";
+            return false;
+        }
+    }
+    return true;
 }
 
 QTableWidget* findTable (const rws::RobotModelBuilderWidget& widget,
@@ -1076,6 +1186,8 @@ int main (int argc, char** argv)
 {
     QApplication application (argc, argv);
     QString publishFailure;
+    if (!verifyMeshToAutoLinkConversion (&publishFailure))
+        return fail (publishFailure.toUtf8 ().constData ());
     if (!verifyTransactionalPublishService (&publishFailure))
         return fail (publishFailure.toUtf8 ().constData ());
     if (!verifyProjectModeSaveAndLoad (&publishFailure))
