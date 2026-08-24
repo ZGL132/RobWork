@@ -56,3 +56,14 @@ $test = 'C:\path\to\RobWork\build\phase8\RobWorkStudio\bin\Debug\sdurws_structur
 
 归档发布清单 JSON、项目 JSON、结果 JSON、候选/任务/审计 CSV、Markdown 报告、候选模型
 包及四个 Phase 8 套件的完整 stdout。不要归档构建目录、Qt 部署 DLL 或临时 WorkCell。
+
+## 唯一构建树规则
+
+StructureOptimizer 的修复、验收和发布证据必须来自同一构建树：
+
+`D:/10_Source_Repos/21_robot/RobWork/RobWork/build/codex-structure-remediation-debug`
+
+执行前必须核对该目录 `CMakeCache.txt` 中的 `CMAKE_HOME_DIRECTORY` 与当前源码
+目录一致，并记录源码 revision、可执行文件绝对路径、文件时间和 SHA256。QtCreator
+链接目录以及其他 `codex-vs-debug*` 目录中的同名可执行文件属于历史输出，不能作为
+修复完成的证据。

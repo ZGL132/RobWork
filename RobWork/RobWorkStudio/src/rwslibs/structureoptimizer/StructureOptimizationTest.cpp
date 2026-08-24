@@ -8135,7 +8135,7 @@ static void testVerifiedRegionUsesSharedEvaluator()
                            currentRpy(1) * rw::math::Rad2Deg,
                            currentRpy(2) * rw::math::Rad2Deg}};
     region.minimumCoverage = 1.0;
-    region.samplesPerAxis = 2;
+    region.sampleCounts = {{2, 2, 2}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
     region.directionSamples = 1;
     region.rollSamples = 1;
@@ -8215,7 +8215,7 @@ static void testVerifiedRegionPreservesPositionCoverage()
     region.tcpFrame = built.artifact.tcpFrame->getName();
     region.center = {{worldTtcp.P()[0], worldTtcp.P()[1], worldTtcp.P()[2]}};
     region.size = {{1e-6, 1e-6, 1e-6}};
-    region.samplesPerAxis = 2;
+    region.sampleCounts = {{2, 2, 2}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::PointAtTarget;
     region.orientationTargetPoint = QString("%1,%2,%3")
         .arg(orientationTarget[0], 0, 'g', 17)
@@ -9038,7 +9038,7 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
     region.center = {{0.5, 0.0, 0.4}};
     region.size = {{0.4, 0.2, 0.3}};
     region.minimumCoverage = 0.85;
-    region.samplesPerAxis = 6;
+    region.sampleSpacingMeters = {{0.08, 0.04, 0.06}};
     region.orientationMode = rws::OrientationMode::PointAtTarget;
     region.orientationTargetPoint = "0.8,0.0,0.4";
     region.directionSamples = 2;
@@ -9107,7 +9107,8 @@ static void testFrozenEngineeringRequirementArtifactAdapter()
         executionRegion.center = source.center;
         executionRegion.size = source.size;
         executionRegion.minimumCoverage = source.minimumCoverage;
-        executionRegion.samplesPerAxis = source.samplesPerAxis;
+        executionRegion.sampleSpacingMeters = source.sampleSpacingMeters;
+        executionRegion.sampleCounts = {{6, 6, 6}};
         executionRegion.minimumVerificationStage =
             static_cast<rws::RequirementExecutionStage>(source.minimumVerificationStage);
         executionRegion.orientationMode =

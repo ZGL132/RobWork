@@ -665,13 +665,12 @@ void SceneOpenGLViewer::mouseDoubleClickEvent (QMouseEvent* event)
         doneCurrent ();
 
         if (pos[2] != 1) {
-            // double click + SHIFT => positionSelected event
-            if (event->modifiers () == Qt::ShiftModifier) {
-                positionSelectedEvent ().fire (pos);
-
-                // plain doubleclick => move pivot point
-            }
-            else {
+            // Shift retains the original position-selection behaviour.  Notify
+            // subscribers for plain double clicks as well so plugins can
+            // hit-test their own visual markers in the 3D view.
+            positionSelectedEvent ().fire (pos);
+            if (event->modifiers () != Qt::ShiftModifier &&
+                _pivotDrawable != NULL && _pivotDrawable->isVisible ()) {
                 _cameraCtrl->setCenter (pos, Vector2D<> (event->pos ().x (), event->pos ().y ()));
                 _pivotDrawable->setTransform (Transform3D<> (pos, Rotation3D<>::identity ()));
                 QWidget::update ();

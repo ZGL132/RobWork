@@ -1,6 +1,8 @@
 #include "WorkspaceRegionSceneVisualizer.hpp"
 
 #include <rw/geometry/Line.hpp>
+#include <rw/geometry/Geometry.hpp>
+#include <rw/graphics/DrawableGeometryNode.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rw/math/Vector3D.hpp>
 
@@ -109,6 +111,42 @@ WorkspaceRegionSceneVisualizer::WorkspaceRegionSceneVisualizer (
     rw::graphics::WorkCellScene::Ptr scene, rw::kinematics::Frame* worldFrame) :
     _scene (scene), _worldFrame (worldFrame)
 {}
+
+bool WorkspaceRegionSceneVisualizer::showTargetPose (
+    const WorkspaceTargetPoseVisualSpec& spec, const std::string& namePrefix,
+    std::string* error)
+{
+    clear ();
+    if (_scene.isNull () || _worldFrame == nullptr) {
+        if (error != nullptr) *error = "3D scene or WORLD frame is unavailable.";
+        return false;
+    }
+    if (spec.id.empty () || !std::isfinite (spec.axisLength) || spec.axisLength <= 0.0) {
+        if (error != nullptr) *error = "Target pose id or marker size is invalid.";
+        return false;
+    }
+    const std::string label = spec.label.empty () ? spec.id : spec.label;
+    const rw::graphics::DrawableNode::Ptr axis = _scene->addFrameAxis (
+        namePrefix + spec.id + ".axis", spec.axisLength, _worldFrame, regionVisualMask);
+    axis->setTransform (spec.worldTTarget);
+    _nodes.push_back (axis);
+    // The axis is a virtual line and may not contribute a depth value to
+    // unproject(). A small solid marker makes the displayed pose reliably
+    // produce a 3D hit even when the pivot-point helper is hidden.
+    const rw::graphics::DrawableGeometryNode::Ptr hitMarker = _scene->addGeometry (
+        namePrefix + spec.id + ".hit",
+        rw::geometry::Geometry::makeSphere (spec.axisLength * 0.30),
+        _worldFrame, regionVisualMask);
+    hitMarker->setTransform (spec.worldTTarget);
+    hitMarker->setColor (rw::math::Vector3D<> (1.0, 0.85, 0.10));
+    _nodes.push_back (hitMarker);
+    const rw::graphics::DrawableNode::Ptr text = _scene->addText (
+        namePrefix + spec.id + ".label", label, _worldFrame, regionVisualMask);
+    text->setTransform (spec.worldTTarget * rw::math::Transform3D<> (
+        rw::math::Vector3D<> (0.0, 0.0, spec.axisLength * 1.25)));
+    _nodes.push_back (text);
+    return true;
+}
 
 void WorkspaceRegionSceneVisualizer::setScene (
     rw::graphics::WorkCellScene::Ptr scene, rw::kinematics::Frame* worldFrame)

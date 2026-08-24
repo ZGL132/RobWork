@@ -1,6 +1,7 @@
 #include "EngineeringRequirementArtifactAdapter.hpp"
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
+#include <rwslibs/engineeringrequirements/WorkspaceSamplingGrid.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -207,7 +208,7 @@ bool executionSnapshot(const FrozenRequirementArtifact& artifact,
         target.center = source.center;
         target.size = source.size;
         target.minimumCoverage = source.minimumCoverage;
-        target.samplesPerAxis = source.samplesPerAxis;
+        target.sampleSpacingMeters = source.sampleSpacingMeters;
         target.orientationMode = static_cast<OrientationMode>(source.orientationMode);
         target.orientationTargetFrame = source.orientationTargetFrame;
         target.orientationTargetGeometry = source.orientationTargetGeometry;
@@ -361,6 +362,10 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         updated.evaluation.coverageBox.enabled = false;
         for (std::size_t regionIndex = 0; regionIndex < mustRegions.size(); ++regionIndex) {
             const WorkspaceDemandRegion& region = mustRegions[regionIndex];
+            WorkspaceSamplingGrid samplingGrid;
+            if (!resolveWorkspaceSamplingGrid(region.size, region.sampleSpacingMeters,
+                                              region.minimumVerificationStage, samplingGrid, nullptr))
+                continue;
             WorkspaceCoverageBox box;
             box.id = region.id;
             box.referenceFrame = region.refFrame.empty() ? "WORLD" : region.refFrame;
@@ -368,9 +373,9 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
         for (std::size_t axis = 0; axis < 3; ++axis) {
             box.minimum[axis] = region.center[axis] - region.size[axis] * 0.5;
             box.maximum[axis] = region.center[axis] + region.size[axis] * 0.5;
-            // samplesPerAxis 表示采样点数，而 CoverageBox 的 cells 表示相邻采样点
+            // 冻结规则解析的 pointCounts 表示采样点数，而 CoverageBox 的 cells 表示相邻采样点
             // 之间的网格数，因此需要减一并保证退化配置至少有一个网格。
-            box.cells[axis] = std::max(1, region.samplesPerAxis - 1);
+            box.cells[axis] = std::max(1, samplingGrid.pointCounts[axis] - 1);
         }
             if (regionIndex == 0) updated.evaluation.coverageBox = box;
             updated.evaluation.coverageBoxes.push_back(box);

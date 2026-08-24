@@ -46,7 +46,9 @@ std::string fingerprintFor(const EvaluationPlan& plan)
         const auto& value = region.source;
         appendEscaped(canonical, value.id);
         canonical << static_cast<int>(value.level) << static_cast<int>(value.compileState)
-                  << value.samplesPerAxis << value.directionSamples << value.rollSamples
+                  << value.sampleCounts[0] << value.sampleCounts[1] << value.sampleCounts[2]
+                  << value.sampleSpacingMeters[0] << value.sampleSpacingMeters[1]
+                  << value.sampleSpacingMeters[2] << value.directionSamples << value.rollSamples
                   << value.minimumCoverage << value.minimumOrientationCoverage
                   << region.hardConstraint << region.evidenceRequired;
     }
@@ -142,9 +144,10 @@ EvaluationPlan EvaluationPlanCompiler::compile(const RequirementExecutionSet& re
             diagnostic(plan, "CAPABILITY_MISSING", ("workspaceRegions." + source.id).c_str(),
                        "Collision evidence is required but the evaluator has no collision capability.");
 
-        if (source.samplesPerAxis <= 0 || source.samplesPerAxis > MaxExecutionWorkspaceSamplesPerAxis)
-            diagnostic(plan, "REGION_SAMPLING_INVALID", ("workspaceRegions." + source.id).c_str(),
-                       "samplesPerAxis is outside the execution safety limit.");
+        for (const int count : source.sampleCounts)
+            if (count <= 0 || count > MaxExecutionWorkspaceSamplesPerAxis)
+                diagnostic(plan, "REGION_SAMPLING_INVALID", ("workspaceRegions." + source.id).c_str(),
+                           "sampleCounts is outside the execution safety limit.");
         plan.regions.push_back(std::move(region));
     }
 

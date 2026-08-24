@@ -1315,6 +1315,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  }
                  updateValidationInspector ();
                  refreshValidationRegionVisualization ();
+                 refreshValidationTaskVisualization ();
                  refreshWorkflowControls ();
              });
     connect (_validateTaskResultTable, &QTableWidget::itemDoubleClicked, this,
@@ -1355,6 +1356,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                  }
                  updateValidationInspector ();
                  refreshValidationRegionVisualization ();
+                 refreshValidationTaskVisualization ();
                  refreshWorkflowControls ();
              });
     connect (_exploreRunButton, SIGNAL (clicked ()), this,
@@ -1659,8 +1661,12 @@ QSize KinematicAnalysisWidget::minimumSizeHint () const
 // 用它获取当前 state、写回 IK 解。
 void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
 {
-    if (_studio != NULL)
+    if (_studio != NULL) {
         _studio->stateChangedEvent ().remove (this);
+        if (!_studio->getView ().isNull () &&
+            !_studio->getView ()->getSceneViewer ().isNull ())
+            _studio->getView ()->getSceneViewer ()->positionSelectedEvent ().remove (this);
+    }
     _studio = studio;
     if (_studio != NULL) {
         _studio->stateChangedEvent ().add (
@@ -1669,9 +1675,20 @@ void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
                 this,
                 boost::arg< 1 > ()),
             this);
-        if (_workcell != nullptr)
-            _validateRegionVisualizer.setScene(
-                _studio->getWorkCellScene(), _workcell->getWorldFrame());
+        if (!_studio->getView ().isNull () &&
+            !_studio->getView ()->getSceneViewer ().isNull ())
+            _studio->getView ()->getSceneViewer ()->positionSelectedEvent ().add (
+                boost::bind (
+                    &KinematicAnalysisWidget::handleValidation3DPositionDoubleClick,
+                    this,
+                    boost::arg< 1 > ()) ,
+                this);
+        if (_workcell != nullptr) {
+            _validateRegionVisualizer.setScene (
+                _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+            _validateTaskVisualizer.setScene (
+                _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+        }
     }
 }
 
@@ -1743,6 +1760,7 @@ void KinematicAnalysisWidget::clearAnalysisSessionState (bool detachWorkCell)
     refreshValidationSummary ();
     setValidationInspectorEmpty ();
     clearValidationRegionVisualization ();
+    clearValidationTaskVisualization ();
 
     if (detachWorkCell)
         _workcell = nullptr;
@@ -1768,11 +1786,16 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         clearAnalysisSessionState (true);
     }
     _workcell = workcell;
-    if (_workcell == nullptr)
-        clearValidationRegionVisualization();
-    else if (_studio != nullptr)
-        _validateRegionVisualizer.setScene(
-            _studio->getWorkCellScene(), _workcell->getWorldFrame());
+    if (_workcell == nullptr) {
+        clearValidationRegionVisualization ();
+        clearValidationTaskVisualization ();
+    }
+    else if (_studio != nullptr) {
+        _validateRegionVisualizer.setScene (
+            _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+        _validateTaskVisualizer.setScene (
+            _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+    }
     refreshProjectDefaultContext ();
     populateDevices ();
     populateTcpFrames ();
@@ -1797,6 +1820,7 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
     if (_workcell == NULL)
         clearVisualizationData ();
     refreshValidationRegionVisualization ();
+    refreshValidationTaskVisualization ();
     refreshWorkflowControls ();
 }
 
@@ -2696,6 +2720,132 @@ void KinematicAnalysisWidget::refreshValidationRegionVisualization ()
                 .arg (regionId, cellsText));
     if (!_studio->getView ().isNull ())
         _studio->getView ()->update ();
+}
+
+void KinematicAnalysisWidget::clearValidationTaskVisualization ()
+{
+    _validateTaskVisualizer.clear ();
+    if (_studio != nullptr && !_studio->getView ().isNull ())
+        _studio->getView ()->update ();
+}
+
+void KinematicAnalysisWidget::refreshValidationTaskVisualization ()
+{
+    if (_studio == nullptr || _workcell == nullptr ||
+        _studio->getWorkCellScene ().isNull () || _validateTaskResultTable == nullptr ||
+        !_validateHasResults) {
+        clearValidationTaskVisualization ();
+        return;
+    }
+
+    const QModelIndexList rows = _validateTaskResultTable->selectionModel () == nullptr ?
+        QModelIndexList () : _validateTaskResultTable->selectionModel ()->selectedRows ();
+    if (rows.isEmpty ()) {
+        clearValidationTaskVisualization ();
+        return;
+    }
+    const QTableWidgetItem* idItem = _validateTaskResultTable->item (rows.front ().row (), 0);
+    const QString taskId = idItem == nullptr ? QString () :
+        idItem->data (Qt::UserRole).toString ();
+    if (taskId.isEmpty ()) {
+        clearValidationTaskVisualization ();
+        return;
+    }
+    const auto task = std::find_if (
+        _validateExecution.tasks.begin (), _validateExecution.tasks.end (),
+        [&taskId] (const RequirementExecutionTask& value) {
+            return QString::fromStdString (value.id) == taskId;
+        });
+    const auto result = std::find_if (
+        _validateSummary.taskResults.begin (), _validateSummary.taskResults.end (),
+        [&taskId] (const TargetEvaluation& value) {
+            return QString::fromStdString (value.target.id) == taskId;
+        });
+    if (task == _validateExecution.tasks.end () ||
+        result == _validateSummary.taskResults.end ()) {
+        clearValidationTaskVisualization ();
+        return;
+    }
+
+    rw::kinematics::Frame* reference = _workcell->getWorldFrame ();
+    if (!task->refFrame.empty () && task->refFrame != "WORLD")
+        reference = _workcell->findFrame (task->refFrame);
+    if (reference == nullptr) {
+        clearValidationTaskVisualization ();
+        return;
+    }
+    const TaskPoint& target = result->target;
+    const rw::math::Transform3D<> localTarget (
+        rw::math::Vector3D<> (target.position[0], target.position[1], target.position[2]),
+        rw::math::RPY<> (target.rpyDeg[0] * rw::math::Deg2Rad,
+                         target.rpyDeg[1] * rw::math::Deg2Rad,
+                         target.rpyDeg[2] * rw::math::Deg2Rad).toRotation3D ());
+    WorkspaceTargetPoseVisualSpec spec;
+    spec.id = task->id;
+    spec.label = task->name.empty () ? task->id : task->name;
+    spec.worldTTarget = rw::kinematics::Kinematics::worldTframe (
+        reference, currentState ()) * localTarget;
+    spec.axisLength = 0.06;
+    _validateTaskVisualizer.setScene (
+        _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+    std::string error;
+    if (!_validateTaskVisualizer.showTargetPose (
+            spec, "KinematicAnalysis.ValidateTask.", &error)) {
+        setStatus (QString::fromStdString (error));
+        return;
+    }
+    if (_validateRegionVisualizationStatus != nullptr)
+        _validateRegionVisualizationStatus->setText (
+            tr ("3D: target %1 shown; double-click its marker to apply the best IK solution.")
+                .arg (taskId));
+    if (!_studio->getView ().isNull ())
+        _studio->getView ()->update ();
+}
+
+void KinematicAnalysisWidget::handleValidation3DPositionDoubleClick (
+    const rw::math::Vector3D<>& position)
+{
+    if (_validateTaskResultTable == nullptr || !_validateHasResults)
+        return;
+    const QModelIndexList rows = _validateTaskResultTable->selectionModel () == nullptr ?
+        QModelIndexList () : _validateTaskResultTable->selectionModel ()->selectedRows ();
+    if (rows.isEmpty ())
+        return;
+    const QTableWidgetItem* idItem = _validateTaskResultTable->item (rows.front ().row (), 0);
+    const QString taskId = idItem == nullptr ? QString () :
+        idItem->data (Qt::UserRole).toString ();
+    if (taskId.isEmpty () || _workcell == nullptr)
+        return;
+    const auto task = std::find_if (
+        _validateExecution.tasks.begin (), _validateExecution.tasks.end (),
+        [&taskId] (const RequirementExecutionTask& value) {
+            return QString::fromStdString (value.id) == taskId;
+        });
+    const auto result = std::find_if (
+        _validateSummary.taskResults.begin (), _validateSummary.taskResults.end (),
+        [&taskId] (const TargetEvaluation& value) {
+            return QString::fromStdString (value.target.id) == taskId;
+        });
+    if (task == _validateExecution.tasks.end () || result == _validateSummary.taskResults.end ())
+        return;
+    rw::kinematics::Frame* reference = _workcell->getWorldFrame ();
+    if (!task->refFrame.empty () && task->refFrame != "WORLD")
+        reference = _workcell->findFrame (task->refFrame);
+    if (reference == nullptr)
+        return;
+    const TaskPoint& target = result->target;
+    const rw::math::Transform3D<> localTarget (
+        rw::math::Vector3D<> (target.position[0], target.position[1], target.position[2]),
+        rw::math::RPY<> (target.rpyDeg[0] * rw::math::Deg2Rad,
+                         target.rpyDeg[1] * rw::math::Deg2Rad,
+                         target.rpyDeg[2] * rw::math::Deg2Rad).toRotation3D ());
+    const rw::math::Vector3D<> targetWorld =
+        (rw::kinematics::Kinematics::worldTframe (reference, currentState ()) * localTarget).P ();
+    const rw::math::Vector3D<> delta = position - targetWorld;
+    const double distanceSquared = delta[0] * delta[0] + delta[1] * delta[1] + delta[2] * delta[2];
+    if (distanceSquared > 0.10 * 0.10)
+        return;
+    applyValidatedTaskBestCandidate (taskId);
 }
 
 // selectValidationResult:按稳定 ID 选中任务表或区域表中的对应行(region 决定目标表)。
@@ -4188,6 +4338,9 @@ void KinematicAnalysisWidget::stateChangedListener (const rw::kinematics::State&
     invalidateEnvelopeCache ();
     if (!_applyingSelectedIkSolution && !_lastIkResult.solutions.empty ())
         invalidateIkResultPresentation ();
+    // A target may be expressed in a moving reference frame; keep its marker
+    // aligned with the current WorkCell state after every robot update.
+    refreshValidationTaskVisualization ();
     if (visualEnvelopeStateChangeRequiresRefresh (envelopeActive, true))
         refreshVisualization ();
 }

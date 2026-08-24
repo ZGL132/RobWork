@@ -42,6 +42,15 @@ struct WorkspaceRegionVisualSpec
     bool showCells = false;
 };
 
+//! 三维视图中可拾取的目标位姿标记。
+struct WorkspaceTargetPoseVisualSpec
+{
+    std::string id;
+    std::string label;
+    rw::math::Transform3D<> worldTTarget;
+    double axisLength = 0.06;
+};
+
 static const std::size_t MaxWorkspaceRegionVisualCells = 2000;
 
 //! 计算参考系下区域中心对应的世界变换。
@@ -74,6 +83,9 @@ class WorkspaceRegionSceneVisualizer
     bool show (const WorkspaceRegionVisualSpec& spec,
                const std::string& namePrefix,
                std::string* error = nullptr);
+    bool showTargetPose (const WorkspaceTargetPoseVisualSpec& spec,
+                         const std::string& namePrefix,
+                         std::string* error = nullptr);
 
     std::size_t displayedCellCount () const { return _displayedCellCount; }
     std::size_t totalCellCount () const { return _totalCellCount; }

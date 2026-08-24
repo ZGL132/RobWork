@@ -14,6 +14,7 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/kinematics/State.hpp>
 #include <rw/math/Q.hpp>
+#include <rw/math/Vector3D.hpp>
 
 // QFutureWatcher:监听 QtConcurrent::run 异步任务完成,触发 finished 信号到主线程。
 // QProgressBar :跨线程进度条(由 updatePoseReachabilityProgress 槽更新)。
@@ -187,6 +188,9 @@ class KinematicAnalysisWidget : public QWidget
     void selectValidationResult (bool region, const QString& stableId);
     void refreshValidationRegionVisualization ();
     void clearValidationRegionVisualization ();
+    void refreshValidationTaskVisualization ();
+    void clearValidationTaskVisualization ();
+    void handleValidation3DPositionDoubleClick (const rw::math::Vector3D<>& position);
     // 双击 Validate 任务行时,将该任务排序后的最佳 IK 候选解写回 3D 状态。
     void applyValidatedTaskBestCandidate (const QString& taskId);
     void applyRequirementValidationResult (const RequirementValidationRunResult& result);
@@ -461,6 +465,7 @@ class KinematicAnalysisWidget : public QWidget
     // _validateOrientationProbeLabel:选中区域的方向采样数提示(Directions / Rolls)。
     QLabel* _validateOrientationProbeLabel;
     WorkspaceRegionSceneVisualizer _validateRegionVisualizer;
+    WorkspaceRegionSceneVisualizer _validateTaskVisualizer;
     // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
     // Run / Cancel + Workspace 采样参数。
     QPushButton* _exploreRunButton;

@@ -1015,4 +1015,20 @@ evaluation pipeline until its designated later migration gates are complete.
   the absolute-path executable passed `phase6_integration` (7 checks, exit 0),
   and the isolated S60-S64 suites plus adjacent StructureOptimizer core suites
   were run as the final gate. `git diff --check` passed with only existing
-  LF-to-CRLF conversion warnings.
+   LF-to-CRLF conversion warnings.
+
+## Remediation Task 1 / unique build baseline (2026-08-23)
+
+- Source revision: `d967d2e7dbd3d631268f7aaf360526236670bb7f`.
+- A fresh build tree was configured at
+  `D:/10_Source_Repos/21_robot/RobWork/RobWork/build/codex-structure-remediation-debug`
+  with Visual Studio x64 developer tools, Ninja, Debug configuration, and the
+  repository vcpkg toolchain.
+- `CMAKE_HOME_DIRECTORY` is
+  `D:/10_Source_Repos/21_robot/RobWork/RobWork`; this is the only build tree
+  accepted for remediation evidence.
+- The existing QtCreator-linked build tree and `codex-vs-debug*` trees are
+  historical outputs. Their executables must not be used as remediation
+  evidence unless rebuilt after this source revision in the unique tree.
+- The target executable for all subsequent evidence is the absolute path
+  `D:/10_Source_Repos/21_robot/RobWork/RobWork/build/codex-structure-remediation-debug/RobWorkStudio/bin/sdurws_structureoptimizer_test.exe`.
