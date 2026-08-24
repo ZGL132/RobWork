@@ -9,7 +9,7 @@
 //     指向目标 / 对齐几何法向)与滚动采样,有多少离散姿态可达。
 //
 // 流程分三步,可分别独立调用:
-//   1. generateGrid:把长方体区域按 samplesPerAxis 均匀切分为网格单元;
+//   1. generateGrid:把长方体区域按冻结的 XYZ 网格点数均匀切分为网格单元;
 //   2. generateTargets:为单个单元生成该处要评估的一组 TaskPoint(不同朝向);
 //   3. evaluate:串行跑完所有单元,聚合出 positionCoverage /
 //      orientationCoverage 与整体 feasibility / quality。

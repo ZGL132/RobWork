@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -412,7 +413,7 @@ QJsonObject writeBoxRegion(const BoxRegion& region)
     object["center"] = writeArray(region.center);
     object["size"] = writeArray(region.size);
     object["minimumCoverage"] = region.minimumCoverage;
-    object["samplesPerAxis"] = region.samplesPerAxis;
+    object["sampleSpacingMeters"] = writeArray(region.sampleSpacingMeters);
     object["tcpFrame"] = QString::fromStdString(region.tcpFrame);
     object["orientationMode"] = toString(region.orientationMode);
     object["orientationTargetFrame"] = QString::fromStdString(region.orientationTargetFrame);
@@ -431,7 +432,7 @@ QJsonObject writeBoxRegion(const BoxRegion& region)
     object["minimumManipulability"] = region.minimumManipulability;
     writeExtensions(object, region.extensions,
                     {"id", "name", "level", "refFrame", "center", "size", "minimumCoverage",
-                     "samplesPerAxis", "tcpFrame", "orientationMode", "orientationTargetFrame",
+                     "sampleSpacingMeters", "tcpFrame", "orientationMode", "orientationTargetFrame",
                      "orientationTargetGeometry", "orientationTargetPoint", "fixedRpyDeg",
                      "directionSamples", "rollSamples", "minimumOrientationCoverage",
                      "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
@@ -443,7 +444,7 @@ bool readBoxRegion(const QJsonObject& object, BoxRegion& region, std::string* er
 {
     if (!readExtensions(object,
                         {"id", "name", "level", "refFrame", "center", "size", "minimumCoverage",
-                         "samplesPerAxis", "tcpFrame", "orientationMode", "orientationTargetFrame",
+                         "sampleSpacingMeters", "samplesPerAxis", "tcpFrame", "orientationMode", "orientationTargetFrame",
                          "orientationTargetGeometry", "orientationTargetPoint", "fixedRpyDeg",
                          "directionSamples", "rollSamples", "minimumOrientationCoverage",
                          "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
@@ -462,9 +463,17 @@ bool readBoxRegion(const QJsonObject& object, BoxRegion& region, std::string* er
         !readArray(object, "size", region.size, error))
         return false;
     if (!requireNumber(object, "minimumCoverage", region.minimumCoverage, 0.8, error) ||
-        !requireInteger(object, "samplesPerAxis", region.samplesPerAxis, 5, error) ||
         !requireString(object, "tcpFrame", region.tcpFrame, "", error) ||
         !requireString(object, "orientationMode", text, "Fixed", error)) return false;
+    if (object.contains("sampleSpacingMeters")) {
+        if (!readArray(object, "sampleSpacingMeters", region.sampleSpacingMeters, error)) return false;
+    } else if (object.contains("samplesPerAxis")) {
+        int legacySamples = 5;
+        if (!requireInteger(object, "samplesPerAxis", legacySamples, 5, error)) return false;
+        for (std::size_t axis = 0; axis < region.size.size(); ++axis)
+            region.sampleSpacingMeters[axis] = region.size[axis] /
+                static_cast<double>(std::max(legacySamples - 1, 1));
+    }
     if (!orientationModeFromString(text, region.orientationMode)) {
         if (error != nullptr) *error = "BoxRegion.orientationMode is invalid.";
         return false;

@@ -129,7 +129,10 @@ struct RequirementExecutionRegion {
     std::array<double, 3> center = {{0.0, 0.0, 0.0}};
     std::array<double, 3> size = {{0.1, 0.1, 0.1}};
     double minimumCoverage = 0.8;
-    int samplesPerAxis = 5;
+    // 编辑态的间距与冻结时解析出的网格点数均显式写入执行契约，避免下游
+    // 因浮点向上取整规则不同而得到不一致的覆盖率结果。
+    std::array<double, 3> sampleSpacingMeters = {{0.025, 0.025, 0.025}};
+    std::array<int, 3> sampleCounts = {{5, 5, 5}};
     RequirementExecutionOrientationMode orientationMode =
         RequirementExecutionOrientationMode::Fixed;
     std::string orientationTargetFrame;

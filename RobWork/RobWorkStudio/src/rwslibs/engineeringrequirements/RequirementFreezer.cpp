@@ -4,6 +4,7 @@
 #include "OrientationRuleResolver.hpp"
 #include "RequirementCompiler.hpp"
 #include "RequirementSetJson.hpp"
+#include "WorkspaceSamplingGrid.hpp"
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 
 #include <rw/kinematics/Kinematics.hpp>
@@ -380,7 +381,7 @@ RequirementSet compiledSnapshot(const CompiledRequirementSet& compiled)
         region.center = item.center;
         region.size = item.size;
         region.minimumCoverage = item.minimumCoverage;
-        region.samplesPerAxis = item.samplesPerAxis;
+        region.sampleSpacingMeters = item.sampleSpacingMeters;
         region.tcpFrame = item.tcpFrame;
         region.orientationMode = item.orientationMode;
         region.orientationTargetFrame = item.orientationTargetFrame;
@@ -520,7 +521,12 @@ RequirementExecutionSet makeExecution(const FrozenRequirementArtifact& artifact)
         region.center = item.center;
         region.size = item.size;
         region.minimumCoverage = item.minimumCoverage;
-        region.samplesPerAxis = item.samplesPerAxis;
+        region.sampleSpacingMeters = item.sampleSpacingMeters;
+        WorkspaceSamplingGrid samplingGrid;
+        if (!resolveWorkspaceSamplingGrid(item.size, item.sampleSpacingMeters,
+                                          item.minimumVerificationStage, samplingGrid, nullptr))
+            continue;
+        region.sampleCounts = samplingGrid.pointCounts;
         region.orientationMode = static_cast<RequirementExecutionOrientationMode>(item.orientationMode);
         region.orientationTargetFrame = item.orientationTargetFrame;
         region.orientationTargetGeometry = item.orientationTargetGeometry;

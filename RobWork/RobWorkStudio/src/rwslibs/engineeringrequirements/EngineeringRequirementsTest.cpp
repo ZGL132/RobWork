@@ -10,6 +10,7 @@
 #include "StationTemplateService.hpp"
 #include "EngineeringRequirementsWidget.hpp"
 #include "WorkspaceRegionSceneVisualizer.hpp"
+#include "WorkspaceSamplingGrid.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -123,6 +124,43 @@ int testWorkspaceRegionVisualizationHelpers()
     REQUIRE(weak[0] > weak[2] && weak[1] > weak[2]);
     REQUIRE(failed[0] > failed[1] && failed[0] > failed[2]);
     REQUIRE(unknown[0] == unknown[1] && unknown[1] == unknown[2]);
+    return 0;
+}
+
+int testWorkspaceSamplingSpacing()
+{
+    rws::WorkspaceSamplingGrid grid;
+    std::string error;
+    REQUIRE(rws::resolveWorkspaceSamplingGrid(
+        {{0.10, 0.10, 0.10}}, {{0.10, 0.05, 0.025}},
+        rws::RequirementVerificationStage::Verified, grid, &error));
+    REQUIRE(grid.pointCounts[0] == 2);
+    REQUIRE(grid.pointCounts[1] == 3);
+    REQUIRE(grid.pointCounts[2] == 5);
+    REQUIRE(grid.totalPointCount == 30);
+
+    REQUIRE(!rws::resolveWorkspaceSamplingGrid(
+        {{0.10, 0.10, 0.10}}, {{0.10, 0.0, 0.025}},
+        rws::RequirementVerificationStage::Verified, grid, &error));
+    REQUIRE(!error.empty());
+
+    // 保存格式从旧标量 samplesPerAxis 迁移到三轴间距后，历史需求项目仍必须可读。
+    rws::RequirementSet legacy;
+    rws::BoxRegion legacyRegion;
+    legacyRegion.id = "legacy-grid";
+    legacyRegion.tcpFrame = "TCP";
+    legacy.boxRegions.push_back(legacyRegion);
+    QJsonObject document = rws::RequirementSetJson::toObject(legacy);
+    QJsonArray regions = document.value("boxRegions").toArray();
+    QJsonObject region = regions.at(0).toObject();
+    region.remove("sampleSpacingMeters");
+    region["samplesPerAxis"] = 5;
+    regions[0] = region;
+    document["boxRegions"] = regions;
+    rws::RequirementSet restored;
+    REQUIRE(rws::RequirementSetJson::fromObject(document, restored, &error));
+    const std::array<double, 3> expectedLegacySpacing = {{0.025, 0.025, 0.025}};
+    REQUIRE(restored.boxRegions.front().sampleSpacingMeters == expectedLegacySpacing);
     return 0;
 }
 
@@ -499,17 +537,17 @@ int testWorkspaceVerificationPolicyValidation()
     verified.id = "verified_grid";
     verified.tcpFrame = "TCP";
     verified.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
-    verified.samplesPerAxis = 1;
+    verified.sampleSpacingMeters = {{0.0, 0.0, 0.0}};
     requirements.boxRegions.push_back(verified);
 
     rws::CompiledRequirementSet compiled;
     std::string error;
     REQUIRE(!rws::RequirementCompiler::compile(requirements, compiled, &error));
-    REQUIRE(error.find("samplesPerAxis") != std::string::npos);
+    REQUIRE(error.find("sampleSpacingMeters") != std::string::npos);
     const std::vector<rws::RequirementDiagnostic> diagnostics =
         rws::RequirementCompiler::validateDetailed(requirements);
     REQUIRE(!diagnostics.empty());
-    REQUIRE(diagnostics.front().code == "REQ_WORKSPACE_GRID_TOO_COARSE");
+    REQUIRE(diagnostics.front().code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED");
 
     requirements.boxRegions.front().level = rws::RequirementLevel::Should;
     REQUIRE(rws::RequirementCompiler::compile(requirements, compiled, &error));
@@ -520,7 +558,7 @@ int testWorkspaceVerificationPolicyValidation()
     quick.id = "quick_grid";
     quick.level = rws::RequirementLevel::Must;
     quick.minimumVerificationStage = rws::RequirementVerificationStage::Quick;
-    quick.samplesPerAxis = 1;
+    quick.sampleSpacingMeters = {{0.0, 0.0, 0.0}};
     quick.directionSamples = 0;
     requirements.boxRegions.clear();
     requirements.boxRegions.push_back(quick);
@@ -540,7 +578,7 @@ int testWorkspaceSamplingLimitsRejectUnboundedWork()
     region.id = "oversized_grid";
     region.tcpFrame = "TCP";
     // 三项采样参数均取"上限 + 1"，确保超出上限而非恰好在边界。
-    region.samplesPerAxis = rws::MaxWorkspaceSamplesPerAxis + 1;
+    region.sampleSpacingMeters = {{0.001, 0.001, 0.001}};
     region.directionSamples = rws::MaxWorkspaceDirectionSamples + 1;
     region.rollSamples = rws::MaxWorkspaceRollSamples + 1;
     requirements.boxRegions.push_back(region);
@@ -572,7 +610,7 @@ int testStableRequirementDiagnosticCodes()
     region.id = "workspace-invalid";
     region.tcpFrame = "TCP";
     region.level = rws::RequirementLevel::Should;
-    region.samplesPerAxis = 1;
+    region.sampleSpacingMeters = {{0.0, 0.0, 0.0}};
     region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
     requirements.boxRegions.push_back(region);
 
@@ -582,7 +620,7 @@ int testStableRequirementDiagnosticCodes()
     bool gridCode = false;
     for (const rws::RequirementDiagnostic& diagnostic : diagnostics) {
         orientationCode = orientationCode || diagnostic.code == "REQ_ORIENTATION_TARGET_MISSING";
-        gridCode = gridCode || diagnostic.code == "REQ_WORKSPACE_GRID_TOO_COARSE";
+        gridCode = gridCode || diagnostic.code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED";
     }
     REQUIRE(orientationCode);
     REQUIRE(gridCode);
@@ -604,7 +642,7 @@ int testRequirementArtifactV3Migration()
     region.id = "legacy_region";
     region.refFrame = "WORLD";
     region.tcpFrame = "TCP";
-    region.samplesPerAxis = 3;
+    region.sampleSpacingMeters = {{0.05, 0.05, 0.05}};
     region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
     legacy.compiled.workspaceRegions.push_back(region);
     legacy.frozenRobotState.deviceName = "robot";
@@ -865,7 +903,7 @@ int testFreezerRetainsNonBlockingEnvironmentExclusions()
     // 除环境诊断外再保留一条编译器级建议诊断(Verified 阶段的覆盖盒存在"过粗"建议)。
     // 工件重载必须完整保留冻结时的诊断记录，不能因重新编译而重复生成或丢失。
     region.minimumVerificationStage = rws::RequirementVerificationStage::Verified;
-    region.samplesPerAxis = 1;
+    region.sampleSpacingMeters = {{0.0, 0.0, 0.0}};
     requirements.boxRegions.push_back(region);
 
     rws::FrozenRequirementArtifact artifact;
@@ -1186,7 +1224,7 @@ int testFrozenArtifactBecomesStaleWhenWorkCellStateChanges()
     region.refFrame = "WORLD";
     region.tcpFrame = "ArtifactTcp";
     region.size = {{0.1, 0.1, 0.1}};
-    region.samplesPerAxis = 3;
+    region.sampleSpacingMeters = {{0.05, 0.05, 0.05}};
     requirements.boxRegions.push_back(region);
 
     rws::FrozenRequirementArtifact artifact;
@@ -2551,13 +2589,13 @@ int testWidgetPreservesBoxSamplingDensityWhenSynchronizing()
 
     addRegion->click();
     REQUIRE(regionTable->rowCount() == 1);
-    regionTable->item(0, 11)->setText("9");
+    regionTable->item(0, 11)->setText("0.01");
 
     // 第二次新增会调用 syncTablesToRequirements()，可覆盖保存和冻结前的同一同步路径。
     addRegion->click();
     const rws::RequirementSet requirements = widget.requirementSet();
     REQUIRE(requirements.boxRegions.size() == 2);
-    REQUIRE(requirements.boxRegions.front().samplesPerAxis == 9);
+    REQUIRE(std::abs(requirements.boxRegions.front().sampleSpacingMeters[0] - 0.01) < 1e-12);
     return 0;
 }
 
@@ -2587,9 +2625,9 @@ int testWidgetAssignsAndPreservesWorkspaceTcpFrame()
     REQUIRE(widget.requirementSet().boxRegions.size() == 1);
     REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "WidgetTcp");
 
-    regionTable->item(0, 11)->setText("9");
+    regionTable->item(0, 11)->setText("0.01");
     REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "WidgetTcp");
-    regionTable->item(0, 12)->setText("CustomTcp");
+    regionTable->item(0, 14)->setText("CustomTcp");
     REQUIRE(widget.requirementSet().boxRegions.front().tcpFrame == "CustomTcp");
 
     addRegion->click();
@@ -2634,12 +2672,12 @@ int testWidgetUndoRedoCoversRegularStationAndCoverageEdits()
 
     addRegion->click();
     REQUIRE(widget.requirementSet().boxRegions.size() == 1);
-    regionTable->item(0, 11)->setText("9");
-    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 9);
+    regionTable->item(0, 11)->setText("0.01");
+    REQUIRE(std::abs(widget.requirementSet().boxRegions.front().sampleSpacingMeters[0] - 0.01) < 1e-12);
     undo->click();
-    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 5);
+    REQUIRE(std::abs(widget.requirementSet().boxRegions.front().sampleSpacingMeters[0] - 0.025) < 1e-12);
     redo->click();
-    REQUIRE(widget.requirementSet().boxRegions.front().samplesPerAxis == 9);
+    REQUIRE(std::abs(widget.requirementSet().boxRegions.front().sampleSpacingMeters[0] - 0.01) < 1e-12);
     return 0;
 }
 
@@ -2697,6 +2735,10 @@ int main(int argc, char** argv)
     if (argc > 1 && std::string(argv[1]) == "region_visualization") {
         QCoreApplication app(argc, argv);
         return testWorkspaceRegionVisualizationHelpers();
+    }
+    if (argc > 1 && std::string(argv[1]) == "workspace_sampling_spacing") {
+        QCoreApplication app(argc, argv);
+        return testWorkspaceSamplingSpacing();
     }
     if (argc > 1 && std::string(argv[1]) == "workspace_execution_fields") {
         QCoreApplication app(argc, argv);

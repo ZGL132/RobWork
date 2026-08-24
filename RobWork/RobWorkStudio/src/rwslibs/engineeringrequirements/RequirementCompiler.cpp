@@ -1,6 +1,7 @@
 #include "RequirementCompiler.hpp"
 
 #include "RequirementSetJson.hpp"
+#include "WorkspaceSamplingGrid.hpp"
 
 #include <QCryptographicHash>
 
@@ -34,7 +35,7 @@ std::string inferDiagnosticField(const std::string& code, const std::string& mes
         return "orientation";
     if (code == "REQ_POSE_INVALID") return "position";
     if (code == "REQ_WORKSPACE_GRID_TOO_COARSE" ||
-        code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED") return "samplesPerAxis";
+        code == "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED") return "sampleSpacingMeters";
     if (code == "REQ_WORKSPACE_INVALID") return "size";
     return std::string();
 }
@@ -241,7 +242,8 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
             addDiagnostic(diagnostics, region.id, region.level, "Box region TCP frame is required: " + region.id,
                           "REQ_REQUIRED_FIELD_MISSING");
 
-        // 几何参数与采样密度校验：包络盒三维尺寸必须严格大于 0，覆盖率 $\in [0, 1]$，离散采样点数 $\ge 2$
+        // 几何参数与采样间距校验：包络盒三维尺寸必须严格大于 0，间距通过统一规则
+        // 解析为包含边界的 XYZ 网格，避免不同下游重复取整。
         if (!finiteArray(region.center) || !finiteArray(region.size) ||
             region.size[0] <= 0.0 || region.size[1] <= 0.0 || region.size[2] <= 0.0)
             addDiagnostic(diagnostics, region.id, region.level,
@@ -252,12 +254,13 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
             addDiagnostic(diagnostics, region.id, region.level,
                           "Box region minimumCoverage must be within [0, 1]: " + region.id,
                           "REQ_WORKSPACE_COVERAGE_INVALID");
-        const int minimumGridSamples =
-            region.minimumVerificationStage == RequirementVerificationStage::Verified ? 2 : 1;
-        if (region.samplesPerAxis < minimumGridSamples)
+        WorkspaceSamplingGrid samplingGrid;
+        std::string samplingError;
+        if (!resolveWorkspaceSamplingGrid(region.size, region.sampleSpacingMeters,
+                                          region.minimumVerificationStage, samplingGrid, &samplingError))
             addDiagnostic(diagnostics, region.id, region.level,
-                          "Box region samplesPerAxis is too coarse for the requested verification stage: " + region.id,
-                          "REQ_WORKSPACE_GRID_TOO_COARSE");
+                          "Box region sampleSpacingMeters is invalid: " + samplingError + " " + region.id,
+                          "REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED");
         if (region.directionSamples < 1)
             addDiagnostic(diagnostics, region.id, region.level,
                           "Box region directionSamples must be at least 1: " + region.id,
@@ -266,11 +269,8 @@ std::vector<RequirementDiagnostic> RequirementCompiler::validateDetailed(const R
             addDiagnostic(diagnostics, region.id, region.level,
                           "Box region rollSamples must be at least 1: " + region.id,
                           "REQ_WORKSPACE_ROLL_SAMPLES_INVALID");
-        // 采样密度安全上限校验：逐轴网格数、方向样本数与翻滚样本数任一超过
-        // 定义的上限即生成 REQ_WORKSPACE_SAMPLE_LIMIT_EXCEEDED 诊断，防止畸形的
-        // 覆盖盒请求在下游采样分析中产生无界计算量。
-        if (region.samplesPerAxis > MaxWorkspaceSamplesPerAxis ||
-            region.directionSamples > MaxWorkspaceDirectionSamples ||
+        // 方向样本与翻滚样本的安全上限校验；空间网格上限已由上方统一解析器处理。
+        if (region.directionSamples > MaxWorkspaceDirectionSamples ||
             region.rollSamples > MaxWorkspaceRollSamples)
             addDiagnostic(diagnostics, region.id, region.level,
                           "Box region sampling density exceeds the supported safety limit: " + region.id,
@@ -435,7 +435,7 @@ bool RequirementCompiler::compile(const RequirementSet& requirements, CompiledRe
         item.center = region.center; 
         item.size = region.size;
         item.minimumCoverage = region.minimumCoverage; 
-        item.samplesPerAxis = region.samplesPerAxis;
+        item.sampleSpacingMeters = region.sampleSpacingMeters;
         item.tcpFrame = region.tcpFrame;
         item.orientationMode = region.orientationMode;
         item.orientationTargetFrame = region.orientationTargetFrame;

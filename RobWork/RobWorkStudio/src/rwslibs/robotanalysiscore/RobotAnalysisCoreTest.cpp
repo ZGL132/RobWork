@@ -489,7 +489,8 @@ int runRequirementExecution ()
     region.tcpFrame = "TCP";
     region.center = {{0.1, 0.2, 0.3}};
     region.size = {{0.2, 0.2, 0.2}};
-    region.samplesPerAxis = 3;
+    region.sampleSpacingMeters = {{0.1, 0.1, 0.1}};
+    region.sampleCounts = {{3, 3, 3}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
     region.orientationTargetFrame = "FixtureFrame";
     region.orientationTargetGeometry = "frame:FixtureFrame";
@@ -548,7 +549,7 @@ int runRequirementExecution ()
     if (restored.tasks.size () != 1 || restored.workspaceRegions.size () != 1 ||
         restored.diagnostics.size () != 1 || restored.tasks.front ().id != "task-1" ||
         restored.tasks.front ().processType != rws::RequirementExecutionProcessType::Pick ||
-        restored.workspaceRegions.front ().samplesPerAxis != 3 ||
+        restored.workspaceRegions.front ().sampleCounts != std::array<int, 3>{{3, 3, 3}} ||
         !restored.tasks.front ().approach.enabled ||
         restored.tasks.front ().approach.axis != rws::RequirementExecutionOffsetAxis::ReferenceZ ||
         restored.tasks.front ().approach.distanceMeters != 0.15 ||
@@ -572,10 +573,10 @@ int runRequirementExecution ()
     // execution contract must not apply the Verified-only minimum of two.
     value.workspaceRegions.front ().minimumVerificationStage =
         rws::RequirementExecutionStage::Quick;
-    value.workspaceRegions.front ().samplesPerAxis = 1;
+    value.workspaceRegions.front ().sampleCounts = {{1, 1, 1}};
     const QJsonObject quickObject = rws::RequirementExecutionJson::toObject (value);
     if (!rws::RequirementExecutionJson::fromObject (quickObject, restored, &error) ||
-        restored.workspaceRegions.front ().samplesPerAxis != 1 ||
+        restored.workspaceRegions.front ().sampleCounts != std::array<int, 3>{{1, 1, 1}} ||
         restored.workspaceRegions.front ().minimumVerificationStage !=
             rws::RequirementExecutionStage::Quick)
         return fail ("Quick requirement execution regions should allow one sample per axis.");
@@ -620,7 +621,8 @@ int runRequirementExecution ()
     QJsonObject oversized = object;
     QJsonArray oversizedRegions = oversized.value ("workspaceRegions").toArray ();
     QJsonObject oversizedRegion = oversizedRegions.at (0).toObject ();
-    oversizedRegion["samplesPerAxis"] = rws::MaxExecutionWorkspaceSamplesPerAxis + 1;
+    oversizedRegion["sampleCounts"] = QJsonArray {rws::MaxExecutionWorkspaceSamplesPerAxis + 1,
+                                                   3, 3};
     oversizedRegions.replace (0, oversizedRegion);
     oversized["workspaceRegions"] = oversizedRegions;
     if (rws::RequirementExecutionJson::fromObject (oversized, restored, &error) ||
@@ -663,16 +665,16 @@ int runRequirementExecution ()
         error.find ("position") == std::string::npos)
         return fail ("Requirement execution JSON should reject wrong-typed array values.");
 
-    // 标量字段类型错误：整数字段混入字符串必须被拒绝，并指出 "samplesPerAxis"。
+    // 网格计数数组字段类型错误：混入字符串必须被拒绝，并指出 "sampleCounts"。
     QJsonObject wrongScalarType = object;
     QJsonArray wrongRegions = wrongScalarType.value ("workspaceRegions").toArray ();
     QJsonObject wrongRegion = wrongRegions.at (0).toObject ();
-    wrongRegion["samplesPerAxis"] = "bad";
+    wrongRegion["sampleCounts"] = QJsonArray {3, "bad", 3};
     wrongRegions.replace (0, wrongRegion);
     wrongScalarType["workspaceRegions"] = wrongRegions;
     if (rws::RequirementExecutionJson::fromObject (wrongScalarType, restored, &error) ||
-        error.find ("samplesPerAxis") == std::string::npos)
-        return fail ("Requirement execution JSON should reject wrong-typed scalar values.");
+        error.find ("sampleCounts") == std::string::npos)
+        return fail ("Requirement execution JSON should reject wrong-typed grid values.");
 
     // 方向样本数上限独立生效：即使逐轴网格数合法，directionSamples 超限也必须拒绝。
     QJsonObject independentDirectionLimit = object;

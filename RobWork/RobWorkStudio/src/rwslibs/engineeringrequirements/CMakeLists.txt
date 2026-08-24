@@ -21,6 +21,7 @@ if(build)
         StationImportService.cpp
         StationTemplateService.cpp
         WorkspaceRegionSceneVisualizer.cpp
+        WorkspaceSamplingGrid.cpp
     )
     set(CoreHeaderFiles
         EngineeringRequirementTypes.hpp
@@ -34,6 +35,7 @@ if(build)
         StationImportService.hpp
         StationTemplateService.hpp
         WorkspaceRegionSceneVisualizer.hpp
+        WorkspaceSamplingGrid.hpp
     )
     rws_add_component(sdurws_engineeringrequirements_core ${CoreSrcFiles} ${CoreHeaderFiles})
     rw_add_includes(sdurws_engineeringrequirements_core "rwslibs/engineeringrequirements" ${CoreHeaderFiles})

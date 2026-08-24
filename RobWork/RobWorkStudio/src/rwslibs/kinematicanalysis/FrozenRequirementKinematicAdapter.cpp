@@ -2,6 +2,7 @@
 
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/RequirementMigration.hpp>
+#include <rwslibs/engineeringrequirements/WorkspaceSamplingGrid.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionTypes.hpp>
 
@@ -150,7 +151,11 @@ RequirementExecutionRegion toExecutionRegion(const WorkspaceDemandRegion& source
     region.center = source.center;
     region.size = source.size;
     region.minimumCoverage = source.minimumCoverage;
-    region.samplesPerAxis = source.samplesPerAxis;
+    region.sampleSpacingMeters = source.sampleSpacingMeters;
+    WorkspaceSamplingGrid samplingGrid;
+    if (resolveWorkspaceSamplingGrid(source.size, source.sampleSpacingMeters,
+                                     source.minimumVerificationStage, samplingGrid, nullptr))
+        region.sampleCounts = samplingGrid.pointCounts;
     region.orientationMode =
         static_cast<RequirementExecutionOrientationMode>(source.orientationMode);
     region.orientationTargetFrame = source.orientationTargetFrame;

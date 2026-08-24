@@ -263,7 +263,8 @@ struct BoxRegion {
     std::array<double, 3> center = {{0.0, 0.0, 0.0}}; ///< 区域中心点位置 [X, Y, Z]（单位：米）
     std::array<double, 3> size = {{0.1, 0.1, 0.1}};   ///< 区域尺寸 [DX, DY, DZ]（单位：米）
     double minimumCoverage = 0.8;                     ///< 要求的最小空间覆盖率 [0.0, 1.0]（如 80%）
-    int samplesPerAxis = 5;                           ///< 空间采样离散密度（每个轴的采样点数）
+    std::array<double, 3> sampleSpacingMeters = {{0.025, 0.025, 0.025}};
+                                                        ///< XYZ 三轴采样间距（米）
     std::string tcpFrame;
     OrientationMode orientationMode = OrientationMode::Fixed;
     std::string orientationTargetFrame;
@@ -334,7 +335,8 @@ struct WorkspaceDemandRegion {
     std::array<double, 3> center = {{0.0, 0.0, 0.0}}; ///< 中心点
     std::array<double, 3> size = {{0.1, 0.1, 0.1}};   ///< 尺寸
     double minimumCoverage = 0.8;                     ///< 要求覆盖率
-    int samplesPerAxis = 5;                           ///< 采样密度
+    std::array<double, 3> sampleSpacingMeters = {{0.025, 0.025, 0.025}};
+                                                        ///< XYZ 三轴采样间距（米）
     std::string tcpFrame;
     OrientationMode orientationMode = OrientationMode::Fixed;
     std::string orientationTargetFrame;

@@ -4,7 +4,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 #include <set>
 
 namespace rws {
@@ -66,6 +68,14 @@ QJsonArray writeArray(const std::array<double, N>& values)
 {
     QJsonArray result;
     for (double value : values) result.append(value);
+    return result;
+}
+
+template <std::size_t N>
+QJsonArray writeIntegerArray(const std::array<int, N>& values)
+{
+    QJsonArray result;
+    for (int value : values) result.append(value);
     return result;
 }
 
@@ -162,6 +172,31 @@ bool readArray(const QJsonObject& object, const char* key,
             return false;
         }
         values[index] = value;
+    }
+    return true;
+}
+
+template <std::size_t N>
+bool readIntegerArray(const QJsonObject& object, const char* key,
+                      std::array<int, N>& values, std::string* error)
+{
+    if (!requireArray(object, key, error)) return false;
+    const QJsonArray array = object.value(key).toArray();
+    if (array.size() != static_cast<int>(N)) {
+        if (error != nullptr) *error = std::string(key) + " must contain " +
+            std::to_string(N) + " values.";
+        return false;
+    }
+    for (std::size_t index = 0; index < N; ++index) {
+        const QJsonValue element = array.at(static_cast<int>(index));
+        const double number = element.toDouble();
+        if (!element.isDouble() || !std::isfinite(number) || std::floor(number) != number ||
+            number < static_cast<double>(std::numeric_limits<int>::min()) ||
+            number > static_cast<double>(std::numeric_limits<int>::max())) {
+            if (error != nullptr) *error = std::string(key) + " must contain finite integer values.";
+            return false;
+        }
+        values[index] = static_cast<int>(number);
     }
     return true;
 }
@@ -573,7 +608,8 @@ QJsonObject regionToObject(const RequirementExecutionRegion& value)
     object["center"] = writeArray(value.center);
     object["size"] = writeArray(value.size);
     object["minimumCoverage"] = value.minimumCoverage;
-    object["samplesPerAxis"] = value.samplesPerAxis;
+    object["sampleSpacingMeters"] = writeArray(value.sampleSpacingMeters);
+    object["sampleCounts"] = writeIntegerArray(value.sampleCounts);
     object["orientationMode"] = orientationToString(value.orientationMode);
     object["orientationTargetFrame"] = QString::fromStdString(value.orientationTargetFrame);
     object["orientationTargetGeometry"] = QString::fromStdString(value.orientationTargetGeometry);
@@ -595,7 +631,7 @@ QJsonObject regionToObject(const RequirementExecutionRegion& value)
     object["diagnostics"] = diagnostics;
     writeExtensions(object, value.extensions,
                     {"id", "name", "level", "compileState", "excludedReason", "refFrame", "tcpFrame",
-                     "center", "size", "minimumCoverage", "samplesPerAxis", "orientationMode",
+                     "center", "size", "minimumCoverage", "sampleSpacingMeters", "sampleCounts", "orientationMode",
                      "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
                      "fixedRpyDeg", "directionSamples", "rollSamples", "minimumOrientationCoverage",
                      "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
@@ -608,7 +644,7 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
 {
     if (!readExtensions(object,
                         {"id", "name", "level", "compileState", "excludedReason", "refFrame", "tcpFrame",
-                         "center", "size", "minimumCoverage", "samplesPerAxis", "orientationMode",
+                         "center", "size", "minimumCoverage", "sampleSpacingMeters", "sampleCounts", "samplesPerAxis", "orientationMode",
                          "orientationTargetFrame", "orientationTargetGeometry", "orientationTargetPoint",
                          "fixedRpyDeg", "directionSamples", "rollSamples", "minimumOrientationCoverage",
                          "minimumVerificationStage", "collisionFreeRequired", "positionToleranceMeters",
@@ -626,8 +662,9 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
                             "positionToleranceMeters", "orientationToleranceDeg",
                             "minimumJointMargin", "minimumManipulability"})
         if (!requireNumber(object, key, error)) return false;
-    // 采样计数必须是整数(网格/方向/翻滚样本数)。
-    for (const char* key : {"samplesPerAxis", "directionSamples", "rollSamples"})
+    // 方向/翻滚样本数必须为整数。网格新格式由 sampleCounts 数组承载；旧格式的
+    // samplesPerAxis 仍可读取并迁移，保证已经保存的工件可继续打开。
+    for (const char* key : {"directionSamples", "rollSamples"})
         if (!requireInteger(object, key, error)) return false;
     // 固定数组与布尔字段。
     if (!requireArray(object, "center", error) || !requireArray(object, "size", error) ||
@@ -655,7 +692,17 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
         !readArray(object, "fixedRpyDeg", value.fixedRpyDeg, error)) return false;
     // 数值严格读取：类型已由 require* 保证，不再回填默认值。
     value.minimumCoverage = object.value("minimumCoverage").toDouble();
-    value.samplesPerAxis = object.value("samplesPerAxis").toInt();
+    if (object.contains("sampleSpacingMeters") || object.contains("sampleCounts")) {
+        if (!readArray(object, "sampleSpacingMeters", value.sampleSpacingMeters, error) ||
+            !readIntegerArray(object, "sampleCounts", value.sampleCounts, error)) return false;
+    } else {
+        if (!requireInteger(object, "samplesPerAxis", error)) return false;
+        const int legacySamples = object.value("samplesPerAxis").toInt();
+        value.sampleCounts = {{legacySamples, legacySamples, legacySamples}};
+        for (std::size_t axis = 0; axis < value.size.size(); ++axis)
+            value.sampleSpacingMeters[axis] = value.size[axis] /
+                static_cast<double>(std::max(legacySamples - 1, 1));
+    }
     value.orientationTargetFrame = object.value("orientationTargetFrame").toString().toStdString();
     value.orientationTargetGeometry = object.value("orientationTargetGeometry").toString().toStdString();
     value.orientationTargetPoint = object.value("orientationTargetPoint").toString().toStdString();
@@ -670,7 +717,6 @@ bool regionFromObject(const QJsonObject& object, RequirementExecutionRegion& val
     // 先做语义校验(枚举合法性)，再校验取值范围(覆盖率、采样下限与上限、有限性)。
     if (!validateExecutionRegion(value, error)) return false;
     if (!std::isfinite(value.minimumCoverage) || value.minimumCoverage < 0.0 || value.minimumCoverage > 1.0 ||
-        value.samplesPerAxis < (value.minimumVerificationStage == RequirementExecutionStage::Verified ? 2 : 1) ||
         value.directionSamples < 1 || value.rollSamples < 1 ||
         !std::isfinite(value.minimumOrientationCoverage) || value.minimumOrientationCoverage < 0.0 ||
         value.minimumOrientationCoverage > 1.0 || !std::isfinite(value.positionToleranceMeters) ||
@@ -793,15 +839,13 @@ bool validateExecutionRegion(const RequirementExecutionRegion& region, std::stri
         if (error != nullptr) *error = "Requirement execution region enum is invalid.";
         return false;
     }
-    // 几何/数值范围：尺寸各分量必须为正，覆盖率在 [0,1]，采样计数有下限(Verified
-    // 阶段至少 2)与安全上限(MaxExecutionWorkspace*)，其余阈值有限且非负。
+    // 几何/数值范围：尺寸各分量必须为正，覆盖率在 [0,1]；冻结结果记录的每轴
+    // 网格点数有下限(Verified 阶段至少 2)与安全上限，其余阈值有限且非负。
     if (!finiteArray(region.center) || !finiteArray(region.size) || !finiteArray(region.fixedRpyDeg) ||
         !std::isfinite(region.size[0]) || !std::isfinite(region.size[1]) ||
         !std::isfinite(region.size[2]) || region.size[0] <= 0.0 || region.size[1] <= 0.0 ||
         region.size[2] <= 0.0 || !std::isfinite(region.minimumCoverage) ||
         region.minimumCoverage < 0.0 || region.minimumCoverage > 1.0 ||
-        region.samplesPerAxis < (region.minimumVerificationStage == RequirementExecutionStage::Verified ? 2 : 1) ||
-        region.samplesPerAxis > MaxExecutionWorkspaceSamplesPerAxis ||
         region.directionSamples < 1 ||
         region.directionSamples > MaxExecutionWorkspaceDirectionSamples ||
         region.rollSamples < 1 || region.rollSamples > MaxExecutionWorkspaceRollSamples ||
@@ -813,6 +857,15 @@ bool validateExecutionRegion(const RequirementExecutionRegion& region, std::stri
         !std::isfinite(region.minimumManipulability) || region.minimumManipulability < 0.0) {
         if (error != nullptr) *error = "Requirement execution workspace region contains invalid values.";
         return false;
+    }
+    const int minimumSamples = region.minimumVerificationStage == RequirementExecutionStage::Verified ? 2 : 1;
+    for (std::size_t axis = 0; axis < region.size.size(); ++axis) {
+        if (!std::isfinite(region.sampleSpacingMeters[axis]) || region.sampleSpacingMeters[axis] <= 0.0 ||
+            region.sampleCounts[axis] < minimumSamples ||
+            region.sampleCounts[axis] > MaxExecutionWorkspaceSamplesPerAxis) {
+            if (error != nullptr) *error = "Requirement execution workspace region contains invalid sampling data.";
+            return false;
+        }
     }
     if ((region.orientationMode == RequirementExecutionOrientationMode::AlignFrame &&
          region.orientationTargetFrame.empty()) ||

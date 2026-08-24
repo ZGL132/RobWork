@@ -314,6 +314,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateProvenanceLabel(NULL),
     _validateTaskSectionTitle(NULL),
     _validateRegionSectionTitle(NULL),
+    _validateRegionVisualizationStatus(NULL),
     _validateOrientationProbeLabel(NULL),
     _exploreRunButton(NULL),
     _exploreCancelButton(NULL),
@@ -1110,6 +1111,13 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
     _validateRegionSummaryTable->setColumnHidden (4, true);
     _validateRegionSummaryTable->setColumnHidden (5, true);
     validateLayout->addWidget (_validateRegionSummaryTable);
+    _validateRegionVisualizationStatus = new QLabel (
+        tr ("3D: select a demand region to preview its boundary."), _validateWorkflowPage);
+    _validateRegionVisualizationStatus->setObjectName (
+        QStringLiteral ("validateRegionVisualizationStatus"));
+    _validateRegionVisualizationStatus->setWordWrap (true);
+    _validateRegionVisualizationStatus->setStyleSheet (QStringLiteral ("color: #4b5563;"));
+    validateLayout->addWidget (_validateRegionVisualizationStatus);
 
     QWidget* validateInspector = new QWidget (_validateWorkflowPage);
     validateInspector->setObjectName (QStringLiteral ("validateInspector"));
@@ -1306,6 +1314,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                      _validateRegionSummaryTable->clearSelection ();
                  }
                  updateValidationInspector ();
+                 refreshValidationRegionVisualization ();
                  refreshWorkflowControls ();
              });
     connect (_validateTaskResultTable, &QTableWidget::itemDoubleClicked, this,
@@ -1345,6 +1354,7 @@ KinematicAnalysisWidget::KinematicAnalysisWidget(QWidget* parent) :
                      }
                  }
                  updateValidationInspector ();
+                 refreshValidationRegionVisualization ();
                  refreshWorkflowControls ();
              });
     connect (_exploreRunButton, SIGNAL (clicked ()), this,
@@ -1659,6 +1669,9 @@ void KinematicAnalysisWidget::setRobWorkStudio(RobWorkStudio* studio)
                 this,
                 boost::arg< 1 > ()),
             this);
+        if (_workcell != nullptr)
+            _validateRegionVisualizer.setScene(
+                _studio->getWorkCellScene(), _workcell->getWorldFrame());
     }
 }
 
@@ -1729,6 +1742,7 @@ void KinematicAnalysisWidget::clearAnalysisSessionState (bool detachWorkCell)
         _validateRequirementStateLabel->setText (tr("No frozen requirement artifact loaded."));
     refreshValidationSummary ();
     setValidationInspectorEmpty ();
+    clearValidationRegionVisualization ();
 
     if (detachWorkCell)
         _workcell = nullptr;
@@ -1754,6 +1768,11 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         clearAnalysisSessionState (true);
     }
     _workcell = workcell;
+    if (_workcell == nullptr)
+        clearValidationRegionVisualization();
+    else if (_studio != nullptr)
+        _validateRegionVisualizer.setScene(
+            _studio->getWorkCellScene(), _workcell->getWorldFrame());
     refreshProjectDefaultContext ();
     populateDevices ();
     populateTcpFrames ();
@@ -1777,6 +1796,7 @@ void KinematicAnalysisWidget::setWorkCell(rw::models::WorkCell* workcell)
         setStatus(tr("WorkCell loaded. Select a device and refresh analysis."));
     if (_workcell == NULL)
         clearVisualizationData ();
+    refreshValidationRegionVisualization ();
     refreshWorkflowControls ();
 }
 
@@ -2287,6 +2307,7 @@ void KinematicAnalysisWidget::populateFrozenRequirementSources ()
     }
     refreshValidationSummary ();
     setValidationInspectorEmpty ();
+    refreshValidationRegionVisualization ();
 }
 
 // refreshValidationSummary:刷新 Validate 页顶部的汇总文本。根据当前数据源与
@@ -2523,7 +2544,7 @@ void KinematicAnalysisWidget::updateValidationInspector ()
                 break;
             }
         }
-        _validateInspectorTable->setRowCount (12);
+        _validateInspectorTable->setRowCount (13);
         setDetailRow (_validateInspectorTable, 0, tr ("Type"), tr ("Demand region"));
         setDetailRow (_validateInspectorTable, 1, tr ("ID"), regionId);
         setDetailRow (_validateInspectorTable, 2, tr ("Level"), levelText (requirement->level));
@@ -2540,14 +2561,141 @@ void KinematicAnalysisWidget::updateValidationInspector ()
                       QString::number (100.0 * result->orientationCoverage, 'f', 1) + QStringLiteral ("%"));
         setDetailRow (_validateInspectorTable, 9, tr ("Sampled cells"),
                       QString::number (result->totalCells));
-        setDetailRow (_validateInspectorTable, 10, tr ("Directions"),
+        setDetailRow (_validateInspectorTable, 10, tr ("Grid"),
+                      QStringLiteral ("%1 x %2 x %3")
+                          .arg (requirement->sampleCounts[0])
+                          .arg (requirement->sampleCounts[1])
+                          .arg (requirement->sampleCounts[2]));
+        setDetailRow (_validateInspectorTable, 11, tr ("Directions"),
                       QString::number (requirement->directionSamples));
-        setDetailRow (_validateInspectorTable, 11, tr ("Rolls"),
+        setDetailRow (_validateInspectorTable, 12, tr ("Rolls"),
                       QString::number (requirement->rollSamples));
         if (_validateInspectorTitleLabel != nullptr)
             _validateInspectorTitleLabel->setText (tr ("Demand region inspector: %1").arg (regionId));
     }
     _validateInspectorTable->resizeRowsToContents ();
+}
+
+void KinematicAnalysisWidget::clearValidationRegionVisualization ()
+{
+    _validateRegionVisualizer.clear ();
+    if (_validateRegionVisualizationStatus != nullptr)
+        _validateRegionVisualizationStatus->setText (
+            tr ("3D: select a demand region to preview its boundary."));
+    if (_studio != nullptr && !_studio->getView ().isNull ())
+        _studio->getView ()->update ();
+}
+
+void KinematicAnalysisWidget::refreshValidationRegionVisualization ()
+{
+    if (_studio == nullptr || _workcell == nullptr ||
+        _studio->getWorkCellScene ().isNull () || _validateRegionSummaryTable == nullptr) {
+        clearValidationRegionVisualization ();
+        return;
+    }
+
+    const QModelIndexList rows = _validateRegionSummaryTable->selectionModel () == nullptr ?
+        QModelIndexList () : _validateRegionSummaryTable->selectionModel ()->selectedRows ();
+    if (rows.isEmpty ()) {
+        clearValidationRegionVisualization ();
+        return;
+    }
+    QTableWidgetItem* idItem = _validateRegionSummaryTable->item (rows.front ().row (), 0);
+    const QString regionId = idItem == nullptr ? QString () :
+        idItem->data (Qt::UserRole).toString ();
+    if (regionId.isEmpty ()) {
+        clearValidationRegionVisualization ();
+        return;
+    }
+
+    const auto requirement = std::find_if (
+        _validateExecution.workspaceRegions.begin (), _validateExecution.workspaceRegions.end (),
+        [&regionId] (const RequirementExecutionRegion& value) {
+            return QString::fromStdString (value.id) == regionId;
+        });
+    if (requirement == _validateExecution.workspaceRegions.end ()) {
+        clearValidationRegionVisualization ();
+        return;
+    }
+
+    rw::kinematics::Frame* reference = _workcell->getWorldFrame ();
+    if (!requirement->refFrame.empty () && requirement->refFrame != "WORLD")
+        reference = _workcell->findFrame (requirement->refFrame);
+    if (reference == nullptr) {
+        _validateRegionVisualizer.clear ();
+        if (_validateRegionVisualizationStatus != nullptr)
+            _validateRegionVisualizationStatus->setText (
+                tr ("3D: reference frame '%1' was not found.")
+                    .arg (QString::fromStdString (requirement->refFrame)));
+        return;
+    }
+
+    WorkspaceRegionVisualSpec spec;
+    spec.id = requirement->id;
+    spec.label = requirement->name.empty () ? requirement->id : requirement->name;
+    spec.worldTReference = rw::kinematics::Kinematics::worldTframe (
+        reference, currentState ());
+    spec.center = requirement->center;
+    spec.size = requirement->size;
+    spec.showCells = false;
+
+    const auto result = std::find_if (
+        _validateSummary.regionResults.begin (), _validateSummary.regionResults.end (),
+        [&regionId] (const RegionCoverageResult& value) {
+            return QString::fromStdString (value.regionId) == regionId;
+        });
+    if (result != _validateSummary.regionResults.end ()) {
+        spec.totalCellCount = static_cast<std::size_t> (std::max (0, result->totalCells));
+        spec.showCells = !result->cells.empty ();
+        spec.cells.reserve (result->cells.size ());
+        rw::math::Transform3D<> worldTBase = rw::math::Transform3D<>::identity ();
+        const rw::core::Ptr<rw::models::Device> device = selectedDevice ();
+        if (device != nullptr)
+            worldTBase = rw::kinematics::Kinematics::worldTframe (
+                device->getBase (), currentState ());
+        for (const RegionCellResult& cell : result->cells) {
+            WorkspaceRegionVisualCell visualCell;
+            const rw::math::Vector3D<> basePosition (
+                cell.position[0], cell.position[1], cell.position[2]);
+            const rw::math::Vector3D<> worldPosition = worldTBase.P () +
+                worldTBase.R () * basePosition;
+            visualCell.position = {{worldPosition[0], worldPosition[1], worldPosition[2]}};
+            if (cell.feasibility == Feasibility::Infeasible ||
+                cell.quality == Quality::Critical)
+                visualCell.state = WorkspaceRegionVisualState::Failed;
+            else if (cell.feasibility == Feasibility::Feasible &&
+                     cell.quality == Quality::Good)
+                visualCell.state = WorkspaceRegionVisualState::Good;
+            else if (cell.feasibility == Feasibility::Feasible ||
+                     cell.quality == Quality::Degraded)
+                visualCell.state = WorkspaceRegionVisualState::Weak;
+            else
+                visualCell.state = WorkspaceRegionVisualState::Unknown;
+            spec.cells.push_back (visualCell);
+        }
+    }
+
+    _validateRegionVisualizer.setScene (
+        _studio->getWorkCellScene (), _workcell->getWorldFrame ());
+    std::string error;
+    if (!_validateRegionVisualizer.show (spec, "KinematicAnalysis.ValidateRegion.", &error)) {
+        if (_validateRegionVisualizationStatus != nullptr)
+            _validateRegionVisualizationStatus->setText (
+                tr ("3D: %1").arg (QString::fromStdString (error)));
+        return;
+    }
+
+    const std::size_t total = spec.totalCellCount;
+    const std::size_t shown = _validateRegionVisualizer.displayedCellCount ();
+    const QString cellsText = total == 0 ? tr ("no validation cells") :
+        tr ("cells %1/%2").arg (static_cast<qulonglong> (shown))
+            .arg (static_cast<qulonglong> (total));
+    if (_validateRegionVisualizationStatus != nullptr)
+        _validateRegionVisualizationStatus->setText (
+            tr ("3D: %1 | %2 | Green=meets, Yellow=weak, Red=fail, Gray=unverified.")
+                .arg (regionId, cellsText));
+    if (!_studio->getView ().isNull ())
+        _studio->getView ()->update ();
 }
 
 // selectValidationResult:按稳定 ID 选中任务表或区域表中的对应行(region 决定目标表)。
@@ -2847,6 +2995,7 @@ void KinematicAnalysisWidget::applyRequirementValidationResult (
     refreshValidationSummary ();
     selectPreferredValidationResult ();
     updateValidationInspector ();
+    refreshValidationRegionVisualization ();
     refreshWorkflowControls ();
     Q_EMIT frozenRequirementValidationCompleted (
         QString::fromStdString (_validateExecution.provenance.requirementFingerprint),

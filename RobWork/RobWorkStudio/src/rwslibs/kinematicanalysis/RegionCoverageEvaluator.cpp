@@ -3,7 +3,7 @@
 // =============================================================================
 //
 // 实现三步流水线:
-//   1. generateGrid:把长方体区域均匀切分为 samplesPerAxis^3 个网格单元,
+//   1. generateGrid:把长方体区域按冻结的 XYZ 网格点数切分为网格单元,
 //      每个单元位置经 baseTReference 变换到设备 base 坐标系;
 //   2. generateTargets:按区域的朝向策略为单元构造任务点 ——
 //      Fixed(固定 RPY)、AlignFrame(对齐目标帧的姿态)、
@@ -181,7 +181,7 @@ void appendUniqueFailures(std::vector< KinematicFailureReason >& destination,
 // -----------------------------------------------------------------------------
 //
 // 前置校验(编译状态 / WorkCell / 区域尺寸 / 采样数)全部通过后,按
-// samplesPerAxis 在每个维度等距切分,把单元中心位置从区域参考系变换到
+// 冻结的 XYZ 网格点数在每个维度等距切分,把单元中心位置从区域参考系变换到
 // 设备 base 坐标系。本阶段只做几何,结果可行性保持 NotEvaluated。
 RegionCoverageResult RegionCoverageEvaluator::generateGrid(
     const AnalysisContext& context,
@@ -215,11 +215,12 @@ RegionCoverageResult RegionCoverageEvaluator::generateGrid(
             return result;
         }
     }
-    if (region.samplesPerAxis < 2 ||
-        region.samplesPerAxis > MaxExecutionWorkspaceSamplesPerAxis) {
-        failGrid (result, "KIN_REGION_INVALID_SAMPLES",
-                  "Verified region samplesPerAxis is outside the execution limits.");
-        return result;
+    for (const int samples : region.sampleCounts) {
+        if (samples < 2 || samples > MaxExecutionWorkspaceSamplesPerAxis) {
+            failGrid (result, "KIN_REGION_INVALID_SAMPLES",
+                      "Verified region sampleCounts is outside the execution limits.");
+            return result;
+        }
     }
 
     rw::math::Transform3D<> baseTReference;
@@ -229,22 +230,24 @@ RegionCoverageResult RegionCoverageEvaluator::generateGrid(
         return result;
     }
 
-    // 单元位置计算:局部坐标 = center - 0.5*size + 比例*size(每轴 samples-1 份),
+    // 单元位置计算:局部坐标 = center - 0.5*size + 比例*size(每轴 sampleCounts-1 份),
     // 再把局部坐标经 baseTReference 旋转 + 平移到设备 base 系。
-    const int samples = region.samplesPerAxis;
-    const std::size_t total = static_cast< std::size_t > (samples) *
-                              static_cast< std::size_t > (samples) *
-                              static_cast< std::size_t > (samples);
+    const int samplesX = region.sampleCounts[0];
+    const int samplesY = region.sampleCounts[1];
+    const int samplesZ = region.sampleCounts[2];
+    const std::size_t total = static_cast< std::size_t > (samplesX) *
+                              static_cast< std::size_t > (samplesY) *
+                              static_cast< std::size_t > (samplesZ);
     result.cells.reserve (total);
-    for (int x = 0; x < samples; ++x) {
-        for (int y = 0; y < samples; ++y) {
-            for (int z = 0; z < samples; ++z) {
+    for (int x = 0; x < samplesX; ++x) {
+        for (int y = 0; y < samplesY; ++y) {
+            for (int z = 0; z < samplesZ; ++z) {
                 const double xRatio = static_cast< double > (x) /
-                                      static_cast< double > (samples - 1);
+                                      static_cast< double > (samplesX - 1);
                 const double yRatio = static_cast< double > (y) /
-                                      static_cast< double > (samples - 1);
+                                      static_cast< double > (samplesY - 1);
                 const double zRatio = static_cast< double > (z) /
-                                      static_cast< double > (samples - 1);
+                                      static_cast< double > (samplesZ - 1);
                 const rw::math::Vector3D<> local (
                     region.center[0] - 0.5 * region.size[0] + xRatio * region.size[0],
                     region.center[1] - 0.5 * region.size[1] + yRatio * region.size[1],

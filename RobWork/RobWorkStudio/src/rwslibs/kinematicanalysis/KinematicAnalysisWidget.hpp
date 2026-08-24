@@ -8,6 +8,7 @@
 #include "KinematicAnalysisTypes.hpp"
 #include "KinematicAnalysisVisualizationTypes.hpp"
 #include "TaskPointTableModel.hpp"
+#include <rwslibs/engineeringrequirements/WorkspaceRegionSceneVisualizer.hpp>
 
 // RobWork 类型:Ptr 智能指针;State 工作单元不可变快照。
 #include <rw/core/Ptr.hpp>
@@ -184,6 +185,8 @@ class KinematicAnalysisWidget : public QWidget
     void setValidationInspectorEmpty ();
     void selectPreferredValidationResult ();
     void selectValidationResult (bool region, const QString& stableId);
+    void refreshValidationRegionVisualization ();
+    void clearValidationRegionVisualization ();
     // 双击 Validate 任务行时,将该任务排序后的最佳 IK 候选解写回 3D 状态。
     void applyValidatedTaskBestCandidate (const QString& taskId);
     void applyRequirementValidationResult (const RequirementValidationRunResult& result);
@@ -454,8 +457,10 @@ class KinematicAnalysisWidget : public QWidget
     QLabel* _validateProvenanceLabel;
     QLabel* _validateTaskSectionTitle;
     QLabel* _validateRegionSectionTitle;
+    QLabel* _validateRegionVisualizationStatus;
     // _validateOrientationProbeLabel:选中区域的方向采样数提示(Directions / Rolls)。
     QLabel* _validateOrientationProbeLabel;
+    WorkspaceRegionSceneVisualizer _validateRegionVisualizer;
     // ---- Explore Capability 页:能力探索(工作空间采样)后台执行 ----
     // Run / Cancel + Workspace 采样参数。
     QPushButton* _exploreRunButton;

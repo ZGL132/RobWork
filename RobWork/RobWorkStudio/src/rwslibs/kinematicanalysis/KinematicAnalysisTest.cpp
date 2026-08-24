@@ -1479,7 +1479,7 @@ static int testVerifiedRegionGridGeneration ()
     region.tcpFrame = device->getEnd ()->getName ();
     region.center = {{1.0, 2.0, 3.0}};
     region.size = {{2.0, 4.0, 6.0}};
-    region.samplesPerAxis = 2;
+    region.sampleCounts = {{2, 2, 2}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
     region.collisionFreeRequired = false;
 
@@ -1493,7 +1493,7 @@ static int testVerifiedRegionGridGeneration ()
         return rc;
 
     rws::RequirementExecutionRegion invalidSamples = region;
-    invalidSamples.samplesPerAxis = 1;
+    invalidSamples.sampleCounts = {{1, 1, 1}};
     if (const int rc = require (
             evaluator.generateGrid (context, invalidSamples).feasibility ==
                 rws::Feasibility::DataInsufficient,
@@ -1700,7 +1700,7 @@ static int testVerifiedRegionTargetEvaluation ()
     region.tcpFrame = device->getEnd ()->getName ();
     region.center = {{100.0, 100.0, 100.0}};
     region.size = {{0.1, 0.1, 0.1}};
-    region.samplesPerAxis = 2;
+    region.sampleCounts = {{2, 2, 2}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
     region.fixedRpyDeg = {{0.0, 0.0, 0.0}};
     region.collisionFreeRequired = false;
@@ -4102,7 +4102,7 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
     includedRegion.center = {{0.11, 0.22, 0.33}};
     includedRegion.size = {{0.44, 0.55, 0.66}};
     includedRegion.minimumCoverage = 0.73;
-    includedRegion.samplesPerAxis = 4;
+    includedRegion.sampleSpacingMeters = {{0.44 / 3.0, 0.55 / 3.0, 0.66 / 3.0}};
     includedRegion.orientationMode = rws::OrientationMode::AlignFrame;
     includedRegion.orientationTargetFrame = "Fixture_A";
     includedRegion.orientationTargetGeometry = "frame:Fixture_A";
@@ -4181,7 +4181,8 @@ static int testFrozenRequirementArtifactImportsIntoKinematicTasks ()
                                    region.center == includedRegion.center &&
                                    region.size == includedRegion.size,
                                "workspace region frames and geometry are retained")) return rc;
-    if (const int rc = require(region.samplesPerAxis == includedRegion.samplesPerAxis &&
+    if (const int rc = require(region.sampleSpacingMeters == includedRegion.sampleSpacingMeters &&
+                                   region.sampleCounts == std::array<int, 3>{{4, 4, 4}} &&
                                    region.orientationMode == rws::RequirementExecutionOrientationMode::AlignFrame &&
                                    region.orientationTargetFrame == includedRegion.orientationTargetFrame &&
                                    region.orientationTargetGeometry == includedRegion.orientationTargetGeometry &&
@@ -6422,7 +6423,7 @@ static int testWorkflowUiStates ()
         region.fixedRpyDeg[axis] = mustTask.rpyDeg[axis];
     }
     region.size = {{0.001, 0.001, 0.001}};
-    region.samplesPerAxis = 2;
+    region.sampleCounts = {{2, 2, 2}};
     region.orientationMode = rws::RequirementExecutionOrientationMode::Fixed;
     region.directionSamples = 1;
     region.rollSamples = 1;

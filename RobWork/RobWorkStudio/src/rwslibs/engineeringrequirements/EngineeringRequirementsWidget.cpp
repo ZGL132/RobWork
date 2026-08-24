@@ -810,8 +810,8 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     actions->addWidget(add); actions->addWidget(duplicate); actions->addWidget(remove); actions->addStretch();
     layout->addLayout(actions);
     _regionTable = new QTableWidget(page); _regionTable->setObjectName("engineeringRequirementBoxTable");
-    _regionTable->setColumnCount(13);
-    _regionTable->setHorizontalHeaderLabels({"ID", "Name", "Level", "Reference Frame", "Center X", "Center Y", "Center Z", "Size X", "Size Y", "Size Z", "Minimum Coverage", "Samples per Axis", "TCP Frame"});
+    _regionTable->setColumnCount(15);
+    _regionTable->setHorizontalHeaderLabels({"ID", "Name", "Level", "Reference Frame", "Center X", "Center Y", "Center Z", "Size X", "Size Y", "Size Z", "Minimum Coverage", "Sample Spacing X (m)", "Sample Spacing Y (m)", "Sample Spacing Z (m)", "TCP Frame"});
     _regionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     layout->addWidget(_regionTable);
     _regionPreviewStatusLabel = new QLabel(
@@ -897,14 +897,15 @@ void EngineeringRequirementsWidget::refreshTables()
                 _regionTable->setItem(row, 7 + axis, textItem(QString::number(region.size[axis])));
             }
             _regionTable->setItem(row, 10, textItem(QString::number(region.minimumCoverage)));
-            // 将采样密度展示为显式的审计字段，确保导入、编辑、冻结和重新打开项目后采用完全
-            // 相同的覆盖率离散网格，而不是隐式回退到数据结构默认值。
-            _regionTable->setItem(row, 11, textItem(QString::number(region.samplesPerAxis)));
+            // 间距按 XYZ 分别编辑；冻结时会统一解析为实际网格点数并写入执行工件。
+            for (int axis = 0; axis < 3; ++axis)
+                _regionTable->setItem(row, 11 + axis,
+                                      textItem(QString::number(region.sampleSpacingMeters[axis])));
             // TCP 帧未显式指定时，以绑定模型对应设备的末端作为默认值，确保展示的
             // TCP 归属绑定机器人，避免覆盖盒 TCP 默认指向第一台设备(可能非绑定设备)。
             const std::string tcpFrame = region.tcpFrame.empty()
                 ? defaultTcpFrame(_workcell, _requirements.modelBinding.robotName) : region.tcpFrame;
-            _regionTable->setItem(row, 12, textItem(QString::fromStdString(tcpFrame)));
+            _regionTable->setItem(row, 14, textItem(QString::fromStdString(tcpFrame)));
         }
     }
     const bool editable = !_requirements.frozen;
@@ -1084,8 +1085,10 @@ void EngineeringRequirementsWidget::syncTablesToRequirements()
         region.refFrame = text(_regionTable, row, 3, "WORLD").toStdString();
         for (int axis = 0; axis < 3; ++axis) { region.center[axis] = number(_regionTable, row, 4 + axis); region.size[axis] = number(_regionTable, row, 7 + axis, 0.1); }
         region.minimumCoverage = number(_regionTable, row, 10, 0.8);
-        region.samplesPerAxis = positiveSampleCount(_regionTable, row, 11, region.samplesPerAxis);
-        region.tcpFrame = text(_regionTable, row, 12,
+        for (int axis = 0; axis < 3; ++axis)
+            region.sampleSpacingMeters[axis] = number(_regionTable, row, 11 + axis,
+                                                       region.sampleSpacingMeters[axis]);
+        region.tcpFrame = text(_regionTable, row, 14,
                                QString::fromStdString(region.tcpFrame)).trimmed().toStdString();
         // 表格 TCP 为空时回填默认值，且优先取绑定设备末端，保证同步后的覆盖盒
         // TCP 归属绑定机器人。
