@@ -26,24 +26,9 @@ if(build)
         EvaluationPlan.cpp
         EvaluationStage.cpp
         TaskEvaluationStage.cpp
-        EstimatedWorkspaceStage.cpp
         VerifiedRegionStage.cpp
-        OrientationCoverageStage.cpp
-        KinematicMetricAggregator.cpp
         CandidateResult.cpp
-        QuickScreeningPolicy.cpp
-        EliteSelector.cpp
-        HybridOptimizer.cpp
-        LocalSearch.cpp
-        FinalValidationPlan.cpp
-        IndependentFinalVerifier.cpp
-        CandidateEvaluationScheduler.cpp
         OptimizationRunStateMachine.cpp
-        OptimizationCheckpoint.cpp
-        CacheKey.cpp
-        EvaluationCache.cpp
-        DeterministicSeed.cpp
-        InitialSampler.cpp
         MetricRegistry.cpp
         ConstraintObjective.cpp
         AdapterRegistry.cpp
@@ -54,17 +39,14 @@ if(build)
         CanonicalBaselineEvaluationBridge.cpp
         RobotModelSpecProjectionAdapter.cpp
         EvaluationDeviceBuilder.cpp
-        CanonicalForwardKinematics.cpp
         CanonicalKinematicModel.cpp
         CanonicalModelShadowService.cpp
         DesignVariable.cpp
         DesignSpaceRegistry.cpp
-        DesignTemplateApplication.cpp
         DerivedExpression.cpp
         DependencyGraph.cpp
         DesignSpaceCompiler.cpp
         DesignVector.cpp
-        DhProjection.cpp
         KinematicBaselineSnapshot.cpp
         KinematicFingerprint.cpp
         KinematicModelImporter.cpp
@@ -105,10 +87,6 @@ if(build)
         OptimizationRunStore.cpp
         StructureOptimizationWorkflowResolver.cpp
         OptimizationPreflight.cpp
-        Phase8Acceptance.cpp
-        Phase8PerformanceAudit.cpp
-        Phase8ResourceAudit.cpp
-        Phase8ReleaseManifest.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
@@ -129,24 +107,9 @@ if(build)
         EvaluationPlan.hpp
         EvaluationStage.hpp
         TaskEvaluationStage.hpp
-        EstimatedWorkspaceStage.hpp
         VerifiedRegionStage.hpp
-        OrientationCoverageStage.hpp
-        KinematicMetricAggregator.hpp
         CandidateResult.hpp
-        QuickScreeningPolicy.hpp
-        EliteSelector.hpp
-        HybridOptimizer.hpp
-        LocalSearch.hpp
-        FinalValidationPlan.hpp
-        IndependentFinalVerifier.hpp
-        CandidateEvaluationScheduler.hpp
         OptimizationRunStateMachine.hpp
-        OptimizationCheckpoint.hpp
-        CacheKey.hpp
-        EvaluationCache.hpp
-        DeterministicSeed.hpp
-        InitialSampler.hpp
         MetricRegistry.hpp
         ConstraintObjective.hpp
         AdapterRegistry.hpp
@@ -159,19 +122,16 @@ if(build)
         RobotModelSpecProjectionAdapter.hpp
         EvaluationDeviceBuilder.hpp
         CompiledCandidate.hpp
-        CanonicalForwardKinematics.hpp
         CanonicalKinematicModel.hpp
         CanonicalModelShadowService.hpp
         DesignVariable.hpp
         DesignSpaceRegistry.hpp
-        DesignTemplateApplication.hpp
         DerivedExpression.hpp
         DependencyGraph.hpp
         CompiledDesignSpace.hpp
         DesignSpaceCompiler.hpp
         DesignVector.hpp
         AdapterCapability.hpp
-        DhProjection.hpp
         KinematicBaselineSnapshot.hpp
         KinematicFingerprint.hpp
         KinematicImportResult.hpp
@@ -217,10 +177,6 @@ if(build)
         OptimizationRunStore.hpp
         StructureOptimizationWorkflowResolver.hpp
         OptimizationPreflight.hpp
-        Phase8Acceptance.hpp
-        Phase8PerformanceAudit.hpp
-        Phase8ResourceAudit.hpp
-        Phase8ReleaseManifest.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
         StructureOptimizationObjectiveProfile.hpp
@@ -259,6 +215,29 @@ if(build)
     # ── 测试可执行文件 ────────────────────────────────────────────────────
     add_executable(sdurws_structureoptimizer_test
         StructureOptimizationTest.cpp
+        # 仅测试可达模块：从核心库移入测试目标，不安装、不进插件运行库。
+        HybridOptimizer.cpp
+        LocalSearch.cpp
+        FinalValidationPlan.cpp
+        IndependentFinalVerifier.cpp
+        CandidateEvaluationScheduler.cpp
+        OptimizationCheckpoint.cpp
+        InitialSampler.cpp
+        DeterministicSeed.cpp
+        Phase8Acceptance.cpp
+        Phase8PerformanceAudit.cpp
+        Phase8ResourceAudit.cpp
+        Phase8ReleaseManifest.cpp
+        EliteSelector.cpp
+        QuickScreeningPolicy.cpp
+        EvaluationCache.cpp
+        CacheKey.cpp
+        KinematicMetricAggregator.cpp
+        EstimatedWorkspaceStage.cpp
+        OrientationCoverageStage.cpp
+        DesignTemplateApplication.cpp
+        DhProjection.cpp
+        CanonicalForwardKinematics.cpp
         StructureOptimizerPlugin.cpp
         ${RccSrcFiles}
         StructureOptimizerPlugin.hpp
