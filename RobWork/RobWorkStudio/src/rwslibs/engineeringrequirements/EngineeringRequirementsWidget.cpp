@@ -814,6 +814,12 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     _regionTable->setHorizontalHeaderLabels({"ID", "Name", "Level", "Reference Frame", "Center X", "Center Y", "Center Z", "Size X", "Size Y", "Size Z", "Minimum Coverage", "Samples per Axis", "TCP Frame"});
     _regionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     layout->addWidget(_regionTable);
+    _regionPreviewStatusLabel = new QLabel(
+        QStringLiteral("3D preview: select a region to display its boundary."), page);
+    _regionPreviewStatusLabel->setObjectName(QStringLiteral("workspaceRegionPreviewStatusLabel"));
+    _regionPreviewStatusLabel->setWordWrap(true);
+    _regionPreviewStatusLabel->setStyleSheet(QStringLiteral("color: #4b5563;"));
+    layout->addWidget(_regionPreviewStatusLabel);
     connect(add, &QPushButton::clicked, this, &EngineeringRequirementsWidget::addBoxRegion);
     connect(duplicate, &QPushButton::clicked, this, &EngineeringRequirementsWidget::duplicateBoxRegion);
     connect(remove, &QPushButton::clicked, this, &EngineeringRequirementsWidget::removeBoxRegion);
@@ -821,6 +827,8 @@ QWidget* EngineeringRequirementsWidget::createBoxRegionPage()
     // 防止工程师修改采样密度、尺寸或约束级别后无法撤销，或直到保存时才发现修改未生效。
     connect(_regionTable, &QTableWidget::cellChanged, this,
             [this] (int, int) { commitBoxRegionTableEdit(); });
+    connect(_regionTable, &QTableWidget::itemSelectionChanged, this,
+            [this] () { Q_EMIT workspaceRegionSelectionChanged(); });
     return page;
 }
 
@@ -2455,6 +2463,20 @@ void EngineeringRequirementsWidget::reportFreezePublicationResult(bool saved, co
     setStatus(QString::fromUtf8(
         "Requirements checked successfully, but publishing failed. The project was not updated. Reason: %1")
                   .arg(detail));
+}
+
+bool EngineeringRequirementsWidget::selectedWorkspaceRegion(BoxRegion& region) const
+{
+    if (_regionTable == nullptr) return false;
+    const int row = _regionTable->currentRow();
+    if (row < 0 || row >= static_cast<int>(_requirements.boxRegions.size())) return false;
+    region = _requirements.boxRegions[static_cast<std::size_t>(row)];
+    return true;
+}
+
+void EngineeringRequirementsWidget::setWorkspaceRegionPreviewStatus(const QString& text)
+{
+    if (_regionPreviewStatusLabel != nullptr) _regionPreviewStatusLabel->setText(text);
 }
 void EngineeringRequirementsWidget::pushUndoSnapshot(const RequirementSet& snapshot)
 {

@@ -223,6 +223,10 @@ void EngineeringRequirementsPlugin::initialize() {
             this, &EngineeringRequirementsPlugin::beginGeometryFeaturePick);
     connect(_widget, &EngineeringRequirementsWidget::requirementsChanged,
             this, &EngineeringRequirementsPlugin::scheduleStationMarkerRefresh);
+    connect(_widget, &EngineeringRequirementsWidget::requirementsChanged,
+            this, &EngineeringRequirementsPlugin::scheduleRegionPreviewRefresh);
+    connect(_widget, &EngineeringRequirementsWidget::workspaceRegionSelectionChanged,
+            this, &EngineeringRequirementsPlugin::scheduleRegionPreviewRefresh);
     connect(_widget, &EngineeringRequirementsWidget::requirementsChanged, this, [this]() {
         if (_projectProvider == nullptr || getRobWorkStudio() == nullptr)
             return;
@@ -349,6 +353,7 @@ void EngineeringRequirementsPlugin::open(rw::models::WorkCell* workcell) {
             _widget->setCurrentState(getRobWorkStudio()->getState());
     }
     refreshStationMarkers(); // 新场景加载后，全量构建 3D 工位 Marker
+    refreshRegionPreview();
 }
 
 /**
@@ -356,6 +361,7 @@ void EngineeringRequirementsPlugin::open(rw::models::WorkCell* workcell) {
  */
 void EngineeringRequirementsPlugin::close() {
     clearStationMarkers(); // 清除所有 3D 视图渲染节点
+    clearRegionPreview();
     _geometryFeaturePickActive = false;
     if (_widget != nullptr) _widget->setWorkCell(nullptr);
 }
@@ -397,6 +403,7 @@ void EngineeringRequirementsPlugin::handleStateChanged(const rw::kinematics::Sta
     if (_widget != nullptr)
         _widget->setCurrentState(state);
     updateStationMarkers(state);
+    scheduleRegionPreviewRefresh();
 }
 
 /**
@@ -418,6 +425,74 @@ void EngineeringRequirementsPlugin::scheduleStationMarkerRefresh()
         _markerRefreshPending = false;
         refreshStationMarkers(); // 在事件循环空闲时执行全量重绘
     });
+}
+
+void EngineeringRequirementsPlugin::scheduleRegionPreviewRefresh()
+{
+    if (_regionPreviewRefreshPending) return;
+    _regionPreviewRefreshPending = true;
+    QTimer::singleShot(0, this, [this] {
+        _regionPreviewRefreshPending = false;
+        refreshRegionPreview();
+    });
+}
+
+void EngineeringRequirementsPlugin::clearRegionPreview()
+{
+    _regionPreview.clear();
+    if (_widget != nullptr)
+        _widget->setWorkspaceRegionPreviewStatus(
+            QStringLiteral("3D preview: select a region to display its boundary."));
+    requestSceneRedraw(getRobWorkStudio());
+}
+
+void EngineeringRequirementsPlugin::refreshRegionPreview()
+{
+    RobWorkStudio* studio = getRobWorkStudio();
+    if (studio == nullptr || _widget == nullptr || studio->getWorkCell().isNull() ||
+        studio->getWorkCellScene().isNull()) {
+        clearRegionPreview();
+        return;
+    }
+
+    BoxRegion region;
+    if (!_widget->selectedWorkspaceRegion(region)) {
+        clearRegionPreview();
+        return;
+    }
+
+    rw::kinematics::Frame* reference = studio->getWorkCell()->getWorldFrame();
+    if (!region.refFrame.empty() && region.refFrame != "WORLD")
+        reference = studio->getWorkCell()->findFrame(region.refFrame);
+    if (reference == nullptr) {
+        clearRegionPreview();
+        _widget->setWorkspaceRegionPreviewStatus(
+            QStringLiteral("3D preview: reference frame '%1' was not found.")
+                .arg(QString::fromStdString(region.refFrame)));
+        return;
+    }
+
+    WorkspaceRegionVisualSpec spec;
+    spec.id = region.id;
+    spec.label = region.name.empty() ? region.id : region.name;
+    spec.worldTReference = rw::kinematics::Kinematics::worldTframe(
+        reference, studio->getState());
+    spec.center = region.center;
+    spec.size = region.size;
+    spec.totalCellCount = 0;
+    spec.showCells = false;
+
+    _regionPreview.setScene(studio->getWorkCellScene(), studio->getWorkCell()->getWorldFrame());
+    std::string error;
+    if (!_regionPreview.show(spec, "EngineeringRequirement.Region.", &error)) {
+        _widget->setWorkspaceRegionPreviewStatus(
+            QStringLiteral("3D preview: %1").arg(QString::fromStdString(error)));
+        return;
+    }
+    _widget->setWorkspaceRegionPreviewStatus(
+        QStringLiteral("3D preview: %1 | boundary follows %2 | blue box = selected region.")
+            .arg(QString::fromStdString(spec.label), QString::fromStdString(region.refFrame)));
+    requestSceneRedraw(studio);
 }
 
 /**

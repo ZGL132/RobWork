@@ -20,6 +20,7 @@ if(build)
         RequirementSetUndoStack.cpp
         StationImportService.cpp
         StationTemplateService.cpp
+        WorkspaceRegionSceneVisualizer.cpp
     )
     set(CoreHeaderFiles
         EngineeringRequirementTypes.hpp
@@ -32,6 +33,7 @@ if(build)
         RequirementSetUndoStack.hpp
         StationImportService.hpp
         StationTemplateService.hpp
+        WorkspaceRegionSceneVisualizer.hpp
     )
     rws_add_component(sdurws_engineeringrequirements_core ${CoreSrcFiles} ${CoreHeaderFiles})
     rw_add_includes(sdurws_engineeringrequirements_core "rwslibs/engineeringrequirements" ${CoreHeaderFiles})
@@ -172,6 +174,8 @@ if(build)
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test>)
         add_test(NAME sdurws_engineeringrequirements_migration_test
                  COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> migration)
+        add_test(NAME sdurws_engineeringrequirements_region_visualization_test
+                 COMMAND $<TARGET_FILE:sdurws_engineeringrequirements_test> region_visualization)
         # UI 测试单独启动 QApplication，覆盖当前 JOG State 如何传入几何工位
         # 解析的回归路径；不能只依赖默认的无界面核心测试。
         add_test(NAME sdurws_engineeringrequirements_widget_test

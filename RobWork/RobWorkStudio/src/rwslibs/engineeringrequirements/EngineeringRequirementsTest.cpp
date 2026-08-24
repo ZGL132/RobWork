@@ -9,6 +9,7 @@
 #include "StationImportService.hpp"
 #include "StationTemplateService.hpp"
 #include "EngineeringRequirementsWidget.hpp"
+#include "WorkspaceRegionSceneVisualizer.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelXmlWriter.hpp>
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
@@ -61,6 +62,7 @@
 #include <cstdio>
 #include <set>
 #include <string>
+#include <vector>
 
 namespace rws {
 // 模板参数的显示策略由界面层统一提供。此处先声明期望的最小接口，以便验证不同
@@ -90,6 +92,39 @@ int fail(const char* expression, int line)
 
 #define REQUIRE(expression) \
     do { if (!(expression)) return fail(#expression, __LINE__); } while (false)
+
+int testWorkspaceRegionVisualizationHelpers()
+{
+    const rw::math::Transform3D<> worldTReference(
+        rw::math::Vector3D<>(1.0, 2.0, 3.0));
+    const rw::math::Transform3D<> worldTRegion =
+        rws::workspaceRegionWorldTransform(worldTReference, {{0.5, -0.25, 0.75}});
+    REQUIRE(std::fabs(worldTRegion.P()[0] - 1.5) < 1e-12);
+    REQUIRE(std::fabs(worldTRegion.P()[1] - 1.75) < 1e-12);
+    REQUIRE(std::fabs(worldTRegion.P()[2] - 3.75) < 1e-12);
+
+    const std::vector<std::size_t> displayIndices =
+        rws::workspaceRegionDisplayIndices(2501, 2000);
+    REQUIRE(displayIndices.size() == 2000);
+    REQUIRE(displayIndices.front() == 0);
+    REQUIRE(displayIndices.back() == 2500);
+    for (std::size_t i = 1; i < displayIndices.size(); ++i)
+        REQUIRE(displayIndices[i - 1] < displayIndices[i]);
+
+    const std::array<double, 4> good =
+        rws::workspaceRegionColor(rws::WorkspaceRegionVisualState::Good);
+    const std::array<double, 4> weak =
+        rws::workspaceRegionColor(rws::WorkspaceRegionVisualState::Weak);
+    const std::array<double, 4> failed =
+        rws::workspaceRegionColor(rws::WorkspaceRegionVisualState::Failed);
+    const std::array<double, 4> unknown =
+        rws::workspaceRegionColor(rws::WorkspaceRegionVisualState::Unknown);
+    REQUIRE(good[1] > good[0] && good[1] > good[2]);
+    REQUIRE(weak[0] > weak[2] && weak[1] > weak[2]);
+    REQUIRE(failed[0] > failed[1] && failed[0] > failed[2]);
+    REQUIRE(unknown[0] == unknown[1] && unknown[1] == unknown[2]);
+    return 0;
+}
 
 int testHistoricalRequirementFreezerAbiRemainsLinkable()
 {
@@ -2659,6 +2694,10 @@ int testWidgetAlwaysShowsStationCoordinatesAndLocksRuleOrientation()
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "region_visualization") {
+        QCoreApplication app(argc, argv);
+        return testWorkspaceRegionVisualizationHelpers();
+    }
     if (argc > 1 && std::string(argv[1]) == "workspace_execution_fields") {
         QCoreApplication app(argc, argv);
         return testWorkspaceExecutionFieldsRoundTrip();

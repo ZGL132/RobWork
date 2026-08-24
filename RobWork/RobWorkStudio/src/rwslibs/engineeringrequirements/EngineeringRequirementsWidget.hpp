@@ -65,6 +65,9 @@ public:
     QString statusText() const;
     void setFreezeReadinessCheck(std::function<bool(QString*)> check);
     void reportFreezePublicationResult(bool saved, const QString& error = QString());
+    // 当前 Workspace Regions 表格选中的编辑态区域，供插件更新三维预览。
+    bool selectedWorkspaceRegion(BoxRegion& region) const;
+    void setWorkspaceRegionPreviewStatus(const QString& text);
 
     /**
      * @brief 由项目文档 Provider 调用的无界面读取入口。
@@ -92,6 +95,8 @@ public:
 Q_SIGNALS:
     void geometryFeaturePickRequested();
     void requirementsChanged();
+    // 仅用于三维预览，不改变需求数据或项目脏状态。
+    void workspaceRegionSelectionChanged();
     void requirementsUnfrozen();
     // 冻结发布请求：携带资源 id、项目内文档路径、需求指纹与 schema 版本，
     // 供插件把冻结工件发布到正确的项目资源位置并核对一致性。
@@ -197,6 +202,7 @@ private:
     QGroupBox* _stationAdvancedPoseGroup = nullptr;
     QLabel* _stationAdvancedPoseSourceLabel = nullptr;
     QTableWidget* _regionTable = nullptr;
+    QLabel* _regionPreviewStatusLabel = nullptr;
     QLabel* _modelLabel = nullptr;
     QLabel* _freezeLabel = nullptr;
     QLabel* _statusLabel = nullptr;

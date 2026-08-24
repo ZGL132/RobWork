@@ -2,6 +2,7 @@
 #define RWS_ENGINEERINGREQUIREMENTS_ENGINEERINGREQUIREMENTSPLUGIN_HPP
 
 #include <rws/RobWorkStudioPlugin.hpp>
+#include "WorkspaceRegionSceneVisualizer.hpp"
 
 #include <map>
 
@@ -103,6 +104,9 @@ private:
      * 确保在一个 UI 渲染帧内多次修改只触发一次全量 3D 渲染刷新。
      */
     void scheduleStationMarkerRefresh();
+    void scheduleRegionPreviewRefresh();
+    void refreshRegionPreview();
+    void clearRegionPreview();
 
     /**
      * @brief 结构性重建 3D 场景中的所有工位标记（Reconstruct Station Markers）
@@ -145,6 +149,8 @@ private:
     bool _projectResourceActive = false;
     bool _geometryFeaturePickActive = false;           ///< 3D 视图几何拾取激活标志（true 表示下一次点击 3D 场景将捕获 Frame）
     bool _markerRefreshPending = false;                ///< 标记异步延迟刷新挂起标志（用于防抖）
+    bool _regionPreviewRefreshPending = false;
+    WorkspaceRegionSceneVisualizer _regionPreview;
 
     /**
      * @brief 工位三维坐标轴渲染节点映射表
