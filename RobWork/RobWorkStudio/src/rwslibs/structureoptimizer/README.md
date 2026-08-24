@@ -105,6 +105,11 @@ model independently of this optimization-project check.
 - No motor/gear selection or dynamics optimization
 - Single-worker only (no parallel candidate evaluation)
 - No evolutionary or multi-objective algorithms
+- `OptimizationRunSnapshot` / `OptimizationRunJson` / `OptimizationRunStore` /
+  `StructureOptimizationWorkflowResolver` are prepared run-persistence and
+  workflow-staleness modules covered by tests but not yet wired into the
+  controller or widget; they are compiled into the test target only, not the
+  plugin runtime library.
 
 ## Kinematic Optimization Workflow
 

@@ -82,10 +82,6 @@ if(build)
         StructureSensitivityAnalyzer.cpp
         StructureOptimizationJson.cpp
         StructureOptimizationMigration.cpp
-        OptimizationRunSnapshot.cpp
-        OptimizationRunJson.cpp
-        OptimizationRunStore.cpp
-        StructureOptimizationWorkflowResolver.cpp
         OptimizationPreflight.cpp
         StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
@@ -172,10 +168,6 @@ if(build)
         StructureSensitivityAnalyzer.hpp
         StructureOptimizationJson.hpp
         StructureOptimizationMigration.hpp
-        OptimizationRunSnapshot.hpp
-        OptimizationRunJson.hpp
-        OptimizationRunStore.hpp
-        StructureOptimizationWorkflowResolver.hpp
         OptimizationPreflight.hpp
         StructureOptimizationDocument.hpp
         StructureOptimizationCsv.hpp
@@ -238,6 +230,10 @@ if(build)
         DesignTemplateApplication.cpp
         DhProjection.cpp
         CanonicalForwardKinematics.cpp
+        OptimizationRunSnapshot.cpp
+        OptimizationRunJson.cpp
+        OptimizationRunStore.cpp
+        StructureOptimizationWorkflowResolver.cpp
         StructureOptimizerPlugin.cpp
         ${RccSrcFiles}
         StructureOptimizerPlugin.hpp
