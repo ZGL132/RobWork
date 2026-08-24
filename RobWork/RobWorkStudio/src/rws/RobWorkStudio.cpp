@@ -2691,7 +2691,9 @@ void RobWorkStudio::createProjectFromRobotFile ()
             QStringLiteral ("structure-optimization-seed.main.json"));
         ProjectResource seedResource;
         seedResource.id = QStringLiteral ("structure-optimization-seed.main");
-        seedResource.kind = QStringLiteral ("rws.structure-optimization-seed");
+        // The seed is a passive sidecar consumed through resolveProjectResource,
+        // not an editable project document requiring a Provider.
+        seedResource.kind = QStringLiteral ("robwork.passive-asset");
         seedResource.path = QStringLiteral ("structure-optimization-seed.main.json");
         seedResource.ownership = QStringLiteral ("generated");
         seedResource.required = false;

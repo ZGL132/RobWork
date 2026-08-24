@@ -137,6 +137,14 @@ struct DummySetup
     std::vector< std::string > proxSetupFilenames;
 };
 
+// WORLD is created implicitly by StateStructure. Older generated WorkCell
+// files also serialized a fixed WORLD frame whose parent was WORLD, which
+// would otherwise create the same frame twice during loading.
+bool isLegacyExplicitWorldFrame (DummyFrame& frame)
+{
+    return frame.getName () == "WORLD" && frame.getRefFrame () == "WORLD";
+}
+
 void addPropertyToMap (const DummyProperty& dprop, core::PropertyMap& map)
 {
     if (dprop._type == "string") {
@@ -1007,6 +1015,8 @@ rw::models::WorkCell::Ptr XMLRWLoader::loadWorkCell (const std::string& fname)
         // 1. check that all parent frames are valid frames
         std::map< std::string, DummyFrame* > strToFrame;
         for (DummyFrame& df : setup.dwc->_framelist) {
+            if (isLegacyExplicitWorldFrame (df))
+                continue;
             strToFrame[df.getName ()] = &df;
         }
         for (DummyDevice& dd : setup.dwc->_devlist) {
@@ -1042,6 +1052,8 @@ rw::models::WorkCell::Ptr XMLRWLoader::loadWorkCell (const std::string& fname)
 
         // first create all frames defined in the workcell
         for (size_t i = 0; i < setup.dwc->_framelist.size (); i++) {
+            if (isLegacyExplicitWorldFrame (setup.dwc->_framelist[i]))
+                continue;
             createFrame (setup.dwc->_framelist[i], setup);
         }
 

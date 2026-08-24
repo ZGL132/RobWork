@@ -2842,8 +2842,8 @@ int main (int argc, char** argv)
             return fail ("Disabled CollisionModel should not be emitted.");
     }
 
-    // Simplified link visuals must not silently re-emit their original mesh
-    // collision, even when an old project JSON still marks that model enabled.
+    // An explicitly enabled mesh collision remains authoritative even when
+    // the corresponding visual Drawable is a simplified link primitive.
     {
         RobotModelSpec model =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -2867,8 +2867,8 @@ int main (int argc, char** argv)
             return fail ("Simplified link with suppressed mesh collision should validate: " +
                          simplifiedErrors.join ("; "));
         const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (model);
-        if (contains (xml, "OriginalMeshCollision"))
-            return fail ("Simplified link must suppress its original mesh CollisionModel.");
+        if (!contains (xml, "OriginalMeshCollision"))
+            return fail ("An enabled mesh CollisionModel must be emitted independently of the simplified Drawable.");
     }
 
     // ---- Test 15: 把 Milestone 6 默认模型写到磁盘,供人工核对 ----

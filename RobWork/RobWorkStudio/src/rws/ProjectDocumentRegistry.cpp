@@ -40,6 +40,12 @@ bool isPassiveProjectAsset (const ProjectResource& resource)
     if (resource.kind == QStringLiteral ("robwork.passive-asset"))
         return true;
 
+    // Structure-optimization import seeds are JSON sidecar assets consumed
+    // directly through resolveProjectResource; they are not editable
+    // documents and intentionally have no Provider. Keep old manifests quiet.
+    if (resource.kind == QStringLiteral ("rws.structure-optimization-seed"))
+        return true;
+
     // WorkCell import bindings written before the metadata/asset split used a
     // document-only kind. They never had a provider and are consumed directly
     // by ModelBuilder, so retain a narrowly-scoped compatibility path.

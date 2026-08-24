@@ -1183,6 +1183,32 @@ TEST (ProjectDocumentRegistryTest, ReportsWarningWhenOptionalResourceIsSkipped)
     EXPECT_TRUE (warnings.front ().contains ("optional.analysis"));
 }
 
+// The robot import seed is a passive JSON asset consumed by StructureOptimizer
+// through resolveProjectResource; it is intentionally not a Provider document.
+// Historical manifests used a dedicated kind, which must remain warning-free.
+TEST (ProjectDocumentRegistryTest, TreatsLegacyStructureOptimizationSeedAsPassiveAsset)
+{
+    QTemporaryDir directory;
+    ASSERT_TRUE (directory.isValid ());
+    const QString projectFile = QDir (directory.path ()).filePath ("Demo.rwproj");
+
+    rws::ProjectManifest manifest;
+    manifest.project.id = "legacy-seed-test";
+    manifest.project.name = "legacy-seed-test";
+    const rws::ProjectResource seed = resource (
+        "structure-optimization-seed.main", "rws.structure-optimization-seed",
+        "structure-optimization-seed.main.json");
+    manifest.resources.push_back (seed);
+
+    rws::ProjectDocumentRegistry registry;
+    QString error;
+    QStringList warnings;
+    ASSERT_TRUE (registry.loadProjectResources (manifest, projectFile, &error, &warnings))
+        << error.toStdString ();
+    EXPECT_TRUE (error.isEmpty ());
+    EXPECT_TRUE (warnings.isEmpty ());
+}
+
 TEST (ProjectDocumentRegistryTest, AutosaveSerializesDirtyProviderWithoutMarkingItClean)
 {
     QTemporaryDir directory;
