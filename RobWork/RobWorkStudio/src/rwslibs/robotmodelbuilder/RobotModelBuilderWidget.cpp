@@ -617,6 +617,68 @@ QString pickNextJointName (const RobotModelSpec& spec)
     }
     return QStringLiteral ("Joint_New");
 }
+
+bool isMeshCollisionShape (const std::string& shape)
+{
+    const GeometryKind kind = geometryKindFromString (shape);
+    return kind == GeometryKind::STL || kind == GeometryKind::Mesh ||
+           kind == GeometryKind::Polytope;
+}
+
+bool sameGeometryPath (const std::string& lhs, const std::string& rhs)
+{
+    if (lhs.empty () || rhs.empty ())
+        return false;
+    const QString left = QDir::cleanPath (
+        QFileInfo (QString::fromStdString (lhs)).absoluteFilePath ());
+    const QString right = QDir::cleanPath (
+        QFileInfo (QString::fromStdString (rhs)).absoluteFilePath ());
+    return left.compare (right, Qt::CaseInsensitive) == 0;
+}
+
+bool isSimplifiedDrawable (const DrawableSpec& drawable)
+{
+    if (drawable.autoLinkGeometry)
+        return true;
+    const QString name = QString::fromStdString (drawable.name);
+    const bool generatedLinkName =
+        QRegularExpression ("^(?:base|link\\d+)_visual(?:_\\d+)?$",
+                            QRegularExpression::CaseInsensitiveOption)
+            .match (name)
+            .hasMatch ();
+    const GeometryKind kind = geometryKindFromString (drawable.shape);
+    return drawable.filePath.empty () && generatedLinkName &&
+           (kind == GeometryKind::Cylinder || kind == GeometryKind::Cone);
+}
+
+// Simplified link helpers are visual proxies. Keeping their source mesh in an
+// enabled CollisionModel defeats simplification and can make a WorkCell load
+// hundreds of megabytes of triangles. The record remains editable so a user
+// can explicitly re-enable or replace it later.
+int disableCollisionsForSimplifiedDrawable (RobotModelSpec& spec,
+                                            const DrawableSpec& drawable,
+                                            const std::string& originalFilePath = std::string ())
+{
+    int disabledCount = 0;
+    for (CollisionModelSpec& collision : spec.collisionModels) {
+        if (collision.refFrame != drawable.refFrame ||
+            !isMeshCollisionShape (collision.shape))
+            continue;
+
+        // During a live mesh -> primitive conversion, only disable the
+        // collision that came from this visual file. For legacy auto-link
+        // projects whose visual file has already been cleared, all mesh
+        // collisions on the same link are conservatively disabled.
+        if (!originalFilePath.empty () &&
+            !sameGeometryPath (collision.filePath, originalFilePath))
+            continue;
+        if (collision.enabled) {
+            collision.enabled = false;
+            ++disabledCount;
+        }
+    }
+    return disabledCount;
+}
 }    // namespace
 
 // =============================================================================
@@ -665,6 +727,10 @@ bool RobotModelBuilderWidget::loadProjectDocument (const QString& path, QString*
         return false;
 
     runtime.saveDirectory = effectiveSaveDirectory ().toStdString ();
+    for (const DrawableSpec& drawable : runtime.drawables) {
+        if (isSimplifiedDrawable (drawable))
+            disableCollisionsForSimplifiedDrawable (runtime, drawable);
+    }
     fillFromSpec (runtime);
     _projectCleanSnapshot = projectDocumentSnapshot ();
     _projectSnapshotActive = true;
@@ -2517,6 +2583,7 @@ void RobotModelBuilderWidget::onDrawableShapeChanged (int row, const QString& pr
     if (row >= static_cast< int > (spec.drawables.size ()))
         return;
     DrawableSpec& drawable = spec.drawables[static_cast< size_t > (row)];
+    const std::string originalFilePath = drawable.filePath;
     const bool enterAutoLink = !drawable.autoLinkGeometry && isMeshShape (previousShape) &&
                                isLinkShape (shape);
     const bool keepAutoLink = drawable.autoLinkGeometry && isLinkShape (shape);
@@ -2540,16 +2607,21 @@ void RobotModelBuilderWidget::onDrawableShapeChanged (int row, const QString& pr
             return;
         }
 
+        int disabledCollisionCount = 0;
+        if (enterAutoLink)
+            disabledCollisionCount =
+                disableCollisionsForSimplifiedDrawable (spec, drawable, originalFilePath);
         drawable.autoLinkGeometry = true;
         drawable.filePath.clear ();
         RobotModelXmlWriter::applyLinkGeometry (spec);
         fillFromSpec (spec);
         generatePreview ();
-        setStatus (QString ("Drawable %1 now follows %2 to %3 automatically.")
+        setStatus (QString ("Drawable %1 now follows %2 to %3 automatically; %4 mesh collision(s) disabled.")
                        .arg (QString::fromStdString (drawable.name))
                        .arg (QString::fromStdString (spec.transformJoints[startIndex].name))
                        .arg (QString::fromStdString (
-                           spec.transformJoints[static_cast< size_t > (startIndex + 1)].name)));
+                           spec.transformJoints[static_cast< size_t > (startIndex + 1)].name))
+                       .arg (disabledCollisionCount));
         return;
     }
 
@@ -2970,7 +3042,12 @@ void RobotModelBuilderWidget::syncFromWorkCellSpec (const RobotModelSpec& spec,
 {
     _importingFromWorkCell = true;
     _importedDocument = spec.imported;
-    fillFromSpec (spec);
+    RobotModelSpec runtime = spec;
+    for (const DrawableSpec& drawable : runtime.drawables) {
+        if (isSimplifiedDrawable (drawable))
+            disableCollisionsForSimplifiedDrawable (runtime, drawable);
+    }
+    fillFromSpec (runtime);
     generatePreview ();
     _importingFromWorkCell = false;
 

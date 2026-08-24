@@ -867,7 +867,7 @@ class RobWorkStudio : public QMainWindow
     void openWorkCellFile (const QString& filename);
     // 打开 WorkCell 的内部实现，返回加载是否成功；失败时回退为空场景。
     // 保留旧 openWorkCellFile（void）以维持插件二进制兼容，它直接委托本函数。
-    bool tryOpenWorkCellFile (const QString& filename);
+    bool tryOpenWorkCellFile (const QString& filename, QString* error = nullptr);
     // 用户主动打开独立 WorkCell 时，必须先完成当前项目的保存/放弃/取消决策，
     // 再解除 Provider 与 ProjectManager 绑定。该入口只供 openFile 的单资源分支使用，
     // 项目 Provider 加载和“重新加载 WorkCell”仍直接走 tryOpenWorkCellFile，避免误退出项目。

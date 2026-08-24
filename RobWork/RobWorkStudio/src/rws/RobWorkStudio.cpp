@@ -3952,8 +3952,8 @@ bool RobWorkStudio::loadWorkCellProjectResource (const QString& filename, QStrin
             *error = QString::fromUtf8 ("WorkCell 文件不存在：%1。").arg (filename);
         return false;
     }
-    if (!tryOpenWorkCellFile (filename)) {
-        if (error != nullptr)
+    if (!tryOpenWorkCellFile (filename, error)) {
+        if (error != nullptr && error->isEmpty ())
             *error = QString::fromUtf8 ("WorkCell 加载失败：%1。").arg (filename);
         return false;
     }
@@ -4127,7 +4127,7 @@ void RobWorkStudio::openWorkCellFile (const QString& filename)
 
 // 打开 WorkCell 的内部实现，返回加载是否成功（失败时回退为空场景）。
 // 与旧 openWorkCellFile 的区别是带返回值，供项目 Provider 判断加载结果。
-bool RobWorkStudio::tryOpenWorkCellFile (const QString& filename)
+bool RobWorkStudio::tryOpenWorkCellFile (const QString& filename, QString* error)
 {
     // Always close the workcell.
     closeWorkCell ();
@@ -4137,14 +4137,20 @@ bool RobWorkStudio::tryOpenWorkCellFile (const QString& filename)
 
     bool loadedSuccessfully = true;
     try {
-        wc = WorkCellLoader::Factory::load (filename.toStdString ());
+        std::string loadError;
+        wc = WorkCellLoader::Factory::load (filename.toStdString (), &loadError);
         if (wc == NULL) {
-            RW_THROW ("Loading of workcell failed!");
+            const std::string reason = loadError.empty () ?
+                                           std::string ("Loading of workcell failed!") :
+                                           loadError;
+            RW_THROW (reason);
         }
     }
     catch (const std::exception& e) {
         const std::string msg = "Failed to load workcell: " + filename.toStdString () + ". \n " +
                                 std::string (e.what ());
+        if (error != nullptr)
+            *error = QString::fromStdString (msg);
         QMessageBox::information (this, "Error", msg.c_str (), QMessageBox::Ok);
         wc = emptyWorkCell ();
         loadedSuccessfully = false;

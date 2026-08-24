@@ -2842,6 +2842,35 @@ int main (int argc, char** argv)
             return fail ("Disabled CollisionModel should not be emitted.");
     }
 
+    // Simplified link visuals must not silently re-emit their original mesh
+    // collision, even when an old project JSON still marks that model enabled.
+    {
+        RobotModelSpec model =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        model.drawables.clear ();
+        DrawableSpec drawable;
+        drawable.name = "Link1To2";
+        drawable.refFrame = "Joint1";
+        drawable.shape = "Cylinder";
+        drawable.autoLinkGeometry = true;
+        model.drawables.push_back (drawable);
+
+        CollisionModelSpec collision;
+        collision.name = "OriginalMeshCollision";
+        collision.refFrame = "Joint1";
+        collision.shape = "Polytope";
+        collision.filePath = "meshes/original.stl";
+        model.collisionModels.push_back (collision);
+
+        QStringList simplifiedErrors;
+        if (!RobotModelXmlWriter::validate (model, simplifiedErrors))
+            return fail ("Simplified link with suppressed mesh collision should validate: " +
+                         simplifiedErrors.join ("; "));
+        const QString xml = RobotModelXmlWriter::makeSerialDeviceXml (model);
+        if (contains (xml, "OriginalMeshCollision"))
+            return fail ("Simplified link must suppress its original mesh CollisionModel.");
+    }
+
     // ---- Test 15: 把 Milestone 6 默认模型写到磁盘,供人工核对 ----
     {
         const QString dir = QDir::tempPath () + "/robotmodelbuilder_dump_m6";

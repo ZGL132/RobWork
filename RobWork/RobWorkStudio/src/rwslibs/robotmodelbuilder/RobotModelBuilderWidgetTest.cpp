@@ -105,7 +105,9 @@ bool verifyMeshToAutoLinkConversion (QString* failure)
     out << "<robot name=\"SimplifiedBot\">\n"
         << "  <link name=\"base\"/>\n"
         << "  <link name=\"link1\"><visual name=\"link1_visual\"><geometry>"
-        << "<mesh filename=\"link1.stl\"/></geometry></visual></link>\n"
+        << "<mesh filename=\"link1.stl\"/></geometry></visual>"
+        << "<collision name=\"link1_collision\"><geometry>"
+        << "<mesh filename=\"link1.stl\"/></geometry></collision></link>\n"
         << "  <link name=\"link2\"/>\n"
         << "  <joint name=\"Joint1\" type=\"revolute\"><parent link=\"base\"/>"
         << "<child link=\"link1\"/><origin xyz=\"0 0 0\"/></joint>\n"
@@ -168,6 +170,19 @@ bool verifyMeshToAutoLinkConversion (QString* failure)
         *failure = "Converted Cylinder did not receive the adjacent-joint length and pose.";
         return false;
     }
+    bool disabledOriginalCollision = false;
+    for (const rws::CollisionModelSpec& collision : converted.collisionModels) {
+        if (collision.refFrame == drawable->refFrame &&
+            collision.filePath == QFileInfo (meshPath).absoluteFilePath ().toStdString () &&
+            !collision.enabled) {
+            disabledOriginalCollision = true;
+            break;
+        }
+    }
+    if (!disabledOriginalCollision) {
+        *failure = "Simplifying a Drawable must disable its original mesh collision model.";
+        return false;
+    }
 
     QComboBox* convertedShape =
         qobject_cast< QComboBox* > (drawables->cellWidget (visualRow, 2));
@@ -177,6 +192,14 @@ bool verifyMeshToAutoLinkConversion (QString* failure)
     for (const rws::DrawableSpec& candidate : manual.drawables) {
         if (candidate.name == "link1_visual" && candidate.autoLinkGeometry) {
             *failure = "Switching back to STL did not leave auto-link mode.";
+            return false;
+        }
+    }
+    for (const rws::CollisionModelSpec& collision : manual.collisionModels) {
+        if (collision.refFrame == drawable->refFrame &&
+            collision.filePath == QFileInfo (meshPath).absoluteFilePath ().toStdString () &&
+            collision.enabled) {
+            *failure = "Returning to a mesh Drawable must not implicitly re-enable its disabled collision model.";
             return false;
         }
     }

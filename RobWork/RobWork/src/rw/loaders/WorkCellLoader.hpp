@@ -113,6 +113,17 @@ namespace rw { namespace loaders {
              */
             static models::WorkCell::Ptr load (const std::string& filename);
 
+            /**
+             * @brief Loads a WorkCell and optionally returns the detailed failure reason.
+             * @param filename [in] name of the WorkCell file.
+             * @param error [out] receives the loader/exception text when loading fails.
+             *
+             * This overload keeps the historical null-pointer return contract while
+             * allowing GUI callers to present the underlying XML or geometry error.
+             */
+            static models::WorkCell::Ptr load (const std::string& filename,
+                                               std::string* error);
+
           private:
             Factory () :
                 rw::core::ExtensionPoint< WorkCellLoader > (

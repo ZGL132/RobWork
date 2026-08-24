@@ -46,15 +46,44 @@ WorkCellLoader::Ptr WorkCellLoader::Factory::getWorkCellLoader (const std::strin
 
 WorkCell::Ptr WorkCellLoader::Factory::load (const std::string& file)
 {
+    return load (file, nullptr);
+}
+
+WorkCell::Ptr WorkCellLoader::Factory::load (const std::string& file, std::string* error)
+{
+    if (error != nullptr)
+        error->clear ();
+
     const std::string ext2           = StringUtil::getFileExtension (file);
     const std::string ext            = StringUtil::toUpper (ext2);
     const WorkCellLoader::Ptr loader = getWorkCellLoader (ext);
+    if (loader.isNull ()) {
+        const std::string message = "No WorkCell loader is registered for '" + file + "'.";
+        if (error != nullptr)
+            *error = message;
+        Log::infoLog () << message << std::endl;
+        return nullptr;
+    }
     try {
-        return loader->loadWorkCell (file);
+        WorkCell::Ptr workcell = loader->loadWorkCell (file);
+        if (workcell.isNull () && error != nullptr)
+            *error = "The WorkCell loader returned an empty WorkCell for '" + file + "'.";
+        return workcell;
     }
     catch (const std::exception& err) {
+        const std::string message = "Failed to load WorkCell '" + file + "': " + err.what ();
+        if (error != nullptr)
+            *error = message;
         Log::infoLog () << "Tried loading workcell with extension, but failed!";
-        Log::infoLog () << " " << err.what () << std::endl;
+        Log::infoLog () << " " << message << std::endl;
+    }
+    catch (...) {
+        const std::string message = "Failed to load WorkCell '" + file +
+                                    "': unknown loader exception.";
+        if (error != nullptr)
+            *error = message;
+        Log::infoLog () << "Tried loading workcell with extension, but failed!";
+        Log::infoLog () << " " << message << std::endl;
     }
     return nullptr;
 }
