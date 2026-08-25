@@ -382,9 +382,43 @@ StructureOptimizationController::runDefaultBaselineEvaluation(
                                                baseline.baselineIndex);
         legacy.stage = StructureEvaluationStage::Verified;
         legacy.feasible = baseline.candidateResult.feasibility == Feasibility::Feasible;
-        legacy.values.reserve(baseline.designVector.values.size());
-        for (const DesignVectorValue& value : baseline.designVector.values)
-            legacy.values.push_back(value.engineeringValue);
+        // The canonical compiler consumes only the new parameter-binding
+        // design space, so its vector can legitimately be empty for a saved
+        // project that still owns legacy StructureDesignVariables.  The
+        // legacy metric evaluator instead requires one value per such
+        // variable.  A "current model" baseline must therefore use the
+        // project's current values, in the legacy evaluator's declared order.
+        legacy.values.reserve(effectiveProblem->variables.size());
+        for (const StructureDesignVariable& variable : effectiveProblem->variables)
+            legacy.values.push_back(variable.currentValue);
+
+        // CandidateResultAssembler intentionally projects lifecycle and
+        // feasibility evidence only.  The existing candidate table, however,
+        // reads its score/reachability/length columns from the legacy raw
+        // metrics.  Evaluate the nominal vector through the same metric
+        // evaluator used for optimizer candidates, then copy *only* display
+        // metrics: the canonical bridge above remains authoritative for the
+        // baseline feasibility/status that it verified.
+        StructureCandidateResult metricProjection = legacy;
+        KinematicEngineeringEvaluator metricEvaluator(*effectiveProblem);
+        metricEvaluator.evaluateCandidate(metricProjection,
+                                          StructureEvaluationStage::Verified,
+                                          callbacks, nullptr);
+        if (metricProjection.status == StructureCandidateStatus::Canceled) {
+            result.canceled = true;
+            return result;
+        }
+        if (metricProjection.raw.modelValid) {
+            legacy.raw = std::move(metricProjection.raw);
+            legacy.scores = metricProjection.scores;
+            legacy.totalScore = metricProjection.totalScore;
+        }
+        else {
+            legacy.warnings.push_back(
+                "Baseline metrics unavailable: nominal metric evaluation did not produce a valid model.");
+            for (const std::string& warning : metricProjection.warnings)
+                legacy.warnings.push_back(warning);
+        }
         result.candidates.push_back(std::move(legacy));
     }
     return result;

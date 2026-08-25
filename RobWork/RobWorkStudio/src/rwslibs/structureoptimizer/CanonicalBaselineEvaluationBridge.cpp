@@ -6,6 +6,8 @@
 #include "TaskEvaluationStage.hpp"
 #include "VerifiedRegionStage.hpp"
 
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
+
 #include <algorithm>
 
 namespace rws {
@@ -164,8 +166,38 @@ BaselineEvaluationResult CanonicalBaselineEvaluationBridge::evaluate(
     EvaluationPlanCompilerOptions options = request.planOptions;
     if (request.checkCollision)
         options.capabilities.insert("collision");
+    // The execution contract records the frozen RobotModelSpec/WorkCell
+    // identities (SHA-256).  The candidate fingerprints above are FNV hashes
+    // of the compiled canonical model and must remain a separate audit stream.
+    // Comparing either pair directly rejects an unchanged project merely
+    // because it crosses the source-model -> canonical-model boundary.
+    const RequirementExecutionProvenance& requirementProvenance =
+        problem.requirementExecution.provenance;
     options.modelFingerprint = result.modelFingerprint;
+    if (!requirementProvenance.robotModelFingerprint.empty()) {
+        const std::string sourceModelFingerprint =
+            RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
+        if (sourceModelFingerprint.empty() ||
+            sourceModelFingerprint != requirementProvenance.robotModelFingerprint) {
+            addError(result, "MODEL_FINGERPRINT_MISMATCH", "modelFingerprint",
+                     "Frozen requirements belong to a different robot model.");
+            result.candidateResult = failedCandidate(result.diagnostics.back().code);
+            return result;
+        }
+        options.modelFingerprint = sourceModelFingerprint;
+    }
     options.environmentFingerprint = result.environmentFingerprint;
+    if (!requirementProvenance.environmentFingerprint.empty()) {
+        if (!problem.scenarioSnapshot.environmentFingerprint.empty() &&
+            problem.scenarioSnapshot.environmentFingerprint !=
+                requirementProvenance.environmentFingerprint) {
+            addError(result, "ENVIRONMENT_FINGERPRINT_MISMATCH", "environmentFingerprint",
+                     "Frozen requirements belong to a different environment.");
+            result.candidateResult = failedCandidate(result.diagnostics.back().code);
+            return result;
+        }
+        options.environmentFingerprint = requirementProvenance.environmentFingerprint;
+    }
     options.toolFingerprint = result.toolFingerprint;
     result.plan = EvaluationPlanCompiler::compile(problem.requirementExecution, options);
     result.planFingerprint = result.plan.fingerprint;

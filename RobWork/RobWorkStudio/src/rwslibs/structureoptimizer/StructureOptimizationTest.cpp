@@ -605,6 +605,17 @@ static void testEvaluationPlanCompiler()
     REQUIRE(first.regions.size() == 1);
     REQUIRE(first.fingerprint == second.fingerprint);
 
+    // The frozen-requirement producer and the JSON contract both define the
+    // execution payload as schema v1.  A valid v1 contract must therefore
+    // enter the optimizer plan instead of being rejected before baseline
+    // evaluation starts.
+    requirements.schemaVersion = 1;
+    const rws::EvaluationPlan v1 =
+        rws::EvaluationPlanCompiler::compile(requirements, options);
+    REQUIRE(v1.valid());
+    REQUIRE(v1.diagnostics.empty());
+    requirements.schemaVersion = 4;
+
     options.capabilities.clear();
     must.collisionFreeRequired = true;
     requirements.tasks[0] = must;
@@ -4577,6 +4588,107 @@ static void testS38ProjectionAndEvaluationDevice()
     REQUIRE(rws::CanonicalForwardKinematics::frameTransform(canonicalFk, "TCP", canonicalTcp));
     REQUIRE(sameTransform(generatedTcp, canonicalTcp));
 
+    // Imported WorkCells can expose the installation frame as the device
+    // base ("RobotBase") while the legacy XML writer emits its serial-device
+    // base as "Base".  Projection must bridge those identifiers instead of
+    // rejecting an otherwise valid canonical chain.
+    rws::CanonicalKinematicModel robotBaseModel = model;
+    robotBaseModel.rootFrameId = "WorldMount";
+    robotBaseModel.baseFrameId = "RobotBase";
+    robotBaseModel.frames.front() = {"RobotBase", "RobotBase", rws::CanonicalFrameType::Base};
+    robotBaseModel.frames.insert(robotBaseModel.frames.begin(),
+                                 {"WorldMount", "WorldMount", rws::CanonicalFrameType::Fixed});
+    robotBaseModel.joints.front().parentFrameId = "RobotBase";
+    rws::JointEdge robotBaseInstallation;
+    robotBaseInstallation.id = "edge:RobotBaseInstallation";
+    robotBaseInstallation.name = "RobotBaseInstallation";
+    robotBaseInstallation.type = rws::CanonicalJointType::Fixed;
+    robotBaseInstallation.parentFrameId = "WorldMount";
+    robotBaseInstallation.childFrameId = "RobotBase";
+    robotBaseInstallation.parentToJointZero = rw::math::Transform3D<>(
+        rw::math::Vector3D<>(0.1, 0.2, 0.3));
+    robotBaseModel.joints.insert(robotBaseModel.joints.begin(), robotBaseInstallation);
+    robotBaseModel.deviceChains.front().rootFrameId = "WorldMount";
+    robotBaseModel.deviceChains.front().orderedJointIds.insert(
+        robotBaseModel.deviceChains.front().orderedJointIds.begin(), robotBaseInstallation.id);
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(robotBaseModel).valid);
+    const auto robotBaseProjection = rws::RobotModelSpecProjectionAdapter::project(
+        {&robotBaseModel, "S38RobotBase", "", nullptr});
+    REQUIRE(robotBaseProjection.ok);
+    if (robotBaseProjection.ok) {
+        rws::EvaluationDeviceBuildRequest robotBaseRequest;
+        robotBaseRequest.model = &robotBaseModel;
+        robotBaseRequest.deviceName = "S38RobotBase";
+        robotBaseRequest.tcpFrame = "TCP";
+        robotBaseRequest.checkCollision = false;
+        const auto robotBaseBuilt = rws::EvaluationDeviceBuilder::build(robotBaseRequest);
+        REQUIRE(robotBaseBuilt.ok);
+        if (robotBaseBuilt.ok) {
+            const rws::CanonicalForwardKinematicsResult robotBaseCanonicalFk =
+                rws::CanonicalForwardKinematics::evaluate(robotBaseModel, q);
+            REQUIRE(robotBaseCanonicalFk.valid);
+            rw::kinematics::State robotBaseState = robotBaseBuilt.artifact.workcell->getDefaultState();
+            robotBaseBuilt.artifact.device->setQ(rw::math::Q(1, q[0]), robotBaseState);
+            const rw::math::Transform3D<> robotBaseTcp = rw::kinematics::Kinematics::frameTframe(
+                robotBaseBuilt.artifact.workcell->getWorldFrame(),
+                robotBaseBuilt.artifact.tcpFrame.get(), robotBaseState);
+            rw::math::Transform3D<> robotBaseCanonicalTcp;
+            REQUIRE(rws::CanonicalForwardKinematics::frameTransform(
+                robotBaseCanonicalFk, "TCP", robotBaseCanonicalTcp));
+            REQUIRE(sameTransform(robotBaseTcp, robotBaseCanonicalTcp));
+        }
+    }
+
+    // WorkCell import qualifies device-frame IDs (for example,
+    // "ImportedRobot.Joint1"), while an imported CollisionSetup keeps the
+    // device-local names.  The output XML must use device-local names again.
+    rws::CanonicalKinematicModel qualifiedModel = model;
+    qualifiedModel.modelId = "QualifiedProjectionRobot";
+    const std::map< std::string, std::string > qualifiedNames = {
+        {"Base", "QualifiedProjectionRobot.Base"},
+        {"Joint1", "QualifiedProjectionRobot.Joint1"},
+        {"FixedGuide", "QualifiedProjectionRobot.FixedGuide"},
+        {"TCP", "QualifiedProjectionRobot.TCP"}};
+    for (rws::FrameNode& frame : qualifiedModel.frames) {
+        frame.id = qualifiedNames.at(frame.id);
+        frame.name = qualifiedNames.at(frame.name);
+    }
+    qualifiedModel.rootFrameId = qualifiedNames.at(qualifiedModel.rootFrameId);
+    qualifiedModel.baseFrameId = qualifiedNames.at(qualifiedModel.baseFrameId);
+    qualifiedModel.activeDeviceChainId = "QualifiedProjectionRobot:chain";
+    for (rws::JointEdge& edge : qualifiedModel.joints) {
+        edge.parentFrameId = qualifiedNames.at(edge.parentFrameId);
+        edge.childFrameId = qualifiedNames.at(edge.childFrameId);
+    }
+    qualifiedModel.deviceChains.front().id = qualifiedModel.activeDeviceChainId;
+    qualifiedModel.deviceChains.front().rootFrameId = qualifiedNames.at("Base");
+    qualifiedModel.deviceChains.front().tipFrameId = qualifiedNames.at("TCP");
+    qualifiedModel.geometryBindings.front().referenceFrameId = qualifiedNames.at("Joint1");
+    qualifiedModel.collisionBindings.front().referenceFrameId = qualifiedNames.at("Joint1");
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(qualifiedModel).valid);
+
+    rws::RobotModelSpec qualifiedSnapshot;
+    qualifiedSnapshot.collisionSetup.enabled = true;
+    qualifiedSnapshot.collisionSetup.excludePairs.push_back(
+        {"TCP", "Joint1", true, "Imported", ""});
+    const auto qualifiedProjection = rws::RobotModelSpecProjectionAdapter::project(
+        {&qualifiedModel, qualifiedModel.modelId, "", &qualifiedSnapshot});
+    REQUIRE(qualifiedProjection.ok);
+    if (qualifiedProjection.ok) {
+        REQUIRE(qualifiedProjection.spec.transformJoints.front().name == "Joint1");
+        REQUIRE(qualifiedProjection.spec.transformJoints.back().name == "TCP");
+        REQUIRE(qualifiedProjection.spec.drawables.front().refFrame == "Joint1");
+        REQUIRE(qualifiedProjection.spec.collisionModels.front().refFrame == "Joint1");
+        rws::EvaluationDeviceBuildRequest qualifiedRequest;
+        qualifiedRequest.model = &qualifiedModel;
+        qualifiedRequest.deviceName = qualifiedModel.modelId;
+        qualifiedRequest.tcpFrame = "TCP";
+        qualifiedRequest.sourceSnapshot = &qualifiedSnapshot;
+        qualifiedRequest.checkCollision = false;
+        const auto qualifiedBuilt = rws::EvaluationDeviceBuilder::build(qualifiedRequest);
+        REQUIRE(qualifiedBuilt.ok);
+    }
+
     rws::CanonicalKinematicModel flangeTool = model;
     flangeTool.frames[1].type = rws::CanonicalFrameType::Flange;
     flangeTool.joints.erase(flangeTool.joints.begin() + 1);
@@ -4649,6 +4761,15 @@ static void testCanonicalBaselineEvaluationBridge()
         std::make_shared< rws::KinematicBaselineSnapshot >(snapshot.snapshot);
     problem.requirementExecution.schemaVersion = 4;
     problem.requirementExecution.provenance.requirementFingerprint = "s52-baseline";
+    // Frozen requirements identify their RobotModelSpec and frozen WorkCell
+    // using SHA-256.  The compiled canonical candidate has a separate FNV
+    // fingerprint for its own audit trail; it must not be compared to these
+    // source-contract fingerprints by the evaluation plan.
+    const std::string frozenSourceFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
+    REQUIRE(!frozenSourceFingerprint.empty());
+    problem.requirementExecution.provenance.robotModelFingerprint = frozenSourceFingerprint;
+    problem.requirementExecution.provenance.environmentFingerprint = "frozen-environment";
     rws::RequirementExecutionTask target;
     target.id = "nominal-tcp";
     target.refFrame = "Base";
@@ -4682,6 +4803,8 @@ static void testCanonicalBaselineEvaluationBridge()
     REQUIRE(!result.candidateFingerprint.empty());
     REQUIRE(!result.modelFingerprint.empty());
     REQUIRE(!result.planFingerprint.empty());
+    REQUIRE(result.plan.modelFingerprint == frozenSourceFingerprint);
+    REQUIRE(result.plan.environmentFingerprint == "frozen-environment");
     REQUIRE(result.plan.fingerprint == result.planFingerprint);
     const rws::BaselineEvaluationResult repeated =
         rws::CanonicalBaselineEvaluationBridge::evaluate(request);
@@ -4705,8 +4828,32 @@ static void testStructureOptimizationControllerBaselineBridge()
         return;
 
     rws::StructureOptimizationProblem problem;
+    const rws::RobotModelSpecProjectionResult projection =
+        rws::RobotModelSpecProjectionAdapter::project({&model, model.modelId, "", nullptr});
+    REQUIRE(projection.ok);
+    if (!projection.ok)
+        return;
+    // The controller's canonical bridge is authoritative for feasibility, but
+    // the legacy result consumed by the widget must still contain the same
+    // metrics that candidates use for score/reachability/length columns.
+    problem.context.modelSpec = projection.spec;
     problem.context.deviceName = model.modelId;
     problem.context.tcpFrame = "TCP";
+    // S52's canonical candidate may have no first-phase parameter bindings,
+    // while the legacy optimizer still owns variables that its metric evaluator
+    // must receive at their current baseline values.
+    rws::StructureDesignVariable jointOffset;
+    jointOffset.id = "joint-1-z";
+    jointOffset.label = "Joint 1 Z";
+    jointOffset.targetName = "Joint1";
+    jointOffset.unit = "m";
+    jointOffset.kind = rws::StructureVariableKind::JointPositionZ;
+    jointOffset.currentValue = 0.2;
+    jointOffset.minimum = 0.1;
+    jointOffset.maximum = 0.3;
+    jointOffset.step = 0.01;
+    jointOffset.enabled = true;
+    problem.variables = {jointOffset};
     problem.canonicalModelShadow.status = rws::CanonicalModelShadowStatus::Current;
     problem.canonicalModelShadow.snapshot =
         std::make_shared< rws::KinematicBaselineSnapshot >(snapshot.snapshot);
@@ -4734,6 +4881,10 @@ static void testStructureOptimizationControllerBaselineBridge()
     REQUIRE(!completed.baselineAudit.planFingerprint.empty());
     REQUIRE(completed.candidates.size() == 1);
     REQUIRE(completed.candidates.front().index == completed.baselineCandidateIndex);
+    REQUIRE(completed.candidates.front().raw.modelValid);
+    REQUIRE(completed.candidates.front().raw.weightedReachability > 0.0);
+    REQUIRE(completed.candidates.front().raw.totalKinematicLength > 0.0);
+    REQUIRE(completed.candidates.front().totalScore > 0.0);
     std::printf("PASSED\n");
 }
 

@@ -88,10 +88,12 @@ bool chainContainsFrame(const CanonicalKinematicModel& model, const DeviceChain&
 }
 
 template< class Binding >
-void assignGeometry(const Binding& binding, DrawableSpec& drawable)
+void assignGeometry(const Binding& binding, DrawableSpec& drawable,
+                    const std::map< std::string, std::string >& frameNames)
 {
     drawable.name = binding.id;
-    drawable.refFrame = binding.referenceFrameId;
+    const auto frameIt = frameNames.find(binding.referenceFrameId);
+    drawable.refFrame = frameIt == frameNames.end() ? binding.referenceFrameId : frameIt->second;
     drawable.shape = geometryShape(binding.kind);
     drawable.filePath = binding.sourceObjectId;
     drawable.dimensions = {{binding.width, binding.height, binding.depth}};
@@ -102,10 +104,12 @@ void assignGeometry(const Binding& binding, DrawableSpec& drawable)
 }
 
 template< class Binding >
-void assignCollision(const Binding& binding, CollisionModelSpec& collision)
+void assignCollision(const Binding& binding, CollisionModelSpec& collision,
+                     const std::map< std::string, std::string >& frameNames)
 {
     collision.name = binding.id;
-    collision.refFrame = binding.referenceFrameId;
+    const auto frameIt = frameNames.find(binding.referenceFrameId);
+    collision.refFrame = frameIt == frameNames.end() ? binding.referenceFrameId : frameIt->second;
     collision.shape = geometryShape(binding.kind);
     collision.filePath = binding.sourceObjectId;
     collision.dimensions = {{binding.width, binding.height, binding.depth}};
@@ -149,6 +153,32 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
     std::map< std::string, CanonicalFrameType > frameTypes;
     for (const FrameNode& frame : model.frames)
         frameTypes[frame.id] = frame.type;
+    // WorkCell import qualifies device-owned frames as "DeviceName.Frame".
+    // RobotModelSpec, on the other hand, is the *inside* of one SerialDevice;
+    // its joint and geometry references must be local names.  Convert only the
+    // active model's own namespace and retain all external scene names intact.
+    std::map< std::string, std::string > legacyFrameNames;
+    const std::string devicePrefix = model.modelId.empty() ? std::string() : model.modelId + ".";
+    std::map< std::string, std::string > canonicalByLegacyName;
+    for (const FrameNode& frame : model.frames) {
+        std::string legacyName = frame.id;
+        if (!devicePrefix.empty() && legacyName.compare(0, devicePrefix.size(), devicePrefix) == 0 &&
+            legacyName.size() > devicePrefix.size())
+            legacyName = legacyName.substr(devicePrefix.size());
+        const auto existing = canonicalByLegacyName.find(legacyName);
+        if (existing != canonicalByLegacyName.end() && existing->second != frame.id) {
+            addError(result, "S38_PROJECTION_FRAME_NAME_COLLISION", "frames",
+                     "Canonical frame IDs map to the same RobotModelSpec local frame name: " +
+                     legacyName + ".");
+            return result;
+        }
+        canonicalByLegacyName[legacyName] = frame.id;
+        legacyFrameNames[frame.id] = legacyName;
+    }
+    const auto legacyFrameName = [&legacyFrameNames](const std::string& frameId) {
+        const auto frameIt = legacyFrameNames.find(frameId);
+        return frameIt == legacyFrameNames.end() ? frameId : frameIt->second;
+    };
 
     RobotModelSpec spec;
     if (request.sourceSnapshot != nullptr)
@@ -165,12 +195,12 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
     spec.transformJoints.clear();
     spec.limits.clear();
     spec.poses.clear();
-
-    if (model.baseFrameId != "Base") {
-        addError(result, "S38_PROJECTION_BASE_NAME_UNSUPPORTED", "baseFrameId",
-                 "The evaluation RobotModelSpec contract requires the canonical device base to be named Base.");
-        return result;
+    for (FramePairSpec& pair : spec.collisionSetup.excludePairs) {
+        pair.first = legacyFrameName(pair.first);
+        pair.second = legacyFrameName(pair.second);
     }
+    for (std::string& frame : spec.collisionSetup.volatileFrames)
+        frame = legacyFrameName(frame);
 
     std::size_t firstEdge = 0;
     if (chainIt->rootFrameId != model.baseFrameId) {
@@ -223,7 +253,7 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
         }
 
         JointTransformSpec projected;
-        projected.name = edge.childFrameId;
+        projected.name = legacyFrameName(edge.childFrameId);
         projected.type = jointType(edge.type);
         const auto childType = frameTypes.find(edge.childFrameId);
         if (childType != frameTypes.end() && childType->second == CanonicalFrameType::Tool)
@@ -241,7 +271,7 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
 
         if (edge.type != CanonicalJointType::Fixed && edge.physicalLimits.enabled) {
             JointLimitSpec limit;
-            limit.jointName = edge.childFrameId;
+            limit.jointName = legacyFrameName(edge.childFrameId);
             const double scale = edge.physicalLimits.unit == CanonicalCoordinateUnit::Radians
                                      ? (180.0 / rw::math::Pi) : 1.0;
             limit.posMin = edge.physicalLimits.lower * scale;
@@ -271,7 +301,7 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
             return result;
         }
         JointTransformSpec projected;
-        projected.name = tool.tcpFrameId;
+        projected.name = legacyFrameName(tool.tcpFrameId);
         projected.type = "ToolFrame";
         assignPose(tool.flangeToTcp, projected.pos, projected.rpyDeg);
         spec.transformJoints.push_back(projected);
@@ -285,13 +315,13 @@ RobotModelSpecProjectionResult RobotModelSpecProjectionAdapter::project(
     spec.drawables.clear();
     for (const GeometryBinding& binding : model.geometryBindings) {
         DrawableSpec drawable;
-        assignGeometry(binding, drawable);
+        assignGeometry(binding, drawable, legacyFrameNames);
         spec.drawables.push_back(drawable);
     }
     spec.collisionModels.clear();
     for (const CollisionBinding& binding : model.collisionBindings) {
         CollisionModelSpec collision;
-        assignCollision(binding, collision);
+        assignCollision(binding, collision, legacyFrameNames);
         spec.collisionModels.push_back(collision);
     }
 

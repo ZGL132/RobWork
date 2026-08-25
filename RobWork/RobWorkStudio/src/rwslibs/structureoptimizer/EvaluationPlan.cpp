@@ -88,9 +88,13 @@ EvaluationPlan EvaluationPlanCompiler::compile(const RequirementExecutionSet& re
     plan.capabilities = options.capabilities;
     plan.metricIds = options.metricIds;
 
-    if (requirements.schemaVersion < 3)
+    // RequirementExecutionSet is its own contract: its JSON reader and
+    // freezer currently produce schema v1.  Do not confuse that version with
+    // the enclosing frozen-artifact version (v3/v4), otherwise every valid
+    // frozen execution set is rejected before baseline evaluation.
+    if (requirements.schemaVersion < 1)
         diagnostic(plan, "REQUIREMENT_SCHEMA_UNSUPPORTED", "schemaVersion",
-                   "RequirementExecutionSet schema must be at least v3.");
+                   "RequirementExecutionSet schema must be at least v1.");
     if (plan.requirementFingerprint.empty())
         diagnostic(plan, "REQUIREMENT_FINGERPRINT_MISSING", "provenance.requirementFingerprint",
                    "A frozen requirement fingerprint is required.");
