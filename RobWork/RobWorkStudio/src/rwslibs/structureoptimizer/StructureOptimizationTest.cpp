@@ -4737,6 +4737,51 @@ static void testStructureOptimizationControllerBaselineBridge()
     std::printf("PASSED\n");
 }
 
+// S52 回归:存量项目保存时还没有 canonicalModelShadow。基线评估入口必须按项目
+// 自身 modelSpec 现场重建影子(与候选评估同一构建路径),而不是用 S52 永久拒绝。
+// 这里同步验证重建三步曲(建模→规范导入→attach),与控制器内实现一一对应。
+static void testBaselineRebuildsMissingCanonicalShadow()
+{
+    std::printf("testBaselineRebuildsMissingCanonicalShadow ... ");
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.modelSpec.robotName = "ShadowRebuildRobot";
+    problem.context.robotName = problem.context.modelSpec.robotName;
+    problem.context.deviceName = problem.context.modelSpec.robotName;
+    problem.context.tcpFrame = "TCP";   // 裸名:同时覆盖 TCP 设备前缀回退路径
+    // 故意不设置 canonicalModelShadow —— 模拟旧项目加载后的状态
+    REQUIRE(!problem.canonicalModelShadow.hasSnapshot());
+
+    rws::CandidateModelBuildRequest buildRequest;
+    buildRequest.spec = problem.context.modelSpec;
+    buildRequest.deviceName = problem.context.deviceName;
+    buildRequest.tcpFrame = problem.context.tcpFrame;
+    buildRequest.checkCollision = false;
+    rws::CandidateModelFactory factory;
+    const rws::CandidateModelBuildResult built = factory.build(buildRequest);
+    REQUIRE(built.ok);
+    REQUIRE(built.artifact.workcell != nullptr);
+    REQUIRE(built.artifact.device != nullptr);
+    REQUIRE(built.artifact.tcpFrame != nullptr);
+
+    rws::KinematicImportRequest importRequest;
+    importRequest.workcell = built.artifact.workcell.get();
+    importRequest.device = built.artifact.device.get();
+    importRequest.tcpFrame = built.artifact.tcpFrame.get();
+    importRequest.sourceSnapshot = &problem.context.modelSpec;
+    importRequest.sourceFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
+    std::string shadowError;
+    REQUIRE(rws::CanonicalModelShadowService::attach(importRequest, problem,
+                                                     &shadowError));
+    REQUIRE(problem.canonicalModelShadow.status ==
+            rws::CanonicalModelShadowStatus::Current);
+    REQUIRE(problem.canonicalModelShadow.hasSnapshot());
+    REQUIRE(!problem.canonicalModelShadow.snapshot->modelFingerprint.empty());
+    std::printf("PASSED\n");
+}
+
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
@@ -11414,8 +11459,14 @@ int main(int argc, char** argv)
 
     if (suite == "canonical_baseline_bridge") {
         QCoreApplication app(argc, argv);
-        testCanonicalBaselineEvaluationBridge();
-        testStructureOptimizationControllerBaselineBridge();
+    testCanonicalBaselineEvaluationBridge();
+    testStructureOptimizationControllerBaselineBridge();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "baseline_shadow_rebuild") {
+        QCoreApplication app(argc, argv);
+    testBaselineRebuildsMissingCanonicalShadow();
         return g_testFailures == 0 ? 0 : 1;
     }
 

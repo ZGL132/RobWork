@@ -4,6 +4,11 @@
 #include "KinematicEngineeringEvaluator.hpp"
 #include "SystemEngineeringOptimizer.hpp"
 #include "CanonicalBaselineEvaluationBridge.hpp"
+#include "CandidateModelFactory.hpp"
+#include "CanonicalModelShadowService.hpp"
+#include "KinematicModelImporter.hpp"
+
+#include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
 #include <QMetaObject>
 #include <QtConcurrent>
@@ -296,10 +301,55 @@ StructureOptimizationController::runDefaultBaselineEvaluation(
                *bridge->callback && (*bridge->callback)();
     };
 
+    // 存量项目保存时还没有 canonicalModelShadow,模型文件在保存后变更也会让影子
+    // 过期。影子完全由项目自身的 modelSpec 决定,这里在评估入口用与候选评估相同
+    // 的模型构建路径(CandidateModelFactory)现场重建影子,避免旧项目被 S52 永久
+    // 卡死;重建失败才原样上报。
+    StructureOptimizationProblem shadowedProblem;
+    const StructureOptimizationProblem* effectiveProblem = &problem;
+    if (problem.canonicalModelShadow.status != CanonicalModelShadowStatus::Current ||
+        !problem.canonicalModelShadow.hasSnapshot()) {
+        shadowedProblem = problem;
+        CandidateModelBuildRequest buildRequest;
+        buildRequest.spec = shadowedProblem.context.modelSpec;
+        buildRequest.deviceName = shadowedProblem.context.deviceName;
+        buildRequest.tcpFrame = shadowedProblem.context.tcpFrame;
+        buildRequest.checkCollision = false;
+        buildRequest.scenarioSnapshot = &shadowedProblem.scenarioSnapshot;
+        buildRequest.scenarioBaseDirectory = shadowedProblem.scenarioSnapshot.baseDirectory;
+        const CandidateModelBuildResult built =
+            CandidateModelFactory().build(buildRequest);
+        std::string shadowError;
+        if (!built.ok) {
+            shadowError = "the project model could not be built for canonical import.";
+        }
+        else {
+            KinematicImportRequest importRequest;
+            importRequest.workcell = built.artifact.workcell.get();
+            importRequest.device = built.artifact.device.get();
+            importRequest.tcpFrame = built.artifact.tcpFrame.get();
+            importRequest.sourceSnapshot = &shadowedProblem.context.modelSpec;
+            importRequest.sourceFingerprint =
+                RobotModelFingerprint::canonicalSha256(shadowedProblem.context.modelSpec);
+            if (!CanonicalModelShadowService::attach(importRequest, shadowedProblem,
+                                                     &shadowError))
+                shadowError = "canonical import failed: " + shadowError;
+        }
+        if (!shadowError.empty()) {
+            AnalysisWarning warning;
+            warning.code     = "S52_CANONICAL_BASELINE_UNAVAILABLE";
+            warning.message  = "Canonical model shadow rebuild failed: " + shadowError;
+            warning.severity = AnalysisStatus::Fail;
+            result.warnings.push_back(std::move(warning));
+            return result;
+        }
+        effectiveProblem = &shadowedProblem;
+    }
+
     CanonicalBaselineEvaluationRequest request;
-    request.problem = &problem;
-    request.deviceName = problem.context.deviceName;
-    request.tcpFrame = problem.context.tcpFrame;
+    request.problem = effectiveProblem;
+    request.deviceName = effectiveProblem->context.deviceName;
+    request.tcpFrame = effectiveProblem->context.tcpFrame;
     request.checkCollision = true;
     request.cancellation = {cancellationRequested, &cancellationBridge};
     request.planOptions.capabilities.insert("target");
