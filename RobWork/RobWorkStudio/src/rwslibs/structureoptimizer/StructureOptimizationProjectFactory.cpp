@@ -2,6 +2,7 @@
 
 #include "CanonicalModelShadowService.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizationValidation.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
@@ -11,7 +12,8 @@ bool StructureOptimizationProjectFactory::create(const RobotModelSpec& spec,
                                                  StructureOptimizationProblem& problem,
                                                  std::string* error)
 {
-    if (spec.robotName.empty() || spec.transformJoints.empty()) {
+    std::string modelReason;
+    if (!StructureOptimizationValidation::hasCompleteModel(spec, &modelReason)) {
         if (error != nullptr) {
             *error = "StructureOptimization.Context.Invalid: complete RobotModelSpec is required.";
         }

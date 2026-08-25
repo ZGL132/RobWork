@@ -267,52 +267,24 @@ StructureOptimizationUiLogic::preflight(const StructureOptimizationProblem& prob
 bool StructureOptimizationUiLogic::hasRunnableInputs(
     const StructureOptimizationProblem& problem, std::string* reason)
 {
-    const std::vector<StructurePreflightFinding> findings = preflight(problem);
-    for (const StructurePreflightFinding& finding : findings) {
-        // 若存在严重失败 (Fail) 或上下文无效错误，直接拒绝运行
-        if (finding.severity == AnalysisStatus::Fail ||
-            finding.code == "StructureOptimization.Context.Invalid") {
-            if (reason != nullptr) {
-                if (finding.code == "StructureOptimization.Context.Invalid")
-                    *reason = "RobotDesignContext.ModelSpec.Incomplete: " +
-                              finding.message;
-                else
-                    *reason = finding.code + ": " + finding.message;
+    // 唯一门禁来源：核心 preflight 组合所有校验（模型完整性、启用变量、
+    // 启用任务点、运行数量等），UI 层只做投影，不再重复扫描变量与任务。
+    const OptimizationPreflightResult result = OptimizationPreflight::run(problem);
+    if (result.canStart) {
+        if (reason != nullptr) reason->clear();
+        return true;
+    }
+    if (reason != nullptr) {
+        // 取第一条阻断性 (Error) finding，输出稳定的 "code: message"；
+        // 中文提示由 Widget 状态栏的 UI 投影层负责。
+        for (const PreflightFinding& finding : result.findings) {
+            if (finding.severity == OptimizationPreflightSeverity::Error) {
+                *reason = finding.code + ": " + finding.message;
+                break;
             }
-            return false;
         }
+        if (reason->empty())
+            *reason = "Optimization preflight blocked the run.";
     }
-
-    // 2. 检查变量列表，确保至少有一个处于勾选启用状态 (enabled == true) 的设计变量
-    bool hasEnabledVariable = false;
-    for (const StructureDesignVariable& variable : problem.variables) {
-        if (variable.enabled) {
-            hasEnabledVariable = true;
-            break;
-        }
-    }
-    if (!hasEnabledVariable) {
-        if (reason != nullptr)
-            *reason = "至少需要一个启用的设计变量。"; // UI 状态栏中文提示
-        return false;
-    }
-
-    // 3. 检查任务点列表，确保至少有一个处于勾选启用状态 (point.enabled == true) 的任务点
-    bool hasEnabledTask = false;
-    for (const OptimizationTaskPoint& task : problem.tasks) {
-        if (task.point.enabled) {
-            hasEnabledTask = true;
-            break;
-        }
-    }
-    if (!hasEnabledTask) {
-        if (reason != nullptr)
-            *reason = "至少需要一个启用的任务点。"; // UI 状态栏中文提示
-        return false;
-    }
-
-    // 全部校验通过，清空原因描述并返回成功
-    if (reason != nullptr)
-        reason->clear();
-    return true;
+    return false;
 }

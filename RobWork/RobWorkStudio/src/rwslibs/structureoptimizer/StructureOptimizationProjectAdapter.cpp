@@ -19,8 +19,9 @@ const int ProjectSchemaVersion = 1;
 
 bool hasInvalidContext(const StructureOptimizationProblem& problem)
 {
-    return problem.context.modelSpec.robotName.empty() ||
-           problem.context.modelSpec.transformJoints.empty();
+    std::string reason;
+    return !StructureOptimizationValidation::hasCompleteModel(
+        problem.context.modelSpec, &reason);
 }
 
 void setError(QString* error, const QString& value)

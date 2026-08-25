@@ -1,5 +1,7 @@
 #include "StructureOptimizationTemplate.hpp"
 
+#include "StructureOptimizationValidation.hpp"
+
 #include <algorithm>
 
 namespace rws {
@@ -152,8 +154,9 @@ bool StructureOptimizationTemplate::apply(StructureOptimizationTemplateKind kind
                                           StructureOptimizationProblem& problem,
                                           std::string* error)
 {
-    if (problem.context.modelSpec.robotName.empty() ||
-        problem.context.modelSpec.transformJoints.empty()) {
+    std::string modelReason;
+    if (!StructureOptimizationValidation::hasCompleteModel(problem.context.modelSpec,
+                                                           &modelReason)) {
         if (error != nullptr)
             *error = "A complete robot model is required before applying a template.";
         return false;

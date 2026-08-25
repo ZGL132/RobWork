@@ -11256,7 +11256,7 @@ static void testStructureOptimizerWidgetState()
     if (startButton != nullptr)
         REQUIRE(!startButton->isEnabled());
     REQUIRE(widget.statusText().toStdString().find(
-                "RobotDesignContext.ModelSpec.Incomplete") != std::string::npos);
+                "StructureOptimization.Context.Invalid") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -11678,6 +11678,37 @@ static void testStructureOptimizationWorkflowResolver()
         rws::StructureOptimizationWorkflowResolver::resolve(inputs);
     REQUIRE(!stale.canStart);
     REQUIRE(stale.blockingCodes.contains("SceneFingerprintMismatch"));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 模型完整性唯一入口:hasCompleteModel 是 Factory/ProjectAdapter/
+// Template/Validation 共用的模型完整性判断。断言空 robotName、空
+// transformJoints、合法完整模型三种路径,以及失败原因以稳定错误码为前缀。
+static void testValidationHasCompleteModel()
+{
+    std::printf("testValidationHasCompleteModel ... ");
+
+    rws::RobotModelSpec spec;
+
+    std::string reason;
+    REQUIRE(!rws::StructureOptimizationValidation::hasCompleteModel(spec, &reason));
+    REQUIRE(reason ==
+            "StructureOptimization.Context.Invalid: robotName must be non-empty.");
+
+    spec.robotName = "HasNameRobot";
+    REQUIRE(!rws::StructureOptimizationValidation::hasCompleteModel(spec, &reason));
+    REQUIRE(reason ==
+            "StructureOptimization.Context.Invalid: transformJoints must contain "
+            "at least one joint.");
+
+    rws::JointTransformSpec joint;
+    joint.name = "base_slider";
+    spec.transformJoints.push_back(joint);
+    REQUIRE(rws::StructureOptimizationValidation::hasCompleteModel(spec, &reason));
+    REQUIRE(reason.empty());
+    REQUIRE(rws::StructureOptimizationValidation::hasCompleteModel(spec));
 
     if (g_testFailures == 0) std::printf("PASSED\n");
     else std::printf("FAILED (%d)\n", g_testFailures);
@@ -12226,6 +12257,7 @@ int main(int argc, char** argv)
 
     if (suite == "preflight_core") {
         QCoreApplication app(argc, argv);
+        testValidationHasCompleteModel();
         testOptimizationPreflightCore();
         return g_testFailures == 0 ? 0 : 1;
     }

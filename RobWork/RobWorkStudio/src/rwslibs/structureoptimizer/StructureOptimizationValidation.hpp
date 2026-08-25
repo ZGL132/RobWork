@@ -22,6 +22,12 @@ namespace rws {
 class StructureOptimizationValidation
 {
 public:
+    //! @brief 判断模型规格是否具备完整上下文 (robotName 非空且 transformJoints 非空)。
+    //!        失败时通过 reason 返回以稳定错误码为前缀的原因；成功时清空 reason。
+    //!        Factory/ProjectAdapter/Template/Validation 共用此唯一判断入口。
+    static bool hasCompleteModel(const RobotModelSpec& spec,
+                                 std::string* reason = nullptr);
+
     //! @brief 验证问题定义, 返回发现的警告/错误列表。
     //!        空 vector 表示完全通过。
     static std::vector< AnalysisWarning > validateProblem(

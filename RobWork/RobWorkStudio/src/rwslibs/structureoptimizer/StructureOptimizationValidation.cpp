@@ -40,6 +40,31 @@ bool isFinite(double v)
 
 } // anonymous namespace
 
+bool StructureOptimizationValidation::hasCompleteModel(const RobotModelSpec& spec,
+                                                       std::string* reason)
+{
+    if (spec.robotName.empty())
+    {
+        if (reason != nullptr)
+        {
+            *reason = "StructureOptimization.Context.Invalid: robotName must be non-empty.";
+        }
+        return false;
+    }
+    if (spec.transformJoints.empty())
+    {
+        if (reason != nullptr)
+        {
+            *reason = "StructureOptimization.Context.Invalid: transformJoints must "
+                      "contain at least one joint.";
+        }
+        return false;
+    }
+    if (reason != nullptr)
+        reason->clear();
+    return true;
+}
+
 std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
     const StructureOptimizationProblem& problem)
 {
@@ -47,7 +72,7 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
 
     // ── 1. 检查上下文完整性 ─────────────────────────────────────────────
     const RobotModelSpec& spec = problem.context.modelSpec;
-    if (spec.robotName.empty() || spec.transformJoints.empty())
+    if (!hasCompleteModel(spec))
     {
         warnings.push_back(makeWarning(
             "StructureOptimization.Context.Invalid",
