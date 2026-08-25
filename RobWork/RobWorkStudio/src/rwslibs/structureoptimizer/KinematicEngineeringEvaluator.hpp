@@ -65,14 +65,25 @@ class KinematicEngineeringEvaluator : public IEngineeringEvaluator
                                          const EvaluationCallbacks& callbacks) override;
 
     /**
-     * @brief 兼容旧版优化策略接口的运动学评估函数。
-     * 
+     * @brief 统一的候选解评估入口。
+     *
      * 直接对 StructureCandidateResult 结构体进行原地修改与赋值，支持传入 StructureCandidateCache 哈希缓存以提速。
-     * 
+     * 模型构建、IK、碰撞与指标汇总全部由本类完成；IEngineeringEvaluator::evaluate 只负责把结果映射为公共工程结果。
+     *
      * @param candidate [in, out] 待评估与更新的候选解结果结构体
      * @param stage 当前评估阶段 (Quick 粗筛 / Verified 精复核)
      * @param callbacks 线程控制与进度回调接口
      * @param cache 可选的候选解哈希缓存指针，若命中直接复用历史指标
+     */
+    void evaluateCandidate(StructureCandidateResult& candidate,
+                           StructureEvaluationStage stage,
+                           const StructureOptimizationCallbacks& callbacks,
+                           StructureCandidateCache* cache = nullptr);
+
+    /**
+     * @brief 兼容转发：旧入口名，等价于 evaluateCandidate。
+     *
+     * 仅保留给唯一的历史兼容性测试使用；生产与新测试代码一律调用 evaluateCandidate。
      */
     void evaluateLegacy(StructureCandidateResult& candidate,
                         StructureEvaluationStage stage,

@@ -68,9 +68,8 @@
 #include "StructureCandidateGenerator.hpp"
 #include "StructureCandidateCache.hpp"
 #include "CandidateModelFactory.hpp"
-#include "StructureCandidateEvaluator.hpp"
-#include "EngineeringEvaluatorPipeline.hpp"
 #include "KinematicEngineeringEvaluator.hpp"
+#include "EngineeringEvaluatorPipeline.hpp"
 #include "SystemEngineeringOptimizer.hpp"
 #include "HybridStructureOptimizer.hpp"
 #include "StructureOptimizationStrategy.hpp"
@@ -6858,7 +6857,7 @@ static void testEvaluator()
     // Minimal problem — no valid context, so the real evaluator's mutator
     // should fail quickly and return a Failed candidate.
     rws::StructureOptimizationProblem problem;
-    rws::StructureCandidateEvaluator  evaluator;
+    rws::KinematicEngineeringEvaluator evaluator(problem);
     rws::StructureCandidateResult     candidate;
 
     candidate.index  = 0;
@@ -6867,8 +6866,8 @@ static void testEvaluator()
     rws::StructureOptimizationCallbacks callbacks;
     callbacks.isCancellationRequested = []() { return false; };
 
-    evaluator.evaluate(problem, candidate, rws::StructureEvaluationStage::Quick,
-                       callbacks, nullptr);
+    evaluator.evaluateCandidate(candidate, rws::StructureEvaluationStage::Quick,
+                                callbacks, nullptr);
 
     // Without a valid model spec, the mutator returns ok=false → Failed
     REQUIRE(candidate.status == rws::StructureCandidateStatus::Failed);
@@ -7952,6 +7951,42 @@ static void testWorkspaceCoverageEvaluator()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 评估器入口统一:同一固定问题与固定候选值分别经旧入口 evaluateLegacy
+// (兼容转发)与新入口 evaluateCandidate 评估,断言 status/feasible/
+// requiredReachableCount/collisionFreeRate/totalScore 完全一致,防止统一
+// 评估入口时行为漂移。这是全仓库唯一允许使用 evaluateLegacy 的测试。
+static void testEvaluateCandidateMatchesLegacyWrapper()
+{
+    std::printf("testEvaluateCandidateMatchesLegacyWrapper ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+
+    rws::StructureCandidateResult viaLegacyEntry;
+    viaLegacyEntry.index = 3;
+    rws::StructureCandidateResult viaCandidate = viaLegacyEntry;
+
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = []() { return false; };
+
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    evaluator.evaluateLegacy(viaLegacyEntry, rws::StructureEvaluationStage::Quick,
+                             callbacks, nullptr);
+    evaluator.evaluateCandidate(viaCandidate, rws::StructureEvaluationStage::Quick,
+                                callbacks, nullptr);
+
+    REQUIRE(viaLegacyEntry.status == viaCandidate.status);
+    REQUIRE(viaLegacyEntry.feasible == viaCandidate.feasible);
+    REQUIRE(viaLegacyEntry.raw.requiredReachableCount ==
+            viaCandidate.raw.requiredReachableCount);
+    REQUIRE(viaLegacyEntry.raw.collisionFreeRate == viaCandidate.raw.collisionFreeRate);
+    REQUIRE(viaLegacyEntry.totalScore == viaCandidate.totalScore);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 评价器一致性:在候选场景里放置一个覆盖整个可达空间的大碰撞盒子,验证
 // KinematicEngineeringEvaluator 对"当前位姿"任务(Must 碰撞必需 / Should 无碰撞)
 // 的结果与直接调用 TargetEvaluator + ConfigurationEvaluator 完全一致——Must 任务
@@ -8258,7 +8293,7 @@ static void testVerifiedRegionPreservesPositionCoverage()
     rws::StructureCandidateResult structureResult;
     rws::StructureOptimizationCallbacks callbacks;
     callbacks.isCancellationRequested = [] () { return false; };
-    rws::KinematicEngineeringEvaluator(problem).evaluateLegacy(
+    rws::KinematicEngineeringEvaluator(problem).evaluateCandidate(
         structureResult, rws::StructureEvaluationStage::Verified, callbacks, nullptr);
     REQUIRE(structureResult.status == rws::StructureCandidateStatus::Feasible);
     REQUIRE(structureResult.raw.workspaceRegionMetrics.size() == 1);
@@ -12424,6 +12459,7 @@ int main(int argc, char** argv)
     }
 
     if (suite == "evaluator_consistency") {
+        testEvaluateCandidateMatchesLegacyWrapper();
         testSharedTargetEvaluatorConsistency();
         testVerifiedRegionUsesSharedEvaluator();
         testVerifiedRegionPreservesPositionCoverage();

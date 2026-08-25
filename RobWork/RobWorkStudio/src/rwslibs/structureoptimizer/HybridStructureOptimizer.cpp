@@ -1,7 +1,7 @@
 #include "HybridStructureOptimizer.hpp"
 #include "StructureCandidateGenerator.hpp"
 #include "StructureObjectiveScorer.hpp"
-#include "StructureCandidateEvaluator.hpp"
+#include "StructureOptimizationStrategy.hpp"
 #include "StructureSensitivityAnalyzer.hpp"
 
 #include <algorithm>

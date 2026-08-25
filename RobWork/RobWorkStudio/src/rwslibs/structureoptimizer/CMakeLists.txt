@@ -74,7 +74,6 @@ if(build)
         StructureCandidateGenerator.cpp
         StructureCandidateCache.cpp
         CandidateModelFactory.cpp
-        StructureCandidateEvaluator.cpp
         KinematicEngineeringEvaluator.cpp
         EngineeringEvaluatorPipeline.cpp
         SystemEngineeringOptimizer.cpp
@@ -158,7 +157,6 @@ if(build)
         StructureCandidateGenerator.hpp
         StructureCandidateCache.hpp
         CandidateModelFactory.hpp
-        StructureCandidateEvaluator.hpp
         KinematicEngineeringEvaluator.hpp
         EngineeringEvaluatorPipeline.hpp
         SystemEngineeringOptimizer.hpp
