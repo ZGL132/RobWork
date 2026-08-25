@@ -7138,6 +7138,32 @@ static void testEvaluateCandidateMatchesLegacyWrapper()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 TCP 裸名回退:存量项目在 context.tcpFrame 里存的是模型构建器的
+// 裸名("TCP"),而 CandidateModelFactory 生成的 WorkCell 把设备内部帧注册为
+// "<device>.TCP"。修复前 findFrame("TCP") 落空导致所有候选在模型构建阶段
+// Failed(得分恒 0);回归断言裸名经设备前缀回退后评估正常出分。
+static void testTcpBareNameFallback()
+{
+    std::printf("testTcpBareNameFallback ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    problem.context.tcpFrame = "TCP";   // 故意使用裸名,模拟存量项目数据
+
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    rws::CandidateEvaluationContext context;
+    rws::EvaluationRequest request;
+    const rws::EngineeringEvaluationResult result = evaluator.evaluate(
+        context, request, rws::EvaluationCallbacks());
+
+    REQUIRE(result.status != rws::EngineeringEvaluationStatus::Failed);
+    REQUIRE(findMetric(result, "kinematics.reachability.weighted") != nullptr);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 评价器一致性:在候选场景里放置一个覆盖整个可达空间的大碰撞盒子,验证
 // KinematicEngineeringEvaluator 对"当前位姿"任务(Must 碰撞必需 / Should 无碰撞)
 // 的结果与直接调用 TargetEvaluator + ConfigurationEvaluator 完全一致——Must 任务
@@ -11784,6 +11810,7 @@ int main(int argc, char** argv)
     testEvaluator();
     testWorkspaceCoverage();
     testWorkspaceCoverageEvaluator();
+    testTcpBareNameFallback();
     testSharedTargetEvaluatorConsistency();
     testVerifiedRegionUsesSharedEvaluator();
     testVerifiedRegionPreservesPositionCoverage();

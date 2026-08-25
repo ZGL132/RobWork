@@ -229,6 +229,12 @@ CandidateModelBuildResult CandidateModelFactory::build (
         const rw::kinematics::Frame* frame =
             wc->findFrame (request.tcpFrame);
         if (frame == NULL) {
+            // 设备内部帧加载进 WorkCell 后注册名带设备前缀（如 "UR-6-85-5-A.TCP"），
+            // 而项目里可能存的是模型构建器的裸名（"TCP"）。按前缀约定回退解析，
+            // 避免存量项目因帧名约定差异导致所有候选构建失败。
+            frame = wc->findFrame (device->getName () + "." + request.tcpFrame);
+        }
+        if (frame == NULL) {
             AnalysisWarning w;
             w.code     = "StructureOptimizer.Model.TcpMissing";
             w.message  = "TCP frame '" + request.tcpFrame
