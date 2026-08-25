@@ -1575,3 +1575,26 @@ equivalent to the generic `structure.legacy-variable` passthrough bindings
 written by `currentEnvelopeToJson`.  Wiring it into production migration
 requires field-level equivalence first (gate test:
 `testLegacyAdapterJsonBindingDivergenceGate`).
+
+## Known runtime gaps and display consistency (2026-08-25)
+
+Facts verified during the code-reduction pass; each keeps a source anchor so
+later changes must update the entry:
+
+- Constraint-kind labels are duplicated with different wording:
+  `StructureOptimizerWidget.cpp` says "Required Tasks Reachable" while
+  `StructureConstraintTableModel.cpp` says "Required Task Reachable".  Not
+  fixed in this pass; unify behind one shared label entry later.
+- Numeric precision differs across the three exports: `StructureOptimizationCsv.cpp`
+  formats doubles with `std::to_string` (6 decimals), `StructureOptimizationReportWriter.cpp`
+  uses `fixed`/`precision(3)`, and JSON emits full-precision numbers.  CSV is
+  not a fingerprint or precision authority.
+- `KinematicEngineeringEvaluator` projects typed raw metrics into
+  string-keyed `EngineeringMetric` entries and `SystemEngineeringOptimizer`
+  maps them back into `StructureRawMetrics`; this is a field-ID coupling (not
+  a text/number round trip).  Any metric-ID change must update producer,
+  consumer and the missing-metric tests together.
+- `CanonicalBaselineEvaluationBridge` constructs a default (empty)
+  `AdapterRegistry`; the parameter adapters are implemented but the default
+  production entry point registers none of them, so the adapter binding chain
+  has not been exercised end to end by a real default run.
