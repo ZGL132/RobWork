@@ -83,7 +83,6 @@ if(build)
         StructureOptimizationJson.cpp
         StructureOptimizationMigration.cpp
         OptimizationPreflight.cpp
-        StructureOptimizationDocument.cpp
         StructureOptimizationCsv.cpp
         StructureOptimizationObjectiveProfile.cpp
         StructureCandidateExporter.cpp
