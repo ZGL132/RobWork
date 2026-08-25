@@ -197,26 +197,11 @@ if(build)
     add_executable(sdurws_structureoptimizer_test
         StructureOptimizationTest.cpp
         # 仅测试可达模块：从核心库移入测试目标，不安装、不进插件运行库。
-        HybridOptimizer.cpp
-        LocalSearch.cpp
-        FinalValidationPlan.cpp
-        IndependentFinalVerifier.cpp
-        CandidateEvaluationScheduler.cpp
         OptimizationCheckpoint.cpp
-        InitialSampler.cpp
-        DeterministicSeed.cpp
         Phase8Acceptance.cpp
         Phase8PerformanceAudit.cpp
         Phase8ResourceAudit.cpp
         Phase8ReleaseManifest.cpp
-        EliteSelector.cpp
-        QuickScreeningPolicy.cpp
-        EvaluationCache.cpp
-        CacheKey.cpp
-        KinematicMetricAggregator.cpp
-        EstimatedWorkspaceStage.cpp
-        OrientationCoverageStage.cpp
-        DesignTemplateApplication.cpp
         DhProjection.cpp
         CanonicalForwardKinematics.cpp
         OptimizationRunSnapshot.cpp
@@ -402,24 +387,6 @@ if(build)
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )
         add_test(
-            NAME sdurws_structureoptimizer_spatial_evaluation_stages_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> spatial_evaluation_stages
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_spatial_evaluation_stages_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_kinematic_metric_aggregator_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> kinematic_metric_aggregator
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_kinematic_metric_aggregator_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
             NAME sdurws_structureoptimizer_candidate_result_test
             COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> candidate_result
         )
@@ -427,50 +394,6 @@ if(build)
             sdurws_structureoptimizer_candidate_result_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_quick_screening_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> quick_screening
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_elite_selector_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> elite_selector
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_elite_selector_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_hybrid_optimizer_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> hybrid_optimizer
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_hybrid_optimizer_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_local_search_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> local_search
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_local_search_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_independent_final_verifier_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> independent_final_verifier
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_independent_final_verifier_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_candidate_evaluation_scheduler_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> candidate_evaluation_scheduler
         )
         add_test(
             NAME sdurws_structureoptimizer_optimization_checkpoint_test
@@ -561,34 +484,6 @@ if(build)
         )
         set_tests_properties(
             sdurws_structureoptimizer_legacy_json_migration_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_candidate_evaluation_scheduler_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_quick_screening_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_cache_key_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> cache_key
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_cache_key_test
-            PROPERTIES
-                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
-        )
-        add_test(
-            NAME sdurws_structureoptimizer_initial_sampler_test
-            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> initial_sampler
-        )
-        set_tests_properties(
-            sdurws_structureoptimizer_initial_sampler_test
             PROPERTIES
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
         )

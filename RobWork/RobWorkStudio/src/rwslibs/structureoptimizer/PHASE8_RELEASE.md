@@ -103,3 +103,18 @@ Implemented per docs/superpowers/plans/2026-08-24-structure-optimizer-code-reduc
   QT_QPA_PLATFORM=windows.
 - Known runtime gaps and display-consistency notes are recorded in
   ARCHITECTURE.md with source anchors.
+
+## Dead-code deletion record (2026-08-25, Tier A)
+
+Deleted the superseded alternative implementations and their test suites
+(git history retains everything): HybridOptimizer, LocalSearch, EliteSelector,
+QuickScreeningPolicy, InitialSampler, DeterministicSeed, EvaluationCache,
+CacheKey, IndependentFinalVerifier, FinalValidationPlan,
+CandidateEvaluationScheduler, KinematicMetricAggregator, EstimatedWorkspaceStage,
+OrientationCoverageStage, DesignTemplateApplication - 30 files / ~1900 source
+lines plus ~915 lines of tests and 10 CTest entries.  Kept (test-target only):
+OptimizationCheckpoint, Phase8 audits, OptimizationRunSnapshot/RunJson/RunStore,
+StructureOptimizationWorkflowResolver, LegacyDesignSpaceAdapter,
+CanonicalForwardKinematics, StructureOptimizationMigration.  Verification:
+core/plugin/test build clean; all 33 remaining CTest tests pass; widget GUI
+suite passes.
