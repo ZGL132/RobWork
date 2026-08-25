@@ -67,3 +67,39 @@ StructureOptimizer 的修复、验收和发布证据必须来自同一构建树�
 目录一致，并记录源码 revision、可执行文件绝对路径、文件时间和 SHA256。QtCreator
 链接目录以及其他 `codex-vs-debug*` 目录中的同名可执行文件属于历史输出，不能作为
 修复完成的证据。
+
+## Code reduction release record (2026-08-25)
+
+Implemented per docs/superpowers/plans/2026-08-24-structure-optimizer-code-reduction.md
+(Tasks 1-7, 9-12; Task 8 variable-suggestion rename deferred as optional).
+
+- Directory after reduction: 228 files (101 cpp / 118 hpp / docs+resources);
+  core library source list reduced from 101 to 65 entries.
+- Moved from the core library into the test target only (not installed):
+  HybridOptimizer, LocalSearch, EliteSelector, QuickScreeningPolicy,
+  InitialSampler, DeterministicSeed, EvaluationCache, CacheKey,
+  KinematicMetricAggregator, EstimatedWorkspaceStage,
+  OrientationCoverageStage, DesignTemplateApplication, DhProjection,
+  CanonicalForwardKinematics, FinalValidationPlan, IndependentFinalVerifier,
+  CandidateEvaluationScheduler, OptimizationCheckpoint, Phase8 audits x4,
+  OptimizationRunSnapshot/RunJson/RunStore,
+  StructureOptimizationWorkflowResolver.
+- Removed: StructureOptimizationDocument.cpp (stateless unit) and the
+  duplicate setDirty call in StructureOptimizerPlugin.
+- Unified: KinematicEngineeringEvaluator::evaluateCandidate is the single
+  candidate evaluation implementation (evaluateLegacy remains only as a
+  forwarding member exercised by one compatibility test); the
+  StructureCandidateEvaluator wrapper class was deleted.
+- Centralized: StructureOptimizationValidation::hasCompleteModel is the only
+  model-completeness check (ProjectFactory / ProjectAdapter / Template /
+  Validation); hasRunnableInputs projects OptimizationPreflight::run.
+- Adapter implementations merged 11 -> 3 files (Joint / Pose / Geometry)
+  with classes, registry IDs, ABI and validation order unchanged.
+- Verification: core, plugin and test targets build clean (MSVC x64 Debug);
+  all 43 sdurws_structureoptimizer CTest tests pass; the fixed-seed
+  UR-6-85-5-A acceptance run keeps best candidate index, scores,
+  reachability, collision-free rate, coverage and fingerprints unchanged
+  (only timing fields differ); the Windows GUI widget suite passes with
+  QT_QPA_PLATFORM=windows.
+- Known runtime gaps and display-consistency notes are recorded in
+  ARCHITECTURE.md with source anchors.
