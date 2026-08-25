@@ -11734,6 +11734,143 @@ static void testOptimizationPreflightCore()
     else std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 legacy/canonical 边界门禁:比较 currentEnvelopeToJson 的
+// designSpace.bindings 投影与 LegacyDesignSpaceAdapter::preview 的语义绑定。
+// 两者当前不是同一套绑定模型——JSON 迁移为每个旧变量写通用
+// "structure.legacy-variable" 透传绑定;adapter 只为可语义化的变量
+// (默认仅 BaseHeight)生成 typed binding,DH A/D 保持只读投影,其余判
+// legacy/unbound。本测试把这一分歧固化为门禁:任一侧改变都会使断言失败,
+// 强制重新审视"是否把 adapter 接线为唯一迁移入口"的决策。在两条路径
+// 字段级等价之前,adapter 不得接入生产 JSON 迁移。
+static void testLegacyAdapterJsonBindingDivergenceGate()
+{
+    std::printf("testLegacyAdapterJsonBindingDivergenceGate ... ");
+
+    rws::StructureOptimizationProblem problem;
+    rws::StructureDesignVariable baseHeight;
+    baseHeight.id = "legacy-base-height";
+    baseHeight.label = "Legacy base height";
+    baseHeight.targetName = "Base";
+    baseHeight.unit = "m";
+    baseHeight.kind = rws::StructureVariableKind::BaseHeight;
+    baseHeight.currentValue = 0.5;
+    baseHeight.minimum = 0.3;
+    baseHeight.maximum = 0.7;
+    baseHeight.step = 0.01;
+    rws::StructureDesignVariable jointX = baseHeight;
+    jointX.id = "legacy-joint-x";
+    jointX.targetName = "Link1";
+    jointX.unit = "mm";
+    jointX.kind = rws::StructureVariableKind::JointPositionX;
+    jointX.currentValue = 500.0;
+    jointX.minimum = 400.0;
+    jointX.maximum = 700.0;
+    jointX.step = 10.0;
+    rws::StructureDesignVariable dhA = jointX;
+    dhA.id = "legacy-dh-a";
+    dhA.unit = "mm";
+    dhA.kind = rws::StructureVariableKind::DhA;
+    problem.variables = {baseHeight, jointX, dhA};
+
+    // ---- JSON 迁移路径的 bindings 投影 ----
+    const QJsonObject envelope = QJsonDocument::fromJson(
+        QByteArray::fromStdString(
+            rws::StructureOptimizationJson::currentEnvelopeToJson(problem)))
+        .object();
+    const QJsonArray jsonBindings =
+        envelope.value("designSpace").toObject().value("bindings").toArray();
+
+    // ---- adapter 语义迁移路径的 bindings 投影 ----
+    const rws::LegacyDesignSpaceMigrationPreview preview =
+        rws::LegacyDesignSpaceAdapter::preview(problem);
+
+    // JSON 侧特征:全部变量都有透传绑定,adapterId 固定,id 等于变量 id,
+    // 数值已转 SI(JointPositionX 500 mm -> 0.5 m)。
+    REQUIRE(jsonBindings.size() == 3);
+    for (const QJsonValue& value : jsonBindings) {
+        REQUIRE(value.toObject().value("adapterId").toString() ==
+                QStringLiteral("structure.legacy-variable"));
+    }
+    const QJsonObject jsonJointX = [&envelope]() {
+        for (const QJsonValue& value :
+             envelope.value("designSpace").toObject().value("variables").toArray())
+            if (value.toObject().value("id").toString() == QStringLiteral("legacy-joint-x"))
+                return value.toObject();
+        return QJsonObject();
+    }();
+    REQUIRE(jsonJointX.value("unit").toString() == QStringLiteral("m"));
+    REQUIRE(std::abs(jsonJointX.value("currentValue").toDouble() - 0.5) < 1e-12);
+
+    // adapter 侧特征:仅 BaseHeight 被语义映射;DH 只读投影;其余 unbound。
+    REQUIRE(preview.entries.size() == 3);
+    REQUIRE(preview.bindings.size() == 1);
+    REQUIRE(preview.mappedVariables.size() == 1);
+    REQUIRE(preview.entries[0].mapped);
+    REQUIRE(preview.entries[0].variable.semanticKind == rws::SemanticKind::BaseTz);
+    REQUIRE(preview.entries[0].binding.ownerAdapterId == "BasePlacementAdapter");
+    REQUIRE(preview.entries[0].variable.unit == rws::DesignVariableUnit::Metres);
+    REQUIRE(preview.entries[1].disposition == "legacy/unbound");
+    REQUIRE(preview.entries[2].disposition == "legacy/projection-only");
+
+    // 非法单位的分歧特征:JSON 迁移直接抛 std::invalid_argument 拒绝导出,
+    // adapter 则记 LEGACY_VARIABLE_UNIT_UNSUPPORTED 诊断并保持变量 unbound。
+    // (单位检查只发生在已语义映射的变量上,因此用 BaseHeight 类别触发。)
+    rws::StructureDesignVariable badUnit = baseHeight;
+    badUnit.id = "legacy-bad-unit";
+    badUnit.unit = "furlong";
+    rws::StructureOptimizationProblem badUnitProblem;
+    badUnitProblem.context = problem.context;
+    badUnitProblem.variables = {badUnit};
+    bool jsonRejectedBadUnit = false;
+    try {
+        rws::StructureOptimizationJson::currentEnvelopeToJson(badUnitProblem);
+    } catch (const std::invalid_argument& error) {
+        jsonRejectedBadUnit =
+            std::string(error.what()).find("furlong") != std::string::npos;
+    }
+    REQUIRE(jsonRejectedBadUnit);
+    const rws::LegacyDesignSpaceMigrationPreview badUnitPreview =
+        rws::LegacyDesignSpaceAdapter::preview(badUnitProblem);
+    REQUIRE(badUnitPreview.entries.size() == 1);
+    REQUIRE(!badUnitPreview.entries[0].mapped);
+    REQUIRE(badUnitPreview.entries[0].disposition == "legacy/unbound");
+    REQUIRE(std::any_of(badUnitPreview.diagnostics.begin(),
+                        badUnitPreview.diagnostics.end(),
+                        [](const rws::StructureOptimizationDiagnostic& diagnostic) {
+                            return diagnostic.code == "LEGACY_VARIABLE_UNIT_UNSUPPORTED";
+                        }));
+
+    // 第二个分歧特征:JSON 出口把 DhA 当长度量纲,拒绝 DhA+deg(自然旧单位组合);
+    // adapter 侧 DhA/DhD 根本不参与绑定(只读投影),不存在单位问题。
+    rws::StructureDesignVariable dhDeg = dhA;
+    dhDeg.id = "legacy-dh-deg";
+    dhDeg.unit = "deg";
+    rws::StructureOptimizationProblem dhDegProblem;
+    dhDegProblem.context = problem.context;
+    dhDegProblem.variables = {dhDeg};
+    bool jsonRejectedDhDeg = false;
+    try {
+        rws::StructureOptimizationJson::currentEnvelopeToJson(dhDegProblem);
+    } catch (const std::invalid_argument&) {
+        jsonRejectedDhDeg = true;
+    }
+    REQUIRE(jsonRejectedDhDeg);
+    const rws::LegacyDesignSpaceMigrationPreview dhDegPreview =
+        rws::LegacyDesignSpaceAdapter::preview(dhDegProblem);
+    REQUIRE(dhDegPreview.entries.size() == 1);
+    REQUIRE(!dhDegPreview.entries[0].mapped);
+    REQUIRE(dhDegPreview.entries[0].disposition == "legacy/projection-only");
+
+    // 分歧门禁:两条路径的绑定集合不等价(数量与 adapter 语义都不同)。
+    // 等价性成立时此断言会失败,届时必须重新执行迁移接线决策。
+    REQUIRE(jsonBindings.size() != static_cast<int>(preview.bindings.size()));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // S61：旧文档只能迁入当前权威 Envelope。迁移不回写输入，也不能让未绑定变量
 // 在迁移过程中被静默启用；legacy 字段仅作为审计扩展保留。
 static void testLegacyJsonMigration()
@@ -12233,6 +12370,7 @@ int main(int argc, char** argv)
 
     if (suite == "legacy_json_migration") {
         QCoreApplication app(argc, argv);
+        testLegacyAdapterJsonBindingDivergenceGate();
         testLegacyJsonMigration();
         return g_testFailures == 0 ? 0 : 1;
     }

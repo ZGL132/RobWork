@@ -110,6 +110,13 @@ model independently of this optimization-project check.
   workflow-staleness modules covered by tests but not yet wired into the
   controller or widget; they are compiled into the test target only, not the
   plugin runtime library.
+- Legacy/canonical boundary: legacy project JSON stays a read-only
+  compatibility input and the current envelope is the only written format.
+  `LegacyDesignSpaceAdapter` remains a test-only semantic migration preview:
+  its typed bindings are not equivalent to the generic
+  `structure.legacy-variable` passthrough bindings written by
+  `currentEnvelopeToJson`, so it is not wired into production JSON migration
+  (see `testLegacyAdapterJsonBindingDivergenceGate`).
 
 ## Kinematic Optimization Workflow
 

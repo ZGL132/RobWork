@@ -1552,3 +1552,26 @@ import.  Project creation and source-aware loading may refresh the shadow's
 `Current`/`Stale`/`Invalid` state, while old projects retain
 `CanonicalModelMissing`.  The legacy `RobotModelSpec`, variables, candidate
 compiler, scorer, and evaluation pipeline remain unchanged in this phase.
+
+## Legacy/canonical boundary and code reduction (2026-08-25)
+
+The runtime truth is the canonical chain (canonical model, compiled design
+space, typed bindings, engineering evaluator pipeline, one hybrid optimizer).
+Legacy `StructureOptimizationProblem` types exist only at the JSON/UI/migration
+boundary: legacy project JSON is a read-only compatibility input, and the
+current envelope is the only written format.
+
+Test-only modules (HybridOptimizer, LocalSearch, EliteSelector,
+QuickScreeningPolicy, InitialSampler, DeterministicSeed, EvaluationCache,
+CacheKey, KinematicMetricAggregator, Estimated/OrientationCoverageStage,
+DesignTemplateApplication, DhProjection, CanonicalForwardKinematics, Phase8
+audits, run-persistence modules) are compiled into the test target only, not
+into `sdurws_structureoptimizer_core`.
+
+`LegacyDesignSpaceAdapter` is a read-only semantic migration preview that stays
+in the test target: its typed bindings (BaseHeight -> BasePlacementAdapter,
+DH A/D projection-only, everything else unbound) are deliberately NOT
+equivalent to the generic `structure.legacy-variable` passthrough bindings
+written by `currentEnvelopeToJson`.  Wiring it into production migration
+requires field-level equivalence first (gate test:
+`testLegacyAdapterJsonBindingDivergenceGate`).
