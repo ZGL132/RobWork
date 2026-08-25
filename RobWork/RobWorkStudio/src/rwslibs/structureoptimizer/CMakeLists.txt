@@ -51,18 +51,10 @@ if(build)
         KinematicFingerprint.cpp
         KinematicModelImporter.cpp
         PoseDelta.cpp
-        BasePlacementAdapter.cpp
-        FlangePoseAdapter.cpp
-        TcpPoseAdapter.cpp
-        JointAxisAdapter.cpp
-        JointLimitAdapter.cpp
-        JointOriginAdapter.cpp
-        JointZeroAdapter.cpp
+        JointParameterAdapters.cpp
+        PoseParameterAdapters.cpp
+        GeometryParameterAdapters.cpp
         LegacyDesignSpaceAdapter.cpp
-        ParameterizedLinkAdapter.cpp
-        ParameterizedGeometryAdapter.cpp
-        ParameterizedCollisionAdapter.cpp
-        MeshTransformAdapter.cpp
         ParameterBinding.cpp
         ParameterizationMode.cpp
         WriteSetValidator.cpp
