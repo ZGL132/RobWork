@@ -120,8 +120,11 @@ static QJsonObject variableKindToJson(StructureVariableKind kind)
         case StructureVariableKind::TcpOffsetY:  return {{"kind", "TcpOffsetY"}};
         case StructureVariableKind::TcpOffsetZ:  return {{"kind", "TcpOffsetZ"}};
         case StructureVariableKind::LinkRadius:  return {{"kind", "LinkRadius"}};
-        case StructureVariableKind::LinkWidth:   return {{"kind", "LinkWidth"}};
-        case StructureVariableKind::LinkHeight:  return {{"kind", "LinkHeight"}};
+    case StructureVariableKind::LinkWidth:   return {{"kind", "LinkWidth"}};
+    case StructureVariableKind::LinkHeight:  return {{"kind", "LinkHeight"}};
+    case StructureVariableKind::LinkDimensionX: return {{"kind", "LinkDimensionX"}};
+    case StructureVariableKind::LinkDimensionY: return {{"kind", "LinkDimensionY"}};
+    case StructureVariableKind::LinkDimensionZ: return {{"kind", "LinkDimensionZ"}};
     }
     return {{"kind", "Unknown"}};
 }
@@ -148,6 +151,9 @@ static StructureVariableKind variableKindFromJson(const QJsonObject& obj, bool* 
     if (k == "LinkRadius")         return StructureVariableKind::LinkRadius;
     if (k == "LinkWidth")          return StructureVariableKind::LinkWidth;
     if (k == "LinkHeight")         return StructureVariableKind::LinkHeight;
+    if (k == "LinkDimensionX")     return StructureVariableKind::LinkDimensionX;
+    if (k == "LinkDimensionY")     return StructureVariableKind::LinkDimensionY;
+    if (k == "LinkDimensionZ")     return StructureVariableKind::LinkDimensionZ;
     if (ok) *ok = false;
     return StructureVariableKind::JointPositionX;
 }

@@ -40,8 +40,11 @@ enum class StructureVariableKind
     TcpOffsetY,          //!< TCP Y 偏移
     TcpOffsetZ,          //!< TCP Z 偏移
     LinkRadius,          //!< 连杆截面半径
-    LinkWidth,           //!< 连杆截面宽度
-    LinkHeight           //!< 连杆截面高度
+    LinkWidth,           //!< 连杆截面宽度（遗留语义：dimensions[0]）
+    LinkHeight,          //!< 连杆截面高度（遗留语义：dimensions[2]）
+    LinkDimensionX,      //!< 连杆截面 X 尺寸（M3：dimensions[0]）
+    LinkDimensionY,      //!< 连杆截面 Y 尺寸（M3：dimensions[1]）
+    LinkDimensionZ       //!< 连杆截面 Z 尺寸（M3：dimensions[2]）
 };
 
 //! @brief 结构约束种类。

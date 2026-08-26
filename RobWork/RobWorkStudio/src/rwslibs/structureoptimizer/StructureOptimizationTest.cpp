@@ -5513,6 +5513,111 @@ static void testPhase2VariableExpressiveness()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 M3: 显式轴维度 kind 与 dimensions[X/Y/Z] 一一对应；建议器按轴
+// 产出；遗留错标按 id 后缀迁移；新 kind 可 JSON 往返。
+static void testLinkDimensionAxisKinds()
+{
+    std::printf("testLinkDimensionAxisKinds ... ");
+
+    rws::RobotModelSpec spec;
+    spec.robotName = "DimRobot";
+    rws::DrawableSpec drawable;
+    drawable.name = "linkA";
+    drawable.autoLinkGeometry = true;
+    drawable.dimensions = {{0.10, 0.20, 0.30}};
+    spec.drawables.push_back(drawable);
+
+    // 变异映射：三种 kind 各写自己的轴
+    for (int axis = 0; axis < 3; ++axis) {
+        const rws::StructureVariableKind kinds[3] = {
+            rws::StructureVariableKind::LinkDimensionX,
+            rws::StructureVariableKind::LinkDimensionY,
+            rws::StructureVariableKind::LinkDimensionZ};
+        rws::StructureDesignVariable variable;
+        variable.id = "dim" + std::to_string(axis);
+        variable.targetName = "linkA";
+        variable.kind = kinds[axis];
+        variable.minimum = 0.0;
+        variable.maximum = 1.0;
+        variable.enabled = true;
+
+        const double injected = 0.4 + 0.1 * axis;
+        const rws::StructureMutationResult result =
+            rws::StructureDesignMutator::apply(spec, {variable}, {injected});
+        REQUIRE(result.ok);
+        double expected[3] = {0.10, 0.20, 0.30};
+        expected[axis] = injected;
+        REQUIRE(result.spec.drawables.front().dimensions[0] == expected[0]);
+        REQUIRE(result.spec.drawables.front().dimensions[1] == expected[1]);
+        REQUIRE(result.spec.drawables.front().dimensions[2] == expected[2]);
+    }
+
+    // 建议器：三轴全部产出且 kind 正确（沿用既有 _dim_<axis> 命名）
+    {
+        rws::RobotDesignContext context;
+        context.modelSpec = spec;
+        const auto suggestions =
+            rws::StructureOptimizationUiLogic::suggestVariables(context);
+        const rws::StructureVariableKind expected[3] = {
+            rws::StructureVariableKind::LinkDimensionX,
+            rws::StructureVariableKind::LinkDimensionY,
+            rws::StructureVariableKind::LinkDimensionZ};
+        for (int axis = 0; axis < 3; ++axis) {
+            const std::string id = "linkA_dim_" + std::to_string(axis);
+            auto it = std::find_if(suggestions.begin(), suggestions.end(),
+                [&id] (const rws::StructureDesignVariable& variable) {
+                    return variable.id == id;
+                });
+            REQUIRE(it != suggestions.end());
+            REQUIRE(it->kind == expected[axis]);
+            REQUIRE(it->targetName == "linkA");
+        }
+    }
+
+    // 遗留迁移：错标组合被纠正，非后缀 id 保持原语义
+    {
+        std::vector<rws::StructureDesignVariable> legacy(4);
+        legacy[0].id = "linkA_dim_0";
+        legacy[0].kind = rws::StructureVariableKind::LinkHeight;   // 旧错误
+        legacy[1].id = "linkA_dim_1";
+        legacy[1].kind = rws::StructureVariableKind::LinkWidth;    // 旧错误
+        legacy[2].id = "linkA_dim_2";
+        legacy[2].kind = rws::StructureVariableKind::LinkHeight;   // 恰好正确
+        legacy[3].id = "customWidth";
+        legacy[3].kind = rws::StructureVariableKind::LinkWidth;    // 用户自定，不迁
+        const int migrated =
+            rws::StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(
+                legacy);
+        // _dim_0/_dim_1 纠错 + _dim_2 显式化为轴 kind，共 3 处
+        REQUIRE(migrated == 3);
+        REQUIRE(legacy[0].kind == rws::StructureVariableKind::LinkDimensionX);
+        REQUIRE(legacy[1].kind == rws::StructureVariableKind::LinkDimensionY);
+        REQUIRE(legacy[2].kind == rws::StructureVariableKind::LinkDimensionZ);
+        REQUIRE(legacy[3].kind == rws::StructureVariableKind::LinkWidth);
+    }
+
+    // JSON 往返：新 kind 不丢失
+    {
+        rws::StructureDesignVariable variable;
+        variable.id = "d"; variable.targetName = "linkA";
+        variable.kind = rws::StructureVariableKind::LinkDimensionY;
+        variable.minimum = 0.0; variable.maximum = 1.0;
+        rws::StructureOptimizationProblem scratch;
+        scratch.variables.push_back(variable);
+        const std::string json = rws::StructureOptimizationJson::problemToJson(scratch);
+        rws::StructureOptimizationProblem decoded;
+        std::string error;
+        REQUIRE(rws::StructureOptimizationJson::problemFromJson(json, decoded, &error));
+        REQUIRE(decoded.variables.front().kind ==
+                rws::StructureVariableKind::LinkDimensionY);
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
@@ -13436,6 +13541,7 @@ int main(int argc, char** argv)
     testExplicitCollisionConstraintRequiresEvidence();
     testPreviewPermissionBindsRuntimeSnapshot();
     testPhase2VariableExpressiveness();
+    testLinkDimensionAxisKinds();
 
     std::printf("\n");
 

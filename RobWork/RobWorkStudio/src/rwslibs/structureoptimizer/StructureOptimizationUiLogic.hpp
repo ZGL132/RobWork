@@ -109,6 +109,16 @@ public:
         std::vector<StructureDesignVariable>& variables);
 
     /**
+     * @brief M3 存量迁移：按 id 后缀 `_dim_<axis>` 重映射旧维度变量的 kind。
+     *
+     * 旧建议器把 `_dim_0` 标为 LinkHeight、`_dim_1` 标为 LinkWidth，与实际
+     * 写入的 dimensions 轴互相冲突。迁移后统一为 LinkDimensionX/Y/Z；
+     * 返回实际改写的数量，id 不匹配后缀模式的遗留变量保持不变。
+     */
+    static int migrateLegacyDrawableDimensionKinds(
+        std::vector<StructureDesignVariable>& variables);
+
+    /**
      * @brief 设计变量"定义模式"指纹（M16）。
      *
      * 只由影响候选几何映射的字段决定（id/kind/targetName/min/max/step/

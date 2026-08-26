@@ -173,19 +173,25 @@ void appendDrawableVariables(std::vector<StructureDesignVariable>& variables,
         variables.push_back(variable);
     }
 
-    // 遍历三轴尺寸（方形截面连杆），生成截面 Width(Y轴) 与 Height(Z轴) 变量
+    // 遍历三轴尺寸（方形截面连杆），生成显式轴维度变量（M3：kind 与
+    // dimensions[X/Y/Z] 一一对应，不再复用语义冲突的 LinkWidth/LinkHeight）。
+    static const char* const axisNames[] = {"X", "Y", "Z"};
+    static const StructureVariableKind axisKinds[] = {
+        StructureVariableKind::LinkDimensionX,
+        StructureVariableKind::LinkDimensionY,
+        StructureVariableKind::LinkDimensionZ
+    };
     for (int axis = 0; axis < 3; ++axis) {
         const double value = drawable.dimensions[static_cast<std::size_t>(axis)];
         if (!nonZero(value))
             continue;
         StructureDesignVariable variable = makeLengthVariable(
             drawable.name + "_dim_" + std::to_string(axis),
-            drawable.name + (axis == 1 ? " Width" : " Height"),
+            drawable.name + " Dimension " + axisNames[axis],
             drawable.name,
-            axis == 1 ? StructureVariableKind::LinkWidth
-                      : StructureVariableKind::LinkHeight,
+            axisKinds[axis],
             value);
-        variable.syncAssociatedGeometry = true; // 变异时联动同步碰撞网格[cite: 17, 22]
+        variable.syncAssociatedGeometry = true; // 变异时联动同步碰撞网格
         variables.push_back(variable);
     }
 }
@@ -308,8 +314,7 @@ std::string StructureOptimizationUiLogic::editableContractFingerprint(
 
 int StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
     std::vector<StructureDesignVariable>& variables)
-{
-    // M4 存量迁移：旧项目可能同时携带同一 ToolFrame 字段的 JointPosition*
+{    // M4 存量迁移：旧项目可能同时携带同一 ToolFrame 字段的 JointPosition*
     // 与 TcpOffset* 绑定。语义明确的 TcpOffset* 保留，JointPosition* 抑制，
     // 返回抑制数量供调用方告警。
     auto axisOf = [](StructureVariableKind kind) -> int {
@@ -351,6 +356,41 @@ int StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
         }
     }
     return disabled;
+}
+
+int StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(
+    std::vector<StructureDesignVariable>& variables)
+{
+    // M3 存量迁移：旧建议器把 `_dim_0` 错标为 LinkHeight（写 dimensions[2]）、
+    // `_dim_1` 错标为 LinkWidth（写 dimensions[0]）。按 id 后缀 "_dim_<axis>"
+    // 重映射为显式轴 kind；id 不符合该模式的遗留变量保持原语义不动。
+    static const std::string marker = "_dim_";
+    int migrated = 0;
+    for (auto& variable : variables) {
+        const bool legacyKind =
+            variable.kind == StructureVariableKind::LinkWidth ||
+            variable.kind == StructureVariableKind::LinkHeight;
+        if (!legacyKind)
+            continue;
+        const std::size_t pos = variable.id.rfind(marker);
+        if (pos == std::string::npos)
+            continue;
+        const std::string suffix = variable.id.substr(pos + marker.size());
+        StructureVariableKind target;
+        if (suffix == "0")
+            target = StructureVariableKind::LinkDimensionX;
+        else if (suffix == "1")
+            target = StructureVariableKind::LinkDimensionY;
+        else if (suffix == "2")
+            target = StructureVariableKind::LinkDimensionZ;
+        else
+            continue;
+        if (variable.kind != target) {
+            variable.kind = target;
+            ++migrated;
+        }
+    }
+    return migrated;
 }
 
 bool StructureOptimizationUiLogic::hasFrozenRequirementContract(

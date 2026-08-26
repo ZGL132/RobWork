@@ -24,6 +24,9 @@ QString kindName(StructureVariableKind kind)
         case StructureVariableKind::LinkRadius: return "LinkRadius";
         case StructureVariableKind::LinkWidth: return "LinkWidth";
         case StructureVariableKind::LinkHeight: return "LinkHeight";
+        case StructureVariableKind::LinkDimensionX: return "LinkDimensionX";
+        case StructureVariableKind::LinkDimensionY: return "LinkDimensionY";
+        case StructureVariableKind::LinkDimensionZ: return "LinkDimensionZ";
     }
     return "Unknown";
 }

@@ -114,8 +114,11 @@ QString variableKindLabel(StructureVariableKind kind)
         case StructureVariableKind::TcpOffsetY: return "TcpOffsetY";
         case StructureVariableKind::TcpOffsetZ: return "TcpOffsetZ";
         case StructureVariableKind::LinkRadius: return "LinkRadius";
-        case StructureVariableKind::LinkWidth: return "LinkWidth";
-        case StructureVariableKind::LinkHeight: return "LinkHeight";
+    case StructureVariableKind::LinkWidth: return "LinkWidth";
+    case StructureVariableKind::LinkHeight: return "LinkHeight";
+    case StructureVariableKind::LinkDimensionX: return "LinkDimensionX";
+    case StructureVariableKind::LinkDimensionY: return "LinkDimensionY";
+    case StructureVariableKind::LinkDimensionZ: return "LinkDimensionZ";
     }
     return "Unknown";
 }
@@ -414,6 +417,9 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
     // M4: 抑制旧项目里与 TcpOffset* 同字段冲突的 JointPosition* 绑定。
     StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
         _loadedProblem.variables);
+    // M3: 按建议 id 后缀修正旧维度变量的错标 kind。
+    StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(
+        _loadedProblem.variables);
 
     // C1.1/D1: 冻结参考指纹持久化在契约 extensions 中，随 _loadedProblem 载入；
     // staleness 判定完全交给共享的 frozenContractStale(problem)，此处无需缓存。
@@ -650,7 +656,7 @@ QWidget* StructureOptimizerWidget::createVariablePage()
     _variableTypeFilter->setObjectName("structureVariableTypeFilter");
     _variableTypeFilter->addItem("All Types");
     for (int kind = static_cast<int>(StructureVariableKind::JointPositionX);
-         kind <= static_cast<int>(StructureVariableKind::LinkHeight); ++kind) {
+         kind <= static_cast<int>(StructureVariableKind::LinkDimensionZ); ++kind) {
         const StructureVariableKind value = static_cast<StructureVariableKind>(kind);
         _variableTypeFilter->addItem(variableKindLabel(value), kind);
     }

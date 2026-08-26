@@ -437,6 +437,50 @@ StructureMutationResult StructureDesignMutator::apply(
             break;
         }
 
+        // ---- M3: 显式轴维度（与 dimensions[X/Y/Z] 一一对应） ----
+        case StructureVariableKind::LinkDimensionX: {
+            auto it = std::find_if(spec.drawables.begin(),
+                spec.drawables.end(),
+                [&](const DrawableSpec& d) { return d.name == var.targetName; });
+            if (it != spec.drawables.end()) {
+                it->dimensions[0] = val;
+            }
+            else {
+                warnings.push_back(makeWarning(
+                    "StructureOptimization.Variable.MissingTarget",
+                    "LinkDimensionX: drawable '" + var.targetName + "' not found."));
+            }
+            break;
+        }
+        case StructureVariableKind::LinkDimensionY: {
+            auto it = std::find_if(spec.drawables.begin(),
+                spec.drawables.end(),
+                [&](const DrawableSpec& d) { return d.name == var.targetName; });
+            if (it != spec.drawables.end()) {
+                it->dimensions[1] = val;
+            }
+            else {
+                warnings.push_back(makeWarning(
+                    "StructureOptimization.Variable.MissingTarget",
+                    "LinkDimensionY: drawable '" + var.targetName + "' not found."));
+            }
+            break;
+        }
+        case StructureVariableKind::LinkDimensionZ: {
+            auto it = std::find_if(spec.drawables.begin(),
+                spec.drawables.end(),
+                [&](const DrawableSpec& d) { return d.name == var.targetName; });
+            if (it != spec.drawables.end()) {
+                it->dimensions[2] = val;
+            }
+            else {
+                warnings.push_back(makeWarning(
+                    "StructureOptimization.Variable.MissingTarget",
+                    "LinkDimensionZ: drawable '" + var.targetName + "' not found."));
+            }
+            break;
+        }
+
         } // switch
     }
 
