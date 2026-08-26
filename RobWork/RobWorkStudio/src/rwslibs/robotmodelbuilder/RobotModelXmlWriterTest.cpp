@@ -178,7 +178,7 @@ int main (int argc, char** argv)
 
     // A fresh standard project uses automatic links for its arm silhouette.  The
     // first joint pair has zero separation, so four effective links plus the
-    // base, shoulder turntable, and tool flange remain as fixed details.
+    // base, shoulder turntable, flange, and three gripper bodies remain fixed.
     {
         const RobotModelSpec defaultSpec =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
@@ -188,15 +188,16 @@ int main (int argc, char** argv)
             if (drawable.autoLinkGeometry)
                 ++autoLinkCount;
             else if (drawable.name == "BasePedestal" || drawable.name == "ShoulderHousing" ||
-                     drawable.name == "ToolFlange")
+                     drawable.name == "ToolFlange" || drawable.name == "GripperPalm" ||
+                     drawable.name == "FingerLeft" || drawable.name == "FingerRight")
                 ++fixedDetailCount;
             else
                 return fail ("Default six-axis model contains an unnecessary fixed drawable: " +
                              QString::fromStdString (drawable.name));
         }
-        if (autoLinkCount != 4 || fixedDetailCount != 3 ||
+        if (autoLinkCount != 4 || fixedDetailCount != 6 ||
             defaultSpec.drawables.size () != autoLinkCount + fixedDetailCount)
-             return fail ("Default six-axis model should contain four automatic links and three fixed details.");
+             return fail ("Default six-axis model should contain four automatic links and six fixed details.");
     }
 
     // A user-converted URDF visual keeps its original name.  Explicit
@@ -829,8 +830,8 @@ int main (int argc, char** argv)
 
     if (!spec.generateDrawables)
         return fail ("Default model should generate drawables.");
-    if (spec.generateScene)
-        return fail ("Default model should not generate a scene file.");
+    if (!spec.generateScene)
+        return fail ("Default desktop model should generate a scene file.");
     if (spec.dynamics.generateDynamicWorkCell)
         return fail ("Default model should not generate a Dynamic WorkCell.");
 
@@ -838,16 +839,16 @@ int main (int argc, char** argv)
     if (!RobotModelXmlWriter::validate (spec, errors))
         return fail ("Default model did not validate: " + errors.join ("; "));
 
-    // The new-project six-axis template uses the compact UR5 proportions from
-    // testfiles/workcells/UR/UR.wc.xml, while remaining a portable primitive-only model.
-    const double expectedUrOffsets[6][3] = {
-        {0.0, 0.0, 0.0892}, {0.0, 0.0, 0.0}, {-0.425, 0.0, 0.0},
-        {-0.39243, 0.0, 0.0}, {0.0, 0.0, 0.109}, {0.0, 0.0, 0.093}};
+    // The new-project template is a compact desktop arm: a raised 0.18 m
+    // pedestal, 0.34 m upper arm, 0.29 m forearm, and compact wrist offsets.
+    const double expectedDesktopOffsets[6][3] = {
+        {0.0, 0.0, 0.180}, {0.0, 0.0, 0.0}, {-0.340, 0.0, 0.0},
+        {-0.290, 0.0, 0.0}, {0.0, 0.0, 0.120}, {0.0, 0.0, 0.100}};
     for (int i = 0; i < 6; ++i) {
         for (int axis = 0; axis < 3; ++axis) {
             if (!nearlyEqual (spec.transformJoints[static_cast< size_t > (i)].pos[axis],
-                               expectedUrOffsets[i][axis]))
-                return fail ("Default joint offsets should follow the UR5 reference model.");
+                               expectedDesktopOffsets[i][axis]))
+                return fail ("Default joint offsets should follow the desktop workcell model.");
         }
     }
     const double expectedLimitMin[6] = {-180, -270, -180, -270, -180, -180};
@@ -857,7 +858,7 @@ int main (int argc, char** argv)
         if (!nearlyEqual (limit.posMin, expectedLimitMin[i]) ||
             !nearlyEqual (limit.posMax, expectedLimitMax[i]) ||
             !nearlyEqual (limit.velMax, 60.0) || !nearlyEqual (limit.accMax, 120.0))
-            return fail ("Default joint limits should follow the UR5 reference model.");
+            return fail ("Default joint limits should follow the desktop-arm model.");
     }
     const auto findDrawable = [&spec] (const std::string& name) -> const DrawableSpec* {
         for (const DrawableSpec& drawable : spec.drawables) {
@@ -880,6 +881,47 @@ int main (int argc, char** argv)
         !forearm->autoLinkGeometry || !nearlyEqual (upperArm->radius, 0.070) ||
         !nearlyEqual (forearm->radius, 0.062))
         return fail ("Default model should use portable automatic links with minimal fixed details.");
+
+    const DrawableSpec* gripperPalm = findDrawable ("GripperPalm");
+    const DrawableSpec* fingerLeft  = findDrawable ("FingerLeft");
+    const DrawableSpec* fingerRight = findDrawable ("FingerRight");
+    if (gripperPalm == nullptr || fingerLeft == nullptr || fingerRight == nullptr ||
+        gripperPalm->refFrame != "TCP" || fingerLeft->refFrame != "TCP" ||
+        fingerRight->refFrame != "TCP")
+        return fail ("Default desktop model should attach a two-finger gripper to TCP.");
+
+    const auto hasSceneFrame = [&spec] (const std::string& name, SceneFrameType type) {
+        for (const FrameSpec& frame : spec.sceneFrames) {
+            if (frame.name == name && frame.frameType == type)
+                return true;
+        }
+        return false;
+    };
+    if (!hasSceneFrame ("WorkTable", SceneFrameType::Fixed) ||
+        !hasSceneFrame ("PickBin", SceneFrameType::Fixed) ||
+        !hasSceneFrame ("PlaceBin", SceneFrameType::Fixed) ||
+        !hasSceneFrame ("Obstacle", SceneFrameType::Fixed) ||
+        !hasSceneFrame ("PickPart", SceneFrameType::Movable) ||
+        !hasSceneFrame ("InspectionPart", SceneFrameType::Movable) ||
+        !hasSceneFrame ("PickApproach", SceneFrameType::Normal) ||
+        !hasSceneFrame ("PickTarget", SceneFrameType::Normal) ||
+        !hasSceneFrame ("PlaceApproach", SceneFrameType::Normal) ||
+        !hasSceneFrame ("PlaceTarget", SceneFrameType::Normal) ||
+        !hasSceneFrame ("InspectionTarget", SceneFrameType::Normal))
+        return fail ("Default desktop model should define pick-and-place workcell frames.");
+
+    const auto hasSceneGeometry = [&spec] (const std::string& name, const std::string& frame) {
+        for (const SceneGeometrySpec& geometry : spec.sceneGeometries) {
+            if (geometry.name == name && geometry.refFrame == frame && geometry.collisionModel)
+                return true;
+        }
+        return false;
+    };
+    if (!hasSceneGeometry ("TableTop", "WorkTable") ||
+        !hasSceneGeometry ("PickPartGeometry", "PickPart") ||
+        !hasSceneGeometry ("InspectionPartGeometry", "InspectionPart") ||
+        !hasSceneGeometry ("SafetyPost", "Obstacle"))
+        return fail ("Default desktop model should provide collidable table, obstacle, and parts.");
 
     const QString serialXml = RobotModelXmlWriter::makeSerialDeviceXml (spec);
     const QString sceneXml  = RobotModelXmlWriter::makeSceneXml (spec);
@@ -945,13 +987,14 @@ int main (int argc, char** argv)
         RobotModelSpec escaping = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         escaping.robotName = "EscapingRobot";
         escaping.transformJoints[0].name = "Joint_A";
-        // Strip limit / forceLimit / dynamics references that would now dangle
-        // because Joint1 was renamed; the escaping test only cares about the
-        // serialization layer, not validate-time reference integrity.
+        // Strip default references that would now dangle because Joint1 was
+        // renamed; the escaping test only cares about the serialization layer,
+        // not validate-time reference integrity.
         escaping.limits.clear ();
         escaping.dynamics.forceLimits.clear ();
         escaping.dynamics.links.clear ();
         escaping.drawables.clear ();
+        escaping.collisionModels.clear ();
         DrawableSpec drawable;
         drawable.name = "Body & \"cover\"";
         drawable.refFrame = "Joint_A";
@@ -1014,7 +1057,7 @@ int main (int argc, char** argv)
     RobotModelSpec dhSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
     dhSpec.exportDhJointsAdvanced = true;
     if (RobotModelXmlWriter::canExportDhJoints (dhSpec, &errors))
-        return fail ("UR-proportioned default should keep its authoritative SE(3) representation.");
+                return fail ("Desktop default should keep its authoritative SE(3) representation.");
     const QString dhXml = RobotModelXmlWriter::makeSerialDeviceXml (dhSpec);
     if (dhXml.count ("<DHJoint name=\"") != 0 || dhXml.count ("<Joint name=\"") != 6)
         return fail ("Lossy advanced DH export must fall back to the six authoritative Joint elements.");
@@ -1113,8 +1156,8 @@ int main (int argc, char** argv)
         for (const DrawableSpec& d : viewOnly.drawables) {
             if (QString::fromStdString (d.name) == "Link2To3") {
                 foundViewOnly = true;
-                if (std::abs (d.length - 0.425) > 1e-6 ||
-                    std::abs (d.pos[0] + 0.2125) > 1e-6 ||
+                if (std::abs (d.length - 0.340) > 1e-6 ||
+                    std::abs (d.pos[0] + 0.170) > 1e-6 ||
                     std::abs (d.pos[1]) > 1e-6 ||
                     std::abs (d.pos[2]) > 1e-6)
                     return fail ("DH view-only edit should not affect link geometry.");
@@ -1218,13 +1261,13 @@ int main (int argc, char** argv)
     for (const DrawableSpec& d : standardDh.drawables) {
         if (QString::fromStdString (d.name) == "Link4To5") {
             foundDhLink = true;
-            if (std::abs (d.length - 0.109) > 1e-6)
-                return fail (QString ("Link4To5 length should be 0.109 from SE(3) truth, got %1")
+            if (std::abs (d.length - 0.120) > 1e-6)
+                return fail (QString ("Link4To5 length should be 0.120 from SE(3) truth, got %1")
                                   .arg (d.length));
             if (std::abs (d.pos[0]) > 1e-6 || std::abs (d.pos[1]) > 1e-6 ||
-                std::abs (d.pos[2] - 0.0545) > 1e-6)
+                std::abs (d.pos[2] - 0.060) > 1e-6)
                 return fail (
-                    QString ("Link4To5 pos should be 0 0 0.0545 in standard DH, got %1 %2 %3")
+                    QString ("Link4To5 pos should be 0 0 0.060 in standard DH, got %1 %2 %3")
                         .arg (d.pos[0])
                         .arg (d.pos[1])
                         .arg (d.pos[2]));
@@ -1247,8 +1290,8 @@ int main (int argc, char** argv)
         for (const DrawableSpec& d : offsetDh.drawables) {
             if (QString::fromStdString (d.name) == "Link2To3") {
                 foundOffsetLink = true;
-                if (std::abs (d.length - 0.425) > 1e-6 ||
-                    std::abs (d.pos[0] + 0.2125) > 1e-6 ||
+                if (std::abs (d.length - 0.340) > 1e-6 ||
+                    std::abs (d.pos[0] + 0.170) > 1e-6 ||
                     std::abs (d.pos[1]) > 1e-6 ||
                 std::abs (d.pos[2]) > 1e-6)
                 return fail ("Link1To2 geometry should follow SE(3) truth, not edited DH projection.");
@@ -1265,9 +1308,9 @@ int main (int argc, char** argv)
     autoDrawable.drawables[6].rpyDeg = {{10, 20, 30}};
     autoDrawable.drawables[6].pos    = {{0.11, 0.22, 0.33}};
     RobotModelXmlWriter::applyLinkGeometry (autoDrawable);
-    if (std::abs (autoDrawable.drawables[6].length - 0.425) > 1e-6 ||
+    if (std::abs (autoDrawable.drawables[6].length - 0.340) > 1e-6 ||
         std::abs (autoDrawable.drawables[6].rpyDeg[1] + 90) > 1e-6 ||
-        std::abs (autoDrawable.drawables[6].pos[0] + 0.2125) > 1e-6)
+        std::abs (autoDrawable.drawables[6].pos[0] + 0.170) > 1e-6)
         return fail ("Auto Link1To2 drawable geometry should be derived from kinematics.");
 
     // ---- 非法输入应被 validate 拦截 ----
@@ -1774,6 +1817,7 @@ int main (int argc, char** argv)
             threeAxis.limits.pop_back ();
         threeAxis.dynamics.forceLimits.clear ();
         threeAxis.dynamics.links.clear ();
+        threeAxis.collisionModels.clear ();
         threeAxis.poses.clear ();
         // 每行 1 可动关节 → pose.q 长度应为 3
         PoseSpec zero;
@@ -1952,7 +1996,8 @@ int main (int argc, char** argv)
     {
         RobotModelSpec sceneSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         sceneSpec.generateScene = true;
-        sceneSpec.sceneFrames.clear ();    // makeDefaultSixAxisModel 已经预填 4 个,测试覆盖它们
+        sceneSpec.sceneFrames.clear ();
+        sceneSpec.sceneGeometries.clear ();
         sceneSpec.robotBaseFrame.pos   = {{0.4, -0.2, 0.75}};
         sceneSpec.robotBaseFrame.rpyDeg = {{0, 0, 90}};
 
@@ -2065,19 +2110,21 @@ int main (int argc, char** argv)
             return fail ("Scene frame cycles should be rejected.");
     }
 
-    // ---- Milestone 3.5:默认场景几何体 ----
+    // ---- 默认桌面工作站场景几何体 ----
     {
         RobotModelSpec sceneGeo =
             RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
         const QString scene = RobotModelXmlWriter::makeSceneXml (sceneGeo);
-        if (!contains (scene, "<Drawable name=\"TableTop\" refframe=\"Table\" colmodel=\"Enabled\">"))
+        if (!contains (scene, "<Drawable name=\"TableTop\" refframe=\"WorkTable\" colmodel=\"Enabled\">"))
             return fail ("Scene XML should contain a visible/collision TableTop drawable.");
-        if (!contains (scene, "<Box x=\"1.2\" y=\"0.8\" z=\"0.05\" />"))
+        if (!contains (scene, "<Box x=\"1.4\" y=\"0.9\" z=\"0.06\" />"))
             return fail ("TableTop should be emitted as a Box.");
-        if (!contains (scene, "<Drawable name=\"WorkpieceBox\" refframe=\"Workpiece\" colmodel=\"Enabled\">"))
-            return fail ("Scene XML should contain WorkpieceBox geometry.");
-        if (!contains (scene, "<Drawable name=\"MovableBoxGeom\" refframe=\"MovableBox\" colmodel=\"Enabled\">"))
-            return fail ("Scene XML should contain MovableBox geometry.");
+        if (!contains (scene, "<Drawable name=\"PickPartGeometry\" refframe=\"PickPart\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain PickPart geometry.");
+        if (!contains (scene, "<Drawable name=\"InspectionPartGeometry\" refframe=\"InspectionPart\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain InspectionPart geometry.");
+        if (!contains (scene, "<Drawable name=\"SafetyPost\" refframe=\"Obstacle\" colmodel=\"Enabled\">"))
+            return fail ("Scene XML should contain the collidable safety obstacle.");
     }
 
     // ---- Milestone 3.5:场景几何校验(refframe / size)----
@@ -2504,13 +2551,13 @@ int main (int argc, char** argv)
         scoped.robotName = "Scoped Robot";
         FramePairSpec pair;
         pair.first  = "Joint3";
-        pair.second = "Table";
+        pair.second = "WorkTable";
         scoped.collisionSetup.excludePairs.push_back (pair);
         scoped.collisionSetup.volatileFrames.push_back ("Joint3");
 
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (scoped);
         if (!contains (collisionXml,
-                       "<FramePair first=\"Scoped_Robot.Joint3\" second=\"Table\"/>"))
+                       "<FramePair first=\"Scoped_Robot.Joint3\" second=\"WorkTable\"/>"))
             return fail ("CollisionSetup should scope robot frames but leave scene frames unscoped.");
         if (!contains (collisionXml, "<Volatile>Scoped_Robot.Joint3</Volatile>"))
             return fail ("CollisionSetup should scope volatile robot frames.");
@@ -2522,7 +2569,7 @@ int main (int argc, char** argv)
         env.generateScene = true;
         FramePairSpec pair;
         pair.first  = "Joint3";
-        pair.second = "Table";
+        pair.second = "WorkTable";
         env.collisionSetup.excludePairs.push_back (pair);
 
         QStringList envErrors;
@@ -2532,7 +2579,7 @@ int main (int argc, char** argv)
 
         const QString collisionXml = RobotModelXmlWriter::makeCollisionSetupXml (env);
         if (!contains (collisionXml,
-                       "<FramePair first=\"GenericSixAxis.Joint3\" second=\"Table\"/>"))
+                       "<FramePair first=\"GenericSixAxis.Joint3\" second=\"WorkTable\"/>"))
             return fail ("Configured robot/environment frame pair should be emitted.");
     }
 
