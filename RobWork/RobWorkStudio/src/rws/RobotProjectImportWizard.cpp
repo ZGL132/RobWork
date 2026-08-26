@@ -5,10 +5,8 @@
 #include <QComboBox>
 #include <QAbstractButton>
 #include <QDir>
-#include <QDoubleSpinBox>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFormLayout>
@@ -20,14 +18,9 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QRegularExpression>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QWizardPage>
-#include <QXmlStreamReader>
 #include <QUrl>
-
-#include <cmath>
 
 namespace {
 
@@ -106,24 +99,6 @@ bool projectSettingsAreValid (const rws::RobotProjectImportRequest& request, QSt
     return true;
 }
 
-bool mutableLinkRangesAreValid (const rws::RobotProjectImportRequest& request, QString* error)
-{
-    for (auto range = request.mutableLinkRanges.constBegin ();
-         range != request.mutableLinkRanges.constEnd (); ++range) {
-        const double minimum = range.value ().first;
-        const double maximum = range.value ().second;
-        if (!std::isfinite (minimum) || !std::isfinite (maximum) || minimum <= 0.0 ||
-            maximum <= 0.0 || minimum > maximum) {
-            setError (error, QStringLiteral ("Variable range for '%1' must satisfy 0 < minimum <= maximum.")
-                                 .arg (range.key ()) );
-            return false;
-        }
-    }
-    if (error != nullptr)
-        error->clear ();
-    return true;
-}
-
 }    // namespace
 
 namespace rws {
@@ -148,8 +123,6 @@ bool RobotProjectImportRequest::isValid (QString* error) const
         setError (error, QStringLiteral ("Configure a Xacro executable, install ROS xacro, or install Python xacro."));
         return false;
     }
-    if (!mutableLinkRangesAreValid (*this, error))
-        return false;
     if (error != nullptr)
         error->clear ();
     return true;
@@ -270,20 +243,6 @@ RobotProjectImportWizard::RobotProjectImportWizard (const QString& initialLocati
     });
     addPage (meshPage);
 
-    QWizardPage* linksPage = new QWizardPage (this);
-    linksPage->setTitle (tr ("Kinematic Chain and Link Preselection"));
-    QVBoxLayout* linksLayout = new QVBoxLayout (linksPage);
-    _links = new QTreeWidget (linksPage);
-    _links->setObjectName (QStringLiteral ("mutableLinks"));
-    _links->setHeaderLabels ({tr ("Link"), tr ("Type"), tr ("Variable"), tr ("Min (m)"), tr ("Max (m)")});
-    _links->setRootIsDecorated (true);
-    linksLayout->addWidget (_links);
-    _linkRangeWarning = new QLabel (linksPage);
-    _linkRangeWarning->setStyleSheet (QStringLiteral ("color: #b42318;"));
-    _linkRangeWarning->setWordWrap (true);
-    linksLayout->addWidget (_linkRangeWarning);
-    addPage (linksPage);
-
     QWizardPage* reviewPage = new QWizardPage (this);
     reviewPage->setTitle (tr ("Review and Commit"));
     QVBoxLayout* reviewLayout = new QVBoxLayout (reviewPage);
@@ -300,7 +259,6 @@ RobotProjectImportWizard::RobotProjectImportWizard (const QString& initialLocati
     connect (_assetPolicy, &QComboBox::currentTextChanged, this, &RobotProjectImportWizard::updateReview);
     connect (_meshMode, &QComboBox::currentTextChanged, this, &RobotProjectImportWizard::updateReview);
     connect (_missingMesh, &QComboBox::currentTextChanged, this, &RobotProjectImportWizard::updateReview);
-    connect (_links, &QTreeWidget::itemChanged, this, &RobotProjectImportWizard::updateReview);
     connect (this, &QWizard::currentIdChanged, this, [this] { updateValidationState (); updateReview (); });
     updateValidationState ();
 }
@@ -319,7 +277,6 @@ void RobotProjectImportWizard::updateSourceDerivedState ()
     }
     if (_sourcePath->text ().trimmed ().isEmpty ()) {
         _packageRootList->clear ();
-        rebuildLinkTree ();
         updateValidationState ();
         updateReview ();
         return;
@@ -335,113 +292,8 @@ void RobotProjectImportWizard::updateSourceDerivedState ()
         if (!candidate.cdUp ())
             break;
     }
-    rebuildLinkTree ();
     updateValidationState ();
     updateReview ();
-}
-
-void RobotProjectImportWizard::rebuildLinkTree ()
-{
-    _links->clear ();
-    QFile file (_sourcePath->text ().trimmed ());
-    if (!file.open (QIODevice::ReadOnly))
-        return;
-    QXmlStreamReader xml (&file);
-    QStringList links;
-    QMap< QString, QString > jointByChildLink;
-    QMap< QString, QString > typeByChildLink;
-    QMap< QString, QString > parentByChildLink;
-    QString currentJointName;
-    QString currentJointType;
-    QString currentParentLink;
-    while (!xml.atEnd ()) {
-        xml.readNext ();
-        if (xml.isStartElement () &&
-            xml.name ().compare (QStringLiteral ("link"), Qt::CaseInsensitive) == 0) {
-            const QString name = xml.attributes ().value (QStringLiteral ("name")).toString ();
-            if (!name.isEmpty () && !links.contains (name))
-                links.push_back (name);
-        }
-        else if (xml.isStartElement () &&
-                 xml.name ().compare (QStringLiteral ("joint"), Qt::CaseInsensitive) == 0) {
-            currentJointName = xml.attributes ().value (QStringLiteral ("name")).toString ();
-            currentJointType = xml.attributes ().value (QStringLiteral ("type")).toString ();
-        }
-        else if (xml.isStartElement () && !currentJointName.isEmpty () &&
-                 xml.name ().compare (QStringLiteral ("parent"), Qt::CaseInsensitive) == 0) {
-            currentParentLink = xml.attributes ().value (QStringLiteral ("link")).toString ();
-        }
-        else if (xml.isStartElement () && !currentJointName.isEmpty () &&
-                 xml.name ().compare (QStringLiteral ("child"), Qt::CaseInsensitive) == 0) {
-            const QString child = xml.attributes ().value (QStringLiteral ("link")).toString ();
-            if (!child.isEmpty ()) {
-                jointByChildLink.insert (child, currentJointName);
-                typeByChildLink.insert (child, currentJointType);
-                parentByChildLink.insert (child, currentParentLink);
-            }
-        }
-        else if (xml.isEndElement () &&
-                 xml.name ().compare (QStringLiteral ("joint"), Qt::CaseInsensitive) == 0) {
-            currentJointName.clear ();
-            currentJointType.clear ();
-            currentParentLink.clear ();
-        }
-    }
-
-    const auto addLinkItem = [this, &jointByChildLink, &typeByChildLink, &parentByChildLink] (
-                                 const QString& name, QTreeWidgetItem* parent) {
-        const QString joint = jointByChildLink.value (name);
-        const QString type = typeByChildLink.value (name, tr ("Fixed"));
-        QTreeWidgetItem* item = parent == nullptr ?
-            new QTreeWidgetItem (_links, {name, type, QString (), QString (), QString ()}) :
-            new QTreeWidgetItem (parent, {name, type, QString (), QString (), QString ()});
-        item->setData (0, Qt::UserRole, joint);
-        const bool variable = !joint.isEmpty () &&
-                              type.compare (QStringLiteral ("fixed"), Qt::CaseInsensitive) != 0;
-        if (variable) {
-            item->setCheckState (2, Qt::Unchecked);
-            item->setFlags (item->flags () | Qt::ItemIsUserCheckable);
-            QDoubleSpinBox* minimum = new QDoubleSpinBox (_links);
-            minimum->setRange (0.001, 100.0);
-            minimum->setValue (0.20);
-            minimum->setSuffix (tr (" m"));
-            QDoubleSpinBox* maximum = new QDoubleSpinBox (_links);
-            maximum->setRange (0.001, 100.0);
-            maximum->setValue (0.60);
-            maximum->setSuffix (tr (" m"));
-            _links->setItemWidget (item, 3, minimum);
-            _links->setItemWidget (item, 4, maximum);
-            connect (minimum, qOverload< double > (&QDoubleSpinBox::valueChanged), this,
-                     &RobotProjectImportWizard::updateReview);
-            connect (maximum, qOverload< double > (&QDoubleSpinBox::valueChanged), this,
-                     &RobotProjectImportWizard::updateReview);
-        }
-        else {
-            item->setFlags (item->flags () & ~Qt::ItemIsUserCheckable);
-            item->setText (2, tr ("Fixed"));
-        }
-        return item;
-    };
-
-    QMap< QString, QTreeWidgetItem* > items;
-    QStringList pending = links;
-    while (!pending.isEmpty ()) {
-        bool added = false;
-        for (int index = pending.size () - 1; index >= 0; --index) {
-            const QString name = pending.at (index);
-            const QString parentName = parentByChildLink.value (name);
-            if (!parentName.isEmpty () && !items.contains (parentName))
-                continue;
-            items.insert (name, addLinkItem (name, items.value (parentName, nullptr)));
-            pending.removeAt (index);
-            added = true;
-        }
-        if (added)
-            continue;
-        const QString orphan = pending.takeFirst ();
-        items.insert (orphan, addLinkItem (orphan, nullptr));
-    }
-    _links->expandAll ();
 }
 
 RobotProjectImportRequest RobotProjectImportWizard::request () const
@@ -457,23 +309,6 @@ RobotProjectImportRequest RobotProjectImportWizard::request () const
     result.options.xacroArguments = splitArguments (_xacroArguments->text ());
     for (int index = 0; index < _packageRootList->count (); ++index)
         result.options.packageRoots.push_back (_packageRootList->item (index)->text ());
-    const auto collectMutableLinks = [this, &result] (const auto& self, QTreeWidgetItem* item) -> void {
-        if (item->checkState (2) == Qt::Checked) {
-            const QString targetName = item->data (0, Qt::UserRole).toString ();
-            if (!targetName.isEmpty ()) {
-                result.mutableLinks.push_back (targetName);
-                const auto* minimum = qobject_cast< QDoubleSpinBox* > (_links->itemWidget (item, 3));
-                const auto* maximum = qobject_cast< QDoubleSpinBox* > (_links->itemWidget (item, 4));
-                if (minimum != nullptr && maximum != nullptr)
-                    result.mutableLinkRanges.insert (targetName,
-                                                    qMakePair (minimum->value (), maximum->value ()));
-            }
-        }
-        for (int childIndex = 0; childIndex < item->childCount (); ++childIndex)
-            self (self, item->child (childIndex));
-    };
-    for (int index = 0; index < _links->topLevelItemCount (); ++index)
-        collectMutableLinks (collectMutableLinks, _links->topLevelItem (index));
     return result;
 }
 
@@ -501,14 +336,7 @@ void RobotProjectImportWizard::updateValidationState ()
     if (currentId () == 1)
         if (button (NextButton) != nullptr)
             button (NextButton)->setEnabled (sourceValid);
-    QString rangeError;
-    const bool rangesValid = mutableLinkRangesAreValid (value, &rangeError);
-    if (_linkRangeWarning != nullptr)
-        _linkRangeWarning->setText (rangesValid ? QString () : rangeError);
     if (currentId () == 3)
-        if (button (NextButton) != nullptr)
-            button (NextButton)->setEnabled (rangesValid);
-    if (currentId () == 4)
         if (button (FinishButton) != nullptr)
             button (FinishButton)->setEnabled (valid);
 }
@@ -521,12 +349,6 @@ void RobotProjectImportWizard::updateReview ()
     QStringList roots = value.options.packageRoots;
     for (QString& root : roots)
         root.prepend (QStringLiteral ("  - "));
-    QStringList mutableLinks;
-    for (const QString& target : value.mutableLinks) {
-        const QPair< double, double > range = value.mutableLinkRanges.value (target);
-        mutableLinks.push_back (QStringLiteral ("  - %1: %2 m to %3 m")
-                                    .arg (target).arg (range.first, 0, 'f', 3).arg (range.second, 0, 'f', 3));
-    }
     const bool sourceIsXacro = QFileInfo (value.sourcePath).suffix ().compare (
         QStringLiteral ("xacro"), Qt::CaseInsensitive) == 0;
     const QString xacroSummary = !sourceIsXacro ? tr ("Not applicable") :
@@ -535,12 +357,11 @@ void RobotProjectImportWizard::updateReview ()
                 .arg (value.options.xacroArguments.join (QLatin1Char (' '))) :
             tr ("%1 %2").arg (value.options.xacroExecutable,
                                value.options.xacroArguments.join (QLatin1Char (' ')));
-    _summary->setText (tr ("Project: %1\nPath: %2\nSource: %3\nAsset policy: %4\nXacro: %5\nMesh: %6\nMissing mesh: %7\nPackage roots:\n%8\nMutable links:\n%9")
+    _summary->setText (tr ("Project: %1\nPath: %2\nSource: %3\nAsset policy: %4\nXacro: %5\nMesh: %6\nMissing mesh: %7\nPackage roots:\n%8")
                            .arg (value.projectName, value.projectFilePath (), value.sourcePath,
                                  _assetPolicy->currentText (), xacroSummary, _meshMode->currentText (),
                                  _missingMesh->currentText (),
-                                 roots.isEmpty () ? tr ("  - None") : roots.join (QLatin1Char ('\n')),
-                                 mutableLinks.isEmpty () ? tr ("  - None") : mutableLinks.join (QLatin1Char ('\n'))));
+                                 roots.isEmpty () ? tr ("  - None") : roots.join (QLatin1Char ('\n'))));
     updateValidationState ();
 }
 
