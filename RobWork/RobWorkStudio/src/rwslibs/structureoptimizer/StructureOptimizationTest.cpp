@@ -7805,6 +7805,14 @@ static rws::StructureOptimizationProblem makeWorkspaceCoverageProblem()
     problem.context.modelSpec =
         rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
     problem.context.modelSpec.robotName = "WorkspaceCoverageRobot";
+    // This shared fixture predates the desktop workcell and models robot-only
+    // coverage.  Individual tests add their own scene geometry, so retaining
+    // the default table/proximity policy would alter their collision evidence.
+    problem.context.modelSpec.generateScene = false;
+    problem.context.modelSpec.sceneFrames.clear();
+    problem.context.modelSpec.sceneGeometries.clear();
+    problem.context.modelSpec.proximitySetup.enabled = false;
+    problem.context.modelSpec.proximitySetup.rules.clear();
     problem.context.robotName = problem.context.modelSpec.robotName;
     problem.context.deviceName = problem.context.modelSpec.robotName;
     problem.context.tcpFrame.clear();
@@ -8099,11 +8107,38 @@ static void testSharedTargetEvaluatorConsistency()
     problem.evaluation.coverageBox.enabled = false;
     problem.evaluation.coverageBoxes.clear();
 
+    const rw::math::Q referenceQ(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7);
+    rws::CandidateModelBuildRequest referenceRequest;
+    referenceRequest.spec = problem.context.modelSpec;
+    referenceRequest.deviceName = problem.context.deviceName;
+    referenceRequest.tcpFrame = problem.context.tcpFrame;
+    const rws::CandidateModelBuildResult referenceBuilt =
+        rws::CandidateModelFactory().build(referenceRequest);
+    REQUIRE(referenceBuilt.ok);
+    if (!referenceBuilt.ok) return;
+    rw::kinematics::State referenceState = referenceBuilt.artifact.state;
+    referenceBuilt.artifact.device->setQ(referenceQ, referenceState);
+    const rw::math::Transform3D<> referenceWorldTtcp =
+        rw::kinematics::Kinematics::frameTframe(
+            referenceBuilt.artifact.workcell->getWorldFrame(),
+            referenceBuilt.artifact.tcpFrame.get(), referenceState);
+
+    rws::FrameSpec collisionFixtureFrame;
+    collisionFixtureFrame.name = "EvaluatorConsistencyCollisionFrame";
+    collisionFixtureFrame.refFrame = "WORLD";
+    collisionFixtureFrame.frameType = rws::SceneFrameType::Movable;
+    const rw::math::RPY<> referenceRpy(referenceWorldTtcp.R());
+    for (std::size_t axis = 0; axis < 3; ++axis) {
+        collisionFixtureFrame.pos[axis] = referenceWorldTtcp.P()[axis];
+        collisionFixtureFrame.rpyDeg[axis] = referenceRpy(axis) * rw::math::Rad2Deg;
+    }
+    problem.context.modelSpec.sceneFrames.push_back(collisionFixtureFrame);
+
     rws::SceneGeometrySpec collisionFixture;
     collisionFixture.name = "EvaluatorConsistencyCollisionFixture";
-    collisionFixture.refFrame = "WORLD";
+    collisionFixture.refFrame = collisionFixtureFrame.name;
     collisionFixture.kind = rws::GeometryKind::Box;
-    collisionFixture.size = {{10.0, 10.0, 10.0}};
+    collisionFixture.size = {{0.10, 0.10, 0.10}};
     collisionFixture.collisionModel = true;
     problem.context.modelSpec.sceneGeometries.push_back(collisionFixture);
 
@@ -8116,9 +8151,12 @@ static void testSharedTargetEvaluatorConsistency()
     REQUIRE(built.ok);
     REQUIRE(!built.artifact.collisionDetector.isNull());
     if (!built.ok) return;
-    rw::kinematics::State referenceState = built.artifact.state;
-    built.artifact.device->setQ(rw::math::Q(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7),
-                                referenceState);
+    referenceState = built.artifact.state;
+    built.artifact.device->setQ(referenceQ, referenceState);
+    rw::proximity::CollisionDetector::QueryResult fixtureCollision;
+    const bool fixtureInCollision =
+        built.artifact.collisionDetector->inCollision(referenceState, &fixtureCollision);
+    REQUIRE(fixtureInCollision);
 
     const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
         built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(),
@@ -10201,6 +10239,336 @@ static void testExportService()
         if (sceneFile.isOpen()) {
             const QByteArray sceneXml = sceneFile.readAll();
             REQUIRE(sceneXml.contains("Fixture_A"));
+        }
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 默认桌面工作站:只以 RobotModelBuilder 生成的临时 GenericSixAxis 文件为
+// 真值，验证 Pick/Place/Inspection 场景目标能经过冻结需求、优化问题导入、候选
+// 模型构建和 Verified 基线评价。它不依赖仓库中的外部 UR 示例资产。
+static void testDefaultDesktopWorkcellOptimizationConsumption()
+{
+    std::printf("testDefaultDesktopWorkcellOptimizationConsumption ... ");
+
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    if (!directory.isValid())
+        return;
+
+    rws::RobotModelSpec model =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(directory.path());
+    QStringList saveErrors;
+    REQUIRE(rws::RobotModelXmlWriter::saveFiles(model, saveErrors));
+    REQUIRE(saveErrors.isEmpty());
+    REQUIRE(rws::RobotModelXmlWriter::saveSpecSidecar(model, saveErrors));
+    REQUIRE(saveErrors.isEmpty());
+
+    const QString scenePath = rws::RobotModelXmlWriter::sceneFilePath(model);
+    const rw::models::WorkCell::Ptr workcell =
+        rw::loaders::WorkCellLoader::Factory::load(scenePath.toStdString());
+    REQUIRE(!workcell.isNull());
+    if (workcell.isNull())
+        return;
+    const rw::kinematics::State state = workcell->getDefaultState();
+    REQUIRE(workcell->getDevices().size() == 1);
+    if (workcell->getDevices().empty())
+        return;
+    const rw::models::Device::Ptr device = workcell->getDevices().front();
+    REQUIRE(!device.isNull());
+    if (device.isNull())
+        return;
+    const std::string tcpFrame = device->getEnd()->getName();
+
+    const auto taskFromSceneTarget = [&] (const char* id, const char* frameName) {
+        const rw::kinematics::Frame* target = workcell->findFrame(frameName);
+        REQUIRE(target != nullptr);
+        rws::PoseTask task;
+        task.id = id;
+        task.name = frameName;
+        task.level = rws::RequirementLevel::Must;
+        task.refFrame = "WORLD";
+        task.tcpFrame = tcpFrame;
+        if (target != nullptr) {
+            const rw::math::Transform3D<> worldTtarget =
+                rw::kinematics::Kinematics::worldTframe(target, state);
+            const rw::math::RPY<> rpy(worldTtarget.R());
+            for (std::size_t axis = 0; axis < 3; ++axis) {
+                task.position[axis] = worldTtarget.P()[axis];
+                task.rpyDeg[axis] = rpy(axis) * rw::math::Rad2Deg;
+            }
+        }
+        return task;
+    };
+
+    rws::RequirementSet requirements;
+    requirements.name = "GenericSixAxis desktop pick and place";
+    requirements.frozen = true;
+    requirements.modelBinding.sourcePath =
+        QFileInfo(rws::RobotModelXmlWriter::specSidecarFilePath(model)).fileName().toStdString();
+    requirements.modelBinding.robotName = model.robotName;
+    requirements.modelBinding.robotModelFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(model);
+    requirements.poseTasks = {
+        taskFromSceneTarget("desktop-pick", "PickTarget"),
+        taskFromSceneTarget("desktop-place", "PlaceTarget"),
+        taskFromSceneTarget("desktop-inspection", "InspectionTarget")};
+    const auto worldPosition = [&] (const char* frameName) {
+        const rw::kinematics::Frame* frame = workcell->findFrame(frameName);
+        REQUIRE(frame != nullptr);
+        std::array< double, 3 > position = {{0.0, 0.0, 0.0}};
+        if (frame != nullptr) {
+            const rw::math::Transform3D<> worldTframe =
+                rw::kinematics::Kinematics::worldTframe(frame, state);
+            for (std::size_t axis = 0; axis < 3; ++axis)
+                position[axis] = worldTframe.P()[axis];
+        }
+        return position;
+    };
+    const std::array< double, 3 > inspectionPosition = worldPosition("InspectionTarget");
+    const std::array< double, 3 > pickPosition = worldPosition("PickTarget");
+    rws::BoxRegion inspectionDirectionRegion;
+    inspectionDirectionRegion.id = "desktop-inspection-direction";
+    inspectionDirectionRegion.name = "Inspection direction coverage";
+    inspectionDirectionRegion.level = rws::RequirementLevel::Must;
+    inspectionDirectionRegion.refFrame = "WORLD";
+    inspectionDirectionRegion.tcpFrame = tcpFrame;
+    inspectionDirectionRegion.center = inspectionPosition;
+    inspectionDirectionRegion.size = {{1e-6, 1e-6, 1e-6}};
+    inspectionDirectionRegion.sampleSpacingMeters = {{1e-6, 1e-6, 1e-6}};
+    inspectionDirectionRegion.minimumCoverage = 0.0;
+    inspectionDirectionRegion.orientationMode = rws::OrientationMode::PointAtTarget;
+    inspectionDirectionRegion.orientationTargetPoint =
+        QString("%1,%2,%3")
+            .arg(pickPosition[0], 0, 'g', 17)
+            .arg(pickPosition[1], 0, 'g', 17)
+            .arg(pickPosition[2], 0, 'g', 17)
+            .toStdString();
+    inspectionDirectionRegion.directionSamples = 1;
+    inspectionDirectionRegion.rollSamples = 1;
+    inspectionDirectionRegion.minimumOrientationCoverage = 0.0;
+    inspectionDirectionRegion.minimumVerificationStage =
+        rws::RequirementVerificationStage::Verified;
+    inspectionDirectionRegion.collisionFreeRequired = true;
+    requirements.boxRegions.push_back(inspectionDirectionRegion);
+
+    rws::FrozenRequirementArtifact artifact;
+    std::string error;
+    const bool frozen = rws::RequirementFreezer::freeze(
+        requirements, *workcell, state, model, artifact, &error, directory.path().toStdString());
+    if (!frozen)
+        std::fprintf(stderr, "Default desktop freeze error: %s\n", error.c_str());
+    REQUIRE(frozen);
+    REQUIRE(artifact.execution.tasks.size() == requirements.poseTasks.size());
+    REQUIRE(artifact.execution.workspaceRegions.size() == 1);
+    if (!artifact.execution.workspaceRegions.empty()) {
+        const rws::RequirementExecutionRegion& region =
+            artifact.execution.workspaceRegions.front();
+        REQUIRE(region.id == inspectionDirectionRegion.id);
+        REQUIRE(region.directionSamples == inspectionDirectionRegion.directionSamples);
+        REQUIRE(region.rollSamples == inspectionDirectionRegion.rollSamples);
+    }
+
+    const QString requirementPath = directory.filePath("desktop.requirements.json");
+    QJsonObject requirementDocument = rws::RequirementSetJson::toObject(requirements);
+    requirementDocument.insert("frozenArtifact", rws::FrozenRequirementArtifactJson::toObject(artifact));
+    QFile requirementFile(requirementPath);
+    REQUIRE(requirementFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const QByteArray requirementJson = QJsonDocument(requirementDocument).toJson();
+    REQUIRE(requirementFile.write(requirementJson) == requirementJson.size());
+    requirementFile.close();
+
+    rws::StructureOptimizationProblem problem;
+    rws::FrozenRequirementValidationResult validation;
+    REQUIRE(rws::FrozenRequirementProjectImportService::createProblem(
+        requirementPath, *workcell, state, problem, &validation, &error, directory.path()));
+    REQUIRE(problem.tasks.size() == requirements.poseTasks.size());
+    REQUIRE(problem.requirementExecution.tasks.size() == requirements.poseTasks.size());
+    REQUIRE(problem.requirementExecution.workspaceRegions.size() == 1);
+    REQUIRE(!problem.context.tcpFrame.empty());
+    REQUIRE(problem.scenarioSnapshot.available());
+    REQUIRE(!rws::StructureOptimizationUiLogic::frozenContractStale(problem));
+
+    rws::CandidateModelBuildRequest candidateRequest;
+    candidateRequest.spec = problem.context.modelSpec;
+    candidateRequest.deviceName = problem.context.deviceName;
+    candidateRequest.tcpFrame = problem.context.tcpFrame;
+    candidateRequest.checkCollision = true;
+    const rws::CandidateModelBuildResult built = rws::CandidateModelFactory().build(candidateRequest);
+    REQUIRE(built.ok);
+    REQUIRE(!built.artifact.workcell.isNull());
+    REQUIRE(!built.artifact.tcpFrame.isNull());
+    REQUIRE(!built.artifact.collisionDetector.isNull());
+
+    // The bridge consumes an immutable canonical snapshot.  The production
+    // controller creates it from this same candidate-model artifact before
+    // dispatching a Verified baseline; this direct integration fixture must
+    // exercise that boundary explicitly rather than bypass it.
+    rws::KinematicImportRequest importRequest;
+    importRequest.workcell = built.artifact.workcell.get();
+    importRequest.device = built.artifact.device.get();
+    importRequest.tcpFrame = built.artifact.tcpFrame.get();
+    importRequest.sourceSnapshot = &problem.context.modelSpec;
+    importRequest.sourceFingerprint =
+        rws::RobotModelFingerprint::canonicalSha256(problem.context.modelSpec);
+    std::string shadowError;
+    REQUIRE(rws::CanonicalModelShadowService::attach(importRequest, problem, &shadowError));
+    REQUIRE(problem.canonicalModelShadow.status == rws::CanonicalModelShadowStatus::Current);
+    REQUIRE(problem.canonicalModelShadow.hasSnapshot());
+
+    rws::CanonicalBaselineEvaluationRequest baselineRequest;
+    baselineRequest.problem = &problem;
+    baselineRequest.deviceName = problem.context.deviceName;
+    baselineRequest.tcpFrame = problem.context.tcpFrame;
+    baselineRequest.checkCollision = true;
+    baselineRequest.planOptions.capabilities.insert("target");
+    const rws::BaselineEvaluationResult baseline =
+        rws::CanonicalBaselineEvaluationBridge::evaluate(baselineRequest);
+    if (!baseline.ok) {
+        for (const rws::StructureOptimizationDiagnostic& diagnostic : baseline.diagnostics)
+            std::fprintf(stderr, "Default desktop baseline diagnostic %s: %s\n",
+                         diagnostic.code.c_str(), diagnostic.message.c_str());
+        std::fprintf(stderr, "Default desktop baseline candidate diagnostic: %s\n",
+                     baseline.candidateResult.evaluationDiagnostic.c_str());
+    }
+    REQUIRE(baseline.ok);
+    REQUIRE(baseline.baselineIndex == 0);
+    REQUIRE(!baseline.modelFingerprint.empty());
+    REQUIRE(baseline.candidateResult.lifecycle == rws::CandidateLifecycle::Completed);
+    REQUIRE(baseline.candidateResult.evidenceStage == rws::AnalysisEvidenceStage::Verified);
+    REQUIRE(baseline.candidateResult.stages.size() == 2);
+    REQUIRE(baseline.candidateResult.completion.requestedCount ==
+            requirements.poseTasks.size() + requirements.boxRegions.size());
+    REQUIRE(baseline.candidateResult.completion.completedCount ==
+            requirements.poseTasks.size() + requirements.boxRegions.size());
+    if (baseline.candidateResult.stages.size() == 2) {
+        REQUIRE(baseline.candidateResult.stages[1].stageId == "verified_region");
+        REQUIRE(baseline.candidateResult.stages[1].requestedCount == 1);
+        REQUIRE(baseline.candidateResult.stages[1].completedCount == 1);
+    }
+
+    rws::StructureCandidateResult previewCandidate;
+    previewCandidate.index = 0;
+    previewCandidate.status = rws::StructureCandidateStatus::Feasible;
+    previewCandidate.feasible = true;
+    previewCandidate.values.reserve(problem.variables.size());
+    for (const rws::StructureDesignVariable& variable : problem.variables)
+        previewCandidate.values.push_back(variable.currentValue);
+    struct PreviewHost : rws::IWorkCellPreviewHost {
+        QString current;
+        QString lastOpened;
+
+        QString currentWorkCellPath() override { return current; }
+        bool openWorkCell(const QString& path, QString*) override {
+            current = path;
+            lastOpened = path;
+            return true;
+        }
+    } previewHost;
+    previewHost.current = scenePath;
+    rws::CandidatePreviewController preview(&previewHost);
+    QString previewError;
+    REQUIRE(preview.preview(problem, previewCandidate, &previewError));
+    REQUIRE(preview.previewedCandidateIndex() == 0);
+    REQUIRE(previewHost.lastOpened != scenePath);
+    const rw::models::WorkCell::Ptr previewWorkcell =
+        rw::loaders::WorkCellLoader::Factory::load(previewHost.lastOpened.toStdString());
+    REQUIRE(!previewWorkcell.isNull());
+    if (!previewWorkcell.isNull()) {
+        REQUIRE(previewWorkcell->findFrame< rw::kinematics::MovableFrame >("PickPart") != nullptr);
+        REQUIRE(previewWorkcell->findFrame< rw::kinematics::MovableFrame >("InspectionPart") != nullptr);
+    }
+    preview.clearPreview();
+    REQUIRE(previewHost.current == scenePath);
+
+    const QString exportDirectory = directory.filePath("desktop-candidate-export");
+    QStringList exportErrors;
+    REQUIRE(rws::StructureCandidateExporter::exportModel(
+        problem, previewCandidate, exportDirectory, exportErrors));
+    REQUIRE(exportErrors.isEmpty());
+    const QStringList exportedScenes = QDir(exportDirectory).entryList(
+        QStringList() << "*Scene.wc.xml", QDir::Files);
+    REQUIRE(exportedScenes.size() == 1);
+    if (exportedScenes.size() == 1) {
+        const rw::models::WorkCell::Ptr exportedWorkcell =
+            rw::loaders::WorkCellLoader::Factory::load(
+                QDir(exportDirectory).filePath(exportedScenes.front()).toStdString());
+        REQUIRE(!exportedWorkcell.isNull());
+        if (!exportedWorkcell.isNull()) {
+            REQUIRE(exportedWorkcell->getDevices().size() == 1);
+            if (exportedWorkcell->getDevices().size() == 1)
+                REQUIRE(exportedWorkcell->getDevices().front()->getEnd()->getName() == tcpFrame);
+            REQUIRE(exportedWorkcell->findFrame< rw::kinematics::MovableFrame >("PickPart") != nullptr);
+            REQUIRE(exportedWorkcell->findFrame< rw::kinematics::MovableFrame >("InspectionPart") != nullptr);
+        }
+    }
+
+    rws::StructureOptimizationProblem collidingProblem = problem;
+    rws::RobotModelSpec collidingScene = problem.scenarioSnapshot.sceneSpec;
+    const auto safetyPost = std::find_if(
+        collidingScene.sceneGeometries.begin(), collidingScene.sceneGeometries.end(),
+        [] (const rws::SceneGeometrySpec& geometry) { return geometry.name == "SafetyPost"; });
+    const auto pickPart = std::find_if(
+        collidingScene.sceneFrames.begin(), collidingScene.sceneFrames.end(),
+        [] (const rws::FrameSpec& frame) { return frame.name == "PickPart"; });
+    const auto pickPartGeometry = std::find_if(
+        collidingScene.sceneGeometries.begin(), collidingScene.sceneGeometries.end(),
+        [] (const rws::SceneGeometrySpec& geometry) { return geometry.name == "PickPartGeometry"; });
+    REQUIRE(safetyPost != collidingScene.sceneGeometries.end());
+    REQUIRE(pickPart != collidingScene.sceneFrames.end());
+    REQUIRE(pickPartGeometry != collidingScene.sceneGeometries.end());
+    if (safetyPost != collidingScene.sceneGeometries.end() &&
+        pickPart != collidingScene.sceneFrames.end() &&
+        pickPartGeometry != collidingScene.sceneGeometries.end()) {
+        pickPart->refFrame = safetyPost->refFrame;
+        pickPart->pos = safetyPost->pos;
+        // Yaobi's cylinder strategy does not report a fully concentric
+        // containment.  Keep a 5 mm radial overlap, matching the public XML
+        // workcell regression's non-concentric collision fixture.
+        pickPart->pos[0] += safetyPost->radius + pickPartGeometry->radius - 0.005;
+        collidingProblem.scenarioSnapshot.sceneSpec = collidingScene;
+        collidingProblem.scenarioSnapshot.snapshotFingerprint =
+            "desktop-pick-part-in-safety-post";
+        // This is a deliberately changed counterexample environment, not a
+        // stale frozen-project simulation.  It must reach collision evaluation.
+        collidingProblem.scenarioSnapshot.environmentFingerprint.clear();
+
+        rws::CandidateModelBuildRequest collidingRequest = candidateRequest;
+        collidingRequest.scenarioSnapshot = &collidingProblem.scenarioSnapshot;
+        collidingRequest.scenarioBaseDirectory = collidingProblem.scenarioSnapshot.baseDirectory;
+        const rws::CandidateModelBuildResult collidingBuilt =
+            rws::CandidateModelFactory().build(collidingRequest);
+        REQUIRE(collidingBuilt.ok);
+        REQUIRE(!collidingBuilt.artifact.collisionDetector.isNull());
+        if (collidingBuilt.ok && !collidingBuilt.artifact.collisionDetector.isNull()) {
+            rw::proximity::CollisionDetector::QueryResult collision;
+            REQUIRE(collidingBuilt.artifact.collisionDetector->inCollision(
+                collidingBuilt.artifact.state, &collision));
+
+            rws::KinematicImportRequest collidingImport;
+            collidingImport.workcell = collidingBuilt.artifact.workcell.get();
+            collidingImport.device = collidingBuilt.artifact.device.get();
+            collidingImport.tcpFrame = collidingBuilt.artifact.tcpFrame.get();
+            collidingImport.sourceSnapshot = &collidingProblem.context.modelSpec;
+            collidingImport.sourceFingerprint =
+                rws::RobotModelFingerprint::canonicalSha256(collidingProblem.context.modelSpec);
+            REQUIRE(rws::CanonicalModelShadowService::attach(
+                collidingImport, collidingProblem, &shadowError));
+            rws::CanonicalBaselineEvaluationRequest collidingBaselineRequest = baselineRequest;
+            collidingBaselineRequest.problem = &collidingProblem;
+            const rws::BaselineEvaluationResult collidingBaseline =
+                rws::CanonicalBaselineEvaluationBridge::evaluate(
+                    collidingBaselineRequest);
+            REQUIRE(collidingBaseline.ok);
+            REQUIRE(collidingBaseline.candidateResult.feasibility == rws::Feasibility::Infeasible);
+            REQUIRE(std::find(collidingBaseline.candidateResult.warnings.begin(),
+                              collidingBaseline.candidateResult.warnings.end(),
+                              "S52_BASELINE_INFEASIBLE: optimization may continue under the configured policy.") !=
+                    collidingBaseline.candidateResult.warnings.end());
         }
     }
 
@@ -12818,6 +13186,17 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if (suite == "default_desktop") {
+        QCoreApplication app(argc, argv);
+        testDefaultDesktopWorkcellOptimizationConsumption();
+        if (g_testFailures == 0) {
+            std::printf("Default desktop workcell optimization test passed.\n");
+            return 0;
+        }
+        std::printf("Default desktop workcell optimization test FAILED.\n");
+        return 1;
+    }
+
     if (suite == "phase1_core") {
         QCoreApplication app(argc, argv);
         testPhaseOneTemplatesAndPreflight();
@@ -13016,6 +13395,7 @@ int main(int argc, char** argv)
     testTcpBareNameFallback();
     testCacheHitPreservesCandidateIdentity();
     testCacheKeySafeWithZeroStep();
+    testDefaultDesktopWorkcellOptimizationConsumption();
     testSharedTargetEvaluatorConsistency();
     testVerifiedRegionUsesSharedEvaluator();
     testVerifiedRegionPreservesPositionCoverage();

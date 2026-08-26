@@ -54,8 +54,15 @@ bool CandidatePreviewController::preview(
         return false;
     }
 
-    const QStringList workCells = QDir(temporary->path()).entryList(
-        {"*.wc.xml"}, QDir::Files, QDir::Name);
+    QStringList workCells = QDir(temporary->path()).entryList(
+        {"*Scene.wc.xml"}, QDir::Files, QDir::Name);
+    // Candidate exports contain both a device XML and a scene XML.  Loading
+    // the device file loses the frozen workcell environment, so only fall
+    // back to a generic WorkCell file for legacy exporters without a scene.
+    if (workCells.isEmpty()) {
+        workCells = QDir(temporary->path()).entryList(
+            {"*.wc.xml"}, QDir::Files, QDir::Name);
+    }
     if (workCells.isEmpty()) {
         if (error != nullptr)
             *error = "StructureOptimization.Preview.WorkCellMissing";

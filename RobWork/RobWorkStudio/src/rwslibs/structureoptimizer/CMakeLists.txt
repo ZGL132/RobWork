@@ -497,6 +497,15 @@ if(build)
                 WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
                 ENVIRONMENT "QT_QPA_PLATFORM=${STRUCTUREOPTIMIZER_TEST_QPA_PLATFORM}"
         )
+        add_test(
+            NAME sdurws_structureoptimizer_default_desktop_test
+            COMMAND $<TARGET_FILE:sdurws_structureoptimizer_test> default_desktop
+        )
+        set_tests_properties(
+            sdurws_structureoptimizer_default_desktop_test
+            PROPERTIES
+                WORKING_DIRECTORY $<TARGET_FILE_DIR:sdurws_structureoptimizer_test>
+        )
         set(ROBOT_FILE_300KG_URDF
             "${CMAKE_SOURCE_DIR}/RobWork/example/ModelData/XMLDevices/UR-6-85-5-A/300kg_urdf/output/300kg.urdf")
         if(EXISTS "${ROBOT_FILE_300KG_URDF}")
