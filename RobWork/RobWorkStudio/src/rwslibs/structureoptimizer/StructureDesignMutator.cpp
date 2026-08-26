@@ -136,8 +136,9 @@ StructureMutationResult StructureDesignMutator::apply(
             if (!v.enabled) continue;
             if (isDhVariable(v.kind))
                 hasDh = true;
-            else
+            else if (isTransformVariable(v.kind))
                 hasTransform = true;
+            // M10: 几何/外观类变量不绑定运动学来源，与 DH 和 Transform 都兼容。
         }
         if (hasDh && hasTransform) {
             warnings.push_back(makeWarning(

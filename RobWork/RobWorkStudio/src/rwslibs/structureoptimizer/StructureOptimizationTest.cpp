@@ -2906,13 +2906,10 @@ static void testJointOriginAndParameterizedLinkAdapters()
     const rws::AdapterPatchCompileResult cartesianPatch = registry.compilePatch(
         {&baseline, &cartesian, {{"origin-x", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
     REQUIRE(cartesianPatch.ok);
-    REQUIRE(cartesianPatch.patch.writes.size() == 3);
-    REQUIRE(std::fabs(cartesianPatch.patch.writes[0].value.scalarValue - 1.25) < 1e-12);
-    REQUIRE(std::fabs(cartesianPatch.patch.writes[1].value.scalarValue - 2.0) < 1e-12);
-    REQUIRE(std::fabs(cartesianPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+    // M5: 单轴语义只写自己的分量——写全 XYZ 会与同关节其他单轴绑定必然冲突。
+    REQUIRE(cartesianPatch.patch.writes.size() == 1);
     REQUIRE(cartesianPatch.patch.writes[0].target == cartesian.writeSet[0]);
-    REQUIRE(cartesianPatch.patch.writes[1].target == cartesian.writeSet[1]);
-    REQUIRE(cartesianPatch.patch.writes[2].target == cartesian.writeSet[2]);
+    REQUIRE(std::fabs(cartesianPatch.patch.writes[0].value.scalarValue - 1.25) < 1e-12);
 
     rws::ParameterBinding cartesianY = jointTranslationBinding(
         "origin-y", rws::SemanticKind::JointOriginOffsetY, "JointOriginAdapter", "joint-1", "base");
@@ -2920,9 +2917,9 @@ static void testJointOriginAndParameterizedLinkAdapters()
     const rws::AdapterPatchCompileResult cartesianYPatch = registry.compilePatch(
         {&baseline, &cartesianY, {{"origin-y", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
     REQUIRE(cartesianYPatch.ok);
-    REQUIRE(std::fabs(cartesianYPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
-    REQUIRE(std::fabs(cartesianYPatch.patch.writes[1].value.scalarValue - 2.25) < 1e-12);
-    REQUIRE(std::fabs(cartesianYPatch.patch.writes[2].value.scalarValue - 3.0) < 1e-12);
+    REQUIRE(cartesianYPatch.patch.writes.size() == 1);
+    REQUIRE(cartesianYPatch.patch.writes[0].target == cartesian.writeSet[1]);
+    REQUIRE(std::fabs(cartesianYPatch.patch.writes[0].value.scalarValue - 2.25) < 1e-12);
 
     rws::ParameterBinding cartesianZ = jointTranslationBinding(
         "origin-z", rws::SemanticKind::JointOriginOffsetZ, "JointOriginAdapter", "joint-1", "base");
@@ -2930,9 +2927,22 @@ static void testJointOriginAndParameterizedLinkAdapters()
     const rws::AdapterPatchCompileResult cartesianZPatch = registry.compilePatch(
         {&baseline, &cartesianZ, {{"origin-z", rws::DesignVariableUnit::Metres, 0.25, ""}}}, capabilities);
     REQUIRE(cartesianZPatch.ok);
-    REQUIRE(std::fabs(cartesianZPatch.patch.writes[0].value.scalarValue - 1.0) < 1e-12);
-    REQUIRE(std::fabs(cartesianZPatch.patch.writes[1].value.scalarValue - 2.0) < 1e-12);
-    REQUIRE(std::fabs(cartesianZPatch.patch.writes[2].value.scalarValue - 3.25) < 1e-12);
+    REQUIRE(cartesianZPatch.patch.writes.size() == 1);
+    REQUIRE(cartesianZPatch.patch.writes[0].target == cartesian.writeSet[2]);
+    REQUIRE(std::fabs(cartesianZPatch.patch.writes[0].value.scalarValue - 3.25) < 1e-12);
+
+    // M5 合并前提：X/Y、X/Z、Y/Z 两两写目标不相交，三轴组合可安全合并。
+    const auto disjoint = [](const rws::AdapterPatchCompileResult& left,
+                             const rws::AdapterPatchCompileResult& right) {
+        for (const auto& l : left.patch.writes)
+            for (const auto& r : right.patch.writes)
+                if (l.target == r.target)
+                    return false;
+        return true;
+    };
+    REQUIRE(disjoint(cartesianPatch, cartesianYPatch));
+    REQUIRE(disjoint(cartesianPatch, cartesianZPatch));
+    REQUIRE(disjoint(cartesianYPatch, cartesianZPatch));
 
     rws::ParameterBinding alongAxis = jointTranslationBinding(
         "origin-axis", rws::SemanticKind::JointOffsetAlongAxis, "JointOriginAdapter", "joint-1", "base");
@@ -5363,6 +5373,139 @@ static void testPreviewPermissionBindsRuntimeSnapshot()
         StructureOptimizationUiLogic::evaluatePreviewPermission(true, reference, reference);
     REQUIRE(matched.allowed);
     REQUIRE(matched.reason.empty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 Phase2 变量可表达性:M10 DH+几何共存、M11 纯 DH 明确拒绝、
+// M4 ToolFrame 建议互斥与遗留重复绑定抑制。
+static void testPhase2VariableExpressiveness()
+{
+    std::printf("testPhase2VariableExpressiveness ... ");
+
+    auto hasCode = [] (const rws::StructureMutationResult& result,
+                       const char* code) {
+        for (const rws::AnalysisWarning& warning : result.warnings)
+            if (warning.code == code)
+                return true;
+        return false;
+    };
+
+    // ── M10: DH 变量与几何变量共存，不再误判为混合运动学 ──
+    {
+        rws::RobotModelSpec emptySpec;
+        rws::StructureDesignVariable dh;
+        dh.id = "a1"; dh.targetName = "J1";
+        dh.kind = rws::StructureVariableKind::DhA;
+        dh.minimum = -1.0; dh.maximum = 1.0; dh.enabled = true;
+        rws::StructureDesignVariable geometry;
+        geometry.id = "radius"; geometry.targetName = "link";
+        geometry.kind = rws::StructureVariableKind::LinkRadius;
+        geometry.minimum = 0.01; geometry.maximum = 0.5; geometry.enabled = true;
+
+        const rws::StructureMutationResult result =
+            rws::StructureDesignMutator::apply(emptySpec, {dh, geometry}, {0.1, 0.1});
+        REQUIRE(!hasCode(result, "StructureOptimization.Variable.MixedKinematicsSource"));
+        // 目标在空 spec 中不存在 -> 按 M1 失败(而非混合检查)
+        REQUIRE(!result.ok);
+        REQUIRE(hasCode(result, "StructureOptimization.Variable.MissingTarget"));
+    }
+
+    // 负例：DH 与 Transform 运动学来源仍然互斥
+    {
+        rws::RobotModelSpec emptySpec;
+        rws::StructureDesignVariable dh;
+        dh.id = "a1"; dh.targetName = "J1";
+        dh.kind = rws::StructureVariableKind::DhA;
+        dh.minimum = -1.0; dh.maximum = 1.0; dh.enabled = true;
+        rws::StructureDesignVariable position;
+        position.id = "z"; position.targetName = "J1";
+        position.kind = rws::StructureVariableKind::JointPositionZ;
+        position.minimum = -1.0; position.maximum = 1.0; position.enabled = true;
+        const rws::StructureMutationResult result =
+            rws::StructureDesignMutator::apply(emptySpec, {dh, position}, {0.1, 0.1});
+        REQUIRE(hasCode(result, "StructureOptimization.Variable.MixedKinematicsSource"));
+    }
+
+    // ── M11/D4: 纯 DH 模型在 Preflight 明确拒绝 ──
+    {
+        rws::StructureOptimizationProblem problem;
+        problem.context.modelSpec.robotName = "PureDhRobot";
+        problem.context.modelSpec.dhJoints.push_back({});
+        const std::vector<rws::StructurePreflightFinding> findings =
+            rws::StructureOptimizationUiLogic::preflight(problem);
+        REQUIRE(std::any_of(findings.begin(), findings.end(),
+                            [] (const rws::StructurePreflightFinding& finding) {
+                                return finding.code ==
+                                           "StructureOptimization.Model.PureDhUnsupported" &&
+                                       finding.severity == rws::AnalysisStatus::Fail;
+                            }));
+        std::string reason;
+        REQUIRE(!rws::StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason));
+    }
+
+    // ── M4: ToolFrame 只建议 TcpOffset*；遗留冲突绑定被抑制 ──
+    {
+        rws::RobotDesignContext context;
+        context.modelSpec =
+            rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+        // 追加一个带非零偏移的工具帧(默认模型的 TCP 偏移可能全零而被
+        // nonZero 守卫跳过，无法用于本断言)。
+        rws::JointTransformSpec tool;
+        tool.name = "ProbeTool";
+        tool.type = "ToolFrame";
+        tool.pos = {{0.01, -0.02, 0.15}};
+        context.modelSpec.transformJoints.push_back(tool);
+        std::set<std::string> toolFrameNames;
+        for (const auto& joint : context.modelSpec.transformJoints)
+            if (joint.type == "ToolFrame")
+                toolFrameNames.insert(joint.name);
+
+        const std::vector<rws::StructureDesignVariable> suggestions =
+            rws::StructureOptimizationUiLogic::suggestVariables(context);
+        bool sawTcpForToolFrame = false;
+        for (const rws::StructureDesignVariable& variable : suggestions) {
+            const bool positionKind =
+                variable.kind == rws::StructureVariableKind::JointPositionX ||
+                variable.kind == rws::StructureVariableKind::JointPositionY ||
+                variable.kind == rws::StructureVariableKind::JointPositionZ;
+            if (positionKind && toolFrameNames.count(variable.targetName))
+                REQUIRE(false); // ToolFrame 上不允许再出现 JointPosition*
+            const bool tcpKind =
+                variable.kind == rws::StructureVariableKind::TcpOffsetX ||
+                variable.kind == rws::StructureVariableKind::TcpOffsetY ||
+                variable.kind == rws::StructureVariableKind::TcpOffsetZ;
+            if (tcpKind && toolFrameNames.count(variable.targetName))
+                sawTcpForToolFrame = true;
+        }
+        REQUIRE(sawTcpForToolFrame);
+
+        std::vector<rws::StructureDesignVariable> legacy;
+        rws::StructureDesignVariable posZ;
+        posZ.id = "legacy-pos-z"; posZ.targetName = "TCP";
+        posZ.kind = rws::StructureVariableKind::JointPositionZ;
+        posZ.enabled = true;
+        rws::StructureDesignVariable tcpZ;
+        tcpZ.id = "tcp-z"; tcpZ.targetName = "TCP";
+        tcpZ.kind = rws::StructureVariableKind::TcpOffsetZ;
+        tcpZ.enabled = true;
+        rws::StructureDesignVariable unrelated;
+        unrelated.id = "radius"; unrelated.targetName = "link";
+        unrelated.kind = rws::StructureVariableKind::LinkRadius;
+        unrelated.enabled = true;
+        legacy.push_back(posZ);
+        legacy.push_back(tcpZ);
+        legacy.push_back(unrelated);
+        const int disabled =
+            rws::StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(legacy);
+        REQUIRE(disabled == 1);
+        REQUIRE(!legacy[0].enabled);
+        REQUIRE(legacy[1].enabled);
+        REQUIRE(legacy[2].enabled);
+    }
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -12912,6 +13055,7 @@ int main(int argc, char** argv)
     testValidationFlagsStaleFrozenContract();
     testExplicitCollisionConstraintRequiresEvidence();
     testPreviewPermissionBindsRuntimeSnapshot();
+    testPhase2VariableExpressiveness();
 
     std::printf("\n");
 

@@ -208,14 +208,17 @@ StructureOptimizationUiLogic::suggestVariables(const RobotDesignContext& context
 
     // 1. 遍历机器人模型的所有平移关节变换
     for (const JointTransformSpec& joint : spec.transformJoints) {
-        // 尝试提取 X, Y, Z 三轴位置变量
-        for (int axis = 0; axis < 3; ++axis)
-            appendTransformPositionVariable(variables, joint, axis);
-
-        // 若当前关节类型为 ToolFrame（工具末端），提取 TCP 偏置变量
-        if (typeToKind(joint.type) == JointKind::ToolFrame) {
+        const bool toolFrame = typeToKind(joint.type) == JointKind::ToolFrame;
+        if (toolFrame) {
+            // M4: ToolFrame 只生成 TcpOffset* 一组变量。JointPosition* 与
+            // TcpOffset* 会写同一 pos[axis]，两套并存时后者覆盖前者，先者
+            // 成为死变量并污染候选解释与灵敏度分析。
             for (int axis = 0; axis < 3; ++axis)
                 appendTcpVariable(variables, joint, axis);
+        }
+        else {
+            for (int axis = 0; axis < 3; ++axis)
+                appendTransformPositionVariable(variables, joint, axis);
         }
     }
 
@@ -301,6 +304,53 @@ std::string StructureOptimizationUiLogic::editableContractFingerprint(
     scratch.tasks = tasks;
     scratch.constraints = constraints;
     return StructureOptimizationJson::problemToJson(scratch);
+}
+
+int StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
+    std::vector<StructureDesignVariable>& variables)
+{
+    // M4 存量迁移：旧项目可能同时携带同一 ToolFrame 字段的 JointPosition*
+    // 与 TcpOffset* 绑定。语义明确的 TcpOffset* 保留，JointPosition* 抑制，
+    // 返回抑制数量供调用方告警。
+    auto axisOf = [](StructureVariableKind kind) -> int {
+        switch (kind) {
+            case StructureVariableKind::JointPositionX:
+            case StructureVariableKind::TcpOffsetX: return 0;
+            case StructureVariableKind::JointPositionY:
+            case StructureVariableKind::TcpOffsetY: return 1;
+            case StructureVariableKind::JointPositionZ:
+            case StructureVariableKind::TcpOffsetZ: return 2;
+            default: return -1;
+        }
+    };
+    auto isPosition = [](StructureVariableKind kind) {
+        return kind == StructureVariableKind::JointPositionX ||
+               kind == StructureVariableKind::JointPositionY ||
+               kind == StructureVariableKind::JointPositionZ;
+    };
+    auto isTcp = [](StructureVariableKind kind) {
+        return kind == StructureVariableKind::TcpOffsetX ||
+               kind == StructureVariableKind::TcpOffsetY ||
+               kind == StructureVariableKind::TcpOffsetZ;
+    };
+
+    int disabled = 0;
+    for (std::size_t i = 0; i < variables.size(); ++i) {
+        if (!isPosition(variables[i].kind) || !variables[i].enabled)
+            continue;
+        const int axis = axisOf(variables[i].kind);
+        for (std::size_t j = 0; j < variables.size(); ++j) {
+            if (i == j || !variables[j].enabled || !isTcp(variables[j].kind))
+                continue;
+            if (variables[j].targetName == variables[i].targetName &&
+                axisOf(variables[j].kind) == axis) {
+                variables[i].enabled = false;
+                ++disabled;
+                break;
+            }
+        }
+    }
+    return disabled;
 }
 
 bool StructureOptimizationUiLogic::hasFrozenRequirementContract(

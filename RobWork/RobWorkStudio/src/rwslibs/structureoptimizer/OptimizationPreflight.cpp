@@ -88,6 +88,16 @@ OptimizationPreflightResult OptimizationPreflight::run(const StructureOptimizati
     // 运行数量和变量数量是结构化门禁的一部分，Start 与 banner 共享同一结果。
     const OptimizationPreflightResult basic = run(input);
     result.findings.insert(result.findings.end(), basic.findings.begin(), basic.findings.end());
+    // D4/M11: 纯 DH 模型尚未经候选编译器/规范正解全链路验证，三处门禁
+    // 统一明确拒绝——宁可载入即报错，不允许"按钮可点但运行失败"。
+    if (problem.context.modelSpec.transformJoints.empty() &&
+        !problem.context.modelSpec.dhJoints.empty()) {
+        result.findings.push_back(
+            {OptimizationPreflightSeverity::Error,
+             "StructureOptimization.Model.PureDhUnsupported", {}, {},
+             std::string("Pure-DH models are not supported by the structure optimizer yet."),
+             std::string("Load a transform-joint (RMB) model snapshot for this robot.")});
+    }
     // C1.1/D1: 冻结契约一致性属于结构化门禁——stale 或未验证都必须阻断，
     // 使 Preflight/Start/Banner 与 Controller 拒绝共享同一结论。
     if (StructureOptimizationUiLogic::frozenContractStale(problem)) {

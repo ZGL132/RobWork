@@ -99,6 +99,16 @@ public:
     static bool frozenContractStale(const StructureOptimizationProblem& problem);
 
     /**
+     * @brief M4 存量迁移：抑制与 TcpOffset* 同字段冲突的 JointPosition*。
+     *
+     * 旧项目可能对同一 ToolFrame 坐标同时携带两套绑定（写同一 pos[axis]），
+     * 后应用者覆盖前者。语义明确的 TcpOffset* 保留，JointPosition* 置为
+     * disabled；返回抑制数量。
+     */
+    static int disableShadowedLegacyTcpDuplicates(
+        std::vector<StructureDesignVariable>& variables);
+
+    /**
      * @brief 设计变量"定义模式"指纹（M16）。
      *
      * 只由影响候选几何映射的字段决定（id/kind/targetName/min/max/step/

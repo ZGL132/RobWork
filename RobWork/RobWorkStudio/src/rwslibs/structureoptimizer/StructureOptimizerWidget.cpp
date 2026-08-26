@@ -411,6 +411,10 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
         _loadedProblem.variables =
             StructureOptimizationUiLogic::suggestVariables(_loadedProblem.context);
 
+    // M4: 抑制旧项目里与 TcpOffset* 同字段冲突的 JointPosition* 绑定。
+    StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
+        _loadedProblem.variables);
+
     // C1.1/D1: 冻结参考指纹持久化在契约 extensions 中，随 _loadedProblem 载入；
     // staleness 判定完全交给共享的 frozenContractStale(problem)，此处无需缓存。
 
@@ -1094,8 +1098,7 @@ void StructureOptimizerWidget::updateRunState()
     const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason);
     const bool contractStale = isFrozenContractStale();
     const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
-                            (!problem.context.modelSpec.transformJoints.empty() ||
-                             !problem.context.modelSpec.dhJoints.empty());
+                            !problem.context.modelSpec.transformJoints.empty();
     _startButton->setEnabled(runnable && !contractStale && !_controller->isRunning() && !_baselineOnlyRunning);
     _applyTemplateButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
     _preflightButton->setEnabled(!_controller->isRunning() && !_baselineOnlyRunning);

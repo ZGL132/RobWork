@@ -790,9 +790,19 @@ AdapterPatchCompileResult JointOriginAdapter::compilePatch(const AdapterPatchCom
     result.patch.adapterVersion = adapterVersion();
     result.patch.bindingId = binding.id;
     const std::vector< ReadWriteTarget > targets = translationTargets(binding);
-    result.patch.writes = {{targets[0], CandidatePatchValue::scalar(next(0))},
-                           {targets[1], CandidatePatchValue::scalar(next(1))},
-                           {targets[2], CandidatePatchValue::scalar(next(2))}};
+    // M5: 单轴语义只写自己确定的分量。写全 XYZ 会与同一关节的其他单轴绑定
+    // 在补丁合并时产生必然写冲突(CANDIDATE_PATCH_WRITE_CONFLICT)，使多轴
+    // 组合永远无法编译。Along-axis 的增量本质是三维的，保留全分量写入。
+    if (binding.semanticKind == SemanticKind::JointOriginOffsetX)
+        result.patch.writes = {{targets[0], CandidatePatchValue::scalar(next(0))}};
+    else if (binding.semanticKind == SemanticKind::JointOriginOffsetY)
+        result.patch.writes = {{targets[1], CandidatePatchValue::scalar(next(1))}};
+    else if (binding.semanticKind == SemanticKind::JointOriginOffsetZ)
+        result.patch.writes = {{targets[2], CandidatePatchValue::scalar(next(2))}};
+    else
+        result.patch.writes = {{targets[0], CandidatePatchValue::scalar(next(0))},
+                               {targets[1], CandidatePatchValue::scalar(next(1))},
+                               {targets[2], CandidatePatchValue::scalar(next(2))}};
     return result;
 }
 
