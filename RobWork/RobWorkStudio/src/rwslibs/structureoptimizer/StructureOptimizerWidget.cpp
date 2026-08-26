@@ -35,15 +35,11 @@
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QItemSelectionModel>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
-#include <QSet>
 #include <QTabWidget>
 #include <QTableView>
 #include <QMenu>
@@ -74,55 +70,6 @@ QSpinBox* makeSpinBox(int minimum, int maximum, int value)
     spinBox->setRange(minimum, maximum);
     spinBox->setValue(value);
     return spinBox;
-}
-
-QString applyRobotImportSeed(RobWorkStudio* studio, StructureOptimizationProblem& problem)
-{
-    if (studio == nullptr)
-        return QString();
-    QString seedPath;
-    if (!studio->resolveProjectResource(QStringLiteral("structure-optimization-seed.main"),
-                                        seedPath, nullptr))
-        return QString();
-    QFile seedFile(seedPath);
-    if (!seedFile.open(QIODevice::ReadOnly))
-        return QObject::tr("The robot import seed could not be read: %1").arg(seedFile.errorString());
-    QJsonParseError parseError;
-    const QJsonDocument document = QJsonDocument::fromJson(seedFile.readAll(), &parseError);
-    if (!document.isObject())
-        return QObject::tr("The robot import seed is invalid: %1").arg(parseError.errorString());
-
-    const QJsonObject root = document.object();
-    QSet<QString> selectedLinks;
-    for (const QJsonValue& value : root.value(QStringLiteral("mutableLinks")).toArray())
-        selectedLinks.insert(value.toString());
-    if (selectedLinks.isEmpty())
-        return QString();
-
-    const QJsonObject ranges = root.value(QStringLiteral("mutableLinkRanges")).toObject();
-    int applied = 0;
-    for (StructureDesignVariable& variable : problem.variables) {
-        const QString target = QString::fromStdString(variable.targetName);
-        if (!selectedLinks.contains(target))
-            continue;
-        variable.enabled = true;
-        variable.syncAssociatedGeometry = true;
-        const QJsonObject range = ranges.value(target).toObject();
-        if (!range.isEmpty()) {
-            const double minimum = range.value(QStringLiteral("minimum")).toDouble(variable.minimum);
-            const double maximum = range.value(QStringLiteral("maximum")).toDouble(variable.maximum);
-            if (minimum < maximum) {
-                variable.minimum = minimum;
-                variable.maximum = maximum;
-                variable.currentValue = std::clamp(variable.currentValue, minimum, maximum);
-                variable.preferredValue = std::clamp(variable.preferredValue, minimum, maximum);
-            }
-        }
-        ++applied;
-    }
-    return applied == 0
-        ? QObject::tr("The robot import seed contains links that have no matching design variables.")
-        : QObject::tr("Applied %1 robot import link seed variable(s).").arg(applied);
 }
 
 std::string uniqueId(const std::string& prefix, const std::vector<std::string>& existing)
@@ -1567,14 +1514,11 @@ void StructureOptimizerWidget::newProjectFromModelSpec()
         return;
     }
 
-    const QString seedStatus = applyRobotImportSeed(_studio, problem);
-
     _projectPath.clear();
     _managedProjectRoot.clear();
     setProblem(problem);
-    _statusLabel->setText(seedStatus.isEmpty()
-                              ? QStringLiteral("Optimization project created from the model snapshot. Add task points before starting.")
-                              : seedStatus);
+    _statusLabel->setText(
+        QStringLiteral("Optimization project created from the model snapshot. Add task points before starting."));
 }
 
 void StructureOptimizerWidget::newProjectFromFrozenRequirements()

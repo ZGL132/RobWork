@@ -60,9 +60,6 @@
 #include <QHash>
 #include <QIcon>
 #include <QInputDialog>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMetaMethod>
@@ -74,7 +71,6 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QScopedValueRollback>
-#include <QSaveFile>
 #include <QSet>
 #include <QShowEvent>
 #include <QStorageInfo>
@@ -2685,50 +2681,6 @@ void RobWorkStudio::createProjectFromRobotFile ()
         if (!error.isEmpty ())
             QMessageBox::critical (this, tr ("Create Project Failed"), error);
         return;
-    }
-    {
-        const QString seedPath = QDir (QFileInfo (projectFile).absolutePath ()).filePath (
-            QStringLiteral ("structure-optimization-seed.main.json"));
-        ProjectResource seedResource;
-        seedResource.id = QStringLiteral ("structure-optimization-seed.main");
-        // The seed is a passive sidecar consumed through resolveProjectResource,
-        // not an editable project document requiring a Provider.
-        seedResource.kind = QStringLiteral ("robwork.passive-asset");
-        seedResource.path = QStringLiteral ("structure-optimization-seed.main.json");
-        seedResource.ownership = QStringLiteral ("generated");
-        seedResource.required = false;
-        QString seedError;
-        QJsonObject seed;
-        seed.insert (QStringLiteral ("schemaVersion"), 1);
-        seed.insert (QStringLiteral ("sourceKind"), QStringLiteral ("urdf"));
-        QJsonArray links;
-        for (const QString& link : importRequest.mutableLinks)
-            links.append (link);
-        seed.insert (QStringLiteral ("mutableLinks"), links);
-        QJsonObject ranges;
-        for (auto range = importRequest.mutableLinkRanges.constBegin ();
-             range != importRequest.mutableLinkRanges.constEnd ();
-             ++range) {
-            QJsonObject values;
-            values.insert (QStringLiteral ("minimum"), range.value ().first);
-            values.insert (QStringLiteral ("maximum"), range.value ().second);
-            ranges.insert (range.key (), values);
-        }
-        seed.insert (QStringLiteral ("mutableLinkRanges"), ranges);
-        QSaveFile file (seedPath);
-        if (!file.open (QIODevice::WriteOnly) ||
-            file.write (QJsonDocument (seed).toJson (QJsonDocument::Indented)) < 0 ||
-            !file.commit ()) {
-            if (seedError.isEmpty ())
-                seedError = QStringLiteral ("Could not persist the structure optimization seed.");
-            QMessageBox::critical (this, tr ("Create Project Failed"), seedError);
-            return;
-        }
-        if (!_projectManager.addGeneratedResource (seedResource, &seedError) ||
-            !_projectManager.saveProject (&seedError)) {
-            QMessageBox::critical (this, tr ("Create Project Failed"), seedError);
-            return;
-        }
     }
     if (!builder->isVisible ())
         builder->showPlugin ();

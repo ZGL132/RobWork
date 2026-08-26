@@ -3,16 +3,12 @@
 
 #include "RobotProjectImportOptions.hpp"
 
-#include <QMap>
-#include <QPair>
 #include <QWizard>
-#include <QStringList>
 
 class QComboBox;
 class QLabel;
 class QListWidget;
 class QLineEdit;
-class QTreeWidget;
 
 namespace rws {
 
@@ -22,8 +18,6 @@ struct RobotProjectImportRequest
     QString projectName;
     QString location;
     RobotProjectImportOptions options;
-    QStringList mutableLinks;
-    QMap< QString, QPair< double, double > > mutableLinkRanges;
 
     bool isValid (QString* error = nullptr) const;
     QString projectFilePath () const;
@@ -44,7 +38,6 @@ class RobotProjectImportWizard : public QWizard
 
   private:
     void updateValidationState ();
-    void rebuildLinkTree ();
 
     QLineEdit* _sourcePath = nullptr;
     QLineEdit* _projectName = nullptr;
@@ -55,10 +48,8 @@ class RobotProjectImportWizard : public QWizard
     QComboBox* _missingMesh = nullptr;
     QComboBox* _assetPolicy = nullptr;
     QListWidget* _packageRootList = nullptr;
-    QTreeWidget* _links = nullptr;
     QLabel* _calculatedPath = nullptr;
     QLabel* _pathWarning = nullptr;
-    QLabel* _linkRangeWarning = nullptr;
     QLabel* _summary = nullptr;
 };
 
