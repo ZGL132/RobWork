@@ -25,10 +25,33 @@ std::size_t hashCombine(std::size_t seed, std::size_t value)
 // 缓存键按位置量化启用变量，要求 values 与 variables 一一对应。数量不一致的
 // 调用（Controller 可被直接调用）不可缓存：查找视为未命中、写入直接跳过，
 // 绝不越界读取 values。
+// 另外启用变量的 value/minimum/step 必须有限，且 diff/step 的商不得超出
+// long long 量化范围——否则 llround 会产生未定义结果并污染缓存键。
 bool valuesAlignedWithVariables(const StructureOptimizationProblem& problem,
                                 const std::vector<double>& values)
 {
-    return values.size() == problem.variables.size();
+    if (values.size() != problem.variables.size())
+        return false;
+    for (std::size_t i = 0; i < problem.variables.size(); ++i)
+    {
+        const StructureDesignVariable& variable = problem.variables[i];
+        if (!variable.enabled)
+            continue;
+        if (!std::isfinite(values[i]) || !std::isfinite(variable.minimum))
+            return false;
+        if (variable.step > 0.0)
+        {
+            // 仅正 step 分支执行除法量化，需要防溢出与除零；
+            // step<=0 走位型键分支（无除法），NaN 值已被上方拦截。
+            if (!std::isfinite(variable.step))
+                return false;
+            const double quotient =
+                (values[i] - variable.minimum) / variable.step;
+            if (!(quotient >= -9.0e18 && quotient <= 9.0e18))
+                return false;
+        }
+    }
+    return true;
 }
 
 } // anonymous namespace

@@ -7365,6 +7365,30 @@ static void testCacheKeySafeWithZeroStep()
     REQUIRE(!mismatchCache.find(problem, low,
                                 rws::StructureEvaluationStage::Quick, probed));
 
+    // ── NaN/Inf 值:不可缓存,查找视为未命中且不产生垃圾键 ──
+    variable.step = 0.01;
+    problem.variables.front() = variable;
+    rws::StructureCandidateCache finiteCache;
+    finiteCache.put(problem, {std::numeric_limits<double>::quiet_NaN()},
+                    rws::StructureEvaluationStage::Quick, stored);
+    REQUIRE(!finiteCache.find(problem,
+                              {std::numeric_limits<double>::quiet_NaN()},
+                              rws::StructureEvaluationStage::Quick, probed));
+    REQUIRE(!finiteCache.find(problem, low,
+                              rws::StructureEvaluationStage::Quick, probed));
+    finiteCache.put(problem,
+                    {std::numeric_limits<double>::infinity()},
+                    rws::StructureEvaluationStage::Quick, stored);
+    REQUIRE(!finiteCache.find(problem,
+                              {std::numeric_limits<double>::infinity()},
+                              rws::StructureEvaluationStage::Quick, probed));
+    // 合法值仍正常缓存
+    finiteCache.put(problem, low, rws::StructureEvaluationStage::Quick,
+                    stored);
+    REQUIRE(finiteCache.find(problem, low,
+                             rws::StructureEvaluationStage::Quick, probed));
+    REQUIRE(probed.index == 1);
+
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else
