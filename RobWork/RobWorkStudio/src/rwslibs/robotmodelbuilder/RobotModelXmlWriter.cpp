@@ -34,6 +34,22 @@ namespace {
 ///   实际 spec 接受任意 ≥0 的 transformJoints 数量)
 const int DefaultJointCount = 6;
 
+// GenericSixAxis desktop workcell dimensions (metres).  Keep the robot and
+// scene proportions in one place so writer, previews, and collision fixtures
+// use the same vendor-neutral envelope.
+constexpr double kTableTopHeight = 0.740;
+constexpr double kBaseDiameter = 0.200;
+constexpr double kBaseHeight = 0.180;
+constexpr double kShoulderColumnHeight = 0.120;
+constexpr double kUpperArmLength = 0.340;
+constexpr double kForearmLength = 0.290;
+constexpr double kWristRise = 0.120;
+constexpr double kFlangeReach = 0.100;
+constexpr double kGripperPalmOffset = 0.095;
+constexpr double kFingerLength = 0.100;
+constexpr double kFingerWidth = 0.022;
+constexpr double kGripperOpening = 0.070;
+
 /// 圆周率;与公开常量 RobotModelXmlWriter::kPi 等价,仅本文件使用
 static constexpr double Pi = RobotModelXmlWriter::kPi;
 
@@ -198,7 +214,7 @@ void appendJointHousings (RobotModelSpec& spec)
 
 /// 默认圆柱连杆(Link{i+1}To{i+2})的半径兜底值,长度随后由 computeLinkPose 重算
 /// 现在按 transformJoints.size()-1 生成,而非固定 5 个。
-void appendLinks (RobotModelSpec& spec)
+void appendLinks (RobotModelSpec& spec, bool respectUserDrawables = true)
 {
     const int n = static_cast< int >(spec.transformJoints.size ());
     if (n < 2)
@@ -208,7 +224,7 @@ void appendLinks (RobotModelSpec& spec)
     // shell on every link in a newly created standard project.
     static const double defaultRadii[6] = {0.075, 0.070, 0.062, 0.052, 0.044, 0.036};
     for (int i = 0; i < n - 1; ++i) {
-        if (hasUserDrawableForFrame (spec, spec.transformJoints[i].name))
+        if (respectUserDrawables && hasUserDrawableForFrame (spec, spec.transformJoints[i].name))
             continue;
         const std::array< double, 3 >& offset = spec.transformJoints[i + 1].pos;
         const double offsetLength = std::sqrt (offset[0] * offset[0] + offset[1] * offset[1] +
@@ -462,8 +478,8 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     const double alphaDeg[DefaultJointCount]  = {0, 90, 0, 0, 90, -90};
     const double offsetDeg[DefaultJointCount] = {0, 0, 0, 0, 0, 0};
     const double pos[DefaultJointCount][3]    = {
-        {0, 0, 0.180}, {0, 0, 0}, {-0.340, 0, 0},
-        {-0.290, 0, 0}, {0, 0, 0.120}, {0, 0, 0.100}};
+        {0, 0, kBaseHeight}, {0, 0, kShoulderColumnHeight}, {-kUpperArmLength, 0, 0},
+        {-kForearmLength, 0, 0}, {0, 0, kWristRise}, {0, 0, kFlangeReach}};
     for (int i = 0; i < DefaultJointCount; ++i) {
         DHJointSpec dh;
         dh.name      = "Joint" + std::to_string (i + 1);
@@ -524,17 +540,19 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     const std::array< double, 3 > armDark = {{0.16, 0.18, 0.21}};
     const std::array< double, 3 > gripperBlue = {{0.16, 0.40, 0.66}};
     appendPrimitive ("BasePedestal", "Base", "Cylinder", {{0.1, 0.1, 0.1}},
-                     0.100, 0.180, {{0, 0, 0.090}}, {{0, 0, 0}}, armDark);
+                     kBaseDiameter / 2.0, kBaseHeight, {{0, 0, kBaseHeight / 2.0}},
+                     {{0, 0, 0}}, armDark);
     appendPrimitive ("ShoulderHousing", "Joint1", "Cylinder", {{0.1, 0.1, 0.1}},
                      0.095, 0.115, {{0, 0, 0.045}}, {{0, 0, 0}}, armGray);
     appendPrimitive ("ToolFlange", "Joint6", "Cylinder", {{0.1, 0.1, 0.1}},
                      0.045, 0.060, {{0, 0, 0.030}}, {{0, 0, 0}}, armDark);
     appendPrimitive ("GripperPalm", "TCP", "Box", {{0.080, 0.060, 0.055}},
-                     0.0, 0.0, {{0, 0, 0.028}}, {{0, 0, 0}}, gripperBlue);
-    appendPrimitive ("FingerLeft", "TCP", "Box", {{0.022, 0.020, 0.100}},
-                     0.0, 0.0, {{0.046, 0, 0.105}}, {{0, 0, 0}}, gripperBlue);
-    appendPrimitive ("FingerRight", "TCP", "Box", {{0.022, 0.020, 0.100}},
-                     0.0, 0.0, {{-0.046, 0, 0.105}}, {{0, 0, 0}}, gripperBlue);
+                     0.0, 0.0, {{0, 0, kGripperPalmOffset}}, {{0, 0, 0}}, gripperBlue);
+    const double fingerCenterX = (kGripperOpening + kFingerWidth) / 2.0;
+    appendPrimitive ("FingerLeft", "TCP", "Box", {{kFingerWidth, 0.020, kFingerLength}},
+                     0.0, 0.0, {{fingerCenterX, 0, 0.170}}, {{0, 0, 0}}, gripperBlue);
+    appendPrimitive ("FingerRight", "TCP", "Box", {{kFingerWidth, 0.020, kFingerLength}},
+                     0.0, 0.0, {{-fingerCenterX, 0, 0.170}}, {{0, 0, 0}}, gripperBlue);
     appendLinks (spec);
     applyLinkGeometry (spec);
 
@@ -582,14 +600,13 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     appendDefaultDynamics (spec);
 
     // ---- 默认桌面取放工作站 ----
-    constexpr double tableTopHeight = 0.740;
     spec.robotBaseFrame.name      = "RobotBase";
     spec.robotBaseFrame.refFrame  = "WORLD";
     spec.robotBaseFrame.frameType = SceneFrameType::Fixed;
     spec.robotBaseFrame.daf       = false;
     spec.robotBaseFrame.poseMode  = PoseMode::RPYPos;
     spec.robotBaseFrame.rpyDeg    = {{0, 0, 0}};
-    spec.robotBaseFrame.pos       = {{-0.410, 0.170, tableTopHeight}};
+    spec.robotBaseFrame.pos       = {{-0.410, 0.170, kTableTopHeight}};
 
     const auto appendSceneFrame = [&spec] (const std::string& name, const std::string& parent,
                                            SceneFrameType type, bool daf,
@@ -618,18 +635,33 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
         geometry.collisionModel = true;
         spec.sceneGeometries.push_back (geometry);
     };
+    const auto appendSceneCylinder = [&spec] (const std::string& name, const std::string& frame,
+                                              double radius, double length,
+                                              const std::array< double, 3 >& position,
+                                              const std::array< double, 3 >& rgb) {
+        SceneGeometrySpec geometry;
+        geometry.name           = name;
+        geometry.refFrame       = frame;
+        geometry.kind           = GeometryKind::Cylinder;
+        geometry.radius         = radius;
+        geometry.length         = length;
+        geometry.pos            = position;
+        geometry.rgb            = rgb;
+        geometry.collisionModel = true;
+        spec.sceneGeometries.push_back (geometry);
+    };
 
     appendSceneFrame ("WorkTable", "WORLD", SceneFrameType::Fixed, false,
-                      {{0, 0, tableTopHeight - 0.030}});
+                      {{0, 0, kTableTopHeight - 0.030}});
     appendSceneFrame ("PickBin", "WorkTable", SceneFrameType::Fixed, false,
                       {{0.250, -0.230, 0.030}});
     appendSceneFrame ("PlaceBin", "WorkTable", SceneFrameType::Fixed, false,
                       {{0.250, 0.230, 0.030}});
     appendSceneFrame ("Obstacle", "WorkTable", SceneFrameType::Fixed, false,
                       {{0.020, 0.000, 0.030}});
-    appendSceneFrame ("PickPart", "PickBin", SceneFrameType::Movable, true,
+    appendSceneFrame ("PickPart", "PickBin", SceneFrameType::Movable, false,
                       {{0, 0, 0.045}});
-    appendSceneFrame ("InspectionPart", "WorkTable", SceneFrameType::Movable, true,
+    appendSceneFrame ("InspectionPart", "WorkTable", SceneFrameType::Movable, false,
                       {{0.050, 0.310, 0.055}});
     appendSceneFrame ("PickApproach", "WorkTable", SceneFrameType::Normal, false,
                       {{0.250, -0.230, 0.250}}, {{180, 0, 0}});
@@ -657,10 +689,10 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
                     {{0, 0, 0}}, {{0.42, 0.46, 0.50}});
     appendSceneBox ("PlaceBinFloor", "PlaceBin", {{0.220, 0.180, 0.020}},
                     {{0, 0, 0}}, {{0.42, 0.46, 0.50}});
-    appendSceneBox ("SafetyPost", "Obstacle", {{0.080, 0.080, 0.260}},
-                    {{0, 0, 0.130}}, {{0.82, 0.42, 0.14}});
-    appendSceneBox ("PickPartGeometry", "PickPart", {{0.050, 0.050, 0.040}},
-                    {{0, 0, 0}}, {{0.16, 0.52, 0.78}});
+    appendSceneCylinder ("SafetyPost", "Obstacle", 0.040, 0.260,
+                         {{0, 0, 0.130}}, {{0.82, 0.42, 0.14}});
+    appendSceneCylinder ("PickPartGeometry", "PickPart", 0.025, 0.040,
+                         {{0, 0, 0}}, {{0.16, 0.52, 0.78}});
     appendSceneBox ("InspectionPartGeometry", "InspectionPart", {{0.060, 0.040, 0.035}},
                     {{0, 0, 0}}, {{0.12, 0.68, 0.44}});
 
@@ -672,9 +704,23 @@ RobotModelSpec RobotModelXmlWriter::makeDefaultSixAxisModel (const QString& save
     spec.collisionSetup.excludeAdjacentLinkPairs = true;
     spec.collisionSetup.excludeStaticPairs       = false;
 
-    spec.proximitySetup.enabled                  = false;
+    // The static workcell assembly has intentional contacts (table/bin and
+    // table/base), so keep static-pair exclusion.  Re-add both movable parts
+    // explicitly, allowing their later motions to collide with any scene
+    // obstacle instead of being filtered from the initial-state grouping.
+    spec.proximitySetup.enabled                  = true;
     spec.proximitySetup.useIncludeAll            = true;
-    spec.proximitySetup.useExcludeStaticPairs    = false;
+    spec.proximitySetup.useExcludeStaticPairs    = true;
+    ProximityRuleSpec pickPartPairs;
+    pickPartPairs.kind     = ProximityRuleKind::Include;
+    pickPartPairs.patternA = "PickPart";
+    pickPartPairs.patternB = "*";
+    spec.proximitySetup.rules.push_back (pickPartPairs);
+    ProximityRuleSpec inspectionPartPairs;
+    inspectionPartPairs.kind     = ProximityRuleKind::Include;
+    inspectionPartPairs.patternA = "InspectionPart";
+    inspectionPartPairs.patternB = "*";
+    spec.proximitySetup.rules.push_back (inspectionPartPairs);
 
     return spec;
 }
@@ -2212,7 +2258,10 @@ void RobotModelXmlWriter::regenerateAutoLinkDrawables (RobotModelSpec& spec)
                                        .hasMatch ();
                         }),
         spec.drawables.end ());
-    appendLinks (spec);
+    // This is an explicit user command, so restore the complete kinematic
+    // helper set even when a normal visual shares a joint frame.  In contrast,
+    // applyDefaultDrawables() retains its non-invasive user-visual policy.
+    appendLinks (spec, false);
     applyLinkGeometry (spec);
 }
 

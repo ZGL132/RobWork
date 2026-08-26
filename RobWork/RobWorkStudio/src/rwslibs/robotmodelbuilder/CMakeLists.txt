@@ -102,7 +102,20 @@ if(build)
             RW::sdurw_loaders
             RW::sdurw_models
             RW::sdurw_proximity
+            RW::sdurw_proximitystrategies
     )
+    if(WIN32)
+        # The test executable lives in the Studio bin directory while
+        # sdurw_loaders is produced in the RobWork bin directory.  Keep the
+        # colocated DLL current so an XML loader regression test never runs
+        # against a stale dependency from an earlier build.
+        add_custom_command(
+            TARGET sdurws_robotmodelbuilder_xmltest POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:sdurw_loaders>
+                    $<TARGET_FILE_DIR:sdurws_robotmodelbuilder_xmltest>
+        )
+    endif()
     target_include_directories(sdurws_robotmodelbuilder_xmltest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     if(BUILD_TESTING)
         add_test(

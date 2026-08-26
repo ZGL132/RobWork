@@ -152,7 +152,12 @@ int main ()
         return fail ("ProximitySetup UseExcludeStaticPairs flag was not recovered.");
     if (imported.proximitySetup.rules.empty ())
         return fail ("ProximitySetup companion rules were not recovered.");
-    if (imported.proximitySetup.rules[0].patternA != "Joint.*")
+    const bool normalizedDeviceRule = std::any_of (
+        imported.proximitySetup.rules.begin (), imported.proximitySetup.rules.end (),
+        [] (const rws::ProximityRuleSpec& rule) {
+            return rule.patternA == "Joint.*" && rule.patternB == "Table";
+        });
+    if (!normalizedDeviceRule)
         return fail ("Device-scoped ProximitySetup pattern was not normalized.");
     if (!imported.collisionSetup.enabled)
         return fail ("CollisionSetup enable flag was not recovered.");

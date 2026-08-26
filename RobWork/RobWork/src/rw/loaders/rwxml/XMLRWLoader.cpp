@@ -1176,6 +1176,13 @@ rw::models::WorkCell::Ptr XMLRWLoader::loadWorkCell (const std::string& fname)
             filename += "/" + (*proxsetupIter)._filename;
 
             ProximitySetup s = DOMProximitySetupLoader::load (filename);
+            // Rules alone are not the full setup.  Propagate the broad-phase
+            // options too (last referenced setup wins), otherwise a freshly
+            // constructed ProximitySetup silently keeps
+            // UseExcludeStaticPairs=true and ignores an explicit false value
+            // from the XML file.
+            proximitySetup.setUseIncludeAll (s.useIncludeAll ());
+            proximitySetup.setUseExcludeStaticPairs (s.useExcludeStaticPairs ());
             proximitySetup.merge (s, prefix);
         }
 

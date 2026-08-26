@@ -3,6 +3,11 @@
 #include "RobotModelSpecJson.hpp"
 #include "RobotModelXmlWriter.hpp"
 
+#include <rw/kinematics/MovableFrame.hpp>
+#include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/models/Device.hpp>
+#include <rw/models/WorkCell.hpp>
+
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
@@ -26,6 +31,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <exception>
 #include <iostream>
 
 namespace {
@@ -1215,12 +1221,86 @@ bool verifyDefaultProjectModelBaseline (QString* failure)
         *failure = "The default project model did not retain the desktop workcell scene.";
         return false;
     }
-    if (!widget.isProjectDocumentDirty ()) {
-        *failure = "The default project model must start as an unsaved document.";
-        return false;
-    }
     if (QFileInfo::exists (output)) {
         *failure = "Applying the default project model created generated output.";
+        return false;
+    }
+
+    QCheckBox* sceneGeneration = NULL;
+    for (QCheckBox* checkbox : widget.findChildren< QCheckBox* > ()) {
+        if (checkbox->text () == "Generate Scene file") {
+            sceneGeneration = checkbox;
+            break;
+        }
+    }
+    if (sceneGeneration == NULL || !sceneGeneration->isChecked ()) {
+        *failure = "Applying the default project model must visibly enable scene generation.";
+        return false;
+    }
+    QTabWidget* previewTabs = findPreviewTabs (widget);
+    QTextEdit* scenePreview = previewTabs == NULL ? NULL : previewAt (previewTabs, "Scene XML");
+    if (scenePreview == NULL || scenePreview->toPlainText ().isEmpty () ||
+        !scenePreview->toPlainText ().contains ("PickPart")) {
+        *failure = "Applying the default project model must show the generated desktop scene preview.";
+        return false;
+    }
+
+    bool promoted = false;
+    QString promotedScene;
+    widget.setProjectPublishPromoter (
+        [&] (const QString& scene, const QStringList& dependencies, QString*) {
+            promoted = QFileInfo (scene).isFile () &&
+                       dependencies.contains (rws::RobotModelXmlWriter::collisionSetupFilePath (actual));
+            promotedScene = scene;
+            return promoted;
+        });
+    QPushButton* saveAndLoad = NULL;
+    for (QPushButton* button : widget.findChildren< QPushButton* > ()) {
+        if (button->text () == "Save and Load") {
+            saveAndLoad = button;
+            break;
+        }
+    }
+    if (saveAndLoad == NULL) {
+        *failure = "The default project model must expose the Save and Load action.";
+        return false;
+    }
+    saveAndLoad->click ();
+    if (!promoted || !QFileInfo (promotedScene).isFile () ||
+        !QFileInfo (rws::RobotModelXmlWriter::collisionSetupFilePath (actual)).isFile ()) {
+        *failure = "Save and Load must publish default desktop scene and collision outputs.";
+        return false;
+    }
+    try {
+        const rw::models::WorkCell::Ptr loaded =
+            rw::loaders::WorkCellLoader::Factory::load (promotedScene.toStdString ());
+        if (loaded.isNull ()) {
+            *failure = "Published default desktop scene could not be loaded: " + promotedScene;
+            return false;
+        }
+        const rw::core::Ptr< rw::models::Device > device = loaded->findDevice ("GenericSixAxis");
+        if (device.isNull () || device->getEnd () == NULL ||
+            device->getEnd ()->getName () != "GenericSixAxis.TCP") {
+            *failure = "Published default desktop scene lost TCP: " + promotedScene;
+            return false;
+        }
+        if (loaded->findFrame< rw::kinematics::MovableFrame > ("PickPart") == NULL ||
+            loaded->findFrame< rw::kinematics::MovableFrame > ("InspectionPart") == NULL) {
+            *failure = "Published default desktop scene lost movable workpieces: " + promotedScene;
+            return false;
+        }
+    }
+    catch (const std::exception& error) {
+        *failure = QString ("Published default desktop scene could not be reloaded: %1").arg (error.what ());
+        return false;
+    }
+    catch (...) {
+        *failure = "Published default desktop scene could not be reloaded.";
+        return false;
+    }
+
+    if (!widget.isProjectDocumentDirty ()) {
+        *failure = "The default project model must start as an unsaved document.";
         return false;
     }
     return true;
@@ -1299,7 +1379,10 @@ int main (int argc, char** argv)
         return fail ("Remove Geometry should remove the selected drawable.");
 
     int helperRow = -1;
-    for (int row = 0; row < drawables->rowCount (); ++row) {
+    // Pick the last generated link: the normal user drawable added above is
+    // attached to Joint1, and regeneration must still retain the full helper
+    // set alongside it.
+    for (int row = drawables->rowCount () - 1; row >= 0; --row) {
         if (drawables->item (row, 0)->text ().startsWith ("Link")) {
             helperRow = row;
             break;
@@ -1307,6 +1390,7 @@ int main (int argc, char** argv)
     }
     if (helperRow < 0)
         return fail ("Default model should contain a generated link helper.");
+    const QString removedHelperName = drawables->item (helperRow, 0)->text ();
     drawables->setCurrentCell (helperRow, 0);
     if (!QMetaObject::invokeMethod (&widget, "removeSelectedDrawable", Qt::DirectConnection))
         return fail ("Could not remove a generated link helper.");
@@ -1314,6 +1398,11 @@ int main (int argc, char** argv)
     if (!QMetaObject::invokeMethod (&widget, "regenerateLinkHelpers", Qt::DirectConnection) ||
         drawables->rowCount () != countWithoutHelper + 1)
         return fail ("Regenerate Link Helpers should restore only the missing link helper.");
+    bool restoredHelper = false;
+    for (int row = 0; row < drawables->rowCount (); ++row)
+        restoredHelper = restoredHelper || drawables->item (row, 0)->text () == removedHelperName;
+    if (!restoredHelper)
+        return fail ("Regenerate Link Helpers should restore the removed helper by name.");
 
     QCheckBox* sceneGeneration = NULL;
     const QList< QCheckBox* > checkboxes = widget.findChildren< QCheckBox* > ();

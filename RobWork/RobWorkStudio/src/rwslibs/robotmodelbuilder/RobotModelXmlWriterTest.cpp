@@ -18,11 +18,19 @@
 #include "RobotModelSpecJson.hpp"
 #include "RobotModelUrdfImporter.hpp"
 
+#include <rw/geometry/Geometry.hpp>
 #include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/kinematics/MovableFrame.hpp>
+#include <rw/math/Transform3D.hpp>
+#include <rw/math/Vector3D.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/proximity/BasicFilterStrategy.hpp>
+#include <rw/proximity/CollisionDetector.hpp>
 #include <rw/proximity/CollisionSetup.hpp>
 #include <rw/proximity/ProximityFilter.hpp>
+#include <rw/proximity/ProximitySetup.hpp>
+#include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
 
 #include <QCoreApplication>
 #include <QDir>
@@ -177,7 +185,7 @@ int main (int argc, char** argv)
         return runExternalUrdfImport (QString::fromLocal8Bit (argv[1]));
 
     // A fresh standard project uses automatic links for its arm silhouette.  The
-    // first joint pair has zero separation, so four effective links plus the
+    // raised shoulder adds an automatic first link, so five effective links plus the
     // base, shoulder turntable, flange, and three gripper bodies remain fixed.
     {
         const RobotModelSpec defaultSpec =
@@ -195,9 +203,30 @@ int main (int argc, char** argv)
                 return fail ("Default six-axis model contains an unnecessary fixed drawable: " +
                              QString::fromStdString (drawable.name));
         }
-        if (autoLinkCount != 4 || fixedDetailCount != 6 ||
+        if (autoLinkCount != 5 || fixedDetailCount != 6 ||
             defaultSpec.drawables.size () != autoLinkCount + fixedDetailCount)
-             return fail ("Default six-axis model should contain four automatic links and six fixed details.");
+             return fail ("Default six-axis model should contain five automatic links and six fixed details.");
+    }
+
+    // Explicitly rebuilding the helper set must be deterministic.  A normal
+    // user visual on a joint may coexist with the generated arm silhouette;
+    // it must not make an unrelated helper disappear during regeneration.
+    {
+        RobotModelSpec regenerated =
+            RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+        DrawableSpec userVisual;
+        userVisual.name       = "UserShoulderMarker";
+        userVisual.refFrame   = "Joint1";
+        userVisual.shape      = "Box";
+        userVisual.dimensions = {{0.02, 0.02, 0.02}};
+        regenerated.drawables.push_back (userVisual);
+        RobotModelXmlWriter::regenerateAutoLinkDrawables (regenerated);
+
+        size_t autoLinkCount = 0;
+        for (const DrawableSpec& drawable : regenerated.drawables)
+            autoLinkCount += drawable.autoLinkGeometry ? 1 : 0;
+        if (autoLinkCount != 5)
+            return fail ("Regenerating automatic links should retain all five desktop-arm helpers.");
     }
 
     // A user-converted URDF visual keeps its original name.  Explicit
@@ -832,6 +861,9 @@ int main (int argc, char** argv)
         return fail ("Default model should generate drawables.");
     if (!spec.generateScene)
         return fail ("Default desktop model should generate a scene file.");
+    if (!spec.proximitySetup.enabled || !spec.proximitySetup.useExcludeStaticPairs ||
+        spec.proximitySetup.rules.size () != 2)
+        return fail ("Default desktop model should retain movable workpiece collision rules.");
     if (spec.dynamics.generateDynamicWorkCell)
         return fail ("Default model should not generate a Dynamic WorkCell.");
 
@@ -840,9 +872,9 @@ int main (int argc, char** argv)
         return fail ("Default model did not validate: " + errors.join ("; "));
 
     // The new-project template is a compact desktop arm: a raised 0.18 m
-    // pedestal, 0.34 m upper arm, 0.29 m forearm, and compact wrist offsets.
+    // pedestal, raised shoulder, 0.34 m upper arm, 0.29 m forearm, and compact wrist offsets.
     const double expectedDesktopOffsets[6][3] = {
-        {0.0, 0.0, 0.180}, {0.0, 0.0, 0.0}, {-0.340, 0.0, 0.0},
+        {0.0, 0.0, 0.180}, {0.0, 0.0, 0.120}, {-0.340, 0.0, 0.0},
         {-0.290, 0.0, 0.0}, {0.0, 0.0, 0.120}, {0.0, 0.0, 0.100}};
     for (int i = 0; i < 6; ++i) {
         for (int axis = 0; axis < 3; ++axis) {
@@ -939,7 +971,7 @@ int main (int argc, char** argv)
     if (!contains (serialXml,
                    "<Joint name=\"Joint2\" type=\"Revolute\">\n"
                    "    <RPY>0 0 90</RPY>\n"
-                   "    <Pos>0 0 0</Pos>"))
+                   "    <Pos>0 0 0.12</Pos>"))
         return fail ("Joint RPY+Pos defaults should convert DH alpha to RobWork RPY Z-Y-X order.");
     // 默认 Drawable 不应该再包含坐标轴几何(老版本遗留)
     if (contains (serialXml, "<Drawable name=\"Joint1Axis\""))
@@ -1308,9 +1340,9 @@ int main (int argc, char** argv)
     autoDrawable.drawables[6].rpyDeg = {{10, 20, 30}};
     autoDrawable.drawables[6].pos    = {{0.11, 0.22, 0.33}};
     RobotModelXmlWriter::applyLinkGeometry (autoDrawable);
-    if (std::abs (autoDrawable.drawables[6].length - 0.340) > 1e-6 ||
-        std::abs (autoDrawable.drawables[6].rpyDeg[1] + 90) > 1e-6 ||
-        std::abs (autoDrawable.drawables[6].pos[0] + 0.170) > 1e-6)
+    if (std::abs (autoDrawable.drawables[6].length - 0.120) > 1e-6 ||
+        std::abs (autoDrawable.drawables[6].rpyDeg[0]) > 1e-6 ||
+        std::abs (autoDrawable.drawables[6].pos[2] - 0.060) > 1e-6)
         return fail ("Auto Link1To2 drawable geometry should be derived from kinematics.");
 
     // ---- 非法输入应被 validate 拦截 ----
@@ -2945,16 +2977,24 @@ int main (int argc, char** argv)
         QDir ().mkpath (dir);
         RobotModelSpec loadSpec = RobotModelXmlWriter::makeDefaultSixAxisModel (dir);
         loadSpec.generateScene = true;
-        loadSpec.proximitySetup.enabled = true;
-        ProximityRuleSpec rule;
-        rule.kind     = ProximityRuleKind::Include;
-        rule.patternA = "Joint.*";
-        rule.patternB = "Table.*";
-        loadSpec.proximitySetup.rules.push_back (rule);
 
         QStringList loadErrors;
         if (!RobotModelXmlWriter::saveFiles (loadSpec, loadErrors))
             return fail ("saveFiles failed before WorkCell load test: " + loadErrors.join ("; "));
+
+        // A setup-file boolean is not a rule; verify that an explicit false
+        // survives the full XML load path independently of the default scene.
+        RobotModelSpec optionSpec = loadSpec;
+        optionSpec.saveDirectory = (dir + "/proximity_option_roundtrip").toStdString ();
+        optionSpec.proximitySetup.useExcludeStaticPairs = false;
+        QStringList optionErrors;
+        if (!RobotModelXmlWriter::saveFiles (optionSpec, optionErrors))
+            return fail ("saveFiles failed before ProximitySetup option load test: " +
+                         optionErrors.join ("; "));
+        const rw::models::WorkCell::Ptr optionWc = rw::loaders::WorkCellLoader::Factory::load (
+            RobotModelXmlWriter::sceneFilePath (optionSpec).toStdString ());
+        if (optionWc.isNull () || rw::proximity::ProximitySetup::get (optionWc).useExcludeStaticPairs ())
+            return fail ("An explicit ProximitySetup UseExcludeStaticPairs=false must survive loading.");
 
         try {
             rw::models::WorkCell::Ptr wc =
@@ -2964,6 +3004,31 @@ int main (int argc, char** argv)
                 return fail ("WorkCellLoader returned null for generated Scene.");
             if (wc->findDevice ("GenericSixAxis").isNull ())
                 return fail ("Loaded WorkCell should contain GenericSixAxis device.");
+            const rw::proximity::ProximitySetup loadedProximity =
+                rw::proximity::ProximitySetup::get (wc);
+            if (!loadedProximity.useExcludeStaticPairs ())
+                return fail ("Loaded desktop WorkCell must retain static assembly-pair exclusion.");
+            bool includesPickPartObstacle = false;
+            QStringList loadedProximityRules;
+            for (const rw::proximity::ProximitySetupRule& rule :
+                 loadedProximity.getProximitySetupRules ()) {
+                const std::pair< std::string, std::string > patterns = rule.getPatterns ();
+                loadedProximityRules << QString::fromStdString (patterns.first + " / " + patterns.second);
+                if (rule.type () == rw::proximity::ProximitySetupRule::INCLUDE_RULE &&
+                    rule.matchPatternA ("PickPart") && rule.matchPatternB ("Obstacle")) {
+                    includesPickPartObstacle = true;
+                    break;
+                }
+            }
+            if (!includesPickPartObstacle)
+                return fail ("Loaded desktop WorkCell must retain the PickPart collision include rule: " +
+                             loadedProximityRules.join (", "));
+            rw::kinematics::MovableFrame* const pickPart =
+                wc->findFrame< rw::kinematics::MovableFrame > ("PickPart");
+            rw::kinematics::MovableFrame* const inspectionPart =
+                wc->findFrame< rw::kinematics::MovableFrame > ("InspectionPart");
+            if (pickPart == NULL || inspectionPart == NULL)
+                return fail ("Loaded desktop WorkCell should preserve both movable workpieces.");
             const rw::proximity::CollisionSetup setup =
                 rw::proximity::CollisionSetup::get (wc);
             if (setup.getExcludeList ().empty ())
@@ -2980,6 +3045,54 @@ int main (int argc, char** argv)
             }
             if (!excludesAdjacentJointPair)
                 return fail ("CollisionSetup should exclude the adjacent Joint1-Joint2 pair.");
+
+            rw::proximity::CollisionDetector detector (
+                wc, rwlibs::proximitystrategies::ProximityStrategyFactory::makeDefaultCollisionStrategy ());
+            const rw::core::Ptr< rw::kinematics::Frame > pickPartFrame = wc->findFrame ("PickPart");
+            const rw::core::Ptr< rw::kinematics::Frame > obstacleFrame = wc->findFrame ("Obstacle");
+            if (detector.getGeometryIDs (pickPartFrame).empty () ||
+                detector.getGeometryIDs (obstacleFrame).empty ())
+                return fail ("Loaded desktop workcell must expose collision geometry for PickPart and Obstacle.");
+            rw::kinematics::State state = wc->getDefaultState ();
+            rw::proximity::CollisionDetector::QueryResult defaultCollision;
+            if (detector.inCollision (state, &defaultCollision)) {
+                QStringList collidingNames;
+                for (const auto& pair : defaultCollision.collidingFrames)
+                    collidingNames << QString::fromStdString (pair.first->getName ()) + " / " +
+                                          QString::fromStdString (pair.second->getName ());
+                return fail ("The default desktop workcell pose must be collision free: " +
+                             collidingNames.join (", "));
+            }
+
+            // Offset into the SafetyPost's shell at (0.020, 0.000, 0.870) in WORLD.
+            // A non-concentric overlap also exercises surface-contact strategies.
+            pickPart->moveTo (
+                rw::math::Transform3D<> (rw::math::Vector3D<> (0.060, 0.000, 0.870)), state);
+            const rw::math::Vector3D<> pickPartPosition =
+                rw::kinematics::Kinematics::worldTframe (pickPartFrame, state).P ();
+            if (std::abs (pickPartPosition[0] - 0.060) > 1e-9 ||
+                std::abs (pickPartPosition[1]) > 1e-9 ||
+                std::abs (pickPartPosition[2] - 0.870) > 1e-9)
+                return fail ("PickPart should move to the requested SafetyPost world position.");
+            const rw::math::Transform3D<> obstacleTransform =
+                rw::kinematics::Kinematics::worldTframe (obstacleFrame, state);
+            const std::string pickGeometryId = detector.getGeometryIDs (pickPartFrame).front ();
+            const std::string obstacleGeometryId = detector.getGeometryIDs (obstacleFrame).front ();
+            const rw::math::Vector3D<> pickGeometryPosition =
+                detector.getGeometry (pickPartFrame, pickGeometryId)->getTransform ().P ();
+            const rw::math::Vector3D<> obstacleGeometryPosition =
+                detector.getGeometry (obstacleFrame, obstacleGeometryId)->getTransform ().P ();
+            if (!detector.getCollisionStrategy ()->inCollision (
+                    pickPartFrame, rw::math::Transform3D<> (pickPartPosition), obstacleFrame,
+                    obstacleTransform)) {
+                return fail (QString ("PickPart and SafetyPost collision geometry must overlap at the forced pose "
+                                      "(pick local %1,%2,%3; obstacle local %4,%5,%6).").
+                             arg (pickGeometryPosition[0]).arg (pickGeometryPosition[1]).
+                             arg (pickGeometryPosition[2]).arg (obstacleGeometryPosition[0]).
+                             arg (obstacleGeometryPosition[1]).arg (obstacleGeometryPosition[2]));
+            }
+            if (!detector.inCollision (state))
+                return fail ("Moving PickPart into SafetyPost must produce collision evidence.");
         }
         catch (const std::exception& e) {
             return fail (QString ("WorkCellLoader failed for generated Scene: %1").arg (e.what ()));
