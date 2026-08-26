@@ -4933,6 +4933,129 @@ static void testBaselineRebuildsMissingCanonicalShadow()
     std::printf("PASSED\n");
 }
 
+// 前置声明:两个冻结契约测试位于该夹具定义之前,但仅在此处调用。
+static rws::StructureOptimizationProblem makeWorkspaceCoverageProblem();
+
+// 子套件 冻结契约指纹(C1/D1):可编辑 Tasks/Constraints 的稳定指纹语义——
+// 内容不变则稳定；任务或约束任一编辑即偏离；与权重/运行配置无关；
+// 恢复原始内容(等价重新冻结)回到参考值。
+static void testFrozenContractStalenessFingerprint()
+{
+    std::printf("testFrozenContractStalenessFingerprint ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    REQUIRE(problem.tasks.empty());
+
+    rws::OptimizationTaskPoint task;
+    task.point.id = "T1";
+    task.point.name = "Task One";
+    task.point.position = {{0.25, -0.1, 0.6}};
+    task.point.enabled = true;
+    task.required = true;
+    problem.tasks.push_back(task);
+
+    rws::StructureConstraint constraint;
+    constraint.id = "coverage.box";
+    constraint.enabled = true;
+    constraint.hard = true;
+    constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    constraint.threshold = 0.5;
+    problem.constraints.push_back(constraint);
+
+    const std::string reference =
+        rws::StructureOptimizationUiLogic::editableContractFingerprint(
+            problem.tasks, problem.constraints);
+    REQUIRE(!reference.empty());
+    // 稳定性: 同内容重复计算必须一致
+    REQUIRE(rws::StructureOptimizationUiLogic::editableContractFingerprint(
+                problem.tasks, problem.constraints) == reference);
+
+    // 任务编辑 -> 偏离
+    std::vector<rws::OptimizationTaskPoint> editedTasks = problem.tasks;
+    editedTasks.front().point.position[2] = 0.61;
+    REQUIRE(rws::StructureOptimizationUiLogic::editableContractFingerprint(
+                editedTasks, problem.constraints) != reference);
+
+    // 约束编辑 -> 偏离
+    std::vector<rws::StructureConstraint> editedConstraints = problem.constraints;
+    editedConstraints.front().threshold = 0.55;
+    REQUIRE(rws::StructureOptimizationUiLogic::editableContractFingerprint(
+                problem.tasks, editedConstraints) != reference);
+
+    // 恢复原始内容(重新冻结的语义) -> 回到参考值
+    REQUIRE(rws::StructureOptimizationUiLogic::editableContractFingerprint(
+                problem.tasks, problem.constraints) == reference);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 Widget 冻结契约门禁(C1/D1):三种状态转换——任务编辑进入 stale、
+// 约束编辑进入 stale、setProblem(从需求源重新冻结)恢复可运行。
+static void testWidgetFrozenContractStaleGating()
+{
+    std::printf("testWidgetFrozenContractStaleGating ... ");
+
+    rws::StructureOptimizationProblem frozen = makeWorkspaceCoverageProblem();
+    rws::OptimizationTaskPoint task;
+    task.point.id = "T1";
+    task.point.position = {{0.25, -0.1, 0.6}};
+    task.point.enabled = true;
+    task.required = true;
+    frozen.tasks.push_back(task);
+    rws::StructureConstraint constraint;
+    constraint.id = "coverage.box";
+    constraint.enabled = true;
+    constraint.hard = true;
+    constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    constraint.threshold = 0.5;
+    frozen.constraints.push_back(constraint);
+    // 冻结执行契约标记(载入自需求源的项目才带)
+    rws::RequirementExecutionTask contractTask;
+    contractTask.level = rws::RequirementExecutionLevel::Must;
+    contractTask.compileState = rws::RequirementExecutionCompileState::Included;
+    frozen.requirementExecution.tasks.push_back(contractTask);
+
+    rws::StructureOptimizerWidget widget;
+    widget.setProblem(frozen);
+    REQUIRE(!widget.isFrozenContractStale());
+
+    // 任务编辑 -> stale
+    QTableView* taskView = widget.findChild<QTableView*>("optimizationTaskTable");
+    REQUIRE(taskView != nullptr);
+    QAbstractItemModel* taskModel = taskView->model();
+    const double originalX =
+        taskModel->index(0, rws::OptimizationTaskTableModel::XColumn).data().toDouble();
+    REQUIRE(taskModel->setData(
+        taskModel->index(0, rws::OptimizationTaskTableModel::XColumn),
+        originalX + 0.05));
+    REQUIRE(widget.isFrozenContractStale());
+
+    // 从需求源重新冻结(整体重载) -> 恢复可运行
+    widget.setProblem(frozen);
+    REQUIRE(!widget.isFrozenContractStale());
+
+    // 约束编辑 -> stale
+    QTableView* constraintView =
+        widget.findChild<QTableView*>("structureConstraintTable");
+    REQUIRE(constraintView != nullptr);
+    QAbstractItemModel* constraintModel = constraintView->model();
+    const double originalThreshold =
+        constraintModel->index(0, rws::StructureConstraintTableModel::ThresholdColumn)
+            .data().toDouble();
+    REQUIRE(constraintModel->setData(
+        constraintModel->index(0, rws::StructureConstraintTableModel::ThresholdColumn),
+        originalThreshold + 0.05));
+    REQUIRE(widget.isFrozenContractStale());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
@@ -12397,6 +12520,8 @@ int main(int argc, char** argv)
         std::fflush(stdout);
         testStructureOptimizationControllerAsyncState();
         std::fflush(stdout);
+        testWidgetFrozenContractStaleGating();
+        std::fflush(stdout);
 
         if (g_testFailures == 0)
         {
@@ -12468,6 +12593,7 @@ int main(int argc, char** argv)
     testCandidatePreviewController();
     testStructureOptimizationControllerAsyncState();
     testControllerDiscardsResultsFromPreviousProject();
+    testFrozenContractStalenessFingerprint();
 
     std::printf("\n");
 

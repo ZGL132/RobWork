@@ -464,6 +464,15 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
         _loadedProblem.variables =
             StructureOptimizationUiLogic::suggestVariables(_loadedProblem.context);
 
+    // C1/D1: 记录冻结契约的参考指纹。存在冻结任务/区域时启用一致性检测；
+    // 之后任何 Tasks/Constraints 编辑都会使实时指纹偏离此参考值。
+    _hasFrozenRequirementContract =
+        !_loadedProblem.requirementExecution.tasks.empty() ||
+        !_loadedProblem.requirementExecution.workspaceRegions.empty();
+    _frozenContractReferenceFingerprint =
+        StructureOptimizationUiLogic::editableContractFingerprint(
+            _loadedProblem.tasks, _loadedProblem.constraints);
+
     _variableModel->setVariables(_loadedProblem.variables);
     _taskModel->setTasks(_loadedProblem.tasks);
     _constraintModel->setConstraints(_loadedProblem.constraints);
@@ -556,6 +565,14 @@ bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString*
 
 bool StructureOptimizerWidget::saveProjectDocument(const QString& targetPath, QString* error) const
 {
+    // C1/D1: stale 状态下禁止保存正式项目文档——否则"编辑后任务 + 旧冻结契约"
+    // 会被持久化，重新载入时参考指纹被刷新，形成绕过检测的持久化旁路。
+    if (isFrozenContractStale()) {
+        if (error != nullptr)
+            *error = QStringLiteral(
+                "Save blocked: frozen requirements are stale. Re-freeze from the requirement source.");
+        return false;
+    }
     const int selectedCandidate = selectedCandidateIndex();
     if (!StructureOptimizationProjectAdapter::saveProject(
             targetPath, collectProblem(), selectedCandidate, error))
@@ -624,6 +641,16 @@ bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
     if (reason != nullptr)
         reason->clear();
     return true;
+}
+
+bool StructureOptimizerWidget::isFrozenContractStale() const
+{
+    if (!_hasFrozenRequirementContract)
+        return false;
+    const StructureOptimizationProblem current = collectProblem();
+    return StructureOptimizationUiLogic::editableContractFingerprint(
+               current.tasks, current.constraints) !=
+           _frozenContractReferenceFingerprint;
 }
 
 // 读取候选列表中当前选中项的索引；未选中或视图无效时返回 -1（表示不导出候选）。
@@ -1132,17 +1159,30 @@ void StructureOptimizerWidget::updateRunState()
     std::string reason;
     const StructureOptimizationProblem problem = collectProblem();
     const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason);
+    const bool contractStale = isFrozenContractStale();
     const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
                             (!problem.context.modelSpec.transformJoints.empty() ||
                              !problem.context.modelSpec.dhJoints.empty());
-    _startButton->setEnabled(runnable && !_controller->isRunning() && !_baselineOnlyRunning);
+    _startButton->setEnabled(runnable && !contractStale && !_controller->isRunning() && !_baselineOnlyRunning);
     _applyTemplateButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
     _preflightButton->setEnabled(!_controller->isRunning() && !_baselineOnlyRunning);
-    _baselineButton->setEnabled(modelReady && !_controller->isRunning() && !_baselineOnlyRunning);
+    _baselineButton->setEnabled(modelReady && !contractStale && !_controller->isRunning() && !_baselineOnlyRunning);
     _compareButton->setEnabled(_lastResult.candidates.size() > 1 &&
                                !_controller->isRunning() && !_baselineOnlyRunning);
     _pauseButton->setEnabled(_controller->isRunning());
     _cancelButton->setEnabled(_controller->isRunning());
+    if (contractStale) {
+        // C1/D1: 冻结契约已过期。Preflight 仍可执行，但结果必须附带过期警示，
+        // 且 Start/Baseline/Verified 与正式导出保持阻断。
+        if (_preflightLabel != nullptr)
+            _preflightLabel->setText(QStringLiteral(
+                "Preflight note: frozen requirements are STALE. Edits diverge from the frozen "
+                "execution contract; re-freeze from the requirement source."));
+        _statusLabel->setText(QStringLiteral(
+            "Frozen requirements are stale. Start, baseline, verified evaluation and formal "
+            "export are blocked until the project is re-frozen from the requirement source."));
+        return;
+    }
     if (runnable) {
         if (_modelSourceStatus == RobotModelSourceStatus::Current)
             _statusLabel->setText("Optimization project ready.");
@@ -1273,6 +1313,11 @@ void StructureOptimizerWidget::runStructurePreflight()
 
 void StructureOptimizerWidget::evaluateStructureBaseline()
 {
+    if (isFrozenContractStale()) {
+        _statusLabel->setText(QStringLiteral(
+            "Baseline blocked: frozen requirements are stale. Re-freeze from the requirement source."));
+        return;
+    }
     runStructurePreflight();
     const StructureOptimizationProblem problem = collectProblem();
     const bool modelReady = !problem.context.modelSpec.robotName.empty() &&
@@ -1324,6 +1369,12 @@ void StructureOptimizerWidget::compareStructureCandidates()
 void StructureOptimizerWidget::startOptimization()
 {
     updateModelSourceStatus();
+    if (isFrozenContractStale()) {
+        // 直接调用防御：按钮通常已被 updateRunState 禁用。
+        _statusLabel->setText(QStringLiteral(
+            "Start blocked: frozen requirements are stale. Re-freeze from the requirement source."));
+        return;
+    }
     StructureOptimizationProblem problem = collectProblem();
     if (!_controller->start(problem))
         return;
@@ -1646,6 +1697,13 @@ void StructureOptimizerWidget::saveProject()
 
 void StructureOptimizerWidget::exportResult()
 {
+    if (isFrozenContractStale()) {
+        QMessageBox::information(this, QStringLiteral("Export Report"),
+                                 QStringLiteral(
+                                     "Formal export is blocked: frozen requirements are stale. "
+                                     "Re-freeze from the requirement source before exporting results."));
+        return;
+    }
     if (_lastResult.candidates.empty()) {
         QMessageBox::information(this, "Export Report", "No optimization results to export.");
         return;

@@ -157,6 +157,16 @@ public:
      */
     bool canCloseProjectDocument(QString* reason = nullptr) const;
 
+    /**
+     * @brief 冻结需求契约是否已因本地编辑而过期（D1 决策）。
+     *
+     * 存在冻结执行契约且当前 Tasks/Constraints 指纹偏离载入时的参考指纹。
+     * stale 期间 Start/Baseline/Verified 与正式导出全部阻断，仅允许
+     * Preflight 与编辑；恢复唯一途径是从需求源重新冻结（重新载入/导入），
+     * 不提供用当前表格重建契约的旁路。
+     */
+    bool isFrozenContractStale() const;
+
 Q_SIGNALS:
     /**
      * @brief 当界面上会改变可持久化优化问题的控件/模型发生变化时触发的信号。
@@ -240,6 +250,10 @@ private:
     QTabWidget* _tabs = nullptr;                       //!< 五页签的主 Tab 控件
     StructureOptimizationResult _baselineResult;
     bool _baselineOnlyRunning = false;
+    // C1/D1: 冻结契约一致性。载入(或重新冻结)时记录可编辑 Tasks/Constraints
+    // 的参考指纹；collectProblem 的实时指纹偏离参考即 stale。
+    bool _hasFrozenRequirementContract = false;
+    std::string _frozenContractReferenceFingerprint;
     QTableView* _variableView = nullptr;
     QTableView* _taskView = nullptr;                   //!< 任务点表格视图
     QTableView* _constraintView = nullptr;             //!< 约束条件表格视图

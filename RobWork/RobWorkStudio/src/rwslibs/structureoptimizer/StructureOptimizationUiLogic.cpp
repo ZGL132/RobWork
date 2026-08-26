@@ -1,6 +1,7 @@
 #include "StructureOptimizationUiLogic.hpp"
 
 #include "OptimizationPreflight.hpp"
+#include "StructureOptimizationJson.hpp"
 
 #include <cmath>
 #include <limits>
@@ -287,4 +288,17 @@ bool StructureOptimizationUiLogic::hasRunnableInputs(
             *reason = "Optimization preflight blocked the run.";
     }
     return false;
+}
+
+std::string StructureOptimizationUiLogic::editableContractFingerprint(
+    const std::vector<OptimizationTaskPoint>& tasks,
+    const std::vector<StructureConstraint>& constraints)
+{
+    // 复用问题级规范化 JSON 编码器（键排序、确定性序列化）。临时 problem 只
+    // 携带 tasks/constraints，其余字段保持默认值，因此指纹与权重、运行配置等
+    // 可编辑无关项完全解耦。
+    StructureOptimizationProblem scratch;
+    scratch.tasks = tasks;
+    scratch.constraints = constraints;
+    return StructureOptimizationJson::problemToJson(scratch);
 }
