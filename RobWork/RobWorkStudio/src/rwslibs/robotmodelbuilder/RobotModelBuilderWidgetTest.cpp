@@ -24,6 +24,7 @@
 #include <QTextStream>
 #include <QTimer>
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -1191,6 +1192,27 @@ bool verifyDefaultProjectModelBaseline (QString* failure)
         actual.transformJoints.size () != expected.transformJoints.size () ||
         actual.transformJoints.size () != 6) {
         *failure = "The default project model is not the factory six-axis baseline.";
+        return false;
+    }
+    const auto hasSceneFrame = [&actual] (const std::string& name,
+                                          rws::SceneFrameType type) {
+        return std::any_of (actual.sceneFrames.begin (), actual.sceneFrames.end (),
+                            [&] (const rws::FrameSpec& frame) {
+                                return frame.name == name && frame.frameType == type;
+                            });
+    };
+    const auto hasTcpDrawable = [&actual] (const std::string& name) {
+        return std::any_of (actual.drawables.begin (), actual.drawables.end (),
+                            [&] (const rws::DrawableSpec& drawable) {
+                                return drawable.name == name && drawable.refFrame == "TCP";
+                            });
+    };
+    if (!actual.generateScene ||
+        !hasSceneFrame ("PickPart", rws::SceneFrameType::Movable) ||
+        !hasSceneFrame ("InspectionPart", rws::SceneFrameType::Movable) ||
+        !hasTcpDrawable ("GripperPalm") || !hasTcpDrawable ("FingerLeft") ||
+        !hasTcpDrawable ("FingerRight")) {
+        *failure = "The default project model did not retain the desktop workcell scene.";
         return false;
     }
     if (!widget.isProjectDocumentDirty ()) {
