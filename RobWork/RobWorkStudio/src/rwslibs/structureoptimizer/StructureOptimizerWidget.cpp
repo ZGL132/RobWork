@@ -450,6 +450,13 @@ void StructureOptimizerWidget::setProblem(
 void StructureOptimizerWidget::setProblemWithManagedRoot(
     const StructureOptimizationProblem& problem, const QString& managedProjectRoot)
 {
+    // 项目会话边界(C2)：setProblem/New/Open/Close/导入全部汇聚于此。先取消
+    // 在途运行并递增 projectEpoch，让旧会话的完成/进度事件在控制器内被丢弃，
+    // 绝不写入新项目的候选表、结果缓存或状态栏。禁用按钮只是辅助防护。
+    if (_controller != nullptr) {
+        _controller->cancel();
+        _controller->notifyProjectSessionChanged();
+    }
     _managedProjectRoot = managedProjectRoot.trimmed().isEmpty()
         ? QString() : QFileInfo(managedProjectRoot).absoluteFilePath();
     _loadedProblem = problem;
@@ -608,9 +615,10 @@ void StructureOptimizerWidget::clearProjectDocumentContext()
 
 bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
 {
-    if (_controller != nullptr && _controller->isRunning()) {
+    if (_controller != nullptr &&
+        (_controller->isRunning() || _controller->isBaselineRunning())) {
         if (reason != nullptr)
-            *reason = QStringLiteral("Optimization is still running. Cancel it or wait for completion.");
+            *reason = QStringLiteral("Optimization or baseline evaluation is still running. Cancel it or wait for completion.");
         return false;
     }
     if (reason != nullptr)

@@ -37,7 +37,8 @@ StructureOptimizationController::StructureOptimizationController(QObject* parent
 StructureOptimizationController::StructureOptimizationController(
     RunFunction runFunction, QObject* parent)
     : QObject(parent),
-      _runFunction(std::move(runFunction))
+      _runFunction(std::move(runFunction)),
+      _baselineRunFunction(&StructureOptimizationController::runDefaultBaselineEvaluation)
 {
     connect(&_watcher, &QFutureWatcher<StructureOptimizationResult>::finished,
             this, &StructureOptimizationController::finishCurrentRun);
@@ -74,9 +75,11 @@ bool StructureOptimizationController::start(
     StructureOptimizationController* receiver = this;
     RunFunction runFunction = _runFunction;
     const std::uint64_t runId = ++_runId;
+    const std::uint64_t projectEpoch = _projectEpoch;
+    _activeRunProjectEpoch = projectEpoch;
 
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
-        [snapshot, control, receiver, runFunction, runId]() {
+        [snapshot, control, receiver, runFunction, runId, projectEpoch]() {
             StructureOptimizationCallbacks callbacks;
             callbacks.isCancellationRequested = [control]() {
                 return control->canceled.load();
@@ -87,11 +90,12 @@ bool StructureOptimizationController::start(
                     return !control->paused.load() || control->canceled.load();
                 });
             };
-            callbacks.onProgress = [receiver, runId](const StructureProgress& progress) {
+            callbacks.onProgress = [receiver, runId, projectEpoch](const StructureProgress& progress) {
                 QMetaObject::invokeMethod(
                     receiver,
-                    [receiver, progress, runId]() {
-                        if (receiver->_runId == runId)
+                    [receiver, progress, runId, projectEpoch]() {
+                        if (receiver->_runId == runId &&
+                            receiver->_projectEpoch == projectEpoch)
                             Q_EMIT receiver->progressChanged(progress);
                     },
                     Qt::QueuedConnection);
@@ -135,8 +139,11 @@ bool StructureOptimizationController::startBaselineEvaluation(
     const std::shared_ptr<OptimizationControlState> control = _baselineControl;
     StructureOptimizationController* receiver = this;
     const std::uint64_t runId = ++_baselineRunId;
+    const std::uint64_t projectEpoch = _projectEpoch;
+    _activeBaselineProjectEpoch = projectEpoch;
+    RunFunction baselineRunFunction = _baselineRunFunction;
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
-        [snapshot, control, receiver, runId]() {
+        [snapshot, control, receiver, runId, projectEpoch, baselineRunFunction]() {
             StructureOptimizationCallbacks callbacks;
             callbacks.isCancellationRequested = [control]() {
                 return control->canceled.load();
@@ -147,17 +154,18 @@ bool StructureOptimizationController::startBaselineEvaluation(
                     return !control->paused.load() || control->canceled.load();
                 });
             };
-            callbacks.onProgress = [receiver, runId](const StructureProgress& progress) {
+            callbacks.onProgress = [receiver, runId, projectEpoch](const StructureProgress& progress) {
                 QMetaObject::invokeMethod(
                     receiver,
-                    [receiver, progress, runId]() {
-                        if (receiver->_baselineRunId == runId)
+                    [receiver, progress, runId, projectEpoch]() {
+                        if (receiver->_baselineRunId == runId &&
+                            receiver->_projectEpoch == projectEpoch)
                             Q_EMIT receiver->progressChanged(progress);
                     },
                     Qt::QueuedConnection);
             };
             try {
-                return runDefaultBaselineEvaluation(snapshot, callbacks);
+                return baselineRunFunction(snapshot, callbacks);
             } catch (const std::exception& error) {
                 StructureOptimizationResult result;
                 AnalysisWarning warning;
@@ -243,6 +251,9 @@ void StructureOptimizationController::finishBaselineRun()
     const bool hasFailure =
         !result.canceled && !result.warnings.empty() && result.candidates.empty();
     setBaselineRunning(false);
+    // 项目会话已切换：旧项目的基线完成事件必须整体丢弃，不得写入新会话。
+    if (_projectEpoch != _activeBaselineProjectEpoch)
+        return;
     if (hasFailure) {
         QString message = QString::fromStdString(result.warnings.front().code);
         if (!result.warnings.front().message.empty())
@@ -256,6 +267,18 @@ void StructureOptimizationController::finishBaselineRun()
 bool StructureOptimizationController::isRunning() const
 {
     return _running;
+}
+
+void StructureOptimizationController::notifyProjectSessionChanged()
+{
+    ++_projectEpoch;
+}
+
+void StructureOptimizationController::setBaselineRunFunctionForTesting(
+    RunFunction function)
+{
+    if (function)
+        _baselineRunFunction = std::move(function);
 }
 
 bool StructureOptimizationController::isPaused() const
@@ -442,6 +465,11 @@ void StructureOptimizationController::finishCurrentRun()
     else if (_runStateMachine.state() == OptimizationRunState::Running ||
              _runStateMachine.state() == OptimizationRunState::CancelRequested)
         _runStateMachine.complete();
+
+    // 项目会话已切换：旧项目的主运行完成事件必须整体丢弃，不得写入新会话
+    // （调度状态已在上面的状态机中收束，isRunning 亦已复位，只是不再对外广播）。
+    if (_projectEpoch != _activeRunProjectEpoch)
+        return;
 
     if (hasFailure) {
         QString message = QString::fromStdString(result.warnings.front().code);

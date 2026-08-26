@@ -11478,6 +11478,155 @@ static void testWidgetProjectCloseClearsOptimizationSession()
     REQUIRE(!widget.isProjectDocumentDirty());
 }
 
+// 子套件 会话隔离(C2):projectEpoch 机制。三条回归——
+//   a) 运行中切换项目:旧主运行被取消且其完成事件不得进入新会话;
+//   b) 旧主运行自然完成:纪元失配后 completed/failed 均不发射;
+//   c) 旧基线完成:纪元失配后 baselineCompleted/baselineFailed 均不发射。
+// 调度状态(isRunning/isBaselineRunning)必须照常复位,只是不再对外广播结果。
+static void testControllerDiscardsResultsFromPreviousProject()
+{
+    std::printf("testControllerDiscardsResultsFromPreviousProject ... ");
+
+    // ── 场景 a+b: 主运行会话隔离 ─────────────────────────────────────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks& callbacks) {
+                // 慢速可取消运行：保证测试能在运行中切换项目。
+                for (int i = 0; i < 5000; ++i) {
+                    if (callbacks.isCancellationRequested &&
+                        callbacks.isCancellationRequested())
+                        break;
+                    if (callbacks.waitIfPaused)
+                        callbacks.waitIfPaused();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                }
+                rws::StructureOptimizationResult result;
+                result.canceled = true;
+                return result;
+            });
+
+        int completedCount = 0;
+        int failedCount = 0;
+        bool notRunningSeen = false;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::completed,
+                         [&](const rws::StructureOptimizationResult&) { ++completedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::failed,
+                         [&](const QString&) { ++failedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::runningChanged,
+                         [&](bool running) { if (!running) notRunningSeen = true; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.start(problem));
+
+        QEventLoop runningLoop;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::runningChanged,
+                         &runningLoop, [&runningLoop](bool running) {
+                             if (running) runningLoop.quit();
+                         });
+        QTimer::singleShot(2000, &runningLoop, SLOT(quit()));
+        runningLoop.exec();
+
+        // ── 场景 a: 运行中切换项目（取消 + 纪元递增）──
+        controller.cancel();
+        controller.notifyProjectSessionChanged();
+        QEventLoop drained;
+        QTimer::singleShot(300, &drained, SLOT(quit()));
+        drained.exec();
+        REQUIRE(notRunningSeen);
+        REQUIRE(!controller.isRunning());
+        // 等待 watcher finished 到达后再确认信号确实被丢弃。
+        QEventLoop settle;
+        QTimer::singleShot(300, &settle, SLOT(quit()));
+        settle.exec();
+        REQUIRE(completedCount == 0);
+        REQUIRE(failedCount == 0);
+    }
+
+    // ── 场景 b2: 未取消、旧主运行自然完成后才切纪元 ─────────────────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                return result; // 立即完成
+            });
+        int completedCount = 0;
+        int failedCount = 0;
+        bool idleSeen = false;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::completed,
+                         [&](const rws::StructureOptimizationResult&) { ++completedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::failed,
+                         [&](const QString&) { ++failedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::runningChanged,
+                         [&](bool running) { if (!running) idleSeen = true; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.start(problem));
+        controller.notifyProjectSessionChanged(); // 完成事件到达前切换项目
+
+        QEventLoop waitIdle;
+        QTimer::singleShot(400, &waitIdle, SLOT(quit()));
+        waitIdle.exec();
+        REQUIRE(idleSeen);
+        REQUIRE(!controller.isRunning());
+        REQUIRE(completedCount == 0);
+        REQUIRE(failedCount == 0);
+    }
+
+    // ── 场景 c: 旧基线完成的会话隔离 ────────────────────────────────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                return result;
+            });
+        int baselineCompletedCount = 0;
+        int baselineFailedCount = 0;
+        bool baselineIdleSeen = false;
+        controller.setBaselineRunFunctionForTesting(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                return result;
+            });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineCompleted,
+                         [&](const rws::StructureOptimizationResult&) { ++baselineCompletedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineFailed,
+                         [&](const QString&) { ++baselineFailedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineRunningChanged,
+                         [&](bool running) { if (!running) baselineIdleSeen = true; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.startBaselineEvaluation(problem));
+        controller.notifyProjectSessionChanged();
+
+        QEventLoop waitBaselineIdle;
+        QTimer::singleShot(400, &waitBaselineIdle, SLOT(quit()));
+        waitBaselineIdle.exec();
+        REQUIRE(baselineIdleSeen);
+        REQUIRE(!controller.isBaselineRunning());
+        REQUIRE(baselineCompletedCount == 0);
+        REQUIRE(baselineFailedCount == 0);
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testStructureOptimizationControllerAsyncState()
 {
     std::printf("testStructureOptimizationControllerAsyncState ... ");
@@ -12184,6 +12333,7 @@ int main(int argc, char** argv)
     testAcceptedUr6585AProject();
     testCandidatePreviewController();
     testStructureOptimizationControllerAsyncState();
+    testControllerDiscardsResultsFromPreviousProject();
 
     std::printf("\n");
 

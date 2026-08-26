@@ -107,6 +107,23 @@ public:
     bool isBaselineRunning() const;
 
     /**
+     * @brief 声明项目会话已切换（setProblem/New/Open/Close/导入后必须调用）。
+     *
+     * 递增内部 projectEpoch：所有在途运行捕获的 {projectEpoch, runId} 随即
+     * 失配，其完成事件将被静默丢弃，绝不写入新项目的 UI 或结果缓存。
+     * 这是会话隔离的安全边界；禁用按钮只是辅助手段。
+     */
+    void notifyProjectSessionChanged();
+
+    /**
+     * @brief 注入基线执行函数（测试缝隙，替代默认的规范基线桥）。
+     *
+     * 基线路径与主优化同样支持算法注入，使测试可以在毫秒级验证
+     * "旧项目的基线完成事件不得写入新会话"的隔离语义。
+     */
+    void setBaselineRunFunctionForTesting(RunFunction function);
+
+    /**
      * @brief 返回主优化会话的纯生命周期状态。
      *
      * 该查询只反映 start/pause/resume/cancel/finish 的调度状态，候选是否可行仍由
@@ -192,6 +209,13 @@ private:
     // 每次提交后台任务都会生成新代号，旧任务的排队信号不得污染新会话。
     std::uint64_t _runId = 0;
     std::uint64_t _baselineRunId = 0;
+    // 项目会话纪元：项目内容被整体替换时递增。运行启动时捕获当时的纪元，
+    // 完成回调只有在纪元与 runId 双重匹配时才允许对外发射信号。
+    std::uint64_t _projectEpoch = 0;
+    std::uint64_t _activeRunProjectEpoch = 0;
+    std::uint64_t _activeBaselineProjectEpoch = 0;
+    // 基线执行函数与主优化同样可注入，供测试验证基线完成事件的会话隔离。
+    RunFunction _baselineRunFunction;
 };
 
 } // namespace rws
