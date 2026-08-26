@@ -77,6 +77,7 @@ bool StructureOptimizationController::start(
     const std::uint64_t runId = ++_runId;
     const std::uint64_t projectEpoch = _projectEpoch;
     _activeRunProjectEpoch = projectEpoch;
+    _activeRunId = runId;
 
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
         [snapshot, control, receiver, runFunction, runId, projectEpoch]() {
@@ -141,6 +142,7 @@ bool StructureOptimizationController::startBaselineEvaluation(
     const std::uint64_t runId = ++_baselineRunId;
     const std::uint64_t projectEpoch = _projectEpoch;
     _activeBaselineProjectEpoch = projectEpoch;
+    _activeBaselineRunId = runId;
     RunFunction baselineRunFunction = _baselineRunFunction;
     QFuture<StructureOptimizationResult> future = QtConcurrent::run(
         [snapshot, control, receiver, runId, projectEpoch, baselineRunFunction]() {
@@ -252,7 +254,9 @@ void StructureOptimizationController::finishBaselineRun()
         !result.canceled && !result.warnings.empty() && result.candidates.empty();
     setBaselineRunning(false);
     // 项目会话已切换：旧项目的基线完成事件必须整体丢弃，不得写入新会话。
-    if (_projectEpoch != _activeBaselineProjectEpoch)
+    // epoch + runId 双重校验（当前 watcher 单活不变量下二者等价，这里显式化）。
+    if (_projectEpoch != _activeBaselineProjectEpoch ||
+        _baselineRunId != _activeBaselineRunId)
         return;
     if (hasFailure) {
         QString message = QString::fromStdString(result.warnings.front().code);
@@ -468,7 +472,8 @@ void StructureOptimizationController::finishCurrentRun()
 
     // 项目会话已切换：旧项目的主运行完成事件必须整体丢弃，不得写入新会话
     // （调度状态已在上面的状态机中收束，isRunning 亦已复位，只是不再对外广播）。
-    if (_projectEpoch != _activeRunProjectEpoch)
+    // epoch + runId 双重校验（当前 watcher 单活不变量下二者等价，这里显式化）。
+    if (_projectEpoch != _activeRunProjectEpoch || _runId != _activeRunId)
         return;
 
     if (hasFailure) {

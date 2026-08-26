@@ -214,6 +214,8 @@ private:
     std::uint64_t _projectEpoch = 0;
     std::uint64_t _activeRunProjectEpoch = 0;
     std::uint64_t _activeBaselineProjectEpoch = 0;
+    std::uint64_t _activeRunId = 0;
+    std::uint64_t _activeBaselineRunId = 0;
     // 基线执行函数与主优化同样可注入，供测试验证基线完成事件的会话隔离。
     RunFunction _baselineRunFunction;
 };

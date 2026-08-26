@@ -7352,6 +7352,15 @@ static void testCacheKeySafeWithZeroStep()
                                rws::StructureEvaluationStage::Quick, probed));
     REQUIRE(probed.index == 1);
 
+    // ── NaN step: 必须无条件拒绝,不得落入位型键分支被缓存 ──
+    variable.step = std::numeric_limits<double>::quiet_NaN();
+    problem.variables.front() = variable;
+    rws::StructureCandidateCache nanStepCache;
+    nanStepCache.put(problem, low, rws::StructureEvaluationStage::Quick,
+                     stored);
+    REQUIRE(!nanStepCache.find(problem, low,
+                               rws::StructureEvaluationStage::Quick, probed));
+
     // ── values 数量不足/超量:不可缓存,查找视为未命中且不越界 ──
     rws::StructureCandidateCache mismatchCache;
     mismatchCache.put(problem, {}, rws::StructureEvaluationStage::Quick,
@@ -11619,6 +11628,131 @@ static void testControllerDiscardsResultsFromPreviousProject()
         REQUIRE(!controller.isBaselineRunning());
         REQUIRE(baselineCompletedCount == 0);
         REQUIRE(baselineFailedCount == 0);
+    }
+
+    // ── 场景 d: 切项目后,旧主运行已排队的 progress 不再发射 ─────────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks& callbacks) {
+                for (int i = 0; i < 5000; ++i) {
+                    if (callbacks.isCancellationRequested &&
+                        callbacks.isCancellationRequested())
+                        break;
+                    rws::StructureProgress progress;
+                    progress.stage = "Fake";
+                    progress.completed = i + 1;
+                    if (callbacks.onProgress)
+                        callbacks.onProgress(progress);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                }
+                rws::StructureOptimizationResult result;
+                result.canceled = true;
+                return result;
+            });
+        int progressCount = 0;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::progressChanged,
+                         [&](const rws::StructureProgress&) { ++progressCount; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.start(problem));
+        QEventLoop warmup;
+        QTimer::singleShot(150, &warmup, SLOT(quit()));
+        warmup.exec();
+        const int progressBeforeBump = progressCount;
+
+        controller.notifyProjectSessionChanged(); // 不取消,仅切纪元
+        QEventLoop staleWindow;
+        QTimer::singleShot(250, &staleWindow, SLOT(quit()));
+        staleWindow.exec();
+        REQUIRE(progressCount == progressBeforeBump);
+
+        controller.cancel();
+        QEventLoop drain;
+        QTimer::singleShot(300, &drain, SLOT(quit()));
+        drain.exec();
+    }
+
+    // ── 场景 e: 旧主运行的硬失败(failed)在切纪元后不发射 ────────────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                rws::AnalysisWarning warning;
+                warning.code = "Fake.HardFailure";
+                warning.message = "stale failure";
+                warning.severity = rws::AnalysisStatus::Fail;
+                result.warnings.push_back(warning); // 无候选 + 警告 => failed 路径
+                return result;
+            });
+        int failedCount = 0;
+        int completedCount = 0;
+        bool idleSeen = false;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::failed,
+                         [&](const QString&) { ++failedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::completed,
+                         [&](const rws::StructureOptimizationResult&) { ++completedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::runningChanged,
+                         [&](bool running) { if (!running) idleSeen = true; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.start(problem));
+        controller.notifyProjectSessionChanged();
+        QEventLoop waitIdle;
+        QTimer::singleShot(400, &waitIdle, SLOT(quit()));
+        waitIdle.exec();
+        REQUIRE(idleSeen);
+        REQUIRE(!controller.isRunning());
+        REQUIRE(failedCount == 0);
+        REQUIRE(completedCount == 0);
+    }
+
+    // ── 场景 f: 旧基线的硬失败(baselineFailed)在切纪元后不发射 ──────────
+    {
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                return result;
+            });
+        controller.setBaselineRunFunctionForTesting(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                rws::StructureOptimizationResult result;
+                rws::AnalysisWarning warning;
+                warning.code = "Fake.BaselineFailure";
+                warning.severity = rws::AnalysisStatus::Fail;
+                result.warnings.push_back(warning);
+                return result;
+            });
+        int baselineFailedCount = 0;
+        int baselineCompletedCount = 0;
+        bool baselineIdleSeen = false;
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineFailed,
+                         [&](const QString&) { ++baselineFailedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineCompleted,
+                         [&](const rws::StructureOptimizationResult&) { ++baselineCompletedCount; });
+        QObject::connect(&controller,
+                         &rws::StructureOptimizationController::baselineRunningChanged,
+                         [&](bool running) { if (!running) baselineIdleSeen = true; });
+
+        rws::StructureOptimizationProblem problem;
+        REQUIRE(controller.startBaselineEvaluation(problem));
+        controller.notifyProjectSessionChanged();
+        QEventLoop waitBaselineIdle;
+        QTimer::singleShot(400, &waitBaselineIdle, SLOT(quit()));
+        waitBaselineIdle.exec();
+        REQUIRE(baselineIdleSeen);
+        REQUIRE(!controller.isBaselineRunning());
+        REQUIRE(baselineFailedCount == 0);
+        REQUIRE(baselineCompletedCount == 0);
     }
 
     if (g_testFailures == 0)

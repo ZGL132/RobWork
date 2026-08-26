@@ -37,14 +37,13 @@ bool valuesAlignedWithVariables(const StructureOptimizationProblem& problem,
         const StructureDesignVariable& variable = problem.variables[i];
         if (!variable.enabled)
             continue;
-        if (!std::isfinite(values[i]) || !std::isfinite(variable.minimum))
+        if (!std::isfinite(values[i]) || !std::isfinite(variable.minimum) ||
+            !std::isfinite(variable.step))
             return false;
         if (variable.step > 0.0)
         {
-            // 仅正 step 分支执行除法量化，需要防溢出与除零；
-            // step<=0 走位型键分支（无除法），NaN 值已被上方拦截。
-            if (!std::isfinite(variable.step))
-                return false;
+            // 仅正 step 分支执行除法量化，需要防溢出；
+            // step<=0（含显式零/负）走位型键分支（无除法），NaN 值已被上方拦截。
             const double quotient =
                 (values[i] - variable.minimum) / variable.step;
             if (!(quotient >= -9.0e18 && quotient <= 9.0e18))
