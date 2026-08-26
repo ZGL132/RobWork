@@ -331,3 +331,38 @@ bool StructureOptimizationUiLogic::frozenContractStale(
     return editableContractFingerprint(problem.tasks, problem.constraints) !=
            reference;
 }
+
+std::string StructureOptimizationUiLogic::designVariableSchemaFingerprint(
+    const std::vector<StructureDesignVariable>& variables)
+{
+    // 只保留影响"候选值 -> 模型字段"映射与合法域的定义字段；运行时数值
+    // (current/preferred/weight) 归零，避免用户微调当前值误触发拒绝。
+    std::vector<StructureDesignVariable> schema = variables;
+    for (StructureDesignVariable& variable : schema) {
+        variable.currentValue = 0.0;
+        variable.preferredValue = 0.0;
+        variable.preferenceWeight = 0.0;
+        variable.syncAssociatedGeometry = false;
+    }
+    StructureOptimizationProblem scratch;
+    scratch.variables = std::move(schema);
+    return StructureOptimizationJson::problemToJson(scratch);
+}
+
+StructurePreviewPermission StructureOptimizationUiLogic::evaluatePreviewPermission(
+    bool hasRuntimeSnapshot,
+    const std::string& snapshotSchemaFingerprint,
+    const std::string& currentSchemaFingerprint)
+{
+    if (!hasRuntimeSnapshot) {
+        return {false,
+                "No runtime snapshot is attached to this result. Re-run the "
+                "optimization to preview its candidates."};
+    }
+    if (snapshotSchemaFingerprint != currentSchemaFingerprint) {
+        return {false,
+                "Preview rejected: variable definitions changed since this run "
+                "completed. Restore the variables or re-run the optimization."};
+    }
+    return {true, std::string()};
+}

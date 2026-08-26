@@ -5308,6 +5308,68 @@ static void testExplicitCollisionConstraintRequiresEvidence()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 候选预览绑定运行时快照(M16):定义模式指纹只对影响候选几何映射的
+// 字段敏感(current/preferred 等运行时数值不触发拒绝)；许可判定覆盖
+// 无快照/模式漂移/匹配三种分支。
+static void testPreviewPermissionBindsRuntimeSnapshot()
+{
+    std::printf("testPreviewPermissionBindsRuntimeSnapshot ... ");
+    using rws::StructureOptimizationUiLogic;
+
+    auto makeVariables = []() {
+        rws::StructureDesignVariable v;
+        v.id = "len";
+        v.targetName = "Joint1";
+        v.kind = rws::StructureVariableKind::JointPositionZ;
+        v.minimum = -1.0;
+        v.maximum = 1.0;
+        v.currentValue = 0.3;
+        v.step = 0.01;
+        v.enabled = true;
+        return std::vector<rws::StructureDesignVariable>{v};
+    };
+
+    const std::string reference =
+        StructureOptimizationUiLogic::designVariableSchemaFingerprint(
+            makeVariables());
+    REQUIRE(!reference.empty());
+    // 运行时数值微调不改变定义模式
+    auto nudged = makeVariables();
+    nudged.front().currentValue = 0.55;
+    nudged.front().preferredValue = 0.9;
+    REQUIRE(StructureOptimizationUiLogic::designVariableSchemaFingerprint(nudged) ==
+            reference);
+    // 定义字段变化必须被感知
+    auto retargeted = makeVariables();
+    retargeted.front().targetName = "Joint2";
+    REQUIRE(StructureOptimizationUiLogic::designVariableSchemaFingerprint(retargeted) !=
+            reference);
+    auto rebounded = makeVariables();
+    rebounded.front().maximum = 2.0;
+    REQUIRE(StructureOptimizationUiLogic::designVariableSchemaFingerprint(rebounded) !=
+            reference);
+
+    // 许可判定：无快照拒绝；模式漂移拒绝且给出原因；匹配放行
+    const rws::StructurePreviewPermission noSnapshot =
+        StructureOptimizationUiLogic::evaluatePreviewPermission(false, reference, reference);
+    REQUIRE(!noSnapshot.allowed);
+    REQUIRE(!noSnapshot.reason.empty());
+    const rws::StructurePreviewPermission drifted =
+        StructureOptimizationUiLogic::evaluatePreviewPermission(true, reference,
+            StructureOptimizationUiLogic::designVariableSchemaFingerprint(retargeted));
+    REQUIRE(!drifted.allowed);
+    REQUIRE(drifted.reason.find("changed") != std::string::npos);
+    const rws::StructurePreviewPermission matched =
+        StructureOptimizationUiLogic::evaluatePreviewPermission(true, reference, reference);
+    REQUIRE(matched.allowed);
+    REQUIRE(matched.reason.empty());
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
@@ -12849,6 +12911,7 @@ int main(int argc, char** argv)
     testFrozenContractStaleLifecycle();
     testValidationFlagsStaleFrozenContract();
     testExplicitCollisionConstraintRequiresEvidence();
+    testPreviewPermissionBindsRuntimeSnapshot();
 
     std::printf("\n");
 

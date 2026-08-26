@@ -16,6 +16,13 @@ struct StructurePreflightFinding
     std::string remediation;
 };
 
+/** 预览许可判定结果（M16：候选预览必须绑定运行时快照）。 */
+struct StructurePreviewPermission
+{
+    bool allowed = false;
+    std::string reason;
+};
+
 /**
  * @brief 结构优化 UI 业务逻辑与智能辅助工具类。
  *
@@ -90,6 +97,27 @@ public:
      * 本身，因此绕过 UI 直接调用 Controller 同样被拦截。
      */
     static bool frozenContractStale(const StructureOptimizationProblem& problem);
+
+    /**
+     * @brief 设计变量"定义模式"指纹（M16）。
+     *
+     * 只由影响候选几何映射的字段决定（id/kind/targetName/min/max/step/
+     * enabled/unit），与 current/preferred 等运行时数值无关——用户微调当前值
+     * 不应导致历史候选被拒预览。
+     */
+    static std::string designVariableSchemaFingerprint(
+        const std::vector<StructureDesignVariable>& variables);
+
+    /**
+     * @brief 判定是否允许用历史候选做几何预览（M16）。
+     *
+     * 无运行时快照、或当前变量定义模式与快照不一致时拒绝并给出原因；
+     * 允许时预览必须使用快照问题而非当前 collectProblem()。
+     */
+    static StructurePreviewPermission evaluatePreviewPermission(
+        bool hasRuntimeSnapshot,
+        const std::string& snapshotSchemaFingerprint,
+        const std::string& currentSchemaFingerprint);
 };
 
 } // namespace rws

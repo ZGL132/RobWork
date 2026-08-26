@@ -421,6 +421,9 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
     _lastResult = StructureOptimizationResult();
     _baselineResult = StructureOptimizationResult();
     _baselineOnlyRunning = false;
+    // M16: 结果已清空，其运行时快照一并作废。
+    _hasLastRunProblem = false;
+    _lastRunVariableSchemaFingerprint.clear();
     if (_preflightLabel != nullptr)
         _preflightLabel->setText("Preflight not run.");
     if (_baselineLabel != nullptr)
@@ -1308,6 +1311,13 @@ void StructureOptimizerWidget::startOptimization()
     StructureOptimizationProblem problem = collectProblem();
     if (!_controller->start(problem))
         return;
+    // M16: 捕获运行时不可变快照——完成后候选预览只允许基于这份问题，
+    // 不再用当前 collectProblem()（变量表可能已被继续编辑）。
+    _lastRunProblem = problem;
+    _hasLastRunProblem = true;
+    _lastRunVariableSchemaFingerprint =
+        StructureOptimizationUiLogic::designVariableSchemaFingerprint(
+            problem.variables);
     _statusLabel->setText("Optimization running in the background.");
 }
 
@@ -1454,7 +1464,18 @@ void StructureOptimizerWidget::previewSelectedCandidate()
         return;
     }
     QString error;
-    if (!_previewController->preview(collectProblem(), *candidate, &error)) {
+    // M16: 预览必须绑定启动时的不可变快照；当前变量定义与快照模式不一致时
+    // 明确拒绝并说明原因，绝不把历史候选套到漂移后的模型上。
+    const StructurePreviewPermission permission =
+        StructureOptimizationUiLogic::evaluatePreviewPermission(
+            _hasLastRunProblem, _lastRunVariableSchemaFingerprint,
+            StructureOptimizationUiLogic::designVariableSchemaFingerprint(
+                collectProblem().variables));
+    if (!permission.allowed) {
+        _statusLabel->setText(QString::fromStdString(permission.reason));
+        return;
+    }
+    if (!_previewController->preview(_lastRunProblem, *candidate, &error)) {
         _statusLabel->setText(error);
         return;
     }

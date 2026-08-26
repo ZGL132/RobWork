@@ -250,6 +250,10 @@ private:
     QTabWidget* _tabs = nullptr;                       //!< 五页签的主 Tab 控件
     StructureOptimizationResult _baselineResult;
     bool _baselineOnlyRunning = false;
+    // M16: 运行时不可变快照——候选预览/结果解释只允许基于启动时的那份问题。
+    StructureOptimizationProblem _lastRunProblem;
+    bool _hasLastRunProblem = false;
+    std::string _lastRunVariableSchemaFingerprint;
     QTableView* _variableView = nullptr;
     QTableView* _taskView = nullptr;                   //!< 任务点表格视图
     QTableView* _constraintView = nullptr;             //!< 约束条件表格视图
