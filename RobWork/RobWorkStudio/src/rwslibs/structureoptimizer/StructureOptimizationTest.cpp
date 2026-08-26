@@ -5056,6 +5056,122 @@ static void testWidgetFrozenContractStaleGating()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// 子套件 冻结契约 stale 生命周期(C1.1/D1):持久化参考指纹是唯一判定基准。
+// 覆盖审核要求的四条回归——
+//   1) 编辑后"保存/重载"(JSON 往返)仍然 stale;
+//   2) 历史"任务已变、契约未变"文件载入即被阻断;
+//   3) 缺参考指纹的旧冻结项目按未验证处理,要求重新冻结;
+//   4) 绕过 Widget 直接调用 Controller 时 stale 运行被拒绝。
+static void testFrozenContractStaleLifecycle()
+{
+    std::printf("testFrozenContractStaleLifecycle ... ");
+    using rws::StructureOptimizationUiLogic;
+
+    auto buildFrozen = []() {
+        rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+        rws::OptimizationTaskPoint task;
+        task.point.id = "T1";
+        task.point.position = {{0.25, -0.1, 0.6}};
+        task.point.enabled = true;
+        task.required = true;
+        problem.tasks.push_back(task);
+        rws::StructureConstraint constraint;
+        constraint.id = "coverage.box";
+        constraint.enabled = true;
+        constraint.hard = true;
+        constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+        constraint.threshold = 0.5;
+        problem.constraints.push_back(constraint);
+        rws::RequirementExecutionTask contractTask;
+        contractTask.id = "T1";
+        contractTask.name = "T1";
+        // 往返编解码(readCommon)要求所有键显式存在：struct 默认值即满足,
+        // 唯独 tcpFrame 空值会被 validate 拒绝——必须给非空工具帧。
+        contractTask.tcpFrame = "TCP";
+        contractTask.level = rws::RequirementExecutionLevel::Must;
+        contractTask.compileState = rws::RequirementExecutionCompileState::Included;
+        problem.requirementExecution.tasks.push_back(contractTask);
+        // 模拟导入器: 冻结时持久化可编辑契约参考指纹
+        problem.requirementExecution.extensions["frozenEditableContractFingerprint"] =
+            QString::fromStdString(StructureOptimizationUiLogic::editableContractFingerprint(
+                problem.tasks, problem.constraints));
+        return problem;
+    };
+
+    const rws::StructureOptimizationProblem frozen = buildFrozen();
+    REQUIRE(!StructureOptimizationUiLogic::frozenContractStale(frozen));
+
+    // (4) 绕过 Widget 直接调用 Controller：stale 运行被拒绝。
+    {
+        rws::StructureOptimizationProblem ghost = frozen;
+        ghost.tasks.front().point.position[2] = 0.77; // 任务已改,契约/参考指纹未变
+        REQUIRE(StructureOptimizationUiLogic::frozenContractStale(ghost));
+
+        rws::StructureOptimizationController controller(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                return rws::StructureOptimizationResult();
+            });
+        controller.setBaselineRunFunctionForTesting(
+            [](const rws::StructureOptimizationProblem&,
+               const rws::StructureOptimizationCallbacks&) {
+                return rws::StructureOptimizationResult();
+            });
+        REQUIRE(!controller.start(ghost));
+        REQUIRE(!controller.startBaselineEvaluation(ghost));
+        // fresh 基线仍可正常启动(守卫没有误伤),随即取消收尾
+        REQUIRE(controller.startBaselineEvaluation(frozen));
+        controller.cancel();
+        QEventLoop drain;
+        QTimer::singleShot(200, &drain, SLOT(quit()));
+        drain.exec();
+    }
+
+    // (2)+(3) 历史"任务已变、契约未变"与缺参考指纹的旧项目:
+    // 序列化->重载后结论保持,证明状态来自持久化数据而非会话缓存。
+    {
+        rws::StructureOptimizationProblem ghost = frozen;
+        ghost.tasks.front().point.position[0] = -0.4;
+        const std::string ghostJson = rws::StructureOptimizationJson::problemToJson(ghost);
+        rws::StructureOptimizationProblem reloadedGhost;
+        std::string error;
+        REQUIRE(rws::StructureOptimizationJson::problemFromJson(
+            ghostJson, reloadedGhost, &error));
+        REQUIRE(StructureOptimizationUiLogic::frozenContractStale(reloadedGhost));
+
+        rws::StructureOptimizationProblem legacy = frozen;
+        legacy.requirementExecution.extensions.remove(
+            QStringLiteral("frozenEditableContractFingerprint"));
+        const std::string legacyJson = rws::StructureOptimizationJson::problemToJson(legacy);
+        rws::StructureOptimizationProblem reloadedLegacy;
+        REQUIRE(rws::StructureOptimizationJson::problemFromJson(
+            legacyJson, reloadedLegacy, &error));
+        REQUIRE(StructureOptimizationUiLogic::frozenContractStale(reloadedLegacy));
+    }
+
+    // (1) 编辑后保存、重载仍然 stale；重新冻结后恢复 fresh。
+    {
+        rws::StructureOptimizationProblem edited = frozen;
+        edited.constraints.front().threshold = 0.9;
+        const std::string savedJson = rws::StructureOptimizationJson::problemToJson(edited);
+        rws::StructureOptimizationProblem reloaded;
+        std::string error;
+        REQUIRE(rws::StructureOptimizationJson::problemFromJson(savedJson, reloaded, &error));
+        REQUIRE(StructureOptimizationUiLogic::frozenContractStale(reloaded));
+
+        rws::StructureOptimizationProblem refrozen = reloaded;
+        refrozen.requirementExecution.extensions["frozenEditableContractFingerprint"] =
+            QString::fromStdString(StructureOptimizationUiLogic::editableContractFingerprint(
+                refrozen.tasks, refrozen.constraints));
+        REQUIRE(!StructureOptimizationUiLogic::frozenContractStale(refrozen));
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
@@ -12594,6 +12710,7 @@ int main(int argc, char** argv)
     testStructureOptimizationControllerAsyncState();
     testControllerDiscardsResultsFromPreviousProject();
     testFrozenContractStalenessFingerprint();
+    testFrozenContractStaleLifecycle();
 
     std::printf("\n");
 

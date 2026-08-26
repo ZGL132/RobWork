@@ -69,6 +69,27 @@ public:
     static std::string editableContractFingerprint(
         const std::vector<OptimizationTaskPoint>& tasks,
         const std::vector<StructureConstraint>& constraints);
+
+    /**
+     * @brief 问题是否携带冻结执行契约（任务或区域非空）。
+     */
+    static bool hasFrozenRequirementContract(
+        const StructureOptimizationProblem& problem);
+
+    /**
+     * @brief 冻结契约参考指纹（随契约持久化；旧项目可能为空）。
+     */
+    static std::string frozenReferenceFingerprint(
+        const StructureOptimizationProblem& problem);
+
+    /**
+     * @brief 冻结契约是否 stale（C1.1/D1 最终判定，供 Widget/Controller/Preflight 共用）。
+     *
+     * 无契约 -> false；有契约但缺持久化参考指纹 -> true（未验证，安全默认）；
+     * 当前 tasks+constraints 指纹 != 持久化参考 -> true。判定完全基于问题
+     * 本身，因此绕过 UI 直接调用 Controller 同样被拦截。
+     */
+    static bool frozenContractStale(const StructureOptimizationProblem& problem);
 };
 
 } // namespace rws

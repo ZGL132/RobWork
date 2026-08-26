@@ -1,5 +1,6 @@
 #include "OptimizationPreflight.hpp"
 
+#include "StructureOptimizationUiLogic.hpp"
 #include "StructureOptimizationValidation.hpp"
 
 #include <cmath>
@@ -87,6 +88,21 @@ OptimizationPreflightResult OptimizationPreflight::run(const StructureOptimizati
     // 运行数量和变量数量是结构化门禁的一部分，Start 与 banner 共享同一结果。
     const OptimizationPreflightResult basic = run(input);
     result.findings.insert(result.findings.end(), basic.findings.begin(), basic.findings.end());
+    // C1.1/D1: 冻结契约一致性属于结构化门禁——stale 或未验证都必须阻断，
+    // 使 Preflight/Start/Banner 与 Controller 拒绝共享同一结论。
+    if (StructureOptimizationUiLogic::frozenContractStale(problem)) {
+        const bool hasReference =
+            !StructureOptimizationUiLogic::frozenReferenceFingerprint(problem).empty();
+        result.findings.push_back(
+            {OptimizationPreflightSeverity::Error,
+             "StructureOptimization.FrozenContract.Stale", {}, {},
+             hasReference
+                 ? std::string("Frozen requirements are stale: edits diverge from the frozen "
+                               "execution contract.")
+                 : std::string("Frozen execution contract is unverified: no editable-contract "
+                               "reference fingerprint."),
+             std::string("Re-freeze the requirements from their source, then reload the project.")});
+    }
     result.canStart = true;
     for (const auto& finding : result.findings) if (finding.severity == OptimizationPreflightSeverity::Error) result.canStart = false;
     return result;

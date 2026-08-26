@@ -464,14 +464,8 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
         _loadedProblem.variables =
             StructureOptimizationUiLogic::suggestVariables(_loadedProblem.context);
 
-    // C1/D1: 记录冻结契约的参考指纹。存在冻结任务/区域时启用一致性检测；
-    // 之后任何 Tasks/Constraints 编辑都会使实时指纹偏离此参考值。
-    _hasFrozenRequirementContract =
-        !_loadedProblem.requirementExecution.tasks.empty() ||
-        !_loadedProblem.requirementExecution.workspaceRegions.empty();
-    _frozenContractReferenceFingerprint =
-        StructureOptimizationUiLogic::editableContractFingerprint(
-            _loadedProblem.tasks, _loadedProblem.constraints);
+    // C1.1/D1: 冻结参考指纹持久化在契约 extensions 中，随 _loadedProblem 载入；
+    // staleness 判定完全交给共享的 frozenContractStale(problem)，此处无需缓存。
 
     _variableModel->setVariables(_loadedProblem.variables);
     _taskModel->setTasks(_loadedProblem.tasks);
@@ -565,14 +559,8 @@ bool StructureOptimizerWidget::loadProjectDocument(const QString& path, QString*
 
 bool StructureOptimizerWidget::saveProjectDocument(const QString& targetPath, QString* error) const
 {
-    // C1/D1: stale 状态下禁止保存正式项目文档——否则"编辑后任务 + 旧冻结契约"
-    // 会被持久化，重新载入时参考指纹被刷新，形成绕过检测的持久化旁路。
-    if (isFrozenContractStale()) {
-        if (error != nullptr)
-            *error = QStringLiteral(
-                "Save blocked: frozen requirements are stale. Re-freeze from the requirement source.");
-        return false;
-    }
+    // C1.1/D1 修订：stale 项目允许保存草稿——契约 extensions 中的持久化参考
+    // 指纹随 _loadedProblem 原样保留，重载后仍判定 stale，不存在持久化旁路。
     const int selectedCandidate = selectedCandidateIndex();
     if (!StructureOptimizationProjectAdapter::saveProject(
             targetPath, collectProblem(), selectedCandidate, error))
@@ -645,12 +633,7 @@ bool StructureOptimizerWidget::canCloseProjectDocument(QString* reason) const
 
 bool StructureOptimizerWidget::isFrozenContractStale() const
 {
-    if (!_hasFrozenRequirementContract)
-        return false;
-    const StructureOptimizationProblem current = collectProblem();
-    return StructureOptimizationUiLogic::editableContractFingerprint(
-               current.tasks, current.constraints) !=
-           _frozenContractReferenceFingerprint;
+    return StructureOptimizationUiLogic::frozenContractStale(collectProblem());
 }
 
 // 读取候选列表中当前选中项的索引；未选中或视图无效时返回 -1（表示不导出候选）。

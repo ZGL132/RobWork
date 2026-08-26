@@ -302,3 +302,32 @@ std::string StructureOptimizationUiLogic::editableContractFingerprint(
     scratch.constraints = constraints;
     return StructureOptimizationJson::problemToJson(scratch);
 }
+
+bool StructureOptimizationUiLogic::hasFrozenRequirementContract(
+    const StructureOptimizationProblem& problem)
+{
+    return !problem.requirementExecution.tasks.empty() ||
+           !problem.requirementExecution.workspaceRegions.empty();
+}
+
+std::string StructureOptimizationUiLogic::frozenReferenceFingerprint(
+    const StructureOptimizationProblem& problem)
+{
+    return problem.requirementExecution.extensions
+        .value(QStringLiteral("frozenEditableContractFingerprint"))
+        .toString()
+        .toStdString();
+}
+
+bool StructureOptimizationUiLogic::frozenContractStale(
+    const StructureOptimizationProblem& problem)
+{
+    if (!hasFrozenRequirementContract(problem))
+        return false;
+    // C1.1: 旧项目缺参考指纹 -> 冻结契约未验证，安全默认要求重新冻结。
+    const std::string reference = frozenReferenceFingerprint(problem);
+    if (reference.empty())
+        return true;
+    return editableContractFingerprint(problem.tasks, problem.constraints) !=
+           reference;
+}

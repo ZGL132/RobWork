@@ -1,5 +1,8 @@
 #include "EngineeringRequirementArtifactAdapter.hpp"
 
+#include "StructureOptimizationUiLogic.hpp"
+
+
 #include <rwslibs/engineeringrequirements/RequirementFreezer.hpp>
 #include <rwslibs/engineeringrequirements/WorkspaceSamplingGrid.hpp>
 #include <rwslibs/robotanalysiscore/RequirementExecutionJson.hpp>
@@ -406,6 +409,13 @@ bool EngineeringRequirementArtifactAdapter::apply(const FrozenRequirementArtifac
     // 直接携带完整执行契约：它是 Verified 阶段候选评价的权威输入，
     // 保证优化器消费的正是冻结器验证过的那份需求。
     updated.requirementExecution = artifact.execution;
+    // C1.1/D1: 冻结时把"可编辑 Tasks/Constraints 参考指纹"随契约一起持久化。
+    // stale 判定以这份持久化参考为唯一基准，而不是载入时的表格快照——否则
+    // 历史"任务已改、契约未变"的项目会被误判 fresh（幽灵违反的根源）。
+    // RequirementExecutionSet.extensions 为版本间往返保留字段，无需改共享 schema。
+    updated.requirementExecution.extensions["frozenEditableContractFingerprint"] =
+        QString::fromStdString(StructureOptimizationUiLogic::editableContractFingerprint(
+            updated.tasks, updated.constraints));
     // 只从 schema v2 工件复制可重建场景；schema v1 仍可导入 WORLD 任务，但绝不会被
     // 误认为携带工装碰撞环境，从而保持历史项目的兼容性和新场景流程的正确性。
     updated.scenarioSnapshot = StructureOptimizationScenarioSnapshot();

@@ -7,6 +7,7 @@
 #include "CandidateModelFactory.hpp"
 #include "CanonicalModelShadowService.hpp"
 #include "KinematicModelImporter.hpp"
+#include "StructureOptimizationUiLogic.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
@@ -59,6 +60,10 @@ bool StructureOptimizationController::start(
     const StructureOptimizationProblem& problem)
 {
     if (_running || _watcher.isRunning() || _baselineRunning || _baselineWatcher.isRunning())
+        return false;
+    // C1.1/D1: 绕过 Widget 的直接调用同样不得运行 stale 冻结契约——
+    // 判定完全基于 problem 本身（持久化参考指纹 vs 当前表格指纹）。
+    if (StructureOptimizationUiLogic::frozenContractStale(problem))
         return false;
     // 结束态必须先复位为 Idle 才能开始下一轮，防止旧会话的取消状态泄漏。
     if (_runStateMachine.state() != OptimizationRunState::Idle)
@@ -131,6 +136,9 @@ bool StructureOptimizationController::startBaselineEvaluation(
     const StructureOptimizationProblem& problem)
 {
     if (_running || _watcher.isRunning() || _baselineRunning || _baselineWatcher.isRunning())
+        return false;
+    // C1.1/D1: stale 冻结契约禁止基线评估（Verified 语义）。
+    if (StructureOptimizationUiLogic::frozenContractStale(problem))
         return false;
 
     _baselineControl.reset(new OptimizationControlState());
