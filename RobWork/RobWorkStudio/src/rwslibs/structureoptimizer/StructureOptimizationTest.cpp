@@ -5012,11 +5012,19 @@ static void testWidgetFrozenContractStaleGating()
     constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
     constraint.threshold = 0.5;
     frozen.constraints.push_back(constraint);
-    // 冻结执行契约标记(载入自需求源的项目才带)
+    // 冻结执行契约标记(载入自需求源的项目才带)，并持久化参考指纹——
+    // C1.1 之后 staleness 以该持久化值为唯一基准。
     rws::RequirementExecutionTask contractTask;
+    contractTask.id = "T1";
+    contractTask.name = "T1";
+    contractTask.tcpFrame = "TCP";
     contractTask.level = rws::RequirementExecutionLevel::Must;
     contractTask.compileState = rws::RequirementExecutionCompileState::Included;
     frozen.requirementExecution.tasks.push_back(contractTask);
+    frozen.requirementExecution.extensions["frozenEditableContractFingerprint"] =
+        QString::fromStdString(rws::StructureOptimizationUiLogic::
+                                   editableContractFingerprint(
+                                       frozen.tasks, frozen.constraints));
 
     rws::StructureOptimizerWidget widget;
     widget.setProblem(frozen);
@@ -5049,6 +5057,16 @@ static void testWidgetFrozenContractStaleGating()
         constraintModel->index(0, rws::StructureConstraintTableModel::ThresholdColumn),
         originalThreshold + 0.05));
     REQUIRE(widget.isFrozenContractStale());
+
+    // 实际保存入口往返(C1 收尾):stale 草稿允许保存,重载后仍 stale——
+    // 证明真实保存链路没有丢失契约 extensions 中的持久化参考指纹。
+    const QString draftPath =
+        QDir::tempPath() + QStringLiteral("/structureoptimizer_c1_stale_draft.project");
+    QString ioError;
+    REQUIRE(widget.saveProjectDocument(draftPath, &ioError));
+    rws::StructureOptimizerWidget reloadedDraft;
+    REQUIRE(reloadedDraft.loadProjectDocument(draftPath, &ioError));
+    REQUIRE(reloadedDraft.isFrozenContractStale());
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -5165,6 +5183,124 @@ static void testFrozenContractStaleLifecycle()
                 refrozen.tasks, refrozen.constraints));
         REQUIRE(!StructureOptimizationUiLogic::frozenContractStale(refrozen));
     }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 Validation 冻结契约发现(C1 收尾):直接使用 validateProblem 的调用方
+// 与 Preflight/Controller 得到同一 stale/未验证结论。
+static void testValidationFlagsStaleFrozenContract()
+{
+    std::printf("testValidationFlagsStaleFrozenContract ... ");
+
+    auto buildFrozen = []() {
+        rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+        rws::OptimizationTaskPoint task;
+        task.point.id = "T1";
+        task.point.position = {{0.25, -0.1, 0.6}};
+        task.point.enabled = true;
+        task.required = true;
+        problem.tasks.push_back(task);
+        rws::RequirementExecutionTask contractTask;
+        contractTask.id = "T1";
+        contractTask.name = "T1";
+        contractTask.tcpFrame = "TCP";
+        contractTask.level = rws::RequirementExecutionLevel::Must;
+        contractTask.compileState = rws::RequirementExecutionCompileState::Included;
+        problem.requirementExecution.tasks.push_back(contractTask);
+        return problem;
+    };
+
+    // fresh：参考指纹与当前表格一致 -> 不产生冻结契约发现
+    rws::StructureOptimizationProblem fresh = buildFrozen();
+    fresh.requirementExecution.extensions["frozenEditableContractFingerprint"] =
+        QString::fromStdString(rws::StructureOptimizationUiLogic::
+                                   editableContractFingerprint(
+                                       fresh.tasks, fresh.constraints));
+    {
+        const std::vector<rws::AnalysisWarning> warnings =
+            rws::StructureOptimizationValidation::validateProblem(fresh);
+        REQUIRE(std::none_of(warnings.begin(), warnings.end(),
+                             [] (const rws::AnalysisWarning& warning) {
+                                 return warning.code ==
+                                        "StructureOptimization.FrozenContract.Stale";
+                             }));
+    }
+
+    // ghost：任务已改、契约未变 -> validateProblem 必须给出阻断级发现
+    rws::StructureOptimizationProblem ghost = fresh;
+    ghost.tasks.front().point.position[2] = 0.77;
+    {
+        const std::vector<rws::AnalysisWarning> warnings =
+            rws::StructureOptimizationValidation::validateProblem(ghost);
+        REQUIRE(std::any_of(warnings.begin(), warnings.end(),
+                            [] (const rws::AnalysisWarning& warning) {
+                                return warning.code ==
+                                       "StructureOptimization.FrozenContract.Stale";
+                            }));
+    }
+
+    // legacy：缺持久化参考指纹 -> 未验证，同样给出发现
+    {
+        rws::StructureOptimizationProblem legacy = buildFrozen();
+        const std::vector<rws::AnalysisWarning> warnings =
+            rws::StructureOptimizationValidation::validateProblem(legacy);
+        REQUIRE(std::any_of(warnings.begin(), warnings.end(),
+                            [] (const rws::AnalysisWarning& warning) {
+                                return warning.code ==
+                                       "StructureOptimization.FrozenContract.Stale";
+                            }));
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 显式碰撞硬约束强制碰撞证据(M2):RequiredTaskCollisionFree 硬约束
+// 存在时，即使全局碰撞开关关闭也必须构建检测器并产生证据标记；无该约束的
+// 同一问题不产生标记。
+static void testExplicitCollisionConstraintRequiresEvidence()
+{
+    std::printf("testExplicitCollisionConstraintRequiresEvidence ... ");
+
+    auto markerPresent = [] (const rws::StructureCandidateResult& candidate) {
+        for (const std::string& warning : candidate.warnings)
+            if (warning.rfind("collision.evidence.required", 0) == 0)
+                return true;
+        return false;
+    };
+
+    // 带显式硬约束：全局碰撞关闭仍必须激活检测器（任何阶段）
+    rws::StructureOptimizationProblem constrained = makeWorkspaceCoverageProblem();
+    REQUIRE(!constrained.evaluation.checkCollision);
+    rws::StructureConstraint constraint;
+    constraint.id = "required.collision.free";
+    constraint.enabled = true;
+    constraint.hard = true;
+    constraint.kind = rws::StructureConstraintKind::RequiredTaskCollisionFree;
+    constrained.constraints.push_back(constraint);
+
+    rws::KinematicEngineeringEvaluator constrainedEvaluator(constrained);
+    rws::StructureCandidateResult constrainedCandidate;
+    constrainedEvaluator.evaluateCandidate(
+        constrainedCandidate, rws::StructureEvaluationStage::Verified,
+        rws::StructureOptimizationCallbacks(), nullptr);
+    REQUIRE(markerPresent(constrainedCandidate));
+    REQUIRE(!constrainedCandidate.raw.taskEvaluationDataInsufficient);
+
+    // 无显式约束、全局碰撞关闭：不得产生证据标记（维持原低耗路径）
+    rws::StructureOptimizationProblem plain = makeWorkspaceCoverageProblem();
+    rws::KinematicEngineeringEvaluator plainEvaluator(plain);
+    rws::StructureCandidateResult plainCandidate;
+    plainEvaluator.evaluateCandidate(
+        plainCandidate, rws::StructureEvaluationStage::Quick,
+        rws::StructureOptimizationCallbacks(), nullptr);
+    REQUIRE(!markerPresent(plainCandidate));
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -12711,6 +12847,8 @@ int main(int argc, char** argv)
     testControllerDiscardsResultsFromPreviousProject();
     testFrozenContractStalenessFingerprint();
     testFrozenContractStaleLifecycle();
+    testValidationFlagsStaleFrozenContract();
+    testExplicitCollisionConstraintRequiresEvidence();
 
     std::printf("\n");
 

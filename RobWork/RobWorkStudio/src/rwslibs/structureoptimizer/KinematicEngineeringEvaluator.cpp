@@ -565,7 +565,7 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
         !problem.requirementExecution.tasks.empty();
     const bool useRequirementExecutionContract =
         useRequirementExecutionTasks || !verifiedRegions.empty();
-    const bool requirementCollisionRequired =
+    const bool baseRequirementCollisionRequired =
         (useRequirementExecutionTasks && std::any_of(
             problem.requirementExecution.tasks.begin(),
             problem.requirementExecution.tasks.end(),
@@ -577,6 +577,24 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
             [] (const RequirementExecutionRegion& region) {
                 return region.collisionFreeRequired;
             });
+    // M2: 显式碰撞硬约束（RequiredTaskCollisionFree 及等价的
+    // collision.free_rate metric 约束）与全局开关、冻结契约同权——
+    // 必须强制产生真实碰撞证据，绝不允许未检测被当作无碰撞。
+    const bool explicitCollisionEvidenceRequired =
+        std::any_of(problem.constraints.begin(), problem.constraints.end(),
+            [] (const StructureConstraint& constraint) {
+                return constraint.enabled && constraint.hard &&
+                       constraint.kind ==
+                           StructureConstraintKind::RequiredTaskCollisionFree;
+            }) ||
+        std::any_of(problem.metricConstraints.begin(),
+            problem.metricConstraints.end(),
+            [] (const ConstraintRule& rule) {
+                return rule.enabled && rule.hard &&
+                       rule.metricId == "collision.free_rate";
+            });
+    const bool requirementCollisionRequired =
+        baseRequirementCollisionRequired || explicitCollisionEvidenceRequired;
     const bool evaluateVerifiedRegions = !verifiedRegions.empty();
     const bool evaluateEstimatedWorkspaceCoverage =
         !coverageBoxes.empty() && !evaluateVerifiedRegions;
@@ -646,8 +664,9 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
         ? &problem.scenarioSnapshot : nullptr;
     buildReq.scenarioBaseDirectory = problem.scenarioSnapshot.baseDirectory;
     buildReq.checkCollision =
+        requirementCollisionRequired ||
         (stage == StructureEvaluationStage::Verified &&
-         (problem.evaluation.checkCollision || requirementCollisionRequired)) ||
+         problem.evaluation.checkCollision) ||
         (problem.evaluation.checkCollision && evaluateWorkspaceCoverage &&
          configuredWorkspaceSampling.checkCollision);
 
@@ -668,12 +687,19 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     double modelBuildSeconds = std::chrono::duration<double>(
         std::chrono::steady_clock::now() - tModelStart).count();
 
-    // Collision detector (null if disabled)
+    // Collision detector (null if disabled)。M2: 显式碰撞约束下任何阶段都
+    // 会构建检测器，任务评价因此获得真实碰撞证据。
     rw::core::Ptr<rw::proximity::CollisionDetector> colDetector;
     if (buildReq.checkCollision)
         colDetector = buildResult.artifact.collisionDetector;
     const rw::core::Ptr<rw::proximity::CollisionDetector> taskCollisionDetector =
-        stage == StructureEvaluationStage::Verified ? colDetector : nullptr;
+        colDetector;
+    if (requirementCollisionRequired && colDetector == nullptr)
+        candidate.warnings.push_back(
+            "collision.evidence.unavailable: hard collision constraint could not obtain a detector");
+    else if (explicitCollisionEvidenceRequired && colDetector != nullptr)
+        candidate.warnings.push_back(
+            "collision.evidence.required: explicit hard collision constraint forces detector");
 
     if (callbacks.isCancellationRequested &&
         callbacks.isCancellationRequested())
@@ -707,7 +733,9 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     contextInput.thresholds = problem.evaluation.thresholds;
     contextInput.collisionRequired =
         !useRequirementExecutionContract &&
-        stage == StructureEvaluationStage::Verified && problem.evaluation.checkCollision;
+        (requirementCollisionRequired ||
+         (stage == StructureEvaluationStage::Verified &&
+          problem.evaluation.checkCollision));
     AnalysisContext analysisContext;
     std::string contextError;
     if (!makeAnalysisContext(contextInput, analysisContext, &contextError)) {
@@ -942,6 +970,10 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     StructureRawMetrics raw;
     raw.modelValid = true;
     raw.taskEvaluationDataInsufficient = taskEvaluationDataInsufficient;
+    // M2 兜底：要求碰撞证据却拿不到检测器时，绝不把"未检测"投影成
+    // collisionFreeRate=1 的空洞通过，而是保留数据不足证据。
+    if (requirementCollisionRequired && colDetector == nullptr)
+        raw.taskEvaluationDataInsufficient = true;
 
     int requiredCount = 0, requiredReachable = 0;
     int optionalCount = 0, optionalReachable = 0;

@@ -1,5 +1,8 @@
 #include "StructureOptimizationValidation.hpp"
 
+#include "StructureOptimizationUiLogic.hpp"
+
+
 #include <rwslibs/robotanalysiscore/EngineeringMetricRegistry.hpp>
 
 #include <cmath>
@@ -286,6 +289,19 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
                 "StructureOptimization.Variable.Domain.Unsupported",
                 "Integer and discrete variables are not supported by the P1 search strategies: '" +
                     variable.id + "'."));
+    }
+
+    // ── N. 冻结契约一致性(C1.1/D1): stale/未验证为阻断级发现,使所有直接
+    // 使用 validateProblem 的调用方与 Preflight/Controller 共享同一结论。──
+    if (rws::StructureOptimizationUiLogic::frozenContractStale(problem))
+    {
+        const bool hasReference = !rws::StructureOptimizationUiLogic::
+                                       frozenReferenceFingerprint(problem).empty();
+        warnings.push_back(makeWarning(
+            "StructureOptimization.FrozenContract.Stale",
+            hasReference
+                ? "Frozen requirements are stale: edits diverge from the frozen execution contract."
+                : "Frozen execution contract is unverified: no editable-contract reference fingerprint."));
     }
 
     return warnings;
