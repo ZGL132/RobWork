@@ -41,9 +41,13 @@ class PipelineCandidateEvaluator : public IStructureCandidateEvaluator
                   StructureCandidateCache* cache) override
     {
         if (cache != nullptr) {
+            const int identityIndex = candidate.index;
+            const std::vector<double> identityValues = candidate.values;
             StructureCandidateResult cached;
             if (cache->find(problem, candidate.values, stage, cached)) {
                 candidate = cached;
+                candidate.index = identityIndex;
+                candidate.values = identityValues;
                 return;
             }
         }

@@ -587,10 +587,18 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     // 避免重复构建模型与运动学求解，是优化迭代中的主要性能保障。
     if (cache)
     {
+        // 缓存提供评估载荷（raw/scores/status/warnings 等）。实现方式是整包
+        // 复制后恢复本次调用的身份字段（index/values）：若未来向候选结果新增
+        // 身份语义字段，必须在此处一并恢复，否则会再次出现历史身份混入当前
+        // 运行的问题。
+        const int identityIndex = candidate.index;
+        const std::vector<double> identityValues = candidate.values;
         StructureCandidateResult cached;
         if (cache->find(problem, candidate.values, stage, cached))
         {
             candidate = cached;
+            candidate.index  = identityIndex;
+            candidate.values = identityValues;
             return;
         }
     }

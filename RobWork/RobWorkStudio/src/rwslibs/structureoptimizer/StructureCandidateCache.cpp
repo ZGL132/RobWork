@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <cstring>
 #include <functional>
 #include <map>
 #include <vector>
@@ -19,6 +20,15 @@ namespace {
 std::size_t hashCombine(std::size_t seed, std::size_t value)
 {
     return seed ^ (value + 0x9e3779b9 + (seed << 6) + (seed >> 2));
+}
+
+// 缓存键按位置量化启用变量，要求 values 与 variables 一一对应。数量不一致的
+// 调用（Controller 可被直接调用）不可缓存：查找视为未命中、写入直接跳过，
+// 绝不越界读取 values。
+bool valuesAlignedWithVariables(const StructureOptimizationProblem& problem,
+                                const std::vector<double>& values)
+{
+    return values.size() == problem.variables.size();
 }
 
 } // anonymous namespace
@@ -60,8 +70,23 @@ StructureCandidateCache::Key StructureCandidateCache::makeKey(
     {
         if (variables[i].enabled)
         {
-            double diff   = values[i] - variables[i].minimum;
-            long long qv  = static_cast<long long>(std::llround(diff / variables[i].step));
+            long long qv = 0;
+            if (variables[i].step > 0.0)
+            {
+                const double diff = values[i] - variables[i].minimum;
+                qv = static_cast<long long>(std::llround(diff / variables[i].step));
+            }
+            else
+            {
+                // 纵深防御：step 非法时不得除零（llround(Inf) 为 UB，且会让
+                // 不同取值塌缩到同一缓存键）。退化为原始 double 位型键，
+                // 保证不同数值不会碰撞；上层校验会另行拦截该配置。
+                static_assert(sizeof(long long) == sizeof(double),
+                              "bit-cast requires equal width");
+                long long bits = 0;
+                std::memcpy(&bits, &values[i], sizeof(bits));
+                qv = bits;
+            }
             key.quantizedValues.push_back(qv);
         }
     }
@@ -131,6 +156,8 @@ void StructureCandidateCache::put(
     StructureEvaluationStage stage,
     const StructureCandidateResult& result)
 {
+    if (!valuesAlignedWithVariables(problem, values))
+        return;
     Key key = makeKey(problem, values, stage);
     _cache[key] = result;
 }
@@ -141,6 +168,8 @@ bool StructureCandidateCache::find(
     StructureEvaluationStage stage,
     StructureCandidateResult& result) const
 {
+    if (!valuesAlignedWithVariables(problem, values))
+        return false;
     Key key = makeKey(problem, values, stage);
     auto it = _cache.find(key);
     if (it != _cache.end())

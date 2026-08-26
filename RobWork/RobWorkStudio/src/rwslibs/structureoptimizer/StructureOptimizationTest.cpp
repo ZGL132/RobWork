@@ -5396,7 +5396,8 @@ static void testMutator()
     auto badResult =
         rws::StructureDesignMutator::apply(spec, {badVar}, {0.5});
 
-    // Missing target warns but doesn't set result.ok = false
+    // Missing target 必须令变异失败(M1):带未生效变量的候选实为基线克隆,
+    // 绝不允许以 ok=true 混入评分与缓存。
     bool foundMissing = false;
     for (const auto& w : badResult.warnings) {
         if (w.code == "StructureOptimization.Variable.MissingTarget") {
@@ -5405,6 +5406,7 @@ static void testMutator()
         }
     }
     REQUIRE(foundMissing);
+    REQUIRE(!badResult.ok);
 
     // ── Test value out of bounds ─────────────────────────────────────────
     auto outResult =
@@ -7257,6 +7259,116 @@ static bool hasArtifact(const rws::EngineeringEvaluationResult& result,
             return true;
     }
     return false;
+}
+
+// 子套件 缓存命中身份保持(M6):两个候选的原始 values 不同但量化到同一缓存键
+// (step=0.01 时 0.04 与 0.044 同属第 104 桶),第二次评估命中缓存后必须保留
+// 本次调用的候选身份(index/values),评估载荷允许复用第一次的结果。
+static void testCacheHitPreservesCandidateIdentity()
+{
+    std::printf("testCacheHitPreservesCandidateIdentity ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::StructureDesignVariable variable;
+    variable.id           = "len";
+    variable.targetName   = problem.context.modelSpec.transformJoints[0].name;
+    variable.kind         = rws::StructureVariableKind::JointPositionZ;
+    variable.minimum      = -1.0;
+    variable.maximum      = 1.0;
+    variable.currentValue = 0.3;
+    variable.step         = 0.01;
+    variable.enabled      = true;
+    problem.variables.push_back(variable);
+
+    rws::KinematicEngineeringEvaluator evaluator(problem);
+    rws::StructureCandidateCache cache;
+    rws::StructureOptimizationCallbacks callbacks;
+
+    rws::StructureCandidateResult first;
+    first.index   = 7;
+    first.values  = {0.04};
+    evaluator.evaluateCandidate(first, rws::StructureEvaluationStage::Quick,
+                                callbacks, &cache);
+    REQUIRE(first.index == 7);
+
+    rws::StructureCandidateResult second;
+    second.index   = 42;
+    second.values  = {0.044}; // 与 first 同一量化桶 -> 必然命中缓存
+    evaluator.evaluateCandidate(second, rws::StructureEvaluationStage::Quick,
+                                callbacks, &cache);
+    REQUIRE(cache.hitCount() >= 1);
+    REQUIRE(second.index == 42);
+    REQUIRE(second.values.size() == 1);
+    REQUIRE(second.values.front() == 0.044);
+    REQUIRE(second.totalScore == first.totalScore);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 子套件 缓存键零步长安全(M15):step<=0 的启用变量不得触发除零 UB,且不同
+// 取值不得塌缩到同一缓存键(否则会静默复用错误评估结果)。
+static void testCacheKeySafeWithZeroStep()
+{
+    std::printf("testCacheKeySafeWithZeroStep ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::StructureDesignVariable variable;
+    variable.id           = "len";
+    variable.targetName   = problem.context.modelSpec.transformJoints[0].name;
+    variable.kind         = rws::StructureVariableKind::JointPositionZ;
+    variable.minimum      = -1.0;
+    variable.maximum      = 1.0;
+    variable.currentValue = 0.3;
+    variable.step         = 0.0; // 非法配置:缓存必须自行防御
+    variable.enabled      = true;
+    problem.variables.push_back(variable);
+
+    rws::StructureCandidateCache cache;
+    rws::StructureCandidateResult stored;
+    stored.index = 1;
+    const std::vector<double> low   = {variable.minimum};
+    const std::vector<double> high  = {variable.maximum};
+    cache.put(problem, low, rws::StructureEvaluationStage::Quick, stored);
+
+    rws::StructureCandidateResult probed;
+    REQUIRE(!cache.find(problem, high, rws::StructureEvaluationStage::Quick,
+                        probed));
+    REQUIRE(cache.find(problem, low, rws::StructureEvaluationStage::Quick,
+                       probed));
+    REQUIRE(probed.index == 1);
+
+    // ── 负 step:与零 step 同样走位型键分支,不得除零或塌缩 ──
+    variable.step = -0.5;
+    problem.variables.front() = variable;
+    rws::StructureCandidateCache negativeCache;
+    negativeCache.put(problem, low, rws::StructureEvaluationStage::Quick,
+                      stored);
+    REQUIRE(!negativeCache.find(problem, high,
+                                rws::StructureEvaluationStage::Quick, probed));
+    REQUIRE(negativeCache.find(problem, low,
+                               rws::StructureEvaluationStage::Quick, probed));
+    REQUIRE(probed.index == 1);
+
+    // ── values 数量不足/超量:不可缓存,查找视为未命中且不越界 ──
+    rws::StructureCandidateCache mismatchCache;
+    mismatchCache.put(problem, {}, rws::StructureEvaluationStage::Quick,
+                      stored);
+    REQUIRE(!mismatchCache.find(problem, {},
+                                rws::StructureEvaluationStage::Quick, probed));
+    mismatchCache.put(problem, {0.0, 1.0},
+                      rws::StructureEvaluationStage::Quick, stored);
+    REQUIRE(!mismatchCache.find(problem, {0.0, 1.0},
+                                rws::StructureEvaluationStage::Quick, probed));
+    REQUIRE(!mismatchCache.find(problem, low,
+                                rws::StructureEvaluationStage::Quick, probed));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
 }
 
 // 子套件 工作区覆盖率评价器:验证 KinematicEngineeringEvaluator 在真实六轴模型上
@@ -12013,6 +12125,8 @@ int main(int argc, char** argv)
     testWorkspaceCoverage();
     testWorkspaceCoverageEvaluator();
     testTcpBareNameFallback();
+    testCacheHitPreservesCandidateIdentity();
+    testCacheKeySafeWithZeroStep();
     testSharedTargetEvaluatorConsistency();
     testVerifiedRegionUsesSharedEvaluator();
     testVerifiedRegionPreservesPositionCoverage();

@@ -439,6 +439,21 @@ StructureMutationResult StructureDesignMutator::apply(
         } // switch
     }
 
+    // ── 5b. 目标缺失即失败 ────────────────────────────────────────────────
+    // 带有 MissingTarget 的候选意味着部分变量从未生效，模型实为基线克隆。
+    // 绝不允许这种"静默未修改"的候选进入评分与缓存，否则所有候选会共享
+    // 同一评估结果且不可察觉。此处统一判定为变异失败（ok=false）。
+    for (const AnalysisWarning& warning : warnings) {
+        if (warning.code == "StructureOptimization.Variable.MissingTarget") {
+            validationFailed = true;
+            break;
+        }
+    }
+    if (validationFailed) {
+        result.warnings = warnings;
+        return result;
+    }
+
     // ── 6. Synchronize kinematics views ──────────────────────────────────
     try {
         if (usedTransformVars) {
