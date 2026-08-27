@@ -23,6 +23,7 @@
 #include <rw/geometry/Box.hpp>
 #include <rw/geometry/Cone.hpp>
 #include <rw/geometry/Cylinder.hpp>
+#include <rw/geometry/Model3D.hpp>
 #include <rw/geometry/Plane.hpp>
 #include <rw/geometry/Sphere.hpp>
 #include <rw/geometry/TriMesh.hpp>
@@ -51,6 +52,9 @@
 #include <rw/models/TreeDevice.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/proximity/ProximitySetup.hpp>
+
+#include <iomanip>
+#include <limits>
 
 using namespace rw::core;
 using namespace rw::loaders;
@@ -231,6 +235,30 @@ std::string getDeviceType (Device& dev)
     return "";
 }
 
+void writeDrawableMaterial (const Model3D::Ptr& model, DOMElem::Ptr drawable)
+{
+    if (model == nullptr || model->getMaterials ().empty ())
+        return;
+
+    const Model3D::Material& material = model->getMaterials ().front ();
+    for (const Model3D::Material& candidate : model->getMaterials ()) {
+        // The XML format has one RGB value per Drawable. Do not collapse a
+        // genuinely multi-material model to the first material.
+        if (!candidate.simplergb || candidate.rgb[0] != material.rgb[0] ||
+            candidate.rgb[1] != material.rgb[1] || candidate.rgb[2] != material.rgb[2] ||
+            candidate.rgb[3] != material.rgb[3]) {
+            return;
+        }
+    }
+
+    std::ostringstream rgb;
+    rgb << std::setprecision (std::numeric_limits< float >::max_digits10) << material.rgb[0] << " "
+        << material.rgb[1] << " " << material.rgb[2];
+    if (material.rgb[3] != 1.0f)
+        rgb << " " << material.rgb[3];
+    drawable->addChild ("RGB")->setValue (rgb.str ());
+}
+
 void writeDrawablesAndColModels (rw::models::Object::Ptr object, DOMElem::Ptr parent)
 {
     if (object != nullptr) {
@@ -253,7 +281,8 @@ void writeDrawablesAndColModels (rw::models::Object::Ptr object, DOMElem::Ptr pa
 
                 // Add the position
                 DOMBasisTypes::createPos (mod->getTransform ().P (), draw_element);
-        
+                writeDrawableMaterial (mod, draw_element);
+
                 std::string t ("#");
                 if (!mod->getFilePath ().empty () &&
                     mod->getFilePath ().compare (0, t.length (), t) != 0) {
@@ -399,6 +428,7 @@ void writeDrawablesAndColModels (rw::models::Object::Ptr object, DOMElem::Ptr pa
 
                 // Add the position
                 DOMBasisTypes::createPos (mod->getTransform ().P (), draw_element);
+                writeDrawableMaterial (mod, draw_element);
 
                 std::string t ("#");
                 if (!mod->getFilePath ().empty () &&
@@ -684,6 +714,7 @@ DOMElem::Ptr ElementCreator::createElement< RevoluteJoint* > (
 
                     // Add the position
                     DOMBasisTypes::createPos (mod->getTransform ().P (), draw_element);
+                    writeDrawableMaterial (mod, draw_element);
 
                     std::string t ("#");
                     if (!mod->getFilePath ().empty () &&
@@ -863,6 +894,7 @@ DOMElem::Ptr ElementCreator::createElement< RevoluteJoint* > (
 
                     // Add the position
                     DOMBasisTypes::createPos (mod->getTransform ().P (), draw_element);
+                    writeDrawableMaterial (mod, draw_element);
 
                     if (!mod->getFilePath ().empty ()) {
                         DOMElem::Ptr polytope_element = draw_element->addChild ("Polytope");

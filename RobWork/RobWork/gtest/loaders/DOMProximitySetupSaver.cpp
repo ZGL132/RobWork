@@ -19,15 +19,18 @@
 #include "../TestEnvironment.hpp"
 
 #include <rw/core/Ptr.hpp>
+#include <rw/geometry/Model3D.hpp>
 #include <rw/loaders/WorkCellLoader.hpp>
 #include <rw/loaders/dom/DOMProximitySetupSaver.hpp>
 #include <rw/loaders/dom/DOMWorkCellSaver.hpp>
+#include <rw/models/Object.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/proximity/ProximitySetup.hpp>
 #include <rw/proximity/CollisionDetector.hpp>
 #include <rw/proximity/BasicFilterStrategy.hpp>
 #include <rwlibs/proximitystrategies/ProximityStrategyFactory.hpp>
 
+#include <cmath>
 #include <string>
 #include <fstream>
 
@@ -115,5 +118,53 @@ TEST (DOMWorkCellSaverTest, CollisionSetupOnlyWorkCellDoesNotWriteToEmptyProximi
         ::testing::TempDir () + "MissingProximityPropertiesWorkCell.wc.xml";
     EXPECT_NO_THROW (rw::loaders::DOMWorkCellSaver::save (
         workcell, workcell->getDefaultState (), missingPropertiesTarget));
+}
+
+TEST (DOMWorkCellSaverTest, PreservesDrawableRgbOnRoundTrip)
+{
+    const std::string sourcePath = ::testing::TempDir () + "ColoredDrawable.wc.xml";
+    {
+        std::ofstream source (sourcePath.c_str ());
+        ASSERT_TRUE (source.good ());
+        source << "<WorkCell name=\"ColoredDrawable\">\n"
+               << "  <Frame name=\"ColoredPart\" refframe=\"WORLD\">\n"
+               << "    <Drawable name=\"colored_box\">\n"
+               << "      <RGB>0.2 0.4 0.8</RGB>\n"
+               << "      <Box x=\"0.1\" y=\"0.2\" z=\"0.3\" />\n"
+               << "    </Drawable>\n"
+               << "  </Frame>\n"
+               << "</WorkCell>\n";
+    }
+
+    const rw::models::WorkCell::Ptr original =
+        WorkCellLoader::Factory::load (sourcePath);
+    ASSERT_TRUE (original != nullptr);
+
+    const std::string targetPath = ::testing::TempDir () + "ColoredDrawableSaved.wc.xml";
+    EXPECT_NO_THROW (rw::loaders::DOMWorkCellSaver::save (
+        original, original->getDefaultState (), targetPath));
+
+    std::ifstream saved (targetPath.c_str ());
+    ASSERT_TRUE (saved.good ());
+    const std::string xml ((std::istreambuf_iterator< char > (saved)),
+                           std::istreambuf_iterator< char > ());
+    EXPECT_NE (std::string::npos, xml.find ("<RGB>"));
+    EXPECT_NE (std::string::npos, xml.find ("0.2"));
+    EXPECT_NE (std::string::npos, xml.find ("0.4"));
+    EXPECT_NE (std::string::npos, xml.find ("0.8"));
+
+    const rw::models::WorkCell::Ptr reloaded =
+        WorkCellLoader::Factory::load (targetPath);
+    ASSERT_TRUE (reloaded != nullptr);
+    const rw::models::Object::Ptr object = reloaded->findObject ("ColoredPart");
+    ASSERT_TRUE (object != nullptr);
+    ASSERT_EQ (1u, object->getModels ().size ());
+    ASSERT_FALSE (object->getModels ().front ()->getMaterials ().empty ());
+
+    const rw::geometry::Model3D::Material& material =
+        object->getModels ().front ()->getMaterials ().front ();
+    EXPECT_TRUE (std::abs (material.rgb[0] - 0.2f) < 1e-5f);
+    EXPECT_TRUE (std::abs (material.rgb[1] - 0.4f) < 1e-5f);
+    EXPECT_TRUE (std::abs (material.rgb[2] - 0.8f) < 1e-5f);
 }
 
