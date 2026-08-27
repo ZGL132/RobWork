@@ -137,6 +137,18 @@ QStringList treeMetadataSnapshot (const QString& root)
     return entries;
 }
 
+TEST (RobWorkStudio, UsesStableApplicationWindowTitle)
+{
+    int argc = 1;
+    char name[] = "RobWorkStudio";
+    char* argv[1] = {name};
+    QApplication app (argc, argv);
+    PropertyMap settings;
+    RobWorkStudio studio (settings);
+
+    EXPECT_EQ (QStringLiteral ("RobWorkStudio"), studio.windowTitle ());
+}
+
 enum class BaselineLimitCase { FileCount, TotalBytes, Depth };
 
 void expectNewRobotProjectRejectsBaselineLimitBeforeSnapshots (BaselineLimitCase limitCase)

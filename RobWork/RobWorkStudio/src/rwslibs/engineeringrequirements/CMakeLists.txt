@@ -80,7 +80,7 @@ if(build)
             TARGET sdurws_engineeringrequirements_test
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    "${CMAKE_BINARY_DIR}/RobWork/bin/$<CONFIG>"
+                    "$<TARGET_FILE_DIR:sdurw_core>"
                     "$<TARGET_FILE_DIR:sdurws_engineeringrequirements_test>"
             COMMENT "Copying RobWork runtime DLLs next to engineering requirements tests"
         )

@@ -232,10 +232,7 @@ RobWorkStudio::RobWorkStudio (const PropertyMap& map) :
     // rw::core::ExtensionRegistry::getInstance()->registerExtensions( ownedPtr( new
     // RWSImageLoaderPlugin() ) ); _robwork->getPluginRepository().addPlugin(ownedPtr( new
     // ColladaLoaderPlugin() ), true);
-    std::stringstream sstr;
-    sstr << " RobWorkStudio v" << RW_VERSION;
-    QString qstr (sstr.str ().c_str ());
-    setWindowTitle (qstr);
+    setWindowTitle (QStringLiteral ("RobWorkStudio"));
 
     // time 50ms
     setWindowIcon (QIcon (":/images/rw_logo_64x64.png"));
@@ -4060,7 +4057,7 @@ void RobWorkStudio::updateProjectWindowTitle ()
             title += QStringLiteral ("*");
         title += QStringLiteral (" - ");
     }
-    title += QStringLiteral ("RobWorkStudio v") + QString::fromLatin1 (RW_VERSION);
+    title += QStringLiteral ("RobWorkStudio");
     setWindowTitle (title);
 
     // 标题刷新恰好覆盖项目创建、打开、关闭和另存为后的所有稳定状态，因此在这里

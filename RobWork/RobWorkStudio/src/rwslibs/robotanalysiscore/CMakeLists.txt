@@ -62,7 +62,7 @@ if(build)
             TARGET sdurws_robotanalysiscore_test
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    "${CMAKE_BINARY_DIR}/RobWork/bin/$<CONFIG>"
+                    "$<TARGET_FILE_DIR:sdurw_core>"
                     "$<TARGET_FILE_DIR:sdurws_robotanalysiscore_test>"
             COMMENT "Copying RobWork runtime DLLs next to robot analysis core tests"
         )
