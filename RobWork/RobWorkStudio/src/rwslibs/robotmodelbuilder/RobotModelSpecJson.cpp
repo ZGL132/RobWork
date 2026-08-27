@@ -717,6 +717,7 @@ QJsonObject RobotModelSpecJson::toObject(const RobotModelSpec& spec)
         obj["saveDirectory"] = QString::fromStdString(spec.saveDirectory);
     obj["mode"]                  = kinematicsViewModeToString(spec.mode);
     obj["exportDhJointsAdvanced"] = spec.exportDhJointsAdvanced;
+    obj["dhParametersAuthoritative"] = spec.dhParametersAuthoritative;
     obj["showFrameAxes"]         = spec.showFrameAxes;
     obj["generateDrawables"]     = spec.generateDrawables;
     obj["generateScene"]         = spec.generateScene;
@@ -848,6 +849,8 @@ bool RobotModelSpecJson::fromObject(const QJsonObject& dataObject,
     }
 
     spec.exportDhJointsAdvanced = dataObject.value("exportDhJointsAdvanced").toBool(false);
+    spec.dhParametersAuthoritative =
+        dataObject.value("dhParametersAuthoritative").toBool(false);
     spec.showFrameAxes          = dataObject.value("showFrameAxes").toBool(false);
     spec.generateDrawables      = dataObject.value("generateDrawables").toBool(false);
     spec.generateScene          = dataObject.value("generateScene").toBool(false);

@@ -2,6 +2,11 @@
 #include "WorkCellConverter.hpp"
 
 #include <rw/loaders/WorkCellLoader.hpp>
+#include <rw/math/Transform3D.hpp>
+#include <rw/math/Vector3D.hpp>
+#include <rw/models/DHParameterSet.hpp>
+#include <rw/models/Joint.hpp>
+#include <rw/models/SerialDevice.hpp>
 #include <rw/models/WorkCell.hpp>
 
 #include <QDir>
@@ -357,6 +362,71 @@ int main ()
     if (!rws::RobotModelXmlWriter::validate (urSpec, validationErrors))
         return fail ("Imported UR fixture should validate without unknown frame errors: " +
                      validationErrors.join ("; "));
+
+    // Native <DHJoint> metadata must survive a fixed-transform axis alignment.
+    // The RobWork transform is intentionally made non-DH-shaped while the
+    // DHParameterSet property remains attached to Joint2.
+    QTemporaryDir nativeDhDir;
+    if (!nativeDhDir.isValid ())
+        return fail ("Could not create native DH temporary directory.");
+    const QString nativeDhSource =
+        QDir (sourceRoot ()).filePath ("RobWork/example/ModelData/XMLDevices/"
+                                      "GenericSixAxis.wc.xml");
+    const QString nativeDhXml = QDir (nativeDhDir.path ()).filePath ("GenericSixAxis.wc.xml");
+    if (!QFile::copy (nativeDhSource, nativeDhXml))
+        return fail ("Could not copy native DH fixture.");
+    rw::models::WorkCell::Ptr nativeDhWorkCell =
+        rw::loaders::WorkCellLoader::Factory::load (nativeDhXml.toStdString ());
+    if (nativeDhWorkCell == NULL)
+        return fail ("Could not load native DH fixture.");
+    rw::models::SerialDevice::Ptr nativeDhDevice =
+        nativeDhWorkCell->findDevice< rw::models::SerialDevice > ("GenericSixAxis");
+    if (nativeDhDevice == NULL || nativeDhDevice->getJoints ().size () != 6)
+        return fail ("Native DH fixture did not expose the expected SerialDevice.");
+    if (rw::models::DHParameterSet::get (nativeDhDevice->getJoints ()[1]) == NULL)
+        return fail ("Native DH fixture did not retain DHParameterSet on Joint2.");
+    nativeDhDevice->getJoints ()[1]->setFixedTransform (
+        rw::math::Transform3D<> (rw::math::Vector3D<> (0.33, 0.022, 0.3869)));
+
+    QStringList nativeDhWarnings;
+    rws::RobotModelSpec nativeDhSpec =
+        rws::WorkCellConverter::convert (*nativeDhWorkCell,
+                                          nativeDhWorkCell->getDefaultState (),
+                                          nativeDhDir.path ().toStdString (),
+                                          nativeDhWarnings);
+    if (nativeDhSpec.dhJoints.size () != 6)
+        return fail ("Native DH metadata was not extracted for all joints.");
+    if (nativeDhSpec.dhJoints[1].name != "Joint2" ||
+        std::fabs (nativeDhSpec.dhJoints[1].alphaDeg - 90.0) > 1e-12 ||
+        std::fabs (nativeDhSpec.dhJoints[1].a - 0.12) > 1e-12 ||
+        std::fabs (nativeDhSpec.dhJoints[1].d) > 1e-12 ||
+        std::fabs (nativeDhSpec.dhJoints[1].offsetDeg) > 1e-12)
+        return fail ("Native DH parameters were replaced by the axis-aligned transform.");
+    nativeDhSpec.exportDhJointsAdvanced = true;
+    QStringList nativeDhExportErrors;
+    if (!rws::RobotModelXmlWriter::canExportDhJoints (nativeDhSpec,
+                                                       &nativeDhExportErrors))
+        return fail ("Native DH metadata should remain exportable after axis alignment: " +
+                     nativeDhExportErrors.join ("; "));
+
+    rws::RobotModelSpec staleDhSidecar = nativeDhSpec;
+    staleDhSidecar.generateDrawables = false;
+    staleDhSidecar.dhJoints[1].a = 99.0;
+    if (!rws::RobotModelXmlWriter::saveSpecSidecar (staleDhSidecar,
+                                                     nativeDhExportErrors))
+        return fail ("Could not save stale DH sidecar: " +
+                     nativeDhExportErrors.join ("; "));
+    QStringList restoredWarnings;
+    rws::RobotModelSpec restoredNativeDh =
+        rws::WorkCellConverter::convert (*nativeDhWorkCell,
+                                          nativeDhWorkCell->getDefaultState (),
+                                          nativeDhDir.path ().toStdString (),
+                                          restoredWarnings);
+    if (restoredNativeDh.generateDrawables)
+        return fail ("Sidecar UI metadata was not restored.");
+    if (restoredNativeDh.dhJoints.size () != 6 ||
+        std::fabs (restoredNativeDh.dhJoints[1].a - 0.12) > 1e-12)
+        return fail ("A stale sidecar overwrote authoritative native DH metadata.");
 
     // 运行到此处说明所有断言全部通过
     std::cout << "WorkCellConverter smoke test passed." << std::endl;

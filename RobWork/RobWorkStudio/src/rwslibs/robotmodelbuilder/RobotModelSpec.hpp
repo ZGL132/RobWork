@@ -456,7 +456,8 @@ struct RobotModelSpec
     std::string robotName;              ///< 机器人模型名称 (如 "GenericSixAxis")
     std::string saveDirectory;          ///< XML 文件保存的目标磁盘目录
     KinematicsViewMode mode;            ///< 运动学视图模式 (JointRPYPos / DHProjection)
-    bool exportDhJointsAdvanced = false;///< 高级选项: 是否导出 <DHJoint> 标签 (须满足无损投影条件)
+    bool exportDhJointsAdvanced = false;///< 高级选项: 是否导出 <DHJoint> 标签
+    bool dhParametersAuthoritative = false; ///< dhJoints 是否来自明确的原生/显式 DH 参数
     bool showFrameAxes;                 ///< 是否在 RobWorkStudio 中显示坐标轴 Property
     bool generateDrawables;             ///< 是否生成可视化几何体节点 (<Drawable>)
     bool generateScene;                 ///< 是否生成场景 WorkCell 文件 (Scene.wc.xml)
@@ -464,7 +465,7 @@ struct RobotModelSpec
     std::vector< FrameSpec > sceneFrames;             ///< 场景中的外部参考系列表 (Table, Workpiece等)
     std::vector< SceneGeometrySpec > sceneGeometries; ///< 场景外部几何体列表
     std::vector< JointTransformSpec > transformJoints;///< SE(3) 关节与变换真值列表
-    std::vector< DHJointSpec > dhJoints;               ///< DH 关节参数列表 (投影派生视图)
+    std::vector< DHJointSpec > dhJoints;               ///< DH 关节参数列表（原生参数或投影视图）
     std::vector< DrawableSpec > drawables;             ///< 可视化几何体列表
     std::vector< CollisionModelSpec > collisionModels; ///< 独立碰撞几何模型列表
     std::vector< JointLimitSpec > limits;              ///< 关节运动限位列表

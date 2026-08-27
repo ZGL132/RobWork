@@ -2400,6 +2400,7 @@ void RobotModelBuilderWidget::addJoint ()
     dh.d         = 0.1;
     dh.offsetDeg = 0.0;
     spec.dhJoints.insert (spec.dhJoints.begin () + insertRow, dh);
+    spec.dhParametersAuthoritative = false;
 
     synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
     fillFromSpec (spec);
@@ -2425,6 +2426,7 @@ void RobotModelBuilderWidget::removeSelectedJoint ()
     spec.transformJoints.erase (spec.transformJoints.begin () + row);
     if (static_cast< size_t >(row) < spec.dhJoints.size ())
         spec.dhJoints.erase (spec.dhJoints.begin () + row);
+    spec.dhParametersAuthoritative = false;
     std::set< std::string > removedNames;
     removedNames.insert (removedName.toStdString ());
     synchronizeJointDerivedData (spec, oldSpec, oldMovables, removedNames);
@@ -2447,6 +2449,7 @@ void RobotModelBuilderWidget::moveSelectedJointUp ()
     if (static_cast< size_t > (row) < spec.dhJoints.size ())
         std::swap (spec.dhJoints[static_cast< size_t > (row - 1)],
                    spec.dhJoints[static_cast< size_t > (row)]);
+    spec.dhParametersAuthoritative = false;
     synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
     fillFromSpec (spec);
     if (static_cast< size_t >(row - 1) < spec.transformJoints.size ())
@@ -2469,6 +2472,7 @@ void RobotModelBuilderWidget::moveSelectedJointDown ()
     if (static_cast< size_t > (row + 1) < spec.dhJoints.size ())
         std::swap (spec.dhJoints[static_cast< size_t > (row)],
                    spec.dhJoints[static_cast< size_t > (row + 1)]);
+    spec.dhParametersAuthoritative = false;
     synchronizeJointDerivedData (spec, oldSpec, oldMovables, std::set< std::string > ());
     fillFromSpec (spec);
     if (static_cast< size_t >(row + 1) < spec.transformJoints.size ())
@@ -2924,6 +2928,8 @@ void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* ite
     if (row >= _dhTable->rowCount ())
         return;
 
+    _dhParametersAuthoritative = false;
+
     JointTransformSpec j;
     j.name = itemText (_transformTable, row, 0).toStdString ();
     j.type = itemText (_transformTable, row, 1).toStdString ();
@@ -2998,6 +3004,7 @@ void RobotModelBuilderWidget::onTransformTableCellChanged (QTableWidgetItem* ite
 void RobotModelBuilderWidget::fillFromSpec (const RobotModelSpec& spec)
 {
     _syncingTables = true;
+    _dhParametersAuthoritative = spec.dhParametersAuthoritative;
     _robotName->setText (QString::fromStdString (spec.robotName));
     // 项目模式的输出字段只允许文件名。旧 JSON/WorkCell 导入可能携带完整路径，显示和收集时
     // 都将其压平为文件名，防止路径片段经由可编辑控件重新逃逸出项目输出目录。
@@ -3088,6 +3095,7 @@ RobotModelSpec RobotModelBuilderWidget::collectSpec () const
     spec.mode              = _mode->currentIndex () == 1 ? KinematicsViewMode::DHProjection
                                                           : KinematicsViewMode::JointRPYPos;
     spec.exportDhJointsAdvanced = _exportDhAdvanced->isChecked ();
+    spec.dhParametersAuthoritative = _dhParametersAuthoritative;
     spec.showFrameAxes     = _showFrameAxes->isChecked ();
     spec.generateDrawables = _generateDrawables->isChecked ();
     spec.generateScene     = _generateScene->isChecked ();
@@ -3388,7 +3396,14 @@ void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
         const JointTransformSpec& joint = spec.transformJoints[row];
         // 把 SE(3) 真值投影成 DH;有损时仍写出投影值,但在 Status 列标记
         bool lossy = false;
-        const DHJointSpec dh = RobotModelXmlWriter::transformJointToDh (joint, &lossy);
+        DHJointSpec dh;
+        if (spec.dhParametersAuthoritative &&
+            static_cast< size_t > (row) < spec.dhJoints.size ()) {
+            dh = spec.dhJoints[static_cast< size_t > (row)];
+        }
+        else {
+            dh = RobotModelXmlWriter::transformJointToDh (joint, &lossy);
+        }
         const QString jt = QString::fromStdString (joint.type).trimmed ();
         // Status 列语义:
         //   * Revolute + 无损 -> "Lossless"   (可被高级 <DHJoint> 导出)
@@ -3398,7 +3413,11 @@ void RobotModelBuilderWidget::fillKinematicsTables (const RobotModelSpec& spec)
         //   * ToolFrame      -> "Unsupported"
         QString status;
         if (jt.compare ("Revolute", Qt::CaseInsensitive) == 0)
-            status = lossy ? "Projected" : "Lossless";
+            status = (spec.dhParametersAuthoritative &&
+                      static_cast< size_t > (row) < spec.dhJoints.size ()) ||
+                         !lossy
+                ? "Lossless"
+                : "Projected";
         else if (jt.compare ("Prismatic", Qt::CaseInsensitive) == 0)
             status = "Projected";
         else

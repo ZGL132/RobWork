@@ -12,6 +12,7 @@
 #include <rw/math/RPY.hpp>
 #include <rw/math/Transform3D.hpp>
 #include <rw/models/Device.hpp>
+#include <rw/models/DHParameterSet.hpp>
 #include <rw/models/Joint.hpp>
 #include <rw/models/JointDevice.hpp>
 #include <rw/models/Object.hpp>
@@ -245,6 +246,8 @@ void normalizeDeviceScopedNames (const rw::models::WorkCell& workcell,
         return;
 
     for (JointTransformSpec& joint : spec.transformJoints)
+        joint.name = stripDeviceScope (joint.name, prefixes);
+    for (DHJointSpec& joint : spec.dhJoints)
         joint.name = stripDeviceScope (joint.name, prefixes);
     for (JointLimitSpec& limit : spec.limits)
         limit.jointName = stripDeviceScope (limit.jointName, prefixes);
@@ -694,9 +697,18 @@ RobotModelSpec WorkCellConverter::convert (const rw::models::WorkCell& workcell,
     // ---- 7. 侧车配置文件 (.rmb.json) 优先加载逻辑 ----
     // 如果磁盘上存在插件先前导出的 .rmb.json，优先使用它替换当前构建的 spec，
     // 从而 100% 无损恢复包含自定义 UI 扩展、隐藏属性在内的完整上下文
+    const bool nativeDhAuthoritative = spec.dhParametersAuthoritative;
+    const std::vector< DHJointSpec > nativeDhJoints = spec.dhJoints;
     RobotModelSpec sidecarSpec;
     if (tryLoadSidecar (workcell, spec.saveDirectory, sidecarSpec, warnings)) {
         spec = sidecarSpec;
+        if (nativeDhAuthoritative) {
+            // A sidecar stores plugin/UI metadata, but an already loaded
+            // WorkCell has the authoritative native DH properties.  Keep the
+            // latter so an old projected sidecar cannot corrupt DH data.
+            spec.dhParametersAuthoritative = true;
+            spec.dhJoints = nativeDhJoints;
+        }
         // 恢复 saveDirectory，防止 sidecar 里的旧路径覆盖当前传入的新目录
         spec.saveDirectory = saveDirectory.empty () ? inferSaveDirectory (workcell) : saveDirectory;
     }
@@ -835,7 +847,12 @@ void WorkCellConverter::extractJoints (const rw::models::JointDevice& device,
                                        QStringList& warnings)
 {
     spec.transformJoints.clear ();
+    spec.dhJoints.clear ();
+    spec.dhParametersAuthoritative = false;
     const std::vector< rw::models::Joint* >& joints = device.getJoints ();
+    std::vector< DHJointSpec > nativeDhJoints;
+    nativeDhJoints.reserve (joints.size ());
+    bool allNativeDh = !joints.empty ();
     for (size_t i = 0; i < joints.size (); ++i) {
         const rw::models::Joint* joint = joints[i];
         if (joint == NULL) {
@@ -856,6 +873,32 @@ void WorkCellConverter::extractJoints (const rw::models::JointDevice& device,
         }
         transformToRpyPos (joint->getFixedTransform (), out.rpyDeg, out.pos);
         spec.transformJoints.push_back (out);
+
+        const rw::models::DHParameterSet* nativeDh =
+            rw::models::DHParameterSet::get (joint);
+        const bool supportedNativeDh =
+            nativeDh != NULL && !nativeDh->isParallel () &&
+            out.type == "Revolute";
+        if (!supportedNativeDh) {
+            allNativeDh = false;
+            continue;
+        }
+
+        DHJointSpec dh;
+        dh.name      = out.name;
+        dh.alphaDeg  = nativeDh->alpha () * rw::math::Rad2Deg;
+        dh.a         = nativeDh->a ();
+        dh.d         = nativeDh->d ();
+        dh.offsetDeg = nativeDh->theta () * rw::math::Rad2Deg;
+        nativeDhJoints.push_back (dh);
+    }
+
+    if (allNativeDh && nativeDhJoints.size () == spec.transformJoints.size ()) {
+        spec.dhJoints = nativeDhJoints;
+        spec.dhParametersAuthoritative = true;
+    }
+    else {
+        RobotModelXmlWriter::refreshDhProjectionFromTransform (spec);
     }
 }
 

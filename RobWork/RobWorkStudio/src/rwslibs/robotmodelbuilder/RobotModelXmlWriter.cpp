@@ -1253,6 +1253,29 @@ bool RobotModelXmlWriter::canExportDhJoints (const RobotModelSpec& spec, QString
 
     bool ok = true;
 
+    if (spec.dhParametersAuthoritative) {
+        for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+            const JointTransformSpec& transformJoint = spec.transformJoints[i];
+            const DHJointSpec& dh = spec.dhJoints[i];
+            if (!isRevoluteType (transformJoint.type)) {
+                out << QString ("Advanced DH export only supports Revolute rows; row %1 (%2) is %3.")
+                           .arg (static_cast< int > (i + 1))
+                           .arg (QString::fromStdString (transformJoint.name))
+                           .arg (QString::fromStdString (transformJoint.type));
+                ok = false;
+            }
+            if (dh.name != transformJoint.name) {
+                out << QString ("Advanced DH export requires matching DH and SE(3) names; "
+                                "row %1 is %2 versus %3.")
+                           .arg (static_cast< int > (i + 1))
+                           .arg (QString::fromStdString (dh.name))
+                           .arg (QString::fromStdString (transformJoint.name));
+                ok = false;
+            }
+        }
+        return ok;
+    }
+
     // 逐行遍历所有 SE(3) 关节，进行类型检查与投影无损校验
     for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
         const JointTransformSpec& joint = spec.transformJoints[i];
@@ -1318,8 +1341,11 @@ QString RobotModelXmlWriter::makeSerialDeviceXml (const RobotModelSpec& spec)
         // 分支 A: 导出 DH 关节参数节点 (<DHJoint>)
         // 说明: 将 SE(3) 真值转换为标准 Schilling 约定的 DH 参数输出
         // ---------------------------------------------------------------------
-        for (const JointTransformSpec& transformJoint : spec.transformJoints) {
-            const DHJointSpec joint = transformJointToDh (transformJoint);
+        for (size_t i = 0; i < spec.transformJoints.size (); ++i) {
+            const JointTransformSpec& transformJoint = spec.transformJoints[i];
+            const DHJointSpec joint = spec.dhParametersAuthoritative
+                ? spec.dhJoints[i]
+                : transformJointToDh (transformJoint);
             out << "  <DHJoint name=\"" << xmlEscaped (joint.name) << "\" alpha=\""
                 << number (joint.alphaDeg) << "\" a=\"" << number (joint.a) << "\" d=\""
                 << number (joint.d) << "\" offset=\"" << number (joint.offsetDeg)
@@ -2342,6 +2368,8 @@ DHJointSpec RobotModelXmlWriter::transformJointToDh (const JointTransformSpec& j
 
 void RobotModelXmlWriter::refreshDhProjectionFromTransform (RobotModelSpec& spec)
 {
+    if (spec.dhParametersAuthoritative)
+        return;
     const size_t n = std::min (spec.dhJoints.size (), spec.transformJoints.size ());
     for (size_t i = 0; i < n; ++i) {
         spec.dhJoints[i] = transformJointToDh (spec.transformJoints[i]);

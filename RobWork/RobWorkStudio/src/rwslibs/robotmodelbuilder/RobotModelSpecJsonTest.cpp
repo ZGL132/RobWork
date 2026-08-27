@@ -249,6 +249,35 @@ static int testLegacyCollisionMetadataIsDiscardedOnSave ()
     return 0;
 }
 
+static int testDhAuthorityFlagIsPersistedAndLegacyDefaultsToFalse ()
+{
+    rws::RobotModelSpec original =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel (QDir::tempPath ());
+    const QJsonObject serialized = rws::RobotModelSpecJson::toObject (original);
+    if (!serialized.contains ("dhParametersAuthoritative"))
+        return fail ("DH authority flag was not written to RobotModelSpec JSON.");
+
+    rws::RobotModelSpec decoded;
+    std::string error;
+    if (!rws::RobotModelSpecJson::fromObject (serialized, decoded, &error))
+        return fail ("DH authority JSON round trip failed: " + error);
+    if (rws::RobotModelSpecJson::toObject (decoded)
+            .value ("dhParametersAuthoritative")
+            .toBool (true))
+        return fail ("Default non-native DH model must not become authoritative.");
+
+    QJsonObject legacy = serialized;
+    legacy.remove ("dhParametersAuthoritative");
+    rws::RobotModelSpec legacyDecoded;
+    if (!rws::RobotModelSpecJson::fromObject (legacy, legacyDecoded, &error))
+        return fail ("Legacy RobotModelSpec without DH authority flag failed: " + error);
+    if (rws::RobotModelSpecJson::toObject (legacyDecoded)
+            .value ("dhParametersAuthoritative")
+            .toBool (true))
+        return fail ("Legacy RobotModelSpec must default DH authority to false.");
+    return 0;
+}
+
 static int testFingerprint ()
 {
     rws::RobotModelSpec original =
@@ -475,6 +504,8 @@ int main (int, char**)
     if (const int rc = testFullRoundTrip ())
         return rc;
     if (const int rc = testLegacyCollisionMetadataIsDiscardedOnSave ())
+        return rc;
+    if (const int rc = testDhAuthorityFlagIsPersistedAndLegacyDefaultsToFalse ())
         return rc;
     if (const int rc = testFingerprint ())
         return rc;

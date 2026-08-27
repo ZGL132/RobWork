@@ -233,6 +233,7 @@ class RobotModelBuilderWidget : public QWidget
 
     bool _syncingTables = false;
     bool _importingFromWorkCell = false;
+    bool _dhParametersAuthoritative = false;
     // 仅在内存中保存的项目输出根目录，不序列化到 .rmb.json；项目整体移动后会由主窗口
     // 的 projectContextChanged 信号重新计算，因而不会留下机器相关的绝对路径。
     QString _projectDirectory;
