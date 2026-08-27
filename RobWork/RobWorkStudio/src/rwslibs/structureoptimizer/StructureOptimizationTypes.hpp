@@ -293,6 +293,10 @@ struct StructureWorkspaceRegionMetric
     double coverage = 0.0;
     std::size_t occupiedCellCount = 0;
     std::size_t totalCellCount = 0;
+    // Verified requirement regions expose position and orientation evidence
+    // separately. Estimated legacy coverage has no orientation evidence and
+    // leaves this value at its default.
+    double orientationCoverage = 0.0;
 };
 
 // =============================================================================

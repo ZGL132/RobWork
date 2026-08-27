@@ -199,7 +199,8 @@ bool isFiniteTarget(const TaskPoint& target)
            target.tolerance.positionMeters >= 0.0 &&
            std::isfinite (target.tolerance.orientationDeg) &&
            target.tolerance.orientationDeg >= 0.0 &&
-           std::isfinite (target.weight);
+           std::isfinite (target.weight) &&
+           target.weight >= 0.0;
 }
 
 } // namespace

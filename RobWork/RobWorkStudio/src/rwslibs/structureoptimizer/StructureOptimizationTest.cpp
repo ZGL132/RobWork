@@ -88,6 +88,8 @@
 #include "StructureOptimizationProjectAdapter.hpp"
 #include "StructureOptimizationProjectFactory.hpp"
 #include "RobotModelStalenessChecker.hpp"
+
+#include <QFile>
 #include "StructureWorkspaceCoverage.hpp"
 #include "StructureOptimizationExportService.hpp"
 #include "StructureOptimizationReportWriter.hpp"
@@ -150,6 +152,7 @@
 #include <QMetaObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMap>
@@ -920,6 +923,39 @@ static void testCanonicalKinematicModelValidation()
     REQUIRE(!fixedLimitModelResult.valid);
     REQUIRE(hasCanonicalDiagnostic(fixedLimitModelResult,
                                    "KINEMATIC_FIXED_JOINT_LIMITS_FORBIDDEN"));
+
+    rws::CanonicalKinematicModel nonFiniteJoint = valid;
+    nonFiniteJoint.joints[0].parentToJointZero.P()(0) =
+        std::numeric_limits<double>::quiet_NaN();
+    const auto nonFiniteJointResult =
+        rws::CanonicalKinematicModelValidator::validate(nonFiniteJoint);
+    REQUIRE(!nonFiniteJointResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(nonFiniteJointResult,
+                                   "KINEMATIC_JOINT_TRANSFORM_NONFINITE"));
+
+    rws::CanonicalKinematicModel zeroAxis = valid;
+    zeroAxis.joints[0].motionAxisInJoint = rw::math::Vector3D<>(0.0, 0.0, 0.0);
+    const auto zeroAxisResult = rws::CanonicalKinematicModelValidator::validate(zeroAxis);
+    REQUIRE(!zeroAxisResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(zeroAxisResult, "KINEMATIC_JOINT_AXIS_ZERO"));
+
+    rws::CanonicalKinematicModel nonFiniteOffset = valid;
+    nonFiniteOffset.joints[0].zeroPositionOffset =
+        std::numeric_limits<double>::infinity();
+    const auto nonFiniteOffsetResult =
+        rws::CanonicalKinematicModelValidator::validate(nonFiniteOffset);
+    REQUIRE(!nonFiniteOffsetResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(nonFiniteOffsetResult,
+                                   "KINEMATIC_JOINT_OFFSET_NONFINITE"));
+
+    rws::CanonicalKinematicModel nonFiniteTool = valid;
+    nonFiniteTool.toolBindings[0].flangeToTcp.P()(1) =
+        std::numeric_limits<double>::quiet_NaN();
+    const auto nonFiniteToolResult =
+        rws::CanonicalKinematicModelValidator::validate(nonFiniteTool);
+    REQUIRE(!nonFiniteToolResult.valid);
+    REQUIRE(hasCanonicalDiagnostic(nonFiniteToolResult,
+                                   "KINEMATIC_TOOL_TRANSFORM_NONFINITE"));
 }
 
 static bool sameTransform(const rw::math::Transform3D<>& first,
@@ -1009,6 +1045,20 @@ static void testCanonicalForwardKinematics()
         rws::CanonicalForwardKinematics::evaluate(model, {0.2});
     REQUIRE(!invalidQ.valid);
     REQUIRE(hasCanonicalDiagnostic(invalidQ, "KINEMATIC_FK_Q_DIMENSION_MISMATCH"));
+
+    const rws::CanonicalForwardKinematicsResult nonFiniteQ =
+        rws::CanonicalForwardKinematics::evaluate(
+            model, {std::numeric_limits<double>::quiet_NaN(), 0.0});
+    REQUIRE(!nonFiniteQ.valid);
+    REQUIRE(hasCanonicalDiagnostic(nonFiniteQ, "KINEMATIC_FK_Q_NONFINITE"));
+
+    // An invalid result must never expose stale or partially populated transforms.
+    rws::CanonicalForwardKinematicsResult invalidWithCachedFrame;
+    invalidWithCachedFrame.frameTransforms["link"] = Transform3D<>();
+    rws::StructureOptimizationDiagnostic invalidResultDiagnostic;
+    REQUIRE(!rws::CanonicalForwardKinematics::frameTransform(
+        invalidWithCachedFrame, "link", actual, &invalidResultDiagnostic));
+    REQUIRE(invalidResultDiagnostic.code == "KINEMATIC_FK_RESULT_INVALID");
 }
 
 // Phase 1/S12: the formal WorkCell/Device/TCP boundary is the source of
@@ -5414,6 +5464,36 @@ static void testPhase2VariableExpressiveness()
         REQUIRE(hasCode(result, "StructureOptimization.Variable.MissingTarget"));
     }
 
+    // The public problem validator must use the same classification as the
+    // mutator: DH plus geometry is valid, while only DH plus a transform is
+    // rejected as a mixed kinematics source.
+    {
+        rws::StructureOptimizationProblem problem;
+        problem.context.modelSpec =
+            rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+        rws::StructureDesignVariable dh;
+        dh.id = "a1"; dh.targetName = "Joint1";
+        dh.kind = rws::StructureVariableKind::DhA;
+        dh.minimum = -1.0; dh.maximum = 1.0; dh.step = 0.1; dh.enabled = true;
+        rws::StructureDesignVariable geometry;
+        geometry.id = "radius"; geometry.targetName = "Link1To2";
+        geometry.kind = rws::StructureVariableKind::LinkRadius;
+        geometry.minimum = 0.01; geometry.maximum = 0.5; geometry.step = 0.01;
+        geometry.enabled = true;
+        problem.variables = {dh, geometry};
+        rws::OptimizationTaskPoint task;
+        task.point.id = "validation-task";
+        task.point.enabled = true;
+        task.point.weight = 1.0;
+        problem.tasks.push_back(task);
+        const auto warnings = rws::StructureOptimizationValidation::validateProblem(problem);
+        REQUIRE(std::none_of(warnings.begin(), warnings.end(),
+                             [] (const rws::AnalysisWarning& warning) {
+                                 return warning.code ==
+                                     "StructureOptimization.Variable.MixedKinematicsSource";
+                             }));
+    }
+
     // 负例：DH 与 Transform 运动学来源仍然互斥
     {
         rws::RobotModelSpec emptySpec;
@@ -5526,6 +5606,12 @@ static void testLinkDimensionAxisKinds()
     drawable.autoLinkGeometry = true;
     drawable.dimensions = {{0.10, 0.20, 0.30}};
     spec.drawables.push_back(drawable);
+    // M3 审核 P1-b: 默认生成器会产出独立碰撞模型——新轴 kind 必须同步
+    // 更新，否则候选只改可视尺寸而保留基线碰撞尺寸。
+    rws::CollisionModelSpec collision;
+    collision.name = "CollisionlinkA";
+    collision.dimensions = {{0.10, 0.20, 0.30}};
+    spec.collisionModels.push_back(collision);
 
     // 变异映射：三种 kind 各写自己的轴
     for (int axis = 0; axis < 3; ++axis) {
@@ -5540,6 +5626,7 @@ static void testLinkDimensionAxisKinds()
         variable.minimum = 0.0;
         variable.maximum = 1.0;
         variable.enabled = true;
+        variable.syncAssociatedGeometry = true;
 
         const double injected = 0.4 + 0.1 * axis;
         const rws::StructureMutationResult result =
@@ -5550,6 +5637,14 @@ static void testLinkDimensionAxisKinds()
         REQUIRE(result.spec.drawables.front().dimensions[0] == expected[0]);
         REQUIRE(result.spec.drawables.front().dimensions[1] == expected[1]);
         REQUIRE(result.spec.drawables.front().dimensions[2] == expected[2]);
+        // 碰撞模型同步：与可视层写入同一轴、其余轴保持基线
+        REQUIRE(result.spec.collisionModels.front().dimensions[axis] == injected);
+        const int otherAxisA = (axis + 1) % 3;
+        const int otherAxisB = (axis + 2) % 3;
+        REQUIRE(result.spec.collisionModels.front().dimensions[otherAxisA] ==
+                (otherAxisA == 0 ? 0.10 : otherAxisA == 1 ? 0.20 : 0.30));
+        REQUIRE(result.spec.collisionModels.front().dimensions[otherAxisB] ==
+                (otherAxisB == 0 ? 0.10 : otherAxisB == 1 ? 0.20 : 0.30));
     }
 
     // 建议器：三轴全部产出且 kind 正确（沿用既有 _dim_<axis> 命名）
@@ -5612,6 +5707,68 @@ static void testLinkDimensionAxisKinds()
                 rws::StructureVariableKind::LinkDimensionY);
     }
 
+    // M3 审核 P1-a: 迁移在反序列化边界生效——经 ProjectAdapter 实际保存/
+    // 加载的旧 LinkWidth/LinkHeight 变量自动纠正，非 Widget 入口同样安全。
+    {
+        rws::StructureOptimizationProblem legacy;
+        legacy.context.modelSpec.robotName = "LegacyDims";
+        legacy.context.modelSpec.transformJoints.push_back({});
+        legacy.context.modelSpec.transformJoints.front().name = "Joint1";
+        legacy.context.modelSpec.transformJoints.front().type = "Revolute";
+        rws::StructureDesignVariable bad0;
+        bad0.id = "linkA_dim_0"; bad0.targetName = "linkA";
+        bad0.kind = rws::StructureVariableKind::LinkHeight;
+        bad0.minimum = 0.0; bad0.maximum = 1.0; bad0.step = 0.1;
+        bad0.enabled = true;
+        rws::StructureDesignVariable bad1;
+        bad1.id = "linkA_dim_1"; bad1.targetName = "linkA";
+        bad1.kind = rws::StructureVariableKind::LinkWidth;
+        bad1.minimum = 0.0; bad1.maximum = 1.0; bad1.step = 0.1;
+        bad1.enabled = true;
+        legacy.variables.push_back(bad0);
+        legacy.variables.push_back(bad1);
+
+        const QString boundaryPath =
+            QDir::tempPath() + QStringLiteral("/m3_migration_boundary.project");
+        QString ioError;
+        REQUIRE(rws::StructureOptimizationProjectAdapter::saveProject(
+            boundaryPath, legacy, -1, &ioError));
+        rws::StructureOptimizationProblem reloaded;
+        int candidateIndex = -1;
+        REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+            boundaryPath, reloaded, &candidateIndex, &ioError));
+        REQUIRE(reloaded.variables.size() == 2);
+        REQUIRE(reloaded.variables[0].kind ==
+                rws::StructureVariableKind::LinkDimensionX);
+        REQUIRE(reloaded.variables[1].kind ==
+                rws::StructureVariableKind::LinkDimensionY);
+        QFile::remove(boundaryPath);
+    }
+
+    // M3 审核 P2: 锁定 MissingTarget/M1 门禁——目标不存在必须失败，
+    // 防止未来移除失败逻辑时本套件仍静默通过。
+    {
+        const rws::StructureVariableKind kinds[3] = {
+            rws::StructureVariableKind::LinkDimensionX,
+            rws::StructureVariableKind::LinkDimensionY,
+            rws::StructureVariableKind::LinkDimensionZ};
+        for (int axis = 0; axis < 3; ++axis) {
+            rws::StructureDesignVariable ghost;
+            ghost.id = "ghost-" + std::to_string(axis);
+            ghost.targetName = "no-such-geometry";
+            ghost.kind = kinds[axis];
+            ghost.minimum = 0.0; ghost.maximum = 1.0; ghost.enabled = true;
+            const rws::StructureMutationResult result =
+                rws::StructureDesignMutator::apply(spec, {ghost}, {0.5});
+            bool missingReported = false;
+            for (const rws::AnalysisWarning& warning : result.warnings)
+                if (warning.code == "StructureOptimization.Variable.MissingTarget")
+                    missingReported = true;
+            REQUIRE(missingReported);
+            REQUIRE(!result.ok);
+        }
+    }
+
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else
@@ -5621,8 +5778,23 @@ static void testLinkDimensionAxisKinds()
 static void testBaseFlangeAndTcpAdapters()
 {
     const rws::CanonicalKinematicModel baseline = independentFlangeFixture();
-    const rws::CanonicalKinematicModel sourceCopy = baseline;
+    rws::CanonicalKinematicModel basePlacementBaseline = baseline;
+    basePlacementBaseline.frames.insert(basePlacementBaseline.frames.begin(),
+                                        {"world", "System root", rws::CanonicalFrameType::Fixed});
+    rws::JointEdge baseInstallation;
+    baseInstallation.id = "world-to-base";
+    baseInstallation.name = "World to base";
+    baseInstallation.type = rws::CanonicalJointType::Fixed;
+    baseInstallation.parentFrameId = "world";
+    baseInstallation.childFrameId = "base";
+    basePlacementBaseline.joints.insert(basePlacementBaseline.joints.begin(), baseInstallation);
+    basePlacementBaseline.rootFrameId = "world";
+    basePlacementBaseline.deviceChains[0].rootFrameId = "world";
+    basePlacementBaseline.deviceChains[0].orderedJointIds.insert(
+        basePlacementBaseline.deviceChains[0].orderedJointIds.begin(), baseInstallation.id);
+    const rws::CanonicalKinematicModel sourceCopy = basePlacementBaseline;
     REQUIRE(rws::CanonicalKinematicModelValidator::validate(baseline).valid);
+    REQUIRE(rws::CanonicalKinematicModelValidator::validate(basePlacementBaseline).valid);
 
     rws::AdapterRegistry registry;
     REQUIRE(registry.registerAdapter(std::make_shared< rws::BasePlacementAdapter >()).ok);
@@ -5635,9 +5807,9 @@ static void testBaseFlangeAndTcpAdapters()
 
     const rws::ParameterBinding baseX = poseBinding(
         "base-x", rws::SemanticKind::BaseTx, "BasePlacementAdapter", rws::TargetObjectType::Frame,
-        "base", rws::TargetPropertyId::BaseTranslationX, "base", "base-pose:base");
+        "base", rws::TargetPropertyId::BaseTranslationX, "world", "base-pose:base");
     const rws::AdapterPatchCompileResult basePatch = registry.compilePatch(
-        {&baseline, &baseX, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+        {&basePlacementBaseline, &baseX, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
                               rws::SemanticKind::BaseTx, "base-pose:base"}}}, capabilities);
     REQUIRE(basePatch.ok);
     REQUIRE(basePatch.patch.writes.size() == 1);
@@ -5645,24 +5817,37 @@ static void testBaseFlangeAndTcpAdapters()
     REQUIRE(basePatch.patch.writes.front().target.objectId == "base");
     REQUIRE(basePatch.patch.writes.front().target.propertyId ==
             rws::TargetPropertyId::BaseTranslationX);
-    REQUIRE(basePatch.patch.writes.front().target.coordinateFrameId == "base");
+    REQUIRE(basePatch.patch.writes.front().target.coordinateFrameId == "world");
     REQUIRE(std::fabs(basePatch.patch.writes.front().value.scalarValue - 0.25) < 1e-12);
     REQUIRE(basePatch.patch.poseDeltaComposition == rws::PoseDeltaComposition::Right);
     REQUIRE(basePatch.patch.poseDeltaGroupId == "base-pose:base");
+
+    // A base coincident with the immutable root has no incoming installation
+    // edge for CandidatePatchApplier, so the adapter must reject it early.
+    rws::ParameterBinding aliasedBase = baseX;
+    aliasedBase.coordinateFrameId = "base";
+    aliasedBase.readSet.front().coordinateFrameId = "base";
+    aliasedBase.writeSet.front().coordinateFrameId = "base";
+    const rws::AdapterPatchCompileResult aliasedBasePatch = registry.compilePatch(
+        {&baseline, &aliasedBase, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+                                   rws::SemanticKind::BaseTx, "base-pose:base"}}}, capabilities);
+    REQUIRE(!aliasedBasePatch.ok);
+    REQUIRE(hasAdapterDiagnostic(aliasedBasePatch.diagnostics,
+                                 "BASE_PLACEMENT_ROOT_BASE_ALIAS_UNSUPPORTED"));
+
     rws::ParameterBinding baseMissingId = baseX;
     baseMissingId.id.clear();
     rws::BasePlacementAdapter directBase;
     const rws::AdapterPatchCompileResult directBaseMalformed = directBase.compilePatch(
-        {&baseline, &baseMissingId, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+        {&basePlacementBaseline, &baseMissingId, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
                                       rws::SemanticKind::BaseTx, "base-pose:base"}}});
     REQUIRE(!directBaseMalformed.ok);
     REQUIRE(hasAdapterDiagnostic(directBaseMalformed.diagnostics,
                                  "PARAMETER_BINDING_ID_REQUIRED"));
     // The Patch names only the base placement; it has no task/environment write
     // and compilation leaves the imported canonical baseline immutable.
-    REQUIRE(basePatch.patch.writes.front().target.objectId != baseline.rootFrameId ||
-            baseline.rootFrameId == baseline.baseFrameId);
-    REQUIRE(sameTransform(baseline.joints[0].parentToJointZero,
+    REQUIRE(basePatch.patch.writes.front().target.objectId != basePlacementBaseline.rootFrameId);
+    REQUIRE(sameTransform(basePlacementBaseline.joints[0].parentToJointZero,
                           sourceCopy.joints[0].parentToJointZero));
 
     // Compiler identity must preserve the frame in which a spatial variable
@@ -5681,7 +5866,7 @@ static void testBaseFlangeAndTcpAdapters()
     baseVariable.bindingId = baseX.id;
     const rws::DesignSpaceRegistry semanticRegistry = rws::DesignSpaceRegistry::firstPhase();
     rws::DesignSpaceCompileRequest mismatchedFrameRequest;
-    mismatchedFrameRequest.model = &baseline;
+    mismatchedFrameRequest.model = &basePlacementBaseline;
     mismatchedFrameRequest.registry = &semanticRegistry;
     mismatchedFrameRequest.capabilities = &capabilities;
     mismatchedFrameRequest.adapterRegistry = &registry;
@@ -5720,7 +5905,7 @@ static void testBaseFlangeAndTcpAdapters()
     wrongBaseFrame.readSet.front().coordinateFrameId = "flange";
     wrongBaseFrame.writeSet.front().coordinateFrameId = "flange";
     const rws::AdapterPatchCompileResult badBase = registry.compilePatch(
-        {&baseline, &wrongBaseFrame, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
+        {&basePlacementBaseline, &wrongBaseFrame, {{"base-x", rws::DesignVariableUnit::Metres, 0.25, "",
                                       rws::SemanticKind::BaseTx, "base-pose:base"}}}, capabilities);
     REQUIRE(!badBase.ok);
     REQUIRE(hasAdapterDiagnostic(badBase.diagnostics, "BASE_PLACEMENT_ROOT_FRAME_REQUIRED"));
@@ -6151,6 +6336,16 @@ static void testScorer()
     REQUIRE(feasible.totalScore >= 0.0);
     REQUIRE(feasible.totalScore <= 100.0);
 
+    rws::StructureCandidateResult nonFinite;
+    nonFinite.index = 2;
+    nonFinite.raw.manipulabilityP10 = std::numeric_limits<double>::quiet_NaN();
+    scorer.score(problem, nonFinite);
+    REQUIRE(nonFinite.status == rws::StructureCandidateStatus::Failed);
+    REQUIRE(!nonFinite.feasible);
+    std::vector<rws::StructureCandidateResult> ordered = {nonFinite, feasible};
+    rws::StructureObjectiveScorer::sortForDecision(ordered);
+    REQUIRE(ordered.front().index == feasible.index);
+
     if (g_testFailures == 0)
         std::printf("PASSED\n");
     else
@@ -6393,6 +6588,29 @@ static void testGenerator()
         problem.variables, 10, 42);
     REQUIRE(lhs.size() == 10);
     REQUIRE(lhs[0].size() == 2);
+
+    // Invalid counts and variable domains must fail closed instead of
+    // converting a negative count to a huge allocation or emitting NaNs.
+    REQUIRE(rws::StructureCandidateGenerator::randomUniform(
+                problem.variables, -1, 42).empty());
+    REQUIRE(rws::StructureCandidateGenerator::latinHypercube(
+                problem.variables, 0, 42).empty());
+    auto invalidVariables = problem.variables;
+    invalidVariables.front().step = 0.0;
+    REQUIRE(rws::StructureCandidateGenerator::randomUniform(
+                invalidVariables, 2, 42).empty());
+    REQUIRE(rws::StructureCandidateGenerator::grid(
+                invalidVariables, 2, 10).empty());
+
+    // Grid endpoints are inclusive: with three samples both minimum and
+    // maximum must be present.
+    const auto grid = rws::StructureCandidateGenerator::grid(
+        problem.variables, 3, 20);
+    REQUIRE(grid.size() == 9);
+    REQUIRE(std::abs(grid.front()[0] - (-10.0)) < 1e-12);
+    REQUIRE(std::abs(grid.front()[1] - (-5.0)) < 1e-12);
+    REQUIRE(std::abs(grid.back()[0] - 10.0) < 1e-12);
+    REQUIRE(std::abs(grid.back()[1] - 5.0) < 1e-12);
 
     // ── quantize ─────────────────────────────────────────────────────
     {
@@ -6865,6 +7083,10 @@ static void testSystemEngineeringOptimizer()
         optimizer.optimize(problem, pipeline, callbacks);
 
     REQUIRE(!result.canceled);
+    REQUIRE(!result.startedAt.empty());
+    REQUIRE(result.startedAt.back() == 'Z');
+    REQUIRE(!result.completedAt.empty());
+    REQUIRE(result.completedAt.back() == 'Z');
     REQUIRE(result.candidates.size() == 4);
     REQUIRE(result.bestCandidateIndex >= 0);
     REQUIRE(evaluator.lastModelHash ==
@@ -7149,6 +7371,134 @@ struct SensitivityMockEvaluator : public rws::IStructureCandidateEvaluator {
 // 子套件 灵敏度分析:用 SensitivityMockEvaluator 在最佳候选 x=0,y=0 上做扰动,
 // 验证每个变量生成 +step/-step 两个扰动条目(共 4 个),最大降分 = 2 → 等级 "A",
 // 且没有关键变量——关键变量列表只在降分超过阈值时才填充。
+// S3 regression: an infeasible candidate may have a higher raw score, but
+// progress bestScore must only report the best feasible candidate.
+class InfeasibleHighScoreEvaluator : public rws::IStructureCandidateEvaluator {
+  public:
+    void evaluate(
+        const rws::StructureOptimizationProblem&,
+        rws::StructureCandidateResult& candidate,
+        rws::StructureEvaluationStage stage,
+        const rws::StructureOptimizationCallbacks&,
+        rws::StructureCandidateCache*) override
+    {
+        candidate.stage = stage;
+        if (candidate.index == 0) {
+            candidate.feasible = true;
+            candidate.status = rws::StructureCandidateStatus::Feasible;
+            candidate.totalScore = 10.0;
+        }
+        else {
+            candidate.feasible = false;
+            candidate.status = rws::StructureCandidateStatus::Infeasible;
+            candidate.totalScore = 99.0;
+        }
+    }
+};
+
+static void testProgressBestScoreExcludesInfeasibleCandidates()
+{
+    std::printf("testProgressBestScoreExcludesInfeasibleCandidates ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.run.strategy = rws::StructureStrategyKind::Random;
+    problem.run.candidateCount = 3;
+    problem.run.finalVerificationCount = 1;
+    problem.run.randomSeed = 17u;
+
+    std::vector<rws::StructureProgress> progress;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [] () { return false; };
+    callbacks.onProgress = [&progress] (const rws::StructureProgress& value) {
+        progress.push_back(value);
+    };
+    InfeasibleHighScoreEvaluator evaluator;
+    rws::HybridStructureOptimizer().optimize(problem, evaluator, callbacks);
+
+    REQUIRE(!progress.empty());
+    for (const rws::StructureProgress& value : progress)
+        REQUIRE(value.bestScore <= 10.0);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// 序列化器增加与任务/约束语义无关的字段时，旧冻结项目仍应保持 fresh。
+// 这是 d3 项目所遇到的回归：旧参考保存的是完整问题 JSON，而不是稳定契约摘要。
+static void testFrozenContractIgnoresSerializationEvolution()
+{
+    std::printf("testFrozenContractIgnoresSerializationEvolution ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::OptimizationTaskPoint task;
+    task.point.id = "T1";
+    task.point.position = {{0.25, -0.1, 0.6}};
+    task.point.enabled = true;
+    task.required = true;
+    problem.tasks.push_back(task);
+    rws::StructureConstraint constraint;
+    constraint.id = "coverage.box";
+    constraint.enabled = true;
+    constraint.hard = true;
+    constraint.kind = rws::StructureConstraintKind::MinimumWorkspaceCoverage;
+    constraint.threshold = 0.5;
+    problem.constraints.push_back(constraint);
+    rws::StructureOptimizationProblem scratch;
+    scratch.tasks = problem.tasks;
+    scratch.constraints = problem.constraints;
+    QJsonDocument legacyDocument = QJsonDocument::fromJson(
+        QByteArray::fromStdString(rws::StructureOptimizationJson::problemToJson(scratch)));
+    REQUIRE(!legacyDocument.isNull());
+    QJsonObject legacyObject = legacyDocument.object();
+    legacyObject["futureSerializationField"] = QStringLiteral("ignored");
+    // Simulate a serializer from before TaskPoint type/tolerance/note were persisted.
+    QJsonObject legacyTask = legacyObject["tasks"].toArray().at(0).toObject();
+    legacyTask.remove("type");
+    legacyTask.remove("tolerance");
+    legacyTask.remove("note");
+    QJsonArray legacyTasks;
+    legacyTasks.append(legacyTask);
+    legacyObject["tasks"] = legacyTasks;
+    problem.requirementExecution.tasks.push_back(rws::RequirementExecutionTask());
+    problem.requirementExecution.extensions[QStringLiteral("frozenEditableContractFingerprint")] =
+        QString::fromUtf8(QJsonDocument(legacyObject).toJson(QJsonDocument::Indented));
+
+    REQUIRE(!rws::StructureOptimizationUiLogic::frozenContractStale(problem));
+
+    // A malformed legacy reference must fail closed rather than normalize to
+    // an empty contract that could accidentally compare equal.
+    legacyObject["tasks"] = QStringLiteral("not-an-array");
+    problem.requirementExecution.extensions[QStringLiteral("frozenEditableContractFingerprint")] =
+        QString::fromUtf8(QJsonDocument(legacyObject).toJson(QJsonDocument::Compact));
+    REQUIRE(rws::StructureOptimizationUiLogic::frozenContractStale(problem));
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+static void testFrozenContractForProject(const QString& path)
+{
+    std::printf("testFrozenContractForProject ... ");
+    rws::StructureOptimizationProblem problem;
+    QString error;
+    REQUIRE(rws::StructureOptimizationProjectAdapter::loadProject(
+        path, problem, nullptr, &error, QFileInfo(path).absolutePath()));
+    if (!error.isEmpty())
+        std::fprintf(stderr, "  load error: %s\n", error.toUtf8().constData());
+    REQUIRE(!problem.tasks.empty());
+    REQUIRE(!problem.requirementExecution.tasks.empty() ||
+            !problem.requirementExecution.workspaceRegions.empty());
+    REQUIRE(!rws::StructureOptimizationUiLogic::frozenContractStale(problem));
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 static void testSensitivity()
 {
     std::printf("testSensitivity ... ");
@@ -7273,14 +7623,14 @@ static void testJsonRoundTrip()
     };
 
     problem.run.candidateCount = 100;
-    problem.run.randomSeed     = 42;
+    problem.run.randomSeed     = 4000000000u;
     problem.evaluation.evaluatorId = "test.kinematics";
     problem.evaluation.evaluatorVersion = "2.0";
     problem.evaluation.quickWorkspace.mode = rws::WorkspaceSamplingMode::Grid;
     problem.evaluation.quickWorkspace.sampleCount = 123;
     problem.evaluation.quickWorkspace.gridStepsPerJoint = 4;
     problem.evaluation.quickWorkspace.checkCollision = false;
-    problem.evaluation.quickWorkspace.randomSeed = 9u;
+    problem.evaluation.quickWorkspace.randomSeed = 3000000001u;
     problem.evaluation.verifiedWorkspace.sampleCount = 456;
     problem.evaluation.verifiedWorkspace.randomSeed = 11u;
     problem.evaluation.coverageBox.enabled = true;
@@ -7295,6 +7645,21 @@ static void testJsonRoundTrip()
         {"collision.free_rate", rws::ComparisonOperator::GreaterThanOrEqual,
          0.95, true, true}
     };
+    rws::OptimizationTaskPoint persistedTask;
+    persistedTask.required = false;
+    persistedTask.point.id = "persisted-task";
+    persistedTask.point.name = "Persisted task";
+    persistedTask.point.type = rws::TaskPointType::Pick;
+    persistedTask.point.refFrame = "WORLD";
+    persistedTask.point.tcpFrame = "TCP";
+    persistedTask.point.position = {{0.11, -0.22, 0.33}};
+    persistedTask.point.rpyDeg = {{1.0, 2.0, 3.0}};
+    persistedTask.point.tolerance.positionMeters = 0.004;
+    persistedTask.point.tolerance.orientationDeg = 2.5;
+    persistedTask.point.tolerance.allowToolRollFree = true;
+    persistedTask.point.weight = 2.75;
+    persistedTask.point.note = "round-trip note";
+    problem.tasks.push_back(persistedTask);
     // 冻结需求的审计身份必须随优化项目往返，确保导出的项目不会丢失其输入依据。
     // 显式填写每个字段，避免审计结构新增成员后，聚合初始化的成员顺序在测试中被悄然误用。
     problem.requirementProvenance.requirementFingerprint = "requirement-sha256";
@@ -7326,14 +7691,14 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.constraints.size() == 1);
     REQUIRE(parsed.constraints[0].id == "c1");
     REQUIRE(parsed.run.candidateCount == 100);
-    REQUIRE(parsed.run.randomSeed == 42u);
+    REQUIRE(parsed.run.randomSeed == 4000000000u);
     REQUIRE(parsed.evaluation.evaluatorId == "test.kinematics");
     REQUIRE(parsed.evaluation.evaluatorVersion == "2.0");
     REQUIRE(parsed.evaluation.quickWorkspace.mode == rws::WorkspaceSamplingMode::Grid);
     REQUIRE(parsed.evaluation.quickWorkspace.sampleCount == 123);
     REQUIRE(parsed.evaluation.quickWorkspace.gridStepsPerJoint == 4);
     REQUIRE(!parsed.evaluation.quickWorkspace.checkCollision);
-    REQUIRE(parsed.evaluation.quickWorkspace.randomSeed == 9u);
+    REQUIRE(parsed.evaluation.quickWorkspace.randomSeed == 3000000001u);
     REQUIRE(parsed.evaluation.verifiedWorkspace.sampleCount == 456);
     REQUIRE(parsed.evaluation.coverageBox.enabled);
     REQUIRE(parsed.evaluation.coverageBox.cells[0] == 2);
@@ -7348,6 +7713,14 @@ static void testJsonRoundTrip()
     REQUIRE(parsed.requirementProvenance.workcellFingerprint == "workcell-state-sha256");
     REQUIRE(parsed.requirementProvenance.compilerVersion == "EngineeringRequirements.Freezer.1");
     REQUIRE(parsed.requirementProvenance.frozenAt == "2026-07-30T09:15:00.123Z");
+    REQUIRE(parsed.tasks.size() == 1);
+    REQUIRE(parsed.tasks.front().required == false);
+    REQUIRE(parsed.tasks.front().point.type == rws::TaskPointType::Pick);
+    REQUIRE(std::abs(parsed.tasks.front().point.tolerance.positionMeters - 0.004) < 1e-12);
+    REQUIRE(std::abs(parsed.tasks.front().point.tolerance.orientationDeg - 2.5) < 1e-12);
+    REQUIRE(parsed.tasks.front().point.tolerance.allowToolRollFree);
+    REQUIRE(std::abs(parsed.tasks.front().point.weight - 2.75) < 1e-12);
+    REQUIRE(parsed.tasks.front().point.note == "round-trip note");
 
     // 报告必须保留冻结姿态的解析来源，而不是仅展示已经失去业务语义的 RPY 数值。
     rws::OptimizationTaskPoint auditedStation;
@@ -7392,6 +7765,97 @@ static void testJsonRoundTrip()
     REQUIRE(migrated.evaluation.quickWorkspace.sampleCount == 1000);
     const std::string upgradedJson = rws::StructureOptimizationJson::problemToJson(migrated);
     REQUIRE(upgradedJson.find("\"schemaVersion\": 2") != std::string::npos);
+
+    // Numeric discrete options from legacy SI envelopes must remain values, not
+    // become empty strings during the read/convert/write round trip.
+    const std::string numericDiscreteJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "variables": [{
+            "id": "numeric-discrete",
+            "kind": "JointPositionX",
+            "domain": "Discrete",
+            "discreteOptions": [1.25, 2.5]
+        }]
+    })json";
+    rws::StructureOptimizationProblem numericDiscrete;
+    REQUIRE(rws::StructureOptimizationJson::problemFromJson(
+        numericDiscreteJson, numericDiscrete, &error));
+    REQUIRE(numericDiscrete.variables.size() == 1);
+    REQUIRE(numericDiscrete.variables.front().domainDefinition.discreteOptions.size() == 2);
+    REQUIRE(numericDiscrete.variables.front().domainDefinition.discreteOptions[0] == "1.25");
+    REQUIRE(numericDiscrete.variables.front().domainDefinition.discreteOptions[1] == "2.5");
+
+    // Problem input numbers are strict: malformed/null values must be rejected,
+    // rather than coerced to zero by QJsonValue::toDouble().
+    const std::string invalidNumberJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "variables": [{
+            "id": "bad-number",
+            "kind": "JointPositionX",
+            "currentValue": null
+        }]
+    })json";
+    rws::StructureOptimizationProblem invalidNumber;
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidNumberJson, invalidNumber, &error));
+
+    const std::string invalidConstraintNumberJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "constraints": [{"kind": "ModelValid", "threshold": null}]
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidConstraintNumberJson, invalidNumber, &error));
+
+    const std::string invalidWeightsJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "weights": {"reachability": "0.5"}
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidWeightsJson, invalidNumber, &error));
+
+    const std::string invalidObjectiveJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "objectives": [{"metricId": "score", "weight": null}]
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidObjectiveJson, invalidNumber, &error));
+
+    const std::string invalidSamplingJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "evaluationConfig": {"quickWorkspace": {"sampleCount": 1.5}}
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidSamplingJson, invalidNumber, &error));
+
+    const std::string invalidRunJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "runConfig": {"candidateCount": "300"}
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidRunJson, invalidNumber, &error));
+
+    const std::string invalidBooleanJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "tasks": [{"enabled": "true"}]
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidBooleanJson, invalidNumber, &error));
+
+    const std::string invalidArrayShapeJson = R"json({
+        "schemaVersion": 2,
+        "type": "StructureOptimizationProblem",
+        "variables": "not-an-array"
+    })json";
+    REQUIRE(!rws::StructureOptimizationJson::problemFromJson(
+        invalidArrayShapeJson, invalidNumber, &error));
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -7736,8 +8200,8 @@ static void testAuditableEvidenceOutput()
     // 多区域冻结需求不能只在评价器内部可见；报告必须保留每个区域的局部参考系、
     // 覆盖率和网格统计，才能让工程师复核哪个工装区域限制了候选结构。
     best.raw.workspaceRegionMetrics = {
-        {"area_a", "Fixture_A", 0.90, 9, 10},
-        {"area_b", "Fixture_B", 0.50, 5, 10}
+        {"area_a", "Fixture_A", 0.90, 9, 10, 0.80},
+        {"area_b", "Fixture_B", 0.50, 5, 10, 0.25}
     };
     result.candidates.push_back(best);
 
@@ -7761,6 +8225,8 @@ static void testAuditableEvidenceOutput()
     REQUIRE(report.find("area_a") != std::string::npos);
     REQUIRE(report.find("Fixture_B") != std::string::npos);
     REQUIRE(report.find("0.500") != std::string::npos);
+    REQUIRE(report.find("Orientation coverage") != std::string::npos);
+    REQUIRE(report.find("0.800") != std::string::npos);
 
     const std::string json = rws::StructureOptimizationJson::resultToJson(problem, result);
     REQUIRE(json.find("\"quickEvaluatedCandidates\": 20") != std::string::npos);
@@ -7776,6 +8242,8 @@ static void testAuditableEvidenceOutput()
     REQUIRE(audit.find("SourceModelPath,models/audit.rmb.json") != std::string::npos);
     REQUIRE(audit.find("SourceFingerprint,source-sha") != std::string::npos);
     REQUIRE(audit.find("SnapshotFingerprint,snapshot-sha") != std::string::npos);
+    REQUIRE(audit.find("WorkspaceRegion0.OrientationCoverage") != std::string::npos);
+    REQUIRE(audit.find("WorkspaceRegion1.OrientationCoverage") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -7845,6 +8313,16 @@ static void testCsvExport()
     REQUIRE(detail.find("CandidateIndex,TaskId,TaskName") != std::string::npos);
     REQUIRE(detail.find("t1") != std::string::npos);
     REQUIRE(detail.find("Task 1") != std::string::npos);
+
+    // A candidate vector must align exactly with the variable schema.  A CSV
+    // exporter must report the mismatch instead of silently shifting columns.
+    rws::StructureCandidateResult malformed = c0;
+    malformed.index = 1;
+    malformed.values.clear();
+    result.candidates.push_back(malformed);
+    const std::string malformedCsv =
+        rws::StructureOptimizationCsv::candidatesCsv(problem, result);
+    REQUIRE(malformedCsv.find("VariableValueCountMismatch") != std::string::npos);
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -8369,6 +8847,70 @@ static void testSharedTargetEvaluatorConsistency()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// D2 regression: TaskPoint.weight contributes to weighted reachability. A
+// reachable task weighted 3 and an unreachable task weighted 1 must yield 0.75.
+static void testWeightedTaskReachability()
+{
+    std::printf("testWeightedTaskReachability ... ");
+
+    rws::StructureOptimizationProblem problem = makeWorkspaceCoverageProblem();
+    rws::CandidateModelBuildRequest buildRequest;
+    buildRequest.spec = problem.context.modelSpec;
+    buildRequest.deviceName = problem.context.deviceName;
+    buildRequest.tcpFrame = problem.context.tcpFrame;
+    const rws::CandidateModelBuildResult built =
+        rws::CandidateModelFactory().build(buildRequest);
+    REQUIRE(built.ok);
+    if (!built.ok)
+        return;
+
+    rw::kinematics::State state = built.artifact.state;
+    built.artifact.device->setQ(
+        rw::math::Q(6, 0.2, -0.4, 0.6, -0.3, 0.5, -0.7), state);
+    const rw::math::Transform3D<> worldTtcp = rw::kinematics::Kinematics::frameTframe(
+        built.artifact.workcell->getWorldFrame(), built.artifact.tcpFrame.get(), state);
+    const rw::math::RPY<> tcpRpy(worldTtcp.R());
+
+    rws::OptimizationTaskPoint reachable;
+    reachable.point.id = "weighted-reachable";
+    reachable.point.name = reachable.point.id;
+    reachable.point.refFrame = "WORLD";
+    reachable.point.tcpFrame = built.artifact.tcpFrame->getName();
+    reachable.point.weight = 3.0;
+    reachable.point.tolerance.positionMeters = 1e-6;
+    reachable.point.tolerance.orientationDeg = 1e-4;
+    for (std::size_t axis = 0; axis < 3; ++axis) {
+        reachable.point.position[axis] = worldTtcp.P()[axis];
+        reachable.point.rpyDeg[axis] = tcpRpy(axis) * rw::math::Rad2Deg;
+    }
+    reachable.required = true;
+
+    rws::OptimizationTaskPoint unreachable = reachable;
+    unreachable.point.id = "weighted-unreachable";
+    unreachable.point.name = unreachable.point.id;
+    unreachable.point.weight = 1.0;
+    unreachable.point.position = {{100.0, 100.0, 100.0}};
+    problem.tasks = {reachable, unreachable};
+
+    rws::StructureCandidateResult candidate;
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [] () { return false; };
+    rws::KinematicEngineeringEvaluator(problem).evaluateLegacy(
+        candidate, rws::StructureEvaluationStage::Verified, callbacks, nullptr);
+
+    REQUIRE(candidate.raw.taskMetrics.size() == 2);
+    REQUIRE(candidate.raw.taskMetrics.size() == 2 &&
+            candidate.raw.taskMetrics[0].reachable);
+    REQUIRE(candidate.raw.taskMetrics.size() == 2 &&
+            !candidate.raw.taskMetrics[1].reachable);
+    REQUIRE(std::abs(candidate.raw.weightedReachability - 0.75) < 1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 Verified 区域走共享评价器:在当前位姿处放置一个极小(1e-6)的 Verified
 // 区域,验证 kinematic 求值器在 Quick 与 Verified 两个阶段都成功,且 Verified 阶段
 // 产出 coverage == 1.0 的指标——证明区域覆盖率确实经由同一套 RegionCoverage
@@ -8400,7 +8942,9 @@ static void testVerifiedRegionUsesSharedEvaluator()
     const rw::math::RPY<> currentRpy(worldTtcp.R());
 
     rws::RequirementExecutionRegion region;
-    region.id = "verified-far-region";
+    // Include JSON-significant characters to exercise structured artifact
+    // serialization at the evaluator boundary.
+    region.id = "verified-\"\\-region";
     region.name = "Verified far region";
     region.level = rws::RequirementExecutionLevel::Must;
     region.compileState = rws::RequirementExecutionCompileState::Included;
@@ -8440,6 +8984,23 @@ static void testVerifiedRegionUsesSharedEvaluator()
         findMetric(verified, "kinematics.workspace.coverage");
     REQUIRE(coverage != nullptr);
     REQUIRE(coverage != nullptr && coverage->value == 1.0);
+    const auto summaryArtifact = std::find_if(
+        verified.artifacts.begin(), verified.artifacts.end(),
+        [] (const rws::EngineeringArtifact& artifact) {
+            return artifact.artifactId == "kinematics.workspace.coverage-summary";
+        });
+    REQUIRE(summaryArtifact != verified.artifacts.end());
+    if (summaryArtifact != verified.artifacts.end()) {
+        QJsonParseError parseError;
+        const QJsonDocument summary = QJsonDocument::fromJson(
+            QByteArray::fromStdString(summaryArtifact->payload), &parseError);
+        REQUIRE(parseError.error == QJsonParseError::NoError);
+        REQUIRE(summary.isObject());
+        const QJsonArray regions = summary.object().value("regions").toArray();
+        REQUIRE(regions.size() == 1);
+        REQUIRE(regions.size() == 1 &&
+                regions.at(0).toObject().value("id").toString().toStdString() == region.id);
+    }
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -8541,6 +9102,21 @@ static void testVerifiedRegionPreservesPositionCoverage()
     REQUIRE(structureResult.raw.workspaceRegionMetrics.size() == 1 &&
             std::abs(structureResult.raw.workspaceRegionMetrics.front().coverage -
                      direct.positionCoverage) < 1e-12);
+    REQUIRE(std::abs(structureResult.raw.workspaceRegionMetrics.front().orientationCoverage -
+                     direct.orientationCoverage) < 1e-12);
+
+    // Position coverage can pass while orientation coverage violates the
+    // frozen region threshold. Preserve the region ID as a diagnostic.
+    rws::StructureOptimizationProblem orientationProblem = problem;
+    orientationProblem.requirementExecution.workspaceRegions.front().minimumOrientationCoverage =
+        std::min(1.0, direct.orientationCoverage + 0.25);
+    rws::StructureCandidateResult orientationCandidate;
+    rws::KinematicEngineeringEvaluator(orientationProblem).evaluateCandidate(
+        orientationCandidate, rws::StructureEvaluationStage::Verified, callbacks, nullptr);
+    REQUIRE(orientationCandidate.status == rws::StructureCandidateStatus::Infeasible);
+    REQUIRE(std::find(orientationCandidate.violatedConstraints.begin(),
+                      orientationCandidate.violatedConstraints.end(), region.id) !=
+            orientationCandidate.violatedConstraints.end());
 
     if (g_testFailures == 0)
         std::printf("PASSED\n");
@@ -8635,6 +9211,12 @@ static void testUiTableModelsAndSuggestions()
     REQUIRE(taskModel.columnCount() >= 7);
     REQUIRE(taskModel.tasks().size() == 1);
     REQUIRE(taskModel.tasks()[0].point.id == "pick");
+    REQUIRE(taskModel.setData(taskModel.index(0, rws::OptimizationTaskTableModel::WeightColumn),
+                              2.0));
+    REQUIRE(!taskModel.setData(taskModel.index(0, rws::OptimizationTaskTableModel::WeightColumn),
+                               std::numeric_limits<double>::quiet_NaN()));
+    REQUIRE(!taskModel.setData(taskModel.index(0, rws::OptimizationTaskTableModel::IdColumn),
+                               QString()));
 
     rws::StructureCandidateResult candidate;
     candidate.index = 7;
@@ -9199,6 +9781,15 @@ static void testConstraintModelAndProjectAdapter()
         constraintModel.index(0, rws::StructureConstraintTableModel::ThresholdColumn),
         0.9));
     REQUIRE(std::abs(constraintModel.constraints().at(0).threshold - 0.9) < 1e-12);
+    REQUIRE(!(constraintModel.flags(
+        constraintModel.index(0, rws::StructureConstraintTableModel::KindColumn)) &
+              Qt::ItemIsEditable));
+    REQUIRE(!constraintModel.setData(
+        constraintModel.index(0, rws::StructureConstraintTableModel::IdColumn),
+        QString()));
+    REQUIRE(!constraintModel.setData(
+        constraintModel.index(0, rws::StructureConstraintTableModel::ThresholdColumn),
+        std::numeric_limits<double>::quiet_NaN()));
 
     rws::StructureOptimizationProblem original;
     original.context.modelSpec =
@@ -10683,6 +11274,32 @@ static void testDefaultDesktopWorkcellOptimizationConsumption()
         std::printf("FAILED (%d)\n", g_testFailures);
 }
 
+// D3: objective weights are normalized over enabled objectives that provide a
+// metric, so changing their scale cannot saturate the total score.
+static void testWeightedObjectiveNormalization()
+{
+    std::printf("testWeightedObjectiveNormalization ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.objectives = {
+        {"structure.preference", rws::OptimizationDirection::Maximize,
+         {1.0, 0.0, true}, 2.0, true},
+        {"kinematics.reachability.weighted", rws::OptimizationDirection::Maximize,
+         {1.0, 0.0, true}, 1.0, true}};
+
+    rws::StructureCandidateResult candidate;
+    candidate.raw.engineeringPreference = 0.75;
+    candidate.raw.weightedReachability = 0.25;
+    rws::StructureObjectiveScorer().score(problem, candidate);
+    REQUIRE(std::abs(candidate.totalScore - ((2.0 * 0.75 + 1.0 * 0.25) / 3.0 * 100.0)) <
+            1e-12);
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 端到端验收(UR 六轴):从 UR.wc.xml 创建托管项目、转换模型、构造含 3 个
 // 任务与 3 个设计变量的问题并保存;重新加载后校验模型溯源为 Current,并实际跑
 // 两次系统级优化(验证确定性)与最佳候选模型导出,检查候选 WC 落盘。
@@ -12003,6 +12620,89 @@ static void testOptimizationRunSnapshot()
     REQUIRE(parsed.randomSeed == 42);
     REQUIRE(parsed.input.modelFingerprint == "model");
     REQUIRE(!rws::optimizationRunSnapshotStatusFromString("Unknown", parsed.status, &error));
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// Phase 3/M13/S12: run snapshots and candidate resources must preserve wide
+// integer progress, warnings, and reject malformed numeric resource metadata.
+static void testOptimizationRunPersistenceBoundaries()
+{
+    std::printf("testOptimizationRunPersistenceBoundaries ... ");
+    rws::StructureOptimizationProblem problem;
+    problem.context.projectName = "wide-integer";
+    problem.context.robotName = "robot";
+    problem.run.randomSeed = std::numeric_limits<unsigned int>::max();
+    problem.run.candidateCount = 2;
+    rws::OptimizationRunSnapshot snapshot = rws::makeOptimizationRunSnapshot(
+        "wide-run", problem, "{}", "plan", "{}", "final", "model", "environment",
+        "requirements", "tool", "adapters");
+    snapshot.requestedCandidateCount = 5000000001ULL;
+    snapshot.generatedCandidateCount = 5000000000ULL;
+    snapshot.completedCandidateCount = 4999999999ULL;
+    snapshot.nextCandidateIndex = 4999999999ULL;
+    rws::OptimizationRunResourceRef resource;
+    resource.resourceId = "candidate-wide";
+    resource.kind = "CandidateResult";
+    resource.schemaVersion = 1;
+    resource.relativePath = "runs/wide/resources/candidate.json";
+    resource.sha256 = "sha256";
+    resource.byteSize = 5000000000ULL;
+    snapshot.candidateResults.push_back(resource);
+
+    const std::string json = rws::optimizationRunSnapshotToJson(snapshot);
+    rws::OptimizationRunSnapshot parsed;
+    std::string error;
+    REQUIRE(rws::optimizationRunSnapshotFromJson(json, parsed, &error));
+    REQUIRE(parsed.randomSeed == std::numeric_limits<unsigned int>::max());
+    REQUIRE(parsed.requestedCandidateCount == 5000000001ULL);
+    REQUIRE(parsed.candidateResults.front().byteSize == 5000000000ULL);
+
+    const std::string negativeSizeJson =
+        [&json]() {
+            std::string mutated = json;
+            const std::string needle = "\"byteSize\":5000000000";
+            const std::size_t position = mutated.find(needle);
+            if (position != std::string::npos)
+                mutated.replace(position, needle.size(), "\"byteSize\":-1");
+            return mutated;
+        }();
+    REQUIRE(!rws::optimizationRunSnapshotFromJson(negativeSizeJson, parsed, &error));
+
+    rws::CandidateResult candidate;
+    candidate.candidateId = "candidate-wide";
+    candidate.representativeQ = {0.125, -0.25};
+    candidate.warnings = {"warning-a", "warning-b"};
+    const std::string resourceJson =
+        rws::candidateResultResourceToJson(candidate, "candidate-wide");
+    rws::CandidateResult restored;
+    std::string resourceId;
+    REQUIRE(rws::candidateResultResourceFromJson(
+        resourceJson, restored, &resourceId, &error));
+    REQUIRE(resourceId == "candidate-wide");
+    REQUIRE(restored.warnings == candidate.warnings);
+    REQUIRE(restored.representativeQ == candidate.representativeQ);
+
+    if (g_testFailures == 0) std::printf("PASSED\n");
+    else std::printf("FAILED (%d)\n", g_testFailures);
+}
+
+// Phase 3/S14: common directory calculation must keep the double-slash UNC
+// prefix, otherwise managed asset paths become rooted on the local drive.
+static void testUncCommonDirectory()
+{
+    std::printf("testUncCommonDirectory ... ");
+    const QString common = rws::FrozenRequirementProjectImportService::commonDirectoryPath(
+        QStringLiteral("//server/share/requirements/main.json"),
+        QStringLiteral("//server/share/models/robot.rmb.json"));
+    REQUIRE(common == QStringLiteral("//server/share"));
+    REQUIRE(common.startsWith(QStringLiteral("//server/share")));
+
+    const QString driveCommon = rws::FrozenRequirementProjectImportService::commonDirectoryPath(
+        QStringLiteral("C:/project/requirements/main.json"),
+        QStringLiteral("C:/project/models/robot.rmb.json"));
+    REQUIRE(driveCommon == QStringLiteral("C:/project"));
 
     if (g_testFailures == 0) std::printf("PASSED\n");
     else std::printf("FAILED (%d)\n", g_testFailures);
@@ -13388,6 +14088,24 @@ int main(int argc, char** argv)
         return g_testFailures == 0 ? 0 : 1;
     }
 
+    if (suite == "frozen_contract") {
+        QCoreApplication app(argc, argv);
+        testFrozenContractStalenessFingerprint();
+        testFrozenContractIgnoresSerializationEvolution();
+        testFrozenContractStaleLifecycle();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "d3_staleness") {
+        QCoreApplication app(argc, argv);
+        if (argc < 3) {
+            std::fprintf(stderr, "d3_staleness requires a project JSON path.\n");
+            return 2;
+        }
+        testFrozenContractForProject(QString::fromLocal8Bit(argv[2]));
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
     QApplication app(argc, argv);
 
     testHistoricalStructureOptimizerAbiRemainsLinkable();
@@ -13427,8 +14145,10 @@ int main(int argc, char** argv)
     if (suite == "evaluator_consistency") {
         testEvaluateCandidateMatchesLegacyWrapper();
         testSharedTargetEvaluatorConsistency();
+        testWeightedTaskReachability();
         testVerifiedRegionUsesSharedEvaluator();
         testVerifiedRegionPreservesPositionCoverage();
+        testWeightedObjectiveNormalization();
         if (g_testFailures == 0) {
             std::printf("Evaluator consistency test passed.\n");
             return 0;
@@ -13485,6 +14205,7 @@ int main(int argc, char** argv)
     testMutator();
     testScorer();
     testScorerWithConstraints();
+    testWeightedObjectiveNormalization();
     testGenericObjectivesAndConstraints();
     testHardConstraints();
 
@@ -13502,6 +14223,7 @@ int main(int argc, char** argv)
     testCacheKeySafeWithZeroStep();
     testDefaultDesktopWorkcellOptimizationConsumption();
     testSharedTargetEvaluatorConsistency();
+    testWeightedTaskReachability();
     testVerifiedRegionUsesSharedEvaluator();
     testVerifiedRegionPreservesPositionCoverage();
     testWorkspaceCoverageDataInsufficient();
@@ -13510,6 +14232,7 @@ int main(int argc, char** argv)
     testSystemEngineeringOptimizer();
     testOptimizer();
     testHybridVerificationAndSensitivityWorkflow();
+    testProgressBestScoreExcludesInfeasibleCandidates();
     testNoFeasibleCandidateLeavesSensitivityUnknown();
 
     printf("\n");
@@ -13517,6 +14240,8 @@ int main(int argc, char** argv)
     testSensitivity();
     testSensitivityStopsAfterCancellation();
     testJsonRoundTrip();
+    testOptimizationRunPersistenceBoundaries();
+    testUncCommonDirectory();
     testAuditableEvidenceOutput();
     testCsvExport();
     testUiTableModelsAndSuggestions();
@@ -13536,6 +14261,7 @@ int main(int argc, char** argv)
     testStructureOptimizationControllerAsyncState();
     testControllerDiscardsResultsFromPreviousProject();
     testFrozenContractStalenessFingerprint();
+    testFrozenContractIgnoresSerializationEvolution();
     testFrozenContractStaleLifecycle();
     testValidationFlagsStaleFrozenContract();
     testExplicitCollisionConstraintRequiresEvidence();

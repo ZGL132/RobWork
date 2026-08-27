@@ -68,10 +68,10 @@ public:
     /**
      * @brief 计算可编辑任务点与约束的稳定指纹（冻结契约一致性检测用）。
      *
-     * 指纹只由 tasks/constraints 内容决定（复用问题级规范化 JSON 编码器，
-     * 键排序、跨会话确定）。冻结需求载入时记录参考指纹；此后任何任务/约束
-     * 编辑使指纹偏离参考值即判定冻结契约 stale——必须从需求源重新冻结，
-     * 绝不允许用当前表格内容重建执行契约。
+     * 指纹只由 tasks/constraints 的契约字段决定，采用版本化 SHA-256 摘要，
+     * 不受问题 JSON 其它字段演进影响。读取旧项目时兼容 C1.1 之前保存的
+     * 完整问题 JSON；此后任何任务/约束编辑使摘要偏离参考值即判定 stale，
+     * 必须从需求源重新冻结，绝不允许用当前表格内容重建执行契约。
      */
     static std::string editableContractFingerprint(
         const std::vector<OptimizationTaskPoint>& tasks,

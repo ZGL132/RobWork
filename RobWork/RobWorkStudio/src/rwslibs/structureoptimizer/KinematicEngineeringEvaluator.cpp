@@ -13,6 +13,10 @@
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/kinematics/Frame.hpp>
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -80,19 +84,17 @@ void addMetric(EngineeringEvaluationResult& result, const std::string& id,
  */
 std::string ikSummary(const StructureRawMetrics& raw)
 {
-    std::ostringstream stream;
-    stream << "{\"tasks\":[";
-    for (std::size_t i = 0; i < raw.taskMetrics.size(); ++i) {
-        const StructureTaskMetric& task = raw.taskMetrics[i];
-        if (i != 0)
-            stream << ',';
-        stream << "{\"id\":\"" << task.taskId
-               << "\",\"usableSolutionCount\":" << task.usableSolutionCount
-               << ",\"reachable\":" << (task.reachable ? "true" : "false")
-               << "}";
+    QJsonArray tasks;
+    for (const StructureTaskMetric& task : raw.taskMetrics) {
+        QJsonObject object;
+        object[QStringLiteral("id")] = QString::fromStdString(task.taskId);
+        object[QStringLiteral("usableSolutionCount")] = task.usableSolutionCount;
+        object[QStringLiteral("reachable")] = task.reachable;
+        tasks.append(object);
     }
-    stream << "]}";
-    return stream.str();
+    QJsonObject root;
+    root[QStringLiteral("tasks")] = tasks;
+    return QJsonDocument(root).toJson(QJsonDocument::Compact).toStdString();
 }
 
 /**
@@ -105,12 +107,26 @@ std::string ikSummary(const StructureRawMetrics& raw)
  */
 std::string workspaceSummary(const StructureRawMetrics& raw)
 {
-    std::ostringstream stream;
-    stream << "{\"coverage\":" << raw.workspaceCoverage
-           << ",\"occupiedCellCount\":" << raw.workspaceOccupiedCellCount
-           << ",\"totalCellCount\":" << raw.workspaceTotalCellCount
-           << "}";
-    return stream.str();
+    QJsonArray regions;
+    for (const StructureWorkspaceRegionMetric& region : raw.workspaceRegionMetrics) {
+        QJsonObject object;
+        object[QStringLiteral("id")] = QString::fromStdString(region.id);
+        object[QStringLiteral("coverage")] = region.coverage;
+        object[QStringLiteral("orientationCoverage")] = region.orientationCoverage;
+        object[QStringLiteral("occupiedCellCount")] =
+            static_cast<qint64>(region.occupiedCellCount);
+        object[QStringLiteral("totalCellCount")] =
+            static_cast<qint64>(region.totalCellCount);
+        regions.append(object);
+    }
+    QJsonObject root;
+    root[QStringLiteral("coverage")] = raw.workspaceCoverage;
+    root[QStringLiteral("regions")] = regions;
+    root[QStringLiteral("occupiedCellCount")] =
+        static_cast<qint64>(raw.workspaceOccupiedCellCount);
+    root[QStringLiteral("totalCellCount")] =
+        static_cast<qint64>(raw.workspaceTotalCellCount);
+    return QJsonDocument(root).toJson(QJsonDocument::Compact).toStdString();
 }
 
 } // 匿名命名空间
@@ -824,7 +840,7 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     std::vector<WorkspaceSample> workspaceSamples;
     double workspaceSeconds = 0.0;
     bool workspaceCoverageDataInsufficient = false;
-    bool verifiedRegionInfeasible = false;
+    std::vector<std::string> verifiedRegionViolations;
     StructureWorkspaceCoverageResult workspaceCoverage;
     std::vector<StructureWorkspaceRegionMetric> workspaceRegionMetrics;
     // 旧式覆盖盒估算路径：对关节空间采样后，把 TCP 样本转换到每个覆盖盒的
@@ -934,6 +950,7 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
             const RegionCoverageResult result =
                 RegionCoverageEvaluator().evaluate(analysisContext, region, cancellation);
             metric.coverage = result.positionCoverage;
+            metric.orientationCoverage = result.orientationCoverage;
             metric.occupiedCellCount =
                 static_cast<std::size_t>(result.reachableCells);
             metric.totalCellCount = static_cast<std::size_t>(result.totalCells);
@@ -943,7 +960,7 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
             if (result.feasibility == Feasibility::DataInsufficient)
                 workspaceCoverageDataInsufficient = true;
             else if (result.feasibility == Feasibility::Infeasible)
-                verifiedRegionInfeasible = true;
+                verifiedRegionViolations.push_back(region.id);
 
             if (!hasCoverageResult || metric.coverage < workspaceCoverage.coverage) {
                 workspaceCoverage.coverage = metric.coverage;
@@ -1008,17 +1025,26 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     raw.optionalTaskCount      = optionalCount;
     raw.optionalReachableCount = optionalReachable;
 
-    // Weighted reachability
-    if (requiredCount > 0)
-        raw.weightedReachability =
-            static_cast<double>(requiredReachable) /
-            static_cast<double>(requiredCount);
-    else if (optionalCount > 0)
-        raw.weightedReachability =
-            static_cast<double>(optionalReachable) /
-            static_cast<double>(optionalCount);
-    else
-        raw.weightedReachability = 1.0;
+    // Weighted reachability: Must tasks take precedence; when no Must tasks
+    // exist, the same weighted ratio is computed over optional tasks. Invalid
+    // or non-positive weights are ignored here and rejected by validation/UI.
+    double weightedReachable = 0.0;
+    double totalTaskWeight = 0.0;
+    bool hasRequiredTask = false;
+    for (const StructureTaskMetric& metric : taskMetrics) {
+        if (metric.required)
+            hasRequiredTask = true;
+    }
+    for (const StructureTaskMetric& metric : taskMetrics) {
+        if (metric.required != hasRequiredTask ||
+            !std::isfinite(metric.weight) || metric.weight <= 0.0)
+            continue;
+        totalTaskWeight += metric.weight;
+        if (metric.reachable)
+            weightedReachable += metric.weight;
+    }
+    raw.weightedReachability = totalTaskWeight > 0.0
+        ? weightedReachable / totalTaskWeight : 1.0;
 
     // 10th percentiles
     raw.manipulabilityP10 = StructureObjectiveScorer::percentile10(manipulabilities);
@@ -1070,9 +1096,15 @@ void KinematicEngineeringEvaluator::evaluateCandidate(
     // 避免区域证据缺失被高分掩盖。
     StructureObjectiveScorer scorer;
     scorer.score(problem, candidate);
-    if (verifiedRegionInfeasible) {
+    if (!verifiedRegionViolations.empty()) {
         candidate.feasible = false;
         candidate.status = StructureCandidateStatus::Infeasible;
+        for (const std::string& regionId : verifiedRegionViolations) {
+            if (std::find(candidate.violatedConstraints.begin(),
+                          candidate.violatedConstraints.end(), regionId) ==
+                candidate.violatedConstraints.end())
+                candidate.violatedConstraints.push_back(regionId);
+        }
     }
 
     // ── 8.  Cache ──────────────────────────────────────────────────────

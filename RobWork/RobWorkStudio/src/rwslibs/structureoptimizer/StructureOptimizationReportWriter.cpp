@@ -188,13 +188,14 @@ std::string StructureOptimizationReportWriter::write(
         // 独立证据。按区域逐行输出，便于研发工程师追溯某个硬约束失败的真实位置。
         if (!best->raw.workspaceRegionMetrics.empty()) {
             out << "\n## Workspace Coverage Results\n\n";
-            out << "| Region | Reference frame | Coverage | Occupied cells | Total cells |\n";
-            out << "| --- | --- | ---: | ---: | ---: |\n";
+            out << "| Region | Reference frame | Position coverage | Orientation coverage | Occupied cells | Total cells |\n";
+            out << "| --- | --- | ---: | ---: | ---: | ---: |\n";
             for (const StructureWorkspaceRegionMetric& metric :
                  best->raw.workspaceRegionMetrics) {
                 out << "| " << markdownCell(metric.id) << " | "
                     << markdownCell(metric.referenceFrame) << " | "
                     << metric.coverage << " | "
+                    << metric.orientationCoverage << " | "
                     << metric.occupiedCellCount << " | "
                     << metric.totalCellCount << " |\n";
             }

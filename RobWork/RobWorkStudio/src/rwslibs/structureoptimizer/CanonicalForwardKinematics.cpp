@@ -2,6 +2,7 @@
 
 #include "KinematicConventions.hpp"
 
+#include <cmath>
 #include <map>
 
 namespace rws {
@@ -53,6 +54,13 @@ CanonicalForwardKinematicsResult CanonicalForwardKinematics::evaluate(
                  "The input Q dimension must equal the canonical DOF count.");
         return result;
     }
+    for (std::size_t index = 0; index < q.size(); ++index) {
+        if (!std::isfinite(q[index])) {
+            addError(result, "KINEMATIC_FK_Q_NONFINITE", "q[" + std::to_string(index) + "]",
+                     "The input Q must contain only finite coordinates.");
+            return result;
+        }
+    }
 
     std::map< std::string, const JointEdge* > joints;
     for (const JointEdge& joint : model.joints)
@@ -93,6 +101,18 @@ bool CanonicalForwardKinematics::frameTransform(const CanonicalForwardKinematics
                                                 rw::math::Transform3D<>& transform,
                                                 StructureOptimizationDiagnostic* diagnostic)
 {
+    if (!result.valid) {
+        if (diagnostic != nullptr) {
+            diagnostic->code = "KINEMATIC_FK_RESULT_INVALID";
+            diagnostic->severity = "Error";
+            diagnostic->subsystem = "canonical-kinematics";
+            diagnostic->stage = "forward-kinematics";
+            diagnostic->fieldPath = "result";
+            diagnostic->objectId = frameId;
+            diagnostic->message = "The requested frame cannot be read from an invalid FK result.";
+        }
+        return false;
+    }
     const auto found = result.frameTransforms.find(frameId);
     if (found != result.frameTransforms.end()) {
         transform = found->second;

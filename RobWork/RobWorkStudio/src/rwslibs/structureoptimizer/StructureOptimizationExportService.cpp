@@ -116,6 +116,13 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
     }
 
     QString error;
+    const std::string candidatesCsv =
+        StructureOptimizationCsv::candidatesCsv(problem, result);
+    if (candidatesCsv.rfind("Error,", 0) == 0) {
+        output.errors << "StructureOptimization.Export.InvalidCandidatesCsv: " +
+                         QString::fromStdString(candidatesCsv);
+        return output;
+    }
     const QString projectPath = QDir(staging.path()).filePath(names[0]);
     if (!StructureOptimizationProjectAdapter::saveProject(
             projectPath, problem, request.selectedCandidateIndex, &error)) {
@@ -126,7 +133,7 @@ StructureOptimizationExportResult StructureOptimizationExportService::exportAll(
 
     const std::vector<std::pair<QString, std::string> > textFiles = {
         {QDir(staging.path()).filePath(names[1]), StructureOptimizationJson::resultToJson(problem, result)},
-        {QDir(staging.path()).filePath(names[2]), StructureOptimizationCsv::candidatesCsv(problem, result)},
+        {QDir(staging.path()).filePath(names[2]), candidatesCsv},
         {QDir(staging.path()).filePath(names[3]), StructureOptimizationCsv::taskDetailCsv(problem, result)},
         {QDir(staging.path()).filePath(names[4]), StructureOptimizationCsv::auditCsv(problem, result)},
         {QDir(staging.path()).filePath(names[5]), StructureOptimizationReportWriter::write(problem, result)}};

@@ -358,6 +358,7 @@ StructureOptimizerWidget::StructureOptimizerWidget(QWidget* parent)
     connect(_controller, &StructureOptimizationController::baselineRunningChanged,
             this, &StructureOptimizerWidget::handleBaselineRunningChanged);
 
+    updateModelSourceStatus();
     updateRunState();
 }
 
@@ -460,6 +461,7 @@ void StructureOptimizerWidget::setProblemWithManagedRoot(
     for (std::size_t i = 0; i < _weightSpins.size(); ++i)
         _weightSpins[i]->setValue(weights[i]);
 
+    updateModelSourceStatus();
     updateRunState();
 }
 
@@ -1098,7 +1100,6 @@ void StructureOptimizerWidget::restoreModelBaseline()
 
 void StructureOptimizerWidget::updateRunState()
 {
-    updateModelSourceStatus();
     std::string reason;
     const StructureOptimizationProblem problem = collectProblem();
     const bool runnable = StructureOptimizationUiLogic::hasRunnableInputs(problem, &reason);
@@ -1255,6 +1256,9 @@ void StructureOptimizerWidget::runStructurePreflight()
 
 void StructureOptimizerWidget::evaluateStructureBaseline()
 {
+    // S7: force one synchronous source read/fingerprint immediately before a
+    // Verified baseline; routine cell edits do not repeatedly hit the disk.
+    updateModelSourceStatus();
     if (isFrozenContractStale()) {
         _statusLabel->setText(QStringLiteral(
             "Baseline blocked: frozen requirements are stale. Re-freeze from the requirement source."));
@@ -1438,7 +1442,9 @@ void StructureOptimizerWidget::handleBaselineCompleted(
 
 void StructureOptimizerWidget::handleBaselineFailed(const QString& message)
 {
-    _baselineLabel->setText("Baseline: evaluation failed.");
+    const bool canceled = message.contains(QStringLiteral("canceled"), Qt::CaseInsensitive);
+    _baselineLabel->setText(canceled ? "Baseline: evaluation canceled."
+                                     : "Baseline: evaluation failed.");
     _statusLabel->setText(message);
 }
 

@@ -35,6 +35,28 @@ bool isDhVariable(StructureVariableKind kind)
            kind == StructureVariableKind::DhD;
 }
 
+// Only variables that change a kinematic transform participate in the
+// DH/Transform exclusivity check. Geometry parameters can coexist with
+// either representation.
+bool isTransformVariable(StructureVariableKind kind)
+{
+    switch (kind) {
+    case StructureVariableKind::JointPositionX:
+    case StructureVariableKind::JointPositionY:
+    case StructureVariableKind::JointPositionZ:
+    case StructureVariableKind::JointRotationRoll:
+    case StructureVariableKind::JointRotationPitch:
+    case StructureVariableKind::JointRotationYaw:
+    case StructureVariableKind::BaseHeight:
+    case StructureVariableKind::TcpOffsetX:
+    case StructureVariableKind::TcpOffsetY:
+    case StructureVariableKind::TcpOffsetZ:
+        return true;
+    default:
+        return false;
+    }
+}
+
 // 辅助: 判断 double 是否有限
 bool isFinite(double v)
 {
@@ -160,7 +182,7 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
                 continue;
             if (isDhVariable(v.kind))
                 hasDh = true;
-            else
+            else if (isTransformVariable(v.kind))
                 hasTransform = true;
         }
         if (hasDh && hasTransform)
@@ -175,12 +197,30 @@ std::vector< AnalysisWarning > StructureOptimizationValidation::validateProblem(
     // ── 6. 至少一个启用的任务点 ─────────────────────────────────────────
     {
         bool hasEnabledTask = false;
+        std::set<std::string> taskIds;
         for (const auto& t : problem.tasks)
         {
+            if (t.point.id.empty())
+                warnings.push_back(makeWarning(
+                    "StructureOptimization.Task.InvalidId",
+                    "Task ID must not be empty."));
+            else if (!taskIds.insert(t.point.id).second)
+                warnings.push_back(makeWarning(
+                    "StructureOptimization.Task.DuplicateId",
+                    "Duplicate task ID: '" + t.point.id + "'."));
             if (t.point.enabled)
             {
                 hasEnabledTask = true;
-                break;
+                bool finitePose = true;
+                for (double value : t.point.position)
+                    finitePose = finitePose && isFinite(value);
+                for (double value : t.point.rpyDeg)
+                    finitePose = finitePose && isFinite(value);
+                if (!finitePose || !isFinite(t.point.weight) || t.point.weight <= 0.0)
+                    warnings.push_back(makeWarning(
+                        "StructureOptimization.Task.InvalidNumericValue",
+                        "Enabled task '" + t.point.id +
+                        "' has non-finite pose values or a non-positive weight."));
             }
         }
         if (!hasEnabledTask)

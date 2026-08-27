@@ -7,6 +7,26 @@
 
 namespace rws {
 
+namespace {
+
+bool validSamplingVariable(const StructureDesignVariable& variable)
+{
+    if (!std::isfinite(variable.currentValue) || !variable.enabled)
+        return !variable.enabled && std::isfinite(variable.currentValue);
+    return std::isfinite(variable.minimum) && std::isfinite(variable.maximum) &&
+           variable.minimum <= variable.maximum && variable.step > 0.0 &&
+           std::isfinite(variable.step);
+}
+
+bool validSamplingInputs(const std::vector<StructureDesignVariable>& variables, int count)
+{
+    if (count <= 0)
+        return false;
+    return std::all_of(variables.begin(), variables.end(), validSamplingVariable);
+}
+
+} // namespace
+
 double StructureCandidateGenerator::randomDouble(unsigned int& state)
 {
     // Simple LCG (Numerical Recipes)
@@ -32,6 +52,8 @@ std::vector<std::vector<double>> StructureCandidateGenerator::randomUniform(
     const std::vector<StructureDesignVariable>& variables,
     int count, unsigned int seed)
 {
+    if (!validSamplingInputs(variables, count))
+        return {};
     std::vector<std::vector<double>> candidates;
     candidates.reserve(static_cast<std::size_t>(count));
     unsigned int state = seed;
@@ -63,6 +85,8 @@ std::vector<std::vector<double>> StructureCandidateGenerator::latinHypercube(
     const std::vector<StructureDesignVariable>& variables,
     int count, unsigned int seed)
 {
+    if (!validSamplingInputs(variables, count))
+        return {};
     std::mt19937 rng(seed);
 
     // samples[j] holds the stratum samples for variable j (before permutation)
@@ -112,7 +136,8 @@ std::vector<std::vector<double>> StructureCandidateGenerator::grid(
     const std::vector<StructureDesignVariable>& variables,
     int stepsPerVariable, int maximumCount)
 {
-    if (stepsPerVariable <= 0 || maximumCount <= 0)
+    if (stepsPerVariable <= 0 || maximumCount <= 0 ||
+        !std::all_of(variables.begin(), variables.end(), validSamplingVariable))
         return {};
 
     // Collect enabled variable indices
@@ -149,8 +174,12 @@ std::vector<std::vector<double>> StructureCandidateGenerator::grid(
         {
             std::size_t idx = enabledIndices[static_cast<std::size_t>(k)];
             const auto& v   = variables[idx];
-            double stepSize = (v.maximum - v.minimum) / stepsPerVariable;
-            double val      = v.minimum + counter[static_cast<std::size_t>(k)] * stepSize;
+            const double stepSize = stepsPerVariable > 1
+                ? (v.maximum - v.minimum) / static_cast<double>(stepsPerVariable - 1)
+                : 0.0;
+            const double val = stepsPerVariable == 1
+                ? std::max(v.minimum, std::min(v.maximum, v.currentValue))
+                : v.minimum + counter[static_cast<std::size_t>(k)] * stepSize;
             values[idx]     = quantize(val, v);
         }
 

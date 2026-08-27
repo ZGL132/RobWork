@@ -34,6 +34,21 @@ bool isMovable(CanonicalJointType type)
     return type == CanonicalJointType::Revolute || type == CanonicalJointType::Prismatic;
 }
 
+bool isFiniteVector(const rw::math::Vector3D<>& vector)
+{
+    return std::isfinite(vector(0)) && std::isfinite(vector(1)) &&
+           std::isfinite(vector(2));
+}
+
+bool isFiniteTransform(const rw::math::Transform3D<>& transform)
+{
+    if (!isFiniteVector(transform.P())) return false;
+    for (std::size_t row = 0; row < 3; ++row)
+        for (std::size_t column = 0; column < 3; ++column)
+            if (!std::isfinite(transform.R()(row, column))) return false;
+    return true;
+}
+
 CanonicalCoordinateUnit expectedUnit(CanonicalJointType type)
 {
     return type == CanonicalJointType::Prismatic ? CanonicalCoordinateUnit::Metres :
@@ -146,6 +161,19 @@ CanonicalKinematicModelValidationResult CanonicalKinematicModelValidator::valida
         if (!hasFrame(frames, joint.parentFrameId) || !hasFrame(frames, joint.childFrameId))
             addError(result, "KINEMATIC_JOINT_FRAME_REFERENCE_INVALID", prefix,
                      "A joint must reference existing parent and child frames.");
+        if (!isFiniteTransform(joint.parentToJointZero) ||
+            !isFiniteTransform(joint.jointMotionToChild))
+            addError(result, "KINEMATIC_JOINT_TRANSFORM_NONFINITE", prefix,
+                     "Joint transforms must contain only finite values.");
+        if (!isFiniteVector(joint.motionAxisInJoint))
+            addError(result, "KINEMATIC_JOINT_AXIS_NONFINITE", prefix + ".motionAxisInJoint",
+                     "Joint motion axes must contain only finite values.");
+        else if (isMovable(joint.type) && joint.motionAxisInJoint.norm2() <= 1e-12)
+            addError(result, "KINEMATIC_JOINT_AXIS_ZERO", prefix + ".motionAxisInJoint",
+                     "Movable joint motion axes must be non-zero.");
+        if (!std::isfinite(joint.zeroPositionOffset))
+            addError(result, "KINEMATIC_JOINT_OFFSET_NONFINITE", prefix + ".zeroPositionOffset",
+                     "Joint zero-position offsets must be finite.");
         if (joint.type == CanonicalJointType::Fixed && !joint.dofId.empty())
             addError(result, "KINEMATIC_FIXED_JOINT_HAS_DOF", prefix + ".dofId",
                      "A fixed joint must not own a degree of freedom.");
@@ -248,6 +276,9 @@ CanonicalKinematicModelValidationResult CanonicalKinematicModelValidator::valida
             tcp->second->type != CanonicalFrameType::Tool)
             addError(result, "KINEMATIC_TOOL_BINDING_INVALID", prefix,
                      "A tool binding must reference a Flange frame and a Tool frame.");
+        if (!isFiniteTransform(binding.flangeToTcp))
+            addError(result, "KINEMATIC_TOOL_TRANSFORM_NONFINITE", prefix + ".flangeToTcp",
+                     "Tool transforms must contain only finite values.");
     }
     std::set< std::string > geometryIds;
     for (std::size_t index = 0; index < model.geometryBindings.size(); ++index)

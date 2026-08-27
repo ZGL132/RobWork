@@ -39,6 +39,7 @@ QString commonDirectory(const QString& first, const QString& second)
 {
     const QString left = QDir::fromNativeSeparators(QFileInfo(first).absoluteFilePath());
     const QString right = QDir::fromNativeSeparators(QFileInfo(second).absoluteFilePath());
+    const bool leftUnc = left.startsWith(QStringLiteral("//"));
     const QStringList leftParts = left.split(QLatin1Char('/'), Qt::SkipEmptyParts);
     const QStringList rightParts = right.split(QLatin1Char('/'), Qt::SkipEmptyParts);
     QStringList commonParts;
@@ -51,7 +52,9 @@ QString commonDirectory(const QString& first, const QString& second)
     if (commonParts.size() <= 1)
         return QFileInfo(first).absolutePath();
     QString common = commonParts.join(QLatin1Char('/'));
-    if (left.startsWith(QLatin1Char('/')))
+    if (leftUnc)
+        common.prepend(QStringLiteral("//"));
+    else if (left.startsWith(QLatin1Char('/')))
         common.prepend(QLatin1Char('/'));
     return QDir::cleanPath(common);
 }
@@ -77,6 +80,12 @@ bool hasRelativeGeometryPath(const RobotModelSpec& model)
 }
 
 } // namespace
+
+QString FrozenRequirementProjectImportService::commonDirectoryPath(
+    const QString& first, const QString& second)
+{
+    return commonDirectory(first, second);
+}
 
 bool FrozenRequirementProjectImportService::createProblem(
     const QString& requirementPath,

@@ -1066,6 +1066,20 @@ static int testTargetEvaluator ()
                                 "target identity is preserved"))
         return rc;
 
+    rws::TaskPoint negativeWeight = reachable;
+    negativeWeight.id = "negative-weight-target";
+    negativeWeight.weight = -1.0;
+    const rws::TargetEvaluation negativeWeightResult =
+        evaluator.evaluate (context, negativeWeight, options);
+    if (const int rc = require (
+            negativeWeightResult.feasibility == rws::Feasibility::Infeasible &&
+                std::find (negativeWeightResult.failureReasons.begin (),
+                           negativeWeightResult.failureReasons.end (),
+                           rws::KinematicFailureReason::InvalidTarget) !=
+                    negativeWeightResult.failureReasons.end (),
+            "negative target weight is rejected as InvalidTarget"))
+        return rc;
+
     rws::TaskPoint farAway = reachable;
     farAway.id = "unreachable-far-away";
     farAway.position = {{100.0, 100.0, 100.0}};
@@ -1666,12 +1680,13 @@ static int testVerifiedRegionGridGeneration ()
 
 // 子套件 Verified 区域求值:验证对不可达区域(中心在 100 米外)整区域 Infeasible,
 // 且每个单元恰好求值一次(采样数=求值数);把覆盖率阈值降为 0 时区域 Feasible;
-// 必需碰撞检查缺检测器在求值前即 DataInsufficient;超大方向/滚转采样被
-// KIN_REGION_SAMPLING_LIMIT 拒绝;取消时保留已采样部分(标记部分进度)但整体
-// 不通过,并带 KIN_REGION_CANCELLED 告警。
+// 必需碰撞检查缺检测器在求值前即 DataInsufficient;directionSamples 不虚增复合
+// 目标计数,真实超限的复合采样被 KIN_REGION_SAMPLING_LIMIT 拒绝;取消时保留已
+// 采样部分(标记部分进度)但整体不通过,并带 KIN_REGION_CANCELLED 告警。
 // 补充说明:对 100 米外的不可达区域,整区域 Infeasible 且每个单元恰好采样/求值一次
 // (sampledOrientations == totalCells == 8);把覆盖率阈值降为 0 后 Feasible;
-// 必需碰撞缺检测器在求值前即 DataInsufficient;超大方向/滚转采样被
+// 必需碰撞缺检测器在求值前即 DataInsufficient;directionSamples 不虚增复合目标
+// 计数(护栏按 单元数×rollSamples 的真实生成数判断),真正超限的复合采样被
 // KIN_REGION_SAMPLING_LIMIT 拒绝(防无限运行);取消时保留已采样部分(partial 进度)
 // 但整体不通过,并带 KIN_REGION_CANCELLED 告警。
 static int testVerifiedRegionTargetEvaluation ()
@@ -1744,12 +1759,36 @@ static int testVerifiedRegionTargetEvaluation ()
         "required collision detector absence is DataInsufficient before IK"))
         return rc;
 
+    // directionSamples 属于方向覆盖采样语义，RegionCoverageEvaluator 的
+    // PointAtTarget 只按 rollSamples 逐滚动生成目标。护栏按真实目标数
+    // (8 单元 × 13 滚动 = 104)计数；旧实现误乘 directionSamples 得
+    // 104,000 而拒绝这种可完成的配置。
+    rws::RequirementExecutionRegion directionInflated = region;
+    directionInflated.orientationMode =
+        rws::RequirementExecutionOrientationMode::PointAtTarget;
+    directionInflated.orientationTargetPoint = "0,0,0";
+    directionInflated.directionSamples = 1000;
+    directionInflated.rollSamples = 13;
+    const rws::RegionCoverageResult inflated =
+        rws::RegionCoverageEvaluator ().evaluate (context, directionInflated);
+    if (const int rc = require (
+            inflated.feasibility == rws::Feasibility::Infeasible &&
+                inflated.sampledOrientations == 104 &&
+                std::none_of (inflated.warnings.begin (), inflated.warnings.end (),
+                              [] (const rws::AnalysisWarning& warning) {
+                                  return warning.code == "KIN_REGION_SAMPLING_LIMIT";
+                              }),
+            "directionSamples does not inflate the composite target count"))
+        return rc;
+
+    // 真实的复合上限仍然拒绝无界运行：1000 单元 × 360 滚动 = 360,000 个目标，
+    // 在进入逐目标 IK 求解之前即被 KIN_REGION_SAMPLING_LIMIT 拦截。
     rws::RequirementExecutionRegion oversizedSampling = region;
     oversizedSampling.orientationMode =
         rws::RequirementExecutionOrientationMode::PointAtTarget;
     oversizedSampling.orientationTargetPoint = "0,0,0";
-    oversizedSampling.directionSamples = 1000;
     oversizedSampling.rollSamples = 360;
+    oversizedSampling.sampleCounts = {{10, 10, 10}};
     const rws::RegionCoverageResult limited =
         rws::RegionCoverageEvaluator ().evaluate (context, oversizedSampling);
     if (const int rc = require (

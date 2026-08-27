@@ -31,6 +31,9 @@ namespace rws {
 class FrozenRequirementProjectImportService
 {
   public:
+    //! @brief 计算两个绝对路径的公共目录，并保留 Windows UNC 根前缀。
+    static QString commonDirectoryPath(const QString& first, const QString& second);
+
     /**
      * @brief 读取需求 JSON 文件，创建包含完整需求来源审计记录的结构优化问题。
      * 

@@ -2,6 +2,7 @@
 
 #include "StructureOptimizationDocument.hpp"
 #include "StructureOptimizationJson.hpp"
+#include "StructureOptimizationUiLogic.hpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -46,6 +47,9 @@ bool StructureOptimizationMigration::migrate(const std::string& json,
         result.source = StructureOptimizationMigrationSource::Current;
         if (!StructureOptimizationJson::currentEnvelopeFromJson(json, result.problem, error))
             return false;
+        // M3 统一加载边界：Current 信封同样应用存量维度 kind 修正。
+        StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(
+            result.problem.variables);
         result.currentJson = StructureOptimizationJson::currentEnvelopeToJson(result.problem);
         result.dirty = false;
         if (error != nullptr)
@@ -79,6 +83,9 @@ bool StructureOptimizationMigration::migrate(const std::string& json,
     QJsonObject legacyExtension;
     legacyExtension.insert(QStringLiteral("document"), root);
     problem.extensions.insert(QStringLiteral("legacy"), legacyExtension);
+    // M3 统一加载边界：旧格式迁移后同样应用存量维度 kind 修正。
+    StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(
+        problem.variables);
     result.problem = problem;
     result.currentJson = StructureOptimizationJson::currentEnvelopeToJson(result.problem);
     result.dirty = true;

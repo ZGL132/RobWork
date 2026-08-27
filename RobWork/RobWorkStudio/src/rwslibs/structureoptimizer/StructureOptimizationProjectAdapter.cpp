@@ -2,6 +2,7 @@
 
 #include "CanonicalModelShadowService.hpp"
 #include "StructureOptimizationJson.hpp"
+#include "StructureOptimizationUiLogic.hpp"
 #include "StructureOptimizationValidation.hpp"
 
 #include <QDir>
@@ -119,6 +120,9 @@ bool StructureOptimizationProjectAdapter::loadProject(
 
     if (selectedCandidateIndex != nullptr)
         *selectedCandidateIndex = root.value("ui").toObject().value("selectedCandidateIndex").toInt(-1);
+    // M3 统一加载边界：直连本适配器的调用方同样获得存量变量迁移，
+    // 不能只依赖 Widget 装载后的补救调用。
+    StructureOptimizationUiLogic::migrateLegacyDrawableDimensionKinds(loaded.variables);
     out = loaded;
     if (error != nullptr)
         error->clear();

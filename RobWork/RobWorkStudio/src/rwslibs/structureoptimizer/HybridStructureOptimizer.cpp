@@ -27,7 +27,13 @@ std::string currentTimestamp()
     auto now = std::chrono::system_clock::now();
     auto t   = std::chrono::system_clock::to_time_t(now);
     char buf[32];
-    std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S", std::localtime(&t));
+    std::tm utcTime{};
+#ifdef _WIN32
+    gmtime_s(&utcTime, &t);
+#else
+    gmtime_r(&t, &utcTime);
+#endif
+    std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &utcTime);
     return std::string(buf);
 }
 
@@ -175,6 +181,16 @@ const StructureCandidateResult* findCandidateByIndex(
     return nullptr;
 }
 
+double bestFeasibleScore(const std::vector<StructureCandidateResult>& candidates)
+{
+    double best = 0.0;
+    for (const StructureCandidateResult& candidate : candidates) {
+        if (candidate.feasible && std::isfinite(candidate.totalScore))
+            best = std::max(best, candidate.totalScore);
+    }
+    return best;
+}
+
 } // 匿名命名空间
 
 // ===========================================================================
@@ -274,9 +290,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                 p.stage     = "Quick";
                 p.completed = completed;
                 p.planned   = static_cast<int>(candidatePool.size());
-                for (const auto& c : result.candidates)
-                    if (c.totalScore > p.bestScore)
-                        p.bestScore = c.totalScore;
+                p.bestScore = bestFeasibleScore(result.candidates);
                 callbacks.onProgress(p);
             }
         }
@@ -328,9 +342,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                     p.stage     = "Verified";
                     p.completed = completed;
                     p.planned   = eliteCount;
-                    for (const auto& c : result.candidates)
-                        if (c.totalScore > p.bestScore)
-                            p.bestScore = c.totalScore;
+                    p.bestScore = bestFeasibleScore(result.candidates);
                     callbacks.onProgress(p);
                 }
             }
@@ -353,7 +365,8 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
             verifiedElites, problem.variables, localEliteCount);
 
         // 5c. 在可行精英解周围开展局部爬山搜索 (Local Sweeps)
-        if (!result.canceled && !localEliteIndices.empty())
+        if (!result.canceled && problem.run.maxLocalSweeps > 0 &&
+            !localEliteIndices.empty())
         {
             int localPerElite = std::max(1,
                 problem.run.maxLocalSweeps / localEliteCount);
@@ -410,9 +423,7 @@ StructureOptimizationResult HybridStructureOptimizer::optimize(
                     p.stage     = "Local";
                     p.completed = completed;
                     p.planned   = static_cast<int>(localPool.size());
-                    for (const auto& c : result.candidates)
-                        if (c.totalScore > p.bestScore)
-                            p.bestScore = c.totalScore;
+                    p.bestScore = bestFeasibleScore(result.candidates);
                     callbacks.onProgress(p);
                 }
             }

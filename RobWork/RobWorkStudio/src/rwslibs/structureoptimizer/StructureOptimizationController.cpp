@@ -8,6 +8,7 @@
 #include "CanonicalModelShadowService.hpp"
 #include "KinematicModelImporter.hpp"
 #include "StructureOptimizationUiLogic.hpp"
+#include "StructureOptimizationValidation.hpp"
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
@@ -266,7 +267,9 @@ void StructureOptimizationController::finishBaselineRun()
     if (_projectEpoch != _activeBaselineProjectEpoch ||
         _baselineRunId != _activeBaselineRunId)
         return;
-    if (hasFailure) {
+    if (result.canceled) {
+        Q_EMIT baselineFailed(QStringLiteral("Baseline evaluation canceled."));
+    } else if (hasFailure) {
         QString message = QString::fromStdString(result.warnings.front().code);
         if (!result.warnings.front().message.empty())
             message += ": " + QString::fromStdString(result.warnings.front().message);
@@ -313,6 +316,18 @@ StructureOptimizationController::runDefaultOptimization(
     const StructureOptimizationProblem& problem,
     const StructureOptimizationCallbacks& callbacks)
 {
+    std::string modelError;
+    if (!StructureOptimizationValidation::hasCompleteModel(
+            problem.context.modelSpec, &modelError)) {
+        StructureOptimizationResult rejected;
+        AnalysisWarning warning;
+        warning.code = "StructureOptimization.Context.Invalid";
+        warning.message = modelError;
+        warning.source = "StructureOptimization.Controller";
+        warning.severity = AnalysisStatus::Fail;
+        rejected.warnings.push_back(std::move(warning));
+        return rejected;
+    }
     KinematicEngineeringEvaluator evaluator(problem);
     EngineeringEvaluatorPipeline pipeline;
     pipeline.addEvaluator(evaluator);
@@ -326,6 +341,17 @@ StructureOptimizationController::runDefaultBaselineEvaluation(
     const StructureOptimizationCallbacks& callbacks)
 {
     StructureOptimizationResult result;
+    std::string modelError;
+    if (!StructureOptimizationValidation::hasCompleteModel(
+            problem.context.modelSpec, &modelError)) {
+        AnalysisWarning warning;
+        warning.code = "StructureOptimization.Context.Invalid";
+        warning.message = modelError;
+        warning.source = "StructureOptimization.Controller";
+        warning.severity = AnalysisStatus::Fail;
+        result.warnings.push_back(std::move(warning));
+        return result;
+    }
     struct CancellationBridge {
         const std::function<bool()>* callback = nullptr;
     } cancellationBridge;

@@ -20,6 +20,7 @@
 #include <cmath>
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include <set>
 #include <stdexcept>
 
@@ -41,6 +42,87 @@ static QJsonValue jsonFiniteNumber(double value)
 static void appendFiniteNumber(QJsonArray& array, double value)
 {
     array.append(jsonFiniteNumber(value));
+}
+
+// Problem configuration numbers are inputs, rather than optional evaluation
+// metrics. Reject null, strings, and non-finite values instead of allowing Qt's
+// toDouble() coercion to silently turn malformed data into zero.
+static bool readFiniteNumber(const QJsonObject& object, const char* key,
+                             double fallback, double& output, std::string* error)
+{
+    const QLatin1String field(key);
+    if (!object.contains(field)) {
+        output = fallback;
+        return true;
+    }
+    const QJsonValue value = object.value(field);
+    if (!value.isDouble() || !std::isfinite(value.toDouble())) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be a finite JSON number.";
+        return false;
+    }
+    output = value.toDouble();
+    return true;
+}
+
+static bool readInteger(const QJsonObject& object, const char* key, int fallback,
+                        int& output, std::string* error)
+{
+    const QLatin1String field(key);
+    if (!object.contains(field)) {
+        output = fallback;
+        return true;
+    }
+    const QJsonValue value = object.value(field);
+    const double number = value.toDouble(std::numeric_limits<double>::quiet_NaN());
+    if (!value.isDouble() || !std::isfinite(number) || std::floor(number) != number ||
+        number < static_cast<double>(std::numeric_limits<int>::min()) ||
+        number > static_cast<double>(std::numeric_limits<int>::max())) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be a finite JSON integer.";
+        return false;
+    }
+    output = static_cast<int>(number);
+    return true;
+}
+
+static bool readUnsignedInteger(const QJsonObject& object, const char* key,
+                                unsigned int fallback, unsigned int& output,
+                                std::string* error)
+{
+    const QLatin1String field(key);
+    if (!object.contains(field)) {
+        output = fallback;
+        return true;
+    }
+    const QJsonValue value = object.value(field);
+    const double number = value.toDouble(std::numeric_limits<double>::quiet_NaN());
+    if (!value.isDouble() || !std::isfinite(number) || std::floor(number) != number ||
+        number < 0.0 || number > static_cast<double>(std::numeric_limits<unsigned int>::max())) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be a non-negative JSON integer.";
+        return false;
+    }
+    output = static_cast<unsigned int>(number);
+    return true;
+}
+
+static bool readBoolean(const QJsonObject& object, const char* key, bool fallback,
+                        bool& output, std::string* error)
+{
+    const QLatin1String field(key);
+    if (!object.contains(field)) {
+        output = fallback;
+        return true;
+    }
+    const QJsonValue value = object.value(field);
+    if (!value.isBool()) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be a JSON boolean.";
+        return false;
+    }
+    output = value.toBool();
+    return true;
 }
 
 static bool isKnownProblemKey(const QString& key)
@@ -288,6 +370,34 @@ static StructureCandidateStatus candidateStatusFromJson(const QJsonObject& obj, 
 //  TaskPoint -> QJsonObject
 // =============================================================================
 
+static const char* taskPointTypeToString(TaskPointType type)
+{
+    switch (type) {
+    case TaskPointType::Pick: return "Pick";
+    case TaskPointType::Place: return "Place";
+    case TaskPointType::Weld: return "Weld";
+    case TaskPointType::Glue: return "Glue";
+    case TaskPointType::Inspect: return "Inspect";
+    case TaskPointType::Screw: return "Screw";
+    case TaskPointType::Custom: return "Custom";
+    case TaskPointType::Generic: default: return "Generic";
+    }
+}
+
+static bool taskPointTypeFromString(const QString& value, TaskPointType& type)
+{
+    if (value == "Generic") type = TaskPointType::Generic;
+    else if (value == "Pick") type = TaskPointType::Pick;
+    else if (value == "Place") type = TaskPointType::Place;
+    else if (value == "Weld") type = TaskPointType::Weld;
+    else if (value == "Glue") type = TaskPointType::Glue;
+    else if (value == "Inspect") type = TaskPointType::Inspect;
+    else if (value == "Screw") type = TaskPointType::Screw;
+    else if (value == "Custom") type = TaskPointType::Custom;
+    else return false;
+    return true;
+}
+
 // 任务点序列化：位置与姿态（RPY 角度）以数值数组保存，便于与旧版 RobWork
 // 项目中的位姿语义对应，也避免浮点精度在文本往返中丢失。
 static QJsonObject taskPointToJson(const TaskPoint& pt)
@@ -295,6 +405,7 @@ static QJsonObject taskPointToJson(const TaskPoint& pt)
     QJsonObject obj;
     obj["id"]       = QString::fromStdString(pt.id);
     obj["name"]     = QString::fromStdString(pt.name);
+    obj["type"]     = taskPointTypeToString(pt.type);
     obj["refFrame"] = QString::fromStdString(pt.refFrame);
     obj["tcpFrame"] = QString::fromStdString(pt.tcpFrame);
     QJsonArray pos;
@@ -307,35 +418,82 @@ static QJsonObject taskPointToJson(const TaskPoint& pt)
     appendFiniteNumber(rpy, pt.rpyDeg[1]);
     appendFiniteNumber(rpy, pt.rpyDeg[2]);
     obj["rpyDeg"] = rpy;
+    QJsonObject tolerance;
+    tolerance["positionMeters"] = jsonFiniteNumber(pt.tolerance.positionMeters);
+    tolerance["orientationDeg"] = jsonFiniteNumber(pt.tolerance.orientationDeg);
+    tolerance["allowToolRollFree"] = pt.tolerance.allowToolRollFree;
+    obj["tolerance"] = tolerance;
     obj["enabled"] = pt.enabled;
     obj["weight"]  = jsonFiniteNumber(pt.weight);
+    obj["note"]    = QString::fromStdString(pt.note);
     return obj;
 }
 
-// 逆过程：数组长度不足 3 时保持默认位姿；enabled/weight 缺省取 1，
-// 保证旧文件缺少字段时也能安全加载而不会崩溃。
-static TaskPoint taskPointFromJson(const QJsonObject& obj)
+static bool readFiniteArray3(const QJsonObject& object, const char* key,
+                             std::array<double, 3>& output, std::string* error)
 {
-    TaskPoint pt;
+    if (!object.contains(QLatin1String(key)))
+        return true;
+    const QJsonValue value = object.value(QLatin1String(key));
+    if (!value.isArray() || value.toArray().size() != 3) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be an array of 3 finite numbers.";
+        return false;
+    }
+    const QJsonArray array = value.toArray();
+    for (int i = 0; i < 3; ++i) {
+        const QJsonValue item = array.at(i);
+        if (!item.isDouble() || !std::isfinite(item.toDouble())) {
+            if (error != nullptr)
+                *error = "Field '" + std::string(key) + "' must contain only finite numbers.";
+            return false;
+        }
+        output[static_cast<std::size_t>(i)] = item.toDouble();
+    }
+    return true;
+}
+
+// 逆过程：缺失字段保持旧版本默认值；若字段存在则必须严格满足类型和有限数契约。
+static bool taskPointFromJson(const QJsonObject& obj, TaskPoint& pt, std::string* error)
+{
     pt.id       = obj["id"].toString().toStdString();
     pt.name     = obj["name"].toString().toStdString();
+    if (obj.contains("type")) {
+        if (!obj.value("type").isString() ||
+            !taskPointTypeFromString(obj.value("type").toString(), pt.type)) {
+            if (error != nullptr) *error = "Unknown TaskPointType value.";
+            return false;
+        }
+    }
     pt.refFrame = obj["refFrame"].toString().toStdString();
     pt.tcpFrame = obj["tcpFrame"].toString().toStdString();
-    QJsonArray pos = obj["position"].toArray();
-    if (pos.size() >= 3) {
-        pt.position[0] = pos[0].toDouble();
-        pt.position[1] = pos[1].toDouble();
-        pt.position[2] = pos[2].toDouble();
+    if (!readFiniteArray3(obj, "position", pt.position, error) ||
+        !readFiniteArray3(obj, "rpyDeg", pt.rpyDeg, error))
+        return false;
+    if (obj.contains("tolerance")) {
+        if (!obj.value("tolerance").isObject()) {
+            if (error != nullptr) *error = "TaskPoint tolerance must be an object.";
+            return false;
+        }
+        const QJsonObject tolerance = obj.value("tolerance").toObject();
+        if (!readFiniteNumber(tolerance, "positionMeters", pt.tolerance.positionMeters,
+                              pt.tolerance.positionMeters, error) ||
+            !readFiniteNumber(tolerance, "orientationDeg", pt.tolerance.orientationDeg,
+                              pt.tolerance.orientationDeg, error))
+            return false;
+        if (tolerance.contains("allowToolRollFree")) {
+            if (!tolerance.value("allowToolRollFree").isBool()) {
+                if (error != nullptr) *error = "TaskPoint tolerance allowToolRollFree must be bool.";
+                return false;
+            }
+            pt.tolerance.allowToolRollFree = tolerance.value("allowToolRollFree").toBool();
+        }
     }
-    QJsonArray rpy = obj["rpyDeg"].toArray();
-    if (rpy.size() >= 3) {
-        pt.rpyDeg[0] = rpy[0].toDouble();
-        pt.rpyDeg[1] = rpy[1].toDouble();
-        pt.rpyDeg[2] = rpy[2].toDouble();
-    }
-    pt.enabled = obj["enabled"].toBool(true);
-    pt.weight  = obj["weight"].toDouble(1.0);
-    return pt;
+    if (!readBoolean(obj, "enabled", true, pt.enabled, error) ||
+        !readFiniteNumber(obj, "weight", pt.weight, pt.weight, error))
+        return false;
+    pt.note = obj["note"].toString().toStdString();
+    return true;
 }
 
 // =============================================================================
@@ -384,14 +542,19 @@ static bool designVariableFromJson(const QJsonObject& obj, StructureDesignVariab
                      obj.value("kind").toString().toStdString();
         return false;
     }
-    var.currentValue   = obj["currentValue"].toDouble();
-    var.minimum        = obj["minimum"].toDouble();
-    var.maximum        = obj["maximum"].toDouble();
-    var.step           = obj["step"].toDouble(0.1);
-    var.preferredValue = obj["preferredValue"].toDouble();
-    var.preferenceWeight = obj["preferenceWeight"].toDouble();
-    var.enabled        = obj["enabled"].toBool(true);
-    var.syncAssociatedGeometry = obj["syncAssociatedGeometry"].toBool(false);
+    if (!readFiniteNumber(obj, "currentValue", var.currentValue, var.currentValue, error) ||
+        !readFiniteNumber(obj, "minimum", var.minimum, var.minimum, error) ||
+        !readFiniteNumber(obj, "maximum", var.maximum, var.maximum, error) ||
+        !readFiniteNumber(obj, "step", var.step, var.step, error) ||
+        !readFiniteNumber(obj, "preferredValue", var.preferredValue,
+                          var.preferredValue, error) ||
+        !readFiniteNumber(obj, "preferenceWeight", var.preferenceWeight,
+                          var.preferenceWeight, error))
+        return false;
+    if (!readBoolean(obj, "enabled", true, var.enabled, error) ||
+        !readBoolean(obj, "syncAssociatedGeometry", false,
+                     var.syncAssociatedGeometry, error))
+        return false;
     bool domainOk = true;
     var.domainDefinition.domain = variableDomainFromString(obj["domain"].toString(), &domainOk);
     if (!domainOk) {
@@ -400,8 +563,21 @@ static bool designVariableFromJson(const QJsonObject& obj, StructureDesignVariab
                      obj.value("domain").toString().toStdString();
         return false;
     }
-    for (const QJsonValue& option : obj["discreteOptions"].toArray())
-        var.domainDefinition.discreteOptions.push_back(option.toString().toStdString());
+    for (const QJsonValue& option : obj["discreteOptions"].toArray()) {
+        if (option.isString()) {
+            var.domainDefinition.discreteOptions.push_back(option.toString().toStdString());
+        }
+        else if (option.isDouble() && std::isfinite(option.toDouble())) {
+            // Legacy JSON sometimes encoded discrete numbers as JSON numbers.
+            var.domainDefinition.discreteOptions.push_back(
+                QString::number(option.toDouble(), 'g', 17).toStdString());
+        }
+        else {
+            if (error != nullptr)
+                *error = "Discrete option must be a string or finite JSON number.";
+            return false;
+        }
+    }
     return true;
 }
 
@@ -435,10 +611,12 @@ static bool constraintFromJson(const QJsonObject& obj, StructureConstraint& con,
                      obj.value("kind").toString().toStdString();
         return false;
     }
-    con.threshold         = obj["threshold"].toDouble();
-    con.secondaryThreshold = obj["secondaryThreshold"].toDouble();
-    con.enabled           = obj["enabled"].toBool(true);
-    con.hard              = obj["hard"].toBool(true);
+    if (!readFiniteNumber(obj, "threshold", con.threshold, con.threshold, error) ||
+        !readFiniteNumber(obj, "secondaryThreshold", con.secondaryThreshold,
+                          con.secondaryThreshold, error) ||
+        !readBoolean(obj, "enabled", con.enabled, con.enabled, error) ||
+        !readBoolean(obj, "hard", con.hard, con.hard, error))
+        return false;
     return true;
 }
 
@@ -456,14 +634,15 @@ static QJsonObject weightsToJson(const StructureOptimizationWeights& w)
 }
 
 // 逆过程：逐项读取并给出历史默认值；缺字段时不会重置其他权重。
-static void weightsFromJson(const QJsonObject& obj, StructureOptimizationWeights& w)
+static bool weightsFromJson(const QJsonObject& obj, StructureOptimizationWeights& w,
+                            std::string* error)
 {
-    w.reachability   = obj["reachability"  ].toDouble(0.35);
-    w.manipulability = obj["manipulability"].toDouble(0.20);
-    w.jointMargin    = obj["jointMargin"   ].toDouble(0.15);
-    w.collision      = obj["collision"     ].toDouble(0.15);
-    w.compactness    = obj["compactness"   ].toDouble(0.10);
-    w.preference     = obj["preference"    ].toDouble(0.05);
+    return readFiniteNumber(obj, "reachability", 0.35, w.reachability, error) &&
+           readFiniteNumber(obj, "manipulability", 0.20, w.manipulability, error) &&
+           readFiniteNumber(obj, "jointMargin", 0.15, w.jointMargin, error) &&
+           readFiniteNumber(obj, "collision", 0.15, w.collision, error) &&
+           readFiniteNumber(obj, "compactness", 0.10, w.compactness, error) &&
+           readFiniteNumber(obj, "preference", 0.05, w.preference, error);
 }
 
 // 通用指标目标序列化：方向、归一化区间与权重一并保存。
@@ -495,12 +674,20 @@ static bool objectiveFromJson(const QJsonObject& obj, ObjectiveTerm& objective,
                      obj.value("direction").toString().toStdString();
         return false;
     }
-    const QJsonObject normalization = obj["normalization"].toObject();
-    objective.normalization.good = normalization["good"].toDouble(1.0);
-    objective.normalization.bad = normalization["bad"].toDouble(0.0);
-    objective.normalization.clamp = normalization["clamp"].toBool(true);
-    objective.weight = obj["weight"].toDouble();
-    objective.enabled = obj["enabled"].toBool(true);
+    QJsonObject normalization;
+    if (obj.contains("normalization")) {
+        if (!obj.value("normalization").isObject()) {
+            if (error != nullptr) *error = "Objective normalization must be an object.";
+            return false;
+        }
+        normalization = obj.value("normalization").toObject();
+    }
+    if (!readFiniteNumber(normalization, "good", 1.0, objective.normalization.good, error) ||
+        !readFiniteNumber(normalization, "bad", 0.0, objective.normalization.bad, error) ||
+        !readBoolean(normalization, "clamp", true, objective.normalization.clamp, error) ||
+        !readFiniteNumber(obj, "weight", objective.weight, objective.weight, error) ||
+        !readBoolean(obj, "enabled", true, objective.enabled, error))
+        return false;
     return true;
 }
 
@@ -529,9 +716,10 @@ static bool metricConstraintFromJson(const QJsonObject& obj, ConstraintRule& con
                      obj.value("comparison").toString().toStdString();
         return false;
     }
-    constraint.threshold = obj["threshold"].toDouble();
-    constraint.hard = obj["hard"].toBool(true);
-    constraint.enabled = obj["enabled"].toBool(true);
+    if (!readFiniteNumber(obj, "threshold", constraint.threshold, constraint.threshold, error) ||
+        !readBoolean(obj, "hard", true, constraint.hard, error) ||
+        !readBoolean(obj, "enabled", true, constraint.enabled, error))
+        return false;
     return true;
 }
 
@@ -549,7 +737,7 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
         value["sampleCount"] = sampling.sampleCount;
         value["gridStepsPerJoint"] = sampling.gridStepsPerJoint;
         value["checkCollision"] = sampling.checkCollision;
-        value["randomSeed"] = static_cast<int>(sampling.randomSeed);
+        value["randomSeed"] = static_cast<qint64>(sampling.randomSeed);
         return value;
     };
     obj["quickWorkspace"] = workspaceToJson(cfg.quickWorkspace);
@@ -587,7 +775,16 @@ static QJsonObject evalConfigToJson(const StructureEvaluationConfig& cfg)
 static bool evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig& cfg,
                                std::string* error)
 {
-    cfg.checkCollision = obj["checkCollision"].toBool(true);
+    if (!readBoolean(obj, "checkCollision", true, cfg.checkCollision, error))
+        return false;
+    if (obj.contains("evaluatorId") && !obj.value("evaluatorId").isString()) {
+        if (error != nullptr) *error = "Field 'evaluatorId' must be a JSON string.";
+        return false;
+    }
+    if (obj.contains("evaluatorVersion") && !obj.value("evaluatorVersion").isString()) {
+        if (error != nullptr) *error = "Field 'evaluatorVersion' must be a JSON string.";
+        return false;
+    }
     cfg.evaluatorId = obj["evaluatorId"].toString(
         QString::fromStdString(cfg.evaluatorId)).toStdString();
     cfg.evaluatorVersion = obj["evaluatorVersion"].toString(
@@ -610,21 +807,36 @@ static bool evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
             }
             sampling.mode = static_cast<WorkspaceSamplingMode>(mode);
         }
-        sampling.sampleCount = value["sampleCount"].toInt(sampling.sampleCount);
-        sampling.gridStepsPerJoint = value["gridStepsPerJoint"].toInt(
-            sampling.gridStepsPerJoint);
-        sampling.checkCollision = value["checkCollision"].toBool(
-            sampling.checkCollision);
-        sampling.randomSeed = static_cast<unsigned int>(value["randomSeed"].toInt(
-            static_cast<int>(sampling.randomSeed)));
+        if (!readInteger(value, "sampleCount", sampling.sampleCount,
+                         sampling.sampleCount, parseError) ||
+            !readInteger(value, "gridStepsPerJoint", sampling.gridStepsPerJoint,
+                         sampling.gridStepsPerJoint, parseError) ||
+            !readBoolean(value, "checkCollision", sampling.checkCollision,
+                         sampling.checkCollision, parseError))
+            return false;
+        if (!readUnsignedInteger(value, "randomSeed", sampling.randomSeed,
+                                 sampling.randomSeed, parseError)) {
+            return false;
+        }
         return true;
     };
     if (!workspaceFromJson(obj["quickWorkspace"].toObject(), cfg.quickWorkspace, error) ||
         !workspaceFromJson(obj["verifiedWorkspace"].toObject(), cfg.verifiedWorkspace, error))
         return false;
 
-    const auto coverageFromJson = [](const QJsonObject& coverage, WorkspaceCoverageBox& box) {
-        if (coverage.isEmpty()) return;
+    const auto coverageFromJson = [](const QJsonObject& coverage, WorkspaceCoverageBox& box,
+                                     std::string* parseError) {
+        if (coverage.isEmpty()) return true;
+        if (coverage.contains("id") && !coverage.value("id").isString()) {
+            if (parseError != nullptr) *parseError = "Coverage box id must be a string.";
+            return false;
+        }
+        if (coverage.contains("referenceFrame") && !coverage.value("referenceFrame").isString()) {
+            if (parseError != nullptr) *parseError = "Coverage box referenceFrame must be a string.";
+            return false;
+        }
+        if (!readBoolean(coverage, "enabled", box.enabled, box.enabled, parseError))
+            return false;
         box.id = coverage["id"].toString(QString::fromStdString(box.id)).toStdString();
         box.referenceFrame = coverage["referenceFrame"].toString(
             QString::fromStdString(box.referenceFrame)).toStdString();
@@ -632,23 +844,50 @@ static bool evalConfigFromJson(const QJsonObject& obj, StructureEvaluationConfig
         const QJsonArray minimum = coverage["minimum"].toArray();
         const QJsonArray maximum = coverage["maximum"].toArray();
         const QJsonArray cells = coverage["cells"].toArray();
-        for (int i = 0; i < 3; ++i) {
-            if (i < minimum.size())
-                box.minimum[static_cast<std::size_t>(i)] = minimum[i].toDouble(
-                    box.minimum[static_cast<std::size_t>(i)]);
-            if (i < maximum.size())
-                box.maximum[static_cast<std::size_t>(i)] = maximum[i].toDouble(
-                    box.maximum[static_cast<std::size_t>(i)]);
-            if (i < cells.size())
-                box.cells[static_cast<std::size_t>(i)] = cells[i].toInt(
-                    box.cells[static_cast<std::size_t>(i)]);
+        if ((!minimum.isEmpty() && minimum.size() != 3) ||
+            (!maximum.isEmpty() && maximum.size() != 3) ||
+            (!cells.isEmpty() && cells.size() != 3)) {
+            if (parseError != nullptr) *parseError = "Coverage box arrays must contain three values.";
+            return false;
         }
+        for (int i = 0; i < 3; ++i) {
+            if (!minimum.isEmpty()) {
+                QJsonObject wrapper;
+                wrapper["value"] = minimum[i];
+                if (!readFiniteNumber(wrapper, "value", box.minimum[static_cast<std::size_t>(i)],
+                                      box.minimum[static_cast<std::size_t>(i)], parseError))
+                    return false;
+            }
+            if (!maximum.isEmpty()) {
+                QJsonObject wrapper;
+                wrapper["value"] = maximum[i];
+                if (!readFiniteNumber(wrapper, "value", box.maximum[static_cast<std::size_t>(i)],
+                                      box.maximum[static_cast<std::size_t>(i)], parseError))
+                    return false;
+            }
+            if (!cells.isEmpty()) {
+                QJsonObject wrapper;
+                wrapper["value"] = cells[i];
+                int cell = box.cells[static_cast<std::size_t>(i)];
+                if (!readInteger(wrapper, "value", cell, cell, parseError)) return false;
+                box.cells[static_cast<std::size_t>(i)] = cell;
+            }
+        }
+        return true;
     };
-    coverageFromJson(obj["coverageBox"].toObject(), cfg.coverageBox);
+    if (obj.contains("coverageBox") && !obj.value("coverageBox").isObject()) {
+        if (error != nullptr) *error = "Field 'coverageBox' must be an object.";
+        return false;
+    }
+    if (!coverageFromJson(obj["coverageBox"].toObject(), cfg.coverageBox, error)) return false;
     cfg.coverageBoxes.clear();
     for (const QJsonValue& value : obj["coverageBoxes"].toArray()) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Coverage boxes must contain objects.";
+            return false;
+        }
         WorkspaceCoverageBox box;
-        coverageFromJson(value.toObject(), box);
+        if (!coverageFromJson(value.toObject(), box, error)) return false;
         cfg.coverageBoxes.push_back(box);
     }
     return true;
@@ -665,7 +904,7 @@ static QJsonObject runConfigToJson(const StructureOptimizationRunConfig& run)
     obj["finalVerificationCount"] = run.finalVerificationCount;
     obj["maxLocalSweeps"]        = run.maxLocalSweeps;
     obj["gridSteps"]             = run.gridSteps;
-    obj["randomSeed"]            = static_cast<int>(run.randomSeed);
+    obj["randomSeed"]            = static_cast<qint64>(run.randomSeed);
     return obj;
 }
 
@@ -686,13 +925,18 @@ static bool runConfigFromJson(const QJsonObject& obj, StructureOptimizationRunCo
         }
         run.strategy = static_cast<StructureStrategyKind>(strategy);
     }
-    run.candidateCount         = obj["candidateCount"].toInt(300);
-    run.eliteCount             = obj["eliteCount"].toInt(20);
-    run.localEliteCount        = obj["localEliteCount"].toInt(5);
-    run.finalVerificationCount = obj["finalVerificationCount"].toInt(3);
-    run.maxLocalSweeps         = obj["maxLocalSweeps"].toInt(20);
-    run.gridSteps              = obj["gridSteps"].toInt(3);
-    run.randomSeed             = static_cast<unsigned int>(obj["randomSeed"].toInt(1));
+    if (!readInteger(obj, "candidateCount", 300, run.candidateCount, error) ||
+        !readInteger(obj, "eliteCount", 20, run.eliteCount, error) ||
+        !readInteger(obj, "localEliteCount", 5, run.localEliteCount, error) ||
+        !readInteger(obj, "finalVerificationCount", 3, run.finalVerificationCount, error) ||
+        !readInteger(obj, "maxLocalSweeps", 20, run.maxLocalSweeps, error) ||
+        !readInteger(obj, "gridSteps", 3, run.gridSteps, error))
+        return false;
+    unsigned int seed = 1;
+    if (!readUnsignedInteger(obj, "randomSeed", seed, seed, error)) {
+        return false;
+    }
+    run.randomSeed = seed;
     return true;
 }
 
@@ -1262,7 +1506,9 @@ bool StructureOptimizationJson::problemFromJson(
     if (!readProblemExtensions(root, extensions, error)) return false;
 
     // schemaVersion
-    const int sv = root["schemaVersion"].toInt();
+    int sv = 0;
+    if (!readInteger(root, "schemaVersion", 0, sv, error))
+        return false;
     if (sv != 1 && sv != SchemaVersion) {
         if (error) *error = "Unsupported schema version: " + std::to_string(sv);
         return false;
@@ -1282,12 +1528,22 @@ bool StructureOptimizationJson::problemFromJson(
 
     // tasks
     problem.tasks.clear();
+    if (root.contains("tasks") && !root.value("tasks").isArray()) {
+        if (error != nullptr) *error = "Field 'tasks' must be an array.";
+        return false;
+    }
     QJsonArray tasksArr = root["tasks"].toArray();
     for (const auto& val : tasksArr) {
+        if (!val.isObject()) {
+            if (error != nullptr) *error = "Task entries must be objects.";
+            return false;
+        }
         QJsonObject tObj = val.toObject();
         OptimizationTaskPoint tp;
-        tp.point   = taskPointFromJson(tObj);
-        tp.required = tObj["required"].toBool(true);
+        if (!taskPointFromJson(tObj, tp.point, error))
+            return false;
+        if (!readBoolean(tObj, "required", true, tp.required, error))
+            return false;
         problem.tasks.push_back(tp);
     }
 
@@ -1343,8 +1599,16 @@ bool StructureOptimizationJson::problemFromJson(
 
     // variables
     problem.variables.clear();
+    if (root.contains("variables") && !root.value("variables").isArray()) {
+        if (error != nullptr) *error = "Field 'variables' must be an array.";
+        return false;
+    }
     QJsonArray varsArr = root["variables"].toArray();
     for (const auto& val : varsArr) {
+        if (!val.isObject()) {
+            if (error != nullptr) *error = "Variable entries must be objects.";
+            return false;
+        }
         StructureDesignVariable variable;
         if (!designVariableFromJson(val.toObject(), variable, error)) return false;
         problem.variables.push_back(variable);
@@ -1381,21 +1645,40 @@ bool StructureOptimizationJson::problemFromJson(
 
     // constraints
     problem.constraints.clear();
+    if (root.contains("constraints") && !root.value("constraints").isArray()) {
+        if (error != nullptr) *error = "Field 'constraints' must be an array.";
+        return false;
+    }
     QJsonArray consArr = root["constraints"].toArray();
     for (const auto& val : consArr) {
+        if (!val.isObject()) {
+            if (error != nullptr) *error = "Constraint entries must be objects.";
+            return false;
+        }
         StructureConstraint constraint;
         if (!constraintFromJson(val.toObject(), constraint, error)) return false;
         problem.constraints.push_back(constraint);
     }
 
     // weights
-    if (root.contains("weights"))
-        weightsFromJson(root["weights"].toObject(), problem.weights);
+    if (root.contains("weights")) {
+        if (!root.value("weights").isObject() ||
+            !weightsFromJson(root.value("weights").toObject(), problem.weights, error))
+            return false;
+    }
 
     // objectives 反序列化：优先读取新字段；缺失时回退为按旧 weights 推导的目标。
     problem.objectives.clear();
     if (root.contains("objectives")) {
+        if (!root.value("objectives").isArray()) {
+            if (error != nullptr) *error = "Field 'objectives' must be an array.";
+            return false;
+        }
         for (const QJsonValue& value : root["objectives"].toArray()) {
+            if (!value.isObject()) {
+                if (error != nullptr) *error = "Objective entries must be objects.";
+                return false;
+            }
             ObjectiveTerm objective;
             if (!objectiveFromJson(value.toObject(), objective, error)) return false;
             problem.objectives.push_back(objective);
@@ -1406,21 +1689,33 @@ bool StructureOptimizationJson::problemFromJson(
     }
 
     problem.metricConstraints.clear();
+    if (root.contains("metricConstraints") && !root.value("metricConstraints").isArray()) {
+        if (error != nullptr) *error = "Field 'metricConstraints' must be an array.";
+        return false;
+    }
     for (const QJsonValue& value : root["metricConstraints"].toArray()) {
+        if (!value.isObject()) {
+            if (error != nullptr) *error = "Metric constraint entries must be objects.";
+            return false;
+        }
         ConstraintRule constraint;
         if (!metricConstraintFromJson(value.toObject(), constraint, error)) return false;
         problem.metricConstraints.push_back(constraint);
     }
 
     // evaluationConfig
-    if (root.contains("evaluationConfig"))
-        if (!evalConfigFromJson(root["evaluationConfig"].toObject(), problem.evaluation, error))
+    if (root.contains("evaluationConfig")) {
+        if (!root.value("evaluationConfig").isObject() ||
+            !evalConfigFromJson(root.value("evaluationConfig").toObject(), problem.evaluation, error))
             return false;
+    }
 
     // runConfig
-    if (root.contains("runConfig"))
-        if (!runConfigFromJson(root["runConfig"].toObject(), problem.run, error))
+    if (root.contains("runConfig")) {
+        if (!root.value("runConfig").isObject() ||
+            !runConfigFromJson(root.value("runConfig").toObject(), problem.run, error))
             return false;
+    }
 
     problem.extensions = extensions;
 
@@ -1576,7 +1871,11 @@ static void convertVariableToSi(QJsonObject& variable)
         QJsonArray options;
         for (const QJsonValue& option : oldOptions) {
             bool ok = false;
-            const double number = option.toString().toDouble(&ok);
+            const double number = option.isDouble()
+                ? option.toDouble()
+                : option.toString().toDouble(&ok);
+            if (option.isDouble())
+                ok = std::isfinite(number);
             options.append(ok ? jsonFiniteNumber(number * factor) : option);
         }
         variable["discreteOptions"] = options;

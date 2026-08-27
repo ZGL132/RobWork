@@ -104,12 +104,15 @@ Qt::ItemFlags StructureConstraintTableModel::flags(const QModelIndex& index) con
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
-    Qt::ItemFlags result = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
-    if (index.column() == EnabledColumn || index.column() == HardColumn)
+    Qt::ItemFlags result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    const bool editable = index.column() != KindColumn &&
+                          !(index.column() == HardColumn && isSafetyConstraint(
+                              _constraints[static_cast<std::size_t>(index.row())]));
+    if (editable)
+        result |= Qt::ItemIsEditable;
+    if (index.column() == EnabledColumn ||
+        (index.column() == HardColumn && editable))
         result |= Qt::ItemIsUserCheckable;
-    if (index.column() == HardColumn && isSafetyConstraint(
-            _constraints[static_cast<std::size_t>(index.row())]))
-        result &= ~Qt::ItemIsEditable;
     return result;
 }
 
@@ -143,6 +146,12 @@ bool StructureConstraintTableModel::setData(const QModelIndex& index, const QVar
     if (updated.id.empty()) {
         Q_EMIT editRejected(QStringLiteral("Constraint ID must not be empty."));
         return false;
+    }
+    for (std::size_t row = 0; row < _constraints.size(); ++row) {
+        if (static_cast<int>(row) != index.row() && _constraints[row].id == updated.id) {
+            Q_EMIT editRejected(QStringLiteral("Constraint ID must be unique."));
+            return false;
+        }
     }
     _constraints[static_cast<std::size_t>(index.row())] = updated;
     Q_EMIT dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole, Qt::CheckStateRole});

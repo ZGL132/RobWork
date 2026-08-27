@@ -1,6 +1,9 @@
 #include "StructureOptimizationCsv.hpp"
 
 #include <algorithm>
+#include <iomanip>
+#include <limits>
+#include <locale>
 #include <sstream>
 
 namespace rws {
@@ -37,9 +40,17 @@ static std::string csvEscape(const std::string& field)
     return escaped;
 }
 
+static std::string preciseNumber(double value)
+{
+    std::ostringstream number;
+    number.imbue(std::locale::classic());
+    number << std::setprecision(std::numeric_limits<double>::max_digits10) << value;
+    return number.str();
+}
+
 static std::string csvEscape(double value)
 {
-    return csvEscape(std::to_string(value));
+    return csvEscape(preciseNumber(value));
 }
 
 static std::string csvEscape(int value)
@@ -72,6 +83,17 @@ std::string StructureOptimizationCsv::candidatesCsv(
     const StructureOptimizationProblem& problem,
     const StructureOptimizationResult& result)
 {
+    for (const StructureCandidateResult& candidate : result.candidates) {
+        if (candidate.values.size() != problem.variables.size()) {
+            std::ostringstream error;
+            error.imbue(std::locale::classic());
+            error << "Error,VariableValueCountMismatch, candidate=" << candidate.index
+                  << ", expected=" << problem.variables.size()
+                  << ", actual=" << candidate.values.size() << "\n";
+            return error.str();
+        }
+    }
+
     std::ostringstream os;
 
     // ── 表头 ───────────────────────────────────────────────────────────────
@@ -169,11 +191,27 @@ std::string StructureOptimizationCsv::auditCsv(
     addInt("QuickWorkspaceSamples", problem.evaluation.quickWorkspace.sampleCount);
     addInt("VerifiedWorkspaceSamples", problem.evaluation.verifiedWorkspace.sampleCount);
 
+    addSize("WorkspaceRegionCount", result.candidates.empty()
+                                      ? 0u
+                                      : result.candidates.front().raw.workspaceRegionMetrics.size());
+
     for (const StructureCandidateResult& candidate : result.candidates) {
         if (candidate.index == result.bestCandidateIndex) {
-            add("WorkspaceCoverage", std::to_string(candidate.raw.workspaceCoverage));
+            add("WorkspaceCoverage", preciseNumber(candidate.raw.workspaceCoverage));
             addSize("WorkspaceOccupiedCells", candidate.raw.workspaceOccupiedCellCount);
             addSize("WorkspaceTotalCells", candidate.raw.workspaceTotalCellCount);
+            for (std::size_t regionIndex = 0;
+                 regionIndex < candidate.raw.workspaceRegionMetrics.size(); ++regionIndex) {
+                const StructureWorkspaceRegionMetric& region =
+                    candidate.raw.workspaceRegionMetrics[regionIndex];
+                const std::string prefix = "WorkspaceRegion" + std::to_string(regionIndex);
+                add(prefix + ".Id", region.id);
+                add(prefix + ".ReferenceFrame", region.referenceFrame);
+                add(prefix + ".Coverage", preciseNumber(region.coverage));
+                add(prefix + ".OrientationCoverage", preciseNumber(region.orientationCoverage));
+                addSize(prefix + ".OccupiedCells", region.occupiedCellCount);
+                addSize(prefix + ".TotalCells", region.totalCellCount);
+            }
             break;
         }
     }

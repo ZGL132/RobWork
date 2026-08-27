@@ -7,9 +7,108 @@
 #include <limits>
 #include <sstream>
 
+#include <QCryptographicHash>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 using namespace rws;
 
 namespace {
+
+const char* ContractFingerprintPrefix = "contract-v1:";
+
+QJsonArray normalizedTaskArray(const QJsonValue& value)
+{
+    QJsonArray normalized;
+    if (!value.isArray())
+        return normalized;
+    for (const QJsonValue& entry : value.toArray()) {
+        if (!entry.isObject())
+            continue;
+        const QJsonObject source = entry.toObject();
+        QJsonObject task;
+        task["id"] = source.value("id").toString();
+        task["name"] = source.value("name").toString();
+        task["type"] = source.value("type").toString(QStringLiteral("Generic"));
+        task["refFrame"] = source.value("refFrame").toString(QStringLiteral("WORLD"));
+        task["tcpFrame"] = source.value("tcpFrame").toString(QStringLiteral("TCP"));
+        task["position"] = source.value("position").isArray()
+            ? source.value("position") : QJsonArray({0.0, 0.0, 0.0});
+        task["rpyDeg"] = source.value("rpyDeg").isArray()
+            ? source.value("rpyDeg") : QJsonArray({0.0, 0.0, 0.0});
+        QJsonObject tolerance;
+        if (source.value("tolerance").isObject())
+            tolerance = source.value("tolerance").toObject();
+        tolerance["positionMeters"] = tolerance.value("positionMeters").toDouble(0.001);
+        tolerance["orientationDeg"] = tolerance.value("orientationDeg").toDouble(1.0);
+        tolerance["allowToolRollFree"] = tolerance.value("allowToolRollFree").toBool(false);
+        task["tolerance"] = tolerance;
+        task["enabled"] = source.value("enabled").toBool(true);
+        task["weight"] = source.value("weight").toDouble(1.0);
+        task["note"] = source.value("note").toString();
+        task["required"] = source.value("required").toBool(true);
+        normalized.append(task);
+    }
+    return normalized;
+}
+
+QJsonArray normalizedConstraintArray(const QJsonValue& value)
+{
+    QJsonArray normalized;
+    if (!value.isArray())
+        return normalized;
+    for (const QJsonValue& entry : value.toArray()) {
+        if (!entry.isObject())
+            continue;
+        const QJsonObject source = entry.toObject();
+        QJsonObject constraint;
+        constraint["id"] = source.value("id").toString();
+        constraint["label"] = source.value("label").toString();
+        constraint["targetName"] = source.value("targetName").toString();
+        constraint["kind"] = source.value("kind").toString(QStringLiteral("MinimumWorkspaceCoverage"));
+        constraint["threshold"] = source.value("threshold").toDouble(0.0);
+        constraint["secondaryThreshold"] = source.value("secondaryThreshold").toDouble(0.0);
+        constraint["enabled"] = source.value("enabled").toBool(true);
+        constraint["hard"] = source.value("hard").toBool(true);
+        normalized.append(constraint);
+    }
+    return normalized;
+}
+
+QJsonObject normalizedContractObject(const QJsonObject& problem)
+{
+    QJsonObject contract;
+    contract["constraints"] = normalizedConstraintArray(problem.value("constraints"));
+    contract["tasks"] = normalizedTaskArray(problem.value("tasks"));
+    return contract;
+}
+
+std::string contractDigest(const QJsonObject& contract)
+{
+    const QByteArray bytes = QJsonDocument(contract).toJson(QJsonDocument::Compact);
+    return std::string(ContractFingerprintPrefix) +
+           QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex().toStdString();
+}
+
+std::string digestForProblemJson(const std::string& json)
+{
+    const QJsonDocument document = QJsonDocument::fromJson(QByteArray::fromStdString(json));
+    if (!document.isObject())
+        return std::string();
+    const QJsonObject object = document.object();
+    if (!object.value("tasks").isArray() || !object.value("constraints").isArray())
+        return std::string();
+    for (const QJsonValue& entry : object.value("tasks").toArray()) {
+        if (!entry.isObject())
+            return std::string();
+    }
+    for (const QJsonValue& entry : object.value("constraints").toArray()) {
+        if (!entry.isObject())
+            return std::string();
+    }
+    return contractDigest(normalizedContractObject(object));
+}
 
 std::string remediationFor(const std::string& code)
 {
@@ -303,13 +402,12 @@ std::string StructureOptimizationUiLogic::editableContractFingerprint(
     const std::vector<OptimizationTaskPoint>& tasks,
     const std::vector<StructureConstraint>& constraints)
 {
-    // 复用问题级规范化 JSON 编码器（键排序、确定性序列化）。临时 problem 只
-    // 携带 tasks/constraints，其余字段保持默认值，因此指纹与权重、运行配置等
-    // 可编辑无关项完全解耦。
+    // 先复用问题级编码器得到字段值，再投影到版本化的契约 schema。这样问题
+    // JSON 新增与契约无关的字段时，不会让历史冻结项目产生伪 stale。
     StructureOptimizationProblem scratch;
     scratch.tasks = tasks;
     scratch.constraints = constraints;
-    return StructureOptimizationJson::problemToJson(scratch);
+    return digestForProblemJson(StructureOptimizationJson::problemToJson(scratch));
 }
 
 int StructureOptimizationUiLogic::disableShadowedLegacyTcpDuplicates(
@@ -418,8 +516,14 @@ bool StructureOptimizationUiLogic::frozenContractStale(
     const std::string reference = frozenReferenceFingerprint(problem);
     if (reference.empty())
         return true;
-    return editableContractFingerprint(problem.tasks, problem.constraints) !=
-           reference;
+    const std::string current = editableContractFingerprint(problem.tasks, problem.constraints);
+    if (reference.rfind(ContractFingerprintPrefix, 0) == 0)
+        return current != reference;
+
+    // 兼容 C1.1 之前持久化的完整问题 JSON。仅对其 tasks/constraints 做同一
+    // 版本化投影，忽略序列化器后来新增的其它字段。
+    const std::string legacyDigest = digestForProblemJson(reference);
+    return legacyDigest.empty() ? true : current != legacyDigest;
 }
 
 std::string StructureOptimizationUiLogic::designVariableSchemaFingerprint(

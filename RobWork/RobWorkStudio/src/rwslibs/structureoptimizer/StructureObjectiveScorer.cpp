@@ -99,6 +99,37 @@ void StructureObjectiveScorer::score(
     const auto& raw     = candidate.raw;
     auto& scores        = candidate.scores;
 
+    const auto finiteRaw = [&raw]() {
+        const double values[] = {
+            raw.weightedReachability, raw.manipulabilityP10, raw.jointMarginP10,
+            raw.minimumJointMargin, raw.collisionFreeRate, raw.workspaceCoverage,
+            raw.totalKinematicLength, raw.baseHeight, raw.maxCrossSection,
+            raw.maxLinkSlenderness, raw.engineeringPreference,
+            raw.modelBuildSeconds, raw.kinematicEvaluationSeconds,
+            raw.workspaceEvaluationSeconds};
+        for (const double value : values)
+            if (!std::isfinite(value)) return false;
+        for (const StructureTaskMetric& metric : raw.taskMetrics) {
+            if (!std::isfinite(metric.weight) || !std::isfinite(metric.manipulability) ||
+                !std::isfinite(metric.jointMargin))
+                return false;
+        }
+        for (const StructureWorkspaceRegionMetric& metric : raw.workspaceRegionMetrics) {
+            if (!std::isfinite(metric.coverage) ||
+                !std::isfinite(metric.orientationCoverage)) return false;
+        }
+        return true;
+    };
+    if (!finiteRaw()) {
+        scores = StructureComponentScores{};
+        candidate.totalScore = 0.0;
+        candidate.feasible = false;
+        candidate.status = StructureCandidateStatus::Failed;
+        candidate.violatedConstraints.clear();
+        candidate.warnings.push_back("Non-finite evaluation metric.");
+        return;
+    }
+
     // Reset
     scores = StructureComponentScores{};
     candidate.violatedConstraints.clear();
@@ -134,17 +165,22 @@ void StructureObjectiveScorer::score(
     // =====================================================================
     //  Weighted total score  →  [0, 100]
     // =====================================================================
-    double total = 0.0;
+    double weightedTotal = 0.0;
+    double effectiveWeight = 0.0;
     for (const ObjectiveTerm& objective :
          StructureOptimizationObjectiveProfile::effectiveObjectives(problem))
     {
         if (!objective.enabled || objective.weight <= 0.0)
             continue;
         double value = 0.0;
-        if (metricValue(raw, objective.metricId, value))
-            total += objective.weight * normalizeMetric(value, objective);
+        if (metricValue(raw, objective.metricId, value) && std::isfinite(value)) {
+            weightedTotal += objective.weight * normalizeMetric(value, objective);
+            effectiveWeight += objective.weight;
+        }
     }
-    candidate.totalScore = clampVal(total * 100.0, 0.0, 100.0);
+    const double normalizedTotal = effectiveWeight > 0.0
+        ? weightedTotal / effectiveWeight : 0.0;
+    candidate.totalScore = clampVal(normalizedTotal * 100.0, 0.0, 100.0);
 
     // =====================================================================
     //  Hard-constraint checking
@@ -241,6 +277,9 @@ void StructureObjectiveScorer::score(
 // ===========================================================================
 double StructureObjectiveScorer::percentile10(std::vector<double> values)
 {
+    values.erase(std::remove_if(values.begin(), values.end(),
+                                [](double value) { return !std::isfinite(value); }),
+                 values.end());
     if (values.empty())
         return 0.0;
 
@@ -267,21 +306,44 @@ void StructureObjectiveScorer::sortForDecision(
             if (a.feasible != b.feasible)
                 return a.feasible > b.feasible;
 
+            // Failed candidates never participate in metric ordering.
+            if (a.status != StructureCandidateStatus::Failed &&
+                b.status == StructureCandidateStatus::Failed)
+                return true;
+            if (a.status == StructureCandidateStatus::Failed &&
+                b.status != StructureCandidateStatus::Failed)
+                return false;
+
             // 2. Required reachability descending
             if (a.raw.requiredReachableCount != b.raw.requiredReachableCount)
                 return a.raw.requiredReachableCount > b.raw.requiredReachableCount;
 
             // 3. Collision-free rate descending
-            if (a.raw.collisionFreeRate != b.raw.collisionFreeRate)
-                return a.raw.collisionFreeRate > b.raw.collisionFreeRate;
+            const auto finiteDescending = [](double first, double second) {
+                const bool firstFinite = std::isfinite(first);
+                const bool secondFinite = std::isfinite(second);
+                if (firstFinite != secondFinite) return firstFinite;
+                return first > second;
+            };
+            if (a.raw.collisionFreeRate != b.raw.collisionFreeRate ||
+                !std::isfinite(a.raw.collisionFreeRate) ||
+                !std::isfinite(b.raw.collisionFreeRate))
+                return finiteDescending(a.raw.collisionFreeRate, b.raw.collisionFreeRate);
 
             // 4. Total score descending
-            if (a.totalScore != b.totalScore)
-                return a.totalScore > b.totalScore;
+            if (a.totalScore != b.totalScore || !std::isfinite(a.totalScore) ||
+                !std::isfinite(b.totalScore))
+                return finiteDescending(a.totalScore, b.totalScore);
 
             // 5. Total length ascending (shorter is better)
-            if (a.raw.totalKinematicLength != b.raw.totalKinematicLength)
+            if (a.raw.totalKinematicLength != b.raw.totalKinematicLength ||
+                !std::isfinite(a.raw.totalKinematicLength) ||
+                !std::isfinite(b.raw.totalKinematicLength)) {
+                const bool firstFinite = std::isfinite(a.raw.totalKinematicLength);
+                const bool secondFinite = std::isfinite(b.raw.totalKinematicLength);
+                if (firstFinite != secondFinite) return firstFinite;
                 return a.raw.totalKinematicLength < b.raw.totalKinematicLength;
+            }
 
             // 6. Index ascending (stable tie-break)
             return a.index < b.index;

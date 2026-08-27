@@ -6,6 +6,9 @@
 #include <QJsonObject>
 #include <QJsonParseError>
 
+#include <cmath>
+#include <limits>
+
 namespace rws {
 
 namespace {
@@ -20,16 +23,59 @@ QJsonObject refToJson(const OptimizationRunResourceRef& ref)
                        {"byteSize", static_cast<qint64>(ref.byteSize)}};
 }
 
-OptimizationRunResourceRef refFromJson(const QJsonObject& obj)
+bool readNonNegativeSize(const QJsonObject& object, const char* key,
+                         std::size_t fallback, std::size_t& output,
+                         std::string* error)
 {
-    OptimizationRunResourceRef ref;
+    const QLatin1String field(key);
+    if (!object.contains(field)) {
+        output = fallback;
+        return true;
+    }
+    const QJsonValue value = object.value(field);
+    const double number = value.toDouble(std::numeric_limits<double>::quiet_NaN());
+    if (!value.isDouble() || !std::isfinite(number) || number < 0.0 ||
+        std::floor(number) != number ||
+        number > static_cast<double>(std::numeric_limits<std::size_t>::max())) {
+        if (error != nullptr)
+            *error = "Field '" + std::string(key) + "' must be a non-negative integer.";
+        return false;
+    }
+    output = static_cast<std::size_t>(number);
+    return true;
+}
+
+bool readUnsignedInt(const QJsonObject& object, const char* key,
+                     unsigned int fallback, unsigned int& output,
+                     std::string* error)
+{
+    std::size_t value = 0;
+    if (!readNonNegativeSize(object, key, fallback, value, error) ||
+        value > static_cast<std::size_t>(std::numeric_limits<unsigned int>::max())) {
+        if (error != nullptr && error->empty())
+            *error = "Field '" + std::string(key) + "' exceeds unsigned integer range.";
+        return false;
+    }
+    output = static_cast<unsigned int>(value);
+    return true;
+}
+
+bool refFromJson(const QJsonObject& obj, OptimizationRunResourceRef& ref,
+                 std::string* error)
+{
     ref.resourceId = obj.value("resourceId").toString().toStdString();
     ref.kind = obj.value("kind").toString().toStdString();
     ref.schemaVersion = obj.value("schemaVersion").toInt();
     ref.relativePath = obj.value("relativePath").toString().toStdString();
     ref.sha256 = obj.value("sha256").toString().toStdString();
-    ref.byteSize = static_cast<std::size_t>(obj.value("byteSize").toVariant().toLongLong());
-    return ref;
+    if (!readNonNegativeSize(obj, "byteSize", 0, ref.byteSize, error))
+        return false;
+    if (ref.resourceId.empty() || ref.kind.empty() || ref.relativePath.empty() ||
+        ref.sha256.empty() || ref.schemaVersion <= 0) {
+        if (error != nullptr) *error = "Optimization resource reference is incomplete.";
+        return false;
+    }
+    return true;
 }
 
 QJsonObject inputToJson(const OptimizationRunInputFingerprint& input)
@@ -107,7 +153,11 @@ bool optimizationRunSnapshotFromJson(const std::string& json,
 {
     QJsonParseError parseError;
     const QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(json), &parseError);
-    if (!doc.isObject()) { if (error) *error = "Optimization snapshot JSON root is invalid."; return false; }
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        if (error) *error = "Optimization snapshot JSON root is invalid: " +
+                             parseError.errorString().toStdString();
+        return false;
+    }
     const QJsonObject root = doc.object();
     if (root.value("type").toString() != "OptimizationRunSnapshot" || root.value("schemaVersion").toInt() != 1) {
         if (error) *error = "Unsupported optimization snapshot schema."; return false;
@@ -124,14 +174,27 @@ bool optimizationRunSnapshotFromJson(const std::string& json,
     parsed.evaluationPlanJson = plans.value("evaluationPlanJson").toString().toStdString();
     parsed.finalValidationPlanJson = plans.value("finalValidationPlanJson").toString().toStdString();
     const QJsonObject progress = root.value("progress").toObject();
-    parsed.randomSeed = static_cast<unsigned int>(progress.value("randomSeed").toInt());
-    parsed.requestedCandidateCount = static_cast<std::size_t>(progress.value("requestedCandidateCount").toInt());
-    parsed.generatedCandidateCount = static_cast<std::size_t>(progress.value("generatedCandidateCount").toInt());
-    parsed.completedCandidateCount = static_cast<std::size_t>(progress.value("completedCandidateCount").toInt());
-    parsed.nextCandidateIndex = static_cast<std::size_t>(progress.value("nextCandidateIndex").toInt());
+    if (!readUnsignedInt(progress, "randomSeed", parsed.randomSeed, parsed.randomSeed, error) ||
+        !readNonNegativeSize(progress, "requestedCandidateCount", parsed.requestedCandidateCount,
+                             parsed.requestedCandidateCount, error) ||
+        !readNonNegativeSize(progress, "generatedCandidateCount", parsed.generatedCandidateCount,
+                             parsed.generatedCandidateCount, error) ||
+        !readNonNegativeSize(progress, "completedCandidateCount", parsed.completedCandidateCount,
+                             parsed.completedCandidateCount, error) ||
+        !readNonNegativeSize(progress, "nextCandidateIndex", parsed.nextCandidateIndex,
+                             parsed.nextCandidateIndex, error))
+        return false;
     const QJsonObject resources = root.value("resources").toObject();
-    for (const auto& value : resources.value("candidateResults").toArray()) parsed.candidateResults.push_back(refFromJson(value.toObject()));
-    for (const auto& value : resources.value("evidence").toArray()) parsed.evidence.push_back(refFromJson(value.toObject()));
+    for (const auto& value : resources.value("candidateResults").toArray()) {
+        OptimizationRunResourceRef ref;
+        if (!refFromJson(value.toObject(), ref, error)) return false;
+        parsed.candidateResults.push_back(ref);
+    }
+    for (const auto& value : resources.value("evidence").toArray()) {
+        OptimizationRunResourceRef ref;
+        if (!refFromJson(value.toObject(), ref, error)) return false;
+        parsed.evidence.push_back(ref);
+    }
     const QJsonObject terminal = root.value("terminal").toObject();
     parsed.canceled = terminal.value("canceled").toBool();
     parsed.terminalDiagnostic = terminal.value("diagnostic").toString().toStdString();
@@ -161,17 +224,45 @@ std::string candidateResultResourceToJson(const CandidateResult& result, const s
 bool candidateResultResourceFromJson(const std::string& json, CandidateResult& result,
                                      std::string* resourceId, std::string* error)
 {
-    const QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(json));
-    if (!doc.isObject() || doc.object().value("type").toString() != "OptimizationRunResource" ||
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(
+        QByteArray::fromStdString(json), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject() ||
+        doc.object().value("type").toString() != "OptimizationRunResource" ||
+        doc.object().value("schemaVersion").toInt() != 1 ||
         doc.object().value("kind").toString() != "CandidateResult") {
-        if (error) *error = "Invalid candidate result resource."; return false;
+        if (error) *error = "Invalid candidate result resource.";
+        return false;
     }
     const QJsonObject root = doc.object();
     const QJsonObject payload = root.value("payload").toObject();
+    if (!payload.contains("candidateId") || !payload.contains("representativeQ") ||
+        !payload.contains("warnings") || !payload.value("warnings").isArray() ||
+        !payload.value("representativeQ").isArray()) {
+        if (error) *error = "Candidate result resource payload is incomplete.";
+        return false;
+    }
     result = CandidateResult();
     result.candidateId = payload.value("candidateId").toString().toStdString();
-    for (const auto& value : payload.value("representativeQ").toArray()) result.representativeQ.push_back(value.toDouble());
+    for (const auto& value : payload.value("representativeQ").toArray()) {
+        if (!value.isDouble() || !std::isfinite(value.toDouble())) {
+            if (error) *error = "Candidate representativeQ must contain finite numbers.";
+            return false;
+        }
+        result.representativeQ.push_back(value.toDouble());
+    }
+    for (const auto& value : payload.value("warnings").toArray()) {
+        if (!value.isString()) {
+            if (error) *error = "Candidate result warnings must be strings.";
+            return false;
+        }
+        result.warnings.push_back(value.toString().toStdString());
+    }
     if (resourceId) *resourceId = root.value("resourceId").toString().toStdString();
+    if (result.candidateId.empty() || !resourceId || resourceId->empty()) {
+        if (error) *error = "Candidate result resource identifiers are required.";
+        return false;
+    }
     if (error) error->clear();
     return !result.candidateId.empty();
 }

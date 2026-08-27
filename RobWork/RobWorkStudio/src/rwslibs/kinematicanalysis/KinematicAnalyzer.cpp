@@ -329,7 +329,7 @@ AnalysisWarning makeWarning (const std::string& code,
 // 校验任务点目标数据是否可用于 IK:
 //   - position / rpyDeg 必须全部有限(NaN/Inf 会让 IK/FK 数值崩溃);
 //   - 位置/姿态容差必须有限且非负;
-//   - weight 必须有限。
+//   - weight 必须有限且非负。
 // 失败时写入 error 并返回 false;调用方(analyzeIk)据此标记 InvalidTarget。
 bool validateTaskPointTarget (const TaskPoint& target, std::string* error)
 {
@@ -359,9 +359,9 @@ bool validateTaskPointTarget (const TaskPoint& target, std::string* error)
             *error = "Target orientation tolerance must be finite and non-negative.";
         return false;
     }
-    if (!std::isfinite (target.weight)) {
+    if (!std::isfinite (target.weight) || target.weight < 0.0) {
         if (error != nullptr)
-            *error = "Target weight must be finite.";
+            *error = "Target weight must be finite and non-negative.";
         return false;
     }
     return true;

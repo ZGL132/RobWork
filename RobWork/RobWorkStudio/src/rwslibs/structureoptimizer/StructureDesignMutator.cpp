@@ -67,6 +67,35 @@ bool isDhVariable(StructureVariableKind kind)
            kind == StructureVariableKind::DhD;
 }
 
+// Drawable and collision specs are intentionally decoupled, but generated
+// collision geometry follows the stable "Collision<drawable>" naming
+// convention. Keep explicit axis variables effective for both representations
+// while still accepting a direct collision-model target for custom projects.
+bool updateLinkDimension(RobotModelSpec& spec, const std::string& targetName,
+                         std::size_t axis, double value,
+                         bool syncAssociatedGeometry)
+{
+    bool found = false;
+    auto drawable = std::find_if(spec.drawables.begin(), spec.drawables.end(),
+        [&](const DrawableSpec& item) { return item.name == targetName; });
+    if (drawable != spec.drawables.end()) {
+        drawable->dimensions[axis] = value;
+        found = true;
+    }
+
+    const std::string generatedCollisionName = "Collision" + targetName;
+    for (CollisionModelSpec& collision : spec.collisionModels) {
+        const bool directCollisionTarget = collision.name == targetName;
+        const bool associatedCollisionTarget = syncAssociatedGeometry &&
+                                               collision.name == generatedCollisionName;
+        if (directCollisionTarget || associatedCollisionTarget) {
+            collision.dimensions[axis] = value;
+            found = true;
+        }
+    }
+    return found;
+}
+
 } // anonymous namespace
 
 // ===========================================================================
@@ -437,46 +466,34 @@ StructureMutationResult StructureDesignMutator::apply(
             break;
         }
 
-        // ---- M3: 显式轴维度（与 dimensions[X/Y/Z] 一一对应） ----
+        // ---- M3: 显式轴维度（与 dimensions[X/Y/Z] 一一对应）。
+        // 与遗留 LinkWidth/LinkHeight 相同，同时更新 drawable 与 collision
+        // model——默认生成器为自动连杆生成独立碰撞模型且 applyLinkGeometry
+        // 不同步尺寸，只改可视层会让候选仍用基线碰撞尺寸。 ----
         case StructureVariableKind::LinkDimensionX: {
-            auto it = std::find_if(spec.drawables.begin(),
-                spec.drawables.end(),
-                [&](const DrawableSpec& d) { return d.name == var.targetName; });
-            if (it != spec.drawables.end()) {
-                it->dimensions[0] = val;
-            }
-            else {
+            if (!updateLinkDimension(spec, var.targetName, 0, val,
+                                     var.syncAssociatedGeometry)) {
                 warnings.push_back(makeWarning(
                     "StructureOptimization.Variable.MissingTarget",
-                    "LinkDimensionX: drawable '" + var.targetName + "' not found."));
+                    "LinkDimensionX: drawable/collision '" + var.targetName + "' not found."));
             }
             break;
         }
         case StructureVariableKind::LinkDimensionY: {
-            auto it = std::find_if(spec.drawables.begin(),
-                spec.drawables.end(),
-                [&](const DrawableSpec& d) { return d.name == var.targetName; });
-            if (it != spec.drawables.end()) {
-                it->dimensions[1] = val;
-            }
-            else {
+            if (!updateLinkDimension(spec, var.targetName, 1, val,
+                                     var.syncAssociatedGeometry)) {
                 warnings.push_back(makeWarning(
                     "StructureOptimization.Variable.MissingTarget",
-                    "LinkDimensionY: drawable '" + var.targetName + "' not found."));
+                    "LinkDimensionY: drawable/collision '" + var.targetName + "' not found."));
             }
             break;
         }
         case StructureVariableKind::LinkDimensionZ: {
-            auto it = std::find_if(spec.drawables.begin(),
-                spec.drawables.end(),
-                [&](const DrawableSpec& d) { return d.name == var.targetName; });
-            if (it != spec.drawables.end()) {
-                it->dimensions[2] = val;
-            }
-            else {
+            if (!updateLinkDimension(spec, var.targetName, 2, val,
+                                     var.syncAssociatedGeometry)) {
                 warnings.push_back(makeWarning(
                     "StructureOptimization.Variable.MissingTarget",
-                    "LinkDimensionZ: drawable '" + var.targetName + "' not found."));
+                    "LinkDimensionZ: drawable/collision '" + var.targetName + "' not found."));
             }
             break;
         }

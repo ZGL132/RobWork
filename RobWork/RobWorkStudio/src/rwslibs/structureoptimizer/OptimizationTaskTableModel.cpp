@@ -1,6 +1,7 @@
 #include "OptimizationTaskTableModel.hpp"
 
 #include <QString>
+#include <cmath>
 
 using namespace rws;
 
@@ -100,37 +101,53 @@ bool OptimizationTaskTableModel::setData(const QModelIndex& index,
         index.row() >= static_cast<int>(_tasks.size()))
         return false;
 
-    OptimizationTaskPoint& task = _tasks[static_cast<std::size_t>(index.row())];
+    OptimizationTaskPoint updated = _tasks[static_cast<std::size_t>(index.row())];
 
     if (role == Qt::CheckStateRole) {
         if (index.column() == RequiredColumn)
-            task.required = value.toInt() == Qt::Checked;
+            updated.required = value.toInt() == Qt::Checked;
         else if (index.column() == EnabledColumn)
-            task.point.enabled = value.toInt() == Qt::Checked;
+            updated.point.enabled = value.toInt() == Qt::Checked;
         else
             return false;
     } else if (role == Qt::EditRole) {
         switch (index.column()) {
-            case IdColumn: task.point.id = value.toString().toStdString(); break;
-            case NameColumn: task.point.name = value.toString().toStdString(); break;
-            case RequiredColumn: task.required = value.toBool(); break;
-            case EnabledColumn: task.point.enabled = value.toBool(); break;
-            case XColumn: task.point.position[0] = value.toDouble(); break;
-            case YColumn: task.point.position[1] = value.toDouble(); break;
-            case ZColumn: task.point.position[2] = value.toDouble(); break;
-            case RollColumn: task.point.rpyDeg[0] = value.toDouble(); break;
-            case PitchColumn: task.point.rpyDeg[1] = value.toDouble(); break;
-            case YawColumn: task.point.rpyDeg[2] = value.toDouble(); break;
-            case RefFrameColumn: task.point.refFrame = value.toString().toStdString(); break;
-            case TcpFrameColumn: task.point.tcpFrame = value.toString().toStdString(); break;
-            case WeightColumn: task.point.weight = value.toDouble(); break;
+            case IdColumn: updated.point.id = value.toString().trimmed().toStdString(); break;
+            case NameColumn: updated.point.name = value.toString().toStdString(); break;
+            case RequiredColumn: updated.required = value.toBool(); break;
+            case EnabledColumn: updated.point.enabled = value.toBool(); break;
+            case XColumn: updated.point.position[0] = value.toDouble(); break;
+            case YColumn: updated.point.position[1] = value.toDouble(); break;
+            case ZColumn: updated.point.position[2] = value.toDouble(); break;
+            case RollColumn: updated.point.rpyDeg[0] = value.toDouble(); break;
+            case PitchColumn: updated.point.rpyDeg[1] = value.toDouble(); break;
+            case YawColumn: updated.point.rpyDeg[2] = value.toDouble(); break;
+            case RefFrameColumn: updated.point.refFrame = value.toString().toStdString(); break;
+            case TcpFrameColumn: updated.point.tcpFrame = value.toString().toStdString(); break;
+            case WeightColumn: updated.point.weight = value.toDouble(); break;
             default: return false;
         }
     } else {
         return false;
     }
 
-    Q_EMIT dataChanged(index, index, {role});
+    if (updated.point.id.empty())
+        return false;
+    for (std::size_t row = 0; row < _tasks.size(); ++row) {
+        if (static_cast<int>(row) != index.row() &&
+            _tasks[row].point.id == updated.point.id)
+            return false;
+    }
+    for (double value : updated.point.position)
+        if (!std::isfinite(value)) return false;
+    for (double value : updated.point.rpyDeg)
+        if (!std::isfinite(value)) return false;
+    if (!std::isfinite(updated.point.weight) || updated.point.weight <= 0.0)
+        return false;
+
+    _tasks[static_cast<std::size_t>(index.row())] = updated;
+    Q_EMIT dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole,
+                                      Qt::CheckStateRole});
     return true;
 }
 

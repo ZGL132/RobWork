@@ -234,6 +234,12 @@ AdapterBindingValidationResult BasePlacementAdapter::validateBinding(
                  "BASE_PLACEMENT_BASE_FRAME_REQUIRED",
                  "Base placement must target the canonical base frame only.");
     }
+    if (baseline.baseFrameId == baseline.rootFrameId) {
+        result.valid = false;
+        basePlacement_addError(result.diagnostics, binding.id, binding.targetObjectId, "targetObjectId",
+                 "BASE_PLACEMENT_ROOT_BASE_ALIAS_UNSUPPORTED",
+                 "Base placement requires a distinct base frame with an incoming fixed installation edge.");
+    }
     if (binding.coordinateFrameId != baseline.rootFrameId) {
         result.valid = false;
         basePlacement_addError(result.diagnostics, binding.id, binding.targetObjectId, "coordinateFrameId",
