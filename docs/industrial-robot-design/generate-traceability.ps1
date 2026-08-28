@@ -1,5 +1,5 @@
 param(
-    [string]$RequirementsPath = (Join-Path $PSScriptRoot '..\industrial-robot-design-software-requirements.md'),
+    [string]$RequirementsPath = (Join-Path $PSScriptRoot 'requirements.md'),
     [string]$OutputPath = (Join-Path $PSScriptRoot 'requirement-traceability.csv')
 )
 

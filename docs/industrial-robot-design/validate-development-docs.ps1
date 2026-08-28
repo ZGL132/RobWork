@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$requirementsPath = Join-Path $PSScriptRoot '..\industrial-robot-design-software-requirements.md'
-$masterPlanPath = Join-Path $PSScriptRoot '..\industrial-robot-design-development-task-breakdown.md'
+$requirementsPath = Join-Path $PSScriptRoot 'requirements.md'
+$masterPlanPath = Join-Path $PSScriptRoot 'development-task-breakdown.md'
 $tracePath = Join-Path $PSScriptRoot 'requirement-traceability.csv'
 $generatorPath = Join-Path $PSScriptRoot 'generate-traceability.ps1'
 $workPackagePath = Join-Path $PSScriptRoot 'work-packages'

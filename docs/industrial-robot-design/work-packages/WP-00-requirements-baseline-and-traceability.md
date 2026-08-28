@@ -14,8 +14,8 @@
 
 **拥有文件：**
 
-- `docs/industrial-robot-design-software-requirements.md`
-- `docs/industrial-robot-design-development-task-breakdown.md`
+- `docs/industrial-robot-design/requirements.md`
+- `docs/industrial-robot-design/development-task-breakdown.md`
 - `docs/industrial-robot-design/requirement-traceability.csv`
 - `docs/industrial-robot-design/generate-traceability.ps1`
 - `docs/industrial-robot-design/validate-development-docs.ps1`

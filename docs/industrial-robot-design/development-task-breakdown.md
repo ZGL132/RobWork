@@ -1,7 +1,7 @@
 # 工业机械臂设计软件开发任务拆解总纲
 
 > 文档状态：执行基线 v1.0
-> 需求基线：`industrial-robot-design-software-requirements.md` v0.4
+> 需求基线：`requirements.md` v0.4
 > 代码基线：`3627db152bfd4b4b43cde52b52603515f9d69df1`
 > 集成分支：`codex/industrial-robot-rebuild`
 > 规划周期：9～12 个月
