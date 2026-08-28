@@ -1120,15 +1120,18 @@ static int testTargetEvaluator ()
 }
 
 // 子套件 候选排序:验证 sortTargetCandidatesForDisplay 的显示优先级链——
-// 无碰撞候选排在碰撞候选之前(碰撞候选排最后);在残差相同时用最小关节裕度
-// 与可操作性打破平局;完全相同时按 Q 字典序保证排序确定性,便于 UI 稳定展示。
-// 补充说明:排序优先级链为"无碰撞 > 残差小 > 关节裕度/可操作性 > Q 字典序",
-// 碰撞候选总是最后。构造 5 个候选分别命中链上的不同环节,验证
+// 可应用(Feasible 且无碰撞)的候选必须排在不可应用候选之前;随后无碰撞候选
+// 排在碰撞候选之前,在残差相同时用最小关节裕度与可操作性打破平局;完全相同
+// 时按 Q 字典序保证排序确定性,便于 UI 稳定展示。
+// 构造一个残差更小但关节限位失败的候选,防止 Validate 表格双击只取首项时
+// 错过同一任务中实际可应用的 IK 解。
+// 其余候选分别命中排序链的不同环节,验证
 // sortTargetCandidatesForDisplay 稳定、可预期,保证 UI 展示不抖动。
 static int testTargetCandidateOrdering ()
 {
     rws::TargetCandidate collisionCandidate;
     collisionCandidate.configuration.inCollision = true;
+    collisionCandidate.configuration.feasibility = rws::Feasibility::Feasible;
     collisionCandidate.configuration.q = rw::math::Q (2, 0.0, 0.0);
     collisionCandidate.positionErrorMeters = 0.0;
     collisionCandidate.orientationErrorDeg = 0.0;
@@ -1136,6 +1139,7 @@ static int testTargetCandidateOrdering ()
     collisionCandidate.configuration.manipulability = 10.0;
 
     rws::TargetCandidate residualCandidate;
+    residualCandidate.configuration.feasibility = rws::Feasibility::Feasible;
     residualCandidate.configuration.q = rw::math::Q (2, 0.0, 1.0);
     residualCandidate.positionErrorMeters = 0.01;
     residualCandidate.orientationErrorDeg = 0.0;
@@ -1143,6 +1147,7 @@ static int testTargetCandidateOrdering ()
     residualCandidate.configuration.manipulability = 10.0;
 
     rws::TargetCandidate marginCandidate;
+    marginCandidate.configuration.feasibility = rws::Feasibility::Feasible;
     marginCandidate.configuration.q = rw::math::Q (2, 0.0, 2.0);
     marginCandidate.positionErrorMeters = 0.001;
     marginCandidate.orientationErrorDeg = 0.0;
@@ -1150,6 +1155,7 @@ static int testTargetCandidateOrdering ()
     marginCandidate.configuration.manipulability = 1.0;
 
     rws::TargetCandidate bestCandidate;
+    bestCandidate.configuration.feasibility = rws::Feasibility::Feasible;
     bestCandidate.configuration.q = rw::math::Q (2, 0.0, 3.0);
     bestCandidate.positionErrorMeters = 0.001;
     bestCandidate.orientationErrorDeg = 0.0;
@@ -1161,9 +1167,25 @@ static int testTargetCandidateOrdering ()
     lexicographicCandidate.configuration.minimumJointMargin = bestCandidate.configuration.minimumJointMargin;
     lexicographicCandidate.configuration.manipulability = bestCandidate.configuration.manipulability;
 
+    rws::TargetCandidate jointLimitCandidate;
+    jointLimitCandidate.configuration.feasibility = rws::Feasibility::Infeasible;
+    jointLimitCandidate.configuration.failureReasons.push_back (
+        rws::KinematicFailureReason::JointLimit);
+    jointLimitCandidate.configuration.q = rw::math::Q (2, 0.0, -1.0);
+    jointLimitCandidate.positionErrorMeters = 0.0;
+    jointLimitCandidate.orientationErrorDeg = 0.0;
+    jointLimitCandidate.configuration.minimumJointMargin = 1.0;
+    jointLimitCandidate.configuration.manipulability = 10.0;
+
     std::vector< rws::TargetCandidate > candidates = {
-        collisionCandidate, lexicographicCandidate, residualCandidate, marginCandidate, bestCandidate};
+        collisionCandidate, lexicographicCandidate, residualCandidate, marginCandidate, bestCandidate,
+        jointLimitCandidate};
     rws::sortTargetCandidatesForDisplay (candidates);
+    if (const int rc = require (
+            candidates[0].configuration.feasibility == rws::Feasibility::Feasible &&
+                !candidates[0].configuration.inCollision,
+            "applicable candidate sorts before a lower-residual joint-limit failure"))
+        return rc;
     if (const int rc = require (!candidates[0].configuration.inCollision,
                                 "collision-free candidate sorts before collision candidate"))
         return rc;

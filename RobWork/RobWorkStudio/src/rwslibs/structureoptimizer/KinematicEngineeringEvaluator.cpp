@@ -111,6 +111,8 @@ std::string workspaceSummary(const StructureRawMetrics& raw)
     for (const StructureWorkspaceRegionMetric& region : raw.workspaceRegionMetrics) {
         QJsonObject object;
         object[QStringLiteral("id")] = QString::fromStdString(region.id);
+        object[QStringLiteral("referenceFrame")] =
+            QString::fromStdString(region.referenceFrame);
         object[QStringLiteral("coverage")] = region.coverage;
         object[QStringLiteral("orientationCoverage")] = region.orientationCoverage;
         object[QStringLiteral("occupiedCellCount")] =

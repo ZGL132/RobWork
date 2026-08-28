@@ -6,6 +6,13 @@
 
 #include <rwslibs/robotmodelbuilder/RobotModelFingerprint.hpp>
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#include <cmath>
+#include <limits>
+
 namespace rws {
 
 namespace {
@@ -24,6 +31,73 @@ double metricOr(const EngineeringEvaluationResult& result, const std::string& me
 {
     const EngineeringMetric* metric = findMetric(result, metricId);
     return metric == nullptr ? fallback : metric->value;
+}
+
+bool finiteNumber(const QJsonObject& object, const QString& key, double& value)
+{
+    const QJsonValue jsonValue = object.value(key);
+    if (!jsonValue.isDouble())
+        return false;
+    value = jsonValue.toDouble();
+    return std::isfinite(value);
+}
+
+bool cellCount(const QJsonObject& object, const QString& key, std::size_t& value)
+{
+    double number = 0.0;
+    if (!finiteNumber(object, key, number) || number < 0.0 ||
+        std::floor(number) != number ||
+        number >= static_cast<double>(std::numeric_limits<std::size_t>::max()))
+        return false;
+    value = static_cast<std::size_t>(number);
+    return true;
+}
+
+std::vector<StructureWorkspaceRegionMetric> workspaceRegionMetrics(
+    const EngineeringEvaluationResult& result)
+{
+    for (const EngineeringArtifact& artifact : result.artifacts) {
+        if (artifact.artifactId != "kinematics.workspace.coverage-summary")
+            continue;
+
+        QJsonParseError parseError;
+        const QJsonDocument summary = QJsonDocument::fromJson(
+            QByteArray::fromStdString(artifact.payload), &parseError);
+        if (parseError.error != QJsonParseError::NoError || !summary.isObject())
+            return {};
+        const QJsonValue regionsValue =
+            summary.object().value(QStringLiteral("regions"));
+        if (!regionsValue.isArray())
+            return {};
+
+        const QJsonArray regions = regionsValue.toArray();
+        std::vector<StructureWorkspaceRegionMetric> metrics;
+        metrics.reserve(static_cast<std::size_t>(regions.size()));
+        for (const QJsonValue& regionValue : regions) {
+            if (!regionValue.isObject())
+                return {};
+            const QJsonObject region = regionValue.toObject();
+            const QString id = region.value(QStringLiteral("id")).toString();
+            if (id.isEmpty())
+                return {};
+
+            StructureWorkspaceRegionMetric metric;
+            metric.id = id.toStdString();
+            metric.referenceFrame = region.value(QStringLiteral("referenceFrame"))
+                                        .toString(QStringLiteral("WORLD")).toStdString();
+            if (!finiteNumber(region, QStringLiteral("coverage"), metric.coverage) ||
+                !finiteNumber(region, QStringLiteral("orientationCoverage"),
+                              metric.orientationCoverage) ||
+                !cellCount(region, QStringLiteral("occupiedCellCount"),
+                           metric.occupiedCellCount) ||
+                !cellCount(region, QStringLiteral("totalCellCount"),
+                           metric.totalCellCount))
+                return {};
+            metrics.push_back(std::move(metric));
+        }
+        return metrics;
+    }
+    return {};
 }
 
 class PipelineCandidateEvaluator : public IStructureCandidateEvaluator
@@ -84,6 +158,7 @@ class PipelineCandidateEvaluator : public IStructureCandidateEvaluator
             metricOr(result, "kinematics.joint_margin.minimum");
         candidate.raw.workspaceCoverage =
             metricOr(result, "kinematics.workspace.coverage");
+        candidate.raw.workspaceRegionMetrics = workspaceRegionMetrics(result);
         candidate.raw.collisionFreeRate = metricOr(result, "collision.free_rate");
         candidate.raw.totalKinematicLength =
             metricOr(result, "geometry.kinematic_length");

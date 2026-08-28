@@ -7054,6 +7054,91 @@ class SystemMetricsEvaluator : public rws::IEngineeringEvaluator {
     }
 };
 
+// A pipeline evaluator that exposes the same named-region artifact contract
+// as KinematicEngineeringEvaluator, without requiring a GUI/model fixture.
+class WorkspaceRegionArtifactEvaluator : public rws::IEngineeringEvaluator {
+  public:
+    std::string id() const override { return "test.workspace-region-artifact"; }
+    std::string version() const override { return "1"; }
+
+    rws::EngineeringEvaluationResult evaluate(
+        const rws::CandidateEvaluationContext& candidate,
+        const rws::EvaluationRequest&,
+        const rws::EvaluationCallbacks&) override
+    {
+        rws::EngineeringEvaluationResult result;
+        result.providerId = id();
+        result.providerVersion = version();
+        result.status = rws::EngineeringEvaluationStatus::Success;
+        result.inputSnapshot = candidate.inputSnapshot;
+        result.metrics.push_back({"kinematics.workspace.coverage", 1.0, "ratio",
+                                  rws::EngineeringMetricStatus::Valid, id()});
+        result.artifacts.push_back({
+            "kinematics.workspace.coverage-summary", "application/json",
+            R"({"regions":[{"id":"box_1","referenceFrame":"WORLD","coverage":1.0,"orientationCoverage":0.75,"occupiedCellCount":4,"totalCellCount":4}]})"});
+        return result;
+    }
+};
+
+// Named workspace constraints must be scored from per-region evidence carried
+// by the evaluation pipeline, rather than only from its aggregate coverage.
+static void testPipelinePreservesWorkspaceRegionMetrics()
+{
+    std::printf("testPipelinePreservesWorkspaceRegionMetrics ... ");
+
+    rws::StructureOptimizationProblem problem;
+    problem.context.modelSpec =
+        rws::RobotModelXmlWriter::makeDefaultSixAxisModel(QDir::tempPath());
+    problem.context.modelSpec.robotName = "PipelineWorkspaceRegionRobot";
+    problem.run.strategy = rws::StructureStrategyKind::Random;
+    problem.run.candidateCount = 1;
+    problem.run.finalVerificationCount = 0;
+    problem.variables.push_back({"fixture.variable", "Fixture variable", "unused", "m",
+                                 rws::StructureVariableKind::JointPositionX,
+                                 0.0, -1.0, 1.0, 0.1, 0.0, 0.0});
+    problem.variables.back().enabled = false;
+    problem.constraints.push_back({"workspace.box_1", "Box 1", "box_1",
+                                   rws::StructureConstraintKind::MinimumWorkspaceCoverage,
+                                   1.0, 0.0, true, true});
+
+    WorkspaceRegionArtifactEvaluator evaluator;
+    rws::EngineeringEvaluatorPipeline pipeline;
+    pipeline.addEvaluator(evaluator);
+    rws::StructureOptimizationCallbacks callbacks;
+    callbacks.isCancellationRequested = [] () { return false; };
+    const rws::StructureOptimizationResult result =
+        rws::SystemEngineeringOptimizer().optimize(problem, pipeline, callbacks);
+
+    REQUIRE(result.candidates.size() == 2);
+    const auto baselineIt = std::find_if(
+        result.candidates.begin(), result.candidates.end(),
+        [] (const rws::StructureCandidateResult& candidate) {
+            return candidate.index == 0;
+        });
+    REQUIRE(baselineIt != result.candidates.end());
+    if (baselineIt == result.candidates.end())
+        return;
+    const rws::StructureCandidateResult& baseline = *baselineIt;
+    REQUIRE(baseline.status == rws::StructureCandidateStatus::Feasible);
+    REQUIRE(baseline.feasible);
+    REQUIRE(baseline.raw.workspaceRegionMetrics.size() == 1);
+    if (baseline.raw.workspaceRegionMetrics.size() == 1) {
+        const rws::StructureWorkspaceRegionMetric& metric =
+            baseline.raw.workspaceRegionMetrics.front();
+        REQUIRE(metric.id == "box_1");
+        REQUIRE(metric.referenceFrame == "WORLD");
+        REQUIRE(metric.coverage == 1.0);
+        REQUIRE(metric.orientationCoverage == 0.75);
+        REQUIRE(metric.occupiedCellCount == 4);
+        REQUIRE(metric.totalCellCount == 4);
+    }
+
+    if (g_testFailures == 0)
+        std::printf("PASSED\n");
+    else
+        std::printf("FAILED (%d)\n", g_testFailures);
+}
+
 // 子套件 系统级优化器:用真实指标评价器(SystemMetricsEvaluator)驱动
 // SystemEngineeringOptimizer,验证候选数(基线 + 3)、未被取消、存在最佳候选,
 // 且评价器拿到的 modelHash 与 RobotModelFingerprint 计算的模型指纹一致——
@@ -9000,6 +9085,9 @@ static void testVerifiedRegionUsesSharedEvaluator()
         REQUIRE(regions.size() == 1);
         REQUIRE(regions.size() == 1 &&
                 regions.at(0).toObject().value("id").toString().toStdString() == region.id);
+        REQUIRE(regions.size() == 1 &&
+                regions.at(0).toObject().value("referenceFrame").toString().toStdString() ==
+                    region.refFrame);
     }
 
     if (g_testFailures == 0)
@@ -13802,6 +13890,12 @@ int main(int argc, char** argv)
     if (suite == "evaluation_pipeline") {
         QCoreApplication app(argc, argv);
         testEvaluationPipelineAndMetricRegistry();
+        return g_testFailures == 0 ? 0 : 1;
+    }
+
+    if (suite == "pipeline_workspace_region") {
+        QApplication app(argc, argv);
+        testPipelinePreservesWorkspaceRegionMetrics();
         return g_testFailures == 0 ? 0 : 1;
     }
 

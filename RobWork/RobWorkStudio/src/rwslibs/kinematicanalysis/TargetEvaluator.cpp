@@ -399,15 +399,24 @@ TargetEvaluation TargetEvaluator::evaluate(const AnalysisContext& context,
 // sortTargetCandidatesForDisplay —— 候选解展示排序(就地)
 // -----------------------------------------------------------------------------
 //
-// 排序键优先级(先满足者胜):无碰撞 > 位置残差小 > 姿态残差小 >
-// 最小关节裕度大 > 可操作度大 > 离当前 Q 距离小;最后以关节值字典序兜底,
+// 排序键优先级(先满足者胜):可应用(Feasible 且无碰撞) > 无碰撞 > Feasible >
+// 位置残差小 > 姿态残差小 > 最小关节裕度大 > 可操作度大 > 离当前 Q 距离小;
+// 最后以关节值字典序兜底,
 // 保证相同输入得到完全相同的排序结果(确定性,便于 UI 与测试复现)。
 void rws::sortTargetCandidatesForDisplay(std::vector< TargetCandidate >& candidates)
 {
     std::sort (candidates.begin (), candidates.end (), [] (const TargetCandidate& lhs,
                                                             const TargetCandidate& rhs) {
+        const bool lhsApplicable = lhs.configuration.feasibility == Feasibility::Feasible &&
+                                   !lhs.configuration.inCollision;
+        const bool rhsApplicable = rhs.configuration.feasibility == Feasibility::Feasible &&
+                                   !rhs.configuration.inCollision;
+        if (lhsApplicable != rhsApplicable)
+            return lhsApplicable;
         if (lhs.configuration.inCollision != rhs.configuration.inCollision)
             return !lhs.configuration.inCollision;
+        if (lhs.configuration.feasibility != rhs.configuration.feasibility)
+            return lhs.configuration.feasibility == Feasibility::Feasible;
         if (lhs.positionErrorMeters != rhs.positionErrorMeters)
             return lhs.positionErrorMeters < rhs.positionErrorMeters;
         if (lhs.orientationErrorDeg != rhs.orientationErrorDeg)
