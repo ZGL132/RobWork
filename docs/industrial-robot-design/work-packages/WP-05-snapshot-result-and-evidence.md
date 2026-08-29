@@ -33,7 +33,7 @@
 
 ### 4.2 AnalysisSnapshot 与 ResultEnvelope
 
-`AnalysisSnapshot` 必填 `snapshotId`、`sourceRevision`、`inputSlice`、`policyRef`、`runtimeNameMapRef`、`softwareBaseline`、`randomSeed`、`createdAt`、`resourceRefs[]`。创建后只读，序列化不得依赖 UI 状态。
+`AnalysisSnapshot` 字段以 `architecture/public-interfaces.md` §7 为准（`snapshotId`、`sourceRevision`、`objectRevisions[]`、`config`、软件基线、`randomSeed`、`manifest`、`resolvedPolicyContentId`、`nameMapId`）；`resolvedPolicyContentId` 与 `nameMapId` 是不透明内容 ID（64 位小写 hex），WP-05 对 WP-06/07 无代码依赖。创建后只读，序列化不得依赖 UI 状态。
 
 `ResultEnvelope` 包含 `resultId`、`project/branch/revision`、`snapshotId`、`runId`、`attemptId`、`evaluatorId/version`、`executionOutcome`、`engineeringStatus`、`payloadCompleteness`、`currentness`、`evidenceLevel`、`payloadRef`、`diagnostics[]`、`createdAt`。`currentness` 取 `Current`、`Superseded`、`Historical`；变更只更新索引，不改 payload。
 
@@ -71,7 +71,7 @@ Quick 模式允许临时外部引用，但结果只能是 Screening/Partial 或 
 
 ## 8. 测试、性能与证据
 
-模块测试覆盖依赖失效矩阵、哈希确定性、快照不可变性、状态组合、接纳拒绝、迟到结果和查询过滤。契约测试验证所有身份字段、版本、名称反解、证据缺口和缓存排除规则。性能基准使用 `benchmark-manifest.json`，记录固定数据集、线程、种子、预热、P50/P95；至少测 10k 结果追加和 100k 历史查询。
+模块测试覆盖依赖失效矩阵、哈希确定性、快照不可变性、状态组合、接纳拒绝、迟到结果和查询过滤。契约测试验证所有身份字段、版本、`nameMapId` 内容一致性（module-design/snapshot-result.md 裁决：名称校验收窄为内容 ID 比较，不做运行时反解）、证据缺口和缓存排除规则。性能基准使用 `benchmark-manifest.json`，记录固定数据集、线程、种子、预热、P50/P95；至少测 10k 结果追加和 100k 历史查询。
 
 每项证据含 Task ID、需求 ID、提交 SHA、环境、命令、输入/快照/资源哈希、期望与实际状态、诊断 JSON、仓库目录清单和独立评审者。
 

@@ -65,7 +65,7 @@ ProjectName.rwdesign/
 - `checkpoints/<run-id>/<attempt-id>/`：检查点数据与已完成批次集合；兼容性按执行模型 §4 校验。
 - `reports/<report-id>/`：ReviewReport 工件（HTML/PDF/JSON/CSV 数据包引用）。
 - **幂等**：同 `runId + attemptId` 重复追加逐字节相同内容为 no-op；不同内容 → `IRD-RESULT-CONFLICT` 拒绝。
-- 保存顺序固定：写入临时版本目录 → 校验全部文件和哈希 → 原子切换 HEAD 指针（需求 §7）。
+- **追加与 HEAD 的边界**：修订保存顺序固定为"写入临时版本目录 → 校验全部文件和哈希 → 原子切换 HEAD 指针"（需求 §7）；`results/checkpoints/reports` 的追加写入**不产生修订、不切换项目 HEAD**，追加原子性由"同卷临时文件 + rename"保证。
 
 ## 5. 版本升级与失败行为（冻结）
 

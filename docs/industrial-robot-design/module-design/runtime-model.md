@@ -1,13 +1,13 @@
 # 运行时模型与名称模块详细方案
 
-- 方案版本：v0.2；需求基线：v0.7；负责 WP：WP-06；阶段/发布：阶段 A / R1
-- 架构契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`
+- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；负责 WP：WP-06；阶段/发布：阶段 A / R1
+- 最高权威：`architecture/canonical-kinematics.md`（变换链、q-zero、关节轴、四元数、R_c 补偿）；其余契约：`architecture/public-interfaces.md` §2/§7、`architecture/symbol-registry.md`、`architecture/testing-contract.md`；需求锚点：§6.7.1、§7.1～7.3、§15.3；任务卡：`agent-tasks/WP-06-T01～T05`
 
 ## 1. 模块职责
 
-模块将领域 `RobotDesign` 编译为规范 SE(3) 模型、RuntimeNameMap、WorkCell 和 DynamicWorkCell，并验证四者的身份、几何、运动学和动力学绑定一致。RobWork 指针只存在适配层并由创建线程释放；下游通过值语义和 `IRuntimeNameResolver` 使用结果。
+把权威参数化（`StandardDH`/`ExplicitJoint`；URDF 导入后为 `ExplicitJoint`）确定性编译为 `CanonicalKinematicModel`（SYM-KIN-004）、`RuntimeNameMap`（SYM-NAM-001）、WorkCell 与 DynamicWorkCell，并以 `CompiledRobotArtifacts`（SYM-KIN-005）全成全败发布。一切公式、坐标系、q-zero 与 R_c 裁决以 canonical-kinematics.md §1～§8 为准；本模块只规定实现次序、夹具、内部结构与校验清单。不实现 FK/IK 算法、碰撞策略、轨迹/动力学评估、GUI 与项目持久化。
 
-## 2. 目录与目标
+## 2. 目录与构建
 
 ```text
 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/
@@ -21,36 +21,76 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/
   test/CanonicalModelTest.cpp NameMapTest.cpp DualCompileTest.cpp
       AxisAdapterTest.cpp RenameScanTest.cpp
   testdata/runtime/{dh,explicit,urdf,names,axes,failpoints}/
+  evidence/WP-06/
 ```
 
-CMake 目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_runtime_contract_test`。允许 WP-03 core、RobWork/RobWorkSim 和标准库；禁止 Qt Widgets、插件 UI、直接项目写入。
+CMake 目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_runtime_contract_test`。允许依赖：WP-03 core、RobWork/RobWorkSim 稳定 API、标准库（代码前置仅 WP-03，与总纲 §5.2 一致）；禁止：Qt Widgets、WP-13+ 业务头、其他 WP 私有头、直接写项目 revision、定义公共端口的平行版本。`CanonicalModelCompiler`、`RobWorkModelAdapter`、`DynamicWorkCellAdapter` 为模块私有类型。
 
-## 3. 规范模型
+## 3. 数据与接口
 
-所有输入先转换成 SI 单位和规范 quaternion/SE(3)。链计算固定为 `OriginPose · Motion(â, q)`（规范公式、坐标系与 q-zero 裁决以 `architecture/canonical-kinematics.md` §2～3 为准；任何零位偏置在编译边界吸收进 `OriginPose`，运行时不叠加第二个偏置），父子顺序由 `parentLinkId/childLinkId` 唯一确定；World/base frame 是显式根。StandardDH 的 `a/alpha/d/theta` 仅存在导入适配器，转换后不再被下游接口接受；ExplicitJoint 和 URDF 必须产生相同 canonical 字段。
+- `IRuntimeNameResolver` 端口签名与 `IRD-NAME-*` 错误码以 public-interfaces §2 为准，本模块是其唯一实现；`RuntimeNameMap` 持久化以 `schemas/runtime-name-map.schema.json` 与 `schemas/examples/runtime-name-map.example.json` 为准。
+- 绑定主键 `(ownerScopeId, objectId)`，值为 `runtimeDeviceName/localName/runtimeScopedName/objectKind`；`objectKind` 值域冻结（public-interfaces §2）：`Device/Joint/Link/Frame/FixedFrame/CompensationFrame/Tool/EnvironmentObject`。`<runtimeDeviceName>.<localName>` 拼接只允许出现在 resolver 实现内部；WORLD 与外部环境对象使用全局名。
+- `CompiledRobotArtifacts` 同载 canonical、names、WorkCell::Ptr、DWC::Ptr、compileDiagnostics 与 source identity；任一工件失败整体为空，不返回部分指针，编译结果不自动写项目。
 
-Joint 的轴必须 finite、非零并归一化；`Revolute` 使用 rad/N·m，`Prismatic` 使用 m/N，`Continuous` 无位置上限但仍需 finite velocity/effort，固定关节不暴露可动轴。零位和 home 分开保存，限位边界包含 inclusive/exclusive 标记。
+## 4. 调用与状态
 
-## 4. RuntimeNameMap
+```text
+RobotDesign 权威参数化
+  → 校验单位/轴/ID/链拓扑（任一失败即中止）
+  → canonical 化（零位偏置只在此吸收进 OriginPose）
+  → 分配 qIndex 与 RuntimeNameMap
+  → 隔离 builder 分别构建 WorkCell、DWC
+  → 按 objectId 交叉校验（见下清单）
+  → 原子发布；或全败：释放全部临时指针并返回空工件＋诊断（调用方旧工件不变）
+```
 
-映射键为 `(ownerScopeId, objectId)`，值为 `runtimeDeviceName`, `localName`, `runtimeScopedName`, `objectKind`。机器人内部名称格式固定 `<device>.<local>`，只允许 `[A-Za-z0-9_.-]`；WORLD/环境对象使用其规范全局名。`resolve(objectId)` 和 `reverse(scopedName)` 必须互为逆函数；重复、旧前缀、双前缀或去前缀后冲突返回稳定诊断，绝不取第一个。
+双编译交叉校验清单：device/joint/frame 集合与 objectId 一一对应；几何、collision/proximity 绑定、limits、mass、COM、inertia 按 objectId 双侧一致。错误矩阵：
 
-## 5. 双编译和所有权
+| 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
+| --- | --- | --- | --- | --- |
+| `IRD-RUNTIME-AXIS-INVALID` | 轴范数 <1e-12、非有限、固定关节带轴语义 | Input | Error | 修正权威参数化后重编译 |
+| `IRD-RUNTIME-DUAL-OFFSET` | 变换链出现第二偏置项（canonical-kinematics §3.2） | Input | Error | 偏置折叠进 OriginPose 后重新提交 |
+| `IRD-RUNTIME-NAME-COLLISION` | 名称表生成时重复绑定/去前缀重名/双前缀 | Input | Error | 修正名称后重新编译 |
+| `IRD-RUNTIME-COMPILE-FAILED` | builder 抛错、返回空或 RobWork 构造失败 | System | Error | 保留调用方旧工件，按诊断修复后重试 |
+| `IRD-RUNTIME-ARTIFACTS-MISMATCH` | 交叉校验任一项不一致 | Engineering | Error | 全部工件作废并返回诊断 |
 
-编译器在隔离 builder 中分别生成 WorkCell、DWC 和名称表，完成后按 objectId 交叉校验 device、joint、frame、geometry、collision/proximity、mass、COM、inertia 和 limits。任一 builder 抛错、返回空或校验失败即释放全部临时指针并返回空 `CompiledRobotArtifacts`；调用方旧工件不变。编译结果不自动写项目，仅由上层显式提交。
+解析期（非编译期）错误使用 public-interfaces §2 冻结的 `IRD-NAME-AMBIGUOUS`/`IRD-NAME-UNRESOLVED`/`IRD-NAME-DUPLICATE-PREFIX`，绝不取第一个匹配。
 
-## 6. 任意轴补偿
+## 5. 关键实现约定
 
-当 RobWork 关节只支持局部 Z 轴，适配器计算从 canonical axis 到 Z 的旋转补偿，在 joint 与 child link 间插入内部 frame。所有视觉/碰撞几何、COM 和 inertia 使用同一刚体变换；反向查询仍以原始 objectId/axis 为准。测试必须比较 canonical 与运行时在 Zero、Home、正负边界和固定 100 个姿态下的末端位姿及世界轴线。
+1. 链实现次序按 canonical-kinematics §2：先 `OriginPose`（吸收全部零位偏置，§3 裁决），再 `Motion(â, q)`；非单位 `T_Jm_C` 编译为 `FixedFrame` 序列；禁止任何双偏置变体（§3.2）。
+2. R_c 适配按 §7 冻结阈值实现平行/反平行/一般三夹具；模块只实现夹具选择与帧插入次序（前置补偿帧 → RobWork Z 关节 → 后置补偿帧），公式不复制。补偿帧 `objectKind=CompensationFrame`、拥有稳定 objectId、不入 `q`；几何/COM/惯量绑规范坐标系；反向查询以规范链为准。
+3. qIndex 按基座到法兰拓扑序仅分配给可动关节、从 0 连续编号（§4）；固定关节与 FixedFrame/CompensationFrame 不占位，`dim(q)` 等于可动关节数。
+4. 四元数符号规范化按 §6 实现：`(w,x,y,z)` 顺序首个绝对值 >1e-12 的分量为正；序列化、缓存键与 `q ≡ −q` 逐字节一致测试共用同一实现；姿态误差用测地角并忽略正负号。
+5. 重命名只更新名称表与 `runtimeDeviceName/localName`；objectId、canonical 物理内容、sliceHash 与历史快照不变；同一 objectId 禁止同时绑定新旧名，新模型不得残留旧前缀或双前缀。
+6. 确定性与所有权：固定输入、算法版本、seed、线程数时 canonical JSON、名称表顺序、artifact 清单与诊断顺序逐字节一致；RobWork 指针只在隔离 builder 内由创建线程释放。
 
-## 7. 重命名与确定性
+## 6. 测试与证据
 
-重命名只改变 `runtimeDeviceName/localName` 和名称表；objectId、canonical 物理内容、sliceHash 和历史快照不变。历史快照保留旧 map，新编译生成新 map；禁止旧名称和新名称同时绑定同一 objectId。固定输入、算法版本、seed 和线程数时，canonical JSON、名称表顺序、artifact 清单和诊断顺序一致。
+| 测试 | 断言要点 |
+| --- | --- |
+| CanonicalModelTest | DH/Explicit/URDF 三入口 canonical 字段一致；双偏置夹具拒绝；qIndex 连续性 |
+| NameMapTest | 双向一一对应；Arm/ArmA、重复 Joint1/TCP、双前缀、旧前缀、重命名 RobotB 夹具 |
+| DualCompileTest | WorkCell/DWC failpoint 全败；交叉校验清单逐项；确定性重复编译 |
+| AxisAdapterTest | 非 Z/非单位/反平行轴：规范链与适配链 FK 等价（§7 容差、§9 姿态集：Zero/Home/边界/固定 100 姿态） |
+| RenameScanTest | 重命名后 sliceHash 与物理结果不变；前缀拼接/剥离静态扫描仅命中 resolver/adapter 目录 |
+| ResolverContractTest | public-interfaces §2 契约：互逆、重命名后旧绑定消失 |
 
-## 8. 测试与证据
+验证命令（脚本形式与原生回退）：
 
-测试夹具覆盖 Arm、ArmA、RobotB、重复 Joint1/TCP、双前缀、旧前缀、非 Z/非单位轴、continuous、prismatic、缺几何、DWC 失败和 WorkCell 失败。契约测试检查 resolver 唯一所有权和下游不得拼接名称；静态扫描只允许 resolver/adapter 目录出现前缀拼接或剥离。证据需含输入身份、名称表、artifact hash、RobWork 版本、容差报告和 failpoint 日志。
+```text
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_runtime(_contract)?_test$'
+cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_runtime_test
+cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_runtime_contract_test
+ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_contract)?_test$"
+```
 
-## 9. 迁移与评审
+证据包含输入 revision/snapshot 身份、sourceFormat、canonical JSON、名称表、artifact hash、RobWork 版本、容差报告与 failpoint 日志、独立评审签名。
 
-旧 `stripDeviceScope` 等链路先以只读适配器隔离，扫描和回归通过后删除；无法证明历史名称映射的结果标 EvidenceOnly。评审逐项核对 canonical/运行时一致性、全成全败、线程所有权、WORLD 例外、未来 ownerScopeId 扩展和禁止跨模块名称猜测。
+## 7. 迁移与删除表
+
+| 旧链路 | 处置 | 条件 |
+| --- | --- | --- |
+| `stripDeviceScope` 等前缀拼接/剥离链路 | 只读适配器隔离 → 删除 | 静态扫描与 AT-18 阶段子集通过 |
+| DH 参数直接进入运行时的旧编译链路 | Rewrite | 三入口等价黄金数据通过 |
+| 无法证明来源的历史名称映射 | EvidenceOnly | 评审记录在案 |

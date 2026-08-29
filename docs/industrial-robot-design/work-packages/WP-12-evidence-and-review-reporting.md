@@ -4,7 +4,7 @@
 
 **Goal:** 从明确项目修订和结果集合生成唯一 `ReviewReport`，输出适合工程评审的 HTML、PDF 及 JSON/CSV 证据数据包。
 
-**Architecture:** ReviewReport 是不可变结构化权威；所有展示格式由同一对象渲染。报告只查询 WP-04/05，不读取当前界面。PDF 由 Qt HTML/PrintSupport 离线生成，不引入新渲染依赖。
+**Architecture:** ReviewReport 是不可变结构化权威；所有展示格式由同一对象渲染。报告只查询 WP-04/05，不读取当前界面。PDF 渲染依赖为**待 ADR 审批项**（未登记第三方库/Qt 模块须先过依赖门禁）：获批前交付 HTML+JSON+CSV，`PdfReportRenderer` 仅保留接口声明；报告对 WP-11 的 CSV 写出为端口契约依赖（集成期代码交付）。
 
 **Tech Stack:** C++、Qt Core/Gui/PrintSupport、HTML/CSS、JSON、CSV、CTest。
 

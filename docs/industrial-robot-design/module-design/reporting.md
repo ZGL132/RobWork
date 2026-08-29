@@ -1,49 +1,87 @@
-# 证据与评审报告 模块详细方案
+# 证据与评审报告模块详细方案
 
-- 方案版本：v0.1；对应需求基线：v0.7
-- 负责 WP：WP-12；阶段/发布：阶段 A / R1
-- 架构契约：`architecture/testing-contract.md`、`architecture/persistence-schema.md`
-- 任务卡：对应 WP 的全部 agent-tasks/WP-12-T*.md
+- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 负责 WP：WP-12；阶段/发布：阶段 A / R1（完整报告随阶段 C 形成 R1 交付）；任务卡：`agent-tasks/WP-12-T01～T06`
+- 架构契约：`architecture/persistence-schema.md`（§4）、`architecture/evaluation-semantics.md`（§2、§4、§5）、`architecture/public-interfaces.md`（§5、§7）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`
 
-## 1. 目标与非目标
+## 1. 模块职责
 
-- 目标：单一报告对象、多格式一致性、固定限制措辞和离线渲染。
-- 非目标：不修改需求语义、不复制其他模块的公共接口、不把私有实现细节升级为跨模块契约。
+模块拥有 `ReviewReport`（SYM-RPT-001）权威报告对象、`ReviewReportBuilder` 和 HTML/PDF/JSON+CSV 渲染。所有展示格式由同一对象渲染；报告只查询明确 ID 的项目修订与结果集合，不读取当前界面或会话态。正式可行结论必须由 `isFormallyFeasible()` 谓词输出（evaluation-semantics §4，WP-05 交付），本模块只消费 `FeasibilityVerdict`/`gaps` 渲染，不得自行判定或复制谓词。
 
-## 2. 代码与构建
+## 2. 目录与构建
 
-- 拥有目录：`industrialrobot/reporting/`；公共类型和接口只能位于该模块的 include 子目录；测试与夹具位于对应 test/testdata 子目录。
-- CMake target：`industrialrobot_reporting`；实现只能依赖本方案列出的架构契约和 WP 前置 target。
-- 禁止依赖：Qt Widgets（纯 UI 模块除外）、当前界面选择、其他 WP 私有头、未登记第三方库和跨模块文件写入。
+```text
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/
+  include/sdurws/ird/reporting/
+    ReviewReport.hpp ReviewReportBuilder.hpp
+    HtmlReportRenderer.hpp PdfReportRenderer.hpp EvidenceDataExporter.hpp
+  resources/report.zh-CN.html report.css
+  src/ReviewReport.cpp ReviewReportBuilder.cpp HtmlReportRenderer.cpp
+      PdfReportRenderer.cpp EvidenceDataExporter.cpp
+  test/ReportObjectTest.cpp DesignVariantTest.cpp HtmlPdfTest.cpp
+      EvidencePackageTest.cpp WordingLimitsTest.cpp ReproducibleRoundtripTest.cpp
+  testdata/ evidence/
+```
+
+CMake target：`sdurws_ird_reporting`、`sdurws_ird_reporting_test`。**依赖裁决**：代码前置 WP-05、09（总纲 §5.2）；项目数据经 `IProjectQuery` 端口（WP-04，签名见 public-interfaces §1，随 WP-05 前置传递），结果与证据经 `IResultRepository`（WP-05），对象显示名取自快照内 `RuntimeNameMap` 与 `localName`，不直接依赖 WP-06 代码；CSV 写出经 WP-11 `CsvWriter` 公共端口（契约引用，集成期交付依赖由总纲同步标注）。禁止依赖：Qt Widgets、当前界面选择、其他 WP 私有头、跨模块文件写入。
+
+**PDF 依赖为待 ADR 审批项**：HTML→PDF 渲染途径（Qt PrintSupport 或其他渲染库）尚未在 WP-01 依赖基线与 ADR 登记，未获批前不得引入构建依赖；`PdfReportRenderer` 仅保留接口声明，交付物为 HTML 与 JSON+CSV，多格式一致性校验的 PDF 维度随 ADR 落地后启用。
 
 ## 3. 数据与接口
 
-- 核心对象：ReviewReport、Html/Pdf/Json/Csv 渲染模型。输入必须携带 projectId/branchId/revisionId 或明确的快照身份；浮点量使用 SI 单位且必须有限。
-- 输出必须包含执行状态、工程状态、证据完整度、诊断列表和来源身份；失败不得返回看似成功的空 payload。
-- 所有权：公共对象由调用方以值语义传入；跨线程只传不可变快照；RobWork/Qt 对象只存在适配层，由创建它的线程释放。
+- `ReviewReport` 内容：`reportId/schemaVersion`、`projectId/branchId/projectRevision`、所选结果与快照 ID 集合、软件/依赖基线、设计摘要与基线差异（改型逐指标给出基线值、候选值、绝对/相对变化和来源）、需求结论与证据缺口、各域结论、Pareto 候选与取舍理由（不得以单一加权分数替代）、硬约束证据与诊断、假设/限制/固定措辞、评审与签署元数据。浮点量 SI 且有限；失败不得返回看似成功的空 payload。
+- `reports/<report-id>/` 追加协议实现（协议以 persistence-schema §4 为准）：写入 `report.json`（身份引用与工件索引：HTML/JSON/CSV 文件名 + SHA-256）及各工件；**幂等**——同 `reportId` 重复追加逐字节相同内容为 no-op；**冲突拒绝**——同 `reportId` 异内容拒绝（`IRD-RESULT-CONFLICT`，追加协议唯一冲突码）；写入顺序固定为临时目录 → 全部工件与哈希校验 → 原子落位，失败不覆盖既有工件。
+- 数据包：JSON 完整保存 `ReviewReport` 与引用身份（非有限数不得产生非法 JSON）；CSV 分别输出设计参数、需求结果、候选指标、硬约束、器件淘汰和诊断，公式注入转义经 WP-11 `CsvWriter`，原始值保存在 JSON。
+- 多格式一致性：关键数值、工程状态、诊断码和快照身份在 HTML/JSON/CSV（PDF 获批后加入）逐字段一致。
 
 ## 4. 调用与状态
 
-- 正常流程：输入校验 → 规范化 → 核心计算/转换 → 下游适配 → WP-05 结果接纳 → 证据输出。
-- 输入错误映射为 Input，工程不可行或数据不足映射为 Engineering，文件/进程/第三方故障映射为 System；每类错误保留稳定 code 和 objectId。
-- 取消停止新工作派发；恢复必须记录原 runId、新 attemptId 和已完成批次；迟到回调只能追加原分支历史。
+```text
+ReviewReportBuilder(明确 ID) -> IProjectQuery 加载修订 -> IResultRepository 读取结果/当前性
+  -> isFormallyFeasible(results, profile)   // WP-05 谓词，报告不自行判定
+  -> 渲染 HTML/JSON/CSV -> 校验多格式一致 -> reports/<report-id>/ 追加（幂等/冲突拒绝）
+```
+
+| 码 | 触发条件 | 类别 | severity | 恢复动作 |
+| --- | --- | --- | --- | --- |
+| IRD-RPT-INPUT-INCOMPLETE | 缺项目修订/快照/必需结果/策略/名称映射/软件基线 | Input | Error | 补齐明确 ID 后重建，不产出空 payload |
+| IRD-RPT-RENDER-FAILED | 渲染、文件、字体或依赖故障 | System | Error | 保留既有工件，可重试 |
+| IRD-RPT-FORMAT-MISMATCH | 多格式关键字段不一致（自检） | System | Error | 阻止该报告工件发布 |
+
+`Quick/Partial/DataInsufficient` 与过期（`Superseded/Historical`）结果只能进入显著标识的参考附录，不进入正式结论（evaluation-semantics §2、§5）；历史报告保留旧快照名称，新报告使用当前 `RuntimeNameMap`，objectId 不混淆。
 
 ## 5. 关键实现约定
 
-- 单位和坐标：领域层使用 SI；角度 rad、长度 m、质量 kg、时间 s；显示或外部格式转换只能在边界适配层完成。
-- 确定性：固定输入切片、算法版本、随机种子和线程数时，输出集合、稳定 ID、排序键和诊断顺序必须一致。
-- 序列化：只写架构契约规定字段；未知字段按版本策略拒绝或保留；保存采用 staging、哈希校验和原子提交。
+- 固定限制措辞以 requirements §15.3 为准并集中为资源常量：碰撞结论固定为"在本策略与分辨率下未发现碰撞"；无签署公差时只显示"敏感度参考"；关节侧机械能与电能严格区分并展示传动效率/回馈假设；结构优化未做强度/刚度校核时明确说明。渲染器不得内联改写措辞。
+- 证据缺口按 `gaps` 逐项列出，不得只显示"不可行"或把证据不足包装成通过（NFR-COR-04）。
+- 可复现：删除/覆盖外部源后，使用项目内不可变资源副本重新生成相同报告；相同 `ReviewReport` 结构化内容生成语义等价 HTML 与逐字段一致数据包。
 
 ## 6. 测试与证据
 
-- Given 缺字段、非法单位、非有限数、版本不兼容或依赖不可用，When 调用模块入口，Then 返回可定位诊断且不产生部分修订/正式结果。
-- Given 黄金数据、固定种子和合法快照，When 执行正常路径及边界输入，Then 结果字段、状态、容差、当前性和证据等级符合契约。
-- 验证命令：先使用 WP-01 提供的双 PowerShell 入口，在 Visual Studio x64 环境运行对应 WP 的模块测试、契约测试和必要 GUI 测试；命令及环境前置以 WP 文件为准。
-- 必须提交：测试日志、黄金数据版本/哈希、输入快照身份、诊断样例、性能或人工报告（适用时）和独立评审记录。
+| 测试 | 覆盖 | 目标 |
+| --- | --- | --- |
+| ReportObjectTest | 缺 ID/基线的失败测试、不接受"当前界面结果" | `sdurws_ird_reporting_test` |
+| DesignVariantTest | 新机型与改型内容、基线差异逐指标 | `sdurws_ird_reporting_test` |
+| HtmlPdfTest | HTML 本地资源、PDF 分页/中文字体（随 ADR 启用） | `sdurws_ird_reporting_test` |
+| EvidencePackageTest | JSON/CSV 数据包、转义、非有限数拒绝 | `sdurws_ird_reporting_test` |
+| WordingLimitsTest | 固定措辞、附录标识、能量口径区分 | `sdurws_ird_reporting_test` |
+| ReproducibleRoundtripTest | 不可变副本重生成、多格式一致、追加幂等/冲突 | `sdurws_ird_reporting_test` |
 
-## 7. 迁移、扩展与任务卡
+验证命令（脚本与原生双形式，均在仓库根执行；本模块无 GUI 测试）：
 
-- 旧实现先以只读适配器保留，只有黄金数据和契约测试通过才标记 Migratable；否则标记 Rewrite 或 EvidenceOnly。删除必须在对应阶段退出条件满足后进行。
-- 扩展新格式、算法或设备类型时，新增独立适配器、契约测试和 ADR；不得改变既有字段含义或隐式增加默认值。
-- 任务卡按 WP-12 索引执行；每张卡一个 worktree、一个分支和一个可评审提交，公共接口只能由所有者 WP 修改。
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'
+cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test
+ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"
+```
 
+证据必须含快照/结果身份、谓词 `gaps` 输出、各格式工件哈希、复算命令和独立评审记录。
+
+## 7. 迁移与删除表
+
+| 旧资产 | 处置 | 说明 |
+| --- | --- | --- |
+| 旧四插件各自的结果导出/打印 | Delete | 由统一 `ReviewReport` 渲染替代 |
+| 旧 HTML 模板与样式片段 | Migratable | 黄金对照通过后并入 `resources/`，否则重写 |
+| 从 UI 状态临时拼报告的路径 | Delete | 阻断项（SYM-RPT-001 禁止项，需求 §13.3） |
+| 旧 PDF 输出链路（如存在） | Rewrite | 随 PDF 依赖 ADR 一并裁决，不静默保留 |

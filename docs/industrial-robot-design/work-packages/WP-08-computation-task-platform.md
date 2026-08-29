@@ -38,7 +38,7 @@ public:
 };
 ```
 
-合法转移：`Queued -> Running -> Completed`；`Running -> Canceling -> Canceled`；`Running -> Pausing -> Paused -> Running`；worker 崩溃为 `Failed`；重启发现未完成为 `Interrupted`。终态不可再转移；非法转移返回诊断且不改变状态。
+任务状态机为 9 态（`Queued/Running/Pausing/Paused/Canceling/Completed/Canceled/Failed/Interrupted`），17 条合法转移以 `architecture/execution-model.md` §1 转移表为唯一权威（含 `Queued→Canceling`、`Paused→Canceling`、`Canceling→Failed` 等旧文本遗漏的转移）。终态不可再转移且幂等；非法转移返回 `IRD-EXEC-ILLEGAL-TRANSITION` 且不改变状态。
 
 ## 5. 调度、进程和结果数据流
 
@@ -54,7 +54,7 @@ submit immutable request
   -> append history; currentness decided outside scheduler
 ```
 
-取消请求发出后 2 秒内进入 `Canceling`，停止派发新批次；普通批次 10 秒内结束，超时可终止单个 worker。主进程崩溃或 worker 异常不能写项目文件。迟到回调只追加原 branch/revision 历史，不成为当前结果。
+取消请求接受后停止派发新批次；取消超时强杀阈值 `resourceBudget.cancelTimeoutMs` 由 module-design/execution-platform.md 冻结默认值 30000 ms（`Canceling` 起算；强杀→`Canceled`＋"强制终止"诊断，取消期间非用户异常→`Failed`，两者严格区分）。主进程崩溃或 worker 异常不能写项目文件。迟到回调只追加原 branch/revision 历史，不成为当前结果。
 
 ## 6. 缓存与检查点
 

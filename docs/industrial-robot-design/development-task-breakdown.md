@@ -127,9 +127,11 @@ Planned → Ready → Implementing → Verifying → Reviewing
 | WP-07 | 统一工程策略与碰撞 | EngineeringPolicySet、CollisionPolicy、适配投影和共享 CollisionEvaluator | ARC-05，CON-06，KIN-05，TRJ-04，NFR-COR-05，UX-08 | WP-03、06 | 5～7 |
 | WP-08 | 计算任务平台 | 调度、工作进程、状态机、取消/暂停、缓存、检查点和资源预算 | TASK-01～03，CON-04，NFR-PERF-02、04～06，NFR-REL-02、03 | WP-04、05 | 7～10 |
 | WP-09 | 诊断、本地化与日志 | 稳定诊断码、中文术语、错误分类、用户/开发日志和脱敏 | ERR-01，UX-02、03、06，NFR-REL-05，NFR-SEC-07 | WP-03 | 3～5 |
-| WP-10 | 会话与公共界面 | 会话/草稿/设计状态、场景投影、阶段导航、策略入口和公共 Qt 组件 | UX-01～08，KIN-06，NFR-PERF-01、03 | WP-03～05、09 | 5～7 |
+| WP-10 | 会话与公共界面 | 会话/草稿/设计状态、场景投影、阶段导航、策略入口和公共 Qt 组件 | UX-01～08，KIN-06，NFR-PERF-01、03 | WP-03～05、09（代码）；WP-07/08 端口契约 | 5～7 |
 | WP-11 | 安全导入导出 | CSV、JSON、URDF、网格和项目资源的解析预算、路径安全与公式注入防护 | REQ-05，SEL-01、02，NFR-SEC-01～03 | WP-03、09 | 4～6 |
-| WP-12 | 证据与评审报告 | ReviewReport、HTML、PDF、JSON/CSV 数据包、快照追溯和签署信息 | NFR-COR-04、REQ-06、OPT-07～09 | WP-05、09 | 4～6 |
+| WP-12 | 证据与评审报告 | ReviewReport、HTML、PDF、JSON/CSV 数据包、快照追溯和签署信息 | NFR-COR-04、REQ-06、OPT-07～09 | WP-05、09（代码）；WP-11 端口契约 | 4～6 |
+
+端口依赖注记：WP-10（策略入口/任务面板消费 WP-07/08 公共端口）、WP-11（资源副本写入经 WP-04 对象端口）、WP-12（CSV 数据包经 WP-11 写出端口、项目数据经 WP-04 查询端口）另消费相应**端口契约**——签名已由 D2 冻结在 `architecture/public-interfaces.md`，端口契约不构成代码前置（可用契约替身先行开发），集成期按交付依赖衔接。
 
 ### 5.3 业务域
 

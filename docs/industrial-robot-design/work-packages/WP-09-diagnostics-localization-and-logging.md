@@ -25,7 +25,7 @@
 
 ## 4. 诊断字段契约
 
-固定 13 字段：`code`、`category`、`severity`、`retryable`、`subjectObjectId`、`localName`、`runtimeScopedName`、`actual`、`expected`、`action`、`causeCode`、`messageKey`、`context`。类别只有 `Input`、`Engineering`、`System`；severity 为 `Info/Warning/Error/Critical`；缺名称时可空，缺 objectId 时显式为空但不得用名称替代。`actual/expected` 使用受限值类型，禁止 NaN/Infinity。
+固定 13 字段：`code`、`category`、`severity`、`retryable`、`subjectObjectId`、`localName`、`runtimeScopedName`、`actual`、`expected`、`action`、`causeCode`、`messageKey`、`context`。类别只有 `Input`、`Engineering`、`System`；severity 为 `Info/Warning/Error` 三值（`architecture/public-interfaces.md` §6 冻结；缺陷严重级别 Blocker/Critical/Major/Minor 是独立口径，不进入诊断 severity）；缺名称时可空，缺 objectId 时显式为空但不得用名称替代。`actual/expected` 使用受限值类型，禁止 NaN/Infinity。
 
 诊断 JSON 固定 UTF-8、字段顺序和枚举字符串；未知未来 schema 拒绝。`causeCode` 保留底层原因，边界 mapper 只映射一次，不重复包装同义诊断。错误类别规则：用户数据/参数为 Input，工程不可行/数据不足为 Engineering，文件、进程、第三方和版本故障为 System。
 

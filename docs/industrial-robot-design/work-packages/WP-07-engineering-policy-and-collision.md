@@ -23,9 +23,9 @@
 
 ## 4. 策略字段和规范化
 
-`EngineeringPolicySet` 必填 `policyId`、`ownerScopeId`、`schemaVersion`、`collision`、`pathValidation`、`sourceRevision`。`CollisionPolicy` 字段：`collisionExecutionMode`（DisabledForDraft/Quick/Verified）、`detectorBackend`、`participation[]`、`excludedPairs[]`、`allowedContactPairs[]`、`safetyDistanceM`、`unknownDistanceFallback`。安全距离必须 finite 且非负；对象对按 `(ownerScopeId, objectId)` 排序，禁止同时出现在 excluded 和 allowed；未知对象、重复规则和缺来源拒绝。
+`EngineeringPolicySet` 与 `CollisionPolicy` 字段以需求 §6.7.2 为唯一权威（`collisionExecutionMode: Enabled | DisabledForDraft`、`detectorBackend/version`、`collisionParticipationByObject`、`excludedPairs[]`、`allowedContactPairs[]`、`safetyDistance`、`pathValidationProfile`、`policySchemaVersion`）。安全距离必须 finite 且非负；对象对按 `(ownerScopeId, objectId)` 排序，禁止同时出现在 excluded 和 allowed；未知对象、重复规则和缺来源拒绝。
 
-`DisabledForDraft` 只能用于草稿预览；Verified 需要可用后端和完整碰撞证据。显示碰撞几何、高亮和当前选择属于 WP-10 会话状态，不进入策略 hash。
+`DisabledForDraft` 只能用于草稿预览，不得与全局 `EvaluationMode = Quick/Verified` 混用（需求 §6.7.2）；`RequiredEvidenceProfile` 要求碰撞证据时，就绪校验阻止 Verified。显示碰撞几何、高亮和当前选择属于 WP-10 会话状态，不进入策略内容身份。
 
 ## 5. 评估和路径验证数据流
 
