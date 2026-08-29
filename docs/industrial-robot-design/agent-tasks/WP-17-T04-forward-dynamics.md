@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`1e-4" plugins/dynamics/src/ForwardDynamicsScenario.cpp|1e-4" plugins/dynamics/src/ForwardDynamicsScenario.cpp` 与 §5.5 冻结值逐字一致（无放宽）；无引擎版本/积分器替换引用；`DynamicsResult` 禁名零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "1e-3|1e-4" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/src/ForwardDynamicsScenario.cpp; if ($LASTEXITCODE -ne 0) { throw '预期命中缺失或扫描命令执行失败' }` 与 §5.5 冻结值逐字一致（无放宽）；无引擎版本/积分器替换引用；`DynamicsResult` 禁名零命中
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——正动力学收敛报告（h/h2 曲线与残差）、发散注入记录（诊断与 Partial 处置）、控制输入/初态/步长入证据记录、测试日志（commit/配置/种子）
 - **提交格式：** `WP-17-T04: 新增正向动力学场景`
 

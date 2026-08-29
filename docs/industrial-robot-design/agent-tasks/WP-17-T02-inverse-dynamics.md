@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`ratio|ratio|reduction" plugins/dynamics/src/` 零命中（映射归 WP-18）；无第二套 RNE/摩擦实现（RobWorkSim RNE 经 `RneAdapter` 复用）；`DynamicsResult` 禁名零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "efficiency|ratio|reduction" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/src; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（映射归 WP-18）；无第二套 RNE/摩擦实现（RobWorkSim RNE 经 `RneAdapter` 复用）；`DynamicsResult` 禁名零命中
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——二连杆解析与静态重力矩对照表（误差与容差）、摩擦不双计断言记录（含 BodyInfo 置零证明）、惯量校验矩阵、测试日志（commit/配置/种子/输入快照身份）
 - **提交格式：** `WP-17-T02: 实现逆动力学`
 

@@ -4,9 +4,9 @@
 
 ## 1. 目标、非目标与完成定义
 
-**目标：** 建立唯一、可版本化、可机器检查的需求基线，保证 124 项需求、19 个验收场景、26 个 WP、实现/测试/评审任务双向可追踪。
+**目标：** 建立唯一、可版本化、可机器检查的需求基线，保证全部需求（当前 128 项，随基线演进以 `requirements.md` 为准）、19 个验收场景、26 个 WP 与真实任务卡/测试/证据/门禁双向可追踪（D8 真实追踪契约）。
 
-**完成定义：** `requirements.md` 是产品行为唯一权威；CSV 恰好 124 行且只能由生成器产生；生成器和验证器在 PowerShell 5.1/7 字节和结果一致；每个 WP 的稳定 Task ID 均有一张任务卡；门禁错误包含文件、行、字段、ID 和修复动作。
+**完成定义：** `requirements.md` 是产品行为唯一权威；CSV 行数与需求文档需求条数一致（当前 128 行）且只能由生成器产生；生成器和验证器在 PowerShell 5.1/7 字节和结果一致；每个 WP 的稳定 Task ID 均有一张任务卡；门禁错误包含文件、行、字段、ID 和修复动作。
 
 **非目标：** 不实现产品 C++、插件或 GUI；不重新解释算法、单位、容差和 OPT-B；不手工修正 CSV；不读取旧 Excel/工作簿或旧插件计划作为当前语义。
 
@@ -31,7 +31,7 @@ validate-development-docs.ps1
 | 组件 | 输入 | 输出 | 所有权 | 禁止 |
 | --- | --- | --- | --- | --- |
 | requirements.md | 批准的需求变更 | 需求、AT、追踪声明 | 需求维护者 | 接受 CSV 反推语义 |
-| generate-traceability.ps1 | 需求表、第16章 | 11列 CSV | WP-00 | 读取 WP 猜映射 |
+| generate-traceability.ps1 | 需求表、第16章 | 13 列 CSV（D8 契约） | WP-00 | 读取 WP 猜映射 |
 | requirement-traceability.csv | 生成器输出 | 查询索引 | 生成器 | 手工编辑 |
 | validate-development-docs.ps1 | 全部文档/CSV/manifest | 退出码和诊断 | WP-00 | 自动修正文档 |
 | WP/架构/模块/任务卡 | 上游权威文档 | 实施上下文 | 各所有者 WP | 改写需求或接口 |
@@ -43,7 +43,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-desi
 powershell -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-design\validate-development-docs.ps1
 ```
 
-成功输出以 validate-development-docs.ps1 当前输出为准（`124 requirements, 19 acceptance tests, <派生> contracts, <派生> symbols, <派生> ADRs, 0 trace gaps`；契约/符号/ADR 计数由脚本按当前文档派生，不在本计划写死）；非零即阻断。
+成功输出以 validate-development-docs.ps1 当前输出为准（`<派生> requirements, 19 acceptance tests, <派生> contracts, <派生> symbols, <派生> ADRs, 0 trace gaps`；全部计数由脚本按当前文档派生，不在本计划写死）；非零即阻断。
 
 ## 3. 代码与文档目录
 
@@ -78,16 +78,18 @@ CSV 固定 UTF-8 BOM、CRLF、字段顺序和标准引号；多值字段使用�
 
 | 字段 | 类型/可空 | 生产规则 |
 | --- | --- | --- |
-| requirement_id | 大写前缀+两位数字/否 | 需求表提取，唯一 |
+| requirement_id | 大写前缀+数字/否 | 需求表提取，唯一 |
 | priority | P0/P1/否 | 需求表提取 |
 | requirement_summary | UTF-8 文本/否 | 去首尾空白 |
-| work_package | WP-00～WP-25 分号/否 | Get-WorkPackages，第一项主包 |
-| implementation_task | WP-XX-IMP-ID/否 | 按 WP 顺序派生 |
-| test_task | WP-XX-TEST-ID/否 | 按 WP 顺序派生 |
-| review_task | WP-XX-REV-ID/否 | 按 WP 顺序派生 |
+| primary_wp | WP-XX/否 | 显式映射主包 |
+| supporting_wps | WP-XX 分号或 -/否 | 显式映射支撑包 |
+| agent_task_ids | WP-XX-TYY 分号/否 | 显式映射真实任务卡（生成器校验存在性） |
+| test_case_ids | 测试/验证方法名分号/否 | 真实测试名或非代码验证方法（取自任务卡） |
 | acceptance_scenario | 方法+场景/否 | 第16章聚合 |
+| evidence_artifact | out/test-evidence/wp-xx/<run-id>/ | 派生自主 WP（AGENTS §3） |
+| release_gate | 门禁枚举/否 | 显式映射 |
 | phase | A～E，可用 / /否 | 第16章聚合 |
-| release | R1/R2/R1-R2/否 | Get-Release 派生，禁止手写 |
+| release | R1/R2/R1/R2/否 | Get-Release 派生，禁止手写 |
 | status | 固定状态枚举/否 | 初始 Planned |
 
 状态只允许 `Planned、Ready、Implementing、Verifying、Reviewing、Rework、Integratable、Integrated、Deferred`；P1 仅经评审可 Deferred。
@@ -97,7 +99,7 @@ CSV 固定 UTF-8 BOM、CRLF、字段顺序和标准引号；多值字段使用�
 ### 5.1 需求和验收读取
 
 1. UTF-8 读取 requirements.md，锚定正则提取需求 ID、优先级和摘要。
-2. 校验 124 行、唯一 ID、P0=110、P1=14。
+2. 校验行数与需求表需求条数一致（当前 128）、唯一 ID、P0/P1 分布与文档解析一致。
 3. 定位 `## 16. 需求—验收追踪` 到 `## 17.`；缺任一锚点立即失败。
 4. 拆分四列追踪表，跳过表头/分隔线。
 5. `Expand-RequirementCell` 展开 `REQ-01～03`，维护当前前缀，重复 ID 去重。
@@ -106,7 +108,7 @@ CSV 固定 UTF-8 BOM、CRLF、字段顺序和标准引号；多值字段使用�
 ### 5.2 工作包、任务和发布派生
 
 1. 对每个 ID 调用显式 `Get-WorkPackages`；特殊规则优先于前缀规则。
-2. 按工作包顺序派生 implementation/test/review 标识，不读取 WP 内容猜测。
+2. 任务/测试/证据/门禁取自显式映射表中的真实任务卡与真实测试名（生成器校验每张卡存在于 agent-tasks/），不读取 WP 内容猜测，禁止 WP-XX-IMP/TEST/REV 类虚拟标识。
 3. `Get-Release` 固定：OPT-01～04/06～08=R1/R2，OPT-05/09/10=R2，CON-04=R1/R2，NFR-PERF-04～06=R2，其余按当前规则。
 4. 有序对象写临时 CSV，统一 CRLF，以显式 UTF-8 BOM 原子写入 OutputPath；生成失败不覆盖正式 CSV。
 
@@ -176,7 +178,7 @@ WP-00 的四个独立任务按下列顺序执行：先冻结需求和范围，�
 
 - Given 正式 v0.8 文档和全部 WP/契约/模块方案/任务卡，When 运行门禁，Then 退出码 0 并输出固定成功行。
 - Given 需求删除、重复、缺验收、缺 WP、stale CSV、非法 release 或孤立卡，When 运行门禁，Then 非零、给出稳定诊断且不自动修复。
-- Given 正式需求，When 运行生成器，Then 输出 124 行、11 列、UTF-8 BOM/CRLF。
+- Given 正式需求，When 运行生成器，Then 输出行数与需求条数一致（当前 128 行）、13 列、UTF-8 BOM/CRLF。
 - Given 5.1 和 7 相同输入，When 逐字节比较，Then 长度和全部字节一致。
 - Given 生成器写入中断，When 再次执行，Then 旧 CSV 可读且临时文件被清理。
 
@@ -190,15 +192,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-
 pwsh.exe -NoProfile -File .\docs\industrial-robot-design\validate-development-docs.ps1
 ```
 
-预期三条命令均成功；生成器输出 124 行，两个验证器输出固定成功行。故障夹具必须逐个返回非零并保留正式目录哈希。
+预期三条命令均成功；生成器输出行数与需求条数一致，两个验证器输出固定成功行。故障夹具必须逐个返回非零并保留正式目录哈希。
 
 ## 10. 迁移、证据与退出
 
-旧 CSV 少于 11 列必须重新生成；旧 Excel 仅历史保留；PowerShell 脚本保持 5.1/7 双兼容。必须提交需求复核记录、生成日志、双版本字节比较、全部夹具日志、门禁成功日志、抽样表和独立评审记录。
+旧 CSV（11 列历史格式，或行数与需求条数不符）必须重新生成；旧 Excel 仅历史保留；PowerShell 脚本保持 5.1/7 双兼容。必须提交需求复核记录、生成日志、双版本字节比较、全部夹具日志、门禁成功日志、抽样表和独立评审记录。
 
 退出条件：
 
-- 124 需求、19 AT、26 WP 和任务卡双向完整追踪；
+- 全部需求（当前 128 项）、19 AT、26 WP 和任务卡双向完整追踪；
 - P0 100%，P1 阶段和验收方法完整；
 - 架构契约、模块方案、WP 和任务卡门禁通过；
 - 正式 CSV 只能由生成器产生，5.1/7 字节一致；

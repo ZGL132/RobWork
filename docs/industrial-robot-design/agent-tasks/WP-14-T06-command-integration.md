@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "class.*DomainCommand" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/include` 命中处仅继承；`QFile\|QFile\|writeProject" requirements/src/RequirementsCommands.cpp` 零命中（不直写项目目录）；`buildMutations` 无 I/O 调用（纯函数）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "class.*DomainCommand" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/include; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 命中处仅继承；`rg -n "ofstream|QFile|writeProject" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/src/RequirementsCommands.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（不直写项目目录）；`buildMutations` 无 I/O 调用（纯函数）
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——修订/失效矩阵（编辑类型×下游切片）、幂等记录、undo/redo 状态表、命令日志
 - **提交格式：** `WP-14-T06: 集成需求命令服务`
 

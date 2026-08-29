@@ -15,7 +15,7 @@
   - 边界：Given margin 恰等于 SF，Then 通过（≥判定）；Given 单项约束恰在阈值，Then 按降额后能力判定并记录实际值/阈值
   - 失败：Given 全部候选被淘汰或组合未列于兼容表，Then `IRD-SEL-ALL-ELIMINATED`/`-PAIR-NOT-LISTED`，逐项证据完整、无部分结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "margin" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/src/ConstraintFilter.cpp` 确认裕量不在淘汰分支内；淘汰诊断缺码/实际值/阈值任一项即测试失败；无目录外推断兼容性代码
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "margin" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/src/ConstraintFilter.cpp; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 确认裕量不在淘汰分支内；淘汰诊断缺码/实际值/阈值任一项即测试失败；无目录外推断兼容性代码
 - **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——可行/不可行黄金表结果、淘汰诊断样本（码＋实际值＋阈值）、SF 默认值评审记录、测试日志
 - **提交格式：**`WP-19-T03: 器件约束筛选`
 - **停止与升级条件：**SEL-03/04 约束项与目录 Schema 列无法一一对应、或黄金表与筛选结果系统性不一致时，停止并升级需求/目录所有者；SF/阈值默认值变更须评审并升 `selectionRulesVersion`，不得静默调整

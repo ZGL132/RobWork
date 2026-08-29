@@ -762,7 +762,7 @@ if (-not (Test-Path -LiteralPath $ledgerPath)) {
     $ledgerStates = @{}
     foreach ($ll in (Get-Content -LiteralPath $ledgerPath -Encoding UTF8)) {
         if ($ll -match '^\|\s*(WP-\d{2}-T\d{2})\s*\|\s*(Planned|Ready|Blocked|Done)\s*\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|') {
-            $ledgerStates[$Matches[1]] = @{ State = $Matches[2]; Signer = $Matches[4].Trim(); Note = $Matches[6].Trim() }
+            $ledgerStates[$Matches[1]] = @{ State = $Matches[2]; Signer = $Matches[4].Trim(); Date = $Matches[5].Trim(); Note = $Matches[6].Trim() }
         }
     }
     foreach ($t in @($cardTaskIds)) {
@@ -785,6 +785,9 @@ if (-not (Test-Path -LiteralPath $ledgerPath)) {
             if ([string]::IsNullOrWhiteSpace($st.Signer) -or $st.Signer -eq '-') {
                 Add-ValidationError "Task $t is Ready without a signer in task-status.md."
             }
+            if ([string]::IsNullOrWhiteSpace($st.Date) -or $st.Date -eq '-') {
+                Add-ValidationError "Task $t is Ready without a decision date in task-status.md."
+            }
         }
         if ($st.State -eq 'Done') {
             if ([string]::IsNullOrWhiteSpace($st.Signer) -or $st.Signer -eq '-') {
@@ -800,11 +803,27 @@ if (-not (Test-Path -LiteralPath $ledgerPath)) {
     }
 }
 
-# 10) 任务卡不得携带落后于当前基线的版本/计数（以派生为准）
+# 10) 陈旧基线数字：任务卡、WP 计划与总纲一律以派生为准（修订历史行除外）
+$stalePattern = 'v0\.7|124 项|124 行|124 requirements|124 trace|Generated 124|-eq 124|P0=110|11 列固定顺序|11列 CSV|11 列字段顺序'
 foreach ($cf in $cardFilesForDag) {
     $raw2 = Get-Content -LiteralPath $cf.FullName -Raw -Encoding UTF8
-    if ($raw2 -match 'v0\.7|124 项|124 行|124 requirements|124 trace|Generated 124|-eq 124|P0=110') {
+    if ($raw2 -cmatch $stalePattern) {
         Add-ValidationError "Task card $($cf.Name) references a stale baseline version/count; derive from current requirements.md instead."
+    }
+}
+foreach ($wf in (Get-ChildItem -LiteralPath $workPackagePath -Filter 'WP-*.md' -File)) {
+    $wLines = Get-Content -LiteralPath $wf.FullName -Encoding UTF8
+    for ($i = 0; $i -lt $wLines.Count; $i++) {
+        if ($wLines[$i] -cmatch $stalePattern) {
+            Add-ValidationError "Work package $($wf.Name):$($i + 1) references a stale baseline version/count/format."
+        }
+    }
+}
+$bpLines = Get-Content -LiteralPath $masterPlanPath -Encoding UTF8
+for ($i = 0; $i -lt $bpLines.Count; $i++) {
+    if ($bpLines[$i] -match '^\|\s*v\d') { continue }
+    if ($bpLines[$i] -cmatch $stalePattern) {
+        Add-ValidationError "development-task-breakdown.md:$($i + 1) references a stale baseline version/count/format."
     }
 }
 
@@ -846,6 +865,47 @@ foreach ($pline in ($piText -split "`r?`n")) {
         $voName = $Matches[1]
         if (-not $symbolNames.Contains($voName)) {
             Add-ValidationError "public-interfaces §7 value object '$voName' is not registered in symbol-registry.md."
+        }
+    }
+}
+
+# 14) 内联命令语法门禁：白名单首词、引号配对、BRE 残留、rg 前缀与路径锚定、PowerShell 解析
+function Test-InlineCommandOk {
+    param([string]$Segment)
+    $seg = $Segment.Trim()
+    $looksLikeCommand = ($seg -match '^(rg|git|powershell|pwsh|cmake|ctest)\b') -or (($seg -match '"') -and ($seg -match '[a-z]/')) -or ($seg -match '\$LASTEXITCODE| throw ')
+    if (-not $looksLikeCommand) { return $true }
+    if ($seg -notmatch '^(rg|git|powershell|pwsh|cmake|ctest)\b') { return $false }
+    if ($seg -match '\\\|') { return $false }
+    if ((([regex]::Matches($seg, '"')).Count % 2) -ne 0) { return $false }
+    if ($seg -match '^rg\b' -and $seg -notmatch '-n') { return $false }
+    if ($seg -match '^rg\b' -and $seg -notmatch 'RobWork/|out/|docs/') { return $false }
+    $parseErrors = $null
+    $segForParse = $seg -replace '<[^<>\r\n]*>', 'PH'
+    [void][System.Management.Automation.Language.Parser]::ParseInput($segForParse, [ref]$null, [ref]$parseErrors)
+    if ($null -ne $parseErrors -and $parseErrors.Count -gt 0) { return $false }
+    return $true
+}
+if (-not (Test-InlineCommandOk -Segment 'rg -n "QFile|writeProject" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/src; if ($LASTEXITCODE -eq 0) { throw ''检测到禁止实现'' }')) {
+    Add-ValidationError '内置夹具失败：规范 rg 命令被误报。'
+}
+if (Test-InlineCommandOk -Segment 'QFile|writeProject" requirements/src/RequirementsCommands.cpp') {
+    Add-ValidationError '内置夹具失败：丢失 rg -n 前缀的片段未被检测。'
+}
+if (Test-InlineCommandOk -Segment 'rg -n "unbalanced quote RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/x') {
+    Add-ValidationError '内置夹具失败：双引号不配对的片段未被检测。'
+}
+if (Test-InlineCommandOk -Segment 'rg -ni "a\|b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/x') {
+    Add-ValidationError '内置夹具失败：BRE 交替残留未被检测。'
+}
+foreach ($cf in $cardFilesForDag) {
+    $cLines2 = Get-Content -LiteralPath $cf.FullName -Encoding UTF8
+    for ($i = 0; $i -lt $cLines2.Count; $i++) {
+        foreach ($bm in [regex]::Matches($cLines2[$i], '`([^`]+)`')) {
+            if (-not (Test-InlineCommandOk -Segment $bm.Groups[1].Value)) {
+                $segPreview = $bm.Groups[1].Value.Substring(0, [Math]::Min(70, $bm.Groups[1].Value.Length))
+                Add-ValidationError "Task card $($cf.Name):$($i + 1) has a malformed inline command: $segPreview"
+            }
         }
     }
 }

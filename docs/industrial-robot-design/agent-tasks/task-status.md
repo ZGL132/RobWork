@@ -8,7 +8,7 @@
 
 | task_id | state | blocked_by | signer | date | note |
 | --- | --- | --- | --- | --- | --- |
-| WP-00-T01 | Ready | - | 审计（2026-08-29） | - | 治理任务；用户 2026-08-29 审计指示首个仅开放本任务 |
+| WP-00-T01 | Ready | - | 用户复审指示（2026-08-29，见 architecture/review/2026-08-29-contract-review.md） | 2026-08-29 | 治理任务；2026-08-30 复审闭合后唯一开放任务；决策依据见复审记录与 DOCUMENT-BASELINE §6 |
 | WP-00-T02 | Planned | 前置 WP 与卡内前置字段（总纲 §5.3） | - | - | - |
 | WP-00-T03 | Planned | 前置 WP 与卡内前置字段（总纲 §5.3） | - | - | - |
 | WP-00-T04 | Planned | 前置 WP 与卡内前置字段（总纲 §5.3） | - | - | - |

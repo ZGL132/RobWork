@@ -15,7 +15,7 @@
   - 边界：Given |P_j|≤ε_P，When 方向判定，Then 按正向耗散处理；Given J_j 显式传入，Then 来源与取值点进证据
   - 失败：Given 移动关节、η⁻ 缺失含反向流、转子/减速器等效惯量缺失或非有限，When 映射，Then 对应 `IRD-DTM-ROTARY-ONLY`/`-REVERSE-EFFICIENCY-MISSING`/`-INERTIA-INVALID`，无部分输出
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单（新增源文件/测试/黄金数据＋CMake 追加）；`reflected" ../ --include="*.cpp"|reflected" ../ --include="*.cpp"` 类效率/惯量公式实现在本包外零命中（无第二套实现，ADR-004）；`git status` 确认 `testdata` 只增不改
+- **diff 和禁止项检查：**diff 仅含允许清单（新增源文件/测试/黄金数据＋CMake 追加）；`rg -n "eta_|reflected" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g '*.cpp' -g '!**/drivetrain/**'; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 类效率/惯量公式实现在本包外零命中（无第二套实现，ADR-004）；`git status` 确认 `testdata` 只增不改
 - **证据工件：**`evaluation/drivetrain/out/test-evidence/wp-18/<run-id>/`——黄金数据版本/哈希与独立复算记录、J_ref 推导说明（动能等价）、假设清单（J_j 取值规则）、测试日志
 - **提交格式：**`WP-18-T02: 旋转传动映射`
 - **停止与升级条件：**黄金数据无法由独立解析复算对齐、或 §8.5 公式与模块详设 §5 冲突时停止并升级；需要修改 T01 冻结常量/诊断码时必须先回 T01 走评审，不得在本卡内私改

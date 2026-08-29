@@ -15,7 +15,7 @@
   - 边界：Given 恰在阈值的约束值，Then 按"实际值 vs 阈值"记录判定并保持确定性；Given Quick 预筛后需 Verified 的约束，Then 仅可证明保守项直接淘汰、其余升级求值
   - 失败：Given 任一 Must 失败或候选编译失败，When 评估，Then 候选不可行/淘汰并保留诊断原因，无部分可行状态
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`inverseDynamics|inverseDynamics|selection" candidate/src/StaticConstraints.cpp` 零命中（无轨迹/动力/器件求值）；无本地碰撞算法（碰撞只经 WP-07 共享评估器）；评估调用只经 WP-08 调度端口
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "trajectory|inverseDynamics|selection" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/candidate/src/StaticConstraints.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无轨迹/动力/器件求值）；无本地碰撞算法（碰撞只经 WP-07 共享评估器）；评估调用只经 WP-08 调度端口
 - **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——硬约束失败矩阵（kind×候选×实际值/阈值）、执行顺序记录、AT-09 静态子集证据、测试日志
 - **提交格式：** `WP-20-T03: 实现静态硬约束执行器`
 

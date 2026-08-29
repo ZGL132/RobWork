@@ -20,7 +20,7 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_contract_test$'`；预期退出码 0
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_contract_test`；预期构建成功
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_contract_test$"`；预期全部通过
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "collision|margin|distance" test/CrossEntryTest.cpp` 无本地碰撞规则副本（只比较两入口输出）；无产品源码改动；`check-boundaries.ps1` 零违规
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "collision|margin|distance" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/test/CrossEntryTest.cpp; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 无本地碰撞规则副本（只比较两入口输出）；无产品源码改动；`check-boundaries.ps1` 零违规
 - **证据工件：**`out/test-evidence/wp-20/<run-id>/`——AT-19 阶段 B 记录（两入口对照矩阵、对象 ID 对/判定/原因三元组、显示开关记录、引用 WP-15-T08 探针约定版本）＋测试日志（命令、commit、配置）
 - **提交格式：**`WP-20-T08: 新增 AT-19 跨入口集成契约测试`
 

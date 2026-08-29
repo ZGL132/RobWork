@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`kWh|kWh|motor" plugins/dynamics/src/PowerEnergyIntegrator.cpp` 零命中（无电能宣称）；无矩形积分/纯瞬时峰值替代路径；`DynamicsResult` 禁名零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "electric|kWh|motor" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/src/PowerEnergyIntegrator.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无电能宣称）；无矩形积分/纯瞬时峰值替代路径；`DynamicsResult` 禁名零命中
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——完整循环积分对账报告（W+/W−/峰值/RMS）、峰值窗与含驻留 RMS 口径对照、采样与积分规则记录、测试日志（commit/配置/种子）
 - **提交格式：** `WP-17-T03: 新增功率与能量积分`
 

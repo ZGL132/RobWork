@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_gui_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
   - GUI 约束：`$env:QT_QPA_PLATFORM='windows'`，一次只启动一个 GUI 测试可执行文件；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`Quick|Quick|robust|audit" plugins/optimization/gui/` 零命中（无 WP-21 功能）；`hash" plugins/optimization/gui/|hash" plugins/optimization/gui/` 无内部哈希作唯一标识展示；无直读会话态与本地文案表
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "jointSearch|Quick|robust|audit" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无 WP-21 功能）；`rg -ni "sha|hash" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 无内部哈希作唯一标识展示；无直读会话态与本地文案表
 - **证据工件：**`out/test-evidence/wp-20/<run-id>/`——GUI 回归报告（面板×场景矩阵）、应用确认与新修订记录、不可行候选 `gaps` 展示记录、测试日志（commit/配置）
 - **提交格式：** `WP-20-T07: 新增阶段 B 优化界面`
 

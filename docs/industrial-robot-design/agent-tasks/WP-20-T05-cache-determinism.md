@@ -15,7 +15,7 @@
   - 边界：Given 仅线程数不同的两次运行，Then 键不同、不命中，但确定性断言仍要求输出等价（集合/支配一致）
   - 失败：Given 依赖任一变化或上次运行为 `Partial`/`Failed`/`Canceled`，When 查缓存，Then 拒绝命中、重新计算、无陈旧正式结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`lru|lru|cache" plugins/optimization --include="*.?pp"` 无第二套缓存容器实现（只经 WP-08 端口）；缓存键材料含四字段且无项目修订号字段；无随机数使用未走受管种子
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "unordered_map|lru|cache" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization -g '*.?pp'; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 无第二套缓存容器实现（只经 WP-08 端口）；缓存键材料含四字段且无项目修订号字段；无随机数使用未走受管种子
 - **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——缓存命中/拒绝矩阵、同种子复现报告（候选 ID/集合/排序/支配跨线程对照）、测试日志
 - **提交格式：** `WP-20-T05: 新增确定性缓存`
 

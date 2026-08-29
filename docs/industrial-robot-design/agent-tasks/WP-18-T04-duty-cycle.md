@@ -15,7 +15,7 @@
   - 边界：Given 无目录峰值能力数据，Then 窗长缺省 1 s；Given 循环短于峰值窗，Then 按实际时长滑窗并声明
   - 失败：Given 序列为空或 `DynamicResult` 缺失，When 统计，Then Input 诊断、无部分统计输出
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`damping" src/DutyCycleWindow.cpp|damping" src/DutyCycleWindow.cpp` 零命中（摩擦不双计——本模块只经效率常数承接）；无第二套 RMS/峰值实现（统计只基于 T02 序列）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "friction|damping" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evaluation/drivetrain/src/DutyCycleWindow.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（摩擦不双计——本模块只经效率常数承接）；无第二套 RMS/峰值实现（统计只基于 T02 序列）
 - **证据工件：**`evaluation/drivetrain/out/test-evidence/wp-18/<run-id>/`——峰值窗/缺省值矩阵、含驻留 RMS 对账、四象限假设清单、摩擦不双计断言记录、测试日志
 - **提交格式：**`WP-18-T04: 峰值与工作制评估`
 - **停止与升级条件：**目录峰值能力字段无法从 WP-11 目录 Schema 取得、或 DYN-03 周期口径与本模块窗口冲突时，停止并升级 WP-17/WP-19 联合评审；缺省 1 s 变更须评审记录并升级公式/默认值版本

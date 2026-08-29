@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`scheduler\|scheduler\|run(" requirements/src/ReadinessChecker.cpp` 零命中（不调度）；映射表覆盖 `StageStatusModel` 全部八值（无缺省分支）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "submit|scheduler|run\(" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/src/ReadinessChecker.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（不调度）；映射表覆盖 `StageStatusModel` 全部八值（无缺省分支）
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——就绪状态机全矩阵（非法 Must/仅 Should/预览/正式×条目组合）、八值映射对照、预览不产正式证据的断言输出
 - **提交格式：** `WP-14-T05: 实现就绪判定状态机`
 
