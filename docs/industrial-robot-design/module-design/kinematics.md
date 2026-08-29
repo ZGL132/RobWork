@@ -47,16 +47,19 @@ CMake target：`sdurws_ird_kinematics`（计算核心，无 Qt Widgets）、`sdu
 
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
-| `IRD-KIN-IK-NO-SOLUTION` | 目标无可应用候选（全部初值未收敛或被过滤） | Engineering | Error | 列出最近残差与失败原因；放宽容差或调整任务定义 |
-| `IRD-KIN-JOINT-LIMIT` | 候选关节超限 | Engineering | Error | 候选标不可应用并保留逐轴实际/限值 |
-| `IRD-KIN-COLLIDING` | 要求碰撞证据且发现碰撞 | Engineering | Error | 报告对象 ID 对与最近距离；结论措辞见 §5 |
-| `IRD-KIN-EVIDENCE-MISSING` | 需要碰撞证据但缺碰撞检测器（KIN-05） | Engineering | Error | 判 DataInsufficient，不得视为无碰撞 |
-| `IRD-KIN-LSTAR-INVALID` | `L*` 非有限/非正且无配置回退 | Engineering | Error | 配置正值回退或输出 DataInsufficient（§15.3） |
+| `IRD-KIN-IK-NO-SOLUTION` | 目标无可应用候选（全部初值未收敛或被过滤） | Engineering | Warning | 列出最近残差与失败原因；放宽容差或调整任务定义 |
+| `IRD-KIN-JOINT-LIMIT` | 候选关节超限 | Engineering | Warning | 候选标不可应用并保留逐轴实际/限值 |
+| `IRD-KIN-COLLIDING` | 要求碰撞证据且发现碰撞 | Engineering | Warning | 报告对象 ID 对与最近距离；结论措辞见 §5 |
+| `IRD-KIN-EVIDENCE-MISSING` | 需要碰撞证据但缺碰撞检测器（KIN-05） | Engineering | Warning | 判 DataInsufficient，不得视为无碰撞 |
+| `IRD-KIN-LSTAR-INVALID` | `L*` 非有限/非正且无配置回退 | Engineering | Warning | 配置正值回退或输出 DataInsufficient（§15.3） |
+| `IRD-KIN-CONTINUOUS-UNBOUNDED` | Continuous 关节未确认工程工作范围，排序归一跳过（§5.1） | Input | Info | 提示确认范围后重评；不阻断评估 |
 | `IRD-KIN-SOLVER-FAILED` | RobWork 求解器异常/资源故障 | System | Error | 保留批次与检查点，修复后以新 attempt 重试 |
+
+Engineering 类 KIN 码的 severity 以 `module-design/diagnostics.md` §3 登记表 `severityDefault`（Warning）为准；`severityDefault` 可由 `DiagnosticMapper` 按边界上下文调整。
 
 ## 5. 关键实现约定
 
-1. **候选排序键（模块冻结；修复历史缺陷 3627db1——排序只优先"残差小"导致首候选因 JointLimit 不可应用，双击取首候选三维模型不动）**，两阶段：① 过滤——不可应用候选（残差超任务容差 1 mm/1 deg、关节超限、要求碰撞证据时碰撞失败）移出主列表、单列分组并保留逐项原因；② 排序——可应用候选按全序键排列：(a) 关节裕量降序，裕量＝min over joints of min((q−lo)/(hi−lo),(hi−q)/(hi−lo))，转动/移动各按自身半区间归一；(b) 可操作度（基于 `J_norm`）降序；(c) 与当前位姿距离升序，距离＝‖D⁻¹(q−q_cur)‖₂、D＝diag(半区间)；(d) 稳定编号升序，stableIndex＝候选在（初值序，q 规范序列化字典序）确定序中的位置。固定输入/种子/线程数下排序逐字节稳定。
+1. **候选排序键（模块冻结；修复历史缺陷 3627db1——排序只优先"残差小"导致首候选因 JointLimit 不可应用，双击取首候选三维模型不动）**，两阶段：① 过滤——不可应用候选（残差超任务容差 1 mm/1 deg、关节超限、要求碰撞证据时碰撞失败）移出主列表、单列分组并保留逐项原因；② 排序——可应用候选按全序键排列：(a) 关节裕量降序，裕量＝min over joints of min((q−lo)/(hi−lo),(hi−q)/(hi−lo))，转动/移动各按自身半区间归一；(b) 可操作度（基于 `J_norm`）降序；(c) 与当前位姿距离升序，距离＝‖D⁻¹(q−q_cur)‖₂、D＝diag(半区间)；(d) 稳定编号升序，stableIndex＝候选在（初值序，q 规范序列化字典序）确定序中的位置。**Continuous 关节排序口径（冻结）**：用户已确认工程工作范围的 Continuous 关节按该确认范围参与 (a) 裕量与 (c) 距离归一化；未确认范围的 Continuous 关节不参与裕量与距离归一——(a) 中该关节裕量分量记 1.0、(c) 距离项剔除该关节分量，并在 `KinematicResult` 附加 Info 级说明诊断（码 `IRD-KIN-CONTINUOUS-UNBOUNDED`，类别 Input、severity Info，登记 diagnostics.md §3）。固定输入/种子/线程数下排序逐字节稳定。
 2. IK 求解（模块冻结）：生产路径＝RobWork 数值 IK（阻尼最小二乘）多初值；初值池按固定次序：q_home → 会话当前 q → 关节区间中点 → 固定种子 Latin 超立方补足至默认 16 个（数量入 `KinematicsSettings`）；任务级收敛判据＝§15.3（位置 1 mm、姿态 1 deg 测地角）；求解器内部步长阈值 1e-10、每初值迭代上限 200。解析 IK 夹具仅用于黄金对照（标准六轴构型解析解集合一致性），不进生产路径。
 3. Jacobian：`J_norm` 与 `L*` 规则以 §15.3 为准（`L*` 默认 Zero 位姿基座原点到 TCP 距离；回退须项目配置正值并记诊断，无法确定→DataInsufficient）；4/5 轴任务用受约束分量构成的任务子空间 Jacobian（分量由 REQ-01 声明），可操作度/条件数一律基于（任务）`J_norm`。
 4. 区域覆盖：分母＝计划的位置—姿态组合；网格含边界；位置/姿态覆盖率分别计算（模块冻结口径：位置覆盖＝存在至少一个达标姿态组合的采样位置占比，姿态覆盖＝存在至少一个达标位置组合的采样姿态占比；组合级统计同时保留）；Verified 区域每空间轴至少两个样本（§15.3）。

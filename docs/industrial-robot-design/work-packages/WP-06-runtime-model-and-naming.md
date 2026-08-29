@@ -25,7 +25,9 @@
 
 ## 4. 冻结公共模型
 
-`CanonicalKinematicModel` 包含 `projectId`、`revisionId`、`robotDesignId`、`baseFrame`、`links[]`、`joints[]`、`tools[]`、`environments[]`、`sourceFormat`、`algorithmVersion`。每个 Joint 必填 `objectId`、`ownerScopeId`、`jointType`、`origin`、`axis`、`zero`、`home`、`limits`、`childLinkId`；轴以单位化有限三维向量表达，原始输入值和补偿变换分开保存。
+`CanonicalKinematicModel` 包含 `projectId`、`revisionId`、`robotDesignId`、`baseFrame`、`links[]`、`joints[]`、`tools[]`、`environments[]`、`sourceFormat`、`algorithmVersion`；`sourceFormat` 枚举冻结为 `StandardDH | ExplicitJoint | UrdfImport`（URDF 导入后为 `ExplicitJoint`）。每个 Joint 必填 `objectId`、`ownerScopeId`、`jointType`、`origin`、`axis`、`home`、`limits`、`childLinkId`；Joint 冻结字段集不含 `zero` 字段——规范 Zero ⇔ `q=0`、零位偏置全部折叠进 `OriginPose`（canonical-kinematics §3），被折叠偏置的溯源保留在源修订 JointDefinition 内，canonical 模型不重复保存；`home` 由 `RobotDesign` 的 `homePosition` 逐轴映射；轴以单位化有限三维向量表达，原始输入值和补偿变换分开保存。
+
+编译入口：`CanonicalModelCompiler::compile(const RobotDesign& robot, const CompileContext& context) -> expected<CanonicalKinematicModel, CompileError>`；`CompileContext{projectId, revisionId, tools[], environments[]}` 由调用方（WP-13/WP-20）从项目修订装配——`RobotDesign` 不内嵌修订身份与工具/环境清单（persistence-schema §2.4 裁决）；canonical 模型中的 `projectId/revisionId` 取自 `CompileContext`。
 
 `RuntimeNameBinding`：`objectId`、`ownerScopeId`、`objectKind`、`runtimeDeviceName`、`runtimeScopedName`、`localName`。机器人内部名称固定为 `<runtimeDeviceName>.<localName>`；WORLD 和外部环境保持全局命名，不加机器人前缀。映射必须一一对应，未知、歧义、双前缀、旧前缀和去前缀重名均拒绝。
 
@@ -44,7 +46,7 @@ RobotDesign/URDF/DH/ExplicitJoint
   -> publish CompiledRobotArtifacts atomically
 ```
 
-规范链使用 `T_parent_child(q) = Origin * AxisRotation(q-zero)`；固定关节不产生可动轴。RobWork 只接受局部 Z 时，适配器增加不可见补偿 frame/link，并将视觉/碰撞几何、质心和惯量按同一补偿变换转换；Canonical 原始 Origin/Axis 永不改写。Zero、Home、有限边界和固定 100 个状态必须使用第 15.3 节冻结容差。
+规范变换链以 `architecture/canonical-kinematics.md` §2～§3 冻结口径为准：`T_parent_child(q) = OriginPose · Motion(â, q)`，零位偏置只允许在编译边界折叠进 `OriginPose`，禁止 `Origin * AxisRotation(q-zero)` 等任何双偏置变体；固定关节不产生可动轴。RobWork 只接受局部 Z 时，适配器增加不可见补偿 frame/link，并将视觉/碰撞几何、质心和惯量按同一补偿变换转换；Canonical 原始 Origin/Axis 永不改写。Zero、Home、有限边界和固定 100 个状态必须使用第 15.3 节冻结容差。
 
 ## 任务
 

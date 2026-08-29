@@ -360,6 +360,136 @@ if ($errors.Count -eq 0) {
     }
 
     $temporaryTrace = Join-Path ([System.IO.Path]::GetTempPath()) ("ird-trace-" + [guid]::NewGuid() + '.csv')
+
+    # ---- D9 增强检查 ----
+
+    # 1) 验证命令禁省略号（任务卡与工作包计划）。
+    foreach ($cmdDoc in @($taskCardFiles.FullName) + @($workPackageFiles.FullName)) {
+        $cmdText = Get-Content -LiteralPath $cmdDoc -Raw -Encoding UTF8
+        if ($cmdText -match '(?m)^.*(-File |ctest |cmake --build)[^\r\n]*\.\.\.') {
+            Add-ValidationError "Ellipsis in a verification command: $cmdDoc"
+        }
+    }
+
+    # 2) ADR 文件存在且状态合法。
+    $adrIndexPath = Join-Path $architecturePath 'adr\README.md'
+    if (Test-Path -LiteralPath $adrIndexPath) {
+        $adrIndexText = Get-Content -LiteralPath $adrIndexPath -Raw -Encoding UTF8
+        foreach ($adrMatch in [regex]::Matches($adrIndexText, '\((ADR-\d{3}-[a-z0-9-]+)\.md\)[^|]*\|[^|]*\|[^|]*\|[^|]*\|\s*`([A-Za-z]+)`')) {
+            $adrFile = Join-Path $architecturePath ('adr\' + $adrMatch.Groups[1].Value + '.md')
+            if (-not (Test-Path -LiteralPath $adrFile)) {
+                Add-ValidationError "ADR indexed but missing: $($adrMatch.Groups[1].Value)"
+            }
+            if ($adrMatch.Groups[2].Value -notin @('Proposed', 'Accepted', 'Superseded')) {
+                Add-ValidationError "ADR $($adrMatch.Groups[1].Value) has invalid status $($adrMatch.Groups[2].Value)."
+            }
+        }
+    }
+
+    # 3) 公共符号异名一致性：裁决记录文件之外不得出现禁止名称。
+    $adjudicationAllowlist = @(
+        (Join-Path $PSScriptRoot 'README.md'),
+        (Join-Path $PSScriptRoot 'DOCUMENT-BASELINE.md'),
+        (Join-Path $architecturePath 'symbol-registry.md'),
+        (Join-Path $architecturePath 'contract-registry.md')
+    )
+    $adjudicationAllowlist += @(Get-ChildItem -LiteralPath (Join-Path $architecturePath 'adr') -Filter '*.md' -File | ForEach-Object { $_.FullName })
+    $bannedAliasDocs = @($workPackageFiles.FullName) + @($moduleDocuments) + @($taskCardFiles.FullName) + @($contractDocuments)
+    foreach ($aliasDoc in $bannedAliasDocs) {
+        if ($adjudicationAllowlist -contains $aliasDoc) { continue }
+        # 行级判断：禁名出现在"禁止/禁名/零命中/静态扫描"等裁决语境行是合法指令（grep 目标），
+        # 出现在无语境行视为把禁名当符号使用。
+        $contextPattern = '(禁止|禁名|禁用|零命中|旧名|静态扫描|static scan|不得|禁止名称)'
+        foreach ($line in (Get-Content -LiteralPath $aliasDoc -Encoding UTF8)) {
+            $hasContext = $line -match $contextPattern
+            foreach ($bannedAlias in @('EvaluationEnvelope', 'DynamicsResult', 'CandidateResult')) {
+                if ($line.Contains($bannedAlias) -and -not $hasContext) {
+                    Add-ValidationError "Banned alias $bannedAlias used without adjudication context in $aliasDoc (see symbol-registry §4)."
+                }
+            }
+            if ($line -match 'AnalysisConfig\b' -and -not $hasContext) {
+                Add-ValidationError "Banned alias AnalysisConfig used without adjudication context in $aliasDoc (use AnalysisConfiguration)."
+            }
+            if ($line -match 'OptimizationStudy\b' -and -not $hasContext) {
+                Add-ValidationError "Banned alias OptimizationStudy used without adjudication context in $aliasDoc (use OptimizationStudyDefinition/OptimizationRunResult)."
+            }
+        }
+    }
+
+    # 4) 代码基线 commit 必须存在于当前仓库。
+    $baselineText = Get-Content -LiteralPath $baselinePath -Raw -Encoding UTF8
+    $baselineMatch = [regex]::Match($baselineText, '\| 代码基线 \| `([0-9a-f]{40})`')
+    if ($baselineMatch.Success) {
+        $baselineSha = $baselineMatch.Groups[1].Value
+        $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+        Push-Location $repoRoot
+        try {
+            & git cat-file -e $baselineSha 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                Add-ValidationError "Code baseline commit $baselineSha not found in repository."
+            }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    # 5) 工作包依赖图无环（总纲 §5 前置列 → 边 → DFS 找环）。
+    $masterPlanText = Get-Content -LiteralPath $masterPlanPath -Raw -Encoding UTF8
+    $wpDependencies = @{}
+    foreach ($rowMatch in [regex]::Matches($masterPlanText, '(?m)^\| (WP-\d{2}) \|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|')) {
+        $wpId = $rowMatch.Groups[1].Value
+        $prereqCell = $rowMatch.Groups[2].Value
+        $prereqs = [System.Collections.Generic.List[string]]::new()
+        foreach ($depMatch in [regex]::Matches($prereqCell, '\b(WP-\d{2})(?:～(\d{2}))?\b')) {
+            $prereqs.Add($depMatch.Groups[1].Value)
+            if ($depMatch.Groups[2].Success) {
+                for ($n = [int]$depMatch.Groups[1].Value.Substring(3) + 1; $n -le [int]$depMatch.Groups[2].Value; $n++) {
+                    $prereqs.Add('WP-{0:D2}' -f $n)
+                }
+            }
+        }
+        $wpDependencies[$wpId] = $prereqs
+    }
+    $visitState = @{}
+    $cycleFound = $null
+    function Test-WpCycle {
+        param([string]$Node)
+        if ($visitState[$Node] -eq 1) { $script:cycleFound = $Node; return $true }
+        if ($visitState[$Node] -eq 2) { return $false }
+        $visitState[$Node] = 1
+        if ($script:wpDependencies.ContainsKey($Node)) {
+            foreach ($next in $script:wpDependencies[$Node]) {
+                if (Test-WpCycle -Node $next) { return $true }
+            }
+        }
+        $visitState[$Node] = 2
+        return $false
+    }
+    foreach ($wpNode in @($wpDependencies.Keys)) {
+        if (Test-WpCycle -Node $wpNode) { break }
+    }
+    if ($null -ne $cycleFound) {
+        Add-ValidationError "Work package dependency cycle detected through $cycleFound."
+    }
+
+    # 6) 公共接口定义所有权：值对象/端口正文定义只能出现在 architecture/public-interfaces.md。
+    $ownedDefinitions = @(
+        'struct ResultEnvelope', 'struct AnalysisSnapshot', 'struct EvaluatorInputSlice',
+        'struct EvidenceBundle', 'class IProjectCommandService', 'class IProjectQuery',
+        'class IResultRepository', 'class IEngineeringEvaluator', 'class IRuntimeNameResolver',
+        'class IEvaluationScheduler'
+    )
+    $consumerDocs = @($moduleDocuments) + @($workPackageFiles.FullName)
+    foreach ($consumerDoc in $consumerDocs) {
+        $consumerText = Get-Content -LiteralPath $consumerDoc -Raw -Encoding UTF8
+        foreach ($ownedDef in $ownedDefinitions) {
+            if ($consumerText.Contains($ownedDef)) {
+                Add-ValidationError "Public definition '$ownedDef' must live in architecture/public-interfaces.md, found in $consumerDoc."
+            }
+        }
+    }
+
     try {
         & $generatorPath -RequirementsPath $requirementsPath -OutputPath $temporaryTrace | Out-Null
         $expectedBytes = [System.IO.File]::ReadAllBytes($temporaryTrace)

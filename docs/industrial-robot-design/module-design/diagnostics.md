@@ -34,9 +34,12 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-PERSIST-UNCOMMITTED | persistence-schema §5 | System | Warning |
 | IRD-PERSIST-FUTURE-SCHEMA | persistence-schema §5 | System | Error |
 | IRD-PERSIST-LEGACY-FORMAT | persistence-schema §5 | System | Error |
-| IRD-PERSIST-SOURCE-MISSED | module-design/persistence.md §8 | Engineering | Error |
-| IRD-PERSIST-SOURCE-CHANGED | module-design/persistence.md §8 | Engineering | Error |
+| IRD-PERSIST-SOURCE-MISSING | module-design/persistence.md §4 | Engineering | Error |
+| IRD-PERSIST-SOURCE-CHANGED | module-design/persistence.md §4 | Engineering | Error |
+| IRD-PERSIST-PATH-ESCAPE | module-design/persistence.md §4 | Input | Error |
+| IRD-PERSIST-HASH-MISMATCH | module-design/persistence.md §4 | System | Error |
 | IRD-PERSIST-LOCKED | persistence-schema §6 | System | Error |
+| IRD-PERSIST-COMMIT-FAILED | module-design/persistence.md §4 | System | Error |
 | IRD-RESULT-SLICE-MISMATCH | execution-model §5 | Engineering | Error |
 | IRD-RESULT-BRANCH-MISMATCH | execution-model §5 | Engineering | Error |
 | IRD-RESULT-DUPLICATE-ATTEMPT | execution-model §5 | System | Error |
@@ -95,6 +98,7 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-KIN-COLLIDING | module-design/kinematics.md（候选过滤） | Engineering | Warning |
 | IRD-KIN-LSTAR-INVALID | module-design/kinematics.md（§15.3 L* 回退失败→DataInsufficient） | Engineering | Warning |
 | IRD-KIN-EVIDENCE-MISSING | module-design/kinematics.md（KIN-05 无检测器→数据不足） | Engineering | Warning |
+| IRD-KIN-CONTINUOUS-UNBOUNDED | module-design/kinematics.md（Continuous 关节未确认工程工作范围，排序归一跳过） | Input | Info |
 | IRD-TRJ-NO-PATH | module-design/trajectory-planning.md | Engineering | Warning |
 | IRD-TRJ-PLANNER-FAILED | module-design/trajectory-planning.md | System | Error |
 | IRD-TRJ-PLANNER-TIMEOUT | module-design/trajectory-planning.md | System | Error |

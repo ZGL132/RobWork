@@ -18,6 +18,7 @@ ProjectName.rwdesign/
   reports/<report-id>/                  WP-12 追加协议（§4）
   drafts/                               WP-04 管理；未提交草稿，不进入修订
   catalog/                              WP-11 解析 → WP-04 提交的不可变目录版本
+  .staging/<transaction-id>/            WP-04 写；瞬态事务目录（未提交事务：启动清理、打包忽略；目录枚举不得视为修订）
 ```
 
 - 目录是唯一规范格式；ZIP 只能作为传输封装，解包后必须得到完全相同的目录内容和哈希（ADR-002）。

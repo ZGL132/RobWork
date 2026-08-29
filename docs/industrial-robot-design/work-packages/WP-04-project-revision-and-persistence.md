@@ -40,33 +40,11 @@ ProjectName.rwdesign/
 
 目录是唯一规范格式，ZIP 只用于传输封装。内部路径统一 POSIX `/`，读取时拒绝空段、`.`、`..`、绝对路径、UNC、符号链接逃逸和项目根外引用。`HEAD` 是 UTF-8 无 BOM 文本，固定两行 `branchId=<id>`、`revisionId=<id>`；空、重复键、未知键或指向缺失修订均拒绝。
 
-`project.json` 必填：`projectId`、`schemaVersion`、`formatVersion`、`robotDesignId`、`createdAt`、`updatedAt`。首版 `schemaVersion=1`、`formatVersion=1`，且 `robotDesignId` 非空且唯一。`manifest.json` 必填：`revisionId`、`parentRevisionId`（根修订为空）、`branchId`、`createdAt`、`author`、`toolVersion`、`domainFiles[]`、`objectRefs[]`、`contentHash`。列表按规范路径排序，禁止重复路径/ID；所有浮点必须 finite，未知未来版本拒绝。
+`project.json` 必填：`projectId`、`schemaVersion`、`formatVersion`、`robotDesignId`、`createdAt`、`updatedAt`。首版 `schemaVersion=1`、`formatVersion=1`，且 `robotDesignId` 非空且唯一。`manifest.json` 字段以 `architecture/persistence-schema.md` §2.3 为唯一权威（`revisionId`、`parentRevisionId`、`branchId`、`objects[]{objectId, objectRevision, sha256, bytes}`、`policyContentId`、`createdToolVersion`、`commandSummary`）；列表按规范路径排序，禁止重复路径/ID；所有浮点必须 finite，未知未来版本拒绝。
 
 ## 5. 公共接口和状态
 
-```cpp
-struct ProjectRevisionRef { std::string projectId, branchId, revisionId; };
-struct ExpectedRevision { ProjectRevisionRef value; };
-struct CommandResult {
-    bool applied;
-    ProjectRevisionRef revision;
-    std::vector<Diagnostic> diagnostics;
-};
-class IProjectQuery {
-public:
-    virtual ProjectRevision load(const ProjectRevisionRef&) const = 0;
-    virtual ~IProjectQuery() = default;
-};
-class IProjectCommandService {
-public:
-    virtual CommandResult apply(const ProjectRevisionRef&, const DomainCommand&) = 0;
-    virtual CommandResult undo(const ProjectRevisionRef&) = 0;
-    virtual CommandResult redo(const ProjectRevisionRef&) = 0;
-    virtual ~IProjectCommandService() = default;
-};
-```
-
-接口按值/const 引用传递，不转移 Qt/RobWork 指针所有权。`apply` 成功恰好创建一个新 revision；expected revision 不匹配返回 `IRD-PROJECT-REVISION-CONFLICT`，不写任何正式文件。分支不匹配返回 `IRD-PROJECT-BRANCH-MISMATCH`。undo/redo 本身是新命令，禁止改写历史 payload；无历史分别返回 `IRD-PROJECT-NOTHING-TO-UNDO`、`IRD-PROJECT-NOTHING-TO-REDO`。诊断类别按 Input/Engineering/System，保存故障必须为 System。
+接口签名、`DomainCommand`/`IProjectQuery`/`IProjectCommandService`/`CommandResult` 的唯一权威是 `architecture/public-interfaces.md` §1（`expected<T, ProjectError>` 错误面）；本计划不复制定义。接口按值/const 引用传递，不转移 Qt/RobWork 指针所有权。`apply` 成功恰好创建一个新 revision；expected revision 不匹配返回 `IRD-PROJ-STALE-REVISION`，不写任何正式文件。分支不匹配返回 `IRD-PROJ-BRANCH-MISMATCH`。undo/redo 本身是新命令，禁止改写历史 payload；无历史分别返回 `IRD-PROJ-NOTHING-TO-UNDO`、`IRD-PROJ-NOTHING-TO-REDO`（错误码总目录见 module-design/diagnostics.md §3）。诊断类别按 Input/Engineering/System，保存故障必须为 System。
 
 ## 6. 端到端数据流
 

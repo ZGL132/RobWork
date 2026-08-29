@@ -6,9 +6,9 @@
 - **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/TransactionWriter.hpp`（模块私有）、`src/TransactionWriter.cpp`、`src/AtomicFile.cpp`（同卷原子替换 helper）、`test/TransactionTest.cpp`、`testdata/rwdesign/failpoints/`、`evidence/WP-04/`；修改 `CMakeLists.txt`、`src/ProjectStore.cpp`（启动恢复扫描挂接）；删除：无。
 - **禁止修改的文件和公共接口：**manifest/HEAD 物理格式字段；T01/T02 冻结接口与命令语义；结果仓库与追加协议；WP-01 脚本；文档与 schemas/。
 - **修改前接口：**T02 的保存钩子为直写占位（无事务状态机、无 failpoint、无恢复扫描）。
-- **修改后接口：**`TransactionWriter` 具名状态机 `Idle→Validating→Staging→Hashing→ManifestReady→RevisionCommitted→HeadCommitted→Complete`（任一阶段 `→Aborted`）；staging 目录 `.staging/<transaction-id>/`；`HeadLock{pid,heartbeatAt}`（心跳 5 s、超时 30 s，模块私有冻结）；诊断码 `IRD-PERSIST-LOCKED`、`IRD-PERSIST-UNCOMMITTED`。
+- **修改后接口：**`TransactionWriter` 具名状态机 `Idle→Validating→Staging→Hashing→ManifestReady→RevisionCommitted→HeadCommitted→Complete`（任一阶段 `→Aborted`）；staging 目录 `.staging/<transaction-id>/`；`HeadLock{pid,heartbeatAt}`（心跳 5 s、超时 30 s，模块私有冻结）；诊断码 `IRD-PERSIST-LOCKED`、`IRD-PERSIST-UNCOMMITTED`、`IRD-PERSIST-COMMIT-FAILED`。
 - **实施步骤：**1) 先写每个 failpoint 的不变量测试；2) 实现固定保存顺序：validate input → 读 expected HEAD 并比较 → 创建 staging → 写领域 JSON/对象 → 写 manifest → 重读并逐文件 SHA-256 校验 → 原子 rename 进 `revisions/<id>/` → 原子替换 HEAD；3) 实现启动扫描清理残留 staging 与过期锁；4) 注入故障矩阵并记录全树哈希。
-- **RED 测试：**domain 写、对象写、manifest 写、单文件哈希、manifest 校验或 HEAD 替换任一 failpoint，When commit，Then 旧 HEAD、旧 revision 文件和对象哈希完全不变，返回 System 诊断。
+- **RED 测试：**domain 写、对象写、manifest 写、单文件哈希、manifest 校验或 HEAD 替换任一 failpoint，When commit，Then 旧 HEAD、旧 revision 文件和对象哈希完全不变，返回 `IRD-PERSIST-COMMIT-FAILED`（System/Error，persistence.md §4；恢复动作＝HEAD 与旧修订保持完整、staging 由下次 open 清理）诊断。
 - **最小实现：**状态机＋同卷原子提交＋恢复扫描；跨卷临时目录直接拒绝，不降级为复制覆盖。
 - **正常/边界/失败测试：**
   - 失败：进程在任一阶段终止，When 下次 open，Then 忽略未完成 staging、产生 `IRD-PERSIST-UNCOMMITTED`、不加载半修订；已有未超时 `HEAD.lock` → `IRD-PERSIST-LOCKED` 不阻塞等待。

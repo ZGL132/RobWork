@@ -50,12 +50,13 @@ CMake target：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_pr
 | --- | --- | --- | --- | --- |
 | `IRD-PERSIST-LOCKED` | 已有未超时的 `HEAD.lock` | System | Error | 不阻塞等待；提示持锁进程或待心跳超时夺取后重试 |
 | `IRD-PERSIST-UNCOMMITTED` | 启动发现残留 staging / 未完成事务 | System | Warning | 记事务清单后清理，重开项目重试保存 |
-| `IRD-PERSIST-FUTURE-SCHEMA` | schemaVersion 高于当前支持 | Input | Error | 只读拒绝；用兼容版本或升级工具打开 |
+| `IRD-PERSIST-FUTURE-SCHEMA` | schemaVersion 高于当前支持 | System | Error | 只读拒绝；用兼容版本或升级工具打开 |
 | `IRD-PERSIST-LEGACY-FORMAT` | 旧 `.rwproj` | Input | Error | 只读拒绝；用户显式走新 staging 迁移，不建兼容层 |
 | `IRD-PERSIST-SOURCE-MISSING` | 外部引用对象缺失 | Engineering | Error | 保留旧修订；重新关联并显式提交新修订 |
 | `IRD-PERSIST-SOURCE-CHANGED` | 外部源哈希与记录不符 | Engineering | Error | 同上；历史对象保留 |
 | `IRD-PERSIST-PATH-ESCAPE` | 路径穿越/符号链接/UNC | Input | Error | 拒绝加载，不创建 staging |
 | `IRD-PERSIST-HASH-MISMATCH` | 读回对象或 manifest 哈希不符 | System | Error | 拒绝使用该对象并报告，等待修复 |
+| `IRD-PERSIST-COMMIT-FAILED` | 保存时序任一写入/校验/切换阶段 failpoint 注入失败或 IO 错误 | System | Error | HEAD 与旧修订保持完整；staging 由下次 open 清理 |
 
 ## 5. 关键实现约定
 

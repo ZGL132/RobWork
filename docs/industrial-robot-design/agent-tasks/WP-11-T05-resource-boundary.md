@@ -13,7 +13,7 @@
 - **正常/边界/失败测试：**
   - 正常：Given 合法有限资源，When read，Then 返回安全字节/路径句柄与内容哈希，供业务适配器解析
   - 边界：Given 深度恰达上限的 JSON 与顶点数恰达上限的网格，When read，Then 通过；超限一项立即停止、零部分对象
-  - 失败：Given 损坏 JSON/URDF 或非有限坐标，When parse，Then Input/System 诊断（`IRD-IO-PARSE-FAILED` 归 System）且旧项目不变；资源缺失按 Engineering/DataInsufficient 表达（`IRD-PERSIST-SOURCE-MISSED` 透传），不伪装成 System
+  - 失败：Given 损坏 JSON/URDF 或非有限坐标，When parse，Then Input/System 诊断（`IRD-IO-PARSE-FAILED` 归 System）且旧项目不变；资源缺失按 Engineering/DataInsufficient 表达（`IRD-PERSIST-SOURCE-MISSING` 透传），不伪装成 System
 - **精确验证命令**（仓库根）：
   ```powershell
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_io(_contract)?_test$'

@@ -48,7 +48,7 @@ untrusted path -> UTF-8 decode -> normalize POSIX -> reject absolute/UNC/../syml
 | IRD-IO-BUDGET-EXCEEDED | 任一预算超限 | Input | Error | 不产出部分记录；调整预算后重试 |
 | IRD-IO-ENCODING-INVALID | 非 UTF-8/坏 BOM、坏引号/换行、重复表头 | Input | Error | 按源行号/字段定位修复 |
 | IRD-IO-CATALOG-INVALID | 清单/哈希/列/单位/行数/唯一性/外键/曲线错误 | Input | Error | 修复目录包后重新导入 |
-| IRD-PERSIST-SOURCE-MISSED / -CHANGED | 外部资源缺失或源哈希变化（WP-04 码透传） | Engineering | Error | 走重新关联入口（NFR-REL-04） |
+| IRD-PERSIST-SOURCE-MISSING / -CHANGED | 外部资源缺失或源哈希变化（WP-04 码透传，首现 module-design/persistence.md §4） | Engineering | Error | 走重新关联入口（NFR-REL-04） |
 | IRD-IO-PARSE-FAILED | 磁盘/权限/解析库故障 | System | Error | 项目旧状态保持，可重试 |
 
 任何失败不得创建部分项目 revision 或正式 `CatalogVersion`；跨表悬空/资源缺失按 Engineering/DataInsufficient 表达，不伪装成 System。

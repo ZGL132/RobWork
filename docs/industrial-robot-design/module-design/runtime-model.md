@@ -28,6 +28,7 @@ CMake 目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_ru
 
 ## 3. 数据与接口
 
+- 编译入口裁决：`expected<CanonicalKinematicModel, CompileError> compile(const RobotDesign& robot, const CompileContext& context)`；`CompileContext{projectId, revisionId, tools[], environments[]}` 由调用方（WP-13/WP-20）从项目修订装配——`RobotDesign` 不内嵌修订身份与工具/环境清单（persistence-schema §2.4 对象头裁决的同一分工）。canonical 模型冻结字段集中的 `projectId/revisionId` 取自 `CompileContext`，`tools[]/environments[]` 以 `CompileContext` 传入内容编译。
 - `IRuntimeNameResolver` 端口签名与 `IRD-NAME-*` 错误码以 public-interfaces §2 为准，本模块是其唯一实现；`RuntimeNameMap` 持久化以 `schemas/runtime-name-map.schema.json` 与 `schemas/examples/runtime-name-map.example.json` 为准。
 - 绑定主键 `(ownerScopeId, objectId)`，值为 `runtimeDeviceName/localName/runtimeScopedName/objectKind`；`objectKind` 值域冻结（public-interfaces §2）：`Device/Joint/Link/Frame/FixedFrame/CompensationFrame/Tool/EnvironmentObject`。`<runtimeDeviceName>.<localName>` 拼接只允许出现在 resolver 实现内部；WORLD 与外部环境对象使用全局名。
 - `CompiledRobotArtifacts` 同载 canonical、names、WorkCell::Ptr、DWC::Ptr、compileDiagnostics 与 source identity；任一工件失败整体为空，不返回部分指针，编译结果不自动写项目。
@@ -49,7 +50,7 @@ RobotDesign 权威参数化
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
 | `IRD-RUNTIME-AXIS-INVALID` | 轴范数 <1e-12、非有限、固定关节带轴语义 | Input | Error | 修正权威参数化后重编译 |
-| `IRD-RUNTIME-DUAL-OFFSET` | 变换链出现第二偏置项（canonical-kinematics §3.2） | Input | Error | 偏置折叠进 OriginPose 后重新提交 |
+| `IRD-RUNTIME-DUAL-OFFSET` | 变换链出现第二偏置项（canonical-kinematics §3.2） | System | Error | 偏置折叠进 OriginPose 后重新提交 |
 | `IRD-RUNTIME-NAME-COLLISION` | 名称表生成时重复绑定/去前缀重名/双前缀 | Input | Error | 修正名称后重新编译 |
 | `IRD-RUNTIME-COMPILE-FAILED` | builder 抛错、返回空或 RobWork 构造失败 | System | Error | 保留调用方旧工件，按诊断修复后重试 |
 | `IRD-RUNTIME-ARTIFACTS-MISMATCH` | 交叉校验任一项不一致 | Engineering | Error | 全部工件作废并返回诊断 |

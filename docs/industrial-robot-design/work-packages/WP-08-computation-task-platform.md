@@ -27,16 +27,7 @@
 
 `EvaluationRequest` 必填：`projectId`、`branchId`、`revisionId`、`snapshotId`、`evaluatorId/version`、`runId`、`attemptId`、`mode`、`randomSeed`、`threadCount`、`resourceBudget`、`cachePolicy`、`checkpointPolicy`。提交时复制为不可变值对象。
 
-```cpp
-class IEvaluationScheduler {
-public:
-    virtual TaskHandle submit(const EvaluationRequest&) = 0;
-    virtual TaskStatus status(const TaskHandle&) const = 0;
-    virtual CancelResult cancel(const TaskHandle&) = 0;
-    virtual PauseResult pause(const TaskHandle&) = 0;
-    virtual ResumeResult resume(const TaskHandle&) = 0;
-};
-```
+`IEvaluationScheduler`/`TaskHandle`/`TaskSnapshot` 的签名与语义（`pause/resume/cancel/checkpoint` 经 `TaskHandle`，全部返回 `expected<TaskSnapshot, EvaluationError>`）以 `architecture/public-interfaces.md` §4 为唯一权威，本计划不复制定义。
 
 任务状态机为 9 态（`Queued/Running/Pausing/Paused/Canceling/Completed/Canceled/Failed/Interrupted`），18 条合法转移以 `architecture/execution-model.md` §1 转移表为唯一权威（含 `Queued→Canceling`、`Paused→Canceling`、`Canceling→Failed` 等旧文本遗漏的转移）。终态不可再转移且幂等；非法转移返回 `IRD-EXEC-ILLEGAL-TRANSITION` 且不改变状态。
 

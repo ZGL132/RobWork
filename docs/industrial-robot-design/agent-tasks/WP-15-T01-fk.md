@@ -6,7 +6,7 @@
 - **允许创建/修改/删除的文件：**（基目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/kinematics/`）
   - 创建：`CMakeLists.txt`（登记 `sdurws_ird_kinematics`、`sdurws_ird_kinematics_test`，随 `IRD_BUILD_BUSINESS_PLUGINS`）
   - 修改：`../CMakeLists.txt`（plugins 聚合入口，仅新增 kinematics 子目录一行；聚合文件尚不存在时创建）
-  - 创建：`include/sdurws/ird/kinematics/FkJacobian.hpp`、`KinematicsDiagnostics.hpp`（IRD-KIN-* 诊断码常量，kinematics.md §4 矩阵）、`src/FkJacobian.cpp`（FK 部分）
+  - 创建：`include/sdurws/ird/kinematics/FkJacobian.hpp`、`KinematicsDiagnostics.hpp`（IRD-KIN-* 诊断码常量确保存在，kinematics.md §4 矩阵全量；后续任务卡仅确保存在、不重复创建）、`src/FkJacobian.cpp`（FK 部分）
   - 创建：`test/FkTest.cpp`；`testdata/kinematics/fk-golden/`（Zero/Home/边界/固定种子姿态解析对照夹具，登记进 WP-02 manifest）；`evidence/WP-15/`
 - **禁止修改的文件和公共接口：** 旧插件 `sdurws_kinematicanalysis` 及一切非本拥有目录源码；`requirements.md`、CSV、文档门禁脚本；WP-06 canonical 模型与 `RuntimeNameMap`、WP-07 `CollisionPolicy`/`CollisionEvaluator`、WP-08 调度接口；不新增 symbol-registry 未登记的公共符号（`KinematicResult` 为已提名补登记项，SYM-KIN-006）；测试运行期禁止写回 `testdata/`。
 - **修改前接口：** 无（`plugins/kinematics/` 不存在，无任何 `sdurws_ird_kinematics*` 目标）。

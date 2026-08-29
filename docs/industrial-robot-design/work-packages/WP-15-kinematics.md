@@ -64,20 +64,22 @@ CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdur
 
 区域覆盖两锚点（evaluation-semantics §2）：用户取消＝`Canceled + NotEvaluated + Partial/None`；预算耗尽＝`Completed + DataInsufficient + Complete`；两者均不得输出 Verified 通过。
 
-失败分类与错误码（kinematics.md §4 矩阵；新码待 diagnostics.md 登记后启用）：`IRD-KIN-IK-NO-SOLUTION`（Engineering/Error）、`IRD-KIN-JOINT-LIMIT`（Engineering/Error）、`IRD-KIN-COLLIDING`（Engineering/Error）、`IRD-KIN-EVIDENCE-MISSING`（Engineering/Error，KIN-05：缺碰撞检测器判 DataInsufficient，不得视为无碰撞）、`IRD-KIN-LSTAR-INVALID`（Engineering/Error）、`IRD-KIN-SOLVER-FAILED`（System/Error，保留批次与检查点，修复后新 attempt 重试）。
+失败分类与错误码（kinematics.md §4 矩阵；类别/severity 以 diagnostics.md §3 登记表为准）：`IRD-KIN-IK-NO-SOLUTION`（Engineering/Warning）、`IRD-KIN-JOINT-LIMIT`（Engineering/Warning）、`IRD-KIN-COLLIDING`（Engineering/Warning）、`IRD-KIN-EVIDENCE-MISSING`（Engineering/Warning，KIN-05：缺碰撞检测器判 DataInsufficient，不得视为无碰撞）、`IRD-KIN-LSTAR-INVALID`（Engineering/Warning）、`IRD-KIN-SOLVER-FAILED`（System/Error，保留批次与检查点，修复后新 attempt 重试）、`IRD-KIN-CONTINUOUS-UNBOUNDED`（Input/Info，Continuous 关节未确认工作范围时排序归一跳过说明）。
 
 ## 5. 任务 DAG
 
 ```text
-T01 FK 与规范模型 ─┬→ T02 IK 候选 ─┬→ T04 区域覆盖 ──┐
-                   │               └→ T05 碰撞证据 ──┼→ T06 批处理执行 → T07 应用与 GUI
-                   └→ T03 Jacobian 与奇异性 ─────────┘         └────→ T08 契约回归
+T01 FK 与规范模型 ─→ T03 Jacobian 与奇异性 ─→ T02 IK 候选 ─┬→ T04 区域覆盖 ──┐
+                                                          └→ T05 碰撞证据 ──┼→ T06 批处理执行 → T07 应用与 GUI
+                                                                            └────→ T08 契约回归
 ```
+
+T02 前置含 T03（裁决）：排序键 (b) 消费 T03 的 `JacobianResult` 可操作度。
 
 | 任务 | WP 内前置 | 外部门禁 |
 | --- | --- | --- |
 | T01 | — | WP-06 canonical 工件、WP-13 交付前置 |
-| T02 | T01 | WP-14 需求切片（交付前置） |
+| T02 | T01、T03 | WP-14 需求切片（交付前置） |
 | T03 | T01 | — |
 | T04 | T02 | WP-14 冻结分母 |
 | T05 | T01、T02 | WP-07 `CollisionEvaluator` |
@@ -98,8 +100,8 @@ T01 FK 与规范模型 ─┬→ T02 IK 候选 ─┬→ T04 区域覆盖 ──
 
 ### 6.2 WP-15-T02 IK 候选（2～2.5 人周，本 WP 最重任务）
 
-- 代码范围：`src/IkSolver.cpp`＋`src/CandidateRanking.cpp`（含同名公共头）；`test/IkCandidateTest.cpp`；`testdata/kinematics/ik-golden/`。
-- 前置：T01；WP-14 需求切片（容差与受约束分量）。
+- 代码范围：`src/IkSolver.cpp`＋`src/CandidateRanking.cpp`（含同名公共头）；`include/.../KinematicsSettings.hpp`＋`src/KinematicsSettings.cpp`（初版：IK 初值数、迭代上限、内部收敛阈值、区域采样线程数字段与默认值；T06 扩展）；`test/IkCandidateTest.cpp`；`testdata/kinematics/ik-golden/`。
+- 前置：T01、T03（排序键 (b) 消费 T03 `JacobianResult` 可操作度）；WP-14 需求切片（容差与受约束分量）。
 - 输出工件：`IkCandidate`（q、residual{position m, orientation rad(测地角)}、jointMargin、manipulability、distanceToCurrent、applicable{residual,jointLimit,collision}、stableIndex）。
 - 验收断言：§6「IkCandidateTest」——多初值收敛、残差/限位过滤、去重（同解判据：逐轴转动/连续差 ≤1e-6 rad、移动 ≤1e-8 m，§15.3）、排序键全序与稳定性、**3627db1 回归夹具**（历史缺陷：排序只优先"残差小"导致首候选因 JointLimit 不可应用、双击取首候选三维模型不动——不得复现）。
 - **排序键（模块冻结，kinematics.md §5.1，两阶段）**：
@@ -130,7 +132,7 @@ T01 FK 与规范模型 ─┬→ T02 IK 候选 ─┬→ T04 区域覆盖 ──
 
 ### 6.6 WP-15-T06 批处理执行（1 人周）
 
-- 代码范围：`src/KinematicsEvaluator.cpp`＋`src/KinematicsSettings.cpp`（含同名公共头）；`test/BatchExecutionTest.cpp`；`testdata/kinematics/batches/`。
+- 代码范围：`src/KinematicsEvaluator.cpp`；`include/.../KinematicsSettings.hpp`＋`src/KinematicsSettings.cpp`（创建归属裁决：初版随 T02 交付，本卡仅扩展评估器装配字段）；`test/BatchExecutionTest.cpp`；`testdata/kinematics/batches/`。
 - 前置：T02、T04、T05；WP-08 调度端口、WP-05 评估端口。
 - 输出工件：`IEngineeringEvaluator` 实现（evaluatorId `ird.kinematics` 冻结；`dependencyManifest/validate/evaluate/capabilities` 按 public-interfaces §3）；批次＝任务点或区域采样组合，安全点＝批次边界。
 - 验收断言：§6「BatchExecutionTest」——身份校验（`RunIdentity`）、迟到回调、取消/检查点、固定种子复现。取消/检查点/缓存按 WP-08 契约（execution-model §1～§5）；`KinematicsSettings` 进入输入切片与缓存键。

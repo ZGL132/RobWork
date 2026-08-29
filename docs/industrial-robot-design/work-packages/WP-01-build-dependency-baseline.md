@@ -67,12 +67,14 @@ RobWork/
 │  ├─ io/include/sdurws/ird/io/
 │  ├─ reporting/include/sdurws/ird/reporting/
 │  ├─ ui/include/sdurws/ird/ui/
-│  └─ tests/<module>/
+│  └─ <module>/{test/,testdata/}（测试源与夹具的规范位置在各模块目录内，见下方裁决）
 ├─ scripts/industrial-robot/
 │  ├─ common.ps1、configure.ps1、build.ps1、run-tests.ps1
 │  ├─ check-boundaries.ps1、package.ps1
 ├─ dependencies/industrial-robot-baseline.json
 └─ gitlab-ci/industrial-robot-windows.yml
+
+测试目录裁决：模块内 `test/`、`testdata/` 目录是测试源与夹具的规范位置（与 23 篇模块详设的文件树一致）；早期树中的顶层 `tests/<module>/` 表述由模块内目录取代，顶层不设独立测试目录。`cmake/IndustrialRobotTargets.cmake` 目标工厂显式收集模块内源文件（逐文件登记，禁止 GLOB），并把各模块内 `test/` 源编入对应 `sdurws_ird_*_test` 目标。
 
 WP-01 可以创建目录和脚本骨架；不得修改其他 WP 所有的公共头、领域实现、需求 CSV 或业务插件源文件。
 
@@ -153,7 +155,7 @@ industrial-robot-windows.yml 步骤固定为 checkout → VS x64 → configure �
 创建旧插件依赖、Widget 头、未登记库、名称拼接四类夹具；先确认规则未实现时非零；实现扫描器和稳定诊断；再次运行确认合法样例通过。
 
 ### WP-01-T02 建立目标骨架
-仅在 rwslibs/CMakeLists.txt 增加 industrialrobot；创建模块 targets、include 安装白名单、依赖断言和独立 CTest；验证选项关闭不会产生半目标。
+仅在 rwslibs/CMakeLists.txt 增加 industrialrobot；创建模块 targets 与 `cmake/IndustrialRobotTargets.cmake` 目标工厂（显式收集各模块内源文件、禁止 GLOB；测试源取各模块内 `test/`，testdata 夹具同位于模块内）、include 安装白名单、依赖断言和独立 CTest；验证选项关闭不会产生半目标。
 
 ### WP-01-T03 统一测试入口
 实现参数和绝对路径；实现 VS x64 发现和版本记录；实现 configure/build/CTest 日志；实现 Windows Qt、单进程和冲突变量检查；分别验证模型与 GUI 路径。
