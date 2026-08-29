@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "QFile\|ifstream\|ofstream\|getline" requirements/src/RequirementsCsvAdapter.cpp` 零命中（一律经 WP-11）；`grep -rn "eval\|system(\|=" requirements/src/RequirementsCsvAdapter.cpp` 无公式求值分支；两次导出哈希一致
+- **diff 和禁止项检查：**diff 仅含允许清单；`ifstream\|ifstream\|ofstream\|getline" requirements/src/RequirementsCsvAdapter.cpp` 零命中（一律经 WP-11）；`system(\|system(\|=" requirements/src/RequirementsCsvAdapter.cpp` 无公式求值分支；两次导出哈希一致
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——三列字典、恶意 CSV 样本与处置、错误行定位报告、往返对照与哈希
 - **提交格式：** `WP-14-T02: 实现需求 CSV 导入导出`
 

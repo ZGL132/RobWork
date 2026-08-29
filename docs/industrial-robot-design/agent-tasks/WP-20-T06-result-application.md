@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "createRevision|writeRevision|new ProjectRevision" candidate/src/` 零直接修订写入（只经 WP-04 命令）；`grep -rn "OptimizationStudy\b"` 禁名零命中；无第二套结果仓库
+- **diff 和禁止项检查：**diff 仅含允许清单；`writeRevision|writeRevision|new ProjectRevision" candidate/src/` 零直接修订写入（只经 WP-04 命令）；`rg -n "OptimizationStudy\b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot` 禁名零命中；无第二套结果仓库
 - **证据工件：**`out/test-evidence/wp-20/<run-id>/`——修订/结果当前性矩阵（候选数×修订数）、应用命令序列与新旧修订 ref、预算锚点记录、AT-12 阶段 B 证据、测试日志
 - **提交格式：** `WP-20-T06: 集成优化结果应用`
 

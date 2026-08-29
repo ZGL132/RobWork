@@ -6,7 +6,7 @@
 >
 > **来源**：依据 `docs/industrial-robot-design/` 治理体系制定——
 > `DOCUMENT-BASELINE.md`（IRD-D0-20260829）、`requirements.md` v0.8、
-> `development-task-breakdown.md` v1.3、`architecture/`（契约已 `Accepted`）、`module-design/`。
+> `development-task-breakdown.md` v1.3、`architecture/`（D10 联合评审通过，`Proposed` 待签署）、`module-design/`。
 >
 > **使用方法**：实施时在对话中指明目标 WP 编号或任务卡编号（如 `WP-02`），
 > 或留空由自动选择规则决定。

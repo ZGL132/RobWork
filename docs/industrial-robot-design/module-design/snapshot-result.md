@@ -1,6 +1,6 @@
 # 快照、结果与证据模块详细方案（snapshot-result）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-05；阶段/发布：阶段 A / R1；任务卡：agent-tasks/WP-05-T01～T05
 - 架构契约：`architecture/public-interfaces.md` §3/§5/§7、`architecture/evaluation-semantics.md`、`architecture/execution-model.md` §3/§5、`architecture/persistence-schema.md` §4、`architecture/symbol-registry.md`
 - 代码前置：WP-03、WP-04（构建/门禁入口由 WP-01 交付）

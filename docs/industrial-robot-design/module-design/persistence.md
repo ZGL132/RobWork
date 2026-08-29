@@ -1,6 +1,6 @@
 # 项目持久化与修订模块详细方案（persistence）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-04；阶段/发布：阶段 A / R1；任务卡：agent-tasks/WP-04-T01～T05
 - 架构契约：`architecture/persistence-schema.md`（权威）、`architecture/public-interfaces.md` §1、`architecture/execution-model.md`、`architecture/testing-contract.md`
 - 代码前置：WP-03（`sdurws_ird_core`）；构建/门禁入口由 WP-01 交付

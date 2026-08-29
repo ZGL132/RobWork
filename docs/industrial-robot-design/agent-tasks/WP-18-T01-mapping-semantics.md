@@ -15,7 +15,7 @@
   - 边界：Given 恰好为正的小速比，When 校验，Then 通过（i>1 为速比正方向约定而非校验阈值；仅 i≤0/非有限被拒）
   - 失败：Given i 缺失、NaN 或 ≤0，When 校验，Then Input/Error 诊断、无部分输出、无部分状态
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
-- **diff 和禁止项检查：**`git diff --name-only` 仅含 `evaluation/drivetrain/` 新建文件与 `industrialrobot/CMakeLists.txt` 一处接入；`grep -rn "IRD-DTM-" RobWorkStudio/src/rwslibs/industrialrobot --include="*.?pp"` 命中仅在 drivetrain 目录（诊断码唯一归属）；源码无 `QtWidgets` include
+- **diff 和禁止项检查：**`git diff --name-only` 仅含 `evaluation/drivetrain/` 新建文件与 `industrialrobot/CMakeLists.txt` 一处接入；`rg -n "IRD-DTM-" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g '*.?pp'` 命中仅在 drivetrain 目录（诊断码唯一归属）；源码无 `QtWidgets` include
 - **证据工件：**`evaluation/drivetrain/out/test-evidence/wp-18/<run-id>/`——语义冻结清单（常量/公式版本/错误码表）、测试日志（命令、退出码、commit、配置）、ε_P 等模块私有默认值的评审记录
 - **提交格式：**`WP-18-T01: 传动映射语义冻结`
 - **停止与升级条件：**需求 §8.5 与模块详设 §5 语义冲突、或必须修改 WP-17/WP-03 公共类型才能表达输入时，停止并升级 WP-18 所有者与架构负责人；`DynamicResult` 字段不足以承载映射输入时走联合评审，不得私改契约

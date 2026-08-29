@@ -1,6 +1,6 @@
 # 轨迹规划模块详细方案（trajectory-planning）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-16；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-16-T01～T06
 - 架构契约：`architecture/public-interfaces.md` §3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/execution-model.md` §1～3、`architecture/canonical-kinematics.md`、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.4（TRJ-01～08）、§7.2/§7.4、§15.3（轨迹限制行、碰撞验证协议、Jacobian 统一尺度）；平台方案：policy-collision、execution-platform、snapshot-result、runtime-model、session-ui

@@ -1,6 +1,6 @@
 # 运动学模块详细方案（kinematics）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过；D5 重写，待消费者评审）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-15；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-15-T01～T08`
 - 架构契约：`architecture/canonical-kinematics.md`（最高权威）、`architecture/evaluation-semantics.md` §1～§2、`architecture/public-interfaces.md` §3～§4/§7、`architecture/execution-model.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-03、05、06、07、08、09；WP-13、14 为交付前置（模型与需求经快照获得，无业务插件代码依赖，总纲 §5.3）；构建/门禁入口 WP-01

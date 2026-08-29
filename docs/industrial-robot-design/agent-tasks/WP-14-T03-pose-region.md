@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "coverage\|jacobian\|samplePose" requirements/src/PoseRegion.cpp` 零命中（覆盖率定义与子空间构造不归本卡）；上限 `1000000` 常量仅出现一处（冻结常量）
+- **diff 和禁止项检查：**diff 仅含允许清单；`jacobian\|jacobian\|samplePose" requirements/src/PoseRegion.cpp` 零命中（覆盖率定义与子空间构造不归本卡）；上限 `1000000` 常量仅出现一处（冻结常量）
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——区域黄金数据、分母对照表、预算拒绝矩阵、边界包含断言输出
 - **提交格式：** `WP-14-T03: 定义位姿区域`
 

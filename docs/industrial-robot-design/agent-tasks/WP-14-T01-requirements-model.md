@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "RPY\|roll.*pitch.*yaw" requirements/include/sdurws/ird/requirements/*.hpp` 命中处仅 helper（不进持久化结构）；`grep -rn "currentSelected\|activeFrame" requirements/src/` 零命中（不得依赖"当前选中坐标系"）
+- **diff 和禁止项检查：**diff 仅含允许清单；`roll.*pitch.*yaw" requirements/include/sdurws/ird/requirements/*.hpp|roll.*pitch.*yaw" requirements/include/sdurws/ird/requirements/*.hpp` 命中处仅 helper（不进持久化结构）；`activeFrame" requirements/src/|activeFrame" requirements/src/` 零命中（不得依赖"当前选中坐标系"）
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——字段矩阵（每字段×校验规则×结果）、JSON 往返样例、诊断样本
 - **提交格式：** `WP-14-T01: 定义需求领域模型`
 

@@ -15,7 +15,7 @@
   - 边界：Given 恰在 x_min/x_max 的查询，Then 返回端点值（合法）；Given 降额曲线域内的温度，Then 能力按曲线折减且只影响能力侧
   - 失败：Given 域外查询点或超域温度，When 查询，Then `IRD-SEL-CURVE-OUT-OF-RANGE`、无数值输出；Given 降额/峰值时间数据缺失，Then `IRD-SEL-DERATING-MISSING`＋DataInsufficient
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "extrapolat\|slope \* (x -" src/CurveInterpolation.cpp` 无域外外推路径；样条/高阶插值关键词零命中（只允许分段线性）；需求侧字段在 `TemperatureDerating.cpp` 零写
+- **diff 和禁止项检查：**diff 仅含允许清单；`slope \* (x -" src/CurveInterpolation.cpp|slope \* (x -" src/CurveInterpolation.cpp` 无域外外推路径；样条/高阶插值关键词零命中（只允许分段线性）；需求侧字段在 `TemperatureDerating.cpp` 零写
 - **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——插值报告（节点/中点/端点对照）、边界外拒绝矩阵、降额域检查记录、测试日志
 - **提交格式：**`WP-19-T02: 曲线插值与数据不足`
 - **停止与升级条件：**曲线 Schema 无法表达闭区间端点语义、或需要样条等非分段线性插值才能满足 SEL-02 时，停止并升级需求/目录所有者；不得私改冻结插值规则

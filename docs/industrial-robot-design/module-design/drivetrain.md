@@ -1,6 +1,6 @@
 # 传动映射模块详细方案（drivetrain）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-18；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-18-T01～T05（WP-17-T06 侧联契约测试落在本模块测试目标）
 - 架构契约：`architecture/domain-model.md` §4（SI/类型化量纲）、`architecture/public-interfaces.md` §7～§8、`architecture/symbol-registry.md` SYM-EVL-001、ADR-004、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.5 `DriveTrainMappingEvaluator` 映射契约（冻结清单）与 DYN-04、§8.6 SEL-05、§9.3（能耗口径裁决）、§15.1（传动映射黄金数据）、§15.3（动力包络行）、§7.2（`DriveTrainDesign`）

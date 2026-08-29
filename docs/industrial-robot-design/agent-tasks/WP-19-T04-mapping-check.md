@@ -15,7 +15,7 @@
   - 边界：Given 惯量比恰为 5，Then 默认 Warning 不淘汰（提升为硬约束时按阈值淘汰并给码＋实际值＋阈值）
   - 失败：Given 含移动关节目标链或上游缺失，When 评估，Then 该轴阻断/整体 Input 诊断，无部分选型结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "eta|inertia|i \* i|ratio \*" plugins/selection/src/` 无本地映射/惯量公式（静态扫描零命中，ADR-004）；`DynamicResult` 字段只读（无 setter 调用）
+- **diff 和禁止项检查：**diff 仅含允许清单；`inertia|inertia|i \* i|ratio \*" plugins/selection/src/` 无本地映射/惯量公式（静态扫描零命中，ADR-004）；`DynamicResult` 字段只读（无 setter 调用）
 - **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——共享 evaluator 调用记录（含 WP-18 版本/公式版本）、移动关节阻断矩阵、惯量比默认值评审记录、测试日志
 - **提交格式：**`WP-19-T04: 传动映射复核`
 - **停止与升级条件：**WP-18-T05 未交付或其输出字段不满足复核需要时，停止并升级 WP-18（不得本地补算）；惯量比阈值/软硬约束默认变更须评审并升 `selectionRulesVersion`

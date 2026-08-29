@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "PreliminaryDesign|ExternallyValidated" plugins/dynamics/src/DynamicsEvaluator.cpp` 无自动提升路径（提升仅由用户确认/独立对照输入触发）；七码与 dynamics.md §4 矩阵逐字一致；无诊断文案硬编码（经 WP-09 目录）
+- **diff 和禁止项检查：**diff 仅含允许清单；`ExternallyValidated" plugins/dynamics/src/DynamicsEvaluator.cpp|ExternallyValidated" plugins/dynamics/src/DynamicsEvaluator.cpp` 无自动提升路径（提升仅由用户确认/独立对照输入触发）；七码与 dynamics.md §4 矩阵逐字一致；无诊断文案硬编码（经 WP-09 目录）
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——降级矩阵（缺失项×降级路径×诊断×证据等级）、failpoints 注入记录、假设清单样例、测试日志（commit/配置/种子）
 - **提交格式：** `WP-17-T05: 新增数据不足降级路径`
 

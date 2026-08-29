@@ -20,7 +20,7 @@
   - 本侧（仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_contract_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_contract_test$"`
   - 契约断言运行入口（WP-18 §9 命令，目标归 WP-18）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain(_contract)?_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain(_contract)?_test$"`
   - 预期两者退出码均 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "DriveTrain|efficiency|\bratio\b" plugins/dynamics/` 零命中（映射归 WP-18）；`DynamicsResult` 禁名零命中；未改动 WP-18 目录任何文件
+- **diff 和禁止项检查：**diff 仅含允许清单；`efficiency|efficiency|\bratio\b" plugins/dynamics/` 零命中（映射归 WP-18）；`DynamicsResult` 禁名零命中；未改动 WP-18 目录任何文件
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——候选无关性联合验收记录（动力学/驱动工程师＋独立测试双评审签署）、映射消费接口评审纪要、公共头稳定化记录、两侧测试日志（commit/配置）
 - **提交格式：** `WP-17-T06: 固化传动映射动力学契约测试`
 

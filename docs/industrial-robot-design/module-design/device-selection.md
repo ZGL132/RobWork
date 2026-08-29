@@ -1,6 +1,6 @@
 # 器件选型模块详细方案（device-selection）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-19；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-19-T01～T06
 - 架构契约：`architecture/public-interfaces.md` §1/§3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/persistence-schema.md` §2.4/§4、`architecture/domain-model.md` §4、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.6（SEL-01～09）、§7.2/§7.4、§9.3（能耗口径）、§15.1（可行/不可行目录黄金表）、§19-24（旋转传动首版范围）；Schema：`schemas/catalog/catalog-manifest.schema.json`、`schemas/catalog/column-dictionary.schema.json`；平台方案：secure-io、execution-platform、snapshot-result

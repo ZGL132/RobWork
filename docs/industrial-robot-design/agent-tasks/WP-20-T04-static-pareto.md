@@ -15,7 +15,7 @@
   - 边界：Given 两候选全部目标差异恰在容差内，Then 互不支配并列（同层排序稳定）；Given 差异恰超容差，Then 计入支配
   - 失败：Given StageB 研究定义引用五项阶段 C/D 指标之一，When 校验，Then `IRD-OPT-STAGE-LOCKED` 拒绝并引导改选可算目标
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "weight(ed)?|score|sum \*|total" candidate/src/StaticPareto.cpp` 无加权总分路径；`minJointMargin` 只从 WP-15 结果读取（无本地裕量公式复制）；软约束不进可行性与支配判定分支
+- **diff 和禁止项检查：**diff 仅含允许清单；`score|score|sum \*|total" candidate/src/StaticPareto.cpp` 无加权总分路径；`minJointMargin` 只从 WP-15 结果读取（无本地裕量公式复制）；软约束不进可行性与支配判定分支
 - **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——静态 Pareto 黄金集（含支配/并列/容差边界）、指标来源对照、`comparisonTolerance` 取值评审（优化工程师签署）、测试日志
 - **提交格式：** `WP-20-T04: 实现静态 Pareto 与支配排序`
 

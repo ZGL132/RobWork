@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "static_friction|DynamicsResult\b" plugins/dynamics` 零命中（无独立静摩擦、禁名）；无 T02～T05 计算体文件混入；常量与 dynamics.md §5.1 逐字一致
+- **diff 和禁止项检查：**diff 仅含允许清单；`DynamicsResult\b" plugins/dynamics|DynamicsResult\b" plugins/dynamics` 零命中（无独立静摩擦、禁名）；无 T02～T05 计算体文件混入；常量与 dynamics.md §5.1 逐字一致
 - **证据工件：**`out/test-evidence/wp-17/<run-id>/`——语义冻结七项产出物清单与黄金夹具、二连杆/重力矩对照数据（WP-02 登记哈希）、动力学/驱动工程师评审签署记录、测试日志（含 commit/配置/种子）
 - **提交格式：** `WP-17-T01: 固化动力学语义冻结测试`
 

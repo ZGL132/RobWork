@@ -15,7 +15,7 @@
   - 边界：Given 变量值为 0，When 校验，Then 视为合法设置值（非未设置）；Given 空软约束/单目标，Then 合法
   - 失败：Given 未注册路径、writeSet 交集、依赖环、域越界或 StageD 绑定，When 校验，Then 对应 `IRD-OPT-*` 诊断、无部分状态、不落盘
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "OptimizationStudy\b" plugins/optimization` 无单独 `OptimizationStudy` 类型（禁止名，SYM 裁决 #9）；无反射式字段写入（注册表外路径全部拒绝）；`joint/` 目录零新增
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "OptimizationStudy\b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization` 无单独 `OptimizationStudy` 类型（禁止名，SYM 裁决 #9）；无反射式字段写入（注册表外路径全部拒绝）；`joint/` 目录零新增
 - **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——研究定义 JSON 样例（合法＋逐项非法）、校验矩阵（拒绝码×输入）、首批绑定条目表与评审签署、测试日志
 - **提交格式：** `WP-20-T01: 定义优化研究定义对象`
 

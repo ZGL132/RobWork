@@ -15,7 +15,7 @@
   - 边界：Given 空 CompatibilityTable 或单电机目录，When 查询，Then 判定为"无兼容组合"而非错误
   - 失败：Given 未知/缺失版本、重复主键或悬空外键记录，When 构建，Then `IRD-SEL-CATALOG-UNAVAILABLE`/结构诊断、无部分视图
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "csv\|fopen\|QFile" plugins/selection/src/CatalogView.cpp` 零命中（无文件 IO，一律经 WP-11）；`grep -rn "IRD-SEL-" industrialrobot --include="*.?pp"` 命中仅在本模块
+- **diff 和禁止项检查：**diff 仅含允许清单；`fopen\|fopen\|QFile" plugins/selection/src/CatalogView.cpp` 零命中（无文件 IO，一律经 WP-11）；`rg -n "IRD-SEL-" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g '*.?pp'` 命中仅在本模块
 - **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——目录视图/列字典对照表、目录包哈希与 `CatalogVersionRef`、主键/外键判定记录、测试日志
 - **提交格式：**`WP-19-T01: 器件目录 Schema`
 - **停止与升级条件：**两 Schema 列清单与安全记录结构不一致、或 `CatalogPackageReader` 记录类型不足以构建四表视图时，停止并升级 WP-11；列清单缺口不得在本模块私补

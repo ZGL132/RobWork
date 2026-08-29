@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_gui_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_gui_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "ofstream\|QFile\|saveProject" modeling/gui/` 零命中（Widget 不写文件）；`grep -rn "apply(\|buildMutations" modeling/gui/ModelingPlugin.cpp` 命中处仅经命令服务调用（无直写领域对象）
+- **diff 和禁止项检查：**diff 仅含允许清单；`QFile\|QFile\|saveProject" modeling/gui/` 零命中（Widget 不写文件）；`buildMutations" modeling/gui/ModelingPlugin.cpp|buildMutations" modeling/gui/ModelingPlugin.cpp` 命中处仅经命令服务调用（无直写领域对象）
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——GUI 回归录屏/截图（四入口＋确认流＋失败定位）、诊断截图、评审者签署
 - **提交格式：** `WP-13-T08: 新增建模插件界面`
 

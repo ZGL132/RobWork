@@ -1,6 +1,6 @@
 # WP-00-T02 生成追踪矩阵
 
-- **Task ID / 需求 ID / ADR / 阶段：** WP-00-T02；治理对象同 T01（124 需求＋AT-01～19 的派生索引）；ADR-004（单一权威：`requirements.md` 为唯一权威，CSV 为派生索引、不可手改）；阶段 A 前提 / R1。
+- **Task ID / 需求 ID / ADR / 阶段：** WP-00-T02；治理对象同 T01（全部需求＋AT-01～19 的派生索引，行数与需求文档一致）；ADR-004（单一权威：`requirements.md` 为唯一权威，CSV 为派生索引、不可手改）；阶段 A 前提 / R1。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
 - **前置任务及必需工件：** WP-00-T01；工件：`out/test-evidence/wp-00/<run-id>/t01-requirements-review.md`（复核结论为无不一致项）与 `DOCUMENT-BASELINE.md` 中的"WP-00-T01 需求基线复核记录"章节。
 - **允许创建/修改/删除的文件：**
@@ -13,7 +13,7 @@
 - **实施步骤：**
   1. 先执行"RED 测试"四条断言，记录基线结果。
   2. 实现或修正 `Expand-RequirementCell`：覆盖 REQ-01～03 连续范围、前缀续接、重复与反向范围。
-  3. 实现或修正 `Get-WorkPackages`/`Get-Release`：124 个 ID 全部有映射；OPT-B、CON-04=R1/R2、NFR-PERF-04～06=R2 等特殊规则先于前缀规则。
+  3. 实现或修正 `Get-WorkPackages`/`Get-Release`：全部需求 ID 均有映射；OPT-B、CON-04=R1/R2、NFR-PERF-04～06=R2 等特殊规则先于前缀规则。
   4. 实现或修正第 16 章锚点定位（缺 `## 16.` 或 `## 17.` 立即失败）、四列追踪表拆分与 acceptanceById 聚合。
   5. 实现 11 列固定顺序与排序、临时文件写入、原子替换；status 初始 Planned，P1 仅经评审可 Deferred。
   6. 重新运行四条断言与验证命令，全部成立后写证据。

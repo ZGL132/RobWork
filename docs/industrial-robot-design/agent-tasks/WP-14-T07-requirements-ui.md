@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_requirements_gui_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements_gui_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "QFile\|ifstream\|getline\|eval(" requirements/gui/` 零命中（无直读/公式）；`grep -rn "sha256\|schemaVersion" requirements/gui/RequirementsPlugin.cpp` 零命中（内部身份不作主操作展示）
+- **diff 和禁止项检查：**diff 仅含允许清单；`ifstream\|ifstream\|getline\|eval(" requirements/gui/` 零命中（无直读/公式）；`schemaVersion" requirements/gui/RequirementsPlugin.cpp|schemaVersion" requirements/gui/RequirementsPlugin.cpp` 零命中（内部身份不作主操作展示）
 - **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——GUI 回归录屏/截图（批量编辑/筛选/单位显示/错误定位/就绪摘要）、AT-02/AT-03 断言输出、评审者签署
 - **提交格式：** `WP-14-T07: 新增需求定义界面`
 

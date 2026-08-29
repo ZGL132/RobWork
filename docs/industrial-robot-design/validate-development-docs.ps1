@@ -666,10 +666,27 @@ foreach ($row in (Import-Csv -LiteralPath $tracePath)) {
 }
 
 # 6) 命令禁项：grep / 任选其一 / 自然语言占位路径
+# 内建夹具自检（防检测正则假阴性回归）：夹具必须命中、rg 不得误报。
+function Test-GrepBan {
+    param([string]$Text)
+    return ($Text -match '(^|[^a-zA-Z.])grep(\.exe)?(\s|$)')
+}
+if (-not (Test-GrepBan -Text '  - `grep -rn "foo" src/`')) {
+    Add-ValidationError '内置夹具失败：grep -rn 未被禁项检测识别。'
+}
+if (-not (Test-GrepBan -Text 'grep.exe -R "foo" .')) {
+    Add-ValidationError '内置夹具失败：grep.exe -R 未被禁项检测识别。'
+}
+if (-not (Test-GrepBan -Text '  rg -ni "foo" src/ # 不应回退到 grep')) {
+    Add-ValidationError '内置夹具失败：包含 grep 的注释行未被检测。'
+}
+if (Test-GrepBan -Text '  - 回退：`rg -n "foo" src/`') {
+    Add-ValidationError '内置夹具失败：rg 误报为 grep。'
+}
 foreach ($cf in $cardFilesForDag) {
     $cLines = Get-Content -LiteralPath $cf.FullName -Encoding UTF8
     for ($i = 0; $i -lt $cLines.Count; $i++) {
-        if ($cLines[$i] -match '(^|[^a-zA-Z-])grep [^-]') {
+        if (Test-GrepBan -Text $cLines[$i]) {
             Add-ValidationError "Task card $($cf.Name):$($i + 1) uses grep; use rg (executable on this Windows environment)."
         }
         if ($cLines[$i] -match '任选其一') {
@@ -734,6 +751,102 @@ foreach ($schemaFile in (Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'sc
     if ($invalidPerSchema2.ContainsKey($stem)) { $cnt = $invalidPerSchema2[$stem] }
     if ($cnt -lt 3) {
         Add-ValidationError "Schema '$stem' has $cnt invalid example(s); at least 3 required under schemas/examples/invalid/."
+    }
+}
+
+# 9) 任务状态账本：覆盖率、状态取值、Ready⇒前置全 Done＋签署、Done⇒签署＋SHA＋证据
+$ledgerPath = Join-Path $agentTaskPath 'task-status.md'
+if (-not (Test-Path -LiteralPath $ledgerPath)) {
+    Add-ValidationError 'agent-tasks/task-status.md is missing.'
+} else {
+    $ledgerStates = @{}
+    foreach ($ll in (Get-Content -LiteralPath $ledgerPath -Encoding UTF8)) {
+        if ($ll -match '^\|\s*(WP-\d{2}-T\d{2})\s*\|\s*(Planned|Ready|Blocked|Done)\s*\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|') {
+            $ledgerStates[$Matches[1]] = @{ State = $Matches[2]; Signer = $Matches[4].Trim(); Note = $Matches[6].Trim() }
+        }
+    }
+    foreach ($t in @($cardTaskIds)) {
+        if (-not $ledgerStates.ContainsKey($t)) {
+            Add-ValidationError "Task $t has no row in agent-tasks/task-status.md."
+        }
+    }
+    foreach ($t in $ledgerStates.Keys) {
+        if (-not $cardTaskIds.Contains($t)) {
+            Add-ValidationError "task-status.md contains row $t without a matching task card."
+            continue
+        }
+        $st = $ledgerStates[$t]
+        if ($st.State -eq 'Ready') {
+            foreach ($p in $taskPrereqs[$t]) {
+                if (-not $ledgerStates.ContainsKey($p) -or $ledgerStates[$p].State -ne 'Done') {
+                    Add-ValidationError "Task $t is Ready but prerequisite $p is not Done."
+                }
+            }
+            if ([string]::IsNullOrWhiteSpace($st.Signer) -or $st.Signer -eq '-') {
+                Add-ValidationError "Task $t is Ready without a signer in task-status.md."
+            }
+        }
+        if ($st.State -eq 'Done') {
+            if ([string]::IsNullOrWhiteSpace($st.Signer) -or $st.Signer -eq '-') {
+                Add-ValidationError "Task $t is Done without a signer in task-status.md."
+            }
+            if ($st.Note -notmatch '[0-9a-f]{7,40}') {
+                Add-ValidationError "Task $t is Done without a commit SHA in its note."
+            }
+            if ($st.Note -notmatch 'out/test-evidence') {
+                Add-ValidationError "Task $t is Done without an out/test-evidence path in its note."
+            }
+        }
+    }
+}
+
+# 10) 任务卡不得携带落后于当前基线的版本/计数（以派生为准）
+foreach ($cf in $cardFilesForDag) {
+    $raw2 = Get-Content -LiteralPath $cf.FullName -Raw -Encoding UTF8
+    if ($raw2 -match 'v0\.7|124 项|124 行|124 requirements|124 trace|Generated 124|-eq 124|P0=110') {
+        Add-ValidationError "Task card $($cf.Name) references a stale baseline version/count; derive from current requirements.md instead."
+    }
+}
+
+# 11) DOCUMENT-BASELINE 头部必须与当前状态一致
+$baselineHead = (Get-Content -LiteralPath $baselinePath -TotalCount 20) -join "`n"
+foreach ($probe in @('IRD-D10-20260829', 'v0.8', 'v1.3')) {
+    if (-not $baselineHead.Contains($probe)) {
+        Add-ValidationError "DOCUMENT-BASELINE.md header is missing current-state token '$probe'."
+    }
+}
+
+# 12) 状态行矛盾：状态行为 Accepted 时不得同时包含待签署/待评审
+foreach ($dd in @($architecturePath, $moduleDesignPath)) {
+    foreach ($sf in (Get-ChildItem -LiteralPath $dd -Filter '*.md' -Recurse -File)) {
+        $head = Get-Content -LiteralPath $sf.FullName -TotalCount 10 -Encoding UTF8
+        foreach ($hl in $head) {
+            if ($hl -match '(文档状态|治理状态|目录状态|> 状态)') {
+                if ($hl -match 'Accepted' -and $hl -match '待签署|待评审') {
+                    Add-ValidationError "$($sf.Name) has a contradictory status line (Accepted + 待签署/待评审)."
+                }
+            }
+        }
+    }
+}
+
+# 13) public-interfaces §7 值对象全部拥有符号注册
+$piText = Get-Content -LiteralPath (Join-Path $architecturePath 'public-interfaces.md') -Raw -Encoding UTF8
+$symbolNames = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+foreach ($line in ($symbolRegistryText -split "`r?`n")) {
+    if ($line -match '^\|\s*`SYM-[^`]+`\s*\|\s*`([^`]+)`') {
+        [void]$symbolNames.Add($Matches[1])
+    }
+}
+$inSection7 = $false
+foreach ($pline in ($piText -split "`r?`n")) {
+    if ($pline -match '^## 7\.') { $inSection7 = $true; continue }
+    if ($inSection7 -and $pline -match '^## ') { break }
+    if ($inSection7 -and $pline -match '^\|\s*`([A-Za-z0-9_]+)`') {
+        $voName = $Matches[1]
+        if (-not $symbolNames.Contains($voName)) {
+            Add-ValidationError "public-interfaces §7 value object '$voName' is not registered in symbol-registry.md."
+        }
     }
 }
 

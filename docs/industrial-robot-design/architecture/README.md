@@ -4,7 +4,7 @@
 
 > 文档治理基线：`IRD-D0-20260829`  
 > 当前检查点：`IRD-D10-20260829`（D1～D9 全链完成 + D10 语义闭合；契约联合评审通过）  
-> 目录状态：`Accepted`（`IRD-D10-20260829` 联合评审；评审记录见 [review/2026-08-29-contract-review.md](review/2026-08-29-contract-review.md)）。
+> 目录状态：`Proposed`（`IRD-D10-20260829` 联合评审已执行、结论通过，待签署；评审记录见 [review/2026-08-29-contract-review.md](review/2026-08-29-contract-review.md)）。
 
 ## 阅读顺序
 
@@ -24,7 +24,7 @@
 
 - D1（`IRD-D1-20260829`）：登记 24+1 个跨模块契约和 59+4 个公共符号；ADR-001～004 正文；`ResultEnvelope` 命名裁决。
 - D2（`IRD-D2-20260829`）：完成五大高风险契约正文——`canonical-kinematics.md`（新增）、`evaluation-semantics.md`（新增）、`execution-model.md`（重写，9 态状态机）、`candidate-compilation.md`（新增）、`persistence-schema.md` 与 `public-interfaces.md`（重写）；消除 `EvaluationEnvelope` 违禁名、`TaskState` 缺态、`q-zero` 双偏置三类权威冲突（ADR-005）；6 处下游异名引用同步修正。
-- 契约状态：`IRD-D10-20260829` 联合评审通过后全部转为 `Accepted`；此后任何语义变更必须走契约变更流程（所有者提出、ADR 记录、消费者影响清单、版本提升）。
+- 契约状态：`IRD-D10-20260829` 联合评审已执行、结论通过，全部条目维持 `Proposed`，签署后升 `Accepted`；此后任何语义变更必须走契约变更流程（所有者提出、ADR 记录、消费者影响清单、版本提升）。
 
 ## 契约所有权
 
