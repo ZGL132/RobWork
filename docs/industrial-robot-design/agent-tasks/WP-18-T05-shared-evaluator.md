@@ -1,13 +1,21 @@
 # WP-18-T05 共享传动评估器
 
-- 需求/阶段：DYN-04、SEL-05；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-18 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：为动力学、选型和优化提供同一个评估器入口。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_shared_evaluator_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-18-T05: 共享传动评估器`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-18-T05；DYN-04、SEL-05、AT-07/AT-08 传动映射断言；ADR-004（唯一实现与静态扫描门禁）；阶段 C / R1。契约：`module-design/drivetrain.md` v0.3 §3/§5.7、`architecture/public-interfaces.md` §7～§8、`architecture/symbol-registry.md` SYM-EVL-001、`architecture/testing-contract.md`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-18-T02（映射核心）、WP-18-T03（能量分项器）、WP-18-T04（工作制窗口）；侧联：WP-17-T06（动力学侧联验收——本卡 `DrivetrainContractTest` 承载双方验收）
+- **允许创建/修改/删除的文件：**创建 `evaluation/drivetrain/src/DriveTrainMappingEvaluator.cpp`（唯一入口装配）、`include/sdurws/ird/drivetrain/MotorSideOperatingPoint.hpp`、`test/SharedEvaluatorTest.cpp`、`test/DrivetrainContractTest.cpp`；修改 `evaluation/drivetrain/CMakeLists.txt`（登记 `sdurws_ird_drivetrain_contract_test`）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01～T04 冻结的私有实现语义与公式版本；`DynamicResult`（WP-17）；`IEngineeringEvaluator`/`ResultEnvelope`（WP-05/08——本模块是共享计算服务而非独立评估入口）；requirements/CSV/architecture/module-design
+- **修改前接口：**映射/惯量/能量/工作制各件独立可用，无统一入口与统一输出类型
+- **修改后接口：**`DriveTrainMappingEvaluator`（SYM-EVL-001）唯一入口：输入＝`DynamicResult` 只读视图＋每轴 `DriveTrainDesign`＋目录效率证据（可选，经调用方传入）→ 校验（`IRD-DTM-RATIO-INVALID`/`-ROTARY-ONLY`）→ 方向判定 → 序列映射 → 反射惯量/惯量比 → 峰值窗/RMS/工作制 → 能量分项 → 输出每轴 `MotorSideOperatingPoint`（工作点/反射惯量/惯量比/能量分项/工作制统计，类型化）＋假设清单随证据输出
+- **实施步骤：**1) RED：写 `SharedEvaluatorTest`（三调用方一致）与 `DrivetrainContractTest`（候选无关性）并登记契约目标；2) 定义 `MotorSideOperatingPoint` 聚合输出；3) 装配 T02～T04 为唯一入口（调用流按模块详设 §4 顺序）；4) 假设清单挂接证据输出；5) 静态扫描脚本断言无第二实现；6) 三形式命令（含契约目标）转绿并写证据
+- **RED 测试：**`SharedEvaluatorTest`（先写先败）：`ThreeConsumersSameOutput`（动力学/选型/优化三个调用方替身同输入同输出）、`NoSecondImplementation`（静态扫描仓库内映射/效率/惯量公式实现零命中，ADR-004）；`DrivetrainContractTest`：`CandidateDesignDoesNotChangeDynamicResult`（改变候选 `DriveTrainDesign` 前后关节侧 `DynamicResult` 逐字段一致——承载 WP-17-T06 候选无关性验收）、`EvaluatorDoesNotWriteBack`（评估器无回写、无 revision 调用）
+- **最小实现：**入口装配＋输出类型＋契约测试转绿；无新算法（全部复用 T02～T04）；直线传动仍为 `IRD-DTM-ROTARY-ONLY` 范围外终态
+- **正常/边界/失败测试：**
+  - 正常：Given 合法快照输入，When 三个调用方分别调用，Then 每轴 `MotorSideOperatingPoint` 完整、字段/单位/假设清单一致
+  - 边界：Given 仅替换候选 `DriveTrainDesign`（不同 i/η），When 重映射，Then 电机侧输出变化而关节侧 `DynamicResult` 与修订数不变
+  - 失败：Given 移动关节或非法速比，When 调用，Then `IRD-DTM-ROTARY-ONLY`/`-RATIO-INVALID`，该轴无部分输出
+- **精确验证命令**（仓库根、VS x64；三形式，登记目标组）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain(_contract)?_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test sdurws_ird_drivetrain_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain(_contract)?_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；静态扫描（效率/反射惯量/映射关键词）在本包外零命中；`grep -rn "class .*MappingEvaluator" industrialrobot/` 仅一处声明；无 Qt Widgets、无 RobWork 运行时对象
+- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T05/`——三消费方一致性记录、候选无关性契约结果（WP-17-T06 侧联签署）、静态扫描报告、假设清单汇总、测试日志
+- **提交格式：**`WP-18-T05: 共享传动评估器`
+- **停止与升级条件：**WP-17-T06 侧联验收不通过、或任何调用方需要第二套映射才能工作时，停止并升级 ADR-004 所有者裁决；WP-19/WP-21 需要扩展输出字段时走契约变更评审，不得在调用方私算

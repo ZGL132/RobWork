@@ -1,13 +1,25 @@
-# WP-12-T03 HTML 与 PDF
+# WP-12-T03 HTML 渲染与 PDF 接口桩
 
-- 需求/阶段：EVI-01、REQ-06、NFR-COR-04；阶段 A / R1
-- 契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`、`architecture/public-interfaces.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-12 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：从同一模型生成离线 HTML/PDF 并校验版式、字体和关键字段一致。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_html_pdf_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-12-T03: HTML 与 PDF`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-12-T03；需求 NFR-COR-04、EVI-01、REQ-06、NFR-SEC-03；ADR-004；PDF 渲染为**待 ADR-006（尚未登记）批准项**；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、module-design/reporting.md v0.3 §2（PDF 依赖裁决）/§3。
+- **前置任务及必需工件：**WP-12-T01（`ReviewReport` 权威对象与追加协议）、WP-12-T02（内容段）；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `include/sdurws/ird/reporting/HtmlReportRenderer.hpp`、`PdfReportRenderer.hpp`（仅接口声明，无实现、无构建依赖）、`src/HtmlReportRenderer.cpp`、`resources/report.zh-CN.html`、`resources/report.css`、`test/HtmlPdfTest.cpp`、`evidence/WP-12/`；修改 `CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**T01/T02 冻结的权威对象与追加协议；requirements.md 与 architecture/、module-design/ 文档；**未获批前禁止引入任何 HTML→PDF 渲染依赖（Qt PrintSupport 或第三方库）**；WP-01 依赖清单；其他 WP 公共头。
+- **修改前接口：**T01/T02 只有结构化 `ReviewReport`，无渲染器。
+- **修改后接口：**`HtmlReportRenderer::render(const ReviewReport&) -> expected<Artifact, RptError>`（离线 HTML：内嵌/本地 CSS 与资源，不访问网络）；`PdfReportRenderer` 仅接口声明（调用返回 `IRD-RPT-RENDER-FAILED` 携带"PDF 待 ADR-006"诊断，ADR 获批后启用实现）；错误码 `IRD-RPT-RENDER-FAILED`。
+- **实施步骤：**1) 先写 HTML 渲染失败测试（资源缺失、非有限值）；2) 实现模板装配（`resources/report.zh-CN.html` + `report.css` 本地引用）；3) 实现多格式一致性自检钩子（关键数值、工程状态、诊断码、快照身份在 HTML/JSON 一致，PDF 维度随 ADR-006 启用）；4) 声明 `PdfReportRenderer` 接口桩并在 CMake 注明 ADR 门禁。
+- **RED 测试：**模板/CSS 缺失或资源路径越界 → `IRD-RPT-RENDER-FAILED` 且不写 `reports/`；渲染产物包含网络引用（http/https URL）→ 测试失败；`PdfReportRenderer` 实例化尝试产生构建期或测试期"未启用"失败。
+- **最小实现：**HTML 渲染＋本地资源＋PDF 接口桩；PDF 分页/中文字体/表格/图例/页码校验随 ADR-006 落地后启用（测试以禁用用例占位并注明 ADR）。
+- **正常/边界/失败测试：**
+  - 失败：Given 渲染/文件/字体故障，When render，Then `IRD-RPT-RENDER-FAILED`，保留既有工件可重试。
+  - 正常：Given 合法 `ReviewReport`，When render，Then HTML 关键数值、状态、诊断码与快照身份和 JSON 逐字段一致（`IRD-RPT-FORMAT-MISMATCH` 自检通过）。
+  - 边界：中文内容、超长表格行、附录显著标识（Quick/历史结果）；PDF 维度断言全部跳过并标注 `adr-pending`。
+- **精确验证命令**（无 GUI 测试）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；CMake 无 PDF 库/Qt PrintSupport 链接；HTML 无外链资源；渲染器不得内联改写固定措辞（T05 资源常量）。
+- **证据工件：**`evidence/WP-12/T03/`：HTML 样例工件及其 SHA-256、一致性自检输出、PDF 桩诊断、ADR-006 待批说明。
+- **提交格式：**`WP-12-T03: html renderer with pdf interface stub`。
+- **停止与升级条件：**需要真实 PDF 输出、或引入任何渲染依赖时停止并提请 ADR-006 与 WP-01 依赖门禁；获批后按新任务卡启用 PDF 维度校验。

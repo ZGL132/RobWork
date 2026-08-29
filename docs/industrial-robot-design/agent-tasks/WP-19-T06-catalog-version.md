@@ -1,13 +1,21 @@
 # WP-19-T06 目录版本兼容
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：目录版本更新时验证历史结果不变并拒绝未知版本。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_catalog_version_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T06: 目录版本兼容`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T06；SEL-08（版本锁定语义，P1 范围按模块详设 §5 第 6 条执行）；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §5.6、`architecture/symbol-registry.md` SYM-SEL-001（`CatalogVersion` 不可变聚合）、SYM-EVI-006（`ResultCurrentness`）
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-19-T01（`CatalogView`/`CatalogVersionRef` 基础）、WP-19-T05（历史 `ComponentSelectionResult` 已可落库——版本比较需要历史结果存在）；WP-05-T03（`ResultCurrentness` 当前性语义——Superseded 判定按切片内容比较）
+- **允许创建/修改/删除的文件：**修改 `plugins/selection/src/CatalogView.cpp`（版本不可变语义与内容 ID 生成/消费）；创建 `test/CatalogVersionTest.cpp`；修改 `plugins/selection/CMakeLists.txt`（仅追加测试文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01～T05 冻结语义（尤其结果 payload 结构）；WP-05 当前性实现（只消费语义）；WP-11 导入侧；requirements/CSV/architecture/module-design；不提供目录就地刷新
+- **修改前接口：**`CatalogVersion` 消费已存在，但目录更新后的版本策略与历史结果不变性未验证
+- **修改后接口：**版本策略（冻结）：目录更新产生新 `CatalogVersion` 与新内容 ID；历史 `ComponentSelectionResult` payload 不变，仅按切片内容比较显示 Superseded；旧版本锁定（SEL-08：历史结果与其目录版本绑定，不随新目录漂移）；未知/缺失版本拒绝并 `IRD-SEL-CATALOG-UNAVAILABLE`（Input/Error）；`CatalogVersion` 无任何变更接口（不可变聚合）
+- **实施步骤：**1) RED：写 `CatalogVersionTest`（更新不改历史、旧版本锁定、未知版本拒绝、无就地刷新）；2) 在 `CatalogView` 固化内容 ID 生成与版本不可变约束；3) 构造"同项目两目录版本"夹具（v1 结果落库后导入 v2）；4) 验证 Superseded 显示语义经 WP-05 当前性端口；5) 三形式命令转绿并写证据
+- **RED 测试：**`CatalogVersionTest`（先写先败）：`CatalogUpdateDoesNotChangeHistoricalResults`（v1 payload 逐字节不变）、`OldVersionStaysLocked`（历史结果按 v1 目录解释，不随 v2 漂移）、`SupersededShownBySliceComparison`（仅当前性显示变化，payload 不改）、`UnknownVersionRejected`（→ `IRD-SEL-CATALOG-UNAVAILABLE`，Input/Error）、`NoInPlaceRefresh`（`CatalogVersion` 无变更接口，类型级 static_assert/编译期断言）
+- **最小实现：**版本策略与不可变约束转绿；目录差异比较 UI（SEL-08 P1）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given v1 历史结果与 v2 目录共存，When 查询，Then 历史结果 payload 与解释目录均为 v1、新评估用 v2
+  - 边界：Given 两目录内容相同（同内容 ID），Then 不产生新版本、历史结果仍 Current
+  - 失败：Given 未知/缺失 `CatalogVersionRef`，When 评估或查询，Then `IRD-SEL-CATALOG-UNAVAILABLE`、无部分结果
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "set[A-Z]" src/CatalogView.cpp` 对 `CatalogVersion` 无变更方法；历史结果文件在测试前后 `git status` 零变化（payload 不回写）；无就地刷新入口
+- **证据工件：**`plugins/selection/evidence/WP-19/T06/`——目录更新前后历史结果比对表（含两版本内容 ID/哈希）、Superseded 显示记录、测试日志
+- **提交格式：**`WP-19-T06: 目录版本兼容`
+- **停止与升级条件：**WP-05 当前性语义无法表达"按切片内容比较显示 Superseded"、或 WP-11 导入无法保证内容 ID 稳定时，停止并升级对应所有者；不得以重算历史结果的方式实现兼容

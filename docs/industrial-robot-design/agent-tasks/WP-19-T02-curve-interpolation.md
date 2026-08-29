@@ -1,13 +1,21 @@
 # WP-19-T02 曲线插值与数据不足
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现分段线性插值；曲线外、温度降额或峰值时间缺失返回 DataInsufficient。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_curve_interpolation_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T02: 曲线插值与数据不足`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T02；SEL-02（分段线性冻结）、AT-08；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §5.2～§5.3（错误码表 §4）
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-19-T01（`CatalogView` 视图与 CapabilityCurveTable 可消费）
+- **允许创建/修改/删除的文件：**创建 `plugins/selection/src/CurveInterpolation.cpp`、`src/TemperatureDerating.cpp`、`test/CurveInterpolationTest.cpp`、`testdata/selection/curves/`（能力曲线与温度降额曲线夹具）；修改 `plugins/selection/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01 的视图接口与诊断骨架语义；WP-11 导入校验（x 严格递增在导入侧保证，本模块不重复校验导入）；requirements/CSV/architecture/module-design；其他 WP 目录
+- **修改前接口：**曲线表只能整表读取，无查询插值
+- **修改后接口：**`CurveInterpolation`（模块私有）：分段线性插值；查询点在 [x_min, x_max] 闭区间内插值（端点值合法）；边界外一律禁止外推 → `IRD-SEL-CURVE-OUT-OF-RANGE`（Engineering/Error，该器件不能凭此曲线通过该约束）；`TemperatureDerating`：环境温度超出降额曲线域同码、不外推降额系数；连续与峰值能力只折减能力侧、不放大需求侧；降额/峰值时间数据缺失 → `IRD-SEL-DERATING-MISSING`（Engineering/Warning），按 DataInsufficient 处理，不得默认无降额、不得按未降额能力放行
+- **实施步骤：**1) RED：写 `CurveInterpolationTest`（节点/中点/端点/边界外/降额域/缺失数据）；2) 建 `testdata/selection/curves/` 夹具（节点值、中点值、端点、域外点、缺失降额变体）；3) 实现分段线性插值与闭区间判定；4) 实现温度降额折减（只折能力侧）；5) 三形式命令转绿并写证据
+- **RED 测试：**`CurveInterpolationTest`（先写先败）：`InterpolatesNodesExactly`、`InterpolatesMidpointsLinearly`、`EndpointsAreLegal`（x=x_min/x_max 返回端点值）、`RejectsOutsideRangeWithoutExtrapolation`（边界外 → `IRD-SEL-CURVE-OUT-OF-RANGE`，不返回外推值）、`DeratingCurveDomainCheckedWithSameCode`（环境温度超域同码、不外推降额系数）、`MissingDeratingIsDataInsufficient`（→ `IRD-SEL-DERATING-MISSING`，不得按未降额放行）
+- **最小实现：**插值器＋降额折减器转绿；筛选链（T03）与评估器接线（T04/T05）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 合法能力曲线，When 查询节点/中点/端点，Then 值与夹具一致（分段线性）
+  - 边界：Given 恰在 x_min/x_max 的查询，Then 返回端点值（合法）；Given 降额曲线域内的温度，Then 能力按曲线折减且只影响能力侧
+  - 失败：Given 域外查询点或超域温度，When 查询，Then `IRD-SEL-CURVE-OUT-OF-RANGE`、无数值输出；Given 降额/峰值时间数据缺失，Then `IRD-SEL-DERATING-MISSING`＋DataInsufficient
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "extrapolat\|slope \* (x -" src/CurveInterpolation.cpp` 无域外外推路径；样条/高阶插值关键词零命中（只允许分段线性）；需求侧字段在 `TemperatureDerating.cpp` 零写
+- **证据工件：**`plugins/selection/evidence/WP-19/T02/`——插值报告（节点/中点/端点对照）、边界外拒绝矩阵、降额域检查记录、测试日志
+- **提交格式：**`WP-19-T02: 曲线插值与数据不足`
+- **停止与升级条件：**曲线 Schema 无法表达闭区间端点语义、或需要样条等非分段线性插值才能满足 SEL-02 时，停止并升级需求/目录所有者；不得私改冻结插值规则

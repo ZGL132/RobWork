@@ -1,13 +1,25 @@
 # WP-12-T06 往返与可复现
 
-- 需求/阶段：EVI-01、REQ-06、NFR-COR-04；阶段 A / R1
-- 契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`、`architecture/public-interfaces.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-12 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：外部源删除后用不可变副本重生成等价报告和数据包。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reproducible_roundtrip_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-12-T06: 往返与可复现`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-12-T06；需求 NFR-COR-04、EVI-01、REQ-06、NFR-SEC-07；ADR-002、ADR-004；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、persistence-schema §4（追加协议）、module-design/reporting.md v0.3 §5。
+- **前置任务及必需工件：**WP-12-T01～T05（权威对象、内容、HTML 渲染＋PDF 桩、数据包、固定措辞）；WP-04-T04（不可变对象库与可达根）；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `test/ReproducibleRoundtripTest.cpp`、`testdata/roundtrip/`（含外部源夹具）、`evidence/WP-12/`；修改 `CMakeLists.txt`、（如自检需暴露只读钩子）`ReviewReportBuilder.hpp/.cpp`；删除：无。
+- **禁止修改的文件和公共接口：**T01～T05 冻结接口与工件格式；`reports/` 已完成工件（只追加不覆盖）；requirements.md 与 architecture/、module-design/ 文档；PDF 维度（随 ADR-006 启用）；其他 WP 公共头。
+- **修改前接口：**T01～T05 各自的构件级断言；无端到端重生成与多格式一致性用例。
+- **修改后接口：**不变（交付物为端到端验证：删除/覆盖外部源后以项目不可变副本重生成相同报告；相同 `ReviewReport` 结构化内容 → 语义等价 HTML＋逐字段一致数据包；追加幂等/冲突语义回归）。
+- **实施步骤：**1) 先写重生成偏差与追加冲突失败测试；2) 建立含外部源（网格/目录）的端到端夹具项目；3) 生成基准报告并记录全部工件哈希；4) 删除/篡改外部源后从项目内不可变副本重生成并比对；5) 跑多格式一致性（HTML/JSON/CSV；PDF 待 ADR-006）与历史名称用例。
+- **RED 测试：**重生成工件哈希或语义内容不一致 → 失败；同 `reportId` 异内容追加被静默覆盖 → 失败；历史报告显示当前名称映射导致 objectId 混淆 → 失败。
+- **最小实现：**只读自检钩子与测试夹具；不改变渲染/导出行为。
+- **正常/边界/失败测试：**
+  - 失败：Given `reports/` 已有同 ID 报告，When 追加异内容，Then `IRD-RESULT-CONFLICT` 拒绝且既有工件字节不变。
+  - 正常：Given 删除/覆盖外部源，When 以项目不可变副本重生成，Then 报告与数据包和基准逐字段一致（HTML 语义等价、JSON/CSV 逐字段）。
+  - 边界：历史报告保留旧快照名称，新报告使用当前 `RuntimeNameMap`，objectId 不混淆；关键数值、工程状态、诊断码、快照身份在 HTML/JSON/CSV 一致（`IRD-RPT-FORMAT-MISMATCH` 自检）；复算命令记入证据。
+- **精确验证命令**（无 GUI 测试）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；测试不写入被测 `reports/` 历史工件；无外部源路径进入报告真值（以内容 ID/对象哈希为准）；无省略号命令。
+- **证据工件：**`evidence/WP-12/T06/`：基准与重生成工件哈希对照、复算命令、多格式一致性矩阵、追加幂等/冲突日志、独立评审记录。
+- **提交格式：**`WP-12-T06: reproducible report roundtrip`。
+- **停止与升级条件：**无法从不可变副本重现（提示对象库或快照冻结缺陷）时停止并报告 WP-04/05 负责人；PDF 一致性维度待 ADR-006 获批后补卡执行。

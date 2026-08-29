@@ -1,13 +1,21 @@
 # WP-18-T01 传动映射语义冻结
 
-- 需求/阶段：DYN-04、SEL-05；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-18 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：冻结速比方向、单位、正反向效率、反射惯量和摩擦公式版本。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_mapping_semantics_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-18-T01: 传动映射语义冻结`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-18-T01；DYN-04（需求 §8.5 映射契约冻结清单，SEL-05 上游）；ADR-004（WP-18 拥有传动映射唯一实现）；阶段 C / R1。契约：`module-design/drivetrain.md` v0.3 §4～§5、`architecture/domain-model.md` §4、`architecture/public-interfaces.md` §7～§8、`architecture/symbol-registry.md` SYM-EVL-001
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/drivetrain.md` v0.3＋`work-packages/WP-18-drivetrain-mapping.md`（D6）
+- **前置任务及必需工件：**无包内前置。契约引用：WP-03-T01（core 类型化量纲公共头）、WP-09-T01（`Diagnostic`/`DiagnosticCategory` 公共头）、WP-17-T01（`DynamicResult` 语义冻结——只读视图，不链接实现）；工具前置：WP-01-T03（`run-tests.ps1` 入口与 `out\build\industrial-robot` 可构建）
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evaluation/drivetrain/include/sdurws/ird/drivetrain/DriveTrainMappingEvaluator.hpp`、`include/sdurws/ird/drivetrain/DrivetrainDiagnostics.hpp`、`test/MappingSemanticsTest.cpp`、`evaluation/drivetrain/CMakeLists.txt`（登记 `sdurws_ird_drivetrain`、`sdurws_ird_drivetrain_test`；`_contract_test` 目标由 WP-18-T05 登记）；修改 `industrialrobot/CMakeLists.txt`（仅追加 evaluation/drivetrain 子目录接入）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**`requirements.md`、`requirement-traceability.csv`、`architecture/`、`module-design/`、`schemas/`；WP-17 `DynamicResult` 与其他 WP 公共接口；`scripts/industrial-robot/` 入口脚本；旧插件目录（按模块详设 §7 由整包验收后处置）
+- **修改前接口：**无（仓库内不存在传动映射实现；旧插件内效率/惯量计算按模块详设 §7 待 Rewrite 后删除）
+- **修改后接口：**`DriveTrainMappingEvaluator` 服务接口（共享计算服务，非独立 `IEngineeringEvaluator` 入口）＋`DrivetrainDiagnostics`：冻结常量——速比无量纲 i>1（输入校验仅要求有限且 >0）、η⁺（电机→负载）/η⁻（负载→电机）分别定义且单一效率值只允许充当 η⁺、`driveTrainInertiaFormulaVersion`（非空版本串）、ε_P=1e-6 W；五诊断码及类别/严重度：`IRD-DTM-RATIO-INVALID`（Input/Error）、`IRD-DTM-ROTARY-ONLY`（Engineering/Error）、`IRD-DTM-EFFICIENCY-MISSING`（Engineering/Error）、`IRD-DTM-REVERSE-EFFICIENCY-MISSING`（Engineering/Warning）、`IRD-DTM-INERTIA-INVALID`（Engineering/Warning）
+- **实施步骤：**1) 先写 `MappingSemanticsTest.cpp` 全部 RED 断言并登记目标，构建确认失败；2) 定义服务接口、常量与诊断码（对齐 WP-09 `Diagnostic` 结构）；3) 实现输入校验骨架（i 有限且 >0；旋转传动判定先返回占位）；4) 三形式命令转绿并写证据
+- **RED 测试：**`MappingSemanticsTest`（先写先败）：`ConstantsAreFrozen`（ε_P=1e-6 W、`driveTrainInertiaFormulaVersion` 非空且跨构建稳定）、`RejectsInvalidRatio`（i 缺失/NaN/≤0 → `IRD-DTM-RATIO-INVALID`，Input/Error）、`FormulaVersionChangeInvalidatesDownstream`（版本串变化→下游切片失效标志置位）、`SingleEfficiencyFillsEtaPlusOnly`（单一效率值只充当 η⁺）
+- **最小实现：**接口/常量/诊断码与输入校验，使上述断言转绿；映射计算（T02）、能量分项（T03）、工作制（T04）、完整装配（T05）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 合法 `DriveTrainDesign` 与 `DynamicResult` 只读视图，When 构造 evaluator，Then 常量/公式版本可查询、五诊断码类别与严重度正确
+  - 边界：Given 恰好为正的小速比，When 校验，Then 通过（i>1 为速比正方向约定而非校验阈值；仅 i≤0/非有限被拒）
+  - 失败：Given i 缺失、NaN 或 ≤0，When 校验，Then Input/Error 诊断、无部分输出、无部分状态
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
+- **diff 和禁止项检查：**`git diff --name-only` 仅含 `evaluation/drivetrain/` 新建文件与 `industrialrobot/CMakeLists.txt` 一处接入；`grep -rn "IRD-DTM-" RobWorkStudio/src/rwslibs/industrialrobot --include="*.?pp"` 命中仅在 drivetrain 目录（诊断码唯一归属）；源码无 `QtWidgets` include
+- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T01/`——语义冻结清单（常量/公式版本/错误码表）、测试日志（命令、退出码、commit、配置）、ε_P 等模块私有默认值的评审记录
+- **提交格式：**`WP-18-T01: 传动映射语义冻结`
+- **停止与升级条件：**需求 §8.5 与模块详设 §5 语义冲突、或必须修改 WP-17/WP-03 公共类型才能表达输入时，停止并升级 WP-18 所有者与架构负责人；`DynamicResult` 字段不足以承载映射输入时走联合评审，不得私改契约

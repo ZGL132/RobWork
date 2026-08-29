@@ -279,9 +279,37 @@ if ($errors.Count -eq 0) {
             Add-ValidationError "Task card $taskId references unknown work package $wpId."
         }
         $taskText = Get-Content -LiteralPath $taskCard.FullName -Raw -Encoding UTF8
-        foreach ($marker in @('需求/阶段：', '契约：', '前置：', '允许：', '禁止：', '产出：', 'Given', 'When', 'Then', '命令：', '证据：', '提交：', '停止：')) {
+        # D7 16 字段任务卡结构；标签按文本匹配（冒号位置/括注不影响）；非代码任务卡允许三个字段的变体名。
+        $commonMarkers = @(
+            'Task ID / 需求 ID / ADR / 阶段',
+            '基线 commit',
+            '前置任务及必需工件',
+            '允许创建/修改/删除的文件',
+            '禁止修改的文件和公共接口',
+            '修改前接口',
+            '修改后接口',
+            'diff 和禁止项检查',
+            '证据工件',
+            '提交格式',
+            '停止与升级条件'
+        )
+        $variantPairs = @(
+            @('实施步骤', '交付步骤'),
+            @('RED 测试', '验证准备'),
+            @('精确验证命令', '精确验证方式')
+        )
+        foreach ($marker in $commonMarkers) {
             if ($taskText -notmatch [regex]::Escape($marker)) {
                 Add-ValidationError "Task card $($taskCard.Name) is missing $marker."
+            }
+        }
+        foreach ($pair in $variantPairs) {
+            $hasAny = $false
+            foreach ($marker in $pair) {
+                if ($taskText.Contains($marker)) { $hasAny = $true }
+            }
+            if (-not $hasAny) {
+                Add-ValidationError "Task card $($taskCard.Name) is missing $($pair[0]) (or variant $($pair[1]))."
             }
         }
         if ($taskText -notmatch 'architecture/') {
@@ -319,7 +347,7 @@ if ($errors.Count -eq 0) {
     foreach ($document in $documents) {
         Test-MarkdownTables -Path $document
         $documentText = Get-Content -LiteralPath $document -Raw -Encoding UTF8
-        if ($documentText -match '(?i)TODO|TBD|PLACEHOLDER|\[To be written\]|待补充|待定') {
+        if ($documentText -match '(?i)\bTODO\b|\bTBD\b|PLACEHOLDER|\[To be written\]|待补充|待定') {
             Add-ValidationError "Placeholder content found in $document."
         }
         if ($documentText.Contains([char]0xFFFD)) {

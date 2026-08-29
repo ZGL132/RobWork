@@ -1,13 +1,21 @@
 # WP-18-T03 能量边界分离
 
-- 需求/阶段：DYN-04、SEL-05；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-18 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：分离关节侧机械功、电机侧机械功、驱动器输入电能和可回馈能量。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_energy_boundaries_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-18-T03: 能量边界分离`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-18-T03；DYN-04/SEL-05、需求 §9.3（能耗口径裁决）与 §8.5 能量分项行；ADR-004；阶段 C / R1。契约：`module-design/drivetrain.md` v0.3 §5.4、`architecture/domain-model.md` §4
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-18-T02（`EfficiencyModel`/`RotaryMappingCore` 工件——η⁺/η⁻ 方向相关映射可用）；WP-17-T03（`DynamicResult` 功率/能量字段语义——W+ 取自其关节侧正机械功）
+- **允许创建/修改/删除的文件：**创建 `evaluation/drivetrain/include/sdurws/ird/drivetrain/DriveTrainEnergySplit.hpp`、`src/EnergySplitter.cpp`、`test/EnergyBoundariesTest.cpp`、`testdata/drivetrain/energy/`；修改 `evaluation/drivetrain/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01/T02 冻结的接口、常量与公式版本；`DynamicResult`（关节侧 W+ 只读取，不得重算或改写）；requirements/CSV/architecture/module-design；其他 WP 目录
+- **修改前接口：**无能量分项输出（T02 仅有序列与惯量）
+- **修改后接口：**`DriveTrainEnergySplit`（模块公共头）＋`EnergySplitter`：关节侧正机械功 W+ 直接取自 `DynamicResult`（默认"能耗"口径）；电机侧机械功 W_motor± 仅当存在效率证据时输出；可回馈能量 W_regen 仅当用户显式声明回馈策略时输出（默认"无回馈、制动能量按耗散计"）；驱动器输入电能首版不输出，以占位诊断表达而非空字段；逐分项标注所依赖假设；各分项不得与关节侧机械能混称
+- **实施步骤：**1) RED：写 `EnergyBoundariesTest` 断言（含 η⁻ 缺失→DataInsufficient 分项）；2) 建 `testdata/drivetrain/energy/` 双向效率对账夹具；3) 实现 `EnergySplitter`（按证据存在性输出分项＋假设标注）；4) 定义 `DriveTrainEnergySplit` 值对象（分项＋假设清单）；5) 三形式命令转绿并写证据
+- **RED 测试：**`EnergyBoundariesTest`（先写先败）：`JointSideWPlusTakenFromDynamicResult`（W+ 不在本地重算）、`MotorSideRequiresEfficiencyEvidence`（正向效率证据缺失 → `IRD-DTM-EFFICIENCY-MISSING`，Engineering/Error，电机侧机械功不可输出）、`ReverseFlowWithoutEtaMinusIsDataInsufficient`（η⁻ 缺失 → 反向流分项 DataInsufficient，`IRD-DTM-REVERSE-EFFICIENCY-MISSING`）、`RegenOnlyWhenExplicitlyDeclared`（默认无回馈、制动按耗散计且假设标注可见）、`DriverElectricEnergyUsesDeclaredDiagnostic`（占位诊断而非空字段）、`TermsNotConflated`（W+ 与电机侧分项不混称）
+- **最小实现：**能量分项器与值对象使上述断言转绿；工作制统计（T04）与完整装配（T05）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 双向效率证据齐备的任务循环，When 分项，Then W+、W_motor+、W_motor− 与对账夹具一致，逐项假设可见
+  - 边界：Given 用户显式声明回馈策略，Then W_regen 输出且假设标注；Given 未声明，Then 无回馈口径生效
+  - 失败：Given 正向效率证据缺失或 η⁻ 缺失而循环含反向功率流，When 分项，Then `IRD-DTM-EFFICIENCY-MISSING`（Error）/`-REVERSE-EFFICIENCY-MISSING`（Warning＋DataInsufficient 分项），无电机侧机械功输出
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "W_plus\|regen" src/EnergySplitter.cpp` 确认 W+ 只读自 `DynamicResult`（无本地功率积分重复实现）；分项字段名与 §9.3 口径一一对应，无"驱动器电能=0"式空值占位
+- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T03/`——能量对账表（关节侧 W+ vs 电机侧分项的分离证据）、假设清单（回馈/效率）、测试日志
+- **提交格式：**`WP-18-T03: 能量边界分离`
+- **停止与升级条件：**§9.3 裁决与 §8.5 分项行不可同时满足、或 `DynamicResult` 能量字段粒度不足时，停止并升级需求所有者，不得自行新增能量口径

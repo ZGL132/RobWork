@@ -1,13 +1,27 @@
 # WP-17-T04 RobWorkSim 正动力学
 
-- 需求/阶段：DYN-01～08、AT-07；阶段 C / R1
-- 契约：`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-17 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：接入 RobWorkSim 正动力学并记录步长、初始状态、控制输入和收敛诊断。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_forward_dynamics_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-17-T04: RobWorkSim 正动力学`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-17-T04；DYN-05（响应一致性/异常检测）、§15.3 正动力学收敛、NFR-DEP-05（RobWorkSim 锁定版本）；无直接 ADR；阶段 C / R1。契约：`module-design/dynamics.md` §5.5、`architecture/execution-model.md` §1～3、`architecture/testing-contract.md`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
+- **前置任务及必需工件：**WP-17-T02（逆动力学/摩擦与状态链路工件）；WP-06-T03（DWC 工件）、WP-16-T05（`TrajectoryPlan` 关节速度剖面 payload）；WP-01-T05（RobWorkSim 依赖基线锁定）
+- **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
+  - 创建：`src/ForwardDynamicsScenario.cpp`、`test/ForwardDynamicsTest.cpp`、`evidence/WP-17/T04/`
+  - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01～T03 冻结语义（含 h＝1e-3 s 与收敛限常量）；RobWorkSim/物理引擎版本（NFR-DEP-05，不得升级或更换引擎）；WP-18 及其后模块头；禁止放宽容差、禁止 Qt Widgets、直读 UI 会话态
+- **修改前接口：**无正动力学执行体（T02/T03 为纯逆动力学与包络计算，无仿真闭环）
+- **修改后接口：**`ForwardDynamicsScenario`（`DynamicSimulator`＋项目锁定物理引擎＋RigidDevice 速度控制模式；控制输入＝plan 关节速度剖面在积分步上的线性插值；初始状态＝轨迹起点 (q0, ω0)；默认步长 h＝1e-3 s）＋`ForwardDynamicsReport`（控制输入、初始状态、步长 h、积分器、h/h2 残差、发散诊断），进入 `DynamicResult` 仿真状态；收敛判据按 §15.3：固定 2 s 基准工况分别以 h 与 h/2 各跑一次，末端及全过程最大关节位置差 ≤1e-4 rad、速度差 ≤1e-3 rad/s（移动关节按 m、m/s 同级）；发散（数值溢出）→ 关节侧结果保留为 Partial 诊断件、运行判 Failed
+- **实施步骤：**1) RED：写 `ForwardDynamicsTest`（h/h2 收敛、未收敛诊断、发散诊断、输入入证据）；2) 实现 `ForwardDynamicsScenario`（速度控制＋线性插值＋初态＋步长）；3) 实现 h/h2 对照与残差/发散诊断；4) 三形式命令转绿并写证据
+- **RED 测试：**`ForwardDynamicsTest`（先写先败）：`HAndHalfConvergesWithinLimits`（2 s 基准、位置差 ≤1e-4 rad、速度差 ≤1e-3 rad/s）、`NotConvergedReportsDiagnostic`（超限→ `IRD-DYN-FD-NOT-CONVERGED`，Engineering/Error，不放宽容差）、`DivergenceReported`（数值溢出→ `IRD-DYN-FD-DIVERGED`，System/Error，Partial 诊断件＋运行判 Failed）、`InputsInitialStepInEvidence`（控制输入/初态/步长/积分器入报告与证据）
+- **最小实现：**正动力学场景＋h/h2 收敛检查转绿；降级矩阵（T05）与候选无关性契约（T06）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 2 s 基准工况与黄金数据，When 以 h 与 h/2 各跑一次，Then 位置/速度差满足 §15.3 且报告完整
+  - 边界：Given 移动关节混合模型，Then 按 m、m/s 同级限值判定；初态 (q0, ω0) 取轨迹起点
+  - 失败：Given 收敛超限或数值发散，When 执行，Then 对应诊断＋Partial/Failed 处置，无正式结果伪装
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "1e-3|1e-4" plugins/dynamics/src/ForwardDynamicsScenario.cpp` 与 §5.5 冻结值逐字一致（无放宽）；无引擎版本/积分器替换引用；`DynamicsResult` 禁名零命中
+- **证据工件：**`evidence/WP-17/T04/`——正动力学收敛报告（h/h2 曲线与残差）、发散注入记录（诊断与 Partial 处置）、控制输入/初态/步长入证据记录、测试日志（commit/配置/种子）
+- **提交格式：**`WP-17-T04: add forward dynamics scenario`
+- **停止与升级条件：**收敛判据在锁定版本下无法达成时停止并升级（不得改物理引擎版本或放宽容差）；步长/积分器/控制输入模式变更须升 `dynamicsSemanticsVersion` 并走语义评审

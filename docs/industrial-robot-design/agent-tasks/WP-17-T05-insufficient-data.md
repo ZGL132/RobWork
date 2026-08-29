@@ -1,13 +1,27 @@
 # WP-17-T05 物性与摩擦数据不足
 
-- 需求/阶段：DYN-01～08、AT-07；阶段 C / R1
-- 契约：`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-17 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：缺少物性或摩擦数据时返回降级证据，不生成精确结论。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_insufficient_data_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-17-T05: 物性与摩擦数据不足`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-17-T05；DYN-06（降级证据）、§6.6（证据等级）；无直接 ADR；阶段 C / R1。契约：`module-design/dynamics.md` §4（错误矩阵）/§5.6、`architecture/evaluation-semantics.md` §1～2（合法组合）/§3（`RequiredEvidenceProfile`）
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
+- **前置任务及必需工件：**WP-17-T02（逆动力学链路）、WP-17-T03（功率/包络链路）；WP-09-T01（`Diagnostic` 结构）、WP-05-T04（结果接纳与 `ResultEnvelope`）
+- **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
+  - 创建：`include/sdurws/ird/dynamics/DynamicsDiagnostics.hpp`、`include/sdurws/ird/dynamics/DynamicsEvaluator.hpp`（评估器入口签名，详设树登记）、`src/DynamicsEvaluator.cpp`（评估主流程＋降级路径）、`test/InsufficientDataTest.cpp`、`testdata/dynamics/failpoints/`、`evidence/WP-17/T05/`
+  - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01～T04 冻结语义；证据等级三级定义（§6.6，不足不得自动提升）；evaluation-semantics §2 合法组合表（构造边界拒绝非法组合）；requirements/CSV/architecture；禁止以估算参数包装精确结论；禁止 Qt Widgets、直读 UI 会话态
+- **修改前接口：**无统一评估主流程（T02～T04 为分段实现，快照校验与降级分支缺失）
+- **修改后接口：**`DynamicsEvaluator` 主流程（snapshot→校验 TrajectoryPlan 存在且 Current、物性/惯量/摩擦假设完整且有限→沿 plan 采样→FK→RNE→摩擦→功率/包络→FD 一致性→`DynamicResult`＋证据→WP-05 接纳）＋降级矩阵：关键物性缺失→估算参数＋`Screening` 继续（`IRD-DYN-PROPERTIES-MISSING`，Engineering/Warning）或补数据重算；摩擦假设缺失→按零摩擦继续并降级证据＋诊断标注（`IRD-DYN-FRICTION-MISSING`，Engineering/Warning）；`IRD-DYN-UPSTREAM-MISSING`（TrajectoryPlan 缺失/非 Current/版本不兼容，Input/Error，先重算轨迹）；证据三级 `Screening/PreliminaryDesign/ExternallyValidated` 标注与提升规则（估算参数最多 `Screening`、用户确认关键物性后 `PreliminaryDesign`、独立对照后 `ExternallyValidated`）；报告必须列出运动律与摩擦假设
+- **实施步骤：**1) RED：写 `InsufficientDataTest` 降级矩阵断言并建 failpoints 夹具；2) 实现 `DynamicsDiagnostics`（错误矩阵七码）与 `DynamicsEvaluator` 主流程装配 T02～T04 组件；3) 实现降级分支与证据等级标注；4) 三形式命令转绿并写证据
+- **RED 测试：**`InsufficientDataTest`（先写先败）：`MissingPropertiesDegradesToScreening`（→ `IRD-DYN-PROPERTIES-MISSING` Warning 且继续、结果降级）、`MissingFrictionContinuesZeroFriction`（→ `IRD-DYN-FRICTION-MISSING` Warning＋降级标注）、`UpstreamMissingRejected`（→ `IRD-DYN-UPSTREAM-MISSING`，不创建运行结果）、`EvidenceNeverAutoPromoted`（§6.6 不足不自动提升）、`DegradeNeverClaimsPrecision`（不产生精确结论、假设清单入报告）
+- **最小实现：**评估主流程＋降级矩阵＋证据标注转绿；候选无关性契约（T06）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 物性完整快照，When 求值，Then 全链路产出正式证据且假设清单完整
+  - 边界：Given 仅摩擦假设缺失，Then 零摩擦继续＋`Screening` 上限＋Warning 诊断；Given 仅部分连杆物性缺失，Then 逐项标注缺失对象
+  - 失败：Given 上游 `TrajectoryPlan` 缺失/非 Current，When 求值，Then `IRD-DYN-UPSTREAM-MISSING`、不产生部分提交或正式结果
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "PreliminaryDesign|ExternallyValidated" plugins/dynamics/src/DynamicsEvaluator.cpp` 无自动提升路径（提升仅由用户确认/独立对照输入触发）；七码与 dynamics.md §4 矩阵逐字一致；无诊断文案硬编码（经 WP-09 目录）
+- **证据工件：**`evidence/WP-17/T05/`——降级矩阵（缺失项×降级路径×诊断×证据等级）、failpoints 注入记录、假设清单样例、测试日志（commit/配置/种子）
+- **提交格式：**`WP-17-T05: add insufficient-data degradation`
+- **停止与升级条件：**降级路径与 §6.6/evaluation-semantics §2 合法组合冲突、或诊断码需新增时，停止并升级（新码先登记 diagnostics.md）；不得以估算参数伪装精确结论或自动提升证据等级

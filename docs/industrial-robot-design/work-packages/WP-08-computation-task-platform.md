@@ -38,7 +38,7 @@ public:
 };
 ```
 
-任务状态机为 9 态（`Queued/Running/Pausing/Paused/Canceling/Completed/Canceled/Failed/Interrupted`），17 条合法转移以 `architecture/execution-model.md` §1 转移表为唯一权威（含 `Queued→Canceling`、`Paused→Canceling`、`Canceling→Failed` 等旧文本遗漏的转移）。终态不可再转移且幂等；非法转移返回 `IRD-EXEC-ILLEGAL-TRANSITION` 且不改变状态。
+任务状态机为 9 态（`Queued/Running/Pausing/Paused/Canceling/Completed/Canceled/Failed/Interrupted`），18 条合法转移以 `architecture/execution-model.md` §1 转移表为唯一权威（含 `Queued→Canceling`、`Paused→Canceling`、`Canceling→Failed` 等旧文本遗漏的转移）。终态不可再转移且幂等；非法转移返回 `IRD-EXEC-ILLEGAL-TRANSITION` 且不改变状态。
 
 ## 5. 调度、进程和结果数据流
 

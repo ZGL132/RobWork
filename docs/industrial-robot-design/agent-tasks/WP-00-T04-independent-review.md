@@ -1,13 +1,29 @@
 # WP-00-T04 独立验证与评审
 
-- 需求/阶段：REQ-01～REQ-124、AT-01～AT-19；阶段 A / R1
-- 契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-00 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：抽样双向追踪需求，先修权威文档再重新生成矩阵。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_independent_review_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-00-T04: 独立验证与评审`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：** WP-00-T04；治理对象同 T01（抽样回溯全部追踪链并复核 ADR-001～005 与需求一致性）；无新增 ADR；阶段 A 前提 / R1。
+- **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
+- **前置任务及必需工件：** WP-00-T01（`evidence/wp-00/t01-requirements-review.md`）、WP-00-T02（`requirement-traceability.csv`＋`evidence/wp-00/t02-generation-log.md`）、WP-00-T03（`validate-development-docs.ps1` 门禁通过＋`fixtures/wp-00/run-fixtures.ps1` 8 夹具通过＋`evidence/wp-00/t03-gate-and-fixtures.md`）。
+- **允许创建/修改/删除的文件：** 创建 `docs/industrial-robot-design/evidence/wp-00/t04-independent-review.md` 与 `docs/industrial-robot-design/evidence/wp-00/t04-dual-shell-byte-compare.md`；不修改任何代码或文档正文。
+- **禁止修改的文件和公共接口：** 除上述两个新增证据文件外的一切文件（含 `requirements.md`、CSV、两个脚本、`fixtures/`、`work-packages/`、`architecture/`、`module-design/`、其余任务卡）；不得边评审边修复，发现问题退回对应任务重开。
+- **修改前接口：** 无（新增）。
+- **修改后接口：** 两份只读评审记录：`t04-independent-review.md` 含逐前缀抽样表（每个需求前缀至少 2 项）与六环节链路回溯结论（需求 → CSV 行 → work-packages 计划 → module-design 方案 → agent-tasks 任务卡 → 测试/评审任务）；`t04-dual-shell-byte-compare.md` 含 powershell.exe 与 pwsh.exe 门禁输出对照与 CSV 哈希。
+- **实施步骤：**
+  1. 在 Visual Studio x64 PowerShell 环境分别用 powershell.exe 与 pwsh.exe 运行门禁，记录输出与 `requirement-traceability.csv` 的 `Get-FileHash` 值。
+  2. 按全部需求前缀各抽至少 2 项需求，沿六环节链正向与反向回溯。
+  3. 复核 T01～T03 证据工件齐全、结论一致、夹具全部按预期非零。
+  4. 记录全部断点（文件、行、字段/ID、修复动作建议），不直接修改任何文件。
+  5. 出具评审结论并签署（独立执行上下文）。
+- **RED 测试：** 抽样断言先于结论执行：每条抽样链若任一环节缺失（CSV 行缺失、WP 未声明 Task ID、卡片孤立、模块方案未引用），评审即失败并生成断点记录；门禁应已拦截该情形，本任务验证其确实拦截（复跑 `run-fixtures.ps1` 确认 8 夹具仍全部非零）。
+- **最小实现：** 两份证据文件为唯一产出；不修改任何被评审对象。
+- **正常/边界/失败测试：**
+  - 正常：Given T01～T03 全部通过，When 双 shell 运行门禁，Then 两环境退出码 0、成功行一致、CSV 哈希一致。
+  - 边界：Given 每前缀至少 2 项抽样，When 双向回溯，Then 每条链六环节齐全且语义一致、P0 覆盖 100%。
+  - 失败：Given 任一链断裂或双 shell 输出不一致，When 记录断点，Then 评审不通过，问题退回 T01～T03 对应任务并升级。
+- **精确验证命令：**（仓库根目录、VS x64 PowerShell 环境）
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-design\validate-development-docs.ps1`；预期退出码 0。
+  - `pwsh.exe -NoProfile -File .\docs\industrial-robot-design\validate-development-docs.ps1`；预期退出码 0、成功行与上一条完全一致。
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-design\fixtures\wp-00\run-fixtures.ps1`；预期 8 夹具全部非零命中。
+- **diff 和禁止项检查：** `git diff --name-only` 仅含两个新增证据文件；其余文件（含 `requirement-traceability.csv`）零变化；评审者与 T01～T03 执行者非同一执行上下文。
+- **证据工件：** `t04-independent-review.md`（逐前缀抽样表、链路结论、断点清单、评审签署）；`t04-dual-shell-byte-compare.md`（两 shell 原始输出、CSV 哈希对照、PowerShell 与操作系统版本）。
+- **提交格式：** `WP-00-T04: 独立验证与评审`
+- **停止与升级条件：** 发现需求、架构契约、WP、模块方案与任务卡之间语义冲突，或双 shell 结果不一致时，停止并升级给文档治理负责人；抽样不足、证据缺失或责任分离不满足时不得签署通过。

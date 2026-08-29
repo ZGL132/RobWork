@@ -1,41 +1,26 @@
 # WP-04-T02 命令、修订与分支
 
-- Task ID：WP-04-T02
-- 需求/阶段：ARC-01、CON-01、CON-03、NFR-REL-01；阶段 A / R1
-- 架构契约：`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/execution-model.md`；模块方案：`module-design/persistence.md`
-- 前置：WP-04-T01、WP-03 core。
-
-## 边界与产出
-
-允许：修改 `include/sdurws/ird/project/ProjectCommand.hpp`、`ProjectBranch.hpp`、`IProjectCommandService.hpp`、`src/ProjectCommandService.cpp`、`src/BranchHistory.cpp`、`test/CommandRevisionTest.cpp`。
-禁止：修改 WP-03 身份定义、WP-05 快照接口、GUI、CSV 和持久化格式字段含义。
-
-产出：`apply/undo/redo` 实现、命令验证器、分支历史和 `CommandResult`。每次成功操作仅生成一个新 revision；项目和分支身份必须从 expected ref 校验，历史 payload 只读。
-
-## 数据流与状态
-
-`ref + DomainCommand -> load HEAD -> compare expected -> validate targets/ownerScopeId -> apply immutable patch -> TransactionWriter(T03) -> return new ref`。创建分支只记录 baseRevisionId 并共享对象；跨项目复制换新 objectId；删除 ID 永不复用。会话态变化不得调用服务。
-
-## Given/When/Then
-
-- Given expected revision 不是当前 HEAD，When apply，Then `IRD-PROJECT-REVISION-CONFLICT`、`applied=false`、目录字节不变。
-- Given branchId 不匹配，When apply/undo/redo，Then `IRD-PROJECT-BRANCH-MISMATCH`。
-- Given 合法命令，When apply，Then parentRevisionId 指向旧 revision，且只出现一个新 revision。
-- Given一条历史命令，When undo then redo，Then 两次均为新 revision，原命令 payload 和旧 revision 哈希不变。
-- Given无可撤销/重做历史，When调用，Then返回 `IRD-PROJECT-NOTHING-TO-UNDO` 或 `...REDO`。
-
-## 测试与命令
-
-覆盖并发冲突、空命令、未知 command type、重复目标、跨作用域目标、分支创建、复制/删除 ID、undo/redo 链和重启后历史读取。
-
-命令：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_commands_revisions_test$'
-```
-
-证据：命令序列 JSON、旧/新 revision ref、manifest 哈希、冲突诊断、历史不变性比对和独立评审记录。
-
-提交：`WP-04-T02: implement revision commands and branch history`。
-
-停止：需要新增公共字段、修改 undo/redo 语义或事务写顺序时暂停并报告给 WP-04 负责人。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-04-T02；需求 ARC-01、CON-01、CON-03、NFR-REL-01；ADR-001、ADR-002；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §1（`DomainCommand/IProjectQuery/IProjectCommandService` 权威）、architecture/persistence-schema.md §2、module-design/persistence.md v0.3。
+- **前置任务及必需工件：**WP-04-T01（`ProjectStore/ProjectPath` 加载链路与 `schema1-*` 夹具）；WP-03 core（身份/聚合校验）；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ProjectCommand.hpp`、`ProjectBranch.hpp`、`IProjectCommandService.hpp`、`src/ProjectCommandService.cpp`、`src/BranchHistory.cpp`、`test/CommandRevisionTest.cpp`、`test/ProjectCommandContractTest.cpp`（编入 `sdurws_ird_project_contract_test`）、`evidence/WP-04/`；修改 `CMakeLists.txt`（登记 contract 目标）；删除：无。
+- **禁止修改的文件和公共接口：**T01 冻结的加载/路径接口与持久化格式字段含义；WP-03 身份定义；WP-05 快照/结果接口；GUI；CSV；WP-01 脚本；manifest/HEAD 物理格式（T03 固化写入顺序）。
+- **修改前接口：**T01 的只读 `IProjectQuery::load`；无命令服务。
+- **修改后接口：**`DomainCommand`（commandId/commandKind/targetObjects/validate/buildMutations，纯函数不落盘）；`IProjectCommandService::apply/undo/redo` 返回 `expected<CommandResult, ProjectError>`；`CommandResult{applied,revision,diagnostics[]}`；错误码 `IRD-PROJ-BRANCH-MISMATCH`、`IRD-PROJ-STALE-REVISION`、`IRD-PROJ-VALIDATION-FAILED`、`IRD-PROJ-NOTHING-TO-UNDO`、`IRD-PROJ-NOTHING-TO-REDO`（architecture/public-interfaces.md §1 权威）。
+- **实施步骤：**1) 先写冲突/幂等/undo-redo 失败测试；2) 实现命令验证器（targets/ownerScopeId/单机械臂不变量）；3) 实现 apply：读 HEAD→比较 expected→生成新 revisionId 与规范化 domain JSON→经保存钩子落盘（T03 交付事务硬化）→返回新 ref；4) 实现分支历史（创建分支只记 baseRevisionId，不复制对象）；5) 契约测试入 `sdurws_ird_project_contract_test`。
+- **RED 测试：**expected revision 不是当前 HEAD → `IRD-PROJ-STALE-REVISION`、`applied=false`、目录字节不变；branchId 不匹配 → `IRD-PROJ-BRANCH-MISMATCH`；无可撤销/重做历史 → `IRD-PROJ-NOTHING-TO-UNDO/REDO`。
+- **最小实现：**单命令 apply＋undo/redo＋分支记录；同 `commandId` 对同 base 幂等 no-op 返回既有修订。
+- **正常/边界/失败测试：**
+  - 失败：未知 command type、空命令、重复目标、跨作用域目标、缺失引用 → `IRD-PROJ-VALIDATION-FAILED`，不写任何正式文件。
+  - 正常：Given 合法命令，When apply，Then parentRevisionId 指向旧 revision 且只出现一个新 revision；payload 记录 `commandId/type/targetObjectIds/before/after`。
+  - 边界：Given 一条历史命令，When undo 后 redo，Then 两者均为新修订，原命令 payload 与旧 revision 哈希不变；跨项目复制换新 objectId，删除 ID 永不复用；会话态变化不调用服务。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_contract_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`（contract 目标同法，目标名替换为 `sdurws_ird_project_contract_test`）
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；错误码与 architecture/public-interfaces.md §1 逐字一致（不得用 `IRD-PROJECT-*` 变体）；历史 payload 只读；无 GUI/Widgets 引用。
+- **证据工件：**`evidence/WP-04/T02/`：命令序列 JSON、旧/新 revision ref、manifest 哈希、冲突诊断、历史不变性比对、契约测试输出。
+- **提交格式：**`WP-04-T02: implement revision commands and branch history`。
+- **停止与升级条件：**需新增公共字段、修改 undo/redo 语义或事务写顺序时停止并报告 WP-04 负责人，走契约变更；发现与 §1 签名冲突不得在代码内改接口。

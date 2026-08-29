@@ -1,13 +1,27 @@
 # WP-17-T03 广义力功率与能量
 
-- 需求/阶段：DYN-01～08、AT-07；阶段 C / R1
-- 契约：`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-17 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：输出类型化广义力、速度、功率、峰值窗、循环 RMS 和 W+。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_power_energy_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-17-T03: 广义力功率与能量`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-17-T03；DYN-03（功率/能量/峰值/RMS）、§9.3（W+ 冻结式）、§15.3（动力包络行）、AT-07；无直接 ADR；阶段 C / R1。契约：`module-design/dynamics.md` §5.3～§5.4、`architecture/domain-model.md` §4、`architecture/evaluation-semantics.md` §1～2
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
+- **前置任务及必需工件：**WP-17-T02（`RneAdapter`/`FrictionModel` 输出的 τ_RNE/τ_f/ω 采样序列与 `JointSample` 时间戳链路）
+- **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
+  - 创建：`src/PowerEnergyIntegrator.cpp`、`src/DynamicsJson.cpp`、`test/PowerEnergyTest.cpp`、`testdata/dynamics/cycle/` 下完整循环黄金数据文件、`evidence/WP-17/T03/`
+  - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01/T02 冻结语义（摩擦式、坐标系、功率符号约定）；关节侧结果不得宣称电能（§8.5 能量边界）；传动映射与电机侧量（WP-18）；requirements/CSV/architecture；禁止 Qt Widgets、直读 UI 会话态
+- **修改前接口：**无功率/能量计算（T02 输出类型化广义力与转速序列，未聚合包络量）
+- **修改后接口：**`JointSample` 序列（时间戳取自 `TrajectoryPlan` 剖面、单调有限；q/ω/α/类型化 τ/P_joint/P_f）；`PowerEnergyIntegrator`：P_joint＝τ_j·ω_j（正＝执行器向机构输出正机械功）、P_f＝τ_f·ω≥0 单列、W+＝∫max(P_joint,0)dt、W−＝∫min(P_joint,0)dt，按记录时间戳梯形积分（§9.3 冻结式），采样与积分规则随结果保存；`PeakWindowStats`（窗长＝器件目录峰值时间能力、无目录数据 1 s；滑窗均值峰值＋瞬时峰值＋所在轨迹段与时刻）；`RmsCycleStats`（τ/ω/P 的 RMS 与 T_cycle，完整任务循环实际时间积分、含驻留）；`DynamicsJson` 序列化（字段语义随结果保存）
+- **实施步骤：**1) RED：写 `PowerEnergyTest`（W+ 梯形、功率符号、峰值窗、含驻留 RMS、禁电能宣称）并加黄金数据；2) 实现 `PowerEnergyIntegrator`（梯形积分＋峰值滑窗＋循环 RMS）；3) 实现 `DynamicsJson` 序列化与采样/积分规则记录；4) 三形式命令转绿并写证据
+- **RED 测试：**`PowerEnergyTest`（先写先败）：`WPlusTrapezoidMatchesGolden`（§9.3 冻结式黄金对账）、`PowerSignConvention`（P_joint 正＝输出正功、P_f≥0 单列）、`PeakWindowStatsAndSegment`（窗长缺省 1 s、滑窗均值峰值＋瞬时峰值＋所在段与时刻）、`RmsIncludesDwell`（T_cycle 含驻留完整循环积分）、`NoElectricEnergyClaim`（关节侧结果无电能字段/宣称）
+- **最小实现：**积分器＋峰值窗＋循环 RMS＋JSON 转绿；正动力学一致性检查（T04）、降级矩阵（T05）、候选无关性（T06）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 完整循环黄金数据（含驻留段），When 积分，Then W+/W−、峰值窗、RMS 与黄金数据在 §15.3 容差内一致
+  - 边界：Given 恒负功率段与零功率驻留段，Then W+ 增量为零、P_f≥0 单列、窗边界样本计入滑窗
+  - 失败：Given 时间戳非单调或循环不含驻留，When 积分，Then 拒绝并诊断，不产出包络量
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "electric|kWh|motor" plugins/dynamics/src/PowerEnergyIntegrator.cpp` 零命中（无电能宣称）；无矩形积分/纯瞬时峰值替代路径；`DynamicsResult` 禁名零命中
+- **证据工件：**`evidence/WP-17/T03/`——完整循环积分对账报告（W+/W−/峰值/RMS）、峰值窗与含驻留 RMS 口径对照、采样与积分规则记录、测试日志（commit/配置/种子）
+- **提交格式：**`WP-17-T03: add power and energy integration`
+- **停止与升级条件：**W+ 梯形式或峰值窗口径与 §9.3/§15.3 冲突、或器件目录峰值时间能力字段缺失无法取值时，停止并升级（不得以矩形积分或瞬时峰值临时替代）；T_cycle 定义歧义升级动力学工程师裁决

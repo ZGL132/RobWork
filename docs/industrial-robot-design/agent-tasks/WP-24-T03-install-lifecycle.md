@@ -1,13 +1,26 @@
 # WP-24-T03 安装生命周期
 
-- 需求/阶段：NFR-MNT、NFR-DEP、NFR-SEC-04～06；阶段 E / R2
-- 契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`、`architecture/public-interfaces.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-24 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：验证离线安装、卸载、版本并存、升级、回滚和无开发机绝对路径。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_install_lifecycle_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-24-T03: 安装生命周期`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：** WP-24-T03；NFR-DEP-03（离线安装与版本并存）、NFR-DEP-04/05（升级迁移与依赖不散落）、NFR-MNT-06；ADR-002（`.rwdesign` 属用户目录，卸载不删除）；阶段 E / R1＋R2。契约：`architecture/persistence-schema.md` §1（R1/R2 同 Schema 主版本——回滚可打开既有项目）、§5（Schema 前向升级由应用执行）；模块详设 `module-design/installation-release.md` v0.3 §3（安装布局与回滚）、§5（干净机器六步冒烟协议）。验证方式＝真实安装演练记录＋检查表（testing-contract §4），不以 CTest 目标替代。
+- **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD（installation-release.md v0.3）
+- **前置任务及必需工件：** WP-24-T02（R1/R2 离线包与 `release-manifest.json`）、WP-24-T01（`smoke-install.ps1` 脚本与路径扫描断言）；外部：WP-22-T05（被打包应用可完成冒烟操作链路）。
+- **允许创建/修改/删除的文件：** 写 `RobWork/installer/industrial-robot/evidence/t03-install-lifecycle/`（六步演练记录、环境快照、安装日志、迁移日志、回滚证据、签署页）。不创建/修改/删除脚本、安装器工程与业务代码（发现缺陷走 §15.4 缺陷登记，不在本卡内改码修复）。
+- **禁止修改的文件和公共接口：** 三脚本与安装器工程（只执行）；业务代码、测试门禁；`requirements.md`、CSV、`architecture/`、`module-design/`；演练环境不得为通过检查而预装开发工具或保留仓库路径。
+- **修改前接口：** 无（纯演练任务）；六步协议无留痕记录。
+- **修改后接口：** 无代码接口；产出六步协议演练记录（installation-release §5，每步含安装日志/脚本输出/演练人签署）：①前置——全新 Windows x64 虚机/实机、无开发工具与仓库路径、断网（NFR-DEP-03）环境快照；②安装——运行 setup，`smoke-install.ps1` 断言全包与安装目录无开发机绝对路径（`IRD-INST-PATH-LEAK` 零命中）、白名单与清单哈希全部通过；③冒烟——启动→新建/打开样例项目→运行一个 Verified 计算→生成报告→保存重开操作记录；④卸载——程序目录清除、用户项目数据（`.rwdesign`）保留；⑤并存——安装第二版本，两版本均可启动且互不破坏；⑥升级与回滚——新版本安装到新目录并迁移用户设置（迁移日志），回滚后旧版本仍能打开既有 `.rwdesign`。
+- **实施步骤：**
+  1. 准备干净机器并留存环境快照（无开发工具、无仓库路径、断网）。
+  2. 执行步骤 2～5（安装、冒烟、卸载、并存），逐步收集安装日志、脚本输出与操作记录。
+  3. 执行步骤 6：升级（记录设置迁移日志）→回滚（旧版本打开既有 `.rwdesign`）。
+  4. 汇总六步记录，逐步由演练人签署；失败步骤登记发布阻断项并按 §15.4 登记缺陷。
+- **RED 测试：** 不适用（真实环境演练）；以检查表首项（六步记录齐备且逐步签署）作为"先失败"起点——任何一步缺失即任务未完成。
+- **最小实现：** 六步演练留痕＋签署；不重打包（T02）、不编白名单（T04）、不出发布检查表（T05）。
+- **正常/边界/失败测试：**
+  - 正常：Given 干净断网机器与 R1 包，When 依序执行六步，Then 全部通过：安装目录为 `%ProgramFiles%\SDURWS\IndustrialRobot\<product-version>\`、冒烟链路完成、两版本并存互不破坏、回滚后旧版本打开既有项目。
+  - 边界：Given 卸载 R2 版本，When 检查，Then 仅 R2 程序目录清除、用户 `.rwdesign` 与 R1 版本不受影响；Given 升级迁移日志存在，Then 回滚后旧版本数据未被新 Schema 独占（同 Schema 主版本）。
+  - 失败：Given 任一步失败（如路径扫描命中、回滚无法打开项目），When 复核，Then 该步登记为发布阻断项＋缺陷，不得以重跑掩盖或放宽检查继续发布流程。
+- **精确验证方式：**（真实环境演练，无自动化测试命令；`smoke-install.ps1` 输出作为步骤 2 脚本证据归档）
+  - 检查表（首项不成立即任务失败）：①六步记录齐备且每步签署栏（演练人/日期/环境）非空；②步骤 1 环境快照证明断网与无仓库路径；③步骤 2 `IRD-INST-PATH-LEAK` 零命中且哈希全部通过；④步骤 4 用户项目数据保留；⑤步骤 6 含迁移日志与回滚打开既有 `.rwdesign` 的证据；⑥失败步骤均有阻断项与缺陷登记号。
+- **diff 和禁止项检查：** `git diff --name-only` 仅含 `evidence/t03-install-lifecycle/` 新增记录；零代码/脚本/工程改动；记录不含占位符或空白签署的"预签"；文件 UTF-8 无 BOM、LF。
+- **证据工件：** `RobWork/installer/industrial-robot/evidence/t03-install-lifecycle/`：环境快照、六步演练记录（逐步日志＋脚本输出＋签署）、迁移日志、回滚证据（旧版本打开既有项目截图或操作记录）、阻断项与缺陷登记清单、commit。
+- **提交格式：** `WP-24-T03: 安装生命周期`
+- **停止与升级条件：** 干净机器或离线安装环境不可得、或安装/回滚步骤失败无法定位根因时，停止并升级工作包所有者（缺陷交由对应 WP 修复）；演练执行者不得担任本卡独立验证者（发布工程师独立复核）。

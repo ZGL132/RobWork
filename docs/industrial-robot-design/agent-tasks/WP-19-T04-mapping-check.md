@@ -1,13 +1,21 @@
 # WP-19-T04 传动映射复核
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：复用 DriveTrainMappingEvaluator 校核惯量比、效率和组合兼容。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_mapping_check_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T04: 传动映射复核`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T04；SEL-05（惯量比/工作点复核）、SEL-09（移动关节范围外）；AT-08；ADR-004（只经共享 `DriveTrainMappingEvaluator`，无本地映射实现）；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §4/§5.4
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-19-T03（筛选链工件——幸存组合可枚举）；WP-18-T05（`sdurws_ird_drivetrain` 共享评估器与 `MotorSideOperatingPoint`——代码依赖）；WP-17（`DynamicResult` 只读视图——契约引用）
+- **允许创建/修改/删除的文件：**创建 `plugins/selection/src/SelectionEvaluator.cpp`（本任务：映射复核接线与范围外判定）、`test/MappingCheckTest.cpp`、`testdata/selection/failpoints/`（含移动关节链与效率证据缺失样本）；修改 `plugins/selection/CMakeLists.txt`（仅追加本任务文件与 `sdurws_ird_drivetrain` 链接）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**WP-18 评估器实现与公共头（只消费）；T01～T03 接口与错误码；`IEngineeringEvaluator`/`ResultEnvelope`（WP-05/08）；requirements/CSV/architecture/module-design；禁止本地效率/惯量/映射公式
+- **修改前接口：**`SelectionEvaluator` 不存在（T05 完成主流程装配，本卡建立其映射复核与范围外判定部分）
+- **修改后接口：**`SelectionEvaluator`（部分）：幸存组合经共享 `DriveTrainMappingEvaluator` 复核电机侧工作点与惯量比（SEL-05：惯量比阈值默认 5 且默认软约束 Warning，可配置工程规则、默认值变更须评审并升 `selectionRulesVersion`）；目标链含移动关节 → `IRD-SEL-TRANSMISSION-OUT-OF-SCOPE`（Engineering/Error，DataInsufficient 判定阻断该轴，不静默套用旋转传动）；上游缺失/非 Current → `IRD-SEL-UPSTREAM-MISSING`（Input/Error）
+- **实施步骤：**1) RED：写 `MappingCheckTest`（共享 evaluator 复核、兼容判定、移动关节阻断、无第二实现）；2) 建 `testdata/selection/failpoints/` 样本；3) 接线 WP-18 评估器（快照内调用、只读消费 `DynamicResult`）；4) 实现移动关节范围外阻断与上游就绪检查；5) 三形式命令转绿并写证据
+- **RED 测试：**`MappingCheckTest`（先写先败）：`UsesSharedEvaluatorForOperatingPoint`（工作点/惯量比取自 WP-18 输出而非本地计算）、`InertiaRatioDefaultSoftConstraint`（默认阈值 5、Warning，不改变可行性；用户提升为硬约束时参与淘汰）、`PrismaticJointBlocksAxis`（→ `IRD-SEL-TRANSMISSION-OUT-OF-SCOPE`，DataInsufficient 判定阻断该轴）、`UpstreamMissingRejected`（`DynamicResult` 缺失/非 Current → `IRD-SEL-UPSTREAM-MISSING`）、`NoLocalMappingImplementation`（静态扫描本模块零效率/反射惯量公式）
+- **最小实现：**复核接线＋范围外/上游判定转绿；主流程装配、结果输出与应用命令在 T05
+- **正常/边界/失败测试：**
+  - 正常：Given 幸存组合与合法 `DynamicResult`，When 复核，Then 电机侧工作点与惯量比来自共享评估器、逐组合诊断完整
+  - 边界：Given 惯量比恰为 5，Then 默认 Warning 不淘汰（提升为硬约束时按阈值淘汰并给码＋实际值＋阈值）
+  - 失败：Given 含移动关节目标链或上游缺失，When 评估，Then 该轴阻断/整体 Input 诊断，无部分选型结果
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "eta|inertia|i \* i|ratio \*" plugins/selection/src/` 无本地映射/惯量公式（静态扫描零命中，ADR-004）；`DynamicResult` 字段只读（无 setter 调用）
+- **证据工件：**`plugins/selection/evidence/WP-19/T04/`——共享 evaluator 调用记录（含 WP-18 版本/公式版本）、移动关节阻断矩阵、惯量比默认值评审记录、测试日志
+- **提交格式：**`WP-19-T04: 传动映射复核`
+- **停止与升级条件：**WP-18-T05 未交付或其输出字段不满足复核需要时，停止并升级 WP-18（不得本地补算）；惯量比阈值/软硬约束默认变更须评审并升 `selectionRulesVersion`

@@ -1,13 +1,21 @@
 # WP-19-T01 器件目录 Schema
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：冻结 motors、reducers、曲线和 compatibility 表字段、单位、空值和版本规则。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_catalog_schema_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T01: 器件目录 Schema`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T01；SEL-01/02（需求 §8.6、§7.4 目录消费）；ADR-004（消费 WP-18/WP-11 权威、不自建）；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §3、`schemas/catalog/catalog-manifest.schema.json`、`schemas/catalog/column-dictionary.schema.json`（列清单权威）、`architecture/symbol-registry.md` SYM-SEL-001
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/device-selection.md` v0.3＋`work-packages/WP-19-device-selection.md`（D6）
+- **前置任务及必需工件：**无包内前置。WP-11-T04（`CatalogPackageReader` 安全记录——本模块不做文件 IO，一律经其导入）；WP-03-T01（core 类型）；WP-09-T01（`Diagnostic`）；WP-01-T03（测试入口）
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/include/sdurws/ird/selection/SelectionDiagnostics.hpp`（诊断骨架）、`src/CatalogView.cpp`、`src/CompatibilityIndex.cpp`、`test/CatalogSchemaTest.cpp`、`plugins/selection/CMakeLists.txt`（登记 `sdurws_ird_selection`、`sdurws_ird_selection_test`；`_contract_test` 由 WP-19-T05 登记）；修改 `industrialrobot/CMakeLists.txt`（仅追加 plugins/selection 子目录接入）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**`schemas/catalog/` 两 Schema（列清单权威，引用不复述）；WP-11 导入校验（x 严格递增等在导入侧保证）；requirements/CSV/architecture/module-design；其他 WP 目录
+- **修改前接口：**无（选型模块不存在；旧目录导入器按模块详设 §7 迁移对照后删除，不在本卡）
+- **修改后接口：**`CatalogView`（内存只读视图）：表角色 MotorTable/ReducerTable/CapabilityCurveTable/CompatibilityTable；单位按 `declaredUnits`（SI）；`primaryKeys` 唯一性与 `foreignKeys` 完整性判定以两 Schema 为权威；`CatalogVersion` 不可变消费，`CatalogVersionRef`（内容 ID）进输入切片与缓存键；`CompatibilityIndex` 以 CompatibilityTable 行存在性为唯一判据；诊断码骨架含 `IRD-SEL-CATALOG-UNAVAILABLE`（Input/Error）
+- **实施步骤：**1) RED：写 `CatalogSchemaTest`（视图/列字典一致、SI 单位、主键/外键、未知版本拒绝）；2) 定义 `SelectionDiagnostics.hpp` 错误码骨架；3) 实现 `CatalogView` 从 WP-11 安全记录构建只读视图（无文件 IO）；4) 实现 `CompatibilityIndex` 外键判定；5) 三形式命令转绿并写证据
+- **RED 测试：**`CatalogSchemaTest`（先写先败）：`ViewMatchesColumnDictionary`（表角色/列与 column-dictionary 一致）、`UnitsAreSiDeclared`、`RejectsDuplicatePrimaryKeys`、`RejectsDanglingForeignKeys`、`RejectsUnknownCatalogVersion`（→ `IRD-SEL-CATALOG-UNAVAILABLE`，Input/Error）、`CatalogViewIsImmutable`（视图无写入口、`CatalogVersionRef` 进缓存键材料）
+- **最小实现：**只读视图＋兼容索引＋诊断骨架转绿；插值/筛选/评估器在 T02～T05
+- **正常/边界/失败测试：**
+  - 正常：Given WP-11 校验后的安全记录，When 构建视图，Then 四表可查、单位/主键/外键判定通过、`CatalogVersionRef` 稳定
+  - 边界：Given 空 CompatibilityTable 或单电机目录，When 查询，Then 判定为"无兼容组合"而非错误
+  - 失败：Given 未知/缺失版本、重复主键或悬空外键记录，When 构建，Then `IRD-SEL-CATALOG-UNAVAILABLE`/结构诊断、无部分视图
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "csv\|fopen\|QFile" plugins/selection/src/CatalogView.cpp` 零命中（无文件 IO，一律经 WP-11）；`grep -rn "IRD-SEL-" industrialrobot --include="*.?pp"` 命中仅在本模块
+- **证据工件：**`plugins/selection/evidence/WP-19/T01/`——目录视图/列字典对照表、目录包哈希与 `CatalogVersionRef`、主键/外键判定记录、测试日志
+- **提交格式：**`WP-19-T01: 器件目录 Schema`
+- **停止与升级条件：**两 Schema 列清单与安全记录结构不一致、或 `CatalogPackageReader` 记录类型不足以构建四表视图时，停止并升级 WP-11；列清单缺口不得在本模块私补

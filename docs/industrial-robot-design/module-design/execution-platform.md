@@ -42,7 +42,7 @@ submit 不可变请求 → 身份/预算校验 → capability check → cache lo
   → completion → evaluation-semantics §2 合法组合校验 → WP-05 接纳 → 追加历史
 ```
 
-状态机实现要点（9 态与 17 条合法转移以 execution-model.md §1 转移表为准，引用不复制）：
+状态机实现要点（9 态与 18 条合法转移以 execution-model.md §1 转移表为准，引用不复制）：
 
 - **单写者线程模型**：`TaskState` 仅由主进程调度线程转移并原子发布；UI 与其他线程只读快照；worker 不持有状态机，只回报消息。
 - **取消语义**：`Canceling` 中重复 cancel 为 no-op；`cancelTimeoutMs` 超时强杀 worker → `Canceled`＋"强制终止"诊断＋保留最近兼容检查点；取消期间非用户异常 → `Failed`，与超时强杀严格区分。
@@ -74,7 +74,7 @@ submit 不可变请求 → 身份/预算校验 → capability check → cache lo
 
 | 测试 | 断言要点 |
 | --- | --- |
-| StateMachineTest | 17 条合法转移逐条通过；全部非法转移在构造边界拒绝 |
+| StateMachineTest | 18 条合法转移逐条通过；全部非法转移在构造边界拒绝 |
 | RequestIdentityTest | 身份校验、重复请求拒绝、迟到事件只追加历史 |
 | CancellationTest | 排队/运行/暂停中取消、重复取消幂等、超时强杀 Canceled 与取消期异常 Failed 可区分 |
 | CacheCheckpointTest | 全键缓存、失败/Partial/Quick 不命中、检查点兼容两分支、恢复不重复计数 |

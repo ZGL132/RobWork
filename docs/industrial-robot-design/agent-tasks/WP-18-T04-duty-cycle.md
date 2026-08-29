@@ -1,13 +1,21 @@
 # WP-18-T04 峰值与工作制评估
 
-- 需求/阶段：DYN-04、SEL-05；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-18 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现峰值持续时间窗、完整循环 RMS、制动/保持和四象限假设。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_duty_cycle_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-18-T04: 峰值与工作制评估`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-18-T04；DYN-03/04、SEL-05、需求 §15.3（动力包络行）与 §8.5 峰值窗/RMS 周期/四象限声明行；ADR-004；阶段 C / R1。契约：`module-design/drivetrain.md` v0.3 §5.5～§5.6
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-18-T02（映射序列工件 τ_m/ω_m/P_m 可用——工作制统计基于电机侧序列）；WP-17-T03（`DynamicResult` 峰值/RMS 字段——DYN-03 同周期口径对齐）
+- **允许创建/修改/删除的文件：**创建 `evaluation/drivetrain/src/DutyCycleWindow.cpp`、`test/DutyCycleTest.cpp`；修改 `evaluation/drivetrain/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01～T03 冻结接口与常量；`DynamicResult`；requirements/CSV/architecture/module-design；其他 WP 目录
+- **修改前接口：**无峰值/工作制统计
+- **修改后接口：**`DutyCycleWindow`（模块私有）：duty 统计窗口＝完整任务循环（含驻留），与 DYN-03 RMS 同周期；峰值窗＝器件目录声明峰值时间能力、无目录数据缺省 1 s（滑窗均值峰值＋瞬时峰值＋所在段）；四象限/制动/保持工况显式声明为假设并进证据（默认无回馈）；输出与 §15.3 动力包络同口径的峰值/RMS 需求
+- **实施步骤：**1) RED：写 `DutyCycleTest`（目录峰值窗/缺省 1 s、含驻留 RMS、四象限、摩擦不双计）；2) 构造含驻留段与四象限切换的循环夹具（进 `testdata/drivetrain/golden/` 已有夹具或新增段）；3) 实现滑窗峰值与完整循环 RMS；4) 实现四象限/连续/峰值区间占比与假设清单挂接；5) 三形式命令转绿并写证据
+- **RED 测试：**`DutyCycleTest`（先写先败）：`PeakWindowUsesCatalogValue`（目录声明峰值时间能力生效）、`PeakWindowDefaultsToOneSecond`（无目录数据缺省 1 s）、`RmsSpansFullCycleIncludingDwell`（完整任务循环含驻留，与 DYN-03 同周期）、`FourQuadrantSharesDeclaredAsAssumptions`（占比进假设清单而非静默默认）、`FrictionNotDoubleCounted`（§15.1 黄金断言：传动效率含减速器摩擦、不复计 WP-17 RNE 侧关节摩擦）
+- **最小实现：**窗口统计使上述断言转绿；能量分项复用 T03、完整 evaluator 装配在 T05
+- **正常/边界/失败测试：**
+  - 正常：Given 含驻留与四象限切换的完整循环，When 统计，Then 峰值/RMS/占比与黄金夹具一致且口径与 §15.3 同
+  - 边界：Given 无目录峰值能力数据，Then 窗长缺省 1 s；Given 循环短于峰值窗，Then 按实际时长滑窗并声明
+  - 失败：Given 序列为空或 `DynamicResult` 缺失，When 统计，Then Input 诊断、无部分统计输出
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "friction\|damping" src/DutyCycleWindow.cpp` 零命中（摩擦不双计——本模块只经效率常数承接）；无第二套 RMS/峰值实现（统计只基于 T02 序列）
+- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T04/`——峰值窗/缺省值矩阵、含驻留 RMS 对账、四象限假设清单、摩擦不双计断言记录、测试日志
+- **提交格式：**`WP-18-T04: 峰值与工作制评估`
+- **停止与升级条件：**目录峰值能力字段无法从 WP-11 目录 Schema 取得、或 DYN-03 周期口径与本模块窗口冲突时，停止并升级 WP-17/WP-19 联合评审；缺省 1 s 变更须评审记录并升级公式/默认值版本

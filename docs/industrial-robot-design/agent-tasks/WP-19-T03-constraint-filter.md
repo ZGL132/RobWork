@@ -1,13 +1,21 @@
 # WP-19-T03 器件约束筛选
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现连续/峰值转矩、转速、功率、过载、工作制、电压、温度和安全系数筛选。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_constraint_filter_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T03: 器件约束筛选`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T03；SEL-03/04（电机九项/减速器八项）、SEL-06、需求 §15.1（可行/不可行目录黄金表）；AT-08；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §5.1/§5.4
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-19-T01（`CatalogView`/`CompatibilityIndex`）、WP-19-T02（插值与降额折减器——温度降额后能力参与淘汰）
+- **允许创建/修改/删除的文件：**创建 `plugins/selection/src/ConstraintFilter.cpp`、`src/MarginCalculator.cpp`、`test/ConstraintFilterTest.cpp`、`testdata/selection/catalog-feasible/`、`testdata/selection/catalog-infeasible/`；修改 `plugins/selection/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01/T02 接口与错误码语义；requirements/CSV/architecture/module-design；WP-18/WP-17 目录（映射复核在 T04，本卡不做惯量比）；其他 WP 目录
+- **修改前接口：**无淘汰与裕量计算
+- **修改后接口：**`ConstraintFilter`/`MarginCalculator`（模块私有）。筛选四步顺序（冻结）：就绪检查 → 组合枚举（∩ CompatibilityTable，外键判定）→ 硬淘汰（逐项）→ 裕量计算（只对幸存组合）。硬淘汰逐项——电机：连续转矩、峰值转矩（峰值窗需求）、最高转速、功率、过载持续时间、工作制、电压、温度降额后能力、制动/保持；减速器：额定/峰值转矩、允许输入转速、速比范围、效率证据、回程间隙、寿命、安装方向、允许外载荷；任一项不过即淘汰并输出诊断码＋实际值＋阈值。margin＝降额后能力/需求（同时报告比值与绝对差）；SF_cont＝1.3/SF_peak＝1.2（模块私有默认，通过条件 margin≥SF，变更须评审并升 `selectionRulesVersion`）
+- **实施步骤：**1) RED：写 `ConstraintFilterTest`（四步顺序、逐项淘汰、黄金表、全淘汰）；2) 建可行/不可行黄金表夹具（§15.1，含每项约束的边界样本）；3) 实现硬淘汰器（逐项、短路淘汰但记录全部已评项）；4) 实现裕量计算器；5) 三形式命令转绿并写证据
+- **RED 测试：**`ConstraintFilterTest`（先写先败）：`HardEliminationBeforeMargin`（裕量只对幸存组合计算——被淘汰组合零裕量调用）、`EveryEliminationCarriesCodeValueThreshold`（每淘汰项含稳定诊断码＋实际值＋阈值，阶段 C 门禁）、`FeasibleInfeasibleGoldenTables`（§15.1 黄金表逐行对照）、`AllEliminatedReportsPerItemEvidence`（→ `IRD-SEL-ALL-ELIMINATED` 输出逐项证据）、`UnlistedPairRejected`（组合不在 CompatibilityTable → `IRD-SEL-PAIR-NOT-LISTED`）、`DeratedCapabilityUsedInElimination`
+- **最小实现：**淘汰器＋裕量器＋黄金夹具转绿；WP-18 映射复核（T04）与结果输出/应用（T05）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 可行黄金表输入，When 筛选，Then 幸存组合裕量（比值＋绝对差）与黄金值一致、排序稳定
+  - 边界：Given margin 恰等于 SF，Then 通过（≥判定）；Given 单项约束恰在阈值，Then 按降额后能力判定并记录实际值/阈值
+  - 失败：Given 全部候选被淘汰或组合未列于兼容表，Then `IRD-SEL-ALL-ELIMINATED`/`-PAIR-NOT-LISTED`，逐项证据完整、无部分结果
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "margin" src/ConstraintFilter.cpp` 确认裕量不在淘汰分支内；淘汰诊断缺码/实际值/阈值任一项即测试失败；无目录外推断兼容性代码
+- **证据工件：**`plugins/selection/evidence/WP-19/T03/`——可行/不可行黄金表结果、淘汰诊断样本（码＋实际值＋阈值）、SF 默认值评审记录、测试日志
+- **提交格式：**`WP-19-T03: 器件约束筛选`
+- **停止与升级条件：**SEL-03/04 约束项与目录 Schema 列无法一一对应、或黄金表与筛选结果系统性不一致时，停止并升级需求/目录所有者；SF/阈值默认值变更须评审并升 `selectionRulesVersion`，不得静默调整

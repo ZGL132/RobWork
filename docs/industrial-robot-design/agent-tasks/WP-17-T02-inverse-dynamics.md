@@ -1,13 +1,27 @@
 # WP-17-T02 逆动力学计算
 
-- 需求/阶段：DYN-01～08、AT-07；阶段 C / R1
-- 契约：`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-17 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现重力、惯性、末端负载、外力、黏性和库仑摩擦逆动力学。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_inverse_dynamics_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-17-T02: 逆动力学计算`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-17-T02；DYN-01（RNE 算法）、DYN-02（摩擦）、AT-07、§15.3 动力学容差；无直接 ADR；阶段 C / R1。契约：`module-design/dynamics.md` §4/§5.1～§5.2、`architecture/domain-model.md` §4（SI/类型化广义力）、`architecture/evaluation-semantics.md` §1～2
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
+- **前置任务及必需工件：**WP-17-T01（`DynamicsSemantics` 冻结常量＋七项黄金夹具＋评审签署）；WP-06-T03（DWC 工件）、WP-16-T05（`TrajectoryPlan` payload 经 `IResultRepository` 取回）、WP-05-T04（结果接纳端口）、WP-02-T03（二连杆/重力矩黄金数据登记）
+- **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
+  - 创建：`include/sdurws/ird/dynamics/DynamicResult.hpp`（类型化广义力字段只读视图）、`src/RneAdapter.cpp`、`src/FrictionModel.cpp`、`src/InertiaValidator.cpp`、`test/InverseDynamicsTest.cpp`、`testdata/dynamics/two-link/` 与 `testdata/dynamics/gravity/` 下黄金数据文件（目录树由 T01 登记）、`evidence/WP-17/T02/`
+  - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01 冻结语义与 `dynamicsSemanticsVersion`；RobWorkSim API 按 NFR-DEP-05 锁定版本（不得升级/替换）；WP-16 类型（只契约引用）；WP-18 及其后模块头；本地效率/减速比计算（映射归 WP-18）；DWC BodyInfo 摩擦字段只允许置零；禁止 Qt Widgets、直读 UI 会话态
+- **修改前接口：**无评估实现（T01 仅语义头；旧插件重复功率/摩擦计算按 §11 迁移表删除，不在本卡）
+- **修改后接口：**`RneAdapter`（`rwsim::util::RecursiveNewtonEuler`：重力在基座坐标，连杆惯性、末端负载与外力经 `ExternalWrenchBinding` 按当前状态 FK 转基座传入）；`FrictionModel`（τ_j＝τ_RNE＋τ_f，τ_f＝b·ω＋τ_c·s(ω)，s(ω)＝ω/ωeps（|ω|≤ωeps＝1e-4）否则 sign(ω)；DWC 构建时 BodyInfo 摩擦字段置零——关节摩擦只在本模块计入一次，WP-18 不得复计）；`InertiaValidator`（惯量"参考点＋参考姿态＋参考坐标系"三要素随对象保存＋正定性与三角不等式校验）；`DynamicResult` 只读视图启用类型化广义力字段（N·m / N，移动关节按 N）
+- **实施步骤：**1) RED：写 `InverseDynamicsTest`（二连杆解析、静态重力矩、摩擦不双计、惯量非法、状态不连续）；2) 实现 `RneAdapter`（snapshot 校验→FK 状态→RNE 刚体力矩）；3) 实现 `FrictionModel`（冻结式＋BodyInfo 置零）；4) 实现 `InertiaValidator` 与 `IRD-DYN-INERTIA-INVALID`/`IRD-DYN-STATE-DISCONTINUOUS` 诊断；5) 三形式命令转绿并写证据
+- **RED 测试：**`InverseDynamicsTest`（先写先败）：`TwoLinkAnalyticMatches`（相对 1e-6、近零绝对下限 1e-8 N·m/N）、`StaticGravityTorqueMatches`（同容差）、`FrictionCountedOnce`（τ_j−τ_RNE＝τ_f 且 DWC BodyInfo 摩擦为零）、`ZeroSpeedRampNotSignFlip`（|ω|≤ωeps 无符号跳变）、`InvalidInertiaRejected`（→ `IRD-DYN-INERTIA-INVALID`，Engineering/Error）、`StateDiscontinuousRejected`（时间戳断裂/速度跳变→ `IRD-DYN-STATE-DISCONTINUOUS`）
+- **最小实现：**RNE 适配＋摩擦叠加＋惯量校验转绿；功率/能量积分（T03）、正动力学（T04）、降级路径（T05）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 二连杆黄金数据与静态位形，When 求逆动力学，Then 广义力满足 §15.3 容差且输出类型化（N·m/N）
+  - 边界：Given 零速与 |ω|＝ωeps 样本，Then 摩擦连续；外力在声明坐标系表达并 FK 转基座，不依赖"当前选中坐标系"
+  - 失败：Given 非正定/违反三角不等式惯量或断续轨迹，When 求值，Then 对应 Error 诊断、无部分正式结果
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "efficiency|ratio|reduction" plugins/dynamics/src/` 零命中（映射归 WP-18）；无第二套 RNE/摩擦实现（RobWorkSim RNE 经 `RneAdapter` 复用）；`DynamicsResult` 禁名零命中
+- **证据工件：**`evidence/WP-17/T02/`——二连杆解析与静态重力矩对照表（误差与容差）、摩擦不双计断言记录（含 BodyInfo 置零证明）、惯量校验矩阵、测试日志（commit/配置/种子/输入快照身份）
+- **提交格式：**`WP-17-T02: implement inverse dynamics`
+- **停止与升级条件：**RNE 适配在锁定版本 API 下无法达成 §15.3 容差、或 BodyInfo 摩擦置零与 DWC 构建冲突时，停止并升级（NFR-DEP-05 版本变更走升级）；不得放宽容差或本地重算效率/减速比

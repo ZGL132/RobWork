@@ -1,13 +1,30 @@
 # WP-22-T03 候选比较与应用
 
-- 需求/阶段：UX-01～08、AT-04、AT-05、AT-12；阶段 E / R2
-- 契约：`architecture/execution-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-22 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现候选比较、临时预览、基线差异和设为当前方案命令。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_candidate_compare_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-22-T03: 候选比较与应用`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：** WP-22-T03；UX-06、§5.3-5（候选比较须给相对基线变化）、§9.3（默认八项比较指标与 `comparisonTolerance` 语义归 WP-20）、AT-04（预览不改设计）、AT-12（应用＝方案分支＋恰好一个新修订＋基线不覆盖＋复算一致＋修订数不随候选数增长）；ADR-004（指标与容差读 WP-20 研究定义，不重新声明）。阶段 E / R1＋R2。契约：`architecture/evaluation-semantics.md` §4（应用守卫消费 `isFormallyFeasible`）、`architecture/symbol-registry.md`（SYM-OPT-005/006）；模块详设 `module-design/workflow-integration.md` v0.3 §6、§7（错误码提名）。
+- **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
+- **前置任务及必需工件：** WP-22-T02（状态投影可用）；外部消费 WP-20/21 结果对象：WP-20-T03/T04（静态指标与 Pareto）、WP-21-T04/T05（联合 `DesignCandidate`/`ParetoSet` 与应用路径）；WP-10-T02（`ISceneProjection.projectCandidate`）、WP-04-T02（命令端口）；工件：T01～T02 用例通过、WP-02 optimization 样本（候选与基线）。
+- **允许创建/修改/删除的文件：**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/`）创建 `comparison/include/sdurws/ird/ui/comparison/ComparisonView.hpp`、`comparison/src/ComparisonView.cpp`、`comparison/include/sdurws/ird/ui/comparison/MetricDiffModel.hpp`、`comparison/src/MetricDiffModel.cpp`、`comparison/test/ComparisonModelTest.cpp`、`comparison/testdata/`；修改 `ui/` CMakeLists（把 ComparisonModelTest 编入 `sdurws_ird_workflow_model_test`）；写 `comparison/evidence/`。不删除文件。
+- **禁止修改的文件和公共接口：** WP-20/21 优化源文件（只读消费 `DesignCandidate`/`ParetoSet` 值对象）；WP-05 谓词；WP-10 `ISceneProjection`；WP-04 project 源文件；`requirements.md`、CSV；不新增 CMake 目标。
+- **修改前接口：** `ui/comparison/` 目录不存在；`sdurws_ird_workflow_model_test` 不含 ComparisonModelTest；无比较视图与差异模型。
+- **修改后接口：** `ComparisonView`＋`MetricDiffModel`：输入以 `ResultRef`/runId 引用基线与候选（文件路径不是结果身份）；指标集＝需求 §9.3 默认八项（总体尺寸包络、结构质量、节拍、关节侧正机械功、器件质量、器件成本、最小关节裕量、最小驱动裕量），激活目标与 `comparisonTolerance` 读取优化研究定义（WP-20）；逐指标输出基线值、候选值、绝对/相对变化与差异高亮；小于容差标"无差别"不构成支配；硬约束违反项单独列出不被总分掩盖。预览经 `ISceneProjection.projectCandidate`（会话态，退出恢复）；应用入口走 WP-04 命令并守卫 `isFormallyFeasible`。
+- **实施步骤：**
+  1. 写 RED 测试（八项指标聚合、差异高亮、无差别容差、应用守卫、`IRD-WF-NOT-COMPAREABLE`/`IRD-WF-APPLY-BLOCKED`）。
+  2. 实现 `MetricDiffModel`：按 `ResultRef` 取候选与基线结果，八项指标聚合与差异计算（容差与激活目标读研究定义）。
+  3. 实现 `ComparisonView` 差异高亮与硬约束违反单列。
+  4. 实现可比性守卫：缺同名指标或含非正式可行项 → `IRD-WF-NOT-COMPAREABLE`（Input/Error）列出不可比项、拒绝整组比较。
+  5. 实现预览（`projectCandidate` 会话态，AT-04 不产生修订）与应用入口（WP-04 命令；守卫失败 → `IRD-WF-APPLY-BLOCKED` 列 `gaps` 并保持当前修订；预览候选先复算为 Current 方可应用）。
+  6. CMake 编入模型测试目标，执行验证命令，写证据。
+- **RED 测试：** 实现前 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"` 无 Comparison 用例；落地后全部通过。
+- **最小实现：** 差异模型＋比较视图＋三守卫；不做 GUI 回归（T05）、不做报告生成（WP-12 入口在 T04 绑定）。
+- **正常/边界/失败测试：**
+  - 正常：Given 基线与两个正式可行候选（同名八项指标齐全），When 比较，Then 逐指标基线值/候选值/绝对/相对变化输出，差值小于 `comparisonTolerance` 的指标标"无差别"。
+  - 边界：Given 候选仅与基线差值全部落在容差内，When 判定，Then 互不支配并列显示，不给出支配结论；Given 预览中的候选，When 请求应用，Then 要求先复算为 Current 结果。
+  - 失败：Given 比较集缺同名指标或含非正式可行项，When 请求比较，Then `IRD-WF-NOT-COMPAREABLE` 拒绝整组比较并列出不可比项；Given 未通过正式可行判定的候选，When 请求应用，Then `IRD-WF-APPLY-BLOCKED` 列 `gaps`、保持当前修订。
+- **精确验证命令：**（仓库根、VS x64 环境；`QCoreApplication` 模型测试）
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_model_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
+- **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；不重新声明八项指标集合或 `comparisonTolerance` 默认值（一律读研究定义）；无加权总分；预览路径无 revision 写入。
+- **证据工件：** `ui/comparison/evidence/t03-candidate-compare.log`：八项指标聚合与差异对照表（WP-02 optimization 样本）、无差别容差边界样例、守卫触发诊断样例、命令原文与 commit。
+- **提交格式：** `WP-22-T03: 候选比较与应用`
+- **停止与升级条件：** WP-20 研究定义公共头无法提供激活目标与 `comparisonTolerance`、或 WP-21-T05 应用路径未交付时，停止并升级工作包所有者；实现者不得担任本卡独立验证者。

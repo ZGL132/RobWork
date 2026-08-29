@@ -1,11 +1,25 @@
 # WP-03-T04 领域聚合 Schema
-- 需求/阶段：ARC-01、ARC-03～05、NFR-COR-03；阶段 A / R1
-- 契约：architecture/domain-model.md、architecture/persistence-schema.md、module-design/core-domain.md
-- 前置：WP-03-T01～T03、WP-02-T01；允许：DomainObjects.hpp、DomainJson.hpp/.cpp 和 schema 测试；禁止：实现业务算法、保存 RobWork/Widget 指针或重复定义 WP-04/05 的仓库对象。
-- 产出：RobotDesign、ToolDefinition、EnvironmentModel、EngineeringRequirements、LoadCase、DriveTrainDesign、AnalysisConfiguration、CatalogRef、OptimizationStudyDefinition 的身份/引用骨架及公共 Envelope。
-- Given 缺引用、重复 objectId、错误 ownerScopeId 或未知 schema，When JSON 加载，Then 返回定位诊断且不生成部分聚合。
-- Given 合法聚合和有限标量，When JSON 往返，Then ID、枚举、引用、来源一致，浮点误差不超过 1e-12。
-- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_aggregate_schema_test$'；入口由 WP-01-T03 交付。
-- 证据：JSON 示例、未知字段/版本测试、引用图和 schema 版本报告。
-- 提交：WP-03-T04: domain aggregate schema
-- 停止：任何新增字段需要改变公共语义时暂停并提交 ADR。
+
+- **Task ID / 需求 ID / ADR / 阶段：**WP-03-T04；需求 ARC-01、ARC-03～05、NFR-COR-03；ADR-001、ADR-004；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、persistence-schema §3、core-domain v0.3、`schemas/examples/robot-design.example.json`、`engineering-requirements.example.json`。
+- **前置任务及必需工件：**WP-03-T01（值类型）、WP-03-T02（`ObjectIdentity/ValueProvenance` 与 `DomainJson` 身份段）、WP-03-T03（评估枚举）、WP-02-T01（manifest 完整性框架与 Schema 夹具校验流程 `schemas/validate-schemas.ps1`）。
+- **允许创建/修改/删除的文件**（模块根同 WP-03-T01）：创建 `include/sdurws/ird/core/DomainObjects.hpp`、`evidence/WP-03/`；修改 `DomainJson.hpp/.cpp`（聚合序列化段）、`DomainValidation.hpp/.cpp`（聚合校验段）、`test/DomainValuesTest.cpp`（聚合 JSON 往返断言）、`test/IdentityTest.cpp`（引用图断言）、`testdata/domain/{valid-aggregate,unknown-version}.json`、`CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**T01～T03 冻结签名；requirements.md 与 architecture/、module-design/、schemas/ 文档；WP-02 黄金数据；其他 WP 公共头。禁止实现业务算法字段、保存 RobWork/Widget 指针、重复定义 WP-04/05 的仓库对象（`ProjectRevision/ResultEnvelope` 等）。
+- **修改前接口：**T01～T03 的值类型、身份/来源与评估枚举；`DomainJson` 仅支持身份/来源段。
+- **修改后接口：**聚合引用骨架 `RobotDesign/JointDefinition/ToolDefinition/EnvironmentModel/EngineeringRequirements/LoadCase/DriveTrainDesign`（SYM-DOM-002～005）、`AnalysisConfiguration`、`CatalogRef`、`OptimizationStudyDefinition` 与公共 `Envelope`；`DomainJson` 支持 schemaVersion 门禁（未知未来版本 → `IRD-CORE-SCHEMA-FUTURE`）与聚合往返。
+- **实施步骤：**1) 先写聚合加载失败测试（缺引用、重复 objectId、错误 ownerScopeId、未知 schemaVersion）；2) 定义九类聚合身份/引用骨架（不实现业务算法字段）；3) 扩展 `DomainValidation`：ID 格式→ownerScopeId→localName 唯一→引用存在→目标主链→枚举组合；4) 扩展 `DomainJson` 往返（未知字段保留再序列化，persistence-schema §3）。
+- **RED 测试：**缺引用、重复 objectId、错误 ownerScopeId、未知未来 schemaVersion → `IRD-CORE-REFERENCE-UNRESOLVED` / `IRD-CORE-IDENTITY-INVALID` / `IRD-CORE-SCHEMA-FUTURE`，且不生成部分聚合。
+- **最小实现：**聚合骨架字段 + 校验链 + JSON 往返；升级链归 WP-04-T05。
+- **正常/边界/失败测试：**
+  - 失败：Given 聚合缺引用或身份冲突，When JSON 加载，Then 返回定位诊断（含 objectId、actual/expected）且不产生部分对象。
+  - 正常：Given 合法聚合与有限标量，When JSON 往返，Then ID、枚举、引用、来源逐字段一致，浮点误差 ≤1e-12。
+  - 边界：未知字段加载时内存保留并原样再序列化；JSON number 非有限拒绝；夹具先过 `schemas/validate-schemas.ps1` 再进往返断言（core-domain §6）。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；聚合字段与 public-interfaces §7/domain-model §1～§4 一致，无自造字段；无业务算法实现；无 RobWork/Qt 指针成员。
+- **证据工件：**`evidence/WP-03/T04/`：JSON 示例与往返日志、未知字段/未知版本测试输出、引用图与 schema 版本报告。
+- **提交格式：**`WP-03-T04: domain aggregate schema`。
+- **停止与升级条件：**任何新增字段需要改变公共语义、或 schema 与 `schemas/` 机器校验不一致时停止并提交 ADR/契约变更请求；不通过代码反向冻结设计。

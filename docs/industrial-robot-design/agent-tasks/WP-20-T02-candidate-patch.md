@@ -1,11 +1,21 @@
 # WP-20-T02 候选补丁
 
-- 需求/阶段：OPT-01、02；B/R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`
-- 前置：WP-13～15、WP-20-T01；允许：候选编译目录；禁止：修改项目修订
-- 产出：`CandidateInputSnapshot`、`CompiledCandidateArtifact` 和差异诊断
-- Given 编译失败，When 生成候选，Then 无项目修订且错误可定位
-- Given 合法向量，When 编译，Then 基线差异、来源和对象 ID 完整
-- 命令：`run-tests.ps1 ... -Regex '^sdurws_ird_optimization_definition_test$'`
-- 证据：候选差异报告；提交：`WP-20-T02: compile candidate patches`
-- 停止：候选与修订归属混淆时暂停
+- **Task ID / 需求 ID / ADR / 阶段：**WP-20-T02；OPT-01、OPT-02（OPT-B）；ADR-003；阶段 B / R1。契约：`architecture/candidate-compilation.md` §2～§5（最高权威）、`architecture/symbol-registry.md` SYM-OPT-003/004/012/013、`schemas/candidate-patch.schema.json`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-20-T01（`OptimizationStudyDefinition` 校验＋绑定注册表工件）；WP-06-T03（`CompiledRobotArtifacts` 编译管线——`CompiledCandidateArtifact` 组合其管线且身份独立，symbol-registry §4.5 裁决 #5）
+- **允许创建/修改/删除的文件：**创建 `plugins/optimization/candidate/include/sdurws/ird/opt/DesignVector.hpp`、`CandidatePatchCompiler.hpp`、`CandidateCompiler.hpp`，`candidate/src/DesignVector.cpp`、`CandidatePatchCompiler.cpp`、`CandidateCompiler.cpp`，`test/CandidatePatchTest.cpp`，`testdata/optimization/vectors/`、`testdata/optimization/candidates/`；修改 `plugins/optimization/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**candidate-compilation §2～§5 冻结语义（规范序列化、稳定 ID 公式、全成全败）；WP-06 编译管线接口（只组合）；T01 注册表条目；项目修订与 `ProjectRevision` 写路径（候选不创建修订）；requirements/CSV/architecture/module-design
+- **修改前接口：**无候选编译链路
+- **修改后接口：**`DesignVector`（SYM-OPT-012，不可变映射 variableId→类型化值；未出现＝未设置、出现且为 0＝合法设置值；规范序列化＝键按 UTF-8 字节序排序的 JSON、无空白、浮点十六进制或最短往返表示，取 SHA-256）；`CandidatePatch`（SYM-OPT-013：`orderedMutations` 按注册序＋DAG 拓扑序、`derivedRecomputation`、`diagnostics`、`writeSetFingerprint`；全成全败——任一 mutation 失败整体拒绝 `IRD-OPT-PATCH-REJECTED`，不留工件、无部分应用状态）；`CandidateInputSnapshot`（SYM-OPT-003：基线修订＋研究版本＋`DesignVector`）；`CandidateCompiler` 组合 WP-06 管线产出 `CompiledCandidateArtifact`（SYM-OPT-004，身份独立）；`candidateStableId`＝SHA-256(studyDefinitionVersion ‖ canonical(DesignVector) ‖ randomSeed)
+- **实施步骤：**1) RED：写 `CandidatePatchTest`（全成全败、零值语义、序列化、稳定 ID、派生重算、不建修订）；2) 实现 `DesignVector` 与规范序列化；3) 实现 `CandidatePatchCompiler`（mutation 排序＋逐项校验＋派生重算）；4) 实现 `CandidateCompiler` 组合 WP-06 管线；5) 建向量/候选夹具；6) 三形式命令转绿并写证据
+- **RED 测试：**`CandidatePatchTest`（先写先败）：`PatchIsAllOrNothing`（任一 mutation 失败 → `IRD-OPT-PATCH-REJECTED`，无工件、无部分应用）、`ZeroIsSetValueNotUnset`（0≠未设置，序列化与域校验可区分）、`CanonicalSerializationStable`（键序/无空白/浮点表示按冻结规则，SHA-256 跨线程一致）、`StableIdFormula`（同研究版本＋向量＋种子跨线程同 ID，candidate-compilation §5）、`DerivedRecomputationMethods`（method∈{AnalyticEstimate, UniformScaling}；AnalyticEstimate 语义源 robot-modeling.md §5 公式表、禁止双实现；UniformScaling 仅无截面几何时回退并记录）、`DerivedInertiaValidityChecked`（每个派生惯量张量正定性与三角不等式校验，非法样本单独报告）、`CandidateCreatesNoRevision`（编译全程修订数不变）
+- **最小实现：**向量/补丁/候选编译链路转绿；静态约束（T03）与指标（T04）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 合法向量，When 编译，Then 基线差异（`orderedMutations`）、派生重算、来源与对象 ID 完整，`CompiledCandidateArtifact` 可整体丢弃
+  - 边界：Given 含零值变量与未设置变量的混合向量，Then 两者在补丁与序列化中严格区分；Given 编译失败（结构边界/拓扑非法），Then `IRD-OPT-CANDIDATE-COMPILE-FAILED`、无部分工件、错误可定位
+  - 失败：Given 域越界/类型单位不符/绑定未注册的 mutation，When 编译，Then 整体拒绝 `IRD-OPT-PATCH-REJECTED`、无任何工件
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "setRevision\|createRevision\|apply(" candidate/src/` 零命中（候选不写项目）；`CompiledRobotArtifacts` 与 `CompiledCandidateArtifact` 类型不混用（符号裁决 #5）；反射式写入零命中
+- **证据工件：**`plugins/optimization/evidence/WP-20/T02/`——候选差异报告（向量→补丁→工件链样例）、派生重算对照（公式版本/方法）、稳定 ID 复现记录（多线程）、测试日志
+- **提交格式：**`WP-20-T02: compile candidate patches`
+- **停止与升级条件：**AnalyticEstimate 实现归属（共享 evaluation 包 vs 端口注入）按 D5 报告裁决未落地、或 WP-06 管线无法组合产出候选工件时，停止并升级；候选与项目修订归属出现混淆（任何候选路径产生修订）立即停止并报告

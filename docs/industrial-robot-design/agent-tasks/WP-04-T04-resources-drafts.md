@@ -1,41 +1,25 @@
 # WP-04-T04 内容对象、资源与草稿隔离
 
-- Task ID：WP-04-T04
-- 需求/阶段：CON-01、CON-03、NFR-REL-01；阶段 A / R1
-- 架构契约：`architecture/persistence-schema.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`；模块方案：`module-design/persistence.md`
-- 前置：WP-04-T01、WP-04-T03、WP-03 core。
-
-## 边界与产出
-
-允许：修改 `include/sdurws/ird/project/ContentObject.hpp`、`ProjectDraft.hpp`、`src/ContentObjectStore.cpp`、`src/DraftStore.cpp`、`src/Reachability.cpp`、`test/ResourceDraftTest.cpp`。
-禁止：修改 evaluator/result 接口、ProjectRevision 字段含义、GUI 会话状态或直接删除历史对象。
-
-产出：内容寻址对象库、引用图遍历、dry-run 清理报告和独立草稿库。对象路径为 `objects/<lowercase sha256>`，写入后只读；写入相同哈希必须幂等并校验 mediaType/bytes。
-
-## 数据流与规则
-
-`external path -> safe read -> size/type/hash limits -> object store -> ContentObjectRef -> manifest/objectRefs`。Verified 或正式报告引用资源时必须复制；源文件变化不改写历史对象。可达根包括所有 branch HEAD、历史 revision、snapshot、report、checkpoint。草稿 `draftId/sessionId/baseRevisionId/patch/editedAt` 单独写入 drafts，绝不进入 revision 或计算队列。
-
-## Given/When/Then
-
-- Given 外部网格/URDF/目录/材料表，When 导入并被 Verified 引用，Then产生不可变 SHA-256 对象和 manifest 引用。
-- Given 相同字节重复导入，When put，Then返回同一 objectId，不重复写入且哈希一致。
-- Given 对象被任一历史 revision、报告或检查点引用，When collect，Then列为 reachable，不得删除。
-- Given 未保存草稿，When session reload 或 evaluator enqueue，Then草稿恢复到会话但不产生 revision、不创建输入切片、不触发计算。
-- Given 源文件缺失或超过预算，When import，Then返回 `IRD-PERSIST-SOURCE-MISSING` 或 `IRD-PERSIST-RESOURCE-BUDGET`，旧项目不变。
-
-## 测试与命令
-
-覆盖对象篡改、媒体类型不符、超大文件、不可达对象 dry-run、引用图环、草稿并发保存、草稿损坏和会话重启。
-
-命令：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_resources_drafts_test$'
-```
-
-证据：对象哈希清单、可达性报告、草稿与 revision 对比、队列调用计数、诊断 JSON 和评审签名。
-
-提交：`WP-04-T04: implement immutable resources and draft isolation`。
-
-停止：清理算法无法证明历史可达性、草稿可能进入 evaluator 或需要改变快照契约时暂停。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-04-T04；需求 CON-01、CON-03、NFR-REL-01；ADR-002；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §1（§2.4 对象头裁决）、§4、module-design/persistence.md v0.3。
+- **前置任务及必需工件：**WP-04-T01（`ProjectPath` 安全读取）、WP-04-T03（`TransactionWriter` 原子落位）、WP-03 core；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ContentObject.hpp`、`ProjectDraft.hpp`、`src/ContentObjectStore.cpp`、`src/DraftStore.cpp`、`src/Reachability.cpp`、`test/ResourceDraftTest.cpp`、`evidence/WP-04/`；修改 `CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**evaluator/result 接口（WP-05）；`ProjectRevision` 字段含义；GUI 会话状态；直接删除历史对象；T01～T03 冻结接口；文档与 schemas/。
+- **修改前接口：**T03 的事务写入仅覆盖领域 JSON/manifest，无内容对象库、无草稿库。
+- **修改后接口：**`ContentObjectRef{sha256,bytes,成员形态}`（`object.json` 或 `payload.bin + meta.json` 二选一，目录名＝内容 SHA-256 小写）；`DraftRecord{draftId,sessionId,baseRevisionId,editedAt,patch}`；追加协议原语（供 WP-05/08/12 复用：临时目录→哈希校验→原子 rename，不产生修订不切 HEAD）；错误码 `IRD-PERSIST-SOURCE-MISSING`、`IRD-PERSIST-SOURCE-CHANGED`（资源预算码按 WP-11/总纲登记项引用）。
+- **实施步骤：**1) 先写对象不可变/去重与草稿隔离失败测试；2) 实现内容寻址对象库（安全读取→大小/类型限制→SHA-256→落位后只读）；3) 实现可达性 dry-run 报告（可达根：所有 branch HEAD、历史 revision、snapshot、report、checkpoint）；4) 实现草稿库（`drafts/<draft-id>.json`）；5) 实现追加原语幂等/冲突语义。
+- **RED 测试：**对象被历史 revision/报告/检查点引用时出现在删除清单 → 不得删除；草稿触发 evaluator enqueue 或进入修订 → 测试失败；同哈希异内容写入 → 拒绝。
+- **最小实现：**对象库＋只读可达性清单＋草稿库；不实现 GC 删除（首版仅 dry-run）。
+- **正常/边界/失败测试：**
+  - 失败：Given 源文件缺失或哈希与记录不符，When import/relink，Then `IRD-PERSIST-SOURCE-MISSING`/`IRD-PERSIST-SOURCE-CHANGED`，旧项目不变。
+  - 正常：Given 外部网格/URDF/材料表被 Verified 引用，When 导入，Then 产生不可变 SHA-256 对象与 manifest 引用；相同字节重复导入返回同一对象且幂等。
+  - 边界：对象篡改、mediaType 不符、超大文件、引用图环、草稿并发保存、草稿损坏、会话重启后草稿恢复但不产生 revision、不创建输入切片、不触发计算。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；对象头仅携带 `objectId/ownerScopeId/localName/objectRevision`＋来源＋对象 Schema 版本（§2.4 裁决，项目/分支/修订关联只在 manifest）；无直接删除历史对象路径。
+- **证据工件：**`evidence/WP-04/T04/`：对象哈希清单、可达性 dry-run 报告、草稿与 revision 对比、队列调用计数、诊断 JSON。
+- **提交格式：**`WP-04-T04: implement immutable resources and draft isolation`。
+- **停止与升级条件：**清理算法无法证明历史可达性、草稿可能进入 evaluator、或需改变快照/追加契约时停止并报告；资源预算参数未登记时提请 WP-11/总纲补登记。

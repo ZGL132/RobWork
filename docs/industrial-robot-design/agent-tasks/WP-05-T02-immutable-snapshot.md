@@ -1,32 +1,25 @@
 # WP-05-T02 不可变分析快照
 
-- Task ID：WP-05-T02
-- 需求/阶段：CON-01～CON-06、EVI-01；阶段 A / R1
-- 架构契约：`architecture/persistence-schema.md`、`architecture/execution-model.md`、`architecture/public-interfaces.md`；模块方案：`module-design/snapshot-result.md`
-- 前置：WP-05-T01、WP-04 内容对象/查询接口、WP-06 RuntimeNameMap 接口。
-- 允许：修改 `evidence/include/.../AnalysisSnapshot.hpp`、`src/AnalysisSnapshot.cpp`、`src/EvidenceJson.cpp`、`test/SnapshotTest.cpp`、`testdata/evidence/snapshot/`。
-- 禁止：修改 slice 字段语义、项目事务、名称解析公共接口、GUI 或结果仓库。
-- 产出：深拷贝快照、资源/策略/名称/软件版本冻结和 Quick 降级规则。
-
-## 数据流
-
-`ProjectRevisionRef + EvaluatorInputSlice + policyRef + RuntimeNameMapRef + SoftwareBaseline + resourceRefs -> validate completeness -> deep-copy/freeze -> snapshotId`。快照创建后只读，外部路径必须已解析为不可变对象；Quick 临时引用不可进入正式证据。
-
-## Given/When/Then
-
-- Given 缺策略、名称映射、算法版本或 Verified 资源对象，When create，Then返回 Engineering/System 诊断，不生成 snapshotId。
-- Given 合法输入，When 修改调用者原始对象，Then快照字段、hash 和资源引用不变。
-- Given Quick 模式外部路径，When create，Then标记 Screening/NonFormal，正式报告接纳器拒绝。
-- Given 软件 baseline 或 seed 缺失，When create，Then返回 `IRD-EVIDENCE-SNAPSHOT-INCOMPLETE`。
-
-## 测试、证据与提交
-
-覆盖深拷贝、序列化往返、资源篡改、版本缺失、Quick/Verified 对比和跨线程 const 访问。
-
-命令：
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_immutable_snapshot_test$'
-```
-证据：snapshot JSON、所有引用 hash、输入身份、失败诊断和评审记录。提交：`WP-05-T02: implement immutable analysis snapshots`。
-
-停止：无法证明深拷贝、资源不可变或需要临时默认版本时暂停。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-05-T02；需求 CON-01～CON-06、EVI-01；ADR-001、ADR-005；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §7（`AnalysisSnapshot` 字段冻结）、architecture/persistence-schema.md §4、module-design/snapshot-result.md v0.3（含依赖裁决：不依赖 WP-06 代码）。
+- **前置任务及必需工件：**WP-05-T01（`EvaluatorInputSlice` 与 `sliceHash`）；WP-04-T04（`ContentObjectStore` 不可变对象落位与追加原语）；WP-01-T03（测试入口）。无 WP-06 代码前置——`nameMapId/resolvedPolicyContentId` 为 64 位小写 hex 不透明内容 ID。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/AnalysisSnapshot.hpp`、`EvidenceBundle.hpp`、`src/AnalysisSnapshot.cpp`、`test/SnapshotTest.cpp`、`testdata/evidence/{snapshot,invalid}/`、`evidence/WP-05/`；修改 `src/EvidenceJson.cpp`（快照段）、`CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**T01 冻结的切片字段语义与哈希规则；WP-04 项目事务/对象库实现；名称解析公共接口（`IRuntimeNameResolver` 归 WP-06）；GUI；结果仓库（T04）；文档与 schemas/。
+- **修改前接口：**T01 的切片构建；无快照类型。
+- **修改后接口：**`AnalysisSnapshot{snapshotId,sourceRevision,objectRevisions[],config,软件基线,randomSeed,manifest,resolvedPolicyContentId,nameMapId}`（architecture/public-interfaces.md §7）；`EvidenceBundle{config 快照,resourceFidelity[],diagnostics[],statistics,provenance,reproduction}`；错误码 `IRD-EVIDENCE-SNAPSHOT-INCOMPLETE`；创建后只读，getter 无可变视图。
+- **实施步骤：**1) 先写完整性/不可变性失败测试；2) 实现深拷贝冻结（调用者修改原始对象不影响快照字段、哈希与资源引用）；3) 实现资源经 WP-04 对象库落位（Verified/正式引用必须已是不可变对象）；4) 实现 Quick 降级（外部路径＋哈希，标记 Screening/非正式）；5) 序列化往返夹具对齐 `schemas/examples/analysis-snapshot.example.json`。
+- **RED 测试：**缺策略内容 ID、名称映射内容 ID、算法/软件版本或 Verified 资源对象 → Engineering/Input 诊断，不生成 `snapshotId`；缺软件 baseline 或 seed → `IRD-EVIDENCE-SNAPSHOT-INCOMPLETE`。
+- **最小实现：**快照冻结＋完整性校验＋JSON 往返；接纳/仓库归 T04。
+- **正常/边界/失败测试：**
+  - 失败：Given 任一必填身份缺失，When create，Then 稳定诊断且无部分快照。
+  - 正常：Given 合法输入，When 修改调用者原始对象后再读快照，Then 字段、哈希与资源引用不变；跨线程 const 访问安全。
+  - 边界：Quick 模式外部路径只存路径＋哈希并标记非正式，正式报告接纳器拒绝；序列化往返逐字段一致（容差 ≤1e-12）；资源篡改在快照侧可检出。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；无 `IRuntimeNameResolver`/WP-06 头引用（依赖裁决）；快照序列化不依赖 UI 状态；无运行时名称作为主键。
+- **证据工件：**`evidence/WP-05/T02/`：snapshot JSON、全部引用哈希、输入身份、失败诊断 JSON、往返比对日志。
+- **提交格式：**`WP-05-T02: implement immutable analysis snapshots`。
+- **停止与升级条件：**无法证明深拷贝或资源不可变、需要临时默认版本号时停止并报告；快照字段变更必须先改 architecture/public-interfaces.md §7 与 ADR，不在代码内扩字段。

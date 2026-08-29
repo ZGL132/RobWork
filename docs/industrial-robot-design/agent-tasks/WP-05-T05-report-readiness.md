@@ -1,32 +1,25 @@
 # WP-05-T05 正式可行与报告就绪
 
-- Task ID：WP-05-T05
-- 需求/阶段：EVI-01、NFR-COR-02、NFR-COR-04；阶段 A / R1
-- 架构契约：`architecture/domain-model.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`；模块方案：`module-design/snapshot-result.md`
-- 前置：WP-05-T03、WP-05-T04、WP-03 正式可行谓词、WP-12 报告接口。
-- 允许：修改 `evidence/include/.../ReportReadiness.hpp`、`EvidenceGap.hpp`、`src/ReportReadiness.cpp`、`test/ReportReadinessTest.cpp`、`testdata/evidence/readiness/`。
-- 禁止：复制/修改 `isFormallyFeasible`、改变报告措辞、把 Quick/Partial 结果提升为正式证据或修改需求。
-- 产出：RequiredEvidenceProfile 缺口计算和报告就绪判定。
-
-## 数据流
-
-`accepted ResultEnvelope[] + RequiredEvidenceProfile -> group by requirement/evaluator -> check Current + Completed + Complete + evidence level + resource fidelity -> call WP-03 predicate -> EvidenceGap[] + readiness`。模块只解释缺口，不替代领域可行谓词。
-
-## Given/When/Then
-
-- Given全部 Must 约束通过且所需评估器、资源和证据等级齐全，When assess，Then复用 WP-03 谓词并返回 Ready/Feasible。
-- Given缺任一评估器、资源保真度或最低证据等级，When assess，Then返回 NotReady 和可定位 `EvidenceGap`。
-- Given Quick、Partial、DataInsufficient、NotEvaluated 或 Superseded 结果，When assess，Then不得成为正式报告证据。
-- Given同一 requirement 多个结果，When assess，Then只选择 Current 且身份匹配的结果，其他保留为历史。
-
-## 测试、证据与提交
-
-覆盖缺口排序、证据等级边界、Must/Should 区分、当前性、取消结果和报告消费者契约。
-
-命令：
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_report_readiness_test$'
-```
-证据：RequiredEvidenceProfile、缺口 JSON、谓词输入输出、报告就绪矩阵和独立评审。提交：`WP-05-T05: implement report readiness and evidence gaps`。
-
-停止：报告层要求重新定义工程状态、缺口无法映射 requirementId 或证据等级含义未冻结时暂停。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-05-T05；需求 EVI-01、NFR-COR-02、NFR-COR-04；ADR-005；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/evaluation-semantics.md §3～§5、architecture/public-interfaces.md §5/§7、module-design/snapshot-result.md v0.3。
+- **前置任务及必需工件：**WP-05-T03（包络与 `RequiredEvidenceProfile` 消费面）、WP-05-T04（`IResultRepository` 接纳历史与当前性）、WP-03-T03（`isFormallyFeasible()` 与 `FeasibilityVerdict/gaps`）；WP-01-T03（测试入口）。WP-12 为下游消费者（契约引用，非代码前置）。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/ReportReadiness.hpp`（模块私有就绪评估）、`src/ReportReadiness.cpp`、`test/ReportReadinessTest.cpp`、`testdata/evidence/readiness/`、`evidence/WP-05/`；修改 `EvidenceDiagnostics.hpp`（`EvidenceGap` 定义归此）、`CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**`isFormallyFeasible` 谓词（WP-03 所有，禁止复制/修改）；报告措辞（WP-12）；把 Quick/Partial 结果提升为正式证据；requirements.md；T01～T04 冻结签名；文档与 schemas/。
+- **修改前接口：**T04 的查询与当前性；无缺口类型与就绪评估。
+- **修改后接口：**`EvidenceGap{requirementId,missingEvaluator,missingResource,minimumLevel,actualLevel}`（供报告层列举，不猜测状态）；`ReportReadiness` 评估入口：按 requirement/evaluator 分组已接纳结果 → 检查 Current + Completed + Complete + 证据等级 + 资源保真度 → 调用 WP-03 谓词 → 输出 `FeasibilityVerdict` + `EvidenceGap[]` + readiness。
+- **实施步骤：**1) 先写缺口与排除规则 RED 测试；2) 实现结果分组与 Current 身份匹配选择；3) 接 WP-03 谓词（只解释 `gaps`，不复制判定）；4) 实现 `EvidenceGap` 填充与稳定排序；5) 冻结"Quick/Partial/DataInsufficient/NotEvaluated 与非 Current 不得进入正式报告"断言。
+- **RED 测试：**缺任一评估器、资源保真度或最低证据等级 → NotReady 且 `EvidenceGap` 逐项可定位；Quick、Partial、DataInsufficient、NotEvaluated、Superseded/Historical 结果被用作正式证据 → 测试失败。
+- **最小实现：**分组＋谓词调用＋缺口列举；不渲染、不措辞、不改历史。
+- **正常/边界/失败测试：**
+  - 失败：Given 任一 Must 条件不满足，When assess，Then NotReady 且缺口映射到 requirementId，不只显示"不可行"。
+  - 正常：Given 全部 Must 通过、所需评估器/资源/证据等级齐全且结果 Current，When assess，Then 复用 WP-03 谓词返回 Ready/Feasible。
+  - 边界：同一 requirement 多个结果时只选 Current 且身份匹配者，其余保留为历史；证据等级恰好满足/差一档各一例；Must/Should 区分（Should 未满足 → Warning，不阻断）；取消结果不参与。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；全模块无第二处 `isFormallyFeasible` 实现（grep 校验）；无结果状态被改写；profile 只读消费（同 usageId 唯一由 WP-03 保证）。
+- **证据工件：**`evidence/WP-05/T05/`：RequiredEvidenceProfile 样例、缺口 JSON、谓词输入输出、报告就绪矩阵与独立评审记录。
+- **提交格式：**`WP-05-T05: implement report readiness and evidence gaps`。
+- **停止与升级条件：**报告层要求重新定义工程状态、缺口无法映射 requirementId 或证据等级含义未冻结时停止并报告；语义变更走 evaluation-semantics/ADR-005 修订。

@@ -1,11 +1,27 @@
 # WP-20-T06 结果与应用
 
-- 需求/阶段：OPT-07、08、CON-02；B/R1
-- 契约：`architecture/execution-model.md`、`public-interfaces.md`
-- 前置：WP-04、WP-05、WP-20-T04；允许：结果仓库和应用适配；禁止：候选直接写项目
-- 产出：运行结果归属、候选应用命令和分支创建
-- Given 运行候选，When 评估中修改项目，Then 修订号不随候选增长
-- Given 显式设为当前，When 应用，Then 只创建一个分支和新修订
-- 命令：`run-tests.ps1 ... -Regex '^sdurws_ird_optimization_definition_test$'`
-- 证据：修订/结果当前性矩阵；提交：`WP-20-T06: integrate optimization results`
-- 停止：结果 payload 被回写时暂停
+- **Task ID / 需求 ID / ADR / 阶段：**WP-20-T06；OPT-07、OPT-08（OPT-B）、CON-02、AT-12；ADR-003（OPT-B 权威范围）；阶段 B / R1。契约：`module-design/optimization.md` v0.3 §3/§4（管线时序）、`architecture/candidate-compilation.md` §4（候选不创建修订）、`architecture/evaluation-semantics.md` §2（预算耗尽锚点）、`architecture/execution-model.md`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-20-T01
+- **前置任务及必需工件：**WP-20-T04（可行集合/`ParetoSet` 工件——应用对象仅取可行候选）、WP-20-T05（缓存/确定性工件）；WP-04-T02（`DomainCommand`/`IProjectCommandService` 命令端口）、WP-05-T04（`IResultRepository` 结果仓库）
+- **允许创建/修改/删除的文件**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）：
+  - 创建：`test/ResultApplicationTest.cpp`、`evidence/WP-20/T06/`
+  - 修改：`candidate/include/sdurws/ird/opt/CandidateCompiler.hpp`、`candidate/src/CandidateCompiler.cpp`（追加运行结果装配＋方案分支应用包组装——详设树无独立应用头文件，落位于既有 candidate 文件）、`plugins/optimization/CMakeLists.txt`（仅追加测试文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**WP-04/WP-05 源码（只经端口调用）；T01～T05 冻结语义（含稳定 ID 公式与缓存键）；`DesignVector`/`CandidatePatch` 规范序列化；requirements/CSV/architecture/module-design；候选/运行结果直写 revision；`OptimizationRunResult` 全量判定语义归 WP-21（本卡只做静态追加）
+- **修改前接口：**候选链路止于 `ParetoSet`（T04），运行结果不入仓库、无应用命令包
+- **修改后接口：**运行结果装配——`OptimizationRunResult`（SYM-OPT-002）静态子集经 `IResultRepository{append}` 只追加（运行身份、候选集合、统计、完成状态），候选结果只归优化运行、不产生修订，运行期间修订数不随候选数量增长（AT-12）；预算耗尽落 `Completed + DataInsufficient + Complete` 锚点（evaluation-semantics §2），可加预算后新 attempt 续跑（WP-08 契约）；方案分支应用包（模块私有类型，optimization.md §3：`DesignVector`＋`writeSetFingerprint`＋目标分支名）——"设为当前方案"经 WP-04 `DomainCommand` 发出，创建方案分支＋恰好一个新修订＋触发完整复算（OPT-08/AT-12）；应用包只接受可行集合内候选且 `writeSetFingerprint` 必须匹配，不匹配拒绝且不产生部分命令
+- **实施步骤：**1) RED：写 `ResultApplicationTest`（修订数不变、只追加、恰好一个新修订、预算锚点、指纹校验）；2) 在 `CandidateCompiler` 实现运行结果装配与 `IResultRepository` 追加；3) 实现应用包组装与 WP-04 `DomainCommand` 发出、复算触发；4) 实现可行集合/指纹守卫与预算锚点；5) 三形式命令转绿并写证据
+- **RED 测试：**`ResultApplicationTest`（先写先败）：`CandidatesCreateNoRevision`（运行期修订数不随候选数量增长，AT-12）、`RunResultAppendOnly`（经 `IResultRepository` 只追加、不直写项目）、`ApplyCreatesBranchAndExactlyOneRevision`（方案分支＋恰好一个新修订＋完整复算）、`BudgetExhaustedAnchorsDataInsufficient`（`Completed + DataInsufficient + Complete`）、`InfeasibleCandidateNotAppliable`（非可行候选拒绝组装）、`FingerprintMismatchRejected`（`writeSetFingerprint` 不匹配拒绝且无部分命令）
+- **最小实现：**运行结果追加＋应用包＋守卫转绿；联合候选应用（WP-21-T05 `CandidateApplication`）与 GUI 面板（T07）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 静态 Pareto 可行候选，When "设为当前方案"，Then 经 WP-04 命令产生方案分支与恰好一个新修订并触发完整复算
+  - 边界：Given 预算耗尽，Then 运行终态落 `Completed + DataInsufficient + Complete` 锚点；Given 同 `commandId` 重复应用，Then 按 WP-04 幂等语义返回既有修订
+  - 失败：Given 不可行候选或指纹不匹配，When 请求应用，Then 拒绝并列出原因、当前修订保持不变；任何候选路径出现修订写入即失败
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
+  - 预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "createRevision|writeRevision|new ProjectRevision" candidate/src/` 零直接修订写入（只经 WP-04 命令）；`grep -rn "OptimizationStudy\b"` 禁名零命中；无第二套结果仓库
+- **证据工件：**`evidence/WP-20/T06/`——修订/结果当前性矩阵（候选数×修订数）、应用命令序列与新旧修订 ref、预算锚点记录、AT-12 阶段 B 证据、测试日志
+- **提交格式：**`WP-20-T06: integrate optimization results`
+- **停止与升级条件：**WP-04 命令端口不支持"方案分支＋恰好一个新修订＋复算触发"语义、或结果 payload 被回写时，暂停并升级 WP-04 所有者；任何候选/运行路径产生修订立即停止并报告

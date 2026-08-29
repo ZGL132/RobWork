@@ -1,33 +1,26 @@
 # WP-05-T04 结果接纳与历史查询
 
-- Task ID：WP-05-T04
-- 需求/阶段：CON-01～CON-06、EVI-01、NFR-COR-02；阶段 A / R1
-- 架构契约：`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/persistence-schema.md`；模块方案：`module-design/snapshot-result.md`
-- 前置：WP-05-T01～T03、WP-04 追加仓库、WP-06 名称解析。
-- 允许：修改 `evidence/include/.../ResultAdmission.hpp`、`IResultRepository.hpp`、`ResultQuery.hpp`、`src/ResultAdmission.cpp`、`src/ResultRepository.cpp`、`test/ResultAdmissionTest.cpp`。
-- 禁止：修改项目 HEAD/revision、工作进程权限、快照字段、报告输出格式或手工 CSV。
-- 产出：身份/切片/名称校验、迟到结果追加和历史查询 API。
-
-## 数据流
-
-`ResultEnvelope -> validate project/branch/revision/snapshot/sliceHash/policy/name map/run/attempt/object IDs -> append immutable record -> currentness index -> query filters`。迟到结果只追加到其携带的原分支历史，不提升当前结果。
-
-## Given/When/Then
-
-- Given project、branch、revision 或 sliceHash 不匹配，When admit，Then拒绝写入并返回稳定诊断。
-- Given 名称无法由 RuntimeNameMap 反解，When admit，Then返回 `IRD-EVIDENCE-NAME-MISMATCH`。
-- Given 相同 runId/attemptId 已存在，When admit，Then幂等返回已有 ResultRef，不重复 payload。
-- Given 迟到结果属于旧 revision，When query current，Then结果为 Historical/Superseded，旧记录仍可按 revision 查询。
-- Given过滤 evaluator、currentness、evidenceLevel、executionOutcome，When query，Then结果顺序稳定且不修改仓库。
-
-## 测试、证据与提交
-
-覆盖重复提交、跨项目、跨分支、名称重命名、取消后回调、查询分页和大历史量。
-
-命令：
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_result_acceptance_test$'
-```
-证据：接纳/拒绝日志、仓库 append 序号、查询快照和迟到结果报告。提交：`WP-05-T04: implement result admission and history queries`。
-
-停止：需要覆盖历史 payload、直接写项目 revision 或身份字段缺乏来源时暂停。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-05-T04；需求 CON-01～CON-06、EVI-01、NFR-COR-02；ADR-005；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §5（`IResultRepository` 四方法权威）、architecture/execution-model.md §3/§5、architecture/persistence-schema.md §4、module-design/snapshot-result.md v0.3（依赖裁决：名称校验收窄为 nameMapId 内容比较）。
+- **前置任务及必需工件：**WP-05-T01～T03（切片/快照/包络）；WP-04-T03～T04（追加协议原语与对象库）；WP-01-T03（测试入口）。无 WP-06 代码前置。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/ResultAdmission.hpp`、`IResultRepository.hpp`、`ResultQuery.hpp`、`ResultCurrentnessService.hpp`、`src/ResultAdmission.cpp`、`src/ResultRepository.cpp`、`src/ResultCurrentnessService.cpp`、`test/ResultAdmissionTest.cpp`、`test/ResultRepositoryContractTest.cpp`（编入 `sdurws_ird_evidence_contract_test`）、`testdata/evidence/{results,late}/`、`evidence/WP-05/`；修改 `CMakeLists.txt`；删除：无。
+- **禁止修改的文件和公共接口：**项目 HEAD/revision 写路径（追加不产生修订、不切 HEAD）；工作进程权限模型；快照字段（T02）；报告输出格式（WP-12）；手工 CSV；WP-06/07 代码；T01～T03 冻结签名；文档与 schemas/。
+- **修改前接口：**T03 的包络工厂；无仓库/接纳/查询接口。
+- **修改后接口：**`IResultRepository{append/findLatest/history/currentness}`（architecture/public-interfaces.md §5）；`ResultAdmission` 校验链（身份/切片/分支/attempt/幂等）；`CurrentnessIndex`（内存索引，打开时由 `results/` 重建）；错误码 `IRD-RESULT-SLICE-MISMATCH`、`IRD-RESULT-BRANCH-MISMATCH`、`IRD-RESULT-DUPLICATE-ATTEMPT`、`IRD-RESULT-CONFLICT`、`IRD-EVIDENCE-NAME-MISMATCH`、`IRD-RESULT-CORRUPT`（建议码，待 WP-09 登记）。
+- **实施步骤：**1) 先写身份不符/幂等/冲突/迟到 RED 测试；2) 实现接纳校验（project/branch/revision/snapshot/sliceHash/policy 内容 ID/nameMapId/run/attempt/object IDs）；3) 经 WP-04 追加原语落盘 `results/<run-id>/`（同字节 no-op、异字节 `IRD-RESULT-CONFLICT`）；4) 实现当前性：按切片内容比较（不比修订号）；5) 实现查询过滤与稳定排序；6) 契约测试入 contract 目标。
+- **RED 测试：**project/branch/revision 或 sliceHash 不匹配 → 拒绝写入；`nameMapId` 与快照/修订不一致 → `IRD-EVIDENCE-NAME-MISMATCH`（**内容 ID 相等比较，不做运行时反解、不调用 `IRuntimeNameResolver`**）；同 `runId+attemptId` 异内容 → `IRD-RESULT-CONFLICT` 保留原记录。
+- **最小实现：**追加式仓库＋接纳校验＋当前性索引＋查询；缓存命中规则按 architecture/execution-model.md §3（仅完整 `sliceHash`；Partial/Failed/Canceled/Interrupted 与不兼容版本不得命中正式缓存）。
+- **正常/边界/失败测试：**
+  - 失败：Given 身份字段任一不符，When admit，Then 稳定诊断、零写入。
+  - 正常：Given 相同 `runId/attemptId` 已存在同内容，When admit，Then 幂等返回既有 `ResultRef` 不重复 payload；`ResultRef{runId,attemptId,evaluatorId,payloadId}`（文件路径不是身份）。
+  - 边界：迟到结果只追加到其携带的原分支历史，不提升为当前；按 evaluator/currentness/evidenceLevel/executionOutcome 过滤时顺序稳定；10k 结果追加与 100k 历史查询基准（benchmark-manifest）。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_contract_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`（contract 目标同法替换目标名）
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；无 `IRuntimeNameResolver` 引用与运行时反解逻辑；追加协议不写 HEAD/revision；读回哈希失败才赋 `Corrupt`。
+- **证据工件：**`evidence/WP-05/T04/`：接纳/拒绝日志、append 序号、查询快照、迟到结果报告、契约测试输出。
+- **提交格式：**`WP-05-T04: implement result admission and history queries`。
+- **停止与升级条件：**需要覆盖历史 payload、直接写项目 revision 或身份字段缺乏契约来源时停止；`IRD-RESULT-CORRUPT` 未获 WP-09 登记时提请登记，不私设码表。

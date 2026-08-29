@@ -1,13 +1,21 @@
 # WP-19-T05 选型结果与修订应用
 
-- 需求/阶段：SEL-01～09、AT-08、AT-19；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-19 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：输出可行组合、裕量、来源、实际值、阈值和诊断码；通过项目命令应用。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_output_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-19-T05: 选型结果与修订应用`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-19-T05；SEL-06、AT-04（应用产生恰好一个新修订）；阶段 C / R1。契约：`module-design/device-selection.md` v0.3 §3/§5.7、`architecture/public-interfaces.md` §1/§3（`DomainCommand`/`IProjectCommandService`）、`architecture/symbol-registry.md` SYM-SEL-002/SYM-API-004
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-19-T03、WP-19-T04（筛选链与映射复核工件）；WP-04-T02（`IProjectCommandService.apply`/`DomainCommand` 语义——集成期装配，本卡以契约测试替身先行）；WP-05-T04（结果接纳端口 `IResultRepository`/`ResultEnvelope`）
+- **允许创建/修改/删除的文件：**创建 `plugins/selection/include/sdurws/ird/selection/ComponentSelectionResult.hpp`、`include/sdurws/ird/selection/SelectionEvaluator.hpp`、`include/sdurws/ird/selection/ApplySelectionCommand.hpp`、`src/SelectionJson.cpp`、`test/SelectionOutputTest.cpp`；修改 `plugins/selection/src/SelectionEvaluator.cpp`（主流程装配）、`plugins/selection/CMakeLists.txt`（登记 `sdurws_ird_selection_contract_test`）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**WP-04 命令端口签名与 WP-05 仓库端口（只消费）；T01～T04 冻结语义；禁止直写 revision、禁止修改 `CatalogVersion`；requirements/CSV/architecture/module-design
+- **修改前接口：**`SelectionEvaluator` 仅有映射复核部分；无结果类型与应用命令
+- **修改后接口：**只读 `ComponentSelectionResult`（SYM-SEL-002）：每可行组合含 motor/reducer 型号（主键）、逐指标裕量、质量与成本（ISO 4217 货币代码）、来源 `CatalogVersionRef` 与 `selectionRulesVersion`；每淘汰项含稳定诊断码＋实际值＋阈值；`ApplySelectionCommand`：模块私有 `DomainCommand`，经 `IProjectCommandService.apply` 产生恰好一个新修订；`SelectionJson`（payload 序列化）＋`dependencyManifest()`/`ResultEnvelope` 填充；确定性：固定目录版本/`DynamicResult`/规则版本/种子时枚举顺序（motor、reducer 主键字典序）、淘汰诊断顺序与排序键（成本→质量→最小裕量）稳定
+- **实施步骤：**1) RED：写 `SelectionOutputTest` 与契约测试（恰好一个新修订、双击预览不产生修订）；2) 定义三个公共头与结果字段；3) 装配主流程（就绪检查→范围外→枚举∩兼容→硬淘汰→映射复核→裕量→排序→结果）；4) 实现 `ApplySelectionCommand` 与 `SelectionJson`；5) 三形式命令（含契约目标）转绿并写证据
+- **RED 测试：**`SelectionOutputTest`（先写先败）：`ResultIsReadOnly`（无写入口，payload 不可变）、`ApplyCreatesExactlyOneNewRevision`（契约测试替身断言 `IProjectCommandService.apply` 恰一次、返回新 `ProjectRevisionRef`）、`PreviewDoesNotCreateRevision`（双击/预览零命令调用）、`DeterministicOrdering`（同输入重复运行枚举/诊断/排序逐位一致）、`PayloadCarriesSourceAndRulesVersion`
+- **最小实现：**结果类型＋主流程装配＋应用命令转绿；目录版本策略在 T06；GUI 呈现不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 合法快照与目录，When 评估并接纳，Then `ComponentSelectionResult` 字段完整、只读、经 WP-05 仓库可查
+  - 边界：Given 应用前项目已前进到新修订，Then 命令按目标修订语义拒绝或重定位（不产生第二修订）
+  - 失败：Given 上游缺失/目录不可用/全淘汰，When 评估，Then 对应 Input/Engineering 诊断、无结果接纳、无修订产生
+- **精确验证命令**（仓库根、VS x64；三形式，登记目标组）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection(_contract)?_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test sdurws_ird_selection_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_contract)?_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "revision\|commit" plugins/selection/src/SelectionEvaluator.cpp` 无直写路径（写操作只经 `ApplySelectionCommand`→端口替身）；结果字段无 setter；成本字段含货币代码
+- **证据工件：**`plugins/selection/evidence/WP-19/T05/`——评估主流程结果样例（JSON payload）、应用命令契约记录（恰好一个新修订）、确定性复跑对照、测试日志
+- **提交格式：**`WP-19-T05: 选型结果与修订应用`
+- **停止与升级条件：**WP-04 命令端口不满足"恰好一个新修订"语义、或 WP-05 接纳端口字段不足时，停止并升级对应所有者；不得绕过端口直写项目状态

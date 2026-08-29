@@ -1,40 +1,25 @@
 # WP-04-T03 多文件事务与崩溃恢复
 
-- Task ID：WP-04-T03
-- 需求/阶段：NFR-REL-01、NFR-REL-04、CON-03；阶段 A / R1
-- 架构契约：`architecture/persistence-schema.md`、`architecture/execution-model.md`、`architecture/public-interfaces.md`；模块方案：`module-design/persistence.md`
-- 前置：WP-04-T01、WP-04-T02、WP-03 core。
-
-## 边界与产出
-
-允许：修改 `include/sdurws/ird/project/TransactionWriter.hpp`、`src/TransactionWriter.cpp`、`src/AtomicFile.cpp`、`test/TransactionTest.cpp`、`testdata/rwdesign/failpoints/`。
-禁止：改变 manifest 字段、HEAD 格式、命令语义、结果仓库或脚本。
-
-产出：具名事务状态机、逐文件 SHA-256 校验、同卷原子提交、failpoint 注入和启动恢复扫描。临时目录为 `.staging/<transaction-id>`，任何目录枚举不得将其视为 revision。
-
-## 固定保存顺序
-
-`validate input -> read expected HEAD -> create staging -> write domain JSON -> put objects -> write manifest -> re-read/hash all files -> rename revision -> replace HEAD -> fsync/close -> complete`。每一步失败均清理可安全清理的 staging，但绝不删除旧 revision 或对象。
-
-## Given/When/Then
-
-- Given domain 写、对象写、manifest 写、单文件哈希、manifest 校验或 HEAD 替换任一 failpoint，When commit，Then旧 HEAD、旧 revision 文件和对象哈希完全不变，返回 System 诊断。
-- Given 进程在任一阶段终止，When 下次 open，Then忽略未完成 staging，产生 `IRD-PERSIST-UNCOMMITTED`，不加载半修订。
-- Given 同卷合法 staging，When commit，Then revision 目录和 HEAD 切换对读者均为原子可见，不出现缺 manifest 或部分文件。
-- Given 跨卷临时目录配置，When commit，Then拒绝非原子路径并返回可行动诊断，不降级为复制覆盖。
-
-## 测试与命令
-
-使用独立临时根目录，记录每个 failpoint、事务 ID、旧 HEAD 和全树哈希；重复 3 次验证一致性，另外验证权限不足、磁盘满模拟和重启恢复。
-
-命令：
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_transactions_test$'
-```
-
-证据：故障矩阵 CSV、旧/新树哈希、恢复诊断、原子切换日志和独立故障注入评审。
-
-提交：`WP-04-T03: implement atomic multi-file transactions`。
-
-停止：平台原子替换能力不足、发现跨卷写入或旧 HEAD 可能被覆盖时暂停，不改用非原子复制。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-04-T03；需求 NFR-REL-01、NFR-REL-04、CON-03；ADR-002；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §5～§6、execution-model、module-design/persistence.md v0.3。
+- **前置任务及必需工件：**WP-04-T01（`ProjectStore/ProjectPath`）、WP-04-T02（`IProjectCommandService` 调用保存钩子）、WP-03 core；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/TransactionWriter.hpp`（模块私有）、`src/TransactionWriter.cpp`、`src/AtomicFile.cpp`（同卷原子替换 helper）、`test/TransactionTest.cpp`、`testdata/rwdesign/failpoints/`、`evidence/WP-04/`；修改 `CMakeLists.txt`、`src/ProjectStore.cpp`（启动恢复扫描挂接）；删除：无。
+- **禁止修改的文件和公共接口：**manifest/HEAD 物理格式字段；T01/T02 冻结接口与命令语义；结果仓库与追加协议；WP-01 脚本；文档与 schemas/。
+- **修改前接口：**T02 的保存钩子为直写占位（无事务状态机、无 failpoint、无恢复扫描）。
+- **修改后接口：**`TransactionWriter` 具名状态机 `Idle→Validating→Staging→Hashing→ManifestReady→RevisionCommitted→HeadCommitted→Complete`（任一阶段 `→Aborted`）；staging 目录 `.staging/<transaction-id>/`；`HeadLock{pid,heartbeatAt}`（心跳 5 s、超时 30 s，模块私有冻结）；诊断码 `IRD-PERSIST-LOCKED`、`IRD-PERSIST-UNCOMMITTED`。
+- **实施步骤：**1) 先写每个 failpoint 的不变量测试；2) 实现固定保存顺序：validate input → 读 expected HEAD 并比较 → 创建 staging → 写领域 JSON/对象 → 写 manifest → 重读并逐文件 SHA-256 校验 → 原子 rename 进 `revisions/<id>/` → 原子替换 HEAD；3) 实现启动扫描清理残留 staging 与过期锁；4) 注入故障矩阵并记录全树哈希。
+- **RED 测试：**domain 写、对象写、manifest 写、单文件哈希、manifest 校验或 HEAD 替换任一 failpoint，When commit，Then 旧 HEAD、旧 revision 文件和对象哈希完全不变，返回 System 诊断。
+- **最小实现：**状态机＋同卷原子提交＋恢复扫描；跨卷临时目录直接拒绝，不降级为复制覆盖。
+- **正常/边界/失败测试：**
+  - 失败：进程在任一阶段终止，When 下次 open，Then 忽略未完成 staging、产生 `IRD-PERSIST-UNCOMMITTED`、不加载半修订；已有未超时 `HEAD.lock` → `IRD-PERSIST-LOCKED` 不阻塞等待。
+  - 正常：同卷合法 staging，When commit，Then revision 目录与 HEAD 切换对读者原子可见，不出现缺 manifest 或部分文件；心跳超时锁可安全夺取（夹具）。
+  - 边界：目录枚举不得把 `.staging/` 视为修订；跨卷临时目录配置拒绝；权限不足、磁盘满模拟；三次连续中断恢复均无半修订。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；无跨卷复制覆盖路径；旧 HEAD/旧 revision 字节级不变由测试哈希证明；无省略号命令。
+- **证据工件：**`evidence/WP-04/T03/`：故障矩阵 CSV、事务 ID、旧/新全树哈希、恢复诊断 JSON、原子切换日志与独立故障注入评审记录。
+- **提交格式：**`WP-04-T03: implement atomic multi-file transactions`。
+- **停止与升级条件：**平台原子替换能力不足、发现跨卷写入或旧 HEAD 可能被覆盖时停止，不改用非原子复制；锁参数变更需回改 module-design 冻结值并走评审。

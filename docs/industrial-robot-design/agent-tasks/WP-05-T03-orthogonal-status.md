@@ -1,32 +1,25 @@
 # WP-05-T03 结果正交状态
 
-- Task ID：WP-05-T03
-- 需求/阶段：CON-01～CON-06、EVI-01、NFR-COR-04；阶段 A / R1
-- 架构契约：`architecture/domain-model.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`；模块方案：`module-design/snapshot-result.md`
-- 前置：WP-05-T02、WP-03 EvaluationSemantics。
-- 允许：修改 `evidence/include/.../ResultEnvelope.hpp`、`EvidenceBundle.hpp`、`ResultStatusValidator.hpp`、`src/ResultEnvelope.cpp`、`test/ResultStatusTest.cpp`。
-- 禁止：重新定义 WP-03 正式可行谓词、改变任务状态机、修改报告渲染或缓存策略。
-- 产出：状态枚举组合校验、currentness 索引字段和不可变 payload 引用。
-
-## 数据流
-
-`evaluator output -> validate executionOutcome/engineeringStatus/payloadCompleteness/evidenceLevel -> attach currentness -> ResultEnvelope`。Currentness 初始为 Current/Historical，由后续服务更新索引；payload 和诊断历史不变。
-
-## Given/When/Then
-
-- Given `Completed + Pass + Complete`，When validate，Then允许进入接纳流程但仍需 RequiredEvidenceProfile。
-- Given `Canceled/Failed/Interrupted + Pass` 或 `Complete`，When validate，Then拒绝并返回 Input/System 诊断。
-- Given `Completed + DataInsufficient/Partial`，When validate，Then允许作为历史结果保存但不可正式可行。
-- Given Superseded，When currentness update，Then只改索引状态，原 JSON/payload/evidence hash 不变。
-
-## 测试、证据与提交
-
-参数化覆盖状态笛卡尔积、Unknown enum、缺 payload、证据等级不足、重复 resultId 和 JSON 往返。
-
-命令：
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_orthogonal_status_test$'
-```
-证据：组合矩阵、拒绝诊断、payload hash 前后比对和评审签名。提交：`WP-05-T03: enforce orthogonal result status`。
-
-停止：发现状态组合与 WP-03 不一致或需要用一个布尔值替代正交字段时暂停。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-05-T03；需求 CON-01～CON-06、EVI-01、NFR-COR-04；ADR-005；阶段 A / R1。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/evaluation-semantics.md §1～§2、architecture/public-interfaces.md §3/§7、module-design/snapshot-result.md v0.3。
+- **前置任务及必需工件：**WP-05-T02（`AnalysisSnapshot`）；WP-03-T03（`EvaluationSemantics` 组合谓词与 `IRD-CORE-COMBINATION-ILLEGAL`）；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/ResultEnvelope.hpp`、`IEngineeringEvaluator.hpp`、`test/ResultStatusTest.cpp`、`test/EvaluatorContractTest.cpp`（骨架，编入 `sdurws_ird_evidence_contract_test`）、`evidence/WP-05/`；修改 `src/EvidenceJson.cpp`（包络段）、`EvidenceDiagnostics.hpp`、`CMakeLists.txt`（登记 contract 目标）；删除：无。
+- **禁止修改的文件和公共接口：**WP-03 正式可行谓词与枚举（只消费）；任务状态机（WP-08）；报告渲染（WP-12）；缓存策略（execution-model 归属）；T01/T02 冻结签名；文档与 schemas/。
+- **修改前接口：**T02 的快照；无包络类型与评估端口。
+- **修改后接口：**`ResultEnvelope` 工厂（构造边界调用 WP-03 组合谓词，非法组合拒绝并透传 `IRD-CORE-COMBINATION-ILLEGAL`）；`ArtifactIntegrity{Valid,Corrupt}`（SYM-STA-007，仅仓库读回赋予）与 `ResultCurrentness{Current,Superseded,Historical}`（SYM-EVI-006）的 C++ 定义；`IEngineeringEvaluator`（architecture/public-interfaces.md §3 签名：dependencyManifest/validate/evaluate/capabilities）。
+- **实施步骤：**1) 参数化 60 组合 RED 测试（仅 architecture/evaluation-semantics.md §2 两类合法）；2) 实现包络工厂与组合校验透传；3) 实现不可变 payload 引用（`payloadId` 内容 ID）与诊断附加；4) 搭 `EvaluatorContractTest` 骨架；5) 序列化往返对齐 `schemas/examples/result-envelope.example.json` 与非法组合样本。
+- **RED 测试：**60 组合中非法项构造即拒绝并透传 core 码，不产生半包络；未知枚举字符串、缺 payload 引用 → 拒绝；读回哈希失败 → `ArtifactIntegrity=Corrupt`（仅仓库路径可赋）。
+- **最小实现：**包络工厂＋枚举定义＋payload 引用；currentness 计算与仓库归 T04。
+- **正常/边界/失败测试：**
+  - 失败：Given `Canceled/Failed/Interrupted + Pass` 或 `+ Complete`，When 构造，Then 拒绝并返回 Input 诊断（透传 core 码）。
+  - 正常：Given `Completed + Pass + Complete`，When 构造，Then 允许进入接纳流程（正式可行仍由谓词与 profile 判定）；JSON 往返逐字段一致且 payload 哈希前后不变。
+  - 边界：Given `Completed + DataInsufficient + Complete`，When 构造，Then 允许作为历史结果保存但不可正式可行；`Superseded` 更新只改索引状态，原 JSON/payload/evidence 哈希不变（T04 索引，此处冻结字段语义）。
+- **精确验证命令：**
+  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
+  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
+- **diff 和禁止项检查：**diff 仅命中允许清单；`EvaluationEnvelope` 等禁止名称零命中；构造边界无 `Corrupt` 赋值路径；无第二处组合表实现（透传 WP-03）。
+- **证据工件：**`evidence/WP-05/T03/`：组合矩阵日志、拒绝诊断、payload 哈希前后比对、契约骨架输出。
+- **提交格式：**`WP-05-T03: enforce orthogonal result status`。
+- **停止与升级条件：**状态组合与 WP-03/evaluation-semantics 不一致、或试图用单一布尔替代正交字段时停止并报告；维度变更须先修订 ADR-005 与契约。

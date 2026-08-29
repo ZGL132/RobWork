@@ -1,13 +1,21 @@
 # WP-18-T02 旋转传动映射
 
-- 需求/阶段：DYN-04、SEL-05；阶段 C / R1
-- 契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
-- 前置：由对应 WP 计划声明的前置工作包和公共接口。
-- 允许：仅修改 WP-18 拥有目录、该任务测试和证据目录；禁止：修改 requirements.md 语义、其他 WP 所有的公共接口、生成 CSV 或未获批准的依赖。
-- 产出：实现旋转传动映射；移动传动返回范围外诊断，不套用旋转公式。 以及可审计测试和结构化证据。
-- Given 契约输入缺失、非法或版本不兼容，When 执行本任务，Then 返回稳定诊断并不产生部分提交或正式结果。（失败断言）
-- Given 合法黄金数据和固定种子，When 执行本任务，Then 输出符合契约字段、状态、单位和容差的结果，并可由后续 WP 消费。（正常/边界断言）
-- 命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_rotary_mapping_test$'`；脚本尚未创建时先执行 WP-01 交付的同名入口。
-- 证据：模块测试日志、契约测试结果、黄金数据或人工复核报告，包含 commit、配置、种子和输入快照身份。
-- 提交：`WP-18-T02: 旋转传动映射`
-- 停止：发现需求、架构契约、前置接口或黄金数据彼此不一致，或验证命令/环境前置缺失时暂停并报告，不自行改写权威语义。
+- **Task ID / 需求 ID / ADR / 阶段：**WP-18-T02；DYN-04、SEL-05、需求 §15.1（多速比黄金数据）；ADR-004；阶段 C / R1。契约：`module-design/drivetrain.md` v0.3 §5.1～§5.3、§8.5 冻结行、`architecture/testing-contract.md`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 T01
+- **前置任务及必需工件：**WP-18-T01（`DriveTrainMappingEvaluator.hpp` 服务接口与 `DrivetrainDiagnostics.hpp` 冻结常量/诊断码）；WP-02-T03（黄金数据登记——`testdata` 样本须含 source/generationMethod/sha256）
+- **允许创建/修改/删除的文件：**创建 `evaluation/drivetrain/src/RotaryMappingCore.cpp`、`src/EfficiencyModel.cpp`、`src/ReflectedInertia.cpp`、`test/RotaryMappingTest.cpp`、`testdata/drivetrain/efficiency/`、`testdata/drivetrain/inertia/`、`testdata/drivetrain/golden/`（多速比正/反向黄金数据，经 WP-02 manifest 登记）；修改 `evaluation/drivetrain/CMakeLists.txt`（仅追加本任务源文件）。禁止删除任何文件
+- **禁止修改的文件和公共接口：**T01 冻结的常量/诊断码/接口签名；`DynamicResult`（WP-17）与 WP-03 类型；requirements/CSV/architecture/module-design；不引入 RobWork 运行时对象与业务插件头
+- **修改前接口：**T01 的校验骨架（无序列映射与惯量计算）
+- **修改后接口：**`RotaryMappingCore`/`EfficiencyModel`/`ReflectedInertia`（模块私有）：方向判定 sign(P_j)、|P_j|≤ε_P 按正向耗散；正向流 τ_m＝τ_j/(i·η⁺)、P_m＝P_j/η⁺；反向流 τ_m＝η⁻·τ_j/i、P_m＝η⁻·P_j；ω_m＝i·ω_j；J_ref,joint＝(J_rotor＋J_coupling＋J_reducer,eq)·i²（动能等价：½J_m·(i·ω_j)²）；J_load,motor＝J_j/i²（J_j 由调用方显式传入并声明取值规则，模块私有默认＝任务循环内构型相关等效惯量最大值保守口径）；惯量比＝J_load,motor/J_rotor；输出量类型化 N·m/rad/s/W
+- **实施步骤：**1) RED：写 `RotaryMappingTest` 黄金对照与失败路径断言；2) 生成多速比正/反向映射与反射惯量黄金数据（独立解析复算，登记 manifest）；3) 实现 `EfficiencyModel`（η⁺/η⁻ 方向相关常数）；4) 实现 `RotaryMappingCore` 序列映射与方向判定；5) 实现 `ReflectedInertia`（公式带版本）；6) 三形式命令转绿并写证据
+- **RED 测试：**`RotaryMappingTest`（先写先败）：`ForwardFlowDividesByEtaPlus`、`ReverseFlowMultipliesByEtaMinus`、`EtaPlusMustNotBeReusedBackward`（η⁻ 缺失且含反向功率流 → `IRD-DTM-REVERSE-EFFICIENCY-MISSING`，反向分项 DataInsufficient，禁止以 η⁺ 反向套用）、`PrismaticJointRejectedAsRotaryOnly`（移动关节 → `IRD-DTM-ROTARY-ONLY`，不套用旋转公式、不静默降级）、`ReflectedInertiaFormulaVersioned`（J_ref＝(J_rotor＋J_coupling＋J_reducer,eq)·i² 与 J_load,motor＝J_j/i² 按黄金数据逐点对照）、`MissingInertiaYieldsNotEvaluated`（→ `IRD-DTM-INERTIA-INVALID`，惯量比 NotEvaluated 并列举缺口）
+- **最小实现：**三个私有源文件＋黄金夹具使上述断言转绿；能量分项（T03）与工作制统计（T04）不在本卡
+- **正常/边界/失败测试：**
+  - 正常：Given 多速比黄金输入（§15.1），When 映射，Then τ_m/ω_m/P_m、J_ref、J_load,motor 与黄金值在容差内且单位类型化
+  - 边界：Given |P_j|≤ε_P，When 方向判定，Then 按正向耗散处理；Given J_j 显式传入，Then 来源与取值点进证据
+  - 失败：Given 移动关节、η⁻ 缺失含反向流、转子/减速器等效惯量缺失或非有限，When 映射，Then 对应 `IRD-DTM-ROTARY-ONLY`/`-REVERSE-EFFICIENCY-MISSING`/`-INERTIA-INVALID`，无部分输出
+- **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
+- **diff 和禁止项检查：**diff 仅含允许清单（新增源文件/测试/黄金数据＋CMake 追加）；`grep -rn "eta_\|reflected" ../ --include="*.cpp"` 类效率/惯量公式实现在本包外零命中（无第二套实现，ADR-004）；`git status` 确认 `testdata` 只增不改
+- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T02/`——黄金数据版本/哈希与独立复算记录、J_ref 推导说明（动能等价）、假设清单（J_j 取值规则）、测试日志
+- **提交格式：**`WP-18-T02: 旋转传动映射`
+- **停止与升级条件：**黄金数据无法由独立解析复算对齐、或 §8.5 公式与模块详设 §5 冲突时停止并升级；需要修改 T01 冻结常量/诊断码时必须先回 T01 走评审，不得在本卡内私改

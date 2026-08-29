@@ -35,7 +35,7 @@ CMake target：`sdurws_ird_ui`、`sdurws_ird_ui_model_test`、`sdurws_ird_ui_wid
 - `EditDraft`：`draftId`、`baseRevisionRef`、`patches[]`、`validationDiagnostics[]`、`dirty`、`savedAt`；保存到 WP-04 drafts，不进入 `EvaluatorInputSlice`；应用前必须重新比较 base revision，冲突交命令服务。
 - `StageStatusModel` 八值：输入未完成、可计算、计算中、结果有效、需要重算、证据不足、计算失败、工程不可行（需求 §5.4）。映射：需要重算 = `Superseded`、历史证据 = `Historical`（`ResultCurrentness`，evaluation-semantics §1/§5）；`DataInsufficient/Partial/NotEvaluated` 显式展示并按 `gaps` 列举缺口，不与"不可行"混排（§5 展示义务）。
 - 候选显示使用 `DesignCandidate`（SYM-OPT-005 规范名，禁止 `CandidateResult`）；投影 `projectCurrent()/projectCandidate(ResultRef)` 只读源，节点以 objectId 绑定，显示名称经 WP-06 `IRuntimeNameResolver`。
-- 任务面板显示 `TaskState` 9 态（SYM-STA-006，execution-model §1）：面板只读 `TaskSnapshot`，17 条转移表以契约为准、本模块不复制；任务生命周期不与阶段状态混用（需求 §5.4）。
+- 任务面板显示 `TaskState` 9 态（SYM-STA-006，execution-model §1）：面板只读 `TaskSnapshot`，18 条转移表以契约为准、本模块不复制；任务生命周期不与阶段状态混用（需求 §5.4）。
 
 ## 4. 调用与状态
 
