@@ -5,7 +5,7 @@
   "randomSeed": 42,
   "designVector": [
     { "variableId": "var-upper-arm-length", "valueType": "Real", "numericValue": 0.285 },
-    { "variableId": "var-upper-arm-section", "valueType": "Enumeration", "stringValue": "045x045x003" },
+    { "variableId": "var-upper-arm-outer-diameter", "valueType": "Real", "numericValue": 0.0925 },
     { "variableId": "var-gear-ratio-j3", "valueType": "CatalogRef", "stringValue": "rv-060-gb" },
     { "variableId": "var-wrist-friction-offset", "valueType": "Real", "numericValue": 0.0 }
   ],
@@ -19,13 +19,13 @@
       "writeSet": ["joints[3].originPose.position.z"]
     },
     {
-      "variableId": "var-upper-arm-section",
-      "bindingId": "bind-link-section-size",
+      "variableId": "var-upper-arm-outer-diameter",
+      "bindingId": "bind-link-section-dimension",
       "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
-      "parameterKey": "links[2].sectionSize",
-      "appliedValueString": "045x045x003",
+      "parameterKey": "links[2].section.dimensions.outerDiameter",
+      "appliedValueNumeric": 0.0925,
       "writeSet": [
-        "links[2].sectionSize",
+        "links[2].section.dimensions.outerDiameter",
         "links[2].mass",
         "links[2].centerOfMass",
         "links[2].inertia"
@@ -45,16 +45,16 @@
       "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
       "parameterKey": "links[2].mass",
       "method": "AnalyticEstimate",
-      "valueNumeric": 4.48,
+      "valueNumeric": 4.3,
       "unit": "kg",
-      "note": "upper arm lengthened 0.26 to 0.285 m and section set to 045x045x003; mass and inertia recomputed by the analytic shell estimate, not independently scaled"
+      "note": "upper arm lengthened 0.26 to 0.285 m and hollow section outer diameter set to 0.0925 m (4 mm wall); mass recomputed by the analytic hollow-cylinder estimate, not independently scaled"
     },
     {
       "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
       "parameterKey": "links[2].inertia.ixx",
       "method": "UniformScaling",
-      "valueNumeric": 0.0925,
-      "unit": "kg",
+      "valueNumeric": 0.0955,
+      "unit": "kg·m2",
       "note": "inertia scaled consistently with mass and characteristic length"
     }
   ],

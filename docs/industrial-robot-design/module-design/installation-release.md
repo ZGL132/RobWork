@@ -1,49 +1,83 @@
-# 安装与发布 模块详细方案
+# 安装与发布模块详细方案（installation-release）
 
-- 方案版本：v0.1；对应需求基线：v0.7
-- 负责 WP：WP-24；阶段/发布：阶段 E / R2
-- 架构契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`
-- 任务卡：对应 WP 的全部 agent-tasks/WP-24-T*.md
+- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 负责 WP：WP-24；阶段/发布：阶段 E / R1+R2（R1、R2 各自生成可回滚包）；任务卡：`agent-tasks/WP-24-T01～T05`
+- 契约：`architecture/persistence-schema.md`（§1 版本口径）、`architecture/testing-contract.md`（§4～5）；需求：NFR-DEP-01～05、NFR-SEC-04～06、NFR-MNT-06、§13.4 安装包审计
+- 代码前置：WP-01（脚本与 CI 门禁）、WP-22、WP-23（被打包与被审计对象）
 
-## 1. 目标与非目标
+## 1. 模块职责与非目标
 
-- 目标：PowerShell 双版本脚本、离线安装、白名单、哈希/许可证、升级回滚和签名策略。
-- 非目标：不修改需求语义、不复制其他模块的公共接口、不把私有实现细节升级为跨模块契约。
+交付 Windows x64 离线安装包、版本并存与升级/回滚、插件白名单、依赖/许可证清单、干净机器冒烟协议、发布检查表与旧安装目标审计。非目标：代码签名能力建设（按企业部署策略单独验收，NFR-SEC-06；未启用签名时记录例外并保持哈希校验）、在线更新与账号（NFR-DEP-03 禁止）、修改业务代码或测试门禁。验证方式＝真实安装演练记录＋脚本化检查，不以 CTest 目标替代（testing-contract §4）。
 
-## 2. 代码与构建
+## 2. 拥有目录与脚本（v0.2 裁决保留）
 
-- 拥有目录：`RobWork/scripts/industrial-robot/`、`RobWork/installer/industrial-robot/`、依赖基线与 CI 配置（与 WP-24 声明一致）；本模块不拥有 C++ 公共头，脚本从仓库根解析绝对路径。
-- CMake target：无产品 C++ 目标（交付物为脚本、安装器工程与发布清单；安装测试目标由 WP-24 计划登记，如 `sdurws_ird_installer_test`）。
-- 禁止依赖：Qt Widgets（纯 UI 模块除外）、当前界面选择、其他 WP 私有头、未登记第三方库和跨模块文件写入。
+```text
+RobWork/scripts/industrial-robot/    package.ps1（WP 计划入口）  verify-package.ps1  smoke-install.ps1（T01/T05 交付）
+RobWork/installer/industrial-robot/  安装器工程（wxs/iss）  plugin-whitelist.json  dependency-inventory.json  licenses/
+```
 
-## 3. 数据与接口
+脚本兼容 Windows PowerShell 5.1 与 PowerShell 7（testing-contract §5），从仓库根解析绝对路径，不依赖开发机路径。CMake target：无产品 C++ 目标；`sdurws_ird_installer_test`（WP-24 计划登记）只运行脚本化校验（清单/哈希/白名单/路径扫描），不承担真实安装演练。
 
-- 核心对象：ReleaseManifest、DependencyInventory、InstallEvidence。输入必须携带 projectId/branchId/revisionId 或明确的快照身份；浮点量使用 SI 单位且必须有限。
-- 输出必须包含执行状态、工程状态、证据完整度、诊断列表和来源身份；失败不得返回看似成功的空 payload。
-- 所有权：公共对象由调用方以值语义传入；跨线程只传不可变快照；RobWork/Qt 对象只存在适配层，由创建它的线程释放。
+## 3. 离线包结构与版本并存（冻结）
 
-## 4. 调用与状态
+```text
+ird-setup-<R1|R2>-<version>-win64/
+  setup.msi                       每版本独立 ProductCode
+  payload/app/                    主程序、Qt 运行库（windeployqt 产出）、MSVC 运行库
+  payload/robwork/                锁定 commit 的 RobWork/RobWorkStudio/RobWorkSim 产物
+  payload/plugins/                白名单内业务插件
+  payload/catalog-templates/      器件目录模板与示例目录包
+  payload/samples/                样例项目（挂接 WP-25 交付物）
+  plugin-whitelist.json  dependency-inventory.json  release-manifest.json  LICENSES/
+```
 
-- 正常流程：输入校验 → 规范化 → 核心计算/转换 → 下游适配 → WP-05 结果接纳 → 证据输出。
-- 输入错误映射为 Input，工程不可行或数据不足映射为 Engineering，文件/进程/第三方故障映射为 System；每类错误保留稳定 code 和 objectId。
-- 取消停止新工作派发；恢复必须记录原 runId、新 attemptId 和已完成批次；迟到回调只能追加原分支历史。
+- 安装布局：`%ProgramFiles%\SDURWS\IndustrialRobot\<product-version>\` 按版本独立目录实现并存（NFR-DEP-03）；开始菜单快捷方式指向所选版本；按版本独立卸载，不触碰其他版本与用户项目数据（`.rwdesign` 属用户目录，卸载不删除）。
+- 升级：新版本安装到新目录并迁移用户设置（记录迁移日志）；项目 Schema 前向升级由应用按 persistence-schema §5 执行，安装器不做数据迁移。
+- 回滚：旧版本目录并存可直接启动；回滚演练要求旧版本仍能打开既有 `.rwdesign`（R1/R2 同 Schema 主版本，persistence-schema §1），为发布检查表必测项。
 
-## 5. 关键实现约定
+## 4. 插件白名单与依赖/许可证清单（冻结格式）
 
-- 单位和坐标：领域层使用 SI；角度 rad、长度 m、质量 kg、时间 s；显示或外部格式转换只能在边界适配层完成。
-- 确定性：固定输入切片、算法版本、随机种子和线程数时，输出集合、稳定 ID、排序键和诊断顺序必须一致。
-- 序列化：只写架构契约规定字段；未知字段按版本策略拒绝或保留；保存采用 staging、哈希校验和原子提交。
+- `plugin-whitelist.json`（NFR-SEC-04 显式白名单，不自动扫描加载）：每项 `{relativePath, componentName, version, sha256, license, source}`；加载器逐项校验路径与哈希，未登记或哈希不符拒绝加载并记录诊断。
+- `dependency-inventory.json`（NFR-SEC-05/NFR-DEP-05）：组件、版本、许可证、SHA-256 与来源；至少覆盖 RobWork/RobWorkStudio/RobWorkSim 锁定 commit、Qt 与编译器版本、碰撞检测后端及版本、运行库——与 WP-01 依赖基线同源，包内清单为准。
+- `release-manifest.json`：包内全部文件清单＋哈希；`verify-package.ps1` 对包与已安装目录双向校验。
+- windeployqt 仅作为打包脚本中的 Qt 运行库收集步骤，产出进入 `payload/app/` 并入清单；不引入未登记第三方库。
 
-## 6. 测试与证据
+## 5. 干净机器冒烟测试协议（人工演练＋脚本检查）
 
-- Given 缺字段、非法单位、非有限数、版本不兼容或依赖不可用，When 调用模块入口，Then 返回可定位诊断且不产生部分修订/正式结果。
-- Given 黄金数据、固定种子和合法快照，When 执行正常路径及边界输入，Then 结果字段、状态、容差、当前性和证据等级符合契约。
-- 验证命令：先使用 WP-01 提供的双 PowerShell 入口，在 Visual Studio x64 环境运行对应 WP 的模块测试、契约测试和必要 GUI 测试；命令及环境前置以 WP 文件为准。
-- 必须提交：测试日志、黄金数据版本/哈希、输入快照身份、诊断样例、性能或人工报告（适用时）和独立评审记录。
+1. 前置：全新 Windows x64 虚机/实机，无开发工具与仓库路径，断网（离线安装，NFR-DEP-03）。
+2. 安装：运行 setup；脚本断言：安装目录与包内无开发机绝对路径（全包字符串扫描）、白名单与清单哈希全部通过。
+3. 冒烟：启动 → 新建/打开样例项目 → 运行一个 Verified 计算 → 生成报告 → 保存重开；系统冒烟（`run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_system_test$'`）作为辅助证据。
+4. 卸载：程序目录清除、用户项目数据保留。
+5. 并存：安装第二版本，两版本均可启动且互不破坏。
+6. 升级与回滚：按 §3 演练并记录。
+每步产出安装日志、检查脚本输出与演练人签署记录；任一步失败为发布阻断项。
 
-## 7. 迁移、扩展与任务卡
+## 6. CI 对接与旧安装目标审计
 
-- 旧实现先以只读适配器保留，只有黄金数据和契约测试通过才标记 Migratable；否则标记 Rewrite 或 EvidenceOnly。删除必须在对应阶段退出条件满足后进行。
-- 扩展新格式、算法或设备类型时，新增独立适配器、契约测试和 ADR；不得改变既有字段含义或隐式增加默认值。
-- 任务卡按 WP-24 索引执行；每张卡一个 worktree、一个分支和一个可评审提交，公共接口只能由所有者 WP 修改。
+- CI：仓库已有 `RobWork/.gitlab-ci.yml`（stages: build…deploy，include `gitlab-ci/gitlab-ci-windows.yml` 等平台文件）——打包作业挂接在其 Windows runner 与既有 stage 结构上，具体 job 定义由 T01 按 WP-01 CI 门禁补齐，本文不预置内容；CI 产物为离线包＋`verify-package.ps1` 报告。
+- 旧安装目标审计（§13.4/NFR-MNT-06）：发布包必须不含 `sdurws_robotmodelbuilder`、`sdurws_engineeringrequirements`、`sdurws_kinematicanalysis`、`sdurws_structureoptimizer*` 等旧目标与旧格式读取；审计＝对包清单做旧目标名单比对，命中即发布阻断。每阶段提交安装包审计结果。
 
+## 7. 错误码（提名，经 WP-09 目录登记后用于脚本与加载器报告）
+
+| 码 | 触发条件 | 类别 | severity | 处置 |
+| --- | --- | --- | --- | --- |
+| `IRD-INST-PATH-LEAK` | 包或安装目录含开发机绝对路径 | System | Error | 清理打包环境后重打包；发布阻断 |
+| `IRD-INST-WHITELIST-MISMATCH` | 插件未登记或哈希不符 | System | Error | 拒绝加载/拒绝发布 |
+| `IRD-INST-INVENTORY-INCOMPLETE` | 依赖/许可证清单缺项 | Input | Error | 补齐后重验，不得发布 |
+
+## 8. 验证与证据（非 CTest）
+
+```powershell
+pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release -Release R1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\verify-package.ps1 -Package <包路径>
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\smoke-install.ps1 -InstallDir <安装目录>
+```
+
+`package.ps1` 调用形态以 WP-24 计划为准；`verify-package.ps1`/`smoke-install.ps1` 为 T01 交付，交付前按 WP-01 资产口径标注。提交：安装日志、包清单、白名单报告、哈希校验、卸载/并存/升级/回滚演练记录、旧目标审计、发布检查表（T05），由发布工程师与安全负责人独立复核（WP 计划）。
+
+## 9. 迁移与删除表
+
+| 旧资产 | 处置 | 门禁 |
+| --- | --- | --- |
+| 旧安装目标与旧格式读取入口 | Delete | 仅允许出现在拒绝测试；R1/R2 包验收后从安装清单与 CI 删除 |
+| 既有打包脚本（如存在） | Rewrite | 新脚本通过干净机演练后替换 |

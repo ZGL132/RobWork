@@ -124,8 +124,9 @@
             "type": "number"
           },
           "unit": {
+            "description": "重算值单位（SI；惯量张量分量用 kg·m2）。",
             "type": "string",
-            "enum": ["rad", "m", "kg", "s", "W", "N", "N·m", "J", "dimensionless"]
+            "enum": ["rad", "m", "kg", "kg·m2", "s", "W", "N", "N·m", "J", "dimensionless"]
           },
           "note": {
             "type": "string",

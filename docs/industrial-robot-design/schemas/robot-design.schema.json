@@ -295,6 +295,56 @@
             "minLength": 1,
             "maxLength": 64
           },
+          "section": {
+            "description": "参数化连杆截面（requirements.md §9.1 参数化截面尺寸和材料；robot.section-dimension 绑定的目标字段）。可选：无参数化截面的连杆省略。截面扰动时质量/质心/惯量按解析估算或一致性缩放规则重算，禁止独立缩放质量与惯量（candidate-compilation.md §3）。",
+            "type": "object",
+            "properties": {
+              "sectionKind": {
+                "description": "截面类型，对应 robot-modeling.md §5 冻结解析公式表的三类截面。",
+                "type": "string",
+                "enum": ["SolidCircular", "HollowCircular", "Rectangular"]
+              },
+              "dimensions": {
+                "description": "按 sectionKind 携带特征尺寸（单位 m、> 0 由代码契约测试保证，子集仅支持含边界 minimum: 0）：SolidCircular → diameter；HollowCircular → outerDiameter + innerDiameter（壁厚为正）；Rectangular → width（沿连杆 x）+ height（沿连杆 y）。未使用的键不得出现，按 kind 的必填键集合由代码契约测试校验。解析估算以半径代入（r = diameter/2、ro/ri 同理），连杆局部 z 为截面轴向。",
+                "type": "object",
+                "properties": {
+                  "diameter": {
+                    "description": "实心圆直径 m。",
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "outerDiameter": {
+                    "description": "空心圆外径 m。",
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "innerDiameter": {
+                    "description": "空心圆内径 m。",
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "width": {
+                    "description": "矩形宽 m（沿连杆 x）。",
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "height": {
+                    "description": "矩形高 m（沿连杆 y）。",
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "additionalProperties": false
+              },
+              "materialRef": {
+                "description": "材料引用（用户批准的离散材料集合键，requirements.md §9.1）。与 links[].materialName 并存：name 供显示，ref 供计算。",
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+              }
+            },
+            "required": ["sectionKind", "dimensions", "materialRef"],
+            "additionalProperties": false
+          },
           "mass": {
             "description": "质量 kg，必须为有限正数（> 0 由代码契约测试保证）。",
             "type": "number",

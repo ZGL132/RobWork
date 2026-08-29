@@ -24,6 +24,12 @@
 | `SYM-DOM-006` | `EngineeringRequirements` | 聚合 | 任务、区域、姿态、节拍、Must/Should 和负载引用 | WP-14 | CTR-DOM-002 | UI 表格作权威数据 | `Proposed` |
 | `SYM-DOM-007` | `LoadCase` | 值对象 | 负载、外力和工艺事件工况 | WP-14 | CTR-DOM-002 | 动力学插件私有负载真值 | `Proposed` |
 | `SYM-DOM-008` | `DriveTrainDesign` | 聚合 | 已应用的每轴传动设计 | WP-18 | CTR-DOM-002 | 选型结果直接充当设计 | `Proposed` |
+| `SYM-DOM-009` | `AnalysisConfiguration` | 值对象 | 运动学、规划、动力学和选型的持久化工程设置（Schema 归 WP-03，实例归各分析 WP） | WP-03 | CTR-DOM-002 | `AnalysisConfig` 及其他缩写 | `Proposed` |
+| `SYM-KIN-006` | `KinematicResult` | 结果值对象 | IK 候选、残差、关节裕量、奇异性、碰撞、覆盖率 | WP-15 | CTR-API-003 | 各插件私有运动学 DTO | `Proposed` |
+| `SYM-TRJ-001` | `TrajectoryPlan` | 结果值对象 | 路点、插值、路径、时间参数、速度/加速度和节拍 | WP-16 | CTR-API-003 | 插件私有轨迹 DTO | `Proposed` |
+| `SYM-DYN-001` | `DynamicResult` | 结果值对象 | 候选传动无关的关节侧广义力、转速、功率、能量、峰值、RMS 和仿真状态 | WP-17 | CTR-DOM-003、CTR-API-003 | `DynamicsResult` | `Proposed` |
+| `SYM-SEL-001` | `CatalogVersion` | 不可变聚合 | 电机、减速器、组合规则、曲线和来源目录 | WP-19 | CTR-PER-002 | 可变目录单例 | `Proposed` |
+| `SYM-SEL-002` | `ComponentSelectionResult` | 只读结果 | 候选组合、裕量、淘汰原因、质量和成本 | WP-19 | CTR-API-003 | 选型结果直接改设计 | `Proposed` |
 | `SYM-KIN-001` | `KinematicAuthorityKind` | 枚举 | `StandardDH` 或 `ExplicitJoint` 的互斥权威类型 | WP-06、WP-13 | CTR-KIN-002 | 布尔 `useDh` | `Proposed` |
 | `SYM-KIN-002` | `StandardDH` | 权威表示 | 可编辑标准 DH 参数化；不是运行时真值 | WP-13 | CTR-KIN-002 | 派生 DH 被当作权威 | `Proposed` |
 | `SYM-KIN-003` | `ExplicitJoint` | 权威表示 | 完整 Origin Pose 与任意 Axis 关节参数化 | WP-13 | CTR-KIN-002 | 有损反算后覆盖显式关节 | `Proposed` |

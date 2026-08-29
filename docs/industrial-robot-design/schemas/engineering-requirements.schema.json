@@ -70,6 +70,11 @@
             "type": "string",
             "enum": ["Must", "Should"]
           },
+          "tcpRef": {
+            "description": "任务点引用的 TCP（ToolDefinition objectId 或 RobotDesign 默认 TCP 的 objectId；module-design/requirements-definition.md §3）。CSV 导入时缺省解析为默认 TCP，持久化对象总是携带已解析引用；引用不可解析 → IRD-REQ-REFERENCE-UNRESOLVED。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
           "targetPose": {
             "description": "目标位姿，显式参考坐标系。",
             "type": "object",
@@ -178,7 +183,7 @@
             "additionalProperties": false
           }
         },
-        "required": ["taskId", "localName", "priority", "targetPose", "positionTolerance", "orientationTolerance"],
+        "required": ["taskId", "localName", "priority", "tcpRef", "targetPose", "positionTolerance", "orientationTolerance"],
         "additionalProperties": false
       }
     },
@@ -368,9 +373,40 @@
             "additionalProperties": false
           },
           "dwellTime": {
-            "description": "驻留时间 s。",
+            "description": "循环名义驻留时间 s（汇总值）；逐段时序由 events[] 表达。",
             "type": "number",
             "minimum": 0
+          },
+          "events": {
+            "description": "任务序列中的工况切换事件（夹取/释放/驻留，REQ-04；module-design/requirements-definition.md §3）。每项至少携带 eventType 和一个时间字段：anchorTaskId（事件挂接的任务点）与 duration（持续 s）恰居其一，由代码契约测试保证。负载事件时间线构成完整任务循环；缺关键负载数据时按 REQ-06 阻止正式运行（DataInsufficient 通道），不静默默认。",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "eventType": {
+                  "description": "事件类型：Grip 夹取、Release 释放、Dwell 驻留。",
+                  "type": "string",
+                  "enum": ["Grip", "Release", "Dwell"]
+                },
+                "anchorTaskId": {
+                  "description": "事件挂接的任务点 ID（引用本对象 tasks[].taskId，事件在该任务点触发）；与 duration 恰居其一。",
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                },
+                "duration": {
+                  "description": "持续时间 s；> 0 由代码契约测试保证（子集仅支持含边界 minimum: 0）。",
+                  "type": "number",
+                  "minimum": 0
+                },
+                "payloadRef": {
+                  "description": "事件关联的负载身份（夹取/释放的负载键，用户批准集合内）；无负载变化的事件（如 Dwell）为 null。",
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                }
+              },
+              "required": ["eventType"],
+              "additionalProperties": false
+            }
           }
         },
         "required": ["loadCaseId", "localName", "payloadMass", "payloadCenterOfMass"],

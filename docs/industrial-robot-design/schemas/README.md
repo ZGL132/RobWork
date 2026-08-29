@@ -71,8 +71,10 @@ enum  items  minimum  maximum  minLength  maxLength  pattern  minItems
 | 同一对象对不得同时属于 excludedPairs 与 allowedContactPairs | `requirements.md` §6.7.2 | 跨字段互斥由代码校验 |
 | writeSet 两两交集为空、dependencies 无环、绑定已注册 | `candidate-compilation.md` §3 | 图/集合语义由代码校验 |
 | runtimeScopedName 与 device+localName 一致、绑定双向一一 | `requirements.md` §6.7.1 | 由 ResolverContractTest 保证 |
-| 四元数单位性（|‖q‖−1| ≤ 1e-12）与符号规范化 | `canonical-kinematics.md` §6 | 数值语义由代码校验；Schema 只冻结 `{x,y,z,w}` 对象形态 |
+| 四元数单位性（\|‖q‖−1\| ≤ 1e-12）与符号规范化 | `canonical-kinematics.md` §6 | 数值语义由代码校验；Schema 只冻结 `{x,y,z,w}` 对象形态 |
 | designVector 条目 numericValue/stringValue 恰居其一（按 valueType） | `candidate-compilation.md` §2 | 条件必填由代码校验（Schema 已保证出现的字段类型正确） |
+| LoadCase 事件 anchorTaskId 与 duration 恰居其一（每项至少一个时间字段） | `requirements.md` §7.2、§8.2；`module-design/requirements-definition.md` §3 | 条件必填由代码校验 |
+| section.dimensions 按 sectionKind 的必填键集合（Solid→diameter；Hollow→outer/inner；Rect→width/height），且数值 > 0、壁厚为正 | `requirements.md` §9.1；`module-design/robot-modeling.md` §5 | 条件必填与严格不等式由代码校验 |
 
 ## 5. 示例
 
@@ -85,3 +87,12 @@ enum  items  minimum  maximum  minLength  maxLength  pattern  minItems
 ## 6. 版本与升级
 
 `schemaVersion` 当前为 1（`enum: [1]`）。升级遵循 `architecture/persistence-schema.md` §5：逐版本显式升级器、未来版本只读拒绝（`IRD-PERSIST-FUTURE-SCHEMA`）。修改任何 schema 的字段名/语义前必须先修改对应契约文档。
+
+## 7. 变更记录
+
+- **2026-08-29（D5 修正，小版本）**：
+  - `engineering-requirements.schema.json`：`tasks[]` 新增必填 `tcpRef`（ToolDefinition objectId 或 RobotDesign 默认 TCP 的 objectId，module-design/requirements-definition.md §3 提名）；`loads[]` 新增可选 `events[]`（Grip/Release/Dwell 事件序列，`anchorTaskId`/`duration` 二选一时间字段 + 可空 `payloadRef`）。
+  - `robot-design.schema.json`：`links[]` 新增可选 `section`（`sectionKind` + `dimensions` 按类型的特征尺寸（直径制，m）+ `materialRef`；robot-modeling.md §5 解析估算以半径代入）。
+  - `candidate-patch.schema.json`：`derivedRecomputation.unit` 枚举补 `kg·m2`（惯量张量分量量纲）。
+  - 示例同步更新；`optimization-study` / `candidate-patch` 示例中的截面变量路径由 `links[2].sectionSize` 对齐为 `links[2].section.dimensions.outerDiameter`。
+  - 版本处置：D3 层尚无任何持久化数据（实现未启动），字段变更并入 `schemaVersion: 1`，不产生升级器；首个实现落地后再引入 v2+ 升级机制。

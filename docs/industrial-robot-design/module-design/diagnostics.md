@@ -80,6 +80,54 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-EXEC-ILLEGAL-TRANSITION | module-design/execution-platform.md（execution-model §1） | System | Error |
 | IRD-UI-PASTE-INVALID | module-design/session-ui.md | Input | Warning |
 | IRD-UI-PROJECTION-FAILED | module-design/session-ui.md | System | Error |
+| IRD-MDL-CONVERSION-FAILED | module-design/robot-modeling.md（AnalysisFailed 场景） | System | Error |
+| IRD-MDL-CONVERSION-INEXACT | module-design/robot-modeling.md（Approximate 只读投影） | Engineering | Warning |
+| IRD-MDL-IMPORT-BLOCKED | module-design/robot-modeling.md（URDF 非法轴/不支持关节阻止修订） | Input | Error |
+| IRD-MDL-PROPERTIES-INSUFFICIENT | module-design/robot-modeling.md | Engineering | Warning |
+| IRD-MDL-TOOL-REF-UNRESOLVED | module-design/robot-modeling.md | Input | Error |
+| IRD-REQ-NOT-READY | module-design/requirements-definition.md（REQ-06 就绪校验） | Input | Warning |
+| IRD-REQ-REFERENCE-UNRESOLVED | module-design/requirements-definition.md | Input | Error |
+| IRD-REQ-ROW-INVALID | module-design/requirements-definition.md（CSV 逐行错误） | Input | Error |
+| IRD-REQ-SAMPLING-BUDGET | module-design/requirements-definition.md（区域组合上限） | Engineering | Error |
+| IRD-KIN-IK-NO-SOLUTION | module-design/kinematics.md | Engineering | Warning |
+| IRD-KIN-SOLVER-FAILED | module-design/kinematics.md | System | Error |
+| IRD-KIN-JOINT-LIMIT | module-design/kinematics.md（候选过滤） | Engineering | Warning |
+| IRD-KIN-COLLIDING | module-design/kinematics.md（候选过滤） | Engineering | Warning |
+| IRD-KIN-LSTAR-INVALID | module-design/kinematics.md（§15.3 L* 回退失败→DataInsufficient） | Engineering | Warning |
+| IRD-KIN-EVIDENCE-MISSING | module-design/kinematics.md（KIN-05 无检测器→数据不足） | Engineering | Warning |
+| IRD-TRJ-NO-PATH | module-design/trajectory-planning.md | Engineering | Warning |
+| IRD-TRJ-PLANNER-FAILED | module-design/trajectory-planning.md | System | Error |
+| IRD-TRJ-PLANNER-TIMEOUT | module-design/trajectory-planning.md | System | Error |
+| IRD-TRJ-BRANCH-JUMP | module-design/trajectory-planning.md（IK 连续性） | Engineering | Warning |
+| IRD-TRJ-SINGULARITY | module-design/trajectory-planning.md | Engineering | Warning |
+| IRD-TRJ-TIME-PARAM-FAILED | module-design/trajectory-planning.md | Engineering | Error |
+| IRD-TRJ-VALIDATION-REJECTED | module-design/trajectory-planning.md（避障复检） | Engineering | Warning |
+| IRD-TRJ-UPSTREAM-MISSING | module-design/trajectory-planning.md | Input | Error |
+| IRD-DYN-FD-NOT-CONVERGED | module-design/dynamics.md（h/h2 收敛判据） | System | Error |
+| IRD-DYN-FD-DIVERGED | module-design/dynamics.md | System | Error |
+| IRD-DYN-FRICTION-MISSING | module-design/dynamics.md | Engineering | Warning |
+| IRD-DYN-INERTIA-INVALID | module-design/dynamics.md（正定性/三角不等式） | Input | Error |
+| IRD-DYN-PROPERTIES-MISSING | module-design/dynamics.md（→DataInsufficient） | Engineering | Warning |
+| IRD-DYN-STATE-DISCONTINUOUS | module-design/dynamics.md | System | Error |
+| IRD-DYN-UPSTREAM-MISSING | module-design/dynamics.md | Input | Error |
+| IRD-DTM-RATIO-INVALID | module-design/drivetrain.md | Input | Error |
+| IRD-DTM-EFFICIENCY-MISSING | module-design/drivetrain.md（→DataInsufficient 分项） | Engineering | Warning |
+| IRD-DTM-REVERSE-EFFICIENCY-MISSING | module-design/drivetrain.md | Engineering | Warning |
+| IRD-DTM-INERTIA-INVALID | module-design/drivetrain.md | Input | Error |
+| IRD-DTM-ROTARY-ONLY | module-design/drivetrain.md（SEL-09 首版范围） | Engineering | Error |
+| IRD-SEL-CATALOG-UNAVAILABLE | module-design/device-selection.md | System | Error |
+| IRD-SEL-CURVE-OUT-OF-RANGE | module-design/device-selection.md（禁止外推） | Input | Error |
+| IRD-SEL-DERATING-MISSING | module-design/device-selection.md（→DataInsufficient，不默认无降额） | Engineering | Warning |
+| IRD-SEL-PAIR-NOT-LISTED | module-design/device-selection.md（Compatibility 外键） | Input | Error |
+| IRD-SEL-ALL-ELIMINATED | module-design/device-selection.md（离散组合为空） | Engineering | Warning |
+| IRD-SEL-UPSTREAM-MISSING | module-design/device-selection.md | Input | Error |
+| IRD-SEL-TRANSMISSION-OUT-OF-SCOPE | module-design/device-selection.md（移动关节阻断） | Engineering | Error |
+| IRD-WF-NOT-COMPAREABLE | module-design/workflow-integration.md | Input | Warning |
+| IRD-WF-EVIDENCE-MISSING | module-design/workflow-integration.md | Engineering | Warning |
+| IRD-WF-APPLY-BLOCKED | module-design/workflow-integration.md | Input | Error |
+| IRD-INST-PATH-LEAK | module-design/installation-release.md（开发机路径残留） | System | Error |
+| IRD-INST-WHITELIST-MISMATCH | module-design/installation-release.md | System | Error |
+| IRD-INST-INVENTORY-INCOMPLETE | module-design/installation-release.md | System | Error |
 
 模块自有码（`IRD-<AREA>-*`）由各 v0.3 方案提名，经本目录登记后方可使用；新增码不得与既有码同义。目录条目含 `code`、`messageKey`、`titleZhCN/detailZhCN`、`action`、`severityDefault`、`allowedTokens[]`；`terminology.zh-CN.json` 含 canonical key、中文词、单位和禁用同义词。本地化策略：代码、稳定码和持久化字段用英文，用户可见中文仅由本目录与术语表提供（需求 §10.3）；首版只交付 zh-CN，`messageKey` 与术语 key 稳定，不随文案调整变化。
 

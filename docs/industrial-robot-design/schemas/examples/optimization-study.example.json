@@ -29,21 +29,17 @@
       "dependencies": []
     },
     {
-      "variableId": "var-upper-arm-section",
-      "bindingId": "bind-link-section-size",
+      "variableId": "var-upper-arm-outer-diameter",
+      "bindingId": "bind-link-section-dimension",
       "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
-      "parameterKey": "links[2].sectionSize",
-      "valueType": "Enumeration",
+      "parameterKey": "links[2].section.dimensions.outerDiameter",
+      "valueType": "Real",
       "unit": "m",
-      "domain": {
-        "kind": "Discrete",
-        "min": 0.04,
-        "max": 0.05,
-        "values": ["040x040x003", "045x045x003", "050x050x004"]
-      },
-      "activationCondition": "links[2].materialKind == ExtrudedAluminum",
+      "domain": { "kind": "Quantized", "min": 0.085, "max": 0.095 },
+      "quantization": { "step": 0.005 },
+      "activationCondition": "links[2].section.sectionKind == HollowCircular",
       "writeSet": [
-        "links[2].sectionSize",
+        "links[2].section.dimensions.outerDiameter",
         "links[2].mass",
         "links[2].centerOfMass",
         "links[2].inertia"
@@ -97,14 +93,16 @@
     {
       "constraintId": "hc-structural-bound",
       "kind": "StructuralBound",
-      "thresholdValue": 0.04,
-      "unit": "m"
+      "thresholdValue": 0.085,
+      "unit": "m",
+      "description": "upper arm outer diameter must stay inside the approved envelope"
     },
     {
       "constraintId": "hc-section-minimum",
       "kind": "SectionMinimum",
-      "thresholdValue": 0.04,
-      "unit": "m"
+      "thresholdValue": 0.003,
+      "unit": "m",
+      "description": "minimum hollow section wall thickness from the approved section set"
     }
   ],
   "softConstraints": [
