@@ -39,71 +39,6 @@ function Expand-RequirementCell {
     return $ids
 }
 
-function Get-WorkPackages {
-    param([string]$RequirementId)
-
-    switch -Regex ($RequirementId) {
-        '^ARC-01$' { return @('WP-04', 'WP-03') }
-        '^ARC-02$' { return @('WP-01') }
-        '^ARC-0[34]$' { return @('WP-06', 'WP-03') }
-        '^ARC-05$' { return @('WP-07', 'WP-03') }
-        '^CON-01$' { return @('WP-05', 'WP-04') }
-        '^CON-02$' { return @('WP-05') }
-        '^CON-03$' { return @('WP-04', 'WP-05') }
-        '^CON-04$' { return @('WP-08', 'WP-05') }
-        '^CON-05$' { return @('WP-05') }
-        '^CON-06$' { return @('WP-05', 'WP-06', 'WP-07') }
-        '^TASK-' { return @('WP-08') }
-        '^ERR-' { return @('WP-09') }
-        '^EVI-' { return @('WP-05', 'WP-12') }
-        '^MDL-06$|^MDL-14$' { return @('WP-13', 'WP-06') }
-        '^MDL-' { return @('WP-13') }
-        '^REQ-05$' { return @('WP-14', 'WP-11') }
-        '^REQ-06$' { return @('WP-14', 'WP-05', 'WP-12') }
-        '^REQ-' { return @('WP-14') }
-        '^KIN-05$' { return @('WP-15', 'WP-07') }
-        '^KIN-06$' { return @('WP-15', 'WP-10') }
-        '^KIN-' { return @('WP-15') }
-        '^TRJ-04$' { return @('WP-16', 'WP-07') }
-        '^TRJ-' { return @('WP-16') }
-        '^DYN-04$' { return @('WP-18', 'WP-17') }
-        '^DYN-' { return @('WP-17') }
-        '^SEL-0[12]$' { return @('WP-19', 'WP-11') }
-        '^SEL-05$' { return @('WP-19', 'WP-18') }
-        '^SEL-' { return @('WP-19') }
-        '^OPT-0[1234678]$' { return @('WP-20', 'WP-21') }
-        '^OPT-' { return @('WP-21') }
-        '^UX-03$' { return @('WP-09', 'WP-10', 'WP-22') }
-        '^UX-08$' { return @('WP-07', 'WP-10', 'WP-22') }
-        '^UX-' { return @('WP-10', 'WP-22') }
-        '^NFR-COR-01$' { return @('WP-02', 'WP-23') }
-        '^NFR-COR-02$' { return @('WP-23', 'WP-08') }
-        '^NFR-COR-03$' { return @('WP-03', 'WP-11', 'WP-23') }
-        '^NFR-COR-04$' { return @('WP-12', 'WP-05', 'WP-23') }
-        '^NFR-COR-05$' { return @('WP-07', 'WP-23') }
-        '^NFR-PERF-01$|^NFR-PERF-03$' { return @('WP-23', 'WP-10') }
-        '^NFR-PERF-' { return @('WP-23', 'WP-08') }
-        '^NFR-REL-01$' { return @('WP-04', 'WP-23') }
-        '^NFR-REL-0[23]$' { return @('WP-08', 'WP-23') }
-        '^NFR-REL-04$' { return @('WP-11', 'WP-04') }
-        '^NFR-REL-05$' { return @('WP-09') }
-        '^NFR-MNT-01$' { return @('WP-03', 'WP-01') }
-        '^NFR-MNT-02$' { return @('WP-01', 'WP-24') }
-        '^NFR-MNT-03$' { return @('WP-03', 'WP-09') }
-        '^NFR-MNT-0[45]$' { return @('WP-01') }
-        '^NFR-MNT-06$' { return @('WP-24', 'WP-01') }
-        '^NFR-MNT-07$' { return @('WP-01', 'WP-06', 'WP-07') }
-        '^NFR-DEP-04$' { return @('WP-04', 'WP-24') }
-        '^NFR-DEP-' { return @('WP-24', 'WP-01') }
-        '^NFR-SEC-0[123]$' { return @('WP-11', 'WP-24') }
-        '^NFR-SEC-04$' { return @('WP-01', 'WP-24') }
-        '^NFR-SEC-05$' { return @('WP-24', 'WP-01') }
-        '^NFR-SEC-06$' { return @('WP-24') }
-        '^NFR-SEC-07$' { return @('WP-09', 'WP-24') }
-        default { throw "No work-package mapping for requirement $RequirementId" }
-    }
-}
-
 function Get-Release {
     param([string]$RequirementId)
 
@@ -116,6 +51,137 @@ function Get-Release {
     }
 }
 
+# D8 显式需求映射表（来源：agent-tasks 全部任务卡第 1 字段"Task ID / 需求 ID / ADR / 阶段"
+# 的需求覆盖反向索引；primary 取 D6 计划"主要需求"列（原 CSV work_package 首项），
+# tasks/tests 取卡内声明的覆盖与代表性测试名，evidence 为规范化证据目录，
+# gate 按 §16 阶段（含 A-GATE 场景明示编号）推导。任务 ID 必须真实存在于 agent-tasks/。
+$requirementMap = @{
+    'ARC-01' = @{ primary = 'WP-04'; supporting = @('WP-03'); tasks = @('WP-04-T01','WP-04-T02','WP-04-T05','WP-03-T01','WP-03-T02','WP-03-T03','WP-03-T04','WP-03-T05','WP-14-T06'); tests = @('PathSafetyTest','CommandRevisionTest','ProjectCommandContractTest'); evidence = 'evidence/WP-04/T01/'; gate = 'A-GATE-02' }
+    'ARC-02' = @{ primary = 'WP-01'; supporting = @(); tasks = @('WP-01-T01','WP-01-T02'); tests = @('old-plugin-dependency','widget-header','unregistered-library'); evidence = 'evidence/WP-01/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'ARC-03' = @{ primary = 'WP-06'; supporting = @('WP-03'); tasks = @('WP-06-T01','WP-06-T02','WP-06-T03','WP-06-T05','WP-03-T01','WP-03-T02','WP-03-T03','WP-03-T04','WP-03-T05'); tests = @('CanonicalModelTest','NameMapTest','DualCompileTest'); evidence = 'evidence/WP-06/T01/'; gate = 'A-GATE-01～07/B-GATE' }
+    'ARC-04' = @{ primary = 'WP-06'; supporting = @('WP-03'); tasks = @('WP-06-T01','WP-06-T02','WP-06-T03','WP-06-T05','WP-03-T02','WP-03-T03','WP-03-T04','WP-03-T05','WP-13-T07'); tests = @('CanonicalModelTest','NameMapTest','DualCompileTest'); evidence = 'evidence/WP-06/T01/'; gate = 'A-GATE-06/B-GATE' }
+    'ARC-05' = @{ primary = 'WP-07'; supporting = @('WP-03'); tasks = @('WP-07-T01','WP-07-T02','WP-07-T03','WP-07-T04','WP-07-T05','WP-03-T02','WP-03-T03','WP-03-T04','WP-03-T05','WP-15-T08','WP-20-T08'); tests = @('PolicyNormalizationTest','unknownDistanceFallback','PathProtocolTest'); evidence = 'evidence/WP-07/T01/'; gate = 'A-GATE-07/C-GATE' }
+    'CON-01' = @{ primary = 'WP-05'; supporting = @('WP-04'); tasks = @('WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04','WP-04-T01','WP-04-T02','WP-04-T04','WP-04-T05'); tests = @('sliceHash','snapshotId','ResultStatusTest'); evidence = 'evidence/WP-05/T01/'; gate = 'A-GATE-01～07' }
+    'CON-02' = @{ primary = 'WP-05'; supporting = @(); tasks = @('WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04','WP-20-T06'); tests = @('sliceHash','snapshotId','ResultStatusTest'); evidence = 'evidence/WP-05/T01/'; gate = 'A-GATE-02' }
+    'CON-03' = @{ primary = 'WP-04'; supporting = @('WP-05'); tasks = @('WP-04-T01','WP-04-T02','WP-04-T03','WP-04-T04','WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04'); tests = @('PathSafetyTest','CommandRevisionTest','ProjectCommandContractTest'); evidence = 'evidence/WP-04/T01/'; gate = 'A-GATE-01～07/B-GATE' }
+    'CON-04' = @{ primary = 'WP-08'; supporting = @('WP-05'); tasks = @('WP-08-T02','WP-08-T04','WP-08-T05','WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04','WP-20-T05','WP-21-T03','WP-23-T02'); tests = @('RequestIdentityTest','CacheCheckpointTest','BoundedParallelismTest'); evidence = 'evidence/WP-08/T02/'; gate = 'A-GATE-01～07/D-GATE' }
+    'CON-05' = @{ primary = 'WP-05'; supporting = @(); tasks = @('WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04','WP-14-T06'); tests = @('sliceHash','snapshotId','ResultStatusTest'); evidence = 'evidence/WP-05/T01/'; gate = 'A-GATE-01～07' }
+    'CON-06' = @{ primary = 'WP-05'; supporting = @('WP-06','WP-07'); tasks = @('WP-05-T01','WP-05-T02','WP-05-T03','WP-05-T04','WP-06-T01','WP-06-T02','WP-06-T03','WP-06-T05','WP-07-T01','WP-07-T02','WP-07-T04','WP-07-T05'); tests = @('sliceHash','snapshotId','ResultStatusTest'); evidence = 'evidence/WP-05/T01/'; gate = 'A-GATE-01～07/C-GATE' }
+    'DYN-01' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T01','WP-17-T02'); tests = @('SemanticFreezeTest','SemanticsVersionRegistered','ZeroSpeedCoulombContinuous'); evidence = 'evidence/WP-17/T01/'; gate = 'C-GATE' }
+    'DYN-02' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T01','WP-17-T02'); tests = @('SemanticFreezeTest','SemanticsVersionRegistered','ZeroSpeedCoulombContinuous'); evidence = 'evidence/WP-17/T01/'; gate = 'C-GATE' }
+    'DYN-03' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T03','WP-18-T04'); tests = @('PowerEnergyTest','WPlusTrapezoidMatchesGolden','PowerSignConvention'); evidence = 'evidence/WP-17/T03/'; gate = 'C-GATE' }
+    'DYN-04' = @{ primary = 'WP-18'; supporting = @('WP-17'); tasks = @('WP-18-T01','WP-18-T02','WP-18-T03','WP-18-T04','WP-18-T05','WP-17-T06'); tests = @('MappingSemanticsTest','ConstantsAreFrozen','driveTrainInertiaFormulaVersion'); evidence = 'evidence/WP-18/T01/'; gate = 'C-GATE' }
+    'DYN-05' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T04'); tests = @('ForwardDynamicsTest','HAndHalfConvergesWithinLimits','NotConvergedReportsDiagnostic'); evidence = 'evidence/WP-17/T04/'; gate = 'C-GATE' }
+    'DYN-06' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T05'); tests = @('InsufficientDataTest','MissingPropertiesDegradesToScreening','MissingFrictionContinuesZeroFriction'); evidence = 'evidence/WP-17/T05/'; gate = 'C-GATE' }
+    'DYN-07' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T03'); tests = @('PowerEnergyTest','WPlusTrapezoidMatchesGolden','PowerSignConvention'); evidence = 'evidence/WP-17/T03/'; gate = 'C-GATE' }
+    'DYN-08' = @{ primary = 'WP-17'; supporting = @(); tasks = @('WP-17-T03'); tests = @('PowerEnergyTest','WPlusTrapezoidMatchesGolden','PowerSignConvention'); evidence = 'evidence/WP-17/T03/'; gate = 'C-GATE' }
+    'ERR-01' = @{ primary = 'WP-09'; supporting = @(); tasks = @('WP-09-T01','WP-09-T02','WP-09-T03','WP-09-T05'); tests = @('DiagnosticSchemaTest','CatalogTermsTest','DiagnosticCatalogContractTest'); evidence = 'evidence/WP-09/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'EVI-01' = @{ primary = 'WP-05'; supporting = @('WP-12'); tasks = @('WP-05-T02','WP-05-T03','WP-05-T04','WP-05-T05','WP-12-T01','WP-12-T02','WP-12-T03','WP-12-T04','WP-12-T05','WP-12-T06'); tests = @('snapshotId','ResultStatusTest','EvaluatorContractTest'); evidence = 'evidence/WP-05/T02/'; gate = 'A-GATE-01～07/B-GATE' }
+    'KIN-01' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T01','WP-15-T03'); tests = @('FkMatchesAnalyticReferencePoses','FkRejectsUnresolvableReference','FkWorldJointAxesFollowCanonicalChain'); evidence = 'evidence/WP-15/T01/'; gate = 'B-GATE' }
+    'KIN-02' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T02'); tests = @('IkCandidateOrderingTest.ApplicableBeforeResidual','IkMultiStartConvergesWithinTaskTolerance','IkFiltersResidualOverToleranceWithReason'); evidence = 'evidence/WP-15/T02/'; gate = 'B-GATE' }
+    'KIN-03' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T06'); tests = @('BatchRequiresCompleteRunIdentity','BatchFixedSequenceReproducesByteStable','LateCallbackAppendsOriginalBranchHistoryOnly'); evidence = 'evidence/WP-15/T06/'; gate = 'B-GATE' }
+    'KIN-04' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T04'); tests = @('CoverageDenominatorMatchesFrozenDefinition','GridSamplesIncludeBoundary','UserCancelYieldsCanceledNotEvaluatedPartial'); evidence = 'evidence/WP-15/T04/'; gate = 'B-GATE' }
+    'KIN-05' = @{ primary = 'WP-15'; supporting = @('WP-07'); tasks = @('WP-15-T05','WP-07-T01','WP-07-T02','WP-07-T03'); tests = @('EvidenceMatchesSharedEvaluatorVerdict','MissingDetectorYieldsDataInsufficient','WordingFrozenToQualifiedNoCollision'); evidence = 'evidence/WP-15/T05/'; gate = 'B-GATE' }
+    'KIN-06' = @{ primary = 'WP-15'; supporting = @('WP-10'); tasks = @('WP-15-T07','WP-10-T01','WP-10-T02'); tests = @('CandidatePreviewDoesNotCreateRevision','DoubleClickOnlyChangesSessionPose','ExplicitApplyGoesThroughCommandPort'); evidence = 'evidence/WP-15/T07/'; gate = 'B-GATE' }
+    'KIN-07' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T07'); tests = @('CandidatePreviewDoesNotCreateRevision','DoubleClickOnlyChangesSessionPose','ExplicitApplyGoesThroughCommandPort'); evidence = 'evidence/WP-15/T07/'; gate = 'B-GATE' }
+    'KIN-08' = @{ primary = 'WP-15'; supporting = @(); tasks = @('WP-15-T07'); tests = @('CandidatePreviewDoesNotCreateRevision','DoubleClickOnlyChangesSessionPose','ExplicitApplyGoesThroughCommandPort'); evidence = 'evidence/WP-15/T07/'; gate = 'B-GATE' }
+    'MDL-01' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01','WP-13-T02'); tests = @('ModelFixtureTest','robotId','buildCommand'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-02' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01','WP-13-T04'); tests = @('ModelFixtureTest','NotRepresentable','DhConversionTest'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-03' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01','WP-13-T03'); tests = @('ModelFixtureTest','Defaulted','UrdfImportTest'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-04' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01'); tests = @('ModelFixtureTest'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-05' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T05'); tests = @('MaterialToolTest'); evidence = 'evidence/WP-13/T05/'; gate = 'B-GATE' }
+    'MDL-06' = @{ primary = 'WP-13'; supporting = @('WP-06'); tasks = @('WP-13-T06','WP-06-T01','WP-06-T02','WP-06-T04'); tests = @('CompiledRobotArtifacts','RuntimeCompileTest','CanonicalModelTest'); evidence = 'evidence/WP-13/T06/'; gate = 'B-GATE' }
+    'MDL-07' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T05','WP-13-T08'); tests = @('MaterialToolTest','ModelingGuiTest'); evidence = 'evidence/WP-13/T05/'; gate = 'B-GATE' }
+    'MDL-08' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T02','WP-13-T07','WP-21-T05'); tests = @('robotId','buildCommand','DomainEditorTest'); evidence = 'evidence/WP-13/T02/'; gate = 'B-GATE' }
+    'MDL-09' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T04','WP-06-T04'); tests = @('NotRepresentable','DhConversionTest','AxisAdapterTest'); evidence = 'evidence/WP-13/T04/'; gate = 'B-GATE' }
+    'MDL-10' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T04','WP-06-T04'); tests = @('NotRepresentable','DhConversionTest','AxisAdapterTest'); evidence = 'evidence/WP-13/T04/'; gate = 'B-GATE' }
+    'MDL-11' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01','WP-13-T03'); tests = @('ModelFixtureTest','Defaulted','UrdfImportTest'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-12' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T01','WP-13-T03'); tests = @('ModelFixtureTest','Defaulted','UrdfImportTest'); evidence = 'evidence/WP-13/T01/'; gate = 'B-GATE' }
+    'MDL-13' = @{ primary = 'WP-13'; supporting = @(); tasks = @('WP-13-T02','WP-13-T05','WP-13-T08'); tests = @('robotId','buildCommand','DomainEditorTest'); evidence = 'evidence/WP-13/T02/'; gate = 'B-GATE' }
+    'MDL-14' = @{ primary = 'WP-13'; supporting = @('WP-06'); tasks = @('WP-13-T06','WP-13-T07','WP-06-T01','WP-06-T02','WP-06-T04'); tests = @('CompiledRobotArtifacts','RuntimeCompileTest','objectId'); evidence = 'evidence/WP-13/T06/'; gate = 'B-GATE' }
+    'NFR-COR-01' = @{ primary = 'WP-02'; supporting = @('WP-23'); tasks = @('WP-02-T01','WP-02-T02','WP-02-T03','WP-02-T04','WP-23-T01','WP-23-T03','WP-23-T05'); tests = @('LoaderRejectsMissingSampleFile','LoaderRejectsSha256Mismatch','LoaderRejectsDuplicateSampleId'); evidence = 'evidence/WP-02/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-COR-02' = @{ primary = 'WP-23'; supporting = @('WP-08'); tasks = @('WP-23-T01','WP-23-T03','WP-23-T04','WP-23-T05','WP-05-T04','WP-05-T05','WP-08-T01','WP-08-T02','WP-08-T04','WP-08-T05'); tests = @('SystemSuiteTest','BenchmarkTest','DeterminismTest'); evidence = 'evidence/WP-23/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-COR-03' = @{ primary = 'WP-03'; supporting = @('WP-11','WP-23'); tasks = @('WP-03-T01','WP-03-T03','WP-03-T04','WP-11-T02','WP-11-T05','WP-23-T01','WP-23-T03','WP-23-T05'); tests = @('Angle','Length','SemanticsTest'); evidence = 'evidence/WP-03/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-COR-04' = @{ primary = 'WP-12'; supporting = @('WP-05','WP-23'); tasks = @('WP-12-T01','WP-12-T02','WP-12-T03','WP-12-T04','WP-12-T05','WP-12-T06','WP-05-T01','WP-05-T03','WP-05-T05','WP-23-T01','WP-23-T03','WP-23-T05'); tests = @('reportId','DesignVariantTest','PdfReportRenderer'); evidence = 'evidence/WP-12/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-COR-05' = @{ primary = 'WP-07'; supporting = @('WP-23'); tasks = @('WP-07-T01','WP-07-T02','WP-07-T03','WP-07-T04','WP-06-T03','WP-06-T04','WP-15-T08','WP-20-T08','WP-23-T01','WP-23-T03','WP-23-T05'); tests = @('PolicyNormalizationTest','unknownDistanceFallback','PathProtocolTest'); evidence = 'evidence/WP-07/T01/'; gate = 'B-GATE/C-GATE' }
+    'NFR-DEP-01' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T01','WP-24-T02','WP-01-T03','WP-01-T04'); tests = @('InstallerScriptTest','package.ps1','verify-package.ps1'); evidence = 'evidence/WP-24/T01/'; gate = 'R-GATE' }
+    'NFR-DEP-02' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T01','WP-24-T02','WP-01-T04'); tests = @('InstallerScriptTest','package.ps1','verify-package.ps1'); evidence = 'evidence/WP-24/T01/'; gate = 'R-GATE' }
+    'NFR-DEP-03' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T02','WP-24-T03'); tests = @('package.ps1','verify-package.ps1','WP-24-T03 检查表首项'); evidence = 'evidence/WP-24/T02/'; gate = 'R-GATE' }
+    'NFR-DEP-04' = @{ primary = 'WP-04'; supporting = @('WP-24'); tasks = @('WP-04-T05','WP-24-T03'); tests = @('SchemaUpgradeTest','ProjectQueryContractTest','WP-24-T03 检查表首项'); evidence = 'evidence/WP-04/T05/'; gate = 'R-GATE' }
+    'NFR-DEP-05' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T03','WP-24-T04','WP-01-T05','WP-17-T04'); tests = @('WP-24-T03 检查表首项','InstallerScriptTest','t05-missing-fields'); evidence = 'evidence/WP-24/T03/'; gate = 'A-GATE-01～07/R-GATE' }
+    'NFR-MNT-01' = @{ primary = 'WP-03'; supporting = @('WP-01'); tasks = @('WP-03-T02','WP-03-T05','WP-01-T02','WP-01-T03'); tests = @('DomainValuesTest','IdentityTest','check-boundaries.ps1'); evidence = 'evidence/WP-03/T02/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-02' = @{ primary = 'WP-01'; supporting = @('WP-24'); tasks = @('WP-01-T01','WP-01-T02'); tests = @('old-plugin-dependency','widget-header','unregistered-library'); evidence = 'evidence/WP-01/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-03' = @{ primary = 'WP-03'; supporting = @('WP-09'); tasks = @('WP-03-T02','WP-03-T05','WP-09-T01','WP-09-T02','WP-09-T03','WP-09-T05'); tests = @('DomainValuesTest','IdentityTest','check-boundaries.ps1'); evidence = 'evidence/WP-03/T02/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-04' = @{ primary = 'WP-01'; supporting = @(); tasks = @('WP-03-T01'); tests = @('Angle','Length'); evidence = 'evidence/WP-01/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-05' = @{ primary = 'WP-01'; supporting = @(); tasks = @('WP-01-T02'); tests = @('WP-01-T02 原生构建断言'); evidence = 'evidence/WP-01/T02/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-06' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T01','WP-24-T03','WP-24-T05'); tests = @('InstallerScriptTest','WP-24-T03 检查表首项','WP-24-T05 检查表首项'); evidence = 'evidence/WP-24/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-MNT-07' = @{ primary = 'WP-01'; supporting = @('WP-06','WP-07'); tasks = @('WP-01-T01','WP-06-T01','WP-06-T02','WP-06-T05','WP-07-T04','WP-07-T05'); tests = @('old-plugin-dependency','widget-header','unregistered-library'); evidence = 'evidence/WP-01/T01/'; gate = 'A-GATE-01～07/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-PERF-01' = @{ primary = 'WP-23'; supporting = @('WP-10'); tasks = @('WP-23-T03','WP-10-T03','WP-10-T05'); tests = @('BenchmarkTest','CommonComponentsTest','ResponsiveListsTest'); evidence = 'evidence/WP-23/T03/'; gate = 'C-GATE' }
+    'NFR-PERF-02' = @{ primary = 'WP-23'; supporting = @('WP-08'); tasks = @('WP-23-T03','WP-08-T03'); tests = @('BenchmarkTest','Canceled','Failed'); evidence = 'evidence/WP-23/T03/'; gate = 'C-GATE' }
+    'NFR-PERF-03' = @{ primary = 'WP-23'; supporting = @('WP-10'); tasks = @('WP-23-T03','WP-10-T01','WP-10-T03','WP-10-T05'); tests = @('BenchmarkTest','EditDraft','applyDraft'); evidence = 'evidence/WP-23/T03/'; gate = 'C-GATE' }
+    'NFR-PERF-04' = @{ primary = 'WP-23'; supporting = @('WP-08'); tasks = @('WP-23-T03','WP-08-T05','WP-21-T01','WP-21-T02','WP-21-T03','WP-21-T04','WP-21-T05','WP-21-T06'); tests = @('BenchmarkTest','BoundedParallelismTest','JointSearchTest'); evidence = 'evidence/WP-23/T03/'; gate = 'D-GATE' }
+    'NFR-PERF-05' = @{ primary = 'WP-23'; supporting = @('WP-08'); tasks = @('WP-23-T03','WP-08-T05','WP-21-T01','WP-21-T02','WP-21-T03','WP-21-T04','WP-21-T05','WP-21-T06'); tests = @('BenchmarkTest','BoundedParallelismTest','JointSearchTest'); evidence = 'evidence/WP-23/T03/'; gate = 'D-GATE' }
+    'NFR-PERF-06' = @{ primary = 'WP-23'; supporting = @('WP-08'); tasks = @('WP-23-T03','WP-08-T05','WP-21-T01','WP-21-T02','WP-21-T03','WP-21-T04','WP-21-T05','WP-21-T06'); tests = @('BenchmarkTest','BoundedParallelismTest','JointSearchTest'); evidence = 'evidence/WP-23/T03/'; gate = 'D-GATE' }
+    'NFR-REL-01' = @{ primary = 'WP-04'; supporting = @('WP-23'); tasks = @('WP-04-T01','WP-04-T02','WP-04-T03','WP-04-T04','WP-23-T01','WP-23-T05'); tests = @('PathSafetyTest','CommandRevisionTest','ProjectCommandContractTest'); evidence = 'evidence/WP-04/T01/'; gate = 'A-GATE-04/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-REL-02' = @{ primary = 'WP-08'; supporting = @('WP-23'); tasks = @('WP-08-T01','WP-08-T02','WP-08-T03','WP-08-T04','WP-21-T03','WP-21-T06','WP-23-T01','WP-23-T02','WP-23-T05'); tests = @('StateMachineTest','SchedulerContractTest','RequestIdentityTest'); evidence = 'evidence/WP-08/T01/'; gate = 'A-GATE-04/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-REL-03' = @{ primary = 'WP-08'; supporting = @('WP-23'); tasks = @('WP-08-T01','WP-08-T03','WP-08-T04','WP-23-T01','WP-23-T05'); tests = @('StateMachineTest','SchedulerContractTest','Canceled'); evidence = 'evidence/WP-08/T01/'; gate = 'A-GATE-04/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-REL-04' = @{ primary = 'WP-11'; supporting = @('WP-04'); tasks = @('WP-11-T01','WP-11-T04','WP-04-T01','WP-04-T03','WP-04-T05','WP-23-T01','WP-23-T05'); tests = @('PathBudgetTest','CatalogVersion','CatalogImportTest'); evidence = 'evidence/WP-11/T01/'; gate = 'A-GATE-04/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-REL-05' = @{ primary = 'WP-09'; supporting = @(); tasks = @('WP-09-T01','WP-09-T03','WP-09-T04','WP-23-T01','WP-23-T05'); tests = @('DiagnosticSchemaTest','ErrorMappingTest','RedactedLoggingTest'); evidence = 'evidence/WP-09/T01/'; gate = 'A-GATE-04/B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-01' = @{ primary = 'WP-11'; supporting = @('WP-24'); tasks = @('WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05'); tests = @('PathBudgetTest','CsvReaderTest','CsvReader'); evidence = 'evidence/WP-11/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-02' = @{ primary = 'WP-11'; supporting = @('WP-24'); tasks = @('WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05'); tests = @('PathBudgetTest','CsvReaderTest','CsvReader'); evidence = 'evidence/WP-11/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-03' = @{ primary = 'WP-11'; supporting = @('WP-24'); tasks = @('WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05','WP-12-T03','WP-12-T04','WP-14-T02'); tests = @('PathBudgetTest','CsvReaderTest','CsvReader'); evidence = 'evidence/WP-11/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-04' = @{ primary = 'WP-01'; supporting = @('WP-24'); tasks = @('WP-24-T01','WP-24-T04'); tests = @('InstallerScriptTest'); evidence = 'evidence/WP-01/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-05' = @{ primary = 'WP-24'; supporting = @('WP-01'); tasks = @('WP-24-T01','WP-24-T02','WP-24-T04','WP-01-T05'); tests = @('InstallerScriptTest','package.ps1','verify-package.ps1'); evidence = 'evidence/WP-24/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'NFR-SEC-06' = @{ primary = 'WP-24'; supporting = @(); tasks = @('WP-24-T05'); tests = @('WP-24-T05 检查表首项'); evidence = 'evidence/WP-24/T05/'; gate = 'R-GATE' }
+    'NFR-SEC-07' = @{ primary = 'WP-09'; supporting = @('WP-24'); tasks = @('WP-09-T01','WP-09-T04','WP-09-T05','WP-12-T04','WP-12-T06'); tests = @('DiagnosticSchemaTest','RedactedLoggingTest','StaticConsistencyTest'); evidence = 'evidence/WP-09/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'OPT-01' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T01','WP-20-T02','WP-21-T01','WP-21-T06'); tests = @('StudyDefinitionTest','RejectsUnregisteredBinding','RejectsWriteSetOverlap'); evidence = 'evidence/WP-20/T01/'; gate = 'B-GATE/D-GATE' }
+    'OPT-02' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T01','WP-20-T02','WP-21-T01','WP-21-T06'); tests = @('StudyDefinitionTest','RejectsUnregisteredBinding','RejectsWriteSetOverlap'); evidence = 'evidence/WP-20/T01/'; gate = 'B-GATE/D-GATE' }
+    'OPT-03' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T03','WP-21-T02','WP-21-T06'); tests = @('StaticConstraintTest','MustViolationExcludedFromFeasibleSet','FixedEvaluationOrderNotReordered'); evidence = 'evidence/WP-20/T03/'; gate = 'B-GATE/D-GATE' }
+    'OPT-04' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T04','WP-12-T02','WP-21-T02','WP-21-T04','WP-21-T06'); tests = @('StaticParetoTest','OnlyThreeStageBMetricsComputable','DominanceRequiresToleranceExceededStrictWin'); evidence = 'evidence/WP-20/T04/'; gate = 'B-GATE/D-GATE' }
+    'OPT-05' = @{ primary = 'WP-21'; supporting = @(); tasks = @('WP-21-T01','WP-21-T06'); tests = @('JointSearchTest','AcceptanceEvidenceTest'); evidence = 'evidence/WP-21/T01/'; gate = 'D-GATE' }
+    'OPT-06' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T05','WP-21-T01','WP-21-T02','WP-21-T03','WP-21-T04','WP-21-T06'); tests = @('CacheDeterminismTest','CacheKeyCoversAllFourFields','DependencyChangePreventsHit'); evidence = 'evidence/WP-20/T05/'; gate = 'B-GATE/D-GATE' }
+    'OPT-07' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T04','WP-20-T06','WP-12-T04','WP-21-T02','WP-21-T04','WP-21-T06'); tests = @('StaticParetoTest','OnlyThreeStageBMetricsComputable','DominanceRequiresToleranceExceededStrictWin'); evidence = 'evidence/WP-20/T04/'; gate = 'B-GATE/D-GATE' }
+    'OPT-08' = @{ primary = 'WP-20'; supporting = @('WP-21'); tasks = @('WP-20-T04','WP-20-T06','WP-20-T07','WP-12-T04','WP-12-T05','WP-21-T05','WP-21-T06'); tests = @('StaticParetoTest','OnlyThreeStageBMetricsComputable','DominanceRequiresToleranceExceededStrictWin'); evidence = 'evidence/WP-20/T04/'; gate = 'B-GATE/D-GATE' }
+    'OPT-09' = @{ primary = 'WP-21'; supporting = @(); tasks = @('WP-21-T04','WP-21-T06','WP-12-T04','WP-12-T05'); tests = @('ParetoRobustnessTest','AcceptanceEvidenceTest','EvidencePackageTest'); evidence = 'evidence/WP-21/T04/'; gate = 'D-GATE' }
+    'OPT-10' = @{ primary = 'WP-21'; supporting = @(); tasks = @('WP-21-T01','WP-21-T06'); tests = @('JointSearchTest','AcceptanceEvidenceTest'); evidence = 'evidence/WP-21/T01/'; gate = 'D-GATE' }
+    'REQ-01' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01','WP-14-T03'); tests = @('tcpRef','RequirementsModelTest','validateBudget'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE/C-GATE' }
+    'REQ-02' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01','WP-14-T04'); tests = @('tcpRef','RequirementsModelTest','payloadMass'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE/C-GATE' }
+    'REQ-03' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01','WP-14-T03'); tests = @('tcpRef','RequirementsModelTest','validateBudget'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE/C-GATE' }
+    'REQ-04' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01','WP-14-T04'); tests = @('tcpRef','RequirementsModelTest','payloadMass'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE/C-GATE' }
+    'REQ-05' = @{ primary = 'WP-14'; supporting = @('WP-11'); tasks = @('WP-14-T01','WP-14-T02','WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05'); tests = @('tcpRef','RequirementsModelTest','CsvIoTest'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE' }
+    'REQ-06' = @{ primary = 'WP-14'; supporting = @('WP-05','WP-12'); tasks = @('WP-14-T01','WP-14-T04','WP-14-T05','WP-14-T06','WP-14-T07','WP-12-T01','WP-12-T02','WP-12-T03','WP-12-T04','WP-12-T05','WP-12-T06'); tests = @('tcpRef','RequirementsModelTest','payloadMass'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE' }
+    'REQ-07' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01','WP-14-T02','WP-14-T07'); tests = @('tcpRef','RequirementsModelTest','CsvIoTest'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE' }
+    'REQ-08' = @{ primary = 'WP-14'; supporting = @(); tasks = @('WP-14-T01'); tests = @('tcpRef','RequirementsModelTest'); evidence = 'evidence/WP-14/T01/'; gate = 'B-GATE' }
+    'SEL-01' = @{ primary = 'WP-19'; supporting = @('WP-11'); tasks = @('WP-19-T01','WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05'); tests = @('CatalogSchemaTest','ViewMatchesColumnDictionary','UnitsAreSiDeclared'); evidence = 'evidence/WP-19/T01/'; gate = 'C-GATE' }
+    'SEL-02' = @{ primary = 'WP-19'; supporting = @('WP-11'); tasks = @('WP-19-T01','WP-19-T02','WP-11-T01','WP-11-T02','WP-11-T03','WP-11-T04','WP-11-T05'); tests = @('CatalogSchemaTest','ViewMatchesColumnDictionary','UnitsAreSiDeclared'); evidence = 'evidence/WP-19/T01/'; gate = 'C-GATE' }
+    'SEL-03' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T03'); tests = @('ConstraintFilterTest','HardEliminationBeforeMargin','EveryEliminationCarriesCodeValueThreshold'); evidence = 'evidence/WP-19/T03/'; gate = 'C-GATE' }
+    'SEL-04' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T03'); tests = @('ConstraintFilterTest','HardEliminationBeforeMargin','EveryEliminationCarriesCodeValueThreshold'); evidence = 'evidence/WP-19/T03/'; gate = 'C-GATE' }
+    'SEL-05' = @{ primary = 'WP-19'; supporting = @('WP-18'); tasks = @('WP-19-T04','WP-18-T01','WP-18-T02','WP-18-T03','WP-18-T04','WP-18-T05'); tests = @('MappingCheckTest','UsesSharedEvaluatorForOperatingPoint','InertiaRatioDefaultSoftConstraint'); evidence = 'evidence/WP-19/T04/'; gate = 'C-GATE' }
+    'SEL-06' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T03','WP-19-T05'); tests = @('ConstraintFilterTest','HardEliminationBeforeMargin','EveryEliminationCarriesCodeValueThreshold'); evidence = 'evidence/WP-19/T03/'; gate = 'C-GATE' }
+    'SEL-07' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T03'); tests = @('ConstraintFilterTest','HardEliminationBeforeMargin','EveryEliminationCarriesCodeValueThreshold'); evidence = 'evidence/WP-19/T03/'; gate = 'C-GATE' }
+    'SEL-08' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T06'); tests = @('CatalogVersionTest','CatalogUpdateDoesNotChangeHistoricalResults','OldVersionStaysLocked'); evidence = 'evidence/WP-19/T06/'; gate = 'C-GATE' }
+    'SEL-09' = @{ primary = 'WP-19'; supporting = @(); tasks = @('WP-19-T04'); tests = @('MappingCheckTest','UsesSharedEvaluatorForOperatingPoint','InertiaRatioDefaultSoftConstraint'); evidence = 'evidence/WP-19/T04/'; gate = 'C-GATE' }
+    'TASK-01' = @{ primary = 'WP-08'; supporting = @(); tasks = @('WP-08-T01','WP-08-T02','WP-08-T03','WP-21-T03','WP-21-T06','WP-23-T02'); tests = @('StateMachineTest','SchedulerContractTest','RequestIdentityTest'); evidence = 'evidence/WP-08/T01/'; gate = 'A-GATE-05' }
+    'TASK-02' = @{ primary = 'WP-08'; supporting = @(); tasks = @('WP-08-T01','WP-08-T02','WP-08-T03','WP-21-T06'); tests = @('StateMachineTest','SchedulerContractTest','RequestIdentityTest'); evidence = 'evidence/WP-08/T01/'; gate = 'A-GATE-01～07' }
+    'TASK-03' = @{ primary = 'WP-08'; supporting = @(); tasks = @('WP-08-T01','WP-08-T02','WP-08-T03','WP-21-T06','WP-23-T02'); tests = @('StateMachineTest','SchedulerContractTest','RequestIdentityTest'); evidence = 'evidence/WP-08/T01/'; gate = 'A-GATE-03' }
+    'TRJ-01' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T01','WP-16-T06'); tests = @('PtpSegmentFromOrderedTaskSequence','CartesianLineApproachRetreatSegments','DwellSegmentCarriesDurationAndLoadCaseRef'); evidence = 'evidence/WP-16/T01/'; gate = 'C-GATE' }
+    'TRJ-02' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T01','WP-16-T06'); tests = @('PtpSegmentFromOrderedTaskSequence','CartesianLineApproachRetreatSegments','DwellSegmentCarriesDurationAndLoadCaseRef'); evidence = 'evidence/WP-16/T01/'; gate = 'C-GATE' }
+    'TRJ-03' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T02','WP-16-T06'); tests = @('PlannerVersionParamsSeedRecordedInSnapshot','ConstraintConstructionOnlyViaWp07Projection','NoPathReportsSegmentAndEndpoints'); evidence = 'evidence/WP-16/T02/'; gate = 'C-GATE' }
+    'TRJ-04' = @{ primary = 'WP-16'; supporting = @('WP-07'); tasks = @('WP-16-T03','WP-16-T04','WP-16-T06','WP-07-T01','WP-07-T02','WP-07-T03'); tests = @('SimplifierRemovesZeroDisplacementAndCollinearWaypoints','SimplifierKeepsTaskPointSemantics','QuinticSplineMatchesC2AtKnots'); evidence = 'evidence/WP-16/T03/'; gate = 'C-GATE' }
+    'TRJ-05' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T03','WP-16-T06'); tests = @('SimplifierRemovesZeroDisplacementAndCollinearWaypoints','SimplifierKeepsTaskPointSemantics','QuinticSplineMatchesC2AtKnots'); evidence = 'evidence/WP-16/T03/'; gate = 'C-GATE' }
+    'TRJ-06' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T05','WP-16-T06'); tests = @('ResolvedIkBranchSequenceRecordsAdoptedSolutions','TrajectoryPlanPayloadCompletePerSchemaV1','EnvelopePassesLegalCombinationValidation'); evidence = 'evidence/WP-16/T05/'; gate = 'C-GATE' }
+    'TRJ-07' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T05','WP-10-T02'); tests = @('ResolvedIkBranchSequenceRecordsAdoptedSolutions','TrajectoryPlanPayloadCompletePerSchemaV1','EnvelopePassesLegalCombinationValidation'); evidence = 'evidence/WP-16/T05/'; gate = 'C-GATE' }
+    'TRJ-08' = @{ primary = 'WP-16'; supporting = @(); tasks = @('WP-16-T01'); tests = @('PtpSegmentFromOrderedTaskSequence','CartesianLineApproachRetreatSegments','DwellSegmentCarriesDurationAndLoadCaseRef'); evidence = 'evidence/WP-16/T01/'; gate = 'C-GATE' }
+    'UX-01' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-10-T03','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T01','WP-22-T02','WP-22-T04','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-02' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-10-T03','WP-10-T05','WP-09-T02','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T04','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-03' = @{ primary = 'WP-09'; supporting = @('WP-10','WP-22'); tasks = @('WP-09-T01','WP-09-T02','WP-09-T03','WP-10-T01','WP-10-T02','WP-10-T03','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T02','WP-22-T04','WP-22-T05','WP-25-T03'); tests = @('DiagnosticSchemaTest','CatalogTermsTest','DiagnosticCatalogContractTest'); evidence = 'evidence/WP-09/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-04' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-10-T03','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-05' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-10-T03','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-06' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-10-T05','WP-09-T02','WP-09-T04','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T01','WP-22-T02','WP-22-T03','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-07' = @{ primary = 'WP-10'; supporting = @('WP-22'); tasks = @('WP-10-T01','WP-10-T02','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T05','WP-25-T03'); tests = @('EditDraft','applyDraft','SessionStateTest'); evidence = 'evidence/WP-10/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+    'UX-08' = @{ primary = 'WP-07'; supporting = @('WP-10','WP-22'); tasks = @('WP-07-T01','WP-10-T01','WP-10-T02','WP-10-T04','WP-13-T08','WP-14-T07','WP-20-T07','WP-22-T05','WP-25-T03'); tests = @('PolicyNormalizationTest','EditDraft','applyDraft'); evidence = 'evidence/WP-07/T01/'; gate = 'B-GATE/C-GATE/D-GATE/R-GATE' }
+}
+
 if (-not (Test-Path -LiteralPath $RequirementsPath)) {
     throw "Requirements document not found: $RequirementsPath"
 }
@@ -125,6 +191,18 @@ $requirementMatches = [regex]::Matches(
     $text,
     '(?m)^\|\s*([A-Z][A-Z0-9-]*-\d+)\s*\|\s*(P[01])\s*\|\s*(.*?)\s*\|\s*$'
 )
+
+$reqRows = [ordered]@{}
+foreach ($match in $requirementMatches) {
+    $id = $match.Groups[1].Value
+    if ($reqRows.Contains($id)) {
+        throw "Duplicate requirement row in requirements document: $id"
+    }
+    $reqRows[$id] = [pscustomobject]@{
+        Priority = $match.Groups[2].Value
+        Summary  = $match.Groups[3].Value.Trim()
+    }
+}
 
 $traceStart = $text.IndexOf('## 16. 需求—验收追踪')
 $traceEnd = $text.IndexOf('## 17.', $traceStart)
@@ -159,11 +237,58 @@ foreach ($line in ($traceText -split "`r?`n")) {
     }
 }
 
-$rows = foreach ($match in $requirementMatches) {
-    $id = $match.Groups[1].Value
-    $priority = $match.Groups[2].Value
-    $summary = $match.Groups[3].Value.Trim()
-    $packages = @(Get-WorkPackages -RequirementId $id)
+# 映射表与需求文档必须一一对应（124 项）。
+if ($reqRows.Count -ne $requirementMap.Count) {
+    throw ("Mapping table size {0} does not match requirement rows {1}." -f $requirementMap.Count, $reqRows.Count)
+}
+foreach ($id in $reqRows.Keys) {
+    if (-not $requirementMap.ContainsKey($id)) {
+        throw "No mapping entry for requirement $id."
+    }
+}
+foreach ($id in $requirementMap.Keys) {
+    if (-not $reqRows.Contains($id)) {
+        throw "Mapping entry $id does not exist in the requirements document."
+    }
+}
+
+# 映射表中的每个任务 ID 都必须有真实任务卡（agent-tasks/WP-XX-TYY-*.md）。
+$agentTaskPath = Join-Path $PSScriptRoot 'agent-tasks'
+$realTaskIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+foreach ($cardFile in (Get-ChildItem -LiteralPath $agentTaskPath -File -Filter 'WP-*.md')) {
+    if ($cardFile.Name -match '^((WP-\d{2})-T\d{2})-') {
+        [void]$realTaskIds.Add($Matches[1])
+    }
+}
+foreach ($entry in $requirementMap.Values) {
+    foreach ($taskId in $entry.tasks) {
+        if (-not $realTaskIds.Contains($taskId)) {
+            throw "Mapped task $taskId (requirement $($entry.primary)) has no task card in agent-tasks/."
+        }
+    }
+    if (@($entry.tasks).Count -lt 1) {
+        throw "Mapping entry with primary $($entry.primary) has no agent task."
+    }
+    if (@($entry.tests).Count -lt 1) {
+        throw "Mapping entry with primary $($entry.primary) has no test case."
+    }
+    foreach ($field in @('primary', 'evidence', 'gate')) {
+        if ([string]::IsNullOrWhiteSpace($entry.$field)) {
+            throw "Mapping entry with primary $($entry.primary) has an empty $field."
+        }
+    }
+}
+
+# 确定性输出顺序：需求 ID 的 Ordinal 排序（PS 5.1 / 7 一致）。
+$sortedIds = [System.Collections.Generic.List[string]]::new()
+foreach ($id in $reqRows.Keys) {
+    $sortedIds.Add($id)
+}
+$sortedIds.Sort([System.StringComparer]::Ordinal)
+
+$rows = foreach ($id in $sortedIds) {
+    $req = $reqRows[$id]
+    $map = $requirementMap[$id]
     $acceptanceEntries = @($acceptanceById[$id])
 
     if ($acceptanceEntries.Count -eq 0) {
@@ -173,16 +298,27 @@ $rows = foreach ($match in $requirementMatches) {
     $methods = @($acceptanceEntries | ForEach-Object { $_.Method } | Select-Object -Unique)
     $scenarios = @($acceptanceEntries | ForEach-Object { $_.Scenario } | Select-Object -Unique)
     $phases = @($acceptanceEntries | ForEach-Object { $_.Phase } | Select-Object -Unique)
+    $scenarioText = (($methods -join ' / ') + '；' + ($scenarios -join ' / '))
+    if ($scenarioText.Length -gt 120) {
+        $scenarioText = $scenarioText.Substring(0, 120) + '…'
+    }
+
+    $supportingText = @($map.supporting) -join ';'
+    if ([string]::IsNullOrWhiteSpace($supportingText)) {
+        $supportingText = '-'
+    }
 
     [pscustomobject][ordered]@{
         requirement_id = $id
-        priority = $priority
-        requirement_summary = $summary
-        work_package = $packages -join ';'
-        implementation_task = @($packages | ForEach-Object { "$_-IMP-$id" }) -join ';'
-        test_task = @($packages | ForEach-Object { "$_-TEST-$id" }) -join ';'
-        review_task = @($packages | ForEach-Object { "$_-REV-$id" }) -join ';'
-        acceptance_scenario = (($methods -join ' / ') + '；' + ($scenarios -join ' / '))
+        priority = $req.Priority
+        requirement_summary = $req.Summary
+        primary_wp = $map.primary
+        supporting_wps = $supportingText
+        agent_task_ids = @($map.tasks) -join ';'
+        test_case_ids = @($map.tests) -join ';'
+        acceptance_scenario = $scenarioText
+        evidence_artifact = $map.evidence
+        release_gate = $map.gate
         phase = $phases -join '/'
         release = Get-Release -RequirementId $id
         status = 'Planned'

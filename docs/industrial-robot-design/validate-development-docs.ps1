@@ -97,8 +97,9 @@ if ($errors.Count -eq 0) {
 
     $traceRows = @(Import-Csv -LiteralPath $tracePath)
     $requiredColumns = @(
-        'requirement_id', 'priority', 'requirement_summary', 'work_package',
-        'implementation_task', 'test_task', 'review_task', 'acceptance_scenario', 'phase', 'release', 'status'
+        'requirement_id', 'priority', 'requirement_summary', 'primary_wp',
+        'supporting_wps', 'agent_task_ids', 'test_case_ids', 'acceptance_scenario',
+        'evidence_artifact', 'release_gate', 'phase', 'release', 'status'
     )
 
     if ($traceRows.Count -ne 124) {
@@ -139,7 +140,10 @@ if ($errors.Count -eq 0) {
                 Add-ValidationError "Trace row $($row.requirement_id) has an empty $column."
             }
         }
-        foreach ($package in ($row.work_package -split ';')) {
+        # D8 列结构：primary_wp 单值；supporting_wps 分号分隔，'-' 表示无支持工作包。
+        $rowPackages = @($row.primary_wp) +
+            @(($row.supporting_wps -split ';') | Where-Object { $_ -and $_ -ne '-' })
+        foreach ($package in $rowPackages) {
             if ($package -notmatch '^WP-(0\d|1\d|2[0-5])$') {
                 Add-ValidationError "Trace row $($row.requirement_id) references invalid work package $package."
             }
@@ -155,7 +159,7 @@ if ($errors.Count -eq 0) {
         }
         if ($row.phase -match 'B') {
             $hasEarlyPackage = @(
-                ($row.work_package -split ';') | Where-Object { $_ -in $phaseBEligiblePackages }
+                $rowPackages | Where-Object { $_ -in $phaseBEligiblePackages }
             ).Count -gt 0
             if (-not $hasEarlyPackage) {
                 Add-ValidationError "Trace row $($row.requirement_id) has phase '$($row.phase)' but no work package deliverable by phase B."
