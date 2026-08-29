@@ -17,7 +17,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/`，含 `include/sdurws/ird/ui/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03～08 公共接口、Qt Widgets/Model-View 和 RobWorkStudio 场景 API；禁止 Widget 直接读取业务插件私有对象、跨线程操作 QWidget、直接写项目文件或手工 CSV。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/`，含 `include/sdurws/ird/ui/`、`src/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许 WP-03～08 公共接口、Qt Widgets/Model-View 和 RobWorkStudio 场景 API；禁止 Widget 直接读取业务插件私有对象、跨线程操作 QWidget、直接写项目文件或手工 CSV。
 
 目标：`sdurws_ird_ui`、`sdurws_ird_ui_model_test`、`sdurws_ird_ui_widget_test`。
 

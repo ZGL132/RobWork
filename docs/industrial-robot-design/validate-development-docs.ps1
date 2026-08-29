@@ -82,18 +82,19 @@ if ($errors.Count -eq 0) {
             ForEach-Object { $_.Groups[1].Value }
     )
 
-    if ($requirementIds.Count -ne 124) {
-        Add-ValidationError "Expected 124 requirement rows; found $($requirementIds.Count)."
+    if ($requirementIds.Count -ne 128) {
+        Add-ValidationError "Expected 128 requirement rows; found $($requirementIds.Count)."
     }
-    if (@($requirementIds | Sort-Object -Unique).Count -ne 124) {
+    if (@($requirementIds | Sort-Object -Unique).Count -ne 128) {
         Add-ValidationError 'Requirement IDs are not unique.'
     }
-    if ($p0Count -ne 110 -or $p1Count -ne 14) {
-        Add-ValidationError "Expected 110 P0 and 14 P1 requirements; found $p0Count P0 and $p1Count P1."
+    if ($p0Count -ne 114 -or $p1Count -ne 14) {
+        Add-ValidationError "Expected 114 P0 and 14 P1 requirements; found $p0Count P0 and $p1Count P1."
     }
     if ($acceptanceIds.Count -ne 19 -or @($acceptanceIds | Sort-Object -Unique).Count -ne 19) {
         Add-ValidationError 'Acceptance-test IDs must contain 19 unique rows.'
     }
+    $requirementTotal = @($requirementIds | Sort-Object -Unique).Count
 
     $traceRows = @(Import-Csv -LiteralPath $tracePath)
     $requiredColumns = @(
@@ -102,8 +103,8 @@ if ($errors.Count -eq 0) {
         'evidence_artifact', 'release_gate', 'phase', 'release', 'status'
     )
 
-    if ($traceRows.Count -ne 124) {
-        Add-ValidationError "Expected 124 trace rows; found $($traceRows.Count)."
+    if ($traceRows.Count -ne $requirementTotal) {
+        Add-ValidationError "Expected $requirementTotal trace rows; found $($traceRows.Count)."
     }
     foreach ($column in $requiredColumns) {
         if ($traceRows.Count -gt 0 -and $column -notin $traceRows[0].PSObject.Properties.Name) {
@@ -515,6 +516,227 @@ if ($errors.Count -eq 0) {
     }
 }
 
+# ---------------------------------------------------------------- D12 语义/执行/治理闭合检查
+
+# 1) 任务级 DAG：前置引用存在性 + 无环
+$cardTaskIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+$taskPrereqs = @{}
+$cardFilePaths = @{}
+$cardFilesForDag = @(Get-ChildItem -LiteralPath $agentTaskPath -Filter 'WP-*.md' -File)
+foreach ($cf in $cardFilesForDag) {
+    if ($cf.BaseName -match '^(WP-\d{2}-T\d{2})') {
+        $selfId = $Matches[1]
+        [void]$cardTaskIds.Add($selfId)
+        $cardFilePaths[$selfId] = $cf.FullName
+        $raw = Get-Content -LiteralPath $cf.FullName -Raw -Encoding UTF8
+        $prereqField = [regex]::Match($raw, '(?m)^- \*\*前置任务及必需工件[^\r\n]*')
+        # 剥离方向性表述（"先于 X 执行"/"不依赖 X"/"装配归 X"等非依赖提法），避免假依赖边
+        $fieldText = $prereqField.Value -replace '(本任务)?先于[^。；]*', '' -replace '不依赖[^。；]*', '' -replace '(归|移交) WP-\d{2}-T\d{2}', ''
+        $prereqIds = @([regex]::Matches($fieldText, 'WP-\d{2}-T\d{2}') | ForEach-Object { $_.Value } | Where-Object { $_ -ne $selfId } | Sort-Object -Unique)
+        $taskPrereqs[$selfId] = $prereqIds
+    }
+}
+foreach ($t0 in @($cardTaskIds)) {
+    foreach ($pid2 in $taskPrereqs[$t0]) {
+        if (-not $cardTaskIds.Contains($pid2)) {
+            Add-ValidationError "Task card $t0 references prerequisite $pid2 which has no task card."
+        }
+    }
+}
+$dagState = @{}
+function Test-TaskDag {
+    param([string]$NodeId)
+    if ($dagState.ContainsKey($NodeId)) {
+        return ($dagState[$NodeId] -eq 2)
+    }
+    $dagState[$NodeId] = 1
+    foreach ($p in $taskPrereqs[$NodeId]) {
+        if (-not (Test-TaskDag -NodeId $p)) {
+            return $false
+        }
+    }
+    $dagState[$NodeId] = 2
+    return $true
+}
+foreach ($t in @($cardTaskIds)) {
+    if (-not (Test-TaskDag -NodeId $t)) {
+        Add-ValidationError "Task-level dependency cycle detected involving $t (check 前置任务 fields)."
+        break
+    }
+}
+
+# 2) 诊断注册表一致性：登记表为唯一权威（diagnostics.md §3）
+$diagReg = @{}
+$diagText = Get-Content -LiteralPath (Join-Path $moduleDesignPath 'diagnostics.md') -Raw -Encoding UTF8
+foreach ($line in ($diagText -split "`r?`n")) {
+    if ($line -match '^\|\s*(IRD-[A-Z0-9-]+)\s*\|\s*[^|]+\|\s*(Input|Engineering|System)\s*\|\s*(Info|Warning|Error)\s*\|') {
+        if (-not $diagReg.ContainsKey($Matches[1])) {
+            $diagReg[$Matches[1]] = @{ Category = $Matches[2]; Severity = $Matches[3] }
+        }
+    }
+}
+$diagScanDirs = @($moduleDesignPath, $workPackagePath, $agentTaskPath, $architecturePath)
+$diagCodePattern = 'IRD-[A-Z0-9]+(?:-[A-Z0-9]+)+'
+$diagCatPattern = '\b(Input|Engineering|System)\b'
+$diagSevPattern = '\b(Info|Warning|Error)\b'
+foreach ($dd in $diagScanDirs) {
+    foreach ($df in (Get-ChildItem -LiteralPath $dd -Filter '*.md' -Recurse -File)) {
+        if ($df.Name -eq 'diagnostics.md' -and $df.DirectoryName -eq $moduleDesignPath) { continue }
+        $dLines = Get-Content -LiteralPath $df.FullName -Encoding UTF8
+        for ($i = 0; $i -lt $dLines.Count; $i++) {
+            $dLine = $dLines[$i]
+            $dMatches = [regex]::Matches($dLine, $diagCodePattern)
+            for ($m = 0; $m -lt $dMatches.Count; $m++) {
+                $dCode = $dMatches[$m].Value
+                if ($dCode -match '^IRD-D\d-') { continue }
+                $rest = $dLine.Substring($dMatches[$m].Index + $dMatches[$m].Length)
+                if ($rest.StartsWith('-*')) { continue }
+                $wEnd = $dLine.Length
+                if ($m -lt $dMatches.Count - 1) { $wEnd = $dMatches[$m + 1].Index }
+                $window = $dLine.Substring($dMatches[$m].Index + $dMatches[$m].Length, $wEnd - $dMatches[$m].Index - $dMatches[$m].Length)
+                if ($window -match '[A-Z0-9]') { continue }
+                $dCat = @([regex]::Matches($window, $diagCatPattern) | ForEach-Object { $_.Value } | Select-Object -Unique)
+                $dSev = @([regex]::Matches($window, $diagSevPattern) | ForEach-Object { $_.Value } | Select-Object -Unique)
+                if ($dCat.Count -eq 0 -or $dSev.Count -eq 0) { continue }
+                if (-not $diagReg.ContainsKey($dCode)) {
+                    Add-ValidationError ("Unregistered diagnostic code '{0}' with category/severity claim at {1}:{2}." -f $dCode, $df.Name, ($i + 1))
+                    continue
+                }
+                if (($dCat[0] -ne $diagReg[$dCode].Category) -or ($dSev[0] -ne $diagReg[$dCode].Severity)) {
+                    Add-ValidationError ("Diagnostic '{0}' claim {1}/{2} at {3}:{4} conflicts with registry {5}/{6}." -f $dCode, $dCat[0], $dSev[0], $df.Name, ($i + 1), $diagReg[$dCode].Category, $diagReg[$dCode].Severity)
+                }
+            }
+        }
+    }
+}
+
+# 3) 公共符号：注册表唯一 + 跨文档引用存在
+$symbolRegistryText = Get-Content -LiteralPath (Join-Path $architecturePath 'symbol-registry.md') -Raw -Encoding UTF8
+$symbolIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+foreach ($line in ($symbolRegistryText -split "`r?`n")) {
+    if ($line -match '^\|\s*`(SYM-[A-Z]+-\d+)`') {
+        if (-not $symbolIds.Add($Matches[1])) {
+            Add-ValidationError "Duplicate symbol ID in symbol-registry.md: $($Matches[1])."
+        }
+    }
+}
+foreach ($dd in @($moduleDesignPath, $workPackagePath, $agentTaskPath, $architecturePath)) {
+    foreach ($sf in (Get-ChildItem -LiteralPath $dd -Filter '*.md' -Recurse -File)) {
+        $sText = Get-Content -LiteralPath $sf.FullName -Raw -Encoding UTF8
+        foreach ($sm in [regex]::Matches($sText, 'SYM-[A-Z]+-\d+')) {
+            if (-not $symbolIds.Contains($sm.Value)) {
+                Add-ValidationError "Unregistered symbol reference '$($sm.Value)' in $($sf.Name)."
+            }
+        }
+    }
+}
+
+# 4) 反向追踪：每张任务卡必须出现在需求追踪表或治理追踪表
+$tracedTaskIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+foreach ($row in (Import-Csv -LiteralPath $tracePath)) {
+    foreach ($tid in ($row.agent_task_ids -split ';')) {
+        if ($tid.Trim()) { [void]$tracedTaskIds.Add($tid.Trim()) }
+    }
+}
+$governanceTracePath = Join-Path $PSScriptRoot 'governance-traceability.csv'
+if (-not (Test-Path -LiteralPath $governanceTracePath)) {
+    Add-ValidationError 'governance-traceability.csv is missing; regenerate it with generate-traceability.ps1.'
+} else {
+    foreach ($row in (Import-Csv -LiteralPath $governanceTracePath)) {
+        if ($row.task_id) { [void]$tracedTaskIds.Add($row.task_id) }
+    }
+}
+foreach ($t in @($cardTaskIds)) {
+    if (-not $tracedTaskIds.Contains($t)) {
+        Add-ValidationError "Task card $t is not covered by requirement-traceability.csv or governance-traceability.csv."
+    }
+}
+
+# 5) 证据路径：任务卡与追踪表统一使用 out/test-evidence/wp-xx/<run-id>/
+foreach ($cf in $cardFilesForDag) {
+    $raw = Get-Content -LiteralPath $cf.FullName -Raw -Encoding UTF8
+    if ($raw -cmatch 'evidence/WP-\d|(?<!out/test-)evidence/wp-\d') {
+        Add-ValidationError "Task card $($cf.Name) still references the legacy evidence/ path; use out/test-evidence/wp-xx/<run-id>/."
+    }
+}
+foreach ($row in (Import-Csv -LiteralPath $tracePath)) {
+    if ($row.evidence_artifact -and -not $row.evidence_artifact.StartsWith('out/test-evidence/')) {
+        Add-ValidationError "Traceability evidence path for $($row.requirement_id) must start with out/test-evidence/."
+    }
+}
+
+# 6) 命令禁项：grep / 任选其一 / 自然语言占位路径
+foreach ($cf in $cardFilesForDag) {
+    $cLines = Get-Content -LiteralPath $cf.FullName -Encoding UTF8
+    for ($i = 0; $i -lt $cLines.Count; $i++) {
+        if ($cLines[$i] -match '(^|[^a-zA-Z-])grep [^-]') {
+            Add-ValidationError "Task card $($cf.Name):$($i + 1) uses grep; use rg (executable on this Windows environment)."
+        }
+        if ($cLines[$i] -match '任选其一') {
+            Add-ValidationError "Task card $($cf.Name):$($i + 1) uses 任选其一; commands must be 必执行 + named fallback order."
+        }
+        if ($cLines[$i] -match '业务插件目录') {
+            Add-ValidationError "Task card $($cf.Name):$($i + 1) uses a natural-language path placeholder (业务插件目录)."
+        }
+    }
+}
+
+# 7) 工作包所有权：重复根目录必须显式豁免（设计内共享/父子结构）
+$knownSharedRoots = @{
+    'plugins/optimization' = @('WP-20', 'WP-21')   # module-design/optimization.md 为 WP-20/21 共用
+    'ui/workflow'          = @('WP-10', 'WP-22')   # WP-22 挂靠 WP-10 ui 层（D5 裁决）
+    'ui/comparison'        = @('WP-10', 'WP-22')
+}
+$ownershipRoots = @{}
+foreach ($wf in (Get-ChildItem -LiteralPath $workPackagePath -Filter 'WP-*.md' -File)) {
+    if ($wf.Name -match '^(WP-\d{2})') {
+        $wpId2 = $Matches[1]
+        $wRaw = Get-Content -LiteralPath $wf.FullName -Raw -Encoding UTF8
+        foreach ($ownLine in ([regex]::Matches($wRaw, '(?m)^.*拥有目录.*$'))) {
+            foreach ($tok in [regex]::Matches($ownLine.Value, '`[^`]*industrialrobot/([^`/]+(?:/[^`/]+)*)/?`')) {
+                $rel = $tok.Groups[1].Value.TrimEnd('/')
+                if (-not $ownershipRoots.ContainsKey($rel)) { $ownershipRoots[$rel] = @() }
+                if ($ownershipRoots[$rel] -notcontains $wpId2) {
+                    $ownershipRoots[$rel] = @($ownershipRoots[$rel]) + $wpId2
+                }
+            }
+        }
+    }
+}
+foreach ($rel in $ownershipRoots.Keys) {
+    $owners = @($ownershipRoots[$rel])
+    if ($owners.Count -gt 1) {
+        $exempt = $false
+        foreach ($exKey in $knownSharedRoots.Keys) {
+            if (($rel -eq $exKey -or $rel -like ($exKey + '/*')) -and @($knownSharedRoots[$exKey] | Where-Object { $owners -notcontains $_ }).Count -eq 0) {
+                $exempt = $true
+            }
+        }
+        if (-not $exempt) {
+            Add-ValidationError "Ownership root '$rel' is claimed by multiple WPs ($($owners -join ', ')) without an explicit shared-root exemption."
+        }
+    }
+}
+
+# 8) Schema 负例最低覆盖：每个 Schema 至少 3 个非法示例
+$invalidDir = Join-Path $PSScriptRoot 'schemas\examples\invalid'
+$invalidPerSchema2 = @{}
+if (Test-Path -LiteralPath $invalidDir) {
+    foreach ($ef in (Get-ChildItem -LiteralPath $invalidDir -Filter '*.example.json' -File)) {
+        $stem = ($ef.BaseName -replace '\.example\.json$', '') -split '\.' | Select-Object -First 1
+        if ($invalidPerSchema2.ContainsKey($stem)) { $invalidPerSchema2[$stem] = $invalidPerSchema2[$stem] + 1 }
+        else { $invalidPerSchema2[$stem] = 1 }
+    }
+}
+foreach ($schemaFile in (Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'schemas') -Filter '*.schema.json' -File)) {
+    $stem = $schemaFile.BaseName -replace '\.schema$', ''
+    $cnt = 0
+    if ($invalidPerSchema2.ContainsKey($stem)) { $cnt = $invalidPerSchema2[$stem] }
+    if ($cnt -lt 3) {
+        Add-ValidationError "Schema '$stem' has $cnt invalid example(s); at least 3 required under schemas/examples/invalid/."
+    }
+}
+
 if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Error $_ }
     exit 1
@@ -526,4 +748,4 @@ $symbolRegistryText = Get-Content -LiteralPath (Join-Path $architecturePath 'sym
 $contractCount = ([regex]::Matches($contractRegistryText, '(?m)^\| `CTR-')).Count
 $symbolCount = ([regex]::Matches($symbolRegistryText, '(?m)^\| `SYM-')).Count
 $adrCount = @(Get-ChildItem -LiteralPath (Join-Path $architecturePath 'adr') -Filter 'ADR-*.md' -File).Count
-Write-Output "124 requirements, 19 acceptance tests, $contractCount contracts, $symbolCount symbols, $adrCount ADRs, 0 trace gaps"
+Write-Output "$requirementTotal requirements, 19 acceptance tests, $contractCount contracts, $symbolCount symbols, $adrCount ADRs, 0 trace gaps"

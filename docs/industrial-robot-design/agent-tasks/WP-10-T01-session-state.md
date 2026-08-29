@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-10-T01；UX-01～UX-08、KIN-06、NFR-PERF-03（需求 §5.4/§5.5）；ADR-005（正交状态）；阶段 A / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`（`industrialrobot/ui/` 尚不存在）；语义源 `module-design/session-ui.md` v0.3
 - **前置任务及必需工件：**WP-01-T03（`run-tests.ps1` 统一测试入口）；WP-03-T02（`ObjectId`/`ObjectIdentity` 公共头）；WP-04-T02（`IProjectCommandService`/`DomainCommand` 公共头）；WP-04-T04（drafts 持久化端口）；WP-05-T03（`ResultCurrentness`/`EngineeringStatus` 公共头）；WP-09-T01（`Diagnostic` 公共头）
-- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp`、`EditDraft.hpp`、`StageStatusModel.hpp`；`ui/src/SessionState.cpp`、`DraftController.cpp`、`StageStatusModel.cpp`；`ui/test/SessionStateTest.cpp`；`ui/testdata/session/`；`ui/evidence/WP-10/T01/`；`ui/CMakeLists.txt`（仅登记 `sdurws_ird_ui`、`sdurws_ird_ui_model_test`）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp`、`EditDraft.hpp`、`StageStatusModel.hpp`；`ui/src/SessionState.cpp`、`DraftController.cpp`、`StageStatusModel.cpp`；`ui/test/SessionStateTest.cpp`；`ui/testdata/session/`；`ui/out/test-evidence/wp-10/<run-id>/`；`ui/CMakeLists.txt`（仅登记 `sdurws_ird_ui`、`sdurws_ird_ui_model_test`）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**`IProjectCommandService`/`IProjectQuery`（public-interfaces §1）、`ResultEnvelope`/`ResultCurrentness`（§5/§7 值对象表）、WP-03/09 公共头；`architecture/`、`module-design/`、`schemas/`、其他模块目录；模型层头不得包含 `<QWidget>` 或 Qt Widgets
 - **修改前接口：**无（目录与 CMake 目标不存在；旧插件 Widget 内嵌会话字段）
 - **修改后接口：**值类型 `SessionState{sessionId,projectRef,selectedObjectId,cameraPose,visibility,colorMode,filter,jogPose,playbackState,previewRef}`；`EditDraft{draftId,baseRevisionRef,patches[],validationDiagnostics[],dirty,savedAt}`；`StageStatusModel` 八值枚举（输入未完成/可计算/计算中/结果有效/需要重算/证据不足/计算失败/工程不可行）＋`ResultCurrentness` 映射；`DraftController::applyDraft(base,EditDraft,DomainCommand)->expected<CommandResult,ProjectError>`（内部经 WP-04 端口，UI 不直写）
@@ -20,7 +20,11 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_model_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_model_test$"
   ```
-- **diff 和禁止项检查：**`git diff --name-only 94fb910e` 仅含允许清单路径；`grep -rn "QWidget\|QtWidgets" ui/include/sdurws/ird/ui/{SessionState,EditDraft,StageStatusModel}.hpp` 零命中；`grep -rn "AnalysisSnapshot" ui/include/sdurws/ird/ui/SessionState.hpp` 零命中（会话态不进快照）
-- **证据工件：**`ui/evidence/WP-10/T01/`——状态转移表（GWT 三类断言）、revision 计数日志、草稿 JSON 样例、诊断样本与命令日志
-- **提交格式：**`WP-10-T01: implement session and draft state model`
+- **diff 和禁止项检查：**`git diff --name-only 94fb910e` 仅含允许清单路径；`rg -n "QWidget|QtWidgets" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EditDraft.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/StageStatusModel.hpp` 零命中；`rg -n "AnalysisSnapshot" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp` 零命中（会话态不进快照）
+- **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——状态转移表（GWT 三类断言）、revision 计数日志、草稿 JSON 样例、诊断样本与命令日志
+- **提交格式：**`WP-10-T01: 新增会话草稿与阶段状态模型`
+
+  - 新增 SessionState/EditDraft/StageStatusModel 值类型与 DraftController 实现
+  - 新增 草稿冲突测试与 `sdurws_ird_ui_model_test` 目标登记
+  - 新增 状态转移表与草稿 JSON 样例证据记录
 - **停止与升级条件：**会话态与项目态出现隐式互转、需要 Widget 才能测试、或 WP-04/05 公共头未合入时暂停并上报 WP-10 负责人；字段语义与 session-ui.md §3 冲突时升级 ADR，不得现场改契约

@@ -1,9 +1,9 @@
 # WP-04-T03 多文件事务与崩溃恢复
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-04-T03；需求 NFR-REL-01、NFR-REL-04、CON-03；ADR-002；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §5～§6、execution-model、module-design/persistence.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §5～§6、execution-model、module-design/persistence.md v0.3。
 - **前置任务及必需工件：**WP-04-T01（`ProjectStore/ProjectPath`）、WP-04-T02（`IProjectCommandService` 调用保存钩子）、WP-03 core；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/TransactionWriter.hpp`（模块私有）、`src/TransactionWriter.cpp`、`src/AtomicFile.cpp`（同卷原子替换 helper）、`test/TransactionTest.cpp`、`testdata/rwdesign/failpoints/`、`evidence/WP-04/`；修改 `CMakeLists.txt`、`src/ProjectStore.cpp`（启动恢复扫描挂接）；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/TransactionWriter.hpp`（模块私有）、`src/TransactionWriter.cpp`、`src/AtomicFile.cpp`（同卷原子替换 helper）、`test/TransactionTest.cpp`、`testdata/rwdesign/failpoints/`、`out/test-evidence/wp-04/<run-id>/`；修改 `CMakeLists.txt`、`src/ProjectStore.cpp`（启动恢复扫描挂接）；删除：无。
 - **禁止修改的文件和公共接口：**manifest/HEAD 物理格式字段；T01/T02 冻结接口与命令语义；结果仓库与追加协议；WP-01 脚本；文档与 schemas/。
 - **修改前接口：**T02 的保存钩子为直写占位（无事务状态机、无 failpoint、无恢复扫描）。
 - **修改后接口：**`TransactionWriter` 具名状态机 `Idle→Validating→Staging→Hashing→ManifestReady→RevisionCommitted→HeadCommitted→Complete`（任一阶段 `→Aborted`）；staging 目录 `.staging/<transaction-id>/`；`HeadLock{pid,heartbeatAt}`（心跳 5 s、超时 30 s，模块私有冻结）；诊断码 `IRD-PERSIST-LOCKED`、`IRD-PERSIST-UNCOMMITTED`、`IRD-PERSIST-COMMIT-FAILED`。
@@ -16,10 +16,14 @@
   - 边界：目录枚举不得把 `.staging/` 视为修订；跨卷临时目录配置拒绝；权限不足、磁盘满模拟；三次连续中断恢复均无半修订。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；无跨卷复制覆盖路径；旧 HEAD/旧 revision 字节级不变由测试哈希证明；无省略号命令。
-- **证据工件：**`evidence/WP-04/T03/`：故障矩阵 CSV、事务 ID、旧/新全树哈希、恢复诊断 JSON、原子切换日志与独立故障注入评审记录。
-- **提交格式：**`WP-04-T03: implement atomic multi-file transactions`。
+- **证据工件：**`out/test-evidence/wp-04/<run-id>/`：故障矩阵 CSV、事务 ID、旧/新全树哈希、恢复诊断 JSON、原子切换日志与独立故障注入评审记录。
+- **提交格式：**`WP-04-T03: 新增原子多文件事务与崩溃恢复`
+
+  - 新增 TransactionWriter 状态机、同卷原子提交与启动恢复扫描
+  - 新增 failpoint 不变量测试与目标登记
+  - 新增 故障矩阵、全树哈希与恢复诊断证据记录
 - **停止与升级条件：**平台原子替换能力不足、发现跨卷写入或旧 HEAD 可能被覆盖时停止，不改用非原子复制；锁参数变更需回改 module-design 冻结值并走评审。

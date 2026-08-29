@@ -1,6 +1,6 @@
 # WP-19 器件选型实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/device-selection.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.7。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/device-selection.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付。首版只支持旋转传动，移动关节输出范围外阻断诊断。
 
 **需求与契约：** SEL-01～09、AT-08、AT-19；架构契约与模块方案清单见 §2。
@@ -23,7 +23,7 @@
 
 ## 3. 文件所有权与 CMake 目标
 
-拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/`，子目录 `include/sdurws/ird/selection/`（ComponentSelectionResult.hpp、SelectionEvaluator.hpp、ApplySelectionCommand.hpp、SelectionDiagnostics.hpp）、`src/`（SelectionEvaluator.cpp、CatalogView.cpp、CurveInterpolation.cpp、TemperatureDerating.cpp、ConstraintFilter.cpp、MarginCalculator.cpp、CompatibilityIndex.cpp、SelectionJson.cpp）、`test/`（CatalogSchemaTest.cpp、CurveInterpolationTest.cpp、ConstraintFilterTest.cpp、MappingCheckTest.cpp、SelectionOutputTest.cpp、CatalogVersionTest.cpp）、`testdata/selection/{catalog-feasible,catalog-infeasible,curves,failpoints}/`、`evidence/WP-19/`。文件树以模块详设 §2 为权威。
+拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/`，子目录 `include/sdurws/ird/selection/`（ComponentSelectionResult.hpp、SelectionEvaluator.hpp、ApplySelectionCommand.hpp、SelectionDiagnostics.hpp）、`src/`（SelectionEvaluator.cpp、CatalogView.cpp、CurveInterpolation.cpp、TemperatureDerating.cpp、ConstraintFilter.cpp、MarginCalculator.cpp、CompatibilityIndex.cpp、SelectionJson.cpp）、`test/`（CatalogSchemaTest.cpp、CurveInterpolationTest.cpp、ConstraintFilterTest.cpp、MappingCheckTest.cpp、SelectionOutputTest.cpp、CatalogVersionTest.cpp）、`testdata/selection/{catalog-feasible,catalog-infeasible,curves,failpoints}/`、`out/test-evidence/wp-19/<run-id>/`。文件树以模块详设 §2 为权威。
 
 CMake 目标：`sdurws_ird_selection`、`sdurws_ird_selection_test`、`sdurws_ird_selection_contract_test`。允许依赖：WP-03 core、WP-05 evidence（端口头；经 `IResultRepository` 取 `DynamicResult`）、WP-11 io（`CatalogPackageReader` 安全记录，导入命令侧代码依赖）、WP-18 drivetrain（共享映射实现，代码依赖）、Qt Core；契约引用（不链接实现）：WP-17 `DynamicResult`、WP-04 `IProjectCommandService`（应用命令，集成期装配）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、直接 CSV/JSON 解析（一律经 WP-11）、第二套映射/效率/惯量计算、写 revision 或修改 `CatalogVersion`、目录外推断兼容性。
 
@@ -118,7 +118,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_
 
 - 独立验证（黑盒）：可行/不可行黄金表逐项复核、边界外插值注入、含移动关节目标链的阻断测试（AT-08）、目录更新前后历史结果比对。
 - 独立评审：由器件目录负责人独立复核字段字典引用、插值与降额规则、淘汰原因可解释性、版本锁定证据；SF/惯量比默认值变更走评审记录并升 `selectionRulesVersion`。
-- 证据写入 `evidence/WP-19/`：目录包哈希与 `CatalogVersionRef`、插值报告、可行/不可行黄金表结果、AT-08 证据、目录负责人独立评审签署。
+- 证据写入 `out/test-evidence/wp-19/<run-id>/`：目录包哈希与 `CatalogVersionRef`、插值报告、可行/不可行黄金表结果、AT-08 证据、目录负责人独立评审签署。
 
 ## 11. 迁移与删除（requirements §13）
 

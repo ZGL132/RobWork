@@ -1,9 +1,9 @@
 # WP-04-T05 Schema 升级与外部源重新关联
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-04-T05；需求 ARC-01、CON-01、NFR-REL-04、NFR-DEP-04；ADR-002；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §5、module-design/persistence.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §5、module-design/persistence.md v0.3。
 - **前置任务及必需工件：**WP-04-T01（格式加载）、WP-04-T03（staging/原子提交复用）、WP-03 core；WP-01-T03（测试入口）；`schemas/examples/project*.example.json` 基线夹具。
-- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ProjectUpgradeRegistry.hpp`、`ProjectSourceRelinker.hpp`、`src/ProjectUpgradeRegistry.cpp`、`src/ProjectSourceRelinker.cpp`、`test/SchemaUpgradeTest.cpp`、`test/ProjectQueryContractTest.cpp`（编入 `sdurws_ird_project_contract_test`）、`evidence/WP-04/`；修改 `CMakeLists.txt`、`testdata/rwdesign/schema1-*`；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ProjectUpgradeRegistry.hpp`、`ProjectSourceRelinker.hpp`、`src/ProjectUpgradeRegistry.cpp`、`src/ProjectSourceRelinker.cpp`、`test/SchemaUpgradeTest.cpp`、`test/ProjectQueryContractTest.cpp`（编入 `sdurws_ird_project_contract_test`）、`out/test-evidence/wp-04/<run-id>/`；修改 `CMakeLists.txt`、`testdata/rwdesign/schema1-*`；删除：无。
 - **禁止修改的文件和公共接口：**当前需求语义与 manifest 基线字段；旧 `.rwproj` 原文件（只读识别）；WP-05 快照接口；手工 CSV；T01～T04 冻结接口；文档与 schemas/。
 - **修改前接口：**T01 对未知版本只读拒绝（`IRD-PERSIST-FUTURE-SCHEMA`）；无升级链与重新关联命令。
 - **修改后接口：**`UpgradeStep{fromVersion,toVersion,升级函数}` 显式注册 `1→2…`（禁跳级/降级猜测）；升级写新 staging 并产生修订记录，原目录只读；`ProjectSourceRelinker` 重新关联命令（sourceUri→规范路径→当前哈希→比对记录哈希→显式确认→新命令/修订）。
@@ -17,10 +17,14 @@
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_contract_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`（contract 目标同法替换目标名）
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`（contract 目标同法替换目标名）
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
-- **diff 和禁止项检查：**diff 仅命中允许清单；无兼容层/双写路径；未登记默认值零新增（grep 隐式默认）；`.rwproj` 夹具未被写入。
-- **证据工件：**`evidence/WP-04/T05/`：升级前后 JSON/哈希、版本链日志、失败恢复比对、重新关联命令审计与契约测试输出。
-- **提交格式：**`WP-04-T05: implement schema upgrades and source relinking`。
+- **diff 和禁止项检查：**diff 仅命中允许清单；无兼容层/双写路径；未登记默认值零新增（rg 校验隐式默认）；`.rwproj` 夹具未被写入。
+- **证据工件：**`out/test-evidence/wp-04/<run-id>/`：升级前后 JSON/哈希、版本链日志、失败恢复比对、重新关联命令审计与契约测试输出。
+- **提交格式：**`WP-04-T05: 新增 Schema 升级与外部源重新关联`
+
+  - 新增 逐版本升级注册表与 ProjectSourceRelinker 重新关联实现
+  - 新增 未来版本/跳级失败测试与 contract 目标登记
+  - 新增 升级前后哈希与重新关联审计证据记录
 - **停止与升级条件：**升级需要隐式默认值、无法保留历史对象或新字段语义未在需求/契约定义时停止并提交 ADR 请求；不得以代码提交替代决策记录。

@@ -1,6 +1,6 @@
 # WP-25-T01 试点范围与固定目录
 
-- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T01；需求 §17（试点前置数据）、§3.3（产品成功指标）、§14（阶段 C 末试点数据签署门禁、首版签署最迟阶段 D 启动前）、§15.3（真实对照逐指标签署）；非代码任务（验证＝签署记录，testing-contract §4）。契约：`module-design/pilot-delivery.md` v0.3 §3、`architecture/testing-contract.md` §4；阶段 C 末门禁 / 阶段 E 实施，R1+R2
+- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T01；**PILOT-01**（试点范围与前置数据签署，需求 §17、§3.3、§14、§15.3）；非代码任务（验证＝签署记录，testing-contract §4）。契约：`module-design/pilot-delivery.md` v0.3 §3、`architecture/testing-contract.md` §4；阶段 C 末门禁 / 阶段 E 实施，R1+R2
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/pilot-delivery.md` v0.3＋`work-packages/WP-25-pilot-and-delivery.md`（D6 计划）§4
 - **前置任务及必需工件：**任务级无（数据签署不依赖代码，可在阶段 C 末先行）；WP 级真实试点前置＝WP-22～WP-24（本卡不阻塞于其完成）。必需输入：`requirements.md` §17 清单、`module-design/pilot-delivery.md` §3 签署表
 - **允许创建/修改/删除的文件：**创建 `docs/industrial-robot-design/pilot/pilot-plan.md`、`docs/industrial-robot-design/pilot/data-signoff.md`。禁止删除任何文件；不创建其他 pilot/ 工件（comparison-report、user-study-*、defect-register、release-checklist 分别归 T02～T05）

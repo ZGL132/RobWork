@@ -1,6 +1,6 @@
 # 快照、结果与证据模块详细方案（snapshot-result）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-05；阶段/发布：阶段 A / R1；任务卡：agent-tasks/WP-05-T01～T05
 - 架构契约：`architecture/public-interfaces.md` §3/§5/§7、`architecture/evaluation-semantics.md`、`architecture/execution-model.md` §3/§5、`architecture/persistence-schema.md` §4、`architecture/symbol-registry.md`
 - 代码前置：WP-03、WP-04（构建/门禁入口由 WP-01 交付）
@@ -26,7 +26,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/
   test/InputSliceTest.cpp   SnapshotTest.cpp   ResultStatusTest.cpp
       ResultAdmissionTest.cpp   ReportReadinessTest.cpp
   testdata/evidence/{slice,results,late,invalid}/
-  evidence/WP-05/
+  # 证据 → out/test-evidence/wp-05/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_evidence`、`sdurws_ird_evidence_test`、`sdurws_ird_evidence_contract_test`（含 `ResultRepositoryContractTest` 与 `EvaluatorContractTest` 骨架，public-interfaces §9）。允许依赖：WP-03、WP-04、C++ 标准库、Qt Core（仅 `QJson*`）。禁止：Qt Widgets、调度器/策略/名称模块私有实现、写项目 revision、直改 `results/` 中已完成工件。
@@ -48,13 +48,13 @@ CMake target：`sdurws_ird_evidence`、`sdurws_ird_evidence_test`、`sdurws_ird_
 
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
-| `IRD-RESULT-SLICE-MISMATCH` | append 时快照/切片身份与请求不符 | Input | Error | 拒绝写入；以当前切片重算 |
-| `IRD-RESULT-BRANCH-MISMATCH` | 结果归属分支与仓库当前分支不符 | Input | Error | 追加为原分支历史，不提升为当前 |
-| `IRD-RESULT-DUPLICATE-ATTEMPT` | 同 `runId` 下 attempt 身份冲突 | Input | Error | 幂等规则先行：同内容 no-op 返回既有 `ResultRef` |
-| `IRD-RESULT-CONFLICT` | 同 `runId+attemptId` 追加异内容 | Input | Error | 保留原记录；新内容需新 attempt |
+| `IRD-RESULT-SLICE-MISMATCH` | append 时快照/切片身份与请求不符 | System | Error | 拒绝写入；以当前切片重算 |
+| `IRD-RESULT-BRANCH-MISMATCH` | 结果归属分支与仓库当前分支不符 | Engineering | Warning | 追加为原分支历史，不提升为当前 |
+| `IRD-RESULT-DUPLICATE-ATTEMPT` | 同 `runId` 下 attempt 身份冲突 | System | Info | 幂等规则先行：同内容 no-op 返回既有 `ResultRef` |
+| `IRD-RESULT-CONFLICT` | 同 `runId+attemptId` 追加异内容 | System | Error | 保留原记录；新内容需新 attempt |
 | `IRD-EVIDENCE-SNAPSHOT-INCOMPLETE` | 快照缺软件 baseline、seed 等必填 | Input | Error | 补全输入后重建快照 |
-| `IRD-EVIDENCE-NAME-MISMATCH` | `nameMapId` 与快照/修订不一致 | Input | Error | 重编译名称映射后重算 |
-| `IRD-RESULT-CORRUPT`（建议码，待 WP-09 登记） | 读回哈希/Schema 校验失败 | System | Error | 赋 `ArtifactIntegrity=Corrupt`，拒绝正式用途，保留诊断待重算 |
+| `IRD-EVIDENCE-NAME-MISMATCH` | `nameMapId` 与快照/修订不一致 | System | Error | 重编译名称映射后重算 |
+| `IRD-RESULT-CORRUPT` | 读回哈希/Schema 校验失败 | System | Error | 赋 `ArtifactIntegrity=Corrupt`，拒绝正式用途，保留诊断待重算 |
 
 ## 5. 关键实现约定
 
@@ -77,7 +77,7 @@ CMake target：`sdurws_ird_evidence`、`sdurws_ird_evidence_test`、`sdurws_ird_
 | ResultAdmissionTest | 幂等/冲突/重复 attempt、迟到结果、跨分支、`nameMapId` 不一致、查询过滤与顺序稳定 |
 | ReportReadinessTest | `isFormallyFeasible` 正反例复用、`EvidenceGap` 列举、证据等级边界、profile 唯一 |
 
-往返夹具先过 `schemas/validate-schemas.ps1`（`testdata/evidence/` 样本与 `schemas/examples/analysis-snapshot.example.json`、`result-envelope.example.json`、`evidence-bundle.example.json` 同构；`invalid/` 含 §2 非法组合样本，对照 `result-envelope.illegal-combination.example.json`）。证据写入 `evidence/WP-05/`：输入/快照/资源哈希、sliceHash、诊断 JSON、append 序号、评审签名。验证命令（双形式）：
+往返夹具先过 `schemas/validate-schemas.ps1`（`testdata/evidence/` 样本与 `schemas/examples/analysis-snapshot.example.json`、`result-envelope.example.json`、`evidence-bundle.example.json` 同构；`invalid/` 含 §2 非法组合样本，对照 `result-envelope.illegal-combination.example.json`）。证据写入 `out/test-evidence/wp-05/<run-id>/`：输入/快照/资源哈希、sliceHash、诊断 JSON、append 序号、评审签名。验证命令（双形式）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'

@@ -1,6 +1,6 @@
 # 传动映射模块详细方案（drivetrain）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-18；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-18-T01～T05（WP-17-T06 侧联契约测试落在本模块测试目标）
 - 架构契约：`architecture/domain-model.md` §4（SI/类型化量纲）、`architecture/public-interfaces.md` §7～§8、`architecture/symbol-registry.md` SYM-EVL-001、ADR-004、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.5 `DriveTrainMappingEvaluator` 映射契约（冻结清单）与 DYN-04、§8.6 SEL-05、§9.3（能耗口径裁决）、§15.1（传动映射黄金数据）、§15.3（动力包络行）、§7.2（`DriveTrainDesign`）
@@ -23,7 +23,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evaluation/drivetrain/
   test/MappingSemanticsTest.cpp   RotaryMappingTest.cpp   EnergyBoundariesTest.cpp
       DutyCycleTest.cpp   SharedEvaluatorTest.cpp   DrivetrainContractTest.cpp
   testdata/drivetrain/{efficiency,inertia,energy,golden}/
-  evidence/WP-18/
+  # 证据 → out/test-evidence/wp-18/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_drivetrain`、`sdurws_ird_drivetrain_test`、`sdurws_ird_drivetrain_contract_test`。允许依赖：WP-03 core、C++ 标准库、Qt Core；契约引用（不链接实现）：WP-17 `DynamicResult` 公共类型（由调用方注入只读视图）。禁止：Qt Widgets、RobWork 运行时对象、业务插件头、第二套映射/效率/惯量实现（静态扫描，ADR-004）、直读 UI 会话态。
@@ -57,9 +57,9 @@ CMake target：`sdurws_ird_drivetrain`、`sdurws_ird_drivetrain_test`、`sdurws_
 | --- | --- | --- | --- | --- |
 | `IRD-DTM-RATIO-INVALID` | 减速比缺失、非有限或 ≤0 | Input | Error | 修正 `DriveTrainDesign` 后重映射 |
 | `IRD-DTM-ROTARY-ONLY` | 目标轴为移动关节/直线传动（SEL-09 首版范围外） | Engineering | Error | 该轴输出明确"范围外"，不套用旋转公式、不静默降级 |
-| `IRD-DTM-EFFICIENCY-MISSING` | 正向效率证据缺失 | Engineering | Error | 电机侧机械功不可输出；补目录/设计效率假设 |
+| `IRD-DTM-EFFICIENCY-MISSING` | 正向效率证据缺失 | Engineering | Warning | 电机侧机械功分项按 DataInsufficient 输出；补目录/设计效率假设 |
 | `IRD-DTM-REVERSE-EFFICIENCY-MISSING` | 反向效率缺失而循环含反向功率流 | Engineering | Warning | 反向流分项按 DataInsufficient 输出，禁止以 η⁺ 反向套用 |
-| `IRD-DTM-INERTIA-INVALID` | 转子/减速器等效惯量缺失或非有限 | Engineering | Warning | 惯量比输出 NotEvaluated 并列举缺口 |
+| `IRD-DTM-INERTIA-INVALID` | 转子/减速器等效惯量非有限或违反物理约束 | Input | Error | 修正惯量数据后重映射；缺失情形走证据缺口（NotEvaluated＋gaps），不用本码 |
 
 ## 5. 关键实现约定
 
@@ -82,7 +82,7 @@ CMake target：`sdurws_ird_drivetrain`、`sdurws_ird_drivetrain_test`、`sdurws_
 | SharedEvaluatorTest | 动力学/选型/优化三调用方同输入同输出；无第二实现（静态扫描零命中） |
 | DrivetrainContractTest | 候选无关性（WP-17-T06）：改变 `DriveTrainDesign` 不改变关节侧 `DynamicResult` |
 
-证据写入 `evidence/WP-18/`：黄金数据（多速比正/反向效率与反射惯量）版本/哈希、假设清单、三消费方一致性记录、驱动工程师＋独立测试双评审签署。验证命令（双形式，仓库根执行）：
+证据写入 `out/test-evidence/wp-18/<run-id>/`：黄金数据（多速比正/反向效率与反射惯量）版本/哈希、假设清单、三消费方一致性记录、驱动工程师＋独立测试双评审签署。验证命令（双形式，仓库根执行）：
 
 ```text
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain(_contract)?_test$'

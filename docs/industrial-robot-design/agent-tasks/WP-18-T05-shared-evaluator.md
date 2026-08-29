@@ -16,6 +16,6 @@
   - 失败：Given 移动关节或非法速比，When 调用，Then `IRD-DTM-ROTARY-ONLY`/`-RATIO-INVALID`，该轴无部分输出
 - **精确验证命令**（仓库根、VS x64；三形式，登记目标组）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain(_contract)?_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test sdurws_ird_drivetrain_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain(_contract)?_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；静态扫描（效率/反射惯量/映射关键词）在本包外零命中；`grep -rn "class .*MappingEvaluator" industrialrobot/` 仅一处声明；无 Qt Widgets、无 RobWork 运行时对象
-- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T05/`——三消费方一致性记录、候选无关性契约结果（WP-17-T06 侧联签署）、静态扫描报告、假设清单汇总、测试日志
+- **证据工件：**`evaluation/drivetrain/out/test-evidence/wp-18/<run-id>/`——三消费方一致性记录、候选无关性契约结果（WP-17-T06 侧联签署）、静态扫描报告、假设清单汇总、测试日志
 - **提交格式：**`WP-18-T05: 共享传动评估器`
 - **停止与升级条件：**WP-17-T06 侧联验收不通过、或任何调用方需要第二套映射才能工作时，停止并升级 ADR-004 所有者裁决；WP-19/WP-21 需要扩展输出字段时走契约变更评审，不得在调用方私算

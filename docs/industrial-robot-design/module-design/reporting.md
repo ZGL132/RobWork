@@ -1,12 +1,12 @@
 # 证据与评审报告模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-12；阶段/发布：阶段 A / R1（完整报告随阶段 C 形成 R1 交付）；任务卡：`agent-tasks/WP-12-T01～T06`
 - 架构契约：`architecture/persistence-schema.md`（§4）、`architecture/evaluation-semantics.md`（§2、§4、§5）、`architecture/public-interfaces.md`（§5、§7）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`
 
 ## 1. 模块职责
 
-模块拥有 `ReviewReport`（SYM-RPT-001）权威报告对象、`ReviewReportBuilder` 和 HTML/PDF/JSON+CSV 渲染。所有展示格式由同一对象渲染；报告只查询明确 ID 的项目修订与结果集合，不读取当前界面或会话态。正式可行结论必须由 `isFormallyFeasible()` 谓词输出（evaluation-semantics §4，WP-05 交付），本模块只消费 `FeasibilityVerdict`/`gaps` 渲染，不得自行判定或复制谓词。
+模块拥有 `ReviewReport`（SYM-RPT-001）权威报告对象、`ReviewReportBuilder` 和 HTML/JSON+CSV 渲染。所有展示格式由同一对象渲染；报告只查询明确 ID 的项目修订与结果集合，不读取当前界面或会话态。正式可行结论必须由 `isFormallyFeasible()` 谓词输出（evaluation-semantics §4，WP-05 交付），本模块只消费 `FeasibilityVerdict`/`gaps` 渲染，不得自行判定或复制谓词。
 
 ## 2. 目录与构建
 
@@ -14,25 +14,25 @@
 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/
   include/sdurws/ird/reporting/
     ReviewReport.hpp ReviewReportBuilder.hpp
-    HtmlReportRenderer.hpp PdfReportRenderer.hpp EvidenceDataExporter.hpp
+    HtmlReportRenderer.hpp EvidenceDataExporter.hpp
   resources/report.zh-CN.html report.css
   src/ReviewReport.cpp ReviewReportBuilder.cpp HtmlReportRenderer.cpp
-      PdfReportRenderer.cpp EvidenceDataExporter.cpp
-  test/ReportObjectTest.cpp DesignVariantTest.cpp HtmlPdfTest.cpp
+      EvidenceDataExporter.cpp
+  test/ReportObjectTest.cpp DesignVariantTest.cpp HtmlRenderTest.cpp
       EvidencePackageTest.cpp WordingLimitsTest.cpp ReproducibleRoundtripTest.cpp
-  testdata/ evidence/
+  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 ```
 
 CMake target：`sdurws_ird_reporting`、`sdurws_ird_reporting_test`。**依赖裁决**：代码前置 WP-05、09（总纲 §5.2）；项目数据经 `IProjectQuery` 端口（WP-04，签名见 public-interfaces §1，随 WP-05 前置传递），结果与证据经 `IResultRepository`（WP-05），对象显示名取自快照内 `RuntimeNameMap` 与 `localName`，不直接依赖 WP-06 代码；CSV 写出经 WP-11 `CsvWriter` 公共端口（契约引用，集成期交付依赖由总纲同步标注）。禁止依赖：Qt Widgets、当前界面选择、其他 WP 私有头、跨模块文件写入。
 
-**PDF 依赖为待 ADR 审批项**：HTML→PDF 渲染途径（Qt PrintSupport 或其他渲染库）尚未在 WP-01 依赖基线与 ADR 登记，未获批前不得引入构建依赖；`PdfReportRenderer` 仅保留接口声明，交付物为 HTML 与 JSON+CSV，多格式一致性校验的 PDF 维度随 ADR 落地后启用。
+**PDF 导出裁决（`IRD-D10-20260829`）**：PDF 不在需求基线内（requirements 无 PDF 条目），R1 不交付 PDF，也不保留 `PdfReportRenderer` 接口桩；未经 WP-01 依赖门禁与 ADR 登记禁止引入任何 HTML→PDF 渲染依赖（Qt PrintSupport 或第三方渲染库）。交付物为 HTML 与 JSON+CSV，多格式一致性校验覆盖 HTML/JSON/CSV 三格式。
 
 ## 3. 数据与接口
 
 - `ReviewReport` 内容：`reportId/schemaVersion`、`projectId/branchId/projectRevision`、所选结果与快照 ID 集合、软件/依赖基线、设计摘要与基线差异（改型逐指标给出基线值、候选值、绝对/相对变化和来源）、需求结论与证据缺口、各域结论、Pareto 候选与取舍理由（不得以单一加权分数替代）、硬约束证据与诊断、假设/限制/固定措辞、评审与签署元数据。浮点量 SI 且有限；失败不得返回看似成功的空 payload。
 - `reports/<report-id>/` 追加协议实现（协议以 persistence-schema §4 为准）：写入 `report.json`（身份引用与工件索引：HTML/JSON/CSV 文件名 + SHA-256）及各工件；**幂等**——同 `reportId` 重复追加逐字节相同内容为 no-op；**冲突拒绝**——同 `reportId` 异内容拒绝（`IRD-RESULT-CONFLICT`，追加协议唯一冲突码）；写入顺序固定为临时目录 → 全部工件与哈希校验 → 原子落位，失败不覆盖既有工件。
 - 数据包：JSON 完整保存 `ReviewReport` 与引用身份（非有限数不得产生非法 JSON）；CSV 分别输出设计参数、需求结果、候选指标、硬约束、器件淘汰和诊断，公式注入转义经 WP-11 `CsvWriter`，原始值保存在 JSON。
-- 多格式一致性：关键数值、工程状态、诊断码和快照身份在 HTML/JSON/CSV（PDF 获批后加入）逐字段一致。
+- 多格式一致性：关键数值、工程状态、诊断码和快照身份在 HTML/JSON/CSV 逐字段一致。
 
 ## 4. 调用与状态
 
@@ -62,7 +62,7 @@ ReviewReportBuilder(明确 ID) -> IProjectQuery 加载修订 -> IResultRepositor
 | --- | --- | --- |
 | ReportObjectTest | 缺 ID/基线的失败测试、不接受"当前界面结果" | `sdurws_ird_reporting_test` |
 | DesignVariantTest | 新机型与改型内容、基线差异逐指标 | `sdurws_ird_reporting_test` |
-| HtmlPdfTest | HTML 本地资源、PDF 分页/中文字体（随 ADR 启用） | `sdurws_ird_reporting_test` |
+| HtmlRenderTest | HTML 本地资源、离线渲染约束、中文内容一致性 | `sdurws_ird_reporting_test` |
 | EvidencePackageTest | JSON/CSV 数据包、转义、非有限数拒绝 | `sdurws_ird_reporting_test` |
 | WordingLimitsTest | 固定措辞、附录标识、能量口径区分 | `sdurws_ird_reporting_test` |
 | ReproducibleRoundtripTest | 不可变副本重生成、多格式一致、追加幂等/冲突 | `sdurws_ird_reporting_test` |
@@ -84,4 +84,4 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_t
 | 旧四插件各自的结果导出/打印 | Delete | 由统一 `ReviewReport` 渲染替代 |
 | 旧 HTML 模板与样式片段 | Migratable | 黄金对照通过后并入 `resources/`，否则重写 |
 | 从 UI 状态临时拼报告的路径 | Delete | 阻断项（SYM-RPT-001 禁止项，需求 §13.3） |
-| 旧 PDF 输出链路（如存在） | Rewrite | 随 PDF 依赖 ADR 一并裁决，不静默保留 |
+| 旧 PDF 输出链路（如存在） | Delete | 无需求支撑（D10 裁决），不保留接口桩；未来引入需先过依赖门禁与 ADR |

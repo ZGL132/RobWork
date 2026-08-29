@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_poli
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "0\.05\|0\.01\|0\.005" policy/src` 确认数值仅来自 profile 携带与 §15.3 引用常量；结论措辞无第二版本
-- **证据工件：**`policy/evidence/WP-07/T03/`：采样点/深度清单、分辨率参数来源记录、结论文本、逐段距离与诊断、命令日志与评审签名
-- **提交格式：**`WP-07-T03: implement path validation protocol`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "0\.05|0\.01|0\.005" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src` 确认数值仅来自 profile 携带与 §15.3 引用常量；结论措辞无第二版本
+- **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：采样点/深度清单、分辨率参数来源记录、结论文本、逐段距离与诊断、命令日志与评审签名
+- **提交格式：**`WP-07-T03: 新增路径验证协议`
+
+  - 新增 pathValidationProfile 冻结参数与 PathValidator 递归二分实现
+  - 新增 深度耗尽降级测试与目标登记
+  - 新增 采样点/深度清单与结论文本证据记录
 - **停止与升级条件：**需求 §15.3 未冻结步长、余量或深度语义，或某关节类型无法归属转动/移动步长时暂停并升级至产品负责人

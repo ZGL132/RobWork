@@ -22,8 +22,8 @@
   - 失败：Given 比较集缺同名指标或含非正式可行项，When 请求比较，Then `IRD-WF-NOT-COMPAREABLE` 拒绝整组比较并列出不可比项；Given 未通过正式可行判定的候选，When 请求应用，Then `IRD-WF-APPLY-BLOCKED` 列 `gaps`、保持当前修订。
 - **精确验证命令：**（仓库根、VS x64 环境；`QCoreApplication` 模型测试）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_model_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；不重新声明八项指标集合或 `comparisonTolerance` 默认值（一律读研究定义）；无加权总分；预览路径无 revision 写入。
 - **证据工件：** `ui/comparison/evidence/t03-candidate-compare.log`：八项指标聚合与差异对照表（WP-02 optimization 样本）、无差别容差边界样例、守卫触发诊断样例、命令原文与 commit。
 - **提交格式：** `WP-22-T03: 候选比较与应用`

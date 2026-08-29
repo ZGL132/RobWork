@@ -1,6 +1,6 @@
 # WP-25-T02 算例与实测对照
 
-- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T02；需求 §15.3（真实机器人试点对照逐指标单独签署、趋势/相关性证据边界）、§3.3（正确性门槛与产品成功指标）、§17（对照口径来源）、§14 阶段 E 退出条件；非代码任务（验证＝对照报告与签署记录，testing-contract §4）。契约：`module-design/pilot-delivery.md` v0.3 §4、`architecture/testing-contract.md` §4、`architecture/evaluation-semantics.md` §5（展示义务）；阶段 E / R1+R2
+- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T02；**PILOT-02**（算法与实测对照签署，需求 §15.3、§3.3、§17、§14 阶段 E）；非代码任务（验证＝对照报告与签署记录，testing-contract §4）。契约：`module-design/pilot-delivery.md` v0.3 §4、`architecture/testing-contract.md` §4、`architecture/evaluation-semantics.md` §5（展示义务）；阶段 E / R1+R2
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/pilot-delivery.md` v0.3＋`work-packages/WP-25-pilot-and-delivery.md`（D6 计划）§5
 - **前置任务及必需工件：**WP-25-T01（`pilot/data-signoff.md` 签署件与 `pilot/pilot-plan.md` 版本锁定表——环境、工具、负载、目录与逐指标容差全程以此为准）；WP 级＝可运行的 R1/R2 安装版本（WP-24 包，用于在签署环境取得软件结果）
 - **允许创建/修改/删除的文件：**创建 `docs/industrial-robot-design/pilot/comparison-report.md`、`docs/industrial-robot-design/pilot/measurements/`（原始测量导出件＋SHA-256 哈希清单）。禁止删除任何文件；不修改 `data-signoff.md` 与 `pilot-plan.md`（签署件只读）

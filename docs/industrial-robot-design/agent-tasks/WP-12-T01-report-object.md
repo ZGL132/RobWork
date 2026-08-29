@@ -1,9 +1,9 @@
 # WP-12-T01 权威报告对象
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-12-T01；需求 NFR-COR-04、EVI-01、REQ-06；ADR-004；阶段 A / R1（完整报告随阶段 C 形成 R1 交付）。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、persistence-schema §4、evaluation-semantics §4、public-interfaces §1/§5、module-design/reporting.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、persistence-schema §4、evaluation-semantics §4、public-interfaces §1/§5、module-design/reporting.md v0.3。
 - **前置任务及必需工件：**WP-05-T01～T05（`IResultRepository`、`ResultEnvelope`、`FeasibilityVerdict/gaps`、`EvidenceGap`）；WP-09-T03（IRD 诊断码目录与映射，消费其 `Diagnostic`）；WP-04 查询端口经 WP-05 前置传递；WP-01-T02/T03（CMake 目标 `sdurws_ird_reporting(_test)` 与测试入口）。
-- **允许创建/修改/删除的文件**（模块根 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/`）：创建 `include/sdurws/ird/reporting/ReviewReport.hpp`、`ReviewReportBuilder.hpp`、`src/ReviewReport.cpp`、`src/ReviewReportBuilder.cpp`、`test/ReportObjectTest.cpp`、`testdata/`、`evidence/WP-12/`、`CMakeLists.txt`；删除：无。
+- **允许创建/修改/删除的文件**（模块根 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/`）：创建 `include/sdurws/ird/reporting/ReviewReport.hpp`、`ReviewReportBuilder.hpp`、`src/ReviewReport.cpp`、`src/ReviewReportBuilder.cpp`、`test/ReportObjectTest.cpp`、`testdata/`、`out/test-evidence/wp-12/<run-id>/`、`CMakeLists.txt`；删除：无。
 - **禁止修改的文件和公共接口：**requirements.md 与 architecture/、module-design/ 文档；WP-03 谓词（只消费 `FeasibilityVerdict/gaps`，不复制判定）；WP-04/05/09 公共接口；未获批准的 PDF 依赖（待 ADR-006）；"当前界面结果"输入路径（SYM-RPT-001 禁止项）。
 - **修改前接口：**无（reporting 模块不存在）。
 - **修改后接口：**`ReviewReport`（SYM-RPT-001：reportId/schemaVersion、projectId/branchId/projectRevision、所选结果与快照 ID 集合、软件/依赖基线、设计摘要、需求结论与证据缺口、各域结论、Pareto 候选取舍、硬约束证据与诊断、假设/限制、评审签署元数据）；`ReviewReportBuilder`（只接受明确 ID，经 `IProjectQuery`/`IResultRepository` 取数）；`reports/<report-id>/` 追加（写 `report.json`＋工件索引与 SHA-256，幂等 no-op，同 ID 异内容 → `IRD-RESULT-CONFLICT`）；错误码 `IRD-RPT-INPUT-INCOMPLETE`、`IRD-RPT-RENDER-FAILED`、`IRD-RPT-FORMAT-MISMATCH`。
@@ -16,10 +16,14 @@
   - 边界：浮点量 SI 且有限（非有限拒绝）；`Quick/Partial/DataInsufficient` 与过期结果只能进显著标识的参考附录（evaluation-semantics §2/§5），不进正式结论。
 - **精确验证命令**（本模块无 GUI 测试，reporting.md §6）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；builder 无"当前界面结果"入参；无第二处正式可行判定；无 Qt Widgets/PDF 依赖引入；无省略号命令。
-- **证据工件：**`evidence/WP-12/T01/`：快照/结果身份清单、谓词 `gaps` 输出、追加工件哈希、失败诊断 JSON、测试输出与提交 SHA。
-- **提交格式：**`WP-12-T01: authoritative review report object`。
+- **证据工件：**`out/test-evidence/wp-12/<run-id>/`：快照/结果身份清单、谓词 `gaps` 输出、追加工件哈希、失败诊断 JSON、测试输出与提交 SHA。
+- **提交格式：**`WP-12-T01: 新增权威评审报告对象`
+
+  - 新增 ReviewReport 权威对象与按 ID 取数 builder 实现
+  - 新增 缺输入失败测试及目标登记
+  - 新增 追加工件哈希与失败诊断证据记录
 - **停止与升级条件：**前置接口或诊断码缺失、字段无法从 reporting.md §3 推导时停止并报告；报告字段变更须先改模块详设与契约，不反向冻结。

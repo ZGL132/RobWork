@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-20-T01
 - **前置任务及必需工件：**WP-20-T06（应用命令包＋`ResultApplicationTest` 工件）、WP-20-T04（静态指标冻结口径与引导提示）；WP-10-T03（公共组件）、WP-09-T03（诊断目录渲染）、WP-01-T03（测试入口）
 - **允许创建/修改/删除的文件**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）：
-  - 创建：`gui/OptimizationPlugin.hpp`、`gui/OptimizationPlugin.cpp`、`gui/panels/`（变量域编辑、候选比较、静态证据、应用确认四面板）、`test/OptimizationGuiTest.cpp`、`evidence/WP-20/T07/`
+  - 创建：`gui/OptimizationPlugin.hpp`、`gui/OptimizationPlugin.cpp`、`gui/panels/`（变量域编辑、候选比较、静态证据、应用确认四面板）、`test/OptimizationGuiTest.cpp`、`out/test-evidence/wp-20/<run-id>/`
   - 修改：`plugins/optimization/CMakeLists.txt`（登记 `sdurws_ird_optimization_plugin`、`sdurws_ird_optimization_gui_test`；目标名不得增删改名）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01～T06 冻结语义与 definition/candidate 计算核心；`joint/` 目录与 `_joint*` 目标（归 WP-21）；实现 WP-21 功能（联合搜索/Quick 审计/鲁棒性）；直读 UI 会话态（经 WP-10 端口）；硬编码诊断文案（统一经 WP-09 目录）；不暴露内部哈希作为唯一标识
 - **修改前接口：**无优化 GUI（旧 `sdurws_structureoptimizer*` 加权总分界面按 WP-20 §10 迁移表删除，不在本卡）
@@ -18,10 +18,14 @@
   - 失败：Given 不可行候选，When 打开应用确认，Then 入口禁用并列出 `gaps` 具体缺口，不得只显示"不可行"
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_gui_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_gui_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_gui_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
   - GUI 约束：`$env:QT_QPA_PLATFORM='windows'`，一次只启动一个 GUI 测试可执行文件；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "jointSearch|Quick|robust|audit" plugins/optimization/gui/` 零命中（无 WP-21 功能）；`grep -rniE "sha|hash" plugins/optimization/gui/` 无内部哈希作唯一标识展示；无直读会话态与本地文案表
-- **证据工件：**`evidence/WP-20/T07/`——GUI 回归报告（面板×场景矩阵）、应用确认与新修订记录、不可行候选 `gaps` 展示记录、测试日志（commit/配置）
-- **提交格式：**`WP-20-T07: add stage-b optimization ui`
+- **证据工件：**`out/test-evidence/wp-20/<run-id>/`——GUI 回归报告（面板×场景矩阵）、应用确认与新修订记录、不可行候选 `gaps` 展示记录、测试日志（commit/配置）
+- **提交格式：** `WP-20-T07: 新增阶段 B 优化界面`
+
+  - 新增优化定义与运行面板
+  - 新增界面守卫测试
+  - 新增运行证据记录
 - **停止与升级条件：**阶段 D 功能混入、或需修改已冻结公共接口/计算核心时暂停并升级；GUI 测试在 `QT_QPA_PLATFORM=windows` 一次一个约束下无法运行时报告环境问题，不得并行启动多个 GUI 可执行文件

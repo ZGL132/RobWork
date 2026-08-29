@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_runt
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；canonical `OriginPose/Axis` 字段无改动（grep 确认）；`CompensationFrame` 不进入 qIndex 分配；无碰撞策略引用
-- **证据工件：**`runtime/evidence/WP-06/T04/`：三夹具补偿矩阵、位姿/轴线误差报告、几何与惯量对照、诊断清单、RobWork 版本、命令日志与评审签名
-- **提交格式：**`WP-06-T04: implement arbitrary-axis runtime adapter`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；canonical `OriginPose/Axis` 字段无改动（rg 确认）；`CompensationFrame` 不进入 qIndex 分配；无碰撞策略引用
+- **证据工件：**`runtime/out/test-evidence/wp-06/<run-id>/`：三夹具补偿矩阵、位姿/轴线误差报告、几何与惯量对照、诊断清单、RobWork 版本、命令日志与评审签名
+- **提交格式：**`WP-06-T04: 新增任意轴运行时适配`
+
+  - 新增 三夹具补偿帧插入与资产坐标系绑定实现
+  - 新增 任意轴 FK 对照测试与目标登记
+  - 新增 补偿矩阵与位姿/轴线误差证据记录
 - **停止与升级条件：**补偿会改写领域原始物理值、容差未在需求 §15.3 定义或 RobWork 无法表达某夹具时暂停并升级至架构负责人

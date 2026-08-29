@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-14-T03；REQ-01、REQ-03、需求 §15.3（区域覆盖口径）；阶段 B / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/requirements-definition.md` v0.3 §3/§5
 - **前置任务及必需工件：**WP-14-T01（`PoseRegion` 字段骨架与校验链工件）
-- **允许创建/修改/删除的文件：**修改 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/include/sdurws/ird/requirements/PoseRegion.hpp`（补全实现）；创建 `requirements/src/PoseRegion.cpp`；`requirements/test/PoseRegionTest.cpp`；`requirements/testdata/requirements/regions/`；`requirements/evidence/WP-14/T03/`；`requirements/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**修改 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/include/sdurws/ird/requirements/PoseRegion.hpp`（补全实现）；创建 `requirements/src/PoseRegion.cpp`；`requirements/test/PoseRegionTest.cpp`；`requirements/testdata/requirements/regions/`；`requirements/out/test-evidence/wp-14/<run-id>/`；`requirements/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01 冻结的 `TaskPoint` 字段与容差语义；WP-15 拥有的覆盖率定义权；`schemas/`、`architecture/`、`module-design/`
 - **修改前接口：**`PoseRegion` 仅为字段骨架（T01）
 - **修改后接口：**`PoseRegion{regionId, priority, frameId, Box min/max, positionSampleCount/orientationSampleCount, minCoverageRatio}`；`PoseRegion::plannedDenominator()`（冻结定义：分母＝计划的位置—姿态组合＝`positionSampleCount×orientationSampleCount`，含边界样本，供 WP-15 消费）；`PoseRegion::validateBudget()`（单区域组合上限 1,000,000，模块冻结）
@@ -21,6 +21,10 @@
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_requirements_test$"
   ```
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "coverage\|jacobian\|samplePose" requirements/src/PoseRegion.cpp` 零命中（覆盖率定义与子空间构造不归本卡）；上限 `1000000` 常量仅出现一处（冻结常量）
-- **证据工件：**`requirements/evidence/WP-14/T03/`——区域黄金数据、分母对照表、预算拒绝矩阵、边界包含断言输出
-- **提交格式：**`WP-14-T03: define pose regions`
+- **证据工件：**`requirements/out/test-evidence/wp-14/<run-id>/`——区域黄金数据、分母对照表、预算拒绝矩阵、边界包含断言输出
+- **提交格式：** `WP-14-T03: 定义位姿区域`
+
+  - 新增位姿区域与公差定义
+  - 新增区域判定测试
+  - 新增运行证据记录
 - **停止与升级条件：**任务坐标系/容差语义不明确、或 WP-15 需要的分母定义与冻结口径冲突时暂停并升级 WP-14/WP-15 联合评审；上限 1,000,000 需变更时走模块详设版本升级

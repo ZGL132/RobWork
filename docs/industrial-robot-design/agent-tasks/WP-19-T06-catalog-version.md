@@ -16,6 +16,6 @@
   - 失败：Given 未知/缺失 `CatalogVersionRef`，When 评估或查询，Then `IRD-SEL-CATALOG-UNAVAILABLE`、无部分结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "set[A-Z]" src/CatalogView.cpp` 对 `CatalogVersion` 无变更方法；历史结果文件在测试前后 `git status` 零变化（payload 不回写）；无就地刷新入口
-- **证据工件：**`plugins/selection/evidence/WP-19/T06/`——目录更新前后历史结果比对表（含两版本内容 ID/哈希）、Superseded 显示记录、测试日志
+- **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——目录更新前后历史结果比对表（含两版本内容 ID/哈希）、Superseded 显示记录、测试日志
 - **提交格式：**`WP-19-T06: 目录版本兼容`
 - **停止与升级条件：**WP-05 当前性语义无法表达"按切片内容比较显示 Superseded"、或 WP-11 导入无法保证内容 ID 稳定时，停止并升级对应所有者；不得以重算历史结果的方式实现兼容

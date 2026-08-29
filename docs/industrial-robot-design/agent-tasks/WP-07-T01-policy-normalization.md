@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_con
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；未触碰 requirements/schema 与 WP-06/业务插件文件；策略源码无硬编码默认安全距离或默认配对
-- **证据工件：**`policy/evidence/WP-07/T01/`：规范 JSON、冲突矩阵、content hash、拒绝诊断、命令日志与评审签名
-- **提交格式：**`WP-07-T01: implement policy normalization`
+- **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：规范 JSON、冲突矩阵、content hash、拒绝诊断、命令日志与评审签名
+- **提交格式：**`WP-07-T01: 新增策略规范化与冲突检测`
+
+  - 新增 EngineeringPolicySet/CollisionPolicy 规范化与 content hash 实现
+  - 新增 冲突矩阵失败测试与目标登记
+  - 新增 规范 JSON 与拒绝诊断证据记录
 - **停止与升级条件：**策略字段含义、默认值或证据等级组合未在 requirements §6.7.2 冻结时暂停，不自行添加默认规则，升级至产品负责人

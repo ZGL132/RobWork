@@ -17,7 +17,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/`，含 `include/sdurws/ird/policy/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-06 RuntimeNameMap、RobWork Proximity/PathPlanning 和 Qt Core；禁止 Qt Widgets、业务插件私有碰撞开关、直接写项目 revision、手工 CSV。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/`，含 `include/sdurws/ird/policy/`、`src/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许 WP-03 core、WP-06 RuntimeNameMap、RobWork Proximity/PathPlanning 和 Qt Core；禁止 Qt Widgets、业务插件私有碰撞开关、直接写项目 revision、手工 CSV。
 
 目标：`sdurws_ird_policy`、`sdurws_ird_policy_test`、`sdurws_ird_policy_contract_test`。
 

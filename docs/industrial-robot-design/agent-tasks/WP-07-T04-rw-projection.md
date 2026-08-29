@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_con
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；adapter 不写入项目 revision；无对 XML 值的无诊断覆盖；RobWork 头仅出现在 adapter 实现文件
-- **证据工件：**`policy/evidence/WP-07/T04/`：策略/setup 往返 JSON、冲突清单、名称反解记录、RobWork 版本、命令日志与评审签名
-- **提交格式：**`WP-07-T04: implement RobWork policy projection`
+- **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：策略/setup 往返 JSON、冲突清单、名称反解记录、RobWork 版本、命令日志与评审签名
+- **提交格式：**`WP-07-T04: 新增 RobWork 策略投影`
+
+  - 新增 CollisionSetup/ProximitySetup 确定性生成与 XML 草稿合并实现
+  - 新增 投影往返与冲突诊断测试及目标登记
+  - 新增 往返 JSON 与冲突清单证据记录
 - **停止与升级条件：**RobWork 设置无法表达策略字段、或需要增加未批准默认值时暂停并升级至 WP-07 所有者与 RobWork 依赖基线评审

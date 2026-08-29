@@ -1,10 +1,10 @@
 # WP-21 联合优化实施计划
 
 > 阶段/发布：阶段 D / R2；完整实现 OPT-01～10（含 OPT-05、OPT-09、OPT-10）。负责 WP：WP-21。
-> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.7；检查点 `IRD-D2-20260829`；与 WP-20 共用一文，本文只引用其 WP-21 部分）。
+> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-20 共用一文，本文只引用其 WP-21 部分）。
 > 前置（总纲 §5.3，保持不变）：WP-16～20。人周：10～16。
 > 模块详设补充（不改总纲口径）：WP-08 平台经 WP-16～20 传递；WP-23 规模化基准与本 WP 协作采集性能证据（NFR-PERF-04～06），不构成总纲前置变更。
-> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设均处 Proposed 时不得进入实现）。
+> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设已于 IRD-D10-20260829 联合评审 Accepted；实现启动按总纲依赖顺序与任务状态账本）。
 
 **需求与契约：** OPT-01～10 全量（OPT-D）、AT-09～14；清单见 §2。  
 **拥有目录：** `industrialrobot/plugins/optimization/`（joint 侧）及其测试（文件树见 §3）。  
@@ -44,7 +44,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/
   test/JointSearchTest.cpp   FeasibilityLayersTest.cpp   SchedulerCheckpointTest.cpp
       ParetoRobustnessTest.cpp   AcceptanceEvidenceTest.cpp
   testdata/optimization/{audit,robustness}/
-  evidence/WP-21/
+  # 证据 → out/test-evidence/wp-21/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 共享范围（与 WP-20 协作、不独自拥有）：`gui/panels/` 的候选预览/应用面板扩展、`test/ResultApplicationTest.cpp` 的联合应用子句、`testdata/optimization/` 其余目录。
@@ -121,7 +121,7 @@ T01 联合搜索策略 ─┬→ T02 约束与指标判定 ─┬→ T04 Pareto 
 
 ### 6.6 WP-21-T06 联合优化验收证据（1.5～3 人周）
 
-- 代码范围：`test/AcceptanceEvidenceTest.cpp`；证据装配入 `evidence/WP-21/`。
+- 代码范围：`test/AcceptanceEvidenceTest.cpp`；证据装配入 `out/test-evidence/wp-21/<run-id>/`。
 - 前置：T03、T04、T05；阶段 D 门禁与 WP-23 协作。
 - 输出工件：AT-10～14（分支切换、恢复、崩溃、性能）证据收集；R2 基准报告、误淘汰审计、恢复统计、Pareto 黄金集。
 - 验收断言：§6「AcceptanceEvidenceTest」——AT-10～14 与 NFR-PERF-04～06；误淘汰率、恢复统计和 Pareto 关系符合需求 §15.3；证据含独立评审签名。
@@ -177,7 +177,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - OPT-01～10 全量、AT-09～14、NFR-PERF-04～06 通过（阶段 D 门禁，总纲 §8.4，形成 R2）。
 - 硬约束失败、证据不足或 Partial 候选不得进入可行 Pareto 集；误淘汰率 ≤1%、95% 置信上界 ≤3%；恢复统计不重复且检查点兼容校验生效。
 - 同种子跨线程候选稳定 ID、可行集合与 Pareto 支配关系一致；候选不产生修订，"设为当前方案"只创建一个新修订并触发完整复算。
-- 证据写入 `evidence/WP-21/` 并签署：R2 基准报告、误淘汰审计、恢复统计、Pareto 黄金集、AT-09～14 记录与独立评审签名。
+- 证据写入 `out/test-evidence/wp-21/<run-id>/` 并签署：R2 基准报告、误淘汰审计、恢复统计、Pareto 黄金集、AT-09～14 记录与独立评审签名。
 
 ## 12. 人周与追踪
 

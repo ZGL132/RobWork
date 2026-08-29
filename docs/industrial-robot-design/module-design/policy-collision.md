@@ -1,6 +1,6 @@
 # 工程策略与碰撞模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；负责 WP：WP-07；阶段/发布：阶段 A / R1
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-07；阶段/发布：阶段 A / R1
 - 契约权威：`architecture/public-interfaces.md` §3（评估端口）/§6（策略端口）/§7（值对象）、`architecture/evaluation-semantics.md` §1～2、`architecture/testing-contract.md`；字段权威：requirements §6.7.2；验证参数权威：requirements §15.3；任务卡：`agent-tasks/WP-07-T01～T05`
 
 ## 1. 模块职责
@@ -21,7 +21,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/
   test/PolicyNormalizationTest.cpp CollisionEvaluatorTest.cpp
       PathProtocolTest.cpp RobWorkProjectionTest.cpp PolicyEntryTest.cpp
   testdata/policy/{pairs,profiles,xml,failpoints}/
-  evidence/WP-07/
+  # 证据 → out/test-evidence/wp-07/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标：`sdurws_ird_policy`、`sdurws_ird_policy_test`、`sdurws_ird_policy_contract_test`。
@@ -32,7 +32,7 @@ CMake 目标：`sdurws_ird_policy`、`sdurws_ird_policy_test`、`sdurws_ird_poli
 
 - `IEngineeringPolicyProvider` 签名以 public-interfaces §6 为准；两个重载均不得叠加私有默认值或覆盖策略字段。
 - `EngineeringPolicySet`/`CollisionPolicy` 字段以 requirements §6.7.2 与 `schemas/engineering-policy.schema.json` 为准；对象对按 `(ownerScopeId, objectId)` 排序，引用必须存在于同一快照。
-- `CollisionEvaluator` 是 `IEngineeringEvaluator` 的共享唯一实现，端口签名引用 public-interfaces §3（头文件位于 `evidence/`，本模块不复制定义）：`dependencyManifest()` 声明策略内容身份、canonical 物理身份与 nameMapId；`evaluate()` 消费不可变快照＋状态/轨迹；`capabilities()` 声明取消与检查点支持。
+- `CollisionEvaluator` 是 `IEngineeringEvaluator` 的共享唯一实现，端口签名引用 public-interfaces §3（头文件位于 `out/test-evidence/wp-xx/<run-id>/`（AGENTS §3），本模块不复制定义）：`dependencyManifest()` 声明策略内容身份、canonical 物理身份与 nameMapId；`evaluate()` 消费不可变快照＋状态/轨迹；`capabilities()` 声明取消与检查点支持。
 - 输出 `CollisionEvaluation`（模块私有视图）填充 `ResultEnvelope`：`ExecutionOutcome/EngineeringStatus/PayloadCompleteness` 值域以 evaluation-semantics §1 为准，合法组合以 §2 为准；同一输入下 pair、采样点与诊断顺序稳定。
 
 ## 4. 调用与状态

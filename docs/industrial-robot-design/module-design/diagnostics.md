@@ -1,6 +1,6 @@
 # 诊断、本地化与日志模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-09；阶段/发布：阶段 A / R1；任务卡：`agent-tasks/WP-09-T01～T05`
 - 架构契约：`architecture/public-interfaces.md`（§6、§8）、`architecture/evaluation-semantics.md`（§1）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`
 
@@ -18,7 +18,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/
   resources/diagnostics.zh-CN.json terminology.zh-CN.json
   src/Diagnostic.cpp DiagnosticJson.cpp StableCodeRegistry.cpp Catalog.cpp DiagnosticMapper.cpp LogSink.cpp Redaction.cpp
   test/DiagnosticSchemaTest.cpp CatalogTermsTest.cpp ErrorMappingTest.cpp RedactedLoggingTest.cpp StaticConsistencyTest.cpp
-  testdata/ evidence/
+  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 ```
 
 CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurws_ird_diagnostics_contract_test`。允许依赖：WP-03 core（代码前置 WP-03，总纲 §5.2）、Qt Core JSON/Locale、标准库；禁止 Qt Widgets、其他模块私有头、直接写项目 revision、未经脱敏的文件/环境信息。`DiagnosticValue`、`ILogSink/LogEvent/LogRedactionPolicy` 为模块公共未登记符号，仅随本模块使用；公共类型名按符号表使用 `Diagnostic`（v0.2 的 `EngineeringDiagnostic` 为同物旧名，T01 实现时按登记名重命名）。
@@ -40,9 +40,9 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-PERSIST-HASH-MISMATCH | module-design/persistence.md §4 | System | Error |
 | IRD-PERSIST-LOCKED | persistence-schema §6 | System | Error |
 | IRD-PERSIST-COMMIT-FAILED | module-design/persistence.md §4 | System | Error |
-| IRD-RESULT-SLICE-MISMATCH | execution-model §5 | Engineering | Error |
-| IRD-RESULT-BRANCH-MISMATCH | execution-model §5 | Engineering | Error |
-| IRD-RESULT-DUPLICATE-ATTEMPT | execution-model §5 | System | Error |
+| IRD-RESULT-SLICE-MISMATCH | execution-model §5 | System | Error |
+| IRD-RESULT-BRANCH-MISMATCH | execution-model §5 | Engineering | Warning |
+| IRD-RESULT-DUPLICATE-ATTEMPT | execution-model §5 | System | Info |
 | IRD-RESULT-CONFLICT | execution-model §5 | System | Error |
 | IRD-EXEC-RESOURCE-BUDGET | execution-model §2 | System | Warning |
 | IRD-EXEC-CAPABILITY-UNSUPPORTED | execution-model §1 | Input | Warning |
@@ -65,10 +65,10 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-CORE-VALUE-INVALID | module-design/core-domain.md | Input | Error |
 | IRD-CORE-IDENTITY-INVALID | module-design/core-domain.md | Input | Error |
 | IRD-CORE-REFERENCE-UNRESOLVED | module-design/core-domain.md | Input | Error |
-| IRD-CORE-COMBINATION-ILLEGAL | module-design/core-domain.md（evaluation-semantics §2） | System | Error |
+| IRD-CORE-COMBINATION-ILLEGAL | module-design/core-domain.md（evaluation-semantics §2） | Input | Error |
 | IRD-CORE-SCHEMA-FUTURE | module-design/core-domain.md | System | Error |
 | IRD-RESULT-CORRUPT | module-design/snapshot-result.md（evaluation-semantics §1 读回赋 Corrupt） | System | Error |
-| IRD-EVIDENCE-NAME-MISMATCH | agent-tasks/WP-05-T04（触发收窄为 nameMapId 内容不一致） | Engineering | Error |
+| IRD-EVIDENCE-NAME-MISMATCH | agent-tasks/WP-05-T04（触发收窄为 nameMapId 内容不一致） | System | Error |
 | IRD-RUNTIME-AXIS-INVALID | module-design/runtime-model.md（canonical-kinematics §5） | Input | Error |
 | IRD-RUNTIME-DUAL-OFFSET | module-design/runtime-model.md（canonical-kinematics §3） | System | Error |
 | IRD-RUNTIME-NAME-COLLISION | module-design/runtime-model.md | Input | Error |
@@ -81,14 +81,14 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-EXEC-REQUEST-INVALID | module-design/execution-platform.md | Input | Error |
 | IRD-EXEC-WORKER-LOST | module-design/execution-platform.md（execution-model §1 区分 Failed/Canceled） | System | Error |
 | IRD-EXEC-ILLEGAL-TRANSITION | module-design/execution-platform.md（execution-model §1） | System | Error |
-| IRD-UI-PASTE-INVALID | module-design/session-ui.md | Input | Warning |
+| IRD-UI-PASTE-INVALID | module-design/session-ui.md | Input | Error |
 | IRD-UI-PROJECTION-FAILED | module-design/session-ui.md | System | Error |
 | IRD-MDL-CONVERSION-FAILED | module-design/robot-modeling.md（AnalysisFailed 场景） | System | Error |
 | IRD-MDL-CONVERSION-INEXACT | module-design/robot-modeling.md（Approximate 只读投影） | Engineering | Warning |
 | IRD-MDL-IMPORT-BLOCKED | module-design/robot-modeling.md（URDF 非法轴/不支持关节阻止修订） | Input | Error |
 | IRD-MDL-PROPERTIES-INSUFFICIENT | module-design/robot-modeling.md | Engineering | Warning |
 | IRD-MDL-TOOL-REF-UNRESOLVED | module-design/robot-modeling.md | Input | Error |
-| IRD-REQ-NOT-READY | module-design/requirements-definition.md（REQ-06 就绪校验） | Input | Warning |
+| IRD-REQ-NOT-READY | module-design/requirements-definition.md（REQ-06 就绪校验） | Input | Error |
 | IRD-REQ-REFERENCE-UNRESOLVED | module-design/requirements-definition.md | Input | Error |
 | IRD-REQ-ROW-INVALID | module-design/requirements-definition.md（CSV 逐行错误） | Input | Error |
 | IRD-REQ-SAMPLING-BUDGET | module-design/requirements-definition.md（区域组合上限） | Engineering | Error |
@@ -101,39 +101,54 @@ CMake target：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurw
 | IRD-KIN-CONTINUOUS-UNBOUNDED | module-design/kinematics.md（Continuous 关节未确认工程工作范围，排序归一跳过） | Input | Info |
 | IRD-TRJ-NO-PATH | module-design/trajectory-planning.md | Engineering | Warning |
 | IRD-TRJ-PLANNER-FAILED | module-design/trajectory-planning.md | System | Error |
-| IRD-TRJ-PLANNER-TIMEOUT | module-design/trajectory-planning.md | System | Error |
+| IRD-TRJ-PLANNER-TIMEOUT | module-design/trajectory-planning.md | Engineering | Error |
 | IRD-TRJ-BRANCH-JUMP | module-design/trajectory-planning.md（IK 连续性） | Engineering | Warning |
 | IRD-TRJ-SINGULARITY | module-design/trajectory-planning.md | Engineering | Warning |
 | IRD-TRJ-TIME-PARAM-FAILED | module-design/trajectory-planning.md | Engineering | Error |
 | IRD-TRJ-VALIDATION-REJECTED | module-design/trajectory-planning.md（避障复检） | Engineering | Warning |
 | IRD-TRJ-UPSTREAM-MISSING | module-design/trajectory-planning.md | Input | Error |
-| IRD-DYN-FD-NOT-CONVERGED | module-design/dynamics.md（h/h2 收敛判据） | System | Error |
+| IRD-DYN-FD-NOT-CONVERGED | module-design/dynamics.md（h/h2 收敛判据） | Engineering | Error |
 | IRD-DYN-FD-DIVERGED | module-design/dynamics.md | System | Error |
 | IRD-DYN-FRICTION-MISSING | module-design/dynamics.md | Engineering | Warning |
 | IRD-DYN-INERTIA-INVALID | module-design/dynamics.md（正定性/三角不等式） | Input | Error |
 | IRD-DYN-PROPERTIES-MISSING | module-design/dynamics.md（→DataInsufficient） | Engineering | Warning |
-| IRD-DYN-STATE-DISCONTINUOUS | module-design/dynamics.md | System | Error |
+| IRD-DYN-STATE-DISCONTINUOUS | module-design/dynamics.md | Engineering | Error |
 | IRD-DYN-UPSTREAM-MISSING | module-design/dynamics.md | Input | Error |
 | IRD-DTM-RATIO-INVALID | module-design/drivetrain.md | Input | Error |
 | IRD-DTM-EFFICIENCY-MISSING | module-design/drivetrain.md（→DataInsufficient 分项） | Engineering | Warning |
 | IRD-DTM-REVERSE-EFFICIENCY-MISSING | module-design/drivetrain.md | Engineering | Warning |
 | IRD-DTM-INERTIA-INVALID | module-design/drivetrain.md | Input | Error |
 | IRD-DTM-ROTARY-ONLY | module-design/drivetrain.md（SEL-09 首版范围） | Engineering | Error |
-| IRD-SEL-CATALOG-UNAVAILABLE | module-design/device-selection.md | System | Error |
-| IRD-SEL-CURVE-OUT-OF-RANGE | module-design/device-selection.md（禁止外推） | Input | Error |
+| IRD-SEL-CATALOG-UNAVAILABLE | module-design/device-selection.md | Input | Error |
+| IRD-SEL-CURVE-OUT-OF-RANGE | module-design/device-selection.md（禁止外推） | Engineering | Warning |
 | IRD-SEL-DERATING-MISSING | module-design/device-selection.md（→DataInsufficient，不默认无降额） | Engineering | Warning |
 | IRD-SEL-PAIR-NOT-LISTED | module-design/device-selection.md（Compatibility 外键） | Input | Error |
 | IRD-SEL-ALL-ELIMINATED | module-design/device-selection.md（离散组合为空） | Engineering | Warning |
 | IRD-SEL-UPSTREAM-MISSING | module-design/device-selection.md | Input | Error |
 | IRD-SEL-TRANSMISSION-OUT-OF-SCOPE | module-design/device-selection.md（移动关节阻断） | Engineering | Error |
-| IRD-WF-NOT-COMPAREABLE | module-design/workflow-integration.md | Input | Warning |
+| IRD-WF-NOT-COMPAREABLE | module-design/workflow-integration.md | Input | Error |
 | IRD-WF-EVIDENCE-MISSING | module-design/workflow-integration.md | Engineering | Warning |
-| IRD-WF-APPLY-BLOCKED | module-design/workflow-integration.md | Input | Error |
+| IRD-WF-APPLY-BLOCKED | module-design/workflow-integration.md | Engineering | Error |
 | IRD-INST-PATH-LEAK | module-design/installation-release.md（开发机路径残留） | System | Error |
 | IRD-INST-WHITELIST-MISMATCH | module-design/installation-release.md | System | Error |
 | IRD-INST-INVENTORY-INCOMPLETE | module-design/installation-release.md | System | Error |
+| IRD-EVIDENCE-SNAPSHOT-INCOMPLETE | module-design/snapshot-result.md §4 | Input | Error |
+| IRD-IO-PATH-ESCAPED | module-design/secure-io.md §4 | Input | Error |
+| IRD-IO-BUDGET-EXCEEDED | module-design/secure-io.md §4 | Input | Error |
+| IRD-IO-ENCODING-INVALID | module-design/secure-io.md §4 | Input | Error |
+| IRD-IO-CATALOG-INVALID | module-design/secure-io.md §4 | Input | Error |
+| IRD-IO-PARSE-FAILED | module-design/secure-io.md §4 | System | Error |
+| IRD-OPT-HARD-CONSTRAINT | module-design/optimization.md §4 | Engineering | Error |
+| IRD-OPT-CANDIDATE-COMPILE-FAILED | module-design/optimization.md §4 | Engineering | Error |
+| IRD-OPT-BUDGET-EXHAUSTED | module-design/optimization.md §4 | Engineering | Warning |
+| IRD-OPT-AUDIT-THRESHOLD-EXCEEDED | module-design/optimization.md §4 | Engineering | Error |
+| IRD-RPT-INPUT-INCOMPLETE | module-design/reporting.md §4 | Input | Error |
+| IRD-RPT-RENDER-FAILED | module-design/reporting.md §4 | System | Error |
+| IRD-RPT-FORMAT-MISMATCH | module-design/reporting.md §4 | System | Error |
 
 模块自有码（`IRD-<AREA>-*`）由各 v0.3 方案提名，经本目录登记后方可使用；新增码不得与既有码同义。目录条目含 `code`、`messageKey`、`titleZhCN/detailZhCN`、`action`、`severityDefault`、`allowedTokens[]`；`terminology.zh-CN.json` 含 canonical key、中文词、单位和禁用同义词。本地化策略：代码、稳定码和持久化字段用英文，用户可见中文仅由本目录与术语表提供（需求 §10.3）；首版只交付 zh-CN，`messageKey` 与术语 key 稳定，不随文案调整变化。
+
+**D10 裁决规则（`IRD-D10-20260829`，全表已按此逐项复核）**：`category` 按责任边界判定——用户/导入/编辑数据在边界被拒为 `Input`，数据合法但工程判定或算法推导产生的条件为 `Engineering`，基础设施、平台治理与内部一致性自检为 `System`；`severity` 按影响判定——所请求操作被阻断或受影响项无有效结果为 `Error`，降级但结论/缺口完整且可恢复（含"确证不可行"类发现，如无解、无路径、全淘汰）为 `Warning`，幂等 no-op 类纯提示为 `Info`。跨码一致性锚点：逐行拒绝＝Error（`IRD-REQ-ROW-INVALID`）、确证不可行发现＝Warning（`IRD-KIN-IK-NO-SOLUTION`）、幂等 no-op＝Info（`IRD-EXEC-ALREADY-TERMINAL`）。
 
 ## 4. 调用与状态
 

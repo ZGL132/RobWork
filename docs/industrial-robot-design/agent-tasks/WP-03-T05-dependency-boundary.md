@@ -1,13 +1,13 @@
 # WP-03-T05 依赖边界扫描
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-03-T05；需求 ARC-01、ARC-03～05、NFR-MNT-01、NFR-MNT-03；ADR-004；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、public-interfaces §0、testing-contract、core-domain v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、public-interfaces §0、testing-contract、core-domain v0.3。
 - **前置任务及必需工件：**WP-01-T01（边界失败测试与扫描规则基线，`check-boundaries.ps1` 规则所有权归 WP-01）；WP-01-T02（CMake 骨架）；WP-03-T01～T04（core 公共头与测试全部就位）。
-- **允许创建/修改/删除的文件**（模块根同 WP-03-T01）：创建 `test/` 下 core 边界夹具（故意含 QWidget/旧头/静态可变全局的负样本，仅用于扫描，不进产品目标）、`evidence/WP-03/`（扫描报告与依赖图）；修改 `CMakeLists.txt`（依赖清单与目标链接）；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-03-T01）：创建 `test/` 下 core 边界夹具（故意含 QWidget/旧头/静态可变全局的负样本，仅用于扫描，不进产品目标）、`out/test-evidence/wp-03/<run-id>/`（扫描报告与依赖图）；修改 `CMakeLists.txt`（依赖清单与目标链接）；删除：无。
 - **禁止修改的文件和公共接口：**`scripts/industrial-robot/check-boundaries.ps1` 及其规则（WP-01 所有）；requirements.md 与 architecture/、module-design/ 文档；WP-01 交付的构建骨架；WP-03-T01～T04 之外的产品代码；其他 WP 公共头。
 - **修改前接口：**T01～T04 的 core 公共头与 `sdurws_ird_core(_test)` 目标；扫描脚本由 WP-01 交付，若未交付则本任务停止（见停止条件）。
 - **修改后接口：**不变（无新增公共符号）；交付物为静态边界证据：core 依赖图与边界扫描零命中报告。
-- **实施步骤：**1) 构造负样本夹具（QWidget 头、旧 `sdurws_robotmodelbuilder*` 头、运行时名称拼接、可变全局状态、未登记依赖）；2) 确认扫描对每个夹具非零且指出文件/行/修复动作；3) 清理夹具后对真实 core 运行扫描，确认零命中；4) 生成依赖图与报告入 `evidence/WP-03/T05/`。
+- **实施步骤：**1) 构造负样本夹具（QWidget 头、旧 `sdurws_robotmodelbuilder*` 头、运行时名称拼接、可变全局状态、未登记依赖）；2) 确认扫描对每个夹具非零且指出文件/行/修复动作；3) 清理夹具后对真实 core 运行扫描，确认零命中；4) 生成依赖图与报告入 `out/test-evidence/wp-03/<run-id>/`。
 - **RED 测试：**Given 公共头包含 QWidget、链接旧插件或出现静态可变全局对象，When 运行 `check-boundaries.ps1`，Then 返回非零并指出文件、行和修复动作。
 - **最小实现：**仅 CMake 依赖清单收紧与夹具；不修改任何产品头文件语义。
 - **正常/边界/失败测试：**
@@ -17,10 +17,13 @@
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单（夹具不进产品目标）；扫描报告为零命中；无 `QApplication/QWidget`、旧插件头、RobWork 运行时对象、可变全局状态。
-- **证据工件：**`evidence/WP-03/T05/`：依赖图（CMake target→依赖）、边界扫描报告、负样本夹具日志、core 测试命令输出。
-- **提交格式：**`WP-03-T05: core dependency boundary`。
+- **证据工件：**`out/test-evidence/wp-03/<run-id>/`：依赖图（CMake target→依赖）、边界扫描报告、负样本夹具日志、core 测试命令输出。
+- **提交格式：**`WP-03-T05: 新增 core 依赖边界扫描证据`
+
+  - 新增 core 边界负样本夹具与依赖清单收紧
+  - 新增 边界扫描与依赖图证据记录
 - **停止与升级条件：**`check-boundaries.ps1` 未交付、或扫描规则与 WP-01 所有权重叠/冲突时停止并报告；需要新增扫描规则时向 WP-01 提交变更申请，不在本任务内改规则。

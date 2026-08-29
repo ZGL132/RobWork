@@ -30,5 +30,9 @@
   - 原生回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_golden_data_test` 与 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_golden_data_test$"`；预期构建成功、测试通过。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `testdata/`、`testkit/tests/golden_data_test.cpp`、`testkit/CMakeLists.txt`；`benchmark-manifest.json` 与 `requirements.md` 零变化；无期望值绕过 manifest 直接硬编码在测试中。
 - **证据工件：** `out/test-evidence/wp-02/<run-id>/`：datasetVersion、manifest SHA-256、生成器 commit 与 seed、逐样本哈希清单、AT 消费关系表、再生成一致性与 300kg_urdf 核查记录、测试日志（含命令与提交 SHA）。
-- **提交格式：** `WP-02-T03: add versioned golden datasets`
+- **提交格式：** `WP-02-T03: 新增版本化领域黄金数据集`
+
+  - 新增 各域黄金样本、确定性生成器与全量 manifest 清单（ird-golden-0.7.1）
+  - 新增 `sdurws_ird_golden_data_test` 测试与目标登记
+  - 新增 逐样本哈希与再生成一致性证据记录
 - **停止与升级条件：** 参考值无法由解析推导或独立工具复核、或样本组成与 §3 表冲突时，停止并标记数据不足上报；数据生产者不得批准自己的期望值，独立算法验证者复核后方可冻结哈希。

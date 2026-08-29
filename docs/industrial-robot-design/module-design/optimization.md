@@ -1,6 +1,6 @@
 # 优化与候选编译模块详细方案（optimization）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（D5 重写，待消费者评审）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过；D5 重写，待消费者评审）
 - 负责 WP：WP-20（阶段 B / R1，OPT-B）＋WP-21（阶段 D / R2，全量）；任务卡：`agent-tasks/WP-20-T01～T08`、`WP-21-T01～T06`
 - 架构契约：`architecture/candidate-compilation.md`（最高权威）、`architecture/evaluation-semantics.md`、`architecture/execution-model.md`、`architecture/public-interfaces.md`、`architecture/persistence-schema.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-03～09；WP-20＝WP-13～15（交付前置）；WP-21 另需 WP-16～20（总纲 §5.3）；构建/门禁入口 WP-01
@@ -33,7 +33,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/
       CrossEntryTest.cpp   JointSearchTest.cpp   FeasibilityLayersTest.cpp
       SchedulerCheckpointTest.cpp   ParetoRobustnessTest.cpp   AcceptanceEvidenceTest.cpp
   testdata/optimization/{studies,vectors,candidates,pareto,audit,robustness}/
-  evidence/WP-20/   evidence/WP-21/
+  out/test-evidence/wp-20/<run-id>/   out/test-evidence/wp-21/<run-id>/
 ```
 
 CMake target：`sdurws_ird_optimization_definition`（definition＋candidate 计算核心，无 Qt Widgets）、`sdurws_ird_optimization_definition_test`、`sdurws_ird_optimization_definition_contract_test`、`sdurws_ird_optimization_plugin`＋`sdurws_ird_optimization_gui_test`（WP-20-T07）、`sdurws_ird_optimization_joint`、`sdurws_ird_optimization_joint_test`。允许依赖：WP-03 core、WP-04 命令端口、WP-05 evidence（评估端口＋结果仓库）、WP-06 runtime（编译管线）、WP-07 policy、WP-08 execution（调度/缓存/检查点）、WP-09 diagnostics、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui；WP-21 对 WP-16～19 评估器仅经 WP-08 调度与 `ResultEnvelope` 交互，无业务插件代码依赖。禁止：业务插件互依、反射式字段写入、候选直写 revision、加权总分替代 Pareto、第二套调度/缓存。
@@ -92,7 +92,7 @@ CMake target：`sdurws_ird_optimization_definition`（definition＋candidate 计
 | JointSearchTest / FeasibilityLayersTest / SchedulerCheckpointTest / ParetoRobustnessTest / AcceptanceEvidenceTest（`_joint_test`） | OPT-01～10 全量、四层判定、检查点恢复统计、误淘汰审计、鲁棒性三模式、AT-10～14 与 NFR-PERF-04～06 |
 | OptimizationGuiTest（`_gui_test`） | 变量域编辑、候选比较、静态证据、应用确认；不可行候选不可应用（WP-20-T07） |
 
-证据写入 `evidence/WP-20/`、`evidence/WP-21/`：研究定义 JSON 样例、候选差异报告、Pareto 黄金集、缓存/复现矩阵、误淘汰审计、恢复统计、AT-09～14 记录与独立评审签名。验证命令（双形式，仓库根执行）：
+证据写入 `out/test-evidence/wp-20/<run-id>/`、`out/test-evidence/wp-21/<run-id>/`：研究定义 JSON 样例、候选差异报告、Pareto 黄金集、缓存/复现矩阵、误淘汰审计、恢复统计、AT-09～14 记录与独立评审签名。验证命令（双形式，仓库根执行）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition(_contract)?_test$'

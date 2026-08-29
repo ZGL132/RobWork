@@ -30,5 +30,9 @@
   - 原生回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_assertion_library_test` 与 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_assertion_library_test$"`；预期构建成功、测试通过（`sdurws_ird_testkit_test` 契约测试随本次扩展同步通过）。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `testkit/` 内新增三头文件、src 实现、两测试文件与 CMake 接入，及经 manifest 登记的样本；无裸 `double` 容差参数进入公共签名；`requirements.md` 第 15.3 节数值零改动。
 - **证据工件：** `out/test-evidence/wp-02/<run-id>/`：断言测试日志（实际/期望值、profile、容差、输入哈希）、acos 近 1 回归样本记录、J_norm 子空间样本记录、两层容差类型隔离编译证据。
-- **提交格式：** `WP-02-T02: numerical assertion profiles`
+- **提交格式：** `WP-02-T02: 新增数值断言与容差剖面`
+
+  - 新增 算法级/外部验证两层容差类型与几何、稳定集合断言库
+  - 新增 断言库测试目标登记与契约测试扩展
+  - 新增 manifest 登记自用样本与断言证据记录
 - **停止与升级条件：** 需求 §15.3 容差与样本 `expected` 冲突、或断言规则无法从 `module-design/testkit.md` §5 推导时，停止并升级，不得自行放宽阈值或新增第三层容差。

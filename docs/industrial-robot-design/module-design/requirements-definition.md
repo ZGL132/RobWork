@@ -1,6 +1,6 @@
 # 需求定义模块详细方案（requirements-definition）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（D5 重写，待消费者评审）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过；D5 重写，待消费者评审）
 - 负责 WP：WP-14；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-14-T01～T07`
 - 架构契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-03、04、09、11（WP-10 为 GUI 层前置）；WP-05、WP-13 为交付/契约前置（总纲 §5.3：快照与模型作用域经修订查询获得，无业务插件代码依赖）；构建/门禁入口 WP-01
@@ -26,7 +26,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/
   test/RequirementsModelTest.cpp   CsvIoTest.cpp   PoseRegionTest.cpp
       LoadEventTest.cpp   ReadinessTest.cpp   CommandIntegrationTest.cpp   RequirementsGuiTest.cpp
   testdata/requirements/{csv-valid,csv-malicious,regions,loads,ready-matrix}/
-  evidence/WP-14/
+  # 证据 → out/test-evidence/wp-14/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_requirements`（计算核心，无 Qt Widgets）、`sdurws_ird_requirements_plugin`（薄插件）、`sdurws_ird_requirements_test`、`sdurws_ird_requirements_contract_test`、`sdurws_ird_requirements_gui_test`。允许依赖：WP-03 core、WP-04 命令/查询公共头、WP-09 diagnostics、WP-11 io（CSV 安全读写）、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui。禁止：其他业务插件私有头、插件内第二套 CSV/路径解析、直接执行公式、直写项目目录、修改领域公共枚举。
@@ -46,7 +46,7 @@ CSV 列字典（模块冻结，风格对齐 `schemas/catalog/column-dictionary.s
 
 ## 4. 调用与状态
 
-时序（固定）：CSV 导入/手工编辑（`EditDraft`）→ 校验（有限性→单位→容差>0→引用存在→采样预算）→ 条目级与聚合就绪判定 → 用户应用 → `IProjectCommandService.apply`（恰好一个新修订；未应用草稿不失效下游，CON-05）。预览（部分预览）只取 Valid 条目、定位全部错误行、不产生正式 Pass/Verified/报告证据（REQ-06/AT-02）；正式运行前聚合就绪必须为"可计算"。错误矩阵（新码待 diagnostics.md 登记）：
+时序（固定）：CSV 导入/手工编辑（`EditDraft`）→ 校验（有限性→单位→容差>0→引用存在→采样预算）→ 条目级与聚合就绪判定 → 用户应用 → `IProjectCommandService.apply`（恰好一个新修订；未应用草稿不失效下游，CON-05）。预览（部分预览）只取 Valid 条目、定位全部错误行、不产生正式 Pass/Verified/报告证据（REQ-06/AT-02）；正式运行前聚合就绪必须为"可计算"。错误矩阵（已登记入 diagnostics.md §3，D10 裁决）：
 
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
@@ -76,7 +76,7 @@ CSV 列字典（模块冻结，风格对齐 `schemas/catalog/column-dictionary.s
 | CommandIntegrationTest | 应用＝一个新修订＋按字段失效；未应用不失效；undo/redo 经 WP-04（AT-05 相关面） |
 | RequirementsGuiTest | 批量编辑、筛选、单位显示、错误定位、就绪摘要（QT_QPA_PLATFORM=windows） |
 
-往返夹具先过 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`。证据写入 `evidence/WP-14/`：CSV 往返样例、非法行报告、就绪判定矩阵、修订/失效矩阵、GUI 报告与独立评审签名。验证命令（双形式，仓库根执行）：
+往返夹具先过 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`。证据写入 `out/test-evidence/wp-14/<run-id>/`：CSV 往返样例、非法行报告、就绪判定矩阵、修订/失效矩阵、GUI 报告与独立评审签名。验证命令（双形式，仓库根执行）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_requirements(_contract)?_test$'

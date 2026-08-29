@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_execution(_
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；scheduler 无直接写项目 revision 调用；请求对象无可变公共 setter；WP-05/evidence 头未被复制修改
-- **证据工件：**`execution/evidence/WP-08/T02/`：request JSON 样例、guard 决策记录、结果接纳回执、旧/当前身份对比、命令日志与评审签名
-- **提交格式：**`WP-08-T02: enforce request identity and late-result isolation`
+- **证据工件：**`execution/out/test-evidence/wp-08/<run-id>/`：request JSON 样例、guard 决策记录、结果接纳回执、旧/当前身份对比、命令日志与评审签名
+- **提交格式：**`WP-08-T02: 新增请求身份校验与迟到结果隔离`
+
+  - 新增 EvaluationRequest 不可变值对象与身份守卫实现
+  - 新增 迟到隔离与重复提交测试及目标登记
+  - 新增 guard 决策与接纳回执证据记录
 - **停止与升级条件：**某身份字段无权威来源、或需要 scheduler 直接修改 WP-05 currentness 语义时暂停并升级至 WP-05/WP-08 所有者联合裁决

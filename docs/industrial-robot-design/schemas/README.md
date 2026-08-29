@@ -79,10 +79,8 @@ enum  items  minimum  maximum  minLength  maxLength  pattern  minItems
 ## 5. 示例
 
 - `examples/<name>.example.json`：每个 schema 一个合法示例（六轴机器人、SI 单位、物理合理数值）。命名必须与 `<name>.schema.json` 的 `<name>` 一致。
-- `examples/invalid/<schema-name>.<原因>.json`：故意非法示例，**必须**被校验器拒绝。当前 3 个：
-  - `result-envelope.illegal-combination.example.json`：`Completed + NotEvaluated + Complete`（evaluation-semantics §2 非法组合，由脚本组合检查拒绝）；
-  - `candidate-patch.missing-field.example.json`：mutation 缺 `writeSet` 且顶层缺 `writeSetFingerprint`（writeSet 冲突检测所需字段缺失，`required` 拒绝）；
-  - `project.missing-required.example.json`：缺必填 `robotId`（`required` 拒绝）。
+- `examples/invalid/<schema-name>.<原因>.example.json`：故意非法示例，**必须**被校验器拒绝。当前 45 个，每个 Schema 至少 3 个（`validate-schemas.ps1` 强制最低覆盖），覆盖五类：`missing-required`（缺必填）、`bad-enum-value`（非法枚举/单位/值）、`cross-field-illegal`（跨字段组合非法）、`future-version`（未来版本）、`dangling-ref-duplicate`（悬空引用/重复 ID）。
+  - 代表例：`result-envelope.illegal-combination.example.json`（`Completed + NotEvaluated + Complete` 非法组合）；`project.missing-required.example.json`（缺必填 `robotId`）；`engineering-requirements.bad-enum-value.example.json`（`priority: Critical` 枚举外）；`*-future-version.example.json`（`schemaVersion: 2` 拒绝）；`runtime-name-map.dangling-ref-duplicate.example.json`（绑定 objectId 非法格式）。
 
 ## 6. 版本与升级
 

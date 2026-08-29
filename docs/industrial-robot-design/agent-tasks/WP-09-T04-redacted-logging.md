@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_diag
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "getenv\|PASSWORD\|token" diagnostics/src` 仅脱敏规则命中；样本日志无原始凭据回显；转储文件权限设置记录在案
-- **证据工件：**`diagnostics/evidence/WP-09/T04/`：脱敏前后样本对照、日志级别矩阵、关联 ID 样例、崩溃转储引用记录、命令日志与评审签名
-- **提交格式：**`WP-09-T04: implement redacted logging`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "getenv|PASSWORD|token" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src` 仅脱敏规则命中；样本日志无原始凭据回显；转储文件权限设置记录在案
+- **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：脱敏前后样本对照、日志级别矩阵、关联 ID 样例、崩溃转储引用记录、命令日志与评审签名
+- **提交格式：**`WP-09-T04: 新增分级日志与脱敏`
+
+  - 新增 LogSink 双通道分级与幂等不可逆脱敏实现
+  - 新增 脱敏样本测试与目标登记
+  - 新增 脱敏前后对照与转储引用证据记录
 - **停止与升级条件：**脱敏导致 objectId 无法定位、或发现任何凭据泄漏路径时立即暂停并升级至安全负责人，不得继续提交

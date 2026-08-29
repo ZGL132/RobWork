@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
 - **前置任务及必需工件：**WP-17-T01（`DynamicsSemantics` 冻结常量＋七项黄金夹具＋评审签署）；WP-06-T03（DWC 工件）、WP-16-T05（`TrajectoryPlan` payload 经 `IResultRepository` 取回）、WP-05-T04（结果接纳端口）、WP-02-T03（二连杆/重力矩黄金数据登记）
 - **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
-  - 创建：`include/sdurws/ird/dynamics/DynamicResult.hpp`（类型化广义力字段只读视图）、`src/RneAdapter.cpp`、`src/FrictionModel.cpp`、`src/InertiaValidator.cpp`、`test/InverseDynamicsTest.cpp`、`testdata/dynamics/two-link/` 与 `testdata/dynamics/gravity/` 下黄金数据文件（目录树由 T01 登记）、`evidence/WP-17/T02/`
+  - 创建：`include/sdurws/ird/dynamics/DynamicResult.hpp`（类型化广义力字段只读视图）、`src/RneAdapter.cpp`、`src/FrictionModel.cpp`、`src/InertiaValidator.cpp`、`test/InverseDynamicsTest.cpp`、`testdata/dynamics/two-link/` 与 `testdata/dynamics/gravity/` 下黄金数据文件（目录树由 T01 登记）、`out/test-evidence/wp-17/<run-id>/`
   - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01 冻结语义与 `dynamicsSemanticsVersion`；RobWorkSim API 按 NFR-DEP-05 锁定版本（不得升级/替换）；WP-16 类型（只契约引用）；WP-18 及其后模块头；本地效率/减速比计算（映射归 WP-18）；DWC BodyInfo 摩擦字段只允许置零；禁止 Qt Widgets、直读 UI 会话态
 - **修改前接口：**无评估实现（T01 仅语义头；旧插件重复功率/摩擦计算按 §11 迁移表删除，不在本卡）
@@ -18,10 +18,14 @@
   - 失败：Given 非正定/违反三角不等式惯量或断续轨迹，When 求值，Then 对应 Error 诊断、无部分正式结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "efficiency|ratio|reduction" plugins/dynamics/src/` 零命中（映射归 WP-18）；无第二套 RNE/摩擦实现（RobWorkSim RNE 经 `RneAdapter` 复用）；`DynamicsResult` 禁名零命中
-- **证据工件：**`evidence/WP-17/T02/`——二连杆解析与静态重力矩对照表（误差与容差）、摩擦不双计断言记录（含 BodyInfo 置零证明）、惯量校验矩阵、测试日志（commit/配置/种子/输入快照身份）
-- **提交格式：**`WP-17-T02: implement inverse dynamics`
+- **证据工件：**`out/test-evidence/wp-17/<run-id>/`——二连杆解析与静态重力矩对照表（误差与容差）、摩擦不双计断言记录（含 BodyInfo 置零证明）、惯量校验矩阵、测试日志（commit/配置/种子/输入快照身份）
+- **提交格式：** `WP-17-T02: 实现逆动力学`
+
+  - 新增逆动力学求解与摩擦模型
+  - 新增解析对照测试
+  - 新增运行证据记录
 - **停止与升级条件：**RNE 适配在锁定版本 API 下无法达成 §15.3 容差、或 BodyInfo 摩擦置零与 DWC 构建冲突时，停止并升级（NFR-DEP-05 版本变更走升级）；不得放宽容差或本地重算效率/减速比

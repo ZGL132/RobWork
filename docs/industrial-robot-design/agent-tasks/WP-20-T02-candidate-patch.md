@@ -16,6 +16,10 @@
   - 失败：Given 域越界/类型单位不符/绑定未注册的 mutation，When 编译，Then 整体拒绝 `IRD-OPT-PATCH-REJECTED`、无任何工件
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "setRevision\|createRevision\|apply(" candidate/src/` 零命中（候选不写项目）；`CompiledRobotArtifacts` 与 `CompiledCandidateArtifact` 类型不混用（符号裁决 #5）；反射式写入零命中
-- **证据工件：**`plugins/optimization/evidence/WP-20/T02/`——候选差异报告（向量→补丁→工件链样例）、派生重算对照（公式版本/方法）、稳定 ID 复现记录（多线程）、测试日志
-- **提交格式：**`WP-20-T02: compile candidate patches`
+- **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——候选差异报告（向量→补丁→工件链样例）、派生重算对照（公式版本/方法）、稳定 ID 复现记录（多线程）、测试日志
+- **提交格式：** `WP-20-T02: 实现候选补丁编译`
+
+  - 新增候选补丁编译与校验
+  - 新增全成全败与稳定 ID 测试
+  - 新增运行证据记录
 - **停止与升级条件：**AnalyticEstimate 实现归属（共享 evaluation 包 vs 端口注入）按 D5 报告裁决未落地、或 WP-06 管线无法组合产出候选工件时，停止并升级；候选与项目修订归属出现混淆（任何候选路径产生修订）立即停止并报告

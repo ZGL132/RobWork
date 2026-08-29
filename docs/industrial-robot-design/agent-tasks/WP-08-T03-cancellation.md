@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_exec
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_execution(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "CreateFile\|ofstream" worker/` 确认无项目目录写句柄；取消阈值无 30000 以外的硬编码副本；进程树在测试后无残留（任务管理器记录）
-- **证据工件：**`execution/evidence/WP-08/T03/`：取消时延（相对 cancelTimeoutMs）、批次停止计数、进程树快照、项目目录写权限检查、恢复 checkpoint 记录、命令日志与评审签名
-- **提交格式：**`WP-08-T03: implement cancellation and worker isolation`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "CreateFile|ofstream" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/` 确认无项目目录写句柄；取消阈值无 30000 以外的硬编码副本；进程树在测试后无残留（任务管理器记录）
+- **证据工件：**`execution/out/test-evidence/wp-08/<run-id>/`：取消时延（相对 cancelTimeoutMs）、批次停止计数、进程树快照、项目目录写权限检查、恢复 checkpoint 记录、命令日志与评审签名
+- **提交格式：**`WP-08-T03: 新增取消暂停与工作进程隔离`
+
+  - 新增 worker 独立进程入口、取消令牌传递与超时强杀实现
+  - 新增 取消/崩溃隔离测试与目标登记
+  - 新增 取消时延、进程树快照与恢复记录证据
 - **停止与升级条件：**取消超时无法强制终止进程、worker 可写项目目录或进程所有权无法证明时暂停并升级至 WP-08 所有者与系统负责人

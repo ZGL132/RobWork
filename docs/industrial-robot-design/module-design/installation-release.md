@@ -1,6 +1,6 @@
 # 安装与发布模块详细方案（installation-release）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-24；阶段/发布：阶段 E / R1+R2（R1、R2 各自生成可回滚包）；任务卡：`agent-tasks/WP-24-T01～T05`
 - 契约：`architecture/persistence-schema.md`（§1 版本口径）、`architecture/testing-contract.md`（§4～5）；需求：NFR-DEP-01～05、NFR-SEC-04～06、NFR-MNT-06、§13.4 安装包审计
 - 代码前置：WP-01（脚本与 CI 门禁）、WP-22、WP-23（被打包与被审计对象）
@@ -63,7 +63,7 @@ ird-setup-<R1|R2>-<version>-win64/
 | --- | --- | --- | --- | --- |
 | `IRD-INST-PATH-LEAK` | 包或安装目录含开发机绝对路径 | System | Error | 清理打包环境后重打包；发布阻断 |
 | `IRD-INST-WHITELIST-MISMATCH` | 插件未登记或哈希不符 | System | Error | 拒绝加载/拒绝发布 |
-| `IRD-INST-INVENTORY-INCOMPLETE` | 依赖/许可证清单缺项 | Input | Error | 补齐后重验，不得发布 |
+| `IRD-INST-INVENTORY-INCOMPLETE` | 依赖/许可证清单缺项 | System | Error | 补齐后重验，不得发布 |
 
 ## 8. 验证与证据（非 CTest）
 

@@ -2,8 +2,8 @@
 
 - **Task ID / 需求 ID / ADR / 阶段：** WP-00-T04；治理对象同 T01（抽样回溯全部追踪链并复核 ADR-001～005 与需求一致性）；无新增 ADR；阶段 A 前提 / R1。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
-- **前置任务及必需工件：** WP-00-T01（`evidence/wp-00/t01-requirements-review.md`）、WP-00-T02（`requirement-traceability.csv`＋`evidence/wp-00/t02-generation-log.md`）、WP-00-T03（`validate-development-docs.ps1` 门禁通过＋`fixtures/wp-00/run-fixtures.ps1` 8 夹具通过＋`evidence/wp-00/t03-gate-and-fixtures.md`）。
-- **允许创建/修改/删除的文件：** 创建 `docs/industrial-robot-design/evidence/wp-00/t04-independent-review.md` 与 `docs/industrial-robot-design/evidence/wp-00/t04-dual-shell-byte-compare.md`；不修改任何代码或文档正文。
+- **前置任务及必需工件：** WP-00-T01（`out/test-evidence/wp-00/<run-id>/t01-requirements-review.md`）、WP-00-T02（`requirement-traceability.csv`＋`out/test-evidence/wp-00/<run-id>/t02-generation-log.md`）、WP-00-T03（`validate-development-docs.ps1` 门禁通过＋`fixtures/wp-00/run-fixtures.ps1` 8 夹具通过＋`out/test-evidence/wp-00/<run-id>/t03-gate-and-fixtures.md`）。
+- **允许创建/修改/删除的文件：** 创建 `out/test-evidence/wp-00/<run-id>/t04-independent-review.md` 与 `out/test-evidence/wp-00/<run-id>/t04-dual-shell-byte-compare.md`；不修改任何代码或文档正文。
 - **禁止修改的文件和公共接口：** 除上述两个新增证据文件外的一切文件（含 `requirements.md`、CSV、两个脚本、`fixtures/`、`work-packages/`、`architecture/`、`module-design/`、其余任务卡）；不得边评审边修复，发现问题退回对应任务重开。
 - **修改前接口：** 无（新增）。
 - **修改后接口：** 两份只读评审记录：`t04-independent-review.md` 含逐前缀抽样表（每个需求前缀至少 2 项）与六环节链路回溯结论（需求 → CSV 行 → work-packages 计划 → module-design 方案 → agent-tasks 任务卡 → 测试/评审任务）；`t04-dual-shell-byte-compare.md` 含 powershell.exe 与 pwsh.exe 门禁输出对照与 CSV 哈希。

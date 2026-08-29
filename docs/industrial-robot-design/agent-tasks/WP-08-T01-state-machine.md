@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_execution(_
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；转移表无表外分支（代码中无硬编码状态字符串 if 链外的路径）；WP-03 枚举与 public-interfaces §4 头未被改动；无 Qt Widgets include
-- **证据工件：**`execution/evidence/WP-08/T01/`：状态转移矩阵参数化结果、事件日志样例、拒绝诊断 JSON、命令日志与评审签名
-- **提交格式：**`WP-08-T01: implement execution state machine`
+- **证据工件：**`execution/out/test-evidence/wp-08/<run-id>/`：状态转移矩阵参数化结果、事件日志样例、拒绝诊断 JSON、命令日志与评审签名
+- **提交格式：**`WP-08-T01: 新增执行任务状态机`
+
+  - 新增 9 态转移表驱动状态机与审计事件实现
+  - 新增 转移表逐行断言测试与目标登记
+  - 新增 状态转移矩阵与拒绝诊断证据记录
 - **停止与升级条件：**requirements §6.4 状态表与 execution-model.md §1 不一致时暂停并升级至 ADR-005 所有者裁决，不得自行增删转移

@@ -1,6 +1,6 @@
 # 产品工作流整合模块详细方案（workflow-integration）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；负责 WP：WP-22（阶段 E / R1+R2）；任务卡：`agent-tasks/WP-22-T01～T05`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-22（阶段 E / R1+R2）；任务卡：`agent-tasks/WP-22-T01～T05`
 - 架构契约：`architecture/evaluation-semantics.md`（§4～5）、`architecture/execution-model.md`（§1）、`architecture/public-interfaces.md`（§1、§4～§6）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`；代码前置 WP-10、WP-12～21（总纲 §5.4），不新增领域权威实现
 
 ## 1. 模块职责与前置裁决
@@ -14,11 +14,11 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/workflow/
   include/sdurws/ird/ui/workflow/
     CockpitDashboard.hpp StageTransitionTable.hpp NextStepAdvisor.hpp CommandPalette.hpp
   src/CockpitDashboard.cpp StageTransitionTable.cpp NextStepAdvisor.cpp CommandPalette.cpp
-  test/WorkflowModelTest.cpp WorkflowGuiTest.cpp  testdata/ evidence/
+  test/WorkflowModelTest.cpp WorkflowGuiTest.cpp  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/comparison/
   include/sdurws/ird/ui/comparison/ ComparisonView.hpp MetricDiffModel.hpp
   src/ComparisonView.cpp MetricDiffModel.cpp
-  test/ComparisonModelTest.cpp  testdata/ evidence/
+  test/ComparisonModelTest.cpp  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 ```
 
 CMake target：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurws_ird_workflow_model_test`（QCoreApplication）、`sdurws_ird_workflow_test`（GUI 回归）。允许依赖：WP-03/04/05/08/09/10/12 公共头、WP-20/21 结果值对象读取（`DesignCandidate` SYM-OPT-005、`ParetoSet` SYM-OPT-006）、Qt Widgets/Model-View、RobWorkStudio 主窗口框架；禁止：业务插件私有头与 Widget、读取其他插件控件、绕过命令服务写项目、复制 `StageStatusModel`/`TaskState`/评估枚举定义。
@@ -75,11 +75,11 @@ CMake target：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurw
 - 差异高亮：逐指标给出基线值、候选值、绝对/相对变化（需求 §5.3-5）；小于 `comparisonTolerance` 标"无差别"不构成支配；硬约束违反项单独列出，不被总分掩盖。
 - 候选预览经 `ISceneProjection.projectCandidate`（会话态，退出恢复，AT-04 不产生修订）；应用入口走 WP-04 命令——"设为当前方案"创建方案分支＋恰好一个新修订（AT-12：基线不覆盖、复算一致、运行期间修订数不随候选数增长），预览中的候选必须先复算为 Current 结果方可应用。
 
-## 7. 错误码（提名，经 WP-09 目录登记后使用）
+## 7. 错误码（已登记入 diagnostics.md §3，D10 裁决）
 
 | 码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
-| `IRD-WF-EVIDENCE-MISSING` | 阶段完成证据缺失时请求下一步建议 | Input | Warning | 显示缺口并回数据入口 |
+| `IRD-WF-EVIDENCE-MISSING` | 阶段完成证据缺失时请求下一步建议 | Engineering | Warning | 显示缺口并回数据入口 |
 | `IRD-WF-NOT-COMPAREABLE` | 比较集缺同名指标或含非正式可行项 | Input | Error | 列出不可比项，拒绝整组比较 |
 | `IRD-WF-APPLY-BLOCKED` | 候选未通过正式可行判定仍请求应用 | Engineering | Error | 列出 gaps；保持当前修订 |
 

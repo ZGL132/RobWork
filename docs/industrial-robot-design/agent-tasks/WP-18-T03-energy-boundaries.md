@@ -16,6 +16,6 @@
   - 失败：Given 正向效率证据缺失或 η⁻ 缺失而循环含反向功率流，When 分项，Then `IRD-DTM-EFFICIENCY-MISSING`（Error）/`-REVERSE-EFFICIENCY-MISSING`（Warning＋DataInsufficient 分项），无电机侧机械功输出
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_drivetrain_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_drivetrain_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -n "W_plus\|regen" src/EnergySplitter.cpp` 确认 W+ 只读自 `DynamicResult`（无本地功率积分重复实现）；分项字段名与 §9.3 口径一一对应，无"驱动器电能=0"式空值占位
-- **证据工件：**`evaluation/drivetrain/evidence/WP-18/T03/`——能量对账表（关节侧 W+ vs 电机侧分项的分离证据）、假设清单（回馈/效率）、测试日志
+- **证据工件：**`evaluation/drivetrain/out/test-evidence/wp-18/<run-id>/`——能量对账表（关节侧 W+ vs 电机侧分项的分离证据）、假设清单（回馈/效率）、测试日志
 - **提交格式：**`WP-18-T03: 能量边界分离`
 - **停止与升级条件：**§9.3 裁决与 §8.5 分项行不可同时满足、或 `DynamicResult` 能量字段粒度不足时，停止并升级需求所有者，不得自行新增能量口径

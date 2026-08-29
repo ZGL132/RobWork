@@ -1,10 +1,10 @@
 # WP-20 优化定义与候选编译实施计划
 
 > 阶段/发布：阶段 B / R1，仅实现 OPT-B（OPT-01～04、06～08 的静态子集，需求 §8.7.1 唯一集合）；OPT-05、OPT-09、OPT-10 与完整轨迹/动力/器件联合归 WP-21（阶段 D / R2）。负责 WP：WP-20。
-> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.7；检查点 `IRD-D2-20260829`；与 WP-21 共用一文，本文只引用其 WP-20 部分）。
+> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-21 共用一文，本文只引用其 WP-20 部分）。
 > 前置（总纲 §5.3，保持不变）：WP-13～15（交付前置）。人周：6～9。
 > 模块详设补充（不改总纲口径）：代码前置 WP-03～09（平台内核经总纲 §5.2 交付）。
-> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设均处 Proposed 时不得进入实现）。
+> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设已于 IRD-D10-20260829 联合评审 Accepted；实现启动按总纲依赖顺序与任务状态账本）。
 
 **需求与契约：** OPT-01～04、06～08 的 OPT-B 唯一子集（需求 §8.7.1）、AT-12/18；清单见 §2。  
 **拥有目录：** `industrialrobot/plugins/optimization/`（definition 侧）及其测试（文件树见 §3）。  
@@ -49,7 +49,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/
       StaticParetoTest.cpp   CacheDeterminismTest.cpp   ResultApplicationTest.cpp
       CrossEntryTest.cpp   OptimizationGuiTest.cpp
   testdata/optimization/{studies,vectors,candidates,pareto}/
-  evidence/WP-20/
+  # 证据 → out/test-evidence/wp-20/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_optimization_definition`（definition＋candidate 计算核心，无 Qt Widgets）、`sdurws_ird_optimization_definition_test`、`sdurws_ird_optimization_definition_contract_test`、`sdurws_ird_optimization_plugin`＋`sdurws_ird_optimization_gui_test`（WP-20-T07）。`sdurws_ird_optimization_joint`/`_joint_test` 归 WP-21，本 WP 不得创建或链接。
@@ -83,7 +83,7 @@ T01 研究定义 → T02 候选补丁 → T03 静态硬约束 → T04 静态指�
 | T05 | T02、T04 | WP-08 缓存契约 |
 | T06 | T04、T05 | WP-04 命令端口、WP-05 结果仓库 |
 | T07 | T06 | WP-10 公共组件 |
-| T08 | T03、T07 | WP-15-T08 对侧联调 |
+| T08 | T03、T07、WP-15-T08 | AT-19 跨入口集成用例唯一所有（消费 WP-15-T08 探针约定） |
 
 每任务一张任务卡、一个 worktree/分支/提交（总纲 §4.3）。
 
@@ -154,7 +154,7 @@ T01 研究定义 → T02 候选补丁 → T03 静态硬约束 → T04 静态指�
 ### 6.8 WP-20-T08 跨入口契约（0.5 人周）
 
 - 代码范围：`test/CrossEntryTest.cpp`（`_definition_test`/`_contract_test` 目标）。
-- 前置：T03、T07；与 WP-15-T08 对侧联调。
+- 前置：T03、T07、WP-15-T08（运动学侧探针与 AT-19 约定，单向依赖）。
 - 输出工件：AT-19 跨入口一致性证据；供 WP-21 复用的稳定扩展接口（不改变已冻结签名）。
 - 验收断言：§6「CrossEntryTest」——AT-19 与运动学入口一致：共享碰撞策略、对象 ID 对、判定与原因完全相同；显示开关不影响判定。
 
@@ -210,7 +210,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - OPT-B 权威集合（需求 §8.7.1）、AT-09 静态子集、AT-12 通过（阶段 B 门禁，总纲 §8.2）。
 - 不可行、Partial、DataInsufficient 候选不进入静态 Pareto；StageD 绑定/指标在 OPT-B 全部被拒（阶段锁生效）。
 - 候选不产生修订；同种子跨线程稳定 ID 与 Pareto 关系一致；R1 不依赖 WP-21 才能完成静态闭环。
-- 证据写入 `evidence/WP-20/` 并签署：研究定义 JSON 样例、候选差异报告、静态 Pareto 黄金集、缓存/复现矩阵、AT-09/12 阶段 B 记录与独立评审签名。
+- 证据写入 `out/test-evidence/wp-20/<run-id>/` 并签署：研究定义 JSON 样例、候选差异报告、静态 Pareto 黄金集、缓存/复现矩阵、AT-09/12 阶段 B 记录与独立评审签名。
 
 ## 12. 人周与追踪
 

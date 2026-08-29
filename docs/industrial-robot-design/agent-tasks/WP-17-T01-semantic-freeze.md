@@ -1,10 +1,10 @@
 # WP-17-T01 动力学语义冻结
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-17-T01；DYN-01～02（算法与摩擦语义冻结）、AT-07、§5.7 产出物清单；无直接 ADR（语义唯一权威＝`module-design/dynamics.md` v0.3 §5 冻结裁决）；阶段 C / R1。契约：`module-design/dynamics.md` §5/§6、`architecture/evaluation-semantics.md` §1～2、`architecture/execution-model.md` §1～3、`architecture/testing-contract.md`
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/dynamics.md` v0.3＋`work-packages/WP-17-dynamics.md`（D6）；需求基线 v0.7、检查点 `IRD-D2-20260829`
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/dynamics.md` v0.3＋`work-packages/WP-17-dynamics.md`（D6）；需求基线 v0.8、检查点 `IRD-D2-20260829`
 - **前置任务及必需工件：**无 WP 内前置（包内首任务）；外部前置：WP-06-T03（`CompiledRobotArtifacts`/DWC 工件）、WP-08-T01（评估任务骨架）、WP-16-T05（上游 `TrajectoryPlan` 结果类型）、WP-01-T03（测试入口）、WP-02-T03（黄金数据登记版本/哈希）
 - **允许创建/修改/删除的文件**（模块根 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/`）：
-  - 创建：`include/sdurws/ird/dynamics/DynamicsSemantics.hpp`、`test/SemanticFreezeTest.cpp`、`testdata/dynamics/{two-link,gravity,cycle,failpoints}/`（黄金夹具登记位：零速摩擦斜坡、功率符号、W+ 积分、峰值窗/RMS、外力坐标系绑定、FD 控制输入插值与积分器配置七项夹具）、`evidence/WP-17/T01/`；`plugins/dynamics/CMakeLists.txt`（登记 `sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`；`_contract_test` 由 WP-17-T06 登记）
+  - 创建：`include/sdurws/ird/dynamics/DynamicsSemantics.hpp`、`test/SemanticFreezeTest.cpp`、`testdata/dynamics/{two-link,gravity,cycle,failpoints}/`（黄金夹具登记位：零速摩擦斜坡、功率符号、W+ 积分、峰值窗/RMS、外力坐标系绑定、FD 控制输入插值与积分器配置七项夹具）、`out/test-evidence/wp-17/<run-id>/`；`plugins/dynamics/CMakeLists.txt`（登记 `sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`；`_contract_test` 由 WP-17-T06 登记）
   - 修改：`industrialrobot/CMakeLists.txt`（仅追加 dynamics 子目录接入）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**dynamics.md §5 冻结裁决（摩擦式/坐标系/功率能量式/峰值 RMS 口径/FD 配置）；WP-16 `TrajectoryPlan` 类型（只契约引用）；WP-06 DWC 工件语义；requirements/CSV/architecture；禁止实现 T02～T05 计算体（RNE 适配、积分器、正动力学场景不在本卡）；禁止 Qt Widgets 与直读 UI 会话态
 - **修改前接口：**无（新插件目录；旧插件动力学代码按 WP-17 §11 迁移表另行处置，不在本卡）
@@ -18,10 +18,14 @@
   - 失败：Given 语义常量或公式 ID 变更而版本未升级，When 校验，Then 失败并要求升版本＋使依赖切片失效
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "static_friction|DynamicsResult\b" plugins/dynamics` 零命中（无独立静摩擦、禁名）；无 T02～T05 计算体文件混入；常量与 dynamics.md §5.1 逐字一致
-- **证据工件：**`evidence/WP-17/T01/`——语义冻结七项产出物清单与黄金夹具、二连杆/重力矩对照数据（WP-02 登记哈希）、动力学/驱动工程师评审签署记录、测试日志（含 commit/配置/种子）
-- **提交格式：**`WP-17-T01: freeze dynamics semantics`
+- **证据工件：**`out/test-evidence/wp-17/<run-id>/`——语义冻结七项产出物清单与黄金夹具、二连杆/重力矩对照数据（WP-02 登记哈希）、动力学/驱动工程师评审签署记录、测试日志（含 commit/配置/种子）
+- **提交格式：** `WP-17-T01: 固化动力学语义冻结测试`
+
+  - 新增动力学语义冻结用例
+  - 新增第二实现静态扫描
+  - 新增运行证据记录
 - **停止与升级条件：**冻结常量与 dynamics.md §5 冲突、或黄金夹具无法从 §9.3/§15.3 冻结式推导时，停止并升级（不得自行改写权威语义）；评审签署未完成不得进入 WP-17-T02

@@ -21,8 +21,8 @@
   - 失败：Given 阶段完成证据缺失时请求下一步建议，When 求值，Then `IRD-WF-EVIDENCE-MISSING`（Input/Warning）：显示缺口并回数据入口；Given Quick 结果，When 渲染，Then 不显示为正式通过。
 - **精确验证命令：**（仓库根、VS x64 环境；`QCoreApplication` 模型测试）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_model_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；不出现 `StageStatusModel`/`TaskState`/评估枚举的本包定义（只 include WP-10 与执行模型公共头）；展示层不自行计算可行性（只渲染 `FeasibilityVerdict/gaps`）。
 - **证据工件：** `ui/workflow/evidence/t02-status-projection.log`：状态展示矩阵（七阶段×八值逐格）、建议规则参数化结果表、命令原文与 commit。
 - **提交格式：** `WP-22-T02: 状态与任务投影`

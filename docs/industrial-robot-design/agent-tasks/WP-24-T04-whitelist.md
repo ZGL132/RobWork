@@ -22,7 +22,7 @@
 - **精确验证命令：**（仓库根；脚本真实调用＋脚本校验目标）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\verify-package.ps1 -Package <包路径>`（白名单与清单哈希逐项通过）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release -Release R1`（清单更新后重打包；R2 同理）
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_installer_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_installer_test$"`（只跑清单/哈希/白名单/路径扫描脚本校验）
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_installer_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_installer_test$"`（只跑清单/哈希/白名单/路径扫描脚本校验）
 - **diff 和禁止项检查：** `git diff --name-only` 仅含两清单、`licenses/`、InstallerScriptTest 与 evidence 目录；未改加载器/业务代码/三脚本；白名单逐项六字段齐全且与包内文件哈希一致；无未登记第三方库进入 `payload/app/`；文件 UTF-8 无 BOM、LF。
 - **证据工件：** `RobWork/installer/industrial-robot/evidence/t04-whitelist/`：白名单/依赖清单六字段核对表、三分支校验用例输出（含两个错误码触发记录）、licenses 归档清单、与 WP-01 依赖基线同源比对记录、verify 报告、命令原文与 commit。
 - **提交格式：** `WP-24-T04: 插件白名单与来源`

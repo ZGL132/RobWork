@@ -21,8 +21,8 @@
   - 失败：Given 未通过正式可行判定的候选请求应用，Then `IRD-WF-APPLY-BLOCKED`（Engineering/Error）列 gaps、保持当前修订；Given 比较集缺同名指标，Then `IRD-WF-NOT-COMPAREABLE`（Input/Error）拒绝整组比较；Given 报告输入不完整，Then 列 `IRD-RPT-INPUT-INCOMPLETE` 缺口。守卫文案不含哈希/Schema/内部插件名（UX-02）。
 - **精确验证命令：**（仓库根、VS x64 环境；`QCoreApplication` 模型测试）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_model_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；无新增命令接口或第二套诊断目录；命令不直写 revision、不经旁路执行业务计算；守卫文案无哈希/Schema/内部插件名。
 - **证据工件：** `ui/workflow/evidence/t04-diagnostic-guidance.log`：九组命令守卫矩阵（前置满足/不满足两分支）、诊断与报告入口样例（含 IRD-WF-*/IRD-RPT-*/IRD-PROJ-NOTHING-TO-* 触发记录）、命令原文与 commit。
 - **提交格式：** `WP-22-T04: 诊断与报告入口`

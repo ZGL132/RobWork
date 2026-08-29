@@ -21,8 +21,8 @@
   - 失败：Given 注入计算失败，When 渲染，Then 失败提示含对象/实际值/要求值/原因/建议动作（UX-03）；Given 未通过正式可行的候选请求应用，Then 阻断、列 gaps 并保持当前修订（AT-12）。
 - **精确验证命令：**（仓库根、VS x64 环境；GUI 一律 `QT_QPA_PLATFORM=windows` 且一次只运行一个 GUI 测试）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test sdurws_ird_workflow_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test sdurws_ird_workflow_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_test$"`
   - GUI 可执行文件运行前在同一 PowerShell 会话设置 `$env:QT_QPA_PLATFORM='windows'`；`sdurws_ird_workflow_model_test` 用 `QCoreApplication`、不需要 GUI 平台插件（testing-contract §5）。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；GUI 用例不设置 offscreen、不并行启动多个 GUI 可执行文件；不改被测实现源文件；固定脚本输入不含开发机绝对路径。
 - **证据工件：** `ui/workflow/evidence/t05-workflow-tests.log`：三条任务脚本录屏、测试日志（含 `QT_QPA_PLATFORM=windows` 设置记录与单实例执行顺序）、输入修订身份记录、状态展示矩阵（七阶段×八值，与 T02 证据合并归档）、命令原文与 commit。

@@ -1,6 +1,6 @@
 # WP-17 动力学实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/dynamics.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.7。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/dynamics.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付；WP-18 依赖本模块（候选无关性由其消费侧契约测试验证）。
 
 **需求与契约：** DYN-01～08、AT-07、NFR-DEP-05；架构契约与模块方案清单见 §2。
@@ -23,7 +23,7 @@
 
 ## 3. 文件所有权与 CMake 目标
 
-拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/`，子目录 `include/sdurws/ird/dynamics/`（DynamicResult.hpp、DynamicsEvaluator.hpp、DynamicsSemantics.hpp、DynamicsDiagnostics.hpp）、`src/`（DynamicsEvaluator.cpp、RneAdapter.cpp、FrictionModel.cpp、PowerEnergyIntegrator.cpp、ForwardDynamicsScenario.cpp、InertiaValidator.cpp、DynamicsJson.cpp）、`test/`（SemanticFreezeTest.cpp、InverseDynamicsTest.cpp、PowerEnergyTest.cpp、ForwardDynamicsTest.cpp、InsufficientDataTest.cpp）、`testdata/dynamics/{two-link,gravity,cycle,failpoints}/`、`evidence/WP-17/`。文件树以模块详设 §2 为权威。
+拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/`，子目录 `include/sdurws/ird/dynamics/`（DynamicResult.hpp、DynamicsEvaluator.hpp、DynamicsSemantics.hpp、DynamicsDiagnostics.hpp）、`src/`（DynamicsEvaluator.cpp、RneAdapter.cpp、FrictionModel.cpp、PowerEnergyIntegrator.cpp、ForwardDynamicsScenario.cpp、InertiaValidator.cpp、DynamicsJson.cpp）、`test/`（SemanticFreezeTest.cpp、InverseDynamicsTest.cpp、PowerEnergyTest.cpp、ForwardDynamicsTest.cpp、InsufficientDataTest.cpp）、`testdata/dynamics/{two-link,gravity,cycle,failpoints}/`、`out/test-evidence/wp-17/<run-id>/`。文件树以模块详设 §2 为权威。
 
 CMake 目标：`sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`、`sdurws_ird_dynamics_contract_test`。允许依赖：WP-03 core（含类型化广义力包装）、WP-05 evidence（端口头＋结果仓库）、WP-06 runtime（`CompiledRobotArtifacts` 的 DWC 工件）、RobWorkSim 稳定 API（DynamicWorkCell、RigidDevice、`rwsim::util::RecursiveNewtonEuler`、积分器/物理引擎，按 NFR-DEP-05 锁定版本）、Qt Core；契约引用（不链接实现）：WP-16 `TrajectoryPlan`/`ResolvedIkBranchSequence` 公共类型（payload 经 `IResultRepository` 取回）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、WP-18 及其后模块头、本地效率/减速比计算（映射归 WP-18）、直读 UI 会话态。
 
@@ -118,7 +118,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics(_c
 
 - 独立验证（黑盒）：二连杆解析算例与静态重力矩独立复算、完整循环积分对账、h/h2 收敛曲线复核、物性缺失注入。
 - 独立评审：由动力学/驱动工程师独立复核摩擦模型、坐标系、积分、峰值窗口径与证据等级；语义冻结工件（T01 七项）需评审签署后才允许 T02 实现。
-- 证据写入 `evidence/WP-17/`：二连杆/重力矩黄金数据版本与哈希、完整循环积分报告、正动力学收敛报告（h/h2 曲线）、假设清单、独立对照数据（试点前逐指标签署）。
+- 证据写入 `out/test-evidence/wp-17/<run-id>/`：二连杆/重力矩黄金数据版本与哈希、完整循环积分报告、正动力学收敛报告（h/h2 曲线）、假设清单、独立对照数据（试点前逐指标签署）。
 
 ## 11. 迁移与删除（requirements §13）
 

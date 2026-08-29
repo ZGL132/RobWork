@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
 - **前置任务及必需工件：**WP-17-T02（逆动力学链路）、WP-17-T03（功率/包络链路）；WP-09-T01（`Diagnostic` 结构）、WP-05-T04（结果接纳与 `ResultEnvelope`）
 - **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
-  - 创建：`include/sdurws/ird/dynamics/DynamicsDiagnostics.hpp`、`include/sdurws/ird/dynamics/DynamicsEvaluator.hpp`（评估器入口签名，详设树登记）、`src/DynamicsEvaluator.cpp`（评估主流程＋降级路径）、`test/InsufficientDataTest.cpp`、`testdata/dynamics/failpoints/`、`evidence/WP-17/T05/`
+  - 创建：`include/sdurws/ird/dynamics/DynamicsDiagnostics.hpp`、`include/sdurws/ird/dynamics/DynamicsEvaluator.hpp`（评估器入口签名，详设树登记）、`src/DynamicsEvaluator.cpp`（评估主流程＋降级路径）、`test/InsufficientDataTest.cpp`、`testdata/dynamics/failpoints/`、`out/test-evidence/wp-17/<run-id>/`
   - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01～T04 冻结语义；证据等级三级定义（§6.6，不足不得自动提升）；evaluation-semantics §2 合法组合表（构造边界拒绝非法组合）；requirements/CSV/architecture；禁止以估算参数包装精确结论；禁止 Qt Widgets、直读 UI 会话态
 - **修改前接口：**无统一评估主流程（T02～T04 为分段实现，快照校验与降级分支缺失）
@@ -18,10 +18,14 @@
   - 失败：Given 上游 `TrajectoryPlan` 缺失/非 Current，When 求值，Then `IRD-DYN-UPSTREAM-MISSING`、不产生部分提交或正式结果
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "PreliminaryDesign|ExternallyValidated" plugins/dynamics/src/DynamicsEvaluator.cpp` 无自动提升路径（提升仅由用户确认/独立对照输入触发）；七码与 dynamics.md §4 矩阵逐字一致；无诊断文案硬编码（经 WP-09 目录）
-- **证据工件：**`evidence/WP-17/T05/`——降级矩阵（缺失项×降级路径×诊断×证据等级）、failpoints 注入记录、假设清单样例、测试日志（commit/配置/种子）
-- **提交格式：**`WP-17-T05: add insufficient-data degradation`
+- **证据工件：**`out/test-evidence/wp-17/<run-id>/`——降级矩阵（缺失项×降级路径×诊断×证据等级）、failpoints 注入记录、假设清单样例、测试日志（commit/配置/种子）
+- **提交格式：** `WP-17-T05: 新增数据不足降级路径`
+
+  - 新增物性缺失降级与 Screening 语义
+  - 新增降级诊断测试
+  - 新增运行证据记录
 - **停止与升级条件：**降级路径与 §6.6/evaluation-semantics §2 合法组合冲突、或诊断码需新增时，停止并升级（新码先登记 diagnostics.md）；不得以估算参数伪装精确结论或自动提升证据等级

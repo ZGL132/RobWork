@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "candidateStableId": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "studyDefinitionVersion": "1.0.0",
+  "randomSeed": 42,
+  "designVector": [
+    { "variableId": "var-upper-arm-length", "valueType": "Real", "numericValue": 0.285 },
+    { "variableId": "var-upper-arm-outer-diameter", "valueType": "Real", "numericValue": 0.0925 },
+    { "variableId": "var-gear-ratio-j3", "valueType": "CatalogRef", "stringValue": "rv-060-gb" },
+    { "variableId": "var-wrist-friction-offset", "valueType": "Real", "numericValue": 0.0 }
+  ],
+  "orderedMutations": [
+    {
+      "variableId": "var-upper-arm-length",
+      "bindingId": "bind-joint-origin-z",
+            "parameterKey": "joints[3].originPose.position.z",
+      "appliedValueNumeric": 0.285,
+      "writeSet": ["joints[3].originPose.position.z"]
+    },
+    {
+      "variableId": "var-upper-arm-outer-diameter",
+      "bindingId": "bind-link-section-dimension",
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "links[2].section.dimensions.outerDiameter",
+      "appliedValueNumeric": 0.0925,
+      "writeSet": [
+        "links[2].section.dimensions.outerDiameter",
+        "links[2].mass",
+        "links[2].centerOfMass",
+        "links[2].inertia"
+      ]
+    },
+    {
+      "variableId": "var-gear-ratio-j3",
+      "bindingId": "bind-drivetrain-gearbox-model",
+      "targetObjectId": "f10c4b70-8e29-4a71-b3d5-92a6c0e4d510",
+      "parameterKey": "driveTrains[2].gearbox.modelKey",
+      "appliedValueString": "rv-060-gb",
+      "writeSet": ["driveTrains[2].gearbox.modelKey", "driveTrains[2].gearbox.ratio"]
+    }
+  ],
+  "derivedRecomputation": [
+    {
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "links[2].mass",
+      "method": "AnalyticEstimate",
+      "valueNumeric": 4.3,
+      "unit": "kg",
+      "note": "upper arm lengthened 0.26 to 0.285 m and hollow section outer diameter set to 0.0925 m (4 mm wall); mass recomputed by the analytic hollow-cylinder estimate, not independently scaled"
+    },
+    {
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "links[2].inertia.ixx",
+      "method": "UniformScaling",
+      "valueNumeric": 0.0955,
+      "unit": "kg·m2",
+      "note": "inertia scaled consistently with mass and characteristic length"
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "IRD-OPT-DERIVED-RECOMPUTED",
+      "category": "Engineering",
+      "severity": "Info",
+      "subjectObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "message": "derived physical properties recomputed for link UpperArm after structural variable changes",
+      "suggestedAction": "review derived mass, center of mass and inertia in the candidate preview"
+    }
+  ],
+  "writeSetFingerprint": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+}

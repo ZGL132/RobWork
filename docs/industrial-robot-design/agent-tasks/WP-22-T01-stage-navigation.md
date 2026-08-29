@@ -22,8 +22,8 @@
   - 失败：Given 阶段完成证据缺失（无 `ResultEnvelope`），When 请求进入下游建议，Then 拒绝给出完成结论并指向证据缺口（`IRD-WF-EVIDENCE-MISSING` 提名语义，最终经 WP-09 登记后使用）。
 - **精确验证命令：**（仓库根、VS x64 环境；`_model_test` 用 `QCoreApplication`，不需要 GUI 平台插件）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_workflow_model_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_workflow_model_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_workflow_model_test$"`
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；`ui/workflow/` 不出现 `StageStatusModel` 枚举定义复制（只 include WP-10 头）；无业务计算代码；无直写 revision。
 - **证据工件：** `ui/workflow/evidence/t01-stage-navigation.log`：转移表逐行结果矩阵（证据存在/缺失两分支）、R1 切片入口截图或状态记录、命令原文与 commit。
 - **提交格式：** `WP-22-T01: 阶段导航与作用域`

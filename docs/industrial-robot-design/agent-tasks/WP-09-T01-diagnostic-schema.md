@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_diag
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "EngineeringDiagnostic" diagnostics/` 零命中；无 `float` NaN 直通序列化路径；无第四 category/severity 枚举值；severity 不与 EngineeringStatus 混用（无转换函数）
-- **证据工件：**`diagnostics/evidence/WP-09/T01/`：13 字段矩阵、JSON 样例（正常与拒绝各一组）、`IRD-DIA-SCHEMA-INVALID` 诊断样例、命令日志与评审签名
-- **提交格式：**`WP-09-T01: implement diagnostic schema`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "EngineeringDiagnostic" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/` 零命中；无 `float` NaN 直通序列化路径；无第四 category/severity 枚举值；severity 不与 EngineeringStatus 混用（无转换函数）
+- **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：13 字段矩阵、JSON 样例（正常与拒绝各一组）、`IRD-DIA-SCHEMA-INVALID` 诊断样例、命令日志与评审签名
+- **提交格式：**`WP-09-T01: 新增诊断 Schema 与字段完整性`
+
+  - 新增 Diagnostic 13 字段不可变值对象与确定性 JSON 序列化
+  - 新增 构造拒绝路径测试与目标登记
+  - 新增 字段矩阵与 JSON 样例证据记录
 - **停止与升级条件：**字段数量、可空性或错误类别与 public-interfaces §6 不一致时暂停并升级至 ADR-004/005 所有者，不得增删字段

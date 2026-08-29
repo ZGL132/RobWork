@@ -26,8 +26,8 @@
   - 失败：Given 手工注入反向依赖（如让 `sdurws_ird_core` 链接 `sdurws_ird_ui`）或开启依赖已关闭选项的上层选项，When 配置，Then 配置期失败并指出违规目标对。
 - **精确验证命令：**（仓库根目录、VS x64 环境；本任务早于统一测试入口，只用原生形式）
   - `cmake -S RobWork -B out\build\industrial-robot -G "Visual Studio 17 2022" -A x64 -DWITH_RWS=ON -DWITH_RWSIM=ON -DBUILD_TESTING=ON -DIRD_BUILD_BUSINESS_PLUGINS=OFF`；预期配置成功、无半目标告警。
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core`；预期构建成功。
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`；预期 1/1 通过。
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core`；预期构建成功。
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`；预期 1/1 通过。
   - 选项关闭路径：`cmake -S RobWork -B out\build\industrial-robot-optoff -G "Visual Studio 17 2022" -A x64 -DWITH_RWS=OFF -DBUILD_TESTING=ON -DIRD_BUILD_UI=OFF -DIRD_BUILD_BUSINESS_PLUGINS=OFF` 后构建 `sdurws_ird_core`；预期成功且无 UI 目标生成。
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1`；预期退出码 0。
 - **diff 和禁止项检查：** `git diff --name-only` 中 `rwslibs/CMakeLists.txt` 的变更仅一行 `add_subdirectory(industrialrobot)`；新增文件全部位于 `industrialrobot/` 内；旧插件目标属性零变化；公共头目录内不出现 QWidget/QApplication 包含。

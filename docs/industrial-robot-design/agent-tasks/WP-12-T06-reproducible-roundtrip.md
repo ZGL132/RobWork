@@ -1,10 +1,10 @@
 # WP-12-T06 往返与可复现
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-12-T06；需求 NFR-COR-04、EVI-01、REQ-06、NFR-SEC-07；ADR-002、ADR-004；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、persistence-schema §4（追加协议）、module-design/reporting.md v0.3 §5。
-- **前置任务及必需工件：**WP-12-T01～T05（权威对象、内容、HTML 渲染＋PDF 桩、数据包、固定措辞）；WP-04-T04（不可变对象库与可达根）；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `test/ReproducibleRoundtripTest.cpp`、`testdata/roundtrip/`（含外部源夹具）、`evidence/WP-12/`；修改 `CMakeLists.txt`、（如自检需暴露只读钩子）`ReviewReportBuilder.hpp/.cpp`；删除：无。
-- **禁止修改的文件和公共接口：**T01～T05 冻结接口与工件格式；`reports/` 已完成工件（只追加不覆盖）；requirements.md 与 architecture/、module-design/ 文档；PDF 维度（随 ADR-006 启用）；其他 WP 公共头。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、persistence-schema §4（追加协议）、module-design/reporting.md v0.3 §5。
+- **前置任务及必需工件：**WP-12-T01～T05（权威对象、内容、HTML 渲染、数据包、固定措辞）；WP-04-T04（不可变对象库与可达根）；WP-01-T03（测试入口）。
+- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `test/ReproducibleRoundtripTest.cpp`、`testdata/roundtrip/`（含外部源夹具）、`out/test-evidence/wp-12/<run-id>/`；修改 `CMakeLists.txt`、（如自检需暴露只读钩子）`ReviewReportBuilder.hpp/.cpp`；删除：无。
+- **禁止修改的文件和公共接口：**T01～T05 冻结接口与工件格式；`reports/` 已完成工件（只追加不覆盖）；requirements.md 与 architecture/、module-design/ 文档；PDF 渲染（无需求支撑，D10 裁决，禁止引入）；其他 WP 公共头。
 - **修改前接口：**T01～T05 各自的构件级断言；无端到端重生成与多格式一致性用例。
 - **修改后接口：**不变（交付物为端到端验证：删除/覆盖外部源后以项目不可变副本重生成相同报告；相同 `ReviewReport` 结构化内容 → 语义等价 HTML＋逐字段一致数据包；追加幂等/冲突语义回归）。
 - **实施步骤：**1) 先写重生成偏差与追加冲突失败测试；2) 建立含外部源（网格/目录）的端到端夹具项目；3) 生成基准报告并记录全部工件哈希；4) 删除/篡改外部源后从项目内不可变副本重生成并比对；5) 跑多格式一致性（HTML/JSON/CSV；PDF 待 ADR-006）与历史名称用例。
@@ -16,10 +16,14 @@
   - 边界：历史报告保留旧快照名称，新报告使用当前 `RuntimeNameMap`，objectId 不混淆；关键数值、工程状态、诊断码、快照身份在 HTML/JSON/CSV 一致（`IRD-RPT-FORMAT-MISMATCH` 自检）；复算命令记入证据。
 - **精确验证命令**（无 GUI 测试）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；测试不写入被测 `reports/` 历史工件；无外部源路径进入报告真值（以内容 ID/对象哈希为准）；无省略号命令。
-- **证据工件：**`evidence/WP-12/T06/`：基准与重生成工件哈希对照、复算命令、多格式一致性矩阵、追加幂等/冲突日志、独立评审记录。
-- **提交格式：**`WP-12-T06: reproducible report roundtrip`。
+- **证据工件：**`out/test-evidence/wp-12/<run-id>/`：基准与重生成工件哈希对照、复算命令、多格式一致性矩阵、追加幂等/冲突日志、独立评审记录。
+- **提交格式：**`WP-12-T06: 新增可复现报告往返验证`
+
+  - 新增 端到端重生成夹具与只读自检钩子实现
+  - 新增 重生成偏差与追加冲突测试及目标登记
+  - 新增 工件哈希对照与多格式一致性证据记录
 - **停止与升级条件：**无法从不可变副本重现（提示对象库或快照冻结缺陷）时停止并报告 WP-04/05 负责人；PDF 一致性维度待 ADR-006 获批后补卡执行。

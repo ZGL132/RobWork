@@ -19,7 +19,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "stripDeviceScope\|localName" 业务插件目录` 仅白名单目录命中；无 sliceHash 手工修正 diff；删除旧链路的提交附迁移 verdict（Migratable/Rewrite/EvidenceOnly）
-- **证据工件：**`runtime/evidence/WP-06/T05/`：重命名前后 hash 对照、历史 map 样本、扫描报告、违规夹具、迁移 verdict 与评审签名
-- **提交格式：**`WP-06-T05: enforce rename stability and name scan`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "stripDeviceScope|localName" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins` 仅白名单目录命中；无 sliceHash 手工修正 diff；删除旧链路的提交附迁移 verdict（Migratable/Rewrite/EvidenceOnly）
+- **证据工件：**`runtime/out/test-evidence/wp-06/<run-id>/`：重命名前后 hash 对照、历史 map 样本、扫描报告、违规夹具、迁移 verdict 与评审签名
+- **提交格式：**`WP-06-T05: 新增重命名稳定性保障与名称静态扫描`
+
+  - 新增 重命名回归夹具与 check-runtime-names.ps1 白名单扫描
+  - 新增 RenameScanTest 回归测试与目标登记
+  - 新增 前后哈希对照与迁移 verdict 证据记录
 - **停止与升级条件：**物理切片因显示名称变化失效、或扫描规则需扩大白名单时暂停并升级至 WP-06 所有者与独立测试负责人

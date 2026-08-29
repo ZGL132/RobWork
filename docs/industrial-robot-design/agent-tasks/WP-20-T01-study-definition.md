@@ -16,6 +16,10 @@
   - 失败：Given 未注册路径、writeSet 交集、依赖环、域越界或 StageD 绑定，When 校验，Then 对应 `IRD-OPT-*` 诊断、无部分状态、不落盘
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "OptimizationStudy\b" plugins/optimization` 无单独 `OptimizationStudy` 类型（禁止名，SYM 裁决 #9）；无反射式字段写入（注册表外路径全部拒绝）；`joint/` 目录零新增
-- **证据工件：**`plugins/optimization/evidence/WP-20/T01/`——研究定义 JSON 样例（合法＋逐项非法）、校验矩阵（拒绝码×输入）、首批绑定条目表与评审签署、测试日志
-- **提交格式：**`WP-20-T01: define optimization study`
+- **证据工件：**`plugins/optimization/out/test-evidence/wp-20/<run-id>/`——研究定义 JSON 样例（合法＋逐项非法）、校验矩阵（拒绝码×输入）、首批绑定条目表与评审签署、测试日志
+- **提交格式：** `WP-20-T01: 定义优化研究定义对象`
+
+  - 新增 OptimizationStudyDefinition 与字段冻结
+  - 新增构造校验测试
+  - 新增运行证据记录
 - **停止与升级条件：**字段路径或锁定规则无法从 candidate-compilation §1～§3 推导、或 `links[i].section` 依赖的 `robot-design.schema.json` 增补（D5 提名）未落地时，停止并升级 WP-20 所有者；绑定条目扩充须走注册表评审，不得运行时动态注册

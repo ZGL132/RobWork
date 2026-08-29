@@ -25,4 +25,8 @@
 - **diff 和禁止项检查：** `git diff --name-only` 仅含安装器工程、`release-manifest.json` 与 evidence 目录；未修改脚本与业务代码；包内无四旧目标（`sdurws_robotmodelbuilder`/`sdurws_engineeringrequirements`/`sdurws_kinematicanalysis`/`sdurws_structureoptimizer*`）；文件 UTF-8 无 BOM、LF。
 - **证据工件：** `RobWork/installer/industrial-robot/evidence/t02-packages/`：R1/R2 打包记录、verify 双向校验报告、包结构比对检查表（签署栏：执行人/日期/环境）、`release-manifest.json`、命令原文与 commit。
 - **提交格式：** `WP-24-T02: R1/R2 安装包`
+
+  - 新增 R1/R2 安装包构建脚本与冻结树
+  - 新增包结构校验测试
+  - 新增运行证据记录
 - **停止与升级条件：** Release 产物或 WP-01 依赖基线锁定 commit 缺失、或包结构无法符合 §3 冻结树时，停止并升级工作包所有者；打包执行者不得担任本卡独立验证者（发布工程师独立复核）。

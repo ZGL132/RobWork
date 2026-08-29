@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_co
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；无 WP-03 头与 public-interfaces 引用端口改动；源码无 `AxisRotation(q-zero)` 双偏置变体残留；无 Qt Widgets include；canonical 公式仅引用不复述
-- **证据工件：**`runtime/evidence/WP-06/T01/`：三入口 canonical JSON、FK/世界轴线差异报告、输入哈希、拒绝诊断清单、命令日志与评审签名
-- **提交格式：**`WP-06-T01: implement canonical SE3 model`
+- **证据工件：**`runtime/out/test-evidence/wp-06/<run-id>/`：三入口 canonical JSON、FK/世界轴线差异报告、输入哈希、拒绝诊断清单、命令日志与评审签名
+- **提交格式：**`WP-06-T01: 新增规范 SE(3) 计算模型`
+
+  - 新增 CanonicalModelCompiler 三入口编译、偏置折叠与确定性序列化
+  - 新增 双偏置拒绝测试与目标登记
+  - 新增 canonical JSON 与拒绝诊断证据记录
 - **停止与升级条件：**来源格式语义无法唯一转换、需修改 WP-03 字段或冻结容差未覆盖某入口时暂停，升级至 WP-06 所有者与架构负责人裁决

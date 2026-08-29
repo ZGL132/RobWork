@@ -1,6 +1,6 @@
 # 运行时模型与名称模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；负责 WP：WP-06；阶段/发布：阶段 A / R1
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-06；阶段/发布：阶段 A / R1
 - 最高权威：`architecture/canonical-kinematics.md`（变换链、q-zero、关节轴、四元数、R_c 补偿）；其余契约：`architecture/public-interfaces.md` §2/§7、`architecture/symbol-registry.md`、`architecture/testing-contract.md`；需求锚点：§6.7.1、§7.1～7.3、§15.3；任务卡：`agent-tasks/WP-06-T01～T05`
 
 ## 1. 模块职责
@@ -21,7 +21,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/
   test/CanonicalModelTest.cpp NameMapTest.cpp DualCompileTest.cpp
       AxisAdapterTest.cpp RenameScanTest.cpp
   testdata/runtime/{dh,explicit,urdf,names,axes,failpoints}/
-  evidence/WP-06/
+  # 证据 → out/test-evidence/wp-06/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_runtime_contract_test`。允许依赖：WP-03 core、RobWork/RobWorkSim 稳定 API、标准库（代码前置仅 WP-03，与总纲 §5.2 一致）；禁止：Qt Widgets、WP-13+ 业务头、其他 WP 私有头、直接写项目 revision、定义公共端口的平行版本。`CanonicalModelCompiler`、`RobWorkModelAdapter`、`DynamicWorkCellAdapter` 为模块私有类型。
@@ -53,7 +53,7 @@ RobotDesign 权威参数化
 | `IRD-RUNTIME-DUAL-OFFSET` | 变换链出现第二偏置项（canonical-kinematics §3.2） | System | Error | 偏置折叠进 OriginPose 后重新提交 |
 | `IRD-RUNTIME-NAME-COLLISION` | 名称表生成时重复绑定/去前缀重名/双前缀 | Input | Error | 修正名称后重新编译 |
 | `IRD-RUNTIME-COMPILE-FAILED` | builder 抛错、返回空或 RobWork 构造失败 | System | Error | 保留调用方旧工件，按诊断修复后重试 |
-| `IRD-RUNTIME-ARTIFACTS-MISMATCH` | 交叉校验任一项不一致 | Engineering | Error | 全部工件作废并返回诊断 |
+| `IRD-RUNTIME-ARTIFACTS-MISMATCH` | 交叉校验任一项不一致 | System | Error | 全部工件作废并返回诊断 |
 
 解析期（非编译期）错误使用 public-interfaces §2 冻结的 `IRD-NAME-AMBIGUOUS`/`IRD-NAME-UNRESOLVED`/`IRD-NAME-DUPLICATE-PREFIX`，绝不取第一个匹配。
 

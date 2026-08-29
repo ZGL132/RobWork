@@ -1,6 +1,6 @@
 # 动力学模块详细方案（dynamics）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-17；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-17-T01～T06
 - 架构契约：`architecture/domain-model.md` §4（SI/类型化广义力）、`architecture/public-interfaces.md` §3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/execution-model.md` §1～3、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.5（DYN-01～08 与 `DriveTrainMappingEvaluator` 映射契约）、§7.1/§7.2/§7.4、§9.3（W+ 冻结式）、§15.3（动力学容差、正动力学收敛、动力包络行）、§6.6（证据等级）、NFR-DEP-05（RobWorkSim 锁定版本）；平台方案：runtime-model、execution-platform、snapshot-result
@@ -23,7 +23,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/
   test/SemanticFreezeTest.cpp   InverseDynamicsTest.cpp   PowerEnergyTest.cpp
       ForwardDynamicsTest.cpp   InsufficientDataTest.cpp
   testdata/dynamics/{two-link,gravity,cycle,failpoints}/
-  evidence/WP-17/
+  # 证据 → out/test-evidence/wp-17/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`、`sdurws_ird_dynamics_contract_test`。允许依赖：WP-03 core（含类型化广义力包装）、WP-05 evidence（端口头＋结果仓库）、WP-06 runtime（`CompiledRobotArtifacts` 的 DWC 工件）、RobWorkSim 稳定 API（DynamicWorkCell、RigidDevice、`rwsim::util::RecursiveNewtonEuler`、积分器/物理引擎，按 NFR-DEP-05 锁定版本）、Qt Core；契约引用（不链接实现）：WP-16 `TrajectoryPlan`/`ResolvedIkBranchSequence` 公共类型（payload 经 `IResultRepository` 取回）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、WP-18 及其后模块头、本地效率/减速比计算（映射归 WP-18）、直读 UI 会话态。
@@ -55,7 +55,7 @@ snapshot → 校验（TrajectoryPlan 存在且 Current、物性/惯量/摩擦假
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
 | `IRD-DYN-UPSTREAM-MISSING` | `TrajectoryPlan` 缺失/非 Current/版本不兼容 | Input | Error | 先重算轨迹 |
-| `IRD-DYN-INERTIA-INVALID` | 惯量缺失、非正定或违反三角不等式（§15.3 物理一致性） | Engineering | Error | 修正物性后重算 |
+| `IRD-DYN-INERTIA-INVALID` | 惯量非正定或违反三角不等式（§15.3 物理一致性；缺失走 PROPERTIES-MISSING） | Input | Error | 修正物性后重算 |
 | `IRD-DYN-PROPERTIES-MISSING` | 关键连杆/负载物性缺失（DYN-06） | Engineering | Warning | 估算参数＋`Screening` 继续或补数据重算；不得包装成精确结论 |
 | `IRD-DYN-FRICTION-MISSING` | 摩擦假设缺失 | Engineering | Warning | 按零摩擦继续并降级证据＋诊断标注 |
 | `IRD-DYN-STATE-DISCONTINUOUS` | 轨迹状态不连续（时间戳断裂/速度跳变） | Engineering | Error | 修正轨迹后重算 |
@@ -82,7 +82,7 @@ snapshot → 校验（TrajectoryPlan 存在且 Current、物性/惯量/摩擦假
 | ForwardDynamicsTest | §15.3 h/h2 收敛、发散→`IRD-DYN-FD-DIVERGED`、控制输入/初始状态/步长入证据 |
 | InsufficientDataTest | 物性/摩擦缺失→降级等级＋Warning 诊断，不产生精确结论 |
 
-WP-17-T06 契约测试落在 WP-18 侧（`sdurws_ird_drivetrain_contract_test`）验证本模块输出可被映射且候选无关。GUI（DYN-08 曲线联动/回放）归 WP-10/WP-22 会话态（`QT_QPA_PLATFORM=windows` 一次一个）；本模块测试为 `QCoreApplication` 模型测试。证据写入 `evidence/WP-17/`：二连杆/重力矩黄金数据版本与哈希、完整循环积分报告、正动力学收敛报告（h/h2 曲线）、假设清单、独立对照数据（试点前逐指标签署）。验证命令（双形式，仓库根执行）：
+WP-17-T06 契约测试落在 WP-18 侧（`sdurws_ird_drivetrain_contract_test`）验证本模块输出可被映射且候选无关。GUI（DYN-08 曲线联动/回放）归 WP-10/WP-22 会话态（`QT_QPA_PLATFORM=windows` 一次一个）；本模块测试为 `QCoreApplication` 模型测试。证据写入 `out/test-evidence/wp-17/<run-id>/`：二连杆/重力矩黄金数据版本与哈希、完整循环积分报告、正动力学收敛报告（h/h2 曲线）、假设清单、独立对照数据（试点前逐指标签署）。验证命令（双形式，仓库根执行）：
 
 ```text
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics(_contract)?_test$'

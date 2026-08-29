@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-11-T01；REQ-05、SEL-01～02、NFR-REL-04、NFR-SEC-01～03；阶段 A / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`（`industrialrobot/io/` 尚不存在）；语义源 `module-design/secure-io.md` v0.3
 - **前置任务及必需工件：**WP-01-T02（CMake 骨架）；WP-01-T03（`run-tests.ps1` 测试入口）；WP-03-T01（单位/有限性公共头）；WP-09-T01（`Diagnostic` 公共头）；WP-09-T03（`IRD-IO-*` 错误码映射）；WP-04-T04（内容对象端口——契约引用，集成期交付，本卡不写 `objects/`）
-- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/include/sdurws/ird/io/ImportBudget.hpp`、`SafeProjectPath.hpp`、`IoDiagnostics.hpp`；`io/src/SafeProjectPath.cpp`、`BudgetGuard.cpp`；`io/test/PathBudgetTest.cpp`、`io/test/IoContractFixture.cpp`（本端口失败/正常/边界三例）；`io/testdata/io/paths/`；`io/evidence/WP-11/T01/`；`io/CMakeLists.txt`（登记 `sdurws_ird_io`、`sdurws_ird_io_test`、`sdurws_ird_io_contract_test`）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/include/sdurws/ird/io/ImportBudget.hpp`、`SafeProjectPath.hpp`、`IoDiagnostics.hpp`；`io/src/SafeProjectPath.cpp`、`BudgetGuard.cpp`；`io/test/PathBudgetTest.cpp`、`io/test/IoContractFixture.cpp`（本端口失败/正常/边界三例）；`io/testdata/io/paths/`；`io/out/test-evidence/wp-11/<run-id>/`；`io/CMakeLists.txt`（登记 `sdurws_ird_io`、`sdurws_ird_io_test`、`sdurws_ird_io_contract_test`）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**WP-03/04/09 公共接口；`schemas/catalog/*.schema.json`（D3 拥有）；`architecture/`、`module-design/`；禁止业务语义解析、直接写项目 revision 或 `objects/`、提供绕过预算的读取旁路
 - **修改前接口：**无（安全路径与预算类型不存在；旧插件各持私有路径拼接）
 - **修改后接口：**`SafeProjectPath::normalize(raw)->expected<CanonicalPath,IoError>`、`resolve(root,relative)->expected<SafePathHandle,IoError>`（统一 POSIX `/` 相对形式）；`ImportBudget` 显式字段（单文件/总字节、JSON/XML 最大深度、最大记录/字段/字符串数、网格顶点/三角形数、压缩展开比、目录文件数）；`BudgetGuard::preflight(budget,path)` 读取前预检
@@ -20,7 +20,11 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "ifstream\|QFile" io/src/SafeProjectPath.cpp io/src/BudgetGuard.cpp` 零命中（预检不偷读内容）；`grep -rn "objects/" io/src/` 零命中（不直写对象库）
-- **证据工件：**`io/evidence/WP-11/T01/`——路径矩阵（拒绝/接受逐项）、预算配置与消耗曲线、诊断 JSON、命令日志
-- **提交格式：**`WP-11-T01: implement safe paths and import budgets`
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "ifstream|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafeProjectPath.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/BudgetGuard.cpp` 零命中（预检不偷读内容）；`rg -n "objects/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 零命中（不直写对象库）
+- **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——路径矩阵（拒绝/接受逐项）、预算配置与消耗曲线、诊断 JSON、命令日志
+- **提交格式：**`WP-11-T01: 新增安全路径与导入预算`
+
+  - 新增 SafeProjectPath 规范化与 BudgetGuard 预检实现
+  - 新增 路径逃逸与预算超限测试及目标登记
+  - 新增 路径矩阵与预算消耗证据记录
 - **停止与升级条件：**平台边界（符号链接/大小写）无法在本机证明、预算默认值未冻结时暂停；阈值需变更时上报 WP-11 负责人更新 secure-io.md 后再实现，不得现场调参

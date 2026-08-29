@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
 - **前置任务及必需工件：**WP-17-T02（逆动力学/摩擦与状态链路工件）；WP-06-T03（DWC 工件）、WP-16-T05（`TrajectoryPlan` 关节速度剖面 payload）；WP-01-T05（RobWorkSim 依赖基线锁定）
 - **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
-  - 创建：`src/ForwardDynamicsScenario.cpp`、`test/ForwardDynamicsTest.cpp`、`evidence/WP-17/T04/`
+  - 创建：`src/ForwardDynamicsScenario.cpp`、`test/ForwardDynamicsTest.cpp`、`out/test-evidence/wp-17/<run-id>/`
   - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01～T03 冻结语义（含 h＝1e-3 s 与收敛限常量）；RobWorkSim/物理引擎版本（NFR-DEP-05，不得升级或更换引擎）；WP-18 及其后模块头；禁止放宽容差、禁止 Qt Widgets、直读 UI 会话态
 - **修改前接口：**无正动力学执行体（T02/T03 为纯逆动力学与包络计算，无仿真闭环）
@@ -18,10 +18,14 @@
   - 失败：Given 收敛超限或数值发散，When 执行，Then 对应诊断＋Partial/Failed 处置，无正式结果伪装
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "1e-3|1e-4" plugins/dynamics/src/ForwardDynamicsScenario.cpp` 与 §5.5 冻结值逐字一致（无放宽）；无引擎版本/积分器替换引用；`DynamicsResult` 禁名零命中
-- **证据工件：**`evidence/WP-17/T04/`——正动力学收敛报告（h/h2 曲线与残差）、发散注入记录（诊断与 Partial 处置）、控制输入/初态/步长入证据记录、测试日志（commit/配置/种子）
-- **提交格式：**`WP-17-T04: add forward dynamics scenario`
+- **证据工件：**`out/test-evidence/wp-17/<run-id>/`——正动力学收敛报告（h/h2 曲线与残差）、发散注入记录（诊断与 Partial 处置）、控制输入/初态/步长入证据记录、测试日志（commit/配置/种子）
+- **提交格式：** `WP-17-T04: 新增正向动力学场景`
+
+  - 新增正向动力学求解与 h/h2 对照
+  - 新增收敛与发散测试
+  - 新增运行证据记录
 - **停止与升级条件：**收敛判据在锁定版本下无法达成时停止并升级（不得改物理引擎版本或放宽容差）；步长/积分器/控制输入模式变更须升 `dynamicsSemanticsVersion` 并走语义评审

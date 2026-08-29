@@ -1,25 +1,29 @@
 # WP-12-T05 限制与固定措辞
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-12-T05；需求 NFR-COR-04、EVI-01、REQ-06、OPT-08～09；ADR-004；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7 §15.3（固定措辞权威）、检查点 `IRD-D2-20260829`、module-design/reporting.md v0.3 §5。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8 §15.3（固定措辞权威）、检查点 `IRD-D2-20260829`、module-design/reporting.md v0.3 §5。
 - **前置任务及必需工件：**WP-12-T01（权威对象与假设/限制字段）、WP-12-T02（内容段）、WP-12-T03（HTML 渲染与资源文件）；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `resources/wording-zh-CN.json`（固定措辞资源常量）、`test/WordingLimitsTest.cpp`、`evidence/WP-12/`；修改 `ReviewReport.hpp`（假设/限制字段段）、`src/HtmlReportRenderer.cpp`（读资源常量）、`src/EvidenceDataExporter.cpp`（限制措辞进数据包）、`CMakeLists.txt`；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-12-T01）：创建 `resources/wording-zh-CN.json`（固定措辞资源常量）、`test/WordingLimitsTest.cpp`、`out/test-evidence/wp-12/<run-id>/`；修改 `ReviewReport.hpp`（假设/限制字段段）、`src/HtmlReportRenderer.cpp`（读资源常量）、`src/EvidenceDataExporter.cpp`（限制措辞进数据包）、`CMakeLists.txt`；删除：无。
 - **禁止修改的文件和公共接口：**requirements.md §15.3 措辞原文与 architecture/、module-design/ 文档；T01～T04 冻结接口；渲染器不得内联改写措辞（只能引用资源常量）；其他 WP 公共头。
 - **修改前接口：**T03 的渲染器直接内联显示自由文本，无固定措辞资源。
 - **修改后接口：**资源常量键集：碰撞结论＝"在本策略与分辨率下未发现碰撞"；无签署公差＝只显示"敏感度参考"；能量口径区分关节侧机械能与电能并展示传动效率/回馈假设；结构优化未做强度/刚度校核的显式说明；渲染器/导出器按键引用，不改写字面量。
 - **实施步骤：**1) 先写措辞偏离失败测试；2) 抽取四组固定措辞为 `resources/wording-zh-CN.json` 常量；3) 渲染器与导出器改为引用键；4) 实现能量口径区分装配（机械能/电能/传动效率/回馈假设并列展示）；5) 断言鲁棒/概率措辞在无签署公差时不出现。
 - **RED 测试：**碰撞结论输出"未发生碰撞/绝对安全"等变体 → 失败；无签署公差时出现"鲁棒通过/通过概率"→ 失败；能量列把关节侧机械能与电能混列 → 失败；结构优化结论出现"结构已验证"→ 失败。
-- **最小实现：**资源常量＋引用装配；PDF 维度随 ADR-006（措辞同源，无需另行实现）。
+- **最小实现：**资源常量＋引用装配；措辞同源由 T03/T06 复核。
 - **正常/边界/失败测试：**
   - 失败：Given 碰撞评估完成，When render，Then 措辞逐字节等于资源常量，任何内联改写使测试失败。
   - 正常：Given 无签署公差的敏感度结果，When render，Then 仅显示"敏感度参考"；Given 传动结果，Then 机械能与电能分列并带传动效率/回馈假设。
   - 边界：结构优化未做强度/刚度校核时明确说明；中英文资源键同名不同值；数据包中的限制措辞与 HTML 一致。
 - **精确验证命令**（无 GUI 测试）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
-- **diff 和禁止项检查：**diff 仅命中允许清单；渲染器/导出器源码中无措辞字面量（grep 校验，字面量只在资源文件）；措辞与 requirements §15.3 逐字一致。
-- **证据工件：**`evidence/WP-12/T05/`：资源常量文件、措辞对照表（需求原文↔资源键↔输出）、能量口径样例、测试输出。
-- **提交格式：**`WP-12-T05: fixed wording and limitation statements`。
+- **diff 和禁止项检查：**diff 仅命中允许清单；渲染器/导出器源码中无措辞字面量（rg 校验，字面量只在资源文件）；措辞与 requirements §15.3 逐字一致。
+- **证据工件：**`out/test-evidence/wp-12/<run-id>/`：资源常量文件、措辞对照表（需求原文↔资源键↔输出）、能量口径样例、测试输出。
+- **提交格式：**`WP-12-T05: 新增固定措辞与限制声明`
+
+  - 新增 固定措辞资源常量与四组限制声明装配实现
+  - 新增 措辞偏离失败测试及目标登记
+  - 新增 措辞对照表与能量口径样例证据记录
 - **停止与升级条件：**需求 §15.3 与资源措辞冲突或需新增限制类别时停止并报告，先改需求/模块详设再实现；不得由渲染层自行拟措辞。

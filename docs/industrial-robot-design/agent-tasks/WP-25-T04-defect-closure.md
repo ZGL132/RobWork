@@ -1,6 +1,6 @@
 # WP-25-T04 缺陷关闭与遗留项
 
-- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T04；需求 §15.4（缺陷等级 Blocker/Critical/Major/Minor 与发布规则）、§3.3（试点发布时开放 Blocker＝0、未关闭 Critical 均有负责人/影响说明/计划日期）、§14 阶段 E 退出条件；非代码任务（验证＝缺陷登记表签署复核，`architecture/testing-contract.md` §4）。契约：`module-design/pilot-delivery.md` v0.3 §6；阶段 E / R1+R2
+- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T04；**DEL-02**（试点缺陷门禁，需求 §15.4、§3.3、§14 阶段 E）；非代码任务（验证＝缺陷登记表签署复核，`architecture/testing-contract.md` §4）。契约：`module-design/pilot-delivery.md` v0.3 §6；阶段 E / R1+R2
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/pilot-delivery.md` v0.3＋`work-packages/WP-25-pilot-and-delivery.md`（D6 计划）§7
 - **前置任务及必需工件：**WP-25-T02（`comparison-report.md`——对照实验缺陷来源）；WP-25-T03（`user-study-report.md` 与记录表单——用户研究缺陷来源）；WP-24 安装演练记录（干净机演练发现的缺陷，只读对接，不修改 WP-24 文件）
 - **允许创建/修改/删除的文件：**创建 `docs/industrial-robot-design/pilot/defect-register.md`（登记表本体及后续状态更新）。禁止删除任何文件（缺陷条目只改状态、不删行）；不创建其他 pilot/ 工件

@@ -1,10 +1,10 @@
 # WP-14 需求定义实施计划
 
 > 阶段/发布：阶段 B / R1（轨迹和动力字段只保存并校验，不在本 WP 执行完整动态求值）；负责 WP：WP-14。
-> 实施语义唯一来源：`module-design/requirements-definition.md` v0.3（需求基线 v0.7；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/requirements-definition.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-03～05、WP-10、WP-11、WP-13。人周：5～8。
 > 模块详设补充（不改总纲口径）：代码前置为 WP-03、04、09、11（WP-10 为 GUI 层前置）；WP-05、WP-13 为交付/契约前置——快照与模型作用域经修订查询获得，无业务插件代码依赖。
-> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设均处 Proposed 时不得进入实现）。
+> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设已于 IRD-D10-20260829 联合评审 Accepted；实现启动按总纲依赖顺序与任务状态账本）。
 
 **需求与契约：** REQ-01～08、AT-02/18（阶段 B 链路）；清单见 §2。  
 **拥有目录：** `industrialrobot/plugins/requirements/` 及其测试（文件树见 §3）。  
@@ -49,7 +49,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/
   test/RequirementsModelTest.cpp   CsvIoTest.cpp   PoseRegionTest.cpp
       LoadEventTest.cpp   ReadinessTest.cpp   CommandIntegrationTest.cpp   RequirementsGuiTest.cpp
   testdata/requirements/{csv-valid,csv-malicious,regions,loads,ready-matrix}/
-  evidence/WP-14/
+  # 证据 → out/test-evidence/wp-14/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_requirements`（计算核心，无 Qt Widgets）、`sdurws_ird_requirements_plugin`（薄插件）、`sdurws_ird_requirements_test`、`sdurws_ird_requirements_contract_test`、`sdurws_ird_requirements_gui_test`。
@@ -197,7 +197,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - REQ-01～08、AT-02、AT-03、AT-18 阶段 B 子链路通过（阶段 B 门禁，总纲 §8.2）。
 - 所有 Must/Should 状态可观察；非法输入不产生修订；区域计划组合上限 1,000,000 生效；CSV 往返稳定（值、顺序、来源）。
 - WP-15 可消费冻结分母定义（`positionSampleCount×orientationSampleCount`，含边界样本）；执行工件版本化且可追溯。
-- 证据写入 `evidence/WP-14/` 并签署：CSV 往返样例、非法行报告、就绪判定矩阵、修订/失效矩阵、GUI 报告与独立评审签名。
+- 证据写入 `out/test-evidence/wp-14/<run-id>/` 并签署：CSV 往返样例、非法行报告、就绪判定矩阵、修订/失效矩阵、GUI 报告与独立评审签名。
 
 ## 12. 人周与追踪
 

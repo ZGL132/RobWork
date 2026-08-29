@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_con
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；policy 目标未链接 WP-05 实现（仅契约引用）；`evidence/IEngineeringEvaluator.hpp` 未被复制修改；无 Qt Widgets include
-- **证据工件：**`policy/evidence/WP-07/T02/`：三入口对照记录、逐 pair 结果与距离、fallback 原因、snapshot/policy hash、后端版本、命令日志与评审签名
-- **提交格式：**`WP-07-T02: implement shared collision evaluator`
+- **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：三入口对照记录、逐 pair 结果与距离、fallback 原因、snapshot/policy hash、后端版本、命令日志与评审签名
+- **提交格式：**`WP-07-T02: 新增共享碰撞评估器`
+
+  - 新增 CollisionEvaluator 配对枚举与三语义判定实现
+  - 新增 fallback 降级测试与目标登记
+  - 新增 三入口对照与逐 pair 结果证据记录
 - **停止与升级条件：**三入口结果不一致、或未知距离被要求默认安全时暂停并升级至 ADR-004 所有者；后端能力缺口升级 WP-01-T05 依赖基线

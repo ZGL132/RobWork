@@ -1,0 +1,145 @@
+{
+  "objectId": "d92f7a10-88b3-4c15-b6e4-77a1e5c39004",
+  "ownerScopeId": "8c4b21aa-35de-4f60-9c17-2b8e40d5a002",
+  "localName": "PickAndPlace-Requirements",
+  "objectRevision": 2,
+  "createdAt": "2026-08-29T07:40:00Z",
+  "provenance": {
+    "importOrigin": "OtherInput",
+    "sourceDetail": "task points imported from task-points.csv (RFC 4180, UTF-8)"
+  },
+  "schemaVersion": 1,
+  "tasks": [
+    {
+      "taskId": "task-pick-1",
+      "localName": "PickStationA",
+      "priority": "Critical",
+      "tcpRef": "e77b3c50-9a1d-4f62-8b04-35c9d0e7a70a",
+      "targetPose": {
+        "frameId": "WORLD",
+        "position": { "x": 0.62, "y": -0.18, "z": 0.35 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "positionTolerance": 0.002,
+      "orientationTolerance": 0.0175,
+      "constrainedComponents": ["X", "Y", "Z", "Roll", "Pitch", "Yaw"],
+      "approach": {
+        "directionFrame": "Tool",
+        "direction": { "x": 0.0, "y": 0.0, "z": -1.0 },
+        "distance": 0.08
+      },
+      "retract": {
+        "directionFrame": "Tool",
+        "direction": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "distance": 0.08
+      }
+    },
+    {
+      "taskId": "task-place-1",
+      "localName": "PlaceStationB",
+      "priority": "Critical",
+      "tcpRef": "e77b3c50-9a1d-4f62-8b04-35c9d0e7a70a",
+      "targetPose": {
+        "frameId": "WORLD",
+        "position": { "x": 0.45, "y": 0.3, "z": 0.55 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 1.0, "w": 0.0 }
+      },
+      "positionTolerance": 0.002,
+      "orientationTolerance": 0.0175,
+      "constrainedComponents": ["X", "Y", "Z", "Roll", "Pitch", "Yaw"],
+      "approach": {
+        "directionFrame": "Tool",
+        "direction": { "x": 0.0, "y": 0.0, "z": -1.0 },
+        "distance": 0.06
+      },
+      "retract": {
+        "directionFrame": "Tool",
+        "direction": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "distance": 0.06
+      }
+    },
+    {
+      "taskId": "task-inspect-1",
+      "localName": "InspectPointC",
+      "priority": "Should",
+      "tcpRef": "e77b3c50-9a1d-4f62-8b04-35c9d0e7a70a",
+      "targetPose": {
+        "frameId": "WORLD",
+        "position": { "x": 0.3, "y": 0.0, "z": 0.7 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "positionTolerance": 0.005,
+      "orientationTolerance": 0.035
+    }
+  ],
+  "regions": [
+    {
+      "regionId": "region-box-1",
+      "localName": "WorkBoxMain",
+      "priority": "Critical",
+      "frameId": "WORLD",
+      "minPosition": { "x": 0.25, "y": -0.25, "z": 0.15 },
+      "maxPosition": { "x": 0.7, "y": 0.25, "z": 0.6 },
+      "positionSampleCount": 1000,
+      "orientationSampleCount": 12,
+      "minCoverageRatio": 0.98
+    }
+  ],
+  "constraints": [
+    {
+      "constraintId": "margin-joint-min",
+      "priority": "Critical",
+      "kind": "MinJointMargin",
+      "marginRatio": 0.15
+    },
+    {
+      "constraintId": "collision-static",
+      "priority": "Critical",
+      "kind": "CollisionFree",
+      "requiresCollisionEvidence": true
+    },
+    {
+      "constraintId": "cycle-time-target",
+      "priority": "Should",
+      "kind": "CycleTime",
+      "targetCycleTime": 4.5
+    }
+  ],
+  "loads": [
+    {
+      "loadCaseId": "loadcase-grip-5kg",
+      "localName": "GripPayload5kg",
+      "payloadMass": 5.0,
+      "payloadCenterOfMass": {
+        "frameId": "flange",
+        "position": { "x": 0.0, "y": 0.0, "z": 0.06 }
+      },
+      "dwellTime": 0.5,
+      "events": [
+        { "eventType": "Grip", "anchorTaskId": "task-pick-1", "payloadRef": "payload-workpiece-5kg" },
+        { "eventType": "Dwell", "duration": 0.5, "payloadRef": null },
+        { "eventType": "Release", "anchorTaskId": "task-place-1", "payloadRef": "payload-workpiece-5kg" }
+      ]
+    },
+    {
+      "loadCaseId": "loadcase-press-2kg",
+      "localName": "PressInsert2kg",
+      "payloadMass": 2.0,
+      "payloadCenterOfMass": {
+        "frameId": "flange",
+        "position": { "x": 0.0, "y": 0.0, "z": 0.03 }
+      },
+      "externalWrench": {
+        "frameId": "flange",
+        "force": { "x": 0.0, "y": 0.0, "z": -80.0 },
+        "torque": { "x": 0.0, "y": 0.0, "z": 0.0 }
+      },
+      "dwellTime": 1.2,
+      "events": [
+        { "eventType": "Grip", "anchorTaskId": "task-pick-1", "payloadRef": "payload-insert-2kg" },
+        { "eventType": "Dwell", "duration": 1.2, "payloadRef": null },
+        { "eventType": "Release", "anchorTaskId": "task-place-1", "payloadRef": "payload-insert-2kg" }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # 项目持久化与修订模块详细方案（persistence）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-04；阶段/发布：阶段 A / R1；任务卡：agent-tasks/WP-04-T01～T05
 - 架构契约：`architecture/persistence-schema.md`（权威）、`architecture/public-interfaces.md` §1、`architecture/execution-model.md`、`architecture/testing-contract.md`
 - 代码前置：WP-03（`sdurws_ird_core`）；构建/门禁入口由 WP-01 交付
@@ -24,7 +24,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/
   test/PathSafetyTest.cpp   CommandRevisionTest.cpp   TransactionTest.cpp
       ResourceDraftTest.cpp   SchemaUpgradeTest.cpp   ContractFixtures.hpp
   testdata/rwdesign/{schema1-valid,schema1-corrupt,legacy-rwproj,failpoints}/
-  evidence/WP-04/
+  # 证据 → out/test-evidence/wp-04/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_project_contract_test`。允许依赖：WP-03 core、C++ 标准库、Qt Core（仅 `QFile/QDir/QJson*`）、WP-01 批准的 SHA-256 实现。禁止：Qt Widgets、业务插件私有头、WP-05 及以上模块实现、RobWork 运行时对象、worker 进程直写（一切写入经主进程本模块）。
@@ -51,7 +51,7 @@ CMake target：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_pr
 | `IRD-PERSIST-LOCKED` | 已有未超时的 `HEAD.lock` | System | Error | 不阻塞等待；提示持锁进程或待心跳超时夺取后重试 |
 | `IRD-PERSIST-UNCOMMITTED` | 启动发现残留 staging / 未完成事务 | System | Warning | 记事务清单后清理，重开项目重试保存 |
 | `IRD-PERSIST-FUTURE-SCHEMA` | schemaVersion 高于当前支持 | System | Error | 只读拒绝；用兼容版本或升级工具打开 |
-| `IRD-PERSIST-LEGACY-FORMAT` | 旧 `.rwproj` | Input | Error | 只读拒绝；用户显式走新 staging 迁移，不建兼容层 |
+| `IRD-PERSIST-LEGACY-FORMAT` | 旧 `.rwproj` | System | Error | 只读拒绝；用户显式走新 staging 迁移，不建兼容层 |
 | `IRD-PERSIST-SOURCE-MISSING` | 外部引用对象缺失 | Engineering | Error | 保留旧修订；重新关联并显式提交新修订 |
 | `IRD-PERSIST-SOURCE-CHANGED` | 外部源哈希与记录不符 | Engineering | Error | 同上；历史对象保留 |
 | `IRD-PERSIST-PATH-ESCAPE` | 路径穿越/符号链接/UNC | Input | Error | 拒绝加载，不创建 staging |
@@ -78,7 +78,7 @@ CMake target：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_pr
 | ResourceDraftTest | 对象不可变与去重、二进制成员组合、可达性只读清单、草稿不触发计算 |
 | SchemaUpgradeTest | v1→v2 显式升级链、未来版本只读拒绝、`.rwproj` 拒绝、未知字段保留往返 |
 
-往返夹具先过 Schema：在 `docs/industrial-robot-design/` 运行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`（`schema1-valid` 必须与 `schemas/examples/project*.example.json` 同构）。证据写入 `evidence/WP-04/`：夹具哈希、事务 ID、新旧 HEAD、manifest SHA-256、诊断 JSON、退出码、评审签名。验证命令（双形式）：
+往返夹具先过 Schema：在 `docs/industrial-robot-design/` 运行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`（`schema1-valid` 必须与 `schemas/examples/project*.example.json` 同构）。证据写入 `out/test-evidence/wp-04/<run-id>/`：夹具哈希、事务 ID、新旧 HEAD、manifest SHA-256、诊断 JSON、退出码、评审签名。验证命令（双形式）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'

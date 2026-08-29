@@ -2,7 +2,7 @@
 
 > 契约 ID：`CTR-KIN-001`、`CTR-KIN-002`（转换判定部分）  
 > 检查点：`IRD-D2-20260829`  
-> 文档状态：`Proposed`（等待 WP-06、WP-13、WP-15～21 消费者评审签署）  
+> 文档状态：`Accepted`（IRD-D10-20260829 联合评审通过）  
 > 权威边界：本文件是 SE(3) 变换链、坐标系、旋转表示、关节向量、任意轴适配和补偿规则的唯一权威；需求 §7.3 是产品语义决策来源。`module-design/runtime-model.md`、`module-design/robot-modeling.md` 及一切下游只能引用本文件，不得复述公式。
 
 ## 1. 变换与坐标系约定

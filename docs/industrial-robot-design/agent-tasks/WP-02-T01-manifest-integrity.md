@@ -31,5 +31,9 @@
   - 原生回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_manifest_integrity_test` 与 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_manifest_integrity_test$"`；预期构建成功、测试通过。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `testkit/`、`testdata/`（manifest 与最小样本）与 `industrialrobot/CMakeLists.txt` 的一处子目录接入；既有模块零变化；无手写期望值进入 manifest（每个样本均有 source 与 generationMethod）。
 - **证据工件：** `out/test-evidence/wp-02/<run-id>/`：测试日志（datasetVersion、manifest SHA-256、命令、提交 SHA）、失败路径前后 `testdata/` 哈希对照表、最小样本清单。
-- **提交格式：** `WP-02-T01: manifest loader and integrity checks`
+- **提交格式：** `WP-02-T01: 新增 manifest 加载器与完整性校验`
+
+  - 新增 manifest 数据模型、加载器与 SHA-256 完整性校验实现
+  - 新增 manifest 完整性与契约测试目标登记
+  - 新增 manifest 最小样本集与完整性证据记录
 - **停止与升级条件：** manifest 字段、单位表或 Loader 顺序无法从 `module-design/testkit.md` §4 与 `architecture/persistence-schema.md` §3 推导，或 SHA-256 实现不在 WP-01 批准依赖内时，停止并升级给工作包所有者；数据生产者不得批准自己的样本字段。

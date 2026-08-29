@@ -13,20 +13,20 @@
 | 当前产品边界 | 单项目、单机械臂、4～7 个可动关节的串联主链 |
 | 正式平台 | Windows x64 企业内网桌面版 |
 
-本基线冻结的是文档层次、职责、状态、变更流程和实施入口，不表示所有技术内容已经接受。需求 v0.7 为当前产品行为基线；架构、模块方案、工作包和任务卡必须按本文件的状态门禁逐层接受后才能实施。
+本基线冻结的是文档层次、职责、状态、变更流程和实施入口，不表示所有技术内容已经接受。需求 v0.8 为当前产品行为基线；架构、模块方案、工作包和任务卡必须按本文件的状态门禁逐层接受后才能实施。
 
 ## 2. 基线组成
 
 | 层 | 基线工件 | 当前状态 |
 | --- | --- | --- |
-| 需求 | `requirements.md` | `Accepted` |
-| 架构 | `architecture/*.md` | `Proposed`；D1 注册表/ADR 与 D2 五大核心契约正文已完成，等待签署及 D3 机器验证 |
-| Schema | `schemas/` | D3 交付中；机器可验证 JSON Schema 与示例 |
-| 模块设计 | `module-design/*.md` | 平台模块 `Proposed`；未完成字段/算法级细化的模块为 `Draft` |
-| 总体计划 | `development-task-breakdown.md` | 治理和工作包边界 `Accepted`；公共接口引用随架构状态受限 |
-| 工作包 | `work-packages/WP-00`～`WP-25` | `Planned`，满足前置契约后逐包进入 `Ready`（WP-11 任务卡以本地仓库实际内容为准） |
-| 任务卡 | `agent-tasks/WP-00`～`WP-25` | `Planned`，满足任务入口门禁后执行 |
-| 追踪 | `requirement-traceability.csv` | 派生工件；每次权威内容变化后重新生成和验证 |
+| 需求 | `requirements.md` | `Accepted`（v0.8，128 项，含 PILOT/DEL 锚点） |
+| 架构 | `architecture/*.md` | `Accepted`（`IRD-D10-20260829` 联合评审；25 契约、76 符号、ADR-001～005） |
+| Schema | `schemas/` | `Accepted` 口径；14 个 Schema、14 合法示例、45 个非法示例（每 Schema ≥3，机器校验） |
+| 模块设计 | `module-design/*.md` | `Accepted` 口径（23 篇 v0.3，随 D10 联合评审） |
+| 总体计划 | `development-task-breakdown.md` | v1.3，治理和工作包边界 `Accepted` |
+| 工作包 | `work-packages/WP-00`～`WP-25` | `Planned`，按依赖顺序与任务状态账本进入 `Ready`（WP-11 任务卡以本地仓库实际内容为准） |
+| 任务卡 | `agent-tasks/WP-00`～`WP-25` | `Planned`，按 [agent-tasks/task-status.md](agent-tasks/task-status.md) 账本与任务入口门禁执行 |
+| 追踪 | `requirement-traceability.csv`＋`governance-traceability.csv` | 派生工件；每次权威内容变化后重新生成和验证 |
 | 基准 | `benchmark-manifest.json` | 固定基准输入；变化需要产品和测试负责人批准 |
 
 ## 3. 权威变更流程
@@ -83,5 +83,8 @@
 | D3/D4/D5（同日） | 2026-08-29 | D3：`schemas/` 14 个机器可验证 Schema＋PS 5.1 校验器全绿；D4：10 篇平台模块详设升 v0.3（对齐 D2 契约、冻结 resourceBudget/锁心跳等模块默认值、依赖裁决）；D5：13 篇业务模块详设由骨架重写为 v0.3（IK 排序键、时间参数化选型、摩擦模型、传动效率模型、七阶段转移表、试点/安装/用户研究协议等模块级冻结）；错误码目录收编至 ~100 码、公共符号 69 个 | 内容完成；模块方案待各自评审；D6～D9（工作包、任务卡、追踪、校验器增强与演练）为后续步骤 |
 | D6（同日） | 2026-08-29 | 26 份工作包计划对齐 v0.3 模块详设：WP-13～25 十三份深化重写（任务 DAG、逐任务代码范围/前置/输出/验收、测试矩阵、双形式命令、迁移删除表、人周明细）；WP-00～12 定点同步（目标名/依赖裁决/重复标题/pwsh 清理）；冻结测试目标命名约定（总纲 §5.3） | 内容完成；Task ID 集合不变（144 卡 1:1）；D7 任务卡重写为后续步骤 |
 | D7/D8/D9（同日） | 2026-08-29 | D7：144 张任务卡全部重写为 16 字段结构（消亡 31 处省略号、64 张空壳卡、模糊前置、未登记目标、非代码任务模板错配；启动自举修复——WP-00 用真实文档门禁脚本、WP-01-T01/T02 用原生 cmake/ctest）；D8：追踪矩阵重建为真实任务/测试/证据/门禁映射（124 项 → 559 条真实任务引用、136/144 卡、测试名逐字取自卡内，幽灵 `WP-XX-IMP-*` ID 清零）；D9：校验器六项增强（命令禁省略号、ADR 文件/状态、禁名行级一致性、代码基线 commit 存在性、WP 依赖图无环、公共接口定义所有权），三卡（WP-06-T01/WP-04-T03/WP-15-T02）只规划演练发现 4 项 A 类 + 13 项 C 类缺口并全部闭合 | 内容完成；演练裁决后重验通过；全文档集满足"智能体无需自行决定跨模块语义"的实施入口标准，等待架构/需求联合评审签署后逐包进入 `Ready` |
+| `IRD-D10-20260829` | 2026-08-29 | D10 语义闭合＋契约联合评审：独立审计复核（双 PS 门禁、Schema 门禁、语义冲突扫描）发现并修复 7 项阻塞——任务级循环依赖（WP-15-T08↔WP-20-T08 → WP-15-T08 探针/约定、WP-20-T08 唯一所有 AT-19）；诊断注册表逐项裁决（117 码登记、未登记 0、category/severity 冲突 0，机器扫描验证，裁决规则入档 diagnostics.md §3）；7 个跨模块公共类型补登记（SYM-UI-001～004、SYM-TRJ-002/003、SYM-DTM-001，字段冻结入 public-interfaces §7）；WP-04 与持久化契约四处口径统一（objects 目录形态、HEAD JSON、manifest/project.json 字段集）；WP-12 PDF 移出 R1（需求无 PDF 条目，不留接口桩）；全部 25 契约＋ADR＋符号转 `Accepted`（评审记录 architecture/review/2026-08-29-contract-review.md） | 联合评审通过；契约整体 `Accepted`；此后语义变更走契约变更流程 |
+| `IRD-D11-20260829` | 2026-08-29 | D11 执行闭合：证据根目录统一为 `out/test-evidence/wp-xx/<run-id>/`（生成器 124→128 行映射、模块树、工作包所有权、144 张卡全部同步）；任务卡验证命令可执行化（`grep`→`rg` 全量替换、"任选其一"改为"第一形式必执行＋原生命中回退"、无占位路径与花括号展开）；提交格式中文化（144/144 卡为 `WP-XX-TYY: 中文概括`＋中文分条正文） | 实施命令在本机可直接执行；完成报告不再产生已知格式偏差 |
+| `IRD-D12-20260829` | 2026-08-29 | D12 治理闭合：需求 v0.8（新增 PILOT-01/02、DEL-01/02 追踪锚点，128 项，P0 114）；WP-25 四张卡挂靠稳定需求 ID；治理豁免任务入 `governance-traceability.csv`（WP-00-T01～T04）；`agent-tasks/TEMPLATE.md` 对齐 16 字段；建立 [agent-tasks/task-status.md](agent-tasks/task-status.md) 任务状态账本；Schema 负例扩至 45 个（每 Schema ≥3，验证器强制）；验证器新增八项检查（任务级 DAG 无环、诊断注册表存在性与 category/severity 一致性、公共符号登记与唯一所有者、反向追踪＋治理豁免、证据路径前缀、命令禁项 `grep`/任选其一/自然语言路径、WP 所有权嵌套、Schema 负例最低覆盖） | 门禁全绿（128 需求/19 验收测试/25 契约/76 符号/5 ADR/0 追踪缺口；14 Schema/45 负例全拒）；反向追踪 144/144 卡闭合；实施从 WP-00/WP-01 按账本启动 |
 
 D1 不改变需求 v0.7、代码提交或工作包范围。D1 的名称裁决为：公共评估输出统一使用 `ResultEnvelope`，原单点名称 `EvaluationEnvelope` 停止使用。D2 的裁决（ADR-005）为：完整性维度拆分为 `PayloadCompleteness` 与 `ArtifactIntegrity`；`TaskState` 冻结 9 态；`Completed + Warning` 仅在 `RequiredEvidenceProfile` 允许警告类别内可正式可行；五组公共符号异名列为禁止名称。

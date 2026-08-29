@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "table": "MotorTable",
+  "primaryKeys": ["model"],
+  "columns": [
+    {
+      "columnName": "model",
+      "valueType": "string",
+      "required": true,
+      "description": "motor model key, unique within the table"
+    },
+    {
+      "columnName": "continuousTorque",
+      "valueType": "decimal",
+      "unit": "Nm",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 1000.0,
+      "description": "rated continuous torque at motor shaft"
+    },
+    {
+      "columnName": "peakTorque",
+      "valueType": "decimal",
+      "unit": "N·m",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 2000.0,
+      "description": "peak torque at motor shaft"
+    }
+  ],
+  "foreignKeys": [
+    {
+      "columnName": "model",
+      "referencesTable": "CapabilityCurveTable",
+      "referencesColumn": "motorModel"
+    }
+  ]
+}

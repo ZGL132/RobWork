@@ -437,6 +437,21 @@ if ($invalidExampleFiles.Count -lt 3) {
     Add-Failure ("expected at least 3 intentionally invalid examples under examples/invalid/, found {0}" -f $invalidExampleFiles.Count)
 }
 
+# D12：每个 Schema 的负例最低覆盖（>= 3 个），负例必须覆盖五类中的可表达类别
+$invalidPerSchema = @{}
+foreach ($ef in $invalidExampleFiles) {
+    $stem = ($ef.Name -replace '\.example\.json$', '') -split '\.' | Select-Object -First 1
+    if ($invalidPerSchema.ContainsKey($stem)) { $invalidPerSchema[$stem] = $invalidPerSchema[$stem] + 1 }
+    else { $invalidPerSchema[$stem] = 1 }
+}
+foreach ($key in @($exampleCoverage.Keys)) {
+    $count = 0
+    if ($invalidPerSchema.ContainsKey($key)) { $count = $invalidPerSchema[$key] }
+    if ($count -lt 3) {
+        Add-Failure ("schema '{0}' has {1} invalid example(s); at least 3 required (missing-required / bad-enum-or-value / cross-field-illegal / future-version / dangling-ref-or-duplicate)" -f $key, $count)
+    }
+}
+
 # ---------------------------------------------------------------- 汇总
 
 Write-Output ''

@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-10-T04；UX-08、AT-19、需求 §6.7.2；阶段 A / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/session-ui.md` v0.3、`architecture/public-interfaces.md` §6
 - **前置任务及必需工件：**WP-10-T01（`EditDraft`/`DraftController` 工件）；WP-07-T05（`IEngineeringPolicyProvider` 端口与策略唯一入口——端口契约前置，签名按 public-interfaces §6 已冻结，本卡以契约测试替身先行，集成期接 WP-07 实现）；WP-09-T01（`Diagnostic` 公共头）
-- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EngineeringPolicyPanel.hpp`；`ui/src/PolicyPanel.cpp`；`ui/test/PolicyUiTest.cpp`；`ui/testdata/policy/`；`ui/evidence/WP-10/T04/`；`ui/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EngineeringPolicyPanel.hpp`；`ui/src/PolicyPanel.cpp`；`ui/test/PolicyUiTest.cpp`；`ui/testdata/policy/`；`ui/out/test-evidence/wp-10/<run-id>/`；`ui/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**`EngineeringPolicySet`/`CollisionPolicy` 字段（WP-07 所有）、碰撞算法实现、`IEngineeringPolicyProvider` 签名；禁止插件私有策略开关；`architecture/`、`module-design/`、其他模块目录
 - **修改前接口：**无（旧插件各持私有策略对话框）
 - **修改后接口：**`EngineeringPolicyPanel`：计算模式/安全距离编辑写入 `EditDraft`，应用后经 `IEngineeringPolicyProvider.resolvedPolicy` 读取（不得叠加私有默认值）；"显示碰撞几何/高亮"开关只写 `SessionState.colorMode/visibility`，立即生效且不触发任何命令
@@ -21,7 +21,11 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_widget_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_widget_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "CollisionPolicy\|EngineeringPolicySet" ui/src/PolicyPanel.cpp` 命中处仅限只读渲染（无字段写回）；`grep -rni "default" ui/src/PolicyPanel.cpp` 不得出现私补策略默认值分支
-- **证据工件：**`ui/evidence/WP-10/T04/`——策略摘要截图、显示隔离计数日志（命令/sliceHash/缓存前后对照）、私有开关拒绝记录
-- **提交格式：**`WP-10-T04: implement unified policy UI`
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "CollisionPolicy|EngineeringPolicySet" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicyPanel.cpp` 命中处仅限只读渲染（无字段写回）；`rg -i -n "default" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicyPanel.cpp` 不得出现私补策略默认值分支
+- **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——策略摘要截图、显示隔离计数日志（命令/sliceHash/缓存前后对照）、私有开关拒绝记录
+- **提交格式：**`WP-10-T04: 新增统一策略 UI 与显示隔离`
+
+  - 新增 EngineeringPolicyPanel 计算模式编辑与显示开关隔离实现
+  - 新增 显示隔离与私有开关拒绝测试及目标登记
+  - 新增 隔离计数日志与拒绝记录证据
 - **停止与升级条件：**计算设置与显示设置无法区分、UI 需要复制策略默认值、或 WP-07 端口签名变更时暂停并升级 WP-07/WP-10 联合评审；替身与 WP-07 实现集成失败时停止并回滚集成，不放宽断言

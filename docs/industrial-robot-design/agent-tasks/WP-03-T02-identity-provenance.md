@@ -1,9 +1,9 @@
 # WP-03-T02 稳定身份与来源
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-03-T02；需求 ARC-01、ARC-03～05、NFR-MNT-01、NFR-MNT-03；ADR-001；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、core-domain v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、core-domain v0.3。
 - **前置任务及必需工件：**WP-03-T01（值类型、`DomainValidation` 值级校验与 `IRD-CORE-VALUE-INVALID` 通道、`DomainValuesTest.cpp` 基线）；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-03-T01）：创建 `include/sdurws/ird/core/ObjectIdentity.hpp`、`include/sdurws/ird/core/ValueProvenance.hpp`、`include/sdurws/ird/core/DomainJson.hpp`、`src/DomainJson.cpp`、`test/IdentityTest.cpp`、`evidence/WP-03/`；修改 `CMakeLists.txt`、`DomainValidation.hpp/.cpp`（身份校验段）、`testdata/domain/valid-aggregate.json`（身份/来源段）；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-03-T01）：创建 `include/sdurws/ird/core/ObjectIdentity.hpp`、`include/sdurws/ird/core/ValueProvenance.hpp`、`include/sdurws/ird/core/DomainJson.hpp`、`src/DomainJson.cpp`、`test/IdentityTest.cpp`、`out/test-evidence/wp-03/<run-id>/`；修改 `CMakeLists.txt`、`DomainValidation.hpp/.cpp`（身份校验段）、`testdata/domain/valid-aggregate.json`（身份/来源段）；删除：无。
 - **禁止修改的文件和公共接口：**T01 冻结的单位/姿态/诊断签名；requirements.md 与 architecture/、module-design/ 文档；WP-02 黄金数据；其他 WP 公共头。禁止用 localName 或名称派生 objectId、跨作用域隐式解析、覆盖历史来源；不得实现聚合骨架（T04）与评估枚举（T03）。
 - **修改前接口：**T01 交付的值类型与 `DomainValidation`（无身份/来源类型、无 JSON 通道）。
 - **修改后接口：**`ObjectIdentity{objectId,ownerScopeId,localName}`（SYM-ID-001～003）；`ImportOriginRecord{sourceType,sourceUri,sourceHash,sourceRevision}` 与 `ValueProvenanceRecord{valueKind,confidence,method,authoritative}`（值域冻结：sourceType 五值、valueKind 四值，domain-model §1）；`isValidObjectId/isValidContentId`（小写 UUIDv4 / 64 位小写 hex）；`DomainJson` 身份/来源段序列化；错误码 `IRD-CORE-IDENTITY-INVALID`、`IRD-CORE-REFERENCE-UNRESOLVED`。
@@ -16,10 +16,14 @@
   - 边界：导入来源变化不自动覆盖 ValueProvenance（两者正交）；覆盖估算值保留原来源；相同内存对象产生逐字节相同 JSON。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；代码无名称派生 ID、无运行时名称拼接；身份字段与 domain-model §1/ADR-001 一致，无未登记公共符号。
-- **证据工件：**`evidence/WP-03/T02/`：身份生命周期测试日志、跨作用域失败诊断 JSON、JSON 往返样例与稳定排序日志。
-- **提交格式：**`WP-03-T02: stable identity and provenance`。
+- **证据工件：**`out/test-evidence/wp-03/<run-id>/`：身份生命周期测试日志、跨作用域失败诊断 JSON、JSON 往返样例与稳定排序日志。
+- **提交格式：**`WP-03-T02: 新增稳定身份与来源记录`
+
+  - 新增 对象身份、导入来源与值来源类型及身份段 JSON 序列化
+  - 新增 身份生命周期测试与目标登记
+  - 新增 跨作用域失败诊断与 JSON 往返样例证据记录
 - **停止与升级条件：**objectId 是否内容寻址、来源字段语义无法从 domain-model §1/ADR-001 确定时停止并报告；需新增公共字段时提交 ADR，不自行扩字段。

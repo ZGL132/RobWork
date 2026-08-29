@@ -19,7 +19,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "setEnabled\|safetyDistance\|excluded" 业务插件目录` 零命中；Provider 无写路径；旧链路删除提交附 Migratable/Rewrite/EvidenceOnly verdict
-- **证据工件：**`policy/evidence/WP-07/T05/`：Provider 查询日志、扫描报告、旧链路迁移 verdict、命令日志与评审签名
-- **提交格式：**`WP-07-T05: enforce unified policy ownership`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "setEnabled|safetyDistance|excluded" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins` 零命中；Provider 无写路径；旧链路删除提交附 Migratable/Rewrite/EvidenceOnly verdict
+- **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：Provider 查询日志、扫描报告、旧链路迁移 verdict、命令日志与评审签名
+- **提交格式：**`WP-07-T05: 新增统一策略入口与所有权扫描`
+
+  - 新增 IEngineeringPolicyProvider 双重载只读查询与白名单扫描脚本
+  - 新增 Provider 契约测试与目标登记
+  - 新增 扫描报告与旧链路迁移 verdict 证据记录
 - **停止与升级条件：**发现多个公共策略所有者、或扫描需扩大业务插件白名单时暂停并升级至 ADR-004 所有者与独立测试负责人

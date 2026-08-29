@@ -20,7 +20,11 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "class.*DomainCommand" modeling/include/` 命中处仅继承声明（无平行基类）；`grep -rn "JointTransformSpec" modeling/` 零命中（§13.3 消除项）；`grep -rn "robwork\|rw::" modeling/src/RobotDesignEditor.cpp` 零命中（无 RobWork 头入计算核心）
-- **证据工件：**`modeling/evidence/WP-13/T02/`——草稿状态矩阵（合法/非法逐项）、命令日志、诊断样本、T01 失败断言转绿记录
-- **提交格式：**`WP-13-T02: implement domain editor`
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "class.*DomainCommand" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/include/` 命中处仅继承声明（无平行基类）；`rg -n "JointTransformSpec" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/` 零命中（§13.3 消除项）；`rg -n "robwork|rw::" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/RobotDesignEditor.cpp` 零命中（无 RobWork 头入计算核心）
+- **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——草稿状态矩阵（合法/非法逐项）、命令日志、诊断样本、T01 失败断言转绿记录
+- **提交格式：**`WP-13-T02: 新增领域编辑器`
+
+  - 新增 RobotDesignEditor 草稿校验与 ApplyRobotDesignEdit 命令实现
+  - 新增 非法草稿零命令测试及目标登记
+  - 新增 草稿状态矩阵与诊断样本证据记录
 - **停止与升级条件：**公共字段与 WP-03 权威类型或 public-interfaces §1 不一致时暂停并升级架构评审；需要新增跨模块符号时先登记 symbol-registry，不得直接进公共头

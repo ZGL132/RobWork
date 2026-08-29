@@ -2,7 +2,7 @@
 
 > 契约 ID：`CTR-PER-001`（§1）、`CTR-PER-002`（§2、§4）、`CTR-PER-003`（§3、§5～6）  
 > 检查点：`IRD-D2-20260829`  
-> 文档状态：`Proposed`（等待 WP-04、05、11、12 消费者评审签署）  
+> 文档状态：`Accepted`（IRD-D10-20260829 联合评审通过）  
 > 权威边界：本文件是 `.rwdesign` 目录布局、文件格式、写边界、追加协议、升级和并发策略的唯一权威；需求 §7、ADR-002 是决策来源。字段级 JSON Schema 位于 `schemas/`（D3），与本文冲突时以本文为准并立即修正 Schema。
 
 ## 1. 目录布局与写边界（冻结）
@@ -64,7 +64,7 @@ ProjectName.rwdesign/
 
 - `results/<run-id>/`：`result-<attemptId>.json`（ResultEnvelope 索引）、`evidence-<attemptId>/`、`payload-<sha256>.json`。只追加，不覆盖已完成工件。
 - `checkpoints/<run-id>/<attempt-id>/`：检查点数据与已完成批次集合；兼容性按执行模型 §4 校验。
-- `reports/<report-id>/`：ReviewReport 工件（HTML/PDF/JSON/CSV 数据包引用）。
+- `reports/<report-id>/`：ReviewReport 工件（HTML/JSON/CSV 数据包引用；PDF 无需求支撑，不交付）。
 - **幂等**：同 `runId + attemptId` 重复追加逐字节相同内容为 no-op；不同内容 → `IRD-RESULT-CONFLICT` 拒绝。
 - **追加与 HEAD 的边界**：修订保存顺序固定为"写入临时版本目录 → 校验全部文件和哈希 → 原子切换 HEAD 指针"（需求 §7）；`results/checkpoints/reports` 的追加写入**不产生修订、不切换项目 HEAD**，追加原子性由"同卷临时文件 + rename"保证。
 

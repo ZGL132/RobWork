@@ -1,6 +1,6 @@
 # WP-25-T05 交付材料
 
-- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T05；需求 §14 阶段 E 交付清单、§3.3（业务指标条目：候选改善≥5%＋保护指标不越阈值）、§15.4（发布要求）；非代码任务（验证＝三方签署的检查表与材料齐备复核，`architecture/testing-contract.md` §4）。契约：`module-design/pilot-delivery.md` v0.3 §6～§7、`module-design/installation-release.md` §3/§5（对接，不改其文件）；阶段 E / R1+R2
+- **Task ID / 需求 ID / ADR / 阶段：**WP-25-T05；**DEL-01**（交付材料包，需求 §14 阶段 E 交付清单、§3.3、§15.4）；非代码任务（验证＝三方签署的检查表与材料齐备复核，`architecture/testing-contract.md` §4）。契约：`module-design/pilot-delivery.md` v0.3 §6～§7、`module-design/installation-release.md` §3/§5（对接，不改其文件）；阶段 E / R1+R2
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/pilot-delivery.md` v0.3＋`work-packages/WP-25-pilot-and-delivery.md`（D6 计划）§7～§8
 - **前置任务及必需工件：**WP-25-T01（签署件与试点计划）、WP-25-T02（`comparison-report.md`——关键结论签署容差条目证据）、WP-25-T03（`user-study-report.md`——§3.3 业务指标条目证据）、WP-25-T04（`defect-register.md`——缺陷门禁条目证据）；WP-24（干净机安装演练协议与安装说明对接，只读）
 - **允许创建/修改/删除的文件：**创建 `docs/industrial-robot-design/pilot/release-checklist.md`、`docs/industrial-robot-design/pilot/samples/`（样例项目：标准搬运＋改型两案例）、`docs/industrial-robot-design/pilot/report-template/`（报告模板）、`docs/industrial-robot-design/pilot/installation-guide/`（安装说明）、`docs/industrial-robot-design/pilot/user-manual/`（用户手册）、`docs/industrial-robot-design/pilot/training/`（培训材料）。禁止删除任何文件

@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_diag
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；资源为 UTF-8 无 BOM；`grep -rn 中文 widgets 源码目录` 确认业务插件无新增用户文案；目录 code 无重复（jq/PowerShell 校验记录）
-- **证据工件：**`diagnostics/evidence/WP-09/T02/`：目录与术语 hash、术语冲突报告、启动校验日志、资源清单、命令日志与评审签名
-- **提交格式：**`WP-09-T02: implement diagnostic catalog and terminology`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；资源为 UTF-8 无 BOM；`rg -n 中文 RobWork/RobWorkStudio/src/rwslibs/industrialrobot` 确认业务插件无新增用户文案；目录 code 无重复（jq/PowerShell 校验记录）
+- **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：目录与术语 hash、术语冲突报告、启动校验日志、资源清单、命令日志与评审签名
+- **提交格式：**`WP-09-T02: 新增诊断目录与中文术语`
+
+  - 新增 中文诊断目录与术语表资源及启动校验实现
+  - 新增 目录校验失败测试与目标登记
+  - 新增 目录/术语 hash 与冲突报告证据记录
 - **停止与升级条件：**术语存在未决同义词、或目录与 requirements 词汇不一致时暂停并升级至产品负责人裁决词汇表

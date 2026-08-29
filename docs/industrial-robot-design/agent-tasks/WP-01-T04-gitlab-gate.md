@@ -31,4 +31,8 @@
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `RobWork/gitlab-ci/industrial-robot-windows.yml` 与 `RobWork/scripts/industrial-robot/package.ps1`；既有脚本零变化；yml 无 offscreen、无并行 GUI、缓存项逐一对照白名单；安装 manifest 无测试数据/私有头/绝对构建路径。
 - **证据工件：** `out/logs/industrial-robot/<timestamp>/package.log`、CI↔本机命令一致性表、Runner 流水线 job 日志与工件清单、`t04-fail-blocks` 阻断记录。
 - **提交格式：** `WP-01-T04: GitLab Windows 门禁`
+
+  - 新增 GitLab CI Windows x64 门禁 yml 配置
+  - 新增 yml 与本地脚本一致性校验步骤
+  - 新增运行证据记录
 - **停止与升级条件：** Runner 无 Windows x64 执行机、yml 步骤与本地脚本无法逐字符一致，或打包需要引入未批准依赖时，停止并升级给集成负责人；yml 编写者不得同时担任 WP-01-T05 依赖评审者。

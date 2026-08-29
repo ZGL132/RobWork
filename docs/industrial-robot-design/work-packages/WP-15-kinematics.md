@@ -1,10 +1,10 @@
 # WP-15 运动学实施计划
 
 > 阶段/发布：阶段 B / R1（阶段 B 只交付模型—需求—运动学—静态优化链路）；负责 WP：WP-15。
-> 实施语义唯一来源：`module-design/kinematics.md` v0.3（需求基线 v0.7；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/kinematics.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-07、WP-08、WP-13、WP-14。人周：7～10。
 > 模块详设补充（不改总纲口径）：代码前置为 WP-03、05、06、07、08、09（WP-03/05/06/09 经 WP-07/08 平台交付传递）；WP-13、WP-14 为交付前置——模型与需求经快照获得，无业务插件代码依赖。
-> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设均处 Proposed 时不得进入实现）。
+> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设已于 IRD-D10-20260829 联合评审 Accepted；实现启动按总纲依赖顺序与任务状态账本）。
 
 **需求与契约：** KIN-01～08、AT-03～05/18/19（阶段 B 链路）；清单见 §2。  
 **拥有目录：** `industrialrobot/plugins/kinematics/` 及其测试（文件树见 §3）。  
@@ -46,7 +46,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/kinematics/
   test/FkTest.cpp   IkCandidateTest.cpp   JacobianTest.cpp   RegionCoverageTest.cpp
       CollisionEvidenceTest.cpp   BatchExecutionTest.cpp   CrossEntryTest.cpp   KinematicsGuiTest.cpp
   testdata/kinematics/{fk-golden,ik-golden,jacobian,regions,collisions,batches}/
-  evidence/WP-15/
+  # 证据 → out/test-evidence/wp-15/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_kinematics`（计算核心，无 Qt Widgets）、`sdurws_ird_kinematics_plugin`（薄插件）、`sdurws_ird_kinematics_test`、`sdurws_ird_kinematics_contract_test`、`sdurws_ird_kinematics_gui_test`。
@@ -85,7 +85,7 @@ T02 前置含 T03（裁决）：排序键 (b) 消费 T03 的 `JacobianResult` �
 | T05 | T01、T02 | WP-07 `CollisionEvaluator` |
 | T06 | T02、T04、T05 | WP-08 调度端口、WP-05 评估端口 |
 | T07 | T06 | WP-10 公共组件、WP-04 命令端口 |
-| T08 | T06、T07 | WP-20-T08 对侧联调 |
+| T08 | T06、T07 | 运动学侧探针与 AT-19 约定（WP-20-T08 单向消费） |
 
 每任务一张任务卡、一个 worktree/分支/提交（总纲 §4.3）。
 
@@ -147,7 +147,7 @@ T02 前置含 T03（裁决）：排序键 (b) 消费 T03 的 `JacobianResult` �
 ### 6.8 WP-15-T08 契约回归（0.5 人周）
 
 - 代码范围：`test/CrossEntryTest.cpp`（`_contract_test` 目标）。
-- 前置：T06、T07；与 WP-20-T08 对侧联调。
+- 前置：T06、T07；交付运动学侧探针与 AT-19 三元组/夹具约定，不依赖 WP-20（跨入口集成由 WP-20-T08 唯一所有）。
 - 输出工件：AT-19 静态入口一致性证据。
 - 验收断言：§6「CrossEntryTest」——AT-19 静态入口：与 WP-20 入口返回完全相同的对象 ID 对、判定与原因；显示开关不影响判定。
 
@@ -207,7 +207,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - KIN-01～08、AT-03～05、AT-18 阶段 B 子链路和 AT-19 静态入口通过（阶段 B 门禁，总纲 §8.2）。
 - 容差符合需求 §15.3（模块不得自行扩大容差，总纲 §10.3）；固定输入/种子/线程数下排序逐字节稳定。
 - 不可行、数据不足和取消结果不进入正式可行集（evaluation-semantics §2/§4）。
-- 证据写入 `evidence/WP-15/` 并签署：FK/IK/Jacobian 解析对照报告、覆盖率矩阵、排序稳定性报告、AT-18/19 阶段 B 记录与独立评审签名。
+- 证据写入 `out/test-evidence/wp-15/<run-id>/` 并签署：FK/IK/Jacobian 解析对照报告、覆盖率矩阵、排序稳定性报告、AT-18/19 阶段 B 记录与独立评审签名。
 
 ## 12. 人周与追踪
 

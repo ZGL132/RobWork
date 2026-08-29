@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_runt
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`grep -rn "\.\|localName" business 插件目录` 确认前缀拼接仅存在于 `src/RuntimeNameMap.cpp`；schema 文件未改动
-- **证据工件：**`runtime/evidence/WP-06/T02/`：binding 表、双向逆映射检查记录、拒绝诊断样例、黄金夹具哈希、命令日志与评审签名
-- **提交格式：**`WP-06-T02: implement deterministic runtime name map`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "\.|localName" RobWork/RobWorkStudio/src/rwslibs/industrialrobot` 确认前缀拼接仅存在于 `src/RuntimeNameMap.cpp`；schema 文件未改动
+- **证据工件：**`runtime/out/test-evidence/wp-06/<run-id>/`：binding 表、双向逆映射检查记录、拒绝诊断样例、黄金夹具哈希、命令日志与评审签名
+- **提交格式：**`WP-06-T02: 新增确定性运行时名称映射`
+
+  - 新增 RuntimeNameMap 双向绑定表与 IRuntimeNameResolver 只读实现
+  - 新增 名称冲突/歧义失败测试与目标登记
+  - 新增 binding 表与双向逆映射检查证据记录
 - **停止与升级条件：**名称格式或多机械臂作用域语义无法由 public-interfaces §2 与 ADR-001 推导时暂停，升级至架构负责人补 ADR

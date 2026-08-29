@@ -1,6 +1,6 @@
 # 计算任务平台模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；负责 WP：WP-08；阶段/发布：阶段 A / R1
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-08；阶段/发布：阶段 A / R1
 - 最高权威：`architecture/execution-model.md`（9 态状态机、转移表、并发/取消/接纳规则）；其余契约：`architecture/public-interfaces.md` §3～4/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/testing-contract.md`；需求锚点：§6.4；任务卡：`agent-tasks/WP-08-T01～T05`
 
 ## 1. 模块职责
@@ -22,10 +22,10 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/
   test/StateMachineTest.cpp RequestIdentityTest.cpp CancellationTest.cpp
       CacheCheckpointTest.cpp BoundedParallelismTest.cpp
   testdata/execution/{checkpoints,failpoints}/
-  evidence/WP-08/
+  # 证据 → out/test-evidence/wp-08/<run-id>/（AGENTS §3，不入源码树）
 ```
 
-CMake 目标：`sdurws_ird_execution`、`sdurws_ird_execution_worker`、`sdurws_ird_execution_test`、`sdurws_ird_execution_contract_test`。代码前置 WP-04、05（总纲 §5.2）：直接链接 WP-03 core 与 WP-05 evidence 接口，WP-04 经 WP-05 传递、本模块不直接包含 project/ 头；允许 Qt Core/Concurrent/Process 与标准库；禁止 Qt Widgets、评估器私有线程池、worker 打开项目根写句柄、手工 CSV。`IEngineeringEvaluator` 头文件位于 `evidence/`（public-interfaces §3），本模块消费不复制。`WorkerProtocol`、`EvaluationCache`、`CheckpointStore`、`ResourceController` 为模块私有类型。
+CMake 目标：`sdurws_ird_execution`、`sdurws_ird_execution_worker`、`sdurws_ird_execution_test`、`sdurws_ird_execution_contract_test`。代码前置 WP-04、05（总纲 §5.2）：直接链接 WP-03 core 与 WP-05 evidence 接口，WP-04 经 WP-05 传递、本模块不直接包含 project/ 头；允许 Qt Core/Concurrent/Process 与标准库；禁止 Qt Widgets、评估器私有线程池、worker 打开项目根写句柄、手工 CSV。`IEngineeringEvaluator` 头文件位于 `out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）（public-interfaces §3），本模块消费不复制。`WorkerProtocol`、`EvaluationCache`、`CheckpointStore`、`ResourceController` 为模块私有类型。
 
 ## 3. 数据与接口
 
@@ -53,10 +53,10 @@ submit 不可变请求 → 身份/预算校验 → capability check → cache lo
 
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
-| `IRD-EXEC-RESOURCE-BUDGET` | 并发任务/worker 数/内存超 resourceBudget 上限 | Engineering | Warning | 任务保持 Queued；释放资源后重派 |
-| `IRD-EXEC-CAPABILITY-UNSUPPORTED` | 对未声明暂停/检查点能力的任务请求该能力 | Input | Error | 状态不变；改用支持能力的评估器 |
+| `IRD-EXEC-RESOURCE-BUDGET` | 并发任务/worker 数/内存超 resourceBudget 上限 | System | Warning | 任务保持 Queued；释放资源后重派 |
+| `IRD-EXEC-CAPABILITY-UNSUPPORTED` | 对未声明暂停/检查点能力的任务请求该能力 | Input | Warning | 状态不变；改用支持能力的评估器 |
 | `IRD-EXEC-ALREADY-TERMINAL` | 终态后调用 cancel/pause | Input | Info | no-op 并返回当前状态与诊断 |
-| `IRD-EXEC-CHECKPOINT-INCOMPATIBLE` | 检查点 schema/版本不兼容 | Engineering | Error | 不用于恢复；保留并标记原因 |
+| `IRD-EXEC-CHECKPOINT-INCOMPATIBLE` | 检查点 schema/版本不兼容 | System | Error | 不用于恢复；保留并标记原因 |
 | `IRD-EXEC-REQUEST-INVALID` | 身份缺失、预算非法、重复请求 | Input | Error | 不入队、不创建结果 |
 | `IRD-EXEC-WORKER-LOST` | worker 崩溃或 IPC 断开 | System | Error | 转 `Failed` 附退出原因；保留检查点 |
 | `IRD-EXEC-ILLEGAL-TRANSITION` | 未列入转移表的转移请求 | System | Error | 构造边界拒绝，状态不变 |

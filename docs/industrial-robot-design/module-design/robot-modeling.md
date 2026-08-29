@@ -1,6 +1,6 @@
 # 机械臂建模模块详细方案（robot-modeling）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（D5 重写，待消费者评审）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过；D5 重写，待消费者评审）
 - 负责 WP：WP-13；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-13-T01～T08`
 - 架构契约：`architecture/canonical-kinematics.md`（最高权威）、`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-06（编译端口）、WP-10（EditDraft/公共组件）、WP-11（安全读取）；WP-04 命令端口经公共头合法可用；构建/门禁入口 WP-01
@@ -26,7 +26,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/
       DhConversionTest.cpp   MaterialToolTest.cpp   RuntimeCompileTest.cpp
       IdentityRegressionTest.cpp   ModelingGuiTest.cpp
   testdata/modeling/{dh,explicit,urdf,axes,branches,materials,failpoints}/
-  evidence/WP-13/
+  # 证据 → out/test-evidence/wp-13/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_modeling`（计算核心，无 Qt Widgets）、`sdurws_ird_modeling_plugin`（薄插件）、`sdurws_ird_modeling_test`、`sdurws_ird_modeling_contract_test`、`sdurws_ird_modeling_gui_test`。允许依赖：WP-03 core、WP-04 命令/查询公共头、WP-06 runtime（`CanonicalModelCompiler`/`CompiledRobotArtifacts`/`IRuntimeNameResolver`）、WP-09 diagnostics、WP-11 io（URDF/网格安全读取）、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui。禁止：RobWork 头进入计算核心（编译一律经 WP-06）、其他业务插件私有头、自行拼接/剥离运行时名称、直写项目目录、第二套 XML/URDF 解析。
@@ -76,7 +76,7 @@ CMake target：`sdurws_ird_modeling`（计算核心，无 Qt Widgets）、`sdurw
 | IdentityRegressionTest | 复制/导入/删除/重命名/目标链切换、objectId 稳定、AT-18 阶段 B 子链路 |
 | ModelingGuiTest | 薄插件：错误定位、应用确认、未应用草稿不失效（QT_QPA_PLATFORM=windows） |
 
-往返夹具先过 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`（`testdata/modeling/` 样本与 `robot-design.example.json` 同构）。证据写入 `evidence/WP-13/`：夹具哈希、导入报告、转换判定与残差、编译日志、身份矩阵、GUI 录屏与独立评审签名。验证命令（双形式，仓库根执行）：
+往返夹具先过 `powershell -NoProfile -ExecutionPolicy Bypass -File .\schemas\validate-schemas.ps1`（`testdata/modeling/` 样本与 `robot-design.example.json` 同构）。证据写入 `out/test-evidence/wp-13/<run-id>/`：夹具哈希、导入报告、转换判定与残差、编译日志、身份矩阵、GUI 录屏与独立评审签名。验证命令（双形式，仓库根执行）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_modeling(_contract)?_test$'

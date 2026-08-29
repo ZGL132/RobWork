@@ -1,6 +1,6 @@
 # 系统质量与规模化模块详细方案（system-quality）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-23；阶段/发布：阶段 A 起持续建设，规模化门禁阶段 D 收口 / R1+R2；任务卡：`agent-tasks/WP-23-T01～T05`
 - 架构契约：`architecture/testing-contract.md`、`architecture/execution-model.md`、`architecture/persistence-schema.md`、`architecture/evaluation-semantics.md`（§1～2）、`architecture/symbol-registry.md`
 - 依赖：各阶段模块（总纲 §5.4，按阶段接入）；黄金数据与断言库来自 WP-02；门禁入口来自 WP-01；基准输入为 `benchmark-manifest.json`（变更须双负责人批准）
@@ -18,7 +18,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/system/
   src/AtRegistry.cpp FaultInjectionMatrix.cpp BenchmarkRunner.cpp RecoveryDrill.cpp ReleaseGate.cpp
   scenarios/at-01…at-19/  faultpoints/  benchmarks/  drills/
   test/SystemSuiteTest.cpp FaultInjectionTest.cpp BenchmarkTest.cpp DeterminismTest.cpp ReleaseGateTest.cpp
-  evidence/WP-23/
+  # 证据 → out/test-evidence/wp-23/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target（与任务卡命令一致）：`sdurws_ird_system_suite_test`、`sdurws_ird_fault_injection_test`、`sdurws_ird_benchmark_test`、`sdurws_ird_determinism_test`、`sdurws_ird_release_gate_test`；`sdurws_ird_system_test` 为聚合别名目标（运行全部五域，对应 WP 计划验证命令）。允许依赖：WP-02 testkit、各模块测试目标与 failpoint 夹具、WP-01 脚本；禁止：绕过统一测试入口直改业务代码、写回 testdata、无批准修改 `benchmark-manifest.json`。

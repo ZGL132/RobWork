@@ -16,6 +16,6 @@
   - 失败：Given 上游缺失/目录不可用/全淘汰，When 评估，Then 对应 Input/Engineering 诊断、无结果接纳、无修订产生
 - **精确验证命令**（仓库根、VS x64；三形式，登记目标组）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection(_contract)?_test$'`；`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test sdurws_ird_selection_contract_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_contract)?_test$"`；预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "revision\|commit" plugins/selection/src/SelectionEvaluator.cpp` 无直写路径（写操作只经 `ApplySelectionCommand`→端口替身）；结果字段无 setter；成本字段含货币代码
-- **证据工件：**`plugins/selection/evidence/WP-19/T05/`——评估主流程结果样例（JSON payload）、应用命令契约记录（恰好一个新修订）、确定性复跑对照、测试日志
+- **证据工件：**`plugins/selection/out/test-evidence/wp-19/<run-id>/`——评估主流程结果样例（JSON payload）、应用命令契约记录（恰好一个新修订）、确定性复跑对照、测试日志
 - **提交格式：**`WP-19-T05: 选型结果与修订应用`
 - **停止与升级条件：**WP-04 命令端口不满足"恰好一个新修订"语义、或 WP-05 接纳端口字段不足时，停止并升级对应所有者；不得绕过端口直写项目状态

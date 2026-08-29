@@ -2,7 +2,7 @@
 
 - **Task ID / 需求 ID / ADR / 阶段：** WP-01-T01；ARC-02（主：业务插件仅经第 6.3 节稳定端口协作）、NFR-MNT-02（插件不含其他插件 Widget 头）、NFR-MNT-07（名称拼接/剥离静态扫描）；无直接关联 ADR；阶段 A 前提 / R1。契约：`architecture/public-interfaces.md`、`architecture/testing-contract.md`。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
-- **前置任务及必需工件：** WP-00-T04；工件：`evidence/wp-00/t03-gate-and-fixtures.md` 与 `evidence/wp-00/t04-independent-review.md`（门禁与独立评审通过）。本任务先于 CMake 骨架（WP-01-T02）执行，不依赖任何构建目标。
+- **前置任务及必需工件：** WP-00-T04；工件：`out/test-evidence/wp-00/<run-id>/t03-gate-and-fixtures.md` 与 `out/test-evidence/wp-00/<run-id>/t04-independent-review.md`（门禁与独立评审通过）。本任务先于 CMake 骨架（WP-01-T02）执行，不依赖任何构建目标。
 - **允许创建/修改/删除的文件：**
   - 创建：`RobWork/scripts/industrial-robot/check-boundaries.ps1`、`RobWork/scripts/industrial-robot/common.ps1`（仅路径解析与日志公共函数）
   - 创建夹具：`docs/industrial-robot-design/fixtures/wp-01/boundaries/{old-plugin-dependency,widget-header,unregistered-library,name-concatenation}/`（各含一个最小 CMakeLists.txt 或源/头文件，仅注入一种违规）

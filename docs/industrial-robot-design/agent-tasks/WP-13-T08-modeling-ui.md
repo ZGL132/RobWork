@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-13-T08；UX-01～UX-08、MDL-07、MDL-13；阶段 B / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/robot-modeling.md` v0.3、`module-design/session-ui.md` v0.3
 - **前置任务及必需工件：**WP-13-T02（编辑器/命令工件）；WP-13-T06（编译衔接工件）；WP-10-T03（公共组件：阶段导航/诊断面板/工程表格——代码前置）
-- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/gui/ModelingPlugin.hpp`、`gui/ModelingPlugin.cpp`、`gui/panels/`；`modeling/test/ModelingGuiTest.cpp`；`modeling/evidence/WP-13/T08/`；`modeling/CMakeLists.txt`（登记 `sdurws_ird_modeling_plugin`、`sdurws_ird_modeling_gui_test`）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/gui/ModelingPlugin.hpp`、`gui/ModelingPlugin.cpp`、`gui/panels/`；`modeling/test/ModelingGuiTest.cpp`；`modeling/out/test-evidence/wp-13/<run-id>/`；`modeling/CMakeLists.txt`（登记 `sdurws_ird_modeling_plugin`、`sdurws_ird_modeling_gui_test`）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**WP-10 公共组件与 `EditDraft`/`SessionState` 接口；WP-04/06 公共头；WP-13 计算核心（`include/`/`src/`——GUI 只消费）；`architecture/`、`module-design/`；禁止 Widget 直接写文件或领域对象、业务逻辑进入 Widget
 - **修改前接口：**无（薄插件不存在；旧建模 UI 与业务耦合待 Rewrite/EvidenceOnly）
 - **修改后接口：**`ModelingPlugin`：入口面板＝导入（T03 报告呈现）、编辑（T02 草稿）、转换预览（T04 判定/残差）、应用确认；一切用户意图写 `EditDraft`，应用经 T02 命令＋T06 预编译时序；错误定位跳转诊断面板
@@ -22,6 +22,10 @@
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_gui_test$"
   ```
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "ofstream\|QFile\|saveProject" modeling/gui/` 零命中（Widget 不写文件）；`grep -rn "apply(\|buildMutations" modeling/gui/ModelingPlugin.cpp` 命中处仅经命令服务调用（无直写领域对象）
-- **证据工件：**`modeling/evidence/WP-13/T08/`——GUI 回归录屏/截图（四入口＋确认流＋失败定位）、诊断截图、评审者签署
-- **提交格式：**`WP-13-T08: add modeling ui`
+- **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——GUI 回归录屏/截图（四入口＋确认流＋失败定位）、诊断截图、评审者签署
+- **提交格式：** `WP-13-T08: 新增建模插件界面`
+
+  - 新增建模编辑与校验界面
+  - 新增界面交互测试
+  - 新增运行证据记录
 - **停止与升级条件：**GUI 测试无法按 Windows 规则（testing-contract §5）运行、或面板需要复制计算核心逻辑时暂停；WP-10 组件接口不足时升级 WP-10 需求，不得在插件内重建私有组件

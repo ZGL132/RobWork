@@ -19,7 +19,11 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_exec
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_execution(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；缓存/检查点路径不落入项目 revision 目录；无基于修订号的键残留（grep revisionId 于 Cache.cpp 仅身份记录不参与键）；无覆盖写（仅追加）
-- **证据工件：**`execution/evidence/WP-08/T04/`：canonical key 样例、命中矩阵、checkpoint hash、批次集合对照、恢复日志、命令日志与评审签名
-- **提交格式：**`WP-08-T04: implement cache and checkpoint recovery`
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；缓存/检查点路径不落入项目 revision 目录；`rg -n "revisionId" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Cache.cpp` 确认仅身份记录不参与键；无覆盖写（仅追加）
+- **证据工件：**`execution/out/test-evidence/wp-08/<run-id>/`：canonical key 样例、命中矩阵、checkpoint hash、批次集合对照、恢复日志、命令日志与评审签名
+- **提交格式：**`WP-08-T04: 新增缓存与检查点恢复`
+
+  - 新增 CacheKey 全键计算、命中资格判定与 CheckpointStore 追加恢复实现
+  - 新增 命中矩阵与兼容性失败测试及目标登记
+  - 新增 canonical key 样例与恢复日志证据记录
 - **停止与升级条件：**无法证明键覆盖全部依赖（execution-model §3/CTR-EXE-002）、或恢复会重复统计时暂停并升级至 WP-08 所有者与 WP-05 所有者

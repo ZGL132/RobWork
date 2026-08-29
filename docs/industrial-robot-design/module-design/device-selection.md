@@ -1,6 +1,6 @@
 # 器件选型模块详细方案（device-selection）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-19；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-19-T01～T06
 - 架构契约：`architecture/public-interfaces.md` §1/§3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/persistence-schema.md` §2.4/§4、`architecture/domain-model.md` §4、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.6（SEL-01～09）、§7.2/§7.4、§9.3（能耗口径）、§15.1（可行/不可行目录黄金表）、§19-24（旋转传动首版范围）；Schema：`schemas/catalog/catalog-manifest.schema.json`、`schemas/catalog/column-dictionary.schema.json`；平台方案：secure-io、execution-platform、snapshot-result
@@ -23,7 +23,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/
   test/CatalogSchemaTest.cpp   CurveInterpolationTest.cpp   ConstraintFilterTest.cpp
       MappingCheckTest.cpp   SelectionOutputTest.cpp   CatalogVersionTest.cpp
   testdata/selection/{catalog-feasible,catalog-infeasible,curves,failpoints}/
-  evidence/WP-19/
+  # 证据 → out/test-evidence/wp-19/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_selection`、`sdurws_ird_selection_test`、`sdurws_ird_selection_contract_test`。允许依赖：WP-03 core、WP-05 evidence（端口头；经 `IResultRepository` 取 `DynamicResult`）、WP-11 io（`CatalogPackageReader` 安全记录，导入命令侧代码依赖）、WP-18 drivetrain（共享映射实现，代码依赖）、Qt Core；契约引用（不链接实现）：WP-17 `DynamicResult`、WP-04 `IProjectCommandService`（应用命令，集成期装配）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、直接 CSV/JSON 解析（一律经 WP-11）、第二套映射/效率/惯量计算、写 revision 或修改 `CatalogVersion`、目录外推断兼容性。
@@ -48,10 +48,10 @@ snapshot → 就绪检查（DynamicResult 存在且 Current、CatalogVersionRef 
 | `IRD-SEL-UPSTREAM-MISSING` | `DynamicResult` 缺失/非 Current/版本不兼容 | Input | Error | 先重算动力学 |
 | `IRD-SEL-CATALOG-UNAVAILABLE` | `CatalogVersionRef` 无法解析/版本未知（T06） | Input | Error | 导入并锁定目录版本后重算 |
 | `IRD-SEL-TRANSMISSION-OUT-OF-SCOPE` | 目标链含移动关节（SEL-09 首版仅旋转传动） | Engineering | Error | 该轴输出明确"范围外"，不静默套用旋转传动 |
-| `IRD-SEL-CURVE-OUT-OF-RANGE` | 查询点超出曲线覆盖域（默认禁止外推） | Engineering | Error | 该器件不能凭此曲线通过该约束；补曲线数据或换型 |
+| `IRD-SEL-CURVE-OUT-OF-RANGE` | 查询点超出曲线覆盖域（默认禁止外推） | Engineering | Warning | 该约束按 DataInsufficient 计缺口，不得外推或放行；补曲线数据或换型 |
 | `IRD-SEL-DERATING-MISSING` | 温度降额/峰值时间数据缺失 | Engineering | Warning | 该约束按 DataInsufficient 处理，不得按未降额能力放行 |
-| `IRD-SEL-PAIR-NOT-LISTED` | 电机×减速器组合不在 CompatibilityTable（外键判定） | Engineering | Error | 改用列于兼容表的组合 |
-| `IRD-SEL-ALL-ELIMINATED` | 全部候选被淘汰 | Engineering | Error | 输出逐项淘汰证据，供调整需求或目录 |
+| `IRD-SEL-PAIR-NOT-LISTED` | 电机×减速器组合不在 CompatibilityTable（外键判定） | Input | Error | 改用列于兼容表的组合 |
+| `IRD-SEL-ALL-ELIMINATED` | 全部候选被淘汰 | Engineering | Warning | 输出逐项淘汰证据，供调整需求或目录 |
 
 ## 5. 关键实现约定
 
@@ -74,7 +74,7 @@ snapshot → 就绪检查（DynamicResult 存在且 Current、CatalogVersionRef 
 | SelectionOutputTest | `ComponentSelectionResult` 只读字段、应用命令产生恰好一个新修订、双击预览不产生修订 |
 | CatalogVersionTest | 目录更新不改历史结果、旧版本锁定、`IRD-SEL-CATALOG-UNAVAILABLE` |
 
-GUI（结果列表/应用入口）为薄插件界面，GUI 测试按 `QT_QPA_PLATFORM=windows` 一次一个执行；本模块测试为 `QCoreApplication` 模型测试。证据写入 `evidence/WP-19/`：目录包哈希与 `CatalogVersionRef`、插值报告、可行/不可行黄金表结果、AT-08 证据、目录负责人独立评审签署。验证命令（双形式，仓库根执行）：
+GUI（结果列表/应用入口）为薄插件界面，GUI 测试按 `QT_QPA_PLATFORM=windows` 一次一个执行；本模块测试为 `QCoreApplication` 模型测试。证据写入 `out/test-evidence/wp-19/<run-id>/`：目录包哈希与 `CatalogVersionRef`、插值报告、可行/不可行黄金表结果、AT-08 证据、目录负责人独立评审签署。验证命令（双形式，仓库根执行）：
 
 ```text
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection(_contract)?_test$'

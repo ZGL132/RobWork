@@ -1,6 +1,6 @@
 # 核心领域基础模块详细方案（core-domain）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-03；阶段/发布：阶段 A / R1；任务卡：agent-tasks/WP-03-T01～T05
 - 架构契约：`architecture/domain-model.md`、`architecture/evaluation-semantics.md`、`architecture/canonical-kinematics.md`（§6）、`architecture/public-interfaces.md`（§0/§7）、`architecture/symbol-registry.md`
 - 代码前置：WP-00（构建/门禁入口由 WP-01 交付）；无其他代码依赖
@@ -20,7 +20,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/
   src/DomainValidation.cpp   src/DomainJson.cpp
   test/DomainValuesTest.cpp  test/IdentityTest.cpp  test/SemanticsTest.cpp
   testdata/domain/{valid-aggregate,invalid-axis,invalid-quaternion,unknown-version}.json
-  evidence/WP-03/
+  # 证据 → out/test-evidence/wp-03/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_core`、`sdurws_ird_core_test`（与 WP-03 §3 一致；无独立 contract_test，契约断言并入三个测试文件）。允许依赖：C++ 标准库＋WP-01 批准的数学基础；禁止：Qt（库本体零 Qt 依赖，测试入口不创建 QApplication）、RobWork/RobWorkSim、旧插件头与 `sdurws_robotmodelbuilder*` 等旧目标。
@@ -43,7 +43,7 @@ CMake target：`sdurws_ird_core`、`sdurws_ird_core_test`（与 WP-03 §3 一致
 
 ## 4. 调用与状态
 
-时序：外部适配器构造值类型 → `DomainValidation` 聚合校验 → `DomainJson` 序列化/读回 → 下游 WP 消费 const 值对象。校验顺序（模块私有冻结）：值＝有限性→单位/范围→组合；聚合＝ID 格式→ownerScopeId→localName 唯一→引用存在→目标主链→枚举组合；JSON＝schemaVersion→必填→枚举→数值→引用→未知字段保留再序列化（persistence-schema §3）。错误一律 `expected<T, Diagnostic>`（CTR-DIA-001）；模块私有错误码（建议登记入 WP-09 总目录）：
+时序：外部适配器构造值类型 → `DomainValidation` 聚合校验 → `DomainJson` 序列化/读回 → 下游 WP 消费 const 值对象。校验顺序（模块私有冻结）：值＝有限性→单位/范围→组合；聚合＝ID 格式→ownerScopeId→localName 唯一→引用存在→目标主链→枚举组合；JSON＝schemaVersion→必填→枚举→数值→引用→未知字段保留再序列化（persistence-schema §3）。错误一律 `expected<T, Diagnostic>`（CTR-DIA-001）；模块错误码已登记入 WP-09 总目录（diagnostics.md §3，D10 裁决）：
 
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
@@ -51,7 +51,7 @@ CMake target：`sdurws_ird_core`、`sdurws_ird_core_test`（与 WP-03 §3 一致
 | `IRD-CORE-IDENTITY-INVALID` | ID 格式非法、作用域内 localName 重复 | Input | Error | 修正 ID 或改名（不改 objectId） |
 | `IRD-CORE-REFERENCE-UNRESOLVED` | 聚合引用缺失或跨作用域未携带目标作用域 | Input | Error | 补齐被引对象或显式作用域 |
 | `IRD-CORE-COMBINATION-ILLEGAL` | outcome×status×payload 落在 evaluation-semantics §2 两类合法组合之外 | Input | Error | 按锚点用例重新落位后构造 |
-| `IRD-CORE-SCHEMA-FUTURE` | JSON 携带未知未来 schemaVersion | Input | Error | 用支持版本打开或走升级链 |
+| `IRD-CORE-SCHEMA-FUTURE` | JSON 携带未知未来 schemaVersion | System | Error | 用支持版本打开或走升级链 |
 
 ## 5. 关键实现约定
 
@@ -69,7 +69,7 @@ CMake target：`sdurws_ird_core`、`sdurws_ird_core_test`（与 WP-03 §3 一致
 | IdentityTest | 重命名保 ID、复制/删除不复用、重复 localName、跨作用域引用、来源正交保存与覆盖估算保留原来源 |
 | SemanticsTest | 60 组合构造（仅 §2 两类合法）、谓词正反例（含 Warning 类别边界、证据等级差一档）、profile 同 usageId 唯一 |
 
-夹具以 `schemas/examples/robot-design.example.json`、`engineering-requirements.example.json` 为合法基线（先过 `schemas/validate-schemas.ps1` 再进往返断言）；`testdata/domain/` 只放故意非法样本。证据写入 `evidence/WP-03/`：任务 ID、需求 ID、提交 SHA、测试日志、边界扫描报告、独立评审记录。验证命令（双形式）：
+夹具以 `schemas/examples/robot-design.example.json`、`engineering-requirements.example.json` 为合法基线（先过 `schemas/validate-schemas.ps1` 再进往返断言）；`testdata/domain/` 只放故意非法样本。证据写入 `out/test-evidence/wp-03/<run-id>/`：任务 ID、需求 ID、提交 SHA、测试日志、边界扫描报告、独立评审记录。验证命令（双形式）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'

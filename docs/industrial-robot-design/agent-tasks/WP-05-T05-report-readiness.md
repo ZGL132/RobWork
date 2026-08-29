@@ -1,9 +1,9 @@
 # WP-05-T05 正式可行与报告就绪
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-05-T05；需求 EVI-01、NFR-COR-02、NFR-COR-04；ADR-005；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/evaluation-semantics.md §3～§5、architecture/public-interfaces.md §5/§7、module-design/snapshot-result.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/evaluation-semantics.md §3～§5、architecture/public-interfaces.md §5/§7、module-design/snapshot-result.md v0.3。
 - **前置任务及必需工件：**WP-05-T03（包络与 `RequiredEvidenceProfile` 消费面）、WP-05-T04（`IResultRepository` 接纳历史与当前性）、WP-03-T03（`isFormallyFeasible()` 与 `FeasibilityVerdict/gaps`）；WP-01-T03（测试入口）。WP-12 为下游消费者（契约引用，非代码前置）。
-- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/ReportReadiness.hpp`（模块私有就绪评估）、`src/ReportReadiness.cpp`、`test/ReportReadinessTest.cpp`、`testdata/evidence/readiness/`、`evidence/WP-05/`；修改 `EvidenceDiagnostics.hpp`（`EvidenceGap` 定义归此）、`CMakeLists.txt`；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/ReportReadiness.hpp`（模块私有就绪评估）、`src/ReportReadiness.cpp`、`test/ReportReadinessTest.cpp`、`testdata/evidence/readiness/`、`out/test-evidence/wp-05/<run-id>/`；修改 `EvidenceDiagnostics.hpp`（`EvidenceGap` 定义归此）、`CMakeLists.txt`；删除：无。
 - **禁止修改的文件和公共接口：**`isFormallyFeasible` 谓词（WP-03 所有，禁止复制/修改）；报告措辞（WP-12）；把 Quick/Partial 结果提升为正式证据；requirements.md；T01～T04 冻结签名；文档与 schemas/。
 - **修改前接口：**T04 的查询与当前性；无缺口类型与就绪评估。
 - **修改后接口：**`EvidenceGap{requirementId,missingEvaluator,missingResource,minimumLevel,actualLevel}`（供报告层列举，不猜测状态）；`ReportReadiness` 评估入口：按 requirement/evaluator 分组已接纳结果 → 检查 Current + Completed + Complete + 证据等级 + 资源保真度 → 调用 WP-03 谓词 → 输出 `FeasibilityVerdict` + `EvidenceGap[]` + readiness。
@@ -16,10 +16,14 @@
   - 边界：同一 requirement 多个结果时只选 Current 且身份匹配者，其余保留为历史；证据等级恰好满足/差一档各一例；Must/Should 区分（Should 未满足 → Warning，不阻断）；取消结果不参与。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
-- **diff 和禁止项检查：**diff 仅命中允许清单；全模块无第二处 `isFormallyFeasible` 实现（grep 校验）；无结果状态被改写；profile 只读消费（同 usageId 唯一由 WP-03 保证）。
-- **证据工件：**`evidence/WP-05/T05/`：RequiredEvidenceProfile 样例、缺口 JSON、谓词输入输出、报告就绪矩阵与独立评审记录。
-- **提交格式：**`WP-05-T05: implement report readiness and evidence gaps`。
+- **diff 和禁止项检查：**diff 仅命中允许清单；全模块无第二处 `isFormallyFeasible` 实现（rg 校验）；无结果状态被改写；profile 只读消费（同 usageId 唯一由 WP-03 保证）。
+- **证据工件：**`out/test-evidence/wp-05/<run-id>/`：RequiredEvidenceProfile 样例、缺口 JSON、谓词输入输出、报告就绪矩阵与独立评审记录。
+- **提交格式：**`WP-05-T05: 新增报告就绪评估与证据缺口`
+
+  - 新增 ReportReadiness 分组评估与 EvidenceGap 列举实现
+  - 新增 缺口与排除规则测试及目标登记
+  - 新增 报告就绪矩阵与谓词输入输出证据记录
 - **停止与升级条件：**报告层要求重新定义工程状态、缺口无法映射 requirementId 或证据等级含义未冻结时停止并报告；语义变更走 evaluation-semantics/ADR-005 修订。

@@ -1,0 +1,214 @@
+{
+  "objectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+  "ownerScopeId": "8c4b21aa-35de-4f60-9c17-2b8e40d5a002",
+  "localName": "IRBot6-850",
+  "objectRevision": 3,
+  "createdAt": "2026-08-28T14:05:00Z",
+  "provenance": {
+    "importOrigin": "UrdfImport",
+    "sourceDetail": "imported from irbot6_850.urdf (URDF import defaults to ExplicitJoint authority)"
+  },
+  "schemaVersion": 1,
+  "kinematicAuthority": "ExplicitJoint",
+  "basePose": {
+    "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+    "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+  },
+  "joints": [
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000001",
+      "localName": "Joint1",
+      "parentJointId": null,
+      "type": "Revolute",
+      "qIndex": 0,
+      "originPose": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.075 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "normalized": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "valueProvenance": "Imported"
+      },
+      "limits": { "lower": -2.9671, "upper": 2.9671 },
+      "importOrigin": "UrdfImport"
+    },
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000002",
+      "localName": "Joint2",
+      "parentJointId": "aa100000-0000-4000-8000-000000000001",
+      "type": "Revolute",
+      "qIndex": 1,
+      "originPose": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.075 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 1.0, "z": 0.0000001 },
+        "normalized": { "x": 0.0, "y": 1.0, "z": 0.0 },
+        "valueProvenance": "Imported",
+        "normalizationNote": "input axis norm 1.0000000000000002, normalized at import boundary"
+      },
+      "limits": { "lower": -2.0944, "upper": 2.0944 },
+      "importOrigin": "UrdfImport"
+    },
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000003",
+      "localName": "Joint3",
+      "parentJointId": "aa100000-0000-4000-8000-000000000002",
+      "type": "Revolute",
+      "qIndex": 2,
+      "originPose": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.26 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 1.0, "z": 0.0 },
+        "normalized": { "x": 0.0, "y": 1.0, "z": 0.0 },
+        "valueProvenance": "Imported"
+      },
+      "limits": { "lower": -2.618, "upper": 2.618 },
+      "importOrigin": "UrdfImport"
+    },
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000004",
+      "localName": "Joint4",
+      "parentJointId": "aa100000-0000-4000-8000-000000000003",
+      "type": "Revolute",
+      "qIndex": 3,
+      "originPose": {
+        "position": { "x": 0.29, "y": 0.0, "z": 0.11 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "normalized": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "valueProvenance": "Imported"
+      },
+      "limits": { "lower": -3.0543, "upper": 3.0543 },
+      "importOrigin": "UrdfImport"
+    },
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000005",
+      "localName": "Joint5",
+      "parentJointId": "aa100000-0000-4000-8000-000000000004",
+      "type": "Revolute",
+      "qIndex": 4,
+      "originPose": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.07 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 1.0, "z": 0.0 },
+        "normalized": { "x": 0.0, "y": 1.0, "z": 0.0 },
+        "valueProvenance": "UserSpecified"
+      },
+      "limits": { "lower": -2.0944, "upper": 2.0944 },
+      "importOrigin": "UrdfImport"
+    },
+    {
+      "jointId": "aa100000-0000-4000-8000-000000000006",
+      "localName": "Joint6",
+      "parentJointId": "aa100000-0000-4000-8000-000000000005",
+      "type": "Revolute",
+      "qIndex": 5,
+      "originPose": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.072 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+      },
+      "axis": {
+        "raw": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "normalized": { "x": 0.0, "y": 0.0, "z": 1.0 },
+        "valueProvenance": "Imported"
+      },
+      "limits": { "lower": -3.0543, "upper": 3.0543 },
+      "importOrigin": "UrdfImport"
+    }
+  ],
+  "targetChainId": "chain-main",
+  "homePosition": [0.0, -0.5236, 1.2217],
+  "links": [
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000000",
+      "localName": "Base",
+      "mass": 8.5,
+      "centerOfMass": { "frameId": "Base", "position": { "x": 0.0, "y": 0.0, "z": 0.04 } },
+      "inertia": { "referenceFrameId": "Base", "ixx": 0.12, "iyy": 0.12, "izz": 0.21, "ixy": 0.0, "ixz": 0.0, "iyz": 0.001 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000001",
+      "localName": "Shoulder",
+      "parentJointId": "aa100000-0000-4000-8000-000000000001",
+      "mass": 3.2,
+      "centerOfMass": { "frameId": "Shoulder", "position": { "x": 0.0, "y": 0.0, "z": 0.04 } },
+      "inertia": { "referenceFrameId": "Shoulder", "ixx": 0.045, "iyy": 0.045, "izz": 0.032, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000002",
+      "localName": "UpperArm",
+      "parentJointId": "aa100000-0000-4000-8000-000000000002",
+      "visualMeshResourceId": "5f2a9c0e1b7d4a38c6e0f2b1d9a84730e5c2f6b8d1a0937e4c5b2f8a0d3e6c19",
+      "collisionMeshResourceId": "c81b3e7f6a2d4905b7c9e1f3a5d708294b6d8f0a2c4e6082a4c6e80a2c4e6082",
+      "materialName": "EN-AW-6082",
+      "section": {
+        "sectionKind": "HollowCircular",
+        "dimensions": { "outerDiameter": 0.09, "innerDiameter": 0.082 },
+        "materialRef": "en-aw-6082-t6"
+      },
+      "mass": 4.1,
+      "centerOfMass": { "frameId": "UpperArm", "position": { "x": 0.0, "y": 0.0, "z": 0.13 } },
+      "inertia": { "referenceFrameId": "UpperArm", "ixx": 0.085, "iyy": 0.082, "izz": 0.028, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000003",
+      "localName": "Forearm",
+      "parentJointId": "aa100000-0000-4000-8000-000000000003",
+      "visualMeshResourceId": "0e9d8c7b6a594837261504f3e2d1c0b9a897867564534241403f2e1d0c9b8a71",
+      "collisionMeshResourceId": "77aa11bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff001122",
+      "materialName": "EN-AW-6082",
+      "section": {
+        "sectionKind": "Rectangular",
+        "dimensions": { "width": 0.05, "height": 0.05 },
+        "materialRef": "en-aw-6082-t6"
+      },
+      "mass": 2.8,
+      "centerOfMass": { "frameId": "Forearm", "position": { "x": 0.15, "y": 0.0, "z": 0.0 } },
+      "inertia": { "referenceFrameId": "Forearm", "ixx": 0.032, "iyy": 0.031, "izz": 0.012, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000004",
+      "localName": "WristRoll",
+      "parentJointId": "aa100000-0000-4000-8000-000000000004",
+      "mass": 1.6,
+      "centerOfMass": { "frameId": "WristRoll", "position": { "x": 0.0, "y": 0.0, "z": 0.04 } },
+      "inertia": { "referenceFrameId": "WristRoll", "ixx": 0.012, "iyy": 0.012, "izz": 0.009, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000005",
+      "localName": "WristPitch",
+      "parentJointId": "aa100000-0000-4000-8000-000000000005",
+      "mass": 0.9,
+      "centerOfMass": { "frameId": "WristPitch", "position": { "x": 0.0, "y": 0.0, "z": 0.03 } },
+      "inertia": { "referenceFrameId": "WristPitch", "ixx": 0.006, "iyy": 0.006, "izz": 0.004, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    },
+    {
+      "linkId": "bb200000-0000-4000-8000-000000000006",
+      "localName": "FlangeCarrier",
+      "parentJointId": "aa100000-0000-4000-8000-000000000006",
+      "mass": 0.4,
+      "centerOfMass": { "frameId": "FlangeCarrier", "position": { "x": 0.0, "y": 0.0, "z": 0.02 } },
+      "inertia": { "referenceFrameId": "FlangeCarrier", "ixx": 0.002, "iyy": 0.002, "izz": 0.0015, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0 }
+    }
+  ],
+  "flange": {
+    "frameId": "flange",
+    "parentJointId": "aa100000-0000-4000-8000-000000000006"
+  },
+  "defaultTcp": {
+    "frameId": "tcp-default",
+    "offset": {
+      "position": { "x": 0.0, "y": 0.0, "z": 0.045 },
+      "rotation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+    }
+  }
+}

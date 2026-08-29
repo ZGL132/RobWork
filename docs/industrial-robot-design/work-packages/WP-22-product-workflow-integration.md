@@ -1,6 +1,6 @@
 # WP-22 产品工作流整合实施计划
 
-> 阶段/发布：阶段 E / R1＋R2；方案对齐 `module-design/workflow-integration.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.7。
+> 阶段/发布：阶段 E / R1＋R2；方案对齐 `module-design/workflow-integration.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 不新增领域权威实现：一切业务操作经公共端口；实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）。
 
 **需求与契约：** UX-01～08、AT-04/05/12；架构契约与模块方案清单见 §2。
@@ -28,10 +28,10 @@
 ```text
 ui/workflow/   include/sdurws/ird/ui/workflow/{CockpitDashboard,StageTransitionTable,NextStepAdvisor,CommandPalette}.hpp
                src/{CockpitDashboard,StageTransitionTable,NextStepAdvisor,CommandPalette}.cpp
-               test/{WorkflowModelTest,WorkflowGuiTest}.cpp  testdata/  evidence/
+               test/{WorkflowModelTest,WorkflowGuiTest}.cpp  testdata/
 ui/comparison/ include/sdurws/ird/ui/comparison/{ComparisonView,MetricDiffModel}.hpp
                src/{ComparisonView,MetricDiffModel}.cpp
-               test/ComparisonModelTest.cpp  testdata/  evidence/
+               test/ComparisonModelTest.cpp  testdata/
 ```
 
 CMake 目标：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurws_ird_workflow_model_test`（`QCoreApplication` 模型测试，覆盖 WorkflowModelTest＋ComparisonModelTest）、`sdurws_ird_workflow_test`（GUI 回归）。允许依赖：WP-03/04/05/08/09/10/12 公共头、WP-20/21 结果值对象读取（`DesignCandidate`、`ParetoSet`）、Qt Widgets/Model-View、RobWorkStudio 主窗口框架；禁止：业务插件私有头与 Widget、读取其他插件控件、绕过命令服务写项目、复制 `StageStatusModel`/`TaskState`/评估枚举定义。
@@ -87,7 +87,7 @@ WP-22-T01～T04 全部完成 → WP-22-T05
 - 验收断言：`WorkflowModelTest`——命令守卫（前置不满足显示不可用原因；UX-02 不显示哈希/Schema/内部插件名）；撤销/重做空态显示 `IRD-PROJ-NOTHING-TO-*` 文案、跨分支/失效命令给诊断；取消任务守卫＝存在非终态任务。
 
 ### WP-22-T05 端到端用户流程
-- 代码范围：`ui/workflow/test/WorkflowGuiTest.cpp`；`ui/workflow/testdata/`（固定任务脚本）；`ui/workflow/evidence/`（录屏与日志）。
+- 代码范围：`ui/workflow/test/WorkflowGuiTest.cpp`；`ui/workflow/testdata/`（固定任务脚本）；`out/test-evidence/wp-22/<run-id>/`（录屏与日志）。
 - 前置任务：WP-22-T01～T04。
 - 输出工件：固定任务脚本（新机型、改型、错误恢复）GUI 回归；状态展示矩阵（七阶段×八值）；任务脚本录屏、测试日志、输入修订身份记录。
 - 验收断言：`WorkflowGuiTest`（模块详设 §8）——AT-04/05/12；新机型、改型、错误恢复固定任务脚本全通过；GUI 按 `QT_QPA_PLATFORM=windows` 一次一个执行。
@@ -118,7 +118,7 @@ GUI 可执行文件运行前在同一 PowerShell 会话设置 `$env:QT_QPA_PLATF
 
 - 独立验证（黑盒）：状态展示矩阵（七阶段×八值）逐格验证、失效传播注入（AT-05：改 TCP/负载与单独改电机成本的失效范围差异）、应用候选后基线不被覆盖与修订数不随候选数增长（AT-12）。
 - 独立评审：由产品、体验与独立测试人员按固定任务脚本复核工作流；评审 UX-01～08 逐条签署。
-- 证据：状态展示矩阵（七阶段×八值）、任务脚本录屏、测试日志、输入修订身份与评审签名（分别写入 `ui/workflow/evidence/`、`ui/comparison/evidence/`）。
+- 证据：状态展示矩阵（七阶段×八值）、任务脚本录屏、测试日志、输入修订身份与评审签名（分别写入 `out/test-evidence/wp-22/<run-id>/`、`out/test-evidence/wp-22/<run-id>/`）。
 
 ## 11. 迁移与删除（模块详设 §9）
 

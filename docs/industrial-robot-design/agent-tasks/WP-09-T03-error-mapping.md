@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；登记表与 module-design/diagnostics.md §3 逐码一致（脚本对照记录）；mapper 之外无新建 Diagnostic 的业务路径；无同义新增 code
-- **证据工件：**`diagnostics/evidence/WP-09/T03/`：跨入口映射对照表、causeCode 链样例、诊断 JSON、severity 调整记录、命令日志与评审签名
-- **提交格式：**`WP-09-T03: implement single-boundary error mapping`
+- **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：跨入口映射对照表、causeCode 链样例、诊断 JSON、severity 调整记录、命令日志与评审签名
+- **提交格式：**`WP-09-T03: 新增边界错误单层映射`
+
+  - 新增 StableCodeRegistry 登记表与 DiagnosticMapper 单层映射实现
+  - 新增 跨入口一致性失败测试与目标登记
+  - 新增 映射对照表与 severity 调整记录证据
 - **停止与升级条件：**同一故障需要多个 code、边界归属无法确定或需变更既有 code 的 category/默认值时暂停并升级至 WP-09 所有者评审

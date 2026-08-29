@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；白名单 diff 逐条可解释（无整目录放行）；check-diagnostics.ps1 已列入 check-boundaries.ps1 调用链；无登记表改动
-- **证据工件：**`diagnostics/evidence/WP-09/T05/`：扫描报告、白名单清单、违规夹具与输出、迁移 verdict、命令日志与评审签名
-- **提交格式：**`WP-09-T05: enforce diagnostic consistency scan`
+- **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：扫描报告、白名单清单、违规夹具与输出、迁移 verdict、命令日志与评审签名
+- **提交格式：**`WP-09-T05: 新增诊断一致性静态扫描`
+
+  - 新增 check-diagnostics.ps1 四类检测与白名单机制
+  - 新增 违规夹具扫描测试与目标登记
+  - 新增 扫描报告与迁移 verdict 证据记录
 - **停止与升级条件：**扫描误报无法解释、或需要允许业务插件自定义同义 code 时暂停并升级至 WP-09 所有者与独立测试负责人

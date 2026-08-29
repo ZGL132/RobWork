@@ -1,9 +1,9 @@
 # WP-04-T02 命令、修订与分支
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-04-T02；需求 ARC-01、CON-01、CON-03、NFR-REL-01；ADR-001、ADR-002；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §1（`DomainCommand/IProjectQuery/IProjectCommandService` 权威）、architecture/persistence-schema.md §2、module-design/persistence.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §1（`DomainCommand/IProjectQuery/IProjectCommandService` 权威）、architecture/persistence-schema.md §2、module-design/persistence.md v0.3。
 - **前置任务及必需工件：**WP-04-T01（`ProjectStore/ProjectPath` 加载链路与 `schema1-*` 夹具）；WP-03 core（身份/聚合校验）；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ProjectCommand.hpp`、`ProjectBranch.hpp`、`IProjectCommandService.hpp`、`src/ProjectCommandService.cpp`、`src/BranchHistory.cpp`、`test/CommandRevisionTest.cpp`、`test/ProjectCommandContractTest.cpp`（编入 `sdurws_ird_project_contract_test`）、`evidence/WP-04/`；修改 `CMakeLists.txt`（登记 contract 目标）；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ProjectCommand.hpp`、`ProjectBranch.hpp`、`IProjectCommandService.hpp`、`src/ProjectCommandService.cpp`、`src/BranchHistory.cpp`、`test/CommandRevisionTest.cpp`、`test/ProjectCommandContractTest.cpp`（编入 `sdurws_ird_project_contract_test`）、`out/test-evidence/wp-04/<run-id>/`；修改 `CMakeLists.txt`（登记 contract 目标）；删除：无。
 - **禁止修改的文件和公共接口：**T01 冻结的加载/路径接口与持久化格式字段含义；WP-03 身份定义；WP-05 快照/结果接口；GUI；CSV；WP-01 脚本；manifest/HEAD 物理格式（T03 固化写入顺序）。
 - **修改前接口：**T01 的只读 `IProjectQuery::load`；无命令服务。
 - **修改后接口：**`DomainCommand`（commandId/commandKind/targetObjects/validate/buildMutations，纯函数不落盘）；`IProjectCommandService::apply/undo/redo` 返回 `expected<CommandResult, ProjectError>`；`CommandResult{applied,revision,diagnostics[]}`；错误码 `IRD-PROJ-BRANCH-MISMATCH`、`IRD-PROJ-STALE-REVISION`、`IRD-PROJ-VALIDATION-FAILED`、`IRD-PROJ-NOTHING-TO-UNDO`、`IRD-PROJ-NOTHING-TO-REDO`（architecture/public-interfaces.md §1 权威）。
@@ -17,10 +17,14 @@
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_contract_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`（contract 目标同法，目标名替换为 `sdurws_ird_project_contract_test`）
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`（contract 目标同法，目标名替换为 `sdurws_ird_project_contract_test`）
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；错误码与 architecture/public-interfaces.md §1 逐字一致（不得用 `IRD-PROJECT-*` 变体）；历史 payload 只读；无 GUI/Widgets 引用。
-- **证据工件：**`evidence/WP-04/T02/`：命令序列 JSON、旧/新 revision ref、manifest 哈希、冲突诊断、历史不变性比对、契约测试输出。
-- **提交格式：**`WP-04-T02: implement revision commands and branch history`。
+- **证据工件：**`out/test-evidence/wp-04/<run-id>/`：命令序列 JSON、旧/新 revision ref、manifest 哈希、冲突诊断、历史不变性比对、契约测试输出。
+- **提交格式：**`WP-04-T02: 新增修订命令与分支历史`
+
+  - 新增 DomainCommand 验证器、apply/undo/redo 命令服务与分支记录
+  - 新增 冲突/幂等测试与 contract 目标登记
+  - 新增 命令序列与历史不变性证据记录
 - **停止与升级条件：**需新增公共字段、修改 undo/redo 语义或事务写顺序时停止并报告 WP-04 负责人，走契约变更；发现与 §1 签名冲突不得在代码内改接口。

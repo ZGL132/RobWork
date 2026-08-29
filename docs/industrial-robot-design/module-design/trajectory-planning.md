@@ -1,6 +1,6 @@
 # 轨迹规划模块详细方案（trajectory-planning）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过）
 - 负责 WP：WP-16；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-16-T01～T06
 - 架构契约：`architecture/public-interfaces.md` §3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/execution-model.md` §1～3、`architecture/canonical-kinematics.md`、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.4（TRJ-01～08）、§7.2/§7.4、§15.3（轨迹限制行、碰撞验证协议、Jacobian 统一尺度）；平台方案：policy-collision、execution-platform、snapshot-result、runtime-model、session-ui
@@ -23,7 +23,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/trajectory/
   test/PtpCartesianTest.cpp   PlannerAdapterTest.cpp   SmoothingTimeTest.cpp
       CollisionLimitsTest.cpp   TrajectoryResultTest.cpp   LifecycleTest.cpp
   testdata/trajectory/{ptp,cartesian,planner,collision,golden,failpoints}/
-  evidence/WP-16/
+  # 证据 → out/test-evidence/wp-16/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_test`、`sdurws_ird_trajectory_contract_test`。允许依赖：WP-03 core、WP-05 evidence（评估端口头；经 `IResultRepository` 按 `ResultRef` 读上游 payload）、WP-06 runtime（`CompiledRobotArtifacts`）、WP-07 policy（共享 `CollisionEvaluator`，代码依赖）、RobWork pathplanning/trajectory/proximity 稳定 API、Qt Core（`QJson*`）；契约引用（只含公共领域类型头，不链接实现）：WP-14 `EngineeringRequirements`/`LoadCase`、WP-15 `KinematicResult`；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、其他插件私有头、本地碰撞开关/采样参数/安全距离副本、直接文件 IO、读取 UI 会话态、第二套 `TrajectoryPlan` DTO。
@@ -54,12 +54,12 @@ snapshot → 校验（上游 KinematicResult 存在且 Current、需求/限值/�
 | 错误码 | 触发条件 | 类别 | severity | 恢复动作 |
 | --- | --- | --- | --- | --- |
 | `IRD-TRJ-UPSTREAM-MISSING` | 上游 `KinematicResult` 缺失/非 Current/版本不兼容 | Input | Error | 先完成或重算运动学 |
-| `IRD-TRJ-NO-PATH` | 起终点不可行或无碰路径不存在（TRJ-06，附段与端点） | Engineering | Error | 调整任务点、策略或锁定分支后重规划 |
+| `IRD-TRJ-NO-PATH` | 起终点不可行或无碰路径不存在（TRJ-06，附段与端点） | Engineering | Warning | 调整任务点、策略或锁定分支后重规划 |
 | `IRD-TRJ-PLANNER-TIMEOUT` | 规划超时（预算来自 resourceBudget） | Engineering | Error | 提高超时预算或增设中间引导点 |
-| `IRD-TRJ-BRANCH-JUMP` | 相邻采样 IK 解差超连续性阈值（附段、点对、差值） | Engineering | Error | 锁定分支（产生修订）或调整路径 |
+| `IRD-TRJ-BRANCH-JUMP` | 相邻采样 IK 解差超连续性阈值（附段、点对、差值） | Engineering | Warning | 锁定分支（产生修订）或调整路径 |
 | `IRD-TRJ-SINGULARITY` | 笛卡尔段采样点 `J_norm` 条件数超阈值（默认 100，可评审） | Engineering | Warning | 改接近方向或降速；不阻断生成 |
 | `IRD-TRJ-TIME-PARAM-FAILED` | 时间参数化迭代上限（32）内未满足限值 | Engineering | Error | 放宽节拍或限值后重算 |
-| `IRD-TRJ-VALIDATION-REJECTED` | 平滑后复检发现碰撞/限制超标（透传 WP-07 证据） | Engineering | Error | 按碰撞对象与段修正后重规划 |
+| `IRD-TRJ-VALIDATION-REJECTED` | 平滑后复检发现碰撞/限制超标（透传 WP-07 证据） | Engineering | Warning | 按碰撞对象与段修正后重规划 |
 | `IRD-TRJ-PLANNER-FAILED` | 规划器/适配层系统故障 | System | Error | 保留旧结果；按诊断重试 |
 
 ## 5. 关键实现约定
@@ -82,7 +82,7 @@ snapshot → 校验（上游 KinematicResult 存在且 Current、需求/限值/�
 | TrajectoryResultTest | `ResolvedIkBranchSequence` 记录、payload 完整性、快照身份、双击不产生修订 |
 | LifecycleTest | 取消/恢复（安全点＝段）、迟到回调只追加原分支、确定性重复运行 |
 
-GUI（TRJ-07 曲线查看/动画）归 WP-10/WP-22 会话态，按 `QT_QPA_PLATFORM=windows` 一次一个执行；本模块测试均为 `QCoreApplication` 模型测试。证据写入 `evidence/WP-16/`：路径黄金数据（WP-02 版本/哈希）、平滑前后碰撞报告、时间参数报告、AT-06/AT-19 记录、独立评审签名。验证命令（双形式，仓库根执行）：
+GUI（TRJ-07 曲线查看/动画）归 WP-10/WP-22 会话态，按 `QT_QPA_PLATFORM=windows` 一次一个执行；本模块测试均为 `QCoreApplication` 模型测试。证据写入 `out/test-evidence/wp-16/<run-id>/`：路径黄金数据（WP-02 版本/哈希）、平滑前后碰撞报告、时间参数报告、AT-06/AT-19 记录、独立评审签名。验证命令（双形式，仓库根执行）：
 
 ```text
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_trajectory(_contract)?_test$'

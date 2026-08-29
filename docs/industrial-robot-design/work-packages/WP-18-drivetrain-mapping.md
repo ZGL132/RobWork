@@ -1,6 +1,6 @@
 # WP-18 传动映射实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/drivetrain.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.7。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/drivetrain.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 共享计算包：位于 `evaluation/drivetrain/`，不提供独立业务插件或 Widget；实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）。WP-17-T06 侧联契约测试落在本包测试目标。
 
 **需求与契约：** DYN-04、SEL-05、AT-07/08 传动映射断言；架构契约与模块方案清单见 §2。
@@ -23,7 +23,7 @@
 
 ## 3. 文件所有权与 CMake 目标
 
-拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evaluation/drivetrain/`，子目录 `include/sdurws/ird/drivetrain/`（DriveTrainMappingEvaluator.hpp、MotorSideOperatingPoint.hpp、DriveTrainEnergySplit.hpp、DrivetrainDiagnostics.hpp）、`src/`（DriveTrainMappingEvaluator.cpp、RotaryMappingCore.cpp、EfficiencyModel.cpp、ReflectedInertia.cpp、EnergySplitter.cpp、DutyCycleWindow.cpp）、`test/`（MappingSemanticsTest.cpp、RotaryMappingTest.cpp、EnergyBoundariesTest.cpp、DutyCycleTest.cpp、SharedEvaluatorTest.cpp、DrivetrainContractTest.cpp）、`testdata/drivetrain/{efficiency,inertia,energy,golden}/`、`evidence/WP-18/`。文件树以模块详设 §2 为权威。
+拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evaluation/drivetrain/`，子目录 `include/sdurws/ird/drivetrain/`（DriveTrainMappingEvaluator.hpp、MotorSideOperatingPoint.hpp、DriveTrainEnergySplit.hpp、DrivetrainDiagnostics.hpp）、`src/`（DriveTrainMappingEvaluator.cpp、RotaryMappingCore.cpp、EfficiencyModel.cpp、ReflectedInertia.cpp、EnergySplitter.cpp、DutyCycleWindow.cpp）、`test/`（MappingSemanticsTest.cpp、RotaryMappingTest.cpp、EnergyBoundariesTest.cpp、DutyCycleTest.cpp、SharedEvaluatorTest.cpp、DrivetrainContractTest.cpp）、`testdata/drivetrain/{efficiency,inertia,energy,golden}/`、`out/test-evidence/wp-18/<run-id>/`。文件树以模块详设 §2 为权威。
 
 CMake 目标：`sdurws_ird_drivetrain`、`sdurws_ird_drivetrain_test`、`sdurws_ird_drivetrain_contract_test`。允许依赖：WP-03 core、C++ 标准库、Qt Core；契约引用（不链接实现）：WP-17 `DynamicResult` 公共类型（由调用方注入只读视图）。禁止：Qt Widgets、RobWork 运行时对象、业务插件头、第二套映射/效率/惯量实现（静态扫描，ADR-004）、直读 UI 会话态。
 
@@ -111,7 +111,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_drivetrain(
 
 - 独立验证（黑盒）：多速比正/反向映射黄金数据独立复算、能量分项对账（关节侧 W+ 与电机侧分项分离）、三消费方一致性、摩擦不双计断言。
 - 独立评审：由驱动工程师与独立测试人员双评审签署——双向效率模型、反射惯量公式与版本、能量边界（§9.3 裁决）、候选无关性。
-- 证据写入 `evidence/WP-18/`：黄金数据（多速比正/反向效率与反射惯量）版本/哈希、假设清单、三消费方一致性记录、双评审签署。
+- 证据写入 `out/test-evidence/wp-18/<run-id>/`：黄金数据（多速比正/反向效率与反射惯量）版本/哈希、假设清单、三消费方一致性记录、双评审签署。
 
 ## 11. 迁移与删除（requirements §13）
 

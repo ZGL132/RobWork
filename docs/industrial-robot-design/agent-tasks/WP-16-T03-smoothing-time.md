@@ -1,10 +1,10 @@
 # WP-16-T03 路径平滑与时间参数化
 
 - **Task ID / 需求 ID / ADR / 阶段：** WP-16-T03；TRJ-04（路径简化与平滑）、TRJ-05（至少加速度连续的运动律按关节速度/加速度限制时间参数化，输出总节拍与分段时间）＋§15.3 轨迹限制行；无直接关联 ADR；阶段 C / R1。契约：`module-design/trajectory-planning.md` v0.3 §3/§5.1/§5.2（选型裁决与流程冻结）、`architecture/canonical-kinematics.md`（关节单位）、`architecture/testing-contract.md`。
-- **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD（trajectory-planning.md v0.3、需求 v0.7）
+- **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD（trajectory-planning.md v0.3、需求 v0.8）
 - **前置任务及必需工件：** WP-16-T01（段 Schema 与 IK 连续性可用）；WP-16-T02（`PlannerAdapter` 无碰路径可用）；WP-02-T01/T02（黄金夹具登记与数值断言库）。
 - **允许创建/修改/删除的文件：**（基目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/trajectory/`）
-  - 创建：`src/PathSimplifier.cpp`、`src/TimeParameterizer.cpp`、`test/SmoothingTimeTest.cpp`、`testdata/trajectory/golden/`（黄金时间参数夹具，登记 WP-02 manifest 版本/哈希）、`evidence/WP-16/`（本卡工件）
+  - 创建：`src/PathSimplifier.cpp`、`src/TimeParameterizer.cpp`、`test/SmoothingTimeTest.cpp`、`testdata/trajectory/golden/`（黄金时间参数夹具，登记 WP-02 manifest 版本/哈希）、`out/test-evidence/wp-16/<run-id>/`（本卡工件）
   - 修改：`CMakeLists.txt`（新源文件编入 `sdurws_ird_trajectory` 与 `sdurws_ird_trajectory_test`）、`include/sdurws/ird/trajectory/TrajectoryDiagnostics.hpp`（新增 `IRD-TRJ-TIME-PARAM-FAILED` 常量）；不删除文件。
 - **禁止修改的文件和公共接口：** RobWork `ParabolicBlend`/`CubicSplineFactory` 等运动律 API（裁决不复用其运动律，只复用几何插值 `LinearInterpolator`/`CircularInterpolator` 与轨迹容器）；WP-16-T01/T02 已交付类型与签名；时间参数化选型、1e-6/1.1/32 冻结值；一切非本拥有目录源码；测试运行期禁止写回 `testdata/`。
 - **修改前接口：** 无（模块内新增）。
@@ -22,11 +22,11 @@
   - 正常：Given T02 无碰路径与限值切片，When 简化＋时间参数化，Then 输出 C² 运动律、限值超差 ≤1e-6 相对、节拍含驻留，黄金夹具复算逐字节一致。
   - 边界：Given 共线路点偏差恰为 1e-6 rad/m 与最慢轴同步缩放边界，When 处理，Then 合并/保留判定确定、多轴时间同步不越限。
   - 失败：Given 32 次延长后仍超限的限值切片，When 时间参数化，Then `IRD-TRJ-TIME-PARAM-FAILED` 且不输出部分运动律。
-- **精确验证命令：**（仓库根目录、VS x64 环境；三形式任选其一必须通过）
+- **精确验证命令：**（仓库根目录、VS x64 环境；第一形式必执行，脚本不可用时按回退顺序执行原生两形式）
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_trajectory_test$'`；预期退出码 0。
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_trajectory_test`；预期构建成功。
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory_test$"`；预期全部通过。
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_trajectory_test`；预期构建成功。
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory_test$"`；预期全部通过。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单文件；未复用 `ParabolicBlend`/`CubicSplineFactory` 运动律；1e-6/1.1/32 冻结值未被改写；golden 夹具有 source/generationMethod 并入 WP-02 manifest；`check-boundaries.ps1` 零违规。
-- **证据工件：** `evidence/WP-16/time-parameter-report.md`（C² 节点对照、限值超差统计、迭代收敛曲线、黄金复算记录、简化前后任务点语义对照）＋测试日志（命令、commit、配置、manifest 哈希）；独立验证者复核冻结值与黄金数据。
+- **证据工件：** `out/test-evidence/wp-16/<run-id>/time-parameter-report.md`（C² 节点对照、限值超差统计、迭代收敛曲线、黄金复算记录、简化前后任务点语义对照）＋测试日志（命令、commit、配置、manifest 哈希）；独立验证者复核冻结值与黄金数据。
 - **提交格式：** `WP-16-T03: 路径平滑与时间参数化`
 - **停止与升级条件：** 五次样条无法同时满足 C² 与限值守恒、或 1e-6/1.1/32 冻结值不可达成时停止并升级规划负责人（冻结值评审须经架构批准，实现不得自行放宽）；实现者不得担任本卡独立验证者。

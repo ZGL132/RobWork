@@ -19,7 +19,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/`，含 `include/sdurws/ird/runtime/`、`src/`、`test/`、`testdata/`、`evidence/`。允许依赖 WP-03 core、RobWork/RobWorkSim 适配 API 和标准库；禁止 Qt Widgets、WP-13 业务 UI、其他 WP 私有头、直接写项目 revision 或自行定义诊断枚举。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/`，含 `include/sdurws/ird/runtime/`、`src/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许依赖 WP-03 core、RobWork/RobWorkSim 适配 API 和标准库；禁止 Qt Widgets、WP-13 业务 UI、其他 WP 私有头、直接写项目 revision 或自行定义诊断枚举。
 
 目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_runtime_contract_test`。
 

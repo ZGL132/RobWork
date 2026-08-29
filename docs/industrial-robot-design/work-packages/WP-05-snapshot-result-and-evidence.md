@@ -19,7 +19,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/`，含 `include/sdurws/ird/evidence/`、`src/`、`test/`、`testdata/` 和 `evidence/`。允许依赖 WP-03 core（含组合谓词与 `isFormallyFeasible`）、WP-04 查询端口＋追加协议原语和 Qt Core JSON；WP-05 不依赖 WP-06 代码，快照只保存不透明 `nameMapId`（内容 ID 相等比较，不调用 `IRuntimeNameResolver`，module-design/snapshot-result.md 依赖裁决）；禁止写项目 revision、直接依赖 Widget、调度器私有实现或手工修改追踪 CSV。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/`，含 `include/sdurws/ird/evidence/`、`src/`、`test/`、`testdata/` 和 `out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许依赖 WP-03 core（含组合谓词与 `isFormallyFeasible`）、WP-04 查询端口＋追加协议原语和 Qt Core JSON；WP-05 不依赖 WP-06 代码，快照只保存不透明 `nameMapId`（内容 ID 相等比较，不调用 `IRuntimeNameResolver`，module-design/snapshot-result.md 依赖裁决）；禁止写项目 revision、直接依赖 Widget、调度器私有实现或手工修改追踪 CSV。
 
 目标：`sdurws_ird_evidence`、`sdurws_ird_evidence_test`、`sdurws_ird_evidence_contract_test`。
 

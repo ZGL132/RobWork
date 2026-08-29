@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：** WP-21-T05；OPT-08（候选归 `OptimizationRunResult` 不产生修订；"设为当前方案"＝方案分支＋恰好一个新修订＋完整复算）、MDL-08、AT-12、NFR-PERF-04～06；ADR-004（应用经 WP-04 命令，不直写 revision）。阶段 D / R2。契约：`architecture/candidate-compilation.md` §4（候选不得创建项目修订）、`architecture/public-interfaces.md`（WP-04 `DomainCommand` 端口）；模块详设 `module-design/optimization.md` v0.3 §3（方案分支应用包）。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
 - **前置任务及必需工件：** WP-21-T02、WP-21-T04（可行集与 Pareto 判定可用）；WP-04-T02（`DomainCommand`/方案分支命令端口）；WP-20-T06（`ResultApplicationTest` 共享夹具与静态应用实现）；WP-20-T07（`OptimizationPlugin` 与 `gui/panels/` 面板骨架，`sdurws_ird_optimization_gui_test` 可用）；工件：T01～T04 用例通过。
-- **允许创建/修改/删除的文件：**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）创建 `joint/include/sdurws/ird/opt/CandidateApplication.hpp`、`joint/src/CandidateApplication.cpp`；修改 `gui/panels/` 候选预览/应用面板扩展、`test/ResultApplicationTest.cpp`（追加联合应用子句，与 WP-20-T06 共享夹具）、`test/OptimizationGuiTest.cpp`（追加联合预览/应用 GUI 用例）与模块 CMakeLists；写 `evidence/WP-21/`。不删除文件。
+- **允许创建/修改/删除的文件：**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）创建 `joint/include/sdurws/ird/opt/CandidateApplication.hpp`、`joint/src/CandidateApplication.cpp`；修改 `gui/panels/` 候选预览/应用面板扩展、`test/ResultApplicationTest.cpp`（追加联合应用子句，与 WP-20-T06 共享夹具）、`test/OptimizationGuiTest.cpp`（追加联合预览/应用 GUI 用例）与模块 CMakeLists；写 `out/test-evidence/wp-21/<run-id>/`。不删除文件。
 - **禁止修改的文件和公共接口：** WP-04 project 源文件（只发 `DomainCommand`）；WP-10 `ISceneProjection`（只调用）；WP-20 definition/candidate 源文件；WP-05 谓词；`requirements.md`、CSV、`schemas/`；不新增 CMake 目标（面板行为由既有 `sdurws_ird_optimization_gui_test` 扩展用例覆盖）。
 - **修改前接口：** 无联合候选应用包类型；面板仅有 WP-20 静态候选预览/应用入口；`ResultApplicationTest` 无联合应用子句。
 - **修改后接口：** `CandidateApplication.hpp` 提供方案分支应用包（`DesignVector`＋`writeSetFingerprint`＋目标分支名，optimization.md §3）经 WP-04 `DomainCommand` 发出："设为当前方案"创建方案分支＋恰好一个新修订并触发完整复算（OPT-08/AT-12），运行期间修订数不随候选数量增长；候选预览不建修订；不可行候选（未通过 `isFormallyFeasible`）不可应用。
@@ -24,11 +24,11 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_joint_test$'`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_gui_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_joint_test sdurws_ird_optimization_definition_test sdurws_ird_optimization_gui_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_joint_test$"`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_joint_test sdurws_ird_optimization_definition_test sdurws_ird_optimization_gui_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_joint_test$"`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；`joint/` 无直写 revision 代码（只经 WP-04 命令）；WP-20 静态应用用例零回归；GUI 用例不在无平台插件环境运行。
-- **证据工件：** `evidence/WP-21/t05-apply-candidate.log`：应用前后修订计数对照（候选数 0→100 修订数不变）、不可行拒用诊断样例、GUI 用例结果、命令原文与 commit。
+- **证据工件：** `out/test-evidence/wp-21/<run-id>/t05-apply-candidate.log`：应用前后修订计数对照（候选数 0→100 修订数不变）、不可行拒用诊断样例、GUI 用例结果、命令原文与 commit。
 - **提交格式：** `WP-21-T05: 候选预览与应用`
 - **停止与升级条件：** WP-04 命令端口无法表达方案分支＋单修订＋复算事务、或 WP-20-T06 共享夹具不可复用时，停止并升级 WP-04 所有者与工作包所有者；实现者不得担任本卡独立验证者。

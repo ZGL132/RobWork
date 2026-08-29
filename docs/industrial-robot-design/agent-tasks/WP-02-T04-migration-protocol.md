@@ -30,5 +30,9 @@
   - WP-02 收尾聚合（`module-design/testkit.md` §7 原文双形式）：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_(manifest_integrity|assertion_library|golden_data|migration_protocol)_test$'`；以及 `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_manifest_integrity_test sdurws_ird_assertion_library_test sdurws_ird_golden_data_test sdurws_ird_migration_protocol_test` 后运行 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_(manifest_integrity|assertion_library|golden_data|migration_protocol)_test$"`；预期四个目标全部构建并通过。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `testkit/` 内 verdict 头/实现、`tests/migration/` 与 CMake 接入；旧插件目录与 `testdata/` 零变化（adapter 只读）；无 Widget/会话状态进入期望值生成。
 - **证据工件：** `out/test-evidence/wp-02/<run-id>/migration/`：迁移对象盘点表、每算法 verdict 表、旧/新输出对照、输入哈希、差异统计、状态依赖审计、命令与提交 SHA、独立迁移评审者签署（非 adapter 实现者）。
-- **提交格式：** `WP-02-T04: migration verdict protocol`
+- **提交格式：** `WP-02-T04: 新增迁移判定协议`
+
+  - 新增 MigrationVerdict 判定类型与三判据规则实现
+  - 新增 旧算法只读 adapter 与迁移协议测试目标登记
+  - 新增 verdict 表、差异报告与迁移证据记录
 - **停止与升级条件：** 无法区分算法失败、数据不足与仅夹具可复用，或判定必须修改旧算法才能运行 adapter 时，停止并升级给迁移评审者与工作包所有者；adapter 实现者不得批准自己的 verdict。

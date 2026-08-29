@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "runIdentity": {
+    "projectId": "6f1d2c34-9a81-4b7e-8c21-0d5a9e3f1001",
+    "branchId": "main",
+    "revisionId": "rev-000007",
+    "runId": "run-20260829-001",
+    "attemptId": "attempt-002"
+  },
+  "evaluatorId": "kinematics-evaluator",
+  "evaluatorVersion": "1.2.0",
+  "mode": "Verified",
+  "outcome": "Completed",
+  "engineeringStatus": "Warning",
+  "payloadCompleteness": "Complete",
+  "evidenceLevel": "PreliminaryDesign",
+  "payloadId": "c81b3e7f6a2d4905b7c9e1f3a5d708294b6d8f0a2c4e6082a4c6e80a2c4e6082",
+  "evidenceRef": {
+    "evidenceBundleId": "9a4d1e70-b2f8-4c53-90a6-7e1b5d8c4208",
+    "relativePath": "results/run-20260829-001/evidence-attempt-002/evidence.json"
+  },
+  "diagnostics": [],
+  "timing": {
+    "wallClockS": 182.4,
+    "cpuS": 1210.7
+  },
+  "resourceUsage": {
+    "peakMemoryBytes": 534773760
+  }
+}

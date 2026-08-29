@@ -2,7 +2,7 @@
 
 > 契约 ID：`CTR-API-001`（§1）、`CTR-API-002`（§2）、`CTR-API-003`（§3、§5）、`CTR-API-004`（§5）、`CTR-NAM-001`（§2）、`CTR-DIA-001`（§7）  
 > 检查点：`IRD-D2-20260829`  
-> 文档状态：`Proposed`（等待各接口所有者与消费者评审签署）  
+> 文档状态：`Accepted`（IRD-D10-20260829 联合评审通过）  
 > 权威边界：本文件是跨模块端口签名、公共值对象字段和错误面的唯一权威。需求 §6.3～6.4 是端口集合决策来源。
 
 ## 0. 通用规则
@@ -180,6 +180,13 @@ public:
 | `ResultEnvelope` | `runIdentity`、`sliceId`、`evaluatorId+version`、`mode(EvaluationMode)`、`outcome(ExecutionOutcome)`、`engineeringStatus`、`payloadCompleteness`、`evidenceLevel(EvidenceLevel)`、`payloadId(内容 ID)`、`evidenceRef`、`diagnostics[]`、`timing/resourceUsage`；读回时由仓库附加 `artifactIntegrity` 与 `currentness` |
 | `EvidenceBundle` | `config 快照`、`resourceFidelity[]`、`diagnostics[]`、`statistics`、`provenance(工具/库版本、种子)`、`reproduction(命令与输入身份)` |
 | `ResultRef` | `runId, attemptId, evaluatorId, payloadId`；文件路径不是结果身份 |
+| `SessionState`（SYM-UI-001，WP-10） | `sessionId`、`projectRef(ProjectRevisionRef)`、`selectedObjectId`、`cameraPose`、`visibility`、`colorMode`、`filter`、`jogPose`、`playbackState`、`previewRef`；会话内可变，更新不产生 revision（需求 §5.5） |
+| `EditDraft`（SYM-UI-002，WP-10） | `draftId`、`baseRevisionRef(ProjectRevisionRef)`、`patches[]`、`validationDiagnostics[]`、`dirty(bool)`、`savedAt`；保存到 WP-04 drafts，不进入 `EvaluatorInputSlice`；应用前重新比较 base revision |
+| `StageStatusModel`（SYM-UI-003，WP-10） | 八值阶段状态：输入未完成/可计算/计算中/结果有效/需要重算/证据不足/计算失败/工程不可行；映射：需要重算=`Superseded`、历史证据=`Historical`（evaluation-semantics §1/§5）；与 `TaskState` 不混用 |
+| `SelectionModel`（SYM-UI-004，WP-10） | `selectedObjectIds[]`（有序 objectId）、`primaryObjectId`；只写 `SessionState` 对应字段，不反写领域数据 |
+| `ResolvedIkBranchSequence`（SYM-TRJ-002，WP-16） | 每路点实际采用 IK 解：`q[]`、分支标识、残差、候选 ID；引用 `KinematicResult` 候选，不复制其完整 payload（需求 TRJ 验收） |
+| `IkBranchPolicy`（SYM-TRJ-003，WP-16） | 自动分支策略、用户显式锁定分支集合、连续性阈值（rad/m）；经 `AnalysisConfiguration` 进入输入切片，修改产生修订 |
+| `MotorSideOperatingPoint`（SYM-DTM-001，WP-18） | 每轴：转矩/转速/功率序列（N·m/rad/s/W，方向相关效率）、峰值与 RMS 需求、`J_ref`（关节侧）与 `J_load,motor`（电机侧）、惯量比、能量分项（`W_motor+/-、W_regen、驱动器电能`，逐项标注假设）、四象限/连续峰值工作制统计 |
 
 - 枚举值域以 [evaluation-semantics.md](evaluation-semantics.md) §1 为准；`ArtifactIntegrity` 由仓库读回时赋予。
 - 持久化 JSON 形态见 [persistence-schema.md](persistence-schema.md) 与 `schemas/`。

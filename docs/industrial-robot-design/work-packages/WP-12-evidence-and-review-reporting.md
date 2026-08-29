@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
 
-**Goal:** 从明确项目修订和结果集合生成唯一 `ReviewReport`，输出适合工程评审的 HTML、PDF 及 JSON/CSV 证据数据包。
+**Goal:** 从明确项目修订和结果集合生成唯一 `ReviewReport`，输出适合工程评审的 HTML 与 JSON/CSV 证据数据包。
 
-**Architecture:** ReviewReport 是不可变结构化权威；所有展示格式由同一对象渲染。报告只查询 WP-04/05，不读取当前界面。PDF 渲染依赖为**待 ADR 审批项**（未登记第三方库/Qt 模块须先过依赖门禁）：获批前交付 HTML+JSON+CSV，`PdfReportRenderer` 仅保留接口声明；报告对 WP-11 的 CSV 写出为端口契约依赖（集成期代码交付）。
+**Architecture:** ReviewReport 是不可变结构化权威；所有展示格式由同一对象渲染。报告只查询 WP-04/05，不读取当前界面。**PDF 导出不在需求基线内（requirements 无 PDF 条目，D10 裁决）：R1 不交付 PDF，也不保留 `PdfReportRenderer` 接口桩；如未来引入 PDF，必须先过 WP-01 依赖门禁并登记 ADR 后再扩展本模块。**报告对 WP-11 的 CSV 写出为端口契约依赖（集成期代码交付）。
 
-**Tech Stack:** C++、Qt Core/Gui/PrintSupport、HTML/CSS、JSON、CSV、CTest。
+**Tech Stack:** C++、Qt Core/Gui、HTML/CSS、JSON、CSV、CTest。
 
 ---
 
@@ -19,7 +19,6 @@
 - `industrialrobot/reporting/include/sdurws/ird/reporting/ReviewReport.hpp`
 - `industrialrobot/reporting/include/sdurws/ird/reporting/ReviewReportBuilder.hpp`
 - `industrialrobot/reporting/include/sdurws/ird/reporting/HtmlReportRenderer.hpp`
-- `industrialrobot/reporting/include/sdurws/ird/reporting/PdfReportRenderer.hpp`
 - `industrialrobot/reporting/include/sdurws/ird/reporting/EvidenceDataExporter.hpp`
 - `industrialrobot/reporting/resources/report.zh-CN.html`
 - `industrialrobot/reporting/resources/report.css`
@@ -60,11 +59,10 @@ reviewer/sign-off metadata
 - [ ] 改型报告逐指标展示基线值、候选值、绝对变化、相对变化和来源。
 - [ ] 不得用单一加权分数替代 Pareto 工程取舍。
 
-### Task 3：HTML 与 PDF
+### Task 3：HTML 渲染
 
 - [ ] HTML 使用内嵌/本地 CSS 和资源，不访问网络。
-- [ ] PDF 从同一 HTML 模型生成，验证分页、中文字体、表格、图例和页码。
-- [ ] 关键数值、状态、诊断码和快照身份在 HTML/PDF/JSON 中一致。
+- [ ] 关键数值、状态、诊断码和快照身份在 HTML/JSON 中一致。
 
 ### Task 4：JSON/CSV 证据包
 
@@ -82,7 +80,7 @@ reviewer/sign-off metadata
 ### Task 6：往返和可复现
 
 - [ ] 删除/覆盖外部源后，使用项目不可变副本重新生成相同报告。
-- [ ] 相同 ReviewReport 结构化内容生成语义等价 HTML/PDF 和逐字段一致数据包。
+- [ ] 相同 ReviewReport 结构化内容生成语义等价 HTML 和逐字段一致数据包。
 - [ ] 历史报告保留旧快照名称，新报告使用当前 RuntimeNameMap，不混淆 objectId。
 
 ## 验证命令
@@ -100,14 +98,14 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_t
 ## 退出条件
 
 - 每项正式结论可追到项目修订、快照、策略、评估器版本和证据。
-- HTML、PDF、JSON 和 CSV 在关键字段与工程状态上完全一致。
+- HTML、JSON 和 CSV 在关键字段与工程状态上完全一致。
 - 报告不读取 Widget 或当前会话态，不把证据不足包装成通过。
 
 ## 任务卡索引
 
 - [WP-12-T01 权威报告对象](../agent-tasks/WP-12-T01-report-object.md)
 - [WP-12-T02 新机型与改型内容](../agent-tasks/WP-12-T02-design-variant.md)
-- [WP-12-T03 HTML 与 PDF](../agent-tasks/WP-12-T03-html-pdf.md)
+- [WP-12-T03 HTML 渲染](../agent-tasks/WP-12-T03-html-render.md)
 - [WP-12-T04 JSON/CSV 证据包](../agent-tasks/WP-12-T04-evidence-package.md)
 - [WP-12-T05 限制与固定措辞](../agent-tasks/WP-12-T05-wording-limits.md)
 - [WP-12-T06 往返与可复现](../agent-tasks/WP-12-T06-reproducible-roundtrip.md)

@@ -6,7 +6,7 @@
 
 **需求与契约：** AT-01～19、NFR-COR、NFR-PERF、NFR-REL；引用 `architecture/testing-contract.md`、`architecture/evaluation-semantics.md`、`architecture/execution-model.md`、`architecture/persistence-schema.md`；模块方案 `module-design/system-quality.md`（v0.3）。
 
-**拥有目录：** `industrialrobot/testkit/system/`（含 scenarios/faultpoints/benchmarks/drills/test）与 `evidence/WP-23/`；`benchmark-manifest.json` 为只读输入；不得修改业务实现以绕过门禁。
+**拥有目录：** `industrialrobot/testkit/system/`（含 scenarios/faultpoints/benchmarks/drills/test）与 `out/test-evidence/wp-23/<run-id>/`；`benchmark-manifest.json` 为只读输入；不得修改业务实现以绕过门禁。
 
 **输入/输出：** 输入＝各阶段模块测试目标与 failpoint 夹具、WP-02 黄金数据与断言库、WP-01 门禁入口、基准清单；输出＝AT 执行矩阵、故障注入日志、基准报告（含全部样本）、恢复统计与 R1/R2 门禁证据。
 
@@ -14,7 +14,7 @@
 
 **目标：** 把需求 §15.2 的 19 个核心场景与 §11 非功能需求转为可重复执行、可审计的系统级验收资产，并按阶段持续交付，使 R1/R2 发布门禁证据可由脚本与清单复核。
 - 完成定义：AT-01～19 逐条有登记的执行入口、数据集与通过判据（§4 表）；8 类故障注入全部有恢复断言证据；固定 seed/threadCount 下集合与数值可复现；性能交付断言在验收机全部满足；R1/R2 门禁清单字段完整并由独立质量负责人签署。
-- 目标交付：`AtRegistry`、`FaultInjectionMatrix`、`BenchmarkRunner`、`RecoveryDrill`、`ReleaseGate` 五组实现与五个测试目标、`scenarios/faultpoints/benchmarks/drills` 夹具、`evidence/WP-23/` 证据集。
+- 目标交付：`AtRegistry`、`FaultInjectionMatrix`、`BenchmarkRunner`、`RecoveryDrill`、`ReleaseGate` 五组实现与五个测试目标、`scenarios/faultpoints/benchmarks/drills` 夹具、`out/test-evidence/wp-23/<run-id>/` 证据集。
 
 **非目标：** 不修改业务实现以绕过门禁；不拥有业务黄金数据（WP-02 所有）；不替代 WP-01 构建门禁；不无批准修改 `benchmark-manifest.json`（module-design/system-quality.md §1、§2）。
 
@@ -44,7 +44,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/system/
   src/AtRegistry.cpp FaultInjectionMatrix.cpp BenchmarkRunner.cpp RecoveryDrill.cpp ReleaseGate.cpp
   scenarios/at-01…at-19/  faultpoints/  benchmarks/  drills/
   test/SystemSuiteTest.cpp FaultInjectionTest.cpp BenchmarkTest.cpp DeterminismTest.cpp ReleaseGateTest.cpp
-  evidence/WP-23/
+  # 证据 → out/test-evidence/wp-23/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 - CMake 目标（与任务卡命令一致）：`sdurws_ird_system_suite_test`、`sdurws_ird_fault_injection_test`、`sdurws_ird_benchmark_test`、`sdurws_ird_determinism_test`、`sdurws_ird_release_gate_test`；`sdurws_ird_system_test` 为聚合别名目标（运行全部五域）。
@@ -110,14 +110,14 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/system/
 
 - **范围：** `AtRegistry.hpp/.cpp`、`scenarios/at-01…at-19/`、`test/SystemSuiteTest.cpp`；按 §4 清单逐条登记执行入口、数据集与判据，并按 §2 节奏分阶段接入（A 阶段先落 A-GATE-01～07 脚本化所需场景骨架）。
 - **前置：** 任务级无；WP 级＝WP-01 门禁入口、WP-02 黄金数据与断言库、对应阶段被测模块测试目标。
-- **输出工件：** AtRegistry（19 条执行条目）、at-01～at-19 场景夹具、AT 执行矩阵（`evidence/WP-23/`）、目标 `sdurws_ird_system_suite_test`。
+- **输出工件：** AtRegistry（19 条执行条目）、at-01～at-19 场景夹具、AT 执行矩阵（`out/test-evidence/wp-23/<run-id>/`）、目标 `sdurws_ird_system_suite_test`。
 - **验收断言：** ①§4 表 19 条逐条可执行且判据与 system-quality.md §3 一致；②AT-03 缺证据结果判 `DataInsufficient` 且展示符合 evaluation-semantics §5（不与"不可行"混排）；AT-05 下游显示"需要重算"（Superseded 口径）；③每条 AT 至少含失败/正常/边界断言（testing-contract §1、§3）；④GUI 相关 AT 单独启动、一次一个（testing-contract §5）；⑤固定种子与输入哈希进入每条证据。
 
 ### WP-23-T02 故障注入与恢复
 
 - **范围：** `FaultInjectionMatrix.hpp/.cpp`、`faultpoints/` 夹具、`RecoveryDrill.hpp/.cpp`、`drills/`、`test/FaultInjectionTest.cpp`；落地 §5 的 8 类矩阵与 §6 恢复演练三场景。
 - **前置：** T01；WP 级＝WP-04/WP-08 failpoint、WP-05 源监控样本、WP-12 渲染 failpoint。
-- **输出工件：** 故障注入矩阵夹具、恢复演练脚本与恢复统计（`evidence/WP-23/`）、目标 `sdurws_ird_fault_injection_test`。
+- **输出工件：** 故障注入矩阵夹具、恢复演练脚本与恢复统计（`out/test-evidence/wp-23/<run-id>/`）、目标 `sdurws_ird_fault_injection_test`。
 - **验收断言：** ①§5 矩阵 8 类逐条恢复断言成立且留日志（system-quality.md §4）；②A-GATE-04/05 口径在系统级复验通过；③锁夺取演练使用心跳超时夹具（WP-04 默认 30 s）后安全夺取；④结果工件损坏读回 `ArtifactIntegrity=Corrupt` 并拒绝正式用途（evaluation-semantics §1～2）；⑤恢复后批次统计不重复（AT-11）。
 
 ### WP-23-T03 性能与规模基准
@@ -131,14 +131,14 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/system/
 
 - **范围：** `test/DeterminismTest.cpp`，复用 T01 优化场景与 WP-02 `StableSetAssertions`；覆盖 §15.3"并行复现"行。
 - **前置：** T01、T03（seed/threadCount 口径来自 manifest）。
-- **输出工件：** 确定性对照报告（`evidence/WP-23/`）、目标 `sdurws_ird_determinism_test`。
+- **输出工件：** 确定性对照报告（`out/test-evidence/wp-23/<run-id>/`）、目标 `sdurws_ird_determinism_test`。
 - **验收断言：** ①seed 20260828、threadCounts [1,8] 下候选稳定 ID、可行集合与 Pareto 支配关系一致；②数值满足 §15.3 算法级相对/绝对误差；③不要求浮点文件逐字节相同（NFR-COR-02）；④AT-09 固定种子复现断言由本目标证据支撑。
 
 ### WP-23-T05 质量与发布门禁
 
 - **范围：** `ReleaseGate.hpp/.cpp`、`test/ReleaseGateTest.cpp`；汇总 T01～T04 证据为 R1/R2 门禁清单，实现防作弊断言脚本。
 - **前置：** T01、T02、T03、T04。
-- **输出工件：** R1/R2 门禁清单（testing-contract §4 字段）、防作弊比对输出、独立质量负责人签名页（`evidence/WP-23/`）、目标 `sdurws_ird_release_gate_test`。
+- **输出工件：** R1/R2 门禁清单（testing-contract §4 字段）、防作弊比对输出、独立质量负责人签名页（`out/test-evidence/wp-23/<run-id>/`）、目标 `sdurws_ird_release_gate_test`。
 - **验收断言：** ①R1/R2 gate 构成与 system-quality.md §6 一致且逐条有证据；②发布时开放 Blocker＝0、未关闭 Critical 均有负责人与计划日期（§15.4）；③"不得以关闭测试、降低阈值或隐藏诊断代替修复"由脚本与既有阈值/诊断清单比对断言；④每条证据含输入哈希（datasetVersion＋manifest SHA-256）与评审者。
 
 ## 验证
@@ -158,7 +158,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_(system_sui
 ## 10. 独立评审与证据
 
 - 独立质量负责人复核 AT 执行矩阵、故障注入日志、基准报告（含全部样本）、恢复统计、门禁清单与防作弊断言输出，并签署（评审者不得参与被测实现）。
-- 证据归档于 `evidence/WP-23/`，字段按 testing-contract §4；报告须能追溯 datasetVersion、manifest SHA-256、seed、threadCount、命令原文与提交 SHA。
+- 证据归档于 `out/test-evidence/wp-23/<run-id>/`，字段按 testing-contract §4；报告须能追溯 datasetVersion、manifest SHA-256、seed、threadCount、命令原文与提交 SHA。
 
 ## 11. 迁移与删除
 

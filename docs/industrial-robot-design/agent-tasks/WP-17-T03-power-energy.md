@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-17-T01
 - **前置任务及必需工件：**WP-17-T02（`RneAdapter`/`FrictionModel` 输出的 τ_RNE/τ_f/ω 采样序列与 `JointSample` 时间戳链路）
 - **允许创建/修改/删除的文件**（模块根同 WP-17-T01）：
-  - 创建：`src/PowerEnergyIntegrator.cpp`、`src/DynamicsJson.cpp`、`test/PowerEnergyTest.cpp`、`testdata/dynamics/cycle/` 下完整循环黄金数据文件、`evidence/WP-17/T03/`
+  - 创建：`src/PowerEnergyIntegrator.cpp`、`src/DynamicsJson.cpp`、`test/PowerEnergyTest.cpp`、`testdata/dynamics/cycle/` 下完整循环黄金数据文件、`out/test-evidence/wp-17/<run-id>/`
   - 修改：`plugins/dynamics/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01/T02 冻结语义（摩擦式、坐标系、功率符号约定）；关节侧结果不得宣称电能（§8.5 能量边界）；传动映射与电机侧量（WP-18）；requirements/CSV/architecture；禁止 Qt Widgets、直读 UI 会话态
 - **修改前接口：**无功率/能量计算（T02 输出类型化广义力与转速序列，未聚合包络量）
@@ -18,10 +18,14 @@
   - 失败：Given 时间戳非单调或循环不含驻留，When 积分，Then 拒绝并诊断，不产出包络量
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rniE "electric|kWh|motor" plugins/dynamics/src/PowerEnergyIntegrator.cpp` 零命中（无电能宣称）；无矩形积分/纯瞬时峰值替代路径；`DynamicsResult` 禁名零命中
-- **证据工件：**`evidence/WP-17/T03/`——完整循环积分对账报告（W+/W−/峰值/RMS）、峰值窗与含驻留 RMS 口径对照、采样与积分规则记录、测试日志（commit/配置/种子）
-- **提交格式：**`WP-17-T03: add power and energy integration`
+- **证据工件：**`out/test-evidence/wp-17/<run-id>/`——完整循环积分对账报告（W+/W−/峰值/RMS）、峰值窗与含驻留 RMS 口径对照、采样与积分规则记录、测试日志（commit/配置/种子）
+- **提交格式：** `WP-17-T03: 新增功率与能量积分`
+
+  - 新增机械功率与能量分项积分
+  - 新增能量口径测试
+  - 新增运行证据记录
 - **停止与升级条件：**W+ 梯形式或峰值窗口径与 §9.3/§15.3 冲突、或器件目录峰值时间能力字段缺失无法取值时，停止并升级（不得以矩形积分或瞬时峰值临时替代）；T_cycle 定义歧义升级动力学工程师裁决

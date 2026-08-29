@@ -19,7 +19,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/`，含 `include/sdurws/ird/diagnostics/`、`resources/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、Qt Core JSON/Locale 和标准库；禁止 Qt Widgets、模块私有诊断 Schema、直接写项目 revision、日志中输出凭据或手工 CSV。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/`，含 `include/sdurws/ird/diagnostics/`、`resources/`、`src/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许 WP-03 core、Qt Core JSON/Locale 和标准库；禁止 Qt Widgets、模块私有诊断 Schema、直接写项目 revision、日志中输出凭据或手工 CSV。
 
 目标：`sdurws_ird_diagnostics`、`sdurws_ird_diagnostics_test`、`sdurws_ird_diagnostics_contract_test`。
 

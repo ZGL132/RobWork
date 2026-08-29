@@ -1,6 +1,6 @@
 # 运动学模块详细方案（kinematics）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（D5 重写，待消费者评审）
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Accepted（IRD-D10-20260829 联合评审通过；D5 重写，待消费者评审）
 - 负责 WP：WP-15；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-15-T01～T08`
 - 架构契约：`architecture/canonical-kinematics.md`（最高权威）、`architecture/evaluation-semantics.md` §1～§2、`architecture/public-interfaces.md` §3～§4/§7、`architecture/execution-model.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-03、05、06、07、08、09；WP-13、14 为交付前置（模型与需求经快照获得，无业务插件代码依赖，总纲 §5.3）；构建/门禁入口 WP-01
@@ -24,7 +24,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/kinematics/
   test/FkTest.cpp   IkCandidateTest.cpp   JacobianTest.cpp   RegionCoverageTest.cpp
       CollisionEvidenceTest.cpp   BatchExecutionTest.cpp   CrossEntryTest.cpp   KinematicsGuiTest.cpp
   testdata/kinematics/{fk-golden,ik-golden,jacobian,regions,collisions,batches}/
-  evidence/WP-15/
+  # 证据 → out/test-evidence/wp-15/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake target：`sdurws_ird_kinematics`（计算核心，无 Qt Widgets）、`sdurws_ird_kinematics_plugin`（薄插件）、`sdurws_ird_kinematics_test`、`sdurws_ird_kinematics_contract_test`、`sdurws_ird_kinematics_gui_test`。允许依赖：WP-03 core、WP-05 evidence（评估端口头）、WP-06 runtime（canonical 模型/`IRuntimeNameResolver`）、WP-07 policy（`CollisionEvaluator`）、WP-08 execution（调度端口）、WP-09 diagnostics、RobWork 稳定 API（数值 IK/FK/Jacobian）、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui。禁止：本地 CollisionPolicy 或默认值、自建线程池/调度、其他业务插件私有头、读取当前 Widget 状态。
@@ -79,7 +79,7 @@ Engineering 类 KIN 码的 severity 以 `module-design/diagnostics.md` §3 登�
 | CrossEntryTest | AT-19 静态入口：对象 ID 对/判定/原因一致；显示开关不影响判定 |
 | KinematicsGuiTest | 候选预览不建修订、显式应用、导出引用快照（QT_QPA_PLATFORM=windows） |
 
-证据写入 `evidence/WP-15/`：FK/IK/Jacobian 解析对照报告、覆盖率矩阵、排序稳定性报告、AT-18/19 阶段 B 记录与独立评审签名。验证命令（双形式，仓库根执行）：
+证据写入 `out/test-evidence/wp-15/<run-id>/`：FK/IK/Jacobian 解析对照报告、覆盖率矩阵、排序稳定性报告、AT-18/19 阶段 B 记录与独立评审签名。验证命令（双形式，仓库根执行）：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_kinematics(_contract)?_test$'

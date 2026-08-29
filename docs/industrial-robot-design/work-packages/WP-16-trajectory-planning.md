@@ -1,6 +1,6 @@
 # WP-16 轨迹规划实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/trajectory-planning.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.7。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/trajectory-planning.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付。
 
 **需求与契约：** TRJ-01～08、AT-04/06/18/19（阶段 C 链路子集）；架构契约与模块方案清单见 §2。
@@ -24,7 +24,7 @@
 
 ## 3. 文件所有权与 CMake 目标
 
-拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/trajectory/`，子目录 `include/sdurws/ird/trajectory/`（TrajectoryPlan.hpp、ResolvedIkBranchSequence.hpp、IkBranchPolicy.hpp、TrajectoryEvaluator.hpp、TrajectoryDiagnostics.hpp）、`src/`（TrajectoryEvaluator.cpp、PtpCartesianPlanner.cpp、PlannerAdapter.cpp、PathSimplifier.cpp、TimeParameterizer.cpp、LimitVerifier.cpp、IkContinuityChecker.cpp、TrajectoryJson.cpp）、`test/`（PtpCartesianTest.cpp、PlannerAdapterTest.cpp、SmoothingTimeTest.cpp、CollisionLimitsTest.cpp、TrajectoryResultTest.cpp、LifecycleTest.cpp）、`testdata/trajectory/{ptp,cartesian,planner,collision,golden,failpoints}/`、`evidence/WP-16/`。文件树以模块详设 §2 为权威。
+拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/trajectory/`，子目录 `include/sdurws/ird/trajectory/`（TrajectoryPlan.hpp、ResolvedIkBranchSequence.hpp、IkBranchPolicy.hpp、TrajectoryEvaluator.hpp、TrajectoryDiagnostics.hpp）、`src/`（TrajectoryEvaluator.cpp、PtpCartesianPlanner.cpp、PlannerAdapter.cpp、PathSimplifier.cpp、TimeParameterizer.cpp、LimitVerifier.cpp、IkContinuityChecker.cpp、TrajectoryJson.cpp）、`test/`（PtpCartesianTest.cpp、PlannerAdapterTest.cpp、SmoothingTimeTest.cpp、CollisionLimitsTest.cpp、TrajectoryResultTest.cpp、LifecycleTest.cpp）、`testdata/trajectory/{ptp,cartesian,planner,collision,golden,failpoints}/`、`out/test-evidence/wp-16/<run-id>/`。文件树以模块详设 §2 为权威。
 
 CMake 目标：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_test`、`sdurws_ird_trajectory_contract_test`。允许依赖：WP-03 core、WP-05 evidence（评估端口头；经 `IResultRepository` 按 `ResultRef` 读上游 payload）、WP-06 runtime（`CompiledRobotArtifacts`）、WP-07 policy（共享 `CollisionEvaluator`，代码依赖）、RobWork pathplanning/trajectory/proximity 稳定 API、Qt Core（`QJson*`）；契约引用（只含公共领域类型头，不链接实现）：WP-14 `EngineeringRequirements`/`LoadCase`、WP-15 `KinematicResult`；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、其他插件私有头、本地碰撞开关/采样参数/安全距离副本、直接文件 IO、读取 UI 会话态、第二套 `TrajectoryPlan` DTO。
 
@@ -116,7 +116,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory(
 
 - 独立验证（黑盒）：黄金时间参数复算、平滑前后碰撞报告比对、三入口碰撞一致性（AT-19）、取消/迟到事件注入（failpoints 夹具）。
 - 独立评审：由规划负责人与独立测试负责人复核段 Schema、时间参数化选型与 1e-6/1.1/32 冻结值、复检协议引用、路径黄金数据与证据签署。
-- 证据写入 `evidence/WP-16/`：路径黄金数据（WP-02 版本/哈希）、平滑前后碰撞报告、时间参数报告、AT-06/AT-19 记录、独立评审签名。
+- 证据写入 `out/test-evidence/wp-16/<run-id>/`：路径黄金数据（WP-02 版本/哈希）、平滑前后碰撞报告、时间参数报告、AT-06/AT-19 记录、独立评审签名。
 
 ## 11. 迁移与删除（requirements §13）
 

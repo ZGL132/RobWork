@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "catalogId": "company-drive-catalog",
+  "catalogVersion": "2.1.0",
+  "source": {
+    "publisher": "ACME Drives GmbH",
+    "publishedAt": "2026-06-15T00:00:00Z",
+    "license": "internal use, per-seat",
+    "contact": "catalog-support@example.com"
+  },
+  "files": [
+    {
+      "role": "MotorTable",
+      "fileName": "motors.csv",
+      "sha256": "5f2a9c0e1b7d4a38c6e0f2b1d9a84730e5c2f6b8d1a0937e4c5b2f8a0d3e6c19",
+      "rowCount": 148,
+      "maxRowsBudget": 5000
+    },
+    {
+      "role": "ReducerTable",
+      "fileName": "reducers.csv",
+      "sha256": "c81b3e7f6a2d4905b7c9e1f3a5d708294b6d8f0a2c4e6082a4c6e80a2c4e6082",
+      "rowCount": 96,
+      "maxRowsBudget": 5000
+    },
+    {
+      "role": "CapabilityCurveTable",
+      "fileName": "capability-curves.csv",
+      "sha256": "0e9d8c7b6a594837261504f3e2d1c0b9a897867564534241403f2e1d0c9b8a71",
+      "rowCount": 2140,
+      "maxRowsBudget": 50000
+    },
+    {
+      "role": "CompatibilityTable",
+      "fileName": "compatibility.csv",
+      "sha256": "77aa11bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff001122",
+      "rowCount": 720,
+      "maxRowsBudget": 20000
+    },
+    {
+      "role": "ColumnDictionary",
+      "fileName": "column-dictionary.json",
+      "sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "rowCount": 4,
+      "maxRowsBudget": 32
+    }
+  ],
+  "declaredUnits": {
+    "torque": "N.m",
+    "rotationalSpeed": "rad/s",
+    "power": "W",
+    "mass": "kg",
+    "ratio": "dimensionless",
+    "cost": "currency"
+  }
+}

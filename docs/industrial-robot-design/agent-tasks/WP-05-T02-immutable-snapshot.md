@@ -1,9 +1,9 @@
 # WP-05-T02 不可变分析快照
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-05-T02；需求 CON-01～CON-06、EVI-01；ADR-001、ADR-005；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §7（`AnalysisSnapshot` 字段冻结）、architecture/persistence-schema.md §4、module-design/snapshot-result.md v0.3（含依赖裁决：不依赖 WP-06 代码）。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/public-interfaces.md §7（`AnalysisSnapshot` 字段冻结）、architecture/persistence-schema.md §4、module-design/snapshot-result.md v0.3（含依赖裁决：不依赖 WP-06 代码）。
 - **前置任务及必需工件：**WP-05-T01（`EvaluatorInputSlice` 与 `sliceHash`）；WP-04-T04（`ContentObjectStore` 不可变对象落位与追加原语）；WP-01-T03（测试入口）。无 WP-06 代码前置——`nameMapId/resolvedPolicyContentId` 为 64 位小写 hex 不透明内容 ID。
-- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/AnalysisSnapshot.hpp`、`EvidenceBundle.hpp`、`src/AnalysisSnapshot.cpp`、`test/SnapshotTest.cpp`、`testdata/evidence/{snapshot,invalid}/`、`evidence/WP-05/`；修改 `src/EvidenceJson.cpp`（快照段）、`CMakeLists.txt`；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-05-T01）：创建 `include/sdurws/ird/evidence/AnalysisSnapshot.hpp`、`EvidenceBundle.hpp`、`src/AnalysisSnapshot.cpp`、`test/SnapshotTest.cpp`、`testdata/evidence/{snapshot,invalid}/`、`out/test-evidence/wp-05/<run-id>/`；修改 `src/EvidenceJson.cpp`（快照段）、`CMakeLists.txt`；删除：无。
 - **禁止修改的文件和公共接口：**T01 冻结的切片字段语义与哈希规则；WP-04 项目事务/对象库实现；名称解析公共接口（`IRuntimeNameResolver` 归 WP-06）；GUI；结果仓库（T04）；文档与 schemas/。
 - **修改前接口：**T01 的切片构建；无快照类型。
 - **修改后接口：**`AnalysisSnapshot{snapshotId,sourceRevision,objectRevisions[],config,软件基线,randomSeed,manifest,resolvedPolicyContentId,nameMapId}`（architecture/public-interfaces.md §7）；`EvidenceBundle{config 快照,resourceFidelity[],diagnostics[],statistics,provenance,reproduction}`；错误码 `IRD-EVIDENCE-SNAPSHOT-INCOMPLETE`；创建后只读，getter 无可变视图。
@@ -16,10 +16,14 @@
   - 边界：Quick 模式外部路径只存路径＋哈希并标记非正式，正式报告接纳器拒绝；序列化往返逐字段一致（容差 ≤1e-12）；资源篡改在快照侧可检出。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；无 `IRuntimeNameResolver`/WP-06 头引用（依赖裁决）；快照序列化不依赖 UI 状态；无运行时名称作为主键。
-- **证据工件：**`evidence/WP-05/T02/`：snapshot JSON、全部引用哈希、输入身份、失败诊断 JSON、往返比对日志。
-- **提交格式：**`WP-05-T02: implement immutable analysis snapshots`。
+- **证据工件：**`out/test-evidence/wp-05/<run-id>/`：snapshot JSON、全部引用哈希、输入身份、失败诊断 JSON、往返比对日志。
+- **提交格式：**`WP-05-T02: 新增不可变分析快照`
+
+  - 新增 AnalysisSnapshot 深拷贝冻结、完整性校验与 JSON 往返实现
+  - 新增 完整性/不可变性测试与目标登记
+  - 新增 快照 JSON 与引用哈希证据记录
 - **停止与升级条件：**无法证明深拷贝或资源不可变、需要临时默认版本号时停止并报告；快照字段变更必须先改 architecture/public-interfaces.md §7 与 ADR，不在代码内扩字段。

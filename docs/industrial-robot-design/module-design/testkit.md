@@ -1,6 +1,6 @@
 # 黄金数据与数值验证模块详细方案（testkit）
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-02；阶段/发布：阶段 A 前提 / R1；任务卡：`agent-tasks/WP-02-T01～T04`
 - 架构契约：`architecture/testing-contract.md`（§2 数值与性能）、`architecture/persistence-schema.md`（§3 JSON 规则）、`architecture/domain-model.md`、`architecture/symbol-registry.md`
 - 边界：黄金数据本体是 WP-02 实施产物；本方案只冻结数据集组成清单、manifest 格式、两层容差与校验/再生成规则

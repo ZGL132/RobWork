@@ -1,0 +1,66 @@
+{
+  "objectId": "5a3c8e21-f0b4-49d7-8a2c-93b6d1f42005",
+  "ownerScopeId": "8c4b21aa-35de-4f60-9c17-2b8e40d5a002",
+  "localName": "DefaultEngineeringPolicy",
+  "objectRevision": 1,
+  "createdAt": "2026-08-28T13:05:00Z",
+  "provenance": {
+    "importOrigin": "TemplateCreated",
+    "sourceDetail": "project template default engineering policy"
+  },
+  "schemaVersion": 1,
+  "collision": {
+    "policySchemaVersion": 1,
+    "collisionExecutionMode": "Enabled",
+    "detectorBackend": {
+      "backendId": "rw-pqp",
+      "backendVersion": "1.8.0"
+    },
+    "participationByObject": [
+      { "objectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003", "participates": true },
+      { "objectId": "b41d7e60-2c9f-4d83-a1b6-86e0f3c5a808", "participates": true }
+    ],
+    "excludedPairs": [],
+    "allowedContactPairs": [],
+    "safetyDistance": 0.0,
+    "pathValidationProfile": {
+      "profileId": "adaptive-subdivision",
+      "profileVersion": "1.0.0",
+      "initialSegmentsPerEdge": 10,
+      "maxRevoluteStep": 0.05,
+      "maxPrismaticStep": 0.01,
+      "subdivisionMargin": 0.005
+    }
+  },
+  "evidence": {
+    "profiles": [
+      {
+        "usageId": "VerifiedReport",
+        "profileVersion": 1,
+        "requiredEvaluators": [
+          {
+            "evaluatorId": "kinematics-evaluator",
+            "minEvidenceLevel": "PreliminaryDesign",
+            "requiredResourceFidelity": ["CollisionGeometry"]
+          }
+        ],
+        "description": "Verified candidates entering the review report"
+      }
+    ]
+  },
+  "unitsAndFrames": {
+    "worldFrameId": "WORLD",
+    "internalLengthUnit": "m",
+    "internalAngleUnit": "rad",
+    "displayLengthUnit": "mm",
+    "displayAngleUnit": "deg"
+  },
+  "limits": {
+    "defaultMinJointMarginRatio": 0.1,
+    "defaultSafetyFactor": 2.0
+  },
+  "disturbanceProtocol": {
+    "protocolId": "ird-disturbance",
+    "protocolVersion": "1.0.0"
+  }
+}

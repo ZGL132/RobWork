@@ -19,7 +19,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/`，含 `include/sdurws/ird/execution/`、`src/`、`worker/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-05 快照/结果接口、Qt Core/Concurrent/Process 和标准库；禁止 Qt Widgets、评估器私有线程池、工作进程写项目 revision、手工 CSV。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/`，含 `include/sdurws/ird/execution/`、`src/`、`worker/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许 WP-03 core、WP-05 快照/结果接口、Qt Core/Concurrent/Process 和标准库；禁止 Qt Widgets、评估器私有线程池、工作进程写项目 revision、手工 CSV。
 
 目标：`sdurws_ird_execution`、`sdurws_ird_execution_worker`、`sdurws_ird_execution_test`、`sdurws_ird_execution_contract_test`。
 

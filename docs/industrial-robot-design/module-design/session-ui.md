@@ -1,6 +1,6 @@
 # 会话、场景与公共 UI 模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-10；阶段/发布：阶段 A / R1；任务卡：`agent-tasks/WP-10-T01～T05`
 - 架构契约：`architecture/execution-model.md`（§1）、`architecture/public-interfaces.md`（§1、§4、§6）、`architecture/evaluation-semantics.md`（§1、§5）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`
 
@@ -24,7 +24,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/
       EngineeringTableView.cpp VirtualResultModel.cpp
   test/SessionStateTest.cpp SceneProjectionTest.cpp CommonComponentsTest.cpp
       PolicyUiTest.cpp ResponsiveListsTest.cpp
-  testdata/ evidence/
+  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 ```
 
 CMake target：`sdurws_ird_ui`、`sdurws_ird_ui_model_test`、`sdurws_ird_ui_widget_test`。允许依赖：WP-03～05/09 公共头（代码依赖，见 §1 裁决①）、WP-07/08 端口头（集成期接入，裁决②）、Qt Widgets/Model-View、RobWorkStudio 场景 API；禁止：业务插件私有对象与 Widget 头、跨线程操作 QWidget、直接写项目文件、绕过 `IProjectCommandService` 的持久化和手工 CSV。

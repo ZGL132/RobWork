@@ -1,6 +1,6 @@
 # 模块详细方案：<模块名>
 
-方案版本：v0.1；对应需求基线：v0.7；负责 WP：WP-XX；阶段/发布：阶段 X / R1 或 R2；架构契约：`architecture/<file>.md`；任务卡：`agent-tasks/WP-XX-TYY-*.md`。
+方案版本：v0.1；对应需求基线：v0.8；负责 WP：WP-XX；阶段/发布：阶段 X / R1 或 R2；架构契约：`architecture/<file>.md`；任务卡：`agent-tasks/WP-XX-TYY-*.md`。
 
 治理状态：Draft；文档所有者：<模块/WP 所有者>；评审者：<架构/测试负责人>；D0 基线：`IRD-D0-20260829`；最近评审：未评审。
 

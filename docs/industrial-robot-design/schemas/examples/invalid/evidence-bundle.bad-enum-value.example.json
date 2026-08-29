@@ -1,0 +1,53 @@
+{
+  "evidenceBundleId": "9a4d1e70-b2f8-4c53-90a6-7e1b5d8c4208",
+  "schemaVersion": 1,
+  "createdAt": "2026-08-29T09:33:05Z",
+  "runIdentity": {
+    "projectId": "6f1d2c34-9a81-4b7e-8c21-0d5a9e3f1001",
+    "branchId": "main",
+    "revisionId": "rev-000007",
+    "runId": "run-20260829-001",
+    "attemptId": "attempt-002"
+  },
+  "configSnapshot": {
+    "analysisConfigurationId": "1f8b6c40-d3e7-4a29-8b5d-50e7c9a23007",
+    "contentDigest": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  },
+  "resourceFidelity": [
+    {
+      "resourceId": "c81b3e7f6a2d4905b7c9e1f3a5d708294b6d8f0a2c4e6082a4c6e80a2c4e6082",
+      "resourceKind": "CollisionGeometry",
+      "fidelity": "ImmutableCopy"
+    },
+    {
+      "resourceId": "77aa11bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff001122",
+      "resourceKind": "MeshGeometry",
+      "fidelity": "ImmutableCopy"
+    }
+  ],
+  "diagnostics": [],
+  "statistics": {
+    "samplesEvaluated": 1000,
+    "itemsPass": 2,
+    "itemsWarning": 1,
+    "itemsInfeasible": 0,
+    "itemsDataInsufficient": 0,
+    "positionCoverageRatio": 1.2,
+    "orientationCoverageRatio": 0.996
+  },
+  "provenance": {
+    "toolVersion": "0.1.0",
+    "evaluatorId": "kinematics-evaluator",
+    "evaluatorVersion": "1.2.0",
+    "robWorkVersion": "1.8.0",
+    "robWorkSimVersion": "1.8.0",
+    "algorithmVersion": "1.0.0",
+    "randomSeed": 20260829
+  },
+  "reproduction": {
+    "commandKind": "RunKinematicsEvaluation",
+    "commandId": "3f8a0d1c-5b2e-4f67-9a0b-8d4c2e6f1309",
+    "snapshotId": "2b6e8f40-7c91-4d35-a2b8-58d0e4c6f701",
+    "sliceId": "5f2a9c0e1b7d4a38c6e0f2b1d9a84730e5c2f6b8d1a0937e4c5b2f8a0d3e6c19"
+  }
+}

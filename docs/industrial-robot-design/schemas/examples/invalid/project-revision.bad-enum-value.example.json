@@ -1,0 +1,26 @@
+{
+  "revisionId": "rev-000007",
+  "parentRevisionId": "rev-000006",
+  "branchId": "main",
+  "objects": [
+    {
+      "objectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "objectRevision": 3,
+      "sha256": "5f2a9c0e1b7d4a38c6e0f2b1d9a84730e5c2f6b8d1a0937e4c5b2f8a0d3e6c1G",
+      "bytes": 48213
+    },
+    {
+      "objectId": "d92f7a10-88b3-4c15-b6e4-77a1e5c39004",
+      "objectRevision": 2,
+      "sha256": "c81b3e7f6a2d4905b7c9e1f3a5d708294b6d8f0a2c4e6082a4c6e80a2c4e6082",
+      "bytes": 15670
+    }
+  ],
+  "policyContentId": "0e9d8c7b6a594837261504f3e2d1c0b9a897867564534241403f2e1d0c9b8a71",
+  "createdToolVersion": "0.1.0",
+  "createdAt": "2026-08-29T08:12:41Z",
+  "commandSummary": {
+    "commandKind": "ApplyRobotDesignEdit",
+    "commandId": "e5c2f6b8-d1a0-437e-8c5b-2f8a0d3e6c19"
+  }
+}

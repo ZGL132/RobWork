@@ -3,9 +3,9 @@
 本目录是工业机械臂设计软件重构的唯一权威文档入口。旧插件的阶段性方案、临时设计稿和历史复盘不再作为实施依据；需要追溯时使用 Git 历史。
 
 > 文档治理基线：`IRD-D0-20260829`  
-> 当前架构检查点：`IRD-D2-20260829`（D1 登记消歧 + D2 五大核心契约正文完成，接受评审待签署）  
-> 产品需求基线：`requirements.md` v0.7  
-> 总体执行基线：`development-task-breakdown.md` v1.2  
+> 当前架构检查点：`IRD-D10-20260829`（D0～D12 全链完成；契约联合评审通过，全部契约与 ADR 为 `Accepted`）  
+> 产品需求基线：`requirements.md` v0.8  
+> 总体执行基线：`development-task-breakdown.md` v1.3  
 > 代码基线：`94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`  
 > 基线说明：[DOCUMENT-BASELINE.md](DOCUMENT-BASELINE.md)
 
@@ -17,7 +17,7 @@
 4. [开发任务拆解总纲](development-task-breakdown.md)：26 个工作包、依赖关系、阶段门禁、责任分离和关键路径。
 5. [工作包计划](work-packages/)：WP-00～WP-25 的详细实施计划。
 6. [智能体任务卡](agent-tasks/)：WP-00～WP-25 的一任务一卡执行上下文。
-7. [需求追踪矩阵](requirement-traceability.csv)：124 项需求到实现、测试、评审、验收场景、阶段和发布切片的机器可检查映射。
+7. [需求追踪矩阵](requirement-traceability.csv)：128 项需求到实现、测试、评审、验收场景、阶段和发布切片的机器可检查映射；[治理追踪](governance-traceability.csv)登记治理豁免任务（WP-00 等）。
 8. [性能基准清单](benchmark-manifest.json)：固定硬件、数据集、线程、种子和统计口径。
 9. [持久化 Schema](schemas/)：机器可验证 JSON Schema 与示例（D3 交付物）。
 10. `generate-traceability.ps1` 与 `validate-development-docs.ps1`：派生追踪和文档门禁。
@@ -45,7 +45,7 @@
 | `Accepted` | 已通过评审，可作为下游和实现依据 |
 | `Superseded` | 已被新版本或 ADR 替代，不再作为实施依据 |
 
-需求 v0.7 当前为 `Accepted`。架构契约 D2 核心正文（规范运动学、评估语义、执行模型、候选编译、持久化边界、公共接口）已完成，在消费者评审签署与 D3 Schema 机器验证完成前整体保持 `Proposed`；模块方案、工作包和任务卡不得仅因文件存在就视为可实施。具体入口门禁见 [DOCUMENT-BASELINE.md](DOCUMENT-BASELINE.md)。
+需求 v0.8 当前为 `Accepted`。全部 25 项架构契约、76 个公共符号与 ADR-001～005 已于 `IRD-D10-20260829` 契约联合评审通过（评审记录见 [architecture/review/2026-08-29-contract-review.md](architecture/review/2026-08-29-contract-review.md)），整体为 `Accepted`；此后语义变更必须走契约变更流程（所有者提出、ADR、消费者影响、版本提升）。模块方案、工作包与任务卡状态见 [DOCUMENT-BASELINE.md](DOCUMENT-BASELINE.md) 与 [agent-tasks/task-status.md](agent-tasks/task-status.md)。
 
 ## 维护规则
 
@@ -61,12 +61,10 @@
 
 ## 当前状态
 
-- 需求基线：v0.7。
-- 需求数量：124，其中 P0 110 项、P1 14 项。
+- 需求基线：v0.8；需求 128 项（P0 114、P1 14），含 D12 新增试点/交付锚点 PILOT-01/02、DEL-01/02。
 - 验收场景：AT-01～AT-19（AT-18/AT-19 按阶段分链路覆盖）。
-- D0 已冻结文档权威层次、状态、变更流程、代码基线和实施入口门禁。
-- D1 已完成契约/符号登记和 ADR-001～004 正文；D2 已完成五大核心契约正文与 ADR-005（评估正交状态拆分与命名裁决），消除 `EvaluationEnvelope` 违禁名、`TaskState` 缺态、`q-zero` 双偏置三类权威冲突；全部架构文档在消费者签署前维持 `Proposed`。
-- D3（机器可验证 Schema 与示例）正在交付：`schemas/` 目录。
-- 工作包与任务卡的实际文件数、索引对应和链接完整性以当前仓库运行校验脚本的结果为准；文件存在不等于状态为 `Ready`。WP-13～WP-25 的模块详设与任务卡仍为骨架/`Planned`，须按 D4～D7 顺序补齐后才可实施（WP-11 任务卡以本地仓库实际内容为准）。
-- 模块详细方案：23 篇（平台 10＋业务 12＋testkit）已按 D2 契约重写为 v0.3，内容完整待评审；引用的架构契约签署前保持 `Planned`。
-- 当前产品边界：单项目单机械臂；领域对象、运行时作用域和项目格式为后续多机械臂扩展保留命名空间。
+- D0～D9 完成：文档权威层次与基线冻结、契约/符号登记、五大核心契约正文、机器可验证 Schema（14 个 Schema、45 个非法示例负例）、23 篇模块详设 v0.3、26 个工作包计划、144 张 16 字段任务卡、真实追踪矩阵与门禁增强。
+- D10（语义闭合）完成：任务级循环依赖解除、诊断注册表 117 码逐项裁决一致、7 个跨模块类型补登记、WP-04/WP-12 口径统一、契约联合评审通过（`Accepted`）。
+- D11（执行闭合）完成：证据根目录统一为 `out/test-evidence/wp-xx/<run-id>/`、任务卡验证命令可执行化（rg、必执行＋回退、无占位路径）、提交格式中文化（144/144）。
+- D12（治理闭合）完成：反向追踪闭合（治理豁免 CSV＋PILOT/DEL 需求锚点）、文档状态刷新、任务状态账本建立、验证器新增八项检查。
+- 实施入口：按 `development-task-breakdown.md` §8/§9 阶段顺序与 [agent-tasks/task-status.md](agent-tasks/task-status.md) 账本从 WP-00/WP-01 开始；当前产品边界为单项目单机械臂，多机械臂扩展保留命名空间。

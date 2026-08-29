@@ -3,7 +3,7 @@
 - **Task ID / 需求 ID / ADR / 阶段：**WP-10-T02；UX-01～UX-08、KIN-06、AT-04、AT-05；ADR-001（单机械臂作用域）；阶段 A / R1
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/session-ui.md` v0.3、`architecture/public-interfaces.md` §6
 - **前置任务及必需工件：**WP-10-T01（`SessionState`/`StageStatusModel` 工件合入）；WP-06-T02（`IRuntimeNameResolver`/`RuntimeNameMap` 公共头——代码前置）；WP-04-T02（`IProjectQuery` 公共头）；WP-05-T02（`AnalysisSnapshot` 公共头）；WP-01-T03（测试入口）
-- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ISceneProjection.hpp`、`SceneProjection.hpp`、`SelectionModel.hpp`；`ui/src/SceneProjection.cpp`、`SelectionModel.cpp`；`ui/test/SceneProjectionTest.cpp`；`ui/testdata/scene/`；`ui/evidence/WP-10/T02/`；`ui/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
+- **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ISceneProjection.hpp`、`SceneProjection.hpp`、`SelectionModel.hpp`；`ui/src/SceneProjection.cpp`、`SelectionModel.cpp`；`ui/test/SceneProjectionTest.cpp`；`ui/testdata/scene/`；`ui/out/test-evidence/wp-10/<run-id>/`；`ui/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**`ISceneProjection` 签名以 public-interfaces §6 冻结为准不得偏离；WP-06 名称解析实现、WP-04/05 公共接口、RobWork 编译工件（WorkCell/DWC 由 WP-06 产出）；`architecture/`、`module-design/`、其他模块目录；禁止按显示名称查找对象、跨线程操作 QWidget
 - **修改前接口：**无（投影接口与选择模型不存在；旧插件直接改场景节点）
 - **修改后接口：**`ISceneProjection::projectCurrent() const -> expected<SceneSnapshot, ProjectError>`、`projectCandidate(const ResultRef&) const -> expected<SceneSnapshot, ProjectError>`（会话态投影，不回写设计基线）；`SelectionModel` 以 `objectId` 为唯一键，`subscribe` 通知列表/三维/详情三视图
@@ -20,7 +20,11 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_model_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_model_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`grep -rn "scopedName\s*+\|+\s*\"\\.\"" ui/src/SceneProjection.cpp` 零命中（禁止名称拼接）；`grep -rn "set.*Pose\|write" ui/src/SceneProjection.cpp` 命中处仅限 `SessionState.previewRef` 保存
-- **证据工件：**`ui/evidence/WP-10/T02/`——投影节点表（objectId↔显示名来源）、恢复前后姿态日志、三视图联动事件序列、失败诊断样本
-- **提交格式：**`WP-10-T02: implement read-only scene projection`
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "scopedName\s*\+|\+\s*\"\.\"" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp` 零命中（禁止名称拼接）；`rg -n "set.*Pose|write" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp` 命中处仅限 `SessionState.previewRef` 保存
+- **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——投影节点表（objectId↔显示名来源）、恢复前后姿态日志、三视图联动事件序列、失败诊断样本
+- **提交格式：**`WP-10-T02: 新增只读场景投影与预览恢复`
+
+  - 新增 ISceneProjection 只读投影与 SelectionModel 三视图联动实现
+  - 新增 投影失败/预览恢复测试及目标登记
+  - 新增 投影节点表与恢复姿态日志证据记录
 - **停止与升级条件：**场景 API 要求回写领域对象、名称无法经 `IRuntimeNameResolver` 反解、或 WP-06 公共头未合入时暂停；接口签名需偏离 public-interfaces §6 时升级架构评审，不得私改

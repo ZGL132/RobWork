@@ -1,9 +1,9 @@
 # WP-05-T01 输入切片与依赖失效
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-05-T01；需求 CON-01～CON-06、NFR-COR-04；ADR-005；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、public-interfaces §7（`EvaluatorDependencyManifest/EvaluatorInputSlice` 字段冻结）、execution-model §3、module-design/snapshot-result.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、public-interfaces §7（`EvaluatorDependencyManifest/EvaluatorInputSlice` 字段冻结）、execution-model §3、module-design/snapshot-result.md v0.3。
 - **前置任务及必需工件：**WP-03-T01～T04（core 值类型/身份/四元数符号规范化）；WP-04-T01～T02（`IProjectQuery.load`、`ProjectRevision`）；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/`）：创建 `include/sdurws/ird/evidence/EvaluatorDependencyManifest.hpp`、`EvaluatorInputSlice.hpp`、`EvidenceDiagnostics.hpp`、`src/DependencyResolver.cpp`、`src/InputSlice.cpp`、`src/EvidenceJson.cpp`（切片段）、`test/InputSliceTest.cpp`、`testdata/evidence/slice/`、`evidence/WP-05/`；修改 `CMakeLists.txt`（登记 `sdurws_ird_evidence`/`_test`）；删除：无。
+- **允许创建/修改/删除的文件**（模块根 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/`）：创建 `include/sdurws/ird/evidence/EvaluatorDependencyManifest.hpp`、`EvaluatorInputSlice.hpp`、`EvidenceDiagnostics.hpp`、`src/DependencyResolver.cpp`、`src/InputSlice.cpp`、`src/EvidenceJson.cpp`（切片段）、`test/InputSliceTest.cpp`、`testdata/evidence/slice/`、`out/test-evidence/wp-05/<run-id>/`；修改 `CMakeLists.txt`（登记 `sdurws_ird_evidence`/`_test`）；删除：无。
 - **禁止修改的文件和公共接口：**requirements.md 与 architecture/、module-design/ 文档；WP-03 枚举与谓词；WP-04 revision 格式；评估算法；手工追踪 CSV；WP-06/07 代码（`policyContentId/nameMapId` 为不透明内容 ID，仅契约引用）。
 - **修改前接口：**无（evidence 模块不存在；WP-04 仅提供查询端口）。
 - **修改后接口：**`DependencyResolver`（按 manifest 选字段/资源/上游）；切片依赖条目 `{fieldPath,contentIdentity,semanticRole}`（列表按 `fieldPath` UTF-8 字节序排序）；`InvalidationReason{fieldPath,semanticRole,reason}`；`sliceHash` 规范化（见 RED）；字段以 public-interfaces §7 为准，不复制契约表。
@@ -16,10 +16,14 @@
   - 边界：显示开关、当前选择、名称拼写变化记为 `NonPhysical` 不失效物理结果，但 `nameMapId` 仍进切片；重复字段、未知 semanticRole、大列表（10k 条）排序稳定。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evidence_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_evidence_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_evidence_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；哈希规则与 module-design §5 逐字一致（键序、空白、编码）；无对 WP-06 `IRuntimeNameResolver` 的代码引用；无省略号命令。
-- **证据工件：**`evidence/WP-05/T01/`：失效矩阵、规范 JSON 样例、sliceHash 对照表、诊断 JSON、命令日志。
-- **提交格式：**`WP-05-T01: implement evaluator input slices`。
+- **证据工件：**`out/test-evidence/wp-05/<run-id>/`：失效矩阵、规范 JSON 样例、sliceHash 对照表、诊断 JSON、命令日志。
+- **提交格式：**`WP-05-T01: 新增评估器输入切片`
+
+  - 新增 依赖解析、切片规范化与 sliceHash 哈希实现
+  - 新增 哈希确定性与失效矩阵测试及目标登记
+  - 新增 失效矩阵与 sliceHash 对照表证据记录
 - **停止与升级条件：**需求未定义某字段是否影响评估器、需要改 WP-03 类型或哈希规则与契约不一致时停止并报告；失效矩阵变更必须先改 WP-05 计划 §4.1 与模块详设。

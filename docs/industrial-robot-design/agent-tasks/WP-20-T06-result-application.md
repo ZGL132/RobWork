@@ -4,7 +4,7 @@
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-20-T01
 - **前置任务及必需工件：**WP-20-T04（可行集合/`ParetoSet` 工件——应用对象仅取可行候选）、WP-20-T05（缓存/确定性工件）；WP-04-T02（`DomainCommand`/`IProjectCommandService` 命令端口）、WP-05-T04（`IResultRepository` 结果仓库）
 - **允许创建/修改/删除的文件**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）：
-  - 创建：`test/ResultApplicationTest.cpp`、`evidence/WP-20/T06/`
+  - 创建：`test/ResultApplicationTest.cpp`、`out/test-evidence/wp-20/<run-id>/`
   - 修改：`candidate/include/sdurws/ird/opt/CandidateCompiler.hpp`、`candidate/src/CandidateCompiler.cpp`（追加运行结果装配＋方案分支应用包组装——详设树无独立应用头文件，落位于既有 candidate 文件）、`plugins/optimization/CMakeLists.txt`（仅追加测试文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**WP-04/WP-05 源码（只经端口调用）；T01～T05 冻结语义（含稳定 ID 公式与缓存键）；`DesignVector`/`CandidatePatch` 规范序列化；requirements/CSV/architecture/module-design；候选/运行结果直写 revision；`OptimizationRunResult` 全量判定语义归 WP-21（本卡只做静态追加）
 - **修改前接口：**候选链路止于 `ParetoSet`（T04），运行结果不入仓库、无应用命令包
@@ -18,10 +18,14 @@
   - 失败：Given 不可行候选或指纹不匹配，When 请求应用，Then 拒绝并列出原因、当前修订保持不变；任何候选路径出现修订写入即失败
 - **精确验证命令**（仓库根、VS x64；三形式，仅用登记目标）：
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_definition_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_definition_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_definition_test$"`
   - 预期退出码 0
 - **diff 和禁止项检查：**diff 仅含允许清单；`grep -rnE "createRevision|writeRevision|new ProjectRevision" candidate/src/` 零直接修订写入（只经 WP-04 命令）；`grep -rn "OptimizationStudy\b"` 禁名零命中；无第二套结果仓库
-- **证据工件：**`evidence/WP-20/T06/`——修订/结果当前性矩阵（候选数×修订数）、应用命令序列与新旧修订 ref、预算锚点记录、AT-12 阶段 B 证据、测试日志
-- **提交格式：**`WP-20-T06: integrate optimization results`
+- **证据工件：**`out/test-evidence/wp-20/<run-id>/`——修订/结果当前性矩阵（候选数×修订数）、应用命令序列与新旧修订 ref、预算锚点记录、AT-12 阶段 B 证据、测试日志
+- **提交格式：** `WP-20-T06: 集成优化结果应用`
+
+  - 新增优化结果比较与应用链路
+  - 新增应用守卫测试
+  - 新增运行证据记录
 - **停止与升级条件：**WP-04 命令端口不支持"方案分支＋恰好一个新修订＋复算触发"语义、或结果 payload 被回写时，暂停并升级 WP-04 所有者；任何候选/运行路径产生修订立即停止并报告

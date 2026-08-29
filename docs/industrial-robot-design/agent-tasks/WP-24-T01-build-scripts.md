@@ -25,7 +25,7 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release -Release R1`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\verify-package.ps1 -Package <包路径>`
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\smoke-install.ps1 -InstallDir <安装目录>`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_installer_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_installer_test$"`（只跑脚本校验）
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_installer_test`；`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_installer_test$"`（只跑脚本校验）
 - **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；`RobWork/.gitlab-ci.yml` 仅追加打包 job（既有 stage/include 不变）；脚本无 PowerShell 7 专属语法、无 offscreen/GUI 并行、无自动删除构建目录；未改 WP-01 既有脚本与业务代码。
 - **证据工件：** `RobWork/installer/industrial-robot/evidence/t01-build-scripts.log`：三脚本 5.1/7 双环境运行日志（含退出码）、`sdurws_ird_installer_test` 输出、CI job 产物清单（离线包＋verify 报告）、资产口径标注记录、命令原文与 commit。
 - **提交格式：** `WP-24-T01: 构建测试与边界脚本`

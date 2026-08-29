@@ -1,0 +1,43 @@
+{
+  "snapshotId": "2b6e8f40-7c91-4d35-a2b8-58d0e4c6f701",
+  "schemaVersion": 1,
+  "createdAt": "2026-08-29T09:30:00Z",
+  "sourceRevision": {
+    "projectId": "6f1d2c34-9a81-4b7e-8c21-0d5a9e3f1001",
+    "branchId": "main",
+    "revisionId": "rev-000007"
+  },
+  "objectRevisions": [
+    { "objectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003", "objectRevision": 3 },
+    { "objectId": "d92f7a10-88b3-4c15-b6e4-77a1e5c39004", "objectRevision": 2 },
+    { "objectId": "5a3c8e21-f0b4-49d7-8a2c-93b6d1f42005", "objectRevision": 1 },
+    { "objectId": "1f8b6c40-d3e7-4a29-8b5d-50e7c9a23007", "objectRevision": 1 },
+    { "objectId": "7d9e4f30-a2c5-4b18-9e0f-04c8b2a61006", "objectRevision": 1 }
+  ],
+  "config": {
+    "analysisConfigurationId": "1f8b6c40-d3e7-4a29-8b5d-50e7c9a23007",
+    "contentDigest": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  },
+  "evaluator": {
+    "evaluatorId": "kinematics-evaluator",
+    "evaluatorVersion": "1.2.0"
+  },
+  "robWorkVersion": "1.8.0",
+  "robWorkSimVersion": "1.8.0",
+  "randomSeed": "NaN",
+  "threadCount": 8,
+  "manifest": {
+    "requiredFields": [
+      "robotDesign.joints",
+      "robotDesign.targetChainId",
+      "requirements.tasks",
+      "requirements.regions",
+      "policy.collision"
+    ],
+    "requiredResources": [],
+    "requiredUpstreamArtifacts": [],
+    "optionalEvidence": ["ik-solution-spread", "region-coverage-heat-map"]
+  },
+  "resolvedPolicyContentId": "0e9d8c7b6a594837261504f3e2d1c0b9a897867564534241403f2e1d0c9b8a71",
+  "nameMapId": "7d9e4f30-a2c5-4b18-9e0f-04c8b2a61006"
+}

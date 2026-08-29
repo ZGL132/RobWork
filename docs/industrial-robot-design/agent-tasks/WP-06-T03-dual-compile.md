@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_runtime(_co
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；三个新类型未出现在公共 include 导出；无直接写项目 revision 的调用；无 Qt Widgets include
-- **证据工件：**`runtime/evidence/WP-06/T03/`：binding manifest、failpoint 日志、artifact hash、RobWork 版本、资源释放记录、命令日志与评审签名
-- **提交格式：**`WP-06-T03: implement atomic dual runtime compilation`
+- **证据工件：**`runtime/out/test-evidence/wp-06/<run-id>/`：binding manifest、failpoint 日志、artifact hash、RobWork 版本、资源释放记录、命令日志与评审签名
+- **提交格式：**`WP-06-T03: 新增 WorkCell/DWC 确定性双编译`
+
+  - 新增 隔离 builder 双编译、交叉校验与原子发布实现
+  - 新增 failpoint 注入测试与目标登记
+  - 新增 artifact 哈希与失败清理证据记录
 - **停止与升级条件：**RobWork API 无法支持全成全败或指针所有权无法证明时暂停并报告，不降级返回部分指针；需新增 RobWork 版本适配时升级 WP-01-T05 基线评审

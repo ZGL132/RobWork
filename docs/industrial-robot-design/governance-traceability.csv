@@ -1,0 +1,5 @@
+﻿"task_id","wp","trace_kind","purpose","gate_or_checkpoint","artifact"
+"WP-00-T01","WP-00","GovernanceExempt","冻结需求基线版本与基线提交（DOCUMENT-BASELINE §3）","IRD-D0-20260829","out/test-evidence/wp-00/<run-id>/"
+"WP-00-T02","WP-00","GovernanceExempt","生成并校验需求—任务—测试追踪矩阵与反向追踪","IRD-D8-20260829","out/test-evidence/wp-00/<run-id>/"
+"WP-00-T03","WP-00","GovernanceExempt","文档验证门禁脚本、Schema 门禁与任务状态账本维护","IRD-D3/D9/D12-20260829","out/test-evidence/wp-00/<run-id>/"
+"WP-00-T04","WP-00","GovernanceExempt","独立评审与契约联合评审记录归档","IRD-D10-20260829","out/test-evidence/wp-00/<run-id>/"

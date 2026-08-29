@@ -1,6 +1,6 @@
 # 安全导入导出模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.7；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-11；阶段/发布：阶段 A / R1；任务卡：`agent-tasks/WP-11-T01～T05`
 - 架构契约：`architecture/persistence-schema.md`（§1、§2.4）、`architecture/public-interfaces.md`（§6）、`architecture/testing-contract.md`；Schema：`schemas/catalog/column-dictionary.schema.json`、`schemas/catalog/catalog-manifest.schema.json`
 
@@ -21,7 +21,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/
       JsonDocumentReader.cpp ResourceImportService.cpp CatalogPackageReader.cpp
   test/PathBudgetTest.cpp CsvReaderTest.cpp CsvWriterTest.cpp
       CatalogImportTest.cpp ResourceBoundaryTest.cpp
-  testdata/ evidence/
+  testdata/                      # 证据统一写 out/test-evidence/wp-xx/<run-id>/（AGENTS §3）
 ```
 
 CMake target：`sdurws_ird_io`、`sdurws_ird_io_test`、`sdurws_ird_io_contract_test`。允许依赖：WP-03 core、WP-09 诊断（代码前置 WP-03、09，总纲 §5.2）、Qt Core/标准库；禁止 Qt Widgets、未登记解析库、业务插件第二套路径/CSV/JSON 读取和直接写 revision。资源副本写入经 WP-04 内容对象端口（契约引用，集成期交付，本模块不直接写 `objects/`）。

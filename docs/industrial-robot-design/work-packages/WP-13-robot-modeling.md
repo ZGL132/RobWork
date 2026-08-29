@@ -1,9 +1,9 @@
 # WP-13 机械臂建模实施计划
 
 > 阶段/发布：阶段 B / R1（仅实现 OPT-B 所需模型能力）；负责 WP：WP-13。
-> 实施语义唯一来源：`module-design/robot-modeling.md` v0.3（需求基线 v0.7；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/robot-modeling.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-06、WP-10、WP-11；共同构建/门禁入口 WP-01、黄金数据框架 WP-02。人周：8～12。
-> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设均处 Proposed 时不得进入实现）。
+> 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设已于 IRD-D10-20260829 联合评审 Accepted；实现启动按总纲依赖顺序与任务状态账本）。
 
 **需求与契约：** MDL-01～14、AT-01/16/18（阶段 B 链路）；架构契约与模块方案清单见 §2。  
 **拥有目录：** `industrialrobot/plugins/modeling/` 及其测试（文件树见 §3）。  
@@ -48,7 +48,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/
       DhConversionTest.cpp   MaterialToolTest.cpp   RuntimeCompileTest.cpp
       IdentityRegressionTest.cpp   ModelingGuiTest.cpp
   testdata/modeling/{dh,explicit,urdf,axes,branches,materials,failpoints}/
-  evidence/WP-13/
+  # 证据 → out/test-evidence/wp-13/<run-id>/（AGENTS §3，不入源码树）
 ```
 
 CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_modeling`（计算核心，无 Qt Widgets）、`sdurws_ird_modeling_plugin`（薄插件）、`sdurws_ird_modeling_test`、`sdurws_ird_modeling_contract_test`、`sdurws_ird_modeling_gui_test`。
@@ -207,7 +207,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - MDL-01～14、AT-01、AT-15～17 及 AT-18 阶段 B 子链路通过（阶段 B 门禁，总纲 §8.2）。
 - 任意编译失败不产生修订；所有对象引用使用 objectId；往返夹具通过 `validate-schemas.ps1`；错误码已登记入 diagnostics 目录。
 - 排序/导入报告/转换判定/估算值/序列化字节在同输入下确定一致。
-- 证据写入 `evidence/WP-13/` 并签署：夹具哈希、导入报告、转换判定与残差、编译日志、身份矩阵、GUI 录屏与独立评审签名。
+- 证据写入 `out/test-evidence/wp-13/<run-id>/` 并签署：夹具哈希、导入报告、转换判定与残差、编译日志、身份矩阵、GUI 录屏与独立评审签名。
 - 旧建模目标不进入 R1 安装包。
 
 ## 12. 人周与追踪

@@ -1,9 +1,9 @@
 # WP-04-T04 内容对象、资源与草稿隔离
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-04-T04；需求 CON-01、CON-03、NFR-REL-01；ADR-002；阶段 A / R1。
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.7、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §1（§2.4 对象头裁决）、§4、module-design/persistence.md v0.3。
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；文档：requirements v0.8、检查点 `IRD-D2-20260829`、architecture/persistence-schema.md §1（§2.4 对象头裁决）、§4、module-design/persistence.md v0.3。
 - **前置任务及必需工件：**WP-04-T01（`ProjectPath` 安全读取）、WP-04-T03（`TransactionWriter` 原子落位）、WP-03 core；WP-01-T03（测试入口）。
-- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ContentObject.hpp`、`ProjectDraft.hpp`、`src/ContentObjectStore.cpp`、`src/DraftStore.cpp`、`src/Reachability.cpp`、`test/ResourceDraftTest.cpp`、`evidence/WP-04/`；修改 `CMakeLists.txt`；删除：无。
+- **允许创建/修改/删除的文件**（模块根同 WP-04-T01）：创建 `include/sdurws/ird/project/ContentObject.hpp`、`ProjectDraft.hpp`、`src/ContentObjectStore.cpp`、`src/DraftStore.cpp`、`src/Reachability.cpp`、`test/ResourceDraftTest.cpp`、`out/test-evidence/wp-04/<run-id>/`；修改 `CMakeLists.txt`；删除：无。
 - **禁止修改的文件和公共接口：**evaluator/result 接口（WP-05）；`ProjectRevision` 字段含义；GUI 会话状态；直接删除历史对象；T01～T03 冻结接口；文档与 schemas/。
 - **修改前接口：**T03 的事务写入仅覆盖领域 JSON/manifest，无内容对象库、无草稿库。
 - **修改后接口：**`ContentObjectRef{sha256,bytes,成员形态}`（`object.json` 或 `payload.bin + meta.json` 二选一，目录名＝内容 SHA-256 小写）；`DraftRecord{draftId,sessionId,baseRevisionId,editedAt,patch}`；追加协议原语（供 WP-05/08/12 复用：临时目录→哈希校验→原子 rename，不产生修订不切 HEAD）；错误码 `IRD-PERSIST-SOURCE-MISSING`、`IRD-PERSIST-SOURCE-CHANGED`（资源预算码按 WP-11/总纲登记项引用）。
@@ -16,10 +16,14 @@
   - 边界：对象篡改、mediaType 不符、超大文件、引用图环、草稿并发保存、草稿损坏、会话重启后草稿恢复但不产生 revision、不创建输入切片、不触发计算。
 - **精确验证命令：**
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'`
-  - `cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
-  - `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
+  - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_project_test`
+  - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_project_test$"`
   - 预期：目标全部用例通过（退出码 0）；脚本未交付时以原生形式执行，不复制临时脚本
 - **diff 和禁止项检查：**diff 仅命中允许清单；对象头仅携带 `objectId/ownerScopeId/localName/objectRevision`＋来源＋对象 Schema 版本（§2.4 裁决，项目/分支/修订关联只在 manifest）；无直接删除历史对象路径。
-- **证据工件：**`evidence/WP-04/T04/`：对象哈希清单、可达性 dry-run 报告、草稿与 revision 对比、队列调用计数、诊断 JSON。
-- **提交格式：**`WP-04-T04: implement immutable resources and draft isolation`。
+- **证据工件：**`out/test-evidence/wp-04/<run-id>/`：对象哈希清单、可达性 dry-run 报告、草稿与 revision 对比、队列调用计数、诊断 JSON。
+- **提交格式：**`WP-04-T04: 新增不可变资源对象与草稿隔离`
+
+  - 新增 内容寻址对象库、可达性 dry-run 与草稿库实现
+  - 新增 对象不可变/去重与草稿隔离测试及目标登记
+  - 新增 对象哈希清单与可达性报告证据记录
 - **停止与升级条件：**清理算法无法证明历史可达性、草稿可能进入 evaluator、或需改变快照/追加契约时停止并报告；资源预算参数未登记时提请 WP-11/总纲补登记。

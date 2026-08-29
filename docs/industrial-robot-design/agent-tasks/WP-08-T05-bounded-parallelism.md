@@ -20,6 +20,10 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_execution(_
 ```
 
 - **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；无 `unbounded`/无上界队列构造；合并代码无按完成时间排序残留；默认值无第二份硬编码副本；无评估算法文件改动
-- **证据工件：**`execution/evidence/WP-08/T05/`：队列/内存曲线、吞吐 P50/P95 与峰值内存、重复运行 diff（逐字节对照）、预算诊断样例、命令日志与评审签名
-- **提交格式：**`WP-08-T05: implement bounded deterministic execution`
+- **证据工件：**`execution/out/test-evidence/wp-08/<run-id>/`：队列/内存曲线、吞吐 P50/P95 与峰值内存、重复运行 diff（逐字节对照）、预算诊断样例、命令日志与评审签名
+- **提交格式：**`WP-08-T05: 新增有界并行确定性执行`
+
+  - 新增 有界队列准入、资源预算控制与确定性合并实现
+  - 新增 并行确定性回归测试与目标登记
+  - 新增 队列/内存曲线与重复运行 diff 证据记录
 - **停止与升级条件：**结果依赖线程完成顺序、内存预算在目标平台无法测量或性能数据不可复现时暂停并升级至 WP-08 所有者与独立测试负责人

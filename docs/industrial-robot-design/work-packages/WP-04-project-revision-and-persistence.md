@@ -19,7 +19,7 @@ WP-04 交付可恢复的目录式 `.rwdesign` 项目仓库：已应用状态以�
 
 ## 3. 文件所有权与依赖
 
-拥有目录为 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/`，包括 `include/sdurws/ird/project/`、`src/`、`test/`、`testdata/` 和 `evidence/`。允许依赖 WP-03 core、Qt Core 文件/JSON、批准的 SHA-256 实现和标准库；禁止 Qt Widgets、业务插件私有头、WP-05 结果实现和跨模块直接写文件。公共接口只能在本目录修改。
+拥有目录为 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/`，包括 `include/sdurws/ird/project/`、`src/`、`test/`、`testdata/` 和 `out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许依赖 WP-03 core、Qt Core 文件/JSON、批准的 SHA-256 实现和标准库；禁止 Qt Widgets、业务插件私有头、WP-05 结果实现和跨模块直接写文件。公共接口只能在本目录修改。
 
 计划目标：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_project_contract_test`。
 
@@ -27,20 +27,20 @@ WP-04 交付可恢复的目录式 `.rwdesign` 项目仓库：已应用状态以�
 
 ```text
 ProjectName.rwdesign/
-  HEAD
+  HEAD                                # JSON 文档（persistence-schema §2.1）
   project.json
   revisions/<revision-id>/manifest.json
-  revisions/<revision-id>/domain/<aggregate>.json
-  objects/<sha256>                 # 不可变文件内容
-  results/<run-id>/                 # 只追加
-  checkpoints/<run-id>/<attempt-id>/# 只追加
-  drafts/<draft-id>.json            # 会话草稿，不是修订
-  reports/<report-id>/              # 只追加
+  objects/<sha256>/                    # 内容寻址只读对象目录（两种成员组合之一）
+  results/<run-id>/                    # 只追加（WP-05）
+  checkpoints/<run-id>/<attempt-id>/   # 只追加（WP-05/WP-08）
+  drafts/<draft-id>/                   # 会话草稿，不是修订
+  reports/<report-id>/                 # 只追加（WP-12）
+  .staging/<transaction-id>/           # 瞬态事务目录（未提交事务；枚举不得视为修订）
 ```
 
-目录是唯一规范格式，ZIP 只用于传输封装。内部路径统一 POSIX `/`，读取时拒绝空段、`.`、`..`、绝对路径、UNC、符号链接逃逸和项目根外引用。`HEAD` 是 UTF-8 无 BOM 文本，固定两行 `branchId=<id>`、`revisionId=<id>`；空、重复键、未知键或指向缺失修订均拒绝。
+目录是唯一规范格式，ZIP 只用于传输封装。内部路径统一 POSIX `/`，读取时拒绝空段、`.`、`..`、绝对路径、UNC、符号链接逃逸和项目根外引用。`HEAD` 是 UTF-8 无 BOM 的 JSON 文档，字段以 `architecture/persistence-schema.md` §2.1 为唯一权威（`schemaVersion`、`formatVersion`、`projectId`、`currentBranch`、`branches`、`toolVersion`、`updatedAt`），原子替换写入；空文档、重复键、未知必填键或指向缺失修订均拒绝。`objects/<sha256>/` 是**目录**（与需求 §7 布局一致），恰好包含一种成员组合：领域 JSON 对象＝`object.json`，二进制资源＝`payload.bin + meta.json`，禁止其他成员；目录名＝成员内容（领域 JSON 规范化字节 / `payload.bin`）的 SHA-256，只读不可变。原子提交边界＝全部写入与校验在 `.staging/<transaction-id>/` 内完成后按 persistence-schema §5 协议落位，正式区不出现部分对象或部分修订。
 
-`project.json` 必填：`projectId`、`schemaVersion`、`formatVersion`、`robotDesignId`、`createdAt`、`updatedAt`。首版 `schemaVersion=1`、`formatVersion=1`，且 `robotDesignId` 非空且唯一。`manifest.json` 字段以 `architecture/persistence-schema.md` §2.3 为唯一权威（`revisionId`、`parentRevisionId`、`branchId`、`objects[]{objectId, objectRevision, sha256, bytes}`、`policyContentId`、`createdToolVersion`、`commandSummary`）；列表按规范路径排序，禁止重复路径/ID；所有浮点必须 finite，未知未来版本拒绝。
+`project.json` 必填：`projectId`、唯一 `robotId`、`schemaVersion`、`formatVersion`、`createdAt`、`toolVersion`（persistence-schema §2.2 为唯一权威）。首版 `schemaVersion=1`、`formatVersion=1`，且 `robotId` 非空且唯一。`manifest.json` 字段以 `architecture/persistence-schema.md` §2.3 为唯一权威（`revisionId`、`parentRevisionId`、`branchId`、`objects[]{objectId, objectRevision, sha256, bytes}`、`policyContentId`、`createdToolVersion`、`commandSummary`）；列表按规范路径排序，禁止重复路径/ID；所有浮点必须 finite，未知未来版本拒绝。
 
 ## 5. 公共接口和状态
 
@@ -53,9 +53,9 @@ DomainCommand
   -> 读取 HEAD 与 expected revision
   -> 加载父 ProjectRevision 并校验身份/引用/单机械臂不变量
   -> 生成新 revisionId 和规范化 domain JSON
-  -> 外部资源导入 objects/<sha256>
-  -> 生成并校验 manifest（逐文件 SHA-256）
-  -> 原子 rename staging/revision -> revisions/<id>
+  -> 外部资源导入 objects/<sha256>/
+  -> 生成并校验 manifest（对象内容 SHA-256）
+  -> 原子 rename .staging/<transaction-id>/ -> revisions/<id>
   -> 原子替换 HEAD
   -> 返回新 ProjectRevisionRef
 ```
