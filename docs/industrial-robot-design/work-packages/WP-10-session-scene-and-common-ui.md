@@ -65,7 +65,7 @@ ProjectRevision/AnalysisSnapshot/DesignCandidate
 
 ## 验证
 
-模型测试命令：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\RobWork\\scripts\\industrial-robot\\build.ps1 -Configuration Debug -Target sdurws_ird_ui_model_test`；随后使用 `run-tests.ps1 -Regex '^sdurws_ird_ui_model_test$'`。GUI 测试必须在 Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，并一次只启动 `sdurws_ird_ui_widget_test.exe`。
+模型测试命令：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\RobWork\\scripts\\industrial-robot\\build.ps1 -Configuration Debug -Target sdurws_ird_ui_model_test`，随后 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\RobWork\\scripts\\industrial-robot\\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_ui_model_test$'`。GUI 测试使用同一入口执行 `-Regex '^sdurws_ird_ui_widget_test$'`，必须在 Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，并一次只启动 `sdurws_ird_ui_widget_test.exe`。
 
 ## 8. 迁移与评审
 

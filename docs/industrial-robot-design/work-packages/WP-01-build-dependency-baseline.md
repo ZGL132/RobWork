@@ -178,9 +178,9 @@ industrial-robot-windows.yml 步骤固定为 checkout → VS x64 → configure �
 | 安装边界 | 私有头/测试数据 | 非零且不出正式包 |
 | 依赖缺项 | 缺 hash/license/approval | 非零并指出组件 |
 
-## 12. 验证
+## 验证
 
-在仓库根目录执行：
+WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行；配置、构建、模型测试、GUI 测试、边界扫描和打包分别保存日志。在仓库根目录执行：
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Debug
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug
@@ -188,11 +188,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
 
-GUI 测试必须遵守 Windows Qt 启动规则；不得使用 offscreen 或同时启动多个 GUI 可执行文件。
-
-## 验证
-
-WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行。配置、构建、模型测试、GUI 测试、边界扫描和打包分别保存日志；GUI 测试一次只启动一个绝对路径可执行文件。
+GUI 测试必须遵守 Windows Qt 启动规则；不得使用 offscreen 或同时启动多个 GUI 可执行文件，一次只启动一个绝对路径可执行文件。
 
 ## 13. 迁移、回滚与删除
 
@@ -204,7 +200,7 @@ WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行�
 
 必须提交 configure/build/test/scan/package 日志、CTest XML、边界夹具结果、依赖基线 JSON、安装 manifest、环境版本和独立评审记录。
 
-## 15. 退出条件
+## 退出条件
 
 - 干净 Windows x64 环境可用统一入口完成配置、构建和测试。
 - 核心目标无 Qt Widgets、旧业务插件和未审批依赖。
@@ -212,8 +208,6 @@ WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行�
 - GitLab Runner 与本机使用相同脚本、参数和工件格式。
 - 依赖/API/许可证基线完整，未审批新增依赖为 0。
 - 边界夹具、失败传播、安装白名单和回滚测试全部通过。
-
-## 退出条件
 
 以上退出条件必须由独立构建评审者根据日志、扫描报告和依赖清单签署确认。
 

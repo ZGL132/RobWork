@@ -101,7 +101,7 @@ JSON number 必须有限；姿态真值使用四元数/刚体变换，RPY 只在
 先写重命名保持 objectId、重复 localName、跨作用域引用和删除不复用测试；实现 Identity、ImportOrigin、ValueProvenance 和 JSON 往返。
 
 ### WP-03-T03 全局评估语义
-参数化覆盖全部 outcome/status/payload 合法与非法组合（以 architecture/evaluation-semantics.md §2 为准）；实现 RequiredEvidenceProfile 和唯一正式可行谓词；验证 Canceled/Failed/Interrupted、Partial、DataInsufficient、NotEvaluated 和 Quick 不被误判为正式通过，Completed+Warning 仅在允许警告类别内可正式可行。
+参数化覆盖全部 outcome/status/payload 合法与非法组合（以 architecture/evaluation-semantics.md §2/§4 为准）；实现 RequiredEvidenceProfile 和唯一正式可行谓词；验证 Canceled/Failed/Interrupted、Partial、DataInsufficient、NotEvaluated 和 Quick 不被误判为正式通过，Completed+Warning 仅在允许警告类别内可正式可行。
 
 ### WP-03-T04 领域聚合 Schema
 定义 RobotDesign、ToolDefinition、EnvironmentModel、EngineeringRequirements、LoadCase、DriveTrainDesign、AnalysisConfiguration、CatalogRef 和 OptimizationStudyDefinition 的身份/引用骨架；不实现业务算法字段。
@@ -118,15 +118,13 @@ JSON number 必须有限；姿态真值使用四元数/刚体变换，RPY 只在
 | 身份 | 改 localName | objectId 和引用不变 |
 | 作用域 | 重复 localName/跨域无 scope | 稳定诊断，不取首个 |
 | 状态 | Canceled + Pass + Complete | 非法组合被拒绝 |
-| 可行性 | Completed + Warning | isFormallyFeasible=false |
+| 可行性 | Completed + Warning（警告类别全部在 allowedWarningCategories 内 / 任一未允许） | 前者 isFormallyFeasible=true；后者 false 且 gaps 列出未允许警告类别 |
 | JSON | 有效聚合 | 字段、枚举、引用往返一致 |
 | 边界 | QWidget/旧头 | check-boundaries 非零 |
 
 ## 验证
 
-WP-03 验证必须在 Visual Studio x64 环境构建 sdurws_ird_core_test，并运行模型、JSON 契约和依赖边界测试；测试过程不得创建 QApplication 或 Widget。
-
-## 9. 验证
+WP-03 验证必须在 Visual Studio x64 环境构建 sdurws_ird_core_test，并运行模型、JSON 契约和依赖边界测试；测试过程不得创建 QApplication 或 Widget。在仓库根目录执行：
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_core_test
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'

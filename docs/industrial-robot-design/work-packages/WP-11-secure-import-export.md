@@ -19,7 +19,7 @@
 
 ## 3. 文件所有权与依赖
 
-拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/`，含 `include/sdurws/ird/io/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-04 内容对象、Qt Core/标准库；禁止 Qt Widgets、未登记解析库、业务插件第二套路径/CSV/JSON 读取和直接写 revision。
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/`，含 `include/sdurws/ird/io/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-09 诊断（代码前置 WP-03、09，module-design/secure-io.md 裁决）和 Qt Core/标准库；资源副本写入经 WP-04 内容对象端口（契约引用，集成期交付，本模块不直接写 `objects/`）；禁止 Qt Widgets、未登记解析库、业务插件第二套路径/CSV/JSON 读取和直接写 revision。
 
 目标：`sdurws_ird_io`、`sdurws_ird_io_test`、`sdurws_ird_io_contract_test`。
 

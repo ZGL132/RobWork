@@ -43,7 +43,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-desi
 powershell -NoProfile -ExecutionPolicy Bypass -File .\docs\industrial-robot-design\validate-development-docs.ps1
 ```
 
-成功输出固定为 `124 requirements, 19 acceptance tests, 0 trace gaps`；非零即阻断。
+成功输出以 validate-development-docs.ps1 当前输出为准（`124 requirements, 19 acceptance tests, <派生> contracts, <派生> symbols, <派生> ADRs, 0 trace gaps`；契约/符号/ADR 计数由脚本按当前文档派生，不在本计划写死）；非零即阻断。
 
 ## 3. 代码与文档目录
 

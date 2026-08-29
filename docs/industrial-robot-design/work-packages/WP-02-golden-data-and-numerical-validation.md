@@ -127,14 +127,10 @@ Loader 行为固定为：路径规范化 → 文件存在性 → JSON 解析 →
 
 ## 验证
 
-WP-02 验证必须在 Visual Studio x64 环境使用 WP-01-T03 提供的统一测试入口执行。每次运行记录 datasetVersion、manifest SHA-256、seed、threadCount、容差 profile、命令和提交 SHA。
-
-## 8. 验证
-
-正式命令由 WP-01 提供；在 VS x64 环境执行：
+WP-02 验证必须在 Visual Studio x64 环境使用 WP-01-T03 提供的统一测试入口执行。每次运行记录 datasetVersion、manifest SHA-256、seed、threadCount、容差 profile、命令和提交 SHA。正式命令由 WP-01 提供；在 VS x64 环境执行：
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_testkit_test$'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_golden_data_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_(manifest_integrity|assertion_library|golden_data|migration_protocol)_test$'
 
 验证输出必须包含 datasetVersion、manifest SHA-256、命令、提交 SHA、seed、threadCount、profile、实际/期望值和报告路径。脚本未交付前必须标记为 WP-01 资产，不得写成现存命令。
 

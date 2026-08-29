@@ -81,5 +81,6 @@
 | `IRD-D1-20260829` | 2026-08-29 | 24 个契约 ID、59 个公共符号、ADR-001～004 正文和最小结构校验 | 内容完成；架构状态保持 `Proposed`，等待联合签署 |
 | `IRD-D2-20260829` | 2026-08-29 | 五大核心契约正文：`canonical-kinematics.md`、`evaluation-semantics.md`、`execution-model.md`（9 态重写）、`candidate-compilation.md`、`persistence-schema.md`/`public-interfaces.md`（重写）；ADR-005；消除 `EvaluationEnvelope` 违禁名、`TaskState` 缺态、`q-zero` 双偏置与 6 处异名引用 | 内容完成；架构状态保持 `Proposed`，等待联合签署与 D3 机器验证 |
 | D3/D4/D5（同日） | 2026-08-29 | D3：`schemas/` 14 个机器可验证 Schema＋PS 5.1 校验器全绿；D4：10 篇平台模块详设升 v0.3（对齐 D2 契约、冻结 resourceBudget/锁心跳等模块默认值、依赖裁决）；D5：13 篇业务模块详设由骨架重写为 v0.3（IK 排序键、时间参数化选型、摩擦模型、传动效率模型、七阶段转移表、试点/安装/用户研究协议等模块级冻结）；错误码目录收编至 ~100 码、公共符号 69 个 | 内容完成；模块方案待各自评审；D6～D9（工作包、任务卡、追踪、校验器增强与演练）为后续步骤 |
+| D6（同日） | 2026-08-29 | 26 份工作包计划对齐 v0.3 模块详设：WP-13～25 十三份深化重写（任务 DAG、逐任务代码范围/前置/输出/验收、测试矩阵、双形式命令、迁移删除表、人周明细）；WP-00～12 定点同步（目标名/依赖裁决/重复标题/pwsh 清理）；冻结测试目标命名约定（总纲 §5.3） | 内容完成；Task ID 集合不变（144 卡 1:1）；D7 任务卡重写为后续步骤 |
 
 D1 不改变需求 v0.7、代码提交或工作包范围。D1 的名称裁决为：公共评估输出统一使用 `ResultEnvelope`，原单点名称 `EvaluationEnvelope` 停止使用。D2 的裁决（ADR-005）为：完整性维度拆分为 `PayloadCompleteness` 与 `ArtifactIntegrity`；`TaskState` 冻结 9 态；`Completed + Warning` 仅在 `RequiredEvidenceProfile` 允许警告类别内可正式可行；五组公共符号异名列为禁止名称。

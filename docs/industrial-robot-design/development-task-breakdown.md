@@ -149,6 +149,8 @@ Planned → Ready → Implementing → Verifying → Reviewing
 
 每个 WP-13～21 必须进一步分为计算核心、RobWork/RobWorkSim 适配、薄插件界面、模块测试、契约测试和 GUI 测试。WP-18 位于 `evaluation/drivetrain/`，是共享计算包，不提供独立业务插件。
 
+测试目标命名约定（D6 冻结）：CMake 目标统一为 `sdurws_ird_<module>`、`_test`、`_contract_test`，插件/GUI 目标按模块详设 v0.3 声明（如 `_plugin_test`、`_gui_test`、`_model_test`、`_widget_test`）；工作包计划与任务卡的验证命令只能引用对应模块详设声明的目标名，不得自造目标。工作包已按 v0.3 模块详设完成 D6 深化重写（WP-13～25 与平台计划同步）。
+
 ### 5.4 产品化与发布
 
 | ID | 工作包 | 唯一交付 | 主要需求 | 前置 | 人周 |

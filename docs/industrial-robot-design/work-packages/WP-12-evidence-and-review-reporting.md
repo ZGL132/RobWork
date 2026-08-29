@@ -16,11 +16,11 @@
 
 **创建：**
 
-- `industrialrobot/reporting/include/.../ReviewReport.hpp`
-- `industrialrobot/reporting/include/.../ReviewReportBuilder.hpp`
-- `industrialrobot/reporting/include/.../HtmlReportRenderer.hpp`
-- `industrialrobot/reporting/include/.../PdfReportRenderer.hpp`
-- `industrialrobot/reporting/include/.../EvidenceDataExporter.hpp`
+- `industrialrobot/reporting/include/sdurws/ird/reporting/ReviewReport.hpp`
+- `industrialrobot/reporting/include/sdurws/ird/reporting/ReviewReportBuilder.hpp`
+- `industrialrobot/reporting/include/sdurws/ird/reporting/HtmlReportRenderer.hpp`
+- `industrialrobot/reporting/include/sdurws/ird/reporting/PdfReportRenderer.hpp`
+- `industrialrobot/reporting/include/sdurws/ird/reporting/EvidenceDataExporter.hpp`
 - `industrialrobot/reporting/resources/report.zh-CN.html`
 - `industrialrobot/reporting/resources/report.css`
 - `industrialrobot/reporting/src/`
@@ -88,7 +88,9 @@ reviewer/sign-off metadata
 ## 验证命令
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'
+cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_reporting_test
+ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_reporting_test$"
 ```
 
 ## 独立评审

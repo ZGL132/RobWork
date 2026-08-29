@@ -6,7 +6,7 @@
 
 ## 1. 目标与非目标
 
-交付不可变 `EngineeringDiagnostic`、诊断目录、术语表、边界 mapper、分级日志 sink、脱敏策略和静态一致性扫描。诊断必须可定位对象、实际值、期望值、原因和建议动作；名称仅作显示，不能替代 objectId。
+交付不可变 `Diagnostic`（SYM-DIA-001 登记名；`EngineeringDiagnostic` 为 v0.2 旧名，module-design/diagnostics.md 裁决）、诊断目录、术语表、边界 mapper、分级日志 sink、脱敏策略和静态一致性扫描。诊断必须可定位对象、实际值、期望值、原因和建议动作；名称仅作显示，不能替代 objectId。
 
 不实现业务错误判断、各模块私有状态、报告渲染、GUI 文案布局、日志采集平台或新的错误类别。
 
