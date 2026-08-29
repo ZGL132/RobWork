@@ -1,106 +1,128 @@
 # WP-04 项目修订与持久化实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A / R1；公共接口所有者：WP-04。实现者、验证者、评审者必须是不同执行上下文。
 
-**Goal:** 实现目录式 `.rwdesign`、原子项目命令、方案分支、草稿、不可变资源和可恢复的多文件事务。
+**目标：** 在不产生半修订的前提下交付可恢复的 `.rwdesign` 项目仓库、命令修订、分支历史、不可变资源和草稿隔离。
 
-**Architecture:** `ProjectRevision` 是已应用状态唯一聚合根；命令产生新修订，查询只读取指定修订。内容对象与资源不可变，`HEAD` 是最后原子切换的提交指针。结果和检查点由各自仓库追加，不由工作进程直接写项目。
+## 1. 目标与边界
 
-**Tech Stack:** C++、Qt Core 文件/JSON API、SHA-256、CTest、Windows 原子文件操作。
+WP-04 交付可恢复的目录式 `.rwdesign` 项目仓库：已应用状态以不可变 `ProjectRevision` 保存，命令以乐观并发方式生成新修订，资源以 SHA-256 内容对象保存，`HEAD` 以原子替换指向当前分支修订。首版项目恰好包含一个 `RobotDesign`，但所有身份均包含 `ownerScopeId`，不得阻断未来多机械臂扩展。
 
----
+不实现业务计算、RobWork WorkCell 编译、结果评估、Widget、目录清理之外的备份系统或远程同步；工作进程没有项目目录写接口。
 
-## 文件与目标
+## 2. 需求、契约和发布切片
 
-**创建目标：** `sdurws_ird_project`、`sdurws_ird_project_test`。
+- 需求：ARC-01、CON-01、CON-03、NFR-REL-01、NFR-REL-04、NFR-DEP-04、AT-05、AT-10、AT-12、AT-13。
+- 架构契约：`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`。
+- 模块方案：`module-design/persistence.md`。
+- 阶段门禁：阶段 A 必须完成格式加载、单命令修订、事务恢复、草稿隔离和 Schema 1 基线；B 阶段仅消费已冻结接口。
 
-**创建：**
+## 3. 文件所有权与依赖
 
-- `industrialrobot/project/include/.../IProjectQuery.hpp`
-- `industrialrobot/project/include/.../IProjectCommandService.hpp`
-- `industrialrobot/project/include/.../ProjectRevision.hpp`
-- `industrialrobot/project/include/.../ProjectManifest.hpp`
-- `industrialrobot/project/include/.../ProjectStore.hpp`
-- `industrialrobot/project/include/.../ProjectUpgradeRegistry.hpp`
-- `industrialrobot/project/src/`
-- `industrialrobot/project/test/`
+拥有目录为 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/`，包括 `include/sdurws/ird/project/`、`src/`、`test/`、`testdata/` 和 `evidence/`。允许依赖 WP-03 core、Qt Core 文件/JSON、批准的 SHA-256 实现和标准库；禁止 Qt Widgets、业务插件私有头、WP-05 结果实现和跨模块直接写文件。公共接口只能在本目录修改。
 
-**覆盖需求：** ARC-01，CON-01、03，NFR-REL-01、04，NFR-DEP-04，AT-05、10、12、13。
+计划目标：`sdurws_ird_project`、`sdurws_ird_project_test`、`sdurws_ird_project_contract_test`。
 
-## 项目格式
+## 4. `.rwdesign` 物理格式
 
 ```text
 ProjectName.rwdesign/
   HEAD
   project.json
   revisions/<revision-id>/manifest.json
-  revisions/<revision-id>/domain/*.json
-  objects/<sha256>
-  results/<run-id>/
-  checkpoints/<run-id>/<attempt-id>/
-  drafts/<draft-id>.json
-  reports/<report-id>/
+  revisions/<revision-id>/domain/<aggregate>.json
+  objects/<sha256>                 # 不可变文件内容
+  results/<run-id>/                 # 只追加
+  checkpoints/<run-id>/<attempt-id>/# 只追加
+  drafts/<draft-id>.json            # 会话草稿，不是修订
+  reports/<report-id>/              # 只追加
 ```
 
-`project.json` 保存项目身份和格式 Schema；`HEAD` 只保存当前分支/修订指针；修订目录保存引用清单，不复制内容寻址资源。首版 Schema 为 1；旧 `.rwproj` 返回稳定“不支持旧格式”诊断。Schema 1 发布后的升级必须通过 `ProjectUpgradeRegistry` 逐版本前向执行，禁止跳级猜测。
+目录是唯一规范格式，ZIP 只用于传输封装。内部路径统一 POSIX `/`，读取时拒绝空段、`.`、`..`、绝对路径、UNC、符号链接逃逸和项目根外引用。`HEAD` 是 UTF-8 无 BOM 文本，固定两行 `branchId=<id>`、`revisionId=<id>`；空、重复键、未知键或指向缺失修订均拒绝。
 
-## 冻结接口
+`project.json` 必填：`projectId`、`schemaVersion`、`formatVersion`、`robotDesignId`、`createdAt`、`updatedAt`。首版 `schemaVersion=1`、`formatVersion=1`，且 `robotDesignId` 非空且唯一。`manifest.json` 必填：`revisionId`、`parentRevisionId`（根修订为空）、`branchId`、`createdAt`、`author`、`toolVersion`、`domainFiles[]`、`objectRefs[]`、`contentHash`。列表按规范路径排序，禁止重复路径/ID；所有浮点必须 finite，未知未来版本拒绝。
+
+## 5. 公共接口和状态
 
 ```cpp
+struct ProjectRevisionRef { std::string projectId, branchId, revisionId; };
+struct ExpectedRevision { ProjectRevisionRef value; };
+struct CommandResult {
+    bool applied;
+    ProjectRevisionRef revision;
+    std::vector<Diagnostic> diagnostics;
+};
 class IProjectQuery {
 public:
-    virtual ProjectRevision getRevision(ProjectId, BranchId, RevisionId) const = 0;
+    virtual ProjectRevision load(const ProjectRevisionRef&) const = 0;
+    virtual ~IProjectQuery() = default;
 };
-
 class IProjectCommandService {
 public:
-    virtual ApplyCommandResult apply(ProjectCommand, ExpectedRevision) = 0;
+    virtual CommandResult apply(const ProjectRevisionRef&, const DomainCommand&) = 0;
+    virtual CommandResult undo(const ProjectRevisionRef&) = 0;
+    virtual CommandResult redo(const ProjectRevisionRef&) = 0;
+    virtual ~IProjectCommandService() = default;
 };
 ```
 
-并发修改使用 expected revision；不匹配时返回冲突诊断，不覆盖新状态。每次用户“应用”产生至多一个原子修订；会话显示变化不调用命令服务。
+接口按值/const 引用传递，不转移 Qt/RobWork 指针所有权。`apply` 成功恰好创建一个新 revision；expected revision 不匹配返回 `IRD-PROJECT-REVISION-CONFLICT`，不写任何正式文件。分支不匹配返回 `IRD-PROJECT-BRANCH-MISMATCH`。undo/redo 本身是新命令，禁止改写历史 payload；无历史分别返回 `IRD-PROJECT-NOTHING-TO-UNDO`、`IRD-PROJECT-NOTHING-TO-REDO`。诊断类别按 Input/Engineering/System，保存故障必须为 System。
+
+## 6. 端到端数据流
+
+```text
+DomainCommand
+  -> 读取 HEAD 与 expected revision
+  -> 加载父 ProjectRevision 并校验身份/引用/单机械臂不变量
+  -> 生成新 revisionId 和规范化 domain JSON
+  -> 外部资源导入 objects/<sha256>
+  -> 生成并校验 manifest（逐文件 SHA-256）
+  -> 原子 rename staging/revision -> revisions/<id>
+  -> 原子替换 HEAD
+  -> 返回新 ProjectRevisionRef
+```
+
+查询只读取已提交 revision；草稿、结果、检查点不会被并入输入。对象被快照、报告或历史修订引用后不可删除；清理只能基于可达性分析并输出删除清单。工作进程只拥有结果/检查点仓库写权限。
 
 ## 任务
 
-### Task 1：格式与路径安全测试
+| 任务 | 独立产出 | 任务卡 |
+| --- | --- | --- |
+| WP-04-T01 | 规范路径、格式加载器和安全失败诊断 | [T01](../agent-tasks/WP-04-T01-path-safety.md) |
+| WP-04-T02 | 命令、修订、分支、undo/redo 服务 | [T02](../agent-tasks/WP-04-T02-commands-revisions.md) |
+| WP-04-T03 | staging、哈希、原子提交和崩溃恢复 | [T03](../agent-tasks/WP-04-T03-transactions.md) |
+| WP-04-T04 | 内容对象、可达性清理和草稿隔离 | [T04](../agent-tasks/WP-04-T04-resources-drafts.md) |
+| WP-04-T05 | Schema 1 注册表、升级和重新关联 | [T05](../agent-tasks/WP-04-T05-schema-upgrade.md) |
 
-- [ ] 先写空 HEAD、未知 Schema、旧 `.rwproj`、资源逃逸、哈希不符和丢失修订失败测试。
-- [ ] 实现规范路径解析，所有资源必须位于项目目录或内容对象区。
-- [ ] 验证 Windows 大小写和分隔符差异不会绕过项目边界。
+依赖顺序：T01 → T02 → T03；T04 依赖 T01/T03；T05 依赖 T01/T03。每张卡一个 worktree、分支和提交；公共接口变更必须先停工并报告。
 
-### Task 2：命令与修订
+## 8. 失败分类与统一行为
 
-- [ ] 先写一次应用只生成一个修订、expected revision 冲突和稳定对象 ID 保持测试。
-- [ ] 实现 ProjectCommand、验证、原子应用和 RevisionEnvelope。
-- [ ] 实现方案分支；优化候选只有“设为当前方案”时创建分支和正式修订。
+- 输入错误：字段缺失、格式非法、路径逃逸、重复 ID；不创建 staging 或正式修订。
+- 工程不可行：引用对象缺失、外部源变化、版本升级无法完成；保留旧修订并返回可行动诊断。
+- 系统错误：磁盘、权限、哈希、进程中断；旧 `HEAD` 和旧修订字节级不变，启动扫描产生 `IRD-PERSIST-UNCOMMITTED`。
 
-### Task 3：多文件事务
+## 9. 测试与证据
 
-- [ ] 在版本目录写入、对象写入、清单校验和 HEAD 切换处分别注入失败。
-- [ ] 实现 staging 写入、逐文件校验和 HEAD 原子切换。
-- [ ] 重启时忽略未提交版本并提供恢复诊断；原版本逐文件哈希保持一致。
+模块测试覆盖 JSON 往返、路径矩阵、命令状态、事务故障注入、对象不可变性和升级器。契约测试固定检查字段/枚举/诊断码/哈希；数值只检查 manifest 哈希和有限性。性能至少测 10k 对象加载与 100 次连续修订。GUI 不在本 WP 测试。
 
-### Task 4：资源和草稿
+每个任务必须提交：命令输出、测试二进制和配置、输入夹具版本/哈希、故障注入点、旧 HEAD 哈希、新 revision/manifest 哈希、诊断 JSON、评审记录。
 
-- [ ] Verified/正式报告引用的外部网格、目录和材料表复制为不可变内容对象。
-- [ ] 实现引用计数/可达性清理，任何历史快照或报告引用的对象不得删除。
-- [ ] 编辑草稿单独保存，不进入 ProjectRevision、输入切片或计算。
+## 验证
 
-### Task 5：升级与重新关联
-
-- [ ] 实现 Schema 1 身份和升级注册表空基线。
-- [ ] 对未知未来 Schema 明确拒绝，不尝试降级读取。
-- [ ] 外部源缺失/变化时报告并提供重新关联命令；历史不可变副本不受影响。
-
-## 验证命令
+命令由 WP-01 提供，脚本未交付前不得自行复制脚本：
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_project_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_project(_contract)?_test$'
 ```
+
+## 11. 迁移、删除和兼容
+
+旧 `.rwproj` 只读识别并返回稳定“不支持旧格式”诊断，不覆盖原文件。旧项目如需迁移，先写新 `.rwdesign` staging，完成全量校验后再由用户显式替换。旧类型按 Migratable/Rewrite/EvidenceOnly 记录；删除旧持久化路径前必须保留迁移输入、差异报告和回滚副本。
 
 ## 退出条件
 
-- A-GATE-02、03、04 和 AT-05、10、12、13 的项目侧断言通过。
-- 任意保存故障后旧项目仍可打开且哈希一致。
-- 工作进程没有项目文件写权限接口。
-- 会话态和草稿态不会产生项目修订。
+验证者逐项复核：所有失败注入点旧 HEAD 不变、重启不加载 staging、对象哈希不变、草稿不触发计算、undo/redo 不改历史、未知未来版本拒绝。评审者检查公共接口唯一所有者、工作进程无项目写权限、目录边界和未来多机械臂 ownerScopeId。
+
+A-GATE-02/03/04 与 AT-05/10/12/13 项目侧断言通过；三次连续进程中断恢复均无半修订；Schema 1 黄金包可加载并往返；5 张任务卡证据齐全且独立评审通过。

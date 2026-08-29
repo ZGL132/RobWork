@@ -1,0 +1,11 @@
+# WP-02-T04 迁移判定协议
+- 需求/阶段：NFR-COR-01、NFR-MNT-03、AT-01～AT-19；阶段 A / R1
+- 契约：architecture/testing-contract.md、architecture/execution-model.md、module-design/testkit.md
+- 前置：WP-02-T01～T03；允许：testkit/migration、旧实现只读适配器和迁移证据目录；禁止：直接修改旧算法或依赖 Widget 状态。
+- 产出：每个旧算法的 verdict、差异报告、依赖审计和回退建议。
+- Given 旧算法依赖 Widget/私有状态、输出超出容差或不可重复，When 运行 adapter，Then verdict 为 Rewrite 或 EvidenceOnly，不能标 Migratable。
+- Given adapter 使用同一 manifest、profile、seed 和输入切片，When 输出满足容差且无旧状态依赖，Then verdict 为 Migratable 并保存证据。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_migration_protocol_test$'；入口由 WP-01-T03 交付。
+- 证据：旧/新输出、输入哈希、差异统计、状态依赖检查、verdict 表和独立评审签名。
+- 提交：WP-02-T04: migration verdict protocol
+- 停止：无法区分算法失败、数据不足和仅夹具可复用时暂停并报告。

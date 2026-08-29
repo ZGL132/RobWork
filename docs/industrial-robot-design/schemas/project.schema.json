@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/project.schema.json",
+  "title": "project.json",
+  "description": "`.rwdesign` 根目录下的项目身份文件（CTR-PER-002 §2.2）。只保存项目身份，不保存任何领域对象内容。字段来源：architecture/persistence-schema.md §2.2。",
+  "type": "object",
+  "properties": {
+    "projectId": {
+      "description": "项目稳定 ID；规范小写 UUID。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "robotId": {
+      "description": "项目内唯一 RobotId（首版一个项目只能有一个 RobotDesign，ownerScopeId 必须等于该值）。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "schemaVersion": {
+      "description": "领域 Schema 主版本（当前初值 1）。",
+      "type": "integer",
+      "enum": [1]
+    },
+    "formatVersion": {
+      "description": "目录布局版本（当前初值 1）。",
+      "type": "integer",
+      "enum": [1]
+    },
+    "createdAt": {
+      "description": "创建时间，UTC ISO 8601。",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "toolVersion": {
+      "description": "写入该文件的工具版本（语义化版本）。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  },
+  "required": ["projectId", "robotId", "schemaVersion", "formatVersion", "createdAt", "toolVersion"],
+  "additionalProperties": false
+}

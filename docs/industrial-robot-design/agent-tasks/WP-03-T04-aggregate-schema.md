@@ -1,0 +1,11 @@
+# WP-03-T04 领域聚合 Schema
+- 需求/阶段：ARC-01、ARC-03～05、NFR-COR-03；阶段 A / R1
+- 契约：architecture/domain-model.md、architecture/persistence-schema.md、module-design/core-domain.md
+- 前置：WP-03-T01～T03、WP-02-T01；允许：DomainObjects.hpp、DomainJson.hpp/.cpp 和 schema 测试；禁止：实现业务算法、保存 RobWork/Widget 指针或重复定义 WP-04/05 的仓库对象。
+- 产出：RobotDesign、ToolDefinition、EnvironmentModel、EngineeringRequirements、LoadCase、DriveTrainDesign、AnalysisConfiguration、CatalogRef、OptimizationStudyDefinition 的身份/引用骨架及公共 Envelope。
+- Given 缺引用、重复 objectId、错误 ownerScopeId 或未知 schema，When JSON 加载，Then 返回定位诊断且不生成部分聚合。
+- Given 合法聚合和有限标量，When JSON 往返，Then ID、枚举、引用、来源一致，浮点误差不超过 1e-12。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_aggregate_schema_test$'；入口由 WP-01-T03 交付。
+- 证据：JSON 示例、未知字段/版本测试、引用图和 schema 版本报告。
+- 提交：WP-03-T04: domain aggregate schema
+- 停止：任何新增字段需要改变公共语义时暂停并提交 ADR。

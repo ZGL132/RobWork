@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/checkpoint.schema.json",
+  "title": "Checkpoint",
+  "description": "检查点（checkpoints/<run-id>/<attempt-id>/，CTR-EXE-001 §4、CTR-PER-002 §4）。字段来源：architecture/execution-model.md §1、§4；module-design/optimization.md §3。检查点保留最近兼容版本；不兼容检查点不得用于恢复（IRD-EXEC-CHECKPOINT-INCOMPATIBLE）。恢复必须记录原 runId、新 attemptId 和已完成批次集合；统计不得重复。",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "checkpointId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "runIdentity": {
+      "description": "产生该检查点的运行身份（RunIdentity）。",
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "branchId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "revisionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "attemptId": {
+          "description": "保存检查点时的 attempt；恢复时携带新 attemptId。",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "required": ["projectId", "branchId", "revisionId", "runId", "attemptId"],
+      "additionalProperties": false
+    },
+    "evaluatorId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "algorithmVersion": {
+      "description": "兼容性判定输入之一：版本不一致 → IRD-EXEC-CHECKPOINT-INCOMPATIBLE。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "studyDefinitionVersion": {
+      "description": "优化研究定义版本（优化检查点）；与恢复时的研究版本必须一致。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "randomSeed": {
+      "description": "确定性随机种子；恢复后继续产生可复现结果。",
+      "type": "integer",
+      "minimum": 0
+    },
+    "completedBatchIds": {
+      "description": "已完成批次集合；恢复时跳过这些批次，统计不重复。元素唯一性由代码契约测试保证。",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+      }
+    },
+    "statistics": {
+      "description": "截至检查点的运行统计（恢复后增量累计，不重复计数）。",
+      "type": "object",
+      "properties": {
+        "candidatesEvaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidatesFeasible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quickScreenedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verifiedCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["candidatesEvaluated", "candidatesFeasible", "quickScreenedCount", "verifiedCount"],
+      "additionalProperties": false
+    },
+    "stateDigest": {
+      "description": "搜索器内部状态规范化内容的 SHA-256；用于检查点完整性与幂等校验。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": ["schemaVersion", "checkpointId", "createdAt", "runIdentity", "evaluatorId", "algorithmVersion", "studyDefinitionVersion", "randomSeed", "completedBatchIds", "statistics", "stateDigest"],
+  "additionalProperties": false
+}

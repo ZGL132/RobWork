@@ -1,0 +1,169 @@
+{
+  "objectId": "0b7f3a60-c1d8-4e92-b7a4-49d5e1f8a30a",
+  "ownerScopeId": "8c4b21aa-35de-4f60-9c17-2b8e40d5a002",
+  "localName": "StageB-StructureAndGearboxStudy",
+  "objectRevision": 1,
+  "createdAt": "2026-08-29T10:00:00Z",
+  "provenance": {
+    "importOrigin": "ManuallyCreated",
+    "sourceDetail": "created in the optimization stage for the OPT-B static subset"
+  },
+  "schemaVersion": 1,
+  "baselineRevision": {
+    "projectId": "6f1d2c34-9a81-4b7e-8c21-0d5a9e3f1001",
+    "branchId": "main",
+    "revisionId": "rev-000007"
+  },
+  "studyDefinitionVersion": "1.0.0",
+  "stage": "StageB",
+  "variables": [
+    {
+      "variableId": "var-upper-arm-length",
+      "bindingId": "bind-joint-origin-z",
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "joints[3].originPose.position.z",
+      "valueType": "Real",
+      "unit": "m",
+      "domain": { "kind": "Continuous", "min": 0.22, "max": 0.32 },
+      "writeSet": ["joints[3].originPose.position.z"],
+      "dependencies": []
+    },
+    {
+      "variableId": "var-upper-arm-section",
+      "bindingId": "bind-link-section-size",
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "links[2].sectionSize",
+      "valueType": "Enumeration",
+      "unit": "m",
+      "domain": {
+        "kind": "Discrete",
+        "min": 0.04,
+        "max": 0.05,
+        "values": ["040x040x003", "045x045x003", "050x050x004"]
+      },
+      "activationCondition": "links[2].materialKind == ExtrudedAluminum",
+      "writeSet": [
+        "links[2].sectionSize",
+        "links[2].mass",
+        "links[2].centerOfMass",
+        "links[2].inertia"
+      ],
+      "dependencies": ["var-upper-arm-length"]
+    },
+    {
+      "variableId": "var-wrist-friction-offset",
+      "bindingId": "bind-joint-friction-offset",
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "joints[5].frictionOffset",
+      "valueType": "Real",
+      "unit": "N·m",
+      "domain": { "kind": "Continuous", "min": -1.0, "max": 1.0 },
+      "activationCondition": "joints[5].type == Revolute",
+      "writeSet": ["joints[5].frictionOffset"],
+      "dependencies": []
+    },
+    {
+      "variableId": "var-gear-ratio-j3",
+      "bindingId": "bind-drivetrain-gearbox-model",
+      "targetObjectId": "f10c4b70-8e29-4a71-b3d5-92a6c0e4d510",
+      "parameterKey": "driveTrains[2].gearbox.modelKey",
+      "valueType": "CatalogRef",
+      "unit": "dimensionless",
+      "domain": {
+        "kind": "Discrete",
+        "min": 40,
+        "max": 80,
+        "values": ["rv-040-gb", "rv-060-gb", "rv-080-gb"]
+      },
+      "writeSet": ["driveTrains[2].gearbox.modelKey", "driveTrains[2].gearbox.ratio"],
+      "dependencies": []
+    }
+  ],
+  "hardConstraints": [
+    {
+      "constraintId": "hc-must-coverage",
+      "kind": "MustCoverage",
+      "thresholdValue": 0.98,
+      "unit": "dimensionless"
+    },
+    {
+      "constraintId": "hc-joint-limits",
+      "kind": "JointLimit"
+    },
+    {
+      "constraintId": "hc-collision-static",
+      "kind": "Collision"
+    },
+    {
+      "constraintId": "hc-structural-bound",
+      "kind": "StructuralBound",
+      "thresholdValue": 0.04,
+      "unit": "m"
+    },
+    {
+      "constraintId": "hc-section-minimum",
+      "kind": "SectionMinimum",
+      "thresholdValue": 0.04,
+      "unit": "m"
+    }
+  ],
+  "softConstraints": [
+    {
+      "constraintId": "sc-joint-margin",
+      "kind": "JointMargin",
+      "thresholdValue": 0.15,
+      "unit": "dimensionless",
+      "penaltyWeight": 1.0
+    }
+  ],
+  "metrics": [
+    { "metricId": "overallSizeEnvelope", "unit": "m3", "description": "overall size envelope of the robot" },
+    { "metricId": "structureMass", "unit": "kg", "description": "structural mass of links and housings" },
+    { "metricId": "cycleTime", "unit": "s", "description": "cycle time of the reference task sequence" },
+    { "metricId": "jointPositiveMechanicalWork", "unit": "J", "description": "default energy metric: joint-side positive mechanical work" },
+    { "metricId": "deviceMass", "unit": "kg", "description": "total mass of motors and gearboxes" },
+    { "metricId": "deviceCost", "unit": "currency", "description": "total cost of motors and gearboxes" },
+    { "metricId": "minJointMargin", "unit": "dimensionless", "description": "minimum joint limit margin ratio" },
+    { "metricId": "minDriveMargin", "unit": "dimensionless", "description": "minimum drive capability margin ratio" }
+  ],
+  "objectives": [
+    {
+      "metricId": "cycleTime",
+      "direction": "Minimize",
+      "unit": "s",
+      "timeAggregation": "Peak",
+      "taskAggregation": "Sum",
+      "requiredEvidenceLevel": "PreliminaryDesign",
+      "comparisonTolerance": 0.05
+    },
+    {
+      "metricId": "structureMass",
+      "direction": "Minimize",
+      "unit": "kg",
+      "timeAggregation": "Peak",
+      "taskAggregation": "Mean",
+      "requiredEvidenceLevel": "PreliminaryDesign",
+      "comparisonTolerance": 0.1
+    },
+    {
+      "metricId": "deviceCost",
+      "direction": "Minimize",
+      "unit": "currency",
+      "timeAggregation": "Peak",
+      "taskAggregation": "Sum",
+      "requiredEvidenceLevel": "PreliminaryDesign",
+      "comparisonTolerance": 10.0
+    }
+  ],
+  "budget": {
+    "maxCandidates": 5000,
+    "maxWallClockS": 3600.0,
+    "maxVerifiedEvaluations": 200
+  },
+  "algorithmPolicy": {
+    "algorithmId": "nsga2-static-screen",
+    "algorithmVersion": "1.0.0",
+    "randomSeed": 42,
+    "threadCount": 8
+  }
+}

@@ -1,0 +1,375 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/optimization-study.schema.json",
+  "title": "OptimizationStudyDefinition",
+  "description": "优化研究定义（SYM-OPT-001，CTR-OPT-001/002）。字段来源：architecture/candidate-compilation.md §1、§3、§6；requirements.md §7.2、§9.1～9.3、§8.7.1。所有变量都是对权威对象字段的引用（不存在第二份候选数据存储）；变量绑定必须先注册，禁止任意字符串反射式字段写入。",
+  "type": "object",
+  "properties": {
+    "objectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ownerScopeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "localName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+    },
+    "objectRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "importOrigin": {
+          "type": "string",
+          "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+        },
+        "sourceDetail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": ["importOrigin"],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "baselineRevision": {
+      "description": "基线修订引用（BaselineRevisionRef）；研究绑定基线修订 + 研究定义版本。",
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "branchId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "revisionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        }
+      },
+      "required": ["projectId", "branchId", "revisionId"],
+      "additionalProperties": false
+    },
+    "studyDefinitionVersion": {
+      "description": "研究定义版本；进入 candidateStableId = SHA-256(studyDefinitionVersion ‖ canonical(DesignVector) ‖ randomSeed)。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "stage": {
+      "description": "研究所属阶段子集（ADR-003）：StageB 为静态候选链路，StageD 为全量联合优化。",
+      "type": "string",
+      "enum": ["StageB", "StageD"]
+    },
+    "variables": {
+      "description": "DesignVariableDefinition 列表（CTR-OPT-002 §1）。variableId 研究内唯一；writeSet 两两交集必须为空（冲突 → IRD-OPT-WRITE-CONFLICT）；dependencies 构成 DAG（环 → IRD-OPT-CYCLE）；互斥/无环由代码契约测试保证。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "variableId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "bindingId": {
+            "description": "引用已注册 VariableBinding；未注册路径 → IRD-OPT-UNREGISTERED-BINDING。",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "targetObjectId": {
+            "description": "权威对象 ID（RobotDesign / EnvironmentModel / DriveTrainDesign 等）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "parameterKey": {
+            "description": "对象内类型化参数路径（如 joints[2].originPose.position.x）。",
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?(\\.[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?)*$"
+          },
+          "valueType": {
+            "type": "string",
+            "enum": ["Real", "Integer", "Enumeration", "CatalogRef"]
+          },
+          "unit": {
+            "description": "SI 单位或无量纲。",
+            "type": "string",
+            "enum": ["rad", "m", "kg", "s", "W", "N", "N·m", "J", "dimensionless"]
+          },
+          "domain": {
+            "description": "值域：连续/量化 [min,max]；离散为合法值集合（枚举键或目录键）。min ≤ max 由代码契约测试保证。",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["Continuous", "Quantized", "Discrete"]
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "values": {
+                "description": "kind = Discrete 时的合法值集合（枚举名或目录键）。",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              }
+            },
+            "required": ["kind", "min", "max"],
+            "additionalProperties": false
+          },
+          "quantization": {
+            "description": "量化步长；可空，null/缺省 = 连续变量。",
+            "type": "object",
+            "properties": {
+              "step": {
+                "description": "量化步长（与 unit 同单位，> 0 由代码契约测试保证）。",
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": ["step"],
+            "additionalProperties": false
+          },
+          "activationCondition": {
+            "description": "可空；仅条件满足时变量激活（如 joints[i].type == Revolute）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "writeSet": {
+            "description": "该变量写入的全部物理字段路径集合（冲突检测用）。",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?(\\.[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?)*$"
+            }
+          },
+          "dependencies": {
+            "description": "依赖的其他 variableId 集合，构成 DAG；按拓扑序重算派生值。",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+            }
+          }
+        },
+        "required": ["variableId", "bindingId", "targetObjectId", "parameterKey", "valueType", "unit", "domain", "writeSet", "dependencies"],
+        "additionalProperties": false
+      }
+    },
+    "hardConstraints": {
+      "description": "硬约束（SYM-OPT-008，requirements.md §9.2）：决定工程可行性；被加权分数抵消属于禁止行为。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "constraintId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["MustCoverage", "JointLimit", "Collision", "PathFeasibility", "CycleTime", "DriveCapability", "EvidenceSufficiency", "StructuralBound", "SectionMinimum"]
+          },
+          "thresholdValue": {
+            "description": "阈值（与 unit 同单位）。",
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["rad", "m", "kg", "s", "W", "N", "N·m", "J", "dimensionless"]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["constraintId", "kind"],
+        "additionalProperties": false
+      }
+    },
+    "softConstraints": {
+      "description": "软约束（SYM-OPT-009）：只产生警告/次级排序，不决定可行性、不参与 Pareto 支配；只有用户显式提升为 Objective 时才参与比较。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "constraintId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["JointMargin", "CycleTime", "Energy", "Mass", "Cost"]
+          },
+          "thresholdValue": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["rad", "m", "kg", "s", "W", "N", "N·m", "J", "dimensionless"]
+          },
+          "penaltyWeight": {
+            "description": "独立惩罚权重（仅次级排序信息）。",
+            "type": "number",
+            "minimum": 0
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["constraintId", "kind"],
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "description": "比较指标（SYM-OPT-007）：始终计算和展示，不自动成为目标。默认八项：overallSizeEnvelope、structureMass、cycleTime、jointPositiveMechanicalWork、deviceMass、deviceCost、minJointMargin、minDriveMargin。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "description": "指标 ID；默认八项比较指标使用 camelCase（如 structureMass）。",
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["s", "kg", "J", "m", "m3", "dimensionless", "currency"]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["metricId", "unit"],
+        "additionalProperties": false
+      }
+    },
+    "objectives": {
+      "description": "Objective（SYM-OPT-010，requirements.md §9.3）：用户显式选择并参与 Pareto 支配的指标。默认激活：节拍、结构质量、器件成本三项；激活数 ≥ 5 时界面提示区分度下降。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "description": "指标 ID；默认八项比较指标使用 camelCase（如 structureMass）。",
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$"
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["Minimize", "Maximize"]
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["s", "kg", "J", "m", "m3", "dimensionless", "currency"]
+          },
+          "timeAggregation": {
+            "description": "时间聚合：峰值或 RMS。",
+            "type": "string",
+            "enum": ["Peak", "Rms"]
+          },
+          "taskAggregation": {
+            "description": "任务聚合：最差、均值或总和。",
+            "type": "string",
+            "enum": ["Worst", "Mean", "Sum"]
+          },
+          "requiredEvidenceLevel": {
+            "description": "该目标可信所需的最低证据等级。",
+            "type": "string",
+            "enum": ["Screening", "PreliminaryDesign", "ExternallyValidated"]
+          },
+          "comparisonTolerance": {
+            "description": "小于该容差的差异视为无差别，不构成支配（与 unit 同单位，≥ 0）。",
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": ["metricId", "direction", "unit", "timeAggregation", "taskAggregation", "requiredEvidenceLevel", "comparisonTolerance"],
+        "additionalProperties": false
+      }
+    },
+    "budget": {
+      "description": "计算预算。",
+      "type": "object",
+      "properties": {
+        "maxCandidates": {
+          "description": "最大候选数。",
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxWallClockS": {
+          "description": "墙钟预算 s；耗尽产生 Completed + DataInsufficient + Complete。",
+          "type": "number",
+          "minimum": 0
+        },
+        "maxVerifiedEvaluations": {
+          "description": "Verified 评估次数上限。",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["maxCandidates", "maxWallClockS", "maxVerifiedEvaluations"],
+      "additionalProperties": false
+    },
+    "algorithmPolicy": {
+      "description": "算法策略（可经接口扩展，OPT-10）。",
+      "type": "object",
+      "properties": {
+        "algorithmId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "algorithmVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "randomSeed": {
+          "description": "确定性随机种子；同研究版本、设计向量和种子在任意线程/并行度下产生相同 candidateStableId 与相同 Pareto 支配关系。",
+          "type": "integer",
+          "minimum": 0
+        },
+        "threadCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["algorithmId", "algorithmVersion", "randomSeed", "threadCount"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["objectId", "ownerScopeId", "localName", "objectRevision", "createdAt", "provenance", "schemaVersion", "baselineRevision", "studyDefinitionVersion", "stage", "variables", "hardConstraints", "metrics", "objectives", "budget", "algorithmPolicy"],
+  "additionalProperties": false
+}

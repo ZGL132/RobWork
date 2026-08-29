@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "candidateStableId": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "studyDefinitionVersion": "1.0.0",
+  "randomSeed": 42,
+  "designVector": [
+    { "variableId": "var-upper-arm-length", "valueType": "Real", "numericValue": 0.285 },
+    { "variableId": "var-gear-ratio-j3", "valueType": "CatalogRef", "stringValue": "rv-060-gb" }
+  ],
+  "orderedMutations": [
+    {
+      "variableId": "var-upper-arm-length",
+      "bindingId": "bind-joint-origin-z",
+      "targetObjectId": "3e7a55bb-12cd-4e88-a0f9-61d0c2b47003",
+      "parameterKey": "joints[3].originPose.position.z",
+      "appliedValueNumeric": 0.285
+    },
+    {
+      "variableId": "var-gear-ratio-j3",
+      "bindingId": "bind-drivetrain-gearbox-model",
+      "targetObjectId": "f10c4b70-8e29-4a71-b3d5-92a6c0e4d510",
+      "parameterKey": "driveTrains[2].gearbox.modelKey",
+      "appliedValueString": "rv-060-gb"
+    }
+  ],
+  "derivedRecomputation": [],
+  "diagnostics": []
+}

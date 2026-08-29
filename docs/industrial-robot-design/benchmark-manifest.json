@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "platform": "Windows x64",
+  "hardware": {
+    "cpuCores": 16,
+    "memoryGiB": 64,
+    "storage": "SSD"
+  },
+  "datasetVersion": "ird-standard-six-axis-v1",
+  "threadCounts": [1, 8],
+  "randomSeed": 20260828,
+  "warmupRuns": 2,
+  "measurementRuns": 3,
+  "startupMode": "cold-and-warm-recorded",
+  "aggregation": "median-with-all-samples-retained",
+  "workloads": {
+    "taskPoints": 5000,
+    "workspaceSamples": 100000,
+    "quickCandidates": 10000,
+    "verifiedCandidates": 100
+  },
+  "meshTriangles": {
+    "visual": 50000,
+    "collision": 15000
+  },
+  "backgroundLoad": {
+    "concurrentWorkerProcesses": 1,
+    "description": "GUI 交互测量期间保持一个标准批处理工作进程运行（5,000 任务运动学批处理负载）"
+  },
+  "measurementExclusions": [
+    "first-time dependency compilation",
+    "dataset import"
+  ],
+  "approvalRequiredForChange": true
+}

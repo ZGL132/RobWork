@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/evidence-bundle.schema.json",
+  "title": "EvidenceBundle",
+  "description": "结构化证据工件（SYM-EVI-004，CTR-TST-002）。字段来源：architecture/public-interfaces.md §7、requirements.md §7.2。持久化于 results/<run-id>/evidence-<attemptId>/；日志文件不得替代结构化证据。",
+  "type": "object",
+  "properties": {
+    "evidenceBundleId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "runIdentity": {
+      "description": "归属运行身份（RunIdentity）。",
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "branchId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "revisionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "attemptId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "required": ["projectId", "branchId", "revisionId", "runId", "attemptId"],
+      "additionalProperties": false
+    },
+    "configSnapshot": {
+      "description": "配置快照：AnalysisConfiguration 身份引用及其内容哈希。",
+      "type": "object",
+      "properties": {
+        "analysisConfigurationId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "contentDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": ["analysisConfigurationId", "contentDigest"],
+      "additionalProperties": false
+    },
+    "resourceFidelity": {
+      "description": "外部资源保真度记录：进入 Verified 结果或正式报告的外部网格、目录、材料表和能力曲线必须复制到项目不可变资源区（ImmutableCopy）；只保存外部路径和哈希（ExternalReference）的快照只能用于临时/Quick 结果。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "description": "资源内容 ID（SHA-256）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "resourceKind": {
+            "type": "string",
+            "enum": ["CollisionGeometry", "CatalogCurve", "MaterialSource", "MeshGeometry", "CapabilityCurve"]
+          },
+          "fidelity": {
+            "type": "string",
+            "enum": ["ImmutableCopy", "ExternalReference"]
+          },
+          "sourcePath": {
+            "description": "原始外部路径（仅 ExternalReference 时记录；POSIX 相对路径）。",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$"
+          }
+        },
+        "required": ["resourceId", "resourceKind", "fidelity"],
+        "additionalProperties": false
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^IRD-[A-Z0-9]+(-[A-Z0-9]+)*$"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["Input", "Engineering", "System"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["Info", "Warning", "Error"]
+          },
+          "subjectObjectId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "actualValue": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedValue": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "suggestedAction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": ["code", "category", "severity", "subjectObjectId", "message"],
+        "additionalProperties": false
+      }
+    },
+    "statistics": {
+      "description": "运行统计（如区域覆盖的逐项覆盖统计，requirements.md §15.3）。",
+      "type": "object",
+      "properties": {
+        "samplesEvaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "itemsPass": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "itemsWarning": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "itemsInfeasible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "itemsDataInsufficient": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positionCoverageRatio": {
+          "description": "位置覆盖率（0～1）。",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "orientationCoverageRatio": {
+          "description": "姿态覆盖率（0～1）。",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["samplesEvaluated", "itemsPass", "itemsWarning", "itemsInfeasible", "itemsDataInsufficient"],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "description": "来源：工具/库版本、种子。",
+      "type": "object",
+      "properties": {
+        "toolVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "evaluatorId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "evaluatorVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "robWorkVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "robWorkSimVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "algorithmVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "randomSeed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["toolVersion", "evaluatorId", "evaluatorVersion", "robWorkVersion", "robWorkSimVersion", "algorithmVersion", "randomSeed"],
+      "additionalProperties": false
+    },
+    "reproduction": {
+      "description": "可复算信息：命令与输入身份。",
+      "type": "object",
+      "properties": {
+        "commandKind": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9.]{0,63}$"
+        },
+        "commandId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "sliceId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": ["commandKind", "commandId", "snapshotId", "sliceId"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["evidenceBundleId", "schemaVersion", "createdAt", "runIdentity", "configSnapshot", "resourceFidelity", "diagnostics", "statistics", "provenance", "reproduction"],
+  "additionalProperties": false
+}

@@ -1,94 +1,67 @@
 # WP-11 安全导入导出实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A / R1；安全 I/O 公共接口所有者：WP-11。实现者、验证者和评审者必须是不同执行上下文。
 
-**Goal:** 为 CSV、JSON、URDF、网格和项目资源提供统一安全边界，防止路径逃逸、资源耗尽、公式注入和业务插件重复解析。
+**目标：** 为 CSV、JSON、URDF、网格和目录包提供统一的路径、字节、编码和资源边界，防止路径穿越、资源耗尽、公式注入和业务插件重复解析。
 
-**Architecture:** 通用 I/O 层负责字节预算、路径、编码、CSV 语法和安全导出；业务适配器负责把已验证记录转换为领域对象。解析器不执行宏、公式、命令或外部资源加载。
+## 1. 目标与非目标
 
-**Tech Stack:** C++、Qt Core、标准库、CTest；不新增工作簿解析依赖。
+通用 I/O 层负责安全读取、预算、编码、CSV 语法、目录包哈希和安全导出；业务 WP-13/14/19 负责已验证记录到领域对象的语义转换。解析器不执行宏、公式、命令、网络 URL、外部实体或资源区外引用。
 
----
+不实现机器人模型语义、需求校验、器件筛选、项目 revision 提交或第三方工作簿引擎。
 
-## 文件与目标
+## 2. 需求与契约
 
-**创建目标：** `sdurws_ird_io`、`sdurws_ird_io_test`。
+- 需求：REQ-05、SEL-01、SEL-02、NFR-COR-03、NFR-REL-04、NFR-SEC-01～03、AT-02、AT-08。
+- 架构契约：`architecture/persistence-schema.md`、`architecture/testing-contract.md`、`architecture/public-interfaces.md`。
+- 模块方案：`module-design/secure-io.md`。
+- 阶段/发布：阶段 A / R1；导入失败不得改变项目旧 revision，成功记录由后续业务 WP 显式应用。
 
-**创建：**
+## 3. 文件所有权与依赖
 
-- `industrialrobot/io/include/.../ImportBudget.hpp`
-- `industrialrobot/io/include/.../SafeProjectPath.hpp`
-- `industrialrobot/io/include/.../CsvReader.hpp`
-- `industrialrobot/io/include/.../CsvWriter.hpp`
-- `industrialrobot/io/include/.../JsonDocumentReader.hpp`
-- `industrialrobot/io/include/.../ResourceImportService.hpp`
-- `industrialrobot/io/include/.../CatalogPackageReader.hpp`
-- `industrialrobot/io/src/`
-- `industrialrobot/io/test/`
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/`，含 `include/sdurws/ird/io/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-04 内容对象、Qt Core/标准库；禁止 Qt Widgets、未登记解析库、业务插件第二套路径/CSV/JSON 读取和直接写 revision。
 
-**覆盖需求：** REQ-05，SEL-01、02，NFR-REL-04，NFR-SEC-01～03，AT-02、08。
+目标：`sdurws_ird_io`、`sdurws_ird_io_test`、`sdurws_ird_io_contract_test`。
 
-## CSV 契约
+## 4. 安全预算和路径规则
 
-- 输入接受 UTF-8 和 UTF-8 BOM；其他编码明确拒绝并给出转换建议。
-- 支持 RFC 4180 引号、逗号和换行；行号和字段名进入诊断。
-- 字段映射、单位和采用值在提交前预览；业务层决定正确行是否可保留。
-- CSV 字段永远按文本/数值数据解析，不执行公式。
-- 导出文本若以 `=、+、-、@` 开头，使用统一安全转义；结构化 JSON 证据保存未转义原值。
+`ImportBudget` 必须显式包含单文件字节数、总字节数、JSON/XML 最大深度、最大记录/字段数、最大字符串长度、网格三角形/顶点数、压缩展开比和目录文件数。预算在读取前检查，超限立即停止，不保留部分领域对象。路径统一 POSIX `/`，拒绝空段、`.`、`..`、绝对/UNC、符号链接逃逸、资源目录外引用和大小写绕过。
 
-## 目录包契约
+## 5. CSV、JSON、URDF 和目录包
 
-```text
-catalog_manifest.json
-motors.csv
-reducers.csv
-motor_curves.csv
-reducer_curves.csv
-compatibility.csv
-```
+CSV 仅接受 UTF-8/UTF-8 BOM，支持 RFC 4180 引号、逗号和换行；每行输出源行号、字段名、原值、规范值和诊断。NaN/Infinity、非法单位和重复表头不转零。导出时以 `=`,`+`,`-`,`@` 开头的文本统一加安全前缀；数值类型保持数值，JSON 证据保存未转义原值。
 
-manifest 固定记录 Schema、目录 ID、版本、来源、文件名和 SHA-256。缺文件、多余未声明文件、哈希错误和跨表悬空引用均阻止形成 CatalogVersion。
+目录包固定为 `catalog_manifest.json`、`motors.csv`、`reducers.csv`、`motor_curves.csv`、`reducer_curves.csv`、`compatibility.csv`。manifest 记录 schema、目录 ID/版本、来源、文件名和 SHA-256；缺文件、多余未声明文件、哈希/列/单位错误、曲线无序或跨表悬空引用阻止形成 `CatalogVersion`。
+
+URDF/网格/JSON 通用层只读安全字节，不执行外部实体、网络、命令或宏；损坏文件、资源缺失和预算超限返回可定位诊断，项目旧状态保持。
 
 ## 任务
 
-### Task 1：路径和资源预算
+| 任务 | 独立产出 | 任务卡 |
+| --- | --- | --- |
+| WP-11-T01 | 路径规范化和资源预算 | [T01](../agent-tasks/WP-11-T01-path-budget.md) |
+| WP-11-T02 | RFC 4180 CSV 安全读取 | [T02](../agent-tasks/WP-11-T02-csv-reader.md) |
+| WP-11-T03 | CSV 公式注入安全写出 | [T03](../agent-tasks/WP-11-T03-csv-writer.md) |
+| WP-11-T04 | 目录包、哈希和跨表引用 | [T04](../agent-tasks/WP-11-T04-catalog-import.md) |
+| WP-11-T05 | URDF、网格和 JSON 安全边界 | [T05](../agent-tasks/WP-11-T05-resource-boundary.md) |
 
-- [ ] 先写 `..`、绝对路径、UNC 逃逸、符号链接逃逸、大小写变体和超长路径失败测试。
-- [ ] 定义单文件大小、总导入量、XML 深度、记录数和几何复杂度预算。
-- [ ] 超限立即停止并返回稳定诊断，不产生部分项目修订。
+依赖：T01 → T02/T03/T04/T05；T04 依赖 T02；T05 依赖 T01。每张卡一个 worktree、分支和提交。
 
-### Task 2：CSV 读取
+## 6. 失败分类与数据流
 
-- [ ] 覆盖 BOM、引号、内嵌换行、空字段、重复表头、非有限数和非法单位。
-- [ ] 逐行结果保存源行号、原值、规范值和诊断；不自动把非法值转零。
-- [ ] 验证看似公式的字符串只作为文本，不触发任何执行路径。
+数据流固定为 `safe path/bytes -> budget -> encoding/syntax -> normalized record -> business adapter -> explicit command`。输入错误（路径、编码、CSV 字段）为 Input；资源缺失/跨表悬空为 Engineering/DataInsufficient；磁盘、解析库或权限故障为 System。任何失败都不创建部分项目 revision 或正式 CatalogVersion。
 
-### Task 3：CSV 安全写出
-
-- [ ] 对 `=1+1`、`+cmd`、`-2+3`、`@SUM` 和普通负数建立区分测试。
-- [ ] 统一转义危险文本，数值类型仍按数值输出；不得破坏往返原值。
-- [ ] 所有业务 CSV 导出只调用 CsvWriter。
-
-### Task 4：目录包与跨表引用
-
-- [ ] 读取 manifest 后逐文件校验哈希、Schema、列、单位和行数预算。
-- [ ] 校验型号唯一性、曲线点顺序、曲线覆盖和 compatibility 引用。
-- [ ] 形成不可变 CatalogVersion 输入；业务筛选规则仍归 WP-19。
-
-### Task 5：URDF、网格和 JSON 边界
-
-- [ ] 通用层只提供安全字节/路径/资源读取，语义解析归 WP-13。
-- [ ] 禁止外部实体、网络 URL、命令、宏和资源区外引用。
-- [ ] 损坏文件和资源缺失给出可定位诊断并保留项目原状态。
-
-## 验证命令
+## 验证
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_io_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_io_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_io(_contract)?_test$'
 ```
+
+## 7. 证据、迁移和退出条件
+
+证据必须含输入文件哈希、预算、路径规范化结果、源行号/字段诊断、manifest 哈希、跨表引用图、导出前后文本和命令日志。旧插件 I/O 先只读接入，无法证明安全边界的标 Rewrite/EvidenceOnly。
 
 ## 退出条件
 
-- 恶意路径、超预算、损坏编码和公式样式字段全部被安全处理并可诊断。
-- 业务插件没有第二套 CSV/JSON/路径读取实现。
-- CSV 任务导入和目录包导入满足 AT-02、08 的输入侧验收。
+恶意路径、超预算、损坏编码、公式样式字段、外部实体和悬空引用均被安全拒绝且可诊断；业务插件无第二套路径/CSV/JSON 解析；AT-02、AT-08 输入侧断言和独立安全评审通过。

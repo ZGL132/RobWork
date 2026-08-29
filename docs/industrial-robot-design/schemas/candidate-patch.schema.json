@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/candidate-patch.schema.json",
+  "title": "CandidatePatch",
+  "description": "候选补丁（SYM-OPT-013，CTR-OPT-002 §4）：按注册序 + DAG 拓扑序排列的原子修改列表、派生重算、诊断与 writeSet 指纹；全成全败。候选不创建项目修订：应用于 CandidateInputSnapshot（基线修订 + 研究定义版本 + DesignVector），编译为 CompiledCandidateArtifact；只有用户执行\"设为当前方案\"才创建方案分支和新 ProjectRevision。designVector 以 {variableId, valueType, numericValue|stringValue} 条目数组表达：未出现 = 未设置，已出现且值为 0 = 合法设置值。",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "candidateStableId": {
+      "description": "candidateStableId = SHA-256(studyDefinitionVersion ‖ canonical(DesignVector) ‖ randomSeed)；同输入跨线程/并行度一致。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "studyDefinitionVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "randomSeed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "designVector": {
+      "description": "DesignVector（CTR-OPT-002 §2）：variableId → 类型化值的不可变映射，此处以条目数组持久化。未出现的变量 = 未设置；已出现且值为 0 = 合法设置值（零值不得被解释为未设置）。valueType = Real/Integer 时必须携带 numericValue，= Enumeration/CatalogRef 时必须携带 stringValue（恰居其一，由代码契约测试保证）。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "variableId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "valueType": {
+            "type": "string",
+            "enum": ["Real", "Integer", "Enumeration", "CatalogRef"]
+          },
+          "numericValue": {
+            "description": "Real/Integer 变量的数值（JSON number；与未设置可区分）。",
+            "type": "number"
+          },
+          "stringValue": {
+            "description": "Enumeration/CatalogRef 变量的键值。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": ["variableId", "valueType"],
+        "additionalProperties": false
+      }
+    },
+    "orderedMutations": {
+      "description": "按注册序 + DAG 拓扑序排列的原子修改列表。任一 mutation 校验失败（域越界 IRD-OPT-DOMAIN-VIOLATION、绑定未注册、类型/单位不符）→ 整个 patch 拒绝（IRD-OPT-PATCH-REJECTED），不产生部分应用状态。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "variableId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "bindingId": {
+            "description": "已注册 VariableBinding ID。",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "targetObjectId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "parameterKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?(\\.[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?)*$"
+          },
+          "appliedValueNumeric": {
+            "description": "实际写入的数值。",
+            "type": "number"
+          },
+          "appliedValueString": {
+            "description": "实际写入的枚举/目录键。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "writeSet": {
+            "description": "该 mutation 写入的全部物理字段路径（writeSet 冲突检测必需字段；缺失即无法执行 IRD-OPT-WRITE-CONFLICT 检测）。",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?(\\.[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?)*$"
+            }
+          }
+        },
+        "required": ["variableId", "bindingId", "targetObjectId", "parameterKey", "writeSet"],
+        "additionalProperties": false
+      }
+    },
+    "derivedRecomputation": {
+      "description": "派生值重算结果（质量/质心/惯量等）。物理一致性：几何相关扰动按解析估算规则重算，或按惯量随质量与特征尺寸同步缩放的一致性规则生成；禁止独立缩放质量与惯量。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "targetObjectId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "parameterKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?(\\.[A-Za-z][A-Za-z0-9_]*(\\[[0-9]+\\])?)*$"
+          },
+          "method": {
+            "description": "重算方法：解析估算或一致性缩放。",
+            "type": "string",
+            "enum": ["AnalyticEstimate", "UniformScaling"]
+          },
+          "valueNumeric": {
+            "description": "重算后的值（与 unit 同单位）。",
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["rad", "m", "kg", "s", "W", "N", "N·m", "J", "dimensionless"]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["targetObjectId", "parameterKey", "method", "valueNumeric", "unit"],
+        "additionalProperties": false
+      }
+    },
+    "diagnostics": {
+      "description": "逐项结构化诊断。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^IRD-[A-Z0-9]+(-[A-Z0-9]+)*$"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["Input", "Engineering", "System"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["Info", "Warning", "Error"]
+          },
+          "subjectObjectId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "suggestedAction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": ["code", "category", "severity", "subjectObjectId", "message"],
+        "additionalProperties": false
+      }
+    },
+    "writeSetFingerprint": {
+      "description": "全部激活变量 writeSet 规范排序后的 SHA-256。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": ["schemaVersion", "candidateStableId", "studyDefinitionVersion", "randomSeed", "designVector", "orderedMutations", "derivedRecomputation", "diagnostics", "writeSetFingerprint"],
+  "additionalProperties": false
+}

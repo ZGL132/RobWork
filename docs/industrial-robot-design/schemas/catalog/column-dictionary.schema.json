@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/catalog/column-dictionary.schema.json",
+  "title": "ColumnDictionary",
+  "description": "CSV 列字典（SEL-01：字段字典；SEL-02：单位、必填字段校验）。描述目录包中一张 CSV 表的列名、类型、单位、必填性与数值范围；导入时缺失必填列、单位不一致或数值越界即拒绝，非法值不能转零。",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "table": {
+      "description": "本字典描述的表。",
+      "type": "string",
+      "enum": ["MotorTable", "ReducerTable", "CapabilityCurveTable", "CompatibilityTable"]
+    },
+    "primaryKeys": {
+      "description": "型号唯一性键列（motor/reducer 唯一性校验）。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+      }
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "columnName": {
+            "description": "CSV 列名（大小写敏感）。",
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+          },
+          "valueType": {
+            "description": "解析目标类型；类型转换必须显式单位与有限性校验。",
+            "type": "string",
+            "enum": ["string", "integer", "decimal", "boolean"]
+          },
+          "unit": {
+            "description": "数值列单位（SI 或 dimensionless/currency）；字符串列省略。",
+            "type": "string",
+            "enum": ["rad", "rad/s", "m", "kg", "kg·m2", "s", "W", "N", "N·m", "J", "dimensionless", "currency"]
+          },
+          "required": {
+            "description": "是否必填；必填列缺失即拒绝导入。",
+            "type": "boolean"
+          },
+          "minNumericValue": {
+            "description": "数值范围下限（含）。",
+            "type": "number"
+          },
+          "maxNumericValue": {
+            "description": "数值范围上限（含）。",
+            "type": "number"
+          },
+          "description": {
+            "description": "列含义说明（进入字段字典证据）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["columnName", "valueType", "required"],
+        "additionalProperties": false
+      }
+    },
+    "foreignKeys": {
+      "description": "表间引用（compatibility 外键校验；悬空引用拒绝导入）。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "columnName": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+          },
+          "referencesTable": {
+            "type": "string",
+            "enum": ["MotorTable", "ReducerTable", "CapabilityCurveTable", "CompatibilityTable"]
+          },
+          "referencesColumn": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+          }
+        },
+        "required": ["columnName", "referencesTable", "referencesColumn"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["schemaVersion", "table", "primaryKeys", "columns", "foreignKeys"],
+  "additionalProperties": false
+}

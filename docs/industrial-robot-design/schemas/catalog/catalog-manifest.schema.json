@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/catalog/catalog-manifest.schema.json",
+  "title": "CatalogManifest",
+  "description": "目录包清单（SEL-01/SEL-02，module-design/secure-io.md §4）。字段来源：requirements.md §8.6、§7.2（CatalogVersion）。WP-11 读取 manifest 后检查固定文件集合、额外文件、目录 ID/版本、SHA-256、列/单位/行数预算；全部通过才生成不可变 CatalogVersion。目录更新不得静默改变历史结果。",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "catalogId": {
+      "description": "目录稳定标识（电机/减速器目录包）。",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "catalogVersion": {
+      "description": "目录版本（不可变 CatalogVersion 的版本号）。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "source": {
+      "description": "来源信息（SEL-01）。",
+      "type": "object",
+      "properties": {
+        "publisher": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "publishedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "contact": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": ["publisher", "publishedAt"],
+      "additionalProperties": false
+    },
+    "files": {
+      "description": "固定文件集合：型号主表（电机/减速器）、能力曲线表、兼容关系表与列字典；出现额外文件即拒绝导入。",
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["MotorTable", "ReducerTable", "CapabilityCurveTable", "CompatibilityTable", "ColumnDictionary"]
+          },
+          "fileName": {
+            "description": "包内相对文件名（POSIX 分隔符，拒绝 .. 与绝对路径）。",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "sha256": {
+            "description": "文件内容 SHA-256（小写十六进制 64 位）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "rowCount": {
+            "description": "数据行数（不含表头；列字典为字典条目数）。",
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxRowsBudget": {
+            "description": "行数预算上限。",
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": ["role", "fileName", "sha256", "rowCount", "maxRowsBudget"],
+        "additionalProperties": false
+      }
+    },
+    "declaredUnits": {
+      "description": "目录统一声明单位（SI）；列级单位由列字典给出，与清单不一致即拒绝。",
+      "type": "object",
+      "properties": {
+        "torque": {
+          "type": "string",
+          "enum": ["N·m"]
+        },
+        "rotationalSpeed": {
+          "type": "string",
+          "enum": ["rad/s"]
+        },
+        "power": {
+          "type": "string",
+          "enum": ["W"]
+        },
+        "mass": {
+          "type": "string",
+          "enum": ["kg"]
+        },
+        "ratio": {
+          "type": "string",
+          "enum": ["dimensionless"]
+        },
+        "cost": {
+          "type": "string",
+          "enum": ["currency"]
+        }
+      },
+      "required": ["torque", "rotationalSpeed", "power", "mass", "ratio", "cost"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["schemaVersion", "catalogId", "catalogVersion", "source", "files", "declaredUnits"],
+  "additionalProperties": false
+}

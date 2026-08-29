@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/runtime-name-map.schema.json",
+  "title": "RuntimeNameMap",
+  "description": "模型编译器一次性生成的不可变双向名称映射（SYM-NAM-001，CTR-NAM-001）。字段来源：requirements.md §6.7.1、§7.2。绑定以 objectId 为主键；runtimeScopedName = runtimeDeviceName + \".\" + localName。除 IRuntimeNameResolver 实现内部，禁止前缀拼接/剥离逻辑。",
+  "type": "object",
+  "properties": {
+    "objectId": {
+      "description": "RuntimeNameMap 自身的稳定 ID；快照以 nameMapId 引用该值。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ownerScopeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "localName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+    },
+    "objectRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "importOrigin": {
+          "type": "string",
+          "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+        },
+        "sourceDetail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": ["importOrigin"],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "compilerVersion": {
+      "description": "生成该映射的模型编译器版本；确定性编译保证同输入产生相同映射。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "robotDeviceName": {
+      "description": "当前 RobWork Device 名称（RobotName）。重命名时项目命令重新生成唯一名称并原子重编译。",
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+    },
+    "bindings": {
+      "description": "objectId 与 RobWork 作用域全名的不可变双向映射。scopedName/resolve 互为逆函数；双前缀、旧前缀、去前缀重名、未知名一律拒绝。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "description": "稳定对象 ID（绑定主键）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "ownerScopeId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "localName": {
+            "description": "作用域内工程名称（如 Joint1、TCP）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "runtimeDeviceName": {
+            "description": "所属 RobWork Device 名称。",
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"
+          },
+          "runtimeScopedName": {
+            "description": "runtimeDeviceName + \".\" + localName，如 RobotA.Joint1；WORLD 与外部场景对象使用各自作用域。",
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}\\.[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "objectKind": {
+            "description": "对象类别；补偿帧与固定帧拥有稳定 objectId，但不计入可动关节。",
+            "type": "string",
+            "enum": ["Device", "Joint", "Link", "Frame", "FixedFrame", "CompensationFrame", "Tool", "EnvironmentObject"]
+          }
+        },
+        "required": ["objectId", "ownerScopeId", "localName", "runtimeDeviceName", "runtimeScopedName", "objectKind"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["objectId", "ownerScopeId", "localName", "objectRevision", "createdAt", "provenance", "schemaVersion", "compilerVersion", "robotDeviceName", "bindings"],
+  "additionalProperties": false
+}

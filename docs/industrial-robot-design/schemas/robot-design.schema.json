@@ -1,0 +1,407 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/robot-design.schema.json",
+  "title": "RobotDesign",
+  "description": "单机械臂权威设计（SYM-DOM-002，CTR-DOM-002）。字段来源：architecture/domain-model.md §1～§2、architecture/canonical-kinematics.md §1～§6、requirements.md §7.1～7.2。四元数持久化为 {\"x\",\"y\",\"z\",\"w\"}（CTR-KIN-001 §6）；SI 单位：rad/m/kg/s/W。RPY 不得出现在持久化对象中。",
+  "type": "object",
+  "properties": {
+    "objectId": {
+      "description": "对象稳定 ID；重命名、分支和修订不改变（规范小写 UUID）。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ownerScopeId": {
+      "description": "所有者作用域 ID；首版必须等于项目唯一 robotId。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "localName": {
+      "description": "作用域内工程名称；同一作用域内唯一，重命名不改变 objectId。",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+    },
+    "objectRevision": {
+      "description": "对象修订号，从 1 递增。",
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "description": "创建时间，UTC ISO 8601。",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "provenance": {
+      "description": "对象来源（统一头信息）。ImportOrigin 记录输入通道；ValueProvenance 是单值级来源，在具体值（如关节轴）上另存。",
+      "type": "object",
+      "properties": {
+        "importOrigin": {
+          "description": "输入通道（requirements.md §7.1）。",
+          "type": "string",
+          "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+        },
+        "sourceDetail": {
+          "description": "来源说明（如导入文件名、模板名）。",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "originalObjectId": {
+          "description": "跨项目复制/重新导入时记录原对象 ID（requirements.md §7.1）。",
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "required": ["importOrigin"],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "description": "对象 Schema 版本。",
+      "type": "integer",
+      "enum": [1]
+    },
+    "kinematicAuthority": {
+      "description": "运动学权威类型（SYM-KIN-001）；与 ImportOrigin 正交。",
+      "type": "string",
+      "enum": ["StandardDH", "ExplicitJoint"]
+    },
+    "basePose": {
+      "description": "基座安装位姿 T_WORLD_base（CTR-KIN-001 §1），相对 WORLD 显式根。",
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "z": { "type": "number" }
+          },
+          "required": ["x", "y", "z"],
+          "additionalProperties": false
+        },
+        "rotation": {
+          "description": "单位四元数 (x,y,z,w)；载入校验 |‖q‖−1| ≤ 1e-12，符号按 (w,x,y,z) 首个绝对值大于 1e-12 的分量为正。",
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "z": { "type": "number" },
+            "w": { "type": "number" }
+          },
+          "required": ["x", "y", "z", "w"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["position", "rotation"],
+      "additionalProperties": false
+    },
+    "joints": {
+      "description": "关节定义列表（含固定关节/FixedFrame 链）。可动关节数 4～7 且恰好一个目标主链由代码契约测试保证；可动关节按拓扑顺序获得连续 qIndex。",
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "properties": {
+          "jointId": {
+            "description": "关节稳定 objectId（可被插件、结果、报告引用）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "localName": {
+            "description": "关节工程名称（如 Joint1）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "parentJointId": {
+            "description": "父关节 objectId；基座直接相连的第一个关节为 null（其父为基座坐标系）。",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "type": {
+            "description": "关节类型（CTR-KIN-001 §2）。",
+            "type": "string",
+            "enum": ["Revolute", "Continuous", "Prismatic", "Fixed"]
+          },
+          "qIndex": {
+            "description": "仅可动关节拥有；按目标主链从基座到法兰拓扑顺序从 0 连续编号。固定关节与 FixedFrame 永不进入 q。",
+            "type": "integer",
+            "minimum": 0
+          },
+          "originPose": {
+            "description": "q=0 时的 T_P_J0：父连杆坐标系到关节零位坐标系的刚体变换。任何零位偏置只能在导入/编译边界吸收进该值（禁止双偏置链）。",
+            "type": "object",
+            "properties": {
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "rotation": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" },
+                  "w": { "type": "number" }
+                },
+                "required": ["x", "y", "z", "w"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["position", "rotation"],
+            "additionalProperties": false
+          },
+          "axis": {
+            "description": "仅可动关节保存（固定关节不得携带轴语义）。â 在关节自身 J0 坐标系中表达；进入规范模型时单位化 |‖a‖−1| ≤ 1e-15，同时保留原始输入轴与来源。",
+            "type": "object",
+            "properties": {
+              "raw": {
+                "description": "原始输入轴（有限非零；范数 < 1e-12 判非法）。",
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "normalized": {
+                "description": "规范化后的单位轴。",
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "valueProvenance": {
+                "description": "该轴数值的来源（requirements.md §7.1）。",
+                "type": "string",
+                "enum": ["Estimated", "Imported", "UserSpecified", "Measured"]
+              },
+              "normalizationNote": {
+                "description": "规范化记录（如非单位输入被规范化时的诊断说明）。",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": ["raw", "normalized", "valueProvenance"],
+            "additionalProperties": false
+          },
+          "limits": {
+            "description": "仅可动关节保存。Revolute/Continuous 单位 rad，Prismatic 单位 m；lower < upper 由代码契约测试保证。Continuous 在 q 中无界，工程工作范围仅用于采样与校核。",
+            "type": "object",
+            "properties": {
+              "lower": { "type": "number" },
+              "upper": { "type": "number" }
+            },
+            "required": ["lower", "upper"],
+            "additionalProperties": false
+          },
+          "importOrigin": {
+            "description": "该关节的输入通道。",
+            "type": "string",
+            "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+          }
+        },
+        "required": ["jointId", "localName", "parentJointId", "type", "originPose", "importOrigin"],
+        "additionalProperties": false
+      }
+    },
+    "targetChainId": {
+      "description": "目标主链 ID；恰好一个（不变量由代码契约测试保证）。",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "nativeDh": {
+      "description": "原生标准 DH 参数化；仅当 kinematicAuthority = StandardDH 时保存。a/d 单位 m，alpha/theta 单位 rad。派生 DH 只读、禁止成为权威。运行时只消费从权威参数化编译出的 SE(3) 关节链。",
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "jointId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "a": { "type": "number" },
+              "alpha": { "type": "number" },
+              "d": { "type": "number" },
+              "theta": { "type": "number" },
+              "offset": { "type": "number" }
+            },
+            "required": ["jointId", "a", "alpha", "d", "theta"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["rows"],
+      "additionalProperties": false
+    },
+    "homePosition": {
+      "description": "q_home：独立命名关节向量，按 qIndex 排列；不改变 Zero、不参与规范模型编译、不进入变换链（CTR-KIN-001 §3）。",
+      "type": "array",
+      "minItems": 4,
+      "items": { "type": "number" }
+    },
+    "links": {
+      "description": "连杆物性：几何、材料、质量、质心、惯量。质心与惯量必须显式声明参考坐标系（默认所属连杆 Frame C）。惯量张量连同参考点（默认质心）一起解释。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "linkId": {
+            "description": "连杆稳定 objectId。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "localName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "parentJointId": {
+            "description": "该连杆挂接的关节 objectId（子连杆坐标系 C 即该关节运动后的连杆坐标系）；基座连杆可省略。",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "visualMeshResourceId": {
+            "description": "视觉网格内容 ID（项目不可变资源区/对象库，SHA-256）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "collisionMeshResourceId": {
+            "description": "碰撞网格内容 ID（SHA-256）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "materialName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "mass": {
+            "description": "质量 kg，必须为有限正数（> 0 由代码契约测试保证）。",
+            "type": "number",
+            "minimum": 0
+          },
+          "centerOfMass": {
+            "description": "质心（kg 基准的位置），显式参考坐标系。",
+            "type": "object",
+            "properties": {
+              "frameId": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["frameId", "position"],
+            "additionalProperties": false
+          },
+          "inertia": {
+            "description": "惯量张量 kg·m²，参考点默认质心、参考姿态默认参考坐标系；正定性与三角不等式由代码契约测试校验。",
+            "type": "object",
+            "properties": {
+              "referenceFrameId": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "ixx": { "type": "number" },
+              "iyy": { "type": "number" },
+              "izz": { "type": "number" },
+              "ixy": { "type": "number" },
+              "ixz": { "type": "number" },
+              "iyz": { "type": "number" }
+            },
+            "required": ["referenceFrameId", "ixx", "iyy", "izz", "ixy", "ixz", "iyz"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["linkId", "localName", "mass", "centerOfMass", "inertia"],
+        "additionalProperties": false
+      }
+    },
+    "flange": {
+      "description": "法兰（主链末端参考）。",
+      "type": "object",
+      "properties": {
+        "frameId": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+        },
+        "parentJointId": {
+          "description": "最后一个可动关节的 objectId。",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "required": ["frameId", "parentJointId"],
+      "additionalProperties": false
+    },
+    "defaultTcp": {
+      "description": "默认 TCP：相对法兰的固定偏置；不复制几何。工具 TCP 定义在 ToolDefinition.tcpPose。",
+      "type": "object",
+      "properties": {
+        "frameId": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+        },
+        "offset": {
+          "type": "object",
+          "properties": {
+            "position": {
+              "type": "object",
+              "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" },
+                "z": { "type": "number" }
+              },
+              "required": ["x", "y", "z"],
+              "additionalProperties": false
+            },
+            "rotation": {
+              "type": "object",
+              "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" },
+                "z": { "type": "number" },
+                "w": { "type": "number" }
+              },
+              "required": ["x", "y", "z", "w"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["position", "rotation"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["frameId", "offset"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["objectId", "ownerScopeId", "localName", "objectRevision", "createdAt", "provenance", "schemaVersion", "kinematicAuthority", "basePose", "joints", "targetChainId", "homePosition"],
+  "additionalProperties": false
+}

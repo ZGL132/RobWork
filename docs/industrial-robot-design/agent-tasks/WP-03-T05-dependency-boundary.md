@@ -1,0 +1,11 @@
+# WP-03-T05 依赖边界扫描
+- 需求/阶段：ARC-01、ARC-03～05、NFR-MNT-01、NFR-MNT-03；阶段 A / R1
+- 契约：architecture/public-interfaces.md、architecture/testing-contract.md、module-design/core-domain.md
+- 前置：WP-01-T01、WP-01-T02、WP-03-T01～T04；允许：WP-03 边界夹具、CMake 和扫描报告；禁止：修改 WP-01 扫描规则所有权之外的产品代码。
+- 产出：core 公共头和 CMake 的静态边界检查，证明无 QWidget/QApplication、旧插件头、运行时名称拼接和可变全局状态。
+- Given 公共头包含 QWidget、链接旧插件或出现静态全局可变对象，When 运行扫描，Then 返回非零并指出文件、行和修复动作。
+- Given 合法 core 目标和 QCoreApplication 测试，When 构建运行，Then 无 GUI 初始化且只链接允许依赖。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1；入口由 WP-01-T03 交付。
+- 证据：依赖图、扫描报告、故障夹具日志和 core 测试命令输出。
+- 提交：WP-03-T05: core dependency boundary
+- 停止：扫描规则与 WP-01 规则重叠或冲突时暂停并报告。

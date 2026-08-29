@@ -1,0 +1,11 @@
+# WP-02-T01 数据清单与完整性
+- 需求/阶段：NFR-COR-01、NFR-COR-03；阶段 A / R1
+- 契约：architecture/testing-contract.md、architecture/persistence-schema.md、module-design/testkit.md
+- 前置：WP-01-T02；允许：industrialrobot/testkit、testdata/manifest.json 和本任务测试；禁止：修改业务算法、requirements.md、正式 CSV 或无来源的期望值。
+- 产出：DataManifestLoader、manifest Schema 校验、SHA-256 校验和完整性故障夹具。
+- Given manifest 缺文件、重复 id、未知单位、空 source 或 sha256 不匹配，When 加载，Then 返回 Input/Integrity 诊断、无样本对象、无结果和非零退出。
+- Given 合法 manifest 和不可变样本，When 加载，Then 返回按 id 排序的只读样本，字段、版本、消费者和哈希完整。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_manifest_integrity_test$'；入口由 WP-01-T03 交付。
+- 证据：manifest JSON、样本哈希清单、篡改/缺失夹具日志和测试报告。
+- 提交：WP-02-T01: manifest loader and integrity checks
+- 停止：哈希算法、单位表或版本升级规则无法从契约确定时暂停并报告。

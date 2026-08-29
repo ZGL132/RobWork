@@ -1,90 +1,82 @@
 # WP-07 统一工程策略与碰撞实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A / R1；策略与碰撞公共接口所有者：WP-07。实现者、验证者和评审者必须是不同执行上下文。
 
-**Goal:** 建立项目级唯一 `EngineeringPolicySet` 和共享碰撞评估器，使运动学、轨迹和优化在同一快照上得到完全一致的对象与结论。
+**目标：** 建立项目修订中的唯一 `EngineeringPolicySet` 和共享 `CollisionEvaluator`，使运动学、轨迹、优化及三个模拟消费者在同一快照下使用相同对象参与规则、距离分辨率和结论。
 
-**Architecture:** 策略是项目修订中的不可变值对象，评估器只读取快照策略。RobWork CollisionSetup、ProximitySetup 和路径验证配置只是确定性适配输出，不是独立权威。
+## 1. 目标与边界
 
-**Tech Stack:** C++、RobWork Proximity/PathPlanning、CTest。
+交付策略规范化、对象对冲突校验、统一碰撞评估器、路径验证协议、RobWork `CollisionSetup`/`ProximitySetup` 投影、统一入口和私有开关扫描。不实现 GUI 高亮、WorkCell 编译、轨迹规划、碰撞后端算法本身或项目事务。
 
----
+## 2. 需求、契约和发布切片
 
-## 文件与目标
+- 需求：ARC-05、CON-06、KIN-05、TRJ-04、UX-08、NFR-COR-05、NFR-MNT-07、AT-06、AT-19。
+- 架构契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`。
+- 模块方案：`module-design/policy-collision.md`。
+- 阶段/发布：阶段 A / R1；阶段 B 的静态链路只消费本模块已冻结策略，轨迹/动力学由阶段 C 扩展。
 
-**创建目标：** `sdurws_ird_policy`、`sdurws_ird_policy_test`。
+## 3. 文件所有权与依赖
 
-**创建：**
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/`，含 `include/sdurws/ird/policy/`、`src/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-06 RuntimeNameMap、RobWork Proximity/PathPlanning 和 Qt Core；禁止 Qt Widgets、业务插件私有碰撞开关、直接写项目 revision、手工 CSV。
 
-- `industrialrobot/policy/include/.../EngineeringPolicySet.hpp`
-- `industrialrobot/policy/include/.../CollisionPolicy.hpp`
-- `industrialrobot/policy/include/.../IEngineeringPolicyProvider.hpp`
-- `industrialrobot/policy/include/.../CollisionEvaluator.hpp`
-- `industrialrobot/policy/include/.../CollisionPolicyAdapters.hpp`
-- `industrialrobot/policy/include/.../PathValidationProfile.hpp`
-- `industrialrobot/policy/src/`
-- `industrialrobot/policy/test/`
+目标：`sdurws_ird_policy`、`sdurws_ird_policy_test`、`sdurws_ird_policy_contract_test`。
 
-**覆盖需求：** ARC-05，CON-06，KIN-05，TRJ-04，UX-08，NFR-COR-05，NFR-MNT-07，AT-06、19。
+## 4. 策略字段和规范化
 
-## 策略 Schema
+`EngineeringPolicySet` 必填 `policyId`、`ownerScopeId`、`schemaVersion`、`collision`、`pathValidation`、`sourceRevision`。`CollisionPolicy` 字段：`collisionExecutionMode`（DisabledForDraft/Quick/Verified）、`detectorBackend`、`participation[]`、`excludedPairs[]`、`allowedContactPairs[]`、`safetyDistanceM`、`unknownDistanceFallback`。安全距离必须 finite 且非负；对象对按 `(ownerScopeId, objectId)` 排序，禁止同时出现在 excluded 和 allowed；未知对象、重复规则和缺来源拒绝。
 
-```cpp
-struct CollisionPolicy {
-    CollisionExecutionMode collisionExecutionMode;
-    DetectorBackendRef detector;
-    ObjectParticipationMap participation;
-    std::vector<ObjectPair> excludedPairs;
-    std::vector<ObjectPair> allowedContactPairs;
-    Length safetyDistance;
-    PathValidationProfile pathValidation;
-    SchemaVersion schemaVersion;
-};
+`DisabledForDraft` 只能用于草稿预览；Verified 需要可用后端和完整碰撞证据。显示碰撞几何、高亮和当前选择属于 WP-10 会话状态，不进入策略 hash。
+
+## 5. 评估和路径验证数据流
+
+```text
+Policy + RuntimeNameMap + Canonical/Compiled artifact + state/trajectory
+  -> normalize object participation and pair rules
+  -> evaluate shared collision backend
+  -> sample path (10 equal segments)
+  -> recursively bisect violating/uncertain segments
+  -> rotational step 0.05 rad, prismatic step 0.01 m, margin 0.005 m, depth <= 8
+  -> CollisionEvaluation + diagnostics + evidence
 ```
 
-`DisabledForDraft` 只允许缺正式碰撞结论的草稿预览；RequiredEvidenceProfile 要求碰撞时必须阻止 Verified。显示碰撞几何和高亮属于 WP-10 会话状态，不进入策略。
+`excludedPairs` 不产生“无碰”证据；`allowedContactPairs` 仍检测并记录距离，但按批准条件不判硬失败。距离查询不可用时按 `unknownDistanceFallback` 返回 `DataInsufficient`，不得默认安全。深度耗尽仍未达到分辨率时返回 `Completed + DataInsufficient + Complete`，结论固定为“在本策略与分辨率下未发现碰撞”，不宣称连续安全证明。
+
+## 6. RobWork 投影和一致性
+
+同一策略和名称映射生成 `CollisionSetup`、`ProximitySetup`、路径验证配置；XML 导入只作为输入，冲突合并为策略草稿并返回诊断，不静默择一。投影后逐项反解 objectId、参与状态、排除/允许对、安全距离和运行时名称，与策略规范 JSON 对比。
 
 ## 任务
 
-### Task 1：策略规范化与冲突
+| 任务 | 独立产出 | 任务卡 |
+| --- | --- | --- |
+| WP-07-T01 | 策略规范化、来源和冲突 | [T01](../agent-tasks/WP-07-T01-policy-normalization.md) |
+| WP-07-T02 | 共享碰撞评估器 | [T02](../agent-tasks/WP-07-T02-collision-evaluator.md) |
+| WP-07-T03 | 路径采样与分辨率协议 | [T03](../agent-tasks/WP-07-T03-path-protocol.md) |
+| WP-07-T04 | RobWork 设置投影和 XML 合并 | [T04](../agent-tasks/WP-07-T04-rw-projection.md) |
+| WP-07-T05 | Provider 入口、扫描和旧链路删除 | [T05](../agent-tasks/WP-07-T05-policy-entry.md) |
 
-- [ ] 先写同一对象对同时 allowed/excluded、未知对象、重复规则、无来源和负安全距离失败测试。
-- [ ] 规范化对象对顺序只使用 objectId，不使用显示名称。
-- [ ] 实现稳定内容身份和 Schema 往返；插件不能叠加私有默认值。
+依赖：T01 → T02 → T03；T04 依赖 T01/T02 和 WP-06；T05 依赖 T01/T04。每张卡一个 worktree、分支和评审提交。
 
-### Task 2：共享碰撞评估器
+## 7. 失败分类与状态
 
-- [ ] 用同一状态从三个模拟消费者调用评估器，比较对象 ID 对、判定和原因码。
-- [ ] 实现对象参与、排除、允许接触、安全距离和后端不可用语义。
-- [ ] excludedPairs 不产生无碰证据；allowedContactPairs 仍检测和记录，但按批准条件不判硬失败。
+- 输入错误：非法距离、未知 objectId、重复/冲突对象对、无来源策略；返回 Input，不产生正式证据。
+- 工程不可行：碰撞、允许接触条件不满足、分辨率不足或距离未知；返回 Engineering/DataInsufficient，保留完整采样记录。
+- 系统错误：后端不可用、RobWork 投影失败、资源/进程故障；返回 System，旧策略和历史结果不变。
 
-### Task 3：路径验证协议
-
-- [ ] 实现初始 10 等分、自适应二分、转动 `0.05 rad`、移动 `0.01 m`、余量 `0.005 m` 和最大深度 8。
-- [ ] 深度耗尽仍不满足分辨率时返回 Completed + DataInsufficient + Complete。
-- [ ] 结论固定为“在本策略与分辨率下未发现碰撞”，不宣称连续安全证明。
-
-### Task 4：RobWork 适配投影
-
-- [ ] 从同一 CollisionPolicy 与 RuntimeNameMap 生成 CollisionSetup、ProximitySetup 和路径配置。
-- [ ] 导入两种 XML 时合并为策略草稿并报告冲突，不静默选择一份。
-- [ ] 往返测试验证 objectId、策略字段和运行时名称一致。
-
-### Task 5：统一入口和扫描
-
-- [ ] 提供 IEngineeringPolicyProvider，仅按项目修订/快照查询。
-- [ ] 边界扫描禁止业务插件出现本地碰撞启用、安全距离、排除规则或不同默认值。
-- [ ] 删除旧 `collisionSetup.enabled`、`proximitySetup.enabled` 和分析插件私有碰撞开关链路。
-
-## 验证命令
+## 验证
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_policy_test$'
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_policy_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_policy(_contract)?_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 ```
+
+## 8. 测试、迁移和证据
+
+测试覆盖策略 JSON 往返、对象对矩阵、三个消费者一致性、距离 fallback、采样边界、深度耗尽、允许接触、XML 冲突、运行时名称反解和私有开关扫描。固定输入/seed/线程时，结论、对象对顺序、采样点和诊断顺序一致。
+
+证据必须含 policy/snapshot/revision 身份、规范策略 hash、采样配置、对象对结果、距离数据、fallback 原因、RobWork 版本、命令日志和独立评审签名。旧 `collisionSetup.enabled`、`proximitySetup.enabled` 链路按 Migratable/Rewrite/EvidenceOnly 留存迁移记录。
 
 ## 退出条件
 
-- A-GATE-07 和 AT-19 通过。
-- 同一快照跨入口返回完全相同的稳定对象 ID、状态和原因码。
-- 纯显示开关不改变项目修订、输入切片、缓存或碰撞结论。
+A-GATE-07 与 AT-19 通过；同一快照跨三个入口返回相同对象 ID 对、状态、距离和原因码；不可用距离不被当作安全；显示开关不改变 revision、sliceHash、缓存或碰撞结论；所有私有碰撞开关扫描通过。

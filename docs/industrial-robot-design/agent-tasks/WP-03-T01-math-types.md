@@ -1,0 +1,11 @@
+# WP-03-T01 工程数学和类型安全
+- 需求/阶段：ARC-01、ARC-03、NFR-COR-03；阶段 A / R1
+- 契约：architecture/domain-model.md、architecture/public-interfaces.md、architecture/testing-contract.md、module-design/core-domain.md
+- 前置：WP-01-T02、WP-02-T02；允许：industrialrobot/core/include/.../core/EngineeringUnits.hpp、EngineeringPose.hpp、DomainValidation 和对应测试；禁止：Qt Widgets、RobWork 指针、裸 double 公共字段和修改其他 WP 接口。
+- 产出：Length/Angle/Mass/Time/Power、RotationalTorque/LinearForce、Pose、Axis 和稳定几何断言。
+- Given NaN、Infinity、零轴、非法旋转或把 N 传入 N·m，When 构造/校验，Then 返回 ValidationError，旧状态不变且不转默认值。
+- Given 合法 SE(3)、轴和解析黄金值，When 计算测地角/有向轴误差，Then 在 AlgorithmTolerance 内得到确定结果。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_math_types_test$'；入口由 WP-01-T03 交付。
+- 证据：公共头、类型编译失败样例、非有限/零轴回归日志和容差报告。
+- 提交：WP-03-T01: typed engineering values
+- 停止：单位或第 15.3 节容差无法确定时暂停并报告。

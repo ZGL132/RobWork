@@ -1,0 +1,383 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/engineering-requirements.schema.json",
+  "title": "EngineeringRequirements",
+  "description": "工程需求聚合（SYM-DOM-006，CTR-DOM-002）：任务点、区域、约束、负载工况。字段来源：architecture/domain-model.md §2、requirements.md §7.2、§8.2（REQ-01～REQ-04、REQ-06）。SI 单位；姿态用四元数，参考坐标系必须显式。",
+  "type": "object",
+  "properties": {
+    "objectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ownerScopeId": {
+      "description": "首版必须等于项目唯一 robotId。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "localName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+    },
+    "objectRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "importOrigin": {
+          "type": "string",
+          "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+        },
+        "sourceDetail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": ["importOrigin"],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "tasks": {
+      "description": "关键任务点（REQ-01/REQ-02）。有效 Must 未满足判不可行，有效 Should 未满足给警告（REQ-06）。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "localName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "priority": {
+            "description": "Must/Should 等级；Must 状态必须可计算且来源可追溯。",
+            "type": "string",
+            "enum": ["Must", "Should"]
+          },
+          "targetPose": {
+            "description": "目标位姿，显式参考坐标系。",
+            "type": "object",
+            "properties": {
+              "frameId": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "rotation": {
+                "description": "单位四元数 (x,y,z,w)。",
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" },
+                  "w": { "type": "number" }
+                },
+                "required": ["x", "y", "z", "w"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["frameId", "position", "rotation"],
+            "additionalProperties": false
+          },
+          "positionTolerance": {
+            "description": "位置容差 m（> 0 由代码契约测试保证）。",
+            "type": "number",
+            "minimum": 0
+          },
+          "orientationTolerance": {
+            "description": "姿态容差 rad，按测地角比较。",
+            "type": "number",
+            "minimum": 0
+          },
+          "constrainedComponents": {
+            "description": "受约束的位姿分量集合；未列出的分量为自由。RPY 仅是分量命名，不持久化欧拉角数值。",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": ["X", "Y", "Z", "Roll", "Pitch", "Yaw"]
+            }
+          },
+          "approach": {
+            "description": "接近段：沿工具轴或参考轴的方向与距离（REQ-02）。",
+            "type": "object",
+            "properties": {
+              "directionFrame": {
+                "description": "方向表达所在坐标系。",
+                "type": "string",
+                "enum": ["Tool", "TaskFrame"]
+              },
+              "direction": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "distance": {
+                "description": "距离 m。",
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": ["directionFrame", "direction", "distance"],
+            "additionalProperties": false
+          },
+          "retract": {
+            "description": "撤离段：同接近段结构。",
+            "type": "object",
+            "properties": {
+              "directionFrame": {
+                "type": "string",
+                "enum": ["Tool", "TaskFrame"]
+              },
+              "direction": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "distance": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": ["directionFrame", "direction", "distance"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["taskId", "localName", "priority", "targetPose", "positionTolerance", "orientationTolerance"],
+        "additionalProperties": false
+      }
+    },
+    "regions": {
+      "description": "Box 工作区域与覆盖率要求（REQ-03）。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "regionId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "localName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["Must", "Should"]
+          },
+          "frameId": {
+            "description": "区域参考坐标系。",
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "minPosition": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            },
+            "required": ["x", "y", "z"],
+            "additionalProperties": false
+          },
+          "maxPosition": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            },
+            "required": ["x", "y", "z"],
+            "additionalProperties": false
+          },
+          "positionSampleCount": {
+            "description": "位置采样数；采样爆炸防护由代码预算保证。",
+            "type": "integer",
+            "minimum": 1
+          },
+          "orientationSampleCount": {
+            "description": "姿态采样数。",
+            "type": "integer",
+            "minimum": 1
+          },
+          "minCoverageRatio": {
+            "description": "最低覆盖率（位置/姿态覆盖率分别计算）。",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": ["regionId", "localName", "priority", "frameId", "minPosition", "maxPosition", "positionSampleCount", "orientationSampleCount", "minCoverageRatio"],
+        "additionalProperties": false
+      }
+    },
+    "constraints": {
+      "description": "约束（最小关节裕量、碰撞要求、目标节拍等，REQ-04）。各类 kind 对应的参数字段必填性由代码契约测试保证。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "constraintId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["Must", "Should"]
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["MinJointMargin", "CollisionFree", "CycleTime", "MinDriveMargin"]
+          },
+          "marginRatio": {
+            "description": "kind = MinJointMargin / MinDriveMargin 时的裕量比值（0～1）。",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "requiresCollisionEvidence": {
+            "description": "kind = CollisionFree 时是否要求碰撞证据；缺少碰撞检测器必须返回 DataInsufficient，不得视为无碰撞（KIN-05）。",
+            "type": "boolean"
+          },
+          "targetCycleTime": {
+            "description": "kind = CycleTime 时的目标节拍上限 s。",
+            "type": "number",
+            "minimum": 0
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": ["constraintId", "priority", "kind"],
+        "additionalProperties": false
+      }
+    },
+    "loads": {
+      "description": "负载工况 LoadCase（SYM-DOM-007）：负载、外力、夹取/释放、驻留。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "loadCaseId": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "localName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+          },
+          "payloadMass": {
+            "description": "负载质量 kg。",
+            "type": "number",
+            "minimum": 0
+          },
+          "payloadCenterOfMass": {
+            "description": "负载质心，显式参考坐标系（通常为法兰/工具坐标系）。",
+            "type": "object",
+            "properties": {
+              "frameId": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["frameId", "position"],
+            "additionalProperties": false
+          },
+          "externalWrench": {
+            "description": "外力/外力矩；力 N，力矩 N·m。",
+            "type": "object",
+            "properties": {
+              "frameId": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "force": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              },
+              "torque": {
+                "type": "object",
+                "properties": {
+                  "x": { "type": "number" },
+                  "y": { "type": "number" },
+                  "z": { "type": "number" }
+                },
+                "required": ["x", "y", "z"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["frameId", "force", "torque"],
+            "additionalProperties": false
+          },
+          "dwellTime": {
+            "description": "驻留时间 s。",
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": ["loadCaseId", "localName", "payloadMass", "payloadCenterOfMass"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["objectId", "ownerScopeId", "localName", "objectRevision", "createdAt", "provenance", "schemaVersion", "tasks", "loads"],
+  "additionalProperties": false
+}

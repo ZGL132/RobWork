@@ -1,0 +1,11 @@
+# WP-03-T03 全局评估语义
+- 需求/阶段：ARC-01、ARC-03～05、NFR-COR-03；阶段 A / R1
+- 契约：architecture/domain-model.md、architecture/execution-model.md、module-design/core-domain.md
+- 前置：WP-03-T01、WP-02-T02；允许：EvaluationSemantics.hpp、DomainValidation 和参数化测试；禁止：业务插件增加状态枚举、改变正式可行谓词或将 Warning 当 Pass。
+- 产出：EvaluationMode、EvidenceLevel、ExecutionOutcome、EngineeringStatus、PayloadCompleteness、RequiredEvidenceProfile 和 isFormallyFeasible。
+- Given 所有 outcome/status/payload 组合，When 构造 Envelope，Then 非法组合拒绝；Canceled/Failed/Interrupted 不得带正式 Complete payload。
+- Given Completed + Pass + Complete、Must 全通过且证据等级满足，When 调用谓词，Then true；其他组合均 false 并列出缺口。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_evaluation_semantics_test$'；入口由 WP-01-T03 交付。
+- 证据：组合矩阵、正式可行正反例、RequiredEvidenceProfile 缺口报告。
+- 提交：WP-03-T03: evaluation semantics
+- 停止：需求正文与架构状态表冲突时暂停并报告。

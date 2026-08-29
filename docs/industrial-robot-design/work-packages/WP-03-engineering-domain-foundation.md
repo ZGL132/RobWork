@@ -1,101 +1,157 @@
 # WP-03 工程领域基础实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A 交付 / R1。
+> 负责范围：无 Qt Widgets 的核心领域库，提供所有后续 WP 共用的单位、姿态、身份、来源、状态和正式可行语义。
+> 责任分离：核心实现者、契约测试者和领域评审者必须是不同执行上下文。
 
-**Goal:** 建立无 Qt Widgets 依赖的工程数学、身份、来源、领域对象和全局评估语义，成为所有模块唯一共享契约。
+## 1. 目标与非目标
 
-**Architecture:** 小型不可变值对象表达单位、姿态、身份和状态；聚合对象只保存领域语义，不保存 RobWork 指针、Widget、当前选择或运行时全名。JSON 适配与领域类型分离。
+**目标：** 建立不可变、可序列化、无运行时依赖的领域类型，使后续模块不再自行定义单位、枚举、身份或工程状态。
+- 目标交付：sdurws_ird_core、公共头文件、JSON 适配、领域校验、参数化测试和依赖边界报告。
+- 完成定义：所有公共枚举只有一个定义；非法单位/非有限数/缺引用不能默认为 0；核心测试不创建 QApplication。
 
-**Tech Stack:** C++、RobWork Math、Qt Core JSON 适配、CTest。
+**非目标：** 不实现 RobWork WorkCell 编译、项目保存、碰撞、调度、算法评估或 Widget；不保存运行时设备全名和 Qt 类型。
 
----
+## 2. 架构边界与依赖
 
-## 文件与目标
+调用链固定为：外部适配输入 → core 值类型/校验 → 项目/快照/评估模块消费。core 只向下依赖 C++ 标准库和允许的数学基础，不向上依赖 WP-04～12。
 
-**创建目标：** `sdurws_ird_core`、`sdurws_ird_core_test`。
+| 层 | 允许内容 | 禁止内容 |
+| --- | --- | --- |
+| values | SI 值类型、Pose、Axis、Limit、Identity | 裸 double 跨领域传递 |
+| identity | ObjectId、ownerScopeId、localName、来源 | 从名称推导身份 |
+| semantics | outcome、engineeringStatus、evidence、可行谓词 | 各插件私有状态 |
+| aggregates | RobotDesign 等引用骨架 | RobWork 指针、Widget、当前选择 |
+| json adapter | 规范 JSON 往返 | 把 JSON 字符串当领域对象 |
 
-**创建目录：**
+## 3. 文件与构建目录
 
-- `industrialrobot/core/include/rwslibs/industrialrobot/core/`
-- `industrialrobot/core/src/`
-- `industrialrobot/core/test/`
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/
+├─ include/sdurws/ird/core/
+│  ├─ EngineeringUnits.hpp
+│  ├─ EngineeringPose.hpp
+│  ├─ ObjectIdentity.hpp
+│  ├─ ValueProvenance.hpp
+│  ├─ EvaluationSemantics.hpp
+│  ├─ DomainObjects.hpp
+│  ├─ DomainValidation.hpp
+│  └─ DomainJson.hpp
+├─ src/DomainJson.cpp、DomainValidation.cpp
+├─ test/DomainValuesTest.cpp、IdentityTest.cpp、SemanticsTest.cpp
+└─ CMakeLists.txt
 
-**核心文件：**
+目标：sdurws_ird_core、sdurws_ird_core_test。公共头安装到 include/sdurws/ird/core；测试和夹具不安装。
 
-- `ObjectIdentity.hpp`
-- `EngineeringUnits.hpp`
-- `EngineeringPose.hpp`
-- `ValueProvenance.hpp`
-- `EvaluationSemantics.hpp`
-- `DomainObjects.hpp`
-- `DomainValidation.hpp`
-- `DomainJson.hpp/.cpp`
+## 4. 类型和字段契约
 
-**覆盖需求：** ARC-01、03，EVI-01，ERR-01 的公共字段，NFR-COR-03，NFR-MNT-01、03、04。
+### 4.1 数值类型
 
-## 冻结接口
+| 类型 | 单位 | 合法性 |
+| --- | --- | --- |
+| Length | m | finite；按需求范围校验 |
+| Angle | rad | finite；显示层才转度 |
+| Mass | kg | finite 且非负 |
+| Time | s | finite 且非负 |
+| Power | W | finite；正负号保留 |
+| RotationalTorque | N·m | 只用于转动关节 |
+| LinearForce | N | 只用于移动关节 |
 
-```cpp
-struct ObjectIdentity {
-    ObjectId objectId;
-    ObjectId ownerScopeId;
-    std::string localName;
-};
+构造函数必须拒绝 NaN/Infinity；范围错误返回结构化 ValidationError。禁止隐式从 double 构造跨单位类型。
 
-enum class EvaluationMode { Quick, Verified };
-enum class EvidenceLevel { Screening, PreliminaryDesign, ExternallyValidated };
-enum class ExecutionOutcome { Completed, Canceled, Failed, Interrupted };
-enum class EngineeringStatus { Pass, Warning, Infeasible, DataInsufficient, NotEvaluated };
-enum class PayloadCompleteness { Complete, Partial, None };
+### 4.2 身份和来源
 
-bool isFormallyFeasible(const EvaluationEnvelope&, const RequiredEvidenceProfile&);
-```
+ObjectIdentity 包含 objectId、ownerScopeId、localName。objectId 为规范化小写 UUID 或内容 ID，不由名称派生；同一 ownerScopeId 内 localName 唯一；删除后 ID 不复用。
 
-领域层姿态使用刚体变换/四元数，不持久化 RPY 作为真值。长度、角度、质量、时间和功率内部统一 SI；转动与移动关节广义力使用不同类型，禁止裸 `double` 混用。
+ImportOrigin 保存 sourceType、sourceUri、sourceHash、sourceRevision；ValueProvenance 保存 valueKind、confidence、method、authoritative。两者正交，导入来源变化不自动覆盖值可信度。
 
-## 任务
+### 4.3 评估语义
 
-### Task 1：工程数学和类型安全
+EvaluationMode：Quick、Verified；EvidenceLevel：Screening、PreliminaryDesign、ExternallyValidated；ExecutionOutcome：Completed、Canceled、Failed、Interrupted；EngineeringStatus：Pass、Warning、Infeasible、DataInsufficient、NotEvaluated；PayloadCompleteness：Complete、Partial、None。
 
-- [ ] 先写单位误用、非有限值、零轴、无效旋转和转动/移动广义力混用的失败测试。
-- [ ] 实现 SI 值类型、姿态、旋转测地角和有向轴误差。
-- [ ] 验证 RPY 只存在于输入/显示适配，不进入领域持久化结构。
+正式可行必须同时满足 Completed + Pass + Complete、所有 Must 硬约束通过和 RequiredEvidenceProfile 满足。Completed 不等于正式可行；Quick、Partial、DataInsufficient 不能通过。
 
-### Task 2：稳定身份与来源
+## 5. 数据流与逻辑
 
-- [ ] 先写名称变化后引用仍指向同一 objectId 的测试。
-- [ ] 实现不可由名称推导的 ObjectId、ownerScopeId 和作用域内 localName 校验。
-- [ ] 实现 `ImportOrigin` 与 `ValueProvenance` 正交保存和 JSON 往返。
+1. 外部适配器创建输入值类型，构造阶段完成有限数、单位和范围检查。
+2. DomainValidation 检查聚合引用、作用域唯一性、目标主链和枚举组合。
+3. DomainJson 将值类型按固定字段写入 JSON；读取时先 schema/version，再字段和引用校验。
+4. 下游 WP 只接收 const 值对象或不可变 Envelope；不得保存 UI 指针或运行时名称。
+5. 诊断包含 code、category、objectId、actual、expected、cause、action；缺 objectId 时显式为空。
 
-### Task 3：全局评估语义
+## 6. JSON 示例和兼容
 
-- [ ] 对全部合法/非法 outcome、engineeringStatus、payload 组合编写参数化测试。
-- [ ] 实现 Quick/Verified、EvidenceLevel 和 RequiredEvidenceProfile。
-- [ ] 实现第 6.6 节唯一正式可行谓词，证明 Completed 不自动等于正式可行。
+{
+  "objectId": "9f7b...lowercase",
+  "ownerScopeId": "robot-001",
+  "localName": "Joint1",
+  "jointType": "Revolute",
+  "origin": {"translationM": [0, 0, 0.35], "quaternion": [1, 0, 0, 0]},
+  "axis": [0, 0, 1],
+  "provenance": {"valueKind": "Imported", "confidence": "Verified"}
+}
 
-### Task 4：领域聚合最小 Schema
+JSON number 必须有限；姿态真值使用四元数/刚体变换，RPY 只在输入或显示适配层存在。未知未来 schema 拒绝，已知版本由显式升级器处理。
 
-- [ ] 定义 RobotDesign、ToolDefinition、EnvironmentModel、EngineeringRequirements、LoadCase、DriveTrainDesign、分析配置、目录引用和优化研究的身份与引用骨架。
-- [ ] 定义各不可变结果对象的公共 Envelope，不在 WP-03 实现领域算法字段。
-- [ ] JSON 往返验证 ID、枚举、引用、来源完全一致，有限标量误差不超过 `1e-12`。
+## 7. 实施步骤
 
-### Task 5：依赖边界
+### WP-03-T01 工程数学和类型安全
+先写单位混用、非有限值、零轴、无效旋转、转动/移动广义力混用失败测试；实现值类型、姿态、旋转测地角和有向轴误差；确认 RPY 不进入持久化结构。
 
-- [ ] CMake 明确禁止 Qt Widgets 链接。
-- [ ] 扫描 public headers，禁止 `QWidget`、旧插件头、运行时名称拼接和可变全局状态。
-- [ ] 独立验证者只链接 `sdurws_ird_core` 完成全部模型测试。
+### WP-03-T02 稳定身份与来源
+先写重命名保持 objectId、重复 localName、跨作用域引用和删除不复用测试；实现 Identity、ImportOrigin、ValueProvenance 和 JSON 往返。
 
-## 验证命令
+### WP-03-T03 全局评估语义
+参数化覆盖全部 outcome/status/payload 合法与非法组合（以 architecture/evaluation-semantics.md §2 为准）；实现 RequiredEvidenceProfile 和唯一正式可行谓词；验证 Canceled/Failed/Interrupted、Partial、DataInsufficient、NotEvaluated 和 Quick 不被误判为正式通过，Completed+Warning 仅在允许警告类别内可正式可行。
 
-```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_core_test
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
-```
+### WP-03-T04 领域聚合 Schema
+定义 RobotDesign、ToolDefinition、EnvironmentModel、EngineeringRequirements、LoadCase、DriveTrainDesign、AnalysisConfiguration、CatalogRef 和 OptimizationStudyDefinition 的身份/引用骨架；不实现业务算法字段。
+
+### WP-03-T05 依赖边界扫描
+扫描公共头和 CMake，拒绝 QWidget、QApplication、旧插件头、运行时名称拼接、可变全局状态和未登记依赖；只链接 core 完成模型测试。
+
+## 8. 测试矩阵
+
+| 场景 | 输入 | 预期 |
+| --- | --- | --- |
+| 单位错误 | Angle 传入 Length | 编译或校验失败，不隐式转换 |
+| 非有限 | NaN/Infinity | ValidationError，payload=None |
+| 身份 | 改 localName | objectId 和引用不变 |
+| 作用域 | 重复 localName/跨域无 scope | 稳定诊断，不取首个 |
+| 状态 | Canceled + Pass + Complete | 非法组合被拒绝 |
+| 可行性 | Completed + Warning | isFormallyFeasible=false |
+| JSON | 有效聚合 | 字段、枚举、引用往返一致 |
+| 边界 | QWidget/旧头 | check-boundaries 非零 |
+
+## 验证
+
+WP-03 验证必须在 Visual Studio x64 环境构建 sdurws_ird_core_test，并运行模型、JSON 契约和依赖边界测试；测试过程不得创建 QApplication 或 Widget。
+
+## 9. 验证
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_core_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+
+模型测试只使用 QCoreApplication 或无 Qt 入口；GUI 平台规则不适用于 core。
+
+## 10. 迁移、评审和证据
+
+旧类型先通过只读适配器迁移；满足黄金数据和契约测试才标 Migratable，否则 Rewrite/EvidenceOnly。删除旧类型前保留输入和差异证据。
+
+必须提交公共头清单、CMake 依赖图、JSON 样例、参数化测试日志、边界扫描报告、迁移 verdict 和独立评审记录。
 
 ## 退出条件
 
-- 公共状态、单位、身份、来源和正式可行语义只有一个定义。
-- 非有限数、非法单位和引用缺失不能静默转为 0 或默认通过。
-- 核心测试可在不创建 QApplication/Widget 的情况下运行。
-- 后续工作包不需要自行决定任何公共枚举或单位口径。
+- 公共单位、身份、来源、状态和正式可行谓词各只有一个定义。
+- 非有限值、非法单位、缺引用和非法状态组合明确失败。
+- core 无 Qt Widgets、旧插件头、RobWork 运行时对象和可变全局状态。
+- JSON 往返、黄金数据和边界扫描全部通过。
+- 后续 WP 可直接引用 core 公共类型，无需重新决定字段、枚举和单位。
+
+## 任务卡索引
+
+- [WP-03-T01 工程数学和类型安全](../agent-tasks/WP-03-T01-math-types.md)
+- [WP-03-T02 稳定身份与来源](../agent-tasks/WP-03-T02-identity-provenance.md)
+- [WP-03-T03 全局评估语义](../agent-tasks/WP-03-T03-evaluation-semantics.md)
+- [WP-03-T04 领域聚合 Schema](../agent-tasks/WP-03-T04-aggregate-schema.md)
+- [WP-03-T05 依赖边界扫描](../agent-tasks/WP-03-T05-dependency-boundary.md)

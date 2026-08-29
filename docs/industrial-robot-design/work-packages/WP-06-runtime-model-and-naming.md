@@ -1,100 +1,85 @@
 # WP-06 运行时模型与名称实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A / R1；运行时模型和名称公共接口所有者：WP-06。实现者、验证者和评审者必须是不同执行上下文。
 
-**Goal:** 建立唯一规范 SE(3) 计算模型和 `RuntimeNameMap`，从稳定 objectId 确定性编译 WorkCell/DynamicWorkCell，并消除分散的名称前缀处理。
+**目标：** 从同一 `RobotDesign` 生成唯一规范 SE(3) 计算模型、确定性 `RuntimeNameMap`、WorkCell 和 DynamicWorkCell，确保 objectId、物理坐标和运行时名称始终可追溯。
 
-**Architecture:** 领域模型不保存 RobWork 运行时全名；模型编译器一次生成不可变名称映射和两个运行时工件。所有适配器只通过 `IRuntimeNameResolver` 解析，禁止自行拼接、剥离或猜测前缀。
+## 1. 目标与非目标
 
-**Tech Stack:** C++、RobWork、RobWorkSim、CTest。
+交付 DH/ExplicitJoint/URDF 到规范模型的编译、objectId 双向名称解析、WorkCell/DWC 全成全败编译、任意关节轴适配、重命名回归和名称前缀静态扫描。首版只有一个机械臂，但名称绑定必须含 `ownerScopeId`，为多机械臂命名空间保留扩展点。
 
----
+不实现 FK/IK 算法、轨迹/动力学评估、碰撞策略、GUI 场景、项目持久化或业务插件私有名称拼接。
 
-## 文件与目标
+## 2. 需求、契约和发布切片
 
-**创建目标：** `sdurws_ird_runtime`、`sdurws_ird_runtime_test`。
+- 需求：ARC-03、ARC-04、CON-06、MDL-06、MDL-09、MDL-10、MDL-14、NFR-COR-05、NFR-MNT-07、AT-01、AT-15、AT-16、AT-18。
+- 架构契约：`architecture/domain-model.md`、`architecture/public-interfaces.md`、`architecture/execution-model.md`、`architecture/testing-contract.md`。
+- 模块方案：`module-design/runtime-model.md`。
+- 阶段门禁：阶段 A 交付模型/名称/双编译基线；阶段 B 供 WP-13～15、WP-20 使用；不以阶段 C/D 轨迹和动力学能力作为本 WP 退出条件。
 
-**创建：**
+## 3. 文件所有权与依赖
 
-- `industrialrobot/runtime/include/.../CanonicalKinematicModel.hpp`
-- `industrialrobot/runtime/include/.../RuntimeNameMap.hpp`
-- `industrialrobot/runtime/include/.../IRuntimeNameResolver.hpp`
-- `industrialrobot/runtime/include/.../CanonicalModelCompiler.hpp`
-- `industrialrobot/runtime/include/.../CompiledRobotArtifacts.hpp`
-- `industrialrobot/runtime/include/.../RobWorkModelAdapter.hpp`
-- `industrialrobot/runtime/src/`
-- `industrialrobot/runtime/test/`
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/`，含 `include/sdurws/ird/runtime/`、`src/`、`test/`、`testdata/`、`evidence/`。允许依赖 WP-03 core、RobWork/RobWorkSim 适配 API 和标准库；禁止 Qt Widgets、WP-13 业务 UI、其他 WP 私有头、直接写项目 revision 或自行定义诊断枚举。
 
-**覆盖需求：** ARC-03、04，CON-06，MDL-06、09、10、14，NFR-COR-05，NFR-MNT-07，AT-01、15、16、18。
+目标：`sdurws_ird_runtime`、`sdurws_ird_runtime_test`、`sdurws_ird_runtime_contract_test`。
 
-## 冻结接口
+## 4. 冻结公共模型
 
-```cpp
-struct RuntimeNameBinding {
-    ObjectId objectId;
-    std::string runtimeDeviceName;
-    std::string runtimeScopedName;
-    ObjectKind objectKind;
-};
+`CanonicalKinematicModel` 包含 `projectId`、`revisionId`、`robotDesignId`、`baseFrame`、`links[]`、`joints[]`、`tools[]`、`environments[]`、`sourceFormat`、`algorithmVersion`。每个 Joint 必填 `objectId`、`ownerScopeId`、`jointType`、`origin`、`axis`、`zero`、`home`、`limits`、`childLinkId`；轴以单位化有限三维向量表达，原始输入值和补偿变换分开保存。
 
-class IRuntimeNameResolver {
-public:
-    virtual RuntimeNameBinding resolve(ObjectId) const = 0;
-    virtual ObjectId reverse(std::string_view runtimeScopedName) const = 0;
-};
+`RuntimeNameBinding`：`objectId`、`ownerScopeId`、`objectKind`、`runtimeDeviceName`、`runtimeScopedName`、`localName`。机器人内部名称固定为 `<runtimeDeviceName>.<localName>`；WORLD 和外部环境保持全局命名，不加机器人前缀。映射必须一一对应，未知、歧义、双前缀、旧前缀和去前缀重名均拒绝。
 
-struct CompiledRobotArtifacts {
-    CanonicalKinematicModel canonical;
-    RuntimeNameMap names;
-    rw::models::WorkCell::Ptr workCell;
-    rwsim::dynamics::DynamicWorkCell::Ptr dynamicWorkCell;
-};
+`CompiledRobotArtifacts` 同时包含 canonical、names、WorkCell::Ptr、DynamicWorkCell::Ptr、compileDiagnostics 和 source identity；任一工件失败则整个结果为空，不得返回部分指针。
+
+## 5. 编译和适配数据流
+
+```text
+RobotDesign/URDF/DH/ExplicitJoint
+  -> validate units, axes, IDs and chain
+  -> normalize to CanonicalKinematicModel (SE(3), SI)
+  -> allocate deterministic RuntimeNameMap
+  -> compile WorkCell and DynamicWorkCell in isolated builders
+  -> bind Collision/Proximity/geometry/limits/dynamics by objectId
+  -> cross-check both artifacts and names
+  -> publish CompiledRobotArtifacts atomically
 ```
 
-编译必须全成或全败；任一工件失败不得返回可提交产物。
+规范链使用 `T_parent_child(q) = Origin * AxisRotation(q-zero)`；固定关节不产生可动轴。RobWork 只接受局部 Z 时，适配器增加不可见补偿 frame/link，并将视觉/碰撞几何、质心和惯量按同一补偿变换转换；Canonical 原始 Origin/Axis 永不改写。Zero、Home、有限边界和固定 100 个状态必须使用第 15.3 节冻结容差。
 
 ## 任务
 
-### Task 1：规范计算模型
+| 任务 | 独立产出 | 任务卡 |
+| --- | --- | --- |
+| WP-06-T01 | 规范 SE(3) 模型和 DH/ExplicitJoint 等价编译 | [T01](../agent-tasks/WP-06-T01-canonical-model.md) |
+| WP-06-T02 | objectId 与运行时作用域名双向映射 | [T02](../agent-tasks/WP-06-T02-name-map.md) |
+| WP-06-T03 | WorkCell/DWC/名称全成全败双编译 | [T03](../agent-tasks/WP-06-T03-dual-compile.md) |
+| WP-06-T04 | 任意轴、连续轴和棱柱轴适配 | [T04](../agent-tasks/WP-06-T04-axis-adapter.md) |
+| WP-06-T05 | 重命名、历史名称和前缀静态扫描 | [T05](../agent-tasks/WP-06-T05-rename-scan.md) |
 
-- [ ] 先写 StandardDH 与 ExplicitJoint 编译后 FK/世界轴线等价测试。
-- [ ] 定义父子关系、Joint Type、Origin、Axis、Zero/Home、限制和附属 Frame 的规范 SE(3) 链。
-- [ ] 确认所有 FK/IK/轨迹/动力接口只接受规范模型，不接受 DH 表或 Widget 数据。
+依赖：T01 → T02 → T03；T04 依赖 T01/T03；T05 依赖 T02/T03。每张任务卡一个 worktree、分支和提交。
 
-### Task 2：名称映射
+## 7. 失败分类与统一行为
 
-- [ ] 使用 Arm、ArmA、RobotB 和重复 Joint1/TCP 黄金数据先写失败测试。
-- [ ] 实现 objectId 与 `<runtimeDeviceName>.<localName>` 严格一一映射和反解。
-- [ ] WORLD 与外部环境对象不添加机器人前缀；设备内 Joint/Frame/Object/Model 全部使用作用域名。
-- [ ] 未知、歧义、双前缀、去前缀重名和旧前缀均返回稳定错误，不取首个匹配。
+- 输入错误：空链、非法轴、重复 ID/名称、非有限值、非法关节类型；返回 Input 诊断，不生成运行时工件。
+- 工程不可行：RobWork 不支持的关节/惯量、缺少几何或动力 Link；返回 Engineering/DataInsufficient，不返回部分编译结果。
+- 系统错误：第三方构造、线程或资源失败；返回 System 诊断，释放已创建对象并保持调用方旧工件不变。
 
-### Task 3：确定性双编译
-
-- [ ] 从同一 RobotDesign 编译 WorkCell、DynamicWorkCell 和 RuntimeNameMap。
-- [ ] 在 WorkCell、DWC、CollisionSetup、ProximitySetup、几何、限位、动力 Link 中逐项校验 objectId 绑定。
-- [ ] 对 WorkCell 成功/DWC 失败和相反情况注入故障，确认没有部分产物。
-
-### Task 4：任意轴运行时适配
-
-- [ ] 对非 Z、非单位、continuous 和 prismatic 轴建立适配测试。
-- [ ] 若 RobWork 关节要求局部 Z，补偿子连杆、视觉/碰撞几何、质心和惯量坐标。
-- [ ] 在 Zero、Home、有限边界和固定 100 状态满足需求第 15.3 节容差，领域原始 Origin/Axis 不被改写。
-
-### Task 5：重命名与静态扫描
-
-- [ ] 重命名只改变 runtimeDeviceName/map；objectId 和物理输入切片不变。
-- [ ] 历史快照保留旧名称，新执行使用新映射，不产生旧/双前缀。
-- [ ] 边界扫描只允许 resolver 实现目录出现前缀拼接/剥离；迁移完成后删除旧逐字段 `stripDeviceScope` 链路。
-
-## 验证命令
+## 验证
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_runtime_test$'
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_runtime_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_runtime(_contract)?_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 ```
+
+模型测试使用 QCoreApplication 或无 Qt 入口；若包含 GUI 消费者，按 Windows Qt 规则单独启动并设置 `QT_QPA_PLATFORM=windows`。
+
+## 8. 测试、迁移和证据
+
+测试覆盖三入口等价、名称黄金集、任意轴、连续/棱柱轴、零/家位置、边界状态、双编译 failpoint、重命名、旧前缀扫描和确定性重复编译。固定输入、线程和版本时 canonical JSON、名称表、artifact 清单和诊断顺序必须一致。
+
+旧运行时名称链路先保留只读适配器，契约测试通过后标 Migratable；无法证明前缀语义的标 Rewrite/EvidenceOnly。证据包含输入 revision/snapshot、source format、artifact hash、名称表、状态矩阵、RobWork 版本、命令日志和独立评审。
 
 ## 退出条件
 
-- A-GATE-06 与 AT-18 全链路通过。
-- RuntimeNameMap 双向一一对应，所有设备内引用无漏、旧、双前缀。
-- 规范模型与运行时模型的 FK、轴、几何、质心和惯量满足冻结容差。
+A-GATE-06 阶段 A 链路和 AT-01、AT-15、AT-16 的模型/名称断言通过；AT-18 仅按阶段 B 规定子集验证。RuntimeNameMap 双向一一对应；WorkCell/DWC 任一失败均无可提交工件；规范与运行时 FK、轴、几何、质心和惯量满足冻结容差；静态扫描确认前缀逻辑只有 resolver/adapter 所有目录。

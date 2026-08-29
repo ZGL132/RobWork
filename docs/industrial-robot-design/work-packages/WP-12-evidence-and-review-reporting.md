@@ -91,8 +91,21 @@ reviewer/sign-off metadata
 pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_reporting_test$'
 ```
 
+## 独立评审
+
+由报告消费者和独立验证者复核快照追溯、格式渲染、证据字段和签署信息。
+
 ## 退出条件
 
 - 每项正式结论可追到项目修订、快照、策略、评估器版本和证据。
 - HTML、PDF、JSON 和 CSV 在关键字段与工程状态上完全一致。
 - 报告不读取 Widget 或当前会话态，不把证据不足包装成通过。
+
+## 任务卡索引
+
+- [WP-12-T01 权威报告对象](../agent-tasks/WP-12-T01-report-object.md)
+- [WP-12-T02 新机型与改型内容](../agent-tasks/WP-12-T02-design-variant.md)
+- [WP-12-T03 HTML 与 PDF](../agent-tasks/WP-12-T03-html-pdf.md)
+- [WP-12-T04 JSON/CSV 证据包](../agent-tasks/WP-12-T04-evidence-package.md)
+- [WP-12-T05 限制与固定措辞](../agent-tasks/WP-12-T05-wording-limits.md)
+- [WP-12-T06 往返与可复现](../agent-tasks/WP-12-T06-reproducible-roundtrip.md)

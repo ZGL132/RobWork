@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$RequirementsPath = (Join-Path $PSScriptRoot 'requirements.md'),
     [string]$OutputPath = (Join-Path $PSScriptRoot 'requirement-traceability.csv')
 )
@@ -71,7 +71,7 @@ function Get-WorkPackages {
         '^SEL-0[12]$' { return @('WP-19', 'WP-11') }
         '^SEL-05$' { return @('WP-19', 'WP-18') }
         '^SEL-' { return @('WP-19') }
-        '^OPT-0[123568]$' { return @('WP-20', 'WP-21') }
+        '^OPT-0[1234678]$' { return @('WP-20', 'WP-21') }
         '^OPT-' { return @('WP-21') }
         '^UX-03$' { return @('WP-09', 'WP-10', 'WP-22') }
         '^UX-08$' { return @('WP-07', 'WP-10', 'WP-22') }
@@ -96,9 +96,23 @@ function Get-WorkPackages {
         '^NFR-DEP-04$' { return @('WP-04', 'WP-24') }
         '^NFR-DEP-' { return @('WP-24', 'WP-01') }
         '^NFR-SEC-0[123]$' { return @('WP-11', 'WP-24') }
-        '^NFR-SEC-0[456]$' { return @('WP-24') }
+        '^NFR-SEC-04$' { return @('WP-01', 'WP-24') }
+        '^NFR-SEC-05$' { return @('WP-24', 'WP-01') }
+        '^NFR-SEC-06$' { return @('WP-24') }
         '^NFR-SEC-07$' { return @('WP-09', 'WP-24') }
         default { throw "No work-package mapping for requirement $RequirementId" }
+    }
+}
+
+function Get-Release {
+    param([string]$RequirementId)
+
+    switch -Regex ($RequirementId) {
+        '^NFR-PERF-0[456]$' { return 'R2' }
+        '^OPT-(01|02|03|04|06|07|08)$' { return 'R1/R2' }
+        '^OPT-(05|09|10)$' { return 'R2' }
+        '^CON-04$' { return 'R1/R2' }
+        default { return 'R1' }
     }
 }
 
@@ -170,6 +184,7 @@ $rows = foreach ($match in $requirementMatches) {
         review_task = @($packages | ForEach-Object { "$_-REV-$id" }) -join ';'
         acceptance_scenario = (($methods -join ' / ') + '；' + ($scenarios -join ' / '))
         phase = $phases -join '/'
+        release = Get-Release -RequirementId $id
         status = 'Planned'
     }
 }
@@ -182,5 +197,20 @@ if ($rows.Count -ne 124) {
     throw "Expected 124 requirement rows, found $($rows.Count)."
 }
 
-$rows | Export-Csv -LiteralPath $OutputPath -NoTypeInformation -Encoding utf8BOM
+# 导出为确定的 UTF-8 BOM + CRLF 字节，兼容 Windows PowerShell 5.1 与 PowerShell 7：
+# Export-Csv 的 -Encoding 取值在两个版本间不同（utf8BOM 仅 PS7 支持），
+# 因此先导出到临时文件，再统一换行并以显式编码写回。
+$tempCsv = Join-Path ([System.IO.Path]::GetTempPath()) ("ird-trace-gen-" + [guid]::NewGuid() + '.csv')
+try {
+    $rows | Export-Csv -LiteralPath $tempCsv -NoTypeInformation -Encoding UTF8
+    $csvText = [System.IO.File]::ReadAllText($tempCsv)
+    $csvText = ($csvText -replace "`r`n", "`n") -replace "`n", "`r`n"
+    $utf8Bom = New-Object System.Text.UTF8Encoding($true)
+    [System.IO.File]::WriteAllText($OutputPath, $csvText, $utf8Bom)
+}
+finally {
+    if (Test-Path -LiteralPath $tempCsv) {
+        Remove-Item -LiteralPath $tempCsv -Force
+    }
+}
 Write-Output "Generated $($rows.Count) traceability rows at $OutputPath"

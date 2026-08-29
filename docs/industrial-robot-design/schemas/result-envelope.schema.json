@@ -1,0 +1,194 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/result-envelope.schema.json",
+  "title": "ResultEnvelope",
+  "description": "正交结果包络（SYM-EVI-005，CTR-API-003/CTR-EXE-004）。字段来源：architecture/public-interfaces.md §7、architecture/evaluation-semantics.md §1。注意：outcome/engineeringStatus/payloadCompleteness 的合法组合（60 选 8）无法用本 Schema 关键字子集表达互斥，本文件只声明枚举值域；合法组合见 architecture/evaluation-semantics.md §2，由代码契约测试（60 组合构造测试）与 schemas/validate-schemas.ps1 的组合规则检查保证。持久化于 results/<run-id>/result-<attemptId>.json，只追加不覆盖。",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "runIdentity": {
+      "description": "RunIdentity（SYM-ID-006）：projectId + branchId + revisionId + runId + attemptId。",
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "branchId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "revisionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+        },
+        "runId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "attemptId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "required": ["projectId", "branchId", "revisionId", "runId", "attemptId"],
+      "additionalProperties": false
+    },
+    "sliceId": {
+      "description": "EvaluatorInputSlice 内容身份（SHA-256）；缓存、当前性与失效判定只基于切片，不基于项目修订号。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evaluatorId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "evaluatorVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "mode": {
+      "description": "EvaluationMode（SYM-STA-001）；Quick 不得作为正式通过证据。",
+      "type": "string",
+      "enum": ["Quick", "Verified"]
+    },
+    "outcome": {
+      "description": "ExecutionOutcome（SYM-STA-003）：运行终态。合法组合见 evaluation-semantics.md §2。",
+      "type": "string",
+      "enum": ["Completed", "Canceled", "Failed", "Interrupted"]
+    },
+    "engineeringStatus": {
+      "description": "EngineeringStatus（SYM-STA-004）：工程判定，与 ExecutionOutcome 不得合并或混用。",
+      "type": "string",
+      "enum": ["Pass", "Warning", "Infeasible", "DataInsufficient", "NotEvaluated"]
+    },
+    "payloadCompleteness": {
+      "description": "PayloadCompleteness（SYM-STA-005）：计划产出覆盖；不再使用 Corrupt 值（工件可解释性由 artifactIntegrity 表达）。",
+      "type": "string",
+      "enum": ["Complete", "Partial", "None"]
+    },
+    "evidenceLevel": {
+      "description": "EvidenceLevel（SYM-STA-002）：输入数据可信度；isFormallyFeasible() 谓词消费该字段（evaluation-semantics.md §4）。证据不足不得自动提升等级。",
+      "type": "string",
+      "enum": ["Screening", "PreliminaryDesign", "ExternallyValidated"]
+    },
+    "payloadId": {
+      "description": "类型化 payload 的内容 ID；公共层只交换 envelope，类型化视图由各评估器模块私有提供。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidenceRef": {
+      "description": "EvidenceBundle 引用（结果身份 = runId + attemptId + evaluatorId + payloadId；文件路径不是结果身份）。",
+      "type": "object",
+      "properties": {
+        "evidenceBundleId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "relativePath": {
+          "description": "存储相对路径（POSIX 分隔符、项目内相对、拒绝 .. 与绝对路径）。",
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$"
+        }
+      },
+      "required": ["evidenceBundleId"],
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "description": "结构化诊断列表（SYM-DIA-001）。DataInsufficient/Partial/NotEvaluated 必须显式展示，不得与\"不可行\"混排。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "稳定诊断码（IRD-*，WP-09 总目录）。",
+            "type": "string",
+            "pattern": "^IRD-[A-Z0-9]+(-[A-Z0-9]+)*$"
+          },
+          "category": {
+            "description": "DiagnosticCategory（SYM-DIA-002）。",
+            "type": "string",
+            "enum": ["Input", "Engineering", "System"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["Info", "Warning", "Error"]
+          },
+          "subjectObjectId": {
+            "description": "诊断绑定对象（优先 objectId，重命名后仍可定位）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "actualValue": {
+            "description": "实际值（用户可读字符串）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedValue": {
+            "description": "要求值。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "suggestedAction": {
+            "description": "建议动作（UX-03）。",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": ["code", "category", "severity", "subjectObjectId", "message"],
+        "additionalProperties": false
+      }
+    },
+    "timing": {
+      "type": "object",
+      "properties": {
+        "wallClockS": {
+          "description": "墙钟耗时 s。",
+          "type": "number",
+          "minimum": 0
+        },
+        "cpuS": {
+          "description": "CPU 耗时 s。",
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["wallClockS", "cpuS"],
+      "additionalProperties": false
+    },
+    "resourceUsage": {
+      "type": "object",
+      "properties": {
+        "peakMemoryBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["peakMemoryBytes"],
+      "additionalProperties": false
+    },
+    "artifactIntegrity": {
+      "description": "ArtifactIntegrity（SYM-STA-007）：可选字段，仅由结果仓库装载/读回时赋予（内容哈希或 Schema 校验失败 → Corrupt）；构造边界不得产生 Corrupt。Corrupt 结果不进入任何正式用途。",
+      "type": "string",
+      "enum": ["Valid", "Corrupt"]
+    },
+    "currentness": {
+      "description": "ResultCurrentness（SYM-EVI-006）：可选字段，仓库关联状态，读回时赋予；不修改历史 payload。Current=切片与当前修订匹配，Superseded=显示\"需要重算\"，Historical=历史证据。",
+      "type": "string",
+      "enum": ["Current", "Superseded", "Historical"]
+    }
+  },
+  "required": ["schemaVersion", "runIdentity", "sliceId", "evaluatorId", "evaluatorVersion", "mode", "outcome", "engineeringStatus", "payloadCompleteness", "evidenceLevel", "payloadId", "evidenceRef", "diagnostics", "timing", "resourceUsage"],
+  "additionalProperties": false
+}

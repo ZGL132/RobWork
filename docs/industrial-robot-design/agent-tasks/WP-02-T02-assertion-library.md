@@ -1,0 +1,11 @@
+# WP-02-T02 数学断言库
+- 需求/阶段：NFR-COR-01、NFR-COR-02、NFR-COR-05；阶段 A / R1
+- 契约：architecture/domain-model.md、architecture/testing-contract.md、module-design/testkit.md
+- 前置：WP-02-T01；允许：testkit/include、testkit/src 和断言测试；禁止：业务模块自定义同名容差或混用外部容差。
+- 产出：AlgorithmTolerance、ExternalValidationTolerance、GeometryAssertions、StableSetAssertions 和错误示例。
+- Given NaN、Infinity、非法维度、零轴、未夹紧 dot 或 L* 非正，When 调用断言，Then 失败并指出字段/单位/诊断。
+- Given 解析 FK/Jacobian 和固定期望值，When 使用正确 profile 比较，Then 位置、矩阵、旋转和集合在对应容差内通过；4/5 轴使用任务子空间。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_assertion_library_test$'；入口由 WP-01-T03 交付。
+- 证据：断言 API、近 1 acos 回归、J_norm 样本和容差测试日志。
+- 提交：WP-02-T02: numerical assertion profiles
+- 停止：需求第 15.3 节与 expected 容差冲突时暂停，不自行放宽阈值。

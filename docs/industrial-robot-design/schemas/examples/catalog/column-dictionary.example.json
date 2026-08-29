@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "table": "MotorTable",
+  "primaryKeys": ["model"],
+  "columns": [
+    {
+      "columnName": "model",
+      "valueType": "string",
+      "required": true,
+      "description": "motor model key, unique within the table"
+    },
+    {
+      "columnName": "continuousTorque",
+      "valueType": "decimal",
+      "unit": "N·m",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 1000.0,
+      "description": "rated continuous torque at motor shaft"
+    },
+    {
+      "columnName": "peakTorque",
+      "valueType": "decimal",
+      "unit": "N·m",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 2000.0,
+      "description": "peak torque at motor shaft"
+    },
+    {
+      "columnName": "ratedSpeed",
+      "valueType": "decimal",
+      "unit": "rad/s",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 1000.0,
+      "description": "rated no-load speed"
+    },
+    {
+      "columnName": "peakPower",
+      "valueType": "decimal",
+      "unit": "W",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 100000.0,
+      "description": "peak electrical input power"
+    },
+    {
+      "columnName": "rotorInertia",
+      "valueType": "decimal",
+      "unit": "kg·m2",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 1.0,
+      "description": "rotor inertia about the motor axis"
+    },
+    {
+      "columnName": "mass",
+      "valueType": "decimal",
+      "unit": "kg",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 100.0,
+      "description": "motor mass without gearbox"
+    },
+    {
+      "columnName": "cost",
+      "valueType": "decimal",
+      "unit": "currency",
+      "required": true,
+      "minNumericValue": 0.0,
+      "maxNumericValue": 100000.0,
+      "description": "unit cost in catalog currency"
+    },
+    {
+      "columnName": "supplyStatus",
+      "valueType": "string",
+      "required": false,
+      "description": "preferred brand / supply status flag (SEL-07), does not affect hard capability checks"
+    }
+  ],
+  "foreignKeys": [
+    {
+      "columnName": "model",
+      "referencesTable": "CapabilityCurveTable",
+      "referencesColumn": "motorModel"
+    }
+  ]
+}

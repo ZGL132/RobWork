@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "checkpointId": "6c1f9b20-4d8e-4a70-b3c2-71e5a0d8f402",
+  "createdAt": "2026-08-29T11:07:30Z",
+  "runIdentity": {
+    "projectId": "6f1d2c34-9a81-4b7e-8c21-0d5a9e3f1001",
+    "branchId": "main",
+    "revisionId": "rev-000007",
+    "runId": "run-20260829-002",
+    "attemptId": "attempt-001"
+  },
+  "evaluatorId": "optimization-evaluator",
+  "algorithmVersion": "1.0.0",
+  "studyDefinitionVersion": "1.0.0",
+  "randomSeed": 42,
+  "completedBatchIds": ["batch-000", "batch-001", "batch-002"],
+  "statistics": {
+    "candidatesEvaluated": 640,
+    "candidatesFeasible": 37,
+    "quickScreenedCount": 612,
+    "verifiedCount": 28
+  },
+  "stateDigest": "77aa11bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff001122"
+}

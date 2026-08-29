@@ -1,0 +1,337 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/engineering-policy.schema.json",
+  "title": "EngineeringPolicySet",
+  "description": "影响工程判定的版本化策略唯一集合（SYM-POL-001，CTR-POL-001）。字段来源：requirements.md §6.6、§6.7.2、§15.3；architecture/evaluation-semantics.md §3。策略是不可变值对象，进入评估输入切片；内容哈希即修订清单的 policyContentId。会话显示状态不得混入。",
+  "type": "object",
+  "properties": {
+    "objectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ownerScopeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "localName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$"
+    },
+    "objectRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "importOrigin": {
+          "type": "string",
+          "enum": ["TemplateCreated", "ManuallyCreated", "UrdfImport", "WorkCellImport", "OtherInput"]
+        },
+        "sourceDetail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": ["importOrigin"],
+      "additionalProperties": false
+    },
+    "schemaVersion": {
+      "description": "策略集合 Schema 版本（policySchemaVersion 由各子策略另带）。",
+      "type": "integer",
+      "enum": [1]
+    },
+    "collision": {
+      "description": "CollisionPolicy（SYM-POL-002，requirements.md §6.7.2）。RobWork CollisionSetup/ProximitySetup 只是同一策略的适配输出。",
+      "type": "object",
+      "properties": {
+        "policySchemaVersion": {
+          "type": "integer",
+          "enum": [1]
+        },
+        "collisionExecutionMode": {
+          "description": "只控制工程计算，不得与全局 EvaluationMode 混用。DisabledForDraft 允许不带正式碰撞结论的草稿预览。",
+          "type": "string",
+          "enum": ["Enabled", "DisabledForDraft"]
+        },
+        "detectorBackend": {
+          "description": "碰撞后端与版本（如项目锁定的 RobWork PQP 策略）；策略与版本进入快照。",
+          "type": "object",
+          "properties": {
+            "backendId": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "backendVersion": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            }
+          },
+          "required": ["backendId", "backendVersion"],
+          "additionalProperties": false
+        },
+        "participationByObject": {
+          "description": "碰撞模型参与计算的对象集合（collisionParticipationByObject）。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "objectId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "participates": {
+                "type": "boolean"
+              }
+            },
+            "required": ["objectId", "participates"],
+            "additionalProperties": false
+          }
+        },
+        "excludedPairs": {
+          "description": "不进入检测的对象对；不能形成\"已验证无碰撞\"证据。同一对象对不得同时属于 excludedPairs 与 allowedContactPairs（由代码契约测试保证）。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objectAId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "objectBId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "reason": {
+                "description": "未说明来源的规则必须阻止应用策略。",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": ["objectAId", "objectBId", "reason"],
+            "additionalProperties": false
+          }
+        },
+        "allowedContactPairs": {
+          "description": "仍检测并记录接触、但按已批准工况不判为硬约束违反的对象对。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objectAId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "objectBId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "reason": {
+                "description": "批准来源必须说明。",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": ["objectAId", "objectBId", "reason"],
+            "additionalProperties": false
+          }
+        },
+        "safetyDistance": {
+          "description": "安全距离 m；默认 0（接触即碰撞），可按工况配置正值。",
+          "type": "number",
+          "minimum": 0
+        },
+        "pathValidationProfile": {
+          "description": "碰撞验证协议（requirements.md §15.3 冻结）：自适应细分离散碰撞检测参数；结论措辞固定为\"在本策略与分辨率下未发现碰撞\"。",
+          "type": "object",
+          "properties": {
+            "profileId": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "profileVersion": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            },
+            "initialSegmentsPerEdge": {
+              "description": "每条路径边的初始等分数（默认 10）。",
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxRevoluteStep": {
+              "description": "转动关节步长上限 rad（默认 0.05）。",
+              "type": "number",
+              "minimum": 0
+            },
+            "maxPrismaticStep": {
+              "description": "移动关节步长上限 m（默认 0.01）。",
+              "type": "number",
+              "minimum": 0
+            },
+            "subdivisionMargin": {
+              "description": "细分余量 m（默认 0.005）。",
+              "type": "number",
+              "minimum": 0
+            },
+            "maxSubdivisionDepth": {
+              "description": "最大细分深度（默认 8）；耗尽仍不满足分辨率判 DataInsufficient，不得判为通过。",
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": ["profileId", "profileVersion", "initialSegmentsPerEdge", "maxRevoluteStep", "maxPrismaticStep", "subdivisionMargin", "maxSubdivisionDepth"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["policySchemaVersion", "collisionExecutionMode", "detectorBackend", "participationByObject", "excludedPairs", "allowedContactPairs", "safetyDistance", "pathValidationProfile"],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "description": "RequiredEvidenceProfile（CTR-DOM-004 §3）：正式用途所需的评估器、证据等级、资源保真度与允许警告类别。同一正式用途全局只有一个 profile 实例。",
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "usageId": {
+                "description": "正式用途稳定标识（如 VerifiedReport、ParetoFeasible）；全局唯一。",
+                "type": "string",
+                "pattern": "^[A-Z][A-Za-z0-9]{0,63}$"
+              },
+              "profileVersion": {
+                "description": "profile Schema 版本。",
+                "type": "integer",
+                "enum": [1]
+              },
+              "requiredEvaluators": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "evaluatorId": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                    },
+                    "minEvidenceLevel": {
+                      "description": "最低证据等级；证据不足不得自动提升。",
+                      "type": "string",
+                      "enum": ["Screening", "PreliminaryDesign", "ExternallyValidated"]
+                    },
+                    "requiredResourceFidelity": {
+                      "description": "必需资源保真度（碰撞几何/目录曲线/物性来源等）。",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string",
+                        "enum": ["CollisionGeometry", "CatalogCurve", "MaterialSource"]
+                      }
+                    },
+                    "allowedWarningCategories": {
+                      "description": "该评估器允许的警告诊断类别集合；Completed + Warning 可正式可行当且仅当全部警告类别在此集合内。",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[A-Z][A-Za-z0-9-]{0,63}$"
+                      }
+                    }
+                  },
+                  "required": ["evaluatorId", "minEvidenceLevel", "requiredResourceFidelity"],
+                  "additionalProperties": false
+                }
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": ["usageId", "profileVersion", "requiredEvaluators"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["profiles"],
+      "additionalProperties": false
+    },
+    "unitsAndFrames": {
+      "description": "单位与坐标约定（内部 SI 冻结；本节记录根坐标系与显示单位偏好，不影响计算）。",
+      "type": "object",
+      "properties": {
+        "worldFrameId": {
+          "description": "显式根坐标系。",
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+        },
+        "internalLengthUnit": {
+          "type": "string",
+          "enum": ["m"]
+        },
+        "internalAngleUnit": {
+          "type": "string",
+          "enum": ["rad"]
+        },
+        "displayLengthUnit": {
+          "description": "界面显示单位（仅显示，不参与持久化数值）。",
+          "type": "string",
+          "enum": ["m", "mm"]
+        },
+        "displayAngleUnit": {
+          "type": "string",
+          "enum": ["rad", "deg"]
+        }
+      },
+      "required": ["worldFrameId", "internalLengthUnit", "internalAngleUnit", "displayLengthUnit", "displayAngleUnit"],
+      "additionalProperties": false
+    },
+    "limits": {
+      "description": "默认工程限制（其他跨插件类型化策略）。",
+      "type": "object",
+      "properties": {
+        "defaultMinJointMarginRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "defaultSafetyFactor": {
+          "description": "默认安全系数（≥ 1 由代码契约测试保证）。",
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["defaultMinJointMarginRatio", "defaultSafetyFactor"],
+      "additionalProperties": false
+    },
+    "disturbanceProtocol": {
+      "description": "鲁棒性与敏感度扰动协议版本（requirements.md §15.3）；协议版本必须进入对应输入切片与缓存键。",
+      "type": "object",
+      "properties": {
+        "protocolId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "protocolVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      },
+      "required": ["protocolId", "protocolVersion"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["objectId", "ownerScopeId", "localName", "objectRevision", "createdAt", "provenance", "schemaVersion", "collision", "evidence", "unitsAndFrames", "limits", "disturbanceProtocol"],
+  "additionalProperties": false
+}

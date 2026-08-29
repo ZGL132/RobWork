@@ -1,0 +1,11 @@
+# WP-02-T03 领域黄金数据
+- 需求/阶段：AT-01～AT-19、NFR-COR-01～03；阶段 A / R1
+- 契约：architecture/testing-contract.md、architecture/domain-model.md、module-design/testkit.md
+- 前置：WP-02-T01、WP-02-T02；允许：testdata 各领域目录和 generators；禁止：用运行中产品输出覆盖黄金样本。
+- 产出：三套等价模型、URDF/DH 边界、名称、碰撞、需求、轨迹、动力学、目录、优化/恢复和性能样本，每个样本登记 consumers。
+- Given 样本缺 expected、source、units、sha256 或消费者，When 运行 manifest 校验，Then 非零且不允许进入测试。
+- Given 固定 seed、threadCount 和版本，When 重新生成样本，Then 文件哈希、参考结果、稳定 ID 和排序完全一致。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_golden_data_test$'；入口由 WP-01-T03 交付。
+- 证据：datasetVersion、生成器 commit、seed、样本哈希、AT 消费关系和重生成日志。
+- 提交：WP-02-T03: add versioned golden datasets
+- 停止：参考值无法由解析推导或独立工具复核时暂停并标记数据不足。

@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://robwork.github.io/ird/schemas/project-revision.schema.json",
+  "title": "revisions/<revision-id>/manifest.json",
+  "description": "修订清单（CTR-PER-002 §2.3）。字段来源：architecture/persistence-schema.md §2.3。修订不可变；apply 成功恰好产生一个新修订。",
+  "type": "object",
+  "properties": {
+    "revisionId": {
+      "description": "修订稳定 ID。",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+    },
+    "parentRevisionId": {
+      "description": "父修订 ID；根修订为 null。非 null 时必须匹配修订 ID 模式。",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+    },
+    "branchId": {
+      "description": "分支 ID（如 main、方案分支）。",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+    },
+    "objects": {
+      "description": "本修订包含的领域对象条目；内容寻址对象库引用。首版恰好一个 RobotDesign 对象（由代码契约测试保证）。",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "description": "对象稳定 ID（规范小写 UUID）。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "objectRevision": {
+            "description": "对象修订号，从 1 递增。",
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "description": "对象规范化字节（领域 JSON 为 object.json，二进制为 payload.bin）的 SHA-256，小写十六进制 64 位。",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "description": "成员内容字节数。",
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": ["objectId", "objectRevision", "sha256", "bytes"],
+        "additionalProperties": false
+      }
+    },
+    "policyContentId": {
+      "description": "本修订已解析 EngineeringPolicySet 的内容 ID（SHA-256，小写十六进制 64 位）。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "createdToolVersion": {
+      "description": "产生该修订的工具版本。",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "createdAt": {
+      "description": "创建时间，UTC ISO 8601。",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "commandSummary": {
+      "description": "产生该修订的命令类型与 commandId（幂等去重键）。",
+      "type": "object",
+      "properties": {
+        "commandKind": {
+          "description": "稳定命令类型名（DomainCommand.commandKind）。",
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9.]{0,63}$"
+        },
+        "commandId": {
+          "description": "稳定唯一命令 ID（幂等去重键），规范小写 UUID。",
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "required": ["commandKind", "commandId"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["revisionId", "parentRevisionId", "branchId", "objects", "policyContentId", "createdToolVersion", "createdAt", "commandSummary"],
+  "additionalProperties": false
+}

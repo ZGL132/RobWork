@@ -1,0 +1,11 @@
+# WP-03-T02 稳定身份与来源
+- 需求/阶段：ARC-01、ARC-03～05、NFR-MNT-01、NFR-MNT-03；阶段 A / R1
+- 契约：architecture/domain-model.md、architecture/persistence-schema.md、module-design/core-domain.md
+- 前置：WP-03-T01；允许：ObjectIdentity.hpp、ValueProvenance.hpp、DomainJson 和身份测试；禁止：用 localName 生成 objectId、跨作用域隐式解析或覆盖历史来源。
+- 产出：规范小写 ObjectId、ownerScopeId/localName 校验、ImportOrigin 与 ValueProvenance 正交 JSON。
+- Given 重命名、复制、导入、删除或重复 localName，When 应用校验，Then objectId 生命周期和引用规则符合契约，删除 ID 不复用。
+- Given 合法身份/来源对象，When JSON 往返，Then 字段、枚举、哈希和来源完全一致。
+- 命令：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_identity_provenance_test$'；入口由 WP-01-T03 交付。
+- 证据：身份生命周期测试、跨作用域失败诊断、JSON 样例和稳定排序日志。
+- 提交：WP-03-T02: stable identity and provenance
+- 停止：objectId 是否内容寻址无法从契约确定时暂停并报告。

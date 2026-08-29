@@ -1,95 +1,102 @@
 # WP-08 计算任务平台实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` and complete this plan task-by-task.
+> 阶段/发布：阶段 A / R1；调度与执行公共接口所有者：WP-08。实现者、验证者和评审者必须是不同执行上下文。
 
-**Goal:** 为全部评估器提供统一调度、工作进程、任务状态、取消/暂停、缓存、检查点、资源预算和迟到结果保护。
+**目标：** 为所有评估器提供统一的请求身份、任务状态机、调度器、工作进程、取消/暂停、缓存、检查点、资源预算和迟到结果保护，确保失败或过期结果不会污染当前项目。
 
-**Architecture:** 调度器只发送不可变快照；评估器声明依赖和能力；长任务在独立工作进程运行，结果必须经 WP-05 接纳。缓存与检查点按版本化契约判断兼容，不复用失败、取消或部分结果。
+## 1. 目标与非目标
 
-**Tech Stack:** C++、Qt Core/Concurrent/Process、CTest、PowerShell 故障注入。
+交付 `IEvaluationScheduler`、任务状态机、有界队列、独立 worker、取消与暂停协议、版本化缓存/检查点、内存节流和确定性并行。长任务必须在独立进程运行；结果只经 WP-05 接纳。轻量任务若不支持暂停/检查点必须明确声明能力。
 
----
+不实现具体 FK/IK/动力学/优化算法、项目事务、结果报告、GUI 调度状态展示或替代 WP-05 的结果接纳语义。
 
-## 文件与目标
+## 2. 需求与契约
 
-**创建目标：** `sdurws_ird_execution`、`sdurws_ird_execution_worker`、`sdurws_ird_execution_test`。
+- 需求：TASK-01～TASK-03、CON-04、NFR-COR-02、NFR-PERF-02、NFR-PERF-04～06、NFR-REL-02～03、AT-10、AT-11、AT-13、AT-14。
+- 架构契约：`architecture/execution-model.md`、`architecture/public-interfaces.md`、`architecture/testing-contract.md`。
+- 模块方案：`module-design/execution-platform.md`。
+- 阶段/发布：阶段 A / R1；阶段 B 只使用已冻结调度接口，阶段 D 才启用全量并行优化。
 
-**创建：**
+## 3. 文件所有权与依赖
 
-- `industrialrobot/execution/include/.../IEngineeringEvaluator.hpp`
-- `industrialrobot/execution/include/.../IEvaluationScheduler.hpp`
-- `industrialrobot/execution/include/.../EvaluationRequest.hpp`
-- `industrialrobot/execution/include/.../TaskHandle.hpp`
-- `industrialrobot/execution/include/.../TaskStateMachine.hpp`
-- `industrialrobot/execution/include/.../EvaluationCache.hpp`
-- `industrialrobot/execution/include/.../CheckpointStore.hpp`
-- `industrialrobot/execution/include/.../ResourceBudget.hpp`
-- `industrialrobot/execution/src/`
-- `industrialrobot/execution/worker/`
-- `industrialrobot/execution/test/`
+拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/`，含 `include/sdurws/ird/execution/`、`src/`、`worker/`、`test/`、`testdata/`、`evidence/`。允许 WP-03 core、WP-05 快照/结果接口、Qt Core/Concurrent/Process 和标准库；禁止 Qt Widgets、评估器私有线程池、工作进程写项目 revision、手工 CSV。
 
-**覆盖需求：** TASK-01～03，CON-04，NFR-COR-02，NFR-PERF-02、04～06，NFR-REL-02、03，AT-10、11、13、14。
+目标：`sdurws_ird_execution`、`sdurws_ird_execution_worker`、`sdurws_ird_execution_test`、`sdurws_ird_execution_contract_test`。
 
-## 冻结接口
+## 4. 请求、状态和公共接口
+
+`EvaluationRequest` 必填：`projectId`、`branchId`、`revisionId`、`snapshotId`、`evaluatorId/version`、`runId`、`attemptId`、`mode`、`randomSeed`、`threadCount`、`resourceBudget`、`cachePolicy`、`checkpointPolicy`。提交时复制为不可变值对象。
 
 ```cpp
-template<class Request, class Result>
-class IEngineeringEvaluator {
-public:
-    virtual EvaluatorDependencyManifest dependencyManifest() const = 0;
-    virtual ValidationResult validate(const Request&) const = 0;
-    virtual Result evaluate(const Request&, ProgressSink&, CancellationToken&) = 0;
-};
-
 class IEvaluationScheduler {
 public:
     virtual TaskHandle submit(const EvaluationRequest&) = 0;
+    virtual TaskStatus status(const TaskHandle&) const = 0;
+    virtual CancelResult cancel(const TaskHandle&) = 0;
+    virtual PauseResult pause(const TaskHandle&) = 0;
+    virtual ResumeResult resume(const TaskHandle&) = 0;
 };
 ```
 
-状态机严格采用需求第 6.4 节。能力由 `capabilities()` 声明；不支持暂停/检查点的轻量任务不得伪装支持。
+合法转移：`Queued -> Running -> Completed`；`Running -> Canceling -> Canceled`；`Running -> Pausing -> Paused -> Running`；worker 崩溃为 `Failed`；重启发现未完成为 `Interrupted`。终态不可再转移；非法转移返回诊断且不改变状态。
+
+## 5. 调度、进程和结果数据流
+
+```text
+submit immutable request
+  -> validate identity/capability/budget
+  -> cache lookup (full key only)
+  -> bounded queue admission
+  -> spawn worker with read-only snapshot + result channel
+  -> progress/checkpoint/cancel messages
+  -> worker result tagged run/attempt/snapshot
+  -> WP-05 ResultAdmission
+  -> append history; currentness decided outside scheduler
+```
+
+取消请求发出后 2 秒内进入 `Canceling`，停止派发新批次；普通批次 10 秒内结束，超时可终止单个 worker。主进程崩溃或 worker 异常不能写项目文件。迟到回调只追加原 branch/revision 历史，不成为当前结果。
+
+## 6. 缓存与检查点
+
+缓存键必须覆盖 `snapshot/sliceHash`、policy hash、canonical model physical identity、evaluator/version、algorithm/library baseline、seed、threadCount、resource budget、mode 和 checkpoint schema。只有 `Completed + Complete + compatible` 可作为正式命中；Failed/Canceled/Interrupted/Partial/Quick 不得命中正式缓存。
+
+检查点包含 `checkpointSchema`、project/branch/revision、snapshot/slice hash、runId、attemptId、evaluator/version、algorithm state、completedBatchIds、seed、threadCount、createdAt。恢复前逐字段兼容检查；新 attemptId 继承原 runId，已完成批次集合去重，统计不得重复。不兼容检查点保留并标记原因。
+
+## 7. 资源预算与确定性
+
+队列有界，批次结果默认流式摘要，明细按查询请求读取。内存达到物理内存约 70% 时先降低并发/暂停派发，仍不足返回 `IRD-EXEC-RESOURCE-BUDGET`；CPU、worker 数和磁盘预算均记录在请求和证据中。固定线程数、seed、输入切片和版本时，任务顺序、候选集合、稳定 ID、可行集合和 Pareto 关系必须一致。
 
 ## 任务
 
-### Task 1：状态机和合法结果
+| 任务 | 独立产出 | 任务卡 |
+| --- | --- | --- |
+| WP-08-T01 | 状态机与终态合法性 | [T01](../agent-tasks/WP-08-T01-state-machine.md) |
+| WP-08-T02 | 请求身份和迟到保护 | [T02](../agent-tasks/WP-08-T02-request-identity.md) |
+| WP-08-T03 | 取消/暂停和 worker 隔离 | [T03](../agent-tasks/WP-08-T03-cancellation.md) |
+| WP-08-T04 | 缓存、检查点和恢复 | [T04](../agent-tasks/WP-08-T04-cache-checkpoint.md) |
+| WP-08-T05 | 有界并行、资源节流和确定性 | [T05](../agent-tasks/WP-08-T05-bounded-parallelism.md) |
 
-- [ ] 对每条合法转移和所有非法转移编写参数化测试。
-- [ ] 实现 Queued、Running、Pausing、Paused、Canceling 及四种终态。
-- [ ] 用户取消后强杀为 Canceled；非用户崩溃为 Failed；重启发现未完成为 Interrupted。
+依赖：T01 → T02 → T03；T04 依赖 T02/T03；T05 依赖 T01/T03。每张卡一个 worktree、分支和提交。
 
-### Task 2：请求身份与迟到保护
+## 8. 失败分类与证据
 
-- [ ] 请求携带项目、分支、修订、切片、run、attempt、评估器版本、模式、种子和预算。
-- [ ] 切换项目/分支后迟到结果只追加原历史，不能成为当前结果。
-- [ ] 输入校验失败不创建运行结果。
+- 输入错误：身份缺失、能力不支持、预算非法、重复 request；不入队、不创建结果。
+- 工程不可行：数据不足、检查点不兼容、资源预算无法满足；保留诊断和历史，不伪装成功。
+- 系统错误：worker 崩溃、超时、进程/磁盘/IPC 故障；主进程和项目不受损，结果标 Failed/Interrupted。
 
-### Task 3：取消、暂停和工作进程
+证据必须含 request/snapshot/run/attempt 身份、状态转移日志、cache key、checkpoint hash、批次集合、资源曲线、取消/超时耗时、结果接纳回执和独立评审签名。
 
-- [ ] 取消 2 秒内进入 Canceling 并停止派发新批次。
-- [ ] 普通批次 10 秒内结束；超时允许终止单一工作进程并保留最近检查点。
-- [ ] 注入工作进程异常退出，验证主界面进程和项目不受损。
-
-### Task 4：缓存和检查点
-
-- [ ] 缓存键包含输入切片、策略、规范模型物理身份、评估器版本、种子和预算。
-- [ ] 失败、取消、Interrupted 和 Partial 不作为正式缓存命中。
-- [ ] 检查点保存版本、run/attempt、算法状态、完成批次和模式；恢复前显式检查兼容性。
-- [ ] 恢复后已完成批次不重复计数，不兼容检查点保留供诊断。
-
-### Task 5：资源与并行确定性
-
-- [ ] 批量任务使用有界队列、流式摘要和按需明细。
-- [ ] 总内存接近物理内存 70% 时先节流，再返回资源不足诊断。
-- [ ] 固定线程数和种子时候选集合、稳定 ID、可行集合和 Pareto 关系一致。
-
-## 验证命令
+## 验证
 
 ```powershell
-pwsh -NoProfile -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_execution_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug -Target sdurws_ird_execution_test
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_execution(_contract)?_test$'
 ```
+
+## 9. 迁移
+
+旧线程池和评估入口先以适配器接入，只有状态/身份/缓存契约通过才标 Migratable；无法证明迟到保护的标 Rewrite/EvidenceOnly。
 
 ## 退出条件
 
-- A-GATE-03、05 与 AT-10、11、13 的平台断言通过。
-- 崩溃、取消和中断不会产生正式结果或损坏项目。
-- 检查点恢复统计不重复，非法缓存命中为 0。
+A-GATE-03/05 与 AT-10/11/13/14 通过；取消、崩溃和重启不产生正式结果或损坏项目；检查点恢复不重复计数；非法缓存命中为 0；固定输入并行运行结果完全一致。
