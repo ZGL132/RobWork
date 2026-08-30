@@ -1,0 +1,32 @@
+=== git diff --name-only 1602c07..c161d6d ===
+RobWork/scripts/industrial-robot/build.ps1
+RobWork/scripts/industrial-robot/common.ps1
+RobWork/scripts/industrial-robot/configure.ps1
+RobWork/scripts/industrial-robot/run-tests.ps1
+=== numstat (insertions/deletions) ===
+103	0	RobWork/scripts/industrial-robot/build.ps1
+183	0	RobWork/scripts/industrial-robot/common.ps1
+85	0	RobWork/scripts/industrial-robot/configure.ps1
+125	0	RobWork/scripts/industrial-robot/run-tests.ps1
+=== git show --check c161d6d (whitespace) ===
+commit c161d6d27b362027ea9dbb7d2219b51504561f1a
+Author: ZGL132 <ZGL132@users.noreply.github.com>
+Date:   Mon Aug 31 06:42:07 2026 +0800
+
+    WP-01-T03: 统一测试入口
+    
+    - 新增 RobWork/scripts/industrial-robot/configure.ps1、build.ps1、run-tests.ps1 三个统一入口，实现公共参数（Configuration/BuildDirectory/SourceDirectory/Generator/Platform/NoConfigure/LogDirectory，run-tests 另有必填 -Regex）、仓库根绝对 -S/-B 解析、VS x64 环境发现（cl/cmake/ctest 检查、vswhere→VsDevCmd -arch=x64 -host_arch=x64，找不到即失败不回退 x86/MinGW）、§4.2 固定配置命令、核心链路目标构建与 CTest 日志及退出码透传
+    - 修改 common.ps1：追加时间戳、输入目录校验、输出目录创建、vswhere 查找、原生日志执行、VS x64 环境初始化与版本记录、QT_*/QML_* 冲突检测辅助函数，WP-01-T01 既有函数签名零改动
+    - 测试：四条 RED 断言（源目录缺失、VS 缺失不回退、Regex 零匹配、继承虚拟平台冲突）实现前全部失败、实现后按预期非零停止；正常链路 configure→build→run-tests '^sdurws_ird_core_test$' 三步退出码 0、CTest 1/1 通过；原生回退双命令结果一致；-NoConfigure 跳过配置与 Debug/Release 日志时间戳分离边界通过；check-boundaries 32 文件通过；GUI 规则强制 QT_QPA_PLATFORM=windows、ctest -j 1 单进程
+    - 证据：out/logs/industrial-robot/20260831-062118/（red、green、failpath、boundary、native 分目录与前后结果表，运行日志不入本提交）
+
+check exit: 0
+=== forbidden-content scan on commit content ===
+--- common.ps1:
+  (clean)
+--- configure.ps1:
+  (clean)
+--- build.ps1:
+  (clean)
+--- run-tests.ps1:
+  (clean)

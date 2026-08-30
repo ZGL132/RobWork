@@ -1,0 +1,6 @@
+=== PowerShell 5.1 parser check (PS7-only syntax would fail to parse) ===
+PASS common.ps1 (PS 5.1 parse clean)
+PASS configure.ps1 (PS 5.1 parse clean)
+PASS build.ps1 (PS 5.1 parse clean)
+PASS run-tests.ps1 (PS 5.1 parse clean)
+parser runtime: PowerShell 5.1.26100.9168
