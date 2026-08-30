@@ -1,0 +1,23 @@
+
+target list (vcxproj enumeration, sdurws_ird_*):
+sdurws_ird_core.vcxproj
+sdurws_ird_core_test.vcxproj
+sdurws_ird_diagnostics.vcxproj
+sdurws_ird_diagnostics_test.vcxproj
+sdurws_ird_evidence.vcxproj
+sdurws_ird_evidence_test.vcxproj
+sdurws_ird_execution.vcxproj
+sdurws_ird_execution_test.vcxproj
+sdurws_ird_io.vcxproj
+sdurws_ird_io_test.vcxproj
+sdurws_ird_policy.vcxproj
+sdurws_ird_policy_test.vcxproj
+sdurws_ird_project.vcxproj
+sdurws_ird_project_test.vcxproj
+sdurws_ird_reporting.vcxproj
+sdurws_ird_reporting_test.vcxproj
+sdurws_ird_runtime.vcxproj
+sdurws_ird_runtime_test.vcxproj
+sdurws_ird_ui.vcxproj
+sdurws_ird_ui_test.vcxproj
+ird target count: 20

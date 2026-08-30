@@ -39,6 +39,7 @@ add_subdirectory(swig)
 # These need to be after swig
 add_subdirectory(luaeditor)
 add_subdirectory(lua)
+add_subdirectory(industrialrobot)
 
 # Propagate libraries to parent directory
 set(RWS_PLUGIN_LIBRARIES

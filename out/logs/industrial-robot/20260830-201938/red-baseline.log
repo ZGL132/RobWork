@@ -1,0 +1,8 @@
+==== RED baseline: target sdurws_ird_core does not exist (before skeleton) ====
+command: cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core
+exit code: 1
+Error: D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot is not a directory
+
+command: ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"
+exit code: 1
+Failed to change working directory to "D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot": No such file or directory

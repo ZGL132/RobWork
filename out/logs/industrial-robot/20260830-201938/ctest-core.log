@@ -1,0 +1,34 @@
+command: ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"
+Test project D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot
+    Start 80: sdurws_ird_core_test
+Could not find executable D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe
+Looked in the following places:
+D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe
+D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe.exe
+D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/Debug/sdurws_ird_core_test.exe
+D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/Debug/sdurws_ird_core_test.exe.exe
+Debug/D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe
+Debug/D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe.exe
+Unable to find executable: D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/RobWorkStudio/bin/Debug/sdurws_ird_core_test.exe
+1/1 Test #80: sdurws_ird_core_test .............***Not Run   0.00 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.35 sec
+
+The following tests FAILED:
+	 80 - sdurws_ird_core_test (Not Run)
+Errors while running CTest
+Output from these tests are in: D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+exit code: 8
+
+command: ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$" (after building the test target)
+Test project D:/10_Source_Repos/21_robot/RobWork/out/build/industrial-robot
+    Start 80: sdurws_ird_core_test
+1/1 Test #80: sdurws_ird_core_test .............   Passed    0.13 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.15 sec
+exit code: 0

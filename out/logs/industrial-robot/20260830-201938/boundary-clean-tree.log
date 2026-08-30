@@ -1,0 +1,4 @@
+
+command (after topology restructure): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+Boundary scan passed: 32 files scanned, root=D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot
+exit code: 0

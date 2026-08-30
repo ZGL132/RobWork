@@ -1,0 +1,34 @@
+command: cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Automatic MOC for target sdurws_ird_core
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+  mocs_compilation_Debug.cpp
+  core_anchor.cpp
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\libs\Debug\sdurws_ird_core.lib
+exit code: 0
+
+command: cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core_test (test executable for the CTest registration)
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\libs\Debug\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_core_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+  mocs_compilation_Debug.cpp
+  core_smoke.cpp
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\bin\Debug\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\bin\Debug\sdurws_ird_core_test.exe: message: deploying dependencies
+exit code: 0
+
+command: cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core (re-build after restructure)
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Automatic MOC for target sdurws_ird_core_test
+  mocs_compilation_Debug.cpp
+  core_smoke.cpp
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\bin\Debug\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\out\build\industrial-robot\RobWorkStudio\bin\Debug\sdurws_ird_core_test.exe: message: deploying dependencies
+exit code: 0
