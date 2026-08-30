@@ -20,6 +20,11 @@ add_subdirectory(RobWork)
 if(WITH_RWS)
     add_subdirectory(RobWorkStudio)
 endif()
+# Industrial robot redesign targets (WP-01-T02, governance-authorized 2026-08-31):
+# kept OUTSIDE the WITH_RWS gate so the IRD modules build without RobWorkStudio
+# (§2.1: sdurws_ird_core must not depend on it). The industrialrobot/CMakeLists.txt
+# guards against double registration when WITH_RWS=ON already added it via rwslibs.
+add_subdirectory(RobWorkStudio/src/rwslibs/industrialrobot)
 if(WITH_RWSIM)
 
     find_package(

@@ -14,6 +14,11 @@
 #
 # Case note: cache options are uppercase (IRD_BUILD_CORE) while module names are
 # lowercase (core); option lookups use the uppercase form directly.
+#
+# Registration note: the skeleton is registered EXACTLY ONCE from the top-level
+# RobWork/CMakeLists.txt (outside the WITH_RWS gate, governance-authorized
+# 2026-08-31). A single registration site is mandatory: CMake rejects binding
+# the same binary directory from two add_subdirectory calls.
 
 set(IRD_MODULES core project evidence runtime policy execution diagnostics io reporting ui)
 
