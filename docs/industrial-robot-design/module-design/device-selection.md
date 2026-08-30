@@ -131,7 +131,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_
 | 连续转矩 |  | N·m |  |  |
 | 峰值转矩 |  | N·m |  |  |
 | 峰值时间 |  | s |  |  |
-| 最高转速 |  | r/min |  |  |
+| 最高转速 |  | rad/s |  |  |
 | 峰值加速度 |  | rad/s² |  |  |
 | 负载惯量 |  | kg·m² |  |  |
 
