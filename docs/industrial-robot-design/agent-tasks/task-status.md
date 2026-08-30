@@ -2,7 +2,7 @@
 
 > 检查点：`IRD-D12-20260829`；本账本是唯一机器可检查的逐任务状态登记（validator 校验覆盖率与取值）。
 > 状态定义：`Planned`（未解除前置）、`Ready`（前置已满足，可实施）、`Blocked`（存在需人工/架构裁决的阻塞，note 注明）、`Done`（已完成并提交，note 记录 commit SHA）。
-> 更新规则：每完成一张任务卡，实施者在本次会话中将该行改为 `Done` 并在 note 记录 commit SHA 与日期；改为 `Ready` 必须满足 DOCUMENT-BASELINE §4 九条门禁并注明判定依据；`Blocked` 必须写明阻塞原因与负责人。
+> 更新规则：实施者只提交当前任务实现并报告“实现完成，待独立验证”，不得修改本账本；独立验证/治理上下文复跑验证并检查范围与证据，通过后在后续治理提交中将该行改为 `Done`，在 note 记录实现 commit SHA 与证据路径，并填写 signer/date。改为 `Ready` 必须满足 DOCUMENT-BASELINE §4 九条门禁并注明判定依据；`Blocked` 必须写明阻塞原因与负责人。
 > 账本门禁（validator 强制）：`Ready` ⇒ 全部前置任务（卡内"前置任务及必需工件"）已为 `Done` 且 signer 非空；`Done` ⇒ signer 非空且 note 含 commit SHA 与 `out/test-evidence/` 证据路径。
 > 初始状态：仅 `WP-00-T01 = Ready`（用户 2026-08-29 审计指示"首个可执行任务只开放 WP-00-T01"）；其余按总纲 §5.3 依赖顺序保持 `Planned`，卡内"前置任务及必需工件"字段为逐任务解锁依据。
 
