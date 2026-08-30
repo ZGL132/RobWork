@@ -3,15 +3,15 @@
 每个 ADR 使用 `ADR-NNN-<topic>.md` 命名，必须包含：背景、决策、备选方案、影响、迁移、需求 ID、受影响 WP、验证证据和状态（Proposed/Accepted/Superseded）。
 
 > D1 检查点：`IRD-D1-20260829`；D2 检查点：`IRD-D2-20260829`；D10 联合评审：`IRD-D10-20260829`  
-> 当前结论：ADR-001～005 于 `IRD-D10-20260829` 联合评审（结论：通过，待签署，状态 `Proposed`）；签署后升 `Accepted`；此后修改已有决策时优先新增替代 ADR 并将旧 ADR 标记 `Superseded`。
+> 当前结论：ADR-001～005 于 `IRD-D10-20260829` 联合评审（结论：通过）；2026-08-30 用户签署生效，状态整体升 `Accepted`（签署记录见 [../review/2026-08-29-contract-review.md](../review/2026-08-29-contract-review.md) §5）；此后修改已有决策时优先新增替代 ADR 并将旧 ADR 标记 `Superseded`。
 
 | ID | 决策 | 所有者 | 关联契约 | 状态 |
 | --- | --- | --- | --- | --- |
-| [ADR-001](ADR-001-single-robot-owner-scope.md) | 首版单机械臂与稳定所有者作用域 | WP-03、04、06 | CTR-DOM-001/002、CTR-NAM-001 | `Proposed` |
-| [ADR-002](ADR-002-rwdesign-directory-format.md) | `.rwdesign` 目录式规范项目格式 | WP-04、11 | CTR-PER-001～003 | `Proposed` |
-| [ADR-003](ADR-003-release-slices-and-opt-b.md) | R1/R2 发布切片与 OPT-B 权威范围 | WP-00、20、21、24 | CTR-REL-001、CTR-OPT-001 | `Proposed` |
-| [ADR-004](ADR-004-single-authority-shared-semantics.md) | 跨模块共享语义的单一权威所有者 | WP-03、05、06、07、09、18 | CTR-DOM/NAM/POL/DIA/EXE | `Proposed` |
-| [ADR-005](ADR-005-orthogonal-result-status-and-naming.md) | 评估正交状态拆分、Completed+Warning 裁决与公共符号命名裁决 | WP-03、05、08、20 | CTR-DOM-004、CTR-EXE-001/004、CTR-OPT-002 | `Proposed` |
+| [ADR-001](ADR-001-single-robot-owner-scope.md) | 首版单机械臂与稳定所有者作用域 | WP-03、04、06 | CTR-DOM-001/002、CTR-NAM-001 | `Accepted` |
+| [ADR-002](ADR-002-rwdesign-directory-format.md) | `.rwdesign` 目录式规范项目格式 | WP-04、11 | CTR-PER-001～003 | `Accepted` |
+| [ADR-003](ADR-003-release-slices-and-opt-b.md) | R1/R2 发布切片与 OPT-B 权威范围 | WP-00、20、21、24 | CTR-REL-001、CTR-OPT-001 | `Accepted` |
+| [ADR-004](ADR-004-single-authority-shared-semantics.md) | 跨模块共享语义的单一权威所有者 | WP-03、05、06、07、09、18 | CTR-DOM/NAM/POL/DIA/EXE | `Accepted` |
+| [ADR-005](ADR-005-orthogonal-result-status-and-naming.md) | 评估正交状态拆分、Completed+Warning 裁决与公共符号命名裁决 | WP-03、05、08、20 | CTR-DOM-004、CTR-EXE-001/004、CTR-OPT-002 | `Accepted` |
 
 新 ADR 使用 [TEMPLATE.md](TEMPLATE.md)。编号一经登记不得复用；修改已有决策时优先新增替代 ADR，将旧 ADR 标记 `Superseded` 并保留历史链接。索引不替代正文，正文完成也不等于通过接受评审。
 

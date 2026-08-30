@@ -2,7 +2,7 @@
 
 > 契约 ID：`CTR-DOM-004`（权威位置自本文件起从 domain-model.md §3 迁入）  
 > 检查点：`IRD-D2-20260829`  
-> 文档状态：`Proposed`（IRD-D10-20260829 联合评审通过，待签署）  
+> 文档状态：`Accepted`（IRD-D10-20260829 联合评审结论通过；2026-08-30 用户签署生效，签署记录见 [review/2026-08-29-contract-review.md](review/2026-08-29-contract-review.md) §5）  
 > 权威边界：本文件是评估正交状态、合法组合、`RequiredEvidenceProfile` 和 `isFormallyFeasible()` 的唯一权威；需求 §6.4、§6.6、§7.4 是产品语义决策来源。
 
 ## 1. 正交维度（冻结）

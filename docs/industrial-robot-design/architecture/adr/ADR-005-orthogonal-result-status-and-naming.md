@@ -1,6 +1,6 @@
 # ADR-005：评估正交状态拆分与公共符号命名裁决
 
-> 状态：`Proposed`（IRD-D10-20260829 联合评审通过，待签署）  
+> 状态：`Accepted`（IRD-D10-20260829 联合评审结论通过；2026-08-30 用户签署生效，签署记录见 [../review/2026-08-29-contract-review.md](../review/2026-08-29-contract-review.md) §5）  
 > 日期：2026-08-29  
 > 检查点：`IRD-D2-20260829`  
 > 关联契约：CTR-DOM-004、CTR-EXE-001、CTR-EXE-004、CTR-OPT-002  

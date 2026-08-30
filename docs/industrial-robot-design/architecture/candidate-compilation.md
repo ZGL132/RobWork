@@ -2,7 +2,7 @@
 
 > 契约 ID：`CTR-OPT-002`（新增登记）  
 > 检查点：`IRD-D2-20260829`  
-> 文档状态：`Proposed`（IRD-D10-20260829 联合评审通过，待签署）  
+> 文档状态：`Accepted`（IRD-D10-20260829 联合评审结论通过；2026-08-30 用户签署生效，签署记录见 [review/2026-08-29-contract-review.md](review/2026-08-29-contract-review.md) §5）  
 > 权威边界：本文件是设计变量定义、设计向量、变量绑定注册、候选补丁和候选稳定身份的唯一权威；需求 §7.4、§8.7.1、§9.1～9.3 是产品语义决策来源。`module-design/optimization.md` 只能引用本文件。
 
 ## 1. DesignVariableDefinition（字段冻结）

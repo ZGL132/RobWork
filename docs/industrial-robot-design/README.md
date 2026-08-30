@@ -3,7 +3,7 @@
 本目录是工业机械臂设计软件重构的唯一权威文档入口。旧插件的阶段性方案、临时设计稿和历史复盘不再作为实施依据；需要追溯时使用 Git 历史。
 
 > 文档治理基线：`IRD-D0-20260829`  
-> 当前架构检查点：`IRD-D10-20260829`（D0～D12 全链完成；D10 联合评审已执行、结论通过，契约 `Proposed` 待签署）  
+> 当前架构检查点：`IRD-D14-20260830`（D0～D14；D10 联合评审结论通过，2026-08-30 用户签署，契约与 ADR 为 `Accepted`）  
 > 产品需求基线：`requirements.md` v0.8  
 > 总体执行基线：`development-task-breakdown.md` v1.3  
 > 代码基线：`94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`  
@@ -45,7 +45,7 @@
 | `Accepted` | 已通过评审，可作为下游和实现依据 |
 | `Superseded` | 已被新版本或 ADR 替代，不再作为实施依据 |
 
-需求 v0.8 当前为 `Accepted`。25 项架构契约、76 个公共符号与 ADR-001～005 已完成 D10 联合评审（结论：通过），状态维持 `Proposed`（待签署）；签署记录见 [architecture/review/2026-08-29-contract-review.md](architecture/review/2026-08-29-contract-review.md) §5，签署后整体升 `Accepted`。此后语义变更必须走契约变更流程（所有者提出、ADR、消费者影响、版本提升）。模块方案、工作包与任务卡状态见 [DOCUMENT-BASELINE.md](DOCUMENT-BASELINE.md) 与 [agent-tasks/task-status.md](agent-tasks/task-status.md)。
+需求 v0.8 当前为 `Accepted`。25 项架构契约、76 个公共符号与 ADR-001～005 已完成 D10 联合评审（结论：通过），并于 2026-08-30 由用户签署整体升 `Accepted`；签署记录见 [architecture/review/2026-08-29-contract-review.md](architecture/review/2026-08-29-contract-review.md) §5。此后语义变更必须走契约变更流程（所有者提出、ADR、消费者影响、版本提升）。模块方案与 Schema 仍为 `Proposed`，按各自接受流程处理。工作包与任务卡状态见 [DOCUMENT-BASELINE.md](DOCUMENT-BASELINE.md) 与 [agent-tasks/task-status.md](agent-tasks/task-status.md)。
 
 ## 维护规则
 
@@ -67,4 +67,4 @@
 - D10（语义闭合）完成：任务级循环依赖解除、诊断注册表 117 码逐项裁决一致、7 个跨模块类型补登记、WP-04/WP-12 口径统一、契约联合评审执行完毕（结论通过，`Proposed` 待签署）。
 - D11（执行闭合）完成：证据根目录统一为 `out/test-evidence/wp-xx/<run-id>/`、任务卡验证命令可执行化（rg、必执行＋回退、无占位路径）、提交格式中文化（144/144）。
 - D12（治理闭合）完成：反向追踪闭合（治理豁免 CSV＋PILOT/DEL 需求锚点）、文档状态刷新、任务状态账本建立、验证器新增八项检查。
-- 实施入口：按 `development-task-breakdown.md` §8/§9 阶段顺序与 [agent-tasks/task-status.md](agent-tasks/task-status.md) 账本执行；当前仅 `WP-00-T01` 为 `Ready`（契约签署后逐包解锁）；当前产品边界为单项目单机械臂，多机械臂扩展保留命名空间。
+- 实施入口：按 `development-task-breakdown.md` §8/§9 阶段顺序与 [agent-tasks/task-status.md](agent-tasks/task-status.md) 账本执行；WP-00 治理任务 T01～T04 已全部 `Done`，`WP-01-T01` 于 2026-08-30 契约签署后通过九项门禁转 `Ready`（其余任务按前置和独立验证结果逐项解锁）；当前产品边界为单项目单机械臂，多机械臂扩展保留命名空间。
