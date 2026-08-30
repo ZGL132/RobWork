@@ -5,7 +5,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 文档治理基线 ID | `IRD-D0-20260829` |
-| 当前架构检查点 | `IRD-D10-20260829`（D0～D12 全链完成；D10 联合评审已执行、结论通过，契约状态 `Proposed` 待签署） |
+| 当前架构检查点 | `IRD-D13-20260830`（D0～D13 全链完成；契约检查点 `IRD-D10-20260829` 联合评审已执行、结论通过，契约状态 `Proposed` 待签署） |
 | 基线日期 | 2026-08-29 |
 | 产品需求基线 | `requirements.md` v0.8 |
 | 总体执行基线 | `development-task-breakdown.md` v1.3 |
@@ -86,5 +86,6 @@
 | `IRD-D10-20260829` | 2026-08-29 | D10 语义闭合＋契约联合评审：独立审计复核（双 PS 门禁、Schema 门禁、语义冲突扫描）发现并修复 7 项阻塞——任务级循环依赖（WP-15-T08↔WP-20-T08 → WP-15-T08 探针/约定、WP-20-T08 唯一所有 AT-19）；诊断注册表逐项裁决（117 码登记、未登记 0、category/severity 冲突 0，机器扫描验证，裁决规则入档 diagnostics.md §3）；7 个跨模块公共类型补登记（SYM-UI-001～004、SYM-TRJ-002/003、SYM-DTM-001，字段冻结入 public-interfaces §7）；WP-04 与持久化契约四处口径统一（objects 目录形态、HEAD JSON、manifest/project.json 字段集）；WP-12 PDF 移出 R1（需求无 PDF 条目，不留接口桩）；完成契约联合评审（结论：通过）；全部契约与 ADR 维持 `Proposed`，签署后升 `Accepted`（评审记录 architecture/review/2026-08-29-contract-review.md） | 联合评审通过（待签署）；契约维持 `Proposed`，签署后升 `Accepted`；此后语义变更走契约变更流程 |
 | `IRD-D11-20260829` | 2026-08-29 | D11 执行闭合：证据根目录统一为 `out/test-evidence/wp-xx/<run-id>/`（生成器 124→128 行映射、模块树、工作包所有权、144 张卡全部同步）；任务卡验证命令可执行化（`grep`→`rg` 全量替换、"任选其一"改为"第一形式必执行＋原生命中回退"、无占位路径与花括号展开）；提交格式中文化（144/144 卡为 `WP-XX-TYY: 中文概括`＋中文分条正文） | 实施命令在本机可直接执行；完成报告不再产生已知格式偏差 |
 | `IRD-D12-20260829` | 2026-08-29 | D12 治理闭合：需求 v0.8（新增 PILOT-01/02、DEL-01/02 追踪锚点，128 项，P0 114）；WP-25 四张卡挂靠稳定需求 ID；治理豁免任务入 `governance-traceability.csv`（WP-00-T01～T04）；`agent-tasks/TEMPLATE.md` 对齐 16 字段；建立 [agent-tasks/task-status.md](agent-tasks/task-status.md) 任务状态账本；Schema 负例扩至 45 个（每 Schema ≥3，验证器强制）；验证器新增八项检查（任务级 DAG 无环、诊断注册表存在性与 category/severity 一致性、公共符号登记与唯一所有者、反向追踪＋治理豁免、证据路径前缀、命令禁项 `grep`/任选其一/自然语言路径、WP 所有权嵌套、Schema 负例最低覆盖） | 门禁全绿（128 需求/19 验收测试/25 契约/76 符号/5 ADR/0 追踪缺口；14 Schema/45 负例全拒）；反向追踪 144/144 卡闭合；按复审指示仅开放 WP-00-T01（账本；契约签署后逐包解锁） |
+| `IRD-D13-20260830` | 2026-08-30 | D13 UI 实施闭合：九份工作台 UI 模块方案统一升至 v0.4；新增工作台外壳、轨迹、动力学、选型、联合分层优化和项目入口六张原子 GUI 卡，任务卡总数 144→150；十组工作包、十二张既有 GUI 卡与开发总纲完成所有权、前置、目标、验证命令和失败行为对齐；需求追踪矩阵由权威生成器重建；完成新读者八问检查和双 PowerShell 文档门禁 | UI 治理内容可直接指导后续任务实施；契约继续保持真实 `Proposed` 状态；状态账本唯一 `Ready` 仍为 WP-00-T01，其他任务按前置和独立验证结果逐项解锁 |
 
 D1 不改变需求 v0.7、代码提交或工作包范围。D1 的名称裁决为：公共评估输出统一使用 `ResultEnvelope`，原单点名称 `EvaluationEnvelope` 停止使用。D2 的裁决（ADR-005）为：完整性维度拆分为 `PayloadCompleteness` 与 `ArtifactIntegrity`；`TaskState` 冻结 9 态；`Completed + Warning` 仅在 `RequiredEvidenceProfile` 允许警告类别内可正式可行；五组公共符号异名列为禁止名称。

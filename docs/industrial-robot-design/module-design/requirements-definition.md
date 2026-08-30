@@ -1,6 +1,6 @@
 # 需求定义模块详细方案（requirements-definition）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
+- 方案版本：v0.4；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-14；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-14-T01～T07`
 - 架构契约：`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-03、04、09、11（WP-10 为 GUI 层前置）；WP-05、WP-13 为交付/契约前置（总纲 §5.3：快照与模型作用域经修订查询获得，无业务插件代码依赖）；构建/门禁入口 WP-01

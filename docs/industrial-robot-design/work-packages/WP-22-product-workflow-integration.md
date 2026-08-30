@@ -1,6 +1,6 @@
 # WP-22 产品工作流整合实施计划
 
-> 阶段/发布：阶段 E / R1＋R2；方案对齐 `module-design/workflow-integration.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
+> 阶段/发布：阶段 E / R1＋R2；方案对齐 `module-design/workflow-integration.md` v0.4（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 不新增领域权威实现：一切业务操作经公共端口；实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）。
 
 **需求与契约：** UX-01～08、AT-04/05/12；架构契约与模块方案清单见 §2。
@@ -9,7 +9,7 @@
 
 ## 1. 目标与非目标
 
-**目标：** 交付产品驾驶舱（`CockpitDashboard`）、七阶段转移表（`StageTransitionTable`）、命令面板（`CommandPalette`）、候选比较视图（`ComparisonView`＋`MetricDiffModel`）与下一步建议（`NextStepAdvisor`），把七个业务域整合为单项目单机械臂的工作流。阶段状态唯一权威为 WP-10 `StageStatusModel`（八值，`module-design/session-ui.md` §3 定义，本包只消费不复制）；任务面板复用 WP-10 组件（`TaskState` 9 态以执行模型 §1 为准）；正式可行结论只渲染 WP-05 谓词输出的 `FeasibilityVerdict/gaps`，本包不自行判定。
+**目标：** 交付无项目入口、新建项目向导、产品驾驶舱、七阶段转移表、命令面板、候选比较视图与下一步建议，把七个业务域整合为单项目单机械臂工作流。阶段状态唯一权威为 WP-10 `StageStatusModel`；任务面板复用 WP-10 组件；正式可行结论只渲染 WP-05 的 `FeasibilityVerdict/gaps`。URDF 只作为新建项目来源，建模插件不提供导入入口。
 - 目标交付：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurws_ird_workflow_model_test`、`sdurws_ird_workflow_test`（GUI 回归）、状态展示矩阵与固定任务脚本证据。
 - 完成定义：UX-01～08、AT-04/05/12 断言通过；R1 可独立完成并报告"建模至基础选型"闭环（第七阶段为 OPT-B 静态子集）。
 
@@ -28,7 +28,7 @@
 ```text
 ui/workflow/   include/sdurws/ird/ui/workflow/{CockpitDashboard,StageTransitionTable,NextStepAdvisor,CommandPalette}.hpp
                src/{CockpitDashboard,StageTransitionTable,NextStepAdvisor,CommandPalette}.cpp
-               test/{WorkflowModelTest,WorkflowGuiTest}.cpp  testdata/
+               project-entry/  test/{WorkflowModelTest,WorkflowGuiTest,ProjectEntryModelTest}.cpp  testdata/
 ui/comparison/ include/sdurws/ird/ui/comparison/{ComparisonView,MetricDiffModel}.hpp
                src/{ComparisonView,MetricDiffModel}.cpp
                test/ComparisonModelTest.cpp  testdata/
@@ -49,7 +49,7 @@ CMake 目标：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurw
 2. **R1 切片**：第七阶段 R1 为 OPT-B 静态子集，全量入口显示"需要 R2 能力"不可用；R1 报告为初步设计级并列证据等级。
 3. **状态投影与展示义务**：按 evaluation-semantics §5——不可行按 `gaps` 列具体缺口；`DataInsufficient/Partial/NotEvaluated` 显式展示、不与不可行混排；`Superseded` 显示"需要重算"、`Historical` 保留原快照名称；Quick 结果不得显示为正式通过。
 4. **下一步建议规则表**（模块详设 §4 为权威）：按 `StageStatusModel` 八值×附加条件给建议动作（输入未完整→跳转第一条 Input 诊断编辑位置；可计算→启动阶段计算并提示 Quick/Verified 用途；计算中→查看进度/暂停/取消；结果有效→按转移表进入下一阶段或（阶段 7）比较并生成报告；需要重算→显示失效切片差异并重算；证据不足→按 gaps 分类补数据/升级证据/调整用途，不得静默降级；计算失败→retryable 重试否则查看开发诊断（默认收起）；工程不可行→查看违反项（对象/实际值/要求值）返回上游）。
-5. **CommandPalette 首版命令集（九组，冻结）**：保存项目（WP-04 草稿随存）；撤销/重做（`IProjectCommandService.undo/redo`，无可撤销/重做显示 `IRD-PROJ-NOTHING-TO-*` 文案）；运行阶段计算/快速检查（`IEvaluationScheduler.submit` Verified/Quick，Quick 提示不作正式证据）；取消任务（`TaskHandle.cancel`）；切换阶段 1～7（无守卫，显示下游需重算）；应用为当前方案（WP-04 命令，守卫＝候选满足 `isFormallyFeasible`）；比较方案（ComparisonView，守卫＝≥2 个可比较结果）；生成评审报告（WP-12 `ReviewReportBuilder`，输入不完整列 `IRD-RPT-INPUT-INCOMPLETE` 缺口）；打开工程策略/打开另存项目/导入 URDF（WP-07/WP-10/WP-04/WP-11 入口）。命令是 UI 意图到既有端口的绑定，不新增接口；前置不满足时显示不可用原因（UX-02 工程用语，不显示哈希/Schema/内部插件名）。
+5. **CommandPalette 首版命令集（冻结）**：保存项目；撤销/重做；运行阶段计算/快速检查；取消任务；切换阶段 1～7；应用为当前方案；比较方案；生成评审报告；打开工程策略和项目命令。URDF 新建项目归 WP-22-T06 的无项目入口，不作为导入命令。命令只绑定既有端口；前置不满足时显示简短工程原因，不显示哈希、Schema 或内部插件名。
 6. **ComparisonView**：指标集＝需求 §9.3 默认八项（总体尺寸包络、结构质量、节拍、关节侧正机械功、器件质量、器件成本、最小关节裕量、最小驱动裕量）；差异高亮逐指标给出基线值、候选值、绝对/相对变化；小于 `comparisonTolerance` 标"无差别"不构成支配；硬约束违反项单独列出，不被总分掩盖。候选预览经 `ISceneProjection.projectCandidate`（会话态，AT-04 不产生修订）；应用入口走 WP-04 命令——"设为当前方案"创建方案分支＋恰好一个新修订（AT-12），预览中的候选必须先复算为 Current 结果方可应用。
 
 ## 6. 任务依赖 DAG
@@ -57,7 +57,8 @@ CMake 目标：`sdurws_ird_workflow`（含 workflow/ 与 comparison/）、`sdurw
 ```text
 WP-22-T01 → WP-22-T02 → WP-22-T04
 WP-22-T02 → WP-22-T03
-WP-22-T01～T04 全部完成 → WP-22-T05
+WP-04、WP-11、WP-13-T03、WP-10-T06、WP-22-T01、WP-22-T04 → WP-22-T06
+WP-22-T01～T04、WP-22-T06 全部完成 → WP-22-T05
 ```
 
 ## 7. 逐任务深化
@@ -88,9 +89,15 @@ WP-22-T01～T04 全部完成 → WP-22-T05
 
 ### WP-22-T05 端到端用户流程
 - 代码范围：`ui/workflow/test/WorkflowGuiTest.cpp`；`ui/workflow/testdata/`（固定任务脚本）；`out/test-evidence/wp-22/<run-id>/`（录屏与日志）。
-- 前置任务：WP-22-T01～T04。
-- 输出工件：固定任务脚本（新机型、改型、错误恢复）GUI 回归；状态展示矩阵（七阶段×八值）；任务脚本录屏、测试日志、输入修订身份记录。
-- 验收断言：`WorkflowGuiTest`（模块详设 §8）——AT-04/05/12；新机型、改型、错误恢复固定任务脚本全通过；GUI 按 `QT_QPA_PLATFORM=windows` 一次一个执行。
+- 前置任务：WP-22-T01～T04、WP-22-T06。
+- 输出工件：无项目、URDF 新建、新机型、改型、错误恢复五条固定脚本；七阶段×八值矩阵；100%/125%/150% 录屏、日志和输入修订记录。
+- 验收断言：`WorkflowGuiTest`——AT-04/05/12、五条脚本和三档缩放通过；中央三维视图与主操作可见；GUI 按 Windows 单实例规则执行。
+
+### WP-22-T06 项目入口与新建项目向导
+- 代码范围：`ui/workflow/project-entry/`、`test/ProjectEntryModelTest.cpp`、本模块 CMake 与 `out/test-evidence/wp-22/<run-id>/`。
+- 前置任务：WP-04、WP-11、WP-13-T03、WP-10-T06、WP-22-T01、WP-22-T04。
+- 输出工件：无项目入口，空白模板、内置样例、URDF 三种新建来源，摘要确认、取消与错误恢复；模型用例编入 `sdurws_ird_workflow_model_test`。
+- 验收断言：所有来源都经 WP-04 项目命令原子创建；URDF 经 WP-11/WP-13 端口；失败无半项目；建模 GUI 无 URDF/模型导入或独立检查动作。
 
 ## 8. 测试矩阵（模块详设 §8 为断言权威）
 
@@ -98,7 +105,8 @@ WP-22-T01～T04 全部完成 → WP-22-T05
 | --- | --- | --- |
 | `sdurws_ird_workflow_model_test` / WorkflowModelTest.cpp | 转移表逐行（证据存在/缺失两分支）、建议规则表参数化、命令守卫 | UX-01～04、§5.1 |
 | 同上 / ComparisonModelTest.cpp | 八项指标聚合、差异高亮、无差别容差、应用守卫 | §5.3-5、§9.3、AT-12 |
-| `sdurws_ird_workflow_test` / WorkflowGuiTest.cpp | AT-04/05/12；新机型、改型、错误恢复固定任务脚本 | UX-01～08、AT-04/05/12 |
+| 同上 / ProjectEntryModelTest.cpp | 无项目、三种新建来源、取消、错误恢复、原子创建和建模禁导入 | UX-01～05、MDL-01/11 |
+| `sdurws_ird_workflow_test` / WorkflowGuiTest.cpp | AT-04/05/12；无项目、URDF 新建、新机型、改型、错误恢复；三档缩放 | UX-01～08、AT-04/05/12 |
 
 模型测试使用 `QCoreApplication`；GUI 回归在 Visual Studio x64 环境设置 `QT_QPA_PLATFORM=windows` 且一次只启动一个 GUI 测试可执行文件（testing-contract §5）。
 
@@ -144,6 +152,7 @@ GUI 可执行文件运行前在同一 PowerShell 会话设置 `$env:QT_QPA_PLATF
 | WP-22-T03 | 1.5～2 |
 | WP-22-T04 | 1～1.5 |
 | WP-22-T05 | 1.5～2.5 |
+| WP-22-T06 | 1～1.5 |
 
 ## 任务卡索引
 
@@ -152,3 +161,4 @@ GUI 可执行文件运行前在同一 PowerShell 会话设置 `$env:QT_QPA_PLATF
 - [WP-22-T03 候选比较与应用](../agent-tasks/WP-22-T03-candidate-compare.md)
 - [WP-22-T04 诊断与报告入口](../agent-tasks/WP-22-T04-diagnostic-guidance.md)
 - [WP-22-T05 端到端用户流程](../agent-tasks/WP-22-T05-workflow-tests.md)
+- [WP-22-T06 项目入口与新建项目向导](../agent-tasks/WP-22-T06-project-entry.md)

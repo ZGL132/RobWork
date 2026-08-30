@@ -1,6 +1,6 @@
 # WP-16 轨迹规划实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/trajectory-planning.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/trajectory-planning.md` v0.4（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付。
 
 **需求与契约：** TRJ-01～08、AT-04/06/18/19（阶段 C 链路子集）；架构契约与模块方案清单见 §2。
@@ -10,10 +10,10 @@
 ## 1. 目标与非目标
 
 **目标：** 实现 `IEngineeringEvaluator` 在轨迹域的唯一实现 `TrajectoryEvaluator`：从任务序列与上游 `KinematicResult` 的 IK 候选生成关节空间 PTP 段、笛卡尔直线接近/撤离段与驻留段（TRJ-01/02）；接入 RobWork 规划器完成避障搜索（TRJ-03）；执行路径简化、平滑与限值守恒的时间参数化（TRJ-04/05），复检复用 WP-07 共享 `CollisionEvaluator`；输出含 `ResolvedIkBranchSequence` 的 `TrajectoryPlan`、分段诊断与节拍（TRJ-06），供 WP-17 复算与 WP-10 播放。
-- 目标交付：`sdurws_ird_trajectory` 及其模型/契约测试、路径黄金数据、时间参数报告、AT-06/AT-19 证据。
+- 目标交付：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_gui_test` 及模型/契约测试、轨迹工作台、路径黄金数据、时间参数报告、AT-06/AT-19 证据。
 - 完成定义：TRJ-01～06 P0 全部通过；轨迹输出可被 WP-17 逐采样复算；固定输入切片/规划器版本/种子/线程数时结果逐字节确定。
 
-**非目标：** IK 求解（WP-15）、碰撞策略与算法（WP-07）、播放/动画/曲线查看会话态（TRJ-07，归 WP-10 session-ui 与 WP-22）、jerk 上限与工艺速度（TRJ-08 P1，仅保持 Schema 与评估接口可扩展，不建空占位）、动力学计算（WP-17）、第二套 `TrajectoryPlan` DTO。
+**非目标：** IK 求解（WP-15）、碰撞策略与算法（WP-07）、播放状态权威与中央三维视图所有权（WP-10；本包 GUI 只绑定）、jerk 上限与工艺速度（TRJ-08 P1，仅保持 Schema 与评估接口可扩展，不建空占位）、动力学计算（WP-17）、第二套 `TrajectoryPlan` DTO。
 
 ## 2. 需求、契约与发布切片
 
@@ -26,7 +26,7 @@
 
 拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/trajectory/`，子目录 `include/sdurws/ird/trajectory/`（TrajectoryPlan.hpp、ResolvedIkBranchSequence.hpp、IkBranchPolicy.hpp、TrajectoryEvaluator.hpp、TrajectoryDiagnostics.hpp）、`src/`（TrajectoryEvaluator.cpp、PtpCartesianPlanner.cpp、PlannerAdapter.cpp、PathSimplifier.cpp、TimeParameterizer.cpp、LimitVerifier.cpp、IkContinuityChecker.cpp、TrajectoryJson.cpp）、`test/`（PtpCartesianTest.cpp、PlannerAdapterTest.cpp、SmoothingTimeTest.cpp、CollisionLimitsTest.cpp、TrajectoryResultTest.cpp、LifecycleTest.cpp）、`testdata/trajectory/{ptp,cartesian,planner,collision,golden,failpoints}/`、`out/test-evidence/wp-16/<run-id>/`。文件树以模块详设 §2 为权威。
 
-CMake 目标：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_test`、`sdurws_ird_trajectory_contract_test`。允许依赖：WP-03 core、WP-05 evidence（评估端口头；经 `IResultRepository` 按 `ResultRef` 读上游 payload）、WP-06 runtime（`CompiledRobotArtifacts`）、WP-07 policy（共享 `CollisionEvaluator`，代码依赖）、RobWork pathplanning/trajectory/proximity 稳定 API、Qt Core（`QJson*`）；契约引用（只含公共领域类型头，不链接实现）：WP-14 `EngineeringRequirements`/`LoadCase`、WP-15 `KinematicResult`；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、其他插件私有头、本地碰撞开关/采样参数/安全距离副本、直接文件 IO、读取 UI 会话态、第二套 `TrajectoryPlan` DTO。
+CMake 目标：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_test`、`sdurws_ird_trajectory_contract_test`、`sdurws_ird_trajectory_gui_test`。计算核心禁止 Qt Widgets；`gui/` 仅允许 Qt Widgets、WP-10 公共 UI 和本模块公共头。其他禁止项不变：其他插件私有头、本地碰撞策略副本、直接文件 IO、GUI 直调规划计算和第二套 `TrajectoryPlan` DTO。
 
 ## 4. 输入/输出与数据流
 
@@ -49,6 +49,7 @@ CMake 目标：`sdurws_ird_trajectory`、`sdurws_ird_trajectory_test`、`sdurws_
 ```text
 WP-16-T01 → WP-16-T02 → WP-16-T03 → WP-16-T04
 WP-16-T01～T04 全部完成 → WP-16-T05 → WP-16-T06
+WP-16-T05、WP-16-T06、WP-10-T06 → WP-16-T07
 ```
 
 ## 7. 逐任务深化
@@ -89,6 +90,12 @@ WP-16-T01～T04 全部完成 → WP-16-T05 → WP-16-T06
 - 输出工件：WP-08 调度接入（`CancellationToken` 协作取消、安全点＝段边界、`TaskCapabilities` 声明）与确定性重复运行证明。
 - 验收断言：`LifecycleTest`（模块详设 §6）——取消/恢复（安全点＝段）、迟到回调只追加原分支不改写终态（执行模型 §1）、确定性重复运行（固定切片/版本/种子/线程数逐字节一致）。
 
+### WP-16-T07 轨迹规划工作台界面
+- 代码范围：`gui/`、`test/TrajectoryGuiTest.cpp`、本插件 CMake 与 `out/test-evidence/wp-16/<run-id>/`。
+- 前置任务：WP-16-T05、WP-16-T06、WP-10-T06。
+- 输出工件：轨迹段、规划设置、曲线/播放、碰撞/限位/分支和页面状态面板；CMake 目标 `sdurws_ird_trajectory_gui_test`。
+- 验收断言：模块详设 v0.4 §8 的字段、表列、按钮、空态/错误态、三维联动和 100%/125%/150% 缩放全部通过；GUI 不执行规划、碰撞计算或文件 IO。
+
 ## 8. 测试矩阵（模块详设 §6 为断言权威）
 
 | 测试目标/文件 | 断言要点 | 覆盖需求 |
@@ -100,8 +107,9 @@ WP-16-T01～T04 全部完成 → WP-16-T05 → WP-16-T06
 | 同上 / TrajectoryResultTest.cpp | `ResolvedIkBranchSequence`、payload 完整性、双击不产生修订 | TRJ-06、AT-04 |
 | 同上 / LifecycleTest.cpp | 取消/恢复（安全点＝段）、迟到回调隔离、确定性 | TRJ-01～06、执行模型 |
 | `sdurws_ird_trajectory_contract_test` | 评估端口契约（合法组合、取消、进度、能力声明）与上游 payload 只读引用 | public-interfaces §3 |
+| `sdurws_ird_trajectory_gui_test` / TrajectoryGuiTest.cpp | 轨迹段、设置、曲线/播放、碰撞/限位、失败保留与三档缩放 | TRJ-07、UX-01～08 |
 
-模型测试均为 `QCoreApplication`；GUI（TRJ-07 曲线查看/动画）归 WP-10/WP-22 会话态，按 `QT_QPA_PLATFORM=windows` 一次一个执行，本包不建 GUI 测试目标。
+模型测试均为 `QCoreApplication`。GUI 目标在 Visual Studio x64 环境设置 `QT_QPA_PLATFORM=windows`，按绝对路径一次只启动 `sdurws_ird_trajectory_gui_test.exe`；播放状态仍由 WP-10 会话模型提供。
 
 ## 验证命令（双形式，仓库根执行）
 
@@ -110,6 +118,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_trajectory_test
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_trajectory_contract_test
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory(_contract)?_test$"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_trajectory_gui_test$'
 ```
 
 ## 10. 独立验证与独立评审
@@ -129,7 +138,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory(
 
 ## 退出条件
 
-- TRJ-01～06 全部 P0、AT-06、AT-19 与 §15.3 轨迹限制/碰撞协议断言通过；TRJ-07/08 保持可扩展且无空占位。
+- TRJ-01～07、AT-06、AT-19 与 §15.3 轨迹限制/碰撞协议断言通过；轨迹工作台字段、状态、三维联动和三档缩放有证据；TRJ-08 保持可扩展且无空占位。
 - `TrajectoryPlan`（Schema 版本 1）＋`ResolvedIkBranchSequence` 为唯一轨迹结果形态，可被 WP-17 逐采样复算、被 WP-10 只读播放。
 - 复检只经共享 `CollisionEvaluator` 与 `pathValidationProfile`，无本地策略副本；确定性重复运行成立。
 - §11 删除清单执行完毕，旧播放/导出适配退出构建。
@@ -144,6 +153,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory(
 | WP-16-T04 | 1～1.5 |
 | WP-16-T05 | 1.5～2 |
 | WP-16-T06 | 1～2 |
+| WP-16-T07 | 1～1.5 |
 
 ## 任务卡索引
 
@@ -153,3 +163,4 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_trajectory(
 - [WP-16-T04 轨迹碰撞与运动限制](../agent-tasks/WP-16-T04-collision-limits.md)
 - [WP-16-T05 轨迹结果与候选预览](../agent-tasks/WP-16-T05-trajectory-result.md)
 - [WP-16-T06 轨迹任务生命周期](../agent-tasks/WP-16-T06-lifecycle.md)
+- [WP-16-T07 轨迹规划工作台界面](../agent-tasks/WP-16-T07-trajectory-ui.md)

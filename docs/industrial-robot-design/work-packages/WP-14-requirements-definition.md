@@ -1,7 +1,7 @@
 # WP-14 需求定义实施计划
 
 > 阶段/发布：阶段 B / R1（轨迹和动力字段只保存并校验，不在本 WP 执行完整动态求值）；负责 WP：WP-14。
-> 实施语义唯一来源：`module-design/requirements-definition.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/requirements-definition.md` v0.4（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-03～05、WP-10、WP-11、WP-13。人周：5～8。
 > 模块详设补充（不改总纲口径）：代码前置为 WP-03、04、09、11（WP-10 为 GUI 层前置）；WP-05、WP-13 为交付/契约前置——快照与模型作用域经修订查询获得，无业务插件代码依赖。
 > 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设经 IRD-D10-20260829 联合评审（通过，待签署）；实现启动按总纲依赖顺序与任务状态账本）。
@@ -52,7 +52,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/
   # 证据 → out/test-evidence/wp-14/<run-id>/（AGENTS §3，不入源码树）
 ```
 
-CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_requirements`（计算核心，无 Qt Widgets）、`sdurws_ird_requirements_plugin`（薄插件）、`sdurws_ird_requirements_test`、`sdurws_ird_requirements_contract_test`、`sdurws_ird_requirements_gui_test`。
+CMake 目标（与模块详设 v0.4 完全一致，不得增删改名）：`sdurws_ird_requirements`（计算核心，无 Qt Widgets）、`sdurws_ird_requirements_plugin`（薄插件）、`sdurws_ird_requirements_test`、`sdurws_ird_requirements_contract_test`、`sdurws_ird_requirements_gui_test`。
 
 允许依赖：WP-03 core、WP-04 命令/查询公共头、WP-09 diagnostics、WP-11 io、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui。
 禁止：其他业务插件私有头、插件内第二套 CSV/路径解析、直接执行公式、直写项目目录、修改领域公共枚举。通过 WP-04 命令服务提交，不直接写项目文件。
@@ -152,7 +152,7 @@ T01 数据模型与单位校验 ─┬→ T02 CSV 导入导出
 | LoadEventTest | 事件时间线、缺失关键数据 → 就绪 DataInsufficient 语义、循环口径稳定 | T04 |
 | ReadinessTest | 就绪状态机全矩阵（非法 Must/仅 Should/预览/正式），预览不产生正式证据 | T05 |
 | CommandIntegrationTest | 应用＝一个新修订＋按字段失效；未应用不失效；undo/redo 经 WP-04（AT-05 相关面） | T06 |
-| RequirementsGuiTest | 批量编辑、筛选、单位显示、错误定位、就绪摘要（QT_QPA_PLATFORM=windows） | T07 |
+| RequirementsGuiTest | 四分区、模板/阵列/镜像、批量编辑、部分导入、Must/Should、验收摘要与三档缩放 | T07 |
 
 ## 验证命令（双形式，仓库根执行）
 

@@ -1,6 +1,6 @@
 # 产品工作流整合模块详细方案（workflow-integration）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-22（阶段 E / R1+R2）；任务卡：`agent-tasks/WP-22-T01～T05`
+- 方案版本：v0.4；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；负责 WP：WP-22（阶段 E / R1+R2）；任务卡：`agent-tasks/WP-22-T01～T06`
 - 架构契约：`architecture/evaluation-semantics.md`（§4～5）、`architecture/execution-model.md`（§1）、`architecture/public-interfaces.md`（§1、§4～§6）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`；代码前置 WP-10、WP-12～21（总纲 §5.4），不新增领域权威实现
 
 ## 1. 模块职责与前置裁决

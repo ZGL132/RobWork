@@ -1,7 +1,7 @@
 # WP-15 运动学实施计划
 
 > 阶段/发布：阶段 B / R1（阶段 B 只交付模型—需求—运动学—静态优化链路）；负责 WP：WP-15。
-> 实施语义唯一来源：`module-design/kinematics.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/kinematics.md` v0.4（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-07、WP-08、WP-13、WP-14。人周：7～10。
 > 模块详设补充（不改总纲口径）：代码前置为 WP-03、05、06、07、08、09（WP-03/05/06/09 经 WP-07/08 平台交付传递）；WP-13、WP-14 为交付前置——模型与需求经快照获得，无业务插件代码依赖。
 > 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设经 IRD-D10-20260829 联合评审（通过，待签署）；实现启动按总纲依赖顺序与任务状态账本）。
@@ -49,7 +49,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/kinematics/
   # 证据 → out/test-evidence/wp-15/<run-id>/（AGENTS §3，不入源码树）
 ```
 
-CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_kinematics`（计算核心，无 Qt Widgets）、`sdurws_ird_kinematics_plugin`（薄插件）、`sdurws_ird_kinematics_test`、`sdurws_ird_kinematics_contract_test`、`sdurws_ird_kinematics_gui_test`。
+CMake 目标（与模块详设 v0.4 完全一致，不得增删改名）：`sdurws_ird_kinematics`（计算核心，无 Qt Widgets）、`sdurws_ird_kinematics_plugin`（薄插件）、`sdurws_ird_kinematics_test`、`sdurws_ird_kinematics_contract_test`、`sdurws_ird_kinematics_gui_test`。
 
 碰撞规则只调用 WP-07 共享 `CollisionEvaluator`，名称只调用 WP-06 `IRuntimeNameResolver`；禁止依赖其他业务插件私有头。
 
@@ -163,7 +163,7 @@ T02 前置含 T03（裁决）：排序键 (b) 消费 T03 的 `JacobianResult` �
 | RegionCoverageTest | 分母/边界、取消与预算耗尽两锚点、Partial 不得 Verified | T04 |
 | CollisionEvidenceTest | 共享评估器一致性、缺检测器 DataInsufficient、限定措辞 | T05 |
 | BatchExecutionTest | 身份校验、迟到回调、取消/检查点、固定种子复现 | T06 |
-| KinematicsGuiTest | 候选预览不建修订、显式应用、导出引用快照（QT_QPA_PLATFORM=windows） | T07 |
+| KinematicsGuiTest | 当前姿态、候选、任务/区域、能力探索三模式、二维图、预览不建修订、显式应用和三档缩放 | T07 |
 | CrossEntryTest | AT-19 静态入口：对象 ID 对/判定/原因一致；显示开关不影响判定 | T08 |
 
 ## 验证命令（双形式，仓库根执行）

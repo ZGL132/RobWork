@@ -1,6 +1,6 @@
 # 机械臂建模模块详细方案（robot-modeling）
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
+- 方案版本：v0.4；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
 - 负责 WP：WP-13；阶段/发布：阶段 B / R1；任务卡：`agent-tasks/WP-13-T01～T08`
 - 架构契约：`architecture/canonical-kinematics.md`（最高权威）、`architecture/domain-model.md`、`architecture/persistence-schema.md`、`architecture/public-interfaces.md`、`architecture/symbol-registry.md`
 - 代码前置：WP-06（编译端口）、WP-10（EditDraft/公共组件）、WP-11（安全读取）；WP-04 命令端口经公共头合法可用；构建/门禁入口 WP-01

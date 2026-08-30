@@ -19,7 +19,7 @@
 
 拥有目录：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/`，含 `include/sdurws/ird/ui/`、`src/`、`test/`、`testdata/`、`out/test-evidence/wp-xx/<run-id>/`（AGENTS §3）。允许 WP-03～08 公共接口、Qt Widgets/Model-View 和 RobWorkStudio 场景 API；禁止 Widget 直接读取业务插件私有对象、跨线程操作 QWidget、直接写项目文件或手工 CSV。
 
-目标：`sdurws_ird_ui`、`sdurws_ird_ui_model_test`、`sdurws_ird_ui_widget_test`。
+目标：`sdurws_ird_ui`、`sdurws_ird_ui_model_test`、`sdurws_ird_ui_widget_test`、`sdurws_ird_workbench_gui_test`。工作台外壳只拥有工业机械臂 Dock 容器与布局恢复，不替换 RobWorkStudio 中央三维视图，也不重置其他插件布局。
 
 ## 4. 三层状态模型
 
@@ -54,8 +54,9 @@ ProjectRevision/AnalysisSnapshot/DesignCandidate
 | WP-10-T03 | 导航、诊断、表格等公共组件 | [T03](../agent-tasks/WP-10-T03-common-components.md) |
 | WP-10-T04 | 唯一策略入口和显示隔离 | [T04](../agent-tasks/WP-10-T04-policy-ui.md) |
 | WP-10-T05 | 虚拟列表、响应和 GUI 证据 | [T05](../agent-tasks/WP-10-T05-responsive-lists.md) |
+| WP-10-T06 | 工作台外壳、三侧 Dock 与缩放恢复 | [T06](../agent-tasks/WP-10-T06-workbench-shell.md) |
 
-依赖：T01 → T02/T03；T04 依赖 WP-07；T05 依赖 T02/T03。每张卡一个 worktree、分支和提交。
+依赖：T01 → T02/T03；T04 依赖 WP-07；T05 依赖 T02/T03；T06 依赖 T01～T05 与 WP-01-T02/T03。每张卡一个 worktree、分支和提交。
 
 ## 7. 失败分类与证据
 
@@ -65,6 +66,8 @@ ProjectRevision/AnalysisSnapshot/DesignCandidate
 
 ## 验证
 
+新增 GUI 目标 `sdurws_ird_workbench_gui_test` 与既有 Widget 目标分开执行；两者都在 Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，每次仅以绝对路径启动一个可执行文件。
+
 模型测试命令：`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\RobWork\\scripts\\industrial-robot\\build.ps1 -Configuration Debug -Target sdurws_ird_ui_model_test`，随后 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\RobWork\\scripts\\industrial-robot\\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_ui_model_test$'`。GUI 测试使用同一入口执行 `-Regex '^sdurws_ird_ui_widget_test$'`，必须在 Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，并一次只启动 `sdurws_ird_ui_widget_test.exe`。
 
 ## 8. 迁移与评审
@@ -73,4 +76,4 @@ ProjectRevision/AnalysisSnapshot/DesignCandidate
 
 ## 退出条件
 
-A-GATE-01/02/07 与 AT-04/05/12/19 UI 断言通过；SessionState、EditDraft、ProjectRevision 没有隐式互转；候选/历史预览可恢复；公共 UI 不访问业务私有对象；P95 和 2 秒无响应门禁通过；5 张任务卡证据和独立评审齐全。
+A-GATE-01/02/07 与 AT-04/05/12/19 UI 断言通过；SessionState、EditDraft、ProjectRevision 没有隐式互转；候选/历史预览可恢复；公共 UI 不访问业务私有对象；P95 和 2 秒无响应门禁通过；100%/125%/150% 缩放、屏外恢复、中央三维视图最小逻辑尺寸和其他插件状态保护通过；6 张任务卡证据和独立评审齐全。

@@ -1,6 +1,6 @@
 # WP-20-T07 阶段 B 优化 UI
 
-- **Task ID / 需求 ID / ADR / 阶段：**WP-20-T07；OPT-08、UX-01～08（静态优化 GUI 子集）；ADR-003（OPT-B 权威范围）；阶段 B / R1。契约：`module-design/optimization.md` v0.3 §5.3/§6、`architecture/candidate-compilation.md` §1/§6（阶段锁）、`architecture/evaluation-semantics.md` §5（展示义务）、`architecture/public-interfaces.md`、`architecture/testing-contract.md`
+- **Task ID / 需求 ID / ADR / 阶段：**WP-20-T07；OPT-08、UX-01～08（静态优化 GUI 子集）；ADR-003（OPT-B 权威范围）；阶段 B / R1。契约：`module-design/optimization.md` v0.4 §8.1～§8.8、`architecture/candidate-compilation.md` §1/§6（阶段锁）、`architecture/evaluation-semantics.md` §5、`architecture/testing-contract.md`
 - **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源同 WP-20-T01
 - **前置任务及必需工件：**WP-20-T06（应用命令包＋`ResultApplicationTest` 工件）、WP-20-T04（静态指标冻结口径与引导提示）；WP-10-T03（公共组件）、WP-09-T03（诊断目录渲染）、WP-01-T03（测试入口）
 - **允许创建/修改/删除的文件**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/`）：
@@ -8,10 +8,10 @@
   - 修改：`plugins/optimization/CMakeLists.txt`（登记 `sdurws_ird_optimization_plugin`、`sdurws_ird_optimization_gui_test`；目标名不得增删改名）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**T01～T06 冻结语义与 definition/candidate 计算核心；`joint/` 目录与 `_joint*` 目标（归 WP-21）；实现 WP-21 功能（联合搜索/Quick 审计/鲁棒性）；直读 UI 会话态（经 WP-10 端口）；硬编码诊断文案（统一经 WP-09 目录）；不暴露内部哈希作为唯一标识
 - **修改前接口：**无优化 GUI（旧 `sdurws_structureoptimizer*` 加权总分界面按 WP-20 §10 迁移表删除，不在本卡）
-- **修改后接口：**`OptimizationPlugin`＋四面板（薄界面）：变量域编辑（StageB 变量经 T01 注册表绑定，`writeSet`/域校验回显）；候选比较（静态 `DesignCandidate`/`ParetoSet` 只读展示与并列标注）；静态证据（指标值＋来源 `ResultRef`＋`gaps` 逐项缺口，`DataInsufficient`/`Partial` 显式展示不与"不可行"混排）；应用确认（经 WP-20-T06 应用包发 WP-04 `DomainCommand`，成功显示新修订号）；候选预览不改基线（不建修订、不改设计）；不可行候选显示硬约束原因（kind＋实际值/阈值）且应用入口禁用；StageB 不可声明目标（节拍/器件成本）显示引导提示并改选可算目标（T04 冻结口径）
+- **修改后接口：**`OptimizationPlugin` 只交付 optimization v0.4 §8 的 R1 静态模式：变量域、可算目标/约束、静态候选、证据与应用确认；节拍、器件成本、驱动裕量等 R1 不可算指标以简短说明显示为不可用，不呈现可运行控件；R2 分层漏斗、八指标、Pareto、审计、稳健性与正式复核归 WP-21-T07。候选预览不改基线，不可行候选列硬约束原因且禁用应用。
 - **实施步骤：**1) RED：写 `OptimizationGuiTest` 六项断言并登记 `_gui_test` 目标；2) 实现变量域编辑与候选比较面板（只读投影）；3) 实现静态证据面板（`gaps`/当前性/证据等级展示）；4) 实现应用确认面板（接 T06 应用包）与守卫；5) `$env:QT_QPA_PLATFORM='windows'` 一次一个运行转绿并写证据
 - **RED 测试：**`OptimizationGuiTest`（先写先败）：`VariableDomainEditingStageBOnly`、`InfeasibleCandidateShowsReasonAndNotAppliable`、`ApplyUsesProjectCommandAndShowsRevision`（经 WP-04 命令、显示恰好一个新修订）、`PreviewDoesNotMutateBaseline`（预览不建修订不改设计）、`StageBGuidanceForUndeclarableGoals`、`InternalHashNotShownAsIdentity`
-- **最小实现：**四面板薄界面＋应用确认转绿；联合候选预览/应用扩展（WP-21-T05）不在本卡
+- **最小实现：**R1 静态模式四面板＋不可算指标提示＋应用确认；所有 R2 控件与行为不在本卡。
 - **正常/边界/失败测试：**
   - 正常：Given 可行候选，When 预览并确认应用，Then 显示硬约束逐项通过、应用后出现恰好一个新修订号
   - 边界：Given 显示开关切换，Then 判定、输入切片与结果当前性不变；Given 互不支配并列候选，Then 稳定展示并列关系
@@ -21,7 +21,7 @@
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_gui_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_gui_test$"`
   - GUI 约束：`$env:QT_QPA_PLATFORM='windows'`，一次只启动一个 GUI 测试可执行文件；预期退出码 0
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "jointSearch|Quick|robust|audit" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无 WP-21 功能）；`rg -ni "sha|hash" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 无内部哈希作唯一标识展示；无直读会话态与本地文案表
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -ni "jointSearch|Quick|robust|audit|funnel" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -eq 0) { throw '检测到 R2 越界实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；`rg -ni "sha|hash" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/gui; if ($LASTEXITCODE -gt 1) { throw '扫描命令执行失败' }` 无内部哈希作唯一标识展示；无直读会话态与本地文案表。
 - **证据工件：**`out/test-evidence/wp-20/<run-id>/`——GUI 回归报告（面板×场景矩阵）、应用确认与新修订记录、不可行候选 `gaps` 展示记录、测试日志（commit/配置）
 - **提交格式：** `WP-20-T07: 新增阶段 B 优化界面`
 

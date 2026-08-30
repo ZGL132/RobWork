@@ -1,14 +1,14 @@
 # WP-22-T03 候选比较与应用
 
-- **Task ID / 需求 ID / ADR / 阶段：** WP-22-T03；UX-06、§5.3-5（候选比较须给相对基线变化）、§9.3（默认八项比较指标与 `comparisonTolerance` 语义归 WP-20）、AT-04（预览不改设计）、AT-12（应用＝方案分支＋恰好一个新修订＋基线不覆盖＋复算一致＋修订数不随候选数增长）；ADR-004（指标与容差读 WP-20 研究定义，不重新声明）。阶段 E / R1＋R2。契约：`architecture/evaluation-semantics.md` §4（应用守卫消费 `isFormallyFeasible`）、`architecture/symbol-registry.md`（SYM-OPT-005/006）；模块详设 `module-design/workflow-integration.md` v0.3 §6、§7（错误码提名）。
+- **Task ID / 需求 ID / ADR / 阶段：** WP-22-T03；UX-06、AT-04、AT-12；ADR-004；阶段 E / R1＋R2。契约：`architecture/evaluation-semantics.md` §4、`architecture/symbol-registry.md` SYM-OPT-005/006；模块详设 `module-design/workflow-integration.md` v0.4 §6～§7、§10.5，`module-design/optimization.md` v0.4 §8.5～§8.7。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
 - **前置任务及必需工件：** WP-22-T02（状态投影可用）；外部消费 WP-20/21 结果对象：WP-20-T03/T04（静态指标与 Pareto）、WP-21-T04/T05（联合 `DesignCandidate`/`ParetoSet` 与应用路径）；WP-10-T02（`ISceneProjection.projectCandidate`）、WP-04-T02（命令端口）；工件：T01～T02 用例通过、WP-02 optimization 样本（候选与基线）。
 - **允许创建/修改/删除的文件：**（前缀 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/`）创建 `comparison/include/sdurws/ird/ui/comparison/ComparisonView.hpp`、`comparison/src/ComparisonView.cpp`、`comparison/include/sdurws/ird/ui/comparison/MetricDiffModel.hpp`、`comparison/src/MetricDiffModel.cpp`、`comparison/test/ComparisonModelTest.cpp`、`comparison/testdata/`；修改 `ui/` CMakeLists（把 ComparisonModelTest 编入 `sdurws_ird_workflow_model_test`）；写 `comparison/evidence/`。不删除文件。
 - **禁止修改的文件和公共接口：** WP-20/21 优化源文件（只读消费 `DesignCandidate`/`ParetoSet` 值对象）；WP-05 谓词；WP-10 `ISceneProjection`；WP-04 project 源文件；`requirements.md`、CSV；不新增 CMake 目标。
 - **修改前接口：** `ui/comparison/` 目录不存在；`sdurws_ird_workflow_model_test` 不含 ComparisonModelTest；无比较视图与差异模型。
-- **修改后接口：** `ComparisonView`＋`MetricDiffModel`：输入以 `ResultRef`/runId 引用基线与候选（文件路径不是结果身份）；指标集＝需求 §9.3 默认八项（总体尺寸包络、结构质量、节拍、关节侧正机械功、器件质量、器件成本、最小关节裕量、最小驱动裕量），激活目标与 `comparisonTolerance` 读取优化研究定义（WP-20）；逐指标输出基线值、候选值、绝对/相对变化与差异高亮；小于容差标"无差别"不构成支配；硬约束违反项单独列出不被总分掩盖。预览经 `ISceneProjection.projectCandidate`（会话态，退出恢复）；应用入口走 WP-04 命令并守卫 `isFormallyFeasible`。
+- **修改后接口：** `ComparisonView`＋`MetricDiffModel`：一次比较 2～4 个候选，指标固定为总体尺寸包络、结构质量、节拍、关节侧正机械功、器件质量、器件成本、最小关节裕量、最小驱动裕量；逐指标显示基线值、候选值、绝对/相对变化与差异高亮，小于 `comparisonTolerance` 标“无差别”；硬约束违反项单列。预览经 `ISceneProjection.projectCandidate`，应用走 WP-04 命令并守卫 `isFormallyFeasible`。
 - **实施步骤：**
-  1. 写 RED 测试（八项指标聚合、差异高亮、无差别容差、应用守卫、`IRD-WF-NOT-COMPAREABLE`/`IRD-WF-APPLY-BLOCKED`）。
+  1. 写 RED 测试（2～4 个候选、八项指标、差异高亮、无差别容差、应用守卫、`IRD-WF-NOT-COMPAREABLE`/`IRD-WF-APPLY-BLOCKED`）。
   2. 实现 `MetricDiffModel`：按 `ResultRef` 取候选与基线结果，八项指标聚合与差异计算（容差与激活目标读研究定义）。
   3. 实现 `ComparisonView` 差异高亮与硬约束违反单列。
   4. 实现可比性守卫：缺同名指标或含非正式可行项 → `IRD-WF-NOT-COMPAREABLE`（Input/Error）列出不可比项、拒绝整组比较。

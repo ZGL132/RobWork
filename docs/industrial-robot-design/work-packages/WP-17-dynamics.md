@@ -1,6 +1,6 @@
 # WP-17 动力学实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/dynamics.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/dynamics.md` v0.4（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付；WP-18 依赖本模块（候选无关性由其消费侧契约测试验证）。
 
 **需求与契约：** DYN-01～08、AT-07、NFR-DEP-05；架构契约与模块方案清单见 §2。
@@ -25,7 +25,7 @@
 
 拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/dynamics/`，子目录 `include/sdurws/ird/dynamics/`（DynamicResult.hpp、DynamicsEvaluator.hpp、DynamicsSemantics.hpp、DynamicsDiagnostics.hpp）、`src/`（DynamicsEvaluator.cpp、RneAdapter.cpp、FrictionModel.cpp、PowerEnergyIntegrator.cpp、ForwardDynamicsScenario.cpp、InertiaValidator.cpp、DynamicsJson.cpp）、`test/`（SemanticFreezeTest.cpp、InverseDynamicsTest.cpp、PowerEnergyTest.cpp、ForwardDynamicsTest.cpp、InsufficientDataTest.cpp）、`testdata/dynamics/{two-link,gravity,cycle,failpoints}/`、`out/test-evidence/wp-17/<run-id>/`。文件树以模块详设 §2 为权威。
 
-CMake 目标：`sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`、`sdurws_ird_dynamics_contract_test`。允许依赖：WP-03 core（含类型化广义力包装）、WP-05 evidence（端口头＋结果仓库）、WP-06 runtime（`CompiledRobotArtifacts` 的 DWC 工件）、RobWorkSim 稳定 API（DynamicWorkCell、RigidDevice、`rwsim::util::RecursiveNewtonEuler`、积分器/物理引擎，按 NFR-DEP-05 锁定版本）、Qt Core；契约引用（不链接实现）：WP-16 `TrajectoryPlan`/`ResolvedIkBranchSequence` 公共类型（payload 经 `IResultRepository` 取回）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、WP-18 及其后模块头、本地效率/减速比计算（映射归 WP-18）、直读 UI 会话态。
+CMake 目标：`sdurws_ird_dynamics`、`sdurws_ird_dynamics_test`、`sdurws_ird_dynamics_contract_test`、`sdurws_ird_dynamics_gui_test`。计算核心禁止 Qt Widgets；`gui/` 只允许 Qt Widgets、WP-10 公共 UI 和本模块公共头，禁止自行换算或补齐动力学量。WP-18 及其后模块头、本地效率/减速比计算和直读 UI 会话态继续禁止。
 
 ## 4. 输入/输出与数据流
 
@@ -50,6 +50,7 @@ WP-17-T01 → WP-17-T02 → WP-17-T03
 WP-17-T02 → WP-17-T04
 WP-17-T02、WP-17-T03 → WP-17-T05 → WP-17-T06
 WP-17-T06 与 WP-18-T01/T02 侧联（契约测试落在 WP-18 测试目标）
+WP-17-T03、WP-17-T05、WP-17-T06、WP-10-T06 → WP-17-T07
 ```
 
 ## 7. 逐任务深化
@@ -90,6 +91,12 @@ WP-17-T06 与 WP-18-T01/T02 侧联（契约测试落在 WP-18 测试目标）
 - 输出工件：候选无关性联合验收记录（双评审签署：动力学/驱动工程师＋独立测试）、映射消费接口评审纪要。
 - 验收断言：`DrivetrainContractTest`（模块详设 drivetrain §6，WP-18 侧执行）——改变 `DriveTrainDesign` 不改变关节侧 `DynamicResult`；本模块输出可被映射且多速比黄金数据可复算（§15.1 传动映射黄金数据）。
 
+### WP-17-T07 动力学工作台界面
+- 代码范围：`gui/`、`test/DynamicsGuiTest.cpp`、本插件 CMake 与 `out/test-evidence/wp-17/<run-id>/`。
+- 前置任务：WP-17-T03、WP-17-T05、WP-17-T06、WP-10-T06。
+- 输出工件：关节包络、曲线、统计口径、可信度、设置与状态面板；CMake 目标 `sdurws_ird_dynamics_gui_test`。
+- 验收断言：模块详设 v0.4 §8 的字段、单位、表列、按钮、数据不足/失败态、三维联动和三档缩放全部通过；GUI 不执行动力学或传动计算。
+
 ## 8. 测试矩阵（模块详设 §6 为断言权威）
 
 | 测试目标/文件 | 断言要点 | 覆盖需求 |
@@ -100,8 +107,9 @@ WP-17-T06 与 WP-18-T01/T02 侧联（契约测试落在 WP-18 测试目标）
 | 同上 / ForwardDynamicsTest.cpp | h/h2 收敛、发散诊断、输入/初态/步长入证据 | DYN-05、§15.3 |
 | 同上 / InsufficientDataTest.cpp | 降级等级＋Warning、不产生精确结论 | DYN-06、§6.6 |
 | `sdurws_ird_drivetrain_contract_test` / DrivetrainContractTest.cpp | 候选无关性（承载 WP-17-T06） | DYN-04 |
+| `sdurws_ird_dynamics_gui_test` / DynamicsGuiTest.cpp | 关节包络、曲线、统计口径、可信度、失败保留与三档缩放 | DYN-08、UX-01～08 |
 
-模型测试均为 `QCoreApplication`；GUI（DYN-08 曲线联动/回放）归 WP-10/WP-22 会话态，按 `QT_QPA_PLATFORM=windows` 一次一个执行，本包不建 GUI 测试目标。
+模型测试均为 `QCoreApplication`。GUI 目标在 Visual Studio x64 环境设置 `QT_QPA_PLATFORM=windows`，按绝对路径一次只启动 `sdurws_ird_dynamics_gui_test.exe`；回放和场景选择状态仍由 WP-10 会话模型提供。
 
 ## 验证命令（双形式，仓库根执行）
 
@@ -110,6 +118,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_test
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_dynamics_contract_test
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics(_contract)?_test$"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_dynamics_gui_test$'
 ```
 
 注：`sdurws_ird_dynamics_contract_test` 目标由本 WP 在 CMake 登记、按模块详设与 WP-18 共同验收；候选无关性断言本体位于 `sdurws_ird_drivetrain_contract_test`（DrivetrainContractTest），运行该目标见 WP-18 §9 命令。
@@ -132,6 +141,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics(_c
 ## 退出条件
 
 - DYN-01～06 全部 P0、AT-07 与 §15.3 动力学容差/正动力学收敛/动力包络行断言通过；DYN-07/08 保持可扩展且无空占位。
+- DYN-08 工作台字段、单位、可信度、错误态、三维联动和 100%/125%/150% 缩放有独立 GUI 证据。
 - 关节侧 `DynamicResult`（规范名）与候选传动无关，可被 WP-18 映射复算（DrivetrainContractTest 通过）。
 - 摩擦只计一次、功率符号与 W+ 口径符合 §9.3 冻结式；证据等级不足不自动提升。
 - §11 删除清单执行完毕，重复功率/摩擦实现退出构建。
@@ -146,6 +156,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics(_c
 | WP-17-T04 | 1.5～2.5 |
 | WP-17-T05 | 1～1.5 |
 | WP-17-T06 | 0.5～1 |
+| WP-17-T07 | 1～1.5 |
 
 ## 任务卡索引
 
@@ -155,3 +166,4 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_dynamics(_c
 - [WP-17-T04 RobWorkSim 正动力学](../agent-tasks/WP-17-T04-forward-dynamics.md)
 - [WP-17-T05 物性与摩擦数据不足](../agent-tasks/WP-17-T05-insufficient-data.md)
 - [WP-17-T06 动力学到传动映射](../agent-tasks/WP-17-T06-drivetrain-contract.md)
+- [WP-17-T07 动力学工作台界面](../agent-tasks/WP-17-T07-dynamics-ui.md)

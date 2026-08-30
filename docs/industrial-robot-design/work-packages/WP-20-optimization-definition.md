@@ -1,7 +1,7 @@
 # WP-20 优化定义与候选编译实施计划
 
 > 阶段/发布：阶段 B / R1，仅实现 OPT-B（OPT-01～04、06～08 的静态子集，需求 §8.7.1 唯一集合）；OPT-05、OPT-09、OPT-10 与完整轨迹/动力/器件联合归 WP-21（阶段 D / R2）。负责 WP：WP-20。
-> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-21 共用一文，本文只引用其 WP-20 部分）。
+> 实施语义唯一来源：`module-design/optimization.md` v0.4（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-21 共用一文，本文只引用其 WP-20 部分）。
 > 前置（总纲 §5.3，保持不变）：WP-13～15（交付前置）。人周：6～9。
 > 模块详设补充（不改总纲口径）：代码前置 WP-03～09（平台内核经总纲 §5.2 交付）。
 > 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设经 IRD-D10-20260829 联合评审（通过，待签署）；实现启动按总纲依赖顺序与任务状态账本）。
@@ -52,7 +52,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/
   # 证据 → out/test-evidence/wp-20/<run-id>/（AGENTS §3，不入源码树）
 ```
 
-CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_optimization_definition`（definition＋candidate 计算核心，无 Qt Widgets）、`sdurws_ird_optimization_definition_test`、`sdurws_ird_optimization_definition_contract_test`、`sdurws_ird_optimization_plugin`＋`sdurws_ird_optimization_gui_test`（WP-20-T07）。`sdurws_ird_optimization_joint`/`_joint_test` 归 WP-21，本 WP 不得创建或链接。
+CMake 目标（与模块详设 v0.4 完全一致，不得增删改名）：`sdurws_ird_optimization_definition`（definition＋candidate 计算核心，无 Qt Widgets）、`sdurws_ird_optimization_definition_test`、`sdurws_ird_optimization_definition_contract_test`、`sdurws_ird_optimization_plugin`＋`sdurws_ird_optimization_gui_test`（WP-20-T07）。`sdurws_ird_optimization_joint`/`_joint_test` 归 WP-21，本 WP 不得创建或链接。
 
 允许依赖：WP-03～09 公共端口（optimization.md §2）；禁止：业务插件互依、反射式字段写入、候选直写 revision、加权总分替代 Pareto、第二套调度/缓存。
 
@@ -149,7 +149,7 @@ T01 研究定义 → T02 候选补丁 → T03 静态硬约束 → T04 静态指�
 - 代码范围：`gui/OptimizationPlugin.hpp`、`gui/OptimizationPlugin.cpp`、`gui/panels/`；`test/OptimizationGuiTest.cpp`；CMake 目标 `sdurws_ird_optimization_plugin`、`sdurws_ird_optimization_gui_test`（模块详设标注归 WP-20-T07）。
 - 前置：T06；WP-10 公共组件。
 - 输出工件：变量域编辑、候选比较、静态证据、应用确认的薄界面。
-- 验收断言：§6「OptimizationGuiTest」——变量域编辑、候选比较、静态证据、应用确认；不可行候选不可应用；不暴露内部哈希作为唯一标识；StageB 不可声明目标的引导提示（T04 冻结口径）。
+- 验收断言：§6「OptimizationGuiTest」——只交付 R1 静态模式的变量域、可算目标/约束、静态候选、证据与应用确认；不可算指标显示简短不可用说明；R2 漏斗、八指标、Pareto、审计、稳健性和正式复核控件零实现。
 
 ### 6.8 WP-20-T08 跨入口契约（0.5 人周）
 

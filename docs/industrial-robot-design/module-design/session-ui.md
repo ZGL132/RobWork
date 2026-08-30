@@ -1,6 +1,6 @@
 # 会话、场景与公共 UI 模块详细方案
 
-- 方案版本：v0.3；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
+- 方案版本：v0.4；需求基线：v0.8；架构检查点：`IRD-D2-20260829`
 - 负责 WP：WP-10；阶段/发布：阶段 A / R1；任务卡：`agent-tasks/WP-10-T01～T05`
 - 架构契约：`architecture/execution-model.md`（§1）、`architecture/public-interfaces.md`（§1、§4、§6）、`architecture/evaluation-semantics.md`（§1、§5）、`architecture/symbol-registry.md`、`architecture/testing-contract.md`
 

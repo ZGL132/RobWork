@@ -1,7 +1,7 @@
 # WP-21 联合优化实施计划
 
 > 阶段/发布：阶段 D / R2；完整实现 OPT-01～10（含 OPT-05、OPT-09、OPT-10）。负责 WP：WP-21。
-> 实施语义唯一来源：`module-design/optimization.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-20 共用一文，本文只引用其 WP-21 部分）。
+> 实施语义唯一来源：`module-design/optimization.md` v0.4（需求基线 v0.8；检查点 `IRD-D2-20260829`；与 WP-20 共用一文，本文只引用其 WP-21 部分）。
 > 前置（总纲 §5.3，保持不变）：WP-16～20。人周：10～16。
 > 模块详设补充（不改总纲口径）：WP-08 平台经 WP-16～20 传递；WP-23 规模化基准与本 WP 协作采集性能证据（NFR-PERF-04～06），不构成总纲前置变更。
 > 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设经 IRD-D10-20260829 联合评审（通过，待签署）；实现启动按总纲依赖顺序与任务状态账本）。
@@ -28,7 +28,7 @@
 - 需求锚点（optimization.md §0）：§7.4、§8.7、§9（含 §9.3/§9.4）、§15.3；场景 AT-09～14；NFR-PERF-04～06。
 - 架构契约：`architecture/candidate-compilation.md`（最高权威）、`architecture/evaluation-semantics.md`、`architecture/execution-model.md`（§3 缓存、§4 取消/检查点/恢复）、`architecture/public-interfaces.md`、`architecture/persistence-schema.md`、`architecture/symbol-registry.md`。
 - 代码前置：WP-20 静态链路（definition/candidate 核心与其公共头）、WP-16～19 评估器（仅经 WP-08 调度）、WP-03～09 平台端口；GUI 面板扩展基于 WP-20-T07 交付的 `OptimizationPlugin`；构建/门禁入口 WP-01。
-- 发布切片：T01～T06 全部属阶段 D / R2；不回改 WP-20 已冻结的 OPT-B 行为（发现缺陷走上游所有者流程，总纲 §4.3）。
+- 发布切片：T01～T07 全部属阶段 D / R2；不回改 WP-20 已冻结的 OPT-B 行为（发现缺陷走上游所有者流程，总纲 §4.3）。
 
 ## 3. 拥有目录、CMake 目标与依赖边界
 
@@ -49,7 +49,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/optimization/
 
 共享范围（与 WP-20 协作、不独自拥有）：`gui/panels/` 的候选预览/应用面板扩展、`test/ResultApplicationTest.cpp` 的联合应用子句、`testdata/optimization/` 其余目录。
 
-CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_optimization_joint`、`sdurws_ird_optimization_joint_test`。本 WP 不新建 GUI 测试目标——联合候选预览/应用的面板行为由既有 `sdurws_ird_optimization_gui_test` 扩展用例覆盖（optimization.md §2 目标清单）。
+CMake 目标（与模块详设 v0.4 完全一致）：`sdurws_ird_optimization_joint`、`sdurws_ird_optimization_joint_test`。WP-21-T07 不新建 GUI 目标，在 WP-20-T07 交付的 `sdurws_ird_optimization_gui_test` 中新增独立 R2 用例，禁止改写 R1 静态用例。
 
 允许依赖：WP-03 core、WP-04 命令端口、WP-05 evidence（评估端口＋结果仓库）、WP-06 runtime（编译管线）、WP-07 policy、WP-08 execution（调度/缓存/检查点）、WP-09 diagnostics、WP-20 definition/candidate 公共头、Qt Core；WP-21 对 WP-16～19 评估器仅经 WP-08 调度与 `ResultEnvelope` 交互。禁止：业务插件互依、反射式字段写入、候选直写 revision、加权总分替代 Pareto、第二套调度/缓存、复现 WP-20 静态语义的第二实现。
 
@@ -69,6 +69,7 @@ CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdur
 ```text
 T01 联合搜索策略 ─┬→ T02 约束与指标判定 ─┬→ T04 Pareto 与鲁棒性 ─┬→ T05 候选预览与应用 ─┐
                   └→ T03 调度缓存检查点 ───────────────────────────┴──────────────────────┴→ T06 验收证据
+T02、T04、T05、WP-20-T07、WP-10-T06 → T07 联合分层优化界面
 ```
 
 | 任务 | WP 内前置 | 外部门禁 |
@@ -79,6 +80,7 @@ T01 联合搜索策略 ─┬→ T02 约束与指标判定 ─┬→ T04 Pareto 
 | T04 | T02 | 需求 §15.3 冻结值 |
 | T05 | T02、T04 | WP-04 命令端口、WP-10/WP-20 GUI 面板 |
 | T06 | T03、T04、T05 | 阶段 D 门禁（总纲 §8.4）、WP-23 协作 |
+| T07 | T02、T04、T05 | WP-20-T07 优化插件、WP-10-T06 工作台外壳 |
 
 每任务一张任务卡、一个 worktree/分支/提交（总纲 §4.3）。
 
@@ -126,6 +128,13 @@ T01 联合搜索策略 ─┬→ T02 约束与指标判定 ─┬→ T04 Pareto 
 - 输出工件：AT-10～14（分支切换、恢复、崩溃、性能）证据收集；R2 基准报告、误淘汰审计、恢复统计、Pareto 黄金集。
 - 验收断言：§6「AcceptanceEvidenceTest」——AT-10～14 与 NFR-PERF-04～06；误淘汰率、恢复统计和 Pareto 关系符合需求 §15.3；证据含独立评审签名。
 
+### 6.7 WP-21-T07 联合分层优化工作台界面（1～1.5 人周）
+
+- 代码范围：`gui/` R2 扩展、`test/JointOptimizationGuiTest.cpp`、本插件 CMake 与 `out/test-evidence/wp-21/<run-id>/`。
+- 前置：T02、T04、T05；WP-20-T07、WP-10-T06。
+- 输出工件：R2 分层漏斗、八指标、Pareto、候选详情/比较、审计、稳健性、正式复核和采用守卫；复用 `sdurws_ird_optimization_gui_test`。
+- 验收断言：optimization v0.4 §8 全部 R2 字段、状态和三档缩放通过；R1 静态用例保持不变；未正式复核、过期或不可行候选不能采用。
+
 ## 7. 测试矩阵
 
 以 optimization.md §6 为唯一基准（本 WP 不自行扩大或放宽）：
@@ -135,6 +144,7 @@ T01 联合搜索策略 ─┬→ T02 约束与指标判定 ─┬→ T04 Pareto 
 | JointSearchTest / FeasibilityLayersTest / SchedulerCheckpointTest / ParetoRobustnessTest / AcceptanceEvidenceTest（`_joint_test`） | OPT-01～10 全量、四层判定、检查点恢复统计、误淘汰审计、鲁棒性三模式、AT-10～14 与 NFR-PERF-04～06 | T01～T06 |
 | ResultApplicationTest 联合应用子句（`_definition_test`，共享） | AT-12 修订不随候选增长、方案分支应用＝一个新修订＋复算 | T05 |
 | OptimizationGuiTest 扩展用例（`_gui_test`，共享） | 联合候选预览/应用面板行为；不可行候选不可应用 | T05 |
+| JointOptimizationGuiTest（`_gui_test`，共享） | 分层漏斗、八指标、Pareto、审计、稳健性、正式复核、采用守卫和三档缩放 | T07 |
 
 ## 验证命令（双形式，仓库根执行）
 
@@ -189,6 +199,7 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 | T04 | 2～3 |
 | T05 | 1～1.5 |
 | T06 | 1.5～3 |
+| T07 | 1～1.5 |
 | 合计 | 10～16（总纲 §5.3，保持不变） |
 
 需求追踪：`requirement-traceability.csv` 中 OPT-05、OPT-09、OPT-10 与 OPT-01～04/06～08 阶段 D 增量主实现＝WP-21。
@@ -201,3 +212,4 @@ GUI 约束：Visual Studio x64 环境设置 `$env:QT_QPA_PLATFORM='windows'`，�
 - [WP-21-T04 Pareto 与鲁棒性](../agent-tasks/WP-21-T04-pareto-robustness.md)
 - [WP-21-T05 候选预览与应用](../agent-tasks/WP-21-T05-apply-candidate.md)
 - [WP-21-T06 联合优化验收证据](../agent-tasks/WP-21-T06-acceptance-evidence.md)
+- [WP-21-T07 联合分层优化工作台界面](../agent-tasks/WP-21-T07-joint-optimization-ui.md)

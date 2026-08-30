@@ -1,7 +1,7 @@
 # WP-13 机械臂建模实施计划
 
 > 阶段/发布：阶段 B / R1（仅实现 OPT-B 所需模型能力）；负责 WP：WP-13。
-> 实施语义唯一来源：`module-design/robot-modeling.md` v0.3（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
+> 实施语义唯一来源：`module-design/robot-modeling.md` v0.4（需求基线 v0.8；检查点 `IRD-D2-20260829`）。
 > 前置（总纲 §5.3，保持不变）：WP-06、WP-10、WP-11；共同构建/门禁入口 WP-01、黄金数据框架 WP-02。人周：8～12。
 > 治理状态：Planned（D6 深化重写；需求、架构契约与模块详设契约与详设经 IRD-D10-20260829 联合评审（通过，待签署）；实现启动按总纲依赖顺序与任务状态账本）。
 
@@ -51,7 +51,7 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/
   # 证据 → out/test-evidence/wp-13/<run-id>/（AGENTS §3，不入源码树）
 ```
 
-CMake 目标（与模块详设 v0.3 完全一致，不得增删改名）：`sdurws_ird_modeling`（计算核心，无 Qt Widgets）、`sdurws_ird_modeling_plugin`（薄插件）、`sdurws_ird_modeling_test`、`sdurws_ird_modeling_contract_test`、`sdurws_ird_modeling_gui_test`。
+CMake 目标（与模块详设 v0.4 完全一致，不得增删改名）：`sdurws_ird_modeling`（计算核心，无 Qt Widgets）、`sdurws_ird_modeling_plugin`（薄插件）、`sdurws_ird_modeling_test`、`sdurws_ird_modeling_contract_test`、`sdurws_ird_modeling_gui_test`。
 
 允许依赖：WP-03 core、WP-04 命令/查询公共头、WP-06 runtime、WP-09 diagnostics、WP-11 io、Qt Core；GUI 层另加 Qt Widgets 与 WP-10 ui。
 禁止：RobWork 头进入计算核心（编译一律经 WP-06）、其他业务插件私有头、自行拼接/剥离运行时名称、直写项目目录、第二套 XML/URDF 解析。不得修改 WP-06 名称解析实现、WP-04 持久化实现或其他业务插件 Widget。
@@ -147,7 +147,7 @@ T01 黄金夹具
 - 代码范围：`gui/ModelingPlugin.hpp`、`gui/ModelingPlugin.cpp`、`gui/panels/`；`test/ModelingGuiTest.cpp`；CMake 目标 `sdurws_ird_modeling_plugin`、`sdurws_ird_modeling_gui_test`。
 - 前置：T02、T06；WP-10 公共组件。
 - 输出工件：最薄建模入口（错误定位、应用确认、未应用草稿不失效）。
-- 验收断言：§6「ModelingGuiTest」——薄插件：错误定位、应用确认、未应用草稿不失效（QT_QPA_PLATFORM=windows）。GUI 不直接写文件或领域对象。
+- 验收断言：§6「ModelingGuiTest」——五分区、机器人树、底部六表、三维双向选择、错误定位、应用确认和未应用草稿不失效；建模 GUI 不含 URDF/模型导入或独立模型检查入口。GUI 不直接写文件或领域对象。
 
 ## 7. 测试矩阵
 
@@ -162,7 +162,7 @@ T01 黄金夹具
 | MaterialToolTest | 三类截面解析算例、权威覆盖保留原来源、工具 TCP 不复制几何（MDL-13） | T05 |
 | RuntimeCompileTest | MDL-06/14：双编译 failpoint 全败零修订、名称映射双向一致、交叉校验清单 | T06 |
 | IdentityRegressionTest | 复制/导入/删除/重命名/目标链切换、objectId 稳定、AT-18 阶段 B 子链路 | T07 |
-| ModelingGuiTest | 薄插件：错误定位、应用确认、未应用草稿不失效（QT_QPA_PLATFORM=windows） | T08 |
+| ModelingGuiTest | 五分区、机器人树、底部六表、三维联动、确认流、禁导入扫描和三档缩放 | T08 |
 
 ## 验证命令（双形式，仓库根执行）
 

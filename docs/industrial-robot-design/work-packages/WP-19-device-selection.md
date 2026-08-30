@@ -1,6 +1,6 @@
 # WP-19 器件选型实施计划
 
-> 阶段/发布：阶段 C / R1；方案对齐 `module-design/device-selection.md` v0.3（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
+> 阶段/发布：阶段 C / R1；方案对齐 `module-design/device-selection.md` v0.4（本模块唯一权威，本文只做实施深化，不复述其冻结语义）；架构检查点 `IRD-D2-20260829`；需求基线 v0.8。
 > 实现者、独立验证者与独立评审者必须是不同执行上下文（总纲 §4.1）；构建/门禁入口由 WP-01 交付。首版只支持旋转传动，移动关节输出范围外阻断诊断。
 
 **需求与契约：** SEL-01～09、AT-08、AT-19；架构契约与模块方案清单见 §2。
@@ -25,7 +25,7 @@
 
 拥有目录 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/selection/`，子目录 `include/sdurws/ird/selection/`（ComponentSelectionResult.hpp、SelectionEvaluator.hpp、ApplySelectionCommand.hpp、SelectionDiagnostics.hpp）、`src/`（SelectionEvaluator.cpp、CatalogView.cpp、CurveInterpolation.cpp、TemperatureDerating.cpp、ConstraintFilter.cpp、MarginCalculator.cpp、CompatibilityIndex.cpp、SelectionJson.cpp）、`test/`（CatalogSchemaTest.cpp、CurveInterpolationTest.cpp、ConstraintFilterTest.cpp、MappingCheckTest.cpp、SelectionOutputTest.cpp、CatalogVersionTest.cpp）、`testdata/selection/{catalog-feasible,catalog-infeasible,curves,failpoints}/`、`out/test-evidence/wp-19/<run-id>/`。文件树以模块详设 §2 为权威。
 
-CMake 目标：`sdurws_ird_selection`、`sdurws_ird_selection_test`、`sdurws_ird_selection_contract_test`。允许依赖：WP-03 core、WP-05 evidence（端口头；经 `IResultRepository` 取 `DynamicResult`）、WP-11 io（`CatalogPackageReader` 安全记录，导入命令侧代码依赖）、WP-18 drivetrain（共享映射实现，代码依赖）、Qt Core；契约引用（不链接实现）：WP-17 `DynamicResult`、WP-04 `IProjectCommandService`（应用命令，集成期装配）；调度经 WP-08 装配（契约引用）。禁止：Qt Widgets、直接 CSV/JSON 解析（一律经 WP-11）、第二套映射/效率/惯量计算、写 revision 或修改 `CatalogVersion`、目录外推断兼容性。
+CMake 目标：`sdurws_ird_selection`、`sdurws_ird_selection_test`、`sdurws_ird_selection_contract_test`、`sdurws_ird_selection_gui_test`。计算核心禁止 Qt Widgets；`gui/` 只允许 Qt Widgets、WP-10 公共 UI 和本模块公共头。直接 CSV/JSON 解析、第二套映射/效率/惯量计算、写 revision、修改 `CatalogVersion` 和目录外推断兼容性继续禁止。
 
 ## 4. 输入/输出与数据流
 
@@ -51,6 +51,7 @@ WP-19-T01 → WP-19-T02 → WP-19-T03 → WP-19-T05
 WP-19-T03（映射复核需筛选链）→ WP-19-T04
 WP-19-T04 → WP-19-T05
 WP-19-T01、WP-19-T05 → WP-19-T06
+WP-19-T05、WP-19-T06、WP-10-T06 → WP-19-T07
 ```
 
 ## 7. 逐任务深化
@@ -91,6 +92,12 @@ WP-19-T01、WP-19-T05 → WP-19-T06
 - 输出工件：目录更新→新 `CatalogVersion`＋新内容 ID 的版本策略；历史 payload 不变、按切片内容比较显示 Superseded；无目录就地刷新。
 - 验收断言：`CatalogVersionTest`（模块详设 §6）——目录更新不改历史结果、旧版本锁定（SEL-08 版本锁定语义）、未知/缺失版本拒绝（`IRD-SEL-CATALOG-UNAVAILABLE`）。
 
+### WP-19-T07 器件选型工作台界面
+- 代码范围：`gui/`、`test/SelectionGuiTest.cpp`、本插件 CMake 与 `out/test-evidence/wp-19/<run-id>/`。
+- 前置任务：WP-19-T05、WP-19-T06、WP-10-T06。
+- 输出工件：目录与轴需求、筛选、可行/淘汰方案、详情、曲线/工作点、2～4 方案比较和整机草案；CMake 目标 `sdurws_ird_selection_gui_test`。
+- 验收断言：模块详设 v0.4 §8 的字段、表列、按钮、目录失败/无可行项、历史结果保护和三档缩放全部通过；GUI 不导入目录、不执行筛选算法。
+
 ## 8. 测试矩阵（模块详设 §6 为断言权威）
 
 | 测试目标/文件 | 断言要点 | 覆盖需求 |
@@ -102,8 +109,9 @@ WP-19-T01、WP-19-T05 → WP-19-T06
 | 同上 / SelectionOutputTest.cpp | 只读字段、恰好一个新修订、双击不产生修订 | SEL-06、AT-04 |
 | 同上 / CatalogVersionTest.cpp | 目录更新不改历史结果、旧版本锁定、版本拒绝 | SEL-08（P1 语义按 §5 第 6 条） |
 | `sdurws_ird_selection_contract_test` | 评估端口契约与 `ApplySelectionCommand`→WP-04 应用契约（原子性/幂等/恰好一个新修订） | public-interfaces §1/§3 |
+| `sdurws_ird_selection_gui_test` / SelectionGuiTest.cpp | 目录/轴需求、筛选、可行与淘汰方案、比较、错误态和三档缩放 | SEL-06/08、UX-01～08 |
 
-本模块测试为 `QCoreApplication` 模型测试；结果列表/应用入口的薄插件 GUI 回归按 `QT_QPA_PLATFORM=windows` 一次一个执行，归 WP-22 端到端链路。
+模型测试使用 `QCoreApplication`。GUI 目标在 Visual Studio x64 环境设置 `QT_QPA_PLATFORM=windows`，按绝对路径一次只启动 `sdurws_ird_selection_gui_test.exe`；WP-22 只做跨阶段端到端回归。
 
 ## 验证命令（双形式，仓库根执行）
 
@@ -112,6 +120,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_test
 cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_selection_contract_test
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_contract)?_test$"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_selection_gui_test$'
 ```
 
 ## 10. 独立验证与独立评审
@@ -132,6 +141,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_
 ## 退出条件
 
 - SEL-01～06、09 全部 P0、AT-08、AT-19 相关选型断言与 §15.1 黄金表通过；每个淘汰项含稳定诊断码＋实际值＋阈值。
+- 选型工作台的字段、比较、目录错误态、历史保护和 100%/125%/150% 缩放有独立 GUI 证据。
 - 目录更新不改变历史结果，未知版本拒绝；移动关节不静默套用旋转传动。
 - 映射复核只经共享 `DriveTrainMappingEvaluator`，无本地效率/惯量实现；应用只经 `ApplySelectionCommand`→WP-04。
 - §11 删除清单执行完毕，旧导入器与重复筛选逻辑退出构建。
@@ -146,6 +156,7 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_
 | WP-19-T04 | 1～1.5 |
 | WP-19-T05 | 1.5～2 |
 | WP-19-T06 | 1～1.5 |
+| WP-19-T07 | 1～1.5 |
 
 ## 任务卡索引
 
@@ -155,3 +166,4 @@ ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_selection(_
 - [WP-19-T04 传动映射复核](../agent-tasks/WP-19-T04-mapping-check.md)
 - [WP-19-T05 选型结果与修订应用](../agent-tasks/WP-19-T05-selection-output.md)
 - [WP-19-T06 目录版本兼容](../agent-tasks/WP-19-T06-catalog-version.md)
+- [WP-19-T07 器件选型工作台界面](../agent-tasks/WP-19-T07-selection-ui.md)

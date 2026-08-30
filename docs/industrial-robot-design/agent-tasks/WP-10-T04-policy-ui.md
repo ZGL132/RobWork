@@ -1,12 +1,12 @@
 # WP-10-T04 统一策略入口与显示隔离
 
 - **Task ID / 需求 ID / ADR / 阶段：**WP-10-T04；UX-08、AT-19、需求 §6.7.2；阶段 A / R1
-- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/session-ui.md` v0.3、`architecture/public-interfaces.md` §6
+- **基线 commit：**代码 `94fb910e8d4b1e2bb84d569cbca4aa623cbd2844`；语义源 `module-design/session-ui.md` v0.4 §8.5～§8.7、`architecture/public-interfaces.md` §6
 - **前置任务及必需工件：**WP-10-T01（`EditDraft`/`DraftController` 工件）；WP-07-T05（`IEngineeringPolicyProvider` 端口与策略唯一入口——端口契约前置，签名按 public-interfaces §6 已冻结，本卡以契约测试替身先行，集成期接 WP-07 实现）；WP-09-T01（`Diagnostic` 公共头）
 - **允许创建/修改/删除的文件：**创建 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EngineeringPolicyPanel.hpp`；`ui/src/PolicyPanel.cpp`；`ui/test/PolicyUiTest.cpp`；`ui/testdata/policy/`；`ui/out/test-evidence/wp-10/<run-id>/`；`ui/CMakeLists.txt`（仅追加本任务文件）。禁止删除任何文件
 - **禁止修改的文件和公共接口：**`EngineeringPolicySet`/`CollisionPolicy` 字段（WP-07 所有）、碰撞算法实现、`IEngineeringPolicyProvider` 签名；禁止插件私有策略开关；`architecture/`、`module-design/`、其他模块目录
 - **修改前接口：**无（旧插件各持私有策略对话框）
-- **修改后接口：**`EngineeringPolicyPanel`：计算模式/安全距离编辑写入 `EditDraft`，应用后经 `IEngineeringPolicyProvider.resolvedPolicy` 读取（不得叠加私有默认值）；"显示碰撞几何/高亮"开关只写 `SessionState.colorMode/visibility`，立即生效且不触发任何命令
+- **修改后接口：**`EngineeringPolicyPanel` 位于右侧“工程设置”：常用计算模式/安全距离直接编辑，高级参数默认折叠；应用后经 `IEngineeringPolicyProvider.resolvedPolicy` 读取（不得叠加私有默认值）；“显示碰撞几何/高亮”归右侧“场景显示”，只写 `SessionState.colorMode/visibility`，立即生效且不触发任何命令；按钮与错误态遵循 session-ui v0.4 §8.5～§8.8。
 - **实施步骤：**1) 页面分组："计算模式"（EditDraft＋应用）与"显示碰撞几何/高亮"（SessionState 直写）；2) 策略摘要只读渲染 `EngineeringPolicySet`；3) 静态断言插件无法注册同名私有开关；4) 隔离测试（toggle 显示开关时 revision/sliceHash/缓存/结果计数全零变化）
 - **RED 测试：**Given 切换"显示碰撞几何/高亮"，When toggle，Then 仅 `SessionState` 变化，命令服务调用计数＝0、sliceHash 不变、缓存失效计数＝0（`PolicyUiTest` 先行）
 - **最小实现：**两组开关的状态模型与替身 provider 读取路径；不含碰撞几何渲染本身
