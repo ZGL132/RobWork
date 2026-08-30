@@ -17,15 +17,18 @@ function Expand-RequirementCell {
             $currentPrefix = $match.Groups['prefix'].Value
         }
         if ([string]::IsNullOrWhiteSpace($currentPrefix)) {
-            continue
+            # WP-00 计划 §5.1：前缀续接仅在已有前缀时成立；无前缀可续接的裸编号属非法输入。
+            throw ("Invalid requirement cell '{0}': number token {1} has no preceding requirement prefix." -f $Cell, $match.Groups['start'].Value)
         }
 
         $start = [int]$match.Groups['start'].Value
-        $end = if ($match.Groups['end'].Success) {
-            [int]$match.Groups['end'].Value
-        }
-        else {
-            $start
+        $end = $start
+        if ($match.Groups['end'].Success) {
+            $end = [int]$match.Groups['end'].Value
+            if ($end -lt $start) {
+                # WP-00 计划 §8.2：反向/非法范围必须失败，不得静默跳过。
+                throw ("Invalid requirement range '{0}{1:D2}～{2:D2}' in cell '{3}': end is less than start." -f $currentPrefix, $start, $end, $Cell)
+            }
         }
 
         for ($number = $start; $number -le $end; $number++) {
@@ -48,6 +51,50 @@ function Get-Release {
         '^OPT-(05|09|10)$' { return 'R2' }
         '^CON-04$' { return 'R1/R2' }
         default { return 'R1' }
+    }
+}
+
+# 工作包映射访问路径（WP-00 计划 §5.2）：D8 显式映射即特殊规则，优先于任何前缀推断；
+# 需求文档中出现而映射表未登记的 ID 一律失败，不得按前缀猜测主包。
+# 前置条件：调用前 $requirementMap 已构建，且映射表与需求文档的双向校验已通过。
+function Get-WorkPackages {
+    param([string]$RequirementId)
+
+    if ($requirementMap.ContainsKey($RequirementId)) {
+        return $requirementMap[$RequirementId]
+    }
+
+    $prefix = if ($RequirementId -match '^([A-Z][A-Z0-9-]*-)\d+$') { $Matches[1] } else { $RequirementId }
+    throw "No work-package mapping for requirement $RequirementId (prefix $prefix). Register it in the D8 mapping table."
+}
+
+# CSV 写入路径（WP-00 计划 §5.2.4）：先写同目录临时文件，再原子替换正式文件；
+# 任一步失败仅清理临时文件，正式 CSV 保持原字节不变。
+function Write-Utf8BomCrlfAtomically {
+    param([string]$Path, [string]$Text)
+
+    $directory = Split-Path -Parent $Path
+    if ([string]::IsNullOrWhiteSpace($directory)) {
+        $directory = (Get-Location).Path
+    }
+    $tempFile = Join-Path $directory ("ird-csv-gen-" + [guid]::NewGuid() + '.tmp')
+    try {
+        $utf8Bom = New-Object System.Text.UTF8Encoding($true)
+        [System.IO.File]::WriteAllText($tempFile, $Text, $utf8Bom)
+        if (Test-Path -LiteralPath $Path) {
+            # PowerShell 会把 $null 编组为空字符串绑定到 string 参数，导致 Replace 抛出
+            # "路径的形式不合法"；必须用 NullString::Value 传递真正的 null 备份文件名。
+            [System.IO.File]::Replace($tempFile, $Path, [System.Management.Automation.Language.NullString]::Value)
+        }
+        else {
+            [System.IO.File]::Move($tempFile, $Path)
+        }
+        $tempFile = $null
+    }
+    finally {
+        if ($tempFile -and (Test-Path -LiteralPath $tempFile)) {
+            Remove-Item -LiteralPath $tempFile -Force
+        }
     }
 }
 
@@ -209,9 +256,12 @@ foreach ($match in $requirementMatches) {
 }
 
 $traceStart = $text.IndexOf('## 16. 需求—验收追踪')
+if ($traceStart -lt 0) {
+    throw 'Could not locate the requirement traceability section: missing anchor "## 16. 需求—验收追踪".'
+}
 $traceEnd = $text.IndexOf('## 17.', $traceStart)
-if ($traceStart -lt 0 -or $traceEnd -lt 0) {
-    throw 'Could not locate the requirement traceability section.'
+if ($traceEnd -lt 0) {
+    throw 'Could not locate the requirement traceability section: missing anchor "## 17.".'
 }
 
 $traceText = $text.Substring($traceStart, $traceEnd - $traceStart)
@@ -292,7 +342,7 @@ $sortedIds.Sort([System.StringComparer]::Ordinal)
 
 $rows = foreach ($id in $sortedIds) {
     $req = $reqRows[$id]
-    $map = $requirementMap[$id]
+    $map = Get-WorkPackages -RequirementId $id
     $acceptanceEntries = @($acceptanceById[$id])
 
     if ($acceptanceEntries.Count -eq 0) {
@@ -345,8 +395,7 @@ try {
     $rows | Export-Csv -LiteralPath $tempCsv -NoTypeInformation -Encoding UTF8
     $csvText = [System.IO.File]::ReadAllText($tempCsv)
     $csvText = ($csvText -replace "`r`n", "`n") -replace "`n", "`r`n"
-    $utf8Bom = New-Object System.Text.UTF8Encoding($true)
-    [System.IO.File]::WriteAllText($OutputPath, $csvText, $utf8Bom)
+    Write-Utf8BomCrlfAtomically -Path $OutputPath -Text $csvText
 }
 finally {
     if (Test-Path -LiteralPath $tempCsv) {
@@ -383,8 +432,7 @@ try {
     $governanceRows | Export-Csv -LiteralPath $tempGov -NoTypeInformation -Encoding UTF8
     $govText = [System.IO.File]::ReadAllText($tempGov)
     $govText = ($govText -replace "`r`n", "`n") -replace "`n", "`r`n"
-    $utf8Bom = New-Object System.Text.UTF8Encoding($true)
-    [System.IO.File]::WriteAllText($governancePath, $govText, $utf8Bom)
+    Write-Utf8BomCrlfAtomically -Path $governancePath -Text $govText
 }
 finally {
     if (Test-Path -LiteralPath $tempGov) {
