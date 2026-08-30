@@ -1,0 +1,7 @@
+﻿==== default clean tree (expect exit 0; vacuous root before WP-01-T02; R7 self-scan clean) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+exit code: 0
+扫描根尚未创建（目标骨架由 WP-01-T02 交付）: D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot
+Boundary scan passed: 0 files scanned, root=<default-root-missing>
+
+R7 token assertion: token-equivalence=True; scanner-source-literal-count=0 (0 = no self-match)

@@ -1,0 +1,28 @@
+﻿==== fixture old-plugin-dependency (expect non-zero, keyword R2) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1 -ScanRoot D:/10_Source_Repos/21_robot/RobWork/docs/industrial-robot-design/fixtures/wp-01/boundaries/old-plugin-dependency
+exit code: 1
+[R2 旧插件目标依赖] CMakeLists.txt:6 核心链接旧插件目标：sdurws_robotmodelbuilder；修复动作：删除对旧插件目标的链接，改用 sdurws_ird_* 拓扑内依赖（WP-01 §2.1）。
+Boundary scan FAILED: 1 violation(s), root=D:\10_Source_Repos\21_robot\RobWork\docs\industrial-robot-design\fixtures\wp-01\boundaries\old-plugin-dependency
+
+==== fixture widget-header (expect non-zero, keyword R1) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1 -ScanRoot D:/10_Source_Repos/21_robot/RobWork/docs/industrial-robot-design/fixtures/wp-01/boundaries/widget-header
+exit code: 1
+[R1 QWidget/QApplication 头包含] include\sdurws\ird\core\Sample.hpp:4 核心公共头包含 Qt Widgets 头：#include <QWidget>；修复动作：核心模块仅允许 Qt Core/Gui 中非 Widget 部分（WP-01 §2.2）；将 Widget 依赖移至 sdurws_ird_ui。
+Boundary scan FAILED: 1 violation(s), root=D:\10_Source_Repos\21_robot\RobWork\docs\industrial-robot-design\fixtures\wp-01\boundaries\widget-header
+
+==== fixture unregistered-library (expect non-zero, keyword R3) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1 -ScanRoot D:/10_Source_Repos/21_robot/RobWork/docs/industrial-robot-design/fixtures/wp-01/boundaries/unregistered-library
+exit code: 1
+[R3 未登记 target] CMakeLists.txt:6 链接未登记 target：some_unregistered_lib；修复动作：仅允许 §2.1 拓扑目标；新依赖走 WP-01 §8 基线审批后登记。
+Boundary scan FAILED: 1 violation(s), root=D:\10_Source_Repos\21_robot\RobWork\docs\industrial-robot-design\fixtures\wp-01\boundaries\unregistered-library
+
+==== fixture name-concatenation (expect non-zero, keyword R4) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1 -ScanRoot D:/10_Source_Repos/21_robot/RobWork/docs/industrial-robot-design/fixtures/wp-01/boundaries/name-concatenation
+exit code: 1
+[R4 运行时名称拼接] plugins\sample\NameConcat.cpp:8 业务插件自行拼接运行时名称：return robotName + "." + localName;；修复动作：名称仅由 runtime 模块 RuntimeNameMap/IRuntimeNameResolver 生成与反解（public-interfaces §6.3）；改用解析器端口。
+Boundary scan FAILED: 1 violation(s), root=D:\10_Source_Repos\21_robot\RobWork\docs\industrial-robot-design\fixtures\wp-01\boundaries\name-concatenation
+
+==== failure test: nonexistent -ScanRoot (expect non-zero, keyword R0 IO) ====
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1 -ScanRoot ./nonexistent-dir-xyz
+exit code: 1
+[R0 IO] 扫描根不存在或不可读: ./nonexistent-dir-xyz；请检查 -ScanRoot 参数。
