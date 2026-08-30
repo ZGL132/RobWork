@@ -1,0 +1,3 @@
+=== t03-no-source: nonexistent -SourceDirectory ===
+[入口参数] -SourceDirectory 目录不存在或不可读: D:\__t03_verify_no_such_source__
+--- exit code: 1

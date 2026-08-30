@@ -1,0 +1,4 @@
+=== t03-no-vs: PATH = stub vswhere + System32 only (no cl.exe), stub returns no instance ===
+VS x64 环境发现失败：vswhere 未发现含 x64 工具集的 Visual Studio 实例；不回退 x86/MinGW。
+[结果] configure 失败，退出码 1；日志保留: D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\logs\industrial-robot\20260831-070633\configure.log
+--- exit code: 1

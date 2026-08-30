@@ -1,0 +1,6 @@
+=== failpath t03-no-vs (post-impl) ===
+setup: PATH stripped to System32 + stub vswhere dir (stub returns no instances, simulates VS-less runner)
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Debug
+VS x64 环境发现失败：vswhere 未发现含 x64 工具集的 Visual Studio 实例；不回退 x86/MinGW。
+[结果] configure 失败，退出码 1；日志保留: D:\10_Source_Repos\21_robot\wt-wp01-t03\out\logs\industrial-robot\20260831-062939\configure.log
+--- exit code: 1

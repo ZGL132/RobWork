@@ -1,0 +1,8 @@
+=== RED t03-no-source ===
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -SourceDirectory D:\__t03_no_such_source__
+--- entry exists: ls: cannot access 'RobWork/scripts/industrial-robot/configure.ps1': No such file or directory
+-File 形式参数的实际参数“.\RobWork\scripts\industrial-robot\configure.ps1”不存在。请提供现有“.ps1”文件的路径，作为 -File 形式参数的一个实际参数。
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+--- exit code: 127

@@ -1,0 +1,4 @@
+=== failpath t03-no-sourceï¼ˆå®ç°åï¼‰ ===
+command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -SourceDirectory D:\__t03_no_such_source__
+[Èë¿Ú²ÎÊı] -SourceDirectory Ä¿Â¼²»´æÔÚ»ò²»¿É¶Á: D:\__t03_no_such_source__
+--- exit code: 1

@@ -1,0 +1,8 @@
+=== RED t03-no-vs ===
+command: env PATH=<System32 only> powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1
+precondition: PATH ä»…å« System32ï¼ˆæ—  cl.exe/cmake.exe/ctest.exeï¼‰ï¼›å…¥å£æ–‡ä»¶ä¸å­˜åœ¨
+-File ĞÎÊ½²ÎÊıµÄÊµ¼Ê²ÎÊı¡°.\RobWork\scripts\industrial-robot\configure.ps1¡±²»´æÔÚ¡£ÇëÌá¹©ÏÖÓĞ¡°.ps1¡±ÎÄ¼şµÄÂ·¾¶£¬×÷Îª -File ĞÎÊ½²ÎÊıµÄÒ»¸öÊµ¼Ê²ÎÊı¡£
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+--- exit code: 127

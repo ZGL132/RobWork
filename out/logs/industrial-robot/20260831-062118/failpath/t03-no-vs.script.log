@@ -1,0 +1,10 @@
+﻿==== configure.ps1（WP-01-T03） 2026-08-31 06:29:39 ====
+[参数] Configuration=Debug Generator="Visual Studio 17 2022" Platform=x64 NoConfigure=False
+[路径] SourceDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03\RobWork
+[路径] BuildDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03\out\build\industrial-robot
+[路径] LogDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03\out\logs\industrial-robot\20260831-062939
+[选项] -DWITH_RWS=ON -DWITH_RWSIM=ON -DBUILD_TESTING=ON -DIRD_BUILD_BUSINESS_PLUGINS=OFF（WP-01 计划 §4.2 固定选项）
+[环境] CMAKE_PREFIX_PATH=<未设置>（继承自操作员环境，脚本不修改）
+---- VS x64 环境发现 ----
+[命令] vswhere 查询 x64 实例 → D:\10_Source_Repos\21_robot\wt-wp01-t03\out\t03-stub-vswhere\vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+[失败] VS x64 环境发现失败：vswhere 未发现含 x64 工具集的 Visual Studio 实例；不回退 x86/MinGW。

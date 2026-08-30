@@ -1,0 +1,3 @@
+=== check-boundaries.ps1 ===
+Boundary scan passed: 32 files scanned, root=D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\RobWork\RobWorkStudio\src\rwslibs\industrialrobot
+--- exit code: 0

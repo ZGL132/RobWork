@@ -1,0 +1,7 @@
+=== failpath t03-offscreen-conflict (post-impl) ===
+setup: QT_QPA_PLATFORM=offscreen inherited
+command: ...run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'
+[GUI 规则] 冲突变量: QT_QPA_PLATFORM=offscreen
+[GUI 规则] 检测到继承 QT_*/QML_* 冲突变量，已先报告并停止；清理后重跑。
+[结果] run-tests 失败，退出码 1；日志保留: D:\10_Source_Repos\21_robot\wt-wp01-t03\out\logs\industrial-robot\20260831-063538\test.log
+--- exit code: 1

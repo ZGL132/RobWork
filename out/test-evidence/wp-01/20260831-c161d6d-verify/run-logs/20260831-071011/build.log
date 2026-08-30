@@ -1,0 +1,177 @@
+﻿==== build.ps1（WP-01-T03） 2026-08-31 07:10:11 ====
+[参数] Configuration=Debug NoConfigure=True
+[路径] SourceDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\RobWork
+[路径] BuildDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\build\industrial-robot
+[路径] LogDirectory=D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\logs\industrial-robot\20260831-071011
+[目标] sdurws_ird_core、sdurws_ird_core_test（WP-01-T03 模型测试链路目标集）
+[环境] CMAKE_PREFIX_PATH=D:/software/QT/6.11.1/msvc2022_64;D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows（继承自操作员环境，脚本不修改）
+---- VS x64 环境发现 ----
+[命令] vswhere 查询 x64 实例 → C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+D:\software\Microsoft Visual Studio\2022\Community
+[命令] VsDevCmd -arch=x64 -host_arch=x64 环境导入 → C:\windows\system32\cmd.exe /s /c "D:\software\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64 -host_arch=x64 && set
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+ALEXANDRIA_PORT_APP=4000
+ALEXANDRIA_PORT_LOOKUP=4001
+ALEXANDRIA_PORT_VIEWER=4002
+ALLUSERSPROFILE=C:\ProgramData
+APPDATA=C:\Users\zgl18\AppData\Roaming
+BRB=C:\Program Files\HP\Sure Click\bin
+BRS=C:\Program Files\HP\Sure Click\servers
+CHROME_CRASHPAD_PIPE_NAME=\\.\pipe\crashpad_23128_WZCMSCMYKBDQANXW
+CMAKE_PREFIX_PATH=D:/software/QT/6.11.1/msvc2022_64;D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows
+CommandPromptType=Native
+COMMONPROGRAMFILES=C:\Program Files\Common Files
+COMPUTERNAME=ZGL
+COMSPEC=C:\windows\system32\cmd.exe
+CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+CommonProgramW6432=C:\Program Files\Common Files
+CONDA_BAT=D:\software\Miniconda3\condabin\conda.bat
+CONDA_EXE=D:\software\Miniconda3\Scripts\conda.exe
+CONDA_SHLVL=0
+DevEnvDir=D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\
+DriverData=C:\Windows\System32\Drivers\DriverData
+EFC_33836_1262719628=1
+EFC_33836_1592913036=1
+EFC_33836_2283032206=1
+EFC_33836_2775293581=1
+EFC_33836_3789132940=1
+EFC_33836_4126798990=1
+EXEPATH=D:\software\Git\bin
+ExtensionSdkDir=C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs
+EXTERNAL_INCLUDE=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include;D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\ATLMFC\include;D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\include;D:\Windows Kits\10\include\10.0.22621.0\ucrt;D:\Windows Kits\10\\include\10.0.22621.0\\um;D:\Windows Kits\10\\include\10.0.22621.0\\shared;D:\Windows Kits\10\\include\10.0.22621.0\\winrt;D:\Windows Kits\10\\include\10.0.22621.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um
+FPS_BROWSER_APP_PROFILE_STRING=Internet Explorer
+FPS_BROWSER_USER_PROFILE_STRING=Default
+Framework40Version=v4.0
+FrameworkDir=C:\Windows\Microsoft.NET\Framework64\
+FrameworkDir64=C:\Windows\Microsoft.NET\Framework64\
+FrameworkVersion=v4.0.30319
+FrameworkVersion64=v4.0.30319
+GIT_EDITOR=true
+HOME=C:\Users\zgl18
+HOMEDRIVE=C:
+HOMEPATH=\Users\zgl18
+INCLUDE=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include;D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\ATLMFC\include;D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\VS\include;D:\Windows Kits\10\include\10.0.22621.0\ucrt;D:\Windows Kits\10\\include\10.0.22621.0\\um;D:\Windows Kits\10\\include\10.0.22621.0\\shared;D:\Windows Kits\10\\include\10.0.22621.0\\winrt;D:\Windows Kits\10\\include\10.0.22621.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um
+LANG=C.UTF-8
+LC_CTYPE=C.UTF-8
+LIB=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\ATLMFC\lib\x64;D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64;D:\Windows Kits\10\lib\10.0.22621.0\ucrt\x64;D:\Windows Kits\10\\lib\10.0.22621.0\\um\x64
+LIBPATH=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\ATLMFC\lib\x64;D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\lib\x64;D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\lib\x86\store\references;D:\Windows Kits\10\UnionMetadata\10.0.22621.0;D:\Windows Kits\10\References\10.0.22621.0;C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+LOCALAPPDATA=C:\Users\zgl18\AppData\Local
+LOGONSERVER=\\ZGL
+MATLAB=D:\software\Matlab2022b
+MSCLIC_INI=C:\Program Files\MSC.Software\MSC Licensing\Helium\msclic.ini
+MSYSTEM=MINGW64
+MW_MINGW64_LOG=C:\msys64\mingw64
+NETFXSDKDir=C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\
+NUMBER_OF_PROCESSORS=32
+OLDPWD=D:/10_Source_Repos/21_robot/RobWork
+OS=Windows_NT
+OneDrive=C:\Users\zgl18\OneDrive
+OnlineServices=Online Services
+PATH=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\bin\HostX64\x64;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\x64\;D:\software\Microsoft Visual Studio\2022\Community\Team Tools\DiagnosticsHub\Collector;D:\Windows Kits\10\bin\10.0.22621.0\\x64;D:\Windows Kits\10\bin\\x64;D:\software\Microsoft Visual Studio\2022\Community\\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\;D:\software\Microsoft Visual Studio\2022\Community\Common7\Tools\;D:\software\Miniconda3\condabin;C:\Users\zgl18\bin;D:\software\Git\mingw64\bin;D:\software\Git\usr\local\bin;D:\software\Git\usr\bin;D:\software\Git\usr\bin;D:\software\Git\mingw64\bin;D:\software\Git\usr\bin;C:\Users\zgl18\bin;C:\Program Files (x86)\VMware\VMware Workstation\bin;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0;C:\windows\System32\OpenSSH;D:\software\Matlab2022b\runtime\win64;D:\software\Matlab2022b\bin;D:\Windows Kits\10\Windows Performance Toolkit;D:\software\Git\cmd;C:\Program Files\TortoiseGit\bin;C:\MinGW\mingw64\bin;C:\Program Files\dotnet;D:\software\Adams2020\bin;D:\software;D:\software\Simpack-2021\run\bin\win64;D:\software\amesim16.0\Win64;D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build;D:\software\CMake\bin;D:\software\Nodev;C:\Program Files\GitHub CLI;C:\Program Files\Microchip\xc32\v5.00\bin;C:\Users\zgl18\.local\bin;C:\Users\zgl18\AppData\Local\Microsoft\WindowsApps;D:\software\VSCode\Microsoft VS Code\bin;C:\Program Files\Prince\engine\bin;C:\Users\zgl18\AppData\Roaming\npm;D:\software\cursor\resources\app\bin;C:\Users\zgl18\AppData\Local\Microsoft\WinGet\Packages\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\poppler-25.07.0\Library\bin;C:\Users\zgl18\AppData\Local\Programs\Antigravity IDE\bin;D:\software\ZCode\resources\tools\ripgrep;D:\software\ZCode\resources\tools\ugrep;D:\software\Git\usr\bin\vendor_perl;D:\software\Git\usr\bin\core_perl;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;D:\software\Microsoft Visual Studio\2022\Community\VC\vcpkg
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+PLINK_PROTOCOL=ssh
+PROCESSOR_ARCHITECTURE=AMD64
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 183 Stepping 1, GenuineIntel
+PROCESSOR_LEVEL=6
+PROCESSOR_REVISION=b701
+PROGRAMFILES=C:\Program Files
+PROMPT=$P$G
+PSExecutionPolicyPreference=Bypass
+PSModulePath=C:\Users\zgl18\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\windows\system32\WindowsPowerShell\v1.0\Modules
+PUBLIC=C:\Users\Public
+PWD=D:/10_Source_Repos/21_robot/wt-wp01-t03-verify
+PYTHONIOENCODING=utf-8
+PYTHONUTF8=1
+ProgramData=C:\ProgramData
+ProgramFiles(x86)=C:\Program Files (x86)
+ProgramW6432=C:\Program Files
+RegionCode=APJ
+SESSIONNAME=Console
+SHELL=D:\software\Git\bin\bash.exe
+SHLVL=1
+SPLM_LICENSE_SERVER=D:\software\Amesim\ProgramData\Siemens\siemens_SSQ.dat
+SYSTEMDRIVE=C:
+SYSTEMROOT=C:\windows
+TEMP=C:\Users\zgl18\AppData\Local\Temp
+TERM=xterm-256color
+TMP=C:\Users\zgl18\AppData\Local\Temp
+UCRTVersion=10.0.22621.0
+UniversalCRTSdkDir=D:\Windows Kits\10\
+USERDOMAIN=ZGL
+USERDOMAIN_ROAMINGPROFILE=ZGL
+USERNAME=zgl18
+USERPROFILE=C:\Users\zgl18
+VCIDEInstallDir=D:\software\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\
+VCINSTALLDIR=D:\software\Microsoft Visual Studio\2022\Community\VC\
+VCPKG_ROOT=D:\software\Microsoft Visual Studio\2022\Community\VC\vcpkg
+VCToolsInstallDir=D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\
+VCToolsRedistDir=D:\software\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\
+VCToolsVersion=14.42.34433
+VisualStudioVersion=17.0
+VS140COMNTOOLS=D:\software\vs2015\Common7\Tools\
+VS170COMNTOOLS=D:\software\Microsoft Visual Studio\2022\Community\Common7\Tools\
+VSCMD_ARG_app_plat=Desktop
+VSCMD_ARG_HOST_ARCH=x64
+VSCMD_ARG_TGT_ARCH=x64
+VSCMD_VER=17.12.0
+VSINSTALLDIR=D:\software\Microsoft Visual Studio\2022\Community\
+WINDIR=C:\windows
+WindowsLibPath=D:\Windows Kits\10\UnionMetadata\10.0.22621.0;D:\Windows Kits\10\References\10.0.22621.0
+WindowsSdkBinPath=D:\Windows Kits\10\bin\
+WindowsSdkDir=D:\Windows Kits\10\
+WindowsSDKLibVersion=10.0.22621.0\
+WindowsSdkVerBinPath=D:\Windows Kits\10\bin\10.0.22621.0\
+WindowsSDKVersion=10.0.22621.0\
+WindowsSDK_ExecutablePath_x64=C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\x64\
+WindowsSDK_ExecutablePath_x86=C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\
+ZAI_BUSINESS_BASE_URL=https://api.z.ai
+ZAI_OAUTH_CLIENT_ID=client_P8X5CMWmlaRO9gyO-KSqtg
+ZAI_OAUTH_ORIGIN=https://chat.z.ai
+ZCODE_APP_VERSION=3.10.1
+ZCODE_BASE_URL=https://zcode.z.ai
+ZCODE_BUILD_COMMIT_ID=5712af2e
+ZCODE_CUA_GRAY_ENABLED=1
+ZCODE_DESKTOP_CONTEXT_PROMPT_ENABLED=1
+ZCODE_ENV=production
+ZCODE_PROCESS_LABEL=local-1
+ZCODE_RG_BINARY=D:\software\ZCode\resources\tools\ripgrep\rg.exe
+ZCODE_RUNTIME_ENV=production
+ZCODE_UGREP_BINARY=D:\software\ZCode\resources\tools\ugrep\ugrep.exe
+ZCODE_WINDOWS_APP_INSTALL_DIR=D:\software\ZCode
+ZES_ENABLE_SYSMAN=1
+_=C:/windows/System32/WindowsPowerShell/v1.0/powershell.exe
+platformcode=AN
+__DOTNET_ADD_64BIT=1
+__DOTNET_PREFERRED_BITNESS=64
+__VSCMD_PREINIT_PATH=D:\software\Miniconda3\condabin;C:\Users\zgl18\bin;D:\software\Git\mingw64\bin;D:\software\Git\usr\local\bin;D:\software\Git\usr\bin;D:\software\Git\usr\bin;D:\software\Git\mingw64\bin;D:\software\Git\usr\bin;C:\Users\zgl18\bin;C:\Program Files (x86)\VMware\VMware Workstation\bin;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0;C:\windows\System32\OpenSSH;D:\software\Matlab2022b\runtime\win64;D:\software\Matlab2022b\bin;D:\Windows Kits\10\Windows Performance Toolkit;D:\software\Git\cmd;C:\Program Files\TortoiseGit\bin;C:\MinGW\mingw64\bin;C:\Program Files\dotnet;D:\software\Adams2020\bin;D:\software;D:\software\Simpack-2021\run\bin\win64;D:\software\amesim16.0\Win64;D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build;D:\software\CMake\bin;D:\software\Nodev;C:\Program Files\GitHub CLI;C:\Program Files\Microchip\xc32\v5.00\bin;C:\Users\zgl18\.local\bin;C:\Users\zgl18\AppData\Local\Microsoft\WindowsApps;D:\software\VSCode\Microsoft VS Code\bin;C:\Program Files\Prince\engine\bin;C:\Users\zgl18\AppData\Roaming\npm;D:\software\cursor\resources\app\bin;C:\Users\zgl18\AppData\Local\Microsoft\WinGet\Packages\oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe\poppler-25.07.0\Library\bin;C:\Users\zgl18\AppData\Local\Programs\Antigravity IDE\bin;D:\software\ZCode\resources\tools\ripgrep;D:\software\ZCode\resources\tools\ugrep;D:\software\Git\usr\bin\vendor_perl;D:\software\Git\usr\bin\core_perl
+[命令] MSVC 版本探测 → D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\bin\HostX64\x64\cl.exe 
+用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.42.34433 版
+版权所有(C) Microsoft Corporation。保留所有权利。
+System.Management.Automation.RemoteException
+用法: cl [ 选项... ] 文件名... [ /link 链接选项... ]
+[命令] CMake 版本 → D:\software\CMake\bin\cmake.exe --version
+cmake version 4.3.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+[命令] CTest 版本 → D:\software\CMake\bin\ctest.exe --version
+ctest version 4.3.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+[环境] 发现方式=VsDevCmd(D:\software\Microsoft Visual Studio\2022\Community)
+[环境] MSVC=用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.42.34433 版；Windows SDK=10.0.22621.0
+[环境] cmake version 4.3.1；ctest version 4.3.1
+[参数] -NoConfigure：跳过配置步骤，直接构建（消费既有构建目录工件）。
+---- 构建目标 sdurws_ird_core ----
+[命令] cmake --build --target sdurws_ird_core → D:\software\CMake\bin\cmake.exe --build D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\build\industrial-robot --config Debug --target sdurws_ird_core
+閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\build\industrial-robot\RobWorkStudio\libs\Debug\sdurws_ird_core.lib
+---- 构建目标 sdurws_ird_core_test ----
+[命令] cmake --build --target sdurws_ird_core_test → D:\software\CMake\bin\cmake.exe --build D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\build\industrial-robot --config Debug --target sdurws_ird_core_test
+閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\build\industrial-robot\RobWorkStudio\bin\Debug\sdurws_ird_core_test.exe
+[结果] 退出码=0；日志: D:\10_Source_Repos\21_robot\wt-wp01-t03-verify\out\logs\industrial-robot\20260831-071011\build.log
