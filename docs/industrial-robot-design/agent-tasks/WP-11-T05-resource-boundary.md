@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "setNetworkAccessible|QNetworkAccessManager|CommandLine" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 零命中；`rg -n "DOCTYPE|ExternalEntity" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 命中处仅限禁用配置；`rg -n "objects/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "setNetworkAccessible|QNetworkAccessManager|CommandLine" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；`rg -n "DOCTYPE|ExternalEntity" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 命中处仅限禁用配置；`rg -n "objects/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中
 - **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——恶意样本清单与哈希、预算消耗、路径规范化结果、逐行诊断 JSON、命令日志
 - **提交格式：**`WP-11-T05: 新增 URDF/网格/JSON 安全边界`
 

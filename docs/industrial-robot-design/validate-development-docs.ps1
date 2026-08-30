@@ -803,18 +803,34 @@ if (-not (Test-Path -LiteralPath $ledgerPath)) {
     }
 }
 
-# 10) 陈旧基线数字：任务卡、WP 计划与总纲一律以派生为准（修订历史行除外）
-$stalePattern = 'v0\.7|124 项|124 行|124 requirements|124 trace|Generated 124|-eq 124|P0=110|11 列固定顺序|11列 CSV|11 列字段顺序'
+# 10) 陈旧基线数字：任务卡、WP 计划与总纲一律以派生为准（明确标注的历史格式说明除外）
+$stalePattern = 'v0\.7|124\s*(项|行|个(?:\s*ID)?)|124 requirements|124 trace|Generated 124|-eq 124|P0=110|固定\s*11\s*列|11\s*列固定顺序|11列 CSV|11\s*列字段顺序'
+function Test-StaleBaselineText {
+    param([string]$Line)
+    if ($Line -match '旧 CSV.*11\s*列历史格式') { return $false }
+    return $Line -cmatch $stalePattern
+}
+if (-not (Test-StaleBaselineText -Line '124 个 ID 均有映射')) {
+    Add-ValidationError '内置夹具失败：过期需求数量的中文表述未被检测。'
+}
+if (-not (Test-StaleBaselineText -Line '固定 11 列、排序、BOM/CRLF')) {
+    Add-ValidationError '内置夹具失败：过期 CSV 列数表述未被检测。'
+}
+if (Test-StaleBaselineText -Line '旧 CSV（11 列历史格式，或行数与需求条数不符）必须重新生成') {
+    Add-ValidationError '内置夹具失败：明确标注的历史格式说明被误报。'
+}
 foreach ($cf in $cardFilesForDag) {
-    $raw2 = Get-Content -LiteralPath $cf.FullName -Raw -Encoding UTF8
-    if ($raw2 -cmatch $stalePattern) {
-        Add-ValidationError "Task card $($cf.Name) references a stale baseline version/count; derive from current requirements.md instead."
+    $cardBaselineLines = Get-Content -LiteralPath $cf.FullName -Encoding UTF8
+    for ($i = 0; $i -lt $cardBaselineLines.Count; $i++) {
+        if (Test-StaleBaselineText -Line $cardBaselineLines[$i]) {
+            Add-ValidationError "Task card $($cf.Name):$($i + 1) references a stale baseline version/count; derive from current requirements.md instead."
+        }
     }
 }
 foreach ($wf in (Get-ChildItem -LiteralPath $workPackagePath -Filter 'WP-*.md' -File)) {
     $wLines = Get-Content -LiteralPath $wf.FullName -Encoding UTF8
     for ($i = 0; $i -lt $wLines.Count; $i++) {
-        if ($wLines[$i] -cmatch $stalePattern) {
+        if (Test-StaleBaselineText -Line $wLines[$i]) {
             Add-ValidationError "Work package $($wf.Name):$($i + 1) references a stale baseline version/count/format."
         }
     }
@@ -822,7 +838,7 @@ foreach ($wf in (Get-ChildItem -LiteralPath $workPackagePath -Filter 'WP-*.md' -
 $bpLines = Get-Content -LiteralPath $masterPlanPath -Encoding UTF8
 for ($i = 0; $i -lt $bpLines.Count; $i++) {
     if ($bpLines[$i] -match '^\|\s*v\d') { continue }
-    if ($bpLines[$i] -cmatch $stalePattern) {
+    if (Test-StaleBaselineText -Line $bpLines[$i]) {
         Add-ValidationError "development-task-breakdown.md:$($i + 1) references a stale baseline version/count/format."
     }
 }
@@ -873,9 +889,10 @@ foreach ($pline in ($piText -split "`r?`n")) {
 function Test-InlineCommandOk {
     param([string]$Segment)
     $seg = $Segment.Trim()
+    $startsWithAssignment = $seg -match '^\$[A-Za-z_][A-Za-z0-9_]*\s*='
     $looksLikeCommand = ($seg -match '^(rg|git|powershell|pwsh|cmake|ctest)\b') -or (($seg -match '"') -and ($seg -match '[a-z]/')) -or ($seg -match '\$LASTEXITCODE| throw ')
     if (-not $looksLikeCommand) { return $true }
-    if ($seg -notmatch '^(rg|git|powershell|pwsh|cmake|ctest)\b') { return $false }
+    if ($seg -notmatch '^(rg|git|powershell|pwsh|cmake|ctest)\b' -and -not $startsWithAssignment) { return $false }
     if ($seg -match '\\\|') { return $false }
     if ((([regex]::Matches($seg, '"')).Count % 2) -ne 0) { return $false }
     if ($seg -match '^rg\b' -and $seg -notmatch '-n') { return $false }
@@ -886,8 +903,20 @@ function Test-InlineCommandOk {
     if ($null -ne $parseErrors -and $parseErrors.Count -gt 0) { return $false }
     return $true
 }
+function Test-ZeroMatchCommandGuard {
+    param(
+        [string]$Segment,
+        [string]$FollowingText
+    )
+    $seg = $Segment.Trim()
+    if ($seg -notmatch '^rg\b' -or $FollowingText -notmatch '零命中') { return $true }
+    return ($seg -match '\$LASTEXITCODE\s*-eq\s*0') -and ($seg -match '\$LASTEXITCODE\s*-ne\s*1')
+}
 if (-not (Test-InlineCommandOk -Segment 'rg -n "QFile|writeProject" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/requirements/src; if ($LASTEXITCODE -eq 0) { throw ''检测到禁止实现'' }')) {
     Add-ValidationError '内置夹具失败：规范 rg 命令被误报。'
+}
+if (-not (Test-InlineCommandOk -Segment '$receipt = Get-Content -LiteralPath .\out\package-result.json -Raw | ConvertFrom-Json; powershell.exe -File .\RobWork\verify.ps1 -Package $receipt.packagePath; if ($LASTEXITCODE -ne 0) { throw ''校验失败'' }')) {
+    Add-ValidationError '内置夹具失败：规范的 PowerShell 赋值命令链被误报。'
 }
 if (Test-InlineCommandOk -Segment 'QFile|writeProject" requirements/src/RequirementsCommands.cpp') {
     Add-ValidationError '内置夹具失败：丢失 rg -n 前缀的片段未被检测。'
@@ -898,13 +927,27 @@ if (Test-InlineCommandOk -Segment 'rg -n "unbalanced quote RobWork/RobWorkStudio
 if (Test-InlineCommandOk -Segment 'rg -ni "a\|b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/x') {
     Add-ValidationError '内置夹具失败：BRE 交替残留未被检测。'
 }
+if (Test-ZeroMatchCommandGuard -Segment 'rg -n "QFile" RobWork/x' -FollowingText ' 零命中') {
+    Add-ValidationError '内置夹具失败：预期零命中的 rg 命令缺少退出码判定但未被检测。'
+}
+if (-not (Test-ZeroMatchCommandGuard -Segment 'rg -n "QFile" RobWork/x; if ($LASTEXITCODE -eq 0) { throw ''检测到禁止实现'' } elseif ($LASTEXITCODE -ne 1) { throw ''扫描命令执行失败'' }' -FollowingText ' 零命中')) {
+    Add-ValidationError '内置夹具失败：规范的预期零命中 rg 命令被误报。'
+}
 foreach ($cf in $cardFilesForDag) {
     $cLines2 = Get-Content -LiteralPath $cf.FullName -Encoding UTF8
     for ($i = 0; $i -lt $cLines2.Count; $i++) {
-        foreach ($bm in [regex]::Matches($cLines2[$i], '`([^`]+)`')) {
+        $inlineMatches = [regex]::Matches($cLines2[$i], '`([^`]+)`')
+        for ($j = 0; $j -lt $inlineMatches.Count; $j++) {
+            $bm = $inlineMatches[$j]
             if (-not (Test-InlineCommandOk -Segment $bm.Groups[1].Value)) {
                 $segPreview = $bm.Groups[1].Value.Substring(0, [Math]::Min(70, $bm.Groups[1].Value.Length))
                 Add-ValidationError "Task card $($cf.Name):$($i + 1) has a malformed inline command: $segPreview"
+            }
+            $followingStart = $bm.Index + $bm.Length
+            $followingEnd = if ($j + 1 -lt $inlineMatches.Count) { $inlineMatches[$j + 1].Index } else { $cLines2[$i].Length }
+            $followingText = $cLines2[$i].Substring($followingStart, $followingEnd - $followingStart)
+            if (-not (Test-ZeroMatchCommandGuard -Segment $bm.Groups[1].Value -FollowingText $followingText)) {
+                Add-ValidationError "Task card $($cf.Name):$($i + 1) has an expected-zero rg command without explicit exit-code handling."
             }
         }
     }

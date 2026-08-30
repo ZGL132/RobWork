@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_widget_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_widget_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "evaluate|collision|ik\(" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPanel.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/EngineeringTableView.cpp` 零命中（无业务算法）；`rg -n "QStringLiteral.*失败|错误：" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPanel.cpp` 零命中（无硬编码文案）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "evaluate|collision|ik\(" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPanel.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/EngineeringTableView.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无业务算法）；`rg -n "QStringLiteral.*失败|错误：" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPanel.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无硬编码文案）
 - **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——组件状态截图、批量粘贴矩阵（合法/非法行组合）、诊断映射对照表、评审者签署
 - **提交格式：**`WP-10-T03: 新增公共工程组件`
 

@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_model_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_model_test$"
   ```
-- **diff 和禁止项检查：**`git diff --name-only 94fb910e` 仅含允许清单路径；`rg -n "QWidget|QtWidgets" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EditDraft.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/StageStatusModel.hpp` 零命中；`rg -n "AnalysisSnapshot" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp` 零命中（会话态不进快照）
+- **diff 和禁止项检查：**`git diff --name-only 94fb910e` 仅含允许清单路径；`rg -n "QWidget|QtWidgets" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/EditDraft.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/StageStatusModel.hpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；`rg -n "AnalysisSnapshot" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/SessionState.hpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（会话态不进快照）
 - **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——状态转移表（GWT 三类断言）、revision 计数日志、草稿 JSON 样例、诊断样本与命令日志
 - **提交格式：**`WP-10-T01: 新增会话草稿与阶段状态模型`
 

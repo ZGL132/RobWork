@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "system\(|eval|QProcess|Shell" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp` 零命中；`rg -n "= *0\b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp` 零命中（无转零分支）；`rg -n "isnan.*? *0" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp` 零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "system\(|eval|QProcess|Shell" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；`rg -n "= *0\b" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无转零分支）；`rg -n "isnan.*? *0" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvReader.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中
 - **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——原始 CSV 与哈希、规范记录 JSON、行级诊断清单、恶意公式样本处置记录
 - **提交格式：**`WP-11-T02: 新增 RFC 4180 安全 CSV 读取器`
 

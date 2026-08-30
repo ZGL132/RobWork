@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "class.*DomainCommand" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/include/` 命中处仅继承声明（无平行基类）；`rg -n "JointTransformSpec" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/` 零命中（§13.3 消除项）；`rg -n "robwork|rw::" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/RobotDesignEditor.cpp` 零命中（无 RobWork 头入计算核心）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "class.*DomainCommand" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/include/` 命中处仅继承声明（无平行基类）；`rg -n "JointTransformSpec" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（§13.3 消除项）；`rg -n "robwork|rw::" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/RobotDesignEditor.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无 RobWork 头入计算核心）
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——草稿状态矩阵（合法/非法逐项）、命令日志、诊断样本、T01 失败断言转绿记录
 - **提交格式：**`WP-13-T02: 新增领域编辑器`
 

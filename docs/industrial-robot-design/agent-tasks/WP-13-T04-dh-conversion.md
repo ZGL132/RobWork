@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "acos\(" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/DhConversionService.cpp` 零命中（姿态比较用测地角，§15.3）；`rg -n "Origin.*AxisRotation|q_zero" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/DhConversionService.cpp` 零命中（无双偏置链，canonical-kinematics §3）；`AnalysisFailed` 分支不得含 `NotRepresentable` 返回值
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "acos\(" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/DhConversionService.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（姿态比较用测地角，§15.3）；`rg -n "Origin.*AxisRotation|q_zero" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/DhConversionService.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无双偏置链，canonical-kinematics §3）；`AnalysisFailed` 分支不得含 `NotRepresentable` 返回值
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——四类黄金模型判定与残差表、固定种子 100 姿态 FK 对照、往返容差实测、故障注入日志、算法版本记录
 - **提交格式：**`WP-13-T04: 新增 DH 转换服务`
 

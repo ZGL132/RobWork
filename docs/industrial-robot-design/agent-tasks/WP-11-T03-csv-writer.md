@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "system\(|eval|QProcess" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvWriter.cpp` 零命中；两次导出 `git hash-object` 比对逐字节一致（确定性）；`rg -n "toDouble|toFixed" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvWriter.cpp` 命中处仅数值列路径
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "system\(|eval|QProcess" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvWriter.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；两次导出 `git hash-object` 比对逐字节一致（确定性）；`rg -n "toDouble|toFixed" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CsvWriter.cpp` 命中处仅数值列路径
 - **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——输入/输出 CSV 对照、类型矩阵（文本/数值/边界字符）、转义规则说明与评审签署
 - **提交格式：**`WP-11-T03: 新增 CSV 公式注入安全写出`
 

@@ -93,7 +93,14 @@ function Read-JsonFileChecked {
         Add-Failure ("{0} : non-finite number literal found (NaN/Infinity are forbidden)" -f $Path)
     }
     try {
-        $parsed = ConvertFrom-Json -InputObject $text
+        # PowerShell 7.5+ 会默认把 ISO 8601 字符串转换为 DateTime；JSON Schema 的
+        # string 类型必须保留词法类型。DateKind 在 Windows PowerShell 5.1 不存在，
+        # 因此仅在当前运行时提供该参数时显式选择 String。
+        $convertFromJsonParameters = @{ InputObject = $text }
+        if ((Get-Command ConvertFrom-Json).Parameters.ContainsKey('DateKind')) {
+            $convertFromJsonParameters['DateKind'] = 'String'
+        }
+        $parsed = ConvertFrom-Json @convertFromJsonParameters
         return $parsed
     }
     catch {

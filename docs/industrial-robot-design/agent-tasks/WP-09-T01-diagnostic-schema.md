@@ -19,7 +19,7 @@ cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_diag
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_diagnostics(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "EngineeringDiagnostic" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/` 零命中；无 `float` NaN 直通序列化路径；无第四 category/severity 枚举值；severity 不与 EngineeringStatus 混用（无转换函数）
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "EngineeringDiagnostic" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；无 `float` NaN 直通序列化路径；无第四 category/severity 枚举值；severity 不与 EngineeringStatus 混用（无转换函数）
 - **证据工件：**`diagnostics/out/test-evidence/wp-09/<run-id>/`：13 字段矩阵、JSON 样例（正常与拒绝各一组）、`IRD-DIA-SCHEMA-INVALID` 诊断样例、命令日志与评审签名
 - **提交格式：**`WP-09-T01: 新增诊断 Schema 与字段完整性`
 

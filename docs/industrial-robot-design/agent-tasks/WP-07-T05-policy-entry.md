@@ -19,7 +19,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\indust
 ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_policy(_contract)?_test$"
 ```
 
-- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "setEnabled|safetyDistance|excluded" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins` 零命中；Provider 无写路径；旧链路删除提交附 Migratable/Rewrite/EvidenceOnly verdict
+- **diff 和禁止项检查：**`git diff --name-only` 仅命中允许清单；`rg -n "setEnabled|safetyDistance|excluded" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中；Provider 无写路径；旧链路删除提交附 Migratable/Rewrite/EvidenceOnly verdict
 - **证据工件：**`policy/out/test-evidence/wp-07/<run-id>/`：Provider 查询日志、扫描报告、旧链路迁移 verdict、命令日志与评审签名
 - **提交格式：**`WP-07-T05: 新增统一策略入口与所有权扫描`
 

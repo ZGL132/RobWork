@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_widget_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_widget_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "evaluate|readFile|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/VirtualResultModel.cpp` 零命中（主线程无评估/IO）；`git status` 确认 testdata 生成器不产生入库巨文件
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "evaluate|readFile|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/VirtualResultModel.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（主线程无评估/IO）；`git status` 确认 testdata 生成器不产生入库巨文件
 - **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——规模与实例化行数对照、P50/P95 表、主线程阻塞窗口日志、后台转移计数、环境（CPU/内存/Qt 版本）记录与评审者签署
 - **提交格式：**`WP-10-T05: 新增虚拟化响应式大列表`
 

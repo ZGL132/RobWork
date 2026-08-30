@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "d */ *2|0\.5 *\* *d" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/MaterialInertiaEstimator.cpp` 命中处唯一（单一 r=d/2 转换点）；`rg -n "geometry.*copy|cloneGeometry" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ToolEnvironmentEditor.cpp` 零命中（TCP 不复制几何，MDL-13）；`rg -n "ofstream|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/MaterialInertiaEstimator.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ToolEnvironmentEditor.cpp` 零命中
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "d */ *2|0\.5 *\* *d" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/MaterialInertiaEstimator.cpp` 命中处唯一（单一 r=d/2 转换点）；`rg -n "geometry.*copy|cloneGeometry" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ToolEnvironmentEditor.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（TCP 不复制几何，MDL-13）；`rg -n "ofstream|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/MaterialInertiaEstimator.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ToolEnvironmentEditor.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——三类截面解析算例对照表（公式值 vs 实现值）、口径转换记录、覆盖前后来源快照、诊断样本
 - **提交格式：**`WP-13-T05: 新增物性估算与工具环境编辑`
 

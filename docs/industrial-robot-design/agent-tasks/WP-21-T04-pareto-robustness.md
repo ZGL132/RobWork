@@ -25,7 +25,7 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_optimization_joint_test$'`
   - 回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_optimization_joint_test`
   - 回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_optimization_joint_test$"`
-- **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；无第二套支配关系实现（`joint/` 不出现支配判定公式复制，只调用 WP-20）；无加权总分；三模式结论措辞互不混用（抽查 grep"鲁棒通过"不得出现在敏感度模式输出）。
+- **diff 和禁止项检查：** `git diff --name-only` 仅含允许清单；无第二套支配关系实现（`joint/` 不出现支配判定公式复制，只调用 WP-20）；无加权总分；三模式结论措辞互不混用；`rg -n "鲁棒通过" out/test-evidence/wp-21/<run-id>/t04-pareto-robustness/sensitivity-output.json; if ($LASTEXITCODE -eq 0) { throw '敏感度模式错误使用鲁棒结论措辞' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中。
 - **证据工件：** `out/test-evidence/wp-21/<run-id>/t04-pareto-robustness/`：误淘汰审计报告（分层键、抽样数、误淘汰率与 95% 置信上界）、三模式结果样例（64 点 LHS 样本身份）、覆盖对象清单、命令原文与 commit。
 - **提交格式：** `WP-21-T04: Pareto 与鲁棒性`
 

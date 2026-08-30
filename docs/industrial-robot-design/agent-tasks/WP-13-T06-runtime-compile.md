@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "rw::|<rw/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/include/sdurws/ird/modeling/ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ModelingCompileRequest.cpp` 零命中（RobWork 指针只存在于 WP-06 builder 内）；`rg -n "\+ *\"\.\" *|substr.*prefix|removePrefix" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/` 零命中（无名称拼接/剥离）；`CompiledCandidateArtifact` 不得出现于本模块（symbol-registry 裁决 5）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "rw::|<rw/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/include/sdurws/ird/modeling/ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/ModelingCompileRequest.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（RobWork 指针只存在于 WP-06 builder 内）；`rg -n "\+ *\"\.\" *|substr.*prefix|removePrefix" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无名称拼接/剥离）；`CompiledCandidateArtifact` 不得出现于本模块（symbol-registry 裁决 5）
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——failpoint 注入日志（双侧）、名称映射双向表、交叉校验清单、编译日志与修订计数
 - **提交格式：**`WP-13-T06: 新增运行时编译请求适配`
 

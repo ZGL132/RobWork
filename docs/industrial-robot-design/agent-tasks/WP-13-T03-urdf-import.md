@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "QFile|ifstream|ifstream.*urdf" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/UrdfImportAdapter.cpp` 零命中（一律经 WP-11 端口）；`rg -n "DOCTYPE|QXmlStreamEntityResolver" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/` 零命中（IO 层职责）；`rg -ni "\+Z|0,0,1" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/UrdfImportAdapter.cpp` 零命中（无 +Z 默认残留）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "QFile|ifstream|ifstream.*urdf" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/UrdfImportAdapter.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（一律经 WP-11 端口）；`rg -n "DOCTYPE|QXmlStreamEntityResolver" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（IO 层职责）；`rg -ni "\+Z|0,0,1" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/src/UrdfImportAdapter.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无 +Z 默认残留）
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——URDF 样本哈希、映射报告（逐条目）、被排除分支清单、确认记录占位、AT-15/AT-17 断言输出
 - **提交格式：**`WP-13-T03: 新增 URDF 导入适配器`
 

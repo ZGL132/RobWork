@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_ui_model_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_ui_model_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "scopedName\s*\+|\+\s*\"\.\"" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp` 零命中（禁止名称拼接）；`rg -n "set.*Pose|write" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp` 命中处仅限 `SessionState.previewRef` 保存
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "scopedName\s*\+|\+\s*\"\.\"" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（禁止名称拼接）；`rg -n "set.*Pose|write" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/SceneProjection.cpp` 命中处仅限 `SessionState.previewRef` 保存
 - **证据工件：**`ui/out/test-evidence/wp-10/<run-id>/`——投影节点表（objectId↔显示名来源）、恢复前后姿态日志、三视图联动事件序列、失败诊断样本
 - **提交格式：**`WP-10-T02: 新增只读场景投影与预览恢复`
 

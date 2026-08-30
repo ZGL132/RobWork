@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "ifstream|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafeProjectPath.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/BudgetGuard.cpp` 零命中（预检不偷读内容）；`rg -n "objects/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/` 零命中（不直写对象库）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "ifstream|QFile" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafeProjectPath.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/BudgetGuard.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（预检不偷读内容）；`rg -n "objects/" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（不直写对象库）
 - **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——路径矩阵（拒绝/接受逐项）、预算配置与消耗曲线、诊断 JSON、命令日志
 - **提交格式：**`WP-11-T01: 新增安全路径与导入预算`
 

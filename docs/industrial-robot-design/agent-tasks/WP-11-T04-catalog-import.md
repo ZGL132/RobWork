@@ -20,7 +20,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_io_test sdurws_ird_io_contract_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_io(_contract)?_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "rank|score|select|filter" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CatalogPackageReader.cpp` 零命中（无筛选语义）；`rg -n "revision|commit" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CatalogPackageReader.cpp` 零命中（不写修订）
+- **diff 和禁止项检查：**diff 仅含允许清单；`rg -n "rank|score|select|filter" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CatalogPackageReader.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（无筛选语义）；`rg -n "revision|commit" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/CatalogPackageReader.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（不写修订）
 - **证据工件：**`io/out/test-evidence/wp-11/<run-id>/`——manifest/哈希清单、跨表引用图、六类失败包诊断样本、重复导入一致性记录
 - **提交格式：**`WP-11-T04: 新增目录包校验与跨表引用`
 

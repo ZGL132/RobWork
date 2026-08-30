@@ -21,7 +21,7 @@
   cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_modeling_test
   ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_modeling_test$"
   ```
-- **diff 和禁止项检查：**diff 仅含允许清单；夹具哈希清单与文件一一对应（`git status` 无未登记新夹具）；`rg -n "RobotDesignEditor|UrdfImportAdapter" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/test/ModelFixtureTest.cpp` 零命中（夹具独立于实现）
+- **diff 和禁止项检查：**diff 仅含允许清单；夹具哈希清单与文件一一对应（`git status` 无未登记新夹具）；`rg -n "RobotDesignEditor|UrdfImportAdapter" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/plugins/modeling/test/ModelFixtureTest.cpp; if ($LASTEXITCODE -eq 0) { throw '检测到禁止实现' } elseif ($LASTEXITCODE -ne 1) { throw '扫描命令执行失败' }` 零命中（夹具独立于实现）
 - **证据工件：**`modeling/out/test-evidence/wp-13/<run-id>/`——夹具清单与哈希、失败断言输出、Schema 校验日志
 - **提交格式：**`WP-13-T01: 新增模型类型与失败夹具`
 
