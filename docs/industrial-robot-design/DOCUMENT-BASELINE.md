@@ -89,3 +89,11 @@
 | `IRD-D13-20260830` | 2026-08-30 | D13 UI 实施闭合：九份工作台 UI 模块方案统一升至 v0.4；新增工作台外壳、轨迹、动力学、选型、联合分层优化和项目入口六张原子 GUI 卡，任务卡总数 144→150；十组工作包、十二张既有 GUI 卡与开发总纲完成所有权、前置、目标、验证命令和失败行为对齐；需求追踪矩阵由权威生成器重建；完成新读者八问检查和双 PowerShell 文档门禁 | UI 治理内容可直接指导后续任务实施；契约继续保持真实 `Proposed` 状态；状态账本唯一 `Ready` 仍为 WP-00-T01，其他任务按前置和独立验证结果逐项解锁 |
 
 D1 不改变需求 v0.7、代码提交或工作包范围。D1 的名称裁决为：公共评估输出统一使用 `ResultEnvelope`，原单点名称 `EvaluationEnvelope` 停止使用。D2 的裁决（ADR-005）为：完整性维度拆分为 `PayloadCompleteness` 与 `ArtifactIntegrity`；`TaskState` 冻结 9 态；`Completed + Warning` 仅在 `RequiredEvidenceProfile` 允许警告类别内可正式可行；五组公共符号异名列为禁止名称。
+
+## 7. WP-00-T01 需求基线复核记录
+
+- 复核日期：2026-08-30；执行时文档基线 commit：`4d14959`；证据：[out/test-evidence/wp-00/20260830-4d14959-impl/t01-requirements-review.md](../../out/test-evidence/wp-00/20260830-4d14959-impl/t01-requirements-review.md)。
+- 复核范围：`requirements.md` v0.8 全部 128 项需求（ID 唯一性、P0 114/P1 14 优先级分布、阶段与发布标注）、AT-01～19 与第 15/16 章对应、ADR-001 单机械臂边界、ADR-003 R1/R2 切片与 OPT-B 权威集合。
+- 复核结论：基线断言 `t01-req-count`（128==128）与 `t01-at-count`（19）通过；追踪矩阵发布切片 R1=114、R1/R2=8、R2=6，阶段标注覆盖 128/128；OPT-01～04/06～08=R1/R2、OPT-05/09/10=R2、NFR-PERF-04～06=R2，与 ADR-003 一致；ADR-001 引锚需求全部存在。`generate-traceability.ps1`（`Generated 128 traceability rows`，退出码 0，CSV 零字节变化）与 `validate-development-docs.ps1`（退出码 0，`128 requirements, 19 acceptance tests, 25 contracts, 76 symbols, 5 ADRs, 0 trace gaps`）逐字执行通过。
+- 疑似不一致项（只记录，不改权威文档，待需求维护者裁决）：① `README.md` 头部检查点行仍为 `IRD-D10-20260829`/D0～D12，滞后于本基线 D13；② AT-14 未被第 16 章追踪表任何行引用。
+- 本节由 WP-00-T01 追加，未修改 §1～§6 任何既有表格与状态。
