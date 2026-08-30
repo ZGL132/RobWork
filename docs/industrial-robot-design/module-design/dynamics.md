@@ -1,7 +1,7 @@
 # 动力学模块详细方案（dynamics）
 
 - 方案版本：v0.4；需求基线：v0.8；架构检查点：`IRD-D2-20260829`；治理状态：Proposed（IRD-D10-20260829 联合评审通过，待签署）
-- 负责 WP：WP-17；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-17-T01～T06
+- 负责 WP：WP-17；阶段/发布：阶段 C / R1；任务卡：agent-tasks/WP-17-T01～T07
 - 架构契约：`architecture/domain-model.md` §4（SI/类型化广义力）、`architecture/public-interfaces.md` §3/§7、`architecture/evaluation-semantics.md` §1～2、`architecture/execution-model.md` §1～3、`architecture/testing-contract.md`
 - 需求锚点：requirements §8.5（DYN-01～08 与 `DriveTrainMappingEvaluator` 映射契约）、§7.1/§7.2/§7.4、§9.3（W+ 冻结式）、§15.3（动力学容差、正动力学收敛、动力包络行）、§6.6（证据等级）、NFR-DEP-05（RobWorkSim 锁定版本）；平台方案：runtime-model、execution-platform、snapshot-result
 - 代码前置：WP-06、08、16（总纲 §5.3）；WP-18 依赖本模块（候选无关性由其消费侧契约测试验证）
