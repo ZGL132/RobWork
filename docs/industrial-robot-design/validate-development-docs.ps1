@@ -35,7 +35,7 @@ function Test-MarkdownTables {
                 $expectedPipes = $pipeCount
             }
             if ($pipeCount -ne $expectedPipes) {
-                Add-ValidationError "$Path line $($index + 1) has $pipeCount table separators; expected $expectedPipes."
+                Add-ValidationError "$Path line $($index + 1) has $pipeCount table separators; expected $expectedPipes. Align the row with its table header."
             }
         }
         else {
@@ -43,6 +43,35 @@ function Test-MarkdownTables {
             $expectedPipes = 0
         }
     }
+}
+
+# 第 16 章需求 ID 单元格展开（与 generate-traceability.ps1 的 Expand-RequirementCell 同语义：
+# 单 ID、连续范围、前缀续接、重复去重）；门禁只读使用，不注入失败语义。
+function Expand-TraceIds {
+    param([string]$Cell)
+
+    $ids = [System.Collections.Generic.List[string]]::new()
+    $currentPrefix = $null
+    foreach ($match in [regex]::Matches($Cell, '(?:(?<prefix>[A-Z][A-Z0-9-]*-))?(?<start>\d+)(?:～(?<end>\d+))?')) {
+        if ($match.Groups['prefix'].Success) {
+            $currentPrefix = $match.Groups['prefix'].Value
+        }
+        if ([string]::IsNullOrWhiteSpace($currentPrefix)) {
+            continue
+        }
+        $start = [int]$match.Groups['start'].Value
+        $end = $start
+        if ($match.Groups['end'].Success -and [int]$match.Groups['end'].Value -gt $start) {
+            $end = [int]$match.Groups['end'].Value
+        }
+        for ($number = $start; $number -le $end; $number++) {
+            $id = '{0}{1:D2}' -f $currentPrefix, $number
+            if (-not $ids.Contains($id)) {
+                $ids.Add($id)
+            }
+        }
+    }
+    return $ids
 }
 
 foreach ($requiredPath in @($requirementsPath, $baselinePath, $masterPlanPath, $tracePath, $generatorPath, $benchmarkManifestPath, $workPackagePath, $architecturePath, $agentTaskPath, $moduleDesignPath)) {
@@ -65,7 +94,9 @@ if ($errors.Count -eq 0) {
     }
 
     if ($errors.Count -gt 0) {
-        $errors | ForEach-Object { Write-Error $_ }
+        # 经 [Console]::Error 逐条输出：Write-Error 会被宿主按控制台宽度折行，
+        # 破坏诊断关键词的连续性；stderr + exit 1 语义不变。
+        $errors | ForEach-Object { [Console]::Error.WriteLine($_) }
         exit 1
     }
 
@@ -83,10 +114,14 @@ if ($errors.Count -eq 0) {
     )
 
     if ($requirementIds.Count -ne 128) {
-        Add-ValidationError "Expected 128 requirement rows; found $($requirementIds.Count)."
+        Add-ValidationError "Requirement count error (数量错误): expected 128 requirement rows in requirements.md; found $($requirementIds.Count). Restore the missing or extra rows against the frozen baseline."
     }
-    if (@($requirementIds | Sort-Object -Unique).Count -ne 128) {
-        Add-ValidationError 'Requirement IDs are not unique.'
+    $uniqueRequirementIds = @($requirementIds | Sort-Object -Unique)
+    if ($requirementIds.Count -ne $uniqueRequirementIds.Count) {
+        Add-ValidationError 'Requirement IDs not unique in requirements.md; remove the duplicated ID rows.'
+    }
+    if ($uniqueRequirementIds.Count -ne 128) {
+        Add-ValidationError "Requirement count error (数量错误): expected 128 unique requirement IDs in requirements.md; found $($uniqueRequirementIds.Count)."
     }
     if ($p0Count -ne 114 -or $p1Count -ne 14) {
         Add-ValidationError "Expected 114 P0 and 14 P1 requirements; found $p0Count P0 and $p1Count P1."
@@ -125,6 +160,27 @@ if ($errors.Count -eq 0) {
     }
     if ($duplicateTrace.Count -gt 0) {
         Add-ValidationError "Duplicate trace rows: $($duplicateTrace.Name -join ', ')."
+    }
+
+    # 第 16 章验收覆盖（WP-00 计划 §5.1.6）：每个需求 ID 至少一条 Method/Scenario/Phase。
+    # 注意：generate-traceability.ps1 的空 §16 防线因 @($null) 语义失效，此检查是唯一权威。
+    $traceAnchorStart = $requirementsText.IndexOf('## 16. 需求—验收追踪')
+    $traceAnchorEnd = if ($traceAnchorStart -ge 0) { $requirementsText.IndexOf('## 17.', $traceAnchorStart) } else { -1 }
+    $coveredIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    if ($traceAnchorStart -ge 0 -and $traceAnchorEnd -gt $traceAnchorStart) {
+        $traceBlockText = $requirementsText.Substring($traceAnchorStart, $traceAnchorEnd - $traceAnchorStart)
+        foreach ($traceLine in ($traceBlockText -split "`r?`n")) {
+            if ($traceLine -notmatch '^\|') { continue }
+            $traceCells = @($traceLine.Trim('|').Split('|') | ForEach-Object { $_.Trim() })
+            if ($traceCells.Count -ne 4) { continue }
+            foreach ($coveredId in (Expand-TraceIds -Cell $traceCells[0])) {
+                [void]$coveredIds.Add($coveredId)
+            }
+        }
+    }
+    $uncoveredIds = @($requirementIds | Where-Object { -not $coveredIds.Contains($_) })
+    if ($uncoveredIds.Count -gt 0) {
+        Add-ValidationError ("no acceptance trace for {0} requirement(s) in section 16 (需求—验收追踪): {1}; restore the missing trace rows." -f $uncoveredIds.Count, ($uncoveredIds -join ', '))
     }
 
     # 阶段 B 验收的行必须至少有一个明确列入阶段 B 交付范围的工作包。
@@ -187,7 +243,7 @@ if ($errors.Count -eq 0) {
     foreach ($number in 0..25) {
         $prefix = 'WP-{0:D2}-' -f $number
         if (@($workPackageFiles | Where-Object { $_.Name.StartsWith($prefix) }).Count -ne 1) {
-            Add-ValidationError "Expected exactly one detailed work-package plan beginning with $prefix."
+            Add-ValidationError "Missing unique detailed plan for ${prefix}: expected exactly one work-packages/WP-XX-*.md; restore or rename the plan file."
         }
     }
 
@@ -339,7 +395,7 @@ if ($errors.Count -eq 0) {
         )
         foreach ($declaredTaskId in $declaredTaskIds) {
             if ($declaredTaskId -notin $taskIds) {
-                Add-ValidationError "Work package $($workPackageFile.Name) declares $declaredTaskId without an independent task card."
+                Add-ValidationError "Task ID without card: work package $($workPackageFile.Name) declares $declaredTaskId; create the matching agent-tasks card or fix the work package text."
             }
         }
     }
@@ -359,8 +415,6 @@ if ($errors.Count -eq 0) {
             Add-ValidationError "Unicode replacement character found in $document."
         }
     }
-
-    $temporaryTrace = Join-Path ([System.IO.Path]::GetTempPath()) ("ird-trace-" + [guid]::NewGuid() + '.csv')
 
     # ---- D9 增强检查 ----
 
@@ -418,19 +472,27 @@ if ($errors.Count -eq 0) {
     }
 
     # 4) 代码基线 commit 必须存在于当前仓库。
+    #    stderr 经 2>$null 转为 ErrorRecord 后受 $ErrorActionPreference='Stop' 影响会终止脚本；
+    #    在临时夹具树（非 git 仓库）中运行时跳过本检查，正式树行为不变。
     $baselineText = Get-Content -LiteralPath $baselinePath -Raw -Encoding UTF8
     $baselineMatch = [regex]::Match($baselineText, '\| 代码基线 \| `([0-9a-f]{40})`')
     if ($baselineMatch.Success) {
         $baselineSha = $baselineMatch.Groups[1].Value
         $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+        $previousPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
         Push-Location $repoRoot
         try {
-            & git cat-file -e $baselineSha 2>$null
-            if ($LASTEXITCODE -ne 0) {
-                Add-ValidationError "Code baseline commit $baselineSha not found in repository."
+            [void](& git rev-parse --is-inside-work-tree 2>$null)
+            if ($LASTEXITCODE -eq 0) {
+                [void](& git cat-file -e $baselineSha 2>$null)
+                if ($LASTEXITCODE -ne 0) {
+                    Add-ValidationError "Code baseline commit $baselineSha not found in repository."
+                }
             }
         }
         finally {
+            $ErrorActionPreference = $previousPreference
             Pop-Location
         }
     }
@@ -488,30 +550,6 @@ if ($errors.Count -eq 0) {
             if ($consumerText.Contains($ownedDef)) {
                 Add-ValidationError "Public definition '$ownedDef' must live in architecture/public-interfaces.md, found in $consumerDoc."
             }
-        }
-    }
-
-    try {
-        & $generatorPath -RequirementsPath $requirementsPath -OutputPath $temporaryTrace | Out-Null
-        $expectedBytes = [System.IO.File]::ReadAllBytes($temporaryTrace)
-        $actualBytes = [System.IO.File]::ReadAllBytes($tracePath)
-        # 兼容 Windows PowerShell 5.1：此处不使用 PowerShell 7 的泛型方法调用语法。
-        $bytesEqual = ($expectedBytes.Length -eq $actualBytes.Length)
-        if ($bytesEqual) {
-            for ($i = 0; $i -lt $expectedBytes.Length; $i++) {
-                if ($expectedBytes[$i] -ne $actualBytes[$i]) {
-                    $bytesEqual = $false
-                    break
-                }
-            }
-        }
-        if (-not $bytesEqual) {
-            Add-ValidationError 'Traceability CSV is stale; regenerate it from the requirements document.'
-        }
-    }
-    finally {
-        if (Test-Path -LiteralPath $temporaryTrace) {
-            Remove-Item -LiteralPath $temporaryTrace -Force
         }
     }
 }
@@ -953,8 +991,46 @@ foreach ($cf in $cardFilesForDag) {
     }
 }
 
+# ---- 最终验证（WP-00 计划 §5.3 末位）：临时生成 CSV 与正式 CSV 逐字节比较 ----
+# 生成器为进程内脚本调用，其 throw 属终止错误，必须显式捕获并转为验证错误，
+# 避免脚本在诊断累积完成前中断；仅当生成成功且临时 CSV 存在时才比较字节。
+if ($errors.Count -eq 0) {
+    $temporaryTrace = Join-Path ([System.IO.Path]::GetTempPath()) ("ird-trace-" + [guid]::NewGuid() + '.csv')
+    try {
+        try {
+            & $generatorPath -RequirementsPath $requirementsPath -OutputPath $temporaryTrace | Out-Null
+        }
+        catch {
+            Add-ValidationError ("Traceability generation failed (no acceptance trace, unregistered requirement, or missing task card): " + $_.Exception.Message)
+        }
+        if (Test-Path -LiteralPath $temporaryTrace) {
+            $expectedBytes = [System.IO.File]::ReadAllBytes($temporaryTrace)
+            $actualBytes = [System.IO.File]::ReadAllBytes($tracePath)
+            # 兼容 Windows PowerShell 5.1：此处不使用 PowerShell 7 的泛型方法调用语法。
+            $bytesEqual = ($expectedBytes.Length -eq $actualBytes.Length)
+            if ($bytesEqual) {
+                for ($i = 0; $i -lt $expectedBytes.Length; $i++) {
+                    if ($expectedBytes[$i] -ne $actualBytes[$i]) {
+                        $bytesEqual = $false
+                        break
+                    }
+                }
+            }
+            if (-not $bytesEqual) {
+                Add-ValidationError 'Traceability CSV stale: regenerate it from the requirements document with generate-traceability.ps1.'
+            }
+        }
+    }
+    finally {
+        if (Test-Path -LiteralPath $temporaryTrace) {
+            Remove-Item -LiteralPath $temporaryTrace -Force
+        }
+    }
+}
+
 if ($errors.Count -gt 0) {
-    $errors | ForEach-Object { Write-Error $_ }
+    # 经 [Console]::Error 逐条输出（不折行）；诊断累积后统一非零退出，不打印成功行。
+    $errors | ForEach-Object { [Console]::Error.WriteLine($_) }
     exit 1
 }
 
