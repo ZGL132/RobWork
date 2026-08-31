@@ -1,0 +1,13 @@
+=== card cmd 4: native fallback ctest Debug '^sdurws_ird_core_test$' ===
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+Test project D:/10_Source_Repos/21_robot/wt-wp01-t04-verify/out/build/industrial-robot
+    Start 80: sdurws_ird_core_test
+1/1 Test #80: sdurws_ird_core_test .............   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.03 sec
+--- exit code: 0

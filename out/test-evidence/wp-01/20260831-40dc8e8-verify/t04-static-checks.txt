@@ -1,0 +1,20 @@
+=== yml/script 禁项扫描（offscreen/Start-Job/-Parallel/并行 GUI）===
+(clean)
+=== yml 缓存路径（应仅构建依赖与包下载）===
+12:  cache:
+13-    key: industrial-robot-dependencies
+14-    policy: pull-push
+15-    paths:
+16-      - .cache/industrial-robot/dependencies/
+17-      - .cache/industrial-robot/packages/
+=== yml variables 定义（CMAKE_PREFIX_PATH 应在此而实际缺失）===
+66:  variables:
+=== PS 5.1 解析 package.ps1 ===
+PASS (PS 5.1 parse clean)
+=== yml script 行 vs 本地命令逐字符对照（五条）===
+25:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Release
+39:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Release -NoConfigure
+53:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_.*_test$' -NoConfigure
+69:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_ui_test$' -NoConfigure
+83:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+97:    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
