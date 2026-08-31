@@ -38,6 +38,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -45,6 +47,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: configure
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Release
       - name: 上传日志/CTest XML/边界报告/安装 manifest
@@ -80,6 +139,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -87,6 +148,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: build
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Release -NoConfigure
       - name: 上传日志/CTest XML/边界报告/安装 manifest
@@ -122,6 +240,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -129,6 +249,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: 模型测试
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
       - name: 上传日志/CTest XML/边界报告/安装 manifest
@@ -166,6 +343,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -173,6 +352,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: GUI 规则通道预检
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
       - name: 上传日志/CTest XML/边界报告/安装 manifest
@@ -208,6 +444,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -215,6 +453,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: check-boundaries
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
       - name: 上传日志/CTest XML/边界报告/安装 manifest
@@ -250,6 +545,8 @@ jobs:
         with:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
       - name: checkout
         run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
@@ -257,6 +554,63 @@ jobs:
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
       - name: package
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
       - name: 上传日志/CTest XML/边界报告/安装 manifest
