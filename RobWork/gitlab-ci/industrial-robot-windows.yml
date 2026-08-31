@@ -1,0 +1,91 @@
+# 工业机械臂重构·Windows x64 CI 门禁（WP-01-T04，2026-08-31 所有者裁决双文件口径）
+# 本文件为门禁契约定义：GitLab Windows Runner 接入前豁免实际执行（WP-01 计划 §9），
+# 执行通道＝.github/workflows/industrial-robot-windows.yml（步骤顺序、job 划分、缓存
+# 白名单与脚本行逐字符一致）。
+# 步骤固定：checkout → VS x64 → configure → build → 模型测试 → GUI 规则通道预检 →
+#           check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest。
+# 模型与 GUI 分离 job；阶段 A 无已注册 GUI 测试可执行文件，GUI job 冻结为
+# "GUI 规则通道预检"（以唯一已构建测试执行 run-tests 并显式声明 QT_QPA_PLATFORM=windows）；
+# 交付真实 GUI 测试目标的任务须同步切换该 job 正则。
+# CMAKE_PREFIX_PATH 双声明（WP-01 计划 §5.5）：本地＝操作员会话导出，CI＝本 variables 声明；
+# 入口脚本对前缀只记录不修改。缓存白名单仅 .cache/industrial-robot/{dependencies,packages}/，
+# 不缓存正式测试结果、结果数据库或项目快照；失败工件 when: always。
+# 集成默认分支保护：main 仅接受本门禁（六步全绿）的合并（仓库分支保护设置）。
+
+stages:
+  - industrial-robot-gate
+
+variables:
+  CMAKE_PREFIX_PATH: "$CI_PROJECT_DIR/.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows"
+
+.industrial-robot-gate-job:
+  stage: industrial-robot-gate
+  tags:
+    - windows
+    - x64
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+  cache:
+    key: industrial-robot-dependencies
+    policy: pull-push
+    paths:
+      - .cache/industrial-robot/dependencies/
+      - .cache/industrial-robot/packages/
+  before_script:
+    - 'Write-Output "checkout: $CI_COMMIT_SHA ($CI_COMMIT_REF_NAME)"'
+    - 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+    - >-
+      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+  artifacts:
+    when: always
+    paths:
+      - out/build/industrial-robot/
+      - out/logs/industrial-robot/
+
+ird-industrial-robot-configure:
+  extends: .industrial-robot-gate-job
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Release
+
+ird-industrial-robot-build:
+  extends: .industrial-robot-gate-job
+  needs:
+    - job: ird-industrial-robot-configure
+      artifacts: true
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Release -NoConfigure
+
+ird-industrial-robot-model-tests:
+  extends: .industrial-robot-gate-job
+  needs:
+    - job: ird-industrial-robot-build
+      artifacts: true
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
+
+ird-industrial-robot-gui-precheck:
+  extends: .industrial-robot-gate-job
+  needs:
+    - job: ird-industrial-robot-model-tests
+      artifacts: true
+  variables:
+    QT_QPA_PLATFORM: windows
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
+
+ird-industrial-robot-boundaries:
+  extends: .industrial-robot-gate-job
+  needs:
+    - job: ird-industrial-robot-gui-precheck
+      artifacts: true
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+
+ird-industrial-robot-package:
+  extends: .industrial-robot-gate-job
+  needs:
+    - job: ird-industrial-robot-boundaries
+      artifacts: true
+  script:
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release

@@ -1,0 +1,234 @@
+# 工业机械臂重构·Windows x64 CI 门禁执行通道（WP-01-T04，2026-08-31 所有者裁决双文件口径）
+# 与 RobWork/gitlab-ci/industrial-robot-windows.yml（门禁契约定义）的步骤顺序、job 划分、
+# 缓存白名单与脚本行逐字符一致；本文件在 GitHub Actions windows 执行机上产出真实运行记录。
+# 步骤固定：checkout → VS x64 → configure → build → 模型测试 → GUI 规则通道预检 →
+#           check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest。
+# 模型与 GUI 分离 job；阶段 A 无已注册 GUI 测试可执行文件，GUI job 冻结为
+# "GUI 规则通道预检"（以唯一已构建测试执行 run-tests 并显式声明 QT_QPA_PLATFORM=windows）；
+# 交付真实 GUI 测试目标的任务须同步切换该 job 正则。
+# CMAKE_PREFIX_PATH 双声明（WP-01 计划 §5.5）：本地＝操作员会话导出，CI＝本顶层 env 声明；
+# 入口脚本对前缀只记录不修改。CI 依赖供给（Qt/Boost/zlib 前缀）用仓库自带的 vendored vcpkg
+# 构建到 .cache/industrial-robot/dependencies/vcpkg/installed/x64-windows（与 env 声明一致）。
+# 缓存白名单仅 .cache/industrial-robot/{dependencies,packages}/，不缓存正式测试结果、
+# 结果数据库或项目快照；失败工件 if: always()（等价 yml 的 when: always）。
+# 集成默认分支保护：main 仅接受本门禁（六步全绿）的合并（仓库分支保护设置）。
+
+name: industrial-robot-windows-gate
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  CMAKE_PREFIX_PATH: ${{ github.workspace }}/.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows
+
+jobs:
+  ird-industrial-robot-configure:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: configure
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Release
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-configure
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+
+  ird-industrial-robot-build:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-configure
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-configure
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: build
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Release -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-build
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+
+  ird-industrial-robot-model-tests:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-build
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-build
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模型测试
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-model-tests
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+
+  ird-industrial-robot-gui-precheck:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-model-tests
+    env:
+      QT_QPA_PLATFORM: windows
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-model-tests
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: GUI 规则通道预检
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_core_test$' -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-gui-precheck
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+
+  ird-industrial-robot-boundaries:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-gui-precheck
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-gui-precheck
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: check-boundaries
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-boundaries
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+
+  ird-industrial-robot-package:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-boundaries
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-boundaries
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        uses: actions/cache@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
+      - name: checkout
+        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+      - name: VS x64
+        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: package
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-package
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
