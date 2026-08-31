@@ -36,7 +36,7 @@ variables:
     - 'Write-Output "checkout: $CI_COMMIT_SHA ($CI_COMMIT_REF_NAME)"'
     - 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
     - >-
-      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/eigen3')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
   artifacts:
     when: always
     paths:
