@@ -31,6 +31,6 @@
   - 选项关闭路径（2026-08-31 二次治理裁决，恢复原预期）：`cmake -S RobWork -B out\build\industrial-robot-optoff -G "Visual Studio 17 2022" -A x64 -DWITH_RWS=OFF -DBUILD_TESTING=ON -DIRD_BUILD_UI=OFF -DIRD_BUILD_BUSINESS_PLUGINS=OFF` 后构建 `sdurws_ird_core`；预期成功且无 `sdurws_ird_ui*` 目标生成（其余 9 模块目标与测试正常，无半目标）。
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1`；预期退出码 0。
 - **diff 和禁止项检查：** `git diff --name-only` 中 `rwslibs/CMakeLists.txt` 的变更仅一行 `add_subdirectory(industrialrobot)`；新增文件全部位于 `industrialrobot/` 内；旧插件目标属性零变化；公共头目录内不出现 QWidget/QApplication 包含。
-- **证据工件：** `out/logs/industrial-robot/<timestamp>/configure-default.log`、`build-core.log`、`ctest-core.log`、`configure-optoff.log`、`boundary-clean-tree.log`（含目标清单 `cmake --build out\build\industrial-robot --config Debug --target help` 摘录与依赖图）。
+- **证据工件：** `out/test-evidence/wp-01/<run-id>/configure-default.log`、`build-core.log`、`ctest-core.log`、`configure-optoff.log`、`boundary-clean-tree.log`（含目标清单 `cmake --build out\build\industrial-robot --config Debug --target help` 摘录与依赖图；原始脚本日志按脚本契约落盘 `out/logs/industrial-robot/<timestamp>/` 并复制入证据根。2026-08-31 所有者修订登记根，两级口径见 WP-01 计划 §5.4；已交付证据按账本记录保留原位置，效力不变）。
 - **提交格式：** `WP-01-T02: 建立目标骨架`
 - **停止与升级条件：** 目标依赖图与 §2.2 表冲突、`WITH_RWS=OFF` 时顶层配置无法收敛，或必须修改旧插件 CMake 才能配置成功时，停止并升级给工作包所有者；本任务实现者不得同时担任 WP-01-T03 验证者。

@@ -2,18 +2,18 @@
 
 - **Task ID / 需求 ID / ADR / 阶段：** WP-01-T04；NFR-DEP-01（Windows x64 正式验收、CI 与本机同命令）、NFR-DEP-02（安装包不依赖开发机路径）；无直接关联 ADR；阶段 A 前提 / R1。契约：`architecture/testing-contract.md`。
 - **基线 commit：** 代码基线 94fb910e8d4b1e2bb84d569cbca4aa623cbd2844；文档基线：main 当前 HEAD
-- **前置任务及必需工件：** WP-01-T03；工件：`RobWork/scripts/industrial-robot/{common,configure,build,run-tests}.ps1`（模型路径链路可用）与 WP-01-T01 的 `check-boundaries.ps1`、`out/logs/industrial-robot/<timestamp>/test.log`。
+- **前置任务及必需工件：** WP-01-T03；工件：`RobWork/scripts/industrial-robot/{common,configure,build,run-tests}.ps1`（模型路径链路可用）与 WP-01-T01 的 `check-boundaries.ps1`、`out/logs/industrial-robot/<timestamp>/test.log`。实施与验证所用 worktree 按 WP-01 计划 §5.6 环境准备模板准备（双 ini 模板复制、操作员 `CMAKE_PREFIX_PATH` 按 §5.5、out/ 重建）。
 - **允许创建/修改/删除的文件：**
   - 创建：`RobWork/gitlab-ci/industrial-robot-windows.yml`
   - 创建：`RobWork/scripts/industrial-robot/package.ps1`（Configuration/BuildDirectory/LogDirectory 参数，产出安装 manifest，不含测试数据/私有头/绝对构建路径）
-  - 写运行日志：`out/logs/industrial-robot/<timestamp>/` 与 CI 工件
+  - 写运行日志：`out/logs/industrial-robot/<timestamp>/`（原始日志）与 CI 工件；证据工件登记于 `out/test-evidence/wp-01/<run-id>/`（两级口径见 WP-01 计划 §5.4）
 - **禁止修改的文件和公共接口：** `industrialrobot/` 内 CMake 与源文件；旧插件；`requirements.md`、CSV、文档门禁脚本；T01/T03 既有脚本签名；CI 缓存不得包含正式测试结果、结果数据库或项目快照。
 - **修改前接口：** 无（仓库无 industrial-robot 流水线与打包脚本）。
-- **修改后接口：** `industrial-robot-windows.yml` 步骤固定为 checkout → VS x64 → configure → build → 模型测试 → GUI 测试 → check-boundaries → package → 上传日志/CTest XML/边界报告/依赖 JSON/安装 manifest；模型与 GUI 分离 job；缓存白名单仅构建依赖与包下载；失败上传工件；集成分支保护；yml 中每个 script 行与本地脚本命令逐字符一致（引用 `configure.ps1/build.ps1/run-tests.ps1/check-boundaries.ps1/package.ps1` 同参数）。
+- **修改后接口：** `industrial-robot-windows.yml` 步骤固定为 checkout → VS x64 → configure → build → 模型测试 → GUI 测试 → check-boundaries → package → 上传日志/CTest XML/边界报告/依赖 JSON/安装 manifest；模型与 GUI 分离 job；缓存白名单仅构建依赖与包下载；失败上传工件；集成分支保护；yml 中每个 script 行与本地脚本命令逐字符一致（引用 `configure.ps1/build.ps1/run-tests.ps1/check-boundaries.ps1/package.ps1` 同参数）。yml 以流水线变量显式定义 `CMAKE_PREFIX_PATH`（Runner 构建依赖前缀，WP-01 计划 §5.5），script 行不依赖 Runner 隐式全局、脚本仅记录该前缀不修改；CI↔本机命令一致性表增加"前缀来源"对照行（本地＝操作员环境导出，CI＝yml 变量），两种形式的证据均含实际前缀取值。
 - **实施步骤：**
   1. 先写"RED 测试"断言：本地预演中注入一步非零（如向 configure.ps1 临时传非法 SourceDirectory），确认后续步骤全部阻断。
   2. 实现 `package.ps1`：Release 配置打包＋安装 manifest（内容清单不含测试数据/私有头/绝对路径）。
-  3. 编写 `industrial-robot-windows.yml`：固定步骤顺序、模型/GUI 分离 job、缓存白名单、失败工件与分支保护。
+  3. 编写 `industrial-robot-windows.yml`：固定步骤顺序、模型/GUI 分离 job、缓存白名单、失败工件与分支保护；以流水线变量定义 `CMAKE_PREFIX_PATH`（WP-01 计划 §5.5）。
   4. 逐行对照 yml script 与本地可执行命令，形成"CI↔本机命令一致性表"。
   5. 本地按 yml 顺序复跑全部命令（脚本形式＋原生回退）并保存日志。
   6. 在 Windows Runner 触发一次流水线，保存 job 日志与工件清单作为证据。
@@ -29,7 +29,7 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release`；预期退出码 0 且生成安装 manifest。
   - 原生回退：`ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`；预期与脚本形式结果一致。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `RobWork/gitlab-ci/industrial-robot-windows.yml` 与 `RobWork/scripts/industrial-robot/package.ps1`；既有脚本零变化；yml 无 offscreen、无并行 GUI、缓存项逐一对照白名单；安装 manifest 无测试数据/私有头/绝对构建路径。
-- **证据工件：** `out/logs/industrial-robot/<timestamp>/package.log`、CI↔本机命令一致性表、Runner 流水线 job 日志与工件清单、`t04-fail-blocks` 阻断记录。
+- **证据工件：** `out/test-evidence/wp-01/<run-id>/package.log`（原始 package 日志自脚本契约目录 `out/logs/industrial-robot/<timestamp>/` 复制入根）、CI↔本机命令一致性表（含前缀来源行）、Runner 流水线 job 日志与工件清单、`t04-fail-blocks` 阻断记录。
 - **提交格式：** `WP-01-T04: GitLab Windows 门禁`
 
   - 新增 GitLab CI Windows x64 门禁 yml 配置

@@ -109,7 +109,7 @@ cmake -S RobWork -B out/build/industrial-robot -G Visual Studio 17 2022 -A x64 -
 
 ### 5.1 公共参数
 
-所有入口支持 Configuration（Debug/Release）、BuildDirectory、SourceDirectory、Generator、Platform、NoConfigure 和 LogDirectory。默认构建目录为 out/build/industrial-robot，日志目录为 out/logs/industrial-robot/<timestamp>。
+所有入口支持 Configuration（Debug/Release）、BuildDirectory、SourceDirectory、Generator、Platform、NoConfigure 和 LogDirectory。默认构建目录为 out/build/industrial-robot，日志目录为 out/logs/industrial-robot/<timestamp>（仅承载原始运行日志；任务证据登记根与两级目录分工见 §5.4）。
 
 参数路径先 Resolve-Path；输出父目录由脚本创建。每一步只消费上一步成功工件；失败保留日志并停止。脚本不得自动删除既有构建目录。
 
@@ -124,6 +124,36 @@ cmake -S RobWork -B out/build/industrial-robot -G Visual Studio 17 2022 -A x64 -
 ### 5.3 configure/build/test/package 数据流
 
 参数 → 绝对路径 → VS x64 环境 → CMake configure → cache/configure.log → build target → build.log → CTest/GUI 测试 → test.log → 边界扫描/依赖清单 → package manifest。
+
+### 5.4 证据根目录与运行日志目录（2026-08-31 所有者修订）
+
+WP-01 的验证产物采用两级目录，职责不同、不得混用：
+
+- 原始运行日志目录：`out/logs/industrial-robot/<timestamp>/`。由入口脚本按 `LogDirectory` 缺省落盘（configure/build/run-tests/package 逐命令日志），属脚本行为契约，路径与参数签名不变。
+- 任务证据根：`out/test-evidence/wp-01/<run-id>/`。任务卡"证据工件"字段、汇总表、前后结果表、独立复跑记录一律登记在此根下，状态账本 `Done` 行引用证据根路径。run-id 取 `<yyyymmdd>-<实现或基线短 SHA>-impl`（实施者）或 `<yyyymmdd>-<短 SHA>-verify`（独立验证者）；治理修订类证据用 `<yyyymmdd>-<基线短 SHA>-owner-rev` 等描述性后缀。
+
+原始日志按原文件名复制或以相对引用并入证据根；证据根内必须有可直接评审的汇总件，不能只有原始日志。已交付的历史证据按账本记录保留原位置，效力不变。本节口径与 AGENTS §5.3 及账本 `Done` 登记规则一致。
+
+### 5.5 CMAKE_PREFIX_PATH 策略（2026-08-31 所有者裁决）
+
+CMake 的 FindBoost/FindQt 依赖操作员环境前缀（当前操作员基线：Qt 6.11.1 与 vcpkg Boost 前缀，属操作员环境资产，不入库）。策略固化为"环境提供、脚本仅记录"：
+
+1. 入口脚本对 `CMAKE_PREFIX_PATH` 只记录不设置、不注入默认值、不因缺失自动修复（T03 已交付行为；T01/T03 脚本签名冻结）。前缀缺失导致的配置失败按日志中的 `<未设置>` 记录停止，由操作员环境或 CI 变量修复后重跑，不得放宽或自动重试。
+2. 本地执行时前缀由操作员在会话中导出；实施备忘与证据必须记录实际前缀取值（脚本日志已自动记录）。
+3. CI 执行时前缀由 `industrial-robot-windows.yml` 流水线变量显式定义（WP-01-T04 落地），Runner 上不依赖隐式全局环境。
+4. WP-01-T05 版本采集时把前缀的组件与版本组成（Qt、Boost/vcpkg 等）登记进环境版本记录；`industrial-robot-baseline.json` 顶层字段结构不变，不写入机器绝对路径。
+
+把前缀固化改为脚本自动设置需修改 T01/T03 冻结签名，必须另立任务卡走实现流程，不得以文档修订带入。
+
+### 5.6 新 Worktree 环境准备模板（2026-08-31 所有者修订）
+
+WP-01 任务在隔离 worktree 中实施，开工前按以下清单准备（均为操作步骤，环境资产不入库）：
+
+1. 从账本记录的前置实现 SHA（或 main HEAD）创建隔离 worktree 与 `codex/` 前缀实现分支；主工作区的用户已有修改不得带入。
+2. 复制 gitignored 双模板到新 worktree 的 `RobWork/RobWorkStudio/bin/`：`RobWorkStudio.ini.shared.in` 与 `RobWorkStudio.ini.template.static`（自主工作区同路径复制）。二者是 `RobWorkStudio/src/CMakeLists.txt` 中 configure_file/install 的输入，受 `.gitignore` 的 `[Bb]in/` 规则忽略、仓库不跟踪；缺失时配置阶段无法完成（T03 独立验证确认）。
+3. 在该 worktree 会话中导出操作员 `CMAKE_PREFIX_PATH`（§5.5）。
+4. `out/` 不入库：新 worktree 无构建树与日志，必须先 configure 再 build/run-tests；`-NoConfigure` 仅适用于同一 worktree 内的增量调用；跨 worktree 复制 `out/build` 不得作为验证依据。
+5. 开工前确认新 worktree 状态干净（除本任务允许文件外无未跟踪/未提交改动），再进入 RED。
 
 ## 6. 测试入口与 GUI 规则
 
@@ -182,7 +212,7 @@ industrial-robot-windows.yml 步骤固定为 checkout → VS x64 → configure �
 
 ## 验证
 
-WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行；配置、构建、模型测试、GUI 测试、边界扫描和打包分别保存日志。在仓库根目录执行：
+WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行；配置、构建、模型测试、GUI 测试、边界扫描和打包分别保存日志（原始日志与登记证据按 §5.4 两级目录组织）。在仓库根目录执行：
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Debug
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug
@@ -200,7 +230,7 @@ GUI 测试必须遵守 Windows Qt 启动规则；不得使用 offscreen 或同�
 
 构建评审者不得参与脚本实现，必须复核目标依赖图、Qt/旧插件边界、CMake 选项、安装白名单、5.1/7 环境入口、VS x64、Qt windows 单进程、CI 同命令和依赖 JSON。
 
-必须提交 configure/build/test/scan/package 日志、CTest XML、边界夹具结果、依赖基线 JSON、安装 manifest、环境版本和独立评审记录。
+必须提交 configure/build/test/scan/package 日志、CTest XML、边界夹具结果、依赖基线 JSON、安装 manifest、环境版本和独立评审记录；登记证据按 §5.4 组织于 `out/test-evidence/wp-01/<run-id>/`，环境版本记录含 `CMAKE_PREFIX_PATH` 实际取值（§5.5）。
 
 ## 退出条件
 

@@ -6,7 +6,7 @@
 - **允许创建/修改/删除的文件：**
   - 创建：`RobWork/scripts/industrial-robot/configure.ps1`、`build.ps1`、`run-tests.ps1`
   - 修改：`RobWork/scripts/industrial-robot/common.ps1`（追加参数/环境/日志函数，不改 T01 既有函数签名）
-  - 写运行日志：`out/logs/industrial-robot/<timestamp>/`
+  - 写运行日志：`out/logs/industrial-robot/<timestamp>/`（原始日志）；证据工件登记于 `out/test-evidence/wp-01/<run-id>/`（2026-08-31 所有者修订，两级口径见 WP-01 计划 §5.4）
 - **禁止修改的文件和公共接口：** `industrialrobot/` 内任何 CMake 与源文件；旧插件；`requirements.md`、CSV、文档门禁脚本；脚本不得自动删除既有构建目录、自动修复源码或环境变量。
 - **修改前接口：** `common.ps1` 仅有 T01 交付的路径解析与日志函数；configure/build/run-tests 三个入口不存在。
 - **修改后接口：** 三入口共用参数（WP-01 计划 §5.1）：`Configuration`（Debug/Release）、`BuildDirectory`（缺省 `out/build/industrial-robot`）、`SourceDirectory`、`Generator`、`Platform`、`NoConfigure`、`LogDirectory`（缺省 `out/logs/industrial-robot/<timestamp>`），`run-tests.ps1` 另有 `-Regex`；行为契约：仓库根解析绝对 `-S/-B` → VS x64 环境发现（cl/cmake/ctest 检查、vswhere→VsDevCmd `-arch=x64 -host_arch=x64`、找不到即失败不回退 x86/MinGW）→ configure/build/CTest 日志 → 退出码透传；GUI 路径强制 `QT_QPA_PLATFORM=windows`、单进程、绝对路径，检测到继承 `QT_*`/`QML_*` 冲突先报告并停止。
@@ -29,6 +29,6 @@
   - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'`；预期退出码 0、1/1 通过。
   - 原生回退：`cmake --build out\build\industrial-robot --config Debug --target sdurws_ird_core` 与 `ctest --test-dir out\build\industrial-robot -C Debug -R "^sdurws_ird_core_test$"`；预期与脚本形式结果一致。
 - **diff 和禁止项检查：** `git diff --name-only` 仅含 `RobWork/scripts/industrial-robot/` 四个脚本；`industrialrobot/` 与旧插件零变化；脚本不含 PowerShell 7 专属语法（除非显式声明前置）、不含 offscreen 设置或并行 GUI 启动。
-- **证据工件：** `out/logs/industrial-robot/<timestamp>/configure.log、build.log、test.log`（含命令行、退出码、环境版本记录）与四条 RED 断言前后结果表。
+- **证据工件：** `out/test-evidence/wp-01/<run-id>/configure.log、build.log、test.log`（含命令行、退出码、环境版本记录与 `CMAKE_PREFIX_PATH` 实际取值）与四条 RED 断言前后结果表；原始脚本日志按脚本契约落盘 `out/logs/industrial-robot/<timestamp>/` 并复制入证据根。2026-08-31 所有者修订登记根，两级口径见 WP-01 计划 §5.4；已交付证据按账本记录保留原位置，效力不变。
 - **提交格式：** `WP-01-T03: 统一测试入口`
 - **停止与升级条件：** VS x64 环境发现、Qt 平台规则或参数契约无法从 WP-01 计划 §5/§6 推导，或必须修改 CMake 目标才能跑通测试时，停止并升级给工作包所有者；脚本实现者不得同时担任 WP-01-T04 验证者。
