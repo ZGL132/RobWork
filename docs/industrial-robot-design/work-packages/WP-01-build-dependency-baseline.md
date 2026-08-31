@@ -9,7 +9,7 @@
 **目标：**
 - 建立 sdurws_ird_* 命名空间下的 CMake 目标骨架和单向依赖图。
 - 在干净 Windows x64 + Visual Studio 2022 环境中，用统一 PowerShell 入口完成配置、构建、模型测试和 GUI 测试。
-- 固化 Qt 平台、单进程 GUI、CTest、边界扫描、打包和 GitLab Windows Runner 规则。
+- 固化 Qt 平台、单进程 GUI、CTest、边界扫描、打包和 Windows CI 流水线规则（GitLab yml 契约＋GitHub Actions 执行通道，2026-08-31 所有者裁决）。
 - 建立 RobWork、RobWorkStudio、RobWorkSim、Qt、MSVC、碰撞后端和第三方组件的版本/许可证/哈希基线。
 
 **非目标：**
@@ -72,7 +72,8 @@ RobWork/
 │  ├─ common.ps1、configure.ps1、build.ps1、run-tests.ps1
 │  ├─ check-boundaries.ps1、package.ps1
 ├─ dependencies/industrial-robot-baseline.json
-└─ gitlab-ci/industrial-robot-windows.yml
+├─ gitlab-ci/industrial-robot-windows.yml（门禁契约定义；Windows Runner 接入前豁免实际执行，见 §9）
+└─ ../.github/workflows/industrial-robot-windows.yml（GitHub Actions 执行通道，2026-08-31 裁决新增，与 yml 命令逐字符一致）
 
 测试目录裁决：模块内 `test/`、`testdata/` 目录是测试源与夹具的规范位置（与 23 篇模块详设的文件树一致）；早期树中的顶层 `tests/<module>/` 表述由模块内目录取代，顶层不设独立测试目录。`cmake/IndustrialRobotTargets.cmake` 目标工厂显式收集模块内源文件（逐文件登记，禁止 GLOB），并把各模块内 `test/` 源编入对应 `sdurws_ird_*_test` 目标。
 
@@ -140,7 +141,7 @@ CMake 的 FindBoost/FindQt 依赖操作员环境前缀（当前操作员基线�
 
 1. 入口脚本对 `CMAKE_PREFIX_PATH` 只记录不设置、不注入默认值、不因缺失自动修复（T03 已交付行为；T01/T03 脚本签名冻结）。前缀缺失导致的配置失败按日志中的 `<未设置>` 记录停止，由操作员环境或 CI 变量修复后重跑，不得放宽或自动重试。
 2. 本地执行时前缀由操作员在会话中导出；实施备忘与证据必须记录实际前缀取值（脚本日志已自动记录）。
-3. CI 执行时前缀由 `industrial-robot-windows.yml` 流水线变量显式定义（WP-01-T04 落地），Runner 上不依赖隐式全局环境。
+3. CI 执行时前缀由流水线文件变量显式定义（`CMAKE_PREFIX_PATH`，WP-01-T04 落地于 `gitlab-ci/industrial-robot-windows.yml` variables 与 `.github/workflows/industrial-robot-windows.yml` env 双声明），执行机上不依赖隐式全局环境。
 4. WP-01-T05 版本采集时把前缀的组件与版本组成（Qt、Boost/vcpkg 等）登记进环境版本记录；`industrial-robot-baseline.json` 顶层字段结构不变，不写入机器绝对路径。
 
 把前缀固化改为脚本自动设置需修改 T01/T03 冻结签名，必须另立任务卡走实现流程，不得以文档修订带入。
@@ -161,6 +162,8 @@ WP-01 任务在隔离 worktree 中实施，开工前按以下清单准备（均�
 
 GUI 测试必须在 VS x64 环境设置 QT_QPA_PLATFORM=windows，一次只启动一个 GUI 可执行文件且使用绝对路径；禁止 offscreen、禁止 Widget/Meta 并行。发现继承 QT_* 或 QML_* 冲突时先报告并停止；Qt 平台插件初始化失败时停止进程，清理冲突变量后按相同规则重启。
 
+CTest 正则必须与当前阶段 build.ps1 已构建目标集一致（2026-08-31 所有者裁决）：T04 阶段模型测试正则冻结为 `^sdurws_ird_core_test$`（T03 冻结目标集 `sdurws_ird_core`＋`sdurws_ird_core_test`）。正则匹配到未构建目标会产生 CTest `Not Run`（非零退出码），属门禁失败语义，不得放宽退出码判定、不得跳过未运行项。构建目标集扩展的后续任务必须同步扩展正则与 CI job 命令，并保持 CI 与本机逐字符一致。
+
 ## 7. 边界扫描规则
 
 check-boundaries.ps1 违反任一规则即非零：核心公共头包含 QWidget/QApplication/旧插件头；核心链接旧插件或未登记 target；业务插件自行拼接运行时名称；业务插件声明碰撞默认值/安全距离/排除规则；安装规则含测试数据/私有头/绝对构建路径；依赖缺版本/来源/许可证/哈希/审批；脚本出现 offscreen 或 GUI 并行。
@@ -175,9 +178,14 @@ dependencies/industrial-robot-baseline.json 必须包含 schemaVersion、project
 
 ## 9. CI 门禁和工件
 
-industrial-robot-windows.yml 步骤固定为 checkout → VS x64 → configure → build → 模型测试 → GUI 测试 → check-boundaries → package → 上传日志/CTest XML/边界报告/依赖 JSON/安装 manifest。
+门禁采用双文件口径（2026-08-31 所有者裁决，用户授权；依据：仓库 remote 为 GitHub `github.com/ZGL132/RobWork`，无 GitLab 实例与 Windows x64 Runner，独立验证报告 `out/test-evidence/wp-01/20260831-40dc8e8-verify/` §5.2 要求书面豁免入档）：
 
-缓存只允许构建依赖和包下载，不缓存正式测试结果、结果数据库或项目快照。集成分支必须同时通过构建、模型测试、GUI 测试、边界扫描和依赖审计。
+- `RobWork/gitlab-ci/industrial-robot-windows.yml` 为门禁契约定义：步骤固定为 checkout → VS x64 → configure → build → 模型测试 → GUI 通道预检 → check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest；其 Windows Runner 实际执行在 Runner 接入前豁免（不删除、保持命令集最新）。
+- `.github/workflows/industrial-robot-windows.yml` 为执行通道（GitHub Actions、windows-latest）：与 yml 的步骤顺序、job 划分、缓存白名单、脚本行逐字符一致，产出真实运行记录。
+- 模型与 GUI 分离 job；阶段 A 无已注册 GUI 测试可执行文件，GUI job 冻结为 GUI 规则通道预检（以唯一已构建测试执行 run-tests 并显式声明 `QT_QPA_PLATFORM=windows`）；交付真实 GUI 测试目标的任务须同步切换该 job 正则。
+- `CMAKE_PREFIX_PATH` 在两份流水线文件中双声明（§5.5）；CI↔本机命令一致性表逐 job 对照两文件的脚本行，并含"前缀来源"行（本地＝操作员会话导出，CI＝流水线变量）。
+
+缓存只允许构建依赖和包下载（`.cache/industrial-robot/{dependencies,packages}/`），不缓存正式测试结果、结果数据库或项目快照。集成分支必须同时通过构建、模型测试、GUI 通道预检、边界扫描和打包门禁。门禁证据口径：本地按流水线步骤顺序逐字符复跑（脚本＋原生双形式）为主证据；GitHub Actions 运行记录（job 日志与工件清单）为流水线执行证据；Runner 侧依赖供给不可行时停止并升级集成负责人，不得以本地日志冒充 CI 记录。
 
 ## 10. 任务清单和详细实施步骤
 
@@ -190,8 +198,8 @@ industrial-robot-windows.yml 步骤固定为 checkout → VS x64 → configure �
 ### WP-01-T03 统一测试入口
 实现参数和绝对路径；实现 VS x64 发现和版本记录；实现 configure/build/CTest 日志；实现 Windows Qt、单进程和冲突变量检查；分别验证模型与 GUI 路径。
 
-### WP-01-T04 GitLab Windows 门禁
-创建 Windows Runner job、缓存白名单、模型/GUI 分离 job、失败工件和分支保护；注入脚本失败确认后续 job 阻断。
+### WP-01-T04 CI Windows 门禁
+维护 GitLab yml 门禁契约定义与 GitHub Actions 执行通道（同命令集、缓存白名单、`CMAKE_PREFIX_PATH` 双声明）、模型/GUI 分离 job、失败工件和分支保护；模型测试正则与已构建目标集收敛（`^sdurws_ird_core_test$`）；package 按已构建目标集收集出包（禁全树安装）；注入脚本失败确认后续 job 阻断。
 
 ### WP-01-T05 依赖与 API 基线
 采集 RobWork 家族、Qt、MSVC、SDK、碰撞后端和第三方版本；生成 JSON；对未批准依赖编写阻断测试和 ADR；独立评审 CMake 与基线一致性。
@@ -216,7 +224,7 @@ WP-01 验证必须在仓库根目录、Visual Studio x64 开发环境中执行�
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Debug
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Debug
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_.*_test$'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Debug -Regex '^sdurws_ird_core_test$'
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
 
@@ -237,7 +245,7 @@ GUI 测试必须遵守 Windows Qt 启动规则；不得使用 offscreen 或同�
 - 干净 Windows x64 环境可用统一入口完成配置、构建和测试。
 - 核心目标无 Qt Widgets、旧业务插件和未审批依赖。
 - 模型测试与 GUI 测试按 Windows 规则单独可执行。
-- GitLab Runner 与本机使用相同脚本、参数和工件格式。
+- CI 执行通道（GitHub Actions）与本机使用相同脚本、参数和工件格式；GitLab Windows Runner 接入前按 2026-08-31 裁决豁免其实际执行，以 GitHub Actions 运行记录替代（§9）。
 - 依赖/API/许可证基线完整，未审批新增依赖为 0。
 - 边界夹具、失败传播、安装白名单和回滚测试全部通过。
 
@@ -248,5 +256,5 @@ GUI 测试必须遵守 Windows Qt 启动规则；不得使用 offscreen 或同�
 - [WP-01-T01 构建边界失败测试](../agent-tasks/WP-01-T01-boundary-tests.md)
 - [WP-01-T02 建立目标骨架](../agent-tasks/WP-01-T02-cmake-skeleton.md)
 - [WP-01-T03 统一测试入口](../agent-tasks/WP-01-T03-test-entry.md)
-- [WP-01-T04 GitLab Windows 门禁](../agent-tasks/WP-01-T04-gitlab-gate.md)
+- [WP-01-T04 CI Windows 门禁](../agent-tasks/WP-01-T04-gitlab-gate.md)
 - [WP-01-T05 依赖与 API 基线](../agent-tasks/WP-01-T05-dependency-baseline.md)
