@@ -38,9 +38,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
@@ -73,9 +73,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
@@ -108,9 +108,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
@@ -145,9 +145,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
@@ -180,9 +180,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
@@ -215,9 +215,9 @@ jobs:
           path: .cache/industrial-robot/dependencies
           key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('vcpkg/versions/baseline.json') }}
       - name: checkout
-        run: Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
       - name: VS x64
-        run: Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
           if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/qtbase')) { & .\vcpkg\vcpkg.exe install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time zlib --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
