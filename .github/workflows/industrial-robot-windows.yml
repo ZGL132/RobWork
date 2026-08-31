@@ -62,7 +62,7 @@ jobs:
       - ird-industrial-robot-configure
     steps:
       - uses: actions/checkout@v4
-      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:
           name: ird-gate-configure
@@ -97,7 +97,7 @@ jobs:
       - ird-industrial-robot-build
     steps:
       - uses: actions/checkout@v4
-      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:
           name: ird-gate-build
@@ -134,7 +134,7 @@ jobs:
       QT_QPA_PLATFORM: windows
     steps:
       - uses: actions/checkout@v4
-      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:
           name: ird-gate-model-tests
@@ -169,7 +169,7 @@ jobs:
       - ird-industrial-robot-gui-precheck
     steps:
       - uses: actions/checkout@v4
-      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:
           name: ird-gate-gui-precheck
@@ -204,7 +204,7 @@ jobs:
       - ird-industrial-robot-boundaries
     steps:
       - uses: actions/checkout@v4
-      - name: 下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:
           name: ird-gate-boundaries
