@@ -1,0 +1,18 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/CMakeLists.txt b/RobWork/RobWorkStudio/src/rwslibs/CMakeLists.txt
+index cf53e88..92c64e1 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/CMakeLists.txt
++++ b/RobWork/RobWorkStudio/src/rwslibs/CMakeLists.txt
+@@ -35,6 +35,13 @@ add_subdirectory(swig)
+ add_subdirectory(luaeditor)
+ add_subdirectory(lua)
+ 
++# ── industrialrobot（工业机械臂设计软件产品代码，2026-09-09 接入）──
++# 补丁登记: industrialrobot/patches/PATCHES.md（SA-02；option 默认 OFF，零影响基线构建）
++option(RWS_BUILD_INDUSTRIALROBOT "Build the industrial robot design product modules" OFF)
++if(RWS_BUILD_INDUSTRIALROBOT)
++    add_subdirectory(industrialrobot)
++endif()
++
+ # Propagate libraries to parent directory
+ set(RWS_PLUGIN_LIBRARIES
+     ${RWS_PLUGIN_LIBRARIES}

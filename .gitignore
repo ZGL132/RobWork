@@ -120,3 +120,8 @@ pythonenv*/
 .spath.rwplay
 serialdev-out.txt
 *.rwplay
+
+# -------------------------------------------------------------
+# Root-level build output (product build tree)
+# -------------------------------------------------------------
+build/
