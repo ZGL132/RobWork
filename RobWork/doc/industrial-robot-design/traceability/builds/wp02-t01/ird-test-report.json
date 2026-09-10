@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T01",
+  "masterWp": "WP-02-T01",
+  "branch": "wp02-t01",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，经 find_package(GTest CONFIG REQUIRED) 接入——DTB §5.5 定稿机制；gtest 首装已随 WP-03-T01（≙CORE-T01）执行并登记于 DTB §4.4 定稿行『gtest:x64-windows@1.18.0（installed/x64-windows，动态库）』，本任务为 testkit 侧接入并核验安装与登记在位：installed/vcpkg/info/gtest_1.18.0_x64-windows.list＋§4.4 行原文——契约验收第 2 条〔CR-07〕）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "INTERFACE 占位升级为 STATIC；C++17；PUBLIC 链 sdurws_ird_core（T-2 唯一许可单元边，O-21 落位即建立）；编译定义注入 IRD_TESTDATA_DEFAULT_DIR；CMake 缓存变量 SDURWS_IRD_TESTDATA_DIR 落位（编译默认＝industrialrobot/testdata，实体目录随 TK-T03 建立——单元卡变更记录 v0.3 偏差登记）"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "链接 GTest::gtest_main＋sdurws_ird_testkit；ird_add_gtest 宏注册 add_test＋_report XML 目标（沿用 core 先例）；vcpkg 动态库经 TARGET_RUNTIME_DLLS 拷贝"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "TestPaths",
+      "designRef": "units/testkit.md §4.6（数据根定位三态）",
+      "cases": [
+        { "name": "TestPaths.EnvVarOverridesDefault_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、testkit.md §4.6 规则 1（env 优先且不校验存在性——env 态原样返回）" },
+        { "name": "TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、§4.6 规则 2 前半（默认存在→原样返回）" },
+        { "name": "TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、§4.6 规则 2 后半（缺失态→TestKitError(env-unavailable)）；纯函数层＋公共 API 层双层" },
+        { "name": "TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、空串归一语义（MSVC CRT 无 unsetenv 的跨平台归一点）" },
+        { "name": "TestPaths.DefaultFallback_Adaptive_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、§4.6＋§3.6（编译默认指向 industrialrobot/testdata，尾段钉住 CMake 注入链）" },
+        { "name": "TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-01、§3.4 布局投影（golden/<id>、tolerance/<id>）＋抛错透传（不吞错返回半截路径）" },
+        { "name": "TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "testkit.md §5/§7.2（kind/助记码/what 前缀三要素；五枚举助记码逐项钉住）" }
+      ]
+    },
+    {
+      "suite": "TkBuild",
+      "designRef": "units/testkit.md §8 TK-BUILD（前两用例）",
+      "cases": [
+        { "name": "TkBuild.SourceTreeReachable_TK_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-BUILD 自检锚定（防扫描空集恒真，验收协议 4.5）" },
+        { "name": "TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-BUILD 用例一源码面（T-2：仅 core＋自身；R-3/NFR-MNT-01 零 Qt）——链接面由 testkit/CMakeLists.txt 配置期守卫（含 gtest 库级链接禁止，D-06）" },
+        { "name": "TkBuild.ProductSourcesZeroTestkitInclude_T1", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-BUILD 用例二源码面（T-1：产品单元零 testkit 头；O-21 自律载体）——链接面由 core 侧配置期守卫钉住" }
+      ]
+    }
+  ],
+  "summary": { "total": 10, "passed": 10, "failed": 0, "modes": { "smoke": "10/10", "integration": "10/10" } },
+  "failureCapabilitySelfCheck": {
+    "method": "三层探针：①向 testkit/src 注入含 #include <QWidget> 的探针＋向 core/include 注入含 #include <sdurws/ird/testkit/TestPaths.hpp> 的探针（TkBuild 为运行期源码扫描，无需重编译）；②临时变异 TestPaths.cpp——goldenDataRoot 向 resolveDataRoot 传 nullptr（模拟忽略环境变量）后重编译。全部探针/变异验证后清除并复验",
+    "result": "①KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3 与 ProductSourcesZeroTestkitInclude_T1 如期变红（探针删除后复绿）；②EnvVarOverridesDefault_NFR_COR_01 与 DatasetAndToleranceDirLayout_NFR_COR_01 如期变红（变异还原重编译后复绿，最终 10/10）——红线与行为用例均具备真实失败能力",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t01/smoke-build.log",
+      "traceability/builds/wp02-t01/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t01/integration-build.log",
+      "traceability/builds/wp02-t01/integration-fullbuild.log",
+      "traceability/builds/wp02-t01/sdurws_ird_testkit_test-integration.xml"
+    ]
+  },
+  "notExecuted": [
+    "ird_gates：未执行——门禁随 WP-01-T01 落地，尚未建成（AGENTS.md §6.3 如实标注）"
+  ],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已确认）；find_package(GTest CONFIG REQUIRED) 配置成功（契约验收第 3 条的 blocked 分支未触发，机制为 REQUIRED 失败即停、无第二框架渠道）"
+}
