@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "WP-01-T01",
+  "branch": "wp01-t01",
+  "generatedAt": "2026-09-10T18:35:00+08:00",
+  "executor": "PIPE v1.7 §0.4 单会话实施者角色（tick 27e331f3）",
+  "summary": "ird_gates 依赖红线与补丁门禁：双模式构建零错误，引擎自测 8/8 通过（干净夹具无误报＋7 类植入违例全部按预期检出），真实单元树现状零命中",
+  "verifications": [
+    {
+      "id": "VERIFY-1",
+      "name": "集成模式 ird_gates 目标（契约 verify 第 1 条）",
+      "command": "cmake --build build --config Release --target ird_gates",
+      "result": "pass",
+      "exitCode": 0,
+      "evidence": "ird-gates-run-integration.log"
+    },
+    {
+      "id": "VERIFY-2",
+      "name": "全量集成构建零错误（DoD 第 1 条）",
+      "command": "cmake --build build --config Release",
+      "result": "pass",
+      "exitCode": 0,
+      "evidence": "integration-build-full.log"
+    },
+    {
+      "id": "VERIFY-3",
+      "name": "独立冒烟模式 ird_gates 目标（带 vcpkg toolchain）",
+      "command": "cmake -S .../industrialrobot -B <temp> -DCMAKE_TOOLCHAIN_FILE=<abs vcpkg.cmake> && cmake --build <temp> --target ird_gates",
+      "result": "pass",
+      "exitCode": 0,
+      "evidence": "ird-gates-run-smoke.log"
+    },
+    {
+      "id": "VERIFY-4",
+      "name": "门禁引擎自测（DTB §2.2 验收第 5 条：未登记例外被门禁检出即失败，含用例验证）",
+      "command": "ird_gates 目标内置：pass_clean 干净夹具期望通过；fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2 七类植入违例期望失败且输出对应命中码",
+      "result": "pass",
+      "detail": "8/8 用例符合预期：1 通过＋7 检出（IRD-GATE-R1/T1/R5/SUB/R3/R4/T2）；另做 GRAPH 反向验证（伪造依赖图触发 IRD-GATE-GRAPH 双向命中）",
+      "evidence": "ird-gates-run-utf8.log"
+    },
+    {
+      "id": "VERIFY-5",
+      "name": "文档校验（契约 verify 第 2 条）",
+      "command": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "result": "pass",
+      "detail": "PASS (20 units, 12 trace entries, 139 task files)",
+      "evidence": "本报告同批次会话输出"
+    },
+    {
+      "id": "VERIFY-6",
+      "name": "契约机器三查自查（PIPE 队列真读校验同源）",
+      "command": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 RobWork/doc/industrial-robot-design/tasks/WP-01-T01.json",
+      "result": "pass",
+      "detail": "validate-task: PASS (1 tasks)",
+      "evidence": "本报告同批次会话输出"
+    }
+  ],
+  "irdGatesResult": {
+    "hitCount": 0,
+    "selftestCases": {
+      "total": 8,
+      "passed": 8
+    },
+    "checksCovered": ["R-1", "R-2", "R-3", "R-4", "R-5", "T-1", "T-2", "SUB(表外边)", "GRAPH(数据源一致性)", "LIB(框架登记库)", "SA-02(工作区补丁核对)"]
+  },
+  "notes": [
+    "ird_gates 为本任务自身交付物：AGENTS §4.1『ird_gates 自查』项在引擎落地并自测通过后即为已执行（非跳过）",
+    "gtest XML 不适用：本任务无 C++ 测试目标新增（ird_gates 为 cmake -P 脚本门禁，自测内建于目标）",
+    "门禁命中码与检查范围定义见 cmake/ird_gates.cmake 文件头注释"
+  ]
+}
