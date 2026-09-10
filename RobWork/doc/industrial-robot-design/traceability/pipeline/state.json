@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 45,
+  "tickCount": 46,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "fix": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T06:30:54+08:00",
+    "updatedAt": "2026-09-11T06:37:40+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -263,7 +263,7 @@
       ]
     },
     "strictQueueOrder": true,
-    "autoDiscovery": false,
+    "autoDiscovery": true,
     "unitCheckpoint": false,
     "unitCheckpointExemptFirstUnit": true,
     "firstUnitCheckpointExempted": true,
@@ -284,5 +284,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "47a9f1a7-2a7e-47bd-ac0d-0907b3ecbdd6"
+  "tickToken": "f52c0cf4-bfa9-4faa-a055-a7b5f32b8697"
 }

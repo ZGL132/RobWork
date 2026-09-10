@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DOC-T09",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "diagnostics 主链整链编译放行（DIAG-T02~T11）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": ["contract-compilation.md", "units/diagnostics.md#11", "traceability/contract-compile-log.md"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/foundation/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["completed-diagnostics-task-contracts", "compile-log-entries"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T02.json"
+  ],
+  "branch": "doc-t09",
+  "interUnit": false,
+  "acceptance": [
+    "DIAG-T02~T11 十份 planned 契约逐份回填：非空 requirements（承接 diagnostics.md §2 需求表）、锚定 designRefs（diagnostics.md 对应章节）、真实 dependsOn、branch 字段（wp09-t02~t11，≙ 映射）、允许/禁止文件、完成态验证命令与逐条 acceptance",
+    "放行策略（所有者 2026-09-11 B 模式预授权，沿用 DOC-T04 整链放宽口径）：十份全部置 ready 并按拓扑序 DIAG-T02→T03→T04→T05→T06→T07→T08→T09→T10→T11 登记（入队由 autoDiscovery 自动追加队尾）",
+    "本单元无硬 O 项阻塞：诊断契约基类型已在 CORE-T07 实现（core↔diagnostics 责任边界按卡内口径）；若实施中发现新阻塞按停止条件上报",
+    "validate-docs 通过；十份契约逐份 validate-task 三查通过；放行逐份登记 traceability/contract-compile-log.md（一行一契约，注明放宽依据）"
+  ],
+  "note": "2026-09-11 补建（所有者 B 模式预授权序列第 4 批）：diagnostics 为 ui 链（UI-T13）的跨单元依赖提供方（DIAG-T10）。"
+}
