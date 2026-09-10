@@ -11,6 +11,8 @@
 
 **当前活跃开发区域只有一个**：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/`（下称 `industrialrobot/`）。框架其余部分（`RobWork/`、`RobWorkSim/`、`RobWorkStudio/` 其他源码）除非有 patches 登记，一律视为只读。
 
+**★ 分支红线（先读）**：唯一开发分支是 **`redesign-main`**；`main` 为旧主分支，已冻结（停在 `49a9e81`）**不再维护，禁止一切新提交**——详见 §6.2。
+
 ---
 
 ## 1. 目录速览
@@ -209,11 +211,14 @@ RobWork/doc/industrial-robot-design/
 
 **规则**：不重定义、不收窄、不扩大需求语义；实现与任务卡有偏差必须按 DTB §5.4 登记（单元卡增量修订），不允许"代码先行、文档失实"。
 
-### 6.2 分支与提交（DTB §5.6）
+### 6.2 分支与提交（★ 含分支红线）
 
-- 分支：短生命周期 `wp<nn>-t<kk>`（如 `wp03-t02`），DoD 达成后合入 `main`；纯文档修订可直接 main 小步提交。
+**★ 分支红线：`main` 是旧主分支，已冻结不再维护——禁止向 `main` 提交（commit）、合并（merge）或推送（push）任何新内容**，本地与远程 `origin/main` 均不得改动；本仓库在新项目接入时曾错误地把新项目提交到 `main`，该状态已回退，不得重演。当前**唯一开发主线是 `redesign-main`**，一切后续改动只能在 `redesign-main` 及其任务分支上进行：
+
+- 分支：一切工作基于 `redesign-main`；实现任务使用短生命周期分支 `wp<nn>-t<kk>`（如 `wp03-t02`），DoD 达成后合入 `redesign-main`；纯文档修订可直接在 `redesign-main` 小步提交。
 - 提交信息：`[WP-nn-Tkk] <摘要>`（代码与其测试同一提交）；文档修订 `[DTB] v0.x: <摘要>` 或对应文档代号。
 - 完成状态随实现提交登记，不积压。
+- 若发现改动误落到了 `main`（如切错分支）：**立即停止并在 `redesign-main` 侧报告**，不得在 `main` 上叠加修正提交，也不得擅自强推改写远程分支历史。
 
 ### 6.3 ★ 每次修改代码后必须提交并同步远程
 
@@ -259,7 +264,7 @@ RobWork/doc/industrial-robot-design/
 
 #### 推送远程
 
-- 每次提交后立即 `git push` 到 `origin`（任务分支推 `origin wp<nn>-t<kk>`；合入 `main` 后推 `origin main`）。
+- 每次提交后立即 `git push` 到 `origin`（任务分支推 `origin wp<nn>-t<kk>`；合入 `redesign-main` 后推 `origin redesign-main`；**任何情况下不得推送 `main`**）。
 - 推送失败（网络/权限/非快进）时：先 `git pull --rebase` 解决分歧再推；仍然失败则**停在原地报告**，不得用 `--force` 强推覆盖远程历史。
 - 禁止改写已推送的提交历史（不 rebase/amend 已在远程的提交）。
 
