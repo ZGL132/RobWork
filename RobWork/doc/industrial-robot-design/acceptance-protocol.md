@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.2（2026-09-10 审核修复：独立 worktree、记录命名序号、findings 消账核对） |
+| 文档版本 | v1.3（2026-09-10 二轮审查修复：按 SHA 的 detached worktree、验收记录独立分支回传、送验对象冻结） |
 | 文档代号 | ACC |
 | 上游 | development-task-breakdown.md §5.7（三段式会话流程的所有者）、AGENTS.md §6.3/§6.4（提交与循环约定）、automation-pipeline.md §8 附录 C（验收者提示词模板） |
 | 适用范围 | 一切按 canonical 任务契约（tasks/foundation/*.json，状态 ready）实施的编码任务；纯文档任务可用其精简版（仅第 4.1/4.6/4.7/4.8 项） |
@@ -21,9 +21,10 @@
 
 ## 3. 验收执行环境
 
-- **独立 worktree（v1.2）**：验收一律在独立 worktree 建立（`git worktree add <临时目录> <任务分支>`，先例：CORE-T01 验收因并行会话占用工作树被迫临时开 worktree——v1.2 起固化为标准动作），不占用流水线/实施工作树；验收结束删除该 worktree 或在记录中登记保留位置。
+- **送验对象冻结（v1.3）**：验收请求必须携带 40 位 `headSha`（实施分支尖端），验收全程按该 SHA 进行；验收期间及之后**任何人不得向任务分支追加提交**——若发现 `origin/<分支>` ≠ headSha，视为分支漂移，验收 fail（阻断级）并报告。验收通过的是该 SHA，不是分支引用。
+- **复现现场（v1.3）**：在独立 worktree 建立——`git worktree add --detach <临时目录A> <headSha>`（**detached @ SHA，不用分支名**：任务分支可能仍被实施工作树检出，按分支建 worktree 会直接失败；且 detached 保证复现对象就是送验对象）。
+- **记录回传（v1.3，防记录随临时 worktree 消亡）**：验收记录不落在临时目录——`git worktree add -b acc/<taskId> <临时目录B> origin/redesign-main`，记录写入 B 内 `traceability/acceptance/` 后 commit 并 `push origin acc/<taskId>`；**确认推送成功后才允许删除两个 worktree**。验收者向编排者输出三元组 `{branch: acc/<taskId>, path, commit}`，由编排者写入 state.acceptanceRecord（PIPE §0.2）。记录分支随后续收尾随代码一起合入（先例：CORE-T01 验收记录先于代码合入 redesign-main）。
 - 干净构建树：集成模式**重新配置**（含 `-DRWS_BUILD_INDUSTRIALROBOT=ON`，确认缓存 `:BOOL=ON`）；独立冒烟模式另配临时目录（冒烟命令须带 vcpkg toolchain 参数，见 AGENTS.md §4.1——CORE-T01 验收 G-2 教训）。
-- `git fetch origin` 后切换到任务分支；diff 范围以验收请求中的 base..head 为准。
 - 验证脚本（调用口径见 DTB §5.1，脚本对 -File/-Command 两种调用方式自检仓库根）：`validate-docs.ps1` / `validate-task.ps1 -TaskFile <契约>` / `verify-task.ps1 -TaskFile <契约>`（可先 `-DryRun` 核对解析与环境）/ `validate-state.ps1`（涉流水线状态时）。
 
 ## 4. 验收清单（逐项出证据，11 项）
@@ -44,7 +45,7 @@
 
 ## 5. 裁决输出与记录
 
-- 产出 `pass` / `fail`，写入 `traceability/acceptance/<taskId>-<YYYYMMDD>.md`；**同日对同一任务的再次验收追加序号 `-r2`、`-r3`（v1.2）**——fail→返工→重新全量验收是常态路径，禁止同名覆盖既有记录。记录内容：verdict、逐项证据（4.1~4.11）、发现的问题清单（分级：阻断/建议）、验收者环境说明。
+- 产出 `pass` / `fail`，写入 `traceability/acceptance/<taskId>-<YYYYMMDD>.md`；**同日对同一任务的再次验收追加序号 `-r2`、`-r3`（v1.2）**——fail→返工→重新全量验收是常态路径，禁止同名覆盖既有记录。记录内容：verdict、逐项证据（4.1~4.11）、发现的问题清单（分级：阻断/建议）、验收者环境说明。**记录必须经 §3 记录回传流程落在 `acc/<taskId>` 分支并推送后，验收才算完成（v1.3）**——留在未推送临时目录里的记录不构成证据。
 - **建议级问题强制转登（v1.2）**：验收发现的一切建议级问题逐条登记 `traceability/findings.json`（编号 F-xxx 顺延，含来源、处置建议、责任方、状态 open/fixed）——只写进验收记录"留档"不构成闭环（CORE-T01 的 G-1~G-4 因无跟踪机制搁置，为反面先例）。
 - **pass 判据**：4.1~4.11 全部通过且无阻断级问题；建议级问题可随验收记录留档并按上条转登，不阻塞合入。
 - **fail 判据**：任一阻断级问题（范围越界、构建/测试不可复现、红线命中、注释缺失必填项、4.11 任一项命中、验收粉饰）。
@@ -61,4 +62,5 @@
 | --- | --- | --- |
 | v1.0 | 2026-09-10 | 随 DTB v0.6 建立：三段式（实施→验收→合入）流程的验收协议；10 项对抗式清单、独立性要求、裁决记录格式 |
 | v1.1 | 2026-09-10 | 新增第 4.11 条偷懒/缩水实现扫描（TODO/stub/空实现扫描、acceptance 逐条证据表、测试强度）；pass/fail 判据同步为 4.1~4.11；配合 automation-pipeline v1.1 防偷懒纪律 |
-| v1.2 | 2026-09-10 | 审核修复：①§3 验收固定使用独立 worktree（CORE-T01 先例固化）＋冒烟 toolchain 口径＋脚本调用方式无关说明＋validate-state.ps1 入清单；②§5 验收记录同日多次加 -rN 序号（防同名覆盖）；③§4.8/§5 增 findings.json 消账核对与建议级问题强制转登（发现闭环，配合 PIPE v1.3 §7） |
+| v1.2 | 2026-09-10 | 审核修复：①§3 验收固定使用独立 worktree＋冒烟 toolchain 口径＋脚本调用方式无关说明＋validate-state.ps1 入清单；②§5 验收记录同日多次加 -rN 序号（防同名覆盖）；③§4.8/§5 增 findings.json 消账核对与建议级问题强制转登（发现闭环，配合 PIPE v1.3 §7） |
+| v1.3 | 2026-09-10 | 二轮审查修复（P0-2/P1-3）：①§3 送验对象冻结（40 位 headSha；分支漂移＝阻断级 fail）；复现现场改 detached worktree@headSha（按分支名建 worktree 在分支被实施树检出时直接失败）；②§3 记录回传流程——记录落 `acc/<taskId>` 分支（基于 origin/redesign-main）commit＋push，推送成功才许删 worktree，输出 {branch,path,commit} 三元组由编排者写入 state.acceptanceRecord；③§5 记录完成判据补推送要求；④与 PIPE v1.4 附录 C 模板（T-ACC v2）同步 |

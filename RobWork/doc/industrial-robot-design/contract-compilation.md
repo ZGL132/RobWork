@@ -2,11 +2,11 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.0（2026-09-10 建立，随自动化流水线 v1.3 审核修复生效） |
+| 文档版本 | v1.1（2026-09-10 二轮审查修复：interUnit/branch 必填化、留痕册建册补录） |
 | 文档代号 | CCP |
 | 上游 | development-task-breakdown.md §2/§8（任务行登记与契约家族归属）、units/&lt;unit&gt;.md 任务拆分表（编译源）、acceptance-protocol.md §2（评审独立性）、automation-pipeline.md §0（阅读阶梯的前提） |
 | 适用范围 | `tasks/` 与 `tasks/foundation/` 下一切执行契约的 planned→ready 编译，及 ready 契约的后续修订 |
-| 留痕载体 | 编译评审结论追加登记 `traceability/contract-compile-log.md`（一行一契约） |
+| 留痕载体 | 编译评审结论追加登记 `traceability/contract-compile-log.md`（一行一契约；v1.1 建册并补录既有 10 份 ready/done 契约——含 branch/interUnit/knownPitfalls 逐份判定） |
 
 ## 0. 为什么需要本协议
 
@@ -29,9 +29,10 @@
 | `designRefs` | 每条 `path#锚点`：锚点指向卡内任务行所在节＋直接支撑实现的接口/数据模型节；`traceability/**` 等过程留痕文件可整读、不强制锚点。机器校验：设计文档锚点必须真实存在（validate-task ②）——锚点失真＝实施者读错章节＝静默实现偏差 |
 | `allowedFiles` / `forbiddenFiles` | 允许面精确到目录 `/**` 或逐文件；**需要同步的治理文档必须显式列入 allowedFiles**（CORE-T01 教训：allowedFiles 不含文档路径，留痕被迫拆提交）；forbiddenFiles 至少含上游需求/架构正文 |
 | `verify` | 每条可在仓库根独立执行、结论二元可判；脚本调用口径见 DTB §5.1 |
+| `branch` | 任务分支名（v1.1 必填，ready 门槛）：`wp<nn>-t<kk>`（单元任务按 ≙ 映射，如 TK-T01→wp02-t01）或治理族 `doc-t<nn>` 等 `<前缀>-t<序号>` 小写句法；PIPE queue 结构化条目与本字段同名同值（唯一来源在此，queue 只携带指针） |
+| `interUnit` | **必填 bool（v1.1 收紧：缺字段即校验失败，不再容忍省略）**：任务是否消费/产出跨单元公共接口——含构建层建立单元间依赖边（如 T01 落位建立 unit→core 边，T-2 白名单边也算跨单元交互）；纯单单元/纯治理任务为 false。判定依据须能在编译评审中陈述（见 traceability/contract-compile-log.md 补录批次的逐份判定先例） |
 | `acceptance` | **逐条可独立验证**：每条映射卡内 UT 编号/具名测试、可复现命令或可核对产物形态，条目数与卡内任务行"完成条件"对齐；**禁止**"实现本文对应任务行定义的接口和不变量"式泛化文案 |
-| `interUnit` | bool：任务是否消费/产出跨单元公共接口（消费他人公共头、或其产出被其他单元消费，即 true） |
-| `knownPitfalls` | `interUnit=true` 必填：与本任务接口/数据相关的已登记语义陷阱（单元卡 §10.2 类 P-xx、`traceability/foundation-contract-review.md` 的 CR-xx、DTB §4 的 O-xx），每条附一句处置约束或 blocked 触发条件。机器校验 ID 句法（validate-task ③）。**陷阱随契约走**——阅读阶梯禁止通读，实施者不该被指望自己翻三处登记册 |
+| `interUnit=true 时` | `knownPitfalls` 必填：与本任务接口/数据相关的已登记语义陷阱（单元卡 §10.2 类 P-xx、`traceability/foundation-contract-review.md` 的 CR-xx、DTB §4 的 O-xx），每条附一句处置约束或 blocked 触发条件。机器校验 ID 句法（validate-task ③）。**陷阱随契约走**——阅读阶梯禁止通读，实施者不该被指望自己翻三处登记册；interUnit=false 时可自愿登记（如 WP-01-T01 的 O-21/O-12） |
 | `note` | 编译决策、豁免依据、与卡行的既登记偏差 |
 
 ## 3. 编译步骤（七步）
@@ -58,3 +59,4 @@
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v1.0 | 2026-09-10 | 随流水线 v1.3 审核修复建立：编译角色与时机、逐字段 ready 门槛（含 interUnit/knownPitfalls"陷阱随契约走"）、七步编译与独立评审、编卡任务质量标准、契约缺陷处置路径 |
+| v1.1 | 2026-09-10 | 二轮审查修复（P1-4：门槛此前实际未生效）：①interUnit 由"建议 bool"收紧为 ready/done 必填 bool（validate-task 缺字段即失败——此前 139/139 份契约集体缺失等于守卫被绕空）；②新增 branch 必填字段（PIPE v1.4 结构化 queue 的唯一来源）；③traceability/contract-compile-log.md 建册，既有 10 份 ready/done 契约按补录批次登记（branch/interUnit/knownPitfalls 逐份判定留痕），后续编译不再有补录 |

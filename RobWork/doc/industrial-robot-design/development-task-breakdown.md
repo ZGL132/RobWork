@@ -685,7 +685,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | 第三方依赖 | 一律经 vcpkg（仓库根、经典模式、无 manifest）；禁源码 vendor 与第二渠道；新增依赖先在本文增量修订登记 |
 | Qt | 仅 L3 及以上按层规则允许（ui 界面目标 Widgets 唯一例外，§4.5）；L2 计算内核与业务计算库零 Qt（R-3） |
 | 语言/工具链 | MSVC 2022 x64（现有构建树）；门禁脚本用 CMake 脚本模式（`cmake -P`）＋git，零 Python |
-| 治理脚本口径（v0.9） | 调用方式 `pwsh -File`（pwsh 7.6.5 已装）或 `powershell -File`（5.1 系统自带）均可——脚本对仓库根做三段自检解析（显式 -RepoRoot > $PSScriptRoot > MyInvocation），与调用方式无关（findings F-001 修复口径）；脚本清单：validate-docs / validate-task / verify-task（含 -DryRun）/ validate-state（流水线状态，PIPE §0.2） |
+| 治理脚本口径（v0.9） | 调用方式 `pwsh -File`（pwsh 7.6.5 已装）或 `powershell -File`（5.1 系统自带）均可——脚本对仓库根做三段自检解析（显式 -RepoRoot > $PSScriptRoot > MyInvocation），与调用方式无关（findings F-001 修复口径）；脚本清单：validate-docs / validate-task / verify-task（含 -DryRun）/ validate-state（流水线状态，PIPE §0.2）/ pipeline-lock（流水线 tick 原子锁，PIPE §0.1，v0.10） |
 
 ### 5.2 统一完成定义（DoD，§2 全部任务的默认验收基线）
 
@@ -754,6 +754,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.7 | 2026-09-10 | 横切契约补建与契约家族归属登记：①新建 tasks/ 根目录四份 canonical 契约——WP-00-T01（governance-log，ready）、WP-00-T02（追踪矩阵格式契约，ready＋dependsOn）、WP-01-T01（ird_gates 门禁，ready＋dependsOn CORE-T01，验收含 O-21 消账/O-12 处置）、WP-01-T02（CI 一键门禁，ready＋dependsOn）——消除 §6"无前置可启动"四任务与机器无契约的失配；②§8 登记契约家族归属（foundation/＝单元任务、tasks/ 根＝治理 DOC 族＋横切 WP 族，编号以本文为唯一来源不双轨）；③validate-task/validate-docs 的 taskId 句法扩展接受 WP-nn-Tkk；④foundation-tasks.json 入口索引 4 份 T01 的 dependsOn 同步为 ["CORE-T01"]（与 canonical 一致）。编码轨 CORE-T01 进行中，本修订与其 allowedFiles 零交集。〔与同日另一 v0.7 行（gtest 版本登记）为并行小步修订，合称 v0.7 批次〕 |
 | v0.8 | 2026-09-10 | 自动化流水线登记：新建 automation-pipeline.md（文档代号 PIPE v1.0）——六态状态机（paused/idle/implementing/awaiting_acceptance/awaiting_merge/blocked）、五守卫（避让进行中会话、禁触 main、契约前置校验、异常即停）、tick 流程（实施/验收分别用全新子代理，验收者只给产物不给叙述）、返工熔断（maxFixCycles=3）与所有者授权分级（autoMerge 默认关闭，预授权须记录于 state.json policy）；状态载体 traceability/pipeline/state.json（初始 paused——CORE-T01 手动会话占用工作树）。§8 登记其地位：三段式流程的编排自动化，不改变任何纪律。 |
 | v0.9 | 2026-09-10 | 流水线审核修复登记（配合 PIPE v1.3/ACC v1.2/新建 CCP v1.0）：①§8 契约编译协议与发现闭环登记（ready 契约唯一产出通道＝CCP；findings.json 强制转登）；②§4.7 新建验收发现跟踪登记册（CORE-T01 G-1~G-4 补登为 F-001~F-004）；③§5.1 增治理脚本调用口径行（调用方式无关＋脚本清单含 validate-state）；④配套数据修复：6 份契约 designRefs 锚点补全/修正（DOC-T01、DOC-T03、FOUNDATION-CR-01、WP-00-T02 #附录C→#24、DIAG-T01、UI-T01），state.json 豁免收编 policy 字段＋心跳 ISO 格式。不改变任何需求语义与任务范围。 |
+| v0.10 | 2026-09-10 | 二轮审查修复登记（配合 PIPE v1.4/ACC v1.3/CCP v1.1）：①§8 增"并发与合入安全"段（原子锁/run 租约/SHA 冻结链/结构化 queue）；②§5.1 脚本清单补 pipeline-lock.ps1；③配套数据：10 份 ready/done 契约补 branch/interUnit/knownPitfalls（跨单元判定留痕于 traceability/contract-compile-log.md 补录批次），state.json queue 结构化＋leaseMinutes/firstUnitCheckpointExempted/tickCount 落位。流水线维持 paused，等所有者复查后恢复。不改变任何需求语义与任务范围。 |
 
 
 
@@ -766,4 +767,6 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 
 AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子目录）状态为 `ready` 的单份执行契约；索引 JSON 不是执行契约。**契约家族与编号归属（v0.7）**：单元任务契约位于 `tasks/foundation/`（taskId＝卡内编号，经 §2 ≙ 映射对应 WPnn-Tkk）；治理/横切任务契约位于 `tasks/` 根目录——治理文档族（DOC-T01~T03、FOUNDATION-CR-01，主 WP-A 的过程任务，无 §2 独立行）与横切任务族（WP-00-T01/T02、WP-01-T01/T02，2026-09-10 补建，taskId 即 §2 登记 WPnn-Tkk 编号）——两族均以本文 §2/§0.1 的登记为唯一编号来源，不双轨。单元任务行与 canonical 的前置必须同时满足。任务必须先通过 `scripts/industrialrobot/validate-task.ps1`，完成后运行 `verify-task.ps1`，并同步 `traceability/` 中的状态和映射。需求或架构语义发生变化时，任务必须转为 `blocked`，不得在代码中自行解释或修改上游文档。**自动化流水线（v0.8）**：三段式流程可经 automation-pipeline.md 编排自动化（定时 tick＋子代理实施/验收，状态载体 `traceability/pipeline/state.json`）——守卫避让进行中会话、返工熔断、合并决策默认所有者门控（预授权须记录于 state.json 的 policy）；流水线不改变本节任何纪律。
 
-**契约编译与发现闭环（v0.9）**：ready 契约的唯一产出通道是 `contract-compilation.md`（文档代号 CCP）——单元卡任务行按其 §2 逐字段门槛与 §3 七步编译放行（requirements 非空、designRefs 带真实锚点、acceptance 逐条可验证、跨单元任务 `knownPitfalls` 显式携带已登记陷阱），占位契约不得领取；validate-task.ps1 三查（前置引用/设计锚点/knownPitfalls）是其机器执行面。验收建议级问题强制转登 `traceability/findings.json`（§4.7），发现必须闭环不得只留档。
+**契约编译与发现闭环（v0.9）**：ready 契约的唯一产出通道是 `contract-compilation.md`（文档代号 CCP）——单元卡任务行按其 §2 逐字段门槛与 §3 七步编译放行（requirements 非空、designRefs 带真实锚点、acceptance 逐条可验证、`branch`/`interUnit` 必填、跨单元任务 `knownPitfalls` 显式携带已登记陷阱），占位契约不得领取；validate-task.ps1 三查（前置引用/设计锚点/knownPitfalls）是其机器执行面；编译评审留痕于 `traceability/contract-compile-log.md`。验收建议级问题强制转登 `traceability/findings.json`（§4.7），发现必须闭环不得只留档。
+
+**并发与合入安全（v0.10，PIPE v1.4）**：tick 并发的唯一裁判是 `.git/ird-pipeline-tick.lock` 原子锁（pipeline-lock.ps1，O_EXCL 创建＋租约自愈）；实施/验收工作者以 run 租约标识，未超时只汇报不续派；验收对象以 40 位 SHA 冻结（base/headSha/acceptedHead 链），合入按 acceptedHead 执行且先验证远端分支未漂移；state.queue 为结构化条目 {taskId,contractPath,branch}（branch 唯一来源在契约）。
