@@ -1,30 +1,23 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "implementing",
+  "phase": "idle",
   "pausedReason": null,
-  "tickCount": 8,
-  "currentTask": "DOC-T03",
-  "branch": "doc-t03",
-  "base": "55bd17dd0055fe45483a2051e8c1255f046dfd01",
+  "tickCount": 9,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": {
-    "kind": "implement",
-    "runId": "f6f36219-bead-45bd-bf47-fc84eba75f25",
-    "workerId": "f27ae198-2af9-4403-85f4-1f48232efbb6",
-    "leaseExpiresAt": "2026-09-10T21:18:59+08:00",
-    "task": "DOC-T03",
-    "startedAt": "2026-09-10T19:18:59+08:00"
-  },
+  "run": null,
   "attempts": {
-    "accept": 0,
     "fix": 0,
-    "implement": 0
+    "implement": 0,
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-10T19:18:59+08:00",
+    "updatedAt": "2026-09-10T19:34:12+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -67,6 +60,16 @@
       "commits": [
         "df8df352313b4a4cd2dff6db2e34344cac06c095"
       ]
+    },
+    {
+      "acceptanceRecord": "traceability/acceptance/DOC-T03-20260910.md",
+      "result": "pass-merged",
+      "unit": "foundation-governance",
+      "mergedAt": "2026-09-10",
+      "commits": [
+        "cfe22dab73249fe819e031ab909ed4101092b9e7"
+      ],
+      "task": "DOC-T03"
     }
   ],
   "policy": {
@@ -92,11 +95,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "DOC-T03",
-      "contractPath": "tasks/DOC-T03.json",
-      "branch": "doc-t03"
-    },
     {
       "taskId": "WP-01-T02",
       "contractPath": "tasks/WP-01-T02.json",

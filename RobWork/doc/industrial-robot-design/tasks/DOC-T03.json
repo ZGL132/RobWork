@@ -4,14 +4,40 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "补齐基础单元 planned 任务的需求追溯与放行条件",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
-  "requirements": ["NFR-MNT-01"],
-  "designRefs": ["contract-compilation.md", "traceability/phase-one-readiness.md", "traceability/foundation-api-diff.md", "units/core.md#9", "units/evidence.md#12", "units/policy.md#12", "units/runtime.md#12", "units/testkit.md#9"],
-  "allowedFiles": ["RobWork/doc/industrial-robot-design/tasks/foundation/**", "RobWork/doc/industrial-robot-design/traceability/**", "RobWork/scripts/industrialrobot/validate-task.ps1", "RobWork/scripts/industrialrobot/validate-docs.ps1"],
-  "forbiddenFiles": ["RobWork/RobWorkStudio/src/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
-  "outputs": ["completed-foundation-task-contracts", "readiness-audit-record"],
-  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1", "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T02.json"],
+  "requirements": [
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "contract-compilation.md",
+    "traceability/phase-one-readiness.md",
+    "traceability/foundation-api-diff.md",
+    "units/core.md#9",
+    "units/evidence.md#12",
+    "units/policy.md#12",
+    "units/runtime.md#12",
+    "units/testkit.md#9"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/foundation/**",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "completed-foundation-task-contracts",
+    "readiness-audit-record"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T02.json"
+  ],
   "branch": "doc-t03",
   "interUnit": false,
   "acceptance": [
