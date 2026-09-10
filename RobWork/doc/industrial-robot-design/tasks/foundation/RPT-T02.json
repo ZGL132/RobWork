@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T02",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "错误与身份类型（Errors/Identity＋RPT-* 码建议清单）",
+  "status": "planned",
+  "dependsOn": ["RPT-T01"],
+  "requirements": ["RPT-01"],
+  "designRefs": ["units/reporting.md#3.5", "units/reporting.md#4.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "token/句法/保留值单测通过；身份往返用例过",
+    "RPT-* 建议码清单登记（交 diagnostics 收编）"
+  ]
+}

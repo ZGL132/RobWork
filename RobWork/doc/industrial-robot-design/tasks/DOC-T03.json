@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DOC-T03",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "补齐基础单元 planned 任务的需求追溯与放行条件",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": ["traceability/phase-one-readiness.md", "traceability/foundation-api-diff.md", "units/core.md", "units/evidence.md", "units/policy.md", "units/runtime.md", "units/testkit.md"],
+  "allowedFiles": ["RobWork/doc/industrial-robot-design/tasks/foundation/**", "RobWork/doc/industrial-robot-design/traceability/**", "RobWork/scripts/industrialrobot/validate-task.ps1", "RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "forbiddenFiles": ["RobWork/RobWorkStudio/src/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
+  "outputs": ["completed-foundation-task-contracts", "readiness-audit-record"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1", "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T02.json"],
+  "acceptance": [
+    "52 个 planned 基础任务逐项回填非空需求 ID、精确设计章节、真实前置、允许和禁止文件、完成态验证命令与验收条件",
+    "只将前置已完成且接口交接已核对的任务改为 ready；其余保持 planned 或标为 blocked，并登记原因",
+    "CORE-T04/05 与 TK-T04/05 的 CR-06 门禁保持原样，不能因契约补齐而提前放行",
+    "validate-docs 与每份已变更任务的 validate-task 通过，追踪矩阵和 phase-one-readiness 同步"
+  ]
+}

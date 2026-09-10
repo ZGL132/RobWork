@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T10",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "证据包组装（Bundle＋IArchiveWriter）",
+  "status": "planned",
+  "dependsOn": ["RPT-T05"],
+  "requirements": ["RPT-03", "NFR-COR-04"],
+  "designRefs": ["units/reporting.md#7.6"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-BUN-1：输入快照＋结果引用＋复现要素（版本/种子/线程/容差）要素完整用例过",
+    "缺失拒绝/取消清理用例过（AT-14）"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T11",
+  "unit": "project",
+  "masterWp": "WP-D",
+  "title": "确认放行流（交互回调编排与留痕）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T10"],
+  "requirements": ["MDL-06", "ERR-01", "UX-03"],
+  "designRefs": ["units/project.md#5.3.3", "units/project.md#5.3.4", "units/project.md#6.7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "PRJ-TX-2：四路拒绝/绑定失效用例通过；确认留痕入 command.json",
+    "project 不依赖 Widgets（回调纯接口，SA-15）"
+  ]
+}

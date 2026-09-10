@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T03",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "CSV 读写器（方言标识＋可逆编码，唯一转义/还原实现）",
+  "status": "planned",
+  "dependsOn": ["IO-T01"],
+  "requirements": ["NFR-SEC-03", "REQ-05"],
+  "designRefs": ["units/io.md#5.1", "units/io.md#9.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "V01~V05 全绿；自带前缀（=、+、-、@、'）roundtrip 逐字符一致",
+    "无标识外部 CSV 原样读入；转义形式不入结构化数据层（AT-02）"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T09",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "导出与归档协调（Export/Archive＋IReportArtifactSink）",
+  "status": "planned",
+  "dependsOn": ["RPT-T07"],
+  "requirements": ["RPT-01", "NFR-COR-04"],
+  "designRefs": ["units/reporting.md#7.3", "units/reporting.md#9.5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-IDEM-1/2、RP-CONF-1、RP-DISK-1、RP-RO-1、RP-CANC-1：幂等/冲突/磁盘/只读/取消用例过",
+    "报告目录追加幂等、冲突拒绝；导出失败保留选择与路径可重试"
+  ]
+}

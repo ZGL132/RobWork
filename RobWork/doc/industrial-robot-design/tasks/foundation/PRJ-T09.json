@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T09",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "查询端口（QueryPort：视图/闭包/缓存/隔离）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T06", "PRJ-T08"],
+  "requirements": ["CON-01", "ARC-02"],
+  "designRefs": ["units/project.md#4.6", "units/project.md#4.7", "units/project.md#5.2"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "并发只读单测通过；闭包外不可见隔离用例过"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T08",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "参数表与表单公共件（阶段 B 交付，本文仅登记）",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "CORE-T04"],
+  "requirements": ["UX-04", "UX-05", "UX-07"],
+  "designRefs": ["units/ui.md#14"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UX-04/05/07 公共编辑规则：数值＋单位同显、非法输入就地显示原因保留原值、批量粘贴/筛选/错误定位"
+  ]
+}

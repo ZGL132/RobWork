@@ -56,13 +56,13 @@
 - `foundation-contract-review.md`：基础单元（core/evidence/policy/runtime/testkit）公共契约审查记录；CR-01～CR-08 已设计级关闭（2026-09-10），五单元转 `frozen` 待联合契约测试通过。
 - `foundation-api-diff.md`：上述审查的逐项 API 差异比对、裁决与联合契约测试登记。
 - `traceability/phase-one-task-index.json`：11 单元全部任务行与执行契约覆盖索引（缺契约者保持 planned）。
-- `tasks/foundation/*.json`：canonical 任务契约（每单元任务一份；与单元详设任务行冲突时以任务行为准并回写同步）。
-- `tasks/*.json`（根目录）：治理与入口任务（FOUNDATION-CR-01、DOC-T01、foundation-tasks.json 入口索引）。
+- `tasks/foundation/*.json`：基础五单元的 canonical 任务 JSON；其中仅 `ready` 项是可领取的完整执行契约，`planned` 项是待补全需求追溯的任务占位，不能直接执行。
+- `tasks/*.json`（根目录）：治理与入口任务（FOUNDATION-CR-01、DOC-T01～T03、foundation-tasks.json 入口索引）。
 
-任务契约必须包含允许修改文件、禁止修改文件、前置任务、设计引用和验证命令。执行前运行：
+任何 `ready` 任务契约必须包含非空的需求、设计引用、允许/禁止文件、产物、验收和验证命令；`planned` 任务在补齐这些信息前不是执行任务。执行前运行：
 
 ```powershell
 pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
-pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T04.json
-pwsh -File RobWork/scripts/industrialrobot/verify-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T04.json
+pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T01.json
+pwsh -File RobWork/scripts/industrialrobot/verify-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T01.json
 ```

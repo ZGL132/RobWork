@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T07",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "一致性检查器（多格式逐字段一致）",
+  "status": "planned",
+  "dependsOn": ["RPT-T06"],
+  "requirements": ["RPT-02"],
+  "designRefs": ["units/reporting.md#8.5", "units/reporting.md#9.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-CONS-1/2：逐字段一致/坏样本定位用例通过（AT-22）"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T05",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "构建器（会话状态机/锚定/资格与当前性快照/冻结）",
+  "status": "planned",
+  "dependsOn": ["RPT-T04"],
+  "requirements": ["RPT-01-B", "NFR-COR-04"],
+  "designRefs": ["units/reporting.md#7.1", "units/reporting.md#9.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-MDL-2、RP-SCOPE-1~4、RP-CUR-3、RP-STATE-1~3：构建全反例矩阵过",
+    "零项目写验证（构造只读）"
+  ]
+}

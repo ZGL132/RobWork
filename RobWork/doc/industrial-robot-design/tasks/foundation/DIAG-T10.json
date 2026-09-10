@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T10",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "测试替身与契约套件（ScriptedDiagSource＋DT-* 用例体）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T03", "DIAG-T04", "DIAG-T05", "DIAG-T06", "DIAG-T07", "DIAG-T08", "DIAG-T09"],
+  "requirements": ["ERR-01", "UX-03"],
+  "designRefs": ["units/diagnostics.md#10"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "§10 矩阵逐条执行通过并留痕",
+    "替身边界声明在案（替身输出仅验证契约，testkit EV-REG-3 同模式）"
+  ]
+}

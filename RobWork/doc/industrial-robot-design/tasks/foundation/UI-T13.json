@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T13",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "诊断/确认/任务呈现模型与 CommandInteractionBridge",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "DIAG-T10", "EX-T09"],
+  "requirements": ["UX-03", "UX-10", "ERR-01"],
+  "designRefs": ["units/ui.md#9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-CMD-4~7、UI-TSK-1~5、UI-DIA-1：比较型三要素呈现/任务清单 9 态短标签/确认对话数据契约用例通过",
+    "sdurws_ird_testkit_qt 首消费者理由登记"
+  ]
+}

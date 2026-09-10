@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T14",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "ui 契约测试套件（§12 全用例）",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "UI-T04", "UI-T05", "UI-T06", "UI-T07", "UI-T08", "UI-T09", "UI-T10", "UI-T11", "UI-T12", "UI-T13"],
+  "requirements": ["UX-09", "UX-13", "UX-03"],
+  "designRefs": ["units/ui.md#12"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "ctest ird/ird_gui 标签注册；ird-test-report.json 留痕（§12 全用例）",
+    "快捷键冲突拒绝/状态词映射/布局记忆用例通过并留痕"
+  ]
+}

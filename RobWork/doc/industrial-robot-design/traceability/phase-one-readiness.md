@@ -2,7 +2,7 @@
 
 日期：2026-09-10。范围：文档状态、任务编排、接口交接与编码前置检查；不含产品实现或正式架构批准。
 
-**结论：可以开始 M0 基础构建与测试设施编码，首项建议 CORE-T01，随后 TK-T01 与 WP-01-T01 门禁。不能据此全面放行 11 单元的功能实现。** 详设编写完成、契约冻结、实现验收是三个独立状态。
+**结论：可以开始 CORE-T01 的 M0 构建落位实现；完成并验证后，再启动 TK-T01 与 WP-01-T01 门禁。不能据此全面放行 11 单元的功能实现。** 详设编写完成、任务契约完整、公共契约冻结和实现验收是四个独立状态。
 
 ## 1. 当前基线
 
@@ -13,14 +13,14 @@
 | evidence | 已编写 v0.1 | Draft-Structured / contract-review | 12 | foundation/ |
 | runtime | 已编写 v0.1 | Draft-Structured / contract-review | 13 | foundation/ |
 | policy | 已编写 v0.1 | Draft-Structured / contract-review | 12 | foundation/ |
-| project | 已编写 v0.1 | Draft | 16 | 待逐项补齐 |
-| execution | 已编写 v0.1 | Draft | 10 | 待逐项补齐 |
-| diagnostics | 已编写 v0.1 | Draft | 11 | 待逐项补齐 |
-| io | 已编写 v0.1 | Draft | 7 | 待逐项补齐 |
-| ui | 已编写 v0.1 | Draft | 14 | 待逐项补齐 |
-| reporting | 已编写 v0.1 | Draft | 16 | 待逐项补齐 |
+| project | 已编写 v0.1 | Draft | 16 | foundation/ |
+| execution | 已编写 v0.1 | Draft | 10 | foundation/ |
+| diagnostics | 已编写 v0.1 | Draft | 11 | foundation/ |
+| io | 已编写 v0.1 | Draft | 7 | foundation/ |
+| ui | 已编写 v0.1 | Draft | 14 | foundation/ |
+| reporting | 已编写 v0.1 | Draft | 16 | foundation/ |
 
-共 131 行单元任务，其中 57 行已有 foundation 执行契约，74 行尚无单份契约；后者包含 DIAG-T01/UI-T01 两项已编写的设计任务，不能把 74 全部计为待编码任务。[全量任务索引](phase-one-task-index.json) 保留每行输入、前置、验收和 WP 映射原文，不以编号后缀推测对应关系。
+共 131 行单元任务，**已全部具备 canonical 任务 JSON**（tasks/foundation/；其中 74 份由 DOC-T02 于 2026-09-10 按本索引逐行生成）。当前状态分布：5 个 T01 为 `ready` 可领取；DIAG-T01/UI-T01 两项编卡任务为 `done`；其余 124 行为 `planned` 占位——不能领取执行，置 ready 须满足各自前置与门禁（CR-06、P-IO-3 等）。[全量任务索引](phase-one-task-index.json) 保留每行输入、前置、验收和 WP 映射原文，不以编号后缀推测对应关系。
 
 第一批设计范围包含 reporting；其业务报告验收仍在 B/C。workflow 未在这 11 单元内，阶段 A 生命周期前置设计仍须完成。剩余九份为 modeling、requirements、kinematics、trajectory、dynamics、drivetrain、selection、optimization、workflow。需求阶段 A～E、R1/R2 与 WP-A～I 各自含义不变。
 
@@ -38,18 +38,30 @@
 | CR-06 | TK-T04/05 依赖 CORE-T04/05 实现后的 API diff | 保持 planned；不能仅凭详设置 ready |
 | O-03 | ARCHITECTURE v0.11 仍 Draft | 未擅自 Accepted；发现实际架构冲突的任务停止并登记，不阻塞既定 M0 落位 |
 | M0～M3 | 本次没有执行构建、产品测试、ird_gates | 不宣布任何实现里程碑通过；各任务按 DTB §5.2 DoD 留痕 |
+| 基础任务契约完整性 | 57 个 JSON 中有 42 个 `requirements` 为空；均为 planned，原校验脚本此前只检查字段存在 | 新校验仅允许字段非空的 ready 任务通过；DOC-T03 补齐 52 个 planned 基础任务后才可逐项放行 |
+
+### 2.1 服务单元交接核对记录（DOC-T02，2026-09-10）
+
+| 交接接口 | 核对结论 | 契约承载 |
+| --- | --- | --- |
+| 诊断 sink 名称/归属（P-DIAG-5/P-PR-6/P-EX-8） | 未裁决——DIAG-T04 工厂与 DIAG-T07 日志管线仅登记接缝（ErrorCodeTranslator 映射、ILogFileOps），不实现具体 sink 归属 | DIAG-T04/T07 acceptance 注明；保持 planned |
+| io 包装配与 project→io 依赖（P-PR-5/P-IO-1） | 无编译边，注入式先行；补边与否待架构所有者裁决 | IO-T06 限定"io 侧 rename 发布/读 .staging 禁止"；PRJ-T18（阶段 B）落位实体 |
+| reporting 写入通道（P-RPT-1～3） | reports/ 写入经 project 归档端口协调，reporting 不直写磁盘；L5 适配交接 | RPT-T09（IReportArtifactSink 契约＋Fake）、RPT-T12（L5 适配建议） |
+| 摘要接口（RPT-T12 ↔ runtime §9.7 交接） | ModelSummary/ITaskStatusSource schema 未冻结——冻结留痕前不做消费端实现 | RPT-T12 acceptance 限定"schema 冻结留痕" |
+| ZIP/XML 选型（P-IO-3） | 待 vcpkg 可用性与版本登记 | IO-T04 阻塞条件写入契约（未冻结不执行） |
 
 ## 3. 可执行顺序与任务准备
 
-1. 从 CORE-T01 开始，联同 TK-T01、WP-01-T01 建立双模式构建、vcpkg GTest 与门禁；依赖缺失作为该任务环境问题处理。已有 ready 表示允许开始，不表示测试目标现已存在。
-2. 完成 core/testkit 前置后，按单元任务行推进 evidence/runtime/policy；diagnostics 先准备单份契约，再按 core 前置推进。
-3. project → execution，io/ui 按各自前置推进。服务单元领取前运行 [DOC-T02](../tasks/DOC-T02.json) 所述契约补齐与交接核对，不把本索引直接交给 verify-task。
-4. reporting 先做基础模型/渲染/替身测试；真实章节、往返复算等待 B/C 域结果。ui 的真实 workflow 数据、三维交互、策略编辑按原任务阶段交付，桩测试不等于端到端通过。
+1. 从 CORE-T01 开始，建立 core 的静态目标、测试目标与零依赖门禁。当前构建树尚不存在该测试目标，正是 T01 的交付内容；不能在实现前运行它的完成态 verify 命令并将失败解读为设计阻塞。
+2. CORE-T01 真实完成并留痕后，启动 TK-T01 与 WP-01-T01，完成 GTest 接入和门禁，再按依赖顺序推进其他基础单元。
+3. 完成 core/testkit 前置后，按单元任务行推进 evidence/runtime/policy；diagnostics 先准备单份契约，再按 core 前置推进。
+4. project → execution，io/ui 按各自前置推进。服务单元执行契约已由 [DOC-T02](../tasks/DOC-T02.json) 补齐（2026-09-10，74 份，交接核对见 §2.1）；基础单元 planned 占位的 requirements/验收回填仍由 [DOC-T03](../tasks/DOC-T03.json) 承担。两类索引都不能直接交给 verify-task。
+5. reporting 先做基础模型/渲染/替身测试；真实章节、往返复算等待 B/C 域结果。ui 的真实 workflow 数据、三维交互、策略编辑按原任务阶段交付，桩测试不等于端到端通过。
 
 基础任务契约中的 requirements/验收字段仍须逐项核对：validate-task 只检查字段存在，不检查非空追溯和实际前置完成。requirements-to-units.json 是导航摘要，完整需求映射仍以 DTB §3 和各单元追踪矩阵为权威，不能把 JSON 条数当覆盖率。
 
 ## 4. 验证与交付边界
 
-文档结构和任务契约校验结果见 [phase-one-validation.log](phase-one-validation.log)。补充核对包含：20 个唯一单元、11 个已编写文件、131 个唯一任务编号及原始任务行、57 个 canonical 引用、剩余 9 个未编写单元。
+文档结构和任务契约校验结果见 [phase-one-validation.log](phase-one-validation.log)。补充核对包含：20 个唯一单元、11 个已编写文件、131 个唯一任务编号及原始任务行、131 个 canonical 契约（其中 74 份为 DOC-T02 新增）、剩余 9 个未编写单元。
 
 未执行：产品代码编译、独立冒烟、集成构建、gtest、GUI 测试、ird_gates、联合契约测试、系统 AT。此次只修改文档和 JSON，不伪造 gtest XML 或产品 ird-test-report.json。开始实现时按仓库 AGENTS.md 执行中文注释、双模式构建和真实留痕；GUI 测试使用 VS x64、windows 平台插件、单 executable 绝对路径启动。

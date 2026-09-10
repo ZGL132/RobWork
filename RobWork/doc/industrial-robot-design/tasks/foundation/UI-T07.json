@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T07",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "统一工程策略入口与策略编辑适配器（阶段 A：摘要只读卡）",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "POL-T05", "PRJ-T10", "PRJ-T11"],
+  "requirements": ["UX-08", "ARC-05"],
+  "designRefs": ["units/ui.md#6.7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "摘要只读、显示开关与计算开关分组异名并说明影响范围（POL-ID-3）",
+    "策略编辑经①命令端口提交（P-POL-9 适配器宿主＝ui）；编辑表单归阶段 B"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T01",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "构建落位：io 占位转真实库",
+  "status": "planned",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "designRefs": ["units/io.md#12", "units/io.md#3.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "双模式构建零错误；红线扫描零命中（§3.3）",
+    "零 Widgets/Qt；不预建空测试目标"
+  ]
+}

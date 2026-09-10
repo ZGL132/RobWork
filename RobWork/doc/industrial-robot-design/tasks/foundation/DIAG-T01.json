@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T01",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "编写 diagnostics 单元任务卡",
+  "status": "done",
+  "completedAt": "2026-09-10",
+  "dependsOn": [],
+  "requirements": ["ERR-01", "UX-03"],
+  "designRefs": ["units/diagnostics.md"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["unit-design-doc"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "十四节齐备；建议码全量收编登记；P-PR-6/P-EX-8 消账路径明确",
+    "卡含 StableCodeRegistry 权威、两级日志接口、脱敏、诊断目录、公共头与任务拆分"
+  ],
+  "resultNote": "units/diagnostics.md v0.1 已产出（2026-09-10）。"
+}

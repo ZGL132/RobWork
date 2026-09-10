@@ -10,7 +10,7 @@
     "designRefs": ["units/core.md#9"],
     "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
     "status": "ready",
-    "note": "入口索引；canonical 任务契约见 tasks/foundation/（57 份），冲突时以 canonical 为准。CR-01~CR-08 已设计级关闭（2026-09-10），构建落位类任务允许执行。"
+    "note": "入口索引；canonical 任务契约见 tasks/foundation/（131 份），冲突时以 canonical 为准。CR-01~CR-08 已设计级关闭（2026-09-10），构建落位类任务允许执行。"
   },
   {
     "schemaVersion": "ird-task/1",

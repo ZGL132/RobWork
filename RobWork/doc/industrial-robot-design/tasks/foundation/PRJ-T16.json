@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T16",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "文档与门禁同步",
+  "status": "planned",
+  "dependsOn": ["PRJ-T01", "PRJ-T02", "PRJ-T03", "PRJ-T04", "PRJ-T05", "PRJ-T06", "PRJ-T07", "PRJ-T08", "PRJ-T09", "PRJ-T10", "PRJ-T11", "PRJ-T12", "PRJ-T13", "PRJ-T14", "PRJ-T15"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["units/project.md#12", "units/project.md#15"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["traceability-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "本文与实现零偏差登记；README 核对",
+    "§11/§15.3 待裁决项状态最新；P-PR-5/P-PR-6 裁决申请提交"
+  ]
+}

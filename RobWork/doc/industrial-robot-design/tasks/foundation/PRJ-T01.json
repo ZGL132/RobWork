@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T01",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "构建落位：project 占位转真实库",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "designRefs": ["units/project.md#12", "units/project.md#3.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "两模式（独立冒烟＋集成）配置构建零错误",
+    "零 Qt/零业务边红线扫描通过"
+  ]
+}

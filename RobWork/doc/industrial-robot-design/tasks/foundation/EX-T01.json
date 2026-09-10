@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T01",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "构建落位：execution 占位转真实库",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "designRefs": ["units/execution.md#12", "units/execution.md#3.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "两模式（独立冒烟＋集成）构建零错误（EX-BLD-1 前两项）",
+    "红线扫描零命中；零 Qt"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T01",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "构建落位：reporting 占位转真实库",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "designRefs": ["units/reporting.md#11", "units/reporting.md#3.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "独立冒烟＋集成双模式构建零错误（RP-GATE-1）",
+    "红线扫描零命中"
+  ]
+}

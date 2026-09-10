@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T11",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "文档与门禁同步",
+  "status": "planned",
+  "dependsOn": ["DIAG-T01", "DIAG-T02", "DIAG-T03", "DIAG-T04", "DIAG-T05", "DIAG-T06", "DIAG-T07", "DIAG-T08", "DIAG-T09", "DIAG-T10"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["units/diagnostics.md#14"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["traceability-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "本文与实现零偏差登记；README 指向核对",
+    "§14.3 状态更新；P-PR-6/P-EX-8 消账确认提交（project/execution 详设修订联动）"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T06",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "聚合器（CauseLink/规则/稳定排序）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T04"],
+  "requirements": ["EVI-01", "UX-03"],
+  "designRefs": ["units/diagnostics.md#6.3", "units/diagnostics.md#9.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-AGG-1~4、DT-CHAIN-1：聚合/排序/不升级反例过（搜索未果/碰撞作用域不升级，§8.1 C5/C8）"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T08",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "脱敏与崩溃诊断文件（Redaction/CrashReport）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T07"],
+  "requirements": ["NFR-SEC-07", "PM-17"],
+  "designRefs": ["units/diagnostics.md#7.6", "units/diagnostics.md#9.5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-SEC-1~4、DT-LIFE-4：凭据零命中/路径四策略/降级/崩溃文件用例通过"
+  ]
+}

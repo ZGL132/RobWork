@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T08",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "措辞冻结规则（限定语映射/两类声明前置断言）",
+  "status": "planned",
+  "dependsOn": ["RPT-T06"],
+  "requirements": ["RPT-05"],
+  "designRefs": ["units/reporting.md#6.4", "units/reporting.md#8.2"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-STATE-1~3、RP-COV-1：限定语保留/两类声明独立用例过",
+    "估算值/数据不足/外部验证未完成限定语不弱化不省略；未判定不得渲染正式通过"
+  ]
+}

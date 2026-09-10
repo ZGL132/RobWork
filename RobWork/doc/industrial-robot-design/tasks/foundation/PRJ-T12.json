@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T12",
+  "unit": "project",
+  "masterWp": "WP-D",
+  "title": "草稿服务（DraftServiceImpl）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T08"],
+  "requirements": ["PM-04"],
+  "designRefs": ["units/project.md#5.4", "units/project.md#8.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "PRJ-TX-6：草稿恢复与保留用例通过（原子替换+.bak/损坏恢复/投影/放弃）",
+    "StaleRevisionRejected 冲突路径用例过"
+  ]
+}

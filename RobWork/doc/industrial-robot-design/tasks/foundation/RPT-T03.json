@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T03",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "报告模型与编码（ReportModel/ReportCodec 双编码）",
+  "status": "planned",
+  "dependsOn": ["RPT-T02"],
+  "requirements": ["RPT-01", "NFR-COR-04"],
+  "designRefs": ["units/reporting.md#4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-MDL-1~3：不可变/身份/合法组合矩阵用例通过",
+    "全部引用类型与字段校验就位（只读明确 ID 的修订与结果）"
+  ]
+}

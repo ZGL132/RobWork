@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T05",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "ConfirmableFinding 服务（FindingId/Binding/状态机）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T04"],
+  "requirements": ["MDL-06", "ERR-01", "CON-06"],
+  "designRefs": ["units/diagnostics.md#5", "units/diagnostics.md#9.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-CFM-1~10：状态机全转移/绑定复核/失效路径用例过（含 project 桩联动）",
+    "确认流分工与 worker 禁令符合 SA-15（DT-CFM-6~8）"
+  ]
+}

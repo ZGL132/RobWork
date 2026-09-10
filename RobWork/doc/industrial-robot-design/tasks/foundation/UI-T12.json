@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T12",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "DraftController（未保存标记/草稿投影/会话状态机界面侧）",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "PRJ-T12"],
+  "requirements": ["PM-04"],
+  "designRefs": ["units/ui.md#8"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-DRF-1~4：保存/应用分离呈现、未保存标记（标题 *）、跨模块草稿汇总用例通过"
+  ]
+}

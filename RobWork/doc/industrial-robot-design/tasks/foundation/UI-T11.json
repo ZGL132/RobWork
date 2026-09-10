@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T11",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "UiSessionController＋关闭/切换对话框机制",
+  "status": "planned",
+  "dependsOn": ["UI-T03"],
+  "requirements": ["PM-03", "PM-07"],
+  "designRefs": ["units/ui.md#5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-SES-2~7、UI-LCY-1：草稿三选＋任务二选统一确认对话框机制用例通过",
+    "只读打开提示（UI-SES-2/3、UI-CMD-3）；等待选项覆盖在途归档（A7）"
+  ]
+}

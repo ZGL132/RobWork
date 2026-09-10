@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T07",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "事务引擎（TxEngine：七步状态机/.staging/恢复扫描）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T02", "PRJ-T05", "PRJ-T06"],
+  "requirements": ["NFR-REL-01", "PM-08"],
+  "designRefs": ["units/project.md#7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "PRJ-TX-4（F1～F8 进程内部分）边界注入矩阵过",
+    "崩溃后已提交修订与 HEAD 字节不变（AT-13）"
+  ]
+}

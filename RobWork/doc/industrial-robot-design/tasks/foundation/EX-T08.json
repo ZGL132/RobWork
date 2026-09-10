@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T08",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "检查点与缓存存储治理（Checkpoint/CacheCoordinator）",
+  "status": "planned",
+  "dependsOn": ["EX-T04", "EV-T09", "RT-T10"],
+  "requirements": ["CON-04", "OPT-06"],
+  "designRefs": ["units/execution.md#8"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "EX-CKP-1~3、EX-CCH-1/2：部分失败结果不作正式缓存命中；检查点兼容契约用例通过",
+    "兼容判定逻辑零复制（经 evidence/runtime 注入 ICompileCacheJudge）"
+  ]
+}

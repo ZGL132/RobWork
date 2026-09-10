@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T06",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "包导入导出 io 侧设施＋固化中转（Package/TempArea）",
+  "status": "planned",
+  "dependsOn": ["IO-T02", "IO-T04"],
+  "requirements": ["PM-05", "NFR-SEC-02", "CON-03"],
+  "designRefs": ["units/io.md#7", "units/io.md#9.9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "V12~V14、V18~V23、V29/V31/V32 全绿（发布用 project fake）",
+    "失败不留目标目录；io 侧 rename 发布与读 .staging 禁止"
+  ]
+}

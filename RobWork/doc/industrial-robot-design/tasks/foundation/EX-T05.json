@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T05",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "调度线程与事件/进度分发（Scheduler/EventBus）",
+  "status": "planned",
+  "dependsOn": ["EX-T02", "CORE-T08"],
+  "requirements": ["TASK-01", "UX-10", "NFR-PERF-01"],
+  "designRefs": ["units/execution.md#6.1", "units/execution.md#10.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "EX-SUB-1/2、EX-RES-2（调度面）：事件 FIFO 与投递线程契约用例通过",
+    "UI 线程零计算（结构断言）；内联门槛（可预测 <1 s）就位"
+  ]
+}

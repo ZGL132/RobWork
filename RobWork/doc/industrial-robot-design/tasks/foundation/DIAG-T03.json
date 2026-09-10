@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T03",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "错误类型与稳定码注册表（Errors/DiagCodes/StableCodeRegistry）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T02"],
+  "requirements": ["ERR-01", "NFR-MNT-03"],
+  "designRefs": ["units/diagnostics.md#4.5", "units/diagnostics.md#4.6", "units/diagnostics.md#9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-REG-1~5：码表清单与 §4.6 一致；重复/未知/废弃用例过",
+    "各卡建议码（PRJ/RT/POLICY/EVI/EX）全量收编登记，码值不重排"
+  ]
+}

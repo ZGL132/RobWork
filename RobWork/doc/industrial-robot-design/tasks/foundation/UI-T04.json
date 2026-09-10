@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T04",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "七态公共状态呈现（StatusWordProjection＋九态短标签映射）",
+  "status": "planned",
+  "dependsOn": ["UI-T03", "EV-T08", "EX-T05"],
+  "requirements": ["UX-06", "UX-10", "PM-11"],
+  "designRefs": ["units/ui.md#6.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-STG-3：映射表按 §6.3 用例通过；不新增状态词（七态投影）",
+    "证据不足不得显示通过；计算中附进度阶段与取消、过期附原因、失败附定位"
+  ]
+}

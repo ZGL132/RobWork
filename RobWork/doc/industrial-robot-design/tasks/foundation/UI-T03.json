@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T03",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "工作台壳与五区布局（WorkbenchShell/布局记忆/无项目首页）",
+  "status": "planned",
+  "dependsOn": ["UI-T02"],
+  "requirements": ["UX-09", "PM-10", "PM-11"],
+  "designRefs": ["units/ui.md#4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-WB-1/2/3、UI-SES-1：五区 Dock/布局记忆与恢复/最小可用布局用例通过",
+    "无项目首页三入口与状态栏格式（PM-10/PM-11）就位"
+  ]
+}

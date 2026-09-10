@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T13",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "文档与门禁同步",
+  "status": "planned",
+  "dependsOn": ["RPT-T01", "RPT-T02", "RPT-T03", "RPT-T04", "RPT-T05", "RPT-T06", "RPT-T07", "RPT-T08", "RPT-T09", "RPT-T10", "RPT-T11", "RPT-T12"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["units/reporting.md#14"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["traceability-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "本文与实现零偏差登记；README 核对",
+    "§14.3 状态更新；P-RPT-1/2/3 裁决申请提交（关联 io P-IO-1）"
+  ]
+}

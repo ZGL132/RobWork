@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T06",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "CommandRegistry＋GlobalShortcutRegistry＋命令面板",
+  "status": "planned",
+  "dependsOn": ["UI-T03"],
+  "requirements": ["UX-13", "PM-14"],
+  "designRefs": ["units/ui.md#7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-CMD-1/2、UI-HKY-1/2/3：重复绑定注册边界拒绝并出比较型诊断（SA-16）",
+    "模糊搜索与键盘导航；未绑定命令经面板可达；绑定属用户级设置（PM-14）"
+  ]
+}

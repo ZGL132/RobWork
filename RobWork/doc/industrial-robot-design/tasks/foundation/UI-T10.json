@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T10",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "帮助入口与关于对话框（插件清单）",
+  "status": "planned",
+  "dependsOn": ["UI-T03"],
+  "requirements": ["UX-14", "NFR-DEP-05"],
+  "designRefs": ["units/ui.md#11.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-PLG-2：版本显示与冻结版本基线一致；插件清单与静态白名单一致"
+  ]
+}

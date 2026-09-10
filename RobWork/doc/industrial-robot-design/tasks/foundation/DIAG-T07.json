@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T07",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "两级日志（Logging：管线/节流采样/轮转/重放）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T02", "DIAG-T03"],
+  "requirements": ["NFR-REL-05", "UX-02"],
+  "designRefs": ["units/diagnostics.md#7.1", "units/diagnostics.md#9.6"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-LOG-1~5：分流/顺序/失败注入/合并用例过（ILogFileOps 接缝）",
+    "用户诊断无调用栈/内部哈希（Tier-U 禁项）；WorkerLogBatch 重放就位"
+  ]
+}

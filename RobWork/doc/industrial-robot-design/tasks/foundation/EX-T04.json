@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T04",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "RunRegistry 与迟到结果两段式接纳（RunRegistry/Admission）",
+  "status": "planned",
+  "dependsOn": ["EX-T02", "EV-T07", "PRJ-T14"],
+  "requirements": ["TASK-03", "PM-13", "CON-02", "CON-05"],
+  "designRefs": ["units/execution.md#9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "EX-REG-1~8、EX-ORT-1：未知/失配/陈旧拒绝＋归档位置取登记记录＋幂等全过（ARCH §11.2-7）",
+    "九步接纳＋名称反解编排；envelope 组装复用 evidence 校验器（不复制）"
+  ]
+}

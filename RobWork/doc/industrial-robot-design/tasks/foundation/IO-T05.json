@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T05",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "资源导入服务与外部源检测（ResourceIo：reader/snapshotter/probe）",
+  "status": "planned",
+  "dependsOn": ["IO-T02"],
+  "requirements": ["NFR-REL-04", "PM-01", "CON-03"],
+  "designRefs": ["units/io.md#8.2", "units/io.md#9.8"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "V15~V17、V24~V27 全绿；三段边界用例（一次性读取/引用记录/固化前契约）通过",
+    "直接创建 CanonicalModel/objects 写入禁止；ResourceBytes 生命周期符合 P-RT-6 裁决"
+  ]
+}

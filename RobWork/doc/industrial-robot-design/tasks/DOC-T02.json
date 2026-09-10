@@ -4,7 +4,8 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "补齐服务单元执行契约并核对实现前置",
-  "status": "ready",
+  "status": "done",
+  "completedAt": "2026-09-10",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["traceability/phase-one-readiness.md", "traceability/phase-one-task-index.json", "development-task-breakdown.md#0.3"],
@@ -17,5 +18,6 @@
     "每项包含真实前置、非空需求/验证目标、允许和禁止文件、Release 构建与测试留痕命令",
     "接口未决和未完成前置保持 planned/blocked，不批量置 ready；重新校验索引与每份契约",
     "诊断 sink、io 包装配、reporting 写入和摘要接口核对记录齐备，未裁决问题不在代码中解释"
-  ]
+  ],
+  "resultNote": "74 份服务单元契约已生成于 tasks/foundation/（PRJ×16、EX×10、DIAG×11、IO×7、UI×14、RPT×16）；全部 planned（DIAG-T01/UI-T01 编卡任务 done）；交接核对记录见 phase-one-readiness.md §2.1。"
 }

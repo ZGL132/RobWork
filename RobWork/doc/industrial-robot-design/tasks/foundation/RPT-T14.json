@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T14",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "B 级真实章节接入（阶段 B：各域提供方注册联调）",
+  "status": "planned",
+  "dependsOn": ["RPT-T11"],
+  "requirements": ["RPT-01-B", "EVI-02"],
+  "designRefs": ["units/reporting.md#5.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "AT-32（B 部分）＋RP-SCOPE-1（真实数据）：B 级端到端用例过",
+    "与 modeling/requirements/kinematics/optimization 的注册联调（各域提供方就绪后启动）"
+  ]
+}

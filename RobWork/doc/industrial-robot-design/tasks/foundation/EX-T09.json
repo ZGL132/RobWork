@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T09",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "契约测试套件落地（FakeWorker/契约与故障注入）",
+  "status": "planned",
+  "dependsOn": ["EX-T01", "EX-T02", "EX-T03", "EX-T04", "EX-T05", "EX-T06", "EX-T07", "EX-T08", "TK-T09"],
+  "requirements": ["TASK-01", "TASK-02", "TASK-03"],
+  "designRefs": ["units/execution.md#11", "units/testkit.md#6.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "§11 矩阵逐项执行通过并留痕（未执行不得标注通过）",
+    "替身边界声明在案（FakeWorkerMain/FakeArchivePort/FaultInterceptor）；TestProcessRunner 按 TK-T11 触发接入真进程场景"
+  ]
+}

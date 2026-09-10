@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T05",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "三维视图交互（阶段 A：中央区占位与视图契约登记）",
+  "status": "planned",
+  "dependsOn": ["UI-T03"],
+  "requirements": ["UX-11", "KIN-06"],
+  "designRefs": ["units/ui.md#4.2"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UX-11 交互清单登记（RWStudioView3D 集成、视图/拾取/截图/分组显隐——交互实现归阶段 B）",
+    "KIN-06 会话姿态语义钉住（AT-04）：点回写仅改会话姿态"
+  ]
+}

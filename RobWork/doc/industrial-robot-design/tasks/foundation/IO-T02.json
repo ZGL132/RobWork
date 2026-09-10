@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T02",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "SafePath＋BudgetGuard（路径穿越/预算防护）",
+  "status": "planned",
+  "dependsOn": ["IO-T01"],
+  "requirements": ["NFR-SEC-01", "NFR-SEC-02"],
+  "designRefs": ["units/io.md#4.1", "units/io.md#9.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "V09/V10/V11/V06 全绿；穿越反例（项目资源区逃逸拒绝）",
+    "预算三要素（单文件/递归深度/解压总量）超限拒绝＋诊断；例外不扩大化（P-1 仅限显式用户源）"
+  ]
+}

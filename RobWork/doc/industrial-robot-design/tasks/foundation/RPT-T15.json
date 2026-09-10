@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T15",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "C 级扩展与变体报告（阶段 C：C 章节/签署元数据/variantDiff）",
+  "status": "planned",
+  "dependsOn": ["RPT-T14"],
+  "requirements": ["RPT-01-C", "RPT-04"],
+  "designRefs": ["units/reporting.md#4.5", "units/reporting.md#6.5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "AT-32、RP-REVW-1/2、RP-COV-1：完整工程案例逐章追溯过",
+    "变体报告引用一致的需求与工况基准，基准不一致即拒绝（EVI-02）"
+  ]
+}

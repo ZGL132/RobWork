@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T04",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "诊断目录与工厂（Catalog/Factory/ErrorCodeTranslator）",
+  "status": "planned",
+  "dependsOn": ["DIAG-T03"],
+  "requirements": ["ERR-01", "UX-03", "PM-08", "PM-15"],
+  "designRefs": ["units/diagnostics.md#4.2", "units/diagnostics.md#9.2", "units/diagnostics.md#9.7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2：字段完整性/边界/去重用例过",
+    "错误码翻译骨架与 PRJ/RT/POLICY/EVI/EX 映射就位"
+  ]
+}

@@ -65,3 +65,11 @@ FOUNDATION-CR-01.json: validate-task: PASS (1 tasks)
 supplemental: PASS (20 units, 11 written, 131 unique task rows, 57 canonical references, 9 pending designs)
 NOT RUN: product build, smoke build, gtest, GUI tests, ird_gates, system AT.
 local Markdown links: PASS (0 missing .md/.json/.log targets)
+
+2026-09-10 重新审核（只修改工作区，未提交、未推送）
+validate-docs: PASS (20 units, 12 trace entries, 61 task files)
+ready contract validation: PASS (7 tasks: DOC-T02, DOC-T03, CORE-T01, EV-T01, POL-T01, RT-T01, TK-T01)
+contract audit: PASS (131 indexed rows; 57 foundation JSON; 5 ready; 52 planned; 42 planned without requirement traceability)
+git diff --check: PASS
+结论：仅 CORE-T01 是建议立即开始的代码实现入口；其余 4 个基础 T01 虽为 ready，仍按 M0 顺序在 CORE-T01 完成并留痕后启动。52 个基础 planned 占位和 74 个服务单元任务行不可领取，分别由 DOC-T03 与 DOC-T02 补齐契约。
+NOT RUN: product build, smoke build, gtest, GUI tests, ird_gates, system AT.

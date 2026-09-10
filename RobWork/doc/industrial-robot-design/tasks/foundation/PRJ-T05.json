@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T05",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "对象库（ObjectStore：内容编址/只增发布/LRU）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T02", "PRJ-T04"],
+  "requirements": ["CON-01"],
+  "designRefs": ["units/project.md#4.6"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "共享/篡改/缓存预算单测通过；不可变与摘要校验用例过"
+  ]
+}

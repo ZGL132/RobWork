@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T02",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "存储原语（AtomicFile/IFileOps）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T01"],
+  "requirements": ["NFR-REL-01"],
+  "designRefs": ["units/project.md#7.1", "units/project.md#7.2"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "原子/持久性分离语义用例通过（publishNew/原子替换/write-through）",
+    "§7.2 官方文档口径逐行复核并留痕"
+  ]
+}

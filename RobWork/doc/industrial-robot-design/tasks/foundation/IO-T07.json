@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "IO-T07",
+  "unit": "io",
+  "masterWp": "WP-E",
+  "title": "契约测试套件整备与留痕",
+  "status": "planned",
+  "dependsOn": ["IO-T01", "IO-T02", "IO-T03", "IO-T04", "IO-T05", "IO-T06"],
+  "requirements": ["NFR-SEC-01", "NFR-SEC-02", "NFR-SEC-03", "NFR-REL-04"],
+  "designRefs": ["units/io.md#11"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "acceptance": [
+    "§11.2 全用例可执行且结果登记（不预设通过）",
+    "ird-test-report.json 追溯字段齐备；用例跳过不报/伪造通过状态禁止"
+  ]
+}

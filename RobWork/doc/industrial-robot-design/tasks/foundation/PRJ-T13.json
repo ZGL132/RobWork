@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T13",
+  "unit": "project",
+  "masterWp": "WP-D",
+  "title": "撤销/重做（UndoRedoServiceImpl：新修订不改写历史）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T10"],
+  "requirements": ["PM-18"],
+  "designRefs": ["units/project.md#5.5", "units/project.md#6.9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "PRJ-TX-5（undo/redo 部分）：新修订/空历史/跨分支用例通过（历史不改写）"
+  ]
+}

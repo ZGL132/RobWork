@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T04",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "章节契约与注册表（Sections/SectionProvider）",
+  "status": "planned",
+  "dependsOn": ["RPT-T03"],
+  "requirements": ["RPT-01-B"],
+  "designRefs": ["units/reporting.md#5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "RP-SCOPE-1~4（替身）：词表/级别校验/注册边界用例通过",
+    "缺正式结果的章节默认不选并显示缺项（B/C 范围契约）"
+  ]
+}

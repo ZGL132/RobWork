@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T02",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "构建落位：ui 占位转真实库（R-3 例外登记）",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": ["units/ui.md#13", "units/ui.md#3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "sdurws_ird_ui 升级 STATIC（链 core＋diagnostics＋Qt Widgets）编译通过",
+    "红线门禁含 ui 例外登记文本；静态扫描（Widgets 范围/QShortcut 作用域/前缀拼接）通过；ird_gui 标签与 testkit_qt 启用登记"
+  ]
+}

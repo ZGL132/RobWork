@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T09",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "阶段状态投影与工程用语（StageNavigationModel/UiText 体系）",
+  "status": "planned",
+  "dependsOn": ["UI-T04"],
+  "requirements": ["UX-01", "UX-02", "UX-12"],
+  "designRefs": ["units/ui.md#6.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "acceptance": [
+    "UI-STG-1/2：七阶段就绪/锁定投影与级联失效提示数据用例通过（门控数据源 WP-22-T03 未产出前用桩）",
+    "界面零哈希/Schema/插件名；投影只消费、不拥有门控规则"
+  ]
+}

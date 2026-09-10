@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T02",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "任务身份与状态机（TaskTypes/StateMachine）",
+  "status": "planned",
+  "dependsOn": ["EX-T01"],
+  "requirements": ["TASK-01", "NFR-REL-03"],
+  "designRefs": ["units/execution.md#4", "units/execution.md#5"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "acceptance": [
+    "EX-SUB-1、EX-SM-1~7：逐转移矩阵＋强制终止矩阵用例通过",
+    "Queued/Preparing/Running/Paused 四态取消出口覆盖（ARCH §11.2-6）；能力声明承载就位"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T10",
+  "unit": "project",
+  "masterWp": "WP-D",
+  "title": "命令服务与内置命令（CommandServiceImpl）",
+  "status": "planned",
+  "dependsOn": ["PRJ-T08", "PRJ-T09"],
+  "requirements": ["ARC-01", "PM-18"],
+  "designRefs": ["units/project.md#5.3", "units/project.md#6"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "acceptance": [
+    "PRJ-TX-1、PRJ-TX-3（桩编译）：恰好一个修订/失败零修订/串行契约用例通过",
+    "内置元数据处理器（project.create-branch 等）与测试处理器（断言判定注入）就位"
+  ]
+}

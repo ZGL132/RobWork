@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DIAG-T02",
+  "unit": "diagnostics",
+  "masterWp": "WP-D",
+  "title": "构建落位：diagnostics 占位转真实库",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "designRefs": ["units/diagnostics.md#3.3", "units/diagnostics.md#11"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "acceptance": [
+    "双模式构建零错误（DT-BUILD）",
+    "红线扫描零命中；零 Qt（仅 diagnostics→core 一条单元边）"
+  ]
+}

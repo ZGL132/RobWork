@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RPT-T12",
+  "unit": "reporting",
+  "masterWp": "WP-H",
+  "title": "模型摘要与任务投影接入（ModelSummary/ITaskStatusSource）",
+  "status": "planned",
+  "dependsOn": ["RPT-T05"],
+  "requirements": ["RPT-01"],
+  "designRefs": ["units/reporting.md#9.7", "units/reporting.md#3.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "acceptance": [
+    "投影 schema/空快照注记单测通过；schema 冻结留痕（runtime 交接）"
+  ]
+}

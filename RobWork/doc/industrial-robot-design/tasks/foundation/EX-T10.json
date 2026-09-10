@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EX-T10",
+  "unit": "execution",
+  "masterWp": "WP-D",
+  "title": "文档与门禁同步",
+  "status": "planned",
+  "dependsOn": ["EX-T01", "EX-T02", "EX-T03", "EX-T04", "EX-T05", "EX-T06", "EX-T07", "EX-T08", "EX-T09"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["units/execution.md#12", "units/execution.md#15"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["traceability-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "本文与实现零偏差登记；README 核对",
+    "§15.3 待裁决项状态最新（P-PR-4/P-EX-*）；DETAILED-DESIGN 状态更新申请提交"
+  ]
+}
