@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T09",
+  "masterWp": "WP-02-T09",
+  "branch": "wp02-t09",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Fault.cpp（faultShouldFire 裁决/记录非模板核心——模板壳在 Fault.hpp 转发，逻辑单点）"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/FaultTest.cpp（TK-FAULT 八用例＋生产面扫描复验＋ProcessRunner 冻结头声明钉住）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "FaultOccurrence/FaultScenario/FaultWiring（TK-FAULT）",
+      "designRef": "units/testkit.md §6.4/§8 TK-FAULT",
+      "cases": [
+        { "name": "FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8：occurrence 触发——恰第 N 次注入前后放行＋命中记录一次（io/file-writer/write-chunk,2）" },
+        { "name": "FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "空计划永不触发；occurrence 超出计划值只触发一次（1..5 循环断言）" },
+        { "name": "FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "多故障点独立计数＋命中按实际注入顺序记录" },
+        { "name": "FaultScenario.DiskFullDrivesErrorPath_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "AT-13 载体示例：磁盘满驱动保存事务错误路径（写 2 块后注入失败→调用方回滚演练）" },
+        { "name": "FaultWiring.RealAccessorDelegation_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "real() 委托通道（shared 所有权恒定）" },
+        { "name": "FaultWiring.NullRealRejected_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "real 为空构造期抛 TestKitError(Usage)——fail-fast" }
+      ]
+    },
+    {
+      "suite": "ProcessRunnerHeader/ProductBoundary",
+      "designRef": "units/testkit.md §6.5（O-33 设计冻结）/§6.4 接缝原则",
+      "cases": [
+        { "name": "ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "冻结头可包含＋三类型声明 static_assert 钉住（实现仍冻结，不实例化）" },
+        { "name": "ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2/3：全部产品单元 include/src 零 testkit 头、零 #ifdef TEST/defined(TEST)（扫描集非空锚定）" }
+      ]
+    },
+    {
+      "suite": "既有回归（TestPaths/JsonLite/BuildRedLine）",
+      "designRef": "units/testkit.md §8",
+      "cases": [
+        { "name": "既有 18 用例（TestPaths 7＋JsonLite 8＋BuildRedLine 3）", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-T01/TK-T02 零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 26, "passed": 26, "failed": 0, "modes": { "smoke": "26/26", "integration": "26/26" } },
+  "failureCapabilitySelfCheck": {
+    "method": "occurrence 探针：把 CONV 计划的触发序号 2 扰动为 1 后重编译执行；探针验证后清除并终验复绿",
+    "result": "FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT 如期变红（计划序号语义错误必被锁定用例捕获）；恢复后 26/26 复绿",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t09/smoke-configure.log",
+      "traceability/builds/wp02-t09/smoke-build.log",
+      "traceability/builds/wp02-t09/smoke-test-run.log",
+      "traceability/builds/wp02-t09/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t09/integration-build.log",
+      "traceability/builds/wp02-t09/integration-fullbuild.log",
+      "traceability/builds/wp02-t09/integration-test-run.log",
+      "traceability/builds/wp02-t09/sdurws_ird_testkit_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①ProcessRunner.hpp 按设计冻结交付：仅声明无定义、不建目标、不写消费测试（O-33 处置约束）；TK-BUILD 复验以两个新用例承载（TkBuild 既有用例继续全过）；②FaultInterceptor 模板壳＋faultShouldFire 非模板核心分离——裁决逻辑单点在 .cpp；③磁盘满模拟为 §6.4 计划用法的简化形态（按调用次注入），真实进程崩溃归 ProcessRunner 触发任务（§6.5 分工）"
+}
