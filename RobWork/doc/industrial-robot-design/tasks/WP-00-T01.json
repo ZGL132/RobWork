@@ -4,7 +4,7 @@
   "unit": "governance",
   "masterWp": "WP-A",
   "title": "建立治理协调与待裁决项流转登记（governance-log）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["PILOT-01", "DEL-02"],
   "designRefs": ["development-task-breakdown.md#2.1", "ARCHITECTURE.md#11.3", "REQUIREMENTS.md#24"],
