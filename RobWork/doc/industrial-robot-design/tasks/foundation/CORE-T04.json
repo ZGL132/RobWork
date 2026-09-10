@@ -4,10 +4,21 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "单位与量（Units）",
-  "status": "ready",
-  "dependsOn": ["CORE-T01"],
-  "requirements": ["NFR-COR-03", "KIN-12", "DYN-03", "SEL-02"],
-  "designRefs": ["units/core.md#4.4", "units/core.md#5.4", "units/core.md#9"],
+  "status": "done",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "NFR-COR-03",
+    "KIN-12",
+    "DYN-03",
+    "SEL-02"
+  ],
+  "designRefs": [
+    "units/core.md#4.4",
+    "units/core.md#5.4",
+    "units/core.md#9"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
@@ -18,12 +29,22 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
-  "crRefs": ["CR-06"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_core_test"
+  ],
+  "crRefs": [
+    "CR-06"
+  ],
   "branch": "wp03-t04",
   "interUnit": true,
-  "knownPitfalls": ["CR-06"],
+  "knownPitfalls": [
+    "CR-06"
+  ],
   "acceptance": [
     "R1 单位 token 表完整；错误口径三态（抛/空/正常）用例通过",
     "非法单位和非有限输入被拒绝（不静默归零）",
