@@ -1,0 +1,17 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from EvidenceBuild
+[ RUN      ] EvidenceBuild.SourceTreeReachable_EV_BUILD
+[       OK ] EvidenceBuild.SourceTreeReachable_EV_BUILD (0 ms)
+[ RUN      ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01
+[       OK ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2
+[       OK ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2 (0 ms)
+[ RUN      ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2
+[       OK ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2 (0 ms)
+[----------] 4 tests from EvidenceBuild (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 4 tests.
