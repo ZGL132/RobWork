@@ -23,7 +23,7 @@ endif()
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 set(IRD_MODULES
-    project evidence runtime policy execution diagnostics
+    project evidence policy execution diagnostics
     ui io reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
@@ -44,12 +44,17 @@ endforeach()
 # 实现与守卫细节见 core/CMakeLists.txt。
 add_subdirectory(core)
 
-# testkit（WP-02-T01≙TK-T01 落地）：INTERFACE 占位升级为 STATIC 库（C++17、
+# PLACEHOLDER-RT：INTERFACE 占位升级为 STATIC 库（C++17、
 # 链 core——testkit 是其唯一允许的单元依赖），并注册 gtest 测试目标
 # sdurws_ird_testkit_test（数据根三态用例＋TK-BUILD 红线用例）与 T-2
 # 配置期守卫（依赖红线 testkit 侧自律，O-21）——细节见 testkit/CMakeLists.txt。
 # 次序约束：必须在 core 之后（testkit 链接 sdurws_ird_core 目标）。
 add_subdirectory(testkit)
+# runtime（RT-T01≙WP-06-T01 落地）：INTERFACE 占位升级为 STATIC（C++17、链 core＋
+# L1 基线库〔P-RT-3：kinematics/models/sdurwsim——目标存在性实测后链接〕），并注册
+# gtest 测试目标 sdurws_ird_runtime_test（红线扫描＋L1 链接清单钉住）——细节见
+# runtime/CMakeLists.txt。次序约束：必须在 core 之后（链接 sdurws_ird_core）。
+add_subdirectory(runtime)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
