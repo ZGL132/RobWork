@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.9（2026-09-10 所有者解除子代理禁令：恢复 v1.6 派发执行模型——实施/验收由全新子代理承载；v1.8 全自动化语义全部保留；恢复前经派发能力实证） |
+| 文档版本 | v1.10（2026-09-11 F-013 整改：tick 报告队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写与预测性表述；T-ORCH 升 v8） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -167,7 +167,7 @@
 
 > 模板即纪律的载体：派发对应子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款（v1.9 §0.4：实施者/验收者由 tick 派发全新子代理承载）；模板修订＝PIPE 增量修订（版本行同步）。
 
-### 附录 A · 编排者模板（T-ORCH v7）
+### 附录 A · 编排者模板（T-ORCH v8）
 
 ```text
 你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
@@ -211,6 +211,10 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
    输出固定报告（phase 变迁/当前任务/证据路径/下一步等待点），并执行
    pipeline-lock release -Token <你的 tickId>——token 失配（退出码 4）＝你的租约已被接管，
    自终止并报告，不得重试。
+   报告中的队列摘要必须**逐字引用** validate-state 输出的 `queue-head:` 行（taskId 与
+   claimable 结论），禁止叙述性改写、预测性表述或对未入队契约作可领取性判断——唯一
+   例外是"队列空"时按 queue-head: (empty) 原样转述（F-013 教训：tick#40 报告编造
+   "队首 TK-T03 依赖均已 done"而权威队列实为 CORE-T10、TK-T03 尚 planned）。
 ```
 
 ### 附录 B · 实施者模板（T-IMPL v3）
@@ -287,3 +291,4 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.7 | 2026-09-10 | 所有者指令"禁止使用子智能体"：新增 §0.4 单会话执行模式——实施/验收角色由 tick 会话顺序扮演，附录 B/C 纪律与清单不变；独立性降级须在验收记录声明；续租纪律保持（角色前后各一次）；T-ORCH 升 v5（步骤 6/7 改会话内执行）；指令解除须增量修订，禁止静默切回 |
 | v1.8 | 2026-09-10 | 所有者指令"流程全自动化，不需要所有者指令"：①state.policy 切换——autoMerge.enabled=true＋classes=全词表 {doc,build,implementation}（预授权按 §6.1 机制登记）；unitCheckpoint=false（单元检查点关闭，awaiting_unit_review 成不可达态）；②§4.6/§4.7 pass 后同 tick 执行七步收尾（漂移检测/冲突即停转 blocked 的保护不变），§4.2 awaiting_merge 变为收尾中断自愈锚点；③§6 所有者触点改监督性（blocked 解除/语义裁决/暂停恢复仍需所有者——诚实边界）；④§7 增双重放宽风险声明（单会话＋自动合入）与监督补偿建议；⑤T-ORCH 升 v6 |
 | v1.9 | 2026-09-10 | 所有者解除子代理禁令（走 §0.4 预留的解除路径）：①恢复 v1.6 派发执行模型——实施/验收由全新子代理承载（§0.4 重写、§1 角色映射、§2 完成事件、附录 A 步骤 6/7 恢复"派发＋阻塞等待＋二次 renew"），附录 T-ORCH 升 v7；②恢复前完成派发能力实证（无害子代理调用成功）；③独立性回到模型级，验收记录不再需要降级声明，§7 风险声明更新（仅余自动合入放宽）；④新增承载者混同禁令：编排者不亲自实施/验收；⑤v1.8 全部自动化语义（autoMerge 全词表、无单元检查点、pass 同 tick 收尾、监督性触点）保留不变 |
+| v1.10 | 2026-09-11 | F-013 整改（tick#40 报告编造"队首 TK-T03 依赖均已 done"，权威队列实为 CORE-T10 且 TK-T03 尚 planned——报告叙述失实而状态未被污染）：附录 A T-ORCH 步骤 9 增补硬性规定——tick 报告的队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写、预测性表述或对未入队契约作可领取性判断（队列空按 "(empty)" 原样转述）；T-ORCH 升 v8 |
