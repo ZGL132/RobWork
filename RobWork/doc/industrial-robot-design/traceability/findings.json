@@ -106,11 +106,11 @@
       "id": "F-011",
       "source": "DOC-T04 实施段 ird_gates 自查（2026-09-11，doc-t04 分支，base 3efa444；本任务零源码改动，命中为基线既有）",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-11",
       "title": "ird_gates IRD-GATE-R4 基线既有命中 1 处：testkit/include/sdurws/ird/testkit/JsonLite.hpp 第 12 行文件头注释含 'RobWork' 字面量（'RobWork 无可借头'），被 R-4 名称前缀拼接/剥离启发式扫描判为疑似命中，`cmake --build build --config Release --target ird_gates` 退出码 1；来源提交 8f4eca0（WP-02-T02≙TK-T02，已 done）。阻断范围：本批放行的 core 编码任务（CORE-T03~T08）DoD 自查'ird_gates 零命中'在消账前必然失败；对 DOC-T04 本体不构成阻断（纯治理契约任务，contract verify 为 validate-docs/validate-task）",
       "owner": "testkit 实现所有者（源文件辖域）＋门禁所有者（DTB §5.1；R-4 扫描是否应排除注释行）",
-      "resolution": "两条路径择一并留痕：①改写 JsonLite.hpp 第 12 行注释措辞去除 'RobWork' 字面量（纯注释、非产品逻辑，语义不变，属 testkit 单元增量修订）；②门禁 R-4 扫描排除注释行，或按 DTB §4.5 登记该处为例外。DOC-T04 forbiddenFiles 含 RobWorkStudio/src/**，不在本任务处置；建议在 CORE-T03 入队执行前由所有者指派消账，消账前含门禁自查的任务须在提交信息如实标注本项既有命中。"
+      "resolution": "所有者裁决\"F-011 做消账\"（2026-09-11），按路径②执行：ird_gates.cmake R-4 扫描在匹配前剥离行/块注释（判定对象＝代码行为，注释属文档；含已知边界＝字符串内 http:// 形态会被行注释规则截断，当前仓库无此形态），并新增 pass_r4comment 回归自测用例（注释含 RobWork 必过）＋既有 fail_r4（字面量必命中）双向防退化；全量运行 9/9 自测＋真实树零命中。消账提交见 redesign-main fix/f-011 合入。"
     },
     {
       "id": "F-012",
