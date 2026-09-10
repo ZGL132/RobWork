@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T01",
+  "masterWp": "WP-05-T01",
+  "branch": "wp05-t01",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "INTERFACE 占位升级为 STATIC（C++17、/utf-8、R-2 头根）；PUBLIC 链仅 sdurws_ird_core（§3.2 唯一单元边——零 rw/零 Qt/零 testkit）；配置期守卫（其他单元目标/Qt/gtest 即 fatal）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "test/BuildRedLineTest.cpp（红线扫描四用例——core/testkit/runtime 同构）；IRD_EVIDENCE_UNIT_ROOT 注入"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceBuild",
+      "designRef": "units/evidence.md §3.2/§3.4、§12 EV-T01",
+      "cases": [
+        { "name": "EvidenceBuild.SourceTreeReachable_EV_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（include 保留位 README＋src 占位 TU——落位期形态）" },
+        { "name": "EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头扫描）" },
+        { "name": "EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面 sdurws/ird/* 白名单＝{core, evidence}——ARCH §3.5 唯一单元边）" },
+        { "name": "EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-2（公共头仅位于 include/sdurws/ird/evidence/——保留位期零头，规则随头落地自动生效）" }
+      ]
+    }
+  ],
+  "summary": { "total": 4, "passed": 4, "failed": 0, "modes": { "smoke": "4/4", "integration": "4/4" } },
+  "failureCapabilitySelfCheck": {
+    "method": "跨单元头探针：向 evidence/src 注入含 #include <sdurws/ird/testkit/JsonLite.hpp> 的临时 TU 后重编译执行；探针验证后清除并终验复绿",
+    "result": "NoCrossUnitInclude_EV_BUILD_R1_R2 如期变红（单元边越界必被扫描捕获）；恢复后 4/4 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t01/smoke-configure.log",
+      "traceability/builds/wp05-t01/smoke-build.log",
+      "traceability/builds/wp05-t01/smoke-test-run.log",
+      "traceability/builds/wp05-t01/sdurws_ird_evidence_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t01/integration-build.log",
+      "traceability/builds/wp05-t01/integration-fullbuild.log",
+      "traceability/builds/wp05-t01/integration-test-run.log",
+      "traceability/builds/wp05-t01/sdurws_ird_evidence_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 exit 0）",
+  "notes": "落位期形态：公共面仅 README 保留位（真实接口 Errors/Snapshot/Slice 随 EV-T02+ 落地）；CR-01/CR-02 陷阱为 EV-T02+ 消费约束（本任务零 core 类型消费——占位 TU 仅 std）；证据日志经 -f 强制纳入（F-010 前置自查）"
+}
