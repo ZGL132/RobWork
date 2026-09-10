@@ -615,7 +615,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-18 | P-RT-7：耦合矩阵"病态"阈值（条件数 ≤1×10⁸）为 runtime 设计默认，建议并入 EngineeringPolicySet | 阻止边界的权威归属 | runtime.md §15.3 P-RT-7 | 需求所有者＋policy 卡 | 登记 |
 | O-19 | P-PR-8：分支 label 创建时一次写入、不可改名是否满足 PM-11"当前方案"显示需要 | 若需可编辑方案名则走需求变更 | project.md §15.3 P-PR-8 | 需求所有者 | 登记 |
 | O-20 | P-POL-5：碰撞后端版本取值依赖 NFR-DEP-05 冻结版本基线（未产出）；内置 ProximityStrategyRW 版本串暂取 RobWork 构建版本 | 复现块与兼容判定版本口径 | policy.md §15.3 P-POL-5 | 版本基线所有者（WP-24-T01 消账） | 登记 |
-| O-21 | P-TK-4：ARCH §3.5 未列 testkit（测试单元）；建议补登"testkit→core（仅测试目标）"边及 T-1/T-2 红线 | 依赖门禁数据源不含测试侧红线时 T-1 仅靠 testkit 卡自律 | testkit.md §12.3 P-TK-4 | 架构所有者 | 登记 |
+| O-21 | P-TK-4：ARCH §3.5 未列 testkit（测试单元）；建议补登"testkit→core（仅测试目标）"边及 T-1/T-2 红线 | 依赖门禁数据源不含测试侧红线时 T-1 仅靠 testkit 卡自律 | testkit.md §12.3 P-TK-4 | 架构所有者 | 已消账（2026-09-10，WP-01-T01：ARCH §3.5 补登该行〔契约 allowedFiles 专门授权〕＋门禁白名单收录该边并登记出处；dependency-graph.json 补行使随 traceability 维护承接） |
 | O-22 | P-TK-5：大体绩黄金数据（点云/大规模采样快照）存储与 CI 获取策略（git 内 vs LFS vs 制品）未定 | 数据集交付与 CI 时效；阶段 A 数据小（源内即可） | testkit.md §12.3 P-TK-5 | 构建负责人＋WP-02（首个大数据集出现时裁决） | 登记 |
 | O-23 | P-TK-7：`requirements-ids.json` lint 字典维护责任 | 字典随 REQUIREMENTS 修订漂移则 lint 失效 | testkit.md §12.3 P-TK-7 | 需求所有者＋WP-02（随需求变更流程更新） | 登记 |
 | O-24 | P-D-1：EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core 的跨卡确认 | execution/ui 卡若另作安排则 core 需迁移词表（evidence/runtime/policy 卡已默认承接） | core.md §10.2 P-D-1 | execution/ui 卡（WP-08-T01/WP-10-T01） | 登记 |

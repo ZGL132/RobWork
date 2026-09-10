@@ -51,10 +51,22 @@ add_subdirectory(core)
 # 次序约束：必须在 core 之后（testkit 链接 sdurws_ird_core 目标）。
 add_subdirectory(testkit)
 
-# 依赖红线（WP-01-T01 边界门禁承载；core 侧配置期断言已随 WP-03-T01 落在
-# core/CMakeLists.txt，全仓依赖图门禁随 ird_gates 落地启用）：
-#   业务目标互链 / 跨单元私有头 / Widgets 进入计算核心 / RobWork 名称前缀拼接
-#   —— 任一命中即构建失败（development-task-breakdown.md §5.1）
+# 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
+# （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
+# 文件头；边白名单与例外登记数据见 cmake/ird_gates_whitelist.cmake（数据面；
+# 人工登记册＝development-task-breakdown.md §4.5，两处必须一致）。运行方式：
+#   cmake --build build --config Release --target ird_gates
+# 目标自带引擎自测（干净夹具必须通过＋7 类植入违例必须检出——DTB §2.2
+# 验收第 5 条），任一命中即目标失败。日常构建不自动挂接该目标（避免每次
+# 构建全树扫描），CI/一键门禁随 WP-01-T02 挂接。
+add_custom_target(ird_gates
+    COMMAND "${CMAKE_COMMAND}"
+        "-DIRD_ROOT=${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DIRD_SELFTEST_DIR=${CMAKE_BINARY_DIR}/ird_gates_selftest"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ird_gates.cmake"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMENT "ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）"
+    VERBATIM)
 
 # 提醒：插件目标（sdurws_ird_<unit>_plugin/_test/_contract_test/_worker 等）
 # 随对应单元任务卡逐个登记，不在骨架中预建空目标（不建占位，总体详设 §1.5 原则）。

@@ -1,0 +1,12 @@
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中
+==============================================================
