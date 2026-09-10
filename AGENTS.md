@@ -100,7 +100,8 @@ std::string computeDigest(const std::string& params, uint64_t seed);
 // 第二步：回滚未完成的事务段。
 // 十段编译链（RT-T11）中任何一段失败，已执行段必须全部回退，
 // 保证"双编译原子性"（MDL-06）：要么新旧模型同时切换成功，要么都保持原状。
-// 注意回滚本身也可能失败，此时进入"污染"状态并上报诊断码 DX-xxx，
+// 注意回滚本身也可能失败，此时进入"污染"状态并上报对应的稳定诊断码
+// （如 RT-WC-COMPILE-FAILED，登记于 diagnostics StableCodeRegistry），
 // 不允许静默吞掉——项目文件宁可标记为需修复，也不能处于未知状态（Q2 失败可恢复）。
 rollbackExecutedSegments();
 ```
@@ -114,7 +115,7 @@ rollbackExecutedSegments();
 | **角度制式** | rad 还是 deg 必须显式写出 | `// 关节角，单位 rad（不是度！）` |
 | **所有权与生命周期** | 裸指针/引用注明谁负责释放；快照注明不可变性 | `// 调用方持有，本函数不接管所有权` |
 | **线程约束** | 非线程安全的共享状态注明使用限制 | `// 非线程安全：仅任务执行线程访问（TASK-02）` |
-| **错误语义** | 错误码/异常的归类（调用方错误 vs 环境错误） | `// DX-3xx = 输入错误（可修复）；DX-5xx = 环境错误` |
+| **错误语义** | 错误码/异常的归类（调用方错误 vs 环境错误）。本项目诊断码为**单元前缀助记码**（PRJ-/RT-/EX-/RPT-…，登记于 diagnostics StableCodeRegistry），不存在 DX-xxx 数字码段 | `// RT-CACHE-INCOMPATIBLE = 版本类稳定码（数据错误）；对已关闭上下文的调用 = 调用方契约违约，走异常 fail-fast` |
 | **确定性来源** | 影响可复现性的种子、排序、舍入策略 | `// 排序键：名称 asc → 修订号 asc（NFR-COR-02 稳定排序）` |
 
 ### 2.6 反面示例（禁止出现的注释）
@@ -222,7 +223,7 @@ RobWork/doc/industrial-robot-design/
 **★ 分支红线：`main` 是旧主分支，已冻结不再维护——禁止向 `main` 提交（commit）、合并（merge）或推送（push）任何新内容**，本地与远程 `origin/main` 均不得改动；本仓库在新项目接入时曾错误地把新项目提交到 `main`，该状态已回退，不得重演。当前**唯一开发主线是 `redesign-main`**，一切后续改动只能在 `redesign-main` 及其任务分支上进行：
 
 - 分支：一切工作基于 `redesign-main`；实现任务使用短生命周期分支 `wp<nn>-t<kk>`（如 `wp03-t02`），DoD 达成后合入 `redesign-main`；纯文档修订可直接在 `redesign-main` 小步提交。
-- 提交信息：`[WP-nn-Tkk] <摘要>`（代码与其测试同一提交）；文档修订 `[DTB] v0.x: <摘要>` 或对应文档代号；治理文件（AGENTS.md 等）修订用 `[docs] <摘要>`（沿用仓库既有实践）。
+- 提交信息：`[WP-nn-Tkk] <摘要>`（代码与其测试同一提交）；文档修订 `[DTB] v0.x: <摘要>` 或对应文档代号；治理文件（AGENTS.md 等）修订用 `[docs] <摘要>`（沿用仓库既有实践）。文档链其余修订沿用既有前缀：单元卡 `[units]`、架构文档 `[ARCH]`（ARCHITECTURE/DETAILED-DESIGN 事实修正）、追踪矩阵/任务契约/验证脚本 `[governance]`。
 - 完成状态随实现提交登记，不积压。
 - 若发现改动误落到了 `main`（如切错分支）：**立即停止并在 `redesign-main` 侧报告**，不得在 `main` 上叠加修正提交，也不得擅自强推改写远程分支历史。
 
