@@ -35,10 +35,10 @@
 | P-PR-6 / P-EX-8 / P-DIAG-5 | diagnostics 已编写，但 sink 名称/归属统一仍未裁决 | 不因卡片存在而自动消账；相关真实装配前完成接口确认 |
 | P-PR-5 / P-IO-1 / P-RPT-1～3 | 注入、包编解码、正式写入与 L5 适配仍有交接项 | 不新增 project→io、reporting→io/runtime 编译依赖；受影响任务逐项阻塞 |
 | P-IO-3 | ZIP/XML 选型尚待 vcpkg 可用性与版本登记 | IO-T04 保持阻塞条件，不擅自选库 |
-| CR-06 | TK-T04/05 依赖 CORE-T04/05 实现后的 API diff | 保持 planned；不能仅凭详设置 ready |
+| CR-06 | TK-T04/05 依赖 CORE-T04/05 实现后的 API diff；DOC-T04（2026-09-11）已将 CORE-T04/05 置 ready（契约内 CR-06 门禁 acceptance 条目原样保留） | TK-T04/05 保持 planned；不能仅凭详设置 ready，须待 CORE-T04/05 实现后 API diff 通过 |
 | O-03 | ARCHITECTURE v0.11 仍 Draft | 未擅自 Accepted；发现实际架构冲突的任务停止并登记，不阻塞既定 M0 落位 |
 | M0～M3 | 本次没有执行构建、产品测试、ird_gates | 不宣布任何实现里程碑通过；各任务按 DTB §5.2 DoD 留痕 |
-| 基础任务契约完整性 | **DOC-T03 已完成（2026-09-10）**：42 份缺字段 planned 契约逐份回填（requirements/designRefs/dependsOn/verify/acceptance 编译自 DTB §2 WP 行＋卡任务行；原"52"系立项计数，现况 42＋先行补齐 10）；CORE-T02/09、TK-T02/09 四份翻转 ready（前置 done＋卡内接口闭环），其余 38 份按前置链保持 planned；CR-06 门禁（CORE-T04/05、TK-T04/05）零触碰 | 空 requirements 的 planned 归零；ready 总数 3→7；放行逐项进行——审计记录见 [readiness-audit-doc-t03.md](readiness-audit-doc-t03.md)、编译留痕见 contract-compile-log.md |
+| 基础任务契约完整性 | **DOC-T03 已完成（2026-09-10）**：42 份缺字段 planned 契约逐份回填（requirements/designRefs/dependsOn/verify/acceptance 编译自 DTB §2 WP 行＋卡任务行；原"52"系立项计数，现况 42＋先行补齐 10）；CORE-T02/09、TK-T02/09 四份翻转 ready（前置 done＋卡内接口闭环），其余 38 份按前置链保持 planned；CR-06 门禁（CORE-T04/05、TK-T04/05）零触碰。**DOC-T04 放行批次（2026-09-11）**：core 主链七份 CORE-T03/04/05/06/07/08/10 整单元拓扑序批次置 ready（所有者裁决对 DOC-T03 保守口径的显式放宽，依据＝同单元接口设计级 diff 已全部关闭〔foundation-api-diff.md〕＋core.md 卡内锚点即交接核对；入队序 T03→T04→T05→T06→T07→T08→T10 由所有者口令经编排侧执行）；早期补齐的 T04/05/06/07 按 DTB §2 WP 行＋core.md §2.1 复核补 requirements（DYN-03/SEL-02、NFR-COR-02、EVI-01/TASK-02/PM-03、MDL-06）与 branch/interUnit/knownPitfalls 放行字段；CORE-T04/05 的 CR-06 门禁条目原样保留，TK-T04/05 仍 planned | 空 requirements 的 planned 归零；ready 总数 3→7（DOC-T03），本批再放行七份——canonical 现况 ready＝core 主链七份＋DOC-T04 本体（此前 ready 契约已随实现转 done；foundation-tasks.json 索引内嵌状态非权威，冲突以 canonical 为准）；放行逐项进行——审计记录见 [readiness-audit-doc-t03.md](readiness-audit-doc-t03.md)、编译留痕（含 DOC-T04 七行放行登记）见 contract-compile-log.md |
 
 ### 2.1 服务单元交接核对记录（DOC-T02，2026-09-10）
 
