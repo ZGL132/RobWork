@@ -5,7 +5,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 文档代号 | UNIT-UI |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | `Draft`（不自行宣布 Accepted） |
 | 单元 / 层 | ui／L3 平台服务（界面支撑）——**全产品唯一允许 Qt Widgets 的平台单元（R-3 唯一例外登记）** |
@@ -42,7 +42,7 @@
 | 代码落位 `RobWorkStudio/src/rwslibs/industrialrobot/ui/` | 仅 `include/sdurws/ird/ui/README.md` 占位（不参与编译，指向本文 §9——**章节号按本文实际结构修正为 §13**，属骨架注释滞后，不阻塞） | 无源码 |
 | `industrialrobot/CMakeLists.txt` | WP-01 构建骨架 | `sdurws_ird_ui` 为 INTERFACE 占位（别名 `RWS::ird::ui`）；升级 STATIC 时目标名不变（DTB §5.1）；红线门禁随首批源码启用 |
 
-**缺失文件如实登记**：`units/workflow.md` 不存在（本文对 workflow 的全部引用为"对未产出单元的单侧冻结"，见 P-UI-6）；`units/io.md`、`units/reporting.md` 及全部业务域单元详设不存在（本文仅按 ARCH §3.1 单元总表登记消费边界，不引用其内部契约）。
+**缺失文件如实登记**（v0.2 更正）：`units/workflow.md` 不存在（本文对 workflow 的全部引用为"对未产出单元的单侧冻结"，见 P-UI-6）；`units/io.md` 与 `units/reporting.md` **已产出**（v0.1 Draft——reporting §9.8/§12 已承接 P-UI-9 预览接口，io 经 §10.10/§13.2 双向交接；原"不存在"表述系编写时快照，已过期）；其余 9 个业务域单元详设仍不存在（本文仅按 ARCH §3.1 单元总表登记消费边界，不引用其内部契约）。
 
 ### 1.2 单元目标（阶段 A）
 
@@ -176,7 +176,7 @@ ui 是 L3 平台服务中的界面支撑单元，为产品提供**唯一**的工
 | `sdurws_ird_ui` | STATIC（自 UI-T02 起，由 INTERFACE 占位升级，目标名不变） | `RWS::ird::core`、`RWS::ird::diagnostics`、Qt Core/Gui/Widgets | **R-3 唯一例外登记目标**：全产品唯一允许 Qt Widgets 的平台单元；例外范围仅限本目标与 §3.3 所列 ui 测试目标 |
 | `sdurws_ird_ui_test` | 可执行 | 被测目标＋`RWS::ird::testkit`＋GTest | 无界面模型测试（QCoreApplication 级，无需 GUI 平台插件——AGENTS 模型测试豁免） |
 | `sdurws_ird_ui_contract_test` | 可执行 | 被测目标＋core/project/execution/diagnostics＋testkit＋GTest | 跨单元契约测试（无界面；带 Qt 事件循环 headless 用 QCoreApplication） |
-| `ird_ui_gui_test` | 可执行（GUI，单列） | 被测目标＋testkit（＋`sdurws_ird_testkit_qt`，见 P-TK 登记） | Widgets/GUI 契约测试；**ctest LABELS `ird_gui` 串行**；不与模型/Meta 测试合并命令 |
+| `sdurws_ird_ui_gui_test` | 可执行（GUI，单列） | 被测目标＋testkit（＋`sdurws_ird_testkit_qt`，见 P-TK 登记） | Widgets/GUI 契约测试；**ctest LABELS `ird_gui` 串行**；不与模型/Meta 测试合并命令（v0.2 更名：原名 `ird_ui_gui_test` 违反 ARCH §1.4 `sdurws_ird_<unit>_*` 命名约定，本卡内三处同步更正） |
 
 依赖边（对齐 ARCH §3.5，不新增）：`ui → core, diagnostics`（接口依赖）；`project / execution / evidence / policy / runtime` 对 ui **零编译依赖**——与它们的协作一律经运行时注入（C-3～C-12 中的实例由 L5 应用壳装配期注入，ui 持有的是 core 中定义的接口类型或各自公共头中的端口接口）。**禁止 ui 链接或 include 任何业务域单元（modeling/requirements/.../workflow）的私有头**；业务插件界面经 §11 注册端口装配。
 
@@ -1037,7 +1037,7 @@ FindingRecord 投影字段（diagnostics.md §5.2）→ 对话呈现映射：fin
 
 - 对话框任务清单＝tasksByProject(当前项目) 过滤非终态（9 态短标签，PM-03 内嵌清单）。
 - "等待"＝进入 Draining 显示归档进度（§5.4 S1）；应用退出时由 L5/workflow 调 `scheduler.shutdown(DrainPolicy)`＋`drained()`（有界排空）。
-- **P-UI-3（文档不一致登记）**：execution.md §7.5 使用 `DrainPolicy::WaitForInFlight`，§10.1 枚举为 `{CancelQueuedAndWait, KeepQueuedTerminate}`——ui 侧按"关闭等待＝CancelQueuedAndWait 语义（取消排队、在途归档后收口）"对接，具体枚举名以 execution 所有者澄清为准（本文不擅改上游枚举）。
+- **P-UI-3（文档不一致登记，已销账）**：execution.md §7.5 原使用 `DrainPolicy::WaitForInFlight`（§10.1 枚举中不存在）——execution.md v0.2 已更正为 `CancelQueuedAndWait`（2026-09-10），与本文"关闭等待＝取消排队、在途归档后收口"的对接语义一致；ui 按 §9.5 对接。
 
 ---
 
@@ -1434,7 +1434,7 @@ public:
 | --- | --- | --- |
 | `sdurws_ird_ui_test` | 无界面模型测试：命令注册表/快捷键表/七态映射/epoch 过滤/DraftController 协议（QCoreApplication 级——AGENTS 模型测试豁免，无需 GUI 平台插件） | `ird` |
 | `sdurws_ird_ui_contract_test` | 跨单元契约：对接 project/execution/diagnostics 公共头与桩实现（testkit FaultInterceptor 伪造 ITaskScheduler/ICommandInteraction） | `ird` |
-| `ird_ui_gui_test` | Widgets/GUI 契约测试（五区创建/布局恢复/对话框/面板导航） | `ird_gui`（**串行**） |
+| `sdurws_ird_ui_gui_test` | Widgets/GUI 契约测试（五区创建/布局恢复/对话框/面板导航） | `ird_gui`（**串行**） |
 
 `sdurws_ird_testkit_qt` 启用登记（testkit.md §3.5/§10.1）：本单元为首个消费者（WP-10-T11 需 Qt Test 辅助：事件循环驱动、控件探针），理由已在 UI-T13 任务卡登记；该目标禁止进入生产计算库依赖（testkit 红线）。
 
@@ -1442,7 +1442,7 @@ public:
 
 1. 在 **Visual Studio x64 Developer Environment**（或等价 vcvars64 初始化的 shell）中运行；
 2. 设置 `$env:QT_QPA_PLATFORM='windows'`；
-3. **每次只启动一个**GUI 测试可执行文件，且使用**绝对路径**调用（例 `D:\build\...\ird_ui_gui_test.exe`）；ctest 侧以 `LABELS ird_gui` 串行调度；
+3. **每次只启动一个**GUI 测试可执行文件，且使用**绝对路径**调用（例 `D:\build\...\sdurws_ird_ui_gui_test.exe`）；ctest 侧以 `LABELS ird_gui` 串行调度；
 4. **不使用** `QT_QPA_PLATFORM='offscreen'`；
 5. **不把 Widget 测试与 Meta/模型测试可执行文件合并到同一命令**（分开运行）；
 6. 若 Qt 报平台插件初始化失败：**先停止受影响进程**→检查继承的 `QT_*`/`QML_*` 环境变量（清除冲突项）→按上述设置**重启**；
@@ -1648,7 +1648,7 @@ public:
 | # | 冲突/缺口 | 依据 | 影响 | 建议 | 裁决者 |
 | --- | --- | --- | --- | --- | --- |
 | CF-1 | 架构 §3.5"ui→core：命令注册表类型"与 core.md §2.3"命令注册表归 ui"不一致（core 无此类型） | ARCH §3.5 vs core.md §2.3 | 无实现影响（本文将注册表类型落位于 ui 自有头） | 架构侧将 §3.5 该行语义改为"ui 消费 core 契约类型"或删除"命令注册表类型"字样 | 架构所有者 |
-| CF-2 | execution §7.5 `DrainPolicy::WaitForInFlight` 与 §10.1 枚举 `{CancelQueuedAndWait, KeepQueuedTerminate}` 不一致 | execution.md §7.5 vs §10.1 | ui 关闭对话框文档引用需择一 | 澄清枚举；ui 按"取消排队＋在途归档后收口"语义对接（§9.5） | execution 所有者 |
+| CF-2 | ~~execution §7.5 `DrainPolicy::WaitForInFlight` 与 §10.1 枚举 `{CancelQueuedAndWait, KeepQueuedTerminate}` 不一致~~ **已销账（2026-09-10）**：execution.md v0.2 将 §7.5 更正为 `CancelQueuedAndWait` | execution.md §7.5 vs §10.1 | 无遗留——ui 按"取消排队＋在途归档后收口"语义对接（§9.5），与更正后枚举一致 | 已由 execution.md v0.2 澄清 | execution 所有者（已处置） |
 | CF-3 | evidence §13 要求 ui 做"七态投影与九态映射"，但七态词表任何上游未定义 | evidence.md §13 vs 全文 | ui 已定义（§6.3），需确认 | 需求侧确认词表与优先级（P-UI-1） | ui 详设所有者＋需求所有者 |
 | CF-4 | PM-03"运行中任务清单"数据在 project 查询端口缺席（只有 execution tasksByProject） | project.md §A7 | 无实现影响（ui 直接消费 execution 接口） | project.md 后续修订时补一句指向 execution（登记即可） | project 所有者 |
 
@@ -1703,3 +1703,4 @@ public:
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版草案（阶段 A 范围）：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）及 8 份已产出单元详设（core/testkit/project/evidence/runtime/policy/execution/diagnostics，均 v0.1 Draft）编写；新建 `units/ui.md`（此前不存在）；冻结 §6.3 七态映射、§7 命令/快捷键设施、§8 DraftController、§9 确认与任务契约、§10 九接口；登记待裁决 P-UI-1~10 与上游不一致 CF-1~4 |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：①§3.1/§11 目标 `ird_ui_gui_test` 更名为 `sdurws_ird_ui_gui_test`（ARCH §1.4 命名约定，三处同步）；②P-UI-3/CF-2 销账——execution.md v0.2 已将 DrainPolicy 更正为 `CancelQueuedAndWait`，与本文对接语义一致；③§1.2"io/reporting 未产出"过期表述由文档治理任务同步（reporting.md 已产出并双向交接）。依赖边三方矛盾（C 表"接口依赖"标注 vs ARCH §3.5 白名单）登记 DTB §4.2 O-31，待架构所有者裁决，本文不私裁 |

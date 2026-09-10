@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-09 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-PROJECT |
@@ -454,7 +454,7 @@ public: virtual ~IDiagnosticsSink() = default;
 };
 ```
 
-project 侧稳定诊断码建议清单（**码值分配权威＝diagnostics StableCodeRegistry，未产出，以下为建议值，P-PR-6 交接**）：`PRJ-LOCK-HELD`（只读打开且含持有 PID）、`PRJ-STORE-CORRUPT`、`PRJ-RECOVERY-IGNORED-UNCOMMITTED`、`PRJ-RECOVERY-ORPHAN-DRAFT`、`PRJ-RECOVERY-DANGLING-OBJECTS`、`PRJ-SCHEMA-FUTURE`、`PRJ-FORMAT-LEGACY`、`PRJ-STALE-REVISION-REJECTED`、`PRJ-ARCHIVE-CONFLICT`、`PRJ-WRITE-AUTHORITY-LOST`。
+project 侧稳定诊断码清单（**码值分配权威＝diagnostics StableCodeRegistry——已收编全量 10 项〔diagnostics.md §4.6，2026-09-10〕，与下列清单一致（P-PR-6 码值部分消账；sink 名称/归属统一仍按 P-PR-6 裁决）**）：`PRJ-LOCK-HELD`（只读打开且含持有 PID）、`PRJ-STORE-CORRUPT`、`PRJ-RECOVERY-IGNORED-UNCOMMITTED`、`PRJ-RECOVERY-ORPHAN-DRAFT`、`PRJ-RECOVERY-DANGLING-OBJECTS`、`PRJ-SCHEMA-FUTURE`、`PRJ-FORMAT-LEGACY`、`PRJ-STALE-REVISION-REJECTED`、`PRJ-ARCHIVE-CONFLICT`、`PRJ-WRITE-AUTHORITY-LOST`。
 
 ### 5.1 打开与存储上下文（ProjectStore / ProjectStoreFactory）
 
@@ -1368,6 +1368,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）、core.md/testkit.md v0.1（Draft，协作输入）完成 15 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失）；冻结 .rwdesign 全目录契约、双通道提交闭包与防回退不变量、七步事务协议与故障注入矩阵、Windows 锁与存储上下文生命周期、命令/确认/撤销/归档接口；实现任务 PRJ-T01～T16；待裁决 8 项（P-PR-1～8） |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：§5.0 稳定码清单由"diagnostics 未产出、以下为建议值"更正为"已收编全量 10 项（diagnostics.md §4.6）"——P-PR-6 码值部分消账；sink 名称/归属统一与 project→diagnostics 边的链接形态（当前注入式、暂不链接）仍按 P-PR-6/P-EX-8 裁决，不因卡存在自动消账 |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

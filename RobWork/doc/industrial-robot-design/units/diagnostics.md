@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-DIAGNOSTICS |
@@ -332,7 +332,7 @@ diagnostics::FindingRecord（§5，SA-15 服务端记录；其 record 必为比�
 
 ### 4.5 稳定诊断码注册表（StableCodeRegistry）
 
-**码命名空间与句法**：`DiagCode` 句法沿用 core（`^[A-Z0-9]+(-[A-Z0-9]+)*$`，≤64）。命名空间约定：**首段＝单元短前缀**（平台：`PRJ`/`RT`/`POL`〔policy 卡用 POLICY-\*，注册表按原文收编，前缀归一为 POLICY〕/`EVI`/`EX`/`IO`/`UI`/`DIAG`；业务域：`MDL`/`REQ`/`KIN`/`TRJ`/`DYN`/`SEL`/`OPT`/`WF`）——前缀即所有权声明，跨前缀注册拒绝。**码值一经注册并进入任何持久化产物即不再改义、不改拼**（持久化契约；改名＝新码＋旧码废弃迁移）。
+**码命名空间与句法**：`DiagCode` 句法沿用 core（`^[A-Z0-9]+(-[A-Z0-9]+)*$`，≤64）。命名空间约定：**首段＝单元短前缀**（平台：`PRJ`/`RT`/`POL`〔policy 卡用 POLICY-\*，注册表按原文收编，前缀归一为 POLICY〕/`EVI`/`EX`/`IO`/`UI`/`RPT`/`DIAG`；业务域：`MDL`/`REQ`/`KIN`/`TRJ`/`DYN`/`SEL`/`OPT`/`WF`）——前缀即所有权声明，跨前缀注册拒绝（RPT 前缀为 2026-09-10 reporting.md §3.5 清单收编时补登，消账 P-RPT-8 码值部分）。**码值一经注册并进入任何持久化产物即不再改义、不改拼**（持久化契约；改名＝新码＋旧码废弃迁移）。
 
 `CodeDescriptor`（注册项，构造后不可变）：
 
@@ -372,7 +372,7 @@ diagnostics::FindingRecord（§5，SA-15 服务端记录；其 record 必为比�
 
 ### 4.6 内置码表（阶段 A 收编清单；码值权威＝本注册表，不重排各卡已登记建议值——dtb WP-09-T03 约束）
 
-收编四份建议清单（project §5.0、runtime §10.11、policy §9.6、evidence §13）＋本文自用码＋execution §3.4 清单。分类/严重为本文登记值（P-DIAG-3）：
+收编五份建议清单（project §5.0、runtime §10.11、policy §9.6、evidence §13、reporting §3.5〔2026-09-10 补充收编〕）＋本文自用码＋execution §3.4 清单。分类/严重为本文登记值（P-DIAG-3）：
 
 | 前缀 | 码（收编，全量） | 分类 | 严重 | 备注 |
 | --- | --- | --- | --- | --- |
@@ -381,6 +381,7 @@ diagnostics::FindingRecord（§5，SA-15 服务端记录；其 record 必为比�
 | POLICY | POLICY-SCHEMA-UNKNOWN-FIELD、POLICY-SCHEMA-VERSION-FUTURE、POLICY-SCHEMA-VERSION-UNKNOWN、POLICY-THRESHOLD-NON-FINITE、POLICY-THRESHOLD-NON-POSITIVE、POLICY-THRESHOLD-OUT-OF-RANGE、POLICY-UNIT-MISMATCH、POLICY-RULE-DUPLICATE、POLICY-RULE-CONFLICT、POLICY-RULE-CYCLE、POLICY-SCOPE-OBJECT-MISSING、POLICY-APPLICABILITY-INVALID、POLICY-VERSION-INCOMPATIBLE、POLICY-CONTENT-IDENTITY-MISMATCH、POLICY-CLL-DETECTOR-UNAVAILABLE、POLICY-CLL-SCENE-INVALID、POLICY-CLL-NAME-UNRESOLVED、POLICY-CLL-CONTEXT-EXPIRED、POLICY-CLL-EVALUATION-FAILED、POLICY-CLL-GEOMETRY-MISSING、POLICY-JNT-TABLE-INVALID、POLICY-ENGINEERING-RANGE-INVALID、POLICY-INFO-DEFAULT-APPLIED | 版本×3/输入×8/版本×2/数据不足/策略拒绝×4（CLL-EVALUATION-FAILED 归执行失败）/资源/输入/策略拒绝/信息 | Error…Info | policy §9.6 全量；CLL-DETECTOR-UNAVAILABLE=KIN-05 数据不足口径 |
 | EVI | EVI-SNAPSHOT-INCOMPLETE、EVI-CASE-COVERAGE-MISSING、EVI-EVIDENCE-MISSING、EVI-PROOF-INVALID、EVI-ENVELOPE-ILLEGAL-COMBINATION、EVI-CACHE-INCOMPATIBLE、EVI-EVALUATOR-DUPLICATE | 数据不足/证据缺失/证据缺失/证据缺失/内部/版本/内部(Dev) | Warning×3/Warning/Dev/Dev | evidence §13 全量；EVALUATOR-DUPLICATE 为装配期错误 |
 | EX | EX-TASK-REJECTED、EX-SNAPSHOT-STALE、EX-STORE-READ-ONLY、EX-RESOURCE-INSUFFICIENT、EX-CAPABILITY-UNSUPPORTED、EX-WORKER-LAUNCH-FAILED、EX-WORKER-CRASHED、EX-WORKER-HUNG、EX-FORCE-TERMINATED、EX-CHANNEL-PROTOCOL-ERROR、EX-REGISTRY-UNKNOWN-RUN、EX-REGISTRY-MISMATCH、EX-STALE-ATTEMPT、EX-CHECKPOINT-CORRUPT、EX-CHECKPOINT-INCOMPATIBLE、EX-ARCHIVE-FAILED、EX-ARCHIVE-AUTHORITY-LOST、EX-TASK-INTERRUPTED | 执行×5（含超时×2）/Dev×4（协议/登记表）/版本×2/执行×2/中断 | … | execution §3.4 全量 18 项；四个"开发级"标 Dev |
+| RPT | RPT-SOURCE-MISSING、RPT-SCOPE-INSUFFICIENT、RPT-CONSISTENCY-MISMATCH、RPT-ARCHIVE-CONFLICT、RPT-EXPORT-FAILED、RPT-ROUNDTRIP-MISMATCH、RPT-CURRENTNESS-UNEVALUABLE、RPT-SECTION-NOT-APPLICABLE | 证据缺失/数据不足/证据缺失/执行/执行/版本/数据不足/信息 | Error/Warning/Error/Error/Error/Error/Warning/Info | reporting §3.5 全量 8 项（2026-09-10 收编，P-RPT-8 码值部分消账）；CURRENTNESS-UNEVALUABLE 对应 P-EV-4 呈现；SECTION-NOT-APPLICABLE＝不适用章节显式标记（Info） |
 | DIAG（本文自用） | DIAG-REDACTION-FAILED、DIAG-REGISTRY-DUPLICATE、DIAG-REGISTRY-UNKNOWN-CODE、DIAG-CATALOG-OVERFLOW、DIAG-LOG-WRITE-FAILED、DIAG-FINDING-BINDING-INVALID、DIAG-FINDING-EXPIRED | 安全/内部×3/内部/可确认类辅助×2 | Error/Dev×3/Dev/Error/Info | 诊断设施自省码（红线的红线：诊断设施自身的失败也走稳定码） |
 | 示例域码（**阶段 B 起注册**，本文仅登记命名约定不预建条目） | 如 MDL-06-TRAVEL-LIMIT（policy §7.4 TravelLimitExceeded 的确认流呈现，confirmable=true） | 可确认 | Warning | 不预建：dtb"不预建无消费者条目"；域卡产出时注册 |
 
@@ -1296,6 +1297,7 @@ public:
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）与 core/testkit/project/evidence/runtime/policy/execution 七份协作输入（均 Draft；DETAILED-DESIGN/development-task-breakdown 已存在并实测登记）完成 14 节详细设计；冻结双层诊断模型（core 契约＋DiagnosticEntry 信封）、分类/严重词表与映射矩阵（实现承载登记）、StableCodeRegistry（收编 PRJ-\*10/RT-\*14/POLICY-\*23/EVI-\*7/EX-\*18/DIAG-\*7 建议码全量）、ConfirmableFinding 生命周期（绑定四元组/失效条件/五态服务状态机/worker 禁令）、原因链与聚合规则（不升级工程语义）、两级日志（单管线双 Tier/worker 回传/崩溃前保留）、脱敏（deny-by-default/降级）、跨单元错误转换（类型映射禁字符串匹配）、七个公共接口；验证矩阵 DT-\* 29 组；实现任务 DIAG-T01～T11（≙WP-09-T01～T06）；待裁决 9 项（P-DIAG-1～9）。同日：`diagnostics/include/sdurws/ird/diagnostics/README.md` 的任务卡指向由"§9"修正为"§11"（与本文任务拆分章节号一致——core/evidence 同先例） |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：§4.5 命名空间补登 `RPT` 前缀、§4.6 收编 reporting.md §3.5 建议清单全量 8 项（2026-09-10 reporting.md 产出后补充收编——P-RPT-8 码值部分消账）；§4.6 收编来源由"四份"更正为"五份" |
 
 ### 14.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

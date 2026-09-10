@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.3（全链一致性审计消账；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-RUNTIME |
@@ -1287,8 +1287,8 @@ public:
 
 | 项 | 内容 |
 | --- | --- |
-| 调用方/被调用方 | runtime 产出 DiagnosticRecord（core 契约）经调用方送 diagnostics 设施；码值与文案注册归 diagnostics（RT-\* 建议清单见 §3.4/§5.2——收编归其详设，P-PR-6 同模式） |
-| 输入/输出 | 建议码：RT-INPUT-INVALID、RT-STRUCTURE-INVALID、RT-UNIT-MISMATCH、RT-RESOURCE-MISSING/CHANGED/BUDGET、RT-WC-COMPILE-FAILED、RT-DWC-COMPILE-FAILED、RT-NAME-CONFLICT、RT-BASE-WORLD-INCONSISTENT、RT-CAPABILITY-MISSING、RT-ROBWORK-ERROR、RT-CACHE-INCOMPATIBLE、RT-CANCELLED（**建议值，码值权威＝StableCodeRegistry**） |
+| 调用方/被调用方 | runtime 产出 DiagnosticRecord（core 契约）经调用方送 diagnostics 设施；码值与文案注册归 diagnostics——RT-\* 14 项**已收编**（diagnostics.md §4.6，2026-09-10；P-PR-6 同模式） |
+| 输入/输出 | 稳定码（已收编 14 项，diagnostics.md §4.6）：RT-INPUT-INVALID、RT-STRUCTURE-INVALID、RT-UNIT-MISMATCH、RT-RESOURCE-MISSING/CHANGED/BUDGET、RT-WC-COMPILE-FAILED、RT-DWC-COMPILE-FAILED、RT-NAME-CONFLICT、RT-BASE-WORLD-INCONSISTENT、RT-CAPABILITY-MISSING、RT-ROBWORK-ERROR、RT-CACHE-INCOMPATIBLE、RT-CANCELLED（**码值权威＝StableCodeRegistry**）。**枚举对齐说明（v0.3）**：枚举值 `UnknownObject`/`ContextReleased` 属调用方契约违约（RuntimeError fail-fast，token 仅供日志，不发稳定码）；`RT-CAPABILITY-MISSING`/`RT-ROBWORK-ERROR` 为诊断事件码（编译诊断/RobWork 异常转译路径，非 RuntimeError 异常路径），故无对应枚举值——清单与枚举"12 个错误码 1:1＋2 个 fail-fast token＋2 个事件码"的关系就此冻结 |
 | 失败处理 | 用户诊断不含 RobWork 调用栈/内部哈希（NFR-REL-05——转译只留消息摘要） |
 | 不允许的反向依赖 | runtime 不链接 diagnostics（经 core 契约承载；注册由调用方/L5） |
 
@@ -1506,6 +1506,7 @@ public:
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）及 core/testkit/project/evidence 四份协作输入（均 Draft；project.md 磁盘实测完整——与 evidence 侧登记差异见 P-RT-9）完成 15 章详细设计：冻结 CanonicalModel 数据契约与 RT-Codec 身份、十段确定性编译链与事务状态机、基座—世界变换单一不变量（含预设矩阵与数值例）、RuntimeNameMap 双射解析、RobWork 适配层（只读视图/异常转译/显式设值）、RuntimeSnapshot 并发与 worker 隔离、分层编译缓存纯判定、能力正交声明、公共接口（含 IModelCompilePort 承接答复）、验证反例矩阵 RT-\* 41 组、实现任务 RT-T01～T13；待裁决 9 项（P-RT-1～9）。同日：`runtime/include/sdurws/ird/runtime/README.md` 的任务卡指向由"§9"修正为"§12"（与本文任务拆分章节号一致，同 evidence README 修正先例） |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-05/CR-07）：§10.3 对 evidence 的供给落点表述更正（modelIdentity/robworkBaselineVersion 入切片 Environment 条目 `runtime.model-identity`/`runtime.robwork-baseline` 并进入 inputBaselineId；复现块仅 compilerContractVersion——原文"§4.1.2 预留字段"不实）；§3.4/RT-T01 行 gtest 引用改指 development-task-breakdown §5.5 定稿。差异记录见 traceability/foundation-api-diff.md |
+| v0.3 | 2026-09-10 | 全链一致性审计消账：①§10.11 稳定码由"建议值"更新为"已收编 14 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（UnknownObject/ContextReleased＝fail-fast token 不发码；RT-CAPABILITY-MISSING/RT-ROBWORK-ERROR＝诊断事件码无枚举对应）；②卡头版本 v0.1→v0.3 更正（原卡头停留 v0.1 而变更记录已达 v0.2，与 policy/reporting 卡的 v0.2 引用不符） |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-REPORTING |
@@ -261,7 +261,7 @@ public: ReportError(ReportErrorCode, std::string detail);
 };
 ```
 
-RPT-\* 稳定诊断码建议清单（**码值权威＝diagnostics StableCodeRegistry，未收编前为建议值**，P-RPT-8 关联）：`RPT-SOURCE-MISSING`（章节缺正式结果/缺项——Error）、`RPT-SCOPE-INSUFFICIENT`（C 级降级建议——Warning）、`RPT-CONSISTENCY-MISMATCH`（Error）、`RPT-ARCHIVE-CONFLICT`（Error）、`RPT-EXPORT-FAILED`（Error，附可重试动作）、`RPT-ROUNDTRIP-MISMATCH`（Error）、`RPT-CURRENTNESS-UNEVALUABLE`（Warning——当前性不可判定呈现，P-EV-4 关联）、`RPT-SECTION-NOT-APPLICABLE`（Info——不适用章节显式标记）。分类/严重为建议值，随 diagnostics 收编冻结。
+RPT-\* 稳定诊断码清单（**码值权威＝diagnostics StableCodeRegistry——已收编全量 8 项〔diagnostics.md §4.5/§4.6，2026-09-10〕，与下列清单一致（P-RPT-8 码值部分消账）**）：`RPT-SOURCE-MISSING`（章节缺正式结果/缺项——Error）、`RPT-SCOPE-INSUFFICIENT`（C 级降级建议——Warning）、`RPT-CONSISTENCY-MISMATCH`（Error）、`RPT-ARCHIVE-CONFLICT`（Error）、`RPT-EXPORT-FAILED`（Error，附可重试动作）、`RPT-ROUNDTRIP-MISMATCH`（Error）、`RPT-CURRENTNESS-UNEVALUABLE`（Warning——当前性不可判定呈现，P-EV-4 关联）、`RPT-SECTION-NOT-APPLICABLE`（Info——不适用章节显式标记）。分类/严重以 diagnostics 收编登记值为准。
 
 ---
 
@@ -1363,7 +1363,7 @@ public:
 | ui.md P-UI-9 | 冻结**预览接口形状**（裁决者=reporting 详设所有者） | §9.8（ReviewReport 只读值＋renderPreview＋JumpTarget） | 已裁决（ui 侧消费即可消账） |
 | evidence.md §13 B·reporting 行 | 消费 FormalPass/ReviewRecord、追溯链、复现要素 | §6.2/§4.3.1/§7.6 | 已消费（envelope 归档工件的解码入口待 evidence/execution 提供——下方交接） |
 | io.md §10.10/§13.2 | 消费 CsvWriter/JsonWriter/AtomicWriter | §3.3/§8.3/§9.5（注入形态，P-RPT-1） | 契约已定（编译边待裁决） |
-| diagnostics.md §12 reporting 行 | 消费 exportSafeSummary/码表只读 | §4.3.3/§6 | 已消费；RPT-\* 码建议清单待收编（P-RPT-8） |
+| diagnostics.md §12 reporting 行 | 消费 exportSafeSummary/码表只读 | §4.3.3/§6 | 已消费；RPT-\* 码已收编 8 项（diagnostics.md §4.6，2026-09-10——P-RPT-8 码值部分消账） |
 | dtb §4 O-25 | 裁决**渲染层是否预留 PDF 接口** | §14.3 P-RPT-6（裁决：不留桩） | 已裁决 |
 
 ### 12.2 向下游/对端的交接（各单元详设或实现的直接输入）
@@ -1468,7 +1468,7 @@ B 级真实章节注册前，其域评估器与 Profile 必须已注册（eviden
 | P-RPT-5 | C 级全部追加章节缺正式结果时的处置（拒绝＋显式降级建议）为本文保守设计，上游未明文 | RPT-01-C/§16 验收要点未覆盖该边界 | 边界场景验收解释 | 维持保守（宁可拒绝不可虚级）；如需"全缺仍生成 C 骨架"语义，走需求变更 | 需求所有者 |
 | P-RPT-6 | **O-25 裁决：渲染层是否预留 PDF 接口** | REQUIREMENTS 附录 B PDF 行（未立项、不设需求条目、**不留接口桩**——待同步消费者＝WP-12 卡）；dtb §4 O-25 | 渲染器架构 | **裁决：不留 PDF 接口桩**——IReportRenderer 是格式无关抽象（新格式＝新实现，天然可扩展，非 PDF 专用预留）；不建 PDF 专属字段/配置/空页面（附录 B 裁决＋TRJ-08"不建占位"同精神）；未来 PDF 走需求变更 | 本文裁决（O-25 消账；需求侧知悉） |
 | P-RPT-7 | 证据包 ZIP 封装的实现通道：io 未暴露通用 ZIP 写出公共接口（ZipChannel 为其 src 内部） | io.md §3.1/§7；RPT-03 | RPT-T10 实现 | IArchiveWriter 注入（io 薄适配）；建议 io 在 P-IO-1 裁决时一并考虑暴露通用 ZIP 写出接口或提供适配器 | io 详设所有者 |
-| P-RPT-8 | RPT-\* 稳定诊断码建议清单收编 | diagnostics.md §4.5（码值权威）；§3.5 建议 | 码表冲突 | 随 RPT-T01 后向 StableCodeRegistry 注册时与 diagnostics 收编确认 | diagnostics 详设所有者 |
+| P-RPT-8 | RPT-\* 稳定诊断码建议清单收编 | diagnostics.md §4.5（码值权威）；§3.5 建议 | 码表冲突 | **已收编（2026-09-10）**：diagnostics.md v0.2 §4.5 补登 RPT 前缀、§4.6 收编全量 8 项——码值部分消账；RPT-T01 注册时按收编表登记即可 | diagnostics 详设所有者（已处置码值部分） |
 | P-RPT-9 | 本文消费的 core/evidence 契约以其 v0.1（Draft）为基线，冻结版可能调整（含 envelope 解码入口缺位——R-3） | 各卡文档头状态行 | RPT-T02 起返工 | 冻结 diff 清单后按影响面增量修订；envelope 解码入口列入 evidence/execution 交接催办 | core/evidence 详设所有者＋本文所有者 |
 
 ### 14.4 变更记录
@@ -1476,6 +1476,7 @@ B 级真实章节注册前，其域评估器与 Profile 必须已注册（eviden
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版草案：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）、十份兄弟单元卡（v0.1 Draft）完成 14 章详细设计；冻结 ReviewReport 数据模型（双层内容身份/三层状态承载）、B/C 分级章节契约（14 章节词表＋降级拒绝规则）、结果/证据/当前性表达（四轴正交＋限定语词表）、生成冻结与幂等归档协议（D-13/D-14 模式）、HTML/JSON/CSV 渲染与逐字段一致性（FieldMatrix 单次投影）、公共接口六件＋注入契约四件；裁决 O-25（不留 PDF 桩）；验证矩阵 RP-\* 29 组；实现任务 RPT-T01～T16（≙ WP-12-T02~T09）；待裁决 9 项（P-RPT-1~9）。状态 `Draft`。 |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：§3.5 RPT-\* 码清单由"未收编建议值"更新为"已收编全量 8 项（diagnostics.md §4.5/§4.6）"，§14.3 P-RPT-8 与 §13.1 交接行同步销账码值部分；RPT-T01 注册时按收编表登记 |
 
 ### 14.5 交付前自审记录（任务约束§八逐项；自审≠实现测试≠正式验收）
 

@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-EXECUTION |
@@ -98,7 +98,7 @@
 | --- | --- | --- | --- | --- |
 | execution → core | 接口依赖（编译链接） | TaskIdentity/RunId/AttemptId、TaskState/TaskOutcome/EvaluationMode、DomainEvent 家族＋IDomainEventBus 接口、DiagnosticRecord/ComparativeFields、CoreError | ARCH §3.5 表 | core.md v0.1 Draft 未冻结（P-EX-1） |
 | execution → evidence | 接口依赖（编译链接） | AnalysisSnapshot/InputSlice（只读消费）、EvaluatorRegistry（find/manifest 摘要）、EvaluationRequest/Output、IEvaluationContext（execution 实现）、aggregateVerdict＋ResultEnvelope::make/validateCombination（接纳复用）、judgeCacheHit/judgeCheckpointCompatibility（缓存与检查点判定） | ARCH §3.5 表、§7.6 | evidence.md v0.1 Draft（P-EX-1） |
-| execution → diagnostics | 接口依赖（边已登记；实现经注入适配） | 稳定诊断码注册（EX-\* 建议码）、两级日志 | ARCH §3.5 表、§7.8 | diagnostics 详设未产出：经本文最小 sink 注入（§3.3），码表建议见 §3.4（P-EX-8） |
+| execution → diagnostics | 接口依赖（边已登记；实现经注入适配） | 稳定诊断码注册（EX-\* 已收编 18 项——diagnostics.md §4.6）、两级日志 | ARCH §3.5 表、§7.8 | diagnostics.md 已产出；消费仍经本文最小 sink 注入（§3.3），目标链接形态按 P-EX-8 裁决（不因卡存在自动消账） |
 | execution → project | 接口依赖（编译链接） | IResultArchivePort（begin/writeBatch/finalize/abandon）、ProjectStore（writable/requestClose/closed/subscribeClose、存储上下文引用协议）、IProjectQueryPort（runDir 读取，协作侧） | ARCH §3.5 表、§6.5/§6.8/§10.1 | project.md v0.1 Draft（P-EX-1；P-PR-4 在本文 §9.5 冻结） |
 | execution →（注入）runtime 能力 | **运行时注入**（零编译依赖） | 快照编译与物化（create/materialize）、编译缓存键与判定、取消令牌对接、MaterializedSnapshotCodec 字节——经本文最小接口 `IExecutionModelService`/`ICompileCacheJudge`（§3.3），适配器归 L5 | runtime.md §10.9/§13.2；ARCH §3.5 未登记 execution→runtime 边（P-EX-3） | runtime.md v0.1 Draft |
 | execution →（值传递）policy | 值传递（零依赖） | 已解析 EngineeringPolicySet 内容身份（快照 PolicyRef，CON-06）——进入运行绑定与登记扩展字段；worker 内评估器自行经④端口消费策略 | CON-06、ARCH §7.5 | policy.md v0.1 Draft |
@@ -182,7 +182,8 @@ sdurws_ird_execution ──► RWS::ird::core（PUBLIC）
                     ──► RWS::ird::evidence（PUBLIC）
                     ──► RWS::ird::project（PUBLIC；归档端口与存储上下文）
                     ──► RWS::ird::diagnostics（ARCH §3.5 已登记边；消费经 IExecutionDiagnosticsSink
-                         注入适配，diagnostics 详设产出前以空实现占位于测试/装配侧——project §3.2 同模式）
+                         注入适配——diagnostics.md 已产出并收编 EX-\* 18 项〔§4.6〕，sink 名称/归属统一仍按
+                         P-EX-8 裁决，测试/装配侧暂以空实现占位——project §3.2 同模式）
                     ──► C++17 标准库 ＋ Win32 kernel32（隔离于 src/win32/）
                     ──✖ 零 Qt（D-01）、零 runtime/policy/业务单元编译边（R-1/R-2 门禁口径）、零 testkit（T-1）
 运行时注入（零编译依赖）：IExecutionModelService/ICompileCacheJudge（适配 runtime）、
@@ -250,7 +251,7 @@ public:
     virtual std::optional<core::ObjectId> tryResolve(core::ContentIdentity nameMapIdentity,
                                                      std::string_view runtimeName) const = 0;
 };
-class IExecutionDiagnosticsSink {        // 对齐 project §5.0 IDiagnosticsSink 形态；diagnostics 详设产出后统一（P-EX-8）
+class IExecutionDiagnosticsSink {        // 对齐 project §5.0 IDiagnosticsSink 形态；sink 名称/归属统一按 P-EX-8 裁决（diagnostics.md 已产出，收编见其 §4.6）
 public:
     virtual ~IExecutionDiagnosticsSink() = default;
     virtual void report(const core::DiagnosticRecord&) = 0;
@@ -264,7 +265,7 @@ public:
 
 ### 3.4 命名空间、错误类型与 CMake 集成
 
-- 命名空间 `sdurws::ird::execution`；目标 `sdurws_ird_execution`（骨架 INTERFACE → EX-T01 升级 STATIC），别名 `RWS::ird::execution`；`target_compile_features(... cxx_std_17)`；`target_link_libraries(sdurws_ird_execution PUBLIC RWS::ird::core RWS::ird::evidence RWS::ird::project)`（diagnostics 边经注入实现，目标暂不链接——其详设产出后按 P-EX-8 结论调整）。
+- 命名空间 `sdurws::ird::execution`；目标 `sdurws_ird_execution`（骨架 INTERFACE → EX-T01 升级 STATIC），别名 `RWS::ird::execution`；`target_compile_features(... cxx_std_17)`；`target_link_libraries(sdurws_ird_execution PUBLIC RWS::ird::core RWS::ird::evidence RWS::ird::project)`（diagnostics 边：ARCH §3.5 已登记，当前经注入实现、目标暂不链接——链接形态按 P-EX-8 裁决，不因 diagnostics.md 已产出而自动消账；同边在 io/ui/reporting 侧为直接链接，口径差异已登记）。
 - worker 目标 `sdurws_ird_execution_worker`（WIN32 可执行）：链接 `sdurws_ird_execution`＋评估器装配清单（阶段 A 仅测试替身；正式评估器链接属 L5 装配决策，登记为**装配目标**——业务目标互链红线 R-1 不因此失效，worker 不链接任何 `_plugin`/Widgets，计算内核零 Qt）；注册随 EX-T06。
 - 测试目标：`sdurws_ird_execution_test`（单元内：状态机/登记表/调度逻辑）、`sdurws_ird_execution_contract_test`（跨单元：与 evidence 校验器、与 project 归档端口、真实 worker 进程场景；gtest 按 DTB §5.5 接入），随 EX-T01 登记；产品目标不链 testkit（T-1 红线）。
 - 头包含形式 `#include <sdurws/ird/execution/RunRegistry.hpp>`；私有实现头不入 `include/`（R-2 纪律）。
@@ -298,7 +299,7 @@ public: ExecutionError(ExecutionErrorCode, std::string detail);
 };
 ```
 
-EX-\* 稳定诊断码建议清单（**码值分配权威＝diagnostics StableCodeRegistry，未产出，以下为建议值**，P-EX-8 交接）：`EX-TASK-REJECTED`、`EX-SNAPSHOT-STALE`、`EX-STORE-READ-ONLY`、`EX-RESOURCE-INSUFFICIENT`、`EX-CAPABILITY-UNSUPPORTED`、`EX-WORKER-LAUNCH-FAILED`、`EX-WORKER-CRASHED`、`EX-WORKER-HUNG`、`EX-FORCE-TERMINATED`、`EX-CHANNEL-PROTOCOL-ERROR`（开发级）、`EX-REGISTRY-UNKNOWN-RUN`（开发级）、`EX-REGISTRY-MISMATCH`（开发级）、`EX-STALE-ATTEMPT`（开发级）、`EX-CHECKPOINT-CORRUPT`、`EX-CHECKPOINT-INCOMPATIBLE`、`EX-ARCHIVE-FAILED`、`EX-ARCHIVE-AUTHORITY-LOST`、`EX-TASK-INTERRUPTED`（恢复呈现数据源，PM-08/PM-15）。
+EX-\* 稳定诊断码清单（**码值分配权威＝diagnostics StableCodeRegistry，已收编全量 18 项〔diagnostics.md §4.6，2026-09-10〕**，与下列清单一致）：`EX-TASK-REJECTED`、`EX-SNAPSHOT-STALE`、`EX-STORE-READ-ONLY`、`EX-RESOURCE-INSUFFICIENT`、`EX-CAPABILITY-UNSUPPORTED`、`EX-WORKER-LAUNCH-FAILED`、`EX-WORKER-CRASHED`、`EX-WORKER-HUNG`、`EX-FORCE-TERMINATED`、`EX-CHANNEL-PROTOCOL-ERROR`（开发级）、`EX-REGISTRY-UNKNOWN-RUN`（开发级）、`EX-REGISTRY-MISMATCH`（开发级）、`EX-STALE-ATTEMPT`（开发级）、`EX-CHECKPOINT-CORRUPT`、`EX-CHECKPOINT-INCOMPATIBLE`、`EX-ARCHIVE-FAILED`、`EX-ARCHIVE-AUTHORITY-LOST`、`EX-TASK-INTERRUPTED`（恢复呈现数据源，PM-08/PM-15）。**枚举对齐说明（v0.2）**：枚举值 `ContextClosed`/`InvalidState` 属调用方契约违约（ExecutionError 异常 fail-fast，token 仅供日志，不发稳定诊断码）；`EX-TASK-INTERRUPTED` 为恢复期 Interrupted 终态的状态标注诊断（§5.5/§7.5，非 API 错误），故无对应枚举值——清单与枚举"17 个错误码 1:1＋2 个 fail-fast token＋1 个状态标注码"的关系就此冻结。
 
 ### 3.5 源码目录布局
 
@@ -686,7 +687,7 @@ requestResume→检查点兼容判定（evidence judgeCheckpointCompatibility：
 
 ### 7.5 UI 关闭与应用崩溃
 
-- **UI 关闭（主进程存活）**：PM-03 统一确认对话框二选——"等待"＝workflow 调 scheduler.shutdown(DrainPolicy::WaitForInFlight)：停止派发新任务（Queued 任务取消或保留至会话终结，策略由 DrainPolicy 声明）、在途运行执行至归档完成（存储上下文引用协议——project §9.7；execution 的终态路径全部释放归档引用）；"协作取消"＝对任务清单逐/批量 requestCancel 后走取消协议。**UI 关闭不等于归档完成**；执行侧保证关闭流程**无永久等待**：排空有界（取消协议 10 s＋归档有界重试＋abandon 兜底；超阈值由 L5 关闭控制器强制 abandonAll(ForceTerminated)——project §9.7 同口径，残留记开发诊断）。
+- **UI 关闭（主进程存活）**：PM-03 统一确认对话框二选——"等待"＝workflow 调 scheduler.shutdown(DrainPolicy::CancelQueuedAndWait)：停止派发新任务（取消排队任务；若需"保留至会话终结"语义，由 workflow 侧选用 KeepQueuedTerminate）、在途运行执行至归档完成（存储上下文引用协议——project §9.7；execution 的终态路径全部释放归档引用）；"协作取消"＝对任务清单逐/批量 requestCancel 后走取消协议。**UI 关闭不等于归档完成**；执行侧保证关闭流程**无永久等待**：排空有界（取消协议 10 s＋归档有界重试＋abandon 兜底；超阈值由 L5 关闭控制器强制 abandonAll(ForceTerminated)——project §9.7 同口径，残留记开发诊断）。〔v0.2 对齐：原文引用的 `DrainPolicy::WaitForInFlight` 不在 §10.1 枚举中，按枚举实际值更正，同时销账 ui.md CF-2/P-UI-3〕
 - **应用崩溃**：Job 限杀联动 worker 终止；重启后恢复扫描（project ②端口/RecoveryReport）发现无 manifest 的归档预留→execution 重建 Interrupted 任务条目（EX-TASK-INTERRUPTED，"已中断可重跑"——NFR-REL-03/PM-08）；检查点目录兼容判定后可续跑（新任务）。主进程崩溃期间不可能有迟到结果（worker 已被联动终止，通道已亡）。
 
 ### 7.6 故障边界与恢复动作矩阵
@@ -1244,6 +1245,7 @@ public:
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）、六张协作卡（core/evidence/project/runtime/policy/testkit v0.1 Draft）与 development-task-breakdown v0.2 完成 15 章详细设计；冻结任务/运行/尝试三级身份与分配协议、九态状态机逐转移矩阵与四轴正交表、调度与资源治理（70% 先节流）、worker 模型与 IRDCHN/1 通道协议、取消/暂停/继续/强杀协议（2 s/10 s）、检查点契约与缓存四分治理、RunRegistry 九步接纳与迟到结果防护、project 归档协作（P-PR-4 冻结答复）；验证矩阵 EX-\* 33 组；实现任务 EX-T01～T10（≙ WP-08-T02～T10）；待裁决 10 项（P-EX-1～10）。同日：execution README 任务卡指向 §9→§12 修正（与本文 §12 一致，同 evidence.md 先例） |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：①§7.5 `DrainPolicy::WaitForInFlight`（枚举中不存在）更正为 `CancelQueuedAndWait`——销账 ui.md CF-2/P-UI-3；②§3.4 稳定码清单由"未产出建议值"更新为"已收编 18 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（ContextClosed/InvalidState＝fail-fast token 不发码；EX-TASK-INTERRUPTED＝状态标注码无枚举值）；③§2.1.2/§3.1/§3.3/§3.4 四处"diagnostics 详设未产出/产出前"过期表述更正——P-EX-8（sink 统一与链接形态）保持登记不消账 |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

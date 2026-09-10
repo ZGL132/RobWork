@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案） |
+| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-IO |
@@ -41,7 +41,8 @@
 | `units/diagnostics.md` | 存在，v0.1，`Draft`（未冻结） | §8.6 已登记 io 义务：SafePath 违规/BudgetGuard 超限（比较型三要素）/CSV 逐行错误的诊断形状与 IO-\* 码注册协议——本文 §5.8/§15.1 落实；码值收编随实现期注册冻结 |
 | `units/execution.md` | 存在，v0.1，`Draft`（未冻结） | N-7 登记 io 拥有外部资源解析与包编解码；后台任务/取消/进度归 execution——io 不自建线程（§9.13 线程总则） |
 | `units/evidence.md`、`units/policy.md`、`units/ui.md` | 存在，v0.1，`Draft`（未冻结） | evidence：CON-03 固化门禁（io 不判定证据资格）；policy：工程策略不含 io 预算（IO-D06 论证）；ui N-6：向导仅收集用户选择、外部资源解析归 io |
-| `units/modeling.md` 等 10 个业务/编报单元 | **不存在**（待产出） | modeling/requirements/selection/reporting/optimization/workflow 详设未产出；本文需要其消费处给最小依赖契约并登记交接（§13），不代写对方详设 |
+| `units/reporting.md` | **已产出**（v0.1 Draft，2026-09-10；原登记"不存在"系编写时快照，已过期） | 与本文双向交接：reporting §10.10/§13.2 消费 io 包编解码；io §13.1 登记对应义务 |
+| `units/modeling.md` 等 9 个业务域单元 | **不存在**（待产出） | modeling/requirements/selection/optimization/workflow 等详设未产出；本文需要其消费处给最小依赖契约并登记交接（§13），不代写对方详设 |
 | io 构建骨架 | 存在：`industrialrobot/io/include/sdurws/ird/io/README.md`（占位，不参与编译）；`industrialrobot/CMakeLists.txt` 注册 `sdurws_ird_io` INTERFACE 目标 | 源码随本文任务卡（§12，对应 WP-11-T02 起）落地；INTERFACE→STATIC 升级、`_test`/`_contract_test` 目标随任务登记，不预建空目标 |
 | 构建缓存 | `build/CMakeCache.txt` 实测：Visual Studio 17 2022（MSVC x64）、Qt 6.11.1 | 与 core.md §1.4 同源事实；Windows 文件/路径 API 按 Microsoft Learn 文档口径设计（§4.2），不凭记忆超诺 |
 | `old/` | 不存在于磁盘（仓库根实测；与 REQUIREMENTS v1.10 声明不符，core.md R-5 已登记） | 从头构建口径不受影响；本文不引用其任何机制 |
@@ -1726,6 +1727,7 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 | 版本 | 日期 | 摘要 |
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版草案：承接 REQUIREMENTS v1.16／ARCHITECTURE v0.11 与九份兄弟单元卡（v0.1 Draft）的 io 行义务；冻结路径安全/预算模型、CSV/JSON 可逆编码、资源读取与三段边界固化协作、`.rwpack` 导入导出协议、公共接口与线程/取消契约、验证矩阵与阶段 A 任务拆分；裁决关闭 P-RT-6；登记 P-IO-1~P-IO-7。状态 `Draft`。 |
+| v0.2 | 2026-09-10 | 全链一致性审计消账：§1.2"units/modeling.md 等 10 个业务/编报单元不存在"过期表述更正——reporting.md 已产出（v0.1 Draft）并与本文双向交接（reporting §10.10/§13.2 ↔ io §13.1），拆分为"reporting 已产出"与"9 个业务域单元待产出"两行 |
 
 ---
 
