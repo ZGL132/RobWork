@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-09-11T00:22:56.260" name="AllTests">
+  <testsuite name="PolicyBuild" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-09-11T00:22:56.260">
+    <testcase name="SourceTreeReachable_POL_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\BuildRedLineTest.cpp" line="66" status="run" result="completed" time="0." timestamp="2026-09-11T00:22:56.260" classname="PolicyBuild" />
+    <testcase name="NoQtInclude_POL_BUILD_NFR_MNT_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\BuildRedLineTest.cpp" line="77" status="run" result="completed" time="0." timestamp="2026-09-11T00:22:56.260" classname="PolicyBuild" />
+    <testcase name="NoCrossUnitInclude_POL_BUILD_R1_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\BuildRedLineTest.cpp" line="97" status="run" result="completed" time="0." timestamp="2026-09-11T00:22:56.262" classname="PolicyBuild" />
+    <testcase name="BaselineLibsPinned_POL_BUILD_R5" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\BuildRedLineTest.cpp" line="124" status="run" result="completed" time="0." timestamp="2026-09-11T00:22:56.262" classname="PolicyBuild" />
+  </testsuite>
+</testsuites>
