@@ -23,7 +23,7 @@ endif()
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 set(IRD_MODULES
-    project evidence policy execution diagnostics
+    project policy execution diagnostics
     ui io reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
@@ -55,6 +55,11 @@ add_subdirectory(testkit)
 # gtest 测试目标 sdurws_ird_runtime_test（红线扫描＋L1 链接清单钉住）——细节见
 # runtime/CMakeLists.txt。次序约束：必须在 core 之后（链接 sdurws_ird_core）。
 add_subdirectory(runtime)
+# evidence（EV-T01≙WP-05-T01 落地）：INTERFACE 占位升级为 STATIC（C++17、仅链
+# core——evidence 是纯计算内核零 rw），并注册 gtest 测试目标 sdurws_ird_evidence_test
+# （红线扫描）与配置期守卫——细节见 evidence/CMakeLists.txt。次序约束：必须在
+# core 之后（链接 sdurws_ird_core）。
+add_subdirectory(evidence)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
