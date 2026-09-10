@@ -83,6 +83,20 @@
 
 **残留门禁（维持原裁决）**：CORE-T04/T05 实现落地后按真实头文件重出 API diff；通过前 TK-T04/TK-T05 保持 `planned` 不得推进 `ready`。
 
+
+### CR-06 实现级 API diff（2026-09-11，DOC-T05 放行闸门执行）——已通过
+
+core 冻结公共头（CORE-T04/05 已合入：Units.hpp/Compare.hpp，head 1b4d5a5）对照 testkit.md §4.3 ToleranceProfile/§5.3 Check 设计签名逐项核对：
+
+| # | testkit 设计签名 | core 冻结产物 | 结论 |
+| --- | --- | --- | --- |
+| 1 | core::Tolerance（struct＋make(rel,abs) 两分量 ≥0 且有限） | Compare.hpp Tolerance::make 同签名同校验（CORE-T05） | 一致 |
+| 2 | core::QuantityKind token（length/angle/…十四量纲） | Units.hpp QuantityKind 枚举＋token 表（§4.4 R1 十四类） | 一致 |
+| 3 | core::UnitToken（ToleranceProfile entries[].unit） | Units.hpp UnitToken（find/symbol/kind/siFactor——CORE-T04） | 一致 |
+| 4 | C4 公式（testkit Check 包转 core 公式，不重写） | Compare.hpp closeWithin（C4＋零参考退化＋非有限拒绝——CORE-T05） | 一致（公式唯一实现点在 core——SA-12/NFR-COR-01） |
+| 5 | core::ComparativeFields（checkComparativeFields 演练） | DiagData.hpp ComparativeFields（CORE-T07） | 一致 |
+
+结论：**diff 通过**——TK-T04/05 随 DOC-T05 批次置 ready（CR-06 门禁关闭，实现级依据即本节）；TK-T04/05 契约的 CR-06 门禁条目改写为放行依据引用。
 ## CR-07 gtest 接入 —— 已关闭（机制定稿）；安装门禁保留
 
 **事实核查（2026-09-10 复核）**：`RobWork/cmake/gtestTargets.cmake` **不存在**（testkit.md 原"实测存在"记载失实）；构建树 `USE_gtest=OFF`；vcpkg installed 无 GTest（ports 有 gtest port）；`RobWork/RobWork/gtest` 等为框架自带源码目录（不消费）。

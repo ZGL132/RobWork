@@ -3,23 +3,46 @@
   "taskId": "TK-T04",
   "unit": "testkit",
   "masterWp": "WP-B",
-  "title": "容差档案（ToleranceProfile）",
-  "status": "planned",
-  "dependsOn": ["TK-T02", "TK-T03"],
-  "requirements": ["NFR-COR-01"],
-  "designRefs": ["units/testkit.md#4.3"],
+  "title": "实现容差档案（ToleranceProfile）",
+  "status": "ready",
+  "dependsOn": [
+    "TK-T02"
+  ],
+  "requirements": [
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "units/testkit.md#4.3",
+    "units/testkit.md#9"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
-  "crRefs": ["CR-06"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_testkit_test"
+  ],
+  "branch": "wp02-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-06",
+    "P-TK-2"
+  ],
   "acceptance": [
-    "resolve 命中/未命中/超限三态用例通过；C7 对照用例通过",
-    "CR-06 门禁：CORE-T04/T05 实现落地并重出 API diff 复核通过后，本任务方可由 planned 推进 ready（foundation-api-diff.md CR-06）"
-  ]
+    "TK-TOL resolve 命中/未命中/超限三态用例通过",
+    "C7 对照用例通过（runtimeAbsoluteTolerance 消费 core 转写）",
+    "示例档案 testdata/tolerance/kin-fk/ 装载通过（附录 D 第 4/9 项条目）",
+    "CR-06：实现级 diff 已通过（见 foundation-api-diff.md §CR-06）——与 core Compare/Units 接口一致引用"
+  ],
+  "note": "DOC-T05 回填（2026-09-11）：requirements/designRefs/deps/verify/acceptance 编译自 testkit.md §9 任务行＋§2 需求表（≙WP-02-Txx）；CR-06 实现级 API diff 已通过（foundation-api-diff.md §CR-06）——TK-T04/05 随批放行；编译留痕见 traceability/contract-compile-log.md"
 }

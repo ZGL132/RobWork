@@ -73,6 +73,14 @@
 | CORE-T06 | wp03-t06 | true | CR-01 | DOC-T04 编译放行（2026-09-11）：早期批次补齐契约本次按 DTB §2 WP-03-T06 行＋core.md §2.1/§9 复核回填——requirements 补 EVI-01/TASK-02/PM-03（§8.1 表 1/表 3 系非 ID 引用，由 acceptance 词表条目承载；保留 ERR-01，core.md §2.4 三轴正交依据）、designRefs 补锚点 §9、allowedFiles 同上、branch/interUnit/knownPitfalls 补全；放行依据同 CORE-T03 行（无 CR 门禁保留项，CR-01 处置＝token 集唯一权威已在 acceptance） | validate-task 三查过（2026-09-11 DOC-T04 实施段）；interUnit=true 判定＝四词表（EvaluationMode/TaskState/TaskOutcome/EngineeringStatus）被 evidence/execution/diagnostics/ui 消费（core.md §2.4） | ready |
 | CORE-T07 | wp03-t07 | true | CR-01、CR-08 | DOC-T04 编译放行（2026-09-11）：早期批次补齐契约本次按 DTB §2 WP-03-T07 行＋core.md §2.1/§9 复核回填——requirements 取 ERR-01/UX-03 并按 core.md §2.1 行（MDL-06④＋SA-15）补 MDL-06（SA-15 系架构决策 ID 非 REQUIREMENTS 现行 ID，不入 requirements，其语义由 acceptance C-1～C-3 承载）、designRefs 补锚点 §9、allowedFiles 同上、branch/interUnit/knownPitfalls 补全；放行依据同 CORE-T03 行（无 CR 门禁保留项） | validate-task 三查过（2026-09-11 DOC-T04 实施段）；interUnit=true 判定＝DiagnosticRecord/ConfirmableFinding 被 diagnostics 及全部诊断产生单元消费（core.md §2.4、foundation-api-diff CR-08） | ready |
 
+| TK-T03 | wp02-t03 | True | P-TK-7 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T04 | wp02-t04 | True | CR-06、P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；CR-06 diff 通过（本批次闸门）；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T05 | wp02-t05 | True | CR-06、P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；CR-06 diff 通过（本批次闸门）；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T06 | wp02-t06 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T07 | wp02-t07 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T08 | wp02-t08 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
+| TK-T10 | wp02-t10 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | planned |
+
 ## 修订行（ready 契约的后续修订，CCP §5）
 
 | 日期 | taskId | 修订内容 | 提交 |
