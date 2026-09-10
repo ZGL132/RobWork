@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T01",
+  "masterWp": "WP-03-T01",
+  "branch": "wp03-t01",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，经 find_package(GTest CONFIG REQUIRED) 接入——DTB §5.5 定稿机制，首次安装）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "INTERFACE 占位升级为 STATIC；C++17；集成模式链 sdurw_math，冒烟模式不链（无框架目标）"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "链接 GTest::gtest_main；ctest 注册于 core 构建子目录"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "BuildRedLine",
+      "designRef": "units/core.md §8 UT-BUILD",
+      "cases": [
+        { "name": "BuildRedLine.SourceTreeReachable_UT_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "UT-BUILD 自检（防扫描空集恒真，验收协议 4.5）" },
+        { "name": "BuildRedLine.NoQtInclude_NFR_MNT_01_R3", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-MNT-01、ARCHITECTURE §3.2 R-3（零 Qt）" },
+        { "name": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（零跨单元头）、T-1（源码面零 testkit）" },
+        { "name": "BuildRedLine.PublicHeaderPathLayout_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-2（公共头仅位于 include/sdurws/ird/core/，units/core.md §3.3）" }
+      ]
+    }
+  ],
+  "summary": { "total": 4, "passed": 4, "failed": 0, "modes": { "smoke": "4/4", "integration": "4/4" } },
+  "failureCapabilitySelfCheck": {
+    "method": "向 core/src 临时注入含 #include <QWidget> 与 #include <sdurws/ird/testkit/TestPaths.hpp> 的探针文件后运行测试",
+    "result": "NoQtInclude_NFR_MNT_01_R3 与 NoCrossUnitInclude_R1_R2_T1 两用例如期变红（FAILED），探针删除后恢复 4/4 绿——用例具备真实失败能力",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t01/smoke-build.log",
+      "traceability/builds/wp03-t01/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t01/integration-build.log",
+      "traceability/builds/wp03-t01/integration-fullbuild.log",
+      "traceability/builds/wp03-t01/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [
+    "ird_gates：未执行——门禁随 WP-01-T01 落地，尚未建成（AGENTS.md §6.3 如实标注）"
+  ],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式重新配置 RWS_BUILD_INDUSTRIALROBOT=ON 后执行）"
+}

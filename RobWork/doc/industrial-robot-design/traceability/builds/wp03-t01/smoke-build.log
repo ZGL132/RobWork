@@ -1,0 +1,44 @@
+=== 独立冒烟模式构建留痕（WP-03-T01≙CORE-T01）===
+日期: 2026-09-10 11:16:46  分支: wp03-t01
+
+$ cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <tmp>/ird-smoke-wp03t01 -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/scripts/buildsystems/vcpkg.cmake
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Configuring done (0.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/zgl18/AppData/Local/Temp/ird-smoke-wp03t01
+
+$ cmake --build <tmp>/ird-smoke-wp03t01 --config Release --target sdurws_ird_core_test
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-smoke-wp03t01\ZERO_CHECK.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-smoke-wp03t01\core\sdurws_ird_core.vcxproj]
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-smoke-wp03t01\core\Release\sdurws_ird_core.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-smoke-wp03t01\core\sdurws_ird_core_test.vcxproj]
+  sdurws_ird_core_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-smoke-wp03t01\core\Release\sdurws_ird_core_test.exe
+
+$ <tmp>/ird-smoke-wp03t01/core/Release/sdurws_ird_core_test.exe
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from BuildRedLine
+[ RUN      ] BuildRedLine.SourceTreeReachable_UT_BUILD
+[       OK ] BuildRedLine.SourceTreeReachable_UT_BUILD (0 ms)
+[ RUN      ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3
+[       OK ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3 (0 ms)
+[ RUN      ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1
+[       OK ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1 (0 ms)
+[ RUN      ] BuildRedLine.PublicHeaderPathLayout_R2
+[       OK ] BuildRedLine.PublicHeaderPathLayout_R2 (0 ms)
+[----------] 4 tests from BuildRedLine (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
+
+$ cmake --build ... --target sdurws_ird_core_test_report（gtest XML）
+  [==========] Running 4 tests from 1 test suite.
+  [----------] 4 tests from BuildRedLine
+  [----------] 4 tests from BuildRedLine (0 ms total)
+  [==========] 4 tests from 1 test suite ran. (0 ms total)
+  [  PASSED  ] 4 tests.

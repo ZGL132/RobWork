@@ -73,3 +73,15 @@ contract audit: PASS (131 indexed rows; 57 foundation JSON; 5 ready; 52 planned;
 git diff --check: PASS
 结论：仅 CORE-T01 是建议立即开始的代码实现入口；其余 4 个基础 T01 虽为 ready，仍按 M0 顺序在 CORE-T01 完成并留痕后启动。52 个基础 planned 占位和 74 个服务单元任务行不可领取，分别由 DOC-T03 与 DOC-T02 补齐契约。
 NOT RUN: product build, smoke build, gtest, GUI tests, ird_gates, system AT.
+
+2026-09-10 CORE-T01 实施段完成（分支 wp03-t01，待验收；实施者会话留痕）
+validate-docs: PASS (20 units, 12 trace entries, 135 task files)
+validate-task: PASS (CORE-T01.json)
+verify-task: PASS CORE-T01（verify 命令 cmake --build build --config Release --target sdurws_ird_core_test 集成模式通过）
+独立冒烟: 配置+构建+UT-BUILD 测试 4/4 通过（builds/wp03-t01/smoke-build.log、sdurws_ird_core_test-smoke.xml）
+集成模式: 重新配置 -DRWS_BUILD_INDUSTRIALROBOT=ON（缓存确认 :BOOL=ON）；全量 Release 构建退出码 0、错误计数 0（builds/wp03-t01/integration-fullbuild.log）；UT-BUILD 测试 4/4＋ctest 注册验证（builds/wp03-t01/integration-build.log）
+C++17 与 C++11 基线共存（P-ENV-1 消账）: sdurws_ird_core（C++17 STATIC）与基线 sdurw_math/sdurw_common（C++11 dll）同树混链构建成功，集成全量零错误
+gtest 接入（DTB §5.5 首次落地）: vcpkg 安装 gtest:x64-windows@1.18.0（installed/x64-windows），find_package(GTest CONFIG REQUIRED) 两模式接入成功；gtest_main.dll/gtest.dll 经 TARGET_RUNTIME_DLLS 拷贝至测试输出目录
+UT-BUILD 失败能力自测: 向 core/src 注入含 #include <QWidget> 与 #include <sdurws/ird/testkit/...> 的探针，NoQtInclude/NoCrossUnitInclude 两用例如期变红，探针删除后恢复 4/4（builds/wp03-t01/ird-test-report.json）
+聚合报告: builds/wp03-t01/ird-test-report.json（4/4 passed，两模式）
+NOT RUN: ird_gates（未执行——门禁随 WP-01-T01 落地，尚未建成）；GUI 测试、系统 AT（非本任务范围）

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-09-10T11:19:43.048" name="AllTests">
+  <testsuite name="BuildRedLine" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-10T11:19:43.048">
+    <testcase name="SourceTreeReachable_UT_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="109" status="run" result="completed" time="0." timestamp="2026-09-10T11:19:43.048" classname="BuildRedLine" />
+    <testcase name="NoQtInclude_NFR_MNT_01_R3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-09-10T11:19:43.048" classname="BuildRedLine" />
+    <testcase name="NoCrossUnitInclude_R1_R2_T1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="163" status="run" result="completed" time="0." timestamp="2026-09-10T11:19:43.049" classname="BuildRedLine" />
+    <testcase name="PublicHeaderPathLayout_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="216" status="run" result="completed" time="0." timestamp="2026-09-10T11:19:43.049" classname="BuildRedLine" />
+  </testsuite>
+</testsuites>

@@ -638,7 +638,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 | 事项 | 定稿结论 | 消账对象 |
 | --- | --- | --- |
-| `_test` 目标 gtest 接入机制 | §5.5：vcpkg 安装＋`find_package(GTest CONFIG REQUIRED)` 唯一机制；失败即停不回落 | core.md P-ENV-2、testkit.md P-TK-1（及 D-01 失实记载更正）——两卡下次增量修订正式关闭 |
+| `_test` 目标 gtest 接入机制 | §5.5：vcpkg 安装＋`find_package(GTest CONFIG REQUIRED)` 唯一机制；失败即停不回落。**首次安装执行：2026-09-10 随 WP-03-T01（≙CORE-T01）安装 `gtest:x64-windows@1.18.0`（installed/x64-windows，动态库）并两模式接入成功** | core.md P-ENV-2、testkit.md P-TK-1（及 D-01 失实记载更正）——两卡下次增量修订正式关闭 |
 | 策略编辑命令处理器适配器宿主（P-POL-9） | **ui 单元承载**（L5 应用壳装配期装配注入；policy 仅供纯函数解析/校验/编码）——WP-10-T07 落地 | policy.md §15.3、project.md §6.5 引用处；ui 卡产出时承接冻结 |
 | 局部任务号与 WP 分配对齐（P-TK-3 及同型） | §2"≙"映射登记制：`WPnn-Tkk ≙ <UNIT>-Txx`，不重排卡内编号、不双轨 | testkit.md §12.2 及各卡同型条目 |
 | testkit 红线扩展建议接收（policy.md §3.4 P-POL） | R-5（proximity 直链禁止）入 §4.5 例外登记册＋门禁（WP-01-T01）；ARCH §3.2 补登行归架构所有者（O-03 同批） | policy.md POL-T01 引用处 |
@@ -745,6 +745,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.4 | 2026-09-10 | §5.6 分支约定增量同步：main 冻结、唯一开发主线为 `redesign-main`，任务分支 DoD 后合入 `redesign-main`——消除与仓库根 AGENTS.md §6.2 分支红线的矛盾；不改变其他章节语义。 |
 | v0.5 | 2026-09-10 | 全链一致性审计消账：①§0.3 准入顺序机器化——TK/EV/RT/POL-T01 canonical 契约编码 dependsOn=["CORE-T01"]（配套 readiness 同步），§0.3 表述消除"仅为 CORE-T01"与"ready＋空前置可领取"的自相矛盾；②§0.3 服务侧计数修正（DIAG-T01/UI-T01 已 done，非"74 份均 planned"）；③WP-02-T11 悬空 ≙TK-T11 映射移除并登记 O-33（≙ 计数回归 73，与"六卡 73 任务"声明一致）；④O-31（ui.md 依赖三方矛盾）、O-32（PILOT/DEL 四条需求无架构 ID 级落点）登记入 §4.2；§6 统计更新为 O-01~O-33。不裁决 O-31/O-32/O-33，留对应所有者。 |
 | v0.6 | 2026-09-10 | 三段式实施流程确立：§5.7 会话流程由单会话循环改为**实施段（实施者，不得自行合入）→验收段（独立上下文验收者，对抗式核查）→合入段（所有者决策）**；新建 acceptance-protocol.md（文档代号 ACC，10 项验收清单、独立性要求、pass/fail 判据与 traceability/acceptance/ 记录格式）；AGENTS.md §6.4 同步改写。目的：实施/验收/裁决三权分立，消除"自实现自验证自宣布完成"的确认偏差。 |
+| v0.7 | 2026-09-10 | §4.4 gtest 定稿行回填首次安装版本：随 WP-03-T01（≙CORE-T01）实施段安装 `gtest:x64-windows@1.18.0` 并两模式接入成功（留痕 traceability/builds/wp03-t01/）。仅版本登记，不改 §5.5 机制本身。 |
 | v0.7 | 2026-09-10 | 横切契约补建与契约家族归属登记：①新建 tasks/ 根目录四份 canonical 契约——WP-00-T01（governance-log，ready）、WP-00-T02（追踪矩阵格式契约，ready＋dependsOn）、WP-01-T01（ird_gates 门禁，ready＋dependsOn CORE-T01，验收含 O-21 消账/O-12 处置）、WP-01-T02（CI 一键门禁，ready＋dependsOn）——消除 §6"无前置可启动"四任务与机器无契约的失配；②§8 登记契约家族归属（foundation/＝单元任务、tasks/ 根＝治理 DOC 族＋横切 WP 族，编号以本文为唯一来源不双轨）；③validate-task/validate-docs 的 taskId 句法扩展接受 WP-nn-Tkk；④foundation-tasks.json 入口索引 4 份 T01 的 dependsOn 同步为 ["CORE-T01"]（与 canonical 一致）。编码轨 CORE-T01 进行中，本修订与其 allowedFiles 零交集。 |
 
 

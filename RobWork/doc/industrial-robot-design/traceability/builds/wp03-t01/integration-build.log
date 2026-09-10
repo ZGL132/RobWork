@@ -1,0 +1,92 @@
+=== 集成模式构建留痕（WP-03-T01≙CORE-T01）===
+日期: 2026-09-10 11:19:56  分支: wp03-t01
+
+$ cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON
+（重新配置于既有构建树；摘要行）
+  -- Configuring done / Generating done / Build files have been written to D:/10_Source_Repos/21_robot/RobWork/build
+  缓存确认: RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+
+$ cmake --build build --config Release --target sdurws_ird_core_test（契约 verify 命令）
+  sdurw_common.vcxproj -> build/RobWork/bin/Release/sdurw_common.dll
+  sdurw_math.vcxproj   -> build/RobWork/bin/Release/sdurw_math.dll（C++11 基线，与 C++17 的 sdurws_ird_core 混链——P-ENV-1）
+  sdurws_ird_core.vcxproj      -> build/RobWorkStudio/libs/Release/sdurws_ird_core.lib
+  sdurws_ird_core_test.vcxproj -> build/RobWorkStudio/bin/Release/sdurws_ird_core_test.exe
+  gtest.dll/gtest_main.dll 拷贝至输出目录（TARGET_RUNTIME_DLLS）
+
+$ ./build/RobWorkStudio/bin/Release/sdurws_ird_core_test.exe
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from BuildRedLine
+[ RUN      ] BuildRedLine.SourceTreeReachable_UT_BUILD
+[       OK ] BuildRedLine.SourceTreeReachable_UT_BUILD (0 ms)
+[ RUN      ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3
+[       OK ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3 (0 ms)
+[ RUN      ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1
+[       OK ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1 (0 ms)
+[ RUN      ] BuildRedLine.PublicHeaderPathLayout_R2
+[       OK ] BuildRedLine.PublicHeaderPathLayout_R2 (0 ms)
+[----------] 4 tests from BuildRedLine (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
+
+$ ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/core -C Release
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.02 sec
+
+$ cmake --build build --config Release（全量构建）——退出码 0、错误计数 0
+全量构建完整日志附后（tail 50 行）：
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_pathoptimization.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_pathoptimization.exp
+  sdurw_pathoptimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathoptimization.dll
+  Automatic MOC for target sdurws_jog
+  Jog.cpp
+  mocs_compilation_Release.cpp
+  sdurws_jog.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  Automatic MOC for target sdurws_log
+  ShowLog.cpp
+  mocs_compilation_Release.cpp
+  sdurws_log.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_planning
+  Planning.cpp
+  mocs_compilation_Release.cpp
+  sdurws_planning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_planning.lib
+  Automatic MOC for target sdurws_playback
+  PlayBack.cpp
+  mocs_compilation_Release.cpp
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_propertyview
+  PropertyView.cpp
+  mocs_compilation_Release.cpp
+  sdurws_propertyview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_propertyview.lib
+  Automatic MOC for target sdurws_sensors
+  Sensors.cpp
+  mocs_compilation_Release.cpp
+  sdurws_sensors.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_sensors.lib
+  Automatic MOC for target sdurws_treeview
+  TreeView.cpp
+  mocs_compilation_Release.cpp
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_workcelleditor
+  sdurws_workcelleditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditor.lib
+  Automatic MOC for target sdurws_workcelleditorplugin
+  WorkcellEditorPlugin.cpp
+  mocs_compilation_Release.cpp
+  sdurws_workcelleditorplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditorplugin.lib
+  Automatic MOC for target sdurws_robworkstudioapp
+  RobWorkStudioApp.cpp
+  sdurws_robworkstudioapp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_robworkstudioapp.lib
+  Automatic MOC for target RobWorkStudio
+  RobWorkStudio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\RobWorkStudio.exe
+  	Copying RobWork runtime DLLs next to RobWorkStudio
+  Automatic MOC and UIC for target SimulatorLogViewer
+  SimulatorLogViewer.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\SimulatorLogViewer.exe
+  Auto build dll exports
+  sdurw_calibration.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_calibration.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_core_test
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
