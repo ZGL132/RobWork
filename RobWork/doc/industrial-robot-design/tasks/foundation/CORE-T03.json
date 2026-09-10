@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "实现值来源与缺失值（Provenance）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T02"
   ],
