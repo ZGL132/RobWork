@@ -131,6 +131,16 @@
       "title": "tick 报告队列摘要叙述失实：tick#40 尾部称\"队首 TK-T03（依赖 CORE-T02/TK-T02 均已 done ✓）\"，而权威状态为 queue=[CORE-T10]（TK-T03 尚 planned、无 branch 字段，从未具备领取资格）——报告对未入队契约编造了可领取性结论。状态机与队列数据未被污染（CORE-T10 在途正常），损害限于报告文本，但报告是所有者监督的主输入，失实摘要会误导调度决策",
       "owner": "编排纪律（PIPE 附录 A，会话流程所有者）",
       "resolution": "随 PIPE v1.10 落地：附录 A T-ORCH 步骤 9 增补硬性规定——tick 报告的队列摘要必须逐字引用 validate-state 输出的 queue-head: 行，禁止叙述性改写、预测性表述或对未入队契约作可领取性判断（队列空按 (empty) 原样转述）；T-ORCH 升 v8。"
+    },
+    {
+      "id": "F-014",
+      "source": "所有者会话（2026-09-11）：\"调整队列：TK 链\"口令执行前的逐份 status 核对",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-11",
+      "title": "DOC-T05 交付物与验收结论不一致：验收记录与 compile-log 均判\"七份全部置 ready\"（verdict=pass），而 TK-T10 契约本体 status 停在 planned（compile-log 该行放行依据已填、status 单元格为 planned，自相矛盾）——放行类验收的逐份 status 核对漏检；若按\"七份\"口令直接入队，队首将停在 planned 契约上熔断",
+      "owner": "实施/验收纪律（CCP §3 编译者与 ACC §4.4 逐条核对责任方）",
+      "resolution": "所有者\"调整队列\"口令执行时逐份核对发现；处置＝按已验收意图补齐状态翻转（TK-T10 planned→ready，validate-task 三查过）后入队七份；流程教训＝放行类验收的 4.4 证据必须含逐份契约的 status 原文输出（非聚合计数），后续 DOC-Txx 验收按此执行。"
     }
   ]
 }
