@@ -4,10 +4,18 @@
   "unit": "runtime",
   "masterWp": "WP-C",
   "title": "构建落位（CanonicalModel 编译单元）",
-  "status": "ready",
-  "dependsOn": ["CORE-T01"],
-  "requirements": ["ARC-03", "MDL-22"],
-  "designRefs": ["units/runtime.md#12", "units/runtime.md#3.4"],
+  "status": "done",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "ARC-03",
+    "MDL-22"
+  ],
+  "designRefs": [
+    "units/runtime.md#12",
+    "units/runtime.md#3.4"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
@@ -16,8 +24,14 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
   "branch": "wp06-t01",
   "interUnit": true,
   "knownPitfalls": [
