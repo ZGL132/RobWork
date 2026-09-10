@@ -27,7 +27,8 @@ add_library(sdurws_ird_core STATIC
     src/Core.cpp
     src/Identity.cpp
     src/Digest.cpp
-    src/Provenance.cpp)
+    src/Provenance.cpp
+    src/Units.cpp)
 
 # C++17（core.md 决策 D-01）：逐目标显式设定，不设全局标准——基线 RobWork
 # 为 C++11，混链可行性正是本任务双模式构建要验证的内容（P-ENV-1 消账）。
@@ -77,7 +78,8 @@ add_executable(sdurws_ird_core_test
     test/IdentityTest.cpp
     test/DigestTest.cpp
     test/ConventionValueSemanticsTest.cpp
-    test/ProvenanceTest.cpp)
+    test/ProvenanceTest.cpp
+    test/UnitsTest.cpp)
 target_compile_features(sdurws_ird_core_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_core_test PROPERTIES
     CXX_STANDARD 17

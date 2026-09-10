@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="37" failures="0" disabled="0" errors="0" time="0.211" timestamp="2026-09-11T03:24:12.955" name="AllTests">
+  <testsuite name="BuildRedLine" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-09-11T03:24:12.955">
+    <testcase name="SourceTreeReachable_UT_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="109" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:12.955" classname="BuildRedLine" />
+    <testcase name="NoQtInclude_NFR_MNT_01_R3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="129" status="run" result="completed" time="0.001" timestamp="2026-09-11T03:24:12.956" classname="BuildRedLine" />
+    <testcase name="NoCrossUnitInclude_R1_R2_T1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="163" status="run" result="completed" time="0.001" timestamp="2026-09-11T03:24:12.958" classname="BuildRedLine" />
+    <testcase name="PublicHeaderPathLayout_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\BuildRedLineTest.cpp" line="216" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:12.959" classname="BuildRedLine" />
+  </testsuite>
+  <testsuite name="IdentityRoundtrip" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:12.960">
+    <testcase name="ParseFormatRoundtrip_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="28" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:12.960" classname="IdentityRoundtrip" />
+  </testsuite>
+  <testsuite name="IdentityReserved" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:12.960">
+    <testcase name="ZeroIsInvalid_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:12.960" classname="IdentityReserved" />
+  </testsuite>
+  <testsuite name="IdentityStrictParse" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:12.960">
+    <testcase name="MisuseAndMalformedRejected_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="68" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:12.960" classname="IdentityStrictParse" />
+  </testsuite>
+  <testsuite name="IdentityGenerate" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.206" timestamp="2026-09-11T03:24:12.960">
+    <testcase name="NonZeroAndUnique_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="95" status="run" result="completed" time="0.206" timestamp="2026-09-11T03:24:12.960" classname="IdentityGenerate" />
+  </testsuite>
+  <testsuite name="TaskIdentityTuple" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="FiveFieldSemantics_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="114" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="TaskIdentityTuple" />
+  </testsuite>
+  <testsuite name="IdentityStrongTyping" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="NoImplicitConversion_UT_ID_T" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\IdentityTest.cpp" line="147" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="IdentityStrongTyping" />
+  </testsuite>
+  <testsuite name="Sha256KnownVectors" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="EmptyString_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256KnownVectors" />
+    <testcase name="Abc_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256KnownVectors" />
+    <testcase name="TwoBlock_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256KnownVectors" />
+  </testsuite>
+  <testsuite name="Sha256Determinism" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="SameBytesSameDigestIndependentlyOfChunking_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256Determinism" />
+    <testcase name="DifferentBytesDifferentDigest_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256Determinism" />
+  </testsuite>
+  <testsuite name="Sha256Lifecycle" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="FinalizeDisallowsFurtherUse_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="103" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="Sha256Lifecycle" />
+  </testsuite>
+  <testsuite name="DigestCanonical" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="RoundtripAndStrictParse_UT_ID_D" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\DigestTest.cpp" line="126" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="DigestCanonical" />
+  </testsuite>
+  <testsuite name="ValueSemantics" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="CopyIndependenceAndHashConsistency_UT_VAL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ValueSemantics" />
+    <testcase name="MovePreservesValue_UT_VAL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ValueSemantics" />
+    <testcase name="EqualityHashConsistency_UT_VAL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ValueSemantics" />
+    <testcase name="ContainerUsability_UT_VAL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="114" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ValueSemantics" />
+  </testsuite>
+  <testsuite name="ConventionPose" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="RotateZ90MapsXToY_UT_CONV" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="164" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ConventionPose" />
+    <testcase name="CompositionOrderAndInverse_UT_CONV" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ConventionValueSemanticsTest.cpp" line="184" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ConventionPose" />
+  </testsuite>
+  <testsuite name="ProvenanceMake" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="ValidConstructions_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="22" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ProvenanceMake" />
+    <testcase name="P1InvariantEnforced_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ProvenanceMake" />
+    <testcase name="MethodTagSyntax_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ProvenanceMake" />
+  </testsuite>
+  <testsuite name="ProvenanceTokens" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="Roundtrip_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="80" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="ProvenanceTokens" />
+  </testsuite>
+  <testsuite name="SourcedValueStates" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="FourStateMatrix_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="96" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="SourcedValueStates" />
+    <testcase name="MissingNeverBecomesZero_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="130" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="SourcedValueStates" />
+    <testcase name="EmptyRawInputRejected_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="149" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="SourcedValueStates" />
+    <testcase name="EqualitySemantics_UT_MISS" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\ProvenanceTest.cpp" line="161" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="SourcedValueStates" />
+  </testsuite>
+  <testsuite name="UnitsConvert" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="KnownConversions_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="UnitsConvert" />
+    <testcase name="DimensionMismatch_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="UnitsConvert" />
+    <testcase name="NonFiniteAndOverflow_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="73" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="UnitsConvert" />
+  </testsuite>
+  <testsuite name="UnitsFind" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="UnknownSymbol_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="UnitsFind" />
+  </testsuite>
+  <testsuite name="UnitsRegistry" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="R1TableComplete_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="103" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="UnitsRegistry" />
+  </testsuite>
+  <testsuite name="QuantityTyped" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T03:24:13.167">
+    <testcase name="TryParseKindMismatchAndDisplay_UT_UNIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-09-11T03:24:13.167" classname="QuantityTyped" />
+  </testsuite>
+</testsuites>

@@ -979,6 +979,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.3 | 2026-09-10 | P-ENV-1 关闭（findings F-003 消账）：C++17/基线混链经 CORE-T01 双模式构建＋验收独立复现证实成立，回落 C++14 预案留档不用；仅 §10.2 状态行翻转，接口与任务行零修改 |
 | v0.4 | 2026-09-10 | CORE-T02（≙WP-03-T02）落位登记：①§4.1/§5.1 身份六强类型＋AttemptId＋TaskIdentity 与 §4.2/§5.2 摘要类型＋ContentDigester（SHA-256，D-05）按原文契约实现，接口零偏差；②`Errors.hpp`（§4.10 CoreError）无独立任务行，随本任务以"首个消费者落位最小契约"惯例建立——签名与 §4.10 原文逐字一致（仅 using 构造透传），不新增成员（DTB §5.4 偏差登记）；③实现取舍留痕：保留值"全零"在解析层可回（句法合法），拒绝由 isValid() 在业务边界执行；FNV-1a 128 哈希为两 64 位半字模拟实现（uint64 定宽保证平台无关，NFR-COR-02） |
 | v0.5 | 2026-09-11 | CORE-T03（≙WP-03-T03）落位登记：①§4.3/§5.3 ValueProvenance＋SourcedValue 四态按原文契约实现，接口零偏差；②**偏差登记（DTB §5.4）**：methodTag 字符集由 [a-z0-9./_-] 放宽为 [A-Za-z0-9./_-]——§4.3 卡内自例 "MDL-05/hollow-cylinder" 含大写与原小写限定自相矛盾（实现取可用意图，UT-MISS 用例同步），详设所有者下次修订时裁决定格；③实现取舍：SourcedValue 非 Provided 态的 value()/invalidRawInput() 抛 CoreError（消息含态 token），"缺失＝零"通道在类型层切断（UT-MISS 探针实证） |
+| v0.6 | 2026-09-11 | CORE-T04（≙WP-03-T04）落位登记：①§4.4/§5.4 QuantityKind 十四量纲＋R1 单位表 17 token＋UnitToken 句柄＋convert/tryConvert 唯一换算＋Quantity<K> 强类型与十四别名，按原文契约实现，接口零偏差；②实现取舍留痕：量纲检测以 tryValue 式双轨（convert 抛/tryConvert 空）各自独立实现；Quantity::isFinite 采用 NaN 自比较与无穷差分检测（无 <cmath> 依赖面）；③CR-06 遵守：本任务零 testkit 头消费（容差接口归 TK-T04/05 经 API diff 后） |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 

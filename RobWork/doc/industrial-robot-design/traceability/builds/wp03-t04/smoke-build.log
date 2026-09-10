@@ -1,0 +1,74 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\sdurws_ird_core.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\Release\sdurws_ird_core.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\sdurws_ird_core_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  BuildRedLineTest.cpp
+  IdentityTest.cpp
+  DigestTest.cpp
+  ConventionValueSemanticsTest.cpp
+  ProvenanceTest.cpp
+  UnitsTest.cpp
+  正在生成代码...
+  sdurws_ird_core_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\Release\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\core\Release\gtest.dll done
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\sdurws_ird_evidence.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\Release\sdurws_ird_evidence.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\sdurws_ird_evidence_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  BuildRedLineTest.cpp
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\Release\sdurws_ird_evidence_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\evidence\Release\gtest.dll done
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\sdurws_ird_policy.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Policy.cpp
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\Release\sdurws_ird_policy.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\sdurws_ird_policy_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  BuildRedLineTest.cpp
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\Release\sdurws_ird_policy_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\policy\Release\gtest.dll done
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\sdurws_ird_runtime.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Runtime.cpp
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\Release\sdurws_ird_runtime.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\sdurws_ird_runtime_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  BuildRedLineTest.cpp
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\Release\sdurws_ird_runtime_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\runtime\Release\gtest.dll done
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\sdurws_ird_testkit.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\Release\sdurws_ird_testkit.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\sdurws_ird_testkit_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPathsTest.cpp
+  JsonLiteTest.cpp
+  FaultTest.cpp
+  BuildRedLineTest.cpp
+  正在生成代码...
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\Release\sdurws_ird_testkit_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\testkit\Release\gtest.dll done
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\wp03t04-smoke\ALL_BUILD.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
