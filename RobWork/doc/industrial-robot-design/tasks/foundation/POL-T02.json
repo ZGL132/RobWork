@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "POL-T02",
+  "unit": "policy",
+  "masterWp": "WP-C",
+  "title": "POL-T02 implementation slice",
+  "status": "planned",
+  "dependsOn": [
+    "POL-T01"
+  ],
+  "requirements": [],
+  "designRefs": [
+    "units/policy.md"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
+  "acceptance": [
+    "实现本文对应任务行定义的接口和不变量",
+    "单元测试及依赖门禁通过"
+  ]
+}

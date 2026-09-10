@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RT-T09",
+  "unit": "runtime",
+  "masterWp": "WP-C",
+  "title": "快照与工厂（Snapshot）",
+  "status": "planned",
+  "dependsOn": ["RT-T05", "RT-T07", "RT-T08"],
+  "requirements": ["ARC-03", "CON-06"],
+  "designRefs": ["units/runtime.md#9"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+  "crRefs": ["CR-05"],
+  "acceptance": [
+    "RT-SNAP-1～4、RT-CPX-4：并发/隔离/迟到用例通过",
+    "CR-05：modelIdentity/nameMapIdentity/robworkBaselineVersion 值供给样例与 EV-T04 联合断言一致（同一样例，evidence 侧 Environment 条目值＝runtime 计算值）"
+  ]
+}

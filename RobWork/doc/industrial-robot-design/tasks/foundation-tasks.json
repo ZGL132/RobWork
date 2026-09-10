@@ -1,0 +1,64 @@
+[
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "CORE-T01",
+    "unit": "core",
+    "masterWp": "WP-B",
+    "title": "构建落位与零依赖门禁",
+    "dependsOn": [],
+    "requirements": ["NFR-MNT-01", "ARC-02"],
+    "designRefs": ["units/core.md#9"],
+    "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+    "status": "ready",
+    "note": "入口索引；canonical 任务契约见 tasks/foundation/（57 份），冲突时以 canonical 为准。CR-01~CR-08 已设计级关闭（2026-09-10），构建落位类任务允许执行。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "EV-T01",
+    "unit": "evidence",
+    "masterWp": "WP-C",
+    "title": "构建落位（快照/切片单元）",
+    "dependsOn": [],
+    "requirements": ["CON-01", "CON-05", "EVI-01"],
+    "designRefs": ["units/evidence.md#12"],
+    "verify": ["cmake --build build --config Release --target sdurws_ird_evidence_test"],
+    "status": "ready"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "POL-T01",
+    "unit": "policy",
+    "masterWp": "WP-C",
+    "title": "构建落位（策略单元）",
+    "dependsOn": [],
+    "requirements": ["ARC-05", "CON-06"],
+    "designRefs": ["units/policy.md#12"],
+    "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
+    "status": "ready"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "RT-T01",
+    "unit": "runtime",
+    "masterWp": "WP-C",
+    "title": "构建落位（CanonicalModel 编译单元）",
+    "dependsOn": [],
+    "requirements": ["ARC-03", "MDL-22"],
+    "designRefs": ["units/runtime.md#12"],
+    "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+    "status": "ready"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "TK-T01",
+    "unit": "testkit",
+    "masterWp": "WP-B",
+    "title": "构建落位与框架接入",
+    "dependsOn": [],
+    "requirements": ["NFR-COR-01", "NFR-MNT-01"],
+    "designRefs": ["units/testkit.md#9"],
+    "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+    "status": "ready",
+    "note": "CR-07：vcpkg 安装 gtest:x64-windows 与版本登记随本任务（development-task-breakdown §5.5）；find_package(GTest CONFIG REQUIRED) 失败→本任务转 blocked。"
+  }
+]

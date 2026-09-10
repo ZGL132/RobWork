@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DOC-T01",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "DETAILED-DESIGN.md 状态表与示例路径同步",
+  "status": "done",
+  "completedAt": "2026-09-10",
+  "dependsOn": ["FOUNDATION-CR-01"],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": ["DETAILED-DESIGN.md", "traceability/unit-status.json"],
+  "allowedFiles": ["RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md"],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["doc-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "20 单元状态表与 unit-status.json 一致（五基础单元＝contract-review）",
+    "示例命令路径指向 tasks/foundation/（根目录游离 CORE-T04.json 已删除）",
+    "登记 foundation-contract-review.md / foundation-api-diff.md 追踪入口"
+  ],
+  "resultNote": "随 FOUNDATION-CR-01 同会话执行完成。"
+}

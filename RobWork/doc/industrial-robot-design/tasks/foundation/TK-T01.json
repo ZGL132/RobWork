@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T01",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "构建落位与框架接入",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["NFR-COR-01", "NFR-MNT-01"],
+  "designRefs": ["units/testkit.md#9", "units/testkit.md#3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+  "crRefs": ["CR-07"],
+  "acceptance": [
+    "两模式构建零错误；数据根解析（env/默认/缺失三态）用例通过",
+    "CR-07：vcpkg 安装 gtest:x64-windows 并将版本登记于 development-task-breakdown §4.4 定稿行（≙WP-02-T01）",
+    "find_package(GTest CONFIG REQUIRED) 失败→本任务转 blocked，不引入第二框架"
+  ]
+}

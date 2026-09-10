@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "ird-unit-status/1",
+  "units": [
+    {
+      "id": "core",
+      "design": "units/core.md",
+      "status": "contract-review",
+      "masterWps": [
+        "WP-B",
+        "WP-C"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "testkit",
+      "design": "units/testkit.md",
+      "status": "contract-review",
+      "masterWps": [
+        "WP-B"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "project",
+      "design": "units/project.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-C",
+        "WP-D"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "evidence",
+      "design": "units/evidence.md",
+      "status": "contract-review",
+      "masterWps": [
+        "WP-C",
+        "WP-D",
+        "WP-H"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "runtime",
+      "design": "units/runtime.md",
+      "status": "contract-review",
+      "masterWps": [
+        "WP-C",
+        "WP-D"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "policy",
+      "design": "units/policy.md",
+      "status": "contract-review",
+      "masterWps": [
+        "WP-C",
+        "WP-E",
+        "WP-F",
+        "WP-G"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "diagnostics",
+      "design": "units/diagnostics.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-D"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "execution",
+      "design": "units/execution.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-D",
+        "WP-F"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "io",
+      "design": "units/io.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-E",
+        "WP-I"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "modeling",
+      "design": "units/modeling.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-E"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "requirements",
+      "design": "units/requirements.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-E"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "kinematics",
+      "design": "units/kinematics.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-F"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "trajectory",
+      "design": "units/trajectory.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-F"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "dynamics",
+      "design": "units/dynamics.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-G"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "drivetrain",
+      "design": "units/drivetrain.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-G"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "selection",
+      "design": "units/selection.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-G"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "optimization",
+      "design": "units/optimization.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-H"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "reporting",
+      "design": "units/reporting.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-H",
+        "WP-I"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "ui",
+      "design": "units/ui.md",
+      "status": "draft",
+      "masterWps": [
+        "WP-I"
+      ],
+      "designCompletion": "written",
+      "implementationStatus": "not-verified"
+    },
+    {
+      "id": "workflow",
+      "design": "units/workflow.md",
+      "status": "planned",
+      "masterWps": [
+        "WP-I"
+      ],
+      "designCompletion": "not-written",
+      "implementationStatus": "not-verified"
+    }
+  ]
+}

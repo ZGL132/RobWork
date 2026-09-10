@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RT-T01",
+  "unit": "runtime",
+  "masterWp": "WP-C",
+  "title": "构建落位（CanonicalModel 编译单元）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["ARC-03", "MDL-22"],
+  "designRefs": ["units/runtime.md#12", "units/runtime.md#3.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+  "acceptance": [
+    "两模式构建零错误；零 Qt/零单元边扫描通过；基线库链接清单留痕（P-RT-3 消账输入）",
+    "gtest 按 development-task-breakdown §5.5 定稿接入（CR-07）"
+  ]
+}

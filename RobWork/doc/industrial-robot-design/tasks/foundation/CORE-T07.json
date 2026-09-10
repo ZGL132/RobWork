@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T07",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "诊断契约（DiagData）",
+  "status": "planned",
+  "dependsOn": ["CORE-T03", "CORE-T04"],
+  "requirements": ["ERR-01", "UX-03"],
+  "designRefs": ["units/core.md#4.8", "units/core.md#5.7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+  "crRefs": ["CR-01", "CR-08"],
+  "acceptance": [
+    "C-1～C-3 不变量用例通过（可确认诊断必比较型、凭据一致性、码句法校验）",
+    "CR-08：DiagnosticRecord 为跨单元结构化诊断唯一承载（稳定码句法；码值权威归 diagnostics StableCodeRegistry）"
+  ]
+}

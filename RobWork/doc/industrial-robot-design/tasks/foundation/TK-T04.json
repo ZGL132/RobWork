@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T04",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "容差档案（ToleranceProfile）",
+  "status": "planned",
+  "dependsOn": ["TK-T02", "TK-T03"],
+  "requirements": ["NFR-COR-01"],
+  "designRefs": ["units/testkit.md#4.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+  "crRefs": ["CR-06"],
+  "acceptance": [
+    "resolve 命中/未命中/超限三态用例通过；C7 对照用例通过",
+    "CR-06 门禁：CORE-T04/T05 实现落地并重出 API diff 复核通过后，本任务方可由 planned 推进 ready（foundation-api-diff.md CR-06）"
+  ]
+}

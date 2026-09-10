@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T04",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "单位与量（Units）",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-COR-03", "KIN-12"],
+  "designRefs": ["units/core.md#4.4", "units/core.md#5.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+  "crRefs": ["CR-06"],
+  "acceptance": [
+    "R1 单位 token 表完整；错误口径三态（抛/空/正常）用例通过",
+    "非法单位和非有限输入被拒绝（不静默归零）",
+    "CR-06：实现后与 testkit.md §4.3 容差档案消费面重出 API diff，作为 TK-T04/05 ready 前置"
+  ]
+}

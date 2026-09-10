@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EV-T07",
+  "unit": "evidence",
+  "masterWp": "WP-C",
+  "title": "结果包络（Envelope）",
+  "status": "planned",
+  "dependsOn": ["EV-T06"],
+  "requirements": ["EVI-01", "TASK-02"],
+  "designRefs": ["units/evidence.md#7"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_evidence_test"],
+  "crRefs": ["CR-01"],
+  "acceptance": [
+    "表 3 全组合矩阵用例通过（EV-ENV-1/2）：非法组合逐一构造拒绝、Preview 构造边界拒绝",
+    "CR-01：仅消费 core Evaluation 词表（无本地枚举定义）；_contract_test 断言 token 字面量与 core::toToken 输出一致（foundation-api-diff.md）"
+  ]
+}

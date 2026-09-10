@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "ird-requirement-trace/1",
+  "entries": [
+    {
+      "requirementId": "ARC-01",
+      "unit": "project",
+      "design": "units/project.md",
+      "taskIds": [
+        "PRJ-T01"
+      ],
+      "acceptanceIds": [
+        "AT-10"
+      ],
+      "masterWp": "WP-C",
+      "status": "specified"
+    },
+    {
+      "requirementId": "KIN-01",
+      "unit": "kinematics",
+      "design": "units/kinematics.md",
+      "taskIds": [
+        "KIN-T01"
+      ],
+      "acceptanceIds": [
+        "AT-03"
+      ],
+      "masterWp": "WP-F",
+      "status": "planned"
+    },
+    {
+      "requirementId": "NFR-MNT-01",
+      "unit": "core",
+      "design": "units/core.md",
+      "taskIds": [
+        "CORE-T01"
+      ],
+      "acceptanceIds": [
+        "AT-10"
+      ],
+      "masterWp": "WP-B",
+      "status": "specified"
+    },
+    {
+      "requirementId": "EVI-01",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "taskIds": [
+        "EV-T01"
+      ],
+      "acceptanceIds": [
+        "AT-03"
+      ],
+      "masterWp": "WP-C",
+      "status": "specified"
+    },
+    {
+      "requirementId": "ARC-05",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "taskIds": [
+        "POL-T01"
+      ],
+      "acceptanceIds": [
+        "AT-19"
+      ],
+      "masterWp": "WP-C",
+      "status": "specified"
+    },
+    {
+      "requirementId": "ARC-03",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "taskIds": [
+        "RT-T01"
+      ],
+      "acceptanceIds": [
+        "AT-37"
+      ],
+      "masterWp": "WP-C",
+      "status": "specified"
+    },
+    {
+      "requirementId": "NFR-COR-01",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "taskIds": [
+        "TK-T01"
+      ],
+      "acceptanceIds": [
+        "AT-16"
+      ],
+      "masterWp": "WP-B",
+      "status": "specified"
+    },
+    {
+      "requirementId": "TASK-01",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "taskIds": [
+        "EX-T02"
+      ],
+      "acceptanceIds": [],
+      "masterWp": "WP-D",
+      "status": "specified",
+      "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
+    },
+    {
+      "requirementId": "ERR-01",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "taskIds": [
+        "DIAG-T03"
+      ],
+      "acceptanceIds": [],
+      "masterWp": "WP-D",
+      "status": "specified",
+      "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
+    },
+    {
+      "requirementId": "NFR-SEC-01",
+      "unit": "io",
+      "design": "units/io.md",
+      "taskIds": [
+        "IO-T02"
+      ],
+      "acceptanceIds": [],
+      "masterWp": "WP-E",
+      "status": "specified",
+      "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
+    },
+    {
+      "requirementId": "UX-01",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "taskIds": [
+        "UI-T03"
+      ],
+      "acceptanceIds": [],
+      "masterWp": "WP-I",
+      "status": "specified",
+      "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
+    },
+    {
+      "requirementId": "RPT-02",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "taskIds": [
+        "RPT-T06"
+      ],
+      "acceptanceIds": [],
+      "masterWp": "WP-H",
+      "status": "specified",
+      "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
+    }
+  ],
+  "coverageNote": "导航摘要，非全量验收覆盖声明；完整权威映射见 development-task-breakdown.md §3 与 units 各追踪矩阵；单元全量任务见 traceability/phase-one-task-index.json。"
+}

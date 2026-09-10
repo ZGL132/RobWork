@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "FOUNDATION-CR-01",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "基础单元公共契约审查与冻结",
+  "status": "done",
+  "completedAt": "2026-09-10",
+  "dependsOn": [],
+  "requirements": [
+    "ARC-02",
+    "ARC-03",
+    "ARC-04",
+    "ARC-05",
+    "CON-05",
+    "CON-06",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "traceability/foundation-contract-review.md",
+    "traceability/foundation-api-diff.md",
+    "DETAILED-DESIGN.md"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/**",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
+  ],
+  "outputs": [
+    "contract-review-record",
+    "api-diff-list",
+    "updated-traceability"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "acceptance": [
+    "CR-01 至 CR-08 每项有结论",
+    "无重复公共类型所有者",
+    "未关闭交接项对应任务保持 blocked 或 planned"
+  ],
+  "resultNote": "CR-01~CR-08 设计级全部关闭（2026-09-10）：逐项 API 差异与裁决见 traceability/foundation-api-diff.md，关闭记录见 foundation-contract-review.md §4。CR-05 修正 evidence/runtime 两处接口文本；CR-06/CR-07 保留实现级门禁（TK-T04/05 待 CORE-T04/05 API diff；TK-T01 承载 vcpkg gtest 安装，失败转 blocked）。dependsOn 登记的 T01 为契约核对对象（任务契约已存在），非实现完成前置；本任务为纯文档审查。 2026-09-10 同步：原 dependsOn 实为审查对象，移至 reviewedTasks；不再把未实现的 T01 误表示为已完成依赖。",
+  "reviewedTasks": [
+    "CORE-T01",
+    "EV-T01",
+    "POL-T01",
+    "RT-T01",
+    "TK-T01"
+  ]
+}

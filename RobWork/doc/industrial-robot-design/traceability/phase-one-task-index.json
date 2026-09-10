@@ -1,0 +1,1186 @@
+{
+  "schemaVersion": "ird-task-index/1",
+  "updatedAt": "2026-09-10",
+  "note": "完整单元任务行索引，不是可交给 verify-task 的执行契约；单元正文为权威。设计批次不改变 A~E 发布范围。",
+  "entries": [
+    {
+      "taskId": "CORE-T01",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T01 构建落位 | 骨架 CMakeLists、§3.3 | `sdurws_ird_core` 升级 STATIC（C++17、链 `sdurw_math`）；注册 `sdurws_ird_core_test`（gtest 按 development-task-breakdown §5.5 定稿） | 无 | `industrialrobot/CMakeLists.txt`、`core/CMakeLists.txt`（新）、`core/src/*`（空起步） | 独立冒烟＋集成构建各配置成功；UT-BUILD 脚本通过 | 两模式下构建零错误；C++17 与基线共存验证记录（P-ENV-1 消账） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/CORE-T01.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T02",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T02 身份与摘要 | §4.1/§4.2、§5.1/§5.2 | `Identity.hpp/.cpp`、`Digest.hpp/.cpp`（SHA-256） | CORE-T01 | 同名文件 | UT-ID-T、UT-ID-D | 全部用例通过；token/保留值行为与本文一致 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T02.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T03",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T03 来源与缺失值 | §4.3、§5.3 | `Provenance.hpp/.cpp` | CORE-T02（引用 ObjectId/ContentVersion） | 同名文件 | UT-MISS | 四态语义与 P-1 不变量用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T03.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T04",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T04 单位与量 | §4.4、§5.4 | `Units.hpp/.cpp`（R1 单位表） | CORE-T01 | 同名文件 | UT-UNIT | R1 token 表完整；错误口径三态（抛/空/正常）用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T04.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T05",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T05 容差比较 | §4.5、§5.5 | `Compare.hpp/.cpp` | CORE-T04（QuantityKind）、rw::math | 同名文件 | UT-TOL | C4 公式与 C7 转写用例通过（含正负抵消反例） |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T05.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T06",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T06 评估词表 | §4.7、§5.6 | `Evaluation.hpp/.cpp` | CORE-T01 | 同名文件 | UT-EVAL | token 往返用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T06.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T07",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T07 诊断契约 | §4.8、§5.7 | `DiagData.hpp/.cpp` | CORE-T03、CORE-T04 | 同名文件 | UT-DIAG | C-1～C-3 不变量用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T07.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T08",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T08 事件契约 | §4.9、§5.8 | `Events.hpp/.cpp` | CORE-T02、CORE-T06 | 同名文件 | UT-EVT | 载荷/一致性/FIFO（测试内参考总线）用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T08.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T09",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T09 约定锁定与值语义 | §4.6、§8 | UT-CONV、UT-VAL 测试体 | CORE-T01 | `core/test/*` | 直接运行 | 已知算例与值语义断言通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T09.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "CORE-T10",
+      "unit": "core",
+      "design": "units/core.md",
+      "sourceRow": "| CORE-T10 文档与门禁同步 | 全文 | README 指向核对；UT-BUILD 扫描并入 CI 建议；§10.2 待裁决项状态更新 | CORE-T01…T09 | 本文、`core/include/.../README.md` | 评审 | 本文与实现零偏差登记；未决项有最新状态 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/CORE-T10.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T01",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T01 构建落位与框架接入 | 骨架 CMakeLists、§3.3/§3.4、development-task-breakdown §5.5 定稿 | `sdurws_ird_testkit` 升级 STATIC（C++17、链 `RWS::ird::core`）；`sdurws_ird_testkit_test` 注册（gtest 按 §5.5：vcpkg 安装＋`find_package(GTest CONFIG REQUIRED)`，安装与版本登记随本任务；find_package 失败→本任务转 blocked）；`testdata/` 根＋`SDURWS_IRD_TESTDATA_DIR` 变量＋`TestPaths.hpp` | 无（与 CORE-T01 平行可做） | `industrialrobot/CMakeLists.txt`、`testkit/CMakeLists.txt`（新）、`testkit/include/.../TestPaths.hpp`、`testkit/test/*` | 独立冒烟＋集成构建配置成功；TK-BUILD 前两个用例 | 两模式构建零错误；数据根解析（env/默认/缺失三态）用例通过；gtest 版本登记于 breakdown §4.4 定稿行 |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/TK-T01.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T02",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T02 受限 JSON | §4.1 | `JsonLite.hpp/.cpp` | TK-T01 | 同名文件 | TK-JSON | 往返/拒绝用例全过；行列错误消息可定位 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T02.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T03",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T03 清单模型与完整性 | §4.2、§4.5、TK-T02 | `Dataset.hpp/.cpp`；`tools/testdata` 校验工具（lint＋全量扫描）；`testdata/requirements-ids.json` 种子（v1.16 ID 清单） | TK-T02 | 同名文件＋`tools/testdata/*` | TK-MAN、TK-INT | 附录 A.2 示例数据集装载通过；全部反例拒绝且消息含字段路径 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T03.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T04",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T04 容差档案 | §4.3 | `ToleranceProfile.hpp/.cpp`；示例档案 `testdata/tolerance/kin-fk/`（附录 D 第 4/9 项条目） | TK-T02（TK-T03 联合 lint） | 同名文件 | TK-TOL | resolve 命中/未命中/超限三态用例通过；C7 对照用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T04.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T05",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T05 数值断言与比较详情 | §5.3 | `Check.hpp`（＋宏）、失败详情输出 | TK-T04 | 同名文件 | TK-CMP | 全部反例（NaN/长度/空/类型规则）按 §4.3.3 表落位 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T05.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T06",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T06 集合与顺序断言 | §5.4 | `SetCheck.hpp`（Traits＋两阶段匹配＋差异定位） | TK-T05 | 同名文件 | TK-SET、TK-ORD | 排序误判/重复匹配反例通过（元测试）；护栏用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T06.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T07",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T07 契约断言 | §5.5 | `ContractCheck.hpp` | TK-T05（core 类型可用性随 core 冻结状态，P-TK-2） | 同名文件 | TK-CTR | 正反例通过；evidence 谓词模板编译（以 core 值类型演练） |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T07.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T08",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T08 夹具与确定性 | §6.1~§6.3 | `Fixture.hpp/.cpp`（TempDir/ReproRecord/DeterministicEnv/GoldenFixture） | TK-T03/T04 | 同名文件 | TK-FIX | 生命周期六步用例；keepOnFailure 现场保留 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T08.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T09",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T09 故障注入原语 | §6.4 | `Fault.hpp/.cpp`；`ProcessRunner.hpp`（仅头文件设计冻结，不实现） | TK-T01 | 同名文件 | TK-FAULT | occurrence 触发/命中记录用例通过；无产品目标链接 testkit（TK-BUILD 复验） |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T09.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "TK-T10",
+      "unit": "testkit",
+      "design": "units/testkit.md",
+      "sourceRow": "| TK-T10 报告、示例与门禁同步 | §7、§3.6、core.md §8 | `Report.hpp/.cpp`（数据类型＋写出）；`gtest/RecordListener.hpp` 适配头；**core 接入示例**（附录 A.1 作为 `sdurws_ird_core_test` 的样板用例建议，随 core CORE-T01~T05 落地）；安装排除扫描脚本建议（交 WP-01/WP-24）；README 更新 | TK-T03~T09 | 同名文件、`testkit/include/.../README.md`、本文 | TK-RPT、TK-BUILD | 六类 outcome 聚合正确；示例数据集随 CI 跑通；门禁建议登记给 WP-01 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/TK-T10.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "PRJ-T01",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T01 构建落位 | 骨架 CMakeLists、§3.3 | `sdurws_ird_project` STATIC（C++17、链 core）；注册 `_test`/`_contract_test`（gtest 按 P-TK-1 结论） | 无（CORE-T01 后更佳，可平行） | `industrialrobot/CMakeLists.txt`、`project/CMakeLists.txt`（新）、`src/`（空起步） | 冒烟＋集成双模式配置构建；PRJ-TX-14 前两项 | 两模式零错误；零 Qt/零业务边扫描通过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T02",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T02 存储原语 | §7.1/§7.2 | `win32/AtomicFile.*`＋`IFileOps` 接缝；`publishNew`/原子替换/write-through 写 | PRJ-T01 | 同名文件 | 单测＋官方文档口径复核记录（§7.2 表逐行） | 原子/持久性分离语义用例过；文档复核留痕 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T03",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T03 写锁与路径 | §9.1～§9.6 | `win32/StoreLock.*`（独占句柄/心跳/PID 读取/失权防护）、`PathCanonical.*` | PRJ-T02 | 同名文件 | PRJ-TX-7、PRJ-TX-13（锁部分） | 双实例/卡顿/接管/只读判定用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T04",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T04 格式契约与编码 | §4.2/§4.4/§4.8 | `PersistenceFormat.hpp`＋`Codec.*`（canonical 编码、round-trip） | PRJ-T01 | 同名文件 | 编码 round-trip/非法拒绝单测 | `parse(dump(x))==x` 全类型过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T05",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T05 对象库 | §4.6 | `ObjectStore.*`（内容编址、只增发布、共享、LRU、摘要校验） | PRJ-T02/T04 | 同名文件 | 单测（共享/篡改/缓存预算） | 不可变与共享用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T06",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T06 修订/分支/元数据 | §4.3/§4.5 | `RevisionIndex.*`（闭包双通道、分支表、防回退校验、seq 分配） | PRJ-T04/T05 | 同名文件 | PRJ-TX-5（模型部分）、PRJ-TX-12 | 走查七步断言过；环/回退注入拒绝 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T07",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T07 事务引擎 | §7 | `TxEngine.*`（七步状态机、.staging、恢复扫描） | PRJ-T02/T05/T06 | 同名文件 | PRJ-TX-4（F1～F8 进程内部分） | 边界注入矩阵过；旧版本字节不变 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T08",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T08 打开与恢复 | §8.7、§7.4 | `ProjectStoreFactory/ProjectStoreImpl`（open/createNew/RecoveryReport/生命周期） | PRJ-T03/T07 | 同名文件 | PRJ-TX-9、恢复报告断言 | 激活前失败不影响当前项目用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T09",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T09 查询端口 | §4.6/§4.7、§5.2 | `QueryPort` 实现（视图/闭包约束/缓存/隔离） | PRJ-T06/T08 | 同名文件 | 并发只读单测；闭包外不可见 | 隔离与不可见用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T10",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T10 命令服务与内置命令 | §5.3、§6 | `CommandServiceImpl.*`（串行槽/S1-S7/注册表/编译编排）＋内置 `project.create-branch` 等元数据处理器＋测试处理器 | PRJ-T08/T09 | 同名文件＋`test/StubHandlers.*` | PRJ-TX-1、PRJ-TX-3（桩编译） | 恰好一个修订/失败零修订用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T11",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T11 确认放行流 | §5.3.3/§5.3.4、§6.7 | 交互回调编排、确认绑定与留痕、取消/失效路径 | PRJ-T10 | 同名文件 | PRJ-TX-2 | 四路拒绝/绑定失效用例过；留痕入 command.json |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T12",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T12 草稿服务 | §5.4、§8.1～§8.6 | `DraftServiceImpl.*`（原子替换+.bak/损坏恢复/投影/放弃） | PRJ-T08 | 同名文件 | PRJ-TX-6 | 恢复与保留用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T13",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T13 撤销/重做 | §5.5、§6.9 | `UndoRedoServiceImpl.*`（逆命令提交、会话栈、边界） | PRJ-T10 | 同名文件 | PRJ-TX-5（undo/redo 部分） | 新修订/空历史/跨分支用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T14",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T14 归档端口 | §5.6、§10.1 | `ArchiveServiceImpl.*`（begin/batch/finalize/abandon、幂等/冲突、引用持有） | PRJ-T08 | 同名文件 | PRJ-TX-8（进程内模拟）、F9 | manifest 发布/幂等/冲突/上下文存活时序过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T15",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T15 契约测试与崩溃注入落地 | §11 全表、testkit §6.4/§6.5 | PRJ-TX-1～14 用例体（含 TestProcessRunner 接入的 F8/PRJ-TX-7/8） | PRJ-T02～T14、TK-T09（及 TestProcessRunner 按 testkit §10.1 节奏） | `project/test/*`、`project/contract_test/*` | §11 表逐项 | 全部设计用例执行通过并留痕（**未执行不得标注通过**） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "PRJ-T16",
+      "unit": "project",
+      "design": "units/project.md",
+      "sourceRow": "| PRJ-T16 文档与门禁同步 | 全文 | README 核对；§11/§15.3 状态更新；门禁建议（含 P-PR-5/P-PR-6 裁决申请）提交 | T01～T15 | 本文、`project/include/.../README.md` | 评审 | 本文与实现零偏差登记；待裁决项最新状态 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EV-T01",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T01 构建落位 | 骨架 CMakeLists、§3.4 | `sdurws_ird_evidence` 升级 STATIC（C++17、链 `RWS::ird::core`）；注册 `_test`/`_contract_test`（gtest 按 development-task-breakdown §5.5 定稿） | 无（与 CORE-T01/TK-T01 平行） | `industrialrobot/CMakeLists.txt`、`evidence/CMakeLists.txt`（新）、`evidence/src/*`（空起步） | 独立冒烟＋集成构建配置成功；UT-BUILD 等价扫描（无 Qt、无私有头出 include/、依赖图仅 core 边） | 两模式构建零错误；红线扫描零命中 |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/EV-T01.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T02",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T02 错误与依赖类型 | §3.5、§4.2 | `Errors.hpp/.cpp`、`Dependency.hpp` | EV-T01 | 同名文件 | 单元测试（token/语法/闭包校验器） | 声明闭包校验用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T02.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T03",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T03 快照 | §4.1 | `Snapshot.hpp/.cpp`（builder/校验/SnapshotCodec refs-only＋materialized） | EV-T02（core 依赖随目标） | 同名文件 | EV-ID-1/3；修订闭包拒绝（混入反例）用例 | 全部快照不变量用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T03.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T04",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T04 切片与身份 | §4.3、§5 | `Slice.hpp/.cpp`（builder/SliceCodec/双层身份） | EV-T03 | 同名文件 | EV-ID-1/2、EV-INV 前置（身份比较） | canonical 往返＋浮点位模式＋NaN 拒绝用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T04.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T05",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T05 证据与 Profile 承载 | §6.1～§6.3 | `Evidence.hpp/.cpp`（状态/清单/Profile/证明/搜索未果/覆盖证据校验） | EV-T04 | 同名文件 | EV-VER-6/7、EV-COV-2/3 | validateProof 逐字段反例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T05.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T06",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T06 汇总判定 | §6.4～§6.6 | `Verdict.hpp/.cpp`（决策表/VerdictTrace/资格/基准检查） | EV-T05 | 同名文件 | EV-VER-1~8、EV-COV-1/4 | 五级优先级全部正反例通过；缺失全量列出 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T06.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T07",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T07 结果包络 | §7 | `Envelope.hpp/.cpp`（Draft/make/validateCombination） | EV-T06 | 同名文件 | EV-ENV-1/2 | 表 3 全组合矩阵用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T07.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T08",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T08 当前性 | §8.1 | `Currentness.hpp/.cpp`（computeCurrentness/CurrentnessIndex） | EV-T04（重建切片）、EV-T07（结果引用） | 同名文件 | EV-CUR-1~4 | 内容身份/不可解析/跨上下文/不写回用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T08.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T09",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T09 兼容判定 | §8.2 | `Compatibility.hpp/.cpp` | EV-T07 | 同名文件 | EV-CPA-1~3 | Quick≠Verified/契约/检查点独立用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T09.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T10",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T10 评估器接口与注册表 | §9 | `Evaluator.hpp/.cpp`（descriptor/接口/两注册表/manifest） | EV-T02、EV-T05（Profile） | 同名文件 | EV-REG-1/2 | 注册边界/并发/manifest 稳定用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T10.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T11",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T11 测试替身与契约套件 | §11、testkit.md §10.2 | `ScriptedEvaluator` 及 EV-* 全部用例体（`_test`）；envelope 访问器特化与切片契约夹具数据集（`_contract_test`） | EV-T03~T10、testkit 可用 | `evidence/test/*`、`testdata/golden/ev-slice-fixture/` | §11 矩阵逐条 | 全部用例通过并留痕；替身边界声明在案（EV-REG-3） |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T11.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "EV-T12",
+      "unit": "evidence",
+      "design": "units/evidence.md",
+      "sourceRow": "| EV-T12 文档与门禁同步 | 全文 | README 指向核对；§15.3 待裁决项状态更新；UT-BUILD 建议并入 CI（WP-01 侧） | EV-T01~T11 | 本文、`evidence/include/.../README.md` | 评审 | 本文与实现零偏差登记；未决项有最新状态 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/EV-T12.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T01",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T01 构建落位 | 骨架 CMakeLists、§3.4、P-RT-3 | `sdurws_ird_runtime` 升级 STATIC（C++17、链 core＋rw/rwsim 基线目标——目标名本任务确认）；注册 `_test`/`_contract_test`（gtest 按 development-task-breakdown §5.5 定稿） | 无（CORE-T01 后更佳，可平行） | `industrialrobot/CMakeLists.txt`、`runtime/CMakeLists.txt`（新）、`runtime/src/*`（空起步） | 独立冒烟＋集成构建配置成功；零 Qt/零单元边扫描（PRJ-TX-14 等价） | 两模式构建零错误；基线库链接清单留痕（P-RT-3 消账输入） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/RT-T01.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T02",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T02 错误与注入契约 | §3.3/§3.4 | `Errors.hpp/.cpp`、`Sources.hpp` | RT-T01 | 同名文件 | 单元测试（token/Expected 语义） | 错误码全表用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T02.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T03",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T03 Description 与校验器 | §4.2、§5.2 S2/S3 | `Description.hpp`＋结构与单位校验器（含耦合矩阵校验） | RT-T02 | 同名文件 | RT-CPX-3、RT-CPL-1、RT-BW-6（校验器部分） | 全部硬校验反例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T03.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T04",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T04 CanonicalModel 与编码器 | §4.3/§4.5 | `CanonicalModel.hpp/.cpp`（含 RuntimeCapability、builder 不变量）、`Codec.hpp/.cpp`（RT-Codec 三形态） | RT-T03 | 同名文件 | RT-ID-1/2/3（模型层）；往返 parse(encode(x))==x | 字段表逐项实现；身份域排除项用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T04.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T05",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T05 名称映射 | §7 | `NameMap.hpp/.cpp`（生成/消歧/双射/内容身份） | RT-T04 | 同名文件 | RT-NM-1～7 | AT-18 双向往返全量用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T05.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T06",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T06 基座—世界规则 | §6 | `BaseWorldTransform.hpp/.cpp`（预设/校验/正反解纯函数） | RT-T04 | 同名文件 | RT-BW-1/2/3/6（规则部分） | 四预设＋反例用例通过；P-RT-4 冻结留痕 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T06.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T07",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T07 WC 编译器 | §5.2 S6、§8.2/§8.4 | `Adapter.hpp`（视图/转译）＋WC 编译实现（Frame 树/Device/Joint/BaseMount 唯一写入） | RT-T04/T06 | `src/WorkCellCompiler.*` 等 | RT-AD-1/2、RT-EQ-1、RT-BW-4（S9 部分） | 显式设值与等价用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T07.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T08",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T08 DWC 编译器 | §5.2 S7、§8.5 | DWC 构造＋能力门控＋关联校验 | RT-T07 | `src/DynamicWorkCellCompiler.*` | RT-CPX-1/2、RT-AD-3 | 门控/原子性/销毁顺序用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T08.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T09",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T09 快照与工厂 | §9.1～§9.3 | `Snapshot.hpp/.cpp`（RuntimeSnapshot/IRuntimeModelView 实现/工厂/materialize） | RT-T05/T07/T08 | 同名文件 | RT-SNAP-1～4、RT-CPX-4 | 并发/隔离/迟到用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T09.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T10",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T10 缓存纯判定 | §9.4 | `CacheKey.hpp/.cpp` | RT-T04 | 同名文件 | RT-CACHE-1～4 | 分层键与判定表全用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T10.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T11",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T11 编译器集成与取消 | §5.1～§5.7 | `Compiler.hpp/.cpp`（十段链/事务/取消/资源复查） | RT-T03～T09 | `src/CompilerImpl.*` 等 | RT-CPX 全组、RT-RES-1/2、RT-CONT-1/2 | 事务状态机全转移用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T11.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T12",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T12 测试替身与契约套件 | §11、testkit §10.2 | Scripted\\*/Fake\\* 替身＋RT-\\* 全部用例体；`testdata/golden/rt-fk-equation/`（analytic，附录 D 第 4 项）、`rt-namemap-roundtrip/`（contract-fixture）数据集与容差档案 `rt` | RT-T01～T11、testkit 可用 | `runtime/test/*`、`testdata/…` | §11 矩阵逐条 | 全部用例通过并留痕；RT-STUB-0 边界声明在案；**未执行不得标注通过** |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T12.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "RT-T13",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T13 文档与门禁同步 | 全文 | README 指向核对（§9→§12）；§15.3 待裁决项状态更新；R-4 例外登记（名称解析器实现文件清单）提交 WP-01-T01；UT-BUILD 建议并入 CI | RT-T01～T12 | 本文、`runtime/include/.../README.md` | 评审 | 本文与实现零偏差登记；未决项最新状态 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/RT-T13.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T01",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T01 构建落位 | 骨架 CMakeLists、§3.4 | `sdurws_ird_policy` 升级 STATIC（C++17、链 core＋sdurw_math/kinematics/models/proximity，目标名实测核对）；注册 `_test`/`_contract_test`（gtest 按 development-task-breakdown §5.5 定稿） | 无（与 CORE-T01/EV-T01 平行） | `industrialrobot/CMakeLists.txt`、`policy/CMakeLists.txt`（新）、`policy/src/*`（空起步） | 独立冒烟＋集成构建配置成功；UT-BUILD 等价扫描（无 Qt、无私有头出 include/、依赖图仅 core＋RobWork 边） | 两模式构建零错误；红线扫描零命中；§3.4 红线扩展建议已提交 WP-01（P-POL 登记） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/POL-T01.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T02",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T02 错误与策略类型 | §3.1/§4、core 契约 | `Errors.hpp/.cpp`、`PolicySet.hpp`（含 PolicyThreshold/四态承载） | POL-T01 | 同名文件 | POL-PARSE-2 前置（字段校验）单测 | 字段约束与不可变性用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T02.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T03",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T03 编码与身份 | §5.3 | `PolicyInput.hpp/.cpp`（RawPolicyInput/PolicyCodec/contentIdentity） | POL-T02 | 同名文件 | POL-ID-1~5 | canonical 往返＋位模式＋排序无关性用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T03.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T04",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T04 解析器与校验器 | §5.1/§5.2/§9.2 | `PolicyParsing.hpp/.cpp`（resolvePolicy/IPolicyValidator/IPolicyValidationContext） | POL-T03 | 同名文件 | POL-PARSE-1~6 | 错误分类表全量反例通过；诊断全量不短路 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T04.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T05",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T05 上下文与端口 | §3.3/§9.1/§9.7 | `Contexts.hpp`、`PolicyPort.hpp/.cpp`（PolicyProvider 实现＋记忆化） | POL-T04 | 同名文件 | POL-ID-1（缓存一致性） | 注入接口与端口契约用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T05.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T06",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T06 场景与会话 | §6.1/§6.4 | `CollisionEvaluator.hpp/.cpp` 之 CollisionScene/会话构建/作用域展开/检测器初始化 | POL-T02/T05 | 同名文件 | POL-SCOPE-1/2 构建期部分 | 作用域矩阵展开与冲突拒绝用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T06.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T07",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T07 评估实现 | §6.2/§6.3/§6.5/§6.6 | `CollisionQuery.hpp/.cpp`＋RobWork 适配评估（SingleState/PathSequence/SampleSet、最小距离、取消、异常捕获） | POL-T06 | 同名文件 | POL-EVAL-1~9、POL-EXC-1、POL-CONC-1 | 状态机/稳定排序/边界值决策表用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T07.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T08",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T08 关节限位评估 | §7.4/§9.4 | `JointLimits.hpp/.cpp` | POL-T04 | 同名文件 | POL-JNT-1/2 | 行程上限边界（4π）与比较型三要素用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T08.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T09",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T09 兼容判定 | §8.1/§8.2/§9.5 | `Compatibility.hpp/.cpp`（checkPolicyCompatibility） | POL-T04 | 同名文件 | POL-COMPAT-1/2 | 版本/后端/锚失配全量 reason 用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T09.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T10",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T10 诊断构造 | §9.6 | `Diagnostics.hpp/.cpp`（建议码表＋IPolicyDiagnostics） | POL-T02 | 同名文件 | checkDiagnosticRecord 族（testkit） | 码表与构造不变量用例通过 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T10.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T11",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T11 替身与契约套件 | §11、testkit.md §10 | header-only 替身（`test/testdouble/`）＋POL-* 全部用例体＋契约夹具（evidence 证明字段形状对齐） | POL-T05~T10、testkit 可用 | `policy/test/*`、`testdata/golden/pol-*` | §11 矩阵逐条 | 全部用例通过并留痕；替身边界声明在案（POL-TD-1） |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T11.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "POL-T12",
+      "unit": "policy",
+      "design": "units/policy.md",
+      "sourceRow": "| POL-T12 文档与门禁同步 | 全文 | 骨架 README 任务卡指向修正（§9→§12）；§15.3 待裁决项状态更新；UT-BUILD 建议并入 CI（WP-01 侧） | POL-T01~T11 | 本文、`policy/include/.../README.md` | 评审 | 本文与实现零偏差登记；未决项最新状态 |",
+      "status": "planned",
+      "canonicalTask": "tasks/foundation/POL-T12.json",
+      "readinessNote": "遵循 canonical 前置及单元任务行；ready 仅为可领取，不是已完成。"
+    },
+    {
+      "taskId": "DIAG-T01",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T01 任务卡定稿 | WP-09-T01 | 全部上游输入 | 本文（≥v0.1） | 无 | 本文 | 评审 | 十四节齐备；建议码全量收编登记；P-PR-6/P-EX-8 消账路径明确 |",
+      "status": "design-written",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T02",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T02 构建落位 | WP-09-T02 | §3.3、骨架 CMakeLists | `sdurws_ird_diagnostics` STATIC（C++17、链 core、零 Qt）；`_test`/`_contract_test` 注册（dtb §5.5 gtest） | DIAG-T01、CORE-T01 | `diagnostics/CMakeLists.txt`（新）、`src/` 空起步 | 双模式构建；DT-BUILD | 零错误；红线扫描零命中 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T03",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T03 错误类型与注册表 | WP-09-T03 | §4.5/§4.6、§9.0/§9.1 | `Errors.*`、`DiagCodes.*`（CodeDescriptor/StableCodeRegistry/内置码表全量收编） | DIAG-T02 | 同名文件 | DT-REG-1~5 | 码表清单与 §4.6 一致；重复/未知/废弃用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T04",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T04 目录与工厂 | WP-09-T04（部分） | §4.2、§9.2/§9.7 | `Catalog.*`（DiagContext/Entry/DedupKey/DiagCatalog）、`Factory.*`（工厂＋ErrorCodeTranslator 骨架与 PRJ/RT/POLICY/EVI/EX 映射） | DIAG-T03 | 同名文件 | DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2 | 字段完整性/边界/去重用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T05",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T05 ConfirmableFinding 服务 | WP-09-T03/T04（设施面） | §5、§9.3 | `Confirmable.*`（FindingId/Binding/Record/服务/状态机/失效条件） | DIAG-T04 | 同名文件 | DT-CFM-1~10 | 状态机全转移/绑定复核/失效路径用例过（含 project 桩联动） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T06",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T06 聚合器 | —（WP-09-T03 范围） | §6.3~§6.5、§9.4 | `Aggregation.*`（CauseLink/规则/稳定排序） | DIAG-T04 | 同名文件 | DT-AGG-1~4、DT-CHAIN-1 | 聚合/排序/不升级反例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T07",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T07 两级日志 | WP-09-T04 | §7.1~§7.5、§9.6 | `Logging.*`（管线/节流采样/轮转/WorkerLogBatch 重放；ILogFileOps 接缝） | DIAG-T02、DIAG-T03 | 同名文件 | DT-LOG-1~5 | 分流/顺序/失败注入/合并用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T08",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T08 脱敏与崩溃文件 | WP-09-T05 | §7.6/§7.7、§9.5 | `Redaction.*`、`CrashReport.*` | DIAG-T07 | 同名文件 | DT-SEC-1~4、DT-LIFE-4 | 凭据零命中/路径四策略/降级/崩溃文件用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T09",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T09 生命周期与容量 | —（WP-09-T04 范围） | §6.1/§6.2 | 目录清理策略、宿主留痕形状（envelope/CommandRecord 对接数据） | DIAG-T04/T07 | `Catalog.*` 扩展 | DT-LIFE-1~3/5 | 保留/清理/不可改写用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T10",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T10 测试替身与契约套件 | WP-09-T06 | §10、testkit | `ScriptedDiagSource`（脚本化可控诊断源：按序列产出预设条目/finding/日志行）＋DT-\\* 全部用例体 | DIAG-T03~T09、testkit 可用 | `diagnostics/test/*`、`contract_test/*` | §10 矩阵逐条 | 全部用例通过并留痕；替身边界声明（替身输出仅验证契约——testkit EV-REG-3 同模式） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "DIAG-T11",
+      "unit": "diagnostics",
+      "design": "units/diagnostics.md",
+      "sourceRow": "| DIAG-T11 文档与门禁同步 | — | 全文 | README 指向核对（§9→§11 已随本文修正）；§14.3 状态更新；P-PR-6/P-EX-8 消账确认提交（project/execution 详设修订联动） | T01~T10 | 本文、`include/.../README.md` | 评审 | 本文与实现零偏差登记；待裁决最新状态 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T01",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T01 构建落位 | 骨架 CMakeLists、§3.4、DTB §5.1/§5.5 | `sdurws_ird_execution` STATIC（C++17、链 core/evidence/project）；注册 `_test`/`_contract_test`（gtest vcpkg 接入）；README 任务卡指向 §9→§12 修正 | 无（WP-03/05/04-T01 后更佳，可平行） | `industrialrobot/CMakeLists.txt`、`execution/CMakeLists.txt`（新）、`src/`（空起步） | 双模式构建；EX-BLD-1 前两项 | 两模式零错误；红线扫描零命中 | WP-08-T02 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T02",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T02 任务身份与状态机 | §4、§5 | `TaskTypes.*`、`StateMachine.*`（转移表＋守卫＋事件发布接缝）、能力声明承载 | EX-T01 | 同名文件 | EX-SUB-1/SM-1~7 | 逐转移矩阵＋强制终止矩阵用例通过；四态取消出口覆盖（ARCH §11.2-6） | WP-08-T03 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T03",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T03 取消与终止协议 | §7、ARCH §4.4 | 取消命令通道、协作窗（ManualClock 可注入时钟）、强杀编排、DrainPolicy | EX-T02 | `Controller.*`、调度器取消路径 | EX-SM-3/4、EX-WKR-4/5 | 2 s/10 s 协议时序用例通过；正常取消零错误诊断 | WP-08-T04 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T04",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T04 RunRegistry 与接纳 | §9、ARCH §4.5 | `RunRegistry.*`（登记/追加/一次性判定）、`Admission.*`（九步＋名称反解编排＋envelope 组装复用 evidence 校验器） | EX-T02、WP-05-T07、WP-04-T14 | 同名文件 | EX-REG-1~8、EX-ORT-1 | 未知/失配/陈旧拒绝＋登记位置取用＋幂等全过（ARCH §11.2-7） | WP-08-T05 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T05",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T05 调度线程与事件/进度分发 | §6.1~§6.3、§10.4 | `Scheduler.*`（队列/优先级/预算/内联门槛/提交验证）、`EventBus.*`（core 接口参考实现）、进度节流 | EX-T02、WP-03-T08 | 同名文件 | EX-SUB-1/2、EX-RES-2（调度面） | 事件 FIFO 与投递线程契约用例通过；UI 线程零计算（结构断言） | WP-08-T06 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T06",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T06 WorkerLauncher 与通道 | §6.4~§6.6 | `win32/ProcessLauncher/ChannelPair/JobScope.*`＋`worker/main.cpp`＋`ChannelProtocol.*`＋心跳/崩溃检测＋临时目录隔离 | EX-T04、WP-06-T09（物化注入可用） | 同名文件＋`worker/` | EX-WKR-1~3、EX-CHN-1 | worker 崩溃只失败当前任务；通道消息全携五元组；流式分批回传用例通过 | WP-08-T07 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T07",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T07 ResourceController 基础节流 | §6.1/§6.6 | `win32/MemProbe.*`＋汇总＋节流决策＋资源不足诊断 | EX-T06 | 同名文件 | EX-RES-2 | 接近 70% 先节流后诊断用例通过（基础形态；规模化归 WP-23-T06） | WP-08-T08 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T08",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T08 检查点与缓存存储治理 | §8 | `Checkpoint.*`、`CacheCoordinator.*`（含 ICompileCacheJudge 消费） | EX-T04、WP-05-T09、WP-06-T10（注入可用） | 同名文件 | EX-CKP-1~3、EX-CCH-1/2 | 部分失败结果不作正式命中；检查点兼容契约用例通过；判定逻辑零复制（经 evidence/runtime 注入） | WP-08-T09 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T09",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T09 契约测试套件落地 | §11 全表、testkit §6.4/§6.5 | `execution/test/*`、`contract_test/*`（FakeWorkerMain＋FakeArchivePort＋FaultInterceptor 接缝；TestProcessRunner 按 TK-T11 触发接入 EX-RCV-1/EX-WKR-2 真进程场景） | EX-T01~T08、WP-02-T09（T11 按需） | `execution/test/*`、`contract_test/*` | §11 矩阵逐项 | 全部用例执行通过并留痕（未执行不得标注通过）；替身边界声明在案 | WP-08-T10 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "EX-T10",
+      "unit": "execution",
+      "design": "units/execution.md",
+      "sourceRow": "| EX-T10 文档与门禁同步 | 全文 | README 核对；§15.3 待裁决项状态更新（P-PR-4/P-EX-*）；DETAILED-DESIGN execution 行状态更新申请；`ird_gates`/CI 建议提交 | EX-T01~T09 | 本文、README、DETAILED-DESIGN.md | 评审 | 本文与实现零偏差登记；未决项最新 | （卡内治理任务，DTB §2.9 未列——按 DTB §5.4 以增量修订登记） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T01",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T01 | WP-11-T02 | 构建落位：io 占位转真实库 | 本卡 v0.1 | `io/CMakeLists.txt`（STATIC，链 core＋diagnostics＋选定 L1/vcpkg 目标）；`IoFwd/IoError` 头 | 双模式构建零错误；红线扫描零命中（§3.3） | 零 Widgets/Qt；预建空测试目标 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T02",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T02 | WP-11-T03 | SafePath＋BudgetGuard | IO-T01 | `SafePath.hpp/.cpp`、`Budget.hpp/.cpp` | V09/V10/V11/V06 全绿；穿越反例（项目资源区逃逸拒绝）；预算三要素诊断 | 例外扩大化（P-1 例外仅限显式用户源） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T03",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T03 | WP-11-T04 | CSV 读写器（方言标识＋可逆编码） | IO-T01 | `Csv.hpp/.cpp` | V01~V05 全绿；自带前缀 roundtrip 逐字符一致；无标识原样读入；转义不入结构层 | 数据-only（无公式/命令执行路径）；方言语法超出 §5.1 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T04",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T04 | WP-11-T05 | JSON 读写器＋ZIP 通道 | IO-T01（P-IO-3 冻结后） | `Json.hpp/.cpp`、`ZipChannel.cpp` | V07/V08 全绿；JSON canonical 字节一致；zip 解包逐字节还原＋哈希（V14 前置） | JsonLite 用于产品格式；第二摘要算法 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T05",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T05 | WP-11-T06 | 资源导入服务与外部源检测 | IO-T02 | `ResourceIo.hpp/.cpp`（reader/snapshotter/probe/依赖树） | V15~V17、V24~V27 全绿；三段边界用例（一次性读取/引用记录/固化前契约） | 直接创建 CanonicalModel/objects 写入 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T06",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T06 | WP-11-T05/T07 | 包导入导出 io 侧设施＋固化中转 | IO-T02/T04 | `Package.hpp/.cpp`、`TempArea.cpp`、`AtomicFile.cpp`、`IRuntimeResourceAdapter` 桥 | V12~V14、V18~V23、V29/V31/V32 全绿（发布用 project fake）；失败不留目标 | io 侧 rename 发布；读 `.staging` |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "IO-T07",
+      "unit": "io",
+      "design": "units/io.md",
+      "sourceRow": "| IO-T07 | WP-11-T07 | 契约测试套件整备与留痕 | IO-T01~T06、WP-02 | `io/test/*`、`io/contract_test/*` 全量 | §11.2 全用例可执行且结果登记（不预设通过）；`ird-test-report.json` 追溯字段齐备 | 用例跳过不报；伪造通过状态 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T01",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T01 构建落位 | WP-12-T02 | 骨架 CMakeLists、§3.4 | `sdurws_ird_reporting` 升级 STATIC（C++17、链 core＋evidence＋diagnostics＋project）；注册 `_test`/`_contract_test`（gtest 按 dtb §5.5） | 无（CORE-T01 后更佳） | `industrialrobot/CMakeLists.txt`、`reporting/CMakeLists.txt`（新）、`src/`（空起步） | 独立冒烟＋集成双模式构建；RP-GATE-1 | 两模式零错误；红线扫描零命中 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T02",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T02 错误与身份类型 | — | §3.5、§4.1 | `Errors.hpp/.cpp`、`Identity.hpp`（ReportId/PublishedRecord/Level）＋RPT-\\* 码建议清单 | RPT-T01 | 同名文件 | 单测（token/句法/保留值） | 身份往返用例过；码清单登记 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T03",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T03 报告模型与编码 | WP-12-T03（模型部分） | §4 全节 | `ReportModel.hpp/.cpp`（全部引用类型/字段校验）＋`ReportCodec`（Data/Full 双编码） | RPT-T02 | 同名文件 | RP-MDL-1~3 | 不可变/身份/合法组合矩阵用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T04",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T04 章节契约与注册表 | — | §5 | `Sections.hpp/.cpp`＋`SectionProvider.hpp`（接口＋注册表） | RPT-T03 | 同名文件 | RP-SCOPE-1~4（替身） | 词表/级别校验/注册边界用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T05",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T05 构建器 | WP-12-T03（构造部分） | §7.1/§7.2、§9.1 | `Builder.hpp/.cpp`（会话状态机/锚定/资格快照/当前性快照/冻结） | RPT-T04 | 同名文件 | RP-MDL-2、RP-SCOPE-1~4、RP-CUR-3、RP-STATE-1~3 | 构建全反例矩阵过；零项目写验证 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T06",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T06 渲染器（三格式） | WP-12-T04 | §8.1~§8.4、§9.3 | `Render.hpp/.cpp`（FieldMatrix 提取＋HTML/JSON/CSV 渲染；注入 io 工厂） | RPT-T05 | 同名文件 | RP-CONS-3/4、RP-STATE-1~3（渲染断言）、RP-SAN-1 | 措辞断言/确定性/限定语用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T07",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T07 一致性检查器 | WP-12-T04 | §8.5、§9.4 | `Consistency.hpp/.cpp` | RPT-T06 | 同名文件 | RP-CONS-1/2 | 逐字段/坏样本定位用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T08",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T08 措辞冻结规则 | WP-12-T06 | §6.4、§8.2 | 渲染规则（限定语映射/两类声明前置断言） | RPT-T06 | `Render.cpp` 内 | RP-STATE-1~3、RP-COV-1 | 限定语保留/两声明独立用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T09",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T09 导出与归档协调 | WP-12-T03（幂等部分）/T04 | §7.3/§7.4、§9.5/§9.6 | `Export.hpp/.cpp`、`Archive.hpp/.cpp`（＋IReportArtifactSink 契约与 Fake） | RPT-T07 | 同名文件 | RP-IDEM-1/2、RP-CONF-1、RP-DISK-1、RP-RO-1、RP-CANC-1 | 幂等/冲突/磁盘/只读/取消用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T10",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T10 证据包组装 | WP-12-T05 | §7.6 | `Bundle.hpp/.cpp`（＋IArchiveWriter 契约与 Fake） | RPT-T05 | 同名文件 | RP-BUN-1 | 要素完整/缺失拒绝/取消清理用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T11",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T11 替身与契约套件 | WP-12-T09 | §10、testkit | `ScriptedResultSource/ScriptedSectionProvider/FakeArtifactSink/FakeArchiveWriter`＋RP-\\* 用例体 | RPT-T02~T10、WP-02 可用 | `reporting/test/*`、`contract_test/*` | §10.1 矩阵逐条 | 全部用例执行通过并留痕；替身边界声明在案（RP-STATE-4） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T12",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T12 模型摘要与任务投影接入 | — | §9.7、§3.3 | `ModelSummary.hpp`＋ITaskStatusSource 最小接口＋L5 适配建议 | RPT-T05 | 同名文件＋适配说明 | 单测（投影 schema/空快照注记） | schema 冻结留痕（runtime 交接） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T13",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T13 文档与门禁同步 | — | 全文 | README 核对；§14.3 状态更新；P-RPT-1/2/3 裁决申请提交（关联 io P-IO-1） | RPT-T01~T12 | 本文、README | 评审 | 零偏差登记；待裁决最新 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T14",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T14 B 级真实章节接入（阶段 B） | WP-12-T03~T06 验收 | §5.1、各域卡 | 与 modeling/requirements/kinematics/optimization 的注册联调（各域提供方就绪后） | RPT-T11、各域卡 | 集成测试 | AT-32(B 部分)＋RP-SCOPE-1（真实数据） | B 级端到端用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T15",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T15 C 级扩展与变体（阶段 C） | WP-12-T07 | §5.1 C 行、§4.5、§6.5 | C 章节接入＋ReviewMetadata/variantDiff＋基准一致性拒绝 | RPT-T14、阶段 C 域结果 | 同名文件 | AT-32、RP-REVW-1/2、RP-COV-1 | 完整工程案例逐章追溯过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "RPT-T16",
+      "unit": "reporting",
+      "design": "units/reporting.md",
+      "sourceRow": "| RPT-T16 往返复算（阶段 C） | WP-12-T08 | §7.7 | roundtripCheck＋不一致标记 | RPT-T15、③端口联调 | 同名文件 | RP-ROUND-1 | 复算一致/不一致双路用例过 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T01",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T01 | 编写 ui 单元任务卡（本文） | WP-09-T01、core 卡 | 本文 §2/§6.3/§7/§8 契约冻结；计算逻辑零入 ui；插件无私占全局快捷键 | WP-10-T01 |",
+      "status": "design-written",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T02",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T02 | 构建落位：`sdurws_ird_ui` INTERFACE→STATIC（链 core＋diagnostics＋Qt Widgets，R-3 例外登记）；ui 测试目标与 `ird_gui` 标签；`sdurws_ird_testkit_qt` 启用登记 | UI-T01、WP-03-T01 | 目标编译；红线门禁含 ui 例外登记文本；静态扫描（Widgets 范围/QShortcut 作用域/前缀拼接） | WP-10-T02 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T03",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T03 | 工作台壳与五区布局（WorkbenchShell、五区 Dock、布局记忆与恢复、最小可用布局、无项目首页、状态栏格式） | UI-T02 | UI-WB-1/2/3、UI-SES-1 | WP-10-T03 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T04",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T04 | 七态公共状态呈现（StatusWordProjection＋九态短标签；映射表 §6.3） | UI-T03、WP-05-T08、WP-08-T06 | UI-STG-3；不新增状态词；证据不足不得显示通过 | WP-10-T04 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T05",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T05 | 三维视图交互（RWStudioView3D 集成、视图/拾取/截图/分组显隐）——**阶段 A 仅中央区占位与视图契约登记，交互实现归阶段 B** | UI-T03 | UX-11 清单登记；KIN-06 会话姿态语义钉住（AT-04） | WP-10-T05（阶段 B 交付） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T06",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T06 | CommandRegistry＋GlobalShortcutRegistry＋命令面板 | UI-T03 | UI-CMD-1/2、UI-HKY-1/2/3；模糊搜索与键盘导航；未绑定命令面板可达 | WP-10-T06 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T07",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T07 | 统一工程策略入口界面与策略编辑适配器（P-POL-9）——阶段 A 交付摘要只读卡；编辑表单归阶段 B | UI-T03、WP-07-T05、WP-04-T10/T11 | 摘要只读、显示开关与计算开关分组异名（POL-ID-3） | WP-10-T07（摘要卡阶段 A） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T08",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T08 | 参数表与表单公共件——阶段 B 交付（本文仅登记 §14） | UI-T03、WP-03-T04 | UX-04/05/07 公共编辑规则 | WP-10-T08（阶段 B） |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T09",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T09 | 阶段状态投影与工程用语（StageNavigationModel＋StageStatusModel 汇聚＋UiText 体系） | UI-T04、WP-22-T03（数据源，未产出→桩） | UI-STG-1/2；界面零哈希/Schema/插件名；投影不拥有门控规则 | WP-10-T09 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T10",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T10 | 帮助入口与关于对话框（插件清单） | UI-T03、WP-24-T01 | UI-PLG-2；版本与冻结基线一致 | WP-10-T10 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T11",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T11 | UiSessionController＋关闭/切换对话框机制（§5） | UI-T03 | UI-SES-2~7、UI-LCY-1 | WP-22-T06 协作侧 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T12",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T12 | DraftController（§8） | UI-T03、WP-04-T12 | UI-DRF-1~4 | WP-04-T12 协作侧 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T13",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T13 | 诊断/确认/任务呈现模型与 CommandInteractionBridge（§9） | UI-T03、WP-09、WP-08 | UI-CMD-4~7、UI-TSK-1~5、UI-DIA-1；`sdurws_ird_testkit_qt` 首消费者理由登记 | WP-10-T04/T06 协作侧 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    },
+    {
+      "taskId": "UI-T14",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T14 | ui 契约测试套件（§12 全用例） | UI-T03~T13、WP-02 | ctest `ird`/`ird_gui` 注册；ird-test-report.json 留痕 | WP-10-T11 |",
+      "status": "planned",
+      "canonicalTask": null,
+      "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。"
+    }
+  ]
+}

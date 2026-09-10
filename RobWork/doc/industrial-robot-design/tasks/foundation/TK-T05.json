@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T05",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "数值断言与比较详情（Check）",
+  "status": "planned",
+  "dependsOn": ["TK-T04"],
+  "requirements": ["NFR-COR-01"],
+  "designRefs": ["units/testkit.md#5.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+  "crRefs": ["CR-06"],
+  "acceptance": [
+    "全部反例（NaN/长度/空/类型规则）按 §4.3.3 表落位；语义实现唯一调 core Compare（testkit 只组织与报告）",
+    "CR-06 门禁：CORE-T04/T05 实现落地并重出 API diff 复核通过后，本任务方可由 planned 推进 ready（foundation-api-diff.md CR-06）"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RT-T05",
+  "unit": "runtime",
+  "masterWp": "WP-C",
+  "title": "RT-T05 implementation slice",
+  "status": "planned",
+  "dependsOn": [
+    "RT-T04"
+  ],
+  "requirements": [],
+  "designRefs": [
+    "units/runtime.md"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
+  "acceptance": [
+    "实现本文对应任务行定义的接口和不变量",
+    "单元测试及依赖门禁通过"
+  ]
+}

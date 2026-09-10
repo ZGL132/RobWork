@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T01",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "构建落位与零依赖门禁",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-01", "ARC-02"],
+  "designRefs": ["units/core.md#9", "units/core.md#3.3"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+  "acceptance": [
+    "两模式（独立冒烟＋集成）构建零错误；C++17 与基线共存验证留痕（P-ENV-1 消账）",
+    "gtest 按 development-task-breakdown §5.5 定稿接入（P-ENV-2 已关闭，CR-07）",
+    "产品目标零 testkit 链接、零跨单元私有头"
+  ]
+}

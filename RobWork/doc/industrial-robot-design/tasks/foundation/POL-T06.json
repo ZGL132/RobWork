@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "POL-T06",
+  "unit": "policy",
+  "masterWp": "WP-C",
+  "title": "场景与会话（CollisionScene）",
+  "status": "planned",
+  "dependsOn": ["POL-T02", "POL-T05"],
+  "requirements": ["ARC-05", "KIN-05"],
+  "designRefs": ["units/policy.md#6.1", "units/policy.md#6.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
+  "crRefs": ["CR-04"],
+  "acceptance": [
+    "POL-SCOPE-1/2 构建期用例：作用域矩阵展开与冲突拒绝通过",
+    "CR-04：CollisionScene/IPolicyNameContext 按 foundation-api-diff.md CR-04 映射与 runtime §8.3/§7.3 适配（sceneContentIdentity←workCellCompileIdentity；WorkCell 共享只读经快照别名构造）；契约夹具以替身先行，policy 零 runtime 编译依赖"
+  ]
+}

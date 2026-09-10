@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "ird-dependency-graph/1",
+  "edges": [
+    {"from":"evidence","to":"core","kind":"interface"},{"from":"policy","to":"core","kind":"interface"},{"from":"runtime","to":"core","kind":"interface"},{"from":"project","to":"core","kind":"interface"},{"from":"project","to":"diagnostics","kind":"interface"},{"from":"execution","to":"core","kind":"interface"},{"from":"execution","to":"evidence","kind":"interface"},{"from":"execution","to":"diagnostics","kind":"interface"},{"from":"execution","to":"project","kind":"interface"}
+  ]
+}

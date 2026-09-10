@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T06",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "评估词表（Evaluation）",
+  "status": "planned",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["ERR-01"],
+  "designRefs": ["units/core.md#4.7", "units/core.md#5.6"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+  "crRefs": ["CR-01"],
+  "acceptance": [
+    "四词表 toToken/fromToken 往返用例通过；未知 token→nullopt",
+    "CR-01：token 集为唯一权威——EV-T07 联合契约测试共用同一 token 集，evidence 侧不得出现本地枚举（foundation-api-diff.md）"
+  ]
+}
