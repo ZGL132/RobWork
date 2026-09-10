@@ -12,7 +12,7 @@
       "command": "cmake --build build --config Release --target ird_gates",
       "result": "pass",
       "exitCode": 0,
-      "evidence": "ird-gates-run-integration.log"
+      "evidence": "ird-gates-run-integration.txt"
     },
     {
       "id": "VERIFY-2",
@@ -20,7 +20,7 @@
       "command": "cmake --build build --config Release",
       "result": "pass",
       "exitCode": 0,
-      "evidence": "integration-build-full.log"
+      "evidence": "integration-build-full.txt"
     },
     {
       "id": "VERIFY-3",
@@ -28,7 +28,7 @@
       "command": "cmake -S .../industrialrobot -B <temp> -DCMAKE_TOOLCHAIN_FILE=<abs vcpkg.cmake> && cmake --build <temp> --target ird_gates",
       "result": "pass",
       "exitCode": 0,
-      "evidence": "ird-gates-run-smoke.log"
+      "evidence": "ird-gates-run-smoke.txt"
     },
     {
       "id": "VERIFY-4",
@@ -36,7 +36,7 @@
       "command": "ird_gates 目标内置：pass_clean 干净夹具期望通过；fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2 七类植入违例期望失败且输出对应命中码",
       "result": "pass",
       "detail": "8/8 用例符合预期：1 通过＋7 检出（IRD-GATE-R1/T1/R5/SUB/R3/R4/T2）；另做 GRAPH 反向验证（伪造依赖图触发 IRD-GATE-GRAPH 双向命中）",
-      "evidence": "ird-gates-run-utf8.log"
+      "evidence": "ird-gates-run-utf8.txt"
     },
     {
       "id": "VERIFY-5",

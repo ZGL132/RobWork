@@ -1,0 +1,220 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  qtpropertybrowser.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  ExtensionRegistry.cpp
+  Log.cpp
+  Plugin.cpp
+  RobWork.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_core.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  DistanceCalculator.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_proximity.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_proximity.exp
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Model3DFactory.cpp
+  XMLRWLoader.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_loaders.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_loaders.exp
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  RenderText.cpp
+  SceneOpenGL.cpp
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_opengl.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\yaobi.lib
+  ProximityStrategyFactory.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  TaskLoader.cpp
+  TaskSaver.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_task.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_task.exp
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws
+  AboutBox.cpp
+  HelpAssistant.cpp
+  RobWorkStudio.cpp
+  RobWorkStudioPlugin.cpp
+  mocs_compilation_Release.cpp
+  sdurws.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  ContactDetector.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/sdurwsim.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target RWSimulatorPlugin
+  RWSimulatorPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/RWSimulatorPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/RWSimulatorPlugin.exp
+  RWSimulatorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\RWSimulatorPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_gui
+  SimCfgDialog.cpp
+  EquationSystemWidget.cpp
+  LogValuesWidget.cpp
+  MathematicaPlotWidget.cpp
+  SimulatorLogWidget.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/sdurwsim_gui.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/sdurwsim_gui.exp
+  sdurwsim_gui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_gui.dll
+  Automatic MOC and UIC for target SimUtilityPlugin
+  SimUtilityPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/SimUtilityPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/SimUtilityPlugin.exp
+  SimUtilityPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\SimUtilityPlugin.dll
+  Automatic MOC and UIC for target GraspTableGeneratorPlugin
+  GraspTableGeneratorPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/GraspTableGeneratorPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/GraspTableGeneratorPlugin.exp
+  GraspTableGeneratorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\GraspTableGeneratorPlugin.dll
+  Automatic MOC and UIC for target RWSimPlugin
+  RWSimPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/RWSimPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/RWSimPlugin.exp
+  RWSimPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\RWSimPlugin.dll
+  Automatic MOC and UIC for target SimTaskPlugin
+  SimTaskPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/SimTaskPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/SimTaskPlugin.exp
+  SimTaskPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\SimTaskPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_test
+  Auto build dll exports
+  sdurwsim_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_test.dll
+  Automatic MOC and UIC for target EngineTestPlugin
+  EngineTestPlugin.cpp
+  mocs_compilation_Release.cpp
+  Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately. For example:
+  - add -D_WIN32_WINNT=0x0601 to the compiler command line; or
+  - add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.
+  Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/EngineTestPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/libs/Release/EngineTestPlugin.exp
+  EngineTestPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\EngineTestPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_bullet
+  Auto build dll exports
+  sdurwsim_bullet.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_bullet.dll
+  Automatic MOC and UIC for target bt_plugin.rwplugin
+  bt_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\bt_plugin.rwplugin.dll
+  Auto build dll exports
+  sdurw_analytic_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.dll
+  sdurw_analytic_geometry.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.rwplugin.dll
+  ProximityStrategyPlugin.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_proximitystrategies.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_proximitystrategies.rwplugin.exp
+  sdurw_proximitystrategies.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.rwplugin.dll
+  sdurw_csgjs.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\sdurw_csgjs.lib
+  Auto build dll exports
+  sdurw_csg.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_csg.dll
+  Auto build dll exports
+  sdurw_simplefinger.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.dll
+  sdurw_simplefinger.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.rwplugin.dll
+  Automatic MOC for target sdurws_atask
+  ATaskVisPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_atask.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_atask.exp
+  sdurws_atask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_atask.dll
+  Automatic MOC for target sdurws_gtask
+  GTaskVisPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_gtask.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_gtask.exp
+  sdurws_gtask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_gtask.dll
+  Automatic MOC for target sdurws_plugin.rwplugin
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.exp
+  sdurws_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
+  Automatic MOC for target QCodeEditor
+  QCodeEditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\QCodeEditor.lib
+  ClearanceOptimizer.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_pathoptimization.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_pathoptimization.exp
+  sdurw_pathoptimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathoptimization.dll
+  Automatic MOC for target sdurws_jog
+  Jog.cpp
+  mocs_compilation_Release.cpp
+  sdurws_jog.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  Automatic MOC for target sdurws_log
+  ShowLog.cpp
+  mocs_compilation_Release.cpp
+  sdurws_log.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_planning
+  Planning.cpp
+  mocs_compilation_Release.cpp
+  sdurws_planning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_planning.lib
+  Automatic MOC for target sdurws_playback
+  PlayBack.cpp
+  mocs_compilation_Release.cpp
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_propertyview
+  PropertyView.cpp
+  mocs_compilation_Release.cpp
+  sdurws_propertyview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_propertyview.lib
+  Automatic MOC for target sdurws_sensors
+  Sensors.cpp
+  mocs_compilation_Release.cpp
+  sdurws_sensors.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_sensors.lib
+  Automatic MOC for target sdurws_treeview
+  TreeView.cpp
+  mocs_compilation_Release.cpp
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_workcelleditor
+  sdurws_workcelleditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditor.lib
+  Automatic MOC for target sdurws_workcelleditorplugin
+  WorkcellEditorPlugin.cpp
+  mocs_compilation_Release.cpp
+  sdurws_workcelleditorplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditorplugin.lib
+  Automatic MOC for target sdurws_robworkstudioapp
+  RobWorkStudioApp.cpp
+  sdurws_robworkstudioapp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_robworkstudioapp.lib
+  Automatic MOC for target RobWorkStudio
+  RobWorkStudio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\RobWorkStudio.exe
+  	Copying RobWork runtime DLLs next to RobWorkStudio
+  Automatic MOC and UIC for target SimulatorLogViewer
+  SimulatorLogViewer.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\SimulatorLogViewer.exe
+  Auto build dll exports
+  sdurw_calibration.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_calibration.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_core_test
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+  Automatic MOC for target sdurws_ird_testkit
+  TestPaths.cpp
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_testkit_test
+  BuildRedLineTest.cpp
+  TestPathsTest.cpp
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
