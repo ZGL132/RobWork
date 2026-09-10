@@ -914,6 +914,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | --- | --- | --- |
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）、core.md v0.1（Draft，协作输入）完成 13 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失、gtest 框架实测）；冻结数据集清单/容差档案 schema、两阶段集合匹配语义、六类测试结果分类；实现任务 TK-T01～T10；待裁决 7 项（P-TK-1～7） |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-06/CR-07）：§3.2 gtest 接入记载更正——`RW::gtest`"实测存在"系失实（CR-07 复核：gtestTargets.cmake 从未生成、USE_gtest=OFF），唯一定稿机制＝vcpkg＋`find_package(GTest CONFIG REQUIRED)`（development-task-breakdown §5.5），P-TK-1 关闭、R-2 消除；TK-T01 行更新（安装/版本登记随本任务、失败转 blocked）。CR-06 设计级 API diff 通过（core Compare ↔ Check 函数族），TK-T04/05 实现级门禁维持。差异记录见 traceability/foundation-api-diff.md |
+| v0.3 | 2026-09-10 | TK-T01（≙WP-02-T01）实施偏差登记（DTB §5.4，实现细节级，接口语义与任务范围零修改）：①§5 错误类型 `TestKitError` 前置定义于 `TestPaths.hpp`——原设计随 Dataset.hpp（TK-T03）承载，但 TestPaths（TK-T01）的 env-unavailable 错误先需要该类型；Dataset.hpp 落地时包含 TestPaths.hpp 而非重复定义，五枚举语义与 §5 原文一致（非冻结变更）；②增设 `detail::resolveDataRoot` 纯函数接缝——§4.6 公共 API 的内部分解，服务三态可测性（编译默认的存在性无法在运行期改写，公共 API 层只能覆盖两态），不构成稳定契约；③`testdata/` 实体目录不随 TK-T01 建立（契约 allowedFiles 不含 testdata/**）：`SDURWS_IRD_TESTDATA_DIR` 变量与解析逻辑先落位，实体目录随 TK-T03 首个数据集建立，"默认缺失"态由纯函数层用例钉住（公共 API 用例按默认存在性双分支自适配，两分支均强断言） |
 
 ---
 

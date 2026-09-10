@@ -4,9 +4,10 @@
 #       与 development-task-breakdown.md §2/§5（任务编排与构建约定）；
 #       DETAILED-DESIGN.md 仅作 20 单元详设索引（WP-03-T01 修订：骨架期对
 #       其 §1.2/§1.5 的引用为悬空引用，改指各单元卡与任务拆分）
-# 状态: core 已随 WP-03-T01（≙CORE-T01）落地为真实 STATIC 库＋gtest 测试
-#       目标（见 core/CMakeLists.txt）；其余 19 个单元仍为 INTERFACE 占位，
-#       源码随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
+# 状态: core 已随 WP-03-T01（≙CORE-T01）、testkit 已随 WP-02-T01（≙TK-T01）
+#       落地为真实 STATIC 库＋gtest 测试目标（见各自 CMakeLists.txt）；
+#       其余 18 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
+#       落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -19,10 +20,10 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(STATUS "industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）")
 endif()
 
-# core 自 WP-03-T01 起移出 INTERFACE 占位循环（下方 add_subdirectory(core)
-# 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
+# core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
+# （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 set(IRD_MODULES
-    testkit project evidence runtime policy execution diagnostics
+    project evidence runtime policy execution diagnostics
     ui io reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
@@ -42,6 +43,13 @@ endforeach()
 # 与依赖红线守卫（R-1/R-2/R-3/T-1 core 侧）——目标名/别名/include 根不变，
 # 实现与守卫细节见 core/CMakeLists.txt。
 add_subdirectory(core)
+
+# testkit（WP-02-T01≙TK-T01 落地）：INTERFACE 占位升级为 STATIC 库（C++17、
+# 链 core——testkit 是其唯一允许的单元依赖），并注册 gtest 测试目标
+# sdurws_ird_testkit_test（数据根三态用例＋TK-BUILD 红线用例）与 T-2
+# 配置期守卫（依赖红线 testkit 侧自律，O-21）——细节见 testkit/CMakeLists.txt。
+# 次序约束：必须在 core 之后（testkit 链接 sdurws_ird_core 目标）。
+add_subdirectory(testkit)
 
 # 依赖红线（WP-01-T01 边界门禁承载；core 侧配置期断言已随 WP-03-T01 落在
 # core/CMakeLists.txt，全仓依赖图门禁随 ird_gates 落地启用）：
