@@ -4,10 +4,18 @@
   "unit": "governance",
   "masterWp": "WP-A",
   "title": "冻结需求追踪表格式契约并重建追踪矩阵（P-02/O-30 消账）",
-  "status": "ready",
-  "dependsOn": ["WP-00-T01"],
-  "requirements": ["P-02"],
-  "designRefs": ["REQUIREMENTS.md#24", "REQUIREMENTS.md#4", "development-task-breakdown.md#3"],
+  "status": "done",
+  "dependsOn": [
+    "WP-00-T01"
+  ],
+  "requirements": [
+    "P-02"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#24",
+    "REQUIREMENTS.md#4",
+    "development-task-breakdown.md#3"
+  ],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/traceability/**",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
@@ -17,8 +25,13 @@
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
   ],
-  "outputs": ["doc-update", "traceability-update"],
-  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "outputs": [
+    "doc-update",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
   "branch": "wp00-t02",
   "interUnit": false,
   "acceptance": [
