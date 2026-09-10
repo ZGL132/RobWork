@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T09",
+  "masterWp": "WP-03-T09",
+  "branch": "wp03-t09",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/ConventionValueSemanticsTest.cpp（UT-CONV＋UT-VAL）；库与既有源零改动（本任务为纯测试体——§4.6 无新类型，core/test/* 直接运行）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ConventionPose（UT-CONV，仅集成模式——消费 rw::math，冒烟无框架目标）",
+      "designRef": "units/core.md §4.6/§8 UT-CONV",
+      "cases": [
+        { "name": "ConventionPose.RotateZ90MapsXToY_UT_CONV", "status": "passed", "modes": ["integration"], "trace": "§8 UT-CONV-1 已知算例：Rz(90°) 显式矩阵自证＋点 (1,0,0)→(0,1,0)（p_a=T_ab*p_b 读法锁定）＋方向向量 R*dir 不随平移" },
+        { "name": "ConventionPose.CompositionOrderAndInverse_UT_CONV", "status": "passed", "modes": ["integration"], "trace": "§8 UT-CONV-2：T_ac=T_ab*T_bc 左乘链式（逐点等价＋平移/旋转数值面）＋inverse 回零（容差 1e-9）" }
+      ]
+    },
+    {
+      "suite": "ValueSemantics（UT-VAL，两模式）",
+      "designRef": "units/core.md §8 UT-VAL（§4 公共类型值语义）",
+      "cases": [
+        { "name": "ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "拷贝独立＋相等⇒哈希相等（Id128＋ContentVersion）" },
+        { "name": "ValueSemantics.MovePreservesValue_UT_VAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "移动保值（平凡可拷贝语义）＋移动赋值" },
+        { "name": "ValueSemantics.EqualityHashConsistency_UT_VAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "等值⇒等哈希／不等⇒哈希不等（ProjectId＋TaskIdentity 五元组）" },
+        { "name": "ValueSemantics.ContainerUsability_UT_VAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "容器可用性编译断言＋运行抽查（unordered_set<ObjectId>/map<RevisionId>/unordered_map<TaskIdentity>）" },
+        { "name": "ConventionSmokePlaceholder.UTSmokeCompilesCoreOwnTypes_UT_VAL", "status": "passed", "modes": ["smoke"], "trace": "冒烟门控占位（core 自有类型无框架环境独立工作）——ird_gates 零命中" }
+      ]
+    },
+    {
+      "suite": "既有回归（IdentityTest/DigestTest/BuildRedLine）",
+      "designRef": "units/core.md §8 UT-ID-T/UT-ID-D/UT-BUILD",
+      "cases": [
+        { "name": "17 既有用例（Identity 六＋Digest 七＋BuildRedLine 四）", "status": "passed", "modes": ["smoke", "integration"], "trace": "CORE-T02/CORE-T01 既有用例零回归" }
+      ]
+    }
+  ],
+  "summary": { "totalIntegration": 23, "totalSmoke": 22, "passed": "23/23（集成）＋22/22（冒烟，UT-CONV 按门控豁免）", "failed": 0 },
+  "failureCapabilitySelfCheck": {
+    "method": "组合顺序探针：把 CONV-2 的左乘链式 tAb*tBc 临时扰动为反向 tBc*tAb 后重编译执行；探针验证后清除并终验复绿",
+    "result": "CompositionOrderAndInverse_UT_CONV 如期变红（组合顺序读法误用必被锁定测试捕获）——UT-CONV 具备真实失败能力",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t09/smoke-configure.log",
+      "traceability/builds/wp03-t09/smoke-build.log",
+      "traceability/builds/wp03-t09/smoke-test-run.log",
+      "traceability/builds/wp03-t09/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t09/integration-build.log",
+      "traceability/builds/wp03-t09/integration-fullbuild.log",
+      "traceability/builds/wp03-t09/integration-test-run.log",
+      "traceability/builds/wp03-t09/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "直接运行（§9 任务行验证方式）——两模式测试可执行文件直接执行 exit 0；ird_gates 随全量构建零命中",
+  "notes": "实现取舍：①UT-CONV 经 __has_include/IRD_HAS_RW_MATH 门控——冒烟模式无框架目标（CORE-T01 先例），UT-CONV 仅集成模式执行并在本报告 modes 如实分记；②旋转算例用显式 9 元素矩阵构造 Rz(90°)（零参数序歧义）——§4.6 锁定对象是 Transform3D 读法而非 RPY/EAA 转换语义；③调试过程中发现并修复测试自身两处缺陷（分块确定性用例二次 finalize、匿名命名空间跨条件块失衡），均未进入终态"
+}
