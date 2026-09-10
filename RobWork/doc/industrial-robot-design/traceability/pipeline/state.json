@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "paused",
-  "pausedReason": "CORE-T01 闭环完成；v1.4 结构修复（原子锁/SHA 冻结/记录回传）已合入，等待维护者复查后\"恢复流水线\"。队首 TK-T01 已结构化，首单元豁免已消费（CORE-T01 手动合入即审核）。",
+  "phase": "idle",
+  "pausedReason": null,
   "tickCount": 0,
   "currentTask": null,
   "branch": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-10T14:11:38+08:00",
+    "updatedAt": "2026-09-10T16:33:47+08:00",
     "ticksNoProgress": 0
   },
   "history": [
