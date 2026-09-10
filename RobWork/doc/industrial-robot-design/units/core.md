@@ -977,6 +977,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）完成 12 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失）；登记待裁决 6 项（P-AR-1～3、P-ENV-1～2、P-D-1 归入待核对）；实现任务 CORE-T01～T10 |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查（CR-01/02/06/07/08 均通过，词表/摘要/比较/错误契约被四个消费单元按原文对齐——差异记录见 traceability/foundation-api-diff.md）：P-ENV-2 关闭（gtest 定稿＝vcpkg＋find_package(GTest CONFIG REQUIRED)，不消费从未生成的 RW::gtest）；CORE-T01 行 gtest 引用改指 development-task-breakdown §5.5；本文接口无修改 |
 | v0.3 | 2026-09-10 | P-ENV-1 关闭（findings F-003 消账）：C++17/基线混链经 CORE-T01 双模式构建＋验收独立复现证实成立，回落 C++14 预案留档不用；仅 §10.2 状态行翻转，接口与任务行零修改 |
+| v0.4 | 2026-09-10 | CORE-T02（≙WP-03-T02）落位登记：①§4.1/§5.1 身份六强类型＋AttemptId＋TaskIdentity 与 §4.2/§5.2 摘要类型＋ContentDigester（SHA-256，D-05）按原文契约实现，接口零偏差；②`Errors.hpp`（§4.10 CoreError）无独立任务行，随本任务以"首个消费者落位最小契约"惯例建立——签名与 §4.10 原文逐字一致（仅 using 构造透传），不新增成员（DTB §5.4 偏差登记）；③实现取舍留痕：保留值"全零"在解析层可回（句法合法），拒绝由 isValid() 在业务边界执行；FNV-1a 128 哈希为两 64 位半字模拟实现（uint64 定宽保证平台无关，NFR-COR-02） |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T02",
+  "masterWp": "WP-03-T02",
+  "branch": "wp03-t02",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；gtest 沿用 CORE-T01 首装登记）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Identity.cpp（六强类型解析/格式化/生成/FNV-1a 128）与 src/Digest.cpp（SHA-256＋摘要类型）；目标名与既有属性（C++17、/utf-8、sdurw_math 链接）不变"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/IdentityTest.cpp（UT-ID-T）与 test/DigestTest.cpp（UT-ID-D）；既有 BuildRedLineTest 保留并全过（红线复验随新源码面自动扩大）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "IdentityRoundtrip/IdentityReserved/IdentityStrictParse/IdentityGenerate/TaskIdentityTuple/IdentityStrongTyping",
+      "designRef": "units/core.md §8 UT-ID-T（§4.1/§5.1）",
+      "cases": [
+        { "name": "IdentityRoundtrip.ParseFormatRoundtrip_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "ARC-04、§5.1 往返后置（parse(format(x))==x，六类型）" },
+        { "name": "IdentityReserved.ZeroIsInvalid_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.1 U-1 保留值纪律＋att-0 拒绝＋解析层/业务边界取舍钉住" },
+        { "name": "IdentityStrictParse.MisuseAndMalformedRejected_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8 UT-ID-T 行：rev- 喂 ObjectId 失败、大写/31hex/字符 g/空白拒绝、try 轨不抛、错误前缀 core/identity/parse" },
+        { "name": "IdentityGenerate.NonZeroAndUnique_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8 UT-ID-T：generate 非零＋1e6 去重计数（thread_local mt19937_64）" },
+        { "name": "TaskIdentityTuple.FiveFieldSemantics_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "TASK-03：五字段缺一即 invalid＋精确等值＋哈希一致＋operator< 全序" },
+        { "name": "IdentityStrongTyping.NoImplicitConversion_UT_ID_T", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.1 强类型纪律行为面（六独立 struct 无跨类型捷径）" }
+      ]
+    },
+    {
+      "suite": "Sha256KnownVectors/Sha256Determinism/Sha256Lifecycle/DigestCanonical",
+      "designRef": "units/core.md §8 UT-ID-D（§4.2/§5.2，FIPS 180-2）",
+      "cases": [
+        { "name": "Sha256KnownVectors.EmptyString_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "FIPS 180-2：空串 e3b0c442…（§8 明文向量）" },
+        { "name": "Sha256KnownVectors.Abc_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "FIPS 180-2：\"abc\" ba7816bf…（§8 明文向量）" },
+        { "name": "Sha256KnownVectors.TwoBlock_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "FIPS 180-2 两分组向量（跨分组＋填充边界）" },
+        { "name": "Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-02：分块方式无关＋重跑一致＋空追加不变" },
+        { "name": "Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8：异字节摘要异（单比特翻转）" },
+        { "name": "Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.2：finalize 幂等禁止（再 finalize/update 抛 CoreError，前缀 core/digest/finalized）" },
+        { "name": "DigestCanonical.RoundtripAndStrictParse_UT_ID_D", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.2：cv-/cid- 64 小写 hex 往返＋大写/长度/tag 误用拒绝" }
+      ]
+    },
+    {
+      "suite": "BuildRedLine（既有，CORE-T01）",
+      "designRef": "units/core.md §8 UT-BUILD",
+      "cases": [
+        { "name": "BuildRedLine.×4（SourceTreeReachable/NoQtInclude/NoCrossUnitInclude/PublicHeaderPathLayout）", "status": "passed", "modes": ["smoke", "integration"], "trace": "既有红线用例随新源码面自动扩大扫描，全过——零 Qt/零跨单元头保持" }
+      ]
+    }
+  ],
+  "summary": { "total": 17, "passed": 17, "failed": 0, "modes": { "smoke": "17/17", "integration": "17/17" } },
+  "failureCapabilitySelfCheck": {
+    "method": "两探针：①扰动 SHA-256 轮常量 K[0]（0x428a2f98→0x428a2f99）后重编译；②身份解析注入大写放行分支（'A'..'F' 接受）后重编译。两探针验证后全部清除并终验复绿。",
+    "result": "①Sha256KnownVectors 三向量用例如期全红（算法实现错误必被标准向量捕获）；②IdentityStrictParse.MisuseAndMalformedRejected 如期变红（解析宽松必被严格性用例捕获）。终态清除后 17/17 复绿——两用例组均具备真实失败能力",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t02/smoke-configure.log",
+      "traceability/builds/wp03-t02/smoke-build.log",
+      "traceability/builds/wp03-t02/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t02/integration-build.log",
+      "traceability/builds/wp03-t02/integration-fullbuild.log",
+      "traceability/builds/wp03-t02/integration-test-run.log",
+      "traceability/builds/wp03-t02/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式，exit 0）",
+  "notes": "门禁复核：ird_gates 目标随全量构建零命中；Errors.hpp 落位偏差已登记 units/core.md 变更记录 v0.4（§4.10 首个消费者最小契约，签名原文一致）"
+}
