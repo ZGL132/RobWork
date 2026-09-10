@@ -1,30 +1,23 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "implementing",
+  "phase": "idle",
   "pausedReason": null,
-  "tickCount": 1,
-  "currentTask": "TK-T01",
-  "branch": "wp02-t01",
-  "base": "959fb9b76d46a226dab8ac46e22c020fa4e8eb00",
+  "tickCount": 3,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": {
-    "kind": "implement",
-    "runId": "e7bdb8e3-387f-4118-8480-26db2895e971",
-    "workerId": "0178cd60-f56f-4b07-94ed-3b8791740ae4",
-    "task": "TK-T01",
-    "startedAt": "2026-09-10T16:38:33+08:00",
-    "leaseExpiresAt": "2026-09-10T18:38:33+08:00"
-  },
+  "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-10T16:38:33+08:00",
+    "updatedAt": "2026-09-10T17:44:18+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -36,6 +29,16 @@
         "ad7bce6"
       ],
       "acceptanceRecord": "traceability/acceptance/CORE-T01-20260910.md",
+      "mergedAt": "2026-09-10"
+    },
+    {
+      "task": "TK-T01",
+      "unit": "testkit",
+      "result": "pass-merged",
+      "commits": [
+        "eb31fc9de7c6bd16dad1c4d856b7c994ca2493fa"
+      ],
+      "acceptanceRecord": "traceability/acceptance/TK-T01-20260910.md",
       "mergedAt": "2026-09-10"
     }
   ],
@@ -58,11 +61,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "TK-T01",
-      "contractPath": "tasks/foundation/TK-T01.json",
-      "branch": "wp02-t01"
-    },
     {
       "taskId": "WP-01-T01",
       "contractPath": "tasks/WP-01-T01.json",
@@ -97,5 +95,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "d32663f0-7814-4801-b850-478130ab7b2a"
+  "tickToken": "86c6c348-0754-448b-ae61-d046c6d9ad2e"
 }

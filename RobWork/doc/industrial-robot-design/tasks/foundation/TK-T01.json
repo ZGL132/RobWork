@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "构建落位与框架接入",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-COR-01", "NFR-MNT-01"],
   "designRefs": ["units/testkit.md#9", "units/testkit.md#3"],
