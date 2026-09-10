@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "构建落位与零依赖门禁",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01", "ARC-02"],
   "designRefs": ["units/core.md#9", "units/core.md#3.3"],
