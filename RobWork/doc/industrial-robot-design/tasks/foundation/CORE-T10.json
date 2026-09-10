@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "core 文档与门禁同步",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T02",
     "CORE-T03",

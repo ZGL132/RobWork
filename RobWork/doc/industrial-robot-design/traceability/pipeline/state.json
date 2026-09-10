@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 41,
+  "tickCount": 43,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "implement": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T05:36:36+08:00",
+    "updatedAt": "2026-09-11T05:54:27+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -231,6 +231,16 @@
       ],
       "result": "pass-merged",
       "mergedAt": "2026-09-11"
+    },
+    {
+      "mergedAt": "2026-09-11",
+      "task": "CORE-T10",
+      "commits": [
+        "ee1dc25eb4990a215e4e6814a72ac70f44236ba1"
+      ],
+      "result": "pass-merged",
+      "unit": "core",
+      "acceptanceRecord": "traceability/acceptance/CORE-T10-20260911.md"
     }
   ],
   "policy": {
@@ -255,13 +265,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "CORE-T10",
-      "contractPath": "tasks/foundation/CORE-T10.json",
-      "branch": "wp03-t10"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -270,5 +274,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "d5ea8e95-2349-4c83-826a-a341b44eb2db"
+  "tickToken": "8ffbe74e-a9a3-4aff-9e51-0960d7c93618"
 }
