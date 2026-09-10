@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DOC-T04",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "core 主链整链编译放行（CORE-T03~T10）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": [
+    "contract-compilation.md",
+    "units/core.md#9",
+    "traceability/readiness-audit-doc-t03.md",
+    "traceability/foundation-api-diff.md",
+    "traceability/contract-compile-log.md"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/foundation/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["completed-core-task-contracts", "compile-log-entries"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T05.json"
+  ],
+  "branch": "doc-t04",
+  "interUnit": false,
+  "knownPitfalls": ["CR-06"],
+  "acceptance": [
+    "CORE-T03/04/05/06/07/08/10 七份 planned 契约逐份回填：非空 requirements（承接 core.md §2 需求表）、锚定 designRefs（core.md 对应 §4/§5 章节）、真实 dependsOn、允许/禁止文件、完成态验证命令与逐条 acceptance",
+    "放行策略（所有者 2026-09-11 裁决，对 DOC-T03 保守放行口径的显式放宽）：七份全部置 ready，入队按拓扑序 CORE-T03→T04→T05→T06→T07→T08→T10（入队本身经所有者\"调整队列\"口令由编排侧执行）；依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对",
+    "CORE-T04/05 契约的 CR-06 门禁条目原样保留（实现后生成容差接口 API diff 供 TK-T04/05 放行——foundation-contract-review.md 裁决不变）；TK-T04/05 不在本批范围，保持 planned",
+    "validate-docs 通过；七份契约逐份 validate-task 三查通过；放行逐份登记 traceability/contract-compile-log.md（一行一契约，注明 CR-06 保留与放宽依据）"
+  ],
+  "note": "2026-09-11 补建（所有者裁决\"按提案执行\"）：整单元拓扑序批次先例；放行策略放宽依据固化于 acceptance 第 2 条；入队动作在编译放行后由所有者口令触发。"
+}
