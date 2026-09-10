@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.4（2026-09-10 三轮审查修复：evidence 分支按尝试隔离、不可变 evidence SHA、按 SHA 合并） |
+| 文档版本 | v1.5（2026-09-10 四轮审查同步：修正 §5 evidence 分支为带 attempt 的规范，并与 PIPE v1.6 失败证据回传一致） |
 | 文档代号 | ACC |
 | 上游 | development-task-breakdown.md §5.7（三段式会话流程的所有者）、AGENTS.md §6.3/§6.4（提交与循环约定）、automation-pipeline.md §8 附录 C（验收者提示词模板） |
 | 适用范围 | 一切按 canonical 任务契约（tasks/foundation/*.json，状态 ready）实施的编码任务；纯文档任务可用其精简版（仅第 4.1/4.6/4.7/4.8 项） |
@@ -45,7 +45,7 @@
 
 ## 5. 裁决输出与记录
 
-- 产出 `pass` / `fail`，写入 `traceability/acceptance/<taskId>-<YYYYMMDD>.md`；**同日对同一任务的再次验收追加序号 `-r2`、`-r3`（v1.2）**——fail→返工→重新全量验收是常态路径，禁止同名覆盖既有记录。记录内容：verdict、逐项证据（4.1~4.11）、发现的问题清单（分级：阻断/建议）、验收者环境说明。**记录必须经 §3 记录回传流程落在 `acc/<taskId>` 分支并推送后，验收才算完成（v1.3）**——留在未推送临时目录里的记录不构成证据。
+- 产出 `pass` / `fail`，写入 `traceability/acceptance/<taskId>-<YYYYMMDD>.md`；**同日对同一任务的再次验收追加序号 `-r2`、`-r3`（v1.2）**——fail→返工→重新全量验收是常态路径，禁止同名覆盖既有记录。记录内容：verdict、逐项证据（4.1~4.11）、发现的问题清单（分级：阻断/建议）、验收者环境说明。**记录必须经 §3 记录回传流程落在 `acc/<taskId>/<attempt>` 分支并推送后，验收才算完成（v1.6）**——留在未推送临时目录里的记录不构成证据。
 - **建议级问题强制转登（v1.2）**：验收发现的一切建议级问题逐条登记 `traceability/findings.json`（编号 F-xxx 顺延，含来源、处置建议、责任方、状态 open/fixed）——只写进验收记录"留档"不构成闭环（CORE-T01 的 G-1~G-4 因无跟踪机制搁置，为反面先例）。
 - **pass 判据**：4.1~4.11 全部通过且无阻断级问题；建议级问题可随验收记录留档并按上条转登，不阻塞合入。
 - **fail 判据**：任一阻断级问题（范围越界、构建/测试不可复现、红线命中、注释缺失必填项、4.11 任一项命中、验收粉饰）。
@@ -65,3 +65,4 @@
 | v1.2 | 2026-09-10 | 审核修复：①§3 验收固定使用独立 worktree＋冒烟 toolchain 口径＋脚本调用方式无关说明＋validate-state.ps1 入清单；②§5 验收记录同日多次加 -rN 序号（防同名覆盖）；③§4.8/§5 增 findings.json 消账核对与建议级问题强制转登（发现闭环，配合 PIPE v1.3 §7） |
 | v1.3 | 2026-09-10 | 二轮审查修复（P0-2/P1-3）：①§3 送验对象冻结（40 位 headSha；分支漂移＝阻断级 fail）；复现现场改 detached worktree@headSha；②§3 记录回传流程——记录落 acc/<taskId> 分支 commit＋push，输出 {branch,path,commit} 三元组；③§5 记录完成判据补推送要求 |
 | v1.4 | 2026-09-10 | 三轮审查修复（P1：失败验收无法可靠重试＋evidence 未冻结）：①evidence 分支改 `acc/<taskId>/<attempt>`（attempt 序号随验收请求下发，state.attempts.accept 递增——fail 重试永不复用已有分支名，`worktree add -b` 不再失败）；②acceptanceRecord.commit 明确为 40 位不可变 evidence SHA，收尾验证 origin ref==该 SHA 后**按 SHA 合并**（不合并分支尖端，evidence 被追加提交时不带入未审查内容）；③与 PIPE v1.5 §4.7 双漂移检测（任务分支＋evidence 分支）与附录 C 模板（T-ACC v3）同步 |
+| v1.5 | 2026-09-10 | 四轮审查同步：§5 的记录完成判据改为与 §3 一致的 `acc/<taskId>/<attempt>`，消除遗留的无 attempt 分支表述；验收 fail 的三元组由 PIPE v1.6 保存为返工用 lastFailureRecord，不改变本协议的独立验收与记录推送要求 |

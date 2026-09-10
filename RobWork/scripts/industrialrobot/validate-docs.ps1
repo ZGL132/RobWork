@@ -1,6 +1,15 @@
 ﻿param([string]$RepoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path)
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 $errors = @()
+# PIPE/ACC 是定时执行器的可执行输入，不能只检查文件存在：以下锚点把 P0 并发临界区、
+# 验收失败证据回传与 evidence 分支命名的关键语义纳入文档门禁，防止后续修订悄然删回旧规则。
+$pipelineText = Get-Content (Join-Path $base 'automation-pipeline.md') -Raw -Encoding UTF8
+$acceptanceText = Get-Content (Join-Path $base 'acceptance-protocol.md') -Raw -Encoding UTF8
+if ($pipelineText -notmatch 'Windows 命名 mutex') { $errors += 'PIPE missing Windows named mutex critical-section rule (P0)' }
+if ($pipelineText -notmatch 'lastFailureRecord') { $errors += 'PIPE missing retry failure-evidence record rule (P1)' }
+if ($pipelineText -notmatch '阻塞等待返回后再次 renew') { $errors += 'PIPE missing post-wait renew rule (P0)' }
+if ($acceptanceText -match '落在 `acc/<taskId>` 分支') { $errors += 'ACC still contains stale acc/<taskId> evidence-branch wording' }
+if ($acceptanceText -notmatch 'acc/<taskId>/<attempt>') { $errors += 'ACC missing attempt-scoped evidence branch wording' }
 $status = Get-Content (Join-Path $base 'traceability/unit-status.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $ids = @($status.units | ForEach-Object { $_.id })
 if ($ids.Count -ne 20 -or ($ids | Sort-Object -Unique).Count -ne 20) { $errors += 'unit-status must contain 20 unique units' }

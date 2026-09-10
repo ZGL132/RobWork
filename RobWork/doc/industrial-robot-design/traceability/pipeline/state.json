@@ -9,6 +9,7 @@
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
+  "lastFailureRecord": null,
   "run": null,
   "attempts": {
     "implement": 0,

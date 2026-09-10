@@ -4,6 +4,10 @@
 # 守卫 5"流水线自身异常（状态损坏/不可修复矛盾）"的静态判定器。tick 编排者每 tick 最先
 # 运行本脚本（PIPE §4.1）；校验失败即视为状态损坏，按守卫 5 转 stopped 等所有者，不得带病续跑。
 #
+# v3 增量（PIPE v1.6）：
+#   ⑬lastFailureRecord：验收 fail 后进入 implementing 的返工者必须有不可变失败证据指针；
+#     首次实施与所有其他阶段强制为 null，防止把失败记录误作可合入 acceptanceRecord；
+#
 # v2 增量（PIPE v1.4，审核结论 P0-1/P0-2/P1-5 对策）：
 #   ⑨run 租约对象：派发中的工作者必须可识别、可判存活（kind/runId/workerId/ISO 时间），
 #     phase 与 run 的存在性/种类强一致——"未超时的 implementing 只汇报不续派"的机器前提；
@@ -73,6 +77,12 @@ if ($null -eq $s.tickCount -or $s.tickCount -lt 0) { $errors += "tickCount must 
 $hasTickTokenProp = ($null -ne ($s.PSObject.Properties | Where-Object { $_.Name -eq "tickToken" }))
 if (-not $hasTickTokenProp) { $errors += "tickToken field is required（string GUID or null；paused/idle 可为 null——v1.5）" }
 elseif ("$($s.tickToken)" -and "$($s.tickToken)" -notmatch '^[0-9a-fA-F-]{36}$') { $errors += "tickToken must be a GUID string, got '$($s.tickToken)'" }
+
+# 验收失败证据：失败分支不能以 acceptanceRecord 的名义进入 awaiting_merge，但返工工作者
+# 又必须能定位上一轮对抗验收结论。因此用独立字段保存不可变证据指针；显式检查属性存在性，
+# 防止 JSON 漏字段被 ConvertFrom-Json 误当作 null 而绕过契约（PIPE v1.6 §0.2/§4）。
+$hasFailureRecordProp = ($null -ne ($s.PSObject.Properties | Where-Object { $_.Name -eq "lastFailureRecord" }))
+if (-not $hasFailureRecordProp) { $errors += "lastFailureRecord field is required（structured record or null；PIPE v1.6）" }
 
 # ---------- ③ attempts ----------
 foreach ($k in @("implement","fix","accept")) {
@@ -199,6 +209,35 @@ if ($s.phase -eq "awaiting_merge") {
     if ("$($s.acceptanceRecord.branch)" -notmatch '^acc/[A-Za-z0-9._-]+/[0-9]+$') { $errors += "acceptanceRecord.branch must match ^acc/<taskId>/<attempt>（ACC §3，v1.5）" }
     if ("$($s.acceptanceRecord.path)" -notmatch '^traceability/acceptance/.+\.md$') { $errors += "acceptanceRecord.path must be under traceability/acceptance/ and end .md" }
     if ("$($s.acceptanceRecord.commit)" -notmatch '^[0-9a-f]{40}$') { $errors += "acceptanceRecord.commit must be full 40-hex evidence SHA（按 SHA 合并的对象，v1.5 收紧）" }
+  }
+}
+
+# 仅“验收失败后的 implementing 返工态”允许保留失败证据。首次实施（fix=0）没有上一轮
+# 验收，任何记录都是陈旧污染；其他阶段同样必须为 null，避免把失败结论误作可合入证据。
+if ($hasFailureRecordProp) {
+  $isRetryImplementing = ($s.phase -eq "implementing" -and $s.attempts.fix -gt 0)
+  if ($isRetryImplementing -and $null -eq $s.lastFailureRecord) {
+    $errors += "retry implementing state requires structured lastFailureRecord {branch,path,commit,attempt}（PIPE v1.6：返工必须读取失败验收证据）"
+  }
+  elseif (-not $isRetryImplementing -and $null -ne $s.lastFailureRecord) {
+    $errors += "phase '$($s.phase)' must have lastFailureRecord = null（失败证据只允许在返工 implementing 态保留）"
+  }
+  elseif ($isRetryImplementing -and $null -ne $s.lastFailureRecord) {
+    foreach ($k in @("branch","path","commit","attempt")) {
+      if ($null -eq $s.lastFailureRecord.$k -or "$($s.lastFailureRecord.$k)" -eq "") { $errors += "lastFailureRecord missing field: $k" }
+    }
+    # ConvertFrom-Json 对 `1`、`1.0`、`"1"` 的运行时类型不同；attempt 是 evidence 分支名
+    # 的不可变序号，必须是 JSON 整数而非可字符串化的值，且必须就是最近一次验收的计数。
+    # 否则第 2 轮失败后仍可能把第 1 轮记录交给返工者，导致修复对象与最近反证脱节。
+    $failureAttempt = $s.lastFailureRecord.attempt
+    $isIntegerAttempt = ($failureAttempt -is [int] -or $failureAttempt -is [long])
+    if (-not $isIntegerAttempt -or $failureAttempt -lt 1) { $errors += "lastFailureRecord.attempt must be a positive JSON integer" }
+    elseif ($failureAttempt -ne $s.attempts.accept) { $errors += "lastFailureRecord.attempt must equal attempts.accept（返工只能读取最近一次验收记录）" }
+    $expectedFailureBranch = "acc/$($s.currentTask)/$failureAttempt"
+    if ("$($s.lastFailureRecord.branch)" -notmatch '^acc/[A-Za-z0-9._-]+/[0-9]+$') { $errors += "lastFailureRecord.branch must match ^acc/<taskId>/<attempt>（ACC §3，PIPE v1.6）" }
+    elseif ("$($s.lastFailureRecord.branch)" -ne $expectedFailureBranch) { $errors += "lastFailureRecord.branch must be '$expectedFailureBranch'（当前返工任务和验收轮次必须一致）" }
+    if ("$($s.lastFailureRecord.path)" -notmatch '^traceability/acceptance/.+\.md$') { $errors += "lastFailureRecord.path must be under traceability/acceptance/ and end .md" }
+    if ("$($s.lastFailureRecord.commit)" -notmatch '^[0-9a-f]{40}$') { $errors += "lastFailureRecord.commit must be full 40-hex evidence SHA（PIPE v1.6）" }
   }
 }
 if (@("idle","paused","blocked") -contains $s.phase) {

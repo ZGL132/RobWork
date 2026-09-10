@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.8（Draft；自动化流水线登记；v0.7 批次＝横切契约补建＋gtest 首装登记；v0.6 为三段式流程；v0.5 为全链审计消账；见 §7 变更记录） |
+| 文档版本 | v0.12（Draft；四轮流水线审查修复已登记；见 §7 变更记录） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
@@ -756,6 +756,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.9 | 2026-09-10 | 流水线审核修复登记（配合 PIPE v1.3/ACC v1.2/新建 CCP v1.0）：①§8 契约编译协议与发现闭环登记（ready 契约唯一产出通道＝CCP；findings.json 强制转登）；②§4.7 新建验收发现跟踪登记册（CORE-T01 G-1~G-4 补登为 F-001~F-004）；③§5.1 增治理脚本调用口径行（调用方式无关＋脚本清单含 validate-state）；④配套数据修复：6 份契约 designRefs 锚点补全/修正（DOC-T01、DOC-T03、FOUNDATION-CR-01、WP-00-T02 #附录C→#24、DIAG-T01、UI-T01），state.json 豁免收编 policy 字段＋心跳 ISO 格式。不改变任何需求语义与任务范围。 |
 | v0.10 | 2026-09-10 | 二轮审查修复登记（配合 PIPE v1.4/ACC v1.3/CCP v1.1）：①§8 增"并发与合入安全"段（原子锁/run 租约/SHA 冻结链/结构化 queue）；②§5.1 脚本清单补 pipeline-lock.ps1；③配套数据：10 份 ready/done 契约补 branch/interUnit/knownPitfalls（跨单元判定留痕于 traceability/contract-compile-log.md 补录批次），state.json queue 结构化＋leaseMinutes/firstUnitCheckpointExempted/tickCount 落位。流水线维持 paused，等所有者复查后恢复。不改变任何需求语义与任务范围。 |
 | v0.11 | 2026-09-10 | 三轮审查修复登记（配合 PIPE v1.5/ACC v1.4）：①锁 fencing token（release/renew 必须 -Token 核对，旧 tick 超时被接管后无法释放新锁）；②state 增 tickToken 侧写＋心跳时钟健全性（≤now+5min，防未来时间戳）与单调性（≥run.startedAt）校验——2026-09-10 实录两类事故（无锁心跳写入/未来时间戳）均被检出；③queue 真读校验（契约本体 taskId/branch 与条目一致＋逐份过 validate-task）；④evidence 分支按尝试隔离 acc/<taskId>/<attempt>（attempts.accept 计数），acceptanceRecord.commit 为 40 位不可变 SHA，收尾双漂移检测（任务分支＋evidence 分支）后按 SHA 合并；⑤in-flight 三态统一强制 branch/base/队首一致。另登记：审查期间发现并行会话无锁写心跳（分钟精度格式溯源）——该会话须停止直写 state 或改走 tick 协议，恢复流水线前必须 retire。维持 paused。 |
+| v0.12 | 2026-09-10 | 四轮审查修复登记（配合 PIPE v1.6/ACC v1.5）：①pipeline-lock 的 status/acquire/renew/release 全过程由按绝对仓库路径派生的 Windows 命名 mutex 串行，fencing 核对与修改锁文件不再存在 TOCTOU；②编排者在每次阻塞等待返回后再次 renew，失败即停止，禁止过期 tick 处理完成事件或写 state；③state.json 与 validate-state 增 lastFailureRecord{branch,path,commit,attempt}，验收 fail 的不可变 evidence 记录只在返工 implementing 态传给实施者，首次实施/其他阶段强制为空；④ACC §5 遗留 acc/<taskId> 表述修正为带 attempt 的分支。配套 test-pipeline-pipeline.ps1 覆盖 mutex、旧 token 接管和失败证据 schema 回归。维持 paused。 |
 
 
 
@@ -770,4 +771,4 @@ AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子�
 
 **契约编译与发现闭环（v0.9）**：ready 契约的唯一产出通道是 `contract-compilation.md`（文档代号 CCP）——单元卡任务行按其 §2 逐字段门槛与 §3 七步编译放行（requirements 非空、designRefs 带真实锚点、acceptance 逐条可验证、`branch`/`interUnit` 必填、跨单元任务 `knownPitfalls` 显式携带已登记陷阱），占位契约不得领取；validate-task.ps1 三查（前置引用/设计锚点/knownPitfalls）是其机器执行面；编译评审留痕于 `traceability/contract-compile-log.md`。验收建议级问题强制转登 `traceability/findings.json`（§4.7），发现必须闭环不得只留档。
 
-**并发与合入安全（v0.10，PIPE v1.4）**：tick 并发的唯一裁判是 `.git/ird-pipeline-tick.lock` 原子锁（pipeline-lock.ps1，O_EXCL 创建＋租约自愈）；实施/验收工作者以 run 租约标识，未超时只汇报不续派；验收对象以 40 位 SHA 冻结（base/headSha/acceptedHead 链），合入按 acceptedHead 执行且先验证远端分支未漂移；state.queue 为结构化条目 {taskId,contractPath,branch}（branch 唯一来源在契约）。
+**并发与合入安全（v0.12，PIPE v1.6）**：tick 并发的唯一裁判是 `.git/ird-pipeline-tick.lock` 原子锁；pipeline-lock.ps1 以绝对仓库路径派生 Windows 命名 mutex，将 status/acquire/renew/release 的读判写完整串行，再以 O_EXCL 创建作文件层兜底，旧 tick 的 fencing 核对与修改锁文件之间不存在 TOCTOU。实施/验收工作者以 run 租约标识，未超时只汇报不续派；阻塞等待返回后必须再次 renew 才能处理完成事件或写 state。验收对象以 40 位 SHA 冻结（base/headSha/acceptedHead 链），合入按 acceptedHead 执行且先验证远端分支未漂移；验收 fail 的不可变记录以 lastFailureRecord{branch,path,commit,attempt} 只传给返工 implementing 工作者。state.queue 为结构化条目 {taskId,contractPath,branch}（branch 唯一来源在契约）。

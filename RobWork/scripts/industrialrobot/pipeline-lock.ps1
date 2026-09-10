@@ -1,10 +1,11 @@
-﻿# 流水线 tick 原子锁（治理脚本，PIPE v1.5 §0.1）。
+﻿# 流水线 tick 原子锁（治理脚本，PIPE v1.6 §0.1）。
 #
 # 职责：把"同一时刻至多一个 tick"从约定变成原子事实——state.json 的普通读写不是原子操作，
-# 两个定时实例可同时读到 idle 后各自派工。本脚本用 .NET FileStream 的 CreateNew 模式
-# （Windows O_EXCL 语义）实现原子 test-and-set：文件已存在即抛异常，不存在则独占创建成功。
+# 两个定时实例可同时读到 idle 后各自派工。本脚本先用仓库路径派生的 Windows 命名 mutex
+# 把 status/acquire/renew/release 的“读锁→判定→修改”串行化，再用 .NET FileStream 的
+# CreateNew 模式（Windows O_EXCL 语义）作为跨进程文件层的兜底：文件已存在即抛异常。
 #
-# fencing token（v1.5，三轮审查 P0 对策）：acquire 返回的 tickId 即 fencing token——
+# fencing token（v1.6，四轮审查 P0 对策）：acquire 返回的 tickId 即 fencing token——
 # 每次成功获取（含陈锁接管）都生成新 token。release 与 renew 必须携带 -Token 并与锁内
 # tickId 核对：不匹配（典型场景＝旧 tick 租约过期被接管后复活，试图释放/续租新 tick 的锁）
 # 一律拒绝（退出码 4），绝不删除他人锁。失去租约的旧 tick 不得再写状态或释放锁。
@@ -38,6 +39,42 @@ if (-not (Test-Path (Join-Path $RepoRoot ".git"))) { throw "repo root resolution
 $lockPath = Join-Path $RepoRoot ".git/ird-pipeline-tick.lock"
 $fmt = "yyyy-MM-ddTHH:mm:sszzz"   # 与 state.json ISO 口径一致（秒精度＋本地偏移）
 
+function Get-LockMutexName([string]$repoPath) {
+  # 命名 mutex 以绝对仓库路径的 SHA-256 命名，而不是使用固定名称。
+  # 这样同一仓库的多个定时器必然争用同一临界区，不同 clone 则不会互相阻塞；大写化
+  # 对齐 Windows 路径大小写不敏感的语义，保证 C:\\Repo 与 c:\\repo 得到同一 mutex。
+  $normalizedPath = (Resolve-Path $repoPath).Path.ToUpperInvariant()
+  $sha256 = [System.Security.Cryptography.SHA256]::Create()
+  try {
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($normalizedPath)
+    $digest = $sha256.ComputeHash($bytes)
+    return "Global\ird-pipeline-tick-" + (($digest | ForEach-Object { $_.ToString("x2") }) -join "")
+  } finally {
+    $sha256.Dispose()
+  }
+}
+
+function Invoke-InLockMutex([scriptblock]$body) {
+  # fencing token 只能拒绝“检查时已非本 tick”的写入，无法防止检查之后、删除/续租之前
+  # 被新持有者接管的 TOCTOU 窗口。这里将完整处理过程置于同一 OS 互斥区，令核对与
+  # Remove-Item/Set-Content 成为同一临界操作（PIPE v1.6 §0.1）。30 秒超时避免调度器
+  # 在异常持锁时无限挂起；遗弃 mutex 表示上个进程已死亡，可安全接管并继续执行。
+  $mutex = [System.Threading.Mutex]::new($false, (Get-LockMutexName $RepoRoot))
+  $entered = $false
+  try {
+    try {
+      $entered = $mutex.WaitOne([TimeSpan]::FromSeconds(30))
+    } catch [System.Threading.AbandonedMutexException] {
+      $entered = $true
+    }
+    if (-not $entered) { throw "pipeline lock mutex wait timed out after 30 seconds" }
+    & $body
+  } finally {
+    if ($entered) { $mutex.ReleaseMutex() }
+    $mutex.Dispose()
+  }
+}
+
 function Read-Lock([string]$path) {
   # pwsh7 的 ConvertFrom-Json 会把秒精度 ISO 解析为 DateTime——统一归一化回字符串，
   # 保证输出与比较在 pwsh7/PS5.1 两种 shell 下形态一致；文件缺失时静默返回 null（-ErrorAction
@@ -64,6 +101,7 @@ function Test-Fencing([object]$l, [string]$path) {
   return "owner"
 }
 
+Invoke-InLockMutex {
 if ($Action -eq "status") {
   if (-not (Test-Path $lockPath)) { Write-Output '{"ok":true,"state":"none"}'; exit 0 }
   $l = Read-Lock $lockPath
@@ -128,3 +166,4 @@ try {
 }
 Write-Output $payload
 exit 0
+}
