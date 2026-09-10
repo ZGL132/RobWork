@@ -37,10 +37,12 @@
 | 业务域 | kinematics | 待产出 | WP-F |
 | 业务域 | trajectory | 待产出 | WP-F |
 | 业务域 | dynamics | 待产出 | WP-G |
-| 业务域 | drivetrain | 待产出 | WP-G |
+| 共享计算服务 | drivetrain | 待产出 | WP-G |
 | 业务域 | selection | 待产出 | WP-G |
 | 业务域 | optimization | 待产出 | WP-H |
 | 编排 | workflow | 待产出 | WP-I |
+
+> drivetrain 类别依 ARCHITECTURE §2.3/§3.1 为 **L2 共享计算服务**（非业务域），不受 R-1 业务域互链禁令约束——dynamics 与 selection 统一消费其传动映射（§7.10）；原登记"业务域"系索引笔误（2026-09-10 修正）。
 
 ## 单元详设最低结构
 
@@ -56,7 +58,7 @@
 - `foundation-contract-review.md`：基础单元（core/evidence/policy/runtime/testkit）公共契约审查记录；CR-01～CR-08 已设计级关闭（2026-09-10），五单元转 `frozen` 待联合契约测试通过。
 - `foundation-api-diff.md`：上述审查的逐项 API 差异比对、裁决与联合契约测试登记。
 - `traceability/phase-one-task-index.json`：11 单元全部任务行与执行契约覆盖索引（缺契约者保持 planned）。
-- `tasks/foundation/*.json`：基础五单元的 canonical 任务 JSON；其中仅 `ready` 项是可领取的完整执行契约，`planned` 项是待补全需求追溯的任务占位，不能直接执行。
+- `tasks/foundation/*.json`：11 单元全量 canonical 任务 JSON（131 份——基础五单元 57 份＋服务六单元 74 份，后者由 DOC-T02 于 2026-09-10 生成；原"基础五单元"描述已过期并修正）；其中仅 `ready` 项是可领取的完整执行契约，`planned` 项是待补全需求追溯的任务占位，不能直接执行；领取顺序遵循各契约 `dependsOn` 前置（TK/EV/RT/POL-T01 须在 CORE-T01 完成留痕后领取——2026-09-10 准入顺序机器化）。
 - `tasks/*.json`（根目录）：治理与入口任务（FOUNDATION-CR-01、DOC-T01～T03、foundation-tasks.json 入口索引）。
 
 任何 `ready` 任务契约必须包含非空的需求、设计引用、允许/禁止文件、产物、验收和验证命令；`planned` 任务在补齐这些信息前不是执行任务。执行前运行：
