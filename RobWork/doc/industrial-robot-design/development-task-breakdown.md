@@ -583,6 +583,8 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 ## 4. 遗留与开放问题（只登记、不裁决；格式参照单元任务卡 P-AR-n 登记）
 
 > 登记项分四类：上游文档与磁盘事实（§4.1）、跨卡契约与裁决（§4.2）、待冻结前置（§4.3）、本文辖域已定稿/消账项（§4.4，构建约定属本文所有者权限——ARCH §11.1，不构成对架构/需求语义的裁决）。每项：编号｜问题｜影响｜来源｜建议裁决者｜状态。
+>
+> **集中流转视图（WP-00-T01 初始化，2026-09-10）**：本节 O-\* 与 11 张单元卡全部 P-\* 待裁决项的集中登记见 [governance-log.md](governance-log.md)（编号/所有者/状态/消账留痕一表可查）——权威本体仍在本节与各卡，该文件是流转台账；消账后两处同步翻转。
 
 ### 4.1 上游文档与磁盘事实（2026-09-10 实测）
 
@@ -757,6 +759,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.10 | 2026-09-10 | 二轮审查修复登记（配合 PIPE v1.4/ACC v1.3/CCP v1.1）：①§8 增"并发与合入安全"段（原子锁/run 租约/SHA 冻结链/结构化 queue）；②§5.1 脚本清单补 pipeline-lock.ps1；③配套数据：10 份 ready/done 契约补 branch/interUnit/knownPitfalls（跨单元判定留痕于 traceability/contract-compile-log.md 补录批次），state.json queue 结构化＋leaseMinutes/firstUnitCheckpointExempted/tickCount 落位。流水线维持 paused，等所有者复查后恢复。不改变任何需求语义与任务范围。 |
 | v0.11 | 2026-09-10 | 三轮审查修复登记（配合 PIPE v1.5/ACC v1.4）：①锁 fencing token（release/renew 必须 -Token 核对，旧 tick 超时被接管后无法释放新锁）；②state 增 tickToken 侧写＋心跳时钟健全性（≤now+5min，防未来时间戳）与单调性（≥run.startedAt）校验——2026-09-10 实录两类事故（无锁心跳写入/未来时间戳）均被检出；③queue 真读校验（契约本体 taskId/branch 与条目一致＋逐份过 validate-task）；④evidence 分支按尝试隔离 acc/<taskId>/<attempt>（attempts.accept 计数），acceptanceRecord.commit 为 40 位不可变 SHA，收尾双漂移检测（任务分支＋evidence 分支）后按 SHA 合并；⑤in-flight 三态统一强制 branch/base/队首一致。另登记：审查期间发现并行会话无锁写心跳（分钟精度格式溯源）——该会话须停止直写 state 或改走 tick 协议，恢复流水线前必须 retire。维持 paused。 |
 | v0.12 | 2026-09-10 | 四轮审查修复登记（配合 PIPE v1.6/ACC v1.5）：①pipeline-lock 的 status/acquire/renew/release 全过程由按绝对仓库路径派生的 Windows 命名 mutex 串行，fencing 核对与修改锁文件不再存在 TOCTOU；②编排者在每次阻塞等待返回后再次 renew，失败即停止，禁止过期 tick 处理完成事件或写 state；③state.json 与 validate-state 增 lastFailureRecord{branch,path,commit,attempt}，验收 fail 的不可变 evidence 记录只在返工 implementing 态传给实施者，首次实施/其他阶段强制为空；④ACC §5 遗留 acc/<taskId> 表述修正为带 attempt 的分支。配套 test-pipeline-pipeline.ps1 覆盖 mutex、旧 token 接管和失败证据 schema 回归。维持 paused。 |
+| v0.13 | 2026-09-10 | WP-00-T01 执行（governance-log 建立）：新建 doc/industrial-robot-design/governance-log.md——11 张单元卡全部 93 项 P-\* 待裁决项与本文 §4 O-01~O-33 的集中流转登记（编号/所有者/状态/消账留痕；逐卡零丢失矩阵；与 phase-one-readiness §2 口径核对一致；只登记不裁决）；本文 §4 头部初始化集中流转视图指向。不裁决任何 P-\*/O-\* 项，需求/架构语义零修改。 |
 
 
 
