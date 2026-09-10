@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T01",
+  "masterWp": "WP-07-T01",
+  "branch": "wp07-t01",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "INTERFACE 占位升级为 STATIC（C++17、/utf-8、R-2 头根）；PUBLIC 链 sdurws_ird_core＋RobWork 基线（集成模式：sdurw_math、sdurw_kinematics、sdurw_models、sdurw_proximity——R-5 唯一产品例外，DTB §4.5 生效行）；冒烟模式零基线链接；配置期守卫（其他单元目标/Qt/gtest 即 fatal）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "test/BuildRedLineTest.cpp（红线扫描四用例＋R-5 清单钉住）；IRD_POLICY_BASELINE_LIBS 逗号分隔注入（RT-T01 实测留痕沿用）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyBuild",
+      "designRef": "units/policy.md §3.2/§3.4、§12 POL-T01、DTB §4.5/§4.6",
+      "cases": [
+        { "name": "PolicyBuild.SourceTreeReachable_POL_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（include 保留位 README＋src 占位 TU——落位期形态）" },
+        { "name": "PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头扫描）" },
+        { "name": "PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面 sdurws/ird/* 白名单＝{core, policy}——CR-04：经 IPolicyNameContext 消费 runtime 而非直依赖）" },
+        { "name": "PolicyBuild.BaselineLibsPinned_POL_BUILD_R5", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-5 例外钉住：集成模式断言清单含 sdurw_math/sdurw_kinematics/sdurw_models/sdurw_proximity 四库且零 gtest（D-06）；冒烟模式断言清单为空——双分支强断言" }
+      ]
+    }
+  ],
+  "summary": { "total": 4, "passed": 4, "failed": 0, "modes": { "smoke": "4/4", "integration": "4/4" } },
+  "failureCapabilitySelfCheck": {
+    "method": "R-5 清单漏登探针：临时把链接与清单宏中的 sdurw_proximity 移除后重新配置重编译；探针验证后清除并终验复绿（首次探针误改链接目标致断链——已修正为仅清单宏隐藏的设计并重做）",
+    "result": "BaselineLibsPinned_POL_BUILD_R5 如期变红（R-5 例外基线库漏登必被清单钉住用例捕获）；恢复后 4/4 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp07-t01/smoke-configure.log",
+      "traceability/builds/wp07-t01/smoke-build.log",
+      "traceability/builds/wp07-t01/smoke-test-run.log",
+      "traceability/builds/wp07-t01/sdurws_ird_policy_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp07-t01/integration-build.log",
+      "traceability/builds/wp07-t01/integration-fullbuild.log",
+      "traceability/builds/wp07-t01/integration-test-run.log",
+      "traceability/builds/wp07-t01/sdurws_ird_policy_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test ——通过（集成模式 exit 0）",
+  "notes": "①P-POL-2 遵守：占位实现零阈值/默认值（nullopt 语义未涉及——POL-T02 承载）；②CR-02/CR-04 陷阱为 POL-T02+ 消费约束（本任务占位 TU 零摘要/runtime 消费）；③基线库实测清单＝sdurw_math＋sdurw_kinematics＋sdurw_models＋sdurw_proximity（与 DTB §4.6 policy 行一致，目标名零偏差）；④落位期形态：公共面仅 README 保留位（真实接口 Errors/PolicySet 随 POL-T02+ 落地）"
+}

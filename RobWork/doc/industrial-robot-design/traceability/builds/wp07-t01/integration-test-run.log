@@ -1,0 +1,17 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from PolicyBuild
+[ RUN      ] PolicyBuild.SourceTreeReachable_POL_BUILD
+[       OK ] PolicyBuild.SourceTreeReachable_POL_BUILD (0 ms)
+[ RUN      ] PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01
+[       OK ] PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2
+[       OK ] PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2 (0 ms)
+[ RUN      ] PolicyBuild.BaselineLibsPinned_POL_BUILD_R5
+[       OK ] PolicyBuild.BaselineLibsPinned_POL_BUILD_R5 (0 ms)
+[----------] 4 tests from PolicyBuild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
