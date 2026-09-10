@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T07",
+  "masterWp": "WP-03-T07",
+  "branch": "wp03-t07",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/DiagData.cpp（C-3 码句法/必填串校验＋C-1/C-2 状态机与凭据一致性）；DiagData.hpp 结构体内联"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/DiagDataTest.cpp（UT-DIAG 八用例）；既有 50 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "DiagCodeSyntax/DiagRecordRequired（C-3）",
+      "designRef": "units/core.md §4.8/§5.7/§8 UT-DIAG（ERR-01）",
+      "cases": [
+        { "name": "DiagCodeSyntax.ValidForms_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "合法形态：单段/多段/数字段" },
+        { "name": "DiagCodeSyntax.InvalidForms_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "反例：小写/下划线/空/>64/首尾与连续连字符＋前缀 core/diag/code" },
+        { "name": "DiagRecordRequired.RequiredStringsNonEmpty_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "context/cause/recommendedAction 必填非空；名称字段显式缺失不伪造" }
+      ]
+    },
+    {
+      "suite": "ConfirmableFindingC1/C2（SA-15）",
+      "designRef": "units/core.md §4.8 不变量 C-1~C-2/§8 UT-DIAG（UX-03/SA-15）",
+      "cases": [
+        { "name": "ConfirmableFindingC1.ComparisonRequired_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "C-1：可确认诊断必为比较型（无 comparison 抛 core/diag/c1）＋初始 Pending" },
+        { "name": "ConfirmableFindingC2.CredentialConsistency_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "C-2：Confirmed ⇔ 凭据在场；Rejected 清凭据；非 Pending 拒绝推进（状态机前置归 project）" }
+      ]
+    },
+    {
+      "suite": "ComparativeFields/DiagRecordEquality（UX-03 三要素）",
+      "designRef": "units/core.md §4.8 ComparativeValue 行（MDL-06 语义复用）",
+      "cases": [
+        { "name": "ComparativeFields.SourcedValueSides_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "SourcedValue 承载：实际侧 Provided、期望侧 NotApplicable/Invalid（不伪造/保留原串——不另设第二套语义）" },
+        { "name": "DiagRecordEquality.FullFieldCompare_UT_DIAG", "status": "passed", "modes": ["smoke", "integration"], "trace": "记录全字段比较（subject 随机不同→不等；副本相等）" }
+      ]
+    },
+    {
+      "suite": "既有回归（50 用例）",
+      "designRef": "units/core.md §8",
+      "cases": [
+        { "name": "既有 50 用例（红线/Identity/Digest/Provenance/Units/Compare/Evaluation/约定与值语义）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 57, "passed": 57, "failed": 0, "modes": { "smoke": "55/55（Q 重载门控差异沿用分记）", "integration": "57/57" } },
+  "failureCapabilitySelfCheck": {
+    "method": "C-1 探针：临时禁用 make 的 comparison 存在性检查（false &&）后重编译执行；探针验证后清除并终验复绿",
+    "result": "ConfirmableFindingC1.ComparisonRequired_UT_DIAG 如期变红（C-1 失效必被非比较型反例捕获）；恢复后 57/57 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t07/smoke-configure.log",
+      "traceability/builds/wp03-t07/smoke-build.log",
+      "traceability/builds/wp03-t07/smoke-test-run.log",
+      "traceability/builds/wp03-t07/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t07/integration-build.log",
+      "traceability/builds/wp03-t07/integration-fullbuild.log",
+      "traceability/builds/wp03-t07/integration-test-run.log",
+      "traceability/builds/wp03-t07/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式 exit 0）",
+  "notes": "①CR-08 遵守：core 仅承载码句法——码值分配与合法性权威归 diagnostics StableCodeRegistry（后续 DIAG 任务）；②CR-01 遵守：比较型三要素复用 SourcedValue（不适用/非法语义不另设第二套）；③实现期自查修复 confirm() 参数遮蔽成员的自移动赋值缺陷（this-> 消歧）——未进入任何提交终态；④确认决策记录持久化归 project、凭据真伪校验归 project 命令服务（§4.8 数据边界——core 不越权）"
+}

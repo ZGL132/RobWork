@@ -982,6 +982,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.6 | 2026-09-11 | CORE-T04（≙WP-03-T04）落位登记：①§4.4/§5.4 QuantityKind 十四量纲＋R1 单位表 17 token＋UnitToken 句柄＋convert/tryConvert 唯一换算＋Quantity<K> 强类型与十四别名，按原文契约实现，接口零偏差；②实现取舍留痕：量纲检测以 tryValue 式双轨（convert 抛/tryConvert 空）各自独立实现；Quantity::isFinite 采用 NaN 自比较与无穷差分检测（无 <cmath> 依赖面）；③CR-06 遵守：本任务零 testkit 头消费（容差接口归 TK-T04/05 经 API diff 后） |
 | v0.7 | 2026-09-11 | CORE-T05（≙WP-03-T05）落位登记：①§4.5/§5.5 Tolerance/closeWithin（C4 公式＋零参考退化＋非有限拒绝）/allCloseWithin（vector＋Q 双重载——Q 经 __has_include 门控，冒烟豁免如实分记）/runtimeAbsoluteTolerance（C7 逐量纲转写）按原文契约实现，接口零偏差；②CR-06 消账输入产出：Compare 公式族与 testkit §5.3 Check 函数族的 API diff 前置已备（本任务零 testkit 消费——diff 由 TK-T04/05 ready 评审执行） |
 | v0.8 | 2026-09-11 | CORE-T06（≙WP-03-T06）落位登记：§4.7/§5.6 四词表（EvaluationMode 三值/TaskOutcome 四值/EngineeringStatus 四值/TaskState 九态）＋token 冻结映射按原文契约实现，接口零偏差；轴正交（Outcome 与 State 终态同名不同轴）以 static_assert＋无互转函数钉住；CR-01 遵守（词表承载零判定规则） |
+| v0.9 | 2026-09-11 | CORE-T07（≙WP-03-T07）落位登记：§4.8/§5.7 DiagCode 句法（^[A-Z0-9]+(-[A-Z0-9]+)*\$ ≤64）＋DiagnosticRecord 工厂（C-3 必填串非空）＋ComparativeFields/ComparativeValue（SourcedValue 承载复用——不适用/非法侧语义不另设）＋ConfirmableFinding（C-1 比较型强制＋C-2 凭据一致性＋状态机前置）按原文契约实现，接口零偏差；CR-08 遵守（core 仅承载句法——码值权威归 diagnostics StableCodeRegistry） |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 
