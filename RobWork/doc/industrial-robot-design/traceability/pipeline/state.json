@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-pipeline/1",
+  "phase": "paused",
+  "pausedReason": "初始暂停：CORE-T01 手动实施会话占用工作树（wp03-t01 分支）。树干净且回到 redesign-main 后，所有者说'恢复流水线'即可。",
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "attempts": { "implement": 0, "fix": 0 },
+  "history": [],
+  "policy": {
+    "autoMerge": { "enabled": false, "classes": [] },
+    "maxImplementRestarts": 2,
+    "maxFixCycles": 3,
+    "autoDiscovery": true
+  },
+  "queue": ["CORE-T01", "TK-T01", "WP-01-T01", "WP-00-T01", "DOC-T03", "WP-01-T02", "WP-00-T02"]
+}

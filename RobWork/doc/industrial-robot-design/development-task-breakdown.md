@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.7（Draft；横切契约补建与契约家族归属登记；v0.6 为三段式实施流程；v0.5 为全链一致性审计消账；v0.4 为分支约定同步；见 §7 变更记录） |
+| 文档版本 | v0.8（Draft；自动化流水线登记；v0.7 批次＝横切契约补建＋gtest 首装登记；v0.6 为三段式流程；v0.5 为全链审计消账；见 §7 变更记录） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
@@ -746,7 +746,8 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.5 | 2026-09-10 | 全链一致性审计消账：①§0.3 准入顺序机器化——TK/EV/RT/POL-T01 canonical 契约编码 dependsOn=["CORE-T01"]（配套 readiness 同步），§0.3 表述消除"仅为 CORE-T01"与"ready＋空前置可领取"的自相矛盾；②§0.3 服务侧计数修正（DIAG-T01/UI-T01 已 done，非"74 份均 planned"）；③WP-02-T11 悬空 ≙TK-T11 映射移除并登记 O-33（≙ 计数回归 73，与"六卡 73 任务"声明一致）；④O-31（ui.md 依赖三方矛盾）、O-32（PILOT/DEL 四条需求无架构 ID 级落点）登记入 §4.2；§6 统计更新为 O-01~O-33。不裁决 O-31/O-32/O-33，留对应所有者。 |
 | v0.6 | 2026-09-10 | 三段式实施流程确立：§5.7 会话流程由单会话循环改为**实施段（实施者，不得自行合入）→验收段（独立上下文验收者，对抗式核查）→合入段（所有者决策）**；新建 acceptance-protocol.md（文档代号 ACC，10 项验收清单、独立性要求、pass/fail 判据与 traceability/acceptance/ 记录格式）；AGENTS.md §6.4 同步改写。目的：实施/验收/裁决三权分立，消除"自实现自验证自宣布完成"的确认偏差。 |
 | v0.7 | 2026-09-10 | §4.4 gtest 定稿行回填首次安装版本：随 WP-03-T01（≙CORE-T01）实施段安装 `gtest:x64-windows@1.18.0` 并两模式接入成功（留痕 traceability/builds/wp03-t01/）。仅版本登记，不改 §5.5 机制本身。 |
-| v0.7 | 2026-09-10 | 横切契约补建与契约家族归属登记：①新建 tasks/ 根目录四份 canonical 契约——WP-00-T01（governance-log，ready）、WP-00-T02（追踪矩阵格式契约，ready＋dependsOn）、WP-01-T01（ird_gates 门禁，ready＋dependsOn CORE-T01，验收含 O-21 消账/O-12 处置）、WP-01-T02（CI 一键门禁，ready＋dependsOn）——消除 §6"无前置可启动"四任务与机器无契约的失配；②§8 登记契约家族归属（foundation/＝单元任务、tasks/ 根＝治理 DOC 族＋横切 WP 族，编号以本文为唯一来源不双轨）；③validate-task/validate-docs 的 taskId 句法扩展接受 WP-nn-Tkk；④foundation-tasks.json 入口索引 4 份 T01 的 dependsOn 同步为 ["CORE-T01"]（与 canonical 一致）。编码轨 CORE-T01 进行中，本修订与其 allowedFiles 零交集。 |
+| v0.7 | 2026-09-10 | 横切契约补建与契约家族归属登记：①新建 tasks/ 根目录四份 canonical 契约——WP-00-T01（governance-log，ready）、WP-00-T02（追踪矩阵格式契约，ready＋dependsOn）、WP-01-T01（ird_gates 门禁，ready＋dependsOn CORE-T01，验收含 O-21 消账/O-12 处置）、WP-01-T02（CI 一键门禁，ready＋dependsOn）——消除 §6"无前置可启动"四任务与机器无契约的失配；②§8 登记契约家族归属（foundation/＝单元任务、tasks/ 根＝治理 DOC 族＋横切 WP 族，编号以本文为唯一来源不双轨）；③validate-task/validate-docs 的 taskId 句法扩展接受 WP-nn-Tkk；④foundation-tasks.json 入口索引 4 份 T01 的 dependsOn 同步为 ["CORE-T01"]（与 canonical 一致）。编码轨 CORE-T01 进行中，本修订与其 allowedFiles 零交集。〔与同日另一 v0.7 行（gtest 版本登记）为并行小步修订，合称 v0.7 批次〕 |
+| v0.8 | 2026-09-10 | 自动化流水线登记：新建 automation-pipeline.md（文档代号 PIPE v1.0）——六态状态机（paused/idle/implementing/awaiting_acceptance/awaiting_merge/blocked）、五守卫（避让进行中会话、禁触 main、契约前置校验、异常即停）、tick 流程（实施/验收分别用全新子代理，验收者只给产物不给叙述）、返工熔断（maxFixCycles=3）与所有者授权分级（autoMerge 默认关闭，预授权须记录于 state.json policy）；状态载体 traceability/pipeline/state.json（初始 paused——CORE-T01 手动会话占用工作树）。§8 登记其地位：三段式流程的编排自动化，不改变任何纪律。 |
 
 
 
@@ -757,4 +758,4 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 
 ## 8. AI 子任务执行约定
 
-AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子目录）状态为 `ready` 的单份执行契约；索引 JSON 不是执行契约。**契约家族与编号归属（v0.7）**：单元任务契约位于 `tasks/foundation/`（taskId＝卡内编号，经 §2 ≙ 映射对应 WPnn-Tkk）；治理/横切任务契约位于 `tasks/` 根目录——治理文档族（DOC-T01~T03、FOUNDATION-CR-01，主 WP-A 的过程任务，无 §2 独立行）与横切任务族（WP-00-T01/T02、WP-01-T01/T02，2026-09-10 补建，taskId 即 §2 登记 WPnn-Tkk 编号）——两族均以本文 §2/§0.1 的登记为唯一编号来源，不双轨。单元任务行与 canonical 的前置必须同时满足。任务必须先通过 `scripts/industrialrobot/validate-task.ps1`，完成后运行 `verify-task.ps1`，并同步 `traceability/` 中的状态和映射。需求或架构语义发生变化时，任务必须转为 `blocked`，不得在代码中自行解释或修改上游文档。
+AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子目录）状态为 `ready` 的单份执行契约；索引 JSON 不是执行契约。**契约家族与编号归属（v0.7）**：单元任务契约位于 `tasks/foundation/`（taskId＝卡内编号，经 §2 ≙ 映射对应 WPnn-Tkk）；治理/横切任务契约位于 `tasks/` 根目录——治理文档族（DOC-T01~T03、FOUNDATION-CR-01，主 WP-A 的过程任务，无 §2 独立行）与横切任务族（WP-00-T01/T02、WP-01-T01/T02，2026-09-10 补建，taskId 即 §2 登记 WPnn-Tkk 编号）——两族均以本文 §2/§0.1 的登记为唯一编号来源，不双轨。单元任务行与 canonical 的前置必须同时满足。任务必须先通过 `scripts/industrialrobot/validate-task.ps1`，完成后运行 `verify-task.ps1`，并同步 `traceability/` 中的状态和映射。需求或架构语义发生变化时，任务必须转为 `blocked`，不得在代码中自行解释或修改上游文档。**自动化流水线（v0.8）**：三段式流程可经 automation-pipeline.md 编排自动化（定时 tick＋子代理实施/验收，状态载体 `traceability/pipeline/state.json`）——守卫避让进行中会话、返工熔断、合并决策默认所有者门控（预授权须记录于 state.json 的 policy）；流水线不改变本节任何纪律。
