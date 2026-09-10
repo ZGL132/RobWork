@@ -1,14 +1,19 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "paused",
-  "pausedReason": "CORE-T01 闭环完成（685c5f6→pass→合入 ad7bce6→契约 done 76f729a）；v1.3 治理修复合入后等待维护者\"恢复流水线\"。下一任务 TK-T01：首单元检查点豁免已收编 policy.unitCheckpointExemptFirstUnit。",
+  "pausedReason": "CORE-T01 闭环完成；v1.4 结构修复（原子锁/SHA 冻结/记录回传）已合入，等待维护者复查后\"恢复流水线\"。队首 TK-T01 已结构化，首单元豁免已消费（CORE-T01 手动合入即审核）。",
+  "tickCount": 0,
   "currentTask": null,
   "branch": null,
   "base": null,
+  "headSha": null,
+  "acceptedHead": null,
+  "acceptanceRecord": null,
+  "run": null,
   "attempts": { "implement": 0, "fix": 0 },
-  "heartbeat": { "updatedAt": "2026-09-10T13:14+08:00", "ticksNoProgress": 0 },
+  "heartbeat": { "updatedAt": "2026-09-10T14:40:00+08:00", "ticksNoProgress": 0 },
   "history": [
-    { "task": "CORE-T01", "unit": "core", "result": "pass-merged", "commits": ["ad7bce6"], "acceptanceRecord": "traceability/acceptance/（随手动会话产出）", "mergedAt": "2026-09-10" }
+    { "task": "CORE-T01", "unit": "core", "result": "pass-merged", "commits": ["ad7bce6"], "acceptanceRecord": "traceability/acceptance/CORE-T01-20260910.md", "mergedAt": "2026-09-10" }
   ],
   "policy": {
     "autoMerge": { "enabled": false, "classes": [] },
@@ -16,11 +21,20 @@
     "autoDiscovery": false,
     "unitCheckpoint": true,
     "unitCheckpointExemptFirstUnit": true,
+    "firstUnitCheckpointExempted": true,
     "noProgressLimit": 3,
     "maxImplementRestarts": 2,
-    "maxFixCycles": 3
+    "maxFixCycles": 3,
+    "leaseMinutes": { "implement": 120, "acceptance": 60 }
   },
-  "queue": ["TK-T01", "WP-01-T01", "WP-00-T01", "DOC-T03", "WP-01-T02", "WP-00-T02"],
+  "queue": [
+    { "taskId": "TK-T01", "contractPath": "tasks/foundation/TK-T01.json", "branch": "wp02-t01" },
+    { "taskId": "WP-01-T01", "contractPath": "tasks/WP-01-T01.json", "branch": "wp01-t01" },
+    { "taskId": "WP-00-T01", "contractPath": "tasks/WP-00-T01.json", "branch": "wp00-t01" },
+    { "taskId": "DOC-T03", "contractPath": "tasks/DOC-T03.json", "branch": "doc-t03" },
+    { "taskId": "WP-01-T02", "contractPath": "tasks/WP-01-T02.json", "branch": "wp01-t02" },
+    { "taskId": "WP-00-T02", "contractPath": "tasks/WP-00-T02.json", "branch": "wp00-t02" }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

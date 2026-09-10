@@ -23,6 +23,8 @@
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
     "一键脚本全量执行（门禁＋双模式构建＋全部 _test/_contract_test 目标）成功"
   ],
+  "branch": "wp01-t02",
+  "interUnit": false,
   "acceptance": [
     "每次提交可一键执行全部门禁与测试（ird_gates＋双模式构建＋全部 _test/_contract_test 目标）；CI 建成前本地一键脚本为强制门槛",
     "不引入 Python（本机无；用 cmake -P＋git）",

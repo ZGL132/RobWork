@@ -19,6 +19,8 @@
   ],
   "outputs": ["doc-update", "traceability-update"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "branch": "wp00-t02",
+  "interUnit": false,
   "acceptance": [
     "追踪矩阵格式契约覆盖 180 条主需求＋12 分期子项＋2 分级子级；矩阵计数与 REQUIREMENTS §4 统计一致",
     "首版生成物落 traceability/（DTB §3 为前身，可机读可复核）",

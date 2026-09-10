@@ -18,6 +18,12 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
+  "branch": "wp07-t01",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-02",
+    "CR-04"
+  ],
   "acceptance": [
     "两模式构建零错误；红线扫描零命中（无 Qt、无私有头出 include/、依赖图仅 core＋RobWork 边）",
     "gtest 按 development-task-breakdown §5.5 定稿接入（CR-07）"

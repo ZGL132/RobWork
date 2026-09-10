@@ -18,6 +18,8 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+  "branch": "wp03-t01",
+  "interUnit": false,
   "acceptance": [
     "两模式（独立冒烟＋集成）构建零错误；C++17 与基线共存验证留痕（P-ENV-1 消账）",
     "gtest 按 development-task-breakdown §5.5 定稿接入（P-ENV-2 已关闭，CR-07）",

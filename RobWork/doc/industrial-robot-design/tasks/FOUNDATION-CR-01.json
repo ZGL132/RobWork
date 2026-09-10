@@ -37,6 +37,7 @@
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
+  "interUnit": false,
   "acceptance": [
     "CR-01 至 CR-08 每项有结论",
     "无重复公共类型所有者",

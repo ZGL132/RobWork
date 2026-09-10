@@ -16,6 +16,7 @@
   ],
   "outputs": ["doc-update"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "interUnit": false,
   "acceptance": [
     "20 单元状态表与 unit-status.json 一致（五基础单元＝contract-review）",
     "示例命令路径指向 tasks/foundation/（根目录游离 CORE-T04.json 已删除）",

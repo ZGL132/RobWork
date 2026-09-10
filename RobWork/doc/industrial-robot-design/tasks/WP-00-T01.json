@@ -20,6 +20,8 @@
   ],
   "outputs": ["doc-update", "traceability-update"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "branch": "wp00-t01",
+  "interUnit": false,
   "acceptance": [
     "新建 governance-log.md：集中登记 11 张单元卡全部 P-* 待裁决项与 DTB §4 O-01~O-33，每项含编号/所有者/状态/消账留痕（逐卡核对零丢失）",
     "只登记流转、不裁决任何 P-*/O-* 项（裁决权归对应所有者——治理协调的基本纪律）",

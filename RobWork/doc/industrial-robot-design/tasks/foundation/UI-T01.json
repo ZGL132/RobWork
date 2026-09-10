@@ -18,6 +18,7 @@
   ],
   "outputs": ["unit-design-doc"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "interUnit": false,
   "acceptance": [
     "§2/§6.3/§7/§8 契约冻结；计算逻辑零入 ui；插件无私占全局快捷键",
     "卡含五区布局、七态投影映射、CommandRegistry/HotkeyBindingTable（SA-16）、DraftController、任务拆分"

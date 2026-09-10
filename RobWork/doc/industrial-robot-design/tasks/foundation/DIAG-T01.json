@@ -18,6 +18,7 @@
   ],
   "outputs": ["unit-design-doc"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "interUnit": false,
   "acceptance": [
     "十四节齐备；建议码全量收编登记；P-PR-6/P-EX-8 消账路径明确",
     "卡含 StableCodeRegistry 权威、两级日志接口、脱敏、诊断目录、公共头与任务拆分"

@@ -12,6 +12,8 @@
   "forbiddenFiles": ["RobWork/RobWorkStudio/src/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
   "outputs": ["completed-foundation-task-contracts", "readiness-audit-record"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1", "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T02.json"],
+  "branch": "doc-t03",
+  "interUnit": false,
   "acceptance": [
     "52 个 planned 基础任务逐项回填非空需求 ID、精确设计章节、真实前置、允许和禁止文件、完成态验证命令与验收条件",
     "只将前置已完成且接口交接已核对的任务改为 ready；其余保持 planned 或标为 blocked，并登记原因",

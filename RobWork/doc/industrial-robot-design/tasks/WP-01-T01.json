@@ -24,6 +24,9 @@
     "cmake --build build --config Release --target ird_gates",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
+  "branch": "wp01-t01",
+  "interUnit": false,
+  "knownPitfalls": ["O-21", "O-12"],
   "acceptance": [
     "R-1~R-5＋T-1/T-2＋SA-02 补丁核对全部实现（cmake -P 脚本模式＋git，零 Python）",
     "cmake --build build --target ird_gates 对骨架与已落位目标现状零命中（INTERFACE 占位目标无链接边，不产生表外边误报）",

@@ -18,6 +18,12 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+  "branch": "wp06-t01",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-02",
+    "CR-05"
+  ],
   "acceptance": [
     "两模式构建零错误；零 Qt/零单元边扫描通过；基线库链接清单留痕（P-RT-3 消账输入）",
     "gtest 按 development-task-breakdown §5.5 定稿接入（CR-07）"

@@ -97,7 +97,17 @@ foreach ($t in $tasks) {
     }
   }
 
-  # ③陷阱随契约走：跨单元任务必须显式登记已知语义陷阱（CCP §3；仅约束声明了 interUnit 的契约）
+  # ③陷阱随契约走（CCP §3）：interUnit 是编译产物必填字段——ready/done 契约缺失该字段即校验失败
+  #   （此前仅在恰为 true 时检查，139 份契约集体缺字段等于把守卫绕空——审核结论 P1-4 对策）；
+  #   planned 契约允许暂缺（未编译），但若存在必须为 bool。interUnit=true ⇒ knownPitfalls 必填。
+  $iuRequired = ($t.status -eq 'ready' -or $t.status -eq 'done')
+  if ($iuRequired -and $null -eq $t.interUnit) { throw "ready/done task missing required bool field interUnit (CCP §3): $($t.taskId)" }
+  if ($null -ne $t.interUnit -and $t.interUnit -isnot [bool]) { throw "interUnit must be bool, got '$($t.interUnit)': $($t.taskId)" }
+  # 任务分支字段（PIPE v1.4 §0.2 queue 结构化条目的唯一来源）：ready 必填（进队前提）；
+  # done 契约若为分支纪律之前的历史直会话执行可无 branch（如 FOUNDATION-CR-01 系），
+  # 但若存在必须句法合法。句法 <前缀>-t<序号>（小写）。
+  if ($t.status -eq 'ready' -and -not $t.branch) { throw "ready task missing required field branch (CCP §3): $($t.taskId)" }
+  if ($t.branch -and "$($t.branch)" -notmatch '^[a-z][a-z0-9]*-t[0-9]+$') { throw "invalid branch '$($t.branch)' (expect like wp03-t01 / doc-t03): $($t.taskId)" }
   if ($t.interUnit -eq $true) {
     # PS 细节：@($null).Count 为 1，须先滤空再判空，否则缺失字段会走错报错分支
     $pitfalls = @($t.knownPitfalls) | Where-Object { $null -ne $_ }

@@ -18,6 +18,12 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+  "branch": "wp02-t01",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-21",
+    "CR-06"
+  ],
   "crRefs": ["CR-07"],
   "acceptance": [
     "两模式构建零错误；数据根解析（env/默认/缺失三态）用例通过",
