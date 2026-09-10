@@ -1,17 +1,30 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "paused",
-  "pausedReason": "初始暂停：CORE-T01 手动实施会话占用工作树（wp03-t01 分支）。树干净且回到 redesign-main 后，所有者说'恢复流水线'即可。",
+  "pausedReason": "CORE-T01 已完整闭环（实现 685c5f6→验收 pass→合入 ad7bce6→契约 done 76f729a）。流水线 v1.1 加固完成，等待维护者'恢复流水线'。注意：下一任务 TK-T01 与 CORE-T01 同属前驱关系已满足，但单元检查点规则不适用于首个已完成单元的回看——直接从 TK-T01 开始。",
   "currentTask": null,
   "branch": null,
   "base": null,
   "attempts": { "implement": 0, "fix": 0 },
-  "history": [],
+  "heartbeat": { "updatedAt": "2026-09-10", "ticksNoProgress": 0 },
+  "history": [
+    { "task": "CORE-T01", "unit": "core", "result": "pass-merged", "commits": ["ad7bce6"], "acceptanceRecord": "traceability/acceptance/（随手动会话产出）", "mergedAt": "2026-09-10" }
+  ],
   "policy": {
     "autoMerge": { "enabled": false, "classes": [] },
+    "strictQueueOrder": true,
+    "autoDiscovery": false,
+    "unitCheckpoint": true,
+    "noProgressLimit": 3,
     "maxImplementRestarts": 2,
-    "maxFixCycles": 3,
-    "autoDiscovery": true
+    "maxFixCycles": 3
   },
-  "queue": ["CORE-T01", "TK-T01", "WP-01-T01", "WP-00-T01", "DOC-T03", "WP-01-T02", "WP-00-T02"]
+  "queue": ["TK-T01", "WP-01-T01", "WP-00-T01", "DOC-T03", "WP-01-T02", "WP-00-T02"],
+  "docRefs": {
+    "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
+    "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
+    "agents": "AGENTS.md",
+    "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
+    "taskContracts": "doc/industrial-robot-design/tasks/"
+  }
 }
