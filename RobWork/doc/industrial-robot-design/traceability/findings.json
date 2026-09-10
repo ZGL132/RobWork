@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-findings/1",
+  "note": "验收与治理发现跟踪登记册（PIPE v1.3 §7 / ACC v1.2 §5）：验收建议级问题必须逐条转登于此，只写进验收记录'留档'不构成闭环；每份验收记录的 4.8 核对未关闭条目。状态 open/fixed；severity 暂分 blocking/suggestion。",
+  "findings": [
+    {
+      "id": "F-001",
+      "source": "traceability/acceptance/CORE-T01-20260910.md#G-1",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-10",
+      "title": "verify-task.ps1 以 -File 调用失败：$PSScriptRoot 参与参数默认值求值异常致 RepoRoot 归约到盘根；行尾另有字面 \\n 输出瑕疵",
+      "resolution": "三段式仓库根解析（显式参数 > $PSScriptRoot > MyInvocation 回退）＋doc 目录存在性自检兜底；新增 -DryRun 供调用方式/环境自检；移除字面 \\n。-File 与 -Command &、pwsh 7 与 PowerShell 5.1 均实测一致。",
+      "fixedAt": "2026-09-10"
+    },
+    {
+      "id": "F-002",
+      "source": "traceability/acceptance/CORE-T01-20260910.md#G-2",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-10",
+      "title": "AGENTS.md §4.1 冒烟命令未同步：core 接入 find_package(GTest CONFIG REQUIRED) 后，无 toolchain 参数的裸冒烟命令配置失败",
+      "resolution": "AGENTS.md §4.1 冒烟命令补 -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake；PIPE 附录 B 实施者模板同步强调。",
+      "fixedAt": "2026-09-10"
+    },
+    {
+      "id": "F-003",
+      "source": "traceability/acceptance/CORE-T01-20260910.md#G-3",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-10",
+      "title": "units/core.md §10.2 P-ENV-1 行未翻转为已关闭（消账证据早已留痕，卡内状态滞后）",
+      "resolution": "P-ENV-1 已按 DTB §4.4 既定计划随 core.md v0.3 增量修订关闭，消账证据＝phase-one-validation.log＋CORE-T01 验收 4.2 独立复现。",
+      "fixedAt": "2026-09-10"
+    },
+    {
+      "id": "F-004",
+      "source": "traceability/acceptance/CORE-T01-20260910.md#G-4",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": "RWS 顶层全局 CMAKE_AUTOMOC 传播使 industrialrobot 各目标出现空转 MOC 步骤（实证零 Qt 依赖）",
+      "owner": "构建约定所有者（DTB §5.1 辖域）",
+      "resolution": "随后续单元落位任务评估目标级 CMAKE_AUTOMOC OFF 的构建收益（NFR-MNT-01 语义下倾向显式关闭）；涉及框架构建面时按 SA-02 先登记后改。"
+    },
+    {
+      "id": "F-005",
+      "source": "units/core.md 文末（本次 v1.3 治理修复中发现）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": "core.md 'AI 执行就绪补充'与'单元任务退出条件'两节存在转义损毁：$(core.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/validate-task.ps1'缺首字母（\\v 被吞）",
+      "owner": "详设所有者（units/core.md 辖域）",
+      "resolution": "随 core.md 下次增量修订重写该两节为可读文本（疑似历史写入时反斜杠转义被 shell/工具层吞掉，建议排查其他单元卡是否存在同型损毁）。"
+    }
+  ]
+}

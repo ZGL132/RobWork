@@ -19,7 +19,7 @@
   "designRefs": [
     "traceability/foundation-contract-review.md",
     "traceability/foundation-api-diff.md",
-    "DETAILED-DESIGN.md"
+    "DETAILED-DESIGN.md#20单元状态"
   ],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/**",

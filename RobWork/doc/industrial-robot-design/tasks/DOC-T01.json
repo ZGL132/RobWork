@@ -8,7 +8,7 @@
   "completedAt": "2026-09-10",
   "dependsOn": ["FOUNDATION-CR-01"],
   "requirements": ["NFR-MNT-01"],
-  "designRefs": ["DETAILED-DESIGN.md", "traceability/unit-status.json"],
+  "designRefs": ["DETAILED-DESIGN.md#20单元状态", "traceability/unit-status.json"],
   "allowedFiles": ["RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md"],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",

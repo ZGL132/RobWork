@@ -899,7 +899,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | P-AR-1 | ARCHITECTURE §3.5"io→core，diagnostics｜接口依赖｜SafePath/BudgetGuard 类型、导入诊断"与 §7.9/§3.1（SafePath/BudgetGuard 为 io 设施）表述含混：依赖表"用途"列可读作"SafePath/BudgetGuard 类型在 core" | 若按依赖表读法，core 需增两个安全设施类型，与"core 不拥有 io 防护"的分层叙述冲突 | 按本文 §2.4 执行：SafePath/BudgetGuard 类型与实现均归 io（仅 io 消费，无共享必要）；core 只向 io 提供 ObjectId 等身份类型；待架构侧在依赖表澄清措辞 | 架构所有者（本文已按建议设计，**不新增反向依赖**，裁决不改 core 现设计） |
 | P-AR-2 | ARCHITECTURE v0.11 状态 `Draft` 待评审；本文以其为基线 | 评审结论可能要求同步 | 评审后按影响面增量修订本文并留痕 | 架构所有者 |
 | P-D-1 | EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core，是对 ARCH §3.1"评估语义"＋依赖拓扑的解释性落地（§4.7 论证） | evidence/execution/diagnostics/ui 详设若另作安排（如全数移入 evidence），core 需迁移词表 | 维持本文方案；evidence.md 与 execution.md 起草时交叉核对（diagnostics 仅依赖 core 是硬约束） | 详设所有者（evidence/execution 任务卡）；不涉需求语义，无需需求变更 |
-| P-ENV-1 | industrialrobot 目标显式 C++17 在 RobWorkStudio 构建树内的共存（基线 C++11、MSVC 2022） | 构建失败即阻塞 CORE-T01 起全部任务 | CORE-T01 双模式（独立冒烟＋集成）构建验证并留痕；失败则回落 C++14（`std::optional/variant` 需替换方案——`std::experimental` 不可靠，届时以设计变更评审替代方案） | 构建负责人（WP-01 侧）确认 |
+| P-ENV-1 | **已关闭（2026-09-10，findings F-003）**：sdurws_ird_core（C++17 STATIC）与 sdurw_math/common（C++11 dll）同树混链构建零错误，C++17/基线共存成立 | （已消除）原"混链失败即阻塞 CORE-T01 起全部任务"风险 | 消账证据：CORE-T01 实施段留痕（traceability/builds/wp03-t01/、phase-one-validation.log 消账段）＋CORE-T01 验收 4.2 验收者独立复现（traceability/acceptance/CORE-T01-20260910.md）；回落 C++14 预案未启用，留档备查 | 构建负责人（验收独立复现即确认） |
 | P-ENV-2 | **已关闭（2026-09-10，CR-07）**：`_test` 目标 gtest 接入机制定稿——development-task-breakdown v0.2 §5.5：vcpkg 安装（`gtest:x64-windows`）＋`find_package(GTest CONFIG REQUIRED)`，失败即停；不消费从未生成的 `RW::gtest`（实测 USE_gtest=OFF、`RobWork/cmake/gtestTargets.cmake` 不存在） | （已消除）原测试目标注册方式悬空 | 按 §5.5 执行；安装与版本登记随 TK-T01（≙WP-02-T01），CORE-T01 仅按机制注册目标 | 构建约定所有者（已定稿） |
 | P-AR-3 | "证据等级"（EVI-01 措辞）除 EvaluationMode 外是否另有独立等级词表 | 若有且被 diagnostics/ui 消费，则需在 core 增词表；若仅为模式效力（§8.1 表 1），则现状足够 | 本文按"等级＝模式效力"理解（不新增）；evidence.md 起草时确认，必要时走本文增量修订 | evidence 详设所有者＋需求侧澄清 |
 
@@ -976,6 +976,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | --- | --- | --- |
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）完成 12 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失）；登记待裁决 6 项（P-AR-1～3、P-ENV-1～2、P-D-1 归入待核对）；实现任务 CORE-T01～T10 |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查（CR-01/02/06/07/08 均通过，词表/摘要/比较/错误契约被四个消费单元按原文对齐——差异记录见 traceability/foundation-api-diff.md）：P-ENV-2 关闭（gtest 定稿＝vcpkg＋find_package(GTest CONFIG REQUIRED)，不消费从未生成的 RW::gtest）；CORE-T01 行 gtest 引用改指 development-task-breakdown §5.5；本文接口无修改 |
+| v0.3 | 2026-09-10 | P-ENV-1 关闭（findings F-003 消账）：C++17/基线混链经 CORE-T01 双模式构建＋验收独立复现证实成立，回落 C++14 预案留档不用；仅 §10.2 状态行翻转，接口与任务行零修改 |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 

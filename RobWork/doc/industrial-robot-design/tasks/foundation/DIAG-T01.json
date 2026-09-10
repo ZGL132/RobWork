@@ -8,7 +8,7 @@
   "completedAt": "2026-09-10",
   "dependsOn": [],
   "requirements": ["ERR-01", "UX-03"],
-  "designRefs": ["units/diagnostics.md"],
+  "designRefs": ["units/diagnostics.md#11"],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/diagnostics.md"
   ],

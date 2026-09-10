@@ -7,7 +7,7 @@
   "status": "ready",
   "dependsOn": ["WP-00-T01"],
   "requirements": ["P-02"],
-  "designRefs": ["REQUIREMENTS.md#附录C", "REQUIREMENTS.md#4", "development-task-breakdown.md#3"],
+  "designRefs": ["REQUIREMENTS.md#24", "REQUIREMENTS.md#4", "development-task-breakdown.md#3"],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/traceability/**",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
