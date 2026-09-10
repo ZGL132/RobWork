@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T01",
+  "masterWp": "WP-06-T01",
+  "branch": "wp06-t01",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "INTERFACE 占位升级为 STATIC（C++17、/utf-8、R-2 头根）；PUBLIC 链 sdurws_ird_core＋L1 基线库（集成模式：sdurw_kinematics、sdurw_models、sdurwsim——P-RT-3 清单）；冒烟模式零基线链接（占位实现零 rw 引用）；配置期守卫（其他单元目标/Qt 即 fatal）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "test/BuildRedLineTest.cpp（红线扫描四用例＋L1 清单钉住）；IRD_RUNTIME_BASELINE_LIBS 经逗号分隔注入（MSVC define 分号分隔坑——CMake \\; 转义在引号内未生效，逗号方案绕过并留痕）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild",
+      "designRef": "units/runtime.md §3.2/§3.4、§12 RT-T01、DTB §4.6/§4.5",
+      "cases": [
+        { "name": "RuntimeBuild.SourceTreeReachable_RT_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（include 保留位 README＋src 非空——落位期无公共头形态）" },
+        { "name": "RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头扫描）" },
+        { "name": "RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面 sdurws/ird/* 白名单＝{core, runtime}——ARCH §3.5 唯一单元边）" },
+        { "name": "RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "P-RT-3 消账输入：集成模式断言清单含 sdurw_kinematics/sdurw_models/sdurwsim 且零 gtest（D-06）；冒烟模式断言清单为空——双分支强断言" }
+      ]
+    }
+  ],
+  "summary": { "total": 4, "passed": 4, "failed": 0, "modes": { "smoke": "4/4", "integration": "4/4" } },
+  "failureCapabilitySelfCheck": {
+    "method": "清单漏登探针：临时把 IRL_BASELINE_LIBS 的 sdurwsim 移除并重新配置后重编译；探针验证后清除并终验复绿",
+    "result": "BaselineLibsPinned_RT_BUILD_P_RT_3 如期变红（基线库漏登必被清单钉住用例捕获）；恢复后 4/4 复绿",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp06-t01/smoke-configure.log",
+      "traceability/builds/wp06-t01/smoke-build.log",
+      "traceability/builds/wp06-t01/smoke-test-run.log",
+      "traceability/builds/wp06-t01/sdurws_ird_runtime_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp06-t01/integration-build.log",
+      "traceability/builds/wp06-t01/integration-fullbuild.log",
+      "traceability/builds/wp06-t01/integration-test-run.log",
+      "traceability/builds/wp06-t01/sdurws_ird_runtime_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_runtime_test ——通过（集成模式 exit 0）",
+  "notes": "P-RT-3 消账输入（基线库链接清单实测留痕）：①集成模式 L1 实际链接清单＝sdurw_kinematics＋sdurw_models＋sdurwsim（名称链接）＋sdurw_math（经 core PUBLIC 传递）——与 DTB §4.6 实测表 runtime 行一致，目标名零偏差；②sdurwsim 目标因顶层配置顺序（RobWorkStudio 先于 RobWorkSim）在 industrialrobot 配置点不存在——if(TARGET sdurwsim) 恒假，故 kinematics/models 用 TARGET 探测（集成/冒烟判定）、sdurwsim 按名称链接（生成期解析）——该顺序约束留痕供后续单元（dynamics 等）参考；③MSVC 预处理器定义含分号会被 vcxproj 拆分——清单注入用逗号分隔绕过（CMake \\; 转义在带引号 define 内未生效，实测留痕）；④运行期 DLL（rw/rwsim 动态库）由 TARGET_RUNTIME_DLLS 经链接传播自动拷贝"
+}

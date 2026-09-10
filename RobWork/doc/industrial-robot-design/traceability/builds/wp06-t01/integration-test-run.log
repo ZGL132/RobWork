@@ -1,0 +1,17 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RuntimeBuild
+[ RUN      ] RuntimeBuild.SourceTreeReachable_RT_BUILD
+[       OK ] RuntimeBuild.SourceTreeReachable_RT_BUILD (0 ms)
+[ RUN      ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01
+[       OK ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2
+[       OK ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2 (0 ms)
+[ RUN      ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3
+[       OK ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3 (0 ms)
+[----------] 4 tests from RuntimeBuild (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
