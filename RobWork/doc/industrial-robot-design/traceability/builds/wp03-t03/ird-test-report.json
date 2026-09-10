@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T03",
+  "masterWp": "WP-03-T03",
+  "branch": "wp03-t03",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Provenance.cpp（token 映射＋ValueProvenance::make 校验：P-1/对象保留值/methodTag 语法）；SourcedValue<T> 模板在 Provenance.hpp 内联（值语义四态）"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/ProvenanceTest.cpp（UT-MISS 九用例）；既有 23 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ProvenanceMake/ProvenanceTokens",
+      "designRef": "units/core.md §4.3/§5.3（工厂校验＋token 冻结表）",
+      "cases": [
+        { "name": "ProvenanceMake.ValidConstructions_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "合法构造：仅类别／对象＋版本＋方法标记（P-1 满足）" },
+        { "name": "ProvenanceMake.P1InvariantEnforced_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "P-1：版本无对象拒绝；保留值（全零）对象拒绝；前缀 core/provenance/p1" },
+        { "name": "ProvenanceMake.MethodTagSyntax_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "语法：空/超 64/空白拒绝；大写与合法字符集通过（字符集放宽偏差——core.md v0.5）" },
+        { "name": "ProvenanceTokens.Roundtrip_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "五枚举↔冻结 token 双向往返＋未知 token 拒绝" }
+      ]
+    },
+    {
+      "suite": "SourcedValueStates（UT-MISS 核心）",
+      "designRef": "units/core.md §4.3 四态表/§8 UT-MISS（NFR-COR-03）",
+      "cases": [
+        { "name": "SourcedValueStates.FourStateMatrix_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "四态矩阵逐行：Provided 全可用／NotProvided·NotApplicable·Invalid 的 value() 抛／Invalid 保留原串／非 Invalid 态 invalidRawInput 抛" },
+        { "name": "SourcedValueStates.MissingNeverBecomesZero_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "『缺失不转零』不变量：NotProvided（含默认构造）取值必抛——类型层切断『缺失＝零』通道" },
+        { "name": "SourcedValueStates.EmptyRawInputRejected_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "Invalid 空原串拒绝（前缀 core/provenance/invalid）" },
+        { "name": "SourcedValueStates.EqualitySemantics_UT_MISS", "status": "passed", "modes": ["smoke", "integration"], "trace": "相等语义分态：Provided 比值＋来源；Invalid 比原串；空态互等；显式 0.0 与缺失不等" }
+      ]
+    },
+    {
+      "suite": "既有回归（Identity/Digest/BuildRedLine/约定与值语义）",
+      "designRef": "units/core.md §8",
+      "cases": [
+        { "name": "既有 22 用例（含 CORE-T02 九＋CORE-T09 六＋红线等）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 31, "passed": 31, "failed": 0, "modes": { "smoke": "31/31", "integration": "31/31" } },
+  "failureCapabilitySelfCheck": {
+    "method": "『缺失转零』探针：临时把 tryValue 的 NotProvided 守卫替换为直接返回占位值后重编译执行；探针验证后清除并终验复绿",
+    "result": "MissingNeverBecomesZero_UT_MISS 如期变红（缺失转零通道一旦打开必被不变量用例捕获）；恢复后 31/31 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t03/smoke-configure.log",
+      "traceability/builds/wp03-t03/smoke-build.log",
+      "traceability/builds/wp03-t03/smoke-test-run.log",
+      "traceability/builds/wp03-t03/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t03/integration-build.log",
+      "traceability/builds/wp03-t03/integration-fullbuild.log",
+      "traceability/builds/wp03-t03/integration-test-run.log",
+      "traceability/builds/wp03-t03/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式 exit 0）",
+  "notes": "①登记偏差（core.md v0.5）：methodTag 字符集放宽至 [A-Za-z0-9./_-]——§4.3 卡内自例含大写与原小写限定自相矛盾，UT-MISS 同步（详设所有者裁决定格）；②CR-01 遵守：core 公共类型未做语义改写，变更通道＝foundation-api-diff 冻结流程；③调试过程发现并修复 CMake 接入的 CRLF 替换失效（ProvenanceTest 未编入导致旧 exe 假绿——已以 gtest_list_tests 实证修复后 31 用例在位）与探针 sed 对 value() 的结构破坏（已复原）——均在终态前解决并如实记录"
+}
