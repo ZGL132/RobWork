@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "实现约定锁定与值语义测试（UT-CONV/UT-VAL）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T01"
   ],
