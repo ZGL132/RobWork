@@ -898,10 +898,10 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | --- | --- | --- | --- | --- |
 | P-AR-1 | ARCHITECTURE §3.5"io→core，diagnostics｜接口依赖｜SafePath/BudgetGuard 类型、导入诊断"与 §7.9/§3.1（SafePath/BudgetGuard 为 io 设施）表述含混：依赖表"用途"列可读作"SafePath/BudgetGuard 类型在 core" | 若按依赖表读法，core 需增两个安全设施类型，与"core 不拥有 io 防护"的分层叙述冲突 | 按本文 §2.4 执行：SafePath/BudgetGuard 类型与实现均归 io（仅 io 消费，无共享必要）；core 只向 io 提供 ObjectId 等身份类型；待架构侧在依赖表澄清措辞 | 架构所有者（本文已按建议设计，**不新增反向依赖**，裁决不改 core 现设计） |
 | P-AR-2 | ARCHITECTURE v0.11 状态 `Draft` 待评审；本文以其为基线 | 评审结论可能要求同步 | 评审后按影响面增量修订本文并留痕 | 架构所有者 |
-| P-D-1 | EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core，是对 ARCH §3.1"评估语义"＋依赖拓扑的解释性落地（§4.7 论证） | evidence/execution/diagnostics/ui 详设若另作安排（如全数移入 evidence），core 需迁移词表 | 维持本文方案；evidence.md 与 execution.md 起草时交叉核对（diagnostics 仅依赖 core 是硬约束） | 详设所有者（evidence/execution 任务卡）；不涉需求语义，无需需求变更 |
+| P-D-1 | **已关闭（2026-09-11，CORE-T10 五卡交叉核对）**：EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core 经全部消费卡承接确认——evidence.md §3.4（"词表归 core、等级＝模式效力"回复）、runtime.md §3.2 消费清单、execution.md §5.1（按上游九态）、ui.md §6.3（UX-10 七态以 core 词表为语义源）、diagnostics 依赖拓扑（仅依赖 core）均按 core 承接，无迁移诉求 | （已消除）词表迁移返工风险 | 消账证据：五卡 designRefs 锚点＋§4.7 归属论证＋governance-log.md §1.1 同源登记（O-24 联动） | 详设所有者（五卡交叉核对事实确认） |
 | P-ENV-1 | **已关闭（2026-09-10，findings F-003）**：sdurws_ird_core（C++17 STATIC）与 sdurw_math/common（C++11 dll）同树混链构建零错误，C++17/基线共存成立 | （已消除）原"混链失败即阻塞 CORE-T01 起全部任务"风险 | 消账证据：CORE-T01 实施段留痕（traceability/builds/wp03-t01/、phase-one-validation.log 消账段）＋CORE-T01 验收 4.2 验收者独立复现（traceability/acceptance/CORE-T01-20260910.md）；回落 C++14 预案未启用，留档备查 | 构建负责人（验收独立复现即确认） |
 | P-ENV-2 | **已关闭（2026-09-10，CR-07）**：`_test` 目标 gtest 接入机制定稿——development-task-breakdown v0.2 §5.5：vcpkg 安装（`gtest:x64-windows`）＋`find_package(GTest CONFIG REQUIRED)`，失败即停；不消费从未生成的 `RW::gtest`（实测 USE_gtest=OFF、`RobWork/cmake/gtestTargets.cmake` 不存在） | （已消除）原测试目标注册方式悬空 | 按 §5.5 执行；安装与版本登记随 TK-T01（≙WP-02-T01），CORE-T01 仅按机制注册目标 | 构建约定所有者（已定稿） |
-| P-AR-3 | "证据等级"（EVI-01 措辞）除 EvaluationMode 外是否另有独立等级词表 | 若有且被 diagnostics/ui 消费，则需在 core 增词表；若仅为模式效力（§8.1 表 1），则现状足够 | 本文按"等级＝模式效力"理解（不新增）；evidence.md 起草时确认，必要时走本文增量修订 | evidence 详设所有者＋需求侧澄清 |
+| P-AR-3 | **已关闭（2026-09-11，CORE-T10 核对）**："证据等级"（EVI-01）确认无独立等级词表——evidence.md §3.4 已按"等级＝模式效力"回复（EvidenceProfile 承载分层效力，EvaluationMode 即模式枚举），diagnostics/ui 均未请求新增词表 | （已消除）core 增词表的不确定性 | 消账证据：evidence.md §3.4 回复行＋ui.md §6.3（UX-10 消费 EvaluationMode 七态投影——实为九态，见 CF-3）＋governance-log.md §1.1 同源登记 | evidence 详设所有者（回复已落卡）＋需求侧（澄清留档不再阻塞） |
 
 ### 10.3 下游交接清单（后续单元详设的直接输入）
 
@@ -984,6 +984,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.8 | 2026-09-11 | CORE-T06（≙WP-03-T06）落位登记：§4.7/§5.6 四词表（EvaluationMode 三值/TaskOutcome 四值/EngineeringStatus 四值/TaskState 九态）＋token 冻结映射按原文契约实现，接口零偏差；轴正交（Outcome 与 State 终态同名不同轴）以 static_assert＋无互转函数钉住；CR-01 遵守（词表承载零判定规则） |
 | v0.9 | 2026-09-11 | CORE-T07（≙WP-03-T07）落位登记：§4.8/§5.7 DiagCode 句法（^[A-Z0-9]+(-[A-Z0-9]+)*\$ ≤64）＋DiagnosticRecord 工厂（C-3 必填串非空）＋ComparativeFields/ComparativeValue（SourcedValue 承载复用——不适用/非法侧语义不另设）＋ConfirmableFinding（C-1 比较型强制＋C-2 凭据一致性＋状态机前置）按原文契约实现，接口零偏差；CR-08 遵守（core 仅承载句法——码值权威归 diagnostics StableCodeRegistry） |
 | v0.10 | 2026-09-11 | CORE-T08（≙WP-03-T08）落位登记：①§4.9/§5.8 四类领域事件（RevisionCommitted/DependencyInvalidated/TaskStatusChanged/ResultArchived——token 冻结）＋四载荷（首修订无 parent；失效不携带对象清单；归档不携带路径——防 DTO 膨胀）＋DomainEvent 工厂（kind↔variant 一致性由构造路径保证）＋访问守卫（错配抛 core/events/kind-payload）按原文契约实现；②总线/sink/订阅接口归 core，实现归 execution·ui（L5 注入）；③测试内参考总线 ReferenceEventBus（FIFO/幂等退订/多订阅）为 §5.8 语义钉子——不进产品链接面（T-1 由生产面扫描钉住） |
+| v0.11 | 2026-09-11 | CORE-T10（≙WP-03-T10）文档与门禁同步：①README 落位状态更新（九公共头模块＋测试体清单——任务指向零偏差核对）；②§10.2 P-D-1/P-AR-3 事实性关闭（五消费卡交叉核对＋evidence §3.4 回复落卡，引用 governance-log §1.1/O-24 同源）；③UT-BUILD 并入 CI 建议：已由 WP-01-T02 交付的 gate-all.ps1＋ci/ 模板承载（红线扫描与 UT-BUILD 同源——消账至 wp01-t02 交付记录，WP-01-T02 已 done 无需再提交）；④P-AR-1/P-AR-2 维持 open（架构所有者）；⑤head 公共头清单：Errors/Identity/Digest/Provenance/Units/Compare/Evaluation/DiagData/Events 九模块 |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 
