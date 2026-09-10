@@ -101,6 +101,16 @@
       "status": "open",
       "title": "gate-all.ps1 在非主树检出（worktree/全新克隆）无法全量运行：vcpkg toolchain/Qt 前缀/ini 模板环境前置缺失（F-007 同类链）",
       "resolution": "建议 -Toolchain 参数化＋VCPKG_ROOT 回退；CI 侧供给由 eb777e2 供给链承载（模板已固化于 scripts/industrialrobot/ci/，激活随 O-34）；本地全新树口径随 F-007 一并处置"
+    },
+    {
+      "id": "F-012",
+      "source": "traceability/acceptance/DOC-T04-20260911.md#4.9-G-1（attempt 1，送验对象 15249151f）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "DOC-T04 送验提交 1524915 标题『编译留痕逐份登记放行＋readiness/发现登记册同步』非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求；正文四段齐备、验证结论与留痕一致（无粉饰），纯风格瑕疵。仓库先例 7f74002（POL-T01 合入收尾）同型，判例不一导致口径漂移",
+      "owner": "实施纪律（DTB §5 会话流程所有者）：后续实施/治理提交标题以动词开头；不追溯改写已推送历史（AGENTS §6.3）",
+      "resolution": "①后续提交自查标题以动词开头；②在 DTB §5.1 或 PIPE 附录 C 模板补一句提交标题示例口径，消除『名词短语标题』与『动词开头』并存的判例分歧。编号说明：F-011 已由送验对象 doc-t04 分支（15249151f，未合入 redesign-main）预留，本条跳号至 F-012 防合并撞车，合入时由所有者确认终号。"
     }
   ]
 }
