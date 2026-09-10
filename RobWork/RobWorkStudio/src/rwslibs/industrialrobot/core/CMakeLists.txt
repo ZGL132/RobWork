@@ -74,7 +74,8 @@ enable_testing()
 add_executable(sdurws_ird_core_test
     test/BuildRedLineTest.cpp
     test/IdentityTest.cpp
-    test/DigestTest.cpp)
+    test/DigestTest.cpp
+    test/ConventionValueSemanticsTest.cpp)
 target_compile_features(sdurws_ird_core_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_core_test PROPERTIES
     CXX_STANDARD 17
