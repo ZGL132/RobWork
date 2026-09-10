@@ -6,7 +6,7 @@
   "branch": null,
   "base": null,
   "attempts": { "implement": 0, "fix": 0 },
-  "heartbeat": { "updatedAt": "2026-09-10", "ticksNoProgress": 0 },
+  "heartbeat": { "updatedAt": "2026-09-10T11:55+08:00", "ticksNoProgress": 0 },
   "history": [
     { "task": "CORE-T01", "unit": "core", "result": "pass-merged", "commits": ["ad7bce6"], "acceptanceRecord": "traceability/acceptance/（随手动会话产出）", "mergedAt": "2026-09-10" }
   ],
