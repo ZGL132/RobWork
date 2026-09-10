@@ -6,26 +6,30 @@
       "unit": "project",
       "design": "units/project.md",
       "taskIds": [
-        "PRJ-T01"
+        "PRJ-T10",
+        "PRJ-T13",
+        "PRJ-T15"
       ],
       "acceptanceIds": [
         "AT-10"
       ],
       "masterWp": "WP-C",
-      "status": "specified"
+      "status": "specified",
+      "taskNote": "主责任务＝WP-04-T10/T13/T15（≙PRJ-T10/T13/T15，DTB §3）；PRJ-T01 仅为构建落位，不承载需求语义"
     },
     {
       "requirementId": "KIN-01",
       "unit": "kinematics",
-      "design": "units/kinematics.md",
+      "design": "（未产出——kinematics.md 随 WP-15-T01 编写任务产生）",
       "taskIds": [
-        "KIN-T01"
+        "WP-15-T03"
       ],
       "acceptanceIds": [
         "AT-03"
       ],
       "masterWp": "WP-F",
-      "status": "planned"
+      "status": "planned",
+      "taskNote": "主责任务＝WP-15-T03（DTB §3）；卡内编号（KIN-Txx）待 kinematics.md 产出后经 ≙ 映射对接，此前不存在 KIN-T01 编号（2026-09-10 修正幽灵引用）"
     },
     {
       "requirementId": "NFR-MNT-01",
@@ -45,52 +49,68 @@
       "unit": "evidence",
       "design": "units/evidence.md",
       "taskIds": [
-        "EV-T01"
+        "EV-T05",
+        "EV-T06"
       ],
       "acceptanceIds": [
         "AT-03"
       ],
       "masterWp": "WP-C",
-      "status": "specified"
+      "status": "specified",
+      "taskNote": "主责任务＝WP-05-T05/T06（≙EV-T05/T06，DTB §3）；EV-T01 仅为构建落位"
     },
     {
       "requirementId": "ARC-05",
       "unit": "policy",
       "design": "units/policy.md",
       "taskIds": [
-        "POL-T01"
+        "POL-T02",
+        "POL-T03",
+        "POL-T04",
+        "POL-T05",
+        "POL-T06",
+        "POL-T07",
+        "POL-T08",
+        "POL-T09"
       ],
       "acceptanceIds": [
         "AT-19"
       ],
       "masterWp": "WP-C",
-      "status": "specified"
+      "status": "specified",
+      "taskNote": "主责任务＝WP-07-T02~T09（≙POL-T02~T09，DTB §3）；POL-T01 仅为构建落位"
     },
     {
       "requirementId": "ARC-03",
       "unit": "runtime",
       "design": "units/runtime.md",
       "taskIds": [
-        "RT-T01"
+        "RT-T04",
+        "RT-T07",
+        "RT-T11"
       ],
       "acceptanceIds": [
         "AT-37"
       ],
       "masterWp": "WP-C",
-      "status": "specified"
+      "status": "specified",
+      "taskNote": "主责任务＝WP-06-T04/T07/T11（≙RT-T04/T07/T11，DTB §3）；RT-T01 仅为构建落位"
     },
     {
       "requirementId": "NFR-COR-01",
       "unit": "testkit",
       "design": "units/testkit.md",
       "taskIds": [
-        "TK-T01"
+        "TK-T03",
+        "TK-T04",
+        "TK-T05"
       ],
       "acceptanceIds": [
         "AT-16"
       ],
       "masterWp": "WP-B",
-      "status": "specified"
+      "status": "specified",
+      "taskNote": "主责任务＝WP-02-T03~T05（≙TK-T03/T04/T05，DTB §3）；TK-T01 仅为构建落位"
     },
     {
       "requirementId": "TASK-01",
@@ -133,11 +153,12 @@
       "unit": "ui",
       "design": "units/ui.md",
       "taskIds": [
-        "UI-T03"
+        "UI-T09"
       ],
       "acceptanceIds": [],
       "masterWp": "WP-I",
       "status": "specified",
+      "taskNote": "主责任务＝WP-10-T09（≙UI-T09，DTB §3）＋WP-22-T03（门控规则数据源，workflow 未产出→桩）；原 UI-T03 为误配（2026-09-10 修正）",
       "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
     },
     {
@@ -153,5 +174,5 @@
       "verificationRef": "对应单元任务行验证列；不虚构系统 AT 映射"
     }
   ],
-  "coverageNote": "导航摘要，非全量验收覆盖声明；完整权威映射见 development-task-breakdown.md §3 与 units 各追踪矩阵；单元全量任务见 traceability/phase-one-task-index.json。"
+  "coverageNote": "导航摘要，非全量验收覆盖声明；完整权威映射见 development-task-breakdown.md §3 与 units 各追踪矩阵；单元全量任务见 traceability/phase-one-task-index.json。taskIds 一律取 DTB §3 主责任务（经 ≙ 映射换算为卡内编号；未产出卡以 WP 编号承载并注明），构建落位任务（各 T01）不作为需求承载。"
 }

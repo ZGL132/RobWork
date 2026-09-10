@@ -1,6 +1,26 @@
 {
   "schemaVersion": "ird-dependency-graph/1",
+  "note": "数据源：ARCHITECTURE.md §3.5 有向边表（全量 20 条接口依赖边）。testkit→core（仅测试目标可用）未入 ARCH §3.5（P-TK-4 / DTB §4 O-21 登记），故不在此列；事件总线/命令上下文回调节点为运行时注入形态，无编译期边。",
   "edges": [
-    {"from":"evidence","to":"core","kind":"interface"},{"from":"policy","to":"core","kind":"interface"},{"from":"runtime","to":"core","kind":"interface"},{"from":"project","to":"core","kind":"interface"},{"from":"project","to":"diagnostics","kind":"interface"},{"from":"execution","to":"core","kind":"interface"},{"from":"execution","to":"evidence","kind":"interface"},{"from":"execution","to":"diagnostics","kind":"interface"},{"from":"execution","to":"project","kind":"interface"}
+    {"from":"evidence","to":"core","kind":"interface"},
+    {"from":"policy","to":"core","kind":"interface"},
+    {"from":"runtime","to":"core","kind":"interface"},
+    {"from":"drivetrain","to":"core","kind":"interface"},
+    {"from":"drivetrain","to":"evidence","kind":"interface"},
+    {"from":"diagnostics","to":"core","kind":"interface"},
+    {"from":"project","to":"core","kind":"interface"},
+    {"from":"project","to":"diagnostics","kind":"interface"},
+    {"from":"execution","to":"core","kind":"interface"},
+    {"from":"execution","to":"evidence","kind":"interface"},
+    {"from":"execution","to":"diagnostics","kind":"interface"},
+    {"from":"execution","to":"project","kind":"interface"},
+    {"from":"io","to":"core","kind":"interface"},
+    {"from":"io","to":"diagnostics","kind":"interface"},
+    {"from":"reporting","to":"core","kind":"interface"},
+    {"from":"reporting","to":"evidence","kind":"interface"},
+    {"from":"reporting","to":"diagnostics","kind":"interface"},
+    {"from":"reporting","to":"project","kind":"interface"},
+    {"from":"ui","to":"core","kind":"interface"},
+    {"from":"ui","to":"diagnostics","kind":"interface"}
   ]
 }
