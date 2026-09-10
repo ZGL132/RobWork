@@ -83,7 +83,7 @@
       "resolution": "全新克隆/CI 全量构建的阻断前置：典型修法为该插件目标加 NOMINMAX 或调整 include 顺序（框架侧改动须先登记 patch）；WP-01-T02（CI 一键门禁）消费本项，ired 范围内任务（含 TK-T01）不受影响——任务目标两模式从零复现零错误。"
     },
     {
-      "id": "F-009",
+      "id": "F-010",
       "source": "traceability/acceptance/WP-01-T01-20260910.md#4.9-4.10",
       "severity": "suggestion",
       "status": "open",
