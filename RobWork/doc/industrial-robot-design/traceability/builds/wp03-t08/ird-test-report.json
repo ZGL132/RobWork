@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T08",
+  "masterWp": "WP-03-T08",
+  "branch": "wp03-t08",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Events.cpp（四工厂 kind↔variant 一致性＋访问守卫＋参考总线 FIFO/退订）；Events.hpp 含四载荷/DomainEvent/三接口/参考总线"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/EventsTest.cpp（UT-EVT 八用例）；既有 57 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EventPayload/EventValue（UT-EVT）",
+      "designRef": "units/core.md §4.9/§5.8/§8 UT-EVT（TASK-03 五元组）",
+      "cases": [
+        { "name": "EventPayload.KindConsistency_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "四类载荷构造 kind/variant/访问器一致（首修订无 parent；失效不带清单；归档不带路径——§4.9 防 DTO 膨胀）＋token 往返" },
+        { "name": "EventPayload.AccessorGuardThrows_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "访问守卫：kind 错配抛 core/events/kind-payload" },
+        { "name": "EventValue.CopyMoveEquality_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "拷贝/移动/相等（含 payload 深比较反例）" }
+      ]
+    },
+    {
+      "suite": "ReferenceBus（参考总线语义钉子）",
+      "designRef": "units/core.md §4.9 总线契约/§5.8（§8 FIFO 与退订）",
+      "cases": [
+        { "name": "ReferenceBus.FifoDeliveryOrder_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "同发布者 FIFO：修订先于失效（顺序敏感场景——§4.9 示例）" },
+        { "name": "ReferenceBus.UnsubscribeStopsDelivery_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "退订后不投递＋重复退订幂等（IEventSubscription 契约）" },
+        { "name": "ReferenceBus.MultipleSubscribersAllReceive_UT_EVT", "status": "passed", "modes": ["smoke", "integration"], "trace": "多订阅方全收（R1 无过滤）＋逐方退订" }
+      ]
+    },
+    {
+      "suite": "既有回归（57 用例）",
+      "designRef": "units/core.md §8",
+      "cases": [
+        { "name": "既有 57 用例（含 CORE-T02~T07 全部）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 63, "passed": 63, "failed": 0, "modes": { "smoke": "61/61（Q 重载门控差异沿用分记）", "integration": "63/63" } },
+  "failureCapabilitySelfCheck": {
+    "method": "投递禁用探针：publish 入口直接 return 后重编译执行（前两轮注入因 CRLF 文本匹配失效与 sed 结构破坏 inconclusive——均复原后改用行号 sed 显式验证注入成功）",
+    "result": "ReferenceBus.FifoDeliveryOrder_UT_EVT 如期变红（投递断路必被 FIFO 用例捕获）；恢复后 63/63 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t08/smoke-configure.log",
+      "traceability/builds/wp03-t08/smoke-build.log",
+      "traceability/builds/wp03-t08/smoke-test-run.log",
+      "traceability/builds/wp03-t08/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t08/integration-build.log",
+      "traceability/builds/wp03-t08/integration-fullbuild.log",
+      "traceability/builds/wp03-t08/integration-test-run.log",
+      "traceability/builds/wp03-t08/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式 exit 0）",
+  "notes": "①P-D-1 联动：TaskState 消费自 CORE-T06 词表（Evaluation.hpp）；②参考总线不进产品链接面——T-1 由生产面扫描（TkBuild/ProductBoundary 同款）钉住，生产总线归 execution·ui（L5 注入）；③事件不持久化（需要历史者消费修订/结果领域对象）；④失效不携带对象清单、归档不携带路径（防 DTO 膨胀——消费者经端口取数）"
+}
