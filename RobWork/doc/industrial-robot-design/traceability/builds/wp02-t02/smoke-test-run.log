@@ -1,0 +1,66 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 18 tests from 8 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from TestPaths
+[ RUN      ] TestPaths.EnvVarOverridesDefault_NFR_COR_01
+[       OK ] TestPaths.EnvVarOverridesDefault_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01
+[       OK ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01 (2 ms)
+[ RUN      ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01
+[       OK ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01
+[       OK ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01
+[       OK ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01
+[       OK ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01
+[       OK ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01 (0 ms)
+[----------] 7 tests from TestPaths (4 ms total)
+
+[----------] 2 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 2 tests from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 3 tests from TkBuild
+[ RUN      ] TkBuild.SourceTreeReachable_TK_BUILD
+[       OK ] TkBuild.SourceTreeReachable_TK_BUILD (0 ms)
+[ RUN      ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3
+[       OK ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3 (1 ms)
+[ RUN      ] TkBuild.ProductSourcesZeroTestkitInclude_T1
+[       OK ] TkBuild.ProductSourcesZeroTestkitInclude_T1 (2 ms)
+[----------] 3 tests from TkBuild (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 18 tests from 8 test suites ran. (10 ms total)
+[  PASSED  ] 18 tests.

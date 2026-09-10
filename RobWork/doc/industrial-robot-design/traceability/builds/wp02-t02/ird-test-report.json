@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T02",
+  "masterWp": "WP-02-T02",
+  "branch": "wp02-t02",
+  "date": "2026-09-10",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/JsonLite.cpp（递归下降解析器＋行列/字段路径追踪＋to_chars 序列化）；目标属性零变化"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/JsonLiteTest.cpp（TK-JSON 八用例）；既有 TestPathsTest/BuildRedLineTest 零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "JsonRoundtrip/JsonAccess/JsonBoundary",
+      "designRef": "units/testkit.md §4.1/§8 TK-JSON（合法往返＋键序）",
+      "cases": [
+        { "name": "JsonRoundtrip.CanonicalTextRestored_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8：dump(parse(canonical))==canonical 逐字符＋dump 幂等＋pretty 语义等价（六类值全覆盖）" },
+        { "name": "JsonRoundtrip.InsertionOrderStable_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.1：对象键序＝插入序（{b,a} 不重排）" },
+        { "name": "JsonAccess.KindDiscriminatorsAndFind_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "值模型访问（类型判别/find 未命中不抛/数组索引——TK-T03 装载面消费形态）" },
+        { "name": "JsonBoundary.DumpOutputReparseable_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "D-02 边界代码侧留痕（输出可再解析、语义不变）" }
+      ]
+    },
+    {
+      "suite": "JsonRejections/JsonErrorLocation/JsonUnicode",
+      "designRef": "units/testkit.md §4.1 拒绝清单/§8 TK-JSON（拒绝＋行列定位）",
+      "cases": [
+        { "name": "JsonRejections.RejectionMatrix_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "重复键（顶层＋嵌套，行列指第二键、路径 $.b.c）/NaN/Infinity/-Infinity 字面/尾随内容/行与块注释/BOM——逐项拒绝且消息含 line:column 与路径" },
+        { "name": "JsonRejections.GrammarViolations_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "前导零/尾逗号（数组＋对象）/未闭合/非法转义/裸控制字符/空输入/1e999 溢出/缺冒号/缺逗号" },
+        { "name": "JsonErrorLocation.LineColumnPrecision_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "多行文本第 3 行第 8 列精确命中（acceptance 第 2 条）" },
+        { "name": "JsonUnicode.EscapesToUtf8_UT_JSON", "status": "passed", "modes": ["smoke", "integration"], "trace": "\\uXXXX（BMP）与代理对→UTF-8 字节；孤立高代理/不足 4 位拒绝" }
+      ]
+    },
+    {
+      "suite": "既有回归（TestPaths/BuildRedLine）",
+      "designRef": "units/testkit.md §8 TK-T01 用例",
+      "cases": [
+        { "name": "TestPaths 7＋TkBuild 3 既有用例", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-T01 用例零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 18, "passed": 18, "failed": 0, "modes": { "smoke": "18/18", "integration": "18/18" } },
+  "failureCapabilitySelfCheck": {
+    "method": "行计数探针：临时禁用解析器 skipWs 的 ++line_（错误行列退化为恒 line 1）后重编译；探针验证后清除并终验复绿",
+    "result": "JsonErrorLocation.LineColumnPrecision_UT_JSON 如期变红（行定位失效必被多行用例捕获）；恢复后 18/18 复绿",
+    "date": "2026-09-10"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t02/smoke-configure.log",
+      "traceability/builds/wp02-t02/smoke-build.log",
+      "traceability/builds/wp02-t02/smoke-test-run.log",
+      "traceability/builds/wp02-t02/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t02/integration-build.log",
+      "traceability/builds/wp02-t02/integration-fullbuild.log",
+      "traceability/builds/wp02-t02/integration-test-run.log",
+      "traceability/builds/wp02-t02/sdurws_ird_testkit_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "实现取舍（细节级，非接口偏差）：①解析错误分类＝TestKitError(DatasetInvalid)（数据资产缺陷——manifest/档案装载场景的最近分类）；②错误消息格式 \"dataset-invalid: json-parse: line L, column C: <原因>（路径 <$.a.b[2]>）\"——路径为 JSON 指针风格；③数字经语法层（JSON 文法排除前导零/字面）＋strtod＋isfinite 三重校验；④嵌套深度上限 200（防栈溢出护栏）；⑤D-02 边界＝文档声明＋JsonBoundary 用例留痕，不在类型系统强制"
+}
