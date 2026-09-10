@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.10（2026-09-11 F-013 整改：tick 报告队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写与预测性表述；T-ORCH 升 v8） |
+| 文档版本 | v1.11（2026-09-11 所有者预授权平台层整链批次序列（B 模式）：autoDiscovery 开启依据登记——每批 DOC-Txx 编译放行后新 ready 契约由 tick 自动追加队尾，消除逐批手工"调整队列"；T-ORCH 升 v9） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -147,7 +147,7 @@
 | 字段 | 消费点 | 语义 |
 | --- | --- | --- |
 | `autoMerge.enabled` / `classes` | §4.6 pass 分支 | enabled=false：pass 一律 awaiting_merge，classes 忽略。enabled=true：仅当任务类别 ∈ classes 才允许 tick 直接合并。**v1.8 生效值**：enabled=true＋classes=全词表（所有者 2026-09-10 全自动化指令，预授权登记于 state——机制不变，仅取值切换）。**类别判定**（由契约 `outputs` 归一）：仅 doc-update/traceability-update ⇒ `doc`；含构建落位（T01 类）⇒ `build`；含 implementation/unit-tests ⇒ `implementation`。词表封闭 {doc, build, implementation}，validate-state 拒绝词表外取值 |
-| `autoDiscovery` | §4.3 之后 | true：每 tick 扫描 tasks/ 发现"status=ready 且不在 queue"的契约，**追加队尾**并在报告中列出（不插队）；false（默认）：跳过扫描 |
+| `autoDiscovery` | §4.3 之后 | true：每 tick 扫描 tasks/ 发现"status=ready 且不在 queue"的契约，**追加队尾**并在报告中列出（不插队）；false：跳过扫描。**2026-09-11 起所有者裁决开启（B 模式预授权＋autoDiscovery，PIPE v1.11）**：编译批次（DOC-Txx）放行的新 ready 契约由 tick 自动追加队尾，整链批次供给不再逐批手工"调整队列"；批次间依赖顺序由编译批次本身的队列序保证（附录 A 步骤 4） |
 | `strictQueueOrder` | §4.3 | true（默认）：队首不可领即停等所有者。false：允许依序向后取**首个**可领条目（跳过项保留在队列原位并在报告标注）——仅在所有者显式接受乱序时开启 |
 | `unitCheckpoint` | §4.3 | true：单元切换先 awaiting_unit_review。false：跳过该门控。**v1.8 生效值**：false（所有者 2026-09-10 全自动化指令）——单元级复盘不删除，改由所有者事后消费 history 聚合（fix 次数、failReason 分类）作监督输入 |
 | `unitCheckpointExemptFirstUnit` / `firstUnitCheckpointExempted` | §4.3 | 前者为配置（是否豁免首单元检查点）、后者为**一次性消费标记**（豁免被使用后置 true，此后任何单元切换均走完整检查点）；两者均为 validate-state 必备 bool |
@@ -167,7 +167,7 @@
 
 > 模板即纪律的载体：派发对应子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款（v1.9 §0.4：实施者/验收者由 tick 派发全新子代理承载）；模板修订＝PIPE 增量修订（版本行同步）。
 
-### 附录 A · 编排者模板（T-ORCH v8）
+### 附录 A · 编排者模板（T-ORCH v9）
 
 ```text
 你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
@@ -186,7 +186,9 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
    awaiting_unit_review → 置 idle 继续（v1.8 不可达态自愈）；blocked → 汇报等待点。
 4. 选任务（仅 idle）：用 queue 队首条目的 taskId/contractPath/branch 三字段（不读契约正文；
    条目与契约的一致性已由 validate-state 真读校验）；不可领（queue-head: claimable=false）
-   → 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。
+   → 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。autoDiscovery=true 时（v1.11
+   当前配置）在领取前先扫描 tasks/：发现"status=ready 且不在 queue"的契约**追加队尾**
+   并在报告中列出（按目录字母序自然成拓扑序——任务号两位数字；不插队）。
 5. 领取：冻结 base=git rev-parse redesign-main（40 位）；置 currentTask/branch/base、
    attempts 清零（implement/fix）、phase=implementing、run{kind=implement, runId/workerId=GUID,
    startedAt/leaseExpiresAt=now±leaseMinutes.implement}；写回 state（tickToken=你的 token）。
@@ -292,3 +294,4 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.8 | 2026-09-10 | 所有者指令"流程全自动化，不需要所有者指令"：①state.policy 切换——autoMerge.enabled=true＋classes=全词表 {doc,build,implementation}（预授权按 §6.1 机制登记）；unitCheckpoint=false（单元检查点关闭，awaiting_unit_review 成不可达态）；②§4.6/§4.7 pass 后同 tick 执行七步收尾（漂移检测/冲突即停转 blocked 的保护不变），§4.2 awaiting_merge 变为收尾中断自愈锚点；③§6 所有者触点改监督性（blocked 解除/语义裁决/暂停恢复仍需所有者——诚实边界）；④§7 增双重放宽风险声明（单会话＋自动合入）与监督补偿建议；⑤T-ORCH 升 v6 |
 | v1.9 | 2026-09-10 | 所有者解除子代理禁令（走 §0.4 预留的解除路径）：①恢复 v1.6 派发执行模型——实施/验收由全新子代理承载（§0.4 重写、§1 角色映射、§2 完成事件、附录 A 步骤 6/7 恢复"派发＋阻塞等待＋二次 renew"），附录 T-ORCH 升 v7；②恢复前完成派发能力实证（无害子代理调用成功）；③独立性回到模型级，验收记录不再需要降级声明，§7 风险声明更新（仅余自动合入放宽）；④新增承载者混同禁令：编排者不亲自实施/验收；⑤v1.8 全部自动化语义（autoMerge 全词表、无单元检查点、pass 同 tick 收尾、监督性触点）保留不变 |
 | v1.10 | 2026-09-11 | F-013 整改（tick#40 报告编造"队首 TK-T03 依赖均已 done"，权威队列实为 CORE-T10 且 TK-T03 尚 planned——报告叙述失实而状态未被污染）：附录 A T-ORCH 步骤 9 增补硬性规定——tick 报告的队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写、预测性表述或对未入队契约作可领取性判断（队列空按 "(empty)" 原样转述）；T-ORCH 升 v8 |
+| v1.11 | 2026-09-11 | 所有者裁决"预授权平台层整链批次序列（B 模式）＋autoDiscovery"：①§6.1 autoDiscovery 语义行登记开启依据——DOC-Txx 编译批次放行的新 ready 契约由 tick 自动追加队尾，消除逐批手工"调整队列"（state 侧翻转随本修订之后执行）；②批次波次固化：DOC-T06 runtime(12)→T07 evidence(11)→T08 policy(11)→T09 diagnostics(10)→T10 project(15)→T11 io(6)→T12 execution(10)→T13 ui(13)，EX/UI 的跨单元依赖由前序波次自然满足；③附录 A T-ORCH 升 v9（步骤 4 增补扫描动作与字母序＝拓扑序说明）；④O 项阻塞（O-09/O-24/O-31）浮出时仍停等所有者，预授权不掩盖真失败 |
