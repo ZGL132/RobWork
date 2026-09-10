@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 44,
+  "tickCount": 45,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,11 +13,11 @@
   "run": null,
   "attempts": {
     "accept": 0,
-    "fix": 0,
-    "implement": 0
+    "implement": 0,
+    "fix": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T06:14:20+08:00",
+    "updatedAt": "2026-09-11T06:30:54+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -241,6 +241,16 @@
       "result": "pass-merged",
       "unit": "core",
       "acceptanceRecord": "traceability/acceptance/CORE-T10-20260911.md"
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T05",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/DOC-T05-20260911.md",
+      "result": "pass-merged",
+      "commits": [
+        "fec5e7dd415c7bf6150d0652bcff398d15bbc380"
+      ]
     }
   ],
   "policy": {
@@ -265,13 +275,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "DOC-T05",
-      "contractPath": "tasks/DOC-T05.json",
-      "branch": "doc-t05"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -280,5 +284,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "df685fa7-f8b5-4fd5-885a-2eb528cd8970"
+  "tickToken": "47a9f1a7-2a7e-47bd-ac0d-0907b3ecbdd6"
 }

@@ -4,9 +4,11 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "testkit 主链整链编译放行（含 CR-06 实现级 API diff）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
-  "requirements": ["NFR-MNT-01"],
+  "requirements": [
+    "NFR-MNT-01"
+  ],
   "designRefs": [
     "contract-compilation.md",
     "units/testkit.md#9",
@@ -22,14 +24,20 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["completed-testkit-task-contracts", "cr06-api-diff-record", "compile-log-entries"],
+  "outputs": [
+    "completed-testkit-task-contracts",
+    "cr06-api-diff-record",
+    "compile-log-entries"
+  ],
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
     "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/TK-T04.json"
   ],
   "branch": "doc-t05",
   "interUnit": false,
-  "knownPitfalls": ["CR-06"],
+  "knownPitfalls": [
+    "CR-06"
+  ],
   "acceptance": [
     "TK-T03/04/05/06/07/08/10 七份 planned 契约逐份回填：非空 requirements（承接 testkit.md §2 需求表）、锚定 designRefs（testkit.md 对应章节）、真实 dependsOn、branch 字段（wp02-t03~t08/t10，≙ 映射）、允许/禁止文件、完成态验证命令与逐条 acceptance",
     "CR-06 实现级 API diff 作为放行闸门先行执行：以 core 冻结公共头 Units.hpp/Compare.hpp（CORE-T04/05 已合入产物）对照 testkit.md §4 ToleranceProfile/Check 设计签名逐项核对，diff 记录登记 foundation-api-diff.md §CR-06 实现级小节；通过→TK-T04/05 随批置 ready；不通过→仅放行 TK-T03 并停止转 blocked 报告（diff 结论转呈架构所有者裁决）",
