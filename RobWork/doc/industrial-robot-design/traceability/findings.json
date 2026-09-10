@@ -51,6 +51,36 @@
       "title": "core.md 'AI 执行就绪补充'与'单元任务退出条件'两节存在转义损毁：$(core.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/validate-task.ps1'缺首字母（\\v 被吞）",
       "owner": "详设所有者（units/core.md 辖域）",
       "resolution": "随 core.md 下次增量修订重写该两节为可读文本（疑似历史写入时反斜杠转义被 shell/工具层吞掉，建议排查其他单元卡是否存在同型损毁）。"
+    },
+    {
+      "id": "F-006",
+      "source": "traceability/acceptance/TK-T01-20260910.md#G-1",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": "units/testkit.md 与 core.md（F-005）同型转义损毁：'AI 执行就绪补充/单元任务退出条件'两节 $(testkit.ToUpper()) 未展开、'alidate-docs.ps1' 缺首字母（\\v 被吞）、'标记为 locked'应为 blocked（\\b 被吞）",
+      "owner": "详设所有者（units/testkit.md 辖域）",
+      "resolution": "随 testkit.md 下次增量修订重写该两节为可读文本；F-005 建议的全卡排查（18 张未修卡）仍待详设所有者执行。"
+    },
+    {
+      "id": "F-007",
+      "source": "traceability/acceptance/TK-T01-20260910.md#G-2",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": "全新集成树配置参数未载明：需 vcpkg toolchain＋Qt CMAKE_PREFIX_PATH（AGENTS §4.1 集成命令字面不含，主树缓存为证）；且框架配置必需的 RobWorkStudio/bin/RobWorkStudio.ini.template.static 被 .gitignore [Bb]in/ 规则吞掉，全新克隆/worktree 配置必卡在 RobWorkStudio/src/CMakeLists.txt:58",
+      "owner": "构建约定所有者（DTB §5.1 辖域）",
+      "resolution": "AGENTS §4.1 补全新树配置口径（toolchain＋Qt 前缀＋模板文件处置——复制样板或 .gitignore 白名单例外）；WP-01-T02 CI 一键门禁的前置输入。"
+    },
+    {
+      "id": "F-008",
+      "source": "traceability/acceptance/TK-T01-20260910.md#G-3",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": "基线框架缺陷：RobWorkSim RWSimulatorPlugin 在全新集成树从零构建失败（Math.hpp min/max 宏污染簇——C4003 参数不足先兆→C2059/C2039 连锁，含 rw::rw::math 双命名空间错乱）；base 959fb9b 对照复现同样失败（71 处 error C），主树为存量增量产物掩盖",
+      "owner": "构建约定所有者（框架侧修复须按 SA-02 先登记 patches/PATCHES.md 再改动）",
+      "resolution": "全新克隆/CI 全量构建的阻断前置：典型修法为该插件目标加 NOMINMAX 或调整 include 顺序（框架侧改动须先登记 patch）；WP-01-T02（CI 一键门禁）消费本项，ired 范围内任务（含 TK-T01）不受影响——任务目标两模式从零复现零错误。"
     }
   ]
 }
