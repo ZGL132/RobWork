@@ -91,6 +91,16 @@
       "title": ".gitignore 全局 *.log 规则吞没 traceability/** 留痕日志：WP-01-T01 四份门禁/构建日志被忽略，致提交 6674c1b 信息（五件留痕）与实际入库内容（仅 1 件）一度不符，改 .txt 后缀方入库；后续任务留痕仍会踩中",
       "owner": "构建约定所有者（DTB §5.1 辖域）",
       "resolution": "为 traceability/** 增加负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；留痕提交前以 git status 核对实际入库清单。"
+    },
+    {
+      "source": "traceability/acceptance/WP-01-T02-20260910.md#G-1",
+      "severity": "suggestion",
+      "owner": "构建约定所有者",
+      "id": "F-009",
+      "registeredAt": "2026-09-10",
+      "status": "open",
+      "title": "gate-all.ps1 在非主树检出（worktree/全新克隆）无法全量运行：vcpkg toolchain/Qt 前缀/ini 模板环境前置缺失（F-007 同类链）",
+      "resolution": "建议 -Toolchain 参数化＋VCPKG_ROOT 回退；CI 侧供给由 eb777e2 供给链承载（模板已固化于 scripts/industrialrobot/ci/，激活随 O-34）；本地全新树口径随 F-007 一并处置"
     }
   ]
 }
