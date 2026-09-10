@@ -3,17 +3,26 @@
   "taskId": "EV-T05",
   "unit": "evidence",
   "masterWp": "WP-C",
-  "title": "EV-T05 implementation slice",
+  "title": "实现证据 Profile 与证明契约承载",
   "status": "planned",
   "dependsOn": [
     "EV-T04"
   ],
-  "requirements": [],
+  "requirements": [
+    "EVI-01",
+    "CON-03"
+  ],
   "designRefs": [
-    "units/evidence.md"
+    "units/evidence.md#6.1",
+    "units/evidence.md#6.2",
+    "units/evidence.md#6.3",
+    "units/evidence.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +33,17 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_evidence_test"
+  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-EV-1",
+    "O-13"
   ],
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "EV-VER-6/7、EV-COV-2/3 用例通过",
+    "validateProof 逐字段反例全部拒绝",
+    "Profile 明细归需求 §8.1 表 4，不复制双账本（D-14）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

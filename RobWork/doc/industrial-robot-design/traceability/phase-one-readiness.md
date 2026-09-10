@@ -38,7 +38,7 @@
 | CR-06 | TK-T04/05 依赖 CORE-T04/05 实现后的 API diff | 保持 planned；不能仅凭详设置 ready |
 | O-03 | ARCHITECTURE v0.11 仍 Draft | 未擅自 Accepted；发现实际架构冲突的任务停止并登记，不阻塞既定 M0 落位 |
 | M0～M3 | 本次没有执行构建、产品测试、ird_gates | 不宣布任何实现里程碑通过；各任务按 DTB §5.2 DoD 留痕 |
-| 基础任务契约完整性 | 57 个 JSON 中有 42 个 `requirements` 为空；均为 planned，原校验脚本此前只检查字段存在 | 新校验仅允许字段非空的 ready 任务通过；DOC-T03 补齐 52 个 planned 基础任务后才可逐项放行 |
+| 基础任务契约完整性 | **DOC-T03 已完成（2026-09-10）**：42 份缺字段 planned 契约逐份回填（requirements/designRefs/dependsOn/verify/acceptance 编译自 DTB §2 WP 行＋卡任务行；原"52"系立项计数，现况 42＋先行补齐 10）；CORE-T02/09、TK-T02/09 四份翻转 ready（前置 done＋卡内接口闭环），其余 38 份按前置链保持 planned；CR-06 门禁（CORE-T04/05、TK-T04/05）零触碰 | 空 requirements 的 planned 归零；ready 总数 3→7；放行逐项进行——审计记录见 [readiness-audit-doc-t03.md](readiness-audit-doc-t03.md)、编译留痕见 contract-compile-log.md |
 
 ### 2.1 服务单元交接核对记录（DOC-T02，2026-09-10）
 

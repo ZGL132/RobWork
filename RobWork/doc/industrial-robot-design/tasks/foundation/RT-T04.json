@@ -2,18 +2,26 @@
   "schemaVersion": "ird-task/1",
   "taskId": "RT-T04",
   "unit": "runtime",
-  "masterWp": "WP-C",
-  "title": "RT-T04 implementation slice",
+  "masterWp": "WP-D",
+  "title": "实现 CanonicalModel 与编码器（RT-Codec）",
   "status": "planned",
   "dependsOn": [
     "RT-T03"
   ],
-  "requirements": [],
+  "requirements": [
+    "ARC-03",
+    "CON-05"
+  ],
   "designRefs": [
-    "units/runtime.md"
+    "units/runtime.md#4.3",
+    "units/runtime.md#4.5",
+    "units/runtime.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +32,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-02",
+    "CR-05"
   ],
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "RT-ID-1/2/3 用例通过",
+    "parse(encode(x))==x 往返用例通过",
+    "身份域排除项（显示字段）用例通过",
+    "CanonicalModel 不持久化（D-1）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

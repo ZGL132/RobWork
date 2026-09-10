@@ -3,17 +3,26 @@
   "taskId": "TK-T09",
   "unit": "testkit",
   "masterWp": "WP-B",
-  "title": "TK-T09 implementation slice",
-  "status": "planned",
+  "title": "实现故障注入原语（Fault）＋ProcessRunner 头冻结",
+  "status": "ready",
   "dependsOn": [
-    "TK-T08"
+    "TK-T01"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-REL-01",
+    "NFR-REL-02",
+    "PM-08"
+  ],
   "designRefs": [
-    "units/testkit.md"
+    "units/testkit.md#6.4",
+    "units/testkit.md#6.5",
+    "units/testkit.md#9"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +33,14 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_testkit_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_testkit_test",
+  "branch": "wp02-t09",
+  "interUnit": true,
+  "knownPitfalls": "O-33",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "TK-FAULT occurrence 触发/命中记录用例通过",
+    "TK-BUILD 复验：产品目标零 testkit 链接",
+    "生产代码零 testkit 头、零 #ifdef TEST"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

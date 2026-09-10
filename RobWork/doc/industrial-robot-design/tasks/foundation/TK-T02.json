@@ -3,17 +3,23 @@
   "taskId": "TK-T02",
   "unit": "testkit",
   "masterWp": "WP-B",
-  "title": "TK-T02 implementation slice",
-  "status": "planned",
+  "title": "实现受限 JSON（JsonLite）",
+  "status": "ready",
   "dependsOn": [
     "TK-T01"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-COR-01"
+  ],
   "designRefs": [
-    "units/testkit.md"
+    "units/testkit.md#4.1",
+    "units/testkit.md#9"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +30,14 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_testkit_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_testkit_test",
+  "branch": "wp02-t02",
+  "interUnit": true,
+  "knownPitfalls": "P-TK-6",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "TK-JSON 往返/拒绝用例全部通过",
+    "行列错误消息可定位（含字段路径）",
+    "不用于产品格式（D-02 边界）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

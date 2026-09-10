@@ -3,32 +3,46 @@
   "taskId": "EV-T12",
   "unit": "evidence",
   "masterWp": "WP-C",
-  "title": "EV-T12 implementation slice",
+  "title": "evidence 文档与门禁同步",
   "status": "planned",
   "dependsOn": [
+    "EV-T02",
+    "EV-T03",
+    "EV-T04",
+    "EV-T05",
+    "EV-T06",
+    "EV-T07",
+    "EV-T08",
+    "EV-T09",
+    "EV-T10",
     "EV-T11"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-MNT-05"
+  ],
   "designRefs": [
-    "units/evidence.md"
+    "units/evidence.md#12",
+    "units/evidence.md#15"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": [
-    "implementation",
-    "unit-tests",
+    "doc-update",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_evidence_test"
-  ],
+  "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+  "branch": null,
+  "interUnit": false,
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "README 核对零偏差",
+    "§15.3 状态更新（含 P-RT-9 消账确认——project.md 完整性实测）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

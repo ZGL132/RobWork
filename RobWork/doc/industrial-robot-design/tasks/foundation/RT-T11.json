@@ -2,18 +2,38 @@
   "schemaVersion": "ird-task/1",
   "taskId": "RT-T11",
   "unit": "runtime",
-  "masterWp": "WP-C",
-  "title": "RT-T11 implementation slice",
+  "masterWp": "WP-D",
+  "title": "实现编译器集成与取消（十段链/事务）",
   "status": "planned",
   "dependsOn": [
+    "RT-T03",
+    "RT-T04",
+    "RT-T05",
+    "RT-T06",
+    "RT-T07",
+    "RT-T08",
+    "RT-T09",
     "RT-T10"
   ],
-  "requirements": [],
+  "requirements": [
+    "ARC-03",
+    "MDL-06",
+    "TASK-01"
+  ],
   "designRefs": [
-    "units/runtime.md"
+    "units/runtime.md#5.1",
+    "units/runtime.md#5.3",
+    "units/runtime.md#5.4",
+    "units/runtime.md#5.5",
+    "units/runtime.md#5.6",
+    "units/runtime.md#5.7",
+    "units/runtime.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +44,15 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-RT-3"
   ],
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "RT-CPX 全组＋RT-RES-1/2＋RT-CONT-1/2 事务状态机全转移用例通过",
+    "编译器无内部超时（D-11——取消只经外部请求）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }
