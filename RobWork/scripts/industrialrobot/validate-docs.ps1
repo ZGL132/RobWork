@@ -4,7 +4,10 @@ $errors = @()
 $status = Get-Content (Join-Path $base 'traceability/unit-status.json') -Raw | ConvertFrom-Json
 $ids = @($status.units | ForEach-Object { $_.id })
 if ($ids.Count -ne 20 -or ($ids | Sort-Object -Unique).Count -ne 20) { $errors += 'unit-status must contain 20 unique units' }
-foreach ($u in $status.units) { if ($u.status -eq "draft" -and -not (Test-Path (Join-Path $base $u.design))) { $errors += "missing design: $($u.design)" } }
+foreach ($u in $status.units) {
+  if ($u.designCompletion -notin 'written','not-written') { $errors += "invalid designCompletion: $($u.id)" }
+  if ($u.designCompletion -eq 'written' -and -not (Test-Path (Join-Path $base $u.design))) { $errors += "missing written design: $($u.design)" }
+}
 $taskFiles = @(Get-ChildItem (Join-Path $base "tasks") -Recurse -Filter "*.json" -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne "foundation-tasks.json" })
 $taskIds = @()
 foreach ($f in $taskFiles) {
@@ -16,5 +19,20 @@ foreach ($f in $taskFiles) {
 if (($taskIds | Sort-Object -Unique).Count -ne $taskIds.Count) { $errors += "duplicate task ids" }
 $trace = Get-Content (Join-Path $base 'traceability/requirements-to-units.json') -Raw | ConvertFrom-Json
 foreach ($e in $trace.entries) { if ($ids -notcontains $e.unit) { $errors += "unknown unit $($e.unit)" }; if ($e.masterWp -notmatch '^WP-[A-I]$') { $errors += "invalid master WP" } }
+$phaseIndexPath = Join-Path $base 'traceability/phase-one-task-index.json'
+if (-not (Test-Path $phaseIndexPath)) {
+  $errors += 'missing phase-one task index'
+} else {
+  $phaseIndex = Get-Content $phaseIndexPath -Raw | ConvertFrom-Json
+  $phaseTaskIds = @($phaseIndex.entries | ForEach-Object { $_.taskId })
+  if ($phaseTaskIds.Count -ne ($phaseTaskIds | Sort-Object -Unique).Count) { $errors += 'duplicate phase-one task ids' }
+  foreach ($entry in $phaseIndex.entries) {
+    if ($ids -notcontains $entry.unit) { $errors += "phase index has unknown unit: $($entry.unit)"; continue }
+    $designPath = Join-Path $base $entry.design
+    if (-not (Test-Path $designPath)) { $errors += "phase index design missing: $($entry.design)"; continue }
+    $designText = Get-Content $designPath -Raw
+    if (-not $designText.Contains($entry.sourceRow)) { $errors += "phase index task row mismatch: $($entry.taskId)" }
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files)"\n
