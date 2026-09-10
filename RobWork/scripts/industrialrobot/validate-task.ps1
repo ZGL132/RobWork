@@ -1,6 +1,6 @@
-param([Parameter(Mandatory=$true)][string]$TaskFile)
+﻿param([Parameter(Mandatory=$true)][string]$TaskFile)
 if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
-$tasks = @(Get-Content $TaskFile -Raw | ConvertFrom-Json)
+$tasks = @(Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json)
 $required = 'taskId','unit','masterWp','title','status','dependsOn','requirements','designRefs','verify'
 $readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'
 foreach ($t in $tasks) {
