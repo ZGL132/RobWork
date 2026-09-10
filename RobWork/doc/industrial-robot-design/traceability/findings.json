@@ -103,6 +103,16 @@
       "resolution": "建议 -Toolchain 参数化＋VCPKG_ROOT 回退；CI 侧供给由 eb777e2 供给链承载（模板已固化于 scripts/industrialrobot/ci/，激活随 O-34）；本地全新树口径随 F-007 一并处置"
     },
     {
+      "id": "F-011",
+      "source": "DOC-T04 实施段 ird_gates 自查（2026-09-11，doc-t04 分支，base 3efa444；本任务零源码改动，命中为基线既有）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "ird_gates IRD-GATE-R4 基线既有命中 1 处：testkit/include/sdurws/ird/testkit/JsonLite.hpp 第 12 行文件头注释含 'RobWork' 字面量（'RobWork 无可借头'），被 R-4 名称前缀拼接/剥离启发式扫描判为疑似命中，`cmake --build build --config Release --target ird_gates` 退出码 1；来源提交 8f4eca0（WP-02-T02≙TK-T02，已 done）。阻断范围：本批放行的 core 编码任务（CORE-T03~T08）DoD 自查'ird_gates 零命中'在消账前必然失败；对 DOC-T04 本体不构成阻断（纯治理契约任务，contract verify 为 validate-docs/validate-task）",
+      "owner": "testkit 实现所有者（源文件辖域）＋门禁所有者（DTB §5.1；R-4 扫描是否应排除注释行）",
+      "resolution": "两条路径择一并留痕：①改写 JsonLite.hpp 第 12 行注释措辞去除 'RobWork' 字面量（纯注释、非产品逻辑，语义不变，属 testkit 单元增量修订）；②门禁 R-4 扫描排除注释行，或按 DTB §4.5 登记该处为例外。DOC-T04 forbiddenFiles 含 RobWorkStudio/src/**，不在本任务处置；建议在 CORE-T03 入队执行前由所有者指派消账，消账前含门禁自查的任务须在提交信息如实标注本项既有命中。"
+    },
+    {
       "id": "F-012",
       "source": "traceability/acceptance/DOC-T04-20260911.md#4.9-G-1（attempt 1，送验对象 15249151f）",
       "severity": "suggestion",

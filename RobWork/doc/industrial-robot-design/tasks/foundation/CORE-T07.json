@@ -4,12 +4,15 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "诊断契约（DiagData）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T03", "CORE-T04"],
-  "requirements": ["ERR-01", "UX-03"],
-  "designRefs": ["units/core.md#4.8", "units/core.md#5.7"],
+  "requirements": ["ERR-01", "UX-03", "MDL-06"],
+  "designRefs": ["units/core.md#4.8", "units/core.md#5.7", "units/core.md#9"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +21,12 @@
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
   "crRefs": ["CR-01", "CR-08"],
+  "branch": "wp03-t07",
+  "interUnit": true,
+  "knownPitfalls": ["CR-01", "CR-08"],
   "acceptance": [
     "C-1～C-3 不变量用例通过（可确认诊断必比较型、凭据一致性、码句法校验）",
     "CR-08：DiagnosticRecord 为跨单元结构化诊断唯一承载（稳定码句法；码值权威归 diagnostics StableCodeRegistry）"
-  ]
+  ],
+  "note": "DOC-T04 编译放行（2026-09-11）：status→ready——放行策略为所有者裁决的整单元拓扑批次放宽，依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；requirements 按 DTB §2 WP-03-T07 行取 ERR-01/UX-03，另按 core.md §2.1 行（MDL-06④＋SA-15）补 MDL-06——SA-15 为架构决策 ID 非 REQUIREMENTS 现行 ID，不入 requirements，其可确认诊断放行语义由 acceptance C-1～C-3 不变量承载；designRefs 补卡内任务行锚点 §9；allowedFiles 按 CORE-T01 教训显式列入治理文档；branch 按 ≙ 映射补 wp03-t07；interUnit=true（DiagnosticRecord/ConfirmableFinding 被 diagnostics 及全部诊断产生单元消费）、knownPitfalls=CR-01/CR-08（与 crRefs 一致）。编译留痕见 traceability/contract-compile-log.md"
 }

@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "实现事件契约（⑤端口接口归 core）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "CORE-T02",
     "CORE-T06"
@@ -33,7 +33,7 @@
     "traceability-update"
   ],
   "verify": "cmake --build build --config Release --target sdurws_ird_core_test",
-  "branch": null,
+  "branch": "wp03-t08",
   "interUnit": true,
   "knownPitfalls": "P-D-1",
   "acceptance": [
@@ -41,5 +41,5 @@
     "参考总线 FIFO 顺序与退订用例通过",
     "事件不携带数据快照（D-9，核对称见卡）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md。DOC-T04 放行（2026-09-11）：status→ready——所有者裁决的整单元拓扑批次放宽，依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；branch 按 ≙ 映射补 wp03-t08，其余字段承 DOC-T03 回填不变（knownPitfalls=P-D-1 处置约束不变：四词表跨卡确认未闭合，事件载荷签名不私改）"
 }

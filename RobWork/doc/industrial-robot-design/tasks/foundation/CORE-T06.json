@@ -4,12 +4,15 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "评估词表（Evaluation）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T01"],
-  "requirements": ["ERR-01"],
-  "designRefs": ["units/core.md#4.7", "units/core.md#5.6"],
+  "requirements": ["EVI-01", "TASK-02", "PM-03", "ERR-01"],
+  "designRefs": ["units/core.md#4.7", "units/core.md#5.6", "units/core.md#9"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +21,12 @@
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
   "crRefs": ["CR-01"],
+  "branch": "wp03-t06",
+  "interUnit": true,
+  "knownPitfalls": ["CR-01"],
   "acceptance": [
     "四词表 toToken/fromToken 往返用例通过；未知 token→nullopt",
     "CR-01：token 集为唯一权威——EV-T07 联合契约测试共用同一 token 集，evidence 侧不得出现本地枚举（foundation-api-diff.md）"
-  ]
+  ],
+  "note": "DOC-T04 编译放行（2026-09-11）：status→ready——放行策略为所有者裁决的整单元拓扑批次放宽，依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；requirements 按 DTB §2 WP-03-T06 行补 EVI-01/TASK-02/PM-03（§8.1 表 1/表 3 为非 ID 引用，由 acceptance 词表条目承载），保留 ERR-01（core.md §2.4 三轴正交词表依据）；designRefs 补卡内任务行锚点 §9；allowedFiles 按 CORE-T01 教训显式列入治理文档；branch 按 ≙ 映射补 wp03-t06；interUnit=true（四词表被 evidence/execution/diagnostics/ui 消费）、knownPitfalls=CR-01。编译留痕见 traceability/contract-compile-log.md"
 }

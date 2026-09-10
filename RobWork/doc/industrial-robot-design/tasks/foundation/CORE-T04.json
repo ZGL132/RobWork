@@ -4,12 +4,15 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "单位与量（Units）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T01"],
-  "requirements": ["NFR-COR-03", "KIN-12"],
-  "designRefs": ["units/core.md#4.4", "units/core.md#5.4"],
+  "requirements": ["NFR-COR-03", "KIN-12", "DYN-03", "SEL-02"],
+  "designRefs": ["units/core.md#4.4", "units/core.md#5.4", "units/core.md#9"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,9 +21,13 @@
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
   "crRefs": ["CR-06"],
+  "branch": "wp03-t04",
+  "interUnit": true,
+  "knownPitfalls": ["CR-06"],
   "acceptance": [
     "R1 单位 token 表完整；错误口径三态（抛/空/正常）用例通过",
     "非法单位和非有限输入被拒绝（不静默归零）",
     "CR-06：实现后与 testkit.md §4.3 容差档案消费面重出 API diff，作为 TK-T04/05 ready 前置"
-  ]
+  ],
+  "note": "DOC-T04 编译放行（2026-09-11）：status→ready——放行策略为所有者裁决的整单元拓扑批次放宽（对 DOC-T03 保守口径的显式放宽），依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；requirements 按 DTB §2 WP-03-T04 行补全 DYN-03/SEL-02；designRefs 补卡内任务行锚点 §9（CCP §2）；allowedFiles 按 CORE-T01 教训显式列入治理文档；branch 按 ≙ 映射补 wp03-t04；interUnit=true（Units.hpp 为 io/selection/kinematics/dynamics 等多单元消费的公共接口）、knownPitfalls=CR-06；acceptance 的 CR-06 门禁条目原样保留（实现后 API diff 供 TK-T04/05 放行，TK-T04/05 保持 planned）。编译留痕见 traceability/contract-compile-log.md"
 }
