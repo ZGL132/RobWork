@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T05",
+  "masterWp": "WP-03-T05",
+  "branch": "wp03-t05",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Compare.cpp（C4 公式/长度违约/C7 逐量纲转写/Q 重载门控实现）；Compare.hpp 模板外全部内联于头（Tolerance/closeWithin noexcept）"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/CompareTest.cpp（九用例：C4 公式/零参考/非有限/正负抵消/长度违约/工厂校验/C7 逐项/Q 重载）；既有 37 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CompareFormula/AllCloseWithin/ToleranceMake（C4）",
+      "designRef": "units/core.md §4.5/§5.5/附录 D C4",
+      "cases": [
+        { "name": "CompareFormula.C4Basic_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "C4 公式：相对项/绝对项/混合形态" },
+        { "name": "CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "零参考退化为纯 absolute（正负双向，不要求精确零）" },
+        { "name": "CompareFormula.NonFiniteInputsFalse_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-03：任一输入 NaN/±Inf → false（不抛不通过）" },
+        { "name": "AllCloseWithin.ElementWiseNotSummed_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "正负抵消反例（+0.01/−0.01 总和归零而逐元素超差）——C4 逐元素判定钉住" },
+        { "name": "AllCloseWithin.LengthMismatchThrows_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "长度不等抛 CoreError（前缀 core/compare/length）" },
+        { "name": "ToleranceMake.Validation_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "两分量 ≥0 且有限（负值/NaN/Inf 拒绝；前缀 core/compare/tolerance）" }
+      ]
+    },
+    {
+      "suite": "RuntimeAbsoluteTolerance（C7 转写）",
+      "designRef": "units/core.md §4.5 C7 表/附录 D C7（D-06）",
+      "cases": [
+        { "name": "RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT", "status": "passed", "modes": ["smoke", "integration"], "trace": "已声明七量纲逐项（angle/length 1e-12、vel/acc/torque 1e-9、dimensionless 1e-12）＋未声明六量纲 nullopt" }
+      ]
+    },
+    {
+      "suite": "AllCloseWithinQ（rw::math::Q 重载——仅集成）",
+      "designRef": "units/core.md §5.5（TRJ-05 消费形态）",
+      "cases": [
+        { "name": "AllCloseWithinQ.QOverloadSemantics_UT_UNIT", "status": "passed", "modes": ["integration"], "trace": "Q 逐元素判定＋正负抵消反例＋长度违约（Q 经 __has_include 门控——冒烟豁免如实分记）" }
+      ]
+    },
+    {
+      "suite": "既有回归（37 用例）",
+      "designRef": "units/core.md §8",
+      "cases": [
+        { "name": "既有 37 用例（红线/Identity/Digest/Provenance/Units/约定与值语义）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "totalIntegration": 45, "totalSmoke": 43, "passed": "45/45（集成）＋43/43（冒烟，Q 重载门控豁免）", "failed": 0 },
+  "failureCapabilitySelfCheck": {
+    "method": "C4 公式探针：临时把 closeWithin 的偏差项 diff 恒零化（公式退化）后重编译执行；探针验证后清除并终验复绿",
+    "result": "C4Basic 与 ZeroReferenceDegradesToAbsolute 如期变红（公式实现错误必被基本面用例捕获）；恢复后 45/45 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t05/smoke-configure.log",
+      "traceability/builds/wp03-t05/smoke-build.log",
+      "traceability/builds/wp03-t05/smoke-test-run.log",
+      "traceability/builds/wp03-t05/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t05/integration-build.log",
+      "traceability/builds/wp03-t05/integration-fullbuild.log",
+      "traceability/builds/wp03-t05/integration-test-run.log",
+      "traceability/builds/wp03-t05/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式 exit 0）",
+  "notes": "①CR-06：本任务零 testkit 消费；Compare 公式族与 testkit §5.3 Check 的 API diff 为 TK-T04/05 ready 前置（已备，由该两任务评审执行）；②Q 重载经 IRD_CORE_HAS_RW_Q 门控（冒烟无 sdurw_math——RT-T01 探测先例）；③core 不持有业务阈值——runtimeAbsoluteTolerance 为 C7 机械转写（修改只能随需求变更，D-06）"
+}
