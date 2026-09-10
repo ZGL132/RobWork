@@ -4,10 +4,17 @@
   "unit": "build",
   "masterWp": "WP-B",
   "title": "CI 常驻与本地一键门禁",
-  "status": "ready",
-  "dependsOn": ["WP-01-T01"],
-  "requirements": ["NFR-MNT-05"],
-  "designRefs": ["ARCHITECTURE.md#11.2", "development-task-breakdown.md#5.5"],
+  "status": "done",
+  "dependsOn": [
+    "WP-01-T01"
+  ],
+  "requirements": [
+    "NFR-MNT-05"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#11.2",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/scripts/industrialrobot/**",
     "RobWork/doc/industrial-robot-design/tasks/**",
@@ -18,7 +25,9 @@
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
     "RobWork/RobWorkStudio/src/rwslibs/**"
   ],
-  "outputs": ["implementation"],
+  "outputs": [
+    "implementation"
+  ],
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
     "一键脚本全量执行（门禁＋双模式构建＋全部 _test/_contract_test 目标）成功"
