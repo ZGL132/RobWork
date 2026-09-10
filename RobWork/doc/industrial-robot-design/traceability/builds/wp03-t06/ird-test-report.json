@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "CORE-T06",
+  "masterWp": "WP-03-T06",
+  "branch": "wp03-t06",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_core",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Evaluation.cpp（四枚举 token 冻结映射——switch 逐值实现防错位）；枚举与函数声明在 Evaluation.hpp"
+    },
+    {
+      "target": "sdurws_ird_core_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/EvaluationTest.cpp（UT-EVAL 六用例）；既有 45 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvaluationMode/TaskOutcome/EngineeringStatus/TaskState/AxisOrthogonality（UT-EVAL）",
+      "designRef": "units/core.md §4.7/§5.6/§8 UT-EVAL（EVI-01 表 1、TASK-02 表 3、ARCH §4.3）",
+      "cases": [
+        { "name": "EvaluationModeTokens.RoundtripAndUnknown_UT_EVAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "preview/quick/verified 往返＋未知与大小写拒绝（§5.6 示例 verified）" },
+        { "name": "TaskOutcomeTokens.RoundtripAndUnknown_UT_EVAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "completed/canceled/failed/interrupted 信封轴往返" },
+        { "name": "EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8：NotApplicable 存在性（ERR-01 显式标记）＋四 token 往返" },
+        { "name": "TaskStateTokens.NineStatesRoundtrip_UT_EVAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "九态逐一往返（ARCH §4.3）＋未知/大小写拒绝" },
+        { "name": "AxisOrthogonality.OutcomeAndStateAreDistinctAxes_UT_EVAL", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.7 轴正交：同名 token 字面一致但枚举类型独立（static_assert）＋无互转函数导出" }
+      ]
+    },
+    {
+      "suite": "既有回归（45 用例）",
+      "designRef": "units/core.md §8",
+      "cases": [
+        { "name": "既有 45 用例（红线/Identity/Digest/Provenance/Units/Compare/约定与值语义）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 50, "passed": 50, "failed": 0, "modes": { "smoke": "48/48（UT-UNIT 的 Q 重载豁免在 CORE-T05 已分记）", "integration": "50/50" } },
+  "failureCapabilitySelfCheck": {
+    "method": "token 漏登探针：临时注释 fromToken 的 engineering-infeasible 分支后重编译执行；探针验证后清除并终验复绿",
+    "result": "EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL 如期变红（token 漏登必被往返用例捕获）；恢复后 50/50 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp03-t06/smoke-configure.log",
+      "traceability/builds/wp03-t06/smoke-build.log",
+      "traceability/builds/wp03-t06/smoke-test-run.log",
+      "traceability/builds/wp03-t06/sdurws_ird_core_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp03-t06/integration-build.log",
+      "traceability/builds/wp03-t06/integration-fullbuild.log",
+      "traceability/builds/wp03-t06/integration-test-run.log",
+      "traceability/builds/wp03-t06/sdurws_ird_core_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_core_test ——通过（集成模式 exit 0）",
+  "notes": "①CR-01 遵守：core 只承载词表与承载——判定规则不复述（§4.7 明文），payload 约束与合法组合校验归 evidence；②轴正交以 static_assert＋行为面（无互转函数导出）钉住；③实现用 switch 逐值映射（防枚举增删静默错位——Provenance toToken 同款纪律）"
+}
