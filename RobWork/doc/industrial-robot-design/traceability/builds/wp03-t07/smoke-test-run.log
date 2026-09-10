@@ -1,0 +1,221 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 55 tests from 35 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from BuildRedLine
+[ RUN      ] BuildRedLine.SourceTreeReachable_UT_BUILD
+[       OK ] BuildRedLine.SourceTreeReachable_UT_BUILD (0 ms)
+[ RUN      ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3
+[       OK ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3 (2 ms)
+[ RUN      ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1
+[       OK ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1 (2 ms)
+[ RUN      ] BuildRedLine.PublicHeaderPathLayout_R2
+[       OK ] BuildRedLine.PublicHeaderPathLayout_R2 (0 ms)
+[----------] 4 tests from BuildRedLine (6 ms total)
+
+[----------] 1 test from IdentityRoundtrip
+[ RUN      ] IdentityRoundtrip.ParseFormatRoundtrip_UT_ID_T
+[       OK ] IdentityRoundtrip.ParseFormatRoundtrip_UT_ID_T (0 ms)
+[----------] 1 test from IdentityRoundtrip (0 ms total)
+
+[----------] 1 test from IdentityReserved
+[ RUN      ] IdentityReserved.ZeroIsInvalid_UT_ID_T
+[       OK ] IdentityReserved.ZeroIsInvalid_UT_ID_T (0 ms)
+[----------] 1 test from IdentityReserved (0 ms total)
+
+[----------] 1 test from IdentityStrictParse
+[ RUN      ] IdentityStrictParse.MisuseAndMalformedRejected_UT_ID_T
+[       OK ] IdentityStrictParse.MisuseAndMalformedRejected_UT_ID_T (0 ms)
+[----------] 1 test from IdentityStrictParse (0 ms total)
+
+[----------] 1 test from IdentityGenerate
+[ RUN      ] IdentityGenerate.NonZeroAndUnique_UT_ID_T
+[       OK ] IdentityGenerate.NonZeroAndUnique_UT_ID_T (224 ms)
+[----------] 1 test from IdentityGenerate (224 ms total)
+
+[----------] 1 test from TaskIdentityTuple
+[ RUN      ] TaskIdentityTuple.FiveFieldSemantics_UT_ID_T
+[       OK ] TaskIdentityTuple.FiveFieldSemantics_UT_ID_T (0 ms)
+[----------] 1 test from TaskIdentityTuple (0 ms total)
+
+[----------] 1 test from IdentityStrongTyping
+[ RUN      ] IdentityStrongTyping.NoImplicitConversion_UT_ID_T
+[       OK ] IdentityStrongTyping.NoImplicitConversion_UT_ID_T (0 ms)
+[----------] 1 test from IdentityStrongTyping (0 ms total)
+
+[----------] 3 tests from Sha256KnownVectors
+[ RUN      ] Sha256KnownVectors.EmptyString_UT_ID_D
+[       OK ] Sha256KnownVectors.EmptyString_UT_ID_D (0 ms)
+[ RUN      ] Sha256KnownVectors.Abc_UT_ID_D
+[       OK ] Sha256KnownVectors.Abc_UT_ID_D (0 ms)
+[ RUN      ] Sha256KnownVectors.TwoBlock_UT_ID_D
+[       OK ] Sha256KnownVectors.TwoBlock_UT_ID_D (0 ms)
+[----------] 3 tests from Sha256KnownVectors (0 ms total)
+
+[----------] 2 tests from Sha256Determinism
+[ RUN      ] Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D
+[       OK ] Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D (0 ms)
+[ RUN      ] Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D
+[       OK ] Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D (0 ms)
+[----------] 2 tests from Sha256Determinism (0 ms total)
+
+[----------] 1 test from Sha256Lifecycle
+[ RUN      ] Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D
+[       OK ] Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D (0 ms)
+[----------] 1 test from Sha256Lifecycle (0 ms total)
+
+[----------] 1 test from DigestCanonical
+[ RUN      ] DigestCanonical.RoundtripAndStrictParse_UT_ID_D
+[       OK ] DigestCanonical.RoundtripAndStrictParse_UT_ID_D (0 ms)
+[----------] 1 test from DigestCanonical (0 ms total)
+
+[----------] 4 tests from ValueSemantics
+[ RUN      ] ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL
+[       OK ] ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL (0 ms)
+[ RUN      ] ValueSemantics.MovePreservesValue_UT_VAL
+[       OK ] ValueSemantics.MovePreservesValue_UT_VAL (0 ms)
+[ RUN      ] ValueSemantics.EqualityHashConsistency_UT_VAL
+[       OK ] ValueSemantics.EqualityHashConsistency_UT_VAL (0 ms)
+[ RUN      ] ValueSemantics.ContainerUsability_UT_VAL
+[       OK ] ValueSemantics.ContainerUsability_UT_VAL (0 ms)
+[----------] 4 tests from ValueSemantics (0 ms total)
+
+[----------] 1 test from ConventionSmokePlaceholder
+[ RUN      ] ConventionSmokePlaceholder.UTSmokeCompilesCoreOwnTypes_UT_VAL
+[       OK ] ConventionSmokePlaceholder.UTSmokeCompilesCoreOwnTypes_UT_VAL (0 ms)
+[----------] 1 test from ConventionSmokePlaceholder (0 ms total)
+
+[----------] 3 tests from ProvenanceMake
+[ RUN      ] ProvenanceMake.ValidConstructions_UT_MISS
+[       OK ] ProvenanceMake.ValidConstructions_UT_MISS (0 ms)
+[ RUN      ] ProvenanceMake.P1InvariantEnforced_UT_MISS
+[       OK ] ProvenanceMake.P1InvariantEnforced_UT_MISS (0 ms)
+[ RUN      ] ProvenanceMake.MethodTagSyntax_UT_MISS
+[       OK ] ProvenanceMake.MethodTagSyntax_UT_MISS (0 ms)
+[----------] 3 tests from ProvenanceMake (0 ms total)
+
+[----------] 1 test from ProvenanceTokens
+[ RUN      ] ProvenanceTokens.Roundtrip_UT_MISS
+[       OK ] ProvenanceTokens.Roundtrip_UT_MISS (0 ms)
+[----------] 1 test from ProvenanceTokens (0 ms total)
+
+[----------] 4 tests from SourcedValueStates
+[ RUN      ] SourcedValueStates.FourStateMatrix_UT_MISS
+[       OK ] SourcedValueStates.FourStateMatrix_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.MissingNeverBecomesZero_UT_MISS
+[       OK ] SourcedValueStates.MissingNeverBecomesZero_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.EmptyRawInputRejected_UT_MISS
+[       OK ] SourcedValueStates.EmptyRawInputRejected_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.EqualitySemantics_UT_MISS
+[       OK ] SourcedValueStates.EqualitySemantics_UT_MISS (0 ms)
+[----------] 4 tests from SourcedValueStates (0 ms total)
+
+[----------] 3 tests from UnitsConvert
+[ RUN      ] UnitsConvert.KnownConversions_UT_UNIT
+[       OK ] UnitsConvert.KnownConversions_UT_UNIT (0 ms)
+[ RUN      ] UnitsConvert.DimensionMismatch_UT_UNIT
+[       OK ] UnitsConvert.DimensionMismatch_UT_UNIT (0 ms)
+[ RUN      ] UnitsConvert.NonFiniteAndOverflow_UT_UNIT
+[       OK ] UnitsConvert.NonFiniteAndOverflow_UT_UNIT (0 ms)
+[----------] 3 tests from UnitsConvert (0 ms total)
+
+[----------] 1 test from UnitsFind
+[ RUN      ] UnitsFind.UnknownSymbol_UT_UNIT
+[       OK ] UnitsFind.UnknownSymbol_UT_UNIT (0 ms)
+[----------] 1 test from UnitsFind (0 ms total)
+
+[----------] 1 test from UnitsRegistry
+[ RUN      ] UnitsRegistry.R1TableComplete_UT_UNIT
+[       OK ] UnitsRegistry.R1TableComplete_UT_UNIT (0 ms)
+[----------] 1 test from UnitsRegistry (0 ms total)
+
+[----------] 1 test from QuantityTyped
+[ RUN      ] QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT
+[       OK ] QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT (0 ms)
+[----------] 1 test from QuantityTyped (0 ms total)
+
+[----------] 3 tests from CompareFormula
+[ RUN      ] CompareFormula.C4Basic_UT_UNIT
+[       OK ] CompareFormula.C4Basic_UT_UNIT (0 ms)
+[ RUN      ] CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT
+[       OK ] CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT (0 ms)
+[ RUN      ] CompareFormula.NonFiniteInputsFalse_UT_UNIT
+[       OK ] CompareFormula.NonFiniteInputsFalse_UT_UNIT (0 ms)
+[----------] 3 tests from CompareFormula (0 ms total)
+
+[----------] 2 tests from AllCloseWithin
+[ RUN      ] AllCloseWithin.ElementWiseNotSummed_UT_UNIT
+[       OK ] AllCloseWithin.ElementWiseNotSummed_UT_UNIT (0 ms)
+[ RUN      ] AllCloseWithin.LengthMismatchThrows_UT_UNIT
+[       OK ] AllCloseWithin.LengthMismatchThrows_UT_UNIT (0 ms)
+[----------] 2 tests from AllCloseWithin (0 ms total)
+
+[----------] 1 test from ToleranceMake
+[ RUN      ] ToleranceMake.Validation_UT_UNIT
+[       OK ] ToleranceMake.Validation_UT_UNIT (0 ms)
+[----------] 1 test from ToleranceMake (0 ms total)
+
+[----------] 1 test from RuntimeAbsoluteTolerance
+[ RUN      ] RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT
+[       OK ] RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT (0 ms)
+[----------] 1 test from RuntimeAbsoluteTolerance (0 ms total)
+
+[----------] 1 test from EvaluationModeTokens
+[ RUN      ] EvaluationModeTokens.RoundtripAndUnknown_UT_EVAL
+[       OK ] EvaluationModeTokens.RoundtripAndUnknown_UT_EVAL (0 ms)
+[----------] 1 test from EvaluationModeTokens (0 ms total)
+
+[----------] 1 test from TaskOutcomeTokens
+[ RUN      ] TaskOutcomeTokens.RoundtripAndUnknown_UT_EVAL
+[       OK ] TaskOutcomeTokens.RoundtripAndUnknown_UT_EVAL (0 ms)
+[----------] 1 test from TaskOutcomeTokens (0 ms total)
+
+[----------] 1 test from EngineeringStatusTokens
+[ RUN      ] EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL
+[       OK ] EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL (0 ms)
+[----------] 1 test from EngineeringStatusTokens (0 ms total)
+
+[----------] 1 test from TaskStateTokens
+[ RUN      ] TaskStateTokens.NineStatesRoundtrip_UT_EVAL
+[       OK ] TaskStateTokens.NineStatesRoundtrip_UT_EVAL (0 ms)
+[----------] 1 test from TaskStateTokens (0 ms total)
+
+[----------] 1 test from AxisOrthogonality
+[ RUN      ] AxisOrthogonality.OutcomeAndStateAreDistinctAxes_UT_EVAL
+[       OK ] AxisOrthogonality.OutcomeAndStateAreDistinctAxes_UT_EVAL (0 ms)
+[----------] 1 test from AxisOrthogonality (0 ms total)
+
+[----------] 2 tests from DiagCodeSyntax
+[ RUN      ] DiagCodeSyntax.ValidForms_UT_DIAG
+[       OK ] DiagCodeSyntax.ValidForms_UT_DIAG (0 ms)
+[ RUN      ] DiagCodeSyntax.InvalidForms_UT_DIAG
+[       OK ] DiagCodeSyntax.InvalidForms_UT_DIAG (0 ms)
+[----------] 2 tests from DiagCodeSyntax (0 ms total)
+
+[----------] 1 test from DiagRecordRequired
+[ RUN      ] DiagRecordRequired.RequiredStringsNonEmpty_UT_DIAG
+[       OK ] DiagRecordRequired.RequiredStringsNonEmpty_UT_DIAG (0 ms)
+[----------] 1 test from DiagRecordRequired (0 ms total)
+
+[----------] 1 test from ConfirmableFindingC1
+[ RUN      ] ConfirmableFindingC1.ComparisonRequired_UT_DIAG
+[       OK ] ConfirmableFindingC1.ComparisonRequired_UT_DIAG (0 ms)
+[----------] 1 test from ConfirmableFindingC1 (0 ms total)
+
+[----------] 1 test from ConfirmableFindingC2
+[ RUN      ] ConfirmableFindingC2.CredentialConsistency_UT_DIAG
+[       OK ] ConfirmableFindingC2.CredentialConsistency_UT_DIAG (0 ms)
+[----------] 1 test from ConfirmableFindingC2 (0 ms total)
+
+[----------] 1 test from ComparativeFields
+[ RUN      ] ComparativeFields.SourcedValueSides_UT_DIAG
+[       OK ] ComparativeFields.SourcedValueSides_UT_DIAG (0 ms)
+[----------] 1 test from ComparativeFields (0 ms total)
+
+[----------] 1 test from DiagRecordEquality
+[ RUN      ] DiagRecordEquality.FullFieldCompare_UT_DIAG
+[       OK ] DiagRecordEquality.FullFieldCompare_UT_DIAG (0 ms)
+[----------] 1 test from DiagRecordEquality (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 55 tests from 35 test suites ran. (233 ms total)
+[  PASSED  ] 55 tests.
