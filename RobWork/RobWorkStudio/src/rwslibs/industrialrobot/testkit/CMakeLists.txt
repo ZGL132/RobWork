@@ -45,7 +45,8 @@ set(SDURWS_IRD_TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../testdata"
 # 等后续实现文件并列加入 src/。
 add_library(sdurws_ird_testkit STATIC
     src/TestPaths.cpp
-    src/JsonLite.cpp)
+    src/JsonLite.cpp
+    src/Fault.cpp)
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -95,6 +96,7 @@ enable_testing()
 add_executable(sdurws_ird_testkit_test
     test/TestPathsTest.cpp
     test/JsonLiteTest.cpp
+    test/FaultTest.cpp
     test/BuildRedLineTest.cpp)
 target_compile_features(sdurws_ird_testkit_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_testkit_test PROPERTIES
