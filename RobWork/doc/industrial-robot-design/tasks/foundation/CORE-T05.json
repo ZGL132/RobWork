@@ -4,10 +4,19 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "容差比较（Compare）",
-  "status": "ready",
-  "dependsOn": ["CORE-T04"],
-  "requirements": ["NFR-COR-02", "NFR-COR-03"],
-  "designRefs": ["units/core.md#4.5", "units/core.md#5.5", "units/core.md#9"],
+  "status": "done",
+  "dependsOn": [
+    "CORE-T04"
+  ],
+  "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/core.md#4.5",
+    "units/core.md#5.5",
+    "units/core.md#9"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
@@ -18,12 +27,22 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
-  "crRefs": ["CR-06"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_core_test"
+  ],
+  "crRefs": [
+    "CR-06"
+  ],
   "branch": "wp03-t05",
   "interUnit": true,
-  "knownPitfalls": ["CR-06"],
+  "knownPitfalls": [
+    "CR-06"
+  ],
   "acceptance": [
     "C4 公式（closeWithin）与 C7 转写（runtimeAbsoluteTolerance）用例通过，含正负抵消反例与零参考退化",
     "CR-06：实现后与 testkit.md §5.3 Check 函数族重出 API diff（签名/参数序/错误语义），作为 TK-T04/05 ready 前置"

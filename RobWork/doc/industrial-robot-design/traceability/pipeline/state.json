@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 33,
+  "tickCount": 35,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
-    "fix": 0,
     "implement": 0,
+    "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T03:36:04+08:00",
+    "updatedAt": "2026-09-11T04:02:14+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -191,6 +191,16 @@
       "result": "pass-merged",
       "acceptanceRecord": "traceability/acceptance/CORE-T04-20260911.md",
       "unit": "core"
+    },
+    {
+      "mergedAt": "2026-09-11",
+      "result": "pass-merged",
+      "unit": "core",
+      "acceptanceRecord": "traceability/acceptance/CORE-T05-20260911.md",
+      "commits": [
+        "4ce149373a993a163a43258f0ddcd75707f0527d"
+      ],
+      "task": "CORE-T05"
     }
   ],
   "policy": {
@@ -216,11 +226,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "CORE-T05",
-      "contractPath": "tasks/foundation/CORE-T05.json",
-      "branch": "wp03-t05"
-    },
     {
       "taskId": "CORE-T06",
       "contractPath": "tasks/foundation/CORE-T06.json",
@@ -250,5 +255,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "d2d6abce-6653-4cd8-acf5-77abdd9b3635"
+  "tickToken": "87762c0a-f8eb-4f39-b503-05b08296f262"
 }
