@@ -21,6 +21,8 @@
 | --- | --- | --- |
 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/` | **产品代码**（20 个单元骨架，逐步落地源码） | ✅ 主要开发区 |
 | `RobWork/doc/industrial-robot-design/` | 设计文档链（REQUIREMENTS → ARCHITECTURE → DETAILED-DESIGN → units/*.md → development-task-breakdown.md） | ✅ 按任务卡修订 |
+| `RobWork/scripts/industrialrobot/` | 文档/任务验证脚本（validate-docs / validate-task / verify-task） | ✅ 随治理任务修订 |
+| `RobWork/docs/superpowers/` | AI 执行规划文档（plans/specs） | ✅ 辅助文档，小步修订 |
 | `RobWork/`（其余源码） | RobWork / RobWorkStudio / RobWorkSim 框架 | ❌ 零源码修改（SA-02，确需修改先登记 patch） |
 | `vcpkg/` | 第三方依赖（经典模式） | ❌ 只读 |
 | `build/` | 集成模式构建树（VS2022 x64） | 构建产物 |
@@ -152,7 +154,7 @@ std::string computeDigest(...);  // 实际是 SHA-256
 | 头文件 | include guard 用 `#ifndef <PROJ>_<Path>_HPP` 风格（参照框架 `RWS_ArcBallController_HPP`）；公共头放 `include/`，私有实现头不跨单元暴露 |
 | 错误处理 | 遵循各单元任务卡错误语义：调用方错误 fail-fast（断言/异常），环境错误走诊断码登记；禁止吞错 |
 | 第三方依赖 | 一律经 vcpkg（仓库根、经典模式）；**禁止** vendor 源码或引入第二渠道；新增依赖先在 development-task-breakdown.md 登记 |
-| 测试框架 | googletest，经 `find_package(GTest CONFIG REQUIRED)` 接入；测试名带需求/AT 追溯字段 |
+| 测试框架 | googletest，经 `find_package(GTest CONFIG REQUIRED)` 接入；测试名带需求/AT 追溯字段（gtest 的 vcpkg 安装随 WP-02-T01/WP-03-T01 执行，当前 `installed/` 尚无 GTest，首个测试目标接入前先安装） |
 
 ---
 
@@ -162,6 +164,10 @@ std::string computeDigest(...);  // 实际是 SHA-256
 
 ```bash
 # 集成模式（唯一交付口径）：仓库根 build/ + RWS_BUILD_INDUSTRIALROBOT=ON
+# ⚠ 现有 build/ 构建树配置于基线 31b8184 时代，缓存中无该选项（默认 OFF）——
+#   直接 build 不会编译 industrialrobot，必须先确认/重新配置开启：
+cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON
+grep RWS_BUILD_INDUSTRIALROBOT build/CMakeCache.txt   # 确认输出 :BOOL=ON 再构建
 cmake --build build --config Release
 
 # 独立冒烟模式：仅验证目标注册与 include 路径，脱离 RobWorkStudio
@@ -216,7 +222,7 @@ RobWork/doc/industrial-robot-design/
 **★ 分支红线：`main` 是旧主分支，已冻结不再维护——禁止向 `main` 提交（commit）、合并（merge）或推送（push）任何新内容**，本地与远程 `origin/main` 均不得改动；本仓库在新项目接入时曾错误地把新项目提交到 `main`，该状态已回退，不得重演。当前**唯一开发主线是 `redesign-main`**，一切后续改动只能在 `redesign-main` 及其任务分支上进行：
 
 - 分支：一切工作基于 `redesign-main`；实现任务使用短生命周期分支 `wp<nn>-t<kk>`（如 `wp03-t02`），DoD 达成后合入 `redesign-main`；纯文档修订可直接在 `redesign-main` 小步提交。
-- 提交信息：`[WP-nn-Tkk] <摘要>`（代码与其测试同一提交）；文档修订 `[DTB] v0.x: <摘要>` 或对应文档代号。
+- 提交信息：`[WP-nn-Tkk] <摘要>`（代码与其测试同一提交）；文档修订 `[DTB] v0.x: <摘要>` 或对应文档代号；治理文件（AGENTS.md 等）修订用 `[docs] <摘要>`（沿用仓库既有实践）。
 - 完成状态随实现提交登记，不积压。
 - 若发现改动误落到了 `main`（如切错分支）：**立即停止并在 `redesign-main` 侧报告**，不得在 `main` 上叠加修正提交，也不得擅自强推改写远程分支历史。
 
@@ -227,7 +233,7 @@ RobWork/doc/industrial-robot-design/
 #### 提交时机与粒度
 
 - **一次修改一次提交**：一个任务/一处完整改动对应一个提交；代码与其配套测试、文档同步、CMake 改动放**同一提交**（保持每个提交可独立构建、可回溯）。
-- **提交前自查**：双模式构建通过、`ird_gates` 零命中、测试已执行留痕（§4.2）——失败的中间状态不要提交；确实需要保存半成品时，在提交信息正文明确标注"WIP：尚未验证，缺 xxx"。
+- **提交前自查**：双模式构建通过、`ird_gates` 零命中、测试已执行留痕（§4.2）——失败的中间状态不要提交；确实需要保存半成品时，在提交信息正文明确标注"WIP：尚未验证，缺 xxx"。注意：`ird_gates` 门禁随 WP-01-T01 落地，落地前该自查项**如实标注"未执行——门禁未建成"**，不得静默跳过。
 
 #### commit 信息写法（详细、易懂，供人工 review 与回溯）
 
@@ -270,7 +276,7 @@ RobWork/doc/industrial-robot-design/
 
 ### 6.4 一次实现会话的循环（DTB §5.7）
 
-读任务行与输入文档章节 → 实现（含 §2 中文注释）→ 双模式构建 → 门禁（`ird_gates`）→ 测试执行留痕 → 文档同步 → **编写详细 commit 并提交、推送 `origin`（§6.3）**。**任何一步失败停在原地登记，不带病前进。**
+读任务行与输入文档章节 → 实现（含 §2 中文注释）→ 双模式构建 → 门禁（`ird_gates`，随 WP-01-T01 落地；落地前如实标注未执行）→ 测试执行留痕 → 文档同步 → **编写详细 commit 并提交、推送 `origin`（§6.3）**。**任何一步失败停在原地登记，不带病前进。**
 
 ---
 
