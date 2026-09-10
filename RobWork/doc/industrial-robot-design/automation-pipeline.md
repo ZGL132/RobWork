@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.4（2026-09-10 二轮审查修复：原子锁与租约、SHA 冻结链、验收记录回传、结构化队列、policy 执行语义） |
+| 文档版本 | v1.5（2026-09-10 三轮审查修复：fencing token、证据分支按尝试隔离与按 SHA 合并、队列契约真读校验、in-flight 三态 branch/base 强制） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -12,13 +12,16 @@
 
 任何全新上下文的执行者只需三样东西即可正确执行一个 tick：①本文件；②`state.json`（含 docRefs 指针与完整状态）；③其内嵌引用的契约路径。tick 提示词不携带历史对话；一切长期知识（约定/红线/流程）必须已在文档中——这是 DTB §5.7"持久状态落文档"的延伸。若 tick 发现 state.json 缺字段或与本文件矛盾：以本文件为准修复 state.json 并在汇报中注明。
 
-### 0.1 tick 调用约定与原子锁（v1.4 重写——普通文件读写不是原子操作，"state.json 占用即标识"不构成锁）
+### 0.1 tick 调用约定与原子锁（v1.5 增 fencing token——超时接管后旧 tick 不得释放新锁）
 
-- **原子锁**：每 tick **第一步**执行 `pwsh -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action acquire -LeaseMinutes <policy.leaseMinutes.implement>`。锁经 .NET FileStream CreateNew（O_EXCL）独占创建于 `.git/ird-pipeline-tick.lock`，内容含 `tickId`/`workerId`（GUID）＋`acquiredAt`/`leaseExpiresAt`。**acquire 失败（退出码 3）＝有未到期锁在持 → 本 tick 只输出锁信息后退出，不读不写 state**；锁已过期或损坏 → 脚本将陈锁改名 `.stale-<时间戳>` 留证后接管并继续。tick 结束（含异常路径）必须 `-Action release`；忘记释放的锁靠租约到期自愈。
-- **触发方式**：①所有者口令"执行一个 tick"（或"恢复流水线"后的首个 tick）——任何被授权会话收到该口令即按附录 A 模板编排；②所有者显式配置的定时自动化（如 ZCode 定时任务）——其提示词**逐字**使用附录 A 模板。除此之外不存在第三种入口；未持口令的会话不得自行编排 tick。
-- **并发约束**：同一时刻至多一个持锁 tick；锁是唯一并发裁判，state.json 不承担锁职责。§7 单工作树单轨道不变。
-- **tick 报告**：每 tick 结束输出固定结构汇报——phase 变迁、当前任务、证据路径、下一步等待点。所有者凭报告决策，不读过程。
-- **tickId/tickCount**：锁内 `tickId` 为本次 tick 的 GUID；state 的 `tickCount` 每 tick 递增一次（与 workerId 共同构成审计链）。
+- **原子锁**：每 tick **第一步**执行 `pwsh -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action acquire -LeaseMinutes <policy.leaseMinutes.implement>`。锁经 .NET FileStream CreateNew（O_EXCL）独占创建于 `.git/ird-pipeline-tick.lock`，内容含 `tickId`/`workerId`（GUID）＋`acquiredAt`/`leaseExpiresAt`。**acquire 失败（退出码 3）＝有未到期锁在持 → 本 tick 只输出锁信息后退出，不读不写 state**；锁已过期或损坏 → 脚本将陈锁改名 `.stale-<时间戳>` 留证后接管并继续。
+- **fencing token（v1.5）**：acquire 返回的 `tickId` 即 fencing token（每次成功获取——含接管——都生成新 token）。`release` 与 `renew` **必须携带 `-Token <tickId>`**，脚本与锁内 tickId 核对：不匹配（旧 tick 租约过期被接管后复活，试图释放/续租新 tick 的锁）一律拒绝（退出码 4），绝不删除他人锁。**失去租约的旧 tick 不得再写状态、不得触碰锁**——发现自身 token 失配（release 被拒/续租被拒）即自终止并报告。
+- **状态写入纪律（诚实边界）**：state.json 的文件写入无法做到硬件级 fencing——纪律为"仅持锁 tick 可写，且每次写入记录 `tickToken`＝自身锁 tickId"；validate-state 的事后检测面＝tickToken 存在性（in-flight 阶段非空）＋心跳时钟健全性（不得晚于当前时刻 5 分钟以上）＋心跳单调性（不得早于活跃 run 的 startedAt）。历史上确有无锁心跳写入与未来时间戳写入两类事故（2026-09-10 实录），均会被上述检测捕获。
+- **长等待续租**：派发子代理阻塞等待前执行 `renew -Token <tickId> -LeaseMinutes <对应时长>`，防健康长任务被租约误杀。
+- **触发方式**：①所有者口令"执行一个 tick"（或"恢复流水线"后的首个 tick）；②所有者显式配置的定时自动化——提示词**逐字**使用附录 A 模板。除此之外不存在第三种入口。
+- **并发约束**：同一时刻至多一个持锁 tick；锁是唯一并发裁判。§7 单工作树单轨道不变。
+- **tick 报告**：每 tick 结束输出固定结构汇报——phase 变迁、当前任务、证据路径、下一步等待点。
+- **tickId/tickCount**：锁内 `tickId` 为本次 tick 的 GUID（＝fencing token＝state.tickToken）；state 的 `tickCount` 每 tick 递增一次。
 
 ### 0.2 state.json schema（机器校验：validate-state.ps1；守卫 5 的执行面）
 
@@ -29,16 +32,17 @@
 | `schemaVersion` | 恒 `ird-pipeline/1` |
 | `phase` | 枚举：paused / idle / implementing / awaiting_acceptance / awaiting_merge / awaiting_unit_review / blocked / stopped |
 | `tickCount` | 整数 ≥0，每 tick 递增（审计计数） |
+| `tickToken` | 写入本状态的 tick 之锁 tickId（fencing 侧写，v1.5）：in-flight 阶段（implementing/awaiting_acceptance/awaiting_merge）必须非空；paused/idle 保留上次写入者作审计。心跳另有时钟健全性（≤now+5min）与单调性（≥活跃 run.startedAt）校验——无锁写入/未来时间戳/回退写入均被事后检出 |
 | `currentTask` / `branch` / `base` | implementing/awaiting_acceptance/awaiting_merge ⇒ currentTask 必填；`base`＝领取任务时冻结的 `redesign-main` 基线 **40 位 SHA**；idle/paused ⇒ currentTask 必须 null |
 | `headSha` | 实施完成时冻结的任务分支尖端 40 位 SHA（进入 awaiting_acceptance 前写入）；fail 返工/idle/paused/blocked 时必须清 null（陈旧 SHA 不得残留） |
 | `acceptedHead` | 验收 pass 时＝headSha 的冻结拷贝；合并只能合并**该 SHA**，不合并分支引用（防验收后分支新增提交混入） |
-| `acceptanceRecord` | 结构化对象 `{branch, path, commit}`：验收记录所在 `acc/<taskId>` 分支＋记录路径＋记录提交（ACC §3 回传流程的落点）；仅 awaiting_merge 必填 |
+| `acceptanceRecord` | 结构化对象 `{branch, path, commit}`：验收记录所在 evidence 分支 `acc/<taskId>/<attempt>`（attempt＝该任务第几次验收，v1.5 起 fail 重试不复用分支名）＋记录路径＋**不可变 evidence 提交 SHA（40 位）**——收尾按该 SHA 合并并先验证远端 ref 未漂移（ACC §3 回传流程的落点）；仅 awaiting_merge 必填 |
 | `run` | 工作者租约对象：`{kind: implement\|acceptance, runId, workerId, task, startedAt, leaseExpiresAt}`（ISO 时间戳）。implementing ⇒ 必有 run（kind=implement）；awaiting_acceptance ⇒ run 为 null（待派验收）或 kind=acceptance（在验）；其余 phase ⇒ null |
-| `attempts` | `implement`/`fix` 整数 ≥0；implement 完成进入验收时清零 |
+| `attempts` | `implement`/`fix`/`accept` 整数 ≥0；implement 完成进入验收时清零；accept＝验收派发计数（evidence 分支序号来源） |
 | `heartbeat.updatedAt` | ISO 时间戳（**规范写入格式 `yyyy-MM-ddTHH:mm:sszzz` 秒精度＋本地偏移**；校验器对 pwsh7 自动 DateTime 化做归一化后仍须匹配 ISO 正则）——纯日期无法排序同日 tick |
 | `heartbeat.ticksNoProgress` | 整数 ≥0，达 `policy.noProgressLimit` 即熔断（守卫 6）；paused 不计 |
 | `policy` | 必备键见 §6.1 执行语义表；**policy 变更＝PIPE 增量修订先行，再改 state** |
-| `queue` | **结构化条目**数组（v1.4）：每项 `{taskId, contractPath, branch}`——三键必填、taskId 不重复、contractPath（相对 doc/industrial-robot-design）指向真实契约且任务非 done；branch 与契约内 `branch` 字段一致（唯一来源在契约，queue 只携带指针）。队首可领取性由 validate-state 输出（编排者不读契约正文） |
+| `queue` | **结构化条目**数组（v1.4）：每项 `{taskId, contractPath, branch}`——三键必填、taskId 不重复、任务非 done；**v1.5 真读校验**：contractPath 指向的契约本体 taskId/branch 必须与条目一致（错路径/错分支不可领取），且队内每份契约过 validate-task 三查（编排者不读契约正文，消费 validate-state 的机器结论）。队首可领取性由 validate-state 输出 |
 | `history` | 追加式数组；每项必备 `task`/`unit`/`result`/`commits`/`mergedAt`，可选 `failReason` |
 | `docRefs` | 必备键：pipeline、acceptance、contractCompilation、agents、dtbTaskRegistry、taskContracts |
 | `pausedReason` | **≤200 字事实陈述**——叙述性豁免/规则变体必须走 PIPE 增量修订（v1.3 状态纪律） |
@@ -99,16 +103,16 @@
    - **严格次序**：队首不可领时不跳队——报告等所有者；`autoDiscovery`/`strictQueueOrder`/`unitCheckpoint` 的分支语义见 §6.1；
    - **单元检查点**：拟领任务 unit 与上一已完成任务不同 → awaiting_unit_review（§2 豁免条款除外）。
 4. **实施段**：派发实施子代理（附录 B 模板；输入含 base SHA）并**阻塞等待**；完成事件处理：`headSha = git rev-parse <branch>`（40 位冻结）、清 run、attempts.implement 清零、phase=awaiting_acceptance。实施子代理内部流程不变（防偷懒纪律 §5、双模式构建、留痕、分步提交、push origin）。
-5. **验收段**：派发验收子代理（附录 C 模板；输入＝契约路径＋headSha＋记录输出路径）并阻塞等待；验收者在独立 worktree（**detached @ headSha**，不用分支名——任务分支可能仍被实施工作树检出）复现核查，验收记录提交到 `acc/<taskId>` 分支（基于 origin/redesign-main）并**推送**（ACC §3——记录不随临时 worktree 消亡）。完成事件：pass → `acceptedHead=headSha`、`acceptanceRecord={branch:acc/<taskId>, path, commit}`、清 run、phase=awaiting_merge；fail → attempts.fix+1（超 `maxFixCycles` 转 blocked），phase=implementing＋新 run（返工实施者只拿验收记录＋契约），headSha/acceptedHead 清 null。
+5. **验收段**：派发验收子代理（附录 C 模板；输入＝契约路径＋headSha＋**attempt 号（＝attempts.accept 递增后的值）**＋记录输出路径）并阻塞等待（先 `renew` 续租）；验收者在独立 worktree（**detached @ headSha**，不用分支名——任务分支可能仍被实施工作树检出）复现核查，验收记录提交到 **evidence 分支 `acc/<taskId>/<attempt>`**（基于 origin/redesign-main；attempt 隔离保证 fail 重试永不复用已存在的分支名）并**推送**（ACC §3——记录不随临时 worktree 消亡）。完成事件：pass → `acceptedHead=headSha`、`acceptanceRecord={branch:acc/<taskId>/<attempt>, path, commit}`（commit＝evidence 分支上的记录提交 **40 位 SHA，不可变合并对象**）、清 run、phase=awaiting_merge；fail → attempts.fix+1（超 `maxFixCycles` 转 blocked），phase=implementing＋新 run（返工实施者只拿验收记录＋契约），headSha/acceptedHead/acceptanceRecord 清 null。
 6. **裁决处理**：pass→awaiting_merge（`autoMerge.enabled=false` 时**永不自动合并**，预授权须所有者显式写入 policy——语义见 §6.1）；fail→fix 循环。
-7. **收尾**（所有者"合并 <taskId>"指令后，v1.4 固化次序）：
+7. **收尾**（所有者"合并 <taskId>"指令后，v1.5 固化次序）：
    ① `git fetch origin`，验证 `git rev-parse origin/<branch>` **== acceptedHead**——不符即转 blocked 报告"验收后分支漂移"（有人绕过流水线推送），不自行取舍；
-   ② 合入验收记录：`git merge --no-ff origin/acc/<taskId>`（治理文档，先例 CORE-T01 记录先于代码合入）；
+   ② 合入验收记录：验证 `git rev-parse origin/<evidence分支>` **== acceptanceRecord.commit**（evidence 分支漂移同样转 blocked），随后 `git merge --no-ff <acceptanceRecord.commit>`——**按不可变 SHA 合并，不合并分支尖端**（evidence 分支被后续追加提交时不会带入未审查内容）；
    ③ **按 SHA 合入代码**：`git merge --no-ff <acceptedHead>`（不是分支引用——即使分支被移动也只合并已验收提交）；冲突即停转 blocked；
    ④ `git push origin redesign-main`；
    ⑤ 治理提交：契约 status=done、解锁 dependents、history 追加（含 failReason 若有）、queue 移出该任务、heartbeat 重置、清 currentTask/branch/base/headSha/acceptedHead/acceptanceRecord、phase=idle、再 push；
-   ⑥ 删除任务分支与 acc 分支（本地＋origin）、state 落盘、出 tick 报告；
-   ⑦ **释放锁**（pipeline-lock release）。
+   ⑥ 删除任务分支与 evidence 分支（本地＋origin）、state 落盘、出 tick 报告；
+   ⑦ **释放锁**（`release -Token <tickId>`——token 失配即自终止报告，不得触碰他人锁）。
 
 ## 5. 防偷懒纪律（实施端与验收端双保险）＋中断对账协议
 
@@ -152,7 +156,7 @@
 
 > 模板即纪律的载体：派发子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款；模板修订＝PIPE 增量修订（版本行同步）。
 
-### 附录 A · 编排者模板（T-ORCH v2）
+### 附录 A · 编排者模板（T-ORCH v3）
 
 ```text
 你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
@@ -162,27 +166,32 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
 按以下次序执行一个 tick（PIPE §4）：
 1. 取锁：pwsh -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action acquire
    -LeaseMinutes <state.policy.leaseMinutes.implement>；退出码非 0＝锁被持有或竞争失败
-   → 输出锁信息后结束（不读不写 state）。
+   → 输出锁信息后结束（不读不写 state）。成功则记录输出中的 tickId＝你的 fencing token。
 2. 守卫（PIPE §3）：git status/branch（"脏"判定按 §3.1 豁免口径）＋运行
    validate-state.ps1（消费其 queue-head: 行作队首可领取性结论）；任一命中按 §3 处置退出。
 3. 恢复判定（PIPE §4.2）：implementing/awaiting_acceptance 且 run 未到期 → 只汇报退出
    （工作者运行中，禁止续派）；run 到期 → 按 §4.2 计数与上限处置；awaiting_merge/
    awaiting_unit_review/blocked → 汇报等待点。
-4. 选任务（仅 idle）：用 queue 队首条目的 taskId/contractPath/branch 三字段（不读契约正文）；
-   不可领（queue-head: claimable=false）→ 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。
+4. 选任务（仅 idle）：用 queue 队首条目的 taskId/contractPath/branch 三字段（不读契约正文；
+   条目与契约的一致性已由 validate-state 真读校验）；不可领（queue-head: claimable=false）
+   → 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。
 5. 领取：冻结 base=git rev-parse redesign-main（40 位）；置 currentTask/branch/base、
-   attempts 清零、phase=implementing、run{kind=implement, runId/workerId=GUID,
-   startedAt/leaseExpiresAt=now±leaseMinutes.implement}；写回 state。
-6. 派发实施子代理：逐字使用附录 B 模板（占位符：契约路径=队首条目 contractPath、
-   分支=队首条目 branch、base=刚冻结 SHA）；阻塞等待完成。完成事件：headSha=
+   attempts 清零（implement/fix）、phase=implementing、run{kind=implement, runId/workerId=GUID,
+   startedAt/leaseExpiresAt=now±leaseMinutes.implement}；写回 state（tickToken=你的 token）。
+6. 派发实施子代理：renew -Token 续租后逐字使用附录 B 模板（占位符：契约路径=队首条目
+   contractPath、分支=队首条目 branch、base=刚冻结 SHA）；阻塞等待完成。完成事件：headSha=
    git rev-parse <branch>；清 run、attempts.implement=0、phase=awaiting_acceptance、写回 state。
-7. 派发验收子代理（下一 tick 或本 tick 继续）：逐字附录 C 模板（输入=契约路径/headSha/
-   记录路径）；阻塞等待。pass：acceptedHead=headSha、acceptanceRecord={branch,path,commit}
-   （从验收者输出解析）、清 run、phase=awaiting_merge；fail：按 §4.5 处置。
-8. 收尾仅凭所有者"合并 <taskId>"指令（PIPE §4.7 七步固化次序，含分支漂移检测与按
-   acceptedHead 合并）；未持指令不得合并。
-9. 每次状态写回同步 heartbeat.updatedAt 与 tickCount+1；tick 结束输出固定报告
-   （phase 变迁/当前任务/证据路径/下一步等待点），并执行 pipeline-lock release。
+7. 派发验收子代理：attempts.accept+1；renew 续租；逐字附录 C 模板（输入=契约路径/headSha/
+   attempt 号/记录路径）；阻塞等待。pass：acceptedHead=headSha、acceptanceRecord=
+   {branch:acc/<taskId>/<attempt>, path, commit}（从验收者输出解析）、清 run、
+   phase=awaiting_merge；fail：按 §4.5 处置。
+8. 收尾仅凭所有者"合并 <taskId>"指令（PIPE §4.7 七步固化次序：任务分支漂移检测→
+   evidence 分支漂移检测→按 acceptanceRecord.commit 合并记录→按 acceptedHead 合并代码→
+   push→治理提交与状态清理→删双分支）；未持指令不得合并。
+9. 每次状态写回同步 heartbeat.updatedAt、tickToken=你的 token 与 tickCount+1；tick 结束
+   输出固定报告（phase 变迁/当前任务/证据路径/下一步等待点），并执行
+   pipeline-lock release -Token <你的 tickId>——token 失配（退出码 4）＝你的租约已被接管，
+   自终止并报告，不得重试。
 ```
 
 ### 附录 B · 实施者模板（T-IMPL v2）
@@ -214,22 +223,25 @@ push origin <branch>。
 证据路径）。
 ```
 
-### 附录 C · 验收者模板（T-ACC v2）
+### 附录 C · 验收者模板（T-ACC v3）
 
 ```text
 你是任务 <taskId> 的验收者：全新上下文，只消费产物，不消费实施叙述（ACC §2 四条
 独立性要求逐条适用；为"不通过"找证据）。
-输入：契约 <contractPath>、送验提交 <headSha（40 位，冻结对象）>、验收记录输出路径
-<traceability/acceptance/<taskId>-<YYYYMMDD>[-rN].md>（同日多次验收加 -r2 序号）。
+输入：契约 <contractPath>、送验提交 <headSha（40 位，冻结对象）>、验收尝试序号 <attempt>、
+验收记录输出路径 <traceability/acceptance/<taskId>-<YYYYMMDD>[-rN].md>（同日多次验收
+加 -r2 序号；与 attempt 独立——文件名防覆盖，attempt 防 evidence 分支重名）。
 
 执行环境（ACC §3，按 SHA 不按分支名——任务分支可能仍被实施工作树检出）：
 - 复现现场：git worktree add --detach <临时目录A> <headSha>；集成模式重新配置
   （确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON）后构建；冒烟另配临时目录（带 toolchain）；
   契约 verify 命令逐条亲手执行。
-- 记录回传（防记录随临时 worktree 消亡）：git worktree add -b acc/<taskId>
-  <临时目录B> origin/redesign-main；在 B 内写验收记录→git add＋commit→
-  push origin acc/<taskId>；输出记录三元组 {branch:acc/<taskId>, path, commit}
-  （编排者将写入 state.acceptanceRecord）。确认推送成功后才允许删除两个 worktree。
+- 记录回传（防记录随临时 worktree 消亡）：git worktree add -b acc/<taskId>/<attempt>
+  <临时目录B> origin/redesign-main（attempt 序号保证 fail 重试不复用已有分支名）；
+  在 B 内写验收记录→git add＋commit→push origin acc/<taskId>/<attempt>；
+  输出记录三元组 {branch:acc/<taskId>/<attempt>, path, commit:40 位提交 SHA}
+  （编排者将写入 state.acceptanceRecord——该 commit 是收尾按 SHA 合并的不可变对象）。
+  确认推送成功后才允许删除两个 worktree。
 
 检查清单：acceptance-protocol.md §4 的 4.1～4.11 逐项出证据（通过给命令输出/文件行号，
 失败给反证；4.1 的 diff 范围＝<headSha 所在分支的 base..head>＝state.base..headSha）；
@@ -248,4 +260,5 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.2 | 2026-09-10 | §0 阅读阶梯：三角色必读—按需下沉—禁止三档输入预算 |
 | v1.2.1 | 2026-09-10 | §3.1 守卫豁免：流水线自持路径与构建产物目录不计脏，防心跳写回自锁 |
 | v1.3 | 2026-09-10 | 一轮审核修复：tick 调用约定、state schema 文档化＋validate-state、守卫精确化、合并次序固化、中断对账（Acc-Covered）、发现闭环（findings.json）、三份提示词模板封存、契约编译协议（CCP）挂接 |
-| v1.4 | 2026-09-10 | 二轮审查修复（6 条结构性问题）：①§0.1 原子锁 pipeline-lock.ps1（O_EXCL 独占创建＋租约＋陈锁接管留证）——并发唯一裁判，防双 tick 双派工；②工作者生命周期（run 租约对象＋阻塞等待＋显式完成事件；未超时只汇报不续派）；③SHA 冻结链（领取冻 base、完成冻 headSha、pass 冻 acceptedHead；收尾先验 origin 分支==acceptedHead 再按 SHA 合并——防未验收提交混入）；④queue 结构化条目 {taskId,contractPath,branch}＋validate-state 队首可领取性输出——编排者自足且不读契约正文；⑤验收 detached worktree@headSha＋acc/<taskId> 记录分支提交推送（ACC v1.3）——记录不随临时 worktree 消亡；⑥§6.1 policy 执行语义表（autoMerge.classes 封闭词表与类别判定、autoDiscovery/strictQueueOrder/unitCheckpoint 消费点、豁免一次性消费标记 firstUnitCheckpointExempted、leaseMinutes）；⑦附录模板升 v2（锁步骤、SHA 输入、记录回传） |
+| v1.4 | 2026-09-10 | 二轮审查修复（6 条结构性问题）：①§0.1 原子锁 pipeline-lock.ps1；②工作者生命周期（run 租约＋阻塞等待＋显式完成事件）；③SHA 冻结链（base/headSha/acceptedHead；按 SHA 合并＋漂移检测）；④queue 结构化条目＋队首可领取性输出；⑤验收 detached worktree＋记录分支回传；⑥§6.1 policy 执行语义表；⑦附录模板升 v2 |
+| v1.5 | 2026-09-10 | 三轮审查修复（1 P0＋3 P1）：①fencing token——release/renew 必须 -Token 与锁内 tickId 核对（退出码 4 拒绝），旧 tick 超时被接管后无法释放/续租新锁；状态写入纪律（仅持锁可写＋tickToken 侧写＋心跳时钟健全性 ≤now+5min 与单调性 ≥run.startedAt——两类历史事故实录均被检出）；②queue 真读校验（contractPath 指向契约本体的 taskId/branch 必须与条目一致＋队内契约逐份过 validate-task）；③evidence 分支按尝试隔离 acc/<taskId>/<attempt>（attempts.accept 计数；fail 重试不复用分支名），acceptanceRecord.commit 收紧为 40 位不可变 SHA，收尾先验 evidence 分支未漂移再按该 SHA 合并（不合并分支尖端）；④in-flight 三态（implementing/awaiting_acceptance/awaiting_merge）统一强制 branch＋base＋currentTask==queue 队首＋branch==队列条目；⑤附录模板升 v3（token/续租/attempt/双漂移检测） |

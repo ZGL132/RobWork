@@ -10,13 +10,32 @@
   "acceptedHead": null,
   "acceptanceRecord": null,
   "run": null,
-  "attempts": { "implement": 0, "fix": 0 },
-  "heartbeat": { "updatedAt": "2026-09-10T14:40:00+08:00", "ticksNoProgress": 0 },
+  "attempts": {
+    "implement": 0,
+    "fix": 0,
+    "accept": 0
+  },
+  "heartbeat": {
+    "updatedAt": "2026-09-10T14:11:38+08:00",
+    "ticksNoProgress": 0
+  },
   "history": [
-    { "task": "CORE-T01", "unit": "core", "result": "pass-merged", "commits": ["ad7bce6"], "acceptanceRecord": "traceability/acceptance/CORE-T01-20260910.md", "mergedAt": "2026-09-10" }
+    {
+      "task": "CORE-T01",
+      "unit": "core",
+      "result": "pass-merged",
+      "commits": [
+        "ad7bce6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/CORE-T01-20260910.md",
+      "mergedAt": "2026-09-10"
+    }
   ],
   "policy": {
-    "autoMerge": { "enabled": false, "classes": [] },
+    "autoMerge": {
+      "enabled": false,
+      "classes": []
+    },
     "strictQueueOrder": true,
     "autoDiscovery": false,
     "unitCheckpoint": true,
@@ -25,15 +44,42 @@
     "noProgressLimit": 3,
     "maxImplementRestarts": 2,
     "maxFixCycles": 3,
-    "leaseMinutes": { "implement": 120, "acceptance": 60 }
+    "leaseMinutes": {
+      "implement": 120,
+      "acceptance": 60
+    }
   },
   "queue": [
-    { "taskId": "TK-T01", "contractPath": "tasks/foundation/TK-T01.json", "branch": "wp02-t01" },
-    { "taskId": "WP-01-T01", "contractPath": "tasks/WP-01-T01.json", "branch": "wp01-t01" },
-    { "taskId": "WP-00-T01", "contractPath": "tasks/WP-00-T01.json", "branch": "wp00-t01" },
-    { "taskId": "DOC-T03", "contractPath": "tasks/DOC-T03.json", "branch": "doc-t03" },
-    { "taskId": "WP-01-T02", "contractPath": "tasks/WP-01-T02.json", "branch": "wp01-t02" },
-    { "taskId": "WP-00-T02", "contractPath": "tasks/WP-00-T02.json", "branch": "wp00-t02" }
+    {
+      "taskId": "TK-T01",
+      "contractPath": "tasks/foundation/TK-T01.json",
+      "branch": "wp02-t01"
+    },
+    {
+      "taskId": "WP-01-T01",
+      "contractPath": "tasks/WP-01-T01.json",
+      "branch": "wp01-t01"
+    },
+    {
+      "taskId": "WP-00-T01",
+      "contractPath": "tasks/WP-00-T01.json",
+      "branch": "wp00-t01"
+    },
+    {
+      "taskId": "DOC-T03",
+      "contractPath": "tasks/DOC-T03.json",
+      "branch": "doc-t03"
+    },
+    {
+      "taskId": "WP-01-T02",
+      "contractPath": "tasks/WP-01-T02.json",
+      "branch": "wp01-t02"
+    },
+    {
+      "taskId": "WP-00-T02",
+      "contractPath": "tasks/WP-00-T02.json",
+      "branch": "wp00-t02"
+    }
   ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
@@ -42,5 +88,6 @@
     "agents": "AGENTS.md",
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
-  }
+  },
+  "tickToken": null
 }
