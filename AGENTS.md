@@ -171,12 +171,16 @@ cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRI
 grep RWS_BUILD_INDUSTRIALROBOT build/CMakeCache.txt   # 确认输出 :BOOL=ON 再构建
 cmake --build build --config Release
 
-# 独立冒烟模式：仅验证目标注册与 include 路径，脱离 RobWorkStudio
-cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <任意临时目录>
+# 独立冒烟模式：仅验证目标注册与 include 路径，脱离 RobWorkStudio。
+# ⚠ 必须带 vcpkg toolchain 参数：单元 CMake 含 find_package(GTest CONFIG REQUIRED)（DTB §5.5），
+#   裸命令会因找不到 GTest 配置失败（CORE-T01 验收 G-2 / findings F-002）：
+cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <任意临时目录> \
+  -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build <该目录>
 ```
 
 - 工具链：MSVC 2022 x64（Visual Studio 17 2022 生成器），Qt 与 vcpkg 依赖已就位。
+- 治理脚本调用：`pwsh -File RobWork/scripts/industrialrobot/<脚本>.ps1`（pwsh 7 与 Windows PowerShell 5.1 均可——脚本对仓库根做自检解析，与调用方式无关；口径登记于 DTB §5.1）。
 - **仅冒烟通过不构成任务完成**；集成模式零错误是 DoD 第 1 条。
 - 运行 RobWorkStudio：仓库根 `start_studio.bat`。
 

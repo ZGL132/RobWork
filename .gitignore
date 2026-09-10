@@ -125,3 +125,7 @@ serialdev-out.txt
 # Root-level build output (product build tree)
 # -------------------------------------------------------------
 build/
+
+# Pipeline/acceptance smoke build trees (governance acceptance leftovers; PIPE v1.3 guard exemption expects these ignored)
+build-acc-smoke/
+*-smoke/
