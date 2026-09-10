@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "实现契约断言（ContractCheck）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "TK-T05"
   ],
@@ -19,7 +19,6 @@
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/testkit.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
@@ -32,13 +31,17 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_testkit_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-TK-2",
-  "acceptance": [
-    "TK-CTR 正反例全部通过",
-    "envelope 谓词模板以 core 值类型编译通过"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_testkit_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "branch": "wp02-t07",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-TK-2"
+  ],
+  "acceptance": [
+    "TK-CTR 正反例通过（诊断记录/比较型三要素/任务身份/身份唯一性/数据完整性五族）",
+    "evidence 谓词模板编译（以 core 值类型演练）"
+  ],
+  "note": "DOC-T05 回填（2026-09-11）：requirements/designRefs/deps/verify/acceptance 编译自 testkit.md §9 任务行＋§2 需求表（≙WP-02-Txx）；CR-06 实现级 API diff 已通过（foundation-api-diff.md §CR-06）——TK-T04/05 随批放行；编译留痕见 traceability/contract-compile-log.md"
 }
