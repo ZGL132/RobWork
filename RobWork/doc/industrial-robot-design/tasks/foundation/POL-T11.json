@@ -2,18 +2,33 @@
   "schemaVersion": "ird-task/1",
   "taskId": "POL-T11",
   "unit": "policy",
-  "masterWp": "WP-C",
-  "title": "POL-T11 implementation slice",
+  "masterWp": "WP-E",
+  "title": "policy 替身与契约套件",
   "status": "planned",
   "dependsOn": [
-    "POL-T10"
+    "POL-T05",
+    "POL-T06",
+    "POL-T07",
+    "POL-T08",
+    "POL-T09",
+    "POL-T10",
+    "TK-T01"
   ],
-  "requirements": [],
+  "requirements": [
+    "ARC-05",
+    "AT-01",
+    "AT-19",
+    "AT-37"
+  ],
   "designRefs": [
-    "units/policy.md"
+    "units/policy.md#11",
+    "units/policy.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +39,13 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_policy_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-POL-4",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "§11 验证矩阵逐条通过并留痕",
+    "POL-TD-1 边界声明（替身不冒充碰撞算法验证）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

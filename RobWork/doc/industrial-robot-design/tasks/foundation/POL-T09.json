@@ -2,18 +2,28 @@
   "schemaVersion": "ird-task/1",
   "taskId": "POL-T09",
   "unit": "policy",
-  "masterWp": "WP-C",
-  "title": "POL-T09 implementation slice",
+  "masterWp": "WP-E",
+  "title": "实现策略兼容判定（Compatibility）",
   "status": "planned",
   "dependsOn": [
-    "POL-T08"
+    "POL-T04"
   ],
-  "requirements": [],
+  "requirements": [
+    "CON-04",
+    "CON-05",
+    "NFR-DEP-05"
+  ],
   "designRefs": [
-    "units/policy.md"
+    "units/policy.md#8.1",
+    "units/policy.md#8.2",
+    "units/policy.md#9.5",
+    "units/policy.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +34,12 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_policy_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-POL-5",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "POL-COMPAT-1/2 版本/后端/锚失配全量 reason 用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

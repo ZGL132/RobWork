@@ -3,17 +3,24 @@
   "taskId": "EV-T09",
   "unit": "evidence",
   "masterWp": "WP-C",
-  "title": "EV-T09 implementation slice",
+  "title": "实现缓存/检查点兼容判定（Compatibility）",
   "status": "planned",
   "dependsOn": [
-    "EV-T08"
+    "EV-T07"
   ],
-  "requirements": [],
+  "requirements": [
+    "CON-04",
+    "OPT-06"
+  ],
   "designRefs": [
-    "units/evidence.md"
+    "units/evidence.md#8.2",
+    "units/evidence.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +31,12 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_evidence_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-EV-1",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "EV-CPA-1~3：Quick≠Verified/契约/检查点独立用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

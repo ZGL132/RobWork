@@ -3,17 +3,25 @@
   "taskId": "CORE-T08",
   "unit": "core",
   "masterWp": "WP-B",
-  "title": "CORE-T08 implementation slice",
+  "title": "实现事件契约（⑤端口接口归 core）",
   "status": "planned",
   "dependsOn": [
-    "CORE-T07"
+    "CORE-T02",
+    "CORE-T06"
   ],
-  "requirements": [],
+  "requirements": [
+    "TASK-03"
+  ],
   "designRefs": [
-    "units/core.md"
+    "units/core.md#4.9",
+    "units/core.md#5.8",
+    "units/core.md#9"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +32,14 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_core_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_core_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-D-1",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "UT-EVT 载荷一致性用例通过",
+    "参考总线 FIFO 顺序与退订用例通过",
+    "事件不携带数据快照（D-9，核对称见卡）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

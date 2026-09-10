@@ -2,33 +2,49 @@
   "schemaVersion": "ird-task/1",
   "taskId": "RT-T13",
   "unit": "runtime",
-  "masterWp": "WP-C",
-  "title": "RT-T13 implementation slice",
+  "masterWp": "WP-D",
+  "title": "runtime 文档与门禁同步",
   "status": "planned",
   "dependsOn": [
+    "RT-T02",
+    "RT-T03",
+    "RT-T04",
+    "RT-T05",
+    "RT-T06",
+    "RT-T07",
+    "RT-T08",
+    "RT-T09",
+    "RT-T10",
+    "RT-T11",
     "RT-T12"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-MNT-07"
+  ],
   "designRefs": [
-    "units/runtime.md"
+    "units/runtime.md#12",
+    "units/runtime.md#15"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": [
-    "implementation",
-    "unit-tests",
+    "doc-update",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_runtime_test"
-  ],
+  "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+  "branch": null,
+  "interUnit": false,
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "README 核对零偏差",
+    "§15.3 状态更新（P-RT-1~9 最新）",
+    "R-4 例外登记（名称解析器实现文件清单）提交 WP-01-T03"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

@@ -3,17 +3,24 @@
   "taskId": "TK-T03",
   "unit": "testkit",
   "masterWp": "WP-B",
-  "title": "TK-T03 implementation slice",
+  "title": "实现黄金数据集清单模型与完整性校验（Dataset）",
   "status": "planned",
   "dependsOn": [
     "TK-T02"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-COR-01"
+  ],
   "designRefs": [
-    "units/testkit.md"
+    "units/testkit.md#4.2",
+    "units/testkit.md#4.5",
+    "units/testkit.md#9"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +31,14 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_testkit_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_testkit_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-TK-7",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "TK-MAN/TK-INT 全部用例通过",
+    "全部反例拒绝且消息含字段路径",
+    "requirements-ids.json 字典以 v1.16 ID 清单生成，不随本任务改需求语义"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

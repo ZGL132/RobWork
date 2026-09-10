@@ -3,17 +3,26 @@
   "taskId": "EV-T08",
   "unit": "evidence",
   "masterWp": "WP-C",
-  "title": "EV-T08 implementation slice",
+  "title": "实现 ResultCurrentness（当前性纯投影）",
   "status": "planned",
   "dependsOn": [
+    "EV-T04",
     "EV-T07"
   ],
-  "requirements": [],
+  "requirements": [
+    "CON-02",
+    "CON-05",
+    "AT-05"
+  ],
   "designRefs": [
-    "units/evidence.md"
+    "units/evidence.md#8.1",
+    "units/evidence.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +33,13 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_evidence_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-EV-4",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "EV-CUR-1~4 内容身份/不可解析/跨上下文/不写回用例通过",
+    "当前性纯投影、不写回（断言无持久化副作用）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

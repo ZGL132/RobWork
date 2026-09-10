@@ -2,18 +2,38 @@
   "schemaVersion": "ird-task/1",
   "taskId": "RT-T12",
   "unit": "runtime",
-  "masterWp": "WP-C",
-  "title": "RT-T12 implementation slice",
+  "masterWp": "WP-D",
+  "title": "runtime 测试替身与契约套件",
   "status": "planned",
   "dependsOn": [
-    "RT-T11"
+    "RT-T02",
+    "RT-T03",
+    "RT-T04",
+    "RT-T05",
+    "RT-T06",
+    "RT-T07",
+    "RT-T08",
+    "RT-T09",
+    "RT-T10",
+    "RT-T11",
+    "TK-T01"
   ],
-  "requirements": [],
+  "requirements": [
+    "ARC-03",
+    "ARC-04",
+    "AT-16",
+    "AT-18",
+    "AT-37"
+  ],
   "designRefs": [
-    "units/runtime.md"
+    "units/runtime.md#11",
+    "units/runtime.md#12"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +44,13 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_runtime_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-RT-1",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "§11 验证矩阵逐条通过并留痕",
+    "RT-STUB-0 边界声明（替身不作 RobWork 算法正确性证明）"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }

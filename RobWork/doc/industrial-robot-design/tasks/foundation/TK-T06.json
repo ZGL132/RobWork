@@ -3,17 +3,23 @@
   "taskId": "TK-T06",
   "unit": "testkit",
   "masterWp": "WP-B",
-  "title": "TK-T06 implementation slice",
+  "title": "实现集合与顺序断言（SetCheck）",
   "status": "planned",
   "dependsOn": [
     "TK-T05"
   ],
-  "requirements": [],
+  "requirements": [
+    "NFR-COR-02"
+  ],
   "designRefs": [
-    "units/testkit.md"
+    "units/testkit.md#5.4",
+    "units/testkit.md#9"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -24,11 +30,13 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": [
-    "cmake --build build --config Release --target sdurws_ird_testkit_test"
-  ],
+  "verify": "cmake --build build --config Release --target sdurws_ird_testkit_test",
+  "branch": null,
+  "interUnit": true,
+  "knownPitfalls": "P-TK-2",
   "acceptance": [
-    "实现本文对应任务行定义的接口和不变量",
-    "单元测试及依赖门禁通过"
-  ]
+    "TK-SET/TK-ORD 排序误判与重复匹配反例（元测试）通过",
+    "两阶段匹配差异定位输出可核对"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
 }
