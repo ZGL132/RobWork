@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.4（Draft；§5.6 分支约定同步 redesign-main，消除与 AGENTS.md 分支红线的矛盾；v0.3 为 11 单元详设与编码准入同步；v0.2 重写为**全量任务卡结构**——v0.1 的 WP 登记/构建约定/实测登记已被收编取代，见 §7 变更记录） |
+| 文档版本 | v0.5（Draft；全链一致性审计消账：§0.3 准入顺序机器化与计数修正、WP-02-T11 悬空映射移除、O-31~O-33 登记；v0.4 为 §5.6 分支约定同步 redesign-main；v0.3 为 11 单元详设与编码准入同步；v0.2 重写为全量任务卡结构，见 §7 变更记录） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
@@ -56,7 +56,7 @@
 
 ### 0.3 第一批详设完成与编码准入（2026-09-10）
 
-第一批 11 单元详设已编写；本次“第一阶段”指设计批次，不替代 §1.2 的产品阶段 A～E。**可开始的编码实现入口仅为 CORE-T01（随后 TK-T01 与 WP-01-T01 门禁）**；其余任务须按 ready 状态和真实前置逐项放行。不允许跳过前置同时实施全部 11 单元，也不宣布 M0～M3 完成。
+第一批 11 单元详设已编写；本次“第一阶段”指设计批次，不替代 §1.2 的产品阶段 A～E。**当前编码实现入口仅为 CORE-T01**；TK/EV/RT/POL-T01 的 canonical 契约已编码 `dependsOn:["CORE-T01"]`（准入顺序机器化，CORE-T01 完成留痕后方可领取——单元卡内"平行可做"指无技术前置，不覆盖准入顺序），WP-01-T01 门禁随首个 STATIC 目标启用；其余任务按 ready 状态与真实前置逐项放行。不允许跳过前置同时实施全部 11 单元，也不宣布 M0～M3 完成。
 
 | 文档任务 | 产物 | 当前状态 |
 | --- | --- | --- |
@@ -66,7 +66,7 @@
 | WP-11-T01 | io.md | 已编写；IO-T01～T07 待实现 |
 | WP-12-T01 | reporting.md | 已编写；RPT-T01～T13 为基础设施，T14～T16 按 B/C 前置实施 |
 
-各卡任务拆分比历史 WP 更细（例如 DIAG-T05/06/09、EX-T10、UI-T11～T14、RPT-T01～T16）。完整映射按 [任务索引](traceability/phase-one-task-index.json) 的原始任务行回查，不能按数字后缀推定一一对应。57 份基础任务 JSON 中只有 5 份 T01 为 ready；其余 52 份基础 JSON 与 74 份服务单元任务行均保持 planned，待补齐需求追溯与真实前置。详设编写完成不冒充评审 Accepted。
+各卡任务拆分比历史 WP 更细（例如 DIAG-T05/06/09、EX-T10、UI-T11～T14、RPT-T01～T16）。完整映射按 [任务索引](traceability/phase-one-task-index.json) 的原始任务行回查，不能按数字后缀推定一一对应。57 份基础任务 JSON 中只有 5 份 T01 为 ready（其中 TK/EV/RT/POL 四份 `dependsOn=CORE-T01`）；其余 52 份基础 JSON 保持 planned；74 份服务单元任务契约中 DIAG-T01/UI-T01 两项编卡任务已 done，其余 72 份保持 planned，待补齐需求追溯与真实前置。详设编写完成不冒充评审 Accepted。
 
 建议实施顺序：CORE-T01 → TK-T01（联同 WP-01-T01 门禁）→ core/testkit 基座 → evidence/runtime/policy/diagnostics → project → execution/io/ui → reporting 基础设施。五个既有 T01 的 ready 仅允许构建落位；服务单元先补任务契约及接口评审，再逐任务放行。workflow 详设仍缺失，不阻塞 M0，但必须在阶段 A 生命周期收口前补齐。
 
@@ -176,7 +176,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-02-T08 | 实现夹具与确定性环境〔≙TK-T08〕 | testkit | WP-02-T03/T04 | testkit.md §6.1~§6.3 | `Fixture.*`（TempDir/ReproRecord/DeterministicEnv/GoldenFixture） | NFR-COR-02 | TK-FIX 生命周期六步＋keepOnFailure 用例通过 | — | M |
 | WP-02-T09 | 实现故障注入原语〔≙TK-T09〕 | testkit | WP-02-T01 | testkit.md §6.4 | `Fault.*`＋`ProcessRunner.hpp`（仅头文件冻结） | NFR-REL-01/02、PM-08（测试支撑） | TK-FAULT occurrence 触发/命中记录用例通过；TK-BUILD 复验产品零链接 | 生产代码零 testkit 头、零 `#ifdef TEST` | M |
 | WP-02-T10 | 实现测试报告与 core 接入示例〔≙TK-T10〕 | testkit | WP-02-T03~T09、WP-03-T01~T05 | testkit.md §7、附录 A.1；core.md §8 | `Report.*`＋`gtest/RecordListener.hpp`＋core 示例用例＋安装排除扫描脚本建议（交 WP-24-T05） | NFR-COR-02（复现要素）、NFR-SEC-05/DEP（分发边界） | TK-RPT 六类 outcome 聚合正确；示例数据集随 CI 跑通 | — | M |
-| WP-02-T11 | 实现 TestProcessRunner 进程级注入原语〔≙TK-T11，触发式〕 | testkit | WP-02-T09＋触发条件：WP-04-T15/WP-08-T10 需要进程级崩溃/恢复场景时 | testkit.md §6.5/§10.1 | `ProcessRunner.*`（Job Object/事件等待） | NFR-REL-02/03、AT-11/13（自动化载体） | 进程崩溃/强杀/事件等待用例通过；PRJ-TX-7/8、TASK 契约场景可消费 | 不提前实现（无消费者不建目标） | M |
+| WP-02-T11 | 实现 TestProcessRunner 进程级注入原语〔触发式；原 ≙TK-T11 映射悬空（testkit.md §9 仅 TK-T01~T10），TK-T11 由 testkit 卡触发时补登——见 §4.2 O-33〕 | testkit | WP-02-T09＋触发条件：WP-04-T15/WP-08-T10 需要进程级崩溃/恢复场景时 | testkit.md §6.5/§10.1 | `ProcessRunner.*`（Job Object/事件等待） | NFR-REL-02/03、AT-11/13（自动化载体） | 进程崩溃/强杀/事件等待用例通过；PRJ-TX-7/8、TASK 契约场景可消费 | 不提前实现（无消费者不建目标） | M |
 
 ### 2.4 WP-03 core（单元卡 units/core.md §9，已存在）
 
@@ -621,6 +621,9 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-24 | P-D-1：EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core 的跨卡确认 | execution/ui 卡若另作安排则 core 需迁移词表（evidence/runtime/policy 卡已默认承接） | core.md §10.2 P-D-1 | execution/ui 卡（WP-08-T01/WP-10-T01） | 登记 |
 | O-25 | reporting 已裁决不留 PDF 专用接口桩 | RPT-02 仍交付 HTML＋JSON/CSV | reporting.md §14.3 P-RPT-6 | reporting 详设所有者 | 已关闭（设计级） |
 | O-26 | UX-13 工业高频命令"运行碰撞检查"的执行编排（经④端口触发后台任务、结果呈现）需 workflow/ui/execution 三方契约对齐 | 高频命令语义与任务清单呈现 | UX-13（M-13）；ARCH §7.11 | workflow 卡＋ui 卡（WP-22-T12 落地） | 登记 |
+| O-31 | ui.md 依赖声明三方矛盾：§2.1.2 C 表把 project/evidence/execution/policy/runtime 协作（C-3/4/5/7/8/10/11）标为"接口依赖"（ARCH §3.5 定义＝链接库目标），而 §3.1 声明"仅链 core,diagnostics、其余零编译依赖"，ARCH §3.5 白名单亦只有 ui→core,diagnostics 两条；ShellWiring（§11）直接持有 policy::IPolicyProvider、runtime::IRuntimeNameResolver 等对端类型 | 按 §3.1 实现则 ShellWiring 无法编译；按 C 表实现则 5 条边违反 SA-10 门禁（表外边＝构建失败）；WP-10 落位前必须裁决 | 全链一致性审计 2026-09-10；ui.md §2.1.2/§3.1 vs ARCHITECTURE.md §3.5 | 架构所有者（增边或确认 ui 侧最小注入接口模式，对齐其余 10 卡"自定义最小注入接口"惯例）＋ui 卡 | 登记 |
+| O-32 | PILOT-01/02、DEL-01/02 四条 P0/R1 需求在 ARCHITECTURE 无 ID 级落点（仅 §10.1 阶段 E 文字性描述；§3.1 单元表"关键需求族"列未登记） | 阶段 E 交付时需求覆盖矩阵（§3）无法回指承载单元与任务；试点/交付验收追溯断链 | 全链一致性审计 2026-09-10；REQUIREMENTS §（PILOT/DEL 条目）vs ARCHITECTURE §3.1/§10.1 | 架构所有者（WP-22/WP-24 任务细化前补登落点） | 登记 |
+| O-33 | WP-02-T11 原 ≙TK-T11 映射悬空：testkit.md §9 任务表仅 TK-T01~T10，§6.5 冻结的 TestProcessRunner 实现任务约定"届时补登 TK-T11"，映射已从 §2 该行移除以保证 ≙ 计数（73）与"六卡 73 任务"声明一致 | 触发条件满足时 WP-02-T11 无卡内编号可对接 | testkit.md §6.5/§9 vs 本文 §2 WP-02-T11 行 | testkit 卡（触发时补登 TK-T11 并恢复 ≙ 映射） | 登记 |
 
 ### 4.3 待冻结前置（REQUIREMENTS 附录 C 状态同步）
 
@@ -728,7 +731,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 - [x] **20 单元 INTERFACE→真实库均有显式任务**：core WP-03-T01｜testkit WP-02-T01｜project WP-04-T01｜evidence WP-05-T01｜runtime WP-06-T01｜policy WP-07-T01｜execution WP-08-T02｜diagnostics WP-09-T02｜ui WP-10-T02｜io WP-11-T02｜reporting WP-12-T02｜modeling WP-13-T02｜requirements WP-14-T02｜kinematics WP-15-T02｜trajectory WP-16-T03｜dynamics WP-17-T02｜drivetrain WP-18-T02｜selection WP-19-T02｜optimization WP-20-T02｜workflow WP-22-T02——20/20。
 - [x] **无任务要求继承/恢复 old/**：全局禁止项 §5.3-①；old/ 磁盘不存在（O-01）已登记勘误请求。
 
-**统计**：任务总数 **266**（其中单元任务卡映射 ≙ 73 项、新增登记 193 项：含 14 张卡编写＋3 项冻结/登记文档任务）；WP 覆盖 26/26；需求 ID 覆盖率 **180/180＋12/12＋2/2**；无前置可立即启动任务：**WP-00-T01、WP-00-T02、WP-01-T01、WP-02-T01、WP-03-T01、WP-04-T01、WP-05-T01、WP-06-T01、WP-07-T01、WP-09-T01**（10 个起点，另六卡内链式任务随各自起点解锁）；开放问题 **30 项登记**（O-01~O-30）＋5 项本文辖域定稿消账（§4.4）。
+**统计**：任务总数 **266**（其中单元任务卡映射 ≙ 73 项、新增登记 193 项：含 14 张卡编写＋3 项冻结/登记文档任务）；WP 覆盖 26/26；需求 ID 覆盖率 **180/180＋12/12＋2/2**；无前置可立即启动任务：**WP-00-T01、WP-00-T02、WP-01-T01、WP-02-T01、WP-03-T01、WP-04-T01、WP-05-T01、WP-06-T01、WP-07-T01、WP-09-T01**（10 个起点，另六卡内链式任务随各自起点解锁）；开放问题 **33 项登记**（O-01~O-33）＋5 项本文辖域定稿消账（§4.4）。
 
 ---
 
@@ -740,6 +743,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.2 | 2026-09-10 | 重写为全量任务卡结构：§1 单元依赖 DAG＋里程碑 M0~M7；§2 266 张任务卡（WPnn-Tkk 两级编号，六卡 73 任务经"≙"映射、14 缺卡单元各设编写卡任务、20 单元落位任务全覆盖）；§3 需求覆盖矩阵（180＋12＋2 全覆盖零沉默遗漏）；§4 开放问题 30 项（O-01~O-30，只登记不裁决）＋例外登记册＋L1 目标实测表；§5 执行约定（DoD/禁止项/同步规则/gtest 定稿/提交与会话交接）；§6 自检核对留痕。收编 v0.1 的构建约定与实测结论，v0.1 结构性内容（WP 登记表、批 0~4 顺序）由 §1/§2 取代 |
 | v0.3 | 2026-09-10 | 同步 11/20 详设完成、五项编写任务产物、全量单元任务索引、编码分批准入；不改变需求或宣布实现通过。 |
 | v0.4 | 2026-09-10 | §5.6 分支约定增量同步：main 冻结、唯一开发主线为 `redesign-main`，任务分支 DoD 后合入 `redesign-main`——消除与仓库根 AGENTS.md §6.2 分支红线的矛盾；不改变其他章节语义。 |
+| v0.5 | 2026-09-10 | 全链一致性审计消账：①§0.3 准入顺序机器化——TK/EV/RT/POL-T01 canonical 契约编码 dependsOn=["CORE-T01"]（配套 readiness 同步），§0.3 表述消除"仅为 CORE-T01"与"ready＋空前置可领取"的自相矛盾；②§0.3 服务侧计数修正（DIAG-T01/UI-T01 已 done，非"74 份均 planned"）；③WP-02-T11 悬空 ≙TK-T11 映射移除并登记 O-33（≙ 计数回归 73，与"六卡 73 任务"声明一致）；④O-31（ui.md 依赖三方矛盾）、O-32（PILOT/DEL 四条需求无架构 ID 级落点）登记入 §4.2；§6 统计更新为 O-01~O-33。不裁决 O-31/O-32/O-33，留对应所有者。 |
 
 
 
