@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 25,
+  "tickCount": 27,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
-    "accept": 0,
+    "fix": 0,
     "implement": 0,
-    "fix": 0
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T00:17:53+08:00",
+    "updatedAt": "2026-09-11T00:37:55+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -151,6 +151,16 @@
         "aa93c4b18202f8a965b99ecf40d83e4189e78497"
       ],
       "result": "pass-merged"
+    },
+    {
+      "result": "pass-merged",
+      "unit": "policy",
+      "mergedAt": "2026-09-11",
+      "acceptanceRecord": "traceability/acceptance/POL-T01-20260911.md",
+      "task": "POL-T01",
+      "commits": [
+        "432f9fa8f7a5eaeb5cd496d8a20e0b4976605ddc"
+      ]
     }
   ],
   "policy": {
@@ -175,13 +185,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "POL-T01",
-      "contractPath": "tasks/foundation/POL-T01.json",
-      "branch": "wp07-t01"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -190,5 +194,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "796eea0b-9079-49e4-92ed-ae77ad900896"
+  "tickToken": "96e42c41-24f9-40df-9fc7-8952e0ad7c62"
 }

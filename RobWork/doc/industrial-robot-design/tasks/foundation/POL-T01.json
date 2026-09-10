@@ -4,10 +4,18 @@
   "unit": "policy",
   "masterWp": "WP-C",
   "title": "构建落位（策略单元）",
-  "status": "ready",
-  "dependsOn": ["CORE-T01"],
-  "requirements": ["ARC-05", "CON-06"],
-  "designRefs": ["units/policy.md#12", "units/policy.md#3.4"],
+  "status": "done",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "ARC-05",
+    "CON-06"
+  ],
+  "designRefs": [
+    "units/policy.md#12",
+    "units/policy.md#3.4"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
@@ -16,8 +24,14 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
   "branch": "wp07-t01",
   "interUnit": true,
   "knownPitfalls": [
