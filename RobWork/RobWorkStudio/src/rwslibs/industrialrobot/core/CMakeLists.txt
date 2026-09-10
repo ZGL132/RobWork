@@ -23,7 +23,10 @@
 find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
-add_library(sdurws_ird_core STATIC src/Core.cpp)
+add_library(sdurws_ird_core STATIC
+    src/Core.cpp
+    src/Identity.cpp
+    src/Digest.cpp)
 
 # C++17（core.md 决策 D-01）：逐目标显式设定，不设全局标准——基线 RobWork
 # 为 C++11，混链可行性正是本任务双模式构建要验证的内容（P-ENV-1 消账）。
@@ -68,7 +71,10 @@ endif()
 # 若顶层已开启亦无副作用。
 enable_testing()
 
-add_executable(sdurws_ird_core_test test/BuildRedLineTest.cpp)
+add_executable(sdurws_ird_core_test
+    test/BuildRedLineTest.cpp
+    test/IdentityTest.cpp
+    test/DigestTest.cpp)
 target_compile_features(sdurws_ird_core_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_core_test PROPERTIES
     CXX_STANDARD 17
