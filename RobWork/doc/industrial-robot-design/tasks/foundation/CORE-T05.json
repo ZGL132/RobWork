@@ -4,12 +4,15 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "容差比较（Compare）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T04"],
-  "requirements": ["NFR-COR-03"],
-  "designRefs": ["units/core.md#4.5", "units/core.md#5.5"],
+  "requirements": ["NFR-COR-02", "NFR-COR-03"],
+  "designRefs": ["units/core.md#4.5", "units/core.md#5.5", "units/core.md#9"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +21,12 @@
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
   "crRefs": ["CR-06"],
+  "branch": "wp03-t05",
+  "interUnit": true,
+  "knownPitfalls": ["CR-06"],
   "acceptance": [
     "C4 公式（closeWithin）与 C7 转写（runtimeAbsoluteTolerance）用例通过，含正负抵消反例与零参考退化",
     "CR-06：实现后与 testkit.md §5.3 Check 函数族重出 API diff（签名/参数序/错误语义），作为 TK-T04/05 ready 前置"
-  ]
+  ],
+  "note": "DOC-T04 编译放行（2026-09-11）：status→ready——放行策略为所有者裁决的整单元拓扑批次放宽，依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；requirements 按 DTB §2 WP-03-T05 行补 NFR-COR-02（附录 D C4/C7 为非 ID 引用，由 acceptance 第 1 条承载），保留 NFR-COR-03（非有限输入不静默通过，core.md §2.1）；designRefs 补卡内任务行锚点 §9；allowedFiles 按 CORE-T01 教训显式列入治理文档；branch 按 ≙ 映射补 wp03-t05；interUnit=true（Tolerance/closeWithin 为 evidence/policy/testkit 消费的公共接口）、knownPitfalls=CR-06；acceptance 的 CR-06 门禁条目原样保留（实现后 API diff 供 TK-T04/05 放行，TK-T04/05 保持 planned）。编译留痕见 traceability/contract-compile-log.md"
 }

@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "core 文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "CORE-T02",
     "CORE-T03",
@@ -36,12 +36,12 @@
     "traceability-update"
   ],
   "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
-  "branch": null,
+  "branch": "wp03-t10",
   "interUnit": false,
   "acceptance": [
     "README 任务指向核对零偏差",
     "§10.2 待裁决项状态更新（P-AR/P-D/P-ENV 最新）",
     "UT-BUILD 并入 CI 建议提交 WP-01-T02"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md。DOC-T04 放行（2026-09-11）：status→ready——所有者裁决的整单元拓扑批次放宽，依据＝同单元内部接口设计级 diff 已全部关闭（traceability/foundation-api-diff.md）＋core.md 卡内锚点即交接核对；branch 按 ≙ 映射补 wp03-t10，其余字段承 DOC-T03 回填不变（interUnit=false 纯文档/门禁同步，无跨单元接口产出；入队按拓扑序在其七项前置完成后执行）"
 }
