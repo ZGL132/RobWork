@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-01-T01",
+  "unit": "build",
+  "masterWp": "WP-B",
+  "title": "实现依赖红线与补丁门禁 ird_gates",
+  "status": "ready",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["ARC-02", "NFR-MNT-01", "NFR-MNT-02", "NFR-MNT-04", "NFR-MNT-05", "NFR-MNT-07", "NFR-SEC-04"],
+  "designRefs": ["ARCHITECTURE.md#3.2", "ARCHITECTURE.md#3.5", "ARCHITECTURE.md#5.2", "ARCHITECTURE.md#7.2", "development-task-breakdown.md#2.2", "units/policy.md#3.4", "units/testkit.md#2.4"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/RobWorkStudio/src/rwslibs/**"
+  ],
+  "outputs": ["implementation", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "acceptance": [
+    "R-1~R-5＋T-1/T-2＋SA-02 补丁核对全部实现（cmake -P 脚本模式＋git，零 Python）",
+    "cmake --build build --target ird_gates 对骨架与已落位目标现状零命中（INTERFACE 占位目标无链接边，不产生表外边误报）",
+    "白名单数据源＝ARCH §3.5 全量 20 条边＋traceability/dependency-graph.json 一致；O-21（testkit→core 边未入 §3.5）在白名单定稿前消账（ARCH §3.5 补登该边）或登记豁免——本任务 allowedFiles 已含 ARCHITECTURE.md 仅为承载该补登，其余正文零改动",
+    "R-4 例外登记册按 O-12 裁决结论填充；O-12 未裁决前以空登记册＋占位说明交付，不私裁",
+    "例外只能经 DTB §4.5 登记册；未登记例外被门禁检出即失败（含用例验证）"
+  ],
+  "note": "2026-09-10 补建契约（DTB v0.7）。前置 CORE-T01＝随首个 STATIC 目标启用（DTB §2.2 既定口径）。O-21/O-12 为门禁数据源前置，处置留痕随本任务验收。"
+}

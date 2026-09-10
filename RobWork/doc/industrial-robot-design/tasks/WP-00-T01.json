@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-00-T01",
+  "unit": "governance",
+  "masterWp": "WP-A",
+  "title": "建立治理协调与待裁决项流转登记（governance-log）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": ["PILOT-01", "DEL-02"],
+  "designRefs": ["development-task-breakdown.md#2.1", "ARCHITECTURE.md#11.3", "REQUIREMENTS.md#24"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/governance-log.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
+  ],
+  "outputs": ["doc-update", "traceability-update"],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "acceptance": [
+    "新建 governance-log.md：集中登记 11 张单元卡全部 P-* 待裁决项与 DTB §4 O-01~O-33，每项含编号/所有者/状态/消账留痕（逐卡核对零丢失）",
+    "只登记流转、不裁决任何 P-*/O-* 项（裁决权归对应所有者——治理协调的基本纪律）",
+    "validate-docs.ps1 通过；与 phase-one-readiness.md 状态口径一致"
+  ],
+  "note": "2026-09-10 补建契约（DTB v0.7）：消除 §6'无前置可启动'与机器无契约可领的失配。文档轨任务，可与编码轨（CORE-T01 等）并行领取。"
+}

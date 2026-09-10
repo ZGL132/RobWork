@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-01-T02",
+  "unit": "build",
+  "masterWp": "WP-B",
+  "title": "CI 常驻与本地一键门禁",
+  "status": "ready",
+  "dependsOn": ["WP-01-T01"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["ARCHITECTURE.md#11.2", "development-task-breakdown.md#5.5"],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/tasks/**",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/**"
+  ],
+  "outputs": ["implementation"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "一键脚本全量执行（门禁＋双模式构建＋全部 _test/_contract_test 目标）成功"
+  ],
+  "acceptance": [
+    "每次提交可一键执行全部门禁与测试（ird_gates＋双模式构建＋全部 _test/_contract_test 目标）；CI 建成前本地一键脚本为强制门槛",
+    "不引入 Python（本机无；用 cmake -P＋git）",
+    "CI 配置落位若涉及框架文件（如 gitlab-ci 目录），先按 SA-02 更新 patches/PATCHES.md 登记再改动——本契约 allowedFiles 不含框架文件，需要时先扩契约",
+    "缓存回退键与模板供给与既有 eb777e2（codex/wp-01-t04 探索分支）结论对齐或说明差异"
+  ],
+  "note": "2026-09-10 补建契约（DTB v0.7）。"
+}

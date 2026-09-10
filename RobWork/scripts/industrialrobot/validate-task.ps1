@@ -5,7 +5,7 @@ $required = 'taskId','unit','masterWp','title','status','dependsOn','requirement
 $readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'
 foreach ($t in $tasks) {
   foreach ($k in $required) { if ($null -eq $t.$k) { throw "missing task field: $k" } }
-  if ($t.taskId -notmatch '^[A-Z]+-(T[0-9]+|CR-[0-9]+)$') { throw "invalid taskId: $($t.taskId)" }
+  if ($t.taskId -notmatch '^([A-Z]+-(T[0-9]+|CR-[0-9]+)|WP-[0-9]+-T[0-9]+)$') { throw "invalid taskId: $($t.taskId)" }
   if ($t.masterWp -notmatch '^WP-[A-I]$') { throw "invalid masterWp: $($t.masterWp)" }
   if ($t.status -notin 'planned','ready','blocked','done','design-written') { throw "invalid task status: $($t.taskId)" }
   if (@($t.verify).Count -eq 0) { throw "verify must contain at least one command: $($t.taskId)" }

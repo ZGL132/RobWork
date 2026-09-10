@@ -20,7 +20,7 @@
 | ui | 已编写 v0.1 | Draft | 14 | foundation/ |
 | reporting | 已编写 v0.1 | Draft | 16 | foundation/ |
 
-共 131 行单元任务，**已全部具备 canonical 任务 JSON**（tasks/foundation/；其中 74 份由 DOC-T02 于 2026-09-10 按本索引逐行生成）。当前状态分布：5 个 T01 为 `ready`——其中 TK/EV/RT/POL-T01 的 `dependsOn` 均为 `["CORE-T01"]`（准入顺序已机器编码，CORE-T01 完成留痕前不可领取；单元卡内"平行可做"指无技术前置，不覆盖准入顺序）；DIAG-T01/UI-T01 两项编卡任务为 `done`；其余 124 行为 `planned` 占位——不能领取执行，置 ready 须满足各自前置与门禁（CR-06、P-IO-3 等）。[全量任务索引](phase-one-task-index.json) 保留每行输入、前置、验收和 WP 映射原文，不以编号后缀推测对应关系。
+共 131 行单元任务，**已全部具备 canonical 任务 JSON**（tasks/foundation/；其中 74 份由 DOC-T02 于 2026-09-10 按本索引逐行生成）。当前状态分布：5 个 T01 为 `ready`——其中 TK/EV/RT/POL-T01 的 `dependsOn` 均为 `["CORE-T01"]`（准入顺序已机器编码，CORE-T01 完成留痕前不可领取；单元卡内"平行可做"指无技术前置，不覆盖准入顺序）；DIAG-T01/UI-T01 两项编卡任务为 `done`；其余 124 行为 `planned` 占位——不能领取执行，置 ready 须满足各自前置与门禁（CR-06、P-IO-3 等）。[全量任务索引](phase-one-task-index.json) 保留每行输入、前置、验收和 WP 映射原文，不以编号后缀推测对应关系。另：治理轨契约与编码轨并行可领——tasks/ 根目录 DOC-T03（52 份基础契约需求追溯回填，ready）与 2026-09-10 补建的四份横切契约（WP-00-T01/T02、WP-01-T01/T02，后两者 dependsOn 已编码，DTB v0.7）。
 
 第一批设计范围包含 reporting；其业务报告验收仍在 B/C。workflow 未在这 11 单元内，阶段 A 生命周期前置设计仍须完成。剩余九份为 modeling、requirements、kinematics、trajectory、dynamics、drivetrain、selection、optimization、workflow。需求阶段 A～E、R1/R2 与 WP-A～I 各自含义不变。
 

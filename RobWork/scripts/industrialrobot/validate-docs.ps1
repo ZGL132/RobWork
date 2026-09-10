@@ -13,7 +13,7 @@ $taskIds = @()
 foreach ($f in $taskFiles) {
   $x = Get-Content $f.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
   if ($x -is [array]) { $errors += "array task file must be named foundation-tasks.json: $($f.Name)"; continue }
-  if ($x.taskId -notmatch "^[A-Z]+-(T[0-9]+|CR-[0-9]+)$") { $errors += "invalid task file: $($f.Name)" }
+  if ($x.taskId -notmatch "^([A-Z]+-(T[0-9]+|CR-[0-9]+)|WP-[0-9]+-T[0-9]+)$") { $errors += "invalid task file: $($f.Name)" }
   $taskIds += $x.taskId
 }
 if (($taskIds | Sort-Object -Unique).Count -ne $taskIds.Count) { $errors += "duplicate task ids" }
