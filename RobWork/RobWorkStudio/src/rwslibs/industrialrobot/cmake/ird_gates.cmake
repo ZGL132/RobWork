@@ -453,7 +453,13 @@ foreach(_entry ${IRD_PRODUCT_FACE_FILES})
         # （ARC-04：名称语义归 runtime；NFR-MNT-07 静态扫描零命中）。
         # runtime 单元整域例外走 IRD_R4_EXCEPTION_UNITS（登记后生效）。
         if(NOT _unit STREQUAL "runtime")
-            string(REGEX MATCHALL "\"[^\"]*RobWork[^\"]*\"" _rw_all "${_src}")
+            # 注释剥离（F-011 消账，2026-09-11）：R-4 判定对象是名称拼接/剥离的
+            # 【代码行为】，注释中的 RobWork 字样属文档而非行为——扫描前剥离
+            # 行注释与块注释，杜绝文档性误报。已知边界：字符串字面量内的
+            # "http://" 会被行注释规则截断（当前仓库无此形态，随用例扩充复核）。
+            string(REGEX REPLACE "//[^\n]*" "" _r4_src "${_src}")
+            string(REGEX REPLACE "/\\*([^*]|\\*[^/])*\\*/" " " _r4_src "${_r4_src}")
+            string(REGEX MATCHALL "\"[^\"]*RobWork[^\"]*\"" _rw_all "${_r4_src}")
             if(_rw_all)
                 list(LENGTH _rw_all _n)
                 ird_hit("R4" "${_unit} 产品面发现 RobWork 字面量 ${_n} 处（疑前缀拼接/剥离）：${_file}（例外须 DTB §4.5 登记）")
@@ -676,6 +682,17 @@ target_include_directories(sdurws_ird_core PUBLIC include)
     file(WRITE "${_dir}/core/src/Core.cpp"
 "#include <string>\nstatic const std::string kPrefix = std::string(\"RobWork\") + \"_Device\";\n")
 
+    # CASE-R4-PASS：RobWork 仅出现在注释中 → 必须通过（F-011 回归用例：
+    # R-4 判定代码行为，注释属文档；2026-09-11 注释剥离修复的防退化锚点）
+    set(_dir "${IRD_SELFTEST_DIR}/pass_r4comment")
+    file(MAKE_DIRECTORY "${_dir}/core/src")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_core STATIC src/Core.cpp)
+target_include_directories(sdurws_ird_core PUBLIC include)
+")
+    file(WRITE "${_dir}/core/src/Core.cpp"
+"// 本单元与 RobWork 框架的协作经 sdurw_math 公共头（注释提及框架名不属拼接行为）\nstatic const int kAnchor = 1;\n")
+
     # CASE-T2：testkit 链接他单元 → 必须命中 IRD-GATE-T2
     set(_dir "${IRD_SELFTEST_DIR}/fail_t2")
     file(MAKE_DIRECTORY "${_dir}")
@@ -689,6 +706,7 @@ target_link_libraries(sdurws_ird_testkit INTERFACE sdurws_ird_core sdurws_ird_ev
     # 逐例运行子门禁并断言
     set(_selftest_cases
         "pass_clean|0|"
+        "pass_r4comment|0|"
         "fail_r1|1|IRD-GATE-R1"
         "fail_t1|1|IRD-GATE-T1"
         "fail_r5|1|IRD-GATE-R5"
