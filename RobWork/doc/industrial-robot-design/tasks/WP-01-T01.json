@@ -4,7 +4,7 @@
   "unit": "build",
   "masterWp": "WP-B",
   "title": "实现依赖红线与补丁门禁 ird_gates",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["ARC-02", "NFR-MNT-01", "NFR-MNT-02", "NFR-MNT-04", "NFR-MNT-05", "NFR-MNT-07", "NFR-SEC-04"],
   "designRefs": ["ARCHITECTURE.md#3.2", "ARCHITECTURE.md#3.5", "ARCHITECTURE.md#5.2", "ARCHITECTURE.md#7.2", "development-task-breakdown.md#2.2", "units/policy.md#3.4", "units/testkit.md#2.4"],
