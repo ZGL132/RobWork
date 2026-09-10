@@ -5,7 +5,7 @@
   "masterWp": "WP-C",
   "title": "构建落位（快照/切片单元）",
   "status": "ready",
-  "dependsOn": [],
+  "dependsOn": ["CORE-T01"],
   "requirements": ["CON-01", "CON-05", "EVI-01"],
   "designRefs": ["units/evidence.md#12", "units/evidence.md#3.4"],
   "allowedFiles": [

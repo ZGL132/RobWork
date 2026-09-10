@@ -5,7 +5,7 @@
   "masterWp": "WP-C",
   "title": "构建落位（CanonicalModel 编译单元）",
   "status": "ready",
-  "dependsOn": [],
+  "dependsOn": ["CORE-T01"],
   "requirements": ["ARC-03", "MDL-22"],
   "designRefs": ["units/runtime.md#12", "units/runtime.md#3.4"],
   "allowedFiles": [
