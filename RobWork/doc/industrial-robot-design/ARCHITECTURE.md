@@ -221,6 +221,7 @@ workflow 是业务层之上的**编排单元**：消费平台事件（修订产�
 | io → core, diagnostics | 接口依赖 | SafePath/BudgetGuard 类型、导入诊断 |
 | reporting → core, evidence, diagnostics, project | 接口依赖 | 查询端口（②）、结果引用、证据契约 |
 | ui → core, diagnostics | 接口依赖 | 事件契约、状态词、命令注册表类型 |
+| testkit → core | 接口依赖（仅测试侧支撑库） | 测试设施基础类型；受 T-1/T-2 约束（testkit.md §2.4）。2026-09-10 补登（DTB §4 O-21 消账，WP-01-T01 承载） |
 | 各业务域单元（L4） → L2/L3 公共接口 | 接口依赖 | 全部经 §7.2 端口（R-1/R-2 红线不变） |
 | 事件总线、命令上下文回调等实例 | 运行时注入 | L5 应用壳装配注入；消费方零编译期依赖 |
 
