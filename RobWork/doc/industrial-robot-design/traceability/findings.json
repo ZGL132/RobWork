@@ -81,6 +81,16 @@
       "title": "基线框架缺陷：RobWorkSim RWSimulatorPlugin 在全新集成树从零构建失败（Math.hpp min/max 宏污染簇——C4003 参数不足先兆→C2059/C2039 连锁，含 rw::rw::math 双命名空间错乱）；base 959fb9b 对照复现同样失败（71 处 error C），主树为存量增量产物掩盖",
       "owner": "构建约定所有者（框架侧修复须按 SA-02 先登记 patches/PATCHES.md 再改动）",
       "resolution": "全新克隆/CI 全量构建的阻断前置：典型修法为该插件目标加 NOMINMAX 或调整 include 顺序（框架侧改动须先登记 patch）；WP-01-T02（CI 一键门禁）消费本项，ired 范围内任务（含 TK-T01）不受影响——任务目标两模式从零复现零错误。"
+    },
+    {
+      "id": "F-009",
+      "source": "traceability/acceptance/WP-01-T01-20260910.md#4.9-4.10",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": ".gitignore 全局 *.log 规则吞没 traceability/** 留痕日志：WP-01-T01 四份门禁/构建日志被忽略，致提交 6674c1b 信息（五件留痕）与实际入库内容（仅 1 件）一度不符，改 .txt 后缀方入库；后续任务留痕仍会踩中",
+      "owner": "构建约定所有者（DTB §5.1 辖域）",
+      "resolution": "为 traceability/** 增加负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；留痕提交前以 git status 核对实际入库清单。"
     }
   ]
 }
