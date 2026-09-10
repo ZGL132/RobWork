@@ -547,6 +547,8 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 ## 3. 需求追踪矩阵（需求 → AT → 单元任务 → 主 WP）
 
+> **机读投影（WP-00-T02，2026-09-10）**：本节为覆盖映射权威（人读）；机读生成物＝[traceability/trace-matrix.json](traceability/trace-matrix.json)（格式契约 trace-matrix-format.md——P-02 冻结产物），两者以本节为准同步再生成。
+
 > 覆盖判定：需求 ID 被至少一个实施任务的"需求追溯"列引用即为覆盖；每行同时必须能映射到 WP-A～WP-I 主 WP。（主 WP 任务为主责承载，支持 WP 任务为协作承载）。分期子项（§17.1）与分级子级（RPT-01-B/C）单列。全部 180 条主需求＋12 子项＋2 子级均被覆盖，**无"本期不实现/延期"的沉默遗漏项**；R2/D/E 条目按其发布标记随对应阶段任务交付（RV-04：全量范围、分期承接）。
 >
 > **缩写约定**：行内"裸编号→"沿用该行行首的需求家族前缀（如 MDL 行中"02→T03/T09"即 MDL-02→WP-13-T03/T09）；区间记法"S1~S3"指该父项的全部分期子项。
@@ -635,7 +637,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-27 | P-03 七轴模板工程数值 | WP-13-T07（仅登记不启用；模板启用前冻结） | 七轴模板不进入 R1 交付 | 未冻结（附录 C） |
 | O-28 | P-04 扰动/鲁棒性协议（已正式延期至 OPT-D 启用前） | WP-21-T01（硬前置） | 未冻结不得启用联合优化（v1.13 决议） | 已登记延期 |
 | O-29 | P-06 轨迹碰撞复检协议数值（步长/细分预算/代表点集） | WP-16-T02（阶段 C 启用前硬前置） | 未冻结不得启用 TRJ-04 复检 | 未冻结（附录 C） |
-| O-30 | P-02 需求追踪表格式契约 | WP-00-T02 | 追踪矩阵以本文 §3 为前身 | 未冻结（附录 C） |
+| O-30 | P-02 需求追踪表格式契约 | WP-00-T02 | 追踪矩阵以本文 §3 为前身 | **已冻结（2026-09-10，WP-00-T02）**：格式契约＝traceability/trace-matrix-format.md（schema `ird-trace-matrix/1`＋五不变量＋缩写展开规则），首版生成物＝traceability/trace-matrix.json（194 项全覆盖、家族计数与 REQUIREMENTS §4 全等）；REQUIREMENTS 附录 C 行翻转随需求侧下次增量修订（本任务 forbiddenFiles 不含 REQUIREMENTS） |
 
 ### 4.4 本文辖域已定稿/消账项（构建约定所有者＝本文，ARCH §11.1）
 
@@ -762,6 +764,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.12 | 2026-09-10 | 四轮审查修复登记（配合 PIPE v1.6/ACC v1.5）：①pipeline-lock 的 status/acquire/renew/release 全过程由按绝对仓库路径派生的 Windows 命名 mutex 串行，fencing 核对与修改锁文件不再存在 TOCTOU；②编排者在每次阻塞等待返回后再次 renew，失败即停止，禁止过期 tick 处理完成事件或写 state；③state.json 与 validate-state 增 lastFailureRecord{branch,path,commit,attempt}，验收 fail 的不可变 evidence 记录只在返工 implementing 态传给实施者，首次实施/其他阶段强制为空；④ACC §5 遗留 acc/<taskId> 表述修正为带 attempt 的分支。配套 test-pipeline-pipeline.ps1 覆盖 mutex、旧 token 接管和失败证据 schema 回归。维持 paused。 |
 | v0.13 | 2026-09-10 | WP-00-T01 执行（governance-log 建立）：新建 doc/industrial-robot-design/governance-log.md——11 张单元卡全部 93 项 P-\* 待裁决项与本文 §4 O-01~O-33 的集中流转登记（编号/所有者/状态/消账留痕；逐卡零丢失矩阵；与 phase-one-readiness §2 口径核对一致；只登记不裁决）；本文 §4 头部初始化集中流转视图指向。不裁决任何 P-\*/O-\* 项，需求/架构语义零修改。 |
 | v0.14 | 2026-09-10 | WP-01-T02 执行（本地一键门禁＋CI 模板）：①新建 `scripts/industrialrobot/gate-all.ps1`——ird_gates＋双模式构建＋全部 `_test`/`_contract_test` 目标一键执行（CTestTestfile 递归发现；零 Python；CI 建成前为强制门槛），首跑 9/9 全绿；②新建 `scripts/industrialrobot/ci/`——eb777e2 双 CI 文件逐字节固化（缓存回退键/双 ini 模板供给/六条门禁行）＋差异说明 README；③§4.2 登记 O-34（CI 激活前置：框架文件落位须补丁登记＋入口脚本命名裁决，归构建约定所有者）。F-007 的 ini 模板半边已由 CI 模板内嵌供给消解（AGENTS §4.1 文档同步项仍开放）。 |
+| v0.15 | 2026-09-10 | WP-00-T02 执行（P-02/O-30 消账）：①新建 traceability/trace-matrix-format.md——追踪矩阵格式契约 v1.0（schema `ird-trace-matrix/1`＋五不变量＋七类缩写展开规则＋再生成/复核方法）；②新建 traceability/trace-matrix.json——首版机读生成物（194 项＝180 主＋12 分期＋2 分级，全覆盖 uncovered=0，家族计数与 REQUIREMENTS §4 逐家族全等，断言通过）；③§3 头部机读投影指向；§4.3 O-30 翻转为已冻结。REQUIREMENTS 附录 C P-02 行的翻转随需求侧下次增量修订（本任务 forbiddenFiles 不含 REQUIREMENTS——消账证据＝格式契约＋本行）。 |
 
 
 
