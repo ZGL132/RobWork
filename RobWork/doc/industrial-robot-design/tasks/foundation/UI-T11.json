@@ -7,18 +7,35 @@
   "status": "planned",
   "dependsOn": ["UI-T03"],
   "requirements": ["PM-03", "PM-07"],
-  "designRefs": ["units/ui.md#5"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#5",
+    "units/ui.md#5.2",
+    "units/ui.md#5.4",
+    "units/ui.md#5.5",
+    "units/ui.md#5.6"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_contract_test"
+  ],
+  "branch": "wp10-t11",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-8"],
   "acceptance": [
-    "UI-SES-2~7、UI-LCY-1：草稿三选＋任务二选统一确认对话框机制用例通过",
-    "只读打开提示（UI-SES-2/3、UI-CMD-3）；等待选项覆盖在途归档（A7）"
-  ]
+    "UI-SES-2~7、UI-LCY-1：草稿三选＋任务二选统一确认对话框机制用例通过（§5.4 S1/S2 时序——对话框数据装配、确认/取消/等待分支）；只读打开提示与显示差异（UI-SES-2/3：锁竞争横幅含 PID、介质只读/权限不足 actionKind 区分——PM-07/§5.3）；等待选项覆盖在途归档（A7/SA-17 分离原则：UI 会话结束≠存储上下文结束，§5.7）",
+    "UI 会话状态机（§5.2）逐状态不变量：INV-SES-1（writable 唯一只读判定源）、INV-SES-2（不存在双 Open* 界面会话）、INV-SES-3（Draining 后台持有点保活）、INV-SES-4（关闭不永久阻塞——§5.6 四级防线：有界等待、协作取消 2 s/10 s、T_force 强制终止确认、T_force2 兜底轮询，数据损失限于未归档结果）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：打开/关闭/切换协议直接持有 project 对端类型（ProjectStoreFactory/ProjectStore/OpenStoreResult——C-3；DraftService::list——C-5）与 execution 对端类型（ITaskScheduler::tasksByProject/ITaskController::requestCancel/scheduler.shutdown(DrainPolicy)——C-8，§5.4/§9.5）；project/execution 实例随打开流程注入 UiSessionController（§10.1 ShellWiring 注释——O-31 载荷）；零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕；P-UI-8 处置：T_force/T_force2 按 §5.6 默认保守值（120 s/300 s）实现且装配期可配，阈值裁决（P-UI-8）未闭合不私定终值"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T11 行＋§2 需求表（PM-03/PM-07 行）＋DTB §2.11 协作侧映射（≙WP-22-T06 协作侧——DTB WP-10 表无对应行，卡 §13 行为准）复核回填——designRefs 细化 §5.2（状态机）＋§5.4（关闭/切换时序）＋§5.5（只读禁用）＋§5.6（防永久阻塞）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_contract_test（§5 生命周期与 project/execution 对接属 §12.1 契约测试面）、acceptance 拆三条并编入 O-31/P-UI-8 处置；branch=wp10-t11（卡内序号——≙ 指向 WP-22-T06 协作侧不可用作分支名，branch 取单元 WP＋卡内编号保证十三份唯一，EX-T10「t 序号取卡内编号」同款口径）；interUnit=true 判定＝C-3/C-5/C-8 三类对端类型直接持有（本任务为 O-31 触发面之一，亦是 §10.1「project/execution 实例随打开流程注入」的承接点）；**O-31 硬约束：kept planned＋blocked（C-3/C-5/C-8 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

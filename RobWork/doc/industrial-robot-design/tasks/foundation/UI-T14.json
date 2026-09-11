@@ -6,19 +6,36 @@
   "title": "ui 契约测试套件（§12 全用例）",
   "status": "planned",
   "dependsOn": ["UI-T03", "UI-T04", "UI-T05", "UI-T06", "UI-T07", "UI-T08", "UI-T09", "UI-T10", "UI-T11", "UI-T12", "UI-T13"],
-  "requirements": ["UX-09", "UX-13", "UX-03"],
-  "designRefs": ["units/ui.md#12"],
+  "requirements": ["UX-03", "UX-09", "UX-10", "UX-13"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#12",
+    "units/ui.md#12.1",
+    "units/ui.md#12.2",
+    "units/ui.md#12.3",
+    "units/ui.md#12.4"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "ctest --test-dir build -C Release -L \"^ird$\"",
+    "ctest --test-dir build -C Release -L \"^ird_gui$\""
+  ],
+  "branch": "wp10-t14",
+  "interUnit": true,
+  "knownPitfalls": ["O-31"],
   "acceptance": [
-    "ctest ird/ird_gui 标签注册；ird-test-report.json 留痕（§12 全用例）",
-    "快捷键冲突拒绝/状态词映射/布局记忆用例通过并留痕"
-  ]
+    "ctest ird/ird_gui 标签注册与全用例落位（§12.1 三目标分层：ui_test 模型测试 LABELS ird、ui_contract_test 跨单元契约测试 LABELS ird、ui_gui_test Widgets 测试 LABELS ird_gui 串行）：§12.3 用例清单逐例注册（UI-WB/SES/DRF/CMD/HKY/STG/TSK/PLG/DIA/PERF/LCY 全族），ird-test-report.json 留痕（每例绑定 TestRecord，GUI 环境不满足记 envUnavailable 不得绿灯——§12.4/testkit §7.5）；登记执行限制 UI-EXEC-1（队列位置无对外接口，只验证文案与诊断呈现不验证数值）",
+    "快捷键冲突拒绝（UI-HKY-1，UX-13/SA-16）/状态词映射（UI-STG-3，UX-10）/布局记忆（UI-WB-1，UX-09）用例通过并留痕；GUI 测试按 §12.2 Windows 流程执行（QT_QPA_PLATFORM=windows、单实例串行、绝对路径、不用 offscreen、不与模型测试合并命令）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：ui_contract_test 目标链接 project/execution/diagnostics＋testkit（§3.1/§12.1——契约测试以 testkit FaultInterceptor 伪造 ITaskScheduler/ICommandInteraction）——对非链接单元的测试链接面即 O-31 依赖形态裁决范围（ARCH §3.5 白名单仅 ui→core,diagnostics，测试目标边亦须裁决确认）；且前置 UI-T03~T13 全部 kept planned（O-31 直接或传导阻塞）——按拓扑序随裁决后整链放行；不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T14 行＋§2 需求表（UX 家族承接——DTB WP-10-T11 需求列「UX 家族、SA-16」为族级表述，requirements 取 §12.3 具名用例直接命中的承接行 UX-03/09/10/13，SA-16 由 acceptance 拒绝边界条目承载〔CORE-T07 先例〕）＋DTB §2.11 WP-10-T11 行（≙）复核回填——designRefs 细化 §12.1~§12.4 全列（三目标分层/执行流程/用例清单/留痕口径）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 改为 ctest 标签双命令（^ird$ 与 ^ird_gui$ 锚定正则——§12.2「不合并命令」口径，结论二元可判）；dependsOn 维持卡行原文 UI-T03~T13 十一项（DTB 前置列「WP-02 testkit_qt 按需」不入 dependsOn——testkit_qt 启用登记归 UI-T02 契约、消费节奏由 testkit.md §10.1 承载，EX-T09/PRJ-T15「按需」同款口径）；branch=wp10-t14（卡内序号——≙WP-10-T11 但 wp10-t11 已被 UI-T11 占用，t 序号取卡内编号保证十三份唯一，EX-T10 同款口径）；interUnit=true 判定＝contract_test 消费 testkit 设施并链接 project/execution/diagnostics 公共头（测试面跨单元交互）；**O-31 硬约束：kept planned＋blocked（contract_test 链接面属 O-31 裁决范围＋前置链全 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }
