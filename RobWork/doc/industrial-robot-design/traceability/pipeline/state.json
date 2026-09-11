@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 56,
+  "tickCount": 57,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T11:35:52+08:00",
+    "updatedAt": "2026-09-11T12:30:39+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -301,6 +301,16 @@
       "commits": [
         "0fe1077ddc20604cc6fbdf6b6dc9105809d5a97f"
       ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T08",
+      "acceptanceRecord": "traceability/acceptance/TK-T08-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "5cfd4898fc313416700ee832c4f6cd45cacb70bc"
+      ]
     }
   ],
   "policy": {
@@ -326,11 +336,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "TK-T08",
-      "contractPath": "tasks/foundation/TK-T08.json",
-      "branch": "wp02-t08"
-    },
     {
       "taskId": "TK-T10",
       "contractPath": "tasks/foundation/TK-T10.json",
