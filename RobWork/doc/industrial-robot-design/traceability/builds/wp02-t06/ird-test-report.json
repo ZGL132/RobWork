@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T06",
+  "masterWp": "WP-02-T06",
+  "branch": "wp02-t06",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "SetCheck.hpp 模板实现（两阶段匹配＋Kuhn 最大匹配＋歧义探测）——header-only（模板可见性）；Check/ToleranceProfile 零改动"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/SetCheckTest.cpp（TK-SET/TK-ORD 十一用例）；既有 43 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "SetEquivalent/SetDuplicates/SetNumeric/SetGuard（TK-SET）",
+      "designRef": "units/testkit.md §5.4.1/§5.4.2/§5.4.4/§8 TK-SET",
+      "cases": [
+        { "name": "SetEquivalent.OrderIndependentEquivalent_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.4.3 集合等价：同集合不同顺序通过＋matched 覆盖＋无歧义" },
+        { "name": "SetEquivalent.IdentityValueMismatchLocated_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.4.2 阶段 1：身份相等值超容差→identity-value-mismatch 定位到字段（CompareDetail）" },
+        { "name": "SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.4.1 TK-SET-3 反例（元测试）：互相近邻的两元素在排序逐项比较下会误判——一一配对语义钉住" },
+        { "name": "SetNumeric.NumericOnlyMatching_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "无身份纯数值形态：一一配对＋missing/extra 登记" },
+        { "name": "SetDuplicates.ActualDuplicateIdentity_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "阶段 0：actual 重复→duplicate-identity 逐键列出" },
+        { "name": "SetDuplicates.ExpectedDuplicateThrows_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "阶段 0：expected 重复→DatasetInvalid（参考集自相矛盾）" },
+        { "name": "SetGuard.ScaleLimitThrows_UT_SET", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.4.2 规模护栏：>100,000 抛 Usage" }
+      ]
+    },
+    {
+      "suite": "StableOrder（TK-ORD）",
+      "designRef": "units/core.md/testkit.md §5.4.3/§8 TK-ORD（NFR-COR-02）",
+      "cases": [
+        { "name": "StableOrder.SameOrderAndFirstDivergence_UT_ORD", "status": "passed", "modes": ["smoke", "integration"], "trace": "同序通过；元素对但序错→sameOrder=false＋firstDivergence=0＋集合断言独立通过（不可互替行为面钉住）" }
+      ]
+    },
+    {
+      "suite": "既有回归（43 用例）",
+      "designRef": "units/core.md/testkit.md §8",
+      "cases": [
+        { "name": "既有 43 用例（TestPaths/JsonLite/Fault/Dataset/ToleranceProfile/Check/BuildRedLine）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 51, "passed": 51, "failed": 0, "modes": { "smoke": "51/51", "integration": "51/51" } },
+  "failureCapabilitySelfCheck": {
+    "method": "相容边禁用探针：临时把 edge 回调替换为恒 false 后重编译执行（一一配对全部失败）；探针验证后清除并终验复绿（一轮 sed 恢复残留重复行——已修复并如实记录）",
+    "result": "SetEquivalent.OrderIndependentEquivalent_UT_SET 如期变红（相容边判定失效必被等价用例捕获）；恢复后 51/51 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t06/smoke-configure.log",
+      "traceability/builds/wp02-t06/smoke-build.log",
+      "traceability/builds/wp02-t06/smoke-test-run.log",
+      "traceability/builds/wp02-t06/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t06/integration-build.log",
+      "traceability/builds/wp02-t06/integration-fullbuild.log",
+      "traceability/builds/wp02-t06/integration-test-run.log",
+      "traceability/builds/wp02-t06/sdurws_ird_testkit_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①最大匹配算法取舍：Kuhn 增广路径（结果与 Hopcroft–Karp 等价——同最大匹配；复杂度 O(E·V) vs O(E√V)，测试规模与稀疏相容边下可行；§5.4.2 命名为复杂度期望非算法强制——报告 notes 留痕）；②模板实现置头文件（消费方特化 traits 需实例化）；③IRD_EXPECT_SET_EQ/STABLE_ORDER 宏加入 AssertMacros.hpp（TK-T05 已交付的宏层）；④歧义探测按 matched 记录序（确定性）逐配对移除后尝试再增广"
+}

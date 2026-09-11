@@ -1,0 +1,15 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_testkit_test
+  SetCheckTest.cpp
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe

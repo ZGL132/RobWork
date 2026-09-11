@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="51" failures="0" disabled="0" errors="0" time="0.132" timestamp="2026-09-11T10:40:29.674" name="AllTests">
+  <testsuite name="TestPaths" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-09-11T10:40:29.675">
+    <testcase name="EnvVarOverridesDefault_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="131" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.675" classname="TestPaths" />
+    <testcase name="DefaultFallbackWhenRootExists_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="150" status="run" result="completed" time="0.001" timestamp="2026-09-11T10:40:29.675" classname="TestPaths" />
+    <testcase name="EnvUnsetAndDefaultMissing_Throws_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="167" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.676" classname="TestPaths" />
+    <testcase name="EmptyEnvTreatedAsUnset_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="206" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.677" classname="TestPaths" />
+    <testcase name="DefaultFallback_Adaptive_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="224" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="TestPaths" />
+    <testcase name="DatasetAndToleranceDirLayout_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="251" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="TestPaths" />
+    <testcase name="ErrorCarriesKindTokenAndDetail_NFR_COR_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\TestPathsTest.cpp" line="281" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="TestPaths" />
+  </testsuite>
+  <testsuite name="JsonRoundtrip" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.678">
+    <testcase name="CanonicalTextRestored_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="JsonRoundtrip" />
+    <testcase name="InsertionOrderStable_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="68" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="JsonRoundtrip" />
+  </testsuite>
+  <testsuite name="JsonAccess" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.678">
+    <testcase name="KindDiscriminatorsAndFind_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="JsonAccess" />
+  </testsuite>
+  <testsuite name="JsonRejections" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.678">
+    <testcase name="RejectionMatrix_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="102" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.678" classname="JsonRejections" />
+    <testcase name="GrammarViolations_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="117" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="JsonRejections" />
+  </testsuite>
+  <testsuite name="JsonErrorLocation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="LineColumnPrecision_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="134" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="JsonErrorLocation" />
+  </testsuite>
+  <testsuite name="JsonUnicode" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="EscapesToUtf8_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="142" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="JsonUnicode" />
+  </testsuite>
+  <testsuite name="JsonBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="DumpOutputReparseable_UT_JSON" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\JsonLiteTest.cpp" line="156" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="JsonBoundary" />
+  </testsuite>
+  <testsuite name="FaultOccurrence" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="FiresExactlyAtPlannedOccurrence_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="76" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultOccurrence" />
+    <testcase name="EmptyPlanAndBeyondPlan_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultOccurrence" />
+    <testcase name="MultiplePointsIndependentCounting_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="113" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultOccurrence" />
+  </testsuite>
+  <testsuite name="FaultScenario" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="DiskFullDrivesErrorPath_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="133" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultScenario" />
+  </testsuite>
+  <testsuite name="FaultWiring" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="RealAccessorDelegation_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="151" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultWiring" />
+    <testcase name="NullRealRejected_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="160" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="FaultWiring" />
+  </testsuite>
+  <testsuite name="ProcessRunnerHeader" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.679">
+    <testcase name="FrozenDeclarationsPresent_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="167" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.679" classname="ProcessRunnerHeader" />
+  </testsuite>
+  <testsuite name="ProductBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-09-11T10:40:29.679">
+    <testcase name="ZeroTestkitHeadersAndTestIfdef_UT_FAULT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\FaultTest.cpp" line="181" status="run" result="completed" time="0.003" timestamp="2026-09-11T10:40:29.679" classname="ProductBoundary" />
+  </testsuite>
+  <testsuite name="DatasetManifest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.007" timestamp="2026-09-11T10:40:29.682">
+    <testcase name="FullFieldLoad_UT_MAN" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="170" status="run" result="completed" time="0.007" timestamp="2026-09-11T10:40:29.682" classname="DatasetManifest" />
+  </testsuite>
+  <testsuite name="DatasetRejections" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.04" timestamp="2026-09-11T10:40:29.690">
+    <testcase name="RejectionMatrixWithFieldPaths_UT_MAN" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="187" status="run" result="completed" time="0.04" timestamp="2026-09-11T10:40:29.690" classname="DatasetRejections" />
+  </testsuite>
+  <testsuite name="DatasetIntegrity" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.014" timestamp="2026-09-11T10:40:29.731">
+    <testcase name="TamperAndSizeMismatch_UT_INT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="249" status="run" result="completed" time="0.014" timestamp="2026-09-11T10:40:29.731" classname="DatasetIntegrity" />
+  </testsuite>
+  <testsuite name="DatasetLint" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.012" timestamp="2026-09-11T10:40:29.745">
+    <testcase name="DatasetIdDirMismatch_UT_MAN" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp" line="280" status="run" result="completed" time="0.012" timestamp="2026-09-11T10:40:29.745" classname="DatasetLint" />
+  </testsuite>
+  <testsuite name="ToleranceProfileLoad" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.031" timestamp="2026-09-11T10:40:29.757">
+    <testcase name="SampleProfileResolveThreeStates_UT_TOL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.757" classname="ToleranceProfileLoad" />
+    <testcase name="DeclaredExceedingAllowedMaxRejected_UT_TOL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="86" status="run" result="completed" time="0.004" timestamp="2026-09-11T10:40:29.757" classname="ToleranceProfileLoad" />
+    <testcase name="FixedRequiresAllowedMax_UT_TOL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="116" status="run" result="completed" time="0.013" timestamp="2026-09-11T10:40:29.762" classname="ToleranceProfileLoad" />
+    <testcase name="SourceWhitelistAndKindMismatch_UT_TOL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="149" status="run" result="completed" time="0.012" timestamp="2026-09-11T10:40:29.776" classname="ToleranceProfileLoad" />
+  </testsuite>
+  <testsuite name="ToleranceProfileC7" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="CrossCheckWithCore_UT_TOL" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ToleranceProfileTest.cpp" line="137" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="ToleranceProfileC7" />
+  </testsuite>
+  <testsuite name="CheckClose" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="DelegatesToCoreC4Formula_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="CheckClose" />
+    <testcase name="NonFiniteFails_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="CheckClose" />
+  </testsuite>
+  <testsuite name="AllCloseWithin" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="ElementWiseNotSummed_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="63" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="AllCloseWithin" />
+    <testcase name="LengthMismatchListed_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="77" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="AllCloseWithin" />
+    <testcase name="BothEmptyPasses_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="AllCloseWithin" />
+  </testsuite>
+  <testsuite name="CheckAtMost" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="BoundAndUnitValidation_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="99" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="CheckAtMost" />
+  </testsuite>
+  <testsuite name="CheckIdentical" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="ExactEqualityBothOverloads_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="110" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="CheckIdentical" />
+  </testsuite>
+  <testsuite name="AssertMacrosBehavior" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="MacroExpansionWorks_UT_CMP" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\CheckTest.cpp" line="121" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="AssertMacrosBehavior" />
+  </testsuite>
+  <testsuite name="SetEquivalent" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="OrderIndependentEquivalent_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="63" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetEquivalent" />
+    <testcase name="IdentityValueMismatchLocated_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="77" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetEquivalent" />
+  </testsuite>
+  <testsuite name="SetDuplicates" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="ActualDuplicateIdentity_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="89" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetDuplicates" />
+    <testcase name="ExpectedDuplicateThrows_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="101" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetDuplicates" />
+  </testsuite>
+  <testsuite name="SetNumeric" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="NumericOnlyMatching_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="111" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetNumeric" />
+    <testcase name="PairwiseSlipperyCaseStillMatches_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="SetNumeric" />
+  </testsuite>
+  <testsuite name="StableOrder" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-11T10:40:29.789">
+    <testcase name="SameOrderAndFirstDivergence_UT_ORD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="141" status="run" result="completed" time="0." timestamp="2026-09-11T10:40:29.789" classname="StableOrder" />
+  </testsuite>
+  <testsuite name="SetGuard" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-09-11T10:40:29.789">
+    <testcase name="ScaleLimitThrows_UT_SET" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\SetCheckTest.cpp" line="162" status="run" result="completed" time="0.001" timestamp="2026-09-11T10:40:29.789" classname="SetGuard" />
+  </testsuite>
+  <testsuite name="TkBuild" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.016" timestamp="2026-09-11T10:40:29.790">
+    <testcase name="SourceTreeReachable_TK_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\BuildRedLineTest.cpp" line="153" status="run" result="completed" time="0.002" timestamp="2026-09-11T10:40:29.790" classname="TkBuild" />
+    <testcase name="KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\BuildRedLineTest.cpp" line="181" status="run" result="completed" time="0.007" timestamp="2026-09-11T10:40:29.793" classname="TkBuild" />
+    <testcase name="ProductSourcesZeroTestkitInclude_T1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\BuildRedLineTest.cpp" line="234" status="run" result="completed" time="0.006" timestamp="2026-09-11T10:40:29.800" classname="TkBuild" />
+  </testsuite>
+</testsuites>
