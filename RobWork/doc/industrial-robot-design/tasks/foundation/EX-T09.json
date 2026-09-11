@@ -4,21 +4,33 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "契约测试套件落地（FakeWorker/契约与故障注入）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T01", "EX-T02", "EX-T03", "EX-T04", "EX-T05", "EX-T06", "EX-T07", "EX-T08", "TK-T09"],
   "requirements": ["TASK-01", "TASK-02", "TASK-03"],
-  "designRefs": ["units/execution.md#11", "units/testkit.md#6.4"],
+  "designRefs": ["units/execution.md#11", "units/testkit.md#6.4", "units/testkit.md#6.5"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test",
+    "cmake --build build --config Release --target sdurws_ird_execution_contract_test"
+  ],
+  "branch": "wp08-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-8"],
   "acceptance": [
-    "§11 矩阵逐项执行通过并留痕（未执行不得标注通过）",
-    "替身边界声明在案（FakeWorkerMain/FakeArchivePort/FaultInterceptor）；TestProcessRunner 按 TK-T11 触发接入真进程场景"
-  ]
+    "§11 矩阵（EX-SUB/SM/WKR/CHN/CKP/CCH/REG/ORT/ARC/RCV/RES/BLD 全组）逐项执行通过并留痕（gtest XML＋ird-test-report.json——任何未执行测试不得标注通过，AGENTS §4.2）；落位双测试目标（test/*＝单元内纯逻辑用替身；contract_test/*＝跨单元 evidence 校验器/project 归档端口 fake/真实 worker 进程场景——§11 目标分工原文）",
+    "替身边界声明在案：ScriptedEvaluator＋FakeWorkerMain（按脚本发进度/心跳/结果/崩溃/卡死）＋FaultInterceptor 接缝＋ManualClock＋TempDir/DeterministicEnv（§11 设施列——替身输出不构成任何业务算法正确性证明，R-7/自审 A-9）；faultPointId 命名登记（execution/process-launcher/create、execution/channel/send-frame、execution/channel/recv-frame、execution/archive/*——testkit §6.4 交接义务）",
+    "TestProcessRunner 按 TK-T11 触发接入真进程场景（EX-RCV-1/EX-WKR-2——testkit §10.1 节奏，卡行依赖「WP-02-T09（T11 按需）」原文；前置未就绪的用例如实标注阻塞，不带病前进——AGENTS §4.2）",
+    "P-EX-8 处置：测试/装配侧 IExecutionDiagnosticsSink 以空实现占位（project §3.2 同模式——sink 名称/归属统一待裁决不私定）；断言只针对 diagnostics.md §4.6 已收编 18 项 EX-* 码值（§3.4 冻结枚举对齐说明），不私定新码值",
+    "AT-10/11/13/34 场景载体就位（AT 编号自 DTB WP-08-T10 需求列迁注，不入 requirements）；时钟敏感用例一律 ManualClock 虚拟推进、不 sleep 断言（§11 末段纪律——testkit §6.5）"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T09 行＋DTB §2.9 WP-08-T10 行（≙）复核回填——requirements 维持 DTB 需求列原文（TASK-01~03；AT-10/11/13 自需求列迁注 acceptance——AT 编号迁注口径）、designRefs 补 testkit#6.5（卡行输入「§11 全表、testkit §6.4/§6.5」原文展开：同步纪律节）、verify 补 contract_test（§11 双测试目标分工原文）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆五条并编入 P-EX-8 处置；dependsOn 维持卡行原文（EX-T01~T08＋TK-T09；TK-T11 按需不入 dependsOn——testkit §10.1 节奏条目承载，PRJ-T15 同款口径）；branch 补 wp08-t09（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T09↔WP-08-T10）；interUnit=true 判定＝消费 testkit 公共测试设施（FakeWorkerMain/FaultInterceptor/ManualClock——§11 设施列）与 evidence 校验器/project 端口 fake 协作；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }

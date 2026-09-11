@@ -4,21 +4,33 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "RunRegistry 与迟到结果两段式接纳（RunRegistry/Admission）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T02", "EV-T07", "PRJ-T14"],
   "requirements": ["TASK-03", "PM-13", "CON-02", "CON-05"],
-  "designRefs": ["units/execution.md#9"],
+  "designRefs": ["units/execution.md#9", "ARCHITECTURE.md#4.5"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test",
+    "cmake --build build --config Release --target sdurws_ird_execution_contract_test"
+  ],
+  "branch": "wp08-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-5", "P-PR-4", "P-EX-3", "P-EX-1"],
   "acceptance": [
-    "EX-REG-1~8、EX-ORT-1：未知/失配/陈旧拒绝＋归档位置取登记记录＋幂等全过（ARCH §11.2-7）",
-    "九步接纳＋名称反解编排；envelope 组装复用 evidence 校验器（不复制）"
-  ]
+    "EX-REG-1~8 全绿：未知 RunId（Rejected(UnknownRun)＋不写任何项目 results/）、五元组任一字段失配（逐字段独立断言）、陈旧 AttemptId 全部拒绝（九步接纳 1~6 五重拒绝——§9.2/ARCH §11.2-7）；归档位置取登记记录（EX-REG-4 项目切换后合法迟到结果归档至 A 原 runDir、不进 B 会话）；同 (run,attempt) 重投递幂等（EX-REG-7）；内容冲突拒绝（EX-REG-8）；不按当前会话丢弃合法迟到结果（卡行禁止项）",
+    "EX-ORT-1 通过：CON-02 三态正交强制（§5.6 四轴互不推导逐行断言——Completed+DataInsufficient、Failed、Canceled、Superseded-Current 组合）；HEAD 不参与接纳判定（EX-REG-6——CON-02/05，当前性由 evidence 另判）；取消/失败/中断结果不入正式（TASK-02 执行侧保证——§9.2 步 7/9：已终结登记拒绝 FinalEnvelope，不构造不归档为正式结果）",
+    "九步接纳＋名称反解编排就位（§9.2 步 8——先反解后接纳，CON-06）：名称反解经⑥端口注入解析器 INameResolverAdapter——P-EX-3 处置：runtime 零编译依赖不私建边（ARCH §3.5 白名单，SA-10 表外边＝构建失败）；envelope 组装复用 evidence 校验器（aggregateVerdict→make→validateCombination 单点复用不复制——TASK-02/D-03 接纳唯一权威点）",
+    "P-EX-5/P-PR-4 处置：归档协作线程模型按 §9.5 单侧冻结（调度线程调用＋writer 互斥串行化＋完成事件幂等无上限＋abandon 三时机），project 侧（PRJ-T14）已按 §5.6/§9.8 同款冻结——双方以各自冻结文本为对端起点不私改，偏差走二次对齐不私裁",
+    "AT-10 场景载体就位（PM-13 切换场景——EX-REG-4/§9.4 归档流程图 S7；AT 编号自 DTB WP-08-T05 需求列迁注，不入 requirements）；P-EX-1 处置：消费 evidence 校验器/判定器与 project 归档端口卡 v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T04 行＋DTB §2.9 WP-08-T05 行（≙）复核回填——requirements 维持 DTB 需求列展开（TASK-03、PM-13、CON-02、CON-05；AT-10 自需求列迁注 acceptance 注记——AT 编号迁注口径）、designRefs 补 ARCHITECTURE.md#4.5（卡行输入「§9、ARCH §4.5」原文：A1 处置/A8 修订）、verify 补 contract_test（EX-REG/EX-ORT 跨单元用例落位 §3.3 双测试目标）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆五条并编入 P-EX-5/P-PR-4/P-EX-3/P-EX-1 处置；branch 补 wp08-t04（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T04↔WP-08-T05）；interUnit=true 判定＝消费 EV-T07（评估器注册/aggregateVerdict 与 envelope 校验器复用）与 PRJ-T14（IResultArchivePort 归档端口——§9.5/P-PR-4 冻结点）；跨单元依赖就绪声明：EV-T07（DOC-T07 批次放行）/PRJ-T14（DOC-T10 批次放行）均已 ready——本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done（DOC-T12 契约 acceptance 3）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；编译留痕见 traceability/contract-compile-log.md"
 }

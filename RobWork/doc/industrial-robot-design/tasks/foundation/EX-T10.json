@@ -4,13 +4,15 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T01", "EX-T02", "EX-T03", "EX-T04", "EX-T05", "EX-T06", "EX-T07", "EX-T08", "EX-T09"],
   "requirements": ["NFR-MNT-05"],
   "designRefs": ["units/execution.md#12", "units/execution.md#15"],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/execution.md",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +20,13 @@
   ],
   "outputs": ["traceability-update"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "branch": "wp08-t10",
+  "interUnit": false,
   "acceptance": [
-    "本文与实现零偏差登记；README 核对",
-    "§15.3 待裁决项状态最新（P-PR-4/P-EX-*）；DETAILED-DESIGN 状态更新申请提交"
-  ]
+    "本文（units/execution.md）与实现零偏差登记：§15.4 变更记录追加实现期核对条目（零偏差亦显式登记「零偏差」）；发现偏差按 DTB §5.4 增量修订登记、不静默不私改",
+    "§15.3 待裁决项状态最新：P-EX-1~10 逐项复核更新（含 P-EX-5＝P-PR-4 冻结答复、P-EX-10 文档索引消账）——已消账项登记消账依据与日期，未决项保持登记不私裁",
+    "DETAILED-DESIGN.md execution 行状态更新申请提交（P-EX-10——「待产出」更新为实际状态，索引一致性；详设目录维护者裁决，本任务执行申请动作）；execution README 任务卡指向核对（与 §12 对齐——§15.4 v0.1 已修正项复核确认）",
+    "ird_gates/CI 建议按 §12 产物列提交登记（横切归属 WP-01 链——只提交建议条目，不私改门禁语义与白名单数据）；validate-docs 通过（文档链一致性门禁，本契约 verify 命令）"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T10 行复核回填——卡内治理任务，DTB §2.9 未列（卡行原文「按 DTB §5.4 以增量修订登记」），branch 取卡内序号 wp08-t10（DTB WP-08-T10 系 EX-T09 ≙ 映射占用，本序号按卡内编号顺延保证十份唯一——IO 批 DOC-T11「t 序号取卡内编号」同款口径）；allowedFiles 补 DETAILED-DESIGN.md（卡行涉及文件「本文、README、DETAILED-DESIGN.md」原文——状态更新申请的动作面）＋traceability/**（CORE-T01 教训）、acceptance 拆四条逐项可验证（原「README 核对」并入条目 3、ird_gates/CI 建议单列条目 4——§12 产物列原文）；interUnit=false 判定＝纯文档/门禁同步无跨单元接口产出（DIAG-T11/EV-T12/PRJ-T16 同款口径），knownPitfalls 不登记（interUnit=false 自愿登记不适用），入队按拓扑序在其九项前置完成后执行；requirements 维持 NFR-MNT-05（文档同步需求）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；编译留痕见 traceability/contract-compile-log.md"
 }

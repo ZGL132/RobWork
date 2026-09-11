@@ -4,12 +4,14 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "调度线程与事件/进度分发（Scheduler/EventBus）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T02", "CORE-T08"],
-  "requirements": ["TASK-01", "UX-10", "NFR-PERF-01"],
-  "designRefs": ["units/execution.md#6.1", "units/execution.md#10.4"],
+  "requirements": ["TASK-01", "TASK-03", "UX-10", "NFR-PERF-01"],
+  "designRefs": ["units/execution.md#6.1", "units/execution.md#6.2", "units/execution.md#6.3", "units/execution.md#10.4"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "branch": "wp08-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1"],
   "acceptance": [
-    "EX-SUB-1/2、EX-RES-2（调度面）：事件 FIFO 与投递线程契约用例通过",
-    "UI 线程零计算（结构断言）；内联门槛（可预测 <1 s）就位"
-  ]
+    "EX-SUB-1/2 全绿：并发提交各获唯一 TaskId、无重复、同任务事件 FIFO（EX-SUB-1——TASK-03 五元组分配经 §4.3 身份分配协议在提交受理时完成，TASK-01 状态机受理入口）；过期快照拒绝（EX-SUB-2——SubmissionRejected＋EX-SNAPSHOT-STALE、无 TaskRecord，CON-01 派发前快照完整性经 §6.3 V2 注入源消费）",
+    "事件 FIFO 与投递线程契约用例通过（EventBus 为 core IDomainEventBus 参考实现——§10.4；TaskState 九态事件流＋ResultArchived 等事件家族按序投递）；进度对外节流 ≤10 Hz（D-06 实现参数非需求值，§6.1）",
+    "UI 线程零计算结构断言就位（NFR-PERF-01：>1 s 转后台——内联门槛＝可预测 <1 s 调度线程内联，ARCH §4.1；§11 EX-BLD-1/T05 完成条件的结构断言承载，提交/控制非阻塞）",
+    "队列/优先级/预算/提交验证就位：双优先级 FIFO 不抢占（D-04——需求未定义抢占，用户干预已由取消/暂停覆盖）；PM-07 只读拒绝启动（§6.3 V3——消费 store.writable() 的预留失败路径变体，写权限判定归 project 不私判）",
+    "UX-10 只承载进度阶段投影（七态状态词与映射归 ui——§2.2/§13 ui 行，execution 不新增状态词）；P-EX-1 处置：EventBus 事件家族与身份类型消费 core v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T05 行＋DTB §2.9 WP-08-T06 行（≙）复核回填——requirements 补 TASK-03（DTB 需求列「TASK-01/03、UX-10（进度阶段）」原文：五元组分配在提交受理路径，§4.3/EX-SUB-1 为其验证载体）、designRefs 补 §6.2/§6.3（卡行输入「§6.1~§6.3、§10.4」原文展开）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆五条（事件 FIFO/UI 零计算结构断言/队列治理/UX-10 边界＋P-EX-1 处置）；branch 补 wp08-t05（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T05↔WP-08-T06）；interUnit=true 判定＝EventBus 为 core IDomainEventBus 参考实现（§10.4——core 事件端口的单元内落地）＋消费 core 事件家族/身份类型；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }

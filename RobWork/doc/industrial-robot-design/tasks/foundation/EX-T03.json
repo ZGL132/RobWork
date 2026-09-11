@@ -4,12 +4,14 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "取消与终止协议（协作窗/强杀/DrainPolicy）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T02"],
   "requirements": ["NFR-PERF-02", "UX-03"],
-  "designRefs": ["units/execution.md#7"],
+  "designRefs": ["units/execution.md#7", "ARCHITECTURE.md#4.4"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "branch": "wp08-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-2"],
   "acceptance": [
-    "EX-SM-3/4、EX-WKR-4/5：2 s/10 s 协议时序用例通过（ManualClock 可注入时钟）",
-    "正常用户取消零错误诊断（UX-03）"
-  ]
+    "EX-SM-3/4 全绿：Running 取消 2 s 内入 Canceling＋停止派发批次、批次 10 s 收敛→Canceled（NFR-PERF-02 协议值 2 s/10 s 为上游需求值不改动；时序经 ManualClock 可注入时钟虚拟推进断言、不 sleep——testkit §6.5 同步纪律）；暂停中取消保检查点（EX-SM-4——检查点文件/manifest 仍在、磁盘断言，可续跑）",
+    "EX-WKR-4/5 通过：强杀编排就位（Job 进程树终止——KILL_ON_JOB_CLOSE；EX-FORCE-TERMINATED 显式区别于普通失败）；运行超时走同卡死路径并以诊断区分 timeout（§7.1）；取消协议无永久等待路径（10 s 收敛＋强杀兜底——自审「无永久等待」项）",
+    "DrainPolicy 排空语义实现就位（§7.5 关闭二选的执行侧：等待排空与协作取消两路径——其行为用例 EX-ARC-4「无永久等待＋超阈值 abandon 兜底」归 §11 契约测试套件 EX-T09 承载）",
+    "正常用户取消零错误诊断（UX-03——EX-SM-1~3 观测点诊断空断言：取消不是失败，不产生错误级诊断）；P-EX-2 处置：协议语义锚定 ARCH §4.4（v0.11 Draft 待评审），评审 A9+ 变更按影响面增量同步（影响面集中 §7）；P-EX-1 处置：消费契约（core 词表/诊断契约）v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T03 行＋DTB §2.9 WP-08-T04 行（≙）复核回填——requirements 维持 DTB 需求列原文（NFR-PERF-02、UX-03（正常取消非错误））、designRefs 补 ARCHITECTURE.md#4.4（卡行输入「§7、ARCH §4.4」原文）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆四条（协议值不改动＋ManualClock 纪律＋DrainPolicy 边界＋P-EX-1/P-EX-2 处置）；branch 补 wp08-t03（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T03↔WP-08-T04）；interUnit=true 判定＝消费 core 九态词表与诊断契约（EX-* 稳定码经 diagnostics StableCodeRegistry 收编协议——§3.4，码值不私定）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }

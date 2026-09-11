@@ -4,21 +4,32 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "WorkerLauncher 与通道（ProcessLauncher/ChannelPair/JobScope/worker）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T04", "RT-T09"],
   "requirements": ["NFR-REL-02", "NFR-PERF-03"],
-  "designRefs": ["units/execution.md#6.4", "units/execution.md#6.6"],
+  "designRefs": ["units/execution.md#6.4", "units/execution.md#6.5", "units/execution.md#6.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test",
+    "cmake --build build --config Release --target sdurws_ird_execution_contract_test"
+  ],
+  "branch": "wp08-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-3"],
   "acceptance": [
-    "EX-WKR-1~3、EX-CHN-1：worker 崩溃只失败当前任务；通道消息全携五元组",
-    "流式分批回传、心跳/崩溃检测、临时目录隔离用例通过"
-  ]
+    "EX-WKR-1~3 全绿：worker 崩溃只失败当前任务（EX-WKR-2——仅当前任务 Failed＋EX-WORKER-CRASHED、主进程存活、其他任务不受影响、最近检查点保留、崩溃 worker 永不回池——NFR-REL-02/D-02 Job Scope 进程侧闭环）；worker 卡死经心跳失联判定走强杀路径（EX-WKR-3——心跳 5 s×3 失联阈值为 D-06 实现参数非需求值，诊断码区分）；worker 正常完成走九步接纳（EX-WKR-1——握手 manifest 比对 CON-06）",
+    "EX-CHN-1 通过：通道消息全携五元组（IRDCHN/1 帧自定界＋seq 序控——§6.5/D-15；乱序/重复按 seq 重排去重，断裂→协议错误→Failed＋EX-CHANNEL-PROTOCOL-ERROR）",
+    "流式分批回传用例通过（ResultBatch——§6.5，NFR-PERF-03 分批/流式、不整体装载）；worker 临时目录隔离用例通过（§6.4——worker 不写项目正式目录、不与 UI 交互，一切结果经主进程登记核对）",
+    "R-3 处置：句柄继承/强杀时序等 Windows 进程/作业/管道行为逐项对照 Microsoft Learn 口径（§6.6），真进程/注入用例实证不超诺（不凭记忆超诺——§2.2 NFR-REL-02 行）；P-EX-3 处置：快照物化经 IExecutionModelService 注入消费（前置 RT-T09 物化注入可用——卡行依赖原文），零编译依赖不私建 execution→runtime 边（SA-10 表外边＝构建失败；如架构补登边可平滑直连）"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T06 行＋DTB §2.9 WP-08-T07 行（≙）复核回填——requirements 维持 DTB 需求列原文（NFR-REL-02、NFR-PERF-03）、designRefs 补 §6.5（卡行输入「§6.4~§6.6」原文展开：通道协议节——EX-CHN-1 五元组/分批依据）、verify 补 contract_test（EX-WKR/EX-CHN 真进程与通道用例落位 §3.3 双测试目标——§11 目标分工原文）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆四条并编入 R-3/P-EX-3 处置；branch 补 wp08-t06（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T06↔WP-08-T07）；interUnit=true 判定＝消费 RT-T09 快照物化注入（IExecutionModelService——§3.3 注入零编译依赖）；跨单元依赖就绪声明：RT-T09（DOC-T06 批次放行）已 ready——本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done（DOC-T12 契约 acceptance 3）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；编译留痕见 traceability/contract-compile-log.md"
 }
