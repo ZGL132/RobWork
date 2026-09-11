@@ -46,7 +46,8 @@ set(SDURWS_IRD_TESTDATA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../testdata"
 add_library(sdurws_ird_testkit STATIC
     src/TestPaths.cpp
     src/JsonLite.cpp
-    src/Fault.cpp)
+    src/Fault.cpp
+    src/Dataset.cpp)
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -97,6 +98,7 @@ add_executable(sdurws_ird_testkit_test
     test/TestPathsTest.cpp
     test/JsonLiteTest.cpp
     test/FaultTest.cpp
+    test/DatasetTest.cpp
     test/BuildRedLineTest.cpp)
 target_compile_features(sdurws_ird_testkit_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_testkit_test PROPERTIES
@@ -153,6 +155,18 @@ macro(ird_add_gtest target)
 endmacro()
 
 ird_add_gtest(sdurws_ird_testkit_test)
+
+# ---- lint 工具（TK-T03 交付：tools/testdata 全量扫描——§4.5 CI 独立运行）----
+# 只链 testkit（数据根经 TestPaths 两级解析）；不进产品安装面（T-1 同款纪律——
+# 分发红线：testkit 与其工具不随产品分发，§3.6）。
+add_executable(sdurws_ird_testdata_lint tools/testdata/main.cpp)
+target_compile_features(sdurws_ird_testdata_lint PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_testdata_lint PROPERTIES
+    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_testdata_lint PRIVATE /utf-8)
+endif()
+target_link_libraries(sdurws_ird_testdata_lint PRIVATE sdurws_ird_testkit)
 
 # ---- 依赖红线守卫（T-2/R-3 的 testkit 侧配置期断言；O-21 自律载体）----
 # T-2（testkit.md §2.4）：sdurws_ird_testkit 链接接口只允许 core——出现
