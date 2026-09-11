@@ -1,0 +1,84 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 21 tests from 12 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from RuntimeBuild
+[ RUN      ] RuntimeBuild.SourceTreeReachable_RT_BUILD
+[       OK ] RuntimeBuild.SourceTreeReachable_RT_BUILD (0 ms)
+[ RUN      ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01
+[       OK ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 (1 ms)
+[ RUN      ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2
+[       OK ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2 (1 ms)
+[ RUN      ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3
+[       OK ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3 (0 ms)
+[----------] 4 tests from RuntimeBuild (2 ms total)
+
+[----------] 1 test from RuntimeErrorsFullTable
+[ RUN      ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03
+[       OK ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03 (0 ms)
+[----------] 1 test from RuntimeErrorsFullTable (0 ms total)
+
+[----------] 1 test from RuntimeErrorsThrow
+[ RUN      ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR
+[       OK ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR (0 ms)
+[----------] 1 test from RuntimeErrorsThrow (0 ms total)
+
+[----------] 1 test from RuntimeErrorsPayload
+[ RUN      ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR
+[       OK ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR (0 ms)
+[----------] 1 test from RuntimeErrorsPayload (0 ms total)
+
+[----------] 1 test from SourcesContract
+[ RUN      ] SourcesContract.InterfacesAreAbstract_RT_SRC
+[       OK ] SourcesContract.InterfacesAreAbstract_RT_SRC (0 ms)
+[----------] 1 test from SourcesContract (0 ms total)
+
+[----------] 1 test from SourcesObjectBytes
+[ RUN      ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2
+[       OK ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2 (0 ms)
+[----------] 1 test from SourcesObjectBytes (0 ms total)
+
+[----------] 1 test from SourcesRevision
+[ RUN      ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1
+[       OK ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1 (0 ms)
+[----------] 1 test from SourcesRevision (0 ms total)
+
+[----------] 1 test from SourcesAttribution
+[ RUN      ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2
+[       OK ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2 (0 ms)
+[----------] 1 test from SourcesAttribution (0 ms total)
+
+[----------] 1 test from SourcesCancel
+[ RUN      ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01
+[       OK ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01 (0 ms)
+[----------] 1 test from SourcesCancel (0 ms total)
+
+[----------] 1 test from SourcesLifetime
+[ RUN      ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC
+[       OK ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC (0 ms)
+[----------] 1 test from SourcesLifetime (0 ms total)
+
+[----------] 7 tests from ExpectedSemantics
+[ RUN      ] ExpectedSemantics.OkStateCarriesValue_ACC3
+[       OK ] ExpectedSemantics.OkStateCarriesValue_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.ErrStateCarriesError_ACC3
+[       OK ] ExpectedSemantics.ErrStateCarriesError_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03
+[       OK ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03 (0 ms)
+[ RUN      ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3
+[       OK ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3
+[       OK ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.CopyAndMovePreserveState_ACC3
+[       OK ] ExpectedSemantics.CopyAndMovePreserveState_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3
+[       OK ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3 (0 ms)
+[----------] 7 tests from ExpectedSemantics (0 ms total)
+
+[----------] 1 test from ExpectedQueryPath
+[ RUN      ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3
+[       OK ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3 (0 ms)
+[----------] 1 test from ExpectedQueryPath (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 12 test suites ran. (3 ms total)
+[  PASSED  ] 21 tests.

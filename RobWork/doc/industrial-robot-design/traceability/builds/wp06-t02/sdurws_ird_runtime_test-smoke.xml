@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="21" failures="0" disabled="0" errors="0" time="0.003" timestamp="2026-09-12T00:10:32.624" name="AllTests">
+  <testsuite name="RuntimeBuild" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-09-12T00:10:32.624">
+    <testcase name="SourceTreeReachable_RT_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BuildRedLineTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.624" classname="RuntimeBuild" />
+    <testcase name="NoQtInclude_RT_BUILD_NFR_MNT_01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BuildRedLineTest.cpp" line="74" status="run" result="completed" time="0.001" timestamp="2026-09-12T00:10:32.625" classname="RuntimeBuild" />
+    <testcase name="NoCrossUnitInclude_RT_BUILD_R1_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BuildRedLineTest.cpp" line="94" status="run" result="completed" time="0.001" timestamp="2026-09-12T00:10:32.626" classname="RuntimeBuild" />
+    <testcase name="BaselineLibsPinned_RT_BUILD_P_RT_3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BuildRedLineTest.cpp" line="123" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.627" classname="RuntimeBuild" />
+  </testsuite>
+  <testsuite name="RuntimeErrorsFullTable" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.627">
+    <testcase name="AllCodesPerToken_RT_ERR_NFR_COR_03" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ErrorsTest.cpp" line="77" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.627" classname="RuntimeErrorsFullTable" />
+  </testsuite>
+  <testsuite name="RuntimeErrorsThrow" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="MessagePrefixAndCodeAccessor_RT_ERR" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ErrorsTest.cpp" line="102" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="RuntimeErrorsThrow" />
+  </testsuite>
+  <testsuite name="RuntimeErrorsPayload" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="ResolveAndNameErrorCarryEcho_RT_ERR" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ErrorsTest.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="RuntimeErrorsPayload" />
+  </testsuite>
+  <testsuite name="SourcesContract" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="InterfacesAreAbstract_RT_SRC" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="185" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesContract" />
+  </testsuite>
+  <testsuite name="SourcesObjectBytes" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="ScriptedHitAndMiss_RT_SRC_S2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="195" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesObjectBytes" />
+  </testsuite>
+  <testsuite name="SourcesRevision" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="SummaryRoundtripAndUnknownRevision_RT_SRC_S1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="217" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesRevision" />
+  </testsuite>
+  <testsuite name="SourcesAttribution" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="InjectionPointsMapToCodes_RT_SRC_ACCEPT2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="250" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesAttribution" />
+  </testsuite>
+  <testsuite name="SourcesCancel" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="ToggleIsFinal_RT_SRC_TASK01" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="316" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesCancel" />
+  </testsuite>
+  <testsuite name="SourcesLifetime" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="DeleteThroughBasePointer_RT_SRC" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SourcesTest.cpp" line="332" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="SourcesLifetime" />
+  </testsuite>
+  <testsuite name="ExpectedSemantics" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="OkStateCarriesValue_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="ErrStateCarriesError_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="GetOnErrorFailsFast_ACC3_NFR_COR_03" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="ErrorOnOkFailsFast_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="StatesAreMutuallyExclusive_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="86" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="CopyAndMovePreserveState_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="100" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+    <testcase name="SupportsMoveOnlyTypes_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="113" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedSemantics" />
+  </testsuite>
+  <testsuite name="ExpectedQueryPath" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-12T00:10:32.628">
+    <testcase name="ResolveMirrorNoThrowWithEcho_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ExpectedTest.cpp" line="140" status="run" result="completed" time="0." timestamp="2026-09-12T00:10:32.628" classname="ExpectedQueryPath" />
+  </testsuite>
+</testsuites>
