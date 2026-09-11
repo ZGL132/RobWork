@@ -141,6 +141,46 @@
       "title": "DOC-T05 交付物与验收结论不一致：验收记录与 compile-log 均判\"七份全部置 ready\"（verdict=pass），而 TK-T10 契约本体 status 停在 planned（compile-log 该行放行依据已填、status 单元格为 planned，自相矛盾）——放行类验收的逐份 status 核对漏检；若按\"七份\"口令直接入队，队首将停在 planned 契约上熔断",
       "owner": "实施/验收纪律（CCP §3 编译者与 ACC §4.4 逐条核对责任方）",
       "resolution": "所有者\"调整队列\"口令执行时逐份核对发现；处置＝按已验收意图补齐状态翻转（TK-T10 planned→ready，validate-task 三查过）后入队七份；流程教训＝放行类验收的 4.4 证据必须含逐份契约的 status 原文输出（非聚合计数），后续 DOC-Txx 验收按此执行。"
+    },
+    {
+      "id": "F-015",
+      "source": "所有者委托复审（2026-09-11）：TK-T03 已合入代码（ea7f6ca）对照 units/testkit.md §4.2.2 的独立复核——先前验收（TK-T03-20260911.md）未覆盖",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "TK-T03 Dataset 装载器把 manifest 的 parameters 字段实现为必填，而 §4.2.2 字段表登记为可选（必填=否，默认={}）——实现收窄合法输入集，与 testkit.md v0.4\"字段表逐行实现、接口零偏差\"的登记声明不符，且该偏差未按 DTB §5.4 登记",
+      "owner": "testkit 详设所有者＋WP-02（TK-T04/T05 实施时顺手修复）",
+      "resolution": "复核实证：无 parameters 键、其余全字段合法的 manifest 被拒（\"parameters: 必填对象字段缺失\"）；测试 fixture 恒带 parameters 故该分支无用例覆盖。处置建议＝改为可选装载（缺省 parametersJson=\"{}\"）或按 DTB §5.4 正式登记\"装载层强制必填\"的偏差并由单元卡背书；随队列中 TK-T04/T05 修复后补反例用例。"
+    },
+    {
+      "id": "F-016",
+      "source": "所有者委托复审（2026-09-11）：sdurws_ird_testdata_lint 在仓库真实布局下的缺省用法实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "TK-T03 lint 工具字典缺省路径解析到 <testdata 根>/../requirements-ids.json（industrialrobot/ 层），而交付种子位于 testdata/ 内（=<根>/requirements-ids.json）——按工具自述用法（不带 --dict）运行必\"字典无法读取\"exit 2；先前验收的 lint 端到端实测未暴露（应带了显式 --dict），且 lint 端到端两条手工用例无原始运行留痕（仅 ird-test-report 声明 passed）",
+      "owner": "testkit 详设所有者＋WP-02",
+      "resolution": "复核实证：--root 指向模拟仓库布局的 fixture（字典在根内）缺省运行 → \"lint-env: 字典无法读取\"；显式 --dict 后 KIN-99 拒绝/KIN-01 通过正常。处置建议＝tools/testdata/main.cpp 缺省路径改为 <根>/requirements-ids.json，并随 TK-T04/T05 补 lint 端到端自动化用例＋原始输出留痕（ACC §4.10 口径）。"
+    },
+    {
+      "id": "F-017",
+      "source": "所有者委托复审（2026-09-11）：TK-T03 已合入代码对照 units/testkit.md §4.2.2/§4.5 的独立复核",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "TK-T03 完整性覆盖检查缺 generate 部分：§4.2.2/§4.5 明文 integrity\"覆盖 inputs+expected+generate 全部文件\"，Dataset.cpp 与 lint 工具均只校验 inputs+expected（代码注释自述\"generate 声明 committed 时亦覆盖\"但未实现）——generatorCommitted=true 的数据集其生成脚本不在完整性保护内",
+      "owner": "testkit 详设所有者＋WP-02",
+      "resolution": "处置建议＝装载/lint 层补 generate 文件覆盖校验（manifest 未逐项登记 generate 文件清单时按 committed 声明与目录枚举核对），或按 DTB §5.4 登记范围裁剪依据；随队列中 testkit 任务修复。"
+    },
+    {
+      "id": "F-018",
+      "source": "所有者委托复审（2026-09-11）：TK-T03 已合入代码健壮性抽查",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "TK-T03 解析健壮性杂项（不阻塞）：①错误消息双前缀\"dataset-invalid: dataset-invalid: …\"（failField 前缀与 TestKitError::what() 包装重复）；②parseSemanticVersion/schemaVersion 主版本段用 std::stoi，超长数字段（>int 范围）抛 std::out_of_range 而非 TestKitError（§5 错误契约\"除注明外不抛非 TestKitError\"被病态输入触发）；③producer.seed/threadCount/integrity.sizeBytes 的 double→整数 static_cast 对非整数值（如 1.5）静默截断；④DatasetTest.cpp 重复 include core/Digest.hpp、units 校验循环含恒真条件",
+      "owner": "testkit 详设所有者＋WP-02",
+      "resolution": "处置建议＝①错误出口统一前缀单层生成；②整数解析改逐位累加并限幅（或捕获 std::exception 转 failField）；③非整数值拒绝（消息含字段路径）；④杂项随手清理；均可随队列中 testkit 任务顺带，不单独开任务。"
     }
   ]
 }
