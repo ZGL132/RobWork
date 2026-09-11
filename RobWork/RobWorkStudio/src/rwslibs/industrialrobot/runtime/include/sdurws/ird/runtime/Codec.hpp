@@ -50,8 +50,12 @@
  *     不是往返载体）；解码后经 CanonicalModelBuilder 全量不变量复核＋身份
  *     复核（防篡改/半传输——NFR-COR-03 不吞错）。
  *
- * NameMap 子形态（IRDNAME，§7.6）随 NameMap/RT-T05 在本头增量落位——本版
- * 只交付 CanonicalModel 三形态（任务卡 RT-T04 范围）。
+ * NameMap 子形态（IRDNAME，§7.6）已随 RT-T05 在本头增量落位（见文件尾
+ * 声明区）：encodeNameMap/parseNameMap/computeNameMapContentIdentity 三形态，
+ * 与 CanonicalModel 三形态同规则（大端/长度前缀/确定性/CR-02 摘要边界）；
+ * ★ 差异：IRDNAME 的内容身份＝SHA-256 over **该编码自身**（§7.6 原文），
+ * 故编码内不嵌摘要字段（自引用不可行）——防篡改核对以重算身份比对实现
+ * （worker 物化核对 D-13 的映射层形态）。
  *
  * 线程安全：全部纯函数（无共享可变状态），并发调用安全。
  * 确定性：同模型重复编码逐字节相等；编码不含时间/环境/地址量（ARC-03）。
@@ -67,6 +71,7 @@
 #include <sdurws/ird/core/Digest.hpp>        // ContentIdentity（内容身份产物）
 #include <sdurws/ird/runtime/CanonicalModel.hpp>  // 被编码的规范模型
 #include <sdurws/ird/runtime/Errors.hpp>     // Expected（parse 查询轨）
+#include <sdurws/ird/runtime/NameMap.hpp>    // IRDNAME 编码对象（RT-T05 增量）
 
 namespace sdurws::ird::runtime::rtcodec {
 
@@ -188,6 +193,79 @@ std::vector<std::uint8_t> encodeIdentityDomain(const CanonicalModel& model);
  * 确定性：同模型→同身份（跨进程一致——NFR-COR-02；RT-ID-1 钉住）。
  */
 core::ContentIdentity computeContentIdentity(const CanonicalModel& model);
+
+// =====================================================================
+// RT-Codec 家族子形态：IRDNAME——RuntimeNameMap 的 canonical 编码（§7.6，
+// 随 RT-T05 落位）。与 IRDCANO 同规则：确定性二进制、magic＋结构版本、
+// 字段按声明序（条目按映射存储序＝(scope, localName, ObjectId 规范文本)
+// 字典序——§7.2/§7.6 同键）、长度前缀、大端、无填充、UTF-8 无 NUL。
+// =====================================================================
+
+/// 魔数 "IRDNAME"（§7.6 子形态家族标识——与 kMagic 同为 7 字节）。
+inline constexpr std::array<std::uint8_t, 7> kNameMapMagic{'I', 'R', 'D', 'N', 'A', 'M', 'E'};
+
+/// IRDNAME 结构版本 major（编码升版＝破坏性变更，走设计变更评审——同上）。
+inline constexpr std::uint16_t kNameMapVersionMajor = 1;
+/// IRDNAME 结构版本 minor。
+inline constexpr std::uint16_t kNameMapVersionMinor = 0;
+
+/**
+ * @brief 全字段确定性编码 RuntimeNameMap（§7.6；RT-NM-1 编码往返的 encode 侧）。
+ *
+ * 布局（大端、无填充）：
+ *   magic(7) | major(2) | minor(2) | ruleVersion(4)
+ *   count(4) | 逐条目（映射存储序）：
+ *     scope(1) | objectId(16) | scopeToken{len(4)+UTF-8}
+ *     | localName{len(4)+UTF-8} | fullName{len(4)+UTF-8}
+ *     | authoritativeLocalName{len(4)+UTF-8}
+ *
+ * @param map [in] 名称映射（应为 buildRuntimeNameMap/parseNameMap 产物——
+ *              条目已规范化，本函数不重排；只读）
+ * @return 编码字节（确定性——同映射重复调用逐字节相等；调用方持有）
+ *
+ * @throws RuntimeError InputInvalid 空映射（无构建来源——worker 通道不应
+ *         序列化占位值；NFR-COR-03 不吞错）
+ *
+ * 线程/确定性：纯函数、可重入、无 I/O、无隐藏状态。
+ */
+std::vector<std::uint8_t> encodeNameMap(const RuntimeNameMap& map);
+
+/**
+ * @brief 解码 IRDNAME 编码并重建映射（RT-NM-1 编码往返的 parse 侧；§9.3
+ *        worker 物化的映射层载体）。
+ *
+ * 校验链（任一失败返回 err，不抛、不产出半成品——NFR-COR-03）：
+ *   ①magic/版本匹配（版本不符＝拒绝而非尽力猜测）；②长度前缀逐字段解码，
+ *   越界/截断/尾随字节/非法 scope 值→InputInvalid（detail 携字节偏移）；
+ *   ③结构不变量复核：fullName 形态（Device 作用域 fullName==localName，
+ *   其余 fullName==scopeToken+"."+localName）、fullName 全局唯一、
+ *   (objectId, scope) 唯一、条目序＝(scope, localName, ObjectId) 字典序；
+ *   ④内容身份重算（编码不含摘要字段——身份＝SHA-256 over 编码自身，见
+ *   文件头差异说明），供调用方与请求预期值核对（worker 按身份核对，
+ *   不等即拒绝执行——§9.3）。
+ *
+ * @param bytes [in] encodeNameMap() 产出的编码（只读；可为任意来源）
+ * @return ok＝重建的映射（与编码前 operator== 相等且身份相等）；err＝校验
+ *         失败（RuntimeError 携 InputInvalid 与字节偏移定位）
+ *
+ * 线程/确定性：纯函数、可重入；同字节→同结果（NFR-COR-02）。
+ */
+Expected<RuntimeNameMap, RuntimeError> parseNameMap(const std::vector<std::uint8_t>& bytes);
+
+/**
+ * @brief 计算映射内容身份（§7.6：nameMapContentIdentity＝SHA-256 over
+ *        IRDNAME 编码——含规则版本编码头）。
+ *
+ * CR-02 摘要边界：只调用 core::ContentDigester（runtime 不实现第二套
+ * SHA-256）；"对什么字节做摘要"由 encodeNameMap 声明。
+ *
+ * @param map [in] 名称映射（只读；空映射抛 InputInvalid——同 encodeNameMap）
+ * @return 内容身份（非零；buildRuntimeNameMap 产物与 parseNameMap 重建产物
+ *         同身份——跨进程一致，NFR-COR-02）
+ *
+ * @throws RuntimeError InputInvalid 空映射（同 encodeNameMap）
+ */
+core::ContentIdentity computeNameMapContentIdentity(const RuntimeNameMap& map);
 
 }  // namespace sdurws::ird::runtime::rtcodec
 

@@ -1112,4 +1112,185 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
     // 其余异常（如 std::bad_alloc）不吞——照常传播（资源类错误不伪装成数据错误）。
 }
 
+// =====================================================================
+// RT-Codec 家族子形态：IRDNAME——RuntimeNameMap 编解码与内容身份（§7.6，
+// RT-T05 增量落位；写/读原语复用上方 Writer/Reader——同规则：大端、长度
+// 前缀、确定性、无填充）。
+// =====================================================================
+
+std::vector<std::uint8_t> encodeNameMap(const RuntimeNameMap& map)
+{
+    // 空映射拒绝（无构建来源的占位值不进 worker 通道——NFR-COR-03 不吞错；
+    // buildRuntimeNameMap 产物条目数恒 ≥1：链必含 robot＋关节＋连杆）。
+    if (map.entries().empty()) {
+        throw RuntimeError{RuntimeErrorCode::InputInvalid,
+                           "codec/encodeNameMap：空映射不可编码（占位值不进序列化通道"
+                           "——NFR-COR-03）"};
+    }
+    Writer w;
+    // 编码头：magic＋结构版本＋规则版本（§7.6"ruleVersion 入编码头"——规则
+    // 版本变化＝名称可能变＝内容身份必变，缓存键 §9.4 由此敏感）。
+    w.raw(kNameMapMagic.data(), kNameMapMagic.size());
+    w.u16(kNameMapVersionMajor);
+    w.u16(kNameMapVersionMinor);
+    w.u32(map.ruleVersion());
+    // 条目区：映射存储序＝(scope, localName, ObjectId 规范文本) 字典序
+    //（§7.6 排序键——builder/parse 已保证本序，此处不重排，只编码）。
+    w.u32(static_cast<std::uint32_t>(map.entries().size()));
+    for (const RuntimeNameMap::Entry& e : map.entries()) {
+        w.u8(static_cast<std::uint8_t>(e.scope));  // 枚举值域 0..10（NameScope 声明序）
+        w.raw16(e.objectId.bytes);
+        w.str(e.scopeToken);
+        w.str(e.localName);
+        w.str(e.fullName);
+        w.str(e.authoritativeLocalName);
+    }
+    return w.take();
+}
+
+Expected<RuntimeNameMap, RuntimeError> parseNameMap(const std::vector<std::uint8_t>& bytes)
+{
+    try {
+        Reader r{bytes.data(), bytes.size()};
+        // 读失败统一包装（Reader.error() 携失败原因、offset() 携字节定位）。
+        auto failAt = [&r]() {
+            return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                RuntimeErrorCode::InputInvalid,
+                "codec/parseNameMap：" + r.error() + "（偏移 " + std::to_string(r.offset())
+                    + "）"});
+        };
+        // ---- ①头校验：magic/结构版本（版本不符＝拒绝而非尽力猜测——编码
+        // 升版是破坏性变更，§4.5 往返行同口径）。----
+        std::array<std::uint8_t, 7> magic{};
+        std::uint16_t major = 0;
+        std::uint16_t minor = 0;
+        std::uint32_t ruleVersion = 0;
+        if (!r.raw(magic.data(), magic.size()) || magic != kNameMapMagic) {
+            return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                RuntimeErrorCode::InputInvalid, "codec/parseNameMap：magic 不符（须 IRDNAME）"});
+        }
+        if (!r.u16(major) || !r.u16(minor) || !r.u32(ruleVersion)) {
+            return failAt();
+        }
+        if (major != kNameMapVersionMajor || minor != kNameMapVersionMinor) {
+            return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                RuntimeErrorCode::InputInvalid,
+                "codec/parseNameMap：编码版本 " + std::to_string(major) + "."
+                    + std::to_string(minor) + " 不受支持（当前 "
+                    + std::to_string(kNameMapVersionMajor) + "."
+                    + std::to_string(kNameMapVersionMinor) + "）"});
+        }
+        // ---- ②条目解码（长度前缀逐字段；越界/截断/尾随即失败——偏移定位）。----
+        std::uint32_t count = 0;
+        if (!r.u32(count)) {
+            return failAt();
+        }
+        // 元素数上界（防御性）：count 受剩余字节预算约束——每条目最少
+        // 1+16+5×4＝37 字节（scope＋objectId＋5 个长度前缀的最小空串形态）。
+        // 伪造的超大 count 会在 reserve 处触发 bad_alloc 而非校验失败——
+        // 查询轨必须就地拒绝（NFR-COR-03 不吞错；溢出/内存不足的转译
+        // 归编译通道 §5.5，不在解码面放行）。
+        constexpr std::uint64_t kMinEntryBytes = 1 + 16 + 5 * 4;
+        const std::uint64_t remainingBytes = bytes.size() - r.offset();
+        if (remainingBytes / kMinEntryBytes < count) {
+            return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                RuntimeErrorCode::InputInvalid,
+                "codec/parseNameMap：条目数 " + std::to_string(count)
+                    + " 超出剩余字节预算（偏移 " + std::to_string(r.offset()) + "）"});
+        }
+        std::vector<RuntimeNameMap::Entry> entries;
+        entries.reserve(count);
+        for (std::uint32_t i = 0; i < count; ++i) {
+            RuntimeNameMap::Entry e;
+            std::uint8_t scopeRaw = 0;
+            if (!r.u8(scopeRaw)) {
+                return failAt();
+            }
+            // 枚举值域校验（NameScope 最大值＝Sensor——防编码面漂移）。
+            if (scopeRaw > static_cast<std::uint8_t>(NameScope::Sensor)) {
+                return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid,
+                    "codec/parseNameMap：scope 字节越界（值 " + std::to_string(scopeRaw)
+                        + "，偏移 " + std::to_string(r.offset()) + "）"});
+            }
+            e.scope = static_cast<NameScope>(scopeRaw);
+            if (!r.raw16(e.objectId.bytes) || !r.str(e.scopeToken) || !r.str(e.localName)
+                || !r.str(e.fullName) || !r.str(e.authoritativeLocalName)) {
+                return failAt();
+            }
+            // ---- ③结构不变量复核（逐条目；重建前拦截畸形条目）。----
+            // 全名形态：Device 条目＝设备名本身（无前缀）；其余＝
+            // scopeToken·'.'·localName——形态判定收口在 Entry::wellFormedFullName
+            // （本单元公共头内联，R-4 拼装单点仍只在 NameMap.cpp）。
+            if (!e.wellFormedFullName()) {
+                return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid,
+                    "codec/parseNameMap：条目 " + std::to_string(i)
+                        + " 全名形态不符（fullName 与 scope/localName 分解不一致）"});
+            }
+            if (e.scopeToken.empty() || e.localName.empty()) {
+                return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid,
+                    "codec/parseNameMap：条目 " + std::to_string(i)
+                        + " 携带空 scopeToken/localName（UTF-8 无 NUL 规范面）"});
+            }
+            entries.push_back(std::move(e));
+        }
+        if (r.offset() != bytes.size()) {
+            return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                RuntimeErrorCode::InputInvalid,
+                "codec/parseNameMap：尾随字节（偏移 " + std::to_string(r.offset()) + "）"});
+        }
+        // ---- ④映射级不变量：条目序＝存储字典序、fullName 全局唯一、
+        // (objectId, scope) 唯一——任一违约＝非本单元产物（防伪造/乱序）。----
+        for (std::size_t i = 1; i < entries.size(); ++i) {
+            const RuntimeNameMap::Entry& prev = entries[i - 1];
+            const RuntimeNameMap::Entry& curr = entries[i];
+            const bool prevLess =
+                (prev.scope != curr.scope)
+                    ? (static_cast<int>(prev.scope) < static_cast<int>(curr.scope))
+                    : (prev.localName != curr.localName
+                           ? prev.localName < curr.localName
+                           : prev.objectId.bytes < curr.objectId.bytes);
+            if (!prevLess) {
+                return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid,
+                    "codec/parseNameMap：条目 " + std::to_string(i)
+                        + " 违反存储字典序（(scope, localName, ObjectId)——§7.2/§7.6）"});
+            }
+            if (prev.fullName == curr.fullName) {
+                return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid,
+                    "codec/parseNameMap：全名重复 \"" + prev.fullName + "\"（名称唯一性"
+                    "不变量——WC 单一命名空间）"});
+            }
+        }
+        // ---- ⑤内容身份重算（编码不含摘要字段——身份＝SHA-256 over 编码
+        // 自身，§7.6；本函数返回后由调用方与请求预期值核对，worker 按身份
+        // 核对不等即拒绝——§9.3）。----
+        core::ContentDigester d;
+        d.update(bytes.data(), bytes.size());
+        core::ContentIdentity identity;
+        identity.bytes = d.finalize();
+        return Expected<RuntimeNameMap, RuntimeError>::ok(
+            RuntimeNameMap::fromValidatedEntries(std::move(entries), identity, ruleVersion));
+    } catch (const RuntimeError& e) {
+        // 防御性分支（读原语已就地返回错误）——不外抛，保持查询轨语义。
+        return Expected<RuntimeNameMap, RuntimeError>::err(e);
+    }
+    // 其余异常（如 std::bad_alloc）不吞——照常传播。
+}
+
+core::ContentIdentity computeNameMapContentIdentity(const RuntimeNameMap& map)
+{
+    // §7.6：身份＝SHA-256 over IRDNAME 编码（含规则版本头）——"对什么字节
+    // 做摘要"由 encodeNameMap 声明（CR-02：摘要只经 core::ContentDigester）。
+    const std::vector<std::uint8_t> encoded = encodeNameMap(map);
+    core::ContentDigester d;
+    d.update(encoded.data(), encoded.size());
+    core::ContentIdentity identity;
+    identity.bytes = d.finalize();
+    return identity;
+}
+
 }  // namespace sdurws::ird::runtime::rtcodec

@@ -37,6 +37,14 @@ target_sources(sdurws_ird_runtime PRIVATE
                                 # CR-02 排除字段声明点＝Codec.hpp；摘要只经
                                 # core::ContentDigester）
 
+# ---- RT-T05 增列（RuntimeNameMap；tasks/foundation/RT-T05.json）----
+target_sources(sdurws_ird_runtime PRIVATE
+    src/NameMap.cpp)            # §7 名称映射：生成/合法化/消歧/双射/内容身份
+                                # ＋S8 交叉校验＋⑥端口适配（BoundRuntimeNameResolver）；
+                                # 公共头 NameMap.hpp——R-4 前缀拼装唯一合法位置
+                                # （joinScopeLocal 单点，NFR-MNT-07 例外实现文件）；
+                                # IRDNAME 编解码随本任务落位 Codec.cpp（§7.6）
+
 target_compile_features(sdurws_ird_runtime PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_runtime PROPERTIES
     CXX_STANDARD 17
@@ -121,7 +129,9 @@ add_executable(sdurws_ird_runtime_test
     test/DescriptionTest.cpp            # RT-T03：§4.2 值类型契约（默认态/值语义/四态/reader 纯函数）
     test/DescriptionValidatorTest.cpp   # RT-T03：S3 校验器（RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＋硬反例逐条）
     test/CanonicalModelTest.cpp         # RT-T04：§4.3 builder 不变量＋§9.6 能力派生＋索引＋D-01 不持久化
-    test/CodecTest.cpp)                 # RT-T04：RT-ID-1/2/3＋parse(encode)==x 往返＋身份域排除
+    test/CodecTest.cpp                  # RT-T04：RT-ID-1/2/3＋parse(encode)==x 往返＋身份域排除
+    test/NameMapTest.cpp)               # RT-T05：RT-NM-1～7（AT-18 双向往返/消歧/未知名/
+                                        # 跨项目/重命名/双前缀/身份不混用）＋R-4 源码扫描
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_STANDARD 17
