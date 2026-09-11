@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T04",
+  "masterWp": "WP-06-T04",
+  "branch": "wp06-t04",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RT-T04 增列 src/CanonicalModel.cpp（§4.3 builder 构造不变量＋§9.6 能力派生＋§4.6 对象/资源索引＋§4.3.6 位模式等值）与 src/Codec.cpp（§4.5 RT-Codec 三形态：encode/parse/computeContentIdentity）；公共头新增 CanonicalModel.hpp 与 Codec.hpp（CR-02 排除字段声明点）；Errors.hpp 的 Expected 工厂改为标签构造直接初始化 variant（原实现要求 T 默认可构造，与其文件头\"工厂支持 move-only 的 T\"承诺不符——公共签名与两态语义不变，RT-T02 既有用例回归通过）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "增列 CanonicalModelTest/CodecTest 两用例文件与 test/CanonicalModelFixture.hpp 共享夹具（确定性种子 id/摘要——同夹具跨运行字节一致，RT-ID-1 的可复核前提）；RT-T01/T02/T03 的 6 个用例文件保留"
+    }
+  ],
+  "modeMechanics": "冒烟模式沿用 RT-T03 引入的 rw 模板头 header-only include 路径（rw 源码树＋vcpkg Eigen3）——CanonicalModel 字段类型即 rw::math，两模式单一类型形态；本任务新增代码零外联符号调用（变换恒等初始化经 detail::identityTransform3D()），冒烟仍零框架链接（BaselineLibsPinned 钉住）",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild（RT-T01 既有，回归）",
+      "designRef": "units/runtime.md §3.2/§3.4、§12 RT-T01",
+      "cases": [
+        { "name": "RuntimeBuild.SourceTreeReachable_RT_BUILD / NoQtInclude_RT_BUILD_NFR_MNT_01 / NoCrossUnitInclude_RT_BUILD_R1_R2 / BaselineLibsPinned_RT_BUILD_P_RT_3（4 例）", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（既有；断言覆盖面自动纳入新增头 CanonicalModel.hpp/Codec.hpp——include 面仅 core/runtime/rw math，R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "RuntimeErrors/Sources/Expected/DescriptionType/DescriptionValidator（RT-T02/T03 既有，回归）",
+      "designRef": "units/runtime.md §3.3/§3.4/§4.2/§5.2 S3/§7.4/§10.11",
+      "cases": [
+        { "name": "73 cases（RuntimeBuild 4＋Errors 3＋Sources 6＋Expected 8＋DescriptionType 6＋DescriptionValidator 族 46 全组）", "status": "passed", "modes": ["smoke", "integration"], "trace": "RT-T01/T02/T03 既有 73 用例回归通过（零改动零跳过；含 SupportsMoveOnlyTypes_ACC3——Expected 工厂标签构造化后其原承诺语义仍在钉）" }
+      ]
+    },
+    {
+      "suite": "CanonicalModelBuilderTest",
+      "designRef": "units/runtime.md §4.3.1～§4.3.5（字段表\"合法与非法实例\"列逐条）、§5.2 S5、§6.6、附录 D 第 6 项",
+      "cases": [
+        { "name": "CanonicalModelBuilderTest.BuildsMinimalFixtureAndDerivesCapability", "status": "passed", "modes": ["smoke", "integration"], "trace": "合法夹具构造成功＋contentIdentity 非零（builder 计算非申报——§4.3.5）＋minimal 能力位与内容一致" },
+        { "name": "CanonicalModelBuilderTest.RichFixtureHasAllCapabilityBits", "status": "passed", "modes": ["smoke", "integration"], "trace": "全物性/摩擦/工具/场景/碰撞/耦合夹具——能力位全齐（§9.6）" },
+        { "name": "CanonicalModelBuilderTest.RejectsEmptyAndDuplicateObjectRefs", "status": "passed", "modes": ["smoke", "integration"], "trace": "闭包引用清单空/重复→StructureInvalid（CM-0 值层面，§4.3.1）" },
+        { "name": "CanonicalModelBuilderTest.RejectsInvalidHeaderFields", "status": "passed", "modes": ["smoke", "integration"], "trace": "空 revision id／契约版本 0／全零 builtFrom→InputInvalid（§4.3.1）" },
+        { "name": "CanonicalModelBuilderTest.RejectsIllegalTWorldBase", "status": "passed", "modes": ["smoke", "integration"], "trace": "非正交（缩放 2I）/反射（det<0）/NaN 平移→InputInvalid（§4.3.2/RT-BW-6 构造面，容差 1e-12）" },
+        { "name": "CanonicalModelBuilderTest.RejectsIllegalGravity", "status": "passed", "modes": ["smoke", "integration"], "trace": "全零/非有限重力→InputInvalid（§4.3.2，单位 m/s²）" },
+        { "name": "CanonicalModelBuilderTest.RejectsCustomPresetWithIdentityRotation", "status": "passed", "modes": ["smoke", "integration"], "trace": "preset=Custom 而 R≈I→InputInvalid（§4.3.2 一致性校验——S5 构造侧唯一预设拒绝面，RT-T03 校验器登记的归属点）" },
+        { "name": "CanonicalModelBuilderTest.RejectsBadChainAndNormalizesAxis", "status": "passed", "modes": ["smoke", "integration"], "trace": "连杆数量失配→StructureInvalid；零轴→InputInvalid；非单位轴规格化且两次构造逐字段等值（§4.3.3\"编译器规格化\"）" },
+        { "name": "CanonicalModelBuilderTest.RejectsIllegalBounds", "status": "passed", "modes": ["smoke", "integration"], "trace": "Revolute 缺限位/qmin≥qmax/Continuous 携带限位/非 Continuous 携带工作范围→InputInvalid；continuous+workingRange 合法（§4.3.3/MDL-12，与 S3 校验器同口径）" },
+        { "name": "CanonicalModelBuilderTest.RejectsIllegalProvidedValues", "status": "passed", "modes": ["smoke", "integration"], "trace": "负限速/零质量/非对称惯量/非正定惯量→InputInvalid（§4.3.3/MDL-05/RT-CPX-3 口径；SPD 判据＝Sylvester 顺序主子式，与 S3 Jacobi 最小特征值数学等价，注释已声明）" },
+        { "name": "CanonicalModelBuilderTest.RejectsDuplicateAndForeignObjectIds", "status": "passed", "modes": ["smoke", "integration"], "trace": "全模型 ObjectId 重复/引用不在 objectRefs→StructureInvalid（§4.3.3/CM-0）" },
+        { "name": "CanonicalModelBuilderTest.RejectsIllegalLocalNames", "status": "passed", "modes": ["smoke", "integration"], "trace": "空名/含 '/'→InputInvalid；同名不阻断（消歧＋警告归 S8/RT-T05——RT-NM-2 口径，不越权）" },
+        { "name": "CanonicalModelBuilderTest.RejectsResourceReferenceViolations", "status": "passed", "modes": ["smoke", "integration"], "trace": "引用不在清单（同 id 不同 digest）→StructureInvalid；全零摘要→InputInvalid（§4.3.3/§4.3.5；按 resourceId+digest 匹配——路径不作身份 §8.6）" },
+        { "name": "CanonicalModelBuilderTest.RejectsDefaultTcpViolations", "status": "passed", "modes": ["smoke", "integration"], "trace": "有工具缺默认 TCP/越界/无工具却设置→InputInvalid（§4.3.4/KIN-14）" },
+        { "name": "CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics", "status": "passed", "modes": ["smoke", "integration"], "trace": "error 级稳定码（经 Errors.hpp registryCode 取 RT-INPUT-INVALID——单一事实来源）入模→构造拒绝；Cancelled 非错误路径放行（§4.3.5/UX-03/D-11；码值权威归 diagnostics 不私裁收窄）" }
+      ]
+    },
+    {
+      "suite": "CanonicalModelCapabilityTest / EqualityTest / IndexTest",
+      "designRef": "units/runtime.md §9.6（派生规则）、§4.3.6（位模式等值）、§4.6（索引）",
+      "cases": [
+        { "name": "CanonicalModelCapabilityTest.BitsFollowContentDerivation", "status": "passed", "modes": ["smoke", "integration"], "trace": "缺连杆质量→hasFullMassInertia/hasDynamicWorkCell 回落；缺工具惯量仅回落 Full 位（DWC Body＝连杆的派生细则）；单位阵耦合→hasCouplingMatrix——派生保证\"能力与字段一致\"（§4.3.5，强于构造拒绝）" },
+        { "name": "CanonicalModelEqualityTest.BitPatternEqualityNotTolerance", "status": "passed", "modes": ["smoke", "integration"], "trace": "同夹具两次构造逐字段等值；±0.0/1e-15 差异不等（§4.3.6 位模式——RT-ID-2 的模型层基础）" },
+        { "name": "CanonicalModelIndexTest.ObjectAndResourceIndicesResolve", "status": "passed", "modes": ["smoke", "integration"], "trace": "findObject 六类（Robot/Joint/SceneObject/Resource 等）与 findResource 命中/未命中（§4.6；层级索引随 RT-T05/T07 落位——§15.4 v0.5 登记）" }
+      ]
+    },
+    {
+      "suite": "CanonicalModelTransientTest（acceptance 4：D-01 不持久化）",
+      "designRef": "units/runtime.md §4.1（瞬态生命周期）、D-01、PA-1",
+      "cases": [
+        { "name": "CanonicalModelTransientTest.NoPersistenceMemberSurface", "status": "passed", "modes": ["smoke", "integration"], "trace": "类型层：detection idiom 静态断言 save/load/serialize/toFile/fromFile 成员不存在＋值语义（拷贝/移动）可构造" },
+        { "name": "CanonicalModelTransientTest.CodecApiIsInMemoryOnly", "status": "passed", "modes": ["smoke", "integration"], "trace": "签名层：encode 只产出 vector<byte>、parse 只消费 vector<byte>（无文件系统参数面）" },
+        { "name": "CanonicalModelTransientTest.SourceScanNoPersistenceIncludes", "status": "passed", "modes": ["smoke", "integration"], "trace": "源码层：CanonicalModel/Codec 四文件零 fstream/filesystem/iostream/cstdio include、零 project/io/modeling 单元头（零持久化通道）" }
+      ]
+    },
+    {
+      "suite": "CodecRoundtripTest（acceptance 2：parse(encode(x))==x）",
+      "designRef": "units/runtime.md §4.5（往返行）、§4.4（四态保留）、§4.1（worker 物化载体）、NFR-COR-03",
+      "cases": [
+        { "name": "CodecRoundtripTest.MinimalModelRoundtripsExactly", "status": "passed", "modes": ["smoke", "integration"], "trace": "minimal：parse(encode(x))==x 全字段＋身份相等＋再编码逐字节相等" },
+        { "name": "CodecRoundtripTest.RichModelPreservesIdentityExcludedFields", "status": "passed", "modes": ["smoke", "integration"], "trace": "rich：排除域字段（revisionSeq=42/preset 来源标记/诊断记录）逐字段保真——全字段编码不失真（worker 物化载体语义）" },
+        { "name": "CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent", "status": "passed", "modes": ["smoke", "integration"], "trace": "presence=0 全路径（无限位/无工作范围/限速 NotProvided/空清单）——nullopt≠零值（NFR-COR-03）＋能力随派生重建" }
+      ]
+    },
+    {
+      "suite": "CodecNegativeTest（负例：编码头/长度/完整性）",
+      "designRef": "units/runtime.md §4.5（拒绝而非尽力猜测）、§9.5（身份核对精神/D-13 前置）、NFR-COR-03",
+      "cases": [
+        { "name": "CodecNegativeTest.RejectsMalformedEncodings", "status": "passed", "modes": ["smoke", "integration"], "trace": "空字节/坏 magic/版本 2/身份域编码作 parse 输入/截断/尾随字节→err InputInvalid（detail 携偏移）" },
+        { "name": "CodecNegativeTest.DetectsContentIdentityMismatch", "status": "passed", "modes": ["smoke", "integration"], "trace": "拼接他人 stored identity/末字节位翻转→重算≠携带值→err（防篡改与半传输——身份复核非 vacuous 的正反两面）" }
+      ]
+    },
+    {
+      "suite": "RT_ID_1_RepeatBuildStability（acceptance 1——模型层切面）",
+      "designRef": "units/runtime.md §11 RT-ID-1、ARC-03、NFR-COR-02；完整切面（跨进程＋WC 对照）随 RT-T11/T12",
+      "cases": [
+        { "name": "RT_ID_1_RepeatBuildStability.SameFixtureYieldsByteIdenticalEncodingAndIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "同确定性夹具两次独立构造→模型逐字段等值＋身份相等＋编码逐字节相等；独立解码路径（worker 物化身份核对的进程内替身——RT-STUB-0 边界声明见测试文件头）身份相等" }
+      ]
+    },
+    {
+      "suite": "RT_ID_2_NoFloatToleranceEquivalence（acceptance 1）",
+      "designRef": "units/runtime.md §4.3.6/§11 RT-ID-2、附录 D C4——容差只用于数值校验断言，严禁用于身份/缓存键",
+      "cases": [
+        { "name": "RT_ID_2_NoFloatToleranceEquivalence.TinyDeltaChangesIdentityWhileToleranceSaysEqual", "status": "passed", "modes": ["smoke", "integration"], "trace": "质量 1e-15 差异：closeWithin 判等（前提自检）但身份不等＋身份域编码不等；±0.0 同判——位模式身份（缓存 Incompatible 归 RT-T10 消费本结论）" }
+      ]
+    },
+    {
+      "suite": "RT_ID_3_DisplayFieldExclusion（acceptance 3：身份域排除项）",
+      "designRef": "units/runtime.md §4.3.1/§4.3.2/§4.3.5/§4.3.6/§11 RT-ID-3、CR-02 排除字段声明（Codec.hpp）",
+      "cases": [
+        { "name": "RT_ID_3_DisplayFieldExclusion.RevisionSeqDoesNotAffectIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "revisionSeq 7↔99：身份相等＋身份域编码逐字节相等；全字段编码与 operator== 不等——\"展示排序不入身份\"（§4.3.1）的精确形态" },
+        { "name": "RT_ID_3_DisplayFieldExclusion.InstallPresetMarkerDoesNotAffectIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "preset 缺省↔Provided(Ground, ImportMapped)（T_world_base 同矩阵）：身份不变——预设 token＋来源标记不入身份（§4.3.2/§4.3.6）" },
+        { "name": "RT_ID_3_DisplayFieldExclusion.DiagnosticsDoNotAffectIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "诊断空↔含警告：身份不变；全字段编码不等（诊断保真往返）——D-12" },
+        { "name": "RT_ID_3_DisplayFieldExclusion.IdentityDomainEncodingIsStrictSubset", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构证据：排除域非空时身份域编码严格短于全字段编码（capabilities/contentIdentity 不占身份域——清单 3/4/5；清单 1/2 由上两用例行为钉住）" }
+      ]
+    },
+    {
+      "suite": "失败能力探针（真实失败验证）",
+      "designRef": "验收协议——测试必须能真实失败，不以假绿充当证据",
+      "cases": [
+        { "name": "probe: Codec.cpp 身份域错误纳入 revisionSeq（注入→精确还原）", "status": "executed", "modes": ["integration"], "trace": "注入后集成构建零错误、RT_ID_3.RevisionSeqDoesNotAffectIdentity 变红（104/105——probe-build.log/probe-test-run.log）；git checkout 精确还原（探针标记零残留）后复绿 105/105。证明身份域排除断言非恒真" }
+      ]
+    }
+  ],
+  "gates": {
+    "ird_gates": "executed（ird-gates-run.log）——命中 2 项均为既有登记项（IRD-GATE-SUB/IRD-GATE-T1：sdurws_ird_testdata_lint→sdurws_ird_testkit，testkit 侧，RT-T03 基线同款）；本任务新增文件零新增命中",
+    "validate_task": "PASS（pwsh validate-task.ps1 -TaskFile tasks/foundation/RT-T04.json）"
+  },
+  "summary": {
+    "total": 105,
+    "passed": 105,
+    "failed": 0,
+    "skipped": 0,
+    "newCases": 32,
+    "regressionCases": 73,
+    "modes": ["smoke", "integration"],
+    "unexecuted": "无——本报告所列用例两模式均真实执行；RT-ID-1/2/3 的完整编译链切面（跨进程/缓存 reasons/WC 对照）依赖 RT-T10/T11/T12 产物，本任务按测试文件头边界声明只主张模型层切面"
+  }
+}
