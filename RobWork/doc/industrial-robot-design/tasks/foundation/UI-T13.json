@@ -5,20 +5,41 @@
   "masterWp": "WP-I",
   "title": "诊断/确认/任务呈现模型与 CommandInteractionBridge",
   "status": "planned",
-  "dependsOn": ["UI-T03", "DIAG-T10", "EX-T09"],
-  "requirements": ["UX-03", "UX-10", "ERR-01"],
-  "designRefs": ["units/ui.md#9"],
+  "dependsOn": ["UI-T03", "DIAG-T03", "DIAG-T04", "DIAG-T05", "EX-T05", "PRJ-T11"],
+  "requirements": ["UX-03", "UX-10", "ERR-01", "PM-15", "TASK-01", "TASK-02", "TASK-03"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#9.1",
+    "units/ui.md#9.2",
+    "units/ui.md#9.3",
+    "units/ui.md#9.4",
+    "units/ui.md#9.5",
+    "units/ui.md#10.7",
+    "units/ui.md#10.8"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_contract_test"
+  ],
+  "branch": "wp10-t13",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-PR-7", "P-UI-4", "P-UI-7"],
   "acceptance": [
-    "UI-CMD-4~7、UI-TSK-1~5、UI-DIA-1：比较型三要素呈现/任务清单 9 态短标签/确认对话数据契约用例通过",
-    "sdurws_ird_testkit_qt 首消费者理由登记"
-  ]
+    "UI-DIA-1＋诊断呈现（§9.1）：DiagProjectionItem 过滤/稳定排序/聚合折叠（occurrences/aggregatedUnder）呈现、原因链 causedBy 展开、actionKind→动作映射表（全部路由 CommandRegistry 或跳转，不直调领域服务）、比较型三要素数值＋单位同显（NotApplicable/Invalid 显示占位不伪造数值）、恢复横幅一句话汇总（PM-15）、Tier-U 日志面板（flush 仅关闭路径）、脱敏仅提供配置界面（呈现层不自行脱敏）；ui 不改变诊断事实/阈值/严重级别，正常用户取消无错误呈现（UX-03）",
+    "UI-CMD-4~7（§9.2/§9.3 确认流）：CommandInteractionBridge 实现 project::ICommandInteraction（命令执行线程同步回调→Marshal 至 UI 线程弹确认对话→阻塞等待；桥内禁止调用命令/查询端口以外写入口防重入死锁；isAlive 探针——会话拆除置 false→Aborted(interaction-lost)）；未确认不提交（拒绝→Rejected(confirmations-rejected) 无修订）；输入变化后凭据失效提示重开对话；关闭窗口未完成确认→Aborted 无用户诊断；ui 只交 credentials，不持判定权不自行放行（SA-15）；principal＝会话启动采集的 Windows 用户名缓存（P-UI-4 建议口径，不逐次弹问）",
+    "UI-TSK-1~5（§9.4/§9.5 任务呈现）：任务清单 9 态短标签＋当前置顶、200 ms 轮询进度（percent 单调、回退丢弃、新 attempt 重置、重复幂等）、暂停/继续按能力声明启用（不支持暂停→StatusAck.feedback 显式提示不静默）、强杀独立确认（关闭对话框不提供强杀选项）、worker 崩溃界面不退出＋重跑入口、Completed 徽标附归档阶段子标（完成≠归档完成——ArchiveFailed 警告＋诊断）、当前性过期附原因且历史可查看（无「正式通过」字样）、关闭项目后旧任务进后台只读清单（控制按钮禁用——P-UI-7 建议口径）；UI 线程不阻塞等待任务（提交即返回 TaskId）",
+    "sdurws_ird_testkit_qt 首消费者理由登记（卡 §13 行原文、ui.md §12.1）：WP-10-T11 契约测试需 Qt Test 辅助（事件循环驱动、控件探针），理由随本契约登记——该目标禁止进入生产计算库依赖（testkit 红线）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：任务呈现直接持有 execution 对端类型（ITaskScheduler::tasksByProject/ITaskController/TaskSnapshot/ProgressReport——C-8，§9.4 输入面），CommandInteractionBridge 实现并持有 project 公共头契约类型 project::ICommandInteraction（C-6，§9.2）——execution/project 对 ui 零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕；P-PR-7 处置：Bridge 线程模型按 project.md §5.3.3 冻结点实现（Marshal＋阻塞等待），对端单侧冻结互为起点不私改；P-DIAG-6 承接：确认对话无自动超时（findings 默认 expiresAt 空）"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T13 行＋§2 需求表（UX-03/ERR-01/PM-15/TASK-01/02/03 行——§9.1/§9.4 承接）＋DTB 协作侧映射（≙WP-10-T04/T06 协作侧——DTB WP-10 表无对应行，卡 §13 行为准）复核回填——requirements 补 PM-15（恢复横幅/诊断表/日志呈现主责，§2.2 行→§9.1）与 TASK-01/02/03（§2.2 合并行→§9.4 任务呈现消费）、designRefs 细化 §9.1~§9.5 全列＋§10.7/§10.8（两呈现模型接口详设节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_contract_test（ICommandInteraction/ITaskScheduler 桩对接属 §12.1 契约测试面）、acceptance 拆五条并编入 O-31/P-PR-7/P-UI-4/P-UI-7 处置；**dependsOn 实测更正：原 [UI-T03, DIAG-T10, EX-T09] 系 DOC-T03 时代机械预填（DIAG-T10＝diagnostics 测试替身、EX-T09＝execution 测试套件，均非本任务实现的技术前置），按 CCP §2「只编码真实技术前置」更正为 [UI-T03, DIAG-T03, DIAG-T04, DIAG-T05, EX-T05, PRJ-T11]——DIAG-T03（StableCodeRegistry 公共头＝UI-* 码注册，PRJ-T10 补 DIAG-T03 同款先例）、DIAG-T04（DiagCatalog/DiagProjectionItem＝§9.1 输入面）、DIAG-T05（ConfirmableFinding/FindingRecord＝§9.2/§9.3 确认对话数据契约）、EX-T05（ITaskScheduler/ITaskController/TaskSnapshot/ProgressReport＝§9.4 输入面，≙WP-08-T06 偏移＋1）、PRJ-T11（ICommandInteraction 契约提供方——DOC-T10 契约 note 原文）**；branch=wp10-t13（卡内序号——≙ 指向 WP-10-T04/T06 协作侧不可用作分支名，同 UI-T11 口径）；interUnit=true 判定＝C-8 execution 对端类型持有＋C-6 project 接口实现（本任务为 O-31 触发面之一）；**O-31 硬约束：kept planned＋blocked（C-8/C-6 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

@@ -6,19 +6,40 @@
   "title": "工作台壳与五区布局（WorkbenchShell/布局记忆/无项目首页）",
   "status": "planned",
   "dependsOn": ["UI-T02"],
-  "requirements": ["UX-09", "PM-10", "PM-11"],
-  "designRefs": ["units/ui.md#4"],
+  "requirements": ["UX-09", "PM-10", "PM-11", "PM-14"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#4",
+    "units/ui.md#4.1",
+    "units/ui.md#4.2",
+    "units/ui.md#4.3",
+    "units/ui.md#4.4",
+    "units/ui.md#4.5",
+    "units/ui.md#4.6",
+    "units/ui.md#10.1"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_gui_test"
+  ],
+  "branch": "wp10-t03",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-5"],
   "acceptance": [
-    "UI-WB-1/2/3、UI-SES-1：五区 Dock/布局记忆与恢复/最小可用布局用例通过",
-    "无项目首页三入口与状态栏格式（PM-10/PM-11）就位"
-  ]
+    "UI-WB-1/2/3、UI-SES-1：五区 Dock 创建与跨会话布局记忆恢复、view.resetLayout 恢复出厂位形、布局记忆损坏回退默认＋UI-LAYOUT-RESTORE-FAILED（Dev，不阻塞启动）、无项目首页三入口与项目作用域命令禁用（命令面板仍可达）——§4.1~§4.5 用例通过并经 ctest 留痕",
+    "状态栏格式（PM-11）就位：标题/状态栏 <显示名>[*][（只读）]——显示名取 ProjectMetadataView.projectDisplayName、*＝存在未应用草稿（DraftProjection.present ∨ 会话脏标记）、(只读)＝writable=false（§4.2 状态栏行）；布局状态与最近项目等用户级设置项（PM-14，§4.6）持久化于用户级、绝不写入 .rwdesign",
+    "最小可用布局（§4.4）：顶栏＋中央区＋状态行三要素恒在，低于最小尺寸时侧栏折叠；WorkbenchShell 装配门面按 §10.1 实现（initialize 恰好一次、子模型访问、mainWindow 唯一 Widget 出口、有界 shutdown）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：本任务交付物 §10.1 ShellWiring 直接持有 policy::IPolicyProvider（C-10）与 runtime::IRuntimeNameResolver（C-11）（O-31 登记原文例证），状态栏/顶栏输入投影含 project::ProjectMetadataView 等对端类型（C-5，§4.2）——按 ui.md §3.1「仅链 core,diagnostics」实现则 ShellWiring 无法编译，按 §2.1.2 C 表「接口依赖」实现则违反 SA-10 表外边门禁（ARCH §3.5 白名单仅 ui→core,diagnostics）。依赖形态三方矛盾未裁决前不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记 traceability/contract-compile-log.md 留痕；P-UI-5 处置：ARCH §3.5「ui→core：命令注册表类型」行消歧前按 CF-1 结论落位（注册表类型归 ui 自有头，无实现影响）"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T03 行＋§2 需求表（UX-09/PM-10/PM-11 行）＋DTB §2.11 WP-10-T03 行（≙）复核回填——requirements 补 PM-14（布局记忆用户级，DTB WP-10-T03 需求列原文）、designRefs 细化 §4.1~§4.6 全列＋§10.1（卡行交付物 WorkbenchShell 的接口详设节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_gui_test（五区/布局属 §12.1 GUI 测试面）、acceptance 按「UI-WB/SES 用例＋状态栏格式＋最小布局」拆分并编入 O-31/P-UI-5 处置；branch=wp10-t03（≙ 直映，卡内序号）；interUnit=true 判定＝WorkbenchShell 装配面消费 core IDomainEventBus＋diagnostics IDiagnosticSink/IRedactionService（ARCH §3.5 登记边）且 ShellWiring 持有 O-31 列名对端类型；**O-31 硬约束：kept planned＋blocked（ShellWiring 持有 policy/runtime 对端类型——O-31 登记原文例证），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；本任务为 UI-T04~T14 的直接/间接前置，其 blocked 状态沿依赖链传导；编译留痕见 traceability/contract-compile-log.md"
 }

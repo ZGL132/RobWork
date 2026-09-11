@@ -6,10 +6,12 @@
   "title": "参数表与表单公共件（阶段 B 交付，本文仅登记）",
   "status": "planned",
   "dependsOn": ["UI-T03", "CORE-T04"],
-  "requirements": ["UX-04", "UX-05", "UX-07"],
-  "designRefs": ["units/ui.md#14"],
+  "requirements": ["UX-04", "UX-05", "UX-07", "KIN-12"],
+  "designRefs": ["units/ui.md#13", "units/ui.md#6.6", "units/ui.md#14"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,7 +19,12 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "branch": "wp10-t08",
+  "interUnit": true,
+  "knownPitfalls": ["O-31"],
   "acceptance": [
-    "UX-04/05/07 公共编辑规则：数值＋单位同显、非法输入就地显示原因保留原值、批量粘贴/筛选/错误定位"
-  ]
+    "UX-04/05/07 公共编辑规则（阶段 B 交付面，卡行验收要点全量登记）：数值＋单位同显（单位显示消费 core Units/Quantity 显示投影——KIN-12，切换仅影响显示不改 SI 真值）、非法输入就地显示原因保留原值、表单级确认应用（UX-07：应用前确认交互，断言与放行归 project）、批量粘贴/筛选/错误定位、取消恢复；不用模态对话框做大量重复编辑（DTB WP-10-T08 禁止项）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：本任务自身交付物（表单公共件）不直接持有 C-3/4/5/7/8/10/11 对端类型（单位显示走已链接的 core Units；草稿接入经 ui 自有 IDraftController.attachModule 接口），但前置 UI-T03 已被 O-31 阻塞且本任务为阶段 B 交付面（卡 §13「阶段 B 交付，本文仅登记」）——按拓扑序随裁决后整链放行；不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T08 行＋§2 需求表（UX-04/05/07 行）＋DTB §2.11 WP-10-T08 行（≙）复核回填——requirements 补 KIN-12（单位显示消费，DTB WP-10-T08 需求列原文＋ui.md §2.1.1 O-2 行 KIN-06/12）、designRefs 补 §6.6（Quantity::displayValueIn 唯一换算入口——数值＋单位同显依据）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 补禁止项与 O-31 处置；dependsOn 维持卡行可编码子集（DTB 前置列 WP-03-T04≙CORE-T04 偏移 0）；branch=wp10-t08（≙ 直映）；interUnit=true 判定＝消费 core Units/Quantity 显示投影（CORE-T04 公共接口——CR-04 同款「多单元消费的公共数据结构」口径）；**O-31 硬约束传导：kept planned＋blocked（前置 UI-T03 blocked；阶段 B 交付面；自身无对端类型直持——如实区分登记），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

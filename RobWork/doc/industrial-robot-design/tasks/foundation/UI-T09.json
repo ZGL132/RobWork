@@ -7,9 +7,18 @@
   "status": "planned",
   "dependsOn": ["UI-T04"],
   "requirements": ["UX-01", "UX-02", "UX-12"],
-  "designRefs": ["units/ui.md#6.4"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#3.5",
+    "units/ui.md#6.4",
+    "units/ui.md#6.5",
+    "units/ui.md#6.6",
+    "units/ui.md#10.2"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +26,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "branch": "wp10-t09",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-1", "P-UI-6"],
   "acceptance": [
-    "UI-STG-1/2：七阶段就绪/锁定投影与级联失效提示数据用例通过（门控数据源 WP-22-T03 未产出前用桩）",
-    "界面零哈希/Schema/插件名；投影只消费、不拥有门控规则"
-  ]
+    "UI-STG-1/2：七阶段就绪/锁定投影与级联失效提示数据用例通过（§6.4 阶段呈现状态表——completed/in-progress/blocked/unavailable/not-started/view-only；门控数据源 WP-22-T03 未产出前用桩注入）；requestNavigate 允许/拒绝时序符合 §6.4 时序图（拒绝不改变 currentStage、就地提示原因＋缺项＋下一步建议）",
+    "StageStatusModel 汇聚投影（§6.5）按单侧冻结数据形状实现（StageReadinessSnapshot/DomainReadinessItem，epoch 标注）；投影只消费、不拥有门控规则（门控状态机唯一归 workflow——N-11 无第二套）；界面零哈希/Schema/插件名（UX-02）：一切文本经 UiText::resolve 文案键解析（§3.5/§6.6，数值带单位显示、对象定位经名称端口局部名）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：本任务自身接口面为 ui/core 类型（§10.2 StageView 用 UiStateToken/TextKey/core::IEventSubscription；§6.5 用 core::EngineeringStatus，门控数据 workflow 未产出以桩注入），但前置 UI-T04 已被 O-31 阻塞（C-7 evidence 对端类型）——按拓扑序随裁决后整链放行；不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕；P-UI-6 处置：workflow 门控三方契约未定稿前按 §6.5 单侧冻结形状实现（workflow.md 产出后核对，不兼容时按影响面增量同步不私改对端）；P-UI-1 处置：StageView.sevenState 七态词表按 §6.3 冻结稿（P-UI-1 确认未闭合不私改）"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T09 行＋§2 需求表（UX-01/02/12 行）＋DTB §2.11 WP-10-T09 行（≙）复核回填——designRefs 细化 §3.5（UiText 文案键体系）＋§6.5（StageStatusModel 单侧冻结——卡行交付物）＋§6.6（工程用语）＋§10.2（接口详设节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆三条并编入 O-31/P-UI-6/P-UI-1 处置；dependsOn 维持 [UI-T04]（DTB 前置列 WP-22-T03 门控数据源未产出无契约不可编码——卡 §13「未产出→桩」原文，桩承载于 acceptance）；branch=wp10-t09（≙ 直映）；interUnit=true 判定＝StageStatusModel 为供 workflow 消费的跨单元汇聚投影（ARCH §3.4——产出面）；**O-31 硬约束传导：kept planned＋blocked（前置 UI-T04 blocked；自身无对端类型直持——如实区分登记），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }
