@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 67,
+  "tickCount": 68,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T20:10:37+08:00",
+    "updatedAt": "2026-09-11T20:55:54+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -381,6 +381,16 @@
       "commits": [
         "fc7d247c7c1ae0a040cf5a65cdfd1021c5b30eae"
       ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T11",
+      "acceptanceRecord": "traceability/acceptance/DOC-T11-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "1ca5167fae1ef5aa1c5debc1d8f791215442c39c"
+      ]
     }
   ],
   "policy": {
@@ -406,11 +416,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "DOC-T11",
-      "contractPath": "tasks/DOC-T11.json",
-      "branch": "doc-t11"
-    },
     {
       "taskId": "DOC-T12",
       "contractPath": "tasks/DOC-T12.json",
@@ -640,6 +645,81 @@
       "taskId": "DIAG-T11",
       "contractPath": "tasks/foundation/DIAG-T11.json",
       "branch": "wp09-t11"
+    },
+    {
+      "taskId": "PRJ-T02",
+      "contractPath": "tasks/foundation/PRJ-T02.json",
+      "branch": "wp04-t02"
+    },
+    {
+      "taskId": "PRJ-T03",
+      "contractPath": "tasks/foundation/PRJ-T03.json",
+      "branch": "wp04-t03"
+    },
+    {
+      "taskId": "PRJ-T04",
+      "contractPath": "tasks/foundation/PRJ-T04.json",
+      "branch": "wp04-t04"
+    },
+    {
+      "taskId": "PRJ-T05",
+      "contractPath": "tasks/foundation/PRJ-T05.json",
+      "branch": "wp04-t05"
+    },
+    {
+      "taskId": "PRJ-T06",
+      "contractPath": "tasks/foundation/PRJ-T06.json",
+      "branch": "wp04-t06"
+    },
+    {
+      "taskId": "PRJ-T07",
+      "contractPath": "tasks/foundation/PRJ-T07.json",
+      "branch": "wp04-t07"
+    },
+    {
+      "taskId": "PRJ-T08",
+      "contractPath": "tasks/foundation/PRJ-T08.json",
+      "branch": "wp04-t08"
+    },
+    {
+      "taskId": "PRJ-T09",
+      "contractPath": "tasks/foundation/PRJ-T09.json",
+      "branch": "wp04-t09"
+    },
+    {
+      "taskId": "PRJ-T10",
+      "contractPath": "tasks/foundation/PRJ-T10.json",
+      "branch": "wp04-t10"
+    },
+    {
+      "taskId": "PRJ-T11",
+      "contractPath": "tasks/foundation/PRJ-T11.json",
+      "branch": "wp04-t11"
+    },
+    {
+      "taskId": "PRJ-T12",
+      "contractPath": "tasks/foundation/PRJ-T12.json",
+      "branch": "wp04-t12"
+    },
+    {
+      "taskId": "PRJ-T13",
+      "contractPath": "tasks/foundation/PRJ-T13.json",
+      "branch": "wp04-t13"
+    },
+    {
+      "taskId": "PRJ-T14",
+      "contractPath": "tasks/foundation/PRJ-T14.json",
+      "branch": "wp04-t14"
+    },
+    {
+      "taskId": "PRJ-T15",
+      "contractPath": "tasks/foundation/PRJ-T15.json",
+      "branch": "wp04-t15"
+    },
+    {
+      "taskId": "PRJ-T16",
+      "contractPath": "tasks/foundation/PRJ-T16.json",
+      "branch": "wp04-t16"
     }
   ],
   "docRefs": {
@@ -650,5 +730,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "0434af3b-a47e-4ad0-b255-4f79fb4113ba"
+  "tickToken": "1453fb82-855a-45de-85ce-27daeec5711d"
 }

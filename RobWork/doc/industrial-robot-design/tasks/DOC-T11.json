@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "io 主链整链编译放行（IO-T02~T07）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["contract-compilation.md", "units/io.md#12", "traceability/contract-compile-log.md"],
