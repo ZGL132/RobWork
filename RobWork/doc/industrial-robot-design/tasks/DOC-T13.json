@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "ui 主链整链编译放行（UI-T02~T14）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["contract-compilation.md", "units/ui.md#13", "traceability/contract-compile-log.md"],
