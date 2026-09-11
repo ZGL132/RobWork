@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 CanonicalModel 与编码器（RT-Codec）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T03"
   ],
@@ -32,8 +32,10 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
+  "branch": "wp06-t04",
   "interUnit": true,
   "knownPitfalls": [
     "CR-02",
@@ -45,5 +47,5 @@
     "身份域排除项（显示字段）用例通过",
     "CanonicalModel 不持久化（D-1）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t04、verify 规范化为数组"
 }

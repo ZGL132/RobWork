@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现编译器集成与取消（十段链/事务）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T03",
     "RT-T04",
@@ -44,15 +44,19 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
+  "branch": "wp06-t11",
   "interUnit": true,
   "knownPitfalls": [
     "P-RT-3"
   ],
   "acceptance": [
     "RT-CPX 全组＋RT-RES-1/2＋RT-CONT-1/2 事务状态机全转移用例通过",
-    "编译器无内部超时（D-11——取消只经外部请求）"
+    "编译器无内部超时（D-11——取消只经外部请求）",
+    "十段编译逐步表（§5.2）S1~S10 装配完整且失败回滚（§5.3）用例通过",
+    "资源摘要复查（§8.6——资源变化→编译失败/缓存失效）用例通过"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t11、verify 规范化为数组"
 }

@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 WorkCell 编译器（Adapter/十段链 S6）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T04",
     "RT-T06"
@@ -34,12 +34,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-RT-3",
-  "acceptance": [
-    "RT-AD-1/2、RT-EQ-1（1e-9 m/rad，附录 D 第 4 项）、RT-BW-4 用例通过"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "branch": "wp06-t07",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-RT-3"
+  ],
+  "acceptance": [
+    "RT-AD-1/2、RT-EQ-1（1e-9 m/rad，附录 D 第 4 项）、RT-BW-4 用例通过",
+    "显式设值与等价用例通过（§12 完成条件——Frame 树/Device/Joint/BaseMount 唯一写入）",
+    "RobWork 异常→稳定诊断转译（§8.4）用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t07、verify/knownPitfalls 规范化为数组"
 }

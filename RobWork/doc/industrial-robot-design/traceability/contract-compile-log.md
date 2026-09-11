@@ -80,6 +80,18 @@
 | TK-T07 | wp02-t07 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
 | TK-T08 | wp02-t08 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | ready |
 | TK-T10 | wp02-t10 | True | P-TK-2 | DOC-T05 回填（2026-09-11）：testkit.md §9 任务行＋§2 需求表 | validate-task 三查过；—；放行依据＝DOC-T05 契约 acceptance 4（整链放宽，拓扑序登记） | planned |
+| RT-T02 | wp06-t02 | True | P-RT-1 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（所有者 2026-09-11 B 模式预授权整链放宽，拓扑序 RT-T02→T13 登记） | ready |
+| RT-T03 | wp06-t03 | True | P-RT-7 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
+| RT-T04 | wp06-t04 | True | CR-02、CR-05 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
+| RT-T05 | wp06-t05 | True | O-12 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；AT-18 自 requirements 迁入 acceptance 注记 | ready |
+| RT-T06 | wp06-t06 | True | P-RT-4 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；AT-37 自 requirements 迁入 acceptance 注记 | ready |
+| RT-T07 | wp06-t07 | True | P-RT-3 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
+| RT-T08 | wp06-t08 | True | P-RT-3 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；风险表 R-2 前置实测义务编入 acceptance | ready |
+| RT-T09 | wp06-t09 | True | CR-05 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；designRefs 细化 §9.1/9.2/9.3、knownPitfalls 自 crRefs 规范化登记 | ready |
+| RT-T10 | wp06-t10 | True | CR-05 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
+| RT-T11 | wp06-t11 | True | P-RT-3 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
+| RT-T12 | wp06-t12 | True | P-RT-1 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；designRefs 补 testkit §10.2 锚点、allowedFiles 补 testdata/**（数据集交付面）、AT 编号迁注 acceptance | ready |
+| RT-T13 | wp06-t13 | False | — | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；R-4 例外登记对象按 §12 行原文更正为 WP-01-T01 | ready |
 
 ## 修订行（ready 契约的后续修订，CCP §5）
 

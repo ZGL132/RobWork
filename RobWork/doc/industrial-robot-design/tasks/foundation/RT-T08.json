@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 DynamicWorkCell 编译器（能力门控）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T07"
   ],
@@ -33,14 +33,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
+  "branch": "wp06-t08",
   "interUnit": true,
   "knownPitfalls": [
     "P-RT-3"
   ],
   "acceptance": [
-    "RT-CPX-1/2、RT-AD-3 门控/原子性/销毁顺序用例通过"
+    "RT-CPX-1/2、RT-AD-3 门控/原子性/销毁顺序用例通过",
+    "能力缺失降级路径（§5.6 正交关系——RuntimeCapability 声明）用例通过",
+    "DWC/摩擦 API 表达力前置实测（风险表 R-2——read 阶段仅确认类形；表达力缺项走 §8.8 补丁流程或能力降级）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t08、verify 规范化为数组；风险表 R-2（DWC/摩擦 API 表达力）的前置实测义务编入 acceptance 第三条"
 }

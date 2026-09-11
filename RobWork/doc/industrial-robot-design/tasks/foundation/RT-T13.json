@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "runtime 文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T02",
     "RT-T03",
@@ -26,8 +26,8 @@
     "units/runtime.md#15"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
     "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/README.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
@@ -38,13 +38,16 @@
     "doc-update",
     "traceability-update"
   ],
-  "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
-  "branch": null,
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp06-t13",
   "interUnit": false,
   "acceptance": [
-    "README 核对零偏差",
-    "§15.3 状态更新（P-RT-1~9 最新）",
-    "R-4 例外登记（名称解析器实现文件清单）提交 WP-01-T03"
+    "README 核对零偏差（§9→§12 指向核对）",
+    "§15.3 状态更新（P-RT-1~9 最新状态逐条）",
+    "R-4 例外登记（名称解析器实现文件清单）提交 WP-01-T01",
+    "UT-BUILD 建议并入 CI（登记给 WP-01/WP-24）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t13、verify 规范化为数组；R-4 例外登记对象按 §12 任务行原文为 WP-01-T01（前次误记 WP-01-T03，放行时更正）"
 }
