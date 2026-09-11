@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.3（全链一致性审计消账；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
+| 文档版本 | v0.4（RT-T03 实现落位登记；v0.3＝全链一致性审计消账；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-RUNTIME |
@@ -158,14 +158,14 @@ runtime 由 12 个公共头模块＋1 个编译实现组成（实现文件随 §
 | --- | --- | --- |
 | `Errors.hpp` | RuntimeErrorCode（稳定 token 建议）、RuntimeError、Expected\<T,E\>、RuntimeResolveError/RuntimeNameError | §3.4、§7.4 |
 | `Sources.hpp` | IObjectBytesSource、IRevisionClosureSource、RevisionSummary、ICompileCancelToken（注入最小契约） | §3.3、§5.1 |
-| `Description.hpp` | RobotDesignDescription（中性输入值类型：关节/连杆/基座/工具/场景/参数/物性/传动，全 SourcedValue 化）、IRobotDesignReader | §4.2 |
+| `Description.hpp` | RobotDesignDescription（中性输入值类型：关节/连杆/基座/工具/场景/参数/物性/传动，全 SourcedValue 化）、IRobotDesignReader；另承载 §4.2 引用的辅助值类型（JointType/WorkingRange/GeometryRef/CouplingMatrix/InstallationPresetToken——后者 §3.1 原列 BaseWorldTransform.hpp，因 §4.2 BasePlacementDescription 字段依赖随 RT-T03 在此落位，RT-T06 经 include 复用，见 §15.4 v0.4） | §4.2 |
 | `CanonicalModel.hpp` | CanonicalModel 及全部子结构（§4.3 字段表）、CanonicalModelBuilder、RuntimeCapability | §4、§9.6 |
 | `Codec.hpp` | RT-Codec（CanonicalModel/NameMap canonical 二进制编码与解码、往返、往返版本） | §4.5、§7.6 |
 | `Compiler.hpp` | CompileRequest/CompileOptions/CompileOutcome/CompileStatus、ICanonicalModelCompiler、编译链阶段枚举 | §5 |
-| `BaseWorldTransform.hpp` | 安装预设、T_world_base 校验、正反解纯函数、InstallationPresetToken | §6 |
+| `BaseWorldTransform.hpp` | 安装预设、T_world_base 校验、正反解纯函数（InstallationPresetToken 枚举自 v0.4 起随 Description.hpp 落位——§4.2 字段依赖先行，本头经 include 复用） | §6 |
 | `NameMap.hpp` | RuntimeName、RuntimeNameView、ObjectRef、NameScope、RuntimeNameMap、buildRuntimeNameMap、IRuntimeNameResolver | §7 |
 | `Adapter.hpp` | WorkCellConstView、DynamicWorkCellConstView、DeviceView、RobWorkBaselineVersion、IRobWorkAdapterFactory | §8.2～§8.5 |
-| `Resource.hpp` | ResourceRef/ResourceManifest、ResourceReadError、IRuntimeResourceProvider | §8.6 |
+| `Resource.hpp` | ResourceRef/ResourceManifest、ResourceReadError、IRuntimeResourceProvider（值类型 ResourceState/ResourceRef 自 v0.4 起随 RT-T03 落位——§4.2 resourceRefs 字段依赖先行；其余实体随资源消费任务） | §8.6 |
 | `Snapshot.hpp` | RuntimeSnapshot、SnapshotIdentity、IRuntimeSnapshotFactory、MaterializedSnapshotCodec（worker 物化） | §9.1～§9.3 |
 | `CacheKey.hpp` | CompileCacheKey 及其分量、CompileCacheCompatibility、judgeCompileCacheCompatibility、IRuntimeCompileCacheKey | §9.4 |
 | `README.md` | 既有保留位说明（不参与编译；已指向本文 §12） | — |
@@ -1507,6 +1507,7 @@ public:
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）及 core/testkit/project/evidence 四份协作输入（均 Draft；project.md 磁盘实测完整——与 evidence 侧登记差异见 P-RT-9）完成 15 章详细设计：冻结 CanonicalModel 数据契约与 RT-Codec 身份、十段确定性编译链与事务状态机、基座—世界变换单一不变量（含预设矩阵与数值例）、RuntimeNameMap 双射解析、RobWork 适配层（只读视图/异常转译/显式设值）、RuntimeSnapshot 并发与 worker 隔离、分层编译缓存纯判定、能力正交声明、公共接口（含 IModelCompilePort 承接答复）、验证反例矩阵 RT-\* 41 组、实现任务 RT-T01～T13；待裁决 9 项（P-RT-1～9）。同日：`runtime/include/sdurws/ird/runtime/README.md` 的任务卡指向由"§9"修正为"§12"（与本文任务拆分章节号一致，同 evidence README 修正先例） |
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-05/CR-07）：§10.3 对 evidence 的供给落点表述更正（modelIdentity/robworkBaselineVersion 入切片 Environment 条目 `runtime.model-identity`/`runtime.robwork-baseline` 并进入 inputBaselineId；复现块仅 compilerContractVersion——原文"§4.1.2 预留字段"不实）；§3.4/RT-T01 行 gtest 引用改指 development-task-breakdown §5.5 定稿。差异记录见 traceability/foundation-api-diff.md |
 | v0.3 | 2026-09-10 | 全链一致性审计消账：①§10.11 稳定码由"建议值"更新为"已收编 14 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（UnknownObject/ContextReleased＝fail-fast token 不发码；RT-CAPABILITY-MISSING/RT-ROBWORK-ERROR＝诊断事件码无枚举对应）；②卡头版本 v0.1→v0.3 更正（原卡头停留 v0.1 而变更记录已达 v0.2，与 policy/reporting 卡的 v0.2 引用不符） |
+| v0.4 | 2026-09-12 | RT-T03 实现落位登记（DTB §5.4，两处分阶段偏差＋一处机制说明）：①InstallationPresetToken 枚举由 §3.1 原列 BaseWorldTransform.hpp（RT-T06）调整随 §4.2 Description.hpp 落位（BasePlacementDescription.preset 字段类型依赖、RT-T03 先于 RT-T06）——RT-T06 的预设→矩阵纯函数经 include 复用，单一权威不重复定义（§3.1 两行已同步）；②Resource.hpp 的值类型 ResourceState/ResourceRef 随 RT-T03 先行落位（RobotDesignDescription.resourceRefs 字段依赖；§12 无单列任务行，首个消费者原则）——ResourceBytes/ResourceReadError/IRuntimeResourceProvider 随资源消费任务落位（§3.1 行已同步）；③耦合矩阵校验（RT-CPL-1）的奇异值计算采用单侧 Jacobi（Hestenes）SVD——小奇异值相对精度不受条件数放大（两侧法经 CᵀC 会平方化动态范围、奇异/病态无法分档），属实现层选型、契约阈值（1×10⁸／1×10⁻¹²）与语义不变；④构建机制：冒烟模式自 RT-T03 起引入 rw 模板头 header-only include（Description 字段类型＝rw::math，两模式单一类型形态；仍零框架链接）。实现证据见 traceability/builds/wp06-t03/ |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 
