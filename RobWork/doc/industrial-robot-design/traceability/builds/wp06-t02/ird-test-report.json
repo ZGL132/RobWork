@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T02",
+  "masterWp": "WP-06-T02",
+  "branch": "wp06-t02",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RT-T02 增列 src/Errors.cpp（token/registryCode/category 三张 switch 全枚举固定表＋RuntimeError 消息拼装）；Sources.hpp 为纯头契约无需源文件；目标名/别名/include 根不变；配置期依赖红线守卫（其他单元目标/Qt 即 fatal）保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "增列 ErrorsTest/ExpectedTest/SourcesTest 三用例文件（RT-T01 的 BuildRedLineTest 保留；其锚定用例过期注释已随代码现状更正、断言不变）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild",
+      "designRef": "units/runtime.md §3.2/§3.4、§12 RT-T01、DTB §4.6/§4.5",
+      "cases": [
+        { "name": "RuntimeBuild.SourceTreeReachable_RT_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（RT-T01 既有；公共头保留位 README＋src 非空）" },
+        { "name": "RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头——覆盖 RT-T02 新增 Errors.hpp/Errors.cpp）" },
+        { "name": "RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面 sdurws/ird/* 白名单＝{core, runtime}——RT-T02 新增头的 core include 均合规）" },
+        { "name": "RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "P-RT-3（RT-T01 既有；集成三库/冒烟空串双分支强断言）" }
+      ]
+    },
+    {
+      "suite": "RuntimeErrorsFullTable / RuntimeErrorsThrow / RuntimeErrorsPayload",
+      "designRef": "units/runtime.md §3.4（枚举全表与 token 列）、§10.11 v0.3（12 个 1:1 注册码＋2 个 fail-fast token＋2 个事件码）、§5.2/§5.6（产生段与分类）、§7.4（错误载荷）",
+      "cases": [
+        { "name": "RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：15 值逐 token/注册码/分类/取消与契约违约判别；期望手写自 §3.4/§10.11 原文（防实现即期望恒真）；枚举序号 14 锚定防插入重排" },
+        { "name": "RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§3.4 异常轨：what()＝\"<token>[: <detail>]\" 前缀强制＋code() 访问器＋std::runtime_error/std::exception 双层按基类捕获" },
+        { "name": "RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.4/RT-NM-3：RuntimeResolveError.requestedName 原名回显；RuntimeNameError.requestedId 为 core 强类型（RT-NM-7 载荷面）" }
+      ]
+    },
+    {
+      "suite": "SourcesContract / SourcesObjectBytes / SourcesRevision / SourcesAttribution / SourcesCancel / SourcesLifetime",
+      "designRef": "units/runtime.md §3.3（注入最小契约原文）、§5.2（十段表注入点失败→错误归属）、§5.5（并发只读安全）、§9.3（worker 载荷存储）、§11（替身清单）",
+      "cases": [
+        { "name": "SourcesContract.InterfacesAreAbstract_RT_SRC", "status": "passed", "modes": ["smoke", "integration"], "trace": "三注入接口 is_abstract 静态断言（MDL-06 零写路径的类型层证据）" },
+        { "name": "SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2", "status": "passed", "modes": ["smoke", "integration"], "trace": "S2 对象字节注入：命中逐字节一致（值传递）；未命中 nullopt（不可得≠空内容）；同 (oid,cv) 重复读取确定性" },
+        { "name": "SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1", "status": "passed", "modes": ["smoke", "integration"], "trace": "S1 修订投影逐字段往返；未知修订 nullopt（归属 UnknownObject）；闭包成员集与 objectRefs 口径一致" },
+        { "name": "SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2：四注入点失败结果↔归属错误码逐项钉住（tryRevision nullopt→UnknownObject〔契约违约轨〕；objectInRevision false→StructureInvalid〔CM-0 防混入〕；tryObjectBytes nullopt→InputInvalid；取消置位→Cancelled〔RT-CANCELLED 正常路径〕）——可定位＝token/注册码/分类三表可查" },
+        { "name": "SourcesCancel.ToggleIsFinal_RT_SRC_TASK01", "status": "passed", "modes": ["smoke", "integration"], "trace": "TASK-01/UX-03：取消最终性（置位前恒 false、置位后恒 true——§3.3 只增不减约束）" },
+        { "name": "SourcesLifetime.DeleteThroughBasePointer_RT_SRC", "status": "passed", "modes": ["smoke", "integration"], "trace": "L5 装配期持有形态：三实现对象经基类指针构造/析构正常（虚析构契约）" }
+      ]
+    },
+    {
+      "suite": "ExpectedSemantics / ExpectedQueryPath",
+      "designRef": "units/runtime.md §3.4（Expected 契约原文）、§7.4（查询不抛、不默认命中、错误含回显）",
+      "cases": [
+        { "name": "ExpectedSemantics.OkStateCarriesValue_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3：成功态携带原值" },
+        { "name": "ExpectedSemantics.ErrStateCarriesError_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3：失败态携带原错误（不吞不改写）" },
+        { "name": "ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-03：错误态 get() 抛 std::logic_error（返回默认值＝静默转换，禁止）；消息稳定前缀 runtime/expected/get-on-error" },
+        { "name": "ExpectedSemantics.ErrorOnOkFailsFast_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "对称侧：成功态 error() 同样 fail-fast" },
+        { "name": "ExpectedSemantics.StatesAreMutuallyExclusive_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "两态互斥（variant 承载：ok 判别与可取侧一一对应）" },
+        { "name": "ExpectedSemantics.CopyAndMovePreserveState_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "值语义：拷贝/移动保留状态与内容" },
+        { "name": "ExpectedSemantics.SupportsMoveOnlyTypes_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "move-only T/E 兼容（工厂按值＋variant emplace）" },
+        { "name": "ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.4/RT-NM-3 查询路径语义镜像：命中不抛；未命中 err＋UnknownObject＋原名回显、不默认命中" }
+      ]
+    }
+  ],
+  "summary": { "total": 21, "passed": 21, "failed": 0, "modes": { "smoke": "21/21", "integration": "21/21" } },
+  "failureCapabilitySelfCheck": {
+    "method": "token 变异探针：把 Errors.cpp 中 Cancelled 的稳定 token 由 \"runtime/cancelled\" 临时改为 \"runtime/cancelled-PROBE\"，重编译集成测试并运行",
+    "result": "如期变红：恰 2 用例失败（RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03——全表逐 token；SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2——归属码面），证明全表用例非恒真；随后按 HEAD 逐字还原（git diff 零差异）重编译复绿 21/21",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp06-t02/smoke-configure.log",
+      "traceability/builds/wp06-t02/smoke-build.log",
+      "traceability/builds/wp06-t02/smoke-test-run.log",
+      "traceability/builds/wp06-t02/sdurws_ird_runtime_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp06-t02/integration-build.log",
+      "traceability/builds/wp06-t02/integration-fullbuild.log",
+      "traceability/builds/wp06-t02/integration-test-run.log",
+      "traceability/builds/wp06-t02/sdurws_ird_runtime_test-integration.xml"
+    ],
+    "failureProbe": [
+      "traceability/builds/wp06-t02/probe-build.log",
+      "traceability/builds/wp06-t02/probe-test-run.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_runtime_test ——通过（集成模式 exit 0，零错误零警告）",
+  "notes": "中断续作说明：本任务由前一实施者会话中断后续作完成——既有半成品（Errors.hpp/.cpp、Sources.hpp、三测试文件、CMake 增列）经逐一审阅核验后采信（与 units/runtime.md §3.3/§3.4/§7.4/§10.11 逐项对照，15 token 逐字一致、12+2+1 注册关系一致、错误载荷字段一致）；续作修正三处：ExpectedTest 重复 using 行、BuildRedLineTest 过期注释、Errors.cpp 文件头 switch 告警级别表述（C4061/C4062 为 /W4 可见，强制防线归全表用例）。P-RT-1 处置约束遵守：core 契约按卡内 v0.1 Draft 基线消费（ObjectId/ContentVersion/RevisionId/BranchId/Digest256 均 core 公共头既有类型，零签名假设），core 冻结出 diff 后增量同步（governance-log P-RT-1 open）。分步提交：错误契约（Acc-Covered: 1,3）→注入契约（Acc-Covered: 2）→证据与治理（本提交）；每步均双模式构建＋测试通过后提交"
+}
