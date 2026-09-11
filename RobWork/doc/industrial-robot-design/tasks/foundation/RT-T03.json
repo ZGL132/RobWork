@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 Description 与校验器（含耦合矩阵校验）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T02"
   ],
