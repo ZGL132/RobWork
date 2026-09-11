@@ -381,6 +381,16 @@
       "title": "RT-T03 提交 dd1a0dc『全树集成构建日志（cmake --build build --config Release，exit 0——DoD 第 1 条最强口径）』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内路径 D:\\...\\RobWork\\build\\）；F-036 对 RT-T02 的同型裁定第 2 次复现——验收者全新 worktree 从零全树构建实测在 F-008（RobWorkSim 插件 min/max 宏污染）失败（73 错误零个涉及 industrialrobot），构建本身真实（日志完整零 error 行）",
       "owner": "实施纪律（与 F-025/F-036 提交信息准确性面同辖域；提交已推送不追溯改写）",
       "resolution": "同 F-036：增量树/全新树显式区分，F-008 闭合前统一采用『任务目标面全新树从零零错误』口径（本任务该口径已由验收者达成：sdurws_ird_runtime＋runtime_test 两模式从零零错误＋73/73）。编号顺延自 F-037，合入时由所有者确认。"
+    },
+    {
+      "id": "F-039",
+      "source": "traceability/acceptance/RT-T04-20260912.md#4.9-G-1（attempt 1，送验对象 92b164fe，提交 92b164fe）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037 同型再现：RT-T04 文档提交 92b164f 标题『[units] runtime v0.5：RT-T04 实现落位登记（层级索引分阶段＋三处实现层选型）』前缀后以名词短语（'runtime v0.5'）开头，非动词开头——F-037（RT-T03 同前缀形态）后第 9 次复现，证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；正文四段齐备、验证结论与留痕一致（验收者全新树亲手复现：双模式 105/105、validate-task PASS、双探针注入即红/还原复绿、ird_gates 命中均为 F-019 既有），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置：文档类提交标题在代号前缀后同样以动词短语开头（如『[units] 登记 runtime v0.5 实现落位…』）；对已推送历史（92b164f 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-038（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
