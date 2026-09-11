@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 CanonicalModel 与编码器（RT-Codec）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T03"
   ],
