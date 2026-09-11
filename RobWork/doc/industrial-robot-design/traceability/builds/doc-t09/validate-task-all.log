@@ -1,0 +1,30 @@
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T02.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T03.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T04.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T05.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T06.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T07.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T08.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T09.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T10.json
+validate-task: PASS (1 tasks)
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/DIAG-T11.json
+validate-task: PASS (1 tasks)
+
