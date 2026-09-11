@@ -4,12 +4,14 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "CSV 读写器（方言标识＋可逆编码，唯一转义/还原实现）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T01"],
   "requirements": ["NFR-SEC-03", "REQ-05"],
-  "designRefs": ["units/io.md#5.1", "units/io.md#9.3"],
+  "designRefs": ["units/io.md#12", "units/io.md#5.1", "units/io.md#5.2", "units/io.md#5.3", "units/io.md#5.4", "units/io.md#5.5", "units/io.md#5.6", "units/io.md#5.8", "units/io.md#9.3", "units/io.md#9.4"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "branch": "wp11-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-5"],
   "acceptance": [
-    "V01~V05 全绿；自带前缀（=、+、-、@、'）roundtrip 逐字符一致",
-    "无标识外部 CSV 原样读入；转义形式不入结构化数据层（AT-02）"
-  ]
+    "V01/V02 全绿：IoCsv/RoundtripBasic（引号/分隔符/换行/中文/空串字段——write→read 逐字段比对＋再 write 文件 SHA-256 二次比较）与 RoundtripPrefixed（=、+、-、@、' 自带前缀样例集 roundtrip 逐字符一致、decode(encode(s))==s 全样例自反、RawTable 无转义形式残留）（NFR-SEC-03 R5；AT-02 迁注：含自带前缀样例的 roundtrip 验收）",
+    "V03 全绿：UnmarkedNoRewrite——无方言标识外部 CSV 全字段原样读入（'=x 保持 '=x），不执行任何前缀剥离或字段改写（NFR-SEC-03 明文；§2.3 非目标 9）",
+    "V04/V05 全绿：BomQuotEol（BOM 剥离/UTF-16 编码识别/CRLF-LF-CR 行尾容错/RFC4180 引号嵌套；非 UTF-8 无 BOM 稳定拒绝 IO-FORMAT-CSV-ENCODING——§2.3 非目标 10 不做编码猜测转码）与 ColumnAnomalies（重复列名/缺列/多列/空行——默认策略拒绝且定位列号/名字/行号，显式策略按声明处置并记录；RowError 集合内容与顺序可断言）（REQ-05 解析与逐行错误支撑）",
+    "数据-only 断言：解析路径零公式/命令执行入口；方言语法不超出 §5.1 声明集（卡行禁止项）；部分成功粒度按 §5.8（正确行保留——结构化层不接收转义形式）",
+    "P-IO-5 处置：方言标识行 v1 语法按 §5.1 已给全文实现（#rwcsv1 及参数），需求/架构评审冻结确认前不私改语法；此后变更走方言版本升级（不就地改 v1 语义）"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T03 行＋§2 需求表（NFR-SEC-03 行）＋DTB §2.12 WP-11-T04 行（≙）复核回填——designRefs 细化 §5.1~§5.6/§5.8（卡行验收 V01~V05 对应章节）与 §9.3/§9.4（读写器接口）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§5 语义」拆分五条（AT-02 自 requirements 迁注 acceptance 注记——AT 编号不入 requirements）；interUnit=true 判定：消费 core SourcedValue/UnitToken/tryParse（数值与单位原文保留——§3.2 消费清单）、诊断经 diagnostics 脱敏/逐行列定位（§5.8），读写器为 requirements 单元消费的公共接口（§13.2）；knownPitfalls=P-IO-5（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t03（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正）；编译留痕见 traceability/contract-compile-log.md"
 }

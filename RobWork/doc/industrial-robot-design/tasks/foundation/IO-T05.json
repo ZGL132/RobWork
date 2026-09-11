@@ -4,12 +4,14 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "资源导入服务与外部源检测（ResourceIo：reader/snapshotter/probe）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T02"],
-  "requirements": ["NFR-REL-04", "PM-01", "CON-03"],
-  "designRefs": ["units/io.md#8.2", "units/io.md#9.8"],
+  "requirements": ["NFR-REL-04", "NFR-SEC-02", "PM-01", "CON-03", "MDL-19"],
+  "designRefs": ["units/io.md#12", "units/io.md#4.2.5", "units/io.md#6.2", "units/io.md#6.3", "units/io.md#6.5", "units/io.md#6.6", "units/io.md#8.1", "units/io.md#8.2", "units/io.md#8.3", "units/io.md#8.4", "units/io.md#9.6", "units/io.md#9.8"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "branch": "wp11-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1", "P-IO-2"],
   "acceptance": [
-    "V15~V17、V24~V27 全绿；三段边界用例（一次性读取/引用记录/固化前契约）通过",
-    "直接创建 CanonicalModel/objects 写入禁止；ResourceBytes 生命周期符合 P-RT-6 裁决"
-  ]
+    "V15/V16 全绿：CyclicIncludes（A→B→A 环报 IO-FORMAT-XML-CYCLE 且含环路径清单、17 层深度链触发 IO-SEC-BUDGET-INCLUDE）与 MeshBudget（二进制 STL 谎报三角形数即拒、真实超限 STL 触发 IO-SEC-BUDGET-MESH——触发时机读前/读中可断言）（MDL-19 文件层支撑——展开引擎与语义归 modeling 阶段 B）",
+    "V17 全绿：SourceChangedDuringCopy——固化复制中途改写源文件（FaultInterceptor 定点注入）→复制前后双快照 digest 不等断言＋sourceChangedDuringCopy=true＋Changed 诊断、中转清理、无部分副本（§8.4 步骤 5 前后双快照）",
+    "V24/V25/V26/V27 全绿：ReadOnlyMedia（IO-RES-READONLY 与 ACCESS-DENIED 码区分）、AccessDenied（不降级为 NOT-FOUND——§4.2.5 四分类）、MissingResource（依赖树缺叶/外部引用记录指向已删文件——缺失清单＋ExternalRefProbe::Missing，无任何工程不可行结论产出＝资源事实类别 §2.5）、DigestStability（同文件 100 次快照 digest 恒定、改名/移动不改 digest——路径不作身份）（NFR-REL-04 检测实现责任方）",
+    "三段边界用例通过（PM-01 段①③执行＋段②检测、ARCH §6.6 R4）：一次性读取（用户显式选择源——NFR-SEC-01 例外、仍受预算管辖）、外部引用记录（{绝对路径＋内容哈希}，不以裸路径充当项目资源引用）、固化前契约（solidifyToStaging 产出中转目录、发布与 objects 入库归 project——§8.4 io 执行侧/project 编排）；直接创建 CanonicalModel/objects 写入禁止（卡行禁止项）",
+    "P-IO-2 处置：ResourceBytes 生命周期按 §8.6 五条裁决实现（最低保证至下次调用、实际至析构、并发安全、Recorded 不缓存、值拷贝兼容——runtime 侧按此同步其文档表述）；P-IO-1 处置：对象库字节经 IProjectBytesSource 注入（§8.6），不直读项目存储（§2.3 非目标 6）——ARCH 边未登记前 io 零 project 编译依赖"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T05 行＋§2 需求表＋DTB §2.12 WP-11-T06 行（≙）复核回填——requirements 补 NFR-SEC-02（V15/V16 预算依据）与 MDL-19（§2.2 支撑行——文件层部分）、designRefs 细化 §6.2~§6.6/§8.1~§8.4/§9.6/§9.8/§4.2.5（卡行验收 V15~V17/V24~V27 对应章节）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§8 语义」拆分五条（原 P-RT-6 表述规范化为 P-IO-2 处置条目——io.md §15.3 已裁决关闭）；interUnit=true 判定：摘要全经 core ContentDigester（§3.2 消费清单）、固化协作经 IProjectBytesSource 注入消费 project 设施（C-3）、检测实现被 runtime 读写链消费（§13.1 runtime.md io 行义务）；knownPitfalls=P-IO-1/P-IO-2（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t05（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正）；编译留痕见 traceability/contract-compile-log.md"
 }

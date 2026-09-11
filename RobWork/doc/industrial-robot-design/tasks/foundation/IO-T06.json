@@ -4,21 +4,33 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "包导入导出 io 侧设施＋固化中转（Package/TempArea）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T02", "IO-T04"],
-  "requirements": ["PM-05", "NFR-SEC-02", "CON-03"],
-  "designRefs": ["units/io.md#7", "units/io.md#9.9"],
+  "requirements": ["PM-05", "NFR-SEC-01", "NFR-SEC-02", "CON-03", "SEL-02"],
+  "designRefs": ["units/io.md#12", "units/io.md#4.6", "units/io.md#7.1", "units/io.md#7.2", "units/io.md#7.3", "units/io.md#7.4", "units/io.md#7.5", "units/io.md#7.6", "units/io.md#7.7", "units/io.md#7.8", "units/io.md#8.4", "units/io.md#9.7", "units/io.md#9.9", "units/io.md#9.10"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_io_test",
+    "cmake --build build --config Release --target sdurws_ird_io_contract_test"
+  ],
+  "branch": "wp11-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1", "P-IO-2", "P-IO-7", "O-09"],
   "acceptance": [
-    "V12~V14、V18~V23、V29/V31/V32 全绿（发布用 project fake）",
-    "失败不留目标目录；io 侧 rename 发布与读 .staging 禁止"
-  ]
+    "V12/V13/V14 全绿：ZipBomb（压缩比>100:1 报 IO-SEC-BOMB-RATIO、超展开量报 IO-SEC-BUDGET-EXPAND——中止＋临时区清理＋目标零写入，ledger 快照观测）、DuplicateEntries（同名×2/仅大小写异条目对在步骤③预检拒绝——展开前零落盘）、HashMismatch（篡改 manifest 条目哈希——IO-PACK-HASH-MISMATCH 条目级定位＋整体拒绝）（NFR-SEC-01/02、PM-05）",
+    "V18~V23 全绿（AT-20 迁注：包导出/导入主线、取消不留半成品）：ExportConcurrentWrite（fake ISnapshotFileSource 版本切换——按快照重读稳定版本、包自洽无混合版本）、ImportCancel（各阶段取消令牌注入——检查点间隔内中止＋临时区清理＋无 Canceled 诊断〔UX-03 状态非错误〕＋目标零写入）、DiskFull（IO-PACK-DISK-FULL 所需/可用比较型＋清理成功）、CleanupFailed（IO-PACK-CLEANUP-FAILED＋残留路径清单脱敏＋二次 cleanup 幂等可成功）、FailureNoTarget/ExportStagingOnly（全部失败样例跑后目标项目目录从未创建/写入、目标 .rwpack 不存在或为先前完整版本——结构性断言）",
+    "V29/V31/V32 全绿（发布用 project fake）：ImportRefIntegrity（manifest 引用不存在条目/镜像缺必备文件——IO-PACK-REF-INCOMPLETE＋断裂链定位；SEL-02 文件层支撑——字段字典/单位/唯一性归 selection）、BackgroundNonBlocking（导入于后台任务运行——UI 线程无 >2s 无响应窗口，io 为可取消同步库调用〔§9.13 io 不创建线程〕）、CommittedVsStaged（快照清单外文件不出现在包内——存在≠已提交）",
+    "失败不留目标目录总断言（V12~V14/V19~V21 全部样例跑后目标目录枚举为空）；io 侧 rename 发布与读 .staging 禁止（发布归 project——§7.7 责任切分、§2.1 N-7 不拥有）",
+    "测试目标登记：sdurws_ird_io_contract_test 随本任务登记（§3.3——googletest 经 vcpkg find_package，不预建空目标）；P-IO-1/O-09 处置：ISnapshotFileSource/发布入口以 project fake 注入（ARCH §3.5 边未登记前 io 零 project/runtime 编译依赖——P-PR-5/O-09 裁决申请提交与依据登记，不私裁补边）；P-IO-2 处置：IRuntimeResourceAdapter（§9.7——P-RT-6 落点）按 §8.6 五条裁决实现；P-IO-7 处置：目录包文件清单/文件名 schema 由 selection 卡注册（§7.8 io 只实现校验执行框架，不预写 selection 字段字典）"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T06 行＋§2 需求表＋DTB §2.12 WP-11-T05/T07 行（≙）复核回填——requirements 补 NFR-SEC-01（包内路径校验/穿越防护 §7.4）与 SEL-02（V29 文件层支撑）、designRefs 细化 §7.1~§7.8 全列（包协议九步/威胁矩阵/临时区/清理状态图/责任切分/目录包——卡行产出全文）与 §4.6/§8.4/§9.7/§9.9/§9.10（AtomicFile/固化中转/adapter/包接口/临时区设施）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、verify 补 contract_test 目标构建（V18~V32 契约/故障注入用例落位 §3.3 双测试目标）、acceptance 按「完成条件＋§7 语义」拆分五条；interUnit=true 判定：实现 runtime IRuntimeResourceProvider 契约（C-4 契约消费＋注入）、经注入消费 project 一致数据视图与发布入口（C-3——P-IO-1 注入式）、消费 core ContentDigester；knownPitfalls=P-IO-1/P-IO-2/P-IO-7/O-09（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t06（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正）；编译留痕见 traceability/contract-compile-log.md"
 }

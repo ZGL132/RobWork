@@ -4,21 +4,32 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "契约测试套件整备与留痕",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T01", "IO-T02", "IO-T03", "IO-T04", "IO-T05", "IO-T06"],
   "requirements": ["NFR-SEC-01", "NFR-SEC-02", "NFR-SEC-03", "NFR-REL-04"],
-  "designRefs": ["units/io.md#11"],
+  "designRefs": ["units/io.md#12", "units/io.md#11.1", "units/io.md#11.2", "units/testkit.md#6.4", "units/testkit.md#10.2"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_io_test",
+    "cmake --build build --config Release --target sdurws_ird_io_contract_test"
+  ],
+  "branch": "wp11-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-2", "O-09"],
   "acceptance": [
-    "§11.2 全用例可执行且结果登记（不预设通过）",
-    "ird-test-report.json 追溯字段齐备；用例跳过不报/伪造通过状态禁止"
-  ]
+    "§11.2 IO-V01~V32 全用例在 sdurws_ird_io_test＋sdurws_ird_io_contract_test 可执行且结果逐条登记（gtest XML＋ird-test-report.json——用例名携带需求/AT 追溯字段〔testkit §3.6 约定〕、组名 IoSec/IoCsv/IoJson/IoRes/IoPack；AT-02/AT-20 迁注：其支撑验证落在对应用例组的追溯字段）；结果不预设通过——任何未执行用例不得标注通过，失败如实登记原因（AGENTS §4.2；卡行验收原文）",
+    "故障注入经 fake 适配层：文件系统故障（磁盘满/写失败/清理失败）经 ITempAreaManager/IAtomicFileWriter 的 fake 注入（FaultInterceptor 第 N 次写失败——testkit §6.4 原语、§10.2 io 行义务）、TempDir 每用例隔离、恶意 zip 构造器（穿越/炸弹/重复/链接条目）；不依赖真实磁盘满；产品目标零 testkit 链接（T-1 红线）",
+    "覆盖核对登记：§11.4 覆盖清单 28 项逐项对应用例编号可查；用例跳过必须显式报告、伪造通过状态禁止（卡行禁止项）；ird-test-report.json 追溯字段齐备（需求/AT、前置、操作、预期、观测点）",
+    "P-IO-2 处置：ResourceBytes 生命周期五条裁决（§8.6）以专用用例断言固化（最低至下次调用/实际至析构/Recorded 不缓存）；O-09 处置：V28/V30/V31 的对端以 project 命令 fake、diagnostics sink fake、驱动线程 fake 承载（io 零 project/runtime 编译依赖——O-09 裁决前不补边，裁决申请归 IO-T06 与 PRJ-T16 联动提交）"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T07 行＋DTB §2.12 WP-11-T07 行（≙）复核回填——designRefs 细化 §11.1/§11.2（验证基础设施与故障注入矩阵——卡行验收原文落点）并补 testkit §6.4/§10.2 锚点（FaultInterceptor 原语与 io 行交接义务——卡行 §11.1 引用原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、verify 补 contract_test 目标构建（io/test＋io/contract_test 双目标——§3.3）、acceptance 拆分逐条可验证四条（RT-T12/EV-T11 同款先例：testdata 面本单元无黄金数据集交付义务——§11.1 替身为程序化构造，不设 testdata/**）；interUnit=true 判定：消费 testkit 公共测试设施（FaultInterceptor/TempDir——跨单元接口消费，PRJ-T15 同款口径）；knownPitfalls=P-IO-2/O-09（测试侧处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t07（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正）；编译留痕见 traceability/contract-compile-log.md"
 }
