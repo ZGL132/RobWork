@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "evidence 文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "EV-T02",
     "EV-T03",
@@ -25,8 +25,8 @@
     "units/evidence.md#15"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
     "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/README.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
@@ -37,12 +37,15 @@
     "doc-update",
     "traceability-update"
   ],
-  "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
-  "branch": null,
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp05-t12",
   "interUnit": false,
   "acceptance": [
     "README 核对零偏差",
-    "§15.3 状态更新（含 P-RT-9 消账确认——project.md 完整性实测）"
+    "§15.3 状态更新（含 P-RT-9 消账确认——project.md 完整性实测）",
+    "UT-BUILD 建议并入 CI（登记给 WP-01 侧——§12 任务行原文）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t12、verify 规范化为数组"
 }

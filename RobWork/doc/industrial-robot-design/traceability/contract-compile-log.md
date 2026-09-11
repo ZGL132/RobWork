@@ -92,6 +92,17 @@
 | RT-T11 | wp06-t11 | True | P-RT-3 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次） | ready |
 | RT-T12 | wp06-t12 | True | P-RT-1 | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；designRefs 补 testkit §10.2 锚点、allowedFiles 补 testdata/**（数据集交付面）、AT 编号迁注 acceptance | ready |
 | RT-T13 | wp06-t13 | False | — | DOC-T06 回填（2026-09-11）：runtime.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T06 契约 acceptance 2（同上批次）；R-4 例外登记对象按 §12 行原文更正为 WP-01-T01 | ready |
+| EV-T02 | wp05-t02 | True | P-EV-1 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（所有者 2026-09-11 B 模式预授权整链放宽，拓扑序 EV-T02→T12 登记） | ready |
+| EV-T03 | wp05-t03 | True | P-EV-1 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；O-14 处置编入 acceptance（RequiredCaseSet 保守字面） | ready |
+| EV-T04 | wp05-t04 | True | CR-02、CR-05 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；designRefs 补 §12、knownPitfalls 自 crRefs 规范化 | ready |
+| EV-T05 | wp05-t05 | True | P-EV-1、O-13 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；O-14 处置编入 acceptance（覆盖证据校验保守字面） | ready |
+| EV-T06 | wp05-t06 | True | P-EV-3、P-EV-7 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；O-14 处置编入 acceptance（覆盖矩阵保守字面） | ready |
+| EV-T07 | wp05-t07 | True | CR-01 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；designRefs 补 §12、knownPitfalls 自 crRefs 规范化 | ready |
+| EV-T08 | wp05-t08 | True | P-EV-4 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；AT-05 自 requirements 迁入 acceptance 注记 | ready |
+| EV-T09 | wp05-t09 | True | P-EV-1 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次） | ready |
+| EV-T10 | wp05-t10 | True | P-EX-7 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次） | ready |
+| EV-T11 | wp05-t11 | True | P-EV-1 | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次）；designRefs 补 testkit §10.2 锚点、allowedFiles 补 testdata/**、O-14 处置编入 acceptance（EV-COV 用例保守字面） | ready |
+| EV-T12 | wp05-t12 | False | — | DOC-T07 回填（2026-09-11）：evidence.md §12 任务行＋§2.2 需求表 | validate-task 三查过；—；放行依据＝DOC-T07 契约 acceptance 2（同上批次） | ready |
 
 ## 修订行（ready 契约的后续修订，CCP §5）
 

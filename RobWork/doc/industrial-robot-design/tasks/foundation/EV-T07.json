@@ -4,12 +4,15 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "结果包络（Envelope）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EV-T06"],
   "requirements": ["EVI-01", "TASK-02"],
-  "designRefs": ["units/evidence.md#7"],
+  "designRefs": ["units/evidence.md#7", "units/evidence.md#12"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,9 +20,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_evidence_test"],
+  "branch": "wp05-t07",
+  "interUnit": true,
+  "knownPitfalls": ["CR-01"],
   "crRefs": ["CR-01"],
   "acceptance": [
     "表 3 全组合矩阵用例通过（EV-ENV-1/2）：非法组合逐一构造拒绝、Preview 构造边界拒绝",
     "CR-01：仅消费 core Evaluation 词表（无本地枚举定义）；_contract_test 断言 token 字面量与 core::toToken 输出一致（foundation-api-diff.md）"
-  ]
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t07、designRefs 补 §12 锚点、knownPitfalls 自 crRefs 规范化登记、allowedFiles 补齐同单元标准面"
 }
