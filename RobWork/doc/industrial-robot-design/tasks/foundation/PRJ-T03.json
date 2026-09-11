@@ -4,21 +4,32 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "写锁与路径（StoreLock/PathCanonical）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T02"],
   "requirements": ["PM-07", "PM-08"],
-  "designRefs": ["units/project.md#9.1", "units/project.md#9.6"],
+  "designRefs": ["units/project.md#12", "units/project.md#9.1", "units/project.md#9.2", "units/project.md#9.3", "units/project.md#9.4", "units/project.md#9.5", "units/project.md#9.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test"
+  ],
+  "branch": "wp04-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-6"],
   "acceptance": [
-    "PRJ-TX-7、PRJ-TX-13（锁部分）：双实例/卡顿/接管/失权防护/只读判定用例通过",
-    "心跳不得作为写权限判据（SA-17）"
-  ]
+    "PRJ-TX-7 锁用例通过：第二实例只读打开＋持锁 PID 提示（PM-07）、心跳卡顿不接管（D-03：心跳仅诊断用途）、崩溃后双实例并发接管仅一胜者（D-02：lock 文件独占句柄内核原子裁决）",
+    "PRJ-TX-13（锁部分）用例通过：只读上下文遍历全部写入口一律拒绝＋稳定诊断（PRJ-LOCK-HELD 含持有 PID——§5.0 码表清单）；失权三道防线（§9.6 写前权威检查——SA-17 承接：心跳不得作为写权限判据）",
+    "PathCanonical 用例通过：路径规范化与同项目多路径打开（§9.3）；锁文件永不删除重建（§9.4 防锁对象分裂——D-03）",
+    "P-PR-6 处置：锁诊断经 §5.0 IDiagnosticsSink 适配器产出 core::DiagnosticRecord（project→diagnostics 允许边的注入实现形态）；PRJ-* 码值已收编 diagnostics.md §4.6（v0.2 码值部分消账），sink 名称/归属统一按 P-PR-6/P-EX-8 裁决前注入式先行、不直链 diagnostics 库"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T03 行＋§2.2 PM-07/PM-08 行＋DTB §2.5 WP-04-T03 行复核回填——designRefs 补 §12 与 §9.1~§9.6 全列（卡行输入原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训：留痕面显式列入）、verify 补 contract_test 目标构建（PRJ-TX-7 锁双实例属 §3.3 跨单元契约测试面）、SA-17（架构决策 ID）自 DTB WP-04-T03 需求列迁注 acceptance 承接（CORE-T07 先例：SA-xx 不入 requirements）；interUnit=true 判定：锁诊断经 §5.0 适配器消费 core::DiagnosticRecord（core 公共契约）；knownPitfalls=P-PR-6（处置编入 acceptance，不私裁）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t03（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

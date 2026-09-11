@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "格式契约与编码（PersistenceFormat/Codec）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T01"],
   "requirements": ["CON-01", "NFR-DEP-04"],
-  "designRefs": ["units/project.md#4.2", "units/project.md#4.4", "units/project.md#4.8"],
+  "designRefs": ["units/project.md#12", "units/project.md#4.2", "units/project.md#4.4", "units/project.md#4.8"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "CR-02"],
   "acceptance": [
-    "parse(dump(x))==x 全类型 round-trip 用例通过",
-    "非法输入拒绝用例通过；externalRefs 记录结构单测（PM-01 数据侧）"
-  ]
+    "PersistenceFormat.hpp 磁盘格式类型（HeadRecord/RevisionManifest/ProjectMetadataRecord/CommandRecord/DraftDocument——§4.4 字段级契约）parse(dump(x))==x 全类型 round-trip 用例通过（§4.8 自有格式规则：ASCII、固定字段序、无浮点——全字符串身份与整数）",
+    "非法输入拒绝用例通过（截断/越界/未知 schemaVersion——主版本破坏性拒绝＋升级指引数据，NFR-DEP-04 数据侧；升级器本体归阶段 B §8.11）；次版本追加可选字段兼容语义用例过",
+    "externalRefs 记录结构单测通过（PM-01 存储侧数据契约：路径＋内容哈希——NFR-REL-04 检测数据源，§4.4.5；SourcedValue 来源标记透传不解释）",
+    "P-PR-1 处置：ObjectId/ContentVersion/SourcedValue 等 core 消费契约（§3.2 清单）以 core.md v0.1 为基线，core 冻结 diff 后按影响面增量同步并留痕、不私改 core；CR-02 处置：对象负载摘要＝对收到的字节经 core ContentDigester 计算（D-10：project 不解释域负载），自有格式编码器不私设第二哈希路径"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T04 行＋§2.2 CON-01/NFR-DEP-04 行＋DTB §2.5 WP-04-T04 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋卡行产物」拆分四条可验证条目并补 PM-06 拒绝数据侧与 §4.8 稳定性语义；interUnit=true 判定：消费 core 身份/ContentVersion/ContentDigester/SourcedValue（§3.2 消费清单）；knownPitfalls=P-PR-1、CR-02（处置编入 acceptance：core v0.1 基线不私改、摘要只经 core ContentDigester）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t04（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

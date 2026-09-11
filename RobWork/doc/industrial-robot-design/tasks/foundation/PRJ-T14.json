@@ -4,20 +4,32 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "归档端口（ArchiveServiceImpl：begin/batch/finalize/abandon）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T08"],
   "requirements": ["TASK-03", "PM-13", "CON-04"],
-  "designRefs": ["units/project.md#5.6", "units/project.md#10.1"],
+  "designRefs": ["units/project.md#12", "units/project.md#5.6", "units/project.md#10.1"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test"
+  ],
+  "branch": "wp04-t14",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "P-PR-4"],
   "acceptance": [
-    "PRJ-TX-8（进程内模拟）、F9：manifest 发布/幂等/冲突/上下文存活时序用例通过"
-  ]
+    "PRJ-TX-8（进程内模拟）用例通过：requestClose 后迟到完成事件到达——上下文存活至归档 finalize、完成后才 Closed；跨项目事件不写入（项目 B results 目录不含外来 run——TASK-03/PM-13 迟到结果归属：归档绑定原修订 results/<run-id>/，不因 HEAD 前进拒绝——ARCH §4.5 A1/A8 承接）",
+    "F9 用例过：manifest 原子发布＝完整判据（D-13——无 manifest 即不完整，CON-04 部分/失败不作缓存命中的存储侧承接）；同 attempt 重投递幂等（D-14：manifest 摘要比对）、内容不一致＝冲突拒绝（PRJ-ARCHIVE-CONFLICT）；begin/abandon 全路径终结（无永久等待——§10.1 两段式）",
+    "端口与引用语义用例过：ArchiveSessionRef 生命周期（闭包双通道归 project——归档期间的引用持有与失权防护 §9.6 联动）；RunManifest 字段与 §4.4.7 契约一致（results 写入口唯一归 project——O-12）",
+    "P-PR-4 处置：归档端口调用线程按 §5.6/§9.8 单侧冻结（与 writer 互斥），RunRegistry 对接细节待 execution 详设（WP-08-T01 P-PR-4 冻结点）定稿后二次对齐、不私改对端契约；P-PR-1 处置：ResultArchived 事件经 core IDomainEventBus（§3.2 消费清单），以 core.md v0.1 为基线，冻结 diff 后增量同步"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T14 行＋§2.2 TASK-03/PM-13（CON-04）行＋DTB §2.5 WP-04-T14 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、verify 补 contract_test 目标构建（PRJ-TX-8 归档协作属 §3.3 跨单元契约测试面）、acceptance 按「完成条件＋D-13/D-14」拆分四条；interUnit=true 判定：产出 IResultArchivePort 供 execution 消费（§13.2 交接清单——本单元为 DOC-T10 契约注记的跨单元依赖提供方）＋消费 core 事件契约；knownPitfalls=P-PR-1、P-PR-4（处置编入 acceptance，不私裁）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t14（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

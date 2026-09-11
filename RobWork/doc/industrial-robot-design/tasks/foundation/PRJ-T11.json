@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "确认放行流（交互回调编排与留痕）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T10"],
   "requirements": ["MDL-06", "ERR-01", "UX-03"],
-  "designRefs": ["units/project.md#5.3.3", "units/project.md#5.3.4", "units/project.md#6.7"],
+  "designRefs": ["units/project.md#12", "units/project.md#5.3.3", "units/project.md#5.3.4", "units/project.md#6.7"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t11",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-6", "P-PR-7"],
   "acceptance": [
-    "PRJ-TX-2：四路拒绝/绑定失效用例通过；确认留痕入 command.json",
-    "project 不依赖 Widgets（回调纯接口，SA-15）"
-  ]
+    "PRJ-TX-2 断言与确认四路用例通过：硬断言失败／无 interaction 待确认集／interaction 拒绝／确认凭据绑定失效（findingDigest/policyContentId/commandDigest/baseRevisionId 任一不符）——四路均无修订、command.json 无新记录；诊断字段完整（MDL-06④ 可确认诊断放行——SA-15 承接：§6.7 放行流编排与确认留痕，O-5）",
+    "确认绑定与取消路径用例过：确认等待占用命令执行槽、零事务资源、可被关闭取消（D-07，§5.3.4 资源占用约束——无永久等待）；interaction 生命周期（挂起/恢复/丢失——InteractionLost 稳定码）",
+    "确认留痕入 command.json 用例过（confirmations 结构——core.md §13.2 接口交接项：确认留痕编码由 project 交接 core 冻结）；UX-03 承接：确认对话所需数据齐备由回调纯接口提供、文案不在 project 生成（NFR-REL-05 口径——码表经 diagnostics 注册后由其供文案，ERR-01 承接）",
+    "project 不依赖 Widgets：ICommandInteraction 纯接口（§5.3.3）；P-PR-7 处置：ICommandInteraction（ui Marshal/取消）以本文单侧冻结为起点，ui 详设交叉核对前不私改签名；P-PR-6 处置：确认流诊断码值已收编 diagnostics.md §4.6，经 §5.0 IDiagnosticsSink 适配器注入、sink 形态裁决前不直链 diagnostics 库"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T11 行＋§2.1 O-5 行＋DTB §2.5 WP-04-T11 行复核回填——requirements 维持 MDL-06/ERR-01/UX-03（DTB 需求列「MDL-06④（M-10）、ERR-01、UX-03、SA-15」口径）、designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§5.3.4/§6.7」拆分四条；SA-15（架构决策 ID）迁注 acceptance 承接不入 requirements（CORE-T07 先例）；interUnit=true 判定：消费 core ConfirmableFinding/ConfirmationCredential（§3.2 消费清单）＋ICommandInteraction 为 ui 消费的回调接口（本单元为 DOC-T10 契约注记的跨单元依赖提供方）；knownPitfalls=P-PR-6、P-PR-7（处置编入 acceptance，不私裁）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t11（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

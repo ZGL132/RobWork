@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "事务引擎（TxEngine：七步状态机/.staging/恢复扫描）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T02", "PRJ-T05", "PRJ-T06"],
   "requirements": ["NFR-REL-01", "PM-08"],
-  "designRefs": ["units/project.md#7"],
+  "designRefs": ["units/project.md#12", "units/project.md#7"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1"],
   "acceptance": [
-    "PRJ-TX-4（F1～F8 进程内部分）边界注入矩阵过",
-    "崩溃后已提交修订与 HEAD 字节不变（AT-13）"
-  ]
+    "PRJ-TX-4（F1～F8 进程内部分）边界注入矩阵逐项通过：七步协议（§7.1，NFR-REL-01/ARCH §6.4 SA-09 逐步化）任一步失败→已发布内容字节不变、未提交 .staging 忽略＋恢复诊断（RecoveryReport.ignoredStagingTxs）；提交边界故障注入全覆盖（§7.6 矩阵）",
+    "崩溃/kill 后已提交修订与 HEAD 字节不变用例通过（AT-13 载体——自动化验收经 PRJ-T15 进程级场景复验，testkit §10.1 节奏）；提交点＝HEAD 原子切换（顺序即原子性，D-09 前置）",
+    "「已发布但未提交」识别用例过（§7.3 闭包规则：闭包外内容对查询不可见）；.staging/tmp 临时物清理断言（D-09：临时产物限 .staging/tmp）",
+    "P-PR-1 处置：修订清单摘要经 core ContentDigester（§3.2 消费清单），以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T07 行＋§2.2 NFR-REL-01/PM-08 行＋DTB §2.5 WP-04-T07 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§7.3/§7.6」拆分四条（补闭包识别与临时物清理断言）；AT-13 保留于 acceptance 并注记进程级复验联动（DTB 需求列 AT 编号迁注 acceptance 口径）；interUnit=true 判定：清单摘要消费 core ContentDigester（§3.2 消费清单）；knownPitfalls=P-PR-1（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t07（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

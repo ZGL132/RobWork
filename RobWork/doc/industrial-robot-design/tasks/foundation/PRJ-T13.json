@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "撤销/重做（UndoRedoServiceImpl：新修订不改写历史）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T10"],
   "requirements": ["PM-18"],
-  "designRefs": ["units/project.md#5.5", "units/project.md#6.9"],
+  "designRefs": ["units/project.md#12", "units/project.md#5.5", "units/project.md#6.9"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,7 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t13",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1"],
   "acceptance": [
-    "PRJ-TX-5（undo/redo 部分）：新修订/空历史/跨分支用例通过（历史不改写）"
-  ]
+    "PRJ-TX-5（undo/redo 部分）用例通过：撤销/重做＝逆命令提交产生新修订、历史不改写（PM-18/PA-2 承接；AT-29 验收锚点——「应用→撤销→重做产生新修订且历史不改写」，自 DTB WP-04-T13 需求列迁注）；修订只增断言（revisionSeq 递增、既有修订清单不变）",
+    "边界语义用例过：空历史稳定提示数据（不抛错）；跨分支提交后再回（栈＝会话内按分支、不持久化——D-11；重启后 canUndo 由 tip 推导）；逆命令记录由业务处理器产出、project 只提交（§6.5 注册协议——不代行业务逆命令）",
+    "与草稿局部撤销的边界用例过（§2.3 非目标：需求集撤销等编辑级 undo 归 ui＋各业务域——PM-18 与 REQ-11 分界）",
+    "P-PR-1 处置：RevisionId/InverseRecord 涉及的身份类型消费以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T13 行＋§2.2 PM-18 行＋DTB §2.5 WP-04-T13 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§6.9 详表」拆分四条；AT-29 自 DTB 需求列迁注 acceptance 并注记原文（AT 编号迁注口径）；interUnit=true 判定：消费 core 身份类型（§3.2 消费清单）；knownPitfalls=P-PR-1（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t13（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }
