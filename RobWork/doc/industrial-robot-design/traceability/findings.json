@@ -331,6 +331,36 @@
       "title": "DOC-T13 契约 acceptance ②『十三份全部置 ready』与 ③『O-31 处置条款（硬约束）……不得置 ready』字面冲突，② 内未注明『受 ③ 限定』（从属提示仅存在于契约 note 的『O-31 为硬阻塞，浮出即停等所有者』一句）。本批实施按 PIPE v1.11 ④『预授权不掩盖真失败』以 ③ 压倒 ② 处置（验收判定合规：实际放行 UI-T02 一份、十二份 kept planned＋blocked），但后读会话若按 ② 字面机械执行（含模板化自动化）存在把十二份误置 ready 的隐患",
       "owner": "所有者（DOC-T13 契约文本修订权在文档链所有者；实施/验收不得私改送验对象）",
       "resolution": "所有者裁决 O-31 后收尾时在 DOC-T13.json acceptance ② 补注从属限定（如『受 ③ 限定』）或按裁决结果直接改写；短期可先在 note 将『O-31 为硬阻塞，浮出即停等所有者』升级为对 ② 的显式限定句。后续批次契约若同现『整链置 ready』与 O 项硬约束条款并存的结构，按本判例在预授权条目内内联标注限定。"
+    },
+    {
+      "id": "F-034",
+      "source": "traceability/acceptance/RT-T02-20260912.md#4.9（attempt 1，送验对象 f0a4c0ee，提交 77902413/804224b2/f0a4c0ee）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "F-012/F-023/F-024/F-026/F-027 同型再现：RT-T02 三份送验提交标题均以名词短语开头（『runtime 错误契约落地…』『runtime 注入契约落地…』『RT-T02 验证留痕…』），非动词开头——模板补救（实施者模板补动词开头示例）仍未落地期间口径持续漂移；三提交正文四段齐备、验证结论与留痕一致（验收者全新树亲手复现：双模式 21/21、validate-task PASS、探针双红复绿），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 系合并处置（实施者模板补提交标题动词开头示例）；对已推送历史（77902413/804224b2/f0a4c0ee 及本系所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-033（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-035",
+      "source": "traceability/acceptance/RT-T02-20260912.md#4.4/4.9（attempt 1，送验对象 f0a4c0ee，提交 77902413/804224b2/f0a4c0ee 自查行）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "RT-T02 三份提交自查行『ird_gates 未执行——门禁未建成（如实标注）』理由失实：门禁已随 WP-01-T01 建成，验收者在全新集成树实测 ird_gates 目标可运行（exit 1＝F-019 两处既有命中 testdata_lint→testkit 边，runtime 面零命中；自测 9 项行为全部符合预期）——F-028『门禁未建成』过时措辞同型再现，且首现于实现类任务：实现类任务按 AGENTS §6.3 本应实际执行门禁并登记真实结论，而非标注未执行；方向为少报、无粉饰",
+      "owner": "实施纪律＋门禁所有者（DTB §5.1；与 F-028 同辖域合并处置）",
+      "resolution": "实现类任务一律实际执行 `cmake --build build --config Release --target ird_gates` 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；AGENTS §6.3『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』过时注记随下次 AGENTS 修订删除（与 F-028 处置合并执行）。编号顺延自 F-034，合入时由所有者确认。"
+    },
+    {
+      "id": "F-036",
+      "source": "traceability/acceptance/RT-T02-20260912.md#4.9（attempt 1，送验对象 f0a4c0ee，提交 f0a4c0ee 验证段＋integration-fullbuild.log）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "RT-T02 提交 f0a4c0ee『全树 Release 构建 exit 0 零错误——DoD 第 1 条最强口径』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内 RWSimulatorPlugin 等目标为既有产物重链接——F-008 登记的『主树为存量增量产物掩盖』效应），构建本身真实（exit 0、日志完整、验收者抽查零 error），但『最强口径』应为全新树从零构建（全树从零受 F-008 基线缺陷阻挡暂不可达）；验收者已在全新 worktree 完成 sdurws_ird_runtime＋全 ird 测试目标面的从零复现补强（两模式零错误＋189 用例零失败）",
+      "owner": "实施纪律（与 F-025 提交信息准确性面同辖域；提交已推送不追溯改写）",
+      "resolution": "提交信息中证据强度表述以实际构建树性质为准（增量树/全新树显式区分，禁止把增量树全量构建表述为『最强口径』）；F-008 闭合前 DoD 第 1 条的表述统一采用『任务目标面全新树从零零错误』口径。编号顺延自 F-035，合入时由所有者确认。"
     }
   ]
 }
