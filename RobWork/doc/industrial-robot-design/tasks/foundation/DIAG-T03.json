@@ -4,21 +4,49 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "错误类型与稳定码注册表（Errors/DiagCodes/StableCodeRegistry）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T02"],
-  "requirements": ["ERR-01", "NFR-MNT-03"],
-  "designRefs": ["units/diagnostics.md#4.5", "units/diagnostics.md#4.6", "units/diagnostics.md#9"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T02"
+  ],
+  "requirements": [
+    "ERR-01",
+    "NFR-MNT-03"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#4.5",
+    "units/diagnostics.md#4.5.1",
+    "units/diagnostics.md#4.6",
+    "units/diagnostics.md#9"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t03",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1",
+    "P-DIAG-3",
+    "P-DIAG-9"
+  ],
   "acceptance": [
-    "DT-REG-1~5：码表清单与 §4.6 一致；重复/未知/废弃用例过",
-    "各卡建议码（PRJ/RT/POLICY/EVI/EX）全量收编登记，码值不重排"
-  ]
+    "DT-REG-1~5 用例通过：码表清单与 §4.6 逐项一致（PRJ 10/RT 14/POLICY 23/EVI 7/EX 18/RPT 8/DIAG 7 全量收编，码值不重排各卡已登记建议）；manifest() 摘要两次计算稳定",
+    "重复注册拒绝（不覆盖不静默）、未知码构造拒绝、paramSchema 缺参/版本冲突/废弃 tombstone 解析用例过（NFR-MNT-03：重复定义注册边界拒绝；废弃码只读映射不改写历史——PA-2）",
+    "P-DIAG-3 处置：DiagnosticCategory（15 值）/DiagnosticSeverity（4 值）为实现承载词表随码元数据登记（§4.4 逐行上游锚点），不新增工程状态轴值；需求侧如冻结正式枚举走需求变更，不私裁",
+    "P-DIAG-1/P-DIAG-9 处置：DiagCode 等消费契约以 core.md v0.1 为基线，core 冻结 diff 后增量同步、不私改 core；titleKey/detailKey 文案键随码表登记且注册期唯一性校验，文案值归 ui/文案资源（键/值分离——UX-02）"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——designRefs 细化 §4.5/§4.5.1/§4.6（卡行输入原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（陷阱随契约走：P-DIAG-1/P-DIAG-3/P-DIAG-9）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t03（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

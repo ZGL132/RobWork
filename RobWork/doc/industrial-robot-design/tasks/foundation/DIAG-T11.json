@@ -4,22 +4,47 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "文档与门禁同步",
-  "status": "planned",
-  "dependsOn": ["DIAG-T01", "DIAG-T02", "DIAG-T03", "DIAG-T04", "DIAG-T05", "DIAG-T06", "DIAG-T07", "DIAG-T08", "DIAG-T09", "DIAG-T10"],
-  "requirements": ["NFR-MNT-05"],
-  "designRefs": ["units/diagnostics.md#14"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T01",
+    "DIAG-T02",
+    "DIAG-T03",
+    "DIAG-T04",
+    "DIAG-T05",
+    "DIAG-T06",
+    "DIAG-T07",
+    "DIAG-T08",
+    "DIAG-T09",
+    "DIAG-T10"
+  ],
+  "requirements": [
+    "NFR-MNT-05"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#11",
+    "units/diagnostics.md#14"
+  ],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["traceability-update"],
-  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "outputs": [
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp09-t11",
+  "interUnit": false,
   "acceptance": [
-    "本文与实现零偏差登记；README 指向核对",
-    "§14.3 状态更新；P-PR-6/P-EX-8 消账确认提交（project/execution 详设修订联动）"
-  ]
+    "本文与实现零偏差登记（§14.4 变更记录逐条；偏差按 DTB §5.4 登记不静默）",
+    "README 指向核对零偏差（diagnostics 公共头 README 指向 §11 任务拆分）",
+    "§14.3 状态更新（P-DIAG-1~9 逐条最新状态）；P-PR-6/P-EX-8 消账确认提交（project/execution 详设修订联动，不私改对端契约）"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §11 任务行复核回填——designRefs 补 §11（README 指向核对锚点）、allowedFiles 补 traceability/**（CORE-T01 教训）、acceptance 拆分为逐条可验证三项；纯文档/门禁同步无跨单元接口产出（interUnit=false），入队按拓扑序在其十项前置完成后执行；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t11（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

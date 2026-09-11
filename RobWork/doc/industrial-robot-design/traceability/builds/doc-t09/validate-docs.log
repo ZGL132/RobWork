@@ -1,0 +1,2 @@
+$ pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+validate-docs: PASS (20 units, 12 trace entries, 150 task files)

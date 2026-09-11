@@ -4,22 +4,47 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "构建落位：diagnostics 占位转真实库",
-  "status": "planned",
-  "dependsOn": ["CORE-T01"],
-  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
-  "designRefs": ["units/diagnostics.md#3.3", "units/diagnostics.md#11"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T01",
+    "CORE-T01"
+  ],
+  "requirements": [
+    "NFR-MNT-01",
+    "NFR-MNT-02"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#3.3",
+    "units/diagnostics.md#10",
+    "units/diagnostics.md#11"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t02",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-8"
+  ],
   "acceptance": [
-    "双模式构建零错误（DT-BUILD）",
-    "红线扫描零命中；零 Qt（仅 diagnostics→core 一条单元边）"
-  ]
+    "双模式构建零错误：sdurws_ird_diagnostics 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core、零 Qt 含 Core——D-01），DT-BUILD 通过",
+    "红线扫描零命中：仅 diagnostics→core 一条单元边（ARCH §3.5 既有边）、零 Eigen/rw::math 直接包含、无私有头出 include（DT-BUILD）",
+    "sdurws_ird_diagnostics_test / sdurws_ird_diagnostics_contract_test 目标按 dtb §5.5 注册（vcpkg gtest，find_package(GTest CONFIG REQUIRED)）；P-DIAG-8 处置：契约测试以桩＋契约夹具验证，不私改 execution 侧链接（P-EX-8 联动，双库集成冒烟另行登记）"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——dependsOn 补 DIAG-T01（卡行依赖原文：DIAG-T01、CORE-T01）、designRefs 补 §10（DT-BUILD 依据行）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训：留痕面显式列入）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t02（≙ 映射）、interUnit=true（构建层建立 diagnostics→core 边）；编译留痕见 traceability/contract-compile-log.md"
 }

@@ -4,21 +4,46 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "诊断生命周期与容量（目录清理策略/宿主留痕形状）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T04", "DIAG-T07"],
-  "requirements": ["TASK-02", "CON-02"],
-  "designRefs": ["units/diagnostics.md#6.1", "units/diagnostics.md#6.2"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T04",
+    "DIAG-T07"
+  ],
+  "requirements": [
+    "TASK-02",
+    "CON-02",
+    "NFR-REL-03"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#6.1",
+    "units/diagnostics.md#6.2"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t09",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-7"
+  ],
   "acceptance": [
-    "DT-LIFE-1~3/5：保留/清理/不可改写用例过",
-    "宿主留痕形状（envelope/CommandRecord 对接数据）冻结"
-  ]
+    "DT-LIFE-1~3/5 用例通过：目录容量与分级淘汰（Info 最旧淘汰，Warning/Error/活动任务关联保留＋DIAG-CATALOG-OVERFLOW）、失败/取消后诊断保留（终结原因必附——NFR-REL-03）、归档失败报告（EX-ARCHIVE-FAILED 用户可见，关闭不等待）、持久化诊断不因当前性改写（字节不变——CON-02/DT-LIFE-5）",
+    "宿主留痕形状（envelope/CommandRecord 对接数据）冻结：诊断随宿主持久化的编码归宿主所有者（envelope canonical 归 evidence、CommandRecord 归 project），本任务只交付对接数据形状，不私改宿主编码（§4.2/§6.2）",
+    "P-DIAG-7 处置：目录容量默认 10,000 条为可配工程默认（P-DIAG-7 登记），WP-23 校准，不作为需求语义"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——requirements 补 NFR-REL-03（DT-LIFE-2 失败/取消后诊断保留的需求依据）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-7 含目录容量默认）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t09（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

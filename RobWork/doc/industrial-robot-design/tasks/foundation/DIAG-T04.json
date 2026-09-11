@@ -4,21 +4,51 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "诊断目录与工厂（Catalog/Factory/ErrorCodeTranslator）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T03"],
-  "requirements": ["ERR-01", "UX-03", "PM-08", "PM-15"],
-  "designRefs": ["units/diagnostics.md#4.2", "units/diagnostics.md#9.2", "units/diagnostics.md#9.7"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T03"
+  ],
+  "requirements": [
+    "ERR-01",
+    "UX-03",
+    "PM-08",
+    "PM-15",
+    "TASK-02"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#4.2",
+    "units/diagnostics.md#9.2",
+    "units/diagnostics.md#9.7"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1",
+    "P-DIAG-5",
+    "CR-08"
+  ],
   "acceptance": [
-    "DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2：字段完整性/边界/去重用例过",
-    "错误码翻译骨架与 PRJ/RT/POLICY/EVI/EX 映射就位"
-  ]
+    "DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2 用例通过：字段完整性（比较型三要素/不适用显式标记）、subject 边界（用户级码缺 subject 拒绝）、去重（不同作用对象绝不合并——DT-DUP-2）、分类区分（取消=Info 且正常取消非错误——UX-03/TASK-02）",
+    "ErrorCodeTranslator 骨架与 PRJ/RT/POLICY/EVI/EX 映射就位；CR-08 处置：跨单元错误只经已登记类型映射转译为稳定码＋DiagnosticRecord，禁字符串匹配、不跨边界抛对方异常类型（§8.1）",
+    "P-DIAG-5 处置：IDiagnosticSink（§9.7）为统一 sink 标准接口，本任务保证 report/reportDev 形态兼容；与 project IDiagnosticsSink/execution IExecutionDiagnosticsSink 的最终统一待其详设修订（P-PR-6/P-EX-8），不私改对端契约",
+    "P-DIAG-1 处置：DiagnosticEntry 信封内嵌 core::DiagnosticRecord——以 core.md v0.1 为基线，core 冻结 diff 后增量同步"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——requirements 补 TASK-02（DT-CAT-1/2 分类区分取消/失败/中断/超时的需求依据，§2.2 TASK-02 行）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-1/P-DIAG-5/CR-08）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t04（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

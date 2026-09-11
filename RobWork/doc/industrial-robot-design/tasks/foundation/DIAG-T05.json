@@ -4,21 +4,49 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "ConfirmableFinding 服务（FindingId/Binding/状态机）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T04"],
-  "requirements": ["MDL-06", "ERR-01", "CON-06"],
-  "designRefs": ["units/diagnostics.md#5", "units/diagnostics.md#9.3"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T04"
+  ],
+  "requirements": [
+    "MDL-06",
+    "ERR-01",
+    "CON-06"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#5",
+    "units/diagnostics.md#9.3"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t05",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1",
+    "P-DIAG-4",
+    "P-DIAG-6",
+    "CR-02"
+  ],
   "acceptance": [
-    "DT-CFM-1~10：状态机全转移/绑定复核/失效路径用例过（含 project 桩联动）",
-    "确认流分工与 worker 禁令符合 SA-15（DT-CFM-6~8）"
-  ]
+    "DT-CFM-1~10 用例通过（含 project 桩联动）：服务端状态机全转移（Pending→Confirmed/Invalidated/Expired，core 投影三态）、绑定四元组双复核（确认提交时＋编译前——project §6.7）、失效路径（revision-changed/policy-changed/write-lost/interaction-lost/user-rejected）、确认留痕形状与 project §6.7 一致（DT-CFM-10）",
+    "SA-15 分工（DT-CFM-6~8）：worker 不产生可确认诊断（装配面静态断言）；UI 关闭回调失效即 Invalidated、无永久等待；确认≠自动成功（DT-CFM-9 编译失败仍不提交）；未确认不能提交命令（DT-CFM-7——project 桩 confirmations-unresolved）",
+    "P-DIAG-4 处置：FindingId 规范文本 fnd-<32hex> 由本单元自持解析，句法与 core Id128 严格一致；core 收编 fnd- tag 前不私改 core（P-DIAG-4 登记待裁决）",
+    "P-DIAG-6/CR-02 处置：expiresAtUtc 默认 nullopt（无超时自动确认——project §5.3.4；启用超时＝需求变更，不私裁）；findingDigest/commandDigest 摘要只经 core ContentDigester，不私设第二哈希路径"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-1/P-DIAG-4/P-DIAG-6/CR-02，陷阱随契约走）；SA-15 系架构决策 ID 不入 requirements（CORE-T07 先例），其语义由 acceptance 承载；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t05（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }
