@@ -47,7 +47,8 @@ add_library(sdurws_ird_testkit STATIC
     src/TestPaths.cpp
     src/JsonLite.cpp
     src/Fault.cpp
-    src/Dataset.cpp)
+    src/Dataset.cpp
+    src/ToleranceProfile.cpp)
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -99,7 +100,11 @@ add_executable(sdurws_ird_testkit_test
     test/JsonLiteTest.cpp
     test/FaultTest.cpp
     test/DatasetTest.cpp
+    test/ToleranceProfileTest.cpp
     test/BuildRedLineTest.cpp)
+# testdata 根注入（TK-TOL 示例档案定位——testdata 与 testkit 平铺）。
+target_compile_definitions(sdurws_ird_testkit_test PRIVATE
+    IRD_TESTDATA_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/../testdata")
 target_compile_features(sdurws_ird_testkit_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_testkit_test PROPERTIES
     CXX_STANDARD 17
