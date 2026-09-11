@@ -211,6 +211,16 @@
       "title": "定时自动化提示词版本漂移：自动化固化 PIPE v1.8 时代的 T-ORCH v6 模板副本（含已废止的\"禁用子智能体\"附加纪律），PIPE v1.9（子代理派发恢复）/v1.10（queue-head 逐字引用）/v1.11（autoDiscovery 扫描）修订均未传导至已配置自动化——后果：RT/EV 两链 23 份 ready 契约两个 tick 未入队（编排侧兜底提交 65bdf28）、定时 tick 验收独立性降级持续、tick#40 报告失实无逐字引用约束",
       "owner": "编排纪律（PIPE 附录 A／定时自动化配置，会话流程所有者）",
       "resolution": "所有者裁决方案 A（2026-09-11）：定时自动化（automation-6aa165fe）提示词整体替换为 PIPE v1.11 附录 A T-ORCH v9 模板逐字文本（保留路径上下文与现行附加纪律：流程全自动化保留、子代理派发按 v1.9 恢复、环境无法派发时报告 blocked 不得静默降级）；流程教训＝PIPE 附录 A 模板每次修订时，须在同一 PIPE 提交内声明\"已配置定时自动化提示词已同步/无需同步\"，防止再次漂移。"
+    },
+    {
+      "id": "F-022",
+      "source": "traceability/acceptance/DOC-T08-20260911.md#4.8-G-1（attempt 1，送验对象 1343a91e）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "POL-T12 dependsOn 缺 POL-T01：units/policy.md §12 与 DTB §2.8 WP-07-T12 行均登记依赖 T01~T11，契约仅列 POL-T02~T11——源头为 DOC-T03 编译（base 19eb9fd 已存在，DOC-T08 diff 未触碰该字段）；T12→T02→T01 传递覆盖故无调度影响，validate-task 三查无法捕获（依赖引用存在性检查不比对卡内依赖列）",
+      "owner": "policy 详设所有者＋契约编译治理（CCP §3）",
+      "resolution": "处置建议＝随 POL-T12 实施领取前补 dependsOn POL-T01（一行改动，validate-task 三查复跑）或按 DTB §5.4 登记裁剪依据；流程建议＝整链放行类验收的逐字段核对把 dependsOn 与卡内任务行依赖列的逐项比对固化为检查步骤（本次验收靠人工读取 §12 发现）。"
     }
   ]
 }
