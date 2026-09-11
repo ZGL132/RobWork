@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.4（RT-T03 实现落位登记；v0.3＝全链一致性审计消账；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
-| 日期 | 2026-09-10 |
+| 文档版本 | v0.5（RT-T04 实现落位登记；v0.4＝RT-T03 实现落位登记；v0.3＝全链一致性审计消账；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
+| 日期 | 2026-09-12 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-RUNTIME |
 | 单元 | runtime（平台内核，L2 计算内核层；ARCHITECTURE §2.3/§3.1：CanonicalModel、确定性编译器（含基座—世界变换）、RuntimeNameMap、RobWork 运行时适配） |
@@ -1508,6 +1508,7 @@ public:
 | v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-05/CR-07）：§10.3 对 evidence 的供给落点表述更正（modelIdentity/robworkBaselineVersion 入切片 Environment 条目 `runtime.model-identity`/`runtime.robwork-baseline` 并进入 inputBaselineId；复现块仅 compilerContractVersion——原文"§4.1.2 预留字段"不实）；§3.4/RT-T01 行 gtest 引用改指 development-task-breakdown §5.5 定稿。差异记录见 traceability/foundation-api-diff.md |
 | v0.3 | 2026-09-10 | 全链一致性审计消账：①§10.11 稳定码由"建议值"更新为"已收编 14 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（UnknownObject/ContextReleased＝fail-fast token 不发码；RT-CAPABILITY-MISSING/RT-ROBWORK-ERROR＝诊断事件码无枚举对应）；②卡头版本 v0.1→v0.3 更正（原卡头停留 v0.1 而变更记录已达 v0.2，与 policy/reporting 卡的 v0.2 引用不符） |
 | v0.4 | 2026-09-12 | RT-T03 实现落位登记（DTB §5.4，两处分阶段偏差＋一处机制说明）：①InstallationPresetToken 枚举由 §3.1 原列 BaseWorldTransform.hpp（RT-T06）调整随 §4.2 Description.hpp 落位（BasePlacementDescription.preset 字段类型依赖、RT-T03 先于 RT-T06）——RT-T06 的预设→矩阵纯函数经 include 复用，单一权威不重复定义（§3.1 两行已同步）；②Resource.hpp 的值类型 ResourceState/ResourceRef 随 RT-T03 先行落位（RobotDesignDescription.resourceRefs 字段依赖；§12 无单列任务行，首个消费者原则）——ResourceBytes/ResourceReadError/IRuntimeResourceProvider 随资源消费任务落位（§3.1 行已同步）；③耦合矩阵校验（RT-CPL-1）的奇异值计算采用单侧 Jacobi（Hestenes）SVD——小奇异值相对精度不受条件数放大（两侧法经 CᵀC 会平方化动态范围、奇异/病态无法分档），属实现层选型、契约阈值（1×10⁸／1×10⁻¹²）与语义不变；④构建机制：冒烟模式自 RT-T03 起引入 rw 模板头 header-only include（Description 字段类型＝rw::math，两模式单一类型形态；仍零框架链接）。实现证据见 traceability/builds/wp06-t03/ |
+| v0.5 | 2026-09-12 | RT-T04 实现落位登记（DTB §5.4，CanonicalModel.hpp/.cpp＋Codec.hpp/.cpp 随 §12 RT-T04 交付，含一处分阶段说明＋三处实现层选型登记）：①§4.6 三类只读索引中的对象索引与资源索引随本任务落地（builder 构建，O(log n)）；**层级索引**（规范侧 Frame 树路径）依赖 §7.2 名称生成与 §6 层级命名的消费语义，随其消费任务 RT-T05/RT-T07 落位——§3.1/§12 无独立任务行，首个消费者原则；②S5 构造不变量的诊断拒绝面＝§10.11 冻结的十段链硬失败码（经 Errors.hpp registryCode 单一来源取 token：INPUT-INVALID/STRUCTURE-INVALID/UNIT-MISMATCH/RESOURCE-\*/WC-DWC-COMPILE-FAILED/NAME-CONFLICT/BASE-WORLD-INCONSISTENT 十码）——出现即违 MDL-06 原子性（编译失败却试图发布）；Cancelled／RT-CAPABILITY-MISSING／RT-ROBWORK-ERROR／未来警告类码不在拒绝集（码值权威归 diagnostics，不私裁收窄）；③惯量正定复核（S5 防御层）采用 Sylvester 顺序主子式（对称矩阵正定 ⟺ 各阶主子式＞0）——与 S3 的对称 Jacobi 最小特征值＞0 数学等价（物理惯量远离奇异边界，两判据合法域内结论一致），O(1) 确定性无迭代，属实现层选型；④parse（RT-Codec 解码）在 §4.5 往返语义之上叠加三重防御：builder 全量不变量复核＋重算身份与携带值比对＋能力块与派生比对（防篡改/半传输——§9.5 worker 身份核对 D-13 的模型层前置）；⑤RuntimeCapability.hasDynamicWorkCell 的模型层派生口径＝"全部连杆物性 Provided"（DWC Body 集合＝链连杆，工具以工具系/RigidDevice 层消费）——S7 实际构造门控的最终落位在 RT-T08，如有出入按 DTB §5.4 增量对齐；⑥Errors.hpp 的 Expected 工厂实现由"默认构造＋emplace"改为标签构造直接初始化 variant（原实现要求 T 默认可构造，与其 §3.4 注释"工厂支持 move-only 的 T"承诺不符——CanonicalModel 私有默认构造无法入轨；公共签名与两态语义不变，RT-T02 既有用例回归通过，属契约注释既明承诺的实现补齐）。实现证据见 traceability/builds/wp06-t04/（含失败能力探针：身份域排除断言注入即红、精确还原复绿） |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 
