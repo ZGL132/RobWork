@@ -49,7 +49,8 @@ add_library(sdurws_ird_testkit STATIC
     src/Fault.cpp
     src/Dataset.cpp
     src/ToleranceProfile.cpp
-    src/Check.cpp)
+    src/Check.cpp
+    src/ContractCheck.cpp)
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -103,6 +104,7 @@ add_executable(sdurws_ird_testkit_test
     test/DatasetTest.cpp
     test/ToleranceProfileTest.cpp
     test/CheckTest.cpp
+    test/ContractCheckTest.cpp
     test/SetCheckTest.cpp
     test/BuildRedLineTest.cpp)
 # testdata 根注入（TK-TOL 示例档案定位——testdata 与 testkit 平铺）。

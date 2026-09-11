@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T07",
+  "masterWp": "WP-02-T07",
+  "branch": "wp02-t07",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 ContractCheck.hpp/.cpp：checkDiagnosticRecord/checkComparativeFields/checkTaskIdentity/checkStableIdsUnique/checkFileIntegrity＋checkEnvelopeCombination 谓词模板——非模板实现入 .cpp，模板入头文件；Check/SetCheck/ToleranceProfile 零改动"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/ContractCheckTest.cpp（UT_CTR 七用例）；既有 51 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ContractDiagRecord/ContractComparative（UT_CTR 诊断记录族＋比较型三要素族）",
+      "designRef": "units/testkit.md §5.5/§9 UT_CTR",
+      "cases": [
+        { "name": "ContractDiagRecord.ValidComparativeRecordPasses_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.5 正例：全字段合法的稳定诊断记录通过（含比较型三要素 unit 已注册）" },
+        { "name": "ContractDiagRecord.RejectionsWithViolations_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.5 反例矩阵：code 句法非法/subject 缺失与保留值/context·cause·recommendedAction 空串逐一拒绝" },
+        { "name": "ContractComparative.KindMismatchFails_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.5 反例：比较型条目 kind 与断言族不匹配→拒绝" }
+      ]
+    },
+    {
+      "suite": "ContractTaskIdentity（UT_CTR 任务身份五元组族）",
+      "designRef": "units/testkit.md §5.5/§9 UT_CTR",
+      "cases": [
+        { "name": "ContractTaskIdentity.FiveFieldValidation_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "五元组（模型名/版本/参数摘要/单位制/时间戳）逐字段缺一拒绝＋全齐通过" }
+      ]
+    },
+    {
+      "suite": "ContractIds（UT_CTR 稳定 ID 唯一性族）",
+      "designRef": "units/testkit.md §5.5/§9 UT_CTR",
+      "cases": [
+        { "name": "ContractIds.StableIdsUnique_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "稳定 ID 重复→拒绝并逐键列出；唯一→通过" }
+      ]
+    },
+    {
+      "suite": "ContractFileIntegrity（UT_CTR 数据完整性族）",
+      "designRef": "units/testkit.md §5.5/§9 UT_CTR",
+      "cases": [
+        { "name": "ContractFileIntegrity.ShaCompare_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "SHA-256 一致通过/不一致拒绝（core::ContentDigester，内容寻址 CON-05）" }
+      ]
+    },
+    {
+      "suite": "ContractEnvelope（UT_CTR 谓词模板族——evidence 值类型演练）",
+      "designRef": "units/testkit.md §5.5/§9 UT_CTR（验收②）",
+      "cases": [
+        { "name": "ContractEnvelope.CombinationRules_UT_CTR", "status": "passed", "modes": ["smoke", "integration"], "trace": "验收②：checkEnvelopeCombination<EnvelopeT,Accessors> 以 core 值类型实例化编译，与/或组合规则正反例" }
+      ]
+    },
+    {
+      "suite": "既有回归（51 用例）",
+      "designRef": "units/core.md/testkit.md §8",
+      "cases": [
+        { "name": "既有 51 用例（TestPaths/JsonLite/Fault/Dataset/ToleranceProfile/Check/SetCheck/StableOrder/BuildRedLine）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 58, "passed": 58, "failed": 0, "modes": { "smoke": "58/58", "integration": "58/58" } },
+  "failureCapabilitySelfCheck": {
+    "method": "code 句法检查禁用探针：临时改为 if (false && !codeSyntaxOk(...)) 后重编译执行；探针验证后清除并终验复绿。",
+    "incident": "首轮注入如实记录（inconclusive）：sed 转义把 && 写成字面 \\&\\& 导致源文件不可编译，构建静默失败后旧二进制被执行——该轮『通过』无效作废；随后恢复 sed 亦静默失败（grep probe=1 复核发现）。",
+    "redone": "改用精确文件编辑重做闭环：注入→构建 exit 0（新二进制）→ContractDiagRecord.RejectionsWithViolations_UT_CTR 如期变红（句法检查失效必被反例矩阵捕获）→恢复→grep probe=0→58/58 两模式复绿。",
+    "result": "成立（以重做轮为准）",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t07/smoke-configure.log",
+      "traceability/builds/wp02-t07/smoke-build.log",
+      "traceability/builds/wp02-t07/smoke-test-run.log",
+      "traceability/builds/wp02-t07/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t07/integration-build.log",
+      "traceability/builds/wp02-t07/integration-fullbuild.log",
+      "traceability/builds/wp02-t07/integration-test-run.log",
+      "traceability/builds/wp02-t07/sdurws_ird_testkit_test-integration.xml"
+    ],
+    "governance": [
+      "traceability/builds/wp02-t07/validate-task.log",
+      "traceability/builds/wp02-t07/validate-docs.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①校验器独立性：codeSyntaxOk 在 testkit 内独立实现（与 core 同规则不同代码——§5.5 校验器不得信任被校验方）；②SHA 计算复用 core::ContentDigester 公共头（R-2 合规，跨单元只用公共头）；③谓词模板 checkEnvelopeCombination 置头文件（消费方以自身 Envelope 类型实例化），非模板断言入 .cpp；④allowTransient=true 时 subject 可空（瞬时开发诊断语义，§5.5）"
+}
