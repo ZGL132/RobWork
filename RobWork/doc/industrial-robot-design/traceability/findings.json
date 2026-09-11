@@ -201,6 +201,16 @@
       "title": "evidence.md §12 任务行 EV-T02 与 §2.1/§3.1 表多处引用'§3.5'（Errors.hpp/EvidenceError 承载章节），但全文无 '### 3.5' 标题——错误类型契约内容现散见于 §3.4 末尾（词表交叉核对）与 §3.1 组成表，无独立章节承载。DOC-T07（allowedFiles 不含 units/evidence.md）以改锚 §3.4＋note 登记处置，未私改设计文本",
       "owner": "evidence 详设所有者",
       "resolution": "处置建议＝evidence.md 增设 '### 3.5 错误类型与注入契约'（将 Errors.hpp/EvidenceErrorCode/EvidenceError 语义从 §3.4 末尾析出成节），或把 §12 EV-T02 行与 §2.1/§3.1 引用统一改为 §3.4——二选一后 EV-T02 designRefs 回锚；随队列中 EV-T02 实施前闭合。"
+    },
+    {
+      "id": "F-021",
+      "source": "所有者会话（2026-09-11）：tick#60 报告自报 T-ORCH v6 与 RT/EV 链两个 tick 未自动入队的比对审计",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-09-11",
+      "title": "定时自动化提示词版本漂移：自动化固化 PIPE v1.8 时代的 T-ORCH v6 模板副本（含已废止的\"禁用子智能体\"附加纪律），PIPE v1.9（子代理派发恢复）/v1.10（queue-head 逐字引用）/v1.11（autoDiscovery 扫描）修订均未传导至已配置自动化——后果：RT/EV 两链 23 份 ready 契约两个 tick 未入队（编排侧兜底提交 65bdf28）、定时 tick 验收独立性降级持续、tick#40 报告失实无逐字引用约束",
+      "owner": "编排纪律（PIPE 附录 A／定时自动化配置，会话流程所有者）",
+      "resolution": "所有者裁决方案 A（2026-09-11）：定时自动化（automation-6aa165fe）提示词整体替换为 PIPE v1.11 附录 A T-ORCH v9 模板逐字文本（保留路径上下文与现行附加纪律：流程全自动化保留、子代理派发按 v1.9 恢复、环境无法派发时报告 blocked 不得静默降级）；流程教训＝PIPE 附录 A 模板每次修订时，须在同一 PIPE 提交内声明\"已配置定时自动化提示词已同步/无需同步\"，防止再次漂移。"
     }
   ]
 }
