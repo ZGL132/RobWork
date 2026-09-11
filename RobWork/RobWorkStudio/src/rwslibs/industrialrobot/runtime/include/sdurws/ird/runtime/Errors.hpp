@@ -226,7 +226,6 @@ struct Expected {
 
     /// 是否成功态（noexcept 纯判别；true ⇒ get() 可用，error() 不可用）。
     bool ok() const noexcept { return value.index() == 0; }
-
     /**
      * @brief 取成功值（前置 ok()）。
      * @return 成功值的 const 引用（生命周期随本对象）
@@ -259,18 +258,26 @@ struct Expected {
     /// 成功态工厂（移动入构造——支持 move-only 的 T）。
     static Expected ok(T v)
     {
-        Expected r;
-        r.value.template emplace<0>(std::move(v));
-        return r;
+        // 直接以 in_place_index 初始化 variant——全程不默认构造 T
+        // （RT-T04 增量：原实现经默认构造＋emplace，要求 T 默认可构造，
+        // 与本行"支持 move-only"的承诺不符——CanonicalModel 等私有默认
+        // 构造的不可变值类型无法入轨；公共签名与两态语义不变）。
+        return Expected(Tag{}, std::variant<T, E>(std::in_place_index<0>, std::move(v)));
     }
 
     /// 错误态工厂（移动入构造——支持 move-only 的 E）。
     static Expected err(E e)
     {
-        Expected r;
-        r.value.template emplace<1>(std::move(e));
-        return r;
+        return Expected(Tag{}, std::variant<T, E>(std::in_place_index<1>, std::move(e)));
     }
+
+private:
+    /// 工厂专用标签构造：绕开默认构造直接持有就绪的 variant——ok()/err()
+    /// 的实现细节（公共面仍只有工厂；显式默认防聚合转换误用）。
+    struct Tag {
+        explicit Tag() = default;
+    };
+    Expected(Tag, std::variant<T, E>&& v) : value(std::move(v)) {}
 };
 
 // =====================================================================
