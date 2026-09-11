@@ -311,6 +311,26 @@
       "title": "EX-T09 契约 acceptance 第 5 条『AT-10/11/13/34 场景载体就位（AT 编号自 DTB WP-08-T10 需求列迁注，不入 requirements）』中 AT-34 的迁注出处表述失准：DTB §2.9 WP-08-T10 需求列原文为『TASK-01~03、AT-10/11/13（载体）』不含 AT-34，AT-34 的实际载体是 execution.md §11 矩阵 EX-SM-3 行（NFR-PERF-02/AT-34）；同契约 note 字段『AT-10/11/13 自需求列迁注』表述准确，仅 acceptance 条目括注以偏概全——实体主张成立（EX-T09 交付 §11 全矩阵，acceptance 第 1 条十二用例组含 EX-SM），无调度与语义实害",
       "owner": "execution 单元 wp08-t09 领取者（领取前补正）＋契约编译治理所有者（批次口径）",
       "resolution": "随 wp08-t09 领取前在 EX-T09.json acceptance 第 5 条括注改为『AT-10/11/13 自 DTB WP-08-T10 需求列迁注、AT-34 承 §11 EX-SM-3 行』；后续契约编译批次涉及 AT 编号迁注时逐个注明出处行（DTB 需求列或卡内矩阵行）。"
+    },
+    {
+      "id": "F-032",
+      "source": "traceability/acceptance/DOC-T13-20260911.md#4.5（attempt 1，送验对象 f12553d14，验收探针 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "validate-task 三查②的 designRefs 锚点强制仅覆盖 ready/done 契约（validate-task.ps1:93 状态条件），planned 契约锚点失真不会变红——DOC-T13 验收探针实证：UI-T05（planned）designRefs 锚点改为不存在值后 validate-task 仍 PASS。planned 契约的 designRefs 锚点是 PIPE v1.2 阅读阶梯的定向阅读输入，脚本头注释自述『锚点失真＝实施者读错章节＝静默实现偏差』的风险对 planned 状态同样成立。DOC-T13 实施以『70 条锚点按 ready 口径全量预检零失败』人工补位（验收者翻转 planned→ready 逐份复跑实证为真、0 失败），但该预检结论仅存在于提交正文声明，无机器留痕载体",
+      "owner": "治理脚本所有者（validate-task.ps1 维护方）",
+      "resolution": "①validate-task 将锚点存在性检查扩展至全部状态（ready/done 维持强制 throw，planned 可先以警告级输出过渡）；②或提供 -AnchorPrecheck 开关并把预检输出落 builds/<批次>/ 留痕，使『planned 契约锚点预检零失败』从提交声明升级为可复核产物。扩展前各编译批次继续沿用 DOC-T13 的人工 ready 口径预检做法。"
+    },
+    {
+      "id": "F-033",
+      "source": "traceability/acceptance/DOC-T13-20260911.md#4.4/4.8（attempt 1，送验对象 f12553d14，tasks/DOC-T13.json acceptance ②/③）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "DOC-T13 契约 acceptance ②『十三份全部置 ready』与 ③『O-31 处置条款（硬约束）……不得置 ready』字面冲突，② 内未注明『受 ③ 限定』（从属提示仅存在于契约 note 的『O-31 为硬阻塞，浮出即停等所有者』一句）。本批实施按 PIPE v1.11 ④『预授权不掩盖真失败』以 ③ 压倒 ② 处置（验收判定合规：实际放行 UI-T02 一份、十二份 kept planned＋blocked），但后读会话若按 ② 字面机械执行（含模板化自动化）存在把十二份误置 ready 的隐患",
+      "owner": "所有者（DOC-T13 契约文本修订权在文档链所有者；实施/验收不得私改送验对象）",
+      "resolution": "所有者裁决 O-31 后收尾时在 DOC-T13.json acceptance ② 补注从属限定（如『受 ③ 限定』）或按裁决结果直接改写；短期可先在 note 将『O-31 为硬阻塞，浮出即停等所有者』升级为对 ② 的显式限定句。后续批次契约若同现『整链置 ready』与 O 项硬约束条款并存的结构，按本判例在预授权条目内内联标注限定。"
     }
   ]
 }
