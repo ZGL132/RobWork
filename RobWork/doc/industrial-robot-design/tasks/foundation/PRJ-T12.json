@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "草稿服务（DraftServiceImpl）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T08"],
   "requirements": ["PM-04"],
-  "designRefs": ["units/project.md#5.4", "units/project.md#8.1"],
+  "designRefs": ["units/project.md#12", "units/project.md#5.4", "units/project.md#8.1", "units/project.md#8.2", "units/project.md#8.3", "units/project.md#8.4", "units/project.md#8.5", "units/project.md#8.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t12",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1"],
   "acceptance": [
-    "PRJ-TX-6：草稿恢复与保留用例通过（原子替换+.bak/损坏恢复/投影/放弃）",
-    "StaleRevisionRejected 冲突路径用例过"
-  ]
+    "PRJ-TX-6 草稿用例通过：定时落盘（保存与应用分离——保存不产生修订，PM-04）→破坏（截断 JSON）→重开：损坏诊断＋.bak 恢复、.new 残留清理、旧草稿保留（任务约束§五.6——D-12 模块粒度单文件＋.bak 轮换）；放弃草稿语义（DiscardResult）",
+    "StaleRevisionRejected 冲突路径用例过：应用＝恰好一个新修订、草稿基线过期拒绝并保留草稿（PM-04/AT-29 关联——§8.3）；多模块草稿汇总投影用例过（§8.5 DraftProjection）",
+    "生命周期边界用例过：草稿与已应用修订的数据结构区别（§8.1）；只读打开与项目切换下的草稿行为（§8.6——只读不落盘）；60 s 默认落盘周期（PM-04-S1 周期可调归 WP-04-T20，本任务不提前实现——R2 边界）",
+    "P-PR-1 处置：草稿负载中 SourcedValue/ValueProvenance 来源标记透传（不解释——§3.2 消费清单）以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T12 行＋§2.2 PM-04 行＋DTB §2.5 WP-04-T12 行复核回填——designRefs 补 §12 与 §8.1~§8.6 全列（卡行输入「§8.1～§8.6」原文展开）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§8 节语义」拆分四条；interUnit=true 判定：草稿负载透传 core SourcedValue/ValueProvenance（§3.2 消费清单）；knownPitfalls=P-PR-1（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t12（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

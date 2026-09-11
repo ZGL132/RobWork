@@ -4,21 +4,32 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "契约测试与崩溃注入落地（PRJ-TX-1～14）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T02", "PRJ-T03", "PRJ-T04", "PRJ-T05", "PRJ-T06", "PRJ-T07", "PRJ-T08", "PRJ-T09", "PRJ-T10", "PRJ-T11", "PRJ-T12", "PRJ-T13", "PRJ-T14", "TK-T09"],
-  "requirements": ["ARC-01", "ARC-02", "NFR-REL-01", "PM-08"],
-  "designRefs": ["units/project.md#11", "units/testkit.md#6.4", "units/testkit.md#6.5"],
+  "requirements": ["ARC-01", "ARC-02", "CON-01", "CON-04", "PM-04", "PM-07", "PM-08", "PM-12", "PM-18", "NFR-REL-01"],
+  "designRefs": ["units/project.md#12", "units/project.md#11", "units/testkit.md#6.4", "units/testkit.md#6.5", "units/testkit.md#10.1"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test"
+  ],
+  "branch": "wp04-t15",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "P-PR-4", "P-PR-7"],
   "acceptance": [
-    "§11 表 PRJ-TX-1～14 逐项执行通过并留痕（未执行不得标注通过）",
-    "TestProcessRunner 接入的 F8/PRJ-TX-7/8 真进程场景按 testkit §10.1 节奏触发"
-  ]
+    "§11 表 PRJ-TX-1～14 逐项执行通过并留痕（gtest XML＋ird-test-report.json；每用例注明需求/AT、前置、操作、预期、观测点——任何未执行测试不得标注通过，失败如实登记）",
+    "testkit 消费边界用例化声明在案：FaultInterceptor 经 src/win32/IFileOps 接缝（testkit.md D-10 形态——生产窄接口、测试侧 fake）、TempDir/DeterministicEnv/IRD_TEST_INFO/IRD_EXPECT_* 按测试目标接入；产品目标不链 testkit（T-1 红线）",
+    "TestProcessRunner 接入的 F8/PRJ-TX-7/8 真进程场景按 testkit §10.1 节奏触发（TK-T11 已 ready、消费者触发成立——AT-11/13 自动化载体：进程崩溃/强杀/事件等待）；前置未就绪的用例如实标注阻塞原因，不带病前进",
+    "P-PR-7 处置：双编译场景以 IModelCompilePort 桩验证（§5.3.6 单侧冻结——PRJ-TX-3，runtime 对端确认前不私改签名）；P-PR-4 处置：归档线程模型用例按 §5.6/§9.8 编写，execution 详设定稿后二次对齐（PRJ-TX-8 进程内模拟口径）；P-PR-1 处置：用例构造的 core 数据（身份/凭据/事件）随 core 冻结 diff 增量同步，不私改 core"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T15 行＋§2.2 需求表＋DTB §2.5 WP-04-T15 行复核回填——requirements 按 DTB 需求列展开为十项（AT-13 迁注 acceptance 注记，AT 编号不入 requirements）、designRefs 补 §12 与 testkit §10.1（TestProcessRunner 交付节奏——卡行「及 TestProcessRunner 按 testkit §10.1 节奏」原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、verify 补 contract_test 目标构建（§11 跨单元用例组落位 §3.3 双测试目标）、acceptance 拆分四条（补 testkit 消费边界与前置未就绪处置——AGENTS §4.2 如实留痕）；dependsOn 维持卡行原文（PRJ-T02～T14、TK-T09；WP-02-T11/TK-T11 为按需前置——testkit §10.1 节奏条目承载，DTB 前置列「T11 按需」同口径）；interUnit=true 判定：消费 testkit 公共测试设施（FaultInterceptor/TempDir/TestProcessRunner——跨单元接口消费）；knownPitfalls=P-PR-1/P-PR-4/P-PR-7（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t15（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

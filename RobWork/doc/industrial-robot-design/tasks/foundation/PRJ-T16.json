@@ -4,13 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T01", "PRJ-T02", "PRJ-T03", "PRJ-T04", "PRJ-T05", "PRJ-T06", "PRJ-T07", "PRJ-T08", "PRJ-T09", "PRJ-T10", "PRJ-T11", "PRJ-T12", "PRJ-T13", "PRJ-T14", "PRJ-T15"],
   "requirements": ["NFR-MNT-05"],
-  "designRefs": ["units/project.md#12", "units/project.md#15"],
+  "designRefs": ["units/project.md#12", "units/project.md#11", "units/project.md#15"],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/project.md",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +19,12 @@
   ],
   "outputs": ["traceability-update"],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "branch": "wp04-t16",
+  "interUnit": false,
   "acceptance": [
-    "本文与实现零偏差登记；README 核对",
-    "§11/§15.3 待裁决项状态最新；P-PR-5/P-PR-6 裁决申请提交"
-  ]
+    "units/project.md 与实现零偏差登记（偏差按 DTB §5.4 单元卡增量修订登记、不静默——§15.4 变更记录逐条可查）；公共头 README 核对（README 指向与 §12 任务拆分一致）",
+    "§11 验证矩阵实现状态标注更新＋§15.3 待裁决项状态更新（P-PR-1～8 逐条最新状态：已消账/未决/裁决中——不留过期陈述）",
+    "P-PR-5/P-PR-6 裁决申请提交（O-09 处置联动：project→io 边补登或注入形态确认——裁决权在架构所有者，本任务只提交申请与依据，不私裁补边；阶段 B 包/固化任务 WP-04-T17/T18 届时按 DOC-T10 契约 O-09 处置条款回填：kept planned＋blocked 原因或注入式先行显式登记）；P-PR-6 申请联动 diagnostics.md（码值部分已按 §15.4 v0.2 消账，sink 形态待裁决——不私改对端）"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T16 行＋DTB §2.5 WP-04-T16 行复核回填——designRefs 补 §11（验证矩阵状态更新锚点）、allowedFiles 补 traceability/**（CORE-T01 教训：留痕面显式列入）、acceptance 拆分逐条可验证三项（DIAG-T11 同款先例）并将 O-09 处置条款联动编入 P-PR-5 裁决申请条目（本单元卡纯文档/门禁同步，无跨单元接口产出）；interUnit=false 判定：纯文档与门禁同步（PRJ-T15 同款口径——无公共头消费/产出，裁决申请为流程动作非接口变更）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记，入队按拓扑序在其十五项前置完成后执行），status planned→ready、branch 补 wp04-t16（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

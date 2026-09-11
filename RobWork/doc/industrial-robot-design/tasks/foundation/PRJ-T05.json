@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "对象库（ObjectStore：内容编址/只增发布/LRU）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T02", "PRJ-T04"],
   "requirements": ["CON-01"],
-  "designRefs": ["units/project.md#4.6"],
+  "designRefs": ["units/project.md#12", "units/project.md#4.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,7 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "CR-02"],
   "acceptance": [
-    "共享/篡改/缓存预算单测通过；不可变与摘要校验用例过"
-  ]
+    "内容编址（objects/<oid>/<cv>，cv＝ContentVersion）与只增发布/同对象共享去重/LRU 缓存预算单测通过（CON-01 包络的持久化编址——§2.2 CON-01 行承接部分）",
+    "篡改检测用例通过：读取侧摘要校验失败拒绝（store-corrupt 数据侧——§4.6 校验语义）；对象文件不可变（写入只增新内容、既有读者引用永不被覆盖——PA-2）",
+    "引用存在性语义用例过：清单无引用的请求返回空 optional 不抛（tryObject）；打开/恢复扫描对有引用无对象报告 store-corrupt、有对象无引用报悬挂对象开发诊断（§4.6）；对象负载＝收到的字节原样存储（D-10：不做业务解释——N-9 边界）",
+    "P-PR-1 处置：ContentIdentity/ContentDigester 消费以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core；CR-02 处置：摘要计算只经 core ContentDigester（对象编址/完整性校验），不私设第二哈希路径"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T05 行＋§2.2 CON-01 行＋DTB §2.5 WP-04-T05 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§4.6 语义」拆分四条可验证条目（补引用存在性与 D-10 边界）；interUnit=true 判定：内容编址/摘要校验消费 core ContentVersion/ContentIdentity/ContentDigester（§3.2 消费清单）；knownPitfalls=P-PR-1、CR-02（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t05（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

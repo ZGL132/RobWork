@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "存储原语（AtomicFile/IFileOps）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T01"],
   "requirements": ["NFR-REL-01"],
-  "designRefs": ["units/project.md#7.1", "units/project.md#7.2"],
+  "designRefs": ["units/project.md#12", "units/project.md#7.1", "units/project.md#7.2"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,12 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t02",
+  "interUnit": false,
   "acceptance": [
-    "原子/持久性分离语义用例通过（publishNew/原子替换/write-through）",
-    "§7.2 官方文档口径逐行复核并留痕"
-  ]
+    "publishNew/原子替换/write-through 语义单测通过：提交（替换）点之前旧文件字节不变、任一步失败不留半写目标（NFR-REL-01 的单文件原语层；§7.2 不超诺口径——只承诺 Windows API 实测保证，不断言超出文档的崩溃一致性）",
+    "§7.2 Windows 文件操作保证对照 Microsoft Learn 官方文档口径逐行复核并留痕（复核记录入 traceability 留痕；R-5 缓解的实证基础——断电残余窗口由 §7 恢复协议兜底，不在本任务超诺）",
+    "IFileOps 生产窄接口接缝就位（testkit.md D-10 形态：生产窄接口、测试侧 fake 经该接缝注入——PRJ-T15 契约测试与 testkit FaultInterceptor 的消费面）；接缝位于 src/win32/ 私有实现头、不出 include/（R-2 纪律）"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T02 行＋§2.2 NFR-REL-01 行＋DTB §2.5 WP-04-T02 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训：留痕面显式列入）、acceptance 按「完成条件＋产物列」拆分可验证三项（补 IFileOps 接缝条目）；interUnit=false 判定：纯 Win32 存储原语，IFileOps 为单元内私有接缝（src/win32/ 非公共头），其跨单元消费发生在本单元测试目标（PRJ-T15 落地），本任务零跨单元公共接口消费/产出；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t02（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

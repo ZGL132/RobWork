@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "查询端口（QueryPort：视图/闭包/缓存/隔离）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T06", "PRJ-T08"],
-  "requirements": ["CON-01", "ARC-02"],
-  "designRefs": ["units/project.md#4.6", "units/project.md#4.7", "units/project.md#5.2"],
+  "requirements": ["ARC-02", "CON-01"],
+  "designRefs": ["units/project.md#12", "units/project.md#4.6", "units/project.md#4.7", "units/project.md#5.2"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,7 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1"],
   "acceptance": [
-    "并发只读单测通过；闭包外不可见隔离用例过"
-  ]
+    "并发只读单测通过（§4.7：查询端口全方法线程安全；返回视图为进程内值拷贝、修订视图一经返回不可变——读写无共享可变状态，PA-2/PA-3 承接）",
+    "闭包外不可见隔离用例过：修订视图按 HEAD 闭包约束（§4.5 闭包规则）；tryObject/tryRevision 引用不存在返回空 optional 不抛；context-closed 拒绝（上下文关闭后查询端口进入拒绝态）；只读打开实例同样提供查询（PM-07 可查看）",
+    "②端口所有者语义用例过：只读快照/对象/修订/分支/草稿/结果清单视图齐备（ARCH §7.2——ARC-02 端口协作承接，无私有互访）；ObjectCache 预算参数生效（§5.2）",
+    "P-PR-1 处置：视图携带的 ObjectId/RevisionId 等身份类型消费以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T09 行＋§2.2 CON-01 行＋DTB §2.5 WP-04-T09 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋②端口义务」拆分四条；requirements 保留 ARC-02（§2.2 ARC-02 行承接：②查询端口所有者——REQUIREMENTS 现行 ID）；PA-3 自 DTB WP-04-T09 需求列迁注 acceptance 承接（快照只读原则由并发只读条目承载，不入 requirements——CORE-T07 先例）；interUnit=true 判定：视图消费 core 身份类型（§3.2 消费清单）；knownPitfalls=P-PR-1（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t09（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

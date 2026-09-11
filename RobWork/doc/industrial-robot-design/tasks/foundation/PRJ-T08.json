@@ -4,12 +4,14 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "打开与恢复（ProjectStoreFactory/ProjectStoreImpl）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["PRJ-T03", "PRJ-T07"],
   "requirements": ["PM-02", "PM-06", "PM-08"],
-  "designRefs": ["units/project.md#8.7", "units/project.md#7.4"],
+  "designRefs": ["units/project.md#12", "units/project.md#8.7", "units/project.md#7.4"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t08",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "P-PR-6"],
   "acceptance": [
-    "PRJ-TX-9：激活前失败不影响当前项目用例过",
-    "旧格式/未来版本拒绝码用例过（PM-06）；恢复报告断言过"
-  ]
+    "PRJ-TX-9 用例通过：Closed 后迟到写拒绝（archive.begin/submit、draft.save 全写入口）＋稳定诊断；闭包外修订不可见（tryRevision 返回空）；激活前失败不影响当前项目（PM-02 打开五步协议服务侧②③⑤——§8.7）",
+    "旧格式/未来版本处理用例通过：稳定只读拒绝＋稳定码＋升级指引数据（PM-06：PRJ-FORMAT-LEGACY/PRJ-SCHEMA-FUTURE——§5.0 码表）；恢复报告断言过（PM-08：.staging 扫描/锁残留/孤儿草稿/HEAD 闭包完整性校验→RecoveryReport，§7.4 状态机）",
+    "生命周期语义用例过：open/createNew/关闭排空（Draining：等待在途归档/草稿完成——PM-03 存储侧承接）与失权后写拒绝（§9.6 联动）；只读打开（PM-07）同样提供查询",
+    "P-PR-1 处置：身份类型/DiagnosticRecord 消费以 core.md v0.1 为基线，冻结 diff 后增量同步、不私改 core；P-PR-6 处置：恢复/只读诊断码值已收编 diagnostics.md §4.6（v0.2 码值部分消账），经 §5.0 IDiagnosticsSink 适配器注入，sink 名称/归属按 P-PR-6/P-EX-8 裁决前不直链 diagnostics 库"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T08 行＋§2.2 PM-02/PM-06/PM-08 行＋DTB §2.5 WP-04-T08 行复核回填——designRefs 补 §12 任务行锚点、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋生命周期产物」拆分四条（补 PM-03 排空与只读打开语义——卡行产物 ProjectStoreImpl 的接口义务 §5.1）；AT-11（崩溃恢复验收锚点）注记于恢复报告条目对应的 PRJ-T15 进程级复验，不入 requirements（AT 编号迁注口径）；interUnit=true 判定：消费 core 身份/DiagnosticRecord 并产出恢复诊断（§3.2 消费清单）；knownPitfalls=P-PR-1、P-PR-6（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t08（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }

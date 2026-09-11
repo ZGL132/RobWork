@@ -4,21 +4,33 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "命令服务与内置命令（CommandServiceImpl）",
-  "status": "planned",
-  "dependsOn": ["PRJ-T08", "PRJ-T09"],
+  "status": "ready",
+  "dependsOn": ["PRJ-T08", "PRJ-T09", "DIAG-T03"],
   "requirements": ["ARC-01", "PM-18"],
-  "designRefs": ["units/project.md#5.3", "units/project.md#6"],
+  "designRefs": ["units/project.md#12", "units/project.md#5.3", "units/project.md#5.3.6", "units/project.md#6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test"
+  ],
+  "branch": "wp04-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-1", "P-PR-3", "P-PR-6", "P-PR-7"],
   "acceptance": [
-    "PRJ-TX-1、PRJ-TX-3（桩编译）：恰好一个修订/失败零修订/串行契约用例通过",
-    "内置元数据处理器（project.create-branch 等）与测试处理器（断言判定注入）就位"
-  ]
+    "PRJ-TX-1 并发与过期基线用例通过：双线程并发 submit 全局串行（第二个等待）、各恰好一个新修订（seq 单调无重复）；expectedRevision=旧 tip 提交 Rejected(stale-revision) 且无修订落盘（PRJ-STALE-REVISION-REJECTED，§6.2 并发校验）",
+    "PRJ-TX-3 双编译用例通过（桩编译）：IModelCompilePort 桩三路——WorkCell 失败/DynamicWorkCell 失败/双成功；任一失败→无修订无发布（对象库无新对象、.staging/tmp 清理），成功→恰好一个新修订（MDL-06 双编译原子性，§6.6 事务编排；D-09 注入形态零 runtime 编译依赖）",
+    "命令服务骨架用例过：S1～S7 提交时序与全局串行槽（§6.1）；未知命令/非法输入/过期修订处理（§6.3：Rejected 稳定码）；命令载荷序列化与版本策略（§6.4）；双编译最小契约 IModelCompilePort 按 §5.3.6 单侧冻结（P-PR-7 处置：runtime 详设以本文为起点交叉核对，对端另立形态前不私改签名）",
+    "内置元数据处理器（project.create-branch 等）与测试处理器（断言判定注入）就位（§5.3.5/§6.5 注册协议，HandlerRegistry）；P-PR-3 处置：命令服务只编排断言阶段，物性/限位/策略判定由注入处理器＋④端口执行（ARCH §7.1 走查读法待架构侧确认——不越权实现业务断言，N-1 边界）",
+    "P-PR-6 处置：PRJ-* 稳定码经 diagnostics StableCodeRegistry 消费（dependsOn=DIAG-T03——DTB WP-04-T10 前置列「WP-09-T03 诊断码收编」；十项码值已收编 diagnostics.md §4.6），诊断经 §5.0 IDiagnosticsSink 适配器注入不直链 diagnostics 库；P-PR-1 处置：IDomainEventBus/DomainEvent（RevisionCommitted/DependencyInvalidated 发布）以 core.md v0.1 为基线，冻结 diff 后增量同步；事件发布失败不回滚已提交修订（D-18）"
+  ],
+  "note": "DOC-T10 编译放行（2026-09-11）：按 project.md §12 PRJ-T10 行＋§2.2 ARC-01/PM-18 行＋DTB §2.5 WP-04-T10 行复核回填——dependsOn 按 DTB 前置列补 DIAG-T03（诊断码收编＝StableCodeRegistry 公共头可用，真实技术前置）；designRefs 补 §12/§5.3.6（双编译最小契约）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、verify 补 contract_test 目标构建（PRJ-TX-1 命令契约属 §3.3 跨单元契约测试面）；AT-29 自 DTB 需求列迁注 acceptance（项目撤销/重做＝新修订且历史不改写的验收锚点，由 PRJ-TX-1 与 PRJ-T13 用例共同承载，AT-29 原文见 REQUIREMENTS §附录 AT 表）；interUnit=true 判定：消费 core 事件/诊断契约＋PRJ-* 码注册（跨单元前置 DIAG-T03）、产出供 execution/ui 消费的命令端口设施（本单元为 DOC-T10 契约注记的跨单元依赖提供方）；knownPitfalls=P-PR-1/P-PR-3/P-PR-6/P-PR-7（处置逐条编入 acceptance，不私裁）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 PRJ-T02→T16 登记），status planned→ready、branch 补 wp04-t10（≙ 映射 WP-04）；编译留痕见 traceability/contract-compile-log.md"
 }
