@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 68,
+  "tickCount": 69,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T20:55:54+08:00",
+    "updatedAt": "2026-09-11T21:56:27+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -391,6 +391,16 @@
       "commits": [
         "1ca5167fae1ef5aa1c5debc1d8f791215442c39c"
       ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T12",
+      "acceptanceRecord": "traceability/acceptance/DOC-T12-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "523df626c1dbe7d34358f1b0ba976cf80aa2a321"
+      ]
     }
   ],
   "policy": {
@@ -416,11 +426,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "DOC-T12",
-      "contractPath": "tasks/DOC-T12.json",
-      "branch": "doc-t12"
-    },
     {
       "taskId": "DOC-T13",
       "contractPath": "tasks/DOC-T13.json",
@@ -720,6 +725,36 @@
       "taskId": "PRJ-T16",
       "contractPath": "tasks/foundation/PRJ-T16.json",
       "branch": "wp04-t16"
+    },
+    {
+      "taskId": "IO-T02",
+      "contractPath": "tasks/foundation/IO-T02.json",
+      "branch": "wp11-t02"
+    },
+    {
+      "taskId": "IO-T03",
+      "contractPath": "tasks/foundation/IO-T03.json",
+      "branch": "wp11-t03"
+    },
+    {
+      "taskId": "IO-T04",
+      "contractPath": "tasks/foundation/IO-T04.json",
+      "branch": "wp11-t04"
+    },
+    {
+      "taskId": "IO-T05",
+      "contractPath": "tasks/foundation/IO-T05.json",
+      "branch": "wp11-t05"
+    },
+    {
+      "taskId": "IO-T06",
+      "contractPath": "tasks/foundation/IO-T06.json",
+      "branch": "wp11-t06"
+    },
+    {
+      "taskId": "IO-T07",
+      "contractPath": "tasks/foundation/IO-T07.json",
+      "branch": "wp11-t07"
     }
   ],
   "docRefs": {
@@ -730,5 +765,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "1453fb82-855a-45de-85ce-27daeec5711d"
+  "tickToken": "4f173df6-a245-4213-a831-400a4ffc4cbe"
 }
