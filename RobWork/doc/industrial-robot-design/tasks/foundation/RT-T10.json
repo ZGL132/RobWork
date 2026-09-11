@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现编译缓存纯判定（CacheKey 分层键）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T04"
   ],
@@ -31,13 +31,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
+  ],
+  "branch": "wp06-t10",
   "interUnit": true,
-  "knownPitfalls": "CR-05",
+  "knownPitfalls": [
+    "CR-05"
+  ],
   "acceptance": [
     "RT-CACHE-1~4 分层键与判定表全部用例通过",
-    "存储归 execution（本任务只做纯判定）"
+    "存储归 execution（本任务只做纯判定）",
+    "部分/失败产物不得作为完整命中（§9.4 判定表反例）用例通过"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t10、verify/knownPitfalls 规范化为数组"
 }

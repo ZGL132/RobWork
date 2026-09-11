@@ -4,15 +4,14 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 RuntimeNameMap（⑥端口，双射解析）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "RT-T04"
   ],
   "requirements": [
     "ARC-04",
     "MDL-14",
-    "CON-06",
-    "AT-18"
+    "CON-06"
   ],
   "designRefs": [
     "units/runtime.md#7",
@@ -33,13 +32,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_runtime_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "O-12",
-  "acceptance": [
-    "RT-NM-1~7 双向往返全量用例通过",
-    "前缀操作仅限本模块（R-4 红线）"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "branch": "wp06-t05",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-12"
+  ],
+  "acceptance": [
+    "RT-NM-1~7 双向往返全量用例通过（AT-18 载体）",
+    "前缀操作仅限本模块（R-4 红线——唯一合法位置）",
+    "全量生成双向校验（MDL-14：无遗漏/无重复前缀/无旧机械臂名）用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；requirements 原含 AT-18（验收追溯编号）——DOC-T06 放行时迁入 acceptance 行注明（requirements 表承接 §2.2 三条）；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t05、verify/knownPitfalls 规范化为数组"
 }

@@ -4,12 +4,15 @@
   "unit": "runtime",
   "masterWp": "WP-C",
   "title": "快照与工厂（Snapshot）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["RT-T05", "RT-T07", "RT-T08"],
   "requirements": ["ARC-03", "CON-06"],
-  "designRefs": ["units/runtime.md#9"],
+  "designRefs": ["units/runtime.md#9.1", "units/runtime.md#9.2", "units/runtime.md#9.3", "units/runtime.md#12"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,9 +20,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+  "branch": "wp06-t09",
+  "interUnit": true,
+  "knownPitfalls": ["CR-05"],
   "crRefs": ["CR-05"],
   "acceptance": [
     "RT-SNAP-1～4、RT-CPX-4：并发/隔离/迟到用例通过",
-    "CR-05：modelIdentity/nameMapIdentity/robworkBaselineVersion 值供给样例与 EV-T04 联合断言一致（同一样例，evidence 侧 Environment 条目值＝runtime 计算值）"
-  ]
+    "CR-05：modelIdentity/nameMapIdentity/robworkBaselineVersion 值供给样例与 EV-T04 联合断言一致（同一样例，evidence 侧 Environment 条目值＝runtime 计算值）",
+    "materialize 编码与工厂创建（§9.5）往返用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T06 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝runtime.md §12 卡内锚点即交接核对＋O-15/O-16/O-18 登记类不阻塞编译——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp06-t09、designRefs 细化为 §9.1/9.2/9.3 锚点、knownPitfalls 从 crRefs 规范化登记（CR-05）、allowedFiles 补齐同单元标准面"
 }
