@@ -147,6 +147,8 @@
 | EX-T09 | wp08-t09 | True | P-EX-1、P-EX-8 | DOC-T12 回填（2026-09-11）：execution.md §12 EX-T09 行＋DTB §2.9 WP-08-T10 行（≙）——designRefs 补 testkit#6.5（卡行输入「testkit §6.4/§6.5」原文展开）、AT-10/11/13 自 DTB 需求列迁注 acceptance、verify 补 contract_test（§11 双测试目标分工原文）、allowedFiles 补单元卡＋traceability/**；dependsOn 维持卡行原文（TK-T11 按需不入 dependsOn——testkit §10.1 节奏条目承载，PRJ-T15 同款口径） | validate-task 三查过（同上批次）；interUnit=true 判定＝消费 testkit 公共测试设施（FakeWorkerMain/FaultInterceptor/ManualClock）与 evidence 校验器/project 端口 fake 协作；放行依据同 EX-T01 行 | ready |
 | EX-T10 | wp08-t10 | False | — | DOC-T12 回填（2026-09-11）：execution.md §12 EX-T10 行——卡内治理任务 DTB §2.9 未列（按 DTB §5.4 增量修订登记），branch 取卡内序号 wp08-t10（DTB WP-08-T10 系 EX-T09 ≙ 映射占用，按卡内编号顺延保证十份唯一——IO 批「t 序号取卡内编号」同款口径）；allowedFiles 补 DETAILED-DESIGN.md＋traceability/**（卡行涉及文件「本文、README、DETAILED-DESIGN.md」原文＋CORE-T01 教训）、acceptance 拆四条逐项可验证；纯文档/门禁同步无跨单元接口产出（DIAG-T11/EV-T12/PRJ-T16 同款口径），入队按拓扑序在其九项前置完成后执行 | validate-task 三查过（同上批次）；放行依据同 EX-T01 行 | ready |
 
+| UI-T02 | wp10-t02 | True | O-31、P-UI-5 | DOC-T13 回填（2026-09-11）：ui.md §13 UI-T02 行＋§2 需求表（NFR-MNT-01 行）＋§3.1/§12.1＋DTB §2.11 WP-10-T02 行（≙）——designRefs 补 §3.1/§12.1＋testkit.md#10.1＋DTB §5.1/§5.5（卡行输入与交付原文）、allowedFiles 补 testkit/CMakeLists.txt＋units/testkit.md（testkit_qt 启用登记面——卡行交付物原文）＋单元卡＋traceability/**（CORE-T01 教训）、verify 展开三测试目标构建、acceptance 拆五条并编入 O-31/P-UI-5 处置 | validate-task 三查过（2026-09-11 DOC-T13 实施段）；interUnit=true 判定＝构建层建立 ui→core/ui→diagnostics 两条 ARCH §3.5 登记边（R-3 唯一 Widgets 例外目标随本任务登记）；放行依据＝DOC-T13 契约 acceptance 2（所有者 2026-09-11 B 模式预授权整链放宽——沿用 DOC-T04 整链放宽口径，拓扑序 UI-T02→T14 登记）；**O-31 处置：本任务交付面仅含表内边与 R-3 例外登记，不创建指向 project/evidence/execution/policy/runtime 的链接或 include——不在 O-31 阻断范围，为十三份中唯一 ready** | ready |
+
 ## 修订行（ready 契约的后续修订，CCP §5）
 
 | 日期 | taskId | 修订内容 | 提交 |

@@ -4,22 +4,44 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "构建落位：ui 占位转真实库（R-3 例外登记）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
-  "designRefs": ["units/ui.md#13", "units/ui.md#3"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#3.1",
+    "units/ui.md#12.1",
+    "units/testkit.md#10.1",
+    "development-task-breakdown.md#5.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_contract_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_gui_test"
+  ],
+  "branch": "wp10-t02",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-5"],
   "acceptance": [
-    "sdurws_ird_ui 升级 STATIC（链 core＋diagnostics＋Qt Widgets）编译通过",
-    "红线门禁含 ui 例外登记文本；静态扫描（Widgets 范围/QShortcut 作用域/前缀拼接）通过；ird_gui 标签与 testkit_qt 启用登记"
-  ]
+    "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_ui 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core＋RWS::ird::diagnostics＋Qt Core/Gui/Widgets——ui.md §3.1），目标名不变；新建 ird/ui/CMakeLists.txt 并在父 CMakeLists 注册（DTB §2.11 WP-10-T02 输出列「ird/ui/CMakeLists.txt（新）」）",
+    "红线门禁含 ui 例外登记文本：R-3 例外登记注明「仅 ui」（全产品唯一允许 Qt Widgets 的平台单元，例外范围仅 sdurws_ird_ui 与 §3.3 所列 ui 测试目标，任何其他目标出现 Widgets 头即构建失败——NFR-MNT-01）；ird_gates/静态扫描零命中：Widgets 范围、QShortcut 作用域（插件不得私占全局快捷键——SA-16）、RobWork 名称前缀拼接/剥离（R-4）",
+    "ui 测试目标与 ird_gui 标签就位（ui.md §3.1/§12.1）：sdurws_ird_ui_test（QCoreApplication 级模型测试，LABELS ird）＋sdurws_ird_ui_contract_test（跨单元契约测试，链 core/project/execution/diagnostics＋testkit）＋sdurws_ird_ui_gui_test（LABELS ird_gui 串行，不与模型/Meta 测试合并命令）三目标按 DTB §5.5 注册（googletest 经 vcpkg find_package(GTest CONFIG REQUIRED)）；实现任务未落地前允许最小构建冒烟用例，不在骨架预建占位实现（父 CMakeLists 既有约定，EX-T01 同款口径）",
+    "sdurws_ird_testkit_qt 启用登记（ui.md §12.1、testkit.md §3.5/§10.1）：触发已成立＝本目标新建 ui 测试目标（QCoreApplication/GUI 测试目标出现）；在 testkit CMake 登记单列目标（Qt Core 起、按需 Widgets，只被 GUI/模型测试目标链接，禁止进入生产计算库依赖），并同步 testkit.md §10.1 启用表状态；首消费者理由归 UI-T13 契约登记（卡 §13 行原文）",
+    "O-31 处置（kept planned 约束的边界澄清）：本任务交付面仅含 ARCH §3.5 表内边（ui→core、ui→diagnostics）与 R-3 例外登记，不创建任何指向 project/evidence/execution/policy/runtime 的链接或 include（C-3/4/5/7/8/10/11 协作的形态裁决前置，不私裁增边或最小注入模式）；P-UI-5 处置：ARCH §3.5「ui→core：命令注册表类型」行消歧前按 ui.md CF-1 结论落位（注册表类型归 ui 自有头，无实现影响），ui→core 边照常建立"
+  ],
+  "note": "DOC-T13 编译放行（2026-09-11）：按 ui.md §13 UI-T02 行＋§2 需求表（NFR-MNT-01 行）＋§3.1/§12.1＋DTB §2.11 WP-10-T02 行（≙）复核回填——designRefs 补 §3.1（构建目标与依赖红线＝卡行输入原文）、§12.1（测试目标与 testkit_qt 启用登记依据）、testkit.md#10.1（启用表）、DTB §5.1/§5.5（构建约定与测试框架接入，EX-T01 同款）；allowedFiles 补 testkit/CMakeLists.txt（testkit_qt 目标启用面——卡行交付物原文）＋units/testkit.md（§10.1 启用表状态同步）＋单元卡＋traceability/**（CORE-T01 教训）；verify 展开为三测试目标构建（§3.1 四目标中三个测试目标，可独立执行、结论二元）；branch=wp10-t02（ui 单元＝WP-10〔DTB §2.11〕，卡内序号 T02 与 WP-10-T02 ≙ 直映，T02~T14 十三份无冲突）；interUnit=true 判定＝构建层建立 ui→core/ui→diagnostics 两条 ARCH §3.5 登记边（T-2 白名单边同款口径）；knownPitfalls=O-31/P-UI-5（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，DOC-T13 契约 acceptance 2），拓扑序 UI-T02→T14 登记——**O-31 硬约束（DOC-T13 契约 acceptance 3）：UI-T03~T14 中涉及 ShellWiring 持有对端类型（C-3/4/5/7/8/10/11 协作）的任务 kept planned＋blocked 原因，裁决后由所有者指派放行，本契约为十三份中唯一 ready**；编译留痕见 traceability/contract-compile-log.md"
 }
