@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "diagnostics 主链整链编译放行（DIAG-T02~T11）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["contract-compilation.md", "units/diagnostics.md#11", "traceability/contract-compile-log.md"],

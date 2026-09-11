@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 64,
+  "tickCount": 65,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T15:45:15+08:00",
+    "updatedAt": "2026-09-11T18:19:24+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -351,6 +351,16 @@
       "commits": [
         "1343a91e1869dddee909a8d2eeb01b57aff78450"
       ]
+    },
+    {
+      "unit": "foundation-governance",
+      "task": "DOC-T09",
+      "acceptanceRecord": "traceability/acceptance/DOC-T09-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "4e0a74b99568c308dd59600e8d45850084547f44"
+      ]
     }
   ],
   "policy": {
@@ -376,11 +386,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "DOC-T09",
-      "contractPath": "tasks/DOC-T09.json",
-      "branch": "doc-t09"
-    },
     {
       "taskId": "TK-T11",
       "contractPath": "tasks/foundation/TK-T11.json",
@@ -520,6 +525,61 @@
       "taskId": "EV-T12",
       "contractPath": "tasks/foundation/EV-T12.json",
       "branch": "wp05-t12"
+    },
+    {
+      "taskId": "POL-T02",
+      "contractPath": "tasks/foundation/POL-T02.json",
+      "branch": "wp07-t02"
+    },
+    {
+      "taskId": "POL-T03",
+      "contractPath": "tasks/foundation/POL-T03.json",
+      "branch": "wp07-t03"
+    },
+    {
+      "taskId": "POL-T04",
+      "contractPath": "tasks/foundation/POL-T04.json",
+      "branch": "wp07-t04"
+    },
+    {
+      "taskId": "POL-T05",
+      "contractPath": "tasks/foundation/POL-T05.json",
+      "branch": "wp07-t05"
+    },
+    {
+      "taskId": "POL-T06",
+      "contractPath": "tasks/foundation/POL-T06.json",
+      "branch": "wp07-t06"
+    },
+    {
+      "taskId": "POL-T07",
+      "contractPath": "tasks/foundation/POL-T07.json",
+      "branch": "wp07-t07"
+    },
+    {
+      "taskId": "POL-T08",
+      "contractPath": "tasks/foundation/POL-T08.json",
+      "branch": "wp07-t08"
+    },
+    {
+      "taskId": "POL-T09",
+      "contractPath": "tasks/foundation/POL-T09.json",
+      "branch": "wp07-t09"
+    },
+    {
+      "taskId": "POL-T10",
+      "contractPath": "tasks/foundation/POL-T10.json",
+      "branch": "wp07-t10"
+    },
+    {
+      "taskId": "POL-T11",
+      "contractPath": "tasks/foundation/POL-T11.json",
+      "branch": "wp07-t11"
+    },
+    {
+      "taskId": "POL-T12",
+      "contractPath": "tasks/foundation/POL-T12.json",
+      "branch": "wp07-t12"
     }
   ],
   "docRefs": {
@@ -530,5 +590,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "47f0721c-1934-47b0-9d60-4596e8f9215c"
+  "tickToken": "aa247c1e-aa20-4c29-affd-079fc185d149"
 }
