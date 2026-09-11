@@ -1,0 +1,146 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 30 tests from 17 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from TestPaths
+[ RUN      ] TestPaths.EnvVarOverridesDefault_NFR_COR_01
+[       OK ] TestPaths.EnvVarOverridesDefault_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01
+[       OK ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01 (1 ms)
+[ RUN      ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01
+[       OK ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01
+[       OK ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01
+[       OK ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01
+[       OK ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01
+[       OK ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01 (0 ms)
+[----------] 7 tests from TestPaths (3 ms total)
+
+[----------] 2 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 2 tests from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 3 tests from FaultOccurrence
+[ RUN      ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT
+[       OK ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT
+[       OK ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT
+[       OK ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT (0 ms)
+[----------] 3 tests from FaultOccurrence (0 ms total)
+
+[----------] 1 test from FaultScenario
+[ RUN      ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT
+[       OK ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT (0 ms)
+[----------] 1 test from FaultScenario (0 ms total)
+
+[----------] 2 tests from FaultWiring
+[ RUN      ] FaultWiring.RealAccessorDelegation_UT_FAULT
+[       OK ] FaultWiring.RealAccessorDelegation_UT_FAULT (0 ms)
+[ RUN      ] FaultWiring.NullRealRejected_UT_FAULT
+[       OK ] FaultWiring.NullRealRejected_UT_FAULT (0 ms)
+[----------] 2 tests from FaultWiring (0 ms total)
+
+[----------] 1 test from ProcessRunnerHeader
+[ RUN      ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT
+[       OK ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT (0 ms)
+[----------] 1 test from ProcessRunnerHeader (0 ms total)
+
+[----------] 1 test from ProductBoundary
+[ RUN      ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT
+[       OK ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT (2 ms)
+[----------] 1 test from ProductBoundary (2 ms total)
+
+[----------] 1 test from DatasetManifest
+[ RUN      ] DatasetManifest.FullFieldLoad_UT_MAN
+unknown file: error: C++ exception with description "dataset-invalid: dataset-invalid: schemaVersion: 版本分隔符缺失（期望 M.m.p）: 1" thrown in the test body.
+
+[  FAILED  ] DatasetManifest.FullFieldLoad_UT_MAN (4 ms)
+[----------] 1 test from DatasetManifest (4 ms total)
+
+[----------] 1 test from DatasetRejections
+[ RUN      ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(164): error: Expected: (std::string(e.what()).find(pathFragment)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+字段路径缺失（期望含 datasetId）: dataset-invalid: dataset-invalid: schemaVersion: 版本分隔符缺失（期望 M.m.p）: 1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(164): error: Expected: (std::string(e.what()).find(pathFragment)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+字段路径缺失（期望含 units.position）: dataset-invalid: json-parse: line 13, column 35: 对象期望 ',' 或 '}'（路径 $.units）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(164): error: Expected: (std::string(e.what()).find(pathFragment)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+字段路径缺失（期望含 edgeCases）: dataset-invalid: dataset-invalid: schemaVersion: 版本分隔符缺失（期望 M.m.p）: 1
+
+[  FAILED  ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN (19 ms)
+[----------] 1 test from DatasetRejections (19 ms total)
+
+[----------] 1 test from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(164): error: Expected: (std::string(e.what()).find(pathFragment)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+字段路径缺失（期望含 SHA-256）: dataset-invalid: dataset-invalid: schemaVersion: 版本分隔符缺失（期望 M.m.p）: 1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(257): error: Value of: sawSize
+  Actual: false
+Expected: true
+size 检查应先于 SHA 报告
+
+[  FAILED  ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT (7 ms)
+[----------] 1 test from DatasetIntegrity (7 ms total)
+
+[----------] 1 test from DatasetLint
+[ RUN      ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\DatasetTest.cpp(164): error: Expected: (std::string(e.what()).find(pathFragment)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+字段路径缺失（期望含 datasetId）: dataset-invalid: dataset-invalid: manifest 不存在: C:\Users\zgl18\AppData\Local\Temp\ird-tk-t03-1353845533-211af670\golden\kin-fk\1.0.0\manifest.json
+
+[  FAILED  ] DatasetLint.DatasetIdDirMismatch_UT_MAN (4 ms)
+[----------] 1 test from DatasetLint (4 ms total)
+
+[----------] 3 tests from TkBuild
+[ RUN      ] TkBuild.SourceTreeReachable_TK_BUILD
+[       OK ] TkBuild.SourceTreeReachable_TK_BUILD (1 ms)
+[ RUN      ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3
+[       OK ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3 (3 ms)
+[ RUN      ] TkBuild.ProductSourcesZeroTestkitInclude_T1
+[       OK ] TkBuild.ProductSourcesZeroTestkitInclude_T1 (5 ms)
+[----------] 3 tests from TkBuild (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 17 test suites ran. (53 ms total)
+[  PASSED  ] 26 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] DatasetManifest.FullFieldLoad_UT_MAN
+[  FAILED  ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+[  FAILED  ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+[  FAILED  ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+
+ 4 FAILED TESTS

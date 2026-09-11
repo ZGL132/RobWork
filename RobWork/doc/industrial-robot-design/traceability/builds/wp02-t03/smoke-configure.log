@@ -1,0 +1,5 @@
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Configuring done (0.1s)
+-- Generating done (0.5s)
+-- Build files have been written to: C:/Users/zgl18/AppData/Local/Temp/wp03t03-smoke
