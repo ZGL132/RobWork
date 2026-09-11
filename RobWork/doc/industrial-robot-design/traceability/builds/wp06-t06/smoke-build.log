@@ -1,0 +1,6 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-t06\core\Release\sdurws_ird_core.lib
+  BaseWorldTransform.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-t06\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-t06\runtime\Release\sdurws_ird_runtime_test.exe
