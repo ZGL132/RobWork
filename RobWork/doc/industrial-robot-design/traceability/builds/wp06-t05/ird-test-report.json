@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T05",
+  "masterWp": "WP-06-T05",
+  "branch": "wp06-t05",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RT-T05 增列 src/NameMap.cpp（§7.2 生成规则全流程＋双射索引＋S8 交叉校验＋⑥端口适配）；公共头新增 NameMap.hpp（NameScope/RuntimeName/RuntimeNameView/ObjectRef/RuntimeNameNotice/RuntimeNameMap/buildRuntimeNameMap/crossCheckRuntimeNames/IRuntimeNameResolver/BoundRuntimeNameResolver）；Codec.hpp/.cpp 增量落位 IRDNAME 子形态三形态（encodeNameMap/parseNameMap/computeNameMapContentIdentity——§7.6，Codec.hpp 文件头预告的落位点）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "增列 test/NameMapTest.cpp（RT-NM-1～7 全组＋R-4 源码扫描，25 例）；RT-T01～T04 的 7 个用例文件保留并全部回归"
+    }
+  ],
+  "modeMechanics": "冒烟模式沿用 RT-T03 引入的 rw 模板头 header-only include 路径（rw 源码树＋vcpkg Eigen3）——本任务新增代码零 rw/Qt 依赖（纯 core 值类型＋标准库），冒烟仍零框架链接（BaselineLibsPinned 钉住）；集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/RuntimeErrors/Sources/Expected/DescriptionType/DescriptionValidator/CanonicalModel*/CodecRoundtrip（RT-T01～T04 既有，回归）",
+      "designRef": "units/runtime.md §3.2～§3.4/§4.2～§4.5/§5.2/§10.11/§11（RT-BW/CPX/CPL/EQ 部分切面）",
+      "cases": [
+        { "name": "105 cases（RT-T04 合入基线全量）", "status": "passed", "modes": ["smoke", "integration"], "trace": "既有 105 用例零改动零跳过回归通过——含 BuildRedLineTest 源码扫描自动纳入新增头 NameMap.hpp（include 面仅 core/runtime，R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "NameMapBuildTest（RT-NM-1 生成面）",
+      "designRef": "units/runtime.md §7.1（范围表）/§7.2（生成规则）/§7.3（构建后置）/§6.3（BaseMount 登记）/§15.4（身份条目口径）",
+      "cases": [
+        { "name": "NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "rich 夹具全范围条目生成：逐范围计数（Device1/Joint2/LinkFrame3/BaseMount1/BaseFrame1/Flange1/Tcp1/Geometry4/SceneObject1/Body3/Sensor0）＋代表性全名形态＋规则版本 1＋身份非零＋零警告（acceptance 3 全量生成切面）" },
+        { "name": "NameMapBuildTest.DeviceEntryHasNoPrefix_R4", "status": "passed", "modes": ["smoke", "integration"], "trace": "Device 条目＝设备名本身（无前缀）；resolveObjectId(robot) 返回设备名——R-4 的前缀语义对设备名不适用" },
+        { "name": "NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "同模型重复构建：operator==＋编码逐字节相等＋身份相等（§7.3 后置；RT-ID-1 映射层）；条目存储序＝(scope, localName, ObjectId) 字典序钉住" },
+        { "name": "NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "Body 条目按 capabilities.hasDynamicWorkCell 门控（§7.1\"DWC 存在时\"）——minimal 无物性无 Body，rich 3 条" },
+        { "name": "NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "身份作用域规则：robot→Device、joint→Joint、link→LinkFrame、tool→Tcp、scene→SceneObject；资源多处引用取映射序首条（确定性——§15.4 登记项）" }
+      ]
+    },
+    {
+      "suite": "NameMapRoundtripTest（acceptance 1 核心：RT-NM-1 双向往返全量＋编码往返）",
+      "designRef": "units/runtime.md §7.4（AT-18 强制）、§7.6（IRDNAME 往返）、附录 D 第 12 项（精确等值）",
+      "cases": [
+        { "name": "NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "正向链全量：10 对象逐一 ObjectId→RuntimeName→ObjectId' 全等（非抽样）" },
+        { "name": "NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "反向链全量：18 条目逐一 RuntimeName→ObjectId→RuntimeName' 链闭合；身份条目逐名回等且每对象恰一条（§7.4 反向链的落位口径——§15.4 澄清登记）" },
+        { "name": "NameMapRoundtripTest.BijectionCounts_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "双射计数：全名两两不等＋范围划分不重不漏（sum(objectsInScope)==size）＋条目全名形态全部合法" },
+        { "name": "NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "IRDNAME 编码往返 parse(encode(x))==x＋往返后身份相等＋再编码逐字节一致（§7.6；worker 通道确定性 NFR-COR-02）" },
+        { "name": "NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构防御：坏 magic/截断/尾随字节/版本不符/scope 字节越界/count 超剩余字节预算→InputInvalid（元素预算防线——本任务实现层加固）；位翻转→身份必变（防篡改凭据）" },
+        { "name": "NameMapRoundtripTest.EmptyMapEncodeRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "空映射 encodeNameMap 抛 InputInvalid（占位值不进序列化通道——NFR-COR-03）" }
+      ]
+    },
+    {
+      "suite": "NameMapResolveErrorTest（RT-NM-3）",
+      "designRef": "units/runtime.md §7.3 接口属性表/§7.5 必须拒绝行",
+      "cases": [
+        { "name": "NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "空串/未知名/大小写不符/部分名/残缺句法→UnknownObject＋requestedName 回显＋detail 非空＋不抛不默认命中；反解侧全零 id 与未知 id 同码并回显 id 规范文本" }
+      ]
+    },
+    {
+      "suite": "NameMapDisambiguationTest（RT-NM-2）",
+      "designRef": "units/runtime.md §7.2（合法化/保留字/唯一化三行）",
+      "cases": [
+        { "name": "NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "同名消歧：ObjectId 字典序决定保留者；次位 _2；警告恰 1 例列出原名/消歧名/对象/全名；消歧不破坏身份条目反解；重复构建相等" },
+        { "name": "NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "非法字符变体（空格/#）合法化后同名→同规则消歧；ObjectRef.localName 保留消歧前权威形态（§7.3）" },
+        { "name": "NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "前导数字→n_ 前缀；空格→_；无冲突不产警告；探针用例（禁用前导数字规则→本用例变红——probe-test-run.log）" },
+        { "name": "NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "保留字 WORLD 直接消歧加后缀（即使组内首位）；小写 world 不保留（大小写敏感精确比对）" },
+        { "name": "NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "后缀探测跳过占用名（dup/dup_2/dup→dup_3）——消歧收敛的全局占用判定" }
+      ]
+    },
+    {
+      "suite": "NameMapCrossProjectTest / NameMapRenameTest（RT-NM-4 / RT-NM-5）",
+      "designRef": "units/runtime.md §7.1（单快照命名空间）/§7.5（旧快照旧名仍可反解）",
+      "cases": [
+        { "name": "NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "两项目同显示名各自编译：两映射独立成立、同名分别解析到各自对象、各自全量往返通过、身份互异、零警告（§7.1\"跨项目/跨快照不存在名称等值含义\"）" },
+        { "name": "NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "重命名后新映射无旧名；对象引用不受影响（ObjectId 不变——ARC-04）；映射内容身份变化（CON-06）；旧快照旧名用旧映射仍可反解（§7.5 迟到语义的映射侧基础）" }
+      ]
+    },
+    {
+      "suite": "NameMapCrossCheckTest（RT-NM-6，acceptance 3：无遗漏/无重复前缀/无旧名）",
+      "designRef": "units/runtime.md §7.2 生成时点/§7.4 无漏旧双前缀/§5.2 S8 行",
+      "cases": [
+        { "name": "NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "WC 实际名⊆映射名——全集/真子集/空集三态通过" },
+        { "name": "NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "注入替身 WC 名 \"IRB_T.IRB_T.joint_1\"（模拟错误写入）→crossCheckRuntimeNames 抛 RuntimeError(NameConflict)＋detail 回显；映射自身无双前缀名（句法检查 wellFormedFullName 逐条目）——RT-NM-6 名面全绿，真实 WC 构造切面随 RT-T07/T11/T12" }
+      ]
+    },
+    {
+      "suite": "NameMapIdentityTest（RT-NM-7＋CON-06）",
+      "designRef": "units/runtime.md §7.5 必须拒绝行/§7.3 ⑥端口/CON-06",
+      "cases": [
+        { "name": "NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "编译期类型层：RuntimeName↔ObjectId 互不可构造/不可转换（static_assert）；ContentVersion↔ContentIdentity 不混用；行为面 id 键字节敏感（映射键全为 ObjectId）" },
+        { "name": "NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4", "status": "passed", "modes": ["smoke", "integration"], "trace": "替身消费单元拼名查询（R-4 违例形态）：过时局部名拼装/缺分隔拼装在新映射均不命中——拼名查询不得命中，无前缀猜测" },
+        { "name": "NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑥端口适配：BoundRuntimeNameResolver 转发语义与映射入口逐字一致；nameMapIdentity==contentIdentity；异映射身份互异（接纳核对凭据——CON-06\"先反解才接纳\"）" }
+      ]
+    },
+    {
+      "suite": "NameMapR4SourceScan（acceptance 2：前缀操作仅限本模块）",
+      "designRef": "units/runtime.md §7.3 调用示例非法项/ARC-04/SA-05/NFR-MNT-07/DTB §4.5 R-4 例外",
+      "cases": [
+        { "name": "NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4", "status": "passed", "modes": ["smoke", "integration"], "trace": "源码扫描：joinScopeLocal（\"作用域.局部名\"唯一拼装点）仅出现在 NameMap 模块两文件（NameMap.hpp 声明＋NameMap.cpp 实现）；单元内其余产品源零命中。全仓静态扫描归 WP-01-T01 门禁（RT-NM-7 备注），例外清单文件登记随 RT-T13 提交" }
+      ]
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "acceptance": "1. RT-NM-1～7 双向往返全量用例通过（AT-18 载体）",
+      "result": "pass",
+      "evidence": "NameMapRoundtripTest 6 例＋NameMapResolveErrorTest＋NameMapDisambiguationTest 5 例＋NameMapCrossProjectTest＋NameMapRenameTest＋NameMapCrossCheckTest 2 例＋NameMapIdentityTest 3 例（合计 19 例，两模式全绿）；双向全量＝正向 10 对象逐id＋反向 18 条目逐名（非抽样）；ird-test-report 各 suite trace 列逐例标注"
+    },
+    {
+      "acceptance": "2. 前缀操作仅限本模块（R-4 红线——唯一合法位置）",
+      "result": "pass",
+      "evidence": "NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4（单元产品源扫描：拼装助手仅 NameMap 模块两文件）；全仓静态扫描归 WP-01-T01 门禁；本任务 ird_gates 零新增命中（ird-gates-run.log 命中 2 项均为 RT-T03 起既有登记项）"
+    },
+    {
+      "acceptance": "3. 全量生成双向校验（MDL-14：无遗漏/无重复前缀/无旧机械臂名）用例通过",
+      "result": "pass",
+      "evidence": "无遗漏＝BuildsAllScopesFromRichFixture（逐范围计数全量生成）＋BijectionCounts（划分不重不漏）＋CrossCheckPassesOnMapSubset；无重复前缀＝DoublePrefixRejected（句法检查＋交叉校验 NameConflict）；无旧机械臂名＝RenameRebuildNoOldResidue＋CrossCheckFlagsOldResidue 语义（RT-NM-5 名面）——注：MDL-14 的 WC 实物交叉切面（真实 WorkCell 对象名收集）随 RT-T07/T11 编译器落地，本任务以映射规则可独立测试口径（§7.2 生成时点）全量覆盖名称面"
+    }
+  ],
+  "probe": {
+    "description": "失败能力探针（集成模式）：向 NameMap.cpp legalizeLocalName 注入单点缺陷（禁用前导数字规则——条件前置 false），构建零错误、恰好 LegalizationRulesLeadingDigitAndChars_RT_NM_2 一例变红（129/130）；git 层面精确还原后复绿 130/130",
+    "evidence": "probe-build.log / probe-test-run.log；探针标记零残留（复绿构建 diff 仅任务产物）"
+  },
+  "gates": {
+    "ird_gates": "命中 2 项均为既有登记项（IRD-GATE-SUB/IRD-GATE-T1——testkit 侧 testdata_lint 边，RT-T03 基线同款）；本任务新增文件零新增命中",
+    "validate-task": "PASS（RT-T05 契约结构校验）"
+  },
+  "deviations": [
+    "§7.4 反向链与 §6.3 派生节点名登记的落位口径（身份作用域条目回等＋派生条目链闭合）——units/runtime.md §15.4 v0.6 已登记实现层澄清；映射条目含派生节点名（BaseMount/BaseFrame/Flange/Body/Geometry 后缀段）为 §6.3/§7.1 明文要求",
+    "实现层默认登记（units/runtime.md §15.4 v0.6 同步）：消歧后缀格式 _2/_3…与数字预算（uint64 无人工上限）＝§7.2 设计默认待产品确认（与 DTB O-12 同源登记，不私裁）；nameMapRuleVersion=1；工具/场景几何 facet 统一 collision；资源多处引用时身份条目取映射序首条"
+  ]
+}
