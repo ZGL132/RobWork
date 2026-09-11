@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "policy 主链整链编译放行（POL-T02~T12）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["contract-compilation.md", "units/policy.md#12", "traceability/contract-compile-log.md"],
