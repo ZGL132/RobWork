@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T03",
+  "masterWp": "WP-06-T03",
+  "branch": "wp06-t03",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RT-T03 增列 src/DescriptionValidator.cpp（§5.2 S3 结构与单位校验器：结构硬校验/变换合法性/耦合矩阵奇异与病态判定〔单侧 Jacobi SVD〕）；公共头新增 Description.hpp（§4.2 值类型全套＋IRobotDesignReader）与 Resource.hpp（§8.6 值类型先行——分阶段落位登记见 units/runtime.md §15.4 v0.4）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "增列 DescriptionTest/DescriptionValidatorTest 两用例文件（RT-T01/T02 的 5 个用例文件保留）；新增 src/ 至测试目标 include 路径（校验器私有头单元内消费——R-2 只禁跨单元）；BuildRedLineTest 的 BaselineLibsPinned 模式判别机制适配（__has_include→注入清单判别——RT-T03 起冒烟含 rw 模板头 header-only；钉住断言集成三库齐/冒烟空串不变，注释如实留痕）"
+    }
+  ],
+  "modeMechanics": "冒烟模式自 RT-T03 起引入 rw 模板头 header-only include 路径（rw 源码树＋vcpkg Eigen3）——§4.2 Description 字段类型即 rw::math，两模式必须单一类型形态；冒烟仍零框架链接（只实例化模板内联代码；纪律：不调用 Rotation3D::identity() 等外联符号，Description.hpp 以 detail::identityTransform3D() 显式内联恒等初始化）。机制登记于 runtime/CMakeLists.txt 冒烟分支注释",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild（RT-T01/T02 既有，回归）",
+      "designRef": "units/runtime.md §3.2/§3.4、§12 RT-T01、DTB §4.5/§4.6",
+      "cases": [
+        { "name": "RuntimeBuild.SourceTreeReachable_RT_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（既有；断言不变）" },
+        { "name": "RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（覆盖 RT-T03 新增 Description.hpp/Resource.hpp/DescriptionValidator.*）" },
+        { "name": "RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面 sdurws/ird/* 白名单＝{core, runtime}——新增头的 core include 均 tick 合规）" },
+        { "name": "RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "P-RT-3（模式判别机制适配：__has_include→注入清单判别——RT-T03 起冒烟含 rw 模板头；钉住断言不变：集成三库齐/冒烟空串，双分支强断言）" }
+      ]
+    },
+    {
+      "suite": "RuntimeErrors/Sources/Expected（RT-T02 既有，回归）",
+      "designRef": "units/runtime.md §3.3/§3.4/§7.4/§10.11",
+      "cases": [
+        { "name": "17 cases（ErrorsFullTable/ErrorsThrow/ErrorsPayload/SourcesContract/ObjectBytes/Revision/Attribution/Cancel/Lifetime/Expected 全组）", "status": "passed", "modes": ["smoke", "integration"], "trace": "RT-T02 既有 17 用例回归通过（零改动零跳过）；合计 21 既有用例（含 RuntimeBuild 4 例）" }
+      ]
+    },
+    {
+      "suite": "DescriptionType",
+      "designRef": "units/runtime.md §4.2（值类型契约原文）、§4.4（缺失≠非法）、§5.2 S2（reader 归属）、§4.5（行主序精神）",
+      "cases": [
+        { "name": "DescriptionType.DefaultsMatchContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "默认实例＝未显式配置口径（向量空/耦合空/Ground 预设〔V15-04〕/SourcedValue 全 NotProvided/契约版本 0＝非法域留待 reader 置值）" },
+        { "name": "DescriptionType.ValueSemanticsDeepCopyAndMove", "status": "passed", "modes": ["smoke", "integration"], "trace": "值语义：深拷贝独立（改副本不动原件——S2 临时值事务安全）＋移动保留" },
+        { "name": "DescriptionType.SourcedValueCarriesMissingNotZero", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-03 类型层：NotProvided 无值可取（缺失＝零通道切断）；Provided 负值逐位保留（RT-CPX-3 的 −1 到达校验器）" },
+        { "name": "DescriptionType.CouplingMatrixRowMajorAccess", "status": "passed", "modes": ["smoke", "integration"], "trace": "MDL-21：c[i*cols+j] 行主序读法（与 §4.5 旋转矩阵编码同精神——校验器与 RT-T04 编码器共用）" },
+        { "name": "DescriptionType.ReaderAbstractAndPureFunction", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.2 reader 契约：抽象性静态断言（类型层强制 modeling 实现）；同字节→同 Description（纯函数确定性）；格式版本不识别→err 携 InputInvalid（S2 归属，不静默猜测）；替身边界声明（RT-STUB-0）在文件头" },
+        { "name": "DescriptionType.EnumSurfaceAnchored", "status": "passed", "modes": ["smoke", "integration"], "trace": "JointType/InstallationPresetToken/ResourceState 序号锚定（RT-Codec 编码面防插入重排——ErrorsTest 同款纪律）" }
+      ]
+    },
+    {
+      "suite": "DescriptionValidator（通过面/语义）",
+      "designRef": "units/runtime.md §5.2 S3、§5.6（能力缺失≠非法）、§4.4（警告不阻断）、NFR-COR-02",
+      "cases": [
+        { "name": "DescriptionValidator.CleanFixturePassesWithNoIssues", "status": "passed", "modes": ["smoke", "integration"], "trace": "3 关节全字段合法夹具零问题通过（含零警告——量级抽样阴性对照）" },
+        { "name": "DescriptionValidator.MissingCapabilitiesDoNotBlock", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.6 分域：物性/限速/摩擦/传动全缺失→通过（capability 降级归下游，S3 不报 InputInvalid——RT-CPX-2 与 RT-CPX-3 分域的阴性面）" },
+        { "name": "DescriptionValidator.DeterministicReport", "modes": ["smoke", "integration"], "status": "passed", "trace": "NFR-COR-02：同输入两次校验问题清单逐项一致（severity/code/fieldPath/detail）" }
+      ]
+    },
+    {
+      "suite": "CouplingValidation（RT-CPL-1 校验器部分）",
+      "designRef": "units/runtime.md §4.3.4（耦合矩阵编译校验原文）、MDL-21/M-6/M-12、§15.3 P-RT-7",
+      "cases": [
+        { "name": "CouplingValidation.WellConditionedCPasses_RT_CPL_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "良态分支：κ≈1.77 的 C 零问题通过（良态 C 编译入模型的后续断言归 RT-T04/T11/T12——测试文件头覆盖面声明）" },
+        { "name": "CouplingValidation.SingularCBlocked_RT_CPL_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "奇异分支①：det=0 的 C → InputInvalid＋比较型诊断（quantity=coupling-min-singular-value，σmin 对分界 σmax×1e-12）＋detail 明示奇异" },
+        { "name": "CouplingValidation.NearSingularDetApproxZeroBlocked_RT_CPL_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "奇异分支②：κ≈2×10¹⁴（扰动 1e-14）→ σmin≈5e-15 落分界 2e-12 之下——小奇异值可分辨依赖单侧 Jacobi 相对精度（实现文件注释）" },
+        { "name": "CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "病态分支：κ=1e10 → InputInvalid＋比较型诊断（actual≈1e10/threshold=1e8，quantity=coupling-condition-number）——P-RT-7『维持 1×10⁸ 设计默认并随诊断输出实际条件数』的字面承载" },
+        { "name": "CouplingValidation.NonSquareCBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.3.4 非方阵拒绝" },
+        { "name": "CouplingValidation.DimensionCountMismatchBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.3.4 方阵维度＝适用关节数" },
+        { "name": "CouplingValidation.RangeOutOfBoundsStructureInvalid", "status": "passed", "modes": ["smoke", "integration"], "trace": "适用范围越出关节链→StructureInvalid（uint64 防回绕）" },
+        { "name": "CouplingValidation.ZeroCountStructureInvalid", "status": "passed", "modes": ["smoke", "integration"], "trace": "适用关节数 0→StructureInvalid" },
+        { "name": "CouplingValidation.DataSizeMismatchBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "扁平数据量≠rows×cols→拒绝（防读越界）" },
+        { "name": "CouplingValidation.NonFiniteEntryBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "矩阵含 NaN→InputInvalid（NFR-COR-03）" },
+        { "name": "CouplingValidation.DeclaredConditionNumberNotTrusted", "status": "passed", "modes": ["smoke", "integration"], "trace": "申报值不参与判定：良态申报 1e30 不误拒＋病态申报 1.0 不放行（校验器一律重算——防申报失真绕过阻止）" }
+      ]
+    },
+    {
+      "suite": "ProvidedIllegal（RT-CPX-3 校验器部分）",
+      "designRef": "units/runtime.md §4.3.3（Provided 值合法性）、§5.6（与能力缺失严格区分）、§11 RT-CPX-3 行",
+      "cases": [
+        { "name": "ProvidedIllegal.NegativeMassLocated_RT_CPX_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "mass=−1（Provided）→InputInvalid 精确定位 links[1].mass（消息含字段路径＋实测值）；对照面：同字段 NotProvided→通过（分域钉住）" },
+        { "name": "ProvidedIllegal.ZeroMassAndToolMassBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "m≤0 同档（连杆/工具两落点）" },
+        { "name": "ProvidedIllegal.NegativeVelocityAndAccelerationBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.3.3 provided(负数)→InputInvalid（maxVelocity/maxAcceleration 两路径）" },
+        { "name": "ProvidedIllegal.NonPositiveRatioAndFrictionBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "传动比须正（§4.3.4）/摩擦须正（§4.3.3）——ratioPerJoint[0]/friction[2].viscous/friction[2].coulomb 三路径" },
+        { "name": "ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked", "status": "passed", "modes": ["smoke", "integration"], "trace": "惯量非对称（比较型：inertia-asymmetry-max 对 1e-12）与非正定（比较型：inertia-min-eigenvalue 对 0）——§4.3.3 非法实例口径" }
+      ]
+    },
+    {
+      "suite": "IllegalTransform（RT-BW-6 校验器部分）",
+      "designRef": "units/runtime.md §6.6（正交容差 1e-12）、§11 RT-BW-6 行、NFR-COR-03",
+      "cases": [
+        { "name": "IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "反射矩阵 diag(1,1,−1)→InputInvalid＋比较型诊断（quantity=rotation-determinant，det 实测<0）＋detail 明示反射" },
+        { "name": "IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "非正交（缩放混入）→比较型诊断（rotation-orthogonality-max-deviation，实测偏差 vs 1e-12＝§6.6 原文容差）" },
+        { "name": "IllegalTransform.NaNTranslationBlocked_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "平移 NaN→定位 <origin>.P（非有限拒绝）" },
+        { "name": "IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "场景位姿含 +Inf→定位 scene[0].worldPose.P（字面反例字段）" },
+        { "name": "IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "工具 tcpOffset 反射（KIN-14 默认 TCP 权威来源——合法性必检）" }
+      ]
+    },
+    {
+      "suite": "StructureHard（acceptance 2——结构硬反例逐条拒绝且消息含字段路径）",
+      "designRef": "units/runtime.md §5.2 S3（StructureInvalid/InputInvalid 归属）、§4.2/§4.3.1/§4.3.3（合法实例口径）",
+      "cases": [
+        { "name": "StructureHard.EmptyJointsRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "①关节链空→joints（StructureInvalid）" },
+        { "name": "StructureHard.LinkCountMismatchRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "②连杆数量失配→links（links＝joints+1）" },
+        { "name": "StructureHard.FrictionLengthMismatchRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "③摩擦清单长度失配→friction" },
+        { "name": "StructureHard.RatioLengthMismatchRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "④传动比清单长度失配→drivetrain.ratioPerJoint" },
+        { "name": "StructureHard.ZeroContractVersionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑤契约版本 0→descriptionContractVersion（§4.3.1 ≥1）" },
+        { "name": "StructureHard.IllegalRobotLocalNameRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑥⑦局部名空/含 '/'→robotLocalName（§4.3.3）" },
+        { "name": "StructureHard.EmptyJointLocalNameRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑧关节局部名空→joints[0].localName" },
+        { "name": "StructureHard.ZeroAxisAndNonFiniteAxisRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑨⑩零轴/轴含 NaN→joints[0].axis（§4.3.3/NFR-COR-03）" },
+        { "name": "StructureHard.MissingLowerBoundRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑪旋转关节缺下界→joints[0].lower（必填——硬边界缺失走 InputInvalid 而非降级）" },
+        { "name": "StructureHard.MissingUpperBoundRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑫缺上界→joints[0].upper" },
+        { "name": "StructureHard.LowerAboveUpperRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑬qmin≥qmax（含等值边界）→joints[0].upper（消息带两值）" },
+        { "name": "StructureHard.ContinuousWithBoundsRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑭Continuous 携带限位→joints[0].lower/.upper 各拒（§4.2）；合法工作范围不报（MDL-12 正道阴性断言）" },
+        { "name": "StructureHard.WorkingRangeOnRevoluteRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑮非 Continuous 携带工作范围→joints[0].workingRange（§4.3.3 仅 Continuous）" },
+        { "name": "StructureHard.InvalidWorkingRangeRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑯工作范围 qmin≥qmax/含 Inf→joints[0].workingRange（MDL-12 有限区间）" },
+        { "name": "StructureHard.CustomWithoutEaaRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑰Custom 缺 EAA→base.customEaa（§4.2 必填）" },
+        { "name": "StructureHard.NonFiniteBasePositionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑱基座位置含 NaN→base.basePosition" },
+        { "name": "StructureHard.EmptyLinkToolSceneNamesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑲连杆/工具/场景局部名空→links[0]/tools[0]/scene[0].localName" },
+        { "name": "（说明）重复 localName 不设硬反例", "status": "not-applicable", "modes": [], "trace": "设计口径：重名消歧归 S8/RT-T05（RT-NM-2——消歧＋警告非硬失败），S3 不拒（校验器文件头不覆盖面登记）" }
+      ]
+    },
+    {
+      "suite": "UnitValidation（acceptance 3——非有限/非法单位拒绝＋量级抽样警告）",
+      "designRef": "units/runtime.md §4.4（非有限拒绝 NFR-COR-03；量级抽样警告不阻断）、§11 RT-CPX-3/单位切面",
+      "cases": [
+        { "name": "UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03", "status": "passed", "modes": ["smoke", "integration"], "trace": "限位 NaN/±Inf→InputInvalid（编译边界非有限拒绝的字段落点）" },
+        { "name": "UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03", "status": "passed", "modes": ["smoke", "integration"], "trace": "限速 NaN→joints[0].maxVelocity（同一检查骨架，钉路径）" },
+        { "name": "UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "deg 量级限位 ±180（>4π×10 rad——§4.4 原文阈值）→UnitMismatch 警告×2、ok() 保持 true（警告级不阻断的字面钉住）＋detail 提示期望单位 rad" },
+        { "name": "UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3", "status": "passed", "modes": ["smoke", "integration"], "trace": "mm 量级移动限位 ±1000（>1×10² m）→UnitMismatch 警告；合法 ±0.5 m 零警告（阴性对照）——警告级设计默认已随实现注释登记（非 P-RT-7 类阻止边界）" },
+        { "name": "UnitValidation.FixedJointProvidedBoundsStillValidated", "status": "passed", "modes": ["smoke", "integration"], "trace": "Fixed 提供限位仍复核值合法性（有序性），不要求提供——类型口径的边界行为钉住" }
+      ]
+    }
+  ],
+  "summary": { "total": 73, "passed": 73, "failed": 0, "modes": { "smoke": "73/73", "integration": "73/73" }, "note": "73＝RT-T02 既有 21（回归全绿）＋RT-T03 新增 52（DescriptionType 6＋DescriptionValidator/Coupling/ProvidedIllegal/IllegalTransform/StructureHard/UnitValidation 46）；not-applicable 1 条为设计口径说明非测试" },
+  "failureCapabilitySelfCheck": {
+    "method": "阈值变异探针：把 DescriptionValidator.cpp 的 kConditionNumberLimit 由 1e8 临时改为 1e12（阻止边界右移出 κ=1e10 反例的可拦范围），重编译集成测试并运行",
+    "result": "如期变红：恰 2 用例失败（CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1——病态反例漏拦；CouplingValidation.DeclaredConditionNumberNotTrusted——申报掩饰分支），证明 RT-CPL-1 用例非恒真；随后按 HEAD 逐字还原（git diff 零差异）重编译复绿 73/73",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp06-t03/smoke-configure.log",
+      "traceability/builds/wp06-t03/smoke-build.log",
+      "traceability/builds/wp06-t03/smoke-test-run.log",
+      "traceability/builds/wp06-t03/sdurws_ird_runtime_test-smoke.xml（tests=73 failures=0）"
+    ],
+    "integration": [
+      "traceability/builds/wp06-t03/integration-build.log（--target sdurws_ird_runtime_test，exit 0 零错误零警告）",
+      "traceability/builds/wp06-t03/integration-fullbuild.log（全树 cmake --build build --config Release，exit 0——DoD 第 1 条最强口径）",
+      "traceability/builds/wp06-t03/integration-test-run.log",
+      "traceability/builds/wp06-t03/sdurws_ird_runtime_test-integration.xml（tests=73 failures=0）"
+    ],
+    "failureProbe": [
+      "traceability/builds/wp06-t03/probe-build.log",
+      "traceability/builds/wp06-t03/probe-test-run.log（2 FAILED 如期；还原后 73/73 复绿）"
+    ]
+  },
+  "notExecuted": [],
+  "governance": "ird_gates 门禁：已执行（ird-gates-run.log）。本任务引入的命中 1 处（IRD-GATE-LIB：冒烟分支曾以 target_link_libraries 链 Eigen3::Eigen——框架外目标）已消除（Eigen 为 header-only，改为仅取 INTERFACE_INCLUDE_DIRECTORIES 的 include 目录、不进 LINK_LIBRARIES；复跑 LIB 命中归零）。复跑后仍余 2 处命中＝IRD-GATE-SUB/IRD-GATE-T1（均指 testkit 单元的 sdurws_ird_testdata_lint 目标与 testkit 的链接关系）——经 git show d4faae3:...testkit/CMakeLists.txt 证实该目标在 base 即存在，属既有命中，且修复涉及 testkit/**、cmake/ird_gates_whitelist.cmake 与 DTB §4.5 登记册，均不在 RT-T03 allowedFiles 内，不私裁、留验收者/所有者处置。门禁目标因此整体 exit 1（存量命中所致，与本任务改动无关）；构建配置期红线守卫（runtime 侧 R-1/R-2/R-3）随两模式配置通过而生效",
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_runtime_test ——通过（集成模式 exit 0，零错误零警告；全树 Release 构建 exit 0）",
+  "notes": "acceptance 对照：①RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＝CouplingValidation 11 例＋ProvidedIllegal 5 例＋IllegalTransform 5 例（覆盖面声明见测试文件头——良态 C 入模型/循环 Frame/Failed 全链断言归 RT-T04/T06/T11/T12，非本任务产物）；②结构硬反例逐条拒绝且消息含字段路径＝StructureHard 19 例（expectBlocked 统一断言 detail 含字段路径）＋单位切面 5 例；③单位校验（非有限拒绝＋量级抽样）＝UnitValidation 5 例。P-RT-7 处置约束遵守：1×10⁸ 维持设计默认、诊断输出实际条件数、归属裁决不私裁（governance-log open 项不受本任务影响）。文档同步：units/runtime.md v0.4（§3.1 两行分阶段落位＋§15.4 登记 DTB §5.4）；Description.hpp/Resource.hpp 文件头同步登记。validate-task 三查 PASS；validate-docs PASS（20 units，150 task files）"
+}
