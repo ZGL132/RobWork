@@ -216,11 +216,11 @@
       "id": "F-022",
       "source": "traceability/acceptance/DOC-T08-20260911.md#4.8-G-1（attempt 1，送验对象 1343a91e）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-11",
       "title": "POL-T12 dependsOn 缺 POL-T01：units/policy.md §12 与 DTB §2.8 WP-07-T12 行均登记依赖 T01~T11，契约仅列 POL-T02~T11——源头为 DOC-T03 编译（base 19eb9fd 已存在，DOC-T08 diff 未触碰该字段）；T12→T02→T01 传递覆盖故无调度影响，validate-task 三查无法捕获（依赖引用存在性检查不比对卡内依赖列）",
       "owner": "policy 详设所有者＋契约编译治理（CCP §3）",
-      "resolution": "处置建议＝随 POL-T12 实施领取前补 dependsOn POL-T01（一行改动，validate-task 三查复跑）或按 DTB §5.4 登记裁剪依据；流程建议＝整链放行类验收的逐字段核对把 dependsOn 与卡内任务行依赖列的逐项比对固化为检查步骤（本次验收靠人工读取 §12 发现）。"
+      "resolution": "所有者会话按 finding 要求\"随 POL-T12 实施领取前\"执行消账（2026-09-11，lock 9dcc1ef0）：dependsOn 补 POL-T01（一行，validate-task 三查复跑 PASS）；流程建议（整链放行验收固化 dependsOn 与卡内任务行依赖列逐项比对）转后续 DOC-Txx 验收执行。"
     }
   ]
 }

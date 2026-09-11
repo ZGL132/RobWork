@@ -6,6 +6,7 @@
   "title": "policy 文档与门禁同步",
   "status": "ready",
   "dependsOn": [
+    "POL-T01",
     "POL-T02",
     "POL-T03",
     "POL-T04",
