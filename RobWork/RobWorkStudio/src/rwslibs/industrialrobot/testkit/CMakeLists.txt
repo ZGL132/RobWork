@@ -51,7 +51,8 @@ add_library(sdurws_ird_testkit STATIC
     src/ToleranceProfile.cpp
     src/Check.cpp
     src/ContractCheck.cpp
-    src/Fixture.cpp)
+    src/Fixture.cpp
+    src/Report.cpp)
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -108,6 +109,9 @@ add_executable(sdurws_ird_testkit_test
     test/ContractCheckTest.cpp
     test/SetCheckTest.cpp
     test/FixtureTest.cpp
+    test/ReportTest.cpp
+    test/CoreIntegrationExampleTest.cpp
+    test/TestMain.cpp
     test/BuildRedLineTest.cpp)
 # testdata 根注入（TK-TOL 示例档案定位——testdata 与 testkit 平铺）。
 target_compile_definitions(sdurws_ird_testkit_test PRIVATE
@@ -122,12 +126,14 @@ if(MSVC)
     target_compile_options(sdurws_ird_testkit_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口（RecordListener
-# 适配随 TK-T10 落地）。链接产品库 sdurws_ird_testkit 同时验证"公共头可
-# 正常 include＋库可链接"（core 侧同一验证形态）。
+# 测试 main 自持（DTB §5.5）：TK-T10 起经 test/TestMain.cpp 安装
+# TestRecordListener（聚合产出 ird-test-report.json，§7.2/§7.3"或 RecordListener
+# 适配"形态）；仅链 GTest::gtest（main 由 TestMain.cpp 提供，不再用 gtest_main）。
+# 链接产品库 sdurws_ird_testkit 同时验证"公共头可正常 include＋库可链接"
+# （core 侧同一验证形态）。
 target_link_libraries(sdurws_ird_testkit_test PRIVATE
     sdurws_ird_testkit
-    GTest::gtest_main)
+    GTest::gtest)
 
 # 源码树位置与编译默认注入（运行期用例输入）：
 #   IRD_TESTKIT_UNIT_ROOT —— TkBuild 用例扫描 industrialrobot 全部单元

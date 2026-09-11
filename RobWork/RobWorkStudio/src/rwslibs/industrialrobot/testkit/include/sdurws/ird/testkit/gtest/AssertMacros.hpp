@@ -24,12 +24,16 @@
 #include <gtest/gtest.h>
 
 #include <sdurws/ird/testkit/Check.hpp>
+#include <sdurws/ird/testkit/Dataset.hpp>
+#include <sdurws/ird/testkit/Report.hpp>
 #include <sdurws/ird/testkit/ToleranceProfile.hpp>
 
-/// 逐失败详情输出（宏内公共体——失败点数与详情字段全量报告）。
+/// 逐失败详情输出（宏内公共体——失败点数与详情字段全量报告；TK-T10 起
+/// 失败详情同时旁路进当前 TestRecord 的 comparisons 字段，§7.2）。
 #define IRD_CHECK_REPORT_(resultExpr)                                                  \
     do {                                                                               \
         const auto irdCheckResult_ = (resultExpr);                                     \
+        ::sdurws::ird::testkit::report::appendComparisons(irdCheckResult_.failures);   \
         if (!irdCheckResult_.passed) {                                                 \
             for (const auto& irdDetail_ : irdCheckResult_.failures) {                  \
                 ADD_FAILURE() << irdDetail_.fieldPath << ": actual="                   \
@@ -69,5 +73,15 @@
             ADD_FAILURE() << fieldPath << ": 非有限值（NaN/±Inf）——NFR-COR-03";       \
         }                                                                              \
     } while (false)
+
+/// 追溯登记（§7.3）：测试体首行声明需求/AT/数据集，写入当前 TestRecord。
+/// 形态（附录 A.1 示例）：IRD_TEST_INFO("KIN-12", {}, std::nullopt)
+///   参数 1：需求 ID（单个字符串或字符串初始化列表）
+///   参数 2：AT 编号集合（可空 {}）
+///   参数 3：数据集引用（可空 std::nullopt / DatasetRef{id, version}）
+///   参数 4：容差档案 "<id>@<version>"（可选，可省略）
+/// listener 未安装时为 no-op（独立使用宏不依赖报告设施）。
+#define IRD_TEST_INFO(...)                                                             \
+    ::sdurws::ird::testkit::report::irdTestInfo(__VA_ARGS__)
 
 #endif  // SDURWS_IRD_TESTKIT_GTEST_ASSERTMACROS_HPP

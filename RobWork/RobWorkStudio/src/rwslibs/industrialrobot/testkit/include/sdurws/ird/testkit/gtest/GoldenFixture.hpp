@@ -32,6 +32,7 @@
 
 #include <sdurws/ird/testkit/Dataset.hpp>           // GoldenDataset（②数据集装载）
 #include <sdurws/ird/testkit/Fixture.hpp>           // TempDir/DeterministicEnv/ReproRecord
+#include <sdurws/ird/testkit/Report.hpp>            // 报告登记（⑥⑦接线——TK-T10 落地）
 #include <sdurws/ird/testkit/TestPaths.hpp>         // goldenDataRoot（①数据根解析）
 #include <sdurws/ird/testkit/ToleranceProfile.hpp>  // ToleranceProfile（③档案就绪）
 
@@ -48,13 +49,13 @@ namespace sdurws::ird::testkit {
  * TearDown 三步（§6.1 原文）：
  *   ⑦ TestRecord 定稿写出 → ⑧ TempDir 清理（失败保留，§6.2）→ ⑨ 环境复位。
  *
- * 范围边界（本实现的两处预留，登记于 units/testkit.md 变更记录 v0.8）：
- *   - ⑥⑦ 两步依赖 TestRecord/Report（§7，TK-T10 交付物），本任务以注释占位
- *     接缝预留——TK-T10 落地后在此接线，夹具使用方接口不变；
- *   - ②③ 失败（数据集非法/环境不可用）"不进入测试体，结果分类见 §7.2"
- *     （§6.1 原文）——结果分类机制归 §7.2/TK-T10；当前以 GTEST_SKIP 占位
- *     （被跳过用例在报告中可见且不计入被测失败，语义与 §7.2"不是 Passed"
- *     一致），TK-T10 落地后替换为正式 outcome 分类。
+ * 范围说明（TK-T10 接线落地后的现状）：
+ *   - ⑥⑦ 两步已随 TK-T10 接线：⑥ 由 report::bindFixtureContext 写入当前
+ *     TestRecord（repro/数据集/档案），⑦ 由 listener 在 OnTestEnd 定稿
+ *     （outcome/duration/聚合写盘）——listener 未安装时两步 no-op；
+ *   - ②③ 失败按 §7.2 正式分类：先登记 outcome（envUnavailable/datasetInvalid，
+ *     listener 端预置优先于 gtest 计算值——不因跳过被计为 skipped），再
+ *     GTEST_SKIP（测试体不进入，§6.1 原文语义保持）。
  */
 class GoldenFixture : public ::testing::Test {
 protected:
@@ -92,11 +93,16 @@ protected:
     void SetUp() override
     {
         // 步骤①：数据根两级解析（env→编译默认）。失败＝环境不可用（§4.6），
-        // 数据资产类用例无从继续——跳过而非计失败（§6.1"②③失败不进入测试体"）。
+        // 数据资产类用例无从继续——登记 outcome=envUnavailable（§7.2 分类，
+        // 不计失败但 CI"不可判定"）后跳过测试体（TK-T10 接线：原 GTEST_SKIP
+        // 占位升级为"分类＋跳过"——listener 按预置 outcome 落记录）。
         std::filesystem::path root;
         try {
             root = goldenDataRoot();
         } catch (const TestKitError& e) {
+            report::setOutcome(report::Outcome::EnvUnavailable,
+                               std::string{"env-unavailable: 步骤①数据根不可解析: "}
+                                   + e.what());
             GTEST_SKIP() << "[golden-fixture 步骤①] 数据根不可解析: " << e.what();
         }
 
@@ -108,6 +114,10 @@ protected:
             try {
                 dataset = GoldenDataset::load(ref);
             } catch (const TestKitError& e) {
+                // §7.2：数据集非法＝数据资产缺陷，不计失败、指向数据集修复。
+                report::setOutcome(report::Outcome::DatasetInvalid,
+                                   std::string{"dataset-invalid: 步骤②数据集装载失败: "}
+                                       + e.what());
                 GTEST_SKIP() << "[golden-fixture 步骤②] 数据集装载失败: " << e.what();
             }
             // 步骤③：容差档案——默认跟随数据集 manifest 的档案引用
@@ -119,6 +129,9 @@ protected:
             try {
                 profile = ToleranceProfile::load(profilePath);
             } catch (const TestKitError& e) {
+                report::setOutcome(report::Outcome::DatasetInvalid,
+                                   std::string{"dataset-invalid: 步骤③容差档案装载失败: "}
+                                       + e.what());
                 GTEST_SKIP() << "[golden-fixture 步骤③] 容差档案装载失败: " << e.what();
             }
             // 复现记录登记数据资产定位（§7.1：数据集引用进复现上下文）。
@@ -135,8 +148,12 @@ protected:
         // 步骤⑤：TempDir（tag 固定 "golden"——隔离由 pid＋随机后缀保证，§6.2）。
         workDir = std::make_unique<TempDir>("golden");
 
-        // 步骤⑥：TestRecord 初始化——预留接缝（TestRecord 归 §7/TK-T10；
-        // 落地后在此以 repro＋需求/AT 登记初始化，接口不变）。
+        // 步骤⑥：TestRecord 初始化（TK-T10 接线落地）——复现上下文＋数据资产
+        // 定位写入当前记录（listener 未安装时 no-op——独立使用夹具不依赖报告）。
+        report::bindFixtureContext(repro, dataset.has_value() ? &ref : nullptr,
+                                   repro.toleranceProfile.empty()
+                                       ? nullptr
+                                       : &repro.toleranceProfile);
     }
 
     /**
@@ -148,13 +165,19 @@ protected:
      */
     void TearDown() override
     {
-        // 步骤⑦：TestRecord 定稿写出——预留接缝（TK-T10；落地后按 outcome
-        // 分类写出，接缝位置不变）。
+        // 步骤⑦：TestRecord 定稿——由 TestRecordListener::OnTestEnd 执行
+        // （outcome/durationMs 定稿＋程序末聚合写盘；本处无额外动作）。
 
         // 步骤⑧：TempDir 清理（失败保留）。HasFailure() 含测试体与 SetUp 的
         // 非致命失败（gtest 语义）——与"测试失败保留现场"口径一致。
         if (workDir) {
-            workDir->noteTestFailure(::testing::Test::HasFailure());
+            const bool failed = ::testing::Test::HasFailure();
+            workDir->noteTestFailure(failed);
+            if (failed) {
+                // 失败现场登记进报告 artifacts（§7.2；TK-T10 落地接线——
+                // 保留决策仍由 TempDir 析构执行，登记与保留口径一致）。
+                report::addArtifact(workDir->path().string(), "tempdir-scene");
+            }
             workDir.reset();  // 析构内完成删除/保留决策（见 TempDir 契约）
         }
 
