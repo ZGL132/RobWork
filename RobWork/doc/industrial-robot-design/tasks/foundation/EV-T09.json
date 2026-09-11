@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现缓存/检查点兼容判定（Compatibility）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "EV-T07"
   ],
@@ -31,12 +31,17 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-EV-1",
-  "acceptance": [
-    "EV-CPA-1~3：Quick≠Verified/契约/检查点独立用例通过"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_evidence_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "branch": "wp05-t09",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-EV-1"
+  ],
+  "acceptance": [
+    "EV-CPA-1~3：Quick≠Verified/契约/检查点独立用例通过",
+    "部分/失败结果不得作正式缓存命中（§8.2 纯判定反例）用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t09、verify/knownPitfalls 规范化为数组"
 }

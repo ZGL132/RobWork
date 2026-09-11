@@ -4,12 +4,15 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "切片与身份（Slice）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EV-T03"],
   "requirements": ["CON-05", "CON-06"],
-  "designRefs": ["units/evidence.md#4.2", "units/evidence.md#5"],
+  "designRefs": ["units/evidence.md#4.2", "units/evidence.md#5", "units/evidence.md#12"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,10 +20,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_evidence_test"],
+  "branch": "wp05-t04",
+  "interUnit": true,
+  "knownPitfalls": ["CR-02", "CR-05"],
   "crRefs": ["CR-02", "CR-05"],
   "acceptance": [
     "canonical 往返＋浮点位模式＋NaN 拒绝用例通过；EV-ID-1/2 通过",
     "CR-02：SliceCodec 排除字段与纪律按 foundation-api-diff.md CR-02 登记（摘要只经 core ContentDigester）",
     "CR-05：Environment 条目 runtime.model-identity/runtime.robwork-baseline 必填校验与编码；该二条目进入 inputBaselineId；与 RT-T09 共享同一样例断言身份一致（evidence 不重算 CanonicalModel）"
-  ]
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t04、designRefs 补 §12 锚点、knownPitfalls 自 crRefs 规范化登记、allowedFiles 补齐同单元标准面"
 }

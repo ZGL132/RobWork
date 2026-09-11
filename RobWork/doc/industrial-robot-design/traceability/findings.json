@@ -191,6 +191,16 @@
       "title": "ird_gates 自 TK-T03 合入起即为红：TK-T03 交付的 lint 工具 sdurws_ird_testdata_lint（testkit/CMakeLists.txt）以 PRIVATE 链接 sdurws_ird_testkit，触发 IRD-GATE-T1（产品目标不得链接 testkit——目标名无 _test/_contract_test/_plugin/_worker 后缀被归为产品面）＋IRD-GATE-SUB（testdata_lint→testkit 边不在 ARCH §3.5 白名单）。基线 e743f61（TK-T06 合入点）已含该链接行（git show 实证）；TK-T03 验收记录无门禁检查记载。修复动作（DTB §4.5 例外登记＋cmake/ird_gates_whitelist.cmake 边登记，或门禁侧工具目标归类）均落在 TK-T07 allowedFiles 之外，无法随本任务处置",
       "owner": "WP-01 构建所有者＋testkit 详设所有者",
       "resolution": "处置建议＝lint 工具按 units/testkit.md §3.6 定性（CI 独立运行、不进产品安装面）在 DTB §4.5 登记例外＋ird_gates_whitelist.cmake 登记 testdata_lint→testkit 边（ PRIVATE 工具边，不随产品分发）；或门禁增加 <unit>_tools/* 目标归类规则。登记后 gate-all 应恢复 15/15。TK-T07 自身变更面（testkit 库＋测试）零门禁命中，其余 14 项 gate-all 检查两模式全过——见 traceability/acceptance/TK-T07-20260911.md。"
+    },
+    {
+      "id": "F-020",
+      "source": "DOC-T07 实施段逐份放行（2026-09-11）：EV-T02 置 ready 后 validate-task 锚点强制（三查②）报 'designRef anchor not found: units/evidence.md#3.5'——planned 态不查锚点故潜伏至放行时暴露",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "evidence.md §12 任务行 EV-T02 与 §2.1/§3.1 表多处引用'§3.5'（Errors.hpp/EvidenceError 承载章节），但全文无 '### 3.5' 标题——错误类型契约内容现散见于 §3.4 末尾（词表交叉核对）与 §3.1 组成表，无独立章节承载。DOC-T07（allowedFiles 不含 units/evidence.md）以改锚 §3.4＋note 登记处置，未私改设计文本",
+      "owner": "evidence 详设所有者",
+      "resolution": "处置建议＝evidence.md 增设 '### 3.5 错误类型与注入契约'（将 Errors.hpp/EvidenceErrorCode/EvidenceError 语义从 §3.4 末尾析出成节），或把 §12 EV-T02 行与 §2.1/§3.1 引用统一改为 §3.4——二选一后 EV-T02 designRefs 回锚；随队列中 EV-T02 实施前闭合。"
     }
   ]
 }

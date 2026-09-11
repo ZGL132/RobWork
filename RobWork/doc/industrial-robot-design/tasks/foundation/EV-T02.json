@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现错误与依赖类型（Errors/Dependency）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "EV-T01"
   ],
@@ -12,7 +12,7 @@
     "CON-05"
   ],
   "designRefs": [
-    "units/evidence.md#3.5",
+    "units/evidence.md#3.4",
     "units/evidence.md#4.2",
     "units/evidence.md#12"
   ],
@@ -31,12 +31,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-EV-1",
-  "acceptance": [
-    "声明闭包校验用例通过（依赖类型正反例）"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_evidence_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "branch": "wp05-t02",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-EV-1"
+  ],
+  "acceptance": [
+    "声明闭包校验用例通过（依赖类型正反例）",
+    "EvidenceErrorCode 全表 token 用例通过（§3.5——稳定 token 逐枚举）",
+    "Dependency 条目语法与闭包校验器（§4.2）正反例用例通过"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t02、verify/knownPitfalls 规范化为数组；§12 任务行'§3.5'在设计文本中无对应标题（错误语义现承载于 §3.4 末尾与 §3.1 组成表）——designRefs 按 ready 锚点强制改锚 §3.4，章节缺位登记 findings F-020 转 evidence 详设所有者"
 }

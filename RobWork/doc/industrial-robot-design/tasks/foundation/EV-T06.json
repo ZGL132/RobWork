@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现五级汇总判定（Verdict）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "EV-T05"
   ],
@@ -35,8 +35,10 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_evidence_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_evidence_test"
+  ],
+  "branch": "wp05-t06",
   "interUnit": true,
   "knownPitfalls": [
     "P-EV-3",
@@ -45,7 +47,8 @@
   "acceptance": [
     "EV-VER-1~8、EV-COV-1/4 五级优先级正反例全部通过",
     "缺失项全量列出（不抽样）",
-    "汇总不得凭状态字段采信证明（D-9）"
+    "汇总不得凭状态字段采信证明（D-9）",
+    "O-14 未决，保守字面（必验工况覆盖矩阵按 §6.6 字面实现——分母＝快照冻结态 RequiredCaseSet，工况对象 schema 归 requirements 卡 WP-14-T01）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T07 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝evidence.md §12 卡内锚点即交接核对——沿用 DOC-T04 整单元拓扑批次口径），status ready、branch 补 wp05-t06、verify 规范化为数组；O-14（＝P-EV-9 同源）处置按 DOC-T07 契约 acceptance 3 编入"
 }
