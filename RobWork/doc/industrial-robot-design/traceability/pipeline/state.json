@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 62,
+  "tickCount": 63,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T14:12:29+08:00",
+    "updatedAt": "2026-09-11T14:26:19+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -400,6 +400,121 @@
       "taskId": "DOC-T13",
       "contractPath": "tasks/DOC-T13.json",
       "branch": "doc-t13"
+    },
+    {
+      "taskId": "RT-T02",
+      "contractPath": "tasks/foundation/RT-T02.json",
+      "branch": "wp06-t02"
+    },
+    {
+      "taskId": "RT-T03",
+      "contractPath": "tasks/foundation/RT-T03.json",
+      "branch": "wp06-t03"
+    },
+    {
+      "taskId": "RT-T04",
+      "contractPath": "tasks/foundation/RT-T04.json",
+      "branch": "wp06-t04"
+    },
+    {
+      "taskId": "RT-T05",
+      "contractPath": "tasks/foundation/RT-T05.json",
+      "branch": "wp06-t05"
+    },
+    {
+      "taskId": "RT-T06",
+      "contractPath": "tasks/foundation/RT-T06.json",
+      "branch": "wp06-t06"
+    },
+    {
+      "taskId": "RT-T07",
+      "contractPath": "tasks/foundation/RT-T07.json",
+      "branch": "wp06-t07"
+    },
+    {
+      "taskId": "RT-T08",
+      "contractPath": "tasks/foundation/RT-T08.json",
+      "branch": "wp06-t08"
+    },
+    {
+      "taskId": "RT-T09",
+      "contractPath": "tasks/foundation/RT-T09.json",
+      "branch": "wp06-t09"
+    },
+    {
+      "taskId": "RT-T10",
+      "contractPath": "tasks/foundation/RT-T10.json",
+      "branch": "wp06-t10"
+    },
+    {
+      "taskId": "RT-T11",
+      "contractPath": "tasks/foundation/RT-T11.json",
+      "branch": "wp06-t11"
+    },
+    {
+      "taskId": "RT-T12",
+      "contractPath": "tasks/foundation/RT-T12.json",
+      "branch": "wp06-t12"
+    },
+    {
+      "taskId": "RT-T13",
+      "contractPath": "tasks/foundation/RT-T13.json",
+      "branch": "wp06-t13"
+    },
+    {
+      "taskId": "EV-T02",
+      "contractPath": "tasks/foundation/EV-T02.json",
+      "branch": "wp05-t02"
+    },
+    {
+      "taskId": "EV-T03",
+      "contractPath": "tasks/foundation/EV-T03.json",
+      "branch": "wp05-t03"
+    },
+    {
+      "taskId": "EV-T04",
+      "contractPath": "tasks/foundation/EV-T04.json",
+      "branch": "wp05-t04"
+    },
+    {
+      "taskId": "EV-T05",
+      "contractPath": "tasks/foundation/EV-T05.json",
+      "branch": "wp05-t05"
+    },
+    {
+      "taskId": "EV-T06",
+      "contractPath": "tasks/foundation/EV-T06.json",
+      "branch": "wp05-t06"
+    },
+    {
+      "taskId": "EV-T07",
+      "contractPath": "tasks/foundation/EV-T07.json",
+      "branch": "wp05-t07"
+    },
+    {
+      "taskId": "EV-T08",
+      "contractPath": "tasks/foundation/EV-T08.json",
+      "branch": "wp05-t08"
+    },
+    {
+      "taskId": "EV-T09",
+      "contractPath": "tasks/foundation/EV-T09.json",
+      "branch": "wp05-t09"
+    },
+    {
+      "taskId": "EV-T10",
+      "contractPath": "tasks/foundation/EV-T10.json",
+      "branch": "wp05-t10"
+    },
+    {
+      "taskId": "EV-T11",
+      "contractPath": "tasks/foundation/EV-T11.json",
+      "branch": "wp05-t11"
+    },
+    {
+      "taskId": "EV-T12",
+      "contractPath": "tasks/foundation/EV-T12.json",
+      "branch": "wp05-t12"
     }
   ],
   "docRefs": {
@@ -410,5 +525,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "5fd0f1a7-9f33-4bd5-aca7-4c041484ea1c"
+  "tickToken": "800efa4a-5ad2-4d56-ae62-f48cd9218a94"
 }
