@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T10",
+  "masterWp": "WP-02-T10",
+  "branch": "wp02-t10",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 Report.hpp/.cpp：TestRecord（§7.2 字段表逐键）/六类 Outcome/ReportSummary（decisive＝不可判定判据 §7.5）/聚合 Report（writeFile）/TestRecordStore（栈式嵌套会合点）——库本体零 gtest（D-06）"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 ReportTest.cpp（TK-RPT 八用例）＋CoreIntegrationExampleTest.cpp（附录 A.1 示例）＋TestMain.cpp（自持 main 安装 RecordListener——DTB §5.5'或 RecordListener 适配'形态）；gtest_main → GTest::gtest；既有 71 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "OutcomeTokens/ReportAggregation/TestRecordJson/ReportWrite（UT_RPT 报告族）",
+      "designRef": "units/testkit.md §7.2/§7.5/§8 TK-RPT（acceptance①）",
+      "cases": [
+        { "name": "OutcomeTokens.AllSixRegistered_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 六值 token 逐字核对（passed/failed/skipped/notRun/envUnavailable/datasetInvalid）" },
+        { "name": "ReportAggregation.SixOutcomesCountedAndDecisiveFlag_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance①：六类分列计数；Skipped 不计 Passed（§7.2）；notRun/env/dataset 非零→decisive=false（§7.5 不可判定）" },
+        { "name": "TestRecordJson.MachineReadableFieldTable_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance①：ird-test-report 机器可读——§7.2 字段表逐键（testId/requirementIds/atIds/dataset/toleranceProfile/repro/environment/outcome/reason/comparisons/artifacts/durationMs）" },
+        { "name": "ReportWrite.FileRoundTripMachineReadable_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 落盘往返：writeFile→JsonLite 严格重解析（schemaVersion/summary/tests 三键）" }
+      ]
+    },
+    {
+      "suite": "RecordStore（UT_RPT 登记表族）",
+      "designRef": "units/testkit.md §7.3/§6.1 步骤⑥",
+      "cases": [
+        { "name": "RecordStore.PresetOutcomeWinsOverComputed_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 分类语义：夹具预置 envUnavailable/datasetInvalid 优先于 gtest 计算值——不因 GTEST_SKIP 计为 skipped" },
+        { "name": "RecordStore.IrdTestInfoFillsRecord_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.3：IRD_TEST_INFO 需求/AT/数据集/档案写入当前记录（A.1 调用形态）" },
+        { "name": "RecordStore.NestedSessionIsolatesFromListener_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "栈式嵌套：单元会话叠加于 listener 记录之上互不污染（beginRecord/endAndTake 闭环不入册）" }
+      ]
+    },
+    {
+      "suite": "RptDemoFixture（UT_RPT 端到端接线族）",
+      "designRef": "units/testkit.md §6.1 步骤⑥⑦（TK-T08 接缝的 TK-T10 落地）",
+      "cases": [
+        { "name": "RptDemoFixture.FixtureContextBoundToRecord_UT_RPT", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑥接线：夹具 repro/数据集/档案已进活动记录（listener OnTestStart 建立全程可见）；端到端产物＝ird-test-report-run.json（80 记录 passed=80 decisive=true，与本报告同目录）" }
+      ]
+    },
+    {
+      "suite": "UnitsTolerance（core 接入示例——acceptance②）",
+      "designRef": "units/testkit.md 附录 A.1/§5.3",
+      "cases": [
+        { "name": "UnitsTolerance.MmToDegRoundtrip_AppendixD_Item9", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance②：A.1 示例随测试运行通过——mm 换算往返（附录 D 第 9 项容差，checkCloseWithin）＋换算入口拒绝 NaN（NFR-COR-03）＋IRD_TEST_INFO 追溯登记；core 侧样板复制建议随 v0.9/README 登记" }
+      ]
+    },
+    {
+      "suite": "既有回归（71 用例）",
+      "designRef": "units/core.md/testkit.md §8",
+      "cases": [
+        { "name": "既有 71 用例（TestPaths/JsonLite/Fault/Dataset/ToleranceProfile/Check/ContractCheck/SetCheck/StableOrder/Fixture/BuildRedLine）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 80, "passed": 80, "failed": 0, "skipped": 0, "notRun": 0, "envUnavailable": 0, "datasetInvalid": 0, "decisive": true, "modes": { "smoke": "80/80", "integration": "80/80" } },
+  "failureCapabilitySelfCheck": {
+    "method": "聚合语义探针：summary() 中 Skipped 误计入 passed（sed 行内替换，无可编译性破坏）后重编译执行——§7.2'Skipped 不得计为 Passed'必被聚合计数用例捕获。",
+    "incident": "首轮探针作废（如实记录）：以行尾追加 // probe 注释方式注入——正则命中两处 for 循环致语法错误，构建 exit=1 后旧二进制执行呈现假绿（TK-T07 教训重演——本轮以构建退出码显式核验发现并作废）。",
+    "redone": "改用语义缺陷注入：case Outcome::Skipped: ++s.passed →构建 exit 0（新二进制）→SixOutcomesCountedAndDecisiveFlag_UT_RPT 如期变红→恢复→80/80 两模式复绿＋报告 summary passed=80/failed=0/decisive=true。",
+    "result": "成立（以重做轮为准）",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t10/smoke-configure.log",
+      "traceability/builds/wp02-t10/smoke-build.log",
+      "traceability/builds/wp02-t10/smoke-test-run.log",
+      "traceability/builds/wp02-t10/sdurws_ird_testkit_test-smoke.xml",
+      "traceability/builds/wp02-t10/ird-test-report-smoke.json"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t10/integration-build.log",
+      "traceability/builds/wp02-t10/integration-fullbuild.log",
+      "traceability/builds/wp02-t10/integration-test-run.log",
+      "traceability/builds/wp02-t10/sdurws_ird_testkit_test-integration.xml",
+      "traceability/builds/wp02-t10/ird-test-report-run.json"
+    ],
+    "governance": [
+      "traceability/builds/wp02-t10/validate-task.log",
+      "traceability/builds/wp02-t10/validate-docs.log",
+      "traceability/builds/wp02-t10/ird-gates.log"
+    ],
+    "note": "ird-test-report-run/-smoke.json 为 TestRecordListener 端到端产物（--ird_report 直写证据目录——TK-RPT 机器可读验收的直接证据）；ird-test-report.json（本文件）为任务级包装报告（既有模式）"
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①acceptance③：安装排除扫描脚本建议稿交付于 tools/install-scan/ird-install-scan.ps1（§3.6 三项排除清单＋机器可判读退出码；门禁实施归 WP-01/WP-24——已在脚本头注释与 README 登记）；②RecordListener 安装形态＝测试 main 自持（DTB §5.5）：TestMain.cpp 替换 gtest_main，链接改 GTest::gtest；③登记表为栈式嵌套设计——单元测试会话（endAndTake）与 listener 会话（endRecord）互不污染（NestedSessionIsolatesFromListener 钉住）；④golden-fixture ②③失败现按 §7.2 正式分类（TK-T08 预留接缝的落地）；⑤IRD_GIT_COMMIT 编译期宏仍留空（CI 通道接线时注入——v0.8 已登记）；⑥ird_gates 仅 F-019 既有 2 处命中（lint 工具边），本任务变更面零新增命中"
+}
