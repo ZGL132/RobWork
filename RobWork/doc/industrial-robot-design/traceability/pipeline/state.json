@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 65,
+  "tickCount": 66,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T18:19:24+08:00",
+    "updatedAt": "2026-09-11T19:22:54+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -323,6 +323,16 @@
       ]
     },
     {
+      "unit": "testkit",
+      "task": "TK-T11",
+      "acceptanceRecord": "traceability/acceptance/TK-T11-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "10afd55552e428a6a0e3db85f5f9e0c3f4112a1c"
+      ]
+    },
+    {
       "unit": "foundation-governance",
       "task": "DOC-T06",
       "acceptanceRecord": "traceability/acceptance/DOC-T06-20260911.md",
@@ -386,11 +396,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "TK-T11",
-      "contractPath": "tasks/foundation/TK-T11.json",
-      "branch": "wp02-t11"
-    },
     {
       "taskId": "DOC-T10",
       "contractPath": "tasks/DOC-T10.json",
@@ -580,6 +585,56 @@
       "taskId": "POL-T12",
       "contractPath": "tasks/foundation/POL-T12.json",
       "branch": "wp07-t12"
+    },
+    {
+      "taskId": "DIAG-T02",
+      "contractPath": "tasks/foundation/DIAG-T02.json",
+      "branch": "wp09-t02"
+    },
+    {
+      "taskId": "DIAG-T03",
+      "contractPath": "tasks/foundation/DIAG-T03.json",
+      "branch": "wp09-t03"
+    },
+    {
+      "taskId": "DIAG-T04",
+      "contractPath": "tasks/foundation/DIAG-T04.json",
+      "branch": "wp09-t04"
+    },
+    {
+      "taskId": "DIAG-T05",
+      "contractPath": "tasks/foundation/DIAG-T05.json",
+      "branch": "wp09-t05"
+    },
+    {
+      "taskId": "DIAG-T06",
+      "contractPath": "tasks/foundation/DIAG-T06.json",
+      "branch": "wp09-t06"
+    },
+    {
+      "taskId": "DIAG-T07",
+      "contractPath": "tasks/foundation/DIAG-T07.json",
+      "branch": "wp09-t07"
+    },
+    {
+      "taskId": "DIAG-T08",
+      "contractPath": "tasks/foundation/DIAG-T08.json",
+      "branch": "wp09-t08"
+    },
+    {
+      "taskId": "DIAG-T09",
+      "contractPath": "tasks/foundation/DIAG-T09.json",
+      "branch": "wp09-t09"
+    },
+    {
+      "taskId": "DIAG-T10",
+      "contractPath": "tasks/foundation/DIAG-T10.json",
+      "branch": "wp09-t10"
+    },
+    {
+      "taskId": "DIAG-T11",
+      "contractPath": "tasks/foundation/DIAG-T11.json",
+      "branch": "wp09-t11"
     }
   ],
   "docRefs": {
@@ -590,5 +645,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "aa247c1e-aa20-4c29-affd-079fc185d149"
+  "tickToken": "6f9a2fe0-3fdc-4e5e-9297-099e10f9149a"
 }

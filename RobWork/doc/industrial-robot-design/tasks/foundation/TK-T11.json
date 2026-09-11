@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "实现 TestProcessRunner 进程级注入原语（Job Object/事件等待）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["TK-T09"],
   "requirements": ["NFR-REL-02", "NFR-REL-03"],
   "designRefs": ["units/testkit.md#6.5", "units/testkit.md#9", "units/testkit.md#10.1"],
