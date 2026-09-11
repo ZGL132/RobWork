@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现基座—世界变换规则（四预设/正反解）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T04"
   ],
