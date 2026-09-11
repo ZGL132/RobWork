@@ -261,6 +261,36 @@
       "title": "F-012/F-023/F-024 同型再现：DOC-T10 送验主提交 28ed5f3 标题『project 主链整链编译放行（PRJ-T02~T16 十五份契约回填置 ready）』以单元名词开头，非动词开头——发生在 F-023/F-024 已登记同类问题之后，证明模板补救（DTB §5.1 或 PIPE 附录 C 补提交标题动词开头示例）仍未落地前口径继续漂移；正文四段齐备、验证结论与留痕一致（验收者逐项复现：逐份三查 15/15、validate-docs PASS 同数字），纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 同辖域）",
       "resolution": "与 F-012/F-023/F-024 合并处置：在实施者模板补提交标题动词开头示例（放行类可用『放行 <unit> 主链编译（…回填）』句式），消除名词短语与动词开头并存的判例分歧；对已推送历史（28ed5f3 及 F-012/F-023/F-024 所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-025（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-027",
+      "source": "traceability/acceptance/DOC-T11-20260911.md#4.9（attempt 1，送验对象 1ca5167fa）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "F-012/F-023/F-024/F-026 同型再现：DOC-T11 送验主提交 ae05e57 标题『io 主链整链编译放行（IO-T02~T07 六份契约回填置 ready）』以单元名词开头，非动词开头——发生在 F-026（同日 DOC-T10）已登记同类问题之后，证明模板补救（DTB §5.1 或 PIPE 附录 C 补提交标题动词开头示例）仍未落地前口径继续漂移；正文四段齐备、验证结论与留痕一致（验收者逐项复现：逐份三查 6/6、validate-docs PASS 同数字），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012/F-023/F-024/F-026 合并处置（模板补动词开头示例，句式如『放行 io 主链编译（…回填）』）；对已推送历史（ae05e57 及本系所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-026，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-028",
+      "source": "traceability/acceptance/DOC-T11-20260911.md#4.9（attempt 1，送验对象 1ca5167fa，提交 ae05e57 验证段）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "DOC-T11 提交 ae05e57 验证段『ird_gates：未执行——门禁未建成（PIPE 守卫未落地，如实标注）』理由条失实：ird_gates 已随 WP-01-T01/T02 建成（cmake/ird_gates.cmake＋ird_gates_whitelist.cmake＋scripts/gate-all.ps1 于送验 base bc458c00 在库；F-019 证其持续运行且基线红）——『未执行』为实（纯文档任务无构建面，未虚标任何通过），但理由与 2026-09-11 时点事实不符，系回退到 AGENTS §6.3『落地前』过时注记措辞；方向为少报、无粉饰，非阻断",
+      "owner": "治理流程所有者（AGENTS §6.3 自查项措辞模板辖域；与 F-025 同为提交信息准确性面）",
+      "resolution": "纯治理文档批次沿用 DOC-T10（28ed5f3）准确口径：『ird_gates 自查＝validate-task 逐份三查代替（本任务无产品代码与构建目标）』；AGENTS §6.3 注记『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』已过时（门禁 2026-09-10 落地），随下次 AGENTS 修订删除或改为『门禁已落地，纯文档任务以逐份三查等价代替并显式注明』。"
+    },
+    {
+      "id": "F-029",
+      "source": "traceability/acceptance/DOC-T11-20260911.md#4.8（attempt 1，送验对象 1ca5167fa，IO-T07.json）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "IO-T07 契约 dependsOn 未承接卡行前置 WP-02（io.md §12 IO-T07 行前置『IO-T01~T06、WP-02』；其 acceptance 消费 FaultInterceptor/TempDir＝testkit §6.4，TK-T09/TK-T08 交付面），回填仅填 IO-T01~T06，且 note 与 compile-log 均未登记该取舍——对照先例 PRJ-T15 对卡行『TK-T11 按需』取舍有显式登记；因 TK-T08/T09 已 done（基线已含交付物）无调度实害",
+      "owner": "io 单元 wp11-t07 领取者（领取前补正）＋契约编译治理所有者（批次口径）",
+      "resolution": "随 wp11-t07 领取前在 IO-T07.json dependsOn 补 TK-T09（或在 compile-log 修订行登记豁免依据）；后续契约编译批次将卡行 WP 家族前置映射为具体任务 ID 的取舍一律随契约 note 登记（CCP §3 精神）。"
     }
   ]
 }
