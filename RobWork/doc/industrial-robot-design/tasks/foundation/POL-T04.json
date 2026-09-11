@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现解析器与校验器（resolvePolicy）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T03"
   ],
@@ -33,12 +33,17 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-POL-4",
-  "acceptance": [
-    "POL-PARSE-1~6 错误分类表全量反例通过（不短路）"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-POL-4"
+  ],
+  "acceptance": [
+    "POL-PARSE-1~6 错误分类表全量反例通过（不短路）",
+    "O-10/P-POL-2 保守口径：默认解析仅附录 D 第 11 项（行程上限 4π——唯一冻结默认，origin=DefaultAppendixD）；无冻结默认项保持 nullopt＝显式不适用（policy.md §5.1③ D-05），不发明数值、不设第二默认"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t04（≙ 映射）、verify/knownPitfalls 规范化为数组；O-10 处置条款编入 acceptance（P-POL-4 上游 Draft 漂移陷阱随契约保留，处置＝冻结时 diff 增量同步）",
+  "branch": "wp07-t04"
 }

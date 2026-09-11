@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现碰撞评估唯一实现（CollisionQuery）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T06"
   ],
@@ -13,8 +13,7 @@
     "KIN-02",
     "KIN-05",
     "TRJ-04",
-    "OPT-03",
-    "AT-19"
+    "OPT-03"
   ],
   "designRefs": [
     "units/policy.md#6.2",
@@ -38,13 +37,17 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
   "interUnit": true,
-  "knownPitfalls": "P-POL-2",
+  "knownPitfalls": [
+    "P-POL-2"
+  ],
   "acceptance": [
-    "POL-EVAL-1~9/POL-EXC-1/POL-CONC-1 状态机/稳定排序/边界值决策表用例通过",
+    "POL-EVAL-1~9/POL-EXC-1/POL-CONC-1 状态机/稳定排序/边界值决策表用例通过（AT-19 载体）",
     "API 无阈值/模式参数（D-9 结构防覆盖）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t07（≙ 映射）、verify/knownPitfalls 规范化为数组；requirements 原含 AT-19（验收追溯编号）迁入 acceptance 注明（requirements 表承接 policy.md §2.2 五条）",
+  "branch": "wp07-t07"
 }

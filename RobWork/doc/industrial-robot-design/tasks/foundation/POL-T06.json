@@ -4,22 +4,51 @@
   "unit": "policy",
   "masterWp": "WP-C",
   "title": "场景与会话（CollisionScene）",
-  "status": "planned",
-  "dependsOn": ["POL-T02", "POL-T05"],
-  "requirements": ["ARC-05", "KIN-05"],
-  "designRefs": ["units/policy.md#6.1", "units/policy.md#6.4"],
+  "status": "ready",
+  "dependsOn": [
+    "POL-T02",
+    "POL-T05"
+  ],
+  "requirements": [
+    "ARC-05",
+    "MDL-04",
+    "MDL-15",
+    "KIN-05"
+  ],
+  "designRefs": [
+    "units/policy.md#6.1",
+    "units/policy.md#6.4",
+    "units/policy.md#12"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
-  "crRefs": ["CR-04"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
+  "crRefs": [
+    "CR-04"
+  ],
   "acceptance": [
     "POL-SCOPE-1/2 构建期用例：作用域矩阵展开与冲突拒绝通过",
     "CR-04：CollisionScene/IPolicyNameContext 按 foundation-api-diff.md CR-04 映射与 runtime §8.3/§7.3 适配（sceneContentIdentity←workCellCompileIdentity；WorkCell 共享只读经快照别名构造）；契约夹具以替身先行，policy 零 runtime 编译依赖"
-  ]
+  ],
+  "branch": "wp07-t06",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-04"
+  ],
+  "note": "DOC-T08 编译放行（2026-09-11）：早期批次补齐契约（DOC-T03 对其零触碰）——requirements 按 DTB §2.8 WP-07-T06 行补 MDL-04/15（碰撞配置/环境参与，承接 policy.md §2.2）、designRefs 补卡内任务行锚点 §12（CCP §2）、allowedFiles 补同单元标准面（CORE-T01 教训）、branch 补 wp07-t06（≙ 映射）、interUnit=true/knownPitfalls 自 crRefs 规范化登记（CR-04）；放行＝所有者 B 模式预授权整链批次放宽（沿用 DOC-T04 整链放宽口径，拓扑序 POL-T02→T12 登记）。编译留痕见 traceability/contract-compile-log.md"
 }

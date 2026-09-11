@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现关节限位与行程阈值评估",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T04"
   ],
@@ -32,13 +32,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
   "interUnit": true,
-  "knownPitfalls": "P-POL-2",
+  "knownPitfalls": [
+    "P-POL-2"
+  ],
   "acceptance": [
     "POL-JNT-1/2：行程上限 4π 边界＋比较型三要素用例通过",
-    "检出非法为诊断级不阻断（判定权归命令处理器，D-13）"
+    "检出非法为诊断级不阻断（判定权归命令处理器，D-13）",
+    "O-10/P-POL-2 保守口径：nearLimitRatio/conditionNumberWarning 未设置（nullopt）→ 该检查输出显式 NotApplicable 标记，不伪造数值（policy.md §7.4/§9.4；消账归需求所有者）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t08（≙ 映射）、verify/knownPitfalls 规范化为数组；O-10 处置条款编入 acceptance",
+  "branch": "wp07-t08"
 }

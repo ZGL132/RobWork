@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "policy 文档与门禁同步",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T02",
     "POL-T03",
@@ -37,12 +37,15 @@
     "doc-update",
     "traceability-update"
   ],
-  "verify": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
-  "branch": null,
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
   "interUnit": false,
   "acceptance": [
     "README 核对零偏差",
-    "§15.3 状态更新（P-POL-1 随 runtime 卡产出可消账；P-POL-6 stale 翻转）"
+    "§15.3 状态更新（P-POL-1 随 runtime 卡产出可消账；P-POL-6 stale 翻转）",
+    "UT-BUILD 建议并入 CI（登记给 WP-01 侧——§12 任务行产物原文）"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t12（≙ 映射）、verify/knownPitfalls 规范化为数组；acceptance 补 UT-BUILD 并入 CI 条目（§12 任务行产物原文）",
+  "branch": "wp07-t12"
 }

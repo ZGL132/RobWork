@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现错误与策略类型（PolicySet 四态承载）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T01"
   ],
@@ -32,12 +32,19 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-POL-2",
-  "acceptance": [
-    "字段约束与不可变性用例通过"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-POL-2"
+  ],
+  "acceptance": [
+    "字段约束与不可变性用例通过",
+    "O-10/P-POL-2 保守口径：无冻结默认阈值（安全间距/近限位比/条件数警告）以 std::optional 承载——nullopt＝该检查显式不适用，不发明数值（policy.md §4.4 D-05；消账归需求所有者）",
+    "O-11（SEL-05 惯量比阈值归属）：JointThresholds 不预填惯量比字段，仅预留 schema 次版本追加通道（policy.md §4.4/§5.3 版本策略）——归属裁决在 selection 卡（WP-19-T01），不私裁",
+    "O-18（耦合矩阵病态阈值并入建议，P-RT-7）：本 schema 不并入——runtime 侧维持其设计默认；如裁决并入走 schema 次版本追加（policy.md §4.6），登记待裁决不私裁"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t02（≙ 映射）、verify/knownPitfalls 规范化为数组；O-10/O-11/O-18 登记类处置条款编入 acceptance（保守口径，不私裁）",
+  "branch": "wp07-t02"
 }
