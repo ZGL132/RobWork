@@ -4,20 +4,48 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "聚合器（CauseLink/规则/稳定排序）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T04"],
-  "requirements": ["EVI-01", "UX-03"],
-  "designRefs": ["units/diagnostics.md#6.3", "units/diagnostics.md#9.4"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T04"
+  ],
+  "requirements": [
+    "ERR-01",
+    "EVI-01",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#6.3",
+    "units/diagnostics.md#6.4",
+    "units/diagnostics.md#6.5",
+    "units/diagnostics.md#9.4"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t06",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1"
+  ],
   "acceptance": [
-    "DT-AGG-1~4、DT-CHAIN-1：聚合/排序/不升级反例过（搜索未果/碰撞作用域不升级，§8.1 C5/C8）"
-  ]
+    "DT-AGG-1~4 用例通过：同根因稳定聚合（occurrences 为实际次数非截断）、聚合保留全部成员明细（不吞关键作用对象——DT-AGG-3，缺失项全量列出 EVI-01）、多工况稳定排序（orderKey 两次构建同序——NFR-COR-02）、不同作用对象绝不合并（DT-DUP-2 口径）",
+    "局部碰撞不自动升级任务不可行（DT-AGG-4——聚合仅呈现分组无判定权，无 infeasibility-proof 条目产生，C8 作用域；搜索未果口径 §8.1 C5 同表核对）",
+    "DT-CHAIN-1 用例通过：错误转换派生条目 causedBy 链完整到根因（禁止翻译后只剩最后一层）",
+    "P-DIAG-1 处置：AggregatedEntry 成员内嵌 core 契约值——core 冻结 diff 后增量同步，不私改 core"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——requirements 修正为 ERR-01/EVI-01/NFR-COR-02（原 UX-03 无聚合锚点；§2.1 O-9 行「聚合、关联和去重契约」＋DT-AGG-2/DT-AGG-3 依据行为准）、designRefs 细化 §6.3~§6.5（卡行输入原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-1）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t06（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

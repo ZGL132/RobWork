@@ -4,21 +4,50 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "两级日志（Logging：管线/节流采样/轮转/重放）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T02", "DIAG-T03"],
-  "requirements": ["NFR-REL-05", "UX-02"],
-  "designRefs": ["units/diagnostics.md#7.1", "units/diagnostics.md#9.6"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T02",
+    "DIAG-T03"
+  ],
+  "requirements": [
+    "NFR-REL-05",
+    "UX-02"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#7.1",
+    "units/diagnostics.md#7.2",
+    "units/diagnostics.md#7.3",
+    "units/diagnostics.md#7.4",
+    "units/diagnostics.md#7.5",
+    "units/diagnostics.md#9.6"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t07",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-7",
+    "P-EX-8"
+  ],
   "acceptance": [
-    "DT-LOG-1~5：分流/顺序/失败注入/合并用例过（ILogFileOps 接缝）",
-    "用户诊断无调用栈/内部哈希（Tier-U 禁项）；WorkerLogBatch 重放就位"
-  ]
+    "DT-LOG-1~5 用例通过：两级分流（Tier-U 无 Dev 行/无调用栈/无内部哈希——NFR-REL-05/UX-02）、关联 ID 与全局稳定序（同线程 FIFO）、写失败注入（DIAG-LOG-WRITE-FAILED 不阻塞调用方、flush 有界——ILogFileOps 接缝）、日志禁用不影响正式诊断（§7.8）、WorkerLogBatch 乱序/断裂重放合并",
+    "P-DIAG-7 处置：轮转（默认 5×2 MiB/文件）与 flush 窗口（N=256/T=2 s）为可配工程默认（P-DIAG-7 登记），WP-23 性能验收时校准，不作为需求语义",
+    "P-EX-8 处置：worker 日志回传只定 WorkerLogBatch 载荷语义（§7.5）；帧类型/通道帧表归 execution §6（§12.2 交接），不私定对端帧格式"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——designRefs 细化 §7.1~§7.5（卡行输入原文）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-7/P-EX-8）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t07（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

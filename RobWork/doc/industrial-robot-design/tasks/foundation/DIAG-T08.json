@@ -4,20 +4,46 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "脱敏与崩溃诊断文件（Redaction/CrashReport）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T07"],
-  "requirements": ["NFR-SEC-07", "PM-17"],
-  "designRefs": ["units/diagnostics.md#7.6", "units/diagnostics.md#9.5"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T07"
+  ],
+  "requirements": [
+    "NFR-SEC-07",
+    "PM-17"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#7.6",
+    "units/diagnostics.md#7.7",
+    "units/diagnostics.md#9.5"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t08",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-1"
+  ],
   "acceptance": [
-    "DT-SEC-1~4、DT-LIFE-4：凭据零命中/路径四策略/降级/崩溃文件用例通过"
-  ]
+    "DT-SEC-1~4 用例通过：凭据不记录（模式扫描零命中）、路径四策略（Keep/Hash/RootOnly/Strip 各自正确）、脱敏失败降级（[REDACTED:redaction-failed]＋DIAG-REDACTION-FAILED，不放行原文、不抛）、目录导出不泄敏感路径",
+    "DT-LIFE-4 用例通过：磁盘不足降级（Dev 诊断/stderr 摘要），不崩溃、不阻塞调用方",
+    "崩溃诊断文件写出设施就位（脱敏后、用户目录——PM-17/AT-11）；OS 级崩溃捕获与应用壳装配归 WP-24-T02（dtb WP-09-T05 协作口径），本任务不越界实现 dump 机制",
+    "P-DIAG-1 处置：崩溃文件携带的诊断摘要内嵌 core 契约数据——core 冻结 diff 后增量同步"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §2 需求表＋§11 任务行复核回填——designRefs 补 §7.7（卡行输入原文 §7.6/§7.7）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-1）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t08（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }

@@ -4,21 +4,50 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "测试替身与契约套件（ScriptedDiagSource＋DT-* 用例体）",
-  "status": "planned",
-  "dependsOn": ["DIAG-T03", "DIAG-T04", "DIAG-T05", "DIAG-T06", "DIAG-T07", "DIAG-T08", "DIAG-T09"],
-  "requirements": ["ERR-01", "UX-03"],
-  "designRefs": ["units/diagnostics.md#10"],
+  "status": "ready",
+  "dependsOn": [
+    "DIAG-T03",
+    "DIAG-T04",
+    "DIAG-T05",
+    "DIAG-T06",
+    "DIAG-T07",
+    "DIAG-T08",
+    "DIAG-T09"
+  ],
+  "requirements": [
+    "ERR-01",
+    "UX-03"
+  ],
+  "designRefs": [
+    "units/diagnostics.md#10",
+    "units/testkit.md#10.2"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_diagnostics_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_diagnostics_test"
+  ],
+  "branch": "wp09-t10",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DIAG-8"
+  ],
   "acceptance": [
-    "§10 矩阵逐条执行通过并留痕",
-    "替身边界声明在案（替身输出仅验证契约，testkit EV-REG-3 同模式）"
-  ]
+    "diagnostics.md §10 验证矩阵逐条执行通过并留痕（DT-REG/DIAG/DUP/CAT/AGG/CFM/CHAIN/COLLAB/LOG/SEC/LIFE 全组＋DT-AT 观测点映射；gtest XML＋ird-test-report.json，任何未执行测试不标注通过）",
+    "ScriptedDiagSource 替身就位且替身边界声明在案（替身输出仅验证契约——testkit EV-REG-3 同模式）；产品目标不链 testkit（T-1 红线）",
+    "P-DIAG-8 处置：契约测试以桩＋契约夹具验证（testkit checkDiagnosticRecord/checkComparativeFields 消费）；execution 链接启用前不私改其构建，双库集成冒烟按 P-EX-8 联动另行登记"
+  ],
+  "note": "DOC-T09 编译放行（2026-09-11）：契约按 diagnostics.md §11 任务行复核回填——designRefs 补 testkit §10.2 锚点（卡行输入「§10、testkit」原文；其 diagnostics 行登记 StableCodeRegistry 契约夹具义务）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、interUnit=true/knownPitfalls 登记（P-DIAG-8）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 DIAG-T02→T11 登记），status planned→ready、branch 补 wp09-t10（≙ 映射）；编译留痕见 traceability/contract-compile-log.md"
 }
