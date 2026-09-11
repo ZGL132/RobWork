@@ -361,6 +361,26 @@
       "title": "RT-T02 提交 f0a4c0ee『全树 Release 构建 exit 0 零错误——DoD 第 1 条最强口径』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内 RWSimulatorPlugin 等目标为既有产物重链接——F-008 登记的『主树为存量增量产物掩盖』效应），构建本身真实（exit 0、日志完整、验收者抽查零 error），但『最强口径』应为全新树从零构建（全树从零受 F-008 基线缺陷阻挡暂不可达）；验收者已在全新 worktree 完成 sdurws_ird_runtime＋全 ird 测试目标面的从零复现补强（两模式零错误＋189 用例零失败）",
       "owner": "实施纪律（与 F-025 提交信息准确性面同辖域；提交已推送不追溯改写）",
       "resolution": "提交信息中证据强度表述以实际构建树性质为准（增量树/全新树显式区分，禁止把增量树全量构建表述为『最强口径』）；F-008 闭合前 DoD 第 1 条的表述统一采用『任务目标面全新树从零零错误』口径。编号顺延自 F-035，合入时由所有者确认。"
+    },
+    {
+      "id": "F-037",
+      "source": "traceability/acceptance/RT-T03-20260912.md#4.9（attempt 1，送验对象 d0fc6e5，提交 d0fc6e5）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "RT-T03 文档提交 d0fc6e5 标题『[units] runtime v0.4：RT-T03 实现落位登记（分阶段偏差两处＋单侧 Jacobi 选型）』前缀后以名词短语（'runtime v0.4'）开头，不合 ACC §4.9 标题动词开头口径——F-012/F-023/F-024/F-026/F-027/F-030/F-034 同家族第 8 次复现（首个 [units] 前缀实例）",
+      "owner": "实施纪律（F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "文档类提交标题在代号前缀后同样以动词短语开头（如『[units] 登记 runtime v0.4 实现落位…』）；F-012 家族合并处置时纳入本例。编号顺延自 F-036，合入时由所有者确认。"
+    },
+    {
+      "id": "F-038",
+      "source": "traceability/acceptance/RT-T03-20260912.md#4.9（attempt 1，送验对象 d0fc6e5，提交 dd1a0dc 验证段＋integration-fullbuild.log）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "RT-T03 提交 dd1a0dc『全树集成构建日志（cmake --build build --config Release，exit 0——DoD 第 1 条最强口径）』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内路径 D:\\...\\RobWork\\build\\）；F-036 对 RT-T02 的同型裁定第 2 次复现——验收者全新 worktree 从零全树构建实测在 F-008（RobWorkSim 插件 min/max 宏污染）失败（73 错误零个涉及 industrialrobot），构建本身真实（日志完整零 error 行）",
+      "owner": "实施纪律（与 F-025/F-036 提交信息准确性面同辖域；提交已推送不追溯改写）",
+      "resolution": "同 F-036：增量树/全新树显式区分，F-008 闭合前统一采用『任务目标面全新树从零零错误』口径（本任务该口径已由验收者达成：sdurws_ird_runtime＋runtime_test 两模式从零零错误＋73/73）。编号顺延自 F-037，合入时由所有者确认。"
     }
   ]
 }
