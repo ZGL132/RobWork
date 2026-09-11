@@ -4,12 +4,14 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "ResourceController 基础节流（MemProbe/汇总/先节流后诊断）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T06"],
   "requirements": ["NFR-PERF-04"],
   "designRefs": ["units/execution.md#6.1", "units/execution.md#6.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,7 +19,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "branch": "wp08-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-2"],
   "acceptance": [
-    "EX-RES-2：接近 70% 先节流后诊断用例通过（基础形态；规模化归 WP-23-T06）"
-  ]
+    "EX-RES-2 全绿：内存采样推至阈值先节流（停派发/降并行）→仍超限→资源不足诊断，已排队/运行任务不失败（NFR-PERF-04 上游值 70% 不改动；观测点＝派发暂停＋诊断）；三段治理就位——65% 节流阈值→停派发/降并行→70% 诊断（§6.1/D-05：65% 为实现参数非需求阈值，登记于 §15.1 不冒充需求值）",
+    "内存汇总覆盖主进程＋全部工作进程（§6.6 MemProbe）；资源不足诊断携带比较型三要素（实际值/上限/单位——core DiagnosticRecord 比较型字段契约，经 §3.3 注入 sink）",
+    "基础形态交付：规模化验收（大任务分批/流式/检查点下的峰值 ≤70% 基准）归 WP-23-T06——§2.2 NFR-PERF-04 行不可越界列，本任务不提前实现；P-EX-2 处置：ARCH §4.6 资源治理节（v0.11 Draft 待评审）评审变更按影响面增量同步；P-EX-1 处置：消费契约 v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T07 行＋DTB §2.9 WP-08-T08 行（≙）复核回填——requirements 维持 DTB 需求列原文（NFR-PERF-04 基础形态；规模化归 WP-23-T06）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆三条（65% 实现参数不冒充需求阈值——D-05；规模化边界不提前实现；P-EX-1/P-EX-2 处置）；branch 补 wp08-t07（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T07↔WP-08-T08）；interUnit=true 判定＝诊断产出消费 core DiagnosticRecord/比较型三要素契约（经 §3.3 注入 sink——P-EX-8 链接形态裁决前不直链 diagnostics）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }

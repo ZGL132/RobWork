@@ -4,13 +4,20 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "构建落位：execution 占位转真实库",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
-  "designRefs": ["units/execution.md#12", "units/execution.md#3.4"],
+  "designRefs": [
+    "units/execution.md#12",
+    "units/execution.md#3.4",
+    "development-task-breakdown.md#5.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +25,14 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "branch": "wp08-t01",
+  "interUnit": true,
+  "knownPitfalls": ["O-24", "P-EX-1", "P-EX-3", "P-EX-8"],
   "acceptance": [
-    "两模式（独立冒烟＋集成）构建零错误（EX-BLD-1 前两项）",
-    "红线扫描零命中；零 Qt"
-  ]
+    "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_execution 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core/RWS::ird::evidence/RWS::ird::project——§3.4；diagnostics 边已登记但当前经注入实现、目标暂不链接，链接形态按 P-EX-8 裁决不自动消账），EX-BLD-1 构建项通过",
+    "红线扫描零命中：仅 execution→core/evidence/project 三条 ARCH §3.5 登记边；零 Qt（NFR-MNT-01）＋零业务域互链/无私有头出 include（NFR-MNT-02）——P-EX-3 处置：runtime/policy 经 §3.3 最小接口注入消费零编译依赖，不私建 ARCH §3.5 表外边（SA-10 表外边＝构建失败；如架构补登边可平滑直连，接口形状不变）",
+    "sdurws_ird_execution_test / sdurws_ird_execution_contract_test 目标按 DTB §5.5 注册并可构建（googletest 经 vcpkg find_package(GTest CONFIG REQUIRED)；实现任务未落地前允许最小构建冒烟用例，业务用例随 EX-T02~T09 落地——不在骨架预建占位实现，父 CMakeLists 既有约定）",
+    "O-24 处置：TaskState/TaskOutcome/EvaluationMode/EngineeringStatus 四词表按 core 词表现状承接（九态词表归 core——§2.2 不可越界列；ui.md §6.3 已产出并默认承接 core 词表映射）——O-24 在 DTB §4 仍为登记未决态，本契约显式登记「O-24 未决，core 现状承接」，不私裁消账（消账权在 DTB §4 登记流程/所有者）；P-EX-1 处置：消费的 core/evidence/project 卡 v0.1 Draft 未冻结（R-1），冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T01 行＋§2 需求表＋DTB §2.9 WP-08-T02 行（≙）复核回填——designRefs 补 DTB §5.1/§5.5（卡行输入原文：构建约定与测试框架接入）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训：留痕面显式列入）、acceptance 拆四条并编入 O-24/P-EX-1/P-EX-3/P-EX-8 处置；dependsOn 维持 CORE-T01（DTB 依赖列 WP-08-T01/WP-03-T01 的可编码子集——WP-08-T01 系编卡任务已直会话完成且无契约不可编码；卡行「evidence/project T01 后更佳，可平行」成立：父 CMakeLists 对 project 注册 INTERFACE 占位目标、evidence 已落 STATIC，链接不空悬，顺序偏好归 queue 承载——CCP §2 dependsOn 只编码真实技术前置）；branch 补 wp08-t01（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T01↔WP-08-T02，DTB WP-08-T01 编卡任务无活动分支，序号无冲突）；interUnit=true 判定＝构建层建立 execution→core/evidence/project 三条 ARCH §3.5 登记边（diagnostics 边经注入暂不链接——P-EX-8）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }

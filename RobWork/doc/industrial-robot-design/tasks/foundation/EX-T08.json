@@ -4,21 +4,33 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "检查点与缓存存储治理（Checkpoint/CacheCoordinator）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T04", "EV-T09", "RT-T10"],
   "requirements": ["CON-04", "OPT-06"],
   "designRefs": ["units/execution.md#8"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test",
+    "cmake --build build --config Release --target sdurws_ird_execution_contract_test"
+  ],
+  "branch": "wp08-t08",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-3", "P-EX-9"],
   "acceptance": [
-    "EX-CKP-1~3、EX-CCH-1/2：部分失败结果不作正式缓存命中；检查点兼容契约用例通过",
-    "兼容判定逻辑零复制（经 evidence/runtime 注入 ICompileCacheJudge）"
-  ]
+    "EX-CKP-1~3 全绿：检查点损坏（篡改一字节）→EX-CHECKPOINT-CORRUPT 拒绝恢复且原文件保留（EX-CKP-1）；checkpointFormatVersion/contractVersion 失配→EX-CHECKPOINT-INCOMPATIBLE＋reasons（EX-CKP-2——judgeCheckpointCompatibility 判定调用归 evidence 验证）；恢复失败原检查点完整保留（EX-CKP-3 磁盘断言）",
+    "P-EX-9 处置：旧版本检查点不迁移（Incompatible 拒绝——保守方向宁可重算不可错续，§8.1；升级后长任务须重跑，迁移工具如需走需求/设计变更不私加）",
+    "EX-CCH-1/2 通过：Quick 缓存命中不替代 Verified（mode-mismatch→Incompatible——判定来自 evidence，本用例验证调度侧消费与不派发伪装，§8.2 四类区分/§8.1 表 1 模式效力）；失败/取消结果不入正式缓存（EX-CCH-2——仅 finalize 产物入缓存，部分批次仅 DiagnosticOnly，TASK-02 执行侧保证）；命中≠当前显式规则（EX-CCH-1——CON-04）",
+    "兼容判定逻辑零复制：经 evidence/runtime 注入 ICompileCacheJudge 消费（卡行产物原文）——P-EX-3 处置：runtime 零编译依赖不私建边（SA-10 表外边＝构建失败）；判定规则归 evidence §8.2/runtime §9.4，execution 只做存储/查找/淘汰/写入（§2.2 CON-04 行不可越界列）",
+    "OPT-06 平台机制承载：缓存键绑定 sliceId/inputBaselineId（CON-05 内容身份驱动——§6.1 缓存键/§9.1 扩展字段）；同键并发缓存请求合并为等待同一运行（D-10——防重复计算与归档冲突）"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T08 行＋§2 需求表（CON-04/OPT-06 行）＋DTB §2.9 WP-08-T09 行（≙）复核回填——requirements 维持卡 §2.2 承接 CON-04/OPT-06（与 DTB WP-08-T09 需求列的既登记差异：该列另列 NFR-PERF-04，其 execution 承接为 ResourceController〔§2.2 NFR-PERF-04 行〕且规模化归 WP-23-T06，不编入本契约——以卡 §2 需求表为准，DOC-T12 契约 acceptance 1 口径）、verify 补 contract_test（EX-CKP/EX-CCH 跨单元判定用例落位 §3.3 双测试目标）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆五条并编入 P-EX-9/P-EX-3 处置；branch 补 wp08-t08（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T08↔WP-08-T09）；interUnit=true 判定＝消费 EV-T09（缓存/检查点判定 judgeCacheHit/judgeCheckpointCompatibility）与 RT-T10（编译缓存键——注入 ICompileCacheJudge）；跨单元依赖就绪声明：EV-T09（DOC-T07 批次放行）/RT-T10（DOC-T06 批次放行）均已 ready——本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done（DOC-T12 契约 acceptance 3）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；编译留痕见 traceability/contract-compile-log.md"
 }

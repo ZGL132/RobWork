@@ -4,12 +4,14 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "任务身份与状态机（TaskTypes/StateMachine）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["EX-T01"],
   "requirements": ["TASK-01", "NFR-REL-03"],
   "designRefs": ["units/execution.md#4", "units/execution.md#5"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/doc/industrial-robot-design/units/execution.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "branch": "wp08-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-EX-1", "P-EX-4", "P-EX-6", "P-EX-7"],
   "acceptance": [
-    "EX-SUB-1、EX-SM-1~7：逐转移矩阵＋强制终止矩阵用例通过",
-    "Queued/Preparing/Running/Paused 四态取消出口覆盖（ARCH §11.2-6）；能力声明承载就位"
-  ]
+    "EX-SM-1~7 全绿：九态逐转移矩阵用例通过（§5.2 状态机图＋§5.3 逐转移表——触发/守卫/事件/清理逐行断言）；矩阵外非法转换拒绝（EX-SM-6 InvalidState、状态不变——TASK-01；提交受理前的拒绝发生在状态机之外，不产生 TaskRecord 不占状态）",
+    "EX-SUB-1 通过：任务/运行/尝试三级身份并发分配唯一、无重复、同任务事件 FIFO（§4.1~§4.3）；TaskId/RunId/AttemptId 值类型归 core，execution 只分配与携带不重定义（TASK-03 五元组承接——§2.2 不可越界列）",
+    "强制终止矩阵用例通过（forceTerminateCost 仅声明与呈现、不影响协议——§5.5）；Queued/Preparing/Running/Paused 四态取消出口覆盖（ARCH §11.2-6——EX-SM-1~4）",
+    "能力声明承载就位（TASK-01）：supportsPause/checkpointGranularity/forceTerminateCost 经 EvaluatorRuntimeCapabilities 注册表扩展声明（§5.5）——P-EX-7 处置：evidence EvaluatorDescriptor 未含执行能力字段，登记为 evidence 交接项（其卡增量修订时决定是否上收 descriptor），execution 侧不私改对端；不支持暂停任务收到暂停须显式反馈不静默（EX-SM-7 EX-CAPABILITY-UNSUPPORTED——卡行禁止项）",
+    "P-EX-4 处置：九态零新增（无 Created/CancelRequested/Rejected 三态——Canceling 承载「取消请求已受理」相，§5.1 注；如需三态显式化走需求变更不私加）；P-EX-6 处置：任务态/登记表为会话内存态（§5.4——Queued 任务崩溃即消失、不呈现「已中断」，磁盘痕迹唯一经 project 归档预留与检查点，D-13 无第二持久化账本）；P-EX-1 处置：消费 core 词表/身份类型卡 v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步"
+  ],
+  "note": "DOC-T12 编译放行（2026-09-11）：契约按 execution.md §12 EX-T02 行＋§2 需求表（TASK-01/NFR-REL-03 行）＋DTB §2.9 WP-08-T03 行（≙）复核回填——requirements 维持 DTB 需求列原文（TASK-01、NFR-REL-03）、designRefs 维持 §4/§5（卡行输入原文）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆五条（逐转移矩阵/三级身份/强制终止矩阵/能力声明承载＋P-EX-4/P-EX-6/P-EX-7/P-EX-1 处置与卡行禁止项编入）；branch 补 wp08-t02（branch 口径＝单元 WP wp08＋卡内序号保证十份唯一——IO 批 DOC-T11 先例；≙ 实测 EX-T02↔WP-08-T03）；interUnit=true 判定＝消费 core TaskState 九态词表与 TaskIdentity 值类型（§2.2 TASK-01/TASK-03 行——词表与值类型归 core 不可越界列）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 EX-T01→T10 登记，DOC-T12 契约 acceptance 2）；本批入队序位于 evidence/runtime/project 整链之后（B 模式波次第 7），领取时前置必然 done；编译留痕见 traceability/contract-compile-log.md"
 }
