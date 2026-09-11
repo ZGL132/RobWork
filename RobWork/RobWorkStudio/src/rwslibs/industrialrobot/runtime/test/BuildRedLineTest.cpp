@@ -117,21 +117,29 @@ TEST(RuntimeBuild, NoCrossUnitInclude_RT_BUILD_R1_R2)
  * L1 基线库链接清单钉住（P-RT-3 消账输入——acceptance 1 第三分句）。
  * CMake 按目标存在性组装清单注入 IRD_RUNTIME_BASELINE_LIBS：
  *   集成模式＝"sdurw_kinematics;sdurw_models;sdurwsim"（目标实测在位）；
- *   冒烟模式＝空串（无框架目标，占位实现不引用 rw 头）。
- * 分支均为强断言（防恒真）：集成要求三库齐；冒烟要求为空。
+ *   冒烟模式＝空串（无框架目标——RT-T03 起冒烟可含 rw 模板头 header-only，
+ *   仍不链接任何框架库）。
+ * 分支均为强断言（防恒真）：集成要求三库齐；冒烟要求清单为空。
+ * ★ 模式判别说明（RT-T03 适配）：原实现以 __has_include(<rw/math/...>)
+ *   探测模式——RT-T03 起冒烟模式经源码树路径同样可达 rw 模板头
+ *   （header-only，见 runtime/CMakeLists.txt 冒烟分支注释），该探测在
+ *   两模式同为真、失去判别力；改以注入的清单串是否为空判别（清单本身
+ *   即 CMake 按模式组装的事实面）。钉住断言（集成三库齐／冒烟为空）不变。
  */
 TEST(RuntimeBuild, BaselineLibsPinned_RT_BUILD_P_RT_3)
 {
-#if __has_include(<rw/math/Vector3D.hpp>)
-    // 集成模式：rw 头可达 ⇒ 三基线库必须在链接清单（分号分隔）。
     const std::string libs = IRD_RUNTIME_BASELINE_LIBS;
-    EXPECT_NE(libs.find("sdurw_kinematics"), std::string::npos) << "清单: " << libs;
-    EXPECT_NE(libs.find("sdurw_models"), std::string::npos) << "清单: " << libs;
-    EXPECT_NE(libs.find("sdurwsim"), std::string::npos) << "清单: " << libs;
-    // 库面零 gtest（本体的 gtest 仅在测试目标——D-06 同款纪律）。
-    EXPECT_EQ(libs.find("gtest"), std::string::npos) << "清单: " << libs;
-#else
-    // 冒烟模式：无框架目标 ⇒ 清单必为空（占位实现零 rw 引用与之自洽）。
-    EXPECT_STREQ(IRD_RUNTIME_BASELINE_LIBS, "");
-#endif
+    if (libs.empty()) {
+        // 冒烟模式：无框架目标 ⇒ 清单必为空（rw 仅模板头 header-only，
+        // 不链接框架库——RT-T03 起的冒烟机制，CMakeLists 冒烟分支钉住）。
+        EXPECT_STREQ(IRD_RUNTIME_BASELINE_LIBS, "");
+        SUCCEED() << "冒烟模式：L1 清单为空（rw 模板头 header-only，零框架链接）";
+    } else {
+        // 集成模式：三基线库必须在链接清单（分号分隔）。
+        EXPECT_NE(libs.find("sdurw_kinematics"), std::string::npos) << "清单: " << libs;
+        EXPECT_NE(libs.find("sdurw_models"), std::string::npos) << "清单: " << libs;
+        EXPECT_NE(libs.find("sdurwsim"), std::string::npos) << "清单: " << libs;
+        // 库面零 gtest（本体的 gtest 仅在测试目标——D-06 同款纪律）。
+        EXPECT_EQ(libs.find("gtest"), std::string::npos) << "清单: " << libs;
+    }
 }

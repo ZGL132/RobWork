@@ -23,8 +23,11 @@ find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（RT-T01）→ 契约源随 RT-T02 起增列 ----
 add_library(sdurws_ird_runtime STATIC
-    src/Runtime.cpp   # 单元锚点（RT-T01 占位，保留）
-    src/Errors.cpp)   # RT-T02：错误码全表（token/稳定码/分类）＋RuntimeError
+    src/Runtime.cpp             # 单元锚点（RT-T01 占位，保留）
+    src/Errors.cpp              # RT-T02：错误码全表（token/稳定码/分类）＋RuntimeError
+    src/DescriptionValidator.cpp) # RT-T03：S3 结构与单位校验器（§5.2 S3——含耦合
+                                  # 矩阵奇异/病态判定〔单侧 Jacobi SVD〕；私有头
+                                  # src/DescriptionValidator.hpp，不入公共 include）
 
 target_compile_features(sdurws_ird_runtime PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_runtime PROPERTIES
@@ -46,8 +49,16 @@ target_include_directories(sdurws_ird_runtime PUBLIC
 # 集成/冒烟判定＝TARGET sdurw_kinematics（框架库目标只在集成配置树存在——
 # CORE-T01 同款探测；顶层目录比较在单元子目录不可用）。集成模式：kinematics/
 # models 直接 TARGET 链接；sdurwsim 因顶层顺序（RobWorkStudio 先于 RobWorkSim
-# 配置）尚无目标，按名称链接（CMake 生成期解析）。冒烟模式：三者皆无→不链接
-# （占位实现零 rw 引用，两模式各自成立）。
+# 配置）尚无目标，按名称链接（CMake 生成期解析）。
+#
+# ★ 冒烟模式自 RT-T03 起引入 rw **模板头**（header-only）include 路径：
+#   §4.2 Description 的字段类型即 rw::math 值类型（单一类型形态——两模式
+#   不允许分叉，否则同一 Description 在两模式间类型不一致）。rw 的
+#   math/common/core 头为模板/内联为主的自包含闭包（外部依赖仅 Eigen——
+#   经 vcpkg Eigen3 提供）；冒烟编译只实例化模板内联代码，不引用任何
+#   框架库符号，故仍不链接 rw/rwsim（L1 清单保持空——BaselineLibsPinned
+#   钉住）。约束（实现纪律）：冒烟可达代码不得调用 Rotation3D::identity()
+#   等外联符号（构造一律逐元素构造函数）；集成模式无此约束。
 set(IRL_BASELINE_LIBS "")
 if(TARGET sdurw_kinematics)
     target_link_libraries(sdurws_ird_runtime PUBLIC
@@ -55,6 +66,34 @@ if(TARGET sdurw_kinematics)
         sdurw_models
         sdurwsim)
     set(IRL_BASELINE_LIBS "sdurw_kinematics, sdurw_models, sdurwsim")
+else()
+    # 冒烟分支：rw 源码树头路径（模板头；本目录相对仓库根 RobWork/RobWork/src
+    # 的固定布局）＋Eigen（vcpkg 提供 Eigen3 配置包；rw 头以 <Eigen/Core> 引用）。
+    set(IRL_RW_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWork/src")
+    if(NOT EXISTS "${IRL_RW_SRC_DIR}/rw/math/Vector3D.hpp")
+        message(FATAL_ERROR
+            "runtime 冒烟模式：未找到 rw 模板头（期望 ${IRL_RW_SRC_DIR}/rw/math/"
+            "Vector3D.hpp）——RT-T03 起 Description.hpp 需要 rw::math 头"
+            "（header-only），请勿移动仓库目录结构")
+    endif()
+    target_include_directories(sdurws_ird_runtime PUBLIC "${IRL_RW_SRC_DIR}")
+    find_package(Eigen3 CONFIG QUIET)
+    if(TARGET Eigen3::Eigen)
+        # Eigen 为 header-only——只取 include 目录，不把 Eigen3::Eigen 放入
+        # LINK_LIBRARIES：ird_gates 的 LIB 门禁按链接清单核对（框架外目标
+        # 即命中），而 header-only 依赖的语义就是"头可达"而非"库链接"。
+        get_target_property(IRL_EIGEN_INC Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        if(NOT IRL_EIGEN_INC)
+            message(FATAL_ERROR
+                "runtime 冒烟模式：Eigen3::Eigen 无 INTERFACE_INCLUDE_DIRECTORIES"
+                "——vcpkg eigen3 配置包异常（RT-T03 冒烟 header-only 机制）")
+        endif()
+        target_include_directories(sdurws_ird_runtime PUBLIC ${IRL_EIGEN_INC})
+    else()
+        message(FATAL_ERROR
+            "runtime 冒烟模式：未找到 Eigen3（vcpkg eigen3）——rw 数学头依赖"
+            " <Eigen/Core>（RT-T03 冒烟 header-only 机制）")
+    endif()
 endif()
 
 target_link_libraries(sdurws_ird_runtime PUBLIC sdurws_ird_core)
@@ -67,10 +106,12 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_runtime_test
-    test/BuildRedLineTest.cpp   # RT-T01：构建红线扫描＋L1 清单钉住
-    test/ErrorsTest.cpp         # RT-T02：RT-ERR 全表（token/稳定码/分类逐值）＋异常轨＋错误载荷
-    test/SourcesTest.cpp        # RT-T02：Sources 注入契约语义（§3.3）＋错误归属可定位（§5.2 表）
-    test/ExpectedTest.cpp)      # RT-T02：Expected 两态语义（§3.4——成功/失败不静默吞错）
+    test/BuildRedLineTest.cpp           # RT-T01：构建红线扫描＋L1 清单钉住
+    test/ErrorsTest.cpp                 # RT-T02：RT-ERR 全表（token/稳定码/分类逐值）＋异常轨＋错误载荷
+    test/SourcesTest.cpp                # RT-T02：Sources 注入契约语义（§3.3）＋错误归属可定位（§5.2 表）
+    test/ExpectedTest.cpp               # RT-T02：Expected 两态语义（§3.4——成功/失败不静默吞错）
+    test/DescriptionTest.cpp            # RT-T03：§4.2 值类型契约（默认态/值语义/四态/reader 纯函数）
+    test/DescriptionValidatorTest.cpp)  # RT-T03：S3 校验器（RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＋硬反例逐条）
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_STANDARD 17
@@ -83,6 +124,12 @@ endif()
 target_link_libraries(sdurws_ird_runtime_test PRIVATE
     sdurws_ird_runtime
     GTest::gtest_main)
+
+# 校验器私有实现头（src/DescriptionValidator.hpp）对单元内测试可见——
+# §3.1 把校验器列在 src（非模板实现），R-2 只禁跨单元私有头（RT-T11 编译器
+# 同样经 src 路径消费；测试与其同权）。
+target_include_directories(sdurws_ird_runtime_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # 源码树位置与 L1 链接清单注入（红线扫描用例输入；清单＝P-RT-3 消账输入——
 # 运行期断言"清单与声明一致"，集成三库、冒烟空串）。
