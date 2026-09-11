@@ -805,8 +805,9 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | TK-T08 夹具与确定性 | §6.1~§6.3 | `Fixture.hpp/.cpp`（TempDir/ReproRecord/DeterministicEnv/GoldenFixture） | TK-T03/T04 | 同名文件 | TK-FIX | 生命周期六步用例；keepOnFailure 现场保留 |
 | TK-T09 故障注入原语 | §6.4 | `Fault.hpp/.cpp`；`ProcessRunner.hpp`（仅头文件设计冻结，不实现） | TK-T01 | 同名文件 | TK-FAULT | occurrence 触发/命中记录用例通过；无产品目标链接 testkit（TK-BUILD 复验） |
 | TK-T10 报告、示例与门禁同步 | §7、§3.6、core.md §8 | `Report.hpp/.cpp`（数据类型＋写出）；`gtest/RecordListener.hpp` 适配头；**core 接入示例**（附录 A.1 作为 `sdurws_ird_core_test` 的样板用例建议，随 core CORE-T01~T05 落地）；安装排除扫描脚本建议（交 WP-01/WP-24）；README 更新 | TK-T03~T09 | 同名文件、`testkit/include/.../README.md`、本文 | TK-RPT、TK-BUILD | 六类 outcome 聚合正确；示例数据集随 CI 跑通；门禁建议登记给 WP-01 |
+| TK-T11 进程测试支撑实现（触发式补登，2026-09-11） | §6.5、§10.1 | `ProcessRunner.cpp`（Job Object 进程树终止/事件等待实现——`ProcessRunner.hpp` 头已于 TK-T09 冻结，实现签名零偏差） | TK-T09；触发已成立＝PRJ-T15/WP-08-T10 契约测试需要进程级崩溃/恢复场景（AT-11/13 载体，位于 project/execution 波次） | 同名文件 | TK-FAULT 扩展 | 进程正常退出/崩溃/强杀/超时终止四态 outcome 用例＋EventWatch 有界等待（命中/超时）用例通过；Windows API 限定实现文件内（§1.4）；无产品目标链接 testkit（T-1 复验） |
 
-每任务完成条件均含"测试通过并留痕"；任何未执行测试不得标注通过。阶段 A **不含**：TestProcessRunner 实现、`_qt` 目标、任何业务域数据集与契约套件（§10 登记）。
+每任务完成条件均含"测试通过并留痕"；任何未执行测试不得标注通过。阶段 A **不含**：TestProcessRunner 实现、`_qt` 目标、任何业务域数据集与契约套件（§10 登记）。**2026-09-11 增量修订**：TK-T11 经消费者触发补登（上表），实现移出"阶段 A 不含"清单——触发与补登依据见 §10.1 与 DTB §4.2 O-33 消账记录。
 
 ---
 
@@ -816,7 +817,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 
 | 能力 | 启用阶段/触发 | 承接 |
 | --- | --- | --- |
-| TestProcessRunner 实现（Job Object/事件等待） | project/execution 契约测试需要进程级崩溃/恢复场景时（AT-11/13 自动化载体；阶段 A 末期或 B 初） | §6.5 设计已冻结；实现任务届时补登 TK-T11 |
+| TestProcessRunner 实现（Job Object/事件等待） | ~~project/execution 契约测试需要进程级崩溃/恢复场景时~~ **触发已成立（2026-09-11）**：消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，预防性补登于该波次之前 | §6.5 设计已冻结；**TK-T11 已补登（§9）并编译放行** |
 | `sdurws_ird_testkit_qt`（Qt 测试辅助） | ui/workflow 出现 QCoreApplication/GUI 测试目标时 | §3.5、§6.7 |
 | 性能基准夹具（计时统计、吞吐对照口径） | NFR-PERF-01~06 所属阶段（C/D） | performance-baseline 数据集类别已预留（§4.2.1）；夹具细则届时由 WP-23 消费者提出 |
 | 各业务域黄金数据集与契约套件 | 阶段 B~E 各域 | §10.2；数据集责任归域＋WP-02 |
@@ -921,6 +922,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v0.7 | 2026-09-11 | TK-T07（≙WP-02-T07）落位登记：①§5.5 五族契约断言（checkDiagnosticRecord——code 句法/subject 必填与保留值/context·cause·recommendedAction 非空/allowTransient 瞬时放行；checkComparativeFields——kind 一致；checkTaskIdentity 五元组；checkStableIdsUnique——重复逐键列出；checkFileIntegrity）＋checkEnvelopeCombination 谓词模板按原文契约实现，接口零偏差；②实现取舍：codeSyntaxOk 于 testkit 独立实现（与 core 同规则不同代码——校验器不得信任被校验方）；SHA 完整性复用 core::ContentDigester（R-2 公共头）；模板置头文件、非模板断言入 .cpp（同 SetCheck 先例） |
 | v0.8 | 2026-09-11 | TK-T08（≙WP-02-T08）落位登记：①§6.2 TempDir（RAII——建立即存在/析构递归删除且删除失败只告警不抛；keepOnFailure 默认 true；目录名＝ird-test/<pid>-<tag>-<随机后缀> 并行隔离三要素）＋§6.3 ReproRecord（默认 seed=20260909/threadCount=1；toJson 键序固定确定性输出；fromJson 逐字段校验拒绝消息含 repro-json 前缀与字段路径，非整数/越界不静默截断）＋DeterministicEnv（记录按值持有＝唯一来源）按原文契约实现，接口零偏差；②增量接缝（实现细节级，非冻结变更）：TempDir::noteTestFailure(bool)——库本体零 gtest（D-06）无法观测 gtest 失败信号，由 gtest 侧 GoldenFixture::TearDown 以 HasFailure() 注入（TK-T01 detail::resolveDataRoot 同款处理）；③§6.1 GoldenFixture 置于 gtest/GoldenFixture.hpp（含 gtest 头，消费方 _test 目标专用——AssertMacros.hpp 同款分层先例），实现步骤①~⑤＋⑧⑨；步骤⑥⑦（TestRecord 初始化/定稿）与 ②③ 失败的正式结果分类（§7.2）为 TK-T10 交付面——本任务以注释接缝＋GTEST_SKIP 占位（"不进入测试体"语义钉住，TK-T10 接线后接口不变）；④IRD_GIT_COMMIT 编译期宏注入随 CI 通道接线（当前 ReproRecord.gitCommit 留空为合法值） |
 | v0.9 | 2026-09-11 | TK-T10（≙WP-02-T10）落位登记：①§7.2 Report.hpp/.cpp（TestRecord 字段表逐键/六类 Outcome token/ReportSummary.decisive＝§7.5 不可判定判据/聚合 Report.writeFile/TempDir 保留现场 artifacts 登记）按原文契约实现，接口零偏差；②§7.3 gtest/RecordListener.hpp（header-only）：installTestRecordListener(argc, argv)——解析 --ird_report=<path>（缺省＝工作目录 ird-test-report.json）、OnTestEnd 夹具预置 outcome 优先于 gtest 计算值（§7.2 分类不因跳过计为 skipped）、OnTestProgramEnd 聚合写盘（写盘失败 stderr 告警不掩盖测试结果）；③增量接缝（实现细节级）：TestRecordStore 栈式嵌套（单元测试 endAndTake 闭环与 listener endRecord 入册互不污染——NestedSessionIsolatesFromListener 钉住）；④TK-T08 预留接缝落地：GoldenFixture ⑥（bindFixtureContext）⑦（listener OnTestEnd 定稿）接线，②③失败按 §7.2 正式分类（envUnavailable/datasetInvalid＋GTEST_SKIP 保持"不进入测试体"）；⑤IRD_TEST_INFO 宏（AssertMacros.hpp，IRD_CHECK_REPORT_ 同步旁路 comparisons 进记录）；⑥core 接入示例（附录 A.1）以 testkit 侧 CoreIntegrationExampleTest.cpp 运行通过（core/test/** 不在契约 allowedFiles——core 侧正式接入按 A.1 样板复制，随 CORE-T04/T05 交付面登记）；⑦安装排除扫描脚本建议稿交付 tools/install-scan/ird-install-scan.ps1（§3.6 三项排除＋机器可判读退出码；门禁实施归 WP-01/WP-24）；⑧测试 main 自持切换：TestMain.cpp 替换 gtest_main（DTB §5.5"或 RecordListener 适配"形态），链接 GTest::gtest |
+| v1.0 | 2026-09-11 | TK-T11 触发式补登（消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，AT-11/13 载体；预防性补登于该波次之前——所有者采纳）：①§9 任务表补登 TK-T11 行（`ProcessRunner.cpp` Job Object/事件等待实现；头文件已于 TK-T09 冻结、实现签名零偏差）；②§10.1 启用表更新为"触发已成立、TK-T11 已补登放行"；③§9"阶段 A 不含"清单同步移出 TestProcessRunner 实现；④DTB §2.2 WP-02-T11 恢复 ≙TK-T11 映射、O-33 消账、≙ 计数 73→74（六卡 74 任务）；⑤契约 tasks/foundation/TK-T11.json 编译放行（ready，入队位于 project 波次 DOC-T10 之前） |
 
 ---
 

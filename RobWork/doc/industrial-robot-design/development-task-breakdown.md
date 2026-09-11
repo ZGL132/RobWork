@@ -176,7 +176,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-02-T08 | 实现夹具与确定性环境〔≙TK-T08〕 | testkit | WP-02-T03/T04 | testkit.md §6.1~§6.3 | `Fixture.*`（TempDir/ReproRecord/DeterministicEnv/GoldenFixture） | NFR-COR-02 | TK-FIX 生命周期六步＋keepOnFailure 用例通过 | — | M |
 | WP-02-T09 | 实现故障注入原语〔≙TK-T09〕 | testkit | WP-02-T01 | testkit.md §6.4 | `Fault.*`＋`ProcessRunner.hpp`（仅头文件冻结） | NFR-REL-01/02、PM-08（测试支撑） | TK-FAULT occurrence 触发/命中记录用例通过；TK-BUILD 复验产品零链接 | 生产代码零 testkit 头、零 `#ifdef TEST` | M |
 | WP-02-T10 | 实现测试报告与 core 接入示例〔≙TK-T10〕 | testkit | WP-02-T03~T09、WP-03-T01~T05 | testkit.md §7、附录 A.1；core.md §8 | `Report.*`＋`gtest/RecordListener.hpp`＋core 示例用例＋安装排除扫描脚本建议（交 WP-24-T05） | NFR-COR-02（复现要素）、NFR-SEC-05/DEP（分发边界） | TK-RPT 六类 outcome 聚合正确；示例数据集随 CI 跑通 | — | M |
-| WP-02-T11 | 实现 TestProcessRunner 进程级注入原语〔触发式；原 ≙TK-T11 映射悬空（testkit.md §9 仅 TK-T01~T10），TK-T11 由 testkit 卡触发时补登——见 §4.2 O-33〕 | testkit | WP-02-T09＋触发条件：WP-04-T15/WP-08-T10 需要进程级崩溃/恢复场景时 | testkit.md §6.5/§10.1 | `ProcessRunner.*`（Job Object/事件等待） | NFR-REL-02/03、AT-11/13（自动化载体） | 进程崩溃/强杀/事件等待用例通过；PRJ-TX-7/8、TASK 契约场景可消费 | 不提前实现（无消费者不建目标） | M |
+| WP-02-T11 | 实现 TestProcessRunner 进程级注入原语〔≙TK-T11；2026-09-11 触发补登（O-33 消账）：消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，预防性补登于该波次之前〕 | testkit | WP-02-T09（已 done）＋触发条件已成立（WP-04-T15/WP-08-T10 契约测试需要进程级崩溃/恢复场景，AT-11/13 载体） | testkit.md §6.5/§10.1 | `ProcessRunner.*`（Job Object/事件等待） | NFR-REL-02/03、AT-11/13（自动化载体） | 进程崩溃/强杀/事件等待用例通过；PRJ-TX-7/8、TASK 契约场景可消费 | 不提前实现（无消费者不建目标） | M |
 
 ### 2.4 WP-03 core（单元卡 units/core.md §9，已存在）
 
@@ -627,7 +627,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-26 | UX-13 工业高频命令"运行碰撞检查"的执行编排（经④端口触发后台任务、结果呈现）需 workflow/ui/execution 三方契约对齐 | 高频命令语义与任务清单呈现 | UX-13（M-13）；ARCH §7.11 | workflow 卡＋ui 卡（WP-22-T12 落地） | 登记 |
 | O-31 | ui.md 依赖声明三方矛盾：§2.1.2 C 表把 project/evidence/execution/policy/runtime 协作（C-3/4/5/7/8/10/11）标为"接口依赖"（ARCH §3.5 定义＝链接库目标），而 §3.1 声明"仅链 core,diagnostics、其余零编译依赖"，ARCH §3.5 白名单亦只有 ui→core,diagnostics 两条；ShellWiring（§11）直接持有 policy::IPolicyProvider、runtime::IRuntimeNameResolver 等对端类型 | 按 §3.1 实现则 ShellWiring 无法编译；按 C 表实现则 5 条边违反 SA-10 门禁（表外边＝构建失败）；WP-10 落位前必须裁决 | 全链一致性审计 2026-09-10；ui.md §2.1.2/§3.1 vs ARCHITECTURE.md §3.5 | 架构所有者（增边或确认 ui 侧最小注入接口模式，对齐其余 10 卡"自定义最小注入接口"惯例）＋ui 卡 | 登记 |
 | O-32 | PILOT-01/02、DEL-01/02 四条 P0/R1 需求在 ARCHITECTURE 无 ID 级落点（仅 §10.1 阶段 E 文字性描述；§3.1 单元表"关键需求族"列未登记） | 阶段 E 交付时需求覆盖矩阵（§3）无法回指承载单元与任务；试点/交付验收追溯断链 | 全链一致性审计 2026-09-10；REQUIREMENTS §（PILOT/DEL 条目）vs ARCHITECTURE §3.1/§10.1 | 架构所有者（WP-22/WP-24 任务细化前补登落点） | 登记 |
-| O-33 | WP-02-T11 原 ≙TK-T11 映射悬空：testkit.md §9 任务表仅 TK-T01~T10，§6.5 冻结的 TestProcessRunner 实现任务约定"届时补登 TK-T11"，映射已从 §2 该行移除以保证 ≙ 计数（73）与"六卡 73 任务"声明一致 | 触发条件满足时 WP-02-T11 无卡内编号可对接 | testkit.md §6.5/§9 vs 本文 §2 WP-02-T11 行 | testkit 卡（触发时补登 TK-T11 并恢复 ≙ 映射） | 登记 |
+| O-33 | WP-02-T11 原 ≙TK-T11 映射悬空：testkit.md §9 任务表仅 TK-T01~T10，§6.5 冻结的 TestProcessRunner 实现任务约定"届时补登 TK-T11"，映射已从 §2 该行移除以保证 ≙ 计数（73）与"六卡 73 任务"声明一致 | 触发条件满足时 WP-02-T11 无卡内编号可对接 | testkit.md §6.5/§9 vs 本文 §2 WP-02-T11 行 | testkit 卡（触发时补登 TK-T11 并恢复 ≙ 映射） | 已消账（2026-09-11 触发成立：TK-T11 补登 §9＋映射恢复 WP-02-T11 行＋TK-T11.json 放行，≙ 计数 73→74） |
 | O-34 | CI 常驻激活前置（WP-01-T02 登记）：CI 模板已固化于 `scripts/industrialrobot/ci/`（与 eb777e2 逐字节一致），但落位目标路径在框架树/仓库根（`RobWork/gitlab-ci/`、`.github/workflows/`）——SA-02 须先补丁登记；且模板引用的入口脚本为 `scripts/industrial-robot/`（连字符）与现行 `scripts/industrialrobot/` 命名不一致，需裁决统一 | CI 六步门禁（ARCH §11.2-2 常驻）无法实际接入 Runner；本地 gate-all.ps1 为过渡强制门槛 | WP-01-T02 产物 ci/README.md 差异表 | 构建约定所有者＋所有者（扩契约＋补丁登记＋命名裁决后复制落位） | 登记 |
 
 ### 4.3 待冻结前置（REQUIREMENTS 附录 C 状态同步）
@@ -741,7 +741,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 - [x] **20 单元 INTERFACE→真实库均有显式任务**：core WP-03-T01｜testkit WP-02-T01｜project WP-04-T01｜evidence WP-05-T01｜runtime WP-06-T01｜policy WP-07-T01｜execution WP-08-T02｜diagnostics WP-09-T02｜ui WP-10-T02｜io WP-11-T02｜reporting WP-12-T02｜modeling WP-13-T02｜requirements WP-14-T02｜kinematics WP-15-T02｜trajectory WP-16-T03｜dynamics WP-17-T02｜drivetrain WP-18-T02｜selection WP-19-T02｜optimization WP-20-T02｜workflow WP-22-T02——20/20。
 - [x] **无任务要求继承/恢复 old/**：全局禁止项 §5.3-①；old/ 磁盘不存在（O-01）已登记勘误请求。
 
-**统计**：任务总数 **266**（其中单元任务卡映射 ≙ 73 项、新增登记 193 项：含 14 张卡编写＋3 项冻结/登记文档任务）；WP 覆盖 26/26；需求 ID 覆盖率 **180/180＋12/12＋2/2**；无前置可立即启动任务：**WP-00-T01、WP-00-T02、WP-01-T01、WP-02-T01、WP-03-T01、WP-04-T01、WP-05-T01、WP-06-T01、WP-07-T01、WP-09-T01**（10 个起点，另六卡内链式任务随各自起点解锁）；开放问题 **33 项登记**（O-01~O-33）＋5 项本文辖域定稿消账（§4.4）。
+**统计**：任务总数 **266**（其中单元任务卡映射 ≙ 74 项、新增登记 192 项；2026-09-11 TK-T11 补登——WP-02-T11 由新增登记改归 ≙ 映射，总数不变：含 14 张卡编写＋3 项冻结/登记文档任务）；WP 覆盖 26/26；需求 ID 覆盖率 **180/180＋12/12＋2/2**；无前置可立即启动任务：**WP-00-T01、WP-00-T02、WP-01-T01、WP-02-T01、WP-03-T01、WP-04-T01、WP-05-T01、WP-06-T01、WP-07-T01、WP-09-T01**（10 个起点，另六卡内链式任务随各自起点解锁）；开放问题 **33 项登记**（O-01~O-33）＋5 项本文辖域定稿消账（§4.4）。
 
 ---
 

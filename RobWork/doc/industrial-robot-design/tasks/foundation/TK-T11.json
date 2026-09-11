@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T11",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "实现 TestProcessRunner 进程级注入原语（Job Object/事件等待）",
+  "status": "ready",
+  "dependsOn": ["TK-T09"],
+  "requirements": ["NFR-REL-02", "NFR-REL-03"],
+  "designRefs": ["units/testkit.md#6.5", "units/testkit.md#9", "units/testkit.md#10.1"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_testkit_test"
+  ],
+  "branch": "wp02-t11",
+  "interUnit": false,
+  "acceptance": [
+    "ProcessRunner 按 §6.5 冻结签名全量实现（零偏差）：start/ProcessOutcome 四态（Exited/Crashed/TerminatedByTimeout/Killed）/kill 进程树终止；EventWatch awaitFile/awaitLineInFile 有界等待（deadline 语义）；Windows API 限定在 ProcessRunner 实现文件内（testkit.md §1.4 表）",
+    "单元测试：进程正常退出/崩溃注入/强杀/超时终止四态 outcome 用例＋EventWatch 命中与超时双路径用例全部通过，双模式构建零错误并留痕（gtest XML＋ird-test-report.json）",
+    "T-1 复验：无任何产品目标链接 testkit（ird_gates 全量运行零命中）；不引入 testkit 新外部依赖（标准库＋Win32 API 限定）",
+    "validate-docs 通过；validate-task 三查通过；编译放行登记 traceability/contract-compile-log.md（注明 O-33 消账与触发依据）"
+  ],
+  "note": "2026-09-11 触发式补登（所有者采纳预防性方案）：消费者＝PRJ-T15/WP-08-T10（AT-11/13 自动化载体，位于 project/execution 波次）；§6.5 设计冻结、§9 TK-T09 仅冻结头文件——本任务实现 ProcessRunner.cpp；O-33 随补登消账（DTB §4.2）、≙ 映射恢复（WP-02-T11 行）、卡计数 73→74。入队位于 project 波次（DOC-T10）之前。"
+}
