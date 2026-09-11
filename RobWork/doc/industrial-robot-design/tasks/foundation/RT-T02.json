@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现错误与注入契约（Errors/Sources）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T01"
   ],
