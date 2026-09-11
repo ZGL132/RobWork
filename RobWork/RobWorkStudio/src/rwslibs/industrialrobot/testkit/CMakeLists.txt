@@ -103,6 +103,7 @@ add_executable(sdurws_ird_testkit_test
     test/DatasetTest.cpp
     test/ToleranceProfileTest.cpp
     test/CheckTest.cpp
+    test/SetCheckTest.cpp
     test/BuildRedLineTest.cpp)
 # testdata 根注入（TK-TOL 示例档案定位——testdata 与 testkit 平铺）。
 target_compile_definitions(sdurws_ird_testkit_test PRIVATE
