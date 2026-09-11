@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T06",
+  "masterWp": "WP-06-T06",
+  "branch": "wp06-t06",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RT-T06 增列 src/BaseWorldTransform.cpp（§6 规则面：installationPresetRotation〔P-RT-4 冻结矩阵唯一权威产出点〕/rotationFromCustomEaa〔Rodrigues〕/resolveWorldBaseTransform〔正解唯一产生入口〕/checkWorldBaseTransform〔有限性/正交性 1e-12/反射〕/checkPresetConsistency〔S5 规则〕/invertWorldBase·transformBasePointToWorld·transformWorldPointToBase·gravityToBase·composeWorldBaseTcp〔正反解与消费数学〕/checkBaseMountConsistency〔S9 判定含 ≈T·T 形态探测〕）；公共头新增 BaseWorldTransform.hpp（§3.1 模块表原列模块——InstallationPresetToken 经 include 自 Description.hpp 复用，v0.4 落位口径）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "增列 test/BaseWorldTransformTest.cpp（RT-BW-1/2/3/6 规则部分＋S5 预设一致性＋S9 二次叠加反例，30 例）；RT-T01～T05 的 8 个用例文件保留并全部回归"
+    }
+  ],
+  "modeMechanics": "冒烟模式沿用 RT-T03 引入的 rw 模板头 header-only include 路径（rw 源码树＋vcpkg Eigen3）——本任务全部矩阵运算逐元素实现，零 rw 外联符号（multiply/operator*/identity/EAA::toRotation3D 均为框架 .cpp 外联；唯一使用的 rw 方法＝Rotation3D::inverse() 原地转置，头内 inline），冒烟仍零框架链接（BaselineLibsPinned 钉住）；集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/RuntimeErrors/Sources/Expected/DescriptionType/DescriptionValidator/CanonicalModel*/CodecRoundtrip/NameMap*（RT-T01～T05 既有，回归）",
+      "designRef": "units/runtime.md §3.2～§3.4/§4.2～§4.5/§5.2/§7/§10.11/§11（既有切面）",
+      "cases": [
+        { "name": "142 cases（RT-T05 合入基线全量）", "status": "passed", "modes": ["smoke", "integration"], "trace": "既有 142 用例零改动零跳过回归通过——含 BuildRedLineTest 源码扫描自动纳入新增头 BaseWorldTransform.hpp（include 面仅 core/runtime/rw 模板头，R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "PresetRotationTest（RT-BW-2 精确面＋acceptance 3 P-RT-4 冻结留痕断言）",
+      "designRef": "units/runtime.md §6.2（预设精确定义表——P-RT-4）、§4.3.2（合法域）",
+      "cases": [
+        { "name": "PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "Ground＝I 九元素位相等（§6.2'编码无舍入'——预设矩阵用精确断言而非容差）" },
+        { "name": "PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "Inverted＝diag(1,−1,−1) 逐位——P-RT-4 冻结留痕的可测锚（acceptance 3）：倒挂轴向＝绕 X，modeling 卡交叉核对的对照基准" },
+        { "name": "PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "Wall＝[[0,0,1],[0,1,0],[−1,0,0]] 逐位（第 1 行 [0,0,1]、第 3 行 [−1,0,0]——§6.2 表第 3 行显式矩阵形态，P-RT-4 第二冻结值）" },
+        { "name": "PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "语义断言：倒挂基座 +Z 世界像＝(0,0,−1)（竖直向下，吊装——§6.2 语义列）" },
+        { "name": "PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "语义断言：壁装基座 +Z 世界像＝(1,0,0)（水平——§6.2 语义列）" },
+        { "name": "PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "三固定预设全元素 ∈ {0,±1} 位值域检查（§6.2'编码无舍入'的身份编码前提）" },
+        { "name": "PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws", "status": "passed", "modes": ["smoke", "integration"], "trace": "Custom 无预设矩阵→InputInvalid fail-fast（不伪造占位阵——NFR-COR-03；矩阵应经 rotationFromCustomEaa 换算）" }
+      ]
+    },
+    {
+      "suite": "CustomEaaTest（Custom 编辑表示换算——§6.2'任意欧拉角'的注入通道）",
+      "designRef": "units/runtime.md §6.2 Custom 行、§4.2 customEaa（单位 rad）、NFR-COR-02/03",
+      "cases": [
+        { "name": "CustomEaaTest.ZeroEaaYieldsIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "零旋转矢量＝恒等（θ=0 数学极限；合法性归一致性面——实现不做语义层拒绝）" },
+        { "name": "CustomEaaTest.QuarterTurnAboutZMatchesAnalytic", "status": "passed", "modes": ["smoke", "integration"], "trace": "EAA(0,0,π/2) 与解析矩阵 R_z(π/2) 一致（1×10⁻¹²——Rodrigues 实现的解析互证）" },
+        { "name": "CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "EAA(π,0,0) 与 P-RT-4 冻结矩阵 diag(1,−1,−1) 数学互证（1×10⁻¹²）——冻结矩阵确为'倒挂 180°'的精确表示" },
+        { "name": "CustomEaaTest.NonFiniteEaaThrowsInputInvalid", "status": "passed", "modes": ["smoke", "integration"], "trace": "NaN/+Inf 分量→InputInvalid（入口拦截——非有限不静默，NFR-COR-03）" },
+        { "name": "CustomEaaTest.DeterministicBitwiseRepeat", "status": "passed", "modes": ["smoke", "integration"], "trace": "同输入两次调用逐位同输出（确定性——NFR-COR-02）" }
+      ]
+    },
+    {
+      "suite": "ResolveTest（正解唯一产生入口＋RT-BW-3 默认地面）",
+      "designRef": "units/runtime.md §6.1 正向、§6.6 未显式设置行（V15-04）、§4.2（Custom 必填）",
+      "cases": [
+        { "name": "ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "未配置 base→(0,0,0)+I（确定性默认非错误，V15-04 含 URDF/Xacro 导入与空白模板路径）＋过两层校验零错误（'无诊断 error'的规则面）" },
+        { "name": "ResolveTest.GroundCarriesBasePosition", "status": "passed", "modes": ["smoke", "integration"], "trace": "Ground＋布置平移：R=I、t=basePosition 逐分量保留（单位 m）" },
+        { "name": "ResolveTest.InvertedResolvesFrozenMatrix", "status": "passed", "modes": ["smoke", "integration"], "trace": "Inverted 正解旋转与冻结矩阵精确相等（0 容差）＋过自身一致性校验（规则链自洽）" },
+        { "name": "ResolveTest.WallResolvesFrozenMatrix", "status": "passed", "modes": ["smoke", "integration"], "trace": "Wall 正解同上（P-RT-4 第二冻结值）" },
+        { "name": "ResolveTest.CustomWithoutEaaRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "Custom 而 customEaa=NotProvided→err InputInvalid＋what() 定位（§4.2'Custom 时必填'；缺失不伪造缺省旋转）" },
+        { "name": "ResolveTest.CustomResolvesViaRodrigues", "status": "passed", "modes": ["smoke", "integration"], "trace": "Custom 正解与 rotationFromCustomEaa 逐位一致（单一实现点——正解不私设第二套换算）＋Custom 非恒等过一致性校验" },
+        { "name": "ResolveTest.NonFinitePositionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "basePosition 含 NaN→err InputInvalid（§4.3.2't 有限'；NFR-COR-03）" }
+      ]
+    },
+    {
+      "suite": "ValidateTest（RT-BW-6 变换面反例——§4.3.2 合法域/§6.6）",
+      "designRef": "units/runtime.md §6.6（非法旋转/奇异姿态行）、§4.3.2（正交 1e-12/det=+1/有限）、附录 D 第 6 项",
+      "cases": [
+        { "name": "ValidateTest.WellFormedTransformPasses", "status": "passed", "modes": ["smoke", "integration"], "trace": "合法变换（任意有限平移＋I）通过（返回 nullopt）" },
+        { "name": "ValidateTest.ReflectionMatrixRejected_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "反射矩阵 diag(1,1,−1)→InputInvalid＋what() 含实测 det（比较型素材——失败能力探针的被测用例，见 probe 节）" },
+        { "name": "ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "非正交（1e-6 扰动≫1e-12）→InputInvalid＋what() 含'非正交'与实测偏差" },
+        { "name": "ValidateTest.NonFiniteComponentsRejected_RT_BW_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "旋转 NaN／平移 +Inf→InputInvalid（有限性拦截先于正交性——NaN 使比较无意义）" },
+        { "name": "ValidateTest.NearOrthogonalWithinTolerancePasses", "status": "passed", "modes": ["smoke", "integration"], "trace": "5×10⁻¹³ 偏差（≤1×10⁻¹²）通过——容差不误判（拒绝阈值的边界内行为）" }
+      ]
+    },
+    {
+      "suite": "PresetConsistencyTest（S5 构造校验规则面——§6.2 括号规则/§4.3.2 合法域）",
+      "designRef": "units/runtime.md §6.2（'preset≠ground 而 R=I→InputInvalid'）、§4.3.2（inverted 匹配/Custom 而非恒等）",
+      "cases": [
+        { "name": "PresetConsistencyTest.InvertedWithFrozenMatrixPasses", "status": "passed", "modes": ["smoke", "integration"], "trace": "Inverted＋R_x(π) 一致通过（§4.3.2 合法域正向例）" },
+        { "name": "PresetConsistencyTest.InvertedWithIdentityRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "Inverted 而 R=I→InputInvalid（§6.2 括号规则字面）" },
+        { "name": "PresetConsistencyTest.WallWithWrongPresetMatrixRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "声明 Wall 实为倒挂矩阵→InputInvalid（来源记录与实际矩阵矛盾——§6.2 精确定义表的对称承接）" },
+        { "name": "PresetConsistencyTest.CustomWithIdentityRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "Custom 而 R≈I→InputInvalid（§4.3.2 明示；恒等判定容差与 CanonicalModel.cpp builder 同源 1e-12）" },
+        { "name": "PresetConsistencyTest.CustomWithRotatedMatrixPasses", "status": "passed", "modes": ["smoke", "integration"], "trace": "Custom＋任意非恒等旋转通过（合法域正向例）" },
+        { "name": "PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation", "status": "passed", "modes": ["smoke", "integration"], "trace": "Ground 无一致性约束（I 与任意正交阵均过——§6.2 括号规则只覆盖非 ground 侧，不扩大语义；Ground 兼作未显式配置默认，V15-04）" }
+      ]
+    },
+    {
+      "suite": "InverseAndPointTest（RT-BW-1①②③ 数值例＋RT-BW-2 正反一致）",
+      "designRef": "units/runtime.md §6.5①②③（最小数值验证例——倒挂）、§6.1 反向定义、DYN-01（g_base=Rᵀ·g_W）",
+      "cases": [
+        { "name": "InverseAndPointTest.NumericExamplePointTransform_RT_BW_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.5① 手算：p_base=(0.3,0.2,0.5)→p_world=(0.3,−0.2,1.5)（Z 分量反号＋吊装高度——逐元素 closeWithin 1e-9）" },
+        { "name": "InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.5②：逆平移 t'=−Rᵀt=(0,0,+2)〔卡文笔误修正——原卡'(0,0,−2.0)'与其同例闭环断言自相矛盾，units/runtime.md §6.5②/§15.4 v0.7 已修订〕＋逆旋转对合精确＋p_world 回代与输入逐位一致" },
+        { "name": "InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.5③：g_base=(0,0,+9.81)（重力沿 +Z_base——DYN-01/AT-37 解析算例）＋地面安装投影恒等断言（排除'就地取反'伪装——禁止清单 2 对照面）" },
+        { "name": "InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "四预设（Ground/Inverted/Wall/Custom 非恒等 EAA）T·inverse(T)==I（逐元素 1e-9——§6.1 反向定义）" },
+        { "name": "InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix", "status": "passed", "modes": ["smoke", "integration"], "trace": "倒挂逆旋转与冻结矩阵逐位相等（R_x(π)⁻¹=R_x(π) 对合）" },
+        { "name": "InverseAndPointTest.InverseRejectsNonOrthogonalInput", "status": "passed", "modes": ["smoke", "integration"], "trace": "非正交输入→fail-fast RuntimeError（调用方契约违约——转置不再是逆，不产出错误值）" }
+      ]
+    },
+    {
+      "suite": "ComposeTest（RT-BW-1④ 结合律——§6.5④）",
+      "designRef": "units/runtime.md §6.5④（三因子两种结合顺序逐元素一致，1e-9）、§6.1 乘法表（T_world_tcp=T_world_base·T_base_tcp）",
+      "cases": [
+        { "name": "ComposeTest.AssociativityTwoGroupings_RT_BW_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "(T·T1)·T2 与 T·(T1·T2) 逐元素一致（1×10⁻⁹——§6.5④ 容差；真实 Device FK 因子随 RT-T07）" },
+        { "name": "ComposeTest.ComposedTranslationMatchesManualFormula", "status": "passed", "modes": ["smoke", "integration"], "trace": "T_world_tcp 平移＝R_wb·t_bc+t_wb 手算一致（§6.5① 同构数值——复合正确性直接证据）" }
+      ]
+    },
+    {
+      "suite": "BaseMountConsistencyTest（acceptance 2／RT-BW-4 规则部分——S9 二次叠加反例）",
+      "designRef": "units/runtime.md §6.6（重复应用基座变换——S9 检测'含 ≈T·T 形态'）、§6.3（唯一存储/唯一写入）、AT-37 反例观测点",
+      "cases": [
+        { "name": "BaseMountConsistencyTest.ExactMatchConsistent", "status": "passed", "modes": ["smoke", "integration"], "trace": "候选＝权威 T→nullopt（唯一写入点产物逐位一致）" },
+        { "name": "BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "候选＝T·T（AT-37 反例形态：下游二次叠加，R²=I 渲染回正/重力矩符号翻转）→检出不一致＋doubleAppliedPattern=true＋偏差>1e-9（§6.6 S9 规则的数学面；编译链拦截与 BaseWorldInconsistent 装配随 RT-T11——PA-1 码值权威）" },
+        { "name": "BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied", "status": "passed", "modes": ["smoke", "integration"], "trace": "换用 Wall 矩阵的不一致→检出且形态标记=false（标记不误报）" },
+        { "name": "BaseMountConsistencyTest.WithinToleranceDeviationPasses", "status": "passed", "modes": ["smoke", "integration"], "trace": "1×10⁻¹⁰ 量级偏差（≤附录 D 第 4 项 1e-9）通过——浮点读回误差不误判" }
+      ]
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "acceptance": "1. RT-BW-1/2/3/6 四预设＋反例用例通过（AT-37 载体）",
+      "result": "pass",
+      "evidence": "RT-BW-1＝InverseAndPointTest 3 例（§6.5①②③ 手算逐元素）＋ComposeTest.Associativity（④ 结合律）；RT-BW-2＝PresetRotationTest 3 例（四预设矩阵精确/值域）＋InverseRoundtripAllFourPresets（正反一致）；RT-BW-3＝DefaultBaseResolvesGroundIdentity（未配置默认地面＋零错误）；RT-BW-6＝ValidateTest 4 反例（反射/非正交/NaN·Inf/容差边界）＋NonFinitePositionRejected＋CustomWithoutEaaRejected；合计 30 例新增，两模式全绿（172/172）。覆盖边界：RT-BW-1 的'编译＋view 读取'全链与 RT-BW-4/5 的替身消费端切面随 RT-T07/T11（IRuntimeModelView/WC 编译交付）——本任务为规则部分（§12 RT-T06 行'RT-BW-1/2/3/6（规则部分）'），边界随测试文档留痕（RT-STUB-0 同款纪律）"
+    },
+    {
+      "acceptance": "2. 单一写入点（禁止下游二次旋转——§6.3 唯一存储/唯一写入）",
+      "result": "pass",
+      "evidence": "规则面三承载：①产生侧唯一入口——T_world_base 只经 resolveWorldBaseTransform() 解析（预设→矩阵唯一经 installationPresetRotation()，Custom 唯一经 rotationFromCustomEaa()——正解与直接换算逐位一致用例钉住'不私设第二套'）；②检测侧——checkBaseMountConsistency() 纯函数实现 §6.6 S9 判定（含 ≈T·T 二次叠加形态探测），DoubleApplicationDetected_RT_BW_4 钉住 AT-37 反例被检出；③S6 唯一写入点实体（BaseMount FixedFrame 一次性置入）与 S9 编译链接线随 RT-T07/T11——本任务交付其全部数学规则，BaseWorldInconsistent 码值装配归 RT-T11（PA-1：码值权威＝diagnostics/StableCodeRegistry）"
+    },
+    {
+      "acceptance": "3. P-RT-4 冻结留痕（modeling 卡交叉核对后）",
+      "result": "pass（runtime 侧留痕落地；modeling 卡交叉核对为后续确认动作，留痕方案已按处置约束落位）",
+      "evidence": "①冻结定义实现：倒挂＝R_x(π)、壁装＝R_y(π/2) 元素精确 {0,±1}（installationPresetRotation 为冻结矩阵唯一权威产出点——分歧时单点回改）；②留痕登记：units/runtime.md §15.3 P-RT-4 行追加〔RT-T06 冻结留痕 2026-09-12〕（实现锚点＋modeling 卡 WP-13-T01/T11 交叉核对的对照基准声明）＋§15.4 v0.7 第②条；③可测锚：InvertedIsFrozenRxPi/WallIsFrozenRyPiHalf 两用例以精确断言钉住冻结值；④交叉核对可行性说明：modeling 单元卡尚未起草（units/ 无 modeling.md，WP-13-T01 未执行；governance-log P-RT-4=open 待该卡交叉核对），契约 note/DOC-T06 放行口径（2026-09-11 所有者 B 模式预授权）明示'O-15/O-16/O-18 登记类不阻塞编译'——本任务按'维持本文定义（§6.2）'处置约束实现并留痕，modeling 卡交叉核对以本实现为对照锚，分歧时以建模侧用户口径为准并回改（§15.3 P-RT-4 处置约束原文）"
+    }
+  ],
+  "probe": {
+    "description": "失败能力探针（集成模式）：向 checkWorldBaseTransform 注入单点缺陷（反射拦截条件前置 false——禁用 det<0 拒绝），构建零错误、恰好 ValidateTest.ReflectionMatrixRejected_RT_BW_6 一例变红（171/172）；git 层面精确还原后复绿 172/172（还原 diff 零残留）",
+    "evidence": "probe-build.log / probe-test-run.log；探针标记零残留（复绿构建仅任务产物）"
+  },
+  "gates": {
+    "ird_gates": "命中 2 项均为既有登记项（IRD-GATE-SUB/IRD-GATE-T1——testkit 侧 testdata_lint 边，RT-T03 起基线同款）；本任务新增文件零新增命中（ird-gates-run.log）",
+    "validate-task": "PASS（RT-T06 契约结构校验：validate-task.ps1 -TaskFile tasks/foundation/RT-T06.json）"
+  },
+  "deviations": [
+    "卡文笔误修正（units/runtime.md §6.5②/§15.4 v0.7，DTB §5.4 事实修正）：数值例中间式 t'=(0,0,−2.0) 应为 (0,0,+2.0)——数学代入与同例闭环断言（p_base' 与输入逐位一致）共同唯一确定 +2；实现与用例按修正值执行，RT-BW-1 全部其他数值与原卡逐字一致",
+    "实现层选型登记（units/runtime.md §15.4 v0.7 同步）：Custom 预设 EAA→R 换算落 runtime（rotationFromCustomEaa，Rodrigues 逐元素——注入通道权威编辑表示）；S5 一致性全量接线（checkPresetConsistency 接入 builder）随 RT-T11，builder 保留 RT-T04 既有 Custom 面不重定义；S9 码值装配归 RT-T11（PA-1）"
+  ]
+}
