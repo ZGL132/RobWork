@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 58,
+  "tickCount": 59,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T13:04:53+08:00",
+    "updatedAt": "2026-09-11T13:12:40+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -345,7 +345,48 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "DOC-T06",
+      "contractPath": "tasks/DOC-T06.json",
+      "branch": "doc-t06"
+    },
+    {
+      "taskId": "DOC-T07",
+      "contractPath": "tasks/DOC-T07.json",
+      "branch": "doc-t07"
+    },
+    {
+      "taskId": "DOC-T08",
+      "contractPath": "tasks/DOC-T08.json",
+      "branch": "doc-t08"
+    },
+    {
+      "taskId": "DOC-T09",
+      "contractPath": "tasks/DOC-T09.json",
+      "branch": "doc-t09"
+    },
+    {
+      "taskId": "DOC-T10",
+      "contractPath": "tasks/DOC-T10.json",
+      "branch": "doc-t10"
+    },
+    {
+      "taskId": "DOC-T11",
+      "contractPath": "tasks/DOC-T11.json",
+      "branch": "doc-t11"
+    },
+    {
+      "taskId": "DOC-T12",
+      "contractPath": "tasks/DOC-T12.json",
+      "branch": "doc-t12"
+    },
+    {
+      "taskId": "DOC-T13",
+      "contractPath": "tasks/DOC-T13.json",
+      "branch": "doc-t13"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -354,5 +395,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "998a73bd-cc4b-4c4e-89cb-ebd0021c00a3"
+  "tickToken": "af849852-269d-46ff-bb1b-b1dae7c55c7a"
 }
