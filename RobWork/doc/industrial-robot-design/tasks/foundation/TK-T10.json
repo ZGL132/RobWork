@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "实现测试报告与 core 接入示例（Report）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "TK-T03",
     "TK-T04",

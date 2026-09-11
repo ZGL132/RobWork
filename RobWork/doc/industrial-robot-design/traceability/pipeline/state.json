@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 57,
+  "tickCount": 58,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-11T12:30:39+08:00",
+    "updatedAt": "2026-09-11T13:04:53+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -311,6 +311,16 @@
       "commits": [
         "5cfd4898fc313416700ee832c4f6cd45cacb70bc"
       ]
+    },
+    {
+      "unit": "testkit",
+      "task": "TK-T10",
+      "acceptanceRecord": "traceability/acceptance/TK-T10-20260911.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-11",
+      "commits": [
+        "c7b8419ef0cc68a3ac402e4035ee4a61c512865f"
+      ]
     }
   ],
   "policy": {
@@ -335,13 +345,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "TK-T10",
-      "contractPath": "tasks/foundation/TK-T10.json",
-      "branch": "wp02-t10"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
