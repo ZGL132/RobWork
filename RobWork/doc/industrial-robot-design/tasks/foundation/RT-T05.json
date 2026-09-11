@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 RuntimeNameMap（⑥端口，双射解析）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T04"
   ],
