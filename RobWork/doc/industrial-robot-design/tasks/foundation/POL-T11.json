@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "policy 替身与契约套件",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T05",
     "POL-T06",
@@ -16,19 +16,21 @@
   ],
   "requirements": [
     "ARC-05",
-    "AT-01",
-    "AT-19",
-    "AT-37"
+    "MDL-06",
+    "MDL-22",
+    "NFR-COR-05"
   ],
   "designRefs": [
     "units/policy.md#11",
-    "units/policy.md#12"
+    "units/policy.md#12",
+    "units/testkit.md#10"
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/policy.md",
-    "RobWork/doc/industrial-robot-design/traceability/**"
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -39,13 +41,18 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
-  "interUnit": true,
-  "knownPitfalls": "P-POL-4",
-  "acceptance": [
-    "§11 验证矩阵逐条通过并留痕",
-    "POL-TD-1 边界声明（替身不冒充碰撞算法验证）"
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-POL-4"
+  ],
+  "acceptance": [
+    "§11 验证矩阵逐条通过并留痕（AT-01/AT-19/AT-37 观测点载体）",
+    "POL-TD-1 边界声明（替身不冒充碰撞算法验证）",
+    "数据集交付：testdata/golden/pol-*（解析/编码契约夹具 contract-fixture 类＋碰撞解析算例 analytic-case 类，按 testkit manifest schema 登记）——lint 通过并随 CI 跑通"
+  ],
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t11（≙ 映射）、verify/knownPitfalls 规范化为数组；requirements 原含 AT-01/19/37（验收追溯编号）迁入 acceptance 注明（requirements 表承接 policy.md §2.2：MDL-06④/MDL-22/NFR-COR-05）；designRefs 补 testkit §10 锚点（§12 任务行输入原文）；allowedFiles 补 testdata/**（数据集交付面）",
+  "branch": "wp07-t11"
 }

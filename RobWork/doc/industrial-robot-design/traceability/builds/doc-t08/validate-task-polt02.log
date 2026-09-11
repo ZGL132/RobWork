@@ -1,0 +1,3 @@
+$ pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T02.json
+validate-task: PASS (1 tasks)
+exit=0

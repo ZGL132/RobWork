@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现诊断构造（建议码表＋IPolicyDiagnostics）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "POL-T02"
   ],
@@ -31,8 +31,9 @@
     "unit-tests",
     "traceability-update"
   ],
-  "verify": "cmake --build build --config Release --target sdurws_ird_policy_test",
-  "branch": null,
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_policy_test"
+  ],
   "interUnit": true,
   "knownPitfalls": [
     "P-PR-6",
@@ -41,5 +42,6 @@
   "acceptance": [
     "checkDiagnosticRecord 族（testkit）码表与不变量用例通过"
   ],
-  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T03 回填（2026-09-10）：requirements/designRefs/deps/verify/acceptance 编译自 DTB §2 WP 行（≙映射）＋单元卡任务行（phase-one-task-index sourceRow）；编译留痕见 traceability/contract-compile-log.md；DOC-T08 放行（2026-09-11）：所有者 B 模式预授权整链批次放宽（依据＝policy.md §12 卡内锚点即交接核对——沿用 DOC-T04 整链放宽口径），status ready、branch 补 wp07-t10（≙ 映射）、verify/knownPitfalls 规范化为数组（P-PR-6/P-EX-8 陷阱随契约保留）",
+  "branch": "wp07-t10"
 }
