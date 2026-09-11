@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "实现黄金数据集清单模型与完整性校验（Dataset）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "TK-T02"
   ],
