@@ -45,6 +45,17 @@ target_sources(sdurws_ird_runtime PRIVATE
                                 # （joinScopeLocal 单点，NFR-MNT-07 例外实现文件）；
                                 # IRDNAME 编解码随本任务落位 Codec.cpp（§7.6）
 
+# ---- RT-T06 增列（基座—世界变换规则；tasks/foundation/RT-T06.json）----
+target_sources(sdurws_ird_runtime PRIVATE
+    src/BaseWorldTransform.cpp) # §6 规则面：安装预设→矩阵（P-RT-4 冻结值）、
+                                # Custom EAA→R（Rodrigues）、T_world_base 正解
+                                # （唯一产生入口）/矩阵层校验/预设一致性（S5）/
+                                # 正反解（点变换/重力投影/FK 组合）/S9 一致性
+                                # 判定（二次叠加检测）；公共头
+                                # BaseWorldTransform.hpp（§3.1 模块表）；
+                                # 全部矩阵运算逐元素实现——零 rw 外联符号
+                                # （冒烟 header-only 纪律，见实现文件头）
+
 target_compile_features(sdurws_ird_runtime PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_runtime PROPERTIES
     CXX_STANDARD 17
@@ -130,8 +141,12 @@ add_executable(sdurws_ird_runtime_test
     test/DescriptionValidatorTest.cpp   # RT-T03：S3 校验器（RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＋硬反例逐条）
     test/CanonicalModelTest.cpp         # RT-T04：§4.3 builder 不变量＋§9.6 能力派生＋索引＋D-01 不持久化
     test/CodecTest.cpp                  # RT-T04：RT-ID-1/2/3＋parse(encode)==x 往返＋身份域排除
-    test/NameMapTest.cpp)               # RT-T05：RT-NM-1～7（AT-18 双向往返/消歧/未知名/
+    test/NameMapTest.cpp                # RT-T05：RT-NM-1～7（AT-18 双向往返/消歧/未知名/
                                         # 跨项目/重命名/双前缀/身份不混用）＋R-4 源码扫描
+                                        # （ird_add_gtest 宏登记于文件末尾）
+    test/BaseWorldTransformTest.cpp)    # RT-T06：RT-BW-1/2/3/6 规则部分（§6.5 数值例/
+                                        # 四预设精确矩阵/默认地面/非法变换反例）
+                                        # ＋S5 预设一致性＋S9 二次叠加反例（acceptance 2）
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_STANDARD 17
