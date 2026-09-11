@@ -221,6 +221,16 @@
       "title": "POL-T12 dependsOn 缺 POL-T01：units/policy.md §12 与 DTB §2.8 WP-07-T12 行均登记依赖 T01~T11，契约仅列 POL-T02~T11——源头为 DOC-T03 编译（base 19eb9fd 已存在，DOC-T08 diff 未触碰该字段）；T12→T02→T01 传递覆盖故无调度影响，validate-task 三查无法捕获（依赖引用存在性检查不比对卡内依赖列）",
       "owner": "policy 详设所有者＋契约编译治理（CCP §3）",
       "resolution": "所有者会话按 finding 要求\"随 POL-T12 实施领取前\"执行消账（2026-09-11，lock 9dcc1ef0）：dependsOn 补 POL-T01（一行，validate-task 三查复跑 PASS）；流程建议（整链放行验收固化 dependsOn 与卡内任务行依赖列逐项比对）转后续 DOC-Txx 验收执行。"
+    },
+    {
+      "id": "F-023",
+      "source": "traceability/acceptance/DOC-T09-20260911.md#4.9（attempt 1，送验对象 4e0a74b9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "F-012 同型再现：DOC-T09 送验提交 a74b1a2 标题『diagnostics 主链整链编译放行（DIAG-T02~T11 十份契约回填）』名词短语开头，非动词开头——发生在 F-012 处置建议①（后续提交自查标题以动词开头）登记之后，证明其建议②（DTB §5.1 或 PIPE 附录 C 模板补提交标题示例口径）未落地前口径仍漂移；正文四段齐备、验证结论与留痕一致（验收者逐字复现），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 同辖域）",
+      "resolution": "与 F-012 合并处置：在 DTB §5.1 或 PIPE 附录 C 实施者模板补一句提交标题动词开头示例（放行类可用『放行 <unit> 主链编译（…回填）』句式），消除名词短语与动词开头并存的判例分歧；对已推送历史（a74b1a2 及 F-012 所涉 15249151f 等）不追溯改写（AGENTS §6.3）。编号顺延自 F-022（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
