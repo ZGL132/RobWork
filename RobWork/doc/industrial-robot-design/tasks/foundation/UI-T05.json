@@ -7,18 +7,27 @@
   "status": "planned",
   "dependsOn": ["UI-T03"],
   "requirements": ["UX-11", "KIN-06"],
-  "designRefs": ["units/ui.md#4.2"],
+  "designRefs": ["units/ui.md#13", "units/ui.md#4.2", "units/ui.md#14"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test",
+    "cmake --build build --config Release --target sdurws_ird_ui_gui_test"
+  ],
+  "branch": "wp10-t05",
+  "interUnit": false,
   "acceptance": [
-    "UX-11 交互清单登记（RWStudioView3D 集成、视图/拾取/截图/分组显隐——交互实现归阶段 B）",
-    "KIN-06 会话姿态语义钉住（AT-04）：点回写仅改会话姿态"
-  ]
+    "UX-11 交互清单登记（RWStudioView3D 集成、标准/相机视图、缩放、透视正交、线框透明、渲染分组显隐、碰撞高亮与组掩码、PNG 截图、ray-cast 拾取——交互实现归阶段 B，WP-10-T05 阶段 B 交付）；阶段 A 仅交付中央区占位面板（「本阶段将在后续版本提供」说明，不虚构业务能力——§4.2/§11.3）",
+    "KIN-06 会话姿态语义钉住（AT-04）：点回写仅改会话姿态（会话级 UI 状态 O-2），不修改设计模型、不产生修订、不触发结果失效——语义登记于中央区占位契约，供阶段 B 交互实现承接",
+    "O-31 处置（blocked——kept planned，不得置 ready）：本任务自身交付物（中央区占位＋契约登记）不直接持有 C-3/4/5/7/8/10/11 对端类型（三维渲染与 IRuntimeModelView 共同消费点 C-11 归阶段 B），但唯一前置 UI-T03 已被 O-31 阻塞（WorkbenchShell/CentralAreaHost 未放行）——按拓扑序随裁决后整链放行，单独置 ready 将造成「前置永不 done 的死 ready」（PIPE §3 守卫 4 队列纪律）；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T05 行＋§2 需求表（UX-11 行）＋DTB §2.11 WP-10-T05 行（≙）复核回填——designRefs 补 §14（阶段 B 承接清单登记锚点）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_gui_test（中央区占位属 GUI 面）、acceptance 补占位红线与 O-31 处置；requirements 维持 [UX-11, KIN-06]（卡 §13 行原文；DTB WP-10-T05 需求列另列 KIN-07〔协作〕与 AT-23〔拾取载体〕，均属阶段 B 交互实现面，不编入阶段 A 契约——以卡行为准）；branch=wp10-t05（≙ 直映）；interUnit=false 判定＝阶段 A 交付为 ui 自有占位组件与语义登记，零跨单元接口消费/产出（C-11 三维共同消费点归阶段 B 交付时随增量修订复核）；**O-31 硬约束传导：kept planned＋blocked（前置 UI-T03 blocked；自身无对端类型直持——如实区分登记），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

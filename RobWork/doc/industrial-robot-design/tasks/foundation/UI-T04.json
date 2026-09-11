@@ -7,9 +7,16 @@
   "status": "planned",
   "dependsOn": ["UI-T03", "EV-T08", "EX-T05"],
   "requirements": ["UX-06", "UX-10", "PM-11"],
-  "designRefs": ["units/ui.md#6.3"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#6.3",
+    "units/ui.md#10.6",
+    "units/evidence.md#13"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +24,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "branch": "wp10-t04",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-1", "P-UI-2", "P-EV-4"],
   "acceptance": [
-    "UI-STG-3：映射表按 §6.3 用例通过；不新增状态词（七态投影）",
-    "证据不足不得显示通过；计算中附进度阶段与取消、过期附原因、失败附定位"
-  ]
+    "UI-STG-3：七态×权威词表映射表（§6.3 表，含求值优先级 empty-project＞computing＞incomplete＞failed＞data-insufficient＞results-stale＞computable）逐行断言通过；不新增状态词（七态为呈现投影而非新判定——R-2 红线）；NotEvaluable 呈现归 results-stale＋「无法判定」原因（P-UI-2 建议口径，冻结前不私定）",
+    "显示纪律（§6.3/§6.8）：证据不足不得显示通过（FormalPassEligibility 五条件为唯一放行数据源，不满足禁止渲染「正式通过」字样）；计算中附进度阶段与取消、过期附原因（InvalidationReason 清单）、失败附定位；九态短标签文案键 state.<token>.label 就位（PM-03/PM-11）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：七态映射「触发数据源」列与显示纪律消费 evidence 对端类型 CurrentnessResult/EvidenceManifest/FormalPassEligibility（C-7，§6.3 表＋显示纪律段）——evidence 对 ui 零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕；P-UI-1 处置：七态词表/优先级冻结确认（CF-3）未闭合前按 §6.3 冻结稿实现、不改词表；P-UI-2/P-EV-4 处置：NotEvaluable 呈现口径按 §6.3 建议值（results-stale＋原因）实现，待需求侧确认后如有调整按影响面增量同步"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T04 行＋§2 需求表（UX-06/UX-10/PM-11 行）＋DTB §2.11 WP-10-T04 行（≙）复核回填——designRefs 补 §10.6（投影存储宿主）＋evidence.md#13（卡行输入「evidence P-EV-4 口径」的交接行原文）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 补显示纪律条目并编入 O-31/P-UI-1/P-UI-2/P-EV-4 处置；dependsOn 维持卡行可编码子集 [UI-T03, EV-T08, EX-T05]（DTB 前置列 WP-05-T08≙EV-T08 偏移 0、WP-08-T06≙EX-T05 偏移＋1——WP-08-T01 编卡已直会话完成，EX-T01 note 同款实测）；branch=wp10-t04（≙ 直映）；interUnit=true 判定＝映射数据源消费 core 九态/工程状态词表＋evidence 当前性对端类型；**O-31 硬约束：kept planned＋blocked（C-7 evidence 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

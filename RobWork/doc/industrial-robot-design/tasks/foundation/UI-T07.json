@@ -7,9 +7,11 @@
   "status": "planned",
   "dependsOn": ["UI-T03", "POL-T05", "PRJ-T10", "PRJ-T11"],
   "requirements": ["UX-08", "ARC-05"],
-  "designRefs": ["units/ui.md#6.7"],
+  "designRefs": ["units/ui.md#13", "units/ui.md#4.6", "units/ui.md#6.7", "units/policy.md#10.6"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "branch": "wp10-t07",
+  "interUnit": true,
+  "knownPitfalls": ["O-31"],
   "acceptance": [
-    "摘要只读、显示开关与计算开关分组异名并说明影响范围（POL-ID-3）",
-    "策略编辑经①命令端口提交（P-POL-9 适配器宿主＝ui）；编辑表单归阶段 B"
-  ]
+    "阶段 A 摘要只读卡（§6.7）：数据＝IPolicyProvider::resolvePolicy 返回的 EngineeringPolicySet 公开字段投影（碰撞域启用/安全间距/过滤对计数/行程上限阈值/判定阈值，含「显式不适用」态）；显示值经单位换算投影，不改变策略内容身份；摘要只读、显示开关与计算开关分组异名并说明影响范围（POL-ID-3：显示设置不存在于策略字段——§4.6 会话显示开关与策略严格分离）",
+    "策略编辑经①命令端口提交（P-POL-9 适配器宿主＝ui，DTB WP-10-T07 定稿承接——POL-T05 编译放行行同款口径）：编辑表单归阶段 B；ui 不持有判定权与计算开关权威（ARC-05/N-3：权威归 policy/EngineeringPolicySet）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：本任务直接持有 policy 对端类型（IPolicyProvider/EngineeringPolicySet——C-10）并经 project ①命令端口提交编辑命令（C-4）——policy/project 对 ui 零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T07 行＋§2 需求表（UX-08 行）＋DTB §2.11 WP-10-T07 行（≙）复核回填——designRefs 补 §4.6（显示设置分组异名依据）＋policy.md#10.6（卡行输入「policy.md §10.6」原文：与 ui/project 交接节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆三条并编入 O-31 处置；dependsOn 维持卡行可编码子集（DTB 前置列 WP-07-T05≙POL-T05 偏移 0、WP-04-T10/T11≙PRJ-T10/T11 偏移 0）；branch=wp10-t07（≙ 直映）；interUnit=true 判定＝直接持有 policy::IPolicyProvider/EngineeringPolicySet（C-10）与 project 命令端口（C-4）对端类型——本任务即 O-31 触发面之一；**O-31 硬约束：kept planned＋blocked（C-10/C-4 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }

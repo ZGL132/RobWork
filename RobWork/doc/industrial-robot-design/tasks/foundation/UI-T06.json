@@ -7,9 +7,17 @@
   "status": "planned",
   "dependsOn": ["UI-T03"],
   "requirements": ["UX-13", "PM-14"],
-  "designRefs": ["units/ui.md#7"],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#3.5",
+    "units/ui.md#7",
+    "units/ui.md#10.3",
+    "units/ui.md#10.4"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +25,13 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "branch": "wp10-t06",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "P-UI-10"],
   "acceptance": [
-    "UI-CMD-1/2、UI-HKY-1/2/3：重复绑定注册边界拒绝并出比较型诊断（SA-16）",
-    "模糊搜索与键盘导航；未绑定命令经面板可达；绑定属用户级设置（PM-14）"
-  ]
+    "UI-CMD-1/2、UI-HKY-1/2/3：重复命令注册/重复快捷键绑定在注册边界拒绝（DuplicateId/Conflict，不覆盖不静默）并出比较型诊断（UI-CMD-DUPLICATE/UI-HOTKEY-CONFLICT，冲突键＋已占用命令在 context、数值比较字段标「不适用」——SA-16/ARCH §11.2-1）；插件私占全局快捷键（WindowShortcut/ApplicationShortcut 作用域 QShortcut）静态扫描命中即违例（UI-HKY-3，NFR-MNT-07）",
+    "命令面板（§7.4/§10.3）：名称/关键字模糊搜索与键盘导航；未绑定命令经面板可达；rebind/解绑为用户级设置持久化（PM-14，§7.3）；实际 QShortcut 对象仅由 GlobalShortcutRegistry 创建（唯一注册点，N-11 无第二套）",
+    "O-31 处置（blocked——kept planned，不得置 ready）：§10.3 CommandOutcome.revisionResult 持有 project::CommandResult（C-4 对端类型），submit 路径产生修订经①命令端口（§7.7 时序）——project 对 ui 零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕；P-UI-10 处置：UI-CMD-*/UI-HOTKEY-CONFLICT 码值按 §3.5 建议值向 diagnostics StableCodeRegistry 注册，最终码值以 diagnostics 码表收编表现为准（不私定码值）"
+  ],
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T06 行＋§2 需求表（UX-13/PM-14 行）＋DTB §2.11 WP-10-T06 行（≙）复核回填——designRefs 细化 §3.5（UI-* 码与文案键体系）＋§10.3/§10.4（两注册表接口详设节，CF-1 落位锚点）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、acceptance 拆三条并编入 O-31/P-UI-10 处置；SA-16 不入 requirements（架构决策 ID 非 REQUIREMENTS 现行 ID——CORE-T07 先例），其语义由 acceptance 拒绝边界条目承载；branch=wp10-t06（≙ 直映）；interUnit=true 判定＝消费 core IEventSubscription/diagnostics IDiagObserver（ARCH §3.5 登记边）且 CommandOutcome 持有 C-4 对端类型；**O-31 硬约束：kept planned＋blocked（C-4 project::CommandResult 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
 }
