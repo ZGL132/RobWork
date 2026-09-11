@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T03",
+  "masterWp": "WP-02-T03",
+  "branch": "wp02-t03",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 src/Dataset.cpp（§4.2.2 字段表装载＋§4.5 完整性校验——ContentDigester 复用）；Dataset.hpp 清单模型"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/DatasetTest.cpp（TK-MAN/TK-INT 五用例）；既有 26 用例零回归"
+    },
+    {
+      "target": "sdurws_ird_testdata_lint",
+      "kind": "executable（工具）",
+      "result": "build-pass（两模式）",
+      "notes": "tools/testdata/main.cpp：全量扫描＋需求 ID 字典校验；--root 经 env 传导 TestPaths；不进产品安装面（§3.6 分发红线）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "DatasetManifest/DatasetRejections/DatasetIntegrity/DatasetLint（TK-MAN/TK-INT）",
+      "designRef": "units/testkit.md §4.2/§4.5/§8/附录 A.2",
+      "cases": [
+        { "name": "DatasetManifest.FullFieldLoad_UT_MAN", "status": "passed", "modes": ["smoke", "integration"], "trace": "附录 A.2 形态全字段清单装载＋resolve 白名单" },
+        { "name": "DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN", "status": "passed", "modes": ["smoke", "integration"], "trace": "反例矩阵：schemaVersion 未知主版本/datasetId 句法/单位未注册/缺 edgeCases/integrity 未覆盖——消息含字段路径" },
+        { "name": "DatasetIntegrity.TamperAndSizeMismatch_UT_INT", "status": "passed", "modes": ["smoke", "integration"], "trace": "TK-INT：篡改一字节→SHA 不符；追加字节→size 不符（先于 SHA 报告）" },
+        { "name": "DatasetLint.DatasetIdDirMismatch_UT_MAN", "status": "passed", "modes": ["smoke", "integration"], "trace": "datasetId 与目录名不一致拒绝（lint 口径装载侧）" }
+      ]
+    },
+    {
+      "suite": "lint 工具端到端（手工执行证据——非 gtest）",
+      "designRef": "units/testkit.md §9（tools/testdata lint＋全量扫描）",
+      "cases": [
+        { "name": "lint 坏 ID（KIN-99 不在字典）→违规 1 退出非零", "status": "passed", "modes": ["integration"], "trace": "端到端：合成数据集＋字典逐项校验拒绝" },
+        { "name": "lint 好 ID（KIN-01）→违规 0 退出零", "status": "passed", "modes": ["integration"], "trace": "端到端正向" }
+      ]
+    },
+    {
+      "suite": "既有回归（26 用例）",
+      "designRef": "units/testkit.md §8",
+      "cases": [
+        { "name": "既有 26 用例（TestPaths/JsonLite/Fault/BuildRedLine）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 30, "passed": 30, "failed": 0, "modes": { "smoke": "30/30", "integration": "30/30" } },
+  "failureCapabilitySelfCheck": {
+    "method": "SHA 检查探针：把装载器实际哈希替换为登记值（SHA 检查短路）后重编译执行；探针验证后清除并终验复绿",
+    "result": "TamperAndSizeMismatch_UT_INT 如期变红（SHA 校验失效必被篡改用例捕获）；恢复后 30/30 复绿",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t03/smoke-configure.log",
+      "traceability/builds/wp02-t03/smoke-build.log",
+      "traceability/builds/wp02-t03/smoke-test-run.log",
+      "traceability/builds/wp02-t03/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t03/integration-build.log",
+      "traceability/builds/wp02-t03/integration-fullbuild.log",
+      "traceability/builds/wp02-t03/integration-test-run.log",
+      "traceability/builds/wp02-t03/sdurws_ird_testkit_test-integration.xml"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①requirements-ids.json 种子＝REQUIREMENTS v1.16 行首 ID 全集 192 条（含分期子项；RPT-01-B/C 内含登记于 source 说明）；②lint 工具 --root 经环境变量传导 TestPaths（运行期覆写口）；③GoldenDataset 落位偏差：§5.1 toleranceProfile() 完整装载归 TK-T04（本任务提供 toleranceProfileRef() manifest 内引用）；④TK-MAN 拒绝矩阵中 datasetId 变体同步目录名——避免目录一致检查遮蔽目标校验"
+}

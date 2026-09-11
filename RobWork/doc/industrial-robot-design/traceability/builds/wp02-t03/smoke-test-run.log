@@ -1,0 +1,117 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 30 tests from 17 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from TestPaths
+[ RUN      ] TestPaths.EnvVarOverridesDefault_NFR_COR_01
+[       OK ] TestPaths.EnvVarOverridesDefault_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01
+[       OK ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01 (1 ms)
+[ RUN      ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01
+[       OK ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01
+[       OK ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01
+[       OK ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01
+[       OK ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01
+[       OK ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01 (0 ms)
+[----------] 7 tests from TestPaths (3 ms total)
+
+[----------] 2 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 2 tests from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+[       OK ] JsonErrorLocation.LineColumnPrecision_UT_JSON (0 ms)
+[----------] 1 test from JsonErrorLocation (0 ms total)
+
+[----------] 1 test from JsonUnicode
+[ RUN      ] JsonUnicode.EscapesToUtf8_UT_JSON
+[       OK ] JsonUnicode.EscapesToUtf8_UT_JSON (0 ms)
+[----------] 1 test from JsonUnicode (0 ms total)
+
+[----------] 1 test from JsonBoundary
+[ RUN      ] JsonBoundary.DumpOutputReparseable_UT_JSON
+[       OK ] JsonBoundary.DumpOutputReparseable_UT_JSON (0 ms)
+[----------] 1 test from JsonBoundary (0 ms total)
+
+[----------] 3 tests from FaultOccurrence
+[ RUN      ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT
+[       OK ] FaultOccurrence.FiresExactlyAtPlannedOccurrence_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT
+[       OK ] FaultOccurrence.EmptyPlanAndBeyondPlan_UT_FAULT (0 ms)
+[ RUN      ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT
+[       OK ] FaultOccurrence.MultiplePointsIndependentCounting_UT_FAULT (0 ms)
+[----------] 3 tests from FaultOccurrence (0 ms total)
+
+[----------] 1 test from FaultScenario
+[ RUN      ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT
+[       OK ] FaultScenario.DiskFullDrivesErrorPath_UT_FAULT (0 ms)
+[----------] 1 test from FaultScenario (0 ms total)
+
+[----------] 2 tests from FaultWiring
+[ RUN      ] FaultWiring.RealAccessorDelegation_UT_FAULT
+[       OK ] FaultWiring.RealAccessorDelegation_UT_FAULT (0 ms)
+[ RUN      ] FaultWiring.NullRealRejected_UT_FAULT
+[       OK ] FaultWiring.NullRealRejected_UT_FAULT (0 ms)
+[----------] 2 tests from FaultWiring (0 ms total)
+
+[----------] 1 test from ProcessRunnerHeader
+[ RUN      ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT
+[       OK ] ProcessRunnerHeader.FrozenDeclarationsPresent_UT_FAULT (0 ms)
+[----------] 1 test from ProcessRunnerHeader (0 ms total)
+
+[----------] 1 test from ProductBoundary
+[ RUN      ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT
+[       OK ] ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT (3 ms)
+[----------] 1 test from ProductBoundary (3 ms total)
+
+[----------] 1 test from DatasetManifest
+[ RUN      ] DatasetManifest.FullFieldLoad_UT_MAN
+[       OK ] DatasetManifest.FullFieldLoad_UT_MAN (6 ms)
+[----------] 1 test from DatasetManifest (6 ms total)
+
+[----------] 1 test from DatasetRejections
+[ RUN      ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN
+[       OK ] DatasetRejections.RejectionMatrixWithFieldPaths_UT_MAN (30 ms)
+[----------] 1 test from DatasetRejections (30 ms total)
+
+[----------] 1 test from DatasetIntegrity
+[ RUN      ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT
+[       OK ] DatasetIntegrity.TamperAndSizeMismatch_UT_INT (10 ms)
+[----------] 1 test from DatasetIntegrity (10 ms total)
+
+[----------] 1 test from DatasetLint
+[ RUN      ] DatasetLint.DatasetIdDirMismatch_UT_MAN
+[       OK ] DatasetLint.DatasetIdDirMismatch_UT_MAN (6 ms)
+[----------] 1 test from DatasetLint (6 ms total)
+
+[----------] 3 tests from TkBuild
+[ RUN      ] TkBuild.SourceTreeReachable_TK_BUILD
+[       OK ] TkBuild.SourceTreeReachable_TK_BUILD (1 ms)
+[ RUN      ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3
+[       OK ] TkBuild.KitIncludesOnlyCoreAndSelf_T2_NFR_MNT_01_R3 (4 ms)
+[ RUN      ] TkBuild.ProductSourcesZeroTestkitInclude_T1
+[       OK ] TkBuild.ProductSourcesZeroTestkitInclude_T1 (5 ms)
+[----------] 3 tests from TkBuild (11 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 17 test suites ran. (73 ms total)
+[  PASSED  ] 30 tests.
