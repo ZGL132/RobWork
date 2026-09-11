@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "TK-T08",
+  "masterWp": "WP-02-T08",
+  "branch": "wp02-t08",
+  "date": "2026-09-11",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_testkit",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "新增 Fixture.hpp/.cpp：TempDir（RAII＋keepOnFailure＋并行隔离三要素）/ReproRecord（默认 seed=20260909＋JsonLite 往返）/DeterministicEnv（记录唯一来源）——库本体零 gtest（D-06）；GoldenFixture 置 gtest/GoldenFixture.hpp（AssertMacros.hpp 同款分层先例，消费方 _test 目标专用）"
+    },
+    {
+      "target": "sdurws_ird_testkit_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/FixtureTest.cpp（UT_FIX 十三用例）；既有 58 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "TempDirLife/TempDirKeep（UT_FIX 临时目录族）",
+      "designRef": "units/testkit.md §6.2/§8 TK-FIX",
+      "cases": [
+        { "name": "TempDirLife.ExistsOnConstructGoneOnDestruct_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.2：建立即存在、析构即消失；目录位于 ird-test 隔离层" },
+        { "name": "TempDirLife.TagSyntaxRejected_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "tag 句法护栏：空串/含分隔符拒绝（Usage——防目录名注入）" },
+        { "name": "TempDirLife.ParallelIsolation_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8 TK-FIX 行：8 线程并发建目录——两两不同且同时全部存在（pid-tag-随机后缀三要素）" },
+        { "name": "TempDirKeep.KeepsSceneOnFailureSignal_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance②：失败信号＋默认开关→现场保留（GoldenFixture TearDown 注入 HasFailure() 同款信号）" },
+        { "name": "TempDirKeep.DisabledRemovesEvenOnFailure_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "keepOnFailure(false)→有失败信号也删除" },
+        { "name": "TempDirKeep.NoSignalRemovesByDefault_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "默认态无信号→正常删除（不影响通过用例清理）" },
+        { "name": "TempDirKeep.DeletionFailureWarnsNotThrows_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.2 原文：句柄占用下删除失败→只告警不抛（Windows 共享冲突语义；关句柄后清理）" }
+      ]
+    },
+    {
+      "suite": "ReproRecordData/DeterministicEnvData（UT_FIX 确定性环境族）",
+      "designRef": "units/testkit.md §6.3/§8 TK-FIX",
+      "cases": [
+        { "name": "ReproRecordData.DefaultsMatchDesign_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.3 默认值：seed=20260909（固定值）、threadCount=1" },
+        { "name": "ReproRecordData.JsonRoundTrip_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "附录 A.4：JSON 往返深相等＋键序固定（seed→threadCount→softwareVersion→gitCommit→dataset→toleranceProfile→notes，NFR-COR-02）" },
+        { "name": "ReproRecordData.FromJsonRejectsInvalid_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5 错误契约：非对象/字段缺失/类型不符/越界（threadCount<1、非整数 seed）拒绝且消息含 repro-json 前缀＋字段路径（F-018③ 教训内化：无静默截断）" },
+        { "name": "DeterministicEnvData.RecordIsSoleSource_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.3：记录＝唯一来源（按值持有，外部副本改不动已建环境）；同记录两次建立相等（重放前提）" }
+      ]
+    },
+    {
+      "suite": "DemoFixture/PureFixture（UT_FIX GoldenFixture 六步生命周期族）",
+      "designRef": "units/testkit.md §6.1/§8 TK-FIX（acceptance①）",
+      "cases": [
+        { "name": "DemoFixture.SixStepLifecycle_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance①：步骤①数据根解析→②数据集装载（env 重定向 fixture 根，DatasetTest 同款模式）→③容差档案（跟随 manifest 档案引用，kin-fk@1.0.0）→④确定性环境（seed 默认/记录登记数据资产）→⑤TempDir 就绪；repro 成员与 env 记录同源" },
+        { "name": "PureFixture.SkipsAssetStepsWhenNoDataset_UT_FIX", "status": "passed", "modes": ["smoke", "integration"], "trace": "纯算法形态：datasetRef 空→②③整体跳过（产物空态），④⑤照常就绪" }
+      ]
+    },
+    {
+      "suite": "既有回归（58 用例）",
+      "designRef": "units/core.md/testkit.md §8",
+      "cases": [
+        { "name": "既有 58 用例（TestPaths/JsonLite/Fault/Dataset/ToleranceProfile/Check/ContractCheck/SetCheck/StableOrder/BuildRedLine）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归" }
+      ]
+    }
+  ],
+  "summary": { "total": 71, "passed": 71, "failed": 0, "modes": { "smoke": "71/71", "integration": "71/71" } },
+  "failureCapabilitySelfCheck": {
+    "method": "keepOnFailure 决策禁用探针：析构保留决策临时改为恒假（if (false && ...)）后重编译执行；探针验证后清除并终验复绿。",
+    "process": "注入（Edit 精确编辑，TK-T07 的 sed 转义事故教训内化）→构建 exit 0→TempDirKeep.KeepsSceneOnFailureSignal_UT_FIX 如期变红（失败保留失效必被 acceptance② 用例捕获）→恢复→grep probe=0→71/71 两模式复绿。",
+    "result": "成立（一轮闭环，无事故）",
+    "date": "2026-09-11"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp02-t08/smoke-configure.log",
+      "traceability/builds/wp02-t08/smoke-build.log",
+      "traceability/builds/wp02-t08/smoke-test-run.log",
+      "traceability/builds/wp02-t08/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp02-t08/integration-build.log",
+      "traceability/builds/wp02-t08/integration-fullbuild.log",
+      "traceability/builds/wp02-t08/integration-test-run.log",
+      "traceability/builds/wp02-t08/sdurws_ird_testkit_test-integration.xml"
+    ],
+    "governance": [
+      "traceability/builds/wp02-t08/validate-task.log",
+      "traceability/builds/wp02-t08/validate-docs.log",
+      "traceability/builds/wp02-t08/ird-gates.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_testkit_test ——通过（集成模式 exit 0）",
+  "notes": "①分层：GoldenFixture 含 gtest 头，置于 gtest/GoldenFixture.hpp（AssertMacros.hpp 同款先例）——库本体零 gtest（D-06）不受影响；②增量接缝登记（v0.8）：TempDir::noteTestFailure(bool)——库无法观测 gtest 失败信号，由 GoldenFixture::TearDown 注入（TK-T01 detail::resolveDataRoot 同款处理）；③§6.1 步骤⑥⑦（TestRecord 初始化/定稿）与 ②③ 失败的正式结果分类（§7.2）为 TK-T10 交付面，本任务以注释接缝＋GTEST_SKIP 占位（语义与'不是 Passed'一致，接口不变）；④删除失败告警输出走 std::fprintf(stderr)（析构期 iostream 全局对象可能已析构）；⑤ird_gates 2 处命中＝F-019 既有缺口（lint 工具边，TK-T03 引入），本任务变更面零新增命中"
+}
