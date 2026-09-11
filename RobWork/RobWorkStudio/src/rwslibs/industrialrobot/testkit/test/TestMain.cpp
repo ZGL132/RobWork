@@ -16,8 +16,15 @@
 
 #include <sdurws/ird/testkit/gtest/RecordListener.hpp>
 
+// 测试进程参数指针（TK-T11 增量接缝）：ProcessRunnerTest 以 argv[0] 定位与
+// 测试可执行文件同目录的 prochelper 辅助进程（CMake 对齐输出目录）。仅
+// 测试目标内部使用，不属于 testkit 库公共面。
+char** g_irdTestArgv = nullptr;
+
 int main(int argc, char** argv)
 {
+    // 第零步：记录参数（供需要 argv[0] 定位同目录设施的用例读取）。
+    g_irdTestArgv = argv;
     // 第一步：安装报告监听（摘除自维护参数 --ird_report=，再交 gtest 解析）。
     ::sdurws::ird::testkit::installTestRecordListener(argc, argv);
     // 第二步：gtest 初始化与全量运行（OnTestProgramEnd 聚合写盘）。

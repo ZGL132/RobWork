@@ -52,7 +52,8 @@ add_library(sdurws_ird_testkit STATIC
     src/Check.cpp
     src/ContractCheck.cpp
     src/Fixture.cpp
-    src/Report.cpp)
+    src/Report.cpp
+    src/ProcessRunner.cpp)   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -110,6 +111,7 @@ add_executable(sdurws_ird_testkit_test
     test/SetCheckTest.cpp
     test/FixtureTest.cpp
     test/ReportTest.cpp
+    test/ProcessRunnerTest.cpp   # TK-T11：四态 outcome＋EventWatch 双路径用例
     test/CoreIntegrationExampleTest.cpp
     test/TestMain.cpp
     test/BuildRedLineTest.cpp)
@@ -185,6 +187,28 @@ if(MSVC)
     target_compile_options(sdurws_ird_testdata_lint PRIVATE /utf-8)
 endif()
 target_link_libraries(sdurws_ird_testdata_lint PRIVATE sdurws_ird_testkit)
+
+# ---- 进程测试辅助子进程（TK-T11：tools/prochelper）----
+# 四态 outcome 用例的"可控行为"载体（exit/延迟写标记/进程树场景）——不用
+# cmd.exe 拼用例的原因见 tools/prochelper/main.cpp 文件头。目标名后缀不匹配
+# 产品/测试目标族（ird_gates 形态解析归 other，同 testdata_lint 先例）；
+# 零链接边（纯标准库＋kernel32 默认链接）——不触发任何依赖红线检查面。
+# tools/ 属 §3.6 安装排除面（同 testdata/tools 排除登记）。
+add_executable(sdurws_ird_testkit_prochelper tools/prochelper/main.cpp)
+target_compile_features(sdurws_ird_testkit_prochelper PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_testkit_prochelper PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    # 输出目录对齐测试可执行文件（多配置生成器下含 $<CONFIG> 子目录）——
+    # 用例以 argv[0] 同目录定位 helper，不依赖 PATH/工作目录。
+    RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:sdurws_ird_testkit_test>")
+if(MSVC)
+    target_compile_options(sdurws_ird_testkit_prochelper PRIVATE /utf-8)
+endif()
+# helper 一起构建：verify 命令只构建 sdurws_ird_testkit_test，缺此依赖则
+# 冒烟/集成验证时 helper 可能缺失，进程用例全数失败。
+add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_prochelper)
 
 # ---- 依赖红线守卫（T-2/R-3 的 testkit 侧配置期断言；O-21 自律载体）----
 # T-2（testkit.md §2.4）：sdurws_ird_testkit 链接接口只允许 core——出现
