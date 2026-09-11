@@ -1,5 +1,1 @@
-[31;1mException: [0mD:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:96[0m
-[31;1m[0m[36;1mLine |[0m
-[31;1m[0m[36;1m[36;1m  96 | [0m бн $anchor)) { [36;1mthrow "designRef anchor not found in target: $ref (in $($[0m бн[0m
-[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
-[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mdesignRef anchor not found in target: units/evidence.md#3.5 (in EV-T02)[0m
+validate-task: PASS (1 tasks)
