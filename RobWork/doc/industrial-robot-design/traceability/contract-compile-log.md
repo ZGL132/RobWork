@@ -114,6 +114,7 @@
 | DIAG-T09 | wp09-t09 | True | P-DIAG-7 | DOC-T09 回填（2026-09-11）：diagnostics.md §11 任务行＋§2 需求表——requirements 补 NFR-REL-03（DT-LIFE-2 依据）、宿主留痕编码归宿主所有者编入 acceptance（envelope 归 evidence、CommandRecord 归 project） | validate-task 三查过；放行依据＝DOC-T09 契约 acceptance 2（同上批次） | ready |
 | DIAG-T10 | wp09-t10 | True | P-DIAG-8 | DOC-T09 回填（2026-09-11）：diagnostics.md §11 任务行——designRefs 补 testkit §10.2 锚点（卡行输入「§10、testkit」原文，diagnostics 行契约夹具义务）、P-DIAG-8 处置编入 acceptance（契约测试以桩＋夹具验证） | validate-task 三查过；放行依据＝DOC-T09 契约 acceptance 2（同上批次） | ready |
 | DIAG-T11 | wp09-t11 | False | — | DOC-T09 回填（2026-09-11）：diagnostics.md §11 任务行——designRefs 补 §11（README 核对锚点）、allowedFiles 补 traceability/**（CORE-T01 教训）、acceptance 拆分逐条可验证三项；纯文档/门禁同步无跨单元接口产出，入队按拓扑序在其十项前置完成后执行 | validate-task 三查过；放行依据＝DOC-T09 契约 acceptance 2（同上批次） | ready |
+| TK-T11 | wp02-t11 | False | —（O-33 随补登消账：消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次〔AT-11/13 载体〕，触发已成立——2026-09-11 所有者采纳预防性补登于该波次之前，见 testkit.md §10.1 与 DTB §4.2 O-33 消账记录） | testkit.md v1.0（2026-09-11）触发式补登：§9 任务表 TK-T11 行＋§10.1 启用表更新＋"阶段 A 不含"清单移出；DTB §2.2 WP-02-T11 行 ≙TK-T11 映射恢复（≙ 计数 73→74）；契约 tasks/foundation/TK-T11.json 同批生成——`ProcessRunner.hpp` 头已于 TK-T09 冻结，本契约实现签名零偏差 | validate-task 三查过（WP-02-T11 实施段复跑）；放行依据＝消费者触发成立（所有者 2026-09-11 采纳），入队位于 project 波次 DOC-T10 之前 | ready |
 
 ## 修订行（ready 契约的后续修订，CCP §5）
 
