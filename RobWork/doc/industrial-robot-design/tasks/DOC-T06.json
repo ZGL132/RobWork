@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "runtime 主链整链编译放行（RT-T02~T13）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01"],
   "designRefs": ["contract-compilation.md", "units/runtime.md#12", "traceability/contract-compile-log.md"],
