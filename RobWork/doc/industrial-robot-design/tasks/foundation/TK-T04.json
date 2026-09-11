@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-B",
   "title": "实现容差档案（ToleranceProfile）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "TK-T02"
   ],
