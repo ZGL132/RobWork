@@ -29,6 +29,14 @@ add_library(sdurws_ird_runtime STATIC
                                   # 矩阵奇异/病态判定〔单侧 Jacobi SVD〕；私有头
                                   # src/DescriptionValidator.hpp，不入公共 include）
 
+# ---- RT-T04 增列（CanonicalModel＋RT-Codec；tasks/foundation/RT-T04.json）----
+target_sources(sdurws_ird_runtime PRIVATE
+    src/CanonicalModel.cpp      # §4.3 字段表构造不变量（builder）＋§9.6 能力派生
+                                # ＋§4.3.6 位模式等值；公共头 CanonicalModel.hpp
+    src/Codec.cpp)              # §4.5 RT-Codec 三形态（encode/parse/内容身份；
+                                # CR-02 排除字段声明点＝Codec.hpp；摘要只经
+                                # core::ContentDigester）
+
 target_compile_features(sdurws_ird_runtime PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_runtime PROPERTIES
     CXX_STANDARD 17
@@ -111,7 +119,9 @@ add_executable(sdurws_ird_runtime_test
     test/SourcesTest.cpp                # RT-T02：Sources 注入契约语义（§3.3）＋错误归属可定位（§5.2 表）
     test/ExpectedTest.cpp               # RT-T02：Expected 两态语义（§3.4——成功/失败不静默吞错）
     test/DescriptionTest.cpp            # RT-T03：§4.2 值类型契约（默认态/值语义/四态/reader 纯函数）
-    test/DescriptionValidatorTest.cpp)  # RT-T03：S3 校验器（RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＋硬反例逐条）
+    test/DescriptionValidatorTest.cpp   # RT-T03：S3 校验器（RT-CPL-1/RT-CPX-3/RT-BW-6 校验器部分＋硬反例逐条）
+    test/CanonicalModelTest.cpp         # RT-T04：§4.3 builder 不变量＋§9.6 能力派生＋索引＋D-01 不持久化
+    test/CodecTest.cpp)                 # RT-T04：RT-ID-1/2/3＋parse(encode)==x 往返＋身份域排除
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_STANDARD 17
