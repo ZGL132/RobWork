@@ -69,6 +69,7 @@ enable_testing()
 add_executable(sdurws_ird_runtime_test
     test/BuildRedLineTest.cpp   # RT-T01：构建红线扫描＋L1 清单钉住
     test/ErrorsTest.cpp         # RT-T02：RT-ERR 全表（token/稳定码/分类逐值）＋异常轨＋错误载荷
+    test/SourcesTest.cpp        # RT-T02：Sources 注入契约语义（§3.3）＋错误归属可定位（§5.2 表）
     test/ExpectedTest.cpp)      # RT-T02：Expected 两态语义（§3.4——成功/失败不静默吞错）
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
