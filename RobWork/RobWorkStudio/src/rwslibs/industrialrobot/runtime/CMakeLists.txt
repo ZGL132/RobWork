@@ -21,8 +21,10 @@
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；CR-07）----
 find_package(GTest CONFIG REQUIRED)
 
-# ---- 产品库目标：INTERFACE 占位 → STATIC ----
-add_library(sdurws_ird_runtime STATIC src/Runtime.cpp)
+# ---- 产品库目标：INTERFACE 占位 → STATIC（RT-T01）→ 契约源随 RT-T02 起增列 ----
+add_library(sdurws_ird_runtime STATIC
+    src/Runtime.cpp   # 单元锚点（RT-T01 占位，保留）
+    src/Errors.cpp)   # RT-T02：错误码全表（token/稳定码/分类）＋RuntimeError
 
 target_compile_features(sdurws_ird_runtime PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_runtime PROPERTIES
@@ -65,7 +67,9 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_runtime_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp   # RT-T01：构建红线扫描＋L1 清单钉住
+    test/ErrorsTest.cpp         # RT-T02：RT-ERR 全表（token/稳定码/分类逐值）＋异常轨＋错误载荷
+    test/ExpectedTest.cpp)      # RT-T02：Expected 两态语义（§3.4——成功/失败不静默吞错）
 target_compile_features(sdurws_ird_runtime_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_STANDARD 17

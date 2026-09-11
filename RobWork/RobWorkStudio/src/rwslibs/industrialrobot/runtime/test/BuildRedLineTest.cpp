@@ -64,7 +64,8 @@ std::string readFile(const fs::path& file)
 TEST(RuntimeBuild, SourceTreeReachable_RT_BUILD)
 {
     ASSERT_TRUE(fs::exists(unitRoot())) << "IRD_RUNTIME_UNIT_ROOT 不存在";
-    // runtime 落位期无公共头（仅 README 保留位）——锚定保留位文件而非扫描集非空。
+    // 公共头根保留位（README.md，RT-T01 落位期建立）——RT-T02 起公共头
+    // （Errors.hpp/Sources.hpp）与保留位并存，锚定断言保持不变。
     ASSERT_TRUE(std::filesystem::exists(unitRoot() / "runtime" / "include" / "sdurws" / "ird" / "runtime" / "README.md")) << "公共头保留位缺失（README.md 应存在）";
     ASSERT_FALSE(collectCppFiles(unitRoot() / "runtime" / "src").empty()) << "src 扫描为空";
 }
