@@ -4,12 +4,14 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "SafePath＋BudgetGuard（路径穿越/预算防护）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T01"],
-  "requirements": ["NFR-SEC-01", "NFR-SEC-02"],
-  "designRefs": ["units/io.md#4.1", "units/io.md#9.1"],
+  "requirements": ["NFR-SEC-01", "NFR-SEC-02", "PM-05"],
+  "designRefs": ["units/io.md#12", "units/io.md#4.2", "units/io.md#4.3", "units/io.md#4.5", "units/io.md#9.1", "units/io.md#9.2", "units/io.md#9.12"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "branch": "wp11-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1", "P-IO-4", "P-IO-6"],
   "acceptance": [
-    "V09/V10/V11/V06 全绿；穿越反例（项目资源区逃逸拒绝）",
-    "预算三要素（单文件/递归深度/解压总量）超限拒绝＋诊断；例外不扩大化（P-1 仅限显式用户源）"
-  ]
+    "V09/V10/V11 全绿：IoSec/PathTraversal（§4.3.3 非法表逐条拒绝＋正确码）、SameProjectAltPaths（同项目多路径等价键一致＋TempArea 互斥——§4.2.4）、SymlinkJunction（文件/目录 symlink 与 junction 指向资源区外一律 IO-SEC-SYMLINK，区内名字指向区外同样拒）；项目资源区逃逸反例拒绝（P-4/P-5 角色——NFR-SEC-01：项目内持久化资源引用与包解包成员不得逃逸，用户显式外部源一次性读取不在此限）",
+    "V06 全绿：IoCsv/StreamBudget 行预算（设 10⁵）超限触发 IO-SEC-BUDGET-ROWS、峰值内存有界——BudgetGuard 行数维度经流式读取路径生效",
+    "预算超限拒绝＋比较型三要素诊断（实际值/上限/单位——§4.5.2）：单文件大小/递归深度/解压总量分别触发 IO-SEC-BUDGET-FILE/-DEPTH/-TOTAL，BudgetLedger 可观测（§4.4 防护流程——预检＋展开检双保险）",
+    "例外不扩大化断言：安全例外仅 PM-01 一次性读取与外部引用记录（P-1 显式用户源），其余通道一律受 SafePath/BudgetGuard 管辖（卡行禁止项）",
+    "P-IO-4 处置：预算数值按卡 §4.5.1 建议默认实现（Draft 档位，架构评审确认前不私改数值——NFR-SEC-02 未定数值）；P-IO-6 处置：IO-* 码值以 §9.12 建议值向 diagnostics StableCodeRegistry 注册并与 diagnostics 所有者收编确认（不私定码值）；P-IO-1 处置：SafePath/BudgetGuard 对 project 的消费形态＝IoRuntime 注入（§9.11），io 公共头不因裁决结果变化"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T02 行＋§2 需求表（NFR-SEC-01/02 行）＋DTB §2.12 WP-11-T03 行（≙）复核回填——requirements 补 PM-05（解包防护维度，DTB WP-11-T03 需求列原文）、designRefs 补 §12 任务行锚点与 §4.2/§4.3/§4.5/§9.1/§9.2/§9.12（直接支撑接口/数据模型节）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§4.3/§4.5 语义」拆分五条（补例外不扩大化与陷阱处置）；interUnit=true 判定：消费 io→core/io→diagnostics 登记边（ARCH §3.5；IoErrorCode 经 diagnostics StableCodeRegistry 注册协议），SafePath/BudgetGuard 类型为项目链（O-09 关联方）注入消费的公共接口提供方（DOC-T11 契约 note）；knownPitfalls=P-IO-1/P-IO-4/P-IO-6（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t02（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正，t 序号取卡内编号保证六份唯一）；编译留痕见 traceability/contract-compile-log.md"
 }

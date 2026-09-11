@@ -4,12 +4,14 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "JSON 读写器＋ZIP 通道（P-IO-3 冻结后）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["IO-T01"],
-  "requirements": ["REQ-12", "PM-05"],
-  "designRefs": ["units/io.md#5.9", "units/io.md#7.1"],
+  "requirements": ["REQ-12", "OPT-12", "PM-05"],
+  "designRefs": ["units/io.md#12", "units/io.md#5.9", "units/io.md#5.9.1", "units/io.md#5.9.2", "units/io.md#5.9.3", "units/io.md#5.9.4", "units/io.md#9.5", "units/io.md#7.1"],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -17,8 +19,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "branch": "wp11-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-3"],
   "acceptance": [
-    "V07/V08 全绿；JSON canonical 字节一致；ZIP 解包逐字节还原＋哈希（V14 前置）",
-    "前置条件：P-IO-3（ZIP/XML 选型）经 vcpkg 可用性与版本登记冻结后方可执行"
-  ]
+    "V07 全绿：SchemaUnknownFuture——未知字段拒（Preserve 名单外）、schemaVersion=999 未来版本只读拒绝＋升级指引数据（PM-06 执行侧支撑——判定与升级器归 project，io 提供格式探测数据）、重复键/缺必填定位（错误码＋JSON 路径＋行列区间）（NFR-DEP-04 版本字段执行侧）",
+    "V08 全绿：NaNInfLimits——NaN/Inf/1e999 溢出拒、超长字符串/深嵌套触发 IO-SEC-BUDGET-JSON*（诊断含实际值/上限——比较型三要素）",
+    "canonical 输出字节一致（§5.9.3 顺序规范化与内容身份——同语义 JSON 同字节）；manifest/内容摘要全经 core ContentDigester（SHA-256 唯一摘要算法——第二摘要算法禁止，SA-12/NFR-MNT-03）",
+    "ZIP 通道：解包逐字节还原＋manifest 条目哈希校验可用（V14 HashMismatch 的前置能力；完整九步包导入协议语义归 IO-T06）；JsonLite 不用于产品格式（仅 testkit 测试侧——卡行禁止项）",
+    "P-IO-3 处置（blocked 触发条件）：ZIP/XML 解析库选型随 IO-T01 完成 vcpkg 可用性与版本登记冻结后方可实施——未冻结本任务不得开工（登记 blocked 上报，不私选第二渠道依赖；NFR-DEP-03 离线/NFR-SEC-05 依赖清单约束）"
+  ],
+  "note": "DOC-T11 编译放行（2026-09-11）：按 io.md §12 IO-T04 行＋§2 需求表（REQ-12 行）＋DTB §2.12 WP-11-T05 行（≙）复核回填——requirements 补 OPT-12（JSON 工件支撑，DTB 需求列原文）、designRefs 细化 §5.9.1~§5.9.4（受限 DOM/版本字段/顺序规范化/校验边界——卡行验收直接支撑节）、allowedFiles 补单元卡与 traceability/**（CORE-T01 教训）、acceptance 按「完成条件＋§5.9/§7.1 语义」拆分五条（原 acceptance 第 2 条 P-IO-3 前置条件按 CCP §2「陷阱随契约走」改写为陷阱处置条目并补 blocked 触发条件）；interUnit=true 判定：JsonProfile 注册协议（业务单元装配期注册、io 执行校验——C-6）＋摘要经 core ContentDigester（§3.2 消费清单）；knownPitfalls=P-IO-3（处置编入 acceptance）；放行＝所有者 2026-09-11 B 模式预授权整链放宽（沿用 DOC-T04 整链放宽口径，拓扑序 IO-T02→T07 登记），status planned→ready、branch 补 wp11-t04（branch 按 ≙ 映射实测：io 单元＝WP-11〔DTB §2.12〕，DOC-T11 契约 acceptance 原文「wp13-t02~t07」系预填笔误——WP-13 为 modeling 单元，按其 note「branch 字段以契约回填时 ≙ 映射实测为准」实测更正）；编译留痕见 traceability/contract-compile-log.md"
 }
