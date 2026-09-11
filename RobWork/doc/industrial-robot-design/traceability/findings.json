@@ -251,6 +251,16 @@
       "title": "TK-T11 提交 10afd55 正文与留痕的计数/份数出入（留痕文件本身准确，方向均为少报、无粉饰）：①称\"16 个新用例…EventWatchPath 双路径 6\"，实测新增 17 个（head XML 97−base wp02-t10 XML 80；EventWatchPath 7 个，XML 按 classname 清点）；②称\"ird-test-report 三份（默认/run/smoke 变体）\"，实际入库两份（ird-test-report.json＝集成默认＋ird-test-report-smoke.json）",
       "owner": "实施纪律（DTB §5 会话流程所有者；提交已推送不追溯改写，归入自查项）",
       "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的份数/计数以 ls 与 gtest XML 实际清点为准（AGENTS §6.3 第 4 条如实陈述的行文面），可与 F-024 同批在实施者模板补一句\"数字须与留痕文件清点一致\"提醒。"
+    },
+    {
+      "id": "F-026",
+      "source": "traceability/acceptance/DOC-T10-20260911.md#4.9（attempt 1，送验对象 fc7d247c7）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-11",
+      "title": "F-012/F-023/F-024 同型再现：DOC-T10 送验主提交 28ed5f3 标题『project 主链整链编译放行（PRJ-T02~T16 十五份契约回填置 ready）』以单元名词开头，非动词开头——发生在 F-023/F-024 已登记同类问题之后，证明模板补救（DTB §5.1 或 PIPE 附录 C 补提交标题动词开头示例）仍未落地前口径继续漂移；正文四段齐备、验证结论与留痕一致（验收者逐项复现：逐份三查 15/15、validate-docs PASS 同数字），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 同辖域）",
+      "resolution": "与 F-012/F-023/F-024 合并处置：在实施者模板补提交标题动词开头示例（放行类可用『放行 <unit> 主链编译（…回填）』句式），消除名词短语与动词开头并存的判例分歧；对已推送历史（28ed5f3 及 F-012/F-023/F-024 所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-025（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
