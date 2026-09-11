@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "kin-fk",
+  "version": "1.0.0",
+  "basis": "appendixD#4 (compile/link equivalence, C7 length 1e-12) + appendixD#9 (dataset-declared stricter)",
+  "entries": [
+    {
+      "fieldPath": "fk[*].tcp.position.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.position.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.position.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 5e-13 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.orientation.z",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-12 }
+    }
+  ]
+}
