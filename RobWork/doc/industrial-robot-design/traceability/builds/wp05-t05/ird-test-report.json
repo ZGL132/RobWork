@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T05",
+  "masterWp": "WP-05-T05",
+  "branch": "wp05-t05",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T05 将 src/Evidence.cpp 由 EV-T01 落位锚点占位升级为证据契约校验器实现（Profile 注册期校验与内容身份 IRDPRF1＋证据项 presence/清单绑定/完备性核对＋Verified 前置固化校验＋validateProof 证明字段级校验＋覆盖矩阵/区域采样证据校验——units/evidence.md §6.1～§6.3/§6.6/§9.5；契约头 Evidence.hpp 新增）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边）；CMake 红线守卫配置期断言保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 83/83）",
+      "notes": "EV-T05 增列 test/EvidenceTest.cpp（EV-PROOF 12＋EV-ITEM 1＋EV-COMPLETENESS 1＋EV-MANIFEST 1＋EV-PROFILE 3＋EV-COVM 4＋EV-COVR 2＋EV-MODE 2＋EV-SEARCH 1＝27 新增）；既有 EV-BUILD/EV-ERR/EV-DEP/EV-SNAP/EV-CASET/EV-SNAPC/EV-SLICE/EV-SLICEC/EV-CR02/EV-CR05 56 用例回归保持通过（零修改）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceProof（EV-PROOF，EV-T05 新增）——acceptance 2（validateProof 逐字段反例全部拒绝）＋acceptance 1（EV-VER-6）",
+      "designRef": "units/evidence.md §6.3（证明契约＋validateProof 五组校验清单）、§11 EV-VER-6 行、§12 EV-T05 行；需求 EVI-01 §8.1 表 2 ③、C5/C8、CON-04、NFR-COR-02",
+      "cases": [
+        { "name": "EvidenceProof.MandatoryStateProofValid_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——必经状态证明正例（mandatoryState 三要素＋collisionPairs 齐备＋绑定一致＋产生者已注册）：字段级校验零问题（§11 EV-VER-6 正例半边）" },
+        { "name": "EvidenceProof.MandatoryStateProofMissingBasisRejected_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——缺必经性依据的同款证明被拒（MandatoryStateBasisMissing；§11 EV-VER-6 反例半边'缺 mandatoryState 的同款证明→Invalid'；Invalid→④ DataInsufficient 的汇总判定归 EV-T06 决策表——§12 依赖序）" },
+        { "name": "EvidenceProof.AnalyticAndContradictionProofsValid", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2（正例面）——解析界限/约束矛盾两类证明条件字段齐备＋coverageClaim 规范声明时零问题" },
+        { "name": "EvidenceProof.CategoryOutsideTripleRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——①类别：三类之外（越界值，模拟'多初值全发散'冒充证明）→ CategoryInvalid（EV-VER-2/3/4 拒绝面；SearchExhaustedRecord→DataInsufficient 才是搜索未果正道）" },
+        { "name": "EvidenceProof.AnalyticBoundMissingExpressionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——②条件字段：AnalyticBound 缺界限表达→拒绝，补齐后通过（'条件必填，缺一即 Invalid'）" },
+        { "name": "EvidenceProof.ContradictionMissingExpressionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——②条件字段：ConstraintContradiction 缺矛盾表达→拒绝" },
+        { "name": "EvidenceProof.MandatoryStateTripleFieldsRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——②条件字段：stateKind 空/objectId 保留值逐项拒绝（三要素逐字段观测）" },
+        { "name": "EvidenceProof.CollisionPairsCounterexamplesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——②条件字段：碰撞对象对空集/保留值身份/A==B/否定判定逐项拒绝且带条目下标（否定判定不能支撑碰撞主张——NFR-COR-03 不伪造）" },
+        { "name": "EvidenceProof.ProducerCounterexamplesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——③产生者：评估键词形非法（含点）/未注册/契约版本不符逐项拒绝（CON-04；注册表经 IProducerRegistryView 注入——EV-T10 落地后适配）" },
+        { "name": "EvidenceProof.SnapshotSliceBindingCounterexamplesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——④绑定：snapshotId/sliceId 空身份与错配逐项拒绝（'非空且与被汇总结果一致'；切片一致性对 expectedSliceId 核对——实现口径 I-5 登记单元卡 v0.6）" },
+        { "name": "EvidenceProof.CoverageClaimCounterexamplesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——⑤覆盖声明：跨类别错配（C8 作用域越界）/自拟措辞/空声明逐项拒绝（§6.3 两规范声明原文逐字为规范 token——实现口径 I-4）" },
+        { "name": "EvidenceProof.IssueOrderDeterministic_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2（确定性面）——多缺陷证明两次校验 issue 序列逐条相等＋检查序锚定（②组先于③组再于④组——NFR-COR-02）" }
+      ]
+    },
+    {
+      "suite": "EvidenceItems/EvidenceCompleteness/EvidenceManifest（EV-ITEM 族，EV-T05 新增）——acceptance 1（EV-VER-7）＋§6.2 状态/清单契约",
+      "designRef": "units/evidence.md §6.2（五值状态/manifest 绑定/完备性核对）、§11 EV-VER-7 行；需求 ERR-01、C2、EVI-01 表 1、CON-01",
+      "cases": [
+        { "name": "EvidenceItems.PresenceDiscipline", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.2 presence 纪律：Satisfied 缺产物摘要/Invalid 缺原因诊断/NotApplicable 缺原因/itemId 词形违约逐项拒绝；五状态齐备形态全部通过（Missing/Unverified 无附加必填）" },
+        { "name": "EvidenceCompleteness.NotApplicableNotCountedMissing_EV_VER_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——表 4 轨迹行承载实例：纯关节路径下 TRJ-02 连续性项 NotApplicable（原因＝无笛卡尔段、非空）→ 完备性核对零缺失（'不计缺失'——C2/ERR-01；'整体不因该缺项降级'的判定归 EV-T06 决策表）；同项改判 Missing/Unverified 进缺失清单且状态区别保留；无清单→三项全量列出（不短路——表 2 ④）" },
+        { "name": "EvidenceManifest.BindingChecksAgainstSnapshot", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.2 绑定面（EV-COV-2 同源）：caseScope ⊆ 快照必验集、subject ∈ objectClosure、清单身份三元组合法——合法通过、错误工况/对象引用/身份残缺逐项拒绝（'防错误工况/对象引用'原文）" }
+      ]
+    },
+    {
+      "suite": "EvidenceProfile（EV-PROFILE，EV-T05 新增）——acceptance 3（D-14 不复制双账本）＋§6.1/§9.5 注册期校验",
+      "designRef": "units/evidence.md §6.1（RequiredEvidenceProfile＋通用必需项＋注册行）、§9.5（Profile 注册期语法面）、D-14；需求 NFR-MNT-03、C6、NFR-COR-02",
+      "cases": [
+        { "name": "EvidenceProfile.CommonRequiredItemsMatchTable4GenericRows_D14", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——通用必需项恰表 4'通用必需项'三行（快照身份/覆盖矩阵/模式与等级标识）、全部 Common＋替代标志 false（C6 不豁免）＋恒适用；D-14 负向锚定：evidence 内建清单域前缀只允许 common——五域明细行不得出现在 evidence 侧（域按表 4 自行实例化注册，§13 交接；内容权威唯一在 REQUIREMENTS 表 4）" },
+        { "name": "EvidenceProfile.RegistrationCounterexamplesRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.1 注册行＋§9.5 语法面：profileId 出五域词表/版本空/itemId 词形（多点）/description 空/Common 禁止域登记/Common 替代标志必须 false/conditionToken 空/referencedKeys 空/引用键语法非法逐项拒绝且带合并序列下标（suggested 段下标接续 required 段）；合法 trj Profile 通过" },
+        { "name": "EvidenceProfile.ContentIdentityDeterministicAndSensitive", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.1'contentIdentity 由 evidence 计算（域不可申报）'：同内容任意登记序同身份（编码前按 itemId 规范化——IRDPRF1 实现口径 I-10）；描述/版本/建议列表任一变化→身份变化（§8.2 复用兼容判定的凭据面）；摘要唯一经 core::ContentDigester（CR-02）" }
+      ]
+    },
+    {
+      "suite": "EvidenceCoverageMatrix（EV-COVM，EV-T05 新增）——acceptance 1（EV-COV-2）＋acceptance 4（O-14 保守字面）",
+      "designRef": "units/evidence.md §6.6 CaseCoverageMatrix 校验规则表、§4.1.3（分母＝快照冻结态必验工况集）、§11 EV-COV-2 行；需求 EVI-02、DYN-07、P-EV-7 保守处置",
+      "cases": [
+        { "name": "EvidenceCoverageMatrix.DuplicateAndUnknownReferenceRejected_EV_COV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——重复 caseId 条目（下标 1＋caseId 规范文本定位）与必验集外引用（下标 2）逐条列出、矩阵非法（§11 EV-COV-2'校验错误列出具体条目'观测点；'非法（重复拒绝/错误引用 Invalid）'）" },
+        { "name": "EvidenceCoverageMatrix.PlanIdentityAndEntryDiscipline", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.6 第 1 条与约束行：requiredCaseSetId 与快照冻结必验集身份不符→拒（与计划核对——acceptance 4 分母权威面）；NotApplicable 缺非空原因→矩阵非法，补原因后矩阵合法但覆盖仍不完备（NotApplicable≠Executed——§6.6 判据字面）；runId/resultSliceId 保留值→追溯面拒绝" },
+        { "name": "EvidenceCoverageMatrix.MissingMandatoryExecutionListed", "status": "passed", "modes": ["smoke", "integration"], "trace": "漏验核对面（EV-COV-1 的校验面，②级判定归 EV-T06）：缺一条 Executed→矩阵合法但覆盖不完备＋issue 点名工况 id（missingItems 数据源）；enabled 非 mandatory 工况不进分母（O-14 字面——分母＝快照冻结态 enabled∧mandatory 工况集，evidence 不解释标记）；全覆盖→coverageComplete" },
+        { "name": "EvidenceCoverageMatrix.EmptyRequiredSetTriviallyComplete_P_EV_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "P-EV-7 保守处置的校验面：空必验集→平凡完备、无漏验 issue（'依赖工况证据的判定项不满足'的 DataInsufficient 裁定归汇总④级——EV-T06）" }
+      ]
+    },
+    {
+      "suite": "EvidenceRegionCoverage（EV-COVR，EV-T05 新增）——acceptance 1（EV-COV-3）＋acceptance 4",
+      "designRef": "units/evidence.md §6.6 RegionCoverageEvidence 表、§4.1.4（分母来源）；需求 KIN-04 R8、DYN-06",
+      "cases": [
+        { "name": "EvidenceRegionCoverage.ZeroSampleUndefined_EV_COV_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——plannedTotal=0＋计数全零：形状自洽（valid）＋zeroSample 暴露（覆盖率不定义——汇总判 DataInsufficient、不得输出 0%/100%——§11 EV-COV-3 反例面；裁定归 EV-T06）" },
+        { "name": "EvidenceRegionCoverage.DenominatorCompletenessAndDowngrade_EV_COV_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1＋4——分母完整性：60+40+0 对 100 通过（60% 可作参考值）；90≠100→DenominatorIncomplete；dataInsufficient>0＋downgraded=true→valid＋downgradedRequired；未标记降级→拒绝；样本集身份不在快照冻结计划/声明分母与冻结计划不符/保留值身份逐项拒绝（'与快照采样计划一致——分母来源'字面）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSnapshotMode/EvidenceSearchExhausted（EV-MODE/EV-SEARCH，EV-T05 新增）——CON-03 承载＋§6.3 末记录",
+      "designRef": "units/evidence.md §6.2（validateForMode(Verified)——EV-T03 卡 v0.4 ⑤预登记归本任务）、§6.3 末（SearchExhaustedRecord）；需求 CON-03/PM-01、C5/C8",
+      "cases": [
+        { "name": "EvidenceSnapshotMode.VerifiedRequiresSolidifiedResources_CON_03", "status": "passed", "modes": ["smoke", "integration"], "trace": "CON-03——Recorded 资源阻断 Verified（逐条带下标）、不阻断 Quick/Preview（'不强制固化'原文）；全部固化＋Verified 通过（EV-T03 v0.4 ⑤'入口归证据清单任务 EV-T05'的兑现）" },
+        { "name": "EvidenceSnapshotMode.ReproductionCompletenessChecked", "status": "passed", "modes": ["smoke", "integration"], "trace": "复现块版本要素完整性对快照值复核（绕过 builder 的手工构造路径同受约束——防线不因调用路径而缺，NFR-COR-03）" },
+        { "name": "EvidenceSearchExhausted.RecordCarriesBudgetGuessesAndFilters", "status": "passed", "modes": ["smoke", "integration"], "trace": "§6.3 末记录承载：EV-VER-4 形态（全部解因碰撞被过滤——Collision 逐条）与 EV-VER-2 形态（多初值全发散——空清单合法）保真＋值语义；DataInsufficient 判定与'不得转不可行'归 EV-T06 决策表" }
+      ]
+    }
+  ],
+  "summary": { "total": 83, "passed": 83, "failed": 0, "modes": { "smoke": "83/83", "integration": "83/83" }, "unitRegression": { "smoke": "core 61/61＋evidence 83/83＋policy 4/4＋runtime 176/176＋testkit 97/97＝421/421", "integration": "evidence 83/83（集成面其余单元未在本任务重跑——ird_gates 的冒烟/集成测试步骤全 PASS 见 ird-gates.log）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "validateProof 探针：向 src/Evidence.cpp 的 CollisionPairsMissing 检查注入 'false &&' 短路（精确编辑＋显式构建/运行退出码核验，无 sed）后重编译执行；探针验证后逐字精确恢复并核验 PROBE 字样零残留（grep 计数 0）",
+    "result": "EvidenceProof.CollisionPairsCounterexamplesRejected 如期变红（exit 1——空集检查被跳过后'碰撞对象对空集'反例漏网被断言检出）——validateProof 字段级钉住测试的真实失败能力成立；恢复后 83/83 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t05/smoke-configure.log",
+      "traceability/builds/wp05-t05/smoke-build.log",
+      "traceability/builds/wp05-t05/smoke-test-run.log",
+      "traceability/builds/wp05-t05/sdurws_ird_evidence_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t05/integration-cache-check.txt",
+      "traceability/builds/wp05-t05/integration-build-evidence.log",
+      "traceability/builds/wp05-t05/integration-verify.log",
+      "traceability/builds/wp05-t05/integration-test-run.log",
+      "traceability/builds/wp05-t05/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t05/probe-red-build.log",
+      "traceability/builds/wp05-t05/probe-red-run.log",
+      "traceability/builds/wp05-t05/probe-restore-build.log",
+      "traceability/builds/wp05-t05/ird-gates.log",
+      "traceability/builds/wp05-t05/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 VERIFY_EXIT=0，integration-verify.log；另以 --target sdurws_ird_evidence 显式核验库构建 LIB_BUILD_EXIT=0）",
+  "irdGates": "ird_gates 结果 14/15，唯一失败＝ird_gates 门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（sdurws_ird_testdata_lint→testkit 表外边）＝F-019 既有；③IRD-GATE-T1（sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。与 wp05-t04 基线逐项一致；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t05/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake），配置 Release，--clean-first 全量重构建 exit 0，全量 421/421 零回归（core 61＋evidence 83＋policy 4＋runtime 176＋testkit 97）。实现口径 I-1～I-12（Applicability 词形复用/stateKind 域 token 词形/CollisionPair 正判定约束/coverageClaim 规范 token/validateProof 第 4 参 expectedSliceId/IProducerRegistryView 注入端口/itemId 词形/CaseCoverageEntry.notApplicableReason 载体/RegionCoverageEvidence 分母声明/IRDPRF1 身份投影/commonRequiredItems 三项稳定键/完备性核对 NotApplicable 不计缺失）登记于 units/evidence.md v0.6 变更记录。测试组名 EV-PROOF/EV-ITEM/EV-PROFILE/EV-COVM/EV-COVR/EV-MODE/EV-SEARCH 为实现侧组名（§11 矩阵 EV-T05 专项＝EV-VER-6/7＋EV-COV-2/3＋validateProof 逐字段反例，对照 §12 行；EV-VER-1~5/8 与 EV-COV-1/4 用例体随 EV-T06/EV-T11 落地——§12 依赖序）。AcceptAllClosureSource/ScriptedProducerRegistry 为接口替身（边界声明见 EvidenceTest.cpp 文件头——替身输出仅验证 evidence 契约，不构成 project/evaluator 侧实现正确性证明，亦不构成 IK/动力学等业务算法正确性证明——EV-REG-3 同源）。"
+}
