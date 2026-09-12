@@ -1,0 +1,49 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = EvidenceSnapshotBuilder.*
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from EvidenceSnapshotBuilder
+[ RUN      ] EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SnapshotTest.cpp(433): error: Expected equality of these values:
+  source.queries()
+    Which is: 0
+  2
+
+[  FAILED  ] EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP (1 ms)
+[ RUN      ] EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SnapshotTest.cpp(318): error: Failed
+预期抛出 EvidenceError，但未抛
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SnapshotTest.cpp(456): error: Expected: (source.queries()) >= (1), actual: 0 vs 1
+
+[  FAILED  ] EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SnapshotTest.cpp(318): error: Failed
+预期抛出 EvidenceError，但未抛
+
+[  FAILED  ] EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.Con06RequiresPolicyAndNameMap_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.Con06RequiresPolicyAndNameMap_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ObjectClosureInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ObjectClosureInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.IdentityTripleRequired_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.IdentityTripleRequired_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ExternalResourceStateMachine_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ExternalResourceStateMachine_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.SamplingPlanInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.SamplingPlanInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ReproductionCompleteness_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ReproductionCompleteness_EV_SNAP (0 ms)
+[----------] 10 tests from EvidenceSnapshotBuilder (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 7 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP
+[  FAILED  ] EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP
+[  FAILED  ] EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP
+
+ 3 FAILED TESTS

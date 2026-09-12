@@ -1,0 +1,237 @@
+CMake is re-running because D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt'
+  is newer than 'D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- RobWork: Build configuration: none
+-- RobWork: Version 26.9.12
+-- RobWork: ROOT - D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork
+-- RobWork: Boost version 1.92.0 found!
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWork: XERCES ENABLED! FOUND!
+-- RobWork: Yaobi ENABLED! NOT FOUND! Using RobWork native Yaobi.
+-- RobWork: PQP ENABLED! Using RobWork native PQP.
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- RobWork: EIGEN3 .. Found w. Hunter
+-- RobWork: Qhull Found
+-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+-- USE_FCL ON : FCL not Found
+-- USE_CSGJS ON: Enabled by default
+-- USE_Bullet OFF : Disable Hard Coded
+-- USE_SWIG OFF : Swig not Found
+-- USE_LUA OFF : Swig not found
+-- USE_ASSIMP OFF : Assimp not found and is now DISABLED!
+-- USE_Python OFF : Disabled Manualy
+-- USE_numpy OFF} : Swig and Python Not found
+-- USE_gtest  OFF : Disabled by default
+-- USE_Mathematica OFF : Disabled by default
+-- USE_RW_ASSERT ON : Enabled by Default
+-- USE_OpenMP ON : OpenMP 2.0 CXX FOUND! - Specification date 200203
+-- RobWork: RW C flags: 
+-- RobWork: RW CXX flags: -EHa -bigobj /MP -openmp
+-- RobWork: RW definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64
+-- RobWork: RW linker flags: 
+CMake Warning (dev) at RobWork/cmake/RobWorkMacros.cmake:497 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+Call Stack (most recent call first):
+  RobWork/ext/csgjs/src/CMakeLists.txt:13 (rw_add_includes)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- BUILD_sdurw_core  ON : Enabled by default.
+-- BUILD_sdurw_plugin  ON : Enabled by default.
+-- BUILD_sdurw_common  ON : Enabled by default.
+-- BUILD_sdurw_math  ON : Enabled by default.
+-- BUILD_sdurw_kinematics  ON : Enabled by default.
+-- BUILD_sdurw_geometry  ON : Enabled by default.
+-- BUILD_sdurw_sensor  ON : Enabled by default.
+-- BUILD_sdurw_graspplanning  ON : Enabled by default.
+-- BUILD_sdurw_models  ON : Enabled by default.
+-- BUILD_sdurw_trajectory  ON : Enabled by default.
+-- BUILD_sdurw_proximity  ON : Enabled by default.
+-- BUILD_sdurw_graphics  ON : Enabled by default.
+-- BUILD_sdurw_invkin  ON : Enabled by default.
+-- BUILD_sdurw_pathplanning  ON : Enabled by default.
+-- BUILD_sdurw_loaders  ON : Enabled by default.
+-- BUILD_sdurw  ON : Enabled by default.
+-- BUILD_sdurw_algorithms  ON : Enabled by default.
+-- BUILD_sdurw_task  ON : Enabled by default.
+-- BUILD_sdurw_assembly  ON : Enabled by default.
+-- BUILD_sdurw_calibration  ON : Enabled by default.
+-- BUILD_sdurw_control  ON : Enabled by default.
+-- BUILD_sdurw_opengl  ON : Enabled by default.
+-- BUILD_sdurw_mathematica  OFF : Disabled by default.
+-- BUILD_sdurw_proximitystrategies  ON : Enabled by default.
+-- sdurw_proximitystrategies: Not building Bullet interface since Bullet is disabled!
+-- sdurw_proximitystrategies: Not building FCL interface since FCL is disabled!
+-- BUILD_sdurw_proximitystrategies.rwplugin  ON : Enabled by default.
+-- BUILD_sdurw_pathoptimization  ON : Enabled by default.
+-- BUILD_sdurw_pathplanners  ON : Enabled by default.
+-- BUILD_sdurw_simulation  ON : Enabled by default.
+-- BUILD_sdurw_java  OFF : SWIG not found!
+-- BUILD_sdurw_python  OFF : SWIG not found!
+-- BUILD_sdurw_lua  OFF : Lua not found!
+-- BUILD_sdurw_softbody  OFF : Disabled by default.
+-- BUILD_sdurw_csg  ON : Enabled by default.
+-- BUILD_sdurw_analytic_geometry  ON : Enabled by default.
+-- BUILD_sdurw_simplefinger  ON : Enabled by default.
+-- BUILD_sdurw_sandbox  OFF : Disabled by default.
+-- RobWork: system id= 
+-- RobWork tests ENABLED!
+-- RobWork example DISABLED!
+-- Current Git revision is 0beadf9c-dirty
+-- RobWorkStudio: Build configuration: none
+-- RobWorkStudio: Version 26.9.12
+-- RobWorkStudio: ROOT dir: D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio
+-- RobWorkStudio: Python DISABLED!
+-- RobWorkStudio: Using Qt 6.11.1.
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWorkStudio: SWIG 3+ not found!
+-- RobWorkStudio: Lua DISABLED!
+-- QCodeEditor not found building internal target
+-- RobWorkStudio: Adding RWS CXX flags:  -EHa -bigobj /MP -openmp
+-- RobWorkStudio: Addubg RWS definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64;-DQT_DEBUG
+-- RobWorkStudio: Using static linking of default plugins!
+CMake Warning (dev) at RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt:66 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Deprecation Warning at RobWorkStudio/ext/QCodeEditor/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- BUILD_sdurws  ON : Enabled by default.
+-- BUILD_sdurws_plugin.rwplugin  ON : Enabled by default.
+-- BUILD_sdurws_atask  ON : Enabled by default.
+-- BUILD_sdurws_gtask  ON : Enabled by default.
+-- BUILD_sdurws_jog  ON : Enabled by default.
+-- BUILD_sdurws_log  ON : Enabled by default.
+-- BUILD_sdurws_playback  ON : Enabled by default.
+-- BUILD_sdurws_propertyview  ON : Enabled by default.
+-- BUILD_sdurws_treeview  ON : Enabled by default.
+-- BUILD_sdurws_planning  ON : Enabled by default.
+-- BUILD_sdurws_pythoneditor  OFF : Either Pyton or QCodeEditor is not installed
+-- BUILD_sdurws_sensors  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditor  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditorplugin  ON : Enabled by default.
+-- USE STATIC PLUGINS
+-- BUILD_sdurws_robworkstudioapp  ON : Enabled by default.
+-- BUILD_sdurws_lua  OFF : SWIG not found!
+-- BUILD_sdurws_java  OFF : SWIG not found!
+-- BUILD_sdurws_python  OFF : SWIG not found!
+-- BUILD_sdurws_luaeditor  OFF : Disabled by default.
+-- BUILD_sdurws_luapl  OFF : Disabled by default.
+-- BUILD_RobWorkStudio  ON : Enabled by default.
+-- RobWorkStudio: platform  
+-- RobWorkStudio: tests DISABLED!
+-- Current Git revision is 0beadf9c-dirty
+-- RobWorkSim: Build configuration: none
+-- RobWorkSim: Version 26.9.12
+-- RobWorkSim: ROOT dir: D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkSim
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:34 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:35 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:41 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: Python interpreter 3.13.11 Found
+-- RobWorkSim: Python libraries 3.13.11 Found
+-- RobWorkSim: SWIG 3+ not found!
+-- RobWorkSim: Lua DISABLED!
+-- RobWorkSim: Bullet enabled
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  CMake variable ODE_ROOT is set to:
+
+    ODE_DIR-NOTFOUND
+
+  For compatibility, CMake is ignoring the variable.
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:181 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: ODE disabled.
+-- RobWorkSim: RobWorkPhysicsEngine enabled.
+-- RobWorkSim: RWPhysics enabled.
+-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+-- BUILD_sdurwsim  ON : Enabled by default.
+-- BUILD_sdurwsim_gui  ON : Enabled by default.
+-- BUILD_sdurwsim_ode  OFF : Disabled by default.
+-- BUILD_sdurwsim_bullet  ON : Enabled by default.
+-- Bullet will be compiled with single precision.
+-- BUILD_sdurwsim_lua  OFF : SWIG not found!
+-- BUILD_sdurwsim_java  OFF : SWIG not found!
+-- BUILD_sdurwsim_python  OFF : SWIG not found!
+-- BUILD_SimulatorLogViewer  ON : Enabled by default.
+-- BUILD_sdurwsim_test  ON : Enabled by default.
+-- BUILD_RWSimulatorPlugin  ON : Enabled by default.
+-- BUILD_SimUtilityPlugin  ON : Enabled by default.
+-- BUILD_GraspTableGeneratorPlugin  ON : Enabled by default.
+-- BUILD_RWSimPlugin  ON : Enabled by default.
+-- BUILD_SimTaskPlugin  ON : Enabled by default.
+-- BUILD_EngineTestPlugin  ON : Enabled by default.
+-- RobWork tests DISABLED!
+-- Configuring done (12.8s)
+-- Generating done (24.7s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ExtensionRegistry.cpp
+  Log.cpp
+  Plugin.cpp
+  RobWork.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_core.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Errors.cpp
+  Snapshot.cpp
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_evidence_test
+  ErrorsTest.cpp
+  DependencyTest.cpp
+  SnapshotTest.cpp
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
