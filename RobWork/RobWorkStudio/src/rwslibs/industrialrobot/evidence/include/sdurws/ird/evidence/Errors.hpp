@@ -52,7 +52,8 @@
 namespace sdurws::ird::evidence {
 
 // =====================================================================
-// EvidenceErrorCode——evidence 全量稳定错误码枚举（9 值）。
+// EvidenceErrorCode——evidence 全量稳定错误码枚举（10 值；v0.5 表尾追加
+// SliceIncomplete——EV-T04 冻结拒绝码面）。
 // 枚举顺序＝单元章节流（§4 快照 → §4.2 声明 → §6 证据/证明/覆盖 →
 // §7 包络 → §8 缓存 → §9 注册表）。顺序与数值一经交付不得改动/插入——
 // 持久化于诊断与报告的 token 虽为字符串，但枚举数值进入二进制契约面，
@@ -103,12 +104,19 @@ enum class EvidenceErrorCode : std::uint8_t {
     /// （§9.4：注册边界拒绝，**不覆盖、不静默**；token 取 §9.4 原文
     /// "duplicate-evaluator"）。
     EvaluatorDuplicate,
+    /// evidence/slice-incomplete——切片非法实例/SliceBuilder 冻结拒绝
+    /// （§4.2.3② 冻结期：条目语法/载荷非法、(kind,key) 重复、Object 条目
+    /// 不在来源快照闭包内（子集校验，防漏声明错配）、CR-05 保留 token
+    /// 值形态非法或必填缺失、来源快照未冻结、评估键语法非法——EV-T04
+    /// 任务卡登记的冻结拒绝码面；SliceCodec 编解码的结构性非法同码面）。
+    /// 表尾追加（v0.5，EV-T04）——建议码为补登值（P-PR-6 同模式）。
+    SliceIncomplete,
 };
 
 /**
  * @brief 取错误码的稳定 token（注释列原文）。
  *
- * @param code [in] 错误码（全枚举 9 值均有 token——全函数，永不返回空）
+ * @param code [in] 错误码（全枚举 10 值均有 token——全函数，永不返回空）
  * @return 稳定 token 字符串（"evidence/..." 形态；静态存储期，调用方无需释放）
  *
  * 确定性：编译期固定 switch 全枚举表（无 default——新增枚举值未登记表项时
@@ -124,14 +132,15 @@ std::string_view token(EvidenceErrorCode code) noexcept;
  * @brief 取错误码对应的 diagnostics 建议注册码（§13 建议码清单）。
  *
  * 冻结关系（§13 原文）：清单列出 7 个 EVI-* 建议码并以"等"收尾——本表
- * 9 值中 7 值与 §13 逐字对应；另 2 值（SnapshotIntegrity/DeclarationInvalid）
- * 的错误语义在设计文本中有明文抛错点（§4.1.5④b/§4.2.3①）但 §13 未给出
- * 建议码，本头按 P-PR-6 同模式补登建议值 EVI-SNAPSHOT-INTEGRITY/
- * EVI-DECLARATION-INVALID（**建议值**——码值权威归 StableCodeRegistry，
+ * 10 值中 7 值与 §13 逐字对应；另 3 值（SnapshotIntegrity/DeclarationInvalid/
+ * SliceIncomplete）的错误语义在设计文本中有明文抛错点（§4.1.5④b/§4.2.3①/
+ * §4.2.3② 冻结期）但 §13 未给出建议码，本头按 P-PR-6 同模式补登建议值
+ * EVI-SNAPSHOT-INTEGRITY/EVI-DECLARATION-INVALID/EVI-SLICE-INCOMPLETE
+ * （**建议值**——码值权威归 StableCodeRegistry，
  * 是否收编由 diagnostics 所有者与 evidence 详设所有者裁决，登记 F-056）。
  *
  * @param code [in] 错误码
- * @return 建议注册码（"EVI-*" 形态——全部 9 值均发建议码；正式码值以
+ * @return 建议注册码（"EVI-*" 形态——全部 10 值均发建议码；正式码值以
  *         diagnostics 注册为准，本函数不承担注册职责——PA-1）
  */
 std::string_view registryCode(EvidenceErrorCode code) noexcept;
@@ -163,7 +172,7 @@ class EvidenceError : public std::runtime_error {
 public:
     /**
      * @brief 以错误码＋细节构造；what() ＝ "<token>: <detail>"。
-     * @param code   [in] 稳定错误码（全表 9 值之一）
+     * @param code   [in] 稳定错误码（全表 10 值之一）
      * @param detail [in] 开发诊断细节（就地定位信息：字段/键/条目下标等）；
      *               空串合法——此时 what() 恰为 token（无尾随冒号空格）
      */

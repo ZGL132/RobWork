@@ -43,7 +43,8 @@ struct CodeExpectation {
     const char* registry;     ///< §13 建议码（"EVI-..."；后两值为补登建议 F-056）
 };
 
-/// 全 9 值期望表（顺序＝枚举声明顺序——数值稳定性一并钉住）。
+/// 全 10 值期望表（顺序＝枚举声明顺序——数值稳定性一并钉住；v0.5 表尾
+/// 追加 SliceIncomplete——EV-T04 冻结拒绝码面）。
 const std::vector<CodeExpectation>& expectations()
 {
     static const std::vector<CodeExpectation> table = {
@@ -59,21 +60,23 @@ const std::vector<CodeExpectation>& expectations()
         {EvidenceErrorCode::SnapshotIntegrity,          "evidence/snapshot-integrity",          "EVI-SNAPSHOT-INTEGRITY"},  // 建议码补登（F-056）
         // ---------------- 注册期闭包拒绝码（§4.2.3① 原文语义） ----------------
         {EvidenceErrorCode::DeclarationInvalid,         "evidence/declaration-invalid",         "EVI-DECLARATION-INVALID"}, // 建议码补登（F-056）
+        // ---------------- 冻结期拒绝码（§4.2.3② 原文语义——表尾追加 v0.5） ----------------
+        {EvidenceErrorCode::SliceIncomplete,            "evidence/slice-incomplete",            "EVI-SLICE-INCOMPLETE"},    // 建议码补登（EV-T04）
     };
     return table;
 }
 
 }  // namespace
 
-/** EV-ERR-1 全表逐 token：9 值逐一核对 token/建议码（acceptance 2——稳定 token 逐枚举）。 */
+/** EV-ERR-1 全表逐 token：10 值逐一核对 token/建议码（acceptance 2——稳定 token 逐枚举）。 */
 TEST(EvidenceErrorsFullTable, AllCodesPerToken_EV_ERR_NFR_COR_02)
 {
-    // 前置锚定：枚举值个数与顺序钉死——9 值、EvaluatorDuplicate 序号 8。
-    // 防止后续任务静默插入/重排枚举值（数值进入二进制契约面；追加只能
-    // 在表尾并在单元卡留痕——头文件纪律注释）。
-    ASSERT_EQ(static_cast<int>(EvidenceErrorCode::EvaluatorDuplicate), 8)
+    // 前置锚定：枚举值个数与顺序钉死——10 值、SliceIncomplete 序号 9（表尾
+    // 追加值，EV-T04）。防止后续任务静默插入/重排枚举值（数值进入二进制
+    // 契约面；追加只能在表尾并在单元卡留痕——头文件纪律注释）。
+    ASSERT_EQ(static_cast<int>(EvidenceErrorCode::SliceIncomplete), 9)
         << "枚举值个数/顺序漂移——稳定 token 契约与持久化诊断的码面被破坏";
-    ASSERT_EQ(expectations().size(), static_cast<std::size_t>(9));
+    ASSERT_EQ(expectations().size(), static_cast<std::size_t>(10));
 
     for (const auto& e : expectations()) {
         SCOPED_TRACE(std::string{"码值: "} + e.tokenText);
@@ -84,7 +87,7 @@ TEST(EvidenceErrorsFullTable, AllCodesPerToken_EV_ERR_NFR_COR_02)
         // 建议注册码：EVI- 前缀、与 §13 原文（或补登建议）逐字一致；
         // 码值权威归 diagnostics StableCodeRegistry（PA-1）——本表只承诺
         // 建议码面（§13 P-PR-6 同模式）。
-        EXPECT_FALSE(registryCode(e.code).empty()) << "9 值均发建议码（F-056 补登口径）";
+        EXPECT_FALSE(registryCode(e.code).empty()) << "10 值均发建议码（F-056/EV-T04 补登口径）";
         EXPECT_EQ(registryCode(e.code).substr(0, 4), "EVI-") << "建议码前缀（§13 清单形态）";
         EXPECT_EQ(registryCode(e.code), std::string_view{e.registry});
     }
@@ -109,8 +112,9 @@ TEST(EvidenceErrorsFullTable, Section13SuggestionsAllCovered_EV_ERR)
         }
         EXPECT_EQ(hits, 1) << "§13 建议码应被恰一个枚举值承载";
     }
-    // 收编规模核对：9 值码面 = §13 清单 7 值＋补登建议 2 值（F-056）。
-    EXPECT_EQ(expectations().size(), static_cast<std::size_t>(9));
+    // 收编规模核对：10 值码面 = §13 清单 7 值＋补登建议 3 值
+    // （F-056 两值＋EV-T04 一值）。
+    EXPECT_EQ(expectations().size(), static_cast<std::size_t>(10));
 }
 
 /** EV-ERR-3 异常轨：消息前缀约定＋code() 访问器＋按基类捕获（§2.1 异常行/D-15）。 */
