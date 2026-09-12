@@ -152,38 +152,6 @@ rw::math::Transform3D<double> jointStaticTransform(
 }
 
 /**
- * @brief 从映射取"某对象某范围"条目的消歧后全名（编译器命名唯一来源）。
- *
- * 背景（§7.2/PA-1）：编译器写入 WC 的每个名字都必须来自映射（不允许
- * 现场拼装——R-4 前缀拼装唯一合法位置在 NameMap 模块）。身份条目经
- * resolveObjectId 直取；BaseMount/BaseFrame/Flange/Tcp/SceneObject 等
- * 派生条目共享所属对象的 ObjectId，须经 entries() 按 (objectId, scope)
- * 定位——本函数即该定位的唯一封装（编译器内部三处调用的公共点）。
- *
- * @param map    [in] buildRuntimeNameMap 产物（只读）
- * @param id     [in] 所属对象身份（robot/joint/link/tool/scene）
- * @param scope  [in] 目标范围（派生条目的语义轴）
- * @return 该 (对象, 范围) 组合的消歧后全名（映射内 fullName 全局唯一）
- *
- * @throws RuntimeError 码＝StructureInvalid：条目不存在（映射生成规则保证
- *         每组合恰一条——不可达，属编译器内部不变量破坏的防御性 fail-fast，
- *         不得以空名继续——NFR-COR-03 不静默）
- */
-std::string scopedFullName(const RuntimeNameMap& map, const core::ObjectId& id, NameScope scope)
-{
-    // 线性扫描条目集（条目量＝链长×2＋工具＋场景级别，O(n) 足够；映射的
-    // 有序索引按 fullName 键组织，不支持 (objectId, scope) 复合键直查）。
-    for (const RuntimeNameMap::Entry& entry : map.entries()) {
-        if (entry.objectId == id && entry.scope == scope) {
-            return entry.fullName;  // 消歧后全名（WC 帧名逐字节使用）
-        }
-    }
-    throw RuntimeError(RuntimeErrorCode::StructureInvalid,
-                       "runtime/workcell-compiler: 名称映射缺少必需要素（scope="
-                           + std::to_string(static_cast<int>(scope)) + "）——内部不变量破坏");
-}
-
-/**
  * @brief 有限性复核（防御面）：把 optional<RuntimeError> 中的校验错误转为
  *        fail-fast 抛出（checkWorldBaseTransform 等非抛出规则函数的统一
  *        消费点——错误信息原样透传，不吞不改）。
@@ -196,6 +164,25 @@ void throwIfError(const std::optional<RuntimeError>& error)
 }
 
 }  // namespace
+
+// =====================================================================
+// scopedFullName——S6/S7 共享的命名定位封装（RT-T08 起由 S6 匿名命名空间
+// 局部函数提升为单元内共享；契约注释见私有头 WorkCellCompiler.hpp）。
+// =====================================================================
+
+std::string scopedFullName(const RuntimeNameMap& map, const core::ObjectId& id, NameScope scope)
+{
+    // 线性扫描条目集（条目量＝链长×2＋工具＋场景级别，O(n) 足够；映射的
+    // 有序索引按 fullName 键组织，不支持 (objectId, scope) 复合键直查）。
+    for (const RuntimeNameMap::Entry& entry : map.entries()) {
+        if (entry.objectId == id && entry.scope == scope) {
+            return entry.fullName;  // 消歧后全名（WC/DWC 帧名逐字节使用）
+        }
+    }
+    throw RuntimeError(RuntimeErrorCode::StructureInvalid,
+                       "runtime/workcell-compiler: 名称映射缺少必需要素（scope="
+                           + std::to_string(static_cast<int>(scope)) + "）——内部不变量破坏");
+}
 
 // =====================================================================
 // compileWorkCell——S6 唯一入口（签名契约见私有头 WorkCellCompiler.hpp）。
