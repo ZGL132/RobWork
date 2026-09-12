@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "结果包络（Envelope）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EV-T06"],
   "requirements": ["EVI-01", "TASK-02"],
   "designRefs": ["units/evidence.md#7", "units/evidence.md#12"],
