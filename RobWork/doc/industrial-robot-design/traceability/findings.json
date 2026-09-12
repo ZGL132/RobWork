@@ -451,6 +451,16 @@
       "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-038/F-040/F-041/F-043/F-044 同型再现：RT-T08 两份送验提交标题以名词短语开头（cfcc3965『[WP-06-T08] 验证留痕：双模式测试报告＋失败能力探针＋门禁与契约校验证据』＝F-034/F-040/F-042 已判同形态；a9f95c30『[WP-06-T08] 文档同步：runtime.md §15.4 v0.9 登记（RT-T08 落位＋R-2 实测结论与选型）』＝F-037/F-039/F-044 同前缀形态）——家族第 13/14 例（实现提交 b4aa2378『[WP-06-T08] 实现 DynamicWorkCell 编译器…』动词开头合规），证明模板补救落地前口径仍漂移；两提交正文四段齐备、验证结论与验收者全新树亲手复现逐项一致（集成 199/199＝基线 188＋新增 11 计数准确、冒烟 172/172、ird_gates 命中＝F-019 既有 2 项零新增、validate-task/validate-docs PASS、验收者独立双探针即红还原复绿），纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
       "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[WP-06-T08] 落地 DynamicWorkCell 编译器留痕…』『[WP-06-T08] 登记 runtime v0.9 实现落位…』）；对已推送历史（cfcc3965/a9f95c30 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-044，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-046",
+      "source": "traceability/acceptance/RT-T09-20260912.md#问题清单-G-1（attempt 1，送验对象 13072b12d，提交 13072b12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "src/Snapshot.cpp 风格瑕疵两处（零行为影响，验收者逐行通读发现）：①SnapshotAssembler::assemble 方法体（约 L951-1030）整体缩进比照类方法层级浅一级（4 空格，应为 8 空格），L1086-1088 return SnapshotAssembler::assemble(...) 实参续行对齐亦有出入；②L543-548 if (std::equal(...)) { /* 空 then */ } else { return …; } 为空 then 分支反模式",
+      "owner": "runtime 单元实现（建议 RT-T11 触碰 Snapshot.cpp 时顺手规整，避免独立格式化提交）",
+      "resolution": "RT-T11（编译器集成）或下次修改该文件的 session 将 assemble 方法体缩进规整至类方法层级、实参续行对齐改齐；空 then 分支改为早返回（if (!std::equal(...)) return …;）。不影响本任务验收（RT-T09 pass）。编号顺延自 F-045，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
