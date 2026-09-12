@@ -1,0 +1,20 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = EvidenceProof.CollisionPairsCounterexamplesRejected
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from EvidenceProof
+[ RUN      ] EvidenceProof.CollisionPairsCounterexamplesRejected
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\EvidenceTest.cpp(393): error: Value of: hasCode(validateProof(noPairs, registry, snapshot, sliceId), ProofIssueCode::CollisionPairsMissing)
+  Actual: false
+Expected: true
+
+[  FAILED  ] EvidenceProof.CollisionPairsCounterexamplesRejected (0 ms)
+[----------] 1 test from EvidenceProof (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] EvidenceProof.CollisionPairsCounterexamplesRejected
+
+ 1 FAILED TEST
