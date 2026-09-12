@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "切片与身份（Slice）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EV-T03"],
   "requirements": ["CON-05", "CON-06"],
   "designRefs": ["units/evidence.md#4.2", "units/evidence.md#5", "units/evidence.md#12"],
