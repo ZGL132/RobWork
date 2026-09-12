@@ -602,6 +602,16 @@
       "title": "ird-test-report.json（builds/wp05-t03/）irdGates 字段把第 3 处门禁命中（IRD-GATE-SUB：sdurws_ird_runtime_test→sdurws_ird_testkit）归入『F-019 既有基线缺陷』名下——按 findings.json 权威登记该命中实为 F-051（ird_gates 引擎与白名单矛盾：白名单 T-1 段声明允许测试目标→testkit，引擎 SUB 形态一未豁免；该边由 RT-T12 落位），F-019 仅覆盖 testdata_lint 的 T-1/SUB 两处；实质主张（3 处均为既有命中、与 EV-T02 送验时逐字相同、本任务零新增目标/链接边、evidence 面零命中）经验收者全新 worktree 亲手复跑证实成立，退出码 1 系既有命中所致——纯发现编号引用失准（F-025 提交信息/报告准确性面同辖域），方向为多归并非漏报、无粉饰，不构成阻断",
       "owner": "实施纪律（F-025 同辖域统一处置；报告随已推送提交不追溯改写）",
       "resolution": "后续 ird-test-report.json／提交信息引用门禁命中归属时以 findings.json 权威编号逐条标注（多编号并列写实，如『F-019×2＋F-051×1』），不得合并归并到单一编号名下；可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-059，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-061",
+      "source": "EV-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T04-20260913.md，送验对象 d58a64b0ff67447d07b97890118b1a32f946583c，分支 wp05-t04）：验收者核对 acceptance 3「与 RT-T09 共享同一样例断言身份一致」时逐行比对 runtime/evidence 两侧 CR-05 用例的共享样例实现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "RT-T09 联合断言注释与实现失配：runtime/test/SnapshotTest.cpp Cr05ValueSupplyEnvironmentEntries_CR_05 注释声称「EV-T04 侧以相同夹具种子与相同 baseline 串构造样例，断言其切片 Environment 条目＝本测试 modelIdentityText/baselineText 逐字节一致」，而 evidence 侧 SliceTest.cpp 实际实现的联合断言面为「输出形态对齐＋值传递全链零重编码」（样例值 cid-12345678…/31b81845-msvc2022-x64 为固定形态样例，非 runtime 测试运行值）——两侧不存在对同一具体值的逐字节断言。该口径已在 units/evidence.md v0.5⑤＋SliceTest.cpp 文件头按 DTB §5.4 登记（「等价断言面」），实体主张（CR-05 必填校验/编码/进入 inputBaselineId/evidence 不重算 CanonicalModel）全部有测试证据且验收者独立双探针证明真实失败能力，EV-T04 验收判 pass 不受影响；但 runtime 侧注释描述的联断机制与实际不符（后读工程师按注释理解会误判测试覆盖），且「固定值逐字节联断」当前物理不可达（modelIdentity 组成含 robworkBaselineVersion 构建采集值、跨构建不稳定，两侧无共享常量机制）——文档失实风险非实现缺陷。",
+      "owner": "runtime/evidence 单元卡所有者（注释修正）；若裁决补共享样例常量机制则归 foundation-api-diff.md CR-05 所有者",
+      "resolution": "择一：①修正 runtime/test/SnapshotTest.cpp 该注释为「形态对齐＋两侧联锁」口径（与 units/evidence.md v0.5⑤ 登记一致，注释随实现更新——AGENTS §2.5 同辖域）；②或建立两侧共享样例常量机制（testkit 共享夹具或 foundation-api-diff.md CR-05 登记 fixed-sample 规范），使「共享同一样例逐字节一致」字面落地。编号顺延自 F-060，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
