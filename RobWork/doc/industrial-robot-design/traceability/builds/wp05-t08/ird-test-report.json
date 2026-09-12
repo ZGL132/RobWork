@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T08",
+  "masterWp": "WP-05-T08",
+  "branch": "wp05-t08",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T08 新增 src/Currentness.cpp（computeCurrentness 五步算法 §8.1＋ResultRef/CurrentnessTarget/ICurrentnessFactSource/CurrentnessSources 注入面＋InvalidationKind/InvalidationReason/CurrentnessResult 判定输出＋CurrentnessIndex 会话态投影缓存——契约头 Currentness.hpp 新增）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过；ird_gates 命中与 wp05-t07 基线逐项一致（零新增）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 151/151）",
+      "notes": "EV-T08 增列 test/CurrentnessTest.cpp（EvidenceCurrentness 18 新增）：EV-CUR-1 内容身份当前性（无关 HEAD 前进仍 Current/被消费对象变化 Superseded＋旧→新 cv detail/新会话同内容 Current）＋EV-CUR-2 不可解析不默认 Current（单键缺失/多键全量列出/目标重冻结失败转译/事实源违约 fail-fast）＋EV-CUR-3 历史不可改写（判定前后归档包络逐字段不变＋投影索引拷贝语义）＋EV-CUR-4 跨上下文（跨项目/跨分支/评估键失配 I-7）＋AT-05 载体（预算复评 Superseded＋ConfigurationChanged＋同快照双切片钉 inputBaseline 排除面）＋契约版本短路（事实源零调用观测）＋条件翻转/条目消失原因＋身份摘要形态保守降级（I-8）＋CurrentnessIndex 行为＋重建源缺位 fail-fast；既有 133 用例回归保持通过（零修改）"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "EV-T08 零修改回归（CR-01 词表契约面与本任务无交集——Currentness.hpp 不定义任何评估词表枚举，全部复用既有承载）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceCurrentness（EV-T08 新增）——acceptance 1（EV-CUR-1~4）＋acceptance 2（纯投影不写回）＋acceptance 3（AT-05 载体）",
+      "designRef": "units/evidence.md §8.1（computeCurrentness 五步＋规则冻结表）、§4.2.4（修改求解预算后的复评）、§5.1（身份纪律——条目级失效判定从不用修订号）、§10.1⑥/§10.4、§11 EV-CUR-1~4 行、§12 EV-T08 行；需求 CON-02/CON-05、TASK-03、AT-05/AT-10",
+      "cases": [
+        { "name": "EvidenceCurrentness.CurrentOnIrrelevantHeadAdvance_EV_CUR_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CUR-1——结果归档后 HEAD 前进（仅电机成本对象变化，不被运动学切片声明消费）：判 Current、reasons 空；目标快照锚定 rev2≠rev1 而『HEAD 修订号不参与判定』被正面钉住（I-8 条目级判据——sliceId 编码含快照锚，全值比较会让 HEAD 进入判定，故以条目集逐条相等为主判据）" },
+        { "name": "EvidenceCurrentness.SupersededOnConsumedObjectChange_EV_CUR_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CUR-1 对照面——被消费对象 cvA→cvC：Superseded＋ObjectContentChanged，detail 携带旧→新两版 contentVersion 规范文本（§8.1 步骤 4『ObjectContentChanged(旧cv→新cv)』；KIN-13 重算提示数据源）" },
+        { "name": "EvidenceCurrentness.NewSessionSameContentStaysCurrent_EV_CUR_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-ID-3 的当前性面——重开项目（新修订载体＋同对象内容）：Current、无失效原因条目（§5.1『重新打开项目不改变任何内容身份』）" },
+        { "name": "EvidenceCurrentness.UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CUR-2——目标上下文依赖对象缺失：status==nullopt＋unevaluableCause==UnresolvedDependency＋诊断非空（建议码 kDiagCurrentnessUnresolvedDependency＋涉事键可定位）；绝不产出 Current（任务约束§五.8 无默认 Current）；本用例经探针自证真实失败能力（见 failureCapabilitySelfCheck）" },
+        { "name": "EvidenceCurrentness.UnresolvedListsAllMissingKeys_EV_CUR_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-CUR-2 全量面——双依赖同时缺失：逐键两条诊断（声明序——缺失全量列出不在首错短路，NFR-COR-03 同口径）" },
+        { "name": "EvidenceCurrentness.TargetRefreezeFailureIsUnevaluable_EV_CUR_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-CUR-2 转译面——事实源与目标快照事实面不一致（Object 条目不在目标闭包，SliceBuilder 子集校验拒绝）：转译为不可判定＋诊断透出原拒绝细节（不抛出、不静默、不默认 Current）" },
+        { "name": "EvidenceCurrentness.FactSourceEntryMismatchFailsFast_EV_CUR_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "事实源实现违约 fail-fast——返回条目与声明键/Kind 不符即抛 EvidenceError(DeclarationInvalid)（静默纠正会掩盖事实源 bug——NFR-COR-03）" },
+        { "name": "EvidenceCurrentness.SupersededDoesNotTouchArchivedEnvelope_EV_CUR_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1＋2/EV-CUR-3——Superseded 判定前后归档包络逐字段不变（operator== 全字段＋payload->digest＋engineeringStatus）；重复判定结果逐字段相等（纯函数幂等，NFR-COR-02）" },
+        { "name": "EvidenceCurrentness.CurrentnessLivesOnlyInProjectionIndex_EV_CUR_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2/EV-CUR-3『currentness 仅存在于投影索引』——判定本身不写缓存（find 未命中），store 后才命中且为拷贝（修改调用方副本不回染缓存——computeCurrentness 无处可写的结构性保证）" },
+        { "name": "EvidenceCurrentness.CrossProjectQueryIsUnevaluable_EV_CUR_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CUR-4——项目 A 结果对项目 B 上下文：status==nullopt＋CrossContext＋诊断（kDiagCurrentnessCrossContext）；项目 B 侧 CurrentnessIndex 判定后仍空（不产生任何持久状态，TASK-03/S7 拦截）" },
+        { "name": "EvidenceCurrentness.CrossBranchQueryIsUnevaluable_EV_CUR_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-CUR-4 分支面——同项目跨分支查询同为跨上下文（§8.1 规则表行 1『分支/方案匹配』）" },
+        { "name": "EvidenceCurrentness.EvaluationKeyMismatchIsCrossContext_I_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "I-7 实现口径——评估键是上下文四要素之一（规则表行 1），跨评估键查询＝不可判定{cross-context}，诊断区分失配维度（结果评估键 vs 目标评估键）" },
+        { "name": "EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3/AT-05 载体（§4.2.4）——修改求解预算后复评：Superseded＋{solve.budget, ConfigurationChanged}，detail 携带旧→新配置内容身份（依赖提示驱动的重算判定）；同快照仅改预算的双切片钉双层身份：sliceId 不等（缓存不命中→重算→新 RunId/Attempt——复评不冒充原运行）而 inputBaselineId 相等（§5.1 排除求解类 Configuration——D-1；新旧同属一次冻结输入研究）" },
+        { "name": "EvidenceCurrentness.ContractVersionChangeSupersedesBeforeRebuild_EV_CUR_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8.1 步骤 2——契约版本 6≠7：Superseded＋EvaluatorContractChanged，detail 携带两版号；事实源调用计数为 0（短路观测——契约升级后条目级比较失去前提）" },
+        { "name": "EvidenceCurrentness.ConditionFlipAndVanishedEntryReasons_EV_CUR_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8.1 步骤 4 词表面——条件依赖 applied true→false（载荷不变）→ConditionFlipped；历史条目在目标声明集消失→SampleBaselineChanged＋『已消失』detail（比对优先级：条件翻转先于载荷差异）" },
+        { "name": "EvidenceCurrentness.IdentityOnlyFormDegradesConservatively_I_8", "status": "passed", "modes": ["smoke", "integration"], "trace": "I-8 降级面——身份摘要形态（resultSlice 缺席）条目级判据不可得：sliceId 全值比较跨修订恒 Superseded＋SliceContentChanged（保守方向绝不误 Current，detail 注明提供切片可执行条目级判定）" },
+        { "name": "EvidenceCurrentness.IndexStoreFindInvalidateClear", "status": "passed", "modes": ["smoke", "integration"], "trace": "CurrentnessIndex 会话缓存（§8.1 规则表行 3）——store/find 命中等值；invalidateRun 后未命中且幂等（修订事件不携带数据 core D-09→按运行粒度失效）；不同 targetContextId 互不影响；clear 全清；空串上下文标识/保留值 runId 拒绝（CacheIncompatible fail-fast）" },
+        { "name": "EvidenceCurrentness.MissingRebuildSourcesFailFast", "status": "passed", "modes": ["smoke", "integration"], "trace": "调用方契约违约 fail-fast——facts/targetSnapshot 空指针（SnapshotIncomplete）与空声明集（DeclarationInvalid——无依赖的评估没有失效语义）：不可判定是目标上下文的状态，不是调用方忘给输入的兜底" }
+      ]
+    }
+  ],
+  "summary": { "total": 156, "passed": 156, "failed": 0, "modes": { "smoke": "evidence 151/151＋contract 5/5", "integration": "evidence 151/151＋contract 5/5" }, "unitRegression": { "smoke": "evidence 151/151＋evidence_contract 5/5（同树全量构建 exit 0）", "integration": "evidence 151/151＋contract 5/5（既有 133＋5 用例零修改回归通过）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "EV-CUR-2『不得默认 Current』防线探针：向 src/Currentness.cpp 的 unresolved-dependency 分支注入一行『out.status = CurrentnessStatus::Current;』（PROBE 标记注释＋精确编辑＋显式构建/运行退出码核验，无 sed）后重编译执行；验证后逐字精确恢复并以 grep 计数核验 PROBE 零残留（probe-residue-check.txt 计数 0）",
+    "result": "UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2 与 UnresolvedListsAllMissingKeys_EV_CUR_2 如期变红（probe-red-run exit 1——不可解析分支被强制置 Current 后 status==nullopt 断言检出）——acceptance 1 的 EV-CUR-2『不可解析不默认 Current』真实失败能力成立；恢复后 151/151 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建，integration XML 为恢复后重写）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t08/smoke-build-full.log",
+      "traceability/builds/wp05-t08/smoke-test-run.log",
+      "traceability/builds/wp05-t08/smoke-contract-run.log",
+      "traceability/builds/wp05-t08/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t08/sdurws_ird_evidence_contract_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t08/integration-cache-check.txt",
+      "traceability/builds/wp05-t08/integration-build-evidence.log",
+      "traceability/builds/wp05-t08/integration-test-run.log",
+      "traceability/builds/wp05-t08/integration-contract-run.log",
+      "traceability/builds/wp05-t08/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t08/sdurws_ird_evidence_contract_test-integration.xml",
+      "traceability/builds/wp05-t08/ird-gates.log",
+      "traceability/builds/wp05-t08/validate-task.log",
+      "traceability/builds/wp05-t08/probe-red-build.log",
+      "traceability/builds/wp05-t08/probe-red-run.log",
+      "traceability/builds/wp05-t08/probe-restore-build.log",
+      "traceability/builds/wp05-t08/probe-residue-check.txt"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 INTEG_BUILD_EXIT=0，integration-build-evidence.log；另以 --target sdurws_ird_evidence_contract_test 核验契约目标 exit 0 零 error；库本体随目标链增量重建 exit 0）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（sdurws_ird_testdata_lint→testkit 表外边）＝F-019 既有；③IRD-GATE-T1（sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。命中清单与 wp05-t07 基线计数逐项一致（IRD-GATE-R1/R3/R4/R5 各 1＋SUB 5＋T1 3——见 ird-gates.log 与 wp05-t07/ird-gates.log 比对）；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t08/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake），配置 Release，全量构建 exit 0。实现口径登记于 units/evidence.md v0.9 变更记录（I-1～I-8：结果引用身份摘要形态／descriptor 值注入〔EV-T10 注册表落地前〕／目标快照注入＋目标条目校验与身份唯一经 SliceBuilder／resultSlice 可选注入＋身份摘要降级／InvalidationKind 扩展值／scheme 记录面／评估键并入上下文匹配／判据分层——条目级对比为主判据〔§5.1 身份纪律『从不用修订号』〕、sliceId 全值仅捷径）。P-EV-4 处置：不可判定为计算形态（status=空＋诊断）非第三持久态，呈现口径归 ui（P-UI-2/UI-T04 承接）——本单元计算面不阻断。测试组名 EvidenceCurrentness 为实现侧组名（§11 矩阵 EV-T08 专项＝EV-CUR-1~4 对照 §12 行）。MapFactSource/AcceptAllClosureSource 为接口替身（边界声明见测试文件头——替身输出仅验证 evidence 当前性投影契约，不构成 project/policy/runtime 侧实现正确性证明，亦不构成 IK/动力学等业务算法正确性证明——EV-REG-3 同源）。"
+}
