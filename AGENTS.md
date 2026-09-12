@@ -155,7 +155,7 @@ std::string computeDigest(...);  // 实际是 SHA-256
 | 头文件 | include guard 用 `#ifndef <PROJ>_<Path>_HPP` 风格（参照框架 `RWS_ArcBallController_HPP`）；公共头放 `include/`，私有实现头不跨单元暴露 |
 | 错误处理 | 遵循各单元任务卡错误语义：调用方错误 fail-fast（断言/异常），环境错误走诊断码登记；禁止吞错 |
 | 第三方依赖 | 一律经 vcpkg（仓库根、经典模式）；**禁止** vendor 源码或引入第二渠道；新增依赖先在 development-task-breakdown.md 登记 |
-| 测试框架 | googletest，经 `find_package(GTest CONFIG REQUIRED)` 接入；测试名带需求/AT 追溯字段（gtest 的 vcpkg 安装随 WP-02-T01/WP-03-T01 执行，当前 `installed/` 尚无 GTest，首个测试目标接入前先安装） |
+| 测试框架 | googletest，经 `find_package(GTest CONFIG REQUIRED)` 接入；测试名带需求/AT 追溯字段（gtest 已随 WP-02-T01 经 vcpkg 安装于 `installed/x64-windows`，各 `_test` 目标可直接解析） |
 
 ---
 
@@ -165,8 +165,8 @@ std::string computeDigest(...);  // 实际是 SHA-256
 
 ```bash
 # 集成模式（唯一交付口径）：仓库根 build/ + RWS_BUILD_INDUSTRIALROBOT=ON
-# ⚠ 现有 build/ 构建树配置于基线 31b8184 时代，缓存中无该选项（默认 OFF）——
-#   直接 build 不会编译 industrialrobot，必须先确认/重新配置开启：
+# ⚠ build/ 构建树初始配置于基线 31b8184 时代（缓存中无该选项）；现已重新配置开启，
+#   缓存当前为 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON——构建前仍须 grep 确认（构建树被重置/重配时可能回到默认 OFF）：
 cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON
 grep RWS_BUILD_INDUSTRIALROBOT build/CMakeCache.txt   # 确认输出 :BOOL=ON 再构建
 cmake --build build --config Release

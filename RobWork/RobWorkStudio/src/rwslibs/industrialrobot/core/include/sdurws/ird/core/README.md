@@ -14,7 +14,7 @@ Errors.hpp（CoreError 唯一异常）、Identity.hpp（六强类型＋AttemptId
 Digest.hpp（SHA-256＋ContentVersion/ContentIdentity）、Provenance.hpp（五类来源＋
 SourcedValue 四态）、Units.hpp（R1 单位表＋Quantity<K>）、Compare.hpp（C4 公式＋C7 转写）、
 Evaluation.hpp（四词表）、DiagData.hpp（诊断记录＋可确认发现）、Events.hpp（四类领域事件＋总线接口＋测试内参考总线）。
-CORE-T09 产出测试体（core/test/）。接口冻结状态见 units/core.md（v0.10）；验收记录见
+CORE-T09 产出测试体（core/test/）。接口冻结状态见 units/core.md（v0.11）；验收记录见
 traceability/acceptance/CORE-T02~T08。
 
 任务编排、接口冻结前置与实现状态见
