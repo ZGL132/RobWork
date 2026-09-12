@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现证据 Profile 与证明契约承载",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T04"
   ],
