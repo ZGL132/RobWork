@@ -48,6 +48,7 @@
 #include <cstddef>
 #include <exception>
 #include <optional>
+#include <string>
 #include <string_view>
 
 #include <rw/kinematics/State.hpp>
@@ -235,6 +236,47 @@ public:
 private:
     /// 借持的只读 DWC 句柄（构造时非空——唯一构造入口已 fail-fast 空输入）。
     rw::core::Ptr<const rwsim::dynamics::DynamicWorkCell> m_dynamicWorkCell;
+};
+
+// =====================================================================
+// RobWorkBaselineVersion——RobWork 基线版本记录（§8.4；§3.1 原列本头实体，
+// 自 v0.10 起随 RT-T09 落位——"基线版本记录随快照身份块"：RuntimeSnapshot.
+// robworkBaselineVersion 与编译缓存键 §9.4 的取值来源，NFR-DEP-05）。
+// =====================================================================
+
+/**
+ * @brief RobWork 基线版本值（§8.4——"commit/tag＋构建选项摘要"的载体）。
+ *
+ * 背景（为什么记录基线）：基线变化＝产物不可比（NFR-DEP-05——不同基线
+ * 编译出的 WC/DWC 不得跨基线比较/复用）。本值随快照记录（§9.1
+ * robworkBaselineVersion，入 snapshotIdentity 与 WC 层编译缓存键），
+ * 并经组装方值传递录入 evidence 切片 Environment 条目
+ * `runtime.robwork-baseline`（CR-05——evidence 不重算）。
+ *
+ * 取值口径（实现层选型，§15.4 v0.10 登记）：本仓库的 RobWork 框架为
+ * vendored 基线快照（框架源码零修改——SA-02），基线锚＝框架子树最后一次
+ * 实质提交 31b81845（"初始可运行版本"）；摘要部分取编译工具链标识
+ * （MSVC 版本＋x64＋C++17＋/utf-8）。★ 精确基线串（commit/tag＋完整构建
+ * 选项）的冻结登记归 WP-24-T01（ird/share/baseline.md，NFR-DEP-05）——
+ * 届时仅替换本函数的常量文本单点，消费方零改动（登记为待回填实现默认，
+ * 同 nameMapRuleVersion=1 先例；O-20 同源待确认项）。
+ *
+ * 确定性：同基线同工具链重复调用产生逐字节相同文本（缓存键/快照身份的
+ * 确定性前提——NFR-COR-02）；不同工具链产生不同文本（产物不可比语义）。
+ * 线程安全：纯函数（无共享可变状态）。
+ */
+struct RobWorkBaselineVersion {
+    /// 基线版本文本（"commit/tag＋选项摘要"形态；非空、ASCII、无空白——
+    /// 可直接作为 Environment 条目值与编码域字节）。
+    std::string text;
+
+    /**
+     * @brief 采集当前构建的基线版本值（§8.4——快照构造与缓存键的唯一取值点）。
+     * @return 基线版本值（text 非空——工厂构造时校验，空串 fail-fast）
+     *
+     * 线程/确定性：纯函数、可重入；无环境读取（编译期常量拼装）。
+     */
+    static RobWorkBaselineVersion capture();
 };
 
 // =====================================================================

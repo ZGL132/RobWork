@@ -1,0 +1,19 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_testdata_lint 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_testdata_lint 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?[ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍛戒腑 2 椤癸細
+  [ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_testdata_lint 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_testdata_lint 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?==============================================================
+  CMake Error at cmake/ird_gates.cmake:767 (message):
+    [ird_gates] 渚濊禆绾㈢嚎/琛ヤ竵闂ㄧ瀛樺湪 2 澶勫懡涓€斺€旀寜 ARCH 搂3.2
+    SA-10 鍒ゆ瀯寤哄け璐ワ紱渚嬪鍙粡 DTB 搂4.5 鐧昏鍐?
+  
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: “D:\10_Source_Repos\21_robot\RobWork\build\CMakeFiles\e40f33939983c9e6b16d79306cec3367\ird_gates.rule”的自定义生成已退出，代码为 1。 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ird_gates.vcxproj]

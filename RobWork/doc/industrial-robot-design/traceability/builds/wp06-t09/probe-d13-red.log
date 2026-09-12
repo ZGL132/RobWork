@@ -1,0 +1,61 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = SnapshotTest.*
+[==========] Running 14 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 14 tests from SnapshotTest
+[ RUN      ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09
+[       OK ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1
+[       OK ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1 (0 ms)
+[ RUN      ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09
+[       OK ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+[       OK ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1 (2 ms)
+[ RUN      ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2
+[       OK ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2 (0 ms)
+[ RUN      ] SnapshotTest.WorkerIdentityMismatchRejected_D_13
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp(549): error: Expected equality of these values:
+  out1.status
+    Which is: 4-byte object <00-00 00-00>
+  CompileStatus::Failed
+    Which is: 4-byte object <01-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp(550): error: Expected equality of these values:
+  out1.snapshot
+    Which is: (ptr = 000001F5C27FB340, value = 1448-byte object <40-81 10-6B F6-7F 00-00 A0-E4 7F-C2 F5-01 00-00 A0-E4 7F-C2 F5-01 00-00 C0-22 5E-C4 F5-01 00-00 E0-E6 77-C2 F5-01 00-00 E0-E6 77-C2 F5-01 00-00 70-DE 7E-C2 F5-01 00-00 E0-E6 77-C2 F5-01 00-00 ... 90-40 7F-C2 F5-01 00-00 90-40 7F-C2 F5-01 00-00 2F-EB 9A-E9 84-90 3F-00 02-00 00-00 5D-87 FC-99 6F-7A C3-29 24-4D 19-9E 59-53 0C-FE 6D-C6 27-07 C8-54 2D-22 50-43 17-80 A1-CA 5B-D8 00-00 00-00>)
+  nullptr
+    Which is: (nullptr)
+身份核对失败不发布快照（D-13）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp(553): error: Expected: (out1.diagnostics.front().cause.find(mainSnapshot->modelIdentity().toCanonical())) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+诊断含期望身份（cid 规范文本）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp(556): error: Expected: (out1.diagnostics.front().cause.find(mainSnapshot->nameMapIdentity().toCanonical())) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+诊断含实得身份（cid 规范文本）
+
+[  FAILED  ] SnapshotTest.WorkerIdentityMismatchRejected_D_13 (1 ms)
+[ RUN      ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5
+[       OK ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5 (0 ms)
+[ RUN      ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3
+[       OK ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3 (0 ms)
+[ RUN      ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4
+[       OK ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4 (0 ms)
+[ RUN      ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4
+[       OK ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4 (0 ms)
+[ RUN      ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4
+[       OK ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4 (0 ms)
+[ RUN      ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09
+[       OK ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.DwcStateBothCauses_RT_T09
+[       OK ] SnapshotTest.DwcStateBothCauses_RT_T09 (0 ms)
+[ RUN      ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05
+[       OK ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05 (0 ms)
+[----------] 14 tests from SnapshotTest (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 1 test suite ran. (7 ms total)
+[  PASSED  ] 13 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] SnapshotTest.WorkerIdentityMismatchRejected_D_13
+
+ 1 FAILED TEST
