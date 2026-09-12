@@ -20,10 +20,13 @@ find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC ----
 # src/Evidence.cpp＝EV-T01 落位锚点 TU；src/Errors.cpp＝EV-T02 错误契约
-# （token/建议码两张全表＋异常轨——units/evidence.md §3.1 组成表）。
+# （token/建议码两张全表＋异常轨——units/evidence.md §3.1 组成表）；
+# src/Snapshot.cpp＝EV-T03 快照（builder 冻结协议＋SnapshotCodec 双形态
+# 编解码——§4.1.5/§5.2；契约头 Snapshot.hpp）。
 add_library(sdurws_ird_evidence STATIC
     src/Evidence.cpp
-    src/Errors.cpp)
+    src/Errors.cpp
+    src/Snapshot.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -52,7 +55,8 @@ enable_testing()
 add_executable(sdurws_ird_evidence_test
     test/BuildRedLineTest.cpp
     test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
-    test/DependencyTest.cpp)         # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
+    test/DependencyTest.cpp          # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
+    test/SnapshotTest.cpp)           # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
