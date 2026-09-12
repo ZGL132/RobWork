@@ -39,6 +39,10 @@ find_package(GTest CONFIG REQUIRED)
 # src/Currentness.cpp＝EV-T08 当前性纯投影（computeCurrentness 五步算法
 # §8.1＋ResultRef/CurrentnessTarget/依赖重建源注入＋CurrentnessIndex 会话
 # 态投影缓存——不写回归档；契约头 Currentness.hpp）。
+# src/Compatibility.cpp＝EV-T09 缓存/检查点兼容判定（judgeCacheHit 三档
+# ＋judgeCheckpointCompatibility 五条件——两套独立判定接口，部分/失败
+# 结果不得作正式缓存命中 CON-04；存储/淘汰/恢复归 execution/project，
+# 本单元只冻结纯判定语义；契约头 Compatibility.hpp）。
 add_library(sdurws_ird_evidence STATIC
     src/Evidence.cpp
     src/Errors.cpp
@@ -46,7 +50,8 @@ add_library(sdurws_ird_evidence STATIC
     src/Slice.cpp
     src/Verdict.cpp
     src/Envelope.cpp
-    src/Currentness.cpp)
+    src/Currentness.cpp
+    src/Compatibility.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -81,7 +86,8 @@ add_executable(sdurws_ird_evidence_test
     test/EvidenceTest.cpp           # EV-T05：EV-PROOF validateProof 逐字段反例＋EV-VER-6/7＋EV-ITEM/清单＋EV-PROFILE D-14＋EV-COV-2/3＋EV-MODE CON-03
     test/VerdictTest.cpp            # EV-T06：EV-VER-1~8 五级决策表正反例＋EV-COV-1/4＋资格检查 §7.2＋P-EV-3/P-EV-7 保守处置＋缺失全量列出
     test/EnvelopeTest.cpp           # EV-T07：EV-ENV-1 表 3 全组合矩阵＋EV-ENV-2 partialData 不可复用＋快照绑定面（工况子集/证明有效性/清单绑定）＋构造确定性
-    test/CurrentnessTest.cpp)       # EV-T08：EV-CUR-1~4（内容身份/不可解析/历史不可改写/跨上下文）＋AT-05 载体（预算复评不冒充原运行）＋契约短路＋条件翻转/条目消失＋Index 缓存行为＋违约 fail-fast
+    test/CurrentnessTest.cpp        # EV-T08：EV-CUR-1~4（内容身份/不可解析/历史不可改写/跨上下文）＋AT-05 载体（预算复评不冒充原运行）＋契约短路＋条件翻转/条目消失＋Index 缓存行为＋违约 fail-fast
+    test/CompatibilityTest.cpp)     # EV-T09：EV-CPA-1~3（Quick≠Verified 双向/契约版本两判定面/检查点与任务成败独立）＋EV-ENV-2 判定面（部分/失败不得正式命中）＋全量收集检查序＋格式区间边界＋确定性
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
