@@ -541,6 +541,16 @@
       "title": "F-036/F-038 已判的构建树性质标注纪律未落地：RT-T12 留痕提交 ff4b943c 称 integration-build.log（两模式构建日志，exit=0），该日志经核对产自主树存量增量树（路径 D:...RobWork\build、无 RWSimulatorPlugin 编译活动＝F-008 掩盖效应），提交未按 F-036 处置建议标注增量树/全新树性质——表述字面真实（构建确实 exit=0、日志完整），无粉饰，但口径纪律持续漂移（任务目标面从零＝ DoD 第 1 条可用口径，由验收者在全新 worktree 补强实证：verify 目标从零构建 exit 0 零错误）",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-036/F-038 同辖域统一处置；提交已推送不追溯改写）",
       "resolution": "后续提交信息中证据强度表述以实际构建树性质为准（增量树/全新树显式区分）；与 F-036 家族合并处置"
+    },
+    {
+      "id": "F-055",
+      "source": "RT-T13 验收段 attempt 1（2026-09-12，traceability/acceptance/RT-T13-20260912.md，送验对象 a2bb6ff6，分支 wp06-t13）：验收者在 ACC §3 规定复现现场（detached worktree @SHA）亲手重跑双模式构建与测试",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "实施侧冒烟留痕未声明构建配置：RT-T13 留痕 smoke-build.log 路径显示 \\testkit\\Debug\\（全文 21 处 Debug、0 处 Release、无 --config 参数）＝MSBuild 默认 Debug 配置实跑；ird-test-report.json exitCodes 声明 smokeBuild=0 属实但未声明配置，与集成侧 Release 口径不对称——数值主张（冒烟 176/176）真实（验收者 Release 从零复跑 176/176 绿），无粉饰，仅留痕口径纪律问题（F-054 构建性质标注纪律的同族延伸：配置维度未覆盖）",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-054 同辖域统一处置）",
+      "resolution": "后续留痕提交在 ird-test-report.json／提交信息中显式声明各模式构建配置（Debug/Release）；随下次触及留痕流程的任务顺手统一，不追溯已推送提交"
     }
   ]
 }
