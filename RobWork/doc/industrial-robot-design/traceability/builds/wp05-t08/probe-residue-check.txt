@@ -1,0 +1,2 @@
+RESIDUE_CHECK_DONE (0=零残留)
+0
