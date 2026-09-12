@@ -1,0 +1,59 @@
+{
+  "comment": "rt-namemap-roundtrip 期望面：§7.1 范围表在平面 2R 夹具上的全量条目（无工具/场景/资源/Body——物性缺失路径）。测试断言：seed→ObjectId 后 resolveObjectId 全量命中本表（IRD_EXPECT_IDENTICAL 精确等值——附录 D 第 12 项），且每条 fullName 经 resolveRuntimeName 反解回同一 ObjectId（AT-18 双向往返）。",
+  "entries": [
+    {
+      "seed": "rtnm-robot",
+      "scope": "Device",
+      "fullName": "RT_NM_BOT",
+      "authoritativeLocalName": "RT_NM_BOT"
+    },
+    {
+      "seed": "rtnm-j1",
+      "scope": "Joint",
+      "fullName": "RT_NM_BOT.joint_1",
+      "authoritativeLocalName": "joint_1"
+    },
+    {
+      "seed": "rtnm-j2",
+      "scope": "Joint",
+      "fullName": "RT_NM_BOT.joint_2",
+      "authoritativeLocalName": "joint_2"
+    },
+    {
+      "seed": "rtnm-l0",
+      "scope": "LinkFrame",
+      "fullName": "RT_NM_BOT.base_link",
+      "authoritativeLocalName": "base_link"
+    },
+    {
+      "seed": "rtnm-l1",
+      "scope": "LinkFrame",
+      "fullName": "RT_NM_BOT.link_1",
+      "authoritativeLocalName": "link_1"
+    },
+    {
+      "seed": "rtnm-l2",
+      "scope": "LinkFrame",
+      "fullName": "RT_NM_BOT.link_2",
+      "authoritativeLocalName": "link_2"
+    },
+    {
+      "seed": "rtnm-robot",
+      "scope": "BaseMount",
+      "fullName": "RT_NM_BOT.BaseMount",
+      "authoritativeLocalName": "BaseMount"
+    },
+    {
+      "seed": "rtnm-l0",
+      "scope": "BaseFrame",
+      "fullName": "RT_NM_BOT.Base",
+      "authoritativeLocalName": "Base"
+    },
+    {
+      "seed": "rtnm-l2",
+      "scope": "Flange",
+      "fullName": "RT_NM_BOT.Flange",
+      "authoritativeLocalName": "Flange"
+    }
+  ]
+}

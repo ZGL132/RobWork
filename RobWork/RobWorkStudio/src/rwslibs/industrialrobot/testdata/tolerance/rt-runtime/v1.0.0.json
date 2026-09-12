@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "rt-runtime",
+  "version": "1.0.0",
+  "basis": "appendixD#4 (FK/编译链等价验证容差：位置 1e-9 m) + appendixD#5 (DH/逐关节判定同尺度：轴线角偏差 1e-9 rad、原点位置 1e-9 m——本档案以轴向量分量 dimensionless/1 表达同尺度数值) + appendixD#12 (身份精确等值——无数值容差条目，身份断言经 IRD_EXPECT_IDENTICAL 精确比较，不进本档案数值条目)。基座—世界数值例（RT-BW-1，§6.5）与重力投影同用第 4 项 1e-9 尺度（m / m/s^2）。",
+  "entries": [
+    {
+      "fieldPath": "fk[*].origin.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].origin.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].origin.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].axis.x",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].axis.y",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].axis.z",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.point.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.point.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.point.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.inverse.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.inverse.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.inverse.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.gravity.x",
+      "quantityKind": "linear-acceleration",
+      "unit": "m/s^2",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.gravity.y",
+      "quantityKind": "linear-acceleration",
+      "unit": "m/s^2",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "base-world.gravity.z",
+      "quantityKind": "linear-acceleration",
+      "unit": "m/s^2",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    }
+  ]
+}

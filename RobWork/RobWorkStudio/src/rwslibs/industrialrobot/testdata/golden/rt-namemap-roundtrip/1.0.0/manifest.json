@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "rt-namemap-roundtrip",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "runtime/name-map-roundtrip",
+  "coveredRequirements": ["ARC-04", "MDL-14", "NFR-COR-02"],
+  "coveredAt": ["AT-18"],
+  "toleranceProfile": { "id": "rt-runtime", "version": "1.0.0" },
+  "inputs": ["inputs/robot.json"],
+  "expected": ["expected/namemap.json"],
+  "parameters": {
+    "chain": "planar-2r-z",
+    "scopesExpected": ["Device", "Joint", "LinkFrame", "BaseMount", "BaseFrame", "Flange"],
+    "disambiguation": "none",
+    "identityCompare": "exact-appendixD-12"
+  },
+  "units": { "angle": "rad", "position": "m" },
+  "frames": { "base": "base_link", "world": "WORLD" },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "rt-namemap-scope-table-projection",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-12T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/robot.json",
+      "sha256": "4c850d8034c5a446f6f0229e1f56f5fd30c4ffdb7ccb4157936d744ad95d1490",
+      "sizeBytes": 1170
+    },
+    {
+      "path": "expected/namemap.json",
+      "sha256": "b27b935c30a03bba68d0e99171482cf7acaa2722b53da6732fbba0da31b8bb8b",
+      "sizeBytes": 1719
+    },
+    {
+      "path": "generate/make_namemap.mjs",
+      "sha256": "9211cf6cc94092b7a98fb6b3b6a74a77805812c4d0098e558f8833adccee7417",
+      "sizeBytes": 4112
+    }
+  ],
+  "generator": {
+    "script": "generate/make_namemap.mjs",
+    "invocation": "node generate/make_namemap.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-12",
+      "change": "首版：平面 2R 命名夹具全量条目（9 条——无工具/场景/资源/Body）——RT-T12 §11 RT-NM-1 数据集面（AT-18 双向往返载体）",
+      "reReviewedBy": "WP-06",
+      "supersededBy": ""
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comment": "rt-fk-equation 输入面（units/runtime.md §11 RT-EQ-1/§12 RT-T12；附录 D 第 4/5 项容差载体）。链定义：平面 3R、全部关节轴 = +Z、origin 旋转恒等、零位偏置 0——FK 具有闭式解，供测试内独立手写 FK（对照工具）与 RobWork Device FK 三方对照。",
+  "robotLocalName": "RT_FK_BOT",
+  "descriptionContractVersion": 1,
+  "objectSeeds": {
+    "robot": "rtfk-robot",
+    "j1": "rtfk-j1",
+    "j2": "rtfk-j2",
+    "j3": "rtfk-j3",
+    "l0": "rtfk-l0",
+    "l1": "rtfk-l1",
+    "l2": "rtfk-l2",
+    "l3": "rtfk-l3"
+  },
+  "joints": [
+    {
+      "localName": "joint_1",
+      "axis": [0.0, 0.0, 1.0],
+      "originTranslation": [0.25, 0.0, 0.1],
+      "zeroOffset": 0.0,
+      "lower": -3.0,
+      "upper": 3.0,
+      "maxVelocity": 2.0,
+      "maxAcceleration": 8.0
+    },
+    {
+      "localName": "joint_2",
+      "axis": [0.0, 0.0, 1.0],
+      "originTranslation": [0.4, 0.0, 0.0],
+      "zeroOffset": 0.0,
+      "lower": -3.0,
+      "upper": 3.0,
+      "maxVelocity": 2.0,
+      "maxAcceleration": 8.0
+    },
+    {
+      "localName": "joint_3",
+      "axis": [0.0, 0.0, 1.0],
+      "originTranslation": [0.4, 0.0, 0.0],
+      "zeroOffset": 0.0,
+      "lower": -3.0,
+      "upper": 3.0,
+      "maxVelocity": 2.0,
+      "maxAcceleration": 8.0
+    }
+  ],
+  "links": ["base_link", "link_1", "link_2", "link_3"],
+  "base": { "preset": "ground", "basePosition": [0.0, 0.0, 0.0] },
+  "configurations": [
+    { "id": "cfg-zero", "q": [0.0, 0.0, 0.0], "edgeCase": "zeroValue" },
+    { "id": "cfg-near-zero", "q": [1e-08, 0.0, 0.0], "edgeCase": "nearZero" },
+    { "id": "cfg-sign-cancel", "q": [0.5235987755982988, 2.0943951023931953, 0.0], "edgeCase": "signCancellation" },
+    { "id": "cfg-general", "q": [0.7, -1.1, 0.5], "edgeCase": "none" }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "rt-fk-equation",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "runtime/fk-equivalence",
+  "coveredRequirements": ["ARC-03", "MDL-10", "NFR-COR-01"],
+  "coveredAt": ["AT-16"],
+  "toleranceProfile": { "id": "rt-runtime", "version": "1.0.0" },
+  "inputs": ["inputs/model.json"],
+  "expected": ["expected/fk.json"],
+  "parameters": {
+    "chain": "planar-3r-z",
+    "originRotation": "identity",
+    "zeroOffsetRad": 0.0,
+    "referenceFrame": "device-base"
+  },
+  "units": { "position": "m", "angle": "rad", "direction": "1" },
+  "frames": { "base": "base_link", "world": "WORLD" },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "平面 3R（轴全 +Z、origin 旋转恒等、零位偏置 0）正运动学闭式解",
+    "independentOfProductionImpl": true,
+    "description": "闭式解推导与实现见 generate/make_fk_equation.mjs（O_1=t_1；O_i=O_{i-1}+Rz(q_1+…+q_{i-1})·t_i；绕 Z 旋转不动 Z 轴故 world 轴恒 (0,0,1)）。脚本零依赖产品代码——与测试内手写 FK、RobWork Device FK 三方互证（附录 D 第 4/5 项容差经档案 rt）。"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "rt-fk-planar-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-12T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/fk.json#cfg-zero",
+      "expected/fk.json#cfg-near-zero",
+      "expected/fk.json#cfg-sign-cancel"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/model.json",
+      "sha256": "b00f00833754968212d15d2eac71270a0fd68eb1c0fffe5fb8acb912e86be990",
+      "sizeBytes": 1812
+    },
+    {
+      "path": "expected/fk.json",
+      "sha256": "a8e7066339c30507426c2a6de2fd0f0076b56584d4aa224cbb67cbf9201e15c8",
+      "sizeBytes": 3161
+    },
+    {
+      "path": "generate/make_fk_equation.mjs",
+      "sha256": "7cd0b216c7e42843d71ed93792f073da83d08a647071d53552951f777a60caab",
+      "sizeBytes": 3309
+    }
+  ],
+  "generator": {
+    "script": "generate/make_fk_equation.mjs",
+    "invocation": "node generate/make_fk_equation.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-12",
+      "change": "首版：平面 3R 闭式 FK 四构型（零值/近零/正负抵消/一般位）——RT-T12 §11 RT-EQ-1 数据集面（AT-16 载体）",
+      "reReviewedBy": "WP-06",
+      "supersededBy": ""
+    }
+  ]
+}
