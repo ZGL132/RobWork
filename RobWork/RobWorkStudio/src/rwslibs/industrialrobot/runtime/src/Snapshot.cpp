@@ -26,6 +26,13 @@
  * DynamicWorkCellCompiler.hpp 私有头——真实 rw/rwsim 非模板类），由
  * runtime/CMakeLists.txt 按 TARGET sdurw_kinematics 条件增列（仅集成模式
  * 编译；冒烟模式 Snapshot.hpp 不被任何 TU include——v0.8②/v0.9⑧ 同款）。
+ *
+ * RT-T11 增量（src/SnapshotAssembler.hpp 提升）：SnapshotAssembler 类声明与
+ * 终态工具（cancelRequested/cancelledOutcome/failedOutcome/toDiagnostic）的
+ * 声明提升为单元内私有头（产品编译器 compile() 与工厂共用 S8+S10 尾段——
+ * 单一发布逻辑），方法/函数定义保留本文件，行为零变化；同批增补
+ * translateNameMapNotices（S8 生成期警告→警告级诊断转译——v0.5⑥ 登记的
+ * 落位点）与 assemble 的 extraWarnings 合并通道（默认空＝既有调用零变化）。
  */
 
 #include <sdurws/ird/runtime/Snapshot.hpp>
@@ -33,6 +40,8 @@
 // ---- 单元内私有编译器（R-2：src/ 同权；S6/S7 是工厂编排的执行段）----
 #include "WorkCellCompiler.hpp"           // compileWorkCell（S6）
 #include "DynamicWorkCellCompiler.hpp"    // compileDynamicWorkCell（S7）
+#include "SnapshotAssembler.hpp"          // SnapshotAssembler＋终态工具（RT-T11 提升——
+                                          //  工厂与产品编译器 compile() 共用尾段）
 
 #include <rw/kinematics/Frame.hpp>            // Frame::getName（S8 实际名收集）
 #include <rw/models/Device.hpp>               // Device::getName
@@ -813,82 +822,10 @@ const IRuntimeNameResolver& RuntimeSnapshot::nameResolver() const
 
 namespace {
 
-/// 段边界取消轮询（§3.3——令牌可空＝不可取消；每段边界检查一次，§5.5）。
-bool cancelRequested(const ICompileCancelToken* cancel)
-{
-    return cancel != nullptr && cancel->cancellationRequested();
-}
-
-/// 取消终态（§9.6 组合表 Cancelled 行：取消诊断非 error 级——UX-03/D-11；
-/// 无快照、可重入重试）。
-CompileOutcome cancelledOutcome()
-{
-    CompileOutcome out;
-    out.status = CompileStatus::Cancelled;
-    // 码面：RT-CANCELLED（registryCode(Cancelled) 单点——PA-1 不私裁码值）。
-    out.diagnostics.push_back(core::DiagnosticRecord::make(
-        std::string{registryCode(RuntimeErrorCode::Cancelled)},
-        std::nullopt,
-        std::nullopt,
-        std::nullopt,
-        std::string{"runtime 编译链取消（段边界轮询——协作取消为正常控制流，非错误）"},
-        std::string{token(RuntimeErrorCode::Cancelled)},
-        std::string{"重新发起编译（无半成品残留，可直接重试——§5.5 可重入）"}));
-    return out;
-}
-
-/// 失败终态（单条诊断——调用方错误语义：环境错误经稳定码登记）。
-CompileOutcome failedOutcome(core::DiagnosticRecord record)
-{
-    CompileOutcome out;
-    out.status = CompileStatus::Failed;
-    out.diagnostics.push_back(std::move(record));
-    return out;
-}
-
-/**
- * @brief RuntimeError→稳定诊断记录（§8.4 转译纪律的编译链面）。
- *
- * 码面：registryCode 非空→注册码（12 个 1:1 码）；RobWorkError→事件码
- * RT-ROBWORK-ERROR（§10.11 冻结——事件路径）；UnknownObject/ContextReleased
- * 不会到达本函数（工厂在调用方违约轨重抛——§3.4 总纲）。
- * cause 携 what()（"runtime/xxx: detail"——token 定位保留于开发诊断）。
- */
-core::DiagnosticRecord toDiagnostic(const RuntimeError& e, const char* stage)
-{
-    std::string code{registryCode(e.code())};
-    if (code.empty()) {
-        // 事件码路径（RobWorkError——不发注册码的第三值，§10.11 v0.3）。
-        code = "RT-ROBWORK-ERROR";
-    }
-    return core::DiagnosticRecord::make(
-        code,
-        std::nullopt,
-        std::nullopt,
-        std::nullopt,
-        std::string{"runtime 编译链失败（段: "} + stage + "）——错误归属见 §5.2 十段表",
-        std::string{e.what()},
-        std::string{"按码面分类修复输入/环境后重编译（分类：Errors.hpp category）"});
-}
-
-/// D-13 身份核对失败诊断（§10.0 materialize 行——诊断含期望/实得身份）。
-core::DiagnosticRecord identityMismatchDiagnostic(const char* what,
-                                                  const core::ContentIdentity& expected,
-                                                  const core::ContentIdentity& actual)
-{
-    return core::DiagnosticRecord::make(
-        std::string{registryCode(RuntimeErrorCode::InputInvalid)},
-        std::nullopt,
-        std::nullopt,
-        std::nullopt,
-        std::string{"worker 物化身份核对失败（D-13——不相等拒绝执行，§9.5/§9.2）"},
-        std::string{what} + "：期望 " + expected.toCanonical() + "，实得 "
-            + actual.toCanonical(),
-        std::string{"核对派发通道与请求一致性（防通道错配/半传输）后重新物化"});
-}
-
 /// S8 交叉校验的实际名收集（§7.2"编译器写入 WC 的名字必须与映射输出逐一
 /// 相等"——工厂对 S6+S7 写入全集的核对；WORLD 根帧不入映射故排除）。
+/// 本文件局部（仅 materialize/create 的编排路径使用；产品编译器经
+/// SnapshotAssembler::assemble 内部同名逻辑共享——RT-T11 提升登记）。
 std::vector<std::string> collectActualRuntimeNames(const WorkCellCompileOutcome& s6)
 {
     std::vector<std::string> names;
@@ -909,45 +846,116 @@ std::vector<std::string> collectActualRuntimeNames(const WorkCellCompileOutcome&
 }  // namespace
 
 // =====================================================================
-// SnapshotAssembler——快照装配尾段（RuntimeSnapshot friend；create 与
-// materialize 的 S8＋S10 公共路径；类定义于本文件——公共面不可见）。
+// 编译链终态工具（声明在 src/SnapshotAssembler.hpp——RT-T11 提升为工厂与
+// 产品编译器共用的单一实现；定义保留本文件，行为零变化）。
 // =====================================================================
 
-/**
- * @brief S8＋S10 装配尾段：交叉校验、身份装配、发布门禁、快照构造。
- *
- * 职责（create 与 materialize 的汇合点——两路径的 S6/S7 产物在此合流）：
- *   S8 交叉校验（WC 实际名 ↔ 映射逐一相等）→ 身份块装配（§9.1"入"字段
- *   取值口径）→ DWC 事实状态归类（三成因分支）→ 诊断合并 → S10 原子发布
- *   （RuntimeSnapshot 私有构造——本类是 friend，工厂方法经 assemble() 调用）。
- */
-class SnapshotAssembler {
-public:
-    /**
-     * @brief 装配并发布快照（RuntimeSnapshot 私有构造的唯一调用方）。
-     *
-     * @param model            [in] 规范模型（S5 产物或物化重建产物）
-     * @param map              [in] 名称映射（create＝buildRuntimeNameMap；worker＝parseNameMap 重建）
-     * @param s6               [in] S6 产物（WC 非空——空句柄由编译器 fail-fast）
-     * @param dwcOutcome       [in] S7 产物（nullptr＝本次编译未请求 DWC——§9.4 capabilityLevel）
-     * @param options          [in] 编译选项（全集——快照记录实际请求）
-     * @param compilerContractVersion [in] 编译器契约版本（create＝compiler 申报；worker＝载荷值传递）
-     * @param compilerVersion  [in] 编译器实现版本（同上）
-     * @param origin           [in] 创建来源（Command/Worker）
-     * @return Published 终态（快照唯一出口）
-     *
-     * @throws RuntimeError S8 交叉校验失败（NameConflict——S8 硬失败通道）；
-     *         RuntimeSnapshot 构造门禁失败（防御面——理论不可达）
-     */
-    static CompileOutcome assemble(const CanonicalModel& model,
-                                   const RuntimeNameMap& map,
-                                   const WorkCellCompileOutcome& s6,
-                                   const DynamicWorkCellCompileOutcome* dwcOutcome,
-                                   const CompileOptions& options,
-                                   std::uint32_t compilerContractVersion,
-                                   const std::string& compilerVersion,
-                                   SnapshotOrigin origin)
-    {
+bool cancelRequested(const ICompileCancelToken* cancel)
+{
+    return cancel != nullptr && cancel->cancellationRequested();
+}
+
+CompileOutcome cancelledOutcome()
+{
+    CompileOutcome out;
+    out.status = CompileStatus::Cancelled;
+    // 码面：RT-CANCELLED（registryCode(Cancelled) 单点——PA-1 不私裁码值）。
+    out.diagnostics.push_back(core::DiagnosticRecord::make(
+        std::string{registryCode(RuntimeErrorCode::Cancelled)},
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::string{"runtime 编译链取消（段边界轮询——协作取消为正常控制流，非错误）"},
+        std::string{token(RuntimeErrorCode::Cancelled)},
+        std::string{"重新发起编译（无半成品残留，可直接重试——§5.5 可重入）"}));
+    return out;
+}
+
+CompileOutcome failedOutcome(core::DiagnosticRecord record)
+{
+    CompileOutcome out;
+    out.status = CompileStatus::Failed;
+    out.diagnostics.push_back(std::move(record));
+    return out;
+}
+
+core::DiagnosticRecord toDiagnostic(const RuntimeError& e, const char* stage)
+{
+    std::string code{registryCode(e.code())};
+    if (code.empty()) {
+        // 事件码路径（RobWorkError——不发注册码的第三值，§10.11 v0.3）。
+        code = "RT-ROBWORK-ERROR";
+    }
+    return core::DiagnosticRecord::make(
+        code,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::string{"runtime 编译链失败（段: "} + stage + "）——错误归属见 §5.2 十段表",
+        std::string{e.what()},
+        std::string{"按码面分类修复输入/环境后重编译（分类：Errors.hpp category）"});
+}
+
+/// S8 名称生成期警告→警告级诊断的转译（声明见 src/SnapshotAssembler.hpp；
+/// RT-T11 交付——v0.5⑥ 登记的落位点，建议码待 diagnostics 收编，PA-1）。
+std::vector<core::DiagnosticRecord> translateNameMapNotices(const RuntimeNameMap& map)
+{
+    // 建议码（待收编——收编后仅替换本常量单点；PA-1：码值权威归 diagnostics）。
+    constexpr const char* kNameDisambiguatedCode = "RT-NAME-DISAMBIGUATED";
+    std::vector<core::DiagnosticRecord> out;
+    out.reserve(map.notices().size());
+    for (const RuntimeNameNotice& n : map.notices()) {
+        out.push_back(core::DiagnosticRecord::make(
+            std::string{kNameDisambiguatedCode},
+            n.objectId,
+            n.originalLocalName,
+            n.fullName,
+            std::string{"S8 名称映射生成警告（不阻断——§7.2 消歧/空名警告）"},
+            n.kind == RuntimeNameNotice::Kind::EmptyName
+                ? std::string{"空名已合法化为 unnamed（原名=\"\"——builder 拒绝面之外"
+                              "的规则面保留分支）"}
+                : std::string{"同名消歧：["} + n.originalLocalName + "] → ["
+                      + n.runtimeLocalName + "]（按 ObjectId 序加后缀）",
+            std::string{"经⑥端口以消歧后运行时名引用该对象（AT-18 往返不变）"}));
+    }
+    return out;
+}
+
+/// D-13 身份核对失败诊断（§10.0 materialize 行——诊断含期望/实得身份）。
+namespace {
+
+core::DiagnosticRecord identityMismatchDiagnostic(const char* what,
+                                                  const core::ContentIdentity& expected,
+                                                  const core::ContentIdentity& actual)
+{
+    return core::DiagnosticRecord::make(
+        std::string{registryCode(RuntimeErrorCode::InputInvalid)},
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::string{"worker 物化身份核对失败（D-13——不相等拒绝执行，§9.5/§9.2）"},
+        std::string{what} + "：期望 " + expected.toCanonical() + "，实得 "
+            + actual.toCanonical(),
+        std::string{"核对派发通道与请求一致性（防通道错配/半传输）后重新物化"});
+}
+
+}  // namespace
+
+// =====================================================================
+// SnapshotAssembler——快照装配尾段（类声明提升至 src/SnapshotAssembler.hpp——
+// RT-T11：产品编译器 compile() 与工厂共用 S8＋S10 尾段；方法定义保留本文件）。
+// =====================================================================
+
+CompileOutcome SnapshotAssembler::assemble(const CanonicalModel& model,
+                                           const RuntimeNameMap& map,
+                                           const WorkCellCompileOutcome& s6,
+                                           const DynamicWorkCellCompileOutcome* dwcOutcome,
+                                           const CompileOptions& options,
+                                           std::uint32_t compilerContractVersion,
+                                           const std::string& compilerVersion,
+                                           SnapshotOrigin origin,
+                                           std::vector<core::DiagnosticRecord> extraWarnings)
+{
     // ---- S8：WC 实际对象名 ↔ 映射逐一交叉校验（§7.2 生成时点；双前缀/
     //      旧名残留/写出映射外名字在此拦截——RT-NM-5/6 的产品执行点）----
     crossCheckRuntimeNames(map, collectActualRuntimeNames(s6));
@@ -997,14 +1005,17 @@ public:
     fields.resourceManifest = model.resourceManifest();
     fields.capabilities = model.capabilities();
 
-    // ---- 诊断合并（模型警告块＋S7 警告；不产 error 码记录——§9.6 组合表
-    //      Published 行的"无 error 级"由来源受限保证：builder 已拒 error、
-    //      S7 警告恰为 RT-CAPABILITY-MISSING 警告级）----
+    // ---- 诊断合并（模型警告块＋S7 警告＋编排路径额外警告〔S8 消歧转译等
+    //      ——extraWarnings〕；不产 error 码记录——§9.6 组合表 Published 行
+    //      的"无 error 级"由来源受限保证：builder 已拒 error、S7 警告恰为
+    //      RT-CAPABILITY-MISSING 警告级、S8 转译恒警告级）----
     std::vector<core::DiagnosticRecord> diagnostics = model.diagnostics();
     if (dwcOutcome != nullptr) {
         diagnostics.insert(diagnostics.end(), dwcOutcome->warnings.begin(),
                            dwcOutcome->warnings.end());
     }
+    diagnostics.insert(diagnostics.end(), std::make_move_iterator(extraWarnings.begin()),
+                       std::make_move_iterator(extraWarnings.end()));
 
     // ---- S10：装配＋原子发布（shared_ptr<const>——此前一切产物对外不可见）。
     //      全部以拷贝传入：私有构造在初始化列表与函数体内都要消费 fields
@@ -1027,8 +1038,7 @@ public:
     out.snapshot = std::move(snapshot);
     out.diagnostics = std::move(diagnostics);
     return out;
-    }
-};  // class SnapshotAssembler（friend——RuntimeSnapshot 私有构造的唯一入口）
+}
 
 CompileOutcome RuntimeSnapshotFactory::create(const CompileRequest& request,
                                               ICanonicalModelCompiler& compiler)
@@ -1082,10 +1092,12 @@ CompileOutcome RuntimeSnapshotFactory::create(const CompileRequest& request,
         //      逐一相等；交叉校验在公共尾段）----
         const RuntimeNameMap map = buildRuntimeNameMap(canonical.get());
 
-        // ---- S8＋S10：交叉校验＋身份装配＋发布 ----
+        // ---- S8＋S10：交叉校验＋身份装配＋发布（生成期警告随尾段合并——
+        //      v0.5⑥ 转译落位，RT-T11）----
         return SnapshotAssembler::assemble(canonical.get(), map, s6, dwcRequested ? &s7 : nullptr,
                                   request.options, compiler.contractVersion(),
-                                  compiler.implementationVersion(), SnapshotOrigin::Command);
+                                  compiler.implementationVersion(), SnapshotOrigin::Command,
+                                  translateNameMapNotices(map));
     } catch (const RuntimeError& e) {
         // 契约违约保持 fail-fast 轨（§3.4——S6–S10 段内编译器抛出的
         // UnknownObject/ContextReleased 不得转为诊断静默）。
@@ -1165,7 +1177,8 @@ CompileOutcome RuntimeSnapshotFactory::materialize(
         return SnapshotAssembler::assemble(model.get(), nameMap.get(), s6,
                                   dwcRequested ? &s7 : nullptr, payload.get().options,
                                   payload.get().compilerContractVersion,
-                                  payload.get().compilerVersion, SnapshotOrigin::Worker);
+                                  payload.get().compilerVersion, SnapshotOrigin::Worker,
+                                  translateNameMapNotices(nameMap.get()));
     } catch (const RuntimeError& e) {
         // 字节面/重建面不应出现契约违约码；保持与 create 同轨的防御一致
         // （§3.4——违约码不走诊断静默）。

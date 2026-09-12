@@ -96,6 +96,18 @@ struct ObjectRefEntry {
 };
 
 /**
+ * @brief 机器人设计对象的类型 token 权威常量（"robot-design"）。
+ *
+ * 消费点（编译链 S2——RT-T11）：RevisionSummary.objectRefs 中
+ * objectTypeToken 命中本常量的对象即 RobotDesign 权威对象（§4.1——
+ * "对象字节经注入的 IRobotDesignReader 读取"的规范化对象）；S2 按 token
+ * 定位恰一个 robot-design 对象（零个/多个均失败——编译器实现登记）。
+ * 常量单点（§3.3 注释的字面落地）——消费方不得另写字面量，避免拼写漂移
+ * 造成路由失联（NFR-COR-02 确定性纪律的码面同款）。
+ */
+inline constexpr const char* kRobotDesignObjectType = "robot-design";
+
+/**
  * @brief 修订只读视图的最小投影（适配 project RevisionView）。
  *
  * "最小"＝只含编译链 S1 锚定所需的字段：修订身份/序号/父修订（闭包

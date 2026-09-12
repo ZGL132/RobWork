@@ -122,16 +122,33 @@ if(TARGET sdurw_kinematics)
 
     # ---- RT-T10 增列（编译缓存纯判定；tasks/foundation/RT-T10.json）----
     # CacheKey.cpp 消费 src/Snapshot.cpp 的
-    # snapshotidentity::computeWorkCellCompileIdentity（§9.1 公式单点——
-    # v0.10②"复用该函数避免第二套键编码"），故与 Snapshot.cpp 同因仅集成
-    # 模式编译；公共头 CacheKey.hpp 在冒烟模式不被任何 TU include
-    # （§15.4 v0.11 登记，v0.8②/v0.9⑧/v0.10⑥ 同款分工）。存储/命中执行/
-    # 淘汰归 execution（CON-04）——本单元只交付纯判定面。
+    # snapshotidentity::computeWorkCellCompileIdentity（v0.10② 公式单点——
+    # 不写第二套 WC 键编码），故与 Snapshot.cpp 同因仅集成模式编译；公共头
+    # CacheKey.hpp 在冒烟模式不被任何 TU include（§15.4 v0.11 登记，v0.8②/
+    # v0.9⑧/v0.10⑥ 同款分工）。存储/命中执行/淘汰归 execution（CON-04）——
+    # 本单元只交付纯判定面。
     target_sources(sdurws_ird_runtime PRIVATE
         src/CacheKey.cpp)               # §9.4（CompileCacheKey 分层键〔WC 键复用
                                         # computeWorkCellCompileIdentity 单点＋DWC
                                         # 链式派生〕＋分量指纹表＋
                                         # judgeCompileCacheCompatibility 判定表全行）
+
+    # ---- RT-T11 增列（十段编译链产品实现；tasks/foundation/RT-T11.json）----
+    # CompilerImpl.cpp 消费 S6/S7 编译器（src/WorkCellCompiler.hpp 与
+    # src/DynamicWorkCellCompiler.hpp——真实 rw/rwsim 非模板类）与
+    # src/SnapshotAssembler.hpp（S8+S10 装配尾段提升——RT-T11 与工厂共用），
+    # 与 Snapshot.cpp 同因仅集成模式编译；公共头 Compiler.hpp 的契约面
+    # （CompileStage 枚举＋CompileRequest.project 增量字段——§15.4 v0.12
+    # 登记）两模式均可用（纯值/枚举，零框架符号），冒烟模式产品实现不被
+    # 任何 TU include（v0.8② 分工先例延续）。
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/CompilerImpl.cpp)           # §5.1～§5.7（十段链 compile() 整体事务：
+                                        # S1～S5 共享实现＋事务状态机＋段边界/资源
+                                        # 逐项取消轮询〔D-11 无内部超时〕＋§5.4 资源
+                                        # 摘要复查〔RT-RES-2〕＋SnapshotAssembler 原子
+                                        # 发布；buildCanonicalModel 分段入口；
+                                        # 私有头 src/CompilerImpl.hpp ＋
+                                        # src/SnapshotAssembler.hpp 提升）
 
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
@@ -225,6 +242,16 @@ if(TARGET sdurw_kinematics)
                                         # 反例（未 finalize 键恒不命中——CON-04）；
                                         # 被测面复用 Snapshot.cpp 的键公式单点——
                                         # 与产品侧增列同因仅集成模式
+    target_sources(sdurws_ird_runtime_test PRIVATE
+        test/CompilerTest.cpp)         # RT-T11：RT-CPX 全组（事务状态机全转移/
+                                        # 降级/provided 非法/取消与 bad_alloc）＋
+                                        # D-11（取消只经外部令牌——边界轮询密度）
+                                        # ＋S1～S10 装配完整与失败回滚＋RT-RES-1/2
+                                        # （资源三码分立/编译中替换 S10 前拦截）＋
+                                        # RT-CONT-1/2（CM-0 防混入/编译只读——
+                                        # 对象库哈希前后一致）；被测面（产品编译器
+                                        # compile()/buildCanonicalModel()）链接真实
+                                        # 框架库——与产品侧增列同因仅集成模式
 endif()
 
 target_link_libraries(sdurws_ird_runtime_test PRIVATE
