@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现 AnalysisSnapshot（快照/校验/修订闭包）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T02"
   ],
