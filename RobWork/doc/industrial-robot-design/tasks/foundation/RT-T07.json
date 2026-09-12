@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 WorkCell 编译器（Adapter/十段链 S6）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T04",
     "RT-T06"
