@@ -100,7 +100,8 @@ TEST(GoldenDataLint, RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3)
 }
 
 /**
- * 容差档案 rt（testdata/tolerance/rt/v1.0.0.json）：装载全链（schema/
+ * 容差档案 rt（testdata/tolerance/rt-runtime/v1.0.0.json——目录名＝
+ * profileId"rt-runtime"，"rt"只是单元卡 §11 行的助记名）：装载全链（schema/
  * 句法/单位/allowedMax 条件规则）＋套件使用的 fieldPath 全部可解析
  * （附录 D C4"报错不默认"——路径未登记即在消费点 ToleranceUndefined，
  * 本用例前移到 CI 显性暴露）。

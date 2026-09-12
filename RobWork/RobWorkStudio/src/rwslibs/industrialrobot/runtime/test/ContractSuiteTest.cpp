@@ -120,7 +120,8 @@ std::shared_ptr<const RuntimeSnapshot> compilePublished(td::ContractHarness& h,
     return out.snapshot;
 }
 
-/// 装载容差档案 rt（testkit 两级数据根解析——testdata/tolerance/rt/v1.0.0.json）。
+/// 装载容差档案 rt（testkit 两级数据根解析——testdata/tolerance/rt-runtime/v1.0.0.json；
+/// 档案目录名＝profileId"rt-runtime"，"rt"只是单元卡 §11 行的助记名）。
 tk::ToleranceProfile loadRtProfile()
 {
     return tk::ToleranceProfile::load(tk::toleranceProfileDir("rt-runtime") / "v1.0.0.json");
