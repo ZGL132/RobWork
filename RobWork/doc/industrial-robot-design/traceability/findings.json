@@ -551,6 +551,26 @@
       "title": "实施侧冒烟留痕未声明构建配置：RT-T13 留痕 smoke-build.log 路径显示 \\testkit\\Debug\\（全文 21 处 Debug、0 处 Release、无 --config 参数）＝MSBuild 默认 Debug 配置实跑；ird-test-report.json exitCodes 声明 smokeBuild=0 属实但未声明配置，与集成侧 Release 口径不对称——数值主张（冒烟 176/176）真实（验收者 Release 从零复跑 176/176 绿），无粉饰，仅留痕口径纪律问题（F-054 构建性质标注纪律的同族延伸：配置维度未覆盖）",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-054 同辖域统一处置）",
       "resolution": "后续留痕提交在 ird-test-report.json／提交信息中显式声明各模式构建配置（Debug/Release）；随下次触及留痕流程的任务顺手统一，不追溯已推送提交"
+    },
+    {
+      "id": "F-057",
+      "source": "EV-T02 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T02-20260912.md §4.8，送验对象 d1314a6d，分支 wp05-t02）：验收者逐项核对文档同步时实测卡头版本行与 §15.4 变更记录失同步",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "evidence.md 卡头'文档版本'行未随 §15.4 v0.3 同步：卡头仍为 v0.2（日期停留 2026-09-09），而 §15.4 已含 v0.3（2026-09-12）行、送验提交信息亦称'单元卡版本按仓库惯例 v0.2→v0.3'——runtime.md（v0.15）/core.md（v0.11）先例为卡头版本行承载版本链；validate-docs 不校验'卡头版本＝§15.4 末行'维度，机检未红。方向为文档内部不一致（少报），v0.3 登记内容本身完整准确",
+      "owner": "evidence 详设所有者（卡头归单元卡辖域）；validate-docs 校验维度扩充建议归治理脚本所有者",
+      "resolution": "随下次触及 evidence.md 的任务（EV-T03 实现、或 F-020 §3.5 增设处置）顺手把卡头'文档版本/日期'推进至最新并补版本链；治理侧可评估为 validate-docs 增加'卡头版本行＝§15.4 末行'机检维度"
+    },
+    {
+      "id": "F-058",
+      "source": "EV-T02 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T02-20260912.md §4.8，送验对象 d1314a6d，分支 wp05-t02）：验收者全文通读 evidence.md 时发现，F-005/F-006 同族转义损毁第三份单元卡新实例",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "evidence.md 'AI 执行就绪补充'节存在 F-005（core.md）/F-006（testkit.md）同族转义损毁：$(evidence.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/alidate-task.ps1'缺首字母（\\v 被吞）——既有损毁非 EV-T02 引入（送验 diff 仅追加 §15.4 v0.3 一行，反证在档）",
+      "owner": "evidence 详设所有者（文本本体）；与 F-005/F-006 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
+      "resolution": "并入 F-005/F-006 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md 三份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁，并排查其余单元卡是否还有第四例"
     }
   ]
 }
