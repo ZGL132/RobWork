@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现缓存/检查点兼容判定（Compatibility）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T07"
   ],
