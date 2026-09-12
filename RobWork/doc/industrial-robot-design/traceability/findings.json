@@ -682,6 +682,26 @@
       "title": "ACC §4.5 探针恢复后的增量构建时间戳陷阱：验收者以『备份文件＋mv 还原』恢复探针注入后，还原文件保留旧 mtime，MSBuild 增量判定源码未变而跳过重编译——探针二进制残留致恢复后首轮运行 2 用例仍假红（源码 git status 零差异、测试却失败）；touch 源文件强制重编译后 151/151 复绿。既有实施者留痕（wp05-t08 probe-residue-check.txt）以 grep 计数 PROBE 标记规避了此坑，但协议未成文该风险——后续验收者若以 mtime 早于探针注入的方式还原（cp -p/mv/IDE 撤销），可能误判『恢复后不复绿』（假 fail）或反向误判复绿（未实际重编译时读旧结果）",
       "owner": "acceptance-protocol 维护者（§4.5 增补一句：探针恢复后必须强制重编译〔touch 注入文件或 --clean-first〕并核验 git 零差异＋标记零残留双条件）",
       "resolution": "协议增量修订；不影响 EV-T08 验收（pass——验收者实测 touch 后复绿并留痕于验收记录）。编号顺延自 F-067。"
+    },
+    {
+      "id": "F-069",
+      "source": "EV-T09 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T09-20260913.md，送验对象 f9eaec775e794862082861d1bc86c66d9584c5ea，分支 wp05-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "EV-T09 三份送验提交（e85430e1／99e4752f／f9eaec77）标题均缺「[WP-05-T09]」前缀，不合 AGENTS §6.3／ACC §4.9 标题字面格式「[任务编号] 动词开头的中文摘要」——与直接前例 EV-T07／EV-T08（各三份实施提交均带 [WP-05-T0x] 前缀）不一致。变体与 F-012 族不同：F-012 族为名词短语开头（动词开头不满足），本例三份均为动词开头、任务编号以 EV-T09 形式在标题内可见、正文四段齐备且验证结论与留痕逐项一致（无粉饰）",
+      "owner": "后续编码任务实施者（提交前缀格式自律——建议以 [任务编号] 前缀自检）；送验对象已冻结不追改（改写已推送历史违反 AGENTS §6.3，由收尾合入时保持原样）",
+      "resolution": "格式纪律提示，登记留档；不影响 EV-T09 验收（pass——4.9 判定详见验收记录：正文四段与验证一致性全过，唯标题前缀字面偏差降为建议级，F-048 先例同口径）。编号顺延自 F-068。"
+    },
+    {
+      "id": "F-070",
+      "source": "EV-T09 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T09-20260913.md）§4.7 注释抽查",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "evidence/test/CompatibilityTest.cpp 文件头注释（L24-26）提及的测试名与实际交付不符两处：①「UnfinalizedManifestIsDiagnosticOnly_EV_CPA_2 反例族」——实际测试名为 UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2（后缀 _EV_CPA_2 系笔误）；②「PartialOutcomeNeverFullHit 反例组」——不存在该具名测试，「部分结果永不 FullHit」语义实际由 CanceledResultIsDiagnosticOnly_EV_ENV_2／FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2／BothResultFaceFailuresListed_EV_ENV_2 三用例共同承载。零行为影响（22 用例本体与断言均正确、两模式 173/173 全绿），纯注释精度微瑕（F-067 同类——注释与实现/清单失配）",
+      "owner": "evidence 实现所有者（随下次触及 CompatibilityTest.cpp 的任务把文件头注释测试名清单对齐实际 TEST 名单）",
+      "resolution": "注释对齐（零行为变化）；不影响 EV-T09 验收（pass——文件头注释的用例分组概述语义正确，仅具名清单失准）。编号顺延自 F-069。"
     }
   ]
 }
