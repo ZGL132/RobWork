@@ -33,7 +33,9 @@
 #include <rw/core/Ptr.hpp>
 #include <rw/models/WorkCell.hpp>
 
-#include <sdurws/ird/runtime/CanonicalModel.hpp>  // 输入：CanonicalModel
+#include <sdurws/ird/core/Identity.hpp>            // core::ObjectId（scopedFullName 参数）
+#include <sdurws/ird/runtime/CanonicalModel.hpp>   // 输入：CanonicalModel
+#include <sdurws/ird/runtime/NameMap.hpp>          // RuntimeNameMap/NameScope（命名唯一源）
 
 namespace sdurws::ird::runtime {
 
@@ -117,6 +119,29 @@ struct WorkCellCompileOutcome {
  * 复杂度：O(链长＋场景＋工具)（RobWork 对象构造线性；无迭代求解）。
  */
 WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model);
+
+/**
+ * @brief 从映射取"某对象某范围"条目的消歧后全名（S6/S7 编译器共用的命名
+ *        唯一来源封装；RT-T08 起由 S6 专属提升为两编译器共享——原为 S6 实现
+ *        文件匿名命名空间局部函数，提升原因＝S7 的 Body 承载帧/连杆帧/基座
+ *        帧同样必须经映射取名，两处重复实现同一逻辑属维护隐患）。
+ *
+ * 背景（§7.2/PA-1）：编译器写入 WC/DWC 的每个名字都必须来自映射（不允许
+ * 现场拼装——R-4 前缀拼装唯一合法位置在 NameMap 模块）。身份条目经
+ * resolveObjectId 直取；BaseMount/BaseFrame/Flange/Tcp/Body 等派生条目共享
+ * 所属对象的 ObjectId，须经 entries() 按 (objectId, scope) 定位——本函数即
+ * 该定位的唯一封装。
+ *
+ * @param map    [in] buildRuntimeNameMap 产物（只读）
+ * @param id     [in] 所属对象身份（robot/joint/link/tool/scene）
+ * @param scope  [in] 目标范围（派生条目的语义轴）
+ * @return 该 (对象, 范围) 组合的消歧后全名（映射内 fullName 全局唯一）
+ *
+ * @throws RuntimeError 码＝StructureInvalid：条目不存在（映射生成规则保证
+ *         每组合恰一条——不可达，属编译器内部不变量破坏的防御性 fail-fast，
+ *         不得以空名继续——NFR-COR-03 不静默）
+ */
+std::string scopedFullName(const RuntimeNameMap& map, const core::ObjectId& id, NameScope scope);
 
 }  // namespace sdurws::ird::runtime
 

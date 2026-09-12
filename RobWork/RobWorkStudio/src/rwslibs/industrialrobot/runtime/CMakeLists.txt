@@ -97,11 +97,19 @@ if(TARGET sdurw_kinematics)
     # 的 rw models/kinematics 头不影响"目标注册＋include 路径"的冒烟口径）。
     # 分阶段落位已按 DTB §5.4 登记 units/runtime.md §15.4（RT-T07 条目）。
     target_sources(sdurws_ird_runtime PRIVATE
-        src/WorkCellCompiler.cpp)   # §5.2 S6（CanonicalModel→WorkCell 确定性
-                                    # 编译：Frame 树/SerialDevice/Joint/限位/
-                                    # BaseMount 唯一写入＋S9 自检）＋§8.3
-                                    # WorkCellConstView 实现＋§8.4 异常转译；
-                                    # 公共头 Adapter.hpp（视图/转译契约面）
+        src/WorkCellCompiler.cpp        # §5.2 S6（CanonicalModel→WorkCell 确定性
+                                        # 编译：Frame 树/SerialDevice/Joint/限位/
+                                        # BaseMount 唯一写入＋S9 自检）＋§8.3
+                                        # WorkCellConstView 实现＋§8.4 异常转译；
+                                        # 公共头 Adapter.hpp（视图/转译契约面）
+        src/DynamicWorkCellCompiler.cpp) # §5.2 S7（RT-T08：DWC 能力门控编译——
+                                         # Body/RigidDevice/质量惯量/摩擦承载/
+                                         # 重力显式设值＋§8.5 同源/Body 覆盖/设备
+                                         # 一致关联校验＋§8.5 销毁顺序持有结构）
+                                         # ＋§8.2/8.3 DynamicWorkCellConstView 实现；
+                                         # 私有头 src/DynamicWorkCellCompiler.hpp
+                                         # （rwsim 为 P-RT-3 已登记 L1——本文件的
+                                         # 设计依据面；冒烟模式不进构建）
 
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
@@ -171,14 +179,18 @@ if(MSVC)
     target_compile_options(sdurws_ird_runtime_test PRIVATE /utf-8)
 endif()
 
-# ---- RT-T07 测试增列（仅集成模式——被测面链接真实框架库）----
+# ---- RT-T07/T08 测试增列（仅集成模式——被测面链接真实框架库）----
 # RT-AD-1（§8.4 真实基线异常转译）/RT-AD-2（§8.2 显式设值逐字段对照）/
 # RT-EQ-1（附录 D 第 4 项 canonical↔WC FK 等价）/RT-BW-4（S9 BaseMount 唯一
-# 写入＋二次叠加反例）＋WorkCellConstView 查询面；RobWork 本体不做替身
-# （RT-STUB-0）。冒烟模式跳过（无框架库可链——与产品侧增列同因）。
+# 写入＋二次叠加反例）＋WorkCellConstView 查询面（RT-T07）；
+# RT-CPX-1/2（门控/原子性）、RT-AD-3（销毁顺序）、§5.6 能力降级正交、
+# §8.5 关联校验、R-2 摩擦承载＋DynamicWorkCellConstView（RT-T08）；
+# RobWork/rwsim 本体不做替身（RT-STUB-0）。冒烟模式跳过（无框架库可链——
+# 与产品侧增列同因）。
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_runtime_test PRIVATE
-        test/WorkCellCompilerTest.cpp)
+        test/WorkCellCompilerTest.cpp
+        test/DynamicWorkCellCompilerTest.cpp)
 endif()
 
 target_link_libraries(sdurws_ird_runtime_test PRIVATE

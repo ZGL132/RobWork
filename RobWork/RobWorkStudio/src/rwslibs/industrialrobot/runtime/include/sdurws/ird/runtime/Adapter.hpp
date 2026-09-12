@@ -23,15 +23,15 @@
  * 只暴露本头的只读视图；可变句柄（addFrame/setBounds 等）只在编译器
  * src/WorkCellCompiler.cpp 内部可达（§8.2 只读包装行）。
  *
- * 分阶段落位登记（RT-T07）：§3.1 模块表列 Adapter.hpp 承载 WorkCellConstView、
- * DynamicWorkCellConstView、DeviceView、RobWorkBaselineVersion、
- * IRobWorkAdapterFactory 五实体。本任务按"首个消费者原则"落位其中的
- * WorkCellConstView（RT-T07 消费）与转译函数（§8.4 签名面）；其余实体随其
- * 消费任务落位——DynamicWorkCellConstView 归 RT-T08（S7 构造 DWC 后才有
- * 可视图语义），DeviceView/RobWorkBaselineVersion/IRobWorkAdapterFactory
- * 归快照/编译链任务（RT-T09/RT-T11，基线版本记录随快照身份块——§8.4
- * "RobWorkBaselineVersion 随快照与缓存键记录"）。已按 DTB §5.4 在
- * units/runtime.md §15.4 增量登记。
+ * 分阶段落位登记（RT-T07/T08）：§3.1 模块表列 Adapter.hpp 承载
+ * WorkCellConstView、DynamicWorkCellConstView、DeviceView、
+ * RobWorkBaselineVersion、IRobWorkAdapterFactory 五实体。已按"首个消费者
+ * 原则"落位：WorkCellConstView（RT-T07 消费）、translateRobWorkError（§8.4
+ * 签名面）、DynamicWorkCellConstView（RT-T08 消费——S7 构造 DWC 后才有
+ * 可视图语义）；其余实体随其消费任务落位——DeviceView/
+ * RobWorkBaselineVersion/IRobWorkAdapterFactory 归快照/编译链任务
+ * （RT-T09/RT-T11，基线版本记录随快照身份块——§8.4"RobWorkBaselineVersion
+ * 随快照与缓存键记录"）。已按 DTB §5.4 在 units/runtime.md §15.4 增量登记。
  *
  * 线程安全：WorkCellConstView 持有的快照侧 WorkCell 发布后不可变（编译器
  * 不再触碰），视图全部方法 const、并发只读安全；translateRobWorkError 为
@@ -56,10 +56,12 @@
 #include <sdurws/ird/core/Identity.hpp>  // ObjectId（转译的 subject 定位）
 
 // rw 基线类型在公共面只做前置声明（§8.2 只读包装——可变句柄的完整类型与
-// 非const 方法在公共头不可达；实现文件 src/WorkCellCompiler.cpp 内 include）。
+// 非const 方法在公共头不可达；实现文件 src/WorkCellCompiler.cpp 与
+// src/DynamicWorkCellCompiler.cpp 内 include）。
 namespace rw { namespace core { template< class T > class Ptr; } }
 namespace rw { namespace models { class WorkCell; class SerialDevice; } }
 namespace rw { namespace kinematics { class Frame; } }
+namespace rwsim { namespace dynamics { class DynamicWorkCell; class Body; } }
 
 namespace sdurws::ird::runtime {
 
@@ -161,6 +163,78 @@ public:
 private:
     /// 借持的只读 WC 句柄（构造时非空——唯一构造入口已 fail-fast 空输入）。
     rw::core::Ptr<const rw::models::WorkCell> m_workCell;
+};
+
+// =====================================================================
+// DynamicWorkCellConstView——DynamicWorkCell 的只读包装（§8.2/§8.3 只读
+// 包装纪律的 DWC 面；RT-T08 落位——§3.1 模块表原列实体，"S7 构造 DWC 后
+// 才有视图语义"）。
+// =====================================================================
+
+/**
+ * @brief DynamicWorkCell 只读视图：零可变句柄——发布后 DWC 不再被修改，
+ *        并发只读安全（§8.3 精神的 DWC 面；RT-T08 交付）。
+ *
+ * 背景（与 WorkCellConstView 同源的包装理由）：rwsim DynamicWorkCell/Body
+ * 携带大量可变入口（setGravity/setCollisionMargin/addBody/Body::setForce
+ * 等），直接暴露 Ptr 会破坏"发布后不可变"的线程承诺（§8.7）。下游
+ * dynamics/drivetrain（DYN-06 消费面——§13.2）经快照的
+ * IRuntimeModelView（RT-T09）取得本视图，只读消费物性/摩擦/重力数据。
+ *
+ * 所有权：视图借持 rw::core::Ptr<const DynamicWorkCell>（引用计数＋1）——
+ * 快照仍是唯一规范持有者（§8.2）；视图存活期间对象保证存活。★ 生命周期
+ * 耦合：DWC 内部自持其 WC 引用（§8.5 销毁顺序行——"rwsim DWC 自持 WC
+ * 引用"），故持有 DWC 即隐式保活 WC，两视图可独立使用。
+ *
+ * 线程安全：全部方法 const 且只读查询（findBody/getBodies 为基线只读
+ * 查询——§8.7"结构查询多线程只读安全"）；不暴露重力/边距等写路径。
+ */
+class DynamicWorkCellConstView {
+public:
+    /**
+     * @brief 以快照侧持有的 DynamicWorkCell 构造只读视图。
+     *
+     * @param dynamicWorkCell [in] 编译产物 DWC（引用计数借持；空 Ptr 属调用
+     *                        方契约违约——DWC 缺失场景由 capability 表达
+     *                        〔hasDynamicWorkCell=false 时快照不持有本视图〕
+     *                        而非空视图，§9.6；本构造对空输入 fail-fast）
+     *
+     * @throws RuntimeError 码＝RobWorkError（runtime/robwork-null-handle）：
+     *         dynamicWorkCell 为空——§8.4"空 Ptr→robwork-error＋操作名"
+     *         的构造入口落点
+     */
+    explicit DynamicWorkCellConstView(
+        rw::core::Ptr<const rwsim::dynamics::DynamicWorkCell> dynamicWorkCell);
+
+    /**
+     * @brief DynamicWorkCell 只读引用（生命周期随视图＋快照）。
+     *
+     * 返回 const 引用：调用方可做全部只读查询（getBodies/getDynamicDevices/
+     * getMaterialData〔const 面〕/getGravity 等），任何写路径在类型层不可达。
+     * @return 内部 DWC 的 const 引用（不抛）
+     */
+    const rwsim::dynamics::DynamicWorkCell& dynamicWorkCell() const noexcept;
+
+    /**
+     * @brief 按运行时名查找 Body（§8.3 findFrame 精神的 DWC 面）。
+     *
+     * @param name [in] Body 全名（映射 Body/Tcp 条目逐字节相等——Body 名＝
+     *             其承载帧名，基线 Body::getName 契约；S7 编译器保证每体
+     *             名字来自映射，RT-CPX 用例钉住）
+     * @return 命中＝Body 的 const Ptr（引用计数借持；生命周期绑定快照）；
+     *         未命中＝空 Ptr（不抛、不默认命中——与基线 findBody 语义一致）
+     */
+    rw::core::Ptr<const rwsim::dynamics::Body> findBody(std::string_view name) const noexcept;
+
+    /**
+     * @brief Body 总数（§8.5 Body 覆盖校验的消费侧读数）。
+     * @return DWC 内 Body 总数（基线 getBodies().size()——含基座/连杆/工具体）
+     */
+    std::size_t bodyCount() const noexcept;
+
+private:
+    /// 借持的只读 DWC 句柄（构造时非空——唯一构造入口已 fail-fast 空输入）。
+    rw::core::Ptr<const rwsim::dynamics::DynamicWorkCell> m_dynamicWorkCell;
 };
 
 // =====================================================================
