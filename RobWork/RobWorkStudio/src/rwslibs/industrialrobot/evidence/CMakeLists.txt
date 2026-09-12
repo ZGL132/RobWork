@@ -33,12 +33,16 @@ find_package(GTest CONFIG REQUIRED)
 # src/Verdict.cpp＝EV-T06 汇总判定（五级优先级决策表 aggregateVerdict＋
 # VerdictTrace 追溯＋§7.2 两类声明资格检查＋§6.5 比较基准一致性检查——
 # §6.4/§6.5/§6.6/§7.2；契约头 Verdict.hpp）。
+# src/Envelope.cpp＝EV-T07 结果包络（ResultEnvelopeDraft/make 构造边界
+# SA-13＋validateCombination 表 3 合法组合矩阵两段式校验器＋载荷摘要
+# CR-02——§7.1/§7.2；契约头 Envelope.hpp）。
 add_library(sdurws_ird_evidence STATIC
     src/Evidence.cpp
     src/Errors.cpp
     src/Snapshot.cpp
     src/Slice.cpp
-    src/Verdict.cpp)
+    src/Verdict.cpp
+    src/Envelope.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -71,7 +75,8 @@ add_executable(sdurws_ird_evidence_test
     test/SnapshotTest.cpp            # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
     test/SliceTest.cpp               # EV-T04：EV-ID-1/2＋EV-SLICE 冻结拒绝＋浮点位模式/NaN 拒绝＋EV-CR02 排除面＋EV-CR05 保留条目
     test/EvidenceTest.cpp           # EV-T05：EV-PROOF validateProof 逐字段反例＋EV-VER-6/7＋EV-ITEM/清单＋EV-PROFILE D-14＋EV-COV-2/3＋EV-MODE CON-03
-    test/VerdictTest.cpp)           # EV-T06：EV-VER-1~8 五级决策表正反例＋EV-COV-1/4＋资格检查 §7.2＋P-EV-3/P-EV-7 保守处置＋缺失全量列出
+    test/VerdictTest.cpp            # EV-T06：EV-VER-1~8 五级决策表正反例＋EV-COV-1/4＋资格检查 §7.2＋P-EV-3/P-EV-7 保守处置＋缺失全量列出
+    test/EnvelopeTest.cpp)          # EV-T07：EV-ENV-1 表 3 全组合矩阵＋EV-ENV-2 partialData 不可复用＋快照绑定面（工况子集/证明有效性/清单绑定）＋构造确定性
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
@@ -112,6 +117,40 @@ macro(ird_add_gtest target)
 endmacro()
 
 ird_add_gtest(sdurws_ird_evidence_test)
+
+# ---- 跨单元契约测试目标 sdurws_ird_evidence_contract_test（随 EV-T07 登记）----
+# §11 测试目标分工：`_test`＝单元内行为；`_contract_test`＝跨单元契约面。
+# 首个用例组 EvidenceVocabularyContract＝CR-01 联合契约测试（foundation-
+# api-diff.md CR-01 关闭记录条款）：evidence 产品源码零 core 词表本地定义
+# （源码扫描）＋包络三轴字段类型＝core 词表类型（编译期 static_assert）＋
+# token 字面量与 core::toToken 输出逐一相等（词表漂移的机检防线）。
+add_executable(sdurws_ird_evidence_contract_test
+    test/EnvelopeContractTest.cpp)  # EV-T07：CR-01 词表契约（类型面/源码面/值面三防线）
+target_compile_features(sdurws_ird_evidence_contract_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_evidence_contract_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_evidence_contract_test PRIVATE /utf-8)
+endif()
+
+# 测试 main 自持＋链接被测库（跨单元契约也必须走公共头＋库链接面——R-2）。
+target_link_libraries(sdurws_ird_evidence_contract_test PRIVATE
+    sdurws_ird_evidence
+    GTest::gtest_main)
+
+# 源码树位置注入（词表本地定义扫描的输入——与 _test 目标同源）。
+target_compile_definitions(sdurws_ird_evidence_contract_test PRIVATE
+    IRD_EVIDENCE_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+add_custom_command(TARGET sdurws_ird_evidence_contract_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_evidence_contract_test>
+            $<TARGET_FILE_DIR:sdurws_ird_evidence_contract_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_evidence_contract_test)
 
 # ---- 依赖红线守卫（配置期断言）----
 # evidence 唯一单元依赖＝core（ARCH §3.5）；零 Qt；产品目标不链 gtest（D-06——
