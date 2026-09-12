@@ -622,6 +622,16 @@
       "title": "worktree/全新树的集成模式构建环境前置未成文：AGENTS §4.1 登记的配置命令「cmake -S RobWork -B build -G \"Visual Studio 17 2022\" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON」在非主树执行会失败于两件主树本地状态——①全新缓存缺 -DCMAKE_TOOLCHAIN_FILE（vcpkg 绝对路径）与 -DCMAKE_PREFIX_PATH（Qt 路径），实测失败于 Could NOT find Boost（主仓 build/CMakeCache.txt 实证该两参数为主树实际配置）；②RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static 与 RobWorkStudio.ini.shared.in 为 git 未跟踪的框架本地资源（RWS_USE_STATIC_LINK_PLUGINS=ON 时 configure_file 必需输入），worktree 检出后缺失即 CMake Error（实测）。补齐两件后配置与构建零错误——与 F-004（gate-all.ps1 非主树无法全量运行）同族：验收/复现环境前置依赖主树未登记的本地状态。实施产物无涉（EV-T05 双模式构建本身零错误），纯流程文档/环境缺口。",
       "owner": "流程文档维护者（AGENTS §4.1 / acceptance-protocol §3 补 worktree 复现口径）；框架构建配置所有者（评估将两件 ini 本地资源纳入版本管理或 CMake 生成机制——注意 SA-02 零源码修改红线，若动框架需先登记 patch）",
       "resolution": "择一：①在 AGENTS §4.1 与/或 ACC §3 增补「worktree 复现口径」小节：等价配置参数（toolchain/Qt 前缀绝对路径）＋本地资源清单（两件 ini 模板需从主树复制或说明生成方式）；②或将两件 ini 模板纳入 git 跟踪/由 CMake 在配置期生成（需评估框架文件属性与 SA-02 登记义务）。编号顺延自 F-061，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-063",
+      "source": "EV-T06 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T06-20260913.md §4.7，送验对象 e266e09f5322804c8222a6ba6582adc63b5acb8d，分支 wp05-t06）：验收者按 AGENTS §2 逐一核查全部 4 个新增/大改文件",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "Verdict.hpp/VerdictTest.cpp 两处零行为影响风格微瑕：①evidence/include/sdurws/ird/evidence/Verdict.hpp 第 506 行注释块续行行首多一个空格（「 // \"资格\"面；实现口径 I-7）」与块内其余行「// 」对齐不一致）；②evidence/test/VerdictTest.cpp EV-VER_3 用例（约 L541-542）局部变量 domainSideOnly 构造后未使用——注释自述「仅为注释性对照（不进入聚合）」，读代码者须靠注释理解其非被测输入，未来接入 clang-tidy unused-variable 类静态检查会报；F-046（Snapshot.cpp 缩进）同型（零行为影响风格面），不构成 ACC §4.7 缺必填项",
+      "owner": "evidence 实现所有者（建议随下次触及该两文件的任务顺手规整，避免独立格式化提交）",
+      "resolution": "①删除 Verdict.hpp L506 行首多余空格对齐注释块；②domainSideOnly 若保留对照语义，改为 [[maybe_unused]] 标注或删除局部变量（对照信息已在注释与 ird-test-report trace 中承载）。不影响 EV-T06 验收（pass）。编号顺延自 F-062，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
