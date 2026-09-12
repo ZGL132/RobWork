@@ -120,6 +120,19 @@ if(TARGET sdurw_kinematics)
                                         # 冒烟模式不被任何 TU include——§15.4
                                         # v0.10 登记）
 
+    # ---- RT-T10 增列（编译缓存纯判定；tasks/foundation/RT-T10.json）----
+    # CacheKey.cpp 消费 src/Snapshot.cpp 的
+    # snapshotidentity::computeWorkCellCompileIdentity（§9.1 公式单点——
+    # v0.10②"复用该函数避免第二套键编码"），故与 Snapshot.cpp 同因仅集成
+    # 模式编译；公共头 CacheKey.hpp 在冒烟模式不被任何 TU include
+    # （§15.4 v0.11 登记，v0.8②/v0.9⑧/v0.10⑥ 同款分工）。存储/命中执行/
+    # 淘汰归 execution（CON-04）——本单元只交付纯判定面。
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/CacheKey.cpp)               # §9.4（CompileCacheKey 分层键〔WC 键复用
+                                        # computeWorkCellCompileIdentity 单点＋DWC
+                                        # 链式派生〕＋分量指纹表＋
+                                        # judgeCompileCacheCompatibility 判定表全行）
+
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
         sdurw_models
@@ -200,11 +213,17 @@ if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_runtime_test PRIVATE
         test/WorkCellCompilerTest.cpp
         test/DynamicWorkCellCompilerTest.cpp
-        test/SnapshotTest.cpp)          # RT-T09：RT-SNAP-1～4（只读并发/worker 隔离
+        test/SnapshotTest.cpp          # RT-T09：RT-SNAP-1～4（只读并发/worker 隔离
                                         # 物化/项目切换旧快照/释放后引用）、
                                         # RT-CPX-4（取消/bad_alloc）、CR-05 值供给
                                         # 样例、materialize §9.5 往返＋D-13 拒绝；
                                         # 被测面（工厂/快照）链接真实框架库——
+                                        # 与产品侧增列同因仅集成模式
+        test/CacheKeyTest.cpp)         # RT-T10：RT-CACHE-1～4（分层键完备/逐分量
+                                        # 扰动＋精确 reasons/WC 复用 DWC 不可/
+                                        # 旧契约版本拒绝/命中≠当前性）＋判定表
+                                        # 反例（未 finalize 键恒不命中——CON-04）；
+                                        # 被测面复用 Snapshot.cpp 的键公式单点——
                                         # 与产品侧增列同因仅集成模式
 endif()
 
