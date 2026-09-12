@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现错误与依赖类型（Errors/Dependency）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T01"
   ],
