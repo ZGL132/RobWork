@@ -41,6 +41,20 @@
  * rw::math 说明：字段按 §4.2 原文使用 rw::math 值类型（模板，header-only
  * 使用——冒烟模式经源码树 include 路径获得、不链接框架库；约束：不得
  * 调用 Rotation3D::identity() 等外联符号，构造一律用逐元素构造函数）。
+ *
+ * ★ 分阶段落位登记（RT-T11，DTB §5.4——units/runtime.md §15.4 v0.12）：
+ *   JointDescription/LinkDescription/ToolDescription/SceneObjectDescription
+ *   四个子结构各增 **objectId** 字段（core::ObjectId）。为什么必须加：
+ *   §4.3.3/§4.3.4 字段表规定 CanonicalJoint/CanonicalLink/CanonicalTool/
+ *   CanonicalSceneObject 的 objectId"∈ header.objectRefs；全模型唯一"——
+ *   S5 装配（§5.2）需要从编译输入侧获得每关节/连杆/工具/场景对象的稳定
+ *   身份，而 §4.2 原文本无承载字段（RobotDesign schema 内的对象身份在
+ *   reader 解析时可得，映射语义归 modeling 侧实现）。该字段是编译链
+ *   S1～S5 产品实现（RT-T11）的输入面增量：reader 实现方（modeling，阶段
+ *   B；阶段 A 测试替身）在产出 Description 时按修订闭包内的对象身份填值；
+ *   S5 装配经 CanonicalModelBuilder 的"引用∈objectRefs＋全模型唯一"不变量
+ *   复核（CM-0）。字段语义与 Canonical 侧同名一一对应；不入 Description
+ *   任何编码（Description 无 RT-Codec 编码——身份经 header.builtFrom 间接）。
  */
 
 #ifndef SDURWS_IRD_RUNTIME_DESCRIPTION_HPP
@@ -55,6 +69,8 @@
 #include <rw/math/Transform3D.hpp>
 #include <rw/math/Vector3D.hpp>
 
+#include <sdurws/ird/core/Identity.hpp>    // ObjectId（编译链对象身份承载——RT-T11 增量，
+                                           //  见文件头"分阶段落位登记（RT-T11）"）
 #include <sdurws/ird/core/Provenance.hpp>  // SourcedValue<T>（四态字段值——缺失≠非法）
 #include <sdurws/ird/runtime/Errors.hpp>   // Expected<T,E>／RuntimeError（reader 返回轨）
 #include <sdurws/ird/runtime/Resource.hpp> // ResourceRef（资源引用——§8.6）
@@ -227,6 +243,10 @@ struct CouplingMatrix {
  * （基座→法兰）。线程安全。
  */
 struct JointDescription {
+    /// 关节对象稳定身份（RT-T11 增量——S5 装配 CanonicalJoint.objectId 的
+    ///  输入面；须 ∈ 修订闭包 objectRefs 且全模型唯一，S5/builder 复核 CM-0。
+    ///  见文件头"分阶段落位登记（RT-T11）"）。
+    core::ObjectId objectId;
     std::string localName; ///< 权威局部名（进入 RuntimeNameMap 与模型身份——
                            ///<  重命名＝设计变更＝新内容版本；非法：空/含 '/'）
     JointType type = JointType::Revolute; ///< 关节类型（保留不回写——MDL-12/V12-01）
@@ -264,6 +284,9 @@ struct JointDescription {
  * 值语义纯结构；线程安全。
  */
 struct LinkDescription {
+    /// 连杆对象稳定身份（RT-T11 增量——S5 装配 CanonicalLink.objectId 的
+    ///  输入面；约束同 JointDescription.objectId，见文件头登记）。
+    core::ObjectId objectId;
     std::string localName; ///< 权威局部名（链内唯一性归名称映射消歧——§7.2；
                            ///<  空名→InputInvalid）
     /// 视觉几何资源引用（可空；资源以内容摘要入身份——§8.6）。
@@ -287,6 +310,9 @@ struct LinkDescription {
  * 值语义纯结构；线程安全。
  */
 struct ToolDescription {
+    /// 工具对象稳定身份（RT-T11 增量——S5 装配 CanonicalTool.objectId 的
+    ///  输入面；约束同 JointDescription.objectId，见文件头登记）。
+    core::ObjectId objectId;
     std::string localName; ///< 工具局部名（空名→InputInvalid）
     /// 工具几何资源引用（可空；MDL-13：几何引用 ToolDefinition 资源，不复制）。
     std::optional<GeometryRef> geometry;
@@ -312,6 +338,9 @@ struct ToolDescription {
  * S6/S9，本类型只承载）。值语义纯结构；线程安全。
  */
 struct SceneObjectDescription {
+    /// 场景对象稳定身份（RT-T11 增量——S5 装配 CanonicalSceneObject.objectId
+    ///  的输入面；约束同 JointDescription.objectId，见文件头登记）。
+    core::ObjectId objectId;
     std::string localName; ///< 对象局部名（空名→InputInvalid）
     /// 世界系固连位姿（T_world_scene；单位 m；非有限/非正交/反射→InputInvalid——
     ///  RT-BW-6"场景位姿非有限"反例的字段）。

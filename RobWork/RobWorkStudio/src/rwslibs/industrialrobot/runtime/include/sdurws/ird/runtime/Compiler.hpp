@@ -24,6 +24,16 @@
  * RT-T11 增量落位——届时本头只增不改为契约面，实现独立成文（与 v0.4/v0.8
  * "首个消费者原则"分阶段先例同口径）。
  *
+ * RT-T11 增量落位登记（DTB §5.4，units/runtime.md §15.4 v0.12）：
+ *   - CompileStage 枚举（§3.1 模块清单本头行"编译链阶段枚举"的原文落位
+ *     ——§5.3 事务状态机全态投影）；
+ *   - CompileRequest 增 project 字段（S5 header.project 的唯一权威来源
+ *     ——§4.3.1 必填身份在原请求面无承载，增量理由见字段注释）；
+ *   - 产品实现 ICanonicalModelCompiler（src/CompilerImpl.hpp/.cpp 的
+ *     CanonicalModelCompiler：十段链 S1～S10 整体事务 compile()＋分段
+ *     buildCanonicalModel()＋§5.3 事务状态机＋§5.4 资源摘要复查＋D-11
+ *     协作取消——编译器无内部超时，取消只经外部令牌）。
+ *
  * 接口属性（§10.0 属性表——ICanonicalModelCompiler）：
  *   - 无状态、可重入（多线程各自请求；"同一请求不可并发重入"由调用方保证）；
  *   - compile()＝整体事务入口（S1–S10）；buildCanonicalModel()＝分段入口
@@ -105,6 +115,48 @@ struct CompileOptions {
 };
 
 // =====================================================================
+// CompileStage——编译链阶段枚举（§3.1 模块清单 Compiler.hpp 行"编译链阶段
+// 枚举"的原文落位；§5.3 事务状态机的全态投影，随 RT-T11 增量落位）。
+// =====================================================================
+
+/**
+ * @brief 十段编译链事务状态机的全部状态（§5.3 原文状态图的 C++ 承载）。
+ *
+ * 状态语义（与 §5.3 图一一对应；S1～S10 十段对应十一个工作态——S7 有
+ * Compiled|SkippedByCapability 两形态，本枚举合并为 DynReady，两形态的
+ * 区分由 S7 产物 status 承载，§5.2 S7）：
+ *   - 工作推进：Idle → Anchored(S1) → Parsed(S2) → Validated(S3) →
+ *     ResourcesReady(S4) → CanonicalBuilt(S5) → WorkCellCompiled(S6) →
+ *     DynReady(S7) → NameMapBuilt(S8) → ConsistencyChecked(S9) →
+ *     Published(S10)；
+ *   - 回滚：任一工作段失败/取消 → RollingBack（瞬态产物逐段析构——
+ *     §5.3 RAII 逐段清理）→ RolledBack（无任何对外可见产物）；
+ *   - 终态：Published（唯一成功出口）/ Failed（诊断全量，状态机回到
+ *     RolledBack 后产出）/ Cancelled（取消非错误——UX-03）。
+ * 关键不变量（§5.3 原文）：重复进入 RollingBack 幂等；发布后（Published）
+ * 不再有失败路径。枚举值进入开发诊断/日志与测试断言面，一经交付不得
+ * 改动/插入（状态机语义稳定第一）。
+ *
+ * 线程安全：纯枚举（无共享状态）；CompileTransaction 的当前 stage 由
+ * 编译线程独占写（§5.5——编译器实例无共享可变状态）。
+ */
+enum class CompileStage {
+    Idle,              ///< 初始态（事务已建、尚未锚定修订）
+    Anchored,          ///< S1：修订只读视图已锚定（RevisionSummary 一次读取）
+    Parsed,            ///< S2：规范模型解析完成（RobotDesignDescription 就绪）
+    Validated,         ///< S3：结构与单位校验通过（警告级问题已收集不阻断）
+    ResourcesReady,    ///< S4：资源读取与完整性校验通过（摘要已记录待复查）
+    CanonicalBuilt,    ///< S5：CanonicalModel 已构造（contentIdentity 已算）
+    WorkCellCompiled,  ///< S6：WorkCell 已编译（S9 防御自检内置——RT-T07）
+    DynReady,          ///< S7：DWC 已编译或能力门控跳过（两形态见 S7 产物）
+    NameMapBuilt,      ///< S8：RuntimeNameMap 已建立
+    ConsistencyChecked, ///< S9：基座—世界一致性检查通过
+    Published,         ///< S10：快照已原子发布（终态——此后无失败路径）
+    RollingBack,       ///< 回滚中（瞬态产物析构；重复进入幂等——§5.3）
+    RolledBack,        ///< 回滚完成（无对外可见产物——Failed/Cancelled 前置态）
+};
+
+// =====================================================================
 // CompileRequest——编译输入面（§10.0 原文——注入源集合＋选项＋取消令牌）。
 // =====================================================================
 
@@ -127,6 +179,16 @@ struct CompileOptions {
  * §5.5）。
  */
 struct CompileRequest {
+    /// 目标修订所属项目身份（RT-T11 增量字段——DTB §5.4 登记，units/
+    /// runtime.md §15.4 v0.12；§10.0 契约面只增不改）。
+    ///
+    /// 为什么必须加：§4.3.1 CanonicalModelHeader.project 是"空 id→构造拒绝"
+    /// 的必填身份字段（来源定位三元组之一），而 §10.0 原文请求面与 §3.3
+    /// RevisionSummary 最小投影均无 project 承载——S5 装配没有合法来源。
+    /// 本字段是 S5 header.project 的唯一权威来源（调用方＝L5 装配/命令侧，
+    /// 其经 project 查询上下文取值）；全零＝请求未提供项目上下文→编译链
+    /// S1 前置校验以 InputInvalid 拒绝（可恢复——补值后重编译）。
+    core::ProjectId project;
     /// 目标修订身份（ARC-01——一次命令提交＝一个修订；worker 物化路径可为
     /// 预解析 RevisionSummary 承载，§10.0 原文注释）。
     core::RevisionId revision;

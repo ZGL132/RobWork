@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T11",
+  "masterWp": "WP-06-T11",
+  "branch": "wp06-t11",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "增列 src/CompilerImpl.cpp（十段链/事务/取消/资源复查——仅集成模式）；公共头 Compiler.hpp 增 CompileStage＋CompileRequest.project（只增不改）、Description.hpp 四子结构增 objectId（RT-T11 增量，§15.4 v0.12 登记）、Sources.hpp 增 kRobotDesignObjectType 常量；SnapshotAssembler＋终态工具提升至 src/SnapshotAssembler.hpp（与工厂共用尾段，行为零变化）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "新增 test/CompilerTest.cpp（24 用例：RT-CPX 全组＋RT-RES-1/2＋RT-CONT-1/2＋D-11＋事务状态机）；既有 220 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CompilerTest（RT-T11 新增 24 用例）",
+      "designRef": "units/runtime.md §5.1～§5.7/§8.6/§11 RT-CPX 全组＋RT-RES-1/2＋RT-CONT-1/2",
+      "cases": [
+        { "name": "CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3", "status": "passed", "modes": ["integration"], "trace": "acceptance 3 正向面：S1～S10 装配完整——Published/快照非空/来源定位一致/DWC Compiled/发布诊断无 error 级" },
+        { "name": "CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity", "status": "passed", "modes": ["integration"], "trace": "§5.5 同输入重复编译：快照身份逐字节相等（NFR-COR-02）" },
+        { "name": "CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance", "status": "passed", "modes": ["integration"], "trace": "§10.0 组合：工厂 create×产品编译器（经 buildCanonicalModel 分段入口）——两入口模型身份一致" },
+        { "name": "CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly", "status": "passed", "modes": ["integration"], "trace": "§6.2/§6.3 接线（v0.7④ S5 全量接线）：倒挂预设→R_x(π) 逐元素＋吊装平移 2 m" },
+        { "name": "CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds", "status": "passed", "modes": ["integration"], "trace": "S2 失败转移→Failed＋InputInvalid＋段定位；修复输入后可重入重试（§5.2 可恢复列）" },
+        { "name": "CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CONT-1：闭包外 (oid,cv)→StructureInvalid（CM-0 防混入的产品执行点）" },
+        { "name": "CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace", "status": "passed", "modes": ["integration"], "trace": "S2 字节完整性：对象字节与修订登记摘要不符→StructureInvalid（CM-0 字节面）" },
+        { "name": "CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CPX-3：mass=−1（provided 非法）→Failed＋InputInvalid 定位 links[1].mass（与能力缺失严格区分）" },
+        { "name": "CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CPX-2：物性 NotProvided→Published＋hasDynamicWorkCell=false＋SkippedNoPhysics＋缺失清单＋RT-CAPABILITY-MISSING 警告" },
+        { "name": "CompilerTest.JointObjectIdOutsideRefsRejectedAtS5", "status": "passed", "modes": ["integration"], "trace": "S5 段失败转移：关节 ObjectId 不在 objectRefs→builder 拦截（S3 不覆盖对象身份）→Failed＋StructureInvalid＋S5 定位" },
+        { "name": "CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CPX-4 取消分支：段边界取消→Cancelled＋非 error 诊断＋无快照；同请求重试→Published（可重入）" },
+        { "name": "CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CPX-4 bad_alloc 分支：reader 抛 std::bad_alloc→Failed＋ResourceBudget（§5.5 转译）" },
+        { "name": "CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2", "status": "passed", "modes": ["integration"], "trace": "acceptance 2 正向面：cancel=nullptr 时编译完整发布——编译器无内部超时机制（实现文件无时钟读取/无期限检查，D-11 静态事实）" },
+        { "name": "CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity", "status": "passed", "modes": ["integration"], "trace": "acceptance 2 密度面：无资源夹具轮询恰 8 次（S1/S2/S3/S5/S6/S7/S8/S10 前边界——§5.5 轮询密度契约钉住）" },
+        { "name": "CompilerTest.ResourceMissingFailsLocated_RT_RES_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 4/RT-RES-1 缺失支：ResourceMissing＋resourceId 定位" },
+        { "name": "CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 4/RT-RES-1 变化支（S4 时点）：申报摘要与实得不符→ResourceChanged" },
+        { "name": "CompilerTest.ResourceBudgetFails_RT_RES_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 4/RT-RES-1 预算支：provider 预算超限→ResourceBudget 同码透传（三码分立）" },
+        { "name": "CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 4/RT-RES-2：S4 后 S10 前 provider 换内容→发布前复查拦截 Failed＋ResourceChanged；复读恰发生（provider 恰 2 次调用）" },
+        { "name": "CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 4/RT-RES-2 免复查面：Solidified 资源不受替换影响→Published＋仅 1 次调用（§5.4 存储不可变保证）" },
+        { "name": "CompilerTest.RecordedResourceWarnsNotBlocked", "status": "passed", "modes": ["integration"], "trace": "§8.6：Recorded 资源正常发布＋RT-RESOURCE-RECORDED 警告级（不代阻断——evidence 门禁职责）" },
+        { "name": "CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CONT-2：类型层（注入接口零写方法）＋行为层（对象库字节哈希与闭包真值编译前后逐项一致）" },
+        { "name": "CompilerTest.UnknownRevisionFailsFast_UnknownObject", "status": "passed", "modes": ["integration"], "trace": "§3.4 违约轨：不存在修订→UnknownObject fail-fast 异常（不走诊断收集）" },
+        { "name": "CompilerTest.MissingProjectContextRejected", "status": "passed", "modes": ["integration"], "trace": "S0 前置：project 全零→Failed＋InputInvalid（可恢复——RT-T11 增量字段的校验面）" },
+        { "name": "CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal", "status": "passed", "modes": ["integration"], "trace": "§5.3 状态机单元级：rollback 幂等（重复回滚停留 RolledBack）＋发布后 rollback 被拒绝（Published 终态）" }
+      ]
+    },
+    {
+      "suite": "既有回归（220 用例）",
+      "designRef": "units/runtime.md §12 RT-T01～T10 交付面",
+      "cases": [
+        { "name": "既有 220 用例（BuildRedLine/Errors/Sources/Expected/Description/Validator/CanonicalModel/Codec/NameMap/BaseWorldTransform/WorkCellCompiler/DynamicWorkCellCompiler/Snapshot/CacheKey）", "status": "passed", "modes": ["smoke", "integration"], "trace": "零回归（SnapshotAssembler 提升与 notices 转译为行为保持重构——冒烟 172/172、集成 244/244）" }
+      ]
+    }
+  ],
+  "summary": { "total": 244, "passed": 244, "failed": 0, "modes": { "smoke": "172/172（既有面零回归；CompilerTest 仅集成模式——被测面链接真实框架库）", "integration": "244/244" } },
+  "failureCapabilitySelfCheck": {
+    "method": "精确编辑探针（禁用 S10 前 recheckConsumedResources 调用→重编译→跑资源用例→还原→重编译终验；不用 sed——规避转义残码假绿教训）",
+    "result": "禁用后恰好 CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2 变红（其余 6 个资源用例仍绿——复查是 RT-RES-2 的唯一执行点）；还原后 244/244 复绿",
+    "date": "2026-09-12"
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/RT-T11.json）",
+    "irdGates": "命中集与 wp06-t10 基线逐项相同＝既有登记 IRD-GATE-SUB/T1 两项（testdata_lint→testkit 依赖，DTB §4.5 登记例外）、零新增"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp06-t11/smoke-configure.log",
+      "traceability/builds/wp06-t11/smoke-build.log",
+      "traceability/builds/wp06-t11/smoke-test-run.log",
+      "traceability/builds/wp06-t11/sdurws_ird_runtime_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp06-t11/integration-build.log",
+      "traceability/builds/wp06-t11/integration-test-run.log",
+      "traceability/builds/wp06-t11/sdurws_ird_runtime_test-integration.xml"
+    ],
+    "probe": [
+      "traceability/builds/wp06-t11/probe-build.log",
+      "traceability/builds/wp06-t11/probe-rtres2-red.log"
+    ],
+    "governance": [
+      "traceability/builds/wp06-t11/validate-task-run.log",
+      "traceability/builds/wp06-t11/ird-gates-run.log"
+    ]
+  }
+}
