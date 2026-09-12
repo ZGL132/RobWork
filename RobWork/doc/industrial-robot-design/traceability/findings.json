@@ -581,6 +581,26 @@
       "title": "evidence.md 'AI 执行就绪补充'节存在 F-005（core.md）/F-006（testkit.md）同族转义损毁：$(evidence.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/alidate-task.ps1'缺首字母（\\v 被吞）——既有损毁非 EV-T02 引入（送验 diff 仅追加 §15.4 v0.3 一行，反证在档）",
       "owner": "evidence 详设所有者（文本本体）；与 F-005/F-006 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
       "resolution": "并入 F-005/F-006 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md 三份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁，并排查其余单元卡是否还有第四例"
+    },
+    {
+      "id": "F-059",
+      "source": "EV-T03 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T03-20260912.md §4.9，送验对象 f3b8acf20b52ed5b5494e2ba5f8f1accd8b44fe4，分支 wp05-t03）：验收者逐份核对三个送验提交标题",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048 同型再现：EV-T03 三份送验提交中两份标题以名词短语开头（f3b8acf2『[WP-05-T03] 验证留痕：双模式构建/测试证据、gtest XML、ird-test-report 与探针失败能力自证』＝F-034/F-040 已判同形态；4d3a2ae8『[WP-05-T03] 文档同步：units/evidence.md v0.4 快照落位登记＋F-057 消账（卡头版本链补全）』＝F-037/F-039/F-044 已判同前缀形态）——家族第 18/19 例（实现提交 6f39d355『实现 evidence 分析快照…』动词开头合规），证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；两提交正文四段齐备、验证结论与留痕一致（验收者全新 worktree 亲手复现：双模式 43/43、契约 verify 目标从零构建 exit 0、双探针即红还原复绿、ird_gates 3 处命中均为既有零新增、validate-task/validate-docs PASS、树性质与配置标注按 F-036/F-055 纪律执行），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[WP-05-T03] 登记双模式验证留痕…』『[WP-05-T03] 同步 units/evidence.md v0.4 落位登记…』）；对已推送历史（f3b8acf2/4d3a2ae8 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-058，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-060",
+      "source": "EV-T03 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T03-20260912.md §4.8，送验对象 f3b8acf20b52ed5b5494e2ba5f8f1accd8b44fe4，分支 wp05-t03）：验收者亲手复跑 ird_gates 逐条解码命中清单并与 findings.json 权威登记比对",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "ird-test-report.json（builds/wp05-t03/）irdGates 字段把第 3 处门禁命中（IRD-GATE-SUB：sdurws_ird_runtime_test→sdurws_ird_testkit）归入『F-019 既有基线缺陷』名下——按 findings.json 权威登记该命中实为 F-051（ird_gates 引擎与白名单矛盾：白名单 T-1 段声明允许测试目标→testkit，引擎 SUB 形态一未豁免；该边由 RT-T12 落位），F-019 仅覆盖 testdata_lint 的 T-1/SUB 两处；实质主张（3 处均为既有命中、与 EV-T02 送验时逐字相同、本任务零新增目标/链接边、evidence 面零命中）经验收者全新 worktree 亲手复跑证实成立，退出码 1 系既有命中所致——纯发现编号引用失准（F-025 提交信息/报告准确性面同辖域），方向为多归并非漏报、无粉饰，不构成阻断",
+      "owner": "实施纪律（F-025 同辖域统一处置；报告随已推送提交不追溯改写）",
+      "resolution": "后续 ird-test-report.json／提交信息引用门禁命中归属时以 findings.json 权威编号逐条标注（多编号并列写实，如『F-019×2＋F-051×1』），不得合并归并到单一编号名下；可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-059，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
