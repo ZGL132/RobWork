@@ -1,0 +1,3 @@
+PROBE residue check on Compatibility.cpp (pattern 'PROBE'):
+0
+grep exit code above: 0 matches = residue-free (grep exit 1 = no match, expected)
