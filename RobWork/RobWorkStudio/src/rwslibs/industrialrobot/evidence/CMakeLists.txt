@@ -30,11 +30,15 @@ find_package(GTest CONFIG REQUIRED)
 # IRDPRF1＋证据项 presence/清单绑定/完备性核对＋Verified 前置固化校验＋
 # validateProof 证明字段级校验＋覆盖矩阵/区域采样证据校验——§6.1～§6.3/
 # §6.6/§9.5；契约头 Evidence.hpp）。
+# src/Verdict.cpp＝EV-T06 汇总判定（五级优先级决策表 aggregateVerdict＋
+# VerdictTrace 追溯＋§7.2 两类声明资格检查＋§6.5 比较基准一致性检查——
+# §6.4/§6.5/§6.6/§7.2；契约头 Verdict.hpp）。
 add_library(sdurws_ird_evidence STATIC
     src/Evidence.cpp
     src/Errors.cpp
     src/Snapshot.cpp
-    src/Slice.cpp)
+    src/Slice.cpp
+    src/Verdict.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -66,7 +70,8 @@ add_executable(sdurws_ird_evidence_test
     test/DependencyTest.cpp          # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
     test/SnapshotTest.cpp            # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
     test/SliceTest.cpp               # EV-T04：EV-ID-1/2＋EV-SLICE 冻结拒绝＋浮点位模式/NaN 拒绝＋EV-CR02 排除面＋EV-CR05 保留条目
-    test/EvidenceTest.cpp)           # EV-T05：EV-PROOF validateProof 逐字段反例＋EV-VER-6/7＋EV-ITEM/清单＋EV-PROFILE D-14＋EV-COV-2/3＋EV-MODE CON-03
+    test/EvidenceTest.cpp           # EV-T05：EV-PROOF validateProof 逐字段反例＋EV-VER-6/7＋EV-ITEM/清单＋EV-PROFILE D-14＋EV-COV-2/3＋EV-MODE CON-03
+    test/VerdictTest.cpp)           # EV-T06：EV-VER-1~8 五级决策表正反例＋EV-COV-1/4＋资格检查 §7.2＋P-EV-3/P-EV-7 保守处置＋缺失全量列出
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
