@@ -1,0 +1,22 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(396): error: The difference between rwJointT.P()[r] and jointAnchor.p[r] is 0.26204746394487749, which exceeds kFkTolerance, where
+rwJointT.P()[r] evaluates to -0.1543478718717369,
+jointAnchor.p[r] evaluates to 0.10769959207314057, and
+kFkTolerance evaluates to 1.0000000000000001e-09.
+构型[0] 关节2 原点分量 0 超差
+
+[  FAILED  ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1 (1 ms)
+[----------] 1 test from WorkCellCompilerTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+
+ 1 FAILED TEST

@@ -88,6 +88,21 @@ target_include_directories(sdurws_ird_runtime PUBLIC
 #   等外联符号（构造一律逐元素构造函数）；集成模式无此约束。
 set(IRL_BASELINE_LIBS "")
 if(TARGET sdurw_kinematics)
+    # ---- RT-T07 增列（S6 WorkCell 编译器＋适配层实现；tasks/foundation/
+    # RT-T07.json）——仅集成模式：WorkCell/SerialDevice/Joint/StateStructure
+    # 为基线非模板类（构造与查询符号实现于 sdurw_kinematics/sdurw_models 的
+    # .cpp），冒烟模式无框架库可链（§8.1 P-RT-3：rw kinematics/models 为已
+    # 登记 L1 依赖——正是本文件的设计依据面）。冒烟模式下 S6 编译器与
+    # Adapter.hpp 公共头不进任何编译单元（无 TU include——公共头 include 面
+    # 的 rw models/kinematics 头不影响"目标注册＋include 路径"的冒烟口径）。
+    # 分阶段落位已按 DTB §5.4 登记 units/runtime.md §15.4（RT-T07 条目）。
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/WorkCellCompiler.cpp)   # §5.2 S6（CanonicalModel→WorkCell 确定性
+                                    # 编译：Frame 树/SerialDevice/Joint/限位/
+                                    # BaseMount 唯一写入＋S9 自检）＋§8.3
+                                    # WorkCellConstView 实现＋§8.4 异常转译；
+                                    # 公共头 Adapter.hpp（视图/转译契约面）
+
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
         sdurw_models
@@ -154,6 +169,16 @@ set_target_properties(sdurws_ird_runtime_test PROPERTIES
     CXX_EXTENSIONS OFF)
 if(MSVC)
     target_compile_options(sdurws_ird_runtime_test PRIVATE /utf-8)
+endif()
+
+# ---- RT-T07 测试增列（仅集成模式——被测面链接真实框架库）----
+# RT-AD-1（§8.4 真实基线异常转译）/RT-AD-2（§8.2 显式设值逐字段对照）/
+# RT-EQ-1（附录 D 第 4 项 canonical↔WC FK 等价）/RT-BW-4（S9 BaseMount 唯一
+# 写入＋二次叠加反例）＋WorkCellConstView 查询面；RobWork 本体不做替身
+# （RT-STUB-0）。冒烟模式跳过（无框架库可链——与产品侧增列同因）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_runtime_test PRIVATE
+        test/WorkCellCompilerTest.cpp)
 endif()
 
 target_link_libraries(sdurws_ird_runtime_test PRIVATE

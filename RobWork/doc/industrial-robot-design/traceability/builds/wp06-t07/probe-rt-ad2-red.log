@@ -1,0 +1,30 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(268): error: Expected equality of these values:
+  joint->getMaxAcceleration()[0]
+    Which is: 1
+  std::numeric_limits<double>::infinity()
+    Which is: inf
+IRB_T.joint_1 maxAcceleration 应显式 +inf（非基线默认 1/±DBL_MAX）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(268): error: Expected equality of these values:
+  joint->getMaxAcceleration()[0]
+    Which is: 1
+  std::numeric_limits<double>::infinity()
+    Which is: inf
+IRB_T.joint_2 maxAcceleration 应显式 +inf（非基线默认 1/±DBL_MAX）
+
+[  FAILED  ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 (1 ms)
+[----------] 1 test from WorkCellCompilerTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+
+ 1 FAILED TEST
