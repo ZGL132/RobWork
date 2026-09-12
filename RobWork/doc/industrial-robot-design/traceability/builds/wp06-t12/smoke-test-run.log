@@ -1,0 +1,499 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 176 tests from 47 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from RuntimeBuild
+[ RUN      ] RuntimeBuild.SourceTreeReachable_RT_BUILD
+[       OK ] RuntimeBuild.SourceTreeReachable_RT_BUILD (1 ms)
+[ RUN      ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01
+[       OK ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 (10 ms)
+[ RUN      ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2
+[       OK ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2 (10 ms)
+[ RUN      ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3
+[       OK ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3 (0 ms)
+[----------] 4 tests from RuntimeBuild (22 ms total)
+
+[----------] 1 test from RuntimeErrorsFullTable
+[ RUN      ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03
+[       OK ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03 (0 ms)
+[----------] 1 test from RuntimeErrorsFullTable (0 ms total)
+
+[----------] 1 test from RuntimeErrorsThrow
+[ RUN      ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR
+[       OK ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR (0 ms)
+[----------] 1 test from RuntimeErrorsThrow (0 ms total)
+
+[----------] 1 test from RuntimeErrorsPayload
+[ RUN      ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR
+[       OK ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR (0 ms)
+[----------] 1 test from RuntimeErrorsPayload (0 ms total)
+
+[----------] 1 test from SourcesContract
+[ RUN      ] SourcesContract.InterfacesAreAbstract_RT_SRC
+[       OK ] SourcesContract.InterfacesAreAbstract_RT_SRC (0 ms)
+[----------] 1 test from SourcesContract (0 ms total)
+
+[----------] 1 test from SourcesObjectBytes
+[ RUN      ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2
+[       OK ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2 (0 ms)
+[----------] 1 test from SourcesObjectBytes (0 ms total)
+
+[----------] 1 test from SourcesRevision
+[ RUN      ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1
+[       OK ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1 (0 ms)
+[----------] 1 test from SourcesRevision (0 ms total)
+
+[----------] 1 test from SourcesAttribution
+[ RUN      ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2
+[       OK ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2 (0 ms)
+[----------] 1 test from SourcesAttribution (0 ms total)
+
+[----------] 1 test from SourcesCancel
+[ RUN      ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01
+[       OK ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01 (0 ms)
+[----------] 1 test from SourcesCancel (0 ms total)
+
+[----------] 1 test from SourcesLifetime
+[ RUN      ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC
+[       OK ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC (0 ms)
+[----------] 1 test from SourcesLifetime (0 ms total)
+
+[----------] 7 tests from ExpectedSemantics
+[ RUN      ] ExpectedSemantics.OkStateCarriesValue_ACC3
+[       OK ] ExpectedSemantics.OkStateCarriesValue_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.ErrStateCarriesError_ACC3
+[       OK ] ExpectedSemantics.ErrStateCarriesError_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03
+[       OK ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03 (0 ms)
+[ RUN      ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3
+[       OK ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3
+[       OK ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.CopyAndMovePreserveState_ACC3
+[       OK ] ExpectedSemantics.CopyAndMovePreserveState_ACC3 (0 ms)
+[ RUN      ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3
+[       OK ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3 (0 ms)
+[----------] 7 tests from ExpectedSemantics (0 ms total)
+
+[----------] 1 test from ExpectedQueryPath
+[ RUN      ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3
+[       OK ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3 (0 ms)
+[----------] 1 test from ExpectedQueryPath (0 ms total)
+
+[----------] 6 tests from DescriptionType
+[ RUN      ] DescriptionType.DefaultsMatchContract
+[       OK ] DescriptionType.DefaultsMatchContract (0 ms)
+[ RUN      ] DescriptionType.ValueSemanticsDeepCopyAndMove
+[       OK ] DescriptionType.ValueSemanticsDeepCopyAndMove (0 ms)
+[ RUN      ] DescriptionType.SourcedValueCarriesMissingNotZero
+[       OK ] DescriptionType.SourcedValueCarriesMissingNotZero (0 ms)
+[ RUN      ] DescriptionType.CouplingMatrixRowMajorAccess
+[       OK ] DescriptionType.CouplingMatrixRowMajorAccess (0 ms)
+[ RUN      ] DescriptionType.ReaderAbstractAndPureFunction
+[       OK ] DescriptionType.ReaderAbstractAndPureFunction (0 ms)
+[ RUN      ] DescriptionType.EnumSurfaceAnchored
+[       OK ] DescriptionType.EnumSurfaceAnchored (0 ms)
+[----------] 6 tests from DescriptionType (0 ms total)
+
+[----------] 3 tests from DescriptionValidator
+[ RUN      ] DescriptionValidator.CleanFixturePassesWithNoIssues
+[       OK ] DescriptionValidator.CleanFixturePassesWithNoIssues (0 ms)
+[ RUN      ] DescriptionValidator.MissingCapabilitiesDoNotBlock
+[       OK ] DescriptionValidator.MissingCapabilitiesDoNotBlock (0 ms)
+[ RUN      ] DescriptionValidator.DeterministicReport
+[       OK ] DescriptionValidator.DeterministicReport (0 ms)
+[----------] 3 tests from DescriptionValidator (0 ms total)
+
+[----------] 11 tests from CouplingValidation
+[ RUN      ] CouplingValidation.WellConditionedCPasses_RT_CPL_1
+[       OK ] CouplingValidation.WellConditionedCPasses_RT_CPL_1 (0 ms)
+[ RUN      ] CouplingValidation.SingularCBlocked_RT_CPL_1
+[       OK ] CouplingValidation.SingularCBlocked_RT_CPL_1 (0 ms)
+[ RUN      ] CouplingValidation.NearSingularDetApproxZeroBlocked_RT_CPL_1
+[       OK ] CouplingValidation.NearSingularDetApproxZeroBlocked_RT_CPL_1 (0 ms)
+[ RUN      ] CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1
+[       OK ] CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1 (0 ms)
+[ RUN      ] CouplingValidation.NonSquareCBlocked
+[       OK ] CouplingValidation.NonSquareCBlocked (0 ms)
+[ RUN      ] CouplingValidation.DimensionCountMismatchBlocked
+[       OK ] CouplingValidation.DimensionCountMismatchBlocked (0 ms)
+[ RUN      ] CouplingValidation.RangeOutOfBoundsStructureInvalid
+[       OK ] CouplingValidation.RangeOutOfBoundsStructureInvalid (0 ms)
+[ RUN      ] CouplingValidation.ZeroCountStructureInvalid
+[       OK ] CouplingValidation.ZeroCountStructureInvalid (0 ms)
+[ RUN      ] CouplingValidation.DataSizeMismatchBlocked
+[       OK ] CouplingValidation.DataSizeMismatchBlocked (0 ms)
+[ RUN      ] CouplingValidation.NonFiniteEntryBlocked
+[       OK ] CouplingValidation.NonFiniteEntryBlocked (0 ms)
+[ RUN      ] CouplingValidation.DeclaredConditionNumberNotTrusted
+[       OK ] CouplingValidation.DeclaredConditionNumberNotTrusted (0 ms)
+[----------] 11 tests from CouplingValidation (0 ms total)
+
+[----------] 5 tests from ProvidedIllegal
+[ RUN      ] ProvidedIllegal.NegativeMassLocated_RT_CPX_3
+[       OK ] ProvidedIllegal.NegativeMassLocated_RT_CPX_3 (0 ms)
+[ RUN      ] ProvidedIllegal.ZeroMassAndToolMassBlocked
+[       OK ] ProvidedIllegal.ZeroMassAndToolMassBlocked (0 ms)
+[ RUN      ] ProvidedIllegal.NegativeVelocityAndAccelerationBlocked
+[       OK ] ProvidedIllegal.NegativeVelocityAndAccelerationBlocked (0 ms)
+[ RUN      ] ProvidedIllegal.NonPositiveRatioAndFrictionBlocked
+[       OK ] ProvidedIllegal.NonPositiveRatioAndFrictionBlocked (0 ms)
+[ RUN      ] ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked
+[       OK ] ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked (0 ms)
+[----------] 5 tests from ProvidedIllegal (0 ms total)
+
+[----------] 5 tests from IllegalTransform
+[ RUN      ] IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6
+[       OK ] IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6 (0 ms)
+[ RUN      ] IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6
+[       OK ] IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6 (0 ms)
+[ RUN      ] IllegalTransform.NaNTranslationBlocked_RT_BW_6
+[       OK ] IllegalTransform.NaNTranslationBlocked_RT_BW_6 (0 ms)
+[ RUN      ] IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6
+[       OK ] IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6 (0 ms)
+[ RUN      ] IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6
+[       OK ] IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6 (0 ms)
+[----------] 5 tests from IllegalTransform (0 ms total)
+
+[----------] 17 tests from StructureHard
+[ RUN      ] StructureHard.EmptyJointsRejected
+[       OK ] StructureHard.EmptyJointsRejected (0 ms)
+[ RUN      ] StructureHard.LinkCountMismatchRejected
+[       OK ] StructureHard.LinkCountMismatchRejected (0 ms)
+[ RUN      ] StructureHard.FrictionLengthMismatchRejected
+[       OK ] StructureHard.FrictionLengthMismatchRejected (0 ms)
+[ RUN      ] StructureHard.RatioLengthMismatchRejected
+[       OK ] StructureHard.RatioLengthMismatchRejected (0 ms)
+[ RUN      ] StructureHard.ZeroContractVersionRejected
+[       OK ] StructureHard.ZeroContractVersionRejected (0 ms)
+[ RUN      ] StructureHard.IllegalRobotLocalNameRejected
+[       OK ] StructureHard.IllegalRobotLocalNameRejected (0 ms)
+[ RUN      ] StructureHard.EmptyJointLocalNameRejected
+[       OK ] StructureHard.EmptyJointLocalNameRejected (0 ms)
+[ RUN      ] StructureHard.ZeroAxisAndNonFiniteAxisRejected
+[       OK ] StructureHard.ZeroAxisAndNonFiniteAxisRejected (0 ms)
+[ RUN      ] StructureHard.MissingLowerBoundRejected
+[       OK ] StructureHard.MissingLowerBoundRejected (0 ms)
+[ RUN      ] StructureHard.MissingUpperBoundRejected
+[       OK ] StructureHard.MissingUpperBoundRejected (0 ms)
+[ RUN      ] StructureHard.LowerAboveUpperRejected
+[       OK ] StructureHard.LowerAboveUpperRejected (0 ms)
+[ RUN      ] StructureHard.ContinuousWithBoundsRejected
+[       OK ] StructureHard.ContinuousWithBoundsRejected (0 ms)
+[ RUN      ] StructureHard.WorkingRangeOnRevoluteRejected
+[       OK ] StructureHard.WorkingRangeOnRevoluteRejected (0 ms)
+[ RUN      ] StructureHard.InvalidWorkingRangeRejected
+[       OK ] StructureHard.InvalidWorkingRangeRejected (0 ms)
+[ RUN      ] StructureHard.CustomWithoutEaaRejected
+[       OK ] StructureHard.CustomWithoutEaaRejected (0 ms)
+[ RUN      ] StructureHard.NonFiniteBasePositionRejected
+[       OK ] StructureHard.NonFiniteBasePositionRejected (0 ms)
+[ RUN      ] StructureHard.EmptyLinkToolSceneNamesRejected
+[       OK ] StructureHard.EmptyLinkToolSceneNamesRejected (0 ms)
+[----------] 17 tests from StructureHard (0 ms total)
+
+[----------] 5 tests from UnitValidation
+[ RUN      ] UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03
+[       OK ] UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03 (0 ms)
+[ RUN      ] UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03
+[       OK ] UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03 (0 ms)
+[ RUN      ] UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3
+[       OK ] UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3 (0 ms)
+[ RUN      ] UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3
+[       OK ] UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3 (0 ms)
+[ RUN      ] UnitValidation.FixedJointProvidedBoundsStillValidated
+[       OK ] UnitValidation.FixedJointProvidedBoundsStillValidated (0 ms)
+[----------] 5 tests from UnitValidation (0 ms total)
+
+[----------] 15 tests from CanonicalModelBuilderTest
+[ RUN      ] CanonicalModelBuilderTest.BuildsMinimalFixtureAndDerivesCapability
+[       OK ] CanonicalModelBuilderTest.BuildsMinimalFixtureAndDerivesCapability (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RichFixtureHasAllCapabilityBits
+[       OK ] CanonicalModelBuilderTest.RichFixtureHasAllCapabilityBits (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsEmptyAndDuplicateObjectRefs
+[       OK ] CanonicalModelBuilderTest.RejectsEmptyAndDuplicateObjectRefs (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsInvalidHeaderFields
+[       OK ] CanonicalModelBuilderTest.RejectsInvalidHeaderFields (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsIllegalTWorldBase
+[       OK ] CanonicalModelBuilderTest.RejectsIllegalTWorldBase (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsIllegalGravity
+[       OK ] CanonicalModelBuilderTest.RejectsIllegalGravity (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsCustomPresetWithIdentityRotation
+[       OK ] CanonicalModelBuilderTest.RejectsCustomPresetWithIdentityRotation (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsBadChainAndNormalizesAxis
+[       OK ] CanonicalModelBuilderTest.RejectsBadChainAndNormalizesAxis (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsIllegalBounds
+[       OK ] CanonicalModelBuilderTest.RejectsIllegalBounds (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsIllegalProvidedValues
+[       OK ] CanonicalModelBuilderTest.RejectsIllegalProvidedValues (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsDuplicateAndForeignObjectIds
+[       OK ] CanonicalModelBuilderTest.RejectsDuplicateAndForeignObjectIds (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsIllegalLocalNames
+[       OK ] CanonicalModelBuilderTest.RejectsIllegalLocalNames (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsResourceReferenceViolations
+[       OK ] CanonicalModelBuilderTest.RejectsResourceReferenceViolations (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsDefaultTcpViolations
+[       OK ] CanonicalModelBuilderTest.RejectsDefaultTcpViolations (0 ms)
+[ RUN      ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics
+[       OK ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics (0 ms)
+[----------] 15 tests from CanonicalModelBuilderTest (1 ms total)
+
+[----------] 1 test from CanonicalModelCapabilityTest
+[ RUN      ] CanonicalModelCapabilityTest.BitsFollowContentDerivation
+[       OK ] CanonicalModelCapabilityTest.BitsFollowContentDerivation (0 ms)
+[----------] 1 test from CanonicalModelCapabilityTest (0 ms total)
+
+[----------] 1 test from CanonicalModelIndexTest
+[ RUN      ] CanonicalModelIndexTest.ObjectAndResourceIndicesResolve
+[       OK ] CanonicalModelIndexTest.ObjectAndResourceIndicesResolve (0 ms)
+[----------] 1 test from CanonicalModelIndexTest (0 ms total)
+
+[----------] 1 test from CanonicalModelEqualityTest
+[ RUN      ] CanonicalModelEqualityTest.BitPatternEqualityNotTolerance
+[       OK ] CanonicalModelEqualityTest.BitPatternEqualityNotTolerance (0 ms)
+[----------] 1 test from CanonicalModelEqualityTest (0 ms total)
+
+[----------] 3 tests from CanonicalModelTransientTest
+[ RUN      ] CanonicalModelTransientTest.NoPersistenceMemberSurface
+[       OK ] CanonicalModelTransientTest.NoPersistenceMemberSurface (0 ms)
+[ RUN      ] CanonicalModelTransientTest.CodecApiIsInMemoryOnly
+[       OK ] CanonicalModelTransientTest.CodecApiIsInMemoryOnly (0 ms)
+[ RUN      ] CanonicalModelTransientTest.SourceScanNoPersistenceIncludes
+[       OK ] CanonicalModelTransientTest.SourceScanNoPersistenceIncludes (1 ms)
+[----------] 3 tests from CanonicalModelTransientTest (1 ms total)
+
+[----------] 3 tests from CodecRoundtripTest
+[ RUN      ] CodecRoundtripTest.MinimalModelRoundtripsExactly
+[       OK ] CodecRoundtripTest.MinimalModelRoundtripsExactly (0 ms)
+[ RUN      ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields
+[       OK ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields (0 ms)
+[ RUN      ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent
+[       OK ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent (0 ms)
+[----------] 3 tests from CodecRoundtripTest (0 ms total)
+
+[----------] 2 tests from CodecNegativeTest
+[ RUN      ] CodecNegativeTest.RejectsMalformedEncodings
+[       OK ] CodecNegativeTest.RejectsMalformedEncodings (0 ms)
+[ RUN      ] CodecNegativeTest.DetectsContentIdentityMismatch
+[       OK ] CodecNegativeTest.DetectsContentIdentityMismatch (0 ms)
+[----------] 2 tests from CodecNegativeTest (0 ms total)
+
+[----------] 1 test from RT_ID_1_RepeatBuildStability
+[ RUN      ] RT_ID_1_RepeatBuildStability.SameFixtureYieldsByteIdenticalEncodingAndIdentity
+[       OK ] RT_ID_1_RepeatBuildStability.SameFixtureYieldsByteIdenticalEncodingAndIdentity (0 ms)
+[----------] 1 test from RT_ID_1_RepeatBuildStability (0 ms total)
+
+[----------] 1 test from RT_ID_2_NoFloatToleranceEquivalence
+[ RUN      ] RT_ID_2_NoFloatToleranceEquivalence.TinyDeltaChangesIdentityWhileToleranceSaysEqual
+[       OK ] RT_ID_2_NoFloatToleranceEquivalence.TinyDeltaChangesIdentityWhileToleranceSaysEqual (0 ms)
+[----------] 1 test from RT_ID_2_NoFloatToleranceEquivalence (0 ms total)
+
+[----------] 4 tests from RT_ID_3_DisplayFieldExclusion
+[ RUN      ] RT_ID_3_DisplayFieldExclusion.RevisionSeqDoesNotAffectIdentity
+[       OK ] RT_ID_3_DisplayFieldExclusion.RevisionSeqDoesNotAffectIdentity (0 ms)
+[ RUN      ] RT_ID_3_DisplayFieldExclusion.InstallPresetMarkerDoesNotAffectIdentity
+[       OK ] RT_ID_3_DisplayFieldExclusion.InstallPresetMarkerDoesNotAffectIdentity (0 ms)
+[ RUN      ] RT_ID_3_DisplayFieldExclusion.DiagnosticsDoNotAffectIdentity
+[       OK ] RT_ID_3_DisplayFieldExclusion.DiagnosticsDoNotAffectIdentity (0 ms)
+[ RUN      ] RT_ID_3_DisplayFieldExclusion.IdentityDomainEncodingIsStrictSubset
+[       OK ] RT_ID_3_DisplayFieldExclusion.IdentityDomainEncodingIsStrictSubset (0 ms)
+[----------] 4 tests from RT_ID_3_DisplayFieldExclusion (0 ms total)
+
+[----------] 5 tests from NameMapBuildTest
+[ RUN      ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1
+[       OK ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4
+[       OK ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4 (0 ms)
+[ RUN      ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1
+[       OK ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1
+[       OK ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1 (0 ms)
+[ RUN      ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1
+[       OK ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1 (0 ms)
+[----------] 5 tests from NameMapBuildTest (0 ms total)
+
+[----------] 6 tests from NameMapRoundtripTest
+[ RUN      ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1
+[       OK ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1
+[       OK ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.BijectionCounts_RT_NM_1
+[       OK ] NameMapRoundtripTest.BijectionCounts_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1
+[       OK ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1
+[       OK ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1 (0 ms)
+[ RUN      ] NameMapRoundtripTest.EmptyMapEncodeRejected
+[       OK ] NameMapRoundtripTest.EmptyMapEncodeRejected (0 ms)
+[----------] 6 tests from NameMapRoundtripTest (0 ms total)
+
+[----------] 1 test from NameMapResolveErrorTest
+[ RUN      ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3
+[       OK ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3 (0 ms)
+[----------] 1 test from NameMapResolveErrorTest (0 ms total)
+
+[----------] 5 tests from NameMapDisambiguationTest
+[ RUN      ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2
+[       OK ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2
+[       OK ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2
+[       OK ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2
+[       OK ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2 (0 ms)
+[ RUN      ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2
+[       OK ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2 (0 ms)
+[----------] 5 tests from NameMapDisambiguationTest (0 ms total)
+
+[----------] 1 test from NameMapCrossProjectTest
+[ RUN      ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4
+[       OK ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4 (0 ms)
+[----------] 1 test from NameMapCrossProjectTest (0 ms total)
+
+[----------] 1 test from NameMapRenameTest
+[ RUN      ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5
+[       OK ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5 (0 ms)
+[----------] 1 test from NameMapRenameTest (0 ms total)
+
+[----------] 2 tests from NameMapCrossCheckTest
+[ RUN      ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6
+[       OK ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6 (0 ms)
+[ RUN      ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6
+[       OK ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6 (0 ms)
+[----------] 2 tests from NameMapCrossCheckTest (0 ms total)
+
+[----------] 3 tests from NameMapIdentityTest
+[ RUN      ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7
+[       OK ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7 (0 ms)
+[ RUN      ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4
+[       OK ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4 (0 ms)
+[ RUN      ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06
+[       OK ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06 (0 ms)
+[----------] 3 tests from NameMapIdentityTest (0 ms total)
+
+[----------] 1 test from NameMapR4SourceScan
+[ RUN      ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4
+[       OK ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4 (8 ms)
+[----------] 1 test from NameMapR4SourceScan (8 ms total)
+
+[----------] 7 tests from PresetRotationTest
+[ RUN      ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2
+[       OK ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2 (0 ms)
+[ RUN      ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4
+[       OK ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4
+[       OK ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4
+[       OK ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4
+[       OK ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4 (0 ms)
+[ RUN      ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2
+[       OK ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2 (0 ms)
+[ RUN      ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws
+[       OK ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws (0 ms)
+[----------] 7 tests from PresetRotationTest (0 ms total)
+
+[----------] 5 tests from CustomEaaTest
+[ RUN      ] CustomEaaTest.ZeroEaaYieldsIdentity
+[       OK ] CustomEaaTest.ZeroEaaYieldsIdentity (0 ms)
+[ RUN      ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic
+[       OK ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic (0 ms)
+[ RUN      ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4
+[       OK ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4 (0 ms)
+[ RUN      ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid
+[       OK ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid (0 ms)
+[ RUN      ] CustomEaaTest.DeterministicBitwiseRepeat
+[       OK ] CustomEaaTest.DeterministicBitwiseRepeat (0 ms)
+[----------] 5 tests from CustomEaaTest (0 ms total)
+
+[----------] 7 tests from ResolveTest
+[ RUN      ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3
+[       OK ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3 (0 ms)
+[ RUN      ] ResolveTest.GroundCarriesBasePosition
+[       OK ] ResolveTest.GroundCarriesBasePosition (0 ms)
+[ RUN      ] ResolveTest.InvertedResolvesFrozenMatrix
+[       OK ] ResolveTest.InvertedResolvesFrozenMatrix (0 ms)
+[ RUN      ] ResolveTest.WallResolvesFrozenMatrix
+[       OK ] ResolveTest.WallResolvesFrozenMatrix (0 ms)
+[ RUN      ] ResolveTest.CustomWithoutEaaRejected
+[       OK ] ResolveTest.CustomWithoutEaaRejected (0 ms)
+[ RUN      ] ResolveTest.CustomResolvesViaRodrigues
+[       OK ] ResolveTest.CustomResolvesViaRodrigues (0 ms)
+[ RUN      ] ResolveTest.NonFinitePositionRejected
+[       OK ] ResolveTest.NonFinitePositionRejected (0 ms)
+[----------] 7 tests from ResolveTest (0 ms total)
+
+[----------] 5 tests from ValidateTest
+[ RUN      ] ValidateTest.WellFormedTransformPasses
+[       OK ] ValidateTest.WellFormedTransformPasses (0 ms)
+[ RUN      ] ValidateTest.ReflectionMatrixRejected_RT_BW_6
+[       OK ] ValidateTest.ReflectionMatrixRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6
+[       OK ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6
+[       OK ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6 (0 ms)
+[ RUN      ] ValidateTest.NearOrthogonalWithinTolerancePasses
+[       OK ] ValidateTest.NearOrthogonalWithinTolerancePasses (0 ms)
+[----------] 5 tests from ValidateTest (0 ms total)
+
+[----------] 6 tests from PresetConsistencyTest
+[ RUN      ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses
+[       OK ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses (0 ms)
+[ RUN      ] PresetConsistencyTest.InvertedWithIdentityRejected
+[       OK ] PresetConsistencyTest.InvertedWithIdentityRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected
+[       OK ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.CustomWithIdentityRejected
+[       OK ] PresetConsistencyTest.CustomWithIdentityRejected (0 ms)
+[ RUN      ] PresetConsistencyTest.CustomWithRotatedMatrixPasses
+[       OK ] PresetConsistencyTest.CustomWithRotatedMatrixPasses (0 ms)
+[ RUN      ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation
+[       OK ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation (0 ms)
+[----------] 6 tests from PresetConsistencyTest (0 ms total)
+
+[----------] 6 tests from InverseAndPointTest
+[ RUN      ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1
+[       OK ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1 (0 ms)
+[ RUN      ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2
+[       OK ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2 (0 ms)
+[ RUN      ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix
+[       OK ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix (0 ms)
+[ RUN      ] InverseAndPointTest.InverseRejectsNonOrthogonalInput
+[       OK ] InverseAndPointTest.InverseRejectsNonOrthogonalInput (0 ms)
+[----------] 6 tests from InverseAndPointTest (0 ms total)
+
+[----------] 2 tests from ComposeTest
+[ RUN      ] ComposeTest.AssociativityTwoGroupings_RT_BW_1
+[       OK ] ComposeTest.AssociativityTwoGroupings_RT_BW_1 (0 ms)
+[ RUN      ] ComposeTest.ComposedTranslationMatchesManualFormula
+[       OK ] ComposeTest.ComposedTranslationMatchesManualFormula (0 ms)
+[----------] 2 tests from ComposeTest (0 ms total)
+
+[----------] 4 tests from BaseMountConsistencyTest
+[ RUN      ] BaseMountConsistencyTest.ExactMatchConsistent
+[       OK ] BaseMountConsistencyTest.ExactMatchConsistent (0 ms)
+[ RUN      ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4
+[       OK ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4 (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied
+[       OK ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WithinToleranceDeviationPasses
+[       OK ] BaseMountConsistencyTest.WithinToleranceDeviationPasses (0 ms)
+[----------] 4 tests from BaseMountConsistencyTest (0 ms total)
+
+[----------] 4 tests from GoldenDataLint
+[ RUN      ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+[       OK ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+[       OK ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3 (0 ms)
+[----------] 4 tests from GoldenDataLint (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 176 tests from 47 test suites ran. (39 ms total)
+[  PASSED  ] 176 tests.

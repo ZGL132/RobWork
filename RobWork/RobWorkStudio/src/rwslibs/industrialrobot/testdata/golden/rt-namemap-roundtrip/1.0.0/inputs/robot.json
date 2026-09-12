@@ -1,0 +1,37 @@
+{
+  "comment": "rt-namemap-roundtrip 输入面（units/runtime.md §11 RT-NM-1/§7.4 AT-18 双向往返；contract-fixture）。链定义：平面 2R——名称生成规则消费 robotLocalName 与各对象 localName；objectSeeds 供测试侧派生确定性 ObjectId（SHA-256 前缀，CanonicalModelFixture 同款派生纪律）。",
+  "robotLocalName": "RT_NM_BOT",
+  "descriptionContractVersion": 1,
+  "objectSeeds": {
+    "robot": "rtnm-robot",
+    "j1": "rtnm-j1",
+    "j2": "rtnm-j2",
+    "l0": "rtnm-l0",
+    "l1": "rtnm-l1",
+    "l2": "rtnm-l2"
+  },
+  "joints": [
+    {
+      "localName": "joint_1",
+      "axis": [0.0, 0.0, 1.0],
+      "originTranslation": [0.0, 0.0, 0.2],
+      "zeroOffset": 0.0,
+      "lower": -2.0,
+      "upper": 2.0,
+      "maxVelocity": 2.0,
+      "maxAcceleration": 8.0
+    },
+    {
+      "localName": "joint_2",
+      "axis": [0.0, 0.0, 1.0],
+      "originTranslation": [0.3, 0.0, 0.0],
+      "zeroOffset": 0.0,
+      "lower": -2.0,
+      "upper": 2.0,
+      "maxVelocity": 2.0,
+      "maxAcceleration": 8.0
+    }
+  ],
+  "links": ["base_link", "link_1", "link_2"],
+  "base": { "preset": "ground", "basePosition": [0.0, 0.0, 0.0] }
+}

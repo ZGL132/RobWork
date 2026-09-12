@@ -1,0 +1,27 @@
+# 本目录（industrialrobot/testdata/**）内的全部文件均为"字节级校验数据资产"：
+# 黄金数据集（golden/**）与容差档案（tolerance/**）由 manifest.json 以
+# sizeBytes + SHA-256 逐字节申报完整性（units/testkit.md §4.5），装载器
+# （GoldenDataset::load）在测试/CI 中按申报值逐字节校验；申报基准形态
+# 统一为 LF（manifest 生成时资产即为 LF）。
+#
+# 为什么必须钉死行尾（阻断 B-1 / findings F-052，RT-T12 验收 attempt 1）：
+#   仓库本地 core.autocrlf=true 且上层 .gitattributes 仅覆盖 *.ppm/*.pgm/
+#   *.stl/*.stlb，未覆盖 json/mjs——任何 fresh checkout（git worktree add、
+#   fresh clone、Windows CI 默认配置）都会把文本资产 LF→CRLF，检出字节数
+#   膨胀"每行一个 CR"，manifest 申报值随即失配，数据集装载抛 dataset-invalid
+#   （实测：model.json 期望 1812 字节检出 1867＝+55 行）。
+#
+# 规则取 `* text eol=lf` 而非整目录 `-text` 的原因（双向钉死）：
+#   - eol=lf：检出方向强制 LF——fresh checkout 恒为 manifest 申报形态；
+#   - text：入库方向 CRLF→LF 归一化——即使本目录文件在某个工作树里被
+#     行尾腐坏（autocrlf 混用环境实测会发生：requirements-ids.json 与
+#     tolerance/kin-fk 曾以 CRLF 形态滞留工作树），git add 也只会把
+#     归一化后的 LF 内容写入 blob，与已入库内容逐字节一致，不会把
+#     行尾差异当作改动提交（-text 方案对此不设防）。
+#
+# 覆盖面说明：目录通配 `*` 只匹配本目录一层，但 git 属性按目录继承，
+# 对 golden/**、tolerance/** 全部子目录同样生效（requirements-ids.json
+# 平铺在本目录，亦在覆盖内）。当前资产全部为文本（*.json/*.mjs）；未来
+# 若需新增二进制资产，须在其子目录以 `*.ext -text` 显式豁免并在 manifest
+# 同步申报——本文件的 text 规则会先被更深层 .gitattributes 覆盖。
+* text eol=lf

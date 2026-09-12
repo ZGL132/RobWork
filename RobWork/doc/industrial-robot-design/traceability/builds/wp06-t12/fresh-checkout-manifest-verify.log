@@ -1,0 +1,14 @@
+# RT-T12 attempt 2 返工自证：fresh detached worktree 检出形态的 manifest 字节级核验
+# 检出对象：wp06-t12 尖端 a1744141（testdata 资产在修复提交 e59d3972 后零变化）；检出命令 git worktree add --detach C:/Users/zgl18/AppData/Local/Temp/ird-t12-wt-fixed wp06-t12
+# 核验语义：对两黄金数据集 manifest.json 的 integrity 数组逐条核对检出文件的 sizeBytes 与 SHA-256（testkit.md §4.5 装载校验的同一判据）
+
+dataset: rt-fk-equation @ C:/Users/zgl18/AppData/Local/Temp/ird-t12-wt-fixed/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0
+  inputs/model.json declared=1812/b00f00833754 checkedout=1812/b00f00833754 => OK
+  expected/fk.json declared=3161/a8e7066339c3 checkedout=3161/a8e7066339c3 => OK
+  generate/make_fk_equation.mjs declared=3309/7cd0b216c7e4 checkedout=3309/7cd0b216c7e4 => OK
+dataset: rt-namemap-roundtrip @ C:/Users/zgl18/AppData/Local/Temp/ird-t12-wt-fixed/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0
+  inputs/robot.json declared=1170/4c850d8034c5 checkedout=1170/4c850d8034c5 => OK
+  expected/namemap.json declared=1719/b27b935c30a0 checkedout=1719/b27b935c30a0 => OK
+  generate/make_namemap.mjs declared=4112/9211cf6cc940 checkedout=4112/9211cf6cc940 => OK
+
+# 对照（未修复基线 ff4b943c 同法检出）：model.json 检出 1867 字节、robot.json 检出 1207 字节（CRLF 膨胀，B-1 复现）；见 fresh-checkout-baseline-red-run.log

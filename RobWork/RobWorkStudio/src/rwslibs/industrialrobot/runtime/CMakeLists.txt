@@ -252,10 +252,37 @@ if(TARGET sdurw_kinematics)
                                         # 对象库哈希前后一致）；被测面（产品编译器
                                         # compile()/buildCanonicalModel()）链接真实
                                         # 框架库——与产品侧增列同因仅集成模式
+    target_sources(sdurws_ird_runtime_test PRIVATE
+        test/ContractSuiteTest.cpp)    # RT-T12：契约套件（§11 矩阵的组合面
+                                        # 缺口——RT-ID-1 跨进程/RT-ID-2·3 缓存
+                                        # 判定集成/RT-BW-1·3·4·5 快照视图与四
+                                        # 消费方/RT-CAP-1·2/RT-RES-3）＋黄金
+                                        # 数据集消费（rt-fk-equation 三方 FK
+                                        # 对照·rt-namemap-roundtrip 双向往返·
+                                        # 档案 rt）；消费 §11 规范替身
+                                        # （RuntimeTestDoubles.hpp）与 testkit
+                                        # 断言宏/TempDir/档案——被测面为产品
+                                        # 编译器/工厂×真实 rw/rwsim，与产品侧
+                                        # 增列同因仅集成模式
 endif()
+
+# ---- RT-T12 测试增列（两模式：数据集 lint；tasks/foundation/RT-T12.json）----
+# GoldenDataLintTest 只消费 testkit（core＋标准库）与 testdata 资产，零
+# 框架符号——两模式均编译（数据资产校验要求两模式口径一致）。runtime 测试
+# 目标链接 sdurws_ird_testkit＝units/testkit.md §10.2 交接表 runtime 行的
+# 消费面（断言/档案/数据集装载；测试侧依赖——R-1 业务域互链红线不适用，
+# runtime 产品目标 sdurws_ird_runtime 的链接面不变，仍仅 core＋L1 基线库，
+# 见文件末尾依赖红线守卫）。用统一真名 sdurws_ird_testkit：两模式都可解析
+# （别名仅集成模式存在——testkit/CMakeLists.txt 同款取舍）。
+target_sources(sdurws_ird_runtime_test PRIVATE
+    test/GoldenDataLintTest.cpp)   # RT-T12：数据集 lint（rt-fk-equation/
+                                   # rt-namemap-roundtrip 装载全链＋档案 rt
+                                   # 条目解析＋coveredRequirements 字典校验）。档案 id＝rt-runtime（"rt" 为单元卡 §11 行的助记名——testkit §4.3.1 profileId 句法 [a-z0-9-]{3,64} 要求 ≥3 字符，故以 rt-runtime 承接，DTB §5.4 登记于单元卡 v0.13）
+                                   # ——§12 RT-T12"lint 通过并随 CI 跑通"
 
 target_link_libraries(sdurws_ird_runtime_test PRIVATE
     sdurws_ird_runtime
+    sdurws_ird_testkit
     GTest::gtest_main)
 
 # 校验器私有实现头（src/DescriptionValidator.hpp）对单元内测试可见——

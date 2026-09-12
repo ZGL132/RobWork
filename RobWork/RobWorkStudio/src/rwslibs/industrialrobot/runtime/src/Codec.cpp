@@ -350,13 +350,18 @@ void writeVec3(Writer& w, const rw::math::Vector3D<double>& v)
     for (int i = 0; i < 3; ++i) { w.f64(v(i)); }
 }
 
-/// ResourceRef（§8.6——路径 hint 只是提示、仍全字段编码供往返）。
-void writeResourceRef(Writer& w, const ResourceRef& r)
+/// ResourceRef（§8.6——路径 hint 只是提示：全字段域编码供往返；身份域
+/// 跳过 pathHint——§8.6 规则总表"路径不作身份：路径变化而内容不变→身份
+/// 不变"（RT-RES-3 钉住；RT-T12 修正：原实现身份域误含 pathHint，与其
+/// 自身规则矛盾，见 units/runtime.md §15.4 v0.13 登记））。
+void writeResourceRef(Writer& w, const ResourceRef& r, bool identityDomain)
 {
     w.raw16(r.resourceId.bytes);
     w.raw32(r.contentDigest);
-    w.presence(r.sourcePathHint.has_value());
-    if (r.sourcePathHint) { w.str(*r.sourcePathHint); }
+    if (!identityDomain) {
+        w.presence(r.sourcePathHint.has_value());
+        if (r.sourcePathHint) { w.str(*r.sourcePathHint); }
+    }
     w.u8(static_cast<std::uint8_t>(r.state));
     w.u32(r.accessVersion);
 }
@@ -772,9 +777,9 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(l.objectId.bytes);
         w.str(l.localName);
         w.presence(l.visual.has_value());
-        if (l.visual) { writeResourceRef(w, *l.visual); }
+        if (l.visual) { writeResourceRef(w, *l.visual, identityDomain); }
         w.presence(l.collision.has_value());
-        if (l.collision) { writeResourceRef(w, *l.collision); }
+        if (l.collision) { writeResourceRef(w, *l.collision, identityDomain); }
         writeSourcedDouble(w, l.mass);
         writeSourcedVec3(w, l.centerOfMass);
         writeSourcedInertia(w, l.inertia);
@@ -787,7 +792,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(t.objectId.bytes);
         w.str(t.localName);
         w.presence(t.geometry.has_value());
-        if (t.geometry) { writeResourceRef(w, *t.geometry); }
+        if (t.geometry) { writeResourceRef(w, *t.geometry, identityDomain); }
         writeSourcedDouble(w, t.mass);
         writeSourcedVec3(w, t.centerOfMass);
         writeSourcedInertia(w, t.inertia);
@@ -801,7 +806,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(s.objectId.bytes);
         w.str(s.localName);
         writeTransform(w, s.worldPose);
-        writeResourceRef(w, s.geometry);
+        writeResourceRef(w, s.geometry, identityDomain);
     }
 
     // ---- 传动块（§4.3.4）----
@@ -826,7 +831,7 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
     // ---- 资源清单（§4.3.5）----
     const auto& manifest = model.resourceManifest();
     w.u32(static_cast<std::uint32_t>(manifest.size()));
-    for (const ResourceRef& r : manifest) { writeResourceRef(w, r); }
+    for (const ResourceRef& r : manifest) { writeResourceRef(w, r, identityDomain); }
 
     // ---- 身份域排除块（CR-02 清单 3/4/5——仅全字段域）----
     if (!identityDomain) {
