@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T10",
+  "masterWp": "WP-05-T10",
+  "branch": "wp05-t10",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T10 新增 src/Evaluator.cpp（EvaluatorRegistry 注册边界/注册期校验/manifest 摘要 IRDRGM1＋EvidenceProfileRegistry 注册与内容身份计算——§9.4/§9.5/§10.2；契约头 Evaluator.hpp 新增）＋Errors.hpp/.cpp 表尾追加三码（EvaluatorDescriptorInvalid/ProfileDuplicate/ProfileInvalid——10→13 值，P-PR-6/F-056 同模式补登建议码）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过；ird_gates 命中清单与 wp05-t09 基线逐项一致（3 项既有——F-051×1＋F-019×2，零新增）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 191/191）",
+      "notes": "EV-T10 增列 test/EvaluatorTest.cpp（EvidenceRegistrationBoundary 5＋EvidenceRegistrationManifest 3＋EvidenceRegistryViewAdapters 2＋EvidenceProfileRegistryBehavior 4＋EvidenceDescriptorFieldFace 1＋EvidenceEvaluationContract 2＋EvidenceRegistryNoScheduler 1，共 18 新增）：EV-REG-1 注册边界（同键重复注册拒绝不覆盖不静默〔含版本冲突行〕/未知键 find+create nullptr/缺 Profile 拒绝并指明字段/descriptor 完整性逐字段指明〔key 词形、契约版本 0、模式集空与重复、threadSafety 位型、contentIdentity 申报〕/声明闭包拒绝走 DeclarationInvalid 码面〔EV-T02 预登记契约兑现〕＋快照事实键∪半边）＋EV-REG-2 并发与 manifest 稳定（key 字典序排序稳定性/重复调用摘要稳定/两套装配同清单同摘要〔CON-06/AT-19 主 worker 比对面〕/清单变化摘要必变/8 线程×200 迭代并发 find+create+manifest+视图查询）＋§9.5 Profile 注册表行为（contentIdentity 注册时计算且域申报值被覆盖/重复 (profileId,version) 拒绝且原注册指针稳定/同域多版本共存/语法拒绝逐 itemId 指明/条件闭包交叉校验三半场〔未声明拒绝、声明后通过、事实键注入通过〕）＋P-EX-7 字段面钉死（结构化绑定恰七成员＋成员类型 static_assert——执行能力字段上收即编译失败）＋§9.3 调用约定接线（工厂独立实例/evaluate 请求透传＋取消查询/进度上报/物化对象读取两分支）＋D-12 调度分离源码扫描（Scheduler/TaskQueue/RunRegistry/std::queue/priority_queue 及执行能力字段词面零命中）；既有 173 用例回归保持通过（零修改）"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "EV-T10 零修改回归（CR-01 词表契约面与本任务无交集——Evaluator.hpp 不定义任何评估词表枚举，mode 复用 core::Evaluation 词表；ThreadSafety 为 §9.2 原文新增档位词表、非 core 评估词表成员）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceRegistrationBoundary（EV-T10 新增·注册边界面）——acceptance 1（EV-REG-1 注册边界）＋acceptance 3（descriptor 依赖声明与注册期校验）",
+      "designRef": "units/evidence.md §9.4（注册表行为冻结表——重复注册/未知键/注册期验证行）、§9.2（descriptor 字段表）、§4.2.3①（声明闭包）、§11 EV-REG-1 行、§14 CON-06 行；需求 CON-04、CON-06、OPT-03、OPT-05、SEL-05",
+      "cases": [
+        { "name": "EvidenceRegistrationBoundary.DuplicateKeyRegistrationRejected_EV_REG_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-REG-1 主例（§11 行输入/预期/观测点逐项）——同 evaluationKey 再次注册：EvidenceError(EvaluatorDuplicate)〔token evidence/duplicate-evaluator 逐字〕、不覆盖（原工厂仍被服务、契约版本 3 不变）、不静默（manifest 摘要不变）；detail 指明重复键与已注册契约版本（§9.4 版本冲突行：同键不同 contractVersion 同拒——换版本＝装配清单变更）" },
+        { "name": "EvidenceRegistrationBoundary.UnknownKeyFindReturnsNullptr_EV_REG_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-REG-1——未知键 find 返回 nullptr（查询非抛）、create 同轨 nullptr（实现口径 R-1）、词形非法键不命中；已注册键正常命中＋isRegistered true——『调用方给评估器不可用诊断』的装配面在调用方（观测面）" },
+        { "name": "EvidenceRegistrationBoundary.MissingProfileRejectedAndFieldNamed_EV_REG_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-REG-1——descriptor 缺 Profile（引用 (kin, 9.9.9) 未注册）：注册拒绝 EvidenceError(EvaluatorDescriptorInvalid)、detail 指明 [profile] 字段并携带不可解析版本（§9.2『注册时必须已可解析』）；被拒绝注册零登记残留" },
+        { "name": "EvidenceRegistrationBoundary.DescriptorIntegrityRejectionsNameFields_EV_REG_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/§9.4 注册期验证行五面：key 词形（Kin.Bad——大写＋含点）/契约版本 0/模式集空/模式集重复（子集语义）/threadSafety 词表外位型（static_cast 0x7F——isKnownThreadSafety 防御面）/contentIdentity 申报（§9.5 域不可申报——实现口径 R-3）逐项拒绝且 detail 逐字段指明（[key]/[contractVersion]/[supportedModes]/[threadSafety]/[profile.contentIdentity]——『任一失败即拒绝并指明字段』）；合法 descriptor 静默通过正例" },
+        { "name": "EvidenceRegistrationBoundary.DeclarationClosureRejectionAndFactKeys_EV_REG_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/§4.2.3①——Conditional 声明引用闭包外键 policy.resolved：EvidenceError(DeclarationInvalid)〔EV-T02 预登记『注册拒绝归 EvaluatorRegistry 消费』码面兑现——不入 EvaluatorDescriptorInvalid〕、detail 指出闭包外引用键与闭包违例语义；注入快照事实键后闭包成立（referencedKeys ⊆ 声明键 ∪ 快照事实键第二半边——D-10 防线）" }
+      ]
+    },
+    {
+      "suite": "EvidenceRegistrationManifest（EV-T10 新增·manifest 稳定与并发行）——acceptance 1（EV-REG-2 并发调用/manifest 稳定）",
+      "designRef": "units/evidence.md §9.4（主/worker 一致性行＋线程安全行）、§11 EV-REG-2 行、§10.2 时序；需求 CON-06、AT-19、NFR-COR-02",
+      "cases": [
+        { "name": "EvidenceRegistrationManifest.ManifestSortedByKeyAndDigestStable_EV_REG_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-REG-2 主例——乱序注册三键：manifest 按 key 字典序升序（dyn→kin→opt）、重复调用清单与摘要全等（NFR-COR-02）、条目 {key, contractVersion, profileIdentity} 与注册值一致且 profileIdentity＝Profile 注册表权威计算值（§9.5 非申报值）" },
+        { "name": "EvidenceRegistrationManifest.ManifestDigestConsistentAcrossRegistries_EV_REG_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/CON-06/AT-19——两套独立装配（主进程/worker 进程模型）以同一清单注册：manifest 逐字段与摘要全等（execution 派发/握手比对面）；同键不同契约版本（模拟算法升级）→摘要必变（CON-04 契约版本参与清单身份）" },
+        { "name": "EvidenceRegistrationManifest.ConcurrentReadersAndCreators_EV_REG_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-REG-2 并发行——8 线程×200 迭代并发 find/create/manifest/isRegistered/contractVersionMatches：全部结果与装配后参考一致、零异常零不一致；create 增量计数＝1600（非空转）；证据口径＝§11『TSAN 或等价评审证据』的等价面：Windows/MSVC 无常态化 TSAN，并发压力执行证据＋实现评审（注册表仅持一把 std::shared_mutex——注册排他/查询共享/工厂调用锁外，无锁外共享可变态）" }
+      ]
+    },
+    {
+      "suite": "EvidenceRegistryViewAdapters（EV-T10 新增·视图适配衔接面）——EV-T05 I-6/EV-T06 I-1 预登记『EV-T10 注册表直接适配』的兑现",
+      "designRef": "units/evidence.md §6.3③（producer 注册查询）、§6.4（Profile 查询）、Evidence.hpp IProducerRegistryView/Verdict.hpp IProfileRegistryView 契约头",
+      "cases": [
+        { "name": "EvidenceRegistryViewAdapters.ProducerRegistryViewQueries", "status": "passed", "modes": ["smoke", "integration"], "trace": "validateProof 产生者查询面（§6.3③）——经 IProducerRegistryView 多态引用：isRegistered 已注册 true/未知键 false；contractVersionMatches 相符 true/不符 false（CON-04 producer 版本比对面）" },
+        { "name": "EvidenceRegistryViewAdapters.ProfileRegistryViewQueries", "status": "passed", "modes": ["smoke", "integration"], "trace": "aggregateVerdict Profile 查询面（§6.4②）——经 IProfileRegistryView 多态引用：(profileId, version) 精确命中、同域未注册版本 nullptr、未注册域 nullptr" }
+      ]
+    },
+    {
+      "suite": "EvidenceProfileRegistryBehavior（EV-T10 新增·Profile 注册表面）——acceptance 3（EvidenceProfileRegistry §9.5 行为用例）",
+      "designRef": "units/evidence.md §9.5（重复拒绝/contentIdentity 注册时计算/注册期校验/交叉校验经注册顺序解耦）、§6.1（Profile 注册行）、§13（接入顺序约束）；需求 EVI-01 表 4",
+      "cases": [
+        { "name": "EvidenceProfileRegistryBehavior.RegistersProfileAndComputesContentIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 主例——注册成功且 contentIdentity 由 evidence 计算（域不可申报）：调用方伪造申报值（非零）被注册权威值覆盖、stored 身份＝computeProfileContentIdentity 同内容计算值；注册内容逐字段保持" },
+        { "name": "EvidenceProfileRegistryBehavior.DuplicateRejectedAndVersionsCoexist", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3/§9.5——重复 (profileId, version) 注册拒绝（内容不同也不行——键是二元组）：EvidenceError(ProfileDuplicate)、detail 指明重复键；不覆盖（findProfile 返回指针稳定——map 节点稳定一并观测）；同域新版本共存（升版本号是演进路径）" },
+        { "name": "EvidenceProfileRegistryBehavior.InvalidProfileRejectedWithItemIdNamed", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3/§9.5 注册期校验——itemId 词形违约（detail 逐条含 itemId——指明字段）/域登记 Common 类（§6.1 单一权威禁令）/description 空串三项均 EvidenceError(ProfileInvalid)；被拒绝注册零登记残留" },
+        { "name": "EvidenceProfileRegistryBehavior.ProfileConditionCrossValidationAtEvaluatorRegistration", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3/§9.5 交叉校验经注册顺序解耦——带条件 Profile 注册成功（上半场：Profile 注册只查语法）；评估器注册三半场：未声明条件键→拒绝（detail 指明 referencedKey 与涉事 item）、声明该键→通过、未声明但快照事实键注入→通过（⊆ 声明键 ∪ 快照事实键）" }
+      ]
+    },
+    {
+      "suite": "EvidenceDescriptorFieldFace＋EvidenceEvaluationContract＋EvidenceRegistryNoScheduler（EV-T10 新增·字段面/调用约定/调度分离）——acceptance 2（不建调度器 D-12）＋acceptance 3（descriptor 能力声明 §9.2）",
+      "designRef": "units/evidence.md §9.1（端口定位与调度分离）、§9.2（字段表）、§9.3（调用约定）、§9.4（实例/生命周期行）、D-12、P-EX-7（governance-log——执行期能力声明承载位置）；需求 EVI-01、OPT-03",
+      "cases": [
+        { "name": "EvidenceDescriptorFieldFace.DescriptorHasExactlyDesignFields_P_EX_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3/P-EX-7——结构化绑定钉死 EvaluatorDescriptor 恰七字段（成员增删即编译失败）＋成员类型 static_assert（cv/引用归一化）＋值面与 isKnownThreadSafety 词表正反例；『能力声明仅指工程评估能力（supportedModes/stateless/threadSafety）——执行能力字段不上收』的机械防线" },
+        { "name": "EvidenceEvaluationContract.FactoryCreatesIndependentInstances", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.4 实例/生命周期行——create() 每次产出独立实例（所有权归调用方）、descriptor() 稳定引用契约（两实例描述符值相等）" },
+        { "name": "EvidenceEvaluationContract.EvaluateReceivesRequestAndUsesContext", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.3/§10.2——evaluate 请求透传（task 五元组/mode/slice 评估键与契约版本/caseSubset 计数）＋上下文通道两分支（未取消→cancellationRequested false/取消→true——协作取消查询面；进度上报 50/100 可观测；tryObjectBytes 身份命中返回字节——宿主注入面的接口级行为证据）；替身边界：仅验证 evidence 契约接线，不构成业务算法正确性证明（EV-REG-3 前置声明）" },
+        { "name": "EvidenceRegistryNoScheduler.NoSchedulerFacilitiesInEvaluatorSources", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2/D-12——Evaluator.hpp/.cpp 源码扫描：调度器/队列/运行登记设施词面（Scheduler/TaskQueue/RunRegistry/std::queue/priority_queue）与执行期能力字段词面（supportsPause/checkpointGranularity/forceTerminateCost——P-EX-7）零命中；注册表内没有调度设施、IEvaluationContext 只是调用约定接口（evidence 零实现）——与 execution 的分界由源码面机检钉住" }
+      ]
+    }
+  ],
+  "summary": { "total": 196, "passed": 196, "failed": 0, "modes": { "smoke": "evidence 191/191＋contract 5/5（冒烟全量 534/534：core 61＋evidence 191＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）", "integration": "evidence 191/191＋contract 5/5" }, "unitRegression": { "smoke": "evidence 191/191＋evidence_contract 5/5（全新独立树全量构建 exit 0；其余三单元＋core ctest 全绿零回归）", "integration": "evidence 191/191＋contract 5/5（既有 173＋5 用例零修改回归通过）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "EV-REG-1『重复注册拒绝』防线探针：向 src/Evaluator.cpp registerEvaluator 的重复键检查注入短路『if (false && existing != m_evaluators.end()) {  // PROBE …』（精确编辑＋PROBE 标记注释＋显式构建/运行退出码核验，无 sed）后重编译执行；验证后逐字精确恢复＋touch 强制重编译（F-068 mtime 陷阱规避）并以 grep 计数核验 PROBE 零残留（probe-residue-check.txt 计数 0）",
+    "result": "DuplicateKeyRegistrationRejected_EV_REG_1 如期变红（probe-red-run exit 1——重复键检查被短路后『同键重复注册必须被拒绝』断言检出）——acceptance 1 的 EV-REG-1『注册边界拒绝不覆盖不静默』真实失败能力成立；恢复后集成 191/191 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建，集成 XML 为恢复后重写）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t10/smoke-configure.log",
+      "traceability/builds/wp05-t10/smoke-build-full.log",
+      "traceability/builds/wp05-t10/smoke-ctest-release.log",
+      "traceability/builds/wp05-t10/smoke-test-run.log",
+      "traceability/builds/wp05-t10/smoke-contract-run.log",
+      "traceability/builds/wp05-t10/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_evidence_contract_test-smoke.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_core_test-smoke.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_policy_test-smoke.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_runtime_test-smoke.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t10/integration-cache-check.txt",
+      "traceability/builds/wp05-t10/integration-build-evidence.log",
+      "traceability/builds/wp05-t10/integration-test-run.log",
+      "traceability/builds/wp05-t10/integration-contract-run.log",
+      "traceability/builds/wp05-t10/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t10/sdurws_ird_evidence_contract_test-integration.xml",
+      "traceability/builds/wp05-t10/ird-gates.log",
+      "traceability/builds/wp05-t10/validate-task.log",
+      "traceability/builds/wp05-t10/probe-red-build.log",
+      "traceability/builds/wp05-t10/probe-red-run.log",
+      "traceability/builds/wp05-t10/probe-restore-build.log",
+      "traceability/builds/wp05-t10/probe-residue-check.txt"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 INTEG_BUILD_EXIT=0，integration-build-evidence.log；另以 --target sdurws_ird_evidence_contract_test 核验契约目标 exit 0 零 error；库本体随目标链增量重建 exit 0）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（表外依赖边 sdurws_ird_testdata_lint→sdurws_ird_testkit）＝F-019 既有；③IRD-GATE-T1（产品目标 sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。命中清单与 wp05-t09 基线逐项一致（日志尾段命中区块同型）；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t10/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake——smoke-configure.log exit 0），配置 Release，全量构建 exit 0（smoke-build-full.log）。实现口径 R-1～R-4 登记于 units/evidence.md v1.1 变更记录（R-1 create 未知键 nullptr 查询轨／R-2 注册检查序＝空 factory→重复键→注册期校验→登记／R-3 descriptor.profile 复用 EvidenceProfileRef 三元组结构但只消费声明面 {profileId, version}——contentIdentity 域不可申报、申报非零即拒绝、manifest 恒取注册表权威值／R-4 Profile 注册检查序＝重复键→语法校验→身份覆盖计算→入库）。P-EV-1 处置：core.md v0.1（Draft 未冻结）契约按卡内签名消费（EvaluationMode/TaskIdentity/ObjectId/ContentVersion/DiagnosticRecord/ContentIdentity），冻结时按 diff 增量同步——本任务未发现基线漂移（AttemptId 为尝试序号值类型〔u64〕，非 Id128——按 core 卡内定义消费）。EvaluationKey 承载口径（D-5 收敛）：语义别名＝std::string（§3.1 概念名落地），词形闸门维持 isValidEvaluationKey、捕获点固定在注册期与编码期——强包装类型会架空 §9.4『key 语法』注册期校验的明文拒绝面（ Slice.hpp/Evaluator.hpp 注释同步登记）。错误码表尾追加三值（10→13）：EvaluatorDescriptorInvalid/ProfileDuplicate/ProfileInvalid——P-PR-6/F-056 同模式补登建议码，码值权威归 diagnostics StableCodeRegistry。测试组名 EvidenceRegistrationBoundary/EvidenceRegistrationManifest/EvidenceRegistryViewAdapters/EvidenceProfileRegistryBehavior/EvidenceDescriptorFieldFace/EvidenceEvaluationContract/EvidenceRegistryNoScheduler 为实现侧组名（§11 矩阵 EV-T10 专项＝EV-REG-1/2 对照 §12 行；EV-REG-3 替身边界声明在测试文件头前置登记——完整 ScriptedEvaluator 契约替身与 EV-* 全量用例体归 EV-T11，§12 依赖序）。测试替身（RecordingFactory/RecordingEvaluator/RecordingContext）只验证 evidence 注册与调用约定契约，其产出不构成任何业务算法正确性证明（§11 任务约束§八/A-9）。ird_gates 日志与 validate-task 日志存在控制台中文乱码（F-065 已登记——本报告关键字段以英文/结构化 JSON 记载避免加重；命中清单经与 wp05-t09 基线比对确认逐项一致）。"
+}
