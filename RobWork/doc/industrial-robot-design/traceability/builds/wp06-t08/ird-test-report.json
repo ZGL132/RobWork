@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T08",
+  "masterWp": "WP-06-T08",
+  "branch": "wp06-t08",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（集成模式两分支验证；冒烟模式本文件不进构建——见 modeMechanics）",
+      "notes": "RT-T08 增列 src/DynamicWorkCellCompiler.cpp（仅集成模式——TARGET sdurw_kinematics 条件）：§5.2 S7（DWC 能力门控编译：门控/降级路径〔SkippedNoPhysics＋缺失清单＋RT-CAPABILITY-MISSING 警告〕/Body·RigidDevice·质量惯量装配/DWC 重力显式设值〔§8.2〕/摩擦 MaterialDataMap 承载〔§8.8 无补丁方案〕/§8.5 同源·Body 覆盖·设备一致关联校验）＋§8.5 销毁顺序持有结构（outcome 成员序〔dwc, wc〕——RT-T09 快照须保持同序）＋§8.2/8.3 DynamicWorkCellConstView 实现（公共头 Adapter.hpp 增实体）；小幅重构：scopedFullName 由 S6 匿名空间提升为 WorkCellCompiler.hpp 单元内共享声明（S6 行为零变化，16 例回归）；私有头 src/DynamicWorkCellCompiler.hpp（R-2 合规，不入公共 include）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（集成模式）；冒烟模式 172 用例（RT-T08 测试不进冒烟目标——被测面链接真实 sdurwsim 框架库，CMake 同款条件）",
+      "notes": "增列 test/DynamicWorkCellCompilerTest.cpp（仅集成模式编译，11 例：RT-CPX-1/2、RT-AD-3、§5.6 正交、§8.5 关联校验正向、R-2 摩擦承载读回、DWC 视图面）；RT-T01～T07 的 12 个用例文件保留并全部回归（172 例冒烟／188 例集成存量）"
+    }
+  ],
+  "modeMechanics": "集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误；冒烟模式使用独立树 build-smoke-wp06-t08（vcpkg toolchain 绝对路径），本任务产品增列（DynamicWorkCellCompiler.cpp）与测试增列（DynamicWorkCellCompilerTest.cpp）均仅集成模式编译——S7 必须构造真实 rwsim DynamicWorkCell/RigidBody/RigidDevice（基线非模板类，符号实现于 sdurwsim 的 .cpp；§8.1 P-RT-3 登记的 L1 依赖 rwsim dynamics 正是本任务设计依据面），冒烟无框架库可链；Adapter.hpp 公共头在冒烟下不被任何 TU include，不影响'目标注册＋include 路径'的冒烟口径；冒烟 172/172 证明既有面零回归。该模式分工与 DTB §5.1 冒烟口径一致，已按 DTB §5.4 登记 units/runtime.md §15.4（RT-T08 条目，v0.9）",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/RuntimeErrors/Sources/Expected/DescriptionType/DescriptionValidator/CanonicalModel*/CodecRoundtrip/NameMap*/BaseWorldTransform*/WorkCellCompiler*/WorkCellConstView*（RT-T01～T07 既有，回归）",
+      "designRef": "units/runtime.md §3.2～§3.4/§4.2～§4.5/§6/§7/§8.2～§8.4/§10.11/§11（既有切面）",
+      "cases": [
+        { "name": "188 cases（RT-T07 合入基线全量）", "status": "passed", "modes": ["integration"], "trace": "既有 188 用例零改动零跳过回归通过——含 scopedFullName 提升重构后 WorkCellCompilerTest 16 例全数回归（S6 行为零变化实证）" },
+        { "name": "172 cases（RT-T07 合入基线全量，冒烟）", "status": "passed", "modes": ["smoke"], "trace": "冒烟全量回归通过——新增头（DynamicWorkCellCompiler.hpp 私有头）不被冒烟 TU include，BuildRedLineTest 源码扫描零新增命中（include 面仅 core/std/rw/rwsim 头，rwsim 为 P-RT-3 已登记 L1；R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellCompilerTest.RT-CPX-2（物性缺失降级——DYN-06/MDL-06 断言分域）",
+      "designRef": "units/runtime.md §5.2 S7（能力门控）、§5.6（正交表）、§9.1（dynamicWorkCellState）、§9.6（能力声明）、§11 RT-CPX-2 行",
+      "cases": [
+        { "name": "DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2", "status": "passed", "modes": ["integration"], "trace": "minimal（全连杆物性 NotProvided）→不抛、status=SkippedNoPhysics、DWC 空、缺失清单＝3 连杆链序（§9.1）、警告恰一条 RT-CAPABILITY-MISSING（subject＝首个缺失连杆）；WC 帧数不变（降级零副作用）" },
+        { "name": "DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2", "status": "passed", "modes": ["integration"], "trace": "仅 link_1 缺失→缺失清单恰一条精确指向、subject 定位该连杆；能力位 false 与清单互核一致（§9.6 派生口径的 S7 侧复核）" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellCompilerTest.§5.6 正交（能力缺失≠输入非法≠编译失败——RT-CAP-2 同源语义）",
+      "designRef": "units/runtime.md §5.6 正交表、§11 RT-CAP-2 行（缺失不升级——无工程判定字段）",
+      "cases": [
+        { "name": "DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6", "status": "passed", "modes": ["integration"], "trace": "mass=−1（provided 而非法）→S5 构造拒绝 InputInvalid（非法输入到不了 S7），与 NotProvided 降级路径严格分域（§5.6 典型反例的正反两面在同类夹具上对照锁定）；降级路径不抛、无任何工程判定产出" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellCompilerTest.Compiled 主路径（构造正确性＋§8.2 显式设值＋§8.5 关联校验）",
+      "designRef": "units/runtime.md §5.2 S7、§8.2（DWC 重力/每 Body 质量惯量显式设值）、§8.5 行 1～3（同源/Body 覆盖/设备一致）、§11 RT-CPX 组",
+      "cases": [
+        { "name": "DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08", "status": "passed", "modes": ["integration"], "trace": "rich（3 连杆＋1 有物性工具）→Compiled、同源（DWC.getWorkCell()==S6 产物）、Body 数=4（§8.5 行 2）、逐体质量/质心/惯量与 canonical 逐字一致（§8.2）、重力读回 (0,0,−9.81)（基线默认 −9.82 被显式覆写——RT-AD-2'DWC 重力'子项消账）" },
+        { "name": "DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08", "status": "passed", "modes": ["integration"], "trace": "DWC 设备恰一个 RigidDevice 且运动学模型==WC 设备（同源）；连杆体承载帧回溯关节名集合==WC 设备关节名集合（测试内独立复算与编译器内置校验互证——§8.5 行 3 经名称映射交叉）；N 体↔N 关节逐关节覆盖" },
+        { "name": "DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2", "status": "passed", "modes": ["integration"], "trace": "摩擦全 Provided 关节→材质注册（id＝关节映射全名）＋(mat,mat) 对 Custom 数据（typeName=ird-joint-friction），fv/fc/bias 参数逐字读回（§8.8 无补丁方案的承载面——R-2 实测结论的端到端证据）" },
+        { "name": "DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08", "status": "passed", "modes": ["integration"], "trace": "全连杆物性齐备但工具无物性＋关节无摩擦→仍 Compiled（hasDynamicWorkCell 只看连杆——RT-T04 登记口径的 S7 落位验证）、Body 数=3（无工具体）、承载材质不注册（数据不伪造；断言经材质清单而非 hasFrictionData——基线 getDataID 对未知名 RW_THROW 实测）" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellCompilerTest.RT-CPX-1（DWC 构造异常→整体失败——原子性）",
+      "designRef": "units/runtime.md §5.2 S7 失败条件、§5.3（失败回滚/RAII）、§8.4（转译 stage=S7→DwcCompileFailed）、§11 RT-CPX-1 行",
+      "cases": [
+        { "name": "DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1", "status": "passed", "modes": ["integration"], "trace": "注入坏数据路径（S6 产物 WC 预置与首个体承载帧同名帧）→真实基线 StateStructure'Frame name is not unique'RW_THROW→RuntimeError(DwcCompileFailed) 且 detail 含 stage=S7 段号定位；WC 帧集合＝注入后基线（S7 承载帧未入树——零残留，瞬态对象 RAII 析构；MDL-06：失败不产出半成品，WC 由编译事务弃置）" },
+        { "name": "DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08", "status": "passed", "modes": ["integration"], "trace": "S6 产物 WC 为空（调用方契约违约）→RobWorkError fail-fast（§8.4 空句柄行——不产出半成品不静默）" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellCompilerTest.RT-AD-3（销毁顺序——§8.5）",
+      "designRef": "units/runtime.md §8.5 行 4（销毁顺序）、§11 RT-AD-3 行（ASAN 口径的证据形态适配登记于 §15.4 v0.9⑤）",
+      "cases": [
+        { "name": "DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3", "status": "passed", "modes": ["integration"], "trace": "§8.5 声明序持有结构〔dynamicWorkCell, workCell〕析构后：WC weak 控制块未过期（WC 因 rwsim DWC 自持 WC 引用存活——WC 实际释放不早于 DWC，§8.5'DWC 先于 WC 释放'）；持 DWC 期间经 DWC 读 Body/查 WC 帧（无 use-after-free）；最后持有者释放后全部控制块过期（无泄漏）。证据形态：MSVC 无 ASAN，以 shared_ptr 控制块计数做等价观测（weak 过期时序断言）——登记 §15.4 v0.9⑤" }
+      ]
+    },
+    {
+      "suite": "DynamicWorkCellConstViewTest（§8.2/§8.3 只读包装——RT-T08 交付面）",
+      "designRef": "units/runtime.md §8.3（WorkCellConstView 契约的 DWC 面推广）、§8.4（空句柄行）",
+      "cases": [
+        { "name": "DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08", "status": "passed", "modes": ["integration"], "trace": "findBody 命中（名＝映射 Body 条目）/未命中空 Ptr（不默认命中）/bodyCount 与基线全体清单一致/const 引用只读消费；空 Ptr 构造→RuntimeError(RobWorkError, runtime/robwork-null-handle)——与 WorkCellConstView 同款 fail-fast" }
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "item": "acceptance 1：RT-CPX-1/2、RT-AD-3 门控/原子性/销毁顺序用例通过",
+      "verdict": "pass",
+      "evidence": "RT-CPX-2＝AllLinksNoPhysicsSkipsDwc/PartialMissingPhysicsSkipsWithPreciseList（降级非失败＋清单精确定位）；RT-CPX-1＝DwcConstructionFailureIsAtomic（真实基线异常→DwcCompileFailed＋stage=S7＋WC 零残留）/NullWorkCellRejected（空句柄 fail-fast）；RT-AD-3＝DestructionOrderDwcBeforeWorkCell（§8.5 顺序＋无泄漏＋无 UAF——ASAN 不可用以控制块计数等价观测，§15.4 v0.9⑤ 登记）。集成 XML 199/199（新增 11），冒烟 172/172"
+    },
+    {
+      "item": "acceptance 2：能力缺失降级路径（§5.6 正交关系——RuntimeCapability 声明）用例通过",
+      "verdict": "pass",
+      "evidence": "§5.6 三轴正交在 S7 入口锁定：NotProvided→SkippedNoPhysics＋警告级 RT-CAPABILITY-MISSING（正常返回，无工程判定字段产出）＝AllLinksNoPhysicsSkipsDwc/PartialMissingPhysicsSkipsWithPreciseList；provided 而非法→S5 InputInvalid 拒绝＝ProvidedIllegalIsNotCapabilityMissing；能力位与门控一致性由编译器互核防御（不一致→DwcCompileFailed fail-fast）；工具物性/摩擦缺项不阻止构造（ToolAndFrictionMissingStillCompiles——RT-T04 登记口径落位验证）"
+    },
+    {
+      "item": "acceptance 3：DWC/摩擦 API 表达力前置实测（风险表 R-2——read 阶段仅确认类形；表达力缺项走 §8.8 补丁流程或能力降级）",
+      "verdict": "pass",
+      "evidence": "源码头实测三条结论（§15.4 v0.9② 登记）：(a) DWC 整体构造器齐全；(b) RigidBody 强制 MovableFrame 基帧（RigidBody.cpp RW_THROW 实测）→S7 挂接映射 Body 条目命名的承载 MovableFrame；(c) 摩擦仅 material-pair 载体无逐关节 API→按 §8.8 默认'无补丁方案'以 MaterialDataMap Custom 数据承载（材质 id＝关节映射全名，fv/fc/bias 冻结），零 rwsim 源码修改（SA-02）、不触发补丁流程、能力位仍按内容派生；承载读回端到端证据＝FrictionCarriedViaMaterialDataMap_R2。knownPitfalls P-RT-3：仅使用 §8.1 已登记 L1 库（rw kinematics/models/math＋rwsim dynamics），零表外依赖（ird_gates 命中集与 wp06-t07 基线逐项相同＝既有登记 IRD-GATE-SUB/T1 两项，零新增）"
+    }
+  ],
+  "probe": {
+    "method": "注入→变红→精确还原→复绿（PIPE §5 失败能力验证；精确 Edit＋构建退出码核验防旧二进制假绿）",
+    "probes": [
+      "探针：禁用能力门控（gate 恒 true）→恰好 RT-CPX-2 两例变红（AllLinksNoPhysicsSkipsDwc/PartialMissingPhysicsSkipsWithPreciseList——S5 能力位与重检互核将降级路径转为 DwcCompileFailed，证明门控与互核均为承力结构）→精确还原→复绿（probe-rt-cpx2-red.log，9/11 通过、失败面精确）"
+    ],
+    "finalState": "精确还原后 git 工作区无探针残留（gate 行恢复为权威读取）；集成 199/199、冒烟 172/172（XML 双份）"
+  },
+  "gates": {
+    "ird_gates": "命中 2 项＝IRD-GATE-SUB/T1（sdurws_ird_testdata_lint→testkit）——RT-T03 起基线同款既有登记项，命中集合与 wp06-t07 逐项相同（IRD-GATE-SUB/T1 各 3 次＝命中＋自检提及；R1/R3/R4/R5/T2 为自检'按预期检出'提及），零新增命中；runtime 单元自身零命中",
+    "validate-task": "PASS（validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RT-T08.json）"
+  }
+}

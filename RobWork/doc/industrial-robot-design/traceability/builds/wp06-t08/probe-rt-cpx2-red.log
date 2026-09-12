@@ -1,0 +1,44 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = DynamicWorkCellCompilerTest.*:DynamicWorkCellConstView.*
+[==========] Running 11 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 10 tests from DynamicWorkCellCompilerTest
+[ RUN      ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+unknown file: error: C++ exception with description "runtime/dwc-compile-failed: stage=S7; 能力位与连杆物性重检不一致——S5 派生内部违约" thrown in the test body.
+
+[  FAILED  ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2 (1 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+unknown file: error: C++ exception with description "runtime/dwc-compile-failed: stage=S7; 能力位与连杆物性重检不一致——S5 派生内部违约" thrown in the test body.
+
+[  FAILED  ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6
+[       OK ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2
+[       OK ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1
+[       OK ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08
+[       OK ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08 (0 ms)
+[ RUN      ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3
+[       OK ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3 (0 ms)
+[----------] 10 tests from DynamicWorkCellCompilerTest (2 ms total)
+
+[----------] 1 test from DynamicWorkCellConstView
+[ RUN      ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08
+[       OK ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08 (0 ms)
+[----------] 1 test from DynamicWorkCellConstView (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 11 tests from 2 test suites ran. (3 ms total)
+[  PASSED  ] 9 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+[  FAILED  ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+
+ 2 FAILED TESTS
