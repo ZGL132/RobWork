@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现编译缓存纯判定（CacheKey 分层键）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T04"
   ],
