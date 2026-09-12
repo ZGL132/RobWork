@@ -481,6 +481,36 @@
       "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-038/F-039/F-040/F-042/F-044/F-045/F-047 同型再现：RT-T11 文档提交 753f4460 标题『[units] runtime.md v0.12：RT-T11 实现落位登记（DTB §5.4）』前缀后以名词短语（'runtime.md v0.12'）开头，非动词开头——F-012 家族第 17 例（实现提交 12bee611『实现十段编译链产品集成…』与留痕提交 8bb71f8c『登记验证留痕…』均动词开头合规），证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；该提交正文四段齐备、验证结论与验收者全新树亲手复现逐项一致（任务目标面从零构建零错误、集成 244/244＝既有 220＋新增 24、冒烟 172/172、验收者独立双探针即红还原复绿 244/244、ird_gates 命中＝F-019 既有 2 项零新增、validate-task/validate-docs PASS），纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
       "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[units] 登记 runtime v0.12 实现落位…』）；对已推送历史（753f4460 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-047，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-049",
+      "source": "RT-T12 实施段（2026-09-12，分支 wp06-t12）：契约套件 RT-RES-3/数据集 lint/ird_gates 自查检出",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "RT-T04/RT-T09 落位的身份域编码把 ResourceRef.sourcePathHint 计入身份字节，违反 units/runtime.md §8.6 规则总表“路径不作身份：路径变化而内容不变→身份不变（不触发失效）”与 §11 RT-RES-3 矩阵行——Codec.cpp 的 writeResourceRef（身份域复用全字段编码）与 Snapshot.cpp 的 encodeIdentityDomain 第七段均编码 pathHint presence+string（Snapshot.cpp 同函数注释“sourcePathHint 不入身份”自相矛盾未被发现）；模型带带路径提示的资源时仅改路径即产生新 modelIdentity/snapshotIdentity 并使 WC/DWC 缓存键失效。RT-T12 契约套件 SourcePathHintIsNotIdentity_RT_RES_3 用例检出（模型级身份对比即红）",
+      "owner": "runtime 详设所有者（修正已随 RT-T12 提交：身份域只编码 resourceId+contentDigest+state+accessVersion，全字段域保留 pathHint 供往返——parse 只接受全字段编码，往返/worker 物化不受影响；CodecTest/SnapshotTest 既有身份断言全部为相对比较，无硬编码摘要，回归通过 261/261）",
+      "resolution": "已随 RT-T12 修复并登记 units/runtime.md §15.4 v0.13③；建议验收者以“身份域 pathHint 注入即红”探针复核（对含 pathHint 模型改路径必改身份即为修复前形态）"
+    },
+    {
+      "id": "F-050",
+      "source": "RT-T12 实施段（2026-09-12，分支 wp06-t12）：契约套件 RT-RES-3/数据集 lint/ird_gates 自查检出",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "units/runtime.md §11 设施行与 §12 RT-T12 行的容差档案助记名“rt”不满足 units/testkit.md §4.3.1 profileId 句法 [a-z0-9-]{3,64}（恰 2 字符，ToleranceProfile::load 报 profileId 句法非法）——两卡文字与档案 schema 的命名冲突",
+      "owner": "runtime 详设所有者＋testkit 详设所有者",
+      "resolution": "已随 RT-T12 以 id=rt-runtime 承接（testdata/tolerance/rt-runtime/v1.0.0.json，basis 声明附录 D 第 4/5/12 项——第 12 项身份精确等值无数值条目，经 IRD_EXPECT_IDENTICAL 承载），units/runtime.md §15.4 v0.13④ 按 DTB §5.4 登记；卡面 §11/§12 行的“rt”按助记名理解，不另行改卡"
+    },
+    {
+      "id": "F-051",
+      "source": "RT-T12 实施段（2026-09-12，分支 wp06-t12）：契约套件 RT-RES-3/数据集 lint/ird_gates 自查检出",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "ird_gates 引擎与白名单登记矛盾：ird_gates_whitelist.cmake T-1 段明文声明允许形态“sdurws_ird_<unit>_test / _contract_test → { 同单元产品目标, sdurws_ird_testkit, gtest 系 }”，但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定（测试目标直链他单元产品目标）对 →sdurws_ird_testkit 边未做豁免——RT-T12 依 units/testkit.md §10.2 交接表 runtime 行（runtime 从 testkit 接收集合/数值断言、契约夹具）与 units/runtime.md §11 设施行增链 sdurws_ird_runtime_test→sdurws_ird_testkit 后产生第 3 处命中（此前基线＝F-019 既有 2 项：testdata_lint 工具边）",
+      "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置；cmake/ 不在 RT-T12 allowedFiles，实施者不得私改）",
+      "resolution": "处置建议＝引擎 SUB 形态一对 _l_face==product 且 _lib==sdurws_ird_testkit 且 _t_face==test 的边按白名单 T-1 段豁免（与注释语义一致）；或在 DTB §4.5/白名单数据面显式登记 runtime_test→testkit 边及登记出处。登记前 gate-all 维持红（F-019 2 项＋本项 1 项），其余检查不受影响"
     }
   ]
 }
