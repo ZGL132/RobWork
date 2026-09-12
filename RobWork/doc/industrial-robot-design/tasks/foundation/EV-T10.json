@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现评估器接口与注册表（③端口所有者）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T02",
     "EV-T05"
