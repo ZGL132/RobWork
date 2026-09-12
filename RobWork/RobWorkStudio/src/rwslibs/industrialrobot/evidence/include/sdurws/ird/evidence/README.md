@@ -20,3 +20,14 @@ Compatibility/Evaluator）随 §12 的 EV-T03 起逐任务落地。
 
 任务编排、接口冻结前置与实现状态见
 doc/industrial-robot-design/traceability/phase-one-readiness.md。
+
+2026-09-12（WP-05-T10≙EV-T10 评估器接口与注册表）：本目录新增 `Evaluator.hpp`
+（§9——ThreadSafety 档位＋EvaluationKey＋EvaluatorDescriptor 七字段〔P-EX-7：
+不含执行期能力字段〕＋EvaluationRequest/Output＋IEvaluationContext/
+IEngineeringEvaluator/IEvaluatorFactory＋EvaluatorRegistry〔注册边界/注册期
+校验/manifest 摘要——D-12 不建调度设施〕＋EvidenceProfileRegistry〔§9.5〕＋
+RegistrationManifest）；EvaluatorRegistry 实现 IProducerRegistryView、
+EvidenceProfileRegistry 实现 IProfileRegistryView（EV-T05/EV-T06 预登记的
+视图适配兑现）。单元测试 EV-REG 系 18 用例随 `sdurws_ird_evidence_test`
+注册；验证留痕见 traceability/builds/wp05-t10/。剩余契约接口随 §12 的
+EV-T11（ScriptedEvaluator 与全量用例体）落地。
