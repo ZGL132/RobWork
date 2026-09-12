@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T04",
+  "masterWp": "WP-05-T04",
+  "branch": "wp05-t04",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T04 增列 src/Slice.cpp（切片组装/校验/规范编码——units/evidence.md §4.2.2/§4.2.3/§5.1/§5.2＋CR-02/CR-05；契约头 Slice.hpp）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边）；CMake 红线守卫配置期断言保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 56/56）",
+      "notes": "EV-T04 增列 test/SliceTest.cpp（EV-ID-1/2 用例＋浮点位模式/NaN 拒绝＋EV-CR02 排除面钉住＋EV-CR05 保留条目＋EV-SLICE 冻结拒绝＋EV-SLICEC 结构非法＝13 新增）；既有 EV-BUILD/EV-ERR/EV-DEP/EV-SNAP/EV-CASET/EV-SNAPC 43 用例回归保持通过（ErrorsTest 全表锚定 9→10 值同步更新——SliceIncomplete 表尾追加）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceSliceIdentity（EV-ID，EV-T04 新增）——acceptance 1＋acceptance 2（摘要单点）",
+      "designRef": "units/evidence.md §11 EV-ID-1/EV-ID-2 行、§5.1（双层身份＋身份纪律）、§5.2（canonical 编码）；§12 EV-T04 行；foundation-api-diff.md CR-02",
+      "cases": [
+        { "name": "EvidenceSliceIdentity.SameContentDeterministicId_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——同内容两次构建（条目添加序正/逆）sliceId/inputBaselineId 逐字节相等＋full 编码逐字节相等＋双身份互不撞值（D-1 排除面非空的旁证）；CON-05/NFR-COR-02" },
+        { "name": "EvidenceSliceIdentity.CodecRoundTrip_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——parse(encodeFull(x))==x 往返（§11 EV-ID-1 观测点原文）；解析侧双身份为重算值（D-2：身份是编码的函数，解析结果不可能携带与内容不符的申报身份）；再编码字节恒同" },
+        { "name": "EvidenceSliceIdentity.DigestViaCoreContentDigesterOnly_CR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2（CR-02）——sliceId/inputBaselineId 恰等于手工以 core::ContentDigester 对对应形态编码的 SHA-256（摘要算法唯一＝core ContentDigester，不存在第二摘要路径）" },
+        { "name": "EvidenceSliceIdentity.NoFloatApproximateEquivalence_EV_ID_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——两配置容差相差 1e-15（数值上近似相等）→ 配置内容身份与 sliceId 均不等（位模式承载＋字节等值身份共同保证'浮点近似相等禁止作身份等价关系'；§5.1 数值容差行）；缓存/当前性消费面归 EV-T08/EV-T09（身份面在此钉住）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSliceFloat（canonical 浮点，EV-T04 新增）——acceptance 1（浮点位模式＋NaN 拒绝）",
+      "designRef": "units/evidence.md §5.2 数值行（'浮点以 IEEE754 双精度 8 字节大端位模式承载（round-trip 精确）；NaN/±Inf 在编码入口拒绝'）；runtime RT-Codec f64 双端纪律同款",
+      "cases": [
+        { "name": "EvidenceSliceFloat.CanonicalF64BitPatternRoundTrip", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——1.0 已知向量 0x3FF0000000000000 大端字节序逐字节钉住；10 个有限样本（含 ±0.0/最小非规格化数/DBL_MAX）round-trip 位级精确（memcmp 语义，不用 == 防 -0.0 数值等值掩盖）；0.0 与 -0.0 位模式不同；1e-15 差异位模式不同" },
+        { "name": "EvidenceSliceFloat.CanonicalF64NaNInfRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——NaN/+Inf/-Inf 编码入口抛 EvidenceError(SliceIncomplete)；接收端手工构造 NaN 位型（0x7FF8…）同样拒绝（双端纪律——传输损坏/手改字节不静默进入身份计算，NFR-COR-03）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSliceBaseline（EV-CR02，EV-T04 新增）——acceptance 2＋acceptance 3（CR-05 基准类归属）",
+      "designRef": "units/evidence.md §5.1 inputBaselineId 行（参与/排除清单）、§4.2.4（改求解预算复评）；foundation-api-diff.md CR-02 排除字段登记＋CR-05 裁决第 2 点",
+      "cases": [
+        { "name": "EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2＋3——排除面单点钉住：仅改 Configuration（求解类）/Policy/非基准 Environment（product-version）→ sliceId 变而 inputBaselineId 不变（C5'同一冻结输入复评'语义）；参与面单点钉住：改 Object/SampleSet/NameMap/基线串（CR-05 双条目）→ 双身份均变（EVI-02 拦截的身份前提；'实现期以各自 codec 单测钉住排除字段'——CR-02 原文）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSliceCr05（EV-CR05，EV-T04 新增）——acceptance 3",
+      "designRef": "foundation-api-diff.md CR-05 裁决三点；units/evidence.md §4.2.1 Environment 行、§5.1（CR-05 二条目属基准类）；runtime/test/SnapshotTest.cpp Cr05ValueSupplyEnvironmentEntries_CR_05（共享样例对齐锚点）",
+      "cases": [
+        { "name": "EvidenceSliceCr05.MandatoryEnvironmentEntries_CR_05", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——必填校验：消费 CanonicalModel（开关置位）缺 runtime.model-identity 或 runtime.robwork-baseline 任一 → build 拒绝（detail 含保留 token 定位）；双条目齐 → 通过；不消费（开关 false）→ 不强制（谁必填由组装方按评估器声明置位，evidence 不域判）；同保留 token 重复条目 → 拒绝（身份贡献歧义）" },
+        { "name": "EvidenceSliceCr05.ValueShapeGate_CR_05", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——值形态闸门（保留 token 恒久生效）：model-identity 值非 cid-<64hex> 规范文本 → 拒绝（CR-05 裁决第 1 点值形态；core::ContentIdentity 可解析性即闸门）；baseline 值含空白/空串 → 拒绝（RobWorkBaselineVersion 契约——RT-T09 断言 4 同款）" },
+        { "name": "EvidenceSliceCr05.SharedSampleValuePassThrough_RT_T09", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3（共享样例）——与 RT-T09 共享同一样例断言身份一致：①供给值 → Environment 条目 → SliceCodec 编码 → parse 还原全链逐字节一致（evidence 零重编码/零重算——CR-05 裁决'evidence 不重算 CanonicalModel'的切片侧等价断言面）；②仅改求解类 Configuration → sliceId 变而 inputBaselineId 不变（CR-05 联合断言 3）；对齐锚点语义登记于 SliceTest.cpp 文件头（runtime 侧样例值＝固定种子夹具＋capture()，evidence 侧以同形态规范样例值承载值传递联锁）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSliceBuilder（EV-SLICE，EV-T04 新增）——冻结期协议反例＋EV-INV 前置",
+      "designRef": "units/evidence.md §4.2.3②（冻结期：语法对账/子集校验）、§4.2.2（存储不变量）、§4.2.1（D-10 条件依赖身份）、§11 EV-INV 前置（身份比较）",
+      "cases": [
+        { "name": "EvidenceSliceBuilder.FreezeRejections_EV_SLICE", "status": "passed", "modes": ["smoke", "integration"], "trace": "冻结拒绝全码面：评估键语法非法（含大写/含点两负例——评估键与依赖键词形差异）/未冻结快照（零 snapshotId）/空条目集（§4.2.2 ≥1）/(kind,key) 重复/Object 闭包子集（错对象＋同对象异版本两负例——防漏声明错配）/applied-notAppliedReason 配对矛盾（presence 语义）/载荷与 kind 错配——全部 EvidenceError(SliceIncomplete) 且 detail 可定位" },
+        { "name": "EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-INV 前置（身份比较）——未适用条件条目（applied=false＋notAppliedReason 在在）保留在切片（§4.2.1 原文）且其解析结果翻转 → sliceId 变（D-10：条件翻转必触发重解析的身份面）；子集校验对未适用条目同样生效" },
+        { "name": "EvidenceSliceCodec.ParseRejectsStructuralGarbage_EV_SLICEC", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构性非法——坏 magic（异单元 IRDSNAP1 编码在此拦截）/版本不符/形态字节（baseline-projection 非往返载体）/截断/尾随字节逐类 SliceIncomplete 拒绝；投影面正向核对：投影编码短于 full 且不含评估键（D-4 分层的字节面证据）" }
+      ]
+    }
+  ],
+  "summary": { "total": 56, "passed": 56, "failed": 0, "modes": { "smoke": "56/56", "integration": "56/56" }, "unitRegression": { "smoke": "core 61/61＋evidence 56/56＋policy 4/4＋runtime 176/176＋testkit 97/97＝394/394", "integration": "core 63/63＋evidence 56/56＋policy 4/4＋runtime 260/260（＋1 例 worker 占位按设计跳过）＋testkit 97/97" } },
+  "failureCapabilitySelfCheck": {
+    "method": "CR-02 排除面探针：向 src/Slice.cpp 的基准投影参与集注入 Policy 分支（把排除面条目吸入投影——精确编辑＋显式构建/运行退出码核验，无 sed）后重编译执行；探针验证后逐字精确恢复并核验 PROBE 字样零残留",
+    "result": "Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05 如期变红（exit 1——Policy 进入投影被'仅改 Policy → inputBaselineId 不变'断言检出）——排除字段钉住测试的真实失败能力成立；恢复后 56/56 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t04/smoke-configure.log",
+      "traceability/builds/wp05-t04/smoke-build.log",
+      "traceability/builds/wp05-t04/smoke-test-run.log",
+      "traceability/builds/wp05-t04/sdurws_ird_evidence_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t04/integration-cache-check.txt",
+      "traceability/builds/wp05-t04/integration-build-evidence.log",
+      "traceability/builds/wp05-t04/integration-verify.log",
+      "traceability/builds/wp05-t04/integration-test-run.log",
+      "traceability/builds/wp05-t04/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t04/probe-red-build.log",
+      "traceability/builds/wp05-t04/probe-red-run.log",
+      "traceability/builds/wp05-t04/probe-restore-build.log",
+      "traceability/builds/wp05-t04/ird-gates.log",
+      "traceability/builds/wp05-t04/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 exit 0，integration-verify.log；另以同命令显式核验构建退出码 BUILD_EXIT=0）",
+  "irdGates": "ird_gates 3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-T1（sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有；②IRD-GATE-SUB（testdata_lint→testkit 表外边）＝F-019 既有；③IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链，白名单允许形态但引擎 SUB 判定未豁免）＝F-051（RT-T12 登记第 3 处命中）。本任务 evidence 变更面（库链接面仍仅 core）零命中；ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t04/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake），配置 Release，全量 394/394 零回归。实现口径 D-1～D-5（基准投影参与集机械口径/双身份为编码导出值/CR-05 值形态闸门/builder 规范化排序/evaluationKey 词形先行承载）与 EvidenceErrorCode 表尾追加 SliceIncomplete（9→10 值，token evidence/slice-incomplete＋建议码 EVI-SLICE-INCOMPLETE 补登）登记于 units/evidence.md v0.5 变更记录。测试组名 EV-SLICE/EV-SLICEC/EV-CR02/EV-CR05 为实现侧组名（§11 矩阵 EV-T04 专项＝EV-ID-1/2＋浮点位模式＋NaN 拒绝，EV-BUILD/EV-ERR/EV-SNAP 同例）。FakeRevisionClosureSource 为接口替身（边界声明见 SliceTest.cpp 文件头——替身输出仅验证 evidence 契约，不构成 project 侧实现正确性证明）。"
+}
