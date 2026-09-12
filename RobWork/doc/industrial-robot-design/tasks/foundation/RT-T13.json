@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "runtime 文档与门禁同步",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T02",
     "RT-T03",
