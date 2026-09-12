@@ -1,0 +1,24 @@
+IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 pass_r4comment：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 命中 3 项：
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+==============================================================
+CMake Error at RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:767 (message):
+  [ird_gates] 依赖红线/补丁门禁存在 3 处命中——按 ARCH §3.2
+  SA-10 判构建失败；例外只经 DTB §4.5 登记册
+
+
