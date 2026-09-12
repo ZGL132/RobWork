@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现五级汇总判定（Verdict）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T05"
   ],
