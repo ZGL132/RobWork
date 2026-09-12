@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "实现 ResultCurrentness（当前性纯投影）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T04",
     "EV-T07"
