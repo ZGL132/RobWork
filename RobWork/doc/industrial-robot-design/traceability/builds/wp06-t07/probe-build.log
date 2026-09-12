@@ -1,0 +1,22 @@
+=== 失败能力探针（PIPE §5：注入→变红→精确还原→复绿）===
+
+--- 探针 1：禁用连杆尾巴补偿旋转（linkStatic 恒等）→ RT-EQ-1 必须变红 ---
+--- 注入形态：src/WorkCellCompiler.cpp 关节循环内 if(joint.type!=Fixed) 块整体注释为 [PROBE-RT-EQ-1 临时注入] ---
+--- 变红证据（probe-rt-eq1-red.log 摘要）：---
+[  FAILED  ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1 (1 ms)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+ 1 FAILED TEST
+
+--- 探针 2：禁用 maxAcceleration 显式设值→ RT-AD-2 必须变红 ---
+--- 注入形态：jointHandle->setMaxAcceleration 两行替换为 [PROBE-RT-AD-2 临时注入] 注释 ---
+--- 变红证据（probe-rt-ad2-red.log 摘要）：---
+[  FAILED  ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 (1 ms)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+ 1 FAILED TEST
+
+--- 精确还原后复绿：git diff 零残留（两次 Edit 精确回写原实现），全量集成 188/188（见 integration-test-run.log/integration XML）＋冒烟 172/172（smoke-test-run.log/smoke XML）---
+--- 探针期间构建均零编译错误（构建退出码 0，防旧二进制假绿——教训①）---

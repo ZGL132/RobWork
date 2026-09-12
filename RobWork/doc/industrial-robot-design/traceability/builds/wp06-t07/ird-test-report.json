@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T07",
+  "masterWp": "WP-06-T07",
+  "branch": "wp06-t07",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（集成模式两分支验证；冒烟模式本文件不进构建——见 modeMechanics）",
+      "notes": "RT-T07 增列 src/WorkCellCompiler.cpp（仅集成模式——TARGET sdurw_kinematics 条件）：§5.2 S6（CanonicalModel→WorkCell 确定性编译：BaseMount 唯一写入〔§6.3〕/任意轴关节映射＋连杆尾巴补偿/逐关节显式设值〔§8.2〕/SerialDevice 链构造/S9 防御性自检〔RT-BW-4 编译器侧〕/名称唯一源＝buildRuntimeNameMap〔§7.2〕）＋§8.3 WorkCellConstView 实现＋§8.4 translateRobWorkError 转译；公共头新增 Adapter.hpp（§3.1 模块表原列模块——本任务按首个消费者原则落位 WorkCellConstView＋转译函数，DynamicWorkCellConstView/DeviceView/RobWorkBaselineVersion/IRobWorkAdapterFactory 随 RT-T08/T09/T11 落位，§15.4 登记）；目标名/别名/include 根不变；配置期依赖红线守卫保持"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（集成模式）；冒烟模式 172 用例（RT-T07 测试不进冒烟目标——被测面链接真实框架库，CMake 同款条件）",
+      "notes": "增列 test/WorkCellCompilerTest.cpp（仅集成模式编译，16 例：RT-AD-1/2、RT-EQ-1、RT-BW-4＋视图面＋结构面）；RT-T01～T06 的 11 个用例文件保留并全部回归（172 例）"
+    }
+  ],
+  "modeMechanics": "集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误；冒烟模式使用独立树 build-smoke-wp06-t07（vcpkg toolchain 绝对路径），本任务产品增列（WorkCellCompiler.cpp）与测试增列（WorkCellCompilerTest.cpp）均仅集成模式编译——S6 必须构造真实 WorkCell/SerialDevice（基线非模板类，符号实现于 sdurw_kinematics/sdurw_models 的 .cpp；P-RT-3 登记的 L1 依赖正是本任务的设计依据面），冒烟无框架库可链；Adapter.hpp 公共头在冒烟下不被任何 TU include，不影响'目标注册＋include 路径'的冒烟口径；冒烟 172/172 证明既有面零回归、新增头不破坏冒烟构建。该模式分工与 DTB §5.1 冒烟口径一致，已按 DTB §5.4 登记 units/runtime.md §15.4（RT-T07 条目）",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/RuntimeErrors/Sources/Expected/DescriptionType/DescriptionValidator/CanonicalModel*/CodecRoundtrip/NameMap*/BaseWorldTransform*（RT-T01～T06 既有，回归）",
+      "designRef": "units/runtime.md §3.2～§3.4/§4.2～§4.5/§6/§7/§10.11/§11（既有切面）",
+      "cases": [
+        { "name": "172 cases（RT-T06 合入基线全量）", "status": "passed", "modes": ["smoke", "integration"], "trace": "既有 172 用例零改动零跳过回归通过——含 BuildRedLineTest 源码扫描自动纳入新增头 Adapter.hpp（include 面仅 core/std/rw 头，R-3/R-1/R-2 合规；rw 模型头为 P-RT-3 已登记 L1 面）" }
+      ]
+    },
+    {
+      "suite": "WorkCellCompilerTest.RT-AD-2（显式设值——§8.2）",
+      "designRef": "units/runtime.md §8.2（RobWork 默认值不作需求默认值）、§11 RT-AD-2 行",
+      "cases": [
+        { "name": "WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2", "status": "passed", "modes": ["integration"], "trace": "minimal 逐关节对照：bounds 逐字等于权威（−2.97/2.97、−π/π rad）、maxVelocity＝2.5/2.0 rad/s、maxAcceleration 未提供→WC 显式 +inf（基线 Joint.cpp 构造默认＝1、bounds 默认 ±DBL_MAX——+inf≠1 证明设值路径执行而非默认残留）" },
+        { "name": "WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2", "status": "passed", "modes": ["integration"], "trace": "zeroOffset=0.5 rad：WC bounds＝权威区间平移 −offset（[−2.97,2.97]→[−3.47,2.47]，q_rw＝q_auth−offset——CanonicalJoint::zeroOffset 口径）" },
+        { "name": "WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2", "status": "passed", "modes": ["integration"], "trace": "连续关节（MDL-12 无限位）→WC 显式 ±inf（基线无独立 continuous 类型，无限位旋转即连续——显式语义表达非默认残留）；限速仍按 Provided 显式" },
+        { "name": "WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07", "status": "passed", "modes": ["integration"], "trace": "固定关节→dof=0 FixedFrame（非基线 Joint），设备活动关节集只含旋转关节" }
+      ]
+    },
+    {
+      "suite": "WorkCellCompilerTest.RT-EQ（canonical↔WC FK 等价——附录 D 第 4 项）",
+      "designRef": "units/runtime.md §5.2 S6、§5.5（同输入重复编译）、§11 RT-EQ-1 行（ARC-03/AT-16/附录 D 第 4 项）",
+      "cases": [
+        { "name": "WorkCellCompilerTest.FkEquivalence_RT_EQ_1", "status": "passed", "modes": ["integration"], "trace": "三关节研究夹具（非 Z 轴 j2 绕 Y/j3 绕 (1,0,1)/√2、非零 zeroOffset 0.2/−0.35/0.7 rad、非恒等 origin 旋转）×3 固定构型：测试内手写独立 FK（Rodrigues 独立实现——替身 FK 仅测试对照工具，§11 替身边界声明）vs 真实基线 Device FK（Kinematics::frameTframe），逐关节轴线/原点与法兰全位姿 ≤1×10⁻⁹ m/rad（第 4 项）——连杆尾巴补偿（R_align·Rz(q)·R_alignᵀ 共轭消去）的端到端证据" },
+        { "name": "WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ", "status": "passed", "modes": ["integration"], "trace": "同输入两次编译：帧名集合/设备名/逐关节 bounds·限速·限加速度（1e-9）逐项相等——§5.5'同输入重复编译 WC 结构相等'" }
+      ]
+    },
+    {
+      "suite": "WorkCellCompilerTest.RT-BW-4（S9 部分——BaseMount 唯一写入/二次叠加，AT-37）",
+      "designRef": "units/runtime.md §6.3（唯一写入点）、§6.6（二次叠加检测）、§11 RT-BW-4 行（MDL-22/AT-37）",
+      "cases": [
+        { "name": "WorkCellCompilerTest.BaseMountReadback_RT_BW_4", "status": "passed", "modes": ["integration"], "trace": "倒挂夹具（§6.5 数值例 R_x(π)、t=(0,0,2) m）编译后 BaseMount 帧读回与权威 T_world_base 逐元素一致（1×10⁻⁹）——唯一写入点事后验证（编译器内部 S9 自检 checkBaseMountConsistency 同面，不一致即 BaseWorldInconsistent 不得放行）" },
+        { "name": "WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4", "status": "passed", "modes": ["integration"], "trace": "T·T 二次叠加候选（倒挂 R_x(π)²＝I'渲染回正'假象）→checkBaseMountConsistency 检出且 doubleAppliedPattern=true（AT-37 反例被拦截）" },
+        { "name": "WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4", "status": "passed", "modes": ["integration"], "trace": "倒挂下场景帧世界位姿＝权威 worldPose（不预乘安装旋转——§6.4 禁止清单 3）；BaseFrame 相对 BaseMount＝恒等（安装分量只在 BaseMount 一处——§6.3'其他一切 Frame 变换不含安装分量'）" }
+      ]
+    },
+    {
+      "suite": "WorkCellCompilerTest.RT-AD-1（RobWork 异常→稳定诊断转译——§8.4）",
+      "designRef": "units/runtime.md §8.4 转译表、§11 RT-AD-1 行、NFR-REL-05（用户诊断不含调用栈）",
+      "cases": [
+        { "name": "WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1", "status": "passed", "modes": ["integration"], "trace": "真实基线异常触发（StateStructure 拒绝重名帧 RW_THROW——'Frame name is not unique'）→translateRobWorkError：code=RT-WC-COMPILE-FAILED（registryCode 冻结映射）、context 含 stage、cause 含消息正文、cause 不含抛出文件/行与 Id 前缀（调用栈剥离——NFR-REL-05）" },
+        { "name": "WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1", "status": "passed", "modes": ["integration"], "trace": "std::bad_alloc→RT-RESOURCE-BUDGET（§5.5 内存不足行）" },
+        { "name": "WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1", "status": "passed", "modes": ["integration"], "trace": "非 rw 标准异常→RT-ROBWORK-ERROR 事件码（Errors.hpp registryCode 注释口径——事件码产出归转译点）" }
+      ]
+    },
+    {
+      "suite": "WorkCellConstViewTest（§8.3 只读包装）＋WorkCellCompilerTest 结构面（§12 交付形态）",
+      "designRef": "units/runtime.md §8.3（WorkCellConstView 原文契约）、§7.2（写入名＝映射输出名）",
+      "cases": [
+        { "name": "WorkCellConstViewTest.ViewQueries_RT_T07", "status": "passed", "modes": ["integration"], "trace": "findFrame 命中/未命中 nullptr（不默认命中）/frameCount=7（WORLD+BaseMount+Base+2 关节帧+2 连杆帧）/findDevice 命中与未知名空 Ptr/defaultState 值拷贝独立性（经设备 q 行为断言——改 s1 不影响 s2）" },
+        { "name": "WorkCellConstViewTest.NullHandleRejected_RT_T07", "status": "passed", "modes": ["integration"], "trace": "空 Ptr 构造→RuntimeError(RobWorkError, runtime/robwork-null-handle)——§8.4 空句柄行 fail-fast（不产空视图）" },
+        { "name": "WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07", "status": "passed", "modes": ["integration"], "trace": "设备名＝映射 Device 条目（IRB_T，无前缀）；runtimeNames 全部在 WC 命中（编译器声称写的每个名真实存在——S8 交叉校验的反向自证）；派生名格式锁定 IRB_T.BaseMount/Base/Flange/joint_1/link_1（§7.1 范围表形态）" },
+        { "name": "WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07", "status": "passed", "modes": ["integration"], "trace": "全能力位夹具（工具 Tcp 帧挂法兰/场景帧挂 WORLD）编译烟囱；设备端帧＝IRB_T.Flange" }
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "item": "acceptance 1：RT-AD-1/2、RT-EQ-1（1e-9 m/rad，附录 D 第 4 项）、RT-BW-4 用例通过",
+      "verdict": "pass",
+      "evidence": "WorkCellCompilerTest 16 例＋WorkCellConstViewTest 2 例全部通过（integration XML 188/188，其中本任务新增 16）；RT-AD-1＝TranslateRealRobWorkException/TranslateBadAlloc/TranslateUnknownStdException；RT-AD-2＝JointFieldsExplicit/JointBoundsOffsetMapping/ContinuousJointExplicitInfiniteBounds/FixedJointIsFrameNotJoint；RT-EQ-1＝FkEquivalence（1e-9）＋RepeatCompileStructuralEquality；RT-BW-4＝BaseMountReadback/DoubleAppliedDetected/SceneAndBaseFramesCarryNoInstallComponent"
+    },
+    {
+      "item": "acceptance 2：显式设值与等价用例通过（§12 完成条件——Frame 树/Device/Joint/BaseMount 唯一写入）",
+      "verdict": "pass",
+      "evidence": "RT-AD-2 四例（逐字段对照，基线默认 ±DBL_MAX/1 残留不可达——+inf/权威值显式覆写）＋FrameNamesMatchNameMap（写入名＝映射输出名逐一相等）＋BaseMountReadback（T_world_base 单点写入）＋FkEquivalence（Frame 树映射正确性）；§12 行'RT-BW-4（S9 部分）'的编译器内置自检已实现（checkBaseMountConsistency 不一致→BaseWorldInconsistent fail-fast）。注：RT-AD-2 行中'DWC 重力 vs gravityWorld'子项属 S7/RT-T08（DWC 编译器）交付面，本任务无 DWC 构造，已在验收请求如实标注"
+    },
+    {
+      "item": "acceptance 3：RobWork 异常→稳定诊断转译（§8.4）用例通过",
+      "verdict": "pass",
+      "evidence": "TranslateRealRobWorkException_RT_AD_1（真实基线 RW_THROW→RT-WC-COMPILE-FAILED＋stage＋消息摘要＋调用栈剥离）/TranslateBadAlloc（RT-RESOURCE-BUDGET）/TranslateUnknownStdException（RT-ROBWORK-ERROR 事件码）；转译不吞异常（S6 catch 后一律 RuntimeError fail-fast——MDL-06）；knownPitfalls P-RT-3：仅使用 §8.1 已登记 L1 库（rw kinematics/models/math），零表外依赖（ird_gates 命中集合与 T06 基线相同，零新增）"
+    }
+  ],
+  "probe": {
+    "method": "注入→变红→精确还原→复绿（PIPE §5 失败能力验证；精确 Edit＋构建退出码核验防旧二进制假绿）",
+    "probes": [
+      "探针 1：禁用连杆尾巴补偿旋转（linkStatic 恒等）→WorkCellCompilerTest.FkEquivalence_RT_EQ_1 恰好变红（13/14 通过，失败面精确）→精确还原→复绿（probe-rt-eq1-red.log）",
+      "探针 2：禁用 maxAcceleration 显式设值→WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 恰好变红（残留基线默认 1 被断言捕获）→精确还原→复绿（probe-rt-ad2-red.log）"
+    ],
+    "finalState": "两次精确还原后 git 工作区无残留；集成 188/188、冒烟 172/172（XML 双份）"
+  },
+  "gates": {
+    "ird_gates": "命中 2 项＝IRD-GATE-SUB/T1（sdurws_ird_testdata_lint→testkit）——RT-T03 起基线同款既有登记项，零新增命中（与 wp06-t06 ird-gates-run.log 命中集合逐项相同）；runtime 单元自身零命中",
+    "validate-task": "PASS（validate-task.ps1 -TaskFile tasks/foundation/RT-T07.json）"
+  }
+}
