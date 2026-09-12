@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-C",
   "title": "快照与工厂（Snapshot）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RT-T05", "RT-T07", "RT-T08"],
   "requirements": ["ARC-03", "CON-06"],
   "designRefs": ["units/runtime.md#9.1", "units/runtime.md#9.2", "units/runtime.md#9.3", "units/runtime.md#12"],
