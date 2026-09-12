@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T03",
+  "masterWp": "WP-05-T03",
+  "branch": "wp05-t03",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T03 增列 src/Snapshot.cpp（快照组装/校验/规范编码——units/evidence.md §4.1/§5.2；契约头 Snapshot.hpp）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边）；CMake 红线守卫配置期断言保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 43/43）",
+      "notes": "EV-T03 增列 test/SnapshotTest.cpp（EV-ID 3 用例＋EV-SNAP 10 用例＋EV-CASET 4 用例＋EV-SNAPC 4 用例＝21 新增）；既有 EV-BUILD/EV-ERR/EV-DEP 22 用例回归保持通过"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceBuild（EV-T01 既有，回归保持）",
+      "designRef": "units/evidence.md §3.2/§3.4、§12 EV-T01",
+      "cases": [
+        { "name": "EvidenceBuild.SourceTreeReachable_EV_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（源码树可达）" },
+        { "name": "EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头——现扫描含新增 Snapshot.hpp/Snapshot.cpp）" },
+        { "name": "EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面白名单 {core, evidence}——新增头仅 include core＋evidence 公共头）" },
+        { "name": "EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-2（公共头仅位于 include/sdurws/ird/evidence/——Snapshot.hpp 纳入扫描）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSnapshotIdentity（EV-ID，EV-T03 新增）——acceptance 1",
+      "designRef": "units/evidence.md §11 EV-ID-1/EV-ID-3 行、§5.1（身份产生与比较）、§5.2（canonical 编码）；§12 EV-T03 行",
+      "cases": [
+        { "name": "EvidenceSnapshotIdentity.SameContentDeterministicId_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——同内容两次组装（插入序相反）snapshotId 逐字节相等＋refs-only 编码逐字节相等（CON-05/NFR-COR-02；内容只生成一次、同一批 ObjectId 复用）" },
+        { "name": "EvidenceSnapshotIdentity.CodecRoundTrip_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——parse(encode(x))==x 往返（除 revisionSeq：§4.1.2'不参与内容身份语义判断'原文——不在编码内、parse 恢复 0，I-1 登记单元卡 v0.4）；身份/再编码双稳定" },
+        { "name": "EvidenceSnapshotIdentity.DisplayAndSessionIndependence_EV_ID_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——改项目显示名（不经过任何组装入口）＋revisionSeq 5→9（重开项目）→ snapshotId 不变；反向对照断言序号确实不同（§11 EV-ID-3 行）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSnapshotBuilder（EV-SNAP，EV-T03 新增）——acceptance 2＋'全部快照不变量'",
+      "designRef": "units/evidence.md §4.1.2（字段表/非法实例清单）、§4.1.5①④a（锚定修订/防混入/即时验证）、CON-01/03/06",
+      "cases": [
+        { "name": "EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "正例基线——冻结凭据/身份非零、闭包按 objectId 字典序冻结（I-3）、值语义拷贝等值、IRevisionClosureSource 被逐条查询（queries==2，协议①机械化证据）" },
+        { "name": "EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 混入反例——(oid,cv) 不在锚定修订清单 → EvidenceError(SnapshotIncomplete)，what() 带 evidence/snapshot-incomplete 前缀＋'不属于锚定修订'定位" },
+        { "name": "EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定读取（§4.1.5①）——同一对象修订 A 合法/组装锚定修订 B 拒绝（拒绝确由锚定失配触发的正反对照）" },
+        { "name": "EvidenceSnapshotBuilder.Con06RequiresPolicyAndNameMap_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "CON-06——policyRef 零身份/nameMapRef 未设定逐类拒绝（§4.1.2 非法实例原文）" },
+        { "name": "EvidenceSnapshotBuilder.ObjectClosureInvariants_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "闭包不变量——空闭包（≥1）/零 ContentVersion/digest 与 contentVersion 不一致（I-2 一致性闸门）/重复 objectId 逐类拒绝" },
+        { "name": "EvidenceSnapshotBuilder.IdentityTripleRequired_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "身份三元组零值拒绝（project/revision——revision 是唯一对象解析锚）" },
+        { "name": "EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "配置引用——空 canonicalBytes/零内容身份/重复 configKindToken 逐类拒绝（schema 归域，只验承载纪律）" },
+        { "name": "EvidenceSnapshotBuilder.ExternalResourceStateMachine_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "CON-03 状态机——Solidified 缺固化版本/Recorded 带固化版本（presence 语义 §5.2）/重复 resourceId 逐类拒绝；Recorded 无版本＋Solidified 带版本正例通过" },
+        { "name": "EvidenceSnapshotBuilder.SamplingPlanInvariants_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "采样计划——零 sampleSetIdentity 拒绝；planned 样本数 0/0 合法（§4.1.4'0 合法'原文）；同区域重复计划拒绝" },
+        { "name": "EvidenceSnapshotBuilder.ReproductionCompleteness_EV_SNAP", "status": "passed", "modes": ["smoke", "integration"], "trace": "复现块——productVersion 空串拒绝/可选字段'有值空串'拒绝（presence 语义）/未设定拒绝；可选字段双缺席正例（谁必填归评估器依赖声明，evidence 不域判）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSnapshotCaseSet（EV-CASET，EV-T03 新增）——acceptance 3（O-14 保守字面）",
+      "designRef": "units/evidence.md §4.1.3（RequiredCaseSet 冻结）、§4.1.2（caseSet 含重复工况 id→拒绝）、P-EV-7/O-14；DTB §4 O-14（schema 归 requirements 卡 WP-14-T01）",
+      "cases": [
+        { "name": "EvidenceSnapshotCaseSet.MarkersCarriedVerbatim_O14_EV_CASESET", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——enabled/mandatory/label 字面承载：反直觉组合（enabled=false∧mandatory=true）与空 label 原样保留、不私裁纠偏（evidence 只承载标记不解释——O-14/P-EV-9）" },
+        { "name": "EvidenceSnapshotCaseSet.DuplicateCaseIdRejected_EV_CASESET", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——caseId 唯一（重复→builder 拒绝，§4.1.2 非法实例原文）" },
+        { "name": "EvidenceSnapshotCaseSet.EmptyCaseSetAllowed_EV_CASESET", "status": "passed", "modes": ["smoke", "integration"], "trace": "空工况集合法入快照（P-EV-7：保守处置在汇总判定层，组装层不拒）；空集凭据为确定值（两次组装相等）" },
+        { "name": "EvidenceSnapshotCaseSet.RequiredCaseSetIdSensitivity_EV_CASESET", "status": "passed", "modes": ["smoke", "integration"], "trace": "冻结凭据——mandatory 翻转/label 变化/增删条目均改凭据；同内容逆序录入凭据不变（I-4 规范编码摘要）" }
+      ]
+    },
+    {
+      "suite": "EvidenceSnapshotCodec（EV-SNAPC，EV-T03 新增）",
+      "designRef": "units/evidence.md §4.1.5⑤（双形态同身份）、§4.1.5④b（载荷级校验）、§5.2（canonical 编码规则）",
+      "cases": [
+        { "name": "EvidenceSnapshotCodec.MaterializedSameIdentity_EV_SNAPC", "status": "passed", "modes": ["smoke", "integration"], "trace": "双形态同身份（D-01）——materialized 部分物化（闭包 3 取 2）解析出 snapshotId 与 refs-only 相等；快照内容往返等值（除 revisionSeq）；载荷逐字节归还；两形态字节可区分" },
+        { "name": "EvidenceSnapshotCodec.MaterializedIntegrity_EV_SNAPC", "status": "passed", "modes": ["smoke", "integration"], "trace": "④b 载荷级校验——物化入口（encode）摘要错配与接收端（parse）单字节翻转均抛 SnapshotIntegrity（evidence/snapshot-integrity 码面，NFR-COR-03 不静默）" },
+        { "name": "EvidenceSnapshotCodec.MaterializedClosureSubsetOnly_EV_SNAPC", "status": "passed", "modes": ["smoke", "integration"], "trace": "物化必须是 objectClosure 子集（§4.1.5⑤/R-6）——闭包外对象（字节自洽）以 SnapshotIncomplete 拒绝（与④b 码面区分）" },
+        { "name": "EvidenceSnapshotCodec.ParseRejectsStructuralGarbage_EV_SNAPC", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构性非法——截断/坏 magic/形态互混（双入口互喂）/版本不符/尾随字节逐类 SnapshotIncomplete 拒绝（detail 带定位词）" }
+      ]
+    }
+  ],
+  "summary": { "total": 43, "passed": 43, "failed": 0, "modes": { "smoke": "43/43", "integration": "43/43" } },
+  "failureCapabilitySelfCheck": {
+    "method": "防混入校验探针：向 src/Snapshot.cpp 的修订闭包包含性检查注入 'if (false && ...)' 短路（精确编辑＋显式退出码核验，无 sed）后重编译执行；探针验证后精确恢复原实现并终验复绿（git diff 核对恢复态——编辑为逐字还原）",
+    "result": "RevisionClosureRejectsForeignObject_EV_SNAP/ClosureCheckedAgainstAnchoredRevision_EV_SNAP/ValidBuildFreezesCanonicalSnapshot_EV_SNAP（后者经 queries 计数断言）如期变红——防混入校验的真实失败能力成立；恢复后 43/43 复绿（probe-red-run.log 为探针期留痕）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t03/smoke-configure.log",
+      "traceability/builds/wp05-t03/smoke-build.log",
+      "traceability/builds/wp05-t03/smoke-test-run.log",
+      "traceability/builds/wp05-t03/sdurws_ird_evidence_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t03/integration-cache-check.txt",
+      "traceability/builds/wp05-t03/integration-build.log",
+      "traceability/builds/wp05-t03/integration-verify.log",
+      "traceability/builds/wp05-t03/integration-test-run.log",
+      "traceability/builds/wp05-t03/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t03/probe-red-run.log",
+      "traceability/builds/wp05-t03/ird-gates.log",
+      "traceability/builds/wp05-t03/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 exit 0，integration-verify.log）",
+  "irdGates": "ird_gates 3 处命中均为 F-019 既有基线缺陷（sdurws_ird_testdata_lint→testkit 的 T-1/SUB＋sdurws_ird_runtime_test→testkit 的 SUB——与 EV-T02 送验时逐字相同，本任务零新增目标/链接边，evidence 面零命中）；ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；本任务全量增量构建 exit 0 零 error——F-008 基线缺陷目标未参与重编），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t03/（本任务会话新建，vcpkg toolchain 绝对路径），配置 Release。实现口径 I-1～I-7（revisionSeq 不入身份/ObjectRefEntry.digest 一致性闸门/冻结序规范化/requiredCaseSetId 字节级定义/形态字节/双端④b/空工况集）登记于 units/evidence.md v0.4 变更记录。测试组名 EV-SNAP/EV-CASET/EV-SNAPC 为实现侧组名（§11 矩阵 EV-T03 专项＝EV-ID-1/3＋混入反例，其余对照 §12 EV-T03 行'全部快照不变量用例'，EV-BUILD/EV-ERR/EV-DEP 同例）。FakeRevisionClosureSource/FakeObjectBytesSource 为接口替身（边界声明见 SnapshotTest.cpp 文件头——替身输出仅验证 evidence 契约，不构成 project 侧实现正确性证明）。"
+}
