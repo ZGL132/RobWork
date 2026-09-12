@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T13",
+  "masterWp": "WP-06-T13",
+  "branch": "wp06-t13",
+  "date": "2026-09-12",
+  "attempt": 1,
+  "reworkNote": "首次实施（lastFailureRecord=null），无返工",
+  "taskNature": "文档与门禁同步任务：零代码变更（仅 units/runtime.md、include README.md、traceability/ 提交件与留痕）——构建/测试执行用于钉住『本文与实现零偏差登记』的实况口径，非新用例交付；沿 CORE-T10 文档任务先例，其 verify＝validate-docs.ps1（本任务另加跑 validate-task/ird_gates/双模式测试留痕，超覆盖执行）",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，既有目标复跑——无新增测试）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式零错误；零源码变更，本任务未触碰任何产品源）",
+      "notes": "集成＝仓库根 build/ 存量增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 后增量构建，F-054 树性质口径）；冒烟＝全新独立目录 build-smoke-wp06-t13/（vcpkg toolchain 绝对路径——首次相对路径配置失败 MSB1009 已换绝对路径重配）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋复跑全绿",
+      "notes": "RT-T01~T12 交付的 261（集成）/176（冒烟）用例全量复跑，与 README/单元卡登记口径逐数一致（acceptance 1 零偏差登记的执行证据）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "既有用例全量复跑（RT-T02～T12 交付面——本任务零增删）",
+      "designRef": "units/runtime.md §11 矩阵全部组——落位全表见 runtime/test/README.md §3",
+      "cases": [
+        { "name": "（汇总）", "status": "passed", "modes": ["integration"], "trace": "集成 260/261 通过＋1 例 worker 占位按设计跳过（ContractSuite.ChildProcessWorker_RT_ID_1，父用例派生子进程时执行）——acceptance 1：README 集成口径逐数一致" },
+        { "name": "（汇总）", "status": "passed", "modes": ["smoke"], "trace": "冒烟 176/176 通过——acceptance 1：README 冒烟口径逐数一致" }
+      ]
+    }
+  ],
+  "summary": {
+    "integration": { "total": 261, "passed": 260, "failed": 0, "skipped": 1, "skippedNote": "ChildProcessWorker_RT_ID_1 为父用例派生的 worker 占位——与 RT-T12 已验收口径一致" },
+    "smoke": { "total": 176, "passed": 176, "failed": 0, "skipped": 0 },
+    "exitCodes": { "integrationBuild": 0, "integrationTest": 0, "smokeConfigure": 0, "smokeBuild": 0, "smokeTest": 0, "validateDocs": 0, "validateTask": 0, "irdGates": 1 },
+    "irdGatesNote": "exit=1＝命中恰 3 项既有登记（IRD-GATE-SUB×2＝F-051 runtime_test→testkit＋F-019 testdata_lint 表外边、IRD-GATE-T1×1＝F-019 testdata_lint）——与 wp06-t12 基线逐项相同，零新增违规；引擎自测 7 项全部按预期检出",
+    "acceptanceMapping": {
+      "acc1": "README 指向核对零偏差——README-audit.md（§1 指向维持 §12、§2 目录实录、§3 十二头逐头比对、§4 状态段比对基准、§5 joinScopeLocal 复核）＋双模式实跑口径一致",
+      "acc2": "§15.3 P-RT-1~9 逐条〔RT-T13 状态同步〕——units/runtime.md §15.3（上游卡版本实测：core.md v0.11/ARCHITECTURE v0.12；实现侧事实消账各附留痕锚点）",
+      "acc3": "R-4 例外清单提交——traceability/wp06-t13-gate-registrations.md §1（清单＝NameMap.hpp＋NameMap.cpp；DTB §4.5 预登记行转生效路径；接收方 WP-01-T01/T03）",
+      "acc4": "UT-BUILD 并入 CI 登记——同上文件 §2（既有承载 gate-all/ird_gates 消账＋CI 模板单目标正则缺口登记给 WP-01/WP-24）"
+    },
+    "evidence": "traceability/builds/wp06-t13/（integration-build.log、integration-test-run.log、sdurws_ird_runtime_test-integration.xml、smoke-configure.log、smoke-build.log、smoke-test-run.log、sdurws_ird_runtime_test-smoke.xml、validate-docs.log、validate-task.log、ird_gates.log、README-audit.md、ird-test-report.json）"
+  }
+}
