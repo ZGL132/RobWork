@@ -51,7 +51,8 @@ enable_testing()
 
 add_executable(sdurws_ird_evidence_test
     test/BuildRedLineTest.cpp
-    test/ErrorsTest.cpp)              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
+    test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
+    test/DependencyTest.cpp)         # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
