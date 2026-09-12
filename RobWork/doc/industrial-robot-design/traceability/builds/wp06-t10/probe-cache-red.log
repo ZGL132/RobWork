@@ -1,0 +1,54 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CacheKeyTest.*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from CacheKeyTest
+[ RUN      ] CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1
+[       OK ] CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1 (0 ms)
+[ RUN      ] CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CacheKeyTest.cpp(84): error: Value of: r.verdict == verdict
+  Actual: false
+Expected: true
+能力级别扰动（请求侧关闭）：verdict 实得 FullReuse，期望 WorkCellOnlyReuse（reasons=1 条）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CacheKeyTest.cpp(84): error: Value of: r.verdict == verdict
+  Actual: false
+Expected: true
+能力级别扰动（缓存侧缺失方向）：verdict 实得 FullReuse，期望 WorkCellOnlyReuse（reasons=1 条）
+
+[  FAILED  ] CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1 (0 ms)
+[ RUN      ] CacheKeyTest.FingerprintSetPinsPureContentKey_RT_CACHE_1
+[       OK ] CacheKeyTest.FingerprintSetPinsPureContentKey_RT_CACHE_1 (0 ms)
+[ RUN      ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CacheKeyTest.cpp(379): error: Value of: r.verdict == CompileCacheCompatibility::Verdict::WorkCellOnlyReuse
+  Actual: false
+Expected: true
+应判 WorkCellOnlyReuse，实得 FullReuse
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CacheKeyTest.cpp(381): error: Value of: r.verdict != CompileCacheCompatibility::Verdict::FullReuse
+  Actual: false
+Expected: true
+WC 复用 DWC 不可不得作为完整命中上报（CON-04）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CacheKeyTest.cpp(84): error: Value of: r.verdict == verdict
+  Actual: false
+Expected: true
+RT-CACHE-2：verdict 实得 FullReuse，期望 WorkCellOnlyReuse（reasons=1 条）
+
+[  FAILED  ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2 (0 ms)
+[ RUN      ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3
+[       OK ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3 (0 ms)
+[ RUN      ] CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4
+[       OK ] CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4 (0 ms)
+[ RUN      ] CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1
+[       OK ] CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1 (0 ms)
+[----------] 7 tests from CacheKeyTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 5 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1
+[  FAILED  ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+
+ 2 FAILED TESTS

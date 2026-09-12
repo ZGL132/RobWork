@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T10",
+  "masterWp": "WP-06-T10",
+  "branch": "wp06-t10",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（集成模式零错误零警告；冒烟模式本文件增列不进构建——见 modeMechanics）",
+      "notes": "RT-T10 增列 src/CacheKey.cpp（仅集成模式——TARGET sdurw_kinematics 条件，与 Snapshot.cpp 同因）：§9.4 编译缓存纯判定——CompileCacheKey 分层键（workCellKey 复用 snapshotidentity::computeWorkCellCompileIdentity 公式单点〔v0.10②，不写第二套编码〕＋dynamicWorkCellKey 链式派生 SHA-256(workCellKey‖requestDynamicWorkCell)）＋分量指纹表（8 条 WC 层分量——judge 分量级 reasons 的可比数据面）＋RuntimeCompileCacheKeyBuilder（构造期固定编译器/环境侧分量，默认值＝各单点）＋codecVersionsFromCodecHeaders（编码头常量单一权威组装）＋judgeCompileCacheCompatibility（判定表全行：有效性门→WC 分量比对→DWC 层判定）；新增公共头 CacheKey.hpp（§3.1 模块表 CacheKey 行全实体＋实现层增补登记 §15.4 v0.11）；同批 NameMap.hpp 增 kNameMapRuleVersion=1 常量单点（m_ruleVersion 默认与 buildRuntimeNameMap 赋值改取该常量，值不变）；目标名/别名/include 根不变；存储/命中执行/淘汰归 execution（CON-04）——本单元零存储 API（acceptance 2）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（集成模式 220/220）；冒烟模式 172/172（RT-T10 测试不进冒烟目标——被测面复用 Snapshot.cpp 集成编译单元的公式单点，CMake 同款条件）",
+      "notes": "增列 test/CacheKeyTest.cpp（仅集成模式编译，7 例：RT-CACHE-1 分层键与确定性＋逐分量扰动精确 reasons＋指纹集合钉住、RT-CACHE-2 WorkCellOnlyReuse 非 FullReuse、RT-CACHE-3 旧契约版本拒绝、RT-CACHE-4 命中≠当前性、未 finalize/伪造部分键恒不命中）；RT-T01～T09 的 14 个用例文件保留并全部回归（172 例冒烟／213 例集成存量）"
+    }
+  ],
+  "modeMechanics": "集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误零警告；冒烟模式使用独立树 build-smoke-wp06-t10（vcpkg toolchain 绝对路径 D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake 配置），本任务产品增列（CacheKey.cpp）与测试增列（CacheKeyTest.cpp）均仅集成模式编译——CacheKey 消费 src/Snapshot.cpp 的 snapshotidentity::computeWorkCellCompileIdentity（集成编译单元，v0.10② 公式单点）；CacheKey.hpp 公共头在冒烟下不被任何 TU include（§15.4 v0.11 登记，v0.8②/v0.9⑧/v0.10⑥ 同款分工），不影响'目标注册＋include 路径'的冒烟口径；冒烟 172/172 证明既有面零回归",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/Errors/Sources/Expected/Description*/CanonicalModel*/Codec/NameMap*/BaseWorldTransform*/WorkCell*/DynamicWorkCell*/Snapshot*（RT-T01～T09 既有，回归）",
+      "designRef": "units/runtime.md §3～§9.3/§9.5/§10.11/§11（既有切面）",
+      "cases": [
+        { "name": "213 cases（RT-T09 合入基线全量）", "status": "passed", "modes": ["integration"], "trace": "既有 213 用例零改动零跳过回归通过——新增头 CacheKey.hpp 不被任何既有 TU include，既有编译面零变化" },
+        { "name": "172 cases（RT-T09 合入基线全量，冒烟）", "status": "passed", "modes": ["smoke"], "trace": "冒烟全量回归通过——CacheKey.hpp 不被冒烟 TU include，BuildRedLineTest 源码扫描零新增命中（新增 include 面仅 core/std 头＋同单元公共头，R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1（§9.4 分层键＋D-04＋单点复用）",
+      "designRef": "units/runtime.md §9.4（分层键结构/分量表）、§9.1 workCellCompileIdentity（公式单点）、D-04、NFR-COR-02",
+      "cases": [
+        { "name": "CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1", "status": "passed", "modes": ["integration"], "trace": "要求 DWC→两层键齐备（WC/DWC 非零＋8 条指纹）；requestDynamicWorkCell=false→WC 键不变＋DWC nullopt（capabilityLevel 不入 WC 键——D-04）；重复生成三部分逐字节等值（纯内容函数）；WC 键==computeWorkCellCompileIdentity 同参数输出（复用单点互证——第二套编码即红）" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1／FingerprintSetPinsPureContentKey_RT_CACHE_1（键完备＋reasons 精确＋键纯内容）",
+      "designRef": "units/runtime.md §9.4 分量表与判定表（Incompatible 行分量级 reasons）、RT-CACHE-1 行、CON-06（策略归 evidence 切片）、CON-05（键纯内容）",
+      "cases": [
+        { "name": "CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1", "status": "passed", "modes": ["integration"], "trace": "环境侧逐分量扰动（契约版本/实现版本/基线版本/名称规则版本/编码版本/WC 选项）→WC 键变且 reasons 恰为该分量词（contract-/compiler-/baseline-/namemap-rule-/codec-/wc-options-changed）；能力级别扰动→WC 键不变、DWC 缺性变→WorkCellOnlyReuse（dwc-not-requested/dwc-missing-in-cached 双向）；内容类扰动（质量值变/工具 TCP 变/几何资源字节变）各自经 modelIdentity 变键且 reasons 全部恰为 model-changed；geometryDetail 单值枚举不扰动（阶段 A 单档，与 RT-T09 键公式用例同口径）" },
+        { "name": "CacheKeyTest.FingerprintSetPinsPureContentKey_RT_CACHE_1", "status": "passed", "modes": ["integration"], "trace": "指纹表恰 8 条且分量名序＝编码域分量序（model/contract/compiler/baseline/namemap-rule/base-world-rule/codec/wc-options）——策略/种子/线程/HEAD 无条目（§9.4 FullReuse 行：它们经 evidence 切片身份进评估缓存，CON-06；把'策略内容身份变化→键不变'钉成可断言面）＋逐条摘要非零" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2（WC 复用 DWC 不可）",
+      "designRef": "units/runtime.md §9.4 判定表第 2 行、CON-04（不得作为完整命中上报）",
+      "cases": [
+        { "name": "CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2", "status": "passed", "modes": ["integration"], "trace": "缓存侧 DWC nullopt（SkippedNoPhysics 落账口径——两成因 WC 键相同）、请求侧要求 DWC→WorkCellOnlyReuse＋dwc-missing-in-cached；显式断言 verdict≠FullReuse（CON-04/acceptance 3 的判定表反例）；WC 键相等前提断言（调用方处置＝复用 WC 层产物、重编 DWC）" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3（旧版本拒绝）",
+      "designRef": "units/runtime.md §9.4 判定表第 3 行（RT-CACHE-3：不存在'版本接近可凑用'）、§4.3.6（字节等值唯一等价关系）",
+      "cases": [
+        { "name": "CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3", "status": "passed", "modes": ["integration"], "trace": "compilerContractVersion 1→2（仅差 1 个版本号）→Incompatible＋reasons 恰为 contract-changed；反向（旧请求键对新缓存键）同判——判定对分量差异本身负责" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4（命中≠当前性）",
+      "designRef": "units/runtime.md §9.4 判定表末行、CON-05/AT-05（'电机成本变更不失效运动学'的 runtime 侧）、SA-07（键链一致）",
+      "cases": [
+        { "name": "CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4", "status": "passed", "modes": ["integration"], "trace": "'电机成本对象变化'场景（HEAD 前进、编译消费面未变——同夹具独立二次 build 承载，RT-ID-2 字节等值断言）→重建请求键与缓存键全等→FullReuse（运行时缓存不失效）；文档断言：键路径无 HEAD/时钟/会话输入（judge 纯函数、键即全部输入），当前性归 evidence computeCurrentness（本测试只断言 runtime 侧行为——单元卡 RT-CACHE-4 行口径）" }
+      ]
+    },
+    {
+      "suite": "CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1（部分/失败产物不作完整命中）",
+      "designRef": "units/runtime.md §9.4 判定表'部分模型/失败产物永不构成命中'行、CON-04、§15.3 审查表'是否允许半成品进入缓存或下游'",
+      "cases": [
+        { "name": "CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1", "status": "passed", "modes": ["integration"], "trace": "未 finalize 键（workCellKey 全零——buildKey 对无效模型的防御性产出面）双向判定→Incompatible(key-invalid)；伪造部分键（WC 合法＋在场 DWC 键全零）→Incompatible(key-invalid)——部分/失败产物无任何命中通道（acceptance 3）" }
+      ]
+    }
+  ],
+  "failureCapabilityProbe": {
+    "target": "judgeCompileCacheCompatibility 判定表 RT-CACHE-2 行（DWC 缺性差异分支的 verdict）",
+    "injection": "把该分支 out.verdict 由 WorkCellOnlyReuse 改为 FullReuse（半成品/不完整产物被伪装成完整命中——CON-04 的对抗面），CacheKey.cpp 单行精确注入（probe-build.log）",
+    "red": "恰好 2 例变红：WorkCellOnlyReuseNotFullReuse_RT_CACHE_2（verdict≠FullReuse 断言）与 ComponentPerturbationPreciseReasons_RT_CACHE_1（能力级别分支 verdict 断言）；其余 5 例 CacheKeyTest 用例与全部既有用例不受影响（probe-cache-red.log，TEST_EXIT=1）",
+    "restore": "单行精确还原（PROBE 标记 grep 计数=0）→重建（integration-build.log，零错误）→全量复绿 220/220（integration-test-run.log，TEST_EXIT=0）"
+  },
+  "gates": {
+    "ird_gates": "命中集与 wp06-t09 基线逐项相同＝既有登记 IRD-GATE-SUB/T1 两项（testkit 相关，DTB §4.5 例外登记在案）——零新增命中（ird-gates-run.log）",
+    "validate_task": "validate-task: PASS（1 tasks）——契约三查（validate-task-run.log）"
+  },
+  "conclusion": "RT-T10 三条 acceptance 逐条自证：①RT-CACHE-1～4 分层键与判定表全用例通过（7/7 新增用例，逐例具名追溯）；②存储归 execution、本任务只做纯判定（模块面仅 buildKey/judge 纯函数，零存储 API——模块边界由实现面与 §15.4 v0.11② 承载，judge 纯函数确定性逐例隐含断言）；③部分/失败产物不得作为完整命中（UnfinalizedKeyNeverHits 恒 Incompatible＋WorkCellOnlyReuse 显式非 FullReuse 两例）。集成 220/220、冒烟 172/172、探针红→精确还原→复绿。未执行项：无——TSAN/ASAN 类等价观测本任务无对应要求（纯函数无并发面）。"
+}

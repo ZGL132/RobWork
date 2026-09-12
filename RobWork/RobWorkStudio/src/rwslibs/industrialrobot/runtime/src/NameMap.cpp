@@ -419,7 +419,7 @@ RuntimeNameMap buildRuntimeNameMap(const CanonicalModel& model)
     }
     map.m_entries = std::move(entries);
     map.m_notices = std::move(notices);
-    map.m_ruleVersion = 1;  // §7.2 规则表初始版本（设计默认——待产品确认冻结）
+    map.m_ruleVersion = kNameMapRuleVersion;  // §7.2 规则表初始版本（单一权威常量——待产品确认冻结）
     map.m_identity = rtcodec::computeNameMapContentIdentity(map);  // §7.6（CR-02）
     return map;
 }

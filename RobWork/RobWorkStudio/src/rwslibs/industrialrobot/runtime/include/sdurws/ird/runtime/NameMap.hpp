@@ -73,6 +73,22 @@
 namespace sdurws::ird::runtime {
 
 // =====================================================================
+// kNameMapRuleVersion——名称生成规则版本单一权威常量（§7.1/§9.4 缓存键
+// 分量 nameMapRuleVersion；RT-T10 增设——§15.4 v0.11 登记）。
+// =====================================================================
+
+/**
+ * @brief 名称生成规则版本的单一权威值（§7.2 规则表初始版本＝1）。
+ *
+ * 背景：规则变化＝名称可能变＝新缓存键（§9.4 分量表 nameMapRuleVersion
+ * 行）；升版走设计变更评审。消费方（buildRuntimeNameMap 的初始版本、
+ * CacheKey 的键分量默认值）一律取本常量、禁止另写字面量（与
+ * kBaseWorldRuleVersion 同款单一权威纪律——§15.4 v0.10 先例）。
+ * 待产品确认冻结后仅替换此单点（§15.4 v0.5③ 同源登记）。
+ */
+inline constexpr std::uint32_t kNameMapRuleVersion = 1;
+
+// =====================================================================
 // NameScope——名称范围（§7.1 范围表行序即枚举声明序；一经交付不得改动/
 // 插入——枚举数值进入 IRDNAME 编码契约面，稳定第一）。
 // =====================================================================
@@ -368,7 +384,7 @@ private:
     std::map<std::string, std::size_t, std::less<>> m_byFullName; ///< fullName→条目下标
     std::map<core::ObjectId, std::size_t> m_identityIndex;        ///< ObjectId→身份条目下标
     core::ContentIdentity m_identity{}; ///< 内容身份（§7.6——构建/解析时计算）
-    std::uint32_t m_ruleVersion = 1;    ///< 生成规则版本（见 ruleVersion() 注释）
+    std::uint32_t m_ruleVersion = kNameMapRuleVersion; ///< 生成规则版本（单一权威常量——见 ruleVersion() 注释）
     std::vector<RuntimeNameNotice> m_notices; ///< 生成期警告（构建路径填充）
 };
 
