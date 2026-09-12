@@ -1,0 +1,6 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t06\core\Release\sdurws_ird_core.lib
+  Verdict.cpp
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t06\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t06\evidence\Release\sdurws_ird_evidence_test.exe

@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T06",
+  "masterWp": "WP-05-T06",
+  "branch": "wp05-t06",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T06 新增 src/Verdict.cpp（五级优先级决策表 aggregateVerdict＋VerdictTrace 追溯＋§7.2 两类声明资格检查 FormalPass/ReviewRecord＋§6.5 比较基准一致性检查 checkComparisonBaselinesConsistent——units/evidence.md §6.4/§6.5/§6.6/§7.2；契约头 Verdict.hpp 新增）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 107/107）",
+      "notes": "EV-T06 增列 test/VerdictTest.cpp（VerdictDecisionTable 2＋VerdictGate 1＋VerdictSearchExhausted 1＋VerdictConfigCollision 2＋VerdictPathCollision 1＋VerdictMandatoryProof 2＋VerdictNotApplicableItem 1＋VerdictMustShould 2＋VerdictCoverage 1＋VerdictBaseline 2＋VerdictMissingCompleteness 2＋VerdictD9 1＋VerdictPitfalls 2＋VerdictRegionCoverage 1＋VerdictEligibility 2＋VerdictDeterminism 1＝24 新增）；既有 EV-BUILD/EV-ERR/EV-DEP/EV-ID/EV-SNAP/EV-CASET/EV-SNAPC/EV-SLICE/EV-SLICEC/EV-CR02/EV-CR05/EV-PROOF/EV-ITEM/EV-COMPLETENESS/EV-MANIFEST/EV-PROFILE/EV-COVM/EV-COVR/EV-MODE/EV-SEARCH 83 用例回归保持通过（零修改）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "VerdictDecisionTable（EV-T06 新增）——决策表⓪前置（TASK-02）＋全链绿对照面",
+      "designRef": "units/evidence.md §6.4.1 表⓪行、§6.4.2 判定对 1、§7.2；需求 TASK-02、CON-02、ERR-01",
+      "cases": [
+        { "name": "VerdictDecisionTable.FailedOutcomeIsNotApplicable_TASK_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "⓪级：outcome=Failed→NotApplicable（执行失败 vs 工程不可行判定对——绝不把执行轴失败折算成不可行）；①~⑤级全部 evaluated=false（字面顺序短路，P-EV-3 同源机制）" },
+        { "name": "VerdictDecisionTable.FullySatisfiedInputIsFeasible", "status": "passed", "modes": ["smoke", "integration"], "trace": "全链绿正例（各反例用例的对照面）：⑤级 Feasible＋决策路径⓪~④ evaluated 未命中＋missingItems/diagnostics 空＋searchRecord 空" }
+      ]
+    },
+    {
+      "suite": "VerdictGate（EV-T06 新增）——acceptance 1（EV-VER-1）＋C6",
+      "designRef": "units/evidence.md §6.4.1 表②行、§11 EV-VER-1 行；需求 EVI-01 表 2 C6",
+      "cases": [
+        { "name": "VerdictGate.GateBlocksProof_EV_VER_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——不可行证明在场＋快照身份缺失（无策略内容身份）→②级命中 DataInsufficient；missingItems 含快照身份项；证明未进入③（InfeasibilityProof 级 evaluated=false——C6 不被替代规则豁免）；诊断 EVI-SNAPSHOT-INCOMPLETE" }
+      ]
+    },
+    {
+      "suite": "VerdictSearchExhausted/VerdictConfigCollision/VerdictPathCollision（EV-T06 新增）——acceptance 1（EV-VER-2/3/4/5，C5/C8）",
+      "designRef": "units/evidence.md §6.4.2 判定对 2/3、§6.3 末、§11 EV-VER-2~5 行；需求 C5/C8/AT-03",
+      "cases": [
+        { "name": "VerdictSearchExhausted.SearchExhaustedThenFeasibleAfterReplan_EV_VER_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——第一次（多初值全发散）：DataInsufficient＋searchRecord 透传（预算 1000/初值 8 可观测）＋EVI-SEARCH-EXHAUSTED 诊断，无 EngineeringInfeasible 输出；第二次（扩大初值后有效解）：Feasible；复评输入前提复证——配置变→sliceId 不等而 inputBaselineId 相等（D-04，双身份行为本体见 EV-T04）" },
+        { "name": "VerdictConfigCollision.FilteredSolutionDoesNotBlockFeasible_EV_VER_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——一组 IK 解碰撞被过滤、另一组有效→Feasible（碰撞解仅入 filteredSolutions——域侧承载，有有效解不产出搜索未果记录；无证明产生）" },
+        { "name": "VerdictConfigCollision.AllSolutionsFilteredIsDataInsufficient_EV_VER_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——全部解因碰撞过滤→DataInsufficient（搜索未果口径）；透传记录 filteredSolutions 全为 Collision；不产生 MandatoryStateCollision 证明（C8）" },
+        { "name": "VerdictPathCollision.ReplannedPathKeepsFeasible_EV_VER_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——候选路径碰撞（淘汰证据）＋重规划成功→Feasible（路径碰撞记录为淘汰证据、非任务级证明——C8）" }
+      ]
+    },
+    {
+      "suite": "VerdictMandatoryProof（EV-T06 新增）——acceptance 1（EV-VER-6 判定面）＋acceptance 3（D-9 反例半边）",
+      "designRef": "units/evidence.md §6.4.1 表③行、§6.4.2 判定对 2、§11 EV-VER-6 行（字段级校验半边在 EV-T05）；需求 C8/D-09",
+      "cases": [
+        { "name": "VerdictMandatoryProof.ValidProofGivesInfeasible_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——validateProof 通过的必经状态碰撞证明→③命中 EngineeringInfeasible；P-EV-3 字面顺序（④/⑤不再评估）；③附加义务：substitutable 成功产物类项按\"因不可行而不适用\"出具说明诊断（EVI-INFEASIBILITY-SUBSTITUTION）" },
+        { "name": "VerdictMandatoryProof.InvalidProofFallsToDataInsufficient_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1＋3——缺必经性依据的同款证明→Invalid→④ DataInsufficient（missingItems 含 claimToken；EVI-PROOF-INVALID 诊断——无效证明不被采信为不可行）" }
+      ]
+    },
+    {
+      "suite": "VerdictNotApplicableItem/VerdictMustShould（EV-T06 新增）——acceptance 1（EV-VER-7/8）",
+      "designRef": "units/evidence.md §6.4.1 表⑤行、§6.2、§11 EV-VER-7/8 行；需求 REQ-06/C2/ERR-01",
+      "cases": [
+        { "name": "VerdictNotApplicableItem.NotApplicableNotCountedMissing_EV_VER_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——trj 域条件项（条件输入＝任务序列对象）NotApplicable（原因＝纯关节路径无笛卡尔段、非空）不计缺失→整体 Feasible 不因该缺项降级；missingItems 空" },
+        { "name": "VerdictMustShould.MustViolationGivesInfeasible_EV_VER_8", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——有效 Must 违例→⑤级 EngineeringInfeasible（VerdictTrace 级次=⑤）；verdictInputs 透传（违例 itemId/明细进判定记录诊断——EVI-MUST-VIOLATION）" },
+        { "name": "VerdictMustShould.ShouldViolationKeepsFeasibleWithWarning_EV_VER_8", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——Should 违例→Feasible＋警告诊断（不阻断，REQ-06；EVI-SHOULD-VIOLATION）" }
+      ]
+    },
+    {
+      "suite": "VerdictCoverage/VerdictBaseline（EV-T06 新增）——acceptance 1（EV-COV-1/4）",
+      "designRef": "units/evidence.md §6.6 校验规则、§6.5、§11 EV-COV-1/4 行；需求 EVI-02/DYN-07/RPT-04/KIN-04/C5",
+      "cases": [
+        { "name": "VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——覆盖矩阵缺一个 enabled∧mandatory 工况→②级 DataInsufficient；missingItems 含漏验工况 id（规范文本逐工况点名）；即使不可行证明在场亦拦截（包络不替代，DYN-07；C6 证明不豁免门禁）；EVI-CASE-COVERAGE-MISSING 诊断" },
+        { "name": "VerdictBaseline.InconsistentBaselinesListDimensions_EV_COV_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——两结果 inputBaselineId 不等（采样预算变）→失败并列差异维度（InputBaseline）；相等→通过（RPT-04/KIN-04 冻结样本集）" },
+        { "name": "VerdictBaseline.MultiDimensionDifferencesOrderedAndSingleTrivial", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-COV-4 补充——多维度差异（Project/InputBaseline/RequiredCaseSet/SampleSets）逐项输出且按枚举声明序（确定性 NFR-COR-02）；空集/单条平凡通过（I-8）" }
+      ]
+    },
+    {
+      "suite": "VerdictMissingCompleteness（EV-T06 新增）——acceptance 2（缺失项全量列出，不抽样不短路）",
+      "designRef": "units/evidence.md §6.4.1 表②④行（\"缺失项全量列出\"）；需求 EVI-02",
+      "cases": [
+        { "name": "VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——②级内多组成同时缺失（快照身份 2 字段＋必验工况漏验 2 工况）→missingItems 全量 4 条逐项在场（不因首个缺失短路；C 非 mandatory 不进分母——O-14 字面）" },
+        { "name": "VerdictMissingCompleteness.EvidenceGapsListedExhaustively_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——④级内两项必需证据全 Missing→missingItems 全量 2 条（全量列出——表 2 ④）" }
+      ]
+    },
+    {
+      "suite": "VerdictD9（EV-T06 新增）——acceptance 3（汇总不得凭状态字段采信证明——D-9）",
+      "designRef": "units/evidence.md §6.3 validateProof 注、D-09、§1.1；任务契约 EV-T06 acceptance 3",
+      "cases": [
+        { "name": "VerdictD9.ProofPresenceNeverTrustedWithoutFieldValidation_D9", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3——证明仅\"存在\"（越界类别冒充——模拟状态字段/存在性声明）不得采信：字段级校验拒绝→DataInsufficient＋EVI-PROOF-INVALID，绝不输出 EngineeringInfeasible（D-09 字面）" }
+      ]
+    },
+    {
+      "suite": "VerdictPitfalls（EV-T06 新增）——acceptance 4（P-EV-7/O-14 保守字面）",
+      "designRef": "units/evidence.md §6.6 空集合与全不适用段、§15.3 P-EV-7、§4.1.3（O-14 分母语义）；任务契约 EV-T06 acceptance 4＋knownPitfalls",
+      "cases": [
+        { "name": "VerdictPitfalls.EmptyRequiredCaseSetIsDataInsufficient_P_EV_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 4——空必验集：覆盖矩阵平凡完备（②级通过）但④级保守判 DataInsufficient＋\"无启用必验工况\"诊断（EVI-CASE-COVERAGE-MISSING 码面＋cause 区分），绝不输出 Feasible（P-EV-7 保守处置——宁可数据不足不可虚通过）" },
+        { "name": "VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 4——全部必验工况显式 NotApplicable（逐项带原因、矩阵合法）：覆盖判据字面（只有 Executed 构成覆盖）在②级拦截→DataInsufficient，不另设路径（单元卡 v0.7 I-6）" }
+      ]
+    },
+    {
+      "suite": "VerdictRegionCoverage（EV-T06 新增）——acceptance 1（EV-COV-3 汇总裁定半边；校验器半边在 EV-T05）",
+      "designRef": "units/evidence.md §6.6 RegionCoverageEvidence 零样本/降级行、§11 EV-COV-3 行；需求 KIN-04 R8",
+      "cases": [
+        { "name": "VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——区域证据零样本（形状自洽、plannedTotal==0）→④级 DataInsufficient＋诊断（覆盖率不定义，不得输出 0%/100%；EVI-REGION-COVERAGE-DOWNGRADED——I-5 分流：形状非法归②级门禁、零样本/降级归④级数据不足）" }
+      ]
+    },
+    {
+      "suite": "VerdictEligibility（EV-T06 新增）——§7.2 两类声明资格（EV-T06 产物\"资格\"面）",
+      "designRef": "units/evidence.md §7.2 资格表（RPT-05）；§12 EV-T06 行产物清单",
+      "cases": [
+        { "name": "VerdictEligibility.FormalPassEligibilityFiveConditions_S7_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 FormalPass——五条件全满足→eligible；Quick 模式→mode-not-verified（表 1：Quick 不得单独支撑正式通过）；必需证据缺失→evidence-incomplete；unmetConditions 稳定 token 逐项断言" },
+        { "name": "VerdictEligibility.ReviewRecordEligibilityRequiresInfeasibleWithBasis_S7_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 ReviewRecord——Must 违例（不可行＋记录在场）→合格；有效证明分支（③命中）→合格；Should 违例（Feasible）→status-not-infeasible＋no-valid-proof-or-must-violation 双 unmet（D-9：\"携带有效证明\"必须字段级校验通过）" }
+      ]
+    },
+    {
+      "suite": "VerdictDeterminism（EV-T06 新增）——NFR-COR-02/COR-04（确定性＋trace 留痕）",
+      "designRef": "units/evidence.md D-09（纯函数＋VerdictTrace 留痕）；需求 NFR-COR-02/NFR-COR-04",
+      "cases": [
+        { "name": "VerdictDeterminism.SameInputSameOutputIncludingTrace_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "同一输入两次聚合 VerdictResult 全字段相等（含 trace.note/诊断 cause 文本——无时间戳/随机；trace 固定六槽完整决策路径）" }
+      ]
+    }
+  ],
+  "summary": { "total": 107, "passed": 107, "failed": 0, "modes": { "smoke": "107/107", "integration": "107/107" }, "unitRegression": { "smoke": "core 61/61＋evidence 107/107＋policy 4/4＋runtime 176/176＋testkit 97/97＝445/445", "integration": "evidence 107/107（集成面其余单元未在本任务重跑——ird_gates 的冒烟/集成测试步骤全 PASS 见 ird-gates.log）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "汇总②级门禁探针：向 src/Verdict.cpp 的覆盖矩阵门禁检查注入 'false &&' 短路（精确编辑＋显式构建/运行退出码核验，无 sed）后重编译执行；探针验证后逐字精确恢复并核验 PROBE 字样零残留（grep 计数 0）",
+    "result": "VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1 与 VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2 如期变红（probe-red-run exit 1——覆盖门禁被跳过后漏验工况放行、EV-COV-1/acceptance 2 断言检出；VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7 同链条变红）——②级覆盖门禁与缺失全量列出判定的真实失败能力成立；恢复后 107/107 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t06/smoke-configure.log",
+      "traceability/builds/wp05-t06/smoke-build.log",
+      "traceability/builds/wp05-t06/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t06/probe-red-build.log",
+      "traceability/builds/wp05-t06/probe-red-run.log",
+      "traceability/builds/wp05-t06/probe-restore-build.log"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t06/integration-cache-check.txt",
+      "traceability/builds/wp05-t06/integration-build-evidence.log",
+      "traceability/builds/wp05-t06/integration-verify.log",
+      "traceability/builds/wp05-t06/integration-test-run.log",
+      "traceability/builds/wp05-t06/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t06/ird-gates.log",
+      "traceability/builds/wp05-t06/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 VERIFY_EXIT=0，integration-verify.log；另以 --target sdurws_ird_evidence 显式核验库构建 LIB_BUILD_EXIT=0，integration-build-evidence.log）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（sdurws_ird_testdata_lint→testkit 表外边）＝F-019 既有；③IRD-GATE-T1（sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。与 wp05-t05 基线逐项一致；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t06/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake），配置 Release，全量构建 exit 0，全量 445/445 零回归（core 61＋evidence 107＋policy 4＋runtime 176＋testkit 97）。实现口径 I-1～I-9（aggregateVerdict 签名落位＝快照显式参数＋两注册表以最小只读投影承载／VerdictInput 增补 mode/regionCoverages/searchRecord 三字段／MissingItem {itemId,reason}／决策表字面顺序与②级固定检查序／区域证据分流＝形状②级＋零样本降级④级／证明无效＝④级命中条件／资格检查 unmetConditions 稳定 token／基准检查按序比较与平凡通过／汇总诊断建议码＝复用 §13 四值＋补登八值）登记于 units/evidence.md v0.7 变更记录。测试组名 Verdict*为实现侧组名（§11 矩阵 EV-T06 专项＝EV-VER-1~8＋EV-COV-1/4 对照 §12 行；EV-VER-6 字段级校验半边与 EV-COV-2/3 校验器半边已随 EV-T05 落地——§12 依赖序）。AcceptAllClosureSource/ScriptedProducerRegistry/ScriptedProfileRegistry 为接口替身（边界声明见 VerdictTest.cpp 文件头——替身输出仅验证 evidence 汇总契约，不构成 project/evaluator 侧实现正确性证明，亦不构成 IK/动力学等业务算法正确性证明——EV-REG-3 同源）。"
+}
