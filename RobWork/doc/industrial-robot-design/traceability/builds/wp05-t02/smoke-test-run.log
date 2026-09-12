@@ -1,0 +1,72 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 22 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from EvidenceBuild
+[ RUN      ] EvidenceBuild.SourceTreeReachable_EV_BUILD
+[       OK ] EvidenceBuild.SourceTreeReachable_EV_BUILD (0 ms)
+[ RUN      ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01
+[       OK ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01 (1 ms)
+[ RUN      ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2
+[       OK ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2 (1 ms)
+[ RUN      ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2
+[       OK ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2 (0 ms)
+[----------] 4 tests from EvidenceBuild (3 ms total)
+
+[----------] 2 tests from EvidenceErrorsFullTable
+[ RUN      ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02
+[       OK ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02 (0 ms)
+[ RUN      ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR
+[       OK ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR (0 ms)
+[----------] 2 tests from EvidenceErrorsFullTable (0 ms total)
+
+[----------] 1 test from EvidenceErrorsThrow
+[ RUN      ] EvidenceErrorsThrow.MessagePrefixAndCodeAccessor_EV_ERR
+[       OK ] EvidenceErrorsThrow.MessagePrefixAndCodeAccessor_EV_ERR (0 ms)
+[----------] 1 test from EvidenceErrorsThrow (0 ms total)
+
+[----------] 2 tests from EvidenceDependencyKeySyntax
+[ RUN      ] EvidenceDependencyKeySyntax.ValidKeys_EV_DEP
+[       OK ] EvidenceDependencyKeySyntax.ValidKeys_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyKeySyntax.InvalidKeys_EV_DEP
+[       OK ] EvidenceDependencyKeySyntax.InvalidKeys_EV_DEP (0 ms)
+[----------] 2 tests from EvidenceDependencyKeySyntax (0 ms total)
+
+[----------] 5 tests from EvidenceDependencyDeclarationClosure
+[ RUN      ] EvidenceDependencyDeclarationClosure.ValidDeclarations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.ValidDeclarations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.MissingClosureDeclaration_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.MissingClosureDeclaration_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.RequirednessPairingViolations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.RequirednessPairingViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.ConditionContentViolations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.ConditionContentViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.DuplicateDeclarationKey_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.DuplicateDeclarationKey_EV_DEP (0 ms)
+[----------] 5 tests from EvidenceDependencyDeclarationClosure (0 ms total)
+
+[----------] 1 test from EvidenceDependencyRequire
+[ RUN      ] EvidenceDependencyRequire.ThrowOnClosureViolation_EV_DEP
+[       OK ] EvidenceDependencyRequire.ThrowOnClosureViolation_EV_DEP (0 ms)
+[----------] 1 test from EvidenceDependencyRequire (0 ms total)
+
+[----------] 7 tests from EvidenceDependencyEntrySyntax
+[ RUN      ] EvidenceDependencyEntrySyntax.ValidEntries_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ValidEntries_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.PayloadKindMismatch_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.PayloadKindMismatch_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.ObjectPayloadViolations_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ObjectPayloadViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.OtherPayloadViolations_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.OtherPayloadViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.AppliedReasonPairing_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.AppliedReasonPairing_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.EntrySetInvariants_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.EntrySetInvariants_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.ValueSemanticsEquality_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ValueSemanticsEquality_EV_DEP (0 ms)
+[----------] 7 tests from EvidenceDependencyEntrySyntax (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 7 test suites ran. (5 ms total)
+[  PASSED  ] 22 tests.
+smoke run EXIT=0

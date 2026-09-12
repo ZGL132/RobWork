@@ -19,7 +19,11 @@
 find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC ----
-add_library(sdurws_ird_evidence STATIC src/Evidence.cpp)
+# src/Evidence.cpp＝EV-T01 落位锚点 TU；src/Errors.cpp＝EV-T02 错误契约
+# （token/建议码两张全表＋异常轨——units/evidence.md §3.1 组成表）。
+add_library(sdurws_ird_evidence STATIC
+    src/Evidence.cpp
+    src/Errors.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -46,7 +50,9 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_evidence_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
+    test/DependencyTest.cpp)         # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17

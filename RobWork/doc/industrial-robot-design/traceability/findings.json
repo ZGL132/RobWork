@@ -553,6 +553,16 @@
       "resolution": "后续留痕提交在 ird-test-report.json／提交信息中显式声明各模式构建配置（Debug/Release）；随下次触及留痕流程的任务顺手统一，不追溯已推送提交"
     },
     {
+      "id": "F-056",
+      "source": "EV-T02 实施段（2026-09-12，分支 wp05-t02）：实现 units/evidence.md §12 EV-T02 行（Errors.hpp/.cpp＋Dependency.hpp）需冻结 EvidenceErrorCode 稳定 token 全表，而 §3.5 错误语义章节缺位（F-020）致码面只能从散落原文拼装",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "EvidenceErrorCode 两处建议码超出 §13 清单枚举：§13 diagnostics 行仅列 7 个 EVI-* 建议码（以'等'收尾），但设计文本另有两处明文抛错点无建议码——§4.1.5④b 载荷摘要不符（EvidenceError(snapshot-integrity)）与 §4.2.3① 声明闭包/语法注册期拒绝（闭包校验器需 fail-fast 码面）。实现按 P-PR-6 同模式补登建议值 EVI-SNAPSHOT-INTEGRITY/EVI-DECLARATION-INVALID（registryCode 返回，注释显式标注建议值），token 命名取抛错点原文（snapshot-integrity）＋§13 建议码 kebab 派生，'evidence/' 前缀与 what() 消息约定沿 runtime §3.4 先例",
+      "owner": "evidence 详设所有者＋diagnostics 所有者（码值注册/StableCodeRegistry 收编时裁决；单元卡 v0.3 变更记录已同步登记）",
+      "resolution": "处置建议＝①diagnostics 注册时收编或改码（码值权威归 StableCodeRegistry——evidence 只产建议码面，PA-1）；②evidence.md 增设 '### 3.5 错误类型与注入契约' 时把 9 值全表＋两补登建议一并析出成节（与 F-020 合并处置）；③闭包拒绝码是否独立成码（vs 归并注册拒绝族）由 EV-T10 EvaluatorRegistry 消费时复核"
+    },
+    {
       "id": "F-057",
       "source": "EV-T02 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T02-20260912.md §4.8，送验对象 d1314a6d，分支 wp05-t02）：验收者逐项核对文档同步时实测卡头版本行与 §15.4 变更记录失同步",
       "severity": "suggestion",
