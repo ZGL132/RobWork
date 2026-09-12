@@ -1,0 +1,27 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = EvidenceErrorsFullTable.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from EvidenceErrorsFullTable
+[ RUN      ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ErrorsTest.cpp(83): error: Expected equality of these values:
+  token(e.code)
+    Which is: "evidence/snapshot-incomplete-PROBE"
+  std::string_view{e.tokenText}
+    Which is: "evidence/snapshot-incomplete"
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ErrorsTest.cpp(79): 码值: evidence/snapshot-incomplete
+
+[  FAILED  ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02 (1 ms)
+[ RUN      ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR
+[       OK ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR (0 ms)
+[----------] 2 tests from EvidenceErrorsFullTable (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02
+
+ 1 FAILED TEST
+probe-run EXIT=1

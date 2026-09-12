@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T02",
+  "masterWp": "WP-05-T02",
+  "branch": "wp05-t02",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T02 增列 src/Errors.cpp（错误契约：EvidenceErrorCode 9 值全表 token/建议码两张固定表＋EvidenceError 异常轨——units/evidence.md §3.1 组成表）；Dependency.hpp 为 header-only（契约产物列无 .cpp）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 22/22）",
+      "notes": "EV-T02 增列 test/ErrorsTest.cpp（EV-ERR 3 用例）＋test/DependencyTest.cpp（EV-DEP 15 用例）；既有 BuildRedLineTest 4 用例保持通过"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvidenceBuild（EV-T01 既有，回归保持）",
+      "designRef": "units/evidence.md §3.2/§3.4、§12 EV-T01",
+      "cases": [
+        { "name": "EvidenceBuild.SourceTreeReachable_EV_BUILD", "status": "passed", "modes": ["smoke", "integration"], "trace": "锚定（源码树可达）" },
+        { "name": "EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-3/NFR-MNT-01（产品面零 Q 头——现扫描含新增 Errors.hpp/Dependency.hpp）" },
+        { "name": "EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-1/R-2（include 面白名单 {core, evidence}——新增头仅 include core＋evidence）" },
+        { "name": "EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2", "status": "passed", "modes": ["smoke", "integration"], "trace": "R-2（公共头仅位于 include/sdurws/ird/evidence/）" }
+      ]
+    },
+    {
+      "suite": "EvidenceErrorsFullTable（EV-ERR，EV-T02 新增）",
+      "designRef": "units/evidence.md §3.1 组成表、§13 diagnostics 行、§4.1.5④b、§9.4；§12 EV-T02 行（token）",
+      "cases": [
+        { "name": "EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——EvidenceErrorCode 全表 9 值逐 token（手写期望表锚定设计原文；枚举序号 8 钉死防插入/重排）＋registryCode 建议码逐值（NFR-COR-02 同码同串）" },
+        { "name": "EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——§13 建议码清单 7 值不重不漏各被恰一个枚举值承载；9＝7＋2 补登建议（F-056）" },
+        { "name": "EvidenceErrorsThrow.MessagePrefixAndCodeAccessor_EV_ERR", "status": "passed", "modes": ["smoke", "integration"], "trace": "§2.1 异常行——what()＝\"<token>[: <detail>]\"前缀强制拼装、code() 访问器、按 std::runtime_error 基类捕获（D-15 进程内抛传）" }
+      ]
+    },
+    {
+      "suite": "EvidenceDependencyKeySyntax（EV-DEP，EV-T02 新增）",
+      "designRef": "units/evidence.md §4.2.1（DependencyKey 语法原文与四示例）、§5.2（编码安全）",
+      "cases": [
+        { "name": "EvidenceDependencyKeySyntax.ValidKeys_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 正例——§4.2.1 四个原文示例键＋长度边界 3/64＋三类词表字符混排全部合法" },
+        { "name": "EvidenceDependencyKeySyntax.InvalidKeys_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——空/2 字符/65 字符/首字符大写·数字·连点·点/下划线·空格·斜杠·NUL 逐类拒绝" }
+      ]
+    },
+    {
+      "suite": "EvidenceDependencyDeclarationClosure（EV-DEP，EV-T02 新增）",
+      "designRef": "units/evidence.md §4.2.3①（闭包规则）、D-10、§4.2.1 声明行",
+      "cases": [
+        { "name": "EvidenceDependencyDeclarationClosure.ValidDeclarations_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 正例——Required 无条件＋Conditional 引用已声明键/快照事实键＋七类 Kind 声明 → 零 issue" },
+        { "name": "EvidenceDependencyDeclarationClosure.MissingClosureDeclaration_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 反例（D-10 核心防线）——条件输入未声明且非快照事实键 → ReferencedKeyNotInClosure 逐键定位（注册期拒绝）" },
+        { "name": "EvidenceDependencyDeclarationClosure.RequirednessPairingViolations_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 反例——Conditional 缺条件/Required 带条件（必需性配对矛盾）" },
+        { "name": "EvidenceDependencyDeclarationClosure.ConditionContentViolations_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 反例——conditionToken 空/referencedKeys 空集/引用键语法非法/声明键语法非法逐类拒绝" },
+        { "name": "EvidenceDependencyDeclarationClosure.DuplicateDeclarationKey_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 反例——同一声明集 key 重复（歧义声明）且下标定位到重复项" }
+      ]
+    },
+    {
+      "suite": "EvidenceDependencyRequire（EV-DEP，EV-T02 新增）",
+      "designRef": "units/evidence.md §4.2.3①/§9.4（注册边界拒绝语义）；Errors.hpp DeclarationInvalid 码面",
+      "cases": [
+        { "name": "EvidenceDependencyRequire.ThrowOnClosureViolation_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——合法集静默通过；非法集抛 EvidenceError(DeclarationInvalid)、what() 带 evidence/ 前缀并聚合涉事键（fail-fast 注册拒绝原语）" }
+      ]
+    },
+    {
+      "suite": "EvidenceDependencyEntrySyntax（EV-DEP，EV-T02 新增）",
+      "designRef": "units/evidence.md §4.2.1 七类载荷行、§4.2.2（entries ≥1、(kind,key) 字典序稳定存储）、§4.2.3②（语法面边界）",
+      "cases": [
+        { "name": "EvidenceDependencyEntrySyntax.ValidEntries_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 正例——七类 Kind 各一合法条目＋未适用条件条目（applied=false＋原因）字典序存放 → 零 issue；Kind 稳定名表 7 值钉住" },
+        { "name": "EvidenceDependencyEntrySyntax.PayloadKindMismatch_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——monostate 保留态＋kind=Object 装 Policy 载荷（错配）均拒" },
+        { "name": "EvidenceDependencyEntrySyntax.ObjectPayloadViolations_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——零 ObjectId/零 ContentVersion/空 objectTypeToken/条目键语法非法逐类拒绝" },
+        { "name": "EvidenceDependencyEntrySyntax.OtherPayloadViolations_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——Configuration 空 canonicalBytes、Policy/NameMap 零内容身份（CON-06）、SampleSet 零样本集身份（KIN-04）、UpstreamResult 键语法＋零 sliceId、Environment 空 valueToken 逐类拒绝" },
+        { "name": "EvidenceDependencyEntrySyntax.AppliedReasonPairing_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——未适用缺原因/空串原因（presence 语义 §5.2）/已应用带原因三种配对矛盾拒绝" },
+        { "name": "EvidenceDependencyEntrySyntax.EntrySetInvariants_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 反例——空条目集（§4.2.2 ≥1）/组内乱序/跨 kind 乱序/(kind,key) 重复（存储不变量）" },
+        { "name": "EvidenceDependencyEntrySyntax.ValueSemanticsEquality_EV_DEP", "status": "passed", "modes": ["smoke", "integration"], "trace": "值语义抽查——条目/声明/适用条件逐成员等值（拷贝等值、载荷差异、applied 差异、条件差异）" }
+      ]
+    }
+  ],
+  "summary": { "total": 22, "passed": 22, "failed": 0, "modes": { "smoke": "22/22", "integration": "22/22" } },
+  "failureCapabilitySelfCheck": {
+    "method": "token 漂移探针：向 src/Errors.cpp 的 token 表注入 'evidence/snapshot-incomplete-PROBE' 错值后重编译执行（精确编辑＋显式退出码核验，无 sed）；探针验证后恢复原值并终验复绿",
+    "result": "AllCodesPerToken_EV_ERR_NFR_COR_02 如期变红（稳定 token 漂移必被全表用例捕获）；恢复后 22/22 复绿（probe-red-run.log 为探针期留痕）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t02/smoke-configure.log",
+      "traceability/builds/wp05-t02/smoke-build.log",
+      "traceability/builds/wp05-t02/smoke-test-run.log",
+      "traceability/builds/wp05-t02/sdurws_ird_evidence_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t02/integration-cache-check.txt",
+      "traceability/builds/wp05-t02/integration-build.log",
+      "traceability/builds/wp05-t02/integration-verify.log",
+      "traceability/builds/wp05-t02/integration-test-run.log",
+      "traceability/builds/wp05-t02/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t02/probe-red-run.log",
+      "traceability/builds/wp05-t02/ird-gates.log",
+      "traceability/builds/wp05-t02/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 exit 0，integration-verify.log）",
+  "irdGates": "ird_gates 3 处命中均为 F-019 既有基线缺陷（sdurws_ird_testdata_lint→testkit 的 T-1/SUB＋sdurws_ird_runtime_test→testkit 的 SUB——本任务零新增目标/链接边，evidence 面零命中）；独立自测 8 项全部按预期",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t02/（vcpkg toolchain 绝对路径），配置 Release。测试组名 EV-ERR/EV-DEP 为实现侧组名（单元卡 §11 矩阵未设 EV-T02 专项组——对照 §12 EV-T02 行验证方式，EV-BUILD 同例）。快照事实键词表归注册方（校验器参数注入）——测试以 policy/name-map/case-set 为代表串。"
+}
