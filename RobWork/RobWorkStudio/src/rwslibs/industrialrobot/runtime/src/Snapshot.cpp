@@ -212,17 +212,13 @@ std::vector<std::uint8_t> encodeIdentityDomain(const Fields& f)
     appendBool(out, f.compileOptions.requestDynamicWorkCell);
 
     // ---- 第七段：资源清单（表行 10——逐条 ResourceRef）----
+    // ★ 源路径提示不入快照身份（§8.6 规则总表"路径不作身份"——RT-RES-3；
+    //   RT-T12 修正：原实现身份域误含 pathHint，与本函数自身的注释约定矛盾，
+    //   见 units/runtime.md §15.4 v0.13 登记）。
     appendU32(out, static_cast<std::uint32_t>(f.resourceManifest.size()));
     for (const ResourceRef& r : f.resourceManifest) {
         appendId(out, r.resourceId);
         appendDigest(out, r.contentDigest);
-        // 源路径提示：presence 字节显式编码（nullopt ≠ 空串——§4.5 可选值行）。
-        if (r.sourcePathHint.has_value()) {
-            out.push_back(1u);
-            appendString(out, *r.sourcePathHint);
-        } else {
-            out.push_back(0u);
-        }
         out.push_back(r.state == ResourceState::Recorded ? 0u : 1u);
         appendU32(out, r.accessVersion);
     }
