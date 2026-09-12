@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 80,
+  "tickCount": 81,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,11 +13,11 @@
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 0,
-    "accept": 1
+    "fix": 1,
+    "accept": 2
   },
   "heartbeat": {
-    "updatedAt": "2026-09-12T15:36:02+08:00",
+    "updatedAt": "2026-09-12T18:35:30+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -511,6 +511,17 @@
       "commits": [
         "753f4460de7ee990a7dc6bf75a9bb6a9cfe8fd8f"
       ]
+    },
+    {
+      "unit": "runtime",
+      "task": "RT-T12",
+      "acceptanceRecord": "traceability/acceptance/RT-T12-20260912-r2.md",
+      "result": "pass-merged",
+      "mergedAt": "2026-09-12",
+      "failReason": "attempt1 fail（B-1：黄金数据集未防护 CRLF 行尾归一化，fresh 检出 manifest 失配）——返工加 testdata/.gitattributes 钉死 LF 后 attempt2 pass",
+      "commits": [
+        "c044f10fc79078a6c9f1b10fe0bab1b387a6caf1"
+      ]
     }
   ],
   "policy": {
@@ -536,11 +547,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RT-T12",
-      "contractPath": "tasks/foundation/RT-T12.json",
-      "branch": "wp06-t12"
-    },
     {
       "taskId": "RT-T13",
       "contractPath": "tasks/foundation/RT-T13.json",
@@ -875,5 +881,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "2f8c191a-35ca-48d6-a12e-5e71a7bf2bb8"
+  "tickToken": "838373fb-1c9d-4e1b-b310-5474b82fba6a"
 }

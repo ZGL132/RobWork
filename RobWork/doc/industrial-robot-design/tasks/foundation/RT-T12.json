@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "runtime 测试替身与契约套件",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T02",
     "RT-T03",
