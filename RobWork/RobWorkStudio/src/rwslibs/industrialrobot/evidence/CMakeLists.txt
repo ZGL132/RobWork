@@ -22,11 +22,15 @@ find_package(GTest CONFIG REQUIRED)
 # src/Evidence.cpp＝EV-T01 落位锚点 TU；src/Errors.cpp＝EV-T02 错误契约
 # （token/建议码两张全表＋异常轨——units/evidence.md §3.1 组成表）；
 # src/Snapshot.cpp＝EV-T03 快照（builder 冻结协议＋SnapshotCodec 双形态
-# 编解码——§4.1.5/§5.2；契约头 Snapshot.hpp）。
+# 编解码——§4.1.5/§5.2；契约头 Snapshot.hpp）；
+# src/Slice.cpp＝EV-T04 切片（SliceBuilder 冻结协议＋SliceCodec 双形态＋
+# 双层身份 D-04＋canonical 浮点原语——§4.2.2/§4.2.3/§5.1/§5.2＋CR-02/CR-05；
+# 契约头 Slice.hpp）。
 add_library(sdurws_ird_evidence STATIC
     src/Evidence.cpp
     src/Errors.cpp
-    src/Snapshot.cpp)
+    src/Snapshot.cpp
+    src/Slice.cpp)
 
 target_compile_features(sdurws_ird_evidence PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_evidence PROPERTIES
@@ -56,7 +60,8 @@ add_executable(sdurws_ird_evidence_test
     test/BuildRedLineTest.cpp
     test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
     test/DependencyTest.cpp          # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
-    test/SnapshotTest.cpp)           # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
+    test/SnapshotTest.cpp            # EV-T03：EV-ID-1/3＋EV-SNAP builder 不变量＋EV-CASET 工况集＋EV-SNAPC codec
+    test/SliceTest.cpp)              # EV-T04：EV-ID-1/2＋EV-SLICE 冻结拒绝＋浮点位模式/NaN 拒绝＋EV-CR02 排除面＋EV-CR05 保留条目
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17

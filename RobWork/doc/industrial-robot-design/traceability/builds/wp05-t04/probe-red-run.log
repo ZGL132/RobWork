@@ -1,0 +1,21 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from EvidenceSliceBaseline
+[ RUN      ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\SliceTest.cpp(563): error: Value of: base.inputBaselineId == s.inputBaselineId
+  Actual: false
+Expected: true
+Policy 进入 inputBaselineId（§4.2.2'仅模型/需求/工况集/冻结样本集条目参与'被违反）
+
+[  FAILED  ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05 (0 ms)
+[----------] 1 test from EvidenceSliceBaseline (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05
+
+ 1 FAILED TEST

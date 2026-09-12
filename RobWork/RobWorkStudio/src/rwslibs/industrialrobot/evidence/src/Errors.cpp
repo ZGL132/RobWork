@@ -54,10 +54,12 @@ std::string makeWhat(EvidenceErrorCode code, std::string&& detail)
 std::string_view token(EvidenceErrorCode code) noexcept
 {
     // token 表：与枚举注释列逐字一致（稳定 token——持久化于诊断/报告，
-    // 一经交付不得改写）。全 9 值非空（"evidence/" 前缀统一）。
+    // 一经交付不得改写）。全 10 值非空（"evidence/" 前缀统一）。
     // 命名出处：SnapshotIntegrity 取 §4.1.5④b 原文 "snapshot-integrity"、
-    // EvaluatorDuplicate 取 §9.4 原文 "duplicate-evaluator"；其余七值按
-    // §13 建议码 EVI-* 的 kebab 形式派生（登记单元卡 v0.3/F-056）。
+    // EvaluatorDuplicate 取 §9.4 原文 "duplicate-evaluator"、
+    // SliceIncomplete 按 §4.2.3② 冻结期语义 kebab 派生（"slice-incomplete"，
+    // EV-T04 冻结拒绝码面——登记单元卡 v0.5）；其余七值按 §13 建议码
+    // EVI-* 的 kebab 形式派生（登记单元卡 v0.3/F-056）。
     switch (code) {
     case EvidenceErrorCode::SnapshotIncomplete:         return "evidence/snapshot-incomplete";
     case EvidenceErrorCode::SnapshotIntegrity:          return "evidence/snapshot-integrity";
@@ -68,6 +70,7 @@ std::string_view token(EvidenceErrorCode code) noexcept
     case EvidenceErrorCode::EnvelopeIllegalCombination: return "evidence/envelope-illegal-combination";
     case EvidenceErrorCode::CacheIncompatible:          return "evidence/cache-incompatible";
     case EvidenceErrorCode::EvaluatorDuplicate:         return "evidence/duplicate-evaluator";
+    case EvidenceErrorCode::SliceIncomplete:            return "evidence/slice-incomplete";
     }
     // 不可达：switch 已覆盖全枚举（无 default——遗漏新值时编译器告警）。
     // 防御性返回空串（调用方以 empty 判异常值，测试保证不触达）。
@@ -78,9 +81,10 @@ std::string_view registryCode(EvidenceErrorCode code) noexcept
 {
     // 建议注册码表：§13 diagnostics 行建议码清单（码值权威＝diagnostics
     // StableCodeRegistry；evidence 只产出建议码面，不注册码值——PA-1）。
-    // 前 7 值与 §13 原文逐字对应；后 2 值为设计抛错点明文（§4.1.5④b/
-    // §4.2.3①）但 §13 未列建议码的补登建议（EVI-SNAPSHOT-INTEGRITY/
-    // EVI-DECLARATION-INVALID——**建议值**，登记 F-056 转 owners 裁决）。
+    // 前 7 值与 §13 原文逐字对应；后 3 值为设计抛错点明文（§4.1.5④b/
+    // §4.2.3①/§4.2.3② 冻结期）但 §13 未列建议码的补登建议
+    // （EVI-SNAPSHOT-INTEGRITY/EVI-DECLARATION-INVALID/EVI-SLICE-INCOMPLETE
+    // ——**建议值**，登记 F-056/EV-T04 转 owners 裁决）。
     switch (code) {
     case EvidenceErrorCode::SnapshotIncomplete:         return "EVI-SNAPSHOT-INCOMPLETE";
     case EvidenceErrorCode::SnapshotIntegrity:          return "EVI-SNAPSHOT-INTEGRITY";     // 补登建议（F-056）
@@ -91,6 +95,7 @@ std::string_view registryCode(EvidenceErrorCode code) noexcept
     case EvidenceErrorCode::EnvelopeIllegalCombination: return "EVI-ENVELOPE-ILLEGAL-COMBINATION";
     case EvidenceErrorCode::CacheIncompatible:          return "EVI-CACHE-INCOMPATIBLE";
     case EvidenceErrorCode::EvaluatorDuplicate:         return "EVI-EVALUATOR-DUPLICATE";
+    case EvidenceErrorCode::SliceIncomplete:            return "EVI-SLICE-INCOMPLETE";       // 补登建议（EV-T04）
     }
     return {};
 }
