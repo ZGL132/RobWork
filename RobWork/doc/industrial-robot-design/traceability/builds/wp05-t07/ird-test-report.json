@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T07",
+  "masterWp": "WP-05-T07",
+  "branch": "wp05-t07",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T07 新增 src/Envelope.cpp（ResultEnvelopeDraft/make 构造边界 SA-13＋validateCombination 表 3 合法组合矩阵两段式校验器〔上下文无关面＋快照绑定面〕＋载荷摘要经 core::ContentDigester 计算〔CR-02〕——units/evidence.md §7.1/§7.2；契约头 Envelope.hpp 新增）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 133/133）",
+      "notes": "EV-T07 增列 test/EnvelopeTest.cpp（EnvelopeMatrix 21＋EnvelopeSnapshotBound 3＋EnvelopeDeterminism 2＝26 新增）：表 3 合法四格逐一构造成功＋非法格逐一构造拒绝（Preview 无条件边界/Completed×NotApplicable/Canceled×Feasible/DataInsufficient 空缺失清单/Failed+payload/Feasible 带缺失/EngineeringInfeasible 无凭据/Satisfied 判定声明/missingItems 不适用/reusable 标记/结构面）＋快照绑定面（工况子集/证明有效性 D-09/清单绑定复核）＋构造确定性；既有 EV-BUILD/EV-ERR/EV-DEP/EV-ID/EV-SNAP/EV-CASET/EV-SNAPC/EV-SLICE/EV-SLICEC/EV-CR02/EV-CR05/EV-PROOF/EV-ITEM/EV-COMPLETENESS/EV-MANIFEST/EV-PROFILE/EV-COVM/EV-COVR/EV-MODE/EV-SEARCH/Verdict* 107 用例回归保持通过（零修改）"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable（本任务新注册——§11 跨单元契约测试目标的首次落地）",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "EV-T07 按 §11『_contract_test＝跨单元』登记新目标（CMake 与 _test 同构：C++17/utf-8/gtest_main/源码树注入/ird_add_gtest）：EvidenceVocabularyContract 5 用例＝CR-01 联合契约测试（foundation-api-diff.md CR-01 关闭记录条款——acceptance 2）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EnvelopeMatrix（EV-T07 新增）——acceptance 1（EV-ENV-1/EV-ENV-2：表 3 全组合矩阵逐格强制）",
+      "designRef": "units/evidence.md §7.1 合法组合矩阵（表 3）、§7.2 构造校验行、§11 EV-ENV-1/2 行；需求 TASK-02、ERR-01、EVI-01 表 1、CON-04/05、CON-02",
+      "cases": [
+        { "name": "EnvelopeMatrix.CompletedFeasibleConstructsAndComputesPayloadDigest_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 合法格——Completed×Feasible 构造成功、字段逐一保真；载荷摘要＝make() 经 core::ContentDigester 对 canonicalBytes 重算且与手工重算逐字节一致（CR-02 摘要算法唯一——非申报值，§7.1 DomainPayload.digest 注释『evidence 计算摘要』）" },
+        { "name": "EnvelopeMatrix.CompletedEngineeringInfeasibleWithValidProof_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 合法格——EngineeringInfeasible 凭据为证明：上下文无关面（在场）与快照绑定面（validateProof 字级通过）双双零问题——『有效证明（validateProof 通过）』全量面" },
+        { "name": "EnvelopeMatrix.CompletedEngineeringInfeasibleWithMustRecordOnly_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 合法格——『或 Must 违例记录』半格：无证明、kDiagMustViolation 判定记录在场即有凭据（识别面复用 EV-T06 词表——不私造 token）" },
+        { "name": "EnvelopeMatrix.CompletedDataInsufficientWithFullMissingList_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 合法格——DataInsufficient 携带缺失全量清单构造成功（『计算执行完成但证据不满足正式判定』合法且常见——§7.1）" },
+        { "name": "EnvelopeMatrix.CanceledDiagnosticOnlyEnvelopeKeepsReusableFalse_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-ENV-2 包络侧——Canceled×NotApplicable＋partialData 构造成功且 reusable==false（部分数据可读诊断不构成正式复用；judgeCacheHit→DiagnosticOnly 判定面归 §8.2/EV-T09——§12 依赖序）" },
+        { "name": "EnvelopeMatrix.FailedAndInterruptedDiagnosticOnlyConstruct_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 3 全 outcome 扫描——Failed/Interrupted 与 Canceled 同一显式标记形态（NotApplicable）；诊断保留、无正式结论字段" },
+        { "name": "EnvelopeMatrix.PreviewRejectedUnconditionally_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1——Preview 构造边界拒绝（表 1『Preview 不产生结果对象』/表 3 行 4『任意×Preview』）：合法底座仅改 mode 即抛 EvidenceError(EnvelopeIllegalCombination)；取消形态同拒（无条件性）" },
+        { "name": "EnvelopeMatrix.PreviewIsFirstErrorAmongMultipleViolations_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 4 检查序确定性——Preview 与 task 保留值/Completed×NotApplicable 并存时首错恒为 PreviewModeForbidden（同坏组装必报同一首错，NFR-COR-02）" },
+        { "name": "EnvelopeMatrix.CompletedNotApplicableRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 2 非法格——Completed×NotApplicable 拒绝（ERR-01：NotApplicable 只配非 Completed）；消息含 engineeringStatus 语义" },
+        { "name": "EnvelopeMatrix.CanceledFeasibleRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 点名反例——Canceled×Feasible 拒绝（不伪造工程判定，ERR-01）" },
+        { "name": "EnvelopeMatrix.CompletedDataInsufficientWithEmptyMissingRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 点名反例——DataInsufficient＋空缺失清单拒绝（『缺失项全量清单必含』）；消息含 missingItems" },
+        { "name": "EnvelopeMatrix.FeasibleWithUnresolvedMissingRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 反例——Feasible 带未解决缺失项拒绝（『可行』与『有缺』互斥，不允许带缺通过）" },
+        { "name": "EnvelopeMatrix.EngineeringInfeasibleWithoutBasisRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 反例——无证明且无 Must 违例记录拒绝（防状态字段伪造不可行——与 Verdict D-9 同源纪律的构造面）" },
+        { "name": "EnvelopeMatrix.FailedWithPayloadRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 点名反例——Failed＋payload 拒绝（取消/失败/中断不得含正式结论字段，TASK-02）；消息含 payload" },
+        { "name": "EnvelopeMatrix.CanceledWithSatisfiedEvidenceRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 3 反例——清单含 Satisfied 判定声明拒绝（『已满足的证据』属正式结论家族；诊断性保留≠判定声明）" },
+        { "name": "EnvelopeMatrix.CanceledWithMissingItemsRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 3 反例——missingItems 不适用拒绝（非 Completed 只保留诊断与 partialData）" },
+        { "name": "EnvelopeMatrix.PartialDataReusableTrueRejected_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-ENV-2——partialData.reusable==true 构造拒绝（『恒 false：诊断价值保留，不得正式复用』——构造边界锁死复用标记）；消息含 partialData/reusable" },
+        { "name": "EnvelopeMatrix.TaskIdentityInvalidRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构面——task 五元组保留值拒绝（§7.1 注释『make 校验 isValid』——无法锚定到真实运行的包络不得存在）" },
+        { "name": "EnvelopeMatrix.EvaluationKeyInvalidRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构面——评估键词形非法拒绝（isValidEvaluationKey 词形闸门——进缓存身份面，CON-04；D-5 同口径）" },
+        { "name": "EnvelopeMatrix.InputIdentityZeroRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "结构面——inputBaselineId 保留值拒绝（snapshotId/sliceId/inputBaselineId 绑定面必须全部非零——CON-05/D-04）" },
+        { "name": "EnvelopeMatrix.CompletedManifestNotCoherentRejected_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 反例——清单绑定与包络不一致拒绝（manifest.snapshotId/sliceId 必须等于包络同名绑定——§6.2 记录面，防证据张冠李戴）" }
+      ]
+    },
+    {
+      "suite": "EnvelopeSnapshotBound（EV-T07 新增）——快照绑定面（validateCombination 三参重载＝接纳侧复用的同一校验器，§7.1/§7.2）",
+      "designRef": "units/evidence.md §7.1 caseScope 注释、表 3 行 1『有效证明（validateProof 通过）』、§6.2；D-09",
+      "cases": [
+        { "name": "EnvelopeSnapshotBound.CaseScopeOutsideSnapshotReported_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "工况子集核对（§7.1『caseScope ⊆ 快照 caseSet』）——界内范围两面皆空；越界工况 id（快照外部资源 id 冒充工况）由快照绑定面逐条点名、上下文无关面不误报（两段式边界的直接观测）" },
+        { "name": "EnvelopeSnapshotBound.InvalidProofRejectedInSnapshotBoundCheck_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "『有效证明』面（D-09 存在性≠有效性）——仅改产生者契约版本（9≠注册值 7）：上下文无关面放行（在场即凭据）、快照绑定面以 validateProof 拒绝（ProofInvalidAgainstSnapshot）" },
+        { "name": "EnvelopeSnapshotBound.ManifestBindingToForeignCaseReported_EV_ENV_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "清单对快照绑定复核（§6.2『防错误工况/对象引用』）——清单项引用必验集外工况被 validateEvidenceManifestBinding 点名（CompletedManifestBindingInvalid；接纳侧纵深防御——汇总段已挡一次、接纳段复检）" }
+      ]
+    },
+    {
+      "suite": "EnvelopeDeterminism（EV-T07 新增）——构造确定性（NFR-COR-02）",
+      "designRef": "units/evidence.md §7.1 构造边界、§7.2『永不回写』；需求 NFR-COR-02",
+      "cases": [
+        { "name": "EnvelopeDeterminism.SameDraftSameIssueSequence_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "同一坏组装两次校验 issue 序列逐条一致（码序＋消息文本——检查序固定）" },
+        { "name": "EnvelopeDeterminism.MakeFromEqualDraftsGivesEqualEnvelopes_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "两份相等草稿经 make() 产出逐字段相等包络（含载荷摘要——历史包络逐字节可复算，EV-CUR-3 前提）" }
+      ]
+    },
+    {
+      "suite": "EvidenceVocabularyContract（EV-T07 新增目标 sdurws_ird_evidence_contract_test）——acceptance 2（CR-01 联合契约测试）",
+      "designRef": "traceability/foundation-api-diff.md CR-01（关闭记录『EV-T07 的 _contract_test 增加断言』条款）、units/evidence.md §11 测试目标分工、§12 EV-T07 行；core.md §4.7 token 冻结表",
+      "cases": [
+        { "name": "EvidenceVocabularyContract.TokenLiteralsEqualCoreToTokenOutputs_CR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——三词表 11 值 token 字面量与 core::toToken 输出逐一相等（preview/quick/verified、completed/canceled/failed/interrupted、feasible/engineering-infeasible/data-insufficient/not-applicable——CR-01 记录原文词表）" },
+        { "name": "EvidenceVocabularyContract.TokenRoundTripThroughCoreParsers_CR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "token 往返——字面量经 core *FromToken 解析回同一枚举值（写入端/读取端共用同一词表）" },
+        { "name": "EvidenceVocabularyContract.EnvelopeTokensFlowThroughCoreVocabulary_CR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "包络承载的枚举经 core::toToken 回出同一字面量（Completed/Feasible 与 Canceled/NotApplicable 两形态——词表经包络流通不漂移）" },
+        { "name": "EvidenceVocabularyContract.NoLocalVocabularyEnumDefinitionInProductSources_CR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "源码面——evidence 产品源码（include/＋src/）扫描『词表枚举名×enum class 定义语法』零命中（『evidence 翻译单元仅经 core/Evaluation.hpp 取得词表（无本地枚举定义）』的机检面）" },
+        { "name": "EvidenceVocabularyContract.EnvelopeHeaderConsumesCoreEvaluationHeader_CR_01", "status": "passed", "modes": ["smoke", "integration"], "trace": "include 面——Envelope.hpp 必须 include core/Evaluation.hpp（『仅经该头消费』的正面断言）；另以 6 组 static_assert 钉死包络三轴字段类型＝core 词表类型（编译期防线——本地重定义直接编译失败）" }
+      ]
+    }
+  ],
+  "summary": { "total": 138, "passed": 138, "failed": 0, "modes": { "smoke": "evidence 133/133＋contract 5/5", "integration": "evidence 133/133＋contract 5/5" }, "unitRegression": { "smoke": "core 61/61＋evidence 133/133＋evidence_contract 5/5＋policy 4/4＋runtime 176/176＋testkit 97/97＝476/476", "integration": "evidence 133/133＋contract 5/5（集成面其余单元未在本任务重跑——ird_gates 的门禁自测步骤全 PASS 见 ird-gates.log）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "Preview 构造边界探针：向 src/Envelope.cpp 的 Preview 检查注入 'false &&' 短路（精确编辑＋显式构建/运行退出码核验，无 sed）后重编译执行；探针验证后逐字精确恢复并核验 PROBE 字样零残留（probe-residue-check.txt 计数 0）",
+    "result": "EnvelopeMatrix.PreviewRejectedUnconditionally_EV_ENV_1 与 EnvelopeMatrix.PreviewIsFirstErrorAmongMultipleViolations_EV_ENV_1 如期变红（probe-red-run exit 1——Preview 边界被跳过后非法构造放行、EV-ENV-1『Preview 构造边界拒绝』断言检出）——acceptance 1 的 Preview 无条件边界的真实失败能力成立；恢复后 133/133 复绿（probe-red-build.log/probe-red-run.log/probe-red-run.xml 为探针期留痕，probe-restore-build.log 为恢复后构建，冒烟 XML 为恢复后重写）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t07/smoke-build-full.log",
+      "traceability/builds/wp05-t07/smoke-test-run.log",
+      "traceability/builds/wp05-t07/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_evidence_contract_test-smoke.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_core_test-smoke.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_testkit_test-smoke.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_runtime_test-smoke.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_policy_test-smoke.xml",
+      "traceability/builds/wp05-t07/probe-red-build.log",
+      "traceability/builds/wp05-t07/probe-red-run.log",
+      "traceability/builds/wp05-t07/probe-red-run.xml",
+      "traceability/builds/wp05-t07/probe-restore-build.log",
+      "traceability/builds/wp05-t07/probe-residue-check.txt"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t07/integration-cache-check.txt",
+      "traceability/builds/wp05-t07/integration-build-evidence.log",
+      "traceability/builds/wp05-t07/integration-test-run.log",
+      "traceability/builds/wp05-t07/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t07/sdurws_ird_evidence_contract_test-integration.xml",
+      "traceability/builds/wp05-t07/ird-gates.log",
+      "traceability/builds/wp05-t07/validate-task.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 TEST_BUILD_EXIT=0，integration-build-evidence.log；另以 --target sdurws_ird_evidence 显式核验库构建 LIB_BUILD_EXIT=0、以 --target sdurws_ird_evidence_contract_test 核验新契约目标 CONTRACT_BUILD_EXIT=0，error 计数 0）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（sdurws_ird_testdata_lint→testkit 表外边）＝F-019 既有；③IRD-GATE-T1（sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。命中清单与 wp05-t06 基线 diff 逐项一致（GATES_BASELINE_IDENTICAL）；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建三目标 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t07/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake），配置 Release，全量构建 exit 0，全量 476/476 零回归（core 61＋evidence 133＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）。实现口径登记于 units/evidence.md v0.8 变更记录（E-1～E-6：payload 摘要 make() 重算／EngineeringInfeasible 凭据两段式＝在场〔上下文无关〕＋有效〔快照绑定〕／Must 违例记录识别面复用 kDiagMustViolation／清单-包络绑定一致性／caseScope 子集核对归快照绑定重载／EvaluationKey 与 ProducerInfo 词形闸门——D-5 同款 std::string 承载）。测试组名 Envelope*/EvidenceVocabularyContract 为实现侧组名（§11 矩阵 EV-T07 专项＝EV-ENV-1/2 对照 §12 行；EV-ENV-2 的 judgeCacheHit 判定面归 §8.2/EV-T09——§12 依赖序，本任务交付其包络侧数据面前提）。AcceptAllClosureSource/ScriptedProducerRegistry 为接口替身（边界声明见两测试文件头——替身输出仅验证 evidence 构造边界契约，不构成 project/evaluator 侧实现正确性证明，亦不构成 IK/动力学等业务算法正确性证明——EV-REG-3 同源）。CR-01 acceptance 2 由新注册的跨单元契约目标 sdurws_ird_evidence_contract_test 承载（§11『_contract_test＝跨单元』首次落地）。"
+}

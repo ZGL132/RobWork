@@ -1,0 +1,11 @@
+sdurws_ird_core_test EXIT=0
+[  PASSED  ] 61 tests.
+sdurws_ird_testkit_test EXIT=0
+sdurws_ird_runtime_test EXIT=0
+[  PASSED  ] 176 tests.
+sdurws_ird_policy_test EXIT=0
+[  PASSED  ] 4 tests.
+sdurws_ird_evidence_contract_test EXIT=0
+[  PASSED  ] 5 tests.
+sdurws_ird_evidence_test EXIT=0
+[  PASSED  ] 133 tests.
