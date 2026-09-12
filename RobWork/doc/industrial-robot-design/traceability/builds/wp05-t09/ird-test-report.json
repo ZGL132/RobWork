@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T09",
+  "masterWp": "WP-05-T09",
+  "branch": "wp05-t09",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EV-T09 新增 src/Compatibility.cpp（judgeCacheHit 三档判定〔FullHit/DiagnosticOnly/Incompatible——§8.2 判定式逐字承载〕＋judgeCheckpointCompatibility 五条件判定〔Resumeable/Incompatible——可恢复性与任务成败独立〕；契约头 Compatibility.hpp 新增）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过；ird_gates 命中清单与 wp05-t08 基线逐项一致（3 项既有——F-051×1＋F-019×2，零新增）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 173/173）",
+      "notes": "EV-T09 增列 test/CompatibilityTest.cpp（CompatibilityCacheHit 13＋CompatibilityCheckpoint 9，共 22 新增）：EV-CPA-1 Quick≠Verified 双向拒绝（Quick 缓存对 Verified 请求／Verified 缓存对 Quick 请求——D-13 模式不升降级；模式相等同身份对 FullHit 正例半边）＋EV-CPA-2 契约版本失配两判定面（judgeCacheHit Incompatible(contract-mismatch)／judgeCheckpointCompatibility 拒绝 token contract-mismatch——同 sliceId 模拟算法升级）＋EV-CPA-3 检查点可恢复性与任务成败独立（CheckpointSummary 无 outcome 字段的类型级独立＋上次 Failed 仍 Resumeable＋请求模式不参与〔C-4〕＋integrityVerified=false 反面拒绝）＋EV-ENV-2 判定面（Canceled/Failed/Interrupted 结果身份面对齐→DiagnosticOnly 非 FullHit、reasons 含 outcome-not-completed——EV-T07 交付包络侧数据面〔partialData.reusable 恒 false〕后本任务兑现其判定面）＋清单未封账反例（Completed 但 manifestFinalized=false→DiagnosticOnly）＋全量收集检查序确定性（六项全失配 reasons 恰六项按声明序；身份面＋结果面混合失配不降档）＋检查点五条件逐项（键词形非法/切片失配/契约失配/格式区间边界 0·1·2/完整性未验证）＋两判定确定性；既有 151 用例回归保持通过（零修改）"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "EV-T09 零修改回归（CR-01 词表契约面与本任务无交集——Compatibility.hpp 不定义任何评估词表枚举，mode/outcome 全部复用 core::Evaluation 词表）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CompatibilityCacheHit（EV-T09 新增·缓存命中面）——acceptance 1（EV-CPA-1/2）＋acceptance 2（部分/失败结果不得作正式缓存命中·§8.2 纯判定反例）",
+      "designRef": "units/evidence.md §8.2（judgeCacheHit 三档判定式＋CachedResultSummary/CacheHitQuery/CacheMissReason 原文）、§11 EV-CPA-1/2、EV-ENV-2 行、§14 CON-04 行；需求 CON-04、OPT-06、EVI-01 表 1（D-13 模式不升降级）",
+      "cases": [
+        { "name": "CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CPA-1 主例（§11 行输入/预期/观测点逐项）——Quick 结果缓存 vs Verified 请求（sliceId 等身份面其余全对齐）：Incompatible 且 reasons 精确＝[mode-mismatch]（Quick 证据不得当 Verified 证据——表 1/OPT-06 Quick 筛选→Verified 复核链要求真实重算而非降级复用）；本用例经探针自证真实失败能力（见 failureCapabilitySelfCheck）" },
+        { "name": "CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CPA-1 反方向（D-13 保守方向）——Verified 缓存供 Quick 请求同为 Incompatible[mode-mismatch]：模式是请求效力属性，隐式升降级双向拒绝" },
+        { "name": "CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-CPA-1 正例半边——模式相等的同身份对 FullHit＋reasons 空（排除『任何 Quick 参与都拒绝』的过宽实现：拒绝只来自模式差）" },
+        { "name": "CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CPA-2 缓存面——同 sliceId、评估器契约版本不同（模拟算法升级）：Incompatible[contract-mismatch]（§14 CON-04 行『身份含契约版本』的判定面观测）" },
+        { "name": "CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2/EV-ENV-2 判定面——身份面对齐的 Canceled 结果作缓存查询：DiagnosticOnly 非 FullHit、reasons＝[outcome-not-completed]（§11 行观测点逐项；部分/失败结果可读诊断、不得正式命中——CON-04 原文；EV-T07 已交付其包络侧数据面前提 partialData.reusable 恒 false）" },
+        { "name": "CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——Failed/Interrupted 两值同轨：除 Completed 外全部 outcome 只可诊断性读取（CON-04『部分/失败结果』全词表覆盖）" },
+        { "name": "CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 反例——Completed 但 manifestFinalized=false：DiagnosticOnly[manifest-incomplete]（运行未终结的中间态同样不得正式命中；§8.2 判定式『∨』第二支独立承载）" },
+        { "name": "CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2——结果面双失配（未完成＋未封账）：两 reason 按检查序全量列出（C-1 不首错短路），verdict 仍 DiagnosticOnly" },
+        { "name": "CompatibilityCacheHit.SliceMismatchIsIncompatible", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8.2 纯判定反例族（acceptance 2 观测面）——切片身份失配：Incompatible[slice-mismatch]（CON-05 切片内容身份＝缓存键；策略/种子/线程/配置/样本/环境版本已含于 sliceId——D-01/D-11 一处相等即覆盖全部输入要素）" },
+        { "name": "CompatibilityCacheHit.ProfileMismatchIsIncompatible", "status": "passed", "modes": ["smoke", "integration"], "trace": "§8.2 纯判定反例族（acceptance 2 观测面）——Profile 内容身份失配：Incompatible[profile-mismatch]（证据效力口径〔§6.1〕不同不得互为复用）" },
+        { "name": "CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "C-1 全量收集——六条件全失配：reasons 恰六项且顺序＝声明序（mode→slice→contract→profile→outcome→manifest，NFR-COR-02 同失配必得同一清单）；身份面失配在 presence 时恒 Incompatible（三档判定式互斥——不因结果面并存降档）" },
+        { "name": "CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "三档互斥面——模式失配（身份面）与未完成（结果面）并存：Incompatible 且两项全列（DiagnosticOnly 仅限身份面全对齐——§8.2『其余一切』的机械化）" },
+        { "name": "CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-02——同输入两次判定 operator== 全字段相等（纯函数幂等）" }
+      ]
+    },
+    {
+      "suite": "CompatibilityCheckpoint（EV-T09 新增·检查点面）——acceptance 1（EV-CPA-2/3）",
+      "designRef": "units/evidence.md §8.2（Resumeable 五条件判定式＋CheckpointSummary/CheckpointCompatibilityResult 原文）、§11 EV-CPA-2/3 行、§14 CON-04 行；需求 CON-04、TASK-01、OPT-06",
+      "cases": [
+        { "name": "CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CPA-3 主例（§11 行）——上次任务 Failed 的检查点（integrityVerified=true）：Resumeable（可恢复性与任务成败独立——强制终止保留最近检查点正是为续跑而生，CON-04/TASK-01）；类型级独立断言＝CheckpointSummary 无 outcome 字段＋同检查点对 Quick/Verified 请求判定一致（C-4：requestedMode 不参与检查点判定）" },
+        { "name": "CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-CPA-3 反面——完整性未通过一律 Incompatible[integrity-not-verified]（与任务成败无关的是『成败』不是『完整性』——两维度不混淆；NFR-COR-03 缺凭据视同损坏不静默恢复）" },
+        { "name": "CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-CPA-2 检查点面（§11 行两判定同名观测）——契约版本失配：Incompatible 且 reasons 精确＝[\"contract-mismatch\"]（稳定 token 跨进程透出面——D-15 错误码化上游输入）" },
+        { "name": "CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "五条件全对齐正例——Resumeable 且 reasons 空（Quick 模式请求不影响——恢复的是运行进度非正式证据，模式效力在结果面把关）" },
+        { "name": "CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "C-2 词形闸门——评估键词形非法（大写开头＋含点双重违例）：Incompatible[evaluator-key-invalid]（损坏/伪造检查点头保守拒绝；键相等性由 sliceId 承载——评估键进 sliceId〔CON-04〕，sliceId 相等⇒键相等）" },
+        { "name": "CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "五条件第二条件——切片身份失配：Incompatible[\"slice-mismatch\"]（输入变了就得从头跑）" },
+        { "name": "CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "C-3 支持闭区间边界——区间内（1）Resumeable；区间外（0 过老/2 过新）均 Incompatible[checkpoint-format-incompatible]（读不懂的格式不得恢复——保守方向；区间常量随 execution/project 存储格式演进推进）" },
+        { "name": "CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "检查点面全量收集——切片＋契约＋格式＋完整性四项并拒：reasons 恰四项按检查序（键→切片→契约→格式→完整性；含 EV-CPA-2 观测 token contract-mismatch）" },
+        { "name": "CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "NFR-COR-02——同输入两次判定全等（纯函数幂等）" }
+      ]
+    }
+  ],
+  "summary": { "total": 178, "passed": 178, "failed": 0, "modes": { "smoke": "evidence 173/173＋contract 5/5（冒烟全量 516/516：core 61＋evidence 173＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）", "integration": "evidence 173/173＋contract 5/5" }, "unitRegression": { "smoke": "evidence 173/173＋evidence_contract 5/5（同树全量构建 exit 0；其余四单元 ctest 全绿零回归）", "integration": "evidence 173/173＋contract 5/5（既有 151＋5 用例零修改回归通过）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "EV-CPA-1『模式不升降级』防线探针：向 src/Compatibility.cpp 的 judgeCacheHit 模式检查注入短路『if (false && summary.mode != request.requestedMode) {  // PROBE …』（精确编辑＋PROBE 标记注释＋显式构建/运行退出码核验，无 sed）后重编译执行；验证后逐字精确恢复＋touch 强制重编译（F-068 mtime 陷阱规避）并以 grep 计数核验 PROBE 零残留（probe-residue-check.txt 计数 0）",
+    "result": "QuickCacheVersusVerifiedRequest_EV_CPA_1 与 VerifiedCacheVersusQuickRequest_EV_CPA_1 如期变红（连同 AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2／IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2 共 4 用例，probe-red-run exit 1——模式检查被短路后 [mode-mismatch] 精确断言检出）——acceptance 1 的 EV-CPA-1『Quick≠Verified 双向拒绝』真实失败能力成立；恢复后集成 173/173＋冒烟全量 516/516 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建，两模式 XML 均为恢复后重写）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t09/smoke-configure.log",
+      "traceability/builds/wp05-t09/smoke-build-full.log",
+      "traceability/builds/wp05-t09/smoke-test-run.log",
+      "traceability/builds/wp05-t09/smoke-contract-run.log",
+      "traceability/builds/wp05-t09/smoke-ctest-release.log",
+      "traceability/builds/wp05-t09/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_evidence_contract_test-smoke.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_core_test-smoke.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_policy_test-smoke.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_runtime_test-smoke.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_testkit_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t09/integration-cache-check.txt",
+      "traceability/builds/wp05-t09/integration-build-evidence.log",
+      "traceability/builds/wp05-t09/integration-test-run.log",
+      "traceability/builds/wp05-t09/integration-contract-run.log",
+      "traceability/builds/wp05-t09/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t09/sdurws_ird_evidence_contract_test-integration.xml",
+      "traceability/builds/wp05-t09/ird-gates.log",
+      "traceability/builds/wp05-t09/validate-task.log",
+      "traceability/builds/wp05-t09/probe-red-build.log",
+      "traceability/builds/wp05-t09/probe-red-run.log",
+      "traceability/builds/wp05-t09/probe-restore-build.log",
+      "traceability/builds/wp05-t09/probe-residue-check.txt"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 INTEG_BUILD_EXIT=0，integration-build-evidence.log；另以 --target sdurws_ird_evidence_contract_test 核验契约目标 exit 0 零 error；库本体随目标链增量重建 exit 0）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：3 处命中均为既有基线缺陷、零新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（表外依赖边 sdurws_ird_testdata_lint→sdurws_ird_testkit）＝F-019 既有；③IRD-GATE-T1（产品目标 sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有。命中清单与 wp05-t08 基线逐项一致（日志尾段命中区块字节级同型）；本任务 evidence 变更面库链接仍仅 core（CMake 红线守卫配置期断言通过），ird_gates 退出码 1＝既有基线命中所致（判例口径：以命中清单比对为准）",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t09/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake——smoke-configure.log exit 0），配置 Release，全量构建 exit 0（两段：首建＋探针恢复/改名后重建，均 append 于 smoke-build-full.log）。实现口径 C-1～C-5 登记于 units/evidence.md v1.0 变更记录（未满足条件全量收集不首错短路／evaluatorKey std::string 承载＋词形闸门＋键相等性由 sliceId 承载／格式版本支持闭区间〔1,1〕常量／requestedMode 与 requestProfileIdentity 不参与检查点判定／非抛出纯函数 try 轨分轨——调用方对 Incompatible 自行转译 CacheIncompatible）。P-EV-1 处置：core.md v0.1（Draft 未冻结）契约按卡内签名消费（EvaluationMode/TaskOutcome/ContentIdentity），冻结时按 diff 增量同步——本任务未发现基线漂移。CacheMissReason 六值枚举一经交付只允许表尾追加（EvidenceErrorCode 同款纪律）；检查点 reasons 为稳定 token 串（词表五值冻结于契约头注释——D-15 跨进程透出面）。测试组名 CompatibilityCacheHit/CompatibilityCheckpoint 为实现侧组名（§11 矩阵 EV-T09 专项＝EV-CPA-1~3 对照 §12 行；EV-ENV-2 的判定面在本任务兑现——EV-T07 v0.8 交付其包络侧数据面前提）。无测试替身引入（纯值判定——摘要结构直接组装，无 stub/无 TODO/无恒等返回）。ird_gates 日志与 validate-task 日志存在控制台中文乱码（F-065 已登记——本报告关键字段以英文/结构化 JSON 记载避免加重；命中清单经与 wp05-t08 基线比对确认逐项一致）。"
+}

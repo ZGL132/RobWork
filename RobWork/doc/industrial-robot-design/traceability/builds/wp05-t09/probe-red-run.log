@@ -1,0 +1,85 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CompatibilityCacheHit.*
+[==========] Running 13 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 13 tests from CompatibilityCacheHit
+[ RUN      ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(132): error: Expected equality of these values:
+  CacheHitResult::Incompatible
+    Which is: 
+  r.verdict
+    Which is: \0
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(134): error: Expected equality of these values:
+  std::size_t{1}
+    Which is: 1
+  r.reasons.size()
+    Which is: 0
+
+[  FAILED  ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(147): error: Expected equality of these values:
+  CacheHitResult::Incompatible
+    Which is: 
+  r.verdict
+    Which is: \0
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(148): error: Expected equality of these values:
+  std::size_t{1}
+    Which is: 1
+  r.reasons.size()
+    Which is: 0
+
+[  FAILED  ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1
+[       OK ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2
+[       OK ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SliceMismatch_EV_CPA_2
+[       OK ] CompatibilityCacheHit.SliceMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.ProfileMismatchIsIncompatible_EV_CPA_1
+[       OK ] CompatibilityCacheHit.ProfileMismatchIsIncompatible_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(349): error: Expected equality of these values:
+  std::size_t{6}
+    Which is: 6
+  r.reasons.size()
+    Which is: 5
+
+[  FAILED  ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(368): error: Expected equality of these values:
+  CacheHitResult::Incompatible
+    Which is: 
+  r.verdict
+    Which is: 
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\CompatibilityTest.cpp(369): error: Expected equality of these values:
+  std::size_t{2}
+    Which is: 2
+  r.reasons.size()
+    Which is: 1
+
+[  FAILED  ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2
+[       OK ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2 (0 ms)
+[----------] 13 tests from CompatibilityCacheHit (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 9 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1
+[  FAILED  ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1
+[  FAILED  ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2
+[  FAILED  ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2
+
+ 4 FAILED TESTS
