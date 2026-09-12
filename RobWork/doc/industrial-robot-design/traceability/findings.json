@@ -632,6 +632,16 @@
       "title": "Verdict.hpp/VerdictTest.cpp 两处零行为影响风格微瑕：①evidence/include/sdurws/ird/evidence/Verdict.hpp 第 506 行注释块续行行首多一个空格（「 // \"资格\"面；实现口径 I-7）」与块内其余行「// 」对齐不一致）；②evidence/test/VerdictTest.cpp EV-VER_3 用例（约 L541-542）局部变量 domainSideOnly 构造后未使用——注释自述「仅为注释性对照（不进入聚合）」，读代码者须靠注释理解其非被测输入，未来接入 clang-tidy unused-variable 类静态检查会报；F-046（Snapshot.cpp 缩进）同型（零行为影响风格面），不构成 ACC §4.7 缺必填项",
       "owner": "evidence 实现所有者（建议随下次触及该两文件的任务顺手规整，避免独立格式化提交）",
       "resolution": "①删除 Verdict.hpp L506 行首多余空格对齐注释块；②domainSideOnly 若保留对照语义，改为 [[maybe_unused]] 标注或删除局部变量（对照信息已在注释与 ird-test-report trace 中承载）。不影响 EV-T06 验收（pass）。编号顺延自 F-062，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-064",
+      "source": "EV-T07 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T07-20260913.md §4.7/问题清单 G-1，送验对象 3e4e099c8c1792b79da3f4b7b15a306f6b2e4ca0，分支 wp05-t07）：验收者按 AGENTS §2 逐一核查新增公共头 include 卫生时发现，并以编译探针实证",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "Envelope.hpp 第 67 行 #include <sdurws/ird/evidence/Slice.hpp> 冗余：头内无 InputSlice/SliceBuilder/SliceCodec 等 Slice 实体引用（CaseId 定义于 Snapshot.hpp L68、isValidEvaluationKey/isDomainProfileId 定义于 Evidence.hpp、IProducerRegistryView 定义于 Verdict.hpp——各自经其余 include 承载）——验收者删除该行后 sdurws_ird_evidence_test＋sdurws_ird_evidence_contract_test 双目标仍零错误编译（探针 exit 0，随即恢复原状）。零行为影响卫生面微瑕（F-053 注释残留同型），不构成 ACC §4.7 缺必填项",
+      "owner": "evidence 实现所有者（建议随下次触及 Envelope.hpp 的任务顺手移除该 include，避免独立格式化提交）",
+      "resolution": "移除 Envelope.hpp 的 Slice.hpp include 即闭合（如后续任务为包络↔切片关联可见性有意保留，可改为注释说明保留理由）；不影响 EV-T07 验收（pass）。编号顺延自 F-063，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
