@@ -1,0 +1,4 @@
+lint: 字典 192 个需求 ID（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/requirements-ids.json）
+lint-ok: rt-fk-equation/1.0.0
+lint-ok: rt-namemap-roundtrip/1.0.0
+lint: 扫描 2 个数据集版本，违规 0

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T12",
+  "masterWp": "WP-06-T12",
+  "branch": "wp06-t12",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "本任务产品面仅两处修正（RT-RES-3，findings F-049）：src/Codec.cpp 的 writeResourceRef 增 identityDomain 参数——身份域跳过 sourcePathHint（§8.6 路径不作身份），全字段域保留供往返；src/Snapshot.cpp 的 encodeIdentityDomain 第七段资源清单同规则剔除 pathHint。全字段编码格式零变化（parse/worker 物化不受影响）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式；增链 sdurws_ird_testkit——testkit.md §10.2 runtime 行消费面，ird_gates 命中登记 F-051）",
+      "notes": "新增 test/RuntimeTestDoubles.hpp（§11 设施规范替身＋ContractHarness）、test/ContractSuiteTest.cpp（13 用例，仅集成模式）、test/GoldenDataLintTest.cpp（4 用例，两模式）；既有 244 用例零回归"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ContractSuite（RT-T12 新增 13 用例——集成模式；ChildProcessWorker 为父用例派生的 worker 占位）",
+      "designRef": "units/runtime.md §11 验证矩阵组合面缺口＋§6.4/§6.5＋testkit §10.2；用例名逐条对应矩阵组",
+      "cases": [
+        { "name": "ContractSuite.ChildProcessWorker_RT_ID_1", "status": "skipped-by-design", "modes": ["integration"], "trace": "RT-ID-1 worker：仅在父用例 CrossProcessIdentityStable 派生（IRD_RT_CONTRACT_CHILD_OUT 环境变量＋gtest 过滤器再入）时执行；常规全量运行中按设计跳过——非未执行缺口，其行为已由父用例的子进程运行覆盖" },
+        { "name": "ContractSuite.CrossProcessIdentityStable_RT_ID_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-ID-1（ARC-03/AT-16 载体）：父子两进程编译同夹具——modelIdentity/snapshotIdentity/nameMapIdentity 逐字节相等＋WC 帧名集合逐名相等（IRD_EXPECT_IDENTICAL，附录 D 第 12 项精确等值）" },
+        { "name": "ContractSuite.TinyFloatDeltaSplitsIdentityAndCache_RT_ID_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-ID-2：1e-15 浮点差——core closeWithin 判等（容差语义）vs 模型/快照身份位模式不等 vs judgeCompileCacheCompatibility=Incompatible 且 reasons 含 model-changed" },
+        { "name": "ContractSuite.DisplayFieldsNeverEnterRuntimeIdentity_RT_ID_3", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-ID-3（CON-05/AT-27）：同内容重编译三面身份不变＋缓存判定 FullReuse、reasons 空（无失效类 reasons；显示名非 runtime 输入面的类型层事实随用例注释留痕）" },
+        { "name": "ContractSuite.NumericExampleThroughSnapshotView_RT_BW_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-BW-1（MDL-22/AT-37）：§6.5 数值例经快照视图——点变换/反变换（t'=−Rᵀt=+2 修正值）/重力投影 g_base=(0,0,+9.81) 逐元素经档案 rt-runtime（附录 D 第 4 项 1e-9）" },
+        { "name": "ContractSuite.DefaultBaseCompilesToIdentityTransform_RT_BW_3", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-BW-3（V15-04）：未配置 base 编译发布——T_world_base 元素精确 {0,1}、presetToken()=Ground、无 error 级诊断" },
+        { "name": "ContractSuite.ConsumerDoubleApplicationIntercepted_RT_BW_4", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-BW-4（AT-37 反例·消费端）：视图 worldToBase 与快照字段逐元素一致（唯一读取点）；正确候选零偏差；二次叠加候选被自检检出（≈T·T 形态＋偏差比较字段 >1e-9 m/rad）→BaseWorldInconsistent 码面映射" },
+        { "name": "ContractSuite.FourConsumersConsistentOnInvertedModel_RT_BW_5", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-BW-5（AT-37 主载体）：倒挂机型——kinematics（T·baseTend 复合）与 trajectory（worldTframe 直读）端位姿互等；dynamics gravityBase 与手算 Rᵀ·g 互等（+Z_base）；policy 场景世界系位姿＝模型字段（无安装分量）；四替身共享快照读取一致" },
+        { "name": "ContractSuite.MixedMissingInputsDeriveCorrectCapabilities_RT_CAP_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CAP-1：混合缺失（物性/摩擦/几何/工具）——九个能力位逐一正确；RT-CAPABILITY-MISSING 恰一条且 subject 定位链序首个缺失连杆 link_1；无 error 级码（§9.6 观测点口径见 v0.13⑥）" },
+        { "name": "ContractSuite.MissingCapabilityNeverEscalates_RT_CAP_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-CAP-2：能力缺失快照交替身消费方→DataInsufficient 域内判定；runtime 公共头全树扫描零 EngineeringStatus（类型层不存在）" },
+        { "name": "ContractSuite.SourcePathHintIsNotIdentity_RT_RES_3", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-RES-3：同内容资源仅换 sourcePathHint——两编译 modelIdentity 逐字节相等（IRD_EXPECT_IDENTICAL）；本用例检出并钉住 F-049 修复（修复前即红）" },
+        { "name": "ContractSuite.GoldenFkEquationDataset_RT_EQ_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-EQ-1 数据集载体（ARC-03/AT-16）：rt-fk-equation analytic 数据集三方对照——canonical 手写 FK↔RobWork Device FK（≤1e-9 测试内断言）↔数据集期望（经档案 rt-runtime IRD_EXPECT_CLOSE，fk[*].origin/axis）；含附录 D C4 零值/近零/正负抵消样例在位断言" },
+        { "name": "ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1/RT-NM-1 数据集载体（ARC-04/MDL-14/AT-18）：rt-namemap-roundtrip 全量 9 条目——身份作用域条目 resolveObjectId 逐条命中（IRD_EXPECT_IDENTICAL）＋全部条目 resolveRuntimeName 反解回同一 ObjectId（双向往返）＋双射计数相等" }
+      ]
+    },
+    {
+      "suite": "GoldenDataLint（RT-T12 新增 4 用例——两模式）",
+      "designRef": "units/runtime.md §12 RT-T12 行（lint 通过并随 CI 跑通）＋testkit.md §4.2.2/§4.3.1/§4.5/§10.2",
+      "cases": [
+        { "name": "GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3：rt-fk-equation 装载全链（schema/完整性 SHA-256/交叉校验）＋analytic-case 独立性与边界样例约束" },
+        { "name": "GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3：rt-namemap-roundtrip（contract-fixture）装载全链" },
+        { "name": "GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3：档案 rt-runtime 装载＋契约套件全部 fieldPath 可解析（报错不默认——C4）" },
+        { "name": "GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3：两数据集 coveredRequirements 对 192 ID 字典逐项校验（TK-MAN lint 语义）" }
+      ]
+    },
+    {
+      "suite": "既有用例（RT-T02～T11 交付面——零回归）",
+      "designRef": "units/runtime.md §11 矩阵其余组（RT-NM-2～7/RT-CACHE-1～4/RT-SNAP-1～4/RT-CPX-1～4/RT-RES-1/2/RT-CONT-1/2/RT-AD-1～3/RT-CPL-1/RT-BW-2/6/RT-ID 系模型层）——落位全表见 runtime/test/README.md §3",
+      "cases": [
+        { "name": "（汇总）", "status": "passed", "modes": ["integration"], "trace": "集成模式 260/261 通过＋1 例 worker 占位按设计跳过＝既有 244＋新增 13 全部通过" },
+        { "name": "（汇总）", "status": "passed", "modes": ["smoke"], "trace": "冒烟模式 176/176 通过＝既有 172＋新增 4（GoldenDataLint；ContractSuite 按两模式分工不进冒烟构建）" }
+      ]
+    }
+  ],
+  "summary": {
+    "integration": { "total": 261, "passed": 260, "failed": 0, "skipped": 1, "skippedNote": "ChildProcessWorker_RT_ID_1 为父用例派生的 worker 占位——父用例内子进程实际执行并通过（CrossProcessIdentityStable_RT_ID_1 passed）" },
+    "smoke": { "total": 176, "passed": 176, "failed": 0, "skipped": 0 },
+    "exitCodes": { "integration": 0, "smoke": 0 },
+    "evidence": "traceability/builds/wp06-t12/（gtest XML×2＋两模式构建/测试日志＋testdata lint 工具日志 exit=0＋validate-task PASS＋ird_gates 命中登记）"
+  }
+}
