@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现 DynamicWorkCell 编译器（能力门控）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T07"
   ],
