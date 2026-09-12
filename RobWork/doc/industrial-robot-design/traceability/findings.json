@@ -642,6 +642,46 @@
       "title": "Envelope.hpp 第 67 行 #include <sdurws/ird/evidence/Slice.hpp> 冗余：头内无 InputSlice/SliceBuilder/SliceCodec 等 Slice 实体引用（CaseId 定义于 Snapshot.hpp L68、isValidEvaluationKey/isDomainProfileId 定义于 Evidence.hpp、IProducerRegistryView 定义于 Verdict.hpp——各自经其余 include 承载）——验收者删除该行后 sdurws_ird_evidence_test＋sdurws_ird_evidence_contract_test 双目标仍零错误编译（探针 exit 0，随即恢复原状）。零行为影响卫生面微瑕（F-053 注释残留同型），不构成 ACC §4.7 缺必填项",
       "owner": "evidence 实现所有者（建议随下次触及 Envelope.hpp 的任务顺手移除该 include，避免独立格式化提交）",
       "resolution": "移除 Envelope.hpp 的 Slice.hpp include 即闭合（如后续任务为包络↔切片关联可见性有意保留，可改为注释说明保留理由）；不影响 EV-T07 验收（pass）。编号顺延自 F-063，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-065",
+      "source": "EV-T08 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T08-20260913.md，送验对象 46c0c682dfa7013c92068ebd8486555dc5780e64，分支 wp05-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "traceability/builds/ 留痕日志中文双重编码乱码（系统性）：ird-gates.log 自 wp05-t06 起门禁段中文呈现『娴嬭瘯鐩爣』型 UTF-8→GBK 误解码再编码文本（wp05-t06/wp05-t07/wp05-t08 三份同症，wp05-t08 之 ird-gates.log 为 UTF-8 文件但门禁输出段为双重编码产物），构建日志中文段同现象。EV-T08 送验留痕与实测输出一致（验收者逐项比对 3 处命中无歧义），不影响证据效力，但损害人读可追溯性",
+      "owner": "治理脚本/流程文档维护者（建议统一捕获管道编码为 UTF-8：pwsh 捕获处显式 [Console]::OutputEncoding/重定向编码，或 ird_gates 输出规范化）",
+      "resolution": "捕获侧修复后可选重出历史日志（非必须——各日志可与构建树重跑对账）；不影响 EV-T08 验收（pass）。编号顺延自 F-064，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-066",
+      "source": "EV-T08 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T08-20260913.md）：Currentness.hpp kDiagCurrentnessCrossContext/kDiagCurrentnessUnresolvedDependency 两常量",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "EV-T08 新增两枚 EVI-* 建议诊断码（EVI-CURRENTNESS-CROSS-CONTEXT/EVI-CURRENTNESS-UNRESOLVED-DEPENDENCY）超出 evidence.md §13 诊断行枚举清单（§13 以『等』收尾的 7 个 EVI-*）——F-056 同族延续；与 F-056 不同点：本两码已在单元卡 v0.9 ⑤ 显式登记（P-PR-6 同模式、码值权威归 StableCodeRegistry、reporting 侧 RPT-CURRENTNESS-UNEVALUABLE 为呈现面消费码），非静默漂移",
+      "owner": "diagnostics 所有者（StableCodeRegistry 注册时对码值/文案一并裁决——EV-T06 v0.7 九值、F-056 两值与本两值同批清理）",
+      "resolution": "diagnostics 注册任务落地时逐码裁决：采纳/改名/废弃均登记回 §13 清单或 StableCodeRegistry；不阻塞 evidence 后续任务。编号顺延自 F-065。"
+    },
+    {
+      "id": "F-067",
+      "source": "EV-T08 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T08-20260913.md）：Currentness.hpp CurrentnessResult::reasons 字段注释（约 L379）与 Currentness.cpp diffEntries 两遍比对实现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "CurrentnessResult::reasons 注释称『Superseded 时按 (kind,key) 字典序输出』与实现不完全一致：diffEntries 第一遍按目标条目冻结序（(kind,key) 字典序）输出在场条目原因，第二遍把『仅在历史切片出现』的消失条目原因尾随拼接（其内部有序但不与第一段全局归并）——反例：消失的 Object 条目原因排在在场的 Policy 条目之后，违反全局 (kind,key) 序。确定性不受影响（两段各自确定、输入冻结序确定，同输入必同输出，NFR-COR-02 成立），纯注释精度微瑕（实现侧 .cpp 注释『先按目标条目序…再按历史条目序补』是准确的）",
+      "owner": "evidence 实现所有者（随下次触及 Currentness.hpp 的任务把头文件注释改为与 .cpp 一致的两段序表述，或实现全局归并排序——任一即可闭合）",
+      "resolution": "注释对齐（推荐，零行为变化）或实现归并；不影响 EV-T08 验收（pass）。编号顺延自 F-066。"
+    },
+    {
+      "id": "F-068",
+      "source": "EV-T08 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T08-20260913.md）§4.5 探针执行过程",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "ACC §4.5 探针恢复后的增量构建时间戳陷阱：验收者以『备份文件＋mv 还原』恢复探针注入后，还原文件保留旧 mtime，MSBuild 增量判定源码未变而跳过重编译——探针二进制残留致恢复后首轮运行 2 用例仍假红（源码 git status 零差异、测试却失败）；touch 源文件强制重编译后 151/151 复绿。既有实施者留痕（wp05-t08 probe-residue-check.txt）以 grep 计数 PROBE 标记规避了此坑，但协议未成文该风险——后续验收者若以 mtime 早于探针注入的方式还原（cp -p/mv/IDE 撤销），可能误判『恢复后不复绿』（假 fail）或反向误判复绿（未实际重编译时读旧结果）",
+      "owner": "acceptance-protocol 维护者（§4.5 增补一句：探针恢复后必须强制重编译〔touch 注入文件或 --clean-first〕并核验 git 零差异＋标记零残留双条件）",
+      "resolution": "协议增量修订；不影响 EV-T08 验收（pass——验收者实测 touch 后复绿并留痕于验收记录）。编号顺延自 F-067。"
     }
   ]
 }
