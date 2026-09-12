@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "实现编译器集成与取消（十段链/事务）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T03",
     "RT-T04",
