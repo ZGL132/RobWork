@@ -612,6 +612,16 @@
       "title": "RT-T09 联合断言注释与实现失配：runtime/test/SnapshotTest.cpp Cr05ValueSupplyEnvironmentEntries_CR_05 注释声称「EV-T04 侧以相同夹具种子与相同 baseline 串构造样例，断言其切片 Environment 条目＝本测试 modelIdentityText/baselineText 逐字节一致」，而 evidence 侧 SliceTest.cpp 实际实现的联合断言面为「输出形态对齐＋值传递全链零重编码」（样例值 cid-12345678…/31b81845-msvc2022-x64 为固定形态样例，非 runtime 测试运行值）——两侧不存在对同一具体值的逐字节断言。该口径已在 units/evidence.md v0.5⑤＋SliceTest.cpp 文件头按 DTB §5.4 登记（「等价断言面」），实体主张（CR-05 必填校验/编码/进入 inputBaselineId/evidence 不重算 CanonicalModel）全部有测试证据且验收者独立双探针证明真实失败能力，EV-T04 验收判 pass 不受影响；但 runtime 侧注释描述的联断机制与实际不符（后读工程师按注释理解会误判测试覆盖），且「固定值逐字节联断」当前物理不可达（modelIdentity 组成含 robworkBaselineVersion 构建采集值、跨构建不稳定，两侧无共享常量机制）——文档失实风险非实现缺陷。",
       "owner": "runtime/evidence 单元卡所有者（注释修正）；若裁决补共享样例常量机制则归 foundation-api-diff.md CR-05 所有者",
       "resolution": "择一：①修正 runtime/test/SnapshotTest.cpp 该注释为「形态对齐＋两侧联锁」口径（与 units/evidence.md v0.5⑤ 登记一致，注释随实现更新——AGENTS §2.5 同辖域）；②或建立两侧共享样例常量机制（testkit 共享夹具或 foundation-api-diff.md CR-05 登记 fixed-sample 规范），使「共享同一样例逐字节一致」字面落地。编号顺延自 F-060，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-062",
+      "source": "EV-T05 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T05-20260913.md，送验对象 203c29458b4b68bd9ef5197a61fe36edb62b005a，分支 wp05-t05）：验收者在 detached worktree 复现现场时按 AGENTS §4.1 字面命令执行集成模式配置失败，逐项排查环境前置后复现成功",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "worktree/全新树的集成模式构建环境前置未成文：AGENTS §4.1 登记的配置命令「cmake -S RobWork -B build -G \"Visual Studio 17 2022\" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON」在非主树执行会失败于两件主树本地状态——①全新缓存缺 -DCMAKE_TOOLCHAIN_FILE（vcpkg 绝对路径）与 -DCMAKE_PREFIX_PATH（Qt 路径），实测失败于 Could NOT find Boost（主仓 build/CMakeCache.txt 实证该两参数为主树实际配置）；②RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static 与 RobWorkStudio.ini.shared.in 为 git 未跟踪的框架本地资源（RWS_USE_STATIC_LINK_PLUGINS=ON 时 configure_file 必需输入），worktree 检出后缺失即 CMake Error（实测）。补齐两件后配置与构建零错误——与 F-004（gate-all.ps1 非主树无法全量运行）同族：验收/复现环境前置依赖主树未登记的本地状态。实施产物无涉（EV-T05 双模式构建本身零错误），纯流程文档/环境缺口。",
+      "owner": "流程文档维护者（AGENTS §4.1 / acceptance-protocol §3 补 worktree 复现口径）；框架构建配置所有者（评估将两件 ini 本地资源纳入版本管理或 CMake 生成机制——注意 SA-02 零源码修改红线，若动框架需先登记 patch）",
+      "resolution": "择一：①在 AGENTS §4.1 与/或 ACC §3 增补「worktree 复现口径」小节：等价配置参数（toolchain/Qt 前缀绝对路径）＋本地资源清单（两件 ini 模板需从主树复制或说明生成方式）；②或将两件 ini 模板纳入 git 跟踪/由 CMake 在配置期生成（需评估框架文件属性与 SA-02 登记义务）。编号顺延自 F-061，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
