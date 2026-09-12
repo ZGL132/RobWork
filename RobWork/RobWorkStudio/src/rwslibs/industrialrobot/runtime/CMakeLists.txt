@@ -102,14 +102,23 @@ if(TARGET sdurw_kinematics)
                                         # BaseMount 唯一写入＋S9 自检）＋§8.3
                                         # WorkCellConstView 实现＋§8.4 异常转译；
                                         # 公共头 Adapter.hpp（视图/转译契约面）
-        src/DynamicWorkCellCompiler.cpp) # §5.2 S7（RT-T08：DWC 能力门控编译——
-                                         # Body/RigidDevice/质量惯量/摩擦承载/
-                                         # 重力显式设值＋§8.5 同源/Body 覆盖/设备
-                                         # 一致关联校验＋§8.5 销毁顺序持有结构）
-                                         # ＋§8.2/8.3 DynamicWorkCellConstView 实现；
-                                         # 私有头 src/DynamicWorkCellCompiler.hpp
-                                         # （rwsim 为 P-RT-3 已登记 L1——本文件的
-                                         # 设计依据面；冒烟模式不进构建）
+        src/DynamicWorkCellCompiler.cpp # §5.2 S7（RT-T08：DWC 能力门控编译——
+                                        # Body/RigidDevice/质量惯量/摩擦承载/
+                                        # 重力显式设值＋§8.5 同源/Body 覆盖/设备
+                                        # 一致关联校验＋§8.5 销毁顺序持有结构）
+                                        # ＋§8.2/8.3 DynamicWorkCellConstView 实现；
+                                        # 私有头 src/DynamicWorkCellCompiler.hpp
+                                        # （rwsim 为 P-RT-3 已登记 L1——本文件的
+                                        # 设计依据面；冒烟模式不进构建）
+        src/Snapshot.cpp)               # §9.1～§9.3/§9.5（RT-T09：RuntimeSnapshot
+                                        # ＋快照身份/工厂 create（S6–S10 编排）/
+                                        # materialize（IRDMAT1＋D-13 核对）＋
+                                        # §8.4 RobWorkBaselineVersion 采集；
+                                        # 消费 S6/S7 编译器——与上两条同因仅
+                                        # 集成模式；公共头 Compiler.hpp（§10.0
+                                        # 契约面，RT-T09 先建）与 Snapshot.hpp；
+                                        # 冒烟模式不被任何 TU include——§15.4
+                                        # v0.10 登记）
 
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
@@ -190,7 +199,13 @@ endif()
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_runtime_test PRIVATE
         test/WorkCellCompilerTest.cpp
-        test/DynamicWorkCellCompilerTest.cpp)
+        test/DynamicWorkCellCompilerTest.cpp
+        test/SnapshotTest.cpp)          # RT-T09：RT-SNAP-1～4（只读并发/worker 隔离
+                                        # 物化/项目切换旧快照/释放后引用）、
+                                        # RT-CPX-4（取消/bad_alloc）、CR-05 值供给
+                                        # 样例、materialize §9.5 往返＋D-13 拒绝；
+                                        # 被测面（工厂/快照）链接真实框架库——
+                                        # 与产品侧增列同因仅集成模式
 endif()
 
 target_link_libraries(sdurws_ird_runtime_test PRIVATE

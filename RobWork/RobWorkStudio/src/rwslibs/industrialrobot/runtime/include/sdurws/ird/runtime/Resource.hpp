@@ -37,6 +37,8 @@
 
 #include <sdurws/ird/core/Digest.hpp>    // Digest256（内容摘要——SHA-256 32 字节）
 #include <sdurws/ird/core/Identity.hpp>  // ObjectId（资源对象身份）
+#include <sdurws/ird/runtime/Errors.hpp> // RuntimeErrorCode/Expected（§8.6 错误侧——
+                                         //  v0.10 随 RT-T09 增量实体引入）
 
 namespace sdurws::ird::runtime {
 
@@ -78,6 +80,69 @@ struct ResourceRef {
     std::optional<std::string> sourcePathHint;   ///< 源路径提示（仅追溯——不作身份）
     ResourceState state = ResourceState::Recorded; ///< 存在状态（默认 Recorded）
     std::uint32_t accessVersion = 0;             ///< 读取契约版本（io 格式版本）
+};
+
+// =====================================================================
+// ResourceBytes/ResourceReadError/IRuntimeResourceProvider（§8.6 原文契约
+// ——自 v0.10 起随 RT-T09 落位：Compiler.hpp 的 CompileRequest.resources
+// 字段类型依赖本接口，首个消费者原则；io 侧实现仍归阶段 B，本头只冻结
+// runtime 侧消费面。见 units/runtime.md §15.4 v0.10 登记）。
+// =====================================================================
+
+/**
+ * @brief 已验证资源字节视图（§8.6 原文契约——"已验证内容"）。
+ *
+ * 语义：io 侧在返回前已完成 SafePath/预算/缺失与摘要校验（§8.6 职责边界
+ * ——"解析、安全读取、预算、缺失/变化检测归 io"），runtime 只消费并按
+ * digest 复核（S4/§5.4 复查归编译链）。★ 生命周期（§8.6/P-IO-2 裁决）：
+ * 缓冲由 provider 持有至其析构——调用方（编译链）同步消费，**不跨调用
+ * 长期持有、不接管释放权**（data/size 为借持视图）。
+ * 值语义纯结构；线程安全（只读借持）。
+ */
+struct ResourceBytes {
+    const std::uint8_t* data = nullptr; ///< 资源字节起始（provider 持有；借持）
+    std::size_t size = 0;               ///< 字节数（无单位——字节计数；0＝空资源）
+    core::Digest256 digest{};           ///< 内容摘要（SHA-256；与 ResourceRef.contentDigest
+                                        ///<  同源——S4 复核的比对值）
+};
+
+/**
+ * @brief 资源读取失败载荷（§8.6 原文契约——tryResourceBytes 错误侧）。
+ *
+ * 错误语义：code 取 Errors.hpp 的资源类码（ResourceMissing/ResourceChanged/
+ * ResourceBudget——§8.6 规则总表"四类诊断严格区分"的原始检测面；io 负责
+ * 检测与原始诊断，runtime 在 S4 就地定位 resourceId 转译）。resourceId
+ * 回显请求值（诊断可定位）；detail 为 io 侧开发诊断细节。
+ * 值语义纯结构；线程安全。
+ */
+struct ResourceReadError {
+    RuntimeErrorCode code;              ///< 失败码（资源类三码之一）
+    core::ObjectId resourceId;          ///< 请求的资源对象身份（原名回显）
+    std::string detail;                 ///< 开发诊断细节（io 侧检测依据）
+};
+
+/**
+ * @brief 资源只读提供者（§8.6 原文契约——io 实现、阶段 B 接入；L5 装配注入）。
+ *
+ * 语义：按资源对象身份取**已验证**内容字节（SafePath/预算在 io 侧已过——
+ * 见方法注释）。注入边界与 IObjectBytesSource 同模式（§3.3：值传递＋最小
+ * 注入接口；runtime 零 io 编译依赖——ARCH §3.5）。
+ * 实现方约束：并发只读安全（§5.5 注入接口统一约定）；返回字节的缓冲由
+ * 实现持有（P-IO-2 生命周期裁决——见 ResourceBytes 注释）；同 id 重复
+ * 调用须确定性（同字节或稳定失败——编译期资源复查 §5.4 的前提）。
+ */
+class IRuntimeResourceProvider {
+public:
+    virtual ~IRuntimeResourceProvider() = default;
+
+    /**
+     * @brief 尝试取资源已验证字节（只读、非抛出——Expected 两态轨）。
+     * @param resourceId [in] 资源对象稳定身份（ARC-04）
+     * @return ok＝已验证资源字节视图（缓冲归 provider——同步消费）；err＝
+     *         读取失败（ResourceReadError——资源类码＋回显定位），不抛
+     */
+    virtual Expected<ResourceBytes, ResourceReadError>
+        tryResourceBytes(core::ObjectId resourceId) const = 0;
 };
 
 }  // namespace sdurws::ird::runtime

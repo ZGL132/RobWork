@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T09",
+  "masterWp": "WP-06-T09",
+  "branch": "wp06-t09",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（集成模式零错误零警告；冒烟模式本文件不进构建——见 modeMechanics）",
+      "notes": "RT-T09 增列 src/Snapshot.cpp（仅集成模式——TARGET sdurw_kinematics 条件）：§9.1 RuntimeSnapshot（字段表全量访问器＋§8.3 IRuntimeModelView 实现＋§8.5 声明序持有〔m_dynamicWorkCell 先于 m_workCell〕＋§9.6 发布门禁构造拒绝）＋snapshotidentity（身份域编码/compute/workCellCompileIdentity §9.1 公式单点）＋RuntimeSnapshotFactory（create S6–S10 编排经 §10.0 分段入口／materialize IRDMAT1 载荷重建＋D-13 身份核对）＋§9.5 snapshotcodec encode/parse＋§8.4 RobWorkBaselineVersion::capture；新增公共头 Compiler.hpp（§10.0 契约面：CompileOptions/CompileRequest/CompileStatus/CompileOutcome/ICanonicalModelCompiler/GeometryDetail——RT-T09 先建，RT-T11 增量交付十段链实现）与 Snapshot.hpp（RuntimeSnapshot/SnapshotIdentity/IRuntimeSnapshotFactory/MaterializedSnapshotCodec——§3.1 全实体）；增量实体：Adapter.hpp 增 RobWorkBaselineVersion（v0.8① 预留）、BaseWorldTransform.hpp 增 kBaseWorldRuleVersion=1（§9.4 分量单点）、Resource.hpp 增 ResourceBytes/ResourceReadError/IRuntimeResourceProvider（§8.6 原文——CompileRequest 字段依赖）；目标名/别名/include 根不变"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（集成模式）；冒烟模式 172 用例（RT-T09 测试不进冒烟目标——被测面链接真实 sdurwsim/sdurw 框架库，CMake 同款条件）",
+      "notes": "增列 test/SnapshotTest.cpp（仅集成模式编译，14 例：RT-SNAP-1～4、RT-CPX-4 取消/bad_alloc、CR-05 值供给样例、materialize §9.5 往返＋D-13 拒绝、快照身份确定性＋键公式扰动、create 失败诊断/违约轨、DWC 状态两成因）；RT-T01～T08 的 13 个用例文件保留并全部回归（172 例冒烟／199 例集成存量）"
+    }
+  ],
+  "modeMechanics": "集成模式使用仓库根 build/ 树（RWS_BUILD_INDUSTRIALROBOT=ON），构建目标＝契约 verify 命令 cmake --build build --config Release --target sdurws_ird_runtime_test，零错误零警告；冒烟模式使用独立树 build-smoke-wp06-t09（vcpkg toolchain 绝对路径重配置），本任务产品增列（Snapshot.cpp）与测试增列（SnapshotTest.cpp）均仅集成模式编译——工厂/快照消费 S6/S7 编译器（真实 rw models/kinematics＋rwsim dynamics 非模板类，§8.1 P-RT-3 已登记 L1），冒烟无框架库可链；Snapshot.hpp 公共头在冒烟下不被任何 TU include（v0.8②/v0.9⑧ 同款分工登记 §15.4 v0.10），不影响'目标注册＋include 路径'的冒烟口径；冒烟 172/172 证明既有面零回归",
+  "testSuites": [
+    {
+      "suite": "RuntimeBuild/Errors/Sources/Expected/Description*/CanonicalModel*/Codec/NameMap*/BaseWorldTransform*/WorkCell*/DynamicWorkCell*（RT-T01～T08 既有，回归）",
+      "designRef": "units/runtime.md §3～§8/§10.11/§11（既有切面）",
+      "cases": [
+        { "name": "199 cases（RT-T08 合入基线全量）", "status": "passed", "modes": ["integration"], "trace": "既有 199 用例零改动零跳过回归通过——新增头不改变任何既有编译面（Compiler.hpp 为新增独立头，Snapshot.hpp 不被既有 TU include）" },
+        { "name": "172 cases（RT-T08 合入基线全量，冒烟）", "status": "passed", "modes": ["smoke"], "trace": "冒烟全量回归通过——Snapshot.hpp/Compiler.hpp 不被冒烟 TU include，BuildRedLineTest 源码扫描命中集与 wp06-t08 基线相同（新增 include 面仅 core/std/rw/rwsim 头＋同单元公共头，R-3/R-1/R-2 合规）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.CreatePublishesSnapshotFields_RT_T09（§9.1 字段表逐项＋§8.3 视图面）",
+      "designRef": "units/runtime.md §9.1（字段表全列）、§8.3（IRuntimeModelView）、§9.6（能力派生一致性）",
+      "cases": [
+        { "name": "SnapshotTest.CreatePublishesSnapshotFields_RT_T09", "status": "passed", "modes": ["integration"], "trace": "rich 夹具→Published：身份四元组/modelIdentity==model.contentIdentity/nameMapIdentity/nameMapRuleVersion=1/workCellCompileIdentity 非零/DWC Compiled＋清单空/版本面（契约版本/实现版本/基线==capture()）/codecVersions==编码头常量三元/选项回读/资源清单逐条/诊断==模型警告块/createdFrom=Command/snapshotIdentity 非零；视图面：nameMap 非空/frameCount>0/worldToBase 与重力投影==规则函数互证（地面 gBase[2]==-9.81）/tryDynamicWorkCell ok＋bodyCount>0/⑥端口反解命中" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.身份确定性＋排除面＋WC 键公式（RT-ID-1 快照层/§9.1 公式/D-04）",
+      "designRef": "units/runtime.md §9.1（snapshotIdentity 派生行＋workCellCompileIdentity 公式）、§9.4（DWC 无关子集）、NFR-COR-02",
+      "cases": [
+        { "name": "SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1", "status": "passed", "modes": ["integration"], "trace": "同输入两次 create→snapshotIdentity/workCellCompileIdentity 逐字节相等；Fields 组装与快照内计算同值（同一编码域互证）；扰动 compilerVersion/revisionSeq（快照层入身份）/robworkBaselineVersion→身份变；diagnostics/createdAtUtc/createdFrom 不在 Fields＝类型层排除（§9.1'不入'列）" },
+        { "name": "SnapshotTest.WorkCellCompileIdentityFormula_RT_T09", "status": "passed", "modes": ["integration"], "trace": "§9.1 公式分量逐项扰动全变（modelIdentity/契约版本/实现版本/基线/名称规则版本/codecVersions/includeCollisionGeometry）；requestDynamicWorkCell 变→键不变（DWC 无关子集，D-04）；全零 modelIdentity/空版本串→InputInvalid fail-fast（合法列'非零'）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1（§9.2/§8.7 只读并发）",
+      "designRef": "units/runtime.md §9.2（快照跨线程/State 每线程）、§8.7（并发只读边界）、§11 RT-SNAP-1 行（TSAN/等价评审）",
+      "cases": [
+        { "name": "SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1", "status": "passed", "modes": ["integration"], "trace": "8 线程×200 次迭代并发：⑥端口整串解析/worldToBase/gravityBase 全部与单线程期望逐一相等；每线程私有 State 经 setQ 写入本线程专属关节位并跨迭代读回一致（线程间零互扰——'State 是唯一可变工作区且线程私有'的行为断言）。证据形态：MSVC 无 TSAN，以并发压力＋逐线程结果一致做等价评审观测（§15.4 v0.10 登记）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2＋WorkerIdentityMismatchRejected_D_13（§9.2/§9.5 worker 隔离）",
+      "designRef": "units/runtime.md §9.2（worker 隔离副本）、§9.5（MaterializedSnapshotCodec＋身份核对）、§10.0（materialize 属性行）、D-13",
+      "cases": [
+        { "name": "SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2", "status": "passed", "modes": ["integration"], "trace": "create→载荷组装（IRDCANO＋IRDNAME＋选项＋编译器版本面＋预期身份）→IRDMAT1 确定性编码（两次 encode 逐字节相等）→materialize→Published；身份三连等（modelIdentity/nameMapIdentity/snapshotIdentity 逐字节）；可执行：worldToBase/frameCount/⑥端口反解与主进程产物同值；createdFrom=Worker 与身份相等正交（观测性不入身份）" },
+        { "name": "SnapshotTest.WorkerIdentityMismatchRejected_D_13", "status": "passed", "modes": ["integration"], "trace": "篡改 1：预期 modelIdentity 错配→Failed＋无快照＋诊断 cause 同时含期望/实得 cid 规范文本（§10.0 原文）；篡改 2：模型字节改尾位→rtcodec parse 身份复核先行拒绝（D-13 模型层前置，Codec.hpp parse 校验链④）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5（§9.5 载荷编解码）",
+      "designRef": "units/runtime.md §9.5（RT-Codec 家族 IRDMAT1/内容面）、acceptance 3（materialize 编码往返）",
+      "cases": [
+        { "name": "SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5", "status": "passed", "modes": ["integration"], "trace": "encode→parse 逐字段相等（RevisionSummary 含 parent presence/objectRefs token/双字节块/options/编译器版本面/预期身份）；防御拒绝×4：截断（半传输）/坏 magic（非 IRDMAT1）/尾随字节/非法载荷（空模型字节 encode fail-fast）——全部 InputInvalid 不抛不半成品" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3（§9.3/AT-10 迟到语义）",
+      "designRef": "units/runtime.md §9.3（旧快照存活/ContextReleased/零外部依赖）、§3.4（调用方违约 fail-fast 轨）、TASK-03/AT-10",
+      "cases": [
+        { "name": "SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3", "status": "passed", "modes": ["integration"], "trace": "场景 1：切 B 后 S_A 迟到反解——resolveObjectId(j1) 命中且 fullName=='IRB_T.joint_1'（用绑定映射，绝不用当前映射）；两快照映射独立（B 无旧名残留——RT-NM-5 面）；场景 2：上下文释放的迟到编译请求→ContextReleased fail-fast 重抛（isContractViolation 断言——不发诊断码，§3.4/§10.11）；场景 3：纯快照内操作在上下文释放后照常服务" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4（§9.3 引用生命周期）",
+      "designRef": "units/runtime.md §9.3（引用释放行）、§8.3（视图借持）、§11 RT-SNAP-4 行（ASAN 口径的证据形态适配）",
+      "cases": [
+        { "name": "SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4", "status": "passed", "modes": ["integration"], "trace": "快照 reset 后 weak_ptr 过期（对象确实析构——悬垂访问不可能经 shared_ptr 通道发生）；快照释放前拷贝的 WorkCellConstView 借持 Ptr 保活 WC（frameCount 读数不变——最后引用释放语义）。证据形态：MSVC 无 ASAN，weak 过期时序等价观测（与 RT-AD-3 同款登记 §15.4 v0.10）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.CancelAtStageBoundary_RT_CPX_4＋BadAllocBecomesResourceBudget_RT_CPX_4（§5.5 取消/预算）",
+      "designRef": "units/runtime.md §5.5（取消/可重入/bad_alloc→ResourceBudget）、§9.6 组合表（取消诊断非 error）、§11 RT-CPX-4 行、TASK-01/UX-03",
+      "cases": [
+        { "name": "SnapshotTest.CancelAtStageBoundary_RT_CPX_4", "status": "passed", "modes": ["integration"], "trace": "CancelToggle 在 S5/S6 段边界置位（替身于 buildCanonicalModel 调用点置位）→Cancelled＋无快照＋恰一条 RT-CANCELLED 非 error 诊断；令牌复位后同链重试→Published（可重入重试成功，无半成品残留）。'临时目录清理失败'子项归 project 事务（§8.6/§10.0'命令路径临时文件归 project 事务'——runtime 零磁盘写），不在本任务面，登记归属" },
+        { "name": "SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4", "status": "passed", "modes": ["integration"], "trace": "替身注入 std::bad_alloc（§11'替身 reader 抛'的等价注入面——S2 段）→Failed＋RT-RESOURCE-BUDGET＋无快照（局部 S6/S7 瞬态产物 RAII 析构即清理）；清理后重编译成功（工厂无状态）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09＋DwcStateBothCauses_RT_T09（错误轨/§9.1 状态两成因）",
+      "designRef": "units/runtime.md §3.4（错误语义总纲）、§5.2 归属表（Sources.hpp 文件头表）、§9.1 dynamicWorkCellState、§9.4 capabilityLevel",
+      "cases": [
+        { "name": "SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09", "status": "passed", "modes": ["integration"], "trace": "err(InputInvalid)→Failed＋RT-INPUT-INVALID 诊断＋无快照（环境错误走诊断收集）；err(UnknownObject)→RuntimeError 重抛（契约违约保持 fail-fast 轨——isContractViolation，不走诊断静默）" },
+        { "name": "SnapshotTest.DwcStateBothCauses_RT_T09", "status": "passed", "modes": ["integration"], "trace": "成因 1（物性缺失，请求 DWC）：minimal→SkippedNoPhysics＋缺失清单＝3 连杆链序＋能力位 false＋tryDynamicWorkCell 错误＋诊断尾条 RT-CAPABILITY-MISSING；成因 2（未请求，capabilityLevel=false）：SkippedNoPhysics＋空缺失清单（无物性缺失事实——§9.4 分层键语义）；快照仍合法发布（D-03 声明完整的发布态）" }
+      ]
+    },
+    {
+      "suite": "SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05（跨单元红线——EV-T04 联合断言锚点）",
+      "designRef": "tasks/foundation/RT-T09.json acceptance 2（CR-05）、units/evidence.md §4.1.1/§4.2.1/§5.1（Environment 条目/inputBaselineId）、units/runtime.md §10.3/§15.4 v0.2",
+      "cases": [
+        { "name": "SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05", "status": "passed", "modes": ["integration"], "trace": "值供给样例＝固定种子 rich 夹具＋(契约版本 1, 'cr05-sample-1.0')＋RobWorkBaselineVersion::capture()：断言快照暴露值＝各真值源计算值（modelIdentity==contentIdentity、nameMapIdentity==映射身份、baseline==capture 单点——值传递无重编码）；toCanonical→fromCanonical 往返同值（条目值是可核对规范编码）；同一样例重复供给三值逐字节一致（EV-T04 联合断言的确定性前提）；baseline 文本非空无空白（可直接作条目值）。EV-T04 侧对齐口径：以相同夹具种子与 baseline 串断言其 Environment 条目 runtime.model-identity/runtime.robwork-baseline 编码值与本测试输出逐字节一致" }
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "item": "acceptance 1：RT-SNAP-1～4、RT-CPX-4：并发/隔离/迟到用例通过",
+      "verdict": "pass",
+      "evidence": "RT-SNAP-1＝ConcurrentReadOnlyView（8×200 并发只读＋逐线程 State 写入互扰检查——TSAN 不可用以等价评审观测，§15.4 v0.10）；RT-SNAP-2＝WorkerMaterializeRoundtrip（身份三连等＋视图同值可执行）；RT-SNAP-3＝StaleSnapshotSurvivesProjectSwitch（迟到反解用绑定映射＋ContextReleased fail-fast 拒绝＋纯快照操作照常）；RT-SNAP-4＝ReferenceReleaseLifecycle（weak 过期时序——ASAN 不可用等价观测）；RT-CPX-4＝CancelAtStageBoundary（Cancelled＋RT-CANCELLED 非 error＋可重入重试）＋BadAllocBecomesResourceBudget（RAII 清理＋预算码）；'临时目录清理失败'子项归 project 事务（runtime 零磁盘写——登记归属）。集成 XML 213/213（新增 14），冒烟 172/172"
+    },
+    {
+      "item": "acceptance 2：CR-05：modelIdentity/nameMapIdentity/robworkBaselineVersion 值供给样例与 EV-T04 联合断言一致（同一样例，evidence 侧 Environment 条目值＝runtime 计算值）",
+      "verdict": "pass",
+      "evidence": "RuntimeSnapshot 暴露三值（＋compilerContractVersion）只读取值入口＝evidence 唯一供给面（Snapshot.hpp 类注释登记 CR-05 落点）；样例（固定种子夹具＋固定编译器版本＋capture() 基线串）断言：快照值==真值源计算值（无重编码）/toCanonical 往返/样例确定性——EV-T04 侧以同一样例对齐其 Environment 条目 runtime.model-identity/runtime.robwork-baseline 编码值（对齐口径在测试注释与 §15.4 v0.10⑤ 登记；evidence.md §4.2.1 定义的条目 token 与值形态即本样例输出）"
+    },
+    {
+      "item": "acceptance 3：materialize 编码与工厂创建（§9.5）往返用例通过",
+      "verdict": "pass",
+      "evidence": "工厂创建＝CreatePublishesSnapshotFields（S6–S10 编排＋字段表全量）＋CreateFailureDiagnosticsAndContractViolation（Failed/违约轨）；materialize 往返＝WorkerMaterializeRoundtrip（create→IRDMAT1 encode→materialize→身份相等可执行）＋MaterializeCodecRoundtripAndValidation（载荷逐字段往返＋截断/坏 magic/尾随/非法载荷×4 拒绝）＋WorkerIdentityMismatchRejected_D_13（核对拒绝含期望/实得身份）。knownPitfalls CR-05 处置见 acceptance 2；interUnit 联动（Compiler.hpp 契约面先行/Resource.hpp 增实体/kBaseWorldRuleVersion）按 DTB §5.4 登记 units/runtime.md §15.4 v0.10"
+    }
+  ],
+  "probe": {
+    "method": "注入→变红→精确还原→复绿（PIPE §5 失败能力验证；精确 Edit＋构建退出码核验防旧二进制假绿）",
+    "probes": [
+      "探针：禁用 D-13 身份核对（materialize 中 modelIdentity 核对分支置 if(false)）→恰好 SnapshotTest.WorkerIdentityMismatchRejected_D_13 一例变红（SnapshotTest 其余 13 例全部通过——失败面精确，证明核对为承力结构）→精确还原→复绿（probe-d13-red.log 记录 1 failed；复绿后 213/213）"
+    ],
+    "finalState": "精确还原后 git 工作区无探针残留（if(false) 行恢复为权威核对条件）；集成 213/213、冒烟 172/172（XML 双份）"
+  },
+  "gates": {
+    "ird_gates": "命中 2 项＝IRD-GATE-SUB/T1（sdurws_ird_testdata_lint→testkit）——RT-T03 起基线同款既有登记项，命中集合与 wp06-t08 逐项相同（IRD-GATE-SUB/T1 各 3 次＝命中＋自检提及；R1/R3/R4/R5/T2 为自检'按预期检出'提及），零新增命中；runtime 单元自身零命中",
+    "validate-task": "PASS（validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RT-T09.json）"
+  }
+}
