@@ -702,6 +702,16 @@
       "title": "evidence/test/CompatibilityTest.cpp 文件头注释（L24-26）提及的测试名与实际交付不符两处：①「UnfinalizedManifestIsDiagnosticOnly_EV_CPA_2 反例族」——实际测试名为 UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2（后缀 _EV_CPA_2 系笔误）；②「PartialOutcomeNeverFullHit 反例组」——不存在该具名测试，「部分结果永不 FullHit」语义实际由 CanceledResultIsDiagnosticOnly_EV_ENV_2／FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2／BothResultFaceFailuresListed_EV_ENV_2 三用例共同承载。零行为影响（22 用例本体与断言均正确、两模式 173/173 全绿），纯注释精度微瑕（F-067 同类——注释与实现/清单失配）",
       "owner": "evidence 实现所有者（随下次触及 CompatibilityTest.cpp 的任务把文件头注释测试名清单对齐实际 TEST 名单）",
       "resolution": "注释对齐（零行为变化）；不影响 EV-T09 验收（pass——文件头注释的用例分组概述语义正确，仅具名清单失准）。编号顺延自 F-069。"
+    },
+    {
+      "id": "F-071",
+      "source": "EV-T10 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T10-20260913.md §4.2，送验对象 f67b597bbc675611dab5744463f86ba7af0752b5，分支 wp05-t10）：验收者在 detached worktree 全新树从零复现集成模式构建时暴露",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "industrialrobot/core/src/Units.cpp 存在 14 处 MSVC C4099 告警（sdurws::ird::core::Quantity<QuantityKind::Length/Angle/Mass/Time/…> 模板类型『以前使用 struct 现在使用 class』——struct/class 声明不一致，L174 起）；主仓增量树该文件无重编译活动而掩盖（F-036/F-052 同族『增量树掩盖』效应，方向为既有告警非错误）。非 EV-T10 引入（送验 diff 未触碰 core 单元；送验留痕增量树日志零告警的表述在其口径下真实），evidence 单元自身源文件零告警",
+      "owner": "core 实现所有者（WP-03 后续任务随下次触及 Units.cpp/Units.hpp 时统一 struct/class 声明消除告警，避免独立格式化提交）",
+      "resolution": "统一 Quantity 模板各具名特化/别名的 struct 与 class 声明形态（声明与定义同关键词）即闭合；全新树/CI 全量构建的告警清洁面前置（F-008 闭合后 CI 全量构建将暴露同类存量）。不影响 EV-T10 验收（pass——任务目标面 evidence 零 error 零告警）。编号顺延自 F-070，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
