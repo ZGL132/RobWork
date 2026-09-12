@@ -431,6 +431,16 @@
       "title": "RT-T06 重力投影方向测试敏感度缺口：gravityToBase 契约公式 g_base＝Rᵀ·g_W 的方向（转置）未被现有用例对非对称旋转钉住——测试仅用对称旋转 R_x(π)=diag(1,−1,−1) 与 I，两者 R·g≡Rᵀ·g，验收者探针实测把实现改为正向乘 R（rotateVector）后 InverseAndPointTest 6/6 仍全绿；Wall/Custom 类非对称安装下方向混淆（重力横向分量符号错误→重力矩错误）不可检。实现本身正确（验收者代码走读＋公式核对证实），属测试覆盖面建议非实现缺陷",
       "owner": "runtime 实现所有者（WP-06 后续任务顺手修复：RT-T07 或用例增补任务）",
       "resolution": "补一条非对称预设重力投影断言即可闭环，如 Wall：g_base＝R_y(π/2)ᵀ·(0,0,−9.81)＝(+9.81,0,0)（重力沿 +X_base，BaseWorldTransformTest.InverseAndPointTest 组）；可随 RT-T07 领取时顺带或后续用例增补批次，不单开任务。编号顺延自 F-042，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-044",
+      "source": "traceability/acceptance/RT-T07-20260912.md#4.9-G-1（attempt 1，送验对象 ded5f2c7c，提交 ded5f2c）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-038/F-040/F-041/F-043 同型再现：RT-T07 文档提交 ded5f2c 标题以名词短语开头（『[units] runtime v0.8：RT-T07 实现落位登记（DTB §5.4）』＝F-038/F-040 已判『[units] runtime v0.x：…』同前缀形态）——家族再复现一例，证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；该提交正文四段齐备、验证结论与留痕一致（验收者全新树亲手复现：集成 188/188、冒烟 172/172、validate-task/validate-docs PASS、计数声明 16＋172 实测准确），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[units] 登记 runtime v0.8 实现落位…』）；对已推送历史（ded5f2c 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-043，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
