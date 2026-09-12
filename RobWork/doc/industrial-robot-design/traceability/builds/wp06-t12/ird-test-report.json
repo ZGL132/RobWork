@@ -4,6 +4,8 @@
   "masterWp": "WP-06-T12",
   "branch": "wp06-t12",
   "date": "2026-09-12",
+  "attempt": 2,
+  "reworkNote": "attempt 2（返工）口径：修复验收阻断 B-1（findings F-052）——testdata/.gitattributes（* text eol=lf）钉死数据资产行尾；逐用例集合与 attempt 1 一致（零增删，两处注释更正不涉用例），全部用例在主树口径与 fresh worktree 检出形态下两轮真实执行通过；本文件 summary.rework 登记返工执行证据。attempt 2 送验对象＝分支 wp06-t12 留痕提交尖端（SHA 见验收请求）",
   "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
   "targets": [
     {
@@ -62,6 +64,19 @@
     "integration": { "total": 261, "passed": 260, "failed": 0, "skipped": 1, "skippedNote": "ChildProcessWorker_RT_ID_1 为父用例派生的 worker 占位——父用例内子进程实际执行并通过（CrossProcessIdentityStable_RT_ID_1 passed）" },
     "smoke": { "total": 176, "passed": 176, "failed": 0, "skipped": 0 },
     "exitCodes": { "integration": 0, "smoke": 0 },
-    "evidence": "traceability/builds/wp06-t12/（gtest XML×2＋两模式构建/测试日志＋testdata lint 工具日志 exit=0＋validate-task PASS＋ird_gates 命中登记）"
+    "rework": {
+      "blocker": "B-1/F-052：fresh checkout（autocrlf=true 且无属性覆盖）把 testdata 文本资产 LF→CRLF，manifest sizeBytes/SHA-256 失配→dataset-invalid",
+      "fix": "testdata/.gitattributes（* text eol=lf，双向钉死：检出强制 LF＋入库归一化 LF）；git add --renormalize 实证 index 与 HEAD 逐字节零变化",
+      "mainTreeRerun": { "integration": "260/261 过＋1 设计跳过（exit 0，主树存量增量树构建 exit 0）", "smoke": "176/176 过（exit 0，独立从零目录 build-smoke-wp06-t12-rework，配置/构建 exit 0）" },
+      "freshCheckoutSelfCheck": {
+        "method": "git worktree add --detach 检出修复后提交（wp06-t12 尖端 a1744141；testdata 资产在修复提交 e59d3972 后零变化）＋同一测试 exe 经 SDURWS_IRD_TESTDATA_DIR 指向 worktree 检出的 testdata",
+        "baselineRed": "worktree @ ff4b943c（未修复基线）：检出 1867/1207 字节（CRLF 膨胀）→集成 255 过＋5 败（失败集合与验收记录逐字一致：RT-EQ-1/RT-NM-1＋lint 3 例）＝B-1 因果钉死",
+        "fixedGreen": "worktree @ 修复后提交：检出 1812/1170 字节，6/6 manifest integrity 条目 size+SHA-256 逐字节 OK→集成 260 过＋1 跳（exit 0）、冒烟 176 过（exit 0）",
+        "negativeProbe": "把检出 model.json 人为转 CRLF（1867 字节）→lint 立即 2 例红（dataset-invalid）；git checkout 还原为 1812 字节 LF→复绿（校验非恒真）",
+        "evidence": "fresh-checkout-*-rework-run.log / baseline-crlf-repro-run.log / crlf-probe-run.log / fresh-checkout-integration-rework.xml（builds/wp06-t12/）"
+      },
+      "gates": { "ird_gates": "exit=1，命中恰 3 项已登记（IRD-GATE-SUB×2＝F-051＋F-019、IRD-GATE-T1×1＝F-019）——零新增违规；validate-task PASS" }
+    },
+    "evidence": "traceability/builds/wp06-t12/（attempt 1 留痕保留；attempt 2 返工口径见 *-rework-* 系列文件：gtest XML×4〔主树/新检出形态×集成/冒烟〕＋两模式构建/测试日志＋fresh 检出形态自证三件＋validate-task PASS＋ird_gates 命中登记）"
   }
 }

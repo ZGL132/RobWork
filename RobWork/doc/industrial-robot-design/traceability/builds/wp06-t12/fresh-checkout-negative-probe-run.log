@@ -1,0 +1,59 @@
+# RT-T12 attempt 2 返工自证（负向探针）：把 fixed worktree 检出的 model.json 人为 LF→CRLF（1812→1867 字节）
+# 预期＝lint 立即红（dataset-invalid）——证明 lint 校验非恒真；随后 git checkout 还原为 1812 字节 LF（eol=lf smudge 实证）
+
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = GoldenDataLint.*:ContractSuite.Golden*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from GoldenDataLint
+[ RUN      ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(58): error: Expected: ds = tk::GoldenDataset::load({id, version}) doesn't throw an exception.
+  Actual: it throws sdurws::ird::testkit::TestKitError with description "dataset-invalid: dataset-invalid: integrity.inputs/model.json: size 不符（期望 1812，实际 1867）".
+数据集装载失败（数据资产缺陷——§7.2 dataset-invalid）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(70): error: Expected equality of these values:
+  ds.manifest().datasetId
+    Which is: ""
+  "rt-fk-equation"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(71): error: Expected equality of these values:
+  ds.manifest().kind
+    Which is: 4-byte object <03-00 00-00>
+  tk::DatasetKind::AnalyticCase
+    Which is: 4-byte object <00-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(72): error: Expected equality of these values:
+  ds.manifest().toleranceProfileId
+    Which is: ""
+  "rt-runtime"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(73): error: Expected equality of these values:
+  ds.manifest().toleranceProfileVersion
+    Which is: ""
+  "1.0.0"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(76): error: Value of: ds.manifest().referenceSourcePresent
+  Actual: false
+Expected: true
+
+[  FAILED  ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3 (1 ms)
+[ RUN      ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+[       OK ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\GoldenDataLintTest.cpp(58): error: Expected: ds = tk::GoldenDataset::load({id, version}) doesn't throw an exception.
+  Actual: it throws sdurws::ird::testkit::TestKitError with description "dataset-invalid: dataset-invalid: integrity.inputs/model.json: size 不符（期望 1812，实际 1867）".
+数据集装载失败（数据资产缺陷——§7.2 dataset-invalid）
+
+[  FAILED  ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3 (0 ms)
+[----------] 4 tests from GoldenDataLint (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+[  FAILED  ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+
+ 2 FAILED TESTS
