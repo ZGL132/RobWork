@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T06",
+  "masterWp": "WP-07-T06",
+  "branch": "wp07-t06",
+  "date": "2026-09-13",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T06 增量：新增 include CollisionEvaluator.hpp（CollisionScene 场景模型＋作用域展开产物＋会话构建期访问器＋唯一实现入口契约——§6.1/§6.4/§7.1/§7.2/§9.3；rw 类型仅前向声明零 rw include，冒烟模式无 TU include）与 src/CollisionEvaluator.cpp（会话三步构建：场景校验/作用域展开＋冲突同码复核/检测器初始化＋sessionIdentity——集成模式专属）与 src/RobWorkCollisionEvaluator.cpp（唯一实现绑定：RobWorkCollisionEvaluator＋make 唯一构造入口＋内置 ProximityStrategyRW 实例化——零字面量 TU，切分说明见⑤）；Errors.hpp/.cpp 表尾追加 SceneInvalid/NameUnresolved（16→17→18 值链，§9.6 CLL 家族正式落位）；链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project 编译依赖（R-1/R-2——NoCrossUnitInclude 对新头自动扫描通过）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T06 增量：新增 test/CollisionSessionTest.cpp（POL-SCOPE-1/2 构建期＋场景校验守卫＋会话身份确定性＋检测器初始化＋词表转发表，5 套件 21 用例——消费 rw 非模板类仅集成模式编译，冒烟模式测试面保持 POL-T01~T05 既有 112 用例）；POL-T01 红线扫描 4 用例、POL-T02 既有 30 用例（PolicyErrors 两张全表锚定用例同步扩展至 18 值）、POL-T03 既有 23 用例、POL-T04 既有 44 用例、POL-T05 既有 15 用例全部保持通过（集成合计 133/133；冒烟 112/112）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CollisionSessionScope",
+      "designRef": "units/policy.md §7.1 作用域矩阵（可执行规则）、§11 POL-SCOPE-1 行、§4.3 enabled 语义、MDL-04/15、§12 POL-T06 行",
+      "cases": [
+        { "name": "CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-SCOPE-1 构建期）：策略仅启用 Self——展开对全部为连杆对（域/角色逐对断言），非相邻 1 对默认必检＋相邻 2 对默认过滤（ruleOrigin=default.adjacent-links 留痕）；Environment/Tool/Scene 分域计数全零（Environment 对零输出资格）；域禁用 voids 工具×工件对（§7.1 不适用条件列）" },
+        { "name": "CollisionSessionScope.ThreeDomainMatrixRowAssignment_POL_SCOPE_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§7.1 矩阵逐行）：三域启用下工具×连杆/工具×工件→Tool、连杆×环境/连杆×工件/工具×环境→Environment、负载×工件→Tool；工具×负载（矩阵未列）与 Scene 未启用的环境×工件不入作用域；相邻过滤仅及 Self；展开产物按 (objectA,objectB) 规范序逐位断言（NFR-COR-02）" },
+        { "name": "CollisionSessionScope.SceneDomainOnlyMandatoryEnters_POL_SCOPE_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§7.1 Scene 行）：环境对象间默认不检、显式 mandatoryPairs 可启用——Scene 域仅必检对进入（状态 Mandatory＋ruleIndex），env×workpiece 未命中必检不入；Environment 域对照（连杆×环境 3 对默认必检）" },
+        { "name": "CollisionSessionScope.DisabledPolicyYieldsEmptyScope", "status": "passed", "modes": ["integration"], "trace": "§4.3 enabled=false 整体停用：会话可构建（§9.3 前置行只要求已发布＋场景校验）、collisionEnabled=false 如实投影、作用域为空——'禁用被误调用'的评估期应答（DisabledByPolicy）归 POL-T07" }
+      ]
+    },
+    {
+      "suite": "CollisionSessionGuards",
+      "designRef": "units/policy.md §6.1 场景校验（会话构建期）、§7.2 两层防御、§7.5 名称不可解析、§9.3 错误类型行、§11 POL-SCOPE-2 行、foundation-api-diff.md CR-04",
+      "cases": [
+        { "name": "CollisionSessionGuards.ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-SCOPE-2 构建期）：显式排除对以 ExcludedByRule 留痕（ruleIndex＋理由原文——AppliedFilterRecord 素材）；ProximitySetup 恰 1 条精确名 EXCLUDE 规则（无模式拼接——R-4）；useExcludeStaticPairs=false（R-POL-3：RobWork 默认过滤不进产品策略）" },
+        { "name": "CollisionSessionGuards.MandatoryAdjacentPairSurvivesDefaultFilter_POL_SCOPE_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§7.2 必检对集不可过滤）：显式必检的相邻对状态=Mandatory（默认相邻过滤不可覆盖）＋setup INCLUDE 规则；未必检相邻对仍默认过滤（EXCLUDE 规则）；setup 规则序＝展开产物规范序" },
+        { "name": "CollisionSessionGuards.ParseTimeConflictStillRejected_POL_SCOPE_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-SCOPE-2 ①解析期——引用性锚定）：排除∩必检直接对端冲突在解析期拒绝发布（POLICY-RULE-CONFLICT，POL-T04 落位码面回归）——无可发布策略，会话不发生" },
+        { "name": "CollisionSessionGuards.SceneExpansionConflictRecheckRejectsTwoLayerDefense_POL_SCOPE_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§7.2 会话构建期同码复核——两层防御第二层，v0.5 ④登记落点）：解析期上下文应答（objectRole=Payload）与场景装配事实（Tool）不一致时，展开集相交以同码 POLICY-RULE-CONFLICT 拦截——cause 携带双方规则清单/下标/理由＋冲突对象对（可追溯 ERR-01）" },
+        { "name": "CollisionSessionGuards.RuleReferenceMissingFromSceneRejected", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.1 ②：规则引用对象不在场景清单（解析期闭包核对通过、场景装配缺失）→ POLICY-CLL-SCENE-INVALID，cause 定位 mandatoryPairs[0]＋缺失对象规范文本" },
+        { "name": "CollisionSessionGuards.DuplicateSceneObjectIdsRejected", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.1 ①：objects 的 ObjectId 重复 → POLICY-CLL-SCENE-INVALID（cause 双 localName 定位）" },
+        { "name": "CollisionSessionGuards.EmptySceneContentIdentityRejected", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.1 ④：sceneContentIdentity 全零 → POLICY-CLL-SCENE-INVALID（CR-04：值由调用方传入，policy 只核对不重算）" },
+        { "name": "CollisionSessionGuards.NullWorkcellRejected", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.1 输入模型前提：workcell 编译产物缺失（空指针）→ POLICY-CLL-SCENE-INVALID" },
+        { "name": "CollisionSessionGuards.PrimaryDeviceUnresolvableRejected_NAME_UNRESOLVED", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.1 ③＋CR-04：primaryDevice 经名称上下文不可解析（runtime Expected 错误→nullopt 原样呈现）→ POLICY-CLL-NAME-UNRESOLVED（不猜测——ARC-04）" },
+        { "name": "CollisionSessionGuards.PrimaryDeviceNameNotADeviceRejected_NAME_UNRESOLVED", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§7.5 名称不可解析行：解析名在 workcell 内无对应设备（findDevice 空——场景 Frame↔对象 ID 断链）→ 同码 POLICY-CLL-NAME-UNRESOLVED（cause 携带解析名）" },
+        { "name": "CollisionSessionGuards.GroupTargetConservativelyRejected", "status": "passed", "modes": ["integration"], "trace": "P-POL-10 保守口径（v0.5 ⑥登记缺口）：已定义组引用可发布（解析期 groupDefined 通过）但组成员数据不在会话输入内→会话构建 POLICY-CLL-SCENE-INVALID 保守拒绝（不猜测/不静默收窄必检集），cause 携带组名＋规则定位；数据通道待所有者裁决（P-POL-10）" },
+        { "name": "CollisionSessionGuards.NullBackendStrategyRejected", "status": "passed", "modes": ["integration"], "trace": "§6.4 检测器两半：后端实例空指针＝装配违约→PolicyError(PolicyObjectInvalid) fail-fast" }
+      ]
+    },
+    {
+      "suite": "CollisionSessionIdentity",
+      "designRef": "units/policy.md §6.4 确定性、§4.1 策略会话身份行、CON-06、§11 POL-SHARE-1（等价会话基础）、CR-04",
+      "cases": [
+        { "name": "CollisionSessionIdentity.SameInputsYieldEqualSessionIdentity", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.4：同 (policy, scene, names, backend) 重复构建→会话身份相等＋展开产物逐字段相等（POL-SHARE-1 等价会话基础）；身份非全零（SHA-256）；sceneIdentity/nameMapIdentity 回填素材＝传入值原样（CR-04 不重算）" },
+        { "name": "CollisionSessionIdentity.CompositionChangesChangeSessionIdentity", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.4 f() 组成敏感性：场景身份/名称映射身份/策略内容任一变化→会话身份变化（证据绑定与缓存键可区分前提——CON-06）" },
+        { "name": "CollisionSessionIdentity.SceneListOrderDoesNotChangeExpansion", "status": "passed", "modes": ["integration"], "trace": "§6.4 确定性：场景对象清单承载序打乱→展开产物逐字节一致＋会话身份不变（规范序与承载序无关——同语义场景等价会话）" }
+      ]
+    },
+    {
+      "suite": "CollisionSessionDetector",
+      "designRef": "units/policy.md §6.5 装配线、§8.1/P-POL-5 复现要素、§9.3 唯一构造入口、§12 POL-T06 行",
+      "cases": [
+        { "name": "CollisionSessionDetector.UniqueEntryProducesBuiltinBackend", "status": "passed", "modes": ["integration"], "trace": "acceptance 2＋§6.5/§8.1：唯一构造入口产出唯一实现——backendId 冻结 rw.proximity.builtin-rw、backendVersion 非（RW_VERSION 构建版本——P-POL-5 暂取口径）、toleranceModel 登记串非工程阈值（R-7）；createSession 正向链路＋会话复现要素与评估器同源（§9.1）" }
+      ]
+    },
+    {
+      "suite": "CollisionSessionTokens",
+      "designRef": "units/policy.md §6.1 场景对象角色词表（与解析期同源）、附录 D 第 12 项精确等值",
+      "cases": [
+        { "name": "CollisionSessionTokens.RoleTokenRoundTripExact", "status": "passed", "modes": ["integration"], "trace": "§6.1 词表转发表：五值 token↔枚举双向；精确等值（大小写/空白变体一律词表外 nullopt——ARC-04 不猜测）" }
+      ]
+    }
+  ],
+  "carryOver": {
+    "description": "POL-T01~T05 既有 112 用例（PolicyBuild 4／PolicyErrors 3／PolicyThresholdField 8／PolicyJointThresholds 4／PolicyCollisionRules 6／PolicySetGate 4／PolicyCodecId 9／PolicyCodecFloat 4／PolicyCodecCr02 3／PolicyCodecErrors 8／PolicyParseSchema 5／PolicyParseThresholds 8／PolicyParseUnits 5／PolicyParseRules 8／PolicyParseScope 3／PolicyParseApplicability 3／PolicyParseDefaults 5／PolicyParsePipeline 7／PolicyPortContexts 2／PolicyPort 10／PolicyPortCache 3）在本任务双模式执行中全部保持通过——本文件不逐条重列，逐条 trace 见 traceability/builds/wp07-t04/（解析面）与 wp07-t05/ird-test-report.json（端口面）；其中 PolicyErrors.TokenTableFullEnumeration_NFR_COR_02／RegistryCodeTableFullEnumeration_NFR_COR_02 两用例随 Errors 表尾追加同步扩展至 18 值（表尾落位 SceneInvalid/NameUnresolved——用例名不变、断言表逐值更新）",
+    "totalPrior": 112,
+    "result": "passed（两模式；冒烟模式测试面＝112 既有——CollisionSessionTest 消费 rw 非模板类仅集成编译，CMake POL-T06 增列注释同源）"
+  },
+  "gates": {
+    "validateTask": "PASS（pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile tasks/foundation/POL-T06.json）",
+    "irdGates": {
+      "result": "5 命中＝base 既有，GATE_DELTA_ZERO",
+      "hits": [
+        "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit",
+        "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit",
+        "IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit",
+        "IRD-GATE-SUB: 表外依赖边 testdata_lint->testkit（不在 ARCH §3.5 白名单）",
+        "IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit"
+      ],
+      "attribution": "与 POL-T04 验收记录（traceability/acceptance/POL-T04-20260913.md）登记的 base 既有 5 命中逐码逐文件相同（F-019×2＋F-051×1＋F-072×2 归属），全部不在本任务 allowedFiles 内；本任务 diff 文件集（policy/**＋units/policy.md＋traceability/**）无任何命中引用——GATE_DELTA_ZERO。实现过程中曾出现第 6 项新命中（IRD-GATE-R4：policy/src/CollisionEvaluator.cpp 'RobWork 字面量 7 处'）——成因＝§9.3 冻结命名（RobWorkCollisionEvaluator/makeRobWorkCollisionEvaluator 含 'RobWork' 子串）与字符串字面量同 TU 时 R-4 启发式（跨引号对匹配）跨行误配；非名称拼接/剥离行为（P-POL-8 措辞登记），已以 TU 切分（零字面量绑定 TU src/RobWorkCollisionEvaluator.cpp——policy.md v0.7 ⑤）在 allowedFiles 内消除，例外登记（ird_gates_whitelist.cmake）归 WP-01/待 O-12 裁决",
+      "engineSelfTest": "9 项全部按预期（pass_clean/pass_r4comment 通过无误报；fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2 按预期检出）"
+    }
+  },
+  "notes": "①实现口径登记（policy.md v0.7，验收可对照 §6.1/§6.4/§7.1/§7.2/§9.3 原文复核）：会话三步构建的校验序/矩阵逐行转写/状态四分/冲突同码复核/检测器规则生成/sessionIdentity 组成逐条登记；②Group 目标会话构建期保守拒绝（POLICY-CLL-SCENE-INVALID）＝v0.5 ⑥'组定义数据由装配侧持有'的下游后果——P-POL-10 登记数据通道二选一待所有者裁决，POL-T06 不私裁；③构建期/评估期边界：evaluate 与查询类型不在本任务（§12 POL-T07 行产物）——会话仅构建期访问器，无占位无空实现（中断对账：本提交无豁免诉求）；④新公共头零 rw include（rw 类型仅前向声明）——冒烟模式口径不变（runtime §15.4 v0.10 同款登记）；⑤门禁命中归属方法：命中码＋文件与 POL-T04 base 记录逐项比对（5/5 相同）＋本任务 diff 文件集核对（无 policy 面引用）"
+}

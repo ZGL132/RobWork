@@ -148,10 +148,12 @@ struct HasIllConditionedCouplingThreshold<
 /** 锚定：token 全表逐枚举钉住（§3.1"稳定 token"——同码同串，NFR-COR-02）。 */
 TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
 {
-    // 全表 16 值逐项核对（顺序＝枚举声明顺序；字符串＝§5.2 建议码 kebab 派生；
+    // 全表 18 值逐项核对（顺序＝枚举声明顺序；字符串＝§5.2 建议码 kebab 派生；
     // 表尾 3 值为补登：PolicyObjectInvalid（POL-T02）、EncodingInvalid（POL-T03
     // ——对象字节编码契约违约，§9.2"字节损坏在解码期报错"）、
-    // PortAssemblyIncomplete（POL-T05——④端口装配契约违约，§9.1 前置行）。
+    // PortAssemblyIncomplete（POL-T05——④端口装配契约违约，§9.1 前置行）；
+    // 表尾 2 值为 §9.6 CLL 家族正式落位（POL-T06——会话构建期场景/名称
+    // 校验：SceneInvalid/NameUnresolved）。
     const std::pair<PolicyErrorCode, const char*> table[] = {
         {PolicyErrorCode::SchemaUnknownField, "policy/schema-unknown-field"},
         {PolicyErrorCode::SchemaVersionFuture, "policy/schema-version-future"},
@@ -169,6 +171,8 @@ TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
         {PolicyErrorCode::PolicyObjectInvalid, "policy/policy-object-invalid"},
         {PolicyErrorCode::EncodingInvalid, "policy/encoding-invalid"},
         {PolicyErrorCode::PortAssemblyIncomplete, "policy/port-assembly-incomplete"},
+        {PolicyErrorCode::SceneInvalid, "policy/cll-scene-invalid"},
+        {PolicyErrorCode::NameUnresolved, "policy/cll-name-unresolved"},
     };
     for (const auto& [code, expected] : table) {
         EXPECT_EQ(token(code), std::string_view{expected}) << "枚举值 token 漂移";
@@ -179,10 +183,11 @@ TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
 /** 锚定：建议注册码全表（§9.6 建议码清单——码值权威归 diagnostics，PA-1）。 */
 TEST(PolicyErrors, RegistryCodeTableFullEnumeration_NFR_COR_02)
 {
-    // 全表 16 值逐项核对（§9.6 清单 13 值＋表尾补登 3 值：POLICY-POLICY-
+    // 全表 18 值逐项核对（§9.6 清单 13 值＋表尾补登 3 值：POLICY-POLICY-
     // OBJECT-INVALID（POL-T02）、POLICY-ENCODING-INVALID（POL-T03）、
     // POLICY-PORT-ASSEMBLY-INCOMPLETE（POL-T05）——
-    // P-PR-6 同模式，码值权威归 diagnostics，PA-1）。
+    // P-PR-6 同模式；＋CLL 家族正式落位 2 值（POL-T06）：POLICY-CLL-SCENE-
+    // INVALID／POLICY-CLL-NAME-UNRESOLVED——码值权威归 diagnostics，PA-1）。
     const std::pair<PolicyErrorCode, const char*> table[] = {
         {PolicyErrorCode::SchemaUnknownField, "POLICY-SCHEMA-UNKNOWN-FIELD"},
         {PolicyErrorCode::SchemaVersionFuture, "POLICY-SCHEMA-VERSION-FUTURE"},
@@ -200,6 +205,8 @@ TEST(PolicyErrors, RegistryCodeTableFullEnumeration_NFR_COR_02)
         {PolicyErrorCode::PolicyObjectInvalid, "POLICY-POLICY-OBJECT-INVALID"},
         {PolicyErrorCode::EncodingInvalid, "POLICY-ENCODING-INVALID"},
         {PolicyErrorCode::PortAssemblyIncomplete, "POLICY-PORT-ASSEMBLY-INCOMPLETE"},
+        {PolicyErrorCode::SceneInvalid, "POLICY-CLL-SCENE-INVALID"},
+        {PolicyErrorCode::NameUnresolved, "POLICY-CLL-NAME-UNRESOLVED"},
     };
     for (const auto& [code, expected] : table) {
         EXPECT_EQ(registryCode(code), std::string_view{expected})

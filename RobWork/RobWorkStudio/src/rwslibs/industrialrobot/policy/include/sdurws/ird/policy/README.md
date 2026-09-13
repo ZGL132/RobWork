@@ -13,3 +13,14 @@ POL-T02 起逐任务落地；验证留痕见 traceability/builds/wp07-t01/。
 
 任务编排、接口冻结前置与实现状态见
 doc/industrial-robot-design/traceability/phase-one-readiness.md。
+
+2026-09-13（WP-07-T06≙POL-T06 场景与会话）：本目录新增
+`CollisionEvaluator.hpp`（CollisionScene 场景模型、会话构建期作用域展开
+产物 ResolvedCollisionScope、CollisionEvaluationSession 构建期访问器、
+ICollisionEvaluator 唯一实现入口与 makeRobWorkCollisionEvaluator 唯一
+构造入口——§6.1/§6.4/§7.1/§7.2/§9.3）。该头对 rw 类型仅前向声明、零
+rw include（冒烟模式无 TU include 该头——runtime RT-T03 同款纪律）；
+rw 非模板类消费在 src/ 侧两 TU（CollisionEvaluator.cpp＋
+RobWorkCollisionEvaluator.cpp，仅集成模式编译）。Errors.hpp 同步表尾
+追加 SceneInvalid/NameUnresolved（CLL 家族，16→18 值）。留痕见
+traceability/builds/wp07-t06/。

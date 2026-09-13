@@ -50,20 +50,25 @@ namespace sdurws::ird::policy {
 // =====================================================================
 // PolicyErrorCode——policy 全量稳定错误码枚举（POL-T02 落位 14 值；
 // POL-T03 表尾追加 EncodingInvalid → 15 值；POL-T05 表尾追加
-// PortAssemblyIncomplete → 16 值）。
-// 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加 2 值：
+// PortAssemblyIncomplete → 16 值；POL-T06 表尾追加 CLL 家族前两值
+// SceneInvalid/NameUnresolved → 18 值）。
+// 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加：
 // PolicyObjectInvalid（发布对象工厂即时校验码——evidence SnapshotIncomplete
-// "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）与
+// "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）、
 // EncodingInvalid（对象字节编码契约违约码——§9.2"字节损坏在解码期报错"
-// 落点，随单元卡 v0.4 增量登记）。
+// 落点，随单元卡 v0.4 登记）、PortAssemblyIncomplete（④端口装配契约违约码
+// ——§9.1 前置行 fail-fast 载体，随单元卡 v0.6 登记）、SceneInvalid 与
+// NameUnresolved（§9.6 CLL 家族——会话构建期场景校验的 fail-fast 载体，
+// §6.1"场景校验失败→PolicyError"，随单元卡 v0.7 登记）。
 // 枚举顺序与数值一经交付不得改动/插入——持久化于诊断与报告的 token 虽为
 // 字符串，但枚举数值进入二进制契约面，稳定第一（runtime/evidence 同款
-// 纪律）；后续任务需要新码（§9.6 的 CLL、JNT、VERSION-INCOMPATIBLE 等
-// 家族）时只能**追加表尾**并在单元卡增量修订留痕（DTB §5.4）。
+// 纪律）；后续任务需要新码（§9.6 的 CLL 其余值、JNT、VERSION-INCOMPATIBLE
+// 等家族）时只能**追加表尾**并在单元卡增量修订留痕（DTB §5.4）。
 // =====================================================================
 
 /**
- * @brief policy 稳定错误码全表（§5.2 错误类各行＋发布对象工厂即时校验）。
+ * @brief policy 稳定错误码全表（§5.2 错误类各行＋发布对象工厂即时校验＋
+ *        会话构建期场景校验）。
  *
  * token 稳定（持久化于诊断/报告）；建议码值归 diagnostics StableCodeRegistry
  * （§9.6 建议码清单——映射见 registryCode()）。每值的设计锚点见注释。
@@ -131,12 +136,32 @@ enum class PolicyErrorCode {
     /// 实例的保留值违约。建议码 POLICY-PORT-ASSEMBLY-INCOMPLETE 为补登建议值
     /// （P-PR-6 同模式，随单元卡 v0.6 增量登记）。
     PortAssemblyIncomplete,
+    /// policy/cll-scene-invalid——会话构建期场景校验失败（表尾追加，
+    /// POL-T06——§9.6 CLL 家族落位；§6.1"场景校验（会话构建期）"四项的
+    /// fail-fast 载体，§9.3 错误类型行"场景校验失败→PolicyError"）：
+    /// sceneContentIdentity 非空核对失败／objects 的 ObjectId 重复／workcell
+    /// 编译产物缺失（空指针）／策略规则引用的对象不在场景清单内（§6.1
+    /// "策略规则引用的对象 ⊆ objects"——subject 绑定缺失对象）／规则携带
+    /// 会话内不可展开的 Group 目标（组定义数据不在 (policy, scene, names)
+    /// 任一输入内——v0.5 ⑥ 登记；保守拒绝不猜测，ARC-04）。诊断文案与
+    /// subject 定位见 CollisionEvaluationSession 构造（POL-T06）。
+    SceneInvalid,
+    /// policy/cll-name-unresolved——会话构建期名称解析失败（表尾追加，
+    /// POL-T06——§9.6 CLL 家族落位；§6.1"primaryDevice 可经名称上下文解析到
+    /// workcell 内设备（不可解析→POLICY-CLL-NAME-UNRESOLVED）"与 §7.5
+    /// "名称不可解析（场景 Frame↔对象 ID 断链）→ 会话构建失败"的 fail-fast
+    /// 载体）：IPolicyNameContext 对主链设备/规则对象返回 nullopt（CR-04：
+    /// runtime Expected 错误→nullopt 原样呈现），或解析出的完整名在 workcell
+    /// 内无对应设备（findDevice 空）。**不猜测**（ARC-04）——宁可会话构建
+    /// 失败也不编造名称静默收窄必检集；属调用方装配/场景事实错误（fail-fast
+    /// 轨），评估期同因（POL-T07 evaluate 路径）将转 Failed＋同码诊断。
+    NameUnresolved,
 };
 
 /**
  * @brief 取错误码的稳定 token（注释列原文）。
  *
- * @param code [in] 错误码（全枚举 16 值均有 token——全函数，永不返回空）
+ * @param code [in] 错误码（全枚举 18 值均有 token——全函数，永不返回空）
  * @return 稳定 token 字符串（"policy/..." 形态；静态存储期，调用方无需释放）
  *
  * 确定性：编译期固定 switch 全枚举表（无 default——新增枚举值未登记表项时
@@ -153,15 +178,17 @@ std::string_view token(PolicyErrorCode code) noexcept;
  *
  * 关系说明：§9.6 建议码清单覆盖 POLICY-SCHEMA、POLICY-THRESHOLD、UNIT、RULE、
  * SCOPE/APPLICABILITY 家族——与本表 13 个 §5.2 系值逐一对应；表尾追加值
- * 发补登建议码（P-PR-6 同模式，是否收编由 diagnostics 所有者裁决）：
- * PolicyObjectInvalid（POL-T02）与 EncodingInvalid（POL-T03）。注意：§9.6
- * 其余家族（POLICY-CLL-*、POLICY-JNT-*、POLICY-VERSION-INCOMPATIBLE、
+ * 发建议码：PolicyObjectInvalid（POL-T02）与 EncodingInvalid（POL-T03）、
+ * PortAssemblyIncomplete（POL-T05）为补登建议码（P-PR-6 同模式，是否收编
+ * 由 diagnostics 所有者裁决）；SceneInvalid/NameUnresolved（POL-T06）为
+ * §9.6 CLL 家族清单既有行的正式落位（非补登）。注意：§9.6
+ * 其余家族（POLICY-CLL-* 其余值、POLICY-JNT-*、POLICY-VERSION-INCOMPATIBLE、
  * POLICY-CONTENT-IDENTITY-MISMATCH 等）不在本表——
- * 其码面归属后续任务的表尾追加（CollisionEvaluator/JointLimits/Compatibility
- * 各自落位时登记），本函数不预发。
+ * 其码面归属后续任务的表尾追加（CollisionEvaluator 评估半区/JointLimits/
+ * Compatibility 各自落位时登记），本函数不预发。
  *
  * @param code [in] 错误码
- * @return 建议注册码（"POLICY-*" 形态——全部 16 值均发建议码；正式码值以
+ * @return 建议注册码（"POLICY-*" 形态——全部 18 值均发建议码；正式码值以
  *         diagnostics StableCodeRegistry 注册为准，本函数不承担注册职责——PA-1）
  */
 std::string_view registryCode(PolicyErrorCode code) noexcept;
@@ -197,7 +224,7 @@ class PolicyError : public std::runtime_error {
 public:
     /**
      * @brief 以错误码＋细节构造；what() ＝ "<token>: <detail>"。
-     * @param code   [in] 稳定错误码（全表 16 值之一）
+     * @param code   [in] 稳定错误码（全表 18 值之一）
      * @param detail [in] 开发诊断细节（就地定位信息：字段/对象/数值等）；
      *               空串合法——此时 what() 恰为 token（无尾随冒号空格）
      */

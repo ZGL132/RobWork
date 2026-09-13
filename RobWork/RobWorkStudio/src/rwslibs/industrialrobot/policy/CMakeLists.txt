@@ -32,6 +32,11 @@ find_package(GTest CONFIG REQUIRED)
 # POL-T05 增量：④端口与注入接口落地——新增 PolicyPort.cpp（PolicyProvider
 # 实现＋(对象, 版本) 记忆化——§9.1/§12 POL-T05 产物行；Contexts.hpp 为
 # header-only 接口契约，无对应 .cpp）。
+# POL-T06 增量：场景与会话构建期落地——src/CollisionEvaluator.cpp 为
+# **集成模式专属**（见下方 target_sources 注释：消费 rw 非模板类
+# WorkCell/ProximitySetup/ProximityStrategyRW——冒烟模式无框架库可链）；
+# CollisionEvaluator.hpp 公共头零 rw include（rw 类型仅前向声明——冒烟模式
+# 无 TU include 该头，公共头 include 面不影响冒烟口径）。
 # 占位 Policy.cpp 保留（单元锚点符号——STATIC 库至少一个翻译单元纪律不变）。
 add_library(sdurws_ird_policy STATIC
     src/Policy.cpp
@@ -61,6 +66,27 @@ target_include_directories(sdurws_ird_policy PUBLIC
 # 许可方（碰撞评估唯一实现——ARC-05）；其他单元直链 proximity 即构建失败。
 set(IRL_BASELINE_LIBS "")
 if(TARGET sdurw_kinematics)
+    # ---- POL-T06 增列（场景与会话构建期；tasks/foundation/POL-T06.json）——
+    # 仅集成模式：CollisionEvaluator.cpp 消费 rw 非模板类（WorkCell 场景校验
+    # findDevice／ProximitySetup・ProximitySetupRule 规则生成／
+    # ProximityStrategyRW 内置后端实例化），冒烟模式无框架库可链（runtime
+    # RT-T07 同款分工——workcell/proximity 为已登记 L1 依赖，§3.2/R-5 例外）。
+    # 公共头 CollisionEvaluator.hpp 对 rw 类型仅前向声明、零 rw include——
+    # 冒烟模式下无任何 TU include 该头（新测试 TU 同因仅集成编译），"目标
+    # 注册＋include 路径"冒烟口径不受影响（runtime §15.4 v0.10 同款登记）。
+    target_sources(sdurws_ird_policy PRIVATE
+        src/CollisionEvaluator.cpp        # §6.1 场景校验＋§6.4 会话三步（作用域
+                                          # 展开/冲突同码复核/检测器初始化/
+                                          # sessionIdentity）＋复现要素字面量
+                                          # 单点（detail::makeBuiltinBackend-
+                                          # Descriptor）——§12 POL-T06 产物行；
+                                          # 评估半区归 POL-T07 同文件增量落位
+        src/RobWorkCollisionEvaluator.cpp)  # §6.5/§9.3 唯一实现绑定（RobWork-
+                                          # CollisionEvaluator 方法＋make 唯一
+                                          # 构造入口＋内置 ProximityStrategyRW
+                                          # 实例化——含 RobWork 命名标识符的
+                                          # 零字面量 TU，切分说明见该文件头）
+
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math
         sdurw_kinematics
@@ -84,6 +110,17 @@ add_executable(sdurws_ird_policy_test
     test/PolicyInputTest.cpp  # POL-T03：canonical 往返/位模式/排序无关/CR-02/错误路径
     test/PolicyParsingTest.cpp # POL-T04：POL-PARSE-1~6 错误分类全量反例＋O-10 默认口径
     test/PolicyPortTest.cpp)  # POL-T05：注入接口契约/端口契约错误矩阵/POL-ID-1 缓存一致
+
+# POL-T06 增列（仅集成模式）：CollisionSessionTest.cpp 消费 rw 非模板类
+# （WorkCell/FakeDevice 场景替身、ProximitySetup 规则核对）——冒烟模式无
+# 框架库可链；与 src/CollisionEvaluator.cpp 同因同 gating（runtime RT-T07
+# 同款分工）。冒烟模式测试面＝POL-T01~T05 既有 112 用例（不受影响）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/CollisionSessionTest.cpp)  # POL-T06：POL-SCOPE-1/2 构建期（作用域
+                                        # 矩阵展开/冲突拒绝两层防御）＋场景校验
+                                        # 守卫＋会话身份确定性＋检测器初始化
+endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
     CXX_STANDARD 17
