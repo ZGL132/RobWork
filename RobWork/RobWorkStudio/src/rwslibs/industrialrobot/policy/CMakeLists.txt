@@ -20,7 +20,13 @@
 find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC ----
-add_library(sdurws_ird_policy STATIC src/Policy.cpp)
+# POL-T02 增量：错误与策略类型落地——新增 Errors.cpp（token/registryCode
+# 稳定表＋PolicyError 构造，units/policy.md §3.1 POL-T02 产物行）；
+# PolicySet.hpp 为 header-only 类型契约（无对应 .cpp——产物清单原文）。
+# 占位 Policy.cpp 保留（单元锚点符号——STATIC 库至少一个翻译单元纪律不变）。
+add_library(sdurws_ird_policy STATIC
+    src/Policy.cpp
+    src/Errors.cpp)
 
 target_compile_features(sdurws_ird_policy PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_policy PROPERTIES
@@ -61,7 +67,8 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_policy_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/PolicySetTest.cpp)   # POL-T02：字段约束与不可变性用例（POL-PARSE-2 前置）
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
     CXX_STANDARD 17
