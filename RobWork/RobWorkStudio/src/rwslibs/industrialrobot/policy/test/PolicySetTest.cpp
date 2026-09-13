@@ -148,7 +148,9 @@ struct HasIllConditionedCouplingThreshold<
 /** 锚定：token 全表逐枚举钉住（§3.1"稳定 token"——同码同串，NFR-COR-02）。 */
 TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
 {
-    // 全表 14 值逐项核对（顺序＝枚举声明顺序；字符串＝§5.2 建议码 kebab 派生）。
+    // 全表 15 值逐项核对（顺序＝枚举声明顺序；字符串＝§5.2 建议码 kebab 派生；
+    // 表尾 2 值为补登：PolicyObjectInvalid（POL-T02）、EncodingInvalid（POL-T03
+    // ——对象字节编码契约违约，§9.2"字节损坏在解码期报错"）。
     const std::pair<PolicyErrorCode, const char*> table[] = {
         {PolicyErrorCode::SchemaUnknownField, "policy/schema-unknown-field"},
         {PolicyErrorCode::SchemaVersionFuture, "policy/schema-version-future"},
@@ -164,6 +166,7 @@ TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
         {PolicyErrorCode::ScopeObjectMissing, "policy/scope-object-missing"},
         {PolicyErrorCode::ApplicabilityInvalid, "policy/applicability-invalid"},
         {PolicyErrorCode::PolicyObjectInvalid, "policy/policy-object-invalid"},
+        {PolicyErrorCode::EncodingInvalid, "policy/encoding-invalid"},
     };
     for (const auto& [code, expected] : table) {
         EXPECT_EQ(token(code), std::string_view{expected}) << "枚举值 token 漂移";
@@ -174,6 +177,9 @@ TEST(PolicyErrors, TokenTableFullEnumeration_NFR_COR_02)
 /** 锚定：建议注册码全表（§9.6 建议码清单——码值权威归 diagnostics，PA-1）。 */
 TEST(PolicyErrors, RegistryCodeTableFullEnumeration_NFR_COR_02)
 {
+    // 全表 15 值逐项核对（§9.6 清单 13 值＋表尾补登 2 值：POLICY-POLICY-
+    // OBJECT-INVALID（POL-T02）、POLICY-ENCODING-INVALID（POL-T03）——
+    // P-PR-6 同模式，码值权威归 diagnostics，PA-1）。
     const std::pair<PolicyErrorCode, const char*> table[] = {
         {PolicyErrorCode::SchemaUnknownField, "POLICY-SCHEMA-UNKNOWN-FIELD"},
         {PolicyErrorCode::SchemaVersionFuture, "POLICY-SCHEMA-VERSION-FUTURE"},
@@ -189,6 +195,7 @@ TEST(PolicyErrors, RegistryCodeTableFullEnumeration_NFR_COR_02)
         {PolicyErrorCode::ScopeObjectMissing, "POLICY-SCOPE-OBJECT-MISSING"},
         {PolicyErrorCode::ApplicabilityInvalid, "POLICY-APPLICABILITY-INVALID"},
         {PolicyErrorCode::PolicyObjectInvalid, "POLICY-POLICY-OBJECT-INVALID"},
+        {PolicyErrorCode::EncodingInvalid, "POLICY-ENCODING-INVALID"},
     };
     for (const auto& [code, expected] : table) {
         EXPECT_EQ(registryCode(code), std::string_view{expected})

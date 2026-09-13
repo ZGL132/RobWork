@@ -949,8 +949,13 @@ private:
 
 namespace detail {
 
-void requireScopeTargetWellFormed(const ScopeTarget& t, std::string_view where)
+inline void requireScopeTargetWellFormed(const ScopeTarget& t, std::string_view where)
 {
+    // inline（POL-T03 修复登记）：本头为 header-only 类型契约，工厂与
+    // 发布门在头内调用这两个谓词——POL-T03 引入第二个产品翻译单元
+    // （PolicyInput.cpp）后，非 inline 的头内定义在 MSVC 下触发
+    // LNK2005 多重定义；inline 标注使多 TU 各自持有等价定义而链接器
+    // 合并之（ODR 合规），不改任何校验语义。
     switch (t.kind) {
     case ScopeTargetKind::Object:
         // kind==Object：object 字段须有效（全零保留值＝未分配身份，非法——
@@ -977,8 +982,10 @@ void requireScopeTargetWellFormed(const ScopeTarget& t, std::string_view where)
     }
 }
 
-void requirePairRuleWellFormed(const PairRule& r, std::string_view where)
+inline void requirePairRuleWellFormed(const PairRule& r, std::string_view where)
 {
+    // inline：同 requireScopeTargetWellFormed 的 POL-T03 修复登记（多
+    // 翻译单元 ODR 合规——语义零变化）。
     // reason 非空必填（§4.3 字段注释：过滤/必检理由进入策略身份与评估诊断
     // ——空理由＝不可追溯规则，发布即拒绝）。
     if (r.reason.empty()) {
