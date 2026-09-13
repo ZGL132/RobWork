@@ -1,0 +1,593 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 205 tests from 59 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from EvidenceBuild
+[ RUN      ] EvidenceBuild.SourceTreeReachable_EV_BUILD
+[       OK ] EvidenceBuild.SourceTreeReachable_EV_BUILD (0 ms)
+[ RUN      ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01
+[       OK ] EvidenceBuild.NoQtInclude_EV_BUILD_NFR_MNT_01 (10 ms)
+[ RUN      ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2
+[       OK ] EvidenceBuild.NoCrossUnitInclude_EV_BUILD_R1_R2 (9 ms)
+[ RUN      ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2
+[       OK ] EvidenceBuild.PublicHeaderPathLayout_EV_BUILD_R2 (1 ms)
+[----------] 4 tests from EvidenceBuild (22 ms total)
+
+[----------] 2 tests from EvidenceErrorsFullTable
+[ RUN      ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02
+[       OK ] EvidenceErrorsFullTable.AllCodesPerToken_EV_ERR_NFR_COR_02 (0 ms)
+[ RUN      ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR
+[       OK ] EvidenceErrorsFullTable.Section13SuggestionsAllCovered_EV_ERR (0 ms)
+[----------] 2 tests from EvidenceErrorsFullTable (0 ms total)
+
+[----------] 1 test from EvidenceErrorsThrow
+[ RUN      ] EvidenceErrorsThrow.MessagePrefixAndCodeAccessor_EV_ERR
+[       OK ] EvidenceErrorsThrow.MessagePrefixAndCodeAccessor_EV_ERR (0 ms)
+[----------] 1 test from EvidenceErrorsThrow (0 ms total)
+
+[----------] 2 tests from EvidenceDependencyKeySyntax
+[ RUN      ] EvidenceDependencyKeySyntax.ValidKeys_EV_DEP
+[       OK ] EvidenceDependencyKeySyntax.ValidKeys_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyKeySyntax.InvalidKeys_EV_DEP
+[       OK ] EvidenceDependencyKeySyntax.InvalidKeys_EV_DEP (0 ms)
+[----------] 2 tests from EvidenceDependencyKeySyntax (0 ms total)
+
+[----------] 5 tests from EvidenceDependencyDeclarationClosure
+[ RUN      ] EvidenceDependencyDeclarationClosure.ValidDeclarations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.ValidDeclarations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.MissingClosureDeclaration_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.MissingClosureDeclaration_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.RequirednessPairingViolations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.RequirednessPairingViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.ConditionContentViolations_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.ConditionContentViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyDeclarationClosure.DuplicateDeclarationKey_EV_DEP
+[       OK ] EvidenceDependencyDeclarationClosure.DuplicateDeclarationKey_EV_DEP (0 ms)
+[----------] 5 tests from EvidenceDependencyDeclarationClosure (0 ms total)
+
+[----------] 1 test from EvidenceDependencyRequire
+[ RUN      ] EvidenceDependencyRequire.ThrowOnClosureViolation_EV_DEP
+[       OK ] EvidenceDependencyRequire.ThrowOnClosureViolation_EV_DEP (0 ms)
+[----------] 1 test from EvidenceDependencyRequire (0 ms total)
+
+[----------] 7 tests from EvidenceDependencyEntrySyntax
+[ RUN      ] EvidenceDependencyEntrySyntax.ValidEntries_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ValidEntries_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.PayloadKindMismatch_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.PayloadKindMismatch_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.ObjectPayloadViolations_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ObjectPayloadViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.OtherPayloadViolations_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.OtherPayloadViolations_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.AppliedReasonPairing_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.AppliedReasonPairing_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.EntrySetInvariants_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.EntrySetInvariants_EV_DEP (0 ms)
+[ RUN      ] EvidenceDependencyEntrySyntax.ValueSemanticsEquality_EV_DEP
+[       OK ] EvidenceDependencyEntrySyntax.ValueSemanticsEquality_EV_DEP (0 ms)
+[----------] 7 tests from EvidenceDependencyEntrySyntax (1 ms total)
+
+[----------] 3 tests from EvidenceSnapshotIdentity
+[ RUN      ] EvidenceSnapshotIdentity.SameContentDeterministicId_EV_ID_1
+[       OK ] EvidenceSnapshotIdentity.SameContentDeterministicId_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSnapshotIdentity.CodecRoundTrip_EV_ID_1
+[       OK ] EvidenceSnapshotIdentity.CodecRoundTrip_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSnapshotIdentity.DisplayAndSessionIndependence_EV_ID_3
+[       OK ] EvidenceSnapshotIdentity.DisplayAndSessionIndependence_EV_ID_3 (0 ms)
+[----------] 3 tests from EvidenceSnapshotIdentity (0 ms total)
+
+[----------] 10 tests from EvidenceSnapshotBuilder
+[ RUN      ] EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ValidBuildFreezesCanonicalSnapshot_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.RevisionClosureRejectsForeignObject_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ClosureCheckedAgainstAnchoredRevision_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.Con06RequiresPolicyAndNameMap_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.Con06RequiresPolicyAndNameMap_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ObjectClosureInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ObjectClosureInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.IdentityTripleRequired_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.IdentityTripleRequired_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ConfigEntryInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ExternalResourceStateMachine_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ExternalResourceStateMachine_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.SamplingPlanInvariants_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.SamplingPlanInvariants_EV_SNAP (0 ms)
+[ RUN      ] EvidenceSnapshotBuilder.ReproductionCompleteness_EV_SNAP
+[       OK ] EvidenceSnapshotBuilder.ReproductionCompleteness_EV_SNAP (0 ms)
+[----------] 10 tests from EvidenceSnapshotBuilder (0 ms total)
+
+[----------] 4 tests from EvidenceSnapshotCaseSet
+[ RUN      ] EvidenceSnapshotCaseSet.MarkersCarriedVerbatim_O14_EV_CASESET
+[       OK ] EvidenceSnapshotCaseSet.MarkersCarriedVerbatim_O14_EV_CASESET (0 ms)
+[ RUN      ] EvidenceSnapshotCaseSet.DuplicateCaseIdRejected_EV_CASESET
+[       OK ] EvidenceSnapshotCaseSet.DuplicateCaseIdRejected_EV_CASESET (0 ms)
+[ RUN      ] EvidenceSnapshotCaseSet.EmptyCaseSetAllowed_EV_CASESET
+[       OK ] EvidenceSnapshotCaseSet.EmptyCaseSetAllowed_EV_CASESET (0 ms)
+[ RUN      ] EvidenceSnapshotCaseSet.RequiredCaseSetIdSensitivity_EV_CASESET
+[       OK ] EvidenceSnapshotCaseSet.RequiredCaseSetIdSensitivity_EV_CASESET (0 ms)
+[----------] 4 tests from EvidenceSnapshotCaseSet (0 ms total)
+
+[----------] 4 tests from EvidenceSnapshotCodec
+[ RUN      ] EvidenceSnapshotCodec.MaterializedSameIdentity_EV_SNAPC
+[       OK ] EvidenceSnapshotCodec.MaterializedSameIdentity_EV_SNAPC (0 ms)
+[ RUN      ] EvidenceSnapshotCodec.MaterializedIntegrity_EV_SNAPC
+[       OK ] EvidenceSnapshotCodec.MaterializedIntegrity_EV_SNAPC (0 ms)
+[ RUN      ] EvidenceSnapshotCodec.MaterializedClosureSubsetOnly_EV_SNAPC
+[       OK ] EvidenceSnapshotCodec.MaterializedClosureSubsetOnly_EV_SNAPC (0 ms)
+[ RUN      ] EvidenceSnapshotCodec.ParseRejectsStructuralGarbage_EV_SNAPC
+[       OK ] EvidenceSnapshotCodec.ParseRejectsStructuralGarbage_EV_SNAPC (0 ms)
+[----------] 4 tests from EvidenceSnapshotCodec (0 ms total)
+
+[----------] 4 tests from EvidenceSliceIdentity
+[ RUN      ] EvidenceSliceIdentity.SameContentDeterministicId_EV_ID_1
+[       OK ] EvidenceSliceIdentity.SameContentDeterministicId_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.CodecRoundTrip_EV_ID_1
+[       OK ] EvidenceSliceIdentity.CodecRoundTrip_EV_ID_1 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.DigestViaCoreContentDigesterOnly_CR_02
+[       OK ] EvidenceSliceIdentity.DigestViaCoreContentDigesterOnly_CR_02 (0 ms)
+[ RUN      ] EvidenceSliceIdentity.NoFloatApproximateEquivalence_EV_ID_2
+[       OK ] EvidenceSliceIdentity.NoFloatApproximateEquivalence_EV_ID_2 (0 ms)
+[----------] 4 tests from EvidenceSliceIdentity (0 ms total)
+
+[----------] 2 tests from EvidenceSliceFloat
+[ RUN      ] EvidenceSliceFloat.CanonicalF64BitPatternRoundTrip
+[       OK ] EvidenceSliceFloat.CanonicalF64BitPatternRoundTrip (0 ms)
+[ RUN      ] EvidenceSliceFloat.CanonicalF64NaNInfRejected
+[       OK ] EvidenceSliceFloat.CanonicalF64NaNInfRejected (0 ms)
+[----------] 2 tests from EvidenceSliceFloat (0 ms total)
+
+[----------] 1 test from EvidenceSliceBaseline
+[ RUN      ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05
+[       OK ] EvidenceSliceBaseline.Cr02ExcludedAndIncludedFieldsPinned_CR_02_CR_05 (0 ms)
+[----------] 1 test from EvidenceSliceBaseline (0 ms total)
+
+[----------] 3 tests from EvidenceSliceCr05
+[ RUN      ] EvidenceSliceCr05.MandatoryEnvironmentEntries_CR_05
+[       OK ] EvidenceSliceCr05.MandatoryEnvironmentEntries_CR_05 (0 ms)
+[ RUN      ] EvidenceSliceCr05.ValueShapeGate_CR_05
+[       OK ] EvidenceSliceCr05.ValueShapeGate_CR_05 (0 ms)
+[ RUN      ] EvidenceSliceCr05.SharedSampleValuePassThrough_RT_T09
+[       OK ] EvidenceSliceCr05.SharedSampleValuePassThrough_RT_T09 (0 ms)
+[----------] 3 tests from EvidenceSliceCr05 (0 ms total)
+
+[----------] 2 tests from EvidenceSliceBuilder
+[ RUN      ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE
+[       OK ] EvidenceSliceBuilder.FreezeRejections_EV_SLICE (0 ms)
+[ RUN      ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV
+[       OK ] EvidenceSliceBuilder.NotAppliedEntryStaysInIdentity_EV_INV (0 ms)
+[----------] 2 tests from EvidenceSliceBuilder (0 ms total)
+
+[----------] 1 test from EvidenceSliceCodec
+[ RUN      ] EvidenceSliceCodec.ParseRejectsStructuralGarbage_EV_SLICEC
+[       OK ] EvidenceSliceCodec.ParseRejectsStructuralGarbage_EV_SLICEC (0 ms)
+[----------] 1 test from EvidenceSliceCodec (0 ms total)
+
+[----------] 12 tests from EvidenceProof
+[ RUN      ] EvidenceProof.MandatoryStateProofValid_EV_VER_6
+[       OK ] EvidenceProof.MandatoryStateProofValid_EV_VER_6 (0 ms)
+[ RUN      ] EvidenceProof.AnalyticAndContradictionProofsValid
+[       OK ] EvidenceProof.AnalyticAndContradictionProofsValid (0 ms)
+[ RUN      ] EvidenceProof.MandatoryStateProofMissingBasisRejected_EV_VER_6
+[       OK ] EvidenceProof.MandatoryStateProofMissingBasisRejected_EV_VER_6 (0 ms)
+[ RUN      ] EvidenceProof.CategoryOutsideTripleRejected
+[       OK ] EvidenceProof.CategoryOutsideTripleRejected (0 ms)
+[ RUN      ] EvidenceProof.AnalyticBoundMissingExpressionRejected
+[       OK ] EvidenceProof.AnalyticBoundMissingExpressionRejected (0 ms)
+[ RUN      ] EvidenceProof.ContradictionMissingExpressionRejected
+[       OK ] EvidenceProof.ContradictionMissingExpressionRejected (0 ms)
+[ RUN      ] EvidenceProof.MandatoryStateTripleFieldsRejected
+[       OK ] EvidenceProof.MandatoryStateTripleFieldsRejected (0 ms)
+[ RUN      ] EvidenceProof.CollisionPairsCounterexamplesRejected
+[       OK ] EvidenceProof.CollisionPairsCounterexamplesRejected (0 ms)
+[ RUN      ] EvidenceProof.ProducerCounterexamplesRejected
+[       OK ] EvidenceProof.ProducerCounterexamplesRejected (0 ms)
+[ RUN      ] EvidenceProof.SnapshotSliceBindingCounterexamplesRejected
+[       OK ] EvidenceProof.SnapshotSliceBindingCounterexamplesRejected (0 ms)
+[ RUN      ] EvidenceProof.CoverageClaimCounterexamplesRejected
+[       OK ] EvidenceProof.CoverageClaimCounterexamplesRejected (0 ms)
+[ RUN      ] EvidenceProof.IssueOrderDeterministic_NFR_COR_02
+[       OK ] EvidenceProof.IssueOrderDeterministic_NFR_COR_02 (0 ms)
+[----------] 12 tests from EvidenceProof (0 ms total)
+
+[----------] 1 test from EvidenceItems
+[ RUN      ] EvidenceItems.PresenceDiscipline
+[       OK ] EvidenceItems.PresenceDiscipline (0 ms)
+[----------] 1 test from EvidenceItems (0 ms total)
+
+[----------] 1 test from EvidenceCompleteness
+[ RUN      ] EvidenceCompleteness.NotApplicableNotCountedMissing_EV_VER_7
+[       OK ] EvidenceCompleteness.NotApplicableNotCountedMissing_EV_VER_7 (0 ms)
+[----------] 1 test from EvidenceCompleteness (0 ms total)
+
+[----------] 1 test from EvidenceManifest
+[ RUN      ] EvidenceManifest.BindingChecksAgainstSnapshot
+[       OK ] EvidenceManifest.BindingChecksAgainstSnapshot (0 ms)
+[----------] 1 test from EvidenceManifest (0 ms total)
+
+[----------] 3 tests from EvidenceProfile
+[ RUN      ] EvidenceProfile.CommonRequiredItemsMatchTable4GenericRows_D14
+[       OK ] EvidenceProfile.CommonRequiredItemsMatchTable4GenericRows_D14 (0 ms)
+[ RUN      ] EvidenceProfile.RegistrationCounterexamplesRejected
+[       OK ] EvidenceProfile.RegistrationCounterexamplesRejected (0 ms)
+[ RUN      ] EvidenceProfile.ContentIdentityDeterministicAndSensitive
+[       OK ] EvidenceProfile.ContentIdentityDeterministicAndSensitive (0 ms)
+[----------] 3 tests from EvidenceProfile (0 ms total)
+
+[----------] 4 tests from EvidenceCoverageMatrix
+[ RUN      ] EvidenceCoverageMatrix.DuplicateAndUnknownReferenceRejected_EV_COV_2
+[       OK ] EvidenceCoverageMatrix.DuplicateAndUnknownReferenceRejected_EV_COV_2 (0 ms)
+[ RUN      ] EvidenceCoverageMatrix.PlanIdentityAndEntryDiscipline
+[       OK ] EvidenceCoverageMatrix.PlanIdentityAndEntryDiscipline (0 ms)
+[ RUN      ] EvidenceCoverageMatrix.MissingMandatoryExecutionListed
+[       OK ] EvidenceCoverageMatrix.MissingMandatoryExecutionListed (0 ms)
+[ RUN      ] EvidenceCoverageMatrix.EmptyRequiredSetTriviallyComplete_P_EV_7
+[       OK ] EvidenceCoverageMatrix.EmptyRequiredSetTriviallyComplete_P_EV_7 (0 ms)
+[----------] 4 tests from EvidenceCoverageMatrix (0 ms total)
+
+[----------] 2 tests from EvidenceRegionCoverage
+[ RUN      ] EvidenceRegionCoverage.ZeroSampleUndefined_EV_COV_3
+[       OK ] EvidenceRegionCoverage.ZeroSampleUndefined_EV_COV_3 (0 ms)
+[ RUN      ] EvidenceRegionCoverage.DenominatorCompletenessAndDowngrade_EV_COV_3
+[       OK ] EvidenceRegionCoverage.DenominatorCompletenessAndDowngrade_EV_COV_3 (0 ms)
+[----------] 2 tests from EvidenceRegionCoverage (0 ms total)
+
+[----------] 2 tests from EvidenceSnapshotMode
+[ RUN      ] EvidenceSnapshotMode.VerifiedRequiresSolidifiedResources_CON_03
+[       OK ] EvidenceSnapshotMode.VerifiedRequiresSolidifiedResources_CON_03 (0 ms)
+[ RUN      ] EvidenceSnapshotMode.ReproductionCompletenessChecked
+[       OK ] EvidenceSnapshotMode.ReproductionCompletenessChecked (0 ms)
+[----------] 2 tests from EvidenceSnapshotMode (0 ms total)
+
+[----------] 1 test from EvidenceSearchExhausted
+[ RUN      ] EvidenceSearchExhausted.RecordCarriesBudgetGuessesAndFilters
+[       OK ] EvidenceSearchExhausted.RecordCarriesBudgetGuessesAndFilters (0 ms)
+[----------] 1 test from EvidenceSearchExhausted (0 ms total)
+
+[----------] 2 tests from VerdictDecisionTable
+[ RUN      ] VerdictDecisionTable.FailedOutcomeIsNotApplicable_TASK_02
+[       OK ] VerdictDecisionTable.FailedOutcomeIsNotApplicable_TASK_02 (0 ms)
+[ RUN      ] VerdictDecisionTable.FullySatisfiedInputIsFeasible
+[       OK ] VerdictDecisionTable.FullySatisfiedInputIsFeasible (0 ms)
+[----------] 2 tests from VerdictDecisionTable (0 ms total)
+
+[----------] 1 test from VerdictGate
+[ RUN      ] VerdictGate.GateBlocksProof_EV_VER_1
+[       OK ] VerdictGate.GateBlocksProof_EV_VER_1 (0 ms)
+[----------] 1 test from VerdictGate (0 ms total)
+
+[----------] 1 test from VerdictSearchExhausted
+[ RUN      ] VerdictSearchExhausted.SearchExhaustedThenFeasibleAfterReplan_EV_VER_2
+[       OK ] VerdictSearchExhausted.SearchExhaustedThenFeasibleAfterReplan_EV_VER_2 (0 ms)
+[----------] 1 test from VerdictSearchExhausted (0 ms total)
+
+[----------] 2 tests from VerdictConfigCollision
+[ RUN      ] VerdictConfigCollision.FilteredSolutionDoesNotBlockFeasible_EV_VER_3
+[       OK ] VerdictConfigCollision.FilteredSolutionDoesNotBlockFeasible_EV_VER_3 (0 ms)
+[ RUN      ] VerdictConfigCollision.AllSolutionsFilteredIsDataInsufficient_EV_VER_4
+[       OK ] VerdictConfigCollision.AllSolutionsFilteredIsDataInsufficient_EV_VER_4 (0 ms)
+[----------] 2 tests from VerdictConfigCollision (0 ms total)
+
+[----------] 1 test from VerdictPathCollision
+[ RUN      ] VerdictPathCollision.ReplannedPathKeepsFeasible_EV_VER_5
+[       OK ] VerdictPathCollision.ReplannedPathKeepsFeasible_EV_VER_5 (0 ms)
+[----------] 1 test from VerdictPathCollision (0 ms total)
+
+[----------] 2 tests from VerdictMandatoryProof
+[ RUN      ] VerdictMandatoryProof.ValidProofGivesInfeasible_EV_VER_6
+[       OK ] VerdictMandatoryProof.ValidProofGivesInfeasible_EV_VER_6 (0 ms)
+[ RUN      ] VerdictMandatoryProof.InvalidProofFallsToDataInsufficient_EV_VER_6
+[       OK ] VerdictMandatoryProof.InvalidProofFallsToDataInsufficient_EV_VER_6 (0 ms)
+[----------] 2 tests from VerdictMandatoryProof (0 ms total)
+
+[----------] 1 test from VerdictNotApplicableItem
+[ RUN      ] VerdictNotApplicableItem.NotApplicableNotCountedMissing_EV_VER_7
+[       OK ] VerdictNotApplicableItem.NotApplicableNotCountedMissing_EV_VER_7 (0 ms)
+[----------] 1 test from VerdictNotApplicableItem (0 ms total)
+
+[----------] 2 tests from VerdictMustShould
+[ RUN      ] VerdictMustShould.MustViolationGivesInfeasible_EV_VER_8
+[       OK ] VerdictMustShould.MustViolationGivesInfeasible_EV_VER_8 (0 ms)
+[ RUN      ] VerdictMustShould.ShouldViolationKeepsFeasibleWithWarning_EV_VER_8
+[       OK ] VerdictMustShould.ShouldViolationKeepsFeasibleWithWarning_EV_VER_8 (0 ms)
+[----------] 2 tests from VerdictMustShould (0 ms total)
+
+[----------] 1 test from VerdictCoverage
+[ RUN      ] VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1
+[       OK ] VerdictCoverage.MissingMandatoryExecutionBlocked_EV_COV_1 (0 ms)
+[----------] 1 test from VerdictCoverage (0 ms total)
+
+[----------] 2 tests from VerdictBaseline
+[ RUN      ] VerdictBaseline.InconsistentBaselinesListDimensions_EV_COV_4
+[       OK ] VerdictBaseline.InconsistentBaselinesListDimensions_EV_COV_4 (0 ms)
+[ RUN      ] VerdictBaseline.MultiDimensionDifferencesOrderedAndSingleTrivial
+[       OK ] VerdictBaseline.MultiDimensionDifferencesOrderedAndSingleTrivial (0 ms)
+[----------] 2 tests from VerdictBaseline (0 ms total)
+
+[----------] 2 tests from VerdictMissingCompleteness
+[ RUN      ] VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2
+[       OK ] VerdictMissingCompleteness.GateFailuresListedExhaustively_Acceptance2 (0 ms)
+[ RUN      ] VerdictMissingCompleteness.EvidenceGapsListedExhaustively_Acceptance2
+[       OK ] VerdictMissingCompleteness.EvidenceGapsListedExhaustively_Acceptance2 (0 ms)
+[----------] 2 tests from VerdictMissingCompleteness (0 ms total)
+
+[----------] 1 test from VerdictD9
+[ RUN      ] VerdictD9.ProofPresenceNeverTrustedWithoutFieldValidation_D9
+[       OK ] VerdictD9.ProofPresenceNeverTrustedWithoutFieldValidation_D9 (0 ms)
+[----------] 1 test from VerdictD9 (0 ms total)
+
+[----------] 2 tests from VerdictPitfalls
+[ RUN      ] VerdictPitfalls.EmptyRequiredCaseSetIsDataInsufficient_P_EV_7
+[       OK ] VerdictPitfalls.EmptyRequiredCaseSetIsDataInsufficient_P_EV_7 (0 ms)
+[ RUN      ] VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7
+[       OK ] VerdictPitfalls.AllNotApplicableCasesBlockedAtGate_P_EV_7 (0 ms)
+[----------] 2 tests from VerdictPitfalls (0 ms total)
+
+[----------] 1 test from VerdictRegionCoverage
+[ RUN      ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3
+[       OK ] VerdictRegionCoverage.ZeroSampleAndDowngradedRegionEvidence_EV_COV_3 (0 ms)
+[----------] 1 test from VerdictRegionCoverage (0 ms total)
+
+[----------] 2 tests from VerdictEligibility
+[ RUN      ] VerdictEligibility.FormalPassEligibilityFiveConditions_S7_2
+[       OK ] VerdictEligibility.FormalPassEligibilityFiveConditions_S7_2 (0 ms)
+[ RUN      ] VerdictEligibility.ReviewRecordEligibilityRequiresInfeasibleWithBasis_S7_2
+[       OK ] VerdictEligibility.ReviewRecordEligibilityRequiresInfeasibleWithBasis_S7_2 (0 ms)
+[----------] 2 tests from VerdictEligibility (0 ms total)
+
+[----------] 1 test from VerdictDeterminism
+[ RUN      ] VerdictDeterminism.SameInputSameOutputIncludingTrace_NFR_COR_02
+[       OK ] VerdictDeterminism.SameInputSameOutputIncludingTrace_NFR_COR_02 (0 ms)
+[----------] 1 test from VerdictDeterminism (0 ms total)
+
+[----------] 21 tests from EnvelopeMatrix
+[ RUN      ] EnvelopeMatrix.CompletedFeasibleConstructsAndComputesPayloadDigest_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedFeasibleConstructsAndComputesPayloadDigest_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedEngineeringInfeasibleWithValidProof_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedEngineeringInfeasibleWithValidProof_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedEngineeringInfeasibleWithMustRecordOnly_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedEngineeringInfeasibleWithMustRecordOnly_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedDataInsufficientWithFullMissingList_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedDataInsufficientWithFullMissingList_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CanceledDiagnosticOnlyEnvelopeKeepsReusableFalse_EV_ENV_2
+[       OK ] EnvelopeMatrix.CanceledDiagnosticOnlyEnvelopeKeepsReusableFalse_EV_ENV_2 (0 ms)
+[ RUN      ] EnvelopeMatrix.FailedAndInterruptedDiagnosticOnlyConstruct_EV_ENV_1
+[       OK ] EnvelopeMatrix.FailedAndInterruptedDiagnosticOnlyConstruct_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.PreviewRejectedUnconditionally_EV_ENV_1
+[       OK ] EnvelopeMatrix.PreviewRejectedUnconditionally_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.PreviewIsFirstErrorAmongMultipleViolations_EV_ENV_1
+[       OK ] EnvelopeMatrix.PreviewIsFirstErrorAmongMultipleViolations_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedNotApplicableRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedNotApplicableRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CanceledFeasibleRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CanceledFeasibleRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedDataInsufficientWithEmptyMissingRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedDataInsufficientWithEmptyMissingRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.FeasibleWithUnresolvedMissingRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.FeasibleWithUnresolvedMissingRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.EngineeringInfeasibleWithoutBasisRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.EngineeringInfeasibleWithoutBasisRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.FailedWithPayloadRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.FailedWithPayloadRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CanceledWithSatisfiedEvidenceRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CanceledWithSatisfiedEvidenceRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CanceledWithMissingItemsRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CanceledWithMissingItemsRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.PartialDataReusableTrueRejected_EV_ENV_2
+[       OK ] EnvelopeMatrix.PartialDataReusableTrueRejected_EV_ENV_2 (0 ms)
+[ RUN      ] EnvelopeMatrix.TaskIdentityInvalidRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.TaskIdentityInvalidRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.EvaluationKeyInvalidRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.EvaluationKeyInvalidRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.InputIdentityZeroRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.InputIdentityZeroRejected_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeMatrix.CompletedManifestNotCoherentRejected_EV_ENV_1
+[       OK ] EnvelopeMatrix.CompletedManifestNotCoherentRejected_EV_ENV_1 (0 ms)
+[----------] 21 tests from EnvelopeMatrix (0 ms total)
+
+[----------] 3 tests from EnvelopeSnapshotBound
+[ RUN      ] EnvelopeSnapshotBound.CaseScopeOutsideSnapshotReported_EV_ENV_1
+[       OK ] EnvelopeSnapshotBound.CaseScopeOutsideSnapshotReported_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeSnapshotBound.InvalidProofRejectedInSnapshotBoundCheck_EV_ENV_1
+[       OK ] EnvelopeSnapshotBound.InvalidProofRejectedInSnapshotBoundCheck_EV_ENV_1 (0 ms)
+[ RUN      ] EnvelopeSnapshotBound.ManifestBindingToForeignCaseReported_EV_ENV_1
+[       OK ] EnvelopeSnapshotBound.ManifestBindingToForeignCaseReported_EV_ENV_1 (0 ms)
+[----------] 3 tests from EnvelopeSnapshotBound (0 ms total)
+
+[----------] 2 tests from EnvelopeDeterminism
+[ RUN      ] EnvelopeDeterminism.SameDraftSameIssueSequence_NFR_COR_02
+[       OK ] EnvelopeDeterminism.SameDraftSameIssueSequence_NFR_COR_02 (0 ms)
+[ RUN      ] EnvelopeDeterminism.MakeFromEqualDraftsGivesEqualEnvelopes_NFR_COR_02
+[       OK ] EnvelopeDeterminism.MakeFromEqualDraftsGivesEqualEnvelopes_NFR_COR_02 (0 ms)
+[----------] 2 tests from EnvelopeDeterminism (0 ms total)
+
+[----------] 18 tests from EvidenceCurrentness
+[ RUN      ] EvidenceCurrentness.CurrentOnIrrelevantHeadAdvance_EV_CUR_1
+[       OK ] EvidenceCurrentness.CurrentOnIrrelevantHeadAdvance_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.SupersededOnConsumedObjectChange_EV_CUR_1
+[       OK ] EvidenceCurrentness.SupersededOnConsumedObjectChange_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.NewSessionSameContentStaysCurrent_EV_CUR_1
+[       OK ] EvidenceCurrentness.NewSessionSameContentStaysCurrent_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2
+[       OK ] EvidenceCurrentness.UnresolvedDependencyNeverDefaultsToCurrent_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.UnresolvedListsAllMissingKeys_EV_CUR_2
+[       OK ] EvidenceCurrentness.UnresolvedListsAllMissingKeys_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.TargetRefreezeFailureIsUnevaluable_EV_CUR_2
+[       OK ] EvidenceCurrentness.TargetRefreezeFailureIsUnevaluable_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.FactSourceEntryMismatchFailsFast_EV_CUR_2
+[       OK ] EvidenceCurrentness.FactSourceEntryMismatchFailsFast_EV_CUR_2 (0 ms)
+[ RUN      ] EvidenceCurrentness.SupersededDoesNotTouchArchivedEnvelope_EV_CUR_3
+[       OK ] EvidenceCurrentness.SupersededDoesNotTouchArchivedEnvelope_EV_CUR_3 (0 ms)
+[ RUN      ] EvidenceCurrentness.CurrentnessLivesOnlyInProjectionIndex_EV_CUR_3
+[       OK ] EvidenceCurrentness.CurrentnessLivesOnlyInProjectionIndex_EV_CUR_3 (0 ms)
+[ RUN      ] EvidenceCurrentness.CrossProjectQueryIsUnevaluable_EV_CUR_4
+[       OK ] EvidenceCurrentness.CrossProjectQueryIsUnevaluable_EV_CUR_4 (0 ms)
+[ RUN      ] EvidenceCurrentness.CrossBranchQueryIsUnevaluable_EV_CUR_4
+[       OK ] EvidenceCurrentness.CrossBranchQueryIsUnevaluable_EV_CUR_4 (0 ms)
+[ RUN      ] EvidenceCurrentness.EvaluationKeyMismatchIsCrossContext_I_7
+[       OK ] EvidenceCurrentness.EvaluationKeyMismatchIsCrossContext_I_7 (0 ms)
+[ RUN      ] EvidenceCurrentness.IdentityOnlyFormDegradesConservatively_I_8
+[       OK ] EvidenceCurrentness.IdentityOnlyFormDegradesConservatively_I_8 (0 ms)
+[ RUN      ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05
+[       OK ] EvidenceCurrentness.BudgetChangeSupersedesWithBaselineUnchanged_AT_05 (0 ms)
+[ RUN      ] EvidenceCurrentness.ContractVersionChangeSupersedesBeforeRebuild_EV_CUR_1
+[       OK ] EvidenceCurrentness.ContractVersionChangeSupersedesBeforeRebuild_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.ConditionFlipAndVanishedEntryReasons_EV_CUR_1
+[       OK ] EvidenceCurrentness.ConditionFlipAndVanishedEntryReasons_EV_CUR_1 (0 ms)
+[ RUN      ] EvidenceCurrentness.IndexStoreFindInvalidateClear
+[       OK ] EvidenceCurrentness.IndexStoreFindInvalidateClear (0 ms)
+[ RUN      ] EvidenceCurrentness.MissingRebuildSourcesFailFast
+[       OK ] EvidenceCurrentness.MissingRebuildSourcesFailFast (0 ms)
+[----------] 18 tests from EvidenceCurrentness (0 ms total)
+
+[----------] 13 tests from CompatibilityCacheHit
+[ RUN      ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1
+[       OK ] CompatibilityCacheHit.QuickCacheVersusVerifiedRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1
+[       OK ] CompatibilityCacheHit.VerifiedCacheVersusQuickRequest_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1
+[       OK ] CompatibilityCacheHit.SameModeAlignedPairIsFullHit_EV_CPA_1 (0 ms)
+[ RUN      ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCacheHit.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.CanceledResultIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.FailedAndInterruptedResultsAreDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.UnfinalizedManifestIsDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2
+[       OK ] CompatibilityCacheHit.BothResultFaceFailuresListed_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.SliceMismatchIsIncompatible
+[       OK ] CompatibilityCacheHit.SliceMismatchIsIncompatible (0 ms)
+[ RUN      ] CompatibilityCacheHit.ProfileMismatchIsIncompatible
+[       OK ] CompatibilityCacheHit.ProfileMismatchIsIncompatible (0 ms)
+[ RUN      ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2
+[       OK ] CompatibilityCacheHit.AllMismatchReasonsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2
+[       OK ] CompatibilityCacheHit.IdentityFaceMismatchNeverDiagnosticOnly_EV_ENV_2 (0 ms)
+[ RUN      ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2
+[       OK ] CompatibilityCacheHit.JudgmentIsDeterministic_EV_CPA_2 (0 ms)
+[----------] 13 tests from CompatibilityCacheHit (0 ms total)
+
+[----------] 9 tests from CompatibilityCheckpoint
+[ RUN      ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.ContractVersionMismatch_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.CheckpointIndependentOfTaskOutcome_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.IntegrityNotVerifiedRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.AlignedCheckpointIsResumeable_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.MalformedEvaluatorKeyRejected_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.SliceMismatchRejected_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.FormatVersionRangeBoundary_EV_CPA_3 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2
+[       OK ] CompatibilityCheckpoint.MultipleRejectionsCollectedInCheckOrder_EV_CPA_2 (0 ms)
+[ RUN      ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3
+[       OK ] CompatibilityCheckpoint.JudgmentIsDeterministic_EV_CPA_3 (0 ms)
+[----------] 9 tests from CompatibilityCheckpoint (0 ms total)
+
+[----------] 5 tests from EvidenceRegistrationBoundary
+[ RUN      ] EvidenceRegistrationBoundary.DuplicateKeyRegistrationRejected_EV_REG_1
+[       OK ] EvidenceRegistrationBoundary.DuplicateKeyRegistrationRejected_EV_REG_1 (0 ms)
+[ RUN      ] EvidenceRegistrationBoundary.UnknownKeyFindReturnsNullptr_EV_REG_1
+[       OK ] EvidenceRegistrationBoundary.UnknownKeyFindReturnsNullptr_EV_REG_1 (0 ms)
+[ RUN      ] EvidenceRegistrationBoundary.MissingProfileRejectedAndFieldNamed_EV_REG_1
+[       OK ] EvidenceRegistrationBoundary.MissingProfileRejectedAndFieldNamed_EV_REG_1 (0 ms)
+[ RUN      ] EvidenceRegistrationBoundary.DescriptorIntegrityRejectionsNameFields_EV_REG_1
+[       OK ] EvidenceRegistrationBoundary.DescriptorIntegrityRejectionsNameFields_EV_REG_1 (0 ms)
+[ RUN      ] EvidenceRegistrationBoundary.DeclarationClosureRejectionAndFactKeys_EV_REG_1
+[       OK ] EvidenceRegistrationBoundary.DeclarationClosureRejectionAndFactKeys_EV_REG_1 (0 ms)
+[----------] 5 tests from EvidenceRegistrationBoundary (0 ms total)
+
+[----------] 3 tests from EvidenceRegistrationManifest
+[ RUN      ] EvidenceRegistrationManifest.ManifestSortedByKeyAndDigestStable_EV_REG_2
+[       OK ] EvidenceRegistrationManifest.ManifestSortedByKeyAndDigestStable_EV_REG_2 (0 ms)
+[ RUN      ] EvidenceRegistrationManifest.ManifestDigestConsistentAcrossRegistries_EV_REG_2
+[       OK ] EvidenceRegistrationManifest.ManifestDigestConsistentAcrossRegistries_EV_REG_2 (0 ms)
+[ RUN      ] EvidenceRegistrationManifest.ConcurrentReadersAndCreators_EV_REG_2
+[       OK ] EvidenceRegistrationManifest.ConcurrentReadersAndCreators_EV_REG_2 (1 ms)
+[----------] 3 tests from EvidenceRegistrationManifest (1 ms total)
+
+[----------] 2 tests from EvidenceRegistryViewAdapters
+[ RUN      ] EvidenceRegistryViewAdapters.ProducerRegistryViewQueries
+[       OK ] EvidenceRegistryViewAdapters.ProducerRegistryViewQueries (0 ms)
+[ RUN      ] EvidenceRegistryViewAdapters.ProfileRegistryViewQueries
+[       OK ] EvidenceRegistryViewAdapters.ProfileRegistryViewQueries (0 ms)
+[----------] 2 tests from EvidenceRegistryViewAdapters (0 ms total)
+
+[----------] 4 tests from EvidenceProfileRegistryBehavior
+[ RUN      ] EvidenceProfileRegistryBehavior.RegistersProfileAndComputesContentIdentity
+[       OK ] EvidenceProfileRegistryBehavior.RegistersProfileAndComputesContentIdentity (0 ms)
+[ RUN      ] EvidenceProfileRegistryBehavior.DuplicateRejectedAndVersionsCoexist
+[       OK ] EvidenceProfileRegistryBehavior.DuplicateRejectedAndVersionsCoexist (0 ms)
+[ RUN      ] EvidenceProfileRegistryBehavior.InvalidProfileRejectedWithItemIdNamed
+[       OK ] EvidenceProfileRegistryBehavior.InvalidProfileRejectedWithItemIdNamed (0 ms)
+[ RUN      ] EvidenceProfileRegistryBehavior.ProfileConditionCrossValidationAtEvaluatorRegistration
+[       OK ] EvidenceProfileRegistryBehavior.ProfileConditionCrossValidationAtEvaluatorRegistration (0 ms)
+[----------] 4 tests from EvidenceProfileRegistryBehavior (0 ms total)
+
+[----------] 1 test from EvidenceDescriptorFieldFace
+[ RUN      ] EvidenceDescriptorFieldFace.DescriptorHasExactlyDesignFields_P_EX_7
+[       OK ] EvidenceDescriptorFieldFace.DescriptorHasExactlyDesignFields_P_EX_7 (0 ms)
+[----------] 1 test from EvidenceDescriptorFieldFace (0 ms total)
+
+[----------] 2 tests from EvidenceEvaluationContract
+[ RUN      ] EvidenceEvaluationContract.FactoryCreatesIndependentInstances
+[       OK ] EvidenceEvaluationContract.FactoryCreatesIndependentInstances (0 ms)
+[ RUN      ] EvidenceEvaluationContract.EvaluateReceivesRequestAndUsesContext
+[       OK ] EvidenceEvaluationContract.EvaluateReceivesRequestAndUsesContext (0 ms)
+[----------] 2 tests from EvidenceEvaluationContract (0 ms total)
+
+[----------] 1 test from EvidenceRegistryNoScheduler
+[ RUN      ] EvidenceRegistryNoScheduler.NoSchedulerFacilitiesInEvaluatorSources
+[       OK ] EvidenceRegistryNoScheduler.NoSchedulerFacilitiesInEvaluatorSources (0 ms)
+[----------] 1 test from EvidenceRegistryNoScheduler (0 ms total)
+
+[----------] 9 tests from EvaluatorPortVerdict
+[ RUN      ] EvaluatorPortVerdict.GateBlocksScriptedProof_EV_VER_1
+[       OK ] EvaluatorPortVerdict.GateBlocksScriptedProof_EV_VER_1 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.SearchExhaustedThenFeasibleViaPort_EV_VER_2
+[       OK ] EvaluatorPortVerdict.SearchExhaustedThenFeasibleViaPort_EV_VER_2 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.FilteredSolutionDoesNotBlockFeasibleViaPort_EV_VER_3
+[       OK ] EvaluatorPortVerdict.FilteredSolutionDoesNotBlockFeasibleViaPort_EV_VER_3 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.AllSolutionsFilteredIsDataInsufficientViaPort_EV_VER_4
+[       OK ] EvaluatorPortVerdict.AllSolutionsFilteredIsDataInsufficientViaPort_EV_VER_4 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ReplannedPathKeepsFeasibleViaPort_EV_VER_5
+[       OK ] EvaluatorPortVerdict.ReplannedPathKeepsFeasibleViaPort_EV_VER_5 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ValidMandatoryProofInfeasibleViaPort_EV_VER_6
+[       OK ] EvaluatorPortVerdict.ValidMandatoryProofInfeasibleViaPort_EV_VER_6 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.MandatoryProofMissingStateFallsToDataInsufficient_EV_VER_6
+[       OK ] EvaluatorPortVerdict.MandatoryProofMissingStateFallsToDataInsufficient_EV_VER_6 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.MustViolationInfeasibleViaPort_EV_VER_8
+[       OK ] EvaluatorPortVerdict.MustViolationInfeasibleViaPort_EV_VER_8 (0 ms)
+[ RUN      ] EvaluatorPortVerdict.ShouldViolationFeasibleWithWarningViaPort_EV_VER_8
+[       OK ] EvaluatorPortVerdict.ShouldViolationFeasibleWithWarningViaPort_EV_VER_8 (0 ms)
+[----------] 9 tests from EvaluatorPortVerdict (0 ms total)
+
+[----------] 2 tests from EvaluatorPortContext
+[ RUN      ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort
+[       OK ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort (0 ms)
+[ RUN      ] EvaluatorPortContext.ObjectReadAndProgressChannels
+[       OK ] EvaluatorPortContext.ObjectReadAndProgressChannels (0 ms)
+[----------] 2 tests from EvaluatorPortContext (0 ms total)
+
+[----------] 1 test from EvaluatorPortCurrentness
+[ RUN      ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV
+[       OK ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV (0 ms)
+[----------] 1 test from EvaluatorPortCurrentness (0 ms total)
+
+[----------] 2 tests from ScriptedDoubleBoundary
+[ RUN      ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3 (3 ms)
+[ RUN      ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3 (0 ms)
+[----------] 2 tests from ScriptedDoubleBoundary (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 205 tests from 59 test suites ran. (33 ms total)
+[  PASSED  ] 205 tests.

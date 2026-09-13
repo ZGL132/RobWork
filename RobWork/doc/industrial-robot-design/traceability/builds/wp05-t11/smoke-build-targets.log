@@ -1,0 +1,68 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  DependencyTest.cpp
+  SnapshotTest.cpp
+  SliceTest.cpp
+  EvidenceTest.cpp
+  VerdictTest.cpp
+  EnvelopeTest.cpp
+  CurrentnessTest.cpp
+  CompatibilityTest.cpp
+  EvaluatorTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  正在生成代码...
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\sdurws_ird_evidence_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\core\Release\sdurws_ird_core.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  EnvelopeContractTest.cpp
+  EnvelopeAccessorContractTest.cpp
+  SliceFixtureContractTest.cpp
+  正在生成代码...
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp05-t11\evidence\Release\sdurws_ird_evidence_contract_test.exe

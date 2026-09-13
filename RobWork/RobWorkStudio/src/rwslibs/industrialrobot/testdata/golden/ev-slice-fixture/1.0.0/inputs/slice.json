@@ -1,0 +1,64 @@
+{
+  "schema": "ev-slice-fixture-input/1",
+  "description": "切片契约夹具输入——InputSlice 的语义描述（WP-05-T11；units/evidence.md §12 EV-T11 产物行、§11 EV-ID-1 载体）。C++ 契约测试按本描述经 SnapshotBuilder/SliceBuilder 重建冻结快照与切片，对照 expected/slice-identity.json 的身份与规范编码逐字节核对（parse(encode(x))==x 的数据集载体）。本输入同时覆盖三类依赖条目形态：Object（基准类）、Configuration（排除类）、Policy 条件未适用（条件输入仍在身份里——§4.2.1）。",
+  "evaluationKey": "kin-batch-ik",
+  "evaluatorContractVersion": 7,
+  "snapshot": {
+    "identity": {
+      "project": "prj-0123456789abcdef0123456789abcdef",
+      "branch": "brn-fedcba9876543210fedcba9876543210",
+      "revision": "rev-00112233445566778899aabbccddeeff",
+      "revisionSeq": 11,
+      "revisionSeqNote": "revisionSeq 不参与身份（§4.1.2/I-1）——仅经 SnapshotBuilder::setIdentity 录入实例"
+    },
+    "policyContentIdentity": "cid-1111111111111111111111111111111111111111111111111111111111111111",
+    "nameMapContentIdentity": "cid-2222222222222222222222222222222222222222222222222222222222222222",
+    "objects": [
+      {
+        "objectId": "obj-a1a2a3a4a5a6a7a8a9a0aaabacadaeaf",
+        "contentVersion": "cv-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "objectTypeToken": "robot-design",
+        "digestHex": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "digestNote": "digest 与 contentVersion 同源（ObjectRefEntry 一致性闸门——bytes 相同）"
+      }
+    ],
+    "reproduction": {
+      "productVersion": "industrialrobot-designer 0.1.0",
+      "evidenceContractVersion": "evidence-contract/1",
+      "codecVersions": ["snapshot-codec/1", "slice-codec/1"],
+      "compilerContractVersion": null,
+      "collisionBackendVersion": null
+    }
+  },
+  "entries": [
+    {
+      "kind": "object",
+      "key": "model.robot-design",
+      "objectId": "obj-a1a2a3a4a5a6a7a8a9a0aaabacadaeaf",
+      "contentVersion": "cv-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "objectTypeToken": "robot-design",
+      "applied": true,
+      "notAppliedReason": null,
+      "faceNote": "基准类条目——进 sliceId 与 inputBaselineId（§5.1）"
+    },
+    {
+      "kind": "configuration",
+      "key": "solve.ik-config",
+      "configKindToken": "ik-solve",
+      "canonicalBytesHex": "3fb999999999999a00ff",
+      "contentIdentity": "cid-4df6fe523153c53c75c78405b9b4c982a08692bd6fb364e9390172fd4fdaae9e",
+      "applied": true,
+      "notAppliedReason": null,
+      "faceNote": "求解类条目——进 sliceId 不进 inputBaselineId（D-04）；canonicalBytes 内嵌 IEEE754 双精度 0.1 的 8 字节大端位模式（0x3FB999999999999A，§5.2 浮点行）＋2 字节后缀；contentIdentity＝SHA-256(canonicalBytes)（生成脚本复核一致性）",
+      "toleranceFieldPath": "slice.payload.config-bytes"
+    },
+    {
+      "kind": "policy",
+      "key": "policy.collision-guard",
+      "policyContentIdentity": "cid-3333333333333333333333333333333333333333333333333333333333333333",
+      "applied": false,
+      "notAppliedReason": "策略未启用碰撞守卫（条件未适用——条件输入仍在切片身份里，§4.2.1）",
+      "faceNote": "条件未适用条目——full 形态编码（含 presence 字节＋原因串）进 sliceId；不进 inputBaselineId（排除面 D-1）"
+    }
+  ]
+}
