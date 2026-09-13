@@ -129,3 +129,9 @@ build/
 # Pipeline/acceptance smoke build trees (governance acceptance leftovers; PIPE v1.3 guard exemption expects these ignored)
 build-acc-smoke/
 *-smoke/
+
+# Testkit RecordListener runtime artifact: the listener writes ird-test-report.json
+# to its working directory by default; a tick running tests with CWD=repo root leaves
+# it at the root (root-anchored ignore only — evidence copies under traceability/**/
+# are explicitly tracked, see AGENTS §4.2 / PIPE §5 留痕纪律).
+/ird-test-report.json
