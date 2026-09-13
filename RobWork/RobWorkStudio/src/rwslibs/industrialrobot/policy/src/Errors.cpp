@@ -1,11 +1,17 @@
 /**
  * @file   Errors.cpp
- * @brief  policy 错误码稳定 token 表与建议注册码表的唯一定义点（POL-T02；
- *         POL-T03/T05/T06/T07 随表尾追加同步维护两表——追加留痕见枚举注释）。
+ * @brief  policy 错误码稳定 token 表的唯一定义点（POL-T02；POL-T03/T05/T06/
+ *         T07 随表尾追加同步维护——追加留痕见枚举注释）。建议注册码
+ *         （registryCode）自 POL-T10 起委托 Diagnostics.cpp 的建议码表：
+ *         token 字面量仍唯一在本 TU，POLICY-* 建议码字面量唯一在
+ *         Diagnostics.cpp（NFR-MNT-03 单一权威——两表面经映射函数衔接，
+ *         字符串行为不变，PolicySetTest 两张全表锚定用例钉住）。
  *
  * 设计依据：
  *   - units/policy.md §3.1（Errors.hpp/.cpp 为 POL-T02 产物）、§5.2（诊断码
- *     建议值逐行——token 派生源）、§9.6（POLICY-* 建议码清单）
+ *     建议值逐行——token 派生源）、§9.6（POLICY-* 建议码清单——建议码
+ *     字面量的权威来源，POL-T10 落位 Diagnostics.hpp 码表后本 TU 不再
+ *     持有第二份字面量）
  *   - runtime/evidence 同款实现纪律：编译期固定 switch 全枚举、无 default
  *     （新增枚举值未登记表项时编译器告警暴露遗漏）；测试侧全表用例逐值钉住
  *
@@ -15,7 +21,49 @@
 
 #include <sdurws/ird/policy/Errors.hpp>
 
+#include <sdurws/ird/policy/Diagnostics.hpp>
+
 namespace sdurws::ird::policy {
+
+namespace {
+
+/**
+ * @brief 异常码 → 建议码枚举的映射（registryCode 的委托桥）。
+ *
+ * 全枚举 switch、无 default（新增 PolicyErrorCode 未登记映射时 MSVC C4062
+ * 告警暴露——与 token() 同款纪律）。一一对应：每个异常码恰好发一个建议码
+ * （§9.6 清单＋表尾补登——对应关系与 POL-T02~T07 的 registryCode 字面量
+ * 表逐行一致，未新增/未改写任何映射）。
+ */
+PolicyDiagCode diagCodeOf(PolicyErrorCode code) noexcept
+{
+    switch (code) {
+    case PolicyErrorCode::SchemaUnknownField:       return PolicyDiagCode::SchemaUnknownField;
+    case PolicyErrorCode::SchemaVersionFuture:      return PolicyDiagCode::SchemaVersionFuture;
+    case PolicyErrorCode::SchemaVersionUnknown:     return PolicyDiagCode::SchemaVersionUnknown;
+    case PolicyErrorCode::ThresholdNonFinite:       return PolicyDiagCode::ThresholdNonFinite;
+    case PolicyErrorCode::ThresholdNonPositive:     return PolicyDiagCode::ThresholdNonPositive;
+    case PolicyErrorCode::ThresholdOutOfRange:      return PolicyDiagCode::ThresholdOutOfRange;
+    case PolicyErrorCode::ThresholdRequiredMissing: return PolicyDiagCode::ThresholdRequiredMissing;
+    case PolicyErrorCode::UnitMismatch:             return PolicyDiagCode::UnitMismatch;
+    case PolicyErrorCode::RuleDuplicate:            return PolicyDiagCode::RuleDuplicate;
+    case PolicyErrorCode::RuleConflict:             return PolicyDiagCode::RuleConflict;
+    case PolicyErrorCode::RuleCycle:                return PolicyDiagCode::RuleCycle;
+    case PolicyErrorCode::ScopeObjectMissing:       return PolicyDiagCode::ScopeObjectMissing;
+    case PolicyErrorCode::ApplicabilityInvalid:     return PolicyDiagCode::ApplicabilityInvalid;
+    case PolicyErrorCode::PolicyObjectInvalid:      return PolicyDiagCode::PolicyObjectInvalid;
+    case PolicyErrorCode::EncodingInvalid:          return PolicyDiagCode::EncodingInvalid;
+    case PolicyErrorCode::PortAssemblyIncomplete:   return PolicyDiagCode::PortAssemblyIncomplete;
+    case PolicyErrorCode::SceneInvalid:             return PolicyDiagCode::CllSceneInvalid;
+    case PolicyErrorCode::NameUnresolved:           return PolicyDiagCode::CllNameUnresolved;
+    case PolicyErrorCode::QueryInvalid:             return PolicyDiagCode::QueryInvalid;
+    }
+    // 不可达路径：全枚举已覆盖（同 token() 出口说明——SchemaUnknownField
+    // 仅为满足编译器；运行期永不可达，测试全表保证）。
+    return PolicyDiagCode::SchemaUnknownField;
+}
+
+}  // namespace
 
 std::string_view token(PolicyErrorCode code) noexcept
 {
@@ -53,35 +101,13 @@ std::string_view token(PolicyErrorCode code) noexcept
 
 std::string_view registryCode(PolicyErrorCode code) noexcept
 {
-    // 建议注册码全表（§9.6 建议码清单逐项＋表尾追加值的补登建议）。
-    // 码值权威＝diagnostics StableCodeRegistry——本表仅"建议"（P-PR-6 同
-    // 模式，PA-1 不越权注册）；正式收编由 diagnostics 所有者裁决。
-    switch (code) {
-    case PolicyErrorCode::SchemaUnknownField:       return "POLICY-SCHEMA-UNKNOWN-FIELD";
-    case PolicyErrorCode::SchemaVersionFuture:      return "POLICY-SCHEMA-VERSION-FUTURE";
-    case PolicyErrorCode::SchemaVersionUnknown:     return "POLICY-SCHEMA-VERSION-UNKNOWN";
-    case PolicyErrorCode::ThresholdNonFinite:       return "POLICY-THRESHOLD-NON-FINITE";
-    case PolicyErrorCode::ThresholdNonPositive:     return "POLICY-THRESHOLD-NON-POSITIVE";
-    case PolicyErrorCode::ThresholdOutOfRange:      return "POLICY-THRESHOLD-OUT-OF-RANGE";
-    case PolicyErrorCode::ThresholdRequiredMissing: return "POLICY-THRESHOLD-REQUIRED-MISSING";
-    case PolicyErrorCode::UnitMismatch:             return "POLICY-UNIT-MISMATCH";
-    case PolicyErrorCode::RuleDuplicate:            return "POLICY-RULE-DUPLICATE";
-    case PolicyErrorCode::RuleConflict:             return "POLICY-RULE-CONFLICT";
-    case PolicyErrorCode::RuleCycle:                return "POLICY-RULE-CYCLE";
-    case PolicyErrorCode::ScopeObjectMissing:       return "POLICY-SCOPE-OBJECT-MISSING";
-    case PolicyErrorCode::ApplicabilityInvalid:     return "POLICY-APPLICABILITY-INVALID";
-    case PolicyErrorCode::PolicyObjectInvalid:      return "POLICY-POLICY-OBJECT-INVALID";
-    case PolicyErrorCode::EncodingInvalid:          return "POLICY-ENCODING-INVALID";
-    case PolicyErrorCode::PortAssemblyIncomplete:   return "POLICY-PORT-ASSEMBLY-INCOMPLETE";
-    // POL-T06 表尾追加（§9.6 建议码清单既有 CLL 行的正式落位——非补登）。
-    case PolicyErrorCode::SceneInvalid:             return "POLICY-CLL-SCENE-INVALID";
-    case PolicyErrorCode::NameUnresolved:           return "POLICY-CLL-NAME-UNRESOLVED";
-    // POL-T07 表尾追加（POLICY-CLL-QUERY-INVALID 为补登建议值——单元卡
-    // v0.8 登记；评估期其余 POLICY-CLL-* 码走诊断轨，不在本枚举）。
-    case PolicyErrorCode::QueryInvalid:             return "POLICY-CLL-QUERY-INVALID";
-    }
-    // 不可达路径：同 token() 说明。
-    return {};
+    // 建议注册码（POL-T10 起委托 Diagnostics.cpp 建议码表——NFR-MNT-03
+    // 单一权威：POLICY-* 字面量全单元唯一在该表；本函数经 diagCodeOf 映射
+    // 取码，字符串行为与 POL-T02~T07 的字面量表逐串一致——PolicySetTest
+    // RegistryCodeTableFullEnumeration 全表锚定钉住）。码值权威＝diagnostics
+    // StableCodeRegistry——本函数仅"建议"（P-PR-6 同模式，PA-1 不越权注册）；
+    // 正式收编由 diagnostics 所有者裁决。
+    return policyDiagCode(diagCodeOf(code));
 }
 
 // =====================================================================

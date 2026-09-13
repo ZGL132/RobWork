@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T10",
+  "masterWp": "WP-07-T10",
+  "branch": "wp07-t10",
+  "base": "5478bc51373e3a3048e62b13d509fd11afc92592",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T10 增量：新增 include/sdurws/ird/policy/Diagnostics.hpp（§3.1 组成表三实体——PolicyDiagCode 建议码全表枚举 29 值＋policyDiagCode/policyDiagCodes 码表〔inline constexpr，字面量唯一点〕＋IPolicyDiagnostics＋PolicyDiagnostics 产品实现＋makeComparative 辅助组）与 src/Diagnostics.cpp（isRegisteredPolicyDiagCode＋make 码表核对/C-3 前置核对/比较型单位核对＋core 工厂委托防御转译＋单侧值构造；纯 core＋std 依赖，双模式无条件编译）；Errors.cpp 的 registryCode() 自本任务起经 diagCodeOf 映射委托码表（NFR-MNT-03 单一字面量点；字符串行为不变——PolicySetTest 两张全表锚定钉住）；五个消费 TU（PolicyParsing/PolicyPort/CollisionQuery/JointLimits/Compatibility）的单点建议码字面量按 §9.6 迁移通道注记收敛为编译期码表引用别名（使用点零改动）。链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project 编译依赖（R-1/R-2）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "POL-T10 增量：新增 test/DiagnosticsTest.cpp（19 用例——建议码表全表锚定 6 用例〔registeredCodes 覆盖/确定性/零重复/码句法/registryCode 交集一致/全表-枚举同源〕＋构造不变量 checkDiagnosticRecord 族 8 用例〔稳定记录通过契约校验＋字段逐一承载/subject 可选性与消费侧核对分工/表外码 fail-fast/C-3 空串转译/比较型双校验器通过/无效单位 fail-fast/NotApplicable 不伪造数值/Invalid 原文保留/确定性〕＋makeComparative 辅助 4 用例＋接口多态 1 用例）；本测试目标自本任务起链接 sdurws_ird_testkit（checkDiagnosticRecord/checkComparativeFields——契约 acceptance 1『（testkit）』字面要求；仅测试目标链接，产品库红线面不变）。POL-T01~T09 既有 181 用例全部保持通过（集成合计 200/200——181 既有＋19 新增；冒烟 131/131——112 既有＋19 新增，DiagnosticsTest.cpp 纯 core 依赖双模式编译）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyDiagCodeTable",
+      "designRef": "units/policy.md §9.6 建议码清单、§12 POL-T10 行；需求 NFR-MNT-03/NFR-COR-02/ARC-04",
+      "cases": [
+        { "name": "PolicyDiagCodeTable.RegisteredCodesCoversWholeTable_SEC9_6", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.6 registeredCodes『本单元建议码清单（供注册表核对）』——29 值全表逐串/逐位一致（清单 23＋表尾补登 3＋§5.2 系补登 3；kPolicyDiagCodeCount 钉住）" },
+        { "name": "PolicyDiagCodeTable.RegisteredCodesDeterministicAcrossInstances_NFR_COR_02", "status": "passed", "modes": ["integration", "smoke"], "trace": "NFR-COR-02——查表产物纯函数值，跨实例/跨调用逐字节相同" },
+        { "name": "PolicyDiagCodeTable.NoDuplicateCodes_SEC9_6", "status": "passed", "modes": ["integration", "smoke"], "trace": "ARC-04 不发明码的清单面推论——重复项使注册表核对语义含混" },
+        { "name": "PolicyDiagCodeTable.AllCodesMatchCoreSyntax_CORE_C3", "status": "passed", "modes": ["integration", "smoke"], "trace": "core DiagData C-3 码句法行（^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）——表内码通过 core 工厂句法半场的前提显式化" },
+        { "name": "PolicyDiagCodeTable.RegistryCodeIntersectionConsistent_NFR_MNT_03", "status": "passed", "modes": ["integration", "smoke"], "trace": "NFR-MNT-03——PolicyErrorCode 19 值 registryCode() 逐串为码表成员（Errors.cpp 委托码表后的两表面防漂移观测点；与 PolicySetTest 全表锚定互为复证）" },
+        { "name": "PolicyDiagnosticsMake.*（8 用例）", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.6 构造不变量：StableRecordPassesContractCheck_ERR_01（testkit checkDiagnosticRecord 通过＋字段逐一承载）、SubjectOptionalIntegrityCheckedByConsumer_ERR_01（allowTransient 选项消费侧核对分工）、RejectsUnknownCodeFailFast_SEC9_6（表外码 PolicyError fail-fast——码值权威）、RejectsBlankRequiredStrings_CORE_C3（空串转译 PolicyError 不泄漏 CoreError）、ComparativeRecordPassesContractAndComparativeChecks_UX_03（checkDiagnosticRecord＋checkComparativeFields 双通过——6π/4π rad 三要素）、RejectsComparisonWithInvalidUnit_UX_03（无效单位句柄 fail-fast）、NotApplicableSidePassesCheckWithoutForgedValue_P_POL_2（显式不适用不伪造数值）、InvalidSidePreservesRawText_NFR_COR_03（NaN 原文保留）、DeterministicConstruction_NFR_COR_02（同输入逐字段相等）" },
+        { "name": "MakeComparativeHelpers.*（4 用例）＋PolicyDiagnosticsInterface.PolymorphicUseThroughBaseReference_SEC9_6", "status": "passed", "modes": ["integration", "smoke"], "trace": "§3.1 组成表 makeComparative 辅助（有限→Provided＋DYN-06 溯源/非有限→Invalid 原文 %.17g/NotApplicable 保量纲/纯聚合）＋§9.6 接口抽象面经基类引用分派" }
+      ]
+    }
+  ],
+  "regression": {
+    "integration": { "total": 200, "passed": 200, "failed": 0, "note": "181 既有（POL-T01~T09）＋19 新增（DiagnosticsTest）；迁移五 TU 后 CollisionEvaluationTest/JointLimitsTest/CompatibilityTest/PolicyParsingTest/PolicyPortTest 全部保持通过——诊断码字面量迁移零行为变化" },
+    "smoke": { "total": 131, "passed": 131, "failed": 0, "note": "112 既有＋19 新增（DiagnosticsTest.cpp 无框架依赖，双模式编译）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log）",
+    "irdGates": {
+      "result": "6 命中＝base 既有 5＋本任务新增 1（如实登记，未私改门禁）",
+      "baseFive": "SUB×4（evidence_test/evidence_contract_test/runtime_test 直链 testkit＋testdata_lint→testkit 表外边）＋T1×1（testdata_lint 产品目标链接 testkit）——与 POL-T06/T07/T08/T09 验收基线逐码一致（GATE_DELTA_ZERO 基线）",
+      "newHit": "SUB×1：sdurws_ird_policy_test 直链 sdurws_ird_testkit",
+      "newHitAnalysis": "契约 acceptance 1『checkDiagnosticRecord 族（testkit）』字面要求测试真实消费 testkit 校验器→测试目标链接 sdurws_ird_testkit。白名单数据面 cmake/ird_gates_whitelist.cmake 注释明文『允许形态（引擎按此硬编码判定）：sdurws_ird_<unit>_test → { 同单元产品目标, sdurws_ird_testkit, gtest 系 }』（T-1/T-2 段），而引擎 cmake/ird_gates.cmake 将 sdurws_ird_testkit 分类为 product 形态（ird_classify_target 正则 ^sdurws_ird_([a-z]+)$）且形态一分支无 testkit 豁免——数据面声明与引擎实现矛盾。既有 base 5 命中中的 4 个 SUB 同根源（evidence/runtime 测试直链 testkit 同被命中），属门禁既有缺陷非本任务行为越界。两文件均在 WP-01 辖区且不在本任务 allowedFiles（policy/**、industrialrobot/CMakeLists.txt、units/policy.md、traceability/**）——按 v0.7 ⑤『裁决前不私改门禁』纪律保留命中如实登记，处置（引擎补 testkit 豁免分支或例外登记）转所有者/WP-01 裁决",
+      "logs": ["gates-current-wp07t10.log（ird_gates 目标全输出）", "gate-all.log（16/17——唯一 FAIL 即上述 ird_gates 命中；集成/冒烟 12 项测试发现与执行全部 PASS）"]
+    }
+  },
+  "verifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test（exit=0；verify-target-build.log）",
+  "notes": "P-PR-6/P-EX-8 处置：建议码表仅产出建议值（29 值含 P-PR-6 同模式补登 6 值——POLICY-THRESHOLD-REQUIRED-MISSING 为本任务新补登入表，§9.6 清单未列而 registryCode 既有），码值权威归 diagnostics StableCodeRegistry，不注册码值、不实现 sink、不裁决 P-PR-6/P-EX-8 的 sink 统一（PA-1）。POLICY-CONTENT-IDENTITY-MISMATCH 为 §9.6 清单既有码面、尚无消费点——随表落位不预发消费语义。"
+}

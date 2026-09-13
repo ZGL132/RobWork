@@ -44,6 +44,7 @@
  * 格式无千分位依赖——与 PolicySet.hpp formatThreshold 同款口径）。
  */
 
+#include <sdurws/ird/policy/Diagnostics.hpp>
 #include <sdurws/ird/policy/PolicyParsing.hpp>
 
 #include <algorithm>
@@ -64,8 +65,10 @@ namespace {
 // =====================================================================
 
 /// 告知性默认填充码（§5.2 行 12/§9.6 唯一已登记 INFO 码——不在
-/// PolicyErrorCode 错误码表内，直接使用 §9.6 建议码原文）。
-constexpr std::string_view kInfoDefaultAppliedCode = "POLICY-INFO-DEFAULT-APPLIED";
+/// PolicyErrorCode 错误码表内；POL-T10 迁移：字面量唯一在 Diagnostics.cpp
+/// 码表，本常量为编译期码表引用别名——NFR-MNT-03 单一权威）。
+constexpr std::string_view kInfoDefaultAppliedCode =
+    policyDiagCode(PolicyDiagCode::InfoDefaultApplied);
 
 /**
  * @brief 数值的确定性文本格式（%.17g——round-trip 精确；仅进诊断文案，
