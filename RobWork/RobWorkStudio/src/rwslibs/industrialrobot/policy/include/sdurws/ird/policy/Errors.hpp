@@ -49,7 +49,8 @@ namespace sdurws::ird::policy {
 
 // =====================================================================
 // PolicyErrorCode——policy 全量稳定错误码枚举（POL-T02 落位 14 值；
-// POL-T03 表尾追加 EncodingInvalid → 15 值）。
+// POL-T03 表尾追加 EncodingInvalid → 15 值；POL-T05 表尾追加
+// PortAssemblyIncomplete → 16 值）。
 // 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加 2 值：
 // PolicyObjectInvalid（发布对象工厂即时校验码——evidence SnapshotIncomplete
 // "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）与
@@ -121,12 +122,21 @@ enum class PolicyErrorCode {
     /// （传输/存储损坏或未校验写入），后者＝解码产物**实例**的保留值违约
     /// （全零身份）。evidence SliceIncomplete 同模式，随单元卡 v0.4 登记。
     EncodingInvalid,
+    /// policy/port-assembly-incomplete——④端口装配契约违约（表尾追加，
+    /// POL-T05——§9.1 前置条件行"实例由 L5/worker 宿主装配注入"的 fail-fast
+    /// 载体）：宿主在评估器半区（ICollisionEvaluator）尚未注入时调用
+    /// IPolicyProvider::collisionEvaluator()/collisionBackend() 语义所需的
+    /// 已装配能力。与 PolicyObjectInvalid 的分工：本码＝**端口实例**的装配
+    /// 状态违约（宿主装配期遗漏/装配未完成即对外服务），后者＝**策略对象**
+    /// 实例的保留值违约。建议码 POLICY-PORT-ASSEMBLY-INCOMPLETE 为补登建议值
+    /// （P-PR-6 同模式，随单元卡 v0.6 增量登记）。
+    PortAssemblyIncomplete,
 };
 
 /**
  * @brief 取错误码的稳定 token（注释列原文）。
  *
- * @param code [in] 错误码（全枚举 15 值均有 token——全函数，永不返回空）
+ * @param code [in] 错误码（全枚举 16 值均有 token——全函数，永不返回空）
  * @return 稳定 token 字符串（"policy/..." 形态；静态存储期，调用方无需释放）
  *
  * 确定性：编译期固定 switch 全枚举表（无 default——新增枚举值未登记表项时
@@ -151,7 +161,7 @@ std::string_view token(PolicyErrorCode code) noexcept;
  * 各自落位时登记），本函数不预发。
  *
  * @param code [in] 错误码
- * @return 建议注册码（"POLICY-*" 形态——全部 15 值均发建议码；正式码值以
+ * @return 建议注册码（"POLICY-*" 形态——全部 16 值均发建议码；正式码值以
  *         diagnostics StableCodeRegistry 注册为准，本函数不承担注册职责——PA-1）
  */
 std::string_view registryCode(PolicyErrorCode code) noexcept;
@@ -187,7 +197,7 @@ class PolicyError : public std::runtime_error {
 public:
     /**
      * @brief 以错误码＋细节构造；what() ＝ "<token>: <detail>"。
-     * @param code   [in] 稳定错误码（全表 15 值之一）
+     * @param code   [in] 稳定错误码（全表 16 值之一）
      * @param detail [in] 开发诊断细节（就地定位信息：字段/对象/数值等）；
      *               空串合法——此时 what() 恰为 token（无尾随冒号空格）
      */
