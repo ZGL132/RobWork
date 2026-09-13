@@ -1,6 +1,7 @@
 /**
  * @file   Errors.cpp
- * @brief  policy 错误码稳定 token 表与建议注册码表的唯一定义点（POL-T02）。
+ * @brief  policy 错误码稳定 token 表与建议注册码表的唯一定义点（POL-T02；
+ *         POL-T03/T05/T06/T07 随表尾追加同步维护两表——追加留痕见枚举注释）。
  *
  * 设计依据：
  *   - units/policy.md §3.1（Errors.hpp/.cpp 为 POL-T02 产物）、§5.2（诊断码
@@ -42,6 +43,8 @@ std::string_view token(PolicyErrorCode code) noexcept
     // POL-T06 表尾追加（§9.6 CLL 家族落位——会话构建期场景/名称校验）。
     case PolicyErrorCode::SceneInvalid:             return "policy/cll-scene-invalid";
     case PolicyErrorCode::NameUnresolved:           return "policy/cll-name-unresolved";
+    // POL-T07 表尾追加（评估期查询契约违约——§9.3 错误类型行评估半区载体）。
+    case PolicyErrorCode::QueryInvalid:             return "policy/cll-query-invalid";
     }
     // 不可达路径：全枚举已覆盖。返回空串仅为满足编译器（无 default 时
     // 控制流分析仍要求出口感）；测试全表用例保证该路径永不在运行期出现。
@@ -73,6 +76,9 @@ std::string_view registryCode(PolicyErrorCode code) noexcept
     // POL-T06 表尾追加（§9.6 建议码清单既有 CLL 行的正式落位——非补登）。
     case PolicyErrorCode::SceneInvalid:             return "POLICY-CLL-SCENE-INVALID";
     case PolicyErrorCode::NameUnresolved:           return "POLICY-CLL-NAME-UNRESOLVED";
+    // POL-T07 表尾追加（POLICY-CLL-QUERY-INVALID 为补登建议值——单元卡
+    // v0.8 登记；评估期其余 POLICY-CLL-* 码走诊断轨，不在本枚举）。
+    case PolicyErrorCode::QueryInvalid:             return "POLICY-CLL-QUERY-INVALID";
     }
     // 不可达路径：同 token() 说明。
     return {};

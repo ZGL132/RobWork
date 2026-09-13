@@ -567,13 +567,17 @@ void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,
 CollisionEvaluationSession::CollisionEvaluationSession(
     const EngineeringPolicySet& policy, const CollisionScene& scene,
     const IPolicyNameContext& names, CollisionBackendDescriptor backend,
-    std::shared_ptr<rw::proximity::CollisionStrategy> strategy)
+    std::shared_ptr<rw::proximity::CollisionStrategy> strategy,
+    std::shared_ptr<std::mutex> backendQueryMutex)
     : m_policy(policy)
     , m_scene(scene)
     , m_nameMapIdentity(names.nameMapContentIdentity())
     , m_backend(std::move(backend))
     , m_strategy(std::move(strategy))
     , m_collisionEnabled(policy.collision.enabled)
+    , m_device()                  // 评估半区（POL-T07——buildEvaluationHalf 填充）
+    , m_distanceCapable(false)    // 默认无距离能力（探测后更新）
+    , m_backendQueryMutex(std::move(backendQueryMutex))
 {
     // ---- 第一步：场景校验（§6.1——失败即无会话；对象索引同时装配） ----
     SceneObjectIndex objectIndex;
@@ -699,6 +703,11 @@ CollisionEvaluationSession::CollisionEvaluationSession(
     m_sessionIdentity = detail::computeSessionIdentity(m_policy.contentIdentity,
                                                        m_scene.sceneContentIdentity,
                                                        m_nameMapIdentity, m_backend);
+
+    // ---- 评估半区装配（POL-T07——§6.4 createSession 的评估半区延伸：
+    //      设备/Frame/名称/几何固化与距离能力探测；实现见 CollisionQuery.cpp。
+    //      置于三步之后：评估半区消费三步产物（作用域/策略/互斥缺省自建）。 ----
+    buildEvaluationHalf(names);
 }
 
 rw::proximity::ProximitySetup

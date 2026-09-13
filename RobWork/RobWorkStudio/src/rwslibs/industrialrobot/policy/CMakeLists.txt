@@ -80,12 +80,21 @@ if(TARGET sdurw_kinematics)
                                           # sessionIdentity）＋复现要素字面量
                                           # 单点（detail::makeBuiltinBackend-
                                           # Descriptor）——§12 POL-T06 产物行；
-                                          # 评估半区归 POL-T07 同文件增量落位
+                                          # 构造函数末段调用评估半区装配
+                                          # （POL-T07，实现在 CollisionQuery.cpp）
+        src/CollisionQuery.cpp            # §6.3/§6.4/§6.6/§7.4 评估半区
+                                          # （POL-T07：buildEvaluationHalf
+                                          # 装配＋evaluate 执行序——setState/
+                                          # 逐对查询/取消/异常捕获/稳定排序/
+                                          # 边界值决策；消费 rw 非模板类
+                                          # Device/Frame/Kinematics/
+                                          # CollisionStrategy/DistanceStrategy）
         src/RobWorkCollisionEvaluator.cpp)  # §6.5/§9.3 唯一实现绑定（RobWork-
                                           # CollisionEvaluator 方法＋make 唯一
                                           # 构造入口＋内置 ProximityStrategyRW
-                                          # 实例化——含 RobWork 命名标识符的
-                                          # 零字面量 TU，切分说明见该文件头）
+                                          # 实例化＋评估器级查询互斥——含
+                                          # RobWork 命名标识符的零字面量 TU，
+                                          # 切分说明见该文件头）
 
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math
@@ -120,6 +129,11 @@ if(TARGET sdurw_kinematics)
         test/CollisionSessionTest.cpp)  # POL-T06：POL-SCOPE-1/2 构建期（作用域
                                         # 矩阵展开/冲突拒绝两层防御）＋场景校验
                                         # 守卫＋会话身份确定性＋检测器初始化
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/CollisionEvaluationTest.cpp)  # POL-T07：POL-EVAL-1~9/POL-EXC-1/
+                                           # POL-CONC-1（AT-19 载体）＋POL-LATE-1
+                                           # ＋R-POL-5/D-9 结构断言——真实后端
+                                           # 解析算例＋脚本化碰撞/距离替身
 endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES

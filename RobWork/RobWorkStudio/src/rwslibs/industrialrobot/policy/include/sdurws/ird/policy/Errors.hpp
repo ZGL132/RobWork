@@ -51,7 +51,8 @@ namespace sdurws::ird::policy {
 // PolicyErrorCode——policy 全量稳定错误码枚举（POL-T02 落位 14 值；
 // POL-T03 表尾追加 EncodingInvalid → 15 值；POL-T05 表尾追加
 // PortAssemblyIncomplete → 16 值；POL-T06 表尾追加 CLL 家族前两值
-// SceneInvalid/NameUnresolved → 18 值）。
+// SceneInvalid/NameUnresolved → 18 值；POL-T07 表尾追加评估期查询违约码
+// QueryInvalid → 19 值）。
 // 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加：
 // PolicyObjectInvalid（发布对象工厂即时校验码——evidence SnapshotIncomplete
 // "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）、
@@ -59,7 +60,9 @@ namespace sdurws::ird::policy {
 // 落点，随单元卡 v0.4 登记）、PortAssemblyIncomplete（④端口装配契约违约码
 // ——§9.1 前置行 fail-fast 载体，随单元卡 v0.6 登记）、SceneInvalid 与
 // NameUnresolved（§9.6 CLL 家族——会话构建期场景校验的 fail-fast 载体，
-// §6.1"场景校验失败→PolicyError"，随单元卡 v0.7 登记）。
+// §6.1"场景校验失败→PolicyError"，随单元卡 v0.7 登记）、QueryInvalid
+// （评估期查询违约码——§9.3 错误类型行"调用方违约（样本数/kind 不符…）
+// →PolicyError"的 fail-fast 载体，随单元卡 v0.8 登记）。
 // 枚举顺序与数值一经交付不得改动/插入——持久化于诊断与报告的 token 虽为
 // 字符串，但枚举数值进入二进制契约面，稳定第一（runtime/evidence 同款
 // 纪律）；后续任务需要新码（§9.6 的 CLL 其余值、JNT、VERSION-INCOMPATIBLE
@@ -156,12 +159,25 @@ enum class PolicyErrorCode {
     /// 失败也不编造名称静默收窄必检集；属调用方装配/场景事实错误（fail-fast
     /// 轨），评估期同因（POL-T07 evaluate 路径）将转 Failed＋同码诊断。
     NameUnresolved,
+    /// policy/cll-query-invalid——评估期查询契约违约（表尾追加，POL-T07——
+    /// §9.3 错误类型行"调用方违约（样本数/kind 不符、场景校验失败）→
+    /// PolicyError"的评估半区 fail-fast 载体）：CollisionQuery 的 kind 与
+    /// 样本数/路径参数不一致（SingleState 须恰 1 构型且无路径参数；
+    /// PathSequence 须构型非空且 pathParameters 等长；SampleSet 须构型
+    /// 非空且无路径参数）。与 SceneInvalid 的分工：本码＝**查询载体**对
+    /// §6.2 匹配契约的违约（调用方装配错误），后者＝**场景装配**对 §6.1
+    /// 校验的违约。建议码 POLICY-CLL-QUERY-INVALID 为补登建议值（P-PR-6
+    /// 同模式，随单元卡 v0.8 增量登记；评估期其余 POLICY-CLL-* 码——
+    /// DETECTOR-UNAVAILABLE/CONTEXT-EXPIRED/EVALUATION-FAILED/
+    /// GEOMETRY-MISSING——走评估输出诊断轨（Failed＋DiagnosticRecord），
+    /// 不在本异常枚举，§9.6 建议码清单承载）。
+    QueryInvalid,
 };
 
 /**
  * @brief 取错误码的稳定 token（注释列原文）。
  *
- * @param code [in] 错误码（全枚举 18 值均有 token——全函数，永不返回空）
+ * @param code [in] 错误码（全枚举 19 值均有 token——全函数，永不返回空）
  * @return 稳定 token 字符串（"policy/..." 形态；静态存储期，调用方无需释放）
  *
  * 确定性：编译期固定 switch 全枚举表（无 default——新增枚举值未登记表项时
@@ -188,7 +204,7 @@ std::string_view token(PolicyErrorCode code) noexcept;
  * Compatibility 各自落位时登记），本函数不预发。
  *
  * @param code [in] 错误码
- * @return 建议注册码（"POLICY-*" 形态——全部 18 值均发建议码；正式码值以
+ * @return 建议注册码（"POLICY-*" 形态——全部 19 值均发建议码；正式码值以
  *         diagnostics StableCodeRegistry 注册为准，本函数不承担注册职责——PA-1）
  */
 std::string_view registryCode(PolicyErrorCode code) noexcept;
