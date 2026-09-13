@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T09",
+  "masterWp": "WP-07-T09",
+  "branch": "wp07-t09",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T09 增量：新增 include/sdurws/ird/policy/Compatibility.hpp（§3.1 组成表五实体——PolicyConsumerRequirements/PolicyIncompatibilityReason/PolicyCompatibility/checkPolicyCompatibility/IPolicyCompatibilityChecker；头内类型面零框架依赖，冒烟模式可消费）与 src/Compatibility.cpp（七项检查固定序全量收集＋POLICY-VERSION-INCOMPATIBLE 诊断构造；backend-mismatch 臂经字面量单点 detail::makeBuiltinBackendDescriptor＋版本宏 RW_VERSION 取'当前注册后端'复现要素——P-POL-5 暂取构建版本，不私定最终取值）。集成模式专属 gating（框架配置头冒烟模式不可解析——与 RobWorkCollisionEvaluator.cpp/JointLimits.cpp 同因同纪律）；链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project 编译依赖（R-1/R-2）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T09 增量：新增 test/CompatibilityTest.cpp（15 用例——POL-COMPAT-1/2 全量 reason：词表全表七值 token/正例零误报/schema 双臂比较型三要素/闭区间边界/碰撞开关双态/后端三字段变异＋精确命中/锚失配＋精确命中/模式三态/内容身份素材面/全量五臂按序收集/确定性/注入接口委托/O-20·P-POL-5 保守口径）；POL-T01~T08 既有 166 用例全部保持通过（集成合计 181/181＝166 既有＋15 新增；冒烟 112/112——POL-T09 新增 TU 仅集成模式编译，冒烟测试面不变）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CompatibilityReasonTokens/PolCompat1/PolCompat2/PolCompatAll/O20Ppol5",
+      "designRef": "units/policy.md §8.1/§8.2/§9.5、§11 POL-COMPAT-1/2 行、§15.3 P-POL-5、§12 POL-T09 行",
+      "cases": [
+        { "name": "CompatibilityReasonTokens.ReasonTokenTableExactSeven", "status": "passed", "modes": ["integration"], "trace": "§8.1 reasons 注释行七值词表逐一精确（kebab token——持久化于失效原因清单不改名）；含防御臂 PolicyInvalid token 钉住（该臂公共 API 下类型层不可达——发布门只产 Valid〔§4.5〕，设计事实登记非覆盖缺口，测试文件头声明）" },
+        { "name": "PolCompat1.DefaultRequirementsAcceptPublishedPolicy", "status": "passed", "modes": ["integration"], "trace": "acceptance 1 正例半边：缺省要求（当前代/不要碰撞/任意后端/不核对锚/不限模式）×合法已发布策略 → Compatible、reasons/diagnostics 双空——零误报（缓存接纳前常态）" },
+        { "name": "PolCompat1.SchemaFutureOnUpperBoundExceeded", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-COMPAT-1 版本臂，§8.2'schema 主版本变化'行左/PM-06）：消费方支持窗 [0,0]×策略代 1 → schema-future；POL-COMPAT-1 观测点'诊断三要素完整'——比较型三要素 Provided(实际 1/期望 0)＋无量纲单位 \"1\"、subject 绑定策略对象、localName=schemaVersion、码面 POLICY-VERSION-INCOMPATIBLE、context/cause/action 齐备" },
+        { "name": "PolCompat1.SchemaObsoleteOnLowerBoundUnderrun", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-COMPAT-1 版本臂对称，§8.2 行右）：要求窗 [2,2]×策略代 1 → schema-obsolete；三要素 Provided(1/2)/单位 \"1\"（旧代不再受消费方支持——字段布局不猜测）" },
+        { "name": "PolCompat1.SchemaBoundariesClosedIntervalAccept", "status": "passed", "modes": ["integration"], "trace": "§8.1 min/max 闭区间语义：策略代恰在任一端点（[1,1]）与窗口覆盖（[0,2]）均兼容——边界含于合规侧（D-08 同口径），无隐藏容差" },
+        { "name": "PolCompat1.CollisionRequiredButDisabledRejected", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§8.1 注释行原文'策略 enabled=false → 不兼容'）：requiresCollision=true×禁用策略 → collision-required-disabled＋诊断（localName=collision.enabled；布尔开关非数值判定——无比较型三要素，UX-03 数值判定口径）；正例双态（不需要碰撞×禁用策略、需要碰撞×启用策略）零命中" },
+        { "name": "PolCompat1.BackendMismatchOnAnyFieldDifference", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-COMPAT-1 后端臂，§8.2'碰撞后端版本变化'行/NFR-DEP-05）：要求后端与当前注册后端三字段（backendId/backendVersion/toleranceModel）分别变异各产一因（backend-mismatch，逐字段精确==——附录 D 第 12 项无容差）；诊断 cause 逐字携带双侧版本串原文（ERR-01 原因要素——字符串臂无比较型三要素，头文件实现口径 C-2/单元卡 §15.4 v0.10 ②登记）" },
+        { "name": "PolCompat1.BackendExactDescriptorOrAbsentAccepted", "status": "passed", "modes": ["integration"], "trace": "§8.1'缺省=任意已注册后端'正例：要求＝当前唯一注册后端真值（唯一装配线 makeRobWorkCollisionEvaluator().backend() 取得）→ 兼容零命中（逐字段相等）；nullopt 缺省＝不核对后端" },
+        { "name": "PolCompat1.AnchorMismatchOnAppendixDRevision", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-COMPAT-1 锚臂，§8.2'数值契约锚变化'行）：要求锚 appendixD@v1.17×策略默认锚 appendixD@v1.16 → numeric-contract-mismatch；cause 逐字携带双侧锚（附录 D 修订走需求变更）；正例＝默认锚精确命中零误报" },
+        { "name": "PolCompat1.ModeNotApplicableOutsideScope", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§8.1 评估模式行'适用性核对用'）：策略 modes={preview,quick}×目标 verified → mode-not-applicable，cause 携带目标 token 与适用清单（core toToken 稳定词表）；正例双态（目标在清单内、策略 modes 空集＝全部适用〔§4.2.1〕）零命中；模式仅消费前预检非评估输入（R-POL-5）" },
+        { "name": "PolCompat2.ContentIdentityChangeSuppliesSliceMaterial", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-COMPAT-2 本侧观测点'本侧供身份＋原因素材'，CON-05/06）：阈值 0.02→0.03 策略＝新内容身份（切片键素材——身份↔阈值绑定归 POL-T03 POL-ID-4）；兼容判定不按身份拒绝复用（越权＝替 evidence 行使缓存判定权——PA-1；拒复用由 judgeCacheHit 在切片层执行，跨单元契约测试联动归 evidence 侧）；stale 请求原因素材全量＋诊断齐备" },
+        { "name": "PolCompatAll.AllMismatchedReasonsCollectedInEnumOrder", "status": "passed", "modes": ["integration"], "trace": "实现口径 C-1（NFR-COR-02/evidence CacheHitReasons C-1 同款）：五臂同时失配 → reasons 按枚举声明序（检查序）全量收集、不首错短路；诊断与原因严格同构（每因一诊、码面/主体/localName 按下标对齐——schemaVersion/collision.enabled/collisionBackend/numericContractAnchor/applicability.modes）" },
+        { "name": "PolCompatAll.DeterminismSameInputSameResult", "status": "passed", "modes": ["integration"], "trace": "§9.5 确定性行（NFR-COR-02）：同输入重复判定 reasons 逐项相等＋diagnostics 逐字节相等（DiagnosticRecord 精确等值算子，含比较型三要素）" },
+        { "name": "PolCompatAll.CheckerInterfaceDelegatesToFreeFunction", "status": "passed", "modes": ["integration"], "trace": "§8.1 注入形态/§9.5'无状态；接口供宿主装配'：测试侧委托适配器（L5 宿主同构形态）经接口调用与自由函数直调结果逐字节相等——接口不是第二判定权威（单一判定权威 PA-1）；判据用非平凡结果（需要碰撞×禁用策略 → Incompatible）保证区分度" },
+        { "name": "O20Ppol5.BackendVersionConservativeStance", "status": "passed", "modes": ["integration"], "trace": "acceptance 2（O-20/P-POL-5 保守口径，§15.3 P-POL-5）：判定所核对后端与唯一装配线同源同值——要求侧携带装配线真值 → 兼容（判定内部推导与装配值逐字段相等＝同宏同字面量单点、无第二取值源的机械证明）；backendId 冻结 rw.proximity.builtin-rw、backendVersion 非空且为构建期口径（暂取构建版本——本单元不私定最终取值，WP-24-T01 冻结 NFR-DEP-05 后锁定回填，判定逻辑零变化）；仅版本串变异 → backend-mismatch（版本串变化即拒绝，回填后断言形态不变）" }
+      ]
+    },
+    {
+      "suite": "既有套件回归（PolicyBuild/PolicySet/PolicyInput/PolicyParsing/PolicyPort/CollisionSessionScope/CollisionSessionGuards/CollisionSessionIdentity/CollisionSessionDetector/CollisionSessionTokens/CollisionEvaluation/JointLimits）",
+      "designRef": "units/policy.md §12 POL-T01~T08 行（回归保护面）",
+      "cases": [
+        { "name": "（汇总）166 用例全部通过", "status": "passed", "modes": ["integration+smoke", "smoke 112 用例"], "trace": "回归保护：POL-T01~T08 交付面零回归——本任务零改动既有产品文件（Errors.hpp/PolicySet.hpp/CollisionQuery.hpp/CollisionEvaluator.hpp/PolicyPort.hpp/JointLimits.* 均未触碰，仅新增 Compatibility.* 与 CMake 增列）；集成合计 181/181＝166 既有＋15 新增；冒烟全量 665/665 零回归（core 61＋evidence 205＋evidence_contract 14＋policy 112＋runtime 176＋testkit 97）" }
+      ]
+    }
+  ],
+  "gates": {
+    "tool": "ird_gates（cmake --build build --config Release --target ird_gates）",
+    "result": "nonzero-exit：5 处命中——全部为既有跨单元测试目标链接面（evidence/evidence_contract/runtime 的 _test 与 testdata_lint → sdurws_ird_testkit），与 POL-T06/T07/T08 验收基线（SUB×4＋T1×1）逐码一致；本任务零新增命中（gate-all.log 无任何 Compatibility 相关条目；R4 品牌子串启发式零触发——Compatibility.cpp 自身文本无双引号对携带的框架品牌子串，版本宏为纯版本串、尖括号包含不在扫描面）",
+    "log": "gate-all.log"
+  },
+  "builds": {
+    "integration": { "command": "cmake --build build --config Release（仓库根，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON——CMakeCache 核对）；契约 verify 命令 cmake --build build --config Release --target sdurws_ird_policy_test 通过", "result": "零错误", "logs": ["integration-build.log", "verify-target-build.log"] },
+    "smoke": { "command": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp07-t09 -DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake ＋ cmake --build ... --config Release", "result": "配置与构建零错误（新增 TU 均为集成模式专属——冒烟测试面保持 112 用例）", "logs": ["smoke-configure.log", "smoke-build.log", "smoke-test-run.log", "smoke-test-run-all.log"] }
+  },
+  "testRuns": {
+    "integration": { "binary": "build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe", "result": "181/181 passed", "xml": "sdurws_ird_policy_test-integration.xml", "log": "integration-test-run.log" },
+    "smoke": { "binary": "build-smoke-wp07-t09/policy/Release/sdurws_ird_policy_test.exe", "result": "112/112 passed", "xml": "sdurws_ird_policy_test-smoke.xml", "log": "smoke-test-run.log" }
+  },
+  "validateTask": { "command": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T09.json", "result": "PASS (1 tasks)", "log": "validate-task.log" },
+  "acceptanceCoverage": {
+    "1": "POL-COMPAT-1/2 版本/后端/锚失配全量 reason 用例通过——15 用例逐条执行通过（词表全表/正例零误报/SchemaFuture·SchemaObsolete 比较型三要素/闭区间边界/CollisionRequiredDisabled 双态/BackendMismatch 三字段变异＋BackendExact 精确命中/AnchorMismatch＋精确命中/ModeNotApplicable 三态/PolCompat2 内容身份素材面/AllMismatchedReasons 五臂按序全量/Determinism/CheckerInterface 委托；本报告 testSuites 明细；gtest XML 为执行凭证）",
+    "2": "O-20/P-POL-5 保守口径：CollisionBackendDescriptor 后端版本串暂取构建版本——判定与装配线同宏同字面量单点（O20Ppol5.BackendVersionConservativeStance：装配线真值→兼容＝同源机械证明；版本串变异→失配；backendId 冻结断言）；本单元不私定最终取值（取值经 detail::makeBuiltinBackendDescriptor 单点＋RW_VERSION 注入，WP-24-T01 冻结 NFR-DEP-05 后锁定回填，判定逻辑零变化）——消账归版本基线所有者（契约注记）"
+  }
+}
