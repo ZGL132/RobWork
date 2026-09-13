@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T03",
+  "masterWp": "WP-07-T03",
+  "branch": "wp07-t03",
+  "date": "2026-09-13",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T03 增量：新增 src/PolicyInput.cpp（PolicyCodec encode/decode/encodeSemanticProjection/contentIdentity＋canonicalF64/parseCanonicalF64 浮点原语——§3.1 POL-T03 产物行、§5.3 编码规则唯一实现点；CR-02 摘要单点在其 contentIdentity）；占位 Policy.cpp 保留（STATIC 库锚点纪律）；链接面不变（core＋RobWork 基线，R-5 例外维持）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T03 增量：新增 test/PolicyInputTest.cpp（canonical 往返/位模式/排序无关性/近似相等禁入身份/CR-02 摘要边界/错误路径 23 用例）；PolicySetTest 码面全表用例同步（14→15 值，表尾追加 EncodingInvalid）；POL-T02 既有 30 用例与 POL-T01 红线扫描 4 用例全部保持通过"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyCodecId",
+      "designRef": "units/policy.md §5.3（canonical 编码与内容身份）、§11 POL-ID-1~4、§12 POL-T03 行",
+      "cases": [
+        { "name": "PolicyCodecId.RoundTripFullFieldsPreservesAll_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：全字段样例 decode(encode(x))==x 逐字段相等＋二次编码不动点（CON-06——同对象字节重复解析同结果的机制前提）" },
+        { "name": "PolicyCodecId.RoundTripMinimalFieldsPreservesAbsence_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：最小样例往返＋presence 缺失面（缺失≠空值≠零——CR-02 纪律、NFR-COR-03）" },
+        { "name": "PolicyCodecId.DeterministicEncodingAndIdentity_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：同输入两次编码同字节、两次身份同值（NFR-COR-02 纯函数确定性——worker/main 跨进程同身份前提）" },
+        { "name": "PolicyCodecId.RuleListOrderInvariance_YieldsIdenticalBytesAndIdentity_POL_ID_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：规则清单承载序打乱→同字节→同身份（§5.3 编码按规范序重排；Object/Role/Group 三类排序键覆盖）" },
+        { "name": "PolicyCodecId.UnorderedPairEndsInvariance_POL_ID_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：PairRule {a,b}≡{b,a}（§4.3 无序对语义进编码规范序）＋往返产物为规范化端序" },
+        { "name": "PolicyCodecId.SetOrderAndDuplicateInvariance_POL_ID_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：域/对象集合乱序＋重复→同投影字节→同身份（集合语义规范化：升序去重）" },
+        { "name": "PolicyCodecId.DisplayUnitNotInIdentity_POL_ID_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：0.02 m 与 20 mm 等值输入→同 SI 真值→同投影→同身份（UX-08/KIN-12 显示单位不入身份）；full 保真 token、投影结构性地无单位槽位（白盒钉住）" },
+        { "name": "PolicyCodecId.ThresholdChangeYieldsNewIdentity_POL_ID_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：安全间距 0.02→0.03→身份不等（CON-05/06——任何语义字段变化产生新身份，§8.6 失效矩阵机制前提）" },
+        { "name": "PolicyCodecId.NearEqualThresholdsDistinctIdentities_POL_ID_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/2：1 ulp 与 1e-15 差异→身份不等（附录 D 第 12 项——位模式编码、近似相等禁作身份键）" }
+      ]
+    },
+    {
+      "suite": "PolicyCodecFloat",
+      "designRef": "units/policy.md §5.3 浮点行、§11 POL-ID-5、evidence/runtime 同款双端纪律",
+      "cases": [
+        { "name": "PolicyCodecFloat.CanonicalF64RoundTripPreservesExactBits", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 位模式面：±0/极值/次正规位级往返精确（memcmp 断言——符号位参与身份语义）" },
+        { "name": "PolicyCodecFloat.CanonicalF64RejectsNonFiniteAtEncodeEntry", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.3 编码入口拒绝：NaN（quiet/signaling）/±Inf→ThresholdNonFinite（非有限值无稳定位模式语义）" },
+        { "name": "PolicyCodecFloat.ParseCanonicalF64RejectsNonFiniteBitPatterns", "status": "passed", "modes": ["smoke", "integration"], "trace": "双端纪律接收端：NaN/±Inf/信号 NaN 位型注入→EncodingInvalid（手工构造/传输损坏不静默进入身份）" },
+        { "name": "PolicyCodecFloat.OneUlpThresholdDifferenceChangesBytesAndIdentity_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 管线级钉：仅差 1 ulp 的两策略→编码字节不同＋身份不同（容差不入身份的端到端证据）" }
+      ]
+    },
+    {
+      "suite": "PolicyCodecCr02",
+      "designRef": "契约 acceptance 3、foundation-api-diff.md §CR-02（排除字段登记）、core.md §4.2 责任边界",
+      "cases": [
+        { "name": "PolicyCodecCr02.DigestViaCoreContentDigesterOnly_CR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3：contentIdentity＝core ContentDigester 对语义闭包投影编码的 SHA-256——手工重算逐字节相等（摘要单点证据：全单元唯一摘要调用点，不私设第二哈希路径）；mutation 探针敏感（摘要输入截断→本用例变红）" },
+        { "name": "PolicyCodecCr02.ExcludedFieldsPinned_CR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3：policyObject/origin/兼容注记变化→full 编码变化（往返保真面）但语义闭包投影与身份不变（CR-02 排除字段结构性不入身份）" },
+        { "name": "PolicyCodecCr02.ThresholdValueOriginNotInIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "实现口径钉：同数值（4π）不同阈值来源标注（DefaultAppendixD 对 Explicit）→同身份（§4.1\"来源标注不影响\"；评估行为仅消费数值——policy.md v0.4 登记）" }
+      ]
+    },
+    {
+      "suite": "PolicyCodecErrors",
+      "designRef": "units/policy.md §5.3（编码入口拒绝）、§9.2（\"字节损坏在解码期报错\"）、§4.3（reason 非空必填）、错误语义总纲",
+      "cases": [
+        { "name": "PolicyCodecErrors.EncodeRejectsNonFiniteThresholds", "status": "passed", "modes": ["smoke", "integration"], "trace": "编码入口拒绝：NaN/±Inf 阈值→ThresholdNonFinite（原文可驻留 RawPolicyInput 供解析诊断，但无效策略不产生修订〔SA-15〕——要求持久化即契约违约）" },
+        { "name": "PolicyCodecErrors.EncodeRejectsContractViolations", "status": "passed", "modes": ["smoke", "integration"], "trace": "encode fail-fast 面：无效 policyObject（全零）/未来与未知 schema 代（PM-06 同款码面）/空数值契约锚/空 reason 规则（detail 谓词复用）——逐项码面核对" },
+        { "name": "PolicyCodecErrors.DecodeRejectsWrongMagicFormAndVersions", "status": "passed", "modes": ["smoke", "integration"], "trace": "decode 帧级违约：错 magic（CR-02 magic 互异的解码面）/语义投影形态 0x01 拒绝（非往返载体）/字节内版本代 future/unknown" },
+        { "name": "PolicyCodecErrors.DecodeRejectsTruncatedAndPaddedBytes", "status": "passed", "modes": ["smoke", "integration"], "trace": "长度前缀纪律解码面：截断/尾部垃圾/载荷长度声明篡改→EncodingInvalid（不静默截断）" },
+        { "name": "PolicyCodecErrors.DecodeRejectsUnknownEnumAndBadPresence", "status": "passed", "modes": ["smoke", "integration"], "trace": "载荷级违约：未知域枚举值（越表 0x7F）/非法 presence 字节（0xFF）→EncodingInvalid（确定性布局偏移＋布局锚断言，漂移即显式失败）" },
+        { "name": "PolicyCodecErrors.DecodeRejectsNonFiniteBitPatternAndEmptyReason", "status": "passed", "modes": ["smoke", "integration"], "trace": "载荷级违约：f64 槽位注入 quiet NaN 位型→EncodingInvalid（接收端双端纪律）；reason 长度前缀清零→EncodingInvalid（§4.3 非空必填的解码面，先于尾部耗尽检查）" },
+        { "name": "PolicyCodecErrors.RoundTripPreservesUtf8AndUnitTokens", "status": "passed", "modes": ["smoke", "integration"], "trace": "往返保真：多字节中文 reason/note、单位 token\"mm\"、数值 25.4——UTF-8 字节直载无转码（\"字节对 project 不透明\"往返语义）" }
+      ]
+    },
+    {
+      "suite": "PolicyErrors/PolicyThresholdField/PolicyJointThresholds/PolicyCollisionRules/PolicySetGate（POL-T02 既有回归）",
+      "designRef": "units/policy.md §3.1/§4/§5.2（POL-T02 套件；本任务仅码面全表同步 14→15 值）",
+      "cases": [
+        { "name": "26 个 POL-T02 用例＋码面全表同步（TokenTableFullEnumeration/RegistryCodeTableFullEnumeration 增 EncodingInvalid 行）", "status": "passed", "modes": ["smoke", "integration"], "trace": "POL-T03 回归：码面追加后全表锚定 15 值逐字核对通过；字段约束/四态承载/发布门/不可变性用例零回归" }
+      ]
+    },
+    {
+      "suite": "PolicyBuild",
+      "designRef": "units/policy.md §3.2/§3.4、§12 POL-T01（红线扫描回归）",
+      "cases": [
+        { "name": "PolicyBuild.SourceTreeReachable_POL_BUILD 等 4 用例", "status": "passed", "modes": ["smoke", "integration"], "trace": "POL-T01 回归：源码树可达/零 Qt（新增头与 .cpp 无 Q 头）/include 白名单 {core, policy}（PolicyInput.hpp 仅 include core 契约＋policy 自有头——R-1/R-2）/R-5 基线清单钉住" }
+      ]
+    }
+  ],
+  "summary": { "total": 53, "passed": 53, "failed": 0, "modes": { "smoke": "53/53", "integration": "53/53" } },
+  "failureCapabilitySelfCheck": {
+    "method": "mutation 探针：临时把 PolicyCodec::contentIdentity 的摘要输入由全量投影字节截断为 size()-1（摘要单点实现的变异）后重编译重跑",
+    "result": "DigestViaCoreContentDigesterOnly_CR_02 如期变红（1 failed / 52 passed）——该用例对摘要实现漂移敏感（手工重算对投影全量摘要，实现路径任何第二口径即失配）；复原后双模式 53/53 复绿（终态证据 XML/日志均出自复原后构建）",
+    "date": "2026-09-13"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp07-t03/smoke-configure.log",
+      "traceability/builds/wp07-t03/smoke-build.log",
+      "traceability/builds/wp07-t03/smoke-test-run.log",
+      "traceability/builds/wp07-t03/sdurws_ird_policy_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp07-t03/integration-build.log",
+      "traceability/builds/wp07-t03/integration-test-run.log",
+      "traceability/builds/wp07-t03/sdurws_ird_policy_test-integration.xml",
+      "traceability/builds/wp07-t03/gate-all.log"
+    ],
+    "gates": [
+      "traceability/builds/wp07-t03/ird_gates-current-wp07t03.log",
+      "traceability/builds/wp07-t03/ird_gates-base-wp07t03.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test ——通过（集成模式 exit 0，构建日志见 evidence）",
+  "gateAll": {
+    "result": "16/17——唯一失败项＝ird_gates 5 处命中，经 base 快照（ab4f3ba2）复跑证明全部为 base 既有，非本任务引入",
+    "method": "①本分支树运行 gate-all.ps1（ird_gates＋双模式全部 _test 目标）→ ird_gates 命中 5 项；②以 git worktree 检出 base ab4f3ba2 快照，以同参数 cmake -P 复跑 ird_gates.cmake → 命中**逐字相同**的 5 项；③本任务 diff 面仅含 policy 单元文件＋单元卡/留痕——命中目标（sdurws_ird_evidence_test/sdurws_ird_evidence_contract_test/sdurws_ird_runtime_test 直链 testkit×3、sdurws_ird_testdata_lint→testkit×2）的 CMakeLists 均不在本任务改动面与 allowedFiles 内",
+    "hitsAllPreexisting": [
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 表外依赖边（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单",
+      "IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1）"
+    ],
+    "verdict": "DoD 第 2 条口径：ird_gates 对**本次变更**零命中（base 既有 5 项不因本任务增减——base/分支命中清单逐字一致）；既有命中按 DTB §5.4 属治理事项（POL-T02 验收已同口径登记），不由 POL-T03 私改其他单元（allowedFiles/forbiddenFiles 边界）",
+    "evidence": [
+      "traceability/builds/wp07-t03/gate-all.log",
+      "traceability/builds/wp07-t03/ird_gates-base-wp07t03.log",
+      "traceability/builds/wp07-t03/ird_gates-current-wp07t03.log"
+    ]
+  },
+  "notes": "①CR-02 处置（acceptance 3）：contentIdentity 为全单元唯一摘要调用点（core ContentDigester，栈上局部实例每线程各持），摘要输入恒为同次调用产出的语义闭包投影编码（身份与投影不可独立漂移）；浮点原语 canonicalF64/parseCanonicalF64 为 policy 侧唯一浮点进出通道（evidence/runtime 同款双端纪律——CR-02 只约束摘要算法唯一归 core，编码原语按单元本地实现，四家纪律一致）；②双形态编码（full 0x00 对象字节/semantic 0x01 语义闭包投影）为 CR-02 排除字段登记的机械落点——排除字段在投影中结构性不存在；③实现口径登记（policy.md v0.4）：阈值来源标注（PolicyValueOrigin）与域元数据（PolicyThresholdDomain）不入身份（评估行为仅消费数值）；RawPolicyInput 阈值以 RawThresholdInput{原始值＋显示单位 token}承载保留原文；④ODR 修复：PolicySet.hpp detail 校验谓词补 inline（POL-T03 引入第二产品翻译单元触发 MSVC LNK2005——既有头缺陷，语义零变化，v0.4 登记）；⑤错误码面：PolicyErrorCode 14→15 值（表尾追加 EncodingInvalid——§9.2\"字节损坏在解码期报错\"落点；建议码 POLICY-ENCODING-INVALID 补登，P-PR-6 同模式），PolicySetTest 全表锚定同步；⑥门禁：validate-task.ps1 PASS；ird_gates 见 gateAll 节（对本次变更零命中，5 项 base 既有已用 base 快照复跑逐字对比证明）"
+}
