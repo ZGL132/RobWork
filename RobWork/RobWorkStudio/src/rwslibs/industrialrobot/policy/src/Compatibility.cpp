@@ -39,6 +39,7 @@
 #include <sdurws/ird/policy/Compatibility.hpp>
 
 #include <sdurws/ird/policy/CollisionEvaluator.hpp>
+#include <sdurws/ird/policy/Diagnostics.hpp>
 
 #include <RobWorkConfig.hpp>
 
@@ -51,14 +52,16 @@
 namespace sdurws::ird::policy {
 
 // =====================================================================
-// 建议诊断码单点（POL-T10 Diagnostics.hpp 落位后迁入码表——JointLimits.cpp
-// 同款迁移通道，§9.6 表尾补登建议值模式）。
+// 建议诊断码（POL-T10 迁移：字面量唯一在 Diagnostics.cpp 码表——本 TU 常
+// 量为编译期码表引用别名，NFR-MNT-03 单一权威；原单点字面量按 §15.4 v0.10
+// ⑥的迁移通道注记收敛）。
 // =====================================================================
 
 /// 建议码：策略版本不兼容（§8.2 诊断行原文码名；比较型——见各臂构造）。
-/// 码值权威归 diagnostics StableCodeRegistry（PA-1）——本 TU 只产出建议码
-/// 原文，不承担注册职责。
-constexpr std::string_view kCodePolicyVersionIncompatible = "POLICY-VERSION-INCOMPATIBLE";
+/// 码值权威归 diagnostics StableCodeRegistry（PA-1）——本 TU 只产出建议码，
+/// 不承担注册职责。
+constexpr std::string_view kCodePolicyVersionIncompatible =
+    policyDiagCode(PolicyDiagCode::VersionIncompatible);
 
 /// 比较型数值侧的来源方法标记（ValueProvenance.methodTag 语法 [a-z0-9./_-]）：
 /// 标记实际值取自已发布策略对象的只读派生（兼容判定的核对面）——审计追溯

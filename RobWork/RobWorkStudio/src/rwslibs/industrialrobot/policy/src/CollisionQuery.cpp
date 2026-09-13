@@ -32,14 +32,16 @@
  *   的切分沿用 policy.md §15.4 v0.7 登记：框架命名标识符
  *   集中在姊妹 TU；本 TU 含评估
  *   执行的 rw 基线调用（setQ/worldTframe/inCollision/distance——框架
- *   API 调用而非框架命名标识符定义）与诊断字面量（评估期 POLICY-CLL-*
- *   单点，POL-T10 Diagnostics.hpp 落位前的承载处）。ird_gates IRD-GATE-R4
+ *   API 调用而非框架命名标识符定义）与诊断码消费（评估期 POLICY-CLL-*——
+ *   POL-T10 起经 Diagnostics.hpp 码表引用别名取码，本 TU 零诊断码字面量）。
+ *   ird_gates IRD-GATE-R4
  *   的跨引号对启发式对本 TU 的触发面＝API 调用名（非字符串拼接行为）——
  *   与 POL-T06 的切分动机一致，误报隔断归属例外登记流程（O-12/P-POL-8）。
  *
- * 评估期诊断码（建议码单点——码值权威归 diagnostics StableCodeRegistry，
- * PA-1；§9.6 CLL 家族清单行，随单元卡 v0.8 补登留痕；POL-T10 落位
- * Diagnostics.hpp 后迁入其码表，本 TU 届时仅消费）：
+ * 评估期诊断码（POL-T10 起统一取自 Diagnostics.hpp 建议码表——码值权威归
+ * diagnostics StableCodeRegistry，PA-1；NFR-MNT-03 单一字面量点。本 TU 原
+ * 单点字面量〔v0.8 ⑥登记〕已按 §9.6 迁移通道注记收敛为码表引用别名，
+ * JointLimits.cpp 同任务同款迁移）：
  *   POLICY-CLL-CONTEXT-EXPIRED      迟到调用拒绝（POL-LATE-1）
  *   POLICY-CLL-DETECTOR-UNAVAILABLE 检测器能力不可用（KIN-05；P-POL-11）
  *   POLICY-CLL-EVALUATION-FAILED    评估内部异常/非有限实测值（§7.4/§7.5）
@@ -53,6 +55,7 @@
  */
 
 #include <sdurws/ird/policy/CollisionEvaluator.hpp>
+#include <sdurws/ird/policy/Diagnostics.hpp>
 
 #include <rw/common/Exception.hpp>
 #include <rw/kinematics/Kinematics.hpp>
@@ -84,16 +87,21 @@ namespace sdurws::ird::policy {
 
 namespace {
 
-// ---- 评估期诊断建议码单点（见文件头码表说明——POL-T10 前的承载处）----
+// ---- 评估期诊断建议码（POL-T10 迁移：字面量唯一在 Diagnostics.cpp 码表，
+//      本 TU 常量为编译期码表引用别名——NFR-MNT-03 单一权威，使用点零改动）----
 
 /// 迟到调用拒绝（POL-LATE-1——§6.1 只读生命周期第二层防护的执行点）。
-constexpr std::string_view kCodeContextExpired = "POLICY-CLL-CONTEXT-EXPIRED";
+constexpr std::string_view kCodeContextExpired =
+    policyDiagCode(PolicyDiagCode::CllContextExpired);
 /// 检测器能力不可用（KIN-05"缺检测器≠无碰撞"；距离能力缺口——P-POL-11）。
-constexpr std::string_view kCodeDetectorUnavailable = "POLICY-CLL-DETECTOR-UNAVAILABLE";
+constexpr std::string_view kCodeDetectorUnavailable =
+    policyDiagCode(PolicyDiagCode::CllDetectorUnavailable);
 /// 评估内部异常/非有限实测值（§6.3 框架异常捕获；§7.4 NaN/±Inf 行）。
-constexpr std::string_view kCodeEvaluationFailed = "POLICY-CLL-EVALUATION-FAILED";
+constexpr std::string_view kCodeEvaluationFailed =
+    policyDiagCode(PolicyDiagCode::CllEvaluationFailed);
 /// 作用域对象几何缺口（告知性——§7.5"不输出无碰撞结论字段"，KIN-05）。
-constexpr std::string_view kCodeGeometryMissing = "POLICY-CLL-GEOMETRY-MISSING";
+constexpr std::string_view kCodeGeometryMissing =
+    policyDiagCode(PolicyDiagCode::CllGeometryMissing);
 
 /**
  * @brief 评估期诊断记录构造（core::DiagnosticRecord::make 的评估语境包装

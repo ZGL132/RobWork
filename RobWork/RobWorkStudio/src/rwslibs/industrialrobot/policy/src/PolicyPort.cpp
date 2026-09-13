@@ -28,8 +28,9 @@
  *      依赖——避免锁传播到宿主适配器）。
  *   5. 诊断构造的码面/文案单源（本文件匿名命名空间——与 PolicyParsing.cpp
  *      同款纪律）；诊断码值权威归 diagnostics StableCodeRegistry，本文件
- *      只产出建议码原文（PA-1；POLICY-OBJECT-MISSING 为 §9.6 清单表尾补登
- *      建议值——单元卡 v0.6 登记）。
+ *      只产出建议码（PA-1；POLICY-OBJECT-MISSING 为 §9.6 清单表尾补登
+ *      建议值——单元卡 v0.6 登记；POL-T10 起码面经 Diagnostics.hpp 码表
+ *      引用别名取得——NFR-MNT-03 单一字面量点，本文件零建议码字面量）。
  *
  * 线程安全：resolvePolicy 为 const＋memo 表经互斥量保护（§9.1 线程行
  * "缓存内部同步"）；并发未命中允许重复计算（解析纯函数——结果逐字段一致，
@@ -37,9 +38,9 @@
  * 固定文案（NFR-COR-02）。
  */
 
-#include <sdurws/ird/policy/PolicyPort.hpp>
-
+#include <sdurws/ird/policy/Diagnostics.hpp>
 #include <sdurws/ird/policy/PolicyInput.hpp>
+#include <sdurws/ird/policy/PolicyPort.hpp>
 
 #include <utility>
 
@@ -52,10 +53,12 @@ namespace {
 // 与 PolicyParsing.cpp 匿名命名空间同款纪律）。
 // =====================================================================
 
-/// 端口存储侧条件码（§9.6 清单表尾补登建议值——单元卡 v0.6 登记；码值
-/// 权威归 diagnostics StableCodeRegistry，PA-1）。覆盖同一错误矩阵项族：
-/// 对象缺失（存储无字节）与版本未指定（不可编址取数）——cause 文案区分。
-constexpr std::string_view kObjectMissingCode = "POLICY-OBJECT-MISSING";
+/// 端口存储侧条件码（§9.6 清单表尾补登建议值——单元卡 v0.6 登记；POL-T10
+/// 迁移：字面量唯一在 Diagnostics.cpp 码表，本常量为编译期码表引用别名
+/// ——NFR-MNT-03 单一权威）。覆盖同一错误矩阵项族：对象缺失（存储无字节）
+/// 与版本未指定（不可编址取数）——cause 文案区分。
+constexpr std::string_view kObjectMissingCode =
+    policyDiagCode(PolicyDiagCode::ObjectMissing);
 
 /**
  * @brief 组装端口层诊断（subject 恒绑请求对象——ERR-01 稳定诊断绑定对象；

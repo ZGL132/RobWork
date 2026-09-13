@@ -28,11 +28,10 @@
  *   故本 TU 与其测试 TU 同为**集成模式专属**（CMakeLists gating——冒烟
  *   模式无框架 include 路径；runtime RT-T07/POL-T07 同款分工登记）。
  *
- * 评估期诊断码（建议码单点——码值权威归 diagnostics StableCodeRegistry，
- * PA-1；§9.6 建议码清单行，随单元卡 v0.9 补登留痕；POL-T10 落位
- * Diagnostics.hpp 后迁入其码表，本 TU 届时仅消费；CollisionQuery.cpp
- * 同模式——CLL 家族两值在该 TU 亦有各自单点，两处字面量同源自 §9.6
- * 同一清单行，迁码表时一并收敛）：
+ * 评估期诊断码（POL-T10 起统一取自 Diagnostics.hpp 建议码表——码值权威归
+ * diagnostics StableCodeRegistry，PA-1；NFR-MNT-03 单一字面量点。本 TU 原
+ * 单点字面量〔v0.9 ⑧登记〕已按 §9.6 迁移通道注记收敛为码表引用别名，
+ * CollisionQuery.cpp 同任务同款迁移）：
  *   POLICY-JNT-TABLE-INVALID             关节表区间非法（伴随 IntervalInvalid）
  *   POLICY-JNT-ENGINEERING-RANGE-INVALID 工程工作范围非法（伴随 EngineeringRangeInvalid）
  *   POLICY-CLL-NAME-UNRESOLVED           名称不可解析（ARC-04 不猜测）
@@ -42,6 +41,7 @@
  * 同 (查询, 策略, 名称映射) 输入必得逐字段相等输出（NFR-COR-02）。
  */
 
+#include <sdurws/ird/policy/Diagnostics.hpp>
 #include <sdurws/ird/policy/JointLimits.hpp>
 
 #include <algorithm>
@@ -64,18 +64,22 @@ namespace sdurws::ird::policy {
 
 namespace {
 
-// ---- 评估期诊断建议码单点（见文件头码表说明——POL-T10 前的承载处）----
+// ---- 评估期诊断建议码（POL-T10 迁移：字面量唯一在 Diagnostics.cpp 码表，
+//      本 TU 常量为编译期码表引用别名——NFR-MNT-03 单一权威，使用点零改动）----
 
 /// 关节表区间非法（伴随 IntervalInvalid 发现——§9.6 JNT 家族清单行）。
-constexpr std::string_view kCodeJntTableInvalid = "POLICY-JNT-TABLE-INVALID";
+constexpr std::string_view kCodeJntTableInvalid =
+    policyDiagCode(PolicyDiagCode::JntTableInvalid);
 /// 工程工作范围非法（伴随 EngineeringRangeInvalid 发现——同上）。
 constexpr std::string_view kCodeJntEngineeringRangeInvalid =
-    "POLICY-JNT-ENGINEERING-RANGE-INVALID";
+    policyDiagCode(PolicyDiagCode::JntEngineeringRangeInvalid);
 /// 名称不可解析（§7.5——不猜测，ARC-04；Errors.hpp NameUnresolved 注释的
 /// "评估期同因转 Failed＋同码诊断"路径）。
-constexpr std::string_view kCodeNameUnresolved = "POLICY-CLL-NAME-UNRESOLVED";
+constexpr std::string_view kCodeNameUnresolved =
+    policyDiagCode(PolicyDiagCode::CllNameUnresolved);
 /// 构型位置非有限（§7.5"NaN/±Inf 不伪造、不入 findings"）。
-constexpr std::string_view kCodeEvaluationFailed = "POLICY-CLL-EVALUATION-FAILED";
+constexpr std::string_view kCodeEvaluationFailed =
+    policyDiagCode(PolicyDiagCode::CllEvaluationFailed);
 
 /// 诊断 context 固定串（同码同上下文——诊断的稳定分类面；用户可见文案权威
 /// 归 diagnostics/ui——NFR-REL-05，本串仅为执行语境标注）。
