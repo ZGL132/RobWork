@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现错误与策略类型（PolicySet 四态承载）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T01"
   ],
