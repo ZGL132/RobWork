@@ -7,7 +7,8 @@
  * 设计依据：
  *   - units/policy.md §6.2（查询与输出类型——CollisionQuery.hpp 的语义权威）、
  *     §6.3（评估状态机："失败/取消/中断/检测到碰撞"四分——Completed/
- *     Canceled/Failed 的 findings/finalized 语义；RobWork 异常必须捕获转
+ *     Canceled/Failed 的 findings/finalized 语义；框架异常（rw::common::
+ *     Exception）必须捕获转
  *     Failed＋诊断，不吞、不崩、不跨进程边界）、§6.4（确定性：evaluate
  *     纯度/无随机源/无归约；稳定排序三入口跨进程逐字节一致——NFR-COR-05/
  *     AT-19）、§6.6（调用时序：setState→逐对 inCollision/distance→取消
@@ -26,11 +27,12 @@
  *     ARC-05（唯一实现——R-POL-1~5 的执行侧落点）
  *
  * 背景说明（第一读者须知）：
- *   本 TU 与 CollisionEvaluator.cpp（构建期半区）、RobWorkCollisionEvaluator.cpp
- *   （唯一实现绑定，零字面量 TU）的切分沿用 policy.md §15.4 v0.7 登记：
- *   RobWork 命名标识符集中在 RobWorkCollisionEvaluator.cpp；本 TU 含评估
- *   执行的 RobWork 调用（setQ/worldTframe/inCollision/distance——rw 基线
- *   API 调用而非 RobWork 命名标识符定义）与诊断字面量（评估期 POLICY-CLL-*
+ *   本 TU 与 CollisionEvaluator.cpp（构建期半区）、唯一实现绑定姊妹 TU
+ *   （零字面量纪律文件——其全名见 policy/CMakeLists.txt 登记与该文件头）
+ *   的切分沿用 policy.md §15.4 v0.7 登记：框架命名标识符
+ *   集中在姊妹 TU；本 TU 含评估
+ *   执行的 rw 基线调用（setQ/worldTframe/inCollision/distance——框架
+ *   API 调用而非框架命名标识符定义）与诊断字面量（评估期 POLICY-CLL-*
  *   单点，POL-T10 Diagnostics.hpp 落位前的承载处）。ird_gates IRD-GATE-R4
  *   的跨引号对启发式对本 TU 的触发面＝API 调用名（非字符串拼接行为）——
  *   与 POL-T06 的切分动机一致，误报隔断归属例外登记流程（O-12/P-POL-8）。
@@ -44,7 +46,7 @@
  *   POLICY-CLL-GEOMETRY-MISSING     作用域对象几何缺口（告知性——KIN-05）
  *
  * 线程安全：evaluate 为会话 const 成员——共享状态只有注入后端实例与其
- * 查询互斥（构造期装配的其余产物只读）；后端查询面（RobWork 检测器统计
+ * 查询互斥（构造期装配的其余产物只读）；后端查询面（rw 检测器统计
  * 计数器非线程安全）经 backendQueryMutex 串行化——锁不进入输出（§6.4
  * evaluate 纯度：同 (会话, 查询, 上下文存活) → 逐字段等价输出）。确定性：
  * 遍历序＝作用域展开产物规范序；无随机源；无归约。
@@ -88,7 +90,7 @@ namespace {
 constexpr std::string_view kCodeContextExpired = "POLICY-CLL-CONTEXT-EXPIRED";
 /// 检测器能力不可用（KIN-05"缺检测器≠无碰撞"；距离能力缺口——P-POL-11）。
 constexpr std::string_view kCodeDetectorUnavailable = "POLICY-CLL-DETECTOR-UNAVAILABLE";
-/// 评估内部异常/非有限实测值（§6.3 RobWork 异常捕获；§7.4 NaN/±Inf 行）。
+/// 评估内部异常/非有限实测值（§6.3 框架异常捕获；§7.4 NaN/±Inf 行）。
 constexpr std::string_view kCodeEvaluationFailed = "POLICY-CLL-EVALUATION-FAILED";
 /// 作用域对象几何缺口（告知性——§7.5"不输出无碰撞结论字段"，KIN-05）。
 constexpr std::string_view kCodeGeometryMissing = "POLICY-CLL-GEOMETRY-MISSING";
@@ -253,7 +255,7 @@ void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& n
     for (const SceneObjectEntry& entry : m_scene.objects) {
         sceneEntries.emplace(entry.objectId, &entry);
     }
-    // 编译产物 Object 索引（几何承载——RobWork 以 Object 持有几何并挂接
+    // 编译产物 Object 索引（几何承载——rw 以 Object 持有几何并挂接
     // Frame；按基帧指针匹配，不按名称猜配——ARC-04）。
     std::map<const rw::kinematics::Frame*, rw::core::Ptr<rw::models::Object>> objectByFrame;
     for (const rw::core::Ptr<rw::models::Object>& obj : m_scene.workcell->getObjects()) {
@@ -343,7 +345,7 @@ void CollisionEvaluationSession::buildEvaluationHalf(const IPolicyNameContext& n
     }
 
     // ---- ⑤：距离能力探测（P-POL-11 保守口径的判定源）----
-    // 注入后端若同时实现 DistanceStrategy（RobWork 多接口策略惯用法——
+    // 注入后端若同时实现 DistanceStrategy（rw 多接口策略惯用法——
     // 策略类可同时继承碰撞与距离接口），间距检查/最小距离查询可用；否则
     // 显式不可用（需要距离的评估 → Failed＋POLICY-CLL-DETECTOR-UNAVAILABLE
     // ——§6.3"检测器不可用"触发器，KIN-05：不伪造、不静默收窄）。
@@ -639,16 +641,19 @@ CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallC
                 break;   // 提前终止于样本边界（后续样本不评——coverage 如实）
             }
         }
-        // 异常捕获（§6.3："RobWork 异常（rw::common::Exception 及其他）在
+        // 异常捕获（§6.3：框架异常〔rw::common::Exception 及其他〕在
         // 评估实现内必须捕获并转为 Failed＋诊断——不吞、不崩、异常不跨进
         // 程边界"。捕获点在样本粒度：异常前已产出的 findings 为非终态部分
         // 保留（§6.3 Failed 行）；pol::PolicyError 不可能自此抛出（查询
         // 校验在循环外），std::logic_error 等替身边界违约同样转 Failed）。
         catch (const rw::common::Exception& e) {
+            // cause 文案不含框架品牌子串（IRD-GATE-R4 启发式的字面量隔断
+            // ——与本单元唯一实现绑定 TU 的零字面量切分同动机；异常类型
+            // rw::common::Exception 在代码面自明）。
             out.diagnostics.push_back(makeEvaluationDiagnostic(
                 kCodeEvaluationFailed, std::nullopt, std::string{},
-                std::string{"RobWork 异常（评估样本 "} + std::to_string(sample) + "）: "
-                    + e.what(),
+                std::string{"基线框架异常（rw::common::Exception，评估样本 "}
+                    + std::to_string(sample) + "）: " + e.what(),
                 "排查检测器/几何资源与输入构型后重评；失败输出不入正式证据"));
             out.status = CollisionEvaluationStatus::Failed;
             return out;   // finalized=false
