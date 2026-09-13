@@ -712,6 +712,16 @@
       "title": "industrialrobot/core/src/Units.cpp 存在 14 处 MSVC C4099 告警（sdurws::ird::core::Quantity<QuantityKind::Length/Angle/Mass/Time/…> 模板类型『以前使用 struct 现在使用 class』——struct/class 声明不一致，L174 起）；主仓增量树该文件无重编译活动而掩盖（F-036/F-052 同族『增量树掩盖』效应，方向为既有告警非错误）。非 EV-T10 引入（送验 diff 未触碰 core 单元；送验留痕增量树日志零告警的表述在其口径下真实），evidence 单元自身源文件零告警",
       "owner": "core 实现所有者（WP-03 后续任务随下次触及 Units.cpp/Units.hpp 时统一 struct/class 声明消除告警，避免独立格式化提交）",
       "resolution": "统一 Quantity 模板各具名特化/别名的 struct 与 class 声明形态（声明与定义同关键词）即闭合；全新树/CI 全量构建的告警清洁面前置（F-008 闭合后 CI 全量构建将暴露同类存量）。不影响 EV-T10 验收（pass——任务目标面 evidence 零 error 零告警）。编号顺延自 F-070，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-073",
+      "source": "EV-T11 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T11-20260913.md §4.9/§4.11，送验对象 cef36791c392d7edd091bcb9819eb98b937762ea，分支 wp05-t11）：验收者以 --gtest_list_tests 与 grep 实测对照提交散文计数发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "EV-T11 提交信息与 ird-test-report.json 散文计数失准四处：①实现提交 88801be9 与报告称 EvaluatorPortSuiteTest.cpp『15 用例』——实测 14 个 TEST；②报告称该文件『EvaluatorPortVerdict 8』——实测 9（EV-VER-1~5/8 各 1＋EV-VER-6 双例 2）；③报告称 _test 目标『既有 190 用例』——实测既有 191（191+14=205）；④实现提交影响面段称『既有 195 用例零修改回归』——按两目标口径应为 196（191+5）。F-041 同型（计数笔误、方向无粉饰）：XML（tests=205/14、failures=0 双模式四份）与报告汇总 total=219/passed=219 及验收者双模式亲测完全一致，差错仅在提交/报告散文层",
+      "owner": "evidence 实现所有者（后续任务提交前以 --gtest_list_tests 实测数字回填散文；本送验对象已冻结不追改，随收尾合入保持原样）",
+      "resolution": "计数纪律留档，不改既有交付；不影响 EV-T11 验收（pass——4.9 判定：验证结论本身与留痕一致，无粉饰，唯散文计数笔误降建议级，F-041/F-025 先例同口径）。编号顺延自 F-072（该编号已由实施侧在任务分支 wp05-t11 登记——本条在 redesign-main 侧顺延，收尾合入时由所有者确认两分支 findings.json 增量无撞车）。"
     }
   ]
 }
