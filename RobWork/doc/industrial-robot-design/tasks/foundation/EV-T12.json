@@ -4,7 +4,7 @@
   "unit": "evidence",
   "masterWp": "WP-C",
   "title": "evidence 文档与门禁同步",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "EV-T02",
     "EV-T03",
