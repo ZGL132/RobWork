@@ -742,6 +742,16 @@
       "title": "units/runtime.md §15.3 P-RT-9 行未随 evidence 侧 P-EV-6 消账同步：EV-T12 已就地翻转 evidence.md §15.3 P-EV-6（project.md 磁盘复核完整——1386 行、__PART3__ 零命中、§1～§15 章节标题全在；验收者在 worktree@b898f0ba 独立实测一致），对端 runtime.md P-RT-9 行仍登记『仍 open（RT-T13 状态同步 2026-09-12）……请 evidence 详设所有者更新的请求维持有效』——该请求实际已被 EV-T12 满足，对端状态滞后；units/runtime.md 不在 EV-T12 allowedFiles，实施侧无法代改（evidence.md 消账行已注明『runtime.md P-RT-9 同源请求对账关闭』，属 evidence 侧单面翻转）",
       "owner": "runtime 详设所有者（下次触及 units/runtime.md 时翻转 P-RT-9 行，引用 evidence.md §15.3 P-EV-6〔v1.3，2026-09-13〕消账行与 EV-T12 验收记录为消账证据；无独立任务必要，亦不影响 EV-T12 验收）",
       "resolution": "P-RT-9 行状态改为已关闭/已由对端消账，注明 EV-T12（2026-09-13）完成 evidence 侧翻转＋验收者独立复核（project.md 1386 行、__PART3__ 零命中、'## 1'～'## 15' 全在）。编号顺延自 F-073（EV-T11 已合入 redesign-main，无跨分支撞车面）。"
+    },
+    {
+      "id": "F-075",
+      "source": "POL-T02 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T02-20260913.md §4.5，送验对象 0c09beb4d682c494bb15bdc48e22bef71cbba78c，分支 wp07-t02）：验收者双探针实测发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "ACC §4.5 探针头文件注入陷阱（F-068 同族第二形态）：对 header-only 契约头注入 mutation 后即使 touch 该头文件，MSBuild 增量构建亦未重编消费 TU——POL-T02 验收探针二改 PolicySet.hpp 近限位比域窗（<=0.0 改 <0.0）并 touch 该头后重建，PolicySetTest.cpp 未重编、NearLimitRatioBoundaries_D08_POL_PARSE_2 未红（首跑 28 通过 2 失败，失败均属另一文件的码面探针）；补 touch 消费 TU（测试源）再重建后方如期变红（30 用例中 3 红）。若验收者据此误判'断言恒真/测试失效'将产出失实结论——探针失效与测试失效的判别需要操作纪律保障",
+      "owner": "验收协议所有者（ACC 文档辖域）：在 ACC §4.5 或 PIPE 附录 C 验收者模板补充探针操作纪律——探针注入头文件后须 touch 全部受影响消费 TU（或直接 touch 测试源文件）再重建；还原探针后同样处理，并以 git status 零残留＋全绿复跑双重核验",
+      "resolution": "操作纪律缺口登记，不改送验产物（探针已还原并复绿 30/30，送验对象零污染）；不影响 POL-T02 验收（pass）。编号顺延自 F-074（EV-T12 收尾已在 redesign-main，无跨分支撞车面）。与 F-068 的区别：F-068 为'备份+mv 还原文件 mtime 陈旧致重编缺失'，本条为'头文件变更+touch 后消费 TU 依赖未传播'，同属增量构建陷阱族，处置纪律一致。"
     }
   ]
 }
