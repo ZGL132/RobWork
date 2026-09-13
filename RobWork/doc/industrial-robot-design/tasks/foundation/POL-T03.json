@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现策略编码与内容身份（PolicyCodec）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T02"
   ],
