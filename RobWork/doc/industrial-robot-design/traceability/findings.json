@@ -822,6 +822,26 @@
       "title": "F-012/F-037/F-039/F-044/F-079 家族同型再现：POL-T06 送验 4 提交中 2 例标题前缀后以名词短语开头，非动词开头——9c6458c5『[WP-07-T06] 错误码面表尾追加 CLL 家族前两值并同步全表锚定』（主语『错误码面』开头）与 553a535c『[WP-07-T06] 留痕与文档同步（…）』（并列名词短语开头，与 F-012 所引 DOC-T04『编译留痕…』同型）；另两例（b63af663『实现…』、9eb5923b『构建…』）合规。正文四段齐备、验证结论与留痕一致（数值主张经亲手复现准确），纯风格瑕疵不构成阻断",
       "owner": "构建约定所有者（模板补救落地）；实施者自查为辅助",
       "resolution": "并入 F-012 家族统一处置（与 F-079 同一模板补救：实施者模板补提交标题动词开头示例并覆盖代码/文档/留痕各前缀形态）。不影响 POL-T06 验收（pass）。编号顺延自 F-081。"
+    },
+    {
+      "id": "F-083",
+      "source": "POL-T07 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T07-20260913.md §4.10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-010 根因第三次踩中（F-081 为第二次）：POL-T07 留痕提交 e5ad5960 正文声称 traceability/builds/wp07-t07/『验证留痕 10 件』并列出 10 个文件名，实际入库仅 3 件（ird-test-report.json＋双模式 gtest XML——git ls-tree 实证）；7 件 .log（integration-build/integration-test-run/smoke-configure/smoke-build/smoke-test-run/gate-all/validate-task）被根 .gitignore:87 『*.log』规则静默吞掉（git check-ignore 实证），ird-test-report.json 的 gates.log/builds/testRuns/validateTask 六处字段引用未入库文件——『声称在库而实际未入库』方向虚报（F-081 同型）。证据本体不缺：双模式 XML（150/112 零失败）与 report 数值主张全部经验收者亲手复现准确（构建零错误、ird_gates 5 命中＝base 既有、validate-task PASS 均独立复现），判级沿 F-081 先例＝建议级不阻断",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决——三次踩中后建议提级）；实施者自查为辅助",
+      "resolution": "沿 F-081 三选一并裁决（根因 .gitignore traceability/** 豁免后 git add -f 补提交／接受 XML＋报告证据本体口径／留痕清单 git status --porcelain 对账自查强制化）；根因未修复前每任务必复踩，建议与 F-010/F-081 一并提级处置。不影响 POL-T07 验收（pass）。编号顺延自 F-082。"
+    },
+    {
+      "id": "F-084",
+      "source": "POL-T07 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T07-20260913.md §4.9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-012 家族同型再现：POL-T07 留痕提交 e5ad5960 标题『[WP-07-T07] 留痕与文档同步（双模式证据＋policy.md v0.8 实现登记＋P-POL-11）』以并列名词短语开头，非动词开头——与 F-082 所引 POL-T06 提交 553a535c 同字面形态（『留痕与文档同步（…）』）；另 4 提交（6bd70879『落位…』/df51284b『实现…』/561e5054『构建…』/08d8d791『消除…』）动词开头合规。正文四段齐备、验证结论与验收者亲手复现逐项一致（集成 150/150、冒烟 112/112、ird_gates 5 既有命中、validate-task PASS），纯风格瑕疵不构成阻断",
+      "owner": "构建约定所有者（模板补救落地）；实施者自查为辅助",
+      "resolution": "并入 F-012 家族统一处置（同一模板补救）。不影响 POL-T07 验收（pass）。编号顺延自 F-083。"
     }
   ]
 }
