@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T11",
+  "masterWp": "WP-05-T11",
+  "branch": "wp05-t11",
+  "date": "2026-09-12",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，本任务零产品源码改动）",
+      "notes": "EV-T11 零产品源码/公共头改动（库本体仅随目标链增量重编译）——本任务交付面全部在 evidence/test/（测试代码）与 testdata/（数据资产）；链接面不变（仅 sdurws_ird_core——§3.2 唯一单元边，零 Qt 零跨单元）；CMake 红线守卫配置期断言保持通过。ird_gates 命中 5 项＝3 项既有基线（F-019×2＋F-051×1）＋2 项新增（两测试目标→testkit 直链，已登记 F-072——见 irdGates 字段逐项归属）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 205/205）",
+      "notes": "EV-T11 增列 test/EvaluatorPortSuiteTest.cpp（15 新增用例：EvaluatorPortVerdict 8＋EvaluatorPortContext 2＋EvaluatorPortCurrentness 1＋ScriptedDoubleBoundary 2＋另含 helper 组——与 VerdictTest 决策表直接装配互补的『经评估器端口』组合面）＋ test/EvidenceTestDoubles.hpp（§11 规范替身：ScriptedEvaluator/ScriptedEvaluatorFactory/ScriptedEvaluationContext——脚本三轨回放〔预设产出/EvidenceError 域自选抛出/取消抛出〕＋请求记录与回放计数＋取消查询/进度上报/对象读取三通道；经真实 EvaluatorRegistry 注册，§9.4/§9.5 注册期校验全过）。EV-VER-1~5/8＋EV-VER-6 双例经端口路径（ScriptedEvaluator 产出→调用侧装配→aggregateVerdict——proof/searchRecord/verdictInputs/evidence 素材透传不丢不变形）；§9.3 上下文契约演练（取消抛出经端口传播——D-15；对象读取/进度可观测）；EV-INV 显示单位子例（§5.3 KIN-12 行——显示单位切换→无任何 reason）；EV-REG-3 机检两面（产品源码 src/＋include/ 替身符号零命中扫描＋README 声明在案断言）。每用例 IRD_TEST_INFO 需求/AT 追溯（§11 登记要求）。CMake：_test 目标增链 sdurws_ird_testkit（IRD_TEST_INFO 依赖——测试侧依赖，产品目标链接面不变）。既有 190 用例零修改回归保持通过"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 14/14）",
+      "notes": "EV-T11 增列 test/EnvelopeAccessorContractTest.cpp（4 新增：envelope 访问器特化——testkit §10.2 evidence 行交接承接。五访问器面 outcome/engineeringStatus/hasEvidenceList/hasMissingItemsList/hasFormalConclusion 把 ResultEnvelope 喂入 checkEnvelopeCombination 泛型谓词；合法组合〔Completed×Feasible/EngineeringInfeasible/DataInsufficient＋Canceled×NotApplicable〕双过、DataInsufficient 空缺失清单与 Canceled×Feasible 双拒对账〔与产品 validateCombination 同判〕、Completed 空证据清单格如实登记两面分工〔谓词面筛查 vs 产品构造边界绑定结构＋汇总④级完备性兜底〕；访问器特化定义在测试侧——产品库零 testkit 依赖）＋ test/SliceFixtureContractTest.cpp（5 新增：切片契约夹具数据集 lint 全链〔GoldenDataset::load：解析→schema→完整性→交叉校验〕＋EV-ID-1 数据集载体〔按 inputs 语义描述经 SnapshotBuilder/SliceBuilder 重建→三身份与双形态编码对照 expected 逐字节→parse(expected)==重建切片〕＋重建确定性＋配置载荷自洽〔contentIdentity==SHA-256(canonicalBytes)，CR-02〕）。既有 CR-01 词表契约 5 用例零修改回归保持通过"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "EvaluatorPortVerdict（EV-T11 新增·端口路径 EV-VER 系）——acceptance 1（§11 矩阵逐条：EV-VER-1~8 的端口组合面）＋acceptance 3（替身数据不冒充真实证据——产出仅进测试进程内存）",
+      "designRef": "units/evidence.md §11（EV-VER-1~8 行的 ScriptedEvaluator 设施指定＋输入/操作/预期/观测点）、§9.3（调用约定）、§9.4（注册路径）、§6.4（决策表）、§12 EV-T11 行；需求 EVI-01、C5/C8、REQ-06、CON-05",
+      "cases": [
+        { "name": "EvaluatorPortVerdict.GateBlocksScriptedProof_EV_VER_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-1 端口路径——ScriptedEvaluator 返回不可行证明＋调用侧装配快照身份缺失（无策略内容身份）：②级命中 DataInsufficient、missingItems 含 policyContentIdentity、③级未评估（证明未进入——C6）、诊断 kDiagSnapshotIncomplete；端口承接面断言请求到达评估器（sliceId/工况子集原样）" },
+        { "name": "EvaluatorPortVerdict.SearchExhaustedThenFeasibleViaPort_EV_VER_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-2 端口路径——同实例双步脚本回放：第一次『多初值全发散』→DataInsufficient（searchRecord 透传 budget=1000/guesses=8、kDiagSearchExhausted、无 EngineeringInfeasible）；扩大初值后第二次→Feasible；两次 inputBaselineId 相等、sliceId 不等（D-04 双身份）；consumedSteps==2＋请求两份各就各位" },
+        { "name": "EvaluatorPortVerdict.FilteredSolutionDoesNotBlockFeasibleViaPort_EV_VER_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-3 端口路径——碰撞解仅入域侧 filteredSolutions（含 Collision 原因，入队前留本地副本断言）、聚合输入不含 searchRecord（有有效解不产搜索未果记录）、无证明产生（out.proof==nullopt）→Feasible（⑤级）" },
+        { "name": "EvaluatorPortVerdict.AllSolutionsFilteredIsDataInsufficientViaPort_EV_VER_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-4 端口路径——全部解碰撞过滤→DataInsufficient；result.searchRecord.filteredSolutions 全为 Collision（2/2）；无 MandatoryStateCollision 证明产生；kDiagSearchExhausted" },
+        { "name": "EvaluatorPortVerdict.ReplannedPathKeepsFeasibleViaPort_EV_VER_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-5 端口路径——初始候选路径碰撞（淘汰诊断，测试域自持 token——码值权威归 diagnostics）→重规划成功→Feasible；淘汰记录在诊断轨（out.proof==nullopt——非任务级证明）" },
+        { "name": "EvaluatorPortVerdict.ValidMandatoryProofInfeasibleViaPort_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-6 正例端口路径——mandatoryState＋collisionPairs 齐备证明（绑定快照/切片/产生者）→validateProof 通过→③命中 EngineeringInfeasible" },
+        { "name": "EvaluatorPortVerdict.MandatoryProofMissingStateFallsToDataInsufficient_EV_VER_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-6 反例端口路径——缺 mandatoryState 必经性依据的同款证明→validateProof 字段级拒绝→④DataInsufficient＋kDiagProofInvalid；缺失项指明证明对象（MissingItem.itemId＝claimToken『kin.task-point-config-collision』）——证明字段级校验逐项观测（D-09 不凭存在性采信）" },
+        { "name": "EvaluatorPortVerdict.MustViolationInfeasibleViaPort_EV_VER_8", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-8——Must 违例→EngineeringInfeasible（VerdictTrace 级次=⑤）；verdictInputs 透传（违例详情『载荷超限 12%』出现在判定诊断 cause＋kDiagMustViolation）" },
+        { "name": "EvaluatorPortVerdict.ShouldViolationFeasibleWithWarningViaPort_EV_VER_8", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1/EV-VER-8——Should 违例→Feasible＋警告诊断（不阻断，kDiagShouldViolation＋详情透传）" }
+      ]
+    },
+    {
+      "suite": "EvaluatorPortContext（EV-T11 新增·§9.3 上下文契约演练）——acceptance 1（§11 替身设施『取消抛出』行为词表的兑现载体）",
+      "designRef": "units/evidence.md §9.3（IEvaluationContext 调用约定——取消查询/进度上报/对象读取）、§9.1、§11 测试设施行；D-15",
+      "cases": [
+        { "name": "EvaluatorPortContext.CancelledEvaluationThrowsThroughPort", "status": "passed", "modes": ["smoke", "integration"], "trace": "§11『取消抛出』轨——宿主置位取消→脚本取消抛出步抛 EvidenceError→evidence 不捕获域异常（D-15 进程内抛传）、错误码/『取消』消息逐项断言、脚本步恰消费一步" },
+        { "name": "EvaluatorPortContext.ObjectReadAndProgressChannels", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.3 三通道——评估器经 context.tryObjectBytes 读取预置物化字节（调用计数=1）、上报进度（50/scripted-solve 恰一次）——worker 物化场景的接口级行为证据" }
+      ]
+    },
+    {
+      "suite": "EvaluatorPortCurrentness（EV-T11 新增·EV-INV 显示单位子例）——acceptance 1（§11 EV-INV 行矩阵逐条：§5.3 KIN-12 显示单位行观测点的补齐）",
+      "designRef": "units/evidence.md §5.3（失效矩阵显示单位行——全 ✗ 纯显示投影）、§11 EV-INV 行子例『显示单位切换→无任何 reason』、§8.1；需求 CON-05、KIN-12",
+      "cases": [
+        { "name": "EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-INV 子例逐字观测——显示单位切换不产生任何切片条目变化→重建目标切片身份与归档一致→computeCurrentness 判 Current 且 reasons 为空、diagnostics 为空（『无任何 reason 条目产生』；矩阵其余行由 CurrentnessTest EV-CUR-1 系承载——test/README.md §3 映射表）" }
+      ]
+    },
+    {
+      "suite": "ScriptedDoubleBoundary（EV-T11 新增·EV-REG-3 机检面）——acceptance 2（替身边界声明 EV-REG-3）＋acceptance 3（替身数据不得冒充真实证据）",
+      "designRef": "units/evidence.md §11 EV-REG-3 行（观测点＝测试文档显式声明＋测试注释/文档留痕）、§13（真实证据生成不得以替身数据冒充）、任务约束§八",
+      "cases": [
+        { "name": "ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 3 机检①——产品源码面（evidence/src/＋include/ 全量 .hpp/.cpp）扫描替身符号（ScriptedEvaluator/evidence::testdoubles）零命中（替身数据不进产品形态的机制面）；反向自证替身头确在测试源码面（扫描非空转）。失败能力自证＝产品源注入替身符号探针→本用例如期变红（probe-red-run exit 1）→逐字恢复＋touch 强制重编译复绿（F-068 规避）→PROBE 零残留（probe-residue-check.txt 计数 0）" },
+        { "name": "ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 机检②——test/README.md 含 EV-REG-3 声明三要素锚点（『仅验证』/『不构成』/EV-REG-3 追溯锚）：『替身输出仅验证 evidence 契约，不构成 IK/动力学/碰撞检测等业务算法正确性证明；替身数据不得冒充真实证据』全文声明＋替身清单＋§11 矩阵→测试文件落位映射全表" }
+      ]
+    },
+    {
+      "suite": "EnvelopeAccessorContract（EV-T11 新增·testkit §10.2 交接承接）——acceptance 4（envelope 访问器特化按 §12 产物行交付于 _contract_test）",
+      "designRef": "units/testkit.md §5.5（checkEnvelopeCombination 访问器五面）、§10.2 evidence 行、§8.1 表 3；units/evidence.md §7.1（表 3）、§12 EV-T11 行、§13 testkit 行",
+      "cases": [
+        { "name": "EnvelopeAccessorContract.LegalCombinationsPassGenericPredicate", "status": "passed", "modes": ["smoke", "integration"], "trace": "表 3 合法四行（Completed×Feasible/EngineeringInfeasible〔证明在场〕/DataInsufficient〔缺失全量清单〕＋Canceled×NotApplicable）经 make() 构造→checkEnvelopeCombination 全部判过；产品校验器对同批合法草稿零问题（双过对账）" },
+        { "name": "EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 空缺失清单格——谓词（草稿面投影）判拒且违例定位 missingItems；产品校验器同判（DataInsufficientNoMissingItems 格）——双拒对账" },
+        { "name": "EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 3 Canceled×Feasible 伪造判定格——谓词判拒定位 engineeringStatus；产品校验器命中 NonCompletedStatusNotNotApplicable——双拒对账（ERR-01）" },
+        { "name": "EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 1 空证据清单格——两面分工如实登记：谓词面（hasEvidenceList＝清单非空投影）判拒定位 evidenceList；产品构造边界该格只查绑定三元组结构（isManifestTripleValid）→『Feasible 而无任何证据』的语义拦截归汇总④级完备性核对（checkEvidenceCompleteness）——防止把『谓词过』误读为『产品校验器过』（不做伪对账）" }
+      ]
+    },
+    {
+      "suite": "SliceFixtureContract（EV-T11 新增·切片契约夹具数据集）——acceptance 4（数据集交付 testdata/golden/ev-slice-fixture/——lint 通过并随 CI 跑通）＋acceptance 1（EV-ID-1 的数据集载体）",
+      "designRef": "units/evidence.md §11（『契约夹具数据集〔切片序列化样本〕按 testkit manifest schema 登记（contract-fixture 类）』＋EV-ID-1 行）、§12 EV-T11 行、§13 testkit 行；units/testkit.md §4.2.2/§4.5/§4.7/§10.2；需求 CON-04/CON-05/NFR-COR-02/NFR-COR-01",
+      "cases": [
+        { "name": "SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4", "status": "passed", "modes": ["smoke", "integration"], "trace": "lint 面——GoldenDataset::load 全链（解析→schema→完整性 sizeBytes＋SHA-256→交叉校验）通过；kind=ContractFixture、datasetId/版本与目录一致、档案引用 ev-slice@1.0.0、inputs/expected 可解析；独立工具同源（sdurws_ird_testdata_lint 全量扫描 3 数据集零违规——192 ID 字典含 CON-04/CON-05/NFR-COR-02）" },
+        { "name": "SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance", "status": "passed", "modes": ["smoke", "integration"], "trace": "档案 ev-slice@1.0.0 装载（§4.3.1）＋零宽容差条目解析（slice.payload.config-bytes：absolute 0＝字节级等值的档案化表达——宽于零即伪造近似等值，EV-ID-2 反例面的档案侧钉住；source=dataset-declared 附依据）" },
+        { "name": "SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "EV-ID-1 数据集载体——按 inputs/slice.json 语义描述经产品 SnapshotBuilder/SliceBuilder 重建→三身份（snapshotId/sliceId/inputBaselineId）与 SliceCodec 双形态编码对照 expected 逐字节相等（expected 由 generate/make_ev_slice_fixture.mjs 按 §5.2/编码布局规则独立重实现——与产品 C++ 编码器双实现互证，任一侧漂移即显性失败）；SliceCodec::parse(expected full)==重建切片（parse(encode(x))==x）；双形态编码长度不等＋两身份互不等值（D-04 分离面复证——夹具含排除类 Configuration/Policy 条件未适用条目）" },
+        { "name": "SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "重建确定性（NFR-COR-02）——同描述二次重建：快照身份/切片全字段/编码逐字节相等（跨进程缓存键一致性的数据集级复证）" },
+        { "name": "SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest", "status": "passed", "modes": ["smoke", "integration"], "trace": "数据集自洽——Configuration.contentIdentity==SHA-256(canonicalBytes)（core::ContentDigester 唯一摘要通道，CR-02；canonicalBytes 内嵌 IEEE754 0.1 大端位模式——§5.2 浮点行承载）" }
+      ]
+    }
+  ],
+  "summary": { "total": 219, "passed": 219, "failed": 0, "modes": { "smoke": "evidence 205/205＋contract 14/14（冒烟全量 ctest 5 目标全绿：core＋evidence＋evidence_contract＋policy＋runtime＋testkit——smoke-ctest-release.log）", "integration": "evidence 205/205＋contract 14/14（增量树任务目标面构建 exit 0 零 error）" }, "unitRegression": { "smoke": "evidence 205/205＋evidence_contract 14/14（全新独立树全量构建 exit 0 零 error；其余单元 ctest 全绿零回归）", "integration": "evidence 205/205＋contract 14/14（既有 190＋5 用例零修改回归通过）" } },
+  "failureCapabilitySelfCheck": {
+    "method": "EV-REG-3 机检面『产品源码替身符号零命中』防线探针：向 src/Evaluator.cpp 文件尾追加含『ScriptedEvaluator』符号的 PROBE 标记注释行（printf 精确追加＋显式构建/运行退出码核验，无 sed）后重编译执行边界扫描用例；验证后 git checkout 逐字恢复＋touch 强制重编译（F-068 mtime 陷阱规避）并以 grep 递归计数核验 PROBE 零残留（probe-residue-check.txt 计数 0）",
+    "result": "ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3 如期变红（probe-red-run exit 1——产品源出现替身符号即被边界扫描检出）——acceptance 3『替身数据不得冒充真实证据』的机制面真实失败能力成立；恢复后集成 205/205 复绿（probe-red-build.log/probe-red-run.log 为探针期留痕，probe-restore-build.log 为恢复后构建，集成 XML 为恢复后重写）",
+    "date": "2026-09-12"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp05-t11/smoke-configure.log",
+      "traceability/builds/wp05-t11/smoke-build-full.log",
+      "traceability/builds/wp05-t11/smoke-build-targets.log",
+      "traceability/builds/wp05-t11/smoke-ctest-release.log",
+      "traceability/builds/wp05-t11/smoke-test-run.log",
+      "traceability/builds/wp05-t11/smoke-contract-run.log",
+      "traceability/builds/wp05-t11/sdurws_ird_evidence_test-smoke.xml",
+      "traceability/builds/wp05-t11/sdurws_ird_evidence_contract_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp05-t11/integration-cache-check.txt",
+      "traceability/builds/wp05-t11/integration-build-test.log",
+      "traceability/builds/wp05-t11/integration-build-contract.log",
+      "traceability/builds/wp05-t11/integration-test-run.log",
+      "traceability/builds/wp05-t11/integration-contract-run.log",
+      "traceability/builds/wp05-t11/sdurws_ird_evidence_test-integration.xml",
+      "traceability/builds/wp05-t11/sdurws_ird_evidence_contract_test-integration.xml",
+      "traceability/builds/wp05-t11/ird-gates.log",
+      "traceability/builds/wp05-t11/validate-task.log",
+      "traceability/builds/wp05-t11/validate-docs.log",
+      "traceability/builds/wp05-t11/probe-red-build.log",
+      "traceability/builds/wp05-t11/probe-red-run.log",
+      "traceability/builds/wp05-t11/probe-restore-build.log",
+      "traceability/builds/wp05-t11/probe-residue-check.txt"
+    ],
+    "dataset": [
+      "testdata/golden/ev-slice-fixture/1.0.0/manifest.json",
+      "testdata/golden/ev-slice-fixture/1.0.0/inputs/slice.json",
+      "testdata/golden/ev-slice-fixture/1.0.0/expected/slice-identity.json",
+      "testdata/golden/ev-slice-fixture/1.0.0/generate/make_ev_slice_fixture.mjs",
+      "testdata/tolerance/ev-slice/v1.0.0.json"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_evidence_test ——通过（集成模式 INTEG_BUILD_EXIT=0，integration-build-test.log；另以 --target sdurws_ird_evidence_contract_test 核验契约目标 exit 0 零 error，integration-build-contract.log）",
+  "irdGates": "ird_gates 结果：门禁目标退出码 1：5 处命中＝3 项既有基线＋2 项新增（按 findings.json 权威归属逐项标注——F-060 教训不笼统归并）：①IRD-GATE-SUB（sdurws_ird_runtime_test→sdurws_ird_testkit 直链）＝F-051 既有；②IRD-GATE-SUB（表外依赖边 io→testkit：sdurws_ird_testdata_lint→sdurws_ird_testkit）＝F-019 既有；③IRD-GATE-T1（产品目标 sdurws_ird_testdata_lint 链接 testkit）＝F-019 既有；④IRD-GATE-SUB（sdurws_ird_evidence_test→sdurws_ird_testkit 直链）＝新增，已登记 F-072；⑤IRD-GATE-SUB（sdurws_ird_evidence_contract_test→sdurws_ird_testkit 直链）＝新增，已登记 F-072。④⑤与 F-051 同根因（白名单 T-1 段明文允许测试目标链接 testkit 而引擎 SUB 形态一未对 →testkit 边豁免）：_contract_test 链接＝本任务 §10.2 交接交付物本体（envelope 访问器特化消费＋数据集装载）不可去除、_test 链接＝§11『每条用例经 IRD_TEST_INFO 登记』要求；处置建议与 F-051 合并归 WP-01 构建所有者（cmake/ 不在本任务 allowedFiles，实施者不得私改）。产品目标 sdurws_ird_evidence 链接仍仅 core（CMake 红线守卫配置期断言通过）——ird_gates 退出码 1 全部来自测试目标/工具的 testkit 消费边，无产品面新增违规",
+  "notes": "构建树性质：集成＝仓库根 build/ 既有增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，integration-cache-check.txt；任务目标面增量构建 exit 0 零 error——F-008 基线缺陷目标未参与，按判例以任务目标面构建为准），配置 Release；冒烟＝全新独立树 build-smoke-wp05-t11/（本任务会话新建，vcpkg toolchain 绝对路径 D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake——smoke-configure.log exit 0），配置 Release，全量构建 exit 0 零 error（smoke-build-full.log）。交付面清单：①evidence/test/EvidenceTestDoubles.hpp（ScriptedEvaluator/Factory/Context 三替身——§11 设施行承载，testdoubles 命名空间〔runtime 先例同款〕）；②evidence/test/EvaluatorPortSuiteTest.cpp（15 用例）；③evidence/test/EnvelopeAccessorContractTest.cpp（4 用例，_contract_test）；④evidence/test/SliceFixtureContractTest.cpp（5 用例，_contract_test）；⑤evidence/test/README.md（EV-REG-3 全文声明＋替身清单＋§11 矩阵落位映射全表）；⑥testdata/golden/ev-slice-fixture/1.0.0/（manifest＋inputs/expected/generate——全部文本资产，testdata/.gitattributes LF 钉死覆盖）；⑦testdata/tolerance/ev-slice/v1.0.0.json（零宽容差档案——§4.2.2 toleranceProfile 必填引用的承接）；⑧evidence/CMakeLists.txt（两测试目标增列＋testkit 测试侧链接）；⑨units/evidence.md v1.2（§11 设施行实现状态更新＋本条 §15.4 登记）。数据集独立性口径：expected 由 JS 生成脚本按编码布局规范独立重实现产出，与产品 C++ 编码器构成双实现互证（NFR-COR-01 独立正确性依据的夹具化承载）——格式变更须携数据集重审（testkit §4.7）。集成模式说明：evidence 产品源码本任务零改动（库增量重编译为 EV-T10 后状态复验）。ird_gates/validate-task 日志存在控制台中文乱码（F-065 既有——本报告关键字段以结构化 JSON 记载；命中归属经 findings.json 权威登记逐项核对）。"
+}
