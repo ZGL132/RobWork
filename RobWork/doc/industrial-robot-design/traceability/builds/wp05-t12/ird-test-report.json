@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EV-T12",
+  "masterWp": "WP-05-T12",
+  "branch": "wp05-t12",
+  "date": "2026-09-13",
+  "attempt": 1,
+  "reworkNote": "首次实施（lastFailureRecord=null），无返工",
+  "taskNature": "文档与门禁同步任务：零代码变更（仅 units/evidence.md、include README.md、traceability/ 登记件与留痕）——构建/测试执行用于钉住『README 核对零偏差』与『本文与实现零偏差登记』的实况口径，非新用例交付；沿 CORE-T10/RT-T13 文档任务先例，其 verify＝validate-docs.ps1（本任务另加跑 validate-task/ird_gates/双模式测试留痕，超覆盖执行）",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，既有目标复跑——无新增测试）",
+  "targets": [
+    {
+      "target": "sdurws_ird_evidence",
+      "kind": "STATIC",
+      "result": "build-pass（两模式零错误；零源码变更，本任务未触碰任何产品源）",
+      "notes": "集成＝仓库根 build/ 存量增量树（CMakeCache 实测 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 后增量构建，F-054 树性质口径）；冒烟＝全新独立目录 build-smoke-wp05-t12/（vcpkg toolchain 绝对路径，configure/build exit 0）"
+    },
+    {
+      "target": "sdurws_ird_evidence_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋复跑全绿",
+      "notes": "EV-T01~T11 交付的 205 用例全量复跑，与 README/单元卡 §15.4 v1.2 登记口径逐数一致（acceptance 1 零偏差登记的执行证据）"
+    },
+    {
+      "target": "sdurws_ird_evidence_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋复跑全绿",
+      "notes": "EV-T07 交付的 14 用例全量复跑（core↔evidence 词表契约三防线＋envelope 访问器特化），与 §15.4 v1.2 登记口径逐数一致"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "既有用例全量复跑（EV-T01～T11 交付面——本任务零增删）",
+      "designRef": "units/evidence.md §11 矩阵全部组——落位全表见 evidence/test/README.md §3",
+      "cases": [
+        { "name": "（汇总）", "status": "passed", "modes": ["integration"], "trace": "集成 sdurws_ird_evidence_test 205/205＋sdurws_ird_evidence_contract_test 14/14 通过——acceptance 1：README 口径逐数一致" },
+        { "name": "（汇总）", "status": "passed", "modes": ["smoke"], "trace": "冒烟 sdurws_ird_evidence_test 205/205＋sdurws_ird_evidence_contract_test 14/14 通过——acceptance 1：两模式口径一致" }
+      ]
+    }
+  ],
+  "summary": {
+    "integration": { "total": 219, "passed": 219, "failed": 0, "skipped": 0, "breakdown": "evidence_test 205＋evidence_contract_test 14" },
+    "smoke": { "total": 219, "passed": 219, "failed": 0, "skipped": 0, "breakdown": "evidence_test 205＋evidence_contract_test 14" },
+    "exitCodes": { "integrationBuild": 0, "integrationTest": 0, "smokeConfigure": 0, "smokeBuild": 0, "smokeTest": 0, "validateDocs": 0, "validateTask": 0, "irdGates": 1 },
+    "irdGatesNote": "exit=1＝命中恰 5 项既有登记（IRD-GATE-SUB×3＝F-072 两项 evidence _test/_contract_test→testkit＋F-051 一项 runtime_test→testkit；IRD-GATE-SUB 表外边＋IRD-GATE-T1 各 1＝F-019 testdata_lint 两项）——与 EV-T11（wp05-t11）基线逐项相同，零新增违规",
+    "acceptanceMapping": {
+      "acc1": "README 核对零偏差——README-audit.md（§1 指向核对、§2 目录实录、§3 十头逐头比对、§4 状态段实跑口径、§5 EV-T11 交付面位置）＋双模式实跑 205＋14 全绿一致",
+      "acc2": "§15.3 状态更新（P-EV-1~9 逐条〔EV-T12 状态同步 2026-09-13〕；P-EV-6 就地消账＝project.md 完整性本任务实测：§1~§15 全在/1386 行/__PART3__ 零命中——runtime P-RT-9 同源请求对账关闭）——units/evidence.md §15.3＋§15.4 v1.3",
+      "acc3": "UT-BUILD 建议并入 CI 登记——traceability/wp05-t12-gate-registrations.md（既有承载 gate-all/ird_gates 双层消账＋CI 模板 run-tests 正则钉 '^sdurws_ird_core_test$' 缺口实测登记给 WP-01）"
+    },
+    "evidence": "traceability/builds/wp05-t12/（integration-build.log、integration-test-run.log、sdurws_ird_evidence_test-integration.xml、sdurws_ird_evidence_contract_test-integration.xml、smoke-configure.log、smoke-build.log、smoke-test-run.log、sdurws_ird_evidence_test-smoke.xml、sdurws_ird_evidence_contract_test-smoke.xml、validate-docs.log、validate-task.log、ird_gates.log、README-audit.md、ird-test-report.json）"
+  }
+}
