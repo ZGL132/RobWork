@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T07",
+  "masterWp": "WP-07-T07",
+  "branch": "wp07-t07",
+  "date": "2026-09-13",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T07 增量：新增 include CollisionQuery.hpp（§6.2 查询与输出类型全量——CollisionQueryKind/CollisionQuery/CollisionFinding/PairCoverageRecord/SampleDistanceSummary/CollisionEvaluation 等；含 rw/math/Q 与 rw/kinematics/State 值成员——runtime Snapshot.hpp 同款 include 纪律，冒烟模式无 TU include）与 src/CollisionQuery.cpp（评估半区：buildEvaluationHalf 装配＋evaluate 执行序——§6.3 状态机/§6.4 稳定排序/§6.6 时序/§7.4 边界值决策——集成模式专属）；CollisionEvaluator.hpp 会话增补 evaluate（§9.3 冻结签名）＋评估半区私有装配产物＋构造参数表尾追加 backendQueryMutex（缺省自建——POL-T06 直构调用源兼容）；RobWorkCollisionEvaluator 增评估器级共享查询互斥（RobWork 检测器查询面非线程安全——同一后端实例全部访问串行化，并发只读安全的执行侧机制）；Errors.hpp/.cpp 表尾追加 QueryInvalid（18→19 值，§9.3 错误类型行评估半区 fail-fast 载体）；链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project 编译依赖（R-1/R-2——NoCrossUnitInclude 自动扫描通过）；R4 字面量纪律：评估 TU 诊断文案不含框架品牌子串（IRD-GATE-R4 跨引号对启发式隔断，与唯一实现绑定 TU 零字面量切分同动机——初版命中已在本任务内修复归零）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T07 增量：新增 test/CollisionEvaluationTest.cpp（17 用例——真实后端解析算例装置〔1 DOF RevoluteJoint 串链＋0.2 m 立方体 RigidObject 几何，q=0 相交/q≈π 间隙 0.8 m 解析已知答案〕＋脚本化碰撞/距离后端替身＋协作取消/存活/模式标签上下文替身）；POL-T06 既有 CollisionSessionTest 夹具增补对象 Frame 登记（评估半区装配的 §7.5 会话契约——作用域对象解析名可定位编译产物 Frame）；POL-T01~T05/T06 既有 133 用例全部保持通过（集成合计 150/150；冒烟 112/112——POL-T07 新增 TU 仅集成模式编译）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "CollisionEvaluation",
+      "designRef": "units/policy.md §6.2/§6.3/§6.4/§6.5/§6.6、§7.1/§7.2/§7.4/§7.5、§11 POL-EVAL-1~9/POL-EXC-1/POL-CONC-1/POL-LATE-1/POL-SCOPE-2 运行期段行、§15.3 P-POL-11、§12 POL-T07 行",
+      "cases": [
+        { "name": "CollisionEvaluation.SingleStateDetectsAndClearsAnalyticPair_POL_EVAL_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-1 构型级输出，KIN-02/C8/AT-03）：真实内置后端解析算例——q=0 两盒重合检出 Collision（对象 ID 对规范序/整名辅助/sampleIndex/level=Must/penetrationDepth 显式空），q≈π 间隙 0.8 m 无发现；coverage 四计数与 excluded 全量断言；§8.3 类型断言（结构化绑定复核十一成员——评估输出无任务级结论字段）" },
+        { "name": "CollisionEvaluation.MandatoryStateFindingCarriesProofMaterial_POL_EVAL_3", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-3 必经状态证明素材）：发现携带对象 ID 对＋判定＋采样位置（§8.4 evidence proof.collisionPairs 映射素材逐字段）；policyContentIdentity/sceneIdentity/nameMapIdentity 三身份回填核对（CON-06/CR-04）" },
+        { "name": "CollisionEvaluation.SampleSetAllCollidingYieldsFindingsOnly_POL_EVAL_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-2 全候选碰撞，C5/C8）：SampleSet 全碰撞→仅发现集合（sampleIndex 0/1/2 独立归档）；评估器无搜索未果/DataInsufficient 输出通道（类型层保证——消费方 kinematics→evidence 表达）" },
+        { "name": "CollisionEvaluation.PathSequenceKeepsOrderAndPathParameter_POL_EVAL_4", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-4 路径 vs 构型，TRJ-04）：PathSequence 发现含 pathParameter（0.0/1.0 段内定位）且保序（样本 0 前于 2）；同构型 SampleSet 对照 pathParameter 恒 nullopt" },
+        { "name": "CollisionEvaluation.BackendExceptionBecomesFailedNotCollision_POL_EVAL_5", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-5 失败≠碰撞，KIN-05）：后端注入真实 rw::common::Exception→内部捕获转 Failed＋POLICY-CLL-EVALUATION-FAILED（cause 保留异常原文），findings 空、pairsEvaluated=0、finalized=false——不吞、不崩、无'无碰撞'字段" },
+        { "name": "CollisionEvaluation.CancellationKeepsPartialFindingsWithoutErrorDiag_POL_EVAL_6", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-6 取消不产正式证据，TASK-02/UX-03）：第 2 样本边界取消命中→Canceled＋部分 findings（样本 0/1）＋finalized=false＋零错误诊断；coverage.pairsEvaluated 如实（1 对）" },
+        { "name": "CollisionEvaluation.RepeatedEvaluationsAreFieldIdentical_POL_EVAL_7", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-7 稳定排序，NFR-COR-05/AT-19）：同会话同查询 3 次评估 operator== 逐字段相等；双发现按对象对字典序稳定（env1 前 env2）；多线程分派见 POL-CONC-1" },
+        { "name": "CollisionEvaluation.ConcurrentEvaluateOnSharedSessionIsIdentical_POL_CONC_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-CONC-1 并发只读，NFR-COR-02）：4 线程对同一会话并发 evaluate（每线程独立上下文——§9.7 每运行/调用一实例）→输出逐字段相等；真实后端＋真实几何；查询互斥串行化后端访问（并发只读可重入的执行侧机制，锁不进入输出）" },
+        { "name": "CollisionEvaluation.BoundaryDecisionTableByScriptedDistance_POL_EVAL_8", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-8① 边界值决策表——§7.4 六行逐行）：d＞m 清晰＋minDistance 摘要含最近对；d＝m 清晰（边界含于安全侧 D-08）；0≤d＜m MarginViolation（measuredClearance=d）；后端相交＝Collision 且距离脚本队列未消费（碰撞/距离二分互斥的机械证明）；d=NaN→Failed＋EVALUATION-FAILED（原文 'nan' 保留、不入 findings）；m=0 退化仅碰撞（无距离能力后端承载——若误判激活即暴露）" },
+        { "name": "CollisionEvaluation.ModeLabelContextsDoNotChangeOutput_POL_EVAL_8", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-8② 无模式影响，KIN-13/EVI-01）：Preview/Quick/Verified 模式标签上下文（替身）下同查询输出逐字段相等——模式不是评估输入（API 无模式通道）" },
+        { "name": "CollisionEvaluation.QueryCarriesNoThresholdOrModeMembers_R_POL_5_D9", "status": "passed", "modes": ["integration"], "trace": "acceptance 2（API 无阈值/模式参数——D-9 结构防覆盖）：CollisionQuery 六成员结构化绑定断言——任何新增成员（阈值/模式/开关）即编译失败，结构上不可逐查询覆盖策略（R-POL-5）；缺省值即 §6.2 语义" },
+        { "name": "CollisionEvaluation.GeometryGapKeepsCoverageAndDiagnostic_POL_EVAL_9", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EVAL-9 几何缺失，KIN-05）两形态：场景声明 false／声明有而产物无 Object→Completed 但 coverage.pairsWithGeometry/pairsEvaluated 缺口＋POLICY-CLL-GEOMETRY-MISSING（subject 定位缺口对象）；无'无碰撞'结论字段——消费方判数据不足接口就绪" },
+        { "name": "CollisionEvaluation.EmptyScopeAndMalformedQueries_POL_EXC_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-EXC-1）：空作用域→Completed＋EmptyScope（非'无碰撞'——coverage 在检计数全零）；查询违约矩阵（空构型序列/SampleSet 构型数≠1/PathSequence 参数不等长/SampleSet 携带路径参数/构型维度≠DOF）逐项 PolicyError(QueryInvalid) fail-fast——what() 前缀=稳定 token policy/cll-query-invalid" },
+        { "name": "CollisionEvaluation.ExpiredContextIsRejected_POL_LATE_1", "status": "passed", "modes": ["integration"], "trace": "§11 POL-LATE-1（迟到调用拒绝）：alive()=false→Failed＋POLICY-CLL-CONTEXT-EXPIRED、finalized=false、零后端查询（§6.1 只读生命周期第二层防护执行点）" },
+        { "name": "CollisionEvaluation.MissingDistanceCapabilityFailsLoudly_POL_EVAL_8", "status": "passed", "modes": ["integration"], "trace": "§15.3 P-POL-11 保守口径（§6.3'检测器不可用'触发器）：无 DistanceStrategy 能力后端＋m＞0（或 requestMinDistance）→Failed＋POLICY-CLL-DETECTOR-UNAVAILABLE（KIN-05 缺检测器≠无碰撞——不静默降级）；m=0 且未请求距离的同后端评估不受影响（能力按需核对）；能力探测对 WP-24 后端基线冻结自适应" },
+        { "name": "CollisionEvaluation.AppliedFiltersTraceAndMandatorySurvive_POL_SCOPE_2", "status": "passed", "modes": ["integration"], "trace": "§11 POL-SCOPE-2 运行期②段（§7.2 过滤可追溯）：显式排除对全量留痕（appliedFilters ruleOrigin='policy.excludedPairs[0].reason=夹持接触豁免'）；必检对发现存活（level=规则 authored Must）且与排除集无交集；coverage inScope=1/excluded=1/evaluated=1" },
+        { "name": "CollisionEvaluation.StopAtFirstFindingTerminatesEarlyWithCoverage", "status": "passed", "modes": ["integration"], "trace": "§6.2 stopAtFirstFinding 提前终止：首个发现即终止（单发现）＋输出仍带 coverage（pairsEvaluated=1/pairsInScope=2 如实）＋Completed/finalized=true（按请求协议完成的评估）" }
+      ]
+    },
+    {
+      "suite": "既有套件回归（PolicyBuild/PolicySet/PolicyInput/PolicyParsing/PolicyPort/CollisionSessionScope/CollisionSessionGuards/CollisionSessionIdentity/CollisionSessionDetector/CollisionSessionTokens）",
+      "designRef": "units/policy.md §12 POL-T01~T06 行（回归保护面）",
+      "cases": [
+        { "name": "（汇总）133 用例全部通过", "status": "passed", "modes": ["integration+smoke", "smoke 112 用例"], "trace": "回归保护：POL-T01~T06 交付面零回归——含 PolicyErrors 两张全表用例（19 值——POL-T07 表尾追加 QueryInvalid 同步维护）；CollisionSessionTest 夹具增补对象 Frame 登记（评估半区装配 §7.5 会话契约的设计内收紧，POL-T06 用例语义不变）；DisabledPolicyYieldsEmptyScope/NullBackendStrategyRejected 等直构会话用例在构造签名缺省参数下源兼容通过" }
+      ]
+    }
+  ],
+  "gates": {
+    "tool": "ird_gates（cmake --build build --config Release --target ird_gates）",
+    "result": "nonzero-exit：5 处命中——全部为既有跨单元测试目标链接面（evidence/evidence_contract/runtime 的 _test 与 testdata_lint → sdurws_ird_testkit），与 POL-T06 验收基线（5 处命中）逐项一致；本任务零新增命中（初版 CollisionQuery.cpp 诊断文案触发 IRD-GATE-R4 跨引号对启发式 1 处——已在任务内改写文案归零，见 gate-all.log 与提交历史）",
+    "log": "gate-all.log"
+  },
+  "builds": {
+    "integration": { "command": "cmake --build build --config Release（仓库根，RWS_BUILD_INDUSTRIALROBOT=ON——CMakeCache 核对）", "result": "零错误", "log": "integration-build.log" },
+    "smoke": { "command": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp07-t07 -DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake ＋ cmake --build ... --config Release", "result": "配置与构建零错误（新增 TU 均为集成模式专属——冒烟测试面保持 112 用例）", "logs": ["smoke-configure.log", "smoke-build.log", "smoke-test-run.log"] }
+  },
+  "testRuns": {
+    "integration": { "binary": "build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe", "result": "150/150 passed", "xml": "sdurws_ird_policy_test-integration.xml", "log": "integration-test-run.log" },
+    "smoke": { "binary": "build-smoke-wp07-t07/policy/Release/sdurws_ird_policy_test.exe", "result": "112/112 passed", "xml": "sdurws_ird_policy_test-smoke.xml", "log": "smoke-test-run.log" }
+  },
+  "validateTask": { "command": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T07.json", "result": "PASS (1 tasks)", "log": "validate-task.log" },
+  "acceptanceCoverage": {
+    "1": "POL-EVAL-1~9/POL-EXC-1/POL-CONC-1 状态机/稳定排序/边界值决策表用例通过（AT-19 载体）——17 用例逐条执行通过（本报告 testSuites 明细；gtest XML 为执行凭证）",
+    "2": "API 无阈值/模式参数（D-9 结构防覆盖）——QueryCarriesNoThresholdOrModeMembers_R_POL_5_D9 结构化绑定断言＋POL-EVAL-8② 模式标签不变性"
+  }
+}
