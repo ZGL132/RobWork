@@ -110,8 +110,17 @@ add_executable(sdurws_ird_policy_test
     test/PolicyInputTest.cpp  # POL-T03：canonical 往返/位模式/排序无关/CR-02/错误路径
     test/PolicyParsingTest.cpp # POL-T04：POL-PARSE-1~6 错误分类全量反例＋O-10 默认口径
     test/PolicyPortTest.cpp)  # POL-T05：注入接口契约/端口契约错误矩阵/POL-ID-1 缓存一致
-# （POL-T06 测试源接入见第③段提交——CollisionSessionTest.cpp 消费 rw 非模板
-#  类，与产品源同因仅集成模式编译）
+
+# POL-T06 增列（仅集成模式）：CollisionSessionTest.cpp 消费 rw 非模板类
+# （WorkCell/FakeDevice 场景替身、ProximitySetup 规则核对）——冒烟模式无
+# 框架库可链；与 src/CollisionEvaluator.cpp 同因同 gating（runtime RT-T07
+# 同款分工）。冒烟模式测试面＝POL-T01~T05 既有 112 用例（不受影响）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/CollisionSessionTest.cpp)  # POL-T06：POL-SCOPE-1/2 构建期（作用域
+                                        # 矩阵展开/冲突拒绝两层防御）＋场景校验
+                                        # 守卫＋会话身份确定性＋检测器初始化
+endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
     CXX_STANDARD 17
