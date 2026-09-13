@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "pol-collision-analytic",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "pol/collision-analytic",
+  "coveredRequirements": ["ARC-05", "MDL-22", "NFR-COR-05", "KIN-05"],
+  "coveredAt": ["AT-37", "AT-19"],
+  "toleranceProfile": { "id": "pol-analytic", "version": "1.0.0" },
+  "inputs": ["inputs/scene-cases.json"],
+  "expected": ["expected/analytic.json"],
+  "parameters": {
+    "geometry": "轴向对齐立方体对（0.2 m）——三角网格精确无细分误差，面间隙闭式＝轴向中心距−边长；q∈{0,π} 保证姿态恒轴对齐（盒旋转不变式）",
+    "mounts": "identity（直立）与 inverted-y-pi（倒挂 Ry(π)——R_world_base 编译产物单一权威，MDL-22/POL-AT-4）",
+    "consumer": "内置后端（ProximityStrategyRW）真实会话评估——对象对/判定与 expected 逐例对照；间隙参考为解析记录（二值评估不查询距离，P-POL-11）",
+    "policySnapshot": "见 producer.solverConfig——测试经被测 policy 对象取值核对（testkit §4.3.2 工程策略默认类别），不旁路策略私设阈值"
+  },
+  "units": { "cases[*].referenceGapM": "m", "geometry.boxSizeM": "m", "geometry.armLengthM": "m" },
+  "frames": { "base": "robot-base", "world": "installation" },
+  "referenceSource": {
+    "method": "hand-built",
+    "scope": "轴向对齐立方体对的已知相交/分离手算构造（含倒挂安装的世界系消费判别例）",
+    "independentOfProductionImpl": true,
+    "description": "期望＝手算闭式公式的直接编码（面间隙＝轴向中心距−边长；中心距小于边长＝投影重叠→二值碰撞）——推导逐例登记于 inputs/scene-cases.json 的 derivation 字段；生成脚本为推导的机器承载（含推导自检断言），不引用任何产品碰撞代码"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "pol-collision-analytic-hand-derivation",
+    "solverConfig": {
+      "policyThresholdSnapshot": {
+        "safetyClearanceSi": 0.0,
+        "safetyClearanceUnit": "m",
+        "safetyClearanceSource": "dataset-declared（§7.4 m=0 退化＝仅碰撞检测——内置后端无距离查询能力，P-POL-11 登记；间距判定面归 POL-T07 脚本化边界值用例）",
+        "finiteRotationTravelLimitRad": 12.566370614359172,
+        "travelLimitSource": "engineering-policy-default（附录 D 第 11 项 4π——唯一冻结默认；消费断言经发布策略对象 origin=DefaultAppendixD 取值，测试不旁路策略私设阈值）"
+      }
+    },
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-14T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/analytic.json#cases[id=upright-contact]",
+      "expected/analytic.json#cases[id=near-zero-separation]",
+      "expected/analytic.json#cases[id=sign-symmetry-negative]"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/scene-cases.json",
+      "sha256": "e7b4f25c8fc4c8434a04797699ea73adc296127bed3f78caf3ce33b60321a014",
+      "sizeBytes": 3442
+    },
+    {
+      "path": "expected/analytic.json",
+      "sha256": "b7af8c7e3a393648fe9a57816944b35389c25f9c085e6ee711a50aee72fd8b2c",
+      "sizeBytes": 2686
+    },
+    {
+      "path": "generate/make_pol_collision_analytic.mjs",
+      "sha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026",
+      "sizeBytes": 6221
+    }
+  ],
+  "generator": {
+    "script": "generate/make_pol_collision_analytic.mjs",
+    "invocation": "node generate/make_pol_collision_analytic.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-14",
+      "change": "首版：碰撞解析算例（直立/倒挂双安装×相交/分离/近零分离/正负镜像六工况——POL-AT-4 倒挂对象对手算一致与无二次旋转判别；MDL-22 世界系固连消费）——POL-T11 §12 产物行数据集面（acceptance 3 analytic-case 类）",
+      "reReviewedBy": "WP-07",
+      "supersededBy": ""
+    }
+  ]
+}

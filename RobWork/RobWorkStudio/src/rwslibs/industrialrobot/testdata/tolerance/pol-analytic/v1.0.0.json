@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "pol-analytic",
+  "version": "1.0.0",
+  "basis": "policy 单元碰撞解析算例（pol-collision-analytic，WP-07-T11）：主判定面为二值碰撞判定与对象对身份（精确等值——附录 D 第 12 项，无数值容差）；间隙参考值为手算闭式的解析记录（二值评估不查询距离，P-POL-11），若消费侧以数值通道引用，按本档案 dataset-declared 容差核对（依据：轴对齐立方体网格精确、无细分误差，双精度乘加减的舍入界 ≤1e-12 m，取 1e-9 m 覆盖位型/求和序差异，严于任何工程间距量级）。",
+  "entries": [
+    {
+      "fieldPath": "cases[*].referenceGapM",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 },
+      "sourceNote": "dataset-declared：面间隙闭式（轴向中心距−边长）的双精度舍入界推导——乘加不超过 3 次浮点运算，误差 ≤2⁻⁵²·1 m 量级；1e-9 m 含充分裕量且远小于最小非零间隙参考 0.02 m（不混淆分离/接触判定）",
+      "sourceNoteBasis": "附录 D C4（解析算例容差逐例声明）；第 12 项（对象对/判定＝精确等值不经本条目）"
+    }
+  ]
+}
