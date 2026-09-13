@@ -802,6 +802,26 @@
       "title": "F-025/F-041/F-077 计数失实家族同型再现：POL-T05 留痕提交 477491b7 正文称『新增 10 件留痕』实际列出并入库 11 件（git diff --name-status 实证 11 个 A 文件）；与 F-077 不同——本例文件清单完整且全部真实入库、无不存在文件，仅总数少报 1 件，方向保守、无粉饰；数值主张本身（双模式 112/112、ird_gates 5 项既有命中、GATE_DELTA_ZERO）经验收者亲手复现准确",
       "owner": "构建约定所有者（提交自查清单口径）；实施者自查为辅助",
       "resolution": "并入 F-025 家族统一处置：提交模板补『正文计数与逐件清单须对账一致』自查项（建议以 git diff --name-status 清点为准）。不影响 POL-T05 验收（pass）。编号顺延自 F-079。"
+    },
+    {
+      "id": "F-081",
+      "source": "POL-T06 验收段 attempt 2（2026-09-13，traceability/acceptance/POL-T06-20260913.md §4.10/§4.9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-010/F-077 家族复踩且规模扩大：POL-T06 留痕提交 553a535c 正文声称新增 traceability/builds/wp07-t06/ 下『集成构建/测试运行日志＋冒烟配置/构建/运行日志＋gate-all.log＋validate-task.log』等 10 件，实际入库仅 3 件（ird-test-report.json＋双模式 gtest XML——git ls-tree 实证）；7 件 .log 留痕因根 .gitignore:87 『*.log』规则被 git add 静默跳过（git check-ignore 对假设路径命中实证；F-010 根因未修复），实施工作树本地实际存在该 10 件（未跟踪）。证据本体不缺：双模式 XML（integration tests=133 failures=0／smoke tests=112 failures=0）与 ird-test-report.json（gates/carryOver/testSuites 全节）在库，且数值主张全部经验收者亲手复现准确（集成 133/133、冒烟 112/112、ird_gates 5 命中＝base 既有 GATE_DELTA_ZERO、validate-task PASS——worktree A 全新树复现）；但方向为『声称在库而实际未入库』的虚报（比 F-080 少报更需警惕），4.10『构建日志落位』字面未达成",
+      "owner": "构建约定所有者（F-010 .gitignore 修复与留痕回填裁决）；实施者自查为辅助",
+      "resolution": "三选一并裁决：①修根 .gitignore 增加 traceability/** 豁免（F-010 一并闭环）后由实施者补提交 7 件日志（git add -f）；②按 POL-T04 F-077 先例接受『XML＋报告承载证据本体』口径，日志以验收记录中的验收者亲跑证据（ird-gates-run.log/validate-task.log 存于 evidence 分支验收记录）替代；③留痕清单自查项强制 git status --porcelain 对账（F-025 家族统一处置追加）。不影响 POL-T06 验收（pass——按 POL-T04 先例证据本体完整且全量复现）。编号顺延自 F-080。"
+    },
+    {
+      "id": "F-082",
+      "source": "POL-T06 验收段 attempt 2（2026-09-13，traceability/acceptance/POL-T06-20260913.md §4.9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-012/F-037/F-039/F-044/F-079 家族同型再现：POL-T06 送验 4 提交中 2 例标题前缀后以名词短语开头，非动词开头——9c6458c5『[WP-07-T06] 错误码面表尾追加 CLL 家族前两值并同步全表锚定』（主语『错误码面』开头）与 553a535c『[WP-07-T06] 留痕与文档同步（…）』（并列名词短语开头，与 F-012 所引 DOC-T04『编译留痕…』同型）；另两例（b63af663『实现…』、9eb5923b『构建…』）合规。正文四段齐备、验证结论与留痕一致（数值主张经亲手复现准确），纯风格瑕疵不构成阻断",
+      "owner": "构建约定所有者（模板补救落地）；实施者自查为辅助",
+      "resolution": "并入 F-012 家族统一处置（与 F-079 同一模板补救：实施者模板补提交标题动词开头示例并覆盖代码/文档/留痕各前缀形态）。不影响 POL-T06 验收（pass）。编号顺延自 F-081。"
     }
   ]
 }
