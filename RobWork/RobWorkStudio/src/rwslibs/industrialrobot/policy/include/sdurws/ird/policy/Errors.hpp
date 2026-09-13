@@ -48,10 +48,13 @@
 namespace sdurws::ird::policy {
 
 // =====================================================================
-// PolicyErrorCode——policy 全量稳定错误码枚举（POL-T02 落位 14 值）。
-// 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加 1 值
+// PolicyErrorCode——policy 全量稳定错误码枚举（POL-T02 落位 14 值；
+// POL-T03 表尾追加 EncodingInvalid → 15 值）。
+// 来源＝§5.2 错误类诊断码逐行（13 值，顺序即表序）＋表尾追加 2 值：
 // PolicyObjectInvalid（发布对象工厂即时校验码——evidence SnapshotIncomplete
-// "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）。
+// "快照非法实例/builder 即时验证失败"同模式，随单元卡 v0.3 增量登记）与
+// EncodingInvalid（对象字节编码契约违约码——§9.2"字节损坏在解码期报错"
+// 落点，随单元卡 v0.4 增量登记）。
 // 枚举顺序与数值一经交付不得改动/插入——持久化于诊断与报告的 token 虽为
 // 字符串，但枚举数值进入二进制契约面，稳定第一（runtime/evidence 同款
 // 纪律）；后续任务需要新码（§9.6 的 CLL、JNT、VERSION-INCOMPATIBLE 等
@@ -110,12 +113,20 @@ enum class PolicyErrorCode {
     /// 〔含阈值单位域与字段位置不符〕；§4.5"发布对象只存在 Valid 态"的
     /// fail-fast 载体）。
     PolicyObjectInvalid,
+    /// policy/encoding-invalid——对象字节编码契约违约（表尾追加，POL-T03——
+    /// §9.2"字节损坏在解码期报错"的码面落点）：PolicyCodec::decode 遇
+    /// magic/形态字节之外的契约损坏（载荷长度与实际不符/字符串或计数越界/
+    /// 未知枚举值/非有限位模式/载荷未精确耗尽/语义闭包投影形态误入解码）。
+    /// 与 PolicyObjectInvalid 的分工：本码＝**字节**对格式契约的违约
+    /// （传输/存储损坏或未校验写入），后者＝解码产物**实例**的保留值违约
+    /// （全零身份）。evidence SliceIncomplete 同模式，随单元卡 v0.4 登记。
+    EncodingInvalid,
 };
 
 /**
  * @brief 取错误码的稳定 token（注释列原文）。
  *
- * @param code [in] 错误码（全枚举 14 值均有 token——全函数，永不返回空）
+ * @param code [in] 错误码（全枚举 15 值均有 token——全函数，永不返回空）
  * @return 稳定 token 字符串（"policy/..." 形态；静态存储期，调用方无需释放）
  *
  * 确定性：编译期固定 switch 全枚举表（无 default——新增枚举值未登记表项时
@@ -131,15 +142,16 @@ std::string_view token(PolicyErrorCode code) noexcept;
  * @brief 取错误码对应的 diagnostics 建议注册码（§9.6 建议码清单）。
  *
  * 关系说明：§9.6 建议码清单覆盖 POLICY-SCHEMA、POLICY-THRESHOLD、UNIT、RULE、
- * SCOPE/APPLICABILITY 家族——与本表 13 个 §5.2 系值逐一对应；本任务未列入
- * §9.6 的 PolicyObjectInvalid 发补登建议码（P-PR-6 同模式，是否收编由
- * diagnostics 所有者裁决）。注意：§9.6 其余家族（POLICY-CLL-*、POLICY-JNT-*、
- * POLICY-VERSION-INCOMPATIBLE、POLICY-CONTENT-IDENTITY-MISMATCH 等）不在本表——
+ * SCOPE/APPLICABILITY 家族——与本表 13 个 §5.2 系值逐一对应；表尾追加值
+ * 发补登建议码（P-PR-6 同模式，是否收编由 diagnostics 所有者裁决）：
+ * PolicyObjectInvalid（POL-T02）与 EncodingInvalid（POL-T03）。注意：§9.6
+ * 其余家族（POLICY-CLL-*、POLICY-JNT-*、POLICY-VERSION-INCOMPATIBLE、
+ * POLICY-CONTENT-IDENTITY-MISMATCH 等）不在本表——
  * 其码面归属后续任务的表尾追加（CollisionEvaluator/JointLimits/Compatibility
  * 各自落位时登记），本函数不预发。
  *
  * @param code [in] 错误码
- * @return 建议注册码（"POLICY-*" 形态——全部 14 值均发建议码；正式码值以
+ * @return 建议注册码（"POLICY-*" 形态——全部 15 值均发建议码；正式码值以
  *         diagnostics StableCodeRegistry 注册为准，本函数不承担注册职责——PA-1）
  */
 std::string_view registryCode(PolicyErrorCode code) noexcept;
@@ -175,7 +187,7 @@ class PolicyError : public std::runtime_error {
 public:
     /**
      * @brief 以错误码＋细节构造；what() ＝ "<token>: <detail>"。
-     * @param code   [in] 稳定错误码（全表 14 值之一）
+     * @param code   [in] 稳定错误码（全表 15 值之一）
      * @param detail [in] 开发诊断细节（就地定位信息：字段/对象/数值等）；
      *               空串合法——此时 what() 恰为 token（无尾随冒号空格）
      */
