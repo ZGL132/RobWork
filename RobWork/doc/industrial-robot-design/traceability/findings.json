@@ -732,6 +732,16 @@
       "title": "EV-T11 提交信息与 ird-test-report.json 散文计数失准四处：①实现提交 88801be9 与报告称 EvaluatorPortSuiteTest.cpp『15 用例』——实测 14 个 TEST；②报告称该文件『EvaluatorPortVerdict 8』——实测 9（EV-VER-1~5/8 各 1＋EV-VER-6 双例 2）；③报告称 _test 目标『既有 190 用例』——实测既有 191（191+14=205）；④实现提交影响面段称『既有 195 用例零修改回归』——按两目标口径应为 196（191+5）。F-041 同型（计数笔误、方向无粉饰）：XML（tests=205/14、failures=0 双模式四份）与报告汇总 total=219/passed=219 及验收者双模式亲测完全一致，差错仅在提交/报告散文层",
       "owner": "evidence 实现所有者（后续任务提交前以 --gtest_list_tests 实测数字回填散文；本送验对象已冻结不追改，随收尾合入保持原样）",
       "resolution": "计数纪律留档，不改既有交付；不影响 EV-T11 验收（pass——4.9 判定：验证结论本身与留痕一致，无粉饰，唯散文计数笔误降建议级，F-041/F-025 先例同口径）。编号顺延自 F-072（该编号已由实施侧在任务分支 wp05-t11 登记——本条在 redesign-main 侧顺延，收尾合入时由所有者确认两分支 findings.json 增量无撞车）。"
+    },
+    {
+      "id": "F-074",
+      "source": "EV-T12 验收段 attempt 2（2026-09-13，traceability/acceptance/EV-T12-20260913.md §4.8，送验对象 b898f0baf08c9c15416599d67c15c8b28a704c2a，分支 wp05-t12）：验收者核对 P-EV-6 消账的对端承接状态时发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "units/runtime.md §15.3 P-RT-9 行未随 evidence 侧 P-EV-6 消账同步：EV-T12 已就地翻转 evidence.md §15.3 P-EV-6（project.md 磁盘复核完整——1386 行、__PART3__ 零命中、§1～§15 章节标题全在；验收者在 worktree@b898f0ba 独立实测一致），对端 runtime.md P-RT-9 行仍登记『仍 open（RT-T13 状态同步 2026-09-12）……请 evidence 详设所有者更新的请求维持有效』——该请求实际已被 EV-T12 满足，对端状态滞后；units/runtime.md 不在 EV-T12 allowedFiles，实施侧无法代改（evidence.md 消账行已注明『runtime.md P-RT-9 同源请求对账关闭』，属 evidence 侧单面翻转）",
+      "owner": "runtime 详设所有者（下次触及 units/runtime.md 时翻转 P-RT-9 行，引用 evidence.md §15.3 P-EV-6〔v1.3，2026-09-13〕消账行与 EV-T12 验收记录为消账证据；无独立任务必要，亦不影响 EV-T12 验收）",
+      "resolution": "P-RT-9 行状态改为已关闭/已由对端消账，注明 EV-T12（2026-09-13）完成 evidence 侧翻转＋验收者独立复核（project.md 1386 行、__PART3__ 零命中、'## 1'～'## 15' 全在）。编号顺延自 F-073（EV-T11 已合入 redesign-main，无跨分支撞车面）。"
     }
   ]
 }
