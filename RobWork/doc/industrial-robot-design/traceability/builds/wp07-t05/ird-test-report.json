@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T05",
+  "masterWp": "WP-07-T05",
+  "branch": "wp07-t05",
+  "date": "2026-09-13",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T05 增量：新增 include Contexts.hpp（三个最小注入接口——§3.3/§9.7，header-only 契约）与 PolicyPort.hpp/.cpp（PolicyResolutionRequest/PolicyResolution、CollisionBackendDescriptor、IPolicyProvider、PolicyProvider 实现＋(对象, 版本) 记忆化——§3.1/§9.1/§12 POL-T05 产物行）；Errors.hpp/.cpp 表尾追加 PortAssemblyIncomplete（14→15→16 值链，§9.1 前置行 fail-fast 载体）；链接面不变（core＋RobWork 基线，R-5 例外维持）；本任务零 runtime/project 编译依赖（R-1/R-2——NoCrossUnitInclude 对新头自动扫描通过）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T05 增量：新增 test/PolicyPortTest.cpp（注入接口契约＋端口契约错误矩阵＋POL-ID-1 缓存一致，3 个套件 15 用例）；POL-T01 红线扫描 4 用例、POL-T02 既有 30 用例（其中 PolicyErrors 两张全表锚定用例同步扩展至 16 值）、POL-T03 既有 23 用例、POL-T04 既有 44 用例全部保持通过（合计 112/112，两模式一致）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyPortContexts",
+      "designRef": "units/policy.md §3.3/§9.7、§11 替身边界（POL-TD-1 精神）、foundation-api-diff.md CR-04、§12 POL-T05 行",
+      "cases": [
+        { "name": "PolicyPortContexts.NameContextExpectedErrorYieldsNulloptIdempotent_CR_04", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1＋acceptance 3（CR-04）：IPolicyNameContext 正向/反向双向查询、映射外 → nullopt（IRuntimeNameResolver 的 Expected 错误→nullopt，不可解析不猜测——ARC-04）；幂等（§9.7'解析只读、幂等'行）；nameMapContentIdentity 转发（CON-06）；替身不含前缀拼拆逻辑（R-4——适配器边界声明）" },
+        { "name": "PolicyPortContexts.CallContextReflectsHostState", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.7 表 IPolicyCallContext 行：cancellationRequested()/alive() 如实投影宿主状态（NFR-PERF-02 协作取消＋§6.1 迟到拒绝的事实源）；消费方＝POL-T07 evaluate（本套件钉住可实现性与标志转发）" }
+      ]
+    },
+    {
+      "suite": "PolicyPort",
+      "designRef": "units/policy.md §9.1 契约表（前置/后置/错误/线程/生命周期行）、§6.5 装配线、§12 POL-T05 行、CR-03/CR-04",
+      "cases": [
+        { "name": "PolicyPort.ResolvePublishesPipelineEqualPolicy_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 成功路径：resolvePolicy 经'取字节→decode→七段管线'发布策略——与管线直调结果逐字段相等（policy＋诊断双向；ARC-05 单一权威，端口无第二解析口径）" },
+        { "name": "PolicyPort.MissingObjectBytesYieldsDiagnosticNoThrow_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 错误类型行第 3 项：存储侧无 (对象, 版本) 字节（CR-03 应答面 nullopt）→ 空 policy＋POLICY-OBJECT-MISSING，不抛；subject 绑定请求对象（ERR-01）＋cause 携带对象/版本规范文本" },
+        { "name": "PolicyPort.AbsentExpectedVersionYieldsDiagnosticNoThrow_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 前置/错误行：expectedVersion 未携带＝不可编址取数（CON-05 内容编址是端口唯一服务形态，§10.1 调用方先经 project ②端口取得 (oid, cv)）→ 空 policy＋诊断，不抛（可恢复输入条件）" },
+        { "name": "PolicyPort.CallerContractViolationsFailFast_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 错误行'实现内部异常→PolicyError'的调用方违约面：全零 policyObject/全零 expectedVersion（保留值——合法编址请求不可产生）→ fail-fast 抛 PolicyError(PolicyObjectInvalid)（与解析管线复检同款纪律，POL-T04 先例）" },
+        { "name": "PolicyPort.CorruptBytesForwardedAsDiagnosticNoThrow_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 错误行'存储侧诊断转发'：字节截断（decode 抛 EncodingInvalid）→ 转译为同码面诊断，what() 全文保留进 cause（NFR-COR-03 不吞错），空 policy，不抛——端口查询语义下'一个坏对象不崩整轮查询'" },
+        { "name": "PolicyPort.FutureSchemaBytesForwardSchemaDiagnosticNoThrow_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 错误行'POLICY-SCHEMA-* 转发'：帧内 schemaVersion=2（手工改帧头字节，kHeaderSize=16 大端）→ 空 policy＋POLICY-SCHEMA-VERSION-FUTURE，不抛、不前向猜测解析（POL-PARSE-1 处置语义的端口级延续）" },
+        { "name": "PolicyPort.InvalidPolicyContentForwardsPipelineDiagnosticsNoThrow_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 错误行第 5 项：策略内容非法（负安全间距）→ 空 policy＋管线全量诊断原样转发（端口诊断集==管线直调诊断集——不增不减不短路），不抛" },
+        { "name": "PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 collisionBackend 行：复现要素按装配期注入值返回（值语义）；CollisionBackendDescriptor 逐字段精确相等/不等（§8.1 版本要素载体；toleranceModel＝后端数值分辨率登记非工程阈值——R-7）" },
+        { "name": "PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 前置条件行的 fail-fast 载体：评估器半区未注入即调用 collisionEvaluator() → PolicyError(PortAssemblyIncomplete)（Errors 表尾追加码的契约面；正向'同一实例引用'断言依赖 POL-T06 完整类型，归 POL-SHARE-1——POL-T11 套件）" },
+        { "name": "PolicyPort.ConcurrentResolveReadOnlySafety_PortContract_NFR_COR_02", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 线程行'并发只读安全（缓存内部同步）'：4 线程×3 类请求（命中/未命中/失败/缺版本）并发——各键结果与单线程基准逐字段一致（NFR-COR-02；memo 表互斥量保护、解析在锁外）" }
+      ]
+    },
+    {
+      "suite": "PolicyPortCache",
+      "designRef": "units/policy.md §9.1 后置条件行（记忆化）、§11 POL-ID-1/POL-ID-4、CON-05/06、§12 POL-T05 行验证列",
+      "cases": [
+        { "name": "PolicyPortCache.RepeatedResolveReturnsFieldEqualResult_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2（POL-ID-1 端口级联动）：同 (policyObject, ContentVersion) 重复解析 → PolicyResolution 逐字段相等（policy 与 diagnostics 双向）＋内容身份相等（§9.1 后置行'身份必然一致'）" },
+        { "name": "PolicyPortCache.CacheKeyIncludesContentVersionSeparatesEntries_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2＋POL-ID-4 联动：同一策略对象两个内容版本（阈值 0.02→0.03）→ 缓存按键分离条目、互不串值；内容身份不同（阈值入语义闭包——CON-05/06）；SI 真值 0.02/0.03 各自到位（KIN-13 阈值经端口传递无损）" },
+        { "name": "PolicyPortCache.FailureOutcomeMemoizedFieldEqual_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.1 后置行对失败情形的延伸（实现口径登记 policy.md v0.6：成功与失败都入表——键下结果为进程内纯函数值）：存储缺失键重复解析 → 空 policy＋诊断逐字段相等" }
+      ]
+    }
+  ],
+  "carryOver": {
+    "description": "POL-T01~T04 既有 97 用例（PolicyBuild 4／PolicyErrors 3／PolicyThresholdField 8／PolicyJointThresholds 4／PolicyCollisionRules 6／PolicySetGate 4／PolicyCodecId 9／PolicyCodecFloat 4／PolicyCodecCr02 3／PolicyCodecErrors 8／PolicyParseSchema 5／PolicyParseThresholds 8／PolicyParseUnits 5／PolicyParseRules 8／PolicyParseScope 3／PolicyParseApplicability 3／PolicyParseDefaults 5／PolicyParsePipeline 7）在本任务双模式执行中全部保持通过——本文件不逐条重列，逐条 trace 见 traceability/builds/wp07-t04/ird-test-report.json；其中 PolicyErrors.TokenTableFullEnumeration_NFR_COR_02／RegistryCodeTableFullEnumeration_NFR_COR_02 两用例随 Errors 表尾追加同步扩展至 16 值（表尾补登 PortAssemblyIncomplete——用例名不变、断言表逐值更新）",
+    "totalPrior": 97,
+    "result": "passed（两模式）"
+  },
+  "totals": {
+    "prior": 97,
+    "new": 15,
+    "sum": 112,
+    "smoke": "112/112 passed",
+    "integration": "112/112 passed"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp07-t05/smoke-configure.log",
+      "traceability/builds/wp07-t05/smoke-build.log",
+      "traceability/builds/wp07-t05/smoke-test-run.log",
+      "traceability/builds/wp07-t05/sdurws_ird_policy_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp07-t05/integration-build.log",
+      "traceability/builds/wp07-t05/integration-test-run.log",
+      "traceability/builds/wp07-t05/sdurws_ird_policy_test-integration.xml",
+      "traceability/builds/wp07-t05/gate-all.log"
+    ],
+    "gates": [
+      "traceability/builds/wp07-t05/ird_gates-current-wp07t05.log",
+      "traceability/builds/wp07-t05/ird_gates-base-wp07t05.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test ——通过（集成模式 exit 0；全量 Release 构建零 error，见 evidence/integration-build.log）",
+  "gateAll": {
+    "result": "16/17——唯一失败项＝ird_gates 目标 5 处命中，经 base 快照（9223f636）同参数复跑证明全部为 base 既有，非本任务引入",
+    "method": "①本分支树运行 gate-all.ps1（ird_gates＋双模式全部 _test 目标）→ ird_gates 命中 5 项；②git worktree 检出 base 9223f636 快照，以同参数 cmake -P 复跑 ird_gates.cmake → 命中**逐字相同**的 5 项（diff 为空）；③本任务 diff 面仅含 policy 单元文件＋单元卡/留痕——命中目标（sdurws_ird_evidence_test/sdurws_ird_evidence_contract_test/sdurws_ird_runtime_test 直链 testkit×3、sdurws_ird_testdata_lint→testkit×2）的 CMakeLists 均不在本任务改动面与 allowedFiles 内",
+    "hitsAllPreexisting": [
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 表外依赖边（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单",
+      "IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1）"
+    ],
+    "verdict": "DoD 第 2 条口径：ird_gates 对**本次变更**零命中（base 既有 5 项不因本任务增减——base/分支命中清单逐字一致，GATE_DELTA_ZERO）；既有命中按 DTB §5.4 属治理事项（POL-T02/T03/T04 验收已同口径登记），不由 POL-T05 私改其他单元（allowedFiles/forbiddenFiles 边界）",
+    "evidence": [
+      "traceability/builds/wp07-t05/gate-all.log",
+      "traceability/builds/wp07-t05/ird_gates-base-wp07t05.log",
+      "traceability/builds/wp07-t05/ird_gates-current-wp07t05.log"
+    ]
+  },
+  "notes": "①实现口径登记（policy.md v0.6，验收可对照 §9.1/§3.3/§9.7 原文复核）：错误矩阵六项逐项落点（头文件类注释＋实现步骤注释）——调用方契约违约（全零对象/版本）fail-fast；版本未指定与存储缺失走 POLICY-OBJECT-MISSING 诊断轨（不抛）；decode 的 PolicyError（EncodingInvalid/SchemaVersionFuture/Unknown）转译为同码面诊断、what() 全文进 cause（不吞错）；②POLICY-OBJECT-MISSING 为 §9.6 清单表尾补登建议值（码值权威归 diagnostics StableCodeRegistry——PA-1，随单元卡 v0.6 登记）；③Errors.hpp/.cpp 表尾追加 PortAssemblyIncomplete（16 值；§9.1 前置行 fail-fast 载体；建议码 POLICY-PORT-ASSEMBLY-INCOMPLETE 补登——P-PR-6 同模式）；④装配口径（vs §6.5 装配线示意）：nameContext 不进构造参数——本端口三方法契约面均不消费名称映射（createSession 由调用方显式传名，§9.3），持有不消费的接口指针违反最小装配面（单元卡 v0.6 登记差异）；解析④⑤步闭包查询经 validationContext 注入（§9.7 已登记注入面）；评估器半区（evaluator＋backend 描述符）可分步注入——注入前 collisionEvaluator() 契约违约 fail-fast；⑤Contexts.hpp 仅定义最小注入接口、零适配器（P-POL-9 宿主＝ui，WP-10-T07 定稿）；零 runtime/project 编译依赖（NoCrossUnitInclude 白名单 {core, policy} 对新头自动扫描通过——acceptance 3）；⑥门禁：validate-task.ps1 PASS；ird_gates 见 gateAll 节（对本次变更零命中，5 项 base 既有已用 base 快照同参数复跑 diff 为空证明）"
+}
