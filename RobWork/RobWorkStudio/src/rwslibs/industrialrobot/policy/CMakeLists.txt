@@ -145,6 +145,13 @@ if(TARGET sdurw_kinematics)
                                            # POL-CONC-1（AT-19 载体）＋POL-LATE-1
                                            # ＋R-POL-5/D-9 结构断言——真实后端
                                            # 解析算例＋脚本化碰撞/距离替身
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/JointLimitsTest.cpp)          # POL-T08：POL-JNT-1/2（行程 4π 边界/
+                                           # 比较型三要素/continuous 豁免/P-POL-2
+                                           # 显式 NotApplicable/区间与工程范围
+                                           # 诊断级检出〔D-13〕/近限位与闭区间
+                                           # 边界/裕量口径/违约矩阵——集成模式
+                                           # 专属，与 src/JointLimits.cpp 同因）
 endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
