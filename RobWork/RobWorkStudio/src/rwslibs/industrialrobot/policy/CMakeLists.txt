@@ -129,6 +129,11 @@ if(TARGET sdurw_kinematics)
         test/CollisionSessionTest.cpp)  # POL-T06：POL-SCOPE-1/2 构建期（作用域
                                         # 矩阵展开/冲突拒绝两层防御）＋场景校验
                                         # 守卫＋会话身份确定性＋检测器初始化
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/CollisionEvaluationTest.cpp)  # POL-T07：POL-EVAL-1~9/POL-EXC-1/
+                                           # POL-CONC-1（AT-19 载体）＋POL-LATE-1
+                                           # ＋R-POL-5/D-9 结构断言——真实后端
+                                           # 解析算例＋脚本化碰撞/距离替身
 endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
