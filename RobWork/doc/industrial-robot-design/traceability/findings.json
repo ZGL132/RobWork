@@ -862,6 +862,16 @@
       "title": "F-012 家族同型再现：POL-T08 三送验提交中 5b7f272e『实现关节限位与行程阈值评估（…）』与 8011f16e『构建 POL-JNT-1/2 关节限位评估用例组（16 用例）』动词开头合规，第三提交 2edfdf01 标题『[WP-07-T08] 留痕与文档同步（双模式证据＋policy.md v0.9 实现登记）』以并列名词短语开头，非动词开头——与 F-084 所引 POL-T07 提交 e5ad5960 同字面形态（『留痕与文档同步（…）』），家族再复现一例；该提交正文四段齐备、验证结论与验收者亲手复现逐项一致（集成 166/166、冒烟 112/112、ird_gates 5 既有命中零新增、validate-task PASS），纯风格瑕疵不构成阻断",
       "owner": "构建约定所有者（模板补救落地）；实施者自查为辅助",
       "resolution": "并入 F-012 家族统一处置（与 F-079/F-082/F-084 同一模板补救：实施者模板补提交标题动词开头示例并覆盖代码/文档/留痕各前缀形态，留痕类可用『登记…留痕（…）』句式）；对已推送历史（2edfdf01 及本家族所涉提交）不追溯改写（AGENTS §6.3）。不影响 POL-T08 验收（pass）。编号顺延自 F-085，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-087",
+      "source": "POL-T09 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T09-20260914.md §4.10-G-1，送验对象 04f3e762f749a7f5decc4789567f644222746776，分支 wp07-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-010 根因第五次踩中（F-081 第二次、F-083 第三次、F-085 第四次之后）：POL-T09 送验 04f3e762 的 traceability/builds/wp07-t09/ird-test-report.json 的 gates.log／builds.integration.logs（integration-build/verify-target-build）／builds.smoke.logs（smoke-configure/smoke-build/smoke-test-run/smoke-test-run-all）／testRuns.*.log／validateTask.log 字段引用 9 件 .log 文件均未入库（git ls-tree 04f3e762 实证 wp07-t09/ 仅 3 件：report＋双模式 gtest XML；git check-ignore -v 实证命中根 .gitignore:87『*.log』规则）——『报告字段引用在库文件而实际未入库』方向悬空引用（F-083/F-085 同型）。较 F-085 为窄：本次提交正文未逐件列举 .log 文件名（仅泛称『双模式构建/测试/门禁留痕』）。证据本体不缺：双模式 XML（integration tests=181 failures=0／smoke tests=112 failures=0 顶格实测）与 report 全部数值主张经验收者在 detached worktree @SHA 亲手复现准确（集成 181/181＝166 既有＋15 新增、冒烟 112/112、冒烟全量 665/665 六目标逐项、ird_gates 5 命中＝F-019×2＋F-051×1＋F-072×2 既有零新增、validate-task PASS、契约 verify 目标从零构建 exit 0、双探针即红还原复绿），判级沿 F-081/F-083/F-085 先例＝建议级不阻断",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决——五次踩中后建议提级处置）；实施者自查为辅助",
+      "resolution": "沿 F-081/F-085 三选一并裁决（根因 .gitignore 增加 traceability/** 负向豁免后由实施者 git add -f 补提交日志／接受『XML＋报告承载证据本体』口径并将 report 内 log 字段改为显式『未入库（gitignore 吞没）』标注／留痕清单 git status --porcelain 对账自查强制化）；根因未修复前每任务必复踩。不影响 POL-T09 验收（pass）。编号顺延自 F-086，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
