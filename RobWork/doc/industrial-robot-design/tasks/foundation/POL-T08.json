@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现关节限位与行程阈值评估",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T04"
   ],
