@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-C",
   "title": "场景与会话（CollisionScene）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T02",
     "POL-T05"
