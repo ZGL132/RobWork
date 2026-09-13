@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现策略兼容判定（Compatibility）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T04"
   ],
