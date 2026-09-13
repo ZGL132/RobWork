@@ -39,6 +39,9 @@ std::string_view token(PolicyErrorCode code) noexcept
     case PolicyErrorCode::PolicyObjectInvalid:      return "policy/policy-object-invalid";
     case PolicyErrorCode::EncodingInvalid:          return "policy/encoding-invalid";
     case PolicyErrorCode::PortAssemblyIncomplete:   return "policy/port-assembly-incomplete";
+    // POL-T06 表尾追加（§9.6 CLL 家族落位——会话构建期场景/名称校验）。
+    case PolicyErrorCode::SceneInvalid:             return "policy/cll-scene-invalid";
+    case PolicyErrorCode::NameUnresolved:           return "policy/cll-name-unresolved";
     }
     // 不可达路径：全枚举已覆盖。返回空串仅为满足编译器（无 default 时
     // 控制流分析仍要求出口感）；测试全表用例保证该路径永不在运行期出现。
@@ -67,6 +70,9 @@ std::string_view registryCode(PolicyErrorCode code) noexcept
     case PolicyErrorCode::PolicyObjectInvalid:      return "POLICY-POLICY-OBJECT-INVALID";
     case PolicyErrorCode::EncodingInvalid:          return "POLICY-ENCODING-INVALID";
     case PolicyErrorCode::PortAssemblyIncomplete:   return "POLICY-PORT-ASSEMBLY-INCOMPLETE";
+    // POL-T06 表尾追加（§9.6 建议码清单既有 CLL 行的正式落位——非补登）。
+    case PolicyErrorCode::SceneInvalid:             return "POLICY-CLL-SCENE-INVALID";
+    case PolicyErrorCode::NameUnresolved:           return "POLICY-CLL-NAME-UNRESOLVED";
     }
     // 不可达路径：同 token() 说明。
     return {};
