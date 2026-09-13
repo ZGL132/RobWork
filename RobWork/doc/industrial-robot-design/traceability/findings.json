@@ -712,6 +712,16 @@
       "title": "industrialrobot/core/src/Units.cpp 存在 14 处 MSVC C4099 告警（sdurws::ird::core::Quantity<QuantityKind::Length/Angle/Mass/Time/…> 模板类型『以前使用 struct 现在使用 class』——struct/class 声明不一致，L174 起）；主仓增量树该文件无重编译活动而掩盖（F-036/F-052 同族『增量树掩盖』效应，方向为既有告警非错误）。非 EV-T10 引入（送验 diff 未触碰 core 单元；送验留痕增量树日志零告警的表述在其口径下真实），evidence 单元自身源文件零告警",
       "owner": "core 实现所有者（WP-03 后续任务随下次触及 Units.cpp/Units.hpp 时统一 struct/class 声明消除告警，避免独立格式化提交）",
       "resolution": "统一 Quantity 模板各具名特化/别名的 struct 与 class 声明形态（声明与定义同关键词）即闭合；全新树/CI 全量构建的告警清洁面前置（F-008 闭合后 CI 全量构建将暴露同类存量）。不影响 EV-T10 验收（pass——任务目标面 evidence 零 error 零告警）。编号顺延自 F-070，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-072",
+      "source": "EV-T11 实施段（2026-09-12，分支 wp05-t11）：ird_gates 自查检出——evidence 单元测试目标按 testkit.md §10.2 交接表 evidence 行（须自行提供 envelope 访问器特化供 checkEnvelopeCombination 消费＋切片契约夹具数据集）与 evidence.md §11 用例登记要求（每条用例经 IRD_TEST_INFO）增链 sdurws_ird_testkit 后，ird_gates 命中从 3 项基线（F-019 两项＋F-051 一项）增至 5 项",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-12",
+      "title": "IRD-GATE-SUB 对测试目标→sdurws_ird_testkit 边的命中再增两处（sdurws_ird_evidence_test→sdurws_ird_testkit、sdurws_ird_evidence_contract_test→sdurws_ird_testkit）——与 F-051 同根因：ird_gates_whitelist.cmake T-1 段明文允许测试目标链接 sdurws_ird_testkit，但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定未对『测试目标→sdurws_ird_testkit』边豁免。两链接均为任务交付面所必需：_contract_test 链接＝envelope 访问器特化（testkit 泛型谓词消费）与数据集装载（GoldenDataset/ToleranceProfile/JsonLite）的 §10.2 交接消费面本体，不可去除；_test 链接＝evidence.md §11『每条用例经 IRD_TEST_INFO 登记』的测试设施依赖（testkit/gtest/AssertMacros.hpp），去除则 §11 登记要求空转",
+      "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置——与 F-051 同一处置动作一并裁决；cmake/ 不在 EV-T11 allowedFiles，实施者不得私改）",
+      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 与本项的 4 处命中，testdata_lint 产品目标 2 处命中仍归 F-019）；或按 DTB §4.5 在门禁数据面显式登记 evidence/runtime 两单元的 testkit 消费边。登记前 ird_gates 维持红（基线 3 项＋本项 2 项），任务目标面构建与测试不受影响（EV-T11 双模式 205/205＋14/14 留痕）。编号顺延自 F-071。"
     }
   ]
 }

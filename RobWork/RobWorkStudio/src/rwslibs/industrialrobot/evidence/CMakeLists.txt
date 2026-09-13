@@ -93,7 +93,8 @@ add_executable(sdurws_ird_evidence_test
     test/EnvelopeTest.cpp           # EV-T07：EV-ENV-1 表 3 全组合矩阵＋EV-ENV-2 partialData 不可复用＋快照绑定面（工况子集/证明有效性/清单绑定）＋构造确定性
     test/CurrentnessTest.cpp        # EV-T08：EV-CUR-1~4（内容身份/不可解析/历史不可改写/跨上下文）＋AT-05 载体（预算复评不冒充原运行）＋契约短路＋条件翻转/条目消失＋Index 缓存行为＋违约 fail-fast
     test/CompatibilityTest.cpp      # EV-T09：EV-CPA-1~3（Quick≠Verified 双向/契约版本两判定面/检查点与任务成败独立）＋EV-ENV-2 判定面（部分/失败不得正式命中）＋全量收集检查序＋格式区间边界＋确定性
-    test/EvaluatorTest.cpp)         # EV-T10：EV-REG-1（重复键/未知键/缺 Profile 注册边界）＋EV-REG-2（并发只读/manifest 排序与摘要稳定/跨注册表一致）＋descriptor 完整性与声明闭包（§9.2/§9.4）＋Profile 注册表行为（§9.5）＋D-12 调度分离红线扫描＋P-EX-7 字段面钉死
+    test/EvaluatorTest.cpp          # EV-T10：EV-REG-1（重复键/未知键/缺 Profile 注册边界）＋EV-REG-2（并发只读/manifest 排序与摘要稳定/跨注册表一致）＋descriptor 完整性与声明闭包（§9.2/§9.4）＋Profile 注册表行为（§9.5）＋D-12 调度分离红线扫描＋P-EX-7 字段面钉死
+    test/EvaluatorPortSuiteTest.cpp) # EV-T11：EV-VER-1~5/8＋EV-VER-6 双例经端口路径（ScriptedEvaluator 注册于测试内 registry→create→evaluate→aggregateVerdict）＋§9.3 上下文契约演练（取消抛出/对象读取/进度）＋EV-INV 显示单位子例＋EV-REG-3 替身边界机检（替身源码面扫描＋README 声明在案）
 target_compile_features(sdurws_ird_evidence_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_test PROPERTIES
     CXX_STANDARD 17
@@ -104,8 +105,13 @@ if(MSVC)
 endif()
 
 # 测试 main 自持＋链接被测库（公共头可 include＋库可链接的双验证）。
+# sdurws_ird_testkit＝testkit.md §10.2 evidence 行的消费面（AssertMacros 的
+# IRD_TEST_INFO 需求/AT 追溯登记——§11"每条用例经 IRD_TEST_INFO 登记"；
+# 测试侧依赖，R-1 业务域互链红线不适用；产品目标链接面不变，见文件末尾
+# 依赖红线守卫）。用统一真名：两模式都可解析（别名仅集成模式存在）。
 target_link_libraries(sdurws_ird_evidence_test PRIVATE
     sdurws_ird_evidence
+    sdurws_ird_testkit
     GTest::gtest_main)
 
 # 源码树位置注入（红线扫描用例输入——core/testkit/runtime 同款）。
@@ -142,7 +148,16 @@ ird_add_gtest(sdurws_ird_evidence_test)
 # （源码扫描）＋包络三轴字段类型＝core 词表类型（编译期 static_assert）＋
 # token 字面量与 core::toToken 输出逐一相等（词表漂移的机检防线）。
 add_executable(sdurws_ird_evidence_contract_test
-    test/EnvelopeContractTest.cpp)  # EV-T07：CR-01 词表契约（类型面/源码面/值面三防线）
+    test/EnvelopeContractTest.cpp         # EV-T07：CR-01 词表契约（类型面/源码面/值面三防线）
+    test/EnvelopeAccessorContractTest.cpp # EV-T11：envelope 访问器特化（testkit
+                                          # checkEnvelopeCombination 消费——
+                                          # testkit.md §10.2 evidence 行交接的
+                                          # 承接；合法/非法组合与产品校验器
+                                          # 对账，分工面如实登记）
+    test/SliceFixtureContractTest.cpp)    # EV-T11：切片契约夹具数据集
+                                          # （testdata/golden/ev-slice-fixture
+                                          # lint 全链＋EV-ID-1 数据集载体——
+                                          # 双实现互证的 parse(encode(x))==x）
 target_compile_features(sdurws_ird_evidence_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_evidence_contract_test PROPERTIES
     CXX_STANDARD 17
@@ -153,8 +168,14 @@ if(MSVC)
 endif()
 
 # 测试 main 自持＋链接被测库（跨单元契约也必须走公共头＋库链接面——R-2）。
+# sdurws_ird_testkit＝testkit.md §10.2 evidence 行的消费面（ContractCheck
+# 泛型谓词/Dataset 装载/ToleranceProfile/JsonLite——测试侧依赖，R-1 业务域
+# 互链红线不适用；产品目标 sdurws_ird_evidence 的链接面不变，仍仅 core，
+# 见文件末尾依赖红线守卫）。用统一真名：两模式都可解析（别名仅集成模式
+# 存在——runtime 测试目标同款取舍）。
 target_link_libraries(sdurws_ird_evidence_contract_test PRIVATE
     sdurws_ird_evidence
+    sdurws_ird_testkit
     GTest::gtest_main)
 
 # 源码树位置注入（词表本地定义扫描的输入——与 _test 目标同源）。

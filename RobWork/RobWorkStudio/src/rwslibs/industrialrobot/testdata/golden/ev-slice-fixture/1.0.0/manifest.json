@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "ev-slice-fixture",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "evidence/slice-serialization-contract",
+  "coveredRequirements": ["CON-04", "CON-05", "NFR-COR-02"],
+  "coveredAt": ["AT-05"],
+  "toleranceProfile": { "id": "ev-slice", "version": "1.0.0" },
+  "inputs": ["inputs/slice.json"],
+  "expected": ["expected/slice-identity.json"],
+  "parameters": {
+    "contract": "evidence InputSlice/SliceCodec（IRDSLCE1 版本 1）＋ AnalysisSnapshot refs-only（IRDSNAP1 版本 1）",
+    "entryFaces": {
+      "object": "基准类——进 sliceId 与 inputBaselineId（§5.1/D-1）",
+      "configuration": "求解类——进 sliceId 不进 inputBaselineId（D-04）；canonicalBytes 内嵌 IEEE754 双精度 0.1 大端位模式（0x3FB999999999999A，§5.2 浮点行）",
+      "policy": "条件未适用——full 形态含 presence 字节与原因串（§4.2.1 条件输入仍在身份里）；不进 inputBaselineId"
+    },
+    "independence": "expected 由 generate/make_ev_slice_fixture.mjs 按 §5.2/编码布局规则独立重实现产出——与产品 C++ 编码器双实现互证（任一侧漂移即 SliceFixtureContractTest 显性失败）",
+    "framesNote": "切片契约面无坐标系语义（frames 仅为 manifest schema 必填项的空声明——base 指向快照组装的安装约定，条目级不携带帧）",
+    "emptyCaseSet": "必验工况集为空（合法形态——EV-CASESET EmptyCaseSetAllowed 同口径；覆盖矩阵语义归 EV-COV 用例，不在本夹具）"
+  },
+  "units": {},
+  "frames": { "base": "robot-base" },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "ev-slice-fixture-canon-rederive",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-12T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/slice.json",
+      "sha256": "cb3ae90419c8e8d4d82e73b5bed52331c923ce95ebc1c751b83566e1ce418adf",
+      "sizeBytes": 3530
+    },
+    {
+      "path": "expected/slice-identity.json",
+      "sha256": "5a0a64270b71bdedf1ee47feee9067628d3296ca13231e932fdef56be24763fd",
+      "sizeBytes": 1824
+    },
+    {
+      "path": "generate/make_ev_slice_fixture.mjs",
+      "sha256": "637062f6db9c132e82891b9887e176cc5308e7923b57416e661c5149e42cad2f",
+      "sizeBytes": 13450
+    }
+  ],
+  "generator": {
+    "script": "generate/make_ev_slice_fixture.mjs",
+    "invocation": "node generate/make_ev_slice_fixture.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-12",
+      "change": "首版：切片序列化契约夹具（Object/Configuration/Policy 条件未适用三形态＋空必验集快照）——EV-T11 §12 产物行数据集面（EV-ID-1 的数据集载体、parse(encode(x))==x 跨实现互证）",
+      "reReviewedBy": "WP-05",
+      "supersededBy": ""
+    }
+  ]
+}

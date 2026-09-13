@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "ev-slice",
+  "version": "1.0.0",
+  "basis": "evidence 单元切片契约夹具（ev-slice-fixture，WP-05-T11）为字节级等值数据集：全部断言为身份精确等值（附录 D 第 12 项——无数值容差）与 canonical 字节逐字节对照（§5.2 位模式规则）。本档案不承载任何放宽的数值容差；唯一条目以 absolute 0 的零宽容差登记夹具求解配置载荷的对照面（语义＝字节级等值，非数值近似），供消费侧以档案通道引用该字段时解析——直接消费请使用字节等值断言（IRD_EXPECT_IDENTICAL 同口径）。",
+  "entries": [
+    {
+      "fieldPath": "slice.payload.config-bytes",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：零宽容差即字节级等值的档案化表达（宽于零＝伪造近似等值，EV-ID-2 反例面）；本夹具的实际断言为字节等值，不经本档案数值通道"
+    }
+  ]
+}
