@@ -95,7 +95,7 @@ if(TARGET sdurw_kinematics)
                                           # 实例化＋评估器级查询互斥——含
                                           # RobWork 命名标识符的零字面量 TU，
                                           # 切分说明见该文件头）
-        src/JointLimits.cpp)              # §7.4/§9.4 关节限位与行程阈值评估
+        src/JointLimits.cpp         # §7.4/§9.4 关节限位与行程阈值评估
                                           # （POL-T08：JointLimitEvaluator::
                                           # evaluate 七步执行序——区间/工程范围
                                           # 诊断级检出〔D-13〕/行程 4π 边界/
@@ -106,6 +106,18 @@ if(TARGET sdurw_kinematics)
                                           # 状态词表复用链传导〔§9.4"复用状态
                                           # 词表"〕——集成模式专属 gating 与
                                           # CollisionQuery.cpp 同因）
+        src/Compatibility.cpp)            # §8.1/§8.2/§9.5 策略兼容判定
+                                          # （POL-T09：七项检查固定序全量收集
+                                          # ＋POLICY-VERSION-INCOMPATIBLE 诊断
+                                          # 构造；backend-mismatch 臂经
+                                          # CollisionEvaluator.hpp 的字面量
+                                          # 单点 makeBuiltinBackendDescriptor
+                                          # ＋框架配置头版本宏取"当前注册后端"
+                                          # 复现要素——P-POL-5 暂取构建版本，
+                                          # 不私定最终取值。框架配置头在冒烟
+                                          # 模式不可解析——集成模式专属 gating
+                                          # 与 RobWorkCollisionEvaluator.cpp
+                                          # 同因；头内类型面零框架依赖）
 
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math
@@ -152,6 +164,14 @@ if(TARGET sdurw_kinematics)
                                            # 诊断级检出〔D-13〕/近限位与闭区间
                                            # 边界/裕量口径/违约矩阵——集成模式
                                            # 专属，与 src/JointLimits.cpp 同因）
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/CompatibilityTest.cpp)        # POL-T09：POL-COMPAT-1/2（版本/后端/
+                                           # 锚失配全量 reason/比较型三要素/
+                                           # 内容身份素材面/全量收集不短路/
+                                           # 确定性/注入接口委托/O-20·P-POL-5
+                                           # 保守口径）——后端真值经唯一装配线
+                                           # 取得（框架库），集成模式专属，
+                                           # 与 src/Compatibility.cpp 同因
 endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
