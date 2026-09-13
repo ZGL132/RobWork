@@ -752,6 +752,36 @@
       "title": "ACC §4.5 探针头文件注入陷阱（F-068 同族第二形态）：对 header-only 契约头注入 mutation 后即使 touch 该头文件，MSBuild 增量构建亦未重编消费 TU——POL-T02 验收探针二改 PolicySet.hpp 近限位比域窗（<=0.0 改 <0.0）并 touch 该头后重建，PolicySetTest.cpp 未重编、NearLimitRatioBoundaries_D08_POL_PARSE_2 未红（首跑 28 通过 2 失败，失败均属另一文件的码面探针）；补 touch 消费 TU（测试源）再重建后方如期变红（30 用例中 3 红）。若验收者据此误判'断言恒真/测试失效'将产出失实结论——探针失效与测试失效的判别需要操作纪律保障",
       "owner": "验收协议所有者（ACC 文档辖域）：在 ACC §4.5 或 PIPE 附录 C 验收者模板补充探针操作纪律——探针注入头文件后须 touch 全部受影响消费 TU（或直接 touch 测试源文件）再重建；还原探针后同样处理，并以 git status 零残留＋全绿复跑双重核验",
       "resolution": "操作纪律缺口登记，不改送验产物（探针已还原并复绿 30/30，送验对象零污染）；不影响 POL-T02 验收（pass）。编号顺延自 F-074（EV-T12 收尾已在 redesign-main，无跨分支撞车面）。与 F-068 的区别：F-068 为'备份+mv 还原文件 mtime 陈旧致重编缺失'，本条为'头文件变更+touch 后消费 TU 依赖未传播'，同属增量构建陷阱族，处置纪律一致。"
+    },
+    {
+      "id": "F-076",
+      "source": "POL-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T04-20260913.md §4.9，送验对象 2df7eb2cdfd2b81ebe0b28ddf5c856b562047c6e，分支 wp07-t04）：验收者逐份核对三个送验提交标题",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048/F-059 同型再现：POL-T04 文档提交 2df7eb2c 标题『[units] policy.md v0.5：POL-T04 实现落位登记（DTB §5.4 增量修订）』前缀后以名词短语（'policy.md v0.5'）开头，非动词开头——F-012 家族再复现一例（首个 [units] policy.md 实例）；另两份送验提交（dad8667e『[WP-07-T04] 实现策略解析器与校验器…』、272aeeaf『[WP-07-T04] 登记 POL-T04 验证留痕…』）动词开头合规。两提交正文四段齐备、验证结论与验收者全新 worktree 亲手复现逐项一致（双模式 97/97、ird_gates 5 项既有命中与送验留痕逐字一致、双探针即红还原复绿），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置：文档类提交标题在代号前缀后同样以动词短语开头（如『[units] 登记 policy v0.5 实现落位…』）；对已推送历史（2df7eb2c 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-075（redesign-main 侧最新），合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-077",
+      "source": "POL-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T04-20260913.md §4.10，送验对象 2df7eb2cdfd2b81ebe0b28ddf5c856b562047c6e，提交 272aeeaf）：验收者以 git ls-tree 清点留痕文件与提交正文清单比对",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "POL-T04 留痕提交 272aeeaf 正文清单与实际入库出入：正文称『新增 10 件留痕』却逐一列出 11 个文件名，其中 smoke-test-run.log 不存在于送验提交（git cat-file -e 实证 fatal: path does not exist；实际入库 10 件为 smoke-configure/smoke-build/integration-build/integration-test-run/ird_gates-base/ird_gates-current/gate-all 七份日志＋双模式 XML 两份＋ird-test-report.json）——F-025/F-041 同型（提交信息文件清单/份数与 ls 实际清点不符），方向为列出不存在文件＋份数口径混乱；证据本体不缺（冒烟测试运行由 sdurws_ird_policy_test-smoke.xml〔tests=97 failures=0〕承载，验收者亲手复跑一致），无粉饰，不构成阻断",
+      "owner": "实施纪律（与 F-025/F-041 提交信息准确性面同辖域；提交已推送不追溯改写）",
+      "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的留痕份数/文件名以 git ls-files／实际 diff --stat 清点为准（列名清单须与份数自洽），可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-076，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-078",
+      "source": "POL-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T04-20260913.md §4.8）：验收者按 F-005/F-006/F-058 家族排查口径对 policy.md 全文扫描",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "units/policy.md 'AI 执行就绪补充/单元任务退出条件'两节存在 F-005（core.md）/F-006（testkit.md）/F-058（evidence.md）同族转义损毁第四份单元卡实例：L1259 '$(policy.ToUpper())' 为未展开模板表达式、L1260 '标记为 locked' 应为 blocked（\\b 被吞）、L1271 'alidate-docs.ps1/alidate-task.ps1' 缺首字母（\\v 被吞）——既有损毁非 POL-T04 引入（送验 diff 对 policy.md 仅 +1 行＝§15.4 v0.5 变更记录，反证在档）；F-005 resolution 预判的'排查其他单元卡'至此已实证第四例",
+      "owner": "policy 详设所有者（文本本体）；与 F-005/F-006/F-058 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
+      "resolution": "并入 F-005/F-006/F-058 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md/policy.md 四份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁；其余单元卡的家族排查继续随触及任务进行。不影响 POL-T04 验收（pass）。编号顺延自 F-077，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
