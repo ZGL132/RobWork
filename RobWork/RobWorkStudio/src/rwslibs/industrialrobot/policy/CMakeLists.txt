@@ -211,6 +211,96 @@ add_custom_command(TARGET sdurws_ird_policy_test POST_BUILD
             $<TARGET_FILE_DIR:sdurws_ird_policy_test>
     COMMAND_EXPAND_LISTS)
 
+# ---- 跨单元契约测试目标 sdurws_ird_policy_contract_test（随 POL-T11 登记）----
+# §11 测试目标分工：`_test`＝单元内行为；`_contract_test`＝跨单元契约面
+# （§3.4：与 core 值类型、与 testkit 谓词、与 evidence 证明字段形状的
+# 对齐断言）。POL-T11 交付本目标——替身与契约套件（tasks/foundation/
+# POL-T11.json，≙WP-07-T11）。
+#
+# 文件分层（两模式 vs 集成专属——与产品库同款 gating 判定）：
+#   - 双模式无条件编译：PolicyCodecFixtureContractTest.cpp（解析/编码契约
+#     夹具数据集消费——纯 core＋policy 无框架依赖）＋
+#     PolicyTestDoubleBoundaryTest.cpp（POL-TD-1 边界机检——纯 std 文件
+#     扫描）；
+#   - 仅集成模式：PolicyContractDoublesTest.cpp（规范替身行为＋POL-SHARE-1
+#     ＋POL-AT-1~3——消费 rw 非模板类 WorkCell/Device/ProximityStrategyRW）
+#     ＋PolicyProofMaterialContractTest.cpp（POL-EVAL-3 证明素材对齐——
+#     CollisionQuery.hpp 的 rw include 面）＋CollisionAnalyticDatasetTest.cpp
+#     （pol-collision-analytic 数据集消费＋POL-AT-4——真实 WorkCell＋
+#     内置后端）；
+#   - 公共头 include：policy/test（替身头 <sdurws/ird/policy/testdouble/…>
+#     ——§11 测试设施行的落位；仅测试目标可见，产品 include 面不变）。
+add_executable(sdurws_ird_policy_contract_test
+    test/PolicyCodecFixtureContractTest.cpp   # POL-T11：pol-policy-codec-fixture
+                                              # 消费（双实现互证——编码/身份/
+                                              # 变体无关性；GoldenDataset 全链）
+    test/PolicyTestDoubleBoundaryTest.cpp)    # POL-T11：POL-TD-1 边界机检
+                                              # （产品源码替身符号零命中＋
+                                              # 声明两面在案断言）
+
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_policy_contract_test PRIVATE
+        test/PolicyContractDoublesTest.cpp    # POL-T11：替身四轨行为＋装配
+                                              # 分步镜像＋POL-SHARE-1（三入口
+                                              # 同一实例/等价输出）＋POL-AT-1
+                                              # （行程确认放行链）＋POL-AT-2
+                                              # （AT-19 三入口一致）＋POL-AT-3
+                                              # （AT-27 单位/配置不可覆盖）
+        test/PolicyProofMaterialContractTest.cpp)  # POL-T11：POL-EVAL-3 证明
+                                                   # 素材对齐（evidence 公共头
+                                                   # 值类型消费——零链接边，
+                                                   # T-1 合规）＋POL-COMPAT-2
+                                                   # 素材面
+    target_sources(sdurws_ird_policy_contract_test PRIVATE
+        test/CollisionAnalyticDatasetTest.cpp)     # POL-T11：pol-collision-
+                                                   # analytic 数据集消费
+                                                   # （analytic-case 六工况
+                                                   # 对照）＋POL-AT-4（倒挂
+                                                   # 无二次旋转判别）
+
+    # evidence 公共头 include 根（仅 ProofMaterial 对齐测试消费 evidence 值
+    # 类型——R-2 允许形态的"其他单元公共头"；零链接边〔不 link
+    # sdurws_ird_evidence，T-1 白名单合规〕；仅集成模式需要——消费文件
+    # 均在本 gating 内）。
+    target_include_directories(sdurws_ird_policy_contract_test PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../evidence/include)
+endif()
+
+target_compile_features(sdurws_ird_policy_contract_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_policy_contract_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_policy_contract_test PRIVATE /utf-8)
+endif()
+
+# 链接面（T-1 允许形态：同单元产品目标＋testkit＋gtest——sdurws_ird_policy_
+# contract_test→testkit 边与 F-072 同族〔白名单数据面明文允许而引擎 SUB
+# 形态未豁免〕，命中如实登记，处置归 WP-01 所有者）。用统一真名：两模式
+# 都可解析（别名仅集成模式存在——runtime/evidence 测试目标同款取舍）。
+# evidence 证明对齐＝公共头值类型消费（R-2 允许形态）——零链接边。
+target_link_libraries(sdurws_ird_policy_contract_test PRIVATE
+    sdurws_ird_policy
+    sdurws_ird_testkit   # §10.2 policy 行消费面（Dataset/JsonLite/ToleranceProfile/
+                         # SetCheck/IRD_TEST_INFO——测试侧依赖，产品库红线面不变）
+    GTest::gtest_main)
+
+# 替身头 include 根（§11 落位 policy/test/sdurws/ird/policy/testdouble/）＋
+# 源码树位置注入（边界机检/源码锚扫描的输入——与 _test 目标同源）。
+target_include_directories(sdurws_ird_policy_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/test)
+target_compile_definitions(sdurws_ird_policy_contract_test PRIVATE
+    IRD_POLICY_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+add_custom_command(TARGET sdurws_ird_policy_contract_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_policy_contract_test>
+            $<TARGET_FILE_DIR:sdurws_ird_policy_contract_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_policy_contract_test)
+
 # ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
 macro(ird_add_gtest target)
     add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
