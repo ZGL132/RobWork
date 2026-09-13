@@ -872,6 +872,26 @@
       "title": "F-010 根因第五次踩中（F-081 第二次、F-083 第三次、F-085 第四次之后）：POL-T09 送验 04f3e762 的 traceability/builds/wp07-t09/ird-test-report.json 的 gates.log／builds.integration.logs（integration-build/verify-target-build）／builds.smoke.logs（smoke-configure/smoke-build/smoke-test-run/smoke-test-run-all）／testRuns.*.log／validateTask.log 字段引用 9 件 .log 文件均未入库（git ls-tree 04f3e762 实证 wp07-t09/ 仅 3 件：report＋双模式 gtest XML；git check-ignore -v 实证命中根 .gitignore:87『*.log』规则）——『报告字段引用在库文件而实际未入库』方向悬空引用（F-083/F-085 同型）。较 F-085 为窄：本次提交正文未逐件列举 .log 文件名（仅泛称『双模式构建/测试/门禁留痕』）。证据本体不缺：双模式 XML（integration tests=181 failures=0／smoke tests=112 failures=0 顶格实测）与 report 全部数值主张经验收者在 detached worktree @SHA 亲手复现准确（集成 181/181＝166 既有＋15 新增、冒烟 112/112、冒烟全量 665/665 六目标逐项、ird_gates 5 命中＝F-019×2＋F-051×1＋F-072×2 既有零新增、validate-task PASS、契约 verify 目标从零构建 exit 0、双探针即红还原复绿），判级沿 F-081/F-083/F-085 先例＝建议级不阻断",
       "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决——五次踩中后建议提级处置）；实施者自查为辅助",
       "resolution": "沿 F-081/F-085 三选一并裁决（根因 .gitignore 增加 traceability/** 负向豁免后由实施者 git add -f 补提交日志／接受『XML＋报告承载证据本体』口径并将 report 内 log 字段改为显式『未入库（gitignore 吞没）』标注／留痕清单 git status --porcelain 对账自查强制化）；根因未修复前每任务必复踩。不影响 POL-T09 验收（pass）。编号顺延自 F-086，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-088",
+      "source": "POL-T10 验收段 attempt 1（2026-09-14，traceability/acceptance/POL-T10-20260914.md §4.10-G-1，送验对象 de9119cce6891f4aba3cd35f59617e6564262e61，分支 wp07-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-010 根因第六次踩中（F-081 第二次、F-083 第三次、F-085 第四次、F-087 第五次之后）：POL-T10 留痕提交 de9119cc 正文声称 traceability/builds/wp07-t10/ 下登记『全套验证留痕』并逐一列举 8 件 .log（verify-target-build/smoke-configure/smoke-build/integration-test-run/smoke-test-run/validate-task/gate-all/gates-current-wp07t10），git ls-tree de9119cc 实证该目录仅 3 件入库（ird-test-report.json＋双模式 gtest XML），8 件 .log 全部未入库（git check-ignore -v 实证命中根 .gitignore:87『*.log』规则）；ird-test-report.json 的 validateTask（『PASS（validate-task.log）』）与 gates 字段同型悬空引用未入库 .log（F-083/F-085/F-087 同型，且本次为『提交正文逐件列举』与 F-077/F-080『正文清单与实际入库出入』的叠加形态）。证据本体不缺：双模式 XML（integration tests=200 failures=0／smoke tests=131 failures=0 顶格实测）与 report 的全部数值主张经验收者在 detached worktree @SHA 亲手复现准确（集成 200/200＝181 既有＋19 新增、冒烟 policy 131/131、冒烟全量六目标 684/684、ird_gates 6 命中＝base 5＋新增 1 与登记逐码一致、validate-task PASS、契约 verify 目标从零构建 exit 0、双探针即红还原复绿），判级沿 F-081/F-083/F-085/F-087 先例＝建议级不阻断",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决——六次踩中，根因未修复前每任务必复踩）；实施者自查为辅助",
+      "resolution": "同 F-087 三选一并裁决（.gitignore 负向豁免＋补提交／接受 XML＋报告承载口径并显式标注未入库／留痕对账自查强制化）；建议与 F-087 合并同一根因处置单，不再按任务逐例重复立案。不影响 POL-T10 验收（pass）。编号顺延自 F-087，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-089",
+      "source": "POL-T10 验收段 attempt 1（2026-09-14，traceability/acceptance/POL-T10-20260914.md §4.10-G-2／4.9，送验对象 de9119cce6891f4aba3cd35f59617e6564262e61，分支 wp07-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-025/F-041/F-073 计数失实家族同型再现：POL-T10 三处散文（提交 e5b0e5fe 正文、units/policy.md §15.4 v0.11 行、traceability/builds/wp07-t10/ird-test-report.json targets[1].notes）称 DiagnosticsTest.cpp『6 套件 19 用例（码表 6＋构造不变量 8＋辅助 4＋多态 1）』，gtest 实测（提交内 integration XML 与验收者 detached worktree 复跑一致）为 4 套件 19 用例（PolicyDiagCodeTable 5＋PolicyDiagnosticsMake 9＋MakeComparativeHelpers 4＋PolicyDiagnosticsInterface 1）——套件数与套内分配失实。与 F-025/F-041/F-073 同判级：总数 19 正确、逐用例均真实存在且通过（提交 XML 19 例与报告枚举、验收复跑逐一对应，ird-test-report.json testSuites 数组对 PolicyDiagCodeTable 逐用例枚举无错、其余三套以计数引用），方向为套件归并口径错位、非虚报用例、非粉饰，建议级不阻断",
+      "owner": "详设所有者（units/policy.md §15.4 散文修正）；实施者按留痕修正惯例自查后续提交散文计数",
+      "resolution": "随 policy.md 下次增量修订将 v0.11 行『6 套件 19 用例（码表 6＋构造不变量 8）』修正为实测分布『4 套件 19 用例（码表 5＋构造不变量 9）』；ird-test-report.json 已合入历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；建议实施者模板补『套件数以 gtest 输出 tests from N test suites 为准』自查项（F-025 家族第四例，与 F-041/F-073 同源）。不影响 POL-T10 验收（pass）。编号顺延自 F-088，合入时由所有者确认与并行 evidence 分支无撞车。"
     }
   ]
 }
