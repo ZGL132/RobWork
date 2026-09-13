@@ -37,10 +37,15 @@ find_package(GTest CONFIG REQUIRED)
 # WorkCell/ProximitySetup/ProximityStrategyRW——冒烟模式无框架库可链）；
 # CollisionEvaluator.hpp 公共头零 rw include（rw 类型仅前向声明——冒烟模式
 # 无 TU include 该头，公共头 include 面不影响冒烟口径）。
+# POL-T10 增量：诊断构造落地——新增 Diagnostics.cpp（policyDiagCodes 建议
+# 码表／IPolicyDiagnostics＋PolicyDiagnostics／makeComparative 辅助——§3.1
+# POL-T10 产物行/§9.6 契约；纯 core＋std 依赖，双模式无条件编译；Errors.cpp
+# 的 registryCode 同步改为委托本 TU 码表——NFR-MNT-03 单一字面量点）。
 # 占位 Policy.cpp 保留（单元锚点符号——STATIC 库至少一个翻译单元纪律不变）。
 add_library(sdurws_ird_policy STATIC
     src/Policy.cpp
     src/Errors.cpp
+    src/Diagnostics.cpp
     src/PolicyInput.cpp
     src/PolicyParsing.cpp
     src/PolicyPort.cpp)
