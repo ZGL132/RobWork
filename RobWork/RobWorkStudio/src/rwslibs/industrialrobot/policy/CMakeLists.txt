@@ -80,12 +80,21 @@ if(TARGET sdurw_kinematics)
                                           # sessionIdentity）＋复现要素字面量
                                           # 单点（detail::makeBuiltinBackend-
                                           # Descriptor）——§12 POL-T06 产物行；
-                                          # 评估半区归 POL-T07 同文件增量落位
+                                          # 构造函数末段调用评估半区装配
+                                          # （POL-T07，实现在 CollisionQuery.cpp）
+        src/CollisionQuery.cpp            # §6.3/§6.4/§6.6/§7.4 评估半区
+                                          # （POL-T07：buildEvaluationHalf
+                                          # 装配＋evaluate 执行序——setState/
+                                          # 逐对查询/取消/异常捕获/稳定排序/
+                                          # 边界值决策；消费 rw 非模板类
+                                          # Device/Frame/Kinematics/
+                                          # CollisionStrategy/DistanceStrategy）
         src/RobWorkCollisionEvaluator.cpp)  # §6.5/§9.3 唯一实现绑定（RobWork-
                                           # CollisionEvaluator 方法＋make 唯一
                                           # 构造入口＋内置 ProximityStrategyRW
-                                          # 实例化——含 RobWork 命名标识符的
-                                          # 零字面量 TU，切分说明见该文件头）
+                                          # 实例化＋评估器级查询互斥——含
+                                          # RobWork 命名标识符的零字面量 TU，
+                                          # 切分说明见该文件头）
 
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math

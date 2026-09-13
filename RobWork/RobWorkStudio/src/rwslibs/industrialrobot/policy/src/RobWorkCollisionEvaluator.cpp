@@ -55,8 +55,12 @@ RobWorkCollisionEvaluator::RobWorkCollisionEvaluator(const BackendConfig& config
     // 唯一构造入口的签名锚（消费以 static_cast<void> 抑制未用告警）。
     static_cast<void>(config);
     // 内置后端实例化（sdurw_proximity——R-5 例外许可的唯一消费点；构造
-    // 不做几何注册——模型注册归评估期，POL-T07）。
+    // 不做几何注册——模型注册归会话构建期，POL-T07 评估半区装配）。
     m_strategy = std::make_shared<rw::proximity::ProximityStrategyRW>();
+    // 后端查询互斥（评估器级单实例——其全部会话共享同一把锁：同一后端
+    // 实例的构建期注册与评估期查询全部串行化，跨会话并发亦无数据竞争；
+    // RobWork 检测器查询面非线程安全——见会话构造参数注释）。
+    m_queryMutex = std::make_shared<std::mutex>();
     // 复现要素（§8.1/P-POL-5）：冻结值与容差模型登记串由字面量单点
     // （detail::makeBuiltinBackendDescriptor——CollisionEvaluator.cpp）供给；
     // backendVersion 注入 RW_VERSION（RobWork 构建版本——构建期宏；
@@ -78,9 +82,11 @@ RobWorkCollisionEvaluator::createSession(const EngineeringPolicySet& policy,
 {
     // 三步构建委托会话构造函数（单一实现——本类无第二套校验/展开逻辑；
     // 后端实例与描述符取自本实例，保证 sessionIdentity 组成一致——§9.1
-    // "推荐取 evaluator->backend() 同源值"的机械落实）。
+    // "推荐取 evaluator->backend() 同源值"的机械落实；查询互斥为本实例
+    // 级单例——本评估器全部会话共享，跨会话并发安全）。
     return std::make_shared<const CollisionEvaluationSession>(policy, scene, names,
-                                                              m_descriptor, m_strategy);
+                                                              m_descriptor, m_strategy,
+                                                              m_queryMutex);
 }
 
 std::unique_ptr<ICollisionEvaluator>

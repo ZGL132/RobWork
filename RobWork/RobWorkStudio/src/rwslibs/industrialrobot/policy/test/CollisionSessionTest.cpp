@@ -26,8 +26,10 @@
  * 用例追溯命名（DTB §5.5）：用例名尾部带需求/用例组编号，断言处注明验证
  * 条款。替身边界声明（POL-TD-1 精神）：本套件的受控替身只替代"名称映射"
  * （TestNameContext——模拟 runtime ⑥端口应答）与"主链设备"（FakeDevice
- * ——只提供设备名注册，不提供运动学；会话构建只消费 findDevice 存在性），
- * 不冒充碰撞算法/几何语义——真实数值正确性归 POL-T07 内置后端解析算例。
+ * ——只提供设备名注册，不提供运动学；会话构建只消费 findDevice 存在性；
+ * POL-T07 起对象侧另以 FixedFrame 登记存在性——评估半区装配的 §7.5
+ * Frame 定位核对，见 addObjectFrames），不冒充碰撞算法/几何语义——真实
+ * 数值正确性归 POL-T07 内置后端解析算例。
  * 本套件为**集成模式专属**（消费 rw 非模板类 WorkCell/Device——冒烟模式
  * 不编译本文件，CMake POL-T06 增列注释同源）。
  */
@@ -44,6 +46,7 @@
 #include <sdurws/ird/policy/PolicyParsing.hpp>
 #include <sdurws/ird/policy/PolicySet.hpp>
 
+#include <rw/kinematics/FixedFrame.hpp>
 #include <rw/models/Device.hpp>
 #include <rw/models/WorkCell.hpp>
 #include <rw/proximity/ProximitySetup.hpp>
@@ -237,6 +240,32 @@ struct SceneIds {
 };
 
 /**
+ * @brief 在 workcell 内登记场景对象的 Frame（POL-T07 会话契约增量：评估
+ *        半区装配要求作用域对象经名称上下文解析后可定位到编译产物 Frame
+ *        ——§7.5"名称不可解析→会话构建失败"；Frame 与 makeNames 的
+ *        byId 映射逐字一致，仅提供存在性——无几何无运动学，作用域展开
+ *        与冲突复核不消费 Frame 位姿语义）。
+ *
+ * @param workcell [in] 目标编译产物替身（Frame 挂接 World——存在性即满足）
+ * @param ids      [in] 对象身份集（Frame 清单＝makeNames 映射的对象全集）
+ */
+void addObjectFrames(const std::shared_ptr<rw::models::WorkCell>& workcell, const SceneIds& ids)
+{
+    const std::pair<const core::ObjectId*, const char*> frames[] = {
+        {&ids.link1, "Robot/Link1"},   {&ids.link2, "Robot/Link2"},
+        {&ids.link3, "Robot/Link3"},   {&ids.tool, "Tool"},
+        {&ids.payload, "Payload"},     {&ids.env1, "Env1"},
+        {&ids.env2, "Env2"},           {&ids.workpiece, "Workpiece"},
+    };
+    for (const auto& [id, name] : frames) {
+        // FixedFrame 挂接 World（addFrame 缺省父＝World——存在性即满足
+        // §7.5 Frame 定位核对；位姿恒等——构建期不消费位姿）。
+        workcell->addFrame(rw::core::ownedPtr(
+            new rw::kinematics::FixedFrame(name, rw::math::Transform3D<>::identity())));
+    }
+}
+
+/**
  * @brief 装配标准碰撞场景（§6.1 五字段全量——CR-04 映射的测试承载：
  *        workcell 共享只读指针、"runtime 计算的"场景内容身份值传递、
  *        对象清单/相邻对自"编译产物事实"装配）。
@@ -249,10 +278,12 @@ struct SceneIds {
 CollisionScene makeScene(const SceneIds& ids, const std::string& deviceName = "Robot",
                          bool mapDevice = true)
 {
-    // WorkCell 替身场景：真实基线类型（集成模式）＋FakeDevice 注册——
-    // 会话构建只消费 findDevice 的名称存在性（§6.1 主链设备核对）。
+    // WorkCell 替身场景：真实基线类型（集成模式）＋FakeDevice 注册＋对象
+    // Frame 登记——会话构建消费 findDevice 存在性（§6.1 主链设备核对）与
+    // 作用域对象的 Frame 定位（§7.5，POL-T07 评估半区装配）。
     auto workcell = std::make_shared<rw::models::WorkCell>("PolicySessionTestWC");
     workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    addObjectFrames(workcell, ids);
 
     CollisionScene scene;
     scene.workcell = workcell;                    // CR-04：共享只读（替身直接持有）
@@ -450,6 +481,7 @@ TEST(CollisionSessionScope, ThreeDomainMatrixRowAssignment_POL_SCOPE_1)
     CollisionScene scene;
     auto workcell = std::make_shared<rw::models::WorkCell>("PolicySessionTestWC");
     workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    addObjectFrames(workcell, ids);   // 评估半区装配的 §7.5 Frame 定位（POL-T07）
     scene.workcell = workcell;   // 共享只读指针（const 化）——CR-04 消费形态
     scene.primaryDevice = ids.device;
     scene.objects = {
@@ -526,6 +558,7 @@ TEST(CollisionSessionScope, SceneDomainOnlyMandatoryEnters_POL_SCOPE_1)
     CollisionScene scene;
     auto workcell = std::make_shared<rw::models::WorkCell>("PolicySessionTestWC");
     workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    addObjectFrames(workcell, ids);   // 评估半区装配的 §7.5 Frame 定位（POL-T07）
     scene.workcell = workcell;   // 共享只读指针（const 化）——CR-04 消费形态
     scene.primaryDevice = ids.device;
     scene.objects = {
@@ -580,6 +613,7 @@ TEST(CollisionSessionGuards, ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2
     CollisionScene scene;
     auto workcell = std::make_shared<rw::models::WorkCell>("PolicySessionTestWC");
     workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    addObjectFrames(workcell, ids);   // 评估半区装配的 §7.5 Frame 定位（POL-T07）
     scene.workcell = workcell;   // 共享只读指针（const 化）——CR-04 消费形态
     scene.primaryDevice = ids.device;
     scene.objects = {

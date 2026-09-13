@@ -50,8 +50,11 @@
  *   检测器初始化/会话身份）；CollisionEvaluationSession::evaluate 与查询
  *   类型（CollisionQuery/CollisionEvaluation 等，§6.2/§6.3）归 POL-T07
  *   （同名文件增量落位——§12 POL-T07 行"CollisionQuery.hpp/.cpp＋RobWork
- *   适配评估"）。本头因此不含任何评估执行路径，也不含占位/空实现——
- *   会话的全部行为在构造期完成并可完整测试（POL-SCOPE-1/2 构建期用例）。
+ *   适配评估"）。POL-T07 已增量落位（2026-09-13，单元卡 v0.8）：查询与
+ *   输出类型在 CollisionQuery.hpp（本头 include 之），evaluate 的声明在
+ *   本头（§9.3 冻结签名）、其实现与评估半区装配（buildEvaluationHalf）
+ *   在 src/CollisionQuery.cpp（含 RobWork 适配：setState/逐对查询/取消/
+ *   异常捕获——§6.6 时序）。
  *
  * 实现纪律：
  *   - 本头对 rw 类型**仅前向声明、零 rw include**（冒烟模式纪律——runtime
@@ -71,6 +74,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -81,18 +85,24 @@
 #include <sdurws/ird/core/Identity.hpp>
 
 #include <sdurws/ird/policy/Contexts.hpp>
+#include <sdurws/ird/policy/CollisionQuery.hpp>
 #include <sdurws/ird/policy/Errors.hpp>
 #include <sdurws/ird/policy/PolicyPort.hpp>
 #include <sdurws/ird/policy/PolicySet.hpp>
 
-// rw 类型前向声明（零 rw include——见文件头"实现纪律"）。
+// rw 类型前向声明（零 rw include——见文件头"实现纪律"；值类型成员由
+// CollisionQuery.hpp 以完整类型承载）。
 namespace rw {
 namespace models {
 class WorkCell;          ///< 编译产物场景（完整类型：rw/models/WorkCell.hpp）
+class Device;            ///< 主链设备（完整类型：rw/models/Device.hpp）
 }  // namespace models
 namespace proximity {
 class ProximitySetup;    ///< RobWork 邻近过滤规则集（完整类型：ProximitySetup.hpp）
 class CollisionStrategy; ///< 碰撞检测策略基类（完整类型：CollisionStrategy.hpp）
+class DistanceStrategy;  ///< 距离查询策略基类（完整类型：DistanceStrategy.hpp；
+                         ///< 与 CollisionStrategy 同继承自 ProximityStrategy——
+                         ///< 多接口后端的能力探测面，POL-T07）
 }  // namespace proximity
 }  // namespace rw
 
@@ -397,8 +407,18 @@ public:
      * @param backend  [in] 后端复现要素（进 sessionIdentity 与证据复现块；
      *                 推荐取评估器 backend() 同源值——§9.1 装配契约）
      * @param strategy [in] 内置后端实例（装配方共享持有；非空——空指针＝
-     *                 调用方装配违约 fail-fast；POL-T07 评估半区消费，
-     *                 构建期只保活）
+     *                 调用方装配违约 fail-fast；评估半区经其执行逐对查询，
+     *                 所有访问经 backendQueryMutex 串行化）
+     * @param backendQueryMutex [in] 后端查询互斥（可选——共享形态：同一
+     *                 后端实例的全部会话共享同一把锁，跨会话并发亦安全；
+     *                 缺省（空）＝本会话自建（仅覆盖会话内并发——测试与
+     *                 单会话装配方形态）。为什么需要：RobWork 检测器的
+     *                 查询面非线程安全（ProximityStrategyRW 的统计计数器
+     *                 在 doInCollision 内非原子累加），而 evaluate 契约是
+     *                 "并发只读可重入"（§9.3 线程行）——以互斥串行化全部
+     *                 后端访问（构建期注册＋评估期查询）是使组合成立的最
+     *                 小机制；锁不影响输出（确定性不依赖锁序——查询内容
+     *                 只读，§6.4 evaluate 纯度）
      *
      * @throws PolicyError(PolicyErrorCode::PolicyObjectInvalid) policy 复检
      *         失败（非 Valid 态/身份无效）或 strategy 为空（装配违约）
@@ -415,7 +435,9 @@ public:
                                const CollisionScene& scene,
                                const IPolicyNameContext& names,
                                CollisionBackendDescriptor backend,
-                               std::shared_ptr<rw::proximity::CollisionStrategy> strategy);
+                               std::shared_ptr<rw::proximity::CollisionStrategy> strategy,
+                               std::shared_ptr<std::mutex> backendQueryMutex
+                                   = std::shared_ptr<std::mutex>{});
 
     /// 已发布策略对象（§9.3 原文签名——内部副本的只读引用；会话存续期有效）。
     const EngineeringPolicySet& policy() const noexcept { return m_policy; }
@@ -451,6 +473,44 @@ public:
     /// ——§9.3 前置行只要求已发布＋场景校验，"禁用被误调用"是评估期语义）。
     bool collisionEnabled() const noexcept { return m_collisionEnabled; }
 
+    /**
+     * @brief 执行碰撞评估（§9.3 原文签名——状态机/确定性与稳定排序契约
+     *        见 §6.3/§6.4；实现与评估半区装配在 src/CollisionQuery.cpp）。
+     *
+     * 执行序（固定——确定性 NFR-COR-02）：
+     *   ① 查询契约校验（kind 与样本数/路径参数匹配、构型维度与设备自由度
+     *      一致——违约抛 PolicyError(QueryInvalid)，fail-fast）；
+     *   ② 迟到调用拒绝（ctx.alive()=false → Failed＋POLICY-CLL-CONTEXT-
+     *      EXPIRED，finalized=false——POL-LATE-1）；
+     *   ③ 适用性判定（策略禁用→Completed＋CollisionDisabledByPolicy；作用
+     *      域为空→Completed＋EmptyScope——均非"无碰撞"结论，§6.2/KIN-05）；
+     *   ④ 距离能力核对（间距检查（safetyClearance＞0）或 requestMinDistance
+     *      需要距离查询而后端无 DistanceStrategy 能力 → Failed＋POLICY-CLL-
+     *      DETECTOR-UNAVAILABLE，finalized=false——§6.3"检测器不可用"触发器，
+     *      KIN-05 口径；待裁决登记见单元卡 §15.3 P-POL-11）；
+     *   ⑤ 样本循环（§6.6 时序：基准态克隆→setState→逐对 inCollision/
+     *      distance；样本边界查询 ctx.cancellationRequested()——命中→
+     *      Canceled＋部分 findings、无错误诊断；RobWork 异常/非有限实测值
+     *      →Failed＋POLICY-CLL-EVALUATION-FAILED——不吞、不崩、不伪造）；
+     *   ⑥ 稳定排序＋终态化（findings 按 (sampleIndex, 对象对字典序, kind)、
+     *      minDistances 按 sampleIndex、appliedFilters 按对象对字典序——
+     *      §6.4；Completed 恒 finalized=true）。
+     *
+     * @param q   [in] 查询载体（§6.2 六成员——无阈值/模式参数，R-POL-5）
+     * @param ctx [in] 调用上下文（宿主注入——存活与协作取消查询；借用，
+     *             调用期存活即可）
+     * @return 评估结果（§6.2 十一字段；身份绑定三字段回填——§8.4 素材）
+     *
+     * @throws PolicyError(PolicyErrorCode::QueryInvalid) 仅查询契约违约
+     *         （§9.3 错误类型行——其余一切评估内部异常转 Failed＋诊断，
+     *         不抛出）
+     *
+     * 线程安全：并发只读可重入（§9.3）——会话状态构造后只读；后端查询
+     * 面经 backendQueryMutex 串行化（锁不影响输出——§6.4 evaluate 纯度）；
+     * 无随机源、无归约（同 (会话, 查询, 上下文存活) → 逐字段等价输出）。
+     */
+    CollisionEvaluation evaluate(const CollisionQuery& q, const IPolicyCallContext& ctx) const;
+
 private:
     /**
      * @brief 检测器过滤规则集构建（第三步前半——§6.4"ProximitySetup——由
@@ -473,6 +533,73 @@ private:
      */
     rw::proximity::ProximitySetup buildPolicyProximitySetup(const IPolicyNameContext& names) const;
 
+    // =================================================================
+    // 评估半区（POL-T07 增量——§6.2/§6.3/§6.6；实现与 evaluate 在
+    // src/CollisionQuery.cpp）。以下私有类型/成员为构建期一次性装配的
+    // 只读产物：构造完成后只读，evaluate 仅消费（§9.3"并发只读可重入"）。
+    // =================================================================
+
+    /**
+     * @brief 作用域内对象的评估固化记录（构建期装配——帧指针/名称/几何
+     *        事实在构建期一次固化，evaluate 零解析）。
+     *
+     * 为什么构建期固化：evaluate 契约是"无共享可变状态＋同输入等价输出"
+     * （§6.4）——名称解析与几何注册若留在评估期，既重复消耗又引入共享
+     * 后端状态的并发写入面。Frame 指针稳定性由会话保活 workcell 保证
+     * （§6.1 只读生命周期第一层——编译产物在会话存续期不可变且不被释放）。
+     */
+    struct SceneObjectEvaluation {
+        core::ObjectId object;      ///< 对象身份（NFR-COR-05 输出用）
+        std::string runtimeName;    ///< 编译产物整名（构建期经名称上下文固化——显示辅助）
+        rw::kinematics::Frame* frame;  ///< 检测器侧 Frame（workcell 保活——指针稳定）
+        bool declaredGeometry;      ///< 场景事实：调用方声明该对象有碰撞几何（§6.1）
+        bool registeredGeometry;    ///< 后端注册核对事实：声明有几何且注册后确有模型
+                                    ///< （声明无几何恒 false；声明有而产物无 Object/
+                                    ///< 注册空 → false——缺口以 POLICY-CLL-GEOMETRY-
+                                    ///  MISSING 显式化，不伪装已检——KIN-05）
+    };
+
+    /**
+     * @brief 作用域内对象对的评估固化记录（仅 Mandatory＋InScopeDefault
+     *        对——被过滤对不经评估，其留痕由 scope 展开产物直接导出）。
+     */
+    struct ScopedPairEvaluation {
+        core::ObjectId objectA;     ///< 规范序第一端（A<B——与展开产物同序）
+        core::ObjectId objectB;     ///< 规范序第二端
+        std::string runtimeNameA;   ///< A 端整名（发现输出的显示辅助——CON-06）
+        std::string runtimeNameB;   ///< B 端整名
+        rw::kinematics::Frame* frameA;  ///< A 端 Frame（workcell 保活——稳定）
+        rw::kinematics::Frame* frameB;  ///< B 端 Frame
+        std::size_t endAIndex = 0;  ///< A 端在 m_evaluationObjects 的下标（拷贝安全——不存指针）
+        std::size_t endBIndex = 0;  ///< B 端在 m_evaluationObjects 的下标
+        bool bothEndsGeometry = false;  ///< 双端 registeredGeometry（KIN-05 缺口判定源）
+        PolicyRuleLevel level = PolicyRuleLevel::Must;  ///< 发现级别（必检规则携带其级别；域默认=Must）
+    };
+
+    /**
+     * @brief 评估半区装配（构造函数末段调用——§6.4 createSession 的评估
+     *        半区延伸；实现在 src/CollisionQuery.cpp，POL-T07 TU）。
+     *
+     * 装配序（固定——确定性）：
+     *   ① 主链设备固化（POL-T06 已验证解析链——此处重新解析并持有
+     *      Device，供 evaluate 的 setState 消费）；
+     *   ② 后端查询互斥缺省自建（共享形态由装配方经构造参数传入）；
+     *   ③ 作用域内对象固化（规范序——objectKey 升序）：名称解析→findFrame
+     *      定位（断链→POLICY-CLL-NAME-UNRESOLVED，§7.5）→几何注册（声明
+     *      有几何的对象在编译产物 Object 清单按基帧匹配后注册进注入后端，
+     *      hasModel 核对；全程持后端互斥——共享实例跨会话访问串行化）；
+     *   ④ 作用域对固化（仅必检/域默认对；级别解析——必检规则携带级别，
+     *      域默认 Must）；
+     *   ⑤ 距离能力探测（注入后端是否同时实现 DistanceStrategy——
+     *      dynamic_cast；无能力时间距检查显式不可用，§6.3/P-POL-11）。
+     *
+     * @param names [in] 名称上下文（借用——构建期存活即可）
+     *
+     * @throws PolicyError(PolicyErrorCode::NameUnresolved) 作用域对象名称
+     *         不可解析或解析名无对应 Frame（§7.5 断链——不猜测）
+     */
+    void buildEvaluationHalf(const IPolicyNameContext& names);
+
     /// 已发布策略对象（副本——会话自持，调用方存活期无要求；§9.3 policy()
     /// 返回其只读引用）。
     EngineeringPolicySet m_policy;
@@ -494,6 +621,28 @@ private:
     std::shared_ptr<rw::proximity::CollisionStrategy> m_strategy;
     /// 碰撞域总开关（自 policy.collision.enabled 固化——评估期适用性判定源）。
     bool m_collisionEnabled;
+
+    // ---- 评估半区数据成员（POL-T07 增量——置于声明序末尾，构造函数初始
+    // ---- 化列表不涉及、按默认成员初始化器/默认构造完成；evaluate 只读消费）。
+
+    /// 作用域内对象固化记录（规范序——objectKey 升序；evaluate 只读消费）。
+    std::vector<SceneObjectEvaluation> m_evaluationObjects;
+    /// 作用域内对象对固化记录（规范序——与 m_scope.pairs 相对序一致）。
+    std::vector<ScopedPairEvaluation> m_evaluationPairs;
+    /// 主链设备（构建期解析固化——evaluate 的 setState 消费；workcell 保活
+    /// 使指针在会话存续期稳定）。
+    rw::core::Ptr<rw::models::Device> m_device;
+    /// 距离查询能力（构建期探测注入后端——间距检查/最小距离的可用性判定源；
+    /// false 时需要距离的评估返回 Failed＋POLICY-CLL-DETECTOR-UNAVAILABLE，
+    /// §6.3/KIN-05/P-POL-11）。
+    bool m_distanceCapable = false;
+    /// 距离查询接口别名（m_distanceCapable 时非空——指向注入后端实例的
+    /// DistanceStrategy 接口面；同一对象，无所有权——生命周期随 m_strategy）。
+    rw::proximity::DistanceStrategy* m_distanceStrategy = nullptr;
+    /// 后端查询互斥（共享形态＝装配方传入的评估器级实例；缺省＝会话自建
+    /// ——使同一后端实例的全部访问（构建期注册＋评估期查询）串行化，
+    /// 并发只读安全的最小机制；锁不进入输出，§6.4）。
+    std::shared_ptr<std::mutex> m_backendQueryMutex;
 };
 
 // =====================================================================
@@ -595,6 +744,10 @@ private:
     std::shared_ptr<rw::proximity::CollisionStrategy> m_strategy;
     /// 复现要素描述符（构造期固化——backend() 与 sessionIdentity 组成同源）。
     CollisionBackendDescriptor m_descriptor;
+    /// 后端查询互斥（构造期一次——本评估器全部会话共享：同一后端实例的
+    /// 全部访问串行化，POL-T07 评估半区的并发只读安全机制；POL-T06 的
+    /// 直构会话（缺省参数）自建会话级互斥——单会话形态等价安全）。
+    std::shared_ptr<std::mutex> m_queryMutex;
 };
 
 /**
