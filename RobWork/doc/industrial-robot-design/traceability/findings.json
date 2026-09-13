@@ -782,6 +782,26 @@
       "title": "units/policy.md 'AI 执行就绪补充/单元任务退出条件'两节存在 F-005（core.md）/F-006（testkit.md）/F-058（evidence.md）同族转义损毁第四份单元卡实例：L1259 '$(policy.ToUpper())' 为未展开模板表达式、L1260 '标记为 locked' 应为 blocked（\\b 被吞）、L1271 'alidate-docs.ps1/alidate-task.ps1' 缺首字母（\\v 被吞）——既有损毁非 POL-T04 引入（送验 diff 对 policy.md 仅 +1 行＝§15.4 v0.5 变更记录，反证在档）；F-005 resolution 预判的'排查其他单元卡'至此已实证第四例",
       "owner": "policy 详设所有者（文本本体）；与 F-005/F-006/F-058 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
       "resolution": "并入 F-005/F-006/F-058 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md/policy.md 四份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁；其余单元卡的家族排查继续随触及任务进行。不影响 POL-T04 验收（pass）。编号顺延自 F-077，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-079",
+      "source": "POL-T05 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T05-20260913.md §4.9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-012/F-037/F-039/F-044 同型再现：POL-T05 文档提交 1b54f713 标题『[units] policy.md v0.6：POL-T05 实现落位登记（DTB §5.4 增量修订）』前缀后以名词短语（'policy.md v0.6'）开头，非动词开头——[units] 前缀形态家族再复现一例，证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；正文四段齐备、验证结论与留痕一致（验收者亲手复现：双模式 112/112、ird_gates 命中均为 F-019 既有 5 项、validate-task/validate-docs/verify-task PASS、双探针注入即红/还原复绿），纯风格瑕疵不构成阻断",
+      "owner": "构建约定所有者（模板补救落地）；实施者自查为辅助",
+      "resolution": "并入 F-012 家族统一处置：DTB §5.1 或 PIPE 附录 C 实施者模板补提交标题动词开头示例并明确 [units] 前缀提交同样适用。不影响 POL-T05 验收（pass）。编号顺延自 F-078。"
+    },
+    {
+      "id": "F-080",
+      "source": "POL-T05 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T05-20260913.md §4.9/§4.10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-13",
+      "title": "F-025/F-041/F-077 计数失实家族同型再现：POL-T05 留痕提交 477491b7 正文称『新增 10 件留痕』实际列出并入库 11 件（git diff --name-status 实证 11 个 A 文件）；与 F-077 不同——本例文件清单完整且全部真实入库、无不存在文件，仅总数少报 1 件，方向保守、无粉饰；数值主张本身（双模式 112/112、ird_gates 5 项既有命中、GATE_DELTA_ZERO）经验收者亲手复现准确",
+      "owner": "构建约定所有者（提交自查清单口径）；实施者自查为辅助",
+      "resolution": "并入 F-025 家族统一处置：提交模板补『正文计数与逐件清单须对账一致』自查项（建议以 git diff --name-status 清点为准）。不影响 POL-T05 验收（pass）。编号顺延自 F-079。"
     }
   ]
 }
