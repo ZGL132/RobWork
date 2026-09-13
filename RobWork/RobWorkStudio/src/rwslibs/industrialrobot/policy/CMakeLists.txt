@@ -89,12 +89,23 @@ if(TARGET sdurw_kinematics)
                                           # 边界值决策；消费 rw 非模板类
                                           # Device/Frame/Kinematics/
                                           # CollisionStrategy/DistanceStrategy）
-        src/RobWorkCollisionEvaluator.cpp)  # §6.5/§9.3 唯一实现绑定（RobWork-
+        src/RobWorkCollisionEvaluator.cpp # §6.5/§9.3 唯一实现绑定（RobWork-
                                           # CollisionEvaluator 方法＋make 唯一
                                           # 构造入口＋内置 ProximityStrategyRW
                                           # 实例化＋评估器级查询互斥——含
                                           # RobWork 命名标识符的零字面量 TU，
                                           # 切分说明见该文件头）
+        src/JointLimits.cpp)              # §7.4/§9.4 关节限位与行程阈值评估
+                                          # （POL-T08：JointLimitEvaluator::
+                                          # evaluate 七步执行序——区间/工程范围
+                                          # 诊断级检出〔D-13〕/行程 4π 边界/
+                                          # 近限位比/限位违例/P-POL-2 显式
+                                          # NotApplicable 标记/稳定排序；本体
+                                          # 零框架调用，rw include 面仅经
+                                          # JointLimits.hpp→CollisionQuery.hpp
+                                          # 状态词表复用链传导〔§9.4"复用状态
+                                          # 词表"〕——集成模式专属 gating 与
+                                          # CollisionQuery.cpp 同因）
 
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math
@@ -134,6 +145,13 @@ if(TARGET sdurw_kinematics)
                                            # POL-CONC-1（AT-19 载体）＋POL-LATE-1
                                            # ＋R-POL-5/D-9 结构断言——真实后端
                                            # 解析算例＋脚本化碰撞/距离替身
+    target_sources(sdurws_ird_policy_test PRIVATE
+        test/JointLimitsTest.cpp)          # POL-T08：POL-JNT-1/2（行程 4π 边界/
+                                           # 比较型三要素/continuous 豁免/P-POL-2
+                                           # 显式 NotApplicable/区间与工程范围
+                                           # 诊断级检出〔D-13〕/近限位与闭区间
+                                           # 边界/裕量口径/违约矩阵——集成模式
+                                           # 专属，与 src/JointLimits.cpp 同因）
 endif()
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES

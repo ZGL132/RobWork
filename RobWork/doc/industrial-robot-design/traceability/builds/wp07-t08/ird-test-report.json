@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T08",
+  "masterWp": "WP-07-T08",
+  "branch": "wp07-t08",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T08 增量：新增 include/sdurws/ird/policy/JointLimits.hpp（§9.4 契约类型全量——JointLimitSpec/JointLimitQuery/JointLimitFinding/JointMarginRecord/JointCheckNotApplicable/JointLimitEvaluation/IJointLimitEvaluator＋唯一产品实现 JointLimitEvaluator 与 makeJointLimitEvaluator 装配入口；实现增量 notApplicableChecks 随单元卡 v0.9 登记）与 src/JointLimits.cpp（evaluate 七步执行序——§7.4 行程/近限位/限位违例边界决策表、§9.4 边界段诊断级检出〔D-13〕、P-POL-2 显式 NotApplicable 标记、§7.5 非有限不伪造、稳定排序；本体零框架调用，rw include 面仅经 CollisionQuery.hpp 状态词表复用链传导〔§9.4'复用状态词表'〕）。集成模式专属 gating（与 CollisionQuery.cpp 同因同纪律——冒烟模式无 rw include 路径）；诊断建议码 POLICY-JNT-TABLE-INVALID/-ENGINEERING-RANGE-INVALID 等四值为单点字面量（POL-T10 迁码表——与 CollisionQuery.cpp 同模式）；链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project 编译依赖（R-1/R-2）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T08 增量：新增 test/JointLimitsTest.cpp（16 用例——POL-JNT-1/2 全量解析算例：4π 边界/6π 超限三要素/continuous 豁免/6π 显式阈值〔AT-01 多圈反例〕/开关关闭标记/P-POL-2 双阈值 NotApplicable/区间与工程范围诊断级检出/近限位严格小于/闭区间违例/裕量公式与排序/非有限失败/名称不可解析/违约矩阵/确定性×表序无关/接口契约）；POL-T01~T07 既有 150 用例全部保持通过（集成合计 166/166；冒烟 112/112——POL-T08 新增 TU 仅集成模式编译，冒烟测试面不变）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "JointLimits",
+      "designRef": "units/policy.md §4.4/§4.5、§7.4/§7.5、§9.4、§11 POL-JNT-1/2 行、§15.3 P-POL-2、§12 POL-T08 行",
+      "cases": [
+        { "name": "JointLimits.TravelAtFourPiBoundaryIsNotExceeded_POL_JNT_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-1 行程上限比较）：行程 T＝4π 恰等于默认阈值 L（附录 D 第 11 项 DefaultAppendixD）→ 无 TravelLimitExceeded（T＝L 不超限——边界含于合规侧，D-08/§7.4 冻结）；边界构型裕量解析算例 margin=2π、r=1.0（Provided 数值断言）；Completed＋finalized=true" },
+        { "name": "JointLimits.TravelAboveFourPiCarriesComparativeTriple_POL_JNT_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-1 比较型三要素）：行程 6π＞4π → TravelLimitExceeded，actualValue=6π/thresholdValue=4π（EXPECT_DOUBLE_EQ 逐位精确，rad 单位语义）、level=Must（SA-15 ConfirmableFinding 素材）、runtimeName/localName 定位齐备；检出≠失败——Completed/finalized=true（D-13）" },
+        { "name": "JointLimits.ContinuousJointExemptFromTravelAndLimitChecks_POL_JNT_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-1 continuous 豁免，MDL-12）：工程范围 (−100,100) rad 远超 4π 仍零发现（§7.4'continuous 关节免除'行）；两构型裕量记录齐备且恒 NotApplicable（SourcedValue 显式标记——不伪造数值）" },
+        { "name": "JointLimits.ExplicitSixPiThresholdPassesMultiTurnJoint_POL_JNT_1", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-1/AT-01 反例素材，§10.4 走查）：多圈关节经工程策略入口改阈值 6π（Explicit）→ 行程 6π 恰在边界复检通过正常放行——策略阈值可配置性的解析算例（T＝L 不超限）" },
+        { "name": "JointLimits.TravelCheckDisabledEmitsExplicitMarker", "status": "passed", "modes": ["integration"], "trace": "§4.4 travelLimitCheckEnabled 开关行：关闭后行程 8π 仍零行程发现（检查确实停用的对照）＋notApplicableChecks 含 TravelLimit 标记（cause 可追溯至 travelLimitCheckEnabled=false 原文）——'关闭'必须可观测，防'无发现'被读作'检查通过'" },
+        { "name": "JointLimits.UnsetThresholdsOutputExplicitNotApplicable_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 3（O-10/P-POL-2 保守口径——policy.md §7.4/§9.4；消账归需求所有者）：nearLimitRatio/conditionNumberWarning 均未设置（nullopt）→ notApplicableChecks 输出两项显式 NotApplicable 标记（cause 引用 P-POL-2）；贴限构型（r≈0.016）不产出 NearLimit、裕量仍 Provided（无阈值即无判定，不伪造数值）；输出形六成员结构化绑定断言（notApplicableChecks＝§9.4 五成员之外唯一实现增量——§15.4 v0.9 登记，新增成员即编译失败）" },
+        { "name": "JointLimits.IntervalInvalidIsDiagnosticLevelAndSkipsJoint_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 2（检出非法为诊断级不阻断——D-13 判定权归命令处理器）：qmin＞qmax → IntervalInvalid 发现（actual=qmin/threshold=qmax/rad/Must）＋POLICY-JNT-TABLE-INVALID 伴随诊断（比较型三要素 Provided 齐备——ERR-01/UX-03）；跳过三证：该关节无裕量、行程 6π 未被评估（无 TravelLimitExceeded）、合法关节照常全评；状态仍 Completed＋finalized=true（评估器不代替处理器阻断）" },
+        { "name": "JointLimits.EngineeringRangeInvalidIsDiagnosticLevel_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 2（MDL-12 工程工作范围有限性，§9.4 边界段）：端点相等（min≥max）与端点 NaN 两形态均检出 EngineeringRangeInvalid＋POLICY-JNT-ENGINEERING-RANGE-INVALID 伴随诊断并跳过（无裕量）；非有限端点以 SourcedValue Invalid 态保留原文 'nan'（NFR-COR-03 不静默转 0）；D-13——状态 Completed 不阻断" },
+        { "name": "JointLimits.NearLimitBoundaryIsStrictLessThanWithShouldLevel_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-2 近限位边界，§7.4 严格小于）：r＝0.1＝阈值不警告（边界含于安全侧，D-08 同口径）；r=0.08＜0.1 警告且 actualValue=r/thresholdValue=0.1（无量纲）、level=Should（'Should 级默认'）；逐样本裕量数值齐备（r=0.1 边界样本 Provided）" },
+        { "name": "JointLimits.LimitViolationClosedIntervalBoundary_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-2 限位违例闭区间边界，§7.4）：q＝上限端点不违例（q ∈ [qmin,qmax] 闭区间）但 margin=0→r=0 触发 NearLimit（贴限警告与违例两类结论）；越上限样本检出 LimitViolated（actual=10.5/threshold=被越过的上限 10.0/rad/Must——硬过滤素材，过滤动作归 kinematics KIN-02）；越限样本裕量负有符号保号（−0.5，违例深度可见不伪造）" },
+        { "name": "JointLimits.MarginValuesFollowSpecFormulaAndOrdering_POL_JNT_2", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（POL-JNT-2 裕量按 §7.4 边界——KIN-01 素材数值正确性）：区间 [−π/2,π/2]×区间 [−1,1] 双关节三构型解析算例——端点 margin=0/r=0、中点 margin=半宽/r=1、45° margin=π/4/r=0.5 全部 EXPECT_DOUBLE_EQ；margins 排序＝(sampleIndex 升序→jointObject 字典序)（实现冻结口径，§15.4 v0.9）；关节表乱序装配输出仍规范" },
+        { "name": "JointLimits.NonFinitePositionFailsEvaluationWithoutFabrication", "status": "passed", "modes": ["integration"], "trace": "§7.5 数值异常行（NFR-COR-03）：构型位置 NaN → 评估 Failed＋POLICY-CLL-EVALUATION-FAILED（cause 保留 %.17g 原文 'nan'）、findings/margins 空、finalized=false（非终态不入正式证据——CON-04）" },
+        { "name": "JointLimits.UnresolvableJointNameFailsWithoutGuessing", "status": "passed", "modes": ["integration"], "trace": "§7.5/ARC-04（名称不可解析不猜测；Errors.hpp NameUnresolved 注释'评估期同因转 Failed＋同码诊断'路径）：映射缺席 → Failed＋POLICY-CLL-NAME-UNRESOLVED、subject 绑定关节对象、finalized=false" },
+        { "name": "JointLimits.QueryContractViolationsFailFast", "status": "passed", "modes": ["integration"], "trace": "§9.4 Spec 契约行（装配违约 fail-fast 轨——与'已提供但非法'语义检出的诊断级分轨）：空关节表/空构型序列/全零身份/重复身份/单侧限位/continuous 缺必填工程范围/构型维度不符七项逐触发 PolicyError(QueryInvalid)，what() 前缀=稳定 token policy/cll-query-invalid" },
+        { "name": "JointLimits.DeterministicOutputIndependentOfTableOrder", "status": "passed", "modes": ["integration"], "trace": "acceptance 1（§9.4 稳定排序/NFR-COR-02）：同场景重复评估 operator== 逐字段相等；同一场景两种关节表装配顺序（正序/倒序）输出逐字段一致（含诊断与标记序——规范序处理）；findings 排序键（对象字典序×kind）逐对核验；场景有效性自检（行程超限发现在场）" },
+        { "name": "JointLimits.FactoryInstanceSatisfiesInterfaceContract", "status": "passed", "modes": ["integration"], "trace": "§9.4 消费面契约：makeJointLimitEvaluator 产出实例经 IJointLimitEvaluator 接口引用调用与直构 JointLimitEvaluator 输出逐字段相等（唯一实现——ARC-05；处理器 prepare〔AT-01〕/kinematics〔KIN-01〕的实际调用形态）" }
+      ]
+    },
+    {
+      "suite": "既有套件回归（PolicyBuild/PolicySet/PolicyInput/PolicyParsing/PolicyPort/CollisionSessionScope/CollisionSessionGuards/CollisionSessionIdentity/CollisionSessionDetector/CollisionSessionTokens/CollisionEvaluation）",
+      "designRef": "units/policy.md §12 POL-T01~T07 行（回归保护面）",
+      "cases": [
+        { "name": "（汇总）150 用例全部通过", "status": "passed", "modes": ["integration+smoke", "smoke 112 用例"], "trace": "回归保护：POL-T01~T07 交付面零回归——本任务零改动既有产品文件（Errors.hpp/PolicySet.hpp/CollisionQuery.hpp/CollisionEvaluator.hpp 等均未触碰）；集成合计 166/166＝150 既有＋16 新增" }
+      ]
+    }
+  ],
+  "gates": {
+    "tool": "ird_gates（cmake --build build --config Release --target ird_gates）",
+    "result": "nonzero-exit：5 处命中——全部为既有跨单元测试目标链接面（evidence/evidence_contract/runtime 的 _test 与 testdata_lint → sdurws_ird_testkit），与 POL-T06/T07 验收基线（5 处命中）逐项一致；本任务零新增命中（gate-all.log 中无任何 JointLimits 相关条目；R4 品牌子串启发式零触发——JointLimits TU 无框架品牌字面量）",
+    "log": "gate-all.log"
+  },
+  "builds": {
+    "integration": { "command": "cmake --build build --config Release（仓库根，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON——CMakeCache 核对）；契约 verify 命令 cmake --build build --config Release --target sdurws_ird_policy_test 通过", "result": "零错误", "logs": ["integration-build.log", "verify-target-build.log"] },
+    "smoke": { "command": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp07-t08 -DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake ＋ cmake --build ... --config Release", "result": "配置与构建零错误（新增 TU 均为集成模式专属——冒烟测试面保持 112 用例）", "logs": ["smoke-configure.log", "smoke-build.log", "smoke-test-run.log"] }
+  },
+  "testRuns": {
+    "integration": { "binary": "build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe", "result": "166/166 passed", "xml": "sdurws_ird_policy_test-integration.xml", "log": "integration-test-run.log" },
+    "smoke": { "binary": "build-smoke-wp07-t08/policy/Release/sdurws_ird_policy_test.exe", "result": "112/112 passed", "xml": "sdurws_ird_policy_test-smoke.xml", "log": "smoke-test-run.log" }
+  },
+  "validateTask": { "command": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/POL-T08.json", "result": "PASS (1 tasks)", "log": "validate-task.log" },
+  "acceptanceCoverage": {
+    "1": "POL-JNT-1/2：行程上限 4π 边界＋比较型三要素用例通过——16 用例逐条执行通过（TravelAtFourPiBoundary/TravelAboveFourPi 三要素逐位精确/ContinuousJointExempt/ExplicitSixPi 多圈反例/NearLimit 边界/LimitViolation 闭区间/MarginValues 公式算例/DeterministicOutput 排序等；本报告 testSuites 明细；gtest XML 为执行凭证）",
+    "2": "检出非法为诊断级不阻断（判定权归命令处理器，D-13）——IntervalInvalid/EngineeringRangeInvalid 两用例：发现＋伴随诊断齐备、关节跳过不伪造裕量、状态 Completed＋finalized=true（评估器不代替处理器放行/阻止）",
+    "3": "O-10/P-POL-2 保守口径：nearLimitRatio/conditionNumberWarning 未设置（nullopt）→ notApplicableChecks 输出显式 NotApplicable 标记（cause 引用 P-POL-2），不伪造数值（贴限构型零 NearLimit、裕量照常 Provided）——UnsetThresholdsOutputExplicitNotApplicable 用例＋TravelCheckDisabled 开关标记用例；消账归需求所有者（契约注记）"
+  }
+}
