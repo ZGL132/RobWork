@@ -892,6 +892,46 @@
       "title": "F-025/F-041/F-073 计数失实家族同型再现：POL-T10 三处散文（提交 e5b0e5fe 正文、units/policy.md §15.4 v0.11 行、traceability/builds/wp07-t10/ird-test-report.json targets[1].notes）称 DiagnosticsTest.cpp『6 套件 19 用例（码表 6＋构造不变量 8＋辅助 4＋多态 1）』，gtest 实测（提交内 integration XML 与验收者 detached worktree 复跑一致）为 4 套件 19 用例（PolicyDiagCodeTable 5＋PolicyDiagnosticsMake 9＋MakeComparativeHelpers 4＋PolicyDiagnosticsInterface 1）——套件数与套内分配失实。与 F-025/F-041/F-073 同判级：总数 19 正确、逐用例均真实存在且通过（提交 XML 19 例与报告枚举、验收复跑逐一对应，ird-test-report.json testSuites 数组对 PolicyDiagCodeTable 逐用例枚举无错、其余三套以计数引用），方向为套件归并口径错位、非虚报用例、非粉饰，建议级不阻断",
       "owner": "详设所有者（units/policy.md §15.4 散文修正）；实施者按留痕修正惯例自查后续提交散文计数",
       "resolution": "随 policy.md 下次增量修订将 v0.11 行『6 套件 19 用例（码表 6＋构造不变量 8）』修正为实测分布『4 套件 19 用例（码表 5＋构造不变量 9）』；ird-test-report.json 已合入历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；建议实施者模板补『套件数以 gtest 输出 tests from N test suites 为准』自查项（F-025 家族第四例，与 F-041/F-073 同源）。不影响 POL-T10 验收（pass）。编号顺延自 F-088，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-090",
+      "source": "POL-T11 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T11-20260914.md §4.10-G-1，送验对象 ba0cb7d5c4b0cbba340eec962e253eb804d748aa，分支 wp07-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-010 根因第七次踩中（F-081 第二次、F-083 第三次、F-085 第四次、F-087 第五次、F-088 第六次之后）：POL-T11 留痕提交 ba0cb7d5 正文声称 traceability/builds/wp07-t11/ 下登记『全套留痕』并逐件列举 11 份 .log（smoke-configure/smoke-build/verify-target-build/integration-test-run/smoke-test-run/ctest-integration/ctest-smoke/gate-all/lint-run/gates-current-wp07t11/validate-task），git ls-tree ba0cb7d5 实证该目录仅 5 件入库（ird-test-report.json＋双模式×双目标 gtest XML），11 份 .log 全部未入库（根 .gitignore『*.log』规则）；ird-test-report.json 的 validateTask／gates.logs／datasets.ci／datasets.lint 字段同型悬空引用未入库 .log（F-083/F-085/F-087/F-088 同型）。证据本体不缺：4 份 XML（integration 200/0＋23/0、smoke 131/0＋8/0 顶格实测）与 report 全部数值主张经验收者在 detached worktree @SHA 亲手复现准确（集成 223/223、冒烟 139/139＋全量七目标 692/692、ird_gates 7 命中＝base 6＋新增 1 逐码一致、lint 5 数据集 0 违规、ctest 双模式 policy 叶 2/2、validate-task PASS、契约 verify 目标从零构建 exit 0、双探针即红还原复绿），判级沿 F-081/F-083/F-085/F-087/F-088 先例＝建议级不阻断",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决——七次踩中）；实施者自查为辅助",
+      "resolution": "按 F-087/F-088 resolution 三选一并裁决（.gitignore 负向豁免＋补提交／接受 XML＋报告承载口径并显式标注未入库／留痕对账自查强制化）；F-087/F-088/F-090 合并同一根因处置单，根因未修复前每任务必复踩。不影响 POL-T11 验收（pass）。编号顺延自 F-089，合入时由所有者确认与并行分支无撞车。"
+    },
+    {
+      "id": "F-091",
+      "source": "POL-T11 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T11-20260914.md §4.9-G-2，送验对象 ba0cb7d5c4b0cbba340eec962e253eb804d748aa，分支 wp07-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-025/F-041/F-073/F-089 计数失实家族第五例（本例为套级用例数四处失实、总数全对）：POL-T11 四处散文称 PolicyCodecFixtureContractTest『4 用例』（提交 5a2fd64a 正文、ird-test-report.json targets[2].notes＋testSuites『PolPolicyCodecFixture（4 用例）』标签、policy.md §15.4 v0.12 行）、PolicyContractDoublesTest『5 用例』（同前两处＋v0.12 行）、report smoke note『双模式文件 7 用例』、提交 a595026f 正文『PolPolicyCodecFixture 4/4』——gtest 实测（提交内 4 份 XML 与验收者 detached worktree 复跑一致）为 PolicyCodecFixtureContractTest 5 TEST、PolicyContractDoublesTest 7 TEST、双模式文件合计 8 用例（5＋3）。与家族同判级：总数（集成 23/223、冒烟 8/139）全对、库内 XML 与 report 逐用例枚举无错（枚举 5/7 条与源码逐一对应）、方向为套内归并口径错位、非虚报用例、非粉饰，建议级不阻断",
+      "owner": "详设所有者（units/policy.md §15.4 v0.12 行散文修正，随 POL-T12）；实施者按计数自查惯例辅助",
+      "resolution": "随 policy.md 下次增量修订（POL-T12）将 v0.12 行『PolicyCodecFixtureContractTest（4 用例）…PolicyContractDoublesTest（5 用例）』修正为实测分布『PolicyCodecFixtureContractTest（5 用例）…PolicyContractDoublesTest（7 用例）』（集成 23＝7＋4＋5＋4＋3、冒烟 8＝5＋3）；ird-test-report.json 与提交正文已入库历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；与 F-089 同源模板自查项『套级分布以 gtest 输出 tests from N test suites 为准』合并落地。不影响 POL-T11 验收（pass）。编号顺延自 F-090，合入时由所有者确认与并行分支无撞车。"
+    },
+    {
+      "id": "F-092",
+      "source": "POL-T11 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T11-20260914.md §4.9-G-3，送验对象 ba0cb7d5c4b0cbba340eec962e253eb804d748aa，分支 wp07-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-012 标题家族再例（两处）：POL-T11 送验 4 提交中 1499a5a6『[units] policy v0.12：POL-T11 实现落位登记（…）』前缀后以名词短语（'policy v0.12'）开头（F-076/F-079 [units] 形态同型）；ba0cb7d5『[WP-07-T11] 验证留痕与编译放行登记：…』以并列名词短语开头（F-084/F-086『留痕与文档同步』同字面形态）。另 2 提交（a595026f『交付…』、5a2fd64a『实现…』）动词开头合规。两提交正文四段齐备、验证结论与验收者全新 worktree 亲手复现逐项一致（集成 223/223、冒烟 139/139、ird_gates 7 命中与登记逐码一致、双探针即红还原复绿），纯风格瑕疵不构成阻断",
+      "owner": "流程模板所有者（DTB §5.1／PIPE 附录 C 实施者模板补救——F-012 家族统一处置，覆盖 [units]/留痕各前缀形态）",
+      "resolution": "并入 F-012 家族统一模板补救（与 F-079/F-082/F-084/F-086 同一动作：实施者模板补提交标题动词开头示例并明确 [units]/[governance]/留痕前缀提交同样适用，留痕类可用『登记…留痕（…）』句式）；对已推送历史（1499a5a6/ba0cb7d5 及本家族所涉提交）不追溯改写（AGENTS §6.3）。不影响 POL-T11 验收（pass）。编号顺延自 F-091，合入时由所有者确认与并行分支无撞车。"
+    },
+    {
+      "id": "F-093",
+      "source": "POL-T11 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T11-20260914.md §4.7-G-4，送验对象 ba0cb7d5c4b0cbba340eec962e253eb804d748aa，分支 wp07-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "两处微观代码卫生瑕疵（测试面 header-only 替身头，不缺 AGENTS §2 必填注释项、零行为影响）：①policy/test/sdurws/ird/policy/testdouble/PolicyTestDoubles.hpp:56 include guard 名 SDURWS_IRD_POLICY_TESTDOUBLE_POLICYSERVICETESTDOUBLES_HPP 含 'POLICYSERVICE' 残段，与文件名 PolicyTestDoubles 不一致（疑似早期命名残留——guard 拼写正确性无机械校验时易在后续复制扩展中误导）；②同文件 :419-421 ScriptedCollisionEvaluator::createSession 对 backend->throwInCollision 先赋 throwInCollision、次行覆盖为 throwInCollision||throwInDistance——首行死存储（两行语义注释本身正确，替身故障注入语义不受影响）",
+      "owner": "policy 单元实施侧（随下次触及该头的任务顺手修正，或随 POL-T12 文档与门禁同步任务一并处理）",
+      "resolution": "guard 重命名为 SDURWS_IRD_POLICY_TESTDOUBLE_POLICYTESTDOUBLES_HPP（header-only 测试面、无 API/链接影响）；删除 :419 首行冗余赋值（下一行覆盖式赋值保留，注释随行）。均零行为变化，属顺手消账级；不阻塞 POL-T11 合入（pass）。编号顺延自 F-092，合入时由所有者确认与并行分支无撞车。"
     }
   ]
 }
