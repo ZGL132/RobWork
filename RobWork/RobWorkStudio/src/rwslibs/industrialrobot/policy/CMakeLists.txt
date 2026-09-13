@@ -27,11 +27,14 @@ find_package(GTest CONFIG REQUIRED)
 # encode/decode/encodeSemanticProjection/contentIdentity＋canonicalF64
 # 浮点原语，§3.1 POL-T03 产物行/§5.3 编码规则唯一实现点；CR-02 摘要
 # 单点在其 contentIdentity）。
+# POL-T04 增量：解析器与校验器落地——新增 PolicyParsing.cpp（resolvePolicy
+# 七段管线/PolicyValidator——§5.1/§5.2/§9.2，POL-T04 产物行）。
 # 占位 Policy.cpp 保留（单元锚点符号——STATIC 库至少一个翻译单元纪律不变）。
 add_library(sdurws_ird_policy STATIC
     src/Policy.cpp
     src/Errors.cpp
-    src/PolicyInput.cpp)
+    src/PolicyInput.cpp
+    src/PolicyParsing.cpp)
 
 target_compile_features(sdurws_ird_policy PUBLIC cxx_std_17)
 set_target_properties(sdurws_ird_policy PROPERTIES
@@ -74,7 +77,8 @@ enable_testing()
 add_executable(sdurws_ird_policy_test
     test/BuildRedLineTest.cpp
     test/PolicySetTest.cpp    # POL-T02：字段约束与不可变性用例（POL-PARSE-2 前置）
-    test/PolicyInputTest.cpp) # POL-T03：canonical 往返/位模式/排序无关/CR-02/错误路径
+    test/PolicyInputTest.cpp  # POL-T03：canonical 往返/位模式/排序无关/CR-02/错误路径
+    test/PolicyParsingTest.cpp) # POL-T04：POL-PARSE-1~6 错误分类全量反例＋O-10 默认口径
 target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_policy_test PROPERTIES
     CXX_STANDARD 17

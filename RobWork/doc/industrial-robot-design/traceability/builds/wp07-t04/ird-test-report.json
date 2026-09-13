@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T04",
+  "masterWp": "WP-07-T04",
+  "branch": "wp07-t04",
+  "date": "2026-09-13",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T04 增量：新增 src/PolicyParsing.cpp（resolvePolicy 七段管线/PolicyValidator——units/policy.md §5.1/§5.2/§9.2，POL-T04 产物行）；链接面不变（core＋RobWork 基线，R-5 例外维持）；本文件零 Qt、零 RobWork 头（L2 计算内核红线）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T04 增量：新增 test/PolicyParsingTest.cpp（POL-PARSE-1~6 错误分类全量反例＋O-10/P-POL-2 保守默认口径＋管线级确定性，8 个套件 44 用例）；POL-T01 红线扫描 4 用例、POL-T02 既有 30 用例、POL-T03 既有 23 用例全部保持通过（合计 97/97，两模式一致）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyParseSchema",
+      "designRef": "units/policy.md §5.1①/§5.2 行 1/2、§11 POL-PARSE-1、PM-06、§12 POL-T04 行",
+      "cases": [
+        { "name": "PolicyParseSchema.FutureVersionRejectedWithComparativeAndUpgradeGuide_POL_PARSE_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：schemaVersion=2 → 空 policy＋POLICY-SCHEMA-VERSION-FUTURE；比较型三要素（实际 2/期望 1/单位 1——§11 行'诊断含实际/期望版本'）＋升级指引（PM-06 同源）" },
+        { "name": "PolicyParseSchema.UnknownOlderVersionRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.2 行 2 分列码：低于已知最低代 → POLICY-SCHEMA-VERSION-UNKNOWN（不猜测旧代字段布局）" },
+        { "name": "PolicyParseSchema.FutureVersionDoesNotInterpretFields", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 2'未来版本不前向猜测解析'：版本门命中即返回（载荷同时含 NaN 阈值仍只发 1 条版本诊断——处置语义而非首错短路）" },
+        { "name": "PolicyParseSchema.RoleVocabularyTypoRejectedAsUnknownField", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.2 行 1 活性检测面：角色 token 拼写错误（词表外）→ POLICY-SCHEMA-UNKNOWN-FIELD＋定位（不静默忽略——防拼写错误静默收窄必检集）；'未知字段'的落点登记见 policy.md v0.5（类型层固定 schema 不可表达，词表 token 为唯一串键活性面，字节层由 codec 精确耗尽承担）" },
+        { "name": "PolicyParseSchema.SceneObjectRoleTokensFrozenVocabulary", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.3/§6.1 角色词表冻结：五值与 SceneObjectRole 枚举声明序一致（持久化契约不改名）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseThresholds",
+      "designRef": "units/policy.md §5.1②/§5.2 行 3/4、§11 POL-PARSE-2、§4.6 非法实例清单、ERR-01/NFR-COR-03",
+      "cases": [
+        { "name": "PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：NaN 阈值 → POLICY-THRESHOLD-NON-FINITE，cause 引用原文（%.17g 稳定文本）；非有限无数值期望界——比较型不填（不伪造）" },
+        { "name": "PolicyParseThresholds.InfiniteTravelLimitRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 3 另一态：+Inf 行程上限 → NON-FINITE＋原文（NaN/±Inf 全覆盖）" },
+        { "name": "PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.6 反例 −0.01：NON-POSITIVE＋比较型三要素（实际 SI/期望界 0/单位 m——ERR-01；§7.4 比较一律对 SI）" },
+        { "name": "PolicyParseThresholds.NearLimitRatioOutOfRangeComparative_POL_PARSE_2", "status": "passed", "modes": ["smoke", "integration"], "trace": "§11 POL-PARSE-2 原文例 1.5：OUT-OF-RANGE＋比较型（实际 1.5/期望 1/单位 1）" },
+        { "name": "PolicyParseThresholds.ZeroTravelLimitRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.6 反例行程上限=0：(0,+∞) 域窗非正拒绝＋定位字段 localName" },
+        { "name": "PolicyParseThresholds.ConditionNumberBelowOneRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 4 两码分列：正值低于下窗（[1,+∞)）→ OUT-OF-RANGE（非正/越窗各自归码）" },
+        { "name": "PolicyParseThresholds.MultipleThresholdErrorsCollectedWithoutShortCircuit", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1'不短路'：四槽位同时非法 → 4 条诊断全量且发射序＝字段 struct 序（确定性）" },
+        { "name": "PolicyParseThresholds.ValidThresholdsPublishedWithExplicitOrigin", "status": "passed", "modes": ["smoke", "integration"], "trace": "通过路径：显式阈值 origin=Explicit、SI 真值入发布对象（②归一语义）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseUnits",
+      "designRef": "units/policy.md §5.1②/§5.2 行 6、§11 POL-PARSE-3、SA-12、POL-ID-3（管线级）",
+      "cases": [
+        { "name": "PolicyParseUnits.ForceUnitForLengthRejectedForwardsCoreError_POL_PARSE_3", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：安全间距携带力单位 N → POLICY-UNIT-MISMATCH，cause 转发 core convert 量纲错误原文（'core/units/dimension'——§5.2 行 6'core convert 抛错转发'）" },
+        { "name": "PolicyParseUnits.UnregisteredUnitTokenRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 6'未注册 token'分支：词表核对失败直接归 UNIT-MISMATCH（字段域期望量纲随文说明）" },
+        { "name": "PolicyParseUnits.MillimeterNormalizedToSi_UnitsNotInIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "POL-ID-3 管线级：20 mm → 0.02 m（位级一致——显示单位不入身份的解析期机制；SA-12 换算唯一经 core convert）" },
+        { "name": "PolicyParseUnits.DegreeTravelLimitNormalizedToRadian", "status": "passed", "modes": ["smoke", "integration"], "trace": "角度制式显式：360 deg → 2π rad（容差断言 1e-9——core UT-UNIT 口径）；origin=Explicit" },
+        { "name": "PolicyParseUnits.EmptyUnitTokenMeansFieldSiUnit", "status": "passed", "modes": ["smoke", "integration"], "trace": "RawThresholdInput'空 token＝未提供单位'契约的解析期落点：按字段域默认 SI 单位解释（factor 1——无第二换算源）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseRules",
+      "designRef": "units/policy.md §5.1②④/§5.2 行 7/8/9、§11 POL-PARSE-4/5、§7.2/D-06、§4.3 无序对",
+      "cases": [
+        { "name": "PolicyParseRules.DirectCrossListConflictRejected_POL_PARSE_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：同一对象对同时必检与排除 → POLICY-RULE-CONFLICT；localName 定位冲突双方条目（D-06 排除∩必检=∅）" },
+        { "name": "PolicyParseRules.RoleExpansionConflictRejected_POL_PARSE_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "§7.2 原文场景：必检 {Role(Tool), 工件} 对排除 {t1, 工件}（t1 角色 Tool）——经 Role 展开等价对检出（§11 行'展开后集合求交断言'的解析期可检子集；Object×Role 经 context.objectRole）" },
+        { "name": "PolicyParseRules.GroupNameConflictRejected_POL_PARSE_4", "status": "passed", "modes": ["smoke", "integration"], "trace": "Group≡Group 同名展开集必交（同一对类：同组名＋同另一端）；{组,A}×{组,B} 不必然冲突的成员级交集归会话构建复核（§7.2 两层防御——policy.md v0.5 登记）" },
+        { "name": "PolicyParseRules.RoleExpansionDuplicateWithinListRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 7 展开面：类级与对象级登记展开后为同一必检对 → RULE-DUPLICATE（同对同类型语义的展开判定）" },
+        { "name": "PolicyParseRules.ExactDuplicateListsBothEntries_POL_PARSE_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "行 7 字面反例：同对同类型重复登记（理由不同仍为重复）→ 诊断列出重复双方条目理由" },
+        { "name": "PolicyParseRules.PairEndsNormalizedToLexicographicOrderInOutput", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.1②'成对规则规范化为字典序（消除顺序歧义）'：输入 {B,A} → 发布产物承载 {A,B}（与 codec 编码规范序同键——decode(encode(·)) 承载序稳定）" },
+        { "name": "PolicyParseRules.UndefinedGroupReferenceRejected_POL_PARSE_5", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：Group 端引用未定义组（context.groupDefined=false）→ POLICY-RULE-CYCLE＋组名入 cause＋定位端序（'组引用组/循环'在扁平组 schema 层不可表达——纵深防御落点登记 policy.md v0.5）" },
+        { "name": "PolicyParseRules.DefinedGroupReferencePublishes", "status": "passed", "modes": ["smoke", "integration"], "trace": "通过路径：已定义组引用不发 RULE-CYCLE（上下文应答驱动的存在性核对——无猜测）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseScope",
+      "designRef": "units/policy.md §5.1⑤/§5.2 行 10、§11 POL-PARSE-6、CON-01",
+      "cases": [
+        { "name": "PolicyParseScope.MissingRuleObjectRejectedBindsSubject_POL_PARSE_6", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1：规则引用闭包外对象 → POLICY-SCOPE-OBJECT-MISSING；subject 绑定缺失对象 ID（§11 行'subject 绑定对象 ID'）＋端序定位" },
+        { "name": "PolicyParseScope.MissingApplicabilityObjectRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.1⑤'引用对象存在性'：适用范围对象集同样经闭包核对（model/task/case 三集）" },
+        { "name": "PolicyParseScope.MultipleMissingObjectsAllReported", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1'不短路'：规则端＋适用范围两处缺失各自成条（2 条全量，发射序＝规则先于适用范围）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseApplicability",
+      "designRef": "units/policy.md §5.1④/§5.2 行 11、§4.2.1/§4.3 空集语义、§5.3 集合规范序",
+      "cases": [
+        { "name": "PolicyParseApplicability.EmptyDomainsWithEnabledRejected", "status": "passed", "modes": ["smoke", "integration"], "trace": "§5.1④'空 enabledDomains 且 enabled=true→非法：无域可检'；不填 {Self,Environment,Tool} 默认（空集与显式清空不可区分——§5.1④ 权威语义为拒绝；模板默认归装配侧——policy.md v0.5 登记）" },
+        { "name": "PolicyParseApplicability.EmptyDomainsWithDisabledPublishes", "status": "passed", "modes": ["smoke", "integration"], "trace": "§4.3'可整体停用后恢复'：enabled=false 时空域合法、安全间距可缺省（必填校验以 enabled==true 为前提）" },
+        { "name": "PolicyParseApplicability.DuplicateDomainsNormalizedInOutput", "status": "passed", "modes": ["smoke", "integration"], "trace": "集合语义：重复＋乱序 → 发布产物升序去重（枚举值序——与 §5.3 集合规范序一致）" }
+      ]
+    },
+    {
+      "suite": "PolicyParseDefaults",
+      "designRef": "契约 acceptance 2、units/policy.md §5.1③/§4.4 D-04/D-05、附录 D 第 11 项、P-POL-2/O-10、§5.2 行 5/12、§4.1'来源标注不影响'",
+      "cases": [
+        { "name": "PolicyParseDefaults.TravelLimitDefaultFilledFromAppendixD_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2：行程上限未提供 → 填 4π（位级等于 kDefaultFiniteRotationTravelLimit）＋origin=DefaultAppendixD＋告知性 POLICY-INFO-DEFAULT-APPLIED 随发布对象附带（§5.2 行 12）——唯一冻结默认" },
+        { "name": "PolicyParseDefaults.UnfrozenDefaultsStayAbsent_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 保守口径：近限位比/条件数警告无冻结默认 → 保持 nullopt＝显式不适用（不发明数值、不设第二默认——P-POL-2）；诊断为空（无默认可告知）" },
+        { "name": "PolicyParseDefaults.ExplicitTravelLimitKeepsExplicitOriginWithoutInfo", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 对偶面：显式提供 4π → origin=Explicit、无默认告知（告知只随'未提供→填入'）" },
+        { "name": "PolicyParseDefaults.DefaultAppliedAndExplicitValueShareIdentity", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 机制面：默认填入 4π 与显式 4π 语义闭包相同 → 内容身份相同（来源标注不入身份——§4.1；诊断集差异可见且不入身份）" },
+        { "name": "PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 2 拒绝面：enabled==true 而安全间距未设置 → POLICY-THRESHOLD-REQUIRED-MISSING（§5.2 行 5——缺失即拒绝发布，P-POL-2 保守口径）" }
+      ]
+    },
+    {
+      "suite": "PolicyParsePipeline",
+      "designRef": "units/policy.md §5.1⑥⑦/§5.3、§9.2、POL-ID-1、CR-02、AGENTS 错误总纲、契约 acceptance 1",
+      "cases": [
+        { "name": "PolicyParsePipeline.DeterministicParseTwiceSameResult_POL_ID_1", "status": "passed", "modes": ["smoke", "integration"], "trace": "POL-ID-1 管线级：同 (输入, 上下文应答) 两次解析 → 发布对象逐字段相等＋诊断逐字相等（纯函数确定性——NFR-COR-02）" },
+        { "name": "PolicyParsePipeline.PublishedIdentityMatchesCodecRecompute", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑥：发布身份＝PolicyCodec::contentIdentity 对发布语义闭包的重算（CR-02 摘要单点；调用方不可申报身份）" },
+        { "name": "PolicyParsePipeline.ParseOfDecodedBytesYieldsSamePolicy", "status": "passed", "modes": ["smoke", "integration"], "trace": "管线×codec 协同：encode→decode 往返输入解析出同一发布对象＋同一诊断（②规范化与编码规范序同键的实现证据）" },
+        { "name": "PolicyParsePipeline.ValidatorMatchesResolveDiagnostics", "status": "passed", "modes": ["smoke", "integration"], "trace": "§9.2：validate 与 resolvePolicy 共享管线——合法/非法两输入的诊断逐字一致；validate 无 policy 返回（类型层防误用/无发布副作用）" },
+        { "name": "PolicyParsePipeline.CallerContractViolationsFailFast", "status": "passed", "modes": ["smoke", "integration"], "trace": "错误总纲：全零 policyObject/空锚/结构非法实例（聚合构造绕过工厂）→ fail-fast 抛 PolicyError（不经诊断轨——合法解码不可产生）" },
+        { "name": "PolicyParsePipeline.AllStageErrorsCollectedInDeterministicOrder", "status": "passed", "modes": ["smoke", "integration"], "trace": "acceptance 1 总反例：跨五检查面 7 条异常全量收集（角色拼写/NaN/越窗/重复/未定义组/闭包外对象/空域启用），发射序＝管线段序逐位断言" },
+        { "name": "PolicyParsePipeline.PublishedPolicyCarriesPolicyObjectAndAuditFields", "status": "passed", "modes": ["smoke", "integration"], "trace": "⑦发布对象承载审计面：policyObject/origin/兼容注记透传、validationState=Valid；sourceVersion 恒 nullopt（填充归 Provider/POL-T05——PA-1）" }
+      ]
+    }
+  ],
+  "carryOver": {
+    "description": "POL-T01~T03 既有 53 用例（PolicyBuild 4／PolicyErrors 3／PolicyThresholdField 8／PolicyJointThresholds 4／PolicyCollisionRules 6／PolicySetGate 4／PolicyCodecId 9／PolicyCodecFloat 4／PolicyCodecCr02 3／PolicyCodecErrors 8）在本任务双模式执行中全部保持通过——本文件不逐条重列，逐条 trace 见 traceability/builds/wp07-t03/ird-test-report.json",
+    "totalPrior": 53,
+    "result": "passed（两模式）"
+  },
+  "totals": {
+    "prior": 53,
+    "new": 44,
+    "sum": 97,
+    "smoke": "97/97 passed",
+    "integration": "97/97 passed"
+  },
+  "evidence": {
+    "smoke": [
+      "traceability/builds/wp07-t04/smoke-configure.log",
+      "traceability/builds/wp07-t04/smoke-build.log",
+      "traceability/builds/wp07-t04/smoke-test-run.log",
+      "traceability/builds/wp07-t04/sdurws_ird_policy_test-smoke.xml"
+    ],
+    "integration": [
+      "traceability/builds/wp07-t04/integration-build.log",
+      "traceability/builds/wp07-t04/integration-test-run.log",
+      "traceability/builds/wp07-t04/sdurws_ird_policy_test-integration.xml",
+      "traceability/builds/wp07-t04/gate-all.log"
+    ],
+    "gates": [
+      "traceability/builds/wp07-t04/ird_gates-current-wp07t04.log",
+      "traceability/builds/wp07-t04/ird_gates-base-wp07t04.log"
+    ]
+  },
+  "notExecuted": [],
+  "contractVerifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test ——通过（集成模式 exit 0；全量 Release 构建零 error，见 evidence/integration-build.log）",
+  "gateAll": {
+    "result": "16/17——唯一失败项＝ird_gates 目标 5 处命中，经 base 快照（042e8db1）同参数复跑证明全部为 base 既有，非本任务引入",
+    "method": "①本分支树运行 gate-all.ps1（ird_gates＋双模式全部 _test 目标）→ ird_gates 命中 5 项；②git worktree 检出 base 042e8db1 快照，以同参数 cmake -P 复跑 ird_gates.cmake → 命中**逐字相同**的 5 项（diff 为空）；③本任务 diff 面仅含 policy 单元文件＋单元卡/留痕——命中目标（sdurws_ird_evidence_test/sdurws_ird_evidence_contract_test/sdurws_ird_runtime_test 直链 testkit×3、sdurws_ird_testdata_lint→testkit×2）的 CMakeLists 均不在本任务改动面与 allowedFiles 内",
+    "hitsAllPreexisting": [
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit",
+      "IRD-GATE-SUB: 表外依赖边（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单",
+      "IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1）"
+    ],
+    "verdict": "DoD 第 2 条口径：ird_gates 对**本次变更**零命中（base 既有 5 项不因本任务增减——base/分支命中清单逐字一致，GATE_DELTA_ZERO）；既有命中按 DTB §5.4 属治理事项（POL-T02/T03 验收已同口径登记），不由 POL-T04 私改其他单元（allowedFiles/forbiddenFiles 边界）",
+    "evidence": [
+      "traceability/builds/wp07-t04/gate-all.log",
+      "traceability/builds/wp07-t04/ird_gates-base-wp07t04.log",
+      "traceability/builds/wp07-t04/ird_gates-current-wp07t04.log"
+    ]
+  },
+  "notes": "①实现口径登记（policy.md v0.5，验收可对照 §5.1/§5.2 原文复核）：'未知字段'（行 1）在强类型 RawPolicyInput 上不可表达——POLICY-SCHEMA-UNKNOWN-FIELD 的活性检测面＝角色 token 词表核对（拼写错误会静默收窄必检集，语义同'防拼写错误降级'），字节层等价拒绝由 PolicyCodec::decode 精确耗尽契约承担；②冲突/重复的 Role/Group 展开为解析期可检子集（同 kind 同载荷＋Object×Role 经 context.objectRole）——Object/Role×Group 成员级交集需场景清单，归会话构建同码复核（§7.2 两层防御，POL-T06 完整执行）；③enabledDomains 空集不填默认（§5.1④ 权威语义为拒绝——与 POL-T02 发布门口径一致；{Self,Environment,Tool} 模板默认归装配侧）；④'组引用组/循环'在扁平组 schema 层不可表达——RULE-CYCLE 的活性面为'引用未定义组'（context.groupDefined）；⑤信息级诊断仅 POLICY-INFO-DEFAULT-APPLIED（§9.6 唯一已登记 INFO 码）；继承标记在 RawPolicyInput v1 不可表达、兼容注记缺失无已登记码面——均不产出；⑥sourceVersion 由 Provider（POL-T05）按 (policyObject, ContentVersion) 记忆化键填充，解析器恒 nullopt（PA-1）；⑦门禁：validate-task.ps1 PASS；ird_gates 见 gateAll 节（对本次变更零命中，5 项 base 既有已用 base 快照同参数复跑 diff 为空证明）"
+}
