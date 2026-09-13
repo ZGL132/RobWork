@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T11",
+  "masterWp": "WP-07-T11",
+  "branch": "wp07-t11",
+  "base": "12097195531acfc5665af1e2c9f638977c86d3ce",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "POL-T11 零产品源码改动（替身与契约套件任务——交付面在 policy/test/ 与 testdata/）；产品库链接面不变（core＋RobWork 基线，R-5 例外维持）；零 runtime/project/evidence 编译依赖（R-1/R-2——contract test 对 evidence 公共头为头级消费、零链接边，见 testSuites.notes）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "POL-T11 零改动（既有 POL-T01~T10 交付面回归：集成 200/200、冒烟 131/131——验证既有面零破坏）"
+    },
+    {
+      "target": "sdurws_ird_policy_contract_test",
+      "kind": "gtest executable（本任务新注册）",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "§3.4 跨单元契约面目标（此前 POL-T01 仅注册 _test）：双模式文件 PolicyCodecFixtureContractTest（4 用例——pol-policy-codec-fixture 数据集消费/双实现互证/完整性复核）＋PolicyTestDoubleBoundaryTest（3 用例——POL-TD-1 机检：产品源码替身符号零命中＋声明两面在案）；集成专属文件 PolicyContractDoublesTest（5 用例——替身四轨行为/装配分步镜像/POL-SHARE-1/POL-AT-1/POL-AT-2/POL-AT-3）＋PolicyProofMaterialContractTest（4 用例——POL-EVAL-3 证明素材对齐/反例面/源码锚/POL-COMPAT-2 素材面）＋CollisionAnalyticDatasetTest（4 用例——pol-collision-analytic 数据集消费/POL-AT-4）。链接面＝sdurws_ird_policy＋sdurws_ird_testkit＋GTest::gtest_main（T-1 允许形态）；include 根＝policy/test（替身头 sdurws/ird/policy/testdouble/）＋evidence/include（仅集成 gating——Evidence.hpp 值类型头级消费，零链接边，ird_gates 实证无 policy_contract_test→evidence 命中）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "PolicyContractDoubles（5 用例）",
+      "designRef": "units/policy.md §11 POL-TD-1/POL-SHARE-1/POL-AT-1~3 行、§10.1/§10.4；需求 ARC-05/NFR-COR-05/MDL-06④/KIN-13/UX-08",
+      "cases": [
+        { "name": "ScriptedEvaluatorProducesAllFourScriptTracks", "status": "passed", "modes": ["integration"], "trace": "POL-TD-1 行为面——脚本四轨（findings/Failed+POLICY-CLL-EVALUATION-FAILED/Canceled 无错误诊断/异常注入）经真实会话处置＋脚本描述符 test.／not-a-real-backend 标注面" },
+        { "name": "StubProviderMirrorsAssemblyStepwiseContract", "status": "passed", "modes": ["integration"], "trace": "§9.1 装配分步契约替身侧镜像——注入前 PortAssemblyIncomplete 同码面／注入后同一实例引用／预设解析轨／脚本抛出轨" },
+        { "name": "ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs", "status": "passed", "modes": ["integration"], "trace": "POL-SHARE-1（ARC-05/AT-19）——三入口替身消费者经同一 provider：评估器地址全等＋会话身份相等＋输出逐字段相等＋findings checkSetEquivalent（SetMatchTraits<CollisionFinding> 显式特化）" },
+        { "name": "At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes", "status": "passed", "modes": ["integration"], "trace": "POL-AT-2（AT-19）——显式排除面 appliedFilters ruleOrigin='policy.excludedPairs[0].reason=夹持接触豁免'三入口逐字一致＋域默认面 findings 对象对/kind/Must 一致" },
+        { "name": "At01TravelLimitConfirmableReleaseChain", "status": "passed", "modes": ["integration"], "trace": "POL-AT-1（AT-01/MDL-06④/SA-15）——§10.4 全链走查：比较型三要素 6π/4π/rad→ConfirmableFinding 四元组绑定→未确认阻止→确认放行摘要含 policyContentId→多圈反例 6π 阈值新身份复检放行（D-08 闭区间）" },
+        { "name": "At27DisplayUnitSwitchKeepsIdentityAndOutput", "status": "passed", "modes": ["integration"], "trace": "POL-AT-3①（AT-27/UX-08/POL-ID-3）——0.01m 与 10mm 等值重解析身份相等且评估输出逐字段一致（间距面经脚本距离会话承载——POL-TD-1 边界内）" },
+        { "name": "At27AnalysisConfigChangeDoesNotAffectEvaluation", "status": "passed", "modes": ["integration"], "trace": "POL-AT-3②（AT-27/KIN-13）——替身分析配置对象修改前后评估输出逐字段相等（配置无覆盖通道的结构事实；真实后端承载）" }
+      ]
+    },
+    {
+      "suite": "PolicyTestDoubleBoundary（3 用例）",
+      "designRef": "units/policy.md §11 POL-TD-1 行；机制先例 evidence ScriptedDoubleBoundary（EV-REG-3）",
+      "cases": [
+        { "name": "ProductSourcesContainNoDoubleSymbols", "status": "passed", "modes": ["integration", "smoke"], "trace": "产品源码 src/＋include/ 六个替身符号零命中（ScriptedCollisionEvaluator/StubPolicyProvider/ScriptedCollisionBackend/ScriptedDistanceBackend/PolicyTestDoubles/testdouble）" },
+        { "name": "DoubleHeaderCarriesBoundaryDeclaration", "status": "passed", "modes": ["integration", "smoke"], "trace": "替身头 POL-TD-1 锚点＋核心命题＋not-a-real-backend 标注纪律在案" },
+        { "name": "TestReadmeDeclaresBoundaryFullText", "status": "passed", "modes": ["integration", "smoke"], "trace": "test/README.md §1 声明全文＋替身清单＋真实正确性通道指认在案" }
+      ]
+    },
+    {
+      "suite": "PolPolicyCodecFixture（4 用例）",
+      "designRef": "units/policy.md §11 矩阵尾注（contract-fixture 类数据集）、§12 POL-T11 行；units/testkit.md §4.2/§4.5/§5.1；需求 CON-05/CON-06/NFR-COR-01/02",
+      "cases": [
+        { "name": "LoadsThroughFullManifestChain", "status": "passed", "modes": ["integration", "smoke"], "trace": "GoldenDataset 全链装载（解析→schema→integrity→交叉校验）＋kind=contract-fixture＋完整性条目 ≥3" },
+        { "name": "IntegrityDigestsMatchCommittedFiles", "status": "passed", "modes": ["integration", "smoke"], "trace": "manifest 申报条目逐文件重算 SHA-256（core ContentDigester）＋大小对照" },
+        { "name": "CanonicalEncodingMatchesIndependentExpectation", "status": "passed", "modes": ["integration", "smoke"], "trace": "POL-ID-1/2 数据集载体——产品 PolicyCodec::encode 与 JS 独立参考编码器逐字节一致＋decode(期望字节)==规范化输入（往返保真）" },
+        { "name": "ContentIdentityMatchesIndependentDigest", "status": "passed", "modes": ["integration", "smoke"], "trace": "CON-05 数据集载体——发布身份与 JS 独立 SHA-256 摘要逐串一致＋语义投影编码逐字节一致（管线⑥投影/摘要与独立实现互证）" },
+        { "name": "ShuffledAndDisplayUnitVariantKeepsIdentity", "status": "passed", "modes": ["integration", "smoke"], "trace": "POL-ID-2/3 数据集载体——变体（规则乱序/无序对互换/域乱序/10mm 等值）的语义投影与发布身份和规范变体逐串一致＋SI 归一值位级等于独立期望" }
+      ]
+    },
+    {
+      "suite": "PolicyProofMaterialContract（4 用例）",
+      "designRef": "units/policy.md §11 POL-EVAL-3/POL-COMPAT-2 行、§8.4；units/evidence.md §6.3；§12 POL-T11 产物行'契约夹具（evidence 证明字段形状对齐）'",
+      "cases": [
+        { "name": "FindingCarriesCompleteProofMaterialFields", "status": "passed", "modes": ["integration"], "trace": "POL-EVAL-3——finding→evidence CollisionPair 映射（对象 ID 对＋判定＋采样位置齐备）＋证明素材组装＋validateProof 清单五段预检零问题（'可被 validateProof 采信'的素材面）" },
+        { "name": "NonCollisionOrSelfPairRejectedByChecklist", "status": "passed", "modes": ["integration"], "trace": "反例面——判定为否不支撑碰撞证明／A==B 不成对／缺必经性依据均被清单拦截" },
+        { "name": "SourceAnchorsPinBothFieldShapes", "status": "passed", "modes": ["integration"], "trace": "源码级字段锚——Evidence.hpp（objectIdA/objectIdB/inCollision/nonSelectabilityBasis/kCoverageClaimMandatoryState）与 CollisionQuery.hpp（objectA/objectB/sampleIndex）成员名在案，任一侧漂移即显性失败" },
+        { "name": "ContentIdentityChangeSuppliesSliceInvalidationMaterial", "status": "passed", "modes": ["integration"], "trace": "POL-COMPAT-2 本侧素材面——阈值变化新身份＋checkPolicyCompatibility 锚失配原因词表（numeric-contract-mismatch）＝evidence judgeCacheHit 消费的身份＋原因素材" }
+      ],
+      "notes": "evidence 依赖面＝公共头值类型头级消费（R-2 允许形态；§3.4 明文设计本目标承担'与 evidence 证明字段形状对齐断言'）；零链接边（不 link sdurws_ird_evidence——ird_gates 实证无该边命中）；validateProof 实现不调用——'可被采信'=清单级预检＋源码锚双机制，采信真值归 evidence 侧 EV-VER 既有覆盖"
+    },
+    {
+      "suite": "PolCollisionAnalytic（4 用例）",
+      "designRef": "units/policy.md §11（analytic-case 类黄金数据集行＋POL-AT-4 行）、§10.5；units/testkit.md §4.2.1/§4.3.2/§10.2 policy 行；需求 MDL-22/ARC-05/KIN-05",
+      "cases": [
+        { "name": "DatasetLoadsThroughFullManifestChain", "status": "passed", "modes": ["integration"], "trace": "analytic-case 全链装载＋referenceSource 独立＋edgeCases 三布尔全 true（附录 D C4）" },
+        { "name": "PolicySnapshotConsumedThroughPolicyObject", "status": "passed", "modes": ["integration"], "trace": "testkit §4.3.2 工程策略默认类别消费——快照 4π 经 policy 对象 origin=DefaultAppendixD 断言（不旁路策略私设阈值）＋safetyClearance 快照值对照" },
+        { "name": "AllCasesMatchHandDerivedExpectations", "status": "passed", "modes": ["integration"], "trace": "六工况逐例对照（内置后端真实评估 vs 手算闭式）——状态/finalized/发现对象对/判定＋coverage 覆盖事实（pairsInScope/pairsWithGeometry/pairsEvaluated）" },
+        { "name": "At37InvertedMountConsumesCompiledStateWithoutSecondRotation", "status": "passed", "modes": ["integration"], "trace": "POL-AT-4（MDL-22/AT-37）——数值面：倒挂 q=0 无碰撞（二次旋转判别例，手算间隙 0.8m）＋q=π 对象对与手算一致；结构面：'policy 禁止二次旋转'契约注释在案" }
+      ]
+    }
+  ],
+  "datasets": {
+    "lint": "testdata_lint 全量扫描 5 个数据集版本 0 违规（lint-run.log；工具链经 --root/--dict 显式传参）",
+    "delivered": [
+      "testdata/golden/pol-policy-codec-fixture/1.0.0（contract-fixture 类——解析/编码契约；双实现互证）",
+      "testdata/golden/pol-collision-analytic/1.0.0（analytic-case 类——碰撞解析算例；POL-AT-4 载体）",
+      "testdata/tolerance/pol-codec/v1.0.0.json（零宽容差＝字节级等值档案化）",
+      "testdata/tolerance/pol-analytic/v1.0.0.json（dataset-declared absolute 1e-9 m）"
+    ],
+    "ci": "ctest 双模式 policy 叶 2/2 通过（ctest-integration.log/ctest-smoke.log）＋gate-all 集成/冒烟各 7 注册全 PASS（gate-all.log）——数据集消费测试随 CI 跑通"
+  },
+  "regression": {
+    "integration": { "total": 223, "passed": 223, "failed": 0, "note": "_test 200（既有零改动）＋_contract 23（新增）" },
+    "smoke": { "total": 139, "passed": 139, "failed": 0, "note": "_test 131（既有零改动）＋_contract 8（新增：双模式文件 7 用例）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log——validate-task.ps1 -TaskFile tasks/foundation/POL-T11.json）",
+    "irdGates": {
+      "result": "7 命中＝base 既有 6＋本任务新增 1（如实登记，未私改门禁）",
+      "baseSix": "SUB×5（evidence_test/evidence_contract_test/policy_test/runtime_test 直链 testkit＋testdata_lint→testkit 表外边）＋T1×1（testdata_lint 产品目标链接 testkit）——与 POL-T10 验收基线逐码一致",
+      "newHit": "SUB×1：sdurws_ird_policy_contract_test 直链 sdurws_ird_testkit",
+      "newHitAnalysis": "与 F-072 同族同根因：白名单数据面 cmake/ird_gates_whitelist.cmake T-1 段明文允许『sdurws_ird_<unit>_test / _contract_test → { 同单元产品目标, sdurws_ird_testkit, gtest 系 }』，而引擎 ird_gates.cmake 将 testkit 分类为 product 形态且无 testkit 豁免分支。本链接为任务交付面所必需（§10.2 policy 行交接消费：GoldenDataset 数据集装载/JsonLite/ToleranceProfile/SetCheck/IRD_TEST_INFO——§11 测试设施行与矩阵尾注的字面要求），去除则 acceptance 3 的数据集消费与 IRD_TEST_INFO 登记要求空转。cmake/ 不在本任务 allowedFiles——保留命中如实登记，处置（引擎补 testkit 豁免分支或例外登记）转所有者/WP-01 裁决",
+      "noNewEdges": "policy_contract_test→evidence 为头级消费零链接边——ird_gates 实证无该边命中（R-2/T-1 合规实证）",
+      "logs": ["gates-current-wp07t11.log（ird_gates 目标全输出——日志中文经 GBK 控制台转写存在双重编码，F-065 同源已知问题，不影响逐码核对：7 处命中码面与上述清单一致）", "gate-all.log（18/19——唯一 FAIL 即上述 ird_gates 命中；集成/冒烟各 7 项测试发现与执行全部 PASS）"]
+    }
+  },
+  "verifyCommand": "cmake --build build --config Release --target sdurws_ird_policy_test（exit=0；verify-target-build.log 含 _test＋_contract_test 两目标重编译——本任务 5 个新 TU 全部在列）",
+  "notes": "P-POL-4 处置（knownPitfalls——上游 Draft 漂移陷阱）：本任务消费的 core/evidence/testkit 公共契约与 policy.md §3.2 消费清单逐项核对一致（Evidence.hpp CollisionPair/MandatoryStateDescriptor/ProofIssueCode 五段清单/validateProof 签名与 §8.4/§11 POL-EVAL-3 卡面同口径；testkit Dataset/manifest schema/§4.3.2 与 §11 尾注同口径），无漂移须同步；evidence/testkit 冻结时按 R-2 出 diff 增量同步（P-POL-4 登记义务延续）。"
+}

@@ -1,0 +1,61 @@
+{
+  "note": "契约夹具规范变体（承载序＝规范化序——与 generate/make_pol_policy_fixture.mjs 的 FIXTURE 模型同语义；expected/identity.json 的对照基准）。",
+  "schemaVersion": 1,
+  "policyObjectHex": "0102030405060708090a0b0c0d0e0f10",
+  "collision": {
+    "enabled": true,
+    "enabledDomains": ["Self", "Environment", "Tool"],
+    "safetyClearance": { "value": 0.01, "unit": "m" },
+    "excludeAdjacentLinksByDefault": true,
+    "mandatoryPairs": [
+      {
+        "first": { "kind": "Object", "objectHex": "11010101010101010101010101010101" },
+        "second": { "kind": "Object", "objectHex": "22020202020202020202020202020202" },
+        "level": "Must",
+        "reason": "机械臂末端接近料架通道必检（POL-T11 契约夹具）"
+      },
+      {
+        "first": { "kind": "Role", "roleToken": "EnvironmentObject" },
+        "second": { "kind": "Role", "roleToken": "Tool" },
+        "level": "Should",
+        "reason": "工具与环境对象默认间距巡检"
+      }
+    ],
+    "excludedPairs": [
+      {
+        "first": { "kind": "Role", "roleToken": "EnvironmentObject" },
+        "second": { "kind": "Group", "groupName": "static-jigs" },
+        "level": "Should",
+        "reason": "静态工装与环境对象互滤（显式组展开面）"
+      }
+    ]
+  },
+  "jointThresholds": {
+    "nearLimitRatio": { "value": 0.05, "unit": "" },
+    "conditionNumberWarning": { "value": 10.0, "unit": "" },
+    "finiteRotationTravelLimit": { "value": 12.566370614359172, "unit": "rad" },
+    "travelLimitCheckEnabled": true
+  },
+  "applicability": {
+    "modes": ["Quick", "Verified"],
+    "modelObjects": ["33030303030303030303030303030303"],
+    "taskObjects": [],
+    "caseObjects": []
+  },
+  "numericContractAnchor": "appendixD@v1.16",
+  "origin": {
+    "kind": "UserEdited",
+    "sourceObjectHex": null,
+    "note": "契约夹具基线策略（POL-T11）"
+  },
+  "compatibilityNotes": "夹具首版——不承载迁移语义",
+  "closure": {
+    "note": "解析⑤闭包应答（消费测试据此装配 IPolicyValidationContext）——夹具引用对象全部在闭包内",
+    "objects": [
+      { "objectHex": "11010101010101010101010101010101", "role": "RobotLink" },
+      { "objectHex": "22020202020202020202020202020202", "role": "EnvironmentObject" },
+      { "objectHex": "33030303030303030303030303030303", "role": "RobotLink" }
+    ],
+    "groups": { "static-jigs": true }
+  }
+}

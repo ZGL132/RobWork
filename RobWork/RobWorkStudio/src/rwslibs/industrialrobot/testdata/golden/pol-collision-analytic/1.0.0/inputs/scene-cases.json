@@ -1,0 +1,67 @@
+{
+  "note": "碰撞解析算例输入（POL-T11/POL-AT-4 载体）——构造场景几何参数与工况清单；期望值由 generate/make_pol_collision_analytic.mjs 按手算闭式推导产出（expected/analytic.json）。几何为轴向对齐立方体（0.2 m）：三角网格精确无细分误差，面间隙闭式＝轴向中心距−边长（同姿态凸盒）。",
+  "geometry": {
+    "boxSizeM": 0.2,
+    "armLengthM": 0.5,
+    "envCenterXyM": [0.5, 0.0],
+    "note": "工具盒挂接设备末端帧（臂长 0.5 m，J1 绕基座 Z 轴）；环境盒世界系固连（MDL-22）于 (0.5,0,z)。倒挂安装＝R_world_base=Ry(π)（编译产物单一权威——policy 禁止二次旋转）。"
+  },
+  "policySnapshot": {
+    "note": "工程策略快照（testkit §4.3.2 工程策略默认类别的消费方式——测试经被测 policy 对象取值核对，不得旁路策略私设阈值）",
+    "safetyClearanceSi": 0.0,
+    "safetyClearanceUnit": "m",
+    "safetyClearanceSource": "dataset-declared（§7.4 m=0 退化＝仅碰撞检测——内置后端无距离查询能力，P-POL-11 登记；间距判定面归脚本化边界值用例 POL-T07）",
+    "finiteRotationTravelLimitRad": 12.566370614359172,
+    "travelLimitSource": "engineering-policy-default（附录 D 第 11 项 4π——唯一冻结默认，消费断言经发布策略对象 origin=DefaultAppendixD）"
+  },
+  "cases": [
+    {
+      "id": "upright-contact",
+      "mount": "identity",
+      "qRad": 0.0,
+      "envCenterZM": 0.0,
+      "edge": "zeroValue",
+      "derivation": "工具盒心＝(0.5,0,0)世界＝环境盒心——零间距接触（附录 D C4 零值工况）：二值判定＝碰撞，面间隙参考 0.0 m"
+    },
+    {
+      "id": "upright-clear-0p8",
+      "mount": "identity",
+      "qRad": 0.0,
+      "envCenterZM": 1.0,
+      "edge": null,
+      "derivation": "z 向中心距 1.0 m，同姿态凸盒面间隙＝1.0−0.2＝0.8 m（分离）→ 无发现"
+    },
+    {
+      "id": "near-zero-separation",
+      "mount": "identity",
+      "qRad": 0.0,
+      "envCenterZM": 0.22,
+      "edge": "nearZero",
+      "derivation": "z 向中心距 0.22 m，面间隙＝0.22−0.2＝0.02 m（近零分离——二值判定＝不碰撞；间隙数值面归距离能力，P-POL-11）"
+    },
+    {
+      "id": "sign-symmetry-negative",
+      "mount": "identity",
+      "qRad": 0.0,
+      "envCenterZM": -0.22,
+      "edge": "signCancellation",
+      "derivation": "与 near-zero-separation 镜像（z→−z）：面间隙闭式只取｜偏移｜＝0.02 m——正负两例判定与间隙参考逐位一致（正负抵消工况）"
+    },
+    {
+      "id": "inverted-clear-no-second-rotation",
+      "mount": "inverted-y-pi",
+      "qRad": 0.0,
+      "envCenterZM": 0.0,
+      "edge": null,
+      "derivation": "倒挂 Ry(π)：q=0 工具盒心＝(−0.5,0,0)世界（基座变换只消费一次——若二次叠加旋转工具盒翻转到 (0.5,0,0) 即与环境盒重合误报碰撞）；x 向中心距 1.0 m，面间隙 0.8 m → 无发现（POL-AT-4 无二次旋转判别例）"
+    },
+    {
+      "id": "inverted-contact",
+      "mount": "inverted-y-pi",
+      "qRad": 3.141592653589793,
+      "envCenterZM": 0.0,
+      "edge": null,
+      "derivation": "倒挂 q=π：基座系工具心 (−0.5,0,0) → 世界 Ry(π)·(−0.5,0,0)=(0.5,0,0)＝环境盒心——重合碰撞；对象对与手算一致（POL-AT-4 观测点）"
+    }
+  ]
+}

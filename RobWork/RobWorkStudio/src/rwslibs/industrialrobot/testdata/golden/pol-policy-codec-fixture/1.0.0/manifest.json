@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "pol-policy-codec-fixture",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "pol/policy-codec-contract",
+  "coveredRequirements": [
+    "CON-05",
+    "CON-06",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "UX-08",
+    "KIN-12"
+  ],
+  "coveredAt": [
+    "AT-27"
+  ],
+  "toleranceProfile": {
+    "id": "pol-codec",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/policy-input.json",
+    "inputs/policy-input-variant.json"
+  ],
+  "expected": [
+    "expected/identity.json"
+  ],
+  "parameters": {
+    "contract": "policy RawPolicyInput/PolicyCodec（IRDPOL1 版本 1）——full 形态往返载体＋语义闭包投影（contentIdentity 唯一摘要输入）",
+    "entryFaces": {
+      "canonical": "inputs/policy-input.json——规范化承载序＋m 显示单位（编码/身份对照基准）",
+      "variant": "inputs/policy-input-variant.json——规则清单乱序＋无序对两端互换＋域乱序＋安全间距 10 mm 表述等值（POL-ID-2/POL-ID-3 数据集载体——编码与发布身份须与 canonical 逐串一致）",
+      "independence": "expected 由 generate/make_pol_policy_fixture.mjs 按 §5.3 编码布局规则独立重实现产出（node:crypto SHA-256——与 core ContentDigester 同算法标准实现）——与产品 C++ 编码器双实现互证（任一侧漂移即 PolicyCodecFixtureContractTest 显性失败）",
+      "closure": "inputs 的 closure 节承载解析⑤闭包应答（对象/角色/组）——发布路径走真实 resolvePolicy 七段管线，身份对照对'已发布语义'生效"
+    },
+    "framesNote": "编码契约面无坐标系语义（frames 仅为 manifest schema 必填项的空声明——与 ev-slice-fixture 同口径）",
+    "emptyCaseSet": "applicability.taskObjects/caseObjects 为空集（合法形态——空集＝不限适用范围，§4.2.1）"
+  },
+  "units": {},
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "pol-policy-codec-fixture-canon-rederive",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-14T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/policy-input.json",
+      "sha256": "cb1fe140fb98281d7a07da1feb65a739fc6d46cf7305d00bb0d1cb75e535b070",
+      "sizeBytes": 2447
+    },
+    {
+      "path": "inputs/policy-input-variant.json",
+      "sha256": "11060ff5f2bcc30de42002262f50015bde822c1a1cede5c17e47808add4f0cf4",
+      "sizeBytes": 2557
+    },
+    {
+      "path": "expected/identity.json",
+      "sha256": "c6cbd7b9f0572b940fd871c39d1ef3977f80fde97b5e511e70c59772add5cf7b",
+      "sizeBytes": 2941
+    },
+    {
+      "path": "generate/make_pol_policy_fixture.mjs",
+      "sha256": "21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561",
+      "sizeBytes": 17698
+    }
+  ],
+  "generator": {
+    "script": "generate/make_pol_policy_fixture.mjs",
+    "invocation": "node generate/make_pol_policy_fixture.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-14",
+      "change": "首版：策略解析/编码契约夹具（canonical＋variant 双变体；full/投影双形态编码＋内容身份独立摘要对照——POL-ID-1/2/3 的数据集载体、CON-05 身份可独立复算的双实现互证）——POL-T11 §12 产物行数据集面（acceptance 3 contract-fixture 类）",
+      "reReviewedBy": "WP-07",
+      "supersededBy": ""
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "pol-codec",
+  "version": "1.0.0",
+  "basis": "policy 单元策略编码契约夹具（pol-policy-codec-fixture，WP-07-T11）为字节级等值数据集：全部断言为身份精确等值（附录 D 第 12 项——无数值容差）与 canonical 字节逐字节对照（§5.3 位模式/规范序规则）。本档案不承载任何放宽的数值容差；唯一条目以 absolute 0 的零宽容差登记夹具 SI 归一值的对照面（语义＝字节级等值，非数值近似），供消费侧以档案通道引用该字段时解析——直接消费请使用字节等值断言（IRD_EXPECT_IDENTICAL 同口径）。",
+  "entries": [
+    {
+      "fieldPath": "identity.siValues[*]",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：零宽容差即字节级等值的档案化表达（宽于零＝伪造近似等值，POL-ID-5 反例面——1e-15 级差异必须产生不同身份）；本夹具的实际断言为字节/逐位等值，不经本档案数值通道"
+    }
+  ]
+}

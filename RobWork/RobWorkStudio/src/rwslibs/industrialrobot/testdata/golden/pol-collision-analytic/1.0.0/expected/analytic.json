@@ -1,0 +1,80 @@
+{
+  "note": "由 generate/make_pol_collision_analytic.mjs 按手算闭式推导产出（同姿态凸盒面间隙公式；推导记录见 inputs/scene-cases.json 各 case 的 derivation）——本文件不是产品代码产物。消费测试（CollisionAnalyticDatasetTest）以内置后端对构造场景的评估结果与本文件对照（对象对/判定/coverage 事实；间隙参考为解析记录——二值评估不查询距离，P-POL-11）。",
+  "geometryEcho": {
+    "boxSizeM": 0.2,
+    "armLengthM": 0.5,
+    "envCenterXyM": [
+      0.5,
+      0
+    ],
+    "note": "工具盒挂接设备末端帧（臂长 0.5 m，J1 绕基座 Z 轴）；环境盒世界系固连（MDL-22）于 (0.5,0,z)。倒挂安装＝R_world_base=Ry(π)（编译产物单一权威——policy 禁止二次旋转）。"
+  },
+  "policySnapshot": {
+    "note": "工程策略快照（testkit §4.3.2 工程策略默认类别的消费方式——测试经被测 policy 对象取值核对，不得旁路策略私设阈值）",
+    "safetyClearanceSi": 0,
+    "safetyClearanceUnit": "m",
+    "safetyClearanceSource": "dataset-declared（§7.4 m=0 退化＝仅碰撞检测——内置后端无距离查询能力，P-POL-11 登记；间距判定面归脚本化边界值用例 POL-T07）",
+    "finiteRotationTravelLimitRad": 12.566370614359172,
+    "travelLimitSource": "engineering-policy-default（附录 D 第 11 项 4π——唯一冻结默认，消费断言经发布策略对象 origin=DefaultAppendixD）"
+  },
+  "cases": [
+    {
+      "id": "upright-contact",
+      "axis": "z",
+      "centerOffsetM": 0,
+      "collision": true,
+      "referenceGapM": 0,
+      "pairs": [
+        [
+          "ToolBox",
+          "EnvBox"
+        ]
+      ]
+    },
+    {
+      "id": "upright-clear-0p8",
+      "axis": "z",
+      "centerOffsetM": 1,
+      "collision": false,
+      "referenceGapM": 0.8,
+      "pairs": []
+    },
+    {
+      "id": "near-zero-separation",
+      "axis": "z",
+      "centerOffsetM": 0.22,
+      "collision": false,
+      "referenceGapM": 0.01999999999999999,
+      "pairs": []
+    },
+    {
+      "id": "sign-symmetry-negative",
+      "axis": "z",
+      "centerOffsetM": 0.22,
+      "collision": false,
+      "referenceGapM": 0.01999999999999999,
+      "pairs": []
+    },
+    {
+      "id": "inverted-clear-no-second-rotation",
+      "axis": "x",
+      "centerOffsetM": 1,
+      "collision": false,
+      "referenceGapM": 0.8,
+      "pairs": []
+    },
+    {
+      "id": "inverted-contact",
+      "axis": "coincident",
+      "centerOffsetM": 0,
+      "collision": true,
+      "referenceGapM": 0,
+      "pairs": [
+        [
+          "ToolBox",
+          "EnvBox"
+        ]
+      ]
+    }
+  ]
+}
