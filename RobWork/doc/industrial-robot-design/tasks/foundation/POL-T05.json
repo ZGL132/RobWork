@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "实现策略端口与上下文（④端口所有者）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T04"
   ],
