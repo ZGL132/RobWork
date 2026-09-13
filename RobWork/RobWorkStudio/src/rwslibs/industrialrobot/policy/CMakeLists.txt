@@ -89,12 +89,23 @@ if(TARGET sdurw_kinematics)
                                           # 边界值决策；消费 rw 非模板类
                                           # Device/Frame/Kinematics/
                                           # CollisionStrategy/DistanceStrategy）
-        src/RobWorkCollisionEvaluator.cpp)  # §6.5/§9.3 唯一实现绑定（RobWork-
+        src/RobWorkCollisionEvaluator.cpp # §6.5/§9.3 唯一实现绑定（RobWork-
                                           # CollisionEvaluator 方法＋make 唯一
                                           # 构造入口＋内置 ProximityStrategyRW
                                           # 实例化＋评估器级查询互斥——含
                                           # RobWork 命名标识符的零字面量 TU，
                                           # 切分说明见该文件头）
+        src/JointLimits.cpp)              # §7.4/§9.4 关节限位与行程阈值评估
+                                          # （POL-T08：JointLimitEvaluator::
+                                          # evaluate 七步执行序——区间/工程范围
+                                          # 诊断级检出〔D-13〕/行程 4π 边界/
+                                          # 近限位比/限位违例/P-POL-2 显式
+                                          # NotApplicable 标记/稳定排序；本体
+                                          # 零框架调用，rw include 面仅经
+                                          # JointLimits.hpp→CollisionQuery.hpp
+                                          # 状态词表复用链传导〔§9.4"复用状态
+                                          # 词表"〕——集成模式专属 gating 与
+                                          # CollisionQuery.cpp 同因）
 
     target_link_libraries(sdurws_ird_policy PUBLIC
         sdurw_math
