@@ -31,6 +31,8 @@
 #include "EntryDetail.hpp"    // 去重键派生（私有单点——工厂为计算点 §4.2）
 #include "ParamSchema.hpp"    // paramSchema 解析单点（占位一致性校验用）
 
+#include <sdurws/ird/diagnostics/Redaction.hpp>  // IRedactionService（redactedContextSnapshot/异常消息脱敏接线——DIAG-T08）
+
 namespace sdurws::ird::diagnostics {
 namespace {
 
@@ -60,6 +62,18 @@ DiagnosticsFactory::DiagnosticsFactory(const IDiagnosticRegistry& registry,
     : m_registry(&registry)
     , m_clock(&clock)
 {
+}
+
+DiagnosticsFactory::~DiagnosticsFactory() = default;
+
+void DiagnosticsFactory::attachRedactionService(
+    std::shared_ptr<const IRedactionService> service)
+{
+    // 快照切换（§14.4 v0.9）：下一次 create 起生效——create 并发安全契约在
+    // 接线后不降级（专用互斥只护 shared_ptr 读写，校验链不持锁）。
+    // nullptr＝解除挂接（回到 v0.4 置空语义——装配前合法降态）。
+    std::lock_guard<std::mutex> lock(m_redactionMtx);
+    m_redaction = std::move(service);
 }
 
 void DiagnosticsFactory::seal() noexcept
@@ -172,9 +186,32 @@ DiagnosticEntry DiagnosticsFactory::create(const core::DiagnosticRecord& record,
         static_cast<std::uint64_t>(entry.emittedAtUtc.time_since_epoch().count()),
         entry.entryId,
         entry.record.code);                      // §6.4 稳定排序键 {时间戳计数, entryId, code}
-    // threadTag/workerId/redactedContextSnapshot 阶段 A 置空：采集点随各单元
-    // 产码路径登记；worker 标注随回传路径（§7.5，DIAG-T07）；脱敏快照经
-    // IRedactionService 产出（§4.2——DIAG-T08 接线）。
+    // threadTag/workerId 阶段 A 置空：采集点随各单元产码路径登记；worker
+    // 标注随回传路径（§7.5，DIAG-T07）。
+    // redactedContextSnapshot（§4.2"构造时经 IRedactionService 产出"——
+    // DIAG-T08 接线，§14.4 v0.9 登记）：非空 params 组装 "k:v,k:v" 快览串
+    // （与 exportSafeSummary 的 params 段同形——单一呈现口径），经挂接的
+    // 脱敏服务按 Dev 档 NFR-SEC-07 全量规则产出（原文不保留——条目只存
+    // 脱敏后快览）；params 为空＝无可快览内容，保持 nullopt（不伪造空串
+    // ——core §4.8 字段口径）。未挂接＝nullopt（v0.4 置空语义——装配前
+    // 合法降态）。脱敏服务绝不抛出（§9.5）——create 校验链的异常面不变。
+    {
+        std::lock_guard<std::mutex> lock(m_redactionMtx);
+        if (m_redaction != nullptr && !entry.context.params.empty()) {
+            std::string kv;
+            bool firstParam = true;
+            for (const auto& [key, value] : entry.context.params) {
+                if (!firstParam) {
+                    kv += ',';
+                }
+                firstParam = false;
+                kv += key;
+                kv += ":";
+                kv += value;
+            }
+            entry.redactedContextSnapshot = m_redaction->redact(kv, LogTier::Dev);
+        }
+    }
     return entry;
 }
 
@@ -229,6 +266,22 @@ DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& in
 {
     // ---- 查找序（Factory.hpp 类注释：精确 → runtime_error → exception →
     // 兜底；全静态类型判据——禁字符串匹配的机制面）----
+    // 异常消息脱敏整备（v0.4 口径④"脱敏随 DIAG-T08"落地，§14.4 v0.9 登记）：
+    // 挂接了脱敏服务时先过 NFR-SEC-07 全量规则（Dev 档——转译条目面向开发
+    // 诊断面，内部十六进制遮蔽不在此层），再走既有 512 字节截断（标注形态
+    // 不变——DT-REG-4 观测面零回归）；未挂接＝原截断语义。脱敏服务绝不抛出
+    // （§9.5）——转译路径"恒不抛"契约不变。
+    std::shared_ptr<const IRedactionService> redaction;
+    {
+        std::lock_guard<std::mutex> lock(m_redactionMtx);
+        redaction = m_redaction;
+    }
+    const auto safeMessage = [&redaction](const std::string& raw) {
+        if (redaction != nullptr) {
+            return truncateMessage(redaction->redact(raw, LogTier::Dev));
+        }
+        return truncateMessage(raw);
+    };
     std::string targetCode;
     bool matched = false;
     if (const auto it = m_rules.find(input.type); it != m_rules.end()) {
@@ -257,7 +310,7 @@ DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& in
             /*subject=*/{}, /*localName=*/{}, /*runtimeName=*/{},
             /*context=*/"未登记错误类型转译（类型 " + input.typeName + "）——保留原始来源",
             /*cause=*/input.message.empty() ? std::string("（消息不可得——非 std::exception 体系）")
-                                            : truncateMessage(input.message),
+                                            : safeMessage(input.message),
             /*recommendedAction=*/"核对 ErrorCodeTranslator 装配清单（类型映射禁字符串匹配——§8.1）");
         DiagnosticEntry entry = create(fallback, context);
         if (root != nullptr) {
@@ -284,7 +337,7 @@ DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& in
         /*context=*/"跨单元错误转译（类型 " + input.typeName + "，目标码 " + targetCode
             + "）——原始来源已保留",
         /*cause=*/input.message.empty() ? std::string("（消息不可得——非 std::exception 体系）")
-                                        : truncateMessage(input.message),
+                                        : safeMessage(input.message),
         /*recommendedAction=*/"按目标码处理动作族处置；开发级日志保留异常链（§8.1 规则 1）");
     DiagnosticEntry entry = create(mapped, context);
     if (root != nullptr) {

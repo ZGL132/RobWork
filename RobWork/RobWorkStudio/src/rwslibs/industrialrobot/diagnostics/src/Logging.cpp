@@ -50,6 +50,8 @@
 
 #include <sdurws/ird/diagnostics/Logging.hpp>
 
+#include <sdurws/ird/diagnostics/Redaction.hpp>  // IRedactionService（§7.3② 步骤②接线——DIAG-T08）
+
 #include <algorithm>
 #include <atomic>
 #include <condition_variable>
@@ -135,6 +137,25 @@ constexpr const char* kCodeChannelProtocol = "EX-CHANNEL-PROTOCOL-ERROR";
 constexpr const char* kChannelLogging = "diag/logging";
 /// 重放合并通道（§7.5 断裂补条行）。
 constexpr const char* kChannelMerge = "diag/log-merge";
+
+/**
+ * @brief 是否管线/脱敏设施的内部自省通道（§7.3② 步骤②的旁路清单——
+ *        DIAG-T08 接线口径，登记于单元卡 §14.4 v0.9）。
+ *
+ * 为什么旁路：这三类通道的行由管线/脱敏设施自产，内容为常量文本＋计数
+ * （绝不携带调用方原文——写失败行携带的文件面 token "user"/"dev" 是枚举
+ * 字面量而非路径）；若再过脱敏，自省行自身的脱敏失败会经 failureSink 回环
+ * 入队（脱敏失败→发失败行→失败行再脱敏再失败……）。自省行不走脱敏即
+ * 切断该环（与 v0.8 口径⑥"内部行旁路采样/节流"同一设计方向）。DT-LOG-1~3
+ * 既有用例断言自省行文本逐字（含 "file=user" 面）——旁路同时保持 v0.8 行
+ * 为零回归。
+ */
+bool isInternalDiagChannel(const std::string& channel) noexcept
+{
+    return channel == kChannelLogging                     // 日志设施自省行
+        || channel == kChannelMerge                       // 重放断裂补条行
+        || channel.compare(kRedactionInternalChannel) == 0;  // 脱敏降级行（Redaction.hpp）
+}
 
 /// 截断标注（§7.2"超出截断并标注"）。
 constexpr const char* kTruncMark = "[trunc]";
@@ -479,6 +500,37 @@ struct LoggingPipeline::Impl {
     std::atomic<std::uint32_t> capacity{4096}; ///< 队列容量镜像（入队侧无锁读取——queueCapacity）
     std::thread worker;                   ///< 日志线程（§7.3"串行化于日志线程"）
 
+    // ---- NFR-SEC-07 全量脱敏接线（§7.3②——DIAG-T08；§14.4 v0.9 登记）----
+    // 专用互斥＋shared_ptr 快照：attach 任意线程调用，renderRecord（日志线
+    // 程）与析构排空（关闭线程）在每行渲染前取一次快照——挂接切换的生效点
+    // ＝下一行（在途行不回溯，与 §9.5 setPolicy 同语义）。独立于 mtx：渲染
+    // 路径在锁外运行，两锁无嵌套即无序要求。mutable＝快照读取为 const 面。
+    mutable std::mutex redactionMtx;                          ///< 护 redaction 快照切换
+    std::shared_ptr<const IRedactionService> redaction;       ///< 脱敏服务（可空＝未接线）
+
+    /// 当前脱敏服务快照（空＝未接线——只做 Tier-U 呈现过滤的 v0.7 原语义）。
+    std::shared_ptr<const IRedactionService> redactionSnapshot() const
+    {
+        std::lock_guard<std::mutex> lock(redactionMtx);
+        return redaction;
+    }
+
+    // ---- 崩溃前开发日志快照环形缓冲（§7.6——DIAG-T08 崩溃诊断文件消费）----
+    // 容量 kLogDevTailRingLines＝512（§7.6 行数值）；写＝日志线程（渲染时），
+    // 读＝崩溃诊断文件写出线程（任意线程）——独立互斥承载并发。
+    mutable std::mutex devTailMtx;                            ///< 护环形缓冲并发
+    std::deque<std::string> devTail;                          ///< 最近 Dev 侧行（渲染后全文）
+
+    /// 渲染后行进环形缓冲（日志线程调用；覆盖语义＝只保最近 512 行——§7.6）。
+    void pushDevTail(const std::string& line)
+    {
+        std::lock_guard<std::mutex> lock(devTailMtx);
+        if (devTail.size() >= kLogDevTailRingLines) {
+            devTail.pop_front();  // 覆盖最老行（环形语义）
+        }
+        devTail.push_back(line);
+    }
+
     // ---- 日志线程私有面（串行化即无锁）----
     struct FileState {
         std::uint64_t size = 0;        ///< 当前大小估计（fileSize 基线＋写增量——轮转判定）
@@ -689,10 +741,11 @@ struct LoggingPipeline::Impl {
     // ---- 五步管线（§7.3——单条记录；日志线程串行）----
 
     /**
-     * @brief 渲染一条记录（①截断→③过滤→④节流采样→⑤写入＋flush 窗口）。
+     * @brief 渲染一条记录（①截断→②脱敏→③过滤→④节流采样→⑤写入＋flush
+     *        窗口）。
      *
-     * @param rec            [in,out] 记录（message 就地截断；timestampUtc 由
-     *                       调用前打点或为 worker 原值）
+     * @param rec            [in,out] 记录（message 就地截断/脱敏；timestampUtc
+     *                       由调用前打点或为 worker 原值）
      * @param c              [in] 配置快照（本条目渲染期内稳定）
      * @param applyThrottle  [in] 是否参与节流（自产汇总行旁路）
      * @param applySampling  [in] 是否参与采样（自产行旁路）
@@ -703,6 +756,19 @@ struct LoggingPipeline::Impl {
         // ①格式化：message 定长截断（§7.2 ≤4 KiB——关联 ID 为结构化字段，
         // 无需字符串规范化；行编码时统一转义）。
         rec.message = truncateForLog(rec.message);
+
+        // ②脱敏（§7.3②"每条消息强制经过 IRedactionService"——NFR-SEC-07
+        // 全量脱敏随 DIAG-T08 接线，§14.4 v0.9 登记）：Dev 档全量规则
+        // （凭据/令牌/环境变量/用户名/路径按策略）对两 Tier 统一生效——
+        // "两 Tier 同一脱敏管线"（§7.1）；Tier-U 文件的"额外内部模式过滤"
+        // 仍由下方呈现层承担（v0.8 口径②镜像语义不变）。内部自省通道旁路
+        // （isInternalDiagChannel——自产常量文本，再过脱敏会形成失败行回环）。
+        // 脱敏服务绝不抛出（§9.5）——此处的 noexcept 保证与管线"环境面不抛"
+        // 契约一致；未接线（快照为空）＝v0.7 原语义（装配前合法降态）。
+        const std::shared_ptr<const IRedactionService> red = redactionSnapshot();
+        if (red != nullptr && !isInternalDiagChannel(rec.channel)) {
+            rec.message = red->redact(rec.message, LogTier::Dev);
+        }
 
         // ③级别过滤（§7.3③）：Tier-U 结构性只收 Error/Warning/Info（入口
         // 校验已保证）；Tier-D 按 devMinLevel 配置（秩 ≤ 下限才写）。
@@ -733,7 +799,13 @@ struct LoggingPipeline::Impl {
         const bool failureLine = rec.code.has_value() && *rec.code == kCodeLogWriteFailed
             && rec.channel == kChannelLogging;
         if (devPass) {
-            writeLine(false /*dev*/, formatLine(rec, false), failureLine, c);
+            // 渲染后全文先进崩溃快照环形缓冲（§7.6"最近 512 行开发日志快照
+            // （重放内存环形缓冲）"——DIAG-T08 崩溃诊断文件经 devTailSnapshot
+            // 消费；先于磁盘写——磁盘满时快照仍完整，DT-LIFE-4 场景的价值面），
+            // 再写 Tier-D 文件。
+            const std::string devLine = formatLine(rec, /*masked=*/false);
+            pushDevTail(devLine);
+            writeLine(false /*dev*/, devLine, failureLine, c);
         }
         if (userPass) {
             writeLine(true /*user*/, formatLine(rec, true), failureLine, c);
@@ -1332,6 +1404,33 @@ void LoggingPipeline::replayWorkerBatch(WorkerLogBatch batch)
     item.kind = LogItem::Kind::Batch;
     item.batch = std::move(batch);
     m_impl->pushItem(std::move(item), /*bounded=*/true);
+}
+
+void LoggingPipeline::attachRedactionService(std::shared_ptr<const IRedactionService> service)
+{
+    // 快照切换（§14.4 v0.9）：切换后新渲染的行生效，在途行不回溯——与
+    // §9.5 setPolicy 同款语义。独立互斥（redactionMtx）——渲染路径在队列锁
+    // 外取快照，两锁无嵌套。nullptr＝解除挂接（回到 v0.7 仅 Tier-U 呈现
+    // 过滤的原语义——测试与装配前降态）。
+    std::lock_guard<std::mutex> lock(m_impl->redactionMtx);
+    m_impl->redaction = std::move(service);
+}
+
+std::vector<std::string> LoggingPipeline::devTailSnapshot(std::size_t maxLines) const
+{
+    // 崩溃快照读取面（§7.6）：任意线程安全（devTailMtx 护并发）；写入序返回，
+    // 最多 maxLines 行（0＝空表；缓冲容量 kLogDevTailRingLines＝512 为硬上限
+    // ——§7.6"最近 512 行"）。
+    std::lock_guard<std::mutex> lock(m_impl->devTailMtx);
+    const std::size_t skip = maxLines >= m_impl->devTail.size()
+                                 ? 0
+                                 : m_impl->devTail.size() - maxLines;
+    std::vector<std::string> out;
+    out.reserve(m_impl->devTail.size() - skip);
+    for (std::size_t i = skip; i < m_impl->devTail.size(); ++i) {
+        out.push_back(m_impl->devTail[i]);
+    }
+    return out;
 }
 
 }  // namespace sdurws::ird::diagnostics

@@ -68,6 +68,8 @@
 #include <atomic>
 #include <exception>
 #include <map>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -81,6 +83,11 @@
 #include <sdurws/ird/diagnostics/Errors.hpp>    // DiagnosticsError（本单元唯一异常类型）
 
 namespace sdurws::ird::diagnostics {
+
+/// 前向声明：脱敏服务（Redaction.hpp——§9.5；redactedContextSnapshot 接线
+/// 的注入形态，DIAG-T08）。公共头只持 shared_ptr<const IRedactionService>
+/// （不完整类型；定义点在实现文件——R-2 最小依赖面）。
+class IRedactionService;
 
 // =====================================================================
 // IDiagnosticFactory（§9.2 接口——创建/校验/关联 + ErrorCodeTranslator 面）
@@ -277,6 +284,13 @@ public:
      */
     DiagnosticsFactory(const IDiagnosticRegistry& registry, const IClock& clock);
 
+    /**
+     * @brief 析构（实现文件内定义——持有 shared_ptr<const IRedactionService>
+     *        成员，删除器实例化需完整类型；Redaction.hpp 定义点只在实现文
+     *        件可见，公共头保持前向声明最小依赖面——R-2）。
+     */
+    ~DiagnosticsFactory() override;
+
     // 禁拷贝/禁移动：entryId 原子计数器与转译注册表的进程级单例语义（引用
     // 注入面要求地址稳定——同 StableCodeRegistry 纪律）。
     DiagnosticsFactory(const DiagnosticsFactory&) = delete;
@@ -288,6 +302,25 @@ public:
 
     /// @brief 是否已进入运行期（装配自检与测试观测用）。
     bool sealed() const noexcept { return m_sealed; }
+
+    // ---- redactedContextSnapshot 接线（§4.2 字段表"构造时经
+    //      IRedactionService 产出"——DIAG-T08；实现类扩展，登记 §14.4 v0.9）----
+    /**
+     * @brief 挂接脱敏服务（create 产出条目的 redactedContextSnapshot 由
+     *        服务生成——§4.2"脱敏后的开发级上下文快览"；v0.5 接线登记的
+     *        落地）。
+     *
+     * 行为：挂接后，create 对**非空 params** 的上下文组装 "k:v,k:v" 快览串
+     * （与 exportSafeSummary 的 params 段同形——单一呈现口径），经
+     * redact(快览串, LogTier::Dev) 产出快照写入条目；params 为空＝无可快览
+     * 内容，字段保持 nullopt（不伪造空串——core §4.8 字段口径）。未挂接＝
+     * nullopt（v0.4 原语义——装配前合法降态）。
+     *
+     * 线程安全：任意线程调用；shared_ptr 快照切换——下一次 create 起生效。
+     *
+     * @param service [in] 脱敏服务（共享所有权；传 nullptr＝解除挂接）
+     */
+    void attachRedactionService(std::shared_ptr<const IRedactionService> service);
 
     // ---- IDiagnosticFactory（§9.2 三方法——行为契约见接口/类注释）----
     DiagnosticEntry create(const core::DiagnosticRecord& record,
@@ -317,6 +350,12 @@ private:
     std::map<std::type_index, std::pair<std::string, std::string>> m_rules;
     /// 运行期标志（seal 后置位——登记路径 Usage 拒绝判据）。
     bool m_sealed = false;
+
+    // ---- redactedContextSnapshot 接线（§4.2——DIAG-T08，§14.4 v0.9 登记）----
+    // 快照服务（可空＝未接线）；专用互斥＋shared_ptr 快照——attach 任意线程、
+    // create 并发（§9.2 契约表"create 并发安全"在接线后不降级）。
+    std::mutex m_redactionMtx;                                       ///< 护快照服务切换
+    std::shared_ptr<const IRedactionService> m_redaction;            ///< 脱敏服务（DIAG-T08）
 };
 
 // =====================================================================

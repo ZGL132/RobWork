@@ -37,6 +37,7 @@
 
 #include "EntryDetail.hpp"                      // 码小写形/去重键派生（私有单点）
 #include <sdurws/ird/diagnostics/Factory.hpp>   // DiagnosticsSinkImpl 的 report 用 create
+#include <sdurws/ird/diagnostics/Redaction.hpp> // IRedactionService（exportSafeSummary 双保险——DIAG-T08）
 
 namespace sdurws::ird::diagnostics {
 
@@ -151,6 +152,12 @@ struct DiagCatalog::Impl {
     std::map<DedupKey, DiagEntryId> dedupIndex; ///< 去重键→首条目 id（§6.4 折叠计数）
     std::unordered_map<DiagEntryId, std::size_t> occurrences; ///< 首条目 id→命中计数（≥1）
     std::vector<IDiagObserver*> observers;     ///< 订阅中的观察者（通知于锁外派发）
+
+    // ---- exportSafeSummary 脱敏双保险（§7.7——DIAG-T08 接线，§14.4 v0.9）----
+    // 复用 mutex（exportSafeSummary 本就持锁迭代；attach 与导出互斥即可）。
+    // shared_ptr 共享所有权——挂接后目录存活期内服务不析构（服务为进程级，
+    // 生命周期纪律见 Redaction.hpp）。
+    std::shared_ptr<const IRedactionService> redaction; ///< 脱敏服务（可空＝未接线）
 };
 
 DiagCatalog::DiagCatalog()
@@ -299,6 +306,10 @@ std::string DiagCatalog::exportSafeSummary(DiagQuery query, std::size_t maxEntri
     // 安全摘要导出（§8.10 reporting 行：{code, titleKey, 参数, subject,
     // severity, category}——不含原始文本字段；键值文本格式 §1.4）。
     std::lock_guard<std::mutex> lock(m_impl->mutex);
+    // 脱敏双保险快照（§7.7"输出前强制再过一遍脱敏"——DIAG-T08 接线）：
+    // Dev 档＝NFR-SEC-07 全量且不做内部十六进制遮蔽（subject 规范身份是
+    // reporting 的机器可读锚点——R-7 防误伤，详见头文件 attach 注释）。
+    const std::shared_ptr<const IRedactionService> red = m_impl->redaction;
     std::string out;
     std::size_t emitted = 0;
     for (const DiagnosticEntry& entry : m_impl->entries) {
@@ -325,32 +336,49 @@ std::string DiagCatalog::exportSafeSummary(DiagQuery query, std::size_t maxEntri
         // 行格式：code|severity|category|titleKey|subject|occurrences|params
         // （subject 规范串；params 为 k:v 逗号串——值为登记表 schema 占位值；
         // 每行一条、'|' 分隔、'\n' 结束——确定性文本，NFR-COR-02）。
-        out += entry.record.code;
-        out += '|';
-        out += severityToken(entry.severity);
-        out += '|';
-        out += categoryToken(entry.category);
-        out += "|diag.";
-        out += detail::codeLower(entry.record.code);
-        out += ".title|";
-        out += entry.record.subject.has_value() ? entry.record.subject->toCanonical() : "-";
-        out += '|';
-        out += std::to_string(m_impl->occurrences.at(entry.entryId));
-        out += '|';
+        std::string line;
+        line += entry.record.code;
+        line += '|';
+        line += severityToken(entry.severity);
+        line += '|';
+        line += categoryToken(entry.category);
+        line += "|diag.";
+        line += detail::codeLower(entry.record.code);
+        line += ".title|";
+        line += entry.record.subject.has_value() ? entry.record.subject->toCanonical() : "-";
+        line += '|';
+        line += std::to_string(m_impl->occurrences.at(entry.entryId));
+        line += '|';
         bool firstParam = true;
         for (const auto& [key, value] : entry.context.params) {
             if (!firstParam) {
-                out += ',';
+                line += ',';
             }
             firstParam = false;
-            out += key;
-            out += ":";
-            out += value;
+            line += key;
+            line += ":";
+            line += value;
         }
-        out += '\n';
+        // 双保险出口：挂接了脱敏服务时每行强制再过一遍脱敏（§7.7 与
+        // reporting 行——报告外发，DT-SEC-4；脱敏服务绝不抛出、输出必为
+        // 脱敏后文本，§9.5——降级由服务侧 [REDACTED:redaction-failed] 承载）。
+        if (red != nullptr) {
+            line = red->redact(line, LogTier::Dev);
+        }
+        line += '\n';
+        out += line;
         ++emitted;
     }
     return out;
+}
+
+void DiagCatalog::attachRedactionService(std::shared_ptr<const IRedactionService> service)
+{
+    // 快照切换（§14.4 v0.9）：下一行导出起生效，无在途回溯问题（导出为
+    // 同步调用——持锁期间快照不变）。复用三表共用锁：attach 与 export 的
+    // 互斥即可保证 shared_ptr 读写不并发。
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    m_impl->redaction = std::move(service);
 }
 
 std::size_t DiagCatalog::size() const
