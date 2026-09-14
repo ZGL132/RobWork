@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "诊断目录与工厂（Catalog/Factory/ErrorCodeTranslator）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T03"
   ],
