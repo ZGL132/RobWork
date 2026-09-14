@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T07",
+  "masterWp": "WP-09（§11 DIAG-T07 行＝WP-09-T04：Logging.*＝管线/节流采样/轮转/WorkerLogBatch 重放；ILogFileOps 接缝）",
+  "branch": "wp09-t07",
+  "base": "dcf229573f6f53cfce94ec6f92e14d20065d6587",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error）",
+      "notes": "DIAG-T07 落位（§11 行产物）：include/ 新增公共头 Logging.hpp（§7.1/§7.2 LogRecord/CorrelationIds＋§7.5 WorkerLogBatch 载荷〔P-EX-8 只定载荷〕＋§9.6 LogSinkConfig/ILogger 签名逐字＋ILogFileOps 接缝＋FileLogFileOps＋LoggingPipeline 实现 ILogger/IDevLogSink 并扩展 replayWorkerBatch），src/ 新增 Logging.cpp（五步管线/节流采样/轮转/队列溢出丢弃/worker 乱序缓冲与断裂补条/日志线程顶界兜底）。实现口径登记九项见单元卡 §14.4 v0.8"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 77/77、smoke 77/77，连跑三次稳定）",
+      "notes": "既有 65 用例（DIAG-T02~T06 登记）零修改零回归＋DIAG-T07 新增 12 用例（DT-LOG-1 两级分流·Tier-U 无 Dev 行/无地址/无哈希/无栈帧且占位符在场；DT-LOG-2 四线程并发·seq 全文件严格单调·同线程 FIFO 逐行核对·行完整性逐行可解析；DT-LOG-3 ILogFileOps 接缝注入追加抛异常＋冲刷失败·log 不阻塞不抛·DIAG-LOG-WRITE-FAILED Dev 行在场·flush 有界返回 false；DT-LOG-4 禁用日志·工厂/目录/reportDev 路由不受影响·零文件产生；DT-LOG-5 乱序 2→1→0 按序号恢复稳定序·重复批幂等丢弃＋计数行·final 收尾越过缺口补 EX-CHANNEL-PROTOCOL-ERROR Dev 行且位置在 b0 与 b2 之间；§7.4 节流窗汇总含 occurrences＋采样首/每 N/末条；§9.6 队列满丢最旧 Debug/Trace＋Dev 计数行·Error 与最新行保全；轮转世代移位硬约束；截断 4 KiB＋UTF-8 边界；入口违约面 Usage fail-fast；P-DIAG-7 默认值钉住；P-EX-8 源码扫描钉住——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 9/9、smoke 9/9）",
+      "notes": "既有 9 用例（DIAG-T02/T05 登记）零修改零回归——DIAG-T07 无新增契约测试（acceptance 1~3 观测面均在单元内：两级日志为产出方设施，对端消费面 project §5.0/execution §3.3 的 reportDev 同形签名已由 DIAG-T04 DiagnosticsSinkImpl＋LoggingPipeline 实现 IDevLogSink 承载；P-EX-8 处置＝不私定对端帧格式，以 Logging.hpp/cpp 源码扫描钉住零 execution 侧 include/零帧类型词汇，归单元 _test 半区）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "7 处命中＝wp09-t06 基线逐码一致零新增（evidence/policy/runtime 测试目标直链 testkit×6＋testdata_lint 表外依赖/T-1×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径）；零 diagnostics 命中；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-current-wp09t07.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T07.json——前置引用/设计锚点/knownPitfalls 三查）＋verify-task PASS（契约 verify 命令：集成模式构建 sdurws_ird_diagnostics_test 目标零 error）",
+    "probeCapability": "故障注入真实触发：DT-LOG-3 经 ILogFileOps 接缝注入用户文件追加抛异常（failHits 计数核对＝每次追加均命中且零成功写入）＋用户文件冲刷失败（flush 返回 false）；队列溢出经 GatedFileOps 闸门（waitEntered 确认日志线程已阻塞在写盘内）确定性蓄满队列——丢弃/计数行行为在真实触发路径上断言，非模拟"
+  },
+  "testSuites": [
+    {
+      "suite": "LoggingTest（DT-LOG-1~5、§7.4/§7.6/§9.6 行为面、P-DIAG-7/P-EX-8 处置钉住——acceptance 1~3）",
+      "designRef": "units/diagnostics.md §7.1~§7.6/§7.8（两级模型/字段表/管线/节流采样/worker 回传/崩溃前保留/日志非权威）、§9.6（ILogger 契约表）、§10 DT-LOG-1~5 行；需求 NFR-REL-05、UX-02；P-DIAG-7/P-EX-8（契约 acceptance 2/3）",
+      "cases": [
+        { "name": "DiagLogging.DtLog1_TwoTierSplitKeepsUserFileCleanOfDevLinesAndInternalPatterns", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LOG-1/NFR-REL-05/UX-02/acceptance 1——写 Error/Info/Dev 三条：用户文件恰两条（无 Dev 行）；用户文件模式扫描零命中（0x 地址/64 位十六进制哈希/栈帧文本）且 [ADDR]/[HASH]/[FRAME] 占位符在场（Tier-U 内部模式过滤——§7.3②）；用户行保留稳定码 code=PRJ-LOCK-HELD 与级别；开发文件全量三行（Tier-U ⊆ Tier-D 镜像＋Dev 行）且保留未过滤原文（§7.1 Tier-D 全量技术细节）" },
+        { "name": "DiagLogging.DtLog2_ConcurrentWritesKeepSameThreadFifoAndGlobalStableOrder", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LOG-2/§7.4/acceptance 1——4 线程×150 条并发写＋回读：行总数 600 无丢失重复；行完整性逐行可解析；seq 全文件严格递增（全局稳定序/序号单调观察点）；同线程 FIFO＝各线程 entryId（ids 结构化承载解析）子序列严格 1..150；tag/entry 关联字段逐行在场（§7.2 结构化关联 ID）" },
+        { "name": "DiagLogging.DtLog3_WriteFailureInjectedStaysNonBlockingAndBounded", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LOG-3/§9.6/acceptance 1——ILogFileOps 接缝注入（testkit D-10 形态自持替身）：用户文件追加抛异常轨（failHits＝appendHits 零成功写入、用户文件未创建）；log 三条 EXPECT_NO_THROW（不阻塞调用方、无异常逃逸）；开发文件出现 DIAG-LOG-WRITE-FAILED Dev 行且指明失守面 file=user（注入命中记录观察点）；flush 因用户文件冲刷被注入失败而返回 false（有界失败——§9.6 超时放弃＋DIAG-LOG-WRITE-FAILED 半区）" },
+        { "name": "DiagLogging.DtLog4_DisabledLoggingLeavesFormalDiagnosticsIntact", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LOG-4/§7.8/acceptance 1——enabled=false 禁用日志：reportDev 经 DiagnosticsSinkImpl→IDevLogSink 路由进禁用 logger 安全降级（§9.7 尾注接缝）；工厂 create＋目录 append 正常产出（snapshot 恰一条 PRJ-STORE-CORRUPT——目录/envelope 诊断不受影响观察点）；用户/开发文件零产生（禁用即不落盘）；flush 即时 true（排空不受影响）" },
+        { "name": "DiagLogging.DtLog5_WorkerBatchReplayRestoresOrderAndFillsChannelGap", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LOG-5/§7.5/acceptance 1——场景 A（worker 7）：乱序投递 2→1→0 重放后 b0→b1→b2 顺序落盘（按序号恢复全局稳定序观察点）；重复投递 b0 幂等（单行在场）＋陈旧批 Dev 计数行（陈旧批次 1——不静默吞）；场景 B（worker 9）：投递 b0 后收 final=2 越过缺口——恰一条 EX-CHANNEL-PROTOCOL-ERROR Dev 补条（Warning 级不触及采样）指明缺口序号 1、锚定 wk=9，且位置严格在 b0 之后 b2 之前（断裂补条存在观察点）；worker 行带 wk=7 补注与 ids=task: 五元组注入（correlationIds 保留 workerId——§7.5）" },
+        { "name": "DiagLogging.DtLogThrottleAndSamplingWindowBehavior", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.4 行为面/acceptance 1 机制承载——采样半区（N=3、7 条 Debug 无 code）：恰 4 行＝首条＋第 3/6 条＋末条（[sampled-tail] 标注，关闭排空落盘——进行中的流无末条可定义，§7.4 承诺在关闭路径兑现）；节流半区（同 code+channel 5 条 Error 同刻＋推进 11 s 后 1 条）：恰 3 行＝首条全量＋汇总行（occurrences=4，保留稳定码——日志不以文本代替稳定码）＋窗后首条全量；Error 永不采样（用户语义事件不丢）" },
+        { "name": "DiagLogging.DtLogOverflowDropsOldestDebugTraceAndCountsDevDiagnostic", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.6 队列策略/acceptance 1 机制承载——GatedFileOps 闸门（waitEntered 确认日志线程已阻塞在写盘内）＋容量 4：灌入 1 Error＋8 Trace 必然蓄满——最旧 Debug/Trace 被丢弃（trace-1 不在场）、Error 与最新行保全（trace-8/Error 行在场）、[log-overflow] Dev 计数行在场（§9.6 丢弃事实不静默）；采样 N=1 隔离采样干扰" },
+        { "name": "DiagLogging.DtLogRotationGenerationsShiftWithRealFiles", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.6/§7.8 轮转/P-DIAG-7 执行面——rotateFiles=2、阈值 100 B 真实文件：每次写盘前越阈轮转，活动文件恒持最新行、一代档持次新行（各恰一行）、.2 不存在（保留数硬约束）；轮转覆盖＝旧档不可达即消亡（§7.8 生命周期——只移位覆盖无归档承诺）" },
+        { "name": "DiagLogging.DtLogTruncationMarks4KiBUtf8Safe", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.2'≤4 KiB 超出截断并标注'——半角 5000 B：截净长恰 4 KiB＋[trunc] 标注；三字节 UTF-8 2100 字（6300 B）：截净长为 3 的倍数（切点回退至字符边界，无半个码位）且贴近 4 KiB 上限——定长截断的编码安全面" },
+        { "name": "DiagLogging.DtLogCallerViolationsFailFastWithUsage", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.2/§7.3③/§9.6 入口违约面（AGENTS.md 调用方错误 fail-fast）——空通道/通道超 48 字符/空消息/线程标超 32 字符/tier=User 携带 Debug 级（Tier-U 只收 Error/Warning/Info）五类 log 违约＋rotateFiles=0、sampleEveryDebug=0 两类配置违约：一律 DiagnosticsError(Usage)（错误码面逐项核对）" },
+        { "name": "DiagLogging.DtPdiag7_DefaultsAreConfigurableEngineeringDefaults", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-DIAG-7/acceptance 2——默认值钉住：rotateFiles=5、rotateMaxBytes=2 MiB、flushEveryLines=256、flushInterval=2 s、sampleEveryDebug=100、throttleWindowSeconds=10、enabled 缺省开（§14.3 登记工程默认值逐项断言）；可配置面：rotateFiles/rotateMaxBytes/flushEveryLines/flushInterval 整值替换 configure 后行为面即时生效（自定义配置写入成功）——工程默认两面（缺省可用＋可配置）自证，WP-23 校准不构成需求偏差" },
+        { "name": "DiagLogging.DtPex8_HeaderDefinesPayloadOnlyNoExecutionFrameContract", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-EX-8/acceptance 3——Logging.hpp 源码扫描：WorkerLogBatch 为唯一回传形态（struct 在场）；#include <sdurws/ird/execution 零命中（R-1/R-2——对端契约不在本单元视野）；FrameType/FrameHeader/ChannelFrame 帧类型词汇零命中（帧类型/通道帧表归 execution §6——§12.2 交接，不私定对端帧格式）；Logging.cpp 同规" }
+      ]
+    }
+  ]
+}
