@@ -1012,6 +1012,16 @@
       "title": "全新集成树配置缓存污染陷阱（F-007/F-098/F-099 环境链家族补充形态）：首次未带 vcpkg toolchain 的失败配置会在 build/CMakeCache.txt 残留 Boost_DIR-NOTFOUND 等失败值，此后即便补齐 toolchain／Qt CMAKE_PREFIX_PATH／CMAKE_CXX_FLAGS 全部参数重配，FindBoost 仍失败（CONFIG 查找失败后缓存 NOTFOUND 不重找）——必须删除整个 build 树从零重配。DIAG-T02 验收实证：无 toolchain 首配失败 → 补 toolchain 重配仍失败（同 FindBoost.cmake:2440）→ 删 build 树后同参数配置即成功",
       "owner": "AGENTS.md 维护方（构建约定所有者）；与 F-007/F-062/F-098/F-099 合并处置（建议 §4.1 环境口径记载附注'首配失败后须删 build 树重配，缓存残留 NOTFOUND 不自愈'）",
       "resolution": "建议级，不阻断 DIAG-T02 验收（pass）。验收复现口径已按删除缓存＋主树完整参数（toolchain＋Qt PREFIX＋CXX_FLAGS）完成，全量构建 0 error。"
+    },
+    {
+      "id": "F-102",
+      "source": "DIAG-T04 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T04-20260914.md §4.9/§4.10，送验对象 6dd6e665168d03fbe3f487e9c9fac3dc5839035e，分支 wp09-t04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-081/F-083/F-085/F-087/F-088/F-090 家族第 7 例（悬空引用/声称在库而实际未入库）且首次涉及 gtest XML 本体：DIAG-T04 送验两提交（af5b7ee7 验证段'四份 gtest XML 与 ird-test-report.json 留痕 traceability/builds/wp09-t04/'、6dd6e665'logs 字段与本批文件一一对应'）与 ird-test-report.json（gtestXml 字段列 4 份 XML、logs.verifyTargetBuild 引用 verify-target-build.log）声称在库的 5 件证据未入库——git ls-tree 6dd6e666 实证 builds/wp09-t04/ 仅 8 件（ird-test-report.json＋7 份 add -f 例外的 .log）；4 份 XML 非 gitignore 命中（check-ignore exit=1，单纯漏 git add，实施工作树本地存在该 4 件未跟踪）；verify-target-build.log 命中 .gitignore:87 *.log（F-010 根因第 8 次复踩）。证据本体不缺：双模式 41/41＋3/3 由验收者在 detached worktree 从零复现一致，数值主张全部准确、无粉饰",
+      "owner": "实施者侧（本分支补交 XML 可随后续任务或收尾登记；当前任务分支已冻结不追改）；治理侧（F-010 根修——traceability/** 白名单例外规则；PIPE 附录 C 实施者模板加'留痕清单逐件 git ls-tree 自检'硬性自查项）",
+      "resolution": "建议级，不阻断 DIAG-T04 验收（pass，沿 F-081 家族既判先例）。与 F-010 根修合并处置：.gitignore 增 traceability/** 留痕白名单例外（!traceability/**/*.log 等）可一次性终结本家族 8 次复踩；实施者模板建议增加提交前 git ls-tree 与报告字段逐项比对自查。"
     }
   ]
 }
