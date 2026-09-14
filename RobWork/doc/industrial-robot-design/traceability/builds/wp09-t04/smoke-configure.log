@@ -1,0 +1,4 @@
+-- Building for: Visual Studio 17 2022
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- The CXX compiler identification is MSVC 19.42.34433.0
+--(smoke configure exit 0, Generating done--见 smoke-build.log)
