@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 108,
+  "tickCount": 109,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,11 +13,11 @@
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 0,
-    "accept": 2
+    "fix": 1,
+    "accept": 4
   },
   "heartbeat": {
-    "updatedAt": "2026-09-14T07:54:24+08:00",
+    "updatedAt": "2026-09-14T10:23:28+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -742,6 +742,17 @@
       ],
       "acceptanceRecord": "traceability/acceptance/POL-T11-20260914.md",
       "mergedAt": "2026-09-14"
+    },
+    {
+      "task": "POL-T12",
+      "unit": "policy",
+      "result": "pass-merged",
+      "commits": [
+        "dd3090c4f76115967cd07b794719f3034a051970"
+      ],
+      "acceptanceRecord": "traceability/acceptance/POL-T12-20260914-r2.md",
+      "mergedAt": "2026-09-14",
+      "failReason": "attempt3 fail（B-1：governance-log.md 越界——语义达成而载体违规，F-094 登记）——返工拆分治理提交（追加还原，治理落点 governance/pol-t12-registry @ 94fe223c 待所有者追认并流）后 attempt4 pass"
     }
   ],
   "policy": {
@@ -767,11 +778,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "POL-T12",
-      "contractPath": "tasks/foundation/POL-T12.json",
-      "branch": "wp07-t12"
-    },
     {
       "taskId": "DIAG-T02",
       "contractPath": "tasks/foundation/DIAG-T02.json",
@@ -991,5 +997,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "fc28cdda-83f3-4416-afe7-ea2f8034c052"
+  "tickToken": "66cab2d6-2bb6-4915-afe2-e23374bde536"
 }

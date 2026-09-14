@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-E",
   "title": "policy 文档与门禁同步",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "POL-T01",
     "POL-T02",
