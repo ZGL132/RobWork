@@ -36,10 +36,16 @@ find_package(GTest CONFIG REQUIRED)
 # STATIC 库至少一个翻译单元纪律——core/src/Core.cpp、policy/src/Policy.cpp
 # 同先例）。DIAG-T03 落地 Errors.cpp（§9.0 错误类型）与 DiagCodes.cpp
 # （§4.5/§4.6/§9.1 注册表＋内置码表 87 码）——同名任务文件按 §11 行增列。
+# DIAG-T04 增列 Catalog.cpp（§4.2/§6/§9.7 目录＋信封＋sink）与 Factory.cpp
+# （§8/§9.2 工厂＋转译注册表）及私有实现头 ParamSchema（解析单点，诊断注册
+# 期验证共用）。
 add_library(sdurws_ird_diagnostics STATIC
     src/Diagnostics.cpp
     src/Errors.cpp
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/ParamSchema.cpp
+    src/Catalog.cpp
+    src/Factory.cpp)
 
 # C++17（单元卡 D-01／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：diagnostics 公共头将使用 std::optional/variant/filesystem 等
@@ -83,13 +89,14 @@ endif()
 # 首批用例＝DT-BUILD 红线扫描（units/diagnostics.md §10 DT-BUILD 行：零 Qt/
 # 零 Eigen·rw 直接包含/依赖图仅 core 边/无私有头出 include——运行期源码
 # 扫描，与文件末尾配置期守卫互为两道防线）。DT-REG-1~5 矩阵用例随
-# DIAG-T03 增列（StableCodeRegistryTest.cpp——§10；DT-DIAG/DT-CAT 等随
-# DIAG-T04+ 继续逐任务增列）。
+# DIAG-T03 增列（StableCodeRegistryTest.cpp——§10）；DT-DIAG-1/2、DT-DUP-1/2、
+# DT-CAT-1/2 及转译器/sink 用例随 DIAG-T04 增列（CatalogFactoryTest.cpp）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
     test/BuildRedLineTest.cpp
-    test/StableCodeRegistryTest.cpp)
+    test/StableCodeRegistryTest.cpp
+    test/CatalogFactoryTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_test PROPERTIES

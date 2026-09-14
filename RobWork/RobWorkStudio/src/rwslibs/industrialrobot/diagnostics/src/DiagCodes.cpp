@@ -47,6 +47,8 @@
 
 #include <sdurws/ird/diagnostics/DiagCodes.hpp>
 
+#include "ParamSchema.hpp"
+
 #include <array>
 #include <cctype>
 #include <stdexcept>
@@ -127,39 +129,14 @@ const std::string_view* expectedOwnerFor(std::string_view code)
 
 // ---------------------------------------------------------------------
 // 内部辅助：paramSchema 受限校验（§4.5"参数模式：受限 JSON 形 schema
-// token 列表"——不引第三方 JSON 库（新增依赖须先登记，dtb 约束）；
-// 手写线性扫描，确定性且零依赖）。
+// token 列表"）。文法与解析自 DIAG-T04 起单点落于 src/ParamSchema.hpp/.cpp
+// （工厂占位一致性校验共用同一判定——防同文法两实现漂移，NFR-MNT-04 精神；
+// 行为与原内联实现逐字一致，既有 DT-REG-5 用例为回归保护）。
 // ---------------------------------------------------------------------
 
-/// 参数名词形：^[a-z0-9]+(-[a-z0-9]+)*$（§4.5 示例 ["pid","host"]——小写
-/// kebab，与诊断码同族词形的小写变体）。
-bool isValidParamName(std::string_view name)
-{
-    if (name.empty() || !std::isalnum(static_cast<unsigned char>(name.front()))) {
-        return false;
-    }
-    bool prevDash = false;
-    for (const char ch : name) {
-        if (ch == '-') {
-            if (prevDash) {
-                return false;   // 连续连字符非法
-            }
-            prevDash = true;
-            continue;
-        }
-        if (!std::isalnum(static_cast<unsigned char>(ch))) {
-            return false;       // 仅允许小写字母/数字（isalnum 对大写也为真——补查）
-        }
-        if (std::isupper(static_cast<unsigned char>(ch))) {
-            return false;
-        }
-        prevDash = false;
-    }
-    return !prevDash;           // 尾连字符非法
-}
-
 /**
- * @brief 校验 paramSchema 为受限 JSON 数组形。
+ * @brief 校验 paramSchema 为受限 JSON 数组形（转调解析单点——失败原因文本
+ *        由 detail::tryParseParamSchema 产出，内容与历史实现一致）。
  *
  * 接受且仅接受：`[]`（无参数——合法声明）或 `["name","name",...]`
  * （空白允许于括号/逗号外侧；字符串内不允许转义/空白——参数名词形本身
@@ -167,67 +144,12 @@ bool isValidParamName(std::string_view name)
  */
 std::string validateParamSchema(const std::string& schema)
 {
-    if (schema.empty()) {
-        return "paramSchema 为空（必填字段——无参数也须显式声明 \"[]\"）";
+    std::vector<std::string> names;
+    std::string error;
+    if (!detail::tryParseParamSchema(schema, &names, &error)) {
+        return error;
     }
-    std::size_t i = 0;
-    const auto skipWs = [&i, &schema] {
-        while (i < schema.size() && (schema[i] == ' ' || schema[i] == '\t')) {
-            ++i;
-        }
-    };
-    skipWs();
-    if (i >= schema.size() || schema[i] != '[') {
-        return "paramSchema 须以 '[' 起始（受限 JSON 数组形）";
-    }
-    ++i;
-    skipWs();
-    std::vector<std::string_view> names;
-    if (i < schema.size() && schema[i] == ']') {
-        ++i;   // 空数组分支
-    } else {
-        while (true) {
-            skipWs();
-            if (i >= schema.size() || schema[i] != '"') {
-                return "paramSchema 参数项须为带引号的参数名";
-            }
-            ++i;
-            const std::size_t start = i;
-            while (i < schema.size() && schema[i] != '"') {
-                ++i;
-            }
-            if (i >= schema.size()) {
-                return "paramSchema 参数名字符串未闭合";
-            }
-            const std::string_view name{schema.data() + start, i - start};
-            if (!isValidParamName(name)) {
-                return "paramSchema 参数名词形非法（须 ^[a-z0-9]+(-[a-z0-9]+)*$）: "
-                       + std::string{name};
-            }
-            for (const auto& prior : names) {
-                if (prior == name) {
-                    return "paramSchema 参数名重复: " + std::string{name};
-                }
-            }
-            names.push_back(name);
-            ++i;   // 跳过闭引号
-            skipWs();
-            if (i < schema.size() && schema[i] == ',') {
-                ++i;
-                continue;   // 下一参数项
-            }
-            if (i < schema.size() && schema[i] == ']') {
-                ++i;
-                break;      // 数组结束
-            }
-            return "paramSchema 参数项后须为 ',' 或 ']'";
-        }
-    }
-    skipWs();
-    if (i != schema.size()) {
-        return "paramSchema 数组结束后存在多余字符";
-    }
-    return {};   // 合法
+    return {};
 }
 
 // ---------------------------------------------------------------------
