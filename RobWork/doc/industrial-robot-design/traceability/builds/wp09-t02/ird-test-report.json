@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T02",
+  "masterWp": "WP-09-T02",
+  "branch": "wp09-t02",
+  "base": "aa34f3a87f66914f81ff07a07976bea97ab9e35f",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "DIAG-T02 落位：INTERFACE 占位升级 STATIC（目标名/别名 RWS::ird::diagnostics/include 根不变）。新增 diagnostics/CMakeLists.txt：C++17 双设（target_compile_features PUBLIC cxx_std_17＋CXX_STANDARD 17）、/utf-8 PUBLIC、PUBLIC 链 sdurws_ird_core（统一真名，两模式可解析——ARCH §3.5 唯一出边）、零 Qt 含 Core（D-01）、零 Eigen/rw::math 直接包含、零 rw 基线库直链。src/ 空起步＝锚点翻译单元 Diagnostics.cpp（单元卡 §11 DIAG-T02 行产物定义『src/ 空起步』——CORE-T01/POL-T01 的 Core.cpp/Policy.cpp 同先例：STATIC 库至少一个翻译单元纪律，注释载明 DIAG-T03+ 同名任务文件落位安排，无任何接口预建——NFR-MNT-04）。配置期红线守卫：仅 core＋自身单元边、零 Qt、产品目标零 gtest（两面读取 LINK/INTERFACE）。顶层 industrialrobot/CMakeLists.txt 同步：diagnostics 移出 INTERFACE 占位循环、add_subdirectory(diagnostics) 挂接于 policy 之后（次序约束：core 之后、消费方 project/execution/io/ui/reporting 之前）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "DIAG-T02 登记（dtb §5.5）：首批用例＝DT-BUILD 红线扫描 5 用例（units/diagnostics.md §10 DT-BUILD 行——零 Qt 含 Core、零 Eigen/rw::math 直接包含、include 面仅 core/diagnostics 白名单、公共头路径布局〔无私有头出 include R-2〕、源码树可达锚定）。不链 sdurws_ird_testkit：DT-BUILD 以 gtest 原生断言承载（需求/AT 追溯在用例名与本报告 trace 字段——evidence EV-T01 同款），testkit 谓词随 DIAG-T10 契约套件消费并按 P-DIAG-8 处置登记；此举同时保证 ird_gates 命中基线零新增（F-072 族不扩散）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "DIAG-T02 登记（acceptance 3）：落位期首批用例＝链接边界契约 3 用例——PublicCoreExposure（消费 TU 零显式 core 链接即消费 core 承载 DiagnosticRecord 契约：行为级证明 PUBLIC 链 core 传染——未来 project/execution/io/ui/reporting 消费方的依赖形态）、UnitEdgeOnlyCore（扫描 diagnostics/CMakeLists.txt 非#注释行的 sdurws_ird_* 目标引用集合⊆白名单：构建图仅 diagnostics→core 一条单元边）、ConsumerStubCoreFindingContracts（P-DIAG-8 处置：桩消费方形态演练 core 承载 ConfirmableFinding 契约 C-1/C-2 不变量＋比较型三要素——确认放行流数据半区在消费侧可用，零 execution 侧链接改动，P-EX-8 联动双库集成冒烟另行登记）。DT-COLLAB/DT-CFM 桩夹具套件随 DIAG-T05/T10 落地"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "DiagnosticsBuild",
+      "designRef": "units/diagnostics.md §10 DT-BUILD 行、§3.2（依赖：仅 core＋std）、§3.3（R-2 头纪律）、§11 DIAG-T02 行；需求 NFR-MNT-01/NFR-MNT-02、ARCH §3.5",
+      "cases": [
+        { "name": "DiagnosticsBuild.SourceTreeReachable_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "§11 DIAG-T02 落位形态锚定——公共头保留位 README＋src/ 锚点翻译单元在位（src/ 空起步＝契约产物定义）" },
+        { "name": "DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "NFR-MNT-01／D-01——产品面（include/＋src/）`#include <Q`/`\"Q` 零命中（零 Qt 含 Core）" },
+        { "name": "DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "§1.4/§3.2——零 Eigen/rw::math 直接包含（rw 类型仅经 core 公共头传递）" },
+        { "name": "DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-1/R-2／ARCH §3.5——include 面 sdurws/ird/* 白名单＝{core, diagnostics}（唯一出边）" },
+        { "name": "DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-2——include/ 下文件仅位于 sdurws/ird/diagnostics/ 命名空间根（无私有头出 include；随 DIAG-T03+ 落头自动收紧）" }
+      ]
+    },
+    {
+      "suite": "DiagnosticsLinkage",
+      "designRef": "units/diagnostics.md §3.3（PUBLIC 链 core／_contract_test 分工）、§3.2（core 契约消费清单）、§10 DT-BUILD 行（CMake 依赖图半区）、governance-log P-DIAG-8；任务契约 DIAG-T02.json acceptance 1/2/3",
+      "cases": [
+        { "name": "DiagnosticsLinkage.PublicCoreExposure_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『PUBLIC 链 RWS::ird::core』行为级自证——本 TU 零显式 core 链接，经 diagnostics 传递接口消费 core::DiagnosticRecord::make（core 库符号）＋字段承载断言" },
+        { "name": "DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『仅 diagnostics→core 一条单元边』——CMakeLists 非#注释行 sdurws_ird_* 目标引用集合⊆{core, diagnostics, 本单元两测试目标}（SA-10 零表外边）" },
+        { "name": "DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／P-DIAG-8 处置——桩消费方（零 execution 链接改动）演练 core::ConfirmableFinding C-1（非比较型 make 抛 CoreError）/C-2（Pending↔凭据耦合、confirm 后 Confirmed＋凭据完整）＋SourcedValue/UnitToken 比较型三要素承载（core §4.3/§4.4/§5.7——§3.2 消费清单可用性核对；状态机实现承载随 DIAG-T05）" }
+      ]
+    }
+  ],
+  "regression": {
+    "integration": { "total": 8, "passed": 8, "failed": 0, "note": "本单元 5（DiagnosticsBuild）＋3（DiagnosticsLinkage）——DIAG-T02 为落位任务，无既有用例回归面；其余单元零触碰（改动仅 diagnostics/**＋顶层 CMakeLists 增列 add_subdirectory，其余单元构建/测试不受影响——全量集成构建 exit 0 佐证）" },
+    "smoke": { "total": 8, "passed": 8, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "7 命中＝POL-T12 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×5（evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——白名单数据面明文允许而引擎 SUB 形态未豁免的既有缺陷，F-072 族）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）——与 POL-T12 返工留痕 rework-ird_gates.log（提交 dd3090c4）逐码一致",
+      "deltaAnalysis": "本任务新增构建图元素＝产品边 diagnostics→core（白名单 IRD_ALLOWED_UNIT_EDGES 既有登记行）＋两测试目标仅链自身产品目标＋GTest::gtest_main（T-1 允许形态；未增链 testkit——F-072 族不扩散）。基线 7 命中全部为 WP-05/WP-02/WP-07 辖区既有命中，处置权 WP-01 所有者（裁决前不私改门禁纪律）。exit 1＝基线既有命中的预期行为",
+      "logs": ["gates-current-wp09t02.log（ird_gates 目标全输出，含引擎自测 7 类植入违例全部按预期检出）"]
+    }
+  },
+  "realFailureEvidence": "测试真实失败能力自证（acceptance-protocol §4.5 预演，验收者侧将独立重演）：①对 src/Diagnostics.cpp 临时植入 `#include <QObject>` 后复跑，NoQtInclude_DT_BUILD_NFR_MNT_01 真实变红（检出 Diagnostics.cpp:43 并逐行报位），还原后复跑 5/5 全绿；②UnitEdgeOnlyCore 用例在实现调试期两次真实失败（首次：CMake 注释文字『不链 sdurws_ird_testkit』与守卫正则裸前缀被计入引用集合——暴露扫描器未剥离注释/未排除正则模式的缺陷，修复后全绿）——失败注入与修复过程证明断言非恒真",
+  "logs": {
+    "integrationConfigure": "integration-configure.log（-DRWS_BUILD_INDUSTRIALROBOT=ON 重配，缓存确认 :BOOL=ON）",
+    "integrationBuild": "integration-build.log（全量 cmake --build build --config Release，exit 0，零 error C/fatal error）",
+    "verifyTargetBuild": "verify-target-build.log（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_diagnostics_test，exit 0；contract_test 目标追加构建同 exit 0）",
+    "integrationTestRun": "integration-test-run.log（两目标 5/5＋3/3 全绿）",
+    "smokeConfigure": "smoke-configure.log（独立冒烟配置，vcpkg toolchain 绝对路径）",
+    "smokeBuild": "smoke-build.log（exit 0）",
+    "smokeTestRun": "smoke-test-run.log（两目标 5/5＋3/3 全绿）",
+    "gtestXml": ["sdurws_ird_diagnostics_test-integration.xml", "sdurws_ird_diagnostics_contract_test-integration.xml", "sdurws_ird_diagnostics_test-smoke.xml", "sdurws_ird_diagnostics_contract_test-smoke.xml"],
+    "validateTask": "validate-task.log"
+  }
+}

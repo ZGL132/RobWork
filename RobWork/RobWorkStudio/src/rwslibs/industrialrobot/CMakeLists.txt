@@ -4,10 +4,11 @@
 #       与 development-task-breakdown.md §2/§5（任务编排与构建约定）；
 #       DETAILED-DESIGN.md 仅作 20 单元详设索引（WP-03-T01 修订：骨架期对
 #       其 §1.2/§1.5 的引用为悬空引用，改指各单元卡与任务拆分）
-# 状态: core 已随 WP-03-T01（≙CORE-T01）、testkit 已随 WP-02-T01（≙TK-T01）
-#       落地为真实 STATIC 库＋gtest 测试目标（见各自 CMakeLists.txt）；
-#       其余 18 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
-#       落地时升级为真实库（CMake 目标名不变）
+# 状态: core 已随 WP-03-T01（≙CORE-T01）、testkit 已随 WP-02-T01（≙TK-T01）、
+#       runtime/evidence/policy 已随 RT-T01/EV-T01/POL-T01、diagnostics 已随
+#       DIAG-T02（≙WP-09-T02）落地为真实 STATIC 库＋gtest 测试目标（见各自
+#       CMakeLists.txt）；其余 16 个单元仍为 INTERFACE 占位，源码随各自单元
+#       任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -22,8 +23,9 @@ endif()
 
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
+# diagnostics 自 DIAG-T02（≙WP-09-T02）起移出（下方 add_subdirectory）。
 set(IRD_MODULES
-    project execution diagnostics
+    project execution
     ui io reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
@@ -65,6 +67,15 @@ add_subdirectory(evidence)
 # DTB §4.5 生效行），并注册 gtest 测试目标 sdurws_ird_policy_test（红线扫描＋R-5
 # 钉住）与配置期守卫——细节见 policy/CMakeLists.txt。次序约束：在 core 之后。
 add_subdirectory(policy)
+# diagnostics（DIAG-T02≙WP-09-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core——ARCH §3.5 唯一出边；零 Qt 含 Core——D-01；零 Eigen/rw::math
+# 直接包含），并注册 gtest 测试目标 sdurws_ird_diagnostics_test（DT-BUILD 红线
+# 扫描）与 sdurws_ird_diagnostics_contract_test（P-DIAG-8 处置：契约测试以桩＋
+# 契约夹具验证，不私改 execution 侧链接——双库集成冒烟随 P-EX-8 联动另行登记）
+# 与配置期守卫——细节见 diagnostics/CMakeLists.txt。次序约束：必须在 core 之后
+# （链接 sdurws_ird_core）；先于其消费方（project/execution/io/ui/reporting——
+# ARCH §3.5 入边单元，dtb §1.1：diagnostics 须先于四者实现）。
+add_subdirectory(diagnostics)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
