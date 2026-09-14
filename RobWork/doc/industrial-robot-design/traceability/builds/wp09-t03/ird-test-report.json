@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T03",
+  "masterWp": "WP-09-T03",
+  "branch": "wp09-t03",
+  "base": "a6315152e377b98e17a4a72bd4d33e339aa08882",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error C）",
+      "notes": "DIAG-T03 落位（§11 行产物）：src/ 增列 Errors.cpp（§9.0 错误类型：DiagnosticsErrorCode 11 值全表＋DiagnosticsError，token 逐值注释原文承载）与 DiagCodes.cpp（§4.3 词表 15/4/3 值 token、§4.5 CodeDescriptor/注册期验证链、§9.1 StableCodeRegistry（registerCode/find/registeredCodes/manifest/deprecate——接口签名逐字）、§4.6 内置码表 87 码全量收编＋canonical 编码 manifest 摘要）；include/ 新增公共头 Errors.hpp/DiagCodes.hpp（§3.1 组成表 10 头之二）。验证链检查序固定、首错即停并指明字段（§4.5『注册期验证』行）；键唯一性（DuplicateCode）先于键形约定校验（Usage）——文案键冲突报 NFR-MNT-03 语义码。『运行期』判据的实现口径＝实现类 seal() 装配原语（§9.1 未定义判据，evidence EV-T09 实现口径登记先例；IDiagnosticRegistry 五方法签名不扩——单元卡变更记录登记）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 22/22、smoke 22/22）",
+      "notes": "既有 DiagnosticsBuild 5 用例（DIAG-T02 登记，零修改零回归）＋DIAG-T03 新增 17 用例（DT-REG-1~5 矩阵＋P-DIAG-1/3/9 处置钉住——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 3/3、smoke 3/3）",
+      "notes": "既有 3 用例（DIAG-T02 登记）零修改零回归——本任务对 core 的消费面（core::DiagCode/content::ContentIdentity/ContentDigester）经 PUBLIC 链传染面复证"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "DiagCodesRegistry（DT-REG 矩阵——acceptance 1/2 主体）",
+      "designRef": "units/diagnostics.md §10 DT-REG-1~5、§4.5（注册表行为冻结表）、§4.5.1（废弃码与迁移）、§4.6（内置码表）、§9.1（接口契约）；需求 ERR-01、NFR-MNT-03",
+      "cases": [
+        { "name": "DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-1 全行＋acceptance 1——空注册表全量注册 87 码；registeredCodes 计数＝清单（PRJ 10/RT 14/POLICY 23/EVI 7/EX 18/RPT 8/DIAG 7）；逐码 find 命中；manifest() 两次计算 entries 逐条目相等＋digest 相等（『摘要逐字节相等』）" },
+        { "name": "DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-1／acceptance 1『码值不重排』——实现表与测试内嵌 §4.6 清单第二来源逐位比对（87 码拼写/顺序双来源交叉钉住）" },
+        { "name": "DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-1／NFR-COR-02——同一注册集不同注册顺序必得同一 manifest（worker 握手比对的前提）；首/尾条目断言钉住按 code 字典序后置" },
+        { "name": "DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-2——同码再注册（含元数据全同）DuplicateCode；不覆盖（find 返回首版描述）；同码不同元数据同面拒绝" },
+        { "name": "DiagCodesRegistry.DtReg2_TextKeyCollisionRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-2／NFR-MNT-03 文案单一权威——titleKey/detailKey 跨码唯一，冲突 DuplicateCode（注册边界拒绝）" },
+        { "name": "DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-3——未注册码 find→nullptr（查询非抛）；前缀不在 §4.5 表/ownerUnit 声明域不符→CodeUnknown（§9.1『CodeUnknown 前缀冲突』）。覆盖边界：『以未注册码调工厂』的完整构造路径随 DIAG-T04（§11 任务分工——T03 产物＝Errors.*/DiagCodes.*），本用例自证工厂将据以拒绝的注册表原语与同一错误码面" },
+        { "name": "DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-4——异常 message 字符串作码：句法非法＋find 拒识＋注册 Usage（『诊断码不能通过异常文本临时生成』的注册表侧）；DIAG-REGISTRY-UNKNOWN-CODE 已收编（translate 兜底码在表）。覆盖边界：translate 兜底条目的生产随 DIAG-T04 工厂" },
+        { "name": "DiagCodesRegistry.DtReg5_ParamSchemaValidation", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-5——paramSchema 缺省/形非法/参数名词形/重复→ParamSchemaMismatch；\"[]\"合法（显式无参数）；PRJ-LOCK-HELD 参数面＝[\"pid\",\"host\"]（§9.2 示例明示）。覆盖边界：『paramSchema 缺参构造』的实例占位校验随 DIAG-T04 工厂（§9.2），本用例自证注册期验证半区" },
+        { "name": "DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-5／§4.5 版本冲突行——同码不同 registryVersion＝重复注册拒绝（DuplicateCode），版本不得覆盖" },
+        { "name": "DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-5／§4.5.1——deprecate 置 tombstone（只读解析保留映射）、supersededBy 导航可达、registeredCodes/manifest 仍含（删除禁止——PA-2）；未注册码废弃→CodeUnknown；自迁移→Usage；纯废弃（nullopt）合法" },
+        { "name": "DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-5／§9.1 manifest 契约——含 tombstone 的装配清单在另一注册表复装配（模拟主/worker 各自装配）后 manifest 逐字节一致（跨进程码表一致）" },
+        { "name": "DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-REG-5／§9.1『运行期 registerCode（Usage）』——seal 后 register/deprecate→Usage；find/manifest 只读可用；seal 幂等（『运行期』判据实现口径＝实现类装配原语，单元卡变更记录登记）" }
+      ]
+    },
+    {
+      "suite": "DiagCodesVocabulary／DiagCodesCoreBaseline／DiagCodesTextKeys（acceptance 3/4 处置钉住）",
+      "designRef": "units/diagnostics.md §4.3（词表——P-DIAG-3）、§4.5（键唯一性——NFR-MNT-03）、governance-log P-DIAG-1/P-DIAG-3/P-DIAG-9；契约 acceptance 3/4",
+      "cases": [
+        { "name": "DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／P-DIAG-3——分类 15 值/严重 4 值/重试 3 值逐值 token 断言（显式全列，新增轴值即红：『不新增工程状态轴值』）＋token 全表互异" },
+        { "name": "DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3『词表随码元数据登记』——87 码全表扫描：Dev 边界（severity=Dev ⇔ userVisible/reportable/historical 全 false，Dev 计数＝11＝各卡登记合计）＋confirmable⇒requiresComparison 全表成立（SA-15）" },
+        { "name": "DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4／P-DIAG-1——CodeDescriptor::code/supersededBy 类型＝core::DiagCode（core.md v0.1 基线，编译期 static_assert 钉住；core 冻结 diff 后增量同步，不私改 core）" },
+        { "name": "DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4／P-DIAG-9 键/值分离——内置 87 码 titleKey/detailKey 全表符合 diag.<code-lower>.title/detail 约定＋174 键全表唯一；偏离约定的键在注册边界 Usage 拒绝；CodeDescriptor 无文案值字段（值归 ui/文案资源——UX-02）" },
+        { "name": "DiagnosticsErrors.DtReg_TokenTableComplete", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.0——DiagnosticsErrorCode 11 值 token 全表逐值钉住＋DiagnosticsError 消息契约（what()＝『<token>: <detail>』，空 detail＝恰为 token）" }
+      ]
+    },
+    {
+      "suite": "DiagnosticsBuild（既有——DIAG-T02 登记，零修改回归面）",
+      "designRef": "units/diagnostics.md §10 DT-BUILD、§3.2/§3.3；NFR-MNT-01/NFR-MNT-02",
+      "cases": [
+        { "name": "DiagnosticsBuild.SourceTreeReachable_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例零修改——新头/新源落位后源码树红线复扫通过" },
+        { "name": "DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——Errors.hpp/.cpp/DiagCodes.hpp/.cpp/StableCodeRegistryTest.cpp 增列后 `#include <Q` 零命中（D-01 零 Qt 含 Core）" },
+        { "name": "DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——新增文件零 Eigen/rw::math 直接包含" },
+        { "name": "DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——新增文件 include 面＝core（DiagData/Digest）＋diagnostics（Errors）＋std，唯一出边不变（ARCH §3.5）" },
+        { "name": "DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——新公共头均位于 include/sdurws/ird/diagnostics/（无私有头出 include）" }
+      ]
+    },
+    {
+      "suite": "DiagnosticsLinkage（既有——DIAG-T02 登记，零修改回归面）",
+      "designRef": "units/diagnostics.md §3.3、governance-log P-DIAG-8",
+      "cases": [
+        { "name": "DiagnosticsLinkage.PublicCoreExposure_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——PUBLIC 链 core 传染性复证（本任务消费 core::DiagCode/ContentDigester 经同一边）" },
+        { "name": "DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——构建图仅 diagnostics→core 一条单元边（本任务零新增目标/零新增边，仅产品库与测试目标增列源文件）" },
+        { "name": "DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有用例——桩消费方形态复证（DIAG-T05 确认服务落地前的契约面保持）" }
+      ]
+    }
+  ],
+  "regression": {
+    "integration": { "total": 25, "passed": 25, "failed": 0, "note": "unit 22（既有 5＋新增 17）＋contract 3——既有 8 用例零修改零回归；其余单元零触碰（改动仅 diagnostics/{include,src,test}/**＋diagnostics/CMakeLists.txt 增列，全量集成构建 exit 0 佐证）" },
+    "smoke": { "total": 25, "passed": 25, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "7 命中＝wp09-t02 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×5（evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——F-072 族既有缺陷）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）——与 wp09-t02 留痕 gates-current-wp09t02.log 命中集合一致；当前扫描输出中零 diagnostics 相关命中",
+      "deltaAnalysis": "本任务新增构建图元素＝产品库与测试目标各增列源文件（零新增目标/零新增边）——命中集合与基线一致的必然结果。exit 1＝基线既有命中的预期行为，处置权 WP-01 所有者",
+      "logs": ["gates-current-wp09t03.log（ird_gates 目标全输出）"]
+    }
+  },
+  "realFailureEvidence": "测试真实失败能力自证（acceptance-protocol §4.5 预演，验收者侧将独立重演）：①探针 A——将 registerCode 重复注册拒绝（§4.5『重复注册』行 throw）与 titleKey/detailKey 唯一性 throw 同时以 if(false) 短路后复跑，DtReg2_DuplicateRegistrationRejectedNotOverwritten 与 DtReg2_TextKeyCollisionRejected 真实变红（前者经 find 非空断言、后者经错误码面断言失败），逐字还原后复跑 22/22 全绿（探针零残留，grep 'if (false &&' 计数 0）；②注入期间附带发现并登记：仅禁用码重复检查时，键唯一性检查（同检查链的 NFR-MNT-03 第二检查点）仍兜底拒绝同码再注册——两检查点语义重叠的防御深度，不构成缺陷（注册边界拒绝语义双保险）",
+  "logs": {
+    "integrationBuild": "integration-build.log（全量 cmake --build build --config Release，exit 0，零 error C/fatal error）",
+    "verifyTargetBuild": "verify-target-build.log（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_diagnostics_test，exit 0）",
+    "integrationTestRun": "integration-test-run.log（两目标 22/22＋3/3 全绿）",
+    "smokeConfigure": "smoke-configure.log（独立冒烟配置，vcpkg toolchain 绝对路径）",
+    "smokeBuild": "smoke-build.log（exit 0）",
+    "smokeTestRun": "smoke-test-run.log（两目标 22/22＋3/3 全绿）",
+    "gtestXml": ["sdurws_ird_diagnostics_test-integration.xml", "sdurws_ird_diagnostics_contract_test-integration.xml", "sdurws_ird_diagnostics_test-smoke.xml", "sdurws_ird_diagnostics_contract_test-smoke.xml"],
+    "validateTask": "validate-task.log"
+  }
+}
