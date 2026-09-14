@@ -46,7 +46,10 @@ find_package(GTest CONFIG REQUIRED)
 # 重放/ILogFileOps 接缝；公共头 Logging.hpp 同名落位）。DIAG-T08 增列
 # Redaction.cpp（§7.7/§9.5 脱敏——四路径策略/凭据模式/降级不放行；公共头
 # Redaction.hpp 同名落位）与 CrashReport.cpp（§7.6 崩溃诊断文件——脱敏写
-# 出/用户目录/磁盘不足降级；公共头 CrashReport.hpp 同名落位）。
+# 出/用户目录/磁盘不足降级；公共头 CrashReport.hpp 同名落位）。DIAG-T09 于
+# Catalog.cpp 内扩容（§6.2 目录清理策略——容量护栏/分级淘汰/DIAG-CATALOG-
+# OVERFLOW 溢出登记；公共头 Catalog.hpp 扩展 CatalogCapacityConfig 与目录
+# 容量面，无新增翻译单元）。
 add_library(sdurws_ird_diagnostics STATIC
     src/Diagnostics.cpp
     src/Errors.cpp
@@ -116,12 +119,17 @@ endif()
 # 不足半区（崩溃文件写失败降级）＋AT-11 崩溃文件用例＋P-DIAG-1 处置钉住随
 # DIAG-T08 增列（RedactionTest.cpp——§10；故障注入经 applyRules 虚缝与
 # ILogFileOps 接缝自持替身，不链 testkit）。
+# DT-LIFE-1/2/3（容量护栏与分级淘汰/失败取消保留/归档失败报告＋关闭有界）
+# ＋P-DIAG-7 容量默认钉住随 DIAG-T09 增列（CatalogLifecycleTest.cpp——§10；
+# DT-LIFE-3"日志仍在/关闭时限"半区经真实 LoggingPipeline＋FileLogFileOps
+# 临时目录自持，不链 testkit）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
     test/BuildRedLineTest.cpp
     test/StableCodeRegistryTest.cpp
     test/CatalogFactoryTest.cpp
+    test/CatalogLifecycleTest.cpp
     test/ConfirmableTest.cpp
     test/AggregationTest.cpp
     test/LoggingTest.cpp
@@ -172,10 +180,14 @@ add_custom_command(TARGET sdurws_ird_diagnostics_test POST_BUILD
 # 图仅 core 一条单元边）＋P-DIAG-8 处置的桩消费方形态验证（LinkageContract
 # Test.cpp 文件头有完整处置说明）；DT-CFM-6~10（UI 关闭/未确认提交/worker 禁令
 # /确认≠成功/确认留痕形状——project §6.7 桩联动）随 DIAG-T05 增列
-# （ConfirmableProjectStubTest.cpp）。
+# （ConfirmableProjectStubTest.cpp）。DT-LIFE-5＋宿主留痕形状冻结（envelope
+# canonical/CommandRecord 绑定的对接桩——evidence/project 所有者形态；编码器
+# 定义在测试侧＝diagnostics 不提供宿主编码设施）随 DIAG-T09 增列
+# （CatalogHostTraceStubTest.cpp——P-DIAG-8 同款桩验证纪律）。
 add_executable(sdurws_ird_diagnostics_contract_test
     test/LinkageContractTest.cpp
-    test/ConfirmableProjectStubTest.cpp)
+    test/ConfirmableProjectStubTest.cpp
+    test/CatalogHostTraceStubTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_contract_test PROPERTIES

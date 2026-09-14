@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T09",
+  "masterWp": "WP-09（§11 DIAG-T09 行＝WP-09-T04 范围：`Catalog.*` 扩展＝§6.1/§6.2 目录清理策略＋宿主留痕形状〔envelope/CommandRecord 对接数据〕）",
+  "branch": "wp09-t09",
+  "base": "87c1f06b490f3ccb32f2efd11b95951256761d8d",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error）",
+      "notes": "DIAG-T09 落位（§11 行产物：`Catalog.*` 扩展——无新增翻译单元）：公共头 Catalog.hpp 扩展 CatalogCapacityConfig（§6.2 目录容量护栏；P-DIAG-7 工程默认 enabled＋10,000 条登记于结构体注释）＋DiagCatalog 五方法 configureCapacity（0 容量 Usage）/capacityConfig（观测面）/markConsumed（消费确认——分级淘汰'已消费'判据）/setTaskActive（活动任务保护登记——任务状态权威归 execution PA-1）/attachDevLogSink（溢出事实出口，可空＝静默降态）＋kCatalogInternalChannel='diag/catalog'（对齐 diag/redaction 命名族）；src/Catalog.cpp 扩容：append 容量护栏步骤⑥（超限腾位→分级淘汰自最旧已消费 Info→引用计数快照链保护→软溢出仍追加）＋DIAG-CATALOG-OVERFLOW 开发诊断登记（锁内捕获锁外派发；消息首 token＝稳定码＋capacity/evicted/retention-protected/size 观测数值）＋applyEvictions 保序一次性重建三张索引表"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 107/107、smoke 107/107）",
+      "notes": "既有 98 用例（DIAG-T02~T08 登记）零修改零回归＋DIAG-T09 新增 9 用例（DT-LIFE-1 分级淘汰主路径〔Info 最旧淘汰·Warning/Error/活动任务关联保留·溢出 Dev 登记〕·未消费保护·链保护与多遍收敛·软溢出保全；DT-LIFE-2 失败任务终结后保留＋终结原因必附〔EX-TASK-REJECTED causedBy EX-WORKER-CRASHED〕·取消任务仅 Info 记录零 Error〔UX-03/D-16〕＋中断保留；DT-LIFE-3 归档失败 EX-ARCHIVE-FAILED 用户可见＋目录/日志设施完好〔真实 LoggingPipeline＋FileLogFileOps 临时目录：溢出登记落盘 Tier-D、Tier-U 零命中〕·关闭有界〔目录析构与 flush(deadline) 均墙钟上界断言〕；P-DIAG-7 容量默认 10,000 逐项断言＋可配置面＋0 容量 Usage＋关闭护栏＋缩容延迟生效——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 14/14、smoke 14/14）",
+      "notes": "既有 9 用例（DIAG-T02/T05 登记）零修改零回归＋DIAG-T09 新增 5 用例（CatalogHostTraceStubTest——P-DIAG-8 同款桩验证纪律，不私改对端链接）：DT-LIFE-5 持久化字节不因当前性投影改写〔重读逐值不变＋重编码逐字节不变＋SHA-256 摘要不变（core ContentDigester——CR-02 唯一哈希路径）〕·更新＝新条目＋supersedes 旧条目逐字段原样＋supersedes 指向不存在条目 Usage 拒绝；宿主留痕形状冻结〔acceptance 2〕——envelope 载荷＝record 值全量且会话 entryId 不入形状（两会话异 id 同字节反例钉住）、CommandRecord 绑定＝修订身份（非 entryId）、Dev 码宿主桩拒绝（historical=true 才允许——TASK-02/§6.1）；桩编码器定义在测试侧＝diagnostics 零宿主编码设施新增的结构性证明"
+    }
+  ],
+  "gates": {
+    "ird_gates": "7 处命中＝wp09-t08 基线逐码一致零新增（evidence/policy/runtime 测试目标直链 testkit×6＋testdata_lint 表外依赖/T-1×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径）；零 diagnostics 命中（命中清单 grep diagnostics 零命中）；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-ird-gates-target.log）；集成全量构建（cmake --build build --config Release）exit 0 零 error（留痕 integration-build.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T09.json——前置引用/设计锚点/knownPitfalls 三查）＋verify-task PASS（契约 verify 命令：cmake --build build --config Release --target sdurws_ird_diagnostics_test 零 error，留痕 verify-task.log/validate-task.log）",
+    "probeCapability": "淘汰/溢出行为以小容量整值替换真实触发（capacity=2/3/4：逐轮断言具体 entryId 在场/消失——非模拟；软溢出 retention-protected=1 与淘汰 evicted=1 两形态分别钉在消息字段上）；DT-LIFE-3 以真实 LoggingPipeline＋FileLogFileOps 落盘文件内容断言（Tier-D 含 DIAG-CATALOG-OVERFLOW、Tier-U 零命中——非内存桩）；DT-LIFE-5 以桩字节账本＋ContentDigester 摘要断言（当前性投影前后逐字节/逐值/摘要三重比对）"
+  },
+  "testSuites": [
+    {
+      "suite": "DiagCatalogLifecycle/DiagCatalogArchiveFailure（DT-LIFE-1/2/3 容量与分级淘汰·失败取消保留·归档失败报告＋P-DIAG-7——acceptance 1/3）",
+      "designRef": "units/diagnostics.md §6.1/§6.2（生命周期图与规则表：清理策略/失败保留/归档失败报告/关闭无阻塞点）、§9.7（append 后置容量策略执行）、§10 DT-LIFE-1~3 行、§14.1 D-16/D-17、§14.3 P-DIAG-7；需求 NFR-REL-03、UX-03、TASK-02、CON-02、PM-03",
+      "cases": [
+        { "name": "DiagCatalogLifecycle.DtLife1_TieredEvictionKeepsWarningErrorAndActiveTask", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-1/§6.2 分级淘汰/acceptance 1——capacity=4 逐轮注入：最旧已消费 Info 淘汰腾位、Warning/Error 消费后仍保留（判据①级别保护）、活动任务关联 Info 保留（判据③——快照 context.task 锚定在场）、溢出事实恰两条 DIAG-CATALOG-OVERFLOW（通道 diag/catalog、消息 evicted=1）、append 恰一次变更通知（§9.7 后置）" },
+        { "name": "DiagCatalogLifecycle.DtLife1_UnconsumedInfoSurvivesDespiteAge", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-1 判据②/§6.2'已消费'限定——更旧的未消费 Info 在压力下保留（markConsumed 显式确认＝淘汰前提——淘汰未消费条目＝丢用户尚未见过的信息），同容量已消费 Info 正常淘汰" },
+        { "name": "DiagCatalogLifecycle.DtLife1_LinkReferencedInfoProtectedThenReleasable", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-1 链保护/§6.3——被幸存条目 causedBy 引用的 Info 不淘汰（append'指向已存在条目'不变式不得被淘汰制造悬挂引用）；引用者淘汰后被引用者随下次压力解除保护（引用计数快照逐遍收敛的两步可观测）" },
+        { "name": "DiagCatalogLifecycle.DtLife1_RetentionProtectedSoftOverflowStillAppends", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-1 软溢出/§6.2——目录被已消费 Error 占满且无 Info 候选：新条目仍然追加（size=3>capacity=2——护栏不得牺牲证据完整性），溢出登记含 retention-protected=1＋evicted=0（保留保护形态显式标记）" },
+        { "name": "DiagCatalogLifecycle.DtPdiag7_DefaultsPinnedAndConfigurableSurface", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-DIAG-7/acceptance 3——默认值钉住（capacityConfig()=={enabled=true, maxEntries=10000}＝§14.3 登记值；WP-23 校准不构成需求偏差）＋0 容量 Usage（被拒配置不部分生效）＋enabled=false 关闭护栏（12 条注入零淘汰零溢出登记）＋缩容延迟生效（缩至 2 不立即淘汰，下一次 append 压力一次腾位、淘汰序＝入目录序）" },
+        { "name": "DiagCatalogLifecycle.DtLife2_FailedTaskDiagnosticsRetainedWithTerminationReason", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-2/NFR-REL-03/acceptance 1——失败任务终结（setTaskActive false）后按任务查询两条俱全：终结原因 EX-TASK-REJECTED（Error 用户可见）必附＋根因 EX-WORKER-CRASHED 保留（§6.3 链完整）——注销保护不删除条目" },
+        { "name": "DiagCatalogLifecycle.DtLife2_CanceledTaskInfoRecordOnlyNoErrorDiagnostics", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-2/UX-03/D-16——取消任务仅 RT-CANCELLED Info 记录（actionKind=none 正常取消无动作）、中断任务 EX-TASK-INTERRUPTED Info（actionKind=rerun-interrupted）；两任务终结后记录保留且全目录零 Error 级条目（正常取消/中断不产生用户错误诊断——TASK-02 分类区分的生命周期面）" },
+        { "name": "DiagCatalogArchiveFailure.DtLife3_ArchiveFailureUserVisibleAndFacilitiesIntact", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-3/project §10.1 诊断半区/acceptance 1——归档桩失败后 EX-ARCHIVE-FAILED（Error/ExecutionFailed/actionKind=retry-task）随任务终态入目录且用户可见；既有诊断未受影响（容量护栏在失败路径照常运转）；溢出登记经真实 LoggingPipeline 落盘 Tier-D（日志仍在）且 Tier-U 零命中（Dev 不入用户目录——NFR-REL-05）；归档编排/abandon 归 project（§6.2 行注），本套件承载码面/目录/日志设施半区" },
+        { "name": "DiagCatalogArchiveFailure.DtLife3_CloseAfterArchiveFailureIsBounded", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-3 关闭时限/PM-03/§6.2 末行——归档失败现场下目录析构（会话回收＝内存释放）与日志 flush(deadline=3s) 均以 steady_clock 墙钟有界完成（<1s/<4s 上界——'非永久等待'防退化断言；诊断设施无关闭阻塞点）" }
+      ]
+    },
+    {
+      "suite": "DiagHostTraceStub（DT-LIFE-5＋宿主留痕形状冻结——acceptance 1/2）",
+      "designRef": "units/diagnostics.md §6.1（持久化部分随宿主不可变——当前性变化不改写任何已持久化诊断）、§6.2（'最终结果中的诊断'行同源/entryId 不入 envelope；'诊断与历史结果的绑定'行宿主对象身份；'诊断对象不能因当前性变化被改写'行 Superseded 不传播）、§4.2 序列化行（record 随宿主持久化、编码归宿主所有者）、§10 DT-LIFE-5 行；需求 CON-02/CON-05、PA-2、TASK-02",
+      "cases": [
+        { "name": "DiagHostTraceStub.DtLife5_PersistedBytesInvariantUnderCurrentnessProjection", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-5/CON-02/acceptance 1——终结收口持久化后标记 Superseded（evidence 投影）：重读记录逐值不变（对照 append 前另存值）、持久化字节逐字节不变、SHA-256 摘要不变（core ContentDigester——CR-02；观测点'摘要比对'）；目录条目照常在场（会话内可见性不受当前性影响）" },
+        { "name": "DiagHostTraceStub.DtLife5_UpdateIsSupersedingEntryAndOldEntryUntouched", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-5/§6.3 supersedes——重试（新尝试五元组）再发现＝新条目 supersedes 旧条目（不同 attempt＝不同去重键，绝不折叠计数）；旧条目投影字段逐项原样（projectionEqual 全字段比对——无改写路径）；supersedes 指向不存在条目 Usage 拒绝（链接真实性由目录承载；异 subject 绕开去重折叠到达链接校验）" },
+        { "name": "DiagHostTraceStub.HostTrace_EnvelopeShapeIsRecordValuesWithoutSessionIdentity", "status": "passed", "modes": ["integration", "smoke"], "trace": "宿主留痕形状冻结/acceptance 2——两会话（独立 entryId 分配器，前置条目推进会话 A 使 id 确定不同）对同一 record 值持久化：宿主字节逐字节一致＋摘要一致（若编码掺入 entryId 必不相同——反例钉住'entryId 不入 envelope'，§6.2）；持久化载荷＝record 值（同源）；桩编码器定义在测试侧＝diagnostics 零宿主编码设施新增的结构性证明（envelope canonical 归 evidence）" },
+        { "name": "DiagHostTraceStub.HostTrace_CommandRecordBindsRevisionNotEntryId", "status": "passed", "modes": ["integration", "smoke"], "trace": "宿主留痕形状冻结/acceptance 2/§6.2 绑定行——命令路径诊断（PRJ-LOCK-HELD，params 恰合 paramSchema [pid,host]）经 project 桩持久化：绑定字段＝修订身份（boundRevision()==revision，宿主对象身份而非 entryId）、记录值同源（CommandRecord 归 project）" },
+        { "name": "DiagHostTraceStub.HostTrace_DevCodesNeverEnterHostPersistence", "status": "passed", "modes": ["integration", "smoke"], "trace": "宿主留痕形状冻结/TASK-02/§6.1——Dev 码（EX-CHANNEL-PROTOCOL-ERROR，subject 可空合法实例）可经工厂创建但宿主桩拒绝持久化（historical=true 才允许——Dev 不进历史）且拒绝路径零字节写入（无半截持久化）" }
+      ]
+    }
+  ]
+}
