@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "两级日志（Logging：管线/节流采样/轮转/重放）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T02",
     "DIAG-T03"
