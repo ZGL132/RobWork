@@ -1102,6 +1102,26 @@
       "title": "src/Logging.cpp:1273 flush() 实现注释将接口名误拼为『ILoggFileOps 契约』（应为 ILogFileOps——Logging.hpp:318 登记的接缝名）；纯注释拼写瑕疵，代码行为与接口拼写均正确",
       "owner": "实施者侧（随下次触碰 Logging.cpp 的提交顺手更正该注释）",
       "resolution": "建议级，不阻断 DIAG-T07 验收（pass）。单字符级注释卫生问题（F-046/F-093 微观卫生家族同型），不构成注释规范缺项（§2.5 高危信息表全部在位）。"
+    },
+    {
+      "id": "F-111",
+      "source": "DIAG-T08 验收段 attempt 3（2026-09-15，traceability/acceptance/DIAG-T08-20260915.md §4.9/§4.10，送验对象 a11f1726d8d4dface4b33a2f3a145c3cbb2a1eee，分支 wp09-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-081/F-102/F-103/F-106/F-108 家族第 11 例（声称在库而实际未入库）：DIAG-T08 留痕提交 a11f1726 正文声称入库『双模式构建日志、gtest XML×4、测试运行日志、ird-test-report.json、validate-task.log、verify-task.log、verify-target-build.log、gates-current-wp09t08.log、gates-ird-gates-target.log』，git ls-tree @a11f1726 实证 builds/wp09-t08/ 仅 5 件（双模式 gtest XML 四份＋ird-test-report.json）——正文声称的全部 .log 缺失（ird-test-report.json gates 字段引用 gates-current-wp09t08.log＋gates-ird-gates-target.log 两处且两文件均不在库）；根因 .gitignore:87 全局 *.log（F-010）仍未按先例 add -f；数值主张（双模式 98/98＋9/9、既有 77＋9 零回归、新增 21 用例、ird_gates 7 命中＝wp09-t07 基线逐码一致零 diagnostics、validate-task/verify-task PASS）经验收者全新 worktree 从零配置亲手复现全部准确，测试结果无粉饰",
+      "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族连续 11 例，流程级根治诉求升级）",
+      "resolution": "建议级，不阻断 DIAG-T08 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103/F-106/F-108。"
+    },
+    {
+      "id": "F-112",
+      "source": "DIAG-T08 验收段 attempt 3（2026-09-15，traceability/acceptance/DIAG-T08-20260915.md §4.9，送验对象 a11f1726d8d4dface4b33a2f3a145c3cbb2a1eee，分支 wp09-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-012/F-100/F-104/F-107/F-109 家族再现：DIAG-T08 留痕提交 a11f1726 标题『[WP-09-T08] 单元卡 v0.9 实现落位登记与验证留痕（traceability/builds/wp09-t08）』以名词『单元卡』开头非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；正文四段齐备、数值主张全部复现准确（同范围另一提交 2f32278d『实现 diagnostics 脱敏服务与崩溃诊断文件…』动词开头合规）",
+      "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
+      "resolution": "建议级，不阻断 DIAG-T08 验收（pass）。属流程纪律提示（F-107/F-109 处置建议连续两次落空，建议 DTB §5.1 或 PIPE 附录 C 模板固化标题示例口径——固化诉求第三次提出）。"
     }
   ]
 }
