@@ -421,6 +421,17 @@ public:
  * @brief 诊断目录实现（§9.7/§6.1/§6.4——会话态诊断集合、只读投影、去重
  *        计数、稳定排序、变更通知）。
  *
+ * 前向声明：脱敏服务（Redaction.hpp——§9.5；exportSafeSummary 双保险接线
+ * 的注入形态，DIAG-T08）。公共头只持 shared_ptr<const IRedactionService>
+ * （不完整类型可声明成员与参数；定义点在实现文件——避免与 Logging.hpp 的
+ * 头环，Logging.hpp→Catalog.hpp 为既有包含边）。
+ */
+class IRedactionService;
+
+/**
+ * @brief 诊断目录实现（§9.7/§6.1/§6.4——会话态诊断集合、只读投影、去重
+ *        计数、稳定排序、变更通知）。
+ *
  * 行为要点（设计依据逐条）：
  *   - 追加即去重（§6.4/DT-DUP-1）：同 DedupKey 条目不再占位，首条目的
  *     occurrences 递增并通知观察者；不同 subject 绝不合并（DT-DUP-2）。
@@ -464,6 +475,25 @@ public:
 
     /// @brief 目录内条目数（含去重折叠前的首条目；去重命中不产生新条目）。
     std::size_t size() const;
+
+    // ---- exportSafeSummary 脱敏双保险接线（§7.7"输出前强制再过一遍脱敏"
+    //      ——DIAG-T08；实现类扩展，登记于单元卡 §14.4 v0.9）----
+    /**
+     * @brief 挂接脱敏服务（exportSafeSummary 输出前强制再过一遍脱敏——
+     *        §7.7 与 reporting 行"双保险，DT-SEC-4"；v0.5 接线登记的落地）。
+     *
+     * 行为：挂接后，exportSafeSummary 的每行输出（键值文本，§1.4）在返回
+     * 前经 redact(line, LogTier::Dev)——Dev 档＝NFR-SEC-07 全量规则（凭据/
+     * 令牌/环境变量/用户名/路径按策略）且**不做**内部十六进制遮蔽：导出面
+     * 的 subject 规范身份（"obj-<32hex>"）是 reporting 的机器可读锚点，
+     * 遮蔽即失去关联能力（R-7 防误伤；§8.10 导出字段面含 subject）。未
+     * 挂接＝原样输出（DIAG-T04 原语义——装配前合法降态）。
+     *
+     * 线程安全：任意线程调用；shared_ptr 快照切换——下一行起生效。
+     *
+     * @param service [in] 脱敏服务（共享所有权；传 nullptr＝解除挂接）
+     */
+    void attachRedactionService(std::shared_ptr<const IRedactionService> service);
 
 private:
     struct Impl;

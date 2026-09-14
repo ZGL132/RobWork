@@ -43,7 +43,10 @@ find_package(GTest CONFIG REQUIRED)
 # DIAG-T06 增列 Aggregation.cpp（§6.3~§6.5/§9.4 聚合器——CauseLink 链遍历/
 # 聚合规则/稳定排序；公共头 Aggregation.hpp 同名落位）。DIAG-T07 增列
 # Logging.cpp（§7.1~§7.5/§9.6 两级日志——管线/节流采样/轮转/WorkerLogBatch
-# 重放/ILogFileOps 接缝；公共头 Logging.hpp 同名落位）。
+# 重放/ILogFileOps 接缝；公共头 Logging.hpp 同名落位）。DIAG-T08 增列
+# Redaction.cpp（§7.7/§9.5 脱敏——四路径策略/凭据模式/降级不放行；公共头
+# Redaction.hpp 同名落位）与 CrashReport.cpp（§7.6 崩溃诊断文件——脱敏写
+# 出/用户目录/磁盘不足降级；公共头 CrashReport.hpp 同名落位）。
 add_library(sdurws_ird_diagnostics STATIC
     src/Diagnostics.cpp
     src/Errors.cpp
@@ -53,7 +56,9 @@ add_library(sdurws_ird_diagnostics STATIC
     src/Factory.cpp
     src/Confirmable.cpp
     src/Aggregation.cpp
-    src/Logging.cpp)
+    src/Logging.cpp
+    src/Redaction.cpp
+    src/CrashReport.cpp)
 
 # C++17（单元卡 D-01／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：diagnostics 公共头将使用 std::optional/variant/filesystem 等
@@ -107,6 +112,10 @@ endif()
 # DT-LOG-1~5（两级分流/稳定序/写失败注入/禁用独立性/WorkerLogBatch 重放）
 # ＋节流采样/轮转/溢出/截断行为面＋P-DIAG-7/P-EX-8 处置钉住随 DIAG-T07 增列
 # （LoggingTest.cpp——§10；故障注入经 ILogFileOps 接缝自持替身，不链 testkit）。
+# DT-SEC-1~4（凭据零命中/路径四策略/脱敏失败降级/导出不泄敏）＋DT-LIFE-4 磁盘
+# 不足半区（崩溃文件写失败降级）＋AT-11 崩溃文件用例＋P-DIAG-1 处置钉住随
+# DIAG-T08 增列（RedactionTest.cpp——§10；故障注入经 applyRules 虚缝与
+# ILogFileOps 接缝自持替身，不链 testkit）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
@@ -115,7 +124,8 @@ add_executable(sdurws_ird_diagnostics_test
     test/CatalogFactoryTest.cpp
     test/ConfirmableTest.cpp
     test/AggregationTest.cpp
-    test/LoggingTest.cpp)
+    test/LoggingTest.cpp
+    test/RedactionTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_test PROPERTIES

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T08",
+  "masterWp": "WP-09（§11 DIAG-T08 行＝WP-09-T05：Redaction.*＝§7.7/§9.5 脱敏；CrashReport.*＝§7.6 崩溃诊断文件）",
+  "branch": "wp09-t08",
+  "base": "330914a64fc91b003381a628f2985cef66a09070",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error）",
+      "notes": "DIAG-T08 落位（§11 行产物）：include/ 新增公共头 Redaction.hpp（§7.7 规则表＋§9.5 IRedactionService 四方法签名逐字＋PathPolicy 四值＋RedactionPolicy＋RedactionService 实现类〔stats/policy/applyRules 虚缝为实现类扩展——seal() 先例〕）与 CrashReport.hpp（§7.6 崩溃诊断文件六段内容载体 CrashReportInput＋CrashReportWriter 写出设施；OS 级崩溃捕获归 WP-24-T02 不越界），src/ 新增 Redaction.cpp（凭据键值/认证方案凭证/环境变量/用户名/路径四策略/User 档内部模式＋降级链〔整条 [REDACTED:redaction-failed]＋DIAG-REDACTION-FAILED〕）与 CrashReport.cpp（键值文本六段组装/逐行 ILogFileOps 落盘/磁盘不足降级 stderr＋开发诊断不递归）。接线三面（§14.4 v0.9 登记）：LoggingPipeline::attachRedactionService＋devTailSnapshot（§7.6 环形缓冲 512 行）、DiagCatalog::attachRedactionService（exportSafeSummary 双保险）、DiagnosticsFactory::attachRedactionService（redactedContextSnapshot §4.2＋translate 异常消息脱敏整备）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 98/98、smoke 98/98）",
+      "notes": "既有 77 用例（DIAG-T02~T07 登记）零修改零回归＋DIAG-T08 新增 21 用例（DT-SEC-1 凭据模式零命中〔服务面＋管线两 Tier 文件面〕＋确定性幂等；DT-SEC-2 路径四策略 Keep/Hash/RootOnly/Strip 逐值正确；DT-SEC-3 脱敏器自身失败经 applyRules 虚缝确定性注入→整条 [REDACTED:redaction-failed]＋DIAG-REDACTION-FAILED 开发诊断、不抛不放行不递归；DT-SEC-4 目录导出不泄敏感路径/用户名且 subject 规范身份保真；DT-LIFE-4 崩溃文件磁盘不足两轨注入〔返回 false／抛异常〕降级不崩溃不阻塞；AT-11 崩溃文件写出且脱敏六段内容＋异常消息 512 B 截断；P-DIAG-1 编译期 static_assert×3＋运行期五元组/finding/project 规范身份逐字内嵌；§7.6 环形缓冲 512 行快照——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 9/9、smoke 9/9）",
+      "notes": "既有 9 用例（DIAG-T02/T05 登记）零修改零回归——DIAG-T08 无新增契约测试（脱敏/崩溃文件为产出方设施；core 契约消费面为值类型内嵌，P-DIAG-1 处置以编译期 static_assert＋运行期逐值断言承载于单元 _test 半区；对端消费面〔ui/reporting/L5 应用壳〕装配归各自单元任务）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "7 处命中＝wp09-t07 基线逐码一致零新增（evidence/policy/runtime 测试目标直链 testkit×6＋testdata_lint 表外依赖/T-1×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径）；零 diagnostics 命中；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-current-wp09t08.log＋gates-ird-gates-target.log）；gate-all 其余 22 项全 PASS（双模式构建＋9 单元全部 _test/_contract_test 目标）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T08.json——前置引用/设计锚点/knownPitfalls 三查）＋verify-task PASS（契约 verify 命令：集成模式构建 sdurws_ird_diagnostics_test 目标零 error，留痕 verify-task.log/verify-target-build.log）",
+    "probeCapability": "故障注入真实触发：DT-SEC-3 经 applyRules 虚缝（protected virtual——产品路径不覆写）确定性抛出→降级链断言整条字面量＋Dev 诊断＋失败计数，连续三次调用字面量稳定（不递归）；DT-LIFE-4 经 ILogFileOps 接缝两轨注入（恒返回 false／appendLine 抛异常）→write 返回 nullopt＋恰一条 [crash-report-write-failed] Dev 诊断＋writer 可复用再次写出仍安全降级；DT-SEC-1/2 断言为输出模式扫描（凭据原文/敏感路径段零命中）非模拟"
+  },
+  "testSuites": [
+    {
+      "suite": "RedactionRules（DT-SEC-1~3 规则面、环境变量/用户名、R-7 防误伤、safeSummary——acceptance 1）",
+      "designRef": "units/diagnostics.md §7.7（脱敏规则表）、§7.3②（降级链）、§9.5（IRedactionService 契约表——纯函数/绝不抛出）、§10 DT-SEC-1~3 行；需求 NFR-SEC-07、NFR-COR-01；R-7（§14.2 命中计数可观测/防误伤）",
+      "cases": [
+        { "name": "RedactionRules.DtSec1_CredentialPatternsNeverRecorded", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-1/NFR-SEC-07/acceptance 1——password/api_key/token/Authorization Bearer JWT/private_key 五形态混排：输出模式扫描零命中（原文值段一个不剩）＋[REDACTED:credential:n]/[REDACTED:token:n] 替换计数在场＋键名保留（结构非秘密）＋stats 命中计数可观测（R-7 观测点）" },
+        { "name": "RedactionRules.DtSec1_DeterministicAndIdempotent", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-1/NFR-COR-01/§9.5 纯函数——同输入两次调用逐字节相等；已脱敏文本再过脱敏逐字节稳定（双保险链路〔管线→崩溃文件再脱敏〕的不变式前提）" },
+        { "name": "RedactionRules.DtSec2_PathPolicyKeep", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-2/§7.7 路径行 Keep——redactPath 原样返回；用户名不因 Keep 泄露（C:\\Users\\<名>→[USER]\\…，§7.7 用户名行无策略条件）；pathHits 计数可见" },
+        { "name": "RedactionRules.DtSec2_PathPolicyHash", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-2/§7.7 Hash——[PATH-<16 位小写 hex>] 形态（SHA-256 前 8 字节经 core ContentDigester——P-DIAG-1/CR-02 唯一哈希路径）；同路径同 token 可关联、异路径异 token、原文不可逆推；消息内嵌路径同样按策略" },
+        { "name": "RedactionRules.DtSec2_PathPolicyRootOnly", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-2/§7.7 RootOnly（默认策略 §9.5）——盘符 D:\\data\\project\\mesh\\arm.stl→D:\\data\\…\\arm.stl（保留盘符＋一级目录＋…＋文件名，§7.7 文本口径）；仅根级文件名原样（无结构可隐藏不伪造）；UNC \\\\srv\\share 根＋一级目录；POSIX /opt/…/mesh.stl；相对路径不处理（R-7）" },
+        { "name": "RedactionRules.DtSec2_PathPolicyStrip", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-2/§7.7 Strip——仅文件名（redactPath 与消息内嵌路径两面）" },
+        { "name": "RedactionRules.DtSec3_DegradationNoRawNoThrow", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-3/§7.3②/acceptance 1——applyRules 虚缝注入抛出（确定性复现脱敏器自身失败）：redact EXPECT_NO_THROW 且整条返回 [REDACTED:redaction-failed]（§7.3② 字面量原文）；safeSummary 同一降级出口；DIAG-REDACTION-FAILED 开发诊断在场（channel diag/redaction、消息常量不回显原文）；失败计数累计；连续失败字面量稳定（thread_local 防护不递归）" },
+        { "name": "RedactionRules.DtSec3_SilentDegradeWithoutSink", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-3 降态半区——failureSink 为空＝静默降级（字面量语义不变＋失败计数在场；装配前合法降态，Redaction.hpp 构造注释）" },
+        { "name": "RedactionRules.EnvAndUserNameRules", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.7 环境变量行/用户名行——%TEMP%/%USERPROFILE%→[USER]；%SOME_SECRET_VAR%/${HOME_DIR}→[REDACTED:env:n]（整体不记录）；${IRD_WORKER_TMP} 产品白名单整引用保留（含定界符回填）；C:\\Users\\<名>→[USER]（无策略条件）" },
+        { "name": "RedactionRules.R7_CanonicalIdsAndDigestsNotMangledOnDev", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-7 防误伤/§14.2——Dev 档规范身份 prj-<32hex> 与 64 位纯十六进制摘要逐字保留（摘要形态非凭证形态——令牌规则多样性判据；认证方案词表不收 digest——与摘要语义同词系统性误伤，§14.4 v0.9 口径）；User 档语义相反：≥32 位十六进制→[HASH]、0x 地址→[ADDR]（NFR-REL-05/UX-02 报告面）" },
+        { "name": "RedactionRules.SafeSummaryTruncatesUtf8Boundary", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.5 safeSummary——User 档脱敏＋maxBytes UTF-8 边界安全截断（切点回退续字节无半个码位）＋[trunc] 标注；maxBytes=0＝只脱敏不截断" }
+      ]
+    },
+    {
+      "suite": "RedactionPipeline（DT-SEC-1/2 的 log 半区＋§7.6 环形缓冲——acceptance 1/3）",
+      "designRef": "units/diagnostics.md §7.3②（管线步骤②强制脱敏）、§7.1（两 Tier 同一脱敏管线）、§7.6（崩溃前快照环形缓冲 512 行）、§10 DT-SEC-1 行 log 操作面",
+      "cases": [
+        { "name": "RedactionPipeline.DtSec1_PipelineScanZeroHitsBothTiers", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-1 log 半区/acceptance 1——attachRedactionService 接线后管线步骤②强制脱敏：Tier-U 与 Tier-D 两文件模式扫描凭据原文/敏感路径段零命中、[REDACTED:credential:1] 替换计数在场、路径按 RootOnly 呈现（文件内 '\\' 转义形态断言——行完整性编码契约）——NFR-SEC-07 全量脱敏对两 Tier 统一生效（§7.1）" },
+        { "name": "RedactionPipeline.DevTailRingKeepsLast512Lines", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.6 崩溃前保留/acceptance 3 数据源面——600 行写入后 devTailSnapshot(512) 恰 512 行且首行为第 89 行（环形覆盖只保最近）、写入序返回（重放语义）、maxLines=3 截取最近 3 行；kLogDevTailRingLines＝§7.6 行数值" }
+      ]
+    },
+    {
+      "suite": "RedactionExport／RedactionFactory（DT-SEC-4 导出双保险＋§4.2 redactedContextSnapshot＋translate 脱敏整备——acceptance 1）",
+      "designRef": "units/diagnostics.md §7.7 与 reporting 行（exportSafeSummary 双保险——DT-SEC-4）、§4.2 redactedContextSnapshot 字段行（构造时经 IRedactionService 产出——接线随本任务）、§8.1 表（转译安全摘要——v0.4 口径④收口）",
+      "cases": [
+        { "name": "RedactionExport.DtSec4_ExportNoSensitivePathsOrUsernames", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-4/RPT/AT-11 精神/acceptance 1——目录条目 params 内嵌凭据/敏感路径/用户目录变量：exportSafeSummary 输出扫描三者零命中、路径按 RootOnly 呈现、[USER] 替换在场；subject 规范身份（obj-<32hex>）逐字保留（Dev 档不做内部十六进制遮蔽——机器可读锚点，R-7）；稳定码字段完整" },
+        { "name": "RedactionExport.DtSec4_UnattachedExportKeepsBaselineShape", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-SEC-4 接线载重证明——未挂接＝DIAG-T04 原样基线（原始路径在场），挂接后同内容输出脱敏且两输出不等（接线非装饰）" },
+        { "name": "RedactionFactory.SnapshotRedactedWhenAttached", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.2 redactedContextSnapshot 接线/acceptance——挂接后 create 产出的快览串（与 exportSafeSummary params 段同形）经 Dev 档脱敏：凭据/敏感路径/用户目录零原文、[REDACTED:credential:1]/[USER]/RootOnly 形态在场；挂接前＝nullopt（v0.4 原语义）；空 params＝nullopt（不伪造空串——core §4.8 口径）" },
+        { "name": "RedactionFactory.TranslateMessageRedactedBeforeTruncation", "status": "passed", "modes": ["integration", "smoke"], "trace": "v0.4 口径④收口（§14.4 v0.9）——兜底条目 DIAG-REGISTRY-UNKNOWN-CODE 的异常消息先过 NFR-SEC-07 再走 512 字节截断：短消息凭据脱敏＋路径 RootOnly；长消息凭据先脱敏后截断（'已截断'标注形态保持——DT-REG-4 零回归）" }
+      ]
+    },
+    {
+      "suite": "CrashReportWrite（§7.6 崩溃诊断文件——AT-11 观测点＋DT-LIFE-4＋P-DIAG-1 运行期半区——acceptance 2/3/4）",
+      "designRef": "units/diagnostics.md §7.6（内容六段/用户目录/失败降级不递归）、§10 DT-LIFE-4 行＋AT-11 映射行、§5.4（finding 状态）；需求 PM-17、NFR-SEC-07、NFR-REL-01 精神；P-DIAG-1（契约 acceptance 4）",
+      "cases": [
+        { "name": "CrashReportWrite.At11_WritesRedactedReportToDirectory", "status": "passed", "modes": ["integration", "smoke"], "trace": "AT-11/PM-17/acceptance 3——写出 EXPECT_NO_THROW 且返回文件路径（crash-<epochMs>-<pid>.log，注入时钟断言）；format=ird-crash-report/1 自描述；六段内容就位（process/exceptionType/exceptionMessage/activeTasks/activeFindings/devLogTail/project）；凭据与敏感路径段全文零命中（processInfo/exceptionMessage/devLogTail 三面脱敏＋RootOnly 呈现）；异常消息经 safeSummary 凭据先脱敏；五元组/finding/project 规范身份逐字内嵌（P-DIAG-1 运行期半区——canonical 不过脱敏，结构化非敏感契约值，§14.4 v0.9 口径 2b）" },
+        { "name": "CrashReportWrite.ExceptionMessageTruncatedTo512Bytes", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.6 异常消息摘要（截断 512 B）——2000 B 超限消息经 safeSummary：值段 ≤512＋[trunc] 标注、凭据在截断前已脱敏（[REDACTED:credential:1] 在场、原文不在场）" },
+        { "name": "CrashReportWrite.DtLife4_DiskFullDegradesWithoutThrowOrBlock", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-4/acceptance 2——ILogFileOps 接缝注入恒返回 false：write EXPECT_NO_THROW 返回 nullopt（如实报告不带病成功）；恰一条 [crash-report-write-failed]＋DIAG-LOG-WRITE-FAILED Dev 诊断（§4.6 ⑤码复用——87 码冻结无 crash 专属码，§14.4 v0.9 口径 4）；stderr 摘要同源（目录经 redactPath 脱敏）；writer 可复用——再次写出仍安全降级且每次恰一条降级诊断（不风暴、不递归）" },
+        { "name": "CrashReportWrite.DtLife4_OpsExceptionAlsoDegrades", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-LIFE-4 注入轨二——appendLine 抛异常（ILogFileOps 契约允许抛，消化责任在使用方）：同一降级出口，无异常外溢、Dev 诊断在场——崩溃路径次生异常即'制造崩溃'的 noexcept 铁律自证" }
+      ]
+    }
+  ]
+}

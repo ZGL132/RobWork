@@ -63,6 +63,11 @@
 
 namespace sdurws::ird::diagnostics {
 
+/// 前向声明：脱敏服务（Redaction.hpp——§9.5；DIAG-T08 接线的注入形态）。
+/// 公共头只持 shared_ptr<const IRedactionService>（不完整类型可声明成员与
+/// 参数；定义点在调用方/实现文件——避免 Catalog.hpp↔Redaction.hpp 环）。
+class IRedactionService;
+
 // =====================================================================
 // 词表与常量（§7.2/§9.6 原文）
 // =====================================================================
@@ -115,6 +120,11 @@ inline constexpr std::size_t kLogThreadTagMaxChars = 32;
 
 /// flush 有界等待默认时限（§9.6：排空默认 3 s；超时放弃＋DIAG-LOG-WRITE-FAILED）。
 inline constexpr std::chrono::milliseconds kLogDefaultFlushDeadline{3000};
+
+/// 崩溃前开发日志快照环形缓冲容量（§7.6"最近 512 行开发日志快照（重放内存
+/// 环形缓冲）"——崩溃诊断文件［CrashReport.hpp/DIAG-T08］经 devTailSnapshot
+/// 消费；容量与 §7.6 行数值一致，环形覆盖语义＝只保最近 512 行）。
+inline constexpr std::size_t kLogDevTailRingLines = 512;
 
 // =====================================================================
 // CorrelationIds / LogRecord（§7.2 字段表）
@@ -565,6 +575,51 @@ public:
      *         载荷边界；批内记录违反 LogRecord 入口不变量同 log 校验）
      */
     void replayWorkerBatch(WorkerLogBatch batch);
+
+    // ---- NFR-SEC-07 全量脱敏接线（§7.3②——DIAG-T08；实现类扩展，seal()
+    //      先例——不在 ILogger 四方法契约上）----
+    /**
+     * @brief 挂接脱敏服务（§7.3② 步骤②"每条消息强制经过 IRedactionService"
+     *        的注入点；DIAG-T08 接线，登记于单元卡 §14.4 v0.9）。
+     *
+     * 行为：挂接后，步骤②对**非内部通道**（diag/logging、diag/log-merge、
+     * diag/redaction——管线/脱敏设施自产常量文本行，见 §14.4 v0.9 口径）的
+     * 记录执行 redact(message, LogTier::Dev)——两 Tier 同一脱敏管线
+     * （NFR-SEC-07 全量：凭据/令牌/环境变量/用户名/路径按策略）；Tier-U 文
+     * 件的"额外内部模式过滤"仍由管线呈现层承担（保持 DIAG-T07 v0.8"Tier-D
+     * 保留原文、Tier-U 用过滤呈现"的镜像语义——Tier-U ⊆ Tier-D 需重建时
+     * 不含 Dev 档已脱敏字段之外的回溯差异）。
+     *
+     * 线程安全：任意线程调用；挂接以 shared_ptr 快照切换——切换后新渲染的
+     * 行生效，在途行不回溯（与 §9.5 setPolicy 同款语义）。
+     *
+     * @param service [in] 脱敏服务（共享所有权——本管线与装配方共同持有，
+     *                挂接后管线存活期内服务不析构；传 nullptr＝解除挂接，
+     *                回到"仅 Tier-U 呈现过滤"的 DIAG-T07 原语义）
+     */
+    void attachRedactionService(std::shared_ptr<const IRedactionService> service);
+
+    // ---- 崩溃前开发日志快照（§7.6——DIAG-T08 崩溃诊断文件消费）----
+    /**
+     * @brief 取最近开发日志行快照（§7.6"最近 512 行开发日志快照（重放内存
+     *        环形缓冲）"的读取面；崩溃诊断文件［CrashReport.hpp］在异常捕获
+     *        点调用）。
+     *
+     * 行为：环形缓冲（容量 kLogDevTailRingLines＝512，§7.6 行数值）只保最近
+     * 的已渲染 Dev 侧行（devPass 记录的完整行文本——含 Tier-U 镜像行与内部
+     * 自省行，与 dev-diagnostics.log 同文）；快照按写入序返回，最多
+     * maxLines 行（调用方按 §7.6 传 512 或更小）。
+     *
+     * 线程安全：任意线程（内部互斥；与日志线程写环形并发安全）。
+     * 注意：快照行是管线渲染后的文本——挂接了脱敏服务时行内消息已按
+     * NFR-SEC-07 脱敏（§7.6 崩溃文件"内容＝脱敏后的"的第一道防线；崩溃
+     * 写出侧仍会再次脱敏——双保险）。
+     *
+     * @param maxLines [in] 最多返回的行数（0＝空表；≥512 至多 512——缓冲
+     *                 容量上限）
+     * @return 最近日志行（写入序；快照不可变性——返回后与后续写入无关）
+     */
+    std::vector<std::string> devTailSnapshot(std::size_t maxLines) const;
 
 private:
     struct Impl;
