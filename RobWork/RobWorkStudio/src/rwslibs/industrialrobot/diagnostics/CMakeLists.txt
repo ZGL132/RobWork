@@ -38,14 +38,16 @@ find_package(GTest CONFIG REQUIRED)
 # （§4.5/§4.6/§9.1 注册表＋内置码表 87 码）——同名任务文件按 §11 行增列。
 # DIAG-T04 增列 Catalog.cpp（§4.2/§6/§9.7 目录＋信封＋sink）与 Factory.cpp
 # （§8/§9.2 工厂＋转译注册表）及私有实现头 ParamSchema（解析单点，诊断注册
-# 期验证共用）。
+# 期验证共用）。DIAG-T05 增列 Confirmable.cpp（§5/§9.3 可确认诊断服务——
+# FindingId/绑定四元组/状态机/失效条件；公共头 Confirmable.hpp 同名落位）。
 add_library(sdurws_ird_diagnostics STATIC
     src/Diagnostics.cpp
     src/Errors.cpp
     src/DiagCodes.cpp
     src/ParamSchema.cpp
     src/Catalog.cpp
-    src/Factory.cpp)
+    src/Factory.cpp
+    src/Confirmable.cpp)
 
 # C++17（单元卡 D-01／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：diagnostics 公共头将使用 std::optional/variant/filesystem 等
@@ -91,12 +93,17 @@ endif()
 # 扫描，与文件末尾配置期守卫互为两道防线）。DT-REG-1~5 矩阵用例随
 # DIAG-T03 增列（StableCodeRegistryTest.cpp——§10）；DT-DIAG-1/2、DT-DUP-1/2、
 # DT-CAT-1/2 及转译器/sink 用例随 DIAG-T04 增列（CatalogFactoryTest.cpp）。
+# DT-CFM-1~5（服务端状态机全转移/绑定复核/失效路径/超时半区）随 DIAG-T05 增列
+# （ConfirmableTest.cpp——§10）；DT-CFM-6~10 的 project 桩联动半区入
+# _contract_test（ConfirmableProjectStubTest.cpp——P-DIAG-8 处置：桩验证不私改
+# 对端链接）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
     test/BuildRedLineTest.cpp
     test/StableCodeRegistryTest.cpp
-    test/CatalogFactoryTest.cpp)
+    test/CatalogFactoryTest.cpp
+    test/ConfirmableTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_test PROPERTIES
@@ -141,10 +148,12 @@ add_custom_command(TARGET sdurws_ird_diagnostics_test POST_BUILD
 # （§3.3：与 core 值类型、与 testkit 谓词、与 project/execution sink 形态
 # 对齐）。落位期首批用例＝链接边界契约（PUBLIC 链 core 的传染性自证＋构建
 # 图仅 core 一条单元边）＋P-DIAG-8 处置的桩消费方形态验证（LinkageContract
-# Test.cpp 文件头有完整处置说明）；DT-COLLAB/DT-CFM 桩夹具套件随 DIAG-T05/
-# T10 落地（届时以桩＋契约夹具消费，不私改 execution 侧链接）。
+# Test.cpp 文件头有完整处置说明）；DT-CFM-6~10（UI 关闭/未确认提交/worker 禁令
+# /确认≠成功/确认留痕形状——project §6.7 桩联动）随 DIAG-T05 增列
+# （ConfirmableProjectStubTest.cpp）。
 add_executable(sdurws_ird_diagnostics_contract_test
-    test/LinkageContractTest.cpp)
+    test/LinkageContractTest.cpp
+    test/ConfirmableProjectStubTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_contract_test PROPERTIES
