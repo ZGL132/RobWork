@@ -932,6 +932,66 @@
       "title": "两处微观代码卫生瑕疵（测试面 header-only 替身头，不缺 AGENTS §2 必填注释项、零行为影响）：①policy/test/sdurws/ird/policy/testdouble/PolicyTestDoubles.hpp:56 include guard 名 SDURWS_IRD_POLICY_TESTDOUBLE_POLICYSERVICETESTDOUBLES_HPP 含 'POLICYSERVICE' 残段，与文件名 PolicyTestDoubles 不一致（疑似早期命名残留——guard 拼写正确性无机械校验时易在后续复制扩展中误导）；②同文件 :419-421 ScriptedCollisionEvaluator::createSession 对 backend->throwInCollision 先赋 throwInCollision、次行覆盖为 throwInCollision||throwInDistance——首行死存储（两行语义注释本身正确，替身故障注入语义不受影响）",
       "owner": "policy 单元实施侧（随下次触及该头的任务顺手修正，或随 POL-T12 文档与门禁同步任务一并处理）",
       "resolution": "guard 重命名为 SDURWS_IRD_POLICY_TESTDOUBLE_POLICYTESTDOUBLES_HPP（header-only 测试面、无 API/链接影响）；删除 :419 首行冗余赋值（下一行覆盖式赋值保留，注释随行）。均零行为变化，属顺手消账级；不阻塞 POL-T11 合入（pass）。编号顺延自 F-092，合入时由所有者确认与并行分支无撞车。"
+    },
+    {
+      "id": "F-094",
+      "source": "POL-T12 验收段 attempt 3（2026-09-14，traceability/acceptance/POL-T12-20260914.md §4.1-B-1，原登记于 acc/POL-T12/3 @ 67dfb62e 记录提交、未并流 redesign-main；2026-09-14 随 POL-T12 attempt 4 验收记录分支 acc/POL-T12/4 重登记并更新处置状态，送验对象 dd3090c4f76115967cd07b794719f3034a051970，分支 wp07-t12）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-09-14",
+      "title": "governance-log.md 越界——不在 POL-T12 契约 allowedFiles 任何模式内：acceptance 2 要求的登记册翻转（P-POL-6 stale→closed 等）其权威落点文件未被契约编译纳入 allowedFiles（契约内部张力：acceptance 2 与 allowedFiles 编译遗漏）；attempt 3 唯一阻断项（送验对象当时为 85a71bf）",
+      "owner": "所有者（合入段对路径 b 处置作最终确认，并裁决 governance/pol-t12-registry 并流）；POL-T12 实施者（已执行拆分）",
+      "resolution": "已按 attempt 3 记录路径 b（拆分治理提交）消解（attempt 4 全量实证）：governance-log.md 改动自任务分支拆出至治理分支 governance/pol-t12-registry @ 94fe223c09dfd325a1bd52ab612769f1958a8081（仅该单文件：P-EV-6/P-POL-6 翻转 closed＋P-POL-9 备注更新＋§4 汇总行＋§5 一致性行＋v1.1 变更记录），任务分支以追加还原提交 fc3d8c06 恢复该文件至 base 44595aa 内容（不重写已推送历史、不 force-push——AGENTS §6.3 红线优先于路径 b 字面'重写分支'步骤，处置全文见 traceability/builds/wp07-t12/rework-b1-note.md）；机制依据＝governance-log §4 维护规则①明文'其任务提交或紧随治理提交同步翻转本表对应行'。attempt 4 验收实证（traceability/acceptance/POL-T12-20260914-r2.md §4.1）：送验 diff 44595aa..dd3090c4 零越界文件；治理分支补丁与原任务分支改动 patch-id --stable 同为 05ff1d18ddcf2d480fe1d3408cee6fa01b0ed4b6（IDENTICAL-PATCH）。残余（不阻断）：追加还原保守变体与治理分支并流时点由所有者合入段最终确认（并流即视为对路径 b 的追认）。"
+    },
+    {
+      "id": "F-095",
+      "source": "POL-T12 验收段 attempt 3（2026-09-14，traceability/acceptance/POL-T12-20260914.md §4.8-G-2/§4.9，原登记于 acc/POL-T12/3 记录提交、未并流 redesign-main；2026-09-14 随 attempt 4 记录分支 acc/POL-T12/4 重登记并更新处置状态）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-14",
+      "title": "消账引用编号错位——F-089/F-091 的散文计数修正被 POL-T12 实施面三处错标为〔F-088〕/〔F-090〕（该两条实为 .log 未入库问题）：提交 fca3fa97 标题/正文、units/policy.md §15.4 v0.13④、ird-test-report.json notes；且 F-089/F-091 状态当时未随修正翻转。附注：ird-test-report.json notes 一句'契约 dependsOn 缺 POL-T01'与契约实际不符（POL-T12.json dependsOn 首项即 POL-T01；可考出处＝contract-compile-log.md:53 拓扑序句'POL-T02→T12'与 DTB 依赖列的表述差，非凭空虚报）",
+      "owner": "POL-T12 实施者（可修面勘误）；详设所有者（units/policy.md §15.4 登记面）",
+      "resolution": "已消账（attempt 4 亲手核读实证）：policy.md v0.14 返工行③与 v0.13④/卡头版本行原位勘误注完成编号更正〔F-088〕→〔F-089〕、〔F-090〕→〔F-091〕（提交 198a0fa6）；findings.json F-089/F-091 随该提交翻转 fixed 并补注勘误（见 F-089/F-091 resolution 尾注）。不可修面按留痕不可变纪律保留并经本条与 attempt 3 记录留档：已入库提交 fca3fa97 标题/正文、ird-test-report.json（属送验对象新增件、实施面选择勘误注而非返工改写——attempt 4 认可其为建议级残余，无阻断）；dependsOn 附注失实随本条留档更正。"
+    },
+    {
+      "id": "F-096",
+      "source": "POL-T12 验收段 attempt 3（2026-09-14，traceability/acceptance/POL-T12-20260914.md §4.8-G-3，原登记于 acc/POL-T12/3 记录提交、未并流 redesign-main；2026-09-14 随 attempt 4 记录分支 acc/POL-T12/4 重登记并更新处置状态）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-14",
+      "title": "同一提交 fca3fa97 内两份文档对 P-EV-6 的处置叙述直接矛盾——units/policy.md v0.13② 称'如实留册载所有者处置，不越权代改'，governance-log.md v1.1 却已'按维护规则③以卡为准回改 closed'（后者合规有据：evidence.md v1.3 卡内 2026-09-13 已随 EV-T12 翻转＋规则③明文），矛盾在 policy.md 行文未随实际动作同步",
+      "owner": "POL-T12 实施者；governance-log.md 所有者（构建约定所有者）",
+      "resolution": "已消账（attempt 4 亲手核读实证）：policy.md v0.14 返工行②对 v0.13② P-EV-6 表述原位勘误并加勘误注（更正为'按 governance-log §4 维护规则③以卡为准回改本册行'，与实际动作一致）；governance-log.md v1.1 侧叙述经治理分支 94fe223c 在案——两文档叙述已收敛一致。"
+    },
+    {
+      "id": "F-097",
+      "source": "POL-T12 验收段 attempt 3（2026-09-14，traceability/acceptance/POL-T12-20260914.md §4.11-G-4，原登记于 acc/POL-T12/3 记录提交、未并流 redesign-main；2026-09-14 随 attempt 4 记录分支 acc/POL-T12/4 重登记，送验对象 dd3090c4 复核后维持 open）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "ird-test-report.json（builds/wp07-t12）gates.codes 枚举漏列 runtime_test 直链 testkit 的 SUB 命中——写作'SUB×5（evidence_test／evidence_contract_test／policy_test／policy_contract_test 直链＋testdata_lint 表外边）'直链仅列 4，实际直链 5；总数 7 与 ird_gates.log 一致。F-025 计数/清单家族轻症",
+      "owner": "POL-T12 实施者侧（报告类文档随下次触及时修正）；WP-01（门禁基线侧）",
+      "resolution": "attempt 4 复核：未随返工修正（报告属送验对象新增件，实施面按留痕不可变口径未改写）；验收者复跑 ird_gates 7 命中与在库 ird_gates.log／rework-ird_gates.log 逐码一致（SUB 直链 5 含 runtime_test＋表外边 1＋T1×1），dd3090c4 提交正文的清单版本正确（直链 5 全列）——失实面仅 report 的 gates.codes 字段一处。维持 open，随下次触及该报告面的任务顺手修正，不阻断 POL-T12 验收（pass）。"
+    },
+    {
+      "id": "F-098",
+      "source": "POL-T12 验收段 attempt 3（2026-09-14，traceability/acceptance/POL-T12-20260914.md §4.2-G-5，原登记于 acc/POL-T12/3 记录提交、未并流 redesign-main；2026-09-14 随 attempt 4 记录分支 acc/POL-T12/4 重登记，attempt 4 复现复核后维持 open）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "AGENTS §4.1 集成配置命令缺本机构建口径记载——主仓库 build 缓存 CMAKE_CXX_FLAGS=-DNOMINMAX -DWIN32_LEAN_AND_MEAN -DWIN32（首次配置显式传入；环境变量 CXXFLAGS 用户/机器级均空）与 CMAKE_PREFIX_PATH=<Qt 路径>（F-062/F-007 已部分登记）均未写入文档命令；全新环境按文档命令配置后全量构建在框架插件处 73 error（RWSimulatorPlugin/rwplugin，min/max 宏污染，F-008 同分布；ird 面零错误）",
+      "owner": "AGENTS.md 维护方（构建约定所有者）",
+      "resolution": "attempt 4 复核：维持 open——AGENTS.md 不在 POL-T12 allowedFiles，任务侧不可修；attempt 4 以对齐主树缓存口径（toolchain＋Qt PREFIX＋CXX flags）复现同 SHA 全量构建 0 error，再证该差异为环境口径而非送验对象缺陷。与 F-008/F-062/F-099 合并处置可一并消解。不阻断 POL-T12 验收（pass）。"
+    },
+    {
+      "id": "F-099",
+      "source": "POL-T12 验收段 attempt 4（2026-09-14，traceability/acceptance/POL-T12-20260914-r2.md §4.2 环境口径注记，送验对象 dd3090c4f76115967cd07b794719f3034a051970，分支 wp07-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "AGENTS §4.1 集成模式复现口径缺'RobWorkStudio.ini 本地辅助件'记载——静态插件口径（RWS_USE_STATIC_LINK_PLUGINS=ON，主树缓存实值）下 RobWorkStudio/src/CMakeLists.txt:58 configure_file 硬依赖 RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static，而 bin/ 整目录被根 .gitignore 规则 [Bb]in/ 忽略（属 git 未追踪本地构建辅助件），全新 clone/worktree 首次配置即报'CMake Error: File …RobWorkStudio.ini.template.static does not exist'（attempt 4 实证：首配 CONFIGURE_EXIT=1；自主树复制两件 ini 辅助件〔ini.shared.in＋ini.template.static〕后重配 CONFIGURE_EXIT=0）",
+      "owner": "AGENTS.md 维护方（构建约定所有者）；F-098 同类文档口径缺口",
+      "resolution": "建议三选一：①AGENTS §4.1 补记'新 worktree/clone 复现集成构建需自主树复制 bin/RobWorkStudio.ini.template.static（静态插件口径必需）'；②两件 ini 辅助件经 .gitignore 白名单例外登记入库；③RobWorkStudio/src/CMakeLists.txt 改容错生成（模板缺失时生成默认 ini）——②③涉框架侧文件，需先走 SA-02 patch 登记。F-098 同型（全新环境按文档口径无法直接复现构建），合并处置可一并消解。不阻断 POL-T12 验收（pass）——验收复现已用复制辅助件方式完成且全量 0 error。"
     }
   ]
 }
