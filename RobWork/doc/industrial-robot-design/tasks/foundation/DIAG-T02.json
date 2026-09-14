@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "构建落位：diagnostics 占位转真实库",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T01",
     "CORE-T01"

@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 109,
+  "tickCount": 110,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
+    "fix": 0,
     "implement": 0,
-    "fix": 1,
-    "accept": 4
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-14T10:23:28+08:00",
+    "updatedAt": "2026-09-14T11:14:20+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -753,6 +753,16 @@
       "acceptanceRecord": "traceability/acceptance/POL-T12-20260914-r2.md",
       "mergedAt": "2026-09-14",
       "failReason": "attempt3 fail（B-1：governance-log.md 越界——语义达成而载体违规，F-094 登记）——返工拆分治理提交（追加还原，治理落点 governance/pol-t12-registry @ 94fe223c 待所有者追认并流）后 attempt4 pass"
+    },
+    {
+      "task": "DIAG-T02",
+      "unit": "diagnostics",
+      "result": "pass-merged",
+      "commits": [
+        "b5c9504eab8482c60b6653b27cf93d450c5dce75"
+      ],
+      "acceptanceRecord": "traceability/acceptance/DIAG-T02-20260914.md",
+      "mergedAt": "2026-09-14"
     }
   ],
   "policy": {
@@ -778,11 +788,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "DIAG-T02",
-      "contractPath": "tasks/foundation/DIAG-T02.json",
-      "branch": "wp09-t02"
-    },
     {
       "taskId": "DIAG-T03",
       "contractPath": "tasks/foundation/DIAG-T03.json",
@@ -997,5 +1002,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "66cab2d6-2bb6-4915-afe2-e23374bde536"
+  "tickToken": "f54fdad2-0dac-4ddb-91cf-b5eced726bf5"
 }
