@@ -992,6 +992,26 @@
       "title": "AGENTS §4.1 集成模式复现口径缺'RobWorkStudio.ini 本地辅助件'记载——静态插件口径（RWS_USE_STATIC_LINK_PLUGINS=ON，主树缓存实值）下 RobWorkStudio/src/CMakeLists.txt:58 configure_file 硬依赖 RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static，而 bin/ 整目录被根 .gitignore 规则 [Bb]in/ 忽略（属 git 未追踪本地构建辅助件），全新 clone/worktree 首次配置即报'CMake Error: File …RobWorkStudio.ini.template.static does not exist'（attempt 4 实证：首配 CONFIGURE_EXIT=1；自主树复制两件 ini 辅助件〔ini.shared.in＋ini.template.static〕后重配 CONFIGURE_EXIT=0）",
       "owner": "AGENTS.md 维护方（构建约定所有者）；F-098 同类文档口径缺口",
       "resolution": "建议三选一：①AGENTS §4.1 补记'新 worktree/clone 复现集成构建需自主树复制 bin/RobWorkStudio.ini.template.static（静态插件口径必需）'；②两件 ini 辅助件经 .gitignore 白名单例外登记入库；③RobWorkStudio/src/CMakeLists.txt 改容错生成（模板缺失时生成默认 ini）——②③涉框架侧文件，需先走 SA-02 patch 登记。F-098 同型（全新环境按文档口径无法直接复现构建），合并处置可一并消解。不阻断 POL-T12 验收（pass）——验收复现已用复制辅助件方式完成且全量 0 error。"
+    },
+    {
+      "id": "F-100",
+      "source": "DIAG-T02 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T02-20260914.md §4.9-G-1，送验对象 b5c9504eab8482c60b6653b27cf93d450c5dce75，分支 wp09-t02）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-012 标题家族再现：DIAG-T02 送验提交 b5c9504e 标题『[WP-09-T02] diagnostics 单元构建落位：INTERFACE 占位升级 STATIC 真实库』前缀后以单元名词'diagnostics'开头，非动词开头（ACC §4.9／AGENTS §6.3 字面要求）——正文四段齐备、验证结论经验收者亲手复现全部属实，无粉饰",
+      "owner": "实施者侧（后续送验提交自检）；治理侧（F-012 家族 20+ 例逐例登记边际收益递减，建议 PIPE 附录 C 提示词模板加标题动词开头硬性自检项，一次性收敛）",
+      "resolution": "建议级，不阻断 DIAG-T02 验收（pass）。家族性处置建议随 F-012 主条目合并推进：模板强制（提示词/自查清单）优先于逐例登记。"
+    },
+    {
+      "id": "F-101",
+      "source": "DIAG-T02 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T02-20260914.md §4.2-G-2 环境口径注记，送验对象 b5c9504e…，分支 wp09-t02）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "全新集成树配置缓存污染陷阱（F-007/F-098/F-099 环境链家族补充形态）：首次未带 vcpkg toolchain 的失败配置会在 build/CMakeCache.txt 残留 Boost_DIR-NOTFOUND 等失败值，此后即便补齐 toolchain／Qt CMAKE_PREFIX_PATH／CMAKE_CXX_FLAGS 全部参数重配，FindBoost 仍失败（CONFIG 查找失败后缓存 NOTFOUND 不重找）——必须删除整个 build 树从零重配。DIAG-T02 验收实证：无 toolchain 首配失败 → 补 toolchain 重配仍失败（同 FindBoost.cmake:2440）→ 删 build 树后同参数配置即成功",
+      "owner": "AGENTS.md 维护方（构建约定所有者）；与 F-007/F-062/F-098/F-099 合并处置（建议 §4.1 环境口径记载附注'首配失败后须删 build 树重配，缓存残留 NOTFOUND 不自愈'）",
+      "resolution": "建议级，不阻断 DIAG-T02 验收（pass）。验收复现口径已按删除缓存＋主树完整参数（toolchain＋Qt PREFIX＋CXX_FLAGS）完成，全量构建 0 error。"
     }
   ]
 }
