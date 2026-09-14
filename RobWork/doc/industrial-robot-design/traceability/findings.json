@@ -1122,6 +1122,16 @@
       "title": "F-012/F-100/F-104/F-107/F-109 家族再现：DIAG-T08 留痕提交 a11f1726 标题『[WP-09-T08] 单元卡 v0.9 实现落位登记与验证留痕（traceability/builds/wp09-t08）』以名词『单元卡』开头非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；正文四段齐备、数值主张全部复现准确（同范围另一提交 2f32278d『实现 diagnostics 脱敏服务与崩溃诊断文件…』动词开头合规）",
       "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
       "resolution": "建议级，不阻断 DIAG-T08 验收（pass）。属流程纪律提示（F-107/F-109 处置建议连续两次落空，建议 DTB §5.1 或 PIPE 附录 C 模板固化标题示例口径——固化诉求第三次提出）。"
+    },
+    {
+      "id": "F-113",
+      "source": "DIAG-T09 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T09-20260915.md §4.10，送验对象 4d4bf83c11bfe6c626efe6d5d25084beff4671a4，分支 wp09-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-087/F-090 悬空引用家族再现：DIAG-T09 送验的 traceability/builds/wp09-t09/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』『留痕 integration-build.log』）与 selfCheck.validateTask 字段（『留痕 verify-task.log/validate-task.log』）引用 4 件 .log 文件均未入库（git ls-tree 4d4bf83c 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份；根 .gitignore『*.log』规则同 F-010 根因）；提交正文 4d4bf83c 干净——仅声称 XML×4＋report 且与 ls-tree 逐件一致（较 F-085/F-088『正文逐件列举不存在文件』为轻）。证据本体不缺：双模式 XML（integration 107/107＋14/14、smoke 107/107＋14/14 顶格实测）与 report 全部数值主张（双模式 107/107＋14/14、ird_gates 7 命中＝wp09-t08 基线逐码一致零 diagnostics、validate-task PASS、verify-task PASS）经验收者在 detached worktree @SHA 从零亲手复现准确，判级沿 F-081/F-083/F-085/F-087/F-088/F-090 先例＝建议级不阻断",
+      "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀，或报告字段只引用在库文件）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——悬空引用/未入库家族累计第 12 例，流程级根治诉求再升一级）",
+      "resolution": "建议级，不阻断 DIAG-T09 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致，ird_gates 命中分布与报告逐码一致）。修复方向同 F-087/F-090。"
     }
   ]
 }
