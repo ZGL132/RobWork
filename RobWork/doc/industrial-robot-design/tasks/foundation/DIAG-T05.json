@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "ConfirmableFinding 服务（FindingId/Binding/状态机）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T04"
   ],
