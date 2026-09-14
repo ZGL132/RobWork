@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T05",
+  "masterWp": "WP-09-T03/T04（设施面——§11 DIAG-T05 行：Confirmable.*＝FindingId/Binding/Record/服务/状态机/失效条件；聚合随 T06、日志随 T07、脱敏随 T08、容量清理随 T09）",
+  "branch": "wp09-t05",
+  "base": "c155aa62cb9dadae2e03becf072d123724770ecd",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error C）",
+      "notes": "DIAG-T05 落位（§11 行产物）：include/ 新增公共头 Confirmable.hpp（§5.2 FindingRecord 字段表 15 字段＋§5.3 FindingBinding 绑定四元组＋§5.4 FindingState 与 finding_reason token 词表＋§9.3 FindingId〔P-DIAG-4 自持解析〕/ConfirmOutcome/IConfirmableFindingService 五方法签名逐字＋ConfirmableService 实现＋IConfirmationEnvironment 复核环境探针＋SA-15 装配面 static_assert）；src/ 新增 Confirmable.cpp（findingRecordDigest 唯一定义点——canonical 编码 'IRDDREC1' 登记于文件头；CR-02：SHA-256 只经 core ContentDigester）。实现口径登记八项见单元卡 §14.4 v0.6"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 54/54、smoke 54/54）",
+      "notes": "既有 41 用例（DIAG-T02/T03/T04 登记）零修改零回归＋DIAG-T05 新增 13 用例（DT-CFM-1~5 服务端半区：创建/确认/拒绝/超时/修订与策略失配/命令重用/token 一次性/invalidate 失效域/pendingFor 过滤＋P-DIAG-4 FindingId 句法＋P-DIAG-6 投影＋CR-02 摘要确定性敏感性＋转移 Dev 日志——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 9/9、smoke 9/9）",
+      "notes": "既有 3 用例（DIAG-T02 登记）零修改零回归＋DIAG-T05 新增 6 用例（ConfirmableProjectStubTest：DT-CFM-6~10 project §6.7 桩联动——非交互提交 confirmations-unresolved/UI 关闭 interaction-lost 无永久等待/worker 装配面禁令/确认≠自动成功（编译失败仍不提交）/确认留痕四元组＋credential 形状回读/编译前复核拦截陈旧确认；P-DIAG-8 处置：桩验证不私改对端链接）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ConfirmableTest（DT-CFM-1~5 服务端半区＋P-DIAG-4/6、CR-02 处置钉住——acceptance 1 服务端状态机/绑定复核/失效路径＋acceptance 3/4）",
+      "designRef": "units/diagnostics.md §10 DT-CFM-1~5、§5.2（字段表）、§5.3（绑定四元组与失效条件）、§5.4（状态机与转移约束）、§9.3（接口契约）；需求 MDL-06④、SA-15、ERR-01、CON-06；P-DIAG-4/P-DIAG-6/CR-02（契约 acceptance 3/4）",
+      "cases": [
+        { "name": "ConfirmableTest.DtCfm1_CreateThenConfirmTransitionsToConfirmed", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-1/acceptance 1——create 后置逐项（Pending/findingId 分配/binding 四元组冻结〔逐成员〕/callbackToken 分配/expiresAtUtc 默认 nullopt＝P-DIAG-6）；submitConfirmation 绑定一致→Confirmed＋confirmation 写入（principal/时间完整）；core 投影 Confirmed＋凭据在场（core C-2）；token 一次性（成功后再用→InvalidState）" },
+        { "name": "ConfirmableTest.DtCfm1_CreatePreconditionViolationsFailFast", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.3 create 前置逐条 fail-fast（错误面 ComparisonMissing/ContextMissing/Usage——§9.0）：非比较型（core C-1）/创建即带凭据（绕过状态机，core C-2）/未注册码/非可确认码（confirmable=false）/命令摘要全零/修订全零/空 commandType/空 subjectScope/全零 ObjectId；违约零残留（无半构造记录）" },
+        { "name": "ConfirmableTest.DtCfm2_RejectionInvalidatesWithCoreRejectedProjection", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-2——submitRejection(user-rejected)→Invalidated(reasonToken)＋core 投影 Rejected（MDL-06④ 拒绝即阻止应用；core C-2 无凭据）；终态不可逆（再确认→InvalidState、再拒绝→InvalidState 异常）" },
+        { "name": "ConfirmableTest.DtCfm3_ExpirationOnlyWhenExplicitlyArmed", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-3/P-DIAG-6——默认（未 armExpiration）推进时钟恒 Pending（无超时自动确认——project §5.3.4）；显式设置后到期惰性转移 Expired（core 投影保持 Pending——设施态不进 core 枚举）；过期后确认→InvalidState（ConfirmOutcome 无 Expired 值——结果枚举优先口径，单元卡 v0.6 登记）" },
+        { "name": "ConfirmableTest.DtCfm4_RevisionChangeYieldsBindingMismatchInvalidation", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-4——tip 前进后提交旧凭据：ConfirmOutcome=BindingMismatch＋Invalidated(revision-changed)（不符成员定性归类）＋不静默沿用（token 作废后重放→InvalidState）＋core 投影 Pending（不伪造 core 终局）" },
+        { "name": "ConfirmableTest.DtCfm4_CommandDigestMismatchYieldsBindingMismatch", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-4 补面——命令槽 nullopt（原命令已终结＝跨命令重用旧凭据面）→BindingMismatch＋binding-mismatch（§5.3 失效条件表'输入修订变化'行的命令侧半区）" },
+        { "name": "ConfirmableTest.DtCfm5_PolicyChangeYieldsBindingMismatchInvalidation", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-5/CON-06——policyContentId 失配→BindingMismatch＋policy-changed；对照半区：绑定无策略身份（非策略来源类）策略变化不触发（成员跳过——必填义务归调用方，服务端不私造启发式判据）" },
+        { "name": "ConfirmableTest.DtCfm6_InvalidateTransitionsAndTerminalGuards", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-6 服务端半区——invalidate 三失效路径（interaction-lost/write-lost/canceled，§5.3 失效条件表）；token 作废（复用→InvalidState）；Invalidated 再失效→InvalidState（不可逆）；未知 id/空 reasonToken→Usage（fail-fast）" },
+        { "name": "ConfirmableTest.DtCfm1_PendingForFiltersByRevisionAndState", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.3 pendingFor——修订等值过滤＋仅 Pending（终态不占待确认集）＋确定性序（两次查询逐元素相等——findingId 字典序，NFR-COR-02 精神）＋身份唯一" },
+        { "name": "ConfirmableTest.DtPdiag4_FindingIdCanonicalSyntaxMatchesCoreId128Rules", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/P-DIAG-4——generate→toCanonical 形态（fnd-＋32 小写 hex＝36 字符）＋parse(format(x))==x 往返＋全零保留值 isValid=false＋严格性探针（tag 不符〔obj-/rev- 喂入边界失败〕/大写 hex/长度违约/缺 tag/空串全拒）＋fromCanonical 违约抛 DiagnosticsError(Usage)（句法与 core Id128 严格一致；异常轨各归其单元）" },
+        { "name": "ConfirmableTest.DtPdiag6_NonRejectInvalidationAndExpiryProjectToCorePending", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/P-DIAG-6——Invalidated(非 user-rejected) 与 Expired 的 core 投影均保持 Pending（§5.4 图注：Invalidated/Expired 仅存在于服务端记录，不进 core 枚举；core 视角保持'未确认'事实不伪造终局）" },
+        { "name": "ConfirmableTest.DtCr02_FindingDigestDeterministicAndSensitive", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/CR-02——findingRecordDigest 两次计算逐字节相等（SHA-256 只经 core ContentDigester 唯一路径）＋代表性字段敏感性（实际值/单位/context/subject 变化→摘要变化——绑定复核有效性的前提）" },
+        { "name": "ConfirmableTest.DtCfm6_StateTransitionsWriteDevLog", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.4 转移约束——每次状态转移恰一行 Dev 日志（channel=diag.confirmable、行含 findingId 规范文本/转移目标态/原因 token——可追溯）；注入 IDevLogSink 收集器观测（DIAG-T07 logger 落地前的同形桩位）" }
+      ]
+    },
+    {
+      "suite": "ConfirmableProjectStubTest（DT-CFM-6~10 project §6.7 桩联动——acceptance 1 桩联动半区＋acceptance 2 SA-15 分工四点）",
+      "designRef": "units/diagnostics.md §10 DT-CFM-6~10、§5.1（SA-15 分工）、§5.3（确认后的义务：确认≠自动成功）、§5.5/§5.6（时序与 UI 关闭）；project.md §5.3.3/§5.3.4/§6.7/§6.10；MDL-06④、SA-15；P-DIAG-8 处置",
+      "cases": [
+        { "name": "ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-7/acceptance 2'未确认不能提交命令'——interaction==nullptr 且待确认集非空→Rejected(confirmations-unresolved)＋无修订（MDL-06④）＋finding 仍 Pending→会话路径 invalidate(canceled) 失效（§5.3.4）" },
+        { "name": "ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-6/acceptance 2'UI 关闭回调失效即 Invalidated、无永久等待'——isAlive=false 前置检查拦截（回调零调用）→Aborted(interaction-lost)＋无修订＋finding=Invalidated(interaction-lost)＋桩流程同步返回（不阻塞）＋token 复用→InvalidState" },
+        { "name": "ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-8/acceptance 2'worker 不产生可确认诊断（装配面静态断言）'——静态半区：测试侧复钉产品头 static_assert 判据（IDiagnosticSink/IDevLogSink 与 IConfirmableFindingService 互不可转换、ConfirmableFinding 不得窄化为 DiagnosticRecord 经 report 回传）；运行期半区：worker 通道桩（IDevLogSink）帧均为普通诊断文本、服务端 pendingFor 恒空（SA-15 装配不暴露——确认只在命令边界）" },
+        { "name": "ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-9/acceptance 1'确认≠自动成功'——确认成立后编译桩失败→Failed＋无修订（MDL-06：确认不豁免编译；SA-15 凭据'继续或终止'终止枝）＋confirmations 不入命令摘要＋finding 保持 Confirmed（失败归编译面不回泼状态机）" },
+        { "name": "ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CFM-10/acceptance 1'确认留痕形状与 project §6.7 一致'——Committed 后桩回读 confirmations[] 恰一条＝{binding 四元组, credential}：findingDigest 可经 findingRecordDigest 复算比对、commandDigest=命令载荷摘要、baseRevisionId=输入修订、策略成员与记录同源、credential（principal/时间）完整（project §6.7 形状权威）" },
+        { "name": "ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1'绑定四元组双复核——编译前（project §6.7）'——S4 提交时复核通过后、编译前 tip 变化（setPreCompileHook 注入）：桩按 §9.3 契约表口径 tryFind＋findingRecordDigest 复算＋环境比对→不静默沿用旧确认→Rejected(confirmations-unresolved)＋无修订＋编排侧 invalidate 登记 Invalidated(revision-changed)（§5.4 底行'该凭据作废'——重新确认＝重新走 S4）" }
+      ]
+    },
+    {
+      "suite": "既有回归面（DIAG-T02/T03/T04 登记，零修改）",
+      "designRef": "units/diagnostics.md §10 DT-BUILD、DT-REG-1~5、DT-DIAG/DT-DUP/DT-CAT、DT-Cr08；NFR-MNT-01/02",
+      "cases": [
+        { "name": "DiagnosticsBuild.*(5)＋DiagCodesRegistry.*(11)＋DiagCodesVocabulary/CoreBaseline/TextKeys/DiagnosticsErrors(6)＋DiagCatalogFactory.*(11)＋ErrorCodeTranslatorTest.*(5)＋DiagnosticsSinkShape/DiagnosticsEnvelopeBaseline(3)", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有 41 用例零修改零回归——新增 Confirmable.hpp/cpp 落位后：零 Qt（D-01）、零 Eigen/rw 直接包含、构建图仅 core 边（ARCH §3.5）、公共头路径布局（R-2）、注册表/工厂/目录/转译行为全部保持；新公共头 Confirmable.hpp 纳入 DT-BUILD 扫描面" }
+      ]
+    }
+  ],
+  "regression": {
+    "integration": { "total": 63, "passed": 63, "failed": 0, "note": "unit 54（既有 41＋新增 13）＋contract 9（既有 3＋新增 6）——既有 44 用例零修改零回归；其余单元零触碰（改动仅 diagnostics/{include,src,test}/**＋diagnostics/CMakeLists.txt 增列，全量集成构建 exit 0 零 error C 佐证）" },
+    "smoke": { "total": 63, "passed": 63, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "7 命中＝wp09-t04 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×5（evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——F-072 族既有缺陷）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）——当前扫描输出零 diagnostics 相关命中（gates-current-wp09t05.log 全文检索 diagnostics 计数 0）",
+      "deltaAnalysis": "本任务新增构建图元素＝产品库增列 1 个源文件（Confirmable.cpp）＋_test 增列 1 个源文件＋_contract_test 增列 1 个源文件（零新增目标/零新增单元边——诊断单元依赖边仍仅 core 一条）——命中集合与基线一致的必然结果。exit 1＝基线既有命中的预期行为，处置权 WP-01 所有者",
+      "logs": ["gates-current-wp09t05.log（ird_gates 目标全输出）"]
+    }
+  },
+  "realFailureEvidence": "测试真实失败能力自证（acceptance-protocol §4.5 预演，验收者侧将独立重演）：①探针 A——将 ConfirmableService::verifyBinding 第④步 tip 比对（§5.3'输入修订变化'判定）以 (true || …) 短路后复跑，DtCfm4_RevisionChangeYieldsBindingMismatchInvalidation 真实变红（预期 BindingMismatch 实得 Confirmed）；同轮契约测试 DtCfm7_PreCompileRebindRejectsStaleConfirmation 保持绿——桩的编译前复核按 §9.3 契约表口径自行比对（不经服务端 verifyBinding），恰证两层复核独立性；②探针 B——将 expireIfDue 的到期判定以提前 return 短路后复跑，DtCfm3_ExpirationOnlyWhenExplicitlyArmed 真实变红（Expired 不触发）。逐字还原后复跑双模式 54/54＋9/9 全绿（探针零残留：Confirmable.cpp 内 grep 'PROBE-TEMP' 计数 0）。探针期间的中间构建未提交、未计入任何留痕结论；留痕 XML/log 均为还原后最终源码的重跑结果",
+  "logs": {
+    "integrationBuild": "integration-build.log（全量 cmake --build build --config Release，exit 0，零 error C/fatal error）",
+    "verifyTargetBuild": "verify-target-build.log（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_diagnostics_test，exit 0）",
+    "integrationTestRun": "integration-test-run.log（两目标 54/54＋9/9 全绿）",
+    "smokeConfigure": "smoke-configure.log（独立冒烟配置 exit 0；vcpkg toolchain 绝对路径）",
+    "smokeBuild": "smoke-build.log（exit 0，零 error C/fatal error）",
+    "smokeTestRun": "smoke-test-run.log（两目标 54/54＋9/9 全绿）",
+    "gtestXml": ["sdurws_ird_diagnostics_test-integration.xml", "sdurws_ird_diagnostics_contract_test-integration.xml", "sdurws_ird_diagnostics_test-smoke.xml", "sdurws_ird_diagnostics_contract_test-smoke.xml"],
+    "validateTask": "validate-task.log"
+  }
+}
