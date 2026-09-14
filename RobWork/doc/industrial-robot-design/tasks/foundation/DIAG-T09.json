@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "诊断生命周期与容量（目录清理策略/宿主留痕形状）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T04",
     "DIAG-T07"
