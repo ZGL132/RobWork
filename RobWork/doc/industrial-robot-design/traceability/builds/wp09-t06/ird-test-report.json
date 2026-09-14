@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T06",
+  "masterWp": "WP-09（§11 DIAG-T06 行＝WP-09-T03 范围设施面：Aggregation.*＝CauseLink/规则/稳定排序）",
+  "branch": "wp09-t06",
+  "base": "1397654c357b06728435dc9f3c34905a5d6fe9b1",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error）",
+      "notes": "DIAG-T06 落位（§11 行产物）：include/ 新增公共头 Aggregation.hpp（§6.3 CauseLink 链遍历＋§6.4 AggregationRule/AggregationScope/AggregatedEntry＋§9.4 IDiagnosticAggregator 签名逐字/DiagnosticAggregator 无状态实现），src/ 新增 Aggregation.cpp（容差链遍历/三类全序分组键/阈值折叠/orderKey 稳定排序——确定性面全部字典序·单调序，无哈希序指针序）。实现口径登记四项见单元卡 §14.4 v0.7"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 65/65、smoke 65/65）",
+      "notes": "既有 54 用例（DIAG-T02/T03/T04/T05 登记）零修改零回归＋DIAG-T06 新增 11 用例（DT-AGG-1 同根因聚合·occurrences 实际次数·多对象明细全保留·混合分类不私造汇总；DT-AGG-2 两次独立构建乱序输入同序·跨任务不折叠·视图 orderKey＝成员最早；DT-AGG-3 缺失项全量列出 6/6；DT-AGG-4 局部碰撞/搜索未果不升级 C8＋C5 同表；DT-CHAIN-1 转译链三层完整到根因＋断链严格 Usage＋聚合断链容差；DT-DUP-1 重复计数；DT-AGG-5 纯函数确定性·阈值可配·空集·违约面 Usage；P-DIAG-1 编译期 static_assert＋运行期 core 值原样内嵌——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 9/9、smoke 9/9）",
+      "notes": "既有 9 用例（DIAG-T05 登记）零修改零回归——DIAG-T06 无新增契约测试（acceptance 1~4 观测面均在单元内：聚合器为纯函数无跨单元对端；P-DIAG-1 处置＝消费 core 基线钉住，与既有 LinkageContractTest 的 core 消费面自证同层）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "7 处命中＝wp09-t05 基线逐码一致零新增（evidence/policy/runtime 测试目标直链 testkit×6＋testdata_lint 表外依赖/T-1×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径）；零 diagnostics 命中；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-current-wp09t06.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T06.json——前置引用/设计锚点/knownPitfalls 三查）",
+    "probeCapability": "未单设失败探针——本任务违约面（Usage 拒绝）已由用例内负路径直接断言（entryId 0/重复/Dev 级/阈值 0/断链/环/未知起点共 7 类真实抛出路径，见 DtAgg5/DtAgg1_Mixed/DtChain1）"
+  },
+  "testSuites": [
+    {
+      "suite": "AggregationTest（DT-AGG-1~5、DT-CHAIN-1、DT-DUP-1 聚合器半区＋P-DIAG-1 处置钉住——acceptance 1~4）",
+      "designRef": "units/diagnostics.md §10 DT-AGG-1~5/DT-CHAIN-1/DT-DUP-2、§6.3（原因链）、§6.4（聚合与去重规则）、§6.5（呈现折叠）、§8.1（C5/C8 作用域）、§9.4（IDiagnosticAggregator 契约表）；需求 ERR-01、EVI-01、NFR-COR-02；P-DIAG-1（契约 acceptance 4）",
+      "cases": [
+        { "name": "DiagAggregation.DtAgg1_SameCauseRootFoldsDerivedEntriesWithExactCounts", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AGG-1/acceptance 1——同根因派生条目折叠一组（键＝容差遍历至根因）；occurrences＝5（阈值 3、成员 5：实际次数非'≥N'截断——§6.4 计数语义）；根因条目组外自成呈现项（§6.3 根因不被聚合吞没）；两次聚合逐元素相等（稳定）；组码＝根因码·成员最高严重＝Error" },
+        { "name": "DiagAggregation.DtAgg1_MultiObjectFoldKeepsEverySubjectVisible", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AGG-1/DT-DUP-2 口径/acceptance 1——同码 5 对象折叠一条'N 个对象受影响'视图项，5 个 subject/localName 逐条在场（不同作用对象绝不合并抹除）；occurrenceCount 对互异 DedupKey 各自独立计数" },
+        { "name": "DiagAggregation.DtDup1_RepeatedOccurrenceCountedNotFolded", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DUP-1 计数半区——同 DedupKey 重复条目 occurrenceCount＝3（'同一错误重复出现→计数'的纯查询承载）；聚合器不执行目录侧去重折叠（PA-1 权威唯一）；未命中键计 0" },
+        { "name": "DiagAggregation.DtAgg2_TwoBuildsFromShuffledInputProduceIdenticalOrder", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AGG-2/NFR-COR-02/acceptance 1——乱序插入、两次独立构建：视图 orderKey 序列逐项相等（观测点）＋码/计数/严重/分类/成员 entryId 序列同构；输出序 orderKey 严格升序；每项 orderKey＝成员最早值（min）；正序副本与乱序副本输出同构（输入序无关）" },
+        { "name": "DiagAggregation.DtAgg2_EntriesFromDifferentTasksNeverMerge", "status": "passed", "modes": ["integration", "smoke"], "trace": "§6.4 多工况/多任务行——同码同 scopeKind 不同 TaskIdentity 绝不折叠（跨任务不聚合）；同任务域内正常折叠（成员归属 2＋1 严格分区）" },
+        { "name": "DiagAggregation.DtAgg3_MissingEvidenceMembersAllListed", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AGG-3/EVI-01/acceptance 1——6 条证据缺失（缺失对象各异）＋3 条其他同批聚合：缺失组成员计数＝6 不短路、6 个缺失对象全量列出；两组明细总数＝9（聚合不丢条目）；共同分类投影＝EvidenceMissing" },
+        { "name": "DiagAggregation.DtAgg4_ConfigurationCollisionNeverEscalatesToInfeasible", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AGG-4/C8＋C5 同表/acceptance 2——5 条策略拒绝（构型级碰撞呈现，阶段 A 以 PolicyDenied 类码承载同分类语义）＋4 条数据不足（搜索未果）同批聚合：分类不变（PolicyDenied/DataInsufficient 原样投影）、严重保持 Warning、全部输出无 infeasibility-proof 条目；成员 9/9 保留；类型层面无证明字段（§9.4'无此能力'）" },
+        { "name": "DiagAggregation.DtAgg1_MixedCategoryCauseRootGroupYieldsNoInventedCategory", "status": "passed", "modes": ["integration", "smoke"], "trace": "实现口径——同根因组分类不一致时 category＝nullopt（不私造汇总分类）；成员最高严重按级别秩（Error＞Warning＞Info＞Dev，非枚举序）；手造原因环（10↔11）聚合 Usage fail-fast（环防御不静默）" },
+        { "name": "DiagAggregation.DtChain1_TranslatedDerivativeChainWalksToRootCause", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CHAIN-1/acceptance 3——worker 崩溃场景：EX-WORKER-CRASHED 根因→转译派生（causedBy 根因）→再转译派生（causedBy 中间层）；chainOf 告知层→…→根因全链三层（禁止翻译后只剩最后一层）；rootOf 遍历至 EX-WORKER-CRASHED；断链子集严格查询 Usage（不返回半截链）＋聚合断链容差（独立呈现不伪造根因）；未知起点/空身份 Usage" },
+        { "name": "DiagAggregation.DtPdiag1_MemberDetailEmbedsCoreContractValuesVerbatim", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/P-DIAG-1——编译期 static_assert 钉住 MemberDetail::subject＝optional<core::ObjectId>（core.md v0.1 基线，冻结 diff 后增量同步、不私改 core）；运行期成员 subject 与源 record.subject 逐值相等（core 契约值原样内嵌不改写）" },
+        { "name": "DiagAggregation.DtAgg5_PureFunctionDeterminismAndCallerViolations", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.4 契约表——纯函数（同输入两次调用逐元素相等·输入集合逐字节未变＝无写路径）；阈值可配（2 条同码：阈值 3 不折叠/阈值 2 折叠）；空集聚合＝空视图·计数 0；违约面 Usage fail-fast：entryId 0/entryId 重复/Dev 级条目/阈值 0（四类真实抛出）" }
+      ]
+    }
+  ]
+}

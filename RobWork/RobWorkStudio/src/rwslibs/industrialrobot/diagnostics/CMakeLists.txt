@@ -40,6 +40,8 @@ find_package(GTest CONFIG REQUIRED)
 # （§8/§9.2 工厂＋转译注册表）及私有实现头 ParamSchema（解析单点，诊断注册
 # 期验证共用）。DIAG-T05 增列 Confirmable.cpp（§5/§9.3 可确认诊断服务——
 # FindingId/绑定四元组/状态机/失效条件；公共头 Confirmable.hpp 同名落位）。
+# DIAG-T06 增列 Aggregation.cpp（§6.3~§6.5/§9.4 聚合器——CauseLink 链遍历/
+# 聚合规则/稳定排序；公共头 Aggregation.hpp 同名落位）。
 add_library(sdurws_ird_diagnostics STATIC
     src/Diagnostics.cpp
     src/Errors.cpp
@@ -47,7 +49,8 @@ add_library(sdurws_ird_diagnostics STATIC
     src/ParamSchema.cpp
     src/Catalog.cpp
     src/Factory.cpp
-    src/Confirmable.cpp)
+    src/Confirmable.cpp
+    src/Aggregation.cpp)
 
 # C++17（单元卡 D-01／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：diagnostics 公共头将使用 std::optional/variant/filesystem 等
@@ -96,14 +99,16 @@ endif()
 # DT-CFM-1~5（服务端状态机全转移/绑定复核/失效路径/超时半区）随 DIAG-T05 增列
 # （ConfirmableTest.cpp——§10）；DT-CFM-6~10 的 project 桩联动半区入
 # _contract_test（ConfirmableProjectStubTest.cpp——P-DIAG-8 处置：桩验证不私改
-# 对端链接）。
+# 对端链接）。DT-AGG-1~5/DT-CHAIN-1（聚合视图/稳定排序/不升级反例/原因链
+# 遍历＋P-DIAG-1 钉住）随 DIAG-T06 增列（AggregationTest.cpp——§10）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
     test/BuildRedLineTest.cpp
     test/StableCodeRegistryTest.cpp
     test/CatalogFactoryTest.cpp
-    test/ConfirmableTest.cpp)
+    test/ConfirmableTest.cpp
+    test/AggregationTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_test PROPERTIES
