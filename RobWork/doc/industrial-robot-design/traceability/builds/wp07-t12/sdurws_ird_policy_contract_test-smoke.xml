@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="0" disabled="0" errors="0" time="0.007" timestamp="2026-09-14T08:36:07.136" name="AllTests">
+  <testsuite name="PolPolicyCodecFixture" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-09-14T08:36:07.136">
+    <testcase name="LoadsThroughFullManifestChain" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp" line="443" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.136" classname="PolPolicyCodecFixture" />
+    <testcase name="IntegrityDigestsMatchCommittedFiles" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp" line="463" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.137" classname="PolPolicyCodecFixture" />
+    <testcase name="CanonicalEncodingMatchesIndependentExpectation" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp" line="499" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.138" classname="PolPolicyCodecFixture" />
+    <testcase name="ContentIdentityMatchesIndependentDigest" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp" line="534" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.138" classname="PolPolicyCodecFixture" />
+    <testcase name="ShuffledAndDisplayUnitVariantKeepsIdentity" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyCodecFixtureContractTest.cpp" line="569" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.139" classname="PolPolicyCodecFixture" />
+  </testsuite>
+  <testsuite name="PolicyTestDoubleBoundary" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-09-14T08:36:07.139">
+    <testcase name="ProductSourcesContainNoDoubleSymbols" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyTestDoubleBoundaryTest.cpp" line="119" status="run" result="completed" time="0.003" timestamp="2026-09-14T08:36:07.139" classname="PolicyTestDoubleBoundary" />
+    <testcase name="DoubleHeaderCarriesBoundaryDeclaration" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyTestDoubleBoundaryTest.cpp" line="163" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.143" classname="PolicyTestDoubleBoundary" />
+    <testcase name="TestReadmeDeclaresBoundaryFullText" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyTestDoubleBoundaryTest.cpp" line="189" status="run" result="completed" time="0." timestamp="2026-09-14T08:36:07.143" classname="PolicyTestDoubleBoundary" />
+  </testsuite>
+</testsuites>

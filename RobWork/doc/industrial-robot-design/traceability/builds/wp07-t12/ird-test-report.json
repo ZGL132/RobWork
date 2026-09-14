@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "POL-T12",
+  "masterWp": "WP-07-T12",
+  "branch": "wp07-t12",
+  "base": "44595aa432b0106853f5f91a45dbfd731db8edbd",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "taskKind": "纯文档任务（零产品源码/零测试代码变更）——构建按 DTB §5.2 DoD 第 1 条免除，双模式既有测试全绿复证照跑留痕（对齐 EV-T12/RT-T13 同型先例）",
+  "targets": [
+    {
+      "target": "sdurws_ird_policy",
+      "kind": "STATIC",
+      "result": "build-pass（两模式复证）",
+      "notes": "POL-T12 零产品源码改动（文档与门禁同步任务——交付面在 units/policy.md、include README、governance-log、traceability 登记件）；产品库链接面不变（core＋RobWork 基线，R-5 例外维持）"
+    },
+    {
+      "target": "sdurws_ird_policy_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "POL-T12 零改动（既有 POL-T01~T10 交付面回归：集成 200/200、冒烟 131/131——与 POL-T11 基线逐数一致，既有面零破坏）"
+    },
+    {
+      "target": "sdurws_ird_policy_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式）",
+      "notes": "POL-T12 零改动（既有 POL-T11 交付面回归：集成 23/23、冒烟 8/8——与 POL-T11 基线逐数一致）"
+    }
+  ],
+  "regression": {
+    "integration": { "total": 223, "passed": 223, "failed": 0, "note": "_test 200＋_contract 23（XML：sdurws_ird_policy_test-integration.xml / sdurws_ird_policy_contract_test-integration.xml，tests/failures 逐份核对）" },
+    "smoke": { "total": 139, "passed": 139, "failed": 0, "note": "_test 131＋_contract 8（XML：sdurws_ird_policy_test-smoke.xml / sdurws_ird_policy_contract_test-smoke.xml）；冒烟树 build-smoke-wp07-t12 带 vcpkg toolchain 绝对路径配置（AGENTS §4.1 / CORE-T01 G-2 教训）" }
+  },
+  "acceptance": [
+    {
+      "item": "acceptance 1：README 核对零偏差",
+      "evidence": "policy/include/sdurws/ird/policy/README.md 修订（状态段同步至 POL-T11 落位现状：十一模块逐头、过期表述'本目录当前不含公共头'消除、T02~T05/T07~T11 落位记录补全）；核对证据本目录 README-audit.md（§1 指向 §12 维持＋§2 实测清单＋§3 逐头比对 11/11＋§4 修订前偏差与消除＋§5 零偏差结论）"
+    },
+    {
+      "item": "acceptance 2：§15.3 状态更新（P-POL-1 随 runtime 卡产出可消账；P-POL-6 stale 翻转）",
+      "evidence": "units/policy.md v0.13（§15.4 变更记录行）：P-POL-1 复核维持已关闭（2026-09-10 CR-04 随 runtime 卡产出消账在案）；P-POL-6 stale 就地翻转＝已消账（project.md 磁盘复核：§1~§15 章标题全在、实测 1386 行、__PART3__ 零命中）；P-POL-9 卡内同步翻转（DTB §4.4 定稿事实，governance-log 册载 closed 在案）；其余项维持 open 如实声明。governance-log.md v1.1 同步（P-POL-6/P-EV-6/P-POL-9 三行＋2026-09-14 汇总行 closed 11/stale 0＋§5 一致性行）"
+    },
+    {
+      "item": "acceptance 3：UT-BUILD 建议并入 CI（登记给 WP-01 侧——§12 任务行产物原文）",
+      "evidence": "traceability/wp07-t12-gate-registrations.md（沿 CORE-T10/EV-T12/RT-T13 先例）：§2.1 policy UT-BUILD 四例清单（test/BuildRedLineTest.cpp）＋§2.2 既有承载如实消账（gate-all.ps1 一键面＋ird_gates 构建期双层）＋§2.3 CI 模板正则钉 ^sdurws_ird_core_test$ 的执行面缺口（2026-09-14 实测复核双 CI 文件四处）＋§2.4 登记请求（WP-01 扩面／WP-24 基线复核）；scripts/ 与 ci/ 不在 allowedFiles，不代行"
+    }
+  ],
+  "gates": {
+    "validateTask": "PASS（validate-task.log——validate-task.ps1 -TaskFile tasks/foundation/POL-T12.json）",
+    "validateDocs": "PASS（validate-docs.log——契约 verify 命令：20 units, 12 trace entries, 150 task files）",
+    "irdGates": {
+      "result": "7 命中＝POL-T11 验收基线逐码一致（零新增——本任务零代码变更）",
+      "codes": "SUB×5（evidence_test／evidence_contract_test／policy_test／policy_contract_test 直链 testkit＋testdata_lint→testkit 表外边）＋T1×1（testdata_lint 产品目标链接 testkit）——F-072 同族既有命中（白名单数据面注释允许 testkit 而引擎无豁免分支的矛盾），处置权 WP-01 所有者，本卡不私改门禁",
+      "logs": ["ird_gates.log（cmake -DIRD_ROOT=... -P ird_gates.cmake 全输出）"]
+    }
+  },
+  "logs": {
+    "integration": ["integration-build.log（--target sdurws_ird_policy_test sdurws_ird_policy_contract_test，exit 0）", "integration-test-run.log（ctest -C Release，2/2 Passed）"],
+    "smoke": ["smoke-configure.log（独立配置＋vcpkg toolchain 绝对路径，exit 0）", "smoke-build.log（--target 两 report 目标＝构建＋运行＋XML，exit 0）", "smoke-test-run.log（ctest -C Release，2/2 Passed）"]
+  },
+  "notes": "findings.json 相关性核对（ACC §4.8）：F-088/F-090 两 resolution 指名'随 policy.md 下次增量修订（POL-T12）'的散文计数修正已随 policy.md v0.13 消账（v0.11 行 DiagnosticsTest 4 套件 19 用例分布、v0.12 行 PolicyCodecFixtureContractTest 5 用例/PolicyContractDoublesTest 7 用例）；F-077（policy.md 'AI 执行就绪补充'两节转义损毁）维持 DOC 治理任务批量处置（core/testkit/evidence/policy 四卡同节同批修正，本卡不单独越权）；契约 dependsOn 缺 POL-T01 的登记（T12→T02→T01 传递覆盖，无调度影响）维持契约编译治理侧处置，不私改契约。本目录全部 .log 经 git add -f 强制入库（根 .gitignore *.log 规则——F-088/F-093 教训：报告不得悬空引用未入库日志）。"
+}
