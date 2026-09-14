@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "聚合器（CauseLink/规则/稳定排序）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T04"
   ],
