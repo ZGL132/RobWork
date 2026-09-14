@@ -4,15 +4,15 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
-| 日期 | 2026-09-10 |
+| 文档版本 | v0.3（DIAG-T02 构建落位登记——§1.2 构建骨架行实测刷新＋卡头"构建落位"字段同步；v0.2＝全链一致性审计消账；v0.1＝首版草案；各版变更记录见 §14.4） |
+| 日期 | 2026-09-14 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-DIAGNOSTICS |
 | 单元 | diagnostics（平台服务，L3；ARCHITECTURE §2.3/§3.1：诊断对象与稳定码注册表、可确认诊断〔ConfirmableFinding〕、诊断目录、两级日志与脱敏） |
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.11（`Draft`，待评审）** |
 | 协作输入 | `units/core.md` **v0.1**、`units/testkit.md` **v0.1**、`units/project.md` **v0.1**（均 `Draft` 未冻结）；`units/evidence.md` **v0.1**、`units/runtime.md` **v0.1**、`units/policy.md` **v0.1**、`units/execution.md` **v0.1**（均 `Draft` 未冻结）。本文消费的 core 公共契约以 core.md v0.1 签名为基线并逐项标注状态（§3.2）；各协作输入如有变更，本文按影响面增量同步（待裁决 P-DIAG-1） |
 | 上游下游链位置 | ARCHITECTURE §11.1 / DETAILED-DESIGN.md：`units/*.md` 单元任务卡。本文即 `units/diagnostics.md`，按任务卡深度编写（接口签名、数据类型在本文件冻结）；对应 development-task-breakdown **WP-09-T01**（"编写 diagnostics 单元任务卡"）的产物 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/`（骨架已建：目标 `sdurws_ird_diagnostics`〔INTERFACE 占位〕＋别名 `RWS::ird::diagnostics`＋公共头保留位 `include/sdurws/ird/diagnostics/README.md`；README 已指向本文 §11，实测一致） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/`（**已随 DIAG-T02 落位〔2026-09-14〕**：目标 `sdurws_ird_diagnostics` 升级 STATIC〔C++17、PUBLIC 链 core、零 Qt 含 Core——D-01；src/ 空起步锚点翻译单元〕，别名 `RWS::ird::diagnostics`，测试目标 `sdurws_ird_diagnostics_test`/`sdurws_ird_diagnostics_contract_test` 已按 dtb §5.5 注册〔gtest〕，配置期红线守卫就位；公共头保留位 `include/sdurws/ird/diagnostics/README.md` 继续指向本文 §11——10 个契约头随 DIAG-T03+ 落地。见单元 `diagnostics/CMakeLists.txt` 与上级 `industrialrobot/CMakeLists.txt`） |
 | 任务包 | WP-09（诊断与日志；ERR-01 主WP、NFR-SEC-07 主WP、NFR-REL-05 主WP；REQUIREMENTS §3 阶段 A〔WP-00～12〕；DETAILED-DESIGN.md 主 WP-D＝WP-08/09/04-T10~15 能力组） |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送。Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`，逐个绝对路径启动。 |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9/v1.11、ARCHITECTURE 文档头）；`old/` 历史实现仅功能范围对照且**当前磁盘缺失**（core.md §1.2 R-5 同源登记）；不复制或恢复 `old/` 历史实现（任务约束§三） |
@@ -45,7 +45,7 @@
 | `units/diagnostics.md` | **不存在**（本文新建） | 目标文件由本文创建；无既有内容可审核整合 |
 | `DETAILED-DESIGN.md` | 存在（45 行，实测） | 20 单元状态索引：diagnostics 标记"待产出"，主 WP-D；规定单元卡最低结构（职责与非职责/输入输出契约/公共接口/数据模型/状态机/错误与诊断/依赖/单元测试/与主 WP 的任务映射/开放问题）——本文 §2/§3/§9/§4~§7/§5.4/§8/§10/§11/§14.3 覆盖全部十项 |
 | `development-task-breakdown.md` | 存在（729 行，实测） | 已登记 WP-09-T01～T06；WP-09-T01 即本文产物，要求"卡含：StableCodeRegistry 码值分配权威（收编 PRJ-\*/RT-\*/POLICY-\*/EVI-\* 建议清单）、两级日志接口（P-PR-6 消账）、脱敏、诊断目录、公共头与任务拆分；不裁决码值外的需求语义"——本文逐项承接；其 §5.5 gtest 接入已定稿（vcpkg `find_package(GTest CONFIG REQUIRED)`）；其 §1.1 指出"diagnostics 虽为 L3，但被 project/execution/io/ui 依赖，其任务卡与 StableCodeRegistry 必须先于四者实现"；M2 里程碑含"WP-09 diagnostics 全绿" |
-| 构建骨架 | 存在：`industrialrobot/CMakeLists.txt`＋20 单元目录＋`patches/`（23 文件）；diagnostics 目录实测仅含 `include/sdurws/ird/diagnostics/README.md`（指向本文 §9 的引用随本文结构修正为 §11，见变更记录） | `sdurws_ird_diagnostics` 为 INTERFACE 占位，无源码；`_test`/`_contract_test` 目标按任务卡逐个登记、不预建空目标 |
+| 构建骨架 | 存在：`industrialrobot/CMakeLists.txt`＋20 单元目录＋`patches/`（23 文件）；diagnostics 目录**自 DIAG-T02 落位〔2026-09-14〕**为 `CMakeLists.txt`（STATIC＋两测试目标＋配置期守卫）＋`src/Diagnostics.cpp`（空起步锚点）＋`test/`（DT-BUILD 红线用例＋落位期契约用例）＋`include/.../README.md` 保留位 | `sdurws_ird_diagnostics` 已为真实 STATIC 库；`_test`/`_contract_test` 目标已随 DIAG-T02 按 dtb §5.5 登记（其余目标仍按任务卡逐个登记、不预建空目标） |
 | `old/` | **不存在于磁盘**（git 亦未跟踪） | 与 REQUIREMENTS v1.10 声明不符（core.md R-5 已登记）；从头构建口径不受影响，本文不引用其任何机制 |
 
 ### 1.3 设计目标
@@ -1298,6 +1298,7 @@ public:
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）与 core/testkit/project/evidence/runtime/policy/execution 七份协作输入（均 Draft；DETAILED-DESIGN/development-task-breakdown 已存在并实测登记）完成 14 节详细设计；冻结双层诊断模型（core 契约＋DiagnosticEntry 信封）、分类/严重词表与映射矩阵（实现承载登记）、StableCodeRegistry（收编 PRJ-\*10/RT-\*14/POLICY-\*23/EVI-\*7/EX-\*18/DIAG-\*7 建议码全量）、ConfirmableFinding 生命周期（绑定四元组/失效条件/五态服务状态机/worker 禁令）、原因链与聚合规则（不升级工程语义）、两级日志（单管线双 Tier/worker 回传/崩溃前保留）、脱敏（deny-by-default/降级）、跨单元错误转换（类型映射禁字符串匹配）、七个公共接口；验证矩阵 DT-\* 29 组；实现任务 DIAG-T01～T11（≙WP-09-T01～T06）；待裁决 9 项（P-DIAG-1～9）。同日：`diagnostics/include/sdurws/ird/diagnostics/README.md` 的任务卡指向由"§9"修正为"§11"（与本文任务拆分章节号一致——core/evidence 同先例） |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§4.5 命名空间补登 `RPT` 前缀、§4.6 收编 reporting.md §3.5 建议清单全量 8 项（2026-09-10 reporting.md 产出后补充收编——P-RPT-8 码值部分消账）；§4.6 收编来源由"四份"更正为"五份" |
+| v0.3 | 2026-09-14 | DIAG-T02 构建落位登记（≙WP-09-T02，契约 tasks/foundation/DIAG-T02.json）：§1.2 构建骨架行与卡头"构建落位"字段实测刷新——`sdurws_ird_diagnostics` 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 core、零 Qt 含 Core），`_test`/`_contract_test` 按 dtb §5.5 注册，`src/` 空起步（锚点翻译单元 Diagnostics.cpp——core/policy 同先例），测试首批用例＝DT-BUILD 红线扫描（零 Qt/零 Eigen·rw 直接包含/仅 core 单元边/公共头路径布局）＋落位期契约用例（PUBLIC 链 core 传染自证、构建图仅 core 边扫描、P-DIAG-8 处置的桩消费方 core 契约演练）；P-DIAG-8 处置按契约 acceptance 3 执行（不私改 execution 侧链接，双库集成冒烟随 P-EX-8 联动另行登记）；任务行原文不动，实现与 §11 零偏差；验证留痕 traceability/builds/wp09-t02/ |
 
 ### 14.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

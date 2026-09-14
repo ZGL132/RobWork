@@ -1,0 +1,37 @@
+== 集成模式 sdurws_ird_diagnostics_test 复跑（2026-09-14，最终代码）
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from DiagnosticsBuild
+[ RUN      ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD
+[       OK ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from DiagnosticsBuild (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 5 tests.
+
+== 集成模式 sdurws_ird_diagnostics_contract_test 复跑
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from DiagnosticsLinkage
+[ RUN      ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD
+[       OK ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8
+[       OK ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8 (0 ms)
+[----------] 3 tests from DiagnosticsLinkage (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.
