@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T04",
+  "masterWp": "WP-09-T04（部分——§11 DIAG-T04 行：Catalog.*/Factory.*；两级日志/脱敏/容量随 T07/T08/T09）",
+  "branch": "wp09-t04",
+  "base": "340e75968099245547c13cd2df096c1fcf4d052f",
+  "date": "2026-09-14",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量 exit 0 零 error C）",
+      "notes": "DIAG-T04 落位（§11 行产物）：include/ 新增公共头 Catalog.hpp（§4.1/§4.2 信封与 DiagContext/DedupKey/OrderKey、§4.4 actionKindToken、§6.4 ScopeKind、§9.7 IDiagnosticSink/DiagProjectionItem/DiagQuery/IDiagObserver/ISubscription/DiagCatalog＋P-DIAG-5 的 IDevLogSink/DiagnosticsSinkImpl report·reportDev 同形签名）与 Factory.hpp（§9.2 IDiagnosticFactory 接口原文＋DiagnosticsFactory 实现＋ErrorCodeTranslator 命名视图＋registerStageATranslations）；src/ 新增 Catalog.cpp/Factory.cpp/ParamSchema.cpp（paramSchema 解析单点自 DiagCodes.cpp 内联迁入——行为逐字保持，DT-REG-5 用例回归保护）与私有头 ParamSchema.hpp/EntryDetail.hpp（src/ 内共享，不入公共 include——R-2）。实现口径登记（单元卡 v0.5）：ErrorCodeTranslator＝DiagnosticsFactory 别名视图（§9.2 将创建与转译合并于同一接口——不设第二实现体）；subject 边界严格口径（用户级码缺/非法 subject→SubjectMissing——ERR-01/core §4.8/DT-DIAG-2 权威链）；去重键派生（task→Task/scopeId 五元组串，否则 subject→Object；Case/Batch 保留）；translate 查找序（精确→runtime_error→exception→DIAG-REGISTRY-UNKNOWN-CODE 兜底不抛）；§8.10 上下文必填阶段 A 机械执行面＝execution 域码⇒task 必填"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 41/41、smoke 41/41）",
+      "notes": "既有 22 用例（DIAG-T02/T03 登记）零修改零回归＋DIAG-T04 新增 19 用例（DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2 矩阵＋DT-REG-3/4 工厂半区补齐＋CR-08/P-DIAG-1/P-DIAG-5 处置钉住——逐用例 trace 见 testSuites）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 3/3、smoke 3/3）",
+      "notes": "既有 3 用例（DIAG-T02 登记）零修改零回归——本任务新增公共头（Catalog/Factory）均经 PUBLIC 链 core 消费 core::DiagnosticRecord/Identity/Digest 契约类型，传染面复证"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "DiagCatalogFactory（DT-DIAG/DT-DUP/DT-CAT 矩阵——acceptance 1 主体）",
+      "designRef": "units/diagnostics.md §10 DT-DIAG-1/2、DT-DUP-1/2、DT-CAT-1/2、§4.2（信封字段与工厂校验）、§4.3/§4.4（分类/严重/动作族）、§6.4（去重）、§8.10（上下文必填）、§9.2；需求 ERR-01、UX-03、TASK-02、CON-02、NFR-MNT-03",
+      "cases": [
+        { "name": "DiagCatalogFactory.DtDiag1_EntryFieldsCompleteFromRegistry", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DIAG-1/acceptance 1——字段完整性：分类/严重自码表（调用方无覆盖面，NFR-MNT-03）、entryId 单调 ≥1、dedupKey/orderKey 已赋（§9.2 后置）、时间来自注入 ManualClock（同输入同输出）、record 原样内嵌（P-DIAG-1）、contractVersions 追加 diag-code 版本标注（§4.5）" },
+        { "name": "DiagCatalogFactory.DtDiag1_ComparisonRequiredAndNotApplicableMarker", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DIAG-1/acceptance 1『比较型三要素/不适用显式标记』——测试域码（KIN 前缀，§4.5 注册协议、seal 前登记）requiresComparison=true：比较型码缺 comparison→ComparisonMissing；三要素经 SourcedValue 承载——实际侧 provided 可取值，期望侧 notApplicable 为显式标记（state()==not-applicable 且取值通道返回 nullopt，非数值伪造——UX-03/ERR-01/MDL-06）" },
+        { "name": "DiagCatalogFactory.DtDiag2_SubjectBoundary", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DIAG-2/acceptance 1『subject 边界（用户级码缺 subject 拒绝）』——用户级码缺 subject→SubjectMissing；全零（非法）subject→SubjectMissing（core §4.8『合法 subjectObjectId』）；Dev 码 subject 可空（§4.2 合法实例 2）。口径＝ERR-01/core §4.8/DT-DIAG-2 权威链严格执行（单元卡 v0.5 登记：§9.2 示例与 §8.2/§8.5 表注 subject=∅ 记法与权威链不符，待该等映射落地任务修正）" },
+        { "name": "DiagCatalogFactory.DtDiag2_CategoryFromRegistryAndCodeGuards", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DIAG-2＋DT-REG-3/4 工厂半区（T03 套件覆盖边界补齐）——分类/严重与注册表逐码一致（RT-CANCELLED=Canceled/Info、EX-WORKER-CRASHED=ExecutionFailed/Error）；未注册码→CodeUnknown；异常文本作码（聚合形态绕过 core make 句法闸的纵深防御面）→CodeUnknown；废弃码构造→CodeDeprecated（§4.5.1 构造侧闸门）" },
+        { "name": "DiagCatalogFactory.DtDiag2_ParamSchemaPlaceholderConsistency", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5/§9.2『工厂校验占位一致性』（DT-REG-5 工厂半区）——PRJ-LOCK-HELD 模式 [\"pid\",\"host\"]：缺参→ParamSchemaMismatch、精确匹配→通过（§9.2 调用示例形态）、多余占位键→同面拒绝（键集须完全一致）" },
+        { "name": "DiagCatalogFactory.DtDiag2_ExecutionContextRequired", "status": "passed", "modes": ["integration", "smoke"], "trace": "§8.10 上下文必填（阶段 A 机械执行面）——execution 域码缺 task→ContextMissing；task 五元组残缺（attempt 空保留值）→同面拒绝；合法五元组→通过且 dedupKey 为 Task 作用域（scopeId 含 att-1 五元组串——TASK-03）" },
+        { "name": "DiagCatalogFactory.DtDup1_SameKeyOccurrencesCounted", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DUP-1 目录半区——同 (code,subject,scope)×3 append→首条目＋occurrences=3（不重复占位，§6.4『目录保留首条，后续命中计数』）；重复 snapshot 序稳定（NFR-COR-02）。聚合视图（aggregate/occurrenceCount 纯查询面）随 DIAG-T06——§11 任务分工" },
+        { "name": "DiagCatalogFactory.DtDup2_DifferentSubjectsNeverMerged", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DUP-2/acceptance 1『去重（不同作用对象绝不合并）』——同码两 subject 两条独立条目（DedupKey 不同——键含 subject）、occurrences 各 1、subject 各自保留（表 2④ 全量口径的目录面）" },
+        { "name": "DiagCatalogFactory.DtDup2_DifferentTaskScopeNotMerged", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-DUP-2 补面——同码同对象跨两次任务运行不合并（键含五元组 scopeId——§6.4『跨任务不聚合』）；DiagQuery.task 等值过滤命中且互不混（DT-COLLAB-1 过滤面，TASK-03）" },
+        { "name": "DiagCatalogFactory.DtCat1_InputInvalidVsExecutionFailed", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CAT-1——RT-INPUT-INVALID（input-invalid/fix-input）vs EX-WORKER-CRASHED（execution-failed/retry-task）：分类/动作族不同（§4.4 矩阵行）；严重按 §4.6 登记值逐码断言（两码均 Error——区分承载于分类/动作族，严重值为码表登记事实不私改）；分类仅呈现映射不改写 outcome 轴（CON-02/TASK-02）" },
+        { "name": "DiagCatalogFactory.DtCat2_TerminalKindsDistinct", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-CAT-2/acceptance 1『分类区分（取消=Info 且正常取消非错误——UX-03/TASK-02）』——RT-CANCELLED=Canceled/Info/actionKind none（正常取消非错误）；EX-WORKER-CRASHED=ExecutionFailed/Error；EX-TASK-INTERRUPTED=Interrupted/Info/rerun-interrupted（NFR-REL-03 可重跑）；EX-FORCE-TERMINATED=Timeout/Error（强杀显式区分）；四终态 (category,severity) 两两互异集合断言" }
+      ]
+    },
+    {
+      "suite": "ErrorCodeTranslatorTest（CR-08 处置——acceptance 2 主体＋DT-REG-4 translate 半区）",
+      "designRef": "units/diagnostics.md §8.1（转换总则）/§8.3（std::exception→RT-ROBWORK-ERROR 兜底）/§9.2（translate 契约）/§4.6（DIAG-REGISTRY-UNKNOWN-CODE）、§6.3（不丢根因）；foundation-contract-review CR-08（已关闭处置）",
+      "cases": [
+        { "name": "ErrorCodeTranslatorTest.DtCr08_RegisteredTypeTranslatesToStableCode", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『跨单元错误只经已登记类型映射转译为稳定码＋DiagnosticRecord』——std::exception 体系兜底至 RT-ROBWORK-ERROR（§8.3 阶段 A 清单）；分类/严重自码表（§8.1 规则 3 唯一权威分类）；root 非空→causedBy 链接＋subject 继承（§6.3 不丢根因/不丢作用对象）" },
+        { "name": "ErrorCodeTranslatorTest.DtCr08_UnregisteredTypeFallsBackNoThrow", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『禁字符串匹配』正例——未登记类型→DIAG-REGISTRY-UNKNOWN-CODE 兜底条目不抛（§9.2 错误行）；来源类型名保留于 context（§8.1 规则 2）；非异常体系『消息不可得』如实登记不伪造" },
+        { "name": "ErrorCodeTranslatorTest.DtCr08_UnknownExceptionMessageTruncatedAndRootLinked", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 补面——未登记阶段 A 清单的局部转译器中异常类型落兜底：4096 字节消息截断至 ≤512 并标注（§7.6 摘要口径；安全摘要脱敏整备随 DIAG-T08）；root 非空→兜底条目 causedBy 链接（§6.3）" },
+        { "name": "ErrorCodeTranslatorTest.DtCr08_RegistrationGuardsAndStageAAudit", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『映射就位』审计面——registeredTranslations 含 std::exception→RT-ROBWORK-ERROR（§8.3 RT 族）；PRJ/EX 逐值映射归域装配（§8.8）、POLICY/EVI 直接产码无异常转译行（§8.4/§8.7）——就位口径登记于 Factory.hpp 头注与单元卡 v0.5，不预建无消费者映射行（NFR-MNT-04）；同型重复登记→DuplicateCode；未注册目标码→CodeUnknown；seal 后登记→Usage（§9.2 运行期违约面）" },
+        { "name": "ErrorCodeTranslatorTest.DtCr08_RootlessUserLevelTranslationRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 补面——CR-08『不跨边界抛对方异常类型』：translate 就地转译不重抛；rootless 转译用户级目标码→SubjectMissing（subject 边界对转译路径一致执行——调用方须提供根因条目，fail-fast）" }
+      ]
+    },
+    {
+      "suite": "DiagnosticsSinkShape／DiagnosticsEnvelopeBaseline（acceptance 3/4 处置钉住）",
+      "designRef": "units/diagnostics.md §9.7（IDiagnosticSink/DiagnosticsSinkImpl/append 守卫/订阅/安全摘要）、§6.2（Dev 不入目录）、§8.10（投影边界）、§4.2（信封）；project.md §5.0/execution.md §3.3（P-DIAG-5 对端同形签名）；core.md §4.8（P-DIAG-1 基线）",
+      "cases": [
+        { "name": "DiagnosticsSinkShape.DtPdiag5_ReportReportDevShapeCompatible", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/P-DIAG-5——DiagnosticsSinkImpl 三方语义：report(record)＝factory.create＋catalog.append 且上下文 sourceUnit/sourceInterface＝注入宿主标识（§9.7 尾注口径）；reportDev(channel,message)＝IDevLogSink 路由且 Dev 不产生目录条目（§6.2）；IDiagnosticSink 四方法直通。同形签名与 project §5.0/execution §3.3 逐字一致——最终统一待 P-PR-6/P-EX-8 详设修订，不私改对端（对端头不在本单元依赖面——R-1/R-2）" },
+        { "name": "DiagnosticsSinkShape.DtPdiag5_CatalogGuardsSubscribeAndSafeSummary", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.7 目录契约——Dev 条目 append→Usage（§9.7 前置）；空 entryId→Usage（绕过工厂分配器的未登记路径拦截）；合法追加/去重命中均通知订阅者、退订（RAII）后不再通知；exportSafeSummary 行含稳定码/|severity|/|category|/titleKey/subject 规范串，record 原始文本不在场（§8.10 投影边界——UX-02）；maxEntries 限幅生效" },
+        { "name": "DiagnosticsEnvelopeBaseline.DtPdiag1_EntryEmbedsCoreRecordBaseline", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/P-DIAG-1——DiagnosticEntry 信封内嵌 core::DiagnosticRecord：static_assert 钉住 record/task/snapshotId 字段类型＝core.md v0.1 契约类型（内嵌不扩充，SA-12）；core 冻结 diff 后增量同步（编译期断言即契约基线证据，不私改 core）" }
+      ]
+    },
+    {
+      "suite": "既有回归面（DIAG-T02/T03 登记，零修改）",
+      "designRef": "units/diagnostics.md §10 DT-BUILD、DT-REG-1~5；NFR-MNT-01/02",
+      "cases": [
+        { "name": "DiagnosticsBuild.*（5 用例）＋DiagCodesRegistry.*（11 用例）＋DiagCodesVocabulary/CoreBaseline/TextKeys/DiagnosticsErrors（6 用例）", "status": "passed", "modes": ["integration", "smoke"], "trace": "既有 22 用例零修改零回归——新增头/源落位后：零 Qt（D-01）、零 Eigen/rw 直接包含、构建图仅 core 边（ARCH §3.5）、公共头路径布局（R-2）、注册表行为与词表 token 全部保持；新公共头 Catalog.hpp/Factory.hpp 纳入 DT-BUILD 扫描面" }
+      ]
+    }
+  ],
+  "regression": {
+    "integration": { "total": 44, "passed": 44, "failed": 0, "note": "unit 41（既有 22＋新增 19）＋contract 3——既有 25 用例零修改零回归；其余单元零触碰（改动仅 diagnostics/{include,src,test}/**＋diagnostics/CMakeLists.txt 增列，全量集成构建 exit 0 零 error C 佐证）" },
+    "smoke": { "total": 44, "passed": 44, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "7 命中＝wp09-t03 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×5（evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——F-072 族既有缺陷）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）——当前扫描输出中零 diagnostics 相关命中（gates-current-wp09t04.log 全文检索 diagnostics 计数 0）",
+      "deltaAnalysis": "本任务新增构建图元素＝产品库增列 3 个源文件（ParamSchema/Catalog/Factory.cpp）＋测试目标增列 1 个源文件（零新增目标/零新增单元边）——命中集合与基线一致的必然结果。exit 1＝基线既有命中的预期行为，处置权 WP-01 所有者",
+      "logs": ["gates-current-wp09t04.log（ird_gates 目标全输出）"]
+    }
+  },
+  "realFailureEvidence": "测试真实失败能力自证（acceptance-protocol §4.5 预演，验收者侧将独立重演）：①探针 A——将 create 的 subject 边界检查（§9.2/DT-DIAG-2 的 SubjectMissing throw）以 if(false) 短路后复跑，DtDiag2_SubjectBoundary 与 DtCr08_RootlessUserLevelTranslationRejected 真实变红（expectThrowsWithCode 未抛失败）；②探针 B——将 DiagCatalog::append 的去重折叠命中判定以 false&& 短路后复跑，DtDup1_SameKeyOccurrencesCounted 真实变红（occurrences=3 断言失败）。逐字还原后复跑双模式 41/41＋3/3 全绿（探针零残留：两 .cpp 内 grep 'false &&' 计数 0）。首次探针 B 注入时产生语法损坏编译失败（C2059），修正注入方式后达成——该中间态未提交、未计入任何留痕结论",
+  "logs": {
+    "integrationBuild": "integration-build.log（全量 cmake --build build --config Release，exit 0，零 error C/fatal error）",
+    "verifyTargetBuild": "verify-target-build.log（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_diagnostics_test，exit 0）",
+    "integrationTestRun": "integration-test-run.log（两目标 41/41＋3/3 全绿）",
+    "smokeConfigure": "smoke-configure.log（独立冒烟配置 exit 0；vcpkg toolchain 绝对路径）",
+    "smokeBuild": "smoke-build.log（exit 0，零 error C/fatal error）",
+    "smokeTestRun": "smoke-test-run.log（两目标 41/41＋3/3 全绿）",
+    "gtestXml": ["sdurws_ird_diagnostics_test-integration.xml", "sdurws_ird_diagnostics_contract_test-integration.xml", "sdurws_ird_diagnostics_test-smoke.xml", "sdurws_ird_diagnostics_contract_test-smoke.xml"],
+    "validateTask": "validate-task.log"
+  }
+}
