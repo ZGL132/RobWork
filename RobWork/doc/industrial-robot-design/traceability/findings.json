@@ -887,11 +887,11 @@
       "id": "F-089",
       "source": "POL-T10 验收段 attempt 1（2026-09-14，traceability/acceptance/POL-T10-20260914.md §4.10-G-2／4.9，送验对象 de9119cce6891f4aba3cd35f59617e6564262e61，分支 wp07-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-14",
       "title": "F-025/F-041/F-073 计数失实家族同型再现：POL-T10 三处散文（提交 e5b0e5fe 正文、units/policy.md §15.4 v0.11 行、traceability/builds/wp07-t10/ird-test-report.json targets[1].notes）称 DiagnosticsTest.cpp『6 套件 19 用例（码表 6＋构造不变量 8＋辅助 4＋多态 1）』，gtest 实测（提交内 integration XML 与验收者 detached worktree 复跑一致）为 4 套件 19 用例（PolicyDiagCodeTable 5＋PolicyDiagnosticsMake 9＋MakeComparativeHelpers 4＋PolicyDiagnosticsInterface 1）——套件数与套内分配失实。与 F-025/F-041/F-073 同判级：总数 19 正确、逐用例均真实存在且通过（提交 XML 19 例与报告枚举、验收复跑逐一对应，ird-test-report.json testSuites 数组对 PolicyDiagCodeTable 逐用例枚举无错、其余三套以计数引用），方向为套件归并口径错位、非虚报用例、非粉饰，建议级不阻断",
       "owner": "详设所有者（units/policy.md §15.4 散文修正）；实施者按留痕修正惯例自查后续提交散文计数",
-      "resolution": "随 policy.md 下次增量修订将 v0.11 行『6 套件 19 用例（码表 6＋构造不变量 8）』修正为实测分布『4 套件 19 用例（码表 5＋构造不变量 9）』；ird-test-report.json 已合入历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；建议实施者模板补『套件数以 gtest 输出 tests from N test suites 为准』自查项（F-025 家族第四例，与 F-041/F-073 同源）。不影响 POL-T10 验收（pass）。编号顺延自 F-088，合入时由所有者确认与并行 evidence 分支无撞车。"
+      "resolution": "随 policy.md 下次增量修订将 v0.11 行『6 套件 19 用例（码表 6＋构造不变量 8）』修正为实测分布『4 套件 19 用例（码表 5＋构造不变量 9）』；ird-test-report.json 已合入历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；建议实施者模板补『套件数以 gtest 输出 tests from N test suites 为准』自查项（F-025 家族第四例，与 F-041/F-073 同源）。不影响 POL-T10 验收（pass）。编号顺延自 F-088，合入时由所有者确认与并行 evidence 分支无撞车。〔2026-09-14 POL-T12 消账翻转 fixed：v0.11 行散文修正已随 policy.md v0.13④ 执行（实测分布『4 套件 19 用例（码表 5＋构造不变量 9＋辅助 4＋多态 1）』在案，POL-T12 attempt 3 验收 §4.8 复现吻合）；勘误：POL-T12 实施面（提交 fca3fa97 正文、policy.md §15.4 v0.13④、ird-test-report.json notes）曾将本条错引为〔F-088〕——F-088 实为 .log 未入库问题（F-010 根因家族），正确编号为本条 F-089，经 POL-T12 验收记录 §4.8-G-2 与 findings F-095 留档更正〕"
     },
     {
       "id": "F-090",
@@ -907,11 +907,11 @@
       "id": "F-091",
       "source": "POL-T11 验收段 attempt 2（2026-09-14，traceability/acceptance/POL-T11-20260914.md §4.9-G-2，送验对象 ba0cb7d5c4b0cbba340eec962e253eb804d748aa，分支 wp07-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-14",
       "title": "F-025/F-041/F-073/F-089 计数失实家族第五例（本例为套级用例数四处失实、总数全对）：POL-T11 四处散文称 PolicyCodecFixtureContractTest『4 用例』（提交 5a2fd64a 正文、ird-test-report.json targets[2].notes＋testSuites『PolPolicyCodecFixture（4 用例）』标签、policy.md §15.4 v0.12 行）、PolicyContractDoublesTest『5 用例』（同前两处＋v0.12 行）、report smoke note『双模式文件 7 用例』、提交 a595026f 正文『PolPolicyCodecFixture 4/4』——gtest 实测（提交内 4 份 XML 与验收者 detached worktree 复跑一致）为 PolicyCodecFixtureContractTest 5 TEST、PolicyContractDoublesTest 7 TEST、双模式文件合计 8 用例（5＋3）。与家族同判级：总数（集成 23/223、冒烟 8/139）全对、库内 XML 与 report 逐用例枚举无错（枚举 5/7 条与源码逐一对应）、方向为套内归并口径错位、非虚报用例、非粉饰，建议级不阻断",
       "owner": "详设所有者（units/policy.md §15.4 v0.12 行散文修正，随 POL-T12）；实施者按计数自查惯例辅助",
-      "resolution": "随 policy.md 下次增量修订（POL-T12）将 v0.12 行『PolicyCodecFixtureContractTest（4 用例）…PolicyContractDoublesTest（5 用例）』修正为实测分布『PolicyCodecFixtureContractTest（5 用例）…PolicyContractDoublesTest（7 用例）』（集成 23＝7＋4＋5＋4＋3、冒烟 8＝5＋3）；ird-test-report.json 与提交正文已入库历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；与 F-089 同源模板自查项『套级分布以 gtest 输出 tests from N test suites 为准』合并落地。不影响 POL-T11 验收（pass）。编号顺延自 F-090，合入时由所有者确认与并行分支无撞车。"
+      "resolution": "随 policy.md 下次增量修订（POL-T12）将 v0.12 行『PolicyCodecFixtureContractTest（4 用例）…PolicyContractDoublesTest（5 用例）』修正为实测分布『PolicyCodecFixtureContractTest（5 用例）…PolicyContractDoublesTest（7 用例）』（集成 23＝7＋4＋5＋4＋3、冒烟 8＝5＋3）；ird-test-report.json 与提交正文已入库历史按留痕不可变纪律不追溯改写（偏差经本条与本任务验收记录 §4.9 留档即可）；与 F-089 同源模板自查项『套级分布以 gtest 输出 tests from N test suites 为准』合并落地。不影响 POL-T11 验收（pass）。编号顺延自 F-090，合入时由所有者确认与并行分支无撞车。〔2026-09-14 POL-T12 消账翻转 fixed：v0.12 行散文修正已随 policy.md v0.13④ 执行（实测分布『PolicyCodecFixtureContractTest（5 用例）／PolicyContractDoublesTest（7 用例）』在案，POL-T12 attempt 3 验收 §4.8 复现吻合）；勘误：POL-T12 实施面（提交 fca3fa97 正文、policy.md §15.4 v0.13④、ird-test-report.json notes）曾将本条错引为〔F-090〕——F-090 实为 .log 未入库问题（F-010 根因家族），正确编号为本条 F-091，经 POL-T12 验收记录 §4.8-G-2 与 findings F-095 留档更正〕"
     },
     {
       "id": "F-092",
