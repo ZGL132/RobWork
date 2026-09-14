@@ -8,14 +8,24 @@
  *   - units/diagnostics.md §4.1（双层诊断模型：core record 内嵌＋本单元信封）、
  *     §4.2（DiagnosticEntry/DiagContext 字段表——全部字段构造后不可变）、
  *     §6.4（去重键 DedupKey 与"不同作用对象绝不合并"、稳定排序 orderKey）、
- *     §6.2（目录生命周期——容量清理随 DIAG-T09）、§9.7（IDiagnosticSink/
- *     DiagProjectionItem/DiagnosticsSinkImpl 契约）、§4.4（actionKind 动作族）
+ *     §6.2（目录生命周期——容量清理策略/失败保留/持久化不因当前性改写，
+ *     随 DIAG-T09 落地）、§9.7（IDiagnosticSink/DiagProjectionItem/
+ *     DiagnosticsSinkImpl 契约）、§4.4（actionKind 动作族）
  *   - 需求 ERR-01（诊断字段/绑定对象——稳定诊断项以 subjectObjectId 绑定
  *     对象）、UX-03（三要素；正常取消非错误）、PM-15（统一诊断目录）、
  *     PM-08（恢复诊断数据源）、TASK-02（取消/失败/中断分类区分）、TASK-03
- *     （五元组关联——DiagContext.task）、NFR-COR-02（orderKey 稳定排序）
+ *     （五元组关联——DiagContext.task）、NFR-COR-02（orderKey 稳定排序）、
+ *     NFR-REL-03（失败/取消后诊断保留——DT-LIFE-2）、CON-02（持久化诊断
+ *     不因当前性改写——DT-LIFE-5）
  *   - 任务契约 tasks/foundation/DIAG-T04.json（≙WP-09-T04 部分）：`Catalog.*`
- *     （DiagContext/Entry/DedupKey/DiagCatalog——§11 DIAG-T04 行产物）
+ *     （DiagContext/Entry/DedupKey/DiagCatalog——§11 DIAG-T04 行产物）；
+ *     tasks/foundation/DIAG-T09.json（≙WP-09-T04 范围）：目录清理策略
+ *     （容量护栏＋分级淘汰＋DIAG-CATALOG-OVERFLOW——§11 DIAG-T09 行）
+ *
+ * 陷阱处置锚点（DIAG-T09 契约 knownPitfalls）：
+ *   - P-DIAG-7：目录容量默认 10,000 条为**可配工程默认**（§14.3 登记——上游
+ *     需求未定义容量值），WP-23 性能验收时校准，不作为需求语义；修改默认值
+ *     不构成需求偏差（CatalogCapacityConfig 注释）。
  *
  * 背景说明（为什么目录条目是"信封"而不是继承 core——SA-12/P-DIAG-1）：
  *   ARCH §7.8 冻结诊断数据契约（DiagnosticRecord）归 core，注册表与目录设施
@@ -414,6 +424,47 @@ public:
 };
 
 // =====================================================================
+// 目录容量护栏（§6.2"诊断清理策略"行——DIAG-T09 行产物；P-DIAG-7 工程默认）
+// =====================================================================
+
+/// 目录自产开发诊断的日志通道 token（对齐 Redaction.hpp kRedactionInternalChannel
+/// 的 "diag/<域>" 命名族；溢出事实 DIAG-CATALOG-OVERFLOW 经 attachDevLogSink
+/// 注入的 IDevLogSink 由此通道产出——Dev 级自省不入目录，§6.2）。
+inline constexpr std::string_view kCatalogInternalChannel = "diag/catalog";
+
+/**
+ * @brief 目录容量护栏配置（§6.2"诊断清理策略"行的可配面——DIAG-T09）。
+ *
+ * ★ P-DIAG-7 处置（DIAG-T09 契约 acceptance 3）：maxEntries 默认 10,000 条
+ *   为**可配工程默认**（§14.3 登记：上游需求未定义容量值；护栏目的＝长会话/
+ *   大规模批量诊断防内存无界——D-17，性能归 WP-23），WP-23 性能验收时校准，
+ *   不作为需求语义。修改默认值不构成需求偏差。
+ *
+ * 清理边界（§6.2 冻结语义，逐条）：
+ *   - 淘汰判据＝**已消费且非 Warning/Error 的最旧 Info 条目**（分级淘汰；
+ *     "已消费"以 markConsumed 的显式确认为准——目录无法感知 ui/reporting 的
+ *     呈现时机，显式确认是最小机制）；
+ *   - Warning/Error 与**活动任务关联**条目不淘汰（setTaskActive 登记的活动
+ *     任务；任务状态权威归 execution——本目录只承载保护登记，PA-1）；
+ *   - 超限且无可淘汰候选＝软溢出：仍追加新条目（护栏不得牺牲证据完整性——
+ *     去重/聚合只影响呈现不改证据集合，§6.4 同精神），溢出事实经开发诊断
+ *     DIAG-CATALOG-OVERFLOW 登记；
+ *   - 清理只作用于**会话态目录**，永不触碰已持久化诊断（随宿主不可变——
+ *     CON-02/PA-2；本配置的任何值都不影响宿主持久化面）。
+ *
+ * 值语义；configureCapacity 按值传入（下一条 append 起生效）。
+ */
+struct CatalogCapacityConfig {
+    /// 护栏开关（false＝不限容量——超小规模场景/测试的工程出口；关闭后
+    /// 不做任何淘汰，DIAG-CATALOG-OVERFLOW 也不产生）。
+    bool enabled = true;
+    /// 目录条目容量上限（单位：条，非字节；≥1。0 非法——0 条容量的目录没有
+    /// 存在意义，关闭护栏应使用 enabled=false 而非 0 值，Usage 拒绝）。
+    /// P-DIAG-7 工程默认 10,000 条。
+    std::size_t maxEntries = 10000;
+};
+
+// =====================================================================
 // DiagCatalog（§9.7 实现——会话级目录）
 // =====================================================================
 
@@ -428,6 +479,10 @@ public:
  */
 class IRedactionService;
 
+/// 前向声明：开发日志路由窄接口（本文件后文定义 IDevLogSink——溢出事实
+/// 诊断 DIAG-CATALOG-OVERFLOW 的出口形态，DIAG-T09；指针成员前置声明即可）。
+struct IDevLogSink;
+
 /**
  * @brief 诊断目录实现（§9.7/§6.1/§6.4——会话态诊断集合、只读投影、去重
  *        计数、稳定排序、变更通知）。
@@ -441,14 +496,19 @@ class IRedactionService;
  *     entryId 拒绝（Usage——工厂分配唯一身份）；causedBy/relatedTo/supersedes
  *     指向不存在条目拒绝（Usage——§6.3"工厂校验指向已存在条目"；指向性校验
  *     在目录侧落地的理由＝目录持有条目集合，工厂无此知识）。
- *   - 容量与清理（§6.2"诊断清理策略"行）：**不在本任务**——§11 DIAG-T09 行
- *     产物（容量护栏＋分级淘汰＋DIAG-CATALOG-OVERFLOW）；本类结构已为容量
- *     策略预留（条目集合与去重计数分离存储）。
+ *   - 容量与清理（§6.2"诊断清理策略"行——DIAG-T09 落地）：容量护栏默认
+ *     10,000 条（P-DIAG-7 可配工程默认，configureCapacity）；超限自最旧起
+ *     淘汰**已消费的 Info 条目**（分级淘汰——Warning/Error、活动任务关联、
+ *     被其他条目链接引用的条目一律保留）；无可淘汰候选＝软溢出仍追加并经
+ *     开发诊断 DIAG-CATALOG-OVERFLOW 登记溢出事实（Dev 走日志不入目录）；
+ *     清理只作用于本会话目录，永不触碰已持久化诊断（CON-02）。
  *
  * 线程安全（§9.7 契约表）：append 并发安全（内部互斥）；snapshot 并发只读；
  * 订阅回调在触发 append 的调用方线程同步派发（阶段 A 口径——§9.8 目录通知
  * 线程"复用日志线程或独立"的独立面随 DIAG-T07 异步化；订阅方负责 Marshal）。
  * 回调在锁外派发（先改状态后通知——观察者可安全调用 snapshot）。
+ * configureCapacity/markConsumed/setTaskActive/attachDevLogSink 同为任意线程
+ * 安全（同一互斥；护栏配置快照切换——下一条 append 起生效）。
  *
  * 生命周期（§9.7 契约表）：会话级目录（项目打开→关闭回收）；进程内服务壳
  * DiagnosticsSinkImpl 持引用注入。无文件 I/O（日志另走 logger——§9.7 副作用行）。
@@ -494,6 +554,90 @@ public:
      * @param service [in] 脱敏服务（共享所有权；传 nullptr＝解除挂接）
      */
     void attachRedactionService(std::shared_ptr<const IRedactionService> service);
+
+    // ---- 容量护栏与分级淘汰（§6.2"诊断清理策略"行——DIAG-T09；实现类
+    //      扩展，登记于单元卡 §14.4 v0.10）----
+    /**
+     * @brief 配置容量护栏（§6.2——超限淘汰"已消费且非 Warning/Error 的最旧
+     *        Info 条目"；默认值即 P-DIAG-7 工程默认，本方法供 WP-23 校准与
+     *        测试注入小容量）。
+     *
+     * 行为：按值替换护栏配置——**下一条 append 起生效**（在途 append 按旧
+     * 配置完成）；缩容不立即触发淘汰，由下一次容量压力（append 达上限）推动
+     * （淘汰判据需要"已消费"事实，主动收缩可能淘汰未消费条目——语义上宁可
+     * 暂超限也不越"已消费"判据）。
+     *
+     * @param config [in] 护栏配置（enabled=false＝关闭不限容量）
+     *
+     * @throws DiagnosticsError Usage（config.enabled 且 config.maxEntries==0
+     *         ——0 条容量无意义，关闭护栏应显式 enabled=false，见
+     *         CatalogCapacityConfig 注释）
+     */
+    void configureCapacity(const CatalogCapacityConfig& config);
+
+    /**
+     * @brief 当前护栏配置快照（观测面——P-DIAG-7 默认值钉住与装配自检用；
+     *        纯查询，无副作用）。
+     */
+    CatalogCapacityConfig capacityConfig() const;
+
+    /**
+     * @brief 消费确认（分级淘汰的"已消费"判据——§6.2"超限淘汰**已消费**且
+     *        非 Warning/Error 的最旧 Info 条目"）。
+     *
+     * 为什么需要显式确认：目录无法感知 ui/reporting 何时已把条目呈现给用户
+     * （§6.1 消费路径）；淘汰未消费条目会丢用户尚未见过的信息——故由消费方
+     * （ui 拉取投影后/reporting 导出后）显式登记。确认是**护栏建议信号**：
+     *   - 幂等；对 Warning/Error 条目确认无效果（其本就不淘汰，仍登记——
+     *     语义以"已消费事实"为准，判据在淘汰侧）；
+     *   - 未知/已淘汰 id **容忍无操作**（不抛）：淘汰只移除已消费条目，迟到
+     *     的确认（并发消费方与淘汰竞态）是良性事件，fail-fast 会把良性竞态
+     *     升级为消费方崩溃——与 append 的 Usage 硬违约不同类；
+     *   - entryId==0 拒绝（Usage——0＝空保留值，传 0 属调用方契约违约）。
+     *
+     * 不触发变更通知（投影不暴露消费态——无 UI 可见变化）；不立即触发淘汰
+     * （淘汰只在 append 容量压力时评估——§6.2"超限淘汰"是压力驱动行为）。
+     *
+     * @param entryId [in] 已确认消费的条目 id（来自 DiagProjectionItem.entryId）
+     */
+    void markConsumed(DiagEntryId entryId);
+
+    /**
+     * @brief 登记/注销活动任务保护（§6.2——"活动任务关联条目不淘汰"）。
+     *
+     * 任务运行中产生的诊断（DiagContext.task 锚定）在任务活动期间不参与
+     * 淘汰——运行尚未收口，其诊断还在被分批消费（§6.2"任务运行中的分批
+     * 诊断"行）。登记语义：
+     *   - 本目录只承载**保护登记**，不判定任务真状态（任务状态权威归
+     *     execution——PA-1；active=true/false 由 execution/L5 装配在任务
+     *     创建/终结时同步）；
+     *   - 重复登记幂等；注销未登记任务幂等（对称的集合语义）；
+     *   - 任务终结（false）后其条目转为可淘汰候选——但**不立即淘汰**（同
+     *     markConsumed：淘汰只在 append 压力时评估；终结任务的诊断照常保留
+     *     于会话——DT-LIFE-2/NFR-REL-03 的承载）。
+     *
+     * @param task   [in] 任务五元组（DiagContext.task 同源值）
+     * @param active [in] true＝登记保护；false＝注销保护
+     */
+    void setTaskActive(const core::TaskIdentity& task, bool active);
+
+    /**
+     * @brief 挂接开发日志路由（目录自产开发诊断的出口——DIAG-CATALOG-
+     *        OVERFLOW 溢出事实登记，§6.2）。
+     *
+     * Dev 级诊断不入目录（§6.2"临时诊断 vs 正式诊断"行），目录自产的溢出
+     * 事实只能走开发日志。挂接后按 kCatalogInternalChannel（"diag/catalog"）
+     * 产出；未挂接＝静默（装配前合法降态——同 RedactionService failureSink
+     * 口径，护栏行为不受影响）。指针非拥有（调用方持有，生命周期须覆盖目录；
+     * 传 nullptr＝解除挂接）。LoggingPipeline 实现 IDevLogSink（Logging.hpp
+     * ——L5 装配把管线同时注入本出口与 DiagnosticsSinkImpl）。
+     *
+     * 线程安全：任意线程调用；快照切换——下一次溢出起生效。
+     * 契约：被挂接 sink 不得回调本目录（与 IDiagObserver 同款死锁面纪律）。
+     *
+     * @param devLog [in] 开发日志路由（非拥有；可空＝解除）
+     */
+    void attachDevLogSink(IDevLogSink* devLog);
 
 private:
     struct Impl;

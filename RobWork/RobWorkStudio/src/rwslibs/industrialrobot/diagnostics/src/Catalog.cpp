@@ -15,6 +15,15 @@
  *     链接字段（causedBy/relatedTo/supersedes）指向不存在条目拒绝（Usage
  *     ——指向性校验在目录侧落地：目录持有条目集合，工厂无此知识；单调
  *     entryId 下"指向更早条目"⇒无环，§6.3 DAG 由构造保证）；
+ *   - §6.2 容量护栏与分级淘汰（DIAG-T09 落地，实现口径）：超限淘汰判据＝
+ *     severity==Info ∧ 已消费（markConsumed 显式确认）∧ 非活动任务关联 ∧
+ *     未被目录内其他条目链接引用（链保护——append 校验"指向已存在条目"
+ *     的不变式不得被淘汰制造悬挂引用破坏，§6.3）；淘汰序＝入目录序（最旧
+ *     先行）；引用计数按"淘汰遍开始时"的快照判定，引用者与被引用者同批
+ *     可淘汰时多遍收敛（正确性优先于遍数）；无可淘汰候选＝软溢出仍追加
+ *     （护栏不得牺牲证据完整性——§6.4"去重只影响呈现"同精神），溢出事实
+ *     一律经 kCatalogInternalChannel 出 DIAG-CATALOG-OVERFLOW 开发诊断
+ *     （Dev 不入目录——§6.2；出口未挂接＝静默，装配前合法降态）；
  *   - §9.7 订阅：回调在触发 append 的调用方线程同步派发（阶段 A 口径），
  *     先改状态后锁外通知（观察者可安全调用 snapshot）；
  *   - §8.10 exportSafeSummary 字段面：{code, titleKey, 参数, subject,
@@ -26,6 +35,9 @@
  * 线程安全：DiagCatalog 内部一把互斥覆盖条目/去重/订阅三张表（append 并发
  * 安全；snapshot 锁内拷贝投影——值拷贝语义，锁外无共享）；订阅退订同样
  * 加锁（句柄析构与 append 并发安全；句柄析构必须早于目录析构——头注契约）。
+ * DIAG-T09 扩展面同锁覆盖：护栏配置/消费确认集/活动任务保护集/开发日志
+ * 出口指针均在该互斥内读写；溢出开发诊断在锁外派发（与订阅回调同一时点，
+ * sink 不得回调目录——Catalog.hpp attachDevLogSink 注释）。
  */
 
 #include <sdurws/ird/diagnostics/Catalog.hpp>
@@ -33,6 +45,7 @@
 #include <algorithm>
 #include <mutex>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 #include "EntryDetail.hpp"                      // 码小写形/去重键派生（私有单点）
@@ -137,6 +150,14 @@ struct DiagCatalog::Impl {
         IDiagObserver* observer; ///< 观察者（非拥有——订阅方持有）
     };
 
+    /// 溢出事实通知（append 锁内捕获、锁外派发——与订阅回调同一时点纪律；
+    /// 每次触发容量护栏的 append 至多一条）。
+    struct OverflowNotice {
+        std::size_t evicted = 0;        ///< 本次腾位淘汰条数
+        std::size_t size = 0;           ///< 派发时目录条目数（观测上下文）
+        bool retentionProtected = false; ///< true＝无可淘汰候选（保留规则压过护栏）
+    };
+
     void removeObserver(IDiagObserver* observer)
     {
         std::lock_guard<std::mutex> lock(mutex);
@@ -146,12 +167,147 @@ struct DiagCatalog::Impl {
         }
     }
 
+    // ---- 容量护栏与分级淘汰（§6.2——DIAG-T09；调用方须已持 mutex）----
+
+    /// 条目是否受"活动任务关联"保护（§6.2"活动任务关联条目不淘汰"）。
+    /// 任务状态权威归 execution（PA-1）——本目录只对 activeTasks 保护集做
+    /// 等值匹配，不判定任务真状态。
+    bool taskActiveProtected(const DiagnosticEntry& entry) const
+    {
+        if (!entry.context.task.has_value()) {
+            return false;   // 无任务锚定的条目无"活动任务关联"可言
+        }
+        for (const core::TaskIdentity& active : activeTasks) {
+            if (active == *entry.context.task) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// 条目是否落入淘汰判据（§6.2"超限淘汰已消费且非 Warning/Error 的最旧
+    /// Info 条目"——三判据的合取；链保护由调用方以引用计数另行判定）。
+    bool isEvictableCandidate(const DiagnosticEntry& entry) const
+    {
+        // ①严重级别＝Info（Warning/Error 永不淘汰——错误追溯优先于内存护栏，
+        //   §6.2/D-17）；
+        // ②已消费（markConsumed 显式确认——未消费条目可能尚未被用户看到，
+        //   淘汰即丢信息）；
+        // ③非活动任务关联（运行未收口的任务，其诊断仍在分批消费——§6.2
+        //   "任务运行中的分批诊断"行）。
+        return entry.severity == DiagnosticSeverity::Info
+            && consumedIds.count(entry.entryId) != 0
+            && !taskActiveProtected(entry);
+    }
+
+    /**
+     * @brief 执行容量腾位（分级淘汰——§6.2；前置：调用方持锁）。
+     *
+     * 目标：淘汰至 entries.size() ≤ maxEntries - minFreeSlots（为新条目腾位）。
+     * 算法（多遍收敛）：
+     *   每遍开始构建**引用计数快照**（全目录 causedBy/relatedTo/supersedes 的
+     *   被指条目计数）——被指者本遍不淘汰（append 校验"链接指向已存在条目"
+     *   的不变式不得被淘汰制造悬挂引用，§6.3）；随后自最旧向新单遍标记候选
+     *   （淘汰序＝入目录序，§6.2"最旧淘汰"）。引用者与被引用者同批可淘汰时
+     *   （链整体已消费且均为 Info），被引用者要到下一遍才解除保护——多遍
+     *   收敛，每遍至少淘汰一条否则停（无候选＝软溢出，由调用方登记）。
+     *
+     * 复杂度：每遍 O(n·L)（n＝条目数，L＝平均链接数）；护栏路径（容量压力）
+     * 才执行，不在诊断追加热区（§6.2 性能护栏定位，WP-23 校准面）。
+     *
+     * @param minFreeSlots [in] 需腾出的空位下限（≥1——append 路径恒传 1）
+     * @return 实际淘汰条数（0＝无可淘汰候选——保留保护，软溢出）
+     */
+    std::size_t evictForCapacity(std::size_t minFreeSlots)
+    {
+        std::size_t totalEvicted = 0;
+        while (true) {
+            // 还需淘汰数：当前规模超出"上限－空位"的部分（调用前置保证 ≥1）。
+            const std::size_t needed =
+                entries.size() + minFreeSlots - capacity.maxEntries;
+            if (needed == 0 || entries.empty()) {
+                break;   // 已腾出足够空位／目录已空
+            }
+            // 本遍引用计数快照：被链接指向的条目不淘汰（链保护——§6.3）。
+            std::unordered_map<DiagEntryId, std::size_t> refCount;
+            for (const DiagnosticEntry& e : entries) {
+                if (e.causedBy) {
+                    ++refCount[*e.causedBy];
+                }
+                for (const DiagEntryId id : e.relatedTo) {
+                    ++refCount[id];
+                }
+                if (e.supersedes) {
+                    ++refCount[*e.supersedes];
+                }
+            }
+            // 自最旧向新标记候选（快照语义：引用计数不随本遍标记递减——被
+            // 跳过者下一遍重评，正确性优先于遍数；不会死循环：每遍无淘汰即停）。
+            std::vector<DiagEntryId> victims;
+            victims.reserve(needed);
+            for (const DiagnosticEntry& e : entries) {
+                if (victims.size() >= needed) {
+                    break;   // 已标记足量——收手（不超汰）
+                }
+                if (!isEvictableCandidate(e)) {
+                    continue;   // 分级判据不满足（级别/未消费/活动任务保护）
+                }
+                if (refCount.count(e.entryId) != 0) {
+                    continue;   // 链保护：仍有幸存条目链接指向它
+                }
+                victims.push_back(e.entryId);
+            }
+            if (victims.empty()) {
+                break;   // 无可淘汰候选——保留保护（软溢出，调用方登记）
+            }
+            applyEvictions(victims);
+            totalEvicted += victims.size();
+        }
+        return totalEvicted;
+    }
+
+    /// 一次性应用淘汰（前置：调用方持锁；victims 非空且互不重复）。entries
+    /// 保序过滤＋三张索引表随幸存者整体重建——避免逐条 vector 中段删除的
+    /// O(n²) 搬移（质量守恒：淘汰只减不增，幸存者字段原样保留——CON-02
+    /// "目录条目永不改写"在淘汰面的对偶：删除整条，绝不部分改写）。
+    void applyEvictions(const std::vector<DiagEntryId>& victims)
+    {
+        const std::unordered_set<DiagEntryId> victimSet(victims.begin(),
+                                                        victims.end());
+        std::vector<DiagnosticEntry> kept;
+        kept.reserve(entries.size() - victimSet.size());
+        for (DiagnosticEntry& e : entries) {
+            if (victimSet.count(e.entryId) != 0) {
+                // 淘汰首条目＝其去重键一并失效（同键后续到达＝新首条重新
+                // 占位，计数从 1 起算——被淘汰的呈现事实已消费完毕）；计数
+                /// 与消费确认随条目同亡（无悬挂引用）。
+                dedupIndex.erase(e.dedupKey);
+                occurrences.erase(e.entryId);
+                consumedIds.erase(e.entryId);
+            } else {
+                kept.push_back(std::move(e));
+            }
+        }
+        entries = std::move(kept);
+        idToIndex.clear();
+        for (std::size_t i = 0; i < entries.size(); ++i) {
+            idToIndex.emplace(entries[i].entryId, i);
+        }
+    }
+
     std::mutex mutex;                          ///< 条目/去重/订阅三表共用锁（短临界区）
     std::vector<DiagnosticEntry> entries;      ///< 目录条目（入目录序＝orderKey 升序）
     std::unordered_map<DiagEntryId, std::size_t> idToIndex;  ///< id→entries 下标（链接校验/查找）
     std::map<DedupKey, DiagEntryId> dedupIndex; ///< 去重键→首条目 id（§6.4 折叠计数）
     std::unordered_map<DiagEntryId, std::size_t> occurrences; ///< 首条目 id→命中计数（≥1）
     std::vector<IDiagObserver*> observers;     ///< 订阅中的观察者（通知于锁外派发）
+
+    // ---- 容量护栏（§6.2——DIAG-T09；P-DIAG-7 默认值登记于 Catalog.hpp）----
+    CatalogCapacityConfig capacity;            ///< 护栏配置（默认 10,000 条可配——P-DIAG-7）
+    std::unordered_set<DiagEntryId> consumedIds; ///< 已消费确认集（markConsumed——淘汰判据②）
+    std::vector<core::TaskIdentity> activeTasks; ///< 活动任务保护集（setTaskActive——淘汰判据③；
+                                                 ///  线性检索：并发活动任务个位数，不值得建索引）
+    IDevLogSink* devLog = nullptr;             ///< 开发日志路由（非拥有——溢出事实出口；空＝静默）
 
     // ---- exportSafeSummary 脱敏双保险（§7.7——DIAG-T08 接线，§14.4 v0.9）----
     // 复用 mutex（exportSafeSummary 本就持锁迭代；attach 与导出互斥即可）。
@@ -186,6 +342,13 @@ void DiagCatalog::append(DiagnosticEntry entry)
     }
 
     std::vector<IDiagObserver*> toNotify;
+    // 溢出事实（锁内捕获、锁外派发——开发诊断出口可能入队 I/O，不得持目录
+    // 锁调用；与订阅回调同一锁外时点纪律）。容量值/出口指针同为锁内快照
+    // （configureCapacity/attachDevLogSink 与 append 并发安全的前提）。
+    Impl::OverflowNotice overflow;
+    IDevLogSink* overflowSink = nullptr;
+    std::size_t overflowCapacity = 0;
+    bool hasOverflow = false;
     {
         std::lock_guard<std::mutex> lock(m_impl->mutex);
 
@@ -225,6 +388,21 @@ void DiagCatalog::append(DiagnosticEntry entry)
                                        "supersedes 指向不存在条目（" + entry.record.code
                                            + "）——取代关系指向旧条目（旧条目保留不删）");
             }
+            // ⑥容量护栏（§6.2"诊断清理策略"行——DIAG-T09）：已满（≥上限）
+            // 先腾位再追加。淘汰只发生在这里（压力驱动——markConsumed/
+            // setTaskActive 不主动触发，§6.2"超限淘汰"的判据语义）。
+            if (m_impl->capacity.enabled
+                && m_impl->entries.size() >= m_impl->capacity.maxEntries) {
+                // 腾 1 个空位（分级淘汰自最旧起；返回 0＝无候选——保留保护）。
+                overflow.evicted = m_impl->evictForCapacity(1);
+                if (m_impl->entries.size() >= m_impl->capacity.maxEntries) {
+                    // 软溢出：无可淘汰候选（Warning/Error/活动关联/未消费/
+                    // 链保护全部在场）——仍然追加（护栏不得牺牲证据完整性；
+                    // 与"清理永不触碰已持久化诊断"同为 CON-02 侧的保留优先）。
+                    overflow.retentionProtected = true;
+                }
+                hasOverflow = true;   // 触发过护栏＝溢出事实成立（淘汰或软溢出）
+            }
             // 登记新条目（值搬移；条目构造后不可变——无 setter）。
             const std::size_t index = m_impl->entries.size();
             m_impl->idToIndex.emplace(entry.entryId, index);
@@ -232,7 +410,36 @@ void DiagCatalog::append(DiagnosticEntry entry)
             m_impl->occurrences.emplace(entry.entryId, 1);
             m_impl->entries.push_back(std::move(entry));
         }
+        overflow.size = m_impl->entries.size();
+        overflowSink = m_impl->devLog;                    // 锁内快照（锁外使用）
+        overflowCapacity = m_impl->capacity.maxEntries;   // 同上
         toNotify = m_impl->observers;   // 通知清单在锁内拷贝、锁外派发
+    }
+
+    // 溢出事实登记（§6.2"DIAG-CATALOG-OVERFLOW 开发诊断登记溢出事实"——
+    // Dev 级自省不入目录，走开发日志通道 diag/catalog；出口未挂接＝静默）。
+    // 淘汰腾位与保留保护两种溢出都登记：前者含淘汰数，后者显式标记保留保护
+    // （工程侧据此发现"容量护栏被保留规则压过"的运行形态）。锁外派发的理由：
+    // 出口可能入队 I/O，不得持目录锁调用（与订阅回调同一时点纪律）。
+    if (hasOverflow && overflowSink != nullptr) {
+        // 消息首 token＝稳定码（对齐 Redaction.cpp 降级行的码前置形态——
+        // 码值权威在登记表，消息文本仅为开发观测载体）；数值面供 WP-23
+        // 性能观测（容量/淘汰数/当前规模）。
+        std::string message = "DIAG-CATALOG-OVERFLOW capacity=";
+        message += std::to_string(overflowCapacity);
+        message += " evicted=";
+        message += std::to_string(overflow.evicted);
+        message += " retention-protected=";
+        message += overflow.retentionProtected ? "1" : "0";
+        message += " size=";
+        message += std::to_string(overflow.size);
+        try {
+            overflowSink->logDev(kCatalogInternalChannel, std::move(message));
+        } catch (...) {
+            // 溢出登记自身失败一并吞掉——护栏路径绝不向 append 调用方抛出
+            // （§9.7 append 后置只承诺"容量策略执行"，诊断失败非调用方错误；
+            // 同 Redaction degrade 的吞错纪律）。
+        }
     }
 
     // 变更通知（§9.7"追加＋去重计数＋变更通知"——去重命中同样通知：投影的
@@ -379,6 +586,80 @@ void DiagCatalog::attachRedactionService(std::shared_ptr<const IRedactionService
     // 互斥即可保证 shared_ptr 读写不并发。
     std::lock_guard<std::mutex> lock(m_impl->mutex);
     m_impl->redaction = std::move(service);
+}
+
+// ---- 容量护栏与分级淘汰（§6.2——DIAG-T09）----
+
+void DiagCatalog::configureCapacity(const CatalogCapacityConfig& config)
+{
+    // 配置不变量（CatalogCapacityConfig 注释）：0 条容量无意义——关闭护栏
+    // 须显式 enabled=false，不允许 0 值半关闭形态（调用方契约违约 fail-fast，
+    // AGENTS.md 错误语义）。
+    if (config.enabled && config.maxEntries == 0) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "容量护栏 maxEntries==0 无意义——关闭护栏应使用 "
+                               "enabled=false（§6.2 配置语义）");
+    }
+    // 快照切换：下一条 append 起生效（在途 append 按旧配置完成——持锁写入，
+    // 与 append 的护栏读同锁互斥，无撕裂读）。
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    m_impl->capacity = config;
+}
+
+CatalogCapacityConfig DiagCatalog::capacityConfig() const
+{
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    return m_impl->capacity;
+}
+
+void DiagCatalog::markConsumed(DiagEntryId entryId)
+{
+    // 0＝空保留值（Catalog.hpp DiagEntryId 注释）——传 0 属调用方契约违约
+    // （正常 id 来自投影项，恒 ≥1），fail-fast。
+    if (entryId == 0) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "markConsumed 传入空 entryId（0）——消费确认须引用"
+                               "投影项携带的合法条目 id");
+    }
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    // 未知/已淘汰 id 容忍无操作（advisory 语义——Catalog.hpp 方法注释：
+    // 淘汰只移除已消费条目，迟到确认是良性竞态，不升级为异常）。对
+    // Warning/Error 条目的确认同样登记（判据在淘汰侧——登记"已消费事实"
+    // 与"是否可淘汰"分离，语义以事实为准）。
+    m_impl->consumedIds.insert(entryId);
+}
+
+void DiagCatalog::setTaskActive(const core::TaskIdentity& task, bool active)
+{
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    if (active) {
+        // 重复登记幂等（同一任务双份保护登记＝实现噪声）。
+        for (const core::TaskIdentity& existing : m_impl->activeTasks) {
+            if (existing == task) {
+                return;
+            }
+        }
+        m_impl->activeTasks.push_back(task);
+    } else {
+        // 注销未登记任务幂等（对称集合语义）。
+        for (auto it = m_impl->activeTasks.begin(); it != m_impl->activeTasks.end();
+             ++it) {
+            if (*it == task) {
+                m_impl->activeTasks.erase(it);
+                break;
+            }
+        }
+    }
+    // 不立即触发淘汰：注销只改变后续 append 压力下的候选判定（终结任务的
+    // 诊断照常保留于会话——DT-LIFE-2/NFR-REL-03；淘汰须容量压力推动）。
+}
+
+void DiagCatalog::attachDevLogSink(IDevLogSink* devLog)
+{
+    // 快照切换：下一次溢出登记起生效；指针非拥有（Catalog.hpp 方法注释——
+    // 调用方持有，生命周期须覆盖目录；nullptr＝解除挂接＝静默降态）。
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    m_impl->devLog = devLog;
 }
 
 std::size_t DiagCatalog::size() const
