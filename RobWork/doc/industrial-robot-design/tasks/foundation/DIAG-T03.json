@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "错误类型与稳定码注册表（Errors/DiagCodes/StableCodeRegistry）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T02"
   ],
