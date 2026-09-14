@@ -1,0 +1,83 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 22 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from DiagnosticsBuild
+[ RUN      ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD
+[       OK ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (1 ms)
+[ RUN      ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (2 ms)
+[ RUN      ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (2 ms)
+[ RUN      ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from DiagnosticsBuild (7 ms total)
+
+[----------] 12 tests from DiagCodesRegistry
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder
+[       OK ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten
+[       OK ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection
+[       OK ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected
+[       OK ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected
+[       OK ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode
+[       OK ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_ParamSchemaValidation
+[       OK ] DiagCodesRegistry.DtReg5_ParamSchemaValidation (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable
+[       OK ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent
+[       OK ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal
+[       OK ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal (0 ms)
+[----------] 12 tests from DiagCodesRegistry (3 ms total)
+
+[----------] 2 tests from DiagCodesVocabulary
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen
+[       OK ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen (0 ms)
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata
+[       OK ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata (0 ms)
+[----------] 2 tests from DiagCodesVocabulary (0 ms total)
+
+[----------] 1 test from DiagCodesCoreBaseline
+[ RUN      ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode
+[       OK ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode (0 ms)
+[----------] 1 test from DiagCodesCoreBaseline (0 ms total)
+
+[----------] 1 test from DiagCodesTextKeys
+[ RUN      ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique
+[       OK ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique (0 ms)
+[----------] 1 test from DiagCodesTextKeys (0 ms total)
+
+[----------] 1 test from DiagnosticsErrors
+[ RUN      ] DiagnosticsErrors.DtReg_TokenTableComplete
+[       OK ] DiagnosticsErrors.DtReg_TokenTableComplete (0 ms)
+[----------] 1 test from DiagnosticsErrors (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 6 test suites ran. (11 ms total)
+[  PASSED  ] 22 tests.
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from DiagnosticsLinkage
+[ RUN      ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD
+[       OK ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8
+[       OK ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8 (0 ms)
+[----------] 3 tests from DiagnosticsLinkage (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.
