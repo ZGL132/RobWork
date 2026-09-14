@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "脱敏与崩溃诊断文件（Redaction/CrashReport）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T07"
   ],
