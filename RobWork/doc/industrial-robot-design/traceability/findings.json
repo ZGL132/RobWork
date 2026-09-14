@@ -1052,6 +1052,26 @@
       "title": "diagnostics/src/Confirmable.cpp L221-223 匿名命名空间内存在无对应函数体的三行 Doxygen 注释（'/// FNV-1a 128 位哈希（仅 generate 的非零混入用？——不：与 core 同源纪律，generate 走 mt19937_64 直接填充，此函数未用则不引入。保留说明：本单元不自建哈希路径，见 findingRecordDigest）'）——放弃引入 FNV 路径后的自澄清残留；内容自洽、零行为影响，属 F-046/F-063/F-093 微观代码卫生家族；且注释含'？——不：'式自我问答腔，非规范陈述句",
       "owner": "实施者侧（随下次触碰 Confirmable.cpp 的提交顺手删除该残留注释块）",
       "resolution": "建议级，不阻断 DIAG-T05 验收（pass）。删除该三行注释即可（CR-02 唯一摘要路径的说明已由 findingRecordDigest 实现处注释承载，无信息丢失）。"
+    },
+    {
+      "id": "F-106",
+      "source": "DIAG-T06 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T06-20260914.md §4.9/§4.10，送验对象 fd3698d318117571416e2e8f69b3bcbf21143043，分支 wp09-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-081/F-102/F-103 家族第 9 例（声称在库而实际未入库；本例为部分缺失且无 logs/gtestXml 索引字段）：DIAG-T06 留痕提交 fd3698d3 正文声称入库『integration/smoke 构建·配置·测试运行日志、契约 verify 命令日志、ird_gates 输出（7 命中＝基线零新增）、validate-task PASS、gtest XML 两份、ird-test-report.json』，git ls-tree @fd3698d3 实证 builds/wp09-t06/ 仅 3 件（integration-gtest-diagnostics-test.xml、integration-gtest-diagnostics-contract-test.xml、ird-test-report.json）——正文声称的全部 .log 缺失（ird-test-report.json 本例无 logs/gtestXml 字段，日志引用仅 gates 字段提及 gates-current-wp09t06.log 一处且该文件不在库）；较 F-103 改进面：2 份集成 gtest XML 已实际入库；根因 .gitignore:87 全局 *.log（F-010）仍未按先例 add -f；数值主张（双模式 65/65＋9/9、ird_gates 7 命中同分布零 diagnostics、validate-task PASS、validate-docs PASS）经验收者亲手复现全部准确，测试结果无粉饰",
+      "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f）",
+      "resolution": "建议级，不阻断 DIAG-T06 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103：流程层面根治 .gitignore 吞留痕。"
+    },
+    {
+      "id": "F-107",
+      "source": "DIAG-T06 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T06-20260914.md §4.9，送验对象 fd3698d318117571416e2e8f69b3bcbf21143043，分支 wp09-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-14",
+      "title": "F-012/F-100/F-104 家族再现：DIAG-T06 留痕提交 fd3698d3 标题『[DIAG-T06] 文档同步与验证留痕（单元卡 v0.7＋双模式证据）』以名词『文档』开头非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；正文四段齐备、数值主张全部复现准确（同范围另一提交 70df8723『实现 diagnostics 聚合器…』动词开头合规）",
+      "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
+      "resolution": "建议级，不阻断 DIAG-T06 验收（pass）。属流程纪律提示：标题写『同步…』『登记…』『修复…』等动词开头即可。"
     }
   ]
 }
