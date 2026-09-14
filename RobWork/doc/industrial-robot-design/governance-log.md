@@ -46,7 +46,7 @@
 | P-EV-3 | 跨域汇总顺序（③先于④字面顺序）与 C6 边界（同源：O-13） | 需求所有者 | open | 卡按保守字面顺序实现；如需他语义走需求变更 |
 | P-EV-4 | 当前性"不可判定"呈现口径（两持久态＋诊断） | ui 详设所有者＋需求侧 | open | ui 详设产出时引用本条定呈现（ui P-UI-2 对应） |
 | P-EV-5 | 覆盖率参考值降级限定语呈现归 reporting/ui | reporting 详设所有者 | open | reporting 详设引用（RPT-05 限定语） |
-| P-EV-6 | project.md 磁盘不完整（§8~§15 缺失） | project 详设所有者 | **stale** | 2026-09-10 实测 project.md §1~§15 完整（DTB §4.4 定稿行；runtime P-RT-9 同源指出）——本登记已过时，卡内待翻转；接口联合复核仍需执行（phase-one §2） |
+| P-EV-6 | project.md 磁盘不完整（§8~§15 缺失） | project 详设所有者 | **closed** | 2026-09-13 卡内已翻转（evidence.md v1.3 EV-T12 就地消账）；2026-09-14 POL-T12 按维护规则③以卡为准回改本行——接口联合复核仍按 phase-one §2 维持 |
 | P-EV-7 | 空必验工况集/全不适用工况的判定口径（同源：O-13） | 需求所有者 | open | 卡按保守处置（DataInsufficient） |
 | P-EV-8 | EvidenceItemStatus 五值实现词表（Unverified 为扩展，同源：O-13） | 需求所有者＋reporting/ui | open | 不作需求级冻结契约；需求侧未来定义枚举则增量对齐 |
 | P-EV-9 | 必验工况标记权威 schema 归 requirements（同源：O-14） | requirements 卡 | open | WP-14-T01 冻结后回接 evidence §4.1.3 |
@@ -74,10 +74,10 @@
 | P-POL-3 | SEL-05 惯量比阈值归属（同源：O-11） | 需求所有者＋selection 卡 | open | 建议归 EngineeringPolicySet；WP-19-T01 起草时核对 |
 | P-POL-4 | 三份协作输入＋ARCH 均 Draft | 各详设所有者＋本卡 | open | 各自冻结时出 diff 清单 |
 | P-POL-5 | 碰撞后端版本取值依赖 NFR-DEP-05 基线（同源：O-20） | 版本基线所有者（WP-24） | open | WP-24-T01 冻结时锁定 |
-| P-POL-6 | project.md 磁盘不完整（与 P-EV-6 同源） | project 详设所有者 | **stale** | 2026-09-10 实测完整（DTB §4.4）——登记过时，卡内待翻转；策略编辑适配器细节随 project 联合复核 |
+| P-POL-6 | project.md 磁盘不完整（与 P-EV-6 同源） | project 详设所有者 | **closed** | 2026-09-14 随 POL-T12 卡内翻转（policy.md v0.13）：磁盘复核完整（§1~§15 全在、实测 1386 行、__PART3__ 零命中）；残余 §10.4/§13 交接项联合复核按 phase-one §2 维持 |
 | P-POL-7 | 按工况差异化策略阈值口径 | 需求所有者 | open | 卡按"全项目统一、场景对象集表达"设计（D-14） |
 | P-POL-8 | R-4 例外登记措辞补充（policy 只读消费整名，同源：O-12） | 架构所有者 | **partial** | DTB §4.5 已预登记该例外行（状态"待确认"）；架构侧措辞确认后转生效 |
-| P-POL-9 | 策略编辑命令处理器适配器宿主 | 构建约定所有者＋ui 详设所有者 | **closed** | 2026-09-10 定稿（DTB §4.4 定稿行）：ui 单元承载（L5 装配期注入），WP-10-T07 落地；卡内待翻转 |
+| P-POL-9 | 策略编辑命令处理器适配器宿主 | 构建约定所有者＋ui 详设所有者 | **closed** | 2026-09-10 定稿（DTB §4.4 定稿行）：ui 单元承载（L5 装配期注入），WP-10-T07 落地；2026-09-14 POL-T12 卡内已翻转（policy.md v0.13） |
 
 ### 1.6 project（8 项）
 
@@ -224,6 +224,7 @@
 ## 4. 状态汇总与维护规则
 
 - 汇总（2026-09-10）：P-\* 93 项——closed 9（P-ENV-1/P-ENV-2/P-TK-1/P-POL-1/P-RT-6/P-IO-2/P-RPT-6/P-RT-9/P-POL-9；其中 P-RT-6 与 P-IO-2 为同案双登记，去重后 8 案）、partial 5（P-TK-3/P-PR-4/P-EX-5/P-POL-8/P-RPT-8）、stale 2（P-EV-6/P-POL-6）、open 77；O-\* 33 项——closed 6（O-04/O-05/O-06/O-17/O-21/O-25）、deferred 1（O-28）、open 26。
+- 汇总（2026-09-14，随 POL-T12 同步）：P-\* 93 项——closed 11（2026-09-10 口径 9 项＋P-EV-6〔按维护规则③以 evidence.md v1.3 卡内翻转〔EV-T12〕为准回改〕＋P-POL-6〔随 policy.md v0.13 卡内翻转〕；其中 P-RT-6 与 P-IO-2 为同案双登记，去重后 10 案）、partial 5（P-TK-3/P-PR-4/P-EX-5/P-POL-8/P-RPT-8）、stale 0、open 77；O-\* 33 项——closed 6（O-04/O-05/O-06/O-17/O-21/O-25）、deferred 1（O-28）、open 26。
 - 维护规则：①各卡/DTB 增量修订消账后，其任务提交或紧随治理提交同步翻转本表对应行（留痕＝消账文档版本/验收记录/findings 编号）；②本表不新增待裁决项——新待裁决一律先登记到所属卡/DTB §4，再在本表补行（保持权威方向）；③发现本表与卡/DTB 不一致：以卡/DTB 为准回改本表并在提交信息注明。
 
 ## 5. 与 phase-one-readiness.md 状态口径的一致性核对（acceptance 第 3 条）
@@ -236,10 +237,11 @@
 | P-PR-5/P-IO-1/P-RPT-1~3 注入先行、交接项保留 | §1.6/§1.9/§1.10 open＋备注 | ✔ 一致 |
 | P-IO-3 选型待 vcpkg 验证（IO-T04 阻塞） | §1.9 open | ✔ 一致 |
 | O-03 ARCH Draft 未 Accepted | §2 open | ✔ 一致 |
-| project 文档完整性（"只有 §1~§7 已过时"） | P-EV-6/P-POL-6 状态 stale（登记过时待翻转） | ✔ 一致（本表进一步区分"事实已消、卡内未翻转"的 stale 态） |
+| project 文档完整性（"只有 §1~§7 已过时"） | P-EV-6/P-POL-6 已 closed（卡内分别于 EV-T12〔2026-09-13〕/POL-T12〔2026-09-14〕翻转，本表行同步回改） | ✔ 一致（2026-09-14 复核；stale 态清零） |
 
 ## 6. 变更记录
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v1.0 | 2026-09-10 | 随 WP-00-T01 建立：11 卡 93 项 P-\*（core 6/testkit 7/evidence 9/runtime 9/policy 9/project 8/execution 10/diagnostics 9/io 7/reporting 9/ui 10）＋O-01~O-33 集中登记；逐卡零丢失矩阵；与 phase-one-readiness §2 口径核对一致；只登记不裁决 |
+| v1.1 | 2026-09-14 | 随 POL-T12 文档与门禁同步（维护规则①③执行）：P-POL-6 行翻转 closed（policy.md v0.13 卡内同步翻转——磁盘复核完整：§1~§15 全在、实测 1386 行、__PART3__ 零命中）；P-EV-6 行按规则③以卡为准回改 closed（evidence.md v1.3 已于 2026-09-13 随 EV-T12 卡内翻转，本册此前滞后）；P-POL-9 行备注更新（卡内已于 policy.md v0.13 翻转，定稿事实 DTB §4.4）；§4 追加 2026-09-14 汇总行（closed 11/stale 0/open 77）；§5 一致性核对行同步。只登记不裁决 |
