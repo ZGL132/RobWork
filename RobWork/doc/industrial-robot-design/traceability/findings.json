@@ -1286,6 +1286,26 @@
       "title": "提交标题家族再现（F-012 系）：PRJ-T03 送验提交 65520d6a 标题『[WP-04-T03] PRJ-T03 验证留痕归档（构建/门禁/测试执行证据）』前缀后以任务名词『PRJ-T03』开头，非动词开头（AGENTS §6.3/ACC §4.9 字面要求）——F-121（PRJ-T01）/F-126（PRJ-T02）同日（2026-09-15）之后的同单元再例。纯风格瑕疵：正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），既往判例均不阻断",
       "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
       "resolution": "处置建议＝同 F-012/F-126 处置建议①：提交前自查标题格式（前缀后首词为动词，如『归档…』『复核…』『登记…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-127，合入时由所有者确认。"
+    },
+    {
+      "id": "F-129",
+      "source": "traceability/acceptance/PRJ-T04-20260916.md#4.9/4.10（attempt 1；验收者 git ls-tree／check-ignore 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127 之后第 11 例，F-127 后同单元再例）：PRJ-T04 送验提交 a148a99e 正文声称新增 traceability/builds/wp04-t04/『14 个证据文件』（integration-build.log／verify-target-build.log／smoke-configure.log／smoke-build.log／四份测试运行日志／gates-ird-gates-target.log／validate-task.log 等 10 份 .log），git ls-tree 实证仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份），.log 全部未入库且 check-ignore 实证命中根 .gitignore:87 *.log 规则；ird-test-report.json 的 gates 字段（validate-task.log/gates-ird-gates-target.log）与 buildModes 字段（四份构建日志）共六处库外幻影引用。F-127 处置建议③（PRJ-T03 的 10 份日志随返工窗口补交）未被执行。验证结论性内容（两模式 81/81＋10/10、契约 verify exit 0、ird_gates 8 命中零 project、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①同 F-125/F-127：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（F-010 根因消账，家族第 11 例后处置紧迫度上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-128，合入时由所有者确认。"
+    },
+    {
+      "id": "F-130",
+      "source": "traceability/acceptance/PRJ-T04-20260916.md#4.9（attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T04 送验两提交标题前缀后均以名词开头非动词开头——a148a99e『[WP-04-T04] PRJ-T04 验证留痕归档（构建/门禁/测试执行证据）』以任务名词开头（F-128 的同字面形态再例）；ae9596db『[units] project.md v0.6：PRJ-T04 格式契约与编码落位登记』以文件名词短语开头（F-037/F-079/F-092 的 [units] 车道同型）。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），实现提交 ae7fb6aa 标题动词开头合规，既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
+      "resolution": "处置建议＝同 F-012/F-126/F-128 处置建议①：提交前自查标题格式（前缀后首词为动词，如『归档…』『登记…』『落位…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-129，合入时由所有者确认。"
     }
   ]
 }
