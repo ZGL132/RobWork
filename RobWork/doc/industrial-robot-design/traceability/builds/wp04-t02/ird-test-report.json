@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T02",
+  "masterWp": "WP-04-T02",
+  "branch": "wp04-t02",
+  "base": "56dbd5aace0ee23d2ee031168e70f56a299c124b",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "PRJ-T02 落位：src/win32/AtomicFile.cpp 增列（§12 PRJ-T02 行产物——存储原语）。新增 src/win32/{IFileOps.hpp,AtomicFile.hpp,AtomicFile.cpp}：IFileOps＝生产窄接口故障注入接缝（D-10 形态——生产代码唯一文件操作通道，测试侧 fake 经构造注入，PRJ-T15 契约测试与 testkit FaultInterceptor 的消费面；接缝位于 src/win32/ 私有实现头、不出 include/——R-2 纪律，测试目标经 PRIVATE src/ include 目录消费）；AtomicFile＝三原语门面：writeThrough（暂存写持久性面：FILE_FLAG_WRITE_THROUGH＋分块写＋FlushFileBuffers 闸门＋RAII 句柄守卫，任一步失败整体失败、已写部分按 §7.1 第 2 步暂存残留语义留置）、publishNew（只增发布：MoveFileExW 无 REPLACE_EXISTING——目标已存在即失败不覆盖，共享摘要判定归 PRJ-T05 对象库）、replaceFile（原子替换＝提交点面：MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH）；故障点标识常量按 testkit §6.4 命名法冻结于 faultpoint 命名空间（project/atomic-file/{open,write-chunk,flush,publish-new,replace-existing}）。Win32FileOps＝无状态真实实现（进程级共享）。零 Qt、零 testkit 头（T-1）、私有头不出单元（R-2）；§7.2 行 6 落实——全实现零 ReplaceFileW 引用。P-PR-1 处置延续：零 core 头消费（产品与新增测试源码均无 sdurws/ird/core include）"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 18/18）",
+      "notes": "PRJ-T02 增列 test/AtomicFileTest.cpp（13 用例）——PublishNew/原子替换/write-through 语义（NFR-REL-01 单文件原语层）＋失败注入（FaultFileOps 装饰器 fake：按故障点×occurrence 注入失败、记录调用序，不依赖任何 testkit 头）。不超诺口径：用例只断言 Windows API 实测保证（同卷 rename 原子可见、WRITE_THROUGH 返回前刷盘、写穿透＋flush 落盘），零断电/零进程杀灭断言——崩溃类（F8/AT-11/13）归 PRJ-T15 TestProcessRunner。PRJ-T01 既有 5 用例（ProjectBuild 红线扫描）全部保持通过＝回归面零破坏。CMake 变更：测试目标增 PRIVATE src/ include 目录（接缝私有头唯一消费通道）——产品 PUBLIC include 根仍仅 include/。真实失败能力留证：实施中将 WriteThrough_OpenFailure_CreatesNothing 的 EXPECT_FALSE 临时反转为 EXPECT_TRUE，该用例随即真实失败（FAILED 1）后复原——注入断言具备行为区分力"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "PRJ-T01 既有构建图边界契约（PRJ-TX-14 后两项）零改动全量回归通过——本任务零新跨单元边（产品库仅增列本单元自有源文件；CMake 依赖面不变：仅 core 一条登记边）。构面守卫（配置期断言）在增列源文件后复跑通过＝R-1/R-2/T-1 纪律在新文件上成立"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "AtomicFileTest",
+      "designRef": "units/project.md §7.1（七步协议第 2/4/5 步）、§7.2（行 1/2/3/6——原子替换与写入持久性分离）、§7.6（F2/F4/F5 单文件原语层）、§11 头注（IFileOps 接缝消费形态）、§3.4（win32 布局）；需求 NFR-REL-01；任务契约 PRJ-T02.json acceptance 1/3；testkit.md §6.4/D-10",
+      "cases": [
+        { "name": "AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／NFR-REL-01／§7.2 行 1——write-through 写后字节完整逐一相等（持久性面）；不超诺：仅断言 API 语义层，不做崩溃断言" },
+        { "name": "AtomicFileTest.WriteThrough_TruncatesExistingContent", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 第 2 步——CREATE_ALWAYS 截断语义：同路径重写不留旧内容尾字节（暂存重试场景的字节视图一致性）" },
+        { "name": "AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 第 2 步边界——零字节载荷走完整闸门链（打开→0 块写→flush→关闭）并成功" },
+        { "name": "AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『任一步失败不留半写目标』／testkit §6.4 打开失败——open 注入失败：无文件产生、不进入写步骤（调用序断言）；错误码透传" },
+        { "name": "AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§7.6 F2（写中途失败）——第 2 块注入磁盘满：暂存残留恰为 kWriteChunkSize（失败边界精确）、已提交目标字节不变、不超诺（残留＝设计行为，恢复扫描处置）" },
+        { "name": "AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『原子/持久性分离语义』／§7.2 行 1——flush 闸门失败＝整体失败；门面调用序零发布点（结构性保证：持久性失败绝不进入可见性切换）" },
+        { "name": "AtomicFileTest.PublishNew_MovesTempToAbsentTarget", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 第 4 步／§7.2 行 2——目标不存在时 rename 就位：目标字节完整、暂存名消失（非复制）" },
+        { "name": "AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『提交（替换）点之前旧文件字节不变』／§7.2 行 2——真实 MoveFileExW（无 REPLACE）对已存在目标失败（实测 ERROR_ALREADY_EXISTS）：旧文件字节不变、暂存保留；共享摘要判定归 PRJ-T05（本层一律拒绝）" },
+        { "name": "AtomicFileTest.ReplaceFile_SwapsTargetToNewContent", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 第 5 步（唯一提交点）／§7.2 行 3——替换后目标整体呈现新内容、暂存名消失" },
+        { "name": "AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 核心语句——HEAD.new 已持久化但替换未发生时 HEAD 字节不变（同用例内构成『前不变/后整体新』时序对照＝NFR-REL-01 单文件层微观时序）" },
+        { "name": "AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『任一步失败不留半写目标』／§7.6 F5（HEAD 切换失败）单文件层——replace 注入 ERROR_SHARING_VIOLATION：旧目标完整、暂存保留（可识别未提交）" },
+        { "name": "AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§7.6 F4（发布失败）单文件层——publish 注入失败：无目标出现、暂存保留（F4 残留语义）" },
+        { "name": "AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3＋§7.2 行 6——默认构造＝生产装配形态（真实 Win32FileOps）；『暂存→只增发布』真实链路可用；行 6 落实由 AtomicFile.cpp 零 ReplaceFileW 引用承载（复核记录佐证：REPLACEFILE_WRITE_THROUGH 官方明示不受支持）" }
+      ]
+    },
+    {
+      "suite": "ProjectBuild（PRJ-T01 既有回归）",
+      "designRef": "units/project.md §11.2 PRJ-TX-14 前两项、§1.4、§3.3",
+      "cases": [
+        { "name": "ProjectBuild.SourceTreeReachable_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-T01 落位形态锚定——src/ 扫描面现含 win32/ 三文件（增列后仍通过）" },
+        { "name": "ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "NFR-MNT-01/D-01——新增 win32 文件零 Qt 头（windows.h 为 §1.4 设计内依赖，不在禁令）" },
+        { "name": "ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "§1.4——新增文件零 Eigen/rw::math 直接包含" },
+        { "name": "ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-1/R-2——新增文件零 sdurws/ird/* 跨单元 include（零 core 头消费——P-PR-1 延续）" },
+        { "name": "ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-2——IFileOps.hpp/AtomicFile.hpp 均在 src/win32/、include/ 零新增（私有头不出单元的直接证据）" }
+      ]
+    },
+    {
+      "suite": "ProjectLinkage（PRJ-T01 既有回归，零改动）",
+      "designRef": "units/project.md §3.3、§11.2 PRJ-TX-14 后两项",
+      "cases": [
+        { "name": "ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-1——本任务零新边，CMake 依赖面不变" },
+        { "name": "ProjectLinkage.NoTestkitEdge_DT_BUILD_T1", "status": "passed", "modes": ["integration", "smoke"], "trace": "T-1——FaultFileOps fake 全部实现在测试目标内、零 testkit 头（D-10 生产窄接口形态）" },
+        { "name": "ProjectLinkage.CoreEdgePresent_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-T01 登记边持续存在" },
+        { "name": "ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-PR-6/P-EX-8——零 diagnostics 链接边" },
+        { "name": "ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09", "status": "passed", "modes": ["integration", "smoke"], "trace": "O-09——零 io 编译期消费" }
+      ]
+    }
+  ],
+  "acceptance": [
+    { "item": 1, "summary": "publishNew/原子替换/write-through 语义单测通过：提交（替换）点之前旧文件字节不变、任一步失败不留半写目标（NFR-REL-01 的单文件原语层；§7.2 不超诺口径——只承诺 Windows API 实测保证，不断言超出文档的崩溃一致性）", "evidence": "AtomicFileTest 13 用例两模式 26/26 通过（sdurws_ird_project_test-{integration,smoke}.xml）；核心断言用例：ReplaceFile_BeforeCommitPoint_OldBytesStable（提交点前旧字节不变）、PublishNew_TargetExists_FailsAndKeepsBothSides/ReplaceFile_FailureKeepsOldTargetIntact/PublishNew_FailureCreatesNoTarget/WriteThrough_OpenFailure/WriteChunk_FailureMidway（各步失败旧目标完整＋无半写）、Flush_FailureFailsDurabilityGate（分离语义）；真实失败能力留证（EXPECT 反转→用例失败→复原）见报告 targets[1].notes" },
+    { "item": 2, "summary": "§7.2 Windows 文件操作保证对照 Microsoft Learn 官方文档口径逐行复核并留痕（复核记录入 traceability 留痕；R-5 缓解的实证基础——断电残余窗口由 §7 恢复协议兜底，不在本任务超诺）", "evidence": "s72-win32-docs-crosscheck.md（本目录）——行 1～6 逐行摘录官方英文原文＋一致性结论＋两处如实注记（CREATE_ALWAYS 成功路径残留 last-error 的实现对策；publishNew 目标已存在失败码按『文档语义＋实测 ERROR_ALREADY_EXISTS』取用）＋行 6 官方佐证（REPLACEFILE_WRITE_THROUGH 不受支持）；行 4/5（PRJ-T03 载体）先行复核登记" },
+    { "item": 3, "summary": "IFileOps 生产窄接口接缝就位（testkit.md D-10 形态：生产窄接口、测试侧 fake 经该接缝注入——PRJ-T15 契约测试与 testkit FaultInterceptor 的消费面）；接缝位于 src/win32/ 私有实现头、不出 include/（R-2 纪律）", "evidence": "src/win32/IFileOps.hpp（接口＋faultpoint 命名空间冻结故障点标识）＋src/win32/AtomicFile.hpp（AtomicFile(IFileOps*) 注入构造）；消费面＝AtomicFileTest.cpp FaultFileOps fake（5 个注入用例经接缝驱动失败路径）＋测试目标 PRIVATE src/ include 目录（CMakeLists 注释登记）；不出 include/＝ProjectBuild.PublicHeaderPathLayout 两模式通过＋include/ 树零新增文件" }
+  ],
+  "regression": {
+    "integration": { "total": 23, "passed": 23, "failed": 0, "note": "本单元 18（ProjectBuild 5＋AtomicFileTest 13）＋契约 5；PRJ-T01 既有 10 用例全量通过＝零回归；其余单元零触碰（改动仅 project/**，全量集成构建 exit 0 佐证）" },
+    "smoke": { "total": 23, "passed": 23, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训复用）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "8 命中＝wp04-t01 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×6（diagnostics_contract_test/evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——F-072 族既有缺陷）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）；日志中 R1/R3/R4/R5/T2 token 均为引擎自测『按预期检出』行，非真实命中",
+      "deltaAnalysis": "8 条真实命中全部为 WP-05/WP-06/WP-07/WP-09 辖区既有命中（逐条核对 target 名，零 sdurws_ird_project 条目）；本任务新增构建图元素＝零新边（产品库仅增列本单元自有源文件），exit 1＝基线既有命中的预期行为"
+    }
+  },
+  "docs": {
+    "unitCard": "units/project.md v0.3→v0.4：卡头文档版本行＋§15.4 变更记录行（PRJ-T02 存储原语落位登记——§7.2 逐行复核留痕＋win32/AtomicFile＋IFileOps 接缝＋13 单测），本文契约语义零变更",
+    "anchor": "src/Project.cpp 头注释『后续任务落位安排』PRJ-T02 行更新为已落位（注释随代码更新——AGENTS.md §2.5）"
+  }
+}

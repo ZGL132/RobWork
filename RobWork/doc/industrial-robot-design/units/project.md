@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.3（PRJ-T01 构建落位登记——卡头构建落位行更新＋README 指向复核，登记见 §15.4；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.4（PRJ-T02 存储原语落位登记——§7.2 官方文档口径逐行复核留痕＋win32/AtomicFile＋IFileOps 接缝，登记见 §15.4；v0.3＝PRJ-T01 构建落位登记；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-09 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-PROJECT |
@@ -1370,6 +1370,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）、core.md/testkit.md v0.1（Draft，协作输入）完成 15 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失）；冻结 .rwdesign 全目录契约、双通道提交闭包与防回退不变量、七步事务协议与故障注入矩阵、Windows 锁与存储上下文生命周期、命令/确认/撤销/归档接口；实现任务 PRJ-T01～T16；待裁决 8 项（P-PR-1～8） |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§5.0 稳定码清单由"diagnostics 未产出、以下为建议值"更正为"已收编全量 10 项（diagnostics.md §4.6）"——P-PR-6 码值部分消账；sink 名称/归属统一与 project→diagnostics 边的链接形态（当前注入式、暂不链接）仍按 P-PR-6/P-EX-8 裁决，不因卡存在自动消账 |
 | v0.3 | 2026-09-15 | PRJ-T01（≙WP-04-T01）构建落位登记：卡头构建落位行更新（INTERFACE 占位升级 STATIC、`_test`/`_contract_test` 注册、src/ 空起步锚点翻译单元 `Project.cpp`、P-ENV-1/P-PR-1 处置留痕）＋README 指向复核（§9→§12 已于 2026-09-10 版修正，复核零偏差）；§3.3 括注"INTERFACE → PRJ-T01 升级 STATIC"兑现，本文契约语义零变更。证据：traceability/builds/wp04-t01/ |
+| v0.4 | 2026-09-15 | PRJ-T02（≙WP-04-T02）存储原语落位登记：§7.2 Windows 文件操作保证对照 Microsoft Learn 官方文档口径**逐行复核**并留痕（行 1/2/3/6＝本任务实现载体行一致无超诺；行 4/5＝PRJ-T03 载体先行复核；两处措辞注记如实登记——CREATE_ALWAYS 成功路径残留 last-error、publishNew 目标已存在失败码按"文档语义＋实测 ERROR_ALREADY_EXISTS"取用；行 6 另得官方佐证 REPLACEFILE_WRITE_THROUGH 不受支持）→ `traceability/builds/wp04-t02/s72-win32-docs-crosscheck.md`；`src/win32/AtomicFile.{hpp,cpp}`＋`IFileOps` 生产窄接口接缝落地（§7.2 行 1/2/3 实现载体：write-through 暂存写〔FILE_FLAG_WRITE_THROUGH＋FlushFileBuffers 闸门〕/publishNew 只增〔无 REPLACE〕/原子替换〔REPLACE_EXISTING\|WRITE_THROUGH〕；接缝位于 src/win32/ 私有头不出 include/——R-2；故障点标识 `project/atomic-file/*` 按 testkit §6.4 命名法冻结），13 个新单测（原子/持久性分离语义＋提交点前旧文件字节不变＋任一步失败不留半写目标——fake 经 IFileOps 接缝注入，D-10 形态；本文契约语义零变更）。证据：traceability/builds/wp04-t02/ |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 
