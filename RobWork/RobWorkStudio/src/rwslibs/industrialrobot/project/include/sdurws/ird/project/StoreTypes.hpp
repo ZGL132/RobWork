@@ -5,9 +5,11 @@
  * 设计依据：
  *   - units/project.md §3.1（组成表：`StoreTypes.hpp`——OpenMode/OpenStoreRequest、
  *     StoreError/StoreErrorCode、RecoveryReport、LockInfo、SchemaInfo、StorePath，
- *     详见 §4、§5.0/§5.1。**本文件按 §12 任务节奏增量落位**：PRJ-T03 只落本
- *     任务卡范围内的类型——§9.2 锁持有者记录与 §5.0 IDiagnosticsSink；其余
- *     类型（StoreError/OpenStoreRequest 等）随 PRJ-T04/T08 落地时增补，不预建
+ *     详见 §4、§5.0/§5.1。**本文件按 §12 任务节奏增量落位**：PRJ-T03 落 §9.2
+ *     锁持有者记录与 §5.0 IDiagnosticsSink；PRJ-T04 增补 §5.0 StoreError/
+ *     StoreErrorCode（canonical 编解码的错误通道——格式解析的稳定拒绝码
+ *     format-legacy/schema-future/store-corrupt 由此承载）；其余类型
+ *     （OpenStoreRequest/RecoveryReport 等）随 PRJ-T08 落地时增补，不预建
  *     无消费者接口（NFR-MNT-04））；
  *   - §5.0（错误类型、诊断码与 diagnostics 适配——IDiagnosticsSink 定义原文）；
  *   - §9.2（第二实例读取 PID：固定宽度记录，容忍撕裂读）；
@@ -35,11 +37,81 @@
 #define SDURWS_IRD_PROJECT_STORETYPES_HPP
 
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 
 #include <sdurws/ird/core/DiagData.hpp>
 
 namespace sdurws::ird::project {
+
+/**
+ * @brief 存储层稳定错误码（§5.0 原文形态；token 表 §4.4.8）。
+ *
+ * 背景说明（错误语义二分，AGENTS §3/各任务卡）：StoreError 携带稳定 code
+ * ＋机器可读 detail，**用户可见文案不在 project 生成**（NFR-REL-05——码表
+ * 经 diagnostics 注册后由其供文案，PRJ-* 码值清单见 §5.0/diagnostics.md
+ * §4.6）。枚举值与 §4.4.8 稳定 token 一一对应（LockHeldByOther ↔
+ * "lock-held-by-other" 等），detail 面向开发诊断、前缀 "project/<域>:"。
+ * 本枚举为封闭集：新增错误码＝单元卡增量修订（不私扩）。
+ */
+enum class StoreErrorCode {
+    LockHeldByOther,           ///< lock-held-by-other（写锁被其他实例持有）
+    MediaReadOnly,             ///< media-read-only（介质只读）
+    AccessDenied,              ///< access-denied（OS 拒绝访问）
+    NotAProject,               ///< not-a-project（目录缺失/非项目目录——PM-02 步骤①）
+    FormatLegacy,              ///< format-legacy（旧格式稳定拒绝——§8.11 行 1/PM-06）
+    SchemaFuture,              ///< schema-future（未来版本拒绝＋升级指引——§8.11 行 2）
+    StoreCorrupt,              ///< store-corrupt（读校验失败/结构损坏——PM-02 读校验）
+    WriteRejected,             ///< write-rejected（写权威缺失——§9.6 门卫）
+    DiskFull,                  ///< disk-full（磁盘空间不足）
+    ContextClosed,             ///< context-closed（存储上下文已关闭——§4.7）
+    StaleRevisionRejected,     ///< stale-revision-rejected（expectedRevision 失配——§6.2/PM-04）
+    UnknownCommand,            ///< unknown-command（未注册命令 token——§6.3）
+    InvalidPayload,            ///< invalid-payload（命令载荷非法——§6.3）
+    ConfirmationsUnresolved,   ///< confirmations-unresolved（待确认集未确认——§6.7）
+    InteractionLost,           ///< interaction-lost（交互回调失效——§5.3.3）
+    CommandAborted,            ///< command-aborted（命令中止——§6.7 取消/关闭路径）
+    CompileFailed,             ///< compile-failed（双编译失败——RT 链，§6.6）
+    ArchiveConflict,           ///< archive-conflict（归档重投递内容冲突——§10.1/D-14）
+    ArchiveTargetMissing,      ///< archive-target-missing（归档目标缺失——§10.1）
+    DraftCorrupt,              ///< draft-corrupt（草稿损坏/归属不符——§4.4.5/§8.4）
+    BranchMetadataRegression,  ///< branch-metadata-regression（INV-M3 防回退——§4.5，防御性）
+};
+
+/**
+ * @brief 存储层统一异常（§5.0 原文形态）：稳定码＋开发诊断 detail。
+ *
+ * 背景说明：project 全部错误一律 StoreError（§5 章约定——错误一律
+ * StoreError，携带稳定 code＋机器可读 detail）。detail 约定为
+ * "project/<域>: <key>=<value> ..." 形态的机器可读键值串（如 canonical
+ * 编解码域为 "project/codec: schema-future document=20000 supported=10000
+ * upgrade=ISchemaUpgrader"——schema-future 的升级指引数据随 detail 携带，
+ * §8.11/PM-06：显示当前支持版本/项目版本/升级工具入口，不自动升级）；
+ * 人读文案归 diagnostics 供文案（P-PR-6 链路）。
+ *
+ * 线程安全：异常对象按值抛出/捕获（what() 串为对象自带，无共享状态）。
+ */
+class StoreError : public std::runtime_error {
+public:
+    /**
+     * @brief 构造携带稳定码与开发诊断明细的存储异常。
+     *
+     * @param code   [in] 稳定错误码（§4.4.8 token 对应的枚举值）
+     * @param detail [in] 开发诊断明细，前缀 "project/<域>:"（§5.0 原文
+     *               约定）；机器可读键值随域约定（如 codec 域的版本判定
+     *               键值对）。经 runtime_error 基类持有拷贝。
+     */
+    StoreError(StoreErrorCode code, std::string detail)
+        : std::runtime_error(detail), code_(code)
+    {
+    }
+
+    /// 稳定错误码（noexcept 纯读取——错误分类判据，调用方 switch 用）。
+    StoreErrorCode code() const noexcept { return code_; }
+
+private:
+    StoreErrorCode code_;  ///< §4.4.8 稳定 token 对应的枚举值（构造后不变）
+};
 
 /**
  * @brief 写锁持有者记录（`.rwdesign/lock` 文件内容的一行式固定宽度编码，
