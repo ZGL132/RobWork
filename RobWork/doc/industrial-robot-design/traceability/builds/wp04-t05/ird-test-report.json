@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T05",
+  "masterWp": "WP-04-T05",
+  "branch": "wp04-t05",
+  "base": "fd1b1971de9b9ba5d0ef4812b6a89726d0bf4695",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，_contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量构建 exit 0 零 error）",
+      "notes": "PRJ-T05 落位：src/ObjectStore.cpp 增列＋src/ObjectStore.hpp 新增（§12 PRJ-T05 行产物——对象库：§4.6 内容编址 objects/<oid>/<cv>〔目录名＝ObjectId::toCanonical，文件名＝ContentVersion::toCanonical 剥 cv- tag——与 core 格式化同源〕；只增发布 publishObject＝writeThrough 持久性闸门→publishNew，目标已存在→摘要一致共享/不一致 store-corrupt，有界重试 2 次覆盖 EXISTS→消失竞态；读取 tryObject/object 首次 size＋SHA-256 校验＋已校验集免复检；LRU 缓存默认 256 MiB 可配、键＝(oid,cv)、单条目超预算不缓存；scanObjects 引用存在性扫描＝missingReferenced〔调用方映射 store-corrupt〕/corruptReferenced/danglingOnDisk〔悬挂对象开发诊断，只读不删〕/malformedEntries 四桶＋确定性排序＋sink reportDev；ObjectStore.hpp 为 src/ 私有实现头——R-2）。CR-02 处置：零哈希实现——cv 一律经 codec::contentVersionOf（core::ContentDigester），文件名/目录名派生与解析全走 core 公共 API（toCanonical/tryFromCanonical），无第二哈希/格式化路径。P-PR-1 处置：消费面＝core 公共契约 Identity.hpp/Digest.hpp（PRJ-T04 同口径），零 core 修改。实现期缺陷留证：初版 publishObject 发布成功后预热读取缓存，TryObject_TamperedContent/TamperedSize 两用例真实失败暴露其违背 §4.6『首次加载执行校验』语义（发布后的首读命中缓存跳过校验）——移除预热（缓存只由读路径填充，§4.6 惰性加载），LRU/PA-3 用例改读驱动逐出后全绿"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 109/109）",
+      "notes": "PRJ-T05 增列 test/ObjectStoreTest.cpp（28 用例、6 组）。Publish 组 8：内容编址路径（objects/<oid 规范文本>/<64hex>）＋返回 cv＝core 直算＝codec 唯一入口三方相等（CR-02）＋同内容共享单文件（fileCount==1＋字节＋mtime 零变化）＋同内容不同 oid 不跨对象共享（§4.1.1 四概念）＋同 oid 新版本旁置并存＋空负载 FIPS 空串向量 e3b0c442…＋全零 oid fail-fast＋发布侧既有文件摘要不符 store-corrupt 且不覆盖。Read 组 7：tryObject 缺失返回 nullopt 不抛（文件缺/目录缺两形态——acceptance 3）＋object 引用缺失 store-corrupt（§5.2 错误表）＋篡改单字节翻转 store-corrupt（tryObject/object/scan 全量档三通道）＋size 篡改 store-corrupt＋全 256 字节值二进制负载逐位保真（D-10：磁盘字节＝负载，无信封）＋免复检语义钉住（同上下文已校验键逐出后再读交付新字节、重开上下文检出——校验结论生命周期＝存储上下文）＋全零键 fail-fast。Immutability 组 1（PA-2）：新版本发布后旧版本磁盘字节/mtime 不变、旧读者拷贝与再读均为原值、旧版本重发布走共享。Cache 组 4：读驱动 LRU 逐出顺序（A 触碰保留/B 逐出，cacheLruOrder 逐键断言）＋超预算不缓存/恰等预算缓存＋逐出不影响持有拷贝（PA-3）＋3 读线程×200 次×并发 20 次发布无失真（线程安全自证）。Scan 组 6：健康零发现＋缺失报告不抛＋悬挂对象开发诊断（CapturingSink 断言 channel/count）且不删除＋损坏全量档/存在性档两档＋四桶混合一次扫描＋确定性（两次扫描逐键相等）＋空库/非法引用 fail-fast。CoreContract 组 2：编址全链路单哈希（发布返回值/文件名解析回读/目录名解析回读/core 直算四方相等，含 64KiB 跨分块负载）＋core 严格解析消费基线（大写 hex/错 tag 拒绝——P-PR-1）。既有 81 用例（ProjectBuild 5＋AtomicFile 13＋StoreLock 13＋PathCanonical 7＋PersistenceFormat 43）零回归"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 10/10）",
+      "notes": "PRJ-T05 零改动回归通过（ProjectLinkage 构建图契约 5＋LockContractTest 真双进程 5）——本任务零新构建图边（CMake 变更仅增列 src/ObjectStore.cpp 与 test/ObjectStoreTest.cpp，链接面不变：仅 sdurws_ird_core＋gtest）；ObjectStore.hpp 位于 src/ 未出 PUBLIC include 根（R-2），LinkageContractTest 的构建图文本扫描与源码 include 面白名单（{core, project}）继续零命中"
+    }
+  ],
+  "gates": {
+    "ird_gates": "已执行：target ird_gates 构建 exit 1——命中 8 项与 wp04-t03/wp04-t04 留痕完全一致（IRD-GATE-SUB×7：diagnostics_contract/evidence/evidence_contract/policy/policy_contract/runtime 各 _test 直链 sdurws_ird_testkit＋testdata_lint→testkit 表外边；IRD-GATE-T1×1：testdata_lint 链接 testkit），全部为其他单元既有登记命中（DTB §4.5 减免通道），本次变更（project 单元）零新增命中——SUB/T1 命中计数与 wp04-t03 基线逐项 diff 相同（证据：gates-ird-gates-target.log）",
+    "validate-task": "PASS（validate-task.ps1 -TaskFile tasks/foundation/PRJ-T05.json——validate-task.log）"
+  },
+  "buildModes": {
+    "integration": "cmake --build build --config Release 全量 exit 0 零 error（build/CMakeCache.txt RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认）——integration-build.log；契约 verify 命令 cmake --build build --config Release --target sdurws_ird_project_test exit 0——verify-target-build.log",
+    "smoke": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp04-t05 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake 配置构建均 exit 0 零 error——smoke-configure.log/smoke-build.log"
+  },
+  "testSuites": [
+    {
+      "suite": "ObjectStorePublish",
+      "designRef": "units/project.md §4.1/§4.4.6/§4.6/§7.1 第 2/4 步；需求 CON-01；任务契约 PRJ-T05.json acceptance 1（内容编址/只增发布/共享去重）＋2（发布侧篡改拒绝）＋4（CR-02）",
+      "cases": [
+        { "name": "ObjectStoreTest.Publish_CreatesContentAddressedPath_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.1 命名规则——对象文件就位 objects/<obj-规范文本>/<64hex>，内容＝负载原样字节" },
+        { "name": "ObjectStoreTest.Publish_ReturnsCv_MatchesCoreDigesterAndCodecEntry_CR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1＋4（CR-02）／§4.6/§4.8——发布返回 cv＝core ContentDigester 直算＝contentVersionOf 唯一入口，三方相等" },
+        { "name": "ObjectStoreTest.Publish_SameContent_SharesSingleFileUnchanged_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.6 共享分支——同内容二次发布目录恰一份文件、既有文件字节＋mtime 零变化" },
+        { "name": "ObjectStoreTest.Publish_SameContentDifferentOid_NoCrossObjectSharing_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.1.1 四概念区分——内容相同 cv 相同但对象身份各立目录（键＝(oid,cv)）" },
+        { "name": "ObjectStoreTest.Publish_NewVersion_AlongsidesOldBothReadable_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.6——同 oid 新版本旁置并存，两版本读回各自字节" },
+        { "name": "ObjectStoreTest.Publish_EmptyPayload_RoundTrip_FipsEmptyVector_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1＋3／§4.4.6——空负载合法，cv＝FIPS 180-2 空串向量，读回空字节" },
+        { "name": "ObjectStoreTest.Publish_AllZeroOid_FailFastInvalidArgument", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 边界／AGENTS 错误二分——全零保留值 oid＝调用方违约 fail-fast" },
+        { "name": "ObjectStoreTest.Publish_ExistingTargetDigestMismatch_RejectsStoreCorruptNoOverwrite", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.6『不一致→store-corrupt』——发布侧既有文件摘要不符拒绝且绝不覆盖（只增不改）" }
+      ]
+    },
+    {
+      "suite": "ObjectStoreRead",
+      "designRef": "units/project.md §4.6 读取与完整性、§5.2 tryObject/object 错误表、§4.4.6 D-10；任务契约 PRJ-T05.json acceptance 2（读取侧篡改检测）＋3（tryObject 语义/D-10）",
+      "cases": [
+        { "name": "ObjectStoreTest.TryObject_MissingObject_ReturnsNulloptNoThrow_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§4.6 引用存在性——文件缺/目录缺两形态均返回空 optional 不抛" },
+        { "name": "ObjectStoreTest.Object_MissingReferenced_ThrowsStoreCorrupt", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§5.2 错误表——object() 断言形态对缺失引用抛 store-corrupt" },
+        { "name": "ObjectStoreTest.TryObject_TamperedContent_RejectedStoreCorrupt", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.6 首次加载校验——等长单字节翻转被 tryObject/object/scan 全量档三通道检出（store-corrupt）" },
+        { "name": "ObjectStoreTest.TryObject_TamperedSize_RejectedStoreCorrupt", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.6 size＋SHA-256 双半边——追加篡改被 size 校验拒绝" },
+        { "name": "ObjectStoreTest.Read_BinaryPayloadPreservedByteExactly_D10", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3（D-10/N-9）／§4.4.6——全 256 字节值＋非法 UTF-8 负载逐位保真，磁盘字节＝负载无信封" },
+        { "name": "ObjectStoreTest.Read_VerifiedOnce_FreeOfRecheckWithinContext_PinnedSemantic", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.6 摘要缓存后免复检——校验结论生命周期＝存储上下文（同上下文免复检交付、重开检出）双向钉住" },
+        { "name": "ObjectStoreTest.TryObject_AllZeroKeys_FailFastInvalidArgument", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 边界——全零键 fail-fast，不伪装成对象不存在" }
+      ]
+    },
+    {
+      "suite": "ObjectStoreImmutability",
+      "designRef": "units/project.md §4.6 查询快照与写入隔离；需求 PA-2/PA-3；任务契约 PRJ-T05.json acceptance 2（对象文件不可变）",
+      "cases": [
+        { "name": "ObjectStoreTest.PublishNewVersion_OldVersionAndReadersNeverOverwritten_PA2", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2（PA-2）——写入只增新内容：旧版本字节/mtime 不变、旧读者拷贝与再读原值、旧版本重发布走共享" }
+      ]
+    },
+    {
+      "suite": "ObjectStoreCache",
+      "designRef": "units/project.md §4.6 缓存（LRU/预算/互斥）；任务契约 PRJ-T05.json acceptance 1（LRU 缓存预算）＋2（PA-3）",
+      "cases": [
+        { "name": "ObjectStoreTest.Cache_EvictsLeastRecentlyUsed_WithinBudget", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.6 LRU——读驱动逐出：触碰者保留、最久未用者逐出（cacheLruOrder 逐键断言）＋记账 stats＋被逐出者可再读" },
+        { "name": "ObjectStoreTest.Cache_OversizeNotCached_ExactFitCached", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 边界——单条目超预算不缓存（可读不受影响）、恰等预算缓存（≤ 口径）" },
+        { "name": "ObjectStoreTest.Cache_EvictionDoesNotAffectHeldCopies_PA3", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2（PA-3）——逐出＋磁盘篡改极端组合下持有拷贝不变（值语义隔离）" },
+        { "name": "ObjectStoreTest.ConcurrentReads_WhilePublishing_ThreadSafe", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.6 缓存互斥内部实现——3 读线程×200 次×并发 20 次发布，读得字节零失真" }
+      ]
+    },
+    {
+      "suite": "ObjectStoreScan",
+      "designRef": "units/project.md §4.6 引用存在性、§7.4 恢复④⑤、§4.1 objects 行（悬挂＝开发诊断不删除）；任务契约 PRJ-T05.json acceptance 3",
+      "cases": [
+        { "name": "ObjectStoreTest.Scan_AllReferencedPresent_NoFindings", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3——健康状态三桶全空" },
+        { "name": "ObjectStoreTest.Scan_MissingReferenced_ReportedNoThrow", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§4.6——有引用无对象进 missingReferenced（调用方映射 store-corrupt），扫描不抛" },
+        { "name": "ObjectStoreTest.Scan_DanglingObject_ReportedAsDevDiagnostic_NotDeleted", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§4.6——有对象无引用＝悬挂对象：sink 开发诊断（project/object-store）＋文件不删除（GC 不做）" },
+        { "name": "ObjectStoreTest.Scan_CorruptReferenced_FullAndExistenceModes", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§7.4 ④⑤——全量档检出被篡改引用对象、存在性档不查摘要（两档语义）" },
+        { "name": "ObjectStoreTest.Scan_MixedFindings_AllBuckets_DeterministicReport", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3——缺失＋损坏＋悬挂＋不合规四桶一次扫描如实分桶；两次扫描报告逐键相等（确定性排序）" },
+        { "name": "ObjectStoreTest.Scan_EmptyStore_NoFindings_InvalidRefFailsFast", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 边界——空库全空报告；引用表混入全零键 fail-fast" }
+      ]
+    },
+    {
+      "suite": "ObjectStoreCoreContract",
+      "designRef": "units/core.md v0.1 §4.1/§4.2（P-PR-1 消费基线）；foundation-api-diff CR-02（摘要唯一＝core ContentDigester）；任务契约 PRJ-T05.json acceptance 4",
+      "cases": [
+        { "name": "ObjectStoreTest.CoreContract_AddressingPath_SingleHashViaCore_CR02_PPR1", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（CR-02）——编址全链路四方相等：发布返回值/文件名解析回读/目录名解析回读/core 直算（含 64KiB 跨分块负载）；本地第二哈希路径必然打破四方相等" },
+        { "name": "ObjectStoreTest.CoreContract_StrictCanonicalParse_ConsumedAsBaseline", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（P-PR-1）——core 严格解析契约消费基线：大写 hex/错 tag 拒绝，无本地宽松解析旁路" }
+      ]
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "acceptance": "acceptance 1：内容编址（objects/<oid>/<cv>）与只增发布/同对象共享去重/LRU 缓存预算单测通过（CON-01 包络的持久化编址）",
+      "tests": [
+        "Publish_CreatesContentAddressedPath_CON01",
+        "Publish_ReturnsCv_MatchesCoreDigesterAndCodecEntry_CR02",
+        "Publish_SameContent_SharesSingleFileUnchanged_CON01",
+        "Publish_SameContentDifferentOid_NoCrossObjectSharing_CON01",
+        "Publish_NewVersion_AlongsidesOldBothReadable_CON01",
+        "Publish_EmptyPayload_RoundTrip_FipsEmptyVector_CON01",
+        "Publish_AllZeroOid_FailFastInvalidArgument",
+        "Cache_EvictsLeastRecentlyUsed_WithinBudget",
+        "Cache_OversizeNotCached_ExactFitCached",
+        "Cache_EvictionDoesNotAffectHeldCopies_PA3",
+        "ConcurrentReads_WhilePublishing_ThreadSafe"
+      ],
+      "result": "passed（两模式 11/11）"
+    },
+    {
+      "acceptance": "acceptance 2：篡改检测用例通过（读取侧摘要校验失败拒绝 store-corrupt）；对象文件不可变（写入只增新内容、既有读者引用永不被覆盖——PA-2）",
+      "tests": [
+        "TryObject_TamperedContent_RejectedStoreCorrupt",
+        "TryObject_TamperedSize_RejectedStoreCorrupt",
+        "Publish_ExistingTargetDigestMismatch_RejectsStoreCorruptNoOverwrite",
+        "Read_VerifiedOnce_FreeOfRecheckWithinContext_PinnedSemantic",
+        "PublishNewVersion_OldVersionAndReadersNeverOverwritten_PA2",
+        "Cache_EvictionDoesNotAffectHeldCopies_PA3"
+      ],
+      "result": "passed（两模式 6/6；发布侧＋读取侧篡改双通道，PA-2/PA-3 隔离）"
+    },
+    {
+      "acceptance": "acceptance 3：引用存在性语义（tryObject 空 optional 不抛；扫描有引用无对象→store-corrupt 材料、有对象无引用→悬挂对象开发诊断；负载＝收到的字节原样存储 D-10/N-9）",
+      "tests": [
+        "TryObject_MissingObject_ReturnsNulloptNoThrow_CON01",
+        "Object_MissingReferenced_ThrowsStoreCorrupt",
+        "Read_BinaryPayloadPreservedByteExactly_D10",
+        "Scan_AllReferencedPresent_NoFindings",
+        "Scan_MissingReferenced_ReportedNoThrow",
+        "Scan_DanglingObject_ReportedAsDevDiagnostic_NotDeleted",
+        "Scan_CorruptReferenced_FullAndExistenceModes",
+        "Scan_MixedFindings_AllBuckets_DeterministicReport",
+        "Scan_EmptyStore_NoFindings_InvalidRefFailsFast",
+        "TryObject_AllZeroKeys_FailFastInvalidArgument"
+      ],
+      "result": "passed（两模式 10/10；store-corrupt 映射决策留调用方——扫描产出 missingReferenced 材料，符合 §4.6 权威唯一）"
+    },
+    {
+      "acceptance": "acceptance 4：P-PR-1 处置（ContentIdentity/ContentDigester 消费以 core.md v0.1 为基线，不私改 core）；CR-02 处置（摘要计算只经 core ContentDigester，不私设第二哈希路径）",
+      "tests": [
+        "Publish_ReturnsCv_MatchesCoreDigesterAndCodecEntry_CR02",
+        "CoreContract_AddressingPath_SingleHashViaCore_CR02_PPR1",
+        "CoreContract_StrictCanonicalParse_ConsumedAsBaseline"
+      ],
+      "result": "passed（两模式 3/3；结构性证据：实现零哈希代码——cv 全经 codec::contentVersionOf，文件/目录名派生与解析全走 core toCanonical/tryFromCanonical；include 面＝core 公共契约头 Identity.hpp/Digest.hpp，零 core 修改——LinkageContractTest 构建图扫描持续零命中）"
+    }
+  ]
+}
