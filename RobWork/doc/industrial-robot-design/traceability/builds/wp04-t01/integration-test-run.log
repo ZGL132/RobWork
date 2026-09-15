@@ -1,0 +1,70 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_project_test
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+  ird: run sdurws_ird_project_test and write gtest XML report
+  Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+  [==========] Running 5 tests from 1 test suite.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from ProjectBuild
+  [ RUN      ] ProjectBuild.SourceTreeReachable_DT_BUILD
+  [       OK ] ProjectBuild.SourceTreeReachable_DT_BUILD (0 ms)
+  [ RUN      ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+  [       OK ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (0 ms)
+  [ RUN      ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+  [       OK ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (0 ms)
+  [ RUN      ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+  [       OK ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (0 ms)
+  [ RUN      ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2
+  [       OK ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+  [----------] 5 tests from ProjectBuild (1 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 5 tests from 1 test suite ran. (1 ms total)
+  [  PASSED  ] 5 tests.
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+  ird: run sdurws_ird_project_contract_test and write gtest XML report
+  Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+  [==========] Running 5 tests from 1 test suite.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from ProjectLinkage
+  [ RUN      ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+  [       OK ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+  [ RUN      ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1
+  [       OK ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+  [ RUN      ] ProjectLinkage.CoreEdgePresent_DT_BUILD
+  [       OK ] ProjectLinkage.CoreEdgePresent_DT_BUILD (0 ms)
+  [ RUN      ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD
+  [       OK ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD (0 ms)
+  [ RUN      ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09
+  [       OK ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09 (0 ms)
+  [----------] 5 tests from ProjectLinkage (1 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 5 tests from 1 test suite ran. (1 ms total)
+  [  PASSED  ] 5 tests.
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
