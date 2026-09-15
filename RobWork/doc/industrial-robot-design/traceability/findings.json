@@ -1366,6 +1366,16 @@
       "title": "幻影清单家族边缘再现（F-081…F-132 家族第 13 例；较 F-132 的『明示形态』退半步、较 F-129 隐匿形态有实质缓解）：PRJ-T06 送验提交 e70031c8 正文列举『新增 traceability/builds/wp04-t06/：冒烟配置/构建日志、集成全量构建日志、…运行日志＋gtest XML（8 份）、ird_gates 门禁日志、契约 verify 命令日志、validate-task 日志…』但未在提交信息内内联说明其中 9 份 .log 受 .gitignore 第 87 行管控不入库（wp04-t05 先例 b6cc2352 曾内联明示）；缓解事实：同提交入库的 ird-test-report.json 的 evidence.localOnlyNote 字段已按 F-132 处置建议②完整注明『9 份 .log 工作区留痕不入库、与 wp04-t03/t04/t05 交付形态一致』，evidence.committed 列表与 git ls-tree 实测 5 件逐项一致——F-132 家族诉求（库内可按图索骥）实质达成，残留仅为提交信息自身措辞。验证结论性内容（两模式 133/133＋10/10、契约 verify exit 0、ird_gates 8 命中与 wp04-t05 基线逐项一致零新增、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）——家族已 13 例，根因处置紧迫度注记在本例继续累积",
       "resolution": "处置建议＝同 F-129/F-132：①.gitignore 增加否定规则或留痕日志统一 .txt 后缀（根因收口后本家族自动消账）；②提交信息列举证据文件时内联注明『X 份入库＋Y 份 .log 工作区留痕』。编号顺延自 F-135，合入时由所有者确认。"
+    },
+    {
+      "id": "F-137",
+      "source": "tick#167 编排者执行留痕（PIPE §4.7②/③；tick 报告同步披露）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "编排者执行偏差（自愈，无交付影响）：tick#167 执行 §4.7②/③ 按 SHA 合并前未断言工作树所在分支，而实施子代理完成后工作树停留在任务分支 wp04-t06，导致记录合并（8cddfbe3）与代码合并（e70031c8）最初落在 wp04-t06 本地（错位合并提交 201abff7，从未推送、从未进入 redesign-main）；发现信号＝步骤③对已含于本分支的 e70031c8 合并返回 Already up to date。纠正＝切回 redesign-main、本地 wp04-t06 指针恢复到已推送尖端 e70031c8（仅丢弃未推送的本地错位合并，不构成对已推送历史的改写）、在 redesign-main 重做②③（972d7d89、f71d5a79，parents 链核实无误）。redesign-main 最终内容与一步做对完全一致（总增量＝验收记录＋findings＋已验收任务内容，无夹带；漂移检测①对 origin 的核对真实通过），仅拓扑中间态多绕一步",
+      "owner": "编排纪律（PIPE §4.7 收尾第①步前应显式断言当前分支==redesign-main，否则先切回）；T-ORCH 模板步骤 8 是否增补此前置断言归 PIPE 所有者裁决（模板修订＝PIPE 增量修订）",
+      "resolution": "处置建议＝附录 A T-ORCH 步骤 8 增补前置断言「git branch --show-current 必须为 redesign-main，否则切回后再执行收尾」；本例已自愈不追溯。编号顺延自 F-136，合入时由所有者确认。"
     }
   ]
 }
