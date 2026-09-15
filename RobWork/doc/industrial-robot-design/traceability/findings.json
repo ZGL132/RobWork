@@ -1266,6 +1266,26 @@
       "title": "提交标题家族再现（F-012 系）：PRJ-T02 送验提交 04315ecb 标题『[WP-04-T02] §7.2 官方文档口径逐行复核留痕＋双模式验证证据＋单元卡 v0.4 同步』前缀后以节号＋名词短语（'§7.2 官方文档口径'）开头，非动词开头——同日（2026-09-15）F-121（PRJ-T01）之后的再例。纯风格瑕疵：正文四段齐备、Acc-Covered 对账行在位、验证结论与留痕一致（验收者独立复现无粉饰），既往判例均不阻断",
       "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
       "resolution": "处置建议＝同 F-012 处置建议①：提交前自查标题格式（前缀后首词为动词，如『复核…』『登记…』『留痕…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-125，合入时由所有者确认。"
+    },
+    {
+      "id": "F-127",
+      "source": "traceability/acceptance/PRJ-T03-20260915.md#4.9/4.10（attempt 3；验收者 git ls-tree／check-ignore 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125 之后又一例，F-125 后同日同单元再例）：PRJ-T03 送验提交 65520d6a 正文声称入库『双模式构建/配置日志＋测试运行日志＋gtest XML×4＋validate-task.log（PASS）＋verify-target-build.log（契约 verify 两命令 exit 0）＋gates-ird-gates-target.log』，git ls-tree @65520d6a 实证 builds/wp04-t03/ 仅 5 件（ird-test-report.json＋双模式 gtest XML 四份）——10 份 .log 全部未入库（实施工作树本地存在、命中根 .gitignore:87 *.log 规则，check-ignore 实证）；ird-test-report.json 的 gates 字段引用 validate-task.log/gates-ird-gates-target.log 亦为库外幻影引用。F-125 处置建议③（PRJ-T02 的 9 份日志随 PRJ-T03 送验补交）未被执行。验证结论性内容（双模式 38/38＋10/10、ird_gates 8 命中＝F-115 基线零 project、validate-task/verify-task/validate-docs PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①同 F-125：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-126，合入时由所有者确认。"
+    },
+    {
+      "id": "F-128",
+      "source": "traceability/acceptance/PRJ-T03-20260915.md#4.9（attempt 3）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "提交标题家族再现（F-012 系）：PRJ-T03 送验提交 65520d6a 标题『[WP-04-T03] PRJ-T03 验证留痕归档（构建/门禁/测试执行证据）』前缀后以任务名词『PRJ-T03』开头，非动词开头（AGENTS §6.3/ACC §4.9 字面要求）——F-121（PRJ-T01）/F-126（PRJ-T02）同日（2026-09-15）之后的同单元再例。纯风格瑕疵：正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
+      "resolution": "处置建议＝同 F-012/F-126 处置建议①：提交前自查标题格式（前缀后首词为动词，如『归档…』『复核…』『登记…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-127，合入时由所有者确认。"
     }
   ]
 }
