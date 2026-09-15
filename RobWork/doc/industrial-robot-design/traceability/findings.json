@@ -1167,11 +1167,33 @@
       "id": "F-117",
       "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.8，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-15",
       "title": "units/diagnostics.md §1.2 卡头『构建落位』字段（v0.11）称『_contract_test 增列 test/ScriptedDiagSource.hpp/.cpp 对』，实际替身为 header-only 仅 ScriptedDiagSource.hpp（无 ScriptedDiagSource.cpp——test/ 目录 ls 实证；同卡 §14.4 v0.11 行与提交 a71e42ee 正文均只写 .hpp）——卡头字段笔误，文件清单表述失实（不影响实现与测试本身）",
       "owner": "详设所有者（units/diagnostics.md 辖域）",
-      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）。随 diagnostics.md 下次增量修订将『.hpp/.cpp 对』订正为『ScriptedDiagSource.hpp（header-only）』。"
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）。随 diagnostics.md 下次增量修订将『.hpp/.cpp 对』订正为『ScriptedDiagSource.hpp（header-only）』。",
+      "fixedAt": "2026-09-15",
+      "fixedBy": "DIAG-T11（送验对象 8d345a43cc90beb7be3434d5d9545a5713868402）：§1.2 卡头措辞已更正为『test/ScriptedDiagSource.hpp 仅头替身＋test/ScriptedDiagSourceTest.cpp』，并按 DTB §5.4 登记于 §14.4 v0.12④；审计证据 traceability/builds/wp09-t11/README-audit.md §4.1——DIAG-T11 验收（acc/DIAG-T11/1）亲测该段在位"
+    },
+    {
+      "id": "F-118",
+      "source": "DIAG-T11 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T11-20260915.md §4.8/§4.10，送验对象 8d345a43cc90beb7be3434d5d9545a5713868402，分支 wp09-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-113/F-111/F-114 悬空引用/幻影清单家族第 14 例（较 F-114 减轻：正文无幻影、仅报告字段幻影）：DIAG-T11 送验的 traceability/builds/wp09-t11/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』）与 selfCheck.validateTask 字段（『留痕 validate-task.log』『留痕 verify-task.log＋validate-docs.log』）及 probeCapability④（『留痕 integration-build.log』『留痕 smoke-build.log/smoke-configure.log』）引用 7 件 .log 均未入库（git ls-tree 8d345a43 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份；根 .gitignore『*.log』规则同 F-010 根因）；但留痕提交 866ce899 正文已如实声明『构建/门禁/验证脚本日志按仓库惯例留磁盘不提交（同 wp09-t10 口径）』——正文与报告字段口径不一致。证据本体不缺：双模式 XML（integration 115/115＋26/26、smoke 115/115＋26/26 顶格实测）与 report 全部数值主张（双模式 115/115＋26/26、ird_gates 8 命中＝wp09-t10 基线逐码一致零新增——验收者 cmake --build --target ird_gates 亲跑命中集逐码比对、validate-task PASS、verify-task PASS）经验收者 detached worktree @SHA 从零亲手复现准确，判级沿 F-111/F-113/F-114 先例＝建议级不阻断",
+      "owner": "实施者侧（报告字段只引用在库文件；被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族累计 14 例，流程级根治诉求再升级）",
+      "resolution": "建议级，不阻断 DIAG-T11 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-114：报告 selfCheck/gates 字段引用与提交正文声明二选一对齐（要么入库要么字段不引用）。"
+    },
+    {
+      "id": "F-119",
+      "source": "DIAG-T11 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T11-20260915.md §4.9，送验对象 8d345a43cc90beb7be3434d5d9545a5713868402，分支 wp09-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-012/F-100/F-104/F-107/F-109/F-112/F-116 家族再现（一次两例）：DIAG-T11 两提交标题『[WP-09-T11] README 指向核对同步与双模式复证留痕…』（866ce899，名词 README 开头）与『[WP-09-T11] 单元卡 v0.12 零偏差登记…』（8d345a43，名词『单元卡』开头——与 F-116 完全同型）均非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；两提交正文四段齐备＋Acc-Covered 逐条标注、数值主张全部复现准确",
+      "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
+      "resolution": "建议级，不阻断 DIAG-T11 验收（pass）。属流程纪律提示（标题示例口径固化建议已多次提出——F-012/F-023/F-104/F-107/F-109/F-112/F-116 连续登记，建议 DTB §5.1 或 PIPE 附录 C 模板强制固化）。"
     }
   ]
 }
