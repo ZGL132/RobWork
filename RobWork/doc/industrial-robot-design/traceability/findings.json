@@ -1132,6 +1132,46 @@
       "title": "F-087/F-090 悬空引用家族再现：DIAG-T09 送验的 traceability/builds/wp09-t09/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』『留痕 integration-build.log』）与 selfCheck.validateTask 字段（『留痕 verify-task.log/validate-task.log』）引用 4 件 .log 文件均未入库（git ls-tree 4d4bf83c 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份；根 .gitignore『*.log』规则同 F-010 根因）；提交正文 4d4bf83c 干净——仅声称 XML×4＋report 且与 ls-tree 逐件一致（较 F-085/F-088『正文逐件列举不存在文件』为轻）。证据本体不缺：双模式 XML（integration 107/107＋14/14、smoke 107/107＋14/14 顶格实测）与 report 全部数值主张（双模式 107/107＋14/14、ird_gates 7 命中＝wp09-t08 基线逐码一致零 diagnostics、validate-task PASS、verify-task PASS）经验收者在 detached worktree @SHA 从零亲手复现准确，判级沿 F-081/F-083/F-085/F-087/F-088/F-090 先例＝建议级不阻断",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀，或报告字段只引用在库文件）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——悬空引用/未入库家族累计第 12 例，流程级根治诉求再升一级）",
       "resolution": "建议级，不阻断 DIAG-T09 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致，ird_gates 命中分布与报告逐码一致）。修复方向同 F-087/F-090。"
+    },
+    {
+      "id": "F-114",
+      "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.9/§4.10，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-113/F-111 悬空引用/幻影清单家族第 13 例（较 DIAG-T09 加重：正文＋报告双幻影）：DIAG-T10 送验的 traceability/builds/wp09-t10/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』）与 selfCheck 字段（『留痕 validate-task.log』『留痕 verify-task.log』『留痕 integration-build.log』『留痕 smoke-build.log』）引用 5 件 .log 均未入库（git ls-tree @76c128d7 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份）；且留痕提交 76c128d7 正文 What 段声称入库 integration-build.log/smoke-build.log/smoke-configure.log/测试运行日志×4/ird-test-report.json/validate-task.log/verify-task.log/gates-ird-gates-target.log 约 12 件，与实际入库 5 件不符（根 .gitignore『*.log』规则同 F-010 根因）。证据本体不缺：双模式 XML（integration 115/115＋26/26、smoke 115/115＋26/26 顶格实测）与 report 全部数值主张（双模式 115/115＋26/26、ird_gates 8 命中＝wp09-t09 基线 7＋新增 1 逐条一致、validate-task PASS、verify-task PASS）经验收者 detached worktree @SHA 从零亲手复现准确，判级沿 F-081/F-085/F-087/F-090/F-111/F-113 先例＝建议级不阻断",
+      "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀，或报告/提交正文只引用在库文件）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族累计 13 例，流程级根治诉求再升级）",
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-111。"
+    },
+    {
+      "id": "F-115",
+      "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.4/§4.8，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "ird_gates 基线新增 1 命中（IRD-GATE-SUB：sdurws_ird_diagnostics_contract_test→sdurws_ird_testkit，验收者亲跑 8 命中＝wp09-t09 基线 7＋新增 1 实证）的 DTB §4.5 例外登记册/ird_gates 白名单登记义务随任务流转悬置：该链接为 testkit.md §2.4 T-1 允许形态 {被测产品目标, sdurws_ird_testkit, gtest}（DIAG-T10 acceptance 3 明文要求的契约谓词消费面，与既有 evidence/policy/runtime 五处测试目标直链同款），产品目标 sdurws_ird_diagnostics 零 testkit 边；但 DIAG-T10 契约 allowedFiles 不含 DTB/门禁白名单，任务卡 note 与单元卡 §14.4 均注明『登记册维护归 WP-01-T03、转登验收裁决』——按 ACC §5 转登跟踪",
+      "owner": "WP-01-T03 所有者（DTB §4.5 例外登记册与 cmake/ird_gates_whitelist.cmake 白名单维护辖域）；合入后随门禁白名单任务收口",
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）——门禁 exit 1 为基线红既有行为，新增命中与送验报告『如实登记』一致、非未申报越界。收口动作：WP-01-T03 落地时把该边（连同 F-019 的 testdata_lint 两命中、evidence/policy/runtime 五命中）一并登记白名单或分类处置。"
+    },
+    {
+      "id": "F-116",
+      "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.9，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-012/F-100/F-104/F-107/F-109/F-112 家族再现：DIAG-T10 留痕提交 76c128d7 标题『[WP-09-T10] 单元卡 v0.11 实现落位登记与验证留痕（traceability/builds/wp09-t10）』以名词『单元卡』开头非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；正文四段齐备、数值主张全部复现准确（同范围另一提交 a71e42ee『实现 diagnostics 测试替身与契约套件…』动词开头合规）",
+      "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）。属流程纪律提示（标题示例口径固化建议已第三次以上提出——F-012/F-023/F-104/F-107/F-109/F-112 连续登记，建议 DTB §5.1 或 PIPE 附录 C 模板强制固化）。"
+    },
+    {
+      "id": "F-117",
+      "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.8，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "units/diagnostics.md §1.2 卡头『构建落位』字段（v0.11）称『_contract_test 增列 test/ScriptedDiagSource.hpp/.cpp 对』，实际替身为 header-only 仅 ScriptedDiagSource.hpp（无 ScriptedDiagSource.cpp——test/ 目录 ls 实证；同卡 §14.4 v0.11 行与提交 a71e42ee 正文均只写 .hpp）——卡头字段笔误，文件清单表述失实（不影响实现与测试本身）",
+      "owner": "详设所有者（units/diagnostics.md 辖域）",
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）。随 diagnostics.md 下次增量修订将『.hpp/.cpp 对』订正为『ScriptedDiagSource.hpp（header-only）』。"
     }
   ]
 }
