@@ -50,9 +50,15 @@ find_package(GTest CONFIG REQUIRED)
 # AtomicFile.cpp 增列（§12 PRJ-T02 行产物——存储原语：publishNew/原子
 # 替换/write-through 写＋IFileOps 接缝；IFileOps.hpp/AtomicFile.hpp 为
 # src/win32/ 私有实现头，不列 include、不经 PUBLIC include 根暴露——R-2）。
+# PRJ-T03 落位：src/win32/{StoreLock,PathCanonical}.cpp 增列（§12 PRJ-T03
+# 行产物——写锁〔独占句柄/心跳/PID 读取/失权防护〕与路径规范化；
+# StoreLock.cpp 内含 ILockOps 的真实实现 Win32LockOps，ILockOps.hpp/
+# StoreLock.hpp/PathCanonical.hpp 同为 src/win32/ 私有实现头——R-2）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
-    src/win32/AtomicFile.cpp)
+    src/win32/AtomicFile.cpp
+    src/win32/StoreLock.cpp
+    src/win32/PathCanonical.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——project 公共头将使用
@@ -84,12 +90,18 @@ target_include_directories(sdurws_ird_project PUBLIC
 # core, diagnostics"中的 core 边，PUBLIC 形态＝§3.3 原文；alias 形态
 # RWS::ird::core 在集成模式即其 ALIAS，此处用统一真名 sdurws_ird_core：
 # 集成与独立冒烟两种模式下都可解析——diagnostics 落位同款取舍）。
-# P-PR-1 处置：本任务仅建立该链接边、零 core 头消费（core v0.1 Draft，
-# 消费面随 PRJ-T04+ 按冻结签名进入）。diagnostics 边按注入形态不落链接
-# （IDiagnosticsSink 适配器注入，§3.2/§5.0——P-PR-6/P-EX-8 裁决链接形态，
-# ird_gates 白名单已预登记 project->diagnostics，不因卡存在自动转链接）。
-# 零 rw 基线库直链（rw::math 经 core 公共头传递，§1.4）、零 Qt（D-01 零 Qt
-# 含 Core）、零其他 industrialrobot 单元（业务域协作全走注入处理器/端口，
+# P-PR-1 处置登记更新（PRJ-T03，2026-09-15）：本单元首个 core 头消费点
+# 已随 PRJ-T03 落地——公共头 StoreTypes.hpp 的 IDiagnosticsSink::report()
+# 以 core::DiagnosticRecord 为参数（§5.0 原文签名；任务契约 PRJ-T03.json
+# acceptance 4 明文要求"锁诊断经 IDiagnosticsSink 适配器产出
+# core::DiagnosticRecord"）。消费面＝core 公共契约 DiagData.hpp（其
+# DiagnosticRecord 已随 DIAG-T03/T04 在 diagnostics 侧钉住 v0.1 基线），
+# 不触及 core.md 其余 Draft 面。diagnostics 边按注入形态不落链接
+# （IDiagnosticsSink 由 project 自有接口定义、diagnostics/L5 提供实现
+# ——P-PR-6/P-EX-8 裁决链接形态，ird_gates 白名单已预登记
+# project->diagnostics，不因卡存在自动转链接）。零 rw 基线库直链
+# （rw::math 经 core 公共头传递，§1.4）、零 Qt（D-01 零 Qt 含 Core）、
+# 零其他 industrialrobot 单元（业务域协作全走注入处理器/端口，
 # §6.5——R-1）、零 testkit（T-1 产品目标不链 testkit）、零 io（O-09 处置：
 # 阶段 A 零 io 编译期消费，包导入导出/固化归阶段 B WP-04-T17/T18）。
 target_link_libraries(sdurws_ird_project PUBLIC sdurws_ird_core)
@@ -106,13 +118,18 @@ endif()
 # D-01 零 Qt 含 Core〕、无私有头出 include〔R-2〕；另含 §1.4 零 Eigen/
 # rw::math 直接包含与 include 面 sdurws/ird/* 白名单＝{core, project}——
 # ARCH §3.5 唯一出边）。运行期源码扫描与文件末尾配置期守卫互为两道防线
-# （diagnostics 落位同款）。PRJ-T02+ 用例按 §11 各 PRJ-TX 组增列
-# （AtomicFileTest/StoreLockTest/CodecRoundTripTest 等同名测试文件）。
+# （diagnostics 落位同款）。PRJ-T02+ 用例按 §11 各 PRJ-TX 组增列。
+# PRJ-T02 增列：AtomicFileTest（PRJ-TX-2/4/5 的单文件原语层——F2/F4/F5
+# 注入）。PRJ-T03 增列：StoreLockTest（acceptance 1 锁面/2 失权三道防线/
+# 4 诊断契约——进程内多实例＋ILockOps 接缝 fake）、PathCanonicalTest
+# （acceptance 3——规范化一致性＋同项目多路径打开 §9.3）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
     test/BuildRedLineTest.cpp
-    test/AtomicFileTest.cpp)
+    test/AtomicFileTest.cpp
+    test/StoreLockTest.cpp
+    test/PathCanonicalTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
@@ -166,11 +183,25 @@ add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
 # （PRJ-TX-14 后两项：CMake 无业务单元边〔R-1〕、无 testkit 边〔T-1〕；另含
 # 唯一登记边 project→core 必须真实存在、diagnostics 边注入不落链接、零 io
 # 编译期消费〔O-09〕——任务契约 acceptance 2 逐项的具名自证）。
-# P-PR-1 处置：本任务零 core 头消费，diagnostics 首个用例那类"消费 core
-# 类型证明 PUBLIC 传染"的行为级自证随 PRJ-T04（首个 core 头消费任务）建立，
-# 此处以构建图文本扫描＋配置期守卫＋双模式链接成功承载边界证据。
+# PRJ-T03 增列：LockContractTest（acceptance 1——PRJ-TX-7 锁双实例契约的
+# 真双进程形态：第二实例只读＋PID／心跳卡顿不接管〔D-03〕／崩溃后并发
+# 接管仅一胜者〔D-02〕；§9.3 同项目多路径打开跨拼写拒绝；测试自再执行
+# 子进程，TestProcessRunner 归 PRJ-T15 按 testkit 节奏重述）。
+# P-PR-1 处置说明（PRJ-T03 更新）：锁诊断的行为级消费已随 StoreLockTest
+# （_test 目标）建立——CapturingSink 实现 §5.0 IDiagnosticsSink 并以
+# core::DiagnosticRecord 承载断言；本目标仍以构建图文本扫描＋配置期守卫
+# ＋双模式链接成功承载边界证据（LinkageContractTest 零改动）。
 add_executable(sdurws_ird_project_contract_test
-    test/LinkageContractTest.cpp)
+    test/LinkageContractTest.cpp
+    test/LockContractTest.cpp)
+
+# src/ 私有实现头目录（仅测试目标 PRIVATE）：LockContractTest.cpp 消费
+# src/win32/{StoreLock,PathCanonical}.hpp 与 ILockOps 真实实现（acceptance
+# 1/3——真双进程锁契约直接驱动锁原语与路径规范化）。产品目标的 PUBLIC
+# include 根仍只有 include/——私有头不出单元（R-2），此目录不进
+# install/接口，仅供同单元测试目标以 "win32/xxx.hpp" 相对形式包含。
+target_include_directories(sdurws_ird_project_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_compile_features(sdurws_ird_project_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_project_contract_test PROPERTIES
@@ -181,12 +212,16 @@ if(MSVC)
     target_compile_options(sdurws_ird_project_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面：仅产品目标＋gtest（T-1 允许形态的落位期最小子集——不链 testkit，
-# PRJ-T15 再登记；不显式链 core——P-PR-1 零头消费，显式链会在测试面引入
-# 第二条到达 core 的路径语义，PUBLIC 传染的行为级自证留待 PRJ-T04）。
+# 链接面：仅产品目标＋gtest（T-1 允许形态——不链 testkit，PRJ-T15 再登记；
+# 不显式链 core——PUBLIC 经 sdurws_ird_project 传染，公共头 StoreTypes.hpp
+# 的 core::DiagnosticRecord 消费由该传染路径解析）。
+# main 自持（DTB §5.5"测试 main 自持"——本目标以自有 main 落实）：GTest::
+# gtest（无入口）替代 GTest::gtest_main——LockContractTest.cpp 的 main 须
+# 在 gtest 初始化**之前**拦截子进程再执行分派（--ird-wp04-t03-child，
+# PRJ-TX-7 真双进程形态），gtest_main 的入口无此拦截点。
 target_link_libraries(sdurws_ird_project_contract_test PRIVATE
     sdurws_ird_project
-    GTest::gtest_main)
+    GTest::gtest)
 
 # 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。
 target_compile_definitions(sdurws_ird_project_contract_test PRIVATE
