@@ -1306,6 +1306,36 @@
       "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T04 送验两提交标题前缀后均以名词开头非动词开头——a148a99e『[WP-04-T04] PRJ-T04 验证留痕归档（构建/门禁/测试执行证据）』以任务名词开头（F-128 的同字面形态再例）；ae9596db『[units] project.md v0.6：PRJ-T04 格式契约与编码落位登记』以文件名词短语开头（F-037/F-079/F-092 的 [units] 车道同型）。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），实现提交 ae7fb6aa 标题动词开头合规，既往判例均不阻断",
       "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
       "resolution": "处置建议＝同 F-012/F-126/F-128 处置建议①：提交前自查标题格式（前缀后首词为动词，如『归档…』『登记…』『落位…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-129，合入时由所有者确认。"
+    },
+    {
+      "id": "F-131",
+      "source": "traceability/acceptance/PRJ-T05-20260916.md#4.9（attempt 2，送验对象 b6cc2352a5d9b7963198748184365fff1e101e20，分支 wp04-t05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T05 送验两提交标题前缀后均以名词开头非动词开头——b6cc2352『[WP-04-T05] PRJ-T05 验证留痕归档（构建/门禁/测试执行证据）』以任务名词开头（F-128 同字面形态的三连例：PRJ-T03→PRJ-T04→PRJ-T05 留痕归档提交逐字复用该标题模板）；7f058bde『[units] project.md v0.7：PRJ-T05 对象库落位登记』以文件名词短语开头（F-130 第二例 ae9596db 与 F-037/F-079/F-092 的 [units] 车道同型）。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），实现提交 9438eb0e 标题动词开头合规，既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①持续有效——留痕归档类标题模板（『PRJ-TXX 验证留痕归档（…）』）已连续三任务逐字复用名词开头形态，建议实施侧把该模板首句改为动词开头（如『归档 PRJ-TXX 验证留痕（…）』）",
+      "resolution": "处置建议＝同 F-012/F-126/F-128/F-130 处置建议①：提交前自查标题格式；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-130，合入时由所有者确认。"
+    },
+    {
+      "id": "F-132",
+      "source": "traceability/acceptance/PRJ-T05-20260916.md#4.8/4.10（attempt 2；验收者 git ls-tree 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129 之后第 12 例，但为首个『明示形态』）：PRJ-T05 送验提交 b6cc2352 正文新增 traceability/builds/wp04-t05/『15 个证据文件』时主动明示『其中 5 个非日志文件随本提交入库，10 个 .log 证据文件因 .gitignore *.log 规则不入库、以工作区文件形态留痕』（较 F-129 的 a148a99e 隐匿形态诚实度提升，无隐瞒成分）；git ls-tree 实证入库 5 件（ird-test-report.json＋双模式 gtest XML 四份）与明示一致。残留问题：ird-test-report.json 的 gates 字段（gates-ird-gates-target.log/validate-task.log）与 buildModes 字段（integration-build.log/verify-target-build.log/smoke-configure.log/smoke-build.log）共六处引用仍为库外路径——后来者仅凭库内产物无法按图索骥取证。验证结论性内容（两模式 109/109＋10/10、契约 verify exit 0、ird_gates 8 命中零 project 零新增、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）——F-129 处置紧迫度注记在本例继续累积（家族已 12 例）",
+      "resolution": "处置建议＝同 F-129：①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②ird-test-report.json 的日志引用字段注明『工作区留痕（不入库）』或随根因消账后改为可入库路径。编号顺延自 F-131，合入时由所有者确认。"
+    },
+    {
+      "id": "F-133",
+      "source": "traceability/acceptance/PRJ-T05-20260916.md#4.8（attempt 2，送验对象 b6cc2352a5d9b7963198748184365fff1e101e20，分支 wp04-t05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-123（units/project.md 卡头版本/日期行与 §15.4 末行失同步）恶化再现——连续第三次未按处置建议执行：PRJ-T05 触及 units/project.md（§15.4 追加 v0.7 行）但卡头『文档版本』行停留 v0.4（PRJ-T02…）、『日期』行停留 2026-09-09，而 §15.4 末行已为 v0.7（2026-09-16）——F-123 登记时差距 1 个版本（卡头 v0.3 行 vs v0.3 行日期残留），PRJ-T03（v0.5）/PRJ-T04（v0.6）/PRJ-T05（v0.7）连续三次触及该文件均未同步卡头，差距扩大到 3 个版本。方向仍为文档内部不一致（少报），v0.7 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
+      "owner": "project 单元卡所有者（卡头归单元卡辖域）；『卡头版本/日期行＝§15.4 末行』机检维度建议归治理脚本所有者（与 F-057/F-123 后半合并评估——三例同源后机检缺失的紧迫度上升）",
+      "resolution": "处置建议＝①随下次触及 units/project.md 的任务（PRJ-T06 领取、或 F-005 家族批量修正批次）把卡头『文档版本』行推进至 v0.7、『日期』行推进至 2026-09-16（与 §15.4 末行一致）；②『随下次触及顺手更正』模式已连续三跳未落地，建议所有者显式指定收口载体（如纳入 F-005 批量修正清单）。编号顺延自 F-132，合入时由所有者确认。"
     }
   ]
 }
