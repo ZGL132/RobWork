@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "测试替身与契约套件（ScriptedDiagSource＋DT-* 用例体）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T03",
     "DIAG-T04",
