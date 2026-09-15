@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T10",
+  "masterWp": "WP-09（§11 DIAG-T10 行＝WP-09-T06：ScriptedDiagSource 替身＋DT-* 全部用例体收口——§10 验证矩阵逐条执行并留痕）",
+  "branch": "wp09-t10",
+  "base": "13fc8fa9ac00f5c268c982beade70fc395dbe9fe",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 26/26、smoke 26/26）",
+      "notes": "既有 14 用例（DIAG-T02/T05/T09 登记）零回归＋DIAG-T10 新增 12 用例：ScriptedDiagSourceTest.cpp 6 用例（ScriptedReplay 回放 3＋ScriptedDoubleBoundary 替身边界机检 3——§11 行产物'按序列产出预设条目/finding/日志行'＋EV-REG-3 同模式边界声明三面：README §1 全文/替身头文件头/机检）＋DiagContractCheckTest.cpp 6 用例（testkit checkDiagnosticRecord/checkComparativeFields 消费——acceptance 3/P-DIAG-8 处置）；DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 白名单沿用面扩入 sdurws_ird_testkit（_contract_test 链接面登记——testkit.md §2.4 允许依赖形态，产品目标仍零 testkit 边）；CMakeLists.txt：_contract_test 链接 sdurws_ird_testkit＋增列两测试文件"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 115/115、smoke 115/115）",
+      "notes": "既有 107 用例（DIAG-T02~T09 登记）零修改零回归＋DIAG-T10 新增 8 用例（CollaborationQueryTest.cpp——DT-COLLAB-1 命令/任务/运行关联 1＋DT-AT 观测点映射 AT-01/10/11/13/19/30/34 七用例，'本文只提供观测点，不代验 AT'边界在各用例 DOC 注释钉住）；§10 矩阵至此全组收口：DT-REG（StableCodeRegistryTest）/DT-DIAG·DT-DUP·DT-CAT（CatalogFactoryTest）/DT-CFM-1~5（ConfirmableTest）/DT-AGG·DT-CHAIN（AggregationTest）/DT-LOG（LoggingTest）/DT-SEC·DT-LIFE-4（RedactionTest）/DT-LIFE-1~3（CatalogLifecycleTest）/DT-LIFE-5＋宿主留痕（CatalogHostTraceStubTest）/DT-BUILD（BuildRedLineTest＋LinkageContractTest）/DT-COLLAB·DT-AT（CollaborationQueryTest——本任务）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics（产品目标）",
+      "kind": "STATIC",
+      "result": "零源码改动（DIAG-T10 产物全部在 test/ 侧与 CMakeLists 测试目标段）",
+      "notes": "T-1 红线自证：产品目标不链 testkit（LinkageContractTest.UnitEdgeOnlyCore_DT_BUILD_R1_R2 白名单断言＋CMakeLists 文件末尾配置期守卫〔产品目标 LINK_LIBRARIES/INTERFACE_LINK_LIBRARIES 出现 core/diagnostics 之外任何 sdurws_ird_* 即 FATAL_ERROR〕＋ScriptedDoubleBoundary.ProductSourcesFreeOfDoubleSymbols 产品源码面零替身符号递归扫描三面钉住）；acceptance 3/P-DIAG-8：execution 链接启用前不私改其构建，双库集成冒烟按 P-EX-8 联动另行登记"
+    }
+  ],
+  "gates": {
+    "ird_gates": "8 处命中＝wp09-t09 基线 7 处＋新增 1 处（如实登记）：IRD-GATE-SUB＝sdurws_ird_diagnostics_contract_test→sdurws_ird_testkit——本任务 acceptance 3 明文要求的 testkit 契约谓词消费面（testkit.md §2.4 允许依赖形态 {被测产品目标, sdurws_ird_testkit, gtest}；diagnostics.md §10 头注 '_contract_test 面＝与 testkit checkDiagnosticRecord/checkComparativeFields' 原文），与既有基线中 evidence/policy/runtime 五处测试目标直链 testkit 同款同源；产品目标仍零 testkit 边（T-1 面三面钉住，见 targets 备注）。DTB §4.5 例外登记册维护归 WP-01-T03——本契约 allowedFiles 不含 DTB/门禁白名单，登记义务转登验收裁决。其余 7 处与 wp09-t09 基线逐码一致零变化（evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 testkit×5＋testdata_lint 表外依赖/T-1×2）；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-ird-gates-target.log，SA-10 判构建失败为基线口径）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T10.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令：cmake --build build --config Release --target sdurws_ird_diagnostics_test 零 error，留痕 verify-task.log）",
+    "probeCapability": "失败能力自证：双面对账的分叉可观测性由 DiagContractCheck 负例用例承载（占位默认记录被 testkit 独立拒绝且逐字段指明/混量纲拒绝且指明 unit/Dev 记录默认选项拒绝——即谓词对违约输入真实变红的面）；ScriptedDoubleBoundary 机检面对'替身符号渗入产品源码面/README 边界声明被删'两类回归真实变红（EXPECT_EQ npos 断言＋锚点缺失消息）；集成全量构建（cmake --build build --config Release）exit 0 零 error（留痕 integration-build.log）、冒烟构建 exit 0 零 error（留痕 smoke-build.log）"
+  },
+  "testSuites": [
+    {
+      "suite": "DiagCollaboration（DT-COLLAB-1＋DT-AT 观测点映射——acceptance 1 收口）",
+      "designRef": "units/diagnostics.md §10 DT-COLLAB-1 行（TASK-03：命令与任务路径各产诊断→snapshot 按 revision/task 过滤→各自命中且互不混；观测点＝DiagQuery 结果集）＋DT-AT 映射行（AT-01/10/11/13/19/30/34 观测点数据形状就绪——'本文只提供观测点，不代验 AT'）；需求 TASK-03/UX-03/ERR-01、NFR-SEC-07/NFR-REL-03",
+      "cases": [
+        { "name": "DiagCollaboration.DtCollab1_CommandAndTaskDiagnosticsFilteredByRevisionAndTask", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-COLLAB-1/TASK-03——命令路径条目（PRJ-LOCK-HELD，context.revision/命令类型/载荷摘要/params 恰合 paramSchema）与任务路径条目（RT-INPUT-INVALID，context.task 五元组）各产诊断后：空查询全量两条；按命令修订过滤只命中命令条目（五元组修订不参与该轴——§9.7 等值语义）；按五元组过滤只命中任务条目；未知修订空集；命令条目不带 task、任务条目 task 等值回读（互不混）" },
+        { "name": "DiagCollaboration.DtAt01_ComparativeAndConfirmationObservationShape", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-01（主责载体 kinematics＋project）——行程超限场景观测点形状：比较型条目三要素（实际 620mm/期望 550mm/单位已注册）＋create→submitConfirmation（绑定一致）→Confirmed 且 confirmation.principal/confirmedAtUtc 完整、coreProjection Confirmed 随凭据、比较三要素确认后不被改写（DT-CFM-1/10 数据形状的独立观测面）" },
+        { "name": "DiagCollaboration.DtAt10_RegistryCodeShapeAndCauseChainToCrashRoot", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-10（主责载体 execution 迟到丢弃）——EX-REGISTRY-UNKNOWN-RUN/EX-REGISTRY-MISMATCH 码表形状（ownerUnit=execution/category=Internal）＋worker 崩溃原因链（EX-WORKER-CRASHED→EX-TASK-REJECTED causedBy）经 CauseLink::rootOf 一步抵达根因（DT-CHAIN-1 形状的观测点可达性）" },
+        { "name": "DiagCollaboration.DtAt11_CrashReportInputShapeAndRedactedWrite", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-11＋NFR-SEC-07——崩溃诊断文件六段载体全装载（每用例独立临时目录 RAII）真实写出：用户名与 Users 目录段零命中、[USER] 标记在案（§7.7 规则④先于⑤路径策略的产品实际规则序）、文件名按策略保留（脱敏不摧毁排障可用性）、format/进程段落痕" },
+        { "name": "DiagCollaboration.DtAt13_RecoveryDiagnosticShape", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-13（主责载体 project 恢复）——PRJ-RECOVERY-ORPHAN-DRAFT 码表形状（Info/PermissionOrLock/P-DIAG-9 文案键约定）＋工厂产出形状（项目上下文锚定必携带、titleKey/severity 投影可查询、record 原样内嵌）" },
+        { "name": "DiagCollaboration.DtAt19_CauseCodesSingleSourceInRegistry", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-19（主责载体 policy/kinematics 原因码一致契约）——RT-CANCELLED/EX-TASK-INTERRUPTED/EX-WORKER-CRASHED 三码两次查询逐字段一致（CodeDescriptor 等值＝码表单点权威可复现；titleKey 非空＝P-DIAG-9 形状）——'码值唯一来源'观测面" },
+        { "name": "DiagCollaboration.DtAt30_InvalidationReasonListParamsShape", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-30（主责载体 optimization 回填复算提示）——诊断上下文参数面承载'失效原因清单'形状：paramSchema 声明槽位（PRJ-LOCK-HELD [pid,host]）、params 键值经工厂校验后原样进入条目上下文并在投影可查询（无丢弃/无重排——数据源保真）" },
+        { "name": "DiagCollaboration.DtAt34_CancelIsInfoNotErrorObservationShape", "status": "passed", "modes": ["integration", "smoke"], "trace": "DT-AT/AT-34（主责载体 execution 取消/进度）——正常取消非错误分类形状：RT-CANCELLED=Info/Canceled/actionKind none、EX-TASK-INTERRUPTED=Info/Interrupted（rerun 族）；DiagQuery 按 category 过滤轴可达（AT 载体按类别统计取消事件的查询形状）" }
+      ]
+    },
+    {
+      "suite": "ScriptedDiagSourceSuite（ScriptedReplay——§11 DIAG-T10 行产物行为自证——acceptance 2）",
+      "designRef": "units/diagnostics.md §11 DIAG-T10 行（产物：ScriptedDiagSource 按序列产出预设条目/finding/日志行）＋§9.2/§9.3/§9.6 产出契约；EV-REG-3 模式第 3 条'被测产品对象不做替身'——三个回放分派全部走真实产品路径（工厂 create→目录 append／ConfirmableService create／LoggingPipeline log）",
+      "cases": [
+        { "name": "ScriptedDiagSourceSuite.EntriesFindingsLogsProducedInScriptOrder", "status": "passed", "modes": ["integration", "smoke"], "trace": "混合脚本（Entry→Log→Finding→Entry 三形态交错）按登记序逐步产出：回放前置状态钉住（目录空/进度 0/脚本 4 步）；逐条 replayNext 后即时断言（第 1 步目录 +1 且 producedEntryIds[0] 与目录投影 entryId 同源；第 2 步目录不变、logsSent=1；第 3 步真实服务 tryFind 命中 Pending 且绑定四元组与脚本参数逐项一致——绑定冻结在服务端发生；第 4 步目录再 +1〔同 subject 异码不去重〕）；耗尽后 flush 真实管线扫描落盘标记（非内存桩）" },
+        { "name": "ScriptedDiagSourceSuite.ExhaustedScriptIsBoundedNoOp", "status": "passed", "modes": ["integration", "smoke"], "trace": "脚本耗尽＝有界正常终态：replayAll 返回实际执行步数 2；再次 replayAll 为 0 步、replayNext 恒 false、目录/产出/游标零变化（回放游标单调语义——无重复执行、无回绕）" },
+        { "name": "ScriptedDiagSourceSuite.EmptyScriptReplaysNothing", "status": "passed", "modes": ["integration", "smoke"], "trace": "空脚本回放为无害空操作（边界）：scriptedCount=0、replayNext false、replayAll 0 步、目录/两观测列表/logsSent 全空" }
+      ]
+    },
+    {
+      "suite": "ScriptedDoubleBoundary（替身边界声明机检面——acceptance 2）",
+      "designRef": "units/diagnostics.md §11 DIAG-T10 行完成条件'替身边界声明（替身输出仅验证契约——testkit EV-REG-3 同模式）'；evidence EvaluatorPortSuiteTest 同款'文档声明＋机检'两面模式",
+      "cases": [
+        { "name": "ScriptedDoubleBoundary.ProductSourcesFreeOfDoubleSymbols", "status": "passed", "modes": ["integration", "smoke"], "trace": "产品源码面（src/＋include/ 全部 .hpp/.cpp，扫描数≥15 防恒真）零 'ScriptedDiagSource'/'testdoubles' 符号命中——替身只存在于测试目标源码面（T-1 红线的替身侧对偶）" },
+        { "name": "ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme", "status": "passed", "modes": ["integration", "smoke"], "trace": "test/README.md §1 四锚点在案（EV-REG-3 同模式出处/'仅验证'边界正句/'不构成'能力否定句/'ScriptedDiagSource'点名）——缺任一即边界声明失守" },
+        { "name": "ScriptedDoubleBoundary.HeaderCarriesBoundaryDeclaration", "status": "passed", "modes": ["integration", "smoke"], "trace": "替身头文件头同款声明在案（'仅验证 diagnostics 契约'/'不构成'/'EV-REG-3'三锚点）——消费方不读 README 也能看到约束" }
+      ]
+    },
+    {
+      "suite": "DiagContractCheck（testkit 契约谓词消费——acceptance 3/P-DIAG-8 处置）",
+      "designRef": "units/diagnostics.md §10 头注（_contract_test 面＝与 testkit checkDiagnosticRecord/checkComparativeFields）＋DT-DIAG-1 行观测点'testkit checkDiagnosticRecord 通过'；units/testkit.md §5.5/§10.2 diagnostics 行交接（ContractCheck（DiagnosticRecord））；双面对账方法论＝evidence EnvelopeAccessorContractTest 同源",
+      "cases": [
+        { "name": "DiagContractCheck.FactoryUserRecordPassesCheckDiagnosticRecord", "status": "passed", "modes": ["integration", "smoke"], "trace": "双面对账正例（非比较型）：前置自证记录确经真实工厂接受后，testkit checkDiagnosticRecord 同判通过——工厂产出与 testkit 独立实现对同一记录不分叉" },
+        { "name": "DiagContractCheck.FactoryComparisonRecordPassesBothChecks", "status": "passed", "modes": ["integration", "smoke"], "trace": "双面对账正例（比较型可确认码，requiresComparison）：工厂校验链全过后 checkDiagnosticRecord（含三要素存在性）与 checkComparativeFields（mm=Length 量纲经 kindOf 单点换算表）双双通过" },
+        { "name": "DiagContractCheck.TransientRecordGatedByAllowTransientOption", "status": "passed", "modes": ["integration", "smoke"], "trace": "Dev（瞬时）记录选项门控：subject 可空的合法 Dev 记录在默认选项被拒且 failures 指明 subject 字段（fieldPath 观测点）；allowTransient=true 同一谓词放行——选项即边界开关，双面同判 Dev 例外" },
+        { "name": "DiagContractCheck.PlaceholderDefaultRecordFailsWithFieldPaths", "status": "passed", "modes": ["integration", "smoke"], "trace": "负例：未经工厂的占位默认记录（code 空/必填串空/subject 缺失——显式构造的违约输入）被 testkit 谓词独立拒绝且 failures 指明 code 等字段——testkit 独立实现真实在岗（产品工厂之外的第二道契约防线，非复读机）" },
+        { "name": "DiagContractCheck.ComparativeFieldsSameQuantityKindPass", "status": "passed", "modes": ["integration", "smoke"], "trace": "量纲一致契约（UX-03）：actual/expected 同为 mm（Length）时 checkComparativeFields 通过" },
+        { "name": "DiagContractCheck.ComparativeFieldsMismatchedQuantityKindFails", "status": "passed", "modes": ["integration", "smoke"], "trace": "量纲不一致拒（负例）：mm（Length）对 expectedKind=Angle 被拒绝且 failures 指明 unit——三要素单位混量纲的 testkit 契约面（与工厂注册单位校验互为两面）" }
+      ]
+    },
+    {
+      "suite": "DiagnosticsLinkage（既有套件——DIAG-T10 修改 1 用例白名单＋3 用例全部重执行通过）",
+      "designRef": "units/diagnostics.md §10 DT-BUILD 行＋testkit.md §2.4 允许依赖形态；修改说明：UnitEdgeOnlyCore_DT_BUILD_R1_R2 的构建图白名单沿用面扩入 sdurws_ird_testkit（_contract_test 消费 testkit 谓词＝T-1 允许形态——DOC 注释登记依据；产品单元边集合不变：产品库仍仅 diagnostics→core 一条），其余两用例零修改",
+      "cases": [
+        { "name": "DiagnosticsLinkage.PublicCoreExposure_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "零修改重执行：消费 TU 零显式 core 链接前提下编译并取用 core 承载类型——PUBLIC 链接接口传染性行为自证（前提未被 testkit 经由边破坏）" },
+        { "name": "DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "DIAG-T10 修改：白名单＝core＋本单元三目标＋sdurws_ird_testkit（测试侧单元，_contract_test 消费面）——扫描全部 sdurws_ird_* 目标引用零白名单外命中（产品单元边仍仅 diagnostics→core）" },
+        { "name": "DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8", "status": "passed", "modes": ["integration", "smoke"], "trace": "零修改重执行：P-DIAG-8 桩消费方 core 契约演练零回归" }
+      ]
+    }
+  ]
+}
