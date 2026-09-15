@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "写锁与路径（StoreLock/PathCanonical）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T02"],
   "requirements": ["PM-07", "PM-08"],
   "designRefs": ["units/project.md#12", "units/project.md#9.1", "units/project.md#9.2", "units/project.md#9.3", "units/project.md#9.4", "units/project.md#9.5", "units/project.md#9.6"],
