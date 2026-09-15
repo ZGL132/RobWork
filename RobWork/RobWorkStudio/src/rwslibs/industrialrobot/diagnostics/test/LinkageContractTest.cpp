@@ -117,12 +117,21 @@ TEST(DiagnosticsLinkage, PublicCoreExposure_DT_BUILD)
 }
 
 /**
- * 链接图契约：diagnostics 的 CMake 目标引用集合仅含 core 一条单元边
+ * 链接图契约：diagnostics 的 CMake 目标引用集合仅含 core 一条产品单元边
  * （acceptance 2——ARCH §3.5 既有边，零新增同层边，SA-10）。
  *
  * 扫描单元 CMakeLists.txt 文本中出现的全部 sdurws_ird_* 目标引用，与白名单
  * 比对：产品目标链接 core（唯一单元边）＋本单元自身/测试目标的引用。出现
- * 任何其他单元目标（如 sdurws_ird_execution）即构建图越界。
+ * 任何其他产品单元目标（如 sdurws_ird_execution）即构建图越界。
+ *
+ * 白名单含 sdurws_ird_testkit 的依据（DIAG-T10 登记）：testkit.md §2.4 的
+ * T-1 允许形态 `sdurws_ird_<unit>_contract_test → { 被测产品目标,
+ * sdurws_ird_testkit, gtest }`——契约目标消费 testkit 契约谓词
+ * （checkDiagnosticRecord/checkComparativeFields，§10 头注与任务契约
+ * acceptance 3 的消费面）。testkit 是测试侧单元（不随产品分发，§3.6），
+ * 该链接只存在于 _contract_test 目标、不改变产品库的单元边集合——
+ * R-1 判定范围（产品单元互链）不受影响；产品目标 sdurws_ird_diagnostics
+ * 本体零 testkit 边由配置期守卫＋安装扫描（WP-24）继续把守。
  */
 TEST(DiagnosticsLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
 {
@@ -160,17 +169,20 @@ TEST(DiagnosticsLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
     }
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：core（唯一允许的单元边）＋ diagnostics 本单元三目标（产品/
-    // 测试/契约测试——同一单元内部引用不构成跨单元边，R-1 判定范围）。
+    // 白名单：core（唯一允许的产品单元边）＋ diagnostics 本单元三目标（产品/
+    // 测试/契约测试——同一单元内部引用不构成跨单元边，R-1 判定范围）＋
+    // sdurws_ird_testkit（测试侧单元——T-1 允许形态的 _contract_test 消费面，
+    // 依据见本用例 DOC 注释；DIAG-T10 登记）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_diagnostics",
         "sdurws_ird_diagnostics_test",
-        "sdurws_ird_diagnostics_contract_test"};
+        "sdurws_ird_diagnostics_contract_test",
+        "sdurws_ird_testkit"};
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
-            << "diagnostics 构建图出现白名单外目标引用（仅 diagnostics→core "
-               "一条单元边，ARCH §3.5）: " << ref;
+            << "diagnostics 构建图出现白名单外目标引用（产品单元边仅 "
+               "diagnostics→core 一条，ARCH §3.5）: " << ref;
     }
 }
 

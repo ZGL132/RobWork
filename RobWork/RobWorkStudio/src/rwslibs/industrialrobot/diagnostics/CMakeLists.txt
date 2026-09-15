@@ -123,6 +123,10 @@ endif()
 # ＋P-DIAG-7 容量默认钉住随 DIAG-T09 增列（CatalogLifecycleTest.cpp——§10；
 # DT-LIFE-3"日志仍在/关闭时限"半区经真实 LoggingPipeline＋FileLogFileOps
 # 临时目录自持，不链 testkit）。
+# DT-COLLAB-1（命令/任务/运行关联——DiagQuery 的 revision/task 过滤轴）
+# ＋DT-AT 观测点映射组（AT-01/10/11/13/19/30/34 七个观测点的数据形状
+# 钉子——"本文只提供观测点，不代验 AT"）随 DIAG-T10 增列
+# （CollaborationQueryTest.cpp——§10 矩阵收口的最后两个缺口组）。
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
@@ -133,7 +137,8 @@ add_executable(sdurws_ird_diagnostics_test
     test/ConfirmableTest.cpp
     test/AggregationTest.cpp
     test/LoggingTest.cpp
-    test/RedactionTest.cpp)
+    test/RedactionTest.cpp
+    test/CollaborationQueryTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_test PROPERTIES
@@ -151,8 +156,9 @@ endif()
 # sdurws_ird_diagnostics 同时验证"公共头可被正常 include＋库可链接"。
 # 不链 sdurws_ird_testkit：DT-BUILD 红线用例以 gtest 原生断言承载（需求/AT
 # 追溯在用例名与 ird-test-report.json 的 trace 字段——evidence EV-T01 同款）；
-# testkit 谓词（IRD_TEST_INFO/checkDiagnosticRecord）随 DIAG-T10 契约套件
-# 消费，届时按 P-DIAG-8 处置登记其链接面。
+# testkit 谓词（checkDiagnosticRecord/checkComparativeFields）已随 DIAG-T10
+# 契约套件消费（DiagContractCheckTest），链接面登记于 _contract_test 目标处
+# （P-DIAG-8 处置：契约目标链 testkit 为 T-1 允许形态，产品目标不链）。
 target_link_libraries(sdurws_ird_diagnostics_test PRIVATE
     sdurws_ird_diagnostics
     GTest::gtest_main)
@@ -184,10 +190,18 @@ add_custom_command(TARGET sdurws_ird_diagnostics_test POST_BUILD
 # canonical/CommandRecord 绑定的对接桩——evidence/project 所有者形态；编码器
 # 定义在测试侧＝diagnostics 不提供宿主编码设施）随 DIAG-T09 增列
 # （CatalogHostTraceStubTest.cpp——P-DIAG-8 同款桩验证纪律）。
+# ScriptedDiagSource 基座＋替身边界机检（ScriptedDiagSourceTest——§11
+# DIAG-T10 行产物"按序列产出预设条目/finding/日志行"；ScriptedDoubleBoundary
+# 组＝EV-REG-3 同模式机检面：产品源码面零替身符号＋README/头文件边界声明
+# 锚点在案）与 testkit 契约谓词消费（DiagContractCheckTest——§10 头注
+# "与 testkit checkDiagnosticRecord/checkComparativeFields"承接；双面对账：
+# 工厂产出与 testkit 独立判定同判）随 DIAG-T10 增列。
 add_executable(sdurws_ird_diagnostics_contract_test
     test/LinkageContractTest.cpp
     test/ConfirmableProjectStubTest.cpp
-    test/CatalogHostTraceStubTest.cpp)
+    test/CatalogHostTraceStubTest.cpp
+    test/ScriptedDiagSourceTest.cpp
+    test/DiagContractCheckTest.cpp)
 
 target_compile_features(sdurws_ird_diagnostics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_diagnostics_contract_test PROPERTIES
@@ -205,7 +219,22 @@ endif()
 # 的依赖形态）。
 target_link_libraries(sdurws_ird_diagnostics_contract_test PRIVATE
     sdurws_ird_diagnostics
+    sdurws_ird_testkit
     GTest::gtest_main)
+
+# ---- DIAG-T10：契约目标链接 testkit（P-DIAG-8 处置的链接面登记）----
+# §10 头注"`_contract_test` 面＝与 testkit checkDiagnosticRecord/
+# checkComparativeFields、ScriptedDiagSource 基座"的承接：契约套件消费
+# testkit 契约谓词（DiagContractCheckTest——testkit.md §10.2 diagnostics
+# 行交接"从 testkit 接收：ContractCheck（DiagnosticRecord）"）。
+# 红线两面（testkit.md §2.4）：本链接是 T-1 允许形态
+# `sdurws_ird_<unit>_contract_test → { 被测产品目标, sdurws_ird_testkit,
+# gtest }`——**产品目标 sdurws_ird_diagnostics 不链 testkit**（文件末尾
+# 配置期守卫＋LinkageContractTest 沿用面＋ScriptedDiagSourceTest 的
+# ScriptedDoubleBoundary 机检三面钉住）。落位前本目标只链产品库＋gtest
+# （DIAG-T02 起的既有形态）；本目标不显式链 core 的理由同上（传染性
+# 自证用例的前提不被破坏——testkit 自身 PUBLIC 链 core，经由边不改变
+# "零显式 core 链接"的断言面）。
 
 # 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。
 target_compile_definitions(sdurws_ird_diagnostics_contract_test PRIVATE
