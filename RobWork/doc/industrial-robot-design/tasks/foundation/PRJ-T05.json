@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "对象库（ObjectStore：内容编址/只增发布/LRU）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T02", "PRJ-T04"],
   "requirements": ["CON-01"],
   "designRefs": ["units/project.md#12", "units/project.md#4.6"],
