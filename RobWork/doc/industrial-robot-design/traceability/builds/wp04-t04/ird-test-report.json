@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T04",
+  "masterWp": "WP-04-T04",
+  "branch": "wp04-t04",
+  "base": "7dd1eaad0d00cd8a4b5ca1ea7e4cb61cc900edf9",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，_contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量构建 exit 0 零 error）",
+      "notes": "PRJ-T04 落位：src/Codec.cpp 增列（§12 PRJ-T04 行产物——格式契约与编码）。新增公共头 include/sdurws/ird/project/PersistenceFormat.hpp（§4.2/§4.4 字段级契约六类型：ProjectStaticIdentity/HeadRecord/RevisionManifest/ProjectMetadataRecord/CommandRecord/DraftDocument——DraftDocument 落位说明见头注：§3.1 组成表列于 DraftService.hpp 行，但 §4.4 开头约定与契约 acceptance 1 明确在本头冻结，PRJ-T12 复用不重定义）＋StoreTypes.hpp 增量落位 §5.0 StoreError/StoreErrorCode（21 稳定码封闭集——canonical 编解码错误通道，文件头预告的'随 PRJ-T04/T08 增补'兑现一半）。新增 src/Codec.hpp/.cpp（私有实现头——R-2）：自含 JSON 引擎（§4.8 canonical 规则落值口径四条：①紧凑无空白/固定字段序＝§4.4 表列序/可选空值省略/整数十进制/非 ASCII 转 \\uXXXX 小写——输出恒纯 ASCII；②输入严格 canonical——拒绝空白/非 ASCII 原始字节/浮点与指数字面量/true-false-null/重复键/前导零/截断与尾随内容；③转义表对称——\\uXXXX 解码回 UTF-8，含代理对与 \\u0000，round-trip 逐字节保真；④dump 侧无效 UTF-8 拒绝＝调用方错误 std::invalid_argument fail-fast——域 canonical 契约归 core §6.3）。版本判定 §8.11/PM-06/NFR-DEP-04：schemaVersion 主版本破坏性拒绝（高于当前＝SchemaFuture＋detail 升级指引三键 document/supported/upgrade；低于当前或 formatId 不符＝FormatLegacy），次版本追加可选字段容忍（1.x 容忍未知字段跳过，1.0 文档未知字段拒绝）。实现口径登记三项（§4/§8.11 未定义判据，DTB §5.4）：①schemaVersion 编码＝主版本*10000＋次版本（当前 1.0＝10000，头内 kSchemaVersionScale 注释）；②token 类字段落值口径＝非空/可打印 ASCII/≤128（objectTypeToken/moduleId/externalRefId/state/时间戳等——防失控字段不收词表），路径类字段独立口径＝非空/无控制字符/≤4096（absolutePath 允许空格与非 ASCII）；③无 schemaVersion/formatId 字段的类型（RevisionManifest/CommandRecord——§4.4.2/§4.4.4 表无此字段）版本语义由容器判定，Codec 按当前支持版本严格解析。CR-02 处置：contentVersionOf()＝本单元唯一哈希入口（core::ContentDigester——D-10 对收到的字节计算）；dump/parse 对全部 digest 类字段（manifestDigest/digest256/contentHash256/findingDigest/commandDigest）零计算只透传——'编码器不私设第二哈希路径'的反证式用例钉住（DigestFields_PassedThroughNotRecomputed：填非真实摘要 round-trip 原样保留，重算即失败）。已知陷阱处置：P-PR-1——core 消费面＝Identity.hpp（ProjectId/BranchId/RevisionId/ObjectId 严格解析）＋Digest.hpp（ContentVersion/ContentIdentity/ContentDigester）＋core.md v0.1 消费清单口径，using 声明显式引入（不用 using namespace），零 core 头修改。发现上游文档冲突并登记（不私裁）：§4.4.4 commandType 冻结语法 ^[a-z0-9-]{3,64} 与 §6.5 内置命令族示例 project.create-branch（含点）矛盾——units/project.md §15.3 新增 P-PR-9，本任务按字段级契约执行，正向样本不含点（PRJ-T10 落位内置命令族时需裁决）"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 81/81）",
+      "notes": "PRJ-T04 增列 test/PersistenceFormatTest.cpp（43 用例）。RoundTrip 组 9：全六类型 parse(dump(x))==x＋确定性（两次 dump 同字节）＋黄金字节（HeadRecord 精确文本钉字段序）＋全类型输出纯 ASCII＋中文名 \\uXXXX 小写转义还原＋BMP 外字符代理对＋可选字段存在/缺省两态（空列表＝省略）。Reject 组 20：截断（六类型 substr＋尾字节 pop）、垃圾/空输入/顶层数组、非 ASCII 原始字节（GBK 误写防线）、尾随内容、非 canonical 空白、HeadRecord 七字段逐一缺省、未知字段（当前版本）、类型错位（字符串↔整数↔对象）、浮点/指数字面量、true/false/null、越界四态（revisionSeq 2^64、payloadFormatVersion 2^32、schemaVersion 2^31、负序号）、前导零、重复键、身份坏规范文本（tag 错/长度错/缺 cv- tag/大写 hex）、commandType 语法三反例、origin 非冻结三值、objectRefs/branches 空数组、token 空值、嵌套对象未知字段。Versioning 组 5：未来主版本 SchemaFuture＋升级指引三键断言、旧主版本（9000/0/负值）FormatLegacy、formatId 不符 FormatLegacy、1.1 文档顶层＋externalRefs 元素未知字段容忍且已知字段保真、1.2 文档 branches 元素嵌套容忍。ExternalRefRecords 组 3：六字段 round-trip＋sizeBytes uint64 上界、多记录保序、坏哈希/空路径拒绝。ContentDigestBoundary 组 5：contentVersionOf==core ContentDigester 直算＋FIPS 180-2 向量 'abc' 双重钉住、确定性/区分度/空串向量/分块等价、域负载（含 SourcedValue 样例序列化文本）逐字节透传、digest 字段非真实值透传（零哈希路径反证）、无效 UTF-8 payload dump fail-fast（std::invalid_argument——错误二分：调用方错误非数据侧）。CoreContractConsumption 组 1：core Id128/ContentVersion 严格解析契约消费基线（P-PR-1——tag 错/大写/缺 tag 拒绝＋parse(format(x))==x）。真实失败能力留证：实施期 4 处缺陷均由本组用例真实失败驱动修复——①首版 PersistenceFormat.hpp 缺 core 类型 using 声明（C3646 编译错）；②parseRefPair 未做嵌套未知键校验（UnknownFieldInNestedObject 用例红）→补 rejectUnknownFields；③absolutePath 误用纯 token 口径拒绝含空格路径（SixFieldsRoundTrip 用例红）→拆分 requirePathField；④测试分块摘要字节数笔误（'load-A' 6 字节传 7，DeterministicDistinct 用例红）——既有 38 用例（ProjectBuild 5＋AtomicFile 13＋StoreLock 13＋PathCanonical 7）零回归"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 10/10）",
+      "notes": "PRJ-T04 零改动回归通过（ProjectLinkage 构建图契约 5＋LockContractTest 真双进程 5）——本任务零新构建图边（CMake 变更仅增列 src/Codec.cpp 与 test/PersistenceFormatTest.cpp，链接面不变：仅 sdurws_ird_core＋gtest）；PersistenceFormat.hpp 经 PUBLIC include 根暴露后 LinkageContractTest 的构建图文本扫描与源码 include 面白名单（{core, project}）继续零命中"
+    }
+  ],
+  "gates": {
+    "ird_gates": "已执行（WP-01-T01 已落地）：target ird_gates 构建 exit 1——命中 8 项与 PRJ-T03 留痕（builds/wp04-t03/gates-ird-gates-target.log）完全一致（IRD-GATE-SUB×7：diagnostics/evidence/policy/runtime 各 _test 直链 sdurws_ird_testkit＋testdata_lint→testkit 表外边；IRD-GATE-T1×1：testdata_lint 链接 testkit），全部为其他单元既有登记命中（DTB §4.5 减免通道），本次变更（project 单元）零新增命中——证据：gates-ird-gates-target.log 中 sdurws_ird_* 命中集合与 wp04-t03 逐项 diff 相同",
+    "validate-task": "PASS（validate-task.ps1 -TaskFile tasks/foundation/PRJ-T04.json——validate-task.log）"
+  },
+  "buildModes": {
+    "integration": "cmake --build build --config Release 全量 exit 0 零 error（build/CMakeCache.txt RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认）——integration-build.log；契约 verify 命令 cmake --build build --config Release --target sdurws_ird_project_test exit 0——verify-target-build.log",
+    "smoke": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp04-t04 -DCMAKE_TOOLCHAIN_FILE=<vcpkg 绝对路径> 配置构建均 exit 0 零 error——smoke-configure.log/smoke-build.log"
+  },
+  "testSuites": [
+    {
+      "suite": "PersistenceFormatRoundTrip",
+      "designRef": "units/project.md §4.2/§4.4/§4.8；需求 CON-01/NFR-COR-02；任务契约 PRJ-T04.json acceptance 1",
+      "cases": [
+        { "name": "PersistenceFormatRoundTrip.StaticIdentity_ValuePreserved_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.2——project.json 静态标识五字段 round-trip 值等价＋输出纯 ASCII" },
+        { "name": "PersistenceFormatRoundTrip.HeadRecord_ValueAndDeterministicBytes_CON01_NFRCOR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.4.1/§4.8——HEAD 七字段 round-trip＋同值两次 dump 同字节（NFR-COR-02 确定性）" },
+        { "name": "PersistenceFormatRoundTrip.RevisionManifest_OptionalPresenceAndAbsence_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.4.2——parent/introduced 两态 round-trip＋可选空值省略（canonical 省略规则）" },
+        { "name": "PersistenceFormatRoundTrip.MetadataRecord_ChineseEscapedRoundTrip_CON01_NFRCOR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.8——中文名 \\uXXXX 小写转义还原＋schemeLabels 键序；输出 ASCII 纯度" },
+        { "name": "PersistenceFormatRoundTrip.CommandRecord_FullAndMinimal_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.4.4——inverse/confirmations 存在与最小形态两态（正向 token 不含点——P-PR-9 口径）" },
+        { "name": "PersistenceFormatRoundTrip.DraftDocument_WithAndWithoutExternalRefs_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.4.5——externalRefs 两态＋origin 冻结三值逐一 round-trip" },
+        { "name": "PersistenceFormatRoundTrip.HeadRecord_GoldenBytes_FieldOrderFixed_CON01_NFRCOR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.8 固定字段序——黄金字节文本精确匹配（防语义等价但字节漂移）" },
+        { "name": "PersistenceFormatRoundTrip.AllTypes_DumpOutputPureAscii_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.8——六类型 dump 输出逐字节 <0x80" },
+        { "name": "PersistenceFormatRoundTrip.MetadataRecord_AstralPlaneChar_SurrogatePairRoundTrip_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§4.8 转义表——BMP 外字符（U+1F600）经 UTF-16 代理对转义并还原" }
+      ]
+    },
+    {
+      "suite": "PersistenceFormatReject",
+      "designRef": "units/project.md §4.4/§4.8/PM-02 读校验精神；任务契约 PRJ-T04.json acceptance 2（非法输入拒绝数据侧）",
+      "cases": [
+        { "name": "PersistenceFormatReject.TruncatedInput_Rejected_AllTypes_PRJTX_CON01", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——六类型截断拒绝（StoreCorrupt）" },
+        { "name": "PersistenceFormatReject.TruncatedLastByte_Rejected_HeadRecord", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——精确截断边界（缺收尾单字节）拒绝" },
+        { "name": "PersistenceFormatReject.GarbageAndEmptyInput_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——垃圾/空输入/顶层数组拒绝" },
+        { "name": "PersistenceFormatReject.NonAsciiRawBytes_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——非 ASCII 原始字节（GBK 误写防线）拒绝" },
+        { "name": "PersistenceFormatReject.TrailingContent_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——尾随内容拒绝（截断/拼接现场）" },
+        { "name": "PersistenceFormatReject.WhitespaceInDocument_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——非 canonical 空白拒绝（严格 canonical 口径）" },
+        { "name": "PersistenceFormatReject.HeadRecord_MissingEachField_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.4.1——七字段逐一缺省拒绝" },
+        { "name": "PersistenceFormatReject.UnknownField_Rejected_AtCurrentVersion", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——当前版本未知字段拒绝（与次版本容忍对照）" },
+        { "name": "PersistenceFormatReject.TypeMismatch_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——字符串↔整数↔对象类型错位拒绝" },
+        { "name": "PersistenceFormatReject.FloatAndExponentLiterals_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8 无浮点——1.5/1e3 字面量词法层拒绝" },
+        { "name": "PersistenceFormatReject.BooleanAndNullLiterals_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——true/false/null 裸词拒绝（契约无布尔/空字段）" },
+        { "name": "PersistenceFormatReject.IntegerOverflowAndNegative_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——越界四态：uint64 上界外/uint32 上界外/int32 上界外/负序号" },
+        { "name": "PersistenceFormatReject.LeadingZeroInteger_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／NFR-COR-02——前导零＝同值第二字节形态拒绝" },
+        { "name": "PersistenceFormatReject.DuplicateKey_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——重复键两义性拒绝" },
+        { "name": "PersistenceFormatReject.BadCanonicalIdentity_Rejected_PPR1Baseline", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/4（P-PR-1 消费基线）——tag 错/长度错/缺 cv- tag（文件名无 tag 与记录字段带 tag 的 §4.1/§4.4 区分）/大写 hex 拒绝" },
+        { "name": "PersistenceFormatReject.CommandTypeSyntaxViolation_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.4.4 冻结语法 ^[a-z0-9-]{3,64}——过短/大写/下划线拒绝（点属 P-PR-9 待裁决面，反例不含点）" },
+        { "name": "PersistenceFormatReject.UnknownOrigin_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.4.5——origin 非冻结三值拒绝" },
+        { "name": "PersistenceFormatReject.EmptyObjectRefsAndBranches_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.4.2/§4.4.3 ≥1——objectRefs/branches 空数组拒绝" },
+        { "name": "PersistenceFormatReject.EmptyTokenField_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.4.5——moduleId 空值拒绝（token 口径）" },
+        { "name": "PersistenceFormatReject.UnknownFieldInNestedObject_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——嵌套对象（metadataRef）未知字段拒绝；实施期经此用例暴露 parseRefPair 漏检并修复（真实失败能力证据）" }
+      ]
+    },
+    {
+      "suite": "PersistenceFormatVersioning",
+      "designRef": "units/project.md §4.8 稳定性/§8.11；需求 NFR-DEP-04/PM-06；任务契约 PRJ-T04.json acceptance 2（版本侧）",
+      "cases": [
+        { "name": "PersistenceFormatVersioning.FutureMajorVersion_Rejected_WithUpgradeGuidance_NFRDEP04", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§8.11 行 2——schema-future 拒绝＋升级指引数据三键（document=20000/supported=10000/upgrade=）逐键断言（NFR-DEP-04 数据侧；升级器本体归阶段 B）" },
+        { "name": "PersistenceFormatVersioning.LegacyMajorVersion_Rejected_FormatLegacy_NFRDEP04", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§8.11 行 1——9000/0/负值均 format-legacy 稳定拒绝" },
+        { "name": "PersistenceFormatVersioning.FormatIdMismatch_Rejected_FormatLegacy", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§8.11 行 1——formatId=rwproj 魔数不符拒绝" },
+        { "name": "PersistenceFormatVersioning.NextMinorVersion_UnknownOptionalFields_Tolerated_NFRDEP04", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——1.1 文档顶层＋externalRefs 元素未知字段容忍跳过、已知字段保真；同文档 1.0 拒绝（对照）" },
+        { "name": "PersistenceFormatVersioning.NextMinorVersion_NestedBranchFields_Tolerated", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2／§4.8——1.2 文档 branches 元素嵌套未知字段容忍" }
+      ]
+    },
+    {
+      "suite": "ExternalRefRecords",
+      "designRef": "units/project.md §4.4.5/§5.7 责任划分；需求 PM-01/NFR-SEC-01/NFR-REL-04；任务契约 PRJ-T04.json acceptance 3",
+      "cases": [
+        { "name": "ExternalRefRecords.SixFieldsRoundTrip_LargeSizeBytes_NFRREL04", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§4.4.5——externalRefs 六字段（id/路径/哈希/sizeBytes/时刻/state）round-trip＋uint64 上界无损；实施期经此用例暴露 absolutePath 误用 token 口径并拆分 requirePathField（真实失败能力证据）" },
+        { "name": "ExternalRefRecords.MultipleRecords_KeepOrder", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3——多记录登记序保序（数组元素序＝数据本身）" },
+        { "name": "ExternalRefRecords.InvalidHashAndEmptyPath_Rejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3——contentHash256 非 64hex＋absolutePath 空值拒绝（路径＋内容哈希＝NFR-REL-04 检测数据源的质量底线）" }
+      ]
+    },
+    {
+      "suite": "ContentDigestBoundary",
+      "designRef": "units/project.md §4.6/§4.8/D-10；foundation-contract-review CR-02（已关闭）；任务契约 PRJ-T04.json acceptance 4",
+      "cases": [
+        { "name": "ContentDigestBoundary.ContentVersionOf_MatchesCoreDigester_CR02_D10", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（CR-02）——contentVersionOf 与 core ContentDigester 直算同一性＋FIPS 180-2 向量 SHA-256('abc') 双重钉住（唯一哈希路径）" },
+        { "name": "ContentDigestBoundary.ContentVersionOf_DeterministicDistinctAndEmpty_CR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4——同字节同版本/异字节异版本/空串 FIPS 向量/分块等价（core 纯函数性）" },
+        { "name": "ContentDigestBoundary.DomainPayload_TransparentBytePreservation_CR02_D10", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（D-10/SourcedValue 透传）——payload 含 SourcedValue 样例序列化文本逐字节保真、摘要只对收到字节计算（来源标记透传不解释）" },
+        { "name": "ContentDigestBoundary.DigestFields_PassedThroughNotRecomputed_CR02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（CR-02 反证面）——manifestDigest/digest256/contentHash256 填非真实摘要 round-trip 原样：编码器零哈希路径（重算即失败）" },
+        { "name": "ContentDigestBoundary.InvalidUtf8Payload_DumpRejected_FailFast", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4——错误二分：payload 无效 UTF-8＝域 canonical 契约违约（core §6.3）→调用方错误 std::invalid_argument fail-fast，非数据侧 StoreError" }
+      ]
+    },
+    {
+      "suite": "CoreContractConsumption",
+      "designRef": "units/project.md §3.2 消费清单；P-PR-1 处置；任务契约 PRJ-T04.json acceptance 4",
+      "cases": [
+        { "name": "CoreContractConsumption.IdStrictness_ConsumedAsBaseline_PPR1", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（P-PR-1）——core Id128/ContentVersion 严格解析契约按 v0.1 基线消费（tag 错/大写/缺 tag 拒绝＋parse(format(x))==x 前提验证）；零 core 头修改" }
+      ]
+    },
+    {
+      "suite": "既有回归（PRJ-T01/T02/T03 用例零改动）",
+      "designRef": "units/project.md §11.2 PRJ-TX-14、§7.2、§9.1～§9.6",
+      "cases": [
+        { "name": "ProjectBuild(5)＋AtomicFileTest(13)＋StoreLockTest(13)＋PathCanonicalTest(7)", "status": "passed", "modes": ["integration", "smoke"], "trace": "零回归——38 既有用例两模式全绿；BuildRedLine 扫描面含新增 PersistenceFormat.hpp/Codec.hpp/.cpp/测试：零 Qt、无私有头出 include（Codec.hpp 在 src/——合法面）、include 白名单 {core, project} 零越界" }
+      ]
+    },
+    {
+      "suite": "sdurws_ird_project_contract_test（零改动回归）",
+      "designRef": "units/project.md §3.3/§11.2",
+      "cases": [
+        { "name": "ProjectLinkage(5)＋LockContractTest(5)", "status": "passed", "modes": ["integration", "smoke"], "trace": "零回归——构建图契约（仅 project→core 一条单元边/零 testkit/零 io）＋真双进程锁契约 10/10" }
+      ]
+    }
+  ],
+  "acceptanceCoverage": [
+    { "item": "acceptance 1（PersistenceFormat.hpp 磁盘格式五类型 parse(dump(x))==x round-trip＋§4.8 自有格式规则）", "evidence": "PersistenceFormatRoundTrip 9 用例（六类型＋静态标识含 §4.2）两模式通过；黄金字节/ASCII 纯度/确定性钉住" },
+    { "item": "acceptance 2（非法输入拒绝——截断/越界/未知 schemaVersion 主版本破坏性拒绝＋升级指引数据；次版本追加可选字段兼容语义）", "evidence": "PersistenceFormatReject 20＋PersistenceFormatVersioning 5 用例；SchemaFuture detail 三键（document/supported/upgrade）逐键断言；升级器本体未实现（阶段 B §8.11——契约明文归位）" },
+    { "item": "acceptance 3（externalRefs 记录结构单测——PM-01 存储侧路径＋内容哈希；SourcedValue 来源标记透传不解释）", "evidence": "ExternalRefRecords 3 用例＋DomainPayload_TransparentBytePreservation（payload 内 SourcedValue 样例逐字节透传）" },
+    { "item": "acceptance 4（P-PR-1：core 消费以 v0.1 为基线不私改 core；CR-02：对象负载摘要＝收到的字节经 core ContentDigester——D-10，自有格式编码器不私设第二哈希路径）", "evidence": "ContentDigestBoundary 5 用例（唯一入口同一性＋FIPS 向量＋digest 字段透传反证）＋CoreContractConsumption 1 用例；源码面：Codec.cpp 除 contentVersionOf 外零哈希计算，零 core 头修改" }
+  ]
+}

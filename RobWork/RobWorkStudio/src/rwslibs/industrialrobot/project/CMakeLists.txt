@@ -54,8 +54,14 @@ find_package(GTest CONFIG REQUIRED)
 # 行产物——写锁〔独占句柄/心跳/PID 读取/失权防护〕与路径规范化；
 # StoreLock.cpp 内含 ILockOps 的真实实现 Win32LockOps，ILockOps.hpp/
 # StoreLock.hpp/PathCanonical.hpp 同为 src/win32/ 私有实现头——R-2）。
+# PRJ-T04 落位：src/Codec.cpp 增列（§12 PRJ-T04 行产物——格式契约与编码：
+# §4.8 canonical 编解码 parse(dump(x))==x、§8.11 版本判定拒绝、CR-02 唯一
+# 摘要入口 contentVersionOf；Codec.hpp 为 src/ 私有实现头——R-2；公共类型
+# 面＝include/sdurws/ird/project/PersistenceFormat.hpp＋StoreTypes.hpp 增量
+# 的 StoreError/StoreErrorCode）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
+    src/Codec.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -123,13 +129,16 @@ endif()
 # 注入）。PRJ-T03 增列：StoreLockTest（acceptance 1 锁面/2 失权三道防线/
 # 4 诊断契约——进程内多实例＋ILockOps 接缝 fake）、PathCanonicalTest
 # （acceptance 3——规范化一致性＋同项目多路径打开 §9.3）。
+# PRJ-T04 增列：PersistenceFormatTest（acceptance 1 round-trip 全类型/
+# 2 非法拒绝＋版本兼容/3 externalRefs/4 CR-02 摘要边界——§4.4/§4.8/§8.11）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
     test/BuildRedLineTest.cpp
     test/AtomicFileTest.cpp
     test/StoreLockTest.cpp
-    test/PathCanonicalTest.cpp)
+    test/PathCanonicalTest.cpp
+    test/PersistenceFormatTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
