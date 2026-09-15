@@ -1246,6 +1246,26 @@
       "title": "『冒烟模式无别名』表述失准（基线既有、本任务沿袭第 3 例）：DTB §5.1 目标命名行与 core/diagnostics/project 三份单元 CMakeLists 注释均称别名 RWS::ird::<unit> 仅集成模式存在，但 add_library(ALIAS) 的条件 NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR 在冒烟模式（-S industrialrobot）下恒为真（单元目录永远不是顶层源目录）——验收者在冒烟树实证追加 target_link_libraries(… PUBLIC RWS::ird::core) 后配置＋构建 exit 0，别名两模式均可解析。零行为影响（真名链接口径两模式恒可用），但注释与治理文档文本会误导后读工程师对冒烟解析形态的判断",
       "owner": "构建约定所有者（DTB §5.1 辖域）；三份单元 CMakeLists 注释随各单元下次落位/触及任务顺手更正",
       "resolution": "处置建议＝①DTB §5.1 该行更正为『别名两模式均存在（单元目录非顶层即创建）』，或②把条件改为显式集成模式开关使文本成立（二选一，涉及框架构建面时按 SA-02 先登记后改）；core/diagnostics/project 注释随下次触及同步。基线既有发现（CORE-T01 起三例沿袭），非本任务引入。编号顺延自 F-123，合入时由所有者确认。"
+    },
+    {
+      "id": "F-125",
+      "source": "traceability/acceptance/PRJ-T02-20260915.md#4.9/4.10（attempt 2；验收者 git show --stat 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114 之后又一例）：PRJ-T02 送验提交 04315ecb 正文声称新增『4 份 gtest XML＋9 份构建/测试/门禁/校验日志』，实际入库仅 6 件留痕（XML×4＋ird-test-report.json＋s72-win32-docs-crosscheck.md）、日志 0 份（git show --stat 实证 7 文件含 units/project.md）；ird-test-report.json 的 gates.validateTask 字段引用『validate-task.log』亦为库外幻影引用。根因沿袭 F-010（.gitignore 全局 *.log 规则吞没 traceability/** 留痕日志）。验证结论性内容（双模式 18/18＋5/5、verify exit 0、validate-task/validate-docs PASS、ird_gates 8 命中基线）经验收者全新树独立复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀，使实施侧生成的日志可入库（F-010 根因消账）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务的 9 份日志若实施侧仍留存，可随 PRJ-T03 送验或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-124，合入时由所有者确认。"
+    },
+    {
+      "id": "F-126",
+      "source": "traceability/acceptance/PRJ-T02-20260915.md#4.9（attempt 2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "提交标题家族再现（F-012 系）：PRJ-T02 送验提交 04315ecb 标题『[WP-04-T02] §7.2 官方文档口径逐行复核留痕＋双模式验证证据＋单元卡 v0.4 同步』前缀后以节号＋名词短语（'§7.2 官方文档口径'）开头，非动词开头——同日（2026-09-15）F-121（PRJ-T01）之后的再例。纯风格瑕疵：正文四段齐备、Acc-Covered 对账行在位、验证结论与留痕一致（验收者独立复现无粉饰），既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3 提交标题『动词开头的中文摘要』）；F-012 家族处置建议①（后续提交自查标题以动词开头）持续有效",
+      "resolution": "处置建议＝同 F-012 处置建议①：提交前自查标题格式（前缀后首词为动词，如『复核…』『登记…』『留痕…』）；本例不追溯改写（已推送提交禁止 rebase/amend）。编号顺延自 F-125，合入时由所有者确认。"
     }
   ]
 }
