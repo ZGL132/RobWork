@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "DIAG-T11",
+  "masterWp": "WP-09（§11 DIAG-T11 行：文档与门禁同步——纯文档任务零代码变更，本报告＝零偏差复证留痕：双模式实跑复证 §14.4 v0.11 登记的测试基数与门禁基线逐数一致）",
+  "branch": "wp09-t11",
+  "base": "d22b12954b8bad5db6bd71ab926033f8ef56258b",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；与 wp09-t10 基线同一安装）",
+  "targets": [
+    {
+      "target": "sdurws_ird_diagnostics_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 115/115、smoke 115/115——21 套件，与 wp09-t10 基线逐套件计数一致）",
+      "notes": "零代码变更复证：本任务产物全部为文档与留痕（units/diagnostics.md §14.3/§14.4、include README.md、本目录），diagnostics/test/ 下 12 个用例文件零修改；回归复证按套件分组逐数比对——DiagnosticsBuild 5/DiagCodesRegistry 12/DiagCodesVocabulary 2/DiagCodesCoreBaseline 1/DiagCodesTextKeys 1/DiagnosticsErrors 1/DiagCatalogFactory 11/ErrorCodeTranslatorTest 5/DiagnosticsSinkShape 2/DiagnosticsEnvelopeBaseline 1/DiagCatalogLifecycle 7/DiagCatalogArchiveFailure 2/ConfirmableTest 13/DiagAggregation 11/DiagLogging 12/RedactionRules 11/RedactionPipeline 2/RedactionExport 2/RedactionFactory 2/CrashReportWrite 4/DiagCollaboration 8＝115（integration 与 smoke 两份 XML 同构）"
+    },
+    {
+      "target": "sdurws_ird_diagnostics_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 26/26、smoke 26/26——6 套件，与 wp09-t10 基线逐套件计数一致）",
+      "notes": "零代码变更复证：DiagnosticsLinkage 3/ConfirmableProjectStubTest 6/DiagHostTraceStub 5/ScriptedDiagSourceSuite 3/ScriptedDoubleBoundary 3/DiagContractCheck 6＝26（integration 与 smoke 两份 XML 同构）；替身边界机检（ScriptedDoubleBoundary）与 testkit 双面对账（DiagContractCheck）在复跑中照常在岗"
+    },
+    {
+      "target": "sdurws_ird_diagnostics（产品目标）",
+      "kind": "STATIC",
+      "result": "零源码改动（本任务产物全部在文档与 traceability 留痕侧——§11 DIAG-T11 行涉及文件＝本文＋include/.../README.md，不触任何 .hpp/.cpp/CMakeLists）",
+      "notes": "复证口径：git diff 基线..head 不含 diagnostics/src、diagnostics/include/*.hpp、diagnostics/CMakeLists.txt；产品目标在集成全量构建（exit 0 零 error）中按既有源集重编通过，T-1/零 Qt/R-1/R-2 红线由 DiagnosticsBuild＋DiagnosticsLinkage 用例组在两模式复跑中照常把守"
+    }
+  ],
+  "gates": {
+    "ird_gates": "8 处命中，与 wp09-t10 验收基线逐码一致零新增（diff 比对留痕于本报告 selfCheck.probeCapability 所述方法）：IRD-GATE-SUB×6（diagnostics_contract_test/evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 testkit——T10 登记的允许形态）＋IRD-GATE-SUB testdata_lint 表外依赖×1＋IRD-GATE-T1 testdata_lint×1；引擎自测 pass_clean/pass_r4comment＋fail_r1/t1/r5/sub/r3/r4/t2 全部按预期检出（留痕 gates-ird-gates-target.log，SA-10 判构建失败为基线口径——命中集合＝既有已登记基线，非本任务新增）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/DIAG-T11.json，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令 validate-docs.ps1：PASS 20 units/12 trace entries/150 task files，留痕 verify-task.log＋validate-docs.log）",
+    "probeCapability": "失败能力自证（纯文档任务三面）：①复证实跑——任何由本任务意外引入的源码/构建面变动都会在双模式 115＋26 全绿复跑中显形（XML 留痕 integration-gtest-*.xml/smoke-gtest-*.xml）；②ird_gates 命中集合逐码 diff——对 wp09-t10 基线 grep IRD-GATE 命中行排序比对（GATES-IDENTICAL-8），门禁面任何偏差可观测；③validate-docs 文档门禁对 PIPE/ACC 关键锚点真实校验（锚点缺失即 exit 1）；④集成全量构建 exit 0 零 error（留痕 integration-build.log）、冒烟构建 exit 0 零 error（留痕 smoke-build.log/smoke-configure.log）"
+  },
+  "regressionReRun": {
+    "note": "DIAG-T11 无新增用例（零代码变更，契约 acceptance 为文档同步三项）；本节登记既有基线的复证结论——acceptance 1（本文与实现零偏差）的机械可核对面＝文件清单比对（README-audit.md §2~§4）＋本复证实跑＋门禁 diff 三件套",
+    "modes": ["integration", "smoke"],
+    "results": [
+      { "target": "sdurws_ird_diagnostics_test", "ran": 115, "passed": 115, "failed": 0, "skipped": 0 },
+      { "target": "sdurws_ird_diagnostics_contract_test", "ran": 26, "passed": 26, "failed": 0, "skipped": 0 }
+    ],
+    "baselineReference": "traceability/builds/wp09-t10/ird-test-report.json（§14.4 v0.11：两模式 115/115＋26/26）——复证逐数一致"
+  }
+}
