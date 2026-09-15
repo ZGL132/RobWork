@@ -46,10 +46,13 @@ find_package(GTest CONFIG REQUIRED)
 # src/Project.cpp＝落位期锚点翻译单元（§12 PRJ-T01 行"src/（空起步）"；
 # STATIC 库至少一个翻译单元纪律——core/src/Core.cpp、policy/src/Policy.cpp、
 # diagnostics/src/Diagnostics.cpp 同先例，零源码 STATIC 在 CMake 生成期即
-# 报"No SOURCES given to target"，实测）。PRJ-T02 起的落位安排见该文件头
-# 注释（win32/AtomicFile、StoreLock、TxEngine 等随同名任务文件增列）。
+# 报"No SOURCES given to target"，实测）。PRJ-T02 落位：src/win32/
+# AtomicFile.cpp 增列（§12 PRJ-T02 行产物——存储原语：publishNew/原子
+# 替换/write-through 写＋IFileOps 接缝；IFileOps.hpp/AtomicFile.hpp 为
+# src/win32/ 私有实现头，不列 include、不经 PUBLIC include 根暴露——R-2）。
 add_library(sdurws_ird_project STATIC
-    src/Project.cpp)
+    src/Project.cpp
+    src/win32/AtomicFile.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——project 公共头将使用
@@ -108,7 +111,16 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_project_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/AtomicFileTest.cpp)
+
+# src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
+# src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
+# 该接缝注入，D-10 形态）。产品目标的 PUBLIC include 根仍只有 include/——
+# 私有头不出单元（R-2），此目录不进 install/接口，仅供同单元测试目标
+# 以 "win32/xxx.hpp" 相对形式包含。
+target_include_directories(sdurws_ird_project_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_compile_features(sdurws_ird_project_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_project_test PROPERTIES

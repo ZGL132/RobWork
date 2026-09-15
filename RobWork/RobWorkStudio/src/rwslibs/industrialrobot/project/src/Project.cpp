@@ -26,7 +26,8 @@
  *
  * 后续任务落位安排（units/project.md §12，实现文件随同名任务进入 src/，
  * 本文件届时或承载跨实现文件共享的内部工具，或拆分为同名任务文件后删除）：
- *   - PRJ-T02：win32/AtomicFile.{hpp,cpp}（原子文件原语＋IFileOps 接缝——§7.1/§7.2）；
+ *   - PRJ-T02：win32/AtomicFile.{hpp,cpp}——已落位（2026-09-15）：存储原语
+ *     publishNew/原子替换/write-through 写＋IFileOps 接缝（§7.1/§7.2）；
  *   - PRJ-T03：win32/StoreLock.{hpp,cpp}、win32/PathCanonical.{hpp,cpp}
  *     （写锁与路径规范化——§9.1~§9.6）；
  *   - PRJ-T04：PersistenceFormat.hpp（include 侧）＋Codec.{hpp,cpp}
