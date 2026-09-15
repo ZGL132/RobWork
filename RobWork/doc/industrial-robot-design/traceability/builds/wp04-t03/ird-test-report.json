@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T03",
+  "masterWp": "WP-04-T03",
+  "branch": "wp04-t03",
+  "base": "c332d52b27e9b4ff032e4851a03ab3e26153d37a",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，_contract_test 目标 main 自持自有入口——子进程再执行分派须先于 gtest 初始化拦截，PRJ-T03 起以 GTest::gtest 链接＋测试内 main 落实）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "PRJ-T03 落位：src/win32/{StoreLock,PathCanonical}.cpp 增列（§12 PRJ-T03 行产物——写锁与路径）。新增 src/win32/{ILockOps.hpp,StoreLock.hpp,StoreLock.cpp,PathCanonical.hpp,PathCanonical.cpp}＋公共头 include/sdurws/ird/project/StoreTypes.hpp（增量落位：§9.2 LockHolderRecord＋§5.0 IDiagnosticsSink——其余 §3.1 登记类型随 PRJ-T04/T08 增补，不预建〔NFR-MNT-04〕）。StoreLock＝SA-17 的类形态：D-02 独占句柄（GENERIC_READ|GENERIC_WRITE＋share=FILE_SHARE_READ＋OPEN_ALWAYS，内核原子裁决）／构造即获取＋写定宽 PID 记录／析构与 release 关闭即失权／心跳线程原地重写（默认 30 s，0＝禁用；纯诊断，无权限状态写通路——SA-17 结构性落实）／失权三道防线（①状态机门卫 requireWriteAuthority ②GetHandleInformation 权威探测 ③三码 I/O 分类锁存 LostWrite）。readHolderRecord＝§9.2 第二实例只读共享读取（用毕即关、撕裂容忍解析）。PathCanonical＝GetFinalPathNameByHandleW 句柄解析＋NTFS 大小写不敏感比较（§9.3/§7.2 行 4）。ILockOps＝锁面生产窄接口接缝（D-10 形态，IFileOps 先例；故障点 project/store-lock/*——PRJ-T15 消费面）。实现口径登记两项（§9 未定义判据，DTB §5.4）：①锁记录为三行定宽文本（15+70+28＝113 字节，pid 零填充/host 空白填充/hb 定宽 ISO 毫秒）——§9.2『固定宽度记录』的落值；②SDK 基线提升——框架全局 _WIN32_WINNT=0x0501（RWS_DEFINITIONS，SA-02 不可动全局）下 SetFilePointerEx/GetFinalPathNameByHandleW 无声明，ILockOps.hpp 与 PathCanonical.cpp 在各自 TU 先于 windows.h 以 winsdkver→定义→sdkddkver 三行序提升至 0x0601（声明门控宏，无 ABI 影响；框架侧其余 TU 零影响）。首个 core 头消费点：StoreTypes.hpp 经 core::DiagnosticRecord（§5.0 原文签名——契约 PRJ-T03.json acceptance 4 明文要求；DIAG-T03/T04 已钉住 v0.1 基线）"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 38/38）",
+      "notes": "PRJ-T03 增列 test/StoreLockTest.cpp（13 用例）＋test/PathCanonicalTest.cpp（7 用例）。StoreLockTest：获取/PID 记录/定宽、心跳原地重写＋文件身份（卷序号/索引/创建时间）稳定（D-03 永不删除重建观测面）、第二实例只读拒绝＋全部锁面写入口遍历拒绝＋PRJ-LOCK-HELD 含持有 PID（TX-13 锁部分）、陈旧心跳双向不构成权限判据（SA-17/D-03）、释放后失权诊断＋新实例可即时获取、防线②探测失败锁存、防线③三码分类＋非三码反例（磁盘满不失权）、心跳写失败分类、接管残留恢复诊断（PM-08）、撕裂容忍读、契约违约 fail-fast、诊断经 core::DiagnosticRecord::make 工厂产出（C-3 字段非空＋码值逐字）。PathCanonicalTest：规范化幂等与 VOLUME_NAME_DOS 形态、无特权拼写族收敛（大小写/正斜杠/尾分隔符/冗余段）、相对路径收敛（cwd RAII 守卫）、8.3 短名（卷禁用时如实降级 SUCCEED 不伪造）、区分度反例、不存在/空串错误码、同项目多路径第二次 writable 拒绝＋isSelf PID（§9.3）。真实失败能力留证：实施期两处缺陷均由本组用例真实失败驱动修复——①rewriteHeartbeatLocked（持锁）调用 classifyIoError（内部二次加锁）触发 std::mutex EDEADLK『resource deadlock would occur』（HeartbeatWriteFailure 用例红）→拆分锁内核 classifyIoErrorLocked 后复绿；②心跳重写断言先于内容前进的时序脆弱性以循环等待消除。既有 18 用例（ProjectBuild 5＋AtomicFileTest 13）零回归"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 10/10）",
+      "notes": "PRJ-T03 增列 test/LockContractTest.cpp（5 用例——PRJ-TX-7 锁双实例契约的真双进程形态＋§9.3 多路径打开跨进程面）：子进程＝测试可执行文件自再执行（main 先于 gtest 初始化分派 --ird-wp04-t03-child；参数经环境变量宽字符传递——窄 argv 破坏非 ASCII 路径）。①SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07：真双进程——子进程持锁→父进程 writable 打开降级＋持有 PID 提示＝子进程实际 PID＋PRJ-LOCK-HELD 上下文含 PID；子进程退出后锁即时可取（§9.1 释放即时性）。②StalledHeartbeat_NeverEnablesTakeover_D03：子进程心跳构造为 2 小时前＋线程停滞（内容冻结实测）→父进程两次获取均被拒——陈旧心跳不触发接管（ARCH §6.8/D-03 原文）。③CrashThenConcurrentTakeover_SingleWinner_D02：TerminateProcess（崩溃＝OS 回收全部句柄）→两竞争子进程经 manual-reset 事件同时放行、各单次获取→Exit Code 恰 {0,3} 各一＝仅一胜者（D-02 内核原子裁决）＋锁记录 PID＝胜者。④LockFileIdentity_StableAcrossCrashTakeover_D03：崩溃-接管全链后锁文件身份逐字段不变（卷序号/文件索引/创建时间）＝永不删除重建（§9.4 防锁对象分裂）。⑤SameProjectMultiPathOpen_CrossSpelling_Refused：变体拼写（大写）的 writable 打开被拒且持有 PID 识别一致（§9.3 规范层）。真实失败能力留证：实施期事件内核对象生存期缺陷由本组用例真实失败暴露——identity 用例父进程先行 CloseHandle 已置位事件→对象引用计数归零销毁→子进程同名 CreateEventW 新建未置位事件→等待超时 Exit 4（红）→父进程句柄保持至子进程退出后复绿。TestProcessRunner 形态（testkit §6.5/§10.2）归 PRJ-T15 按交付节奏重述——本组子进程形态为先行承接（§11 头注接缝先例同口径）。PRJ-T01 既有 5 用例（ProjectLinkage 构建图契约）零改动回归通过——本任务零新构建图边（CMake 链接面变更仅 GTest::gtest_main→GTest::gtest，非单元边）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "StoreLockTest",
+      "designRef": "units/project.md §9.1～§9.6（D-02/D-03/SA-17/失权三道防线/§9.8 线程模型）、§11 PRJ-TX-13 行（锁部分）、§11 头注（接缝消费形态）、§3.4；需求 PM-07/PM-08；任务契约 PRJ-T03.json acceptance 1（锁面）/2/4",
+      "cases": [
+        { "name": "StoreLockTest.Acquire_WritesPidRecord_FixedWidth", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 锁面／§9.1『构造＝获取＋写 PID 记录』——获取成功、PID/host 经 §9.2 只读路径读回一致、文件长度恒等于定宽记录编码总长（§9.4 原地重写前提）" },
+        { "name": "StoreLockTest.Constructor_ContractViolations_FailFast", "status": "passed", "modes": ["integration", "smoke"], "trace": "AGENTS §3/契约错误语义——空接缝/空路径/负周期抛 std::invalid_argument（调用方违约 fail-fast），违约构造不留锁文件" },
+        { "name": "StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 锁文件面／§9.4（D-03）——50 ms 周期≥4 次心跳前进；文件身份三元组（卷序号/文件索引/创建时间）与长度不变＝删除重建从未发生" },
+        { "name": "StoreLockTest.StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2（SA-17 承接：心跳不得作写权限判据）——双向证明：远古心跳不撤销持有者权限（requireWriteAuthority 仍 true）也不授予第二实例权限（拒绝依据＝内核共享冲突，诊断＝PRJ-LOCK-HELD 而非心跳派生码）" },
+        { "name": "StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/2（TX-13 锁部分）——第二实例获取被拒（HeldByOther）＋lastHolder PID＝持有者；全部锁面写入口（门卫＋锁重写）遍历拒绝且每次拒绝产出 PRJ-LOCK-HELD（含持有 PID 321）；拒绝方零写入副作用（锁文件字节不变）。命令/草稿/归档写入口随 PRJ-T08+ 建立后经同一门卫承接（§9.6①）" },
+        { "name": "StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4（P-PR-6 处置）——CapturingSink 实现 §5.0 IDiagnosticsSink；记录为 core::DiagnosticRecord（make 工厂 C-3：context/cause/recommendedAction 非空）；码值＝diagnostics.md §4.6 收编串逐字（PRJ-LOCK-HELD）" },
+        { "name": "StoreLockTest.Release_RejectsWrites_AuthorityLost_ThenReacquirable", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 防线①（状态机）＋§5.0 映射（context-closed→PRJ-WRITE-AUTHORITY-LOST）——释放后门卫与重写入口全拒（失权诊断×2）；OS 锁即时可被新实例获取（§9.1 释放即时性）" },
+        { "name": "StoreLockTest.ProbeFailure_LatchesLostWrite_SecondLine", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 防线②（权威探测）／§9.6『失败即失权』——ILockOps 接缝注入 probe 失败（D-10）：门卫拒绝＋held 翻转＋PRJ-WRITE-AUTHORITY-LOST；注入撤销后仍拒绝＝失权锁存不可逆" },
+        { "name": "StoreLockTest.IoErrorClassification_ThreeCodesLatch_OthersNot", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 防线③（I/O 分类）／§9.6 三码表——SHARING_VIOLATION(32)/INVALID_HANDLE(6)/ACCESS_DENIED(5) 各锁存失权；反例磁盘满(112)不锁存（分类表封闭，D-03 心跳丢失无害）" },
+        { "name": "StoreLockTest.HeartbeatWriteFailure_ClassifiedAsAuthorityLoss", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2 防线③（经真实写入口通道）／§9.4——心跳重写注入 INVALID_HANDLE：拒绝＋失权锁存＋稳定诊断；后续门卫全拒（与显式分类同一状态机汇合点）。实施期经此用例暴露持锁重入死锁并修复（真实失败能力证据，见 targets[1].notes）" },
+        { "name": "StoreLockTest.Takeover_ReadsResidual_RecoveryDevDiagnostic_PM08", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 接管面／§9.4＋PM-08——裸写异 PID 残留记录（崩溃残留等价物）后获取：接管成功＋开发诊断（project/lock-recovery）报告残留 PID＋记录重写为接管者身份" },
+        { "name": "StoreLockTest.ReadHolderRecord_TornContent_Tolerated", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.2『固定宽度记录，容忍撕裂读』——半截记录（截断于 pid 行）解析为部分值不失败；全垃圾内容零字段命中＝parsed false＋零值（『未知』呈现口径），绝无误报损坏" },
+        { "name": "StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1（卡顿不接管·进程内形态）——心跳冻结（周期 0＋远古戳）下两轮次（间隔 60 ms）获取均被拒：时间推移不翻转裁决（接管唯一途径＝OS 锁可被获取）" }
+      ]
+    },
+    {
+      "suite": "PathCanonicalTest",
+      "designRef": "units/project.md §9.3、§7.2 行 4；任务契约 PRJ-T03.json acceptance 3",
+      "cases": [
+        { "name": "PathCanonicalTest.Canonicalize_ExistingDir_FinalPathForm", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.2 行 4——VOLUME_NAME_DOS 形态（\\\\?\\ 前缀＝规范形态组成部分）；规范化幂等（以规范形态再解析＝同一结果，存储身份稳定性）" },
+        { "name": "PathCanonicalTest.SameProject_DifferentSpellings_CanonicalizeEqual", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§9.3『经规范层统一后不再歧义』——大小写/正斜杠/尾分隔符/冗余中间段四拼写族收敛到同一规范形态（无特权拼写；subst/symlink 解析能力由 §7.2 行 4 文档口径承载）" },
+        { "name": "PathCanonicalTest.RelativeSpelling_CanonicalizesToSameStore", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.3 相对路径——以进程 cwd 为基的相对拼写收敛到与绝对拼写同一规范形态（cwd RAII 守卫恢复，不污染其他用例）" },
+        { "name": "PathCanonicalTest.ShortPathSpelling_ResolvedWhenAvailable", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.3『8.3 短名』——短名拼写解析到同一存储；卷禁用 8.3 名时如实降级 SUCCEED（验证留痕不伪造通过）" },
+        { "name": "PathCanonicalTest.DifferentDirectories_Differ", "status": "passed", "modes": ["integration", "smoke"], "trace": "规范形态区分度反例——三个不同目录两两不判等（存储实例身份不漏判不冤判）" },
+        { "name": "PathCanonicalTest.NonexistentAndEmpty_FailWithOsError", "status": "passed", "modes": ["integration", "smoke"], "trace": "错误语义——不存在路径＝环境错误（ERROR_FILE_NOT_FOUND 原始码，PM-02 步骤①预检数据面）；空串＝契约违约面（ERROR_INVALID_PARAMETER 值语义失败）" },
+        { "name": "PathCanonicalTest.SameProjectMultiPathOpen_SecondWritableRefused", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§9.3 同项目多路径打开（进程内形态）——拼写 A 持锁后拼写 B（大写变体）writable 打开被拒（HeldByOther）＋持有 PID＝本进程（isSelf 语义数据面，防自我双写）" }
+      ]
+    },
+    {
+      "suite": "LockContractTest（真双进程）",
+      "designRef": "units/project.md §11 PRJ-TX-7 行、§9.9 流程图、§9.1～§9.4、§3.3（_contract_test＝锁双实例契约面）；需求 PM-07/PM-08、SA-17；任务契约 PRJ-T03.json acceptance 1/3",
+      "cases": [
+        { "name": "LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1／§9.2 全流程（真双进程）——子进程持锁→父进程 writable 打开 HeldByOther（不阻塞等待）＋持有 PID＝子进程实际 PID＋PRJ-LOCK-HELD 上下文含 PID；持有者退出后锁即时可取（§9.1）" },
+        { "name": "LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1（卡顿不接管）——子进程心跳构造为 2 h 前＋线程停滞（两时点内容逐字相等＝冻结实据）→父进程两次获取均被拒：陈旧心跳不触发接管（ARCH §6.8/D-03 原文；接管唯一途径＝OS 锁可被获取）" },
+        { "name": "LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1（崩溃后双实例并发接管仅一胜者）／§9.9＋D-02——TerminateProcess（崩溃＝OS 回收句柄）→两竞争子进程经 manual-reset 事件同时放行、各单次获取→Exit Code 恰 {0,3} 各一＋锁记录 PID＝胜者（内核原子裁决）" },
+        { "name": "LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 锁文件面／§9.4（D-03 防锁对象分裂）——崩溃-接管全链后文件身份逐字段不变（卷序号/文件索引/创建时间）＝锁文件从未删除重建；实施期经此用例暴露事件对象生存期缺陷并修复（真实失败能力证据，见 targets[2].notes）" },
+        { "name": "LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3／§9.3（跨进程形态）——子进程经规范路径持锁、父进程以大写变体拼写 writable 打开被拒＋持有 PID 识别一致（规范层保证多拼写＝同一存储实例判定）" }
+      ]
+    },
+    {
+      "suite": "ProjectBuild（PRJ-T01 既有回归）",
+      "designRef": "units/project.md §11.2 PRJ-TX-14 前两项、§1.4、§3.3",
+      "cases": [
+        { "name": "ProjectBuild.SourceTreeReachable_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-T01 落位形态锚定——src/ 扫描面现含 win32/ 五实现文件（增列后仍通过）" },
+        { "name": "ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "NFR-MNT-01/D-01——新增五文件＋StoreTypes.hpp 零 Qt 头（windows.h 为 §1.4 设计内依赖）" },
+        { "name": "ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "§1.4——新增文件零 Eigen/rw::math 直接包含" },
+        { "name": "ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-1/R-2——include 面 sdurws/ird/* 白名单 {core, project}：StoreTypes.hpp/StoreLock.cpp 的 core::DiagnosticRecord 消费（acceptance 4 要求的合法面——PRJ-T03 契约明文）零越界；零 diagnostics/io 头" },
+        { "name": "ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-2——新增公共头仅 StoreTypes.hpp 位于 sdurws/ird/project/ 命名空间根；ILockOps/StoreLock/PathCanonical 头均在 src/win32/（私有头不出单元的直接证据）" }
+      ]
+    },
+    {
+      "suite": "ProjectLinkage（PRJ-T01 既有回归，零改动）",
+      "designRef": "units/project.md §3.3、§11.2 PRJ-TX-14 后两项",
+      "cases": [
+        { "name": "ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-1——本任务零新单元边（GTest::gtest_main→GTest::gtest 为测试入口形态变更，非单元边）" },
+        { "name": "ProjectLinkage.NoTestkitEdge_DT_BUILD_T1", "status": "passed", "modes": ["integration", "smoke"], "trace": "T-1——子进程分派/锁 fake 全部在测试目标内，零 testkit 头" },
+        { "name": "ProjectLinkage.CoreEdgePresent_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-T01 登记边持续存在——本任务起该边承载真实头消费（StoreTypes.hpp→DiagData.hpp）" },
+        { "name": "ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-PR-6/P-EX-8——IDiagnosticsSink 注入形态落地（acceptance 4）且构建图零 diagnostics 链接边（注入式先行的构建图证据）" },
+        { "name": "ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09", "status": "passed", "modes": ["integration", "smoke"], "trace": "O-09——零 io 编译期消费（include 面＋构建图面双向扫描）" }
+      ]
+    }
+  ],
+  "acceptance": [
+    { "item": 1, "summary": "PRJ-TX-7 锁用例通过：第二实例只读打开＋持锁 PID 提示（PM-07）、心跳卡顿不接管（D-03：心跳仅诊断用途）、崩溃后双实例并发接管仅一胜者（D-02：lock 文件独占句柄内核原子裁决）", "evidence": "LockContractTest 5 用例两模式 10/10（sdurws_ird_project_contract_test-{integration,smoke}.xml；integration-contract-test-run.log / smoke-contract-test-run.log）——SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07（真双进程只读降级＋PID 提示＋退出即时释放）、StalledHeartbeat_NeverEnablesTakeover_D03（心跳 2 h 陈旧＋冻结实据下两次获取均拒）、CrashThenConcurrentTakeover_SingleWinner_D02（TerminateProcess 后双子进程事件放行竞速 Exit {0,3} 恰一胜者＋记录 PID＝胜者）；进程内佐证 StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03／StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03" },
+    { "item": 2, "summary": "PRJ-TX-13（锁部分）用例通过：只读上下文遍历全部写入口一律拒绝＋稳定诊断（PRJ-LOCK-HELD 含持有 PID——§5.0 码表清单）；失权三道防线（§9.6 写前权威检查——SA-17 承接：心跳不得作为写权限判据）", "evidence": "StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13（锁面写入口＝门卫 requireWriteAuthority＋锁重写 rewriteHeartbeat，本阶段全部写入口遍历拒绝×2＋获取被拒共 3 条 PRJ-LOCK-HELD、上下文含持有 PID 321、锁文件字节零改动；命令/草稿/归档写入口随 PRJ-T08+ 经同一门卫承接——§9.6①统一防线）；三道防线：Release_RejectsWrites_AuthorityLost_ThenReacquirable（①状态机＋context-closed 映射）、ProbeFailure_LatchesLostWrite_SecondLine（②权威探测锁存）、IoErrorClassification_ThreeCodesLatch_OthersNot＋HeartbeatWriteFailure_ClassifiedAsAuthorityLoss（③三码分类＋非三码反例）；心跳非判据双向：StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03；真双进程只读面 LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07" },
+    { "item": 3, "summary": "PathCanonical 用例通过：路径规范化与同项目多路径打开（§9.3）；锁文件永不删除重建（§9.4 防锁对象分裂——D-03）", "evidence": "PathCanonicalTest 7 用例（幂等＋DOS 形态／四拼写族收敛／相对路径／8.3 短名〔卷禁用时如实降级 SUCCEED〕／区分度反例／错误码／SameProjectMultiPathOpen_SecondWritableRefused 进程内 isSelf）＋LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused（跨进程变体拼写拒绝）；D-03 双面：StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03（心跳原地重写后身份三元组不变）＋LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03（崩溃-接管全链身份不变＝永不删除重建）" },
+    { "item": 4, "summary": "P-PR-6 处置：锁诊断经 §5.0 IDiagnosticsSink 适配器产出 core::DiagnosticRecord（project→diagnostics 允许边的注入实现形态）；PRJ-* 码值已收编 diagnostics.md §4.6（v0.2 码值部分消账），sink 名称/归属统一按 P-PR-6/P-EX-8 裁决前注入式先行、不直链 diagnostics 库", "evidence": "公共头 StoreTypes.hpp＝§5.0 原文形态 IDiagnosticsSink{report(core::DiagnosticRecord)/reportDev}（project 定义、外部提供实现、注入可空）；StoreLock.cpp 产码点仅用收编码 PRJ-LOCK-HELD／PRJ-WRITE-AUTHORITY-LOST（diagnostics.md §4.6 逐字）；StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6（工厂 C-3 字段校验＋码值逐字断言）；构建图面＝ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD 两模式通过＋ird_gates 零 project 命中（注入式先行、零 diagnostics 链接边——gates-ird-gates-target.log 命中 8 项＝DIAG-T10 登记基线，全部为其他单元已登记 testkit 边）" }
+  ],
+  "regression": {
+    "integration": { "total": 48, "passed": 48, "failed": 0, "note": "本单元 _test 38（ProjectBuild 5＋AtomicFileTest 13＋StoreLockTest 13＋PathCanonicalTest 7）＋契约 10（ProjectLinkage 5＋LockContractTest 5）；PRJ-T01/T02 既有 18 用例全量通过＝零回归；全量集成构建 exit 0 零 error（integration-build.log）；其余单元零触碰（改动仅 project/** 与单元卡）" },
+    "smoke": { "total": 48, "passed": 48, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训复用；build-smoke-wp04-t03/）" }
+  },
+  "gates": {
+    "ird_gates": "已建成并执行（WP-01-T01 落地）：命中 8 项＝DIAG-T10（wp09-t10）登记基线零新增，零 project 命中（gates-ird-gates-target.log）；validate-task：PASS（validate-task.log）"
+  }
+}
