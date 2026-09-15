@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.3（PRJ-T01 构建落位登记——卡头构建落位行更新＋README 指向复核，登记见 §15.4；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-09 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-PROJECT |
@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.11（`Draft`，待评审）** |
 | 协作输入 | `units/core.md` **v0.1（`Draft`，未冻结）**、`units/testkit.md` **v0.1（`Draft`，未冻结）**——本文消费的 core 公共契约以 core.md v0.1 签名为基线并逐项标注状态（§3.2）；core/testkit 冻结版本如有变更，本文按影响面增量同步（待裁决 P-PR-1） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立）→ `units/*.md`（单元任务卡）。本文即 `units/project.md`，按任务卡深度编写（接口签名、数据类型在本文件冻结） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/`（骨架已建：目标 `sdurws_ird_project`〔INTERFACE 占位〕＋别名 `RWS::ird::project`＋公共头保留位 `include/sdurws/ird/project/README.md`；README 已引用本文 §9，与本文结构一致） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/`（**已随 PRJ-T01 落位〔2026-09-15〕**：目标 `sdurws_ird_project` 升级 STATIC〔C++17、PUBLIC 链 core——ARCH §3.5 唯一登记编译链接边；diagnostics 边按注入形态不落链接——P-PR-6/P-EX-8；零 Qt 含 Core——D-01；零 io 编译期消费——O-09 处置；src/ 空起步锚点翻译单元 `Project.cpp`——STATIC 库最小翻译单元先例形态，CORE-T01/POL-T01/DIAG-T02 同款，无接口预建〕，别名 `RWS::ird::project`；测试目标 `sdurws_ird_project_test`/`sdurws_ird_project_contract_test` 已按 DTB §5.5 注册〔gtest vcpkg 接入〕；配置期红线守卫就位。公共头保留位 `include/sdurws/ird/project/README.md` 指向本文 §12——原 §9 指向已于 2026-09-10 版修正，PRJ-T01 复核确认零偏差，"不参与编译/不表示已实现"声明保留；§3.1 契约头随 PRJ-T04+ 落地。见单元 `project/CMakeLists.txt` 与上级 `industrialrobot/CMakeLists.txt`） |
 | 任务包 | WP-04（持久化/草稿/撤销/恢复平台原语；ARC-01 主WP；REQUIREMENTS §3 阶段 A〔WP-00～12〕；PM-04/08/12/18 主WP） |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送。Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`，逐个绝对路径启动。 |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9/v1.11、ARCHITECTURE 文档头）；`old/` 历史实现仅功能范围对照且**当前磁盘缺失**（实测；core.md §1.2 R-5、testkit.md §1.2 同源登记）；历史实现不作为语义来源 |
@@ -1369,6 +1369,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | --- | --- | --- |
 | v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）、core.md/testkit.md v0.1（Draft，协作输入）完成 15 章详细设计；登记磁盘现状（DETAILED-DESIGN/development-task-breakdown/其余 units 卡缺失、old/ 缺失）；冻结 .rwdesign 全目录契约、双通道提交闭包与防回退不变量、七步事务协议与故障注入矩阵、Windows 锁与存储上下文生命周期、命令/确认/撤销/归档接口；实现任务 PRJ-T01～T16；待裁决 8 项（P-PR-1～8） |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§5.0 稳定码清单由"diagnostics 未产出、以下为建议值"更正为"已收编全量 10 项（diagnostics.md §4.6）"——P-PR-6 码值部分消账；sink 名称/归属统一与 project→diagnostics 边的链接形态（当前注入式、暂不链接）仍按 P-PR-6/P-EX-8 裁决，不因卡存在自动消账 |
+| v0.3 | 2026-09-15 | PRJ-T01（≙WP-04-T01）构建落位登记：卡头构建落位行更新（INTERFACE 占位升级 STATIC、`_test`/`_contract_test` 注册、src/ 空起步锚点翻译单元 `Project.cpp`、P-ENV-1/P-PR-1 处置留痕）＋README 指向复核（§9→§12 已于 2026-09-10 版修正，复核零偏差）；§3.3 括注"INTERFACE → PRJ-T01 升级 STATIC"兑现，本文契约语义零变更。证据：traceability/builds/wp04-t01/ |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 

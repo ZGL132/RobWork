@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-09-15T14:55:22.839" name="AllTests">
+  <testsuite name="ProjectLinkage" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-09-15T14:55:22.839">
+    <testcase name="UnitEdgeOnlyCore_DT_BUILD_R1_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\LinkageContractTest.cpp" line="111" status="run" result="completed" time="0." timestamp="2026-09-15T14:55:22.839" classname="ProjectLinkage" />
+    <testcase name="NoTestkitEdge_DT_BUILD_T1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\LinkageContractTest.cpp" line="140" status="run" result="completed" time="0." timestamp="2026-09-15T14:55:22.839" classname="ProjectLinkage" />
+    <testcase name="CoreEdgePresent_DT_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\LinkageContractTest.cpp" line="157" status="run" result="completed" time="0." timestamp="2026-09-15T14:55:22.839" classname="ProjectLinkage" />
+    <testcase name="DiagnosticsEdgeInjectionNotLink_DT_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\LinkageContractTest.cpp" line="174" status="run" result="completed" time="0." timestamp="2026-09-15T14:55:22.839" classname="ProjectLinkage" />
+    <testcase name="NoIoCompileTimeConsumption_DT_BUILD_O09" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\LinkageContractTest.cpp" line="191" status="run" result="completed" time="0." timestamp="2026-09-15T14:55:22.840" classname="ProjectLinkage" />
+  </testsuite>
+</testsuites>

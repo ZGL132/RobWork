@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T01",
+  "masterWp": "WP-04-T01",
+  "branch": "wp04-t01",
+  "base": "e69f70cf1739b90cbaa18b0048300826384116db",
+  "date": "2026-09-15",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制，P-TK-1 定稿结论：不消费 RW::gtest、不源码 vendor、测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "PRJ-T01 落位：INTERFACE 占位升级 STATIC（目标名/别名 RWS::ird::project/include 根不变）。新建 project/CMakeLists.txt：C++17 双设（target_compile_features PUBLIC cxx_std_17＋CXX_STANDARD 17——P-ENV-1 处置：显式 C++17 不用 C++20，双模式构建即 C++17 与框架 C++11 基线混链复证，governance-log P-ENV-1 已随 CORE-T01 关闭〔F-003〕）、/utf-8 PUBLIC、PUBLIC 链 sdurws_ird_core（统一真名两模式可解析——ARCH §3.5 唯一登记编译链接边；集成模式 RWS::ird::core 即其 ALIAS）、零 Qt 含 Core（D-01）、零 Eigen/rw::math 直接包含、零 io 编译期消费（O-09 处置：包导入导出/固化归阶段 B WP-04-T17/T18）、diagnostics 边按注入形态不落链接（P-PR-6/P-EX-8，ird_gates 白名单预登记 project->diagnostics 不构成链接义务）、零 testkit 边（T-1）。P-PR-1 处置：core.md v0.1 仍 Draft，本任务仅链接目标零 core 头消费（产品与测试源码均无 sdurws/ird/core include——builds 留痕与扫描用例双证）。src/ 空起步＝锚点翻译单元 Project.cpp（单元卡 §12 行产物定义的既定先例形态——CORE-T01/POL-T01/DIAG-T02 同款：CMake 零源码 STATIC 库生成期即报 No SOURCES given to target〔实测〕，锚点 TU＝库可生成且无任何接口预建〔NFR-MNT-04〕的最小载体；后续 PRJ-T02~T14 同名任务文件落位安排见该文件头注释）。配置期红线守卫：仅 core＋自身单元边（^sdurws_ird_ 通配同时拦截 testkit——T-1）、零 Qt、产品目标零 gtest（两面读取 LINK/INTERFACE）。顶层 industrialrobot/CMakeLists.txt 同步：project 移出 INTERFACE 占位循环、add_subdirectory(project) 挂接于 diagnostics 之后（次序约束：core 之后〔链接〕、diagnostics 之后〔其卡 §3.2 消费方次序〕），头注释状态行更新（15 个单元仍为占位）"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "PRJ-T01 登记（§3.3/DTB §5.5；契约 verify 命令构建对象——cmake --build build --config Release --target sdurws_ird_project_test exit 0，留痕 verify-target-build.log）。首批用例＝PRJ-TX-14 前两项的源码 include 面扫描（units/project.md §11.2：目标无 Qt 头〔NFR-MNT-01/D-01〕、无私有头出 include〔R-2〕）＋§1.4 零 Eigen/rw::math 直接包含＋include 面 sdurws/ird/* 白名单＝{core, project}。不链 sdurws_ird_testkit：PRJ-TX-14 用例以 gtest 原生断言承载（需求/AT 追溯在用例名与本报告 trace 字段——diagnostics DT-BUILD 同款）；testkit 消费（FaultInterceptor/TempDir 等）随 PRJ-T15 按 T-1 允许形态登记。扫描器语义＝#include 指令行（isIncludeDirective 门控）而非任意文本行——注释散文中的路径字样（文件头文档追溯）不构成编译期包含；实施中曾以任意文本行扫描观察到一次真实失败（Project.cpp 注释'sdurws/ird/core'误报），修正后复证通过——该过程同时是用例真实失败能力的执行证据"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "PRJ-T01 登记（§3.3 跨单元契约面——锁双实例/归档协作等随 PRJ-T10/T14/T15 展开；落位期＝构建图边界契约，acceptance 2 逐项具名自证）：UnitEdgeOnlyCore（CMakeLists 非注释行 sdurws_ird_* 引用⊆{core, project, 本单元两测试目标}——仅 project→core 一条单元边，R-1）、NoTestkitEdge（T-1 具名：落位期零 testkit 引用，PRJ-T15 增链须伴随本用例白名单显式增量修订）、CoreEdgePresent（唯一登记边必须真实存在——acceptance 1 PUBLIC 链 core 的构建图半区，链接器半区由两模式构建/测试链接成功承载）、DiagnosticsEdgeInjectionNotLink（ARCH §3.5 登记行的 diagnostics 边按注入形态不落链接——P-PR-6/P-EX-8 裁决，白名单预登记≠链接义务）、NoIoCompileTimeConsumption（include 面＋构建图面双向扫描——O-09 处置：阶段 A 零 io，P-PR-5 未裁决不私裁补边）。P-PR-1 处置：零 core 头消费，行为级 PUBLIC 传染自证（diagnostics 落位期 PublicCoreExposure 同款）随 PRJ-T04 首个消费任务建立——避免在 Draft 基线上扩大返工面"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "ProjectBuild",
+      "designRef": "units/project.md §11.2 PRJ-TX-14 行（前两项）、§3.2（依赖图：core＋std＋Win32——零 Qt 含 Core D-01、零 Eigen/rw::math 直含）、§3.3（R-2 头纪律）、§12 PRJ-T01 行；需求 NFR-MNT-01/NFR-MNT-02、ARCH §3.5；任务契约 PRJ-T01.json acceptance 1/2",
+      "cases": [
+        { "name": "ProjectBuild.SourceTreeReachable_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1 落位形态锚定——公共头保留位 README.md＋src/ 锚点翻译单元 Project.cpp 在位（src/ 空起步＝CMake STATIC 最小翻译单元纪律，CORE-T01/POL-T01/DIAG-T02 先例；零源码 STATIC 生成期报 No SOURCES given to target 实测）" },
+        { "name": "ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-TX-14 第 1 项／NFR-MNT-01／D-01——产品面（include/＋src/）include 指令行 `#include <Q`/`\"Q` 零命中（零 Qt 含 Core）" },
+        { "name": "ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "§1.4/§3.2——零 Eigen/rw::math 直接包含（rw 类型仅经 core 公共头传递；Win32 为设计内依赖不在禁令）" },
+        { "name": "ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "PRJ-TX-14 第 2 项延伸面／R-1/R-2／acceptance 2——include 面 sdurws/ird/* 白名单＝{core, project}（ARCH §3.5 唯一登记编译链接边；io/业务单元零命中＝零 io 编译期消费的 include 面半区）" },
+        { "name": "ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "R-2——include/ 下文件仅位于 sdurws/ird/project/ 命名空间根（无私有头出 include；随 PRJ-T04+ 落头自动收紧）" }
+      ]
+    },
+    {
+      "suite": "ProjectLinkage",
+      "designRef": "units/project.md §3.3（PUBLIC 链 core／_contract_test 分工）、§3.2（diagnostics 注入形态）、§11.2 PRJ-TX-14 行（后两项）、§2.1 O-9/O-14＋§10.4（io 边 P-PR-5）；任务契约 PRJ-T01.json acceptance 1/2/5（P-PR-1）；governance-log P-PR-1/P-ENV-1 行",
+      "cases": [
+        { "name": "ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『仅建立 project→core 编译链接边』——CMakeLists 非#注释行 sdurws_ird_* 目标引用⊆{core, project, project_test, project_contract_test}（SA-10 零表外边；R-1 业务域互链禁止）" },
+        { "name": "ProjectLinkage.NoTestkitEdge_DT_BUILD_T1", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『无 testkit 边（T-1 产品目标不链 testkit）』具名——落位期零 sdurws_ird_testkit 引用；PRJ-T15 增链须伴随白名单显式增量修订" },
+        { "name": "ProjectLinkage.CoreEdgePresent_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1『PUBLIC 链 core』构建图半区——登记边必须真实存在（零表外边只证无多余、不证已建立）；链接器半区＝两模式构建＋测试链接成功（integration-build.log/smoke-build.log）" },
+        { "name": "ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『diagnostics 边按注入形态不落链接，ird_gates 白名单已预登记不越界』——零 sdurws_ird_diagnostics 目标引用（§3.2/§5.0 注入形态；P-PR-6/P-EX-8 裁决链接形态，白名单预登记≠链接义务）" },
+        { "name": "ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2『零 io 编译期消费』（O-09 处置）——include 面零 sdurws/ird/io 头＋构建图面零 sdurws_ird_io 引用（包导入导出/固化归阶段 B WP-04-T17/T18，P-PR-5 未裁决不私裁补边）" }
+      ]
+    }
+  ],
+  "acceptance": [
+    { "item": 1, "summary": "双模式构建零错误：sdurws_ird_project INTERFACE→STATIC（C++17、PUBLIC 链 core——§3.3），目标名/别名/include 根不变；新建 project/CMakeLists.txt 并在父 CMakeLists 注册；src/ 空起步＝锚点翻译单元 Project.cpp（零源码 STATIC 技术不可行的既定先例形态——CORE-T01/POL-T01/DIAG-T02 同款，无任何接口预建，NFR-MNT-04）", "evidence": "smoke-configure.log/smoke-build.log（exit 0）、integration-configure.log/integration-build.log（全量 exit 0 零错误）、verify-target-build.log（契约 verify 命令 exit 0）、ProjectBuild.SourceTreeReachable（两模式）" },
+    { "item": 2, "summary": "红线扫描零命中（PRJ-TX-14 全项）：无 Qt 头（NFR-MNT-01/D-01）、无私有头出 include（R-2）、CMake 无业务单元边（R-1）、无 testkit 边（T-1）；仅 project→core 编译链接边；diagnostics 边注入不落链接（白名单预登记不越界）；零 io 编译期消费（O-09）", "evidence": "ProjectBuild.NoQtInclude/NoCrossUnitInclude/PublicHeaderPathLayout＋ProjectLinkage 五用例（两模式 10/10）；ird_gates 8 命中＝wp09-t11 基线逐码一致零新增（gates-ird-gates-target.log，命中全部位于 evidence/policy/runtime/diagnostics 契约目标与 testdata_lint 的既有辖区，零 project 项）" },
+    { "item": 3, "summary": "测试目标按 §3.3/DTB §5.5 注册并可构建：sdurws_ird_project_test（verify 命令构建对象）＋sdurws_ird_project_contract_test；googletest 经 vcpkg find_package(GTest CONFIG REQUIRED) 接入失败即停不回落；实现任务未落地前的最小构建冒烟用例（10 用例）", "evidence": "两模式 build-pass＋run-pass（smoke-test-run.log/integration-test-run.log）；4 份 gtest XML（sdurws_ird_project*_test-{smoke,integration}.xml 各 5 用例）；ird_add_gtest 宏自持（add_test＋<target>_report XML 报告目标）" },
+    { "item": 4, "summary": "project README 复核留痕（DTB §2.5 WP-04-T01『project README 任务卡指向 §9→§12 修正』）：现文（2026-09-10 版）已指向 project.md §12，实现时复核确认零偏差；保留『不参与编译/不表示已实现』声明", "evidence": "include/sdurws/ird/project/README.md 追加 2026-09-15 复核行（指向 §12 确认无误＋声明保留）；单元卡 v0.3 卡头构建落位行同步登记复核结论" },
+    { "item": 5, "summary": "陷阱处置：P-ENV-1——目标显式 cxx_std_17 不用 C++20，双模式构建即 C++17 与框架 C++11 基线混链复证留痕（P-ENV-1 已随 CORE-T01 关闭 F-003，本任务同口径复证）；P-PR-1——core 消费契约以 core.md v0.1（Draft）签名为基线，本任务仅链接目标零头消费，core 冻结 diff 后按影响面增量同步留痕", "evidence": "project/CMakeLists.txt C++17 双设注释（P-ENV-1 处置标注）＋两模式构建 exit 0；Project.cpp/两测试文件头 P-PR-1 处置标注＋ProjectBuild.NoCrossUnitInclude/ProjectLinkage 全组用例零 sdurws/ird/core include（产品与测试源码均无 core 头消费——构建日志与扫描双证）" }
+  ],
+  "regression": {
+    "integration": { "total": 10, "passed": 10, "failed": 0, "note": "本单元 5（ProjectBuild）＋5（ProjectLinkage）——PRJ-T01 为落位任务，无既有用例回归面；其余单元零触碰（改动仅 project/**＋顶层 CMakeLists 增列/移出循环/头注释，其余单元构建/测试不受影响——全量集成构建 exit 0 佐证）" },
+    "smoke": { "total": 10, "passed": 10, "failed": 0, "note": "同上（冒烟树独立配置：vcpkg toolchain 绝对路径——CORE-T01 验收 G-2 教训）" }
+  },
+  "gates": {
+    "validateTask": "PASS（validate-task.log：validate-task PASS (1 tasks)，exit 0）",
+    "irdGates": {
+      "result": "8 命中＝wp09-t11 合入基线逐码一致、零新增（如实登记，未私改门禁）",
+      "baseline": "SUB×6（diagnostics_contract_test/evidence_test/evidence_contract_test/policy_test/policy_contract_test/runtime_test 直链 sdurws_ird_testkit——白名单数据面明文允许而引擎 SUB 形态未豁免的既有缺陷，F-072 族）＋SUB 表外边×1（testdata_lint→testkit）＋T1×1（testdata_lint 产品目标链 testkit）——与 wp09-t11 留痕 gates-ird-gates-target.log 逐码一致（SUB 由 5 增至 6 系 DIAG-T10 契约目标增链 testkit 所致，先于本任务存在）",
+      "deltaAnalysis": "本任务新增构建图元素＝产品边 project→core（白名单 IRD_ALLOWED_UNIT_EDGES 既有登记行 project->core）＋两测试目标仅链自身产品目标＋GTest::gtest_main（T-1 允许形态；未增链 testkit——F-072 族不扩散）。基线 8 命中全部为 WP-02/WP-05/WP-07/WP-09 辖区既有命中，处置权 WP-01 所有者（裁决前不私改门禁纪律）。exit 1＝基线既有命中的预期行为"
+    }
+  },
+  "docs": {
+    "unitCard": "units/project.md v0.2→v0.3：卡头构建落位行更新（已随 PRJ-T01 落位——STATIC/两测试目标/锚点翻译单元/README 复核结论）＋§15.4 变更记录行；§3.3 括注『INTERFACE → PRJ-T01 升级 STATIC』兑现，正文契约语义零变更",
+    "readme": "include/sdurws/ird/project/README.md 追加 2026-09-15 PRJ-T01 复核行（acceptance 4）"
+  }
+}
