@@ -1206,6 +1206,46 @@
       "resolution": "所有者『请处置』口令委托治理会话执行（2026-09-15）：①PRJ-T01/IO-T01 按 CCP §3 七步编译放行（validate-task 三查过＋validate-docs PASS＋独立评审子代理对抗式核对双 PASS，留痕 traceability/contract-compile-log.md 2026-09-15 两行——含 IO-T01 占位 verify 指向不存在测试目标的偏差修正登记）；②所有者调整队列授权下插队：PRJ-T01 置队首（PRJ-T02 之前）、IO-T01 置 IO-T02 之前（autoDiscovery 队尾追加不可达依赖拓扑要求的此序）；③state 置 idle＋heartbeat 重置（本笔治理提交）——下一自动 tick 恢复领取 PRJ-T01；④PIPE v1.12 变更记录登记本缺陷与处置。fixedAt=2026-09-15，fixedBy=治理提交（契约两份＋compile-log 两行＋本条＋PIPE v1.12＋state 队列/phase）",
       "fixedAt": "2026-09-15",
       "fixedBy": "治理会话（所有者 2026-09-15 处置口令委托）：PRJ-T01/IO-T01 编译放行＋队列插入＋state 解除 blocked——同笔治理提交落地，下一自动 tick 恢复例行自动化"
+    },
+    {
+      "id": "F-121",
+      "source": "traceability/acceptance/PRJ-T01-20260915.md#4.9（attempt 1，送验对象 5de89534c1c88eadce53cc6c8327e1fbd9b542e0，分支 wp04-t01，提交 5de89534）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "F-012 家族同型再现（构建落位形态第 2 例，F-100 同型）：PRJ-T01 送验提交 5de89534 标题『[WP-04-T01] project 单元构建落位：INTERFACE 占位升级 STATIC 真实库』前缀后以单元名词（'project 单元构建落位'）开头，非动词开头——与 F-100（DIAG-T02『diagnostics 单元构建落位：…』）同形态，证明模板补救（实施者模板补提交标题动词开头示例）落地前构建落位类任务口径持续漂移；正文四段齐备、验证结论与验收者全新树亲手复现逐项一致（双模式 10/10、契约 verify 目标 exit 0、ird_gates 8 命中＝基线零新增零 project 项、validate-task/validate-docs PASS），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补动词开头示例，构建落位类可用『落地 <unit> 单元构建（占位升级 STATIC…）』句式）；对已推送历史（5de89534）不追溯改写（AGENTS §6.3）。编号顺延自 F-120，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-122",
+      "source": "traceability/acceptance/PRJ-T01-20260915.md#4.8（attempt 1，送验对象 5de89534c1c88eadce53cc6c8327e1fbd9b542e0，分支 wp04-t01）：验收者逐项核对文档同步时实测卡头日期行与 §15.4 失同步",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "units/project.md 卡头『文档版本』行已随 §15.4 v0.3 同步（v0.3＝PRJ-T01 构建落位登记）但『日期』行停留 2026-09-09（§15.4 v0.3 行＝2026-09-15）——F-057 消账时确立的『卡头行与 §15.4 末行一致』纪律的半同步残留形态（版本行同步、日期行漏改；较 F-057 原例减轻）；validate-docs 不校验该维度，机检未红（与 F-057 后半建议同源）。方向为文档内部不一致（少报），v0.3 登记内容本身完整准确",
+      "owner": "project 单元卡所有者（卡头归单元卡辖域）；『卡头版本/日期行＝§15.4 末行』机检维度建议归治理脚本所有者（与 F-057 后半合并评估）",
+      "resolution": "随下次触及 units/project.md 的任务（PRJ-T02 领取、或 F-005 家族批量修正批次）把卡头『日期』行推进至 2026-09-15（与 §15.4 v0.3 行一致）；机检维度与 F-057 后半合并处置，不单开任务。编号顺延自 F-121，合入时由所有者确认。"
+    },
+    {
+      "id": "F-123",
+      "source": "traceability/acceptance/PRJ-T01-20260915.md#4.5/4.11（attempt 1，验收者探针 3/3b）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "PRJ-T01 CoreEdgePresent_DT_BUILD 断言敏感度缺口：collectTargetRefs 只剥离 '#' 注释行，而 project/CMakeLists.txt 配置期守卫的匹配逻辑文本（NOT _lib STREQUAL \"sdurws_ird_core\"）自身含该目标名 token——验收者探针实证仅移除/注释 target_link_libraries 链接行后 CoreEdgePresent 仍绿（配置期守卫只有反向禁令、不要求 core 边存在，且当前 P-PR-1 零 core 头消费下链接器对该边无感）；探针 3b（全文 token 改名）证明断言本体存活会红。实现本身正确（链接行在位＋两模式链接成功亲证），属测试覆盖面建议非实现缺陷（F-043 同型判定）",
+      "owner": "project 实现所有者（WP-04 后续任务顺手收口：PRJ-T04 首个 core 头消费任务建立行为级 PUBLIC 传染自证时一并处理）",
+      "resolution": "处置建议＝①collectTargetRefs／守卫改按 target_link_libraries 语句级扫描（或守卫文本改用拼接形式避开字面 token）；②配置期守卫增加『core 边必须存在』正向断言（与 R-1 反向禁令对偶）。随 PRJ-T04 顺带或后续用例增补批次，不单开任务。编号顺延自 F-122，合入时由所有者确认。"
+    },
+    {
+      "id": "F-124",
+      "source": "traceability/acceptance/PRJ-T01-20260915.md#4.8（attempt 1；验收者冒烟树别名链接探针）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-15",
+      "title": "『冒烟模式无别名』表述失准（基线既有、本任务沿袭第 3 例）：DTB §5.1 目标命名行与 core/diagnostics/project 三份单元 CMakeLists 注释均称别名 RWS::ird::<unit> 仅集成模式存在，但 add_library(ALIAS) 的条件 NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR 在冒烟模式（-S industrialrobot）下恒为真（单元目录永远不是顶层源目录）——验收者在冒烟树实证追加 target_link_libraries(… PUBLIC RWS::ird::core) 后配置＋构建 exit 0，别名两模式均可解析。零行为影响（真名链接口径两模式恒可用），但注释与治理文档文本会误导后读工程师对冒烟解析形态的判断",
+      "owner": "构建约定所有者（DTB §5.1 辖域）；三份单元 CMakeLists 注释随各单元下次落位/触及任务顺手更正",
+      "resolution": "处置建议＝①DTB §5.1 该行更正为『别名两模式均存在（单元目录非顶层即创建）』，或②把条件改为显式集成模式开关使文本成立（二选一，涉及框架构建面时按 SA-02 先登记后改）；core/diagnostics/project 注释随下次触及同步。基线既有发现（CORE-T01 起三例沿袭），非本任务引入。编号顺延自 F-123，合入时由所有者确认。"
     }
   ]
 }
