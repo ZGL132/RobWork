@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "存储原语（AtomicFile/IFileOps）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T01"],
   "requirements": ["NFR-REL-01"],
   "designRefs": ["units/project.md#12", "units/project.md#7.1", "units/project.md#7.2"],
