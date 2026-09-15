@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-D",
   "title": "文档与门禁同步",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DIAG-T01",
     "DIAG-T02",
