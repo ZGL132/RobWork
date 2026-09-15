@@ -64,10 +64,17 @@ find_package(GTest CONFIG REQUIRED)
 # 校验、LRU 缓存、引用存在性扫描；ObjectStore.hpp 为 src/ 私有实现头——R-2；
 # 摘要一律经 Codec 的 contentVersionOf＝core ContentDigester，CR-02 唯一
 # 哈希入口）。
+# PRJ-T06 落位：src/RevisionIndex.cpp 增列（§12 PRJ-T06 行产物——修订/分支/
+# 元数据：§4.5 提交闭包双通道〔D-4：修订 DAG parent 链∪元数据谱系
+# supersedes→committedBy〕、§4.4.3 分支表、INV-M1/M2/M3 发布边界防回退
+# 校验〔branch-metadata-regression〕、§6.1 S6 rev 单调序号分配〔O-15〕、
+# D-5 权威元数据底本拷贝更新；RevisionIndex.hpp 为 src/ 私有实现头——R-2；
+# 纯进程内语义模型，零磁盘 I/O——文件读写归 TxEngine/T07）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
     src/ObjectStore.cpp
+    src/RevisionIndex.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -140,6 +147,11 @@ endif()
 # PRJ-T05 增列：ObjectStoreTest（acceptance 1 内容编址/只增发布/共享去重/
 # LRU 预算；2 篡改检测＋PA-2 不可变；3 引用存在性＋D-10 原样存储；
 # 4 CR-02/P-PR-1 处置自证——§4.6 全语义面）。
+# PRJ-T06 增列：RevisionIndexTest（acceptance 1 §4.5.1 走查七步＋PM-12
+# baseRevisionId 不复制对象——PRJ-TX-5 模型部分；2 闭包双通道孤岛/残留
+# ＋谱系成环/分支表回退注入拒绝——PRJ-TX-12/INV-M1/M2/M3；3 O-15 序号
+# 单调分配＋D-5 底本拷贝；4 P-PR-1 core 身份基线/P-PR-8 label 一次写入
+# 处置自证）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -148,7 +160,8 @@ add_executable(sdurws_ird_project_test
     test/StoreLockTest.cpp
     test/PathCanonicalTest.cpp
     test/PersistenceFormatTest.cpp
-    test/ObjectStoreTest.cpp)
+    test/ObjectStoreTest.cpp
+    test/RevisionIndexTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
