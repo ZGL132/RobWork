@@ -4,22 +4,35 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "构建落位：io 占位转真实库",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
-  "designRefs": ["units/io.md#12", "units/io.md#3.3"],
+  "designRefs": [
+    "units/io.md#12",
+    "units/io.md#3.3",
+    "development-task-breakdown.md#5.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_io_test"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_io"],
+  "branch": "wp11-t01",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-3"],
   "acceptance": [
-    "双模式构建零错误；红线扫描零命中（§3.3）",
-    "零 Widgets/Qt；不预建空测试目标"
-  ]
+    "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_io 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core＋RWS::ird::diagnostics——io.md §3.3），目标名与别名 RWS::ird::io 不变；L1 文件/XML 第三方目标待 P-IO-3 冻结后登记（§3.3，本任务不引入）；新建 io/CMakeLists.txt 并在父 CMakeLists 注册（卡行产出列）；IoFwd/IoError 公共头就位，不在骨架预建占位实现（父 CMakeLists 既有约定，EX-T01 同款口径）",
+    "红线扫描零命中：仅 io→core/io→diagnostics 两条登记边（io.md §2.1/§3.3）；零 Qt/零 Widgets（NFR-MNT-01——io.md §3.3『零 Qt、零 Widgets』＋DTB §2.12 WP-11-T02 禁止项『零 Widgets』）、无私有头出 include（NFR-MNT-02/R-2）、无业务单元表外边（R-1）、产品目标不链 testkit（T-1 红线）",
+    "不预建空测试目标（io.md §12 IO-T01 禁止项＋§3.3『随 IO-T06 登记，不预建』）：sdurws_ird_io_test/sdurws_ird_io_contract_test 两目标及用例整备随 IO-T06/T07 落地，本任务不注册；本契约 verify 由占位的『构建 sdurws_ird_io_test』修正为构建产品目标 sdurws_ird_io（偏差登记 traceability/contract-compile-log.md——占位 verify 指向本任务完成时点尚不存在的测试目标，不可执行，CCP §2『结论二元可判』门槛不满足）",
+    "P-IO-3 处置（R-IO-1：『vcpkg 可用性验证前置到 IO-T01』）：完成 ZIP/XML 候选库 vcpkg 可用性验证并留痕（ZIP＝libzip/miniz；XML＝expat/pugixml 或 RobWork 自带——io.md §15.2 P-IO-3 建议候选），验证结论登记 traceability 留痕；选型冻结归 WP-11 评审（P-IO-3 影响面 IO-T04），不私裁引入任何依赖（NFR-DEP-03 离线约束）"
+  ],
+  "note": "治理会话编译放行（2026-09-15，所有者 blocked 处置口令委托——PIPE §6 队首死锁解除连带项）：本契约系 DOC-T11 批次（IO-T02~T07，2026-09-11）范围排除项，队列内 IO-T02~T06 依赖本任务而其保持 planned——PRJ 段（PRJ-T01/PRJ-T02~T16）完成后将复现同型队首死锁（findings F-120 登记），本次一并放行消除。按 io.md §12 IO-T01 行＋§3.3＋DTB §2.12 WP-11-T02 行（≙）回填：designRefs 补 DTB §5.1/§5.5（双模式构建约定与测试框架接入——EX-T01 同款，本任务用例整备虽随 IO-T06/T07，构建口径仍受其约束）；allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）；verify 修正为产品目标构建（占位 verify 指向 IO-T06 才登记的测试目标——偏差在 acceptance 3 与 compile-log 双登记）；branch 补 wp11-t01（branch 口径＝单元 WP wp11＋卡内序号——队列 IO-T02~T07 已占 wp11-t02~t07 无冲突，EX-T01 先例）；interUnit=true 判定＝构建层建立 io→core/io→diagnostics 两条登记边（§3.3 PUBLIC 链，T-2 白名单同款口径）；dependsOn 维持空表（io 落位无 ird 单元内技术前置——core/diagnostics 骨架目标自流水线建库前已注册，链接不空悬；卡行前置列『本卡 v0.1』系文档前置已满足）；knownPitfalls＝P-IO-3（选型未冻结——本任务只做 vcpkg 可用性验证留痕，冻结权在 WP-11 评审，R-IO-1 同源登记 acceptance 4）；放行＝CCP §3 七步（独立评审结论见 traceability/contract-compile-log.md），入队＝所有者 2026-09-15 处置口令下插入 IO-T02 之前（PIPE §6 调整队列——依赖拓扑要求，autoDiscovery 队尾追加不可达此序）"
 }

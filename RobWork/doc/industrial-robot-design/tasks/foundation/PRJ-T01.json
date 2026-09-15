@@ -4,13 +4,20 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "构建落位：project 占位转真实库",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
-  "designRefs": ["units/project.md#12", "units/project.md#3.3"],
+  "designRefs": [
+    "units/project.md#12",
+    "units/project.md#3.3",
+    "development-task-breakdown.md#5.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
@@ -18,8 +25,15 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": ["cmake --build build --config Release --target sdurws_ird_project_test"],
+  "branch": "wp04-t01",
+  "interUnit": true,
+  "knownPitfalls": ["P-ENV-1", "P-PR-1"],
   "acceptance": [
-    "两模式（独立冒烟＋集成）配置构建零错误",
-    "零 Qt/零业务边红线扫描通过"
-  ]
+    "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_project 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core——project.md §3.3），目标名与别名 RWS::ird::project 不变；新建 project/CMakeLists.txt 并在父 CMakeLists 注册（卡行产物列）；src/ 空起步，不在骨架预建占位实现（父 CMakeLists 既有约定，EX-T01 同款口径）",
+    "红线扫描零命中（project.md §11.2 PRJ-TX-14 全项脚本扫描；卡行验证方式『前两项』＋完成条件『零 Qt/零业务边』）：目标无 Qt 头（NFR-MNT-01）、无私有头出 include（NFR-MNT-02/R-2）、CMake 无业务单元边（R-1）、无 testkit 边（T-1 产品目标不链 testkit）——仅建立 project→core 编译链接边（ARCH §3.5 登记行『project → core, diagnostics』中的 diagnostics 边按注入形态不落链接，ird_gates 白名单已预登记不越界）；零 io 编译期消费（project.md §2.1 io 行『阶段 A 不需要』，O-09 处置：包导入导出/固化实体归阶段 B WP-04-T17/T18，届时按处置条款回填，不私裁补边）",
+    "测试目标按 project.md §3.3/DTB §5.5 注册并可构建：sdurws_ird_project_test（verify 命令构建对象）＋sdurws_ird_project_contract_test（§3.3『随 PRJ-T01 登记』）——googletest 经 vcpkg find_package(GTest CONFIG REQUIRED) 接入，失败即停、不回落（卡行『gtest 按 P-TK-1 结论』＝P-TK-1 定稿结论：不消费 RW::gtest、不源码 vendor、测试 main 自持）；实现任务未落地前允许最小构建冒烟用例",
+    "project README 复核留痕（DTB §2.5 WP-04-T01 验收列『project README 任务卡指向 §9→§12 修正』）：include/sdurws/ird/project/README.md 现文（2026-09-10 版）已指向 project.md §12——实现时复核并在留痕中登记核对结论，保留『不参与编译/不表示已实现』声明",
+    "陷阱处置：P-ENV-1（project.md R-7 同源）——目标显式 target_compile_features cxx_std_17、不使用 C++20，双模式构建即 C++17 与框架 C++11 基线混链验证并留痕；P-PR-1——core 消费契约以 core.md v0.1（Draft）签名为基线，本任务仅链接目标不消费头，core 冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "治理会话编译放行（2026-09-15，所有者 blocked 处置口令委托——PIPE §6 队首死锁解除）：本契约系 DOC-T10 批次（PRJ-T02~T16，2026-09-11）范围排除项（28ed5f3 影响面段自述），批次放行后队首 PRJ-T02 依赖本任务而其保持 planned，strictQueueOrder 下无进展熔断转 blocked（tick#136 报告；findings F-120 登记）。按 project.md §12 PRJ-T01 行＋§3.3＋DTB §2.5 WP-04-T01 行（≙）回填：designRefs 补 DTB §5.1/§5.5（卡行验证方式『双模式配置构建』与 gtest 接入的构建约定原文，EX-T01 同款）；allowedFiles 补单元卡＋traceability/**（CORE-T01 教训：留痕面显式列入）；acceptance 按 EX-T01 先例展开五条（落位/红线/测试目标/README/陷阱处置）；branch 补 wp04-t01（branch 口径＝单元 WP wp04＋卡内序号——T02~T16 已占 wp04-t02~t16 无冲突，EX-T01 先例）；interUnit=true 判定＝构建层建立 project→core ARCH §3.5 登记边（T-2 白名单同款口径，§3.3 PUBLIC 链）；dependsOn 维持 CORE-T01（卡行『无（CORE-T01 后更佳，可平行）』——链接语义以 core 目标已落 STATIC 为完整，顺序偏好归 queue 承载，CCP §2）；knownPitfalls＝P-ENV-1（R-7 混链基线，显式 C++17 双模式验证）/P-PR-1（core v0.1 Draft 基线）；放行＝CCP §3 七步（独立评审结论见 traceability/contract-compile-log.md），入队＝所有者 2026-09-15 处置口令下插入队首（PIPE §6 调整队列——PRJ-T02~T16 依赖拓扑要求本任务先行，autoDiscovery 队尾追加不可达此序）"
 }

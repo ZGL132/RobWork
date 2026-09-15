@@ -1194,6 +1194,18 @@
       "title": "F-012/F-100/F-104/F-107/F-109/F-112/F-116 家族再现（一次两例）：DIAG-T11 两提交标题『[WP-09-T11] README 指向核对同步与双模式复证留痕…』（866ce899，名词 README 开头）与『[WP-09-T11] 单元卡 v0.12 零偏差登记…』（8d345a43，名词『单元卡』开头——与 F-116 完全同型）均非动词开头，不合 AGENTS §6.3/ACC §4.9 提交标题『动词开头』字面要求；两提交正文四段齐备＋Acc-Covered 逐条标注、数值主张全部复现准确",
       "owner": "实施者侧（后续提交标题动词开头；已推送提交历史不改写）",
       "resolution": "建议级，不阻断 DIAG-T11 验收（pass）。属流程纪律提示（标题示例口径固化建议已多次提出——F-012/F-023/F-104/F-107/F-109/F-112/F-116 连续登记，建议 DTB §5.1 或 PIPE 附录 C 模板强制固化）。"
+    },
+    {
+      "id": "F-120",
+      "source": "编排 tick#136 blocked 报告（2026-09-15，tickId 33d67502）＋所有者『请处置』口令的治理会话核对（2026-09-15）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-09-15",
+      "title": "B 模式波次批次范围缺陷（PIPE v1.11 波次表 T10 project(15)/T11 io(6) 以『主链』口径排除了两单元的构建落位任务）：DOC-T10 批次放行 PRJ-T02~T16 而其共同前置 PRJ-T01（≙WP-04-T01，唯一前置 CORE-T01 已 done、DTB §744 十起点之一）保持 planned 不在队列；DIAG-T11 合入后队首升至 PRJ-T02，strictQueueOrder 下队首永不 claimable（validate-state：deps not done: PRJ-T01），连续 3 tick 无进展触发守卫 6 熔断转 blocked 停等所有者——流水线按设计安全停等，但例行自动化被治理侧批次定义缺陷卡死。同型潜伏缺陷：DOC-T11 批次（IO-T02~T07）同样排除 IO-T01（≙WP-11-T02，IO-T02~T06 的前置），PRJ 段完成后将在 IO-T02 队首复现同型死锁。批次放行当日即已上膛（2026-09-11），delayed-fuse 至 2026-09-15 DIAG-T11 合入才引爆；F-014 同族（队首停在非 ready 契约上）——F-014 是单份状态翻转漏检，本例是批次范围定义结构性遗漏",
+      "owner": "治理侧（批次放行的范围定义须含单元构建落位任务或显式登记排除理由——CCP §1 时机条款『任务进队前必须已 ready』的批次级落实）；后续波次（reporting/modeling 等 14 单元编卡后批次）沿用本教训",
+      "resolution": "所有者『请处置』口令委托治理会话执行（2026-09-15）：①PRJ-T01/IO-T01 按 CCP §3 七步编译放行（validate-task 三查过＋validate-docs PASS＋独立评审子代理对抗式核对双 PASS，留痕 traceability/contract-compile-log.md 2026-09-15 两行——含 IO-T01 占位 verify 指向不存在测试目标的偏差修正登记）；②所有者调整队列授权下插队：PRJ-T01 置队首（PRJ-T02 之前）、IO-T01 置 IO-T02 之前（autoDiscovery 队尾追加不可达依赖拓扑要求的此序）；③state 置 idle＋heartbeat 重置（本笔治理提交）——下一自动 tick 恢复领取 PRJ-T01；④PIPE v1.12 变更记录登记本缺陷与处置。fixedAt=2026-09-15，fixedBy=治理提交（契约两份＋compile-log 两行＋本条＋PIPE v1.12＋state 队列/phase）",
+      "fixedAt": "2026-09-15",
+      "fixedBy": "治理会话（所有者 2026-09-15 处置口令委托）：PRJ-T01/IO-T01 编译放行＋队列插入＋state 解除 blocked——同笔治理提交落地，下一自动 tick 恢复例行自动化"
     }
   ]
 }
