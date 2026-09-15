@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "格式契约与编码（PersistenceFormat/Codec）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T01"],
   "requirements": ["CON-01", "NFR-DEP-04"],
   "designRefs": ["units/project.md#12", "units/project.md#4.2", "units/project.md#4.4", "units/project.md#4.8"],
