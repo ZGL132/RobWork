@@ -136,6 +136,23 @@ find_package(GTest CONFIG REQUIRED)
 # UndoRedoService/UndoRedoStatus/InverseRecord〕。零自有写通道——
 # undo/redo 一律经命令端口 submit，§6.5 注册协议：逆命令由业务处理器
 # 产出，project 只提交）。
+# PRJ-T14 增列：src/ArchiveServiceImpl.cpp（§12 PRJ-T14 行产物——归档
+# 端口：§5.6 begin/writeBatch/finalize/abandon〔begin 校验清单/分批写
+# 只增＋批次幂等/manifest 原子发布＝D-13 完整判据＋D-14 摘要幂等与
+# PRJ-ARCHIVE-CONFLICT 冲突拒绝/全路径责任终结〕＋§10.1 归档协作要素
+# 〔绑定原修订不因 HEAD 拒绝、会话持宿主在途票据＝引用持有通道、
+# 失权探测＝防护通道〕＋§10.2 流程〔finalize→ResultArchived 事件→
+# 票据释放→排空归零 Closed〕＋Codec 增量 dump(RunManifest)〔§4.4.7
+# 写侧编码——manifestDigest 由端口计算回填，CR-02 唯一哈希路径〕；
+# ArchiveServiceImpl.hpp 为 src/ 私有实现头——R-2；公共契约面＝
+# include/sdurws/ird/project/ArchivePort.hpp〔§3.1 组成表行：
+# ArchiveRequest/ArchiveBatch/RunManifest/ArchiveStatus、
+# IResultArchivePort、ArchiveSessionRef——RunManifest 复用
+# PersistenceFormat 冻结类型，不重定义〕＋ProjectStore.hpp 增挂
+# archive() 访问器〔五端口访问器全部挂载完成〕＋DiagRecords.hpp 增量
+# makeArchiveConflict 装配点〔PRJ-ARCHIVE-CONFLICT〕。调用线程单侧
+# 冻结——任意线程进入、writer 互斥内部串行〔P-PR-4 处置〕；事件经
+# core IDomainEventBus v0.1 基线〔P-PR-1 处置〕）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -148,6 +165,7 @@ add_library(sdurws_ird_project STATIC
     src/ConfirmationFlow.cpp
     src/DraftServiceImpl.cpp
     src/UndoRedoServiceImpl.cpp
+    src/ArchiveServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -278,6 +296,17 @@ endif()
 # 恢复面不产生修订、不经本服务（§2.3/REQ-11 分界的存储侧形态）；status
 # 前置违约 fail-fast 面）；StubHandlers.hpp 增补对称逆命令处理器桩
 # （test-append-undo——撤销/重做用例的可逆命令族）。
+# PRJ-T14 增列：ArchiveServiceTest（acceptance 2 F9 归档边界——manifest
+# 原子发布＝完整判据〔D-13：无 manifest 即不完整，listRuns 不列＋重开
+# 不列〕/§4.4.7 字段契约与 manifestDigest 自洽〔round-trip＋重算比对〕/
+# 同 attempt 重投递幂等〔不重写〕/内容不一致＝PRJ-ARCHIVE-CONFLICT/
+# 批次级重投递〔一致跳过/不一致冲突〕；acceptance 3 端口与引用语义——
+# ArchiveSessionRef 生命周期〔空/失效句柄 fail-fast、终结后 fail-fast、
+# 会话持票据＝requestClose 排空计数〕/relPath 白名单〔穿越/保留名/
+# 设备名 fail-fast——NFR-SEC-01〕/跨项目 begin 拒绝＋B 项目 results 无
+# 外来 run〔AT-10〕/只读上下文 begin 拒绝；acceptance 4 陷阱处置自证——
+# 绑定原修订不因 HEAD 前进拒绝〔TASK-03/CON-02〕、abandon 全路径终结
+# 〔四值原因＋幂等＋排空归零〕、失败即 abandon 不阻塞关闭〔A-4〕）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -294,6 +323,7 @@ add_executable(sdurws_ird_project_test
     test/CommandServiceTest.cpp
     test/DraftServiceTest.cpp
     test/UndoRedoServiceTest.cpp
+    test/ArchiveServiceTest.cpp
     test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
@@ -362,10 +392,19 @@ add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
 # ＋PRJ-STALE-REVISION-REJECTED 稳定码双通道；PRJ-TX-3 双编译桩三路
 # 〔WC 失败/DWC 失败→Failed(compile-failed)＋无修订无发布＋.staging/tmp
 # 清理；双成功→恰一修订〕；§5.3.6 冻结签名消费——P-PR-7）。
+# PRJ-T14 增列：ArchiveContractTest（acceptance 1 的契约面——PRJ-TX-8
+# 进程内模拟归属 §3.3 跨单元契约测试面〔契约 note 登记口径〕：
+# requestClose 后迟到完成事件到达——上下文存活至归档 finalize、完成后
+# 才 Closed〔一次性回调时序断言〕；跨项目事件不写入〔项目 B results
+# 目录不含外来 run——TASK-03/PM-13〕；ResultArchived 事件经 core
+# IDomainEventBus〔ReferenceEventBus 注入——P-PR-1 处置的行为级自证〕；
+# 并发归档流与 writer 互斥〔P-PR-4 单侧冻结的行为级自证——双会话并发
+# batch/finalize 全部成功且磁盘一致〕）。
 add_executable(sdurws_ird_project_contract_test
     test/LinkageContractTest.cpp
     test/LockContractTest.cpp
     test/CommandContractTest.cpp
+    test/ArchiveContractTest.cpp
     test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：LockContractTest.cpp 消费

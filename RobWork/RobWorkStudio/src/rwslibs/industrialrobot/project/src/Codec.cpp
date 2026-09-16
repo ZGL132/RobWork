@@ -581,6 +581,11 @@ std::string canonical(BranchId id) { return id.toCanonical(); }
 /// 身份字段规范化文本（RevisionId → "rev-…"）。
 std::string canonical(RevisionId id) { return id.toCanonical(); }
 
+/// 身份字段规范化文本（RunId → "run-…"；PRJ-T14 增量——RunManifest
+/// taskIdentity 的 run 字段编码。RunId 不在 PersistenceFormat 的 using
+/// 清单内（该头零消费者时未引入），此处以全限定名声明）。
+std::string canonical(sdurws::ird::core::RunId id) { return id.toCanonical(); }
+
 /// 身份字段规范化文本（ObjectId → "obj-…"）。
 std::string canonical(ObjectId id) { return id.toCanonical(); }
 
@@ -1067,6 +1072,44 @@ std::string dump(const DraftDocument& value)
     out += ",\"savedAtUtc\":";
     appendJsonString(out, value.savedAtUtc, "savedAtUtc");
     out += ",\"origin\":\"" + std::string(toToken(value.origin)) + "\"";
+    out += '}';
+    return out;
+}
+
+std::string dump(const RunManifest& value)
+{
+    // §4.4.7 表列序：taskIdentity（project/branch/revision/run/attempt
+    // ——core TaskIdentity 声明序）、items[]、runKind、evaluationKey、
+    // finalizedAtUtc、manifestDigest。manifestDigest 透传（CR-02——
+    // 归档端口调用前自行计算回填，见 Codec.hpp 本函数契约）。attempt
+    // 的规范文本＝"att-<十进制>"（core AttemptId::toCanonical）。
+    std::string out;
+    out += "{\"taskIdentity\":{\"project\":\"" + canonical(value.taskIdentity.project)
+           + "\",\"branch\":\"" + canonical(value.taskIdentity.branch)
+           + "\",\"revision\":\"" + canonical(value.taskIdentity.revision)
+           + "\",\"run\":\"" + canonical(value.taskIdentity.run)
+           + "\",\"attempt\":\"" + value.taskIdentity.attempt.toCanonical()
+           + "\"}";
+    out += ",\"items\":[";
+    for (std::size_t i = 0; i < value.items.size(); ++i) {
+        if (i > 0) { out += ','; }
+        const RunManifestItem& r = value.items[i];
+        out += "{\"relPath\":";
+        appendJsonString(out, r.relPath, "relPath");
+        out += ",\"sha256\":";
+        appendJsonString(out, r.sha256, "sha256");
+        out += ",\"sizeBytes\":" + std::to_string(r.sizeBytes);
+        out += '}';
+    }
+    out += ']';
+    out += ",\"runKind\":";
+    appendJsonString(out, value.runKind, "runKind");
+    out += ",\"evaluationKey\":";
+    appendJsonString(out, value.evaluationKey, "evaluationKey");
+    out += ",\"finalizedAtUtc\":";
+    appendJsonString(out, value.finalizedAtUtc, "finalizedAtUtc");
+    out += ",\"manifestDigest\":";
+    appendJsonString(out, value.manifestDigest, "manifestDigest");
     out += '}';
     return out;
 }

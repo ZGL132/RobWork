@@ -37,7 +37,8 @@
  *   打开/新建协议、关闭排空、身份查询——它们正是 PRJ-T08 的契约产物，
  *   且是后续端口挂载的基座（端口实现经 ProjectStoreImpl 的内部通道
  *   获得写权限门卫与部件访问）。前四个访问器已分别随 T09/T10/T12/T13
- *   挂载（archive() 归 PRJ-T14——归档端口）。
+ *   挂载，第五个访问器 archive() 已随 PRJ-T14 挂载（归档端口——
+ *   ArchivePort.hpp）。
  *
  * 线程模型（§9.8）：身份查询面（writable/lockInfo/projectId/schema/
  * canonicalPath/closed）并发安全（内部互斥）；requestClose 幂等、可与
@@ -71,6 +72,10 @@ class DraftService;
 // UndoRedoService 完整定义于 UndoRedo.hpp（同款前向声明纪律——undoRedo()
 // 以引用返回接口，PRJ-T13 增量挂载）。
 class UndoRedoService;
+
+// IResultArchivePort 完整定义于 ArchivePort.hpp（同款前向声明纪律——
+// archive() 以引用返回接口，PRJ-T14 增量挂载）。
+class IResultArchivePort;
 
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
@@ -249,6 +254,35 @@ public:
      * 内部互斥，提交段经命令端口执行槽串行）。
      */
     [[nodiscard]] virtual UndoRedoService& undoRedo() const noexcept = 0;
+
+    /**
+     * @brief 归档端口（§5.1 原文五端口访问器之 T14 位——PRJ-T14 增量
+     *        挂载）。任务运行结果/检查点写入 results/·checkpoints/ 的
+     *        唯一存储入口（O-12；供 execution 经 ARCH §3.5 反向服务边
+     *        消费——IResultArchivePort 契约详见 ArchivePort.hpp）。
+     *
+     * 语义（§5.6/§10.1）：
+     *   - 引用与上下文同生命周期（同 query()/commands()/drafts()/
+     *     undoRedo()——端口无独立生命周期）；同一上下文多次调用返回
+     *     同一实例；
+     *   - 只读打开的实例同样提供本端口（begin 的锁面门卫拒绝——
+     *     LockHeldByOther＋PRJ-LOCK-HELD，与草稿写轨同表）；
+     *   - Draining 拒绝**新** begin（§9.7 排空期不再接受新归档预留），
+     *     已开始的会话继续 writeBatch/finalize/abandon——上下文存活至
+     *     归档终结（PRJ-TX-8 的存活机制：会话持宿主在途票据）；
+     *   - 归档位置绑定原修订（A8）：HEAD 前进不影响写入合法性（当前性
+     *     归 evidence，CON-02——§10.1"当前性与历史归档"行）；
+     *   - 调用线程按 §5.6/§9.8 单侧冻结（任意线程进入、内部 writer
+     *     互斥串行——P-PR-4 处置口径，RunRegistry 对接细节待 execution
+     *     详设二次对齐）。
+     *
+     * @return 归档端口接口引用（非 owning——随上下文消亡；方法集契约
+     *         见 ArchivePort.hpp）
+     *
+     * 线程安全：并发安全（返回同一实例；四方法各自经门卫＋writer 互斥
+     *   串行——§9.8）。
+     */
+    [[nodiscard]] virtual IResultArchivePort& archive() const noexcept = 0;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 
