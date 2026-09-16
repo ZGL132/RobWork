@@ -81,6 +81,10 @@ namespace sdurws::ird::project {
 // ProjectStoreImpl.cpp 的 out-of-line 定义处完成——那里 include 全量头）。
 class QueryPortImpl;
 
+// 前向声明：命令服务实现（PRJ-T10 落位——完整定义于 CommandServiceImpl.
+// hpp；m_commands 同款不完整类型持有，装配与析构在实现文件完成）。
+class CommandServiceImpl;
+
 /**
  * @brief 存储上下文状态机（§9.6①的载体；Draining/Closed/LostWrite 一律
  *        拒绝新写——LostWrite 不单列状态：锁失权锁存在 StoreLock 内部，
@@ -131,6 +135,16 @@ public:
      * （Closed 后端口自身拒绝——拒绝语义在端口方法内）。
      */
     [[nodiscard]] IProjectQueryPort& query() const noexcept override;
+
+    /**
+     * @brief 命令端口访问器（§5.1 原文形态——PRJ-T10 增量挂载；契约见
+     *        ProjectStore::commands() 公共头注释）。
+     *
+     * 返回装配期创建的 CommandServiceImpl 实例（同一上下文恒同一实例
+     * ——端口无独立生命周期）；noexcept 纯指针返回，任何状态下可调
+     * （只读/Closed 后提交在 S1 形式校验拒绝——§6.1）。
+     */
+    [[nodiscard]] ProjectCommandService& commands() const noexcept override;
 
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
@@ -199,6 +213,35 @@ public:
         return *m_objects;
     }
 
+    /**
+     * @brief 命令服务实现访问（同单元装配/测试消费——registry() 注册
+     *        入口与 S1～S7 观测；不进公共头，revisionIndex() 同款先例：
+     *        R-2 禁令是跨单元暴露，同单元测试消费私有头是既定形态）。
+     */
+    [[nodiscard]] CommandServiceImpl& commandService() noexcept
+    {
+        return *m_commands;
+    }
+
+    /**
+     * @brief 只读上下文判定（从未持锁＝PM-07 显式只读或降级——与
+     *        "持锁但失权"区分；CommandServiceImpl S1 的 not-writable
+     *        分类用——§9.6 门卫两道防线的提前面）。
+     */
+    [[nodiscard]] bool readOnlyContext() const noexcept
+    {
+        return m_lock == nullptr;
+    }
+
+    /**
+     * @brief 编译临时产物目录（D-09：.staging/tmp——非事务操作的临时
+     *        产物落点；CommandServiceImpl 命令结束清理用，§6.6 实现口径⑤）。
+     */
+    [[nodiscard]] std::filesystem::path compileTmpDir() const
+    {
+        return m_canonicalDirFs / ".staging" / "tmp";
+    }
+
 private:
     // 查询端口实现是本类的视图面（消费部件/锁/权威快照——窄 friend 访问
     // 收敛于 QueryPortImpl 类整体，不散落到自由函数）。
@@ -237,6 +280,11 @@ private:
      * @param authoritativeRef [in] 权威元数据的注册键（须已注册）
      * @param eventBus       [in] 事件总线（非 owning，可空）
      * @param sink           [in] 诊断 sink（非 owning，可空）
+     * @param collectorLifetime [in] 打开期收集型 sink 的生命周期锚（wp04-t10
+     *                          缺陷修复登记：TxEngine/ObjectStore/StoreLock
+     *                          长寿命部件绑定的 sink 指针指向该对象——锚随
+     *                          上下文存活，部件的 sink 不得悬空；类型擦除
+     *                          形态 shared_ptr<void>，删除器在创建点捕获）
      *
      * @throws std::invalid_argument objects/index/engine 之一为空
      *         （工厂装配违约——fail-fast，不产生半构造上下文）
@@ -251,7 +299,8 @@ private:
                      const ProjectMetadataRecord& authoritative,
                      const ObjectRefPair& authoritativeRef,
                      core::IDomainEventBus* eventBus,
-                     IDiagnosticsSink* sink);
+                     IDiagnosticsSink* sink,
+                     std::shared_ptr<void> collectorLifetime);
 
     /**
      * @brief 排空收尾（Draining 且 pending==0 的唯一路径；锁内判定、
@@ -283,6 +332,12 @@ private:
 
     // ---- 状态（锁序：m_lifecycleMutex 先于 m_writerMutex；不反向） ----
 
+    /// 打开期收集型 sink 的生命周期锚（wp04-t10 缺陷修复——声明序在全部
+    /// 持 sink 指针的部件**之前**＝析构最后，保证 TxEngine/ObjectStore/
+    /// StoreLock 的 sink 指针在部件析构前恒有效；类型擦除持有——见构造
+    /// 参数注释）。
+    std::shared_ptr<void> m_collectorLifetime;
+
     mutable std::mutex m_lifecycleMutex;  ///< 状态/在途/订阅者汇合点
     StoreLifecycleState m_state{StoreLifecycleState::Active};  ///< 状态机
     std::uint32_t m_pending{0};           ///< 在途引用计数（票据存活数）
@@ -311,6 +366,12 @@ private:
 
     core::IDomainEventBus* m_eventBus{nullptr};  ///< 事件总线（非 owning）
     IDiagnosticsSink* m_sink{nullptr};  ///< 诊断 sink（非 owning，可空）
+
+    /// 命令服务实现（PRJ-T10——§5.1 端口访问器 commands() 的交付物）。
+    /// 声明序在 m_query 之前：构造先于查询端口（hasUnresolvedPayload
+    /// 判据注入注册表查询），析构后于查询端口（判据 lambda 消费注册表
+    /// ——先析构消费方再析构被消费方，避免悬空捕获）。
+    std::unique_ptr<CommandServiceImpl> m_commands;
 
     /// 查询端口实现（PRJ-T09——§5.1 端口访问器 query() 的交付物）。声明
     /// 序在全部部件之后：构造于装配末尾（部件就绪后创建），析构先于部件

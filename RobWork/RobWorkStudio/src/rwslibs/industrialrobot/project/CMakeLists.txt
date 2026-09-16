@@ -96,6 +96,18 @@ find_package(GTest CONFIG REQUIRED)
 # ProjectMetadataView/BranchTip/RunInfo/DraftInfo〕＋ProjectStore.hpp
 # 增挂 query() 访问器＋PersistenceFormat.hpp 增量 RunManifest 读取类型
 # 〔首消费者＝listRuns；dump 随 T14〕＋Codec 增量 parseRunManifest）。
+# PRJ-T10 落位：src/CommandServiceImpl.cpp 增列（§12 PRJ-T10 行产物——
+# 命令服务与内置命令：S1～S7 编排〔串行槽/形式校验/基线解析/确认决策
+# 映射/双编译编排/CommitPlan 装配〕＋HandlerRegistry＋QueryPort 的
+# hasUnresolvedPayload 判据注入＋ProjectStore::commands() 访问器挂载；
+# CommandServiceImpl.hpp 为 src/ 私有实现头——R-2；公共契约面＝include/
+# sdurws/ird/project/CommandService.hpp〔§3.1 组成表行〕＋ProjectStore.
+#hpp 增挂 commands()；**P-PR-9 阻断登记**：内置元数据命令族
+# （project.create-branch 等，§6.5）的注册 token 被任务卡明示待所有者
+# 裁决（§15.3），本任务不落位该族——机制面与测试处理器先行）。
+# PRJ-T10 同步增列：src/DiagRecords.hpp（PRJ-* 诊断记录共享工厂——
+# ProjectStoreImpl 原文件局部两工厂收敛至此＋stale-revision 新增；
+# 私有实现头不出 include/——R-2）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -104,6 +116,7 @@ add_library(sdurws_ird_project STATIC
     src/TxEngine.cpp
     src/ProjectStoreImpl.cpp
     src/QueryPortImpl.cpp
+    src/CommandServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)

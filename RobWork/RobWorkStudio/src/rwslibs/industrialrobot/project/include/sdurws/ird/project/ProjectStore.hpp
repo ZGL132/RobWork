@@ -59,6 +59,10 @@ namespace sdurws::ird::project {
 // 存储上下文头不承载端口契约——头职责单一）。
 class IProjectQueryPort;
 
+// ProjectCommandService 完整定义于 CommandService.hpp（同款前向声明
+// 纪律——commands() 以引用返回接口，PRJ-T10 增量挂载）。
+class ProjectCommandService;
+
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
  *
@@ -162,6 +166,28 @@ public:
      * ——§4.7"查询端口全部方法线程安全"）。
      */
     [[nodiscard]] virtual IProjectQueryPort& query() const noexcept = 0;
+
+    /**
+     * @brief 命令端口（①端口，§5.1 原文"只读实例上提交即拒绝"——PRJ-T10
+     *        增量挂载）。唯一写路径入口（submit）的获取点。
+     *
+     * 语义（§5.3.1/§6.1）：
+     *   - 引用与上下文同生命周期（同 query()——端口无独立生命周期）；
+     *     同一上下文多次调用返回同一实例；
+     *   - 只读打开的实例同样提供本端口（拒绝发生在 submit 的 S1 形式
+     *     校验——Rejected(not-writable)＋门卫稳定码诊断，§6.3/§9.6）；
+     *   - Draining/Closed 后提交同样在 S1 拒绝（关闭态先行分流——写
+     *     路径拒绝语义与查询端口"Draining 不拒"区分，§4.7）；
+     *   - 处理器注册（L5 装配期，§6.5）经实现类型的注册表访问器进行
+     *     （本抽象端口不含注册面——§5.3.5 HandlerRegistry 的归属与
+     *     装配通道见 CommandService.hpp）。
+     *
+     * @return 命令端口接口引用（非 owning——随上下文消亡）
+     *
+     * 线程安全：并发安全（返回同一实例；submit 内部命令执行槽串行——
+     * §6.1）。
+     */
+    [[nodiscard]] virtual ProjectCommandService& commands() const noexcept = 0;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 
