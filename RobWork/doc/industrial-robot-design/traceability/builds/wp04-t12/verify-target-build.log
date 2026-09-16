@@ -1,0 +1,64 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_project_test
+  StoreLockTest.cpp
+  PathCanonicalTest.cpp
+  ProjectStoreTest.cpp
+  QueryPortTest.cpp
+  CommandServiceTest.cpp
+  DraftServiceTest.cpp
+  StubHandlers.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(420,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(473,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(799,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1010,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1015,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1017,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1024,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1026,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1028,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PathCanonicalTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(150,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(148,9):
+              请参阅 "PathCanonicalTest_SameProject_DifferentSpellings_CanonicalizeEqual_Test::TestBody" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
