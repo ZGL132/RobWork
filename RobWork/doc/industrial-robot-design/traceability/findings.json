@@ -1376,6 +1376,36 @@
       "title": "编排者执行偏差（自愈，无交付影响）：tick#167 执行 §4.7②/③ 按 SHA 合并前未断言工作树所在分支，而实施子代理完成后工作树停留在任务分支 wp04-t06，导致记录合并（8cddfbe3）与代码合并（e70031c8）最初落在 wp04-t06 本地（错位合并提交 201abff7，从未推送、从未进入 redesign-main）；发现信号＝步骤③对已含于本分支的 e70031c8 合并返回 Already up to date。纠正＝切回 redesign-main、本地 wp04-t06 指针恢复到已推送尖端 e70031c8（仅丢弃未推送的本地错位合并，不构成对已推送历史的改写）、在 redesign-main 重做②③（972d7d89、f71d5a79，parents 链核实无误）。redesign-main 最终内容与一步做对完全一致（总增量＝验收记录＋findings＋已验收任务内容，无夹带；漂移检测①对 origin 的核对真实通过），仅拓扑中间态多绕一步",
       "owner": "编排纪律（PIPE §4.7 收尾第①步前应显式断言当前分支==redesign-main，否则先切回）；T-ORCH 模板步骤 8 是否增补此前置断言归 PIPE 所有者裁决（模板修订＝PIPE 增量修订）",
       "resolution": "处置建议＝附录 A T-ORCH 步骤 8 增补前置断言「git branch --show-current 必须为 redesign-main，否则切回后再执行收尾」；本例已自愈不追溯。编号顺延自 F-136，合入时由所有者确认。"
+    },
+    {
+      "id": "F-138",
+      "source": "traceability/acceptance/PRJ-T07-20260916.md#4.9/4.10（attempt 1，送验对象 448d2e4f715d58fee7ba3a9183a631c405fc9912，分支 wp04-t07，验收者 git ls-tree／ird-test-report.json evidence 字段实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136 之后第 14 例；形态较 F-136 的缓解措施〔evidence.localOnlyNote 字段〕退步）：PRJ-T07 送验提交 65e05bee 正文声称入库 traceability/builds/wp04-t07/『15 项证据』（双模式测试运行日志四份、集成全量构建日志、冒烟配置/构建日志、ird_gates 目标日志、validate-task 日志、verify-target-build 日志），git ls-tree 实证仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份）——10 份 .log 全部未入库（命中根 .gitignore:87 *.log 规则＝F-010 根因），且 65e05bee 正文未内联明示该处置（448d2e4f 正文有『.log 按仓库惯例留工作树不入库』补述，但晚于声称性提交）；ird-test-report.json 的 evidence.committed 列表将 10 份库外 .log 与 5 件库内文件混列于同一 committed 字段且无 localOnlyNote 字段——后来者仅凭该字段无法区分库内/库外证据。验证结论性内容（两模式 151/151＋10/10、ird_gates 8 命中＝wp04-t06 基线零新增零 project 项、契约 verify exit 0、validate-task PASS、validate-docs PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：evidence.committed 字段应只列库内文件或增设 localOnlyNote 区分——F-136 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①evidence.committed 字段收敛为库内实测清单（git ls-tree 口径），库外留痕移入独立的 localOnlyNote 字段（F-136/wp04-t06 先例 b6cc2352 已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-137，合入时由所有者确认。"
+    },
+    {
+      "id": "F-139",
+      "source": "traceability/acceptance/PRJ-T07-20260916.md#4.9（attempt 1，送验对象 448d2e4f715d58fee7ba3a9183a631c405fc9912，分支 wp04-t07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次三例）：PRJ-T07 送验三提交标题前缀后均以名词开头非动词开头——65e05bee『[WP-04-T07] PRJ-T07 验证留痕归档（构建/门禁/测试执行证据）』以任务名词开头（F-128→F-130→F-131→F-135 同字面标题模板的五连例：PRJ-T03→T04→T05→T06→T07 留痕归档提交逐字复用）；448d2e4f『[WP-04-T07] PRJ-T07 留痕补齐（冒烟模式 gtest XML 两份）』同为任务名词开头；e61ade92『[units] project.md v0.9：PRJ-T07 事务引擎落位登记』以文件名词短语开头（F-037/F-079/F-092/F-130 的 [units] 车道同型）。实现提交 856544ef『实现 project 事务引擎（…）』动词开头合规。纯风格瑕疵：三提交正文四段齐备、Acc-Covered 对账行在位、验证结论经验收者独立复现全部为真（无粉饰），既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3/ACC §4.9 提交标题动词开头）；模板补救（实施者模板补动词开头示例与逐字模板黑名单）在 F-121/F-126 处置建议中已提出，落地前家族持续累积",
+      "resolution": "处置建议＝同 F-121/F-126：实施者会话模板增补提交标题硬约束（动词开头示例＋『PRJ-Txx 验证留痕归档』等既有逐字模板列为反例）；治理侧可考虑在 verify-task/validate-task 增加 commit 标题形态机检。编号顺延自 F-138，合入时由所有者确认。"
+    },
+    {
+      "id": "F-140",
+      "source": "traceability/acceptance/PRJ-T07-20260916.md#4.8（attempt 1，送验对象 448d2e4f715d58fee7ba3a9183a631c405fc9912，分支 wp04-t07）：验收者核对单元卡卡头与 §15.4 末行时实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-134 半执行状态持续（F-123→F-133→F-134 之后第四次再现，F-134 两条建议全部未执行）：PRJ-T07 触及 units/project.md（§15.4 追加 v0.9 行）且卡头『文档版本』行已同步至 v0.9（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 末行 v0.9＝2026-09-16）；且提交 e61ade92 与 v0.9 行均未注明 F-133/F-134 消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向仍为文档内部不一致（日期少报），v0.9 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
+      "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行——F-133 建议①原文）；validate-docs 是否增补该维度机检归治理所有者裁决",
+      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行至该版登记日期并注明家族消账；②validate-docs 增补『卡头版本行/日期行与 §15.4 末行一致』机检（F-123 后半建议的再次提出）。编号顺延自 F-139，合入时由所有者确认。"
     }
   ]
 }
