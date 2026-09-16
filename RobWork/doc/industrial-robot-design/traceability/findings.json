@@ -1746,6 +1746,36 @@
       "title": "PRJ-T15 新增代码零行为影响健壮性微瑕一处（F-160/F-169/F-046/F-063 同型，验收者逐行通读发现）：ProcessCrashContractTest.cpp 两处 startChild（F8ProcessCrash 夹具与 Tx8ArchiveProcessKill 夹具）以 `wchar_t exePath[MAX_PATH]` 固定缓冲调 GetModuleFileNameW 取自身可执行路径，仅断言返回非 0、未检测截断情形（返回值＝nSize-1 且末字符 NUL）——深嵌套构建树/长临时目录下子进程 self-reexec 会以截断路径启动而失败原因不直观。当前 build 树与 TempDir 路径均未超 MAX_PATH（实测 3 轮全绿），零行为影响",
       "owner": "project 实施侧（随下次触及该文件的任务顺手加固）",
       "resolution": "处置建议＝随下次触及 ProcessCrashContractTest.cpp 的任务顺手加固：动态缓冲（二次调用取所需长度）或对返回值＝nSize-1 的截断情形 ADD_FAILURE 显性失败；不单独开返工（零语义影响）。编号顺延自 F-173，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-175",
+      "source": "traceability/acceptance/PRJ-T16-20260917.md#问题清单-G-1（attempt 1，送验对象 3fe0ee71ace3ab0c82675ddb6771004ba740c34e，分支 wp04-t16）：验收者 4.8 findings 相关性核对发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170 家族第十三次再现：PRJ-T16 触及 units/project.md（卡头版本行 v0.17→v0.18＋§15.4 追加 v0.18 行＝2026-09-17），卡头『日期』行仍停留 2026-09-09 未同步——版本半边更新、日期半边遗漏的同型微瑕。纯文档任务零行为影响，仅文档头自洽性",
+      "owner": "project 实施侧（随下次触及 units/project.md 的任务顺手同步卡头日期行）",
+      "resolution": "处置建议＝随下次触及 units/project.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期；治理级根治（收尾脚本自动核对卡头日期与 §15.4 末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-174，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-176",
+      "source": "traceability/acceptance/PRJ-T16-20260917.md#问题清单-G-2（attempt 1，送验对象 3fe0ee71ace3ab0c82675ddb6771004ba740c34e，分支 wp04-t16）：验收者 4.9 commit 质量核查发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-012/F-119 家族再现：af6417c4『[WP-04-T16] project 单元卡与实现零偏差同步及验证状态登记』前缀后以名词短语『project 单元卡』开头非动词开头（同提交正文四段齐备、验证结论经验收者逐项复现为真）；同任务 3fe0ee71『提交 P-PR-5/P-PR-6 裁决申请…』合规——同一任务两提交一合规一违规，属标题起草疏漏非流程缺位",
+      "owner": "project 实施侧（后续提交标题以动词开头；不改写已推送历史）",
+      "resolution": "处置建议＝后续任务提交标题自查动词开头（已登记于验收记录，不改写已推送提交历史）；模板级约束（commit-msg 钩子/门禁扫描）归治理任务面。编号顺延自 F-175，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-177",
+      "source": "traceability/acceptance/PRJ-T16-20260917.md#问题清单-G-3（attempt 1，送验对象 3fe0ee71ace3ab0c82675ddb6771004ba740c34e，分支 wp04-t16）：验收者 4.9 逐句核对提交正文验证结论与校验器实际扫描面发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "3fe0ee71 正文验证段『validate-docs PASS（150 task files 扫描含本文件）』表述不精确：validate-docs.ps1 扫描面为 tasks/**/*.json＋traceability/{unit-status,requirements-to-units,phase-one-task-index}.json＋PIPE/ACC 锚点短语，不含 traceability/*.md 新增文档（裁决申请文档不在扫描面）——PASS 结论真实且经验收者复现（计数逐字一致），无结论性失实；同一事实在 exec-record.json 的表述（执行时点在全部文档修改之后）为准确口径。F-172 家族的弱化变体（留痕声明精度）",
+      "owner": "project 实施侧（提交正文中引用校验器结论时按其真实扫描面表述）",
+      "resolution": "处置建议＝提交正文引用校验器/门禁结论时写明命令与真实扫描面（或引用 exec-record 的 validation 条目），避免『扫描含本文件』式歧义；可在治理任务面增加 commit 正文与校验器口径的抽查项。编号顺延自 F-176，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
