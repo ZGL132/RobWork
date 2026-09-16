@@ -115,6 +115,17 @@ find_package(GTest CONFIG REQUIRED)
 # 登记于该头/.cpp 文件头：摘要编码表、阶段 A 策略身份来源、复核时机、
 # 失配归类、探针注入面。同文件时间辅助增量：win32::formatIsoMilli——
 # 确认凭据 time_point→ISO-8601 文本〔StoreLock 重构，行为零变化〕）。
+# PRJ-T12 增列：src/DraftServiceImpl.cpp（§12 PRJ-T12 行产物——草稿服务：
+# §5.4 落盘协议〔.new→flush→.bak 轮换→原子就位→失败清理〕＋§8.4 恢复
+# ／损坏诊断〔draft-corrupt→PRJ-RECOVERY-ORPHAN-DRAFT〕／.bak 优先／
+# .new 残留丢弃＋§8.5 多模块汇总投影〔磁盘事实投影，present 位口径〕＋
+# §8.6 放弃〔幂等目标态〕与只读/生命周期边界；DraftServiceImpl.hpp 为
+# src/ 私有实现头——R-2；公共契约面＝include/sdurws/ird/project/
+# DraftService.hpp〔§3.1 组成表行：DraftService/DraftProjection/
+# SaveResult/DiscardResult——DraftDocument 复用 PersistenceFormat 冻结
+# 类型，不重定义〕＋ProjectStore.hpp 增挂 drafts() 访问器＋DiagRecords
+# .hpp 增量 makeDraftCorrupt 装配点〔PRJ-RECOVERY-ORPHAN-DRAFT 的单文件
+# 形态，diagnostics.md §8.2 映射行〕）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -125,6 +136,7 @@ add_library(sdurws_ird_project STATIC
     src/QueryPortImpl.cpp
     src/CommandServiceImpl.cpp
     src/ConfirmationFlow.cpp
+    src/DraftServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -234,6 +246,16 @@ endif()
 # FIFO 与 D-18 不回滚＋hasUnresolvedPayload 判据注入〔T09 承诺兑现〕
 # ＋注册表契约/命令槽直接观测/装配违约）；StubHandlers.cpp（§12 行
 # test/StubHandlers.*——测试处理器桩/编译端口桩/交互桩/共享夹具）。
+# PRJ-T12 增列：DraftServiceTest（acceptance 1 PRJ-TX-6 草稿用例——
+# 保存与应用分离〔不产生修订 PM-04〕/破坏→重开 .bak 恢复＋损坏诊断
+# PRJ-RECOVERY-ORPHAN-DRAFT/.new 残留丢弃 current·.bak 保留/放弃语义
+# DiscardResult〔幂等目标态〕；acceptance 2 StaleRevisionRejected 冲突
+# 路径〔应用＝恰一修订/过期拒绝并保留＋apply-retained 标记〕＋多模块
+# 汇总投影〔排序/stale 判定/present 位/损坏面〕；acceptance 3 生命周期
+# 边界〔§8.1 覆盖写 vs 只增/§8.6 只读拒绝写可读/Closed 拒绝/60 s 周期
+# 边界＝autosave·manual 同一入口——定时器归 ui 本服务无定时器〕；
+# acceptance 4 P-PR-1 透传自证〔SourcedValue/ValueProvenance 负载
+# round-trip 逐字节一致＋磁盘直读佐证〕＋门卫/白名单 fail-fast 面）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -248,6 +270,7 @@ add_executable(sdurws_ird_project_test
     test/ProjectStoreTest.cpp
     test/QueryPortTest.cpp
     test/CommandServiceTest.cpp
+    test/DraftServiceTest.cpp
     test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费

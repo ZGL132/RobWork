@@ -17,10 +17,11 @@
  *     project 侧文案保持最小、面向开发定位）。
  *
  * 背景说明（为什么集中于此）：写拒绝/过期基线类稳定诊断的产出点分散在
- *   多个端口实现（ProjectStoreImpl 门卫、CommandServiceImpl S1/S2、后续
- *   PRJ-T12/T14 写入口）——同一码值的记录装配若各写一份必然漂移（文案
- *   分叉、字段不一致）。本头是**唯一装配点**：码值字符串逐字取自
- *   diagnostics.md §4.6 收编清单（不私造码——CR-08），文案单处维护。
+ *   多个端口实现（ProjectStoreImpl 门卫、CommandServiceImpl S1/S2、
+ *   PRJ-T12 草稿服务、后续 PRJ-T14 写入口）——同一码值的记录装配若各写
+ *   一份必然漂移（文案分叉、字段不一致）。本头是**唯一装配点**：码值
+ *   字符串逐字取自 diagnostics.md §4.6 收编清单（不私造码——CR-08），
+ *   文案单处维护。
  *
  * 线程安全：全部为纯函数（每次调用构造独立记录——无共享状态）。
  */
@@ -96,6 +97,40 @@ inline core::DiagnosticRecord makeStaleRevision(const std::string& detail)
         "基于当前版本重新调整输入后重试；未应用的草稿已完整保留"
         "（origin=apply-retained 语义——PM-04），可对照新旧修订引用"
         "重新合并");
+}
+
+/**
+ * @brief PRJ-RECOVERY-ORPHAN-DRAFT 记录（草稿损坏面——PRJ-T12 增补的
+ *        第二装配形态）。
+ *
+ * 背景（码值与分类的权威出处）：diagnostics.md §4.6 收编清单中本码的
+ *   语义＝"恢复场景/Info"，diagnostics.md §8.2 映射行把存储错误码
+ *   draft-corrupt 映射到本码（"附加上下文＝模块/分支"）。打开协议⑤步
+ *   的 makeOrphanDraftRecord（ProjectStoreImpl.cpp 内）按**计数**报告
+ *   孤儿草稿清单；本工厂按**单文件**报告草稿损坏/归属不符（§8.4 损坏
+ *   处置：draft-corrupt 诊断＋.bak 恢复）——同码两形态对应两个产出点，
+ *   字段深度不同（恢复横幅需要知道是哪个模块坏、坏在哪一步），装配点
+ *   收敛于本头（唯一装配点纪律——防多份装配漂移）。
+ *
+ * @param moduleId [in] 涉事模块 token（进 cause——映射行的"模块"上下文）
+ * @param branch   [in] 涉事分支规范文本（进 cause——映射行的"分支"上下文）
+ * @param detail   [in] 开发定位明细（失败环节：read/parse/ownership＋
+ *                 路径——进 cause 字段）
+ */
+inline core::DiagnosticRecord makeDraftCorrupt(const std::string& moduleId,
+                                               const std::string& branch,
+                                               const std::string& detail)
+{
+    return core::DiagnosticRecord::make(
+        std::string{"PRJ-RECOVERY-ORPHAN-DRAFT"},
+        std::nullopt,
+        std::nullopt, std::nullopt,
+        "草稿损坏或归属不符，已按恢复流程处置（尝试上一版 .bak 恢复"
+        "——§8.4；旧版不可得时该草稿不可加载，已应用的项目状态不受"
+        "影响）",
+        "module=" + moduleId + " branch=" + branch + " " + detail,
+        "草稿是编辑中的临时状态，损坏不影响已提交的项目内容；可从"
+        "上一版草稿继续编辑，或直接放弃该草稿后重新编辑");
 }
 
 }  // namespace sdurws::ird::project::diagrec
