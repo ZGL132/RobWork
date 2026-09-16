@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "契约测试与崩溃注入落地（PRJ-TX-1～14）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T02", "PRJ-T03", "PRJ-T04", "PRJ-T05", "PRJ-T06", "PRJ-T07", "PRJ-T08", "PRJ-T09", "PRJ-T10", "PRJ-T11", "PRJ-T12", "PRJ-T13", "PRJ-T14", "TK-T09"],
   "requirements": ["ARC-01", "ARC-02", "CON-01", "CON-04", "PM-04", "PM-07", "PM-08", "PM-12", "PM-18", "NFR-REL-01"],
   "designRefs": ["units/project.md#12", "units/project.md#11", "units/testkit.md#6.4", "units/testkit.md#6.5", "units/testkit.md#10.1"],
