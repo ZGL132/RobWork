@@ -307,6 +307,16 @@ endif()
 # 外来 run〔AT-10〕/只读上下文 begin 拒绝；acceptance 4 陷阱处置自证——
 # 绑定原修订不因 HEAD 前进拒绝〔TASK-03/CON-02〕、abandon 全路径终结
 # 〔四值原因＋幂等＋排空归零〕、失败即 abandon 不阻塞关闭〔A-4〕）。
+# PRJ-T15 增列一：Tx11Tx13SuiteTest（§11 表 PRJ-TX-13 具名用例体——只读
+# 上下文遍历全部写 API〔submit/undo/redo/save/discard/archive.begin〕一律
+# 拒绝＋稳定诊断 PRJ-LOCK-HELD、错误码集合＝设计清单、零磁盘副作用；
+# PRJ-TX-11 阻塞登记——另存为/包实体归阶段 B WP-04-T17/T18〔§13.1〕，
+# GTEST_SKIP 如实标注前置未就绪，不计通过〔§7.2 四类分列〕）。
+# PRJ-T15 增列二：TestMainReport（单元测试目标自有 main——安装 testkit
+# TestRecordListener，IRD_TEST_INFO/IRD_* 断言详情聚合为
+# ird-test-report.json 与 gtest XML 并存〔testkit §7.2/§7.3；acceptance 2
+# 的 IRD_TEST_INFO/IRD_EXPECT_* 接入面〕；链接面同步 GTest::gtest_main
+# →GTest::gtest——gtest_main 固定入口无监听器安装点）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -324,7 +334,9 @@ add_executable(sdurws_ird_project_test
     test/DraftServiceTest.cpp
     test/UndoRedoServiceTest.cpp
     test/ArchiveServiceTest.cpp
-    test/StubHandlers.cpp)
+    test/Tx11Tx13SuiteTest.cpp
+    test/StubHandlers.cpp
+    test/TestMainReport.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
@@ -346,15 +358,16 @@ if(MSVC)
     target_compile_options(sdurws_ird_project_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：GTest::gtest_main 提供入口；测试
-# 链接产品库 sdurws_ird_project 同时验证"公共头可被正常 include＋库可链接"。
-# 不链 sdurws_ird_testkit：PRJ-TX-14 红线用例以 gtest 原生断言承载（需求/AT
-# 追溯在用例名与 ird-test-report.json 的 trace 字段——diagnostics DT-BUILD
-# 同款）；testkit 消费（FaultInterceptor/TempDir 等，§11 头注）随 PRJ-T15
-# 契约测试落地时按 T-1 允许形态在对应目标登记。
+# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：PRJ-T15 起以自有 main
+# （TestMainReport.cpp——安装 testkit RecordListener）提供入口；测试链接
+# 产品库 sdurws_ird_project 同时验证"公共头可被正常 include＋库可链接"。
+# sdurws_ird_testkit＝testkit.md §10.2 project 行的消费面（TempDir/
+# IRD_TEST_INFO/IRD_EXPECT_*——T-1 允许形态：仅测试目标链 testkit，产品
+# 目标不链——NoTestkitEdge 用例持续钉住产品面零 testkit 边）。
 target_link_libraries(sdurws_ird_project_test PRIVATE
     sdurws_ird_project
-    GTest::gtest_main)
+    sdurws_ird_testkit
+    GTest::gtest)
 
 # 源码树位置注入：PRJ-TX-14 用例在运行期扫描 project 源码核对红线。
 # 经编译定义传 industrialrobot 根（diagnostics/evidence/runtime 同款——值内
@@ -400,11 +413,27 @@ add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
 # IDomainEventBus〔ReferenceEventBus 注入——P-PR-1 处置的行为级自证〕；
 # 并发归档流与 writer 互斥〔P-PR-4 单侧冻结的行为级自证——双会话并发
 # batch/finalize 全部成功且磁盘一致〕）。
+# PRJ-T15 增列：ProcessCrashContractTest／ProcessLockContractTest／
+# Tx2DiagnosticRecordContractTest／Tx15Child（§12 PRJ-T15 行产物——
+# TestProcessRunner 接入的真进程用例体：F8 崩溃边界五挡〔kill 于 T1～
+# T6 每步后重启恢复——RecoveryReport 逐项＋字节不变，AT-11/13〕、
+# PRJ-TX-8 在途归档强杀〔D-13 无 manifest＝不完整〕、PRJ-TX-7 锁三场景
+# 的 TestProcessRunner 重述〔第二实例只读+PID／存活不接管 D-03／崩溃
+# 并发接管仅一胜者 D-02〕、PRJ-TX-2 观测点"诊断字段完整"经 ContractCheck
+# 机器校验〔IRD_TEST_INFO/IRD_EXPECT_* 消费面〕。Tx15Child.cpp＝真进程
+# 子进程半边〔无 gtest——main 拦截分派；FaultInterceptor 经 IFileOps
+# 接缝停靠，testkit.md D-10 形态〕。testkit §10.1 触发登记的兑现：
+# TestProcessRunner/EventWatch/FaultInterceptor/TempDir 按 T-1 允许形态
+# 仅入本测试目标——产品目标零 testkit 边不变）。
 add_executable(sdurws_ird_project_contract_test
     test/LinkageContractTest.cpp
     test/LockContractTest.cpp
     test/CommandContractTest.cpp
     test/ArchiveContractTest.cpp
+    test/ProcessCrashContractTest.cpp
+    test/ProcessLockContractTest.cpp
+    test/Tx2DiagnosticRecordContractTest.cpp
+    test/Tx15Child.cpp
     test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：LockContractTest.cpp 消费
@@ -424,15 +453,21 @@ if(MSVC)
     target_compile_options(sdurws_ird_project_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面：仅产品目标＋gtest（T-1 允许形态——不链 testkit，PRJ-T15 再登记；
-# 不显式链 core——PUBLIC 经 sdurws_ird_project 传染，公共头 StoreTypes.hpp
-# 的 core::DiagnosticRecord 消费由该传染路径解析）。
+# 链接面：产品目标＋gtest＋testkit（T-1 允许形态——testkit 仅测试目标
+# 可链，PRJ-T15 登记：TestProcessRunner/EventWatch/FaultInterceptor/
+# TempDir/ContractCheck/RecordListener 消费；产品目标仍零 testkit 边
+# ——NoTestkitEdge 用例持续钉住；不显式链 core——PUBLIC 经
+# sdurws_ird_project 传染，公共头 StoreTypes.hpp 的 core::DiagnosticRecord
+# 消费由该传染路径解析）。
 # main 自持（DTB §5.5"测试 main 自持"——本目标以自有 main 落实）：GTest::
-# gtest（无入口）替代 GTest::gtest_main——LockContractTest.cpp 的 main 须
-# 在 gtest 初始化**之前**拦截子进程再执行分派（--ird-wp04-t03-child，
-# PRJ-TX-7 真双进程形态），gtest_main 的入口无此拦截点。
+# gtest（无入口）——LockContractTest.cpp 的 main 须在 gtest 初始化**之前**
+# 拦截子进程再执行分派（--ird-wp04-t03-child／--ird-wp04-t15-child，
+# PRJ-TX-7 真双进程＋PRJ-T15 真进程契约），gtest_main 的入口无此拦截点；
+# 同一 main 在 gtest 初始化后安装 testkit RecordListener（§7.3——
+# ird-test-report.json 与 gtest XML 并存）。
 target_link_libraries(sdurws_ird_project_contract_test PRIVATE
     sdurws_ird_project
+    sdurws_ird_testkit
     GTest::gtest)
 
 # 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。

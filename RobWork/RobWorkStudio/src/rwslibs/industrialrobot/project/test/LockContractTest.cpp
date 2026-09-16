@@ -25,6 +25,7 @@
  * 参数——窄 argv 会破坏非 ASCII 路径），Exit Code 承载获取结果。
  */
 
+#include "Tx15Child.hpp"
 #include "win32/PathCanonical.hpp"
 #include "win32/StoreLock.hpp"
 
@@ -32,6 +33,7 @@
 
 #include <windows.h>
 
+#include <sdurws/ird/testkit/gtest/RecordListener.hpp>
 #include <sdurws/ird/project/StoreTypes.hpp>
 
 #include <algorithm>
@@ -657,10 +659,21 @@ TEST_F(LockContractTest, SameProjectMultiPathOpen_CrossSpelling_Refused)
 int main(int argc, char** argv)
 {
     // 子进程再执行分派：argv 标记为纯 ASCII——窄字符比较无损；实际参数
-    // 已经环境变量传递（宽字符安全，见文件头说明）。
+    // 已经环境变量传递（宽字符安全，见文件头说明）。两代分派 token 并存：
+    // --ird-wp04-t03-child＝PRJ-T03 锁原语子进程（既有）；
+    // --ird-wp04-t15-child＝PRJ-T15 真进程契约子进程（F8 崩溃边界/
+    // TX-7 锁角色/TX-8 在途归档——Tx15Child.hpp 分派契约）。
     if (argc >= 3 && std::string(argv[1]) == "--ird-wp04-t03-child") {
         return runChildMode(argv[2]);
     }
+    if (argc >= 3 && std::string(argv[1]) == "--ird-wp04-t15-child") {
+        return sdurws::ird::project::tx15::runChild(argv[2]);
+    }
     ::testing::InitGoogleTest(&argc, argv);
+    // 机器可读测试报告（testkit §7.2"与 gtest XML 并存"；§7.3 原文签名
+    // ——PRJ-T15 消费登记：IRD_TEST_INFO 追溯与 IRD_* 断言详情经监听器
+    // 聚合为 ird-test-report.json，--ird_report=<path> 可指定落盘位置，
+    // 参数在 gtest 解析前被摘除）。
+    sdurws::ird::testkit::installTestRecordListener(argc, argv);
     return RUN_ALL_TESTS();
 }
