@@ -78,12 +78,20 @@ find_package(GTest CONFIG REQUIRED)
 # F1/F7 注入点登记 faultpoint::kCreateDirectories/kRemoveTree；对象发布
 # 的共享判定复用 ObjectStore 读回校验通道，摘要一律经 contentVersionOf
 # ＝core ContentDigester〔CR-02/P-PR-1 消费基线〕）。
+# PRJ-T08 落位：src/ProjectStoreImpl.cpp 增列（§12 PRJ-T08 行产物——打开
+# 与恢复：ProjectStoreFactory open/createNew〔PM-02②③⑤ 打开协议/PM-01
+# 存储侧组装〕、ProjectStoreImpl 生命周期〔§9.6 门卫＋§9.7 Draining 排空〕
+# ＋RecoveryReport 汇编〔§7.4 恢复顺序〕；ProjectStoreImpl.hpp 为 src/
+# 私有实现头——R-2；公共契约面＝include/sdurws/ird/project/ProjectStore.hpp
+# ＋StoreTypes.hpp 增量的 §5.1 打开协议类型；端口访问器随 PRJ-T09/T10/
+# T12/T13/T14 增量挂载——不预建无实现接口，NFR-MNT-04）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
     src/ObjectStore.cpp
     src/RevisionIndex.cpp
     src/TxEngine.cpp
+    src/ProjectStoreImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -167,6 +175,13 @@ endif()
 # PRJ-T15；acceptance 3 §7.3 闭包外识别/查询不可见＋.staging/tmp 启动
 # 清理〔D-09〕；acceptance 4 P-PR-1 处置——清单摘要与 core ContentDigester
 # 直算比对）。
+# PRJ-T08 增列：ProjectStoreTest（acceptance 1 PRJ-TX-9 落位面——Closed/
+# Draining 迟到写拒绝＋稳定诊断〔PRJ-WRITE-AUTHORITY-LOST〕＋闭包外修订
+# 不可见＋激活前失败不影响当前项目〔完成条件具名用例〕；acceptance 2
+# 旧格式/未来版本稳定拒绝＋升级指引数据〔PM-06〕＋恢复报告逐字段断言
+# 〔PM-08/§7.4①③④〕；acceptance 3 createNew 骨架/关闭排空〔Draining〕/
+# 只读打开〔PM-07〕/进程内重复可写打开拒绝〔§9.3〕；acceptance 4 P-PR-1
+# core 身份基线＋P-PR-6 诊断码收编清单/sink 可选注入）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -177,7 +192,8 @@ add_executable(sdurws_ird_project_test
     test/PersistenceFormatTest.cpp
     test/ObjectStoreTest.cpp
     test/RevisionIndexTest.cpp
-    test/TxEngineTest.cpp)
+    test/TxEngineTest.cpp
+    test/ProjectStoreTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
