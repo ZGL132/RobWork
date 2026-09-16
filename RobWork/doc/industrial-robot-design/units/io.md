@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.3（IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-IO |
@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.11（`Draft`，待评审）** |
 | 协作输入 | `units/core.md`、`units/testkit.md`、`units/project.md`、`units/evidence.md`、`units/runtime.md`、`units/policy.md`、`units/execution.md`、`units/diagnostics.md`、`units/ui.md`——均 v0.1（`Draft`，未冻结）；本文消费的 core 契约以 core.md v0.1 签名为基线逐项登记（§3.2），上游冻结版本变更时按影响面增量同步 |
 | 上游下游链位置 | ARCHITECTURE §11.1 / `DETAILED-DESIGN.md`：`units/io.md` 为 20 单元任务卡之一；对应任务包 WP-11（任务卡 WP-11-T01～T07 已在 `development-task-breakdown.md` §2.12 登记）；主 WP 归属 WP-E、WP-I（DETAILED-DESIGN 20 单元状态表） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/`（骨架已建：目标 `sdurws_ird_io`〔INTERFACE 占位〕＋别名 `RWS::ird::io`＋公共头保留位 `include/sdurws/ird/io/README.md`；README 引用本文 §9〔公共接口〕作为源码落位依据，与本文结构一致） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/`（IO-T01 落位：目标 `sdurws_ird_io` STATIC〔链 core＋diagnostics——§3.3〕＋别名 `RWS::ird::io`＋公共头 `IoFwd.hpp`/`IoError.hpp`＋`src/Io.cpp` 锚点；README 引用本文 §9〔公共接口〕作为源码落位依据，与本文结构一致） |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送。Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`，逐个绝对路径启动。 |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9/v1.11、ARCHITECTURE 文档头）；`old/` 历史实现仅功能范围对照、不作语义来源（RV-13），本文不引用、不复制、不恢复其任何机制 |
 
@@ -43,7 +43,7 @@
 | `units/evidence.md`、`units/policy.md`、`units/ui.md` | 存在，v0.1，`Draft`（未冻结） | evidence：CON-03 固化门禁（io 不判定证据资格）；policy：工程策略不含 io 预算（IO-D06 论证）；ui N-6：向导仅收集用户选择、外部资源解析归 io |
 | `units/reporting.md` | **已产出**（v0.1 Draft，2026-09-10；原登记"不存在"系编写时快照，已过期） | 与本文双向交接：reporting §10.10/§13.2 消费 io 包编解码；io §13.1 登记对应义务 |
 | `units/modeling.md` 等 9 个业务域单元 | **不存在**（待产出） | modeling/requirements/selection/optimization/workflow 等详设未产出；本文需要其消费处给最小依赖契约并登记交接（§13），不代写对方详设 |
-| io 构建骨架 | 存在：`industrialrobot/io/include/sdurws/ird/io/README.md`（占位，不参与编译）；`industrialrobot/CMakeLists.txt` 注册 `sdurws_ird_io` INTERFACE 目标 | 源码随本文任务卡（§12，对应 WP-11-T02 起）落地；INTERFACE→STATIC 升级、`_test`/`_contract_test` 目标随任务登记，不预建空目标 |
+| io 构建骨架 | **已落位**（IO-T01≙WP-11-T02，2026-09-17 实测）：`industrialrobot/io/CMakeLists.txt`（新建，`sdurws_ird_io` STATIC、C++17、PUBLIC 链 `sdurws_ird_core`＋`sdurws_ird_diagnostics`——§3.3 两条登记边；L1 文件/XML 目标按 P-IO-3 冻结后由 IO-T04 登记）；公共头 `IoFwd.hpp`/`IoError.hpp`（§3.1 表前两行，类型契约头）；`src/Io.cpp` 锚点翻译单元（零接口实现预建）；`sdurws_ird_io_test`/`_contract_test` 随 IO-T06/T07 登记，不预建 | 原 INTERFACE 占位骨架（仅 README.md 占位）已按 §3.3/§12 IO-T01 行升级为真实库；P-IO-3 候选可用性验证留痕见 `traceability/io-pio3-dependency-probe.md`（2026-09-17） |
 | 构建缓存 | `build/CMakeCache.txt` 实测：Visual Studio 17 2022（MSVC x64）、Qt 6.11.1 | 与 core.md §1.4 同源事实；Windows 文件/路径 API 按 Microsoft Learn 文档口径设计（§4.2），不凭记忆超诺 |
 | `old/` | 不存在于磁盘（仓库根实测；与 REQUIREMENTS v1.10 声明不符，core.md R-5 已登记） | 从头构建口径不受影响；本文不引用其任何机制 |
 
@@ -1728,7 +1728,8 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版草案：承接 REQUIREMENTS v1.16／ARCHITECTURE v0.11 与九份兄弟单元卡（v0.1 Draft）的 io 行义务；冻结路径安全/预算模型、CSV/JSON 可逆编码、资源读取与三段边界固化协作、`.rwpack` 导入导出协议、公共接口与线程/取消契约、验证矩阵与阶段 A 任务拆分；裁决关闭 P-RT-6；登记 P-IO-1~P-IO-7。状态 `Draft`。 |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§1.2"units/modeling.md 等 10 个业务/编报单元不存在"过期表述更正——reporting.md 已产出（v0.1 Draft）并与本文双向交接（reporting §10.10/§13.2 ↔ io §13.1），拆分为"reporting 已产出"与"9 个业务域单元待产出"两行 |
+| v0.3 | 2026-09-17 | IO-T01（≙WP-11-T02）落位同步：§1.2"io 构建骨架"行更新——`sdurws_ird_io` 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 core＋diagnostics——§3.3 两条登记边），`io/CMakeLists.txt` 新建、`IoFwd.hpp`/`IoError.hpp` 公共头就位（§3.1 表前两行）、`src/Io.cpp` 锚点翻译单元（零接口实现预建）；P-IO-3 候选库 vcpkg 可用性验证完成并留痕（`traceability/io-pio3-dependency-probe.md`——R-IO-1 前置处置；选型冻结权仍归 WP-11 评审，L1 文件/XML 目标冻结后随 IO-T04 登记）；测试目标不预建（§12 IO-T01 禁止项，随 IO-T06/T07）。双模式构建零错误＋红线扫描零新增命中（留痕 `traceability/builds/wp11-t01/`）。设计正文（§2~§14）零变更。 |
 
 ---
 
-**本文档结束**（io 单元详细设计 v0.1，状态 `Draft`；对应任务 WP-11-T01。）
+**本文档结束**（io 单元详细设计 v0.3，状态 `Draft`；对应任务 WP-11-T01，构建落位 WP-11-T02 已随 IO-T01 完成。）

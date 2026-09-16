@@ -6,9 +6,10 @@
 #       其 §1.2/§1.5 的引用为悬空引用，改指各单元卡与任务拆分）
 # 状态: core 已随 WP-03-T01（≙CORE-T01）、testkit 已随 WP-02-T01（≙TK-T01）、
 #       runtime/evidence/policy 已随 RT-T01/EV-T01/POL-T01、diagnostics 已随
-#       DIAG-T02（≙WP-09-T02）、project 已随 PRJ-T01（≙WP-04-T01）落地为真实
-#       STATIC 库＋gtest 测试目标（见各自 CMakeLists.txt）；其余 15 个单元仍
-#       为 INTERFACE 占位，源码随各自单元任务卡落地，落地时升级为真实库
+#       DIAG-T02（≙WP-09-T02）、project 已随 PRJ-T01（≙WP-04-T01）、io 已随
+#       IO-T01（≙WP-11-T02）落地为真实 STATIC 库（见各自 CMakeLists.txt；
+#       io 落位期无测试目标——随 IO-T06/T07 登记）；其余 14 个单元仍为
+#       INTERFACE 占位，源码随各自单元任务卡落地，落地时升级为真实库
 #       （CMake 目标名不变）
 # =====================================================================
 
@@ -24,11 +25,11 @@ endif()
 
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
-# diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）
-# 起移出（下方 add_subdirectory）。
+# diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）、
+# io 自 IO-T01（≙WP-11-T02）起移出（下方 add_subdirectory）。
 set(IRD_MODULES
     execution
-    ui io reporting
+    ui reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
 )
@@ -89,6 +90,18 @@ add_subdirectory(diagnostics)
 # diagnostics 之后（其卡 §3.2 消费方次序约定——project 属 ARCH §3.5 入边
 # 单元）。
 add_subdirectory(project)
+# io（IO-T01≙WP-11-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、PUBLIC
+# 链 core＋diagnostics——io.md §3.2/§3.3 仅有的两条登记单元边，ird_gates
+# 白名单 "io->core"/"io->diagnostics" 行），并新建 io/CMakeLists.txt（本
+# 注册行即其挂载点）；IoFwd/IoError 公共头就位，src/ 空起步＝锚点翻译单元
+# Io.cpp（零接口实现预建——NFR-MNT-04）。P-IO-3 处置：ZIP/XML 候选库
+# 仅做 vcpkg 可用性验证留痕（traceability/io-pio3-dependency-probe.md），
+# 选型冻结权在 WP-11 评审——L1 文件/XML 第三方目标冻结前不登记（不预引入，
+# NFR-DEP-03）。本任务不注册测试目标（sdurws_ird_io_test/_contract_test 随
+# IO-T06/T07 登记，不预建——io.md §12 IO-T01 禁止项）。零 Qt、零 Widgets
+# （NFR-MNT-01＋WP-11-T02 禁止项）。次序约束：必须在 core 与 diagnostics
+# 之后（链接两者目标——diagnostics 卡 §3.2 已注明 io 属其消费方）。
+add_subdirectory(io)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
