@@ -385,9 +385,12 @@ TEST_F(QueryPortTest, RevisionView_HeadAndRevision_FieldsAssembled)
     ASSERT_TRUE(head.inverse.has_value());
     EXPECT_EQ(head.inverse->commandType, "remove-mass-point");
     EXPECT_EQ(head.inverse->payloadFormatVersion, 1u);
-    // 本阶段注册表未装配——hasUnresolvedPayload 字段默认（§5.2 字面语义；
-    // 实现口径 2，T10 注入判据后真判定）。
-    EXPECT_FALSE(head.hasUnresolvedPayload);
+    // hasUnresolvedPayload 真判定（§6.3 末行；T10 注入注册表判据——本用
+    // 例的提交 token "remove-mass-point" 未在该上下文注册 → 修订可读、
+    // payload 不解析＝true。T09 落位时的 false 预期对应"注册表未装配、
+    // 判据为空＝无法判定"阶段，随 T10 注入兑现为真判定，见 QueryPort.hpp
+    // 增量落位说明 3 的预留口径）。
+    EXPECT_TRUE(head.hasUnresolvedPayload);
 
     // 引用集：完整非增量（§4.4.2 ≥1）——含本次域对象与元数据对象。
     ASSERT_EQ(head.objectRefs.size(), 2u);
