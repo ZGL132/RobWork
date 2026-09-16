@@ -1466,6 +1466,56 @@
       "title": "契约 acceptance 3 的『失权后写拒绝』在存储上下文层缺端到端用例：ProjectStoreTest 18 用例覆盖了门卫第①道（状态机：Closed/Draining→ContextClosed）与只读锁面（无锁→LockHeldByOther），但门卫第②道『已打开上下文的锁句柄失权/释放后 executeCommit → requireWriteAuthority 返回 false → StoreError(WriteRejected)』无直接用例钉住（该路径为三行委托）。缓解面：原语级语义已由 StoreLockTest 5+ 用例覆盖（PRJ-T03 交付：陈旧心跳不失权/他方拒绝/释放后拒绝等）；实现侧无失实声明（ird-test-report.json 与单元卡 v0.10 均未声称存在该直接用例）；PRJ-TX-9 全量用例已登记归 PRJ-T15 进程级复验。验收者代码走读证实门卫②实现与 §9.6①② 一致，属测试覆盖面建议非实现缺陷",
       "owner": "project 实现所有者（建议随 PRJ-T15 进程级复验补用例，或 PRJ-T10 挂载命令服务经同一门卫时顺带）",
       "resolution": "处置建议＝补一条上下文级失权用例（如 Writable 打开后对 StoreLock 注入失权态/直接 release，再 executeCommit 断言 StoreError(WriteRejected)＋PRJ-WRITE-AUTHORITY-LOST 诊断），随 PRJ-T15 复验批次或用例增补批次执行，不单开任务。编号顺延自 F-145，合入时由所有者确认。"
+    },
+    {
+      "id": "F-147",
+      "source": "traceability/acceptance/PRJ-T09-20260916.md#4.8（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09）：验收者核对单元卡卡头与 §15.4 末行时实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-122/F-133/F-134/F-140/F-143 家族第六次再现（日期半边连续五跳未落地后本任务再跳）：PRJ-T09 触及 units/project.md（§15.4 追加 v0.11 行）且卡头『文档版本』行已同步至 v0.11（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 v0.11 行＝2026-09-16）；F-143 处置建议①『同步日期行＋注明 F-140 家族消账＋顺带把 v0.10 行移至 v0.9 之后的正确时序位』三项均未执行且提交 3c0b8bf6 与 v0.11 行均未注明家族消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。部分改善：v0.11 新行追加于表尾（v0.9 之后——新行时序正确，F-143 建议的追加于表尾半边成立；存量 v0.10 行倒置未修）。方向为文档内部不一致（日期少报），v0.11 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
+      "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行——F-133 建议①原文，已连续六跳未落地）；validate-docs 是否增补『卡头版本/日期行＝§15.4 末行』与『变更行时序』机检归治理脚本所有者（F-123/F-140/F-143 建议的再次提出）",
+      "resolution": "处置建议＝①所有者显式指定收口载体（纳入 F-005 家族批量修正清单或专设一次治理微任务）一次性同步日期行并修 v0.10 行时序位——『随下次触及顺手更正』模式已证实连续六跳失效，不宜再作为主要处置；②validate-docs 增补该维度机检。编号顺延自 F-146，合入时由所有者确认。"
+    },
+    {
+      "id": "F-148",
+      "source": "traceability/acceptance/PRJ-T09-20260916.md#4.10（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09，验收者 git ls-tree／.gitignore 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136/F-138/F-141 之后第 16 例，F-141 无缓解形态再现）：PRJ-T09 留痕提交 93489c02 正文声称 traceability/builds/wp04-t09/ 新增 integration-build.log／smoke-configure.log／smoke-build.log／verify-target-build.log／validate-task.log 五份 .log『＋运行日志』共约七件，git ls-tree 实证仅入库 5 件（ird-test-report.json＋四份 gtest XML）——.log 全部命中根 .gitignore:87 *.log 规则（F-010 根因）未入库，提交正文未内联明示该处置；ird-test-report.json builds[] 四字段引用的 .log 均为库外文件且无 localOnlyNote 字段（F-136/F-138 建议形态未采纳）。缓解面：四份 gtest XML 本体全部在库（PRJ-T08 曾缺 XML 的更严重形态未再现）；提交正文列出的结论性数据（183/183＋10/10、exit 0、validate-task PASS）经验收者双模式亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：builds[]/正文只列库内文件或增设 localOnlyNote／内联注明『X 件入库＋Y 份 .log 工作区留痕』——F-136/F-138/F-141 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者，已六连跳）",
+      "resolution": "处置建议＝同 F-141：①builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote；②提交信息列举证据时内联注明入库/库外件数；③根因处置同 F-129/F-132/F-138/F-141 建议（.gitignore 否定规则 traceability/** 或留痕统一改后缀）。编号顺延自 F-147，合入时由所有者确认。"
+    },
+    {
+      "id": "F-149",
+      "source": "traceability/acceptance/PRJ-T09-20260916.md#4.4/附（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09）：验收者实跑 ird_gates 与 PRJ-T08 验收基线（9 命中）比对",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-028/F-035/F-144 家族再现（实现类任务第二次，与 F-144 同根同措辞）：PRJ-T09 为实现类任务，未实跑 ird_gates 自查；ird-test-report.json gates.ird_gates 字段与提交 93489c02 影响面段均称『未执行——如实标注：门禁目标随 WP-01-T01 落地前的口径与本单元既有任务一致』——理由失实（F-035 验收者已在全新集成树实测门禁目标可运行；本单元 PRJ-T06/T07 及验收侧均有门禁实跑结论，『既有任务一致』的是实跑口径而非未执行口径）。验收者代行实跑：9 命中＝F-145 登记后的基线（SUB×7＋T1×1＋R4×1〔ProjectStoreImpl.cpp:105 kCreatedWithToolVersion——本任务未触碰该常量，diff 零命中〕），本任务零新增命中；门禁自测 9 项全部按预期。若实施侧实跑即可得出『基线 9 红、零新增』的干净自查结论——缺位本身无后果，但『如实标注』措辞与事实不符构成 F-144 判定的字面再现",
+      "owner": "实施纪律（F-035/F-144 处置建议原文：实现类任务实跑 ird_gates 并把命中数与基线比对写入 ird-test-report.json——零新增时一行即可）；ird-test-report 模板是否增补 gates 基线比对字段归治理所有者",
+      "resolution": "处置建议＝同 F-144：实现类任务的 ird-test-report.json gates 字段改为实跑结论（命中数＋与基线比对），理由栏不再使用『WP-01-T01 落地前口径』（与事实相反）；家族第三例时建议模板强制化。编号顺延自 F-148，合入时由所有者确认。"
+    },
+    {
+      "id": "F-150",
+      "source": "traceability/acceptance/PRJ-T09-20260916.md#4.8（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09）：验收者按 §5.2 原文逐方法比对接口实现时实测计数",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "计数失准家族再现（F-025/F-041/F-073 同型，方向少报）：提交 b2fa1c5e 与单元卡 §15.4 v0.11 行均称 IProjectQueryPort『十一方法』，实测纯虚方法 12 个（head/tryRevision/revision/currentMetadata/metadataAt/branchTips/branchHistory/tryObject/object/listDrafts/listRuns/runDir——§5.2 原文代码块同 12 个，QueryPortImpl 12 个 override 全数实现）；QueryPort.hpp 文件头未使用该计数表述、不受影响。少报不虚报（无『实现超出声明』粉饰风险），接口/实现/单元卡 §5.2 三方一致，纯散文计数瑕疵",
+      "owner": "实施纪律（F-025/F-041 处置建议原文：交付前对提交信息与报告中的计数逐条实测清点——本例为接口方法计数）",
+      "resolution": "处置建议＝随下次触及 units/project.md 的任务（或 F-147 的批量修正载体）把 v0.11 行『十一方法』更正为『十二方法』；提交信息不可改写（已推送），在验收记录留档即可。编号顺延自 F-149，合入时由所有者确认。"
+    },
+    {
+      "id": "F-151",
+      "source": "traceability/acceptance/PRJ-T09-20260916.md#4.9（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T09 送验四提交中两份标题前缀后以名词开头非动词开头——3c0b8bf6『[units] project.md v0.11：PRJ-T09 查询端口落位登记』以文件名词短语开头（F-037/F-079/F-092/F-130 的 [units] 车道同型）、93489c02『[governance] PRJ-T09 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋validate-task』以任务名词开头（F-139 已判『PRJ-Txx 验证留痕』逐字模板第七连例，本例第八例且首次出现 [governance] 车道变体）。实现提交 b2fa1c5e『实现查询端口（…）』与测试提交 60e10e78『新增查询端口用例组（…）』动词开头合规。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者独立复现全部为真，既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3/ACC §4.9 提交标题动词开头）；模板补救（动词开头示例＋『PRJ-Txx 验证留痕归档/留痕补齐』等既有逐字模板黑名单——F-121/F-126/F-139/F-142 处置建议反复提出，落地前家族持续累积）",
+      "resolution": "处置建议＝同 F-121/F-126/F-139/F-142：实施者会话模板增补提交标题硬约束（动词开头示例＋逐字模板反例清单，覆盖 [units]/[governance] 车道）；治理侧可考虑在 verify-task/validate-task 增加 commit 标题形态机检。编号顺延自 F-150，合入时由所有者确认。"
     }
   ]
 }
