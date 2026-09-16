@@ -18,7 +18,9 @@
 
 #include "AtomicFile.hpp"
 
+#include <filesystem>
 #include <stdexcept>
+#include <system_error>
 
 namespace sdurws::ird::project::win32 {
 
@@ -154,6 +156,47 @@ FileResult Win32FileOps::replaceExisting(const std::wstring& tempPath,
     return boolToResult(
         ::MoveFileExW(tempPath.c_str(), targetPath.c_str(),
                       MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH));
+}
+
+FileResult Win32FileOps::createDirectories(const std::wstring& path)
+{
+    // 目录动作不走 Win32 API 而走 std::filesystem：递归补建（含缺失父级）
+    // 与跨平台错误码语义由标准库承载，本实现只做"失败即带码返回"的薄
+    // 封装（故障注入经接口接缝，见 IFileOps.hpp kCreateDirectories 登记）。
+    // 幂等：目标已存在＝无错误成功（create_directories 契约）。
+    std::error_code ec;
+    std::filesystem::create_directories(std::filesystem::path(path), ec);
+    if (ec) {
+        // error_code.value() 在 Windows（system 类别）＝OS 原生码
+        // （如 ERROR_ACCESS_DENIED＝5）——与 FileResult.osError 的
+        // "GetLastError 原始码"口径同源，事务层映射表可复用。
+        FileResult r;
+        r.ok = false;
+        r.osError = static_cast<unsigned long>(ec.value());
+        return r;
+    }
+    FileResult r;
+    r.ok = true;
+    r.osError = 0;
+    return r;
+}
+
+FileResult Win32FileOps::removeTree(const std::wstring& path)
+{
+    // remove_all：递归删除目录树；目标不存在＝返回 0 且不置错误（幂等
+    // 清理语义——第 7 步清理与恢复扫描 tmp 清理都依赖"重复调用安全"）。
+    std::error_code ec;
+    std::filesystem::remove_all(std::filesystem::path(path), ec);
+    if (ec) {
+        FileResult r;
+        r.ok = false;
+        r.osError = static_cast<unsigned long>(ec.value());
+        return r;
+    }
+    FileResult r;
+    r.ok = true;
+    r.osError = 0;
+    return r;
 }
 
 // ---------------------------------------------------------------------

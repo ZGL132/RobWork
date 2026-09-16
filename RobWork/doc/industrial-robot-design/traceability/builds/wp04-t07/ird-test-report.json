@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T07",
+  "masterWp": "WP-04-T07",
+  "branch": "wp04-t07",
+  "base": "da7d3647c61122d58242bacfcfcc1926bbb78828",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，_contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量构建 exit 0 零 error）",
+      "notes": "PRJ-T07 落位：src/TxEngine.cpp＋src/TxEngine.hpp 新增（§12 PRJ-T07 行产物——事务引擎：§7.1 七步提交协议〔第 1 步准备 tx-id/序号 O-15；第 2 步 .staging/<tx-id>/ 全量暂存 write-through＋flush 闸门；第 3 步重读 size＋SHA-256 全量验证含对象字节→ContentVersion 名一致性；第 4 步只增发布——对象先行/修订清单最后、目标已存在经 ObjectStore 读回共享判定、部分就位保留悬挂不回滚；第 5 步 HEAD.new 原子替换＝唯一提交点＋重读自校验 manifestDigest；第 6 步事件 FIFO RevisionCommitted→DependencyInvalidated 失败重试一次＋开发诊断不回滚 D-18；第 7 步清理失败仅开发诊断〕、§7.3 闭包外识别〔磁盘修订目录集＼闭包集＝uncommittedRevisions〕、§7.4①④⑤ 恢复扫描〔①.staging 残留忽略＋PRJ-RECOVERY-IGNORED-UNCOMMITTED＋.staging/tmp 启动清理 D-09；④HEAD 闭包完整性失败＝PRJ-STORE-CORRUPT 定位到文件；⑤悬挂对象只读计数〕；TxEngine.hpp 为 src/ 私有实现头——R-2）。实现口径登记三项（DTB §5.4）：①修订身份随 CommitPlan 带入（分配点＝命令服务 S6 计划装配单一分配点；tipUpdate.newTip 一致性提前校验，validateMetadataPublish 二道防线）；②S6 时序三步：registerRevision→validateMetadataPublish→registerMetadata（切换权威——闭包可达前提）；③元数据对象类型 token＝\"ProjectMetadata\"（kMetadataTypeToken，随清单持久化一经发布不变）。对象发布不经 ObjectStore::publishObject 的原因（同登记）：§7.1 第 2 步要求暂存落于事务目录＋§7.6 要求 F2/F4 注入经 IFileOps 接缝，而 publishObject 绑定对象库级暂存与真实 Win32FileOps——引擎自做暂存写＋publishNew，共享判定复用 ObjectStore 读回校验通道（object()）。IFileOps 接缝随本任务增补目录两方法 createDirectories/removeTree（faultpoint::kCreateDirectories/kRemoveTree——§7.6 表头『注入经 IFileOps 接缝』对 F1/F7 目录级边界的承载；AtomicFileTest fake 同步补全转发）。损坏分流纪律（scanForRecovery）：清单/元数据缺失或损坏仅对闭包成员构成 store-corrupt，闭包外残缺＝未提交残留（§7.3——F4 有目录无清单形态）。CR-02：清单摘要/对象 cv 全经 contentVersionOf（core ContentDigester）。P-PR-1 处置：消费面＝core 公共契约 Identity.hpp/Digest.hpp/Events.hpp（IDomainEventBus）/DiagData.hpp（DiagnosticRecord），零 core 修改。线程约束：commit 串行化归 §6.1 命令执行槽，scanForRecovery 与 commit 互斥由调用方保证（打开/恢复时点）——tx-id 计数器原子仅保证编号唯一非并发许可"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 151/151）",
+      "notes": "PRJ-T07 增列 test/TxEngineTest.cpp（18 用例；151＝既有 133＋新增 18）。测试期登记两项（DTB §5.4）：①F3『写后篡改』注入挂 closeHandle 而非 flush——暂存句柄 share mode 0 独占打开，句柄存活期间二次打开共享冲突，关闭后翻转才是可行进程内形态；②『字节不变』断言两档：严格全等（F1/F2/F3/F8 准备/暂存腿——零发布）与 expectCommittedUnchanged（F4/F5/StagingTmp——既有文件字节不变＋新增仅限悬挂残留，§7.1 第 4 步『已就位项保留』）。实现期缺陷留证：初版 8 用例失败全部为测试侧期望错误（osError 5 误期望 WriteRejected——映射表拒绝访问→AccessDenied 系 PRJ-T05 登记口径①的正确行为；共享 .staging/tmp 误以为随事务创建——§4.1 该目录归非事务操作），引擎零缺陷修改，修正测试期望后全绿"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 10/10——PRJ-T01/T03 既有契约用例零回归）",
+      "notes": "本任务零新增契约用例（命令/归档契约面归 PRJ-T10/T14）；随双模式构建与运行复核，证明 IFileOps 接缝增补（目录两方法）不破坏既有契约"
+    }
+  ],
+  "gates": {
+    "tool": "ird_gates（WP-01-T01 已落地；cmake --build build --config Release --target ird_gates）",
+    "result": "命中 8 项——与 wp04-t06 基线（traceability/builds/wp04-t06/gates-ird-gates-target.log）命中目标集合逐项一致（IRD-GATE-SUB×6〔diagnostics/evidence/policy/runtime 测试目标直链 sdurws_ird_testkit＋testdata_lint 表外边，均为 DTB §4.5 已登记例外〕＋IRD-GATE-T1×1〔testdata_lint〕等），零新增命中（本任务目标指纹比对：sdurws_ird_testkit×14/testdata_lint×2/runtime_test×2/policy_test×2/policy_contract_test×2/evidence_test×2/evidence_contract_test×2/diagnostics_contract_test×2 与基线逐一相同）；门禁自检（pass_clean/fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2）全部按预期"
+  },
+  "validateTask": "PASS（pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T07.json——1 tasks）",
+  "verify": "cmake --build build --config Release --target sdurws_ird_project_test → exit 0（契约 verify 命令；留痕 verify-target-build.log 同步承载 _report 两目标运行）",
+  "evidence": {
+    "dir": "RobWork/doc/industrial-robot-design/traceability/builds/wp04-t07/",
+    "committed": [
+      "ird-test-report.json",
+      "sdurws_ird_project_test-smoke.xml",
+      "sdurws_ird_project_test-integration.xml",
+      "sdurws_ird_project_contract_test-smoke.xml",
+      "sdurws_ird_project_contract_test-integration.xml",
+      "integration-build.log（全量集成构建 exit 0 零 error）",
+      "integration-test-run.log（151/151）",
+      "integration-contract-test-run.log（10/10）",
+      "smoke-configure.log（vcpkg toolchain 绝对路径）",
+      "smoke-build.log（exit 0 零 error）",
+      "smoke-test-run.log（151/151）",
+      "smoke-contract-test-run.log（10/10）",
+      "gates-ird-gates-target.log（8 命中＝wp04-t06 基线零新增）",
+      "validate-task.log（PASS 1 tasks）",
+      "verify-target-build.log（契约 verify 命令＋_report 目标）"
+    ]
+  },
+  "acceptance": [
+    {
+      "item": 1,
+      "entry": "PRJ-TX-4（F1～F8 进程内部分）边界注入矩阵逐项通过：七步协议任一步失败→已发布内容字节不变、未提交 .staging 忽略＋恢复诊断；提交边界故障注入全覆盖",
+      "tests": [
+        "F1_PrepareFails_StagingDirCreate（§7.6 F1——createDirectories 注入→WriteRejected、无修订、HEAD 不变、零残留）",
+        "F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag（F2——第 3 chunk 磁盘满→DiskFull、旧版本字节不变、残留被忽略＋PRJ-RECOVERY-IGNORED-UNCOMMITTED）",
+        "F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish（F3——写后位翻转→StoreCorrupt、零发布、开发诊断 verify-failed）",
+        "F4_PublishPartialFailure_DanglingResidue_ClosureExcludes（F4——第 3 个 rename 失败→悬挂保留、HEAD 不变、danglingObjectCount=2、残留清单）",
+        "F5_HeadSwitchFails_PublishedButUncommitted（F5——replaceExisting 失败→内容已发布未提交、恢复扫描可识别）",
+        "F6_EventPublishFails_RetriedOnce_CommitStands／F6b_EventPublishFailsAll_CommitStillStands（F6——重试一次＋开发诊断、D-18 不回滚）",
+        "F7_CleanupFails_CommittedStateIntact（F7——清理失败仅诊断、已提交完好、残留仅 ① 报告）",
+        "Commit_InconsistentTipUpdate_FailFastZeroDiskWrites／Commit_UnregisteredAuthoritativeRef_FailFast（内存段先于磁盘——零磁盘副作用）"
+      ]
+    },
+    {
+      "item": 2,
+      "entry": "崩溃/kill 后已提交修订与 HEAD 字节不变（AT-13 载体——进程级复验归 PRJ-T15）；提交点＝HEAD 原子切换（顺序即原子性，D-09 前置）",
+      "tests": [
+        "F8_AfterPrepare_OldStateByteInvariant（T1 边界后崩溃——旧状态字节不变）",
+        "F8_AfterStage_OldStateByteInvariant（T2/T3 边界后——旧状态字节不变、暂存全残留）",
+        "F5_HeadSwitchFails_PublishedButUncommitted（T4 边界后——HEAD 未切换即未提交）",
+        "F8_AfterHeadSwitch_CommittedStateByteInvariant（T5/T6 边界后——已提交新状态字节不变：HEAD/清单摘要/命令文件逐一比对＋闭包可达）",
+        "Commit_HappyPath_SevenStepsAndStagingCleaned（T7 控制腿——提交点原子切换＋磁盘 HEAD 字节级等于结果）",
+        "进程级 TestProcessRunner kill 注入按 testkit §10.1 节奏归 PRJ-T15 复验（本任务为进程内模拟——契约 acceptance 2 注记口径）"
+      ]
+    },
+    {
+      "item": 3,
+      "entry": "「已发布但未提交」识别（§7.3 闭包规则：闭包外内容对查询不可见）；.staging/tmp 临时物清理断言（D-09）",
+      "tests": [
+        "F4_PublishPartialFailure_DanglingResidue_ClosureExcludes（uncommittedRevisions＝{r1}＋闭包装载纪律下 tryRevision(r1)=nullopt＋dangling 计数）",
+        "F5_HeadSwitchFails_PublishedButUncommitted（重开后历史不含该修订——tryRevision/闭包双断言）",
+        "StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir（.staging/tmp 启动清理＋引擎产物限事务目录＋项目根无散落 head.new）",
+        "RecoveryScan_HealthyStore_NoFindings（健康存储零发现基线）"
+      ]
+    },
+    {
+      "item": 4,
+      "entry": "P-PR-1 处置：修订清单摘要经 core ContentDigester（§3.2 消费清单），以 core.md v0.1 为基线，零 core 修改",
+      "tests": [
+        "HeadManifestDigest_MatchesDirectCoreDigester（HEAD.manifestDigest／对象文件名与 core::ContentDigester 直算三方同值——CR-02 唯一摘要入口的消费面自证；core.md 仍 Draft-Structured，冻结 diff 后按影响面增量同步留痕本报告）"
+      ]
+    }
+  ]
+}

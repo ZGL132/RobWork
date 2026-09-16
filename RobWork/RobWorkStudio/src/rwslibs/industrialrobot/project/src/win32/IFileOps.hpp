@@ -78,6 +78,20 @@ inline constexpr const char* kPublishNew = "project/atomic-file/publish-new";
 /// 的单文件层）。
 inline constexpr const char* kReplaceExisting =
     "project/atomic-file/replace-existing";
+/// createDirectories 失败注入点（目录树创建失败——§7.6 F1"`.staging`
+/// 目录创建失败（权限/只读）"的注入载体；第 4 步对象/修订目录创建同走
+/// 本故障点，occurrence 计全局调用序）。
+///
+/// 登记说明（PRJ-T07 增补）：§7.6 表头明定故障注入"经 IFileOps 接缝"，
+/// 而 F1/F7 的边界（暂存目录创建、事务目录清理）是目录级动作，原五点
+/// （open/write-chunk/flush/publish-new/replace-existing）只覆盖文件级。
+/// 两个新点随 PRJ-T07 消费（PRJ-T15 契约测试按同 ID 匹配），命名沿用
+/// "<单元>/<接口>/<动作>" 法——接口段取消费方组件名 tx-engine（动作的
+/// 协议归属是事务七步协议，而非 AtomicFile 门面）。
+inline constexpr const char* kCreateDirectories = "project/tx-engine/create-dirs";
+/// removeTree 失败注入点（目录树删除失败——§7.6 F7"清理失败：删除
+/// .staging 失败"的注入载体；预期＝已提交状态完好、残留仅诊断）。
+inline constexpr const char* kRemoveTree = "project/tx-engine/remove-tree";
 
 }  // namespace faultpoint
 
@@ -204,6 +218,36 @@ public:
      */
     virtual FileResult replaceExisting(const std::wstring& tempPath,
                                        const std::wstring& targetPath) = 0;
+
+    /**
+     * @brief 递归创建目录树（std::filesystem::create_directories 封装）。
+     *
+     * PRJ-T07 增补（接缝登记见 faultpoint::kCreateDirectories）：事务七步
+     * 协议的目录动作（第 1 步 `.staging/<tx-id>/`、第 4 步 objects/<oid>/
+     * 与 revisions/<rev-id>/）必须可被 F1 类注入驱动，因此目录创建与文件
+     * 操作同走本接口——生产实现是 std::filesystem 薄封装，测试 fake 按故障
+     * 点注入失败。幂等语义：目标已存在＝成功（create_directories 对已存在
+     * 路径无错误返回，与 ObjectStore.cpp 既有用法同口径）。
+     *
+     * @param path [in] 待创建的目录路径（逐级补建缺失的父目录）
+     * @return ok==false 时 osError＝std::error_code.value()（Windows 上即
+     *         OS 错误码，如 ERROR_ACCESS_DENIED；错误映射归事务引擎）
+     */
+    virtual FileResult createDirectories(const std::wstring& path) = 0;
+
+    /**
+     * @brief 递归删除目录树（std::filesystem::remove_all 封装）。
+     *
+     * 消费点＝事务第 7 步清理（删 `.staging/<tx-id>/` 含 tmp）与恢复扫描
+     * 的 `.staging/tmp` 启动清理（§4.1 tmp 行"启动清理"）。目标不存在＝
+     * 成功（remove_all 对缺失路径返回 0 且不置错误——清理的幂等语义）。
+     * 删除失败（句柄占用/权限）→ ok==false，由调用方按各自协议处置
+     * （第 7 步＝仅开发诊断，已提交状态不受影响——§7.1 第 7 步）。
+     *
+     * @param path [in] 待删除的目录树根（含其全部子项）
+     * @return ok==false 时 osError＝std::error_code.value()（同上）
+     */
+    virtual FileResult removeTree(const std::wstring& path) = 0;
 };
 
 }  // namespace sdurws::ird::project::win32
