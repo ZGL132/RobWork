@@ -92,6 +92,7 @@
 #include "DraftServiceImpl.hpp"
 #include "QueryPortImpl.hpp"
 #include "UndoRedoServiceImpl.hpp"
+#include "ArchiveServiceImpl.hpp"
 #include "win32/AtomicFile.hpp"
 #include "win32/ILockOps.hpp"
 #include "win32/PathCanonical.hpp"
@@ -716,6 +717,15 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
     // 边界＝存储上下文生命周期）；无独立写通道——undo/redo 全部经
     // commands() 的唯一写路径进入（§5.5/§6.5）。
     m_undoRedo = std::make_unique<UndoRedoServiceImpl>(*this);
+
+    // 归档端口装配（PRJ-T14——§5.1 archive() 访问器的交付物）：装配于
+    // 五端口之最末（构造序最末、成员逆序析构中最先销毁）。归档会话持
+    // 宿主在途票据（§9.7 引用持有通道）——析构时本端口实现先于其余
+    // 成员销毁，强制终结全部在途会话并释放票据（票据删除器观测本类已
+    // Closed——析构静默终局，不触发排空回调）。写路径经宿主门卫三道/
+    // writer 互斥（§9.6/§9.8——与事务/草稿写同一串行化点，P-PR-4 单侧
+    // 冻结）；完成事件经注入的事件总线（§3.2 消费清单——ResultArchived）。
+    m_archive = std::make_unique<ArchiveServiceImpl>(*this);
 }
 
 IProjectQueryPort& ProjectStoreImpl::query() const noexcept
@@ -752,6 +762,17 @@ UndoRedoService& ProjectStoreImpl::undoRedo() const noexcept
     // 空状态、undo/redo 终态经 CommandResult 承载——UndoRedo.hpp 错误
     // 语义总表）。
     return *m_undoRedo;
+}
+
+IResultArchivePort& ProjectStoreImpl::archive() const noexcept
+{
+    // 装配不变量同 query()（PRJ-T14——构造体末尾创建 m_archive，五端口
+    // 之最末；成员逆序析构中最先销毁且析构完成在途会话终结，宿主引用
+    // 在本类对象生存期内恒可用——析构执行期端口引用按常规 C++ 生存期
+    // 纪律不得再被调用方使用）。noexcept 纯指针返回，任何状态下可调
+    // （拒绝语义在端口方法内：begin 门卫抛异常轨、batch/finalize 返回
+    // 值轨、失效句柄 fail-fast——ArchivePort.hpp 错误语义口径）。
+    return *m_archive;
 }
 
 bool ProjectStoreImpl::writable() const noexcept

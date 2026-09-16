@@ -132,6 +132,27 @@ std::string dump(const CommandRecord& value);
  */
 std::string dump(const DraftDocument& value);
 
+/**
+ * @brief RunManifest → canonical JSON 字节（§4.4.7 表列序；PRJ-T14 增量
+ *        ——写侧编码随归档端口 finalize 落位，读侧 parseRunManifest
+ *        已随 PRJ-T09 先行）。
+ *
+ * 字段序：taskIdentity（project/branch/revision/run/attempt——core
+ * TaskIdentity 声明序）、items[]（relPath/sha256/sizeBytes）、runKind、
+ * evaluationKey、finalizedAtUtc、manifestDigest。manifestDigest 为透传
+ * 字段（CR-02：编码器对 digest 类字段零计算——归档端口在调用 dump 前
+ * 自行计算回填，被摘要对象口径见 ArchiveServiceImpl::computeManifest-
+ * DigestHex）。
+ *
+ * @param value [in] 运行完整性清单（runKind/evaluationKey 为登记透传
+ *              的 ASCII token——调用方已校验）
+ * @return 纯 ASCII、紧凑、固定字段序的 JSON 文本
+ *
+ * @throws std::invalid_argument 不可达路径（本类型无自由 UTF-8 字段——
+ *         防御性契约声明，与含 UTF-8 字段的 dump 对齐）
+ */
+std::string dump(const RunManifest& value);
+
 // =====================================================================
 // 严格解析（parse）——拒绝一切非法输入（acceptance 2）；版本判定 §8.11
 // =====================================================================

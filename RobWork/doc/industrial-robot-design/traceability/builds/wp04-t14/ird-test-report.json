@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T14",
+  "masterWp": "WP-04-T14",
+  "branch": "wp04-t14",
+  "base": "3a505119e520732792dd311a6695ede8202df7f1",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC library",
+      "result": "两模式构建零错误（smoke 与 integration；本任务新增 src/ArchiveServiceImpl.cpp 编译单元＋Codec.cpp 增量 dump(RunManifest)，其余编译单元行为零变化——ProjectStoreImpl 仅增 include/装配/friend/窄访问器/archive() 访问器五面）",
+      "notes": "PRJ-T14 产物：归档端口（§5.6/§10.1/§10.2）——公共头 ArchivePort.hpp 增量落位〔§3.1 组成表行：ArchiveRequest/ArchiveItem/ArchiveBatch/ArchiveStatus/ArchiveEndReason/IResultArchivePort/ArchiveSessionRef——RunManifest 复用 PersistenceFormat §4.4.7 冻结类型不重定义〕＋src/ArchiveServiceImpl.{hpp,cpp}〔begin 校验清单/运行目录创建、writeBatch 只增发布＋批次级幂等/冲突、finalize manifest 原子发布＝D-13 完整判据＋D-14 摘要幂等与 PRJ-ARCHIVE-CONFLICT 冲突拒绝＋磁盘核验把守发布路径、abandon 全路径责任终结〕＋ProjectStore.hpp 增挂 archive() 访问器〔§5.1 五端口访问器全部挂载完成〕＋Codec 增量 dump(RunManifest)〔§4.4.7 写侧编码——manifestDigest 由端口经自由函数 computeManifestDigestHex 计算回填，CR-02 唯一哈希路径＝core ContentDigester〕＋DiagRecords.hpp 增量 makeArchiveConflict〔PRJ-ARCHIVE-CONFLICT 唯一装配点〕。会话生命周期：begin 起持宿主在途票据（§9.7 引用持有通道），每笔写经 StoreLock::requireWriteAuthority 探测（§9.6 失权防护通道）——两通道全归 project（acceptance 3）；宿主析构先 finishClose 置 Closed、m_archive 成员（声明序最末＝最先析构）强制终结全部在途会话并锁外释放票据（删除器观测 Closed 不触发排空回调——析构静默终局口径）。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "253/253 PASSED（两模式一致：smoke 与 integration 各 253/253；既有 242 用例零回归＋本任务新增 11 用例全绿）",
+      "notes": "新增 11 用例（acceptance 逐条对账，套件 ArchiveServiceTest）：acceptance 2＝四用例〔F9_FinalizeManifestIsCompletenessJudge：F9/D-13/CON-04——finalize 前 manifest.json 不存在＋listRuns 不列、发布后磁盘 manifest 经 parseRunManifest 全等＋dump 逐字节还原（§4.8 round-trip）＋manifestDigest 与重算摘要一致〔幂等判据自洽〕＋listRuns 逐字段一致（§4.4.7 原样透传）＋重开可见（D-13 打开协议侧）；D14_RedeliveryIdempotentAndConflictRejected：重投递同一 manifest 幂等成功〔不重写——磁盘字节不变〕、内容分歧→ArchiveConflict＋PRJ-ARCHIVE-CONFLICT 用户诊断＋既有 manifest 不覆盖＋冲突后会话未终结可 abandon；D14_BatchLevelRedeliverySkipOrConflict：批次级重投递一致跳过（磁盘零变化）/不一致冲突拒绝且文件保持原内容；F9_FinalizeVerifiesManifestAgainstDisk：O-12 完整性发布义务（实现口径④）——sha256/size/缺失三类声明不符→StoreCorrupt＋manifest 不发布〔失败不产生假完整〕＋会话未终结正确声明重试成功〕；acceptance 3＝四用例〔SessionRef_LifecycleAndOwnership：begin 后 requestClose 返回在途数≥1 且不关闭〔会话持票据＝§9.7 引用持有通道〕＋finalize 终结后句柄失效 fail-fast〔实现口径⑦〕＋空句柄 fail-fast＋abandon 幂等；Abandon_FullPathTerminationNoPermanentWait：排空挂起→finalize 失败不终结不关闭→abandon(Failed) 排空归零→关闭＋一次性回调〔A-4 无永久等待〕＋批次残留保留为未完成〔CON-04——重开 listRuns 不列〕；RelPath_WhitelistFailFast：穿越/绝对/盘符/反斜杠/保留名 manifest.json/暂存后缀 .ird-part/设备名/控制字符/超长/空串全拒绝（NFR-SEC-01）＋违约零磁盘副作用＋空批 no-op；Begin_RejectionMatrix：跨项目 task 拒绝（AT-10）＋开发诊断、attempt=0、runKind 空、runDir 白名单外（A8 不重推导）全 fail-fast＋零会话建立〕；acceptance 4 关联＝三用例〔Task03_ArchiveBoundToOriginalRevisionIgnoreHeadAdvance：TASK-03/CON-02——提交两次推进 HEAD 后绑定 r0 的归档照常成功＋查询面 r0 名下可见〔A8 绑定原修订〕；Begin_ReadOnlyContextRejected：只读上下文 begin→LockHeldByOther＋PRJ-LOCK-HELD（PM-07 归档面）；Draining_RejectsNewBeginButServesExistingSession：§9.7 分野——排空期新 begin→ContextClosed、既有会话 writeBatch 照常、abandon 收尾关闭完成〕。"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "18/18 PASSED（两模式一致：smoke 与 integration 各 18/18；既有 15 用例零回归＋本任务新增 3 用例全绿）",
+      "notes": "新增 3 用例（套件 ArchiveContractTest——归档协作属 §3.3 跨单元契约测试面，契约 note 登记口径）：acceptance 1＝两用例〔PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed：PRJ-TX-8 进程内模拟——begin（派发时预留）→requestClose（返回在途数≥1、不关闭）→迟到完成事件到达→writeBatch/finalize→closed()==true＋一次性回调恰一次；ResultArchived 事件恰一条、kind 与载荷五元组一致（core DomainEvent::make 工厂）；进程内全序戳断言『事件发布先于关闭回调』（§10.2 流程序：finalize→事件→引用释放→Closed）；PRJ_TX8_CrossProjectEventNotWritten：项目 A 五元组误入 B 端口→invalid_argument＋开发诊断＋B 的 results/ 磁盘无外来 run 目录＋B 的 listRuns 空＋B 上下文不受影响〕；acceptance 4＝Ppr4_ConcurrentSessionsSerializedByWriterMutex：双线程并发各自 begin→batch→finalize 不同 run 全部成功（线程内不做 gtest 断言——QueryPortTest 互斥消息表汇合纪律）＋两份 manifest 磁盘一致＋requestClose 同步完成（在途归零）——调用线程单侧冻结（任意线程进入、writer 互斥内部串行，§9.8）的行为级自证；RunRegistry 对接细节不在测试中预设（P-PR-4 处置口径）。既有 15 用例零回归（LinkageContractTest 唯一单元边与 BuildRedLineTest 零 Qt/R-2 扫描自动覆盖本任务新增文件）。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project" },
+    { "mode": "integration", "log": "integration-contract-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_contract_test（契约 verify 命令——tasks/foundation/PRJ-T14.json verify）" },
+    { "mode": "integration", "log": "verify-target-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令——tasks/foundation/PRJ-T14.json verify）" },
+    { "mode": "integration-full", "log": "（全量 Release 构建零错误零警告〔除既有 C4834〕，会话执行留证）", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release" },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg 绝对路径（AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-test-run", "log": "smoke-test-run.log", "exitCode": 0 },
+    { "mode": "smoke-contract-test-run", "log": "smoke-contract-test-run.log", "exitCode": 0 },
+    { "mode": "integration-test-run", "log": "integration-test-run.log", "exitCode": 0 },
+    { "mode": "integration-contract-test-run", "log": "integration-contract-test-run.log", "exitCode": 0 }
+  ],
+  "gates": {
+    "ird_gates": "实跑（2026-09-16，集成构建树 ird_gates 目标；日志 ird-gates.log）：命中 9 项＝7×IRD-GATE-SUB（既有测试目标直链 sdurws_ird_testkit 的登记形态提示）＋1×IRD-GATE-T1（sdurws_ird_testdata_lint 产品目标链接 testkit）＋1×IRD-GATE-R4（ProjectStoreImpl.cpp 的 \"RobWork\" 字面量 1 处——kCreatedWithToolVersion 工具版本串，git show base 核对为 T08 既有；本任务对该文件改动仅 include/装配/friend/窄访问器/archive() 访问器五面，无新字面量）。命中集合与 wp04-t08～t13 基线逐项一致＝零新增命中；门禁目标按 SA-10 设计命中即非零退出（exit 1），既有命中属基线登记面非本任务违规。",
+    "validateTask": "PASS（validate-task.log；pwsh -File validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T14.json，exit 0——PASS (1 tasks)）"
+  },
+  "acceptanceCoverage": "acceptance 1＝全（PRJ-TX-8 进程内模拟两用例归契约目标——契约 note §3.3 口径：requestClose 后迟到完成事件到达、上下文存活至归档 finalize、完成后才 Closed〔一次性回调恰一次＋事件先于关闭回调的全序戳断言〕；跨项目事件不写入＝B 端口拒绝＋B results/ 磁盘无外来 run＋listRuns 空三通道；归档绑定原修订不因 HEAD 前进拒绝〔TASK-03/PM-13/ARCH §4.5 A1/A8〕＝单元目标 Task03 具名用例——HEAD 推进两次后绑定 r0 归档成功＋查询面 r0 可见）；acceptance 2＝全（F9 具名四用例＋D-14 两用例：manifest 原子发布＝完整判据〔D-13 发布前后 listRuns/磁盘/重开三通道〕、同 attempt 重投递幂等〔D-14 摘要比对、不重写〕、内容不一致＝PRJ-ARCHIVE-CONFLICT 冲突拒绝〔manifest 级＋批次级两粒度〕、begin/abandon 全路径终结〔四值原因＋幂等＋失败即 abandon 释放引用——A-4 无永久等待，Abandon 具名用例〕）；acceptance 3＝全（ArchiveSessionRef 生命周期〔引用持有通道＝requestClose 在途计数、失权防护通道＝requireWriteAuthority 探测、失效句柄 fail-fast、abandon 幂等〕＋relPath 白名单 NFR-SEC-01 全拒绝矩阵＋跨项目/只读/Draining begin 拒绝矩阵＋RunManifest 字段与 §4.4.7 契约一致〔解析全等＋round-trip＋listRuns 逐字段〕＋results 写入口唯一归 project＝O-12 磁盘核验把守发布路径）；acceptance 4＝全（P-PR-4 处置：调用线程单侧冻结——契约目标双线程并发用例的行为级自证＋writer 互斥单侧串行〔§5.6/§9.8〕，RunRegistry 对接细节不预设不私改对端契约〔execution 详设 WP-08-T01 P-PR-4 冻结点定稿后二次对齐〕；P-PR-1 处置：ResultArchived 事件经 core IDomainEventBus〔Events.hpp v0.1 基线 DomainEvent::make 工厂，契约目标具名用例行为级自证〕，零 core 修改实证＝本任务 diff 无 core/ 路径文件，core 冻结 diff 后按影响面增量同步〔§15.3 既有口径〕）。",
+  "implementationNotes": "实现口径登记七项（DTB §5.4，详见 ArchivePort.hpp/ArchiveServiceImpl.hpp 文件头，已随 units/project.md §15.4 v0.16 登记）：①begin 的『同 runId 已有 manifest』比对＝身份比对（五元组＋runKind/evaluationKey 逐字段相等——请求不携摘要，语义等价的幂等判据前置到身份面；内容级 D-14 摘要幂等仍由 finalize 承载；同一 run 目录绑定一份登记事实，身份不符〔含同 runId 不同 attempt〕＝ArchiveConflict）；②runDir 白名单判据＝weakly_canonical(runDir) 与 weakly_canonical(<项目根>/results/<task.run 规范文本>) 相等——白名单内＋绑定 run-id 单判据（A8：位置取自登记记录，一致即通过、不一致即拒绝、不静默重定向）；③manifestDigest 被摘要对象＝除 manifestDigest 外全部字段的 canonical 编码（digest 置空后 codec::dump 字节经 contentVersionOf——CR-02 唯一哈希路径；空字段字节参与摘要，两侧计算同一函数故判定自洽；编码归 project〔§4.8〕，finalize 由端口计算回填，调用方该字段不参与）；④finalize 磁盘核验＝逐 items 对照（存在＋sizeBytes＋sha256 实算），且仅把守发布路径——D-14 比对先行（manifest 在＝已完整，重投递只与已发布事实比对；否则『声明了未写入文件』的分歧重投递会被误判 store-corrupt 而非 archive-conflict——实现期自测暴露后修正的顺序语义）；⑤批次/manifest 暂存后缀 \".ird-part\" 为保留名（relPath 校验拒绝该后缀防暂存名/正式名碰撞；manifest.json 同为保留名；末分量另拒 Windows 设备名——NFR-SEC-01 消费侧）；⑥幂等 finalize 命中不重复发布 ResultArchived（进程内总线恰一次语义——core Events.hpp；重复投递由 execution 完成事件 at-least-once 承接，存储侧不放大）；⑦已终结句柄的 writeBatch/finalize＝fail-fast（invalid_argument——调用方契约错误不走返回值轨）、abandon 对已终结会话幂等 no-op（全路径终结的容忍形态）、空句柄一律 fail-fast。并发面：锁序＝宿主 m_lifecycleMutex→m_writerMutex→m_sessionsMutex（不反向）；在途票据释放一律在本类锁外（删除器取宿主 lifecycle 锁——§9.7 排空触发点不在锁内发生）；会话终结先锁内置态摘登记、ResultArchived 事件在终结态下发布、票据最后释放（§10.2 流程序）。文档同步：units/project.md v0.16（文件版本行＋§15.4 变更记录）。"
+}

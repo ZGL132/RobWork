@@ -133,6 +133,35 @@ inline core::DiagnosticRecord makeDraftCorrupt(const std::string& moduleId,
         "上一版草稿继续编辑，或直接放弃该草稿后重新编辑");
 }
 
+/**
+ * @brief PRJ-ARCHIVE-CONFLICT 记录（归档重投递内容冲突——PRJ-T14 增补
+ *        装配形态）。
+ *
+ * 背景（码值与分类的权威出处）：diagnostics.md §4.6 收编清单十码之一
+ *   （§5.0 清单同源）；StoreErrorCode::ArchiveConflict（"archive-conflict"
+ *   ——§4.4.8）的用户级映射码。产出点＝归档端口的重投递冲突拒绝
+ *  （D-14：同 (runId,attempt) 的 manifest 摘要/批次摘要不一致——数据
+ *   分歧不掩盖，§10.1"重投递幂等与内容冲突"行）。begin 侧的身份冲突
+ *  （同一 run 目录绑定另一份登记事实）同码同工厂——两类冲突同属"归档
+ *   重投递内容与既有事实不一致"。
+ *
+ * @param detail [in] 开发定位明细（run/kind/比对维度——进 cause 字段）
+ */
+inline core::DiagnosticRecord makeArchiveConflict(const std::string& detail)
+{
+    return core::DiagnosticRecord::make(
+        std::string{"PRJ-ARCHIVE-CONFLICT"},
+        std::nullopt,
+        std::nullopt, std::nullopt,
+        "归档被拒绝：重投递内容与已存档事实不一致（§10.1/D-14——同一"
+        "运行的重复归档必须携带与首次一致的内容，分歧按冲突拒绝，"
+        "不覆盖既有数据）",
+        detail,
+        "请核对运行登记与归档来源：确属同一运行的重试须携带原始内容"
+        "重投递；确属新内容应为新 run 登记新目录。既有已存档数据未"
+        "被修改");
+}
+
 }  // namespace sdurws::ird::project::diagrec
 
 #endif  // SDURWS_IRD_PROJECT_SRC_DIAGRECORDS_HPP

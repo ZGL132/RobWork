@@ -94,6 +94,11 @@ class DraftServiceImpl;
 // 在实现文件完成）。
 class UndoRedoServiceImpl;
 
+// 前向声明：归档端口实现（PRJ-T14 落位——完整定义于
+// ArchiveServiceImpl.hpp；m_archive 同款不完整类型持有，装配与析构
+// 在实现文件完成）。
+class ArchiveServiceImpl;
+
 /**
  * @brief 存储上下文状态机（§9.6①的载体；Draining/Closed/LostWrite 一律
  *        拒绝新写——LostWrite 不单列状态：锁失权锁存在 StoreLock 内部，
@@ -175,6 +180,17 @@ public:
      * 承载——拒绝语义在服务方法内）。
      */
     [[nodiscard]] UndoRedoService& undoRedo() const noexcept override;
+
+    /**
+     * @brief 归档端口访问器（§5.1 原文形态——PRJ-T14 增量挂载；契约见
+     *        ProjectStore::archive() 公共头注释）。
+     *
+     * 返回装配期创建的 ArchiveServiceImpl 实例（同一上下文恒同一实例
+     * ——端口无独立生命周期）；noexcept 纯指针返回，任何状态下可调
+     * （拒绝语义在端口方法内：begin 的门卫三道抛异常轨、batch/finalize
+     * 返回值轨、失效句柄 fail-fast）。
+     */
+    [[nodiscard]] IResultArchivePort& archive() const noexcept override;
 
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
@@ -274,6 +290,17 @@ public:
     }
 
     /**
+     * @brief 归档端口实现访问（PRJ-T14——同单元测试消费面，先例同上：
+     *        归档用例的会话注册表观测〔activeSessionCount〕与终结形态
+     *        经实现类型；不进公共头。常规消费走 archive() 公共访问器
+     *        的接口引用，本访问器只服务实现类型的内部通道需求）。
+     */
+    [[nodiscard]] ArchiveServiceImpl& archiveService() noexcept
+    {
+        return *m_archive;
+    }
+
+    /**
      * @brief 只读上下文判定（从未持锁＝PM-07 显式只读或降级——与
      *        "持锁但失权"区分；CommandServiceImpl S1 的 not-writable
      *        分类用——§9.6 门卫两道防线的提前面）。
@@ -300,6 +327,10 @@ private:
     // 草稿服务实现是本类的草稿写面（写门卫/writer 互斥/在途票据/身份
     // 事实——同款窄 friend 访问，PRJ-T12）。
     friend class DraftServiceImpl;
+
+    // 归档端口实现是本类的归档写面（写门卫三道/writer 互斥/在途票据/
+    // 事件总线/身份事实——同款窄 friend 访问，PRJ-T14）。
+    friend class ArchiveServiceImpl;
 
     // 撤销/重做服务实现消费宿主的开发诊断通道（PRJ-T13——同款窄 friend
     // 访问；查询/命令端口经公共访问器消费，零写通道暴露）。
@@ -457,6 +488,15 @@ private:
     /// 宿主引用、调用期才解引用 query()/commands()——构造时点两端口已
     /// 就绪；析构无操作，逆序安全）。
     std::unique_ptr<UndoRedoServiceImpl> m_undoRedo;
+
+    /// 归档端口实现（PRJ-T14——§5.1 端口访问器 archive() 的交付物）。
+    /// 声明序在 m_undoRedo 之后＝五端口中构造序最末、成员逆序析构中最
+    /// 先销毁。析构语义有实义（区别于 T13 的"析构无操作"）：归档会话
+    /// 持宿主在途票据（§9.7），本类析构（finishClose 已置 Closed 之后）
+    /// 时强制终结全部在途会话并释放票据——删除器观测 Closed 不再触发
+    /// 排空回调（析构静默终局口径；顺序依赖＝票据删除器读 m_state/
+    /// m_lifecycleMutex，两者声明序在本成员之前＝析构晚于本成员，安全）。
+    std::unique_ptr<ArchiveServiceImpl> m_archive;
 };
 
 }  // namespace sdurws::ird::project
