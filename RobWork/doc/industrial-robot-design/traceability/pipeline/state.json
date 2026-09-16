@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 170,
+  "tickCount": 171,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "fix": 0,
     "implement": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-16T13:06:17+08:00",
+    "updatedAt": "2026-09-16T18:12:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -963,6 +963,19 @@
       ],
       "acceptanceRecord": "traceability/acceptance/PRJ-T09-20260916.md",
       "mergedAt": "2026-09-16"
+    },
+    {
+      "task": "PRJ-T10",
+      "unit": "project",
+      "result": "pass-merged",
+      "commits": [
+        "c6527070810c9a00324d57d3482aa774abdebaae",
+        "43925b3ca33193dc75593fb94338c366217d40f8",
+        "e9d6da3fced7e3dadf409267857d6b231cb1610d",
+        "37d05852530d6512b22091c9a1f24ad027908820"
+      ],
+      "acceptanceRecord": "traceability/acceptance/PRJ-T10-20260916.md",
+      "mergedAt": "2026-09-16"
     }
   ],
   "policy": {
@@ -988,11 +1001,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "PRJ-T10",
-      "contractPath": "tasks/foundation/PRJ-T10.json",
-      "branch": "wp04-t10"
-    },
     {
       "taskId": "PRJ-T11",
       "contractPath": "tasks/foundation/PRJ-T11.json",
@@ -1122,5 +1130,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "bde2451d-de25-42a2-b15e-f1367ca048e1"
+  "tickToken": "955d5aef-0ba4-48f3-ad22-4c5b451b6f5c"
 }

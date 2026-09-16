@@ -4,10 +4,22 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "命令服务与内置命令（CommandServiceImpl）",
-  "status": "ready",
-  "dependsOn": ["PRJ-T08", "PRJ-T09", "DIAG-T03"],
-  "requirements": ["ARC-01", "PM-18"],
-  "designRefs": ["units/project.md#12", "units/project.md#5.3", "units/project.md#5.3.6", "units/project.md#6"],
+  "status": "done",
+  "dependsOn": [
+    "PRJ-T08",
+    "PRJ-T09",
+    "DIAG-T03"
+  ],
+  "requirements": [
+    "ARC-01",
+    "PM-18"
+  ],
+  "designRefs": [
+    "units/project.md#12",
+    "units/project.md#5.3",
+    "units/project.md#5.3.6",
+    "units/project.md#6"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
     "RobWork/doc/industrial-robot-design/units/project.md",
@@ -17,14 +29,23 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_project_test",
     "cmake --build build --config Release --target sdurws_ird_project_contract_test"
   ],
   "branch": "wp04-t10",
   "interUnit": true,
-  "knownPitfalls": ["P-PR-1", "P-PR-3", "P-PR-6", "P-PR-7"],
+  "knownPitfalls": [
+    "P-PR-1",
+    "P-PR-3",
+    "P-PR-6",
+    "P-PR-7"
+  ],
   "acceptance": [
     "PRJ-TX-1 并发与过期基线用例通过：双线程并发 submit 全局串行（第二个等待）、各恰好一个新修订（seq 单调无重复）；expectedRevision=旧 tip 提交 Rejected(stale-revision) 且无修订落盘（PRJ-STALE-REVISION-REJECTED，§6.2 并发校验）",
     "PRJ-TX-3 双编译用例通过（桩编译）：IModelCompilePort 桩三路——WorkCell 失败/DynamicWorkCell 失败/双成功；任一失败→无修订无发布（对象库无新对象、.staging/tmp 清理），成功→恰好一个新修订（MDL-06 双编译原子性，§6.6 事务编排；D-09 注入形态零 runtime 编译依赖）",
