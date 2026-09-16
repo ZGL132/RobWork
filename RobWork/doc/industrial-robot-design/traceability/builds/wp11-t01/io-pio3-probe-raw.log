@@ -1,0 +1,54 @@
+=== P-IO-3 候选依赖 vcpkg 探针原始输出（2026-09-17，wp11-t01）===
+--- ① vcpkg search（端口注册与版本）---
+[search libzip]
+libzip                   1.11.4           A C library for reading, creating, and modifying zip archives.
+libzip[bzip2]                             Support bzip2-compressed zip archives
+libzip[default-aes]                       AES (encryption) support using a default backend
+libzip[liblzma]                           Support XZ compressed zip archives using liblzma
+libzip[mbedtls]                           AES (encryption) support using mbedtls
+libzip[openssl]                           AES (encryption) support using OpenSSL
+[search miniz]
+miniz                    3.1.2            Single C source file zlib-replacement library
+minizip                  1.3.2            Minizip zip file manipulation library
+minizip[bzip2]                            Support compression using bzip2 library
+minizip[tools]                            Install tools
+minizip[unofficial-iowin32]               Include iowin32 API in minizip library.
+minizip-ng               4.1.0            minizip-ng is a zip manipulation library written in C that is supported on...
+[search expat]
+expat                    2.8.3            XML parser library written in C
+gdal[expat]                               Use EXPAT library
+libsbml[expat]                            libsbml using expat parser
+The result may be outdated. Run `git pull` to get the latest results.
+If your port is not listed, please open an issue at and/or consider making a pull request.  -  https://github.com/Microsoft/vcpkg/issues
+[search pugixml]
+bitserializer[pugixml-archive]            Module for support XML (implementation based on the PugiXml library)
+pugixml                  1.16             Light-weight, simple and fast XML parser for C++ with XPath support
+pugixml[compact]                          Enable compact memory mode (reduces memory consumption at the cost of perf...
+The result may be outdated. Run `git pull` to get the latest results.
+If your port is not listed, please open an issue at and/or consider making a pull request.  -  https://github.com/Microsoft/vcpkg/issues
+--- ② 端口 vcpkg.json 版本字段 ---
+ports/libzip/vcpkg.json:  "version": "1.11.4",
+ports/miniz/vcpkg.json:  "version": "3.1.2",
+ports/expat/vcpkg.json:  "version": "2.8.3",
+ports/pugixml/vcpkg.json:  "version": "1.16",
+--- ③ 本机安装状态（候选零新增；已装为环境既有）---
+bzip2:x64-windows                                 1.0.8#6             bzip2 is a freely available, patent free, high-q...
+bzip2[tool]:x64-windows                                               Builds bzip2 executable
+libzip:x64-windows                                1.11.4              A C library for reading, creating, and modifying...
+libzip[bzip2]:x64-windows                                             Support bzip2-compressed zip archives
+libzip[default-aes]:x64-windows                                       AES (encryption) support using a default backend
+xerces-c:x64-windows                              3.3.0#1             Xerces-C++ is a XML parser, for parsing, generat...
+xerces-c[network]:x64-windows                                         Network support
+zlib:x64-windows                                  1.3.2#2             A compression library
+--- ④ downloads 离线缓存 ---
+nih-at-libzip-v1.11.4.tar.gz
+--- ⑤ libzip CMake 接入形态 ---
+copyright
+libzip-config-version.cmake
+libzip-config.cmake
+libzip-targets-debug.cmake
+libzip-targets-release.cmake
+libzip-targets.cmake
+modules
+vcpkg-spdx-resources.json
+add_library(libzip::zip SHARED IMPORTED)
