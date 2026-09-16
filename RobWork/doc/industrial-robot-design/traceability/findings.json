@@ -1566,6 +1566,46 @@
       "title": "既有用例偶发失败观察（非本任务新增用例）：sdurws_ird_project_contract_test 的 LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02（T05/T08 面——进程崩溃模拟＋并发接管时序）在验收环境探针还原后首轮全量复跑 1 次失败，随后 3 连跑全绿（本验收全程前后另有 2 次全量 15/15）——高负载（MSBuild 重建收尾窗口）下时序敏感偶发，与 F-068 增量陷阱场景叠加出现过一次",
       "owner": "测试约定所有者（units/testkit.md 辖域）＋project 单元测试维护者",
       "resolution": "处置建议＝评估为该用例（及同族崩溃模拟用例）增加确定性重试容忍（gtest retry 或用例内接管窗口放宽）或在验收探针流程中隔离重建与测试执行的负载窗口；本例不构成 PRJ-T10 阻断（复跑稳定、非送验范围用例），仅作稳定性跟踪。编号顺延自 F-155，合入时由所有者确认。"
+    },
+    {
+      "id": "F-157",
+      "source": "traceability/acceptance/PRJ-T11-20260916.md#4.9/4.10-G-1（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148/F-152 之后又一例）：PRJ-T11 留痕提交 cdb24264 正文声称『traceability/builds/wp04-t11/ 全套执行证据（16 文件）』（integration-build.log／integration-contract-build.log／verify-target-build.log／smoke-configure.log／smoke-build.log／smoke-test-run.log／smoke-contract-test-run.log／integration-test-run.log／integration-contract-test-run.log／ird-gates.log／validate-task.log 等），ird-test-report.json builds[] 九项与 gates 两项引用的全部 .log 亦均为库外文件；git ls-tree @cdb24264 实证 builds/wp04-t11/ 仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份），.log 零入库（.gitignore:87 *.log 规则逐文件命中——F-010 根因第九次踩中，F-153 第八次之后），提交正文未内联明示该处置（F-136/F-138 建议形态未采纳）。缓解面：结论性数据（两模式 219/219＋15/15、ird_gates 9 命中＝F-145 基线零新增、validate-task PASS、validate-docs 同数字）经验收者 detached worktree 全新树亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（DTB §5 会话流程所有者；提交已推送不追溯改写）",
+      "resolution": "处置建议＝同 F-153：留痕日志以 git add -f 强加入库（wp02-t02/wp02-t08/wp04-t01/wp05-* 等任务先例）或在提交正文/ird-test-report.json localOnlyNote 内联明示『.log 因 .gitignore 未入库、证据本体＝XML＋report』；根本处置仍为 F-010 的 traceability/** 负向豁免。编号顺延自 F-156，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-158",
+      "source": "traceability/acceptance/PRJ-T11-20260916.md#4.9-G-2（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048/F-051/F-059 同型再现：PRJ-T11 送验四提交中两份标题前缀后以名词开头非动词开头——cdb24264『[governance] PRJ-T11 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋门禁实跑』（F-139『PRJ-Txx 验证留痕』逐字模板连例再现、[governance] 车道继 F-151/F-154 后第三例）、46c58061『[units] project.md v0.13：PRJ-T11 确认放行流落位登记』（F-037/F-079/F-092/F-130/F-151/F-154 的 [units] 文件名词短语车道同型）——家族第 19/20 例，证明模板补救（实施者模板补提交标题动词开头示例）落地前口径仍漂移；实现提交 bfe2d5d1『实现确认放行流（绑定四元组/两处复核/留痕入 command.json）』与测试提交 151e7d6b『新增确认放行流用例组（13 用例…）』动词开头合规。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者全新树亲手复现全部为真（两模式 219/219＋15/15、门禁 9 命中零新增、validate-task/validate-docs PASS、双探针即红还原复绿），既往判例均不阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[governance] 登记验证留痕…』『[units] 登记 project.md v0.13 落位…』）；对已推送历史（cdb24264/46c58061 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-157，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-159",
+      "source": "traceability/acceptance/PRJ-T11-20260916.md#4.8-G-3（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155 家族第八次再现：PRJ-T11 触及 units/project.md（§15.4 追加 v0.13 行＋卡头文档版本行 v0.12→v0.13 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.13 行日期 2026-09-16 更新——版本半边落地、日期半边连续第八跳未落地（F-134 两条处置建议之一持续被跳过）",
+      "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-147/F-155：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-158，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-160",
+      "source": "traceability/acceptance/PRJ-T11-20260916.md#问题清单-G-4（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）：验收者逐行通读新增实现与测试",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "PRJ-T11 新增代码零行为影响风格微瑕两处（F-046/F-063 同型，验收者逐行通读发现）：①CommandServiceTest.cpp 约 L1112 用例头注释笔误『ReRejected(confirmations-rejected)』（应为 Rejected，重复首字母）；②CommandServiceImpl.cpp recheckConfirmations 的 currentBase 解析 lambda 在逐 finding 循环体内每轮重复构造——其输入（currentBaseRevision 字符串）与循环变量无关，可提至循环外一次求解（当前每轮重复 tryFromCanonical 解析，零正确性影响、finding 数量级为个位数）",
+      "owner": "project 单元实现（建议随下次触及该两文件的任务顺手规整，避免独立格式化提交）",
+      "resolution": "①更正注释为 Rejected；②currentBase 解析提至循环外（或注释说明保持现状的理由）。不影响 PRJ-T11 验收（pass）。编号顺延自 F-159，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
