@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "归档端口（ArchiveServiceImpl：begin/batch/finalize/abandon）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T08"],
   "requirements": ["TASK-03", "PM-13", "CON-04"],
   "designRefs": ["units/project.md#12", "units/project.md#5.6", "units/project.md#10.1"],
