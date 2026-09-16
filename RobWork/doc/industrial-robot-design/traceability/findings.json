@@ -1696,6 +1696,56 @@
       "title": "PRJ-T14 新增代码零行为影响风格微瑕两处（F-160/F-046/F-063 同型，验收者逐行通读发现）：①ArchivePort.hpp writeBatch 契约注释『本操作开始时对锁句執行权威探测』含繁体『執』字（应为『锁句柄执行』或『对锁执行』）；②ArchiveServiceImpl.hpp 文件头实现口径④⑤两行缩进错位（行首多一格——『④finalize 的磁盘核验…』续行与『⑤批次临时文件后缀…』整体缩进异常，排版瑕疵）。两处均纯注释排版问题，零语义影响",
       "owner": "project 详设所有者／实施侧（随下次触及该文件的任务顺手修正）",
       "resolution": "处置建议＝随下次触及 ArchivePort.hpp/ArchiveServiceImpl.hpp 的任务顺手修正两处排版；不单独开返工（零语义影响）。编号顺延自 F-168，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-170",
+      "source": "traceability/acceptance/PRJ-T15-20260917.md#4.8-G-1（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168 家族第十二次再现：PRJ-T15 触及 units/project.md（§15.4 追加 v0.17 行＋卡头文档版本行 v0.16→v0.17 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.17 行日期 2026-09-17 更新——版本半边落地、日期半边连续第十二跳未落地（F-168 处置建议再次被跳过，且 v0.17 登记行未注明家族消账进展——ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向为文档内部不一致（日期少报），v0.17 登记内容本身完整准确且经验收者实测逐项吻合",
+      "owner": "project 详设所有者（units/project.md 辖域；F-163/F-168 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-168：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 机检维度与 F-057 后半同批评估。编号顺延自 F-169，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-171",
+      "source": "traceability/acceptance/PRJ-T15-20260917.md#4.9-G-2（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-012 家族再现（任务车道留痕提交例）：a52dbd93『[WP-04-T15] 验证留痕与单元卡同步（PRJ-T15 落地登记 v0.17）』前缀后以名词短语『验证留痕』开头非动词开头；实现提交 a8b01ac3『[WP-04-T15] 落地 PRJ-TX 契约测试与崩溃注入用例体（…）』动词开头合规。纯风格瑕疵：留痕提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者独立复现全部为真（无粉饰），既往判例均不阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，任务车道句式如『[WP-04-T15] 归档验证留痕…』『[WP-04-T15] 同步单元卡与留痕…』）；对已推送历史不追溯改写（AGENTS §6.3）。编号顺延自 F-170，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-172",
+      "source": "traceability/acceptance/PRJ-T15-20260917.md#4.10-G-3（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148/F-152/F-157/F-165/F-166 之后又一例）且 F-010 根因第九次踩中：a52dbd93 正文与 ird-test-report.json 声称入库 traceability/builds/wp04-t15/ 下『双模式构建日志×3＋verify 日志＋gtest XML 四份＋运行日志四份＋ird-gates.log＋validate-task.log』，提交树实测仅 5 份 ird-test-report*.json 在库——*.log 七份被 .gitignore:87 全局规则吞（F-081/F-083/F-085/F-087/F-088/F-090/F-153 之后第八次踩中该根因，本例第九次）；4 份 gtest XML 不在任何 ignore 规则内（check-ignore 实证）属生成后未提交。缓解事实：等价用例级明细以四份 listenerReport JSON（ird-test-report-unit/contract-*-smoke/integration.json）在库承载且两模式 durationMs 差异证实真实独立运行；验证结论（28/28＋254+1 skipped＋gates 11＋validate-task PASS）经验收者亲手复现全部为真——无结论性粉饰，按 F-166 判例建议级不阻断",
+      "owner": "构建约定所有者（F-010 根因——.gitignore 负向豁免或 .txt 后缀约定）＋实施侧（XML 等未入 ignore 的留痕应在 git status 核对后入库；F-010 处置建议『留痕提交前以 git status 核对实际入库清单』再次未执行）",
+      "resolution": "处置建议＝同 F-010/F-166：①为 traceability/** 增加 .gitignore 负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；②gtest XML 与 listenerReport 二选一在库即可但报告字段不得引用未入库文件名（幻影字段治理——同 F-113/F-114 家族处置）。编号顺延自 F-171，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-173",
+      "source": "traceability/acceptance/PRJ-T15-20260917.md#4.4-G-4（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "ird_gates 基线新增 2 命中（本任务引入，实施侧自查已如实登记——非缺位）：IRD-GATE-SUB×2＝sdurws_ird_project_test→sdurws_ird_testkit、sdurws_ird_project_contract_test→sdurws_ird_testkit，为 PRJ-T15 契约 interUnit=true＋acceptance 2 明文的 testkit 消费链接边（T-1 允许形态——产品目标零 testkit 边由 NoTestkitEdge 双侧断言钉住，门禁 T1 产品面零命中）；实施侧已在 ird-test-report.json gates.disposition 与单元卡 §15.4 v0.17 行登记『DTB §4.5 既有例外行同型实例，实例行增补归 WP-01-T03』——F-115（diagnostics_contract_test 同型）处置先例复用",
+      "owner": "WP-01-T03（ird_gates 白名单登记册维护任务）——随其落地把两实例行纳入 DTB §4.5 例外行登记",
+      "resolution": "处置建议＝WP-01-T03 落地时把 project 两测试目标→testkit 边与 F-115 的 diagnostics 边同批纳入例外行登记（消除门禁红字基线漂移）；登记前各验收以『与基线逐项一致＋新增项有契约明文依据』为核对口径。编号顺延自 F-172，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-174",
+      "source": "traceability/acceptance/PRJ-T15-20260917.md#问题清单-G-5（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）：验收者逐行通读新增测试文件发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "PRJ-T15 新增代码零行为影响健壮性微瑕一处（F-160/F-169/F-046/F-063 同型，验收者逐行通读发现）：ProcessCrashContractTest.cpp 两处 startChild（F8ProcessCrash 夹具与 Tx8ArchiveProcessKill 夹具）以 `wchar_t exePath[MAX_PATH]` 固定缓冲调 GetModuleFileNameW 取自身可执行路径，仅断言返回非 0、未检测截断情形（返回值＝nSize-1 且末字符 NUL）——深嵌套构建树/长临时目录下子进程 self-reexec 会以截断路径启动而失败原因不直观。当前 build 树与 TempDir 路径均未超 MAX_PATH（实测 3 轮全绿），零行为影响",
+      "owner": "project 实施侧（随下次触及该文件的任务顺手加固）",
+      "resolution": "处置建议＝随下次触及 ProcessCrashContractTest.cpp 的任务顺手加固：动态缓冲（二次调用取所需长度）或对返回值＝nSize-1 的截断情形 ADD_FAILURE 显性失败；不单独开返工（零语义影响）。编号顺延自 F-173，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
