@@ -89,6 +89,11 @@ class CommandServiceImpl;
 // hpp；m_drafts 同款不完整类型持有，装配与析构在实现文件完成）。
 class DraftServiceImpl;
 
+// 前向声明：撤销/重做服务实现（PRJ-T13 落位——完整定义于
+// UndoRedoServiceImpl.hpp；m_undoRedo 同款不完整类型持有，装配与析构
+// 在实现文件完成）。
+class UndoRedoServiceImpl;
+
 /**
  * @brief 存储上下文状态机（§9.6①的载体；Draining/Closed/LostWrite 一律
  *        拒绝新写——LostWrite 不单列状态：锁失权锁存在 StoreLock 内部，
@@ -159,6 +164,17 @@ public:
      * （拒绝语义在草稿服务方法内——写轨返回值轨、读轨 ContextClosed）。
      */
     [[nodiscard]] DraftService& drafts() const noexcept override;
+
+    /**
+     * @brief 撤销/重做服务端口访问器（§5.1 原文形态——PRJ-T13 增量挂载；
+     *        契约见 ProjectStore::undoRedo() 公共头注释）。
+     *
+     * 返回装配期创建的 UndoRedoServiceImpl 实例（同一上下文恒同一实例
+     * ——会话栈归属该实例，D-11）；noexcept 纯指针返回，任何状态下可调
+     * （status 拒绝态降级为稳定空状态；undo/redo 终态经 CommandResult
+     * 承载——拒绝语义在服务方法内）。
+     */
+    [[nodiscard]] UndoRedoService& undoRedo() const noexcept override;
 
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
@@ -247,6 +263,17 @@ public:
     }
 
     /**
+     * @brief 撤销/重做服务实现访问（PRJ-T13——同单元测试消费面，先例
+     *        同上：undo/redo 用例的会话栈与边界观测经实现类型；不进公
+     *        共头。常规消费走 undoRedo() 公共访问器的接口引用，本访问
+     *        器只服务实现类型的内部通道需求）。
+     */
+    [[nodiscard]] UndoRedoServiceImpl& undoRedoService() noexcept
+    {
+        return *m_undoRedo;
+    }
+
+    /**
      * @brief 只读上下文判定（从未持锁＝PM-07 显式只读或降级——与
      *        "持锁但失权"区分；CommandServiceImpl S1 的 not-writable
      *        分类用——§9.6 门卫两道防线的提前面）。
@@ -273,6 +300,10 @@ private:
     // 草稿服务实现是本类的草稿写面（写门卫/writer 互斥/在途票据/身份
     // 事实——同款窄 friend 访问，PRJ-T12）。
     friend class DraftServiceImpl;
+
+    // 撤销/重做服务实现消费宿主的开发诊断通道（PRJ-T13——同款窄 friend
+    // 访问；查询/命令端口经公共访问器消费，零写通道暴露）。
+    friend class UndoRedoServiceImpl;
 
     friend class ProjectStoreFactory;
 
@@ -357,6 +388,17 @@ private:
         return m_sink;
     }
 
+    /**
+     * @brief 撤销/重做服务的开发诊断通道（UndoRedoServiceImpl friend 窄
+     *        访问器——非对称声明族不入 redo 栈等观察点的 reportDev 上报
+     *        口，PRJ-T13；可空＝丢弃，§5.0 sink 约定。用户级稳定码不经
+     *        此产出——CR-08 同上）。
+     */
+    [[nodiscard]] IDiagnosticsSink* undoredoDevSink() const noexcept
+    {
+        return m_sink;
+    }
+
     // ---- 状态（锁序：m_lifecycleMutex 先于 m_writerMutex；不反向） ----
 
     /// 打开期收集型 sink 的生命周期锚（wp04-t10 缺陷修复——声明序在全部
@@ -409,6 +451,12 @@ private:
     /// 序在 m_query 之后＝构造序最末、析构序最先（DraftServiceImpl 只持
     /// 宿主引用、析构无操作——不触碰宿主成员，逆序安全）。
     std::unique_ptr<DraftServiceImpl> m_drafts;
+
+    /// 撤销/重做服务实现（PRJ-T13——§5.1 端口访问器 undoRedo() 的交付
+    /// 物）。声明序在 m_drafts 之后＝构造序最末、析构序最先（服务只持
+    /// 宿主引用、调用期才解引用 query()/commands()——构造时点两端口已
+    /// 就绪；析构无操作，逆序安全）。
+    std::unique_ptr<UndoRedoServiceImpl> m_undoRedo;
 };
 
 }  // namespace sdurws::ird::project

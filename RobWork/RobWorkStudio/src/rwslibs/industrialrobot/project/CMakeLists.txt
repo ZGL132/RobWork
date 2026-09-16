@@ -126,6 +126,16 @@ find_package(GTest CONFIG REQUIRED)
 # 类型，不重定义〕＋ProjectStore.hpp 增挂 drafts() 访问器＋DiagRecords
 # .hpp 增量 makeDraftCorrupt 装配点〔PRJ-RECOVERY-ORPHAN-DRAFT 的单文件
 # 形态，diagnostics.md §8.2 映射行〕）。
+# PRJ-T13 增列：src/UndoRedoServiceImpl.cpp（§12 PRJ-T13 行产物——撤销/
+# 重做服务：§5.5 接口〔undo＝逆命令提交产生新修订，envelope 取自当前
+# tip 修订的 inverse 记录；redo＝重放被撤销命令原始载荷〕＋§6.9 语义
+# 〔会话栈按分支、不持久化——D-11；新命令清空 redo／过期基线 stale
+# 说明；空历史稳定提示〕＋ProjectStore.hpp 增挂 undoRedo() 访问器；
+# UndoRedoServiceImpl.hpp 为 src/ 私有实现头——R-2；公共契约面＝
+# include/sdurws/ird/project/UndoRedo.hpp〔§3.1 组成表行：
+# UndoRedoService/UndoRedoStatus/InverseRecord〕。零自有写通道——
+# undo/redo 一律经命令端口 submit，§6.5 注册协议：逆命令由业务处理器
+# 产出，project 只提交）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -137,6 +147,7 @@ add_library(sdurws_ird_project STATIC
     src/CommandServiceImpl.cpp
     src/ConfirmationFlow.cpp
     src/DraftServiceImpl.cpp
+    src/UndoRedoServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -256,6 +267,17 @@ endif()
 # 边界＝autosave·manual 同一入口——定时器归 ui 本服务无定时器〕；
 # acceptance 4 P-PR-1 透传自证〔SourcedValue/ValueProvenance 负载
 # round-trip 逐字节一致＋磁盘直读佐证〕＋门卫/白名单 fail-fast 面）。
+# PRJ-T13 增列：UndoRedoServiceTest（acceptance 1 PRJ-TX-5 undo/redo
+# 部分——应用→撤销→重做各恰一新修订〔revisionSeq 递增＋revisions/ 目录
+# 只增〕＋历史不改写〔既有修订视图逐字节不变＋branchHistory 清单只增〕
+# ＋AT-29 锚点；acceptance 2 边界语义——空历史稳定提示数据〔不抛错〕/
+# 跨分支提交后再回〔栈按分支隔离——D-11〕/重开项目会话栈清空〔redo
+# 仅会话内、canUndo 由 tip 推导〕/逆命令由业务处理器声明、project 只
+# 提交〔未注册逆命令 token→unknown-command 透传〕/新命令清空 redo＋
+# 一次性 stale 说明；acceptance 3 与草稿局部撤销的边界——草稿保存/
+# 恢复面不产生修订、不经本服务（§2.3/REQ-11 分界的存储侧形态）；status
+# 前置违约 fail-fast 面）；StubHandlers.hpp 增补对称逆命令处理器桩
+# （test-append-undo——撤销/重做用例的可逆命令族）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -271,6 +293,7 @@ add_executable(sdurws_ird_project_test
     test/QueryPortTest.cpp
     test/CommandServiceTest.cpp
     test/DraftServiceTest.cpp
+    test/UndoRedoServiceTest.cpp
     test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费

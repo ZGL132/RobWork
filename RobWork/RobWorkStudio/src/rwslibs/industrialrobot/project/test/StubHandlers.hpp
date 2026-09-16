@@ -4,7 +4,8 @@
  *         StubHandlers.*"）——命令服务用例组的注入面：域处理器桩（断言
  *         判定注入——P-PR-3 处置的测试侧形态）、双编译端口桩（§5.3.6
  *         "阶段 A 以测试桩实现验证编排"）、确认交互桩（SA-15）、事件
- *         记录面与共享夹具。
+ *         记录面与共享夹具。PRJ-T13 增补对称逆命令处理器桩
+ *         AppendUndoHandler（撤销/重做用例的可逆命令族——见其类注释）。
  *
  * 设计依据：
  *   - units/project.md §5.3.2（ICommandHandler 契约——prepare 三态与
@@ -12,9 +13,11 @@
  *     §5.3.6（IModelCompilePort——"阶段 A 以测试桩实现验证编排；真实
  *     编译链随 runtime/modeling 交付"）、§6.1～§6.6（S1～S7 各拒绝/
  *     中止面的注入需求——§11 PRJ-TX 组用例表）、P-PR-3（断言判定由
- *     注入处理器执行——本头即"注入处理器"的测试实现）；
+ *     注入处理器执行——本头即"注入处理器"的测试实现）、§6.9（对称
+ *     逆命令声明族——AppendUndoHandler 的声明面依据，PRJ-T13）；
  *   - 任务契约 tasks/foundation/PRJ-T10.json acceptance 3/4（测试处理
- *     器〔断言判定注入〕就位）。
+ *     器〔断言判定注入〕就位）、tasks/foundation/PRJ-T13.json
+ *     acceptance 1～2（可逆命令族的撤销/重做面）。
  *
  * 背景说明（为什么处理器桩用 test- 无点 token——P-PR-9 不越界声明）：
  *   本头全部 token 遵守 §4.4.4 冻结语法 ^[a-z0-9-]{3,64}（不含点）。
@@ -165,6 +168,39 @@ public:
             out.inversePayloadCanonical = envelope.payloadCanonical;
         }
         out.summary = "test append object";
+        return PrepareOutcome::Planned;
+    }
+};
+
+/// 追加撤销命令（"test-append-undo" v1——PRJ-T13 撤销/重做用例的可逆
+/// 命令族对称半边）：与 AppendObjectHandler（declareInverse=true）构成
+/// 对称声明族——append 的逆＝本命令（载荷原样），本命令的逆＝append
+/// （载荷原样）。测试域语义：执行"撤销追加"＝纯元数据修订（不写对象
+/// ——测试域内"移除引用"的最简表达；引用集级回退的业务判定归域处理
+/// 器，project 只提交——§6.5/§6.9 可逆性声明制）。undo/redo 用例经它
+/// 断言：撤销修订的 inverse＝原始 append 命令（redo 信封的数据源——
+/// InverseRecord 拷贝面）；未注册本处理器时 undo 透传 unknown-command
+/// （§6.5 注册协议——project 不代行业务逆命令的拒绝面）。
+class AppendUndoHandler final : public ICommandHandler {
+public:
+    [[nodiscard]] std::string commandType() const override
+    {
+        return "test-append-undo";
+    }
+    [[nodiscard]] std::uint32_t currentPayloadVersion() const override
+    {
+        return 1;
+    }
+
+    PrepareOutcome prepare(HandlerContext& /*ctx*/, const CommandEnvelope& envelope,
+                           const RevisionView& /*baseSnapshot*/, CommandPlan& out,
+                           std::vector<core::DiagnosticRecord>& /*diags*/) override
+    {
+        // 纯元数据修订（objectWrites 为空——CommitPlan 的合法形态）；
+        // 逆声明＝原始 append 命令（载荷原样回写——对称族约定）。
+        out.inverseCommandType = "test-append-object";
+        out.inversePayloadCanonical = envelope.payloadCanonical;
+        out.summary = "test append undo";
         return PrepareOutcome::Planned;
     }
 };
