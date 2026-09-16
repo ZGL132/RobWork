@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T13",
+  "masterWp": "WP-04-T13",
+  "branch": "wp04-t13",
+  "base": "fcfa6feae7aae4eabe494f5d71644c17788dde3c",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC library",
+      "result": "两模式构建零错误（smoke 与 integration；本任务新增 src/UndoRedoServiceImpl.cpp 编译单元，其余编译单元行为零变化——ProjectStoreImpl 仅增装配/friend/窄访问器/undoRedo() 访问器四面）",
+      "notes": "PRJ-T13 产物：撤销/重做服务（§5.5/§6.9）——公共头 UndoRedo.hpp 增量落位〔§3.1 组成表行：UndoRedoService/UndoRedoStatus/InverseRecord〕＋src/UndoRedoServiceImpl.{hpp,cpp}〔§12 行产物——逆命令提交（undo envelope 取自当前 tip 修订的 inverse 记录，expectedRevision＝tip——§5.5 原文）、会话栈（redo 栈按分支、仅内存——D-11；新命令惰性清空＋一次性 stale 说明——§6.9 行 4/6）、边界语义（空历史稳定提示数据不抛错；前置违约 invalid_argument fail-fast）〕＋ProjectStore.hpp 增挂 undoRedo() 访问器〔§5.1 五端口访问器的 T13 位〕。零自有写通道：undo/redo 一律经命令端口 submit（S1～S7/事务/事件全归命令端口）——§6.5 注册协议：逆命令由业务处理器产出，project 只拷贝三元组组装信封。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "242/242 PASSED（两模式一致：smoke 与 integration 各 242/242；既有 233 用例零回归＋本任务新增 9 用例全绿）",
+      "notes": "新增 9 用例（acceptance 逐条对账，套件 UndoRedoServiceTest；测试处理器增补＝StubHandlers.hpp 对称逆命令族 AppendUndoHandler——append 声明逆为 append-undo、append-undo 声明逆为 append）：acceptance 1＝两用例〔ApplyUndoRedoEachCommittedAsNewRevisionHistoryAppendOnly：PRJ-TX-5 undo/redo 部分——应用→撤销→重做各恰一新修订＋revisionSeq 递增（O-15）＋revisions/ 目录逐次只增＋branchHistory 清单原序只增＋既有修订视图（v1/v2）逐字段不变＝历史不改写（PM-18/PA-2/AT-29 锚点）＋撤销修订 inverse＝原始命令三元组（redo 数据源——§6.9 对称声明面）＋各阶段 canUndo/canRedo/undoSummary/redoSummary 断言；UndoThenRedoRestoresOriginalPayloadAndCommandFamily：内容面——撤销修订 objectRefs 仅剩元数据对象、重做修订重新携带同负载对象且 tryObject 逐字节一致＝重放原始载荷〕；acceptance 2＝五用例〔EmptyHistoryStablePromptDataAndPreconditionViolationFailsFast：空历史稳定提示数据（全 false＋空摘要＋无 blockedReason，重复调用幂等不抛错——PM-18）＋未知分支稳定空状态＋canUndo/canRedo 为 false 时 undo/redo 调用 std::invalid_argument fail-fast；CrossBranchCommitDoesNotTouchSiblingBranchStacks：§4.5.1 分支模型上——main 撤销后 feature-b 提交不清 main 会话栈（栈按分支隔离——D-11/§6.9 跨分支行）＋B 的 canUndo 由其 tip 推导、canRedo=false＋undoSummary 逐字等于 B tip 自身命令摘要（非跨分支泄漏）＋再回 main 重做成功且 seq 全局单调；ReopenProjectRedoLostUndoDerivedFromTip：关闭重开（存储上下文消亡＝会话消亡）——canRedo 恒 false、canUndo 由 tip 修订 inverse 推导照常可用、重开后 redo 前置违约（D-11 重启面；另证 §6.5 L5 装配边界——处理器注册归属每个上下文）；UnregisteredInverseTokenTypeRelayedAsUnknownCommandNoRevision：逆命令 token 未注册时 undo 经 submit 透传 Rejected(unknown-command)＋零修订＋会话栈不入（§6.5 注册协议——project 不代行业务逆命令），处理器就位后同一撤销成功（正向面）；NewCommandClearsRedoStackWithOneShotStaleReason：会话内新命令（无 inverse 的纯元数据命令）提交后 status 显示 canRedo=false＋一次性 blockedReason（StaleRevisionRejected——§6.9 行 4 新命令清空＋行 6 过期基线）＋旗标读即消费＋栈清空后 redo 前置违约〕；acceptance 3＝DraftEditingStaysOutsideCommandUndoService：草稿落盘零修订（PM-04）＋撤销服务状态零变化＋undo 命令撤销后草稿原样保留（baseRevision/payload 读回一致——编辑级局部撤销归 ui DraftController＋业务域〔REQ-11 分界，§2.3/§6.9 末行〕，项目命令撤销不消费草稿）；acceptance 4＝Ppr1_SessionTypesAreCoreContractIdentities：编译期 static_assert（InverseRecord::undoRevision＝core::RevisionId——core.md v0.1 §4.1 契约类型；载荷版本三元组同型）＋运行期身份经 core 规范 API（toCanonical/tryFromCanonical）往返语义不变并可直接作消费键（无本地第二身份形态/零本地重格式化）。"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "15/15 PASSED（两模式一致：smoke 与 integration 各 15/15）",
+      "notes": "本任务零改动零新增（PRJ-TX-5 的契约测试面全量归 PRJ-T15——§12 PRJ-T15 行；本任务单元内面已覆盖 undo/redo 全语义）。既有 15 用例零回归（PRJ-TX-1 两用例＋PRJ-TX-3 三用例＋锁/链接契约 10 用例——其中 LinkageContractTest 的唯一单元边与 BuildRedLineTest 的零 Qt/R-2 扫描自动覆盖本任务新增文件）。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project" },
+    { "mode": "integration", "log": "integration-contract-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_contract_test" },
+    { "mode": "integration", "log": "verify-target-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令——tasks/foundation/PRJ-T13.json verify）" },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg 绝对路径（AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-test-run", "log": "smoke-test-run.log", "exitCode": 0 },
+    { "mode": "smoke-contract-test-run", "log": "smoke-contract-test-run.log", "exitCode": 0 },
+    { "mode": "integration-test-run", "log": "integration-test-run.log", "exitCode": 0 },
+    { "mode": "integration-contract-test-run", "log": "integration-contract-test-run.log", "exitCode": 0 }
+  ],
+  "gates": {
+    "ird_gates": "实跑（2026-09-16，集成构建树 ird_gates 目标；日志 ird-gates.log）：命中 9 项＝7×IRD-GATE-SUB（既有测试目标直链 sdurws_ird_testkit 的登记形态提示）＋1×IRD-GATE-T1（sdurws_ird_testdata_lint 产品目标链接 testkit）＋1×IRD-GATE-R4（ProjectStoreImpl.cpp 的 \"RobWork\" 字面量 1 处——kCreatedWithToolVersion 工具版本串，git show base 核对为 T08 既有、base 与现文件各恰 1 处；本任务对该文件的改动仅 undoRedo() 装配/friend/窄访问器，无新字面量）。命中集合与 wp04-t08～t12 基线逐项一致＝零新增命中；门禁目标按 SA-10 设计命中即非零退出（exit 1），既有命中属基线登记面非本任务违规。",
+    "validateTask": "PASS（validate-task.log；pwsh -File validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T13.json，exit 0——PASS (1 tasks)）"
+  },
+  "acceptanceCoverage": "acceptance 1＝全（PRJ-TX-5 undo/redo 部分：应用→撤销→重做各恰一新修订〔revisionSeq 递增＋revisions/ 目录只增〕、历史不改写〔既有修订视图逐字段不变＋branchHistory 原序只增——PA-2〕、AT-29 锚点用例＋内容面重放佐证〔撤销修订不引用域对象、重做修订重新携带逐字节一致载荷〕＋修订只增断言〔seq/目录/清单三维观测〕）；acceptance 2＝全（空历史稳定提示数据不抛错＋幂等；跨分支提交后再回——栈按分支隔离〔D-11〕＋B 分支 undoSummary 数据源逐字核验；重开项目 canRedo=false 而 canUndo 由 tip 修订 inverse 推导〔重启面〕；逆命令记录由业务处理器产出、project 只提交〔未注册 token→unknown-command 透传零修订＋处理器注册后同一请求成功——§6.5 注册协议〕；新命令清空 redo＋一次性 stale 说明〔§6.9 行 4/6——StaleRevisionRejected 复用 §4.4.8 现有码不私扩〕）；acceptance 3＝全（与草稿局部撤销的边界：草稿落盘零修订＋撤销服务状态零变化＋undo 后草稿原样保留——§2.3/§6.9 末行 PM-18 与 REQ-11 分界的存储侧形态，编辑级撤销不在本服务任何接口面〔编译面证据：UndoRedo.hpp 无草稿参数入口〕）；acceptance 4＝全（P-PR-1 处置：InverseRecord/信封消费的身份类型＝core.md v0.1 公共契约类型〔编译期 static_assert＋运行期 core 规范 API 往返〕；零 core 修改实证＝本任务 diff 无 core/ 路径文件＋BuildRedLineTest/LinkageContractTest 既有红线自动覆盖新增文件；core 冻结 diff 后按影响面增量同步〔§15.3 既有口径，不私改 core〕）。",
+  "implementationNotes": "实现口径登记三项（DTB §5.4，详见 UndoRedo.hpp/UndoRedoServiceImpl.hpp 文件头，已随本文 §15.4 v0.15 登记）：①『新命令清空 redo』（§6.9 行 4）的检测形态＝惰性同步——服务不订阅事件总线，status/undo/redo 进入时读权威分支表比对上次观察 tip，不一致且栈非空即清空＋置一次性 stale 说明（§6.9 行 6 的 blockedReason=StaleRevisionRejected 落点；旗标读即消费，成功 undo/redo 亦消费——轮询面不重复呈现同一事实；用户级诊断不由 status 产出——轮询去重，真拒绝由命令端口诊断链路承载）；②undo 后 redo 条目的数据源＝撤销修订视图的 inverse 记录（对称声明面由逆命令处理器声明——§6.9 可逆性声明制），撤销时点拷贝三元组入会话栈〔修订不可变（PA-2）下拷贝与重读等价；取拷贝使 D-11『redo 仅会话内』在结构上自明〕；非对称族（撤销修订无 inverse）不入栈＋开发诊断 reportDev 观察面（无收编用户码不私造——CR-08）；③§5.5 undo 字面语义（envelope 恒取自当前 tip 的 inverse）的推论＝撤销后再次 undo 即『撤销该撤销』（tip 已是撤销修订且其 inverse＝原始命令）——撤销深度由处理器 inverse 声明链决定，project 不推断可逆性；重启后 canUndo 由 tip 推导正是该机制的极端情形（§5.5 注释原文锚定）。并发面：undo/redo 的会话读写段持服务内互斥、提交段锁外（不嵌套命令执行槽——处理器回调 status 不死锁）；并发竞争正确性由命令端口 S2 过期基线校验兜底（§6.2——后到者 Rejected(stale-revision) 零修订，会话栈只在 Committed 后变更）。测试口径登记两项（DTB §5.4）：①重开用例须在重开后重注册处理器（§6.5 L5 装配边界——注册归属每个存储上下文）；②『重启 redo 丢失』断言须先于重开后的首次 undo（对称族下该撤销会建立新的会话 redo 条目）。实现期缺陷留证两项（自测暴露并修复，终态 9/9 全绿）：①status() 中一次性旗标消费误用 const 引用（C3490 编译期捕获）；②测试初版两处期望错误（B 分支 undoSummary 误期望为空——其自身 tip 本可逆；重开用例 redo 断言次序）。文档同步：units/project.md v0.15（§15.4 变更记录＋文件版本行）。"
+}
